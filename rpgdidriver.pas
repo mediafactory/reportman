@@ -260,7 +260,7 @@ begin
  dpi:=Screen.PixelsPerInch;
  drawclippingregion:=true;
  oldpagesize.PageIndex:=-1;
- scale:=0.5;
+ scale:=1;
 end;
 
 procedure TRpGDIDriver.NewDocument(report:TrpMetafileReport);

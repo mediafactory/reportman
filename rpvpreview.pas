@@ -51,7 +51,6 @@ type
     EPageNum: TEdit;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
     APrint: TAction;
     ToolButton6: TToolButton;
     ASave: TAction;
@@ -61,11 +60,19 @@ type
     BCancel: TButton;
     PBar: TProgressBar;
     AExit: TAction;
-    BSeparator: TToolButton;
-    ToolButton9: TToolButton;
+    BExit: TToolButton;
     ToolButton8: TToolButton;
     AParams: TAction;
-    ToolButton10: TToolButton;
+    AScale100: TAction;
+    AScaleWide: TAction;
+    AScaleFull: TAction;
+    ToolButton11: TToolButton;
+    ToolButton12: TToolButton;
+    ToolButton13: TToolButton;
+    ToolButton14: TToolButton;
+    AScaleLess: TAction;
+    AScaleMore: TAction;
+    ToolButton15: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -84,6 +91,11 @@ type
     procedure AExitExecute(Sender: TObject);
     procedure AParamsExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure AScale100Execute(Sender: TObject);
+    procedure AScaleWideExecute(Sender: TObject);
+    procedure AScaleFullExecute(Sender: TObject);
+    procedure AScaleLessExecute(Sender: TObject);
+    procedure AScaleMoreExecute(Sender: TObject);
   private
     { Private declarations }
     cancelled:boolean;
@@ -406,7 +418,7 @@ end;
 
 procedure TFRpVPreview.DisableControls(enablebar:boolean);
 begin
- BCancel.Left:=BSeparator.Left+BSeparator.Width;
+ BCancel.Left:=BExit.Left+BExit.Width;
  BCancel.Visible:=true;
  AFirst.Enabled:=false;
  ALast.Enabled:=false;
@@ -497,16 +509,58 @@ end;
 procedure TFRpVPreview.FormResize(Sender: TObject);
 begin
  // Sets the driver widths and redraw accordingly
+ AScaleFull.Checked:=false;
+ AScaleWide.Checked:=false;
+ AScale100.Checked:=false;
  if Assigned(gdidriver) then
  begin
   gdidriver.clientwidth:=ImageContainer.Width;
   gdidriver.clientHeight:=ImageContainer.Height;
-  if (gdidriver.PreviewStyle in [spWide,spEntirePage]) then
-   if pagenum>=1 then
-    PrintPage;
+  case gdidriver.PreviewStyle of
+   spWide:
+    AScaleWide.Checked:=True;
+   spEntirePage:
+    AScaleFull.Checked:=True;
+   spNormal:
+    AScale100.Checked:=True;
+  end;
+  if pagenum>=1 then
+   PrintPage;
   if pagenum>=1 then
    PlaceImagePosition;
  end;
+end;
+
+procedure TFRpVPreview.AScale100Execute(Sender: TObject);
+begin
+ gdidriver.PreviewStyle:=spNormal;
+ FormResize(Self);
+end;
+
+procedure TFRpVPreview.AScaleWideExecute(Sender: TObject);
+begin
+ gdidriver.PreviewStyle:=spWide;
+ FormResize(Self);
+end;
+
+procedure TFRpVPreview.AScaleFullExecute(Sender: TObject);
+begin
+ gdidriver.PreviewStyle:=spEntirePage;
+ FormResize(Self);
+end;
+
+procedure TFRpVPreview.AScaleLessExecute(Sender: TObject);
+begin
+ gdidriver.PreviewStyle:=spCustom;
+ gdidriver.Scale:=gdidriver.scale-0.10;
+ FormResize(Self);
+end;
+
+procedure TFRpVPreview.AScaleMoreExecute(Sender: TObject);
+begin
+ gdidriver.PreviewStyle:=spCustom;
+ gdidriver.Scale:=gdidriver.scale+0.10;
+ FormResize(Self);
 end;
 
 end.

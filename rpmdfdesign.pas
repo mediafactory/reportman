@@ -124,6 +124,7 @@ begin
  inherited Create(AOwner);
  SectionScrollBox:=TRpScrollBox.Create(Self);
  SectionScrollBox.BorderStyle:=bsNone;
+ SectionScrollBox.Color:=clDisabledForeground;
  SectionScrollBox.Align:=Alclient;
  SectionScrollBox.Parent:=Self;
 

@@ -50,7 +50,6 @@ type
     EPageNum: TEdit;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
     APrint: TAction;
     ToolButton6: TToolButton;
     ASave: TAction;
@@ -60,10 +59,18 @@ type
     BCancel: TButton;
     PBar: TProgressBar;
     AExit: TAction;
-    BSeparator: TToolButton;
-    ToolButton9: TToolButton;
+    BExit: TToolButton;
     ToolButton8: TToolButton;
     AParams: TAction;
+    AScale100: TAction;
+    AScaleWide: TAction;
+    AScaleFull: TAction;
+    AScaleLess: TAction;
+    AScaleMore: TAction;
+    ToolButton11: TToolButton;
+    ToolButton12: TToolButton;
+    ToolButton13: TToolButton;
+    ToolButton5: TToolButton;
     ToolButton10: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -83,6 +90,11 @@ type
     procedure AExitExecute(Sender: TObject);
     procedure AParamsExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure AScale100Execute(Sender: TObject);
+    procedure AScaleWideExecute(Sender: TObject);
+    procedure AScaleFullExecute(Sender: TObject);
+    procedure AScaleLessExecute(Sender: TObject);
+    procedure AScaleMoreExecute(Sender: TObject);
   private
     { Private declarations }
     cancelled:boolean;
@@ -413,7 +425,7 @@ end;
 
 procedure TFRpPreview.DisableControls(enablebar:boolean);
 begin
- BCancel.Left:=BSeparator.Left+BSeparator.Width;
+ BCancel.Left:=BExit.Left+BExit.Width;
  BCancel.Visible:=true;
  AFirst.Enabled:=false;
  ALast.Enabled:=false;
@@ -486,15 +498,16 @@ end;
 // A bug in TScrollBox Refresh background does not
 // allow to center the image
 procedure TFRpPreview.PlaceImagePosition;
-//var
-// AWidth:integeR;
-// Aheight:integer;
+var
+ AWidth:integeR;
+ Aheight:integer;
+ rec:TRect;
 begin
  ImageContainer.HorzScrollBar.Position:=0;
  ImageContainer.VertScrollBar.Position:=0;
  AImage.Left:=0;
  AImage.Top:=0;
-{ ImageContainer.HorzScrollBar.Position:=0;
+ ImageContainer.HorzScrollBar.Position:=0;
  ImageContainer.VertScrollBar.Position:=0;
 
  AWidth:=ImageContainer.Width-SCROLLBAR_VX;
@@ -508,23 +521,70 @@ begin
   AImage.Top:=0
  else
   AImage.Top:=(AHeight-AImage.Height) div 2;
-}end;
+ // A bug in the refresh
+{$IFDEF MSWINDOWS}
+ ImageContainer.Visible:=False;
+ ImageContainer.Visible:=True;
+ {$ENDIF}
+end;
 
 
 
 procedure TFRpPreview.FormResize(Sender: TObject);
 begin
  // Sets the driver widths and redraw accordingly
+ AScaleFull.Checked:=false;
+ AScaleWide.Checked:=false;
+ AScale100.Checked:=false;
  if Assigned(qtdriver) then
  begin
   qtdriver.clientwidth:=ImageContainer.Width;
   qtdriver.clientHeight:=ImageContainer.Height;
-  if (qtdriver.PreviewStyle in [spWide,spEntirePage]) then
-   if pagenum>=1 then
-    PrintPage;
+  case qtdriver.PreviewStyle of
+   spWide:
+    AScaleWide.Checked:=True;
+   spEntirePage:
+    AScaleFull.Checked:=True;
+   spNormal:
+    AScale100.Checked:=True;
+  end;
+  if pagenum>=1 then
+   PrintPage;
   if pagenum>=1 then
    PlaceImagePosition;
  end;
+end;
+
+procedure TFRpPreview.AScale100Execute(Sender: TObject);
+begin
+ qtdriver.PreviewStyle:=spNormal;
+ FormResize(Self);
+end;
+
+procedure TFRpPreview.AScaleWideExecute(Sender: TObject);
+begin
+ qtdriver.PreviewStyle:=spWide;
+ FormResize(Self);
+end;
+
+procedure TFRpPreview.AScaleFullExecute(Sender: TObject);
+begin
+ qtdriver.PreviewStyle:=spEntirePage;
+ FormResize(Self);
+end;
+
+procedure TFRpPreview.AScaleLessExecute(Sender: TObject);
+begin
+ qtdriver.PreviewStyle:=spCustom;
+ qtdriver.Scale:=qtdriver.scale-0.10;
+ FormResize(Self);
+end;
+
+procedure TFRpPreview.AScaleMoreExecute(Sender: TObject);
+begin
+ qtdriver.PreviewStyle:=spCustom;
+ qtdriver.Scale:=qtdriver.scale+0.10;
+ FormResize(Self);
 end;
 
 end.

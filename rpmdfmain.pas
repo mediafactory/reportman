@@ -130,7 +130,6 @@ type
     est1: TMenuItem;
     ext21: TMenuItem;
     ADocumentation: TAction;
-    Features1: TMenuItem;
     utorial1: TMenuItem;
     APrintSetup: TAction;
     Printersetup1: TMenuItem;

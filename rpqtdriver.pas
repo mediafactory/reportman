@@ -160,7 +160,7 @@ constructor TRpQtDriver.Create;
 begin
  // By default 1:1 scale
  dpi:=Screen.PixelsPerInch;
- scale:=0.5;
+ scale:=1;
 end;
 
 procedure TRpQtDriver.NewDocument(report:TrpMetafileReport);
