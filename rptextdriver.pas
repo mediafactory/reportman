@@ -299,6 +299,8 @@ end;
 
 procedure TRpTextDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
    hardwarecollate:boolean);stdcall;
+var
+ sizeqt:TPageSizeQt;
 begin
  DrawerBefore:=report.OpenDrawerBefore;
  DrawerAfter:=report.OpenDrawerAfter;
@@ -314,6 +316,11 @@ begin
   if Length(escapecodes[rpescapepulse])>0 then
    MemStream.Write(escapecodes[rpescapepulse][1],Length(escapecodes[rpescapepulse]));
  // Set page size
+ sizeqt.Custom:=True;
+ sizeqt.CustomWidth:=report.CustomX;
+ sizeqt.CustomHeight:=report.CustomX;
+ SetPagesize(sizeqt);
+
  WritePageSize;
 end;
 

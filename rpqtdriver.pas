@@ -58,7 +58,6 @@ type
     allpages,collate:boolean;
     frompage,topage,copies:integer;
     printerindex:TRpPrinterSelect;
-    DrawerBefore,DrawerAfter:Boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure AppIdleReport(Sender:TObject;var done:boolean);
     procedure AppIdlePrintPDF(Sender:TObject;var done:boolean);
@@ -89,6 +88,7 @@ type
    FOrientation:TRpOrientation;
    FIntPageSize:TPageSizeQt;
    OldOrientation:TPrinterOrientation;
+   DrawerBefore,DrawerAfter:Boolean;
    function InternalSetPagesize(PagesizeQt:integer):TPoint;
   public
    bitmap:TBitmap;
@@ -99,6 +99,7 @@ type
    bitmapwidth,bitmapheight:integer;
    PreviewStyle:TRpPreviewStyle;
    clientwidth,clientheight:integer;
+   printerindex:TRpPrinterSelect;
    procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
     hardwarecollate:boolean);stdcall;
    procedure EndDocument;stdcall;
@@ -216,6 +217,7 @@ var
  scale2:double;
  sizeqt:integer;
 begin
+ printerindex:=report.PrinterSelect;
  DrawerBefore:=report.OpenDrawerBefore;
  DrawerAfter:=report.OpenDrawerAfter;
  if ToPrinter then
@@ -243,10 +245,10 @@ begin
    if DrawerBefore then
    begin
 {$IFDEF MSWINDOWS}
-    SendControlCodeToPrinter(GetPrinterRawOp(selectedprinter,rawopopendrawer));
+    SendControlCodeToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer));
 {$ENDIF}
 {$IFDEF LINUX}
-    SendTextToPrinter(GetPrinterRawOp(selectedprinter,rawopopendrawer),selectedprinter,SRpOpenDrawerAfter);
+    SendTextToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer),printerindex,SRpOpenDrawerAfter);
 {$ENDIF}
    end;
   if Not Printer.Printing then
@@ -344,17 +346,16 @@ end;
 
 procedure TRpQtDriver.EndDocument;
 begin
- FIntPageSize.Custom:=false;
  if toprinter then
  begin
   printer.EndDoc;
   if DrawerAfter then
   begin
 {$IFDEF MSWINDOWS}
-   SendControlCodeToPrinter(GetPrinterRawOp(selectedprinter,rawopopendrawer));
+   SendControlCodeToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer));
 {$ENDIF}
 {$IFDEF LINUX}
-   SendTextToPrinter(GetPrinterRawOp(selectedprinter,rawopopendrawer),selectedprinter,SRpOpenDrawerAfter);
+   SendTextToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer),printerindex,SRpOpenDrawerAfter);
 {$ENDIF}
   end;
  end
@@ -982,6 +983,7 @@ begin
  LTittle.Caption:=tittle;
  Lprocessing.Visible:=true;
  DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate,printerindex);
+ Close;
 end;
 
 

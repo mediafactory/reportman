@@ -295,7 +295,7 @@ end;
 
 procedure TFRpPageSetup.SaveOptions;
 var
- acopies:integer;ç
+ acopies:integer;
  FReportAction:TRpReportActions;
 begin
  acopies:=StrToInt(ECopies.Text);

@@ -1899,6 +1899,7 @@ begin
  params:=TStringList.Create;
  try
   params.Add('recode');
+  params.Add('-f');
   params.Add(parameter);
   params.Add(afilename);
   // Creates a fork, and provides the input from standard
