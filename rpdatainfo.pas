@@ -146,6 +146,8 @@ type
    destructor Destroy;override;
   end;
 
+ TRpDatasetType=(rpdquery,rpdtable);
+
 
  TRpDataInfoItem=class(TCollectionItem)
   private
@@ -158,6 +160,12 @@ type
    FSQLInternalQuery:TDataset;
    FMyBaseFilename:string;
    FMyBaseIndexFields:string;
+   FBDEIndexFields:string;
+   FBDEIndexName:string;
+   FBDETable:string;
+   FBDEType:TRpDatasetType;
+   FBDEMasterFields:string;
+   FBDEFilter:string;
    connecting:boolean;
    FCached:Boolean;
    procedure SetDatabaseAlias(Value:string);
@@ -180,6 +188,13 @@ type
    property DataSource:string read FDatasource write SetDataSource;
    property MyBaseFilename:string read FMyBaseFilename write FMyBaseFilename;
    property MyBaseIndexFields:string read FMyBaseIndexFields write FMyBaseIndexFields;
+   property BDEIndexFields:string read FBDEIndexFields write FBDEIndexFields;
+   property BDEIndexName:string read FBDEIndexName write FBDEIndexName;
+   property BDETable:string read FBDETable write FBDETable;
+   property BDEType:TRpDatasetType read FBDEType write FBDEType
+    default rpdquery;
+   property BDEFilter:string read FBDEFilter write FBDEFilter;
+   property BDEMasterFields:string read FBDEMasterFields write FBDEMasterFields;
   end;
 
  TRpDataInfoList=class(TCollection)
@@ -381,6 +396,12 @@ begin
   FSQL:=TRpDataInfoItem(Source).FSQL;
   FMyBaseFilename:=TRpDataInfoItem(Source).FMyBaseFilename;
   FMyBaseIndexFields:=TRpDataInfoItem(Source).FMyBaseIndexFields;
+  FBDEIndexFields:=TRpDataInfoItem(Source).FBDEIndexFields;
+  FBDEMasterFields:=TRpDataInfoItem(Source).FBDEMasterFields;
+  FBDEIndexName:=TRpDataInfoItem(Source).FBDEIndexName;
+  FBDEFilter:=TRpDataInfoItem(Source).FBDEFilter;
+  FBDETable:=TRpDataInfoItem(Source).FBDETable;
+  FBDEType:=TRpDataInfoItem(Source).FBDEType;
  end
  else
   inherited Assign(Source);
@@ -865,7 +886,10 @@ begin
      rpdatabde:
       begin
 {$IFDEF USEBDE}
-       FSQLInternalQuery:=TQuery.Create(nil);
+       if FBDEType=rpdquery then
+        FSQLInternalQuery:=TQuery.Create(nil)
+       else
+        FSQLInternalQuery:=TTable.Create(nil);
 {$ELSE}
        Raise Exception.Create(SRpDriverNotSupported+SrpDriverBDE);
 {$ENDIF}
@@ -916,11 +940,23 @@ begin
      rpdatabde:
       begin
 {$IFDEF USEBDE}
-       if Not (FSQLInternalQuery is TQuery) then
+       if FBDEType=rpdquery then
        begin
-        FSQLInternalQuery.Free;
-        FSQLInternalQuery:=nil;
-        FSQLInternalQuery:=TQuery.Create(nil);
+        if Not (FSQLInternalQuery is TQuery) then
+        begin
+         FSQLInternalQuery.Free;
+         FSQLInternalQuery:=nil;
+         FSQLInternalQuery:=TQuery.Create(nil);
+        end;
+       end
+       else
+       begin
+        if Not (FSQLInternalQuery is TTable) then
+        begin
+         FSQLInternalQuery.Free;
+         FSQLInternalQuery:=nil;
+         FSQLInternalQuery:=TTable.Create(nil);
+        end;
        end;
 {$ENDIF}
       end;
@@ -990,9 +1026,24 @@ begin
     rpdatabde:
      begin
 {$IFDEF USEBDE}
-      TQuery(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEAlias;
-      TQuery(FSQLInternalQuery).SQL.Text:=SQL;
-      TQuery(FSQLInternalQUery).UniDirectional:=True;
+      if FBDEType=rpdquery then
+       TQuery(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEAlias
+      else
+       TTable(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEAlias;
+      TBDEDataset(FSQLInternalQuery).Filter:=FBDEFilter;
+      if length(Trim(FBDEFilter))>0 then
+      TBDEDataset(FSQLInternalQuery).Filtered:=True;
+      if FBDEType=rpdquery then
+      begin
+       TQuery(FSQLInternalQuery).SQL.Text:=SQL;
+       TQuery(FSQLInternalQUery).UniDirectional:=True;
+      end
+      else
+      begin
+       TTable(FSQLInternalQuery).Tablename:=FBDETable;
+       TTable(FSQLInternalQUery).IndexFieldNames:=FBDEIndexFields;
+       TTable(FSQLInternalQUery).IndexName:=FBDEIndexName;
+      end;
 {$ENDIF}
      end;
     rpdataado:
@@ -1042,12 +1093,24 @@ begin
      rpdatabde:
       begin
 {$IFDEF USEBDE}
-       if Not Assigned(TQuery(FSQLInternalQuery).DataSource) then
-        TQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
-       if datainfosource.cached then
-        TQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+       if FBDEType=rpdquery then
+       begin
+        if Not Assigned(TQuery(FSQLInternalQuery).DataSource) then
+         TQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
+        if datainfosource.cached then
+         TQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+        else
+         TQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+       end
        else
-        TQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+       begin
+        if Not Assigned(TTable(FSQLInternalQuery).DataSource) then
+         TTable(FSQLInternalQuery).MasterSource:=TDataSource.Create(nil);
+        if datainfosource.cached then
+         TTable(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+        else
+         TTable(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+       end;
 {$ENDIF}
       end;
      rpdataado:
@@ -1101,9 +1164,14 @@ begin
       rpdatabde:
        begin
 {$IFDEF USEBDE}
-        TQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
-         ParamTypeToDataType(param.ParamType);
-        TQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
+        if FBDEType=rpdquery then
+        begin
+         TQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
+          ParamTypeToDataType(param.ParamType);
+         TQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
+        end
+        else
+         Raise Exception.Create(SrpParamBDENotSupported);
 {$ENDIF}
        end;
       rpdataado:
@@ -1151,6 +1219,7 @@ constructor TRpDatainfoitem.Create(Collection:TCollection);
 begin
  inherited Create(Collection);
 
+ FBDEType:=rpdquery;
  FCachedDataset:=TRpDataset.Create(nil);
 end;
 

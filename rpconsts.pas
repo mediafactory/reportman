@@ -541,6 +541,9 @@ resourcestring
   SRpBadColorIndex='Bad color index in bitmap';
   SRpRLECompBitmapPDF='Compressed RLE bitmaps not supported in PDF Export';
   SRpMonochromeBitmapPDF='Monochrome bitmaps not supported in PDF Export';
+  SRpParamBDENotSupported='Parameters not supported in BDE Tables';
+
+
 implementation
 
 

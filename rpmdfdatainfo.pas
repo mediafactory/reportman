@@ -31,13 +31,11 @@ uses SysUtils, Classes, QGraphics, QForms,
   adodb,
 {$ENDIF}
   rpreport,rpconsts,rpdatainfo,DBConnAdmin,QDialogs,
-  rpparams,rpfparams;
+  rpparams,rpfparams, QComCtrls;
 
 type
   TFRpDatainfoconfig = class(TForm)
-    OKBtn: TButton;
-    CancelBtn: TButton;
-    GroupBox1: TGroupBox;
+    GConnections: TGroupBox;
     LConnections: TListBox;
     BAddCon: TButton;
     BDeletecon: TButton;
@@ -47,29 +45,49 @@ type
     CheckLoginPrompt: TCheckBox;
     CheckLoadParams: TCheckBox;
     CheckLoadDriverParams: TCheckBox;
-    GroupBox2: TGroupBox;
-    LDatasets: TListBox;
-    BAdd: TButton;
-    BDelete: TButton;
-    BRename: TButton;
+    GDatasets: TGroupBox;
     GDataProps: TGroupBox;
-    Label2: TLabel;
-    ComboConnection: TComboBox;
-    LMasterDataset: TLabel;
-    ComboDataSource: TComboBox;
-    LSQL: TLabel;
-    MSQL: TMemo;
-    BShowData: TButton;
-    BParams: TButton;
     GDriver: TRadioGroup;
-    EMyBase: TEdit;
-    LMyBase: TLabel;
-    BMyBase: TButton;
     OpenDialog1: TOpenDialog;
-    EIndexFields: TEdit;
-    LIndexFields: TLabel;
     LConnectionString: TLabel;
     EConnectionString: TEdit;
+    CancelBtn: TButton;
+    OKBtn: TButton;
+    PControl: TPageControl;
+    TabSQL: TTabSheet;
+    MSQL: TMemo;
+    Panel1: TPanel;
+    BShowData: TButton;
+    ComboDataSource: TComboBox;
+    LMasterDataset: TLabel;
+    ComboConnection: TComboBox;
+    Label2: TLabel;
+    TabBDETable: TTabSheet;
+    TabBDEType: TTabSheet;
+    RBDEType: TRadioGroup;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    MBDEFilter: TMemo;
+    LBDEIndexFields: TLabel;
+    LIndexName: TLabel;
+    EBDEIndexFields: TComboBox;
+    EBDEIndexName: TComboBox;
+    EBDETable: TComboBox;
+    LTable: TLabel;
+    LMasterFields: TLabel;
+    EBDEMasterFields: TEdit;
+    TabMySQL: TTabSheet;
+    EMyBase: TEdit;
+    EIndexFields: TEdit;
+    LIndexFields: TLabel;
+    LMyBase: TLabel;
+    BMyBase: TButton;
+    Panel4: TPanel;
+    BParams: TButton;
+    BAdd: TButton;
+    LDatasets: TListBox;
+    BDelete: TButton;
+    BRename: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -430,11 +448,16 @@ begin
  MSQL.Text:=dinfo.SQL;
  EMyBase.Text:=dinfo.MyBaseFilename;
  EIndexFields.Text:=dinfo.MyBaseIndexFields;
+ EBDEIndexFields.Text:=dinfo.BDEIndexFields;
+ MBDEFilter.Text:=dinfo.BDEFilter;
+ EBDEIndexName.Text:=dinfo.BDEIndexName;
+ EBDETable.Text:=dinfo.BDETable;
+ EBDEMasterFields.Text:=dinfo.BDEMasterFields;
+ RBDEType.ItemIndex:=Integer(dinfo.BDEType);
  index:=ComboConnection.Items.IndexOf(dinfo.DatabaseAlias);
  if index<0 then
   dinfo.DatabaseAlias:='';
  ComboConnection.ItemIndex:=Index;
-
 
  ComboDataSource.Items.Assign(Ldatasets.Items);
  index:=ComboDataSource.Items.IndexOf(dinfo.alias);
@@ -462,15 +485,10 @@ begin
  dinfo:=FindDataInfoItem;
  if dinfo=nil then
  begin
-  LSQL.Visible:=false;
-  MSQL.Visible:=false;
-  LMyBase.Visible:=false;
-  EMyBase.Visible:=false;
-  BMyBase.Visible:=false;
-  EIndexFields.Visible:=false;
-  LMasterDataset.Visible:=false;
-  LIndexFields.Visible:=false;
-  ComboDataSource.Visible:=false;
+  TabSQL.TabVisible:=false;
+  TabBDETable.TabVisible:=false;
+  TabMySQL.TabVisible:=false;
+  TabBDEType.TabVisible:=false;
   exit;
  end;
  if Sender=MSQL then
@@ -485,40 +503,44 @@ begin
   index:=databaseinfo.IndexOf(dinfo.DatabaseAlias);
   if index<0 then
   begin
-   LSQL.Visible:=false;
-   MSQL.Visible:=false;
-   LMyBase.Visible:=false;
-   EMyBase.Visible:=false;
-   BMyBase.Visible:=false;
-   EIndexFields.Visible:=false;
-   ComboDataSource.Visible:=false;
-   LIndexFields.Visible:=false;
-   LMasterDataset.Visible:=false;
+   TabSQL.TabVisible:=false;
+   TabBDETable.TabVisible:=false;
+   TabMySQL.TabVisible:=false;
+   TabBDEType.TabVisible:=false;
    exit;
   end;
   if databaseinfo.items[index].Driver=rpdatamybase then
   begin
-   LMyBase.Visible:=true;
-   EMyBase.Visible:=true;
-   BMyBase.Visible:=true;
-   EIndexFields.Visible:=true;
-   LMasterDataset.Visible:=false;
-   LIndexFields.Visible:=true;
-   ComboDataSource.Visible:=false;
-   LSQL.Visible:=false;
-   MSQL.Visible:=false;
+   TabSQL.TabVisible:=false;
+   TabBDETable.TabVisible:=false;
+   TabMySQL.TabVisible:=True;
+   TabBDEType.TabVisible:=false;
   end
   else
   begin
-   LSQL.Visible:=true;
-   MSQL.Visible:=true;
-   LMyBase.Visible:=false;
-   EMyBase.Visible:=false;
-   BMyBase.Visible:=false;
-   EIndexFields.Visible:=false;
-   ComboDataSource.Visible:=true;
-   LIndexFields.Visible:=false;
-   LMasterDataset.Visible:=true;
+   if databaseinfo.items[index].Driver=rpdatabde then
+   begin
+    TabBDEType.TabVisible:=True;
+    if (dinfo.BDEType=rpdtable) then
+    begin
+     TabSQL.TabVisible:=False;
+     TabBDETable.TabVisible:=True;
+     TabMySQL.TabVisible:=False;
+    end
+    else
+    begin
+     TabSQL.TabVisible:=True;
+     TabBDETable.TabVisible:=False;
+     TabMySQL.TabVisible:=False;
+    end;
+   end
+   else
+   begin
+    TabSQL.TabVisible:=True;
+    TabBDETable.TabVisible:=false;
+    TabMySQL.TabVisible:=False;
+    TabBDEType.TabVisible:=false;
+   end;
   end;
  end
  else
@@ -535,6 +557,50 @@ begin
  if Sender=EIndexFields then
  begin
   dinfo.MyBaseIndexFields:=EIndexFields.Text;
+ end
+ else
+ if Sender=RBDEType then
+ begin
+  dinfo.BDEType:=TRpDatasetType(RBDEType.ItemIndex);
+  if dinfo.BDEType=rpdQuery then
+  begin
+   TabSQL.Visible:=true;
+   TabBDETable.Visible:=false;
+  end
+  else
+  begin
+   TabSQL.Visible:=False;
+   TabBDETable.Visible:=True;
+  end;
+ end
+ else
+ if Sender=EBDEIndexFields then
+ begin
+  dinfo.BDEIndexFields:=Trim(EBDEIndexFields.Text);
+  if length(dinfo.BDEIndexFields)>0 then
+   EBDEIndexName.Text:='';
+ end
+ else
+ if Sender=EBDEIndexName then
+ begin
+  dinfo.BDEIndexName:=Trim(EBDEIndexName.Text);
+  if length(dinfo.BDEIndexName)>0 then
+   EBDEIndexFields.Text:='';
+ end
+ else
+ if Sender=EBDETable then
+ begin
+  dinfo.BDETable:=EBDETable.Text;
+ end
+ else
+ if Sender=MBDEFilter then
+ begin
+  dinfo.BDEFilter:=MBDEFilter.Text;
+ end
+ else
+ if Sender=EBDEMasterFields then
+ begin
+  dinfo.BDEMasterFields:=EBDEMasterFields.Text;
  end;
 end;
 
@@ -637,7 +703,6 @@ begin
     LConnectionString.Visible:=False;
     EConnectionString.Visible:=False;
     BConfig.Visible:=true;
-    LSQL.Visible:=true;
     ComboAvailable.Visible:=true;
     if Assigned(ConAdmin) then
     begin
@@ -650,7 +715,6 @@ begin
     LConnectionString.Visible:=False;
     EConnectionString.Visible:=False;
     BConfig.Visible:=true;
-    LSQL.Visible:=true;
     ComboAvailable.Visible:=true;
     if Assigned(ConAdmin) then
     begin

@@ -1187,7 +1187,6 @@ var
  i:integer;
  aitem:TMenuItem;
 begin
-// RefreshChildren(True);
  Application.Style.DefaultStyle:=AppStyle;
  for i:=0 to MQtStyle.Count-1 do
  begin

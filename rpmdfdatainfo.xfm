@@ -1,11 +1,9 @@
 object FRpDatainfoconfig: TFRpDatainfoconfig
-  Left = 28
-  Top = 32
-  Width = 545
-  Height = 472
-  HorzScrollBar.Range = 537
-  VertScrollBar.Range = 449
-  ActiveControl = OKBtn
+  Left = 189
+  Top = 112
+  Width = 526
+  Height = 434
+  VertScrollBar.Range = 129
   Caption = 'Data access configuration'
   Color = clButton
   Position = poScreenCenter
@@ -15,35 +13,18 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 100
-  object OKBtn: TButton
-    Left = 147
-    Top = 424
-    Width = 75
-    Height = 25
-    Caption = 'OK'
-    Default = True
-    TabOrder = 0
-    OnClick = OKBtnClick
-  end
-  object CancelBtn: TButton
-    Left = 227
-    Top = 424
-    Width = 75
-    Height = 25
-    Cancel = True
-    Caption = 'Cancel'
-    TabOrder = 1
-    OnClick = CancelBtnClick
-  end
-  object GroupBox1: TGroupBox
-    Left = 4
-    Top = 4
-    Width = 533
+  TextHeight = 13
+  TextWidth = 6
+  object GConnections: TGroupBox
+    Left = 0
+    Top = 0
+    Width = 526
     Height = 129
+    Align = alTop
     Caption = 'Database connections'
-    TabOrder = 2
+    TabOrder = 0
     object LConnections: TListBox
-      Left = 276
+      Left = 172
       Top = 12
       Width = 117
       Height = 69
@@ -51,7 +32,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
       OnClick = LConnectionsClick
     end
     object BAddCon: TButton
-      Left = 224
+      Left = 128
       Top = 16
       Width = 37
       Height = 25
@@ -60,7 +41,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
       OnClick = BAddConClick
     end
     object BDeletecon: TButton
-      Left = 224
+      Left = 128
       Top = 52
       Width = 37
       Height = 25
@@ -71,17 +52,17 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
     object Label1: TLabel
       Left = 8
       Top = 16
-      Width = 64
-      Height = 20
+      Width = 43
+      Height = 13
       Caption = 'Available'
     end
     object ComboAvailable: TComboBox
       Left = 8
       Top = 32
-      Width = 201
-      Height = 28
+      Width = 117
+      Height = 21
       Style = csDropDownList
-      ItemHeight = 22
+      ItemHeight = 15
       TabOrder = 4
     end
     object BConfig: TButton
@@ -94,7 +75,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
       OnClick = BConfigClick
     end
     object CheckLoginPrompt: TCheckBox
-      Left = 392
+      Left = 292
       Top = 16
       Width = 129
       Height = 17
@@ -103,7 +84,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
       OnClick = CheckLoginPromptClick
     end
     object CheckLoadParams: TCheckBox
-      Left = 392
+      Left = 292
       Top = 36
       Width = 129
       Height = 17
@@ -112,7 +93,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
       OnClick = CheckLoginPromptClick
     end
     object CheckLoadDriverParams: TCheckBox
-      Left = 392
+      Left = 292
       Top = 60
       Width = 129
       Height = 17
@@ -121,9 +102,9 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
       OnClick = CheckLoginPromptClick
     end
     object GDriver: TRadioGroup
-      Left = 8
-      Top = 84
-      Width = 517
+      Left = 2
+      Top = 86
+      Width = 522
       Height = 41
       Items.Strings = (
         'DbExpress'
@@ -132,6 +113,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
         'BDE'
         'ADO'
         'IBO')
+      Align = alBottom
       Caption = 'Driver'
       Columns = 6
       TabOrder = 9
@@ -140,197 +122,359 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
     object LConnectionString: TLabel
       Left = 8
       Top = 16
-      Width = 129
-      Height = 20
+      Width = 84
+      Height = 13
       Caption = 'Connection String'
       Visible = False
     end
     object EConnectionString: TEdit
       Left = 8
       Top = 32
-      Width = 205
-      Height = 28
+      Width = 117
+      Height = 21
       TabOrder = 11
       Visible = False
       OnChange = EConnectionStringChange
     end
+    object CancelBtn: TButton
+      Left = 441
+      Top = 48
+      Width = 75
+      Height = 25
+      Anchors = [akTop, akRight]
+      Cancel = True
+      Caption = 'Cancel'
+      TabOrder = 12
+      OnClick = CancelBtnClick
+    end
+    object OKBtn: TButton
+      Left = 441
+      Top = 20
+      Width = 75
+      Height = 25
+      Anchors = [akTop, akRight]
+      Caption = 'OK'
+      Default = True
+      TabOrder = 13
+      OnClick = OKBtnClick
+    end
   end
-  object GroupBox2: TGroupBox
-    Left = 4
-    Top = 144
-    Width = 525
-    Height = 273
+  object GDatasets: TGroupBox
+    Left = 0
+    Top = 129
+    Width = 526
+    Height = 305
+    Align = alClient
     Caption = 'Report datasets'
-    TabOrder = 3
-    object LDatasets: TListBox
-      Left = 8
-      Top = 16
-      Width = 145
-      Height = 65
-      TabOrder = 0
-      OnClick = LDatasetsClick
-    end
-    object BAdd: TButton
-      Left = 164
-      Top = 16
-      Width = 85
-      Height = 25
-      Caption = 'Add'
-      TabOrder = 1
-      OnClick = BAddClick
-    end
-    object BDelete: TButton
-      Left = 252
-      Top = 16
-      Width = 97
-      Height = 25
-      Caption = 'Delete'
-      TabOrder = 2
-      OnClick = BDeleteClick
-    end
-    object BRename: TButton
-      Left = 356
-      Top = 16
-      Width = 97
-      Height = 25
-      Caption = 'Rename'
-      TabOrder = 3
-      OnClick = BRenameClick
-    end
+    TabOrder = 1
     object GDataProps: TGroupBox
-      Left = 8
-      Top = 84
-      Width = 501
-      Height = 185
+      Left = 2
+      Top = 89
+      Width = 522
+      Height = 214
+      Align = alClient
       Caption = 'Dataset properties'
-      TabOrder = 4
+      TabOrder = 0
       Visible = False
-      object Label2: TLabel
-        Left = 8
-        Top = 20
-        Width = 82
-        Height = 20
-        Caption = 'Connection'
+      object PControl: TPageControl
+        Left = 2
+        Top = 45
+        Width = 518
+        Height = 167
+        ActivePage = TabBDEType
+        Align = alClient
+        TabOrder = 0
+        object TabSQL: TTabSheet
+          Caption = 'SQL'
+          object MSQL: TMemo
+            Left = 0
+            Top = 0
+            Width = 510
+            Height = 137
+            Align = alClient
+            Lines.Strings = (
+              'MSQL')
+            TabOrder = 0
+            WordWrap = False
+            OnChange = MSQLChange
+          end
+        end
+        object TabBDEType: TTabSheet
+          Caption = 'BDE Type'
+          ImageIndex = 2
+          object RBDEType: TRadioGroup
+            Left = 0
+            Top = 0
+            Width = 510
+            Height = 37
+            Items.Strings = (
+              'Query'
+              'Table')
+            Align = alTop
+            Columns = 2
+            TabOrder = 0
+            OnClick = MSQLChange
+          end
+          object Panel2: TPanel
+            Left = 0
+            Top = 37
+            Width = 510
+            Height = 100
+            Align = alClient
+            BevelOuter = bvNone
+            TabOrder = 1
+            object Panel3: TPanel
+              Left = 0
+              Top = 0
+              Width = 510
+              Height = 17
+              Align = alTop
+              Alignment = taLeftJustify
+              BevelOuter = bvNone
+              Caption = 'BDE Filter'
+              TabOrder = 0
+            end
+            object MBDEFilter: TMemo
+              Left = 0
+              Top = 17
+              Width = 510
+              Height = 83
+              Align = alClient
+              Lines.Strings = (
+                'MBDEFilter')
+              ScrollBars = ssBoth
+              TabOrder = 1
+              WordWrap = False
+              OnChange = MSQLChange
+            end
+          end
+        end
+        object TabBDETable: TTabSheet
+          Caption = 'Table and order'
+          ImageIndex = 1
+          object LBDEIndexFields: TLabel
+            Left = 5
+            Top = 58
+            Width = 56
+            Height = 13
+            Caption = 'Index Fields'
+          end
+          object LIndexName: TLabel
+            Left = 4
+            Top = 32
+            Width = 57
+            Height = 13
+            Caption = 'Index Name'
+          end
+          object EBDEIndexFields: TComboBox
+            Left = 77
+            Top = 54
+            Width = 140
+            Height = 21
+            ItemHeight = 15
+            TabOrder = 2
+            OnChange = MSQLChange
+          end
+          object EBDEIndexName: TComboBox
+            Left = 77
+            Top = 28
+            Width = 140
+            Height = 21
+            ItemHeight = 15
+            TabOrder = 3
+            OnChange = MSQLChange
+          end
+          object EBDETable: TComboBox
+            Left = 76
+            Top = 2
+            Width = 141
+            Height = 21
+            ItemHeight = 15
+            TabOrder = 4
+            OnChange = MSQLChange
+          end
+          object LTable: TLabel
+            Left = 4
+            Top = 10
+            Width = 27
+            Height = 13
+            Caption = 'Table'
+          end
+          object LMasterFields: TLabel
+            Left = 228
+            Top = 6
+            Width = 59
+            Height = 13
+            Caption = 'Master fields'
+          end
+          object EBDEMasterFields: TEdit
+            Left = 308
+            Top = 2
+            Width = 145
+            Height = 21
+            TabOrder = 7
+            Text = 'EBDEMasterFields'
+            OnChange = MSQLChange
+          end
+        end
+        object TabMySQL: TTabSheet
+          Caption = 'MySQL'
+          ImageIndex = 3
+          object EMyBase: TEdit
+            Left = 0
+            Top = 22
+            Width = 485
+            Height = 21
+            TabOrder = 0
+            OnChange = MSQLChange
+          end
+          object EIndexFields: TEdit
+            Left = 0
+            Top = 82
+            Width = 185
+            Height = 21
+            TabOrder = 1
+            OnChange = MSQLChange
+          end
+          object LIndexFields: TLabel
+            Left = 0
+            Top = 70
+            Width = 53
+            Height = 13
+            Caption = 'Index fields'
+          end
+          object LMyBase: TLabel
+            Left = 0
+            Top = 6
+            Width = 83
+            Height = 13
+            Caption = 'MyBase Filename'
+          end
+          object BMyBase: TButton
+            Left = 0
+            Top = 42
+            Width = 109
+            Height = 25
+            Caption = 'Search...'
+            TabOrder = 4
+            OnClick = BMyBaseClick
+          end
+        end
       end
-      object ComboConnection: TComboBox
-        Left = 76
-        Top = 16
-        Width = 125
-        Height = 28
-        Style = csDropDownList
-        ItemHeight = 22
+      object Panel1: TPanel
+        Left = 2
+        Top = 13
+        Width = 518
+        Height = 32
+        Align = alTop
         TabOrder = 1
-        OnChange = MSQLChange
-      end
-      object LMasterDataset: TLabel
-        Left = 212
-        Top = 20
-        Width = 108
-        Height = 20
-        Caption = 'Master dataset'
-      end
-      object ComboDataSource: TComboBox
-        Left = 348
-        Top = 16
-        Width = 145
-        Height = 28
-        Style = csDropDownList
-        ItemHeight = 22
-        TabOrder = 3
-        OnChange = MSQLChange
-      end
-      object LSQL: TLabel
-        Left = 8
-        Top = 44
-        Width = 107
-        Height = 20
-        Caption = 'SQL Sentence'
-        Visible = False
-      end
-      object MSQL: TMemo
-        Left = 8
-        Top = 60
-        Width = 485
-        Height = 89
-        Lines.Strings = (
-          'MSQL')
-        TabOrder = 5
-        Visible = False
-        WordWrap = False
-        OnChange = MSQLChange
-      end
-      object BShowData: TButton
-        Left = 8
-        Top = 152
-        Width = 137
-        Height = 29
-        Caption = 'Show data'
-        TabOrder = 6
-        OnClick = BShowDataClick
-      end
-      object EMyBase: TEdit
-        Left = 8
-        Top = 60
-        Width = 485
-        Height = 28
-        TabOrder = 7
-        Visible = False
-        OnChange = MSQLChange
-      end
-      object LMyBase: TLabel
-        Left = 8
-        Top = 44
-        Width = 129
-        Height = 20
-        Caption = 'MyBase Filename'
-        Visible = False
-      end
-      object BMyBase: TButton
-        Left = 8
-        Top = 84
-        Width = 109
-        Height = 25
-        Caption = 'Search...'
-        TabOrder = 9
-        Visible = False
-        OnClick = BMyBaseClick
-      end
-      object EIndexFields: TEdit
-        Left = 8
-        Top = 128
-        Width = 185
-        Height = 28
-        TabOrder = 10
-        Visible = False
-        OnChange = MSQLChange
-      end
-      object LIndexFields: TLabel
-        Left = 8
-        Top = 112
-        Width = 81
-        Height = 20
-        Caption = 'Index fields'
-        Visible = False
+        object BShowData: TButton
+          Left = 420
+          Top = 0
+          Width = 97
+          Height = 29
+          Caption = 'Show data'
+          TabOrder = 0
+          OnClick = BShowDataClick
+        end
+        object ComboDataSource: TComboBox
+          Left = 296
+          Top = 4
+          Width = 117
+          Height = 21
+          Style = csDropDownList
+          ItemHeight = 15
+          TabOrder = 1
+          OnChange = MSQLChange
+        end
+        object LMasterDataset: TLabel
+          Left = 192
+          Top = 8
+          Width = 70
+          Height = 13
+          Caption = 'Master dataset'
+        end
+        object ComboConnection: TComboBox
+          Left = 72
+          Top = 4
+          Width = 113
+          Height = 21
+          Style = csDropDownList
+          ItemHeight = 15
+          TabOrder = 2
+          OnChange = MSQLChange
+        end
+        object Label2: TLabel
+          Left = 4
+          Top = 8
+          Width = 54
+          Height = 13
+          Caption = 'Connection'
+        end
       end
     end
-    object BParams: TButton
-      Left = 164
-      Top = 52
-      Width = 81
-      Height = 29
-      Caption = 'Parameters'
-      TabOrder = 5
-      OnClick = BParamsClick
+    object Panel4: TPanel
+      Left = 2
+      Top = 13
+      Width = 522
+      Height = 76
+      Align = alTop
+      BevelOuter = bvNone
+      TabOrder = 1
+      object BParams: TButton
+        Left = 160
+        Top = 40
+        Width = 81
+        Height = 29
+        Caption = 'Parameters'
+        TabOrder = 0
+        OnClick = BParamsClick
+      end
+      object BAdd: TButton
+        Left = 160
+        Top = 4
+        Width = 85
+        Height = 25
+        Caption = 'Add'
+        TabOrder = 1
+        OnClick = BAddClick
+      end
+      object LDatasets: TListBox
+        Left = 4
+        Top = 4
+        Width = 145
+        Height = 65
+        TabOrder = 2
+        OnClick = LDatasetsClick
+      end
+      object BDelete: TButton
+        Left = 248
+        Top = 4
+        Width = 97
+        Height = 25
+        Caption = 'Delete'
+        TabOrder = 3
+        OnClick = BDeleteClick
+      end
+      object BRename: TButton
+        Left = 352
+        Top = 4
+        Width = 97
+        Height = 25
+        Caption = 'Rename'
+        TabOrder = 4
+        OnClick = BRenameClick
+      end
     end
   end
   object OpenDialog1: TOpenDialog
+    Height = 0
+    Width = 0
     DefaultExt = 'cds'
     Filter = 'Mybase files;*.cds'
     FilterIndex = 0
-    Height = 0
     Title = 'Open'
-    Width = 0
-    Left = 216
-    Top = 296
+    Left = 268
+    Top = 300
   end
 end
