@@ -9,8 +9,8 @@ MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
 DCC = $(ROOT)\bin\dcc32.exe $**
 BRCC = $(ROOT)\bin\brcc32.exe $**
 #------------------------------------------------------------------------------
-PROJECTS = rppack_del.bpl rppackvcl_del.bpl rppackdesignvcl_del.bpl \
-  rppackv_del.bpl rppackdesign_del.bpl
+PROJECTS = rppack_del.bpl  rppackvcl_del.bpl rppackdesignvcl_del.bpl rppackv_del.bpl \
+  rppackdesign_del.bpl rppackdesigntime_del.bpl
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -29,5 +29,9 @@ rppackv_del.bpl: rppackv_del.dpk
 
 rppackdesign_del.bpl: rppackdesign_del.dpk
   $(DCC)
+
+rppackdesigntime_del.bpl: rppackdesigntime_del.dpk
+  $(DCC)
+
 
 

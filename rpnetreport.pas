@@ -3,7 +3,7 @@
 {       Report Manager                                  }
 {                                                       }
 {       rpnetreport                                     }
-{       Report component for ner applications           }
+{       Report component for net applications           }
 {                                                       }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }

@@ -29,7 +29,6 @@ package rppackdesigntime_del;
 requires
   rtl,
   designide,
-  vclactnband,
   vclx,
   vcl,
   vcljpg,
@@ -47,12 +46,13 @@ requires
   ZParseSql,
   ZDbc,
   ZComponent,
-  rppack_del;
+  rppack_del,
+  rppackdesignvcl_del,
+  vcldb;
 
 contains
-  rpmreg in 'rpmreg.pas',
   rpmdesigneditors in 'rpmdesigneditors.pas',
   rpeditalias in 'rpeditalias.pas' {FRpEditAlias},
-  rpeditconnvcl in 'rpeditconnvcl.pas' {FRpEditConVCL};
+  rpmregdesigntime in 'rpmregdesigntime.pas';
 
 end.

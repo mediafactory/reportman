@@ -2,14 +2,15 @@ unit D7ComboBoxStringsGetPatch;
 
 // The patch fixes TCustomComboBoxStrings.Get method for empty string item in Delphi 7.
 
+{$I rpconf.inc}
+
 interface
 
-{$IF RTLVersion <> 15.0}
-'This patch is intended for Delphi 7 only';
-{$IFEND}
+
 
 implementation
 
+{$IFDEF ISDELPHI7}
 uses
   Windows, SysUtils, StdCtrls;
 
@@ -91,4 +92,5 @@ end;
 initialization
   PatchTCustomComboBoxStringsGet;
 
+{$ENDIF}
 end.

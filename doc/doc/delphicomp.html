@@ -21,17 +21,21 @@
     <td>Unique complete package (VCL only)</td>
   </tr>
   <tr> 
-    <td rowspan="5" bgcolor="#FFFFCC">Delphi 6/7</td>
+    <td rowspan="6" bgcolor="#FFFFCC">Delphi 6/7</td>
     <td>rppack_del.dpk</td>
-    <td>Base package, VCL, runtime only</td>
+    <td>Base package, non-visual</td>
   </tr>
   <tr>
-    <td>rppackdesigntime_del.dpk</td>
-    <td>Base package, VCL, designtime only</td>
+    <td>rppackvcl_del.dpk</td>
+    <td>VCL components</td>
   </tr>
   <tr> 
     <td>rppackdesisgnvcl_del</td>
     <td>Interface to Report Manager Designer (VCL)</td>
+  </tr>
+  <tr> 
+    <td>rppackdesigntime_del.dpk</td>
+    <td>Designtime package, design editors.</td>
   </tr>
   <tr> 
     <td>rppackv_del.dpk</td>
@@ -42,10 +46,13 @@
     <td>Visual CLX interface to Report Manager Designer</td>
   </tr>
 </table>
-<p>You must install the packages in the correct order. The runtime needs only 
-  compilation. </p>
+<p>You must install the packages in the correct order. CLX packages are optional. 
+  You should install rppackdesigntime_del in Delphi 6/7 to install integrated 
+  property editors into your IDE, so you can preview report without compiling 
+  your application. </p>
 <p>You must <a href="http://www.indyproject.org" target="_blank">install Indy 
-  components</a> in Delphi 5 before installing Report Manager components. </p>
+  components</a> in Delphi 5 before installing Report Manager components or disable 
+  Indy support in rpconf.inc file.</p>
 <p>After a Delphi update or a component library update, can be necessary to rebuild 
   all the packages. Uninstall them and then install them in the same order.</p>
 <p>Before begin installation you must remove all packages of any previous version 

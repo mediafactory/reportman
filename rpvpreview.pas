@@ -73,6 +73,7 @@ type
     AScaleLess: TAction;
     AScaleMore: TAction;
     ToolButton15: TToolButton;
+    ToolButton5: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);

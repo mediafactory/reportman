@@ -23,12 +23,12 @@ unit rpmdesigneditors;
 
 interface
 
-uses Classes,SysUtils,rptypes,rpcompobase,rpalias,rpdatainfo,DB,
+uses Classes,SysUtils,rptypes,rpcompobase,rpalias,rpdatainfo,DB,rpeval,
 {$IFDEF MSWINDOWS}
- rpmdfopenlibvcl,
+ rpmdfopenlibvcl,rprfvparams,rpexpredlgvcl,Dialogs,
 {$ENDIF}
 {$IFDEF LINUX}
- rpmdfopenlib,
+ rpmdfopenlib,rprfparams,rpexpredlg,QDialogs,
 {$ENDIF}
 {$IFDEF USEVARIANTS}
  Designintf,
@@ -58,9 +58,124 @@ type
    procedure SetValue(const Value: string); override;
   end;
 
+  TRpExpressionPropEditor=class(TPropertyEditor)
+  protected
+  public
+   function GetAttributes:TPropertyAttributes;override;
+   procedure Edit;override;
+   function GetValue: string;override;
+   procedure SetValue(const Value: string); override;
+  end;
+
+  TRpBaseComponentEditor=class(TComponentEditor)
+  protected
+  public
+   procedure Edit;override;
+   function GetVerbCount:integer;override;
+   function GetVerb(Index:integer):string;override;
+   procedure ExecuteVerb(Index:Integer);override;
+  end;
+
+  TRpEvalComponentEditor=class(TComponentEditor)
+  protected
+  public
+   procedure Edit;override;
+   function GetVerbCount:integer;override;
+   function GetVerb(Index:integer):string;override;
+   procedure ExecuteVerb(Index:Integer);override;
+  end;
 
 
 implementation
+
+
+procedure TRpBaseComponentEditor.Edit;
+begin
+ if Component is TCBaseReport then
+  (Component As TCBaseReport).Execute;
+end;
+
+function TRpBaseComponentEditor.GetVerbCount:integer;
+begin
+ Result:=3;
+end;
+
+function TRpBaseComponentEditor.GetVerb(Index:integer):string;
+begin
+ case index of
+  0:
+   Result:='Execute';
+  1:
+   Result:='Preview';
+  2:
+   Result:='Parameters';
+ end;
+end;
+
+procedure TRpBaseComponentEditor.ExecuteVerb(Index:Integer);
+var
+ oldpreview:Boolean;
+begin
+ case index of
+  0:
+   (Component As TCBaseReport).Execute;
+  1:
+   begin
+    oldpreview:=(Component As TCBaseReport).Preview;
+    try
+     (Component As TCBaseReport).Preview:=true;
+     (Component As TCBaseReport).Execute;
+    finally
+     (Component As TCBaseReport).Preview:=oldpreview;
+    end;
+   end;
+  2:
+   begin
+    ShowUserParams((Component As TCBaseReport).Report.Params);
+   end;
+ end;
+end;
+
+
+procedure TRpEvalComponentEditor.Edit;
+begin
+ if Component is TRpEvaluator then
+ begin
+  (Component As TRpEvaluator).Evaluate;
+  ShowMessage((Component As TRpEvaluator).EvalResultString);
+ end;
+end;
+
+function TRpEvalComponentEditor.GetVerbCount:integer;
+begin
+ Result:=2;
+end;
+
+function TRpEvalComponentEditor.GetVerb(Index:integer):string;
+begin
+ case index of
+  0:
+   Result:='Evaluate';
+  1:
+   Result:='Edit expression';
+ end;
+end;
+
+procedure TRpEvalComponentEditor.ExecuteVerb(Index:Integer);
+begin
+ case index of
+  0:
+   begin
+    (Component As TRpEvaluator).Evaluate;
+    ShowMessage((Component As TRpEvaluator).EvalResultString);
+   end;
+  1:
+   begin
+    (Component As TRpEvaluator).Expression:=ChangeExpression((Component As TRpEvaluator).Expression,(Component As TRpEvaluator));
+   end;
+ end;
+end;
+
 
 
 function TRpReportLibNamePropEditor.GetAttributes:TPropertyAttributes;
@@ -278,6 +393,116 @@ begin
   begin
    acompo:=GetComponent(i) as TCBaseReport;
    acompo.ReportName:=Value;
+  end;
+ end;
+end;
+
+
+function TRpExpressionPropEditor.GetAttributes:TPropertyAttributes;
+begin
+ Result:=[paDialog];
+end;
+
+procedure TRpExpressionPropEditor.Edit;
+var
+ acompo:TRpCustomEvaluator;
+ aexpression,newexpression:String;
+ i:integer;
+begin
+ inherited;
+ aexpression:='';
+ acompo:=nil;
+ for i:=0 to PropCount-1 do
+ begin
+  if (GetComponent(i) is TRpCustomEvaluator) then
+  begin
+   acompo:=GetComponent(i) as TRpCustomEvaluator;
+   if Length(acompo.Expression)<1 then
+   begin
+    aexpression:='';
+    break;
+   end
+   else
+   begin
+    if Length(aexpression)>0 then
+    begin
+     if aexpression<>acompo.Expression then
+     begin
+      aexpression:='';
+      break;
+     end;
+    end
+    else
+     aexpression:=acompo.Expression;
+   end;
+  end;
+ end;
+ if not assigned(acompo) then
+  exit;
+ newexpression:=ChangeExpression(aexpression,acompo);
+ if newexpression<>aexpression then
+ begin
+  for i:=0 to PropCount-1 do
+  begin
+   if (GetComponent(i) is TRpCustomEvaluator) then
+   begin
+    acompo:=GetComponent(i) as TRpCustomEvaluator;
+    acompo.Expression:=newExpression;
+   end;
+  end;
+ end;
+end;
+
+function TRpExpressionPropEditor.GetValue: string;
+var
+ aexpression:String;
+ acompo:TRpCustomEvaluator;
+ i:integer;
+begin
+ aexpression:='';
+ acompo:=nil;
+ for i:=0 to PropCount-1 do
+ begin
+  if (GetComponent(i) is TRpCustomEvaluator) then
+  begin
+   acompo:=GetComponent(i) as TRpCustomEvaluator;
+   if Length(acompo.Expression)<1 then
+   begin
+    aexpression:='';
+    break;
+   end
+   else
+   begin
+    if Length(aexpression)>0 then
+    begin
+     if aexpression<>acompo.Expression then
+     begin
+      aexpression:='';
+      break;
+     end;
+    end
+    else
+     aexpression:=acompo.Expression;
+   end;
+  end;
+ end;
+ if not assigned(acompo) then
+  Result:=''
+ else
+  Result:=aexpression;
+end;
+
+procedure TRpExpressionPropEditor.SetValue(const Value: string);
+var
+ acompo:TRpCustomEvaluator;
+ i:integer;
+begin
+ for i:=0 to PropCount-1 do
+ begin
+  if (GetComponent(i) is TRpCustomEvaluator) then
+  begin
+   acompo:=GetComponent(i) as TRpCustomEvaluator;
+   acompo.Expression:=Value;
   end;
  end;
 end;

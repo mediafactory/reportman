@@ -70,63 +70,69 @@ object FRpVPreview: TFRpVPreview
       Top = 0
       Action = ALast
     end
-    object ToolButton6: TToolButton
+    object ToolButton5: TToolButton
       Left = 148
+      Top = 0
+      Width = 8
+      Caption = 'ToolButton5'
+      ImageIndex = 7
+      Style = tbsSeparator
+    end
+    object ToolButton6: TToolButton
+      Left = 156
       Top = 0
       Action = APrint
     end
     object ToolButton7: TToolButton
-      Left = 174
+      Left = 182
       Top = 0
       Action = ASave
     end
     object ToolButton8: TToolButton
-      Left = 200
+      Left = 208
       Top = 0
       Action = AParams
     end
     object ToolButton11: TToolButton
-      Left = 226
+      Left = 234
       Top = 0
       Action = AScale100
     end
     object ToolButton12: TToolButton
-      Left = 252
+      Left = 260
       Top = 0
       Action = AScaleWide
     end
     object ToolButton13: TToolButton
-      Left = 278
+      Left = 286
       Top = 0
       Action = AScaleFull
     end
     object ToolButton14: TToolButton
-      Left = 304
+      Left = 312
       Top = 0
       Action = AScaleLess
     end
     object ToolButton15: TToolButton
-      Left = 330
+      Left = 338
       Top = 0
       Action = AScaleMore
     end
     object BExit: TToolButton
-      Left = 356
+      Left = 364
       Top = 0
       Action = AExit
     end
     object PBar: TProgressBar
-      Left = 382
+      Left = 390
       Top = 0
       Width = 67
       Height = 25
-      Min = 0
-      Max = 100
       TabOrder = 0
       Visible = False
     end
     object BCancel: TButton
-      Left = 449
+      Left = 457
       Top = 0
       Width = 164
       Height = 25
@@ -139,7 +145,7 @@ object FRpVPreview: TFRpVPreview
     Left = 0
     Top = 27
     Width = 627
-    Height = 440
+    Height = 433
     HorzScrollBar.Increment = 60
     HorzScrollBar.Tracking = True
     VertScrollBar.Increment = 60

@@ -41,7 +41,7 @@ uses Classes,Sysutils,
  rpbasereport,rpreport,
 {$ENDIF}
  rptypes,rpmetafile,
- rpmunits,rpmdconsts;
+ rpmunits,rpmdconsts,rpmdcharttypes;
 
 const
  DEFAULT_LINESPERINCH=6;
@@ -116,6 +116,7 @@ type
    procedure NewPage;
    procedure EndPage;
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
+   procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
    procedure DrawPage(apage:TRpMetaFilePage);
    function AllowCopies:boolean;
    function GetPageSize(var PageSizeQt:Integer):TPoint;
@@ -1714,4 +1715,12 @@ begin
   memstream.free;
  end;
 end;
+
+procedure TRpTextDriver.DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
+begin
+ // Charts not supported in text driver
+
+end;
+
+
 end.
