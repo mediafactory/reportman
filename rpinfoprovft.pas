@@ -58,6 +58,7 @@ type
   loadedwidths,loadedkernings:TStringList;
   constructor Create;
   destructor Destroy;override;
+  procedure OpenFont;
  end;
 
  TRpFTInfoProvider=class(TInterfacedObject,IRpInfoProvider)
@@ -249,7 +250,6 @@ begin
     // Type1 fonts also supported
     if  (FT_FACE_FLAG_SCALABLE AND aface.face_flags)<>0 then
     begin
-     CheckFreeType(FT_Set_Char_Size(aface,0,64*100,720,720));
      aobj:=TRpLogFont.Create;
      try
       aobj.FullInfo:=false;
@@ -259,22 +259,11 @@ begin
       begin
        aobj.convfactor:=1000/aface.units_per_EM;
        aobj.widthmult:=aobj.convfactor;
-//        convfactor:=1;
-//        widthmult:=1;
-       // Try finding and reading kernings
-//        kerningfile:=ChangeFileExt(afilename,'.afm');
-//        if FileExists(kerningfile) then
-//        begin
-//         CheckFreeType(FT_Attach_File(aface,Pchar(kerningfile)));
-//        end;
       end
       else
       begin
-//        convfactor:=916/1880;
        aobj.convfactor:=1000/aface.units_per_EM;
        aobj.widthmult:=aobj.convfactor;
-       // Note same text printed with OpenOffice, can be larger
-       // If exported to PDF from OpenOffice will be the same
       end;
       aobj.filename:=fontfiles.strings[i];
       aobj.postcriptname:=StringReplace(StrPas(aface.family_name),' ','',[rfReplaceAll]);
@@ -292,66 +281,32 @@ begin
       aobj.stylename:=StrPas(aface.style_name);
       aobj.bold:=(aface.style_flags AND FT_STYLE_FLAG_BOLD)<>0;
       aobj.italic:=(aface.style_flags AND FT_STYLE_FLAG_ITALIC)<>0;
-{      validcmap:=false;
-      if FT_Select_Charmap(aface,FT_ENCODING_ADOBE_LATIN_1)=0 then
-       validcmap:=true
+      if not assigned(defaultfont) then
+      begin
+       if ((not aobj.italic) and (not aobj.bold)) then
+        defaultfont:=aobj;
+      end
       else
-      if FT_Select_Charmap(aface,FT_ENCODING_UNICODE)=0 then
-       validcmap:=true
-      else
-        if FT_Select_Charmap(aface,FT_ENCODING_ADOBE_STANDARD)=0 then
-         validcmap:=true
-         else
-          if FT_Select_Charmap(aface,FT_ENCODING_OLD_LATIN_2)=0 then
-           validcmap:=true;
-       for j:=32 to 255 do
+      begin
+       if ((not aobj.italic) and (not aobj.bold)) then
        begin
-        if validcmap then
+        if ((aobj.familyname='Arial') or
+         (aobj.familyname='Helvetica')) then
         begin
-//         if 0=FT_Load_Char(aface,j,FT_LOAD_NO_SCALE) then
-         w:=FT_Get_Char_Index(aface,j);
-         if w>0 then
-         begin
-          CheckFreeType(FT_Load_Glyph(aface,w,FT_LOAD_NO_SCALE));
-          // Some fonts translated from freetype returns fixed
-          // advance (wrong result)
-          // for example casmira.ttf
-          // take care kerning is not implemented
-          aobj.Widths[j]:=Round(widthmult*aface.glyph.advance.x);
-         end
-         else
-          aobj.Widths[j]:=0;
-        end
-        else
-         aobj.Widths[j]:=0;
-       end;
-}
-       if not assigned(defaultfont) then
-       begin
-        if ((not aobj.italic) and (not aobj.bold)) then
          defaultfont:=aobj;
-       end
-       else
-       begin
-        if ((not aobj.italic) and (not aobj.bold)) then
-        begin
-         if ((aobj.familyname='Arial') or
-          (aobj.familyname='Helvetica')) then
-         begin
-          defaultfont:=aobj;
-         end;
         end;
        end;
-       fontlist.AddObject(UpperCase(aobj.familyname),aobj);
-      except
-       aobj.free;
       end;
+      fontlist.AddObject(UpperCase(aobj.familyname),aobj);
+     except
+      aobj.free;
      end;
-    finally
-     FT_Done_Face(aface);
     end;
+   finally
+    FT_Done_Face(aface);
    end;
   end;
+ end;
 end;
 
 constructor TRpFTInfoProvider.Create;
@@ -574,11 +529,12 @@ begin
    end
    else
    begin
-    if Not currentfont.faceinit then
-    begin
-     CheckFreeType(FT_New_Face(ftlibrary,PChar(currentfont.filename),0,currentfont.ftface));
-     currentfont.faceinit:=true;
-    end;
+    currentfont.OpenFont;
+
+    // Drawing glyph is actually no usefull
+//    if 0=FT_Load_Char(currentfont.ftface,Cardinal(charcode),FT_LOAD_NO_BITMAP) then
+//     awidth:=Round((1/64)*currentfont.ftface.glyph.advance.x)
+    // It use no scale for better speed
     if 0=FT_Load_Char(currentfont.ftface,Cardinal(charcode),FT_LOAD_NO_SCALE) then
      awidth:=Round(currentfont.widthmult*currentfont.ftface.glyph.advance.x)
     else
@@ -626,11 +582,7 @@ begin
     end
     else
     begin
-     if Not currentfont.faceinit then
-     begin
-      CheckFreeType(FT_New_Face(ftlibrary,PChar(currentfont.filename),0,currentfont.ftface));
-      currentfont.faceinit:=true;
-     end;
+     currentfont.OpenFont;
      wl:=FT_Get_Char_Index(currentfont.ftface,Cardinal(leftchar));
      if wl>0 then
      begin
@@ -669,6 +621,30 @@ begin
   CheckFreeType(FT_Done_Face(ftface));
  inherited destroy;
 end;
+
+procedure TRpLogFont.OpenFont;
+var
+ kerningfile:string;
+begin
+ if faceinit then
+  exit;
+ CheckFreeType(FT_New_Face(ftlibrary,PChar(filename),0,ftface));
+ faceinit:=true;
+ if type1 then
+ begin
+  // Check for kening file for type1 font
+  kerningfile:=ChangeFileExt(filename,'.afm');
+  if FileExists(kerningfile) then
+  begin
+   CheckFreeType(FT_Attach_File(ftface,Pchar(kerningfile)));
+  end;
+ end;
+ // Don't need scale, but this is a scale that returns
+ // exact widht for pdf if you divide the result
+ // of Get_Char_Width by 64
+ CheckFreeType(FT_Set_Char_Size(ftface,0,64*100,720,720));
+end;
+
 
 initialization
  fontlist:=nil;
