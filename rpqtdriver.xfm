@@ -1,0 +1,57 @@
+object FRpQtProgress: TFRpQtProgress
+  Left = 156
+  Top = 200
+  Width = 455
+  Height = 117
+  VertScrollBar.Range = 109
+  HorzScrollBar.Range = 453
+  ActiveControl = CancelBtn
+  BorderStyle = fbsDialog
+  Caption = 'Print progress'
+  Color = clButton
+  Position = poScreenCenter
+  Scaled = False
+  ShowHint = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  object CancelBtn: TButton
+    Left = 207
+    Top = 84
+    Width = 75
+    Height = 25
+    Cancel = True
+    Caption = 'Cancel'
+    ModalResult = 4
+    TabOrder = 0
+    OnClick = CancelBtnClick
+  end
+  object Label1: TLabel
+    Left = 8
+    Top = 40
+    Width = 52
+    Height = 13
+    Caption = 'Processing'
+  end
+  object LRecordCount: TLabel
+    Left = 76
+    Top = 40
+    Width = 305
+    Height = 21
+    AutoSize = False
+  end
+  object Label2: TLabel
+    Left = 8
+    Top = 4
+    Width = 23
+    Height = 13
+    Caption = 'Tittle'
+    Visible = False
+  end
+  object LTittle: TLabel
+    Left = 76
+    Top = 4
+    Width = 377
+    Height = 25
+    AutoSize = False
+  end
+end
