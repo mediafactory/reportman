@@ -29,9 +29,17 @@ interface
 
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpconsts,
  rpdatainfo,rpparams,rplabelitem,rpdrawitem,rpeval,
- rpmetafile,types,rpalias,db,rpmunits;
+ rpmetafile,types,rpalias,db,
+{$IFDEF LINUX}
+  Libc,
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  mmsystem,windows,
+{$ENDIF}
+ rpmunits;
 
 const
+ MILIS_PROGRESS=500;
  // 1 cms=574
  // 0.5 cms=287
  CONS_DEFAULT_GRIDWIDTH=115;
@@ -42,6 +50,8 @@ const
 type
  TRpReport=class;
  TRpSubReportListItem=class;
+
+ TRpProgressEvent=procedure (Sender:TRpReport;var docancel:boolean) of object;
 
  TRpSubReportList=class(TCollection)
   private
@@ -90,6 +100,15 @@ type
    FIdentifiers:TStringList;
    FMetafile:TRpMetafileReport;
    FDataAlias:TRpAlias;
+   FOnProgress:TRpProgressEvent;
+   FRecordCount:integer;
+{$IFDEF MSWINDOWS}
+   mmfirst,mmlast:DWORD;
+{$ENDIF}
+{$IFDEF LINUX}
+   milifirst,mililast:TDatetime;
+{$ENDIF}
+   difmilis:int64;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -110,6 +129,7 @@ type
    PageNum:integer;
    LastPage:Boolean;
    LastRecord:Boolean;
+   property RecordCount:integer read FRecordCount;
    property Metafile:TRpMetafileReport read FMetafile;
    property Identifiers:TStringList read FIdentifiers;
    constructor Create(AOwner:TComponent);override;
@@ -133,6 +153,7 @@ type
    procedure EndPrint;
    function PrintNextPage:boolean;
    procedure PrintAll;
+   property OnProgress:TRpProgressEvent read FOnProgress write FOnProgress;
   published
    // Grid options
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
@@ -487,6 +508,7 @@ end;
 procedure TRpReport.ActivateDatasets;
 var
  i:integer;
+ docancel:boolean;
 begin
  if FDataInfo.Count<1 then
   exit;
@@ -494,6 +516,13 @@ begin
   for i:=0 to FDataInfo.Count-1 do
   begin
    FDataInfo.Items[i].Connect(DatabaseInfo,Params);
+   if Assigned(FOnProgress) then
+   begin
+    docancel:=false;
+    FOnProgress(Self,docancel);
+    if docancel then
+    Raise Exception.Create(SRpOperationAborted);
+   end;
   end;
  except
   for i:=0 to FDataInfo.Count-1 do
@@ -544,6 +573,7 @@ var
  subrep:TRpSubreport;
  index:integeR;
  data:TDataset;
+ docancel:boolean;
 begin
  subrep:=Subreports.Items[CurrentSubreportIndex].SubReport;
  if Length(Trim(subrep.Alias))<1 then
@@ -555,6 +585,32 @@ begin
    Raise TRpReportException.Create(SRPAliasNotExists+subrep.alias,subrep);
   data:=DataInfo.Items[index].Dataset;
   data.Next;
+  inc(FRecordCount);
+  if Assigned(FOnProgress) then
+  begin
+{$IFDEF MSWINDOWS}
+   mmlast:=TimeGetTime;
+   difmilis:=(mmlast-mmfirst);
+{$ENDIF}
+{$IFDEF LINUX}
+   mililast:=now;
+   difmilis:=MillisecondsBetween(mililast,milifirst);
+{$ENDIF}
+   if difmilis>MILIS_PROGRESS then
+   begin
+     // Get the time
+{$IFDEF MSWINDOWS}
+    mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+    milifirst:=now;
+{$ENDIF}
+    docancel:=false;
+    FOnProgress(Self,docancel);
+    if docancel then
+     Raise Exception.Create(SRpOperationAborted);
+   end;
+  end;
   LastRecord:=data.Eof;
  end;
 end;
@@ -629,6 +685,13 @@ var
  i:integer;
  item:TRpAliaslistItem;
 begin
+ // Get the time
+{$IFDEF MSWINDOWS}
+ mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+ milifirst:=now;
+{$ENDIF}
  metafile.Clear;
  metafile.CustomX:=Round((PageWidth/1440)*251);
  metafile.CustomY:=Round((PageHeight/1440)*251);
@@ -636,6 +699,7 @@ begin
  LastRecord:=false;
  EndPrint;
  PageNum:=-1;
+ FRecordCount:=0;
  CurrentSubReportIndex:=0;
  ActivateDatasets;
  // Evaluator
@@ -742,12 +806,12 @@ end;
 
 initialization
  // Need clas registration to be streamable
- RegisterClass(TRpSection);
- RegisterClass(TRpReport);
- RegisterClass(TRpSubReport);
- RegisterClass(TRpImage);
- RegisterClass(TRpShape);
- RegisterClass(TRpLabel);
- RegisterClass(TRpExpression);
+ Classes.RegisterClass(TRpSection);
+ Classes.RegisterClass(TRpReport);
+ Classes.RegisterClass(TRpSubReport);
+ Classes.RegisterClass(TRpImage);
+ Classes.RegisterClass(TRpShape);
+ Classes.RegisterClass(TRpLabel);
+ Classes.RegisterClass(TRpExpression);
 
 end.

@@ -29,7 +29,8 @@ resourcestring
   SRpCatalan='Catalan';
   SRpDirCantBeCreated='Directory can''t be created: ';
   SRpConfigFileNotExists='Configuration file missing: ';
-
+  SRpPage='Page';
+  SRpItem='Item';
   SRpInvalidClipboardFormat='Invalid clipboard format';
   SRpErrorReadingReport='Error reading report: ';
   SRpIgnoreError='Ignore?';
@@ -263,6 +264,7 @@ resourcestring
   SRpUntitled='Untitled';
   //  SRpHour = 'Hora';
   SRpSaveAborted='Save aborted';
+  SRpOperationAborted='Operation aborted';
   SRpFileNameRequired='File name required to adquire config file';
   SRpAliasExists='The database alias already exists: ';
   SRPDabaseAliasNotFound='Database alias not found';

@@ -23,7 +23,8 @@ unit rpdatainfo;
 interface
 
 uses Classes,SysUtils,SqlExpr,rpconsts, DBXpress,
- DB,rpparams,Inifiles,IdGlobal,SqlConst;
+ DB,rpparams,Inifiles,
+ IdGlobal,SqlConst;
 
 {$IFDEF LINUX}
 const
@@ -509,8 +510,10 @@ begin
 end;
 
 procedure TRpConnAdmin.LoadConfig;
+{$IFDEF LINUX}
 var
  configdir:string;
+{$ENDIF}
 begin
  if Assigned(config) then
  begin
@@ -532,12 +535,22 @@ begin
  driverfilename:=configdir+'/'+DBXDRIVERFILENAME;
  configfilename:=configdir+'/'+DBXCONFIGFILENAME;
 {$ENDIF}
+{$IFDEF MSWINDOWS}
+ // Looks the registry and if there is not registry
+ // Use current dir
+ driverfilename:=GetDriverRegistryFile;
+ configfilename:=GetConnectionRegistryFile;
+{$ENDIF}
  if FileExists(driverfilename) then
  begin
   drivers:=TMemInifile.Create(driverfilename);
  end
  else
  begin
+{$IFDEF MSWINDOWS}
+   Raise Exception.Create(SRpConfigFileNotExists+driverfilename);
+{$ENDIF}
+{$IFDEF LINUX}
   // Check if exists in the current dir
   if FileExists(DBXDRIVERFILENAME) then
   begin
@@ -546,6 +559,7 @@ begin
   end
   else
    Raise Exception.Create(SRpConfigFileNotExists+DBXDRIVERFILENAME);
+{$ENDIF}
  end;
  if FileExists(configfilename) then
  begin
@@ -553,6 +567,10 @@ begin
  end
  else
  begin
+{$IFDEF MSWINDOWS}
+   Raise Exception.Create(SRpConfigFileNotExists+driverfilename);
+{$ENDIF}
+{$IFDEF LINUX}
   // Check if exists in the current dir
   if FileExists(DBXCONFIGFILENAME) then
   begin
@@ -561,6 +579,7 @@ begin
   end
   else
    Raise Exception.Create(SRpConfigFileNotExists+DBXCONFIGFILENAME);
+{$ENDIF}
  end;
 end;
 

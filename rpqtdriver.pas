@@ -21,11 +21,46 @@ unit rpqtdriver;
 
 interface
 
-uses Classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
- rpmunits,QPrinters,QDialogs,rpgraphutils;
+uses
+
+{$IFDEF LINUX}
+  Libc,
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  mmsystem,windows,
+{$ENDIF}
+Classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
+ rpmunits,QPrinters,QDialogs,rpgraphutils, QControls,
+ QStdCtrls,
+ rpreport;
 
 
+const
+ METAPRINTPROGRESS_INTERVAL=20;
 type
+  TFRpQtProgress = class(TForm)
+    CancelBtn: TButton;
+    Label1: TLabel;
+    LRecordCount: TLabel;
+    Label2: TLabel;
+    LTittle: TLabel;
+    procedure FormCreate(Sender: TObject);
+    procedure CancelBtnClick(Sender: TObject);
+  private
+    { Private declarations }
+    procedure AppIdle(Sender:TObject;var done:boolean);
+    procedure AppIdleReport(Sender:TObject;var done:boolean);
+    procedure RepProgress(Sender:TRpReport;var docancel:boolean);
+  public
+    { Public declarations }
+    cancelled:boolean;
+    oldonidle:TIdleEvent;
+    tittle:string;
+    metafile:TRpMetafileReport;
+    report:TRpReport;
+  end;
+
+
  TRpQtDriver=class(TInterfacedObject,IRpPrintDriver)
   private
    intdpix,intdpiy:integer;
@@ -43,9 +78,12 @@ type
    constructor Create;
   end;
 
-procedure PrintMetafile(metafile:TRpMetafileReport;tittle:string);
+function PrintMetafile(metafile:TRpMetafileReport;tittle:string;showprogress:boolean):boolean;
+function CalcReportWidthProgress(report:TRpReport):boolean;
 
 implementation
+
+{$R *.xfm}
 
 constructor TRpQtDriver.Create;
 begin
@@ -199,13 +237,27 @@ begin
  end;
 end;
 
-procedure PrintMetafile(metafile:TRpMetafileReport;tittle:string);
+procedure DoPrintMetafile(metafile:TRpMetafileReport;tittle:string;aform:TFRpQtProgress);
 var
  i:integer;
  j:integer;
  apage:TRpMetafilePage;
  dpix,dpiy:integer;
+{$IFDEF MSWINDOWS}
+    mmfirst,mmlast:DWORD;
+{$ENDIF}
+{$IFDEF LINUX}
+    milifirst,mililast:TDatetime;
+{$ENDIF}
+    difmilis:int64;
 begin
+ // Get the time
+{$IFDEF MSWINDOWS}
+ mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+ milifirst:=now;
+{$ENDIF}
  printer.Title:=tittle;
  printer.Begindoc;
  try
@@ -219,6 +271,38 @@ begin
    for j:=0 to apage.ObjectCount-1 do
    begin
     PrintObject(apage.Objects[j],dpix,dpiy);
+    if assigned(aform) then
+    begin
+{$IFDEF MSWINDOWS}
+     mmlast:=TimeGetTime;
+     difmilis:=(mmlast-mmfirst);
+{$ENDIF}
+{$IFDEF LINUX}
+     mililast:=now;
+     difmilis:=MillisecondsBetween(mililast,milifirst);
+{$ENDIF}
+     if difmilis>MILIS_PROGRESS then
+     begin
+      // Get the time
+{$IFDEF MSWINDOWS}
+      mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+      milifirst:=now;
+{$ENDIF}
+      aform.LRecordCount.Caption:=SRpPage+':'+ IntToStr(i+1)+
+        ' - '+SRpItem+':'+ IntToStr(j+1);
+      Application.ProcessMessages;
+      if aform.cancelled then
+       Raise Exception.Create(SRpOperationAborted);
+     end;
+    end;
+   end;
+   if assigned(aform) then
+   begin
+     Application.ProcessMessages;
+     if aform.cancelled then
+      Raise Exception.Create(SRpOperationAborted);
    end;
   end;
   Printer.EndDoc;
@@ -226,7 +310,110 @@ begin
   printer.Abort;
   raise;
  end;
+ if assigned(aform) then
+  aform.close;
 end;
+
+function PrintMetafile(metafile:TRpMetafileReport;tittle:string;showprogress:boolean):boolean;
+var
+ dia:TFRpQtProgress;
+begin
+ Result:=true;
+ if Not ShowProgress then
+ begin
+  DoPrintMetafile(metafile,tittle,nil);
+  exit;
+ end;
+ dia:=TFRpQtProgress.Create(Application);
+ try
+  dia.oldonidle:=Application.OnIdle;
+  try
+   dia.metafile:=metafile;
+   dia.tittle:=tittle;
+   Application.OnIdle:=dia.AppIdle;
+   dia.ShowModal;
+   Result:=Not dia.cancelled;
+  finally
+   Application.OnIdle:=dia.oldonidle;
+  end;
+ finally
+
+ end;
+end;
+
+
+procedure TFRpQtProgress.FormCreate(Sender: TObject);
+begin
+ LRecordCount.Font.Style:=[fsBold];
+ LTittle.Font.Style:=[fsBold];
+end;
+
+procedure TFRpQtProgress.AppIdle(Sender:TObject;var done:boolean);
+begin
+ cancelled:=false;
+ Application.OnIdle:=nil;
+ done:=false;
+ LTittle.Caption:=tittle;
+ Label2.Visible:=true;
+ DoPrintMetafile(metafile,tittle,self);
+end;
+
+
+procedure TFRpQtProgress.CancelBtnClick(Sender: TObject);
+begin
+ cancelled:=true;
+end;
+
+
+procedure TFRpQtProgress.RepProgress(Sender:TRpReport;var docancel:boolean);
+begin
+ LRecordCount.Caption:=IntToStr(Sender.CurrentSubReportIndex)+':'+FormatFloat('#########,####',Sender.RecordCount);
+ Application.ProcessMessages;
+ if cancelled then
+  docancel:=true;
+end;
+
+procedure TFRpQtProgress.AppIdleReport(Sender:TObject;var done:boolean);
+var
+ oldprogres:TRpProgressEvent;
+begin
+ Application.Onidle:=nil;
+ done:=false;
+ oldprogres:=RepProgress;
+ try
+  report.OnProgress:=RepProgress;
+  report.BeginPrint;
+  try
+   while Not report.PrintNextPage do;
+  finally
+   report.EndPrint;
+  end;
+ finally
+  report.OnProgress:=oldprogres;
+ end;
+ Close;
+end;
+
+function CalcReportWidthProgress(report:TRpReport):boolean;
+var
+ dia:TFRpQTProgress;
+begin
+ dia:=TFRpQTProgress.Create(Application);
+ try
+  dia.oldonidle:=Application.OnIdle;
+  try
+   dia.report:=report;
+   Application.OnIdle:=dia.AppIdleReport;
+   dia.ShowModal;
+   Result:=Not dia.cancelled;
+  finally
+   Application.onidle:=dia.oldonidle;
+  end;
+ finally
+  dia.free;
+ end;
+end;
+
 
 end.
 

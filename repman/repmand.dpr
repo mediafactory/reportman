@@ -19,6 +19,8 @@
 
 program repmand;
 
+{%ToDo 'repmand.todo'}
+
 uses
   QForms,
   fmain in 'fmain.pas' {FMainf},
@@ -52,7 +54,7 @@ uses
   rpexpredlg in '..\rpexpredlg.pas' {FrpExpredialog},
   rpgdidriver in '..\rpgdidriver.pas',
   rpmetafile in '..\rpmetafile.pas',
-  rpqtdriver in '..\rpqtdriver.pas',
+  rpqtdriver in '..\rpqtdriver.pas' {FRpQtProgress},
   rpruler in '..\rpruler.pas',
   rptypeval in '..\rptypeval.pas',
   rpwriter in '..\rpwriter.pas',
@@ -84,7 +86,7 @@ uses
   rpalias in '../rpalias.pas',
   rpexpredlg in '../rpexpredlg.pas' {FrpExpredialog},
   rpmetafile in '../rpmetafile.pas',
-  rpqtdriver in '../rpqtdriver.pas',
+  rpqtdriver in '../rpqtdriver.pas' {FQtProgress},
   rpruler in '../rpruler.pas',
   rptypeval in '../rptypeval.pas',
   rpwriter in '../rpwriter.pas',

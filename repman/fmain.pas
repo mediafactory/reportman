@@ -710,8 +710,8 @@ end;
 
 procedure TFMainf.APrintExecute(Sender: TObject);
 begin
- report.PrintAll;
- PrintMetafile(report.Metafile,Caption);
+ if CalcReportWidthProgress(report) then
+  PrintMetafile(report.Metafile,Caption,true);
 end;
 
 initialization

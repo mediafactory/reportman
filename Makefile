@@ -37,6 +37,8 @@ clean:
         -del repman\utils\reptotxt\reptotxt
         -del repman\utils\txttorep\txttorep
         -del repman\utils\printrep\printrep
+        -del repman\utils\metaprint\metaprint
+        -del repman\utils\metaview\metaview
 real_clean:      clean
         -del /s *.bpl
         -del /s *.so
