@@ -23,7 +23,8 @@ unit rpdataset;
 
 interface
 
-uses Sysutils,Classes,DBClient,db;
+uses Sysutils,Classes,DBClient,
+ db;
 
 // A client dataset with two record buffer obtaining records from
 resourcestring

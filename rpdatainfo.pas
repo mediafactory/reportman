@@ -90,6 +90,7 @@ type
    FLoginPrompt:boolean;
    FADOConnectionString:widestring;
 {$IFDEF USEIBX}
+   FIBInternalDatabase:TIBDatabase;
    FIBDatabase:TIBDatabase;
 {$ENDIF}
 {$IFDEF USEADO}
@@ -117,6 +118,10 @@ type
    constructor Create(Collection:TCollection);override;
 {$IFDEF USESQLEXPRESS}
    property SQLConnection:TSQLConnection read FSQLConnection write FSQLConnection;
+{$ENDIF}
+{$IFDEF USEIBX}
+   property IBDatabase:TIBDatabase read FIBDatabase
+    write FIBDatabase;
 {$ENDIF}
   published
    property Alias:string read FAlias write SetAlias;
@@ -448,10 +453,10 @@ begin
  FSQLInternalConnection.free;
 {$ENDIF}
 {$IFDEF USEIBX}
- if Assigned(FIBDatabase) then
+ if Assigned(FIBInternalDatabase) then
  begin
-  FIBDatabase.DefaultTransaction.Free;
-  FIBDatabase.Free;
+  FIBInternalDatabase.DefaultTransaction.Free;
+  FIBInternalDatabase.Free;
  end;
 {$ENDIF}
 {$IFDEF USEIBO}
@@ -639,11 +644,12 @@ begin
 {$IFDEF USEIBX}
      if Not Assigned(FIBDatabase) then
      begin
-      FIBDatabase:=TIBDatabase.Create(nil);
-      FIBDatabase.DefaultTransaction:=TIBTransaction.Create(nil);
-      FIBDatabase.DefaultTransaction.DefaultDatabase:=FIBDatabase;
-      FIBDatabase.DefaultTransaction.Params.Add('concurrency');
-      FIBDatabase.DefaultTransaction.Params.Add('nowait');
+      FIBInternalDatabase:=TIBDatabase.Create(nil);
+      FIBInternalDatabase.DefaultTransaction:=TIBTransaction.Create(nil);
+      FIBInternalDatabase.DefaultTransaction.DefaultDatabase:=FIBInternalDatabase;
+      FIBInternalDatabase.DefaultTransaction.Params.Add('concurrency');
+      FIBInternalDatabase.DefaultTransaction.Params.Add('nowait');
+      FIBDatabase:=FIBInternalDatabase;
      end;
      if FIBDatabase.Connected then
       exit;
@@ -754,9 +760,9 @@ begin
  end;
 {$ENDIF}
 {$IFDEF USEIBX}
- if Assigned(FIBDatabase) then
+ if Assigned(FIBInternalDatabase) then
  begin
-  FIBDatabase.Connected:=False;
+  FIBInternalDatabase.Connected:=False;
  end;
 {$ENDIF}
 {$IFDEF USEBDE}

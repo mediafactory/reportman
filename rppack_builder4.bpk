@@ -23,11 +23,8 @@ RESDEPEN = $(RESFILES)
 LIBFILES =
 IDLFILES =
 IDLGENFILES =
-LIBRARIES = inet40.lib inetdb40.lib nmfast40.lib dss40.lib vcldbx40.lib ibsmp40.lib \
-  bcbsmp40.lib vcljpg40.lib vclx40.lib
-SPARELIBS = Vcl40.lib vclx40.lib vcljpg40.lib vclmid40.lib vcldb40.lib bcbsmp40.lib \
-  ibsmp40.lib vcldbx40.lib dss40.lib \
-  nmfast40.lib inetdb40.lib inet40.lib
+LIBRARIES = vcldbx40.lib vcljpg40.lib vclx40.lib
+SPARELIBS = Vcl40.lib vclx40.lib vcljpg40.lib vclmid40.lib vcldb40.lib vcldbx40.lib
 PACKAGES = vcl40.bpi Vclmid40.bpi Vcldb40.bpi
 # ---------------------------------------------------------------------------
 PATHCPP = .;
