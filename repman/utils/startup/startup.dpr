@@ -42,11 +42,20 @@ begin
  if addvalue then
  begin
   avalue:=GetEnvironmentVariable(varname);
+  if varname='LD_LIBRARY_PATH' then
+  begin
+   if Length(avalue)>0 then
+    avalue:='/opt/kylixlibs'+':'+avalue
+   else
+    avalue:='/opt/kylixlibs';
+  end;
   if Length(avalue)>0 then
    avalue:=varvalue+':'+avalue
   else
    avalue:=varvalue;
+  varvalue:=avalue;
  end;
+ls
  setenv(PChar(varname),PChar(varvalue),1);
 end;
 

@@ -53,6 +53,11 @@ clean:
 	-rm -Rf server/config/*.dcu
 	-rm -Rf server/config/*.dpu
 	-rm -Rf server/config/*.~*
+	-rm -Rf server/web/*.~*
+	-rm -Rf server/web/*.dcu
+	-rm -Rf server/web/*.dpu
+	-rm -Rf server/web/repwebexe
+
 	
 
 	-rm tests/eval/project1

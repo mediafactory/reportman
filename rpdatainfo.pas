@@ -1522,13 +1522,23 @@ begin
  // Looks for ./borland in Linux registry in Windows
 {$IFDEF LINUX}
  configdir:=GetEnvironmentVariable('HOME')+'/.borland';
- if Not DirectoryExists(configdir) then
+ if Length(configdir)>12 then
  begin
-  if not CreateDir(configdir) then
-   Raise Exception.Create(SRpDirCantBeCreated+'-'+configdir);
- end;
+  if Not DirectoryExists(configdir) then
+  begin
+   if not CreateDir(configdir) then
+    Raise Exception.Create(SRpDirCantBeCreated+'-'+configdir);
+  end;
+ end
+ else
+  configdir:='/usr/local/etc';
  driverfilename:=configdir+'/'+DBXDRIVERFILENAME;
  configfilename:=configdir+'/'+DBXCONFIGFILENAME;
+ if  (configdir='/usr/local/etc') then
+ begin
+  driverfilename:=driverfilename+'.conf';
+  configfilename:=configfilename+'.conf';
+ end;
 {$ENDIF}
 {$IFDEF MSWINDOWS}
  // Looks the registry and if there is not registry
@@ -1550,14 +1560,20 @@ begin
   if FileExists(DBXDRIVERFILENAME) then
   begin
    drivers:=TMemIniFile.Create(DBXDRIVERFILENAME);
-   CopyFileTo(DBXDRIVERFILENAME,driverfilename);
+   if configdir<>'/usr/local/etc' then
+   begin
+    CopyFileTo(DBXDRIVERFILENAME,driverfilename);
+   end;
   end
   else
   begin
    // Check int /usr/local/etc
    if FileExists('/usr/local/etc/'+DBXDRIVERFILENAME+'.conf') then
    begin
-    CopyFileTo('/usr/local/etc/'+DBXDRIVERFILENAME+'.conf',driverfilename);
+    if configdir<>'/usr/local/etc' then
+    begin
+     CopyFileTo('/usr/local/etc/'+DBXDRIVERFILENAME+'.conf',driverfilename);
+    end;
     drivers:=TMemIniFile.Create(driverfilename);
    end
    else

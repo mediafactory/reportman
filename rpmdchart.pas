@@ -31,13 +31,13 @@ uses Classes,SysUtils,Math,rpprintitem,rpmdconsts,rpeval,
  Types,
 {$ENDIF}
 {$IFDEF USETEECHART}
- Chart,Series,Graphics,rpdrawitem,
- teEngine,arrowcha,bubblech,ganttch,
+ Chart,Series,rpdrawitem,
+ teEngine,ArrowCha,BubbleCh,GanttCh,
  {$IFDEF MSWINDOWS}
-   rpgraphutilsvcl,rpvgraphutils,
+   rpgraphutilsvcl,rpvgraphutils,Graphics,
  {$ENDIF}
  {$IFDEF LINUX}
-   rpgraphutils,
+   rpgraphutils,QGraphics,
  {$ENDIF}
 {$ENDIF}
  rpmetafile;
@@ -567,13 +567,23 @@ begin
   achart.LeftAxis.LabelsFont.Size:=FontSize;
   // Convert to degrees first
   achart.LeftAxis.LabelsAngle:=Abs(FontRotation div 10) mod 360;
+{$IFDEF MSWINDOWS}
   achart.LeftAxis.LabelsFont.Style:=CLXIntegerToFontStyle(FontStyle);
+{$ENDIF}
+{$IFDEF LINUX}
+  achart.LeftAxis.LabelsFont.Style:=IntegerToFontStyle(FontStyle);
+{$ENDIF}
   achart.BottomAxis.LabelsFont.Size:=FontSize;
   // Convert to degrees first
   achart.BottomAxis.LabelsAngle:=Abs(FontRotation div 10) mod 360;
+{$IFDEF MSWINDOWS}
   achart.BottomAxis.LabelsFont.Style:=CLXIntegerToFontStyle(FontStyle);
+{$ENDIF}
+{$IFDEF LINUX}
+  achart.BottomAxis.LabelsFont.Style:=IntegerToFontStyle(FontStyle);
+{$ENDIF}
 
-  acolor:=0;
+  acolor:=1;
   for i:=0 to Series.Count-1 do
   begin
    aserie:=nil;
@@ -618,18 +628,27 @@ begin
    intserie:=Series.Items[i];
    for j:=0 to intserie.FValueCount-1 do
    begin
+    if ChartType=rpchartpie then
+     aserie.Add(intserie.Values[j],
+      intSerie.ValueCaptions[j],SeriesColors[aColor])
+    else
     aserie.Add(intserie.Values[j],
-     intSerie.ValueCaptions[j],SeriesColors[aColor]);
+     intSerie.ValueCaptions[j]);
     if series.count<2 then
     begin
      if ChartType=rpchartpie then
-      acolor:=((acolor+1) mod MAX_SERIECOLORS);
+      acolor:=((acolor+1) mod (MAX_SERIECOLORS-1))+1;
     end;
    end;
    abitmap:=TBitmap.Create;
    try
+{$IFDEF MSWINDOWS}
     abitmap.HandleType:=bmDIB;
     abitmap.PixelFormat:=pf24bit;
+{$ENDIF}
+{$IFDEF LINUX}
+    abitmap.PixelFormat:=pf32bit;
+{$ENDIF}
     // Chart resolution to default screen
     abitmap.Width:=Round(twipstoinchess(Width)*twipstopixels(TWIPS_PER_INCHESS));
     abitmap.Height:=Round(twipstoinchess(Height)*twipstopixels(TWIPS_PER_INCHESS));
@@ -1001,9 +1020,9 @@ begin
  alist.Add(SRpChartHorzBar);
  alist.Add(SRpChartArea);
  alist.Add(SRpChartPie);
-// alist.Add(SRpChartArrow);
-// alist.Add(SRpChartBubble);
-// alist.Add(SRpChartGantt);
+ alist.Add(SRpChartArrow);
+ alist.Add(SRpChartBubble);
+ alist.Add(SRpChartGantt);
 end;
 
 

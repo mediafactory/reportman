@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.3pre14';
+ RM_VERSION='1.3pre17';
 
 function TranslateStr(index:integer;defvalue:Widestring):WideString;
 
@@ -1146,8 +1146,8 @@ begin
  TranslateVar(67,SRpSDriver);
 
  TranslateVar(895,SRpChartLine);
- TranslateVar(896,SRpChartBar);
- TranslateVar(897,SRpChartPoint);
+ TranslateVar(897,SRpChartBar);
+ TranslateVar(896,SRpChartPoint);
  TranslateVar(898,SRpChartHorzBar);
  TranslateVar(899,SRpChartArea);
  TranslateVar(900,SRpChartPie);
