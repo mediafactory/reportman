@@ -459,6 +459,7 @@ object FMainf: TFMainf
       Enabled = False
       Hint = 'Copy selected object to clipboard'
       ImageIndex = 15
+      OnExecute = ACopyExecute
     end
     object APaste: TAction
       Category = 'Edit'
@@ -466,6 +467,7 @@ object FMainf: TFMainf
       Enabled = False
       Hint = 'Paste from clipboard'
       ImageIndex = 16
+      OnExecute = APasteExecute
     end
   end
   object iconlist: TImageList

@@ -25,7 +25,7 @@ uses
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
   rpconsts,rptypes, QExtCtrls,frpstruc, rplastsav,rpsubreport,
   rpobinsint,rpfparams,fdesign,rpobjinsp,fsectionint,
-  rpsection,rpprintitem;
+  rpsection,rpprintitem,QClipbrd;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;
@@ -131,6 +131,8 @@ type
     procedure AParamsExecute(Sender: TObject);
     procedure AGridOptionsExecute(Sender: TObject);
     procedure ACutExecute(Sender: TObject);
+    procedure ACopyExecute(Sender: TObject);
+    procedure APasteExecute(Sender: TObject);
   private
     { Private declarations }
     report:TRpReport;
@@ -636,7 +638,56 @@ begin
   exit;
  pitem:=TRpSizePosInterface(fobjinsp.CompItem).printitem;
  section:=TRpSection(TRpSizePosInterface(fobjinsp.CompItem).SectionInt.printitem);
+ Clipboard.SetComponent(pitem);
  section.DeleteComponent(pitem);
+ fobjinsp.CompItem:=nil;
+ fdesignframe.UpdateSelection(true);
+end;
+
+procedure TFMainf.ACopyExecute(Sender: TObject);
+var
+ pitem:TRpCommonComponent;
+begin
+ // Delete current selection
+ if Not Assigned(fobjinsp.CompItem) then
+  exit;
+ pitem:=TRpSizePosInterface(fobjinsp.CompItem).printitem;
+ Clipboard.SetComponent(pitem);
+end;
+
+procedure TFMainf.APasteExecute(Sender: TObject);
+var
+ section:TRpSection;
+ secint:TRpSectionInterface;
+ compo:TComponent;
+begin
+// 'application/delphi.component'
+
+ // Delete current selection
+ if Not Assigned(fobjinsp.CompItem) then
+  exit;
+ if (fobjinsp.CompItem is TRpSectionInterface) then
+ begin
+  secint:=TRpSectionInterface(fobjinsp.CompItem);
+ end
+ else
+ begin
+  secint:=TRpSectionInterface(TRpSizePosInterface(fobjinsp.CompItem).SectionInt);
+ end;
+ section:=TrpSection(secint.printitem);
+ compo:=Clipboard.GetComponent(report,report);
+ if compo is TRpCommonPosComponent then
+ begin
+  compo.Name:='';
+  Generatenewname(compo);
+  (section.Components.Add).Component:=TRpCommonPosComponent(compo);
+  fobjinsp.CompItem:=nil;
+  fdesignframe.UpdateSelection(true);
+ end
+ else
+ begin
+  Raise Exception.Create(SRpInvalidClipboardFormat);
+ end;
 end;
 
 initialization

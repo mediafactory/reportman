@@ -143,10 +143,10 @@ begin
   fchangesize.Control:=CompItem;
   fmainf.ACut.Enabled:=true;
   fmainf.ACopy.Enabled:=true;
-  fmainf.APaste.Enabled:=true;
  end
  else
   fchangesize.Control:=nil;
+ fmainf.APaste.Enabled:=true;
  if not dontrelease then
  begin
   HorzScrollBar.Position:=0;
@@ -190,7 +190,10 @@ begin
   end;
  end
  else
+ begin
   posy:=posy+Combo.Height;
+  Combo.ItemIndex:=combo.Items.IndexOfObject(CompItem);
+ end;
  FCompItem.GetProperties(LNames,LTypes,LValues);
  for i:=0 to LNames.Count-1 do
  begin
@@ -350,11 +353,22 @@ end;
 procedure TFObjInsp.EditChange(Sender:TObject);
 var
  index:integer;
+ aname:string;
 begin
  index:=TControl(Sender).tag;
- FCompItem.SetProperty(Lnames.strings[index],TEdit(Sender).Text);
+ aname:=Lnames.strings[index];
+ FCompItem.SetProperty(aname,TEdit(Sender).Text);
  if Assigned(FDesignFrame) then
   TFDesignFrame(FDesignFrame).UpdateInterface;
+ // If the property es positional update position
+ if Assigned(fchangesize) then
+ begin
+  if ((aname=SRpSWidth) or (aname=SRpsHeight) or
+   (aname=SRpSTop) or (aname=SRpSLeft)) then
+  begin
+   fchangesize.UpdatePos;
+  end;
+ end;
 end;
 
 procedure TFObjInsp.ShapeMouseUp(Sender: TObject; Button: TMouseButton;

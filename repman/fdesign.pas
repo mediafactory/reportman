@@ -109,6 +109,7 @@ begin
   FSectionInterface:=nil;
   TopRuler.Visible:=False;
   LeftRuler.Visible:=False;
+  FObjInsp.CompItem:=nil;
  end;
  if Not Assigned(freportstructure) then
   exit;
@@ -144,6 +145,8 @@ begin
   begin
    fobjinsp.CompItem:=FSectionInterface;
   end;
+  if force then
+   HorzScrollBar.Position:=0;
  end;
 end;
 

@@ -101,8 +101,9 @@ uses rpreport;
 constructor TRpCommonComponent.Create(AOwner:TComponent);
 begin
  // The owner must be a report
- if (Not (AOwner is TRpReport)) then
-  Raise Exception.Create(SRpOnlyAReportOwner+classname);
+ if Assigned(AOwner) then
+  if (Not (AOwner is TRpReport)) then
+   Raise Exception.Create(SRpOnlyAReportOwner+classname);
 
  inherited Create(AOwner);
  FHeight:=0;
