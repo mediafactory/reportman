@@ -507,8 +507,22 @@ var
  newsize:integer;
  i:integer;
  acompo:TRpCommonPosComponent;
+ DoPartialPrint:Boolean;
 begin
  Result:=inherited GetExtension(adriver,MaxExtent);
+ DoPartialPrint:=False;
+ // Look for a partial print
+ for i:=0 to Components.Count-1 do
+ begin
+  acompo:=TRpCommonPosComponent(Components.Items[i].Component);
+  if (acompo is TRpExpression) then
+   if TRpExpression(acompo).IsPartial then
+   begin
+    DoPartialPrint:=true;
+    break;
+   end;
+ end;
+
  if FAutoContract then
  begin
   minsize:=0;
@@ -532,17 +546,40 @@ begin
  for i:=0 to Components.Count-1 do
  begin
   acompo:=TRpCommonPosComponent(Components.Items[i].Component);
-  compsize:=acompo.GetExtension(adriver,MaxExtent);
-  if compsize.Y>0 then
+  if DoPartialPrint then
   begin
-   if acompo.Align in [rpalbottom,rpalbotright] then
-    newsize:=compsize.Y
-   else
-    newsize:=acompo.PosY+compsize.Y;
-   if newsize<maxsize then
+   if (acompo is TRpExpression) then
+    if TRpExpression(acompo).IsPartial then
+    begin
+     compsize:=acompo.GetExtension(adriver,MaxExtent);
+     if compsize.Y>0 then
+     begin
+      if acompo.Align in [rpalbottom,rpalbotright] then
+       newsize:=compsize.Y
+      else
+       newsize:=acompo.PosY+compsize.Y;
+      if newsize<maxsize then
+      begin
+       if newsize>currentsize then
+        currentsize:=newsize;
+      end;
+     end;
+    end;
+  end
+  else
+  begin
+   compsize:=acompo.GetExtension(adriver,MaxExtent);
+   if compsize.Y>0 then
    begin
-    if newsize>currentsize then
-     currentsize:=newsize;
+    if acompo.Align in [rpalbottom,rpalbotright] then
+     newsize:=compsize.Y
+    else
+     newsize:=acompo.PosY+compsize.Y;
+    if newsize<maxsize then
+    begin
+     if newsize>currentsize then
+      currentsize:=newsize;
+    end;
    end;
   end;
  end;

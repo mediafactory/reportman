@@ -584,7 +584,7 @@ begin
   APanelBottom.Height:=aheight;
   Control2.Width:=Control.Parent.Width-70;
   Control2.parent:=APanelBottom;
-//  Control2.Anchors:=[akleft,aktop,akright];
+  Control2.Anchors:=[akleft,aktop,akright];
   TButton(Control2).OnClick:=BringToFrontClick;
   TBUtton(Control2).Caption:=SRpBringToFront;
  end;
@@ -982,6 +982,7 @@ begin
  FRpMainf:=TFRpMainF(Owner);
  FCurrentPanel:=FindPanelForClass(Value);
  FCurrentPanel.FCompItem:=Value;
+ TFRpDesignFrame(FDesignFrame).InvalidateCaptions;
  FCurrentPanel.Subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
  FCurrentPanel.AssignPropertyValues;
 end;

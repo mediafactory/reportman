@@ -658,6 +658,8 @@ end;
 
 procedure TFRpMainF.FormCreate(Sender: TObject);
 begin
+ ToolBar1.ButtonHeight:=26*75 div Screen.PixelsPerInch;
+ ToolBar1.ButtonWidth:=26*75 div Screen.PixelsPerInch;
  // Inits Bools Arrays
  BoolToStr(True,True);
  ALeft.ShortCut:=ShortCut(Key_Left,[ssCtrl]);
