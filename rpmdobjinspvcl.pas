@@ -977,7 +977,7 @@ begin
  TFRpObjInspVCL(Owner).FontDialog1.Font.Name:=aitem.GetProperty(SRpSWFontName);
  TFRpObjInspVCL(Owner).FontDialog1.Font.Size:= StrToInt(aitem.GetProperty(SRpSFontSize));
  TFRpObjInspVCL(Owner).FontDialog1.Font.Color:= StrToInt(aitem.GetProperty(SRpSFontColor));
- TFRpObjInspVCL(Owner).FontDialog1.Font.Style:=IntegerToFontStyle(StrToInt(aitem.GetProperty(SrpSFontStyle)));
+ TFRpObjInspVCL(Owner).FontDialog1.Font.Style:=CLXIntegerToFontStyle(StrToInt(aitem.GetProperty(SrpSFontStyle)));
  if TFRpObjInspVCL(Owner).FontDialog1.Execute then
  begin
   index:=TComponent(Sender).Tag;
@@ -999,8 +999,8 @@ begin
   index:=LNames.IndexOf(SrpSFontStyle);
   if index>=0 then
   begin
-   TEdit(LControls.Objects[index]).Text:=IntegerFontStyleToString(FontStyleToInteger(TFRpObjInspVCL(Owner).Fontdialog1.Font.Style));
-   SetPropertyFull(SRpSFontStyle,IntToStr(FontStyleToInteger(TFRpObjInspVCL(Owner).Fontdialog1.Font.Style)));
+   TEdit(LControls.Objects[index]).Text:=IntegerFontStyleToString(FontStyleToCLXInteger(TFRpObjInspVCL(Owner).Fontdialog1.Font.Style));
+   SetPropertyFull(SRpSFontStyle,IntToStr(FontStyleToCLXInteger(TFRpObjInspVCL(Owner).Fontdialog1.Font.Style)));
   end;
  end;
 end;

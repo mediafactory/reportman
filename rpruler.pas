@@ -60,7 +60,7 @@ type
 
 
 
-function PaintRuler(metrics:TRprulermetric;RType:TRpRulerType;Color:TColor;Width,Height:integer):TBitmap;
+function PaintRuler (metrics:TRprulermetric; RType:TRpRulerType; Color:TColor; Width,Height:integer):TBitmap;
 
 implementation
 

@@ -53,7 +53,12 @@ reportmanserver:
         cd ..
 
 
-reportmanutilsxp:
+designerxp:
+        cd repman
+        $(COMPILE) repmandxp.dpr
+        cd ..
+
+reportmanutilsxp: designerxp
         cd repman
         $(COMPILE) repmandxp.dpr
 
@@ -116,7 +121,9 @@ clean:
         -del /s *.~*
         -del /s *.o
         -del /s *.exe
-        -del /s *.dll
+        -del /s repman\*.dll
+        -del /s server\*.bin
+        -del /s server\*.dll
         -del /s *.dcp
         -del /s *.ow
         -del /s *.ppw

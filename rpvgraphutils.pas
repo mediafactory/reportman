@@ -45,26 +45,17 @@ type
     sizey:double;
   end;
 
-procedure DrawBitmap (Destination:TCanvas;Bitmap:TBitmap;Rec,RecSrc:TRect);
-procedure DrawBitmapMosaic(canvas:TCanvas;rec:TRect;bitmap:TBitmap);
-function CLXColorToVCLColor(CLXColor:integer):integer;
-function CLXIntegerToFontStyle(intfontstyle:integer):TFontStyles;
-procedure DrawBitmapMosaicSlow(canvas:TCanvas;rec:Trect;bitmap:TBitmap);
+procedure DrawBitmap (Destination:TCanvas; Bitmap:TBitmap; Rec,RecSrc:TRect);
+procedure DrawBitmapMosaic (canvas:TCanvas; rec:TRect; bitmap:TBitmap);
+procedure DrawBitmapMosaicSlow (canvas:TCanvas; rec:Trect; bitmap:TBitmap);
 function GetPhysicPageSizeTwips:TPoint;
 function GetPageSizeTwips:TPoint;
 function GetPageMarginsTWIPS:TRect;
-function QtPageSizeToGDIPageSize(qtsize:TPageSizeQt):TGDIPageSize;
-function FindIndexPaperName(device,name:string):integer;
-procedure SetCurrentPaper(apapersize:TGDIPageSize);
+function QtPageSizeToGDIPageSize (qtsize:TPageSizeQt):TGDIPageSize;
+function FindIndexPaperName (device, name:string):integer;
+procedure SetCurrentPaper (apapersize:TGDIPageSize);
 function GetCurrentPaper:TGDIPageSize;
-procedure SendControlCodeToPrinter(S: string);
-function FontStyleToCLXInteger(fontstyle:TFontStyles):integer;
-function twipstopixels(ATwips:integer):integer;
-function pixelstotwips(apixels:integer):integer;
-function AlignToGrid(Value:integer;scale:integer):integer;
-function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
-procedure FillTreeView(ATree:TTreeView;alist:TStringList);
-function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
+procedure SendControlCodeToPrinter (S: string);
 procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
 
 var
@@ -99,37 +90,7 @@ begin
  end;
 end;
 
-function twipstopixels(ATwips:integer):integer;
-begin
- Result:=Round((ATwips/TWIPS_PER_INCHESS)*Screen.PixelsPerInch);
-end;
-
-function pixelstotwips(apixels:integer):integer;
-begin
- Result:=Round((APixels/Screen.PixelsPerInch)*TWIPS_PER_INCHESS);
-end;
-
-function AlignToGrid(Value:integer;scale:integer):integer;
-var
- rest:integer;
-begin
- Result:=Value div scale;
- rest:=Value mod scale;
- Result:=scale*Result;
- if rest>(scale div 2) then
-  Result:=Result+scale;
-end;
-
-function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
-begin
- Value:=pixelstotwips(Value);
- Value:=AlignToGrid(Value,scaletwips);
- Result:=twipstopixels(Value);
-end;
-
-{ Rutina que imprime un bitmap  }
-{ Bitmap: el bitmap a imprimir }
-{ REcDesti.Top,Left Situacino en coord.logicas }
+// Bitmap print routine
 procedure DrawBitmap (Destination:TCanvas;Bitmap:TBitmap;Rec,RecSrc:TRect);
 var
   Info:PBitmapInfo;
@@ -207,39 +168,6 @@ begin
  end;
 end;
 
-
-function CLXIntegerToFontStyle(intfontstyle:integer):TFontStyles;
-begin
- Result:=[];
- if (intfontstyle and 1)>0 then
-  include(Result,fsBold);
- if (intfontstyle and (1 shl 1))>0 then
-  include(Result,fsItalic);
- if (intfontstyle and (1 shl 2))>0 then
-  include(Result,fsUnderline);
- if (intfontstyle and (1 shl 3))>0 then
-  include(Result,fsStrikeOut);
-end;
-
-function FontStyleToCLXInteger(fontstyle:TFontStyles):integer;
-begin
- Result:=0;
- if (fsBold in fontstyle) then
-  Result:=Result or 1;
- if (fsItalic in fontstyle) then
-  Result:=Result or (1 shl 1);
- if (fsUnderline in fontstyle) then
-  Result:=Result or (1 shl 2);
- if (fsStrikeOut in fontstyle) then
-  Result:=Result or (1 shl 3);
-end;
-
-
-
-function CLXColorToVCLColor(CLXColor:integer):integer;
-begin
- Result:=CLXColor AND $00FFFFFF;
-end;
 
 procedure DrawBitmapMosaicSlow(canvas:TCanvas;rec:Trect;bitmap:TBitmap);
 var
@@ -1013,157 +941,6 @@ begin
  end;
 end;
 
-function getfirstname(astring:string):string;
-var
- j,index:integer;
-begin
- j:=1;
- index:=Length(astring)+1;
- while j<=Length(astring) do
- begin
-  if astring[j]=C_DIRSEPARATOR then
-  begin
-   index:=j;
-   break;
-  end;
-  inc(j);
- end;
- Result:=Copy(astring,1,index-1);
-end;
-
-function getpathname(astring:string):string;
-var
- j,index:integer;
-begin
- j:=1;
- index:=1;
- while j<=Length(astring) do
- begin
-  if astring[j]=C_DIRSEPARATOR then
-  begin
-   index:=j;
-  end;
-  inc(j);
- end;
- Result:=Copy(astring,1,index-1);
-end;
-
-function getlastname(astring:string):string;
-var
- j,index:integer;
-begin
- j:=1;
- index:=1;
- while j<=Length(astring) do
- begin
-  if astring[j]=C_DIRSEPARATOR then
-  begin
-   index:=j;
-  end;
-  inc(j);
- end;
- Result:=Copy(astring,index+1,Length(astring));
-end;
-
-function SearchnodeInt(ATree:TTreeView;astring:String;anode:TTreeNode):TTreeNode;
-var
- i:integer;
- firstname:string;
-begin
- firstname:=GetFirstName(astring);
- Result:=nil;
- for i:=0 to anode.Count-1 do
- begin
-  if firstname=anode.Item[i].Text then
-  begin
-   if firstname=astring then
-   begin
-    Result:=anode.Item[i];
-   end
-   else
-    Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),anode.Item[i]);
-  end;
- end;
- if Not Assigned(Result) then
- begin
-  Result:=ATree.Items.AddChild(anode,firstname);
-  Result.ImageIndex:=2;
-  Result.SelectedIndex:=2;
-  if firstname<>astring then
-  begin
-   Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),Result);
-  end;
- end;
-end;
-
-
-function Searchnode(FTopItems:TStringList;ATree:TTreeView;astring:String):TTreeNode;
-var
- i:integer;
- firstname:string;
-begin
- firstname:=GetFirstName(astring);
- Result:=nil;
- for i:=0 to FTopItems.Count-1 do
- begin
-  if firstname=FTopItems.Strings[i] then
-  begin
-   if firstname=astring then
-   begin
-    Result:=TTreeNode(FTopItems.Objects[i]);
-   end
-   else
-    Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),TTreeNode(FTopItems.Objects[i]));
-  end;
- end;
- if Not Assigned(Result) then
- begin
-  Result:=ATree.Items.AddChild(nil,firstname);
-  Result.ImageIndex:=2;
-  Result.SelectedIndex:=2;
-  FTopItems.AddObject(firstname,Result);
-  if firstname<>astring then
-  begin
-   Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),Result);
-  end;
- end;
-end;
-
-procedure FillTreeView(ATree:TTreeView;alist:TStringList);
-var
- newitem,anode:TTreeNode;
- astring:string;
- repname,dirname:String;
- i:integer;
- FTopItems:TStringList;
-begin
- FTopitems:=TStringList.Create;
- try
-  for i:=0 to alist.count-1 do
-  begin
-   if Length(alist.Strings[i])<1 then
-    continue;
-   astring:=alist.Strings[i];
-   repname:=GetLastName(astring);
-   dirname:=GetPathName(astring);
-   anode:=SearchNode(FTopItems,ATree,dirname);
-   newitem:=ATree.Items.AddChild(anode,repname);
-   newitem.ImageIndex:=3;
-   newitem.SelectedIndex:=3;
-  end;
- finally
-  FTopItems.Free;
- end;
-end;
-
-
-function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
-begin
- if Assigned(ANode.Parent) then
-  Result:=GetFullFileName(ANode.Parent,dirseparator)+dirseparator+ANode.Text
- else
-  Result:=ANode.Text;
-end;
 
 
 initialization

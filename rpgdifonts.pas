@@ -54,12 +54,12 @@ type
 
 function UpdatePrinterFontList:boolean;
 
-procedure FindDeviceFont(DC:HDC;Font:Tfont;fstep:TFontStep);
-function FindRotatedFont(Desti:HDC;Font:TFont;rotation:integer):HFont;
-function FontStepToString(fstep:TFontStep):string;
-function StringToPasFont(cad:string):TFontStep;
-function FindFontStep(Font:TFont):integer;
-function FontSizeToStep(asize:integer):TFontStep;
+procedure FindDeviceFont (DC:HDC; Font:Tfont; fstep:TFontStep);
+function FindRotatedFont (Desti:HDC; Font:TFont; rotation:integer):HFont;
+function FontStepToString (fstep:TFontStep):string;
+function StringToPasFont (cad:string):TFontStep;
+function FindFontStep (Font:TFont):integer;
+function FontSizeToStep (asize:integer):TFontStep;
 
 var
  PrinterFonts:TList;

@@ -22,7 +22,7 @@ interface
 
 uses
   SysUtils, Types, Classes, Variants, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ComCtrls, ImgList,rpmdconsts,rpvgraphutils;
+  Dialogs, StdCtrls, ComCtrls, ImgList,rpmdconsts,rpgraphutilsvcl;
 
 type
   TFReportTreeVCL = class(TForm)
@@ -50,7 +50,7 @@ begin
   exit;
  dia:=TFReportTreeVCL.Create(Application);
  try
-  rpvgraphutils.FillTreeView(dia.TreeView1,alist);
+  FillTreeView(dia.TreeView1,alist);
   dia.showmodal;
  finally
   dia.free;

@@ -168,7 +168,7 @@ begin
 
  Canvas.Font.Color:=alabel.FontColor;
  Canvas.Font.Size:=alabel.FontSize;
- Canvas.Font.Style:=IntegerToFontStyle(alabel.FontStyle);
+ Canvas.Font.Style:=CLXIntegerToFontStyle(alabel.FontStyle);
  rec.Top:=0;
  rec.Left:=0;
  rec.Right:=Width-1;
@@ -428,7 +428,7 @@ begin
  Canvas.Font.Name:=aexp.WFontName;
  Canvas.Font.Color:=aexp.FontColor;
  Canvas.Font.Size:=aexp.FontSize;
- Canvas.Font.Style:=IntegerToFontStyle(aexp.FontStyle);
+ Canvas.Font.Style:=CLXIntegerToFontStyle(aexp.FontStyle);
 
  rec.Top:=0;
  rec.Left:=0;

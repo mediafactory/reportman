@@ -28,7 +28,8 @@ interface
 uses Types,
   Graphics,Forms,Controls,Dialogs,
  rpmdconsts,classes,sysutils,rpmunits,
- rpprintitem,rpvgraphutils,rpsection,rpreport,rptypes;
+ rpprintitem,rpvgraphutils,rpgraphutilsvcl,rpsection,
+ rpreport,rptypes;
 
 const
  CONS_MODIWIDTH=5;

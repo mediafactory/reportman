@@ -37,7 +37,7 @@ const
 const
  RM_VERSION='1.3';
 
-function TranslateStr(index:integer;defvalue:Widestring):WideString;
+function TranslateStr (index:integer; defvalue:Widestring):WideString;
 
 
 var

@@ -540,9 +540,9 @@ var
  aimage:TRpImage;
  rec:TRect;
  dpix,dpiy:integer;
- oldrgn:HRGN;
- newrgn:HRGN;
- aresult:integer;
+// oldrgn:HRGN;
+// newrgn:HRGN;
+// aresult:integer;
  bitmapwidth,bitmapheight:integer;
  jpegimage:TJPegImage;
 begin
@@ -605,15 +605,16 @@ begin
     rpDrawTile:
      begin
       // Set clip region
-      oldrgn:=CreateRectRgn(0,0,2,2);
-      aresult:=GetClipRgn(Canvas.Handle,oldrgn);
-      newrgn:=CreateRectRgn(rec.Left,rec.Top,rec.Right,rec.Bottom);
-      SelectClipRgn(Canvas.handle,newrgn);
+//      oldrgn:=CreateRectRgn(0,0,2,2);
+
+//      aresult:=GetClipRgn(Canvas.Handle,oldrgn);
+//      newrgn:=CreateRectRgn(rec.Left,rec.Top,rec.Right,rec.Bottom);
+//      SelectClipRgn(Canvas.handle,newrgn);
       DrawBitmapMosaicSlow(Canvas,rec,fbitmap);
-      if aresult=0 then
-       SelectClipRgn(Canvas.handle,0)
-      else
-       SelectClipRgn(Canvas.handle,oldrgn);
+//      if aresult=0 then
+//       SelectClipRgn(Canvas.handle,0)
+//      else
+//       SelectClipRgn(Canvas.handle,oldrgn);
      end;
    end;
   end;

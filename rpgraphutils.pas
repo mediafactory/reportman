@@ -66,21 +66,21 @@ type
     { Public declarations }
   end;
 
-procedure DrawGrid(Canvas:TCanvas;XWidth,XHeight,PixelsWidth,PixelsHeight:integer;Color:TColor;lines:boolean;XOffset,YOffset:integer);
-function twipstopixels(ATwips:integer):integer;
-function pixelstotwips(apixels:integer):integer;
-function FontStyleToInteger(fontstyle:TFontStyles):integer;
-function IntegerToFontStyle(intfontstyle:integer):TFontStyles;
-function IntegerFontStyleToString(intfontstyle:integer):String;
-function AlignToGrid(Value:integer;scale:integer):integer;
-function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
+procedure DrawGrid (Canvas:TCanvas;XWidth,XHeight,PixelsWidth,PixelsHeight:integer;Color:TColor;lines:boolean;XOffset,YOffset:integer);
+function twipstopixels (ATwips:integer):integer;
+function pixelstotwips (apixels:integer):integer;
+function FontStyleToInteger (fontstyle:TFontStyles):integer;
+function IntegerToFontStyle (intfontstyle:integer):TFontStyles;
+function IntegerFontStyleToString (intfontstyle:integer):String;
+function AlignToGrid (Value:integer;scale:integer):integer;
+function AlignToGridPixels (Value:integer;scaletwips:integer):integer;
 procedure LoadQtTranslator;
-function RpMessageBox(const Text: WideString; const Caption: WideString = '';
+function RpMessageBox (const Text: WideString; const Caption: WideString = '';
   Buttons: TMessageButtons = [smbOK]; Style: TMessageStyle = smsInformation;
   Default: TMessageButton = smbOK; Escape: TMessageButton = smbCancel): TMessageButton;
-function RpInputBox(const ACaption, APrompt, ADefault:WideString ):WideString;
-procedure FillTreeView(ATree:TTreeView;alist:TStringList);
-function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
+function RpInputBox (const ACaption, APrompt, ADefault:WideString ):WideString;
+procedure FillTreeView (ATree:TTreeView;alist:TStringList);
+function GetFullFileName (ANode:TTreeNode;dirseparator:char):String;
 
 implementation
 

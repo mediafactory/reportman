@@ -34,7 +34,12 @@ requires
   vcl,
   dbrtl,
   rppack_del,
-  vcljpg;
+  vcljpg,
+  bdertl,
+  dbexpress,
+  adortl,
+  ibxpress,
+  dsnap;
 
 {%File 'rpconf.inc'}
 
@@ -50,6 +55,7 @@ contains
   rpgdidriver in 'rpgdidriver.pas' {FRpVCLProgress},
   rpgdifonts in 'rpgdifonts.pas',
   rpmdprintconfigvcl in 'rpmdprintconfigvcl.pas' {FRpPrinterConfig},
-  rprulervcl in 'rprulervcl.pas';
+  rprulervcl in 'rprulervcl.pas',
+  rpgraphutilsvcl in 'rpgraphutilsvcl.pas' {FRpMessageDlgVCL};
 
 end.

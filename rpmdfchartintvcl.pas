@@ -437,7 +437,7 @@ begin
 {$ENDIF}
  Canvas.Font.Color:=aexp.FontColor;
  Canvas.Font.Size:=aexp.FontSize;
- Canvas.Font.Style:=IntegerToFontStyle(aexp.FontStyle);
+ Canvas.Font.Style:=CLXIntegerToFontStyle(aexp.FontStyle);
 
  rec.Top:=0;
  rec.Left:=0;

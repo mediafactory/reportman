@@ -225,11 +225,11 @@ type
 
 
 
-function PDFCompatibleText(astring:string):string;
-function NumberToText(Value:double):string;
+function PDFCompatibleText (astring:string):string;
+function NumberToText (Value:double):string;
 
-procedure GetBitmapInfo(stream:TStream;var width,height,imagesize:integer;FMemBits:TMemoryStream);
-function GetJPegInfo(astream:TStream;var width,height:integer):boolean;
+procedure GetBitmapInfo (stream:TStream; var width, height, imagesize:integer;FMemBits:TMemoryStream);
+function GetJPegInfo (astream:TStream; var width, height:integer):boolean;
 
 implementation
 

@@ -26,6 +26,7 @@ uses
   SysUtils, Types, Classes, Variants, Graphics, Controls, Forms,
   Dialogs, rptranslator, StdCtrls, ExtCtrls,rpmdrepclient,
   rpmdconsts, ActnList, ImgList, ComCtrls,rpparams,rpvgraphutils,
+  rpgraphutilsvcl,
   rprfvparams, ToolWin;
 
 type
@@ -242,7 +243,7 @@ end;
 procedure TFRpCliTreeVCL.OnGetTree(alist:TStringList);
 begin
  LTree.Items.Clear;
- rpvgraphutils.FillTreeView(LTree,alist);
+ FillTreeView(LTree,alist);
 end;
 
 procedure TFRpCliTreeVCL.ComboAliasClick(Sender: TObject);

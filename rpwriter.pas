@@ -20,8 +20,8 @@ interface
 uses Classes,SysUtils,rpmzlib;
 
 
-procedure FileReportToPlainText(reportfile,plainfile:string);
-procedure PlainTextToFileReport(plainfile,reportfile:string);
+procedure FileReportToPlainText (reportfile,plainfile:string);
+procedure PlainTextToFileReport (plainfile,reportfile:string);
 
 implementation
 

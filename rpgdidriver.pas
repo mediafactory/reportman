@@ -27,7 +27,7 @@ uses
  mmsystem,windows,
  Classes,sysutils,rpmetafile,rpmdconsts,Graphics,Forms,
  rpmunits,Printers,Dialogs, Controls,rpgdifonts,
- StdCtrls,ExtCtrls,rppdffile,
+ StdCtrls,ExtCtrls,rppdffile,rpgraphutilsvcl,
 {$IFDEF USEVARIANTS}
  types,
 {$ENDIF}

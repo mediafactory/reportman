@@ -55,9 +55,9 @@ const
 {$ENDIF}
 
 
-  function Obtainininameuserconfig(company,product,filename:string):string;
-  function Obtainininamelocalconfig(company,product,filename:string):string;
-  function Obtainininamecommonconfig(company,product,filename:string):string;
+  function Obtainininameuserconfig (company, product, filename:string):string;
+  function Obtainininamelocalconfig (company, product, filename:string):string;
+  function Obtainininamecommonconfig (company, product, filename:string):string;
 
 {$IFDEF MSWINDOWS}
 {$EXTERNALSYM SHGetFolderPath}
