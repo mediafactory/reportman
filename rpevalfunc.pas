@@ -575,7 +575,7 @@ begin
  FParamcount:=1;
  IdenName:='Str';
  Help:=SRpStr;
- model:='function '+'Str'+'(num:double):string';
+ model:='function '+'Str'+'(num:variant):string';
  aParams:=SRpPStr;
 end;
 
