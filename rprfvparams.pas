@@ -338,7 +338,8 @@ begin
    acontrol.parent:=PRight;
    acontrol.Anchors:=[akLeft,akTop,akRight];
    if Not assigned(ActiveControl) then
-    ActiveControl:=TWinControl(acontrol);
+    if acontrol.Visible then
+     ActiveControl:=TWinControl(acontrol);
    Posy:=PosY+acontrol.Height+CONS_CONTROLGAP;
   end
   else

@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.3e';
+ RM_VERSION='2.3f';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 type
   TPageWidthHeight = record
@@ -1250,7 +1250,6 @@ var
   SRpPlainFullPrinter:WideString='Full plain text printer';
   SRpTimeOut:WideString='Timeout detected';
   SRpPrintRep26:WideString='         -onesheet Optional one sheet excel output';
-  //
   SRpTypeInfo:WideString='Data type information';
 
 implementation
@@ -2167,6 +2166,7 @@ begin
  TranslateVar(1344,SRpPlainFullPrinter);
  TranslateVar(1345,SRpTimeOut);
  TranslateVar(1346,SRpPrintRep26);
+ TranslateVar(1349,SRpTypeInfo);
 end;
 
 

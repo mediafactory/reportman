@@ -2425,6 +2425,7 @@ begin
    // Assigns the color for this serie
    for j:=0 to intserie.ValueCount-1 do
    begin
+    aserie.ValueColor[1]:=clBlue;
     if nchart.ChartType=rpchartpie then
      aserie.Add(intserie.Values[j],
       intSerie.ValueCaptions[j],SeriesColors[aColor])

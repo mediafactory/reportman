@@ -24,7 +24,7 @@ interface
 
 uses
   SysUtils, Classes, QGraphics, QControls, QForms,
-  rpdatainfo,rpmdconsts,rpreport,rptypeval,rpparser,
+  rpdatainfo,rpmdconsts,rpreport,rptypeval,rpparser,rptypes,
 {$IFDEF USEEVALHASH}
   rphashtable,
   rpstringhash,
@@ -52,9 +52,11 @@ type
     procedure SetReport(Value:TRpReport);
     procedure InitTree;
     procedure SetShowDataTypes(value:Boolean);
+    procedure FreeFieldsInfo;
   public
     { Public declarations }
     constructor Create(AOwner:TComponent);override;
+    destructor Destroy;override;
     property Report:TRpReport read FReport write SetReport;
     property ShowEval:Boolean read FShowEval write FShowEval;
     property ShowDatasets:Boolean read FShowDatasets write FShowDatasets;
@@ -68,6 +70,32 @@ implementation
 
 {$R *.xfm}
 
+function NewTRpDBFieldInfo(fieldsize:integer):TRpDBFieldInfo;
+begin
+ Result:=TRpDBFieldInfo.Create;
+ Result.FieldSize:=fieldsize;
+end;
+
+procedure TFRpBrowser.FreeFieldsInfo;
+var
+ i:integer;
+begin
+ for i:=0 to ATree.Items.Count-1 do
+ begin
+  if TObject(ATree.Items[i].Data) is TRpDBFieldInfo then
+  begin
+   TObject(ATree.Items[i].Data).free;
+   ATree.Items[i].Data:=nil;
+  end;
+ end;
+end;
+
+destructor TFRpBrowser.Destroy;
+begin
+ FreeFieldsInfo;
+ inherited Destroy;
+end;
+
 procedure TFRpBrowser.SetReport(Value:TRpReport);
 begin
  FReport:=Value;
@@ -77,6 +105,7 @@ begin
  end
  else
  begin
+  FreeFieldsInfo;
   ATree.Items.Clear;
  end;
 end;
@@ -94,6 +123,7 @@ var
  ait:TstrHashIterator;
 {$ENDIF}
 begin
+ FreeFieldsInfo;
  ATree.Items.Clear;
  if FShowDatabases then
  begin
@@ -234,10 +264,16 @@ begin
      begin
       for i:=0 to alist.Count-1 do
       begin
-       achild:=ATree.Items.AddChild(Node,alist.Strings[i]);
-       achild.Data:=dbitem;
-       achild.ImageIndex:=1;
-       achild.SelectedIndex:=1;
+       aname:=alist.Strings[i];
+       if ((i<fieldtypes.Count) and (FShowDataTypes)) then
+       begin
+        aname:=aname+'-'+fieldtypes.Strings[i];
+        if (i<fieldsizes.Count) then
+         if Length(fieldsizes.Strings[i])>0 then
+          aname:=aname+'('+fieldsizes.Strings[i]+')';
+       end;
+       achild:=ATree.Items.AddChild(Node,aname);
+       achild.Data:=Node.Data;
        ATree.Items.AddChild(achild,'');
       end;
      end;
@@ -253,19 +289,25 @@ begin
       for i:=0 to alist.Count-1 do
       begin
        aname:=alist.Strings[i];
-       if i<fieldtypes.Count then
-        aname:=aname+'-'+fieldtypes.Strings[i];
        if ((i<fieldtypes.Count) and (FShowDataTypes)) then
        begin
-        if Length(fieldsizes.Strings[i])>0 then
-         aname:=aname+'('+fieldsizes.Strings[i]+')';
+        aname:=aname+' '+fieldtypes.Strings[i];
+        if i<fieldsizes.Count then
+         if Length(fieldsizes.Strings[i])>0 then
+          aname:=aname+'('+fieldsizes.Strings[i]+')';
        end;
        achild:=ATree.Items.AddChild(Node,aname);
-       achild.Data:=Pointer(10);
-       if Length(fieldsizes.Strings[i])>0 then
-        achild.Data:=Pointer(StrToInt(fieldsizes.strings[i]));
        achild.ImageIndex:=2;
        achild.SelectedIndex:=2;
+       achild.Data:=NewTRpDBFieldInfo(10);
+       if (i<fieldsizes.Count) then
+        if Length(fieldsizes.Strings[i])>0 then
+        begin
+         TObject(achild.Data).free;
+         achild.Data:=NewTRpDBFieldInfo(StrToInt(fieldsizes.strings[i]));
+        end;
+       achild.ImageIndex:=1;
+       achild.SelectedIndex:=1;
       end;
      end;
     end;
@@ -315,9 +357,13 @@ begin
          aname:=aname+'('+fieldsizes.Strings[i]+')';
        end;
        achild:=ATree.Items.AddChild(Node,aname);
-       achild.Data:=Pointer(10);
-       if Length(fieldsizes.Strings[i])>0 then
-        achild.Data:=Pointer(StrToInt(fieldsizes.strings[i]));
+       achild.Data:=NewTRpDBFieldInfo(10);
+       if i<fieldsizes.Count then       
+        if Length(fieldsizes.Strings[i])>0 then
+        begin
+         TObject(achild.Data).free;
+         achild.Data:=NewTRpDBFieldInfo(StrToInt(fieldsizes.strings[i]));
+        end;       
        achild.ImageIndex:=2;
        achild.SelectedIndex:=2;
       end;

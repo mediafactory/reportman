@@ -1448,9 +1448,9 @@ begin
   TRpReport(printitem.Report).AssignDefaultFontTo(TRpGenTextComponent(asizepos));
 
   // Search if theres a selected field
-  size:=Integer(anode.Data);
-  if size=0 then
-   size:=10;
+  size:=10;
+  if (TObject(anode.Data) is TRpDBFieldInfo) then
+   size:=TRpDBFieldInfo(anode.Data).FieldSize;
   fieldname:=ExtractFieldNameEx(anode.Text);
   TRpExpression(asizepos).Expression:=fieldname;
   Canvas.Font.Name:=TRpExpression(asizepos).WFontName;

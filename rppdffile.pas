@@ -2851,15 +2851,18 @@ begin
    SWriteLine(FTempStream,'/FirstChar '+IntToStr(adata.firstloaded));
    SWriteLine(FTempStream,'/LastChar '+IntToStr(adata.lastloaded));
    awidths:='[';
-   index:=adata.firstloaded;
-   repeat
-    awidths:=awidths+IntToStr(adata.loadedwidths[index])+' ';
-    inc(index);
-    if (index mod 8)=7 then
-     awidths:=awidths+LINE_FEED;
-   until index>adata.lastloaded;
-   awidths:=awidths+']';
-   SWriteLine(FTempStream,'/Widths '+awidths);
+   if adata.lastloaded>0 then
+   begin
+    index:=adata.firstloaded;
+    repeat
+     awidths:=awidths+IntToStr(adata.loadedwidths[index])+' ';
+     inc(index);
+     if (index mod 8)=7 then
+      awidths:=awidths+LINE_FEED;
+    until index>adata.lastloaded;
+    awidths:=awidths+']';
+    SWriteLine(FTempStream,'/Widths '+awidths);
+   end;
    SWriteLine(FTempStream,'/FontDescriptor '+
     IntToStr(adata.DescriptorIndex)+' 0 R');
    SWriteLine(FTempStream,'/Encoding /'+adata.Encoding);

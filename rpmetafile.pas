@@ -82,8 +82,8 @@ type
    property position:LongInt read FPosition;
   end;
 
- TrpMetafileReport=class;
- TrpMetafilePage=class;
+ TRpMetafileReport=class;
+ TRpMetafilePage=class;
 
  TTotalPagesObject=class(TObject)
   public

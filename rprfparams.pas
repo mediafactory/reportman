@@ -324,7 +324,8 @@ begin
     if VarIsNull(aparam.Value) then
      acontrol.Visible:=false;
    if Not assigned(ActiveControl) then
-    ActiveControl:=TWidgetControl(acontrol);
+    if acontrol.Visible then
+     ActiveControl:=TWidgetControl(acontrol);
    Posy:=PosY+acontrol.Height+CONS_CONTROLGAP;
   end
   else

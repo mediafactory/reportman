@@ -356,19 +356,24 @@ begin
        begin
         if threadsafeexec then
         begin
-         HandleInput;
-         FEndReport.SetEvent;
+         if Not (CB.Command in [repopenreport,repsetparams]) then
+          HandleInput;
+         if CB.Command<>repsetparams then
+          FEndReport.SetEvent;
         end
         else
         begin
-         FEndReport.SetEvent;
-         Synchronize(HandleInput);
+         if CB.Command<>repsetparams then
+          FEndReport.SetEvent;
+         if Not (CB.Command in [repopenreport,repsetparams]) then
+          Synchronize(HandleInput);
         end;
         syncexec:=false;
        end;
       end
       else
-       Synchronize(HandleInput);
+       if Not (CB.Command in [repopenreport,repsetparams]) then
+        Synchronize(HandleInput);
       data.Clear;
      finally
       FreeBlock(CB);
@@ -969,11 +974,12 @@ begin
    end
    else
    begin
-    ClientHandleThread.syncexec:=true;
-    FEndReport.ReSetEvent;
+    // To avoid lock conflicts never check or set events
+//    ClientHandleThread.syncexec:=true;
+//    FEndReport.ReSetEvent;
     // Sets an event and waits for its signal
     SendBlock(RepClient,arec);
-    FEndReport.WaitFor($FFFFFFFF);
+//    FEndReport.WaitFor($FFFFFFFF);
    end;
   finally
    FreeBlock(arec);

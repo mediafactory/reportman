@@ -215,6 +215,10 @@ type
     WString: WideString;
   end;
 
+  TRpDBFieldInfo=class(TObject)
+   FieldSize:Integer;
+  end;
+
   TRpWideStrings = class(TPersistent)
   private
     FWideList: TList;
@@ -374,6 +378,12 @@ const
 {$IFDEF BUILDER4}
 function VarTypeToDataType(VarType: Integer): TFieldType;
 {$ENDIF}
+
+{$IFNDEF USEVARIANTS}
+function GetEnvironmentVariable(aname:String):string;
+function HTMLEncode(astring:String):String;
+{$ENDIF}
+
 
 {$IFDEF MSWINDOWS}
 var
@@ -4272,6 +4282,40 @@ begin
   else
    Result:=1;
  end;
+end;
+{$ENDIF}
+
+{$IFNDEF USEVARIANTS}
+function GetEnvironmentVariable(aname:String):string;
+const DEFSIZE=200;
+var
+ abuffer:Pchar;
+ ares:DWORD;
+begin
+ abuffer:=AllocMem(DEFSIZE+2);
+ try
+  ares:=Windows.GetEnvironmentVariable(PChar(aname),abuffer,DEFSIZE);
+  if ares=0 then
+   Result:=''
+  else
+  begin
+   if ares>DEFSIZE then
+   begin
+    FreeMem(abuffer);
+    abuffer:=nil;
+    abuffer:=AllocMem(ares+2);
+    Windows.GetEnvironmentVariable(PChar(aname),abuffer,ares+1);
+   end;
+   Result:=StrPas(abuffer);
+  end;
+ finally
+  FreeMem(abuffer);
+ end;
+end;
+
+function HTMLEncode(astring:String):String;
+begin
+ Result:=astring;
 end;
 {$ENDIF}
 
