@@ -1440,6 +1440,7 @@ begin
   begin
    subrep:=TRpSubReport(compo);
    freportstructure.SelectDataItem(subrep);
+   fobjinsp.SelectProperty(TRpReportException(E).PropertyName);
   end
   else
   begin
@@ -1448,6 +1449,7 @@ begin
    begin
     sec:=TRpSection(compo);
     freportstructure.SelectDataItem(sec);
+    fobjinsp.SelectProperty(TRpReportException(E).PropertyName);
    end
    else
    begin

@@ -425,7 +425,7 @@ begin
   iden:=Searchidentifier(Rpparser.TokenString);
   if iden=nil then
   begin
-   Raise TRpEvalException.Create(SRpEvalDescIden+
+   Raise TRpEvalException.Create(SRpEvalDescIden+':'+
          Rpparser.TokenString,Rpparser.TokenString,
         Rpparser.SourceLine,Rpparser.SourcePos);
   end

@@ -526,11 +526,18 @@ begin
  while i<indexdetail do
  begin
   sec:=Sections.Items[i].Section;
-  if (sec.SectionType=rpsecgheader) then
-  begin
-   eval.Expression:=sec.ChangeExpression;
-   eval.Evaluate;
-   sec.GroupValue:=eval.EvalResult;
+  try
+   if (sec.SectionType=rpsecgheader) then
+   begin
+    eval.Expression:=sec.ChangeExpression;
+    eval.Evaluate;
+    sec.GroupValue:=eval.EvalResult;
+   end;
+  except
+   on E:Exception do
+   begin
+    Raise TRpReportException.Create(E.Message,sec,SRpSGroupExpression);
+   end;
   end;
   inc(i);
  end;

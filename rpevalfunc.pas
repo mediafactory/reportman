@@ -1054,7 +1054,7 @@ begin
   varDate:
    begin
     DecodeDate(TDateTime(Params[0]),Any,Mes,Dia);
-    Result:=Dia;
+    Result:=integer(Dia);
    end;
   else
    Raise TRpNamedException.Create(SRpEvalType,
@@ -1196,7 +1196,7 @@ begin
  if Vartype(Params[1])<>varboolean then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if NOt (Vartype(Params[0]) in [varsmallint..varcurrency]) then
+ if NOt (Vartype(Params[0]) in [varsmallint..varcurrency,varShortInt,varInt64,varWord,varLongWord,varByte]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
 

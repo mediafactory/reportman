@@ -136,11 +136,19 @@ begin
  LDataType.Caption:=TranslateStr(193,LDatatype.Caption);
  LValue.Caption:=TranslateStr(194,LValue.Caption);
  CheckVisible.Caption:=TranslateStr(195,CheckVisible.Caption);
+ CheckVisible.Hint:=TranslateStr(952,CheckVisible.Caption);
  CheckNull.Caption:=TranslateStr(196,CheckNull.Caption);
  LDescription.Caption:=TranslateStr(197,LDescription.Caption);
  LAssign.Caption:=TranslateStr(198,LAssign.Caption);
  Caption:=TranslateStr(199,Caption);
  GetPossibleDataTypes(ComboDataType.Items);
+ ComboDataType.Hint:=TranslateStr(944,ComboDataType.Hint);
+ CheckNull.Hint:=TranslateStr(945,CheckNull.Hint);
+ LSearch.Caption:=TranslateStr(946,CheckNull.Hint);
+ ComboDatasets.Hint:=TranslateStr(947,ComboDatasets.Hint);
+ BAddData.Hint:=TranslateStr(948,BAddData.Hint);
+ BDeleteData.Hint:=TranslateStr(949,BDeleteData.Hint);
+ LDatasets.Hint:=TranslateStr(950,LDatasets.Hint);
 end;
 
 procedure TFRpParamsVCL.BOKClick(Sender: TObject);

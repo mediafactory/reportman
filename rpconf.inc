@@ -18,7 +18,7 @@
 // By default is not defined becuase Borland don't provide
 // it in default installation
 {$IFDEF LINUX}
-// {$UNDEF USEIBX}
+ {$UNDEF USEIBX}
  {$UNDEF USEADO}
  {$UNDEF USEBDE}
  {$UNDEF USEIBO}

@@ -666,7 +666,10 @@ begin
  else
  begin
   if Not Assigned(FADOConnection) then
+  begin
     FADOConnection:=TADOConnection.Create(nil);
+    FADOConnection.KeepConnection:=false;
+  end;
   Result:=FADOConnection;
  end;
 end;
@@ -1013,7 +1016,14 @@ begin
    end;
    if ((FDataset<>FSQLInternalQuery) and (not doexit)) then
    begin
-    FDataset.Active:=true;
+    try
+     FDataset.Active:=true;
+    except
+     on E:Exception do
+     begin
+      Raise Exception.Create(E.Message);
+     end;
+    end;
     if cached then
     begin
      FCachedDataset.DoClose;
@@ -1366,6 +1376,8 @@ begin
    for i:=0 to params.count-1 do
    begin
     param:=params.items[i];
+    if param.ParamType=rpParamSubst then
+     continue;
     index:=param.Datasets.IndexOf(Alias);
     if index>=0 then
     begin
@@ -1440,8 +1452,13 @@ begin
     FCachedDataset.DoOpen;
    end;
   end;
- finally
+
   connecting:=false;
+ except
+  on E:Exception do
+  begin
+   Raise Exception.Create(Alias+':'+E.Message);
+  end;
  end;
 end;
 

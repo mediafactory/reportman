@@ -1200,11 +1200,12 @@ begin
  TranslateVar(929,SRpSTwoPassReportNeeded);
  TranslateVar(931,SRpNewDataInfo);
  TranslateVar(932,SRpPrintPDFRep9);
- TranslateVar(933,SRpFrench);
+ TranslateVar(953,SRpFrench);
  TranslateVar(940,SRpIniNumPage);
  TranslateVar(941,SRpPrintNulls);
  TranslateVar(942,SrpSExpressionB);
  TranslateVar(943,SrpSExpressionA);
+ TranslateVar(951,SRpSParamSubs);
 end;
 
 {$IFDEF LINUX}
