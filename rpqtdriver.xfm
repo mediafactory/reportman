@@ -1,23 +1,23 @@
 object FRpQtProgress: TFRpQtProgress
-  Left = 192
-  Top = 364
+  Left = 286
+  Top = 355
   ActiveControl = BCancel
   AutoScroll = False
   BorderStyle = fbsDialog
   Caption = 'Print progress'
-  ClientHeight = 124
-  ClientWidth = 514
+  ClientHeight = 155
+  ClientWidth = 511
   Color = clButton
   Position = poScreenCenter
   ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 15
-  TextWidth = 7
+  TextHeight = 20
+  TextWidth = 8
   object BCancel: TButton
-    Left = 207
-    Top = 84
+    Left = 203
+    Top = 120
     Width = 75
     Height = 25
     Cancel = True
@@ -28,30 +28,30 @@ object FRpQtProgress: TFRpQtProgress
   end
   object LProcessing: TLabel
     Left = 8
-    Top = 40
-    Width = 62
-    Height = 15
+    Top = 60
+    Width = 79
+    Height = 20
     Caption = 'Processing'
   end
   object LRecordCount: TLabel
-    Left = 76
-    Top = 40
-    Width = 421
+    Left = 8
+    Top = 88
+    Width = 497
     Height = 25
     AutoSize = False
   end
   object LTitle: TLabel
     Left = 8
     Top = 4
-    Width = 26
-    Height = 15
+    Width = 35
+    Height = 20
     Caption = 'Tittle'
     Visible = False
   end
   object LTittle: TLabel
-    Left = 76
-    Top = 4
-    Width = 421
+    Left = 8
+    Top = 28
+    Width = 501
     Height = 25
     AutoSize = False
   end

@@ -135,12 +135,13 @@ implementation
 
 uses rpmdfdesign,rpmdfsectionint, rpmdfmain;
 
-function calcdefaultheight:integer;
+function calcdefaultheight(fontsize:integer):integer;
 var
  Edit:TEdit;
 begin
  Edit:=TEDit.Create(nil);
  try
+  Edit.Font.Size:=fontsize;
   Edit.Text:='MMg';
   Result:=Edit.Height;
  finally
@@ -239,7 +240,7 @@ var
  aheight:integer;
 begin
  posy:=0;
- aheight:=calcdefaultheight;
+ aheight:=calcdefaultheight(Font.Size);
 
  AScrollBox:=TScrollBox.Create(Self);
  AScrollBox.Align:=alClient;
@@ -350,7 +351,7 @@ begin
  totalwidth:=WIdth;
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
- aheight:=calcdefaultheight;
+ aheight:=calcdefaultheight(Font.Size);
 
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
