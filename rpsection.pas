@@ -23,15 +23,15 @@ unit rpsection;
 interface
 
 uses Classes,rptypes,rpconsts,rpmunits,rpprintitem,rplabelitem,
- sysutils;
+ sysutils,rpmetafile;
 
 const
  C_DEFAULT_SECTION_WIDTH=19;
  C_DEFAULT_SECTION_HEIGHT=3;
 
 type
- TRpSectionType=(rpsecrheader,rpsecpheader,rpsecgheader,
-  rpsecdetail,rpsecgfooter,rpsecpfooter,rpsecrfooter);
+ TRpSectionType=(rpsecpheader,rpsecgheader,
+  rpsecdetail,rpsecgfooter,rpsecpfooter);
 
 
  TRpSection=class(TRpCommonComponent)
@@ -57,6 +57,7 @@ type
    procedure FreeComponents;
    procedure DeleteComponent(com:TRpCommonComponent);
    property SectionCaption:String read GetSectionCaption;
+   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   published
    property SubReport:TComponent read FSubReport write FSubReport;
    property GroupName:String read FGroupName write SetGroupName;
@@ -113,14 +114,6 @@ begin
   rpsecpfooter:
    begin
     Result:=SRpPageFooter;
-   end;
-  rpsecrheader:
-   begin
-    Result:=SRpReportHeader;
-   end;
-  rpsecrfooter:
-   begin
-    Result:=SRpReportFooter;
    end;
   rpsecgheader:
    begin
@@ -206,5 +199,14 @@ begin
  end;
 end;
 
+procedure TRpSection.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+var
+ i:integer;
+begin
+ for i:=0 to Components.Count-1 do
+ begin
+  Components.Items[i].Component.Print(aposx,aposy,metafile);
+ end;
+end;
 
 end.

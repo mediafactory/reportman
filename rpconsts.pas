@@ -35,7 +35,11 @@ resourcestring
   SRpNewGroup='New Group';
   SRpSGroupName='Group Name';
   SRpGroupAlreadyExists='Group already exists:';
-
+  SRpNoSpaceToPrint='No space to print ';
+  SRpSection='Section';
+  SRpNothingToPrint='Nothing to print';
+  SRpLastPageReached='Last page already reached';
+  SRPAliasNotExists='Data alias does not exists: ';
 
   SRpNoDatasets='No datasets defined';
   SRpSampleTextToLabels='Text';

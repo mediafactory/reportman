@@ -22,7 +22,8 @@ unit rpsubreport;
 
 interface
 
-uses Classes,SysUtils,rpsecutil,rpsection,rptypes,rpconsts;
+uses Classes,SysUtils,rpsecutil,rpsection,rptypes,rpconsts,
+ rplabelitem,rpprintitem;
 
 type
  TRpSubReport=class(TComponent)
@@ -32,23 +33,27 @@ type
    // Methots for writing internal indexes
    procedure SetSections(Value:TRpSectionList);
    function GetDetailCount:integer;
-   function GetDetail:integer;
+   function GetFirstDetail:integer;
+   function GetLastDetail:integer;
   protected
+   procedure FillGroupValues;
+   procedure CheckCurrentGroupChange;
   public
    // Creation and destruction
+   CurrentGroup:string;
    constructor Create(AOWner:TComponent);override;
    destructor Destroy;override;
    procedure CreateNew;
    procedure FreeSections;
    procedure FreeSection(sec:TRpSection);
-   procedure AddReportHeader;
    procedure AddPageHeader;
-   procedure AddReportFooter;
    procedure AddPageFooter;
    procedure CheckGroupExists(groupname:string);
    procedure AddGroup(groupname:string);
    procedure AddDetail;
-   property FirstDetail:integer read GetDetail;
+   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
+   property FirstDetail:integer read GetFirstDetail;
+   property LastDetail:integer read GetLastDetail;
    property DetailCount:integer read GetDetailCount;
   published
    property Sections:TRpSectionList read FSections write SetSections;
@@ -57,35 +62,7 @@ type
 
 implementation
 
-procedure TRpSubReport.AddReportHeader;
-var
- i:integer;
- sec:TRpSection;
-begin
- Sections.Add;
- // Move all sections one down
- for i:=Sections.count-2 downto 0 do
- begin
-  Sections.Items[i+1].Section:=Sections.Items[i].Section;
- end;
- sec:=TRpSection.Create(Owner);
- sec.SectionType:=rpsecrheader;
- sec.SubReport:=Self;
- Sections.Items[0].Section:=sec;
- Generatenewname(sec);
-end;
 
-procedure TRpSubReport.AddReportFooter;
-var
- sec:TRpSection;
-begin
- Sections.Add;
- sec:=TRpSection.Create(Owner);
- sec.SubReport:=Self;
- sec.SectionType:=rpsecrfooter;
- Sections.Items[Sections.Count-1].Section:=sec;
- Generatenewname(sec);
-end;
 
 procedure TRpSubReport.AddPageHeader;
 var
@@ -95,8 +72,6 @@ var
 begin
  // Search the index to insert the page header
  index:=0;
- while (Sections.Items[index].Section.SectionType=rpsecrheader) do
-  inc(index);
  // Move all sections one down
  Sections.Add;
  for i:=Sections.count-2 downto index do
@@ -119,7 +94,7 @@ var
 begin
  // Search the index to insert the page footer
  index:=0;
- while ((Sections.Items[index].Section.SectionType in [rpsecrheader..rpsecdetail])
+ while ((Sections.Items[index].Section.SectionType in [rpsecpheader..rpsecdetail])
        ) do
  begin
   inc(index);
@@ -148,7 +123,7 @@ var
 begin
  // Search the index to insert the page footer
  index:=0;
- while ((Sections.Items[index].Section.SectionType in [rpsecrheader..rpsecgfooter])
+ while ((Sections.Items[index].Section.SectionType in [rpsecpheader..rpsecgfooter])
        ) do
  begin
   inc(index);
@@ -196,7 +171,7 @@ begin
   Raise Exception.Create(SRpGroupNameRequired);
  // Search the index to insert the group header
  index:=0;
- while ((Sections.Items[index].Section.SectionType in [rpsecrheader..rpsecgheader])
+ while ((Sections.Items[index].Section.SectionType in [rpsecpheader..rpsecgheader])
        AND (index<Sections.Count)) do
  begin
   if (Sections.Items[index].Section.SectionType=rpsecgheader) then
@@ -220,7 +195,7 @@ begin
  Generatenewname(sec);
  // Search the index to insert the group footer
  index:=0;
- while ((Sections.Items[index].Section.SectionType in [rpsecrheader..rpsecdetail])
+ while ((Sections.Items[index].Section.SectionType in [rpsecpheader..rpsecdetail])
        ) do
  begin
   inc(index);
@@ -371,7 +346,7 @@ begin
  Result:=0;
 end;
 
-function TRpSubReport.GetDetail:integer;
+function TRpSubReport.GetFirstDetail:integer;
 var
  i:integer;
 begin
@@ -385,6 +360,75 @@ begin
    break;
   end;
   inc(i);
+ end;
+end;
+
+
+function TRpSubReport.GetLastDetail:integer;
+var
+ i:integer;
+begin
+ i:=0;
+ while i<Sections.Count do
+ begin
+  if Sections.Items[i].Section.SectionType=rpsecdetail then
+  begin
+   break;
+  end;
+  inc(i);
+ end;
+ while i<Sections.Count do
+ begin
+  if Sections.Items[i].Section.SectionType<>rpsecdetail then
+  begin
+   dec(i);
+   break;
+  end;
+  inc(i);
+ end;
+ dec(i);
+ Result:=i;
+end;
+
+
+procedure TRpSubReport.FillGroupValues;
+begin
+ CurrentGroup:='';
+end;
+
+procedure TRpSubReport.CheckCurrentGroupChange;
+begin
+
+end;
+
+
+procedure TRpSubReport.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
+var
+ i:integer;
+ j:integer;
+ sec:TRpSection;
+ compo:TRpCommonComponent;
+begin
+ // Updates group values
+ if newstate=rpReportStart then
+ begin
+  FillGroupValues;
+ end;
+ if newstate=rpDataChange then
+ begin
+  CheckCurrentGroupChange;
+ end;
+ for i:=0 to Sections.Count-1 do
+ begin
+  sec:=Sections.Items[i].Section;
+  for j:=0 to sec.Components.Count-1 do
+  begin
+   compo:=sec.Components.Items[j].Component;
+   if (compo is TRpExpression) then
+   begin
+    TRpExpression(compo).SubReportChanged(newstate,newgroup);
+   end;
+  end;
  end;
 end;
 

@@ -141,6 +141,7 @@ type
    destructor Destroy;override;
    procedure NewPage;
    procedure DrawPage(IDriver:IRpPrintDriver);
+   procedure DrawAll(IDriver:IRpPrintDriver);
    procedure DrawPageOnly(IDriver:IRpPrintDriver);
    procedure InsertPage(index:integer);
    procedure DeletePage(index:integer);
@@ -651,5 +652,28 @@ begin
   raise;
  end;
 end;
+
+procedure TRpMetafileReport.DrawAll(IDriver:IRpPrintDriver);
+var
+ i:integeR;
+begin
+ IDriver.NewDocument(self);
+ try
+  for i:=0 to PageCount-1 do
+  begin
+   if i>0 then
+    IDriver.NewPage;
+   CurrentPage:=i;
+   DrawPageOnly(IDriver);
+  end;
+  IDriver.EndPage;
+
+  IDriver.EndDocument;
+ except
+  IDriver.AbortDocument;
+  raise;
+ end;
+end;
+
 
 end.

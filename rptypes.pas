@@ -32,6 +32,7 @@ type
  TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull);
  TRpAggregate=(rpAgNone,rpAgGroup,rpAgPage,rpAgGeneral);
  TRpAggregateType=(rpagSum,rgagAvg,rpagStdDev);
+ TRpReportChanged=(rpReportStart,rpPageStart,rpDataChange,rpGroupChange,rpEndData);
 
  TRpPageSize=(rpPageSizeDefault,rpPageSizeCustom);
 
@@ -40,6 +41,13 @@ type
  // How to show preview
  TRpPreviewStyle = (spWide,spNormal,spEntirePage);
 
+ TRpReportException=class(Exception)
+  private
+   FComponent:TComponent;
+  public
+   constructor Create(AMessage:String;compo:TComponent);
+   property Component:TComponent read FComponent;
+  end;
 
 // Compares 2 streams and returns true if they are equal
 function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
@@ -52,6 +60,13 @@ var
 
 
 implementation
+
+
+constructor TRpReportException.Create(AMessage:String;compo:TComponent);
+begin
+ FComponent:=compo;
+ inherited Create(AMessage);
+end;
 
 function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
 const

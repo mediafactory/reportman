@@ -21,7 +21,8 @@ unit rplabelitem;
 
 interface
 
-uses Sysutils,Classes,rptypes,rpprintitem,rpconsts;
+uses Sysutils,Classes,rptypes,rpprintitem,rpconsts,
+ rpmetafile,rpeval,variants;
 
 type
  TRpLabel=class(TRpGenTextComponent)
@@ -34,6 +35,7 @@ type
    constructor Create(AOwner:TComponent);override;
    property Text:widestring read GetText write SetText;
    destructor Destroy;override;
+   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   published
    property AllText:TStrings read FAllText write SetAllText;
   end;
@@ -50,6 +52,9 @@ type
    procedure SetIdentifier(Value:string);
   public
    constructor Create(AOwner:TComponent);override;
+   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
+   function GetText:string;
+   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   published
    property Expression:widestring read FExpression write FExpression;
    property Identifier:string read FIdentifier write SetIdentifier;
@@ -118,6 +123,22 @@ begin
  Width:=1440;
 end;
 
+procedure TRpLabel.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+var
+ FontName:String;
+begin
+{$IFDEF LINUX}
+  FontName:=LFontName;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  FontName:=WFontName;
+{$ENDIF}
+ metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
+  aposx+PosX,width,height,Text,FontName,FontSize,
+  FontStyle,FOntColor,BackColor,Transparent);
+end;
+
+
 procedure TRpExpression.SetIdentifier(Value:string);
 var
  fidens:TStringList;
@@ -141,6 +162,53 @@ begin
  begin
   fidens.Add(FIdentifier);
  end;
+end;
+
+function TRpExpression.GetText:string;
+var
+ fevaluator:TRpEvaluator;
+begin
+ if Length(Trim(Expression))<1 then
+ begin
+  Result:='';
+  exit;
+ end;
+ try
+  fevaluator:=TRpREport(Owner).Evaluator;
+  fevaluator.Expression:=Expression;
+  fevaluator.Evaluate;
+  if VarIsNull(fevaluator.EvalResult) then
+   Result:=''
+  else
+   Result:=string(fevaluator.EvalResult);
+ except
+  on E:Exception do
+  begin
+   Raise TRpReportException.Create(E.Message+':'+SRpSExpression,self);
+  end;
+ end;
+end;
+
+procedure TRpExpression.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+var
+ FontName:String;
+ Text:string;
+begin
+ Text:=GetText;
+{$IFDEF LINUX}
+  FontName:=LFontName;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  FontName:=WFontName;
+{$ENDIF}
+  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
+   aposx+PosX,width,height,Text,FontName,FontSize,
+   FontStyle,FOntColor,BackColor,Transparent);
+end;
+
+procedure TRpExpression.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
+begin
+
 end;
 
 

@@ -21,7 +21,8 @@ unit rpprintitem;
 
 interface
 
-uses Sysutils,Classes,rptypes,rpconsts;
+uses Sysutils,Classes,rptypes,rpconsts,types,
+ rpeval,rpmetafile;
 
 type
 
@@ -33,6 +34,9 @@ type
    FPrintCondition:string;
   public
    constructor Create(AOwner:TComponent);override;
+   function GetExtension:TPoint;virtual;
+   function EvaluatePrintCondition:boolean;
+   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);virtual;
   published
    property PrintCondition:string read FPrintCondition write FPrintCondition;
    property DoBeforePrint:string read FDoBeforePrint write FDoBeforePrint;
@@ -111,6 +115,39 @@ begin
  inherited Create(AOwner);
  FHeight:=0;
  FWidth:=0;
+end;
+
+function TRpCommonComponent.GetExtension:TPoint;
+begin
+ Result.X:=Width;
+ Result.Y:=Height;
+end;
+
+function TRpCommonComponent.EvaluatePrintCondition:boolean;
+var
+ fevaluator:TRpEvaluator;
+begin
+ if Length(Trim(PrintCondition))<1 then
+ begin
+  Result:=true;
+  exit;
+ end;
+ try
+  fevaluator:=TRpREport(Owner).Evaluator;
+  fevaluator.Expression:=PrintCondition;
+  fevaluator.Evaluate;
+  Result:=fevaluator.EvalResult;
+ except
+  on E:Exception do
+  begin
+   Raise TRpReportException.Create(E.Message+':'+SRpSPrintCondition,self);
+  end;
+ end;
+end;
+
+procedure TRpCommonComponent.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+begin
+
 end;
 
 constructor TrpCOmmonList.Create(sec:TComponent);

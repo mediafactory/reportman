@@ -73,7 +73,7 @@ begin
   bitmap:=TBitmap.Create;
   bitmap.PixelFormat:=pf32bit;
   bitmap.Width:=Round(report.CustomX*dpi/(CMS_PER_INCHESS*100));
-  bitmap.Height:=Round(report.CustomX*dpi/(CMS_PER_INCHESS*100));
+  bitmap.Height:=Round(report.CustomY*dpi/(CMS_PER_INCHESS*100));
  end;
 end;
 

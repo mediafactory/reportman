@@ -64,14 +64,10 @@ type
     MReport: TMenuItem;
     ANewPageHeader: TAction;
     Newpageheader1: TMenuItem;
-    ANewReportHeader: TAction;
     MAdd: TMenuItem;
-    Reportheader1: TMenuItem;
     ANewPageFooter: TAction;
-    ANewReportFooter: TAction;
     ANewGroup: TAction;
     Pagefooter1: TMenuItem;
-    Reportfooter1: TMenuItem;
     Groupheaderandfooter1: TMenuItem;
     ANewSubreport: TAction;
     Subreport1: TMenuItem;
@@ -124,9 +120,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ANewPageHeaderExecute(Sender: TObject);
-    procedure ANewReportHeaderExecute(Sender: TObject);
     procedure ANewPageFooterExecute(Sender: TObject);
-    procedure ANewReportFooterExecute(Sender: TObject);
     procedure ANewGroupExecute(Sender: TObject);
     procedure ANewSubreportExecute(Sender: TObject);
     procedure ADeleteSelectionExecute(Sender: TObject);
@@ -302,9 +296,7 @@ begin
  ASaveas.Enabled:=false;
  MReport.Visible:=false;
  ANewPageHeader.Enabled:=false;
- ANewReportHeader.Enabled:=false;
  ANewPageFooter.Enabled:=false;
- ANewReportFooter.Enabled:=false;
  ANewGroup.Enabled:=false;
  ANewSubReport.Enabled:=false;
  ADeleteSelection.Enabled:=false;
@@ -355,9 +347,7 @@ begin
  APageSetup.Enabled:=True;
  MReport.Visible:=True;
  ANewPageHeader.Enabled:=True;
- ANewReportHeader.Enabled:=True;
  ANewPageFooter.Enabled:=True;
- ANewReportFooter.Enabled:=True;
  ANewGroup.Enabled:=True;
  ANewSubReport.Enabled:=True;
  ADeleteSelection.Enabled:=true;
@@ -557,32 +547,12 @@ begin
  CreateInterface;
 end;
 
-procedure TFMainf.ANewReportHeaderExecute(Sender: TObject);
-begin
- // Inserts a new page report header
- Assert(report<>nil,'Called AddNewReportHeader without a report assigned');
-
- freportstructure.FindSelectedSubreport.AddReportHeader;
- FreeInterface;
- CreateInterface;
-end;
-
 procedure TFMainf.ANewPageFooterExecute(Sender: TObject);
 begin
  // Inserts a new page footer
  Assert(report<>nil,'Called AddNewPageFooter without a report assigned');
 
  freportstructure.FindSelectedSubreport.AddPageFooter;
- FreeInterface;
- CreateInterface;
-end;
-
-procedure TFMainf.ANewReportFooterExecute(Sender: TObject);
-begin
- // Inserts a new report footer
- Assert(report<>nil,'Called AddNewReportFooter without a report assigned');
-
- freportstructure.FindSelectedSubreport.AddReportFooter;
  FreeInterface;
  CreateInterface;
 end;

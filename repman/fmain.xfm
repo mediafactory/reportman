@@ -290,14 +290,8 @@ object FMainf: TFMainf
         object Newpageheader1: TMenuItem
           Action = ANewPageHeader
         end
-        object Reportheader1: TMenuItem
-          Action = ANewReportHeader
-        end
         object Pagefooter1: TMenuItem
           Action = ANewPageFooter
-        end
-        object Reportfooter1: TMenuItem
-          Action = ANewReportFooter
         end
         object Groupheaderandfooter1: TMenuItem
           Action = ANewGroup
@@ -395,26 +389,12 @@ object FMainf: TFMainf
       Hint = 'Inserts a page header in the selected subreport'
       OnExecute = ANewPageHeaderExecute
     end
-    object ANewReportHeader: TAction
-      Category = 'Report'
-      Caption = 'Report header'
-      Enabled = False
-      Hint = 'Inserts a report header in the selected subreport'
-      OnExecute = ANewReportHeaderExecute
-    end
     object ANewPageFooter: TAction
       Category = 'Report'
       Caption = 'Page footer'
       Enabled = False
       Hint = 'Inserts a page footer in the selected subreport'
       OnExecute = ANewPageFooterExecute
-    end
-    object ANewReportFooter: TAction
-      Category = 'Report'
-      Caption = 'Report footer'
-      Enabled = False
-      Hint = 'Inserts a report footer in the selected subreport'
-      OnExecute = ANewReportFooterExecute
     end
     object ANewGroup: TAction
       Category = 'Report'

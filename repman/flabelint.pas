@@ -152,7 +152,7 @@ begin
  inherited GetProperties(lnames,ltypes,lvalues);
  // Text
  lnames.Add(SrpSExpression);
- ltypes.Add(SRpSString);
+ ltypes.Add(SRpSExpression);
  lvalues.Add(TRpExpression(printitem).Expression);
 end;
 

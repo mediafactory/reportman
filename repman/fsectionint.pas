@@ -203,8 +203,7 @@ begin
   ltypes.Add(SRpSBool);
   lvalues.Add(BoolToStr(TRpSection(printitem).PageRepeat,true));
  end;
- if (TrpSection(printitem).SectionType in [rpsecrheader,rpsecrfooter,
-     rpsecgheader,rpsecgfooter,rpsecdetail]) then
+ if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter,rpsecdetail]) then
  begin
   lnames.Add(SRpSBeginPage);
   ltypes.Add(SRpSBool);
@@ -258,8 +257,7 @@ begin
    exit;
   end;
  end;
- if (TrpSection(printitem).SectionType in [rpsecrheader,rpsecrfooter,
-     rpsecgheader,rpsecgfooter,rpsecdetail]) then
+ if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter,rpsecdetail]) then
  begin
   if pname=SRPSBeginPage then
   begin
@@ -315,8 +313,7 @@ begin
    exit;
   end;
  end;
- if (TrpSection(printitem).SectionType in [rpsecrheader,rpsecrfooter,
-     rpsecgheader,rpsecgfooter,rpsecdetail]) then
+ if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter,rpsecdetail]) then
  begin
   if pname=SRPSBeginPage then
   begin

@@ -28,13 +28,17 @@ unit rpreport;
 interface
 
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpconsts,
- rpdatainfo,rpparams,rplabelitem,rpdrawitem,rpeval;
+ rpdatainfo,rpparams,rplabelitem,rpdrawitem,rpeval,
+ rpmetafile,types,rpalias,db,rpmunits;
 
 const
  // 1 cms=574
  // 0.5 cms=287
  CONS_DEFAULT_GRIDWIDTH=115;
  CONS_DEFAULT_GRIDCOLOR=$FF0000;
+ // 29,7/2.51*1440
+ DEFAULT_PAGEHEIGHT=17039;
+ DEFAULT_PAGEWIDTH=12048;
 type
  TRpReport=class;
  TRpSubReportListItem=class;
@@ -84,6 +88,8 @@ type
    FLanguage:integer;
    FEvaluator:TRpEvaluator;
    FIdentifiers:TStringList;
+   FMetafile:TRpMetafileReport;
+   FDataAlias:TRpAlias;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -91,16 +97,21 @@ type
    procedure SetDatabaseInfo(Value:TRpDatabaseInfoList);
    procedure SetParams(Value:TRpParamList);
   protected
+    section:TRpSection;
     procedure Notification(AComponent:TComponent;Operation:TOperation);override;
     procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
     procedure Loaded;override;
+    function NextSection:boolean;
+    procedure NextRecord;
   public
    printing:boolean;
    CurrentSubReportIndex:integer;
    CurrentSectionIndex:integer;
    PageNum:integer;
+   LastPage:Boolean;
+   LastRecord:Boolean;
+   property Metafile:TRpMetafileReport read FMetafile;
    property Identifiers:TStringList read FIdentifiers;
-
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    procedure FreeSubreports;
@@ -117,7 +128,10 @@ type
    // Print functions
    procedure ActivateDatasets;
    procedure DeActivateDatasets;
-   property Evaluator:TRpEvaluator read FEvaluator write FEvaluator;
+   property Evaluator:TRpEvaluator read FEvaluator;
+   procedure BeginPrint;
+   procedure EndPrint;
+   function PrintNextPage:boolean;
   published
    // Grid options
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
@@ -131,8 +145,10 @@ type
     write FPageOrientation default rpOrientationDefault;
    property Pagesize:TRpPageSize read FPagesize write FPageSize
      default rpPageSizeDefault;
-   property PageHeight:TRpTwips read FPageHeight write FPageHeight default 0;
-   property PageWidth:TRpTwips read FPageWidth write FPageWidth default 0;
+   property PageHeight:TRpTwips read FPageHeight write FPageHeight
+    default DEFAULT_PAGEHEIGHT;
+   property PageWidth:TRpTwips read FPageWidth write FPageWidth
+    default DEFAULT_PAGEWIDTH;
    property PageBackColor:TRpColor read FPageBackColor write FPageBackColor;
    property PreviewStyle:TRpPreviewStyle read FPreviewStyle
     write FPreviewStyle default spWide;
@@ -148,7 +164,7 @@ type
 
 implementation
 
-uses rpprintitem;
+uses rpprintitem, rpsecutil;
 
 // Constructors and destructors
 constructor TRpReport.Create(AOwner:TComponent);
@@ -160,8 +176,8 @@ begin
  FPagesize:=rpPageSizeDefault;
   // Means white
  FPageBackColor:=High(FPageBackColor);
- FPageWidth:=0;
- FPageheight:=0;
+ FPageWidth:=DEFAULT_PAGEWIDTH;
+ FPageheight:=DEFAULT_PAGEHEIGHT;
  FPreviewStyle:=spWide;
  // Def values of grid
  FGridVisible:=True;
@@ -180,6 +196,9 @@ begin
  FIdentifiers:=TStringList.Create;
  FIdentifiers.Sorted:=true;
  FIdentifiers.Duplicates:=dupError;
+ // Metafile
+ FMetafile:=TRpMetafileReport.Create(nil);
+ FDataAlias:=TRpAlias.Create(nil);
 end;
 
 destructor TRpReport.Destroy;
@@ -189,6 +208,8 @@ begin
  FDatabaseInfo.free;
  FParams.free;
  FIdentifiers.free;
+ FMetafile.Free;
+ FDataAlias.Free;
  inherited destroy;
 end;
 
@@ -439,10 +460,6 @@ begin
  inherited SetItem(Index,Value);
 end;
 
-
-
-
-
 procedure TRpReport.DeleteSubReport(subr:TRpSubReport);
 var
  i:integer;
@@ -471,9 +488,7 @@ var
  i:integer;
 begin
  if FDataInfo.Count<1 then
- begin
-  Raise Exception.Create(SRpNoDatasets);
- end;
+  exit;
  try
   for i:=0 to FDataInfo.Count-1 do
   begin
@@ -499,12 +514,220 @@ begin
 end;
 
 
+
+procedure TRpReport.EndPrint;
+begin
+ DeActivateDatasets;
+ FEvaluator.Free;
+ FEvaluator:=nil;
+ printing:=false;
+end;
+
+
+procedure TRpReport.NextRecord;
+var
+ subrep:TRpSubreport;
+ index:integeR;
+ data:TDataset;
+begin
+ subrep:=Subreports.Items[CurrentSubreportIndex].SubReport;
+ if Length(Trim(subrep.Alias))<1 then
+  Lastrecord:=True
+ else
+ begin
+  index:=DataInfo.IndexOf(subrep.Alias);
+  if index<0 then
+   Raise TRpReportException.Create(SRPAliasNotExists+subrep.alias,subrep);
+  data:=DataInfo.Items[index].Dataset;
+  data.Next;
+  LastRecord:=data.Eof;
+ end;
+end;
+
+function TRpReport.NextSection:boolean;
+var
+ subrep:TRpSubreport;
+ sec:TRpSection;
+ oldsection:TRpSection;
+begin
+ Result:=true;
+ oldsection:=section;
+ section:=nil;
+ // Check the condition
+ while CurrentSubReportIndex<Subreports.count do
+ begin
+  subrep:=Subreports.Items[CurrentSubReportIndex].SubReport;
+  while CurrentSectionIndex<subrep.Sections.Count do
+  begin
+   if CurrentSectionIndex<0 then
+    CurrentSectionIndex:=subrep.FirstDetail
+   else
+    inc(CurrentSectionIndex);
+   if Not LastRecord then
+   begin
+    if CurrentSectionIndex>subrep.LastDetail then
+    begin
+     NextRecord;
+     if Not LastRecord then
+     begin
+      CurrentSectionIndex:=subrep.FirstDetail;
+      sec:=Subrep.Sections.Items[CurrentSectionIndex].Section;
+      if sec.EvaluatePrintCondition then
+      begin
+       Section:=sec;
+       break;
+      end;
+     end;
+    end
+    else
+    begin
+     if CurrentSectionIndex<=subrep.LastDetail then
+     begin
+      sec:=Subrep.Sections.Items[CurrentSectionIndex].Section;
+      if sec.EvaluatePrintCondition then
+      begin
+       Section:=sec;
+       break;
+      end;
+     end;
+    end;
+   end;
+  end;
+  if Not assigned(Section) then
+  begin
+   inc(CurrentSubReportIndex);
+   if CurrentSubReportIndex>=Subreports.count then
+    break;
+   subrep:=Subreports.Items[CurrentSubReportIndex].SubReport;
+   CurrentSectionIndex:=-1;
+//    subrep.UpdateGroupValues;
+   LastRecord:=false;
+  end
+  else
+   break;
+ end;
+ Result:=Assigned(Section);
+end;
+
+procedure TRpReport.BeginPrint;
+var
+ i:integer;
+ item:TRpAliaslistItem;
+begin
+ metafile.Clear;
+ metafile.CustomX:=Round((PageWidth/1440)*251);
+ metafile.CustomY:=Round((PageHeight/1440)*251);
+ LastPage:=false;
+ LastRecord:=false;
+ EndPrint;
+ PageNum:=-1;
+ CurrentSubReportIndex:=0;
+ ActivateDatasets;
+ // Evaluator
+ FEvaluator:=TRpEvaluator.Create(self);
+ // Insert params into rpEvaluator
+ for i:=0 to Params.Count-1 do
+ begin
+  FEvaluator.NewVariable(params.items[i].Name,params.items[i].Value);
+ end;
+ // Sends the message report header to all components
+ Subreports.Items[0].Subreport.SubReportChanged(rpReportStart);
+ FDataAlias.List.Clear;
+ for i:=0 to DataInfo.Count-1 do
+ begin
+  item:=FDataAlias.List.Add;
+  item.Alias:=DataInfo.Items[i].Alias;
+  item.Dataset:=DataInfo.Items[i].Dataset;
+ end;
+ FEvaluator.Rpalias:=FDataAlias;
+ CurrentSectionIndex:=-1;
+ section:=nil;
+ if Not NextSection then
+ begin
+  EndPrint;
+  Raise Exception.Create(SRpNothingToPrint);
+ end;
+ printing:=True;
+end;
+
+
+function TRpReport.PrintNextPage:boolean;
+var
+ printedsomething:boolean;
+ pageposy,pageposx:integer;
+ subreport:TRpSubreport;
+ sectionext:TPoint;
+ freespace:integer;
+
+
+function CheckSpace:boolean;
+begin
+ sectionext:=Section.GetExtension;
+ Result:=true;
+ if sectionext.Y>freespace then
+ begin
+  if printedsomething then
+  begin
+   Result:=false;
+  end
+  else
+  begin
+   Raise Exception.Create(SRpNoSpaceToPrint+
+    SRpSubReport+':'+IntToStr(CurrentSubReportIndex)+
+    SRpSection+':'+IntToStr(CurrentSectionIndex));
+  end;
+ end;
+end;
+
+procedure PrintFixedSections;
+begin
+end;
+
+procedure PrintSection;
+begin
+ printedsomething:=true;
+ section.Print(pageposx,pageposy,metafile);
+ freespace:=freespace-sectionext.Y;
+ pageposy:=pageposy+sectionext.Y;
+end;
+
+begin
+ if Not Assigned(Section) then
+  Raise Exception.Create(SRpLastPageReached);
+ pageposy:=0;
+ pageposx:=0;
+ printedsomething:=false;
+ inc(Pagenum);
+ if fmetafile.PageCount<=PageNum then
+ begin
+  fmetafile.NewPage;
+ end;
+ fmetafile.CurrentPage:=PageNum;
+ // Tries to print at least a report header
+ subreport:=FSubReports.Items[CurrentSubReportIndex].FSubReport;
+ freespace:=Pageheight;
+
+ // Fills the page with fixed sections
+ PrintFixedSections;
+
+ while Assigned(section)  do
+ begin
+  if Not CheckSpace then
+   break;
+  PrintSection;
+  NextSection;
+ end;
+ Result:=Not Assigned(Section);
+ LastPage:=Result;
+end;
+
+
+
 initialization
  // Need clas registration to be streamable
  RegisterClass(TRpSection);
  RegisterClass(TRpReport);
  RegisterClass(TRpSubReport);
-// RegisterClass(TRpCommonComponent);
  RegisterClass(TRpImage);
  RegisterClass(TRpShape);
  RegisterClass(TRpLabel);
