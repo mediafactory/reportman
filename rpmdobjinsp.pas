@@ -237,6 +237,7 @@ begin
  PParent:=TPanel.Create(Self);
  PParent.Left:=0;
  PParent.Width:=0;
+ PParent.Height:=500;
  PParent.Parent:=AScrollBox;
  PPArent.BorderStyle:=bsNone;
  PParent.BevelInner:=bvNone;
@@ -256,6 +257,8 @@ begin
  ComboAlias.Top:=Posy;
  ComboAlias.Left:=CONS_CONTROLPOS;
  ComboAlias.Width:=TotalWidth-ComboAlias.Left-CONS_RIGHTBARGAP;
+ // A item must be added so the control height is calculated
+ ComboAlias.Items.Add('');
  ComboAlias.parent:=PParent;
  ComboAlias.Anchors:=[akleft,aktop,akright];
 
@@ -359,6 +362,8 @@ begin
    TComboBox(Control).Items.Add(TrueBoolStrs[0]);
    TComboBox(Control).Style:=csDropDownList;
    TCOmboBox(Control).OnChange:=EditChange;
+   if control.height=0 then
+    Control.Height:=Abs(TComboBox(Control).Font.height*2);
   end
   else
   if LTypes.Strings[i]=SRpSList then
@@ -475,10 +480,9 @@ begin
    Control2.Parent:=PParent;
    Control2.Anchors:=[aktop,akright];
   end;
-
   posy:=posy+control.height;
  end;
-
+ PParent.Height:=posy;
  // Send to back and bring to front buttons
  if (FCompItem is TRpSizePosInterface) then
  begin
