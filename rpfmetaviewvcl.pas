@@ -31,9 +31,7 @@ uses
 {$ENDIF}
   Classes, Graphics, Controls, Forms,
   StdCtrls,rpmetafile, ComCtrls,ExtCtrls,
-{$IFNDEF FORWEBAX}
-  rpmdclitreevcl,
-{$ENDIF}
+  rpmdclitreevcl,rpexceldriver,rptextdriver,
   ActnList, ImgList,Printers,rpmdconsts,rptypes, Menus,
   rpmdfaboutvcl,rpmdshfolder,rpmdprintconfigvcl,
   ToolWin;
@@ -175,9 +173,7 @@ type
     procedure ShowHelp(AURL:string);
   public
     { Public declarations }
-{$IFNDEF FORWEBAX}
     clitree:TFRpCliTreeVCL;
-{$ENDIF}
     ShowPrintDialog:Boolean;
     pagenum:integer;
     metafile:TRpMetafileReport;
@@ -191,6 +187,7 @@ type
       Shift: TShiftState);
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
+    procedure CreateClitree;
     procedure PrintPage;
   end;
 
@@ -202,6 +199,15 @@ implementation
 uses rppdfdriver;
 
 {$R *.dfm}
+
+procedure TFRpMetaVCL.CreateClitree;
+begin
+ clitree:=TFRpCliTreeVCL.Create(Self);
+ clitree.Align:=alLeft;
+ clitree.Parent:=Self;
+ clitree.OnExecuteServer:=ExecuteServer;
+ LoadConfig;
+end;
 
 procedure TFRpMetaVCL.SetForm(Value:TWinControl);
 begin
@@ -286,13 +292,9 @@ begin
  configfile:=Obtainininameuserconfig('','','repmand');
  SaveDialog1.Filter:=SRpRepMetafile+'|*.rpmf|'+
    SRpPDFFile+'|*.pdf|'+
-   SRpPDFFileUn+'|*.pdf';
-{$IFNDEF FORWEBAX}
- clitree:=TFRpCliTreeVCL.Create(Self);
- clitree.Align:=alLeft;
- clitree.Parent:=Self;
- clitree.OnExecuteServer:=ExecuteServer;
-{$ENDIF}
+   SRpPDFFileUn+'|*.pdf|'+
+   SRpExcelFile+'|*.xls|'+
+   SRpPlainFile+'|*.txt';
  MHelp.Caption:=TranslateStr(6,MHelp.Caption);
  AAbout.Caption:=TranslateStr(58,AAbout.Caption);
  AAbout.Hint:=TranslateStr(59,AABout.Hint);
@@ -482,6 +484,18 @@ begin
       SaveMetafileToPDF(metafile,SaveDialog1.filename,true)
      else
       SaveMetafileToPDF(metafile,SaveDialog1.filename,false);
+    end
+    else
+    if SaveDialog1.FilterIndex=4 then
+    begin
+     ALastExecute(Self);
+     ExportMetafileToExcel(Metafile,SaveDialog1.FileName,
+      true,false,true,1,9999);
+    end
+    else
+    begin
+     ALastExecute(Self);
+     SaveMetafileToTextFile(Metafile,SaveDialog1.FileName);
     end;
  finally
    EnableButtons;
@@ -725,18 +739,19 @@ end;
 
 procedure TFRpMetaVCL.ExecuteServer(Sender:TObject);
 begin
-{$IFNDEF FORWEBAX}
- metafile.LoadFromStream(clitree.Stream);
- ASave.Enabled:=True;
- APrint.Enabled:=True;
- AFirst.Enabled:=True;
- APrevious.Enabled:=True;
- ANext.Enabled:=True;
- ALast.Enabled:=True;
- pagenum:=1;
- PrintPage;
- FormResize(Self);
-{$ENDIF}
+ if assigned(clitree) then
+ begin
+  metafile.LoadFromStream(clitree.Stream);
+  ASave.Enabled:=True;
+  APrint.Enabled:=True;
+  AFirst.Enabled:=True;
+  APrevious.Enabled:=True;
+  ANext.Enabled:=True;
+  ALast.Enabled:=True;
+  pagenum:=1;
+  PrintPage;
+  FormResize(Self);
+ end;
 end;
 
 procedure TFRpMetaVCL.AAboutExecute(Sender: TObject);
@@ -747,10 +762,11 @@ end;
 procedure TFRpMetaVCL.AViewConnectExecute(Sender: TObject);
 begin
  AViewConnect.Checked:=Not AViewConnect.Checked;
-{$IFNDEF FORWEBAX}
- clitree.Width:=clitree.Initialwidth;
- clitree.Visible:=AViewConnect.Checked;
-{$ENDIF}
+ if assigned(clitree) then
+ begin
+  clitree.Width:=clitree.Initialwidth;
+  clitree.Visible:=AViewConnect.Checked;
+ end;
  FormResize(Self);
 end;
 
@@ -772,12 +788,13 @@ begin
   BStatus.Visible:=inif.ReadBool('Preferences','StatusBar',True);
   AStatusBar.Checked:=BStatus.Visible;
   AViewConnect.Checked:=inif.ReadBool('Preferences','DiagConnect',True);
-{$IFNDEF FORWEBAX}
-  clitree.Visible:=AViewConnect.Checked;
-  clitree.ComboHost.Text:=inif.ReadString('Preferences','Host','localhost');
-  clitree.EUserName.Text:=inif.ReadString('Preferences','UserName','Admin');
-  clitree.asynchrohous:=AAsyncexec.Checked;
-{$ENDIF}
+  if assigned(clitree) then
+  begin
+   clitree.Visible:=AViewConnect.Checked;
+   clitree.ComboHost.Text:=inif.ReadString('Preferences','Host','localhost');
+   clitree.EUserName.Text:=inif.ReadString('Preferences','UserName','Admin');
+   clitree.asynchrohous:=AAsyncexec.Checked;
+  end;
   AAsyncExec.Checked:=inif.ReadBool('Preferences','AsyncExec',False);;
   printerindex:=TRpPrinterSelect(inif.ReadInteger('Preferences','PrinterIndex',Integer(pRpDefaultPrinter)));
   UpdatePrintSel;
@@ -794,10 +811,11 @@ begin
  try
   inif.WriteBool('Preferences','StatusBar',BStatus.Visible);
   inif.WriteInteger('Preferences','PrinterIndex',Integer(printerindex));
-{$IFNDEF FORWEBAX}
-  inif.WriteString('Preferences','Host',clitree.ComboHost.Text);
-  inif.WriteString('Preferences','UserName',clitree.EUserName.Text);
-{$ENDIF}
+  if assigned(clitree) then
+  begin
+   inif.WriteString('Preferences','Host',clitree.ComboHost.Text);
+   inif.WriteString('Preferences','UserName',clitree.EUserName.Text);
+  end;
   inif.WriteBool('Preferences','AsyncExec',AAsyncExec.Checked);;
   inif.WriteBool('Preferences','DiagConnect',AViewConnect.Checked);
   inif.UpdateFile;
@@ -858,9 +876,8 @@ end;
 procedure TFRpMetaVCL.AAsyncExecExecute(Sender: TObject);
 begin
  AAsyncExec.Checked:=Not AAsyncExec.checked;
-{$IFNDEF FORWEBAX}
- clitree.asynchrohous:=AAsyncexec.Checked;
-{$ENDIF}
+ if assigned(clitree) then
+  clitree.asynchrohous:=AAsyncexec.Checked;
 end;
 
 end.

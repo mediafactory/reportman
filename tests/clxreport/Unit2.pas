@@ -2,14 +2,8 @@ unit Unit2;
 
 interface
 
-{$I rpconf.inc}
-
 uses
-  Windows, Messages, SysUtils,
-{$IFDEF USEVARIANTS}
-  Variants,
-{$ENDIF}
-  Classes, Graphics, Controls, Forms,
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, rpcompobase, rpvclreport, DB, DBTables, rppdfreport,
   rpreport,rppdfdriver;
 
@@ -64,7 +58,7 @@ begin
   try
    astream.Clear;
 //   rppdfdriver.PrintReportPDFStream(pdfreport,'',false,true,1,9999,1,
-//    astream,true,);
+//    astream,true);
    astream.Seek(0,soFromBeginning);
    astream.SaveToFile('prova.pdf');
   finally
@@ -76,8 +70,15 @@ begin
 end;
 
 procedure TForm1.Button3Click(Sender: TObject);
+var
+ VCLReport2:TVCLReport;
 begin
- VCLReport1.ExecuteRemote('localhost',3060,'admin','','SAMPLE','sample2.rep');
+ VCLReport2:=TVCLReport.Create(nil);
+ try
+  VCLReport2.ExecuteRemote('localhost',3060,'Admin','','SAMPLE','sampl.rep');
+ finally
+  VCLReport2.free;
+ end;
 end;
 
 end.

@@ -625,7 +625,6 @@ var
   SRpParseParamsH:WideString='         -paramPARAMNAME=paramvalue  Assign a value to a parameter';
   SrpSClearExpChart:WideString='Clear expression';
   SrpSBoolClearExp:WideString='Bool C.expression';
-  // Translate from here
   SRpStreamFormat:WideString='Invalid Stream format';
   SRpZLibNotSupported:WideString='ZLib Streams not supported';
   SRpPreferedFormat:WideString='Prefered save format';
@@ -691,7 +690,6 @@ var
   SRpNobitBlockScroll:WideString='No bitblock scroll';
   SRpExcelFile:WideString='Excel file';
   SRpExcelNotSupported:WideString='Excel not supported';
-  SRpPrintConditionHint:WideString='Boolean expression, if evaluated to false this component/section will not print, this is a multiline hint it spans auto across some lines because it does not fit in screen, well may be if a high resolution is selected this hint will be visible in only ';
   SRpFieldsFileNotDefined:WideString='Fields file not defined';
   SRpSMemo:WideString='Memo';
   SRpSInvReportHandle:WideString='Invalid report handle';
@@ -740,7 +738,7 @@ var
   SRpErrorCreatePipe:WideString='Error creating pipe';
   SRpErrorForking:WideString='Error creating fork';
   SRpCreatingTempFile:WideString='Error creating temporary file';
-  //SRpPrintRep9,SRpPrintRep10:
+  SRpPlainFile:WideString='Text file';
 
 implementation
 
@@ -1354,6 +1352,90 @@ begin
  TranslateVar(965,SRpParseParamsH);
  TranslateVar(966,SrpSClearExpChart);
  TranslateVar(967,SrpSBoolClearExp);
+ TranslateVar(968,SRpStreamFormat);
+ TranslateVar(969,SRpZLibNotSupported);
+ TranslateVar(970,SRpPreferedFormat);
+ TranslateVar(971,SRpStreamZLib);
+ TranslateVar(972,SRpStreamBinary);
+ TranslateVar(973,SRpStreamText);
+ TranslateVar(974,SRpSOptions);
+ TranslateVar(975,SRpSReady);
+ TranslateVar(976,SRpSsysInfo);
+ TranslateVar(977,SRpSsysInfoH);
+ TranslateVar(978,SRpSHighResolution);
+ TranslateVar(979,SRpSMediumResolution);
+ TranslateVar(980,SRpSLowResolution);
+ TranslateVar(981,SRpSDraftResolution);
+ TranslateVar(982,SRpSColorPrinting);
+ TranslateVar(983,SRpSMonoPrinting);
+ TranslateVar(984,SRSPlotter);
+ TranslateVar(985,SRSRasterDisplay);
+ TranslateVar(986,SRSRasterPrinter);
+ TranslateVar(987,SRSRasterCamera);
+ TranslateVar(988,SRSCharStream);
+ TranslateVar(989,SRSDisplayFile);
+ TranslateVar(990,SRpSMetafile);
+ TranslateVar(991,SRpSPolyline);
+ TranslateVar(992,SRpSmarker);
+ TranslateVar(993,SRpSPolyMarker);
+ TranslateVar(994,SRpSWideCap);
+ TranslateVar(995,SRpSSTyledCap);
+ TranslateVar(996,SRpSWideSTyledCap);
+ TranslateVar(997,SRpSInteriorsCap);
+ TranslateVar(998,SRpSPolygon);
+ TranslateVar(999,SRpSRectanglecap);
+ TranslateVar(1000,SRpSWindPolygon);
+ TranslateVar(1001,SRpSSCANLINE);
+ TranslateVar(1002,SRpSCircleCap);
+ TranslateVar(1003,SRpSPiecap);
+ TranslateVar(1004,SRpSCHordCap);
+ TranslateVar(1005,SRpSEllipses);
+ TranslateVar(1006,SRpSRoundRectCap);
+ TranslateVar(1007,SRpSBandingRequired);
+ TranslateVar(1008,SRpSBitmapTransfer);
+ TranslateVar(1009,SRpSBitmapTransfer64);
+ TranslateVar(1010,SRpSDIBTransfer);
+ TranslateVar(1011,SRpSDIBDevTransfer);
+ TranslateVar(1012,SRpSFloodFillcap);
+ TranslateVar(1013,SRpSGDI20Out);
+ TranslateVar(1014,SRPSPaletteDev);
+ TranslateVar(1015,SRpSScalingCap);
+ TranslateVar(1016,SRpSStretchCap);
+ TranslateVar(1017,SRpSStretchDIBCap);
+ TranslateVar(1018,SRpSCharOutput);
+ TranslateVar(1019,SRpSCharStroke);
+ TranslateVar(1020,SRpSClipStroke);
+ TranslateVar(1021,SRpS90Rotation);
+ TranslateVar(1022,SRpSAnyRotation);
+ TranslateVar(1023,SRpSScaleXY);
+ TranslateVar(1024,SRpSDoubleChar);
+ TranslateVar(1025,SRpSIntegerScale);
+ TranslateVar(1026,SRpSAnyrScale);
+ TranslateVar(1027,SRpSDoubleWeight);
+ TranslateVar(1028,SRpRasterFonts);
+ TranslateVar(1029,SRpVectorFonts);
+ TranslateVar(1030,SRpNobitBlockScroll);
+ TranslateVar(1031,SRpExcelFile);
+ TranslateVar(1032,SRpExcelNotSupported);
+ TranslateVar(1033,SRpFieldsFileNotDefined);
+ TranslateVar(1034,SRpSMemo);
+ TranslateVar(1035,SRpSInvReportHandle);
+ TranslateVar(1036,SRpSNotAvail);
+ TranslateVar(1037,SRpLinesPerInchIncorrect);
+ TranslateVar(1038,SRpStepBySize);
+ TranslateVar(1039,SRpSFontStep);
+ TranslateVar(1040,SRpDBExpressDesc);
+ TranslateVar(1041,SRpMybaseDesc);
+ TranslateVar(1042,SRpIBXDesc);
+ TranslateVar(1043,SRpBDEDesc);
+ TranslateVar(1044,SRpADODesc);
+ TranslateVar(1045,SRpIBODesc);
+ TranslateVar(1046,SRpErrorCreatePipe);
+ TranslateVar(1047,SRpErrorForking);
+ TranslateVar(1048,SRpCreatingTempFile);
+ TranslateVar(1049,SRpPlainFile);
+ TranslateVar(1050,SRpPrintRep9);
+ TranslateVar(1051,SRpPrintRep10);
 end;
 
 {$IFDEF LINUX}

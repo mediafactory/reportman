@@ -24,5 +24,6 @@ begin
   Application.Initialize;
   Application.Title := 'Report manager metafile report viewer';
   Application.CreateForm(TFRpMainMetaVCL, FRpMainMetaVCL);
+  FRpMainMetaVCL.MFrame.CreateClitree;
   Application.Run;
 end.

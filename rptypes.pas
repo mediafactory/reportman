@@ -598,13 +598,19 @@ end;
 function GetPrinterEscapeOem(printerindex:TRpPrinterSelect):Boolean;
 begin
  CheckLoadedPrinterConfig;
- Result:=printerconfigfile.ReadBool('PrinterEscapeOem','Printer'+IntToStr(integer(printerindex)),false);
+ Result:=printerconfigfile.ReadBool('PrinterEscapeOem','Printer'+IntToStr(integer(printerindex)),true);
 end;
 
 function GetPrinterEscapeStyleOption(printerindex:TRpPrinterSelect):TRpPrinterEscapeStyle;
+var
+ adefault:integer;
 begin
  CheckLoadedPrinterConfig;
- Result:=TRpPrinterEscapeStyle(printerconfigfile.ReadInteger('PrinterEscapeStyle','Printer'+IntToStr(integer(printerindex)),0));
+ adefault:=0;
+ if printerindex=pRpCharacterprinter
+  adefault:=2;
+ adefault:=printerconfigfile.ReadInteger('PrinterEscapeStyle','Printer'+IntToStr(integer(printerindex)),adefault));
+ Result:=TRpPrinterEscapeStyle(adefault);
 end;
 
 function GetPrinterEscapeStyleDriver(printerindex:TRpPrinterSelect):String;

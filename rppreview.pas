@@ -32,7 +32,7 @@ uses
 {$ENDIF}
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpreport,rpmetafile, QComCtrls,
-  rpqtdriver, QExtCtrls,rptypes,
+  rpqtdriver, QExtCtrls,rptypes,rptextdriver,
   QActnList, QImgList,QPrinters,rpmdconsts,Qt;
 
 
@@ -280,12 +280,14 @@ begin
 {$IFDEF VCLFILEFILTERS}
  SaveDialog1.Filter:=SRpRepMetafile+'|*.rpmf|'+
    SRpPDFFile+'|*.pdf|'+
-   SRpPDFFileUn+'|*.pdf';
+   SRpPDFFileUn+'|*.pdf|'+
+   SRpPlainFile+'|*.pdf';
 {$ENDIF}
 {$IFNDEF VCLFILEFILTERS}
  SaveDialog1.Filter:=SRpRepMetafile+' (*.rpmf)|'+
    SRpPDFFile+' (*.pdf)|'+
-   SRpPDFFileUn+' (*.pdf)';
+   SRpPDFFileUn+' (*.pdf)|';
+   SRpPlainFile+' (*.pdf)';
 {$ENDIF}
 
  Caption:=TranslateStr(215,Caption);
@@ -425,6 +427,13 @@ begin
 //      report.EndPrint;
 //      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,32000,
 //       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
+      AppIdle(Self,adone);
+     end
+     else
+     begin
+      // Plain text file
+      ALastExecute(Self);
+      SaveMetafileToTextFile(report.Metafile,SaveDialog1.FileName);
       AppIdle(Self,adone);
      end;
    finally

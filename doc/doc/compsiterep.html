@@ -12,6 +12,7 @@
   used by the next report.</p>
 <p>To compose reports you must set <b>two pass report option</b> in all the reports 
   implied.</p>
+<p><b>Using composite reports with VCL/CLX components</b></p>
 <p>You must have two TRpReport objects available, you can place two TVCLReport 
   components in a form for example, the TVCLReport.Report property contains the 
   TRpReport object if you assigned a filename, or used LoadFromStream method of 
@@ -24,6 +25,19 @@
 <p>ReportTwo.Report.Compose(ReportOne.Report,false,nil);</p>
 <p>ReportTwo.Execute;</p>
 <p>//</p>
-<p>&nbsp;</p>
+<p><b>Using composite reports with ActiveX components</b></p>
+<p>You must have at least two ActiveX component, set the filename and calculate 
+  the report before composite. For example, for three reports:</p>
+<p> reportman1.filename = &quot;c:\repsamples\sampl2.rep&quot;<br>
+  reportman1.CalcReport(True)<br>
+  reportman2.filename = &quot;c:\repsamples\sampl3.rep&quot;<br>
+  reportman2.Compose(reportman1.Report, False)<br>
+  reportman2.CalcReport(True)<br>
+  reportman3.filename = &quot;c:\repsamples\sampl4.rep&quot;<br>
+  reportman3.Compose(reportman2.Report, False)<br>
+  reportman3.Preview = True<br>
+  reportman3.Execute()<br>
+</p>
+<p></p>
 </body>
 </html>

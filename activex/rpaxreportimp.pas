@@ -11,7 +11,7 @@ interface
 uses
   Windows, ActiveX, SysUtils,Classes, Controls, Graphics, Menus, Forms, StdCtrls,
   ComServ, StdVCL, AXCtrls, Reportman_TLB, rpactivexreport,rpreport,
-  rpparams,rptypes;
+  rpparams,rptypes,rpgdidriver,rpmetafile;
 
 type
   TIReportParam=class(TInterfacedObject,IReportParam)
@@ -50,6 +50,7 @@ type
    protected
     function  Get_Params: IReportParameters; safecall;
     procedure Set_Params(const Value: IReportParameters); safecall;
+    function Get_VCLReport: PChar; safecall;
   end;
 
 
@@ -119,6 +120,9 @@ type
     procedure Set_Report(const Value: IReportReport); safecall;
     procedure ExecuteRemote(const hostname: WideString; port: Integer;
       const user, password, aliasname, reportname: WideString); safecall;
+    procedure CalcReport(ShowProgress: WordBool); safecall;
+    procedure Compose(const Report: IReportReport; Execute: WordBool);
+      safecall;
   end;
 
 implementation
@@ -401,6 +405,11 @@ begin
 end;
 
 
+function TIReportReport.Get_VCLReport: PChar; safecall;
+begin
+ Result:=Pchar(FReport);
+end;
+
 function  TIReportReport.Get_Params: IReportParameters;
 begin
  if Not Assigned(FReportParameters) then
@@ -502,6 +511,34 @@ procedure TReportManX.ExecuteRemote(const hostname: WideString;
   port: Integer; const user, password, aliasname, reportname: WideString);
 begin
  FDelphiControl.ExecuteRemote(hostname,port,user,password,aliasname,reportname);
+end;
+
+procedure TReportManX.CalcReport(ShowProgress: WordBool);
+var
+ gdidriver:TRpGDIDriver;
+ agdidriver:IRpPrintDriver;
+begin
+ if ShowProgress then
+  CalcReportWidthProgress(FDelphiControl.GetReport)
+ else
+ begin
+  GDIDriver:=TRpGDIDriver.Create;
+  aGDIDriver:=GDIDriver;
+  FDelphiControl.GetReport.PrintAll(agdidriver);
+ end;
+end;
+
+procedure TReportManX.Compose(const Report: IReportReport;
+  Execute: WordBool);
+var
+ gdidriver:TRpGDIDriver;
+ agdidriver:IRpPrintDriver;
+begin
+ GDIDriver:=TRpGDIDriver.Create;
+ aGDIDriver:=GDIDriver;
+ FDelphiControl.GetReport.Compose(TRpReport(Report.VCLReport),false,aGDIDriver);
+ if Execute then
+  FDelphiControl.Execute;
 end;
 
 initialization

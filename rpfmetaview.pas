@@ -31,7 +31,7 @@ uses
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,rpmdclitree,
   QActnList, QImgList,QPrinters,Qt,rpmdconsts,rptypes, QMenus,
-  rpmdfabout,QTypes,QStyle,rpmdshfolder,rpmdprintconfig,
+  rpmdfabout,QTypes,QStyle,rpmdshfolder,rpmdprintconfig,rptextdriver,
   rpmdfhelpform;
 
 type
@@ -300,13 +300,15 @@ begin
 {$IFDEF VCLFILEFILTERS}
  SaveDialog1.Filter:=SRpRepMetafile+'|*.rpmf|'+
    SRpPDFFile+'|*.pdf|'+
-   SRpPDFFileUn+'|*.pdf';
+   SRpPDFFileUn+'|*.pdf|'+
+   SRpPlainFile+'|*.pdf';
  OpenDialog1.Filter:=SRpRepMetafile+'|*.rpmf';
 {$ENDIF}
 {$IFNDEF VCLFILEFILTERS}
  SaveDialog1.Filter:=SRpRepMetafile+' (*.rpmf)|'+
    SRpPDFFile+' (*.pdf)|'+
-   SRpPDFFileUn+' (*.pdf)';
+   SRpPDFFileUn+' (*.pdf)|';
+   SRpPlainFile+' (*.pdf)';
  OpenDialog1.Filter:=SRpRepMetafile+' (*.rpmf)';
 {$ENDIF}
  AppStyle:=dsSystemDefault;
@@ -555,6 +557,12 @@ begin
       SaveMetafileToPDF(metafile,SaveDialog1.filename,true)
      else
       SaveMetafileToPDF(metafile,SaveDialog1.filename,false);
+    end
+    else
+    begin
+     // Plain text file
+     ALastExecute(Self);
+     SaveMetafileToTextFile(Metafile,SaveDialog1.FileName);
     end;
  finally
    EnableButtons;

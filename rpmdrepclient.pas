@@ -8,7 +8,7 @@
 {       Routines and main interface to implement        }
 {       the report client                               }
 {                                                       }
-{       Copyright (c) 1994-2003 Toni Martir             }
+{       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -64,6 +64,7 @@ type
     { Public declarations }
     asynchronous:boolean;
     dirseparator:char;
+    threadsafeexec:boolean;
     property PDF:Boolean read FPDF write FPDF default false;
     procedure GetUsers;
     procedure GetParams;
@@ -100,10 +101,9 @@ type
    FEndreport:TEvent;
    syncexec:boolean;
    errormessage:widestring;
-   freemod:boolean;
+   threadsafeexec:boolean;
    procedure HandleInput;
    procedure DoErrorMessage;
-   procedure DoFreeMod;
   protected
    procedure Execute; override;
   end;
@@ -216,12 +216,6 @@ begin
  end;
 end;
 
-procedure TRpClientHandleThread.DoFreeMod;
-begin
- amod.free;
- amod:=nil;
-end;
-
 procedure TRpClientHandleThread.Execute;
 begin
  data:=TMemoryStream.Create;
@@ -251,8 +245,16 @@ begin
       begin
        if CB.Command in [repexecutereportmeta,repexecutereportpdf,repopenreport,reperror] then
        begin
-        FEndReport.SetEvent;
-        Synchronize(HandleInput);
+        if threadsafeexec then
+        begin
+         HandleInput;
+         FEndReport.SetEvent;
+        end
+        else
+        begin
+         FEndReport.SetEvent;
+         Synchronize(HandleInput);
+        end;
         syncexec:=false;
        end;
       end
@@ -266,7 +268,10 @@ begin
      on E:Exception do
      begin
       errormessage:=E.Message;
-      Synchronize(DoErrorMessage);
+      if threadsafeexec then
+       DoErrorMessage
+      else
+       Synchronize(DoErrorMessage);
      end;
     end;
    end;
@@ -274,11 +279,6 @@ begin
  finally
   data.free;
  end;
- if FreeMod then
-  if assigned(amod) then
-  begin
-   Synchronize(Dofreemod);
-  end;
 end;
 
 
@@ -318,7 +318,7 @@ procedure Disconnect(amod:TModClient);
 begin
  if amod.RepClient.Connected then
   amod.RepClient.Disconnect;
- amod.ClientHandleThread.FreeMod:=true;
+ amod.free;
 end;
 
 
@@ -355,6 +355,7 @@ begin
   alist.add(aliasname+'='+reportname);
   arec:=GenerateBlock(repexecutereportmeta,alist);
   try
+   ClientHandleThread.threadsafeexec:=threadsafeexec;
    if asynchronous then
    begin
     SendBlock(RepClient,arec);

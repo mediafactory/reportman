@@ -2376,6 +2376,7 @@ begin
  pageposy:=PrevReport.pageposy;
  pageposx:=FLeftMargin;
  FCompose:=True;
+ TwoPass:=true;
  if execute then
  begin
   PrintAll(ADriver);

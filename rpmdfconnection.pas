@@ -119,7 +119,7 @@ begin
  CheckLoadParams.Caption:=TranslateStr(145,CheckLoadParams.Caption);
  CheckLoadDriverParams.Caption:=TranslateStr(146,CheckLoadDriverParams.Caption);
  BTest.Caption:=TranslateStr(753,BTest.Caption);
- BBuild.Caption:=TranslateStr(936,BBuild.Caption);
+ BBuild.Caption:=TranslateStr(168,BBuild.Caption);
 
  GetRpDatabaseDrivers(GDriver.Items);
  GetRpDatabaseDrivers(ComboDriver.Items);
@@ -150,7 +150,8 @@ begin
  ComboAvailable.Anchors:=[akLeft,akTop,akRight];
  EConnectionString.Anchors:=[akLeft,akTop,akRight];
 
- FDatabaseInfo.Assign(Value);
+ if Value<>FDatabaseInfo then
+  FDatabaseInfo.Assign(Value);
  LConnections.Clear;
  for i:=0 to FDatabaseinfo.Count-1 do
  begin

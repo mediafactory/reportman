@@ -48,10 +48,10 @@ object Form1: TForm1
     OnClick = Button2Click
   end
   object Button3: TButton
-    Left = 320
-    Top = 164
-    Width = 77
-    Height = 49
+    Left = 304
+    Top = 236
+    Width = 149
+    Height = 57
     Caption = 'Button3'
     TabOrder = 3
     OnClick = Button3Click

@@ -32,7 +32,7 @@ uses
 {$ENDIF}
   Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls,rpreport,rpmetafile, ComCtrls,
-  rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,
+  rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,rptextdriver,
   ActnList, ImgList,Printers,rpmdconsts, ToolWin;
 
 type
@@ -275,7 +275,8 @@ begin
  SaveDialog1.Filter:=SRpRepMetafile+'|*.rpmf|'+
    SRpPDFFile+'|*.pdf|'+
    SRpPDFFileUn+'|*.pdf|'+
-   SRpExcelFile+'|*.xls';
+   SRpExcelFile+'|*.xls|'+
+   SRpPlainFile+'|*.txt';
 
  APrevious.ShortCut:=ShortCut(VK_PRIOR, []);
  ANext.ShortCut:=ShortCut(VK_NEXT, []);
@@ -415,11 +416,17 @@ begin
       AppIdle(Self,adone);
      end
      else
+     if SaveDialog1.FilterIndex=4 then
      begin
-      if SaveDialog1.FilterIndex=4 then
       ALastExecute(Self);
       ExportMetafileToExcel(report.Metafile,SaveDialog1.FileName,
        true,false,true,1,9999);
+      AppIdle(Self,adone);
+     end
+     else
+     begin
+      ALastExecute(Self);
+      SaveMetafileToTextFile(report.Metafile,SaveDialog1.FileName);
       AppIdle(Self,adone);
      end;
    finally

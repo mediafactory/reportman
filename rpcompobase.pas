@@ -24,7 +24,7 @@ interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,
  rpalias,rpsubreport,rpsection,rpprintitem,rptypes,
- rpmdrepclient,SyncObjs,rpmetafile;
+ rpmdrepclient,rpmetafile;
 
 type
  TCBaseReport=class(TComponent)
@@ -40,17 +40,16 @@ type
    FLanguage:integer;
    FOnBeforePrint:TNotifyEvent;
    FReportName:WideString;
-   FEndReport:TEvent;
+   FRemoteError:Boolean;
+   FRemoteMessage:WideString;
    procedure ReadReportName(Reader:TReader);
    procedure WriteReportName(Writer:TWriter);
    procedure InternalSetBeforePrint;
    function GetReport:TRpReport;
    procedure SetFileName(Value:TFilename);
    procedure SetOnBeforePrint(NewValue:TNotifyEvent);
-   procedure ServerError(Sender:TObject;aMessage:WideString);
-   procedure ServerExecute(Sender:TObject);
+   procedure OnRemoteError(Sender:TObject;aMessage:WideString);
   protected
-   procedure RemoteServerError(aMessage:WideString);virtual;
    procedure Notification(AComponent: TComponent; Operation: TOperation);override;
    procedure DefineProperties(Filer:TFiler);override;
    procedure InternalExecuteRemote(metafile:TRpMetafileReport);virtual;
@@ -90,7 +89,6 @@ implementation
 constructor TCBaseReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
- FEndReport:=TEvent.Create(nil,false,false,'');
  FShowProgress:=true;
  FFilename:='';
  FPreview:=true;
@@ -251,49 +249,34 @@ begin
  // Implemented in derived classes
 end;
 
-procedure TCBaseReport.RemoteServerError(aMessage:WideString);
+procedure TCBaseReport.OnRemoteError(Sender:TObject;aMessage:WideString);
 begin
-end;
-
-procedure TCBaseReport.ServerError(Sender:TObject;aMessage:WideString);
-begin
- RemoteServerError(aMessage);
- FEndReport.SetEvent;
-end;
-
-procedure TCBaseReport.ServerExecute(Sender:TObject);
-var
- metafile:TRpMetafileReport;
-begin
- metafile:=TRpMetafileReport.Create(nil);
- try
-  metafile.LoadFromStream(Tmodclient(Sender).Stream);
-  InternalExecuteRemote(metafile);
-  FEndReport.SetEvent;
- finally
-  metafile.free;
- end;
+ Fremoteerror:=true;
+ Fremotemessage:=aMessage;
 end;
 
 procedure TCBaseReport.ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
 var
  client:Tmodclient;
- i:integer;
+ metafile:TRpMetafileReport;
 begin
  client:=Connect(hostname,user,password,port);
  try
-  client.OnError:=ServerError;
-  client.OnExecute:=ServerExecute;
-  FEndReport.ReSetEvent;
-  client.Execute(aliasname,reportname);
-  i:=0;
-{  while (wrTimeout=FEndReport.WaitFor(100)) do
-  begin
-   inc(i);
-   if i>100000 then
-    break;
+  metafile:=TRpMetafileReport.Create(nil);
+  try
+   client.threadsafeexec:=true;
+   Fremoteerror:=false;
+   client.OnError:=OnRemoteError;
+   client.Execute(aliasname,reportname);
+   if Fremoteerror then
+    Raise Exception.Create(Fremotemessage);
+   client.Stream.Seek(0,soFromBeginning);
+   metafile.LoadFromStream(client.Stream);
+   InternalExecuteRemote(metafile);
+  finally
+   metafile.free;
   end;
-} finally
+ finally
   Disconnect(client);
  end;
 end;

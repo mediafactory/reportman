@@ -41,7 +41,6 @@ type
    FDriver:TRpPrintDriver;
   protected
    procedure InternalExecuteRemote(metafile:TRpMetafileReport);override;
-   procedure RemoteServerError(aMessage:WideString);override;
   public
    function Execute:boolean;override;
    procedure PrinterSetup;override;
@@ -297,10 +296,5 @@ begin
  end;
 end;
 
-
-procedure TCLXReport.RemoteServerError(aMessage:WideString);
-begin
- RpMessageBox(aMessage);
-end;
 
 end.

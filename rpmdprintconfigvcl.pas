@@ -161,6 +161,7 @@ end;
 procedure TFRpPrinterConfigVCL.LSelPrinterClick(Sender: TObject);
 var
  index:integer;
+ defdriver:String;
 begin
  if LSelPrinter.ItemIndex=0 then
  begin
@@ -189,10 +190,16 @@ begin
  ECutPaper.Text:=configinifile.ReadString('CutPaper','Printer'+IntToStr(LSelPrinter.ItemIndex),'');
  CheckOpenDrawer.Checked:=configinifile.ReadBool('OpenDrawerOn','Printer'+IntToStr(LSelPrinter.ItemIndex),false);
  EOpenDrawer.Text:=configinifile.ReadString('OpenDrawer','Printer'+IntToStr(LSelPrinter.ItemIndex),'');
- index:=ComboTextOnly.Items.IndexOf(configinifile.ReadString('PrinterDriver','Printer'+IntToStr(LSelPrinter.ItemIndex),' '));
+ defdriver:=' ';
+ if LSelPrinter.ItemIndex=Integer(pRpCharacterprinter) then
+  defdriver:='EPSON';
+ defdriver:=configinifile.ReadString('PrinterDriver','Printer'+IntToStr(LSelPrinter.ItemIndex),defdriver);
+ if Length(defdriver)<1 then
+ defdriver:=' ';
+ index:=ComboTextOnly.Items.IndexOf(defdriver);
  if index>0 then
   ComboTextOnly.ItemIndex:=index;
- CheckOem.Checked:=configinifile.ReadBool('PrinterEscapeOem','Printer'+IntToStr(LSelPrinter.ItemIndex),False);
+ CheckOem.Checked:=configinifile.ReadBool('PrinterEscapeOem','Printer'+IntToStr(LSelPrinter.ItemIndex),true);
 end;
 
 procedure TFRpPrinterConfigVCL.ReadPrintersConfig;

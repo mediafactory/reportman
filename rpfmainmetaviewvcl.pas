@@ -23,6 +23,7 @@ interface
 
 {$I rpconf.inc}
 
+
 uses
   SysUtils,Inifiles,
   Windows,Dialogs,rpgdidriver,ShellApi,rpgraphutilsvcl,
@@ -96,9 +97,8 @@ begin
    MFrame.pagenum:=1;
    MFrame.AViewConnect.Checked:=false;
    MFrame.AViewConnect.Enabled:=false;
-{$IFNDEF FORWEBAX}
-   MFrame.clitree.Visible:=false;
-{$ENDIF}
+   if assigned(MFrame.clitree) then
+    MFrame.clitree.Visible:=false;
    MFrame.Splitter1.Visible:=false;
    MFrame.printerindex:=metafile.PrinterSelect;
    MFrame.UpdatePrintSel;

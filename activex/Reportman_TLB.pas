@@ -12,7 +12,7 @@ unit Reportman_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 14/06/2003 10:33:35 from Type Library described below.
+// File generated on 02/07/2003 10:52:18 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
@@ -24,15 +24,12 @@ unit Reportman_TLB;
 //   (1) v2.0 stdole, (C:\WINNT\System32\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
+{$WARN SYMBOL_PLATFORM OFF}
 {$WRITEABLECONST ON}
+{$VARPROPSETTER ON}
 interface
 
-{$I rpconf.inc}
-uses Windows, ActiveX, Classes, Graphics,
-{$IFDEF USEVARIANTS}
- Variants,
-{$ENDIF}
- OleCtrls, StdVCL;
+uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL, Variants;
   
 
 // *********************************************************************//
@@ -163,6 +160,8 @@ type
     procedure ExecuteRemote(const hostname: WideString; port: Integer; const user: WideString; 
                             const password: WideString; const aliasname: WideString; 
                             const reportname: WideString); safecall;
+    procedure CalcReport(ShowProgress: WordBool); safecall;
+    procedure Compose(const Report: IReportReport; Execute: WordBool); safecall;
     property filename: WideString read Get_filename write Set_filename;
     property Preview: WordBool read Get_Preview write Set_Preview;
     property ShowProgress: WordBool read Get_ShowProgress write Set_ShowProgress;
@@ -224,6 +223,8 @@ type
     procedure ExecuteRemote(const hostname: WideString; port: Integer; const user: WideString; 
                             const password: WideString; const aliasname: WideString; 
                             const reportname: WideString); dispid 201;
+    procedure CalcReport(ShowProgress: WordBool); dispid 202;
+    procedure Compose(const Report: IReportReport; Execute: WordBool); dispid 203;
   end;
 
 // *********************************************************************//
@@ -308,7 +309,9 @@ type
     ['{3468D0A7-7616-4E17-95B4-16A59E7BF064}']
     function Get_Params: IReportParameters; safecall;
     procedure Set_Params(const Value: IReportParameters); safecall;
+    function Get_VCLReport: PChar; safecall;
     property Params: IReportParameters read Get_Params write Set_Params;
+    property VCLReport: PChar read Get_VCLReport;
   end;
 
 // *********************************************************************//
@@ -319,6 +322,7 @@ type
   IReportReportDisp = dispinterface
     ['{3468D0A7-7616-4E17-95B4-16A59E7BF064}']
     property Params: IReportParameters dispid 2;
+    property VCLReport: {??PChar}OleVariant readonly dispid 101;
   end;
 
 
@@ -363,6 +367,8 @@ type
     procedure ExecuteRemote(const hostname: WideString; port: Integer; const user: WideString; 
                             const password: WideString; const aliasname: WideString; 
                             const reportname: WideString);
+    procedure CalcReport(ShowProgress: WordBool);
+    procedure Compose(const Report: IReportReport; Execute: WordBool);
     property  ControlInterface: IReportManX read GetControlInterface;
     property  DefaultInterface: IReportManX read GetControlInterface;
     property DoubleBuffered: WordBool index 18 read GetWordBoolProp write SetWordBoolProp;
@@ -533,6 +539,16 @@ procedure TReportManX.ExecuteRemote(const hostname: WideString; port: Integer;
                                     const aliasname: WideString; const reportname: WideString);
 begin
   DefaultInterface.ExecuteRemote(hostname, port, user, password, aliasname, reportname);
+end;
+
+procedure TReportManX.CalcReport(ShowProgress: WordBool);
+begin
+  DefaultInterface.CalcReport(ShowProgress);
+end;
+
+procedure TReportManX.Compose(const Report: IReportReport; Execute: WordBool);
+begin
+  DefaultInterface.Compose(Report, Execute);
 end;
 
 procedure Register;

@@ -124,6 +124,8 @@ type
   end;
 
 
+procedure SaveMetafileToTextFile(metafile:TRpMetafileReport;
+ afilename:String);
 procedure SaveMetafileToText(metafile:TRpMetafileReport;
  Stream:TStream);
 procedure SaveMetafileRangeToText(metafile:TRpMetafileReport;
@@ -1240,6 +1242,21 @@ begin
   codedstring:=EnCodeLine(FLines[i],i);
   if Length(codedstring)>0 then
    MemStream.Write(codedstring[1],Length(codedstring));
+ end;
+end;
+
+procedure SaveMetafileToTextFile(metafile:TRpMetafileReport;
+ afilename:String);
+var
+ memstream:TMemoryStream;
+begin
+ memstream:=TMemoryStream.Create;
+ try
+  SaveMetafileToText(metafile,memstream);
+  memstream.Seek(0,soFromBeginning);
+  memstream.SaveToFile(afilename);
+ finally
+  memstream.free;
  end;
 end;
 
