@@ -1,0 +1,337 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager                                  }
+{                                                       }
+{       Rpsubreport                                     }
+{       TRpSubReport: The subreport defines sections    }
+{       and data access methods to compose a subreport  }
+{                                                       }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the GPL license              }
+{       A comercial license is also available           }
+{       See license.txt for licensing details           }
+{                                                       }
+{                                                       }
+{*******************************************************}
+
+unit rpsubreport;
+
+
+interface
+
+uses Classes,SysUtils,rpsecutil,rpsection,rptypes,rpconsts;
+
+type
+ TRpSubReport=class(TComponent)
+  private
+   FSections:TRpSectionList;
+   // Methots for writing internal indexes
+   procedure SetSections(Value:TRpSectionList);
+  protected
+  public
+   // Creation and destruction
+   constructor Create(AOWner:TComponent);override;
+   destructor Destroy;override;
+   procedure CreateNew;
+   procedure FreeSections;
+   procedure FreeSection(sec:TRpSection);
+   procedure AddReportHeader;
+   procedure AddPageHeader;
+   procedure AddReportFooter;
+   procedure AddPageFooter;
+   procedure AddGroup(groupname:string);
+   procedure AddDetail;
+  published
+   property Sections:TRpSectionList read FSections write SetSections;
+ end;
+
+implementation
+
+procedure TRpSubReport.AddReportHeader;
+var
+ i:integer;
+ sec:TRpSection;
+begin
+ Sections.Add;
+ // Move all sections one down
+ for i:=Sections.count-2 downto 0 do
+ begin
+  Sections.Items[i+1].Section:=Sections.Items[i].Section;
+ end;
+ sec:=TRpSection.Create(Owner);
+ sec.SectionType:=rpsecrheader;
+ Sections.Items[0].Section:=sec;
+ Generatenewname(sec);
+end;
+
+procedure TRpSubReport.AddReportFooter;
+var
+ sec:TRpSection;
+begin
+ Sections.Add;
+ sec:=TRpSection.Create(Owner);
+ sec.SectionType:=rpsecrfooter;
+ Sections.Items[Sections.Count-1].Section:=sec;
+ Generatenewname(sec);
+end;
+
+procedure TRpSubReport.AddPageHeader;
+var
+ i:integer;
+ index:integer;
+ sec:TRpSection;
+begin
+ // Search the index to insert the page header
+ index:=0;
+ while (Sections.Items[index].Section.SectionType=rpsecrheader) do
+  inc(index);
+ // Move all sections one down
+ Sections.Add;
+ for i:=Sections.count-2 downto index do
+ begin
+  Sections.Items[i+1].Section:=Sections.Items[i].Section;
+ end;
+ sec:=TRpSection.Create(Owner);
+ sec.SectionType:=rpsecpheader;
+ Sections.Items[index].Section:=sec;
+ Generatenewname(sec);
+end;
+
+
+procedure TRpSubReport.AddDetail;
+var
+ i:integer;
+ index:integer;
+ sec:TRpSection;
+begin
+ // Search the index to insert the page footer
+ index:=0;
+ while ((Sections.Items[index].Section.SectionType in [rpsecrheader..rpsecdetail])
+       ) do
+ begin
+  inc(index);
+  if (index>=Sections.Count) then
+   break;
+ end;
+ // Move all sections one down
+ Sections.Add;
+ for i:=Sections.count-2 downto index do
+ begin
+  Sections.Items[i+1].Section:=Sections.Items[i].Section;
+ end;
+ sec:=TRpSection.Create(Owner);
+ sec.SectionType:=rpsecdetail;
+ Sections.Items[index].Section:=sec;
+ Generatenewname(sec);
+end;
+
+
+procedure TRpSubReport.AddPageFooter;
+var
+ i:integer;
+ index:integer;
+ sec:TRpSection;
+begin
+ // Search the index to insert the page footer
+ index:=0;
+ while ((Sections.Items[index].Section.SectionType in [rpsecrheader..rpsecgfooter])
+       ) do
+ begin
+  inc(index);
+  if (index>=Sections.Count) then
+   break;
+ end;
+ // Move all sections one down
+ Sections.Add;
+ for i:=Sections.count-2 downto index do
+ begin
+  Sections.Items[i+1].Section:=Sections.Items[i].Section;
+ end;
+ sec:=TRpSection.Create(Owner);
+ sec.SectionType:=rpsecpfooter;
+ Sections.Items[index].Section:=sec;
+ Generatenewname(sec);
+end;
+
+procedure TRpSubReport.AddGroup(groupname:string);
+var
+ i:integer;
+ index:integer;
+ sec:TRpSection;
+begin
+ if Length(groupname)<1 then
+  Raise Exception.Create(SRpGroupNameRequired);
+ // Search the index to insert the group header
+ index:=0;
+ while ((Sections.Items[index].Section.SectionType in [rpsecrheader..rpsecgheader])
+       AND (index<Sections.Count)) do
+ begin
+  if (Sections.Items[index].Section.SectionType=rpsecgheader) then
+  begin
+   if (groupname=Sections.Items[index].Section.GroupName) then
+    Raise Exception.Create(SRpGroupNameExists);
+  end;
+  inc(index);
+ end;
+ // Move all sections one down
+ Sections.Add;
+ for i:=Sections.count-2 downto index do
+ begin
+  Sections.Items[i+1].Section:=Sections.Items[i].Section;
+ end;
+ sec:=TRpSection.Create(Owner);
+ sec.SectionType:=rpsecgheader;
+ sec.GroupName:=groupname;
+ Sections.Items[index].Section:=sec;
+ Generatenewname(sec);
+ // Search the index to insert the group footer
+ index:=0;
+ while ((Sections.Items[index].Section.SectionType in [rpsecrheader..rpsecdetail])
+       ) do
+ begin
+  inc(index);
+  if (index>=Sections.Count) then
+   break;
+ end;
+ // Move all sections one down
+ Sections.Add;
+ for i:=Sections.count-2 downto index do
+ begin
+  Sections.Items[i+1].Section:=Sections.Items[i].Section;
+ end;
+ sec:=TRpSection.Create(Owner);
+ sec.SectionType:=rpsecgfooter;
+ sec.GroupName:=groupname;
+ Sections.Items[index].Section:=sec;
+ Generatenewname(sec);
+end;
+
+procedure TRpSubReport.SetSections(Value:TRpSectionList);
+begin
+ FSections.Assign(Value);
+end;
+
+constructor TRpSubReport.Create(AOWner:TComponent);
+begin
+ inherited Create(AOwner);
+ // Sections
+ FSections:=TRpSectionList.Create(Self);
+end;
+
+destructor TRpSubReport.Destroy;
+begin
+ FSections.free;
+ inherited Destroy;
+end;
+
+procedure TRpSubReport.FreeSections;
+var
+ i:integer;
+begin
+ // If is destroying left the component free sections
+ if (csDestroying in Owner.ComponentState) then
+  exit;
+ for i:=0 to FSections.Count-1 do
+ begin
+  FSections.Items[i].Section.FreeComponents;
+  FSections.Items[i].Section.Free;
+  FSections.Items[i].Section:=nil;
+ end;
+ FSections.Clear;
+end;
+
+procedure TRpSubReport.CreateNew;
+var
+ it:TRpSectionListItem;
+begin
+ // Free the current sections
+ FreeSections;
+ // Create a new section, the owner is the report
+ it:=FSections.Add;
+ it.Section:=TRpSection.Create(Owner);
+ it.Section.SectionType:=rpsecdetail;
+ Generatenewname(it.Section);
+end;
+
+// Frees a section, if the section is a group
+// the header and footer are freed
+procedure TRpSubReport.FreeSection(sec:TRpSection);
+var
+ i:integer;
+ detailcount:integer;
+ groupname:string;
+begin
+ // If it's a detail looks if there is two details
+ if sec.SectionType=rpsecdetail then
+ begin
+  i:=0;
+  detailcount:=0;
+  while i<FSections.Count do
+  begin
+   if Sections.Items[i].Section.SectionType=rpsecdetail then
+   begin
+    inc(detailcount);
+    if detailcount>1 then
+     break;
+   end;
+   inc(i);
+  end;
+  if detailcount<2 then
+   Raise Exception.Create(SRpAtLeastOneDetail);
+ end;
+ if (sec.SectionType in [rpsecgheader,rpsecgfooter]) then
+ begin
+  groupname:=sec.GroupName;
+  i:=0;
+  while i<Sections.Count do
+  begin
+   if (Sections.Items[i].Section.GroupName=groupname) then
+   begin
+    if Sections.Items[i].Section.Sectiontype=rpsecgheader then
+     break;
+   end;
+   inc(i);
+  end;
+  if (i>=Sections.Count) then
+   Raise Exception.Create(SRpSectionNotFound);
+  Sections.Items[i].Section.FreeComponents;
+  Sections.Items[i].Section.Free;
+  Sections.Delete(i);
+
+    i:=0;
+  while i<Sections.Count do
+  begin
+   if (Sections.Items[i].Section.GroupName=groupname) then
+   begin
+    if Sections.Items[i].Section.Sectiontype=rpsecgfooter then
+     break;
+   end;
+   inc(i);
+  end;
+  if (i>=Sections.Count) then
+   Raise Exception.Create(SRpSectionNotFound);
+  Sections.Items[i].Section.FreeComponents;
+  Sections.Items[i].Section.Free;
+  Sections.Delete(i);
+ end
+ else
+ begin
+  i:=0;
+  while (Sections.Items[i].Section<>sec) do
+  begin
+   inc(i);
+   if i>Sections.count-1 then
+    Raise Exception.Create(SRpSectionNotFound);
+  end;
+  Sections.Items[i].Section.FreeComponents;
+  Sections.Items[i].Section.Free;
+  Sections.Delete(i);
+ end;
+end;
+
+
+
+end.

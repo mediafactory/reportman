@@ -1,0 +1,729 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager Designer                         }
+{                                                       }
+{       Rpobinsint                                      }
+{                                                       }
+{       Basic properties editor, size, position         }
+{       Especial controls to modify basic properties    }
+{       And notify object inspector about object        }
+{       selection                                       }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the GPL license              }
+{       A comercial license is also available           }
+{       See license.txt for licensing details           }
+{                                                       }
+{                                                       }
+{*******************************************************}
+
+unit rpobinsint;
+
+interface
+
+uses Types,QGraphics,QForms,QControls,rpconsts,classes,sysutils,rpmunits,
+  rpprintitem;
+
+const
+ CONS_MODIWIDTH=5;
+ CONS_MINIMUMMOVE=5;
+ CONS_MINHEIGHT=5;
+ CONS_MINWIDTH=5;
+type
+ TRpPropertytype=(rppinteger,rppcurrency,rppstring,rpplist,rpcustom);
+
+
+ // The implementation and size
+ TRpSizeInterface=class(TGraphicControl)
+  private
+  protected
+   fprintitem:TRpCommonComponent;
+   FSelected:boolean;
+   procedure SetSelected(Value:boolean);
+  protected
+   procedure Paint;override;                             
+   procedure DrawSelected;
+   procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer); override;
+   procedure DblClick; override;
+
+  public
+   procedure UpdatePos;virtual;
+   procedure GetProperties(lnames,ltypes,lvalues:TStrings);virtual;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);virtual;
+   procedure SetProperty(pname:string;value:string);virtual;
+   procedure GetProperty(pname:string;var value:string);virtual;
+   constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);reintroduce;overload;virtual;
+   property printitem:TRpCommonComponent read fprintitem;
+   property Selected:Boolean read FSelected write SetSelected;
+ end;
+
+ TRpRectangle=class(TGraphicControl)
+  protected
+   procedure Paint;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+ end;
+
+ // The implementation for and size and position
+ TRpSizePosInterface=class(TRpSizeInterface)
+  private
+   FXOrigin,FYOrigin:integer;
+   FBlocked:boolean;
+   FRectangle:TRpRectangle;
+   FRectangle2:TRpRectangle;
+   FRectangle3:TRpRectangle;
+   FRectangle4:TRpRectangle;
+  protected
+   procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer); override;
+   procedure MouseMove(Shift: TShiftState; X, Y: Integer);override;
+   procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
+   procedure Paint;override;
+  public
+   procedure UpdatePos;override;
+   procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
+   procedure SetProperty(pname:string;value:string);override;
+   procedure GetProperty(pname:string;var value:string);override;
+   constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
+ end;
+
+
+ TRpBlackControl=class(TGraphicControl)
+  private
+   FXOrigin,FYOrigin:integer;
+   FRectangle:TRpRectangle;
+   FRectangle2:TRpRectangle;
+   FRectangle3:TRpRectangle;
+   FRectangle4:TRpRectangle;
+   FControl:TControl;
+   procedure CalcNewCoords(var NewLeft,
+    NewTop,NewWidth,NewHeight,X,Y:integer);
+  protected
+   procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer); override;
+   procedure MouseMove(Shift: TShiftState; X, Y: Integer);override;
+   procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
+  protected
+   procedure Paint;override;
+
+  public
+   constructor Create(AOwner:TComponent);override;
+   property Control:TControl read FControl write FControl;
+  end;
+
+ TRpSizeModifier=class(TComponent)
+  private
+   SizeOnly:boolean;
+   FBlacks:array[0..3] of TRpBlackControl;
+   FControl:TControl;
+   FOnSizeChange:TNotifyEvent;
+   procedure SetControl(Value:TControl);
+  public
+   procedure UpdatePos;
+   constructor Create(AOwner:TComponent);override;
+  published
+   property Control:TControl read FControl write SetControl;
+   property OnSizeChange:TNotifyEvent read FOnSizeChange write FOnSizeChange;
+  end;
+
+ function twipstopixels(ATwips:integer):integer;
+function pixelstotwips(apixels:integer):integer;
+implementation
+
+
+function twipstopixels(ATwips:integer):integer;
+begin
+ Result:=Round((ATwips/TWIPS_PER_INCHESS)*Screen.PixelsPerInch);
+end;
+
+function pixelstotwips(apixels:integer):integer;
+begin
+ Result:=Round((APixels/Screen.PixelsPerInch)*TWIPS_PER_INCHESS);
+end;
+
+constructor TRpSizeInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
+begin
+ inherited Create(AOwner);
+ fprintitem:=pritem;
+ UpdatePos;
+end;
+
+procedure TRpSizeInterface.UpdatePos;
+var
+ NewWidth,NewHeight:integer;
+begin
+ NewWidth:=twipstopixels(TRpCOmmonPosComponent(printitem).Width);
+ NewHeight:=twipstopixels(TRpCOmmonPosComponent(printitem).Height);
+ SetBounds(Left,Top,NewWidth,NewHeight);
+end;
+
+procedure TRpSizeInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+begin
+ lnames.clear;
+ ltypes.clear;
+ lvalues.Clear;
+ // Width
+ lnames.Add(SrpSWidth);
+ ltypes.Add(SRpSCurrency);
+ lvalues.Add(gettextfromtwips(printitem.Width));
+ // Height
+ lnames.Add(SrpSHeight);
+ ltypes.Add(SRpSCurrency);
+ lvalues.Add(gettextfromtwips(printitem.Height));
+end;
+
+procedure TRpSizeInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
+begin
+ Raise Exception.Create(SRpPropertyHaveNoListValues+pname);
+end;
+
+procedure TRpSizeInterface.SetProperty(pname:string;value:string);
+begin
+ if pname=SRpSWidth then
+ begin
+  fprintitem.Width:=gettwipsfromtext(value);
+  exit;
+ end;
+ if pname=SRpSHeight then
+ begin
+  fprintitem.Height:=gettwipsfromtext(value);
+ end;
+ Raise Exception.Create(SRpPropertyNotFound+pname);
+end;
+
+procedure TRpSizeInterface.GetProperty(pname:string;var value:string);
+begin
+ if pname=SRpSWidth then
+ begin
+  value:=gettextfromtwips(printitem.Width);
+  exit;
+ end;
+ if pname=SRpSHeight then
+ begin
+  value:=gettextfromtwips(printitem.Height);
+ end;
+ Raise Exception.Create(SRpPropertyNotFound+pname);
+end;
+
+
+
+constructor TRpSizePosInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
+var
+ opts:TControlStyle;
+begin
+ if Not (pritem is TRpCommonPosComponent) then
+  Raise Exception.Create(SRpIncorrectComponentForInterface);
+ inherited Create(AOwner,pritem);
+ Top:=TRpCommonPosComponent(pritem).PosY;
+ Left:=TRpCommonPosComponent(pritem).PosY;
+ opts:=ControlStyle;
+ include(opts,csCaptureMouse);
+ ControlStyle:=opts;
+end;
+
+
+procedure TRpSizePosInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+begin
+ inherited GetProperties(lnames,ltypes,lvalues);
+
+ // Top
+ lnames.Add(SrpSTop);
+ ltypes.Add(SRpSCurrency);
+ lvalues.Add(gettextfromtwips(TRpCommonPosComponent(printitem).PosY));
+ // Left
+ lnames.Add(SrpSLeft);
+ ltypes.Add(SRpSCurrency);
+ lvalues.Add(gettextfromtwips(TRpCommonPosComponent(printitem).PosX));
+end;
+
+
+procedure TRpSizePosInterface.SetProperty(pname:string;value:string);
+begin
+ if pname=SRpSTop then
+ begin
+  TRpCommonPosComponent(fprintitem).PosY:=gettwipsfromtext(value);
+  exit;
+ end;
+ if pname=SRpSLeft then
+ begin
+  TRpCommonPosComponent(fprintitem).PosX:=gettwipsfromtext(value);
+  exit;
+ end;
+end;
+
+procedure TRpSizePosInterface.GetProperty(pname:string;var value:string);
+begin
+ if pname=SRpSTop then
+ begin
+  value:=gettextfromtwips(TRpCommonPosComponent(printitem).PosY);
+  exit;
+ end;
+ if pname=SRpSLeft then
+ begin
+  value:=gettextfromtwips(TRpCommonPosComponent(printitem).PosX);
+  exit;
+ end;
+ inherited GetProperty(pname,value);
+end;
+
+procedure TRpSizePosInterface.UpdatePos;
+var
+ NewLeft,NewTop,NewWidth,NewHeight:integer;
+begin
+ NewLeft:=twipstopixels(TRpCOmmonPosComponent(printitem).PosX);
+ NewWidth:=twipstopixels(TRpCOmmonPosComponent(printitem).Width);
+ NewTop:=twipstopixels(TRpCOmmonPosComponent(printitem).PosY);
+ NewHeight:=twipstopixels(TRpCOmmonPosComponent(printitem).Height);
+ SetBounds(NewLeft,NewTop,NewWidth,NewHeight);
+end;
+
+procedure TRpSizeInterface.Paint;
+begin
+ Canvas.Brush.Style:=bsSolid;
+ Canvas.Brush.Color:=clWhite;
+ Canvas.Pen.Style:=psDashDot;
+ Canvas.Rectangle(0,0,Width,Height);
+ Canvas.TextOut(0,0,SRpUndefinedPaintInterface);
+ Canvas.TextOut(0,Canvas.TextHeight('gW'),ClassName);
+ DrawSelected;
+end;
+
+procedure TRpSizeInterface.DrawSelected;
+begin
+ if Not Selected then
+  exit;
+ Canvas.Brush.Style:=bsClear;
+ Canvas.Pen.Style:=psSolid;
+ Canvas.Rectangle(0,0,Width,Height);
+end;
+
+procedure TRpSizeInterface.SetSelected(Value:boolean);
+begin
+ FSelected:=Value;
+ Invalidate;
+end;
+
+procedure TRpSizeInterface.MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
+begin
+ inherited MouseDown(Button,Shift,X,Y);
+
+end;
+
+procedure TRpSizeInterface.DblClick;
+begin
+ inherited DblClick;
+
+end;
+
+constructor TRpBlackControl.Create(AOwner:TComponent);
+var
+ opts:TControlStyle;
+begin
+ inherited Create(AOwner);
+ Width:=CONS_MODIWIDTH;
+ Height:=CONS_MODIWIDTH;
+ opts:=ControlStyle;
+ Include(opts,csCaptureMouse);
+ ControlStyle:=opts;
+end;
+
+procedure TRpBlackControl.Paint;
+begin
+ Canvas.Brush.Color:=clBlack;
+ Canvas.Rectangle(0,0,Width,Height);
+end;
+
+constructor TRpSizeModifier.Create(AOwner:TComponent);
+var
+ i:integer;
+begin
+ inherited Create(AOwner);
+
+ for i:=0 to 3 do
+ begin
+  FBlacks[i]:=TRpBlackControl.Create(Self);
+  FBlacks[i].Tag:=i;
+  FBlacks[i].Visible:=false;
+ end;
+ FBlacks[0].Cursor:=crSizeNWSE;
+ FBlacks[1].Cursor:=crSizeNESW;
+ FBlacks[2].Cursor:=crSizeNESW;
+ FBlacks[3].Cursor:=crSizeNWSE;
+end;
+
+procedure TRpSizeModifier.UpdatePos;
+var
+ i:integer;
+begin
+ for i:=0 to 3 do
+ begin
+  FBlacks[i].Visible:=false;
+  FBlacks[i].Parent:=FControl.Parent;
+ end;
+ if Not Assigned(FControl) then
+ begin
+  Exit;
+ end;
+ FBlacks[0].Left:=FControl.Left-CONS_MODIWIDTH div 2;
+ FBlacks[0].Top:=FControl.Top-CONS_MODIWIDTH div 2;
+ FBlacks[1].Left:=FControl.Left+FControl.Width-CONS_MODIWIDTH div 2;
+ FBlacks[1].Top:=FControl.Top-CONS_MODIWIDTH div 2;
+ FBlacks[2].Left:=FControl.Left-CONS_MODIWIDTH div 2;
+ FBlacks[2].Top:=FControl.Top+FControl.Height-CONS_MODIWIDTH div 2;
+ FBlacks[3].Left:=FControl.Left+FControl.Width-CONS_MODIWIDTH div 2;
+ FBlacks[3].Top:=FControl.Top+FControl.Height-CONS_MODIWIDTH div 2;
+
+ if SizeOnly then
+  FBlacks[0].Visible:=true
+ else
+ begin
+  for i:=0 to 3 do
+  begin
+   FBlacks[i].Visible:=true;
+  end;
+ end;
+end;
+
+procedure TRpSizeModifier.SetControl(Value:TControl);
+var
+ i:integer;
+begin
+ FControl:=Value;
+ for i:=0 to 3 do
+ begin
+  FBlacks[i].Control:=FControl;
+ end;
+
+ UpdatePos;
+end;
+
+
+procedure TRpSizePosInterface.MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
+begin
+ inherited MouseDown(Button,Shift,X,Y);
+
+ if Not Assigned(FRectangle) then
+ begin
+  FRectangle:=TRpRectangle.Create(Self);
+  FRectangle2:=TRpRectangle.Create(Self);
+  FRectangle3:=TRpRectangle.Create(Self);
+  FRectangle4:=TRpRectangle.Create(Self);
+
+  FRectangle.SetBounds(Left,Top,Width,1);
+  FRectangle2.SetBounds(Left,Top+Height,Width,1);
+  FRectangle3.SetBounds(Left,Top,1,Height);
+  FRectangle4.SetBounds(Left+Width,Top,1,Height);
+
+  FRectangle.Parent:=Parent;
+  FRectangle2.Parent:=Parent;
+  FRectangle3.Parent:=Parent;
+  FRectangle4.Parent:=Parent;
+ end;
+
+
+ FXOrigin:=X;
+ FYOrigin:=Y;
+ FBlocked:=True;
+end;
+
+procedure TRpSizePosInterface.MouseMove(Shift: TShiftState; X, Y: Integer);
+var
+ NewLeft,NewTop:integer;
+begin
+ inherited MouseMove(Shift,X,Y);
+
+ if MouseCapture then
+ begin
+  if ((Abs(X-FXOrigin)>CONS_MINIMUMMOVE) OR
+    (Abs(Y-FYOrigin)>CONS_MINIMUMMOVE)) then
+     FBlocked:=False;
+
+  if Assigned(FRectangle) AND (Not FBlocked) then
+  begin
+   NewLeft:=Left-FXOrigin+X;
+   if NewLeft<0 then
+    NewLeft:=0;
+   NewTop:=Top-FYOrigin+Y;
+   if NewTop<0 then
+    NewTop:=0;
+   if NewLeft+Width>Parent.Width then
+    NewLeft:=Parent.Width-Width;
+   if NewTop+Height>Parent.Height then
+    NewTop:=Parent.Height-Height;
+   FRectangle.SetBounds(Newleft,NewTop,Width,1);
+   FRectangle2.SetBounds(Newleft,NewTop+Height,Width,1);
+   FRectangle3.SetBounds(Newleft,NewTop,1,Height);
+   FRectangle4.SetBounds(Newleft+Width,NewTop,1,Height);
+  end;
+ end;
+end;
+
+procedure TRpSizePosInterface.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+ NewLeft,NewTop:integer;
+begin
+ inherited MouseUp(Button,Shift,X,Y);
+
+ if Assigned(FRectangle) then
+ begin
+  FRectangle.Free;
+  FRectangle:=nil;
+  FRectangle2.Free;
+  FRectangle:=nil;
+  FRectangle3.Free;
+  FRectangle:=nil;
+  FRectangle4.Free;
+  FRectangle:=nil;
+  // New position
+  NewLeft:=Left-FXOrigin+X;
+  if NewLeft<0 then
+   NewLeft:=0;
+  NewTop:=Top-FYOrigin+Y;
+  if NewTop<0 then
+   NewTop:=0;
+  if NewLeft+Width>Parent.Width then
+   NewLeft:=Parent.Width-Width;
+  if NewTop+Height>Parent.Height then
+   NewTop:=Parent.Height-Height;
+  TRpCOmmonPosComponent(printitem).PosX:=pixelstotwips(NewLeft);
+  TRpCOmmonPosComponent(printitem).PosY:=pixelstotwips(NewTop);
+  UpdatePos;
+ end;
+end;
+
+
+
+procedure TRpSizePosInterface.Paint;
+begin
+ inherited Paint;
+end;
+
+procedure TRpRectangle.Paint;
+begin
+ Canvas.Rectangle(0,0,Width,Height);
+end;
+
+constructor TRpRectangle.Create(AOwner:TComponent);
+var
+ opts:TControlStyle;
+begin
+ inherited Create(AOwner);
+
+ opts:=ControlStyle;
+ include(opts,csOpaque);
+ ControlStyle:=opts;
+end;
+
+
+procedure TRpBlackControl.MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
+begin
+ inherited MouseDown(Button,Shift,X,Y);
+
+ if Not Assigned(FRectangle) then
+ begin
+  FRectangle:=TRpRectangle.Create(Self);
+  FRectangle2:=TRpRectangle.Create(Self);
+  FRectangle3:=TRpRectangle.Create(Self);
+  FRectangle4:=TRpRectangle.Create(Self);
+
+  FRectangle.SetBounds(Left,Top,Width,1);
+  FRectangle2.SetBounds(Left,Top+Height,Width,1);
+  FRectangle3.SetBounds(Left,Top,1,Height);
+  FRectangle4.SetBounds(Left+Width,Top,1,Height);
+
+  FRectangle.Parent:=Parent;
+  FRectangle2.Parent:=Parent;
+  FRectangle3.Parent:=Parent;
+  FRectangle4.Parent:=Parent;
+ end;
+
+
+ FXOrigin:=X;
+ FYOrigin:=Y;
+end;
+
+
+procedure TRpBlackControl.CalcNewCoords(var NewLeft,
+ NewTop,NewWidth,NewHeight,X,Y:integer);
+begin
+  // Depending on tag must do different coordinates
+  case Tag of
+   0:
+    begin
+     NewLeft:=Control.Left-FXOrigin+X;
+     NewTop:=Control.Top-FYOrigin+Y;
+     // It mantains the bottom corner position
+     if NewTop>Control.Top+Control.Height then
+     begin
+      NewHeight:=NewTop-(Control.Top+Control.Height);
+      NewTop:=Control.Top+Control.Height;
+     end
+     else
+     begin
+      if NewTop<0 then
+       NewTop:=0;
+      NewHeight:=Control.Height+(Control.Top-NewTop);
+     end;
+
+     if NewLeft>Control.Left+Control.Width then
+     begin
+      NewWidth:=NewLeft-(Control.Left+Control.Width);
+      NewLeft:=Control.Left+Control.Width;
+     end
+     else
+     begin
+      if NewLeft<0 then
+       NewLeft:=0;
+      NewWidth:=Control.Width+(Control.Left-NewLeft);
+     end;
+    end;
+   1:
+    begin
+     NewLeft:=Control.Left;
+     NewWidth:=Control.Width-FXOrigin+X;
+     NewTop:=Control.Top-FYOrigin+Y;
+
+     // It mantains the bottom corner position
+     if NewTop>Control.Top+Control.Height then
+     begin
+      NewHeight:=NewTop-(Control.Top+Control.Height);
+      NewTop:=Control.Top+Control.Height;
+     end
+     else
+     begin
+      if NewTop<0 then
+       NewTop:=0;
+      NewHeight:=Control.Height+(Control.Top-NewTop);
+     end;
+
+     if NewWidth<0 then
+     begin
+      NewWidth:=-NewWidth;
+      if NewWidth>Control.Left then
+       NewWidth:=Control.Left;
+      NewLeft:=Control.Left-NewWidth;
+     end
+    end;
+   2:
+    begin
+     NewLeft:=Control.Left-FXOrigin+X;
+     NewHeight:=Control.Height-FYOrigin+Y;
+     NewTop:=Control.Top;
+
+     if NewHeight<0 then
+     begin
+      NewHeight:=-NewHeight;
+      if NewHeight>Control.Top then
+       NewHeight:=Control.Top;
+      NewTop:=Control.Top-NewHeight;
+     end;
+
+     if NewLeft>Control.Left+Control.Width then
+     begin
+      NewWidth:=NewLeft-(Control.Left+Control.Width);
+      NewLeft:=Control.Left+Control.Width;
+     end
+     else
+     begin
+      if NewLeft<0 then
+       NewLeft:=0;
+      NewWidth:=Control.Width+(Control.Left-NewLeft);
+     end;
+
+    end;
+   3:
+    begin
+     NewHeight:=Control.Height-FYOrigin+Y;
+     NewTop:=Control.Top;
+     NewLeft:=Control.Left;
+     NewWidth:=Control.Width-FXOrigin+X;
+
+     if NewHeight<0 then
+     begin
+      NewHeight:=-NewHeight;
+      if NewHeight>Control.Top then
+       NewHeight:=Control.Top;
+      NewTop:=Control.Top-NewHeight;
+     end;
+     if NewWidth<0 then
+     begin
+      NewWidth:=-NewWidth;
+      if NewWidth>Control.Left then
+       NewWidth:=Control.Left;
+      NewLeft:=Control.Left-NewWidth;
+     end
+
+    end;
+  end;
+  if NewLeft<0 then
+    NewLeft:=0;
+  if NewTop<0 then
+   NewTop:=0;
+  if NewLeft+NewWidth>Parent.Width then
+   NewWidth:=Parent.Width-NewLeft-1;
+  if NewTop+NewHeight>Parent.Height then
+   NewHeight:=Parent.Height-NewTop-1;
+end;
+
+
+procedure TRpBlackControl.MouseMove(Shift: TShiftState; X, Y: Integer);
+var NewLeft,
+ NewTop,NewWidth,NewHeight:integer;
+begin
+ inherited MouseMove(Shift,X,Y);
+
+ if Not Assigned(FControl) then
+  exit;
+ if MouseCapture then
+ begin
+  if (Not Assigned(FRectangle)) then
+   exit;
+  CalcNewCoords(NewLeft,NewTop,NewWidth,NewHeight,X,Y);
+
+  FRectangle.SetBounds(Newleft,NewTop,NewWidth,1);
+  FRectangle2.SetBounds(Newleft,NewTop+NewHeight,NewWidth,1);
+  FRectangle3.SetBounds(Newleft,NewTop,1,NewHeight);
+  FRectangle4.SetBounds(Newleft+NewWidth,NewTop,1,NewHeight);
+ end;
+end;
+
+procedure TRpBlackControl.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+ NewLeft,NewTop,NewWidth,NewHeight:integer;
+begin
+ inherited MouseUp(Button,Shift,X,Y);
+
+ if Assigned(FRectangle) then
+ begin
+  FRectangle.Free;
+  FRectangle:=nil;
+  FRectangle2.Free;
+  FRectangle:=nil;
+  FRectangle3.Free;
+  FRectangle:=nil;
+  FRectangle4.Free;
+  FRectangle:=nil;
+
+  CalcNewCoords(NewLeft,NewTop,NewWidth,NewHeight,X,Y);
+
+  if NewWidth<CONS_MINWIDTH then
+   NewWidth:=CONS_MINWIDTH;
+  if NewHeight<CONS_MINHEIGHT then
+   NewHeight:=CONS_MINHEIGHT;
+
+  // New position
+  Control.SetBounds(NewLeft,NewTop,NewWidth,NewHeight);
+  if Assigned(TRpSizeModifier(Owner).OnSizeChange) then
+   TRpSizeModifier(Owner).OnSizeChange(Owner);
+  TRpSizeModifier(Owner).UpdatePos;
+ end;
+end;
+
+
+end.

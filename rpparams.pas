@@ -1,0 +1,236 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager                                  }
+{                                                       }
+{       Rpparams                                        }
+{                                                       }
+{       Parameter collection to assign to datasets      }
+{       and expresion evaluator                         }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the GPL license              }
+{       A comercial license is also available           }
+{       See license.txt for licensing details           }
+{                                                       }
+{                                                       }
+{*******************************************************}
+
+unit rpparams;
+
+interface
+
+uses Classes, SysUtils,rpconsts,Variants,DB;
+
+type
+  TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,
+   rpParamTime,rpParamDateTime,rpParamCurrency,rpParamBool);
+
+  TRpParam=class(TCollectionitem)
+   private
+    FName:string;
+    FDescription:string;
+    FVisible:boolean;
+    FValue:variant;
+    FParamType:TRpParamType;
+    FDatasets:TStrings;
+    procedure SetVisible(AVisible:boolean);
+    procedure SetName(AName:String);
+    procedure SetValue(AValue:variant);
+    procedure SetDescription(ADescription:string);
+    procedure SetParamType(AParamType:TRpParamType);
+   public
+    Constructor Create(Collection:TCollection);override;
+    procedure Assign(Source:TPersistent);override;
+    destructor Destroy;override;
+    procedure SetDatasets(AList:TStrings);
+   published
+    property Name:string read FName write SetName;
+    property Description:string read FDescription write SetDescription;
+    property Visible:Boolean read FVisible write SetVisible default True;
+    property Value:Variant read FValue write SetValue;
+    property ParamType:TRpParamType read FParamtype write SetParamType
+     default rpParamString;
+    property Datasets:TStrings read FDatasets write SetDatasets;
+  end;
+
+  TRpParamList=class(TCollection)
+   private
+    FReport:TComponent;
+   public
+    function GetItem(Index:Integer):TRpParam;
+    procedure SetItem(index:integer;Value:TRpParam);
+   public
+    constructor Create(AOwner:TComponent);
+    function Add(AName:String):TRpParam;
+    function IndexOf(AName:String):integer;
+    function FindParam(AName:string):TRpParam;
+    function ParamByName(AName:string):TRpParam;
+    property Items[index:integer]:TRpParam read GetItem write SetItem;default;
+   end;
+
+function ParamTypeToDataType(paramtype:TRpParamType):TFieldType;
+
+implementation
+
+Constructor TRpParam.Create(Collection:TCollection);
+begin
+ inherited Create(Collection);
+ FVisible:=true;
+ FParamType:=rpParamString;
+ FDatasets:=TStringList.Create;
+end;
+
+procedure TRpParam.Assign(Source:TPersistent);
+begin
+ if (Source is TRpParam) then
+ begin
+  FName:=TRpParam(Source).FName;
+  FVisible:=TRpParam(Source).FVisible;
+  FDescription:=TRpParam(Source).FDescription;
+  FValue:=TRpParam(Source).FValue;
+  FParamType:=TRpParam(Source).FParamType;
+  FDatasets.Assign(TRpParam(Source).FDatasets);
+ end
+ else
+  inherited Assign(Source);
+end;
+
+destructor TRpParam.Destroy;
+begin
+ FDatasets.Free;
+ inherited Destroy;
+end;
+
+procedure TRpParam.SetVisible(AVisible:boolean);
+begin
+ FVisible:=AVisible;
+ Changed(false);
+end;
+
+procedure TRpParam.SetDatasets(AList:TStrings);
+begin
+ FDatasets.Assign(Alist);
+ Changed(False);
+end;
+
+procedure TRpParam.SetName(AName:String);
+begin
+ FName:=AnsiUpperCase(AName);
+ Changed(false);
+end;
+
+procedure TRpParam.SetParamType(AParamType:TRpParamType);
+begin
+ FParamType:=AParamType;
+ Changed(False);
+end;
+
+procedure TRpParam.SetDescription(ADescription:String);
+begin
+ FDescription:=AnsiUpperCase(ADescription);
+ Changed(false);
+end;
+
+procedure TRpParam.SetValue(AValue:Variant);
+begin
+ FValue:=AValue;
+ Changed(false);
+end;
+
+
+function TRpParamList.GetItem(Index:Integer):TRpParam;
+begin
+ Result:=TRpParam(inherited GetItem(index));
+end;
+
+
+procedure TRpParamList.SetItem(index:integer;Value:TRpParam);
+begin
+ inherited SetItem(Index,Value);
+end;
+
+constructor TRpParamList.Create(AOwner:TComponent);
+begin
+ inherited Create(TRpParam);
+ FReport:=AOwner;
+end;
+
+function TRpParamList.Add(AName:String):TRpParam;
+begin
+ // Checks if it exists
+ if IndexOf(AName)>0 then
+  Raise Exception.Create(SRpAliasExists);
+ Result:=TRpParam(inherited Add);
+ Result.FName:=AName;
+ Result.FVisible:=true;
+ Result.FParamType:=rpParamString;
+ Result.FValue:=Null;
+end;
+
+
+function TRpParamList.IndexOf(AName:String):integer;
+var
+ i:integer;
+begin
+ AName:=AnsiUpperCase(AName);
+ Result:=-1;
+ i:=0;
+ While i<count do
+ begin
+  if items[i].FName=AName then
+  begin
+   Result:=i;
+   break;
+  end;
+  inc(i);
+ end;
+end;
+
+function TRpParamList.FindParam(AName:string):TRpParam;
+var
+ index:integer;
+begin
+ Result:=nil;
+ index:=Indexof(AName);
+ if index>=0 then
+  Result:=items[index];
+end;
+
+function TRpParamList.ParamByName(AName:string):TRpParam;
+var
+ index:integer;
+begin
+ index:=Indexof(AName);
+ if index<0 then
+  Raise Exception.Create(SRpParamNotFound+AName);
+ Result:=items[index];
+end;
+
+
+function ParamTypeToDataType(paramtype:TRpParamType):TFieldType;
+begin
+  Result:=ftUnknown;
+  case ParamType of
+   rpParamString:
+    Result:=ftString;
+   rpParamInteger:
+    Result:=ftInteger;
+   rpParamDouble:
+    Result:=ftFloat;
+   rpParamCurrency:
+    Result:=ftCurrency;
+   rpParamDate:
+    Result:=ftDate;
+   rpParamTime:
+    Result:=ftDateTime;
+   rpParamDateTime:
+    Result:=ftTime;
+   rpParamBool:
+    Result:=ftBoolean;
+  end;
+end;
+
+
+end.

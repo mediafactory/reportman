@@ -1,0 +1,152 @@
+object FrpExpredialog: TFrpExpredialog
+  Left = 197
+  Top = 104
+  Width = 495
+  Height = 368
+  HorzScrollBar.Range = 469
+  VertScrollBar.Range = 349
+  ActiveControl = MemoExpre
+  Caption = 'Expression build'
+  Color = clButton
+  Position = poScreenCenter
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  PixelsPerInch = 75
+  TextHeight = 15
+  TextWidth = 7
+  object Label1: TLabel
+    Left = 8
+    Top = 8
+    Width = 61
+    Height = 15
+    Caption = 'Expression'
+  end
+  object Label2: TLabel
+    Left = 4
+    Top = 108
+    Width = 51
+    Height = 15
+    Caption = 'Category'
+  end
+  object Label3: TLabel
+    Left = 124
+    Top = 108
+    Width = 55
+    Height = 15
+    Caption = 'Operation'
+  end
+  object LModel: TLabel
+    Left = 8
+    Top = 248
+    Width = 42
+    Height = 15
+    Caption = 'LModel'
+  end
+  object LHelp: TLabel
+    Left = 8
+    Top = 224
+    Width = 26
+    Height = 15
+    Caption = 'Help'
+  end
+  object LParams: TLabel
+    Left = 8
+    Top = 272
+    Width = 461
+    Height = 49
+    AutoSize = False
+    Caption = 'Params'
+  end
+  object MemoExpre: TMemo
+    Left = 4
+    Top = 24
+    Width = 457
+    Height = 53
+    Lines.Strings = (
+      'MemoExpre')
+    TabOrder = 0
+  end
+  object LCategory: TListBox
+    Left = 4
+    Top = 124
+    Width = 109
+    Height = 89
+    Items.Strings = (
+      'Database fields'
+      'Functions'
+      'Variables'
+      'Constants'
+      'Operators')
+    Rows = 5
+    TabOrder = 4
+    OnClick = LCategoryClick
+  end
+  object LItems: TListBox
+    Left = 120
+    Top = 124
+    Width = 337
+    Height = 89
+    TabOrder = 5
+    OnClick = LItemsClick
+    OnDblClick = LItemsDblClick
+  end
+  object BitBtn1: TBitBtn
+    Left = 200
+    Top = 84
+    Width = 33
+    Height = 33
+    TabOrder = 2
+    OnClick = BitBtn1Click
+    Glyph.Data = {
+      7A010000424D7601000000000000760000002800000020000000100000000100
+      0400000000000001000000000000000000001000000010000000000000000000
+      800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333000333
+      3333333333777F33333333333309033333333333337F7F333333333333090333
+      33333333337F7F33333333333309033333333333337F7F333333333333090333
+      33333333337F7F33333333333309033333333333FF7F7FFFF333333000090000
+      3333333777737777F333333099999990333333373F3333373333333309999903
+      333333337F33337F33333333099999033333333373F333733333333330999033
+      3333333337F337F3333333333099903333333333373F37333333333333090333
+      33333333337F7F33333333333309033333333333337373333333333333303333
+      333333333337F333333333333330333333333333333733333333}
+    NumGlyphs = 2
+  end
+  object BCheckSyn: TButton
+    Left = 8
+    Top = 80
+    Width = 113
+    Height = 25
+    Caption = 'Syntax check'
+    TabOrder = 1
+    OnClick = BCheckSynClick
+  end
+  object BShowResult: TButton
+    Left = 280
+    Top = 80
+    Width = 113
+    Height = 25
+    Caption = 'Show Result'
+    TabOrder = 3
+    OnClick = BShowResultClick
+  end
+  object BCancel: TButton
+    Left = 96
+    Top = 324
+    Width = 85
+    Height = 25
+    Caption = '&Cancel'
+    ModalResult = 2
+    TabOrder = 6
+  end
+  object BOK: TButton
+    Left = 4
+    Top = 324
+    Width = 85
+    Height = 25
+    Caption = '&OK'
+    Default = True
+    ModalResult = 1
+    TabOrder = 7
+  end
+end

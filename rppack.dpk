@@ -1,0 +1,49 @@
+package rppack;
+
+{$R *.res}
+{$R 'rpeval.dcr'}
+{$R 'rpalias.dcr'}
+{$R 'rplastsav.dcr'}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'Report manager designer (non visual)'}
+{$IMPLICITBUILD OFF}
+requires
+  baseclx,
+  dataclx;
+
+contains
+  rptypeval in 'rptypeval.pas',
+  rpconsts in 'rpconsts.pas',
+  rpeval in 'rpeval.pas',
+  rpevalfunc in 'rpevalfunc.pas',
+  rpparser in 'rpparser.pas',
+  rpalias in 'rpalias.pas',
+  rpreg in 'rpreg.pas',
+  rplastsav in 'rplastsav.pas',
+  rptypes in 'rptypes.pas',
+  rpdatainfo in 'rpdatainfo.pas',
+  rpparams in 'rpparams.pas';
+
+
+
+end.
