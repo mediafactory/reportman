@@ -5,6 +5,9 @@ interface
 
 uses
   SysUtils, Classes, HTTPApp,rptypes,rpmdconsts,inifiles,
+{$IFDEF USEADO}
+  ActiveX,
+{$ENDIF}
   rpmdshfolder,
   rpwebpages;
 
@@ -50,6 +53,9 @@ end;
 procedure Trepwebmod.WebModuleCreate(Sender: TObject);
 begin
  pageloader:=TRpWebPageLoader.Create(Self);
+{$IFDEF USEADO}
+ Coinitialize(nil);
+{$ENDIF}
 end;
 
 

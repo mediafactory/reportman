@@ -9,4 +9,4 @@ export LC_NUMERIC=en_US
 export KYLIX_DEFINEDENVLOCALES=Yes
 export KYLIX_THOUSAND_SEPARATOR=.
 export KYLIX_DECIMAL_SEPARATOR=,
-./repmand
+./repmand $1 $2 $3 $4 $5 $6 $7

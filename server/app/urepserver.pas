@@ -32,6 +32,9 @@ uses
 {$IFDEF USEBDE}
   dbtables,
 {$ENDIF}
+{$IFDEF USEADO}
+  ActiveX,
+{$ENDIF}
   rptranslator,rpmdshfolder,IniFiles,rpmdprotocol,
   rpreport,rppdfdriver, IdThreadMgrPool,rptypes,rpparams;
 
@@ -106,6 +109,9 @@ implementation
 
 procedure TRpClient.CreateReport;
 begin
+{$IFDEF USEADO}
+ CoInitialize(nil);
+{$ENDIF}
 {$IFDEF USEBDE}
  if Not Assigned(ASession) then
  begin
