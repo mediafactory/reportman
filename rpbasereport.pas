@@ -1528,9 +1528,6 @@ begin
  end;
  adata.SQLOverride:=sql;
  adata.Connect(DatabaseInfo,Params);
- index:=FDataAlias.List.indexof(datasetname);
- if index>=0 then
-  FDataAlias.List.Items[index].CacheFields;
 end;
 
 function TRpBaseReport.Newlanguage(alanguage:integer):integer;

@@ -481,7 +481,7 @@ var
 // oldsectionindex:integer;
  lastdetail,firstdetail:integer;
  dataavail:boolean;
- index,nindex:integer;
+ index:integer;
  SearchGroupHeader:Boolean;
 begin
  SearchGroupHeader:=false;
@@ -506,9 +506,6 @@ begin
      Datainfo.Items[index].Disconnect;
      UpdateParamsBeforeOpen(index,true);
      Datainfo.Items[index].Connect(DatabaseInfo,params);
-     nindex:=FDataAlias.List.indexof(Datainfo.Items[index].Alias);
-     if nindex>=0 then
-      FDataAlias.List.Items[nindex].CacheFields;
     end
     else
     begin
@@ -519,9 +516,6 @@ begin
        Datainfo.Items[index].Disconnect;
        UpdateParamsBeforeOpen(index,true);
        Datainfo.Items[index].Connect(DatabaseInfo,params);
-       nindex:=FDataAlias.List.indexof(Datainfo.Items[index].Alias);
-       if nindex>=0 then
-        FDataAlias.List.Items[nindex].CacheFields;
       end
      end;
     end;
@@ -825,14 +819,14 @@ end;
 
 procedure TRpReport.BeginPrint(Driver:IRpPrintDriver);
 var
- i:integer;
+ i,index:integer;
  item:TRpAliaslistItem;
  apagesize:TPoint;
  paramname:string;
  rPageSizeQt:TPageSizeQt;
  subrep:TRpSubReport;
  dataavail:Boolean;
- newpagesize,index:integer;
+ newpagesize:integer;
 begin
  FillGlobalHeaders;
  FDriver:=Driver;
@@ -957,6 +951,16 @@ begin
  end;
 
 
+ FDataAlias.List.Clear;
+ for i:=0 to DataInfo.Count-1 do
+ begin
+  item:=FDataAlias.List.Add;
+  item.Alias:=DataInfo.Items[i].Alias;
+  DataInfo.Items[i].OnConnect:=item.CacheFields;
+  DataInfo.Items[i].OnDisConnect:=item.UnCacheFields;
+ end;
+
+
  ActivateDatasets;
  try
   // After activating dataset we must check wich subreport to activate
@@ -968,18 +972,16 @@ begin
  end;
 
 
- FDataAlias.List.Clear;
  for i:=0 to DataInfo.Count-1 do
  begin
-  item:=FDataAlias.List.Add;
-  item.Alias:=DataInfo.Items[i].Alias;
+  index:=FDataAlias.List.indexof(DataInfo.Items[i].Alias);
+  item:=FDataAlias.List.Items[index];
 {$IFDEF USERPDATASET}
   if Datainfo.Items[i].Cached then
    item.Dataset:=DataInfo.Items[i].CachedDataset
   else
 {$ENDIF}
    item.Dataset:=DataInfo.Items[i].Dataset;
-  item.CacheFields;
  end;
  FEvaluator.Rpalias:=FDataAlias;
 

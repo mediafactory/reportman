@@ -77,7 +77,8 @@ type
    public
     Constructor Create(Collection:TCollection);override;
     procedure Assign(Source:TPersistent);override;
-    procedure CacheFields;
+    procedure CacheFields(Sender:TDataset);
+    procedure UnCacheFields(Sender:TDataset);
     destructor Destroy;override;
    published
     property Alias:string read FAlias write SetAlias;
@@ -396,24 +397,24 @@ begin
   Result:=-1;
 end;
 
-procedure TRpAliaslistItem.CacheFields;
+procedure TRpAliaslistItem.CacheFields(Sender:TDataset);
 var
  i:integer;
 begin
- if Not Assigned(Dataset) then
+ if Not Assigned(Sender) then
   exit;
  FCachedFields:=true;
-// FFields.Clear;
-// FFields.Sorted:=true;
-// for i:=0 to Dataset.Fields.Count-1 do
-// begin
-//  FFields.AddObject(AnsiUpperCase(Dataset.Fields[i].FieldName),Dataset.Fields[i]);
-// end;
  FFields.clear;
- for i:=0 to Dataset.Fields.Count-1 do
+ for i:=0 to Sender.Fields.Count-1 do
  begin
-  FFields.setValue(AnsiUpperCase(Dataset.Fields[i].FieldName),Dataset.Fields[i]);
+  FFields.setValue(AnsiUpperCase(Sender.Fields[i].FieldName),Sender.Fields[i]);
  end;
+end;
+
+procedure TRpAliaslistItem.UnCacheFields(Sender:TDataset);
+begin
+ FCachedFields:=false;
+ FFields.clear;
 end;
 
 end.

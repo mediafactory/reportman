@@ -267,6 +267,8 @@ type
 {$IFDEF USEADO}
    FexternalDataSet: Pointer;
 {$ENDIF}
+   FOnConnect:TDatasetNotifyEvent;
+   FOnDisConnect:TDatasetNotifyEvent;
    procedure SetDataUnions(Value:TStrings);
    procedure SetDatabaseAlias(Value:string);
    procedure SetAlias(Value:string);
@@ -277,6 +279,8 @@ type
 {$ENDIF}
   public
    SQLOverride:widestring;
+   property OnConnect:TDatasetNotifyEvent read FOnConnect write FOnConnect;
+   property OnDisConnect:TDatasetNotifyEvent read FOnDisConnect write FOnDisConnect;
    procedure Assign(Source:TPersistent);override;
    procedure Connect(databaseinfo:TRpDatabaseInfoList;params:TRpParamList);
    procedure Disconnect;
@@ -1927,6 +1931,8 @@ begin
    if Not Assigned(FSQLInternalQuery) then
     Raise Exception.Create(SRpDriverNotSupported);
 
+   FSQLInternalQuery.AfterOpen:=OnConnect;
+   FSQLInternalQuery.AfterClose:=OnDisConnect;
    FSQLInternalQuery.Active:=true;
 {$IFDEF USEBDE}
    if (FSQLInternalQuery is TTable) then
