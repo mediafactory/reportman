@@ -1151,6 +1151,7 @@ var
  aitem:TMenuItem;
 begin
 // RefreshChildren(True);
+ Application.Style.DefaultStyle:=AppStyle;
  for i:=0 to MQtStyle.Count-1 do
  begin
   aitem:=MQtStyle.Items[i];
@@ -1163,7 +1164,6 @@ procedure TFRpMainF.Windows1Click(Sender: TObject);
 begin
  // Sets the style
  AppStyle:=TDefaultStyle((Sender As TComponent).Tag);
- Application.Style.DefaultStyle:=AppStyle;
  UpdateStyle;
 end;
 

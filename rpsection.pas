@@ -203,8 +203,8 @@ procedure TRpSection.SetGroupName(Value:string);
 var
  subrep:TRpSubreport;
  i:integer;
- j:integer;
- sec:TRpSection;
+ aexpre:TRpExpression;
+ AGroupName:string;
 begin
  if (csLoading in ComponentState) then
  begin
@@ -223,24 +223,23 @@ begin
  subrep.CheckGroupExists(Value);
  if Length(FGroupName)>0 then
  begin
-  for i:=0 to subrep.Sections.Count-1 do
+  for i:=0 to Owner.ComponentCount-1 do
   begin
-   sec:=TRpSection(subrep.Sections[i]);
-   for j:=0 to Components.Count-1 do
+   if (Owner.Components[i] is TRpExpression) then
    begin
-    if (sec.Components.Items[j].Component is TRpExpression) then
-    begin
-     TRpExpression(sec.Components.Items[j].Component).GroupName:=Value;
-    end;
+    aexpre:=TRpExpression(Owner.Components[i]);
+    if aexpre.GroupName=FGroupName then
+     aexpre.GroupName:=Value;
    end;
   end;
  end;
  // Assign header and footer
+ AGroupName:=FGroupName;
  for i:=0 to subrep.Sections.Count-1 do
  begin
   if (subrep.Sections.Items[i].Section.SectionType in [rpsecgheader,rpsecgfooter]) then
-   if subrep.Sections.Items[i].Section.GroupName=FGroupName then
-    subrep.Sections.Items[i].Section.GroupName:=Value;
+   if subrep.Sections.Items[i].Section.FGroupName=AGroupName then
+    subrep.Sections.Items[i].Section.FGroupName:=Value;
  end;
 end;
 
