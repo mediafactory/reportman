@@ -9,7 +9,9 @@ MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
 DCC = $(ROOT)\bin\dcc32.exe $**
 BRCC = $(ROOT)\bin\brcc32.exe $**
 #------------------------------------------------------------------------------
-PROJECTS = repmandxp.exe rptranslate.exe unixtodos.exe repserverservice.exe
+PROJECTS = repmandxp.exe rptranslate.exe unixtodos.exe repserverservice.exe \
+  ReportMan.ocx printrepxp.exe metaprintxp.exe metaviewxp.exe \
+  reportserverappxp.exe repserverconfigxp.exe repserviceinstall.exe
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -24,6 +26,27 @@ unixtodos.exe: utils\unixtodos\unixtodos.dpr
   $(DCC)
 
 repserverservice.exe: ..\server\service\repserverservice.dpr
+  $(DCC)
+
+ReportMan.ocx: ..\activex\ReportMan.dpr
+  $(DCC)
+
+printrepxp.exe: utils\printrep\printrepxp.dpr
+  $(DCC)
+
+metaprintxp.exe: utils\metaprint\metaprintxp.dpr
+  $(DCC)
+
+metaviewxp.exe: utils\metaview\metaviewxp.dpr
+  $(DCC)
+
+reportserverappxp.exe: ..\server\app\reportserverappxp.dpr
+  $(DCC)
+
+repserverconfigxp.exe: ..\server\config\repserverconfigxp.dpr
+  $(DCC)
+
+repserviceinstall.exe: ..\server\service\repserviceinstall.dpr
   $(DCC)
 
 

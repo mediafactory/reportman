@@ -61,7 +61,6 @@ type
     procedure OnProgress(Sender:TRpReport;var docancel:boolean);
     procedure CreateReport;
   public
-    constructor Create;
     destructor Destroy;override;
   end;
 
@@ -107,6 +106,19 @@ implementation
 
 procedure TRpClient.CreateReport;
 begin
+{$IFDEF USEBDE}
+ if Not Assigned(ASession) then
+ begin
+  // If can not create session omit it
+  try
+   ASession:=TSession.Create(CurrentReport);
+   ASession.AutoSessionName:=True;
+  except
+   ASession.free;
+   ASession:=nil;
+  end;
+ end;
+{$ENDIF}
  if Assigned(CurrentReport) then
  begin
   CurrentReport.free;
@@ -116,21 +128,14 @@ begin
  CurrentReport.OnProgress:=OnProgress;
  CurrentReport.MilisProgres:=DEFAULT_MILIS_PROGRESS;
 {$IFDEF USEBDE}
- CurrentReport.DatabaseInfo.BDESession:=ASession;
+ if Assigned(ASession) then
+  CurrentReport.DatabaseInfo.BDESession:=ASession;
 {$ENDIF}
 {$IFDEF LINUX}
 // CurrentReport.LoadFromFile('/home/toni/cvsroot/reportman/repman/repsamples/sample6.rep');
 {$ENDIF}
 end;
 
-constructor TRpClient.Create;
-begin
-{$IFDEF USEBDE}
- ASession:=TSession.Create(CurrentReport);
- ASession.AutoSessionName:=True;
- ASession.Active:=True;
-{$ENDIF}
-end;
 
 destructor TRpClient.Destroy;
 begin
@@ -260,6 +265,7 @@ begin
  Ffilenameconfig:=Obtainininamecommonconfig('','','reportmanserver');
  if Not FileExists(FFilenameConfig) then
   Ffilenameconfig:=Obtainininamelocalconfig('','','reportmanserver');
+ ForceDirectories(ExtractFilePath(ffilenameconfig));
  inif:=TMemInifile.Create(filenameconfig);
  try
   laliases.clear;
@@ -311,6 +317,7 @@ begin
  Ffilenameconfig:=Obtainininamecommonconfig('','','reportmanserver');
  if Not FileExists(FFilenameConfig) then
   Ffilenameconfig:=Obtainininamelocalconfig('','','reportmanserver');
+ ForceDirectories(ExtractFilePath(ffilenameconfig));
  inif:=TMemInifile.Create(filenameconfig);
  try
   inif.WriteInteger('CONFIG','TCPPORT',fport);
@@ -405,14 +412,14 @@ begin
     case ACB^.Command of
      repauth:
       begin
+       username:='';
+       password:='';
        alist:=TStringList.Create;
        try
         alist.LoadFromStream(astream);
-        username:='Admin';
-        password:='';
         if alist.count>0 then
         begin
-         username:=Alist.Names[0];
+         username:=Uppercase(Alist.Names[0]);
          password:=Alist.Values[Alist.Names[0]];
         end;
        finally
@@ -420,11 +427,16 @@ begin
        end;
        // Looks if the user exists
        correct:=false;
-       index:=LUsers.IndexOfName(username);
-       if index>=0 then
+       if length(username)>0 then
        begin
-        If LUsers.ValueFromIndex[index]=password then
-         correct:=true;
+        index:=LUsers.IndexOfName(username);
+        if index>=0 then
+        begin
+         If LUsers.ValueFromIndex[index]=password then
+         begin
+          correct:=true;
+         end;
+        end;
        end;
        if correct then
        begin
@@ -810,14 +822,14 @@ procedure Tmodserver.RepServerDisconnect(AThread: TIdPeerThread);
 var
  ActClient: TRpClient;
 begin
-  ActClient:= TRpClient(AThread.Data);
-  try
-   Clients.LockList.Remove(ActClient);
-  finally
-   Clients.UnlockList;
-  end;
-  ActClient.free;
-  AThread.Data := nil;
+ ActClient:= TRpClient(AThread.Data);
+ try
+  Clients.LockList.Remove(ActClient);
+ finally
+  Clients.UnlockList;
+ end;
+ ActClient.free;
+ AThread.Data := nil;
 end;
 
 end.

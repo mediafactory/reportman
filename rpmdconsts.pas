@@ -529,6 +529,11 @@ var
   SRpAPathMustBeAssigned:WideString='A path must be specified';
   SRpAUserNameMustbeAssigned:WideString='A user name must be specified';
   SRpUserorPasswordIncorrect:WideString='User or password incorrect';
+  SRpWindowsNTRequired:WideString='Windows NT required to use this feature';
+  SRpCannotExecute:WideString='Can not execute';
+  SRpServiceStopped:WideString='Stopped';
+  SRpServiceStarted:WideString='Started';
+  SRpServiceUnInstalled:WideString='Not Installed';
 implementation
 
 uses rptranslator;
@@ -1051,6 +1056,11 @@ begin
  TranslateVar(803,SRpAPathMustBeAssigned);
  TranslateVar(804,SRpAUserNameMustbeAssigned);
  TranslateVar(805,SRpUserorPasswordIncorrect);
+ TranslateVar(814,SRpWindowsNTRequired);
+ TranslateVar(815,SRpCannotExecute);
+ TranslateVar(822,SRpServiceUnInstalled);
+ TranslateVar(823,SRpServiceStopped);
+ TranslateVar(824,SRpServiceStarted);
 end;
 
 

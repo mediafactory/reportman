@@ -30,18 +30,31 @@ Source: "..\repman\transwin\repmandxp.*"; DestDir: "{app}"; CopyMode: alwaysover
 Source: "..\repman\qttranslation\windows\qt_*.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaview\metaview.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaview\metaview.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\metaview\metaviewxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\metaview\metaviewxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaprint\metaprint.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\metaprint\metaprintxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\metaprint\metaprintxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "license.txt"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\printrep\printrep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\printrep\printrepxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\printrep\printrepxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\reptotxt\reptotxt.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\txttorep\txttorep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\rptranslator\rptranslate.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\rptranslator\rptranslate.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\rptranslator\rptranslateres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\printreptopdf\printreptopdf.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\server\service\repserverservice.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\server\app\reportserverapp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\server\app\reportserverappxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\server\app\reportserverappxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\server\app\reportservercon.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\server\config\repserverconfig.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\server\config\repserverconfigxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\server\config\repserverconfigxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\server\service\repserviceinstall.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\server\service\repserviceinstall.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; CopyMode: alwaysoverwrite
@@ -62,16 +75,18 @@ Source: "..\doc\doc\images\*.*"; DestDir: "{app}\doc\images"; CopyMode: alwaysov
 [Icons]
 Name: "{group}\Designer XP"; Filename: "{app}\repmandxp.exe"; WorkingDir: "{app}"
 Name: "{group}\Designer CP"; Filename: "{app}\repmand.exe"; WorkingDir: "{app}"
+Name: "{group}\Metafile Viewer/Report Client XP"; Filename: "{app}\metaviewxp.exe"; WorkingDir: "{app}"
 Name: "{group}\Metafile Viewer/Report Client"; Filename: "{app}\metaview.exe"; WorkingDir: "{app}"
 Name: "{group}\Translation Utility"; Filename: "{app}\rptranslate.exe"; WorkingDir: "{app}"
 Name: "{group}\Documentation"; Filename: "{app}\doc\index.html"; WorkingDir: "{app}\doc"
 Name: "{group}\License"; Filename: "{app}\license.txt";
+Name: "{group}\Server application XP"; Filename: "{app}\reportserverappxp.exe"; WorkingDir: "{app}"
 Name: "{group}\Server application"; Filename: "{app}\reportserverapp.exe"; WorkingDir: "{app}"
+Name: "{group}\Server configuration XP"; Filename: "{app}\repserverconfigxp.exe"; WorkingDir: "{app}"
 Name: "{group}\Server configuration"; Filename: "{app}\repserverconfig.exe"; WorkingDir: "{app}"
-Name: "{group}\Service Install"; Filename: "{app}\repserverservice.exe"; Parameters "/INSTALL"; WorkingDir: "{app}"
-Name: "{group}\Service UnInstall"; Filename: "{app}\repserverservice.exe"; Parameters "/UNINSTALL"; WorkingDir: "{app}"
+Name: "{group}\Service Installation tool"; Filename: "{app}\repserviceinstall.exe"; WorkingDir: "{app}"
 Name: "{userdesktop}\Report Manager Designer XP"; Filename: "{app}\repmandxp.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
-Name: "{userdesktop}\Report Manager Client"; Filename: "{app}\metaview.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
+Name: "{userdesktop}\Report Manager Client"; Filename: "{app}\metaviewxp.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\repmandxp.exe"; Description: "Launch Report Manager Designer XP"; Flags: nowait postinstall skipifsilent

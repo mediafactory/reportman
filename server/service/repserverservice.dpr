@@ -22,14 +22,21 @@
 program repserverservice;
 
 uses
+  midaslib,
+  rpmdconsts,
+  SysUtils,
+  rptypes,
+  urepservice in 'urepservice.pas' {ReportManServer: TService},
   SvcMgr,
-  urepservice in 'urepservice.pas' {ReportService: TService},
   urepserver in '..\app\urepserver.pas' {modserver: TDataModule};
 
 {$R *.RES}
 
 begin
-  Application.Initialize;
-  Application.CreateForm(TReportService, ReportService);
+ if Not IsWindowsNT then
+  Raise Exception.Create(SRpWindowsNTRequired);
+ Application.Initialize;
+ Application.Title := 'Report Manager Service';
+ Application.CreateForm(TReportManServer, ReportManServer);
   Application.Run;
 end.

@@ -23,7 +23,7 @@ unit rpvgraphutils;
 interface
 
 uses Classes,SysUtils,Windows,Graphics,rpmunits,Printers,WinSpool,
- rpmdconsts,rptypes,Forms;
+ rpmdconsts,rptypes,Forms,ComCtrls;
 
 type
  TGDIPageSize=record
@@ -54,7 +54,6 @@ function GetPhysicPageSizeTwips:TPoint;
 function GetPageSizeTwips:TPoint;
 function GetPageMarginsTWIPS:TRect;
 function QtPageSizeToGDIPageSize(qtsize:TPageSizeQt):TGDIPageSize;
-function IsWindowsNT:Boolean;
 function FindIndexPaperName(device,name:string):integer;
 procedure SetCurrentPaper(apapersize:TGDIPageSize);
 function GetCurrentPaper:TGDIPageSize;
@@ -64,16 +63,16 @@ function twipstopixels(ATwips:integer):integer;
 function pixelstotwips(apixels:integer):integer;
 function AlignToGrid(Value:integer;scale:integer):integer;
 function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
+procedure FillTreeView(ATree:TTreeView;alist:TStringList);
+function GetFullFileName(ANode:TTreeNode):String;
 
 var
- osinfo:TOsVersionInfo;
  formslist:TStringlist;
 
 
 implementation
 
 var
- obtainedversion:Boolean;
  FPrinters:TStringList;
 
 
@@ -254,6 +253,7 @@ var rec:TRect;
     offset:TPoint;
     dpix,dpiy:integer;
     apagewidth,apageheight:integer;
+    printererror:boolean;
 begin
  if Printer.printers.count<1 then
  begin
@@ -263,7 +263,22 @@ begin
   result.Right:=12047;
   exit;
  end;
- DC:=Printer.handle;
+ DC:=0;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  DC:=Printer.handle;
+ except
+  printererror:=true;
+ end;
+ if printererror then
+ begin
+  result.Left:=0;
+  result.Top:=0;
+  result.Bottom:=16637;
+  result.Right:=12047;
+  exit;
+ end;
 
  dpix:=GetDeviceCaps(DC,LOGPIXELSX); //  printer.XDPI;
  dpiy:=GetDeviceCaps(DC,LOGPIXELSY);  // printer.YDPI;
@@ -300,6 +315,7 @@ var
  DC:HDC;
  dpix,dpiy:integer;
  apagewidth,apageheight:integer;
+ printererror:boolean;
 begin
  if Printer.printers.count<1 then
  begin
@@ -307,7 +323,20 @@ begin
   result.x:=12047;
   exit;
  end;
- DC:=Printer.handle;
+ DC:=0;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  DC:=Printer.handle;
+ except
+  printererror:=true;
+ end;
+ if printererror then
+ begin
+  result.y:=16637;
+  result.x:=12047;
+  exit;
+ end;
  // Get the device units of
  dpix:=GetDeviceCaps(DC,LOGPIXELSX); //  printer.XDPI;
  dpiy:=GetDeviceCaps(DC,LOGPIXELSY);  // printer.YDPI;
@@ -324,6 +353,7 @@ function GetPhysicPageSizeTwips:TPoint;
 var
  DC:HDC;
  dpix,dpiy:integer;
+ printererror:boolean;
 begin
  if Printer.printers.count<1 then
  begin
@@ -331,7 +361,20 @@ begin
   result.x:=12047;
   exit;
  end;
- DC:=Printer.handle;
+ // Printer selected not valid error
+ DC:=0;
+ printererror:=false;
+ try
+  DC:=Printer.handle;
+ except
+  printererror:=true;
+ end;
+ if printererror then
+ begin
+  result.y:=16637;
+  result.x:=12047;
+  exit;
+ end;
  // Get the device units of
  dpix:=GetDeviceCaps(DC,LOGPIXELSX); //  printer.XDPI;
  dpiy:=GetDeviceCaps(DC,LOGPIXELSY);  // printer.YDPI;
@@ -533,6 +576,7 @@ var
   DeviceMode: THandle;
   PDevMode :  ^TDeviceMode;
   Device, Driver, Port: array[0..1023] of char;
+  printererror:boolean;
 begin
  if printer.printers.count<1 then
  begin
@@ -541,7 +585,20 @@ begin
   Result.Height:=0;
   exit;
  end;
- Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+ begin
+  Result.PageIndex:=DMPAPER_A4;
+  Result.Width:=0;
+  Result.Height:=0;
+  exit;
+ end;
  PDevMode := GlobalLock(DeviceMode);
  // Warning the custom page size does not work in all drivers
  // especially in Windows NT drivers
@@ -564,17 +621,6 @@ begin
 end;
 
 
-function IsWindowsNT:Boolean;
-begin
- if Not obtainedversion then
- begin
-   osinfo.dwOSVersionInfoSize:=sizeof(osinfo);
-  if Not GetVersionEx(osinfo) then
-   Raise Exception.Create(SRpError+' GetVersionEx');
-  obtainedversion:=True;
- end;
- Result:=osinfo.dwPlatformId=VER_PLATFORM_WIN32_NT;
-end;
 
 
 function GetPrinters: TStrings;
@@ -704,13 +750,21 @@ var
   foundpaper:boolean;
   needed:DWord;
   indexpaper:integer;
-
+  printererror:boolean;
   Device, Driver, Port: array[0..1023] of char;
   laste:integer;
 begin
  if printer.Printers.count<1 then
   exit;
- Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
  PDevMode := GlobalLock(DeviceMode);
  try
   // Custom page size, warning not all drivers supports it
@@ -936,10 +990,161 @@ begin
  end;
 end;
 
+function getfirstname(astring:string):string;
+var
+ j,index:integer;
+begin
+ j:=1;
+ index:=Length(astring)+1;
+ while j<=Length(astring) do
+ begin
+  if astring[j]=C_DIRSEPARATOR then
+  begin
+   index:=j;
+   break;
+  end;
+  inc(j);
+ end;
+ Result:=Copy(astring,1,index-1);
+end;
+
+function getpathname(astring:string):string;
+var
+ j,index:integer;
+begin
+ j:=1;
+ index:=1;
+ while j<=Length(astring) do
+ begin
+  if astring[j]=C_DIRSEPARATOR then
+  begin
+   index:=j;
+  end;
+  inc(j);
+ end;
+ Result:=Copy(astring,1,index-1);
+end;
+
+function getlastname(astring:string):string;
+var
+ j,index:integer;
+begin
+ j:=1;
+ index:=1;
+ while j<=Length(astring) do
+ begin
+  if astring[j]=C_DIRSEPARATOR then
+  begin
+   index:=j;
+  end;
+  inc(j);
+ end;
+ Result:=Copy(astring,index+1,Length(astring));
+end;
+
+function SearchnodeInt(ATree:TTreeView;astring:String;anode:TTreeNode):TTreeNode;
+var
+ i:integer;
+ firstname:string;
+begin
+ firstname:=GetFirstName(astring);
+ Result:=nil;
+ for i:=0 to anode.Count-1 do
+ begin
+  if firstname=anode.Item[i].Text then
+  begin
+   if firstname=astring then
+   begin
+    Result:=anode.Item[i];
+   end
+   else
+    Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),anode.Item[i]);
+  end;
+ end;
+ if Not Assigned(Result) then
+ begin
+  Result:=ATree.Items.AddChild(anode,firstname);
+  Result.ImageIndex:=2;
+  Result.SelectedIndex:=2;
+  if firstname<>astring then
+  begin
+   Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),Result);
+  end;
+ end;
+end;
+
+
+function Searchnode(FTopItems:TStringList;ATree:TTreeView;astring:String):TTreeNode;
+var
+ i:integer;
+ firstname:string;
+begin
+ firstname:=GetFirstName(astring);
+ Result:=nil;
+ for i:=0 to FTopItems.Count-1 do
+ begin
+  if firstname=FTopItems.Strings[i] then
+  begin
+   if firstname=astring then
+   begin
+    Result:=TTreeNode(FTopItems.Objects[i]);
+   end
+   else
+    Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),TTreeNode(FTopItems.Objects[i]));
+  end;
+ end;
+ if Not Assigned(Result) then
+ begin
+  Result:=ATree.Items.AddChild(nil,firstname);
+  Result.ImageIndex:=2;
+  Result.SelectedIndex:=2;
+  FTopItems.AddObject(firstname,Result);
+  if firstname<>astring then
+  begin
+   Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),Result);
+  end;
+ end;
+end;
+
+procedure FillTreeView(ATree:TTreeView;alist:TStringList);
+var
+ newitem,anode:TTreeNode;
+ astring:string;
+ repname,dirname:String;
+ i:integer;
+ FTopItems:TStringList;
+begin
+ FTopitems:=TStringList.Create;
+ try
+  for i:=0 to alist.count-1 do
+  begin
+   if Length(alist.Strings[i])<1 then
+    continue;
+   astring:=alist.Strings[i];
+   repname:=GetLastName(astring);
+   dirname:=GetPathName(astring);
+   anode:=SearchNode(FTopItems,ATree,dirname);
+   newitem:=ATree.Items.AddChild(anode,repname);
+   newitem.ImageIndex:=3;
+   newitem.SelectedIndex:=3;
+  end;
+ finally
+  FTopItems.Free;
+ end;
+end;
+
+
+function GetFullFileName(ANode:TTreeNode):String;
+begin
+ if Assigned(ANode.Parent) then
+  Result:=GetFullFileName(ANode.Parent)+C_DIRSEPARATOR+ANode.Text
+ else
+  Result:=ANode.Text;
+end;
+
 
 initialization
 
-obtainedversion:=false;
 formslist:=TStringList.Create;
 if IsWindowsNT then
  FillFormsList;

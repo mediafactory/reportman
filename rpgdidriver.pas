@@ -1454,7 +1454,7 @@ procedure PageSizeSelection(rpPageSize:TPageSizeQt);
 var
  pagesize:TGDIPageSize;
 begin
- if Printer.Printers.Count<0 then
+ if Printer.Printers.Count<1 then
   exit;
  pagesize:=QtPageSizeToGDIPageSize(rppagesize);
  SetCurrentPaper(pagesize);
@@ -1463,7 +1463,7 @@ end;
 
 procedure OrientationSelection(neworientation:TRpOrientation);
 begin
- if Printer.Printers.Count<0 then
+ if Printer.Printers.Count<1 then
   exit;
  if neworientation=rpOrientationDefault then
   exit;

@@ -26,6 +26,7 @@ uses
   fmainf in 'fmainf.pas' {FSerMain},
   urepserver in 'urepserver.pas' {modserver: TDataModule},
 {$IFDEF MSWINDOWS}
+  midaslib,
   rpmdprotocol in '..\..\rpmdprotocol.pas';
 {$ENDIF}
 {$IFDEF LINUX}

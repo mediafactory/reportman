@@ -134,16 +134,3 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
-[Excluded Packages]
-c:\archivos de programa\borland\delphi7\Bin\dclsoap70.bpl=Borland SOAP Components
-c:\archivos de programa\borland\delphi7\Bin\dclwebsnap70.bpl=Borland WebSnap Components
-c:\archivos de programa\borland\delphi7\bin\dclRave70.bpl=Rave Reports BE 5.0 Package
-c:\archivos de programa\borland\delphi7\Bin\dclsmp70.bpl=Borland Sample Components
-c:\archivos de programa\borland\delphi7\Projects\Bpl\Gestor.bpl=Componentes del gestor de Informes
-C:\Archivos de programa\Borland\Delphi7\Bin\dclocx70.bpl=Borland Sample Imported ActiveX Controls
-c:\archivos de programa\borland\delphi7\Bin\dclofficexp70.bpl=Microsoft Office XP Sample Automation Server Wrapper Components
-c:\archivos de programa\borland\delphi7\Bin\dcl31w70.bpl=Delphi 1.0 Compatibility Components
-c:\archivos de programa\borland\delphi7\Bin\dclIntraweb_50_70.bpl=Intraweb 5.0 Design Package for Delphi 7
-c:\archivos de programa\borland\delphi7\Bin\dcltee70.bpl=TeeChart Components
-c:\archivos de programa\borland\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
-c:\archivos de programa\borland\delphi7\Bin\dclado70.bpl=Borland ADO DB Components

@@ -40,8 +40,6 @@ type
     PClient: TPanel;
     LHost: TLabel;
     ComboHost: TComboBox;
-    EPath: TEdit;
-    LPath: TLabel;
     PMessages: TPanel;
     LMessages: TMemo;
     Splitter1: TSplitter;
@@ -106,7 +104,6 @@ begin
  LHost.Caption:=TranslateStr(747,LHost.Caption);
  LUserName.Caption:=TranslateStr(751,LUserName.Caption);
  LPassword.Caption:=TranslateStr(752,LPassword.Caption);
- LPath.Caption:=TranslateStr(760,LPath.Caption);
  GUser.Caption:=TranslateStr(750,Guser.Caption);
  AConnect.Caption:=TranslateStr(753,AConnect.Caption);
  ADisconnect.Caption:=TranslateStr(777,ADisconnect.Caption);
@@ -240,6 +237,7 @@ end;
 
 procedure TFRpCliTree.OnGetTree(alist:TStringList);
 begin
+ LTree.Items.Clear;
  rpgraphutils.FillTreeView(LTree,alist);
 end;
 

@@ -132,10 +132,15 @@ function GetPrinterOffset(printerindex:TRpPrinterSelect):TPoint;
 function GetDeviceFontsOption(printerindex:TRpPrinterSelect):boolean;
 function GetPrinterRawOp(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):string;
 procedure FillTreeDir(adirectory:String;alist:TStringList);
+{$IFDEF MSWINDOWS}
+function IsWindowsNT:Boolean;
+{$ENDIF}
 
 // Language identifiers
 var
  rplangids:array [0..MAX_LANGUAGES-1] of string=('EN','ES','CAT');
+
+
 
 {$IFNDEF USEVARIANTS}
 function BoolToStr(B: Boolean; UseBoolStrs: Boolean = False): string;
@@ -154,9 +159,17 @@ const
 
 var
  printerconfigfile:TMemInifile;
+{$IFDEF MSWINDOWS}
+ osinfo:TOsVersionInfo;
+{$ENDIF}
 
 
 implementation
+
+{$IFDEF MSWINDOWS}
+var
+ obtainedversion:Boolean;
+{$ENDIF}
 
 
 {$IFNDEF USEVARIANTS}
@@ -501,7 +514,9 @@ begin
     end
     else
     begin
-     alist.Add(Copy(adir,adirlength+1,Length(adir))+C_DIRSEPARATOR+ChangeFileExt(srec.Name,''));
+     // Only adds the .rep files
+     if ExtractFileExt(srec.Name)='.rep' then
+      alist.Add(Copy(adir,adirlength+1,Length(adir))+C_DIRSEPARATOR+ChangeFileExt(srec.Name,''));
     end;
    until FindNext(srec)<>0;
   end;
@@ -598,11 +613,26 @@ begin
     Add(S);
 end;
 
+{$IFDEF MSWINDOWS}
+function IsWindowsNT:Boolean;
+begin
+ if Not obtainedversion then
+ begin
+   osinfo.dwOSVersionInfoSize:=sizeof(osinfo);
+  if Not GetVersionEx(osinfo) then
+   Raise Exception.Create(SRpError+' GetVersionEx');
+  obtainedversion:=True;
+ end;
+ Result:=osinfo.dwPlatformId=VER_PLATFORM_WIN32_NT;
+end;
+{$ENDIF}
 
 
 initialization
 
+obtainedversion:=false;
 printerconfigfile:=nil;
+
 finalization
 
 if assigned(printerconfigfile) then

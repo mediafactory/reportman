@@ -12,7 +12,7 @@ unit ReportMan_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 25/09/2002 15:04:47 from Type Library described below.
+// File generated on 02/10/2002 22:19:21 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)

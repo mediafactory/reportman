@@ -1258,7 +1258,7 @@ end;
 
 procedure PageSizeSelection(rpPageSize:TPageSizeQt);
 begin
- if Printer.Printers.Count<0 then
+ if Printer.Printers.Count<1 then
   exit;
  if rpPageSize.Custom then
   exit;
@@ -1267,7 +1267,7 @@ end;
 
 procedure OrientationSelection(neworientation:TRpOrientation);
 begin
- if Printer.Printers.Count<0 then
+ if Printer.Printers.Count<1 then
   exit;
  if neworientation=rpOrientationDefault then
   exit;

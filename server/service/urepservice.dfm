@@ -1,8 +1,8 @@
-object ReportService: TReportService
+object ReportManServer: TReportManServer
   OldCreateOrder = False
-  DisplayName = 'ReportService'
+  OnCreate = ServiceCreate
+  DisplayName = 'Report Manager Service'
   OnContinue = ServiceContinue
-  OnExecute = ServiceExecute
   OnPause = ServicePause
   OnShutdown = ServiceShutdown
   OnStart = ServiceStart

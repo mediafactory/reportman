@@ -481,7 +481,7 @@ begin
   copies:=1;
   rpgdidriver.PrinterSelection(printerindex);
   rpgdidriver.PageSizeSelection(rpPageSize);
-  rpqtdriver.OrientationSelection(metafile.orientation);
+  rpgdidriver.OrientationSelection(metafile.orientation);
   if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
    rpgdidriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
     frompage,topage,copies,collate,GetDeviceFontsOption(printerindex),printerindex);
@@ -838,9 +838,8 @@ begin
 {$ENDIF}
   clitree.ComboHost.Text:=inif.ReadString('Preferences','Host','localhost');
   clitree.EUserName.Text:=inif.ReadString('Preferences','UserName','Admin');
-  clitree.EPath.Text:=inif.ReadString('Preferences','Path','');
   ADriverGDI.Checked:=Not ADriverQT.Checked;
-  AAsyncExec.Checked:=inif.ReadBool('Preferences','AsyncExec',True);;
+  AAsyncExec.Checked:=inif.ReadBool('Preferences','AsyncExec',False);;
   clitree.asynchrohous:=AAsyncexec.Checked;
   AppStyle:=TDefaultStyle(inif.ReadInteger('Preferences','QtStyle',Integer(dsSystemDefault)));
   printerindex:=TRpPrinterSelect(inif.ReadInteger('Preferences','PrinterIndex',Integer(pRpDefaultPrinter)));
@@ -864,7 +863,6 @@ begin
   inif.WriteInteger('Preferences','PrinterIndex',Integer(printerindex));
   inif.WriteString('Preferences','Host',clitree.ComboHost.Text);
   inif.WriteString('Preferences','UserName',clitree.EUserName.Text);
-  inif.WriteString('Preferences','Path',clitree.EPath.Text);
   inif.WriteBool('Preferences','AsyncExec',AAsyncExec.Checked);;
   inif.WriteBool('Preferences','DiagConnect',AViewConnect.Checked);
   inif.UpdateFile;

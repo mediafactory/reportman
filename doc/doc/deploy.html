@@ -20,11 +20,11 @@
     <td width="262">Report Manager Main executable</td>
     <td width="133">AppDir/Required</td>
   </tr>
-  <tr>
+  <tr> 
     <td width="88">rpmandxp.exe</td>
     <td width="88">&nbsp;</td>
     <td width="262">Non Qt Report Manager Designer Version, it supports Windows 
-      XP Themes</td>
+      XP Themes, that is looks good in XP.</td>
     <td width="133">AppDir/Optional</td>
   </tr>
   <tr> 
@@ -36,7 +36,13 @@
   <tr> 
     <td width="88">repmand.*</td>
     <td width="88">&nbsp;</td>
-    <td width="262">Internal resource translations</td>
+    <td width="262">Internal resource translations for repmand.exe</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
+  <tr> 
+    <td width="88">repmandxp.*</td>
+    <td width="88">&nbsp;</td>
+    <td width="262">Internal resource translations for repmandxp.exe</td>
     <td width="133">AppDir/Optional</td>
   </tr>
   <tr> 
@@ -50,21 +56,64 @@
     <td width="88">metaprint</td>
     <td width="262"> 
       <p>Metafile print command line tool.</p>
-      <p>* Required only by Linux because a CLX bug. See <a href="knownissues.html">known 
+      <p>* Required only by some Linux distros because a CLX bug. See <a href="knownissues.html">known 
         issues and workarounds</a></p>
     </td>
     <td width="133">AppDir/Required*</td>
   </tr>
   <tr> 
+    <td width="88">metaprintxp.exe</td>
+    <td width="88">&nbsp;</td>
+    <td width="262">Same as metaprint but using GDI print driver (no QT)</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
+  <tr> 
+    <td width="88">reportserverapp.exe</td>
+    <td width="88">reportserverapp</td>
+    <td width="262">Report Server X/Win application</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
+  <tr> 
+    <td width="88">reportservercon.exe</td>
+    <td width="88">reportservercon</td>
+    <td width="262">Report Server console application</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
+  <tr> 
+    <td width="88">repserverconfig.exe</td>
+    <td width="88">repserverconfig.exe</td>
+    <td width="262">Report Server configuration client</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
+  <tr> 
+    <td width="88">repserverconfigxp.exe</td>
+    <td width="88">&nbsp;</td>
+    <td width="262">Report Server conf.client (no Qt)</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
+  <tr> 
+    <td width="88">repserverservice.exe</td>
+    <td width="88">&nbsp;</td>
+    <td width="262">Service application for NT Systems</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
+  <tr> 
+    <td width="88">repserviceinstall.exe</td>
+    <td width="88">&nbsp;</td>
+    <td width="262">Service installation utility</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
+  <tr> 
     <td width="88">&nbsp;</td>
     <td width="88">libborqtintf-6.9-qt2.3.so</td>
-    <td width="262">Linux interface to QT libs.</td>
+    <td width="262">Interface to QT libs. (Kylix 3)</td>
     <td width="133">SysDir/Required</td>
   </tr>
   <tr> 
-    <td width="88">qtintf7.dll</td>
-    <td width="88">libborqt.so.2</td>
-    <td width="262">QT Linux libs and Windows qt libs and interface to qtlibs</td>
+    <td width="88">qtintf70.dll</td>
+    <td width="88">libbqt.so.2,libqtintf.so.2</td>
+    <td width="262">QT Linux libs and Windows qt libs and interface to qtlibs 
+      (Kylix 2)</td>
     <td width="133">SysDir/Required</td>
   </tr>
   <tr> 
@@ -75,9 +124,11 @@
   </tr>
   <tr> 
     <td width="88">&nbsp;</td>
-    <td width="88">repmand.sh</td>
+    <td width="88"> 
+      <p>repmand.sh, metaview.sh, reportservercon.sh, reportserverapp.sh, repserverconfig.sh</p>
+    </td>
     <td width="262">If you place SysDir libraries in AppDir you must use this 
-      script to start Report Manager Designer</td>
+      scripts to start Report Manager Designer</td>
     <td width="133">AppDir/Optional</td>
   </tr>
   <tr> 
@@ -104,12 +155,18 @@
     <td width="262">Loads a report definition and executes it to printer</td>
     <td width="133">AppDir/Optional</td>
   </tr>
+  <tr>
+    <td width="88" height="51">printrepxp.exe</td>
+    <td width="88" height="51">&nbsp;</td>
+    <td width="262">Same as printrep but without Qt deps</td>
+    <td width="133" height="51">AppDir/Optional</td>
+  </tr>
   <tr> 
     <td width="88" height="51">printreptopdf.exe</td>
     <td width="88" height="51">printreptopdf</td>
     <td width="262">Loads a report definition, proces it and generates pdf, this 
       is a true console app</td>
-    <td width="133" height="51">AppDir/Optiona</td>
+    <td width="133" height="51">AppDir/Optional</td>
   </tr>
   <tr> 
     <td width="88" height="51">doc directory</td>
@@ -162,10 +219,15 @@
     <td width="16%">libsqlora.so</td>
     <td width="68%">Oracle DBExpress driver</td>
   </tr>
-  <tr>
-    <td width="16%">&nbsp;</td>
+  <tr> 
+    <td width="16%">dbexpinf.dll</td>
     <td width="16%">libsqlinf.so</td>
     <td width="68%">Informix DBExpress driver</td>
+  </tr>
+  <tr>
+    <td width="16%">dbexpmss.dll</td>
+    <td width="16%">&nbsp;</td>
+    <td width="68%">DBExpress driver for Microsoft SQL server</td>
   </tr>
 </table>
 <table width="95%" border="1">
@@ -223,8 +285,10 @@
             </tr>
           </table>
         </li>
-        <li>To not deploy <b>midas.dll</b> file you must include <b>midaslib</b> 
-          unit in your project.</li>
+        <li>You must deploy <b>midas.dll</b> or include <b>midaslib</b> unit in 
+          your project.</li>
+        <li>Distribute the .manifest file of the executables so they will look 
+          with the XP theme</li>
       </ul>
     </td>
     <td width="53%"> 
@@ -258,12 +322,13 @@
     <td width="53%" bgcolor="#FFFFCC"><b>Linux</b></td>
   </tr>
   <tr> 
-    <td width="47%">qtintf7.dll</td>
-    <td width="53%">libborqtintf-6.9-qt2.3.so</td>
+    <td width="47%">qtintf70.dll (Delphi 7) or qtintf.dll (Delphi 6)</td>
+    <td width="53%">libborqtintf-6.9-qt2.3.so (Kylix3) or libqt.so.2 and libqtintf.so.2 
+      (Kylix 2)</td>
   </tr>
   <tr> 
     <td width="47%">Note: If you use VCL only components in a VCL Application 
-      you don't need qtintf7.dll</td>
+      you don't need qtintf*.dll</td>
     <td width="53%"> 
       <p>libborqt.so.2</p>
       <p>This are qt runtime files provided by Borland since Kylix 3, if you use 
@@ -281,14 +346,18 @@
   <tr> 
     <td width="47%">Reportman.ocx</td>
   </tr>
-  <tr>
+  <tr> 
     <td width="47%">You can distribute reportmanres.* to show the Preview and 
       Print dialogs in the language locale of the user.</td>
   </tr>
   <tr> 
     <td width="47%">Note: You must register it with regsvr32 as any other ActiveX 
       component, usually installation applications like Install Shield do it when 
-      you include the file</td>
+      you include the file in you installation project</td>
+  </tr>
+  <tr>
+    <td width="47%">Distribute the Reportman.ocx.manifest file if you want the 
+      report engine forms look with the XP theme</td>
   </tr>
 </table>
 <p>&nbsp;</p>

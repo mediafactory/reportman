@@ -19,7 +19,7 @@ object FNewAlias: TFNewAlias
     Height = 25
     Caption = 'OK'
     Default = True
-    TabOrder = 0
+    TabOrder = 2
     OnClick = BOkClick
   end
   object BCancel: TButton
@@ -30,7 +30,7 @@ object FNewAlias: TFNewAlias
     Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
-    TabOrder = 1
+    TabOrder = 3
   end
   object LAlias: TLabel
     Left = 12
@@ -44,7 +44,7 @@ object FNewAlias: TFNewAlias
     Top = 8
     Width = 201
     Height = 21
-    TabOrder = 3
+    TabOrder = 0
     Text = 'EAliasName'
   end
   object EPath: TEdit
@@ -52,7 +52,7 @@ object FNewAlias: TFNewAlias
     Top = 44
     Width = 405
     Height = 21
-    TabOrder = 4
+    TabOrder = 1
     Text = 'EAliasName'
   end
   object LPath: TLabel

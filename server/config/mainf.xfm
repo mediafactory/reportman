@@ -3,8 +3,8 @@ object FMain: TFMain
   Top = 83
   Width = 490
   Height = 426
-  VertScrollBar.Range = 161
-  HorzScrollBar.Range = 389
+  VertScrollBar.Range = 417
+  HorzScrollBar.Range = 473
   ActiveControl = ComboHost
   BorderStyle = fbsDialog
   Caption = 'Report Manager Server configuration'
@@ -63,25 +63,25 @@ object FMain: TFMain
     end
   end
   object GServerinfo: TGroupBox
-    Left = 8
-    Top = 44
+    Left = 4
+    Top = 40
     Width = 469
-    Height = 373
+    Height = 309
     Caption = 'Server information'
     TabOrder = 3
     Visible = False
     object GReportDirectories: TGroupBox
-      Left = 8
-      Top = 148
-      Width = 461
-      Height = 185
+      Left = 4
+      Top = 120
+      Width = 453
+      Height = 157
       Caption = 'Report server directories'
       TabOrder = 1
       object DBGrid1: TDBGrid
         Left = 4
         Top = 16
         Width = 445
-        Height = 133
+        Height = 109
         DataSource = SDirectories
         ReadOnly = True
         TabOrder = 0
@@ -94,79 +94,79 @@ object FMain: TFMain
       end
       object BAddAlias: TButton
         Left = 4
-        Top = 149
+        Top = 124
         Width = 133
-        Height = 33
+        Height = 26
         Caption = 'Add'
         TabOrder = 1
         OnClick = BAddAliasClick
       end
       object BDeleteAlias: TButton
         Left = 140
-        Top = 149
+        Top = 124
         Width = 133
-        Height = 33
+        Height = 26
         Caption = 'Delete'
         TabOrder = 2
         OnClick = BDeleteAliasClick
       end
       object BPreviewTree: TButton
         Left = 276
-        Top = 149
+        Top = 124
         Width = 173
-        Height = 33
+        Height = 26
         Caption = 'Preview Report Tree'
         TabOrder = 3
         OnClick = BPreviewTreeClick
       end
     end
     object GUsers: TGroupBox
-      Left = 8
-      Top = 16
+      Left = 4
+      Top = 12
       Width = 453
-      Height = 129
+      Height = 105
       Caption = 'Users'
       TabOrder = 0
       object LUsers: TListBox
-        Left = 8
+        Left = 4
         Top = 16
         Width = 305
-        Height = 105
+        Height = 81
         TabOrder = 0
       end
       object BDeleteUser: TButton
         Left = 316
-        Top = 88
+        Top = 68
         Width = 133
-        Height = 33
+        Height = 29
         Caption = 'Delete'
-        TabOrder = 1
+        TabOrder = 3
         OnClick = BDeleteUserClick
       end
       object BAddUser: TButton
         Left = 316
         Top = 17
         Width = 133
-        Height = 33
+        Height = 28
         Caption = 'Add'
-        TabOrder = 2
+        TabOrder = 1
         OnClick = BAddUserClick
       end
       object BChangePassword: TButton
         Left = 316
-        Top = 53
+        Top = 41
         Width = 133
-        Height = 33
+        Height = 28
         Caption = 'Change Password'
-        TabOrder = 3
+        TabOrder = 2
         OnClick = BChangePasswordClick
       end
     end
     object BCloseConnection: TButton
-      Left = 8
-      Top = 337
+      Left = 4
+      Top = 277
       Width = 173
-      Height = 33
+      Height = 28
       Caption = 'Close connection'
       TabOrder = 2
       OnClick = BCloseConnectionClick
@@ -188,6 +188,13 @@ object FMain: TFMain
     Items.Strings = (
       'localhost')
     TabOrder = 0
+  end
+  object LMessages: TListBox
+    Left = 4
+    Top = 352
+    Width = 469
+    Height = 65
+    TabOrder = 4
   end
   object Trans: TRpTranslator
     Active = False

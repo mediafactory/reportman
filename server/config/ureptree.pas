@@ -1,3 +1,21 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager Server configuration             }
+{                                                       }
+{       ureptree                                        }
+{                                                       }
+{       Preview the tree for reports in a alias         }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
+{                                                       }
+{                                                       }
+{*******************************************************}
+
 unit ureptree;
 
 interface

@@ -23,6 +23,8 @@ unit rpdataset;
 
 interface
 
+{$I rpconf.inc}
+
 uses Sysutils,Classes,DBClient,
  db;
 
@@ -53,6 +55,53 @@ type
 
 implementation
 
+// Assign field source to destinaton (Assign not works well in Delphi 7)
+// The bug appears when you edit a already assigned record and assign
+// the blobfield, it clears the preceder field
+// Sample4.rep, uses biolife.gdb and reproduce the bug in Delphi7
+procedure AssignField(Source,Destination:TField);
+{$IFDEF BLOBSTREAMBUG}
+var
+ bwstream:TStream;
+ brstream:TStream;
+ memstream:TMemoryStream;
+{$ENDIF}
+begin
+ {$IFNDEF BLOBSTREAMBUG}
+   Destination.Assign(Source);
+ {$ENDIF}
+ {$IFDEF BLOBSTREAMBUG}
+   if (Destination is TBlobField) then
+   begin
+    Destination.Clear;
+    bwstream:=Destination.DataSet.CreateBlobStream(Destination,bmWrite);
+    try
+     brstream:=Source.DataSet.CreateBlobStream(Source,bmRead);
+     try
+      memstream:=TMemoryStream.Create;
+      try
+       memstream.SetSize(brStream.Size);
+       brStream.Read(memstream.memory^,memstream.Size);
+       memstream.Seek(0,soFromBeginning);
+       bwStream.Write(memstream.memory^,memstream.size);
+      finally
+       memstream.free;
+      end;
+     finally
+      brstream.Free;
+     end;
+    finally
+     bwstream.free;
+    end;
+   end
+   else
+   begin
+    Destination.Assign(Source);
+   end;
+ {$ENDIF}
+end;
+
+
 constructor TRpDataSet.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
@@ -77,7 +126,7 @@ begin
    try
     for i:=0 to FDataset.FieldCount-1 do
     begin
-     Fields[i].Assign(FDataset.Fields[i]);
+     AssignField(FDataset.Fields[i],Fields[i]);
     end;
     Post;
    except
@@ -87,7 +136,7 @@ begin
    FCOpyDataset.Append;
    for i:=0 to FDataset.FieldCount-1 do
    begin
-    FCopyDataset.Fields[i].Assign(Fields[i]);
+    AssignField(Fields[i],FCopyDataset.Fields[i]);
    end;
    FCOpyDataset.Post;
    FDataset.Next;
@@ -117,21 +166,22 @@ begin
     if RecNo=1 then
     begin
      Next;
-     Exit;
+     // Exit because a prior sentence has been done before
+     exit;
     end;
     doappend:=false;
 
     FCopyDataset.Edit;
     for i:=0 to FDataset.FieldCount-1 do
     begin
-     FCopyDataset.Fields[i].Assign(Fields[i]);
+     AssignField(Fields[i],FCopyDataset.Fields[i]);
     end;
     FCopyDataset.Post;
     First;
     Edit;
     for i:=0 to FDataset.FieldCount-1 do
     begin
-     Fields[i].Assign(FCopyDataset.Fields[i]);
+     AssignField(FCopyDataset.Fields[i],Fields[i]);
     end;
     Post;
     Last;
@@ -143,7 +193,7 @@ begin
    try
     for i:=0 to FDataset.FieldCount-1 do
     begin
-     Fields[i].Assign(FDataset.Fields[i]);
+     AssignField(FDataset.Fields[i],Fields[i]);
     end;
     Post;
    except

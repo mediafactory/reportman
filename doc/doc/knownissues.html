@@ -19,8 +19,9 @@
         work correctly in some Linux distros, errors like 'Error loading icons.Bitmap' 
         or 'Bitmap not valid' appear in this cases.</p>
       <p>The workaround for Report Manager version 1.0RC2 and later (Kylix 3):</p>
-      <p>- Add export CLX_USE_LIBQT=true to the repmand.sh file (startup script) 
-        so libqt.so (and libqtintf.so) system library is loaded instead of libborqt.so</p>
+      <p>- Add/uncomment the line export CLX_USE_LIBQT=true to the repmand.sh 
+        file (startup script) so libqt.so (and libqtintf.so) system library is 
+        loaded instead of libborqt.so</p>
       <p>The workaround for Report Manager version 1.0RC1 and previous versions 
         (Kylix 2):</p>
       <p>- Remove the libqt.so library provided in the package so the system provided 
@@ -67,8 +68,8 @@
     </td>
   </tr>
   <tr> 
-    <td bgcolor="#00FFFF"><b>Previewing a large page size raises a extranges exceptions 
-      Invalid Canvas State-Invalid handle...</b></td>
+    <td bgcolor="#00FFFF"><b>Previewing a large page size raises eception Invalid 
+      Canvas State-Invalid handle...</b></td>
   </tr>
   <tr> 
     <td>This only happens in some versions of Windows and only with Qt Driver, 
@@ -121,7 +122,8 @@
       <p>If after connecting to a database the printer not works your system have 
         the 'Kylixprintbugfix'. To fix this set Kylix Print Bug Fix in preferences 
         (Report Manager Designer) and try again. At runtime you must set rpqtdriver.kylixprintbugfix 
-        variable to true.</p>
+        variable to true. This can be a X fonts qt inplementation because if you 
+        replace the textout by a Rectangle works perfectly.</p>
       <p>The workaround uses metaprint command line tool to print a generated 
         metafile so you must distribute metaprint in the same directory of your 
         exe. </p>

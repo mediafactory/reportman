@@ -1,3 +1,21 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager Server configuration             }
+{                                                       }
+{       unewalias                                       }
+{                                                       }
+{       Ask info to create a new alias                  }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
+{                                                       }
+{                                                       }
+{*******************************************************}
+
 unit unewalias;
 
 interface
@@ -54,13 +72,13 @@ end;
 
 procedure TFNewAlias.FormCreate(Sender: TObject);
 begin
- SetInitialBounds;
  Caption:=TranslateStr(806,Caption);
  LAlias.Caption:=TranslateStr(807,LAlias.Caption);
  LPath.Caption:=TranslateStr(808,LPath.Caption);
  BOK.Caption:=TranslateStr(93,BOK.Caption);
  BCancel.Caption:=TranslateStr(94,BCancel.Caption);
 
+ SetInitialBounds;
 end;
 
 procedure TFNewAlias.BOkClick(Sender: TObject);

@@ -3,13 +3,13 @@ object FRpCliTree: TFRpCliTree
   Top = 0
   Width = 216
   Height = 464
-  VertScrollBar.Range = 149
+  VertScrollBar.Range = 129
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
     Width = 216
-    Height = 149
+    Height = 129
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
@@ -17,7 +17,7 @@ object FRpCliTree: TFRpCliTree
       Left = 4
       Top = 4
       Width = 201
-      Height = 141
+      Height = 117
       Caption = 'User information'
       TabOrder = 0
       object LUserName: TLabel
@@ -32,7 +32,7 @@ object FRpCliTree: TFRpCliTree
         Top = 36
         Width = 85
         Height = 21
-        TabOrder = 1
+        TabOrder = 2
         Text = 'Admin'
       end
       object EPassword: TEdit
@@ -41,7 +41,7 @@ object FRpCliTree: TFRpCliTree
         Width = 85
         Height = 21
         EchoMode = emPassword
-        TabOrder = 2
+        TabOrder = 3
       end
       object LPassword: TLabel
         Left = 8
@@ -53,12 +53,12 @@ object FRpCliTree: TFRpCliTree
       object BConnect: TButton
         HelpType = htContext
         Left = 8
-        Top = 108
+        Top = 84
         Width = 113
         Height = 25
         Action = AConnect
         Caption = 'Connect'
-        TabOrder = 4
+        TabOrder = 5
       end
       object LHost: TLabel
         Left = 8
@@ -73,37 +73,22 @@ object FRpCliTree: TFRpCliTree
         Width = 85
         Height = 21
         ItemHeight = 15
-        TabOrder = 6
+        TabOrder = 0
         Text = 'localhost'
-      end
-      object EPath: TEdit
-        Left = 104
-        Top = 84
-        Width = 85
-        Height = 21
-        EchoMode = emPassword
-        TabOrder = 7
-      end
-      object LPath: TLabel
-        Left = 8
-        Top = 88
-        Width = 56
-        Height = 13
-        Caption = 'Server Path'
       end
     end
   end
   object PClient: TPanel
     Left = 0
-    Top = 149
+    Top = 129
     Width = 216
-    Height = 315
+    Height = 335
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object Splitter1: TSplitter
       Left = 0
-      Top = 226
+      Top = 246
       Width = 216
       Height = 7
       Cursor = crVSplit
@@ -112,7 +97,7 @@ object FRpCliTree: TFRpCliTree
     end
     object PMessages: TPanel
       Left = 0
-      Top = 233
+      Top = 253
       Width = 216
       Height = 82
       Align = alBottom
@@ -134,7 +119,7 @@ object FRpCliTree: TFRpCliTree
       Left = 0
       Top = 0
       Width = 216
-      Height = 226
+      Height = 246
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
@@ -189,7 +174,7 @@ object FRpCliTree: TFRpCliTree
         Left = 0
         Top = 61
         Width = 216
-        Height = 165
+        Height = 185
         Align = alClient
         Columns = <>
         Images = imalist
@@ -734,8 +719,8 @@ object FRpCliTree: TFRpCliTree
       120B00000200000002000000FFFFFF00000000000000000003FFFFFF03F00700
       3BFFFFFF67FC0FFFFFFFFFFF7FFE0BFFFFFFFFFF7FFF0FFFFFFFFFFF7E0F8BFF
       FFFFFFFF7C078D5557FFFFFF7E078FFFFFFFFFFF7F0003FFF3FFFFFF000003FF
-      F3FFFFFF000FC3FFF3FFFFFF781FC00003FFFFFF780FC000FBEFFFFF3C1FC000
-      F9BB6DFF3FFFC3FFFBFFFFFF1FFFC3FFE3FFFFFF0FFC83FFFBC7F77F03F00000
+      F3FFFFFF000FC3FFF3FFFFFF781FC00003FFFFFF780FC000FBFFFFFF3C1FC000
+      FBFFFFFF3FFFC3FFFBFFFFFF1FFFC3FFE3FFFFFF0FFC83FFFBFFFFFF03F00000
       FBFFFFFF00000000FBFFFFFF000000000000007FFFFFC0000000007FFFFFCFFF
       3000007FFDFFC801703FF87FFCFFCAAFE040147FFFFFC819C0FFFA7FFFFFCAB3
       C081CE7FFFFFC8214081CA7FFFFFCAA940FFF97FFFFFC83DC080157FFFFFCAB9

@@ -68,6 +68,8 @@ begin
   mserver:=nil;
  end;
  mserver:=StartServer(onlog);
+ BStartServer.Enabled:=False;
+ BStopServer.Enabled:=True;
  LHostName.Caption:=mserver.HostName;
  ELogFile.Text:=mserver.LogFileName;
  EConfigFile.Text:=mserver.FileNameConfig;
@@ -101,8 +103,6 @@ begin
  BStopServer.Caption:=TranslateStr(785,BStopServer.Caption);
  LHostName.Font.Style:=[fsbold];
  BStartServerClick(Self);
- BStartServer.Enabled:=False;
- BStopServer.Enabled:=True;
 
  SetInitialBounds;
 end;

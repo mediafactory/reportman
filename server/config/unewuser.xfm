@@ -19,7 +19,7 @@ object FNewUser: TFNewUser
     Height = 25
     Caption = 'OK'
     Default = True
-    TabOrder = 0
+    TabOrder = 3
     OnClick = BOKClick
   end
   object BCancel: TButton
@@ -30,7 +30,7 @@ object FNewUser: TFNewUser
     Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
-    TabOrder = 1
+    TabOrder = 4
   end
   object LUser: TLabel
     Left = 12
@@ -44,7 +44,7 @@ object FNewUser: TFNewUser
     Top = 12
     Width = 121
     Height = 21
-    TabOrder = 3
+    TabOrder = 0
   end
   object EPassword: TEdit
     Left = 156
@@ -52,7 +52,7 @@ object FNewUser: TFNewUser
     Width = 121
     Height = 21
     EchoMode = emPassword
-    TabOrder = 4
+    TabOrder = 1
   end
   object LPassword: TLabel
     Left = 12
@@ -74,6 +74,6 @@ object FNewUser: TFNewUser
     Width = 121
     Height = 21
     EchoMode = emPassword
-    TabOrder = 7
+    TabOrder = 2
   end
 end

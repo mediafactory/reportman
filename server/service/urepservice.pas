@@ -20,28 +20,29 @@ unit urepservice;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, SvcMgr, Dialogs,
-  urepserver;
+  Windows, Messages, SysUtils, Classes, SvcMgr,
+  urepserver,rpmdconsts;
 
 type
-  TReportService = class(TService)
+  TReportManServer = class(TService)
     procedure ServiceStart(Sender: TService; var Started: Boolean);
     procedure ServiceShutdown(Sender: TService);
     procedure ServicePause(Sender: TService; var Paused: Boolean);
-    procedure ServiceExecute(Sender: TService);
     procedure ServiceStop(Sender: TService; var Stopped: Boolean);
     procedure ServiceContinue(Sender: TService; var Continued: Boolean);
+    procedure ServiceCreate(Sender: TObject);
   private
     { Private declarations }
     amod:TModServer;
     procedure Onlog(Sender:TObject;aMessage:WideString);
+    procedure OnError(Sender:TObject;aMessage:WideString);
   public
     function GetServiceController: TServiceController; override;
     { Public declarations }
   end;
 
 var
-  ReportService: TReportService;
+  ReportManServer: TReportManServer;
 
 implementation
 
@@ -49,73 +50,99 @@ implementation
 
 procedure ServiceController(CtrlCode: DWord); stdcall;
 begin
-  ReportService.Controller(CtrlCode);
+  ReportManServer.Controller(CtrlCode);
 end;
 
-function TReportService.GetServiceController: TServiceController;
+function TReportManServer.GetServiceController: TServiceController;
 begin
   Result := ServiceController;
 end;
 
-procedure TReportService.ServiceStart(Sender: TService;
+procedure TReportManServer.ServiceStart(Sender: TService;
   var Started: Boolean);
 begin
- if Assigned(amod) then
- begin
-  amod.free;
-  amod:=nil;
+ try
+  if Assigned(amod) then
+  begin
+   StopServer(amod);
+   amod:=nil;
+  end;
+  amod:=StartServer(OnLog);
+  Started:=True;
+ except
+  on E:Exception do
+  begin
+   OnError(Self,E.Message);
+   raise;
+  end;
  end;
- amod:=StartServer(OnLog);
 end;
 
-procedure TReportService.Onlog(Sender:TObject;aMessage:WideString);
+procedure TReportManServer.Onlog(Sender:TObject;aMessage:WideString);
 begin
  LogMessage(aMessage,EVENTLOG_INFORMATION_TYPE,0);
 end;
 
-
-procedure TReportService.ServiceShutdown(Sender: TService);
+procedure TReportManServer.OnError(Sender:TObject;aMessage:WideString);
 begin
- amod.free;
- amod:=nil;
+ LogMessage(aMessage,EVENTLOG_ERROR_TYPE ,0);
 end;
 
-procedure TReportService.ServicePause(Sender: TService;
+procedure TReportManServer.ServiceShutdown(Sender: TService);
+begin
+ if assigned(amod) then
+ begin
+  StopServer(amod);
+  amod:=nil;
+ end;
+end;
+
+procedure TReportManServer.ServicePause(Sender: TService;
   var Paused: Boolean);
 begin
- amod.free;
- amod:=nil;
+ if assigned(amod) then
+ begin
+  StopServer(amod);
+  amod:=nil;
+ end;
  Paused:=True;
 end;
 
-procedure TReportService.ServiceExecute(Sender: TService);
-begin
- if Assigned(amod) then
- begin
-  amod.free;
-  amod:=nil;
- end;
- amod:=StartServer(OnLog);
-end;
 
-procedure TReportService.ServiceStop(Sender: TService;
+procedure TReportManServer.ServiceStop(Sender: TService;
   var Stopped: Boolean);
 begin
- amod.free;
- amod:=nil;
+ if assigned(amod) then
+ begin
+  StopServer(amod);
+  amod:=nil;
+ end;
  Stopped:=True;
 end;
 
-procedure TReportService.ServiceContinue(Sender: TService;
+procedure TReportManServer.ServiceContinue(Sender: TService;
   var Continued: Boolean);
 begin
  if Assigned(amod) then
  begin
-  amod.free;
+  StopServer(amod);
   amod:=nil;
  end;
  amod:=StartServer(OnLog);
  Continued:=True;
+end;
+
+procedure TReportManServer.ServiceCreate(Sender: TObject);
+begin
+ if UpperCase(ParamStr(1))='/INSTALL' then
+ begin
+  if Length(ParamStr(2))>0 then
+  begin
+   ServiceStartName:='.\'+ParamStr(2);
+  end;
+  if Length(ParamStr(3))>0 then
+   Password:=ParamStr(3);
+ end;
 end;
 
 end.

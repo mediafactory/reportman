@@ -100,7 +100,7 @@ type
   WordWrap:boolean;
  end;
 
- TRpMetaObject=record
+ TRpMetaObject=packed record
   Top,Left,Width,Height:integer;
   case Metatype:TRpMetaObjectType of
    rpMetaText:

@@ -1,3 +1,21 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager Server configuration             }
+{                                                       }
+{       mainf                                           }
+{                                                       }
+{       Main form to configure the server               }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
+{                                                       }
+{                                                       }
+{*******************************************************}
+
 unit mainf;
 
 interface
@@ -34,6 +52,7 @@ type
     BPreviewTree: TButton;
     BCloseConnection: TButton;
     BChangePassword: TButton;
+    LMessages: TListBox;
     procedure FormCreate(Sender: TObject);
     procedure BConnectClick(Sender: TObject);
     procedure BCloseConnectionClick(Sender: TObject);
@@ -211,6 +230,7 @@ begin
   ShowMessage(SRpUserorPasswordIncorrect);
   BCloseConnectionClick(Self);
  end;
+ LMessages.Items.Insert(0,AMessage);
 end;
 
 

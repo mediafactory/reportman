@@ -1,0 +1,117 @@
+<html>
+<head>
+<title>Building Report Manager Designer and tools</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Developer</h2>
+<h3>Building Report Manager Designer and tools</h3>
+<p>Here is a detailed explanation on how to build Report Manager binaries.</p>
+<p>If you build and distribute Report Manager binaries you must report that it's 
+  another version, you can change the version in the about box, this is because 
+  obvious practical reasons.</p>
+<p><b>Required tools</b></p>
+<table width="90%" border="1">
+  <tr> 
+    <td bgcolor="#FFFFCC" width="42%"><b>Windows</b></td>
+    <td bgcolor="#FFFFCC" width="58%"><b>Linux</b></td>
+  </tr>
+  <tr> 
+    <td width="50%"> 
+      <p><a href="http://www.borland.com/delphi" target="_blank">Delphi 6/7 Professional</a></p>
+      <p>Enterprise version is required for translation manager features</p>
+    </td>
+    <td width="58%"><a href="http://www.borland.com/kylix" target="_blank">Kylix 
+      2/3 Professional</a>, open edition is reported to compile also previous 
+      installation of the FreeCLX</td>
+  </tr>
+  <tr> 
+    <td width="42%"><a href="http://www.innosetup.com" target="_blank">InnoSetup</a> 
+      2.019 to build autoinstallable executable</td>
+    <td width="58%">GNU Makefile to build the distributable tar.gz package, this 
+      tool is usually provided by all linux distributions</td>
+  </tr>
+  <tr> 
+    <td width="42%"><a href="http://www.wincvs.org" target="_blank">CVS</a> to 
+      obtain the source also SSH to contribute actively in the project.</td>
+    <td width="58%">CVS client and SSH client are provided in most linux distributions 
+      and is installed by default if developer workstation installation is selected 
+      (Red Hat,Suse,Mandrake...)</td>
+  </tr>
+</table>
+<p><b>1.Install Report Manager packages</b></p>
+<p>Install all Report Manager packages, follow instructions for <a href="delphicomp.html">Delphi</a> 
+  and <a href="kylixcomp.html">Kylix</a>.</p>
+<p><b>2.Update language resources(Windows only)</b></p>
+<p>If you modified the resources (forms,resourcestrings) the language resources 
+  must be updated.</p>
+<p>You can omit this step, but don't distribute the repman\transwin\repmand.* 
+  and repman\transwin\repmandxp.* because are old resource libs.</p>
+<p> Only repmand.dpr an repmandxp.dpr must be updated.</p>
+<p>Open repman\repmand.dpr and select Project-Languages-Update Resource DLLs</p>
+<p>Open repman\repmandxp.dpr and select Project-Languages-Update Resource DLLs</p>
+<p></p>
+<p>After that you can translate the strings you added.</p>
+<p>Build the resources for all languajes then copy them to repman\transwin directory.</p>
+<p><b>3.Build the applications</b></p>
+<p>Windows have two versions of various applications (Qt dependent and Pure VCL), 
+  because Qt draws controls in a custom way does not look like standard Windows 
+  apps, Pure VCL applications (marqued here as xp) looks like all other applications 
+  specially in XP or .Net versions.</p>
+<p>You must open and compile the following project groups:</p>
+<table width="90%" border="1">
+  <tr> 
+    <td bgcolor="#FFFFCC" width="42%"><b>Windows</b></td>
+    <td bgcolor="#FFFFCC" width="58%"><b>Linux</b></td>
+  </tr>
+  <tr> 
+    <td width="50%"> 
+      <p>repman\reportman.bpg</p>
+    </td>
+    <td width="58%">repman\reportman.bpg</td>
+  </tr>
+  <tr> 
+    <td width="42%">repman\reportmanxp.bpg</td>
+    <td width="58%">&nbsp;</td>
+  </tr>
+</table>
+<p><b>4.Build installation packages</b></p>
+<p>After executable applications are build, you can build the distributable packages 
+  to easy install Report manager designer in other computers.</p>
+<table width="90%" border="1">
+  <tr> 
+    <td bgcolor="#FFFFCC" width="42%"><b>Windows</b></td>
+    <td bgcolor="#FFFFCC" width="58%"><b>Linux</b></td>
+  </tr>
+  <tr> 
+    <td width="50%"> 
+      <p>Open install\reportman.iss with Innosetup if you want all the versions 
+        (Qt and no Qt)</p>
+    </td>
+    <td width="58%">
+      <p><code>cd tests\repmand</code></p>
+      <p><code>make clean</code></p>
+      <p><code>make</code></p>
+      </td>
+  </tr>
+  <tr> 
+    <td width="42%">Open \install\reportman.iss with Innosetup if you want the 
+      applications without qt dependences (the docs are also removed because are 
+      internet enabled)</td>
+    <td width="58%">Note: Edit GNUmakefile in \tests\repmand and specify your 
+      path to Kylix installation</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p><b>5. Distribution of source packages for Linux and Delphi</b></p>
+<p>To distribute the installable packages it's recommended to use Windows because 
+  source code compatibility with Delphi 5/Builder 4 (MSDOS style line ends)</p>
+<p>Go to the main tree in a console window and with borland make in the path type</p>
+<p>make clean</p>
+<p>This will delete any dcus, dpus innecessary files (warning also cleans the 
+  executables)</p>
+<p>Zip all the files in one and it's done.</p>
+<p>&nbsp;</p>
+</body>
+</html>

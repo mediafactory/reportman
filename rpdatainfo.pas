@@ -1332,9 +1332,10 @@ procedure TRpDataInfoItem.DisConnect;
 begin
  if Assigned(FDataset) then
  begin
-  if FDataset<>FSQLInternalQuery then
+  if FDataset=FSQLInternalQuery then
    FDataset.Active:=false;
-  FCachedDataset.DoClose;
+  if Assigned(FCachedDataset) then
+   FCachedDataset.DoClose;
  end;
 end;
 
