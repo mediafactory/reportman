@@ -30,6 +30,8 @@ uses Classes,SysUtils,
 
 
 type
+ TRpWidths=array [32..255] of integer;
+
  TRpLogFont=class(TObject)
   fixedpitch:boolean;
   postcriptname:string;
@@ -38,7 +40,7 @@ type
   italic:Boolean;
   bold:Boolean;
   filename:String;
-  widths:array [32..255] of integer;
+  widths:TRpWidths;
   ascent:integer;
   descent:integer;
   weight:integer;
@@ -48,6 +50,8 @@ type
   ItalicAngle:double;
   BBox:TRect;
   StemV:double;
+  // kerning is not implemented but here checked
+  havekerning:Boolean;
   type1:boolean;
  end;
 
@@ -84,6 +88,7 @@ var
  f:TSearchRec;
  retvalue:integer;
 begin
+ adir:=ExpandFileName(adir);
  alist.Add(adir);
  retvalue:=SysUtils.FindFirst(adir+C_DIRSEPARATOR+'*',faDirectory,F);
  if 0=retvalue then
@@ -148,18 +153,21 @@ end;
 
 procedure TRpFTInfoProvider.InitLibrary;
 var
- i,j:integer;
+ i:integer;
  f:TSearchRec;
  retvalue:integer;
  aobj:TRpLogFont;
  afilename:string;
+// kerningfile:string;
  alibrary:FT_Library;
  aface:FT_Face;
  w:FT_UInt;
  validcmap:boolean;
  awide:WideString;
  aucs:UCS4String;
- convfactor:Double;
+ convfactor,widthmult:Double;
+ j,k:FT_ULong;
+ indexl,indexr:FT_UInt;
 begin
  if Assigned(fontlist) then
   exit;
@@ -167,6 +175,7 @@ begin
  // reads font directory
  fontlist:=TStringList.Create;
  fontfiles:=TStringList.Create;
+ fontfiles.Sorted:=true;
  fontpaths:=TStringList.Create;
 
  GetFontsDirectories(fontpaths);
@@ -222,18 +231,33 @@ begin
      // Type1 fonts also supported
      if  (FT_FACE_FLAG_SCALABLE AND aface.face_flags)<>0 then
      begin
+      CheckFreeType(FT_Set_Char_Size(aface,0,64*100,300,300));
       aobj:=TRpLogFont.Create;
       try
        // Fill font properties
        aobj.Type1:=(FT_FACE_FLAG_SFNT AND aface.face_flags)=0;
        if aobj.Type1 then
-        convfactor:=1
+       begin
+        convfactor:=1;
+        widthmult:=1;
+        // Try finding and reading kernings
+//        kerningfile:=ChangeFileExt(afilename,'.afm');
+//        if FileExists(kerningfile) then
+//        begin
+//         CheckFreeType(FT_Attach_File(aface,Pchar(kerningfile)));
+//        end;
+       end
        else
        begin
         // Sizes perfect in Suse 9.1
         // Truetype should contain 2048 value but contains 1000
         // In Suse 9.0 contains 2048
-        convfactor:=916/1880*2048/aface.units_per_EM;
+
+//        convfactor:=916/1880*2048/aface.units_per_EM;
+//        convfactor:=916/1880;
+//        convfactor:=1400/1880;
+        convfactor:=1;
+        widthmult:=1;
         // Note same text printed with OpenOffice, can be larger
         // If exported to PDF from OpenOffice will be the same
        end;
@@ -241,6 +265,7 @@ begin
        aobj.postcriptname:=StringReplace(StrPas(aface.family_name),' ','',[rfReplaceAll]);
        aobj.familyname:=StrPas(aface.family_name);
        aobj.fixedpitch:=(aface.face_flags AND FT_FACE_FLAG_FIXED_WIDTH)<>0;
+       aobj.HaveKerning:=(aface.face_flags AND FT_FACE_FLAG_KERNING)<>0;
        aobj.BBox.Left:=Round(convfactor*aface.bbox.xMin);
        aobj.BBox.Right:=Round(convfactor*aface.bbox.xMax);
        aobj.BBox.Top:=Round(convfactor*aface.bbox.yMax);
@@ -270,7 +295,11 @@ begin
         begin
          if 0=FT_Load_Char(aface,j,FT_LOAD_NO_SCALE) then
          begin
-          aobj.Widths[j]:=Round(convfactor*aface.glyph.advance.x);
+          // Some fonts translated from freetype returns fixed
+          // advance (wrong result)
+          // for example casmira.ttf
+          // take care kerning is not implemented
+          aobj.Widths[j]:=Round(widthmult*aface.glyph.advance.x);
          end
          else
           aobj.Widths[j]:=0;
@@ -278,6 +307,7 @@ begin
         else
          aobj.Widths[j]:=0;
        end;
+
        if not assigned(defaultfont) then
        begin
         if ((not aobj.italic) and (not aobj.bold)) then

@@ -87,7 +87,7 @@ object TRpReport
     end
     item
       Name = 'LASTORDER'
-      Value = 9000
+      Value = 1010
       ParamType = rpParamInteger
       Datasets.Strings = (
         'ORDERS')
@@ -349,16 +349,16 @@ object TRpReport
   object TRpLabel0: TRpLabel
     Width = 2415
     Height = 450
-    PosX = 150
+    PosX = 147
     PosY = 0
     Type1Font = poHelvetica
-    FontSize = 14
+    FontSize = 24
     FontStyle = 4
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
     WFontName = 'Arial'
-    LFontName = 'Helvetica'
+    LFontName = 'Tahoma'
     WideText = 'Customer'
   end
   object TRpSection5: TRpSection
@@ -414,11 +414,10 @@ object TRpReport
   object TRpExpression1: TRpExpression
     Width = 6525
     Height = 450
-    PosX = 4290
+    PosX = 4320
     PosY = 0
-    Type1Font = poHelvetica
-    FontSize = 14
-    FontStyle = 1
+    Type1Font = poEmbedded
+    FontSize = 36
     AutoExpand = False
     AutoContract = False
     ExportPosition = 0
@@ -427,8 +426,8 @@ object TRpReport
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
-    WFontName = 'Arial'
-    LFontName = 'Helvetica'
+    WFontName = 'Casmira'
+    LFontName = 'Casmira'
     Expression = 'CUSTOMERS.Company'
     AgIniValue = '0'
     ExportExpression = ''
@@ -879,11 +878,10 @@ object TRpReport
   object TRpExpression13: TRpExpression
     Width = 1725
     Height = 450
-    PosX = 2565
+    PosX = 2587
     PosY = 0
-    Type1Font = poHelvetica
-    FontSize = 14
-    FontStyle = 1
+    Type1Font = poEmbedded
+    FontSize = 36
     AutoExpand = False
     AutoContract = False
     ExportPosition = 0
@@ -892,8 +890,8 @@ object TRpReport
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
-    WFontName = 'Arial'
-    LFontName = 'Helvetica'
+    WFontName = 'Casmira'
+    LFontName = 'Casmira'
     Expression = 'ORDERS.CustNo'
     AgIniValue = '0'
     ExportExpression = ''

@@ -46,9 +46,14 @@ const
  FT_FACE_FLAG_SCALABLE=1;
  FT_FACE_FLAG_SFNT=8;
  FT_FACE_FLAG_FIXED_WIDTH=4;
+ FT_FACE_FLAG_KERNING=32;
 
  FT_STYLE_FLAG_ITALIC=1;
  FT_STYLE_FLAG_BOLD=2;
+
+ FT_KERNING_DEFAULT  = 0;
+ FT_KERNING_UNFITTED=1;
+ FT_KERNING_UNSCALED=2;
 
 type
 
@@ -72,7 +77,7 @@ type
   PFT_String = PChar;
   FT_Long = longint;
   FT_Pointer = Pointer;
-  FT_ULong = longint;
+  FT_ULong = Cardinal;
   FT_UInt = Cardinal;
   FT_Short=smallint;
   FT_UShort=Word;
@@ -120,6 +125,8 @@ type
     vertAdvance:FT_Pos;   // advance height for vertical layout    */
   end;
 
+  PFT_Vector=^FT_Vector;
+
   FT_Vector=record
     x:FT_Pos;
     y:FT_Pos;
@@ -159,7 +166,6 @@ type
 
   FT_Face     = ^FT_FaceRec;
 
-  PFT_Vector=^FT_Vector;
   FT_Outline=record
     n_contours:smallint;      //* number of contours in glyph        */
     n_points:smallint;        //* number of points in the glyph      */
@@ -281,6 +287,7 @@ type
   TFT_New_Face=function (alibrary:FT_Library;filepathname:PChar;
                face_index:FT_Long;var aface:FT_Face):FT_Error;cdecl;
   TFT_Done_Face=function  (aface : FT_Face ) : FT_Error;cdecl;
+  TFT_Attach_File=function (aface:FT_Face;filepathname:PChar):FT_Error;cdecl;
 
 
   FT_Parameter=record
@@ -316,6 +323,12 @@ type
   TFT_Set_Char_Size=function (face:FT_Face;char_width,char_height:FT_F26Dot6;
                            horz_resolution,vert_resolution:FT_UInt):FT_Error;cdecl;
 
+  TFT_Get_Kerning=function (aface:FT_Face;left_glyph,right_glyph,kern_mode:FT_UInt;
+                    var akerning:FT_Vector):FT_Error;cdecl;
+
+  TFT_Get_First_Char=function (aface:FT_Face;var agindex:FT_UInt):FT_ULong;cdecl;
+  TFT_Get_Next_Char=function (aface:FT_Face;char_code:FT_ULong;
+                         var agindex:FT_UInt):FT_ULong;cdecl;
 
 procedure CheckFreeTypeLoaded;
 procedure LoadFreeType;
@@ -333,6 +346,11 @@ var
   FT_Select_Charmap:TFT_Select_Charmap;
   FT_Load_Char:TFT_Load_Char;
   FT_Set_Char_Size:TFT_Set_Char_Size;
+  FT_Attach_File:TFT_Attach_File;
+  FT_Get_Kerning:TFT_Get_Kerning;
+  FT_Get_First_Char:TFT_Get_First_Char;
+  FT_Get_Next_Char:TFT_Get_Next_Char;
+
 var
 {$IFDEF MSWINDOWS}
  FreeTypeLib:HINST;
@@ -397,6 +415,11 @@ begin
  FT_Select_Charmap:=GetProcAddr('FT_Select_Charmap');
  FT_Load_Char:=GetProcAddr('FT_Load_Char');
  FT_Set_Char_Size:=GetProcAddr('FT_Set_Char_Size');
+ FT_Attach_File:=GetProcAddr('FT_Attach_File');
+ FT_Get_Kerning:=GetProcAddr('FT_Get_Kerning');
+ FT_Get_First_Char:=GetProcAddr('FT_Get_First_Char');
+ FT_Get_Next_Char:=GetProcAddr('FT_Get_Next_Char');
+
 end;
 
 procedure FreeFreeType;
