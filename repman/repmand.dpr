@@ -20,6 +20,7 @@
 program repmand;
 
 {%ToDo 'repmand.todo'}
+{%File '..\rpconf.inc'}
 
 uses
   QForms,
@@ -85,7 +86,6 @@ uses
   rpzlibzlib in '..\rpzlibzlib.pas',
   rpzlibzutil in '..\rpzlibzutil.pas',
   rpclxreport in '..\rpclxreport.pas';
-
 {$ENDIF}
 
 {$IFDEF LINUX}

@@ -22,8 +22,11 @@ interface
 
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,
-{$IFDEF MSWINDOWS}
-  dbtables,adodb,
+{$IFDEF USEBDE}
+  dbtables,
+{$ENDIF}
+{$IFDEF USEADO}
+  adodb,
 {$ENDIF}
   rpreport,rpconsts,rpdatainfo,DBConnAdmin,QDialogs,
   rpparams,rpfparams;
@@ -118,7 +121,9 @@ procedure ShowDataConfig(report:TRpReport);
 var
  dia:TFDataInfoConfig;
 begin
+{$IFDEF USECONADMIN}
  UpdateConAdmin;
+{$ENDIF}
  dia:=TFDataInfoConfig.Create(Application);
  try
   dia.report:=report;
@@ -172,9 +177,9 @@ begin
  case TRpDBDriver(GDriver.ItemIndex) of
   rpdatadbexpress:
    begin
+{$IFDEF USECONADMIN}
     ShowDBXConfig;
     UpdateConAdmin;
-
     if Assigned(ConAdmin) then
     begin
      ConAdmin:=nil;
@@ -188,6 +193,7 @@ begin
      end;
      conadmin.GetConnectionNames(ComboAvailable.Items,'');
     end;
+{$ENDIF}
    end;
   rpdatamybase:
    begin
@@ -196,7 +202,7 @@ begin
   rpdataado:
    begin
      // Gets connection string
-{$IFDEF MSWINDOWS}
+{$IFDEF USEADO}
      EConnectionString.Text:=PromptDataSource(0,EConnectionString.Text);
 {$ENDIF}
    end;
@@ -634,8 +640,8 @@ begin
      conadmin.GetConnectionNames(ComboAvailable.Items,'');
     end;
    end;
-  // DBExpress
-  rpdataibx:
+  // IBX and IBO
+  rpdataibx,rpdataibo:
    begin
     LConnectionString.Visible:=False;
     EConnectionString.Visible:=False;
@@ -659,7 +665,7 @@ begin
   // BDE
   rpdatabde:
    begin
-{$IFDEF MSWINDOWS}
+{$IFDEF USEBDE}
     LConnectionString.Visible:=False;
     EConnectionString.Visible:=False;
     BConfig.Visible:=false;
@@ -667,7 +673,7 @@ begin
     ComboAvailable.Visible:=true;
 {$ENDIF}
    end;
-  // BDE
+  // ADO
   rpdataado:
    begin
 {$IFDEF MSWINDOWS}

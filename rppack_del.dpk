@@ -29,15 +29,16 @@ package rppack_del;
 {$IMPLICITBUILD OFF}
 
 requires
+  vcl,
   rtl,
-  dbrtl,
   dsnap,
+  dbrtl,
+  IBO40CRT,
+  IBO40XRT,
   dbexpress,
   ibxpress,
-  adortl,
-  bdertl;
-
-{%File 'rpconf.inc'}
+  bdertl,
+  adortl;
 
 contains
   rptypeval in 'rptypeval.pas',

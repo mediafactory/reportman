@@ -41,5 +41,5 @@
 previewing...}
 {DONE 1 -oToni -cEngine : Implementation of one pass and two pas report instead of whole pas}
 
-{TODO 3 -oToni -cEngine : Implementation of cut text,wordwrap...}
+{DONE 3 -oToni -cEngine : Implementation of cut text,wordwrap...}
 

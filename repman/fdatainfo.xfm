@@ -131,9 +131,10 @@ object FDatainfoconfig: TFDatainfoconfig
         'MyBase'
         'IBX'
         'BDE'
-        'ADO')
+        'ADO'
+        'IBO')
       Caption = 'Driver'
-      Columns = 5
+      Columns = 6
       TabOrder = 9
       OnClick = GDriverClick
     end

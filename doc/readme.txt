@@ -1,6 +1,6 @@
 Report Manager Reporting Tool
 
-Version 0.99
+Version 0.99 beta
 
 Supports Delphi 6 and Kylix 2
 

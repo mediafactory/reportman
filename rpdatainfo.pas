@@ -26,6 +26,9 @@ interface
 
 
 uses Classes,SysUtils,
+{$IFDEF MSWINDOWS}
+ registry,windows,
+{$ENDIF}
 {$IFDEF USESQLEXPRESS}
  SqlExpr,DBXpress,SqlConst,
 {$ENDIF}
@@ -40,6 +43,9 @@ uses Classes,SysUtils,
 {$IFDEF USEADO}
   adodb,
 {$ENDIF}
+{$IFDEF USEIBO}
+  IB_Components,IBODataset,
+{$ENDIF}
  rpdataset;
 
 {$IFDEF LINUX}
@@ -49,10 +55,10 @@ const
 {$ENDIF}
 type
  TRpDbDriver=(rpdatadbexpress,rpdatamybase,rpdataibx,
-  rpdatabde,rpdataado);
+  rpdatabde,rpdataado,rpdataibo);
 
 
-{$IFDEF USESQLEXPRESS}
+{$IFDEF USECONADMIN}
  TRpConnAdmin=class(TObject)
   public
    driverfilename:string;
@@ -90,6 +96,10 @@ type
    FBDEDatabase:TDatabase;
    FBDEAlias:string;
 {$ENDIF}
+{$IFDEF USEIBO}
+   FIBODatabase: TIB_Database;
+{$ENDIF}
+
    FDriver:TRpDbDriver;
    procedure SetAlias(Value:string);
    procedure SetConfigFile(Value:string);
@@ -176,14 +186,31 @@ type
    constructor Create(rep:TComponent);
   end;
 
-{$IFDEF USESQLEXPRESS}
+{$IFDEF USECONADMIN}
 procedure UpdateConAdmin;
 {$ENDIF}
 
 implementation
 
+const
+  SDRIVERREG_SETTING = 'Driver Registry File';           { Do not localize }
+  SCONNECTIONREG_SETTING = 'Connection Registry File';   { Do not localize }
+  VENDORLIB_KEY = 'VendorLib';                  { Do not localize }
+  DLLLIB_KEY = 'LibraryName';                   { Do not localize }
+{$IFDEF MSWINDOWS}
+  SDriverConfigFile = 'dbxdrivers.ini';            { Do not localize }
+  SConnectionConfigFile = 'dbxconnections.ini';    { Do not localize }
+  SDBEXPRESSREG_SETTING = '\Software\Borland\DBExpress'; { Do not localize }
+{$ENDIF}
+{$IFDEF LINUX}
+  SDBEXPRESSREG_USERPATH = '/.borland/';          { Do not localize }
+  SDBEXPRESSREG_GLOBALPATH = '/usr/local/etc/';   { Do not localize }
+  SDriverConfigFile = 'dbxdrivers';                  { Do not localize }
+  SConnectionConfigFile = 'dbxconnections';          { Do not localize }
+  SConfExtension = '.conf';                       { Do not localize }
+{$ENDIF}
 
-{$IFDEF USESQLEXPRESS}
+{$IFDEF USECONADMIN}
 var
  ConAdmin:TRpConnAdmin;
 {$ENDIF}
@@ -246,6 +273,69 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF USEIBO}
+procedure ConvertParamsFromDBXToIBO(base:TIB_Database);
+var
+ index:integer;
+ params:TStrings;
+begin
+ params:=base.Params;
+ index:=params.IndexOfName('DriverName');
+ if index>=0 then
+ begin
+  if UpperCase(params.Values['DriverName'])<>'INTERBASE' then
+   Raise Exception.Create(SRpDriverAliasIsNotInterbase);
+  params.Delete(index);
+ end;
+ index:=params.IndexOfName('Database');
+ if index<0 then
+  Raise Exception.Create(SRpNoDatabase);
+ base.DatabaseName:=params.Values['Database'];
+ params.Delete(index);
+ index:=params.IndexOfName('BlobSize');
+ if index>=0 then
+  params.Delete(index);
+ index:=params.IndexOfName('CommitRetain');
+ if index>=0 then
+  params.Delete(index);
+ index:=params.IndexOfName('ErrorResourceFile');
+ if index>=0 then
+  params.Delete(index);
+ index:=params.IndexOfName('LocaleCode');
+ if index>=0 then
+  params.Delete(index);
+ index:=params.IndexOfName('Interbase TransIsolation');
+ if index>=0 then
+  params.Delete(index);
+ index:=params.IndexOfName('WaitOnLocks');
+ if index>=0 then
+  params.Delete(index);
+ index:=params.IndexOfName('SQLDialect');
+ if index>=0 then
+ begin
+  base.SQLDialect:=StrToInt(params.Values['SQLDialect']);
+  params.Delete(index);
+ end;
+ index:=params.IndexOfName('RoleName');
+ if index>=0 then
+ begin
+  base.SQLRole:=params.Values['RoleName'];
+  params.Delete(index);
+ end;
+ index:=params.IndexOfName('user_name');
+ if index>=0 then
+ begin
+  params.Add('USER NAME='+params.Values['user_name']);
+  params.Delete(index);
+ end;
+ index:=params.IndexOfName('ServerCharSet');
+ if index>=0 then
+ begin
+  base.Charset:=params.Values['ServerCharSet'];
+  params.Delete(index);
+ end;
+end;
+{$ENDIF}
 
 procedure TRpDataInfoItem.SetDatabaseAlias(Value:string);
 begin
@@ -361,6 +451,12 @@ begin
   FIBDatabase.Free;
  end;
 {$ENDIF}
+{$IFDEF USEIBO}
+ if Assigned(FIBODatabase) then
+ begin
+  FIBODatabase.Free;
+ end;
+{$ENDIF}
 {$IFDEF USEBDE}
  FBDEDatabase.free;
 {$ENDIF}
@@ -464,7 +560,7 @@ begin
  FDriver:=rpdatadbexpress;
 end;
 
-{$IFDEF USESQLEXPRESS}
+{$IFDEF USECONADMIN}
 procedure UpdateConAdmin;
 begin
  if Assigned(ConAdmin) then
@@ -482,9 +578,9 @@ end;
 {$ENDIF}
 
 procedure TRpDatabaseinfoitem.Connect;
-{$IFDEF USESQLEXPRESS}
 var
  conname:string;
+{$IFDEF USESQLEXPRESS}
  funcname,drivername,vendorlib,libraryname:string;
 {$ENDIF}
 begin
@@ -616,6 +712,30 @@ begin
     Raise Exception.Create(SRpDriverNotSupported+SrpDriverADO);
 {$ENDIF}
    end;
+  rpdataibo:
+   begin
+{$IFDEF USEIBO}
+     if Not Assigned(FIBODatabase) then
+     begin
+      FIBODatabase:=TIB_Database.Create(nil);
+     end;
+     if FIBODatabase.Connected then
+      exit;
+     FIBODatabase.LoginPrompt:=FLoginPrompt;
+     conname:=alias;
+     // Load Connection parameters
+     if (FLoadParams) then
+     begin
+      if Not Assigned(ConAdmin) then
+       CreateConAdmin;
+      ConAdmin.GetConnectionParams(conname,FIBODatabase.params);
+     end;
+     ConvertParamsFromDBXToIBO(FIBODatabase);
+     FIBODatabase.Connected:=true;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+{$ENDIF}
+   end;
  end;
 end;
 
@@ -643,6 +763,12 @@ begin
 {$IFDEF USEADO}
  if Assigned(FADOConnection) then
   FADOConnection.Connected:=false;
+{$ENDIF}
+{$IFDEF USEIBO}
+ if Assigned(FIBODatabase) then
+ begin
+  FIBODatabase.Connected:=False;
+ end;
 {$ENDIF}
 end;
 
@@ -717,7 +843,7 @@ begin
       end;
      rpdataibx:
       begin
-{$IFDEF USESIBX}
+{$IFDEF USEIBX}
        FSQLInternalQuery:=TIBQuery.Create(nil);
 {$ELSE}
        Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
@@ -741,6 +867,14 @@ begin
        FSQLInternalQuery:=TADOQuery.Create(nil);
 {$ELSE}
        Raise Exception.Create(SRpDriverNotSupported+SrpDriverADO);
+{$ENDIF}
+      end;
+     rpdataibo:
+      begin
+{$IFDEF USEIBO}
+       FSQLInternalQuery:=TIBOQuery.Create(nil);
+{$ELSE}
+       Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
 {$ENDIF}
       end;
     end;
@@ -789,6 +923,17 @@ begin
         FSQLInternalQuery.Free;
         FSQLInternalQuery:=nil;
         FSQLInternalQuery:=TADOQuery.Create(nil);
+       end;
+{$ENDIF}
+      end;
+     rpdataibo:
+      begin
+{$IFDEF USEIBO}
+       if Not (FSQLInternalQuery is TIBOQuery) then
+       begin
+        FSQLInternalQuery.Free;
+        FSQLInternalQuery:=nil;
+        FSQLInternalQuery:=TIBOQuery.Create(nil);
        end;
 {$ENDIF}
       end;
@@ -850,6 +995,14 @@ begin
       TADOQuery(FSQLInternalQuery).CursorLocation:=clUseServer;
 {$ENDIF}
      end;
+    rpdataibo:
+     begin
+{$IFDEF USEIBO}
+      TIBOQuery(FSQLInternalQuery).IB_Connection:=databaseinfo.items[index].FIBODatabase;
+      TIBOQuery(FSQLInternalQuery).SQL.Text:=SQL;
+      TIBOQuery(FSQLInternalQuery).UniDirectional:=true;
+{$ENDIF}
+     end;
    end;
    // Use the datasource
    if Assigned(datainfosource) then
@@ -899,6 +1052,17 @@ begin
         TADOQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
 {$ENDIF}
       end;
+     rpdataibo:
+      begin
+{$IFDEF USEIBO}
+       if Not Assigned(TIBOQuery(FSQLInternalQuery).DataSource) then
+        TIBOQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
+       if datainfosource.cached then
+        TIBOQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+       else
+        TIBOQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+{$ENDIF}
+      end;
     end;
    end;
    // Assigns parameters
@@ -939,6 +1103,12 @@ begin
         TADOQuery(FSQLInternalQuery).Parameters.ParamByName(param.Name).DataType:=
          ParamTypeToDataType(param.ParamType);
         TADOQuery(FSQLInternalQuery).Parameters.ParamByName(param.Name).Value:=param.Value;
+{$ENDIF}
+       end;
+      rpdataibo:
+       begin
+{$IFDEF USEIBO}
+        TIBOQuery(FSQLInternalQuery).ParamByName(param.Name).AsVariant:=param.Value;
 {$ENDIF}
        end;
      end;
@@ -991,7 +1161,7 @@ begin
  end;
 end;
 
-{$IFDEF USESQLEXPRESS}
+{$IFDEF USECONADMIN}
 constructor TRpConnAdmin.Create;
 begin
  LoadConfig;
@@ -1011,6 +1181,60 @@ begin
  end;
  inherited Destroy;
 end;
+
+
+function GetRegistryFile(Setting, Default: string; DesignMode: Boolean): string;
+var
+{$IFDEF MSWINDOWS}
+  Reg: TRegistry;
+{$ENDIF}
+{$IFDEF LINUX}
+  GlobalFile: string;
+{$ENDIF}
+begin
+  {$IFDEF MSWINDOWS}
+  Result := '';
+  Reg := TRegistry.Create;
+  try
+    Reg.RootKey := HKEY_CURRENT_USER;
+    if Reg.OpenKeyReadOnly(SDBEXPRESSREG_SETTING) then
+      Result := Reg.ReadString(Setting);
+  finally
+    Reg.Free;
+  end;
+  if Result = '' then
+    Result := ExtractFileDir(ParamStr(0)) + '\' + Default;
+  {$ENDIF}
+  {$IFDEF LINUX}
+  Result := getenv('HOME') + SDBEXPRESSREG_USERPATH + Default;    { do not localize }
+  if not FileExists(Result) then
+  begin
+    GlobalFile := SDBEXPRESSREG_GLOBALPATH + Default + SConfExtension;
+    if FileExists(GlobalFile) then
+    begin
+      if DesignMode then
+      begin
+        if not CopyConfFile(GlobalFile, Result) then
+          DatabaseErrorFmt(SConfFileMoveError, [GlobalFile, Result])
+      end else
+        Result := GlobalFile;
+    end else
+      DatabaseErrorFmt(SMissingConfFile, [GlobalFile]);
+  end;
+  {$ENDIF}
+end;
+
+
+function ObtainDriverRegistryFile(DesignMode: Boolean = False): string;
+begin
+  Result := GetRegistryFile(SDRIVERREG_SETTING, sDriverConfigFile, DesignMode);
+end;
+
+function ObtainConnectionRegistryFile(DesignMode: Boolean = False): string;
+begin
+  Result := GetRegistryFile(SCONNECTIONREG_SETTING, sConnectionConfigFile, DesignMode);
+end;
+
 
 
 procedure TRpConnAdmin.LoadConfig;
@@ -1042,8 +1266,8 @@ begin
 {$IFDEF MSWINDOWS}
  // Looks the registry and if there is not registry
  // Use current dir
- driverfilename:=GetDriverRegistryFile;
- configfilename:=GetConnectionRegistryFile;
+ driverfilename:=ObtainDriverRegistryFile;
+ configfilename:=ObtainConnectionRegistryFile;
 {$ENDIF}
  if FileExists(driverfilename) then
  begin
@@ -1102,13 +1326,13 @@ end;
 
 initialization
 
-{$IFDEF USESQLEXPRESS}
+{$IFDEF USECONADMIN}
 ConAdmin:=nil;
 {$ENDIF}
 
 finalization
 
-{$IFDEF USESQLEXPRESS}
+{$IFDEF USECONADMIN}
 if Assigned(ConAdmin) then
 begin
  ConAdmin.free;
