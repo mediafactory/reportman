@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.3a';
+ RM_VERSION='2.3c';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 type
   TPageWidthHeight = record
@@ -1227,7 +1227,6 @@ var
   SRpFormName:WideString='Form name';
   SRpFormPageSize:WideString='Form page size';
   SRpPageSize:WideString='Page size';
-  //
   SRpCompareValue:WideString='Returns -1 if first number is lower, 1 if first number is greater or zero if equal.';
   SRpPCompareValue:WideString='num1 and num2 are numbers to compare, epsilon de diference tolerance';
   SRpDrawTiledpi:WideString='Tile proportional';
@@ -1251,6 +1250,9 @@ var
   SRpPlainFullPrinter:WideString='Full plain text printer';
   SRpTimeOut:WideString='Timeout detected';
   SRpPrintRep26:WideString='         -onesheet Optional one sheet excel output';
+  //
+  SRpTypeInfo:WideString='Data type information';
+
 implementation
 
 uses rptranslator;
@@ -2071,7 +2073,7 @@ begin
  TranslateVar(1248,SrpSBackExpression);
  TranslateVar(1249,SrpSInvBackImage);
  TranslateVar(1250,SRpSBackStyle);
- TranslateVar(1252,SRpSBDesign);
+ TranslateVar(1251,SRpSBDesign);
  TranslateVar(1252,SRpSBPreview);
  TranslateVar(1253,SRpSBPrint);
  TranslateVar(1254,SRpAsc2);

@@ -1047,7 +1047,10 @@ begin
     if index>=0 then
     begin
      if Assigned(FAliasList.List.Items[index].dataset) then
+     begin
+      FDataInfo.Items[i].Cached:=false;
       FDataInfo.Items[i].Dataset:=FAliasList.List.Items[index].dataset;
+     end;
     end;
    end;
    CheckProgress(false);
@@ -1074,6 +1077,8 @@ begin
  for i:=0 to FDataInfo.Count-1 do
  begin
   FDataInfo.Items[i].DisConnect;
+  if Assigned(FDataInfo.Items[i].CachedDataset) then
+   FDataInfo.Items[i].CachedDataset.DoClose;
  end;
  for i:=0 to FDatabaseInfo.Count-1 do
  begin

@@ -2608,6 +2608,10 @@ object FRpMainFVCL: TFRpMainFVCL
         Caption = 'Object inspector Font'
         OnClick = MObjFontClick
       end
+      object MTypeInfo: TMenuItem
+        Caption = 'Data type information'
+        OnClick = MTypeInfoClick
+      end
     end
     object MHelp: TMenuItem
       Caption = 'Help'

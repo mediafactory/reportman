@@ -229,6 +229,7 @@ type
     MAppFont: TMenuItem;
     MObjFont: TMenuItem;
     FontDialog1: TFontDialog;
+    MTypeInfo: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -293,6 +294,7 @@ type
     procedure ASaveToExecute(Sender: TObject);
     procedure MAppFontClick(Sender: TObject);
     procedure MObjFontClick(Sender: TObject);
+    procedure MTypeInfoClick(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrameVCL;
@@ -374,9 +376,9 @@ end;
 
 constructor TFRpMainFVCL.Create(AOwner:TComponent);
 begin
- inherited Create(AOwner);
  configfile:=Obtainininameuserconfig('','','repmand');
  configfilelib:=Obtainininameuserconfig('','','repmandlib');
+ inherited Create(AOwner);
  LoadConfig;
 end;
 
@@ -590,6 +592,7 @@ begin
  fobjinsp.Align:=alclient;
  fobjinsp.Parent:=leftpanel;
  freportstructure:=TFRpStructureVCL.Create(Self);
+ freportstructure.browser.showdatatypes:=MTypeInfo.Checked;
  freportstructure.Align:=alTop;
  freportstructure.Parent:=leftPanel;
  fdesignframe:=TFRpDesignFrameVCL.Create(Self);
@@ -701,6 +704,7 @@ begin
  // Translate menus and actions
  MAppFont.Caption:=TranslateStr(1347,MAppFont.Caption);
  MObjFont.Caption:=TranslateStr(1348,MAppFont.Caption);
+ MTypeInfo.Caption:=SRpTypeInfo;
  File1.Caption:=TranslateStr(0,File1.Caption);
  Caption:=TranslateStr(1,Caption);
  MReport.Caption:=TranslateStr(2,MReport.Caption);
@@ -1286,6 +1290,7 @@ var
 begin
  inif:=TIniFile.Create(configfile);
  try
+  MTypeInfo.Checked:=inif.ReadBool('Preferences','TypeInfo',true);
   FAppFontName:=inif.ReadString('Preferences','AppFontName',Screen.IconFont.Name);
   FAppFontSize:=inif.ReadInteger('Preferences','AppFontSize',Screen.IconFont.Size);
   FAppFontColor:=inif.ReadInteger('Preferences','AppFontColor',Screen.IconFont.Color);
@@ -1325,6 +1330,7 @@ var
 begin
  inif:=TIniFile.Create(configfile);
  try
+  inif.WriteBool('Preferences','TypeInfo', MTypeInfo.Checked);
   inif.WriteString('Preferences','AppFontName',FAppFontName);
   inif.WriteInteger('Preferences','AppFontSize',FAppFontSize);
   inif.WriteInteger('Preferences','AppFontColor',FAppFontColor);
@@ -1914,6 +1920,16 @@ begin
    FObjFontSize:=8;
   FObjFontStyle:=FontStyleTOCLXInteger(FontDialog1.Font.Style);
   UpdateFonts;
+ end;
+end;
+
+procedure TFRpMainFVCL.MTypeInfoClick(Sender: TObject);
+begin
+ MTypeInfo.Checked:=Not MTypeInfo.Checked;
+
+ if Assigned(freportstructure) then
+ begin
+  freportstructure.browser.showdatatypes:=MTypeInfo.Checked;
  end;
 end;
 

@@ -44,12 +44,14 @@ type
     procedure MRefreshClick(Sender: TObject);
   private
     { Private declarations }
+    FShowDataTypes:Boolean;
     FReport:TRpReport;
     FShowDatasets:Boolean;
     FShowDatabases:Boolean;
     FShowEval:Boolean;
     procedure SetReport(Value:TRpReport);
     procedure InitTree;
+    procedure SetShowDataTypes(value:Boolean);
   public
     { Public declarations }
     constructor Create(AOwner:TComponent);override;
@@ -57,6 +59,8 @@ type
     property ShowEval:Boolean read FShowEval write FShowEval;
     property ShowDatasets:Boolean read FShowDatasets write FShowDatasets;
     property ShowDatabases:Boolean read FShowDatabases write FShowDatabases;
+    property ShowDataTypes:Boolean read FShowDataTypes write SetShowDataTypes
+     default true;
   end;
 
 implementation
@@ -296,10 +300,9 @@ begin
         aname:='['+ditem.Alias+'.'+aname+']'
        else
         aname:=ditem.Alias+'.'+aname;
-       if i<fieldtypes.Count then
-        aname:=aname+' '+fieldtypes.Strings[i];
-       if i<fieldsizes.Count then
+       if ((i<fieldtypes.Count) and (FShowDataTypes)) then
        begin
+        aname:=aname+' '+fieldtypes.Strings[i];
         if Length(fieldsizes.Strings[i])>0 then
          aname:=aname+'('+fieldsizes.Strings[i]+')';
        end;
@@ -355,6 +358,16 @@ end;
 procedure TFRpBrowser.MRefreshClick(Sender: TObject);
 begin
  SetReport(FReport);
+end;
+
+
+procedure TFRpBrowser.SetShowDataTypes(value:Boolean);
+begin
+ if value<>FShowDataTypes then
+ begin
+  FShowDataTypes:=value;
+  SetReport(FReport);
+ end;
 end;
 
 end.

@@ -498,5 +498,24 @@ This section will give you the steps to configure and use the databases provided
 <p>Login as root and type:</p>
 <p>ln -s /usr/lib/libfbclient.so /usr/lib/fbclient.so</p>
 <p>Retry your connection, now it works ok.</p>
+<p><strong>Oracle and DBExpress </strong>(by Stefano Tronu -stefano.tronu@gmail.com)</p>
+<p>1) Installing latest version of Oracle Client (10g actually) (for<br>
+  example on /usr/lib/oracle/10.1.0.3/)<br>
+  2) Installing ReportManager (for example on /opt/repmand)<br>
+  3) verify if the Oracle VendorLib name on /root/.borland/dbxdriver is<br>
+  the same of libclntsh.so* under lib root oracle installation. If is<br>
+  not the same, create a link to the .so library or rename the VendorLib<br>
+  name under dbxdriver. (for example, Oracle10g library name is<br>
+  libclntsh.so.10.1).<br>
+  4) Copy the TNSNAMES.ORA contents into the databasename connections<br>
+  configuration, for example<br>
+  &quot;(DESCRIPTION = (ADDRESS_LIST = (ADDRESS = (PROTOCOL = TCP)(HOST =<br>
+  hostname)(PORT = 1521)) )<br>
+  (CONNECT_DATA = (SERVICE_NAME = ORATEST) ) )&quot;.<br>
+  <br>
+  On Linux is not a valid environment TNS_ADMIN=TNSNAMES.ORA path, so<br>
+  is'n need create environment variables such as<br>
+  ORACLE_HOME, ORACLE_SID, LD_LIBRARY_PATH and TNS_ADMIN.<br>
+</p>
 </body>
 </html>

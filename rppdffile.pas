@@ -121,9 +121,9 @@ type
    function UnitsToTextY(Value:integer):string;
    function UnitsToTextText(Value:integer;FontSize:integer):string;
    procedure Line(x1,y1,x2,y2:Integer);
-   procedure TextOut(X, Y: Integer; const Text: string;LineWidth,
+   procedure TextOut(X, Y: Integer; const Text: Widestring;LineWidth,
     Rotation:integer;RightToLeft:Boolean);
-   procedure TextRect(ARect: TRect; Text: string;
+   procedure TextRect(ARect: TRect; Text: Widestring;
                        Alignment: integer; Clipping: boolean;
                        Wordbreak:boolean;Rotation:integer;RightToLeft:Boolean);
    procedure Rectangle(x1,y1,x2,y2:Integer);
@@ -135,7 +135,7 @@ type
    function CalcCharWidth(charcode:Widechar;fontdata:TRpTTFontData):double;
    function UpdateFonts:TRpTTFontData;
    procedure FreeFonts;
-   function PDFCompatibleTextWidthKerning(astring:String;adata:TRpTTFontData;pdffont:TRpPDFFont):String;
+   function PDFCompatibleTextWidthKerning(astring:WideString;adata:TRpTTFontData;pdffont:TRpPDFFont):String;
   public
    procedure TextExtent(const Text:WideString;var Rect:TRect;wordbreak:boolean;
     singleline:boolean);
@@ -231,7 +231,7 @@ type
 
 
 
-function PDFCompatibleText (astring:string):string;
+function PDFCompatibleText (astring:Widestring):String;
 function NumberToText (Value:double):string;
 
 procedure GetBitmapInfo (stream:TStream; var width, height, imagesize:integer;FMemBits:TMemoryStream);
@@ -1141,7 +1141,7 @@ begin
  SWriteLine(FFile.FsTempStream,'Q');
 end;
 
-procedure TRpPDFCanvas.TextRect(ARect: TRect; Text: string;
+procedure TRpPDFCanvas.TextRect(ARect: TRect; Text: Widestring;
                        Alignment: integer; Clipping: boolean;Wordbreak:boolean;
                        Rotation:integer;RightToLeft:Boolean);
 var
@@ -1149,7 +1149,7 @@ var
  i,index:integer;
  posx,posY,currpos,alinedif:integer;
  singleline:boolean;
- astring:String;
+ astring:WideString;
  alinesize:integer;
  lwords:TStringList;
  lwidths:TStringList;
@@ -1326,13 +1326,13 @@ begin
 end;
 
 
-procedure TRpPDFCanvas.TextOut(X, Y: Integer; const Text: string;LineWidth,
+procedure TRpPDFCanvas.TextOut(X, Y: Integer; const Text: Widestring;LineWidth,
  Rotation:integer;RightToLeft:Boolean);
 var
  rotrad,fsize:double;
  rotstring:string;
  PosLine,PosLineX1,PosLineY1,PosLineX2,PosLineY2:integer;
- astring:String;
+ astring:WideString;
  adata:TRpTTFontData;
  havekerning:boolean;
 begin
@@ -1369,7 +1369,7 @@ begin
   astring:=Text;
   if RightToLeft then
   begin
-   astring:=DoReverseString(astring);
+   astring:=DoReverseStringW(astring);
   end;
   havekerning:=false;
   adata:=GetTTFontData;
@@ -1383,7 +1383,7 @@ begin
    SWriteLine(FFile.FsTempStream,PDFCompatibleTextWidthKerning(astring,adata,Font)+' TJ');
   end
   else
-   SWriteLine(FFile.FsTempStream,'('+PDFCompatibleText(astring)+') Tj');
+   SWriteLine(FFile.FsTempStream,PDFCompatibleText(astring)+' Tj');
   SWriteLine(FFile.FsTempStream,'ET');
  finally
   if (Rotation<>0) then
@@ -2823,22 +2823,35 @@ begin
 end;
 
 
-function TRpPDFCanvas.PDFCompatibleTextWidthKerning(astring:String;adata:TRpTTFontData;pdffont:TRpPDFFont):String;
+function WideCharToHex(achar:Widechar):string;
+var
+ aint:Integer;
+begin
+ aint:=Integer(achar);
+ Result:=Format('%4.4x',[aint]);
+end;
+
+function TRpPDFCanvas.PDFCompatibleTextWidthKerning(astring:WideString;adata:TRpTTFontData;pdffont:TRpPDFFont):String;
 var
  i:integer;
- closeparent:boolean;
  kerningvalue:integer;
+ iswidestring:boolean;
 begin
+ iswidestring:=false;
  if Length(astring)<1 then
  begin
   Result:='[]';
   exit;
  end;
  Result:='[(';
- closeparent:=true;
  for i:=1 to Length(astring) do
  begin
-  if astring[i] in ['(',')','\'] then
+  if Ord(astring[i])>255 then
+  begin
+   iswidestring:=true;
+   break;
+  end;
+  if astring[i] in [WideChar('('),WideChar(')'),WideChar('\')] then
    Result:=Result+'\';
   Result:=Result+astring[i];
   if (i<Length(astring)) then
@@ -2847,29 +2860,63 @@ begin
    if kerningvalue<>0 then
    begin
     Result:=Result+')'+' '+IntToStr(kerningvalue);
-    if i=Length(astring) then
-     closeparent:=false
-    else
-     Result:=Result+' (';
+    Result:=Result+' (';
    end;
   end;
  end;
- if closeparent then
-  Result:=Result+')';
- Result:=Result+']';
+ if iswidestring then
+ begin
+  Result:='[<';
+  for i:=1 to Length(astring) do
+  begin
+   Result:=Result+WideCharToHex(astring[i]);
+   if (i<Length(astring)) then
+   begin
+    kerningvalue:=infoprovider.GetKerning(pdffont,adata,WideChar(astring[i]),WideChar(astring[i+1]));
+    if kerningvalue<>0 then
+    begin
+     Result:=Result+'>'+' '+IntToStr(kerningvalue);
+     Result:=Result+' <';
+    end;
+   end;
+  end;
+  Result:=Result+'>]';
+ end
+ else
+ begin
+  Result:=Result+')]';
+ end;
 end;
 
-function PDFCompatibleText(astring:string):string;
+function PDFCompatibleText(astring:Widestring):String;
 var
  i:integer;
+ iswidestring:boolean;
 begin
- Result:='';
+ Result:='(';
+ iswidestring:=false;
  for i:=1 to Length(astring) do
  begin
-  if astring[i] in ['(',')','\'] then
+  if Ord(astring[i])>255 then
+  begin
+   iswidestring:=true;
+   break;
+  end;
+  if astring[i] in [WideChar('('),WideChar(')'),WideChar('\')] then
    Result:=Result+'\';
   Result:=Result+astring[i];
  end;
+ if iswidestring then
+ begin
+  Result:='<';
+  for i:=1 to Length(astring) do
+  begin
+   Result:=Result+WideCharToHex(astring[i]);
+  end;
+  Result:=Result+'>';
+ end
+ else
+  Result:=Result+')';
 end;
 
 procedure TRpPDFFile.FreePageInfos;

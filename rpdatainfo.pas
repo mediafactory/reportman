@@ -3274,11 +3274,11 @@ begin
    DReports:=TClientDataSet.Create(nil);
    try
     DReportGroups.FieldDefs.Add('GROUP_CODE',ftInteger,0,true);
-    DReportGroups.FieldDefs.Add('GROUP_NAME',ftString,50,false);
+    DReportGroups.FieldDefs.Add('GROUP_NAME',ftString,100,false);
     DReportGroups.FieldDefs.Add('PARENT_GROUP',ftInteger,0,false);
     DReportGroups.FieldDefs.Add('GROUP_PATH',ftMemo,250,false);
     DReportGroups2.FieldDefs.Assign(DReportGroups.FieldDefs);
-    DReports.FieldDefs.Add('REPORT_NAME',ftString,50,true);
+    DReports.FieldDefs.Add('REPORT_NAME',ftString,100,true);
     DReports.FieldDefs.Add('REPORT_GROUP',ftInteger,0,false);
     DReports.IndexDefs.Add('IGROUP','REPORT_GROUP',[]);
     DReports.IndexFieldNames:='REPORT_GROUP';

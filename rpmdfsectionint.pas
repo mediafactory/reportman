@@ -38,6 +38,7 @@ uses SysUtils, Classes,Types,
 const
  CONS_MINWIDTH=5;
  CONS_MINHEIGHT=5;
+ MAX_DROP_SIZE=40;
 type
 
   TRpSectionInterface=class;
@@ -1428,7 +1429,7 @@ begin
  Result:='';
  for i:=1 to asize do
  begin
-  Result:=Result+'M';
+  Result:=Result+'x';
  end;
 end;
 
@@ -1469,18 +1470,20 @@ begin
   asizepos.PosX:=pixelstotwips(X);
   asizepos.PosY:=pixelstotwips(Y);
 
-  if size<=100 then
+  if size<=MAX_DROP_SIZE then
   begin
    apoint.y:=Canvas.TextHeight('Mg');
    apoint.x:=Canvas.TextWidth(getmstring(size));
   end
   else
   begin
-   apoint.y:=Canvas.TextHeight('Mg')*((size div 100)+1);
+   apoint.y:=Canvas.TextHeight('Mg')*((size div MAX_DROP_SIZE)+1);
    apoint.x:=Canvas.TextWidth(getmstring(size));
   end;
   apoint.x:=pixelstotwips(apoint.x);
   apoint.y:=pixelstotwips(apoint.y);
+  if asizepos.PosX+apoint.x>printitem.Width then
+   apoint.x:=printitem.Width-asizepos.PosX;
   asizepos.Height:=Round(apoint.y*1.1);
   asizepos.Width:=apoint.x;
 

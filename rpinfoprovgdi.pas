@@ -454,17 +454,16 @@ begin
  end;
  SelectFont(pdffont);
  logx:=GetDeviceCaps(adc,LOGPIXELSX);
-{ if IsWindowsNT then
+ if IsWindowsNT then
  begin
-  if not GetCharABCWidthsW(adc,Cardinal(charcode),Cardinal(charcode),aabc[1]) then
+  if not GetCharABCWidthsW(adc,aint,aint,aabc[1]) then
    RaiseLastOSError;
  end
  else
  begin
-}
- if not GetCharABCWidths(adc,aint,aint,aabc[1]) then
+ if not GetCharABCWidths(adc,Cardinal(chr(aint)),Cardinal(chr(aint)),aabc[1]) then
    RaiseLastOSError;
-// end;
+ end;
  Result:=Round(
    (Integer(aabc[1].abcA)+Integer(aabc[1].abcB)+Integer(aabc[1].abcC))/logx*72000/TTF_PRECISION
    );

@@ -606,6 +606,10 @@ object FRpMainF: TFRpMainF
         Caption = 'Object inspector Font'
         OnClick = MObjFontClick
       end
+      object MTypeInfo: TMenuItem
+        Caption = 'Data type information'
+        OnClick = MTypeInfoClick
+      end
       object MQtStyle: TMenuItem
         Caption = 'Qt Widget Style'
         object Windows1: TMenuItem

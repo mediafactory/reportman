@@ -303,10 +303,8 @@ begin
 end;
 
 function TIdenField.GeTRpValue:TRpValue;
-{$IFDEF USEBCD}
 var
  atype:TVarType;
-{$ENDIF}
 begin
  if Field=nil then
  begin
@@ -314,6 +312,11 @@ begin
   Exit;
  end;
  Result:=Field.AsVariant;
+{$IFNDEF USEBCD}
+ atype:=VarType(Result);
+ if atype=14 then
+  Result:=Field.AsInteger;
+{$ENDIF}
 {$IFDEF USEBCD}
  atype:=VarType(Result);
  if atype=varFmtBCD then

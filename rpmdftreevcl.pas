@@ -763,7 +763,7 @@ begin
   begin
    adatagroups:=TClientDataset.Create(nil);
    adatagroups.FieldDefs.Add('GROUP_CODE',ftinteger);
-   adatagroups.FieldDefs.Add('GROUP_NAME',ftstring,50);
+   adatagroups.FieldDefs.Add('GROUP_NAME',ftstring,100);
    adatagroups.FieldDefs.Add('PARENT_GROUP',ftinteger);
    TClientDataset(adatagroups).CreateDataSet;
   end;

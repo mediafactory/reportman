@@ -221,7 +221,8 @@ begin
  Rect.Top:=0;
  Rect.Bottom:=0;
  Rect.Right:=extent.X;
- FPDFFile.Canvas.TextExtent(atext.Text,Rect,atext.WordWrap,singleline);
+ // Unicode not supported
+ FPDFFile.Canvas.TextExtent(String(atext.Text),Rect,atext.WordWrap,singleline);
  extent.X:=Rect.Right;
  extent.Y:=Rect.Bottom;
 end;
@@ -238,7 +239,7 @@ var
  rec:TRect;
  aalign:integer;
  stream:TStream;
- astring:String;
+ astring:WideString;
 // bitmap:TBitmap;
 begin
  posx:=obj.Left;
@@ -269,7 +270,8 @@ begin
     rec.Top:=posy;
     rec.Right:=posx+round(obj.Width);
     rec.Bottom:=posy+round(obj.Height);
-    astring:=page.GetText(Obj);
+    // Unicode not supported
+    astring:=String(page.GetText(Obj));
     FPDFFile.Canvas.TextRect(rec,astring,aalign,obj.cuttext,
     obj.WordWrap,obj.FontRotation,obj.RightToLeft);
    end;
