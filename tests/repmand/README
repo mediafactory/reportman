@@ -25,15 +25,12 @@ Supported databases (dbexpress):
 - MySQL & MySQL 2.3 (untested)
 - ODBC throught UNIXodbc (untested)
 
-Limitations (expected finished in release 1.0)
-
-- No group headers and footers
-- No database graphic fields (but fixed images work)
 
 Bugs:
 - Please submit bugs to sourceforge project.
 
 Support:
 - Submit support questions and other to egroups.
+egroups.yahoo.com group reportman
 
 Thanks

@@ -18,10 +18,15 @@ install:
 	cp ../../repman/utils/printrep/printrep .
 	cp ../../repman/utils/reptotxt/reptotxt .
 	cp ../../repman/utils/txttorep/txttorep .
-	cp ../clxreport/Project1 .
+	-cp ../clxreport/Project1 .
 	cp ../clxreport/sample4.rep .
 	cp ../clxreport/biolife.cds .
-	tar c repmand dbxdrivers dbxconnections metaprint metaview printrep reptotxt txttorep repmand repmand.sh README *.so *.so.1 *.so.2 *.so.1.0 > repmand.i386.tar
+	-mkdir doc
+	cp ../../doc/*.html doc
+	-mkdir doc/tutorial
+	cp ../../doc/tutorial/*.html doc/tutorial
+	cp ../../doc/tutorial/*.jpg doc/tutorial
+	tar c doc sample4.rep biolife.cds repmand dbxdrivers dbxconnections metaprint metaview printrep reptotxt txttorep repmand repmand.sh README *.so *.so.1 *.so.2 *.so.1.0 > repmand.i386.tar
 	gzip repmand.i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0
@@ -29,3 +34,6 @@ clean:
 	-rm -f dbxconnections dbxdrivers metaprint metaview printrep
 	-rm -f reptotxt txttorep
 	-rm -f *.gz
+	-rm -f *.rep
+	-rm -f *.cds
+	-rm -Rf doc
