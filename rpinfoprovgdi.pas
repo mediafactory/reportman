@@ -486,8 +486,14 @@ begin
   astring:='';
   astring:=astring+charcode+Widechar(0);
 {$IFDEF USEVARIANTS}
+{$IFDEF CBUILDER6}
+  if GetCharacterPlacementW(adc,PWideChar(astring),true,false,gcp,GCP_DIACRITIC)=0 then
+   RaiseLastOSError;
+{$ENDIF}
+{$IFNDEF CBUILDER6}
   if GetCharacterPlacementW(adc,PWideChar(astring),1,0,gcp,GCP_DIACRITIC)=0 then
    RaiseLastOSError;
+{$ENDIF}
 {$ENDIF}
 {$IFNDEF USEVARIANTS}
   if GetCharPlac(adc,PWideChar(astring),1,0,gcp,GCP_DIACRITIC)=0 then
