@@ -12,7 +12,7 @@ unit WebReportManX_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 01/12/2003 20:20:51 from Type Library described below.
+// File generated on 23/12/2003 15:41:00 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\webactivex\WebReportManX.tlb (1)
@@ -21,7 +21,7 @@ unit WebReportManX_TLB;
 // Helpfile: 
 // HelpString: WebReportManX Library
 // DepndLst: 
-//   (1) v2.0 stdole, (H:\WINDOWS\System32\stdole2.tlb)
+//   (1) v2.0 stdole, (C:\WINDOWS\System32\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}

@@ -36,6 +36,10 @@ webplugin:
         cd ..
 
 prerelease:
+        cd webactivex
+        generatecab
+        cd ..
+
         -del /S /Q ..\prerelease
         -mkdir ..\prerelease
         copy repman\repmandxp.exe ..\prerelease

@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 2.0pre2
+AppVerName=Report Manager 2.0
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -40,10 +40,11 @@ Source: "..\drivers\win32\upx.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\utils\rptranslator\rptranslate.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\utils\rptranslator\rptranslate.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\utils\rptranslator\rptranslateres.*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\compilerep\compilerep.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\utils\printreptopdf\printreptopdf.exe"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "..\activex\ReportMan.ocx"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\activex\ReportMan.ocx"; DestDir: "{sys}"; Flags: restartreplace sharedfile regserver
-Source: "..\activex\ReportMan.ocx.manifest"; DestDir: "{sys}"; Flags: ignoreversion
+Source: "..\activex\ReportMan.ocx.manifest"; DestDir: "{sys}"
 Source: "..\webactivex\WebReportManX.cab"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "..\webactivex\WebReportManX.cab"; DestDir: "{sys}"; CopyMode: alwaysskipifsameorolder; Flags: restartreplace sharedfile regserver
 Source: "..\server\service\repserverservice.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -58,6 +59,7 @@ Source: "..\server\web\repwebserver.dll"; DestDir: "{app}\webserver"; Flags: ign
 Source: "..\server\web\repwebexe.exe"; DestDir: "{app}\webserver"; Flags: ignoreversion
 ; Report Server custom files
 Source: "..\server\web\*.html"; DestDir: "{app}\webserver"; Flags: ignoreversion
+Source: "..\webactivex\reportman.htm"; DestDir: "{app}\sampleplugin"; Flags: ignoreversion
 
 Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; Flags: ignoreversion
@@ -72,6 +74,7 @@ Source: "..\drivers\win32\dbexpmss.dll"; DestDir: "{sys}";  Flags: uninsneveruni
 Source: "..\drivers\win32\dbexpora.dll"; DestDir: "{sys}";  Flags: uninsneveruninstall onlyifdoesntexist
 Source: "..\drivers\win32\dbexpdb2.dll"; DestDir: "{sys}";  Flags: uninsneveruninstall onlyifdoesntexist
 Source: "..\drivers\win32\dbxoodbc.dll"; DestDir: "{sys}"; Flags: uninsneveruninstall onlyifdoesntexist
+Source: "..\drivers\win32\upx.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; Api libraries
 Source: "..\rpreportman.h"; DestDir: "{app}\api"; Flags: ignoreversion
 Source: "..\rpreportmanapi.bas"; DestDir: "{app}\api"; Flags: ignoreversion

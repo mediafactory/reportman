@@ -1,7 +1,7 @@
 library WebReportManX;
 
 uses
-  ComServ,
+  ComServ,XPMan,
   WebReportManX_TLB in 'WebReportManX_TLB.pas',
   rpwebreportx in 'rpwebreportx.pas' {WebReportMan: TActiveForm} {WebReportMan: CoClass},
   rpwebmetaclient in '..\rpwebmetaclient.pas',
