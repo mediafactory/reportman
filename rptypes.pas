@@ -383,8 +383,8 @@ end;
 function GetPrinterOffset(printerindex:TRpPrinterSelect):TPoint;
 begin
  CheckLoadedPrinterConfig;
- Result.X:=printerconfigfile.ReadInteger('PrinterOffsetX','Printer'+IntToStr(integer(printerindex)),-1000);
- Result.Y:=printerconfigfile.ReadInteger('PrinterOffsetY','Printer'+IntToStr(integer(printerindex)),1000);
+ Result.X:=printerconfigfile.ReadInteger('PrinterOffsetX','Printer'+IntToStr(integer(printerindex)),0);
+ Result.Y:=printerconfigfile.ReadInteger('PrinterOffsetY','Printer'+IntToStr(integer(printerindex)),0);
 end;
 
 initialization

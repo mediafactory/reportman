@@ -4,7 +4,7 @@ interface
 
 uses SysUtils, Classes, QGraphics, QForms, QControls, QStdCtrls,
   QButtons, QExtCtrls,rpmdconsts,IniFiles,rpmdshfolder,QPrinters,
-  rptypes;
+  rptypes,rpmunits;
 
 type
   TFRpPrinterConfig = class(TForm)
@@ -18,6 +18,13 @@ type
     EConfigFile: TEdit;
     RadioUser: TRadioButton;
     RadioSystem: TRadioButton;
+    GPageMargins: TGroupBox;
+    LLeft: TLabel;
+    ELeftMargin: TEdit;
+    ETopMargin: TEdit;
+    LTop: TLabel;
+    LMetrics3: TLabel;
+    LMetrics4: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure LSelPrinterClick(Sender: TObject);
     procedure RadioUserClick(Sender: TObject);
@@ -25,6 +32,7 @@ type
     procedure CheckPrinterFontsClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ComboPrintersChange(Sender: TObject);
+    procedure ELeftMarginChange(Sender: TObject);
   private
     { Private declarations }
     procedure DoSave;
@@ -68,6 +76,11 @@ begin
  RadioUser.Caption:=TranslateStr(744,RadioUser.Caption);
  RadioSystem.Caption:=TranslateStr(745,RadioSystem.Caption);
  Caption:=TranslateStr(742,Caption);
+ GPageMargins.Caption:=TranslateStr(746,GPagemargins.Caption);
+ LLeft.Caption:=TranslateStr(100,LLeft.Caption);
+ LTop.Caption:=TranslateStr(102,LTop.Caption);
+ LMetrics3.Caption:=rpunitlabels[defaultunit];
+ LMetrics4.Caption:=LMetrics3.Caption;
  with LSelPrinter.Items do
  begin
   Add(SRpDefaultPrinter);
@@ -121,6 +134,8 @@ begin
    ComboPrintersChange(Self);
   end;
  end;
+ ELeftMargin.Text:=gettextfromtwips(configinifile.ReadInteger('PrinterOffsetX','Printer'+IntToStr(LSelPrinter.ItemIndex),0));
+ ETopMargin.Text:=gettextfromtwips(configinifile.ReadInteger('PrinterOffsetY','Printer'+IntToStr(LSelPrinter.ItemIndex),0));
 end;
 
 procedure ReadPrintersConfig;
@@ -201,6 +216,23 @@ begin
  if LSelPrinter.ItemIndex<=0 then
   exit;
  configinifile.WriteString('PrinterNames','Printer'+IntToStr(LSelPrinter.ItemIndex),ComboPrinters.Text);
+end;
+
+procedure TFRpPrinterConfig.ELeftMarginChange(Sender: TObject);
+var
+ margin:integer;
+begin
+ if LSelPrinter.ItemIndex<0 then
+  exit;
+ try
+  margin:=gettwipsfromtext(TEdit(Sender).Text);
+ except
+  margin:=0;
+ end;
+ if Sender=ELeftMargin then
+  configinifile.WriteInteger('PrinterOffsetX','Printer'+IntToStr(LSelPrinter.ItemIndex),margin)
+ else
+  configinifile.WriteInteger('PrinterOffsetY','Printer'+IntToStr(LSelPrinter.ItemIndex),margin);
 end;
 
 initialization

@@ -470,8 +470,8 @@ begin
     end
     else
     begin
-     posx:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
-     posy:=round(obj.Top*dpiy/TWIPS_PER_INCHESS);
+     posx:=round((obj.Left+offset.X)*dpix/TWIPS_PER_INCHESS);
+     posy:=round((obj.Top+offset.X)*dpiy/TWIPS_PER_INCHESS);
      rec.Left:=posx;
      rec.Top:=posy;
      rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);
@@ -1221,6 +1221,7 @@ begin
    Printer.SetPrinter(Printer.Printers.Strings[0]);
   end;
  end;
+ Result:=offset;
 end;
 
 procedure TRpQtDriver.SelectPrinter(printerindex:TRpPrinterSelect);

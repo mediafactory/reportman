@@ -63,6 +63,7 @@ type
     allpages,collate:boolean;
     frompage,topage,copies:integer;
     devicefonts:boolean;
+    printerindex:TRpPrinterSelect;
     dook:boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure AppIdleReport(Sender:TObject;var done:boolean);
@@ -92,6 +93,7 @@ type
    meta:TMetafile;
    pagecliprec:TRect;
   public
+   offset:TPoint;
    lockedpagesize:boolean;
    CurrentPageSize:Tpoint;
    bitmap:TBitmap;
@@ -128,7 +130,7 @@ type
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
  showprogress,allpages:boolean;frompage,topage,copies:integer;
-  collate:boolean;devicefonts:boolean):boolean;
+  collate:boolean;devicefonts:boolean;printerindex:TRpPrinterSelect=pRpDefaultPrinter):boolean;
 function CalcReportWidthProgress(report:TRpReport):boolean;
 function PrintReport(report:TRpReport;Caption:string;progress:boolean;
   allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
@@ -137,7 +139,7 @@ function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
   showprintdialog:boolean;filename:string;compressed:boolean):Boolean;
 function DoShowPrintDialog(var allpages:boolean;
  var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
-procedure PrinterSelection(printerindex:TRpPrinterSelect);
+function PrinterSelection(printerindex:TRpPrinterSelect):TPoint;
 
 implementation
 
@@ -319,6 +321,9 @@ begin
  end
  else
  begin
+  // Offset is 0 in preview
+  offset.X:=0;
+  offset.Y:=0;
   if assigned(bitmap) then
   begin
    bitmap.free;
@@ -564,7 +569,7 @@ begin
  extent.Y:=Round(arec.Bottom/dpiy*TWIPS_PER_INCHESS);
 end;
 
-procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;pagemargins:TRect;devicefonts:boolean);
+procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;pagemargins:TRect;devicefonts:boolean;offset:TPoint);
 var
  posx,posy:integer;
  rec,recsrc:TRect;
@@ -588,8 +593,8 @@ begin
  if toprinter then
  begin
   // If printer then must be displaced
-  posx:=round((obj.Left-pagemargins.Left)*dpix/TWIPS_PER_INCHESS);
-  posy:=round((obj.Top-pagemargins.Top)*dpiy/TWIPS_PER_INCHESS);
+  posx:=round((obj.Left-pagemargins.Left+offset.X)*dpix/TWIPS_PER_INCHESS);
+  posy:=round((obj.Top-pagemargins.Top+offset.Y)*dpiy/TWIPS_PER_INCHESS);
  end
  else
  begin
@@ -883,7 +888,7 @@ begin
   dpix:=Screen.PixelsPerInch;
   dpiy:=Screen.PixelsPerInch;
  end;
- PrintObject(Canvas,page,obj,dpix,dpiy,toprinter,pagemargins,devicefonts);
+ PrintObject(Canvas,page,obj,dpix,dpiy,toprinter,pagemargins,devicefonts,offset);
 end;
 
 function TRpGDIDriver.AllowCopies:boolean;
@@ -930,7 +935,7 @@ end;
 
 procedure DoPrintMetafile(metafile:TRpMetafileReport;tittle:string;
  aform:TFRpVCLProgress;allpages:boolean;frompage,topage,copies:integer;
- collate:boolean;devicefonts:boolean);
+ collate:boolean;devicefonts:boolean;printerindex:TRpPrinterSelect=pRpDefaultPrinter);
 var
  i:integer;
  j:integer;
@@ -943,7 +948,9 @@ var
  difmilis:int64;
  totalcount:integer;
  pagemargins:TRect;
+ offset:TPoint;
 begin
+ offset:=PrinterSelection(printerindex);
  pagemargins:=GetPageMarginsTWIPS;
  // Get the time
  mmfirst:=TimeGetTime;
@@ -995,7 +1002,7 @@ begin
      apage:=metafile.Pages[i];
      for j:=0 to apage.ObjectCount-1 do
      begin
-      PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,true,pagemargins,devicefonts);
+      PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,true,pagemargins,devicefonts,offset);
       if assigned(aform) then
       begin
        mmlast:=TimeGetTime;
@@ -1032,14 +1039,14 @@ end;
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
  showprogress,allpages:boolean;frompage,topage,copies:integer;
-  collate:boolean;devicefonts:boolean):boolean;
+  collate:boolean;devicefonts:boolean;printerindex:TRpPrinterSelect=pRpDefaultPrinter):boolean;
 var
  dia:TFRpVCLProgress;
 begin
  Result:=true;
  if Not ShowProgress then
  begin
-  DoPrintMetafile(metafile,tittle,nil,allpages,frompage,topage,copies,collate,devicefonts);
+  DoPrintMetafile(metafile,tittle,nil,allpages,frompage,topage,copies,collate,devicefonts,printerindex);
   exit;
  end;
  dia:=TFRpVCLProgress.Create(Application);
@@ -1054,6 +1061,7 @@ begin
    dia.copies:=copies;
    dia.collate:=collate;
    dia.devicefonts:=devicefonts;
+   dia.printerindex:=printerindex;
    Application.OnIdle:=dia.AppIdle;
    dia.ShowModal;
    Result:=Not dia.cancelled;
@@ -1091,7 +1099,7 @@ begin
  done:=false;
  LTittle.Caption:=tittle;
  LProcessing.Visible:=true;
- DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate,devicefonts);
+ DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate,devicefonts,printerindex);
 end;
 
 
@@ -1390,28 +1398,34 @@ begin
  end;
 end;
 
-procedure PrinterSelection(printerindex:TRpPrinterSelect);
+function PrinterSelection(printerindex:TRpPrinterSelect):TPoint;
 var
  printername:String;
  index:integer;
+ offset:TPoint;
 begin
  printername:=GetPrinterConfigName(printerindex);
+ offset:=GetPrinterOffset(printerindex);
  if length(printername)>0 then
  begin
   index:=Printer.Printers.IndexOf(printername);
   if index>=0 then
    Printer.PrinterIndex:=index;
  end;
+ Result:=offset;
 end;
 
 procedure TRpGDIDriver.SelectPrinter(printerindex:TRpPrinterSelect);
 begin
- PrinterSelection(printerindex);
+ offset:=PrinterSelection(printerindex);
  if neverdevicefonts then
   exit;
  if devicefonts then
   exit;
  devicefonts:=GetDeviceFontsOption(printerindex);
+ if devicefonts then
+  UpdatePrinterFontList;
+
 end;
 
 end.
