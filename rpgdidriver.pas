@@ -1141,6 +1141,8 @@ var
  istextonly:boolean;
  drivername,S:String;
  memstream:TMemoryStream;
+ rPageSizeQt:TPageSizeQt;
+ gdidriver:TRpGDIDriver;
 begin
  drivername:=Trim(GetPrinterEscapeStyleDriver(printerindex));
  istextonly:=Length(drivername)>0;
@@ -1185,6 +1187,28 @@ begin
     printer.Orientation:=poLandscape;
   end;
   // Sets pagesize
+  rpagesizeQt.papersource:=metafile.PaperSource;
+  rpagesizeQt.duplex:=metafile.duplex;
+  if Metafile.PageSize<0 then
+  begin
+   rpagesizeqt.Custom:=True;
+   rPageSizeQt.CustomWidth:=metafile.CustomX;
+   rPageSizeQt.CustomHeight:=metafile.CustomY;
+  end
+  else
+  begin
+   rpagesizeqt.Indexqt:=metafile.PageSize;
+   rpagesizeqt.Custom:=False;
+  end;
+  try
+   gdidriver:=TRpGDIDriver.Create;
+   gdidriver.SetPagesize(rpagesizeqt);
+  except
+   On E:Exception do
+   begin
+    rpgraphutilsvcl.RpMessageBox(E.Message);
+   end;
+  end;
   pagecopies:=1;
   reportcopies:=1;
 

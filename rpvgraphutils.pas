@@ -877,7 +877,7 @@ begin
  Result.y:=Round(gdipage.FormHeight/100/CMS_PER_INCHESS*TWIPS_PER_INCHESS);
 end;
 
-
+(*
 function GetCurrentPaper:TGDIPageSize;
 var
  FPrinterHandle:THandle;
@@ -987,12 +987,11 @@ begin
   end;
  end;
 end;
-
+*)
 
 // Gets current paper page size old version
 // That checks for existent forms
-(*
-function GetCurrentPaperOld:TGDIPageSize;
+function GetCurrentPaper:TGDIPageSize;
 var
 {$IFNDEF DOTNETD}
   DeviceMode: THandle;
@@ -1128,7 +1127,7 @@ begin
 {$ENDIF}
  Printer.SetPrinter(Device, Driver, Port, DeviceMode);
 end;
-*)
+
 
 
 
@@ -1407,6 +1406,7 @@ begin
   end
   else
   begin
+   PDevMode.dmFields:=PDevMode.dmFields or dm_papersize;
    PDevMode.dmPaperSize :=apapersize.PageIndex;
    PDevMode.dmPaperlength := apapersize.Height;
    PDevMode.dmPaperwidth  := apapersize.Width;

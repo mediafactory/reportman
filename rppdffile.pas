@@ -41,6 +41,7 @@
 {               -RoundRect                              }
 {               -Widechar Fonts                         }
 {               -Composite Fonts                        }
+{               -Unicode Fonts                          }
 {                                                       }
 {       This file is under the MPL license              }
 {       If you enhace the functionality of this file    }

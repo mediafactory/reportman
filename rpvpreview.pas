@@ -37,7 +37,7 @@ uses
 {$ENDIF}
   StdCtrls,rpbasereport,rpreport,rpmetafile, ComCtrls,rphtmldriver,
   rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,rptextdriver,rpsvgdriver,
-  rpcsvdriver,
+  rpcsvdriver,rpgraphutilsvcl,
   ActnList, ImgList,Printers,rpmdconsts, ToolWin, Mask, rpmaskedit;
 
 type
@@ -255,6 +255,8 @@ begin
 end;
 
 procedure TFRpVPreview.AppIdle(Sender:TObject;var done:boolean);
+var
+ rPageSizeQt:TPageSizeQt;
 begin
  Application.OnIdle:=nil;
  done:=false;
@@ -266,6 +268,28 @@ begin
   begin
    if Not CalcReportWidthProgress(report) then
     Abort;
+   // Sets page size
+   rpagesizeQt.papersource:=report.metafile.PaperSource;
+   rpagesizeQt.duplex:=report.metafile.duplex;
+   if report.Metafile.PageSize<0 then
+   begin
+    rpagesizeqt.Custom:=True;
+    rPageSizeQt.CustomWidth:=report.metafile.CustomX;
+    rPageSizeQt.CustomHeight:=report.metafile.CustomY;
+   end
+   else
+   begin
+    rpagesizeqt.Indexqt:=report.metafile.PageSize;
+    rpagesizeqt.Custom:=False;
+   end;
+   try
+    gdidriver.SetPagesize(rpagesizeqt);
+   except
+    On E:Exception do
+    begin
+     rpgraphutilsvcl.RpMessageBox(E.Message);
+    end;
+   end;
   end
   else
   begin

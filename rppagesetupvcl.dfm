@@ -24,9 +24,6 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     TabOrder = 0
     object TabPage: TTabSheet
       Caption = 'Page setup'
-      DesignSize = (
-        450
-        364)
       object SColor: TShape
         Left = 164
         Top = 248
@@ -107,9 +104,6 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Page Margins'
         TabOrder = 5
-        DesignSize = (
-          441
-          69)
         object LLeft: TLabel
           Left = 16
           Top = 16
@@ -212,9 +206,6 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Caption = 'Custom page size (Windows only)'
         TabOrder = 1
         Visible = False
-        DesignSize = (
-          261
-          93)
         object LMetrics7: TLabel
           Left = 218
           Top = 24
@@ -283,9 +274,6 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     object TabPrint: TTabSheet
       Caption = 'Print setup'
       ImageIndex = 1
-      DesignSize = (
-        450
-        364)
       object LSelectPrinter: TLabel
         Left = 8
         Top = 92
@@ -494,9 +482,6 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     object TabOptions: TTabSheet
       Caption = 'Options'
       ImageIndex = 2
-      DesignSize = (
-        450
-        364)
       object LPreferedFormat: TLabel
         Left = 8
         Top = 12

@@ -864,6 +864,7 @@ var
  istextonly:boolean;
  drivername,S:String;
  memstream:TMemoryStream;
+ qtdriver:TRpQtDriver;
 begin
  drivername:=Trim(GetPrinterEscapeStyleDriver(printerindex));
  istextonly:=Length(drivername)>0;

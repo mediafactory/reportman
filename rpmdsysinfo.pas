@@ -22,7 +22,7 @@ interface
 {$I rpconf.inc}
 
 uses Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls,
-  Buttons, ExtCtrls,Printers,rpmdconsts,WinSpool,Dialogs,rpversion,rptypes,
+  Buttons, ExtCtrls,Printers,rpmdconsts,WinSpool,Dialogs,rptypes,
   rpmunits;
 
 type

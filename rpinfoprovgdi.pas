@@ -251,8 +251,14 @@ var
  aabc:array [1..1] of ABC;
  searchname:string;
  index:integer;
+ astring:String;
+ awidestring:String;
+ achar:char;
 begin
- searchname:=FormatFloat('000000',Integer(charcode));
+ awidestring:=charcode;
+ astring:=awidestring;
+ achar:=astring[1];
+ searchname:=FormatFloat('000000',Integer(achar));
  index:=data.loadedwidths.IndexOf(searchname);
  if index>=0 then
  begin
@@ -261,13 +267,21 @@ begin
  end;
  SelectFont(pdffont);
  logx:=GetDeviceCaps(adc,LOGPIXELSX);
- if not GetCharABCWidths(adc,Cardinal(charcode),Cardinal(charcode),aabc[1]) then
-  RaiseLastOSError;
+{ if IsWindowsNT then
+ begin
+  if not GetCharABCWidthsW(adc,Cardinal(charcode),Cardinal(charcode),aabc[1]) then
+   RaiseLastOSError;
+ end
+ else
+ begin
+}  if not GetCharABCWidths(adc,Cardinal(achar),Cardinal(achar),aabc[1]) then
+   RaiseLastOSError;
+// end;
  Result:=Round(
    (Integer(aabc[1].abcA)+Integer(aabc[1].abcB)+Integer(aabc[1].abcC))/logx*72000/TTF_PRECISION
    );
  // Add to the cache
- data.loadedwidths.AddObject(FormatFloat('000000',integer(charcode)),TObject(Result));
+ data.loadedwidths.AddObject(FormatFloat('000000',integer(achar)),TObject(Result));
 end;
 
 
