@@ -27,6 +27,7 @@ type
     PrinterConfig:Integer;
     Install:Integer;
     MetaUrl:WideString;
+    Port:Integer;
     procedure ActivateEvent(Sender: TObject);
     procedure ClickEvent(Sender: TObject);
     procedure CreateEvent(Sender: TObject);
@@ -85,6 +86,8 @@ type
     procedure Set_Embedded(Value: Integer); safecall;
     function Get_Install: Integer; safecall;
     procedure Set_Install(Value: Integer); safecall;
+    function Get_Port: Integer; safecall;
+    procedure Set_Port(Value: Integer); safecall;
   public
     { Public declarations }
     procedure Initialize; override;
@@ -380,6 +383,7 @@ end;
 procedure TWebReportMan.ActiveFormCreate(Sender: TObject);
 begin
  Timer1.Enabled:=true;
+ Port:=80;
 end;
 
 function TWebReportMan.Get_ShowProgress: Integer;
@@ -415,6 +419,7 @@ begin
   webmetaprint.PrinterConfig:=PrinterConfig<>0;
   webmetaprint.Install:=Install<>0;
   webmetaprint.MetaUrl:=MetaUrl;
+  webmetaprint.Port:=Port;
   if Length(MetaUrl)>0 then
   begin
    webmetaprint.Execute;
@@ -448,6 +453,16 @@ procedure TWebReportMan.ActiveFormKeyDown(Sender: TObject; var Key: Word;
 begin
  if assigned(webmetaprint.Meta) then
   webmetaprint.Meta.FormKeyDown(Self,Key,Shift);
+end;
+
+function TWebReportMan.Get_Port: Integer;
+begin
+ Result:=Port;
+end;
+
+procedure TWebReportMan.Set_Port(Value: Integer);
+begin
+ Port:=Value;
 end;
 
 initialization

@@ -207,12 +207,17 @@ begin
     Raise Exception.Create(SRpNotFound+' - '+MetaUrl);
    astream.Seek(0,soFromBeginning);
    astream.SaveToFile(sysdir+DIR_SEPARATOR+'reportmanres.es');
-   connect.Get(MetaUrl+'/WebReportManX.ocx.manifest',astream);
+   connect.Get(MetaUrl+'/reportmanres.fr',astream);
+   if astream.size=0 then
+    Raise Exception.Create(SRpNotFound+' - '+MetaUrl);
+   astream.Seek(0,soFromBeginning);
+   astream.SaveToFile(sysdir+DIR_SEPARATOR+'reportmanres.fr');
+{   connect.Get(MetaUrl+'/WebReportManX.ocx.manifest',astream);
    if astream.size=0 then
     Raise Exception.Create(SRpNotFound+' - '+MetaUrl);
    astream.Seek(0,soFromBeginning);
    astream.SaveToFile(sysdir+DIR_SEPARATOR+'WebReportManX.ocx.manifest');
-  finally
+}  finally
    astream.free;
   end;
  finally

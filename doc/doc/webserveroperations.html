@@ -23,6 +23,39 @@
 <p>If the web report server is installed in Linux you should execute:</p>
 <p><a href="http://localhost/cgi-bin/repwebexe.bin/version">http://localhost/cgi-bin/repwebexe.bin/version</a></p>
 <p>This are a few screenshots of the report web server.</p>
+<p>The web report server URL is formed when you advance in login, selection etc, 
+  so you don't need to know them, but for developers here is a list of them:</p>
+<table width="100%" border="1">
+  <tr> 
+    <td bgcolor="#FFFFCC"><b>Parameter name</b></td>
+    <td bgcolor="#FFFFCC"><b>Description</b></td>
+  </tr>
+  <tr> 
+    <td>username</td>
+    <td>User name accessing the report server by default only the user Admin with 
+      blank password is available. You can alter the configuration file to add 
+      users (execute /version command to know where is located)</td>
+  </tr>
+  <tr> 
+    <td>password</td>
+    <td>Password for the selected user, this will travel on the internet so it's 
+      recommended to use a secure server</td>
+  </tr>
+  <tr> 
+    <td>aliasname</td>
+    <td>You can configure several report groups in the configuration file</td>
+  </tr>
+  <tr> 
+    <td>reportname</td>
+    <td>The report file name</td>
+  </tr>
+  <tr>
+    <td>metafile</td>
+    <td>Two possible values: with 0 (default) the server returns a pdf file, with 
+      1 returns a native Report Manager Metafile, useful for example to work with 
+      WebReportManX web component</td>
+  </tr>
+</table>
 <p>The login page:</p>
 <p><img src="images/webserverop1.jpg" width="547" height="365"></p>
 <p>The index page (selection of aliases):</p>
