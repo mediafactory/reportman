@@ -45,6 +45,10 @@ clean:
 	-rm -Rf server/app/*.dpu
 	-rm -Rf server/app/reportserverapp
 	-rm -Rf server/app/reportservercon
+	-rm -Rf server/config/repserverconfig
+	-rm -Rf server/config/*.dcu
+	-rm -Rf server/config/*.dpu
+	-rm -Rf server/config/*.~*
 	
 
 	-rm tests/eval/project1

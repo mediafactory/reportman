@@ -465,7 +465,7 @@ var
 begin
  // Prints the report
  frompage:=1;
- topage:=99999999;
+ topage:=999999;
  allpages:=true;
  collate:=false;
  copies:=1;

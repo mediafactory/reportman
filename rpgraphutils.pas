@@ -285,7 +285,7 @@ var
   function FindBS(Current: PChar): PChar;
   begin
     Result := Current;
-    while (Result^ <> #0) and (Result^ <> '\') do
+    while (Result^ <> #0) and (Result^ <> C_DIRSEPARATOR) do
       Result := CharNext(Result);
   end;
 
@@ -313,9 +313,9 @@ var
       end;
     end;
 
-    if AFileName[0] = '\' then
+    if AFileName[0] = C_DIRSEPARATOR then
     begin
-      if AFileName[1] <> '\' then Exit;
+      if AFileName[1] <> C_DIRSEPARATOR then Exit;
       CurrBS := FindBS(AFileName + 2);  // skip server name
       if CurrBS^ = #0 then Exit;
       CurrBS := FindBS(CurrBS + 1);     // skip share name
@@ -336,7 +336,7 @@ var
       windows.FindClose(Handle);
 
       if L + 1 + lstrlen(FindData.cFileName) + 1 > SizeOf(Buffer) then Exit;
-      Buffer[L] := '\';
+      Buffer[L] := C_DIRSEPARATOR;
       lstrcpy(Buffer + L + 1, FindData.cFileName);
       Inc(L, lstrlen(FindData.cFileName) + 1);
       CurrBS := NextBS;
@@ -603,7 +603,7 @@ begin
  index:=Length(astring)+1;
  while j<=Length(astring) do
  begin
-  if astring[j]='\' then
+  if astring[j]=C_DIRSEPARATOR then
   begin
    index:=j;
    break;
@@ -621,7 +621,7 @@ begin
  index:=1;
  while j<=Length(astring) do
  begin
-  if astring[j]='\' then
+  if astring[j]=C_DIRSEPARATOR then
   begin
    index:=j;
   end;
@@ -638,7 +638,7 @@ begin
  index:=1;
  while j<=Length(astring) do
  begin
-  if astring[j]='\' then
+  if astring[j]=C_DIRSEPARATOR then
   begin
    index:=j;
   end;
@@ -743,7 +743,7 @@ end;
 function GetFullFileName(ANode:TTreeNode):String;
 begin
  if Assigned(ANode.Parent) then
-  Result:=GetFullFileName(ANode.Parent)+'\'+ANode.Text
+  Result:=GetFullFileName(ANode.Parent)+C_DIRSEPARATOR+ANode.Text
  else
   Result:=ANode.Text;
 end;

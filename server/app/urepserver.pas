@@ -258,6 +258,8 @@ var
  i:integer;
 begin
  Ffilenameconfig:=Obtainininamecommonconfig('','','reportmanserver');
+ if Not FileExists(FFilenameConfig) then
+  Ffilenameconfig:=Obtainininamelocalconfig('','','reportmanserver');
  inif:=TMemInifile.Create(filenameconfig);
  try
   laliases.clear;
@@ -307,6 +309,8 @@ var
  adups:TStringList;
 begin
  Ffilenameconfig:=Obtainininamecommonconfig('','','reportmanserver');
+ if Not FileExists(FFilenameConfig) then
+  Ffilenameconfig:=Obtainininamelocalconfig('','','reportmanserver');
  inif:=TMemInifile.Create(filenameconfig);
  try
   inif.WriteInteger('CONFIG','TCPPORT',fport);
@@ -594,7 +598,7 @@ begin
          begin
           apath:=LAliases.Values[LAliases.Names[index]];
           ActClient.CreateReport;
-          ActClient.CurrentReport.LoadFromFile(apath+'\'+alist.Values[alist.Names[0]]);
+          ActClient.CurrentReport.LoadFromFile(apath+C_DIRSEPARATOR+alist.Values[alist.Names[0]]);
          end;
         end;
         CB:=GenerateBlock(repopenreport,alist);
@@ -676,7 +680,7 @@ begin
          begin
           apath:=LAliases.Values[LAliases.Names[index]];
           ActClient.CreateReport;
-          ActClient.CurrentReport.LoadFromFile(apath+'\'+alist.Values[alist.Names[0]]);
+          ActClient.CurrentReport.LoadFromFile(apath+C_DIRSEPARATOR+alist.Values[alist.Names[0]]);
          end;
         end;
         if Assigned(ActClient.CurrentReport) then
@@ -711,7 +715,7 @@ begin
          begin
           apath:=LAliases.Values[LAliases.Names[index]];
           ActClient.CreateReport;
-          ActClient.CurrentReport.LoadFromFile(apath+'\'+alist.Values[alist.Names[0]]);
+          ActClient.CurrentReport.LoadFromFile(apath+C_DIRSEPARATOR+alist.Values[alist.Names[0]]);
          end;
         end;
         if assigned(ActClient.CurrentReport) then

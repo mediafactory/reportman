@@ -465,7 +465,7 @@ var
  sdir:string;
 begin
  Attr:=faAnyfile;
- sdir:=adir+'\*.*';
+ sdir:=adir+C_DIRSEPARATOR+'*.*';
  ares:=FindFirst(sdir,Attr,srec);
  try
   if ares=0 then
@@ -475,13 +475,13 @@ begin
     begin
      if ((srec.Name<>'.') AND (srec.Name<>'..')) then
      begin
-//      alist.Add(Copy(adir,adirlength,Length(adir))+'\'+srec.Name);
-      IntFillTreeDir(adir+'\'+srec.Name);
+//      alist.Add(Copy(adir,adirlength,Length(adir))+C_DIRSEPARATOR+srec.Name);
+      IntFillTreeDir(adir+C_DIRSEPARATOR+srec.Name);
      end;
     end
     else
     begin
-     alist.Add(Copy(adir,adirlength+1,Length(adir))+'\'+ChangeFileExt(srec.Name,''));
+     alist.Add(Copy(adir,adirlength+1,Length(adir))+C_DIRSEPARATOR+ChangeFileExt(srec.Name,''));
     end;
    until FindNext(srec)<>0;
   end;

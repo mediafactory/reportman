@@ -21,6 +21,16 @@ unit rpmdconsts;
 
 interface
 
+{$I rpconf.inc}
+
+{$IFDEF MSWINDOWS}
+const
+ C_DIRSEPARATOR='\';
+{$ENDIF}
+{$IFDEF LINUX}
+const
+ C_DIRSEPARATOR='/';
+{$ENDIF}
 
 
 function TranslateStr(index:integer;defvalue:Widestring):WideString;

@@ -1,4 +1,4 @@
-kylix_bin=/opt/kylix3/bin
+kylix_bin=/home/toni/kylix3/bin
 drivers_path=../../drivers/linux
 
 install:
@@ -23,6 +23,8 @@ install:
 	cp ../../repman/utils/reptotxt/reptotxt .
 	cp ../../repman/utils/txttorep/txttorep .
 	cp ../../server/app/reportserverapp .
+	cp ../../server/app/reportservercon .
+	cp ../../server/config/repserverconfig .
 	cp ../../repman/utils/printreptopdf/printreptopdf .
 	cp ../../repman/reportmanres.es .
 	cp ../../repman/reportmanres.en .
@@ -37,13 +39,13 @@ install:
 	mkdir doc/images
 	cp ../../doc/doc/images/*.jpg doc/images
 #	include repmand.es when linux translation done
-	tar c doc LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es repmand dbxdrivers dbxconnections metaprint metaview printrep printreptopdf reptotxt txttorep repmand repmand.sh README *.so *.so.1 qt_* dbxres.en.1 > repmand-1RC2.i386.tar
-	gzip repmand-1RC2.i386.tar
+	tar c doc LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es repmand reportserverapp reportservercon repserverconfig repserverconfig.sh dbxdrivers dbxconnections metaprint metaview metaview.sh printrep printreptopdf reptotxt txttorep repmand repmand.sh README *.so *.so.1 qt_* dbxres.en.1 > repmand-1_1.i386.tar
+	gzip repmand-1_1.i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0
 	-rm -f repmand
 	-rm -f dbxconnections dbxdrivers metaprint metaview printrep printreptopdf
-	-rm -f reptotxt txttorep
+	-rm -f reptotxt txttorep repserverconfig reportservercon
 	-rm -f *.gz
 	-rm -f *.rep
 	-rm -f *.cds

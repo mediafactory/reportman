@@ -30,6 +30,9 @@ package rppack;
 {$DESCRIPTION 'Report manager designer (non visual)'}
 {$IMPLICITBUILD OFF}
 
+requires
+  rtl,
+  dataclx;
 
 contains
   rptypeval in 'rptypeval.pas',
