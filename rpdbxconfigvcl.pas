@@ -366,9 +366,16 @@ end;
 
 procedure TFRpDBXConfigVCL.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
- if Assigned(ConAdmin) then
-  ConAdmin.Config.UpdateFile;
- UpdateConAdmin;
+ try
+  if Assigned(ConAdmin) then
+   ConAdmin.Config.UpdateFile;
+  UpdateConAdmin;
+ except
+  on E:Exception do
+  begin
+   RpMessageBox(E.MEssage);
+  end;
+ end;
 end;
 
 

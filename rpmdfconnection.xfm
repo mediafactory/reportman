@@ -1,15 +1,15 @@
 object FRpConnection: TFRpConnection
   Left = 0
   Top = 0
-  Width = 451
-  Height = 304
+  Width = 680
+  Height = 373
   VertScrollBar.Range = 30
   Align = alClient
   TabOrder = 0
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 451
+    Width = 680
     Height = 30
     AutoSize = True
     ButtonHeight = 26
@@ -56,15 +56,15 @@ object FRpConnection: TFRpConnection
   object PParent: TPanel
     Left = 0
     Top = 30
-    Width = 451
-    Height = 274
+    Width = 680
+    Height = 343
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PTop: TPanel
       Left = 0
       Top = 0
-      Width = 451
+      Width = 680
       Height = 105
       Align = alTop
       BevelOuter = bvNone
@@ -81,7 +81,7 @@ object FRpConnection: TFRpConnection
       object PDriver: TPanel
         Left = 169
         Top = 0
-        Width = 282
+        Width = 511
         Height = 105
         Align = alClient
         BevelOuter = bvNone
@@ -89,7 +89,7 @@ object FRpConnection: TFRpConnection
         object MHelp: TMemo
           Left = 0
           Top = 33
-          Width = 282
+          Width = 511
           Height = 72
           Align = alClient
           Color = clInfoBk
@@ -99,7 +99,7 @@ object FRpConnection: TFRpConnection
         object Panel1: TPanel
           Left = 0
           Top = 0
-          Width = 282
+          Width = 511
           Height = 33
           Align = alTop
           BevelOuter = bvNone
@@ -119,16 +119,16 @@ object FRpConnection: TFRpConnection
     object PanelProps: TPanel
       Left = 0
       Top = 105
-      Width = 451
-      Height = 169
+      Width = 680
+      Height = 238
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
       object GAvailable: TGroupBox
         Left = 0
         Top = 0
-        Width = 451
-        Height = 169
+        Width = 680
+        Height = 238
         Align = alClient
         Caption = 'Available connections'
         TabOrder = 0
@@ -136,7 +136,7 @@ object FRpConnection: TFRpConnection
           Left = 2
           Top = 13
           Width = 169
-          Height = 154
+          Height = 223
           Align = alLeft
           TabOrder = 0
           OnClick = LConnectionsClick
@@ -144,8 +144,8 @@ object FRpConnection: TFRpConnection
         object PConProps: TPanel
           Left = 171
           Top = 13
-          Width = 278
-          Height = 154
+          Width = 507
+          Height = 223
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
@@ -495,9 +495,9 @@ object FRpConnection: TFRpConnection
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF00000000000000000003FF5FFF0000007E03AFFFFF
-      00000CFF83FFD7FF00010FFFC3EBFFFF04000FFFE1FFF5FF0E020FC1F3FAFFFF
-      0E040F80F17FFD7F070C0FC0F3FF5FFF03980FE002A95AFF01F0000001B6D57F
+      0200000002000000FFFFFF00000000000000000003FFFFFF0000007E03FFFFFF
+      00000CFF83FFFFFF00010FFFC3FFFFFF04000FFFE3FFFFFF0E020FC1F3FFFFFF
+      0E040F80F3FFFFFF070C0FC0F3FFFFFF03980FE003FFFFFF01F0000003FFFFFF
       00E00001FBFFFFFF01F00F03FBFFFFFF03900F01FBFFFFFF0F0C0783FBFFFFFF
       1E0607FFFBFFFFFF180303FFFBFFFFFF000001FF93FFFFFF0000007E03FFFFFF
       0000000003FFFFFF000000000000007F000000000000007F01C000080000007F

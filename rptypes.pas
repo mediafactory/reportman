@@ -132,9 +132,9 @@ type
  TRpPreviewStyle = (spWide,spNormal,spEntirePage,spCustom);
  TRpPreviewWindowStyle=(spwNormal,spwMaximized);
 
- TPrinterRawOp=(rawopcutpaper,rawopopendrawer,rpescapelinefeed,
+ TPrinterRawOp=(rawopcutpaper,rawopopendrawer,rpescapelinefeed,rpescapecr,
   rpescapeformfeed,rpescapetearoff,rpescapeinitprinter,rpescapepulse,
-  rpescaperedfont,rpescapeblackfont,
+  rpescapeendprint,rpescaperedfont,rpescapeblackfont,
   rpescapeNormal, rpescapeBold,rpescapeUnderline,rpescapeItalic,
   rpescapeStrikeOut,
   rpescape20cpi,rpescape17cpi,rpescape15cpi,rpescape12cpi,rpescape10cpi,
@@ -714,12 +714,16 @@ begin
    Operation:='OpenDrawer';
   rpescapelinefeed:
    Operation:='LineFeed';
+  rpescapecr:
+   Operation:='CarrierReturn';
   rpescapeformfeed:
    Operation:='FormFeed';
   rpescapetearoff:
    Operation:='TearOff';
   rpescapeinitprinter:
    Operation:='InitPrinter';
+  rpescapeendprint:
+   Operation:='EndPrint';
   rpescapepulse:
    Operation:='PulseDrawer';
   rpescaperedfont:
@@ -755,13 +759,18 @@ begin
  defaultvalue:='';
  if rawop=rpescapelinefeed then
  begin
+  defaultvalue:='#10';
+ end;
+ if rawop=rpescapecr then
+ begin
 {$IFDEF MSWINDOWS}
-  defaultvalue:='#13#10';
+  defaultvalue:='#13';
 {$ENDIF}
 {$IFDEF LINUX}
-  defaultvalue:='#10';
+  defaultvalue:='';
 {$ENDIF}
  end;
+
  Result:=printerconfigfile.ReadString(Operation,'Printer'+IntToStr(integer(printerindex)),defaultvalue);
  // Transform the string to a real string
  Result:=EscapeCodedToString(Result);

@@ -27,7 +27,7 @@ uses
 {$IFDEF USEVARIANTS}
   Variants,Types,
 {$ENDIF}
-  Classes, QGraphics, QControls, QForms,
+  Classes, QGraphics, QControls, QForms,rpreport,
   QDialogs, QStdCtrls, QExtCtrls, QActnList,
 {$IFDEF USEBDE}
   dbtables,
@@ -93,6 +93,7 @@ type
     { Private declarations }
     conadmin:TRpCOnnAdmin;
     FDatabaseInfo:TRpDatabaseInfoList;
+    report:TRpReport;
     procedure SetDatabaseInfo(Value:TRpDatabaseInfoList);
     procedure MenuAddClick(Sender:TObject);
     function FindDatabaseInfoItem:TRpDatabaseInfoItem;
@@ -123,6 +124,8 @@ begin
  GetRpDatabaseDrivers(GDriver.Items);
  GetRpDatabaseDrivers(ComboDriver.Items);
 
+ report:=TRPReport.Create(Self);
+ FDatabaseInfo:=report.databaseinfo;
 
  ConAdmin:=TRpConnAdmin.Create;
 
@@ -147,7 +150,7 @@ begin
  ComboAvailable.Anchors:=[akLeft,akTop,akRight];
  EConnectionString.Anchors:=[akLeft,akTop,akRight];
 
- FDatabaseInfo:=Value;
+ FDatabaseInfo.Assign(Value);
  LConnections.Clear;
  for i:=0 to FDatabaseinfo.Count-1 do
  begin

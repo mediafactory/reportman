@@ -1413,7 +1413,7 @@ begin
   Libc.system(PChar('konqueror "'+aurl+'"&'))
 {$ENDIF}
 {$IFDEF MSWINDOWS}
-  ShellExecute(0,Pchar('open'),Pchar('aurl'),
+  ShellExecute(0,Pchar('open'),Pchar(aurl),
    nil,nil,SW_SHOWNORMAL);
 {$ENDIF}
 end;

@@ -25,9 +25,6 @@ interface
 
 uses Classes,Sysutils,rpreport,
  rpmdconsts,rpcompobase,rptypes,rpmetafile,
-{$IFDEF HORZPAPERBUG}
- rpmetafile,
-{$ENDIF}
  QPrinters,rpqtdriver,rppreview,rprfparams,rpgraphutils,
 {$IFDEF MSWINDOWS}
  rpgdidriver,Printers,Dialogs,rprfvparams,rpvpreview,rpfmainmetaviewvcl,

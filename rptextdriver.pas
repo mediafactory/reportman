@@ -94,6 +94,7 @@ type
    function NearestFontStep(FontStep:TRpFontStep):TRpFontStep;
    procedure UpdatePrinterConfig;
    procedure FillEspcapes(FPrinterDriverName:String);
+   procedure WritePageSize;
   public
    LoadOemConvert:Boolean;
    MemStream:TMemoryStream;
@@ -294,12 +295,17 @@ begin
  UpdatePrinterConfig;
  if Length(escapecodes[rpescapeinitprinter])>0 then
   MemStream.Write(escapecodes[rpescapeinitprinter][1],Length(escapecodes[rpescapeinitprinter]));
+ // Set page size
+ WritePageSize;
 end;
 
 procedure TRpTextDriver.EndDocument;
 begin
  // Write the last page and the tear off
  WriteCurrentPage;
+
+ if Length(escapecodes[rpescapeendprint])>0 then
+  MemStream.Write(escapecodes[rpescapeendprint][1],Length(escapecodes[rpescapeendprint]));
  // Tear off
  if Length(escapecodes[rpescapetearoff])>0 then
   MemStream.Write(escapecodes[rpescapetearoff][1],Length(escapecodes[rpescapetearoff]));
@@ -566,6 +572,28 @@ begin
  Result:=True;
 end;
 
+
+procedure TRpTextDriver.WritePageSize;
+var
+ s:String;
+begin
+ FPrinterDriverName:=UpperCase(FPrinterDriverName);
+ s:='';
+ if FPrinterDriverName='EPSON' then
+ begin
+  s:=#27+'C'+Chr(High(FLines)+1);
+ end
+ else
+ if FPrinterDriverName='EPSON-QUALITY' then
+ begin
+  s:=#27+'C'+Chr(High(FLines)+1);
+ end;
+ if Length(s)>0 then
+ begin
+  Memstream.Write(s[1],Length(s));
+ end;
+end;
+
 procedure TRpTextDriver.FillEspcapes(FPrinterDriverName:String);
 var
  i:TPrinterRawOp;
@@ -579,8 +607,9 @@ begin
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode
   escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2'+#27+'x'+#0;
-  escapecodes[rpescapelinefeed]:=#13+#10;
-//  escapecodes[rpescapeformfeed]:=#12;
+  escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rpescapecr]:=#13;
+  escapecodes[rpescapeformfeed]:=#12;
   escapecodes[rpescapebold]:=#27+'E';
   escapecodes[rpescapeunderline]:=#27+#45+#1;
   escapecodes[rpescapeitalic]:=#27+'4';
@@ -595,6 +624,9 @@ begin
 //  escapecodes[rpescape15cpi]:=#27+'g'+#27+'W'+#0;
   escapecodes[rpescape17cpi]:=#27+'P'+#27+'W'+#0+#15;
   escapecodes[rpescape20cpi]:=#27+'M'+#27+'W'+#0+#15;
+
+  escapecodes[rpescapeendprint]:=#27+#64;
+
 
   // Open drawer
   escapecodes[rpescapepulse]:=#27+#112+#0+#100+#100;
@@ -604,8 +636,9 @@ begin
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode
   escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2'+#27+'x'+#1;
-  escapecodes[rpescapelinefeed]:=#13+#10;
-//  escapecodes[rpescapeformfeed]:=#12;
+  escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rpescapecr]:=#13;
+  escapecodes[rpescapeformfeed]:=#12;
   escapecodes[rpescapebold]:=#27+'E';
   escapecodes[rpescapeunderline]:=#27+#45+#1;
   escapecodes[rpescapeitalic]:=#27+'4';
@@ -621,6 +654,7 @@ begin
   escapecodes[rpescape17cpi]:=#27+'P'+#27+'W'+#0+#15;
   escapecodes[rpescape20cpi]:=#27+'M'+#27+'W'+#0+#15;
 
+  escapecodes[rpescapeendprint]:=#27+#64;
   // Open drawer
   escapecodes[rpescapepulse]:=#27+#112+#0+#100+#100;
  end
@@ -629,7 +663,8 @@ begin
  begin
   // Init Printer-Line spacing to 1/6
   escapecodes[rpescapeinitprinter]:=#27+#64+#27+#50;
-  escapecodes[rpescapelinefeed]:=#13+#10;
+  escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rpescapecr]:=#13;
 //  escapecodes[rpescapeformfeed]:=#12;
   escapecodes[rpescapebold]:=#27+#69+#1;
   escapecodes[rpescapeunderline]:=#27+#45+#1;
@@ -1182,7 +1217,16 @@ begin
   else
    encoded:=Copy(encoded,1,Length(encoded)-1);
  end;
- encoded:=encoded+escapecodes[rpescapelinefeed];
+ encoded:=encoded+escapecodes[rpescapecr];
+ if Length(escapecodes[rpescapeformfeed])>0 then
+ begin
+  if index=High(FLines) then
+   encoded:=encoded+escapecodes[rpescapeformfeed]
+  else
+   encoded:=encoded+escapecodes[rpescapelinefeed];
+ end
+ else
+  encoded:=encoded+escapecodes[rpescapelinefeed];
  Result:=encoded;
 end;
 
@@ -1194,9 +1238,6 @@ begin
  for i:=0 to High(FLines) do
  begin
   codedstring:=EnCodeLine(FLines[i],i);
-  if Length(codedstring)>0 then
-   MemStream.Write(codedstring[1],Length(codedstring));
-  codedstring:=escapecodes[rpescapeformfeed];
   if Length(codedstring)>0 then
    MemStream.Write(codedstring[1],Length(codedstring));
  end;

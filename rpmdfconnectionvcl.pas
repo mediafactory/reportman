@@ -27,7 +27,7 @@ uses
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
-  Classes, Graphics, Controls, Forms,
+  Classes, Graphics, Controls, Forms,rpreport,
   Dialogs, StdCtrls, ExtCtrls, ComCtrls, ToolWin, ActnList, ImgList,
 {$IFDEF USEBDE}
   dbtables,
@@ -92,6 +92,7 @@ type
     { Private declarations }
     conadmin:TRpCOnnAdmin;
     FDatabaseInfo:TRpDatabaseInfoList;
+    report:TRpReport;
     procedure SetDatabaseInfo(Value:TRpDatabaseInfoList);
     procedure MenuAddClick(Sender:TObject);
     function FindDatabaseInfoItem:TRpDatabaseInfoItem;
@@ -125,6 +126,9 @@ begin
 
  ConAdmin:=TRpConnAdmin.Create;
 
+ report:=TRPReport.Create(Self);
+ FDatabaseInfo:=report.databaseinfo;
+
  GDriver.ItemIndex:=0;
  GDriverClick(Self);
 end;
@@ -146,7 +150,7 @@ begin
  ComboAvailable.Anchors:=[akLeft,akTop,akRight];
  EConnectionString.Anchors:=[akLeft,akTop,akRight];
 
- FDatabaseInfo:=Value;
+ FDatabaseInfo.Assign(Value);
  LConnections.Clear;
  for i:=0 to FDatabaseinfo.Count-1 do
  begin
