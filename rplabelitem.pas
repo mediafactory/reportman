@@ -394,6 +394,7 @@ begin
    Raise TRpReportException.Create(E.Message+':'+SRpSExpression+' '+Name,self,SRpSExpression);
   end;
  end;
+ FExportValue:=Null;
  if Length(FExportExpression)>0 then
  begin
   try
@@ -472,17 +473,17 @@ begin
  end;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy,
    aposx,Printwidth,Printheight,Textobj,BackColor,Transparent);
+ // Is Total pages variable?
+ if (UpperCase(expre)='PAGECOUNT') then
+ begin
+  TRpBaseReport(GetReport).AddTotalPagesItem(metafile.currentpage,metafile.Pages[metafile.currentpage].ObjectCount-1,displayformat);
+ end;
  if Not VarIsNull(FExportValue) then
  begin
   avalue:=FormatVariant(exportdisplayformat,FExportValue,rpParamunknown,true);
   metafile.Pages[metafile.CurrentPage].NewExportObject(aposy,aposx,
    PrintWidth,PrintHeight,avalue,FExportLine,FExportPosition,FExportSize,
    FExportDoNewLine);
- end;
- // Is Total pages variable?
- if (UpperCase(expre)='PAGECOUNT') then
- begin
-  TRpBaseReport(GetReport).AddTotalPagesItem(metafile.currentpage,metafile.Pages[metafile.currentpage].ObjectCount-1,displayformat);
  end;
 end;
 

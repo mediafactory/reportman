@@ -114,6 +114,7 @@ type
     procedure DoFillTreeDir(apath:String;alist:TStringList);
   public
     smp:Boolean;
+    disablesmp:Boolean;
     procedure InitConfig;
     procedure WriteConfig;
     property RpAliasLibs:TRpAlias read  FRpAliasLibs;
@@ -268,6 +269,8 @@ var
  sysinfo:SYSTEM_INFO;
 begin
  smp:=false;
+ if disablesmp then
+  exit;
  GetSystemInfo(sysinfo);
  if sysinfo.dwNumberOfProcessors>1 then
   smp:=true;
@@ -279,6 +282,9 @@ var
  proccount:integer;
  i:integer;
 begin
+ smp:=false;
+ if disablesmp then
+  exit;
  proccount:=1;
  alist:=TStringList.Create;
  try
@@ -297,6 +303,7 @@ end;
 
 procedure Tmodserver.DataModuleCreate(Sender: TObject);
 begin
+ disablesmp:=false;
 {$IFNDEF DOTNETD}
  ThreadMan:=TIdThreadMgrPool.Create(Self);
  ThreadMan.PoolSize:=10;
@@ -382,6 +389,7 @@ begin
   ClearLists;
   inif.CaseSensitive:=false;
   fport:=inif.ReadInteger('CONFIG','TCPPORT',3060);
+  disablesmp:=inif.ReadBool('CONFIG','DISABLESMP',false);
   inif.ReadSectionValues('USERS',lusers);
   inif.ReadSectionValues('GROUPS',lgroups);
   inif.ReadSectionValues('ALIASES',laliases);
@@ -1445,7 +1453,7 @@ begin
    aparams.Add('-q');
    aparams.Add(atempname);
    aparams.Add(atempname2);
-   // Creates a fork, and provides the input from standard
+   // Creates a fork, and provides the input from a temp file
    for i:=0 to aparams.count-1 do
    begin
     theparams[i]:=Pchar(aparams[i]);

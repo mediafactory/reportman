@@ -612,6 +612,7 @@ begin
  EPageNum.Enabled:=false;
  ASave.Enabled:=false;
  AMailTo.Enabled:=false;
+ APageSetup.Enabled:=false;
  AParams.Enabled:=false;
  PBar.Position:=0;
  PBar.Visible:=enablebar;
@@ -634,6 +635,7 @@ begin
  EPageNum.Enabled:=true;
  ASave.Enabled:=true;
  AMailTo.Enabled:=true;
+ APageSetup.Enabled:=true;
  AParams.Enabled:=enableparams;
  PBar.Visible:=false;
  AExit.Enabled:=true;

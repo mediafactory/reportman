@@ -2282,9 +2282,9 @@ begin
    Result:=NumberToTextCastellano(FNumero,female);
   2:
    Result:=NumberToTextCatalan(FNumero,female);
+{$IFNDEF DOTNETD}
   4:
    Result:=NumberToTextPortuguese(FNumero);
-{$IFNDEF DOTNETD}
   7:
    Result:=NumberToTextTurkish(FNumero);
 {$ENDIF}
