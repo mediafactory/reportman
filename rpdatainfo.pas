@@ -942,6 +942,7 @@ var
  index:integer;
  i:integer;
  datainfosource:TRpDatainfoItem;
+ baseinfo:TRpDatabaseInfoIntem;
  doexit:boolean;
  param:TRpParam;
 begin
@@ -995,12 +996,13 @@ begin
    index:=databaseinfo.IndexOf(Databasealias);
    if index<0 then
     Raise Exception.Create(SRPDabaseAliasNotFound+' : '+FDatabaseAlias);
-   databaseinfo.items[index].Connect;
+   baseinfo:=databaseinfo.items[index];
+   baseinfo.Connect;
 
 
    if not assigned(FSQLInternalQuery) then
    begin
-    case databaseinfo.items[index].FDriver of
+    case baseinfo.FDriver of
      rpdatadbexpress:
       begin
 {$IFDEF USESQLEXPRESS}
@@ -1060,7 +1062,7 @@ begin
    end
    else
    begin
-    case databaseinfo.items[index].FDriver of
+    case baseinfo.FDriver of
      rpdatadbexpress:
       begin
 {$IFDEF USESQLEXPRESS}
@@ -1138,12 +1140,12 @@ begin
    FDataset:=FSQLInternalQuery;
 
    // Assigns the connectoin
-   case databaseinfo.items[index].Driver of
+   case baseinfo.Driver of
     rpdatadbexpress:
      begin
 {$IFDEF USESQLEXPRESS}
       TSQLQuery(FSQLInternalQuery).SQLConnection:=
-       databaseinfo.items[index].SQLConnection;
+       baseinfo.SQLConnection;
       TSQLQuery(FSQLInternalQuery).SQL.Text:=SQL;
 {$ENDIF}
      end;
@@ -1151,7 +1153,7 @@ begin
      begin
 {$IFDEF USEIBX}
       TIBQuery(FSQLInternalQuery).Database:=
-       databaseinfo.items[index].FIBDatabase;
+       baseinfo.FIBDatabase;
       TIBQuery(FSQLInternalQuery).SQL.Text:=SQL;
       if Assigned(TIBQuery(FSQLInternalQuery).Database) then
       begin
@@ -1178,11 +1180,11 @@ begin
 {$IFDEF USEBDE}
       if FBDEType=rpdquery then
       begin
-       TQuery(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEDatabase.DatabaseName;
+       TQuery(FSQLInternalQuery).DatabaseName:=baseinfo.FBDEDatabase.DatabaseName;
       end
       else
       begin
-       TTable(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEDatabase.DatabaseName;
+       TTable(FSQLInternalQuery).DatabaseName:=baseinfo.FBDEDatabase.DatabaseName;
       end;
       TBDEDataset(FSQLInternalQuery).Filter:=FBDEFilter;
       if length(Trim(FBDEFilter))>0 then
@@ -1216,7 +1218,7 @@ begin
     rpdataado:
      begin
 {$IFDEF USEADO}
-      TADOQuery(FSQLInternalQuery).Connection:=databaseinfo[index].FADOConnection;
+      TADOQuery(FSQLInternalQuery).Connection:=baseinfo.FADOConnection;
       TADOQuery(FSQLInternalQuery).SQL.Text:=SQL;
       TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
 //      Activating this switches break linked querys
@@ -1226,7 +1228,7 @@ begin
     rpdataibo:
      begin
 {$IFDEF USEIBO}
-      TIBOQuery(FSQLInternalQuery).IB_Connection:=databaseinfo.items[index].FIBODatabase;
+      TIBOQuery(FSQLInternalQuery).IB_Connection:=baseinfo.FIBODatabase;
       TIBOQuery(FSQLInternalQuery).SQL.Text:=SQL;
       TIBOQuery(FSQLInternalQuery).UniDirectional:=true;
 {$ENDIF}
@@ -1235,7 +1237,7 @@ begin
    // Use the datasource
    if Assigned(datainfosource) then
    begin
-    case databaseinfo.items[index].Driver of
+    case baseinfo.Driver of
      rpdatadbexpress:
       begin
 {$IFDEF USESQLEXPRESS}
@@ -1313,7 +1315,7 @@ begin
     index:=param.Datasets.IndexOf(Alias);
     if index>=0 then
     begin
-     case databaseinfo.items[index].Driver of
+st     case baseinfo.Driver of
       rpdatadbexpress:
        begin
 {$IFDEF USESQLEXPRESS}
