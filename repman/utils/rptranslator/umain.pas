@@ -19,7 +19,7 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls,rptranslator, DBCtrls, Grids, DBGrids, Db, DBClient, Menus,
   ActnList, ExtCtrls, ToolWin, ComCtrls,Consts, ImgList, rpeval,
-  clipbrd,rpmdconsts;
+  clipbrd,rpmdconsts,comobj;
 
 
 resourcestring
@@ -94,6 +94,8 @@ type
     ComboOrder: TComboBox;
     FindDialog1: TReplaceDialog;
     DTextsORIGINAL: TWideStringField;
+    AExcelEx: TAction;
+    Exporttoexcel1: TMenuItem;
     procedure AOpenExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ASaveasExecute(Sender: TObject);
@@ -118,6 +120,7 @@ type
     procedure ASaveDescExecute(Sender: TObject);
     procedure ComboOrderClick(Sender: TObject);
     procedure FindDialog1Replace(Sender: TObject);
+    procedure AExcelExExecute(Sender: TObject);
   private
     { Private declarations }
     atrans:TRpTransLator;
@@ -678,6 +681,34 @@ begin
  end;
 end;
 
+
+procedure TFMain.AExcelExExecute(Sender: TObject);
+var
+ excel,wb,sh:Variant;
+ shcount,index:integer;
+begin
+ DTexts.CheckBrowseMode;
+ DTexts.DisableControls;
+ try
+  Excel:=CreateOleObject('excel.application');
+  Excel.Visible:=Visible;
+  wb:=Excel.Workbooks.Add;
+  shcount:=1;
+  sh:=wb.Worksheets.item[shcount];
+  index:=1;
+  DTexts.First;
+  while Not DTexts.Eof do
+  begin
+   sh.Cells.Item[index,'A']:=DTextsPOSITION.AsString;
+   sh.Cells.Item[index,'B']:=DTextsTEXT.AsString;
+   sh.Cells.Item[index,'C']:=DTextsDESCRIPTION.AsString;
+   DTexts.Next;
+   inc(index);
+  end;
+ finally
+  DTexts.EnableControls
+ end;
+end;
 
 initialization
 
