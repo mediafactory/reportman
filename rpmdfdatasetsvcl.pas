@@ -529,12 +529,16 @@ end;
 procedure TFRpDatasetsVCL.BShowDataClick(Sender: TObject);
 var
  dinfo:TRpDatainfoitem;
+ i:integer;
 begin
  // Opens the dataset and show the data
  dinfo:=FindDataInfoItem;
  if dinfo=nil then
   exit;
- dinfo.Disconnect;
+ for i:=0 to Datainfo.Count-1 do
+ begin
+  Datainfo.Items[i].Disconnect;
+ end;
  Report.PrepareParamsBeforeOpen;
  dinfo.Connect(databaseinfo,report.params);
  try

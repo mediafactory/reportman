@@ -305,6 +305,8 @@ begin
   FCanvas.Handle := DC;
   try
     FCanvas.Font := Font;
+    if not Enabled then
+     FCanvas.Font.Color := clGrayText;
     with FCanvas do
     begin
       R := ClientRect;

@@ -1846,7 +1846,9 @@ begin
      avalue:=param.LastValue;
 //    end
 //    else
-//     avalue:=param.ListValue;
+//    begin
+//      avalue:=param.ListValue
+//    end;
     if ((atype=ftUnknown) or (param.ParamType=rpParamExpreB)) then
      atype:=VarTypeToDataType(Vartype(avalue));
     if param.ParamType=rpParamSubst then
@@ -2952,6 +2954,7 @@ begin
    end;
    data.Next;
   end;
+  client.First;
  finally
   groupfields.free;
   groupfieldindex.free;

@@ -1192,10 +1192,10 @@ end;
 
 function TIdenModul.GeTRpValue:TRpValue;
 begin
- if Not VarIsInteger(Params[0]) then
+ if Not VarIsNumber(Params[0]) then
   Raise TRpNamedException.Create(SRpEvalType,
        IdenName);
- if Not VarIsInteger(Params[1]) then
+ if Not VarIsNumber(Params[1]) then
   Raise TRpNamedException.Create(SRpEvalType,
        IdenName);
  Result:=Integer(Params[0]) mod Integer(Params[1]);

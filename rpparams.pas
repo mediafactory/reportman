@@ -189,6 +189,7 @@ begin
   FDatasets.Assign(TRpParam(Source).FDatasets);
   FItems.Assign(TRpParam(Source).FItems);
   FValues.Assign(TRpParam(Source).FValues);
+  LastValue:=TRpParam(Source).LastValue;
  end
  else
   inherited Assign(Source);
@@ -342,6 +343,8 @@ begin
   else
    FValue:=AValue;
  end;
+ if paramtype<>rpParamExpreB then
+  LastValue:=FValue;
  Changed(false);
 end;
 

@@ -1170,16 +1170,16 @@ var
 {$ENDIF}
 begin
    Result:=nil;
-   iden:=SearchIdentifier(Expression);
+   iden:=SearchIdentifier(atext);
    if Assigned(iden) then
     if (Not (iden is TIdenField)) then
      iden:=nil;
    if Not Assigned(iden) then
    begin
     // Looks for a string (path to file)
-    aValue:=EvaluateText(Expression);
+    aValue:=EvaluateText(atext);
     if (not ((VarType(aValue)=varString) or (VarType(aValue)=varOleStr))) then
-     Raise Exception.Create(SRpFieldNotFound+FExpression);
+     Raise Exception.Create(SRpFieldNotFound+atext);
     afilename:=aValue;
     FMStream:=TMemoryStream.Create;
     try
@@ -1231,7 +1231,7 @@ begin
    begin
     AField:=(iden As TIdenField).Field;
     if (Not (AField is TBlobField)) then
-     Raise Exception.Create(SRpNotBinary+FExpression);
+     Raise Exception.Create(SRpNotBinary+atext);
     if AField.isnull then
      exit;
     FMStream:=TMemoryStream.Create;
