@@ -1,3 +1,5 @@
+//{$DEFINE FORWEBAX}
+
 // Database drivers to be used
 {$DEFINE USESQLEXPRESS}
 {$DEFINE USEIBX}
@@ -86,3 +88,14 @@
 // {$UNDEF USEVARIANTS}
  {$UNDEF USEBCD}
 {$ENDIF}
+
+// Disable databases if webaxcontrol
+{$IFDEF FORWEBAX}
+ {$UNDEF USESQLEXPRESS}
+ {$UNDEF USEIBX}
+ {$UNDEF USEADO}
+ {$UNDEF USEBDE}
+ {$UNDEF USEIBO}
+ {$UNDEF USETEECHART}
+{$ENDIF}
+

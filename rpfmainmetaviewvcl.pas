@@ -30,7 +30,7 @@ uses
   Types,
 {$ENDIF}
   Classes, Graphics, Controls, Forms,
-  StdCtrls,rpmetafile, ComCtrls,ExtCtrls,rpmdclitreevcl,
+  StdCtrls,rpmetafile, ComCtrls,ExtCtrls,
   ActnList, ImgList,Printers,rpmdconsts,rptypes, Menus,
   rpmdfaboutvcl,rpmdshfolder,rpmdprintconfigvcl,
   ToolWin,rpfmetaviewvcl;
@@ -94,9 +94,6 @@ begin
    MFrame.AViewConnect.Checked:=false;
    MFrame.AViewConnect.Enabled:=false;
    MFrame.Splitter1.Visible:=false;
-{$IFNDEF FORWEBAX}
-   MFrame.clitree.visible:=false;
-{$ENDIF}
    if metafile.PreviewWindow=spwMaximized then
    begin
     if (FForm is TForm) then

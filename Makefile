@@ -3,9 +3,17 @@ DELPHIPATH=c:\Archivos de programa\Borland\Delphi7
 REPORTMANPATH=c:\prog\toni\cvsroot\reportman\reportman
 COMPILE="$(DELPHIPATH)\bin\dcc32" -U"$(REPORTMANPATH);$(DELPHIPATH)\projects\bpl" -I"$(REPORTMANPATH)"
 
-all: packages reportman
+all: clean packages reportman
 
 reportman: reportmanutils reportmanserver reportmanutilsxp reportmanserverxp
+
+
+webx:   clean
+        cd webactivex
+        $(COMPILE)  -DFORWEBAX WebReportManX.dpr
+        generatecab
+        cd ..
+
 
 reportmanutils:
         cd repman
@@ -82,10 +90,6 @@ reportmanutilsxp: designerxp
 
         cd activex
         $(COMPILE) Reportman.dpr
-        cd ..
-
-        cd webactivex
-        $(COMPILE) WebReportManX.dpr
         cd ..
 
 reportmanserverxp:

@@ -32,7 +32,7 @@ uses classes,SysUtils,Windows,graphics,controls,forms,
 {$IFNDEF USEVARIANTS}
  Types
 {$ENDIF}
- rpmetafile,rpreport,rpfmainmetaviewvcl,rpmdconsts,
+ rpmetafile,rpfmainmetaviewvcl,rpmdconsts,
  IdHttp,rpgdidriver,rpmdprintconfigvcl,rpmdshfolder,
  rpfmetaviewvcl;
 

@@ -11,17 +11,17 @@ unit WebReportManX_TLB;
 // manual modifications will be lost.                                         
 // ************************************************************************ //
 
-// PASTLWTR : $Revision: 1.1 $
-// File generated on 20/01/2003 10:55:46 from Type Library described below.
+// PASTLWTR : 1.2
+// File generated on 25/01/2003 18:55:38 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\tests\webprint\Project1.tlb (1)
 // LIBID: {3C25C257-3AA3-4215-9128-3DCD59849E05}
 // LCID: 0
 // Helpfile: 
+// HelpString: WebReportManX Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINNT\System32\stdole2.tlb)
-//   (2) v4.0 StdVCL, (C:\WINNT\System32\STDVCL40.DLL)
+//   (1) v2.0 stdole, (C:\WINDOWS\System32\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
@@ -227,7 +227,7 @@ type
 // Event   Interface: IWebReportManEvents
 // TypeFlags        : (34) CanCreate Control
 // *********************************************************************//
-  TWebReportManOnKeyPress = procedure(Sender: TObject; var Key: Smallint) of object;
+  TWebReportManOnKeyPress = procedure(ASender: TObject; var Key: Smallint) of object;
 
   TWebReportMan = class(TOleControl)
   private
@@ -256,6 +256,7 @@ type
     property VisibleDockClientCount: Integer index 216 read GetIntegerProp;
     property Enabled: WordBool index -514 read GetWordBoolProp write SetWordBoolProp;
   published
+    property Anchors;
     property  ParentColor;
     property  ParentFont;
     property  Align;
@@ -298,6 +299,8 @@ procedure Register;
 
 resourcestring
   dtlServerPage = 'Servers';
+
+  dtlOcxPage = 'ActiveX';
 
 implementation
 
@@ -344,7 +347,7 @@ end;
 
 procedure Register;
 begin
-  RegisterComponents('ActiveX',[TWebReportMan]);
+  RegisterComponents(dtlOcxPage, [TWebReportMan]);
 end;
 
 end.

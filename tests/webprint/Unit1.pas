@@ -49,7 +49,7 @@ begin
  acontrol.preview:=true;
  acontrol.aForm:=acontrol;
  acontrol.align:=alclient;
- acontrol.visible:=false;
+// acontrol.visible:=false;
  thecontrol.BringToFront;
  acontrol.PrinterConfig:=false;
  acontrol.MetaUrl:=Edit1.Text;

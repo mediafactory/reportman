@@ -6,7 +6,8 @@ uses
   rpwebmetaclient in '..\..\rpwebmetaclient.pas',
   rpfmetaviewvcl in '..\..\rpfmetaviewvcl.pas' {FRpMetaVCL},
   rpfmainmetaviewvcl in '..\..\rpfmainmetaviewvcl.pas' {FRpMainMetaVCL},
-  Project1_TLB in 'Project1_TLB.pas';
+  Project1_TLB in 'Project1_TLB.pas',
+  WebReportManX_TLB in 'WebReportManX_TLB.pas';
 
 {$R *.TLB}
 

@@ -32,7 +32,7 @@ uses
  types,
 {$ENDIF}
  rptypes,rpvgraphutils,jpeg,
- rpreport,rppdfdriver;
+ rppdfdriver,rpreport;
 
 
 const
