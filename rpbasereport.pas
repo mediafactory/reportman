@@ -182,6 +182,7 @@ type
    procedure ReadLFontName(Reader:TReader);
    procedure WriteLFontName(Writer:TWriter);
    procedure SetBidiModes(Value:TStrings);
+   function Newlanguage(alanguage:integer):integer;
   protected
     errorprocessing:Boolean;
     lasterrorprocessing:WideString;
@@ -197,6 +198,7 @@ type
     FDriver:IRpPrintDriver;
     // Identifiers
     Fidenpagenum:TIdenReportVar;
+    Fidenlanguage:TIdenReportVar;
     Fidenpagenumgroup:TIdenReportVar;
     FidenEof:TIdenEof;
     Fidenfreespace:TIdenReportVar;
@@ -284,6 +286,7 @@ type
    property OnProgress:TRpProgressEvent read FOnProgress write FOnProgress;
    property AliasList:TRpAlias read FAliasList write FAliasList;
    property idenpagenum:TIdenReportVar read fidenpagenum;
+   property idenlanguage:TIdenReportVar read fidenlanguage;
    property ideneof:TIdenEof read fideneof;
    property idenfreespace:TIdenReportVar read fidenfreespace;
    property idenfreespacecms:TIdenReportVar read fidenfreespacecms;
@@ -431,6 +434,11 @@ begin
      if varname='PAGEHEIGHT' then
      begin
       Result:=freport.FInternalPageHeight;
+     end
+     else
+     if varname='LANGUAGE' then
+     begin
+      Result:=freport.FLanguage;
      end;
 end;
 
@@ -488,6 +496,9 @@ begin
  FIdenPagenum:=TIdenReportVar.Create(nil);
  Fidenpagenum.FReport:=self;
  FidenPagenum.varname:='PAGE';
+ FIdenLanguage:=TIdenReportVar.Create(nil);
+ FIdenLanguage.FReport:=self;
+ FIdenLanguage.varname:='LANGUAGE';
  FIdenPagenumgroup:=TIdenReportVar.Create(nil);
  Fidenpagenumgroup.FReport:=self;
  FidenPagenumgroup.varname:='PAGENUM';
@@ -1400,6 +1411,7 @@ begin
  end;
  FEvaluator:=TRpEvaluator.Create(nil);
  FEvaluator.Language:=Language;
+ FEvaluator.OnNewLanguage:=Newlanguage;
  FEvaluator.OnGraphicOp:=OnGraphicOp;
  FEvaluator.OnImageOp:=OnImageOp;
  FEvaluator.OnBarcodeOp:=OnBarcodeOp;
@@ -1516,6 +1528,14 @@ begin
  end;
  adata.SQLOverride:=sql;
  adata.Connect(DatabaseInfo,Params);
+end;
+
+function TRpBaseReport.Newlanguage(alanguage:integer):integer;
+begin
+ Result:=FLanguage;
+ FLanguage:=aLanguage;
+ if Assigned(FEvaluator) then
+  FEvaluator.Language:=FLanguage;
 end;
 
 end.

@@ -60,6 +60,7 @@ type
   FOnBarcodeOp:TRpBarcodeOpProc;
   FOnReOpenOp:TRpReOpenOp;
   FOnTextOp:TRpTextOpProc;
+  FOnNewLanguage:TRpNewLanguage;
   FOnGetSQLValue:TRpOnGetSQLValue;
   procedure SetExpression(Value:string);
   // Recursive functions to evaluate the expresion
@@ -128,6 +129,7 @@ type
   property OnTextOp:TRpTextOpProc read FOnTextOp write FOnTextOp;
   property OnReOpenOp:TRpReOpenOp read FOnReOpenOp write FOnReOpenOp;
   property OnGetSQLValue:TRpOnGetSQLValue read FOnGetSQLValue write FOnGetSQLValue;
+  property OnNewLanguage:TRpNewLanguage read FOnNewLanguage write FOnNewLanguage;
  end;
 
  // The visual component
@@ -314,9 +316,12 @@ begin
  // SQl functions
  iden:=TIdenGetValueFromSQL.Create(nil);
  Rpfunctions.AddObject('GETVALUEFROMSQL',iden);
- // 
+ //
  iden:=TIdenReOpenOp.Create(nil);
  Rpfunctions.AddObject('REOPEN',iden);
+ //
+ iden:=TIdenSetLanguage.Create(nil);
+ Rpfunctions.AddObject('SETLANGUAGE',iden);
 
 end;
 

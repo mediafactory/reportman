@@ -955,6 +955,7 @@ var
   SRpNumCols:WideString='Num Cols';
   SRpTruncatedPDF417:WideString='Truncate PDF417';
   SRpPrintRep25:WideString='         -printer printername  Select printer before print';
+  SRpSetLanguage:WideString='Sets the language for the report at runtime';
 implementation
 
 uses rptranslator;

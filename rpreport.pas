@@ -803,6 +803,7 @@ begin
  // Insert page number and other variables
  eval.AddVariable('PAGE',fidenpagenum);
  eval.AddVariable('PAGENUM',fidenpagenumgroup);
+ eval.AddVariable('LANGUAGE',fidenlanguage);
  // Free space and sizes
  eval.AddVariable('FREE_SPACE_TWIPS',fidenfreespace);
  eval.AddVariable('PAGEWIDTH',fidenpagewidth);

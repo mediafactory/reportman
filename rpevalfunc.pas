@@ -306,6 +306,12 @@ type
    constructor Create(AOWner:TComponent);override;
  end;
 
+ TIdenSetLanguage=class(TIdenFunction)
+ protected
+   function GetRpValue:TRpValue;override;
+ public
+   constructor Create(AOWner:TComponent);override;
+ end;
 
  TIdenMonthname=Class(TIdenFunction)
  protected
@@ -391,6 +397,7 @@ type
    property OnNewValue:TRpNewValue read FOnNewValue write FOnNewValue;
    property OnBounds:TRpBoundsValue read FOnBounds write FOnBounds;
   end;
+
 
  //added FRB 20030204
  TIdenReplaceStr=class(TIdenFunction)
@@ -1371,6 +1378,31 @@ begin
  avaluador:=(evaluator As TRpEvaluator);
  result:=avaluador.Evaluatetext(Params[0]);
 end;
+
+// TIdenSetLanguage
+
+constructor TIdenSetLanguage.Create(AOwner:TComponent);
+begin
+ inherited Create(Aowner);
+ FParamcount:=1;
+ IdenName:='SetLanguage';
+ Help:=SRpSetLanguage;
+ model:='function '+'SetLanguage'+'(language:integer):integer';
+// aParams:=SRpPEvalText;
+end;
+
+function TIdenSetLanguage.GeTRpValue:TRpValue;
+var avaluador:TRpEvaluator;
+begin
+ if Not VarIsInteger(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ // Evaluate
+ avaluador:=(evaluator As TRpEvaluator);
+ if assigned(avaluador.OnNewLanguage) then
+  result:=avaluador.OnNewLanguage(Params[0]);
+end;
+
 
 { TIdenMonth }
 {**************************************************************************}

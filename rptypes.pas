@@ -99,6 +99,7 @@ type
   lastline:Boolean;
  end;
 
+ TRpNewLanguage=function (alanguage:integer):integer of object;
  TRpOnGetSQLValue=function (connectionname,sql:String):Variant of object;
  TRpGraphicOpProc=function (Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;

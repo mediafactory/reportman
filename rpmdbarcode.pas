@@ -1772,15 +1772,15 @@ var
   CodeLen            : Integer;
   CurrentMode        : TStDataMode;
   Count              : Integer;
-  First              : Boolean;
   Code:String;
 
 const
   TextCompaction     = 900;
   PadCodeword        = 900;
+  BinaryCompaction     = 901;
+  NumericCompaction     = 902;
 begin
   Code:=CurrentText;
-  First := True;
   for i := 0 to 2700 do
     FCodewords[i] := PadCodeword;
   FNumCodewords := 1; { There will always be a length codeword }
@@ -1791,33 +1791,54 @@ begin
     Exit;
 
   if GoodForNumericCompaction (i, CodeLen, Count) then
-    CurrentMode := dmNumeric
-  else if GoodForTextCompaction (i, CodeLen, Count) then
-    CurrentMode := dmText
+  begin
+    CurrentMode := dmNumeric;
+    AddCodeword (NumericCompaction);
+  end
   else
+  if GoodForTextCompaction (i, CodeLen, Count) then
+  begin
+    CurrentMode := dmText
+  end
+  else
+  begin
     CurrentMode := dmBinary;
+    AddCodeword (BinaryCompaction);
+  end;
 
   while i < CodeLen do begin
     case CurrentMode of
       dmBinary :
         EncodeBinary (i, CodeLen);
       dmText :
-        if First then
-          EncodeText (i, CodeLen);
+        EncodeText (i, CodeLen);
       dmNumeric :
         EncodeNumeric (i, CodeLen);
     end;
 
     if GoodForNumericCompaction (i, CodeLen, Count) then
-      CurrentMode := dmNumeric
-    else if GoodForTextCompaction (i, CodeLen, Count) then begin
-      if not First then
-        AddCodeword (TextCompaction);
-      CurrentMode := dmText;
-      EncodeText (i, CodeLen);                                         {!!.01}
-    end else
+    begin
+     if CurrentMode<>dmNumeric then
+       AddCodeword (NumericCompaction);
+     CurrentMode := dmNumeric
+    end
+    else
+    if GoodForTextCompaction (i, CodeLen, Count) then
+    begin
+     if CurrentMode<>dmText then
+     begin
+       AddCodeword (TextCompaction);
+       CurrentMode := dmText;
+     end;
+    end
+    else
+    begin
+     if CurrentMode<>dmBinary then
+     begin
+      AddCodeword (BinaryCompaction);
       CurrentMode := dmBinary;
-    First := False;
+     end;
+    end;
   end;
 end;
 
@@ -1998,7 +2019,7 @@ procedure TRpBarcode.EncodeBinary (var Position : Integer;
     Result := 0;
     Done := False;
     while not done do begin
-      if (Result < CodeLen) and 
+      if (Result < CodeLen) and
          (not GoodForNumericCompaction (Position + Result, CodeLen, Dummy)) and
          (not GoodForTextCompaction (Position + Result, CodeLen, Dummy)) then
         Inc (Result)
@@ -2277,7 +2298,13 @@ begin
         (not Done) do begin
     if (Position <= CodeLen) then begin
       GetNextCharacter (NewChar, Codeword, Position, CodeLen);
-      CurChar := TSPDF417TextCompaction[NewChar];
+      if NewChar>127 then
+      begin
+       Position:=Position-2;
+       break;
+      end
+      else
+       CurChar := TSPDF417TextCompaction[NewChar];
     end;
 
     if Codeword then begin
@@ -2497,7 +2524,6 @@ procedure TRpBarcode.GetNextCharacter (var NewChar  : Integer;
 var
   WorkNum : Integer;
   FCode:String;
-
 begin
   FCode:=CurrentText;
   NewChar := 0;

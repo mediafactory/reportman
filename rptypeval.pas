@@ -48,6 +48,7 @@ type
  TRpToken=(totEOF,totSymbol,totString,totInteger,TotFloat,totOperator,
               totBoolean,totDate,totTime,totDateTime);
 
+
  // New exception to raise avaluating operations
  TRpNamedException=Class(Exception)
   public

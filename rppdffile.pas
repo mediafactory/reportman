@@ -1618,12 +1618,6 @@ var
  afontname:string;
  index:integer;
 begin
-{$IFDEF MSWINDOWS}
-  afontname:=StringReplace(Font.WFontName,' ','',[rfReplaceAll]);
-{$ENDIF}
-{$IFDEF LINUX}
-  afontname:=StringReplace(Font.LFontName,' ','',[rfReplaceAll]);
-{$ENDIF}
   aarray:=nil;
   defaultwidth:=Default_Font_Width;
   isdefault:=true;
@@ -1634,6 +1628,12 @@ begin
   end;
   if (FFont.Name in [poLinked,poEmbedded]) then
   begin
+{$IFDEF MSWINDOWS}
+   afontname:=StringReplace(Font.WFontName,' ','',[rfReplaceAll]);
+{$ENDIF}
+{$IFDEF LINUX}
+   afontname:=StringReplace(Font.LFontName,' ','',[rfReplaceAll]);
+{$ENDIF}
    // Ask for font size
    index:=FFontTTData.IndexOf(afontname+IntToStr(Font.Style));
    if index>=0 then
