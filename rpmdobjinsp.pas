@@ -688,6 +688,7 @@ begin
  begin
   TFRpObjInsp(Owner).fchangesize.Control:=nil;
   FRpMainf.ACut.Enabled:=false;
+  FRpMainf.ADelete.Enabled:=false;
   FRpMainf.ACopy.Enabled:=false;
   FRpMainf.AHide.Enabled:=false;
   FRpMainf.APaste.Enabled:=false;
@@ -756,6 +757,7 @@ begin
    end;
   end;
   FRpMainf.ACut.Enabled:=true;
+  FRpMainf.ADelete.Enabled:=true;
   FRpMainf.ACopy.Enabled:=true;
   FRpMainf.AHide.Enabled:=true;
   FRpMainf.ALeft.Enabled:=true;

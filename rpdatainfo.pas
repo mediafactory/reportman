@@ -40,6 +40,9 @@ uses Classes,SysUtils,
 {$IFDEF USEIBX}
  IBQuery,IBDatabase,
 {$ENDIF}
+{$IFDEF USEZEOS}
+ ZDbcIntfs,ZAbstractRODataset, ZDataset, ZConnection,
+{$ENDIF}
 {$IFDEF USEBDE}
   dbtables,
 {$ENDIF}
@@ -61,7 +64,7 @@ const
 {$ENDIF}
 type
  TRpDbDriver=(rpdatadbexpress,rpdatamybase,rpdataibx,
-  rpdatabde,rpdataado,rpdataibo,rpdatadriver);
+  rpdatabde,rpdataado,rpdataibo,rpdatazeos,rpdatadriver);
 
 
  TRpConnAdmin=class(TObject)
@@ -115,6 +118,10 @@ type
    FIBInternalDatabase:TIBDatabase;
    FIBDatabase:TIBDatabase;
 {$ENDIF}
+{$IFDEF USEZEOS}
+   FZInternalDatabase:TZConnection;
+   FZConnection:TZConnection;
+{$ENDIF}
 {$IFDEF USEADO}
    FADOConnection:TADOConnection;
    FProvidedADOConnection:TADOConnection;
@@ -153,6 +160,10 @@ type
 {$IFDEF USEIBX}
    property IBDatabase:TIBDatabase read FIBDatabase
     write FIBDatabase;
+{$ENDIF}
+{$IFDEF USEZEOS}
+   property ZConnection:TZConnection read FZConnection
+    write FZConnection;
 {$ENDIF}
    function GetStreamFromSQL(sqlsentence:String;params:TStringList):TStream;
    procedure GetTableNames(Alist:TStrings);
@@ -575,6 +586,12 @@ begin
   FIBInternalDatabase.Free;
  end;
 {$ENDIF}
+{$IFDEF USEZEOS}
+ if Assigned(FZInternalDatabase) then
+ begin
+  FZInternalDatabase.Free;
+ end;
+{$ENDIF}
 {$IFDEF USEIBO}
  if Assigned(FIBODatabase) then
  begin
@@ -742,6 +759,9 @@ var
 {$IFDEF USESQLEXPRESS}
  funcname,drivername,vendorlib,libraryname:string;
 {$ENDIF}
+{$IFDEF USEZEOS}
+  transiso:String;
+{$ENDIF}
 {$IFDEF USEBDE}
  i:integer;
  AlreadyOpen:boolean;
@@ -827,6 +847,56 @@ begin
      FIBDatabase.Connected:=true;
 {$ELSE}
     Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
+{$ENDIF}
+   end;
+  rpdatazeos:
+   begin
+{$IFDEF USEZEOS}
+     if Not Assigned(FZConnection) then
+     begin
+      FZInternalDatabase:=TZConnection.Create(nil);
+      FZConnection:=FZInternalDatabase;
+     end;
+     if FZConnection.Connected then
+      exit;
+     FZConnection.LoginPrompt:=FLoginPrompt;
+     conname:=alias;
+     // Load Connection parameters
+     if (FLoadParams) then
+     begin
+      if Not Assigned(ConAdmin) then
+       CreateConAdmin;
+      alist:=TStringList.Create;
+      try
+       ConAdmin.GetConnectionParams(conname,alist);
+       FZConnection.User:=alist.Values['User_Name'];
+       FZConnection.Password:=alist.Values['Password'];
+       if length(alist.Values['Port'])>0 then
+        FZConnection.Port:=StrToInt(alist.Values['Port']);
+       FZConnection.HostName:=alist.Values['HostName'];
+       FZConnection.Database:=alist.Values['Database'];
+       FZConnection.Protocol:=alist.Values['Database Protocol'];
+       transiso:=alist.Values['Zeos TransIsolation'];
+       if (transiso='ReadCommited') then
+        FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiReadCommitted
+       else
+       if (transiso='ReadUnCommited') then
+        FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiReadUnCommitted
+       else
+       if (transiso='RepeatableRead') then
+        FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiRepeatableRead
+       else
+       if (transiso='Serializable') then
+        FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiSerializable
+       else
+        FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiNone;
+      finally
+       alist.free;
+      end;
+     end;
+     FZConnection.Connected:=true;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverZEOS);
 {$ENDIF}
    end;
   rpdatamybase:
@@ -980,7 +1050,7 @@ begin
      ConvertParamsFromDBXToIBO(FIBODatabase);
      FIBODatabase.Connected:=true;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBO);
 {$ENDIF}
    end;
  end;
@@ -1041,6 +1111,12 @@ begin
  if Assigned(FIBInternalDatabase) then
  begin
   FIBInternalDatabase.Connected:=False;
+ end;
+{$ENDIF}
+{$IFDEF USEZEOS}
+ if Assigned(FZInternalDatabase) then
+ begin
+  FZInternalDatabase.Connected:=False;
  end;
 {$ENDIF}
 {$IFDEF USEBDE}
@@ -1170,6 +1246,14 @@ begin
        Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
 {$ENDIF}
       end;
+     rpdatazeos:
+      begin
+{$IFDEF USEZEOS}
+       FSQLInternalQuery:=TZReadOnlyQuery.Create(nil);
+{$ELSE}
+       Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverZeos);
+{$ENDIF}
+      end;
      rpdatamybase:
       begin
        FSQLInternalQuery:=TClientDataset.Create(nil);
@@ -1206,7 +1290,7 @@ begin
 {$IFDEF USEIBO}
        FSQLInternalQuery:=TIBOQuery.Create(nil);
 {$ELSE}
-       Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
+       Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBO);
 {$ENDIF}
       end;
     end;
@@ -1233,6 +1317,17 @@ begin
         FSQLInternalQuery.Free;
         FSQLInternalQuery:=nil;
         FSQLInternalQuery:=TIBQuery.Create(nil);
+       end;
+{$ENDIF}
+      end;
+     rpdatazeos:
+      begin
+{$IFDEF USEZEOS}
+       if Not (FSQLInternalQuery is TZReadOnlyQuery) then
+       begin
+        FSQLInternalQuery.Free;
+        FSQLInternalQuery:=nil;
+        FSQLInternalQuery:=TZReadOnlyQuery.Create(nil);
        end;
 {$ENDIF}
       end;
@@ -1314,6 +1409,15 @@ begin
       end;
       TIBQuery(FSQLInternalQuery).UniDirectional:=true;
       TIBQuery(FSQLInternalQuery).DataSource:=nil;
+{$ENDIF}
+     end;
+    rpdatazeos:
+     begin
+{$IFDEF USEZEOS}
+      TZReadOnlyQuery(FSQLInternalQuery).Connection:=
+       baseinfo.FZConnection;
+      TZReadOnlyQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
+//      TZReadOnlyQuery(FSQLInternalQuery).DataSource:=nil;
 {$ENDIF}
      end;
     rpdatamybase:
@@ -1438,6 +1542,17 @@ begin
         FMasterSource.DataSet:=datainfosource.Dataset;
 {$ENDIF}
       end;
+     rpdatazeos:
+      begin
+{$IFDEF USEZEOS}
+{       TZReadOnlyQuery(FSQLInternalQuery).DataSource:=FMasterSource;
+       if datainfosource.cached then
+        FMasterSource.DataSet:=datainfosource.CachedDataset
+       else
+        FMasterSource.DataSet:=datainfosource.Dataset;
+}
+{$ENDIF}
+      end;
      rpdatabde:
       begin
 {$IFDEF USEBDE}
@@ -1506,6 +1621,14 @@ begin
         TIBQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
          ParamTypeToDataType(param.ParamType);
         TIBQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
+{$ENDIF}
+       end;
+      rpdatazeos:
+       begin
+{$IFDEF USEZEOS}
+        TZReadOnlyQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
+         ParamTypeToDataType(param.ParamType);
+        TZReadOnlyQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
 {$ENDIF}
        end;
       rpdatabde:
@@ -1938,6 +2061,15 @@ begin
     Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
 {$ENDIF}
    end;
+  rpdatazeos:
+   begin
+{$IFDEF USEZEOS}
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverZeos);
+//    FZConnection.GetTableNames(alist);
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverZeos);
+{$ENDIF}
+   end;
   rpdatamybase:
    begin
     alist.Clear;
@@ -1967,7 +2099,7 @@ begin
 {$IFDEF USEIBO}
     alist.clear;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBO);
 {$ENDIF}
    end;
  end;
@@ -2013,6 +2145,17 @@ begin
     Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
 {$ENDIF}
    end;
+  rpdatazeos:
+   begin
+{$IFDEF USEZEOS}
+    FSQLInternalQuery:=TZReadOnlyQuery.Create(nil);
+    TZReadOnlyQuery(FSQLInternalQuery).Connection:=FZConnection;
+    TZReadOnlyQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
+//    TZReadOnlyQuery(FSQLInternalQuery).UniDirectional:=true;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverZeos);
+{$ENDIF}
+   end;
   rpdatamybase:
    begin
     Raise Exception.Create(SRpDriverNotSupported);
@@ -2049,7 +2192,7 @@ begin
     TIBOQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
     TIBOQuery(FSQLInternalQuery).UniDirectional:=true;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBO);
 {$ENDIF}
    end;
  end;
@@ -2100,6 +2243,22 @@ begin
        TIBQuery(FSQLInternalQuery).ParamByName(paramName).DataType:=
         VariantTypeToDataType(avariant);
        TIBQuery(FSQLInternalQuery).ParamByName(paramName).Value:=avariant;
+      end;
+{$ENDIF}
+     end;
+    rpdatazeos:
+     begin
+{$IFDEF USEZEOS}
+      if assigned(astream) then
+      begin
+       TZReadOnlyQuery(FSQLInternalQuery).ParamByName(paramName).DataType:=ftBlob;
+       TZReadOnlyQuery(FSQLInternalQuery).ParamByName(paramName).LoadFromStream(astream,ftBlob);
+      end
+      else
+      begin
+       TZReadOnlyQuery(FSQLInternalQuery).ParamByName(paramName).DataType:=
+        VariantTypeToDataType(avariant);
+       TZReadOnlyQuery(FSQLInternalQuery).ParamByName(paramName).Value:=avariant;
       end;
 {$ENDIF}
      end;
@@ -2167,6 +2326,12 @@ begin
      TIBQuery(FSQLInternalQuery).ExecSQL;
  {$ENDIF}
     end;
+   rpdatazeos:
+    begin
+ {$IFDEF USEZEOS}
+     TZReadOnlyQuery(FSQLInternalQuery).ExecSQL;
+ {$ENDIF}
+    end;
    rpdatamybase:
     begin
      Raise Exception.Create(SRpDriverNotSupported);
@@ -2209,6 +2374,7 @@ begin
  alist.Add('Borland Database Engine');
  alist.Add('Microsoft DAO');
  alist.Add('Interbase Objects');
+ alist.Add('Zeos Database Objects');
 end;
 
 

@@ -1,6 +1,6 @@
 ;DELPHIPATH=c:\Archivos de programa\Borland\Delphi7
 DELPHIPATH=c:\prog\Delphi7
-REPORTMANPATH=c:\prog\toni\cvsroot\reportman\reportman;$(DELPHIPATH)\OCX\Servers
+REPORTMANPATH=c:\prog\toni\cvsroot\reportman\reportman;c:\prog\toni\zeos\src\component;c:\prog\toni\zeos\src\dbc;c:\prog\toni\zeos\src\core;c:\prog\toni\zeos\src\parse;c:\prog\toni\zeos\src\parsesql;c:\prog\toni\zeos\src\plain
 PACKAGESPATH="$(DELPHIPATH)\Projects\Bpl"
 COMPILE="$(DELPHIPATH)\bin\dcc32" -LN$(PACKAGESPATH) -LE$(PACKAGESPATH) -U"$(REPORTMANPATH);$(DELPHIPATH)\projects\bpl" -I"$(REPORTMANPATH)"
 IMPLIB="c:\prog\cbuilder6\bin\implib" 

@@ -1,8 +1,8 @@
 object FRpMainFVCL: TFRpMainFVCL
   Left = 130
   Top = 71
-  Width = 541
-  Height = 451
+  Width = 567
+  Height = 479
   Caption = 'Report Manager Designer'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -13,6 +13,7 @@ object FRpMainFVCL: TFRpMainFVCL
   Menu = MainMenu1
   OldCreateOrder = False
   ShowHint = True
+  WindowState = wsMaximized
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -23,8 +24,8 @@ object FRpMainFVCL: TFRpMainFVCL
   TextHeight = 13
   object BStatus: TStatusBar
     Left = 0
-    Top = 384
-    Width = 533
+    Top = 412
+    Width = 559
     Height = 21
     Panels = <
       item
@@ -34,7 +35,7 @@ object FRpMainFVCL: TFRpMainFVCL
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 533
+    Width = 559
     Height = 70
     AutoSize = True
     ButtonHeight = 26
@@ -187,23 +188,28 @@ object FRpMainFVCL: TFRpMainFVCL
       Wrap = True
       Style = tbsSeparator
     end
-    object ToolButton11: TToolButton
+    object BDelete: TToolButton
       Left = 0
+      Top = 42
+      Action = ADelete
+    end
+    object ToolButton11: TToolButton
+      Left = 26
       Top = 42
       Action = ACut
     end
     object ToolButton12: TToolButton
-      Left = 26
+      Left = 52
       Top = 42
       Action = ACopy
     end
     object ToolButton13: TToolButton
-      Left = 52
+      Left = 78
       Top = 42
       Action = APaste
     end
     object ToolButton14: TToolButton
-      Left = 78
+      Left = 104
       Top = 42
       Width = 14
       Caption = 'ToolButton14'
@@ -211,27 +217,27 @@ object FRpMainFVCL: TFRpMainFVCL
       Style = tbsSeparator
     end
     object ToolButton15: TToolButton
-      Left = 92
+      Left = 118
       Top = 42
       Action = ALeft
     end
     object ToolButton16: TToolButton
-      Left = 118
+      Left = 144
       Top = 42
       Action = ARight
     end
     object ToolButton17: TToolButton
-      Left = 144
+      Left = 170
       Top = 42
       Action = AUp
     end
     object ToolButton18: TToolButton
-      Left = 170
+      Left = 196
       Top = 42
       Action = ADown
     end
     object ToolButton19: TToolButton
-      Left = 196
+      Left = 222
       Top = 42
       Width = 12
       Caption = 'ToolButton19'
@@ -239,32 +245,32 @@ object FRpMainFVCL: TFRpMainFVCL
       Style = tbsSeparator
     end
     object ToolButton20: TToolButton
-      Left = 208
+      Left = 234
       Top = 42
       Action = AAlignLeft
     end
     object ToolButton21: TToolButton
-      Left = 234
+      Left = 260
       Top = 42
       Action = AAlignRight
     end
     object ToolButton22: TToolButton
-      Left = 260
+      Left = 286
       Top = 42
       Action = AAlignUp
     end
     object ToolButton23: TToolButton
-      Left = 286
+      Left = 312
       Top = 42
       Action = AAlignDown
     end
     object ToolButton24: TToolButton
-      Left = 312
+      Left = 338
       Top = 42
       Action = AAlignHorz
     end
     object ToolButton25: TToolButton
-      Left = 338
+      Left = 364
       Top = 42
       Action = AAlignVert
     end
@@ -272,8 +278,8 @@ object FRpMainFVCL: TFRpMainFVCL
   object mainscrollbox: TPanel
     Left = 0
     Top = 70
-    Width = 533
-    Height = 314
+    Width = 559
+    Height = 342
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
@@ -282,7 +288,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 181
       Top = 0
       Width = 8
-      Height = 314
+      Height = 342
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
@@ -291,7 +297,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 0
       Top = 0
       Width = 181
-      Height = 314
+      Height = 342
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -2363,6 +2369,14 @@ object FRpMainFVCL: TFRpMainFVCL
       Hint = 'Open report libraries dialog'
       OnExecute = ALibrariesExecute
     end
+    object ADelete: TAction
+      Category = 'Edit'
+      Caption = 'Delete'
+      Enabled = False
+      Hint = 'Delete the selected object'
+      ImageIndex = 20
+      OnExecute = ADeleteExecute
+    end
   end
   object Lastusedfiles: TRpLastUsedStrings
     HistoryCount = 7
@@ -2470,6 +2484,9 @@ object FRpMainFVCL: TFRpMainFVCL
     object MEdit: TMenuItem
       Caption = 'Edit'
       Enabled = False
+      object Delete1: TMenuItem
+        Action = ADelete
+      end
       object Cut1: TMenuItem
         Action = ACut
       end

@@ -747,6 +747,10 @@ var
   SRpPrintPDFRep12:WideString='         -oemconvert        Force recode to oem for text output';
   SRpCommandLineStdIN:WideString='         -stdin    Read from standard input instead from a file';
   SRpTextDrivers:WideString='Text drivers';
+  SrpDriverZeos:WideString='Zeos Database Objects';
+  SrpDriverZeosDesc:WideString='Zeos Database Objects is a Opensource database driver technology for Delphi/Kylix/Builder.';
+  SrpDriverIBO:WideString='Interbase Objects';
+
 implementation
 
 uses rptranslator;
@@ -1450,6 +1454,9 @@ begin
  TranslateVar(1056,SRpPrintPDFRep12);
  TranslateVar(1057,SRpCommandLineStdIN);
  TranslateVar(1058,SRpTextDrivers);
+ TranslateVar(1107,SrpDriverZeos);
+ TranslateVar(1108,SrpDriverZeosDesc);
+ TranslateVar(1109,SrpDriverIBO);
 end;
 
 {$IFDEF LINUX}

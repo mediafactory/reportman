@@ -6,11 +6,12 @@ object FRpMainF: TFRpMainF
   ActiveControl = ToolButton1
   AutoScroll = False
   Caption = 'Report Manager Designer'
-  ClientHeight = 337
-  ClientWidth = 501
+  ClientHeight = 318
+  ClientWidth = 444
   Color = clBackground
   Menu = MainMenu1
   ShowHint = True
+  WindowState = wsMaximized
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -23,7 +24,7 @@ object FRpMainF: TFRpMainF
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 501
+    Width = 444
     Height = 56
     AutoSize = True
     ButtonHeight = 26
@@ -194,31 +195,31 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton11: TToolButton
       HelpType = htContext
-      Left = 399
-      Top = 4
+      Left = 1
+      Top = 30
       Height = 26
       Action = ACut
       Caption = 'Cut'
     end
     object ToolButton12: TToolButton
       HelpType = htContext
-      Left = 425
-      Top = 4
+      Left = 27
+      Top = 30
       Height = 26
       Action = ACopy
       Caption = 'Copy'
     end
     object ToolButton13: TToolButton
       HelpType = htContext
-      Left = 451
-      Top = 4
+      Left = 53
+      Top = 30
       Height = 26
       Action = APaste
       Caption = 'Paste'
     end
     object ToolButton14: TToolButton
-      Left = 477
-      Top = 4
+      Left = 79
+      Top = 30
       Width = 14
       Height = 26
       Style = tbsSeparator
@@ -227,7 +228,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton15: TToolButton
       HelpType = htContext
-      Left = 1
+      Left = 93
       Top = 30
       Height = 26
       Action = ALeft
@@ -235,7 +236,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton16: TToolButton
       HelpType = htContext
-      Left = 27
+      Left = 119
       Top = 30
       Height = 26
       Action = ARight
@@ -243,7 +244,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton17: TToolButton
       HelpType = htContext
-      Left = 53
+      Left = 145
       Top = 30
       Height = 26
       Action = AUp
@@ -251,14 +252,14 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton18: TToolButton
       HelpType = htContext
-      Left = 79
+      Left = 171
       Top = 30
       Height = 26
       Action = ADown
       Caption = 'Down'
     end
     object ToolButton19: TToolButton
-      Left = 105
+      Left = 197
       Top = 30
       Width = 12
       Height = 26
@@ -268,7 +269,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton20: TToolButton
       HelpType = htContext
-      Left = 117
+      Left = 209
       Top = 30
       Height = 26
       Action = AAlignLeft
@@ -276,7 +277,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton21: TToolButton
       HelpType = htContext
-      Left = 143
+      Left = 235
       Top = 30
       Height = 26
       Action = AAlignRight
@@ -284,7 +285,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton22: TToolButton
       HelpType = htContext
-      Left = 169
+      Left = 261
       Top = 30
       Height = 26
       Action = AAlignUp
@@ -292,7 +293,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton23: TToolButton
       HelpType = htContext
-      Left = 195
+      Left = 287
       Top = 30
       Height = 26
       Action = AAlignDown
@@ -300,7 +301,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton24: TToolButton
       HelpType = htContext
-      Left = 221
+      Left = 313
       Top = 30
       Height = 26
       Action = AAlignHorz
@@ -308,7 +309,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton25: TToolButton
       HelpType = htContext
-      Left = 247
+      Left = 339
       Top = 30
       Height = 26
       Action = AAlignVert
@@ -325,12 +326,20 @@ object FRpMainF: TFRpMainF
       Grouped = True
       ImageIndex = 31
     end
+    object BDelete: TToolButton
+      HelpType = htContext
+      Left = 399
+      Top = 4
+      Height = 26
+      Action = ADelete
+      Caption = 'Delete'
+    end
   end
   object mainscrollbox: TScrollBox
     Left = 0
     Top = 56
-    Width = 501
-    Height = 260
+    Width = 444
+    Height = 241
     HorzScrollBar.Range = 189
     Align = alClient
     BorderStyle = bsNone
@@ -340,7 +349,7 @@ object FRpMainF: TFRpMainF
       Left = 181
       Top = 0
       Width = 8
-      Height = 260
+      Height = 241
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
@@ -349,7 +358,7 @@ object FRpMainF: TFRpMainF
       Left = 0
       Top = 0
       Width = 181
-      Height = 260
+      Height = 241
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -367,8 +376,8 @@ object FRpMainF: TFRpMainF
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 316
-    Width = 501
+    Top = 297
+    Width = 444
     Height = 21
     Panels = <
       item
@@ -463,6 +472,9 @@ object FRpMainF: TFRpMainF
     object MEdit: TMenuItem
       Caption = 'Edit'
       Enabled = False
+      object Delete1: TMenuItem
+        Action = ADelete
+      end
       object Cut1: TMenuItem
         Action = ACut
       end
@@ -989,6 +1001,14 @@ object FRpMainF: TFRpMainF
       Caption = 'Libraries...'
       Hint = 'Open report libraries dialog'
       OnExecute = ALibrariesExecute
+    end
+    object ADelete: TAction
+      Category = 'Edit'
+      Caption = 'Delete'
+      Enabled = False
+      Hint = 'Delete the selected object'
+      ImageIndex = 20
+      OnExecute = ADeleteExecute
     end
   end
   object iconlist: TImageList

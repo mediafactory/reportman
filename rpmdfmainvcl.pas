@@ -220,6 +220,9 @@ type
     N6: TMenuItem;
     MLibraries: TMenuItem;
     Malign1_6: TMenuItem;
+    ADelete: TAction;
+    BDelete: TToolButton;
+    Delete1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -281,6 +284,7 @@ type
     procedure ASysInfoExecute(Sender: TObject);
     procedure ALibrariesExecute(Sender: TObject);
     procedure AAlign1_6Execute(Sender: TObject);
+    procedure ADeleteExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrameVCL;
@@ -311,6 +315,7 @@ type
     procedure UpdateStyle;
     procedure MyExceptionHandler(Sender:TObject;E:Exception);
     procedure AppHint(Sender:TObject);
+    procedure DeleteSelection;
   public
     { Public declarations }
     report:TRpReport;
@@ -477,6 +482,7 @@ begin
  ADataConfig.Enabled:=false;
  APreview.Enabled:=false;
  ACut.Enabled:=False;
+ ADelete.Enabled:=False;
  ACopy.Enabled:=FalsE;
  APaste.Enabled:=False;
  AShowAll.Enabled:=False;
@@ -532,6 +538,7 @@ begin
  ADataConfig.Enabled:=true;
  APreview.Enabled:=true;
  ACut.Enabled:=False;
+ ADelete.Enabled:=False;
  ACopy.Enabled:=FalsE;
  AHide.Enabled:=False;
  APaste.Enabled:=true;
@@ -665,10 +672,12 @@ begin
  AUp.ShortCut:=ShortCut(VK_UP,[ssCtrl]);
  ADown.ShortCut:=ShortCut(VK_DOWN,[ssCtrl]);
 // Shortcuts disabled, must check if there is a TEdit active
-// ACut.ShortCut:=ShortCut(Ord('X'),[ssCtrl]);
-// ACopy.ShortCut:=ShortCut(Ord('C'),[ssCtrl]);
-// APaste.ShortCut:=ShortCut(Ord('V'),[ssCtrl]);
-// ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssCtrl]);
+
+ ACut.ShortCut:=ShortCut(Ord('X'),[ssCtrl,ssAlt]);
+ ADelete.ShortCut:=ShortCut(VK_DELETE,[ssCtrl,ssAlt]);
+ ACopy.ShortCut:=ShortCut(Ord('C'),[ssCtrl,ssAlt]);
+ APaste.ShortCut:=ShortCut(Ord('V'),[ssCtrl,ssAlt]);
+ ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssCtrl,ssAlt]);
  MQtStyle.Visible:=false;
  MSystemPrint.Visible:=false;
 
@@ -697,6 +706,8 @@ begin
  AGridOptions.Caption:=TranslateStr(7,AGridOptions.Caption);
  AGridOptions.Hint:=TranslateStr(8,AGridOptions.Hint);
  ACut.Caption:=TranslateStr(9,ACut.Caption);
+ ADelete.Caption:=TranslateStr(150,ADelete.Caption);
+ ADelete.Hint:=TranslateStr(1106,ADelete.Hint);
  ACopy.Caption:=TranslateStr(10,ACopy.Caption);
  APaste.Caption:=TranslateStr(11,APaste.Caption);
  ACut.Hint:=TranslateStr(12,ACut.Hint);
@@ -975,19 +986,13 @@ begin
  fdesignframe.UpdateSelection(true);
 end;
 
-procedure TFRpMainFVCL.ACutExecute(Sender: TObject);
+procedure TFRpMainFVCL.DeleteSelection;
 var
  sectionintf:TRpSectionInterface;
  aitem:TRpSizePosInterface;
  alist:TStringList;
  i:integer;
 begin
- // Delete current selection
- if fobjinsp.SelectedItems.Count<1 then
-  exit;
- if (Not (fobjinsp.SelectedItems.Objects[0] is TRpSizePosInterface)) then
-  exit;
- ACopy.Execute;
  alist:=TStringList.Create;
  try
   sectionintf:=nil;
@@ -1006,6 +1011,17 @@ begin
   alist.free;
  end;
 // fdesignframe.UpdateSelection(true);
+end;
+
+procedure TFRpMainFVCL.ACutExecute(Sender: TObject);
+begin
+ // Delete current selection
+ if fobjinsp.SelectedItems.Count<1 then
+  exit;
+ if (Not (fobjinsp.SelectedItems.Objects[0] is TRpSizePosInterface)) then
+  exit;
+ ACopy.Execute;
+ DeleteSelection;
 end;
 
 procedure TFRpMainFVCL.ACopyExecute(Sender: TObject);
@@ -1673,6 +1689,16 @@ procedure TFRpMainFVCL.AAlign1_6Execute(Sender: TObject);
 begin
  report.AlignSectionsTo1_6inchess;
  RefreshInterface(Self);
+end;
+
+procedure TFRpMainFVCL.ADeleteExecute(Sender: TObject);
+begin
+ // Delete current selection
+ if fobjinsp.SelectedItems.Count<1 then
+  exit;
+ if (Not (fobjinsp.SelectedItems.Objects[0] is TRpSizePosInterface)) then
+  exit;
+ DeleteSelection;
 end;
 
 end.

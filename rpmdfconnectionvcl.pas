@@ -232,6 +232,8 @@ begin
    MHelp.Lines.Text:=SRpADODesc;
   5:
    MHelp.Lines.Text:=SRpIBODesc;
+  6:
+   MHelp.Lines.Text:=SrpDriverZeosDesc;
  end;
  // Loads the alias config
  case TrpDbDriver(GDriver.ItemIndex) of
@@ -246,6 +248,15 @@ begin
    end;
   // IBX and IBO
   rpdataibx,rpdataibo:
+   begin
+    BConfig.Visible:=true;
+    if Assigned(ConAdmin) then
+    begin
+     conadmin.GetConnectionNames(ComboAvailable.Items,'Interbase');
+    end;
+   end;
+  // Zeos
+  rpdatazeos:
    begin
     BConfig.Visible:=true;
     if Assigned(ConAdmin) then

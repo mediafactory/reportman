@@ -738,6 +738,7 @@ begin
    end;
   end;
   FRpMainf.ACut.Enabled:=true;
+  FRpMainf.ADelete.Enabled:=true;
   FRpMainf.ACopy.Enabled:=true;
   FRpMainf.AHide.Enabled:=true;
   FRpMainf.ALeft.Enabled:=true;
@@ -750,6 +751,7 @@ begin
   TFRpObjInspVCL(Owner).fchangesize.Control:=nil;
   secint:=TrpSectionInterface(FCompItem);
   FRpMainf.ACut.Enabled:=False;
+  FRpMainf.ADelete.Enabled:=False;
   FRpMainf.ACopy.Enabled:=False;
   FRpMainf.AHide.Enabled:=False;
   FRpMainf.ALeft.Enabled:=false;

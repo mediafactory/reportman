@@ -224,6 +224,9 @@ type
     ALibraries: TAction;
     N7: TMenuItem;
     MLibraries: TMenuItem;
+    ADelete: TAction;
+    BDelete: TToolButton;
+    Delete1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -287,6 +290,7 @@ type
     procedure ASysInfoExecute(Sender: TObject);
     procedure AAlign1_6Execute(Sender: TObject);
     procedure ALibrariesExecute(Sender: TObject);
+    procedure ADeleteExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrame;
@@ -326,6 +330,7 @@ type
     procedure AppHint(Sender:TObject);
     procedure OnHelpClick(Sender:TObject);
     procedure HelpOnIdle(Sender:TObject;var done:Boolean);
+    procedure DeleteSelection;
   public
     { Public declarations }
     report:TRpReport;
@@ -487,6 +492,7 @@ begin
  ADataConfig.Enabled:=false;
  APreview.Enabled:=false;
  ACut.Enabled:=False;
+ ADelete.Enabled:=False;
  ACopy.Enabled:=FalsE;
  APaste.Enabled:=False;
  AShowAll.Enabled:=False;
@@ -542,6 +548,7 @@ begin
  ADataConfig.Enabled:=true;
  APreview.Enabled:=true;
  ACut.Enabled:=False;
+ ADelete.Enabled:=False;
  ACopy.Enabled:=FalsE;
  AHide.Enabled:=False;
  APaste.Enabled:=true;
@@ -687,10 +694,11 @@ begin
  AUp.ShortCut:=ShortCut(Key_Up,[ssCtrl]);
  ADown.ShortCut:=ShortCut(Key_Down,[ssCtrl]);
 // Shortcuts disabled must checkn if TEdit active
-// ACut.ShortCut:=ShortCut(Ord('X'),[ssCtrl]);
-// ACopy.ShortCut:=ShortCut(Ord('C'),[ssCtrl]);
-// APaste.ShortCut:=ShortCut(Ord('V'),[ssCtrl]);
-// ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssCtrl]);
+ ADelete.ShortCut:=ShortCut(Key_Delete,[ssCtrl]);
+ ACut.ShortCut:=ShortCut(Ord('X'),[ssCtrl,ssAlt]);
+ ACopy.ShortCut:=ShortCut(Ord('C'),[ssCtrl,ssAlt]);
+ APaste.ShortCut:=ShortCut(Ord('V'),[ssCtrl,ssAlt]);
+ ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssCtrl,ssAlt]);
 
 {$IFDEF VCLFILEFILTERS}
  OpenDialog1.Filter := SRpRepFile+'|*.rep';
@@ -747,6 +755,8 @@ begin
  AGridOptions.Caption:=TranslateStr(7,AGridOptions.Caption);
  AGridOptions.Hint:=TranslateStr(8,AGridOptions.Hint);
  ACut.Caption:=TranslateStr(9,ACut.Caption);
+ ADelete.Caption:=TranslateStr(150,ADelete.Caption);
+ ADelete.Hint:=TranslateStr(1106,ADelete.Hint);
  ACopy.Caption:=TranslateStr(10,ACopy.Caption);
  APaste.Caption:=TranslateStr(11,APaste.Caption);
  ACut.Hint:=TranslateStr(12,ACut.Hint);
@@ -872,6 +882,8 @@ begin
  // Activates OnHint
  oldonhint:=Application.OnHint;
  Application.OnHint:=AppHint;
+
+ SetInitialBounds;
 end;
 
 procedure TFRpMainF.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -1042,19 +1054,13 @@ begin
  fdesignframe.UpdateSelection(true);
 end;
 
-procedure TFRpMainF.ACutExecute(Sender: TObject);
+procedure TFRpMainF.DeleteSelection;
 var
  sectionintf:TRpSectionInterface;
  aitem:TRpSizePosInterface;
  alist:TStringList;
  i:integer;
 begin
- // Delete current selection
- if fobjinsp.SelectedItems.Count<1 then
-  exit;
- if (Not (fobjinsp.SelectedItems.Objects[0] is TRpSizePosInterface)) then
-  exit;
- ACopy.Execute;
  alist:=TStringList.Create;
  try
   sectionintf:=nil;
@@ -1073,6 +1079,17 @@ begin
   alist.free;
  end;
  fdesignframe.UpdateSelection(true);
+end;
+
+procedure TFRpMainF.ACutExecute(Sender: TObject);
+begin
+ // Delete current selection
+ if fobjinsp.SelectedItems.Count<1 then
+  exit;
+ if (Not (fobjinsp.SelectedItems.Objects[0] is TRpSizePosInterface)) then
+  exit;
+ ACopy.Execute;
+ DeleteSelection;
 end;
 
 procedure TFRpMainF.ACopyExecute(Sender: TObject);
@@ -1902,6 +1919,8 @@ begin
  // tool bar and menu
  Width:=Width+1;
  FormResize(Self);
+ // Bugfix
+ WindowState:=wsMaximized;
 end;
 
 procedure TFRpMainF.ASysInfoExecute(Sender: TObject);
@@ -1921,6 +1940,16 @@ procedure TFRpMainF.ALibrariesExecute(Sender: TObject);
 begin
 // ShowModifyConnections(RPalias1.Connections);
 // SaveConfig;
+end;
+
+procedure TFRpMainF.ADeleteExecute(Sender: TObject);
+begin
+ // Delete current selection
+ if fobjinsp.SelectedItems.Count<1 then
+  exit;
+ if (Not (fobjinsp.SelectedItems.Objects[0] is TRpSizePosInterface)) then
+  exit;
+ DeleteSelection;
 end;
 
 end.
