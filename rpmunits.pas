@@ -40,6 +40,7 @@ var
 
 function gettextfromtwips(twips1:TRptwips):string;
 function gettwipsfromtext(atext:string):TRptwips;
+function getdefaultunitstring:string;
 
 implementation
 
@@ -53,6 +54,10 @@ begin
  Result:=Round(StrToFloat(atext)*rpunitconversions[defaultunit]);
 end;
 
+function getdefaultunitstring:string;
+begin
+ Result:=rpunitlabels[defaultunit];
+end;
 
 
 initialization

@@ -4,6 +4,7 @@
 {                                                       }
 {       Rpprintitem                                     }
 {       TRpPrintItem: Base class for printable comps    }
+{       TRpGenTextItem: Base class for text items       }
 {                                                       }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
@@ -20,7 +21,7 @@ unit rpprintitem;
 
 interface
 
-uses Sysutils,Classes,rptypes;
+uses Sysutils,Classes,rptypes,rpconsts;
 
 type
 
@@ -32,18 +33,19 @@ type
    FPrintCondition:string;
   public
    constructor Create(AOwner:TComponent);override;
-   property Width:TRpTwips read FWidth write FWidth;
-   property Height:TRpTwips read FHeight write FHeight;
    property PrintCondition:string read FPrintCondition write FPrintCondition;
    property DoBeforePrint:string read FDoBeforePrint write FDoBeforePrint;
    property DoAfterPrint:string read FDoAfterPrint write FDoAfterPrint;
+  published
+   property Width:TRpTwips read FWidth write FWidth;
+   property Height:TRpTwips read FHeight write FHeight;
   end;
 
  TRpCommonPosComponent=class(TRpCommonComponent)
   private
    FPosY:TRpTwips;
    FPosX:TRpTwips;
-  public
+  published
    property PosX:TRpTwips read FPosX write FPosX;
    property PosY:TRpTwips read FPosY write FPosY;
   end;
@@ -54,6 +56,7 @@ type
    procedure SetComponent(Value:TRpCommonComponent);
   public
    procedure Assign(Source:TPersistent);override;
+  published
    property Component:TRpCommonComponent read FComponent write SetComponent;
  end;
 
@@ -70,10 +73,36 @@ type
    constructor Create(sec:TComponent);
  end;
 
+ TRpGenTextComponent=class(TRpCommonPosComponent)
+  private
+   FFontName:widestring;
+   FFontSize:integer;
+   FFontStyle:integer;
+   FFontColor:integer;
+   FBackColor:integer;
+   FTransparent:Boolean;
+  public
+   constructor Create(AOwner:TComponent);override;
+  published
+   property FontName:widestring read FFontName write FFontName;
+   property FontSize:integer read FFontSize write FFontSize default 10;
+   property FontStyle:integer read FFontStyle write FFontStyle default 0;
+   property FontColor:integer read FFontColor write FFontColor default 0;
+   property BackColor:integer read FBackColor write FBackColor default $FFFFFF;
+   property Transparent:Boolean read FTransparent write FTransparent default true;
+
+  end;
+
 implementation
+
+uses rpreport;
 
 constructor TRpCommonComponent.Create(AOwner:TComponent);
 begin
+ // The owner must be a report
+ if (Not (AOwner is TRpReport)) then
+  Raise Exception.Create(SRpOnlyAReportOwner+classname);
+
  inherited Create(AOwner);
  FHeight:=0;
  FWidth:=0;
@@ -134,5 +163,17 @@ begin
  end;
 end;
 
+constructor TRpGenTextComponent.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+
+ FontName:='Arial';
+ FontSize:=10;
+ FontStyle:=0;
+ FontColor:=0;
+ FBackColor:=$FFFFFF;
+ FTransparent:=true;
+
+end;
 
 end.

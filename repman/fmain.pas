@@ -96,6 +96,10 @@ type
     BDraw: TToolButton;
     BImage: TToolButton;
     BChart: TToolButton;
+    MDisplay: TMenuItem;
+    AGridOptions: TAction;
+    Grid1: TMenuItem;
+    Splitter2: TSplitter;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -115,6 +119,7 @@ type
     procedure ANewDetailExecute(Sender: TObject);
     procedure ADataConfigExecute(Sender: TObject);
     procedure AParamsExecute(Sender: TObject);
+    procedure AGridOptionsExecute(Sender: TObject);
   private
     { Private declarations }
     report:TRpReport;
@@ -143,7 +148,7 @@ var
 
 implementation
 
-uses rppagesetup, rpshfolder, freportgroup, fdatainfo;
+uses rppagesetup, rpshfolder, freportgroup, fdatainfo, frpgrid;
 
 {$R *.xfm}
 
@@ -281,6 +286,8 @@ begin
  ADeleteSelection.Enabled:=false;
  AnewDetail.Enabled:=false;
  ADataConfig.Enabled:=false;
+ AGridOptions.Enabled:=false;
+ MDisplay.Visible:=false;
 
  // Palette
  BArrow.Enabled:=false;
@@ -326,6 +333,8 @@ begin
  ADeleteSelection.Enabled:=true;
  AnewDetail.Enabled:=true;
  ADataConfig.Enabled:=true;
+ AGridOptions.Enabled:=true;
+ MDisplay.Visible:=true;
 
  // Palette
  BArrow.Enabled:=true;
@@ -596,6 +605,12 @@ end;
 procedure TFMainf.AParamsExecute(Sender: TObject);
 begin
  ShowParamDef(report.Params,report.DataInfo);
+end;
+
+procedure TFMainf.AGridOptionsExecute(Sender: TObject);
+begin
+ ModifyGridProperties(report);
+ fdesignframe.UpdateSelection(true);
 end;
 
 initialization

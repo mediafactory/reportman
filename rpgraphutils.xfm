@@ -6,10 +6,12 @@ object FRpGraphProgres: TFRpGraphProgres
   VertScrollBar.Range = 113
   HorzScrollBar.Range = 182
   ActiveControl = CancelBtn
+  BorderStyle = fbsDialog
   Caption = 'Dialog'
   Color = clButton
   Position = poScreenCenter
   Scaled = False
+  ShowHint = True
   PixelsPerInch = 96
   object CancelBtn: TButton
     Left = 107

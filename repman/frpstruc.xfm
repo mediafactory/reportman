@@ -3,6 +3,8 @@ object FRpStructure: TFRpStructure
   Top = 0
   Width = 213
   Height = 161
+  ParentShowHint = False
+  ShowHint = True
   TabOrder = 0
   object RView: TTreeView
     Left = 0

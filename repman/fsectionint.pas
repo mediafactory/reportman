@@ -23,8 +23,8 @@ interface
 uses SysUtils, Classes, QGraphics, QForms,Types,
   QButtons, QExtCtrls, QControls, QStdCtrls,
   rpobinsint,rpreport,rpprintitem,rpgraphutils,
-  rpobjinsp,frpstruc,
-  rpconsts,rpsection;
+  rpobjinsp,frpstruc,flabelint,rplabelitem,
+  rpconsts,rpsection,rptypes;
 
 
 type
@@ -46,8 +46,10 @@ type
    public
     OnPosChange:TNotifyEvent;
     freportstructure:TFRpStructure;
-
+    childlist:TList;
     constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
+    destructor destroy;override;
+    procedure CreateChilds;
   end;
 
 
@@ -149,8 +151,14 @@ begin
  opts:=ControlStyle;
  include(opts,csCaptureMouse);
  ControlStyle:=opts;
+ ChildList:=TList.Create;
 end;
 
+destructor TRpSectionInterface.destroy;
+begin
+ childlist.free;
+ inherited destroy;
+end;
 
 
 
@@ -161,6 +169,8 @@ var
  rec:TRect;
  bitmap:TBitmap;
 begin
+ if Assigned(OnPosChange) then
+  OnPosChange(Self);
  if Not Assigned(fprintitem) then
   exit;
  if Not Assigned(fprintitem.Owner) then
@@ -168,28 +178,29 @@ begin
  if Not (fprintitem.Owner is TRpReport) then
   exit;
  report:=TRpReport(fprintitem.Owner);
-
- // Draws the grid bitmap
-
- bitmap:=DrawBitmapGrid(width,height,report.GridWidth,report.GridHeight,report.GridColor,report.GridLines);
- if assigned(bitmap) then
+ if report.GridVisible then
  begin
-  Canvas.Draw(0,0,bitmap);
- end
- else
- begin
-  rec.Top:=0;rec.Left:=0;
-  rec.Bottom:=Width;
-  rec.Right:=Height;
-  Canvas.Brush.Color:=clwhite;
-  Canvas.FillRect(rec);
+  bitmap:=DrawBitmapGrid(width,height,report.GridWidth,report.GridHeight,report.GridColor,report.GridLines);
+  if assigned(bitmap) then
+  begin
+   Canvas.Draw(0,0,bitmap);
+   exit;
+  end;
  end;
- if Assigned(OnPosChange) then
-  OnPosChange(Self);
+
+ rec.Top:=0;rec.Left:=0;
+ rec.Bottom:=Height;
+ rec.Right:=Width;
+ Canvas.Brush.Color:=clwhite;
+ Canvas.FillRect(rec);
 end;
 
 procedure TRpSectionInterface.MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
+var
+ labelint:TRpLabelInterface;
+ alabel:TRpLabel;
+ aitem:TRpCommonListItem;
 begin
  inherited MouseDown(Button,Shift,X,Y);
 
@@ -198,9 +209,48 @@ begin
  begin
   // Selects object inspector section properties
   freportstructure.SelectDataItem(printitem);
+  TFObjInsp(fobjinsp).CompItem:=self;
+  exit;
+ end;
+ if fmainf.BLabel.Down then
+ begin
+  alabel:=TRpLabel.Create(printitem.Owner);
+  alabel.PosX:=pixelstotwips(X);
+  alabel.PosY:=pixelstotwips(Y);
+  GenerateNewName(alabel);
+  aitem:=TRpSection(printitem).Components.Add;
+  aitem.Component:=alabel;
+  labelint:=TRpLabelInterface.Create(Self,alabel);
+  labelint.Parent:=parent;
+  labelint.UpdatePos;
+  labelint.fobjinsp:=fobjinsp;
+
+  childlist.Add(labelint);
+  fmainf.BArrow.Down:=true;
  end;
 end;
 
+procedure TRpSectionInterface.CreateChilds;
+var
+ sec:TRpSection;
+ i:integer;
+ compo:TRpCommonComponent;
+ labelint:TRpLabelInterface;
+begin
+ sec:=TRpSection(printitem);
+ for i:=0 to sec.Components.Count-1 do
+ begin
+  compo:=sec.Components.Items[i].Component;
+  if compo is TRpLabel then
+  begin
+   labelint:=TRpLabelInterface.Create(Self,compo);
+   labelint.Parent:=parent;
+   labelint.UpdatePos;
+   labelint.fobjinsp:=fobjinsp;
+   childlist.Add(labelint)
+  end;
+ end;
+end;
 
 
 

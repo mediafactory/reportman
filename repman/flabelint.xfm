@@ -1,21 +1,26 @@
-object FSectionProps: TFSectionProps
-  Left = 282
-  Top = 196
+object FLabelInterface: TFLabelInterface
+  Left = 403
+  Top = 225
   Width = 320
   Height = 240
-  VertScrollBar.Range = 209
-  HorzScrollBar.Range = 234
+  VertScrollBar.Range = 205
+  HorzScrollBar.Range = 305
   ActiveControl = OKBtn
-  BorderStyle = fbsDialog
-  Caption = 'Section properties'
+  Caption = 'Dialog'
   Color = clButton
   Position = poScreenCenter
   Scaled = False
-  ShowHint = True
   PixelsPerInch = 96
+  object Bevel1: TBevel
+    Left = 8
+    Top = 8
+    Width = 297
+    Height = 161
+    Shape = bsFrame
+  end
   object OKBtn: TButton
     Left = 79
-    Top = 184
+    Top = 180
     Width = 75
     Height = 25
     Caption = 'OK'

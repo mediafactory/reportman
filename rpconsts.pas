@@ -24,6 +24,11 @@ interface
 
 
 resourcestring
+  SRpEnglish='English';
+  SRpSpanish='Spanish';
+  SRpCatalan='Catalan';
+
+  SRpOnlyAReportOwner='Only a report can be the owner of :';
   SrpErrorProcesingFileMenu='Error procesing the File Menu for last saved files';
   SRpRepToTxt1='reptotxt v1.0';
   SRpRepToTxt2='Converts a report file from report manager (.rep) to a plain file';
@@ -287,11 +292,22 @@ resourcestring
   SRpParamNameExists='Param name already exists';
   SRpRenameParam='Rename param';
 
+  // Component properties
   SRpSTop='Top';
   SRpSLeft='Left';
   SRpSWidth='Width';
   SRpSHeight='Height';
   SRpSCurrency='Currency';
+  SRpSString='String';
+  SRpSInteger='Integer';
+  SRpSFontName='Font Name';
+  SrpSFontSize='Font Size';
+  SrpSFontColor='Font Color';
+  SrpSBackColor='Back Color';
+  SrpSFontStyle='Font Style';
+  SrpSTransparent='Transparent';
+  SRpSBool='Boolean';
+  SrpSText='Text';
 
   SRpPropertyNotFound='Property not found: ';
   SRpPropertyHaveNoListValues='This property have not a list of values';

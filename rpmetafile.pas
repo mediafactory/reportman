@@ -78,9 +78,11 @@ type
    Top,Left,Width,Height:integer;
    Text:widestring;
    FontName:widestring;
+   FontSize:integer;
    FontStyle:integer;
    FontColor:integer;
    BackColor:integer;
+   Transparent:boolean;
    DrawStyle:integer;
    BrushStyle:integer;
    BrushColor:integer;
@@ -104,8 +106,8 @@ type
    constructor Create;
    destructor Destroy;override;
    procedure NewTextObject(Top,Left,Width,Height:integer;
-    Text:widestring;FontName:widestring;FontStyle:integer;
-    FontColor:integer;BackColor:integer);
+    Text:widestring;FontName:widestring;FontSize:integer;FontStyle:integer;
+    FontColor:integer;BackColor:integer;transparent:boolean);
    procedure NewDrawObject(Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenWidth:integer; PenColor:integer);
@@ -189,8 +191,8 @@ begin
 end;
 
 procedure TrpMetafilePage.NewTextObject(Top,Left,Width,Height:integer;
-    Text:widestring;FontName:widestring;FontStyle:integer;
-    FontColor:integer;BackColor:integer);
+    Text:widestring;FontName:widestring;FontSize:integer;FontStyle:integer;
+    FontColor:integer;BackColor:integer;transparent:boolean);
 var
  FObject:TrpMetafileObject;
 begin
@@ -204,7 +206,8 @@ begin
  FObject.FontColor:=FontColor;
  FObject.FontStyle:=FontStyle;
  FObject.BackColor:=BackColor;
-
+ FObject.FontSize:=FontSize;
+ FObject.Transparent:=Transparent;
  FObjects.Add(FObject);
 end;
 
@@ -478,6 +481,22 @@ begin
      Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
     SetLength(text,numbytes div 2);
     Stream.Read(PWideString(Text)^,numbytes);
+    // Wide string is 2 bytes per char.
+    if (sizeof(numbytes)<>Stream.Read(numbytes,sizeof(numbytes))) then
+     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
+    SetLength(FontName,numbytes div 2);
+    Stream.Read(PWideString(FontName)^,numbytes);
+    // Font Properties
+    if (sizeof(FontSize)<>Stream.Read(FontSize,sizeof(FontSize))) then
+     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
+    if (sizeof(FontStyle)<>Stream.Read(FontStyle,sizeof(FontStyle))) then
+     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
+    if (sizeof(FontColor)<>Stream.Read(FontColor,sizeof(FontColor))) then
+     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
+    if (sizeof(BackColor)<>Stream.Read(BackColor,sizeof(BackColor))) then
+     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
+    if (sizeof(Transparent)<>Stream.Read(Transparent,sizeof(Transparent))) then
+     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
    end;
   rpMetaDraw:
    begin
@@ -531,6 +550,15 @@ begin
     numbytes:=Length(Text)*2;
     Stream.Write(numbytes,sizeof(numbytes));
     Stream.Write(PWideString(Text)^,numbytes);
+    // Font Properties
+    numbytes:=Length(FontName)*2;
+    Stream.Write(numbytes,sizeof(numbytes));
+    Stream.Write(PWideString(FontName)^,numbytes);
+    Stream.Write(FontSize,sizeof(FontSize));
+    Stream.Write(FontStyle,sizeof(FontStyle));
+    Stream.Write(FontColor,sizeof(FontColor));
+    Stream.Write(BackColor,sizeof(BackColor));
+    Stream.Write(Transparent,sizeof(Transparent));
    end;
   rpMetaDraw:
    begin

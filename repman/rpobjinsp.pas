@@ -26,7 +26,7 @@ uses
 
 const
   CONS_LEFTGAP=3;
-  CONS_CONTROLPOS=50;
+  CONS_CONTROLPOS=65;
   CONS_LABELTOPGAP=2;
   CONS_RIGHTBARGAP=25;
 
@@ -88,12 +88,14 @@ var
  control:TControl;
  typename:string;
 begin
+ ReleaseAllControls;
  FCompItem:=Value;
  if Not Assigned(Value) then
  begin
-  ReleaseAllControls;
   exit;
  end;
+ HorzScrollBar.Position:=0;
+ VertScrollBar.Position:=0;
  // Creates the labels and controls
  FCompItem.GetProperties(LNames,LTypes,LValues);
  posy:=0;

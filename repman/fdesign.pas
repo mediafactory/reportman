@@ -35,6 +35,7 @@ type
     PLeft: TPanel;
     LeftRuler: TRpRuler;
     SectionScrollBox: TScrollBox;
+    PSection: TPanel;
   private
     { Private declarations }
     FReport:TRpReport;
@@ -47,7 +48,7 @@ type
     freportstructure:TFRpStructure;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
-    procedure UpdateSelection;
+    procedure UpdateSelection(force:boolean);
     procedure UpdateInterface;
     property Report:TRpReport read FReport write SetReport;
     property ObjInsp:TFObjInsp read FObjInsp write FObjInsp;
@@ -77,7 +78,7 @@ begin
  FReport:=Value;
  if Not Assigned(FReport) then
   exit;
- UpdateSelection;
+ UpdateSelection(false);
 end;
 
 
@@ -91,7 +92,7 @@ begin
  end;
 end;
 
-procedure TFDesignFrame.UpdateSelection;
+procedure TFDesignFrame.UpdateSelection(force:boolean);
 var
  data:Pointer;
  dataobj:TOBject;
@@ -100,7 +101,8 @@ begin
  begin
   if assigned(fobjinsp) then
   begin
-   if freportstructure.FindSelectedObject=FSectionInterface.printitem then
+   if ((freportstructure.FindSelectedObject=FSectionInterface.printitem)
+    and (not force)) then
     exit;
   end;
   FSectionInterface.free;
@@ -117,12 +119,19 @@ begin
   exit;
  dataobj:=TObject(data);
  if (dataobj is TRpSubReport) then
+ begin
+  if assigned(fobjinsp) then
+  begin
+   fobjinsp.CompItem:=nil;
+  end;
   exit;
+ end;
  if (dataobj is TRpSection) then
  begin
   FSectionInterface:=TRpSectionInterface.Create(Self,TRpSection(dataobj));
   FSectionInterface.OnPosChange:=SecPosChange;
-  FSectionInterface.Parent:=SectionScrollBox;
+  FSectionInterface.fobjinsp:=FObjInsp;
+  FSectionInterface.Parent:=PSection;
   FSectionInterface.freportstructure:=freportstructure;
   FSectionInterface.Top:=0;
   FSectionInterface.Left:=0;
@@ -130,6 +139,7 @@ begin
   LeftRuler.Height:=FSectionInterface.Height;
   TopRuler.Visible:=true;
   LeftRuler.Visible:=true;
+  FSectionInterface.CreateChilds;
   if assigned(fobjinsp) then
   begin
    fobjinsp.CompItem:=FSectionInterface;
@@ -141,6 +151,8 @@ procedure TFDesignFrame.SecPosChange(Sender:TObject);
 begin
  TopRuler.Left:=CONS_RULER_LEFT+FSectionInterface.Left;
  LeftRuler.Top:=FSectionInterface.Top;
+ PSection.Height:=FSectionInterface.Height;
+ PSection.Width:=FSectionInterface.Width;
 end;
 
 end.

@@ -1,15 +1,17 @@
 object FRpParams: TFRpParams
   Left = 230
   Top = 157
-  Width = 443
-  Height = 304
+  Width = 448
+  Height = 311
   VertScrollBar.Range = 113
   HorzScrollBar.Range = 402
   ActiveControl = OKBtn
+  BorderStyle = fbsDialog
   Caption = 'Parameter definition'
   Color = clButton
   Position = poScreenCenter
   Scaled = False
+  ShowHint = True
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
@@ -89,6 +91,7 @@ object FRpParams: TFRpParams
     Top = 4
     Width = 81
     Height = 29
+    Hint = 'Add a new parameter'
     Caption = 'Add'
     TabOrder = 3
     OnClick = BAddClick
@@ -110,6 +113,7 @@ object FRpParams: TFRpParams
     Top = 36
     Width = 81
     Height = 29
+    Hint = 'Delete the selected parameter'
     Caption = 'Delete'
     TabOrder = 4
     OnClick = BDeleteClick
@@ -131,6 +135,7 @@ object FRpParams: TFRpParams
     Top = 68
     Width = 81
     Height = 29
+    Hint = 'Rename the selected parameter'
     Caption = 'Rename'
     TabOrder = 5
     OnClick = BRenameClick
@@ -154,6 +159,7 @@ object FRpParams: TFRpParams
       Top = 68
       Width = 349
       Height = 21
+      Hint = 'Description to be show on the end user dialog'
       TabOrder = 1
       Text = 'EDescription'
       OnChange = EDescriptionChange
@@ -170,6 +176,7 @@ object FRpParams: TFRpParams
       Top = 8
       Width = 129
       Height = 21
+      Hint = 'Data type for the parameter'
       Style = csDropDownList
       ItemHeight = 15
       Items.Strings = (
@@ -205,6 +212,7 @@ object FRpParams: TFRpParams
       Top = 40
       Width = 197
       Height = 17
+      Hint = 'Sets if the parameter will be visible to the end user'
       Caption = 'Visible'
       TabOrder = 6
       OnClick = EDescriptionChange
@@ -214,6 +222,7 @@ object FRpParams: TFRpParams
       Top = 40
       Width = 197
       Height = 17
+      Hint = 'Sets this parameter to null'
       Caption = 'Null value'
       TabOrder = 7
       OnClick = EDescriptionChange
@@ -230,6 +239,7 @@ object FRpParams: TFRpParams
       Top = 128
       Width = 161
       Height = 21
+      Hint = 'The parameters will be assigned not the selected datasets'
       Style = csDropDownList
       ItemHeight = 15
       TabOrder = 9

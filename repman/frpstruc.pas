@@ -147,7 +147,7 @@ end;
 
 procedure TFRpStructure.RViewClick(Sender: TObject);
 begin
- TFDesignFrame(designframe).UpdateSelection;
+ TFDesignFrame(designframe).UpdateSelection(false);
 end;
 
 function FindDataInTree(nodes:TTreeNodes;data:TObject):TTreeNode;

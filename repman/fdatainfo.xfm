@@ -10,6 +10,7 @@ object FDatainfoconfig: TFDatainfoconfig
   Color = clButton
   Position = poScreenCenter
   Scaled = False
+  ShowHint = True
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy

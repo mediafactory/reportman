@@ -21,7 +21,10 @@ unit rptypes;
 
 interface
 
-uses Sysutils,Classes;
+uses Sysutils,Classes,rpconsts;
+
+const
+ MAX_LANGUAGES=3;
 
 type
  TRpTwips=integer;
@@ -34,13 +37,16 @@ type
  // How to show preview
  TRpPreviewStyle = (spWide,spNormal,spEntirePage);
 
- // Interface IPrintable
-
- // Interface IPrintDriver
 
 // Compares 2 streams and returns true if they are equal
 function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
 procedure Generatenewname(Component:TComponent);
+
+// Language identifiers
+var
+ rplangids:array [0..MAX_LANGUAGES-1] of string=('EN','ES','CAT');
+ rplangdesc:array [0..MAX_LANGUAGES-1] of string=(SRpEnglish,SRpSpanish,SRpCatalan);
+
 
 implementation
 

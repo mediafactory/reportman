@@ -42,6 +42,8 @@ type
     ColorDialog1: TColorDialog;
     SColor: TShape;
     BBackground: TBitBtn;
+    Label3: TLabel;
+    ComboLanguage: TComboBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -90,9 +92,15 @@ begin
 end;
 
 procedure TFPageSetup.FormCreate(Sender: TObject);
+var
+ i:integer;
 begin
  LMetrics1.Caption:=rpunitlabels[defaultunit];
  LMetrics2.Caption:=LMetrics1.Caption;
+ for i:=0 to MAX_LANGUAGES-1 do
+ begin
+  ComboLanguage.Items.Add(rplangdesc[i]);
+ end;
 end;
 
 procedure TFPageSetup.BOKClick(Sender: TObject);
@@ -125,6 +133,8 @@ begin
    report.PageOrientation:=rpOrientationLandscape;
  end;
  report.PageBackColor:=SColor.Brush.Color;
+ // Language
+ report.Language:=ComboLanguage.ItemIndex;
 end;
 
 procedure TFPageSetup.ReadOptions;
@@ -157,6 +167,10 @@ begin
   RCustomOrientation.Itemindex:=1;
  // Color
  SColor.Brush.Color:=TColor(report.PageBackColor);
+ // Language
+ ComboLanguage.ItemIndex:=0;
+ if report.Language<ComboLanguage.Items.Count then
+  ComboLanguage.ItemIndex:=report.Language;
 end;
 
 procedure TFPageSetup.SColorMouseDown(Sender: TObject;

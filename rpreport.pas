@@ -28,7 +28,7 @@ unit rpreport;
 interface
 
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpconsts,
- rpdatainfo,rpparams;
+ rpdatainfo,rpparams,rplabelitem;
 
 const
  // 1 cms=574
@@ -81,6 +81,7 @@ type
    FGridLines:Boolean;
    FGridWidth:integer;
    FGridHeight:integer;
+   FLanguage:integer;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -129,6 +130,8 @@ type
    property DataInfo:TRpDataInfoList read FDataInfo write SetDataInfo;
    property DatabaseInfo:TRpDatabaseInfoList read FDatabaseInfo write SetDatabaseInfo;
    property Params:TRpParamList read FParams write SetParams;
+   // Language
+   property Language:integer read FLanguage write FLanguage default 0;
  end;
 
  procedure PrintReportFile(filename:string);
@@ -451,5 +454,6 @@ initialization
  RegisterClass(TRpReport);
  RegisterClass(TRpSubReport);
  RegisterClass(TRpCommonComponent);
+ RegisterClass(TRpLabel);
 
 end.

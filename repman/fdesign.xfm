@@ -6,6 +6,8 @@ object FDesignFrame: TFDesignFrame
   VertScrollBar.Range = 20
   HorzScrollBar.Range = 20
   Align = alClient
+  ParentShowHint = False
+  ShowHint = True
   TabOrder = 0
   object PTop: TPanel
     Left = 0
@@ -45,8 +47,18 @@ object FDesignFrame: TFDesignFrame
     Top = 20
     Width = 431
     Height = 284
+    VertScrollBar.Range = 29
+    HorzScrollBar.Range = 29
     Align = alClient
     BorderStyle = bsNone
     TabOrder = 2
+    object PSection: TPanel
+      Left = 0
+      Top = 0
+      Width = 29
+      Height = 29
+      BevelOuter = bvNone
+      TabOrder = 0
+    end
   end
 end

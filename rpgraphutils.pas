@@ -16,8 +16,12 @@ type
   end;
 
 procedure DrawGrid(Canvas:TCanvas;XWidth,XHeight,PixelsWidth,PixelsHeight:integer;Color:TColor;lines:boolean;XOffset,YOffset:integer);
+function twipstopixels(ATwips:integer):integer;
+function pixelstotwips(apixels:integer):integer;
 
 implementation
+
+{$R *.xfm}
 
 procedure DrawGrid(Canvas:TCanvas;XWidth,XHeight,PixelsWidth,PixelsHeight:integer;Color:TColor;lines:boolean;XOffset,YOffset:integer);
 var
@@ -111,6 +115,14 @@ begin
  end;
 end;
 
-{$R *.xfm}
+function twipstopixels(ATwips:integer):integer;
+begin
+ Result:=Round((ATwips/TWIPS_PER_INCHESS)*Screen.PixelsPerInch);
+end;
+
+function pixelstotwips(apixels:integer):integer;
+begin
+ Result:=Round((APixels/Screen.PixelsPerInch)*TWIPS_PER_INCHESS);
+end;
 
 end.

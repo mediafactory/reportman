@@ -6,10 +6,12 @@ object FGroup: TFGroup
   VertScrollBar.Range = 301
   HorzScrollBar.Range = 317
   ActiveControl = EGroupName
+  BorderStyle = fbsDialog
   Caption = 'Add group'
   Color = clButton
   Position = poScreenCenter
   Scaled = False
+  ShowHint = True
   OnCreate = FormCreate
   PixelsPerInch = 96
   object OKBtn: TButton

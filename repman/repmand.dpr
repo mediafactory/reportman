@@ -30,6 +30,8 @@ uses
   fsampledata in 'fsampledata.pas' {FShowSampledata},
   rpobinsint in 'rpobinsint.pas',
   rpobjinsp in 'rpobjinsp.pas' {FObjInsp: TFrame},
+  frpgrid in 'frpgrid.pas' {FRpGridOptions},
+  flabelint in 'flabelint.pas' {FLabelInterface},
 {$IFDEF MSWINDOWS}
   ShLwApi in 'ShLwApi.pas',
   ShFolder in 'ShFolder.pas',
@@ -59,7 +61,8 @@ uses
   fsectionint in 'fsectionint.pas' {FSectionProps},
   rpfparams in '..\rpfparams.pas' {FRpParams},
   rpdbxconfig in '..\rpdbxconfig.pas' {FDBXConfig},
-  rpgraphutils in '..\rpgraphutils.pas' {FRpGraphProgres};
+  rpgraphutils in '..\rpgraphutils.pas' {FRpGraphProgres},
+  rplabelitem in '..\rplabelitem.pas';
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -88,6 +91,7 @@ uses
   rpfparams in '../rpfparams.pas' {FRpParams},
   rpdbxconfig in '../rpdbxconfig.pas' {FDBXConfig},
   rpgraphutils in '../rpgraphutils.pas' {FRpGraphProgres};
+  rplabelitem in '../rplabelitem.pas';
 {$ENDIF}
 
 

@@ -4,11 +4,11 @@ object FShowSampledata: TFShowSampledata
   Width = 470
   Height = 357
   VertScrollBar.Range = 37
-  BorderStyle = fbsSingle
   Caption = 'Data'
   Color = clButton
   Position = poScreenCenter
   Scaled = False
+  ShowHint = True
   PixelsPerInch = 96
   object ToolBar1: TToolBar
     Left = 0
