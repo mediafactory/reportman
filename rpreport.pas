@@ -512,6 +512,10 @@ begin
  begin
   FDataInfo.Items[i].Disconnect;
  end;
+ for i:=0 to FDatabaseInfo.Count-1 do
+ begin
+  FDatabaseInfo.Items[i].DisConnect;
+ end;
 end;
 
 procedure TRpReport.PrintAll;

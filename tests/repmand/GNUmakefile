@@ -7,6 +7,10 @@ install:
 	cp $(kylix_bin)/libsqlmy.so.1 .
 	cp $(kylix_bin)/libsqlmy23.so.1 .
 	cp ../../repman/repmand .
+	cp ../../repman/dbxdrivers .
+	cp ../../repman/dbxconnections .
 clean:
 	-rm -f *.so *.so.1 *.so.2
 	-rm -f repmand
+	-rm -f dbxconnections dbxdrivers
+

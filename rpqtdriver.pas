@@ -22,7 +22,7 @@ unit rpqtdriver;
 interface
 
 uses classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
- rpmunits,QPrinters,QDialogs;
+ rpmunits,QPrinters,QDialogs,rpgraphutils;
 
 
 type
@@ -156,7 +156,7 @@ begin
     y:=round(obj.Top*dpiy/TWIPS_PER_INCHESS);
     Canvas.Font.Name:=Obj.FontName;
     Canvas.Font.Color:=Obj.FontColor;
-    Canvas.TextOut(x,y,obj.Text)
+    Canvas.TextOut(x,y,obj.Text);
    end;
   rpMetaDraw:
    begin
@@ -221,13 +221,11 @@ begin
     PrintObject(apage.Objects[j],dpix,dpiy);
    end;
   end;
- finally
   Printer.EndDoc;
+ except
+  printer.Abort;
+  raise;
  end;
-// except
-//  printer.Abort;
-//  raise;
-// end;
 end;
 
 end.

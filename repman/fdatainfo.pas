@@ -85,6 +85,7 @@ procedure ShowDataConfig(report:TRpReport);
 var
  dia:TFDataInfoConfig;
 begin
+ CreateConAdmin;
  dia:=TFDataInfoConfig.Create(Application);
  try
   dia.report:=report;

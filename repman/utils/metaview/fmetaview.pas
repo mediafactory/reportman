@@ -1,14 +1,14 @@
-unit rppreview;
+unit fmetaview;
 
 interface
 
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  QStdCtrls,rpreport,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,
+  QStdCtrls,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,
   QActnList, QImgList,QPrinters;
 
 type
-  TFRpPreview = class(TForm)
+  TFMeta = class(TForm)
     BToolBar: TToolBar;
     ImageContainer: TScrollBox;
     AImage: TImage;
@@ -29,6 +29,9 @@ type
     ASave: TAction;
     SaveDialog1: TSaveDialog;
     ToolButton7: TToolButton;
+    OpenDialog1: TOpenDialog;
+    AOpen: TAction;
+    ToolButton8: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -39,61 +42,36 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure APrintExecute(Sender: TObject);
     procedure ASaveExecute(Sender: TObject);
+    procedure AOpenExecute(Sender: TObject);
   private
     { Private declarations }
-    procedure AppIdle(Sender:TObject;var done:boolean);
   public
     { Public declarations }
     pagenum:integer;
-    report:TRpReport;
+    metafile:TRpMetafileReport;
     qtdriver:TRpQtDriver;
     aqtdriver:IRpPrintDriver;
     bitmap:TBitmap;
     procedure PrintPage;
   end;
 
-
-procedure ShowPreview(report:TRpReport);
+var
+ FMeta:TFMeta;
 
 implementation
 
 {$R *.xfm}
 
-procedure ShowPreview(report:TRpReport);
-var
- dia:TFRpPreview;
-begin
- dia:=TFRpPreview.Create(Application);
- try
-  dia.report:=report;
-  Application.OnIdle:=dia.AppIdle;
-  dia.ShowModal;
- finally
-  dia.Free;
- end;
-end;
 
-procedure TFRpPreview.PrintPage;
+procedure TFMeta.PrintPage;
 begin
  EPageNum.Text:='0';
- if report.Metafile.PageCount>=pagenum then
+ if pagenum>Metafile.PageCount then
  begin
-  report.Metafile.CurrentPage:=pagenum-1;
- end
- else
- begin
-  while report.Metafile.PageCount<pagenum do
-  begin
-   if report.LastPage then
-    break;
-   if Not report.PrintNextPage then
-    break;
-  end;
-  if report.Metafile.PageCount<pagenum then
-   pagenum:=report.Metafile.PageCount;
-  report.Metafile.CurrentPage:=pagenum-1;
+  pagenum:=Metafile.PageCount;
  end;
- report.metafile.DrawPage(qtdriver);
+ Metafile.CurrentPage:=pagenum-1;
+ metafile.DrawPage(qtdriver);
  if Assigned(qtdriver.bitmap) then
  begin
   AImage.Width:=qtdriver.bitmap.Width;
@@ -101,19 +79,11 @@ begin
   AImage.Picture.Bitmap.Assign(qtdriver.bitmap);
   AImage.Invalidate;
  end;
+ pagenum:=Metafile.CurrentPage+1;
  EPageNum.Text:=IntToStr(PageNum);
 end;
 
-procedure TFRpPreview.AppIdle(Sender:TObject;var done:boolean);
-begin
- Application.OnIdle:=nil;
- done:=false;
- report.BeginPrint;
- pagenum:=1;
- PrintPage;
-end;
-
-procedure TFRpPreview.FormCreate(Sender: TObject);
+procedure TFMeta.FormCreate(Sender: TObject);
 begin
  qtdriver:=TRpQtDriver.Create;
  aqtdriver:=qtdriver;
@@ -121,27 +91,27 @@ begin
  bitmap:=TBitmap.Create;
  bitmap.PixelFormat:=pf32bit;
  AImage.Picture.Bitmap:=bitmap;
+ metafile:=TrpMetafileReport.Create(Self);
 end;
 
-procedure TFRpPreview.FormDestroy(Sender: TObject);
+procedure TFMeta.FormDestroy(Sender: TObject);
 begin
- report.EndPrint;
  bitmap.free;
 end;
 
-procedure TFRpPreview.AFirstExecute(Sender: TObject);
+procedure TFMeta.AFirstExecute(Sender: TObject);
 begin
  pagenum:=1;
  PrintPage;
 end;
 
-procedure TFRpPreview.ANextExecute(Sender: TObject);
+procedure TFMeta.ANextExecute(Sender: TObject);
 begin
  inc(pagenum);
  PrintPage;
 end;
 
-procedure TFRpPreview.APreviousExecute(Sender: TObject);
+procedure TFMeta.APreviousExecute(Sender: TObject);
 begin
  dec(pagenum);
  if pagenum<1 then
@@ -149,13 +119,13 @@ begin
  PrintPage;
 end;
 
-procedure TFRpPreview.ALastExecute(Sender: TObject);
+procedure TFMeta.ALastExecute(Sender: TObject);
 begin
  pagenum:=MaxInt;
  PrintPage;
 end;
 
-procedure TFRpPreview.EPageNumKeyPress(Sender: TObject; var Key: Char);
+procedure TFMeta.EPageNumKeyPress(Sender: TObject; var Key: Char);
 begin
  if Key=chr(13) then
  begin
@@ -164,36 +134,39 @@ begin
  end;
 end;
 
-procedure TFRpPreview.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TFMeta.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
  qtdriver:=nil;
 end;
 
-procedure TFRpPreview.APrintExecute(Sender: TObject);
+procedure TFMeta.APrintExecute(Sender: TObject);
 begin
- while not report.LastPage do
- begin
-  report.PrintNextPage;
- end;
  // Prints the report
- Printer.ExecuteSetup;
- qtdriver.toprinter:=true;
- try
-  report.Metafile.DrawAll(QtDriver);
- finally
-  qtdriver.toprinter:=false;
- end;
+ PrintMetafile(metafile,opendialog1.FileName);
 end;
 
-procedure TFRpPreview.ASaveExecute(Sender: TObject);
+procedure TFMeta.ASaveExecute(Sender: TObject);
 begin
  // Saves the metafile
  if SaveDialog1.Execute then
  begin
-  if Not report.LastPage then
-   while Not report.PrintNextPage do;
+  Metafile.SaveToFile(SaveDialog1.Filename);
+ end;
+end;
 
-  report.Metafile.SaveToFile(SaveDialog1.Filename);
+procedure TFMeta.AOpenExecute(Sender: TObject);
+begin
+ if OpenDialog1.Execute then
+ begin
+  metafile.LoadFromFile(OpenDialog1.Filename);
+  ASave.Enabled:=True;
+  APrint.Enabled:=True;
+  AFirst.Enabled:=True;
+  APrevious.Enabled:=True;
+  ANext.Enabled:=True;
+  ALast.Enabled:=True;
+  pagenum:=1;
+  PrintPage;
  end;
 end;
 

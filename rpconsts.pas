@@ -27,6 +27,8 @@ resourcestring
   SRpEnglish='English';
   SRpSpanish='Spanish';
   SRpCatalan='Catalan';
+  SRpDirCantBeCreated='Directory can''t be created: ';
+  SRpConfigFileNotExists='Configuration file missing: ';
 
   SRpInvalidClipboardFormat='Invalid clipboard format';
   SRpErrorReadingReport='Error reading report: ';

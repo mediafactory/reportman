@@ -70,7 +70,7 @@ type
 
  TRpMetaObjectType=(rpMetaText,rpMetaDraw,rpMetaImage);
 
- TRpMetaSeparator=(rpFHeader,rpFPage,rpFObject);
+ TRpMetaSeparator=(rpFHeader,rpFPage,rpEPage,rpFObject,rpEObject);
 
  TRpMetafileObject=class(TObject)
   public
@@ -433,6 +433,8 @@ begin
  begin
   if (bytesread<>sizeof(separator)) then
    Raise ERpBadFileFormat.Create(SrpMtObjectSeparatorExpected,Stream.Position);
+  if (separator=integer(rpEObject)) then
+   break;
   if (separator<>integer(rpFObject)) then
    Raise ERpBadFileFormat.Create(SrpMtObjectSeparatorExpected,Stream.Position);
   // Creates a new object
@@ -450,13 +452,17 @@ var
  separator:integer;
 begin
  // Objects
- for i:=0 to FObjects.count-1 do
+ i:=0;
+ while i<FObjects.count do
  begin
   separator:=integer(rpFObject);
   Stream.Write(separator,sizeof(separator));
 
   TRpMetafileObject(FObjects.items[i]).SaveToStream(Stream);
+  inc(i);
  end;
+ separator:=integer(rpEObject);
+ Stream.Write(separator,sizeof(separator));
 end;
 
 procedure TRpMetafileObject.LoadFromStream(stream:TStream);

@@ -20,6 +20,10 @@ clean:
 	-rm -Rf *.dcp repman/*.dcp
 	-rm -Rf *.ow repman/*.ow
 	-rm -Rf *.rst repman/*.rst
+	-rm -Rf repman/utils/metaview/*.dcu
+	-rm -Rf repman/utils/metaview/*.dpu
+	-rm -Rf repman/utils/metaview/*.~*
+
 
 	-rm tests/eval/project1
 	-rm tests/metafiles/metafile
@@ -32,6 +36,8 @@ clean:
 	-rm repman/utils/printrep/printrep
 	-rm tests/repmand/*.so tests/repmand/*.so.1 tests/repmand/*.so.2
 	-rm tests/repmand/repmand
+	-rm tests/repmand/dbxdrivers
+	-rm tests/repmand/dbxconnections
 real_clean: clean
 	-rm -Rf  *.bpl
 	-rm -Rf  *.so

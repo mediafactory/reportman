@@ -22,10 +22,27 @@ unit rpdatainfo;
 
 interface
 
-uses Classes,SysUtils,SqlExpr,rpconsts,DBConnAdmin, DBXpress,
- DB,rpparams;
+uses Classes,SysUtils,SqlExpr,rpconsts, DBXpress,
+ DB,rpparams,Inifiles,IdGlobal,SqlConst;
 
+{$IFDEF LINUX}
+const
+ DBXDRIVERFILENAME='dbxdrivers';
+ DBXCONFIGFILENAME='dbxconnections';
+{$ENDIF}
 type
+ TRpConnAdmin=class(TObject)
+  public
+   driverfilename:string;
+   configfilename:string;
+   config:TMemInifile;
+   drivers:TMemInifile;
+   constructor Create;
+   destructor destroy;override;
+   procedure LoadConfig;
+   procedure GetConnectionParams(conname:string;params:TStrings);
+   procedure GetDriverLibNames(const drivername:string;var LibraryName,VendorLib:string);
+ end;
 
  TRpDatabaseInfoItem=class(TCollectionItem)
   private
@@ -108,12 +125,12 @@ type
    constructor Create(rep:TComponent);
   end;
 
+procedure CreateConAdmin;
 
 implementation
 
 var
- ConAdmin:IConnectionAdmin;
- ConAdminObj:TConnectionAdmin;
+ ConAdmin:TRpConnAdmin;
 
 
 procedure TRpDataInfoItem.SetDatabaseAlias(Value:string);
@@ -317,9 +334,7 @@ end;
 
 procedure CreateConAdmin;
 begin
- ConAdmin:=GetConnectionAdmin;
- ConAdminObj:=TConnectionAdmin.Create;
- ConAdmin:=ConAdminObj;
+ ConAdmin:=TRpConnAdmin.Create;
 end;
 
 procedure TRpDatabaseinfoitem.Connect;
@@ -341,14 +356,14 @@ begin
  // Load Connection parameters
  if (FLoadParams) then
  begin
-  if Not Assigned(ConAdminObj) then
+  if Not Assigned(ConAdmin) then
    CreateConAdmin;
   ConAdmin.GetConnectionParams(conname,FSQLConnection.params);
  end;
  // Load vendor lib, library name...
  if (FLoadDriverParams) then
  begin
-  if Not Assigned(ConAdminObj) then
+  if Not Assigned(ConAdmin) then
    CreateConAdmin;
   drivername:=FSQLCOnnection.DriverName;
   if Length(drivername)<1 then
@@ -357,7 +372,7 @@ begin
    drivername:=FSQLConnection.params.Values['Drivername'];
   if Length(drivername)<1 then
    Raise Exception.Create(SRpNoDriverName+conname);
-  funcname:=ConAdminObj.DriverConfig.ReadString(drivername,'GetDriverFunc','');
+  funcname:=ConAdmin.drivers.ReadString(drivername,'GetDriverFunc','');
   ConAdmin.GetDriverLibNames(drivername,LibraryName,VendorLib);
   // Assigns all
   FSQLConnection.DriverName:=drivername;
@@ -367,7 +382,7 @@ begin
 
  end;
 
- FSQLConnection.Connected:=true;
+// FSQLConnection.Connected:=true;
 end;
 
 procedure TRpDatabaseinfoitem.DisConnect;
@@ -473,10 +488,103 @@ begin
  end;
 end;
 
+constructor TRpConnAdmin.Create;
+begin
+ LoadConfig;
+end;
+
+destructor TRpConnAdmin.Destroy;
+begin
+ if Assigned(config) then
+ begin
+  config.free;
+  config:=nil;
+ end;
+ if Assigned(drivers) then
+ begin
+  drivers.free;
+  drivers:=nil;
+ end;
+ inherited Destroy;
+end;
+
+procedure TRpConnAdmin.LoadConfig;
+var
+ configdir:string;
+begin
+ if Assigned(config) then
+ begin
+  config.free;
+  config:=nil;
+ end;
+ if Assigned(drivers) then
+ begin
+  drivers.free;
+  drivers:=nil;
+ end;
+
+ // Looks for ./borland in Linux registry in Windows
+{$IFDEF LINUX}
+ configdir:=GetEnvironmentVariable('HOME')+'/.borland';
+ if Not DirectoryExists(configdir) then
+  if Not CreateDir(configdir) then
+   Raise Exception.Create(SRpDirCantBeCreated+configdir);
+ driverfilename:=configdir+'/'+DBXDRIVERFILENAME;
+ configfilename:=configdir+'/'+DBXCONFIGFILENAME;
+{$ENDIF}
+ if FileExists(driverfilename) then
+ begin
+  drivers:=TMemInifile.Create(driverfilename);
+ end
+ else
+ begin
+  // Check if exists in the current dir
+  if FileExists(DBXDRIVERFILENAME) then
+  begin
+   drivers:=TMemIniFile.Create(DBXDRIVERFILENAME);
+   CopyFileTo(DBXDRIVERFILENAME,driverfilename);
+  end
+  else
+   Raise Exception.Create(SRpConfigFileNotExists+DBXDRIVERFILENAME);
+ end;
+ if FileExists(configfilename) then
+ begin
+  config:=TMemInifile.Create(configfilename);
+ end
+ else
+ begin
+  // Check if exists in the current dir
+  if FileExists(DBXCONFIGFILENAME) then
+  begin
+   config:=TMemInifile.Create(DBXCONFIGFILENAME);
+   CopyFileTo(DBXCONFIGFILENAME,configfilename);
+  end
+  else
+   Raise Exception.Create(SRpConfigFileNotExists+DBXCONFIGFILENAME);
+ end;
+end;
+
+procedure TRpConnAdmin.GetConnectionParams(conname:string;params:TStrings);
+begin
+ config.ReadSectionValues(conname,params);
+end;
+
+procedure TRpConnAdmin.GetDriverLibNames(const drivername:string;var LibraryName,VendorLib:string);
+begin
+ LibraryName:=drivers.ReadString(DriverName,DLLLIB_KEY,'');
+ VendorLib:=drivers.ReadString(DriverName,VENDORLIB_KEY,'');
+end;
+
 initialization
 
-ConAdminObj:=nil;
+ConAdmin:=nil;
 
+finalization
 
+if Assigned(ConAdmin) then
+begin
+ ConAdmin.free;
+ ConAdmin:=nil;
+end;
 
 end.
