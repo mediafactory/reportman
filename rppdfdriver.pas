@@ -74,6 +74,9 @@ function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
 function PrintReportPDFStream(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
      Stream:TStream;compressed:boolean;collate:boolean):Boolean;
+function PrintReportMetafileStream(report:TRpReport;
+ Caption:string;progress:boolean;allpages:boolean;frompage,topage,copies:integer;
+ Stream:TStream;compressed:boolean;collate:boolean):Boolean;
 
 
 
@@ -548,5 +551,39 @@ begin
  end;
  Result:=True;
 end;
+
+function PrintReportMetafileStream(report:TRpReport;
+ Caption:string;progress:boolean;allpages:boolean;frompage,topage,copies:integer;
+ Stream:TStream;compressed:boolean;collate:boolean):Boolean;
+var
+ pdfdriver:TRpPDFDriver;
+ apdfdriver:IRpPrintDriver;
+ oldprogres:TRpProgressEvent;
+ astream:TMemoryStream;
+begin
+ pdfdriver:=TRpPDFDriver.Create;
+ pdfdriver.compressed:=compressed;
+ astream:=TMemoryStream.Create;
+ try
+  pdfdriver.DestStream:=aStream;
+  apdfdriver:=pdfdriver;
+  // If report progress must print progress
+  oldprogres:=report.OnProgress;
+  try
+   if progress then
+    report.OnProgress:=pdfdriver.RepProgress;
+   report.PrintAll(apdfdriver);
+
+   report.Metafile.SaveToStream(Stream);
+   Stream.Seek(0,soFromBeginning);
+  finally
+   report.OnProgress:=oldprogres;
+  end;
+  Result:=True;
+ finally
+  astream.free;
+ end;
+end;
+
 
 end.

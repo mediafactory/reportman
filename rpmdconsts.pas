@@ -133,6 +133,7 @@ var
   SRpPrintPDFRep6:WideString='         -to     n Prints report to page pnum';
   SRpPrintPDFRep7:WideString='         -copies n Prints pnum copies';
   SRpPrintPDFRep8:WideString='         -u        Generate not compressed pdf';
+  SRpPrintPDFRep9:WideString='         -m        Generate Report Metafile Stream format';
   SrpSubReport:WideString='SubReport';
   SRpRepman:WideString='Report manager designer';
   SRpError:WideString='Error';
@@ -1193,6 +1194,7 @@ begin
  TranslateVar(928,SRpSPOnlyData);
  TranslateVar(929,SRpSTwoPassReportNeeded);
  TranslateVar(931,SRpNewDataInfo);
+ TranslateVar(932,SRpPrintPDFRep9);
 end;
 
 {$IFDEF LINUX}

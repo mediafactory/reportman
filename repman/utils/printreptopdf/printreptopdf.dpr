@@ -22,7 +22,7 @@ program printreptopdf;
 {$APPTYPE CONSOLE}
 
 uses
-  SysUtils,
+  SysUtils,Classes,
 {$IFDEF MSWINDOWS}
   midaslib,
   rpreport in '..\..\..\rpreport.pas',
@@ -56,6 +56,8 @@ var
  copies,acopies:integer;
  compress:boolean;
  collate:boolean;
+ doprintmetafile:boolean;
+ afstream:TFileStream;
 
 procedure PrintHelp;
 begin
@@ -67,10 +69,12 @@ begin
  Writeln(SRpPrintPDFRep6);
  Writeln(SRpPrintPDFRep7);
  Writeln(SRpPrintPDFRep8);
+ Writeln(SRpPrintPDFRep9);
  Writeln(SRpPrintRep8);
 end;
 
 begin
+  doprintmetafile:=false;
   { TODO -oUser -cConsole Main : Insert code here }
   try
    if ParamCount<1 then
@@ -126,6 +130,11 @@ begin
       compress:=false;
      end
      else
+     if ParamStr(indexparam)='-m' then
+     begin
+      doprintmetafile:=true;
+     end
+     else
      if ParamStr(indexparam)='-collate' then
      begin
       collate:=true;
@@ -162,9 +171,22 @@ begin
       copies:=report.Copies
      else
       copies:=acopies;
-     PrintReportPDF(report,filename,showprogress,
-       allpages,frompage,topage,copies,
-       PDFfilename,compress,collate);
+     if doprintmetafile then
+     begin
+      afstream:=TFileStream.Create(filename,fmCreate);
+      try
+       PrintReportMetafileStream(report,'',showprogress,allpages,frompage,topage,
+        copies,afstream,compress,collate);
+      finally
+       afstream.free;
+      end;
+     end
+     else
+     begin
+      PrintReportPDF(report,filename,showprogress,
+        allpages,frompage,topage,copies,
+         PDFfilename,compress,collate);
+     end;
     finally
      report.free;
     end;

@@ -1,3 +1,5 @@
+{TODO -oToni -cDesigner : Add Categories to the object inspector}
+{TODO -oToni -cEngine : Add Between function to evaluator}
 {TODO 2 -oToni -cDesigner : Rename components in design time}
 {TODO 2 -oToni -cEngine :
 Add more parameters features, expresions before open dataset,

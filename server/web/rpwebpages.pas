@@ -613,9 +613,11 @@ var
  aliasname:string;
  astream:TMemoryStream;
  paramname,paramvalue:string;
+ dometafile:boolean;
  i,index:integer;
  paramisnull:boolean;
 begin
+ dometafile:=false;
  reportname:='';
  try
   aliasname:=Request.QueryFields.Values['aliasname'];
@@ -650,15 +652,29 @@ begin
        pdfreport.Params.ParamByName(paramname).AsString:=paramvalue;
       end;
      end;
+     if Uppercase(Request.QueryFields.Names[i])='METAFILE' then
+      dometafile:=Request.QueryFields.Values['METAFILE']='1';
     end;
     astream:=TMemoryStream.Create;
     astream.Clear;
-    rppdfdriver.PrintReportPDFStream(pdfreport,'',false,true,1,9999,1,
-     astream,true,false);
-    Response.Content:='Executed, size:'+IntToStr(astream.size);
-    Response.ContentType := 'application/pdf';
-    Response.ContentStream:=astream;
-    WriteLog(reportname+' Executed ');
+    if dometafile then
+    begin
+     rppdfdriver.PrintReportMetafileStream(pdfreport,'',false,true,1,9999,1,
+      astream,true,false);
+     Response.Content:='Executed, size:'+IntToStr(astream.size);
+     Response.ContentType := 'application/rpmf';
+     Response.ContentStream:=astream;
+     WriteLog(reportname+' Executed Metafile');
+    end
+    else
+    begin
+     rppdfdriver.PrintReportPDFStream(pdfreport,'',false,true,1,9999,1,
+      astream,true,false);
+     Response.Content:='Executed, size:'+IntToStr(astream.size);
+     Response.ContentType := 'application/pdf';
+     Response.ContentStream:=astream;
+     WriteLog(reportname+' Executed PDF');
+    end;
    finally
     pdfreport.Free;
    end;
