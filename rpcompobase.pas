@@ -23,12 +23,13 @@ interface
 {$I rpconf.inc}
 
 uses Classes,Sysutils,rpreport,rpmdconsts,
- rpalias,rpsubreport,rpsection,rpprintitem;
+ rpalias,rpsubreport,rpsection,rpprintitem,rptypes;
 
 type
  TCBaseReport=class(TComponent)
   private
    FFilename:TFilename;
+   FConnectionName:String;
    FReport:TRpReport;
    FPreview:Boolean;
    FShowProgress:Boolean;
@@ -37,12 +38,16 @@ type
    FShowPrintDialog:boolean;
    FLanguage:integer;
    FOnBeforePrint:TNotifyEvent;
+   FReportName:WideString;
+   procedure ReadReportName(Reader:TReader);
+   procedure WriteReportName(Writer:TWriter);
    procedure InternalSetBeforePrint;
    function GetReport:TRpReport;
    procedure SetFileName(Value:TFilename);
    procedure SetOnBeforePrint(NewValue:TNotifyEvent);
   protected
    procedure Notification(AComponent: TComponent; Operation: TOperation);override;
+   procedure DefineProperties(Filer:TFiler);override;
   public
    function Execute:boolean;virtual;
    procedure PrinterSetup;virtual;abstract;
@@ -65,6 +70,8 @@ type
     write FShowPrintDialog default true;
    property AliasList:TRpAlias read FAliasList write FAliasList;
    property Language:integer read FLanguage write FLanguage default -1;
+   property ConnectionName:String read FConnectionName write FConnectionName;
+   property ReportName:WideString read FReportName write FReportName;
   published
    property OnBeforePrint:TNotifyEvent read FOnBeforePrint
     write SetOnBeforePrint;
@@ -213,6 +220,23 @@ begin
    end;
   end;
  end;
+end;
+
+procedure TCBaseReport.DefineProperties(Filer:TFiler);
+begin
+ inherited;
+
+ Filer.DefineProperty('ReportName',ReadReportName,WriteReportName,True);
+end;
+
+procedure TCBaseReport.ReadReportName(Reader:TReader);
+begin
+ FReportName:=ReadWideString(Reader);
+end;
+
+procedure TCBaseReport.WriteReportName(Writer:TWriter);
+begin
+ WriteWideString(Writer, FReportName);
 end;
 
 

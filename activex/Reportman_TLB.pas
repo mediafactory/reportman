@@ -6,7 +6,7 @@ unit Reportman_TLB;
 // The types declared in this file were generated from data read from a       
 // Type Library. If this type library is explicitly or indirectly (via        
 // another type library referring to this type library) re-imported, or the   
-// 'Refresh' command of the Type Library Editor activated while editing the   
+// 'Refresh' command of the Type Library Editor activated while editing the
 // Type Library, the contents of this file will be regenerated and all        
 // manual modifications will be lost.                                         
 // ************************************************************************ //
@@ -18,18 +18,28 @@ unit Reportman_TLB;
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
 // LIBID: {D4D26F6B-6564-44F4-A913-03C91CE37740}
 // LCID: 0
-// Helpfile: 
+// Helpfile:
 // HelpString: Report Manager ActiveX Library
-// DepndLst: 
+// DepndLst:
 //   (1) v2.0 stdole, (C:\WINNT\System32\stdole2.tlb)
 // ************************************************************************ //
-{$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
+
+{$I rpconf.inc}
+{$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers.
+
+{$IFDEF USEVARIANTS}
 {$WARN SYMBOL_PLATFORM OFF}
-{$WRITEABLECONST ON}
 {$VARPROPSETTER ON}
+{$ENDIF}
+
+{$WRITEABLECONST ON}
 interface
 
-uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL, Variants;
+uses Windows, ActiveX, Classes, Graphics, OleCtrls,
+{$IFDEF USEVARIANTS}
+ Variants,
+{$ENDIF}
+ StdVCL;
   
 
 // *********************************************************************//

@@ -29,40 +29,11 @@ var
  lasthandle:integer;
  rplasterror:String;
 
-function rp_open(filename:PChar):integer;
-{$IFDEF MSWINDOWS}
-stdcall;
-{$ENDIF}
-{$IFDEF LINUX}
-cdecl;
-{$ENDIF}
-function rp_execute(hreport:integer;outputfilename:PChar;metafile,compressed:integer):integer;
-{$IFDEF MSWINDOWS}
-stdcall;
-{$ENDIF}
-{$IFDEF LINUX}
-cdecl;
-{$ENDIF}
-{$IFDEF MSWINDOWS}
-stdcall;
-{$ENDIF}
-{$IFDEF LINUX}
-cdecl;
-{$ENDIF}
-function rp_close(hreport:integer):integer;
-{$IFDEF MSWINDOWS}
-stdcall;
-{$ENDIF}
-{$IFDEF LINUX}
-cdecl;
-{$ENDIF}
-function rp_lasterror:PChar;
-{$IFDEF MSWINDOWS}
-stdcall;
-{$ENDIF}
-{$IFDEF LINUX}
-cdecl;
-{$ENDIF}
+function rp_open(filename:PChar):integer;stdcall;
+function rp_execute(hreport:integer;outputfilename:PChar;metafile,
+ compressed:integer):integer;stdcall;
+function rp_close(hreport:integer):integer;stdcall;
+function rp_lasterror:PChar;stdcall;
 
 function FindReportIndex(hreport:integer):integer;
 function FindReport(hreport:integer):TRpReport;

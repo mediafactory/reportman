@@ -5,7 +5,7 @@ int main(void)
 {
  int hreport;
 
- char reportmanfile[]="/home/toni/cvsroot/reportman/repman/repsamples/sample4.rep";
+ char reportmanfile[]="c:\\prog\\toni\\reportman\\repman\\repsamples\\sample2.rep";
  printf("Test for report manager\n");
  printf("Will load :");
  printf(reportmanfile);
@@ -15,18 +15,18 @@ int main(void)
  if (hreport==0)
  {	 
    printf("Error loading: ");
-//   printf(rp_lasterror());
+   printf(rp_lasterror());
    printf("\n");
  }
  else
  {
-//  printf("%d \n",hreport);
-//  if (0==rp_execute(hreport,"pp.pdf",0,0))
-//  {
-//   printf(rp_lasterror());
-//   printf("\n");
-//  }
-//  rp_close(hreport);
+  printf("%d \n",hreport);
+  if (0==rp_preview(hreport,"Hello"))
+  {
+   printf(rp_lasterror());
+   printf("\n");
+  }
+  rp_close(hreport);
  }
  printf("\n");
 }

@@ -4,7 +4,7 @@ object FRpMainFVCL: TFRpMainFVCL
   Width = 541
   Height = 451
   Caption = 'Report Manager Designer'
-  Color = clBtnFace
+  Color = clAppWorkSpace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -41,8 +41,10 @@ object FRpMainFVCL: TFRpMainFVCL
     ButtonHeight = 26
     ButtonWidth = 26
     Caption = 'ToolBar1'
+    Color = clBtnFace
     Flat = True
     Images = iconlist
+    ParentColor = False
     TabOrder = 1
     object ToolButton1: TToolButton
       Left = 0

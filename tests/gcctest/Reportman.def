@@ -1,0 +1,8 @@
+EXPORTS
+rp_preview
+rp_print
+rp_lasterror
+rp_execute
+rp_close
+rp_open
+

@@ -107,6 +107,7 @@ type
 {$ENDIF}
    FConfigFile:string;
    FLoadParams:boolean;
+   FReportTable,FReportGroupsTable,FReportSearchField,FReportField:String;
    FLoadDriverParams:boolean;
    FLoginPrompt:boolean;
    FADOConnectionString:widestring;
@@ -136,6 +137,10 @@ type
    procedure SetADOConnection(Value:TADOConnection);
    function GetADOConnection:TADOConnection;
 {$ENDIF}
+   procedure ReadAdoConnectionString(Reader:TReader);
+   procedure WriteAdoConnectionString(Writer:TWriter);
+  protected
+    procedure DefineProperties(Filer:TFiler);override;
   public
    procedure Assign(Source:TPersistent);override;
    destructor Destroy;override;
@@ -156,6 +161,7 @@ type
    property ADOConnection:TADOConnection read GetADOConnection write SetADOConnection;
 {$ENDIF}
    property MyBasePath:String read FMyBasePath;
+   property ADOConnectionString:widestring read FADOConnectionString write FADOConnectionString;
   published
    property Alias:string read FAlias write SetAlias;
    property ConfigFile:string read FConfigFile write SetConfigFile;
@@ -163,7 +169,10 @@ type
    property LoadDriverParams:boolean read FLoadDriverParams write SetLoadDriverParams;
    property LoginPrompt:boolean read FLoginPrompt write SetLoginPrompt;
    property Driver:TRpDbDriver read FDriver write FDriver default rpdatadbexpress;
-   property ADOConnectionString:widestring read FADOConnectionString write FADOConnectionString;
+   property ReportTable:String read FReportTable write FReportTable;
+   property ReportSearchField:String read FReportSearchField write FReportSearchField;
+   property ReportField:String read FReportField write FReportField;
+   property ReportGroupsTable:String read FReportGroupsTable write FReportGroupsTable;
   end;
 
   TRpDatabaseInfoList=class(TCollection)
@@ -180,6 +189,8 @@ type
 {$ENDIF}
    function Add(alias:string):TRpDatabaseInfoItem;
    function IndexOf(Value:string):integer;
+   procedure SaveToFile(ainifile:String);
+   procedure LoadFromFile(ainifile:String);
    property Items[index:integer]:TRpDatabaseInfoItem read GetItem write SetItem;default;
    constructor Create(rep:TComponent);
    destructor Destroy;override;
@@ -616,6 +627,10 @@ begin
   FConfigFile:=TRpDatabaseInfoItem(Source).FConfigFile;
   FDriver:=TRpDatabaseInfoItem(Source).FDriver;
   FADOConnectionString:=TRpDatabaseInfoItem(Source).FADOConnectionString;
+  FReportTable:=TRpDatabaseInfoItem(Source).FReportTable;
+  FReportField:=TRpDatabaseInfoItem(Source).FReportField;
+  FReportSearchField:=TRpDatabaseInfoItem(Source).FReportSearchField;
+  FReportGroupsTable:=TRpDatabaseInfoItem(Source).FReportGroupsTable;
  end
  else
   inherited Assign(Source);
@@ -672,6 +687,10 @@ begin
  FLoadParams:=true;
  FLoadDriverParams:=true;
  FDriver:=rpdatadbexpress;
+ FReportTable:='REPMAN_REPORTS';
+ FReportGroupsTable:='REPMAN_GROUPS';
+ FReportSearchField:='REPORT_NAME';
+ FReportField:='REPORT';
 end;
 
 procedure UpdateConAdmin;
@@ -2394,6 +2413,88 @@ begin
  end;
 end;
 
+procedure TRpDatabaseInfoItem.DefineProperties(Filer:TFiler);
+begin
+ inherited;
+
+ Filer.DefineProperty('ADOConnectionString',ReadAdoConnectionString,WriteAdoConnectionString,True);
+end;
+
+procedure TRpDatabaseInfoItem.ReadAdoConnectionString(Reader:TReader);
+begin
+ FAdoConnectionString:=ReadWideString(Reader);
+end;
+
+procedure TRpDatabaseInfoItem.WriteAdoConnectionString(Writer:TWriter);
+begin
+ WriteWideString(Writer, FAdoConnectionString);
+end;
+
+procedure TRpDatabaseInfoList.SaveToFile(ainifile:String);
+var
+ i:integer;
+ inif:TMemInifile;
+ concount:integer;
+ aitem:TRpDatabaseInfoItem;
+ conname:String;
+begin
+ inif:=TMemInifile.Create(ainifile);
+ try
+  concount:=Count;
+  inif.WriteInteger('REPMAN_CONNECTIONS','COUNT',concount);
+  for i:=0 to concount-1 do
+  begin
+   aitem:=Items[i];
+   conname:='REPMAN_CONNECTION'+IntToStr(i);
+   inif.WriteString(conname,'NAME',aitem.FAlias);
+   inif.WriteString(conname,'ADOSTRING',aitem.ADOConnectionString);
+   inif.WriteBool(conname,'LOADPARAMS',aitem.LoadParams);
+   inif.WriteBool(conname,'LOADDRIVERPARAMS',aitem.LoadDriverParams);
+   inif.WriteBool(conname,'LOGINPROMPT',aitem.LoginPrompt);
+   inif.WriteInteger(conname,'DRIVER',Integer(aitem.Driver));
+   inif.WriteString(conname,'REPORTTABLE',aitem.ReportTable);
+   inif.WriteString(conname,'REPORTFIELD',aitem.ReportField);
+   inif.WriteString(conname,'REPORTSEARCHFIELD',aitem.ReportSearchField);
+   inif.WriteString(conname,'REPORTGROUPSTABLE',aitem.ReportGroupsTable);
+  end;
+  inif.UpdateFile;
+ finally
+  inif.free;
+ end;
+end;
+
+procedure TRpDatabaseInfoList.LoadFromFile(ainifile:String);
+var
+ i:integer;
+ inif:TMemInifile;
+ concount:integer;
+ aitem:TRpDatabaseInfoItem;
+ aname:String;
+ conname:String;
+begin
+ inif:=TMemInifile.Create(ainifile);
+ try
+  Clear;
+  concount:=inif.ReadInteger('REPMAN_CONNECTIONS','COUNT',0);
+  for i:=0 to concount-1 do
+  begin
+   conname:='REPMAN_CONNECTION'+IntToStr(i);
+   aname:=inif.ReadString(conname,'NAME','CONNECTION'+IntToStr(i));
+   aitem:=Add(aname);
+   aitem.ADOConnectionString:=inif.ReadString(conname,'ADOSTRING',aitem.ADOConnectionString);
+   aitem.LoadParams:=inif.ReadBool(conname,'LOADPARAMS',aitem.LoadParams);
+   aitem.LoadDriverParams:=inif.ReadBool(conname,'LOADDRIVERPARAMS',aitem.LoadDriverParams);
+   aitem.LoginPrompt:=inif.ReadBool(conname,'LOGINPROMPT',aitem.LoginPrompt);
+   aitem.Driver:=TRpDbDriver(inif.ReadInteger(conname,'DRIVER',Integer(aitem.Driver)));
+   aitem.ReportTable:=inif.ReadString(conname,'REPORTTABLE',aitem.ReportTable);
+   aitem.ReportField:=inif.ReadString(conname,'REPORTFIELD',aitem.ReportField);
+   aitem.ReportSearchField:=inif.ReadString(conname,'REPORTSEARCHFIELD',aitem.ReportSearchField);
+   aitem.ReportGroupsTable:=inif.ReadString(conname,'REPORTGROUPSTABLE',aitem.ReportGroupsTable);
+  end;
+ finally
+  inif.free;
+ end;
+end;
 
 
 initialization

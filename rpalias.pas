@@ -22,7 +22,7 @@ unit rpalias;
 interface
 
 uses SysUtils,Classes,DB,TypInfo,
-  rptypeval;
+  rptypeval,rpdatainfo;
 type
   // Forward definitions
   TRpAliaslist=class;
@@ -37,7 +37,9 @@ type
    private
     Iden:TIdenField;
     FList:TRpAliaslist;
+    FConnections:TRpDataInfoList;
     procedure SetList(Newlist:TRpAliaslist);
+    procedure SetConnections(Newconn:TRpDataInfoList);
    protected
     procedure Notification(AComponent:TComponent;Operation:TOperation);override;
    public
@@ -48,6 +50,7 @@ type
     function IndexOf(Dataset:TDataSet):integer;
    published
     property List:TRpAliaslist read FList write SetList;
+    property Connections:TRpDataInfoList read FConnections write SetConnections;
    end;
 
 
@@ -208,17 +211,24 @@ begin
  inherited Create(AOWner);
  FList:=TRpAliaslist.Create(Self);
  Iden:=TIdenField.CreateField(Self,'');
+ FConnections:=TRpDataInfoList.Create(Self);
 end;
 
 destructor TRpAlias.Destroy;
 begin
  FList.free;
+ FConnections.free;
  inherited Destroy;
 end;
 
 procedure TRpAlias.SetList(Newlist:TRpAliaslist);
 begin
  FList.Assign(Newlist);
+end;
+
+procedure TRpAlias.SetConnections(Newconn:TRpDataInfoList);
+begin
+ FConnections.Assign(Newconn);
 end;
 
 // Seartching a field in the List

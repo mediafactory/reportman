@@ -24,7 +24,11 @@ unit rpdllutilqt;
 interface
 
 
-uses ShareExcept,SysUtils,Classes,rpreport,rpmdconsts,
+uses
+{$IFDEF LINUX}
+ ShareExcept,
+{$ENDIF}
+ SysUtils,Classes,rpreport,rpmdconsts,
 {$IFDEF MSWINDOWS}
  rpgdidriver,
  rpvpreview,
@@ -38,21 +42,9 @@ uses ShareExcept,SysUtils,Classes,rpreport,rpmdconsts,
 
 
 function rp_print(hreport:integer;Title:PChar;
- showprogress,ShowPrintDialog:integer):integer;
-{$IFDEF MSWINDOWS}
-stdcall;
-{$ENDIF}
-{$IFDEF LINUX}
-cdecl;
-{$ENDIF}
+ showprogress,ShowPrintDialog:integer):integer;stdcall;
 
-function rp_preview(hreport:integer;Title:PChar):integer;
-{$IFDEF MSWINDOWS}
-stdcall;
-{$ENDIF}
-{$IFDEF LINUX}
-cdecl;
-{$ENDIF}
+function rp_preview(hreport:integer;Title:PChar):integer;stdcall;
 
 {$IFDEF LINUX}
 exports
@@ -117,20 +109,16 @@ var
  report:TRpReport;
 begin
  rplibdoinit;
- Writeln('Hello1');
  rplasterror:='';
  Result:=1;
  try
-  Writeln('Hello2');
   report:=FindReport(hreport);
-  Writeln('Hello3');
 {$IFDEF MSWINDOWS}
   ShowPreview(report,Title);
 {$ENDIF}
 {$IFDEF LINUX}
   ShowPreview(report,Title,true);
 {$ENDIF}
-  Writeln('Hello4');
  except
   on E:Exception do
   begin
