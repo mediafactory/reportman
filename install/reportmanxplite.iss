@@ -47,7 +47,7 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: Additi
 Source: ..\repman\repmandxp.exe; DestDir: {app}; Components: designer; Flags: ignoreversion
 Source: ..\repman\repmandxp.exe.manifest; DestDir: {app}; Components: designer; Flags: ignoreversion
 Source: ..\repman\transwin\repmandxp.*; DestDir: {app}; Components: designer; Flags: ignoreversion
-Source: ..\repman\reportmanres.*; DestDir: {sys}; Flags: ignoreversion
+Source: ..\repman\reportmanres.*; DestDir: {app}; Flags: ignoreversion
 Source: ..\repman\transwin\repmandxp.*; DestDir: {app}; Components: designer; Flags: ignoreversion
 Source: license.txt; DestDir: {app}; Flags: ignoreversion
 Source: ..\drivers\win32\upx.exe; DestDir: {sys}; Flags: restartreplace

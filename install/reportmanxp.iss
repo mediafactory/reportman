@@ -55,7 +55,7 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: Additi
 [Files]
 Source: ..\repman\repmandxp.exe; DestDir: {app}; Components: designer; Flags: ignoreversion
 Source: ..\repman\repmandxp.exe.manifest; DestDir: {app}; Components: designer; Flags: ignoreversion
-Source: ..\repman\reportmanres.*; DestDir: {sys}; Flags: restartreplace
+Source: ..\repman\reportmanres.*; DestDir: {app}; Flags: restartreplace
 Source: ..\repman\transwin\repmandxp.*; DestDir: {app}; Components: designer; Flags: ignoreversion
 Source: ..\repman\transwin\metaviewxp.*; DestDir: {app}; Components: clienttcp; Flags: ignoreversion
 Source: ..\repman\utils\metaview\metaviewxp.exe.manifest; DestDir: {app}; Components: clienttcp; Flags: ignoreversion

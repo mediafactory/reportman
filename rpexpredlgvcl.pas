@@ -24,7 +24,7 @@ uses
   SysUtils, Classes,
   Graphics,Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls,Buttons,
-  rpalias,rpeval, rptypeval,
+  rpalias,rpeval, rptypeval,rphashtable,rpstringhash,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
@@ -187,6 +187,7 @@ var
  i:integer;
  iden:TRpIdentifier;
  rec:TRpRecHelp;
+ ait:TstrHashIterator;
 begin
  Fevaluator:=Aval;
  for i:=0 to FMaxlisthelp-1 do
@@ -204,9 +205,11 @@ begin
    lista1.Objects[i]:=rec;
   end;
  end;
- for i:=0 to aval.identifiers.Count -1 do
+ ait:=aval.identifiers.getiterator;
+ while ait.hasnext do
  begin
-  iden:=aval.identifiers.objects[i] as TRpIdentifier;
+  ait.next;
+  iden:=TRpIdentifier(ait.GetValue);
   if iden is TIdenRpExpression then
   begin
    lista1:=llistes[2];
@@ -229,7 +232,7 @@ begin
    end;
   end;
   rec:=TRpRecHelp.Create;
-  rec.rfunction:=aval.identifiers.Strings[i];
+  rec.rfunction:=ait.GetKey;
   rec.help:=iden.Help;
   rec.model:=iden.model;
   rec.params:=iden.aparams;
