@@ -93,6 +93,7 @@ type
     POrderBy: TPanel;
     ComboOrder: TComboBox;
     FindDialog1: TReplaceDialog;
+    DTextsORIGINAL: TWideStringField;
     procedure AOpenExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ASaveasExecute(Sender: TObject);
@@ -168,6 +169,7 @@ begin
     begin
      DTexts.Append;
      DTextsText.Value:=atrans.Strings[i];
+     DTextsOriginal.Value:=DTextsText.Value;
      DTexts.Post;
     end;
     UpdateDescriptions;
@@ -383,6 +385,9 @@ begin
  if Not DTexts.Active then
   exit;
  DTexts.CheckBrowseMode;
+ ComboOrder.ItemIndex:=0;
+ ComboOrderClick(Self);
+
  if OpenDialog1.Execute then
  begin
   asource:=TRpTransLator.Create(Application);
@@ -390,25 +395,36 @@ begin
    asource.AutoLocale:=false;
    asource.Filename:=OpenDialog1.FileName;
    asource.Active:=true;
-   if asource.StringCount>DTexts.RecordCount then
-   begin
-    oldAllow:=AAllowInsert.Checked;
+
+   oldAllow:=AAllowInsert.Checked;
+   try
+    AAllowInsert.Checked:=True;
+    DTexts.Disablecontrols;
     try
-     AAllowInsert.Checked:=True;
-     DTexts.Disablecontrols;
-     try
-      for i:=DTexts.RecordCount to asource.StringCount-1 do
-      begin
-       DTexts.Append;
-       DTextsTEXT.Value:=asource.Strings[i];
-       DTexts.Post;
-      end;
-     finally
-      DTexts.EnableControls;
+     for i:=DTexts.RecordCount to asource.StringCount-1 do
+     begin
+      DTexts.Append;
+      DTextsTEXT.Value:=asource.Strings[i];
+      DTextsORIGINAL.Value:=asource.Strings[i];
+      DTexts.Post;
+     end;
+     // Now set original values
+     i:=0;
+     DTexts.First;
+     while Not DTexts.Eof do
+     begin
+      DTexts.Edit;
+      DTextsORIGINAL.Value:=asource.Strings[i];
+      DTexts.Post;
+
+      DTexts.Next;
+      inc(i);
      end;
     finally
-     AAllowInsert.Checked:=oldAllow;
+     DTexts.EnableControls;
     end;
+   finally
+    AAllowInsert.Checked:=oldAllow;
    end;
   finally
    asource.free;
@@ -620,7 +636,7 @@ begin
  if ComboOrder.ItemIndex=0 then
   DTexts.IndexFieldNames:='POSITION'
  else
-  DTexts.IndexFieldNames:='TEXT';
+  DTexts.IndexFieldNames:='ORIGINAL';
 end;
 
 procedure TFMain.FindDialog1Replace(Sender: TObject);

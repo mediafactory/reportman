@@ -156,6 +156,14 @@ object FMain: TFMain
         end
         item
           Expanded = False
+          FieldName = 'ORIGINAL'
+          ReadOnly = True
+          Title.Caption = 'Original'
+          Width = 100
+          Visible = True
+        end
+        item
+          Expanded = False
           FieldName = 'TEXT'
           Width = 500
           Visible = True
@@ -177,7 +185,6 @@ object FMain: TFMain
       item
         Width = 50
       end>
-    SimplePanel = False
   end
   object DTexts: TClientDataSet
     Aggregates = <>
@@ -190,6 +197,10 @@ object FMain: TFMain
       item
         Name = 'ITEXT'
         Fields = 'TEXT'
+      end
+      item
+        Name = 'IOriginal'
+        Fields = 'ORIGINAL'
       end>
     IndexFieldNames = 'POSITION'
     Params = <>
@@ -215,6 +226,10 @@ object FMain: TFMain
       DisplayWidth = 60
       FieldName = 'DESCRIPTION'
       Size = 150
+    end
+    object DTextsORIGINAL: TWideStringField
+      FieldName = 'ORIGINAL'
+      Size = 500
     end
   end
   object STexts: TDataSource

@@ -108,5 +108,38 @@
   <li> Implementation requires a little more low level access to printer and forget 
     to get it to work in Linux at least until Borland upgrades to Qt 3..</li>
 </ul>
+<p><strong>About font sizes and Truetype PDF Output.</strong></p>
+<p>Having a symple sentence covering near one line and a Truetype Font selected 
+  at point size 26.I see some differences between:<br>
+  1- Report Manager preview.<br>
+  2- Printing from Report Manager engine.<br>
+  3- Exporting to PDF Output from Report Manager and print out(current development 
+  implementation)<br>
+  4- Printing from Openoffice<br>
+  5- Exporting from OpenOffice to PDF and print out.</p>
+<p>- The 1 print (screen) have the larger width, with a diference of about 2 chars 
+  over the output numer 2 (printing from Report Manager engine).<br>
+  - The 4 option (Open Office) output have a larger result in print out than number 
+  2 but less than number 1 (just 1 char diference with number 2)<br>
+  - The 5 (exporting from OpenOffice to PDF) coincides exactly with option 2 and 
+  3, but shows printout in OpenOffice gives different result than Export to PDF 
+  then print out (not a acrobat reader problem)<br>
+  - The exactly same preview and print is given by acroread.</p>
+<p>That shows the sizing and previewing of TrueType fonts are not perfect for 
+  experienced programs and libraries, in Microsoft Windows something similar happens 
+  (but only preview differs).<br>
+  Anyway it's possible an exact implementation in Report Manager (preview same 
+  as printout), but this requires to replace the call to Qt libraries to draw 
+  a block of text to draw words or letters, giving more complexity to the engine 
+  (Microsoft Windows GDI call must be also replaced).</p>
+<p>So current implementation (this issue was present also before Truetype embedding) 
+  have the limitation of previewing multiple line texts not producing exactly 
+  same output at screen and in printout, take care that the printout well be more 
+  precise. You will see the issue occasionally when previewing a single text that 
+  fills lot of lines in the same page.</p>
+<p>I say you this to ensure you know this is a Windows Win32 API limitation and 
+  Qt library limitation (just like the full justify missing feature), and not 
+  easy to implement (replace that apis with correct ones).</p>
+<p>Thanks</p>
 </body>
 </html>
