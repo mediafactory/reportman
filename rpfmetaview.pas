@@ -634,7 +634,7 @@ begin
  end;
  Application.ProcessMessages;
 {$IFDEF MSWINDOWS}
- if ((GetKeyState(VK_ESCAPE) AND $80)>0) then
+ if ((GetAsyncKeyState(VK_ESCAPE) AND $8000)<>0) then
   cancelled:=true;
 {$ENDIF}
  if cancelled then
