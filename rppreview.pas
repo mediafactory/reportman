@@ -582,7 +582,7 @@ begin
  if AImage.Height>AHeight then
   AImage.Top:=0
  else
-  AImage.Top:=(AHeight-AImage.Height) div 2;
+  AImage.Top:=((AHeight-AImage.Height) div 2);
  // A bug in the refresh in Windows
 {$IFDEF MSWINDOWS}
  ImageContainer.Visible:=False;

@@ -552,13 +552,13 @@ begin
  AHeight:=ImageContainer.Height-GetSystemMetrics(SM_CXHSCROLL);
 
  if AImage.Width>AWidth then
-  AImage.Left:=0
+  AImage.Left:=-ImageContainer.HorzScrollBar.Position
  else
-  AImage.Left:=(AWidth-AImage.Width) div 2;
+  AImage.Left:=((AWidth-AImage.Width) div 2)-ImageContainer.HorzScrollBar.Position;
  if AImage.Height>AHeight then
-  AImage.Top:=0
+  AImage.Top:=-ImageContainer.VertScrollBar.Position
  else
-  AImage.Top:=(AHeight-AImage.Height) div 2;
+  AImage.Top:=((AHeight-AImage.Height) div 2)-ImageContainer.VertScrollBar.Position;
 end;
 
 

@@ -135,7 +135,7 @@ end;
 constructor TFRpDesignFrame.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
- panelheight:=Round(1.2*Font.Size/72*Screen.PixelsPerInch);
+ panelheight:=Round(1.3*Font.Size/72*Screen.PixelsPerInch);
  SectionScrollBox:=TRpScrollBox.Create(Self);
  SectionScrollBox.BorderStyle:=bsNone;
  SectionScrollBox.Color:=clDisabledForeground;
@@ -148,6 +148,7 @@ begin
  secinterfaces:=TList.Create;
 
  PSection:=TRpPaintEventPanel.Create(Self);
+ PSection.Color:=clDisabledForeground;
  PSection.Parent:=SectionSCrollBox;
  PSection.OnPaint:=SecPosChange;
 end;
@@ -304,7 +305,6 @@ begin
    apanel.Caption:='';
    apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption;
    apanel.Alignment:=taLeftJustify;
-   apanel.Color:=clAppWorkSpace;
    apanel.BorderStyle:=bsSingle;
    apanel.BevelInner:=bvNone;
    apanel.BevelOuter:=bvNone;
@@ -388,6 +388,7 @@ begin
   begin
    apanel:=TRpPaintEventpanel(toptitles.Items[i]);
    asecint:=TRpSectionInterface(secinterfaces.items[i]);
+   apanel.Color:=clDisabledDark;
    apanel.Width:=asecint.Width;
    apanel.Caption:='';
    apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption;

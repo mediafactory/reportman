@@ -24,21 +24,22 @@ interface
 
 uses
   SysUtils,QStyle,Qt,
+  Types, Classes, QGraphics,
+{$IFDEF MSWINDOWS}
+  rpgdidriver,rpvpreview,rprfvparams,Dialogs,Forms,
+{$ENDIF}
+  QControls, QForms,
+  QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
+  rpmdconsts,rptypes, QExtCtrls,rpmdfstruc, rplastsav,rpsubreport,
+  rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
+  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver,QConsts, QDialogs,
 {$IFDEF LINUX}
   Libc,
-{$ENDIF}
-{$IFDEF MSWINDOWS}
-  Dialogs,rpgdidriver,rpvpreview,Forms,rprfvparams,
 {$ENDIF}
 {$IFDEF HORZPAPERBUG}
  rpmetafile,
 {$ENDIF}
-  Types, Classes, QGraphics, QControls, QForms,
-  QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
-  rpmdconsts,rptypes, QExtCtrls,rpmdfstruc, rplastsav,rpsubreport,
-  rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
-  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver,
-  DB,rpmdfhelpform,rpmunits,QConsts, QDialogs,rpgraphutils;
+  DB,rpmdfhelpform,rpmunits,rpgraphutils;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;

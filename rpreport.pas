@@ -759,6 +759,8 @@ var
  i,index:integer;
  docancel:boolean;
  alias:string;
+ dbinfo:TRpDatabaseInfoItem;
+ dbalias:string;
 begin
  if FDataInfo.Count<1 then
   exit;
@@ -773,10 +775,18 @@ begin
    alias:=SubReports.items[i].Subreport.Alias;
    if Length(alias)>0 then
    begin
+    dbalias:=FDataInfo.Items[i].DatabaseAlias;
+    index:=DatabaseInfo.IndexOf(dbalias);
+    if index<0 then
+     Raise Exception.Create(SRpSubreportAliasNotFound+':'+alias);
+    dbinfo:=DatabaseInfo.Items[index];
     index:=DataInfo.IndexOf(alias);
     if index<0 then
       Raise Exception.Create(SRpSubreportAliasNotFound+':'+alias);
-    FDataInfo.Items[index].Cached:=true;
+    if dbinfo.Driver<>rpdataibx then
+    begin
+     FDataInfo.Items[index].Cached:=true;
+    end;
    end;
   end;
 
@@ -946,12 +956,20 @@ begin
   index:=DataInfo.IndexOf(subrep.Alias);
   if index<0 then
    Raise TRpReportException.Create(SRPAliasNotExists+subrep.alias,subrep,SRpMainDataset);
-  data:=DataInfo.Items[index].CachedDataset;
-  data.DoNext;
+  if datainfo.Items[index].Cached then
+  begin
+   data:=DataInfo.Items[index].CachedDataset;
+   data.DoNext;
+  end
+  else
+   DataInfo.Items[index].Dataset.Next;
   // If its the last record no group change
   if not grouprestore then
   begin
-   subrep.LastRecord:=data.Eof;
+   if datainfo.Items[index].Cached then
+    subrep.LastRecord:=data.Eof
+   else
+    subrep.LastRecord:=datainfo.Items[index].Dataset.Eof;
   end;
   if Not Subrep.LastRecord then
   begin
@@ -961,7 +979,10 @@ begin
     if subrep.CurrentGroupIndex>0 then
     begin
      Result:=true;
-     data.DoPrior;
+     if datainfo.Items[index].Cached then
+      data.DoPrior
+     else
+      datainfo.Items[index].Dataset.Prior;
     end
     else
      subrep.SubReportChanged(rpDataChange);

@@ -34,6 +34,7 @@ type
     RepClient: TIdTCPClient;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
+    procedure RepClientDisconnected(Sender: TObject);
   private
     { Private declarations }
     FStream:TMemoryStream;
@@ -245,6 +246,12 @@ begin
  // Sets an event and waits for its signal
  RepClient.WriteBuffer(arec,sizeof(arec));
  FEndReport.WaitFor($FFFFFFFF);
+end;
+
+procedure Tmodclient.RepClientDisconnected(Sender: TObject);
+begin
+ if assigned(ClientHandleThread.FEndReport) then
+  ClientHandleThread.FEndReport.SetEvent;
 end;
 
 end.

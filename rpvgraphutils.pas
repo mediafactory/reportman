@@ -59,6 +59,7 @@ function FindIndexPaperName(device,name:string):integer;
 procedure SetCurrentPaper(apapersize:TGDIPageSize);
 function GetCurrentPaper:TGDIPageSize;
 procedure SendControlCodeToPrinter(S: string);
+function FontStyleToCLXInteger(fontstyle:TFontStyles):integer;
 
 var
  osinfo:TOsVersionInfo;
@@ -165,6 +166,20 @@ begin
  if (intfontstyle and (1 shl 3))>0 then
   include(Result,fsStrikeOut);
 end;
+
+function FontStyleToCLXInteger(fontstyle:TFontStyles):integer;
+begin
+ Result:=0;
+ if (fsBold in fontstyle) then
+  Result:=Result or 1;
+ if (fsItalic in fontstyle) then
+  Result:=Result or (1 shl 1);
+ if (fsUnderline in fontstyle) then
+  Result:=Result or (1 shl 2);
+ if (fsStrikeOut in fontstyle) then
+  Result:=Result or (1 shl 3);
+end;
+
 
 
 function CLXColorToVCLColor(CLXColor:integer):integer;

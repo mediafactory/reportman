@@ -4,7 +4,8 @@ uses
   QForms,
   Unit1 in 'Unit1.pas' {Form1},
   rptypes in '..\..\rptypes.pas',
-  rpgraphutils in '..\..\rpgraphutils.pas' {FRpMessageDlg};
+  rpgraphutils in '..\..\rpgraphutils.pas' {FRpMessageDlg},
+  rpmdftree in '..\..\rpmdftree.pas' {FRpDBTree: TFrame};
 
 {$R *.res}
 

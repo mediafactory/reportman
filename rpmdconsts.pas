@@ -507,6 +507,7 @@ var
   SRpServerStarted:WideString='Server started';
   SRpClientConnected:WideString='Client connected';
   SRpServerStoped:WideString='Server stoped';
+  SRpSureDeleteReport:WideString='The selected report will be deleted. Are you sure?';
 
 implementation
 
@@ -1018,6 +1019,7 @@ begin
  TranslateVar(787,SRpServerStarted);
  TranslateVar(788,SRpClientConnected);
  TranslateVar(789,SRpServerStoped);
+ TranslateVar(794,SRpSureDeleteReport);
 end;
 
 

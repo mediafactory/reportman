@@ -4,30 +4,37 @@ VERSION = BWS.02.5
 MAKE = make -$(MAKEFLAGS) -f$**
 DCC =dcc $<
 #------------------------------------------------------------------------------
-PROJECTS = repmand metaprint metaview printrep reptotxt txttorep printreptopdf
+PROJECTS = repmand metaprint metaview printrep reptotxt txttorep printreptopdf \
+  reportserverapp.exe reportservercon.exe
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
 
 repmand: repmand.dpr
-							$(DCC)
+  $(DCC)
 
-metaprint: utils/metaprint/metaprint.dpr
-						$(DCC)
+metaprint: utils\metaprint\metaprint.dpr
+  $(DCC)
 
-metaview: utils/metaview/metaview.dpr
-					$(DCC)
+metaview: utils\metaview\metaview.dpr
+  $(DCC)
 
-printrep: utils/printrep/printrep.dpr
-				$(DCC)
+printrep: utils\printrep\printrep.dpr
+  $(DCC)
 
-reptotxt: utils/reptotxt/reptotxt.dpr
-			$(DCC)
+reptotxt: utils\reptotxt\reptotxt.dpr
+  $(DCC)
 
-txttorep: utils/txttorep/txttorep.dpr
-		$(DCC)
+txttorep: utils\txttorep\txttorep.dpr
+  $(DCC)
 
-printreptopdf: utils/printreptopdf/printreptopdf.dpr
-	$(DCC)
+printreptopdf: utils\printreptopdf\printreptopdf.dpr
+  $(DCC)
+
+reportserverapp.exe: ..\server\app\reportserverapp.dpr
+  $(DCC)
+
+reportservercon.exe: ..\server\app\reportservercon.dpr
+  $(DCC)
 
 

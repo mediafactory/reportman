@@ -99,6 +99,7 @@ type
 {$IFDEF USEBDE}
    FBDEDatabase:TDatabase;
    FBDEAlias:string;
+   CreatedBDE:Boolean;
 {$ENDIF}
 {$IFDEF USEIBO}
    FIBODatabase: TIB_Database;
@@ -446,9 +447,9 @@ end;
 
 function TRpDataInfoList.Add(alias:string):TRpDataInfoItem;
 begin
- // Then function is defined by teh class TCollectionItem
+ // Then function is defined by the class TCollectionItem
  alias:=AnsiUpperCase(alias);
- if Indexof(alias)>0 then
+ if Indexof(alias)>=0 then
   Raise Exception.Create(SRpAliasExists);
  Result:=TRpDataInfoItem(inherited Add);
  Result.Alias:=alias;
@@ -507,7 +508,8 @@ begin
  end;
 {$ENDIF}
 {$IFDEF USEBDE}
- FBDEDatabase.free;
+ if CreatedBDE then
+  FBDEDatabase.free;
 {$ENDIF}
 {$IFDEF USEADO}
  FADOConnection.free;
@@ -636,6 +638,7 @@ var
  i:integer;
  AlreadyOpen:boolean;
  OpenedName:string;
+ FOpenedDatabase:TDatabase;
  ASession:TSession;
  adparams:TStrings;
 {$ENDIF}
@@ -726,9 +729,11 @@ begin
    begin
 {$IFDEF USEBDE}
     FBDEAlias:=Alias;
+    CreatedBDE:=false;
     if Not Assigned(FBDEDatabase) then
     begin
      FBDEDatabase:=TDatabase.Create(nil);
+     createdBDE:=true;
      FBDEDatabase.KeepConnection:=false;
      if Assigned(TRpDatabaseInfoList(Collection).FBDESession) then
       FBDEDatabase.SessionName:=TRpDatabaseInfoList(Collection).FBDESession.SessionName;
@@ -757,6 +762,7 @@ begin
       begin
        AlreadyOpen:=True;
        OpenedName:=ASession.Databases[i].DatabaseName;
+       FOpenedDatabase:=ASession.Databases[i];
        break;
       end
       else
@@ -766,13 +772,14 @@ begin
       if ASession.Databases[i].Connected then
       begin
        AlreadyOpen:=True;
+       FOpenedDatabase:=ASession.Databases[i];
        OpenedName:=ASession.Databases[i].DatabaseName;
        break;
       end;
     end;
-    FBDEDatabase.DatabaseName:=OpenedName;
     if Not AlreadyOpen then
     begin
+     FBDEDatabase.DatabaseName:=OpenedName;
      if FLoadParams then
      begin
       try
@@ -798,6 +805,16 @@ begin
        end;
       end;
      end;
+    end
+    else
+    begin
+     if createdBDE then
+     begin
+      FBDEDatabase.free;
+      FBDEDatabase:=nil;
+      CreatedBDE:=false;
+     end;
+     FBDEDatabase:=FOpenedDatabase;
     end;
 {$ELSE}
     Raise Exception.Create(SRpDriverNotSupported+SrpDriverBDE);
@@ -1123,11 +1140,11 @@ begin
 {$IFDEF USEBDE}
       if FBDEType=rpdquery then
       begin
-       TQuery(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEAlias
+       TQuery(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEDatabase.DatabaseName;
       end
       else
       begin
-       TTable(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEAlias;
+       TTable(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEDatabase.DatabaseName;
       end;
       TBDEDataset(FSQLInternalQuery).Filter:=FBDEFilter;
       if length(Trim(FBDEFilter))>0 then

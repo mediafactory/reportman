@@ -76,8 +76,8 @@ implementation
 {$IFDEF MSWINDOWS}
 const
   kernel = 'kernel32.dll';
-  OldLocaleOverrideKey = 'Software\Borland\Delphi\Locales'; // do not localize
-  NewLocaleOverrideKey = 'Software\Borland\Locales'; // do not localize
+  OldLocaleOverrideKey = 'Software\Borland\Delphi\Locales';
+  NewLocaleOverrideKey = 'Software\Borland\Locales';
 
 
 function RegOpenKeyEx(hKey: LongWord; lpSubKey: PChar; ulOptions,
@@ -579,6 +579,8 @@ begin
   dia.free;
  end;
 end;
+
+
 
 procedure FillTreeView(path:String;Nodes:TTreeNodes;Node:TTreeNode;pattern:string);
 var

@@ -72,6 +72,7 @@ type
    FDrawStyle:TRpImageDrawStyle;
    Fdpires:integer;
    FCopyMode:integer;
+   FRotation:SmallInt;
    procedure ReadStream(AStream:TStream);
    procedure WriteStream(AStream:TStream);
    function GetStream:TMemoryStream;
@@ -86,6 +87,8 @@ type
    function GetExtension(adriver:IRpPrintDriver):TPoint;override;
    property Stream:TMemoryStream read FStream write SetStream;
   published
+   // Rotating bitmaps still not implemented
+   property Rotation:smallint read FRotation write FRotation default 0;
    property Expression:WideString read FExpression write FExpression;
    property DrawStyle:TRpImageDrawStyle read FDrawStyle write FDrawStyle
     default rpDrawCrop;

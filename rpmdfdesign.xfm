@@ -6,6 +6,8 @@ object FRpDesignFrame: TFRpDesignFrame
   VertScrollBar.Range = 20
   HorzScrollBar.Range = 20
   Align = alClient
+  Color = clDisabledForeground
+  ParentColor = False
   ParentShowHint = False
   ShowHint = True
   TabOrder = 0
@@ -16,6 +18,7 @@ object FRpDesignFrame: TFRpDesignFrame
     Height = 20
     Align = alTop
     BevelOuter = bvNone
+    Color = clButton
     TabOrder = 0
     object TopRuler: TRpRuler
       Left = 20
@@ -32,6 +35,7 @@ object FRpDesignFrame: TFRpDesignFrame
     Height = 284
     Align = alLeft
     BevelOuter = bvNone
+    Color = clButton
     TabOrder = 1
   end
 end
