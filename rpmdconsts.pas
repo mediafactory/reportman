@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.2j';
+ RM_VERSION='2.2k';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 type
   TPageWidthHeight = record
@@ -221,107 +221,106 @@ const PageSizeNames: array [0..148] of widestring =
       (Width: 10000; Height: 14000), // 10x14 in                            }
     (Width: 11000; Height: 17000),// 11x17 in                            }
     (Width: 8500; Height: 11000), // Note 8 12 x 11 in                   }
-    //
-    (Width: 10000; Height: 14000),// Envelope #9 3 78 x 8 78             }
-    (Width: 10000; Height: 14000),// Envelope #10 4 18 x 9 12            }
-    (Width: 10000; Height: 14000),// Envelope #11 4 12 x 10 38           }
-    (Width: 10000; Height: 14000),// Envelope #12 4 \276 x 11            }
-    (Width: 10000; Height: 14000),// Envelope #14 5 x 11 12              }
-    (Width: 10000; Height: 14000),// C size sheet                        }
-    (Width: 10000; Height: 14000),// D size sheet                        }
-    (Width: 10000; Height: 14000),// E size sheet                        }
-    (Width: 10000; Height: 14000),// Envelope DL 110 x 220mm             }
-    (Width: 10000; Height: 14000),// Envelope C5 162 x 229 mm            }
-    (Width: 10000; Height: 14000),// Envelope C3  324 x 458 mm           }
-    (Width: 10000; Height: 14000),// Envelope C4  229 x 324 mm           }
-    (Width: 10000; Height: 14000),// Envelope C6  114 x 162 mm           }
-    (Width: 10000; Height: 14000),// Envelope C65 114 x 229 mm           }
-    (Width: 10000; Height: 14000),// Envelope B4  250 x 353 mm           }
-    (Width: 10000; Height: 14000),// Envelope B5  176 x 250 mm           }
-    (Width: 10000; Height: 14000),// Envelope B6  176 x 125 mm           }
-    (Width: 10000; Height: 14000),// Envelope 110 x 230 mm               }
-    (Width: 10000; Height: 14000), // Envelope Monarch 3.875 x 7.5 in     }
-    (Width: 10000; Height: 14000),// 6 34 Envelope 3 58 x 6 12 in        }
-    (Width: 10000; Height: 14000),// US Std Fanfold 14 78 x 11 in        }
-    (Width: 10000; Height: 14000),// German Std Fanfold 8 12 x 12 in    }
-    (Width: 10000; Height: 14000),// German Legal Fanfold 8 12 x 13 in  }
-    (Width: 10000; Height: 14000),// B4 (ISO) 250 x 353 mm               }
-    (Width: 10000; Height: 14000),// Japanese Postcard 100 x 148 mm      }
-    (Width: 10000; Height: 14000), // 9 x 11 in                           }
-    (Width: 10000; Height: 14000), // 10 x 11 in                          }
-    (Width: 10000; Height: 14000), // 15 x 11 in                          }
-    (Width: 10000; Height: 14000), // Envelope Invite 220 x 220 mm        }
-    (Width: 10000; Height: 14000), // RESERVED--DO NOT USE                }
-    (Width: 10000; Height: 14000), // RESERVED--DO NOT USE                }
-    (Width: 10000; Height: 14000), // Letter Extra 9 \275 x 12 in         }
-    (Width: 10000; Height: 14000), // Legal Extra 9 \275 x 15 in          }
-    (Width: 10000; Height: 14000), // Tabloid Extra 11.69 x 18 in         }
-    (Width: 10000; Height: 14000), // A4 Extra 9.27 x 12.69 in            }
-    (Width: 10000; Height: 14000),  // Letter Transverse 8 \275 x 11 in    }
-    (Width: 10000; Height: 14000),  // A4 Transverse 210 x 297 mm          }
-    (Width: 10000; Height: 14000),     // Letter Extra Transverse 9\275 x 12 in  }
-    (Width: 10000; Height: 14000),     // SuperASuperAA4 227 x 356 mm       }
-    (Width: 10000; Height: 14000),    // SuperBSuperBA3 305 x 487 mm       }
-    (Width: 10000; Height: 14000),    // Letter Plus 8.5 x 12.69 in          }
-    (Width: 10000; Height: 14000),    // A4 Plus 210 x 330 mm                }
-    (Width: 10000; Height: 14000),    // A5 Transverse 148 x 210 mm          }
-    (Width: 10000; Height: 14000),    // B5 (JIS) Transverse 182 x 257 mm    }
-    (Width: 10000; Height: 14000),    // A3 Extra 322 x 445 mm               }
-    (Width: 10000; Height: 14000),    // A5 Extra 174 x 235 mm               }
-    (Width: 10000; Height: 14000),    // B5 (ISO) Extra 201 x 276 mm         }
-    (Width: 10000; Height: 14000),    // A2 420 x 594 mm                     }
-    (Width: 10000; Height: 14000),    // A3 Transverse 297 x 420 mm          }
-    (Width: 10000; Height: 14000),     // A3 Extra Transverse 322 x 445 mm    }
-    (Width: 10000; Height: 14000), // Japanese Double Postcard 200 x 148 mm }
-    (Width: 10000; Height: 14000),  // A6 105 x 148 mm                 }
-    (Width: 10000; Height: 14000),  // Japanese Envelope Kaku #2       }
-    (Width: 10000; Height: 14000),  // Japanese Envelope Kaku #3       }
-    (Width: 10000; Height: 14000),  // Japanese Envelope Chou #3       }
-    (Width: 10000; Height: 14000),  // Japanese Envelope Chou #4       }
-    (Width: 10000; Height: 14000),  // Letter Rotated 11 x 8 1/2 11 in }
-    (Width: 10000; Height: 14000),  // A3 Rotated 420 x 297 mm         }
-    (Width: 10000; Height: 14000),  // A4 Rotated 297 x 210 mm         }
-    (Width: 10000; Height: 14000),  // A5 Rotated 210 x 148 mm         }
-    (Width: 10000; Height: 14000),  // B4 (JIS) Rotated 364 x 257 mm   }
-    (Width: 10000; Height: 14000),  // B5 (JIS) Rotated 257 x 182 mm   }
-    (Width: 10000; Height: 14000), // Japanese Postcard Rotated 148 x 100 mm }
-    (Width: 10000; Height: 14000), // Double Japanese Postcard Rotated 148 x 200 mm }
-    (Width: 10000; Height: 14000), // A6 Rotated 148 x 105 mm         }
-    (Width: 10000; Height: 14000),  // Japanese Envelope Kaku #2 Rotated}
-    (Width: 10000; Height: 14000),  // Japanese Envelope Kaku #3 Rotated}
-    (Width: 10000; Height: 14000),  // Japanese Envelope Chou #3 Rotated}
-    (Width: 10000; Height: 14000),  // Japanese Envelope Chou #4 Rotated}
-    (Width: 10000; Height: 14000),  // B6 (JIS) 128 x 182 mm           }
-    (Width: 10000; Height: 14000),  // B6 (JIS) Rotated 182 x 128 mm   }
-    (Width: 10000; Height: 14000),  // 12 x 11 in                      }
-    (Width: 10000; Height: 14000),  // Japanese Envelope You #4        }
-    (Width: 10000; Height: 14000),  // Japanese Envelope You #4 Rotated}
-    (Width: 10000; Height: 14000),  // PRC 16K 146 x 215 mm            }
-    (Width: 10000; Height: 14000),  // PRC 32K 97 x 151 mm             }
-    (Width: 10000; Height: 14000),  // PRC 32K(Big) 97 x 151 mm        }
-    (Width: 10000; Height: 14000),  // PRC Envelope #1 102 x 165 mm    }
-    (Width: 10000; Height: 14000),  // PRC Envelope #2 102 x 176 mm    }
-    (Width: 10000; Height: 14000),  // PRC Envelope #3 125 x 176 mm    }
-    (Width: 10000; Height: 14000),  // PRC Envelope #4 110 x 208 mm    }
-    (Width: 10000; Height: 14000), // PRC Envelope #5 110 x 220 mm    }
-    (Width: 10000; Height: 14000), // PRC Envelope #6 120 x 230 mm    }
-    (Width: 10000; Height: 14000), // PRC Envelope #7 160 x 230 mm    }
-    (Width: 10000; Height: 14000), // PRC Envelope #8 120 x 309 mm    }
-    (Width: 10000; Height: 14000), // PRC Envelope #9 229 x 324 mm    }
-    (Width: 10000; Height: 14000), // PRC Envelope #10 324 x 458 mm   }
-    (Width: 10000; Height: 14000), // PRC 16K Rotated                 }
-    (Width: 10000; Height: 14000), // PRC 32K Rotated                 }
-    (Width: 10000; Height: 14000), // PRC 32K(Big) Rotated            }
-    (Width: 10000; Height: 14000), // PRC Envelope #1 Rotated 165 x 102 mm}
-    (Width: 10000; Height: 14000), // PRC Envelope #2 Rotated 176 x 102 mm}
-    (Width: 10000; Height: 14000), // PRC Envelope #3 Rotated 176 x 125 mm}
-    (Width: 10000; Height: 14000), // PRC Envelope #4 Rotated 208 x 110 mm}
-    (Width: 10000; Height: 14000), // PRC Envelope #5 Rotated 220 x 110 mm}
-    (Width: 10000; Height: 14000), // PRC Envelope #6 Rotated 230 x 120 mm}
-    (Width: 10000; Height: 14000), // PRC Envelope #7 Rotated 230 x 160 mm}
-    (Width: 10000; Height: 14000), // PRC Envelope #8 Rotated 309 x 120 mm}
-    (Width: 10000; Height: 14000), // PRC Envelope #9 Rotated 324 x 229 mm}
-    (Width: 10000; Height: 14000) // PRC Envelope #10 Rotated 458 x 324 mm }
+    (Width: 3875; Height: 8875),// Envelope #9 3 78 x 8 78             }
+    (Width: 4125; Height: 9500),// Envelope #10 4 18 x 9 12            }
+    (Width: 4500; Height: 10375),// Envelope #11 4 12 x 10 38           }
+    (Width: 4276; Height: 11000),// Envelope #12 4 \276 x 11            }
+    (Width: 5000; Height: 11500),// Envelope #14 5 x 11 12              }
+    (Width: 16969; Height: 21969),// C size sheet 431 x 558 mm                       }
+    (Width: 21969; Height: 33976),// D size sheet 558 x 863 mm                      }
+    (Width: 33976; Height: 43976),// E size sheet 863 x 1117 mm                       }
+    (Width: 4331; Height: 8661),// Envelope DL 110 x 220mm             }
+    (Width: 6378; Height: 9016),// Envelope C5 162 x 229 mm            }
+    (Width: 12756; Height: 18031),// Envelope C3  324 x 458 mm           }
+    (Width: 9016; Height: 12756),// Envelope C4  229 x 324 mm           }
+    (Width: 4488; Height: 6378),// Envelope C6  114 x 162 mm           }
+    (Width: 4488; Height: 9016),// Envelope C65 114 x 229 mm           }
+    (Width: 9843; Height: 13898),// Envelope B4  250 x 353 mm           }
+    (Width: 6929; Height: 9843),// Envelope B5  176 x 250 mm           }
+    (Width: 6929; Height: 4921),// Envelope B6  176 x 125 mm           }
+    (Width: 4331; Height: 9056),// Envelope 110 x 230 mm               }
+    (Width: 3875; Height: 7500), // Envelope Monarch 3.875 x 7.5 in     }
+    (Width: 3625; Height: 6500),// 6 34 Envelope 3 58 x 6 12 in        }
+    (Width: 14875; Height: 11000),// US Std Fanfold 14 78 x 11 in        }
+    (Width: 8500; Height: 12000),// German Std Fanfold 8 12 x 12 in    }
+    (Width: 8500; Height: 13000),// German Legal Fanfold 8 12 x 13 in  }
+    (Width: 9843; Height: 13898),// B4 (ISO) 250 x 353 mm               }
+    (Width: 3937; Height: 5827),// Japanese Postcard 100 x 148 mm      }
+    (Width: 9000; Height: 11000), // 9 x 11 in                           }
+    (Width: 10000; Height: 11000), // 10 x 11 in                          }
+    (Width: 15000; Height: 11000), // 15 x 11 in                          }
+    (Width: 8661; Height: 8661), // Envelope Invite 220 x 220 mm        }
+    (Width: 100; Height: 100), // RESERVED--DO NOT USE                }
+    (Width: 100; Height: 100), // RESERVED--DO NOT USE                }
+    (Width: 9275; Height: 12000), // Letter Extra 9 \275 x 12 in         }
+    (Width: 9275; Height: 15000), // Legal Extra 9 \275 x 15 in          }
+    (Width: 11690; Height: 18000), // Tabloid Extra 11.69 x 18 in         }
+    (Width: 9270; Height: 12690), // A4 Extra 9.27 x 12.69 in            }
+    (Width: 8275; Height: 11000),  // Letter Transverse 8 \275 x 11 in    }
+    (Width: 8268; Height: 11693),  // A4 Transverse 210 x 297 mm          }
+    (Width: 9275; Height: 12000), // Letter Extra Transverse 9\275 x 12 in  }
+    (Width: 8937; Height: 14016),     // SuperASuperAA4 227 x 356 mm       }
+    (Width: 12008; Height: 19172),    // SuperBSuperBA3 305 x 487 mm       }
+    (Width: 8500; Height: 12690),    // Letter Plus 8.5 x 12.69 in          }
+    (Width: 8268; Height: 12992),    // A4 Plus 210 x 330 mm                }
+    (Width: 5828; Height: 8268),    // A5 Transverse 148 x 210 mm          }
+    (Width: 7166; Height: 10118),    // B5 (JIS) Transverse 182 x 257 mm    }
+    (Width: 13071; Height: 17520),    // A3 Extra 322 x 445 mm               }
+    (Width: 6850; Height: 9252),    // A5 Extra 174 x 235 mm               }
+    (Width: 7913; Height: 10867),    // B5 (ISO) Extra 201 x 276 mm         }
+    (Width: 16536; Height: 23386),    // A2 420 x 594 mm                     }
+    (Width: 11693; Height: 16535),    // A3 Transverse 297 x 420 mm          }
+    (Width: 13071; Height: 17520),     // A3 Extra Transverse 322 x 445 mm    }
+    (Width: 7874; Height: 5827), // Japanese Double Postcard 200 x 148 mm }
+    (Width: 4173; Height:5827),  // A6 105 x 148 mm                 }
+    (Width: 100; Height: 100),  // Japanese Envelope Kaku #2       }
+    (Width: 100; Height: 100),  // Japanese Envelope Kaku #3       }
+    (Width: 100; Height: 100),  // Japanese Envelope Chou #3       }
+    (Width: 100; Height: 100),  // Japanese Envelope Chou #4       }
+    (Width: 11000; Height: 8500),  // Letter Rotated 11 x 8 1/2 11 in }
+    (Width: 16535; Height: 11693),  // A3 Rotated 420 x 297 mm         }
+    (Width: 11693; Height: 8268),  // A4 Rotated 297 x 210 mm         }
+    (Width: 8268; Height: 5828),  // A5 Rotated 210 x 148 mm         }
+    (Width: 14331; Height: 10118),  // B4 (JIS) Rotated 364 x 257 mm   }
+    (Width: 10118; Height: 7165),  // B5 (JIS) Rotated 257 x 182 mm   }
+    (Width: 5827; Height: 3937), // Japanese Postcard Rotated 148 x 100 mm }
+    (Width: 5827; Height: 7874), // Double Japanese Postcard Rotated 148 x 200 mm }
+    (Width: 5827; Height: 4173), // A6 Rotated 148 x 105 mm         }
+    (Width: 100; Height: 100),  // Japanese Envelope Kaku #2 Rotated}
+    (Width: 100; Height: 100),  // Japanese Envelope Kaku #3 Rotated}
+    (Width: 100; Height: 100),  // Japanese Envelope Chou #3 Rotated}
+    (Width: 100; Height: 100),  // Japanese Envelope Chou #4 Rotated}
+    (Width: 100; Height: 100),  // B6 (JIS) 128 x 182 mm           }
+    (Width: 100; Height: 100),  // B6 (JIS) Rotated 182 x 128 mm   }
+    (Width: 100; Height: 100),  // 12 x 11 in                      }
+    (Width: 100; Height: 100),  // Japanese Envelope You #4        }
+    (Width: 100; Height: 100),  // Japanese Envelope You #4 Rotated}
+    (Width: 100; Height: 100),  // PRC 16K 146 x 215 mm            }
+    (Width: 100; Height: 100),  // PRC 32K 97 x 151 mm             }
+    (Width: 100; Height: 100),  // PRC 32K(Big) 97 x 151 mm        }
+    (Width: 100; Height: 100),  // PRC Envelope #1 102 x 165 mm    }
+    (Width: 100; Height: 100),  // PRC Envelope #2 102 x 176 mm    }
+    (Width: 100; Height: 100),  // PRC Envelope #3 125 x 176 mm    }
+    (Width: 100; Height: 100),  // PRC Envelope #4 110 x 208 mm    }
+    (Width: 100; Height: 100), // PRC Envelope #5 110 x 220 mm    }
+    (Width: 100; Height: 100), // PRC Envelope #6 120 x 230 mm    }
+    (Width: 100; Height: 100), // PRC Envelope #7 160 x 230 mm    }
+    (Width: 100; Height: 100), // PRC Envelope #8 120 x 309 mm    }
+    (Width: 100; Height: 100), // PRC Envelope #9 229 x 324 mm    }
+    (Width: 100; Height: 100), // PRC Envelope #10 324 x 458 mm   }
+    (Width: 100; Height: 100), // PRC 16K Rotated                 }
+    (Width: 100; Height: 100), // PRC 32K Rotated                 }
+    (Width: 100; Height: 100), // PRC 32K(Big) Rotated            }
+    (Width: 100; Height: 100), // PRC Envelope #1 Rotated 165 x 102 mm}
+    (Width: 100; Height: 100), // PRC Envelope #2 Rotated 176 x 102 mm}
+    (Width: 100; Height: 100), // PRC Envelope #3 Rotated 176 x 125 mm}
+    (Width: 100; Height: 100), // PRC Envelope #4 Rotated 208 x 110 mm}
+    (Width: 100; Height: 100), // PRC Envelope #5 Rotated 220 x 110 mm}
+    (Width: 100; Height: 100), // PRC Envelope #6 Rotated 230 x 120 mm}
+    (Width: 100; Height: 100), // PRC Envelope #7 Rotated 230 x 160 mm}
+    (Width: 100; Height: 100), // PRC Envelope #8 Rotated 309 x 120 mm}
+    (Width: 100; Height: 100), // PRC Envelope #9 Rotated 324 x 229 mm}
+    (Width: 100; Height: 100) // PRC Envelope #10 Rotated 458 x 324 mm }
 
     );
 
