@@ -124,6 +124,72 @@ begin
  if Assigned(lvalues) then
   lvalues.Add(RpChartDriverToString(TRpChart(printitem).Driver));
 
+ // View3D
+ lnames.Add(SRpSView3D);
+ ltypes.Add(SRpSBool);
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpChart(printitem).View3D,True));
+
+ // View3D Walls
+ lnames.Add(SRpSView3DWalls);
+ ltypes.Add(SRpSBool);
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpChart(printitem).View3DWalls,True));
+
+ // Perspective
+ lnames.Add(SRpSPerspective);
+ ltypes.Add(SRpSInteger);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpChart(printitem).Perspective));
+
+ // Elevation
+ lnames.Add(SRpSElevation);
+ ltypes.Add(SRpSInteger);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpChart(printitem).Elevation));
+
+ // Rotation
+ lnames.Add(SRpSRotation);
+ ltypes.Add(SRpSInteger);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpChart(printitem).Rotation));
+
+ // Orthogonal
+ lnames.Add(SRpSOrthogonal);
+ ltypes.Add(SRpSBool);
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpChart(printitem).Orthogonal,True));
+
+ // Zoom
+ lnames.Add(SRpSZoom);
+ ltypes.Add(SRpSInteger);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpChart(printitem).Zoom));
+
+ // H.Offset
+ lnames.Add(SRpSHOffset);
+ ltypes.Add(SRpSInteger);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpChart(printitem).HorzOffset));
+
+ // H.Offset
+ lnames.Add(SRpSVOffset);
+ ltypes.Add(SRpSInteger);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpChart(printitem).VertOffset));
+
+ // Tilt
+ lnames.Add(SRpSTilt);
+ ltypes.Add(SRpSInteger);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpChart(printitem).Tilt));
+
+ // Multibar
+ lnames.Add(SRpSMultibar);
+ ltypes.Add(SRpSList);
+ if Assigned(lvalues) then
+  lvalues.Add(RpMultiBarToString(TRpChart(printitem).MultiBar));
+
 end;
 
 
@@ -168,6 +234,61 @@ begin
  if pname=SrpSDriver then
  begin
   TRpChart(fprintitem).Driver:=StringToRpChartDriver(Value);
+  exit;
+ end;
+ if pname=SrpSView3D then
+ begin
+  TRpChart(fprintitem).View3d:=StrToBool(value);
+  exit;
+ end;
+ if pname=SrpSView3DWalls then
+ begin
+  TRpChart(fprintitem).View3dWalls:=StrToBool(value);
+  exit;
+ end;
+ if pname=SrpSperspective then
+ begin
+  TRpChart(fprintitem).Perspective:=StrToInt(value);
+  exit;
+ end;
+ if pname=SrpSElevation then
+ begin
+  TRpChart(fprintitem).Elevation:=StrToInt(value);
+  exit;
+ end;
+ if pname=SrpSRotation then
+ begin
+  TRpChart(fprintitem).Rotation:=StrToInt(value);
+  exit;
+ end;
+ if pname=SrpSOrthogonal then
+ begin
+  TRpChart(fprintitem).Orthogonal:=StrToBool(value);
+  exit;
+ end;
+ if pname=SrpSZoom then
+ begin
+  TRpChart(fprintitem).Zoom:=StrToInt(value);
+  exit;
+ end;
+ if pname=SrpSHOffset then
+ begin
+  TRpChart(fprintitem).HorzOffSet:=StrToInt(value);
+  exit;
+ end;
+ if pname=SrpSVOffset then
+ begin
+  TRpChart(fprintitem).VertOffset:=StrToInt(value);
+  exit;
+ end;
+ if pname=SrpSTilt then
+ begin
+  TRpChart(fprintitem).Tilt:=StrToInt(value);
+  exit;
+ end;
+ if pname=SrpSMultibar then
+ begin
+  TRpChart(fprintitem).Multibar:=StringToRpMultibar(value);
   exit;
  end;
  inherited SetProperty(pname,value);
@@ -216,6 +337,61 @@ begin
   Result:=RpChartDriverToString(TRpChart(printitem).Driver);
   exit;
  end;
+ if pname=SrpSView3D then
+ begin
+  Result:=BoolToStr(TRpChart(printitem).View3D,True);
+  exit;
+ end;
+ if pname=SrpSView3DWalls then
+ begin
+  Result:=BoolToStr(TRpChart(printitem).View3DWalls,True);
+  exit;
+ end;
+ if pname=SrpSPerspective then
+ begin
+  Result:=IntToStr(TRpChart(printitem).Perspective);
+  exit;
+ end;
+ if pname=SrpSElevation then
+ begin
+  Result:=IntToStr(TRpChart(printitem).Elevation);
+  exit;
+ end;
+ if pname=SrpSRotation then
+ begin
+  Result:=IntToStr(TRpChart(printitem).Elevation);
+  exit;
+ end;
+ if pname=SrpSOrthogonal then
+ begin
+  Result:=BoolToStr(TRpChart(printitem).Orthogonal,True);
+  exit;
+ end;
+ if pname=SrpSZoom then
+ begin
+  Result:=IntToStr(TRpChart(printitem).Zoom);
+  exit;
+ end;
+ if pname=SrpSHOffset then
+ begin
+  Result:=IntToStr(TRpChart(printitem).HorzOffset);
+  exit;
+ end;
+ if pname=SrpSVOffset then
+ begin
+  Result:=IntToStr(TRpChart(printitem).VertOffset);
+  exit;
+ end;
+ if pname=SrpSTilt then
+ begin
+  Result:=IntToStr(TRpChart(printitem).Tilt);
+  exit;
+ end;
+ if pname=SrpSMultibar then
+ begin
+  Result:=RpMultiBarToString(TRpChart(printitem).Multibar);
+  exit;
+ end;
  Result:=inherited GetProperty(pname);
 end;
 
@@ -230,6 +406,11 @@ begin
  if pname=SRpSDriver then
  begin
   GetRpChartDriverPossibleValues(lpossiblevalues);
+  exit;
+ end;
+ if pname=SRpSMultibar then
+ begin
+  GetRpMultibarPossibleValues(lpossiblevalues);
   exit;
  end;
  inherited GetPropertyValues(pname,lpossiblevalues);

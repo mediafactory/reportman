@@ -381,7 +381,7 @@ end;
 
 function TRpWebPageLoader.LoadAliasPage(Request: TWebRequest):string;
 var
- astring:String;
+ astring,reportname:String;
  reportlist:String;
  aliasname:String;
  i:integer;
@@ -403,8 +403,14 @@ begin
    FillTreeDir(dirpath,alist);
    for i:=0 to alist.Count-1 do
    begin
-    reportlist:=reportlist+#10+'<p><a href="./showparams?reportname='+
-     alist.Strings[i]+'&'+Request.Query+'">'+alist.Strings[i]+'</a></p>';
+    reportname:=alist.Strings[i];
+    if Length(reportname)>0 then
+    begin
+     if reportname[1]=C_DIRSEPARATOR then
+      reportname:=Copy(reportname,2,Length(reportname));
+     reportlist:=reportlist+#10+'<p><a href="./showparams?reportname='+
+      alist.Strings[i]+'&'+Request.Query+'">'+reportname+'</a></p>';
+    end;
    end;
   finally
    alist.free;
@@ -419,7 +425,7 @@ end;
 function TRpWebPageLoader.LoadParamsPage(Request: TWebRequest):string;
 var
  pdfreport:TRpReport;
- dirpath,reportname:string;
+ dirpath,reportname,areportname:string;
  aliasname:string;
  visibleparam:Boolean;
  i:integer;
@@ -457,8 +463,14 @@ begin
      TranslateStr(135,'Parameter values'),[rfReplaceAll]);
     astring:=StringReplace(astring,REPMAN_EXECUTELABEL,
      TranslateStr(779,'Execute'),[rfReplaceAll]);
+    areportname:=Request.QueryFields.Values['reportname'];
+    if Length(areportname)>0 then
+    begin
+     if areportname[1]=C_DIRSEPARATOR then
+      areportname:=Copy(areportname,2,Length(areportname));
+    end;
     astring:=StringReplace(astring,REPMAN_REPORTTITLE,
-     Request.QueryFields.Values['reportname'],[rfReplaceAll]);
+     areportname,[rfReplaceAll]);
 
     inputstring:='<input type="hidden" name="reportname" '+
     'value="'+Request.QueryFields.Values['reportname']+'">';

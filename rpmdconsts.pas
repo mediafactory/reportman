@@ -574,6 +574,21 @@ var
   SRpChartArrow:WideString='Arrow';
   SRpChartBubble:WideString='Bubble';
   SRpChartGantt:WideString='Gantt';
+  SRPSView3D:WideString='View3D';
+  SRPSView3DWalls:WideString='3D Walls';
+  SRPSPerspective:WideString='Perspective';
+  SRPSElevation:WideString='Elevation';
+  SRPSRotation:WideString='Rotation';
+  SRPSOrthogonal:WideString='Orthogonal';
+  SRPSZoom:WideString='Zoom';
+  SRPSHOffset:WideString='H.Offset';
+  SRPSVOffset:WideString='V.Offset';
+  SRPSTilt:WideString='Tilt';
+  SRPSMultibar:WideString='Multibar';
+  SRpSNone:WideString='None';
+  SRpSSide:WideString='Side';
+  SRpSStacked:WideString='Stacked';
+  SRpSStacked100:WideString='Stacked100';
 
 implementation
 
@@ -1139,7 +1154,21 @@ begin
  TranslateVar(901,SRpChartArrow);
  TranslateVar(902,SRpChartBubble);
  TranslateVar(903,SRpChartGantt);
-
+ TranslateVar(904,SRPSView3D);
+ TranslateVar(905,SRPSView3DWalls);
+ TranslateVar(906,SRPSPerspective);
+ TranslateVar(907,SRPSElevation);
+ TranslateVar(908,SRPSRotation);
+ TranslateVar(909,SRPSOrthogonal);
+ TranslateVar(910,SRPSZoom);
+ TranslateVar(911,SRPSHOffset);
+ TranslateVar(912,SRPSVOffset);
+ TranslateVar(913,SRPSTilt);
+ TranslateVar(914,SRPSMultibar);
+ TranslateVar(915,SRpSNone);
+ TranslateVar(916,SRpSSide);
+ TranslateVar(917,SRpSStacked);
+ TranslateVar(918,SRpSStacked100);
 end;
 
 {$IFDEF LINUX}

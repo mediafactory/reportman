@@ -67,15 +67,14 @@
 <p>Report Manager is thread safe but there are some issues not only related to 
   Report Manager:<br>
   - BDE is not thread safe by default (a session must be open for each thread), 
-  in next version you can assign a session to a database report, in current version 
-  you can assign a TDatabase directly to the database report<br>
-  component in runtime.<br>
+  you can assign a session to a database report or you can assign a TDatabase 
+  directly to the database report component in runtime.<br>
   - Warning about local dabase access modes, some database engines like Interbase/Firebird 
-  allow to set a path to the database directly (c:\adatabase.gdb) using local 
-  access to database, you must avoid this because it's not thread safe you must 
-  use net access mode allways (localhost:c:\adatabase.gdb)<br>
+  allow to set a path to the database directly (c:\database.gdb) using local access 
+  to database, you must avoid this because it's not thread safe you must use net 
+  access mode allways (localhost:c:\database.gdb)<br>
   - Not all VisualCLX components are thread safe so you need to modify this VisualCLX 
-  components in the main thread, so the designer package is, becasuse this issue, 
+  components in the main thread, so the designer package is (becasuse this issue) 
   not thread safe.</p>
 <p><b>Q. Can Report Manager print in dot matrix printers in Linux as fast as in 
   Windows?</b></p>
@@ -96,11 +95,6 @@
 <p>Other way to do this is write a driver for Report Manager (now Report<br>
   Manager has three drivers:Qt,PDF,WinGDI), the output of this driver can be<br>
   only text for example, or text with escape codes...</p>
-<p><b>Q. Is TeeChart supported?</b></p>
-<p>No, for now, because Teechart has no easy way to vectorize the chart so it 
-  can not be included in metafiles as vectors (scalable), also it's not included 
-  in any version of Kylix.</p>
-<p>You can use the chart provided (it's very simple, only supports lines for now). 
-  To include support for TeeChart is not difficult but can take some work.</p>
+<p>&nbsp;</p>
 </body>
 </html>

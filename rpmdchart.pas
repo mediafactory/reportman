@@ -201,6 +201,11 @@ function RpChartDriverToString(driver:TRpChartDriver):String;
 function StringToRpChartDriver(Value:String):TRpChartDriver;
 procedure GetRpChartDriverPossibleValues(alist:TStrings);
 
+function RpMultiBarToString(multibar:TRpMultibar):String;
+function StringToRpMultibar(Value:String):TRpMultiBar;
+procedure GetRpMultiBarPossibleValues(alist:TStrings);
+
+
 implementation
 
 uses rpreport;
@@ -561,11 +566,11 @@ begin
 {$ENDIF}
   achart.LeftAxis.LabelsFont.Size:=FontSize;
   // Convert to degrees first
-  achart.LeftAxis.LabelsAngle:=FontRotation;
+  achart.LeftAxis.LabelsAngle:=Abs(FontRotation div 10) mod 360;
   achart.LeftAxis.LabelsFont.Style:=CLXIntegerToFontStyle(FontStyle);
   achart.BottomAxis.LabelsFont.Size:=FontSize;
   // Convert to degrees first
-  achart.BottomAxis.LabelsAngle:=FontRotation;
+  achart.BottomAxis.LabelsAngle:=Abs(FontRotation div 10) mod 360;
   achart.BottomAxis.LabelsFont.Style:=CLXIntegerToFontStyle(FontStyle);
 
   acolor:=0;
@@ -999,6 +1004,51 @@ begin
 // alist.Add(SRpChartArrow);
 // alist.Add(SRpChartBubble);
 // alist.Add(SRpChartGantt);
+end;
+
+
+function RpMultiBarToString(multibar:TRpMultibar):String;
+begin
+ Result:=SRPSNone;
+ case multibar of
+  rpMultiNone:
+   Result:=SRPSNone;
+  rpMultiside:
+   Result:=SRPSSide;
+  rpMultiStacked:
+   Result:=SRPSStacked;
+  rpMultiStacked100:
+   Result:=SRPSStacked100;
+ end;
+end;
+
+function StringToRpMultibar(Value:String):TRpMultiBar;
+begin
+ Result:=rpMultiNone;
+ if Value=SRPSSide then
+ begin
+  Result:=rpMultiSide;
+  exit;
+ end;
+ if Value=SRPSStacked then
+ begin
+  Result:=rpMultiStacked;
+  exit;
+ end;
+ if Value=SRPSStacked100 then
+ begin
+  Result:=rpMultiStacked100;
+  exit;
+ end;
+end;
+
+procedure GetRpMultiBarPossibleValues(alist:TStrings);
+begin
+ alist.Clear;
+ alist.Add(SRpSNone);
+ alist.Add(SRpSSide);
+ alist.Add(SRpSStacked);
+ alist.Add(SRpSStacked100);
 end;
 
 end.

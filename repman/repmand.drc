@@ -8,18 +8,96 @@
   resources were bound to the produced executable.
 */
 
-#define QDBConsts_SNextRecord 64768
-#define QDBConsts_SLastRecord 64769
-#define QDBConsts_SInsertRecord 64770
-#define QDBConsts_SDeleteRecord 64771
-#define QDBConsts_SEditRecord 64772
-#define QDBConsts_SPostEdit 64773
-#define QDBConsts_SCancelEdit 64774
-#define QDBConsts_SConfirmCaption 64775
-#define QDBConsts_SRefreshRecord 64776
-#define QDBConsts_SDeleteRecordQuestion 64777
-#define QDBConsts_SDataSourceFixed 64778
-#define QDBConsts_SRemoteLogin 64779
+#define QDBConsts_SInsertRecord 64688
+#define QDBConsts_SDeleteRecord 64689
+#define QDBConsts_SEditRecord 64690
+#define QDBConsts_SPostEdit 64691
+#define QDBConsts_SCancelEdit 64692
+#define QDBConsts_SConfirmCaption 64693
+#define QDBConsts_SRefreshRecord 64694
+#define QDBConsts_SDeleteRecordQuestion 64695
+#define QDBConsts_SDataSourceFixed 64696
+#define QDBConsts_SRemoteLogin 64697
+#define TeeConst_TeeMsg_PieOther 64704
+#define TeeConst_TeeMsg_ValuesX 64705
+#define TeeConst_TeeMsg_ValuesY 64706
+#define TeeConst_TeeMsg_ValuesPie 64707
+#define TeeConst_TeeMsg_ValuesBar 64708
+#define TeeConst_TeeMsg_ValuesAngle 64709
+#define TeeConst_TeeMsg_ValuesGanttStart 64710
+#define TeeConst_TeeMsg_ValuesGanttEnd 64711
+#define TeeConst_TeeMsg_ValuesGanttNextTask 64712
+#define TeeConst_TeeMsg_ValuesBubbleRadius 64713
+#define TeeConst_TeeMsg_ValuesArrowEndX 64714
+#define TeeConst_TeeMsg_ValuesArrowEndY 64715
+#define QDBConsts_SFirstRecord 64716
+#define QDBConsts_SPriorRecord 64717
+#define QDBConsts_SNextRecord 64718
+#define QDBConsts_SLastRecord 64719
+#define TeeConst_TeeMsg_GanttSample7 64720
+#define TeeConst_TeeMsg_GanttSample8 64721
+#define TeeConst_TeeMsg_GanttSample9 64722
+#define TeeConst_TeeMsg_GanttSample10 64723
+#define TeeConst_TeeMsg_DefaultFontSize 64724
+#define TeeConst_TeeMsg_FunctionAdd 64725
+#define TeeConst_TeeMsg_FunctionSubtract 64726
+#define TeeConst_TeeMsg_FunctionMultiply 64727
+#define TeeConst_TeeMsg_FunctionDivide 64728
+#define TeeConst_TeeMsg_FunctionHigh 64729
+#define TeeConst_TeeMsg_FunctionLow 64730
+#define TeeConst_TeeMsg_FunctionAverage 64731
+#define TeeConst_TeeMsg_GalleryBubble 64732
+#define TeeConst_TeeMsg_DefaultFontName 64733
+#define TeeConst_TeeMsg_CheckPointerSize 64734
+#define TeeConst_TeeMsg_FunctionPeriod 64735
+#define TeeConst_TeeMsg_PieSample3 64736
+#define TeeConst_TeeMsg_PieSample4 64737
+#define TeeConst_TeeMsg_PieSample5 64738
+#define TeeConst_TeeMsg_PieSample6 64739
+#define TeeConst_TeeMsg_PieSample7 64740
+#define TeeConst_TeeMsg_PieSample8 64741
+#define TeeConst_TeeMsg_GalleryStandard 64742
+#define TeeConst_TeeMsg_GalleryFunctions 64743
+#define TeeConst_TeeMsg_GalleryArrow 64744
+#define TeeConst_TeeMsg_GalleryGantt 64745
+#define TeeConst_TeeMsg_GanttSample1 64746
+#define TeeConst_TeeMsg_GanttSample2 64747
+#define TeeConst_TeeMsg_GanttSample3 64748
+#define TeeConst_TeeMsg_GanttSample4 64749
+#define TeeConst_TeeMsg_GanttSample5 64750
+#define TeeConst_TeeMsg_GanttSample6 64751
+#define TeeConst_TeeMsg_BarOffsetPercent 64752
+#define TeeConst_TeeMsg_DefaultPercentOf 64753
+#define TeeConst_TeeMsg_DefPercentFormat 64754
+#define TeeConst_TeeMsg_DefValueFormat 64755
+#define TeeConst_TeeMsg_AxisTitle 64756
+#define TeeConst_TeeMsg_AxisLabels 64757
+#define TeeConst_TeeMsg_GalleryLine 64758
+#define TeeConst_TeeMsg_GalleryPoint 64759
+#define TeeConst_TeeMsg_GalleryArea 64760
+#define TeeConst_TeeMsg_GalleryBar 64761
+#define TeeConst_TeeMsg_GalleryHorizBar 64762
+#define TeeConst_TeeMsg_GalleryPie 64763
+#define TeeConst_TeeMsg_GalleryFastLine 64764
+#define TeeConst_TeeMsg_Rotation 64765
+#define TeeConst_TeeMsg_PieSample1 64766
+#define TeeConst_TeeMsg_PieSample2 64767
+#define TeeConst_TeeMsg_LegendColorWidth 64768
+#define TeeConst_TeeMsg_SeriesSetDataSource 64769
+#define TeeConst_TeeMsg_SeriesInvDataSource 64770
+#define TeeConst_TeeMsg_FillSample 64771
+#define TeeConst_TeeMsg_Angle 64772
+#define TeeConst_TeeMsg_AxisLogDateTime 64773
+#define TeeConst_TeeMsg_AxisLogNotPositive 64774
+#define TeeConst_TeeMsg_AxisLabelSep 64775
+#define TeeConst_TeeMsg_AxisIncrementNeg 64776
+#define TeeConst_TeeMsg_AxisMinMax 64777
+#define TeeConst_TeeMsg_AxisMaxMin 64778
+#define TeeConst_TeeMsg_AxisLogBase 64779
+#define TeeConst_TeeMsg_MaxPointsPerPage 64780
+#define TeeConst_TeeMsg_3dPercent 64781
+#define TeeConst_TeeMsg_CircularSeries 64782
+#define TeeConst_TeeMsg_BarWidthPercent 64783
 #define ADOConst_SBookmarksRequired 64784
 #define ADOConst_SMissingCommandText 64785
 #define ADOConst_SNoResultSet 64786
@@ -34,8 +112,8 @@
 #define ADOConst_sValueAttr 64795
 #define rpdataset_SRpDatasetActive 64796
 #define rpdataset_SRpInvOpRpdata 64797
-#define QDBConsts_SFirstRecord 64798
-#define QDBConsts_SPriorRecord 64799
+#define TeeConst_TeeMsg_LegendTopPos 64798
+#define TeeConst_TeeMsg_LegendFirstValue 64799
 #define bdeconst_SNoParameterValue 64800
 #define bdeconst_SLoginError 64801
 #define bdeconst_SInitError 64802
@@ -774,8 +852,6 @@
 #define SysConst_SAccessDenied 65535
 STRINGTABLE
 BEGIN
-	QDBConsts_SNextRecord,	"Next record"
-	QDBConsts_SLastRecord,	"Last record"
 	QDBConsts_SInsertRecord,	"Insert record"
 	QDBConsts_SDeleteRecord,	"Delete record"
 	QDBConsts_SEditRecord,	"Edit record"
@@ -786,6 +862,86 @@ BEGIN
 	QDBConsts_SDeleteRecordQuestion,	"Delete record?"
 	QDBConsts_SDataSourceFixed,	"Operation not allowed in a DBCtrlGrid"
 	QDBConsts_SRemoteLogin,	"Remote Login"
+	TeeConst_TeeMsg_PieOther,	"Other"
+	TeeConst_TeeMsg_ValuesX,	"X"
+	TeeConst_TeeMsg_ValuesY,	"Y"
+	TeeConst_TeeMsg_ValuesPie,	"Pie"
+	TeeConst_TeeMsg_ValuesBar,	"Bar"
+	TeeConst_TeeMsg_ValuesAngle,	"Angle"
+	TeeConst_TeeMsg_ValuesGanttStart,	"Start"
+	TeeConst_TeeMsg_ValuesGanttEnd,	"End"
+	TeeConst_TeeMsg_ValuesGanttNextTask,	"NextTask"
+	TeeConst_TeeMsg_ValuesBubbleRadius,	"Radius"
+	TeeConst_TeeMsg_ValuesArrowEndX,	"EndX"
+	TeeConst_TeeMsg_ValuesArrowEndY,	"EndY"
+	QDBConsts_SFirstRecord,	"First record"
+	QDBConsts_SPriorRecord,	"Prior record"
+	QDBConsts_SNextRecord,	"Next record"
+	QDBConsts_SLastRecord,	"Last record"
+	TeeConst_TeeMsg_GanttSample7,	"Manufac."
+	TeeConst_TeeMsg_GanttSample8,	"Debugging"
+	TeeConst_TeeMsg_GanttSample9,	"New Version"
+	TeeConst_TeeMsg_GanttSample10,	"Banking"
+	TeeConst_TeeMsg_DefaultFontSize,	"8"
+	TeeConst_TeeMsg_FunctionAdd,	"Add"
+	TeeConst_TeeMsg_FunctionSubtract,	"Subtract"
+	TeeConst_TeeMsg_FunctionMultiply,	"Multiply"
+	TeeConst_TeeMsg_FunctionDivide,	"Divide"
+	TeeConst_TeeMsg_FunctionHigh,	"High"
+	TeeConst_TeeMsg_FunctionLow,	"Low"
+	TeeConst_TeeMsg_FunctionAverage,	"Average"
+	TeeConst_TeeMsg_GalleryBubble,	"Bubble"
+	TeeConst_TeeMsg_DefaultFontName,	"Arial"
+	TeeConst_TeeMsg_CheckPointerSize,	"Pointer size must be greater than zero"
+	TeeConst_TeeMsg_FunctionPeriod,	"Function Period should be >= 0"
+	TeeConst_TeeMsg_PieSample3,	"Tables"
+	TeeConst_TeeMsg_PieSample4,	"Monitors"
+	TeeConst_TeeMsg_PieSample5,	"Lamps"
+	TeeConst_TeeMsg_PieSample6,	"Keyboards"
+	TeeConst_TeeMsg_PieSample7,	"Bikes"
+	TeeConst_TeeMsg_PieSample8,	"Chairs"
+	TeeConst_TeeMsg_GalleryStandard,	"Standard"
+	TeeConst_TeeMsg_GalleryFunctions,	"Functions"
+	TeeConst_TeeMsg_GalleryArrow,	"Arrow"
+	TeeConst_TeeMsg_GalleryGantt,	"Gantt"
+	TeeConst_TeeMsg_GanttSample1,	"Design"
+	TeeConst_TeeMsg_GanttSample2,	"Prototyping"
+	TeeConst_TeeMsg_GanttSample3,	"Development"
+	TeeConst_TeeMsg_GanttSample4,	"Sales"
+	TeeConst_TeeMsg_GanttSample5,	"Marketing"
+	TeeConst_TeeMsg_GanttSample6,	"Testing"
+	TeeConst_TeeMsg_BarOffsetPercent,	"Bar Offset Percent must be between -100% and 100%"
+	TeeConst_TeeMsg_DefaultPercentOf,	"%s of %s"
+	TeeConst_TeeMsg_DefPercentFormat,	"##0.## %"
+	TeeConst_TeeMsg_DefValueFormat,	"#,##0.###"
+	TeeConst_TeeMsg_AxisTitle,	"Axis Title"
+	TeeConst_TeeMsg_AxisLabels,	"Axis Labels"
+	TeeConst_TeeMsg_GalleryLine,	"Line"
+	TeeConst_TeeMsg_GalleryPoint,	"Point"
+	TeeConst_TeeMsg_GalleryArea,	"Area"
+	TeeConst_TeeMsg_GalleryBar,	"Bar"
+	TeeConst_TeeMsg_GalleryHorizBar,	"Horiz. Bar"
+	TeeConst_TeeMsg_GalleryPie,	"Pie"
+	TeeConst_TeeMsg_GalleryFastLine,	"Fast Line"
+	TeeConst_TeeMsg_Rotation,	"Rotation"
+	TeeConst_TeeMsg_PieSample1,	"Cars"
+	TeeConst_TeeMsg_PieSample2,	"Phones"
+	TeeConst_TeeMsg_LegendColorWidth,	"Legend Color Width must be between 0 and 100 %"
+	TeeConst_TeeMsg_SeriesSetDataSource,	"No ParentChart to validate DataSource"
+	TeeConst_TeeMsg_SeriesInvDataSource,	"No valid DataSource: %s"
+	TeeConst_TeeMsg_FillSample,	"FillSampleValues NumValues must be > 0"
+	TeeConst_TeeMsg_Angle,	"%s Angle must be between 0 and 359 degrees"
+	TeeConst_TeeMsg_AxisLogDateTime,	"DateTime Axis cannot be Logarithmic"
+	TeeConst_TeeMsg_AxisLogNotPositive,	"Logarithmic Axis Min and Max values should be >= 0"
+	TeeConst_TeeMsg_AxisLabelSep,	"Labels Separation % must be greater than 0"
+	TeeConst_TeeMsg_AxisIncrementNeg,	"Axis increment must be >= 0"
+	TeeConst_TeeMsg_AxisMinMax,	"Axis Minimum Value must be <= Maximum"
+	TeeConst_TeeMsg_AxisMaxMin,	"Axis Maximum Value must be >= Minimum"
+	TeeConst_TeeMsg_AxisLogBase,	"Axis Logarithmic Base should be >= 2"
+	TeeConst_TeeMsg_MaxPointsPerPage,	"MaxPointsPerPage must be >= 0"
+	TeeConst_TeeMsg_3dPercent,	"3D effect percent must be between %d and %d"
+	TeeConst_TeeMsg_CircularSeries,	"Circular Series dependences are not allowed"
+	TeeConst_TeeMsg_BarWidthPercent,	"Bar Width Percent must be between 1 and 100"
 	ADOConst_SBookmarksRequired,	"Dataset does not support bookmarks, which are required for multi-record data controls"
 	ADOConst_SMissingCommandText,	"Missing %s property"
 	ADOConst_SNoResultSet,	"CommandText does not return a result set"
@@ -800,8 +956,8 @@ BEGIN
 	ADOConst_sValueAttr,	"Value"
 	rpdataset_SRpDatasetActive,	"Operation not allowed in a open dataset"
 	rpdataset_SRpInvOpRpdata,	"Invalid operation for TRpDataset"
-	QDBConsts_SFirstRecord,	"First record"
-	QDBConsts_SPriorRecord,	"Prior record"
+	TeeConst_TeeMsg_LegendTopPos,	"Top Legend Position must be between 0 and 100 %"
+	TeeConst_TeeMsg_LegendFirstValue,	"First Legend Value must be > 0"
 	bdeconst_SNoParameterValue,	"No value for parameter '%s'"
 	bdeconst_SLoginError,	"Cannot connect to database '%s'"
 	bdeconst_SInitError,	"An error occurred while attempting to initialize the Borland Database Engine (error $%.4x)"
