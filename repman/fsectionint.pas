@@ -217,8 +217,16 @@ begin
  if fmainf.BLabel.Down then
  begin
   alabel:=TRpLabel.Create(printitem.Owner);
-  alabel.PosX:=pixelstotwips(X);
-  alabel.PosY:=pixelstotwips(Y);
+  if TRpReport(printitem.Owner).GridEnabled then
+  begin
+   alabel.PosX:=pixelstotwips(AlignToGridPixels(X,TRpReport(printitem.Owner).GridWidth));
+   alabel.PosY:=pixelstotwips(AlignToGridPixels(Y,TRpReport(printitem.Owner).GridHeight));
+  end
+  else
+  begin
+   alabel.PosX:=pixelstotwips(X);
+   alabel.PosY:=pixelstotwips(Y);
+  end;
   alabel.Text:=SRpSampleTextToLabels;
   GenerateNewName(alabel);
   aitem:=TRpSection(printitem).Components.Add;
@@ -238,8 +246,16 @@ begin
  if fmainf.BExpression.Down then
  begin
   aexpre:=TRpExpression.Create(printitem.Owner);
-  aexpre.PosX:=pixelstotwips(X);
-  aexpre.PosY:=pixelstotwips(Y);
+  if TRpReport(printitem.Owner).GridEnabled then
+  begin
+   aexpre.PosX:=pixelstotwips(AlignToGridPixels(X,TRpReport(printitem.Owner).GridWidth));
+   aexpre.PosY:=pixelstotwips(AlignToGridPixels(Y,TRpReport(printitem.Owner).GridHeight));
+  end
+  else
+  begin
+   aexpre.PosX:=pixelstotwips(X);
+   aexpre.PosY:=pixelstotwips(Y);
+  end;
   aexpre.Expression:='2+2';
   GenerateNewName(aexpre);
   aitem:=TRpSection(printitem).Components.Add;

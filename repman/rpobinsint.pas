@@ -605,8 +605,6 @@ end;
 
 procedure TRpBlackControl.CalcNewCoords(var NewLeft,
  NewTop,NewWidth,NewHeight,X,Y:integer);
-var
- difx,dify:integer;
 begin
   // Depending on tag must do different coordinates
   case Tag of
@@ -806,6 +804,11 @@ begin
   if Assigned(TRpSizeModifier(Owner).OnSizeChange) then
    TRpSizeModifier(Owner).OnSizeChange(Owner);
   TRpSizeModifier(Owner).UpdatePos;
+  if Control is TRpSizePosInterface then
+  begin
+   if Assigned(TRpSizePosInterface(Control).fobjinsp) then
+    TFObjInsp(TRpSizePosInterface(Control).fobjinsp).CompItem:=TRpSizePosInterface(Control);
+  end;
  end;
 end;
 
@@ -839,9 +842,14 @@ procedure TRpGenTextInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
  inherited GetProperties(lnames,ltypes,lvalues);
  // Font Name
- lnames.Add(SrpSFontName);
- ltypes.Add(SRpSString);
- lvalues.Add(TRpGenTextComponent(printitem).FontName);
+ lnames.Add(SrpSWFontName);
+ ltypes.Add(SRpSWFontName);
+ lvalues.Add(TRpGenTextComponent(printitem).WFontName);
+
+ // Linux Font Name
+ lnames.Add(SrpSLFontName);
+ ltypes.Add(SRpSLFontName);
+ lvalues.Add(TRpGenTextComponent(printitem).LFontName);
 
  // Font Size
  lnames.Add(SrpSFontSize);
@@ -875,9 +883,15 @@ procedure TRpGenTextInterface.SetProperty(pname:string;value:string);
 begin
  if length(value)<1 then
   exit;
- if pname=SRpSFontName then
+ if pname=SRpSWFontName then
  begin
-  TRpGenTextComponent(fprintitem).FontName:=value;
+  TRpGenTextComponent(fprintitem).WFontName:=value;
+  Invalidate;
+  exit;
+ end;
+ if pname=SRpSLFontName then
+ begin
+  TRpGenTextComponent(fprintitem).LFontName:=value;
   Invalidate;
   exit;
  end;
@@ -918,9 +932,14 @@ end;
 function TRpGenTextInterface.GetProperty(pname:string):string;
 begin
  Result:='';
- if pname=SrpSFontName then
+ if pname=SrpSWFontName then
  begin
-  Result:=TRpGenTextComponent(printitem).FontName;
+  Result:=TRpGenTextComponent(printitem).WFontName;
+  exit;
+ end;
+ if pname=SrpSLFontName then
+ begin
+  Result:=TRpGenTextComponent(printitem).LFontName;
   exit;
  end;
  if pname=SrpSFontSize then

@@ -76,7 +76,8 @@ type
 
  TRpGenTextComponent=class(TRpCommonPosComponent)
   private
-   FFontName:widestring;
+   FWFontName:widestring;
+   FLFontName:widestring;
    FFontSize:integer;
    FFontStyle:integer;
    FFontColor:integer;
@@ -85,7 +86,8 @@ type
   public
    constructor Create(AOwner:TComponent);override;
   published
-   property FontName:widestring read FFontName write FFontName;
+   property WFontName:widestring read FWFontName write FWFontName;
+   property LFontName:widestring read FLFontName write FLFontName;
    property FontSize:integer read FFontSize write FFontSize default 10;
    property FontStyle:integer read FFontStyle write FFontStyle default 0;
    property FontColor:integer read FFontColor write FFontColor default 0;
@@ -175,7 +177,8 @@ constructor TRpGenTextComponent.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
- FontName:='Helvetica';
+ FLFontName:='Helvetica';
+ FWFontName:='Arial';
  FontSize:=10;
  FontStyle:=0;
  FontColor:=0;

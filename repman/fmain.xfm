@@ -1,8 +1,8 @@
 object FMainf: TFMainf
-  Left = 23
-  Top = 64
+  Left = 47
+  Top = 99
   Width = 696
-  Height = 395
+  Height = 428
   VertScrollBar.Range = 30
   ActiveControl = ToolButton1
   Caption = 'Report manager designer'
@@ -175,7 +175,7 @@ object FMainf: TFMainf
     Left = 0
     Top = 30
     Width = 696
-    Height = 342
+    Height = 375
     HorzScrollBar.Range = 189
     Align = alClient
     BorderStyle = bsNone
@@ -185,7 +185,7 @@ object FMainf: TFMainf
       Left = 181
       Top = 0
       Width = 8
-      Height = 342
+      Height = 375
       Beveled = True
       OnMoved = Splitter1Moved
     end
@@ -193,7 +193,7 @@ object FMainf: TFMainf
       Left = 0
       Top = 0
       Width = 181
-      Height = 342
+      Height = 375
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -1169,7 +1169,7 @@ object FMainf: TFMainf
       0000000003FFFFFFFFFFFFFF0000003FF3FFFFFFFFFFFFFF00FF87FFF3FFFFFF
       FFFFFFFF00FF8FFFF3FFFFFFFFFFFFFF00FF8FFFF3FFFFFFFFFFFFFF3FFF8FFF
       F3FFFFFFFFFFFFFF3FFF8FFFE3FFFFFFFFFFFFFF3FFF8FFFC3FFFFFFFFFFFFFF
-      3FFF8FFFC3FFFFFFFFFFFFFF3FFF0FFFC3FFFFFFFFFFDFFF3FFE0FFFC3FFFFFF
+      3FFF8FFFC3FFFFFFFFFFFFFF3FFF0FFFC3FFFFFFFFFFFFFF3FFE0FFFC3FFFFFF
       FFFFFFFF3FFC0F03C3FFFFFFFFFFFFFF3FC00FFFC3FFFFFFFFFFFFFF3F8007FF
       83FFFFFFFFFFFFFF3F00007803FFFFFFFFFFFFFF0000000003FFFFFFFFFFFFFF
       0000000003FFFFFFFFFFFFFF0000000000000000000000010000000000000000

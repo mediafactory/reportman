@@ -65,6 +65,7 @@ type
     LLabels:TList;
     LControls:TStringList;
     LControlsToFree:TList;
+    procedure UpdatePosValues;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
     property CompItem:TRpSizeInterface read FCompItem write SetCompItem;
@@ -135,7 +136,7 @@ begin
  if Assigned(FCompItem) then
   if Assigned(Value) then
    if FCompItem.ClassName=Value.ClassName then
-    dontrelease:=true;
+     dontrelease:=true;
  if not dontrelease then
   ReleaseAllControls;
  FCompItem:=Value;
@@ -224,12 +225,14 @@ begin
    if dontrelease then
     Control:=TControl(LControls.Objects[i])
    else
+   begin
     Control:=TComboBox.Create(Self);
-   TComboBox(Control).Items.Add(FalseBoolStrs[0]);
-   TComboBox(Control).Items.Add(TrueBoolStrs[0]);
-   TComboBox(Control).Style:=csDropDownList;
+    TComboBox(Control).Items.Add(FalseBoolStrs[0]);
+    TComboBox(Control).Items.Add(TrueBoolStrs[0]);
+    TComboBox(Control).Style:=csDropDownList;
+    TCOmboBox(Control).OnChange:=EditChange;
+   end;
    TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(LValues.Strings[i]);
-   TCOmboBox(Control).OnChange:=EditChange;
   end
   else
   if LTypes.Strings[i]=SRpSColor then
@@ -264,10 +267,7 @@ begin
    TEdit(Control).Text:=LValues.Strings[i];
    TEdit(Control).OnChange:=EditChange;
   end;
-  if LNames.Strings[i]=SRpSFontName then
-  begin
-   TEdit(Control).OnDblClick:=FontClick;
-  end;
+
   if not dontrelease then
   begin
    Control.Top:=Posy;
@@ -286,7 +286,24 @@ begin
   // Font button
   if not dontrelease then
   begin
-   if LTypes.Strings[i]=SRpSFontSize then
+{$IFDEF MSWINDOWS}
+   if LTypes.Strings[i]=SRpSWFontName then
+   begin
+    TEdit(Control).OnDblClick:=FontClick;
+   end;
+{$ENDIF}
+{$IFDEF LINUX}
+   if LTypes.Strings[i]=SRpSLFontName then
+   begin
+    TEdit(Control).OnDblClick:=FontClick;
+   end;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+   if LTypes.Strings[i]=SRpSWFontName then
+{$ENDIF}
+{$IFDEF LINUX}
+   if LTypes.Strings[i]=SRpSLFontName then
+{$ENDIF}
    begin
     Control2:=TButton.Create(Self);
     Control2.Width:=CONS_BUTTONWIDTH;
@@ -414,13 +431,18 @@ procedure TFObjInsp.FontClick(Sender:TObject);
 var
  index:integer;
 begin
- FontDialog1.Font.Name:= CompItem.GetProperty(SRpSFontName);
+{$IFDEF MSWINDOWS}
+ FontDialog1.Font.Name:= CompItem.GetProperty(SRpSWFontName);
+{$ENDIF}
+{$IFDEF LINUX}
+ FontDialog1.Font.Name:= CompItem.GetProperty(SRpSLFontName);
+{$ENDIF}
  FontDialog1.Font.Size:= StrToInt(CompItem.GetProperty(SRpSFontSize));
  FontDialog1.Font.Color:= StrToInt(CompItem.GetProperty(SRpSFontColor));
  FontDialog1.Font.Style:=IntegerToFontStyle(StrToInt(CompItem.GetProperty(SrpSFontStyle)));
  if FontDialog1.Execute then
  begin
-  index:=LNames.IndexOf(SrpSFontName);
+  index:=TComponent(Sender).Tag;
   if index>=0 then
   begin
    TEdit(LControls.Objects[index]).Text:=FontDialog1.Font.Name;
@@ -456,39 +478,11 @@ begin
 end;
 
 procedure TFObjInsp.ChangeSizeChange(Sender:TObject);
-var
- index:integer;
- sizeposint:TRpSizePosInterface;
- NewLeft,NewTop,NewWidth,NewHeight:integer;
 begin
  // Read bounds Values and assign
  if Not Assigned(fchangesize.Control) then
   exit;
- sizeposint:=TRpSizePosInterface(fchangesize.control);
- NewLeft:=sizeposint.Left;
- NewTop:=sizeposint.Top;
- NewWidth:=sizeposint.Width;
- NewHeight:=sizeposint.Height;
- index:=LNames.IndexOf(SRpSLeft);
- if index>=0 then
- begin
-  sizeposint.SetProperty(SRpSLeft,gettextfromtwips(pixelstotwips(NewLeft)));
- end;
- index:=LNames.IndexOf(SRpSTop);
- if index>=0 then
- begin
-  sizeposint.SetProperty(SRpSTop,gettextfromtwips(pixelstotwips(NewTop)));
- end;
- index:=LNames.IndexOf(SRpSWidth);
- if index>=0 then
- begin
-  sizeposint.SetProperty(SRpSWidth,gettextfromtwips(pixelstotwips(NewWidth)));
- end;
- index:=LNames.IndexOf(SRpSHeight);
- if index>=0 then
- begin
-  sizeposint.SetProperty(SRpSHeight,gettextfromtwips(pixelstotwips(NewHeight)));
- end;
+ UpdatePosValues;
 end;
 
 procedure TFObjInsp.SendToBackClick(Sender:TObject);
@@ -570,6 +564,39 @@ begin
  RpExpreDialog1.Expresion.Text:=TEdit(LControls.Objects[TButton(Sender).Tag]).Text;
  if RpExpreDialog1.Execute then
   TEdit(LControls.Objects[TButton(Sender).Tag]).Text:=Trim(RpExpreDialog1.Expresion.Text);
+end;
+
+procedure TFObjInsp.UpdatePosValues;
+var
+ index:integer;
+ sizeposint:TRpSizePosInterface;
+ NewLeft,NewTop,NewWidth,NewHeight:integer;
+begin
+ sizeposint:=TRpSizePosInterface(fchangesize.control);
+ NewLeft:=sizeposint.Left;
+ NewTop:=sizeposint.Top;
+ NewWidth:=sizeposint.Width;
+ NewHeight:=sizeposint.Height;
+ index:=LNames.IndexOf(SRpSLeft);
+ if index>=0 then
+ begin
+  sizeposint.SetProperty(SRpSLeft,gettextfromtwips(pixelstotwips(NewLeft)));
+ end;
+ index:=LNames.IndexOf(SRpSTop);
+ if index>=0 then
+ begin
+  sizeposint.SetProperty(SRpSTop,gettextfromtwips(pixelstotwips(NewTop)));
+ end;
+ index:=LNames.IndexOf(SRpSWidth);
+ if index>=0 then
+ begin
+  sizeposint.SetProperty(SRpSWidth,gettextfromtwips(pixelstotwips(NewWidth)));
+ end;
+ index:=LNames.IndexOf(SRpSHeight);
+ if index>=0 then
+ begin
+  sizeposint.SetProperty(SRpSHeight,gettextfromtwips(pixelstotwips(NewHeight)));
+ end;
 end;
 
 end.

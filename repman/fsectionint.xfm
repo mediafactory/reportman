@@ -1,7 +1,7 @@
 object FSectionProps: TFSectionProps
   Left = 282
   Top = 196
-  Width = 320
+  Width = 317
   Height = 240
   VertScrollBar.Range = 209
   HorzScrollBar.Range = 234

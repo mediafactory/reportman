@@ -151,6 +151,8 @@ type
     procedure UpdateFileMenu;
     procedure OnFileClick(Sender:TObject);
     procedure DoOpen(newfilename:string;showopendialog:boolean);
+    procedure OnReadError(Reader: TReader; const Message: string;
+     var Handled: Boolean);
   public
     { Public declarations }
     report:TRpReport;
@@ -194,6 +196,7 @@ begin
  DoDisable;
  // Creates a new report
  report:=TRpReport.Create(Self);
+ report.OnReadError:=OnReadError;
  report.CreateNew;
  filename:='';
 
@@ -251,6 +254,7 @@ begin
  // Creates a new report
  report:=TRpReport.Create(Self);
  try
+  report.OnReadError:=OnReadError;
   report.LoadFromFile(OpenDialog1.FileName);
   filename:=OpenDialog1.FileName;
   Savedialog1.filename:=filename;
@@ -701,6 +705,14 @@ begin
  fobjinsp.CompItem:=olditem;
 end;
 
+procedure TFMainf.OnReadError(Reader: TReader; const Message: string;
+    var Handled: Boolean);
+begin
+ Handled:=MessageDlg(SRpErrorReadingReport,Message+#10+SRpIgnoreError,mtWarning,[mbYes,mbNo],0)=mrYes;
+end;
+
 initialization
+
+
 
 end.

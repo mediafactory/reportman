@@ -106,7 +106,13 @@ begin
  Canvas.Rectangle(0,0,Width,Height);
 
  // Draws the text
- Canvas.Font.Name:=alabel.FontName;
+{$IFDEF MSWINDOWS}
+ Canvas.Font.Name:=alabel.WFontName;
+{$ENDIF}
+{$IFDEF LINUX}
+ Canvas.Font.Name:=alabel.LFontName;
+{$ENDIF}
+
  Canvas.Font.Color:=alabel.FontColor;
  Canvas.Font.Size:=alabel.FontSize;
  Canvas.Font.Style:=IntegerToFontStyle(alabel.FontStyle);
@@ -173,7 +179,12 @@ begin
  Canvas.Rectangle(0,0,Width,Height);
 
  // Draws the text
- Canvas.Font.Name:=aexp.FontName;
+{$IFDEF MSWINDOWS}
+ Canvas.Font.Name:=aexp.WFontName;
+{$ENDIF}
+{$IFDEF LINUX}
+ Canvas.Font.Name:=aexp.LFontName;
+{$ENDIF}
  Canvas.Font.Color:=aexp.FontColor;
  Canvas.Font.Size:=aexp.FontSize;
  Canvas.Font.Style:=IntegerToFontStyle(aexp.FontStyle);

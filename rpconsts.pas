@@ -29,6 +29,8 @@ resourcestring
   SRpCatalan='Catalan';
 
   SRpInvalidClipboardFormat='Invalid clipboard format';
+  SRpErrorReadingReport='Error reading report: ';
+  SRpIgnoreError='Ignore?';
 
   SRpSampleTextToLabels='Text';
   SRpOnlyAReportOwner='Only a report can be the owner of :';
@@ -309,7 +311,8 @@ resourcestring
   SRpSString='String';
   SRpSColor='Color';
   SRpSInteger='Integer';
-  SRpSFontName='Font Name';
+  SRpSWFontName='WFont Name';
+  SRpSLFontName='LFont Name';
   SrpSFontSize='Font Size';
   SrpSFontColor='Font Color';
   SrpSBackColor='Back Color';
