@@ -55,7 +55,7 @@ DebugSourceDirs=
 UsePackages=0
 
 [Parameters]
-RunParams=-m ../../repsamples/sample6.rep sample6.rpmf
+RunParams=-m -from 3 -to 10 sample4.rep sample4.rpmf
 HostApplication=
 Launcher=/usr/X11R6/bin/xterm -T KylixDebuggerOutput -e bash -i -c %debuggee%
 UseLauncher=0
