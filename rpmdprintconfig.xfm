@@ -221,7 +221,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
     TabOrder = 5
     OnChange = ComboTextOnlyChange
   end
-  object Label1: TLabel
+  object LTextDriver:TLabel
     Left = 216
     Top = 80
     Width = 72

@@ -56,7 +56,7 @@ type
     EOpenDrawer: TEdit;
     LExample2: TLabel;
     ComboTextOnly: TComboBox;
-    Label1: TLabel;
+    LTextDriver: TLabel;
     CheckOem: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure LSelPrinterClick(Sender: TObject);

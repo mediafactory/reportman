@@ -403,7 +403,7 @@ begin
   except
    on E:Exception do
    begin
-    Raise TRpReportException.Create(E.Message+':'+SRpSExpression+' '+Name,self,SRpSExportExpression);
+    Raise TRpReportException.Create(E.Message+':'+SRpSExportExpression+' '+Name,self,SRpSExportExpression);
    end;
   end;
  end
@@ -432,7 +432,14 @@ begin
  else
  begin
   Evaluate;
-  Result:=FormatVariant(displayformat,FValue,FDataType,FPrintNulls);
+  try
+   Result:=FormatVariant(displayformat,FValue,FDataType,FPrintNulls);
+  except
+   on E:Exception do
+   begin
+    Raise TRpReportException.Create(E.Message+':'+SRpSDisplayFormat+' '+Name,self,SRpSDisplayFormat);
+   end;
+  end;
   if FIsPartial then
    Result:=Copy(Result,FPartialPos,Length(Result));
  end;
@@ -480,7 +487,14 @@ begin
  end;
  if Not VarIsNull(FExportValue) then
  begin
-  avalue:=FormatVariant(exportdisplayformat,FExportValue,rpParamunknown,true);
+  try
+   avalue:=FormatVariant(exportdisplayformat,FExportValue,rpParamunknown,true);
+  except
+   on E:Exception do
+   begin
+    Raise TRpReportException.Create(E.Message+':'+SRpSExportFormat+' '+Name,self,SRpSExportFormat);
+   end;
+  end;
   metafile.Pages[metafile.CurrentPage].NewExportObject(aposy,aposx,
    PrintWidth,PrintHeight,avalue,FExportLine,FExportPosition,FExportSize,
    FExportDoNewLine);
