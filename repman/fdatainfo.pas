@@ -196,7 +196,9 @@ begin
   rpdataado:
    begin
      // Gets connection string
+{$IFDEF MSWINDOWS}
      EConnectionString.Text:=PromptDataSource(0,EConnectionString.Text);
+{$ENDIF}
    end;
  end;
  FillCurrentConnections;

@@ -22,7 +22,7 @@ program repmand;
 {%ToDo 'repmand.todo'}
 
 uses
-  QForms,midaslib,
+  QForms,
   fmain in 'fmain.pas' {FMainf},
   frpstruc in 'frpstruc.pas' {FRpStructure: TFrame},
   fdesign in 'fdesign.pas' {FDesignFrame: TFrame},
@@ -38,6 +38,7 @@ uses
 {$IFDEF MSWINDOWS}
   ShLwApi in 'ShLwApi.pas',
   ShFolder in 'ShFolder.pas',
+  midaslib,
   rpreport in '..\rpreport.pas',
   rpsubreport in '..\rpsubreport.pas',
   rpconsts in '..\rpconsts.pas',

@@ -4,6 +4,7 @@ drivers_path=../../drivers/linux
 install:
 	cp $(kylix_bin)/libqtintf-6.5-qt2.3.so .
 	cp $(kylix_bin)/libqt.so.2 .
+	cp $(kylix_bin)/libmidas.so.1
 	cp $(drivers_path)/libsqlib.so.1 .
 	cp $(drivers_path)/libsqlmy.so.1 .
 	cp $(drivers_path)/libsqlmy23.so.1 .

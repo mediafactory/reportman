@@ -117,8 +117,6 @@ type
     AAbout: TAction;
     About1: TMenuItem;
     ReportManager1: TMenuItem;
-    IBTransaction1: TIBTransaction;
-    IBDatabase1: TIBDatabase;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);

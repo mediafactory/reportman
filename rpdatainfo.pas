@@ -23,9 +23,10 @@ unit rpdatainfo;
 interface
 
 uses Classes,SysUtils,SqlExpr,rpconsts, DBXpress,
- DB,rpparams,Inifiles,rptypes,dbclient,
+ DB,rpparams,Inifiles,rptypes,DBClient,
+ IBQuery,IBDatabase,
 {$IFDEF MSWINDOWS}
-  dbtables,ibquery,ibdatabase,adodb,
+  dbtables,adodb,
 {$ENDIF}
  SqlConst;
 
