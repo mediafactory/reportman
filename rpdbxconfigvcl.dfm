@@ -22,9 +22,6 @@ object FRpDBXConfigVCL: TFRpDBXConfigVCL
     Height = 53
     Align = alTop
     TabOrder = 0
-    DesignSize = (
-      585
-      53)
     object LDriversFile: TLabel
       Left = 8
       Top = 8
@@ -507,10 +504,5 @@ object FRpDBXConfigVCL: TFRpDBXConfigVCL
       60000000FFF1FC7F8FF003F820000000FFF1FFFFFFF007FC60000000FFFFFFFF
       FFF00FFFB0100000FFFFFFFFFFFFFFFFFFF00000000000000000000000000000
       00000000000000000000}
-  end
-  object SQLConnection1: TSQLConnection
-    ConnectionName = 'OASIS3000'
-    Left = 188
-    Top = 144
   end
 end

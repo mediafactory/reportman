@@ -29,9 +29,6 @@ object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
     Align = alTop
     Caption = 'Database connections'
     TabOrder = 0
-    DesignSize = (
-      557
-      129)
     object LAvailable: TLabel
       Left = 8
       Top = 16
@@ -248,8 +245,6 @@ object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
               Width = 541
               Height = 93
               Align = alClient
-              Lines.Strings = (
-                'MBDEFilter')
               ScrollBars = ssBoth
               TabOrder = 1
               WordWrap = False
