@@ -455,6 +455,11 @@ begin
  begin
   Font.Size:=7;
  end;
+
+ RpExpreDialog1.evaluator.AddVariable('Page',fmainf.report.idenpagenum);
+ RpExpreDialog1.evaluator.AddVariable('FREE_SPACE',fmainf.report.idenfreespace);
+ RpExpreDialog1.evaluator.AddVariable('FREE_SPACE_CMS',fmainf.report.idenfreespacecms);
+ RpExpreDialog1.evaluator.AddVariable('FREE_SPACE_INCH',fmainf.report.idenfreespaceinch);
 end;
 
 destructor TFObjInsp.Destroy;

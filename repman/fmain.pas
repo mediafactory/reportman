@@ -639,6 +639,7 @@ begin
 
  FreeInterface;
  CreateInterface;
+ FormResize(Self);
 end;
 
 procedure TFMainf.ANewDetailExecute(Sender: TObject);

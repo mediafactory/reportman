@@ -23,50 +23,7 @@ object Form1: TForm1
   object CLXReport1: TCLXReport
     Filename = 'sample4.rep'
     Title = 'Untitled'
-    AliasList = RpAlias1
     Left = 96
-    Top = 92
-  end
-  object IBDatabase1: TIBDatabase
-    Connected = True
-    DatabaseName = 'artemis:c:\datos\toni\biolife.gdb'
-    Params.Strings = (
-      'user_name=SYSDBA'
-      'password=tw2000'
-      'lc_ctype=WIN1252')
-    LoginPrompt = False
-    DefaultTransaction = IBTransaction1
-    IdleTimer = 0
-    SQLDialect = 3
-    TraceFlags = []
-    Left = 100
-    Top = 156
-  end
-  object IBQuery1: TIBQuery
-    Database = IBDatabase1
-    Transaction = IBTransaction1
-    Active = True
-    BufferChunks = 1000
-    CachedUpdates = False
-    SQL.Strings = (
-      'SELECT * FROM BIOLIFE ORDER BY SPECIES_NO')
-    Left = 152
-    Top = 164
-  end
-  object IBTransaction1: TIBTransaction
-    Active = True
-    DefaultDatabase = IBDatabase1
-    AutoStopAction = saNone
-    Left = 196
-    Top = 176
-  end
-  object RpAlias1: TRpAlias
-    List = <
-      item
-        Alias = 'FISH'
-        Dataset = IBQuery1
-      end>
-    Left = 160
     Top = 92
   end
 end

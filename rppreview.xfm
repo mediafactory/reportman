@@ -1,6 +1,6 @@
 object FRpPreview: TFRpPreview
-  Left = 24
-  Top = 70
+  Left = 32
+  Top = 38
   Width = 640
   Height = 480
   VertScrollBar.Range = 33
@@ -148,6 +148,7 @@ object FRpPreview: TFRpPreview
       Top = 0
       Width = 89
       Height = 81
+      Stretch = True
     end
   end
   object ImageList1: TImageList

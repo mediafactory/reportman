@@ -33,6 +33,7 @@ type
    FTitle:WideString;
    FAliasList:TRpAlias;
    FShowPrintDialog:boolean;
+   FLanguage:integer;
   protected
    procedure Notification(AComponent: TComponent; Operation: TOperation);override;
   public
@@ -52,6 +53,7 @@ type
    property ShowPrintDialog:boolean read FShowPrintDialog
     write FShowPrintDialog default true;
    property AliasList:TRpAlias read FAliasList write FAliasList;
+   property Language:integer read FLanguage write FLanguage default -1;
   end;
 
 implementation
@@ -66,6 +68,7 @@ begin
  FPreview:=true;
  FTitle:=SRpUntitled;
  FShowPrintDialog:=True;
+ FLanguage:=-1;
 end;
 
 procedure TCLXReport.Notification(AComponent: TComponent; Operation: TOperation);
@@ -135,6 +138,8 @@ var
 begin
  CheckLoaded;
  report.AliasList:=AliasList;
+ if FLanguage>=0 then
+  report.Language:=FLanguage;
  if FPreview then
  begin
   Result:=ShowPreview(report,Title);

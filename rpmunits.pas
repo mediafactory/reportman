@@ -41,6 +41,8 @@ var
 function gettextfromtwips(twips1:TRptwips):string;
 function gettwipsfromtext(atext:string):TRptwips;
 function getdefaultunitstring:string;
+function twipstoinchess(twips1:TRpTwips):double;
+function twipstocms(twips1:TRpTwips):double;
 
 implementation
 
@@ -59,6 +61,15 @@ begin
  Result:=rpunitlabels[defaultunit];
 end;
 
+function twipstoinchess(twips1:TRpTwips):double;
+begin
+ Result:=twips1/TWIPS_PER_INCHESS;
+end;
+
+function twipstocms(twips1:TRpTwips):double;
+begin
+ Result:=(twips1/TWIPS_PER_INCHESS)*CMS_PER_INCHESS;
+end;
 
 initialization
  defaultunit:=rpUnitcms;

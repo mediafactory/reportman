@@ -138,9 +138,6 @@ begin
    bitmap.free;
    bitmap:=nil;
   end;
-  // The scale is the screen resolution by default
-  // in dots per inch but the paper size is in tenths of
-  // milimeter
   bitmap:=TBitmap.Create;
   bitmap.PixelFormat:=pf32bit;
   // Sets Orientation

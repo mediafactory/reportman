@@ -1,15 +1,16 @@
+{TODO 1 -oToni -cEngine : Implementation of external sections}
 {TODO 1 -oToni -cDesign Interface : Add multilect option and show common properties in object inspector}
-{TODO 2 -oToni -cEngine : Conditional define to build reportman package without db drivers}
+{DONE 2 -oToni -cEngine : Conditional define to build reportman package without db drivers}
 {DONE 4 -oToni -cDesign Interface : Select inchess or cms in preferences menu}
 {TODO 1 -oToni -cEngine : Add text rotation to text controls}
-{TODO 1 -oToni -cEngine : Implementation for Delphi 5 (ADO-NOADO) and C++Builder 4}
-{TODO 2 -oToni -cEngine : Add aliaslist to the report component to use application opened querys}
+{TODO 5 -oToni -cEngine : Implementation for Delphi 5 vcl driver}
+{DONE 2 -oToni -cEngine : Add aliaslist to the report component to use application opened querys}
 {TODO 1 -oToni -cDesign Interface : Select the object that produces a error}
 {TODO 1 -oToni -cDesign Interface : Add a alignment window for elements}
 {TODO 1 -oToni -cEngine : Implementation of vertical labels as subreport column width}
 {TODO 1 -oToni -cDesign Interface : Enhace object inspector speed}
-{TODO 2 -oToni -cEngine : Implement pagerepeat for group headers}
-{TODO 3 -oToni -cEngine : Finish TRpGDIDriver and program a TGDIReport to support VCL}
+{DONE 2 -oToni -cEngine : Implement skip page expression}
+{DONE 3 -oToni -cEngine : Add Language index to TCLXReport}
 
 
 {TODO 1 -oToni -cEngine : Image component filename property to load a file on the fly}
@@ -26,7 +27,7 @@
 {TODO 1 -oToni -cEngine : Program a simple chart component at least with poly lines and dots}
 
 {TODO 1 -oToni -cOthers : Conversion program for gestor.exe}
-{TODO   -oToni -cEngine : Saving and loading reportms from database tables using the designer}
+{TODO 1   -oToni -cEngine : Saving and loading reportms from database tables using the designer}
 
 
 {DONE 1 -oToni -cDesign Interface : Drop Fields directly from a floating window when click in expression}

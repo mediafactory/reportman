@@ -241,8 +241,8 @@ begin
  if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter,rpsecdetail]) then
  begin
   lnames.Add(SRpSBeginPage);
-  ltypes.Add(SRpSBool);
-  lvalues.Add(BoolToStr(TRpSection(printitem).BeginPage,true));
+  ltypes.Add(SRpSExpression);
+  lvalues.Add(TRpSection(printitem).BeginPageExpression);
 
   lnames.Add(SRpSkipPage);
   ltypes.Add(SRpSBool);
@@ -300,7 +300,7 @@ begin
  begin
   if pname=SRPSBeginPage then
   begin
-   TRpSection(fprintitem).BeginPage:=StrToBool(Value);
+   TRpSection(fprintitem).BeginPageExpression:=Value;
    exit;
   end;
   if pname=SRPSkipPage then
@@ -361,7 +361,7 @@ begin
  begin
   if pname=SRPSBeginPage then
   begin
-   Result:=BoolToStr(TRpSection(fprintitem).BeginPage,true);
+   Result:=TRpSection(fprintitem).BeginPageExpression;
    exit;
   end;
   if pname=SRPSkipPage then

@@ -4,76 +4,154 @@
   <title>Features</title>
 </head>
 <body>
-  <b>Report Manager is a reporting scheme designer and a printing engine.</b><p></p>
   
-<ul>
-  <li> Opensource under the MPL license model </li>
-  <li> Cross platform supporting Windows and Linux (Kylix/Delphi) </li>
-  <li> Database access </li>
-  <ul>
-    <li> Any TDataset descendant passed from Delphi/Kylix.</li>
-    <li>Windows: Borland database engine (DBase, Paradox, Interbase, Oracle, DB2, 
-      SQL Server, ODBC) </li>
-    <li> Windows: Microsoft Data Access Objects (Microsoft Jet, ODBC...) </li>
-    <li> Windows & Linux: DBExpress (Interbase, MySQl, PostgreSQL, DB2, Oracle, 
-      ODBC) </li>
-    <li> Windows & Linux: Native Access to Interbase (IBX, no additional libraries 
-      needed) </li>
-    <li> Windows & Linux: Borland Native simple local file database (MyBase)</li>
-  </ul>
-  <li> Report definition </li>
-  <ul>
-    <li> Unlimited number of subreports, each subreport can use a dataset </li>
-    <li> Each subreport can have a unlimited number of sections</li>
-    <ul>
-      <li> Page headers (unlimited)</li>
-      <li> Page footers (unlimited)</li>
-      <li> Grouping (unlimited), a group changes when a expression is true or 
-        changes </li>
-      <li> Grouping allow sum,min,max,avg and std.desv. operations.</li>
-      <li> You can use groups as report headers and footers (summary) </li>
-      <li> Details (unlimited). All details are printed once for each record of 
-        the subreport's dataset </li>
-    </ul>
-    <li> Each section has also some properties </li>
-    <ul>
-      <li> Print condition </li>
-      <li> Skip page before or after print </li>
-    </ul>
-  </ul>
-  <li> Printing engine 
-    <ul>
-      <li> Horizontal movement (labels) </li>
-      <li> For text controls </li>
+<p><b>Report Manager is a reporting scheme designer and a printing engine.</b></p>
+<table width="100%" border="1">
+  <tr> 
+    <td><b>General</b></td>
+  </tr>
+  <tr> 
+    <td> 
+      <ul>
+        <li> Opensource under the MPL license model. That is: free inclusive for 
+          use in commercial applications</li>
+        <li> <b>Cross platform</b> supporting Windows and Linux (Kylix/Delphi) 
+        </li>
+        <li>Small FootPrint (It <b>adds just 80Kbytes to your exe</b>)</li>
+        <li>Band based report designer, very easy similar to MSAccess, Visual 
+          Foxpro....</li>
+        <li>Report definition files are very small (most <b>reports fit in less 
+          than 5Kbytes</b>)</li>
+        <li><b>Expression evaluator</b> with builtin functions and access to database 
+          fields</li>
+        <li>Report parameters, define them, assign them to querys at run time 
+          or design time.</li>
+        <li><b>Linked or unlinked additional datasets</b>, link querys easily, 
+          open datasets to obtain aditional information...</li>
+      </ul>
+    </td>
+  </tr>
+  <tr> 
+    <td><b>Supported databases</b></td>
+  </tr>
+  <tr> 
+    <td> 
+      <ul>
+        <li> Any <b>TDataset descendant</b> passed from Delphi/Kylix.</li>
+        <li>Windows: Borland database engine (DBase, Paradox, Interbase, Oracle, 
+          DB2, SQL Server, ODBC) </li>
+        <li> Windows: Microsoft Data Access Objects (Microsoft Jet, ODBC...) </li>
+        <li> Windows & Linux: DBExpress (Interbase, MySQL, PostgreSQL, DB2, Oracle, 
+          ODBC) </li>
+        <li> Windows & Linux: Native Access to Interbase (IBX, no additional libraries 
+          needed) </li>
+        <li> Windows & Linux: Borland Native simple local file database (MyBase)</li>
+      </ul>
+    </td>
+  </tr>
+  <tr> 
+    <td><b>Report definition</b></td>
+  </tr>
+  <tr> 
+    <td> 
+      <ul>
+        <li> Unlimited number of subreports, <b>each subreport can use a dataset</b></li>
+        <li><a name="subreports"></a>You can print <b>multiple subreports in the 
+          same page</b>.</li>
+        <li> Each subreport can have a unlimited number of sections of each type 
+          (page headers,page footers,<b>group header an footers</b>)</li>
+        <li>Grouping allow <b>sum,min,max,avg and std.desv</b>. operations.</li>
+        <li> You can use groups as report headers and footers (<b>summary</b>)</li>
+        <li> All details are printed once for each record of the subreport's dataset</li>
+        <li>Each section has also some useful properties:print condition,skip 
+          page before or after print,<b>align bottom</b></li>
+      </ul>
+    </td>
+  </tr>
+  <tr> 
+    <td><b>Printing engine</b></td>
+  </tr>
+  <tr> 
+    <td height="22"> 
+      <ul>
+        <li>Horizontal movement (that is <b>multicolumn</b> for label print for 
+          example)</li>
+        <li>Page Margins and page orientation</li>
+        <li><b>Fast preview</b></li>
+        <li>Positioning in <b>1440 dots per inchess</b> of precision</li>
+        <li>Print resolution limited only by the system print driver</li>
+        <li>Save the report as a <b>metafile report<a name="metafile"></a></b> 
+          (device independent graphic format) </li>
+        <li>A separate application can <b>print/preview metafiles</b> (metaview)</li>
+        <li>Two pass report optional (page count variable available).</li>
+      </ul>
+    </td>
+  </tr>
+  <tr> 
+    <td><b>Properties for all controls</b></td>
+  </tr>
+  <tr> 
+    <td> 
+      <ul>
+        <li>Print condition</li>
+        <li>Expression evaluation before print</li>
+        <li>Expression evaluation after print</li>
+        <li>Z Order (to back, to front)</li>
+      </ul>
+    </td>
+  </tr>
+  <tr> 
+    <td><b>Properties for text controls</b></td>
+  </tr>
+  <tr> 
+    <td> 
       <ul>
         <li> Font Name (for each platform) </li>
         <li> Font Size, Bold, Italic, Color. </li>
         <li> Background color or transparent </li>
-        <li> Alignment, multiline </li>
-        <li> Display Mask </li>
+        <li> Alignment, vertical or horizontal</li>
+        <li>Labels are multilanguage</li>
       </ul>
-      <li> Page Margins and page orientation </li>
-      <li> Image print support </li>
+    </td>
+  </tr>
+  <tr> 
+    <td><b>Properties for expressions</b></td>
+  </tr>
+  <tr> 
+    <td> 
       <ul>
-        <li> The image is embedded in the report </li>
-        <li> The image can be loaded from a binary field </li>
-        <li> The image can be stretched, or adapt to pixels per inch </li>
+        <li> <b>Display Mask</b></li>
+        <li>Identifier, to reference from other controls</li>
+        <li>Don't print repeated values option</li>
+        <li>The expressions can be grouped with sum, avg...</li>
       </ul>
-      <li> Simple graphic support </li>
+    </td>
+  </tr>
+  <tr> 
+    <td><b>Image print control</b></td>
+  </tr>
+  <tr> 
+    <td>
+      <ul>
+        <li>The image can be embedded in the report </li>
+        <li> The image can be loaded from a binary field </li>
+        <li> The image can be stretched, or adapt to pixels per inch</li>
+        <li>Copy modes (Xor, And...)</li>
+      </ul>
+      </td>
+  </tr>
+  <tr>
+    <td><b>Simple drawing/decoration control</b></td>
+  </tr>
+  <tr> 
+    <td>
       <ul>
         <li> Horz line, Vert line, Rectangle, Ellipse, Roundrect... </li>
-        <li> Pen style (dash,dash dot, solid) and color </li>
-        <li> Brush Style (lines, cross, solid, pattern) and color </li>
+        <li> Pen style (dash,dash dot, solid), width and color </li>
+        <li> Brush Style (lines, cross, solid, pattern) and color</li>
       </ul>
-      <li> Expression evaluator, you can use fields and functions </li>
-      <li> Preview </li>
-      <ul>
-        <li> Fast preview </li>
-        <li> Save the report as a metafile report (device independent graphic 
-          format) </li>
-        <li> A separate application can print/preview metafiles (metaview) </li>
-      </ul>
-    </ul>
-</ul>
+      </td>
+  </tr>
+</table>
 </body>
 </html>

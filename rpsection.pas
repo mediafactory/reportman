@@ -23,7 +23,7 @@ unit rpsection;
 interface
 
 uses Classes,rptypes,rpconsts,rpmunits,rpprintitem,rplabelitem,
- sysutils,rpmetafile;
+ sysutils,rpmetafile,rpeval;
 
 const
  C_DEFAULT_SECTION_WIDTH=19;
@@ -41,7 +41,6 @@ type
    FChangeExpression:WideString;// [rpsecgheader,rpsecgfooter]
    FChangeBool:boolean;         // [rpsecgheader,rpsecgfooter]
    FPageRepeat:boolean;         // [rpsecgheader,rpsecgfooter]
-   FBeginPage:boolean;          // [rpsecrheader,rpsecrfooter,rpsecgheader,rpsecgfooter,rpsecdetail]
    FAlignBottom:boolean;        // [rpsecrheader,rpsecrfooter,rpsecgheader,rpsecgfooter,rpsecdetail]
    FSkipPage:boolean;           // [rpsecrheader,rpsecrfooter,rpsecgheader,rpsecgfooter,rpsecdetail]
    FSectionType:TRpSectionType;
@@ -49,9 +48,15 @@ type
    FAutoExpand:Boolean;
    FAutoContract:Boolean;
    FHorzDesp:Boolean;
+   FIsExternal:boolean;
+   FExternalFilename:string;
+   FBeginPageExpression:widestring;
+   // deprecated
+   FBeginPage:boolean;
    function GetSectionCaption:String;
    procedure SetComponents(Value:TRpCommonList);
    procedure SetGroupName(Value:string);
+   procedure SetChangeExpression(Value:widestring);
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   public
@@ -61,13 +66,13 @@ type
    procedure FreeComponents;
    procedure DeleteComponent(com:TRpCommonComponent);
    property SectionCaption:String read GetSectionCaption;
+   function EvaluateBeginPage:boolean;
   published
    property SubReport:TComponent read FSubReport write FSubReport;
    property GroupName:String read FGroupName write SetGroupName;
    property ChangeBool:boolean read FChangeBool write FChangeBool;
-   property ChangeExpression:widestring read FChangeExpression write FChangeExpression;
+   property ChangeExpression:widestring read FChangeExpression write SetChangeExpression;
    property PageRepeat:boolean read FPageRepeat write FPageRepeat;
-   property BeginPage:boolean read FBeginPage write FBeginPage;
    property SkipPage:boolean read FSkipPage write FSkipPage;
    property AlignBottom:boolean read FAlignBottom write FAlignBottom;
    property SectionType:TRpSectionType read FSectionType write FSectionType;
@@ -77,11 +82,18 @@ type
    property AutoContract:Boolean read FAutoContract write FAutoContract
     default false;
    property HorzDesp:Boolean read FHorzDesp write FHorzDesp default false;
+   property BeginPageExpression:widestring read FBeginPageExpression
+    write FBeginPageExpression;
+   property IsExternal:Boolean read FIsExternal
+    write FIsExternal default false;
+   property ExternalFilename:string read FExternalFilename write FExternalFilename;
+   // Deprecated properties for compatibility only
+   property BeginPage:boolean read FBeginpage write FBeginPage default false;
  end;
 
 implementation
 
-uses rpsubreport;
+uses rpsubreport,rpreport;
 
 constructor TRpSection.Create(AOwner:TComponent);
 begin
@@ -158,6 +170,34 @@ begin
  end;
 end;
 
+procedure TRpSection.SetChangeExpression(Value:widestring);
+var
+ subrep:TRpSubreport;
+ i:integer;
+begin
+ if (csLoading in ComponentState) then
+ begin
+  FChangeExpression:=Value;
+  exit;
+ end;
+ if FChangeExpression=Value then
+  exit;
+ if not assigned(FSubreport) then
+ begin
+  FChangeExpression:=Value;
+  exit;
+ end;
+ subrep:=TRpSubreport(FSubReport);
+ // Assign header and footer
+ for i:=0 to subrep.Sections.Count-1 do
+ begin
+  if (subrep.Sections.Items[i].Section.SectionType in [rpsecgheader,rpsecgfooter]) then
+   if subrep.Sections.Items[i].Section.GroupName=FGroupName then
+    subrep.Sections.Items[i].Section.FChangeExpression:=Value;
+ end;
+end;
+
+
 procedure TRpSection.SetGroupName(Value:string);
 var
  subrep:TRpSubreport;
@@ -213,6 +253,22 @@ begin
   if Components.Items[i].Component.EvaluatePrintCondition then
    Components.Items[i].Component.Print(aposx,aposy,metafile);
  end;
+end;
+
+function TRpSection.EvaluateBeginPage:boolean;
+var
+ report:TRpReport;
+ eval:TRpEvaluator;
+begin
+ Result:=false;
+
+ if Length(FBeginPageExpression)<1 then
+  exit;
+ report:=TRpReport(Owner);
+ eval:=report.Evaluator;
+ eval.Expression:=FBeginPageExpression;
+ eval.Evaluate;
+ Result:=eval.EvalResult;
 end;
 
 end.

@@ -82,12 +82,14 @@ type
    property SubReport:TRpSubReport read FSubReport write SetSubReport;
  end;
 
- TIdenPageNum=class(TIdenFunction)
+ TIdenReportVar=class(TIdenFunction)
    FReport:TRpReport;
   private
   protected
    function GeTRpValue:TRpValue;override;
- end;
+  public
+   varname:string;
+  end;
 
 
  TRpReport=class(TComponent)
@@ -121,13 +123,17 @@ type
    FRecordCount:integer;
    FDriver:IRpPrintDriver;
    FLeftMargin,FTopMargin,FRightMargin,FBottomMargin:TRpTwips;
-   Fidenpagenum:TIdenpagenum;
+   Fidenpagenum:TIdenReportVar;
+   Fidenfreespace:TIdenReportVar;
+   Fidenfreespacecms:TIdenReportVar;
+   Fidenfreespaceinch:TIdenReportVar;
    FCopies:integer;
    FCollateCopies:boolean;
    FTwoPass:boolean;
    FTotalPagesList:TList;
    FAliasList:TRpAlias;
    printingonepass:boolean;
+   freespace:integer;
 {$IFDEF MSWINDOWS}
    mmfirst,mmlast:DWORD;
 {$ENDIF}
@@ -188,6 +194,10 @@ type
     frompage,topage,copies:integer);
    property OnProgress:TRpProgressEvent read FOnProgress write FOnProgress;
    property AliasList:TRpAlias read FAliasList write FAliasList;
+   property idenpagenum:TIdenReportVar read fidenpagenum;
+   property idenfreespace:TIdenReportVar read fidenfreespace;
+   property idenfreespacecms:TIdenReportVar read fidenfreespacecms;
+   property idenfreespaceinch:TIdenReportVar read fidenfreespaceinch;
   published
    // Grid options
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
@@ -235,9 +245,20 @@ implementation
 
 uses rpprintitem, rpsecutil;
 
-function TIdenPageNum.GeTRpValue:TRpValue;
+function TIdenReportVar.GeTRpValue:TRpValue;
 begin
- Result:=freport.PageNum+1;
+ if varname='PAGE' then
+  Result:=freport.PageNum+1
+ else
+  if varname='FREESPACETWIPS' then
+   Result:=freport.freespace
+  else
+   if varname='FREESPACECMS' then
+    Result:=twipstocms(freport.freespace)
+   else
+    if varname='FREESPACEINCH' then
+     Result:=twipstocms(freport.freespace);
+
 end;
 
 // Constructors and destructors
@@ -276,8 +297,18 @@ begin
  FIdentifiers.Sorted:=true;
  FIdentifiers.Duplicates:=dupError;
  // Pagenum
- FIdenPagenum:=TIdenPageNum.Create(nil);
+ FIdenPagenum:=TIdenReportVar.Create(nil);
  Fidenpagenum.FReport:=self;
+ FidenPagenum.varname:='PAGE';
+ FIdenfreespace:=TIdenReportVar.Create(nil);
+ Fidenfreespace.varname:='FREESPACE';
+ Fidenfreespace.FReport:=self;
+ FIdenfreespacecms:=TIdenReportVar.Create(nil);
+ Fidenfreespacecms.varname:='FREESPACECMS';
+ Fidenfreespacecms.FReport:=self;
+ FIdenfreespaceinch:=TIdenReportVar.Create(nil);
+ Fidenfreespaceinch.varname:='FREESPACEINCH';
+ Fidenfreespaceinch.FReport:=self;
  // Metafile
  FMetafile:=TRpMetafileReport.Create(nil);
  FDataAlias:=TRpAlias.Create(nil);
@@ -320,6 +351,9 @@ begin
  FMetafile.Free;
  FDataAlias.Free;
  FIdenPagenum.free;
+ Fidenfreespace.free;
+ Fidenfreespacecms.free;
+ Fidenfreespaceinch.free;
  FTotalPagesList.free;
  inherited destroy;
 end;
@@ -1080,6 +1114,9 @@ begin
  FEvaluator:=TRpEvaluator.Create(self);
  // Insert page numeber
  FEvaluator.AddVariable('Page',fidenpagenum);
+ FEvaluator.AddVariable('FREE_SPACE',fidenfreespace);
+ FEvaluator.AddVariable('FREE_SPACE_CMS',fidenfreespacecms);
+ FEvaluator.AddVariable('FREE_SPACE_INCH',fidenfreespaceinch);
  // Insert params into rpEvaluator
  for i:=0 to Params.Count-1 do
  begin
@@ -1136,7 +1173,6 @@ var
  printedsomething:boolean;
  pageposy,pageposx:integer;
  sectionext:TPoint;
- freespace:integer;
  pagefooters:TStringList;
  asection:TrpSection;
  pagefooterpos:integer;
@@ -1293,7 +1329,7 @@ begin
   begin
    if printedsomething then
    begin
-    if section.BeginPage then
+    if section.EvaluateBeginPage then
      break;
    end;
    asection:=section;

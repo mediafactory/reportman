@@ -162,8 +162,8 @@ begin
   report.metafile.DrawPage(qtdriver);
   if Assigned(qtdriver.bitmap) then
   begin
-   AImage.Width:=qtdriver.bitmap.Width;
-   AImage.Height:=qtdriver.bitmap.Height;
+   AImage.Width:=Round(qtdriver.bitmap.Width);
+   AImage.Height:=Round(qtdriver.bitmap.Height);
    AImage.Picture.Bitmap.Assign(qtdriver.bitmap);
    AImage.Invalidate;
   end;
