@@ -32,7 +32,6 @@ uses
 
 const
  CONS_RULER_LEFT=20;
- CONS_RIGHTPWIDTH=6;
 type
 
   // A ScrollBox that not scrolls in view focused controls
@@ -46,11 +45,11 @@ type
 
   TRpPanelRight=Class(TPanel)
    private
-    FFrame:TFRpDesignFrame;
-    FRectangle:TRpRectanglew;
-    FRectangle2:TRpRectanglew;
-    FRectangle3:TRpRectanglew;
-    FRectangle4:TRpRectanglew;
+    FFrame:TFRpDesignFrameVCL;
+    FRectangle:TRpRectangle;
+    FRectangle2:TRpRectangle;
+    FRectangle3:TRpRectangle;
+    FRectangle4:TRpRectangle;
     FXOrigin,FYOrigin:integer;
     FBlocked:boolean;
    protected
@@ -69,19 +68,17 @@ type
     FOnPaint:TNotifyEvent;
     Updating:boolean;
     FFrame:TFRpDesignFrame;
-    FRectangle:TRpRectanglew;
-    FRectangle2:TRpRectanglew;
-    FRectangle3:TRpRectanglew;
-    FRectangle4:TRpRectanglew;
     FXOrigin,FYOrigin:integer;
     FBlocked:boolean;
     allowselect:Boolean;
    protected
     procedure Paint;override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer);override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
-       X, Y: Integer); override;
+      X, Y: Integer); override;
    public
     CaptionText:WideString;
     section:TRpSection;
@@ -389,7 +386,6 @@ begin
  try
   maxwidth:=0;
   posx:=0;
-  asecint:=nil;
   for i:=0 to fsubreport.Sections.Count-1 do
   begin
    apanel:=TRpPaintEventPanel.Create(self);
@@ -509,11 +505,7 @@ begin
  if not Assigned(FSubreport) then
   exit;
  oldxposition:=SectionScrollBox.HorzScrollBar.Position;
- if oldxposition<0 then
-  oldxposition:=0;
  oldyposition:=SectionScrollBox.VertScrollBar.Position;
- if oldyposition<0 then
-  oldyposition:=0;
  SectionScrollBox.Visible:=true; // Set to false?
  try
   SectionScrollBox.HorzScrollBar.Position:=0;
@@ -574,10 +566,12 @@ begin
  finally
   SectionScrollBox.Visible:=true;
  end;
- PSection.Height:=posx+Height;
- PSection.Width:=maxwidth*2+CONS_RIGHTPWIDTH;
  SectionScrollBox.HorzScrollBar.Position:=oldxposition;
  SectionScrollBox.VertScrollBar.Position:=oldyposition;
+ PSection.Height:=posx+Height;
+ PSection.Width:=maxwidth*2+CONS_RIGHTPWIDTH;
+ SectionScrollBox.HorzScrollBar.Position:=0;
+ SectionScrollBox.VertScrollBar.Position:=0;
 end;
 
 procedure TFRpDesignFrame.ShowAllHiden;
@@ -602,13 +596,13 @@ end;
 procedure TRpPaintEventPanel.MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
 var
- dframe:TFRpDesignFrame;
+ dframe:TFRpDesignFrameVCL;
 begin
  inherited MouseDown(Button,Shift,X,Y);
 
  if allowselect then
  begin
-  dframe:=TFRpDesignFrame(Owner);
+  dframe:=TFRpDesignFrameVCL(Owner);
   dframe.freportstructure.SelectDataItem(section);
  end;
 
@@ -616,10 +610,10 @@ begin
   exit;
  if Not Assigned(FRectangle) then
  begin
-  FRectangle:=TRpRectanglew.Create(Self);
-  FRectangle2:=TRpRectanglew.Create(Self);
-  FRectangle3:=TRpRectanglew.Create(Self);
-  FRectangle4:=TRpRectanglew.Create(Self);
+  FRectangle:=TRpRectangle.Create(Self);
+  FRectangle2:=TRpRectangle.Create(Self);
+  FRectangle3:=TRpRectangle.Create(Self);
+  FRectangle4:=TRpRectangle.Create(Self);
 
   FRectangle.SetBounds(Left,Top,Width,1);
   FRectangle2.SetBounds(Left,Top+Height,Width,1);
@@ -630,10 +624,6 @@ begin
   FRectangle2.Parent:=Parent;
   FRectangle3.Parent:=Parent;
   FRectangle4.Parent:=Parent;
-  // It seems a Bug forces me to invalidate section after
-  // a aselection
-//  if assigned(parent) then
-//   parent.invalidate;
  end;
 
 
@@ -780,10 +770,10 @@ procedure TRpPanelRight.MouseDown(Button: TMouseButton; Shift: TShiftState;
 begin
  if Not Assigned(FRectangle) then
  begin
-  FRectangle:=TRpRectanglew.Create(Self);
-  FRectangle2:=TRpRectanglew.Create(Self);
-  FRectangle3:=TRpRectanglew.Create(Self);
-  FRectangle4:=TRpRectanglew.Create(Self);
+  FRectangle:=TRpRectangle.Create(Self);
+  FRectangle2:=TRpRectangle.Create(Self);
+  FRectangle3:=TRpRectangle.Create(Self);
+  FRectangle4:=TRpRectangle.Create(Self);
 
   FRectangle.SetBounds(Left,Top,Width,1);
   FRectangle2.SetBounds(Left,Top+Height,Width,1);
@@ -831,7 +821,7 @@ end;
 
 procedure TRpPanelRight.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
- NewLeft:integer;
+ NewLeft,NewTop:integer;
 begin
  inherited MouseUp(Button,Shift,X,Y);
 
@@ -849,6 +839,7 @@ begin
   NewLeft:=Left-FXOrigin+X;
   if NewLeft<0 then
    NewLeft:=0;
+  NewTop:=Top;
   if NewLeft+Width>Parent.Width then
    NewLeft:=Parent.Width-Width;
   if NewLeft<0 then

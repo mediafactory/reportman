@@ -691,6 +691,7 @@ var
   SRpPrintConditionHint:WideString='Boolean expression, if evaluated to false this component/section will not print, this is a multiline hint it spans auto across some lines because it does not fit in screen, well may be if a high resolution is selected this hint will be visible in only ';
   SRpFieldsFileNotDefined:WideString='Fields file not defined';
   SRpSMemo:WideString='Memo';
+  SRpSInvReportHandle:WideString='Invalid report handle';
 
 
 implementation

@@ -607,6 +607,9 @@ object FRpMainF: TFRpMainF
       object utorial1: TMenuItem
         Action = ADocumentation
       end
+      object Systeminformation1: TMenuItem
+        Action = ASysInfo
+      end
       object ReportManager1: TMenuItem
         Action = AAbout
       end
@@ -622,6 +625,12 @@ object FRpMainF: TFRpMainF
       Hint = 'Creates a new report'
       ImageIndex = 0
       OnExecute = ANewExecute
+    end
+    object ASysInfo: TAction
+      Category = 'Help'
+      Caption = 'System information'
+      Hint = 'Shows system and printer information'
+      OnExecute = ASysInfoExecute
     end
     object AOpen: TAction
       Category = 'File'

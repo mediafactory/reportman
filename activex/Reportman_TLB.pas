@@ -23,13 +23,25 @@ unit Reportman_TLB;
 // DepndLst: 
 //   (1) v2.0 stdole, (C:\WINDOWS\System32\stdole2.tlb)
 // ************************************************************************ //
-{$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
-{$WARN SYMBOL_PLATFORM OFF}
+
+{$I rpconf.inc}
+
+{$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers.
+
+{$IFDEF USEVARIANTS}
+ {$WARN SYMBOL_PLATFORM OFF}
+ {$VARPROPSETTER ON}
+{$ENDIF}
+
 {$WRITEABLECONST ON}
-{$VARPROPSETTER ON}
 interface
 
-uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL, Variants;
+
+uses Windows, ActiveX, Classes, Graphics, OleCtrls,
+{$IFDEF USEVARIANT}
+ Variants,
+{$ENDIF}
+ StdVCL;
   
 
 // *********************************************************************//

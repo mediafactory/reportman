@@ -35,7 +35,7 @@ uses
   rpmdfgrid,rppreview,rpprintdia,
   rpmdconsts,rptypes, rpmdfstruc, rplastsav,rpsubreport,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
-  rpsection,rpprintitem,rprfparams,rpfmainmetaview,
+  rpsection,rpprintitem,rprfparams,rpfmainmetaview,rpmdsysinfoqt,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
@@ -215,6 +215,8 @@ type
     ADriverPDFQt: TAction;
     MPDFQtDriver: TMenuItem;
     MPDFGDIDriver: TMenuItem;
+    ASysInfo: TAction;
+    Systeminformation1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -275,6 +277,7 @@ type
     procedure ADriverPDFGDIExecute(Sender: TObject);
     procedure ADriverPDFQtExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure ASysInfoExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrame;
@@ -1826,6 +1829,11 @@ begin
  // tool bar and menu
  Width:=Width+1;
  FormResize(Self);
+end;
+
+procedure TFRpMainF.ASysInfoExecute(Sender: TObject);
+begin
+ RpShowSystemInfoQt;
 end;
 
 initialization

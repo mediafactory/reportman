@@ -22,7 +22,7 @@ program reptotxt;
 {$APPTYPE CONSOLE}
 
 uses
-  Classes,
+  Classes,SysUtils,
 {$IFDEF MSWINDOWS}
   rpwriter in '..\..\..\rpwriter.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas';
@@ -42,8 +42,16 @@ end;
 
 begin
   { TODO -oUser -cConsole Main : Insert code here }
+ try
   if ParamCount<>2 then
    PrintHelp
   else
    FileReportToPlainText(ParamStr(1),ParamStr(2));
+ except
+  On E:Exception do
+  begin
+   WriteLn(E.Message);
+   raise;
+  end;
+ end;
 end.

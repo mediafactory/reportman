@@ -1,6 +1,10 @@
 unit rpaxreportimp;
 
-{$WARN SYMBOL_PLATFORM OFF}
+{$I rpconf.inc}
+
+{$IFDEF USEVARIANTS}
+ {$WARN SYMBOL_PLATFORM OFF}
+{$ENDIF}
 
 interface
 
@@ -150,7 +154,9 @@ end;
 
 function TReportManX.Get_AlignDisabled: WordBool;
 begin
+{$IFDEF USEVARIANTS}
   Result := FDelphiControl.AlignDisabled;
+{$ENDIF}
 end;
 
 function TReportManX.Get_Cursor: Smallint;
@@ -175,12 +181,16 @@ end;
 
 function TReportManX.Get_HelpKeyword: WideString;
 begin
+{$IFDEF USEVARIANTS}
   Result := WideString(FDelphiControl.HelpKeyword);
+{$ENDIF}
 end;
 
 function TReportManX.Get_HelpType: TxHelpType;
 begin
+{$IFDEF USEVARIANTS}
   Result := Ord(FDelphiControl.HelpType);
+{$ENDIF}
 end;
 
 function TReportManX.Get_Language: Integer;
@@ -305,12 +315,16 @@ end;
 
 procedure TReportManX.Set_HelpKeyword(const Value: WideString);
 begin
+{$IFDEF USEVARIANTS}
   FDelphiControl.HelpKeyword := String(Value);
+{$ENDIF}
 end;
 
 procedure TReportManX.Set_HelpType(Value: TxHelpType);
 begin
+{$IFDEF USEVARIANTS}
   FDelphiControl.HelpType := THelpType(Value);
+{$ENDIF}
 end;
 
 procedure TReportManX.Set_Language(Value: Integer);
@@ -363,7 +377,9 @@ end;
 
 procedure TReportManX.SetSubComponent(IsSubComponent: WordBool);
 begin
+{$IFDEF USEVARIANTS}
   FDelphiControl.SetSubComponent(IsSubComponent);
+{$ENDIF}
 end;
 
 function TReportManX.Get_Report: IReportReport;

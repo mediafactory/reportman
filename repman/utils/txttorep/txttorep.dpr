@@ -43,8 +43,16 @@ end;
 
 begin
   { TODO -oUser -cConsole Main : Insert code here }
+ try
   if ParamCount<>2 then
    PrintHelp
   else
    PlainTextToFileReport(ParamStr(1),ParamStr(2));
+ except
+  On E:Exception do
+  begin
+   WriteLn(E.Message);
+   raise;
+  end;
+ end;
 end.

@@ -81,6 +81,9 @@ function PrintReportPDFStream(report:TRpReport;Caption:string;progress:boolean;
 function PrintReportMetafileStream(report:TRpReport;
  Caption:string;progress:boolean;allpages:boolean;frompage,topage,copies:integer;
  Stream:TStream;compressed:boolean;collate:boolean):Boolean;
+function PrintReportToMetafile(report:TRpReport;Caption:string;progress:boolean;
+     allpages:boolean;frompage,topage,copies:integer;
+     filename:string;collate:boolean):Boolean;
 
 
 
@@ -138,8 +141,8 @@ const
 constructor TRpPDFDriver.Create;
 begin
  PageQt:=0;
- FPageWidth:= 12048;
- FPageHeight:= 17039;
+ FPageWidth:= 11904;
+ FPageHeight:= 16836;
  FPDFFile:=TRpPDFFile.Create(nil);
 end;
 
@@ -455,6 +458,33 @@ begin
 
 end;
 
+
+function PrintReportToMetafile(report:TRpReport;Caption:string;progress:boolean;
+     allpages:boolean;frompage,topage,copies:integer;
+     filename:string;collate:boolean):Boolean;
+var
+ pdfdriver:TRpPDFDriver;
+ apdfdriver:IRpPrintDriver;
+ oldprogres:TRpProgressEvent;
+begin
+ if Length(Trim(filename))<0 then
+  Raise Exception.Create(SRpNoFileNameProvided+':Metafile');
+ pdfdriver:=TRpPDFDriver.Create;
+ pdfdriver.compressed:=false;
+ apdfdriver:=pdfdriver;
+ report.TwoPass:=true;
+ // If report progress must print progress
+ oldprogres:=report.OnProgress;
+ try
+  if progress then
+   report.OnProgress:=pdfdriver.RepProgress;
+  report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
+  report.Metafile.SaveToFile(filename);
+ finally
+  report.OnProgress:=oldprogres;
+ end;
+ Result:=True;
+end;
 
 function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;

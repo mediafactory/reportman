@@ -1,6 +1,27 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager                                  }
+{                                                       }
+{       aboutrpax                                       }
+{       About box for ActiveX control                   }
+{                                                       }
+{       Copyright (c) 1994-2003 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
+{                                                       }
+{                                                       }
+{*******************************************************}
+
 unit aboutrpax;
 
-//{$WARN SYMBOL_PLATFORM OFF}
+{$I rpconf.inc}
+
+{$IFDEF USEVARIANTS}
+ {$WARN SYMBOL_PLATFORM OFF}
+{$ENDIF}
 
 interface
 

@@ -712,6 +712,9 @@ end;
 procedure TRpSizePosInterface.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
  NewLeft,NewTop:integer;
+ insp:TFRpObjInsp;
+ aitem:TRpCommonPosComponent;
+ afitem:TRpSizePosInterface;
 begin
  inherited MouseUp(Button,Shift,X,Y);
 
@@ -743,11 +746,39 @@ begin
    NewTop:=AlignToGridPixels(NewTop,TRpReport(printitem.Report).GridHeight);
   end;
 
-  TRpCOmmonPosComponent(printitem).PosX:=pixelstotwips(NewLeft);
-  TRpCOmmonPosComponent(printitem).PosY:=pixelstotwips(NewTop);
-  UpdatePos;
-  if Assigned(fobjinsp) then
-   TFRpObjInsp(fobjinsp).AddCompItem(Self,Not (ssShift in Shift));
+  if Selected then
+  begin
+   if Assigned(fobjinsp) then
+   begin
+    insp:=TFRpObjInsp(fobjinsp);
+    difx:=TRpCOmmonPosComponent(printitem).PosX-pixelstotwips(NewLeft);
+    dify:=TRpCOmmonPosComponent(printitem).PosY-pixelstotwips(NewTop);
+    for i:=0 to insp.SelectedItems.Count-1 do
+    begin
+     afitem:=TRpSizePosInterface(insp.SelectedItems.Objects[i]);
+     aitem:=TRpCommonPosComponent(afitem.printitem);
+     NewLeft:=aitem.PosX-difx;
+     if NewLeft<0 then
+      NewLeft:=0;
+     NewTop:=aitem.PosY-dify;
+     if NewTop<0 then
+      NewTop:=0;
+     aitem.PosX:=NewLeft;
+     aitem.PosY:=NewTop;
+     afitem.UpdatePos;
+    end;
+    if (ssShift in Shift) then
+     TFRpObjInsp(fobjinsp).AddCompItem(Self,Not (ssShift in Shift));
+   end;
+  end
+  else
+  begin
+   TRpCOmmonPosComponent(printitem).PosX:=pixelstotwips(NewLeft);
+   TRpCOmmonPosComponent(printitem).PosY:=pixelstotwips(NewTop);
+   UpdatePos;
+   if Assigned(fobjinsp) then
+    TFRpObjInspVCL(fobjinsp).AddCompItem(Self,Not (ssShift in Shift));
+  end;
  end;
 end;
 

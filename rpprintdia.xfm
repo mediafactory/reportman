@@ -13,6 +13,13 @@ object FRpPrintDialog: TFRpPrintDialog
   PixelsPerInch = 96
   TextHeight = 13
   TextWidth = 6
+  object EFilename: TEdit
+    Left = 284
+    Top = 52
+    Width = 177
+    Height = 21
+    TabOrder = 13
+  end
   object LFilename: TLabel
     Left = 228
     Top = 56
@@ -118,18 +125,11 @@ object FRpPrintDialog: TFRpPrintDialog
     TabOrder = 11
   end
   object EProgram: TEdit
-    Left = 284
-    Top = 52
+    Left = 304
+    Top = 32
     Width = 177
     Height = 21
     TabOrder = 12
-  end
-  object EFilename: TEdit
-    Left = 284
-    Top = 52
-    Width = 177
-    Height = 21
-    TabOrder = 13
   end
   object RPages: TRadioGroup
     Left = 4

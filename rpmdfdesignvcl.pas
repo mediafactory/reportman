@@ -526,11 +526,7 @@ begin
  if not Assigned(FSubreport) then
   exit;
  oldxposition:=SectionScrollBox.HorzScrollBar.Position;
- if oldxposition<0 then
-  oldxposition:=0;
  oldyposition:=SectionScrollBox.VertScrollBar.Position;
- if oldyposition<0 then
-  oldyposition:=0;
  SectionScrollBox.Visible:=false;
  try
   SectionScrollBox.HorzScrollBar.Position:=0;
@@ -592,10 +588,10 @@ begin
  finally
   SectionScrollBox.Visible:=true;
  end;
- PSection.Height:=posx+Height;
- PSection.Width:=maxwidth*2+CONS_RIGHTPWIDTH;
  SectionScrollBox.HorzScrollBar.Position:=oldxposition;
  SectionScrollBox.VertScrollBar.Position:=oldyposition;
+ PSection.Height:=posx+Height;
+ PSection.Width:=maxwidth*2+CONS_RIGHTPWIDTH;
 end;
 
 procedure TFRpDesignFrameVCL.ShowAllHiden;
@@ -845,7 +841,7 @@ end;
 
 procedure TRpPanelRight.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
- NewLeft:integer;
+ NewLeft,NewTop:integer;
 begin
  inherited MouseUp(Button,Shift,X,Y);
 
@@ -863,6 +859,7 @@ begin
   NewLeft:=Left-FXOrigin+X;
   if NewLeft<0 then
    NewLeft:=0;
+  NewTop:=Top;
   if NewLeft+Width>Parent.Width then
    NewLeft:=Parent.Width-Width;
   if NewLeft<0 then
