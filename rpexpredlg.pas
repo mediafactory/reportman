@@ -174,7 +174,7 @@ procedure TFRpExpredialog.Setevaluator(aval:TRpCustomEvaluator);
 var
  lista1:Tstringlist;
  i:integer;
- iden:TIdentifier;
+ iden:TRpIdentifier;
  rec:TRpRecHelp;
 begin
  Fevaluator:=Aval;
@@ -195,7 +195,7 @@ begin
  end;
  for i:=0 to aval.identifiers.Count -1 do
  begin
-  iden:=aval.identifiers.objects[i] as TIdentifier;
+  iden:=aval.identifiers.objects[i] as TRpIdentifier;
   case iden.RType of
    RTypeidenfunction:
     begin

@@ -43,7 +43,7 @@ type
    public
     constructor Create(AOWner:TComponent);override;
     destructor Destroy;override;
-    function searchfield(aname,datasetname:ShortString;var duplicated:Boolean):TIdentifier;
+    function searchfield(aname,datasetname:ShortString;var duplicated:Boolean):TRpIdentifier;
     procedure fillwithfields(lines:TStrings);
     function IndexOf(Dataset:TDataSet):integer;
    published
@@ -222,7 +222,7 @@ begin
 end;
 
 // Seartching a field in the List
-function TRpAlias.searchfield(aname,datasetname:ShortString;var duplicated:Boolean):TIdentifier;
+function TRpAlias.searchfield(aname,datasetname:ShortString;var duplicated:Boolean):TRpIdentifier;
 var i:integer;
     found:Boolean;
     Field:TField;

@@ -1,15 +1,15 @@
 object FRpStructureVCL: TFRpStructureVCL
   Left = 0
   Top = 0
-  Width = 312
-  Height = 236
+  Width = 264
+  Height = 166
   ParentShowHint = False
   ShowHint = True
   TabOrder = 0
   object Panel1: TToolBar
     Left = 0
     Top = 0
-    Width = 312
+    Width = 264
     Height = 28
     AutoSize = True
     ButtonHeight = 26
@@ -46,8 +46,8 @@ object FRpStructureVCL: TFRpStructureVCL
   object RView: TTreeView
     Left = 0
     Top = 28
-    Width = 312
-    Height = 208
+    Width = 264
+    Height = 138
     Align = alClient
     Indent = 19
     ReadOnly = True

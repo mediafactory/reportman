@@ -130,20 +130,20 @@ type
    destructor Destroy;override;
   end;
 
-function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
- showprogress,allpages:boolean;frompage,topage,copies:integer;
-  collate:boolean;devicefonts:boolean;printerindex:TRpPrinterSelect=pRpDefaultPrinter):boolean;
-function CalcReportWidthProgress(report:TRpReport):boolean;
-function PrintReport(report:TRpReport;Caption:string;progress:boolean;
-  allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
-function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
-  allpages:boolean;frompage,topage:integer;
-  showprintdialog:boolean;filename:string;compressed:boolean):Boolean;
-function DoShowPrintDialog(var allpages:boolean;
- var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
-function PrinterSelection(printerindex:TRpPrinterSelect):TPoint;
-procedure PageSizeSelection(rpPageSize:TPageSizeQt);
-procedure OrientationSelection(neworientation:TRpOrientation);
+function PrintMetafile (metafile:TRpMetafileReport; tittle:string;
+ showprogress,allpages:boolean; frompage,topage,copies:integer;
+  collate:boolean; devicefonts:boolean; printerindex:TRpPrinterSelect=pRpDefaultPrinter):boolean;
+function CalcReportWidthProgress (report:TRpReport):boolean;
+function PrintReport (report:TRpReport; Caption:string; progress:boolean;
+  allpages:boolean; frompage,topage,copies:integer; collate:boolean):Boolean;
+function ExportReportToPDF (report:TRpReport; Caption:string; progress:boolean;
+  allpages:boolean; frompage,topage:integer;
+  showprintdialog:boolean; filename:string; compressed:boolean):Boolean;
+function DoShowPrintDialog (var allpages:boolean;
+ var frompage,topage,copies:integer; var collate:boolean;disablecopies:boolean=false) :boolean;
+function PrinterSelection (printerindex:TRpPrinterSelect) :TPoint;
+procedure PageSizeSelection (rpPageSize:TPageSizeQt);
+procedure OrientationSelection (neworientation:TRpOrientation);
 
 implementation
 

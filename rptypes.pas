@@ -117,7 +117,7 @@ type
     WString: WideString;
   end;
 
-  TRpWideStrings = class
+  TRpWideStrings = class(TObject)
   private
     FWideList: TList;
     function GetString(Index: Integer): WideString;

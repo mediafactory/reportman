@@ -113,24 +113,24 @@ type
    destructor Destroy;override;
   end;
 
-function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
- showprogress,allpages:boolean;frompage,topage,copies:integer;
-  collate:boolean;printerindex:TRpPrinterSelect):boolean;
-function CalcReportWidthProgress(report:TRpReport):boolean;
-function PrintReport(report:TRpReport;Caption:string;progress:boolean;
-  allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
-function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
-  allpages:boolean;frompage,topage:integer;
-  showprintdialog:boolean;filename:string;compressed:boolean):Boolean;
+function PrintMetafile (metafile:TRpMetafileReport; tittle:string;
+ showprogress,allpages:boolean; frompage,topage,copies:integer;
+  collate:boolean; printerindex:TRpPrinterSelect):boolean;
+function CalcReportWidthProgress (report:TRpReport):boolean;
+function PrintReport (report:TRpReport; Caption:string; progress:boolean;
+  allpages:boolean; frompage,topage,copies:integer; collate:boolean):Boolean;
+function ExportReportToPDF (report:TRpReport; Caption:string; progress:boolean;
+  allpages:boolean; frompage,topage:integer;
+  showprintdialog:boolean; filename:string;compressed:boolean):Boolean;
 
 
 // Because copies and collation not work in Windows we
 // use the ShowPrintdialog in rpprintdia
-function DoShowPrintDialog(var allpages:boolean;
- var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
-function PrinterSelection(printerindex:TRpPrinterSelect):TPoint;
-procedure PageSizeSelection(rpPageSize:TPageSizeQt);
-procedure OrientationSelection(neworientation:TRpOrientation);
+function DoShowPrintDialog (var allpages:boolean;
+ var frompage,topage,copies:integer; var collate:boolean; disablecopies:boolean=false):boolean;
+function PrinterSelection (printerindex:TRpPrinterSelect):TPoint;
+procedure PageSizeSelection (rpPageSize:TPageSizeQt);
+procedure OrientationSelection (neworientation:TRpOrientation);
 
  var
 {$IFDEF MSWINDOWS}

@@ -1368,8 +1368,10 @@ begin
  for i:=0 to fobjinsp.SelectedItems.Count-1 do
  begin
   TRpSizePosInterface(fobjinsp.SelectedItems.Objects[i]).Visible:=false;
+  TRpSizePosInterface(fobjinsp.SelectedItems.Objects[i]).printitem.Visible:=false;
  end;
  fobjinsp.ClearMultiselect;
+ fobjinsp.fchangesize.Control:=nil;
 end;
 
 procedure TFRpMainFVCL.AShowAllExecute(Sender: TObject);

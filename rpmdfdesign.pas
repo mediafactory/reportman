@@ -462,6 +462,7 @@ begin
   begin
    aposint:=TRpSizePosInterface(asecint.childlist.items[j]);
    aposint.Visible:=true;
+   aposint.PrintItem.Visible:=true;
   end;
  end;
 end;

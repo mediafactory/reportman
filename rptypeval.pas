@@ -2,6 +2,7 @@
 {                                                       }
 {       Rptypeval Datatypes and functions for           }
 {       the Rpevaluator                                 }
+{       Report Manager                                  }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
@@ -66,10 +67,10 @@ type
 
 
  // Identifier }
- RTypeIdentificador = (RTypeidenFunction,RTypeIdenVariable,RTypeIdenConstant);
+ RTypeIdentificator = (RTypeidenFunction,RTypeIdenVariable,RTypeIdenConstant);
 
  // Identifier, abstract object
- TIdentifier=class(TComponent)
+ TRpIdentifier=class(TComponent)
   protected
    FParamCount:integer;
    procedure SeTRpValue(Value:TRpValue);virtual;abstract;
@@ -77,7 +78,7 @@ type
   public
    evaluator:TComponent;
    // Identifier type
-   RType:RTypeIdentificador;
+   RType:RTypeIdentificator;
    // Internal identifier
    Idenname:string;
    // Help
@@ -94,7 +95,7 @@ type
   end;
 
  // Generic function, all function can inherit from this object
- TIdenFunction=class(TIdentifier)
+ TIdenFunction=class(TRpIdentifier)
   protected
    procedure SeTRpValue(Value:TRpValue);override;
   public
@@ -102,7 +103,7 @@ type
   end;
 
  // Variable
- TIdenVariable=class(TIdentifier)
+ TIdenVariable=class(TRpIdentifier)
   protected
    FValue:TRpValue;
    procedure SeTRpValue(Value:TRpValue);override;
@@ -112,7 +113,7 @@ type
   end;
 
  // Constant
- TIdenConstant=class(TIdentifier)
+ TIdenConstant=class(TRpIdentifier)
   protected
    FValue:TRpValue;
    procedure SeTRpValue(Value:TRpValue);override;
@@ -122,7 +123,7 @@ type
   end;
 
  // Field
- TIdenField=class(TIdentifier)
+ TIdenField=class(TRpIdentifier)
  private
   FField:TField;
  protected
@@ -177,6 +178,7 @@ procedure DatetimeValidation(var Value1,Value2:TRpValue);
 
 var
  DefaultDecimals:Integer;
+
 implementation
 
 // TRpNamedexception
@@ -197,8 +199,8 @@ begin
  inherited Create(ErrorMessage,ElementError);
 end;
 
-// TIdentifier
-constructor TIdentifier.Create(AOwner:TComponent);
+// TRpIdentifier
+constructor TRpIdentifier.Create(AOwner:TComponent);
 begin
  inherited create(AOwner);
 

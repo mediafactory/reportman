@@ -659,14 +659,17 @@ begin
  for i:=0 to childlist.Count-1 do
  begin
   aitem:=TRpSizePosInterface(childlist.Items[i]);
-  rec2.Left:=aitem.Left;
-  rec2.Top:=aitem.Top;
-  rec2.Bottom:=aitem.Top+aitem.Height;
-  rec2.Right:=aitem.Left+aitem.Width;
-  if IntersectRect(arec,Rec1,Rec2) then
+  if aitem.Visible then
   begin
-   TFRpObjInspVCL(fobjinsp).AddCompItem(aitem,false);
-   Result:=True;
+   rec2.Left:=aitem.Left;
+   rec2.Top:=aitem.Top;
+   rec2.Bottom:=aitem.Top+aitem.Height;
+   rec2.Right:=aitem.Left+aitem.Width;
+   if IntersectRect(arec,Rec1,Rec2) then
+   begin
+    TFRpObjInspVCL(fobjinsp).AddCompItem(aitem,false);
+    Result:=True;
+   end;
   end;
  end;
 end;
@@ -814,6 +817,7 @@ begin
   begin
    labelint.Parent:=FInterface;
    labelint.sectionint:=self;
+   labelint.Visible:=compo.visible;
    labelint.UpdatePos;
    labelint.fobjinsp:=fobjinsp;
    childlist.Add(labelint)

@@ -65,7 +65,7 @@ type
   // Aditional priva procedures
   function EvaluateExpression:TRpValue;
   // Searching indentifiers
-  function Searchwithoutdot(name1:Shortstring):TIdentifier;
+  function Searchwithoutdot(name1:Shortstring):TRpIdentifier;
   function GetEvalResultString:string;
   procedure AddIdentifiers;
  protected
@@ -78,11 +78,11 @@ type
   constructor CreateWithoutiden(AOwner:TComponent;AddIdens:boolean);
   destructor Destroy;override;
   // Adds identifiers
-  procedure AddVariable(name1:string;objecte:TIdentifier);
-  procedure AddIden(name1:string;objecte:TIdentifier);
+  procedure AddVariable(name1:string;objecte:TRpIdentifier);
+  procedure AddIden(name1:string;objecte:TRpIdentifier);
   function NewVariable(name1:string;ValueIni:TRpValue):TIdenVariable;
   // Searching identifiers
-  function Searchidentifier(name1:shortstring):TIdentifier;
+  function Searchidentifier(name1:shortstring):TRpIdentifier;
   // The evaluation procedure
   procedure Evaluate;
   // The evaluation procedure without Expression property
@@ -117,17 +117,6 @@ type
    property Expression;
   end;
 
-  // The visual editor can check syntax and evaluate
-  // on design time
-{  TRpEvalEditor=class(TComponentEditor)
-  protected
-  public
-   procedure Edit;override;
-   function GetVerbCount:integer;override;
-   function GetVerb(Index:integer):string;override;
-   procedure ExecuteVerb(Index:Integer);override;
-  end;
-}
 implementation
 
 uses rpevalfunc;
@@ -172,7 +161,7 @@ end;
 // Creates only one instance of functions for all
 // Evaluators
 procedure FillRpcache;
-var iden:TIdentifier;
+var iden:TRpIdentifier;
 begin
  if Rpfunctions.count>0 then
   exit;
@@ -428,7 +417,7 @@ end;
 
 procedure TRpCustomEvaluator.variables(var Value:TRpValue);
 var
- iden:TIdentifier;
+ iden:TRpIdentifier;
 begin
  if Rpparser.Token=toSymbol then
  begin
@@ -664,7 +653,7 @@ end;
 // The sign is same precedence than functions
 procedure TRpCustomEvaluator.dosign(var Value:TRpValue);
 var operador:string[4];
-    iden:TIdentifier;
+    iden:TRpIdentifier;
     i:integer;
 begin
  iden:=nil;
@@ -771,7 +760,7 @@ end;
 
 procedure TRpCustomEvaluator.Operand(var Value:TRpValue);
 VAR
-    iden:TIdentifier;
+    iden:TRpIdentifier;
 begin
  case Rpparser.Token of
   toSymbol:
@@ -929,18 +918,18 @@ begin
  Rpparser.NextToken;
 end;
 
-procedure TRpCustomEvaluator.AddVariable(name1:string;objecte:TIdentifier);
+procedure TRpCustomEvaluator.AddVariable(name1:string;objecte:TRpIdentifier);
 begin
  objecte.idenname:=name1;
  Identifiers.ADDObject('M.'+AnsiUpperCase(name1),objecte);
 end;
 
-procedure TRpCustomEvaluator.AddIden(name1:string;objecte:TIdentifier);
+procedure TRpCustomEvaluator.AddIden(name1:string;objecte:TRpIdentifier);
 begin
  Identifiers.ADDObject(name1,objecte);
 end;
 
-function TRpCustomEvaluator.Searchwithoutdot(name1:Shortstring):TIdentifier;
+function TRpCustomEvaluator.Searchwithoutdot(name1:Shortstring):TRpIdentifier;
 var
  index:integer;
  Doble:Boolean;
@@ -950,14 +939,14 @@ begin
   index:=Identifiers.Indexof(name1);
   if index>-1 then
   begin
-   Result:=Identifiers.Objects[index] As TIdentifier;
+   Result:=Identifiers.Objects[index] As TRpIdentifier;
    Exit;
   end;
   // Memory variable?
   index:=Identifiers.Indexof('M.'+name1);
   if index>-1 then
   begin
-   Result:=Identifiers.Objects[index] As TIdentifier;
+   Result:=Identifiers.Objects[index] As TRpIdentifier;
    Exit;
   end;
   // May be a field ?
@@ -968,7 +957,7 @@ begin
        Rpparser.TokenString,Rpparser.SourceLine,Rpparser.SourcePos);
 end;
 
-function TRpCustomEvaluator.Searchidentifier(name1:Shortstring):TIdentifier;
+function TRpCustomEvaluator.Searchidentifier(name1:Shortstring):TRpIdentifier;
 var
 pospunt:byte;
 primer,sensepunt:string;
@@ -989,7 +978,7 @@ begin
  begin
   index:=Identifiers.Indexof(name1);
   if index>-1 then
-   Result:=Identifiers.Objects[index] As TIdentifier;
+   Result:=Identifiers.Objects[index] As TRpIdentifier;
   Exit;
  end;
  sensepunt:=copy(name1,pospunt+1,ord(name1[0])-pospunt);

@@ -2,7 +2,6 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       Rpreport                                        }
 {       TRpReport: The report component, it contains    }
 {       subreports, pagesetup, printer selection...     }
 {                                                       }

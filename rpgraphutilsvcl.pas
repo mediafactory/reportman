@@ -126,7 +126,7 @@ var
  windowwidth,windowheight:integer;
  x,y:integer;
  pixelwidth:integer;
- pixelheight:integer;
+// pixelheight:integer;
  xof,yof:integer;
  oldmapmode:integer;
  origin,destination,avalue:TPoint;
@@ -154,8 +154,8 @@ begin
  han:=Canvas.Handle;
 // hanbrush:=Canvas.Brush.handle;
 
- pixelwidth:=Round(TWIPS_PER_INCHESS/pixelsperinchx)+1;
- pixelheight:=Round(TWIPS_PER_INCHESS/pixelsperinchy)+1;
+// pixelwidth:=Round(TWIPS_PER_INCHESS/pixelsperinchx)+1;
+// pixelheight:=Round(TWIPS_PER_INCHESS/pixelsperinchy)+1;
 
  origin.X:=windowwidth;
  origin.Y:=windowheight;
@@ -203,21 +203,24 @@ begin
    x:=xof+XWidth;
    while (x<windowwidth) do
    begin
-    avalue.X:=x;
-    avalue.Y:=x+pixelwidth;
-    avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
+//    avalue.X:=x;
+//    avalue.Y:=x+pixelwidth;
+//    avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
 
-    rect.Left:=avalue.X;
-    rect.Right:=avalue.Y;
+//    rect.Left:=avalue.X;
+//    rect.Right:=avalue.Y;
     y:=yof+XHeight;
     while y<windowheight do
     begin
-     avalue.X:=y;
-     avalue.Y:=y+pixelheight;
+     avalue.X:=x;
+     avalue.Y:=y;
+//     avalue.X:=y;
+//     avalue.Y:=y+pixelheight;
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
-     rect.Top:=avalue.X;
-     rect.Bottom:=avalue.Y;
-     Canvas.FillRect(rect);
+//     rect.Top:=avalue.X;
+//     rect.Bottom:=avalue.Y;
+//     Canvas.FillRect(rect);
+     SetPixel(han,avalue.X,avalue.Y,Color);
      y:=y+XHeight;
     end;
     x:=x+XWidth;

@@ -34,6 +34,7 @@ reportmanutils:
         cd unixtodos
         $(COMPILE) unixtodos.dpr
         cd ..
+
         cd ..
         cd ..
 
@@ -66,7 +67,16 @@ reportmanutilsxp:
         cd metaprint
         $(COMPILE) metaprintxp.dpr
         cd ..
+        cd rptranslator
+        $(COMPILE) rptranslate.dpr
         cd ..
+
+
+        cd ..
+        cd ..
+
+        cd activex
+        $(COMPILE) Reportman.dpr
         cd ..
 
 reportmanserverxp:

@@ -731,7 +731,7 @@ end;
 
 function TIdenGraphicClear.GeTRpValue:TRpValue;
 var
- iden:TIdentifier;
+ iden:TRpIdentifier;
 begin
  if Vartype(Params[0])<>varstring then
    Raise TRpNamedException.Create(SRpEvalType,
@@ -764,7 +764,7 @@ end;
 
 function TIdenGraphicNew.GeTRpValue:TRpValue;
 var
- iden:TIdentifier;
+ iden:TRpIdentifier;
 begin
  if Vartype(Params[0])<>varstring then
    Raise TRpNamedException.Create(SRpEvalType,

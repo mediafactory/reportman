@@ -720,7 +720,7 @@ begin
       if Length(drivername)<1 then
        drivername:=FSQLConnection.params.Values['Drivername'];
       if Length(drivername)<1 then
-       Raise Exception.Create(SRpNoDriverName+conname);
+       Raise Exception.Create(SRpNoDriverName+' - '+conname);
 
 
       funcname:=ConAdmin.drivers.ReadString(drivername,'GetDriverFunc','');
@@ -733,7 +733,7 @@ begin
       FSQLConnection.Connected:=true;
      end;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverDBX);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverDBX);
 {$ENDIF}
    end;
   rpdataibx:
@@ -762,7 +762,7 @@ begin
      ConvertParamsFromDBXToIBX(FIBDatabase);
      FIBDatabase.Connected:=true;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
 {$ENDIF}
    end;
   rpdatamybase:
@@ -856,7 +856,7 @@ begin
      FBDEDatabase:=FOpenedDatabase;
     end;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverBDE);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverBDE);
 {$ENDIF}
    end;
   rpdataado:
@@ -874,7 +874,7 @@ begin
     else
      FProvidedADOConnection.Connected:=True;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverADO);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverADO);
 {$ENDIF}
    end;
   rpdataibo:
@@ -898,7 +898,7 @@ begin
      ConvertParamsFromDBXToIBO(FIBODatabase);
      FIBODatabase.Connected:=true;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
 {$ENDIF}
    end;
  end;
@@ -987,7 +987,7 @@ var
  param:TRpParam;
 begin
  if connecting then
-  Raise Exception.Create(SRpCircularDatalink+alias);
+  Raise Exception.Create(SRpCircularDatalink+' - '+alias);
  connecting:=true;
  try
   doexit:=false;
@@ -1048,7 +1048,7 @@ begin
 {$IFDEF USESQLEXPRESS}
        FSQLInternalQuery:=TSQLQuery.Create(nil);
 {$ELSE}
-       Raise Exception.Create(SRpDriverNotSupported+SrpDriverDBX);
+       Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverDBX);
 {$ENDIF}
       end;
      rpdataibx:
@@ -1056,7 +1056,7 @@ begin
 {$IFDEF USEIBX}
        FSQLInternalQuery:=TIBQuery.Create(nil);
 {$ELSE}
-       Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+       Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
 {$ENDIF}
       end;
      rpdatamybase:
@@ -1079,7 +1079,7 @@ begin
          TTable(FSQLInternalQuery).SessionName:=databaseinfo.FBDESession.SessionName;
        end;
 {$ELSE}
-       Raise Exception.Create(SRpDriverNotSupported+SrpDriverBDE);
+       Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverBDE);
 {$ENDIF}
       end;
      rpdataado:
@@ -1087,7 +1087,7 @@ begin
 {$IFDEF USEADO}
        FSQLInternalQuery:=TADOQuery.Create(nil);
 {$ELSE}
-       Raise Exception.Create(SRpDriverNotSupported+SrpDriverADO);
+       Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverADO);
 {$ENDIF}
       end;
      rpdataibo:
@@ -1095,7 +1095,7 @@ begin
 {$IFDEF USEIBO}
        FSQLInternalQuery:=TIBOQuery.Create(nil);
 {$ELSE}
-       Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+       Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
 {$ENDIF}
       end;
     end;
@@ -1586,7 +1586,7 @@ begin
  else
  begin
 {$IFDEF MSWINDOWS}
-   Raise Exception.Create(SRpConfigFileNotExists+driverfilename);
+   Raise Exception.Create(SRpConfigFileNotExists+' - '+driverfilename);
 {$ENDIF}
 {$IFDEF LINUX}
   // Check if exists in the current dir
@@ -1610,7 +1610,7 @@ begin
     drivers:=TMemIniFile.Create(driverfilename);
    end
    else
-    Raise Exception.Create(SRpConfigFileNotExists+DBXDRIVERFILENAME);
+    Raise Exception.Create(SRpConfigFileNotExists+' - '+DBXDRIVERFILENAME);
   end;
 {$ENDIF}
  end;
@@ -1624,7 +1624,7 @@ begin
  else
  begin
 {$IFDEF MSWINDOWS}
-   Raise Exception.Create(SRpConfigFileNotExists+driverfilename);
+   Raise Exception.Create(SRpConfigFileNotExists+' - '+driverfilename);
 {$ENDIF}
 {$IFDEF LINUX}
   // Check if exists in the current dir
@@ -1644,7 +1644,7 @@ begin
     config.CaseSensitive:=false;
    end
    else
-    Raise Exception.Create(SRpConfigFileNotExists+DBXCONFIGFILENAME);
+    Raise Exception.Create(SRpConfigFileNotExists+' - '+DBXCONFIGFILENAME);
   end
 {$ENDIF}
  end;
@@ -1701,7 +1701,7 @@ begin
 {$IFDEF USESQLEXPRESS}
     SQLConnection.GetTableNames(alist);
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverDBX);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverDBX);
 {$ENDIF}
    end;
   rpdataibx:
@@ -1709,7 +1709,7 @@ begin
 {$IFDEF USEIBX}
     FIBDatabase.GetTableNames(alist);
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
 {$ENDIF}
    end;
   rpdatamybase:
@@ -1725,7 +1725,7 @@ begin
      Session.GetTableNames(FBDEDatabase.Databasename,'',False,False,alist);
 //    GetTableNames(alist);
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverBDE);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverBDE);
 {$ENDIF}
    end;
   rpdataado:
@@ -1733,7 +1733,7 @@ begin
 {$IFDEF USEADO}
     ADOConnection.GetTableNames(alist);
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverADO);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverADO);
 {$ENDIF}
    end;
   rpdataibo:
@@ -1741,7 +1741,7 @@ begin
 {$IFDEF USEIBO}
     alist.clear;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
 {$ENDIF}
    end;
  end;
@@ -1768,7 +1768,7 @@ begin
     TSQLQuery(FSQLInternalQuery).SQLConnection:=SQLConnection;
     TSQLQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverDBX);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverDBX);
 {$ENDIF}
    end;
   rpdataibx:
@@ -1784,7 +1784,7 @@ begin
     end;
     TIBQuery(FSQLInternalQuery).UniDirectional:=true;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
 {$ENDIF}
    end;
   rpdatamybase:
@@ -1801,7 +1801,7 @@ begin
     TQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
     TQuery(FSQLInternalQUery).UniDirectional:=True;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverBDE);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverBDE);
 {$ENDIF}
    end;
   rpdataado:
@@ -1812,7 +1812,7 @@ begin
     TADOQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
     TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverADO);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverADO);
 {$ENDIF}
    end;
   rpdataibo:
@@ -1823,7 +1823,7 @@ begin
     TIBOQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
     TIBOQuery(FSQLInternalQuery).UniDirectional:=true;
 {$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
 {$ENDIF}
    end;
  end;

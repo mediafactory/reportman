@@ -49,6 +49,7 @@ type
    FDoBeforePrint,FDoAfterPrint:string;
    FPrintCondition:string;
    FOnBeforePrint:TNotifyEvent;
+   FVisible:Boolean;
    procedure SetWidth(Value:TRpTwips);
    procedure SetHeight(Value:TRpTwips);
   protected
@@ -63,6 +64,7 @@ type
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');virtual;
    property Report:TComponent read GetReport;
    property OnBeforePrint:TNotifyEvent read FOnBeforePrint write FOnBeforePrint;
+   property Visible:Boolean read FVisible write FVisible;
   published
    property PrintCondition:string read FPrintCondition write FPrintCondition;
    property DoBeforePrint:string read FDoBeforePrint write FDoBeforePrint;
@@ -161,6 +163,7 @@ begin
     Raise Exception.Create(SRpOnlyAReportOwner+classname);
 
  inherited Create(AOwner);
+ FVisible:=True;
  FHeight:=0;
  FWidth:=0;
 end;

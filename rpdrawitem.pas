@@ -201,7 +201,7 @@ end;
 function TRpImage.GetStream:TMemoryStream;
 var
  evaluator:TRpEvaluator;
- iden:TIdentifier;
+ iden:TRpIdentifier;
  afield:TField;
  AStream:TStream;
  Size,readed: Longint;
