@@ -1,4 +1,4 @@
-Report Manager Designer Version 0.99 beta
+Report Manager Designer Version 0.99g
 
 Author:	Toni Martir
 	toni@pala.com (no free support)
@@ -9,9 +9,13 @@ http://reportman.sourceforge.net
 
 To install:
 
-tar zxvf repmand-0.99.i386.tar.gz
+tar zxvf repmand-0.99g.i386.tar.gz
 
 To execute the application:
+
+Edit repmand.sh and set correct path to kylix/bin directory
+
+Then execute:
 
 ./repmand.sh
 

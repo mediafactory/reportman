@@ -565,6 +565,9 @@ end;
 
 procedure TFRpMainF.FormCreate(Sender: TObject);
 begin
+{$IFDEF KYLIX2}
+ OpenDialog1.Filter = 'Report Files (*.rep)|*.rep';
+{$ENDIF}
  // Sets on exception event
  oldonexception:=Application.OnException;
  Application.OnException:=MyExceptionHandler;
