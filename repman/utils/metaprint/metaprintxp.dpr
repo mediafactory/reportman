@@ -21,12 +21,13 @@ program metaprintxp;
 
 {$APPTYPE CONSOLE}
 uses
-  Classes,SysUtils,
+  Classes,
+  SysUtils,
   rpgdidriver in '..\..\..\rpgdidriver.pas',
   rpmetafile in '..\..\..\rpmetafile.pas',
-  rpfmainmetaviewvcl in '..\..\..\rpfmainmetaviewvcl.pas',
   rptypes in '..\..\..\rptypes.pas',
-  rpmdconsts in '..\..\..\rpmdconsts.pas';
+  rpmdconsts in '..\..\..\rpmdconsts.pas',
+  rpfmainmetaviewvcl in '..\..\..\rpfmainmetaviewvcl.pas' {FRpMainMetaVCL};
 
 var
  metafile:TRpMetafileReport;

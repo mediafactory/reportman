@@ -170,7 +170,7 @@ var
  dbitem:TRpDatabaseInfoItem;
  ditem:TRpDataInfoItem;
  achild:TTreeNode;
- alist:TStringList;
+ alist,fieldtypes,fieldsizes:TStringList;
  usebrackets:Boolean;
  i,j:integer;
  aname:string;
@@ -188,6 +188,8 @@ begin
   begin
    dbitem:=TRpDatabaseInfoItem(TObject(Node.Data));
    alist:=TStringList.Create;
+   fieldtypes:=TStringList.Create;
+   fieldsizes:=TStringList.Create;
    try
     // Tables
     Atree.Items.Delete(achild);
@@ -211,14 +213,22 @@ begin
     // Fields
     else
     begin
-     dbitem.GetFieldNames(Node.Text,alist);
+     dbitem.GetFieldNames(Node.Text,alist,fieldtypes,fieldsizes);
      if alist.count<1 then
       AllowExpansion:=false
      else
      begin
       for i:=0 to alist.Count-1 do
       begin
-       achild:=ATree.Items.AddChild(Node,alist.Strings[i]);
+       aname:=alist.Strings[i];
+       if i<fieldtypes.Count then
+        aname:=aname+'-'+fieldtypes.Strings[i];
+       if i<fieldsizes.Count then
+       begin
+        if Length(fieldsizes.Strings[i])>0 then
+         aname:=aname+'('+fieldsizes.Strings[i]+')';
+       end;
+       achild:=ATree.Items.AddChild(Node,aname);
        achild.ImageIndex:=2;
        achild.SelectedIndex:=2;
       end;
@@ -226,6 +236,8 @@ begin
     end;
    finally
     alist.free;
+    fieldtypes.free;
+    fieldsizes.free;
    end;
   end
   else
@@ -235,9 +247,11 @@ begin
     ditem:=TRpDataInfoItem(TObject(Node.Data));
     ditem.Connect(Freport.DatabaseInfo,FReport.Params);
     alist:=TStringList.Create;
+    fieldtypes:=TStringList.Create;
+    fieldsizes:=TStringList.Create;
     try
      Atree.Items.Delete(achild);
-     ditem.Dataset.GetFieldNames(alist);
+     FillFieldsInfo(ditem.Dataset,alist,fieldtypes,fieldsizes);
      if alist.count<1 then
       AllowExpansion:=false
      else
@@ -258,6 +272,13 @@ begin
         aname:='['+ditem.Alias+'.'+aname+']'
        else
         aname:=ditem.Alias+'.'+aname;
+       if i<fieldtypes.Count then
+        aname:=aname+' '+fieldtypes.Strings[i];
+       if i<fieldsizes.Count then
+       begin
+        if Length(fieldsizes.Strings[i])>0 then
+         aname:=aname+'('+fieldsizes.Strings[i]+')';
+       end;
        achild:=ATree.Items.AddChild(Node,aname);
        achild.Data:=ditem;
        achild.ImageIndex:=2;
@@ -266,6 +287,8 @@ begin
      end;
     finally
      alist.free;
+     fieldtypes.free;
+     fieldsizes.free;
     end;
    end;
   end;
