@@ -409,6 +409,7 @@ begin
   amod.ClientHandleThread.FreeOnTerminate:=True;
   amod.ClientHandleThread.Resume;
 
+
   arec:=GenerateUserNameData(user,password);
   try
    amod.ClientHandleThread.threadsafeexec:=true;
@@ -422,7 +423,12 @@ begin
     amod.FEndReport.ReSetEvent;
     // Sets an event and waits for its signal
     SendBlock(amod.RepClient,arec);
+{$IFDEF MSWINDOWS}
     amod.FEndReport.WaitFor(20000);
+{$ENDIF}
+{$IFDEF LINUX}
+    amod.FEndReport.WaitFor($FFFFFFFF);
+{$ENDIF}
     if Not amod.FAuthorized then
      Raise Exception.Create(SRpAuthFailed);
    end;
