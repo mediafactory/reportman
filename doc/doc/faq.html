@@ -45,10 +45,10 @@
 <p><code>uses rplabelitem;</code></p>
 <p><code>...</code></p>
 <p><code>var acompo:TRpExpression;</code></p>
-<p><code>compo:=CLXReport1.Report.FindComponent('TRpExpression5');</code></p>
+<p><code>acompo:=TRpExpression(CLXReport1.Report.FindComponent('TRpExpression5'));</code></p>
 <p><code>if Assigned(compo) then</code></p>
 <p><code>begin</code></p>
-<p> compo.DisplayFormat:='dd/mm/yyyy';</p>
+<p> acompo.DisplayFormat:='dd/mm/yyyy';</p>
 <p><code>end</code></p>
 <p><b>Q. I'm designing a report that will be printed in any matrix printer or 
   receipt printer, how can I use printer fonts to speed up the print process?</b></p>

@@ -11,13 +11,15 @@
 <p>Report parameters is a powerful feature, here is a list of samples you can 
   do with parameters</p>
 <ul>
-  <li> Allow the user to change words or sentences of the report</li>
-  <li>Set initial values of group sums...</li>
-  <li>Assign them to querys to alter the result set (parametrized querys)</li>
-  <li>The user can alter the parameters that are marked as visible</li>
-  <li>Print them, or alter them while executing the report</li>
-  <li>Assign parameters using report client application</li>
-  <li>Assign parameters using the web report server and any html client</li>
+  <li> Allow the user to change words or sentences of the report.</li>
+  <li>Set initial values of group sums, etc, place the parameter name in any expression</li>
+  <li>Assign them to querys to alter the result set (parametrized or <a href="linkedquerys.html">linked 
+    querys</a>)</li>
+  <li>Print them, or alter them while executing the report, you can use the parameter 
+    in any <a href="exevaluator.html">expression</a></li>
+  <li>Assign parameters using <a href="serverclient.html">report client application</a></li>
+  <li>Assign parameters using the <a href="webserveroperations.html">web report 
+    server</a> and any html client</li>
 </ul>
 <p>You can define the parameters, and also preview how the parameters will show 
   to the user.</p>
@@ -30,8 +32,13 @@
 <p>The data definition properties for this sample, see that parameters are preceded 
   by the : symbol.</p>
 <p><img src="images/paramdef2.jpg" width="547" height="497"></p>
-<p>The user parameters window:</p>
+<p>The user parameters window is called in preview window when user click the 
+  parameters button:</p>
 <p><img src="images/paramdef3.jpg" width="591" height="163"></p>
+<p>You can call parameter window from your application with the method ShowParams:</p>
+<p>VCL/CLX Components:</p>
+<p><code>if CLXReport1.ShowParams then</code></p>
+<p><code> CLXReport1.Execute</code></p>
 <p>You can modify report parameters in runtime in your application.</p>
 <p>VCL/CLX Components:</p>
 <p><code>CLXReport1.Report.Params.ParamByName('CUSTOMERINI').Value:=2;</code></p>

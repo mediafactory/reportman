@@ -26,7 +26,7 @@ interface
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,
   rpmdconsts,
-  Variants,
+  Variants,rptypes,
   rpparams;
 
 const
@@ -155,7 +155,7 @@ begin
    achecknull.OnClick:=CheckNullClick;
    lnulls.AddObject(aparam.Name,acheckNull);
    case aparam.ParamType of
-    rpParamString:
+    rpParamString,rpParamExpre,rpParamUnknown:
      begin
       acontrol:=TEdit.Create(Self);
       acontrol.tag:=i;

@@ -137,7 +137,11 @@ constructor TrpPanelObj.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
-// TFRpObjInspVCL(Owner).OpenDialog1.Filter:=SrpBitmapImages+'|*.bmp';
+ TFRpObjInspVCL(Owner).OpenDialog1.Filter:=
+  SrpBitmapImages+'|*.bmp|'+
+  SrpSJpegImages+'|*.jpg|';
+//  SrpSPNGImages+'|*.png|'+
+//  SRpSXPMImages+'|*.xpm';
 
  Align:=alClient;
 

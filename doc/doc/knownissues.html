@@ -117,6 +117,14 @@
         enviroment variable LC_NUMERIC=en_US, see repmand.sh startup script. Then 
         in your Kylix application you can set the DecimalSeparator and ThousandSeparator 
         variables before print so you can print with your custom locale settings.</p>
+      <p>Another workaround to is to use the launcher provided by Report Manager, 
+        for example if you have compiled <i>myprogram</i>.</p>
+      <p>cp repmand.bin myprogram.bin</p>
+      <p>This launcher add the current directory to LD_LIBRARY_PATH, then save 
+        locale configuration to enviroment variables, launch the application without 
+        the .bin extension but with modified LC_NUMERIC, the Report Manager engine 
+        restores the locale configuration (Decimal separator and Thousand separator) 
+      </p>
       <p>The way to reproduce the bug is:</p>
       <p>The CLX print engine does not work well in some Linux systems/configurations, 
         you can test if your system works ok by writting a small program in kylix 

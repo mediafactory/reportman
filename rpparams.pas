@@ -30,9 +30,6 @@ uses Classes, SysUtils,rpmdconsts,
  DB,rptypes;
 
 type
-  TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,
-   rpParamTime,rpParamDateTime,rpParamCurrency,rpParamBool,rpParamExpre);
-
 
   TRpParam=class(TCollectionitem)
    private
@@ -97,6 +94,9 @@ type
 
 function ParamTypeToDataType(paramtype:TRpParamType):TFieldType;
 function VariantTypeToDataType(avariant:Variant):TFieldType;
+function ParamTypeToString(paramtype:TRpParamType):String;
+function StringToParamType(Value:String):TRpParamType;
+procedure GetPossibleDataTypes(alist:TStrings);
 
 implementation
 
@@ -322,6 +322,8 @@ begin
   exit;
  end;
  case ParamType of
+  rpParamUnknown:
+   Result:='';
   rpParamString,rpParamExpre:
    Result:=Value;
   rpParamInteger,rpParamDouble,rpParamCurrency:
@@ -352,7 +354,96 @@ begin
    Value:=StrToDateTime(NewValue);
   rpParamBool:
    Value:=StrToBool(NewValue);
+  rpParamUnknown:
+   begin
+    ParamType:=rpParamString;
+    Value:=newValue;
+   end;
  end;
+end;
+
+function ParamTypeToString(paramtype:TRpParamType):String;
+begin
+ case ParamType of
+  rpParamString,rpParamExpre:
+   Result:=SRpSString;
+  rpParamInteger:
+   Result:=SRpSInteger;
+  rpParamDouble:
+   Result:=SRpSFloat;
+  rpParamCurrency:
+   Result:=SRpSCurrency;
+  rpParamDate:
+   Result:=SRpSDate;
+  rpParamTime:
+   Result:=SRpSTime;
+  rpParamDateTime:
+   Result:=SRpSDateTime;
+  rpParamBool:
+   Result:=SRpSBoolean;
+  rpParamUnknown:
+   Result:=SRpSUnknownType;
+ end;
+end;
+
+
+function StringToParamType(Value:String):TRpParamType;
+begin
+ Result:=rpParamUnknown;
+ if Value=SRpSString then
+ begin
+  Result:=rpParamString;
+  exit;
+ end;
+ if Value=SRpSInteger then
+ begin
+  Result:=rpParamInteger;
+  exit;
+ end;
+ if Value=SRpSFloat then
+ begin
+  Result:=rpParamDouble;
+  exit;
+ end;
+ if Value=SRpSCurrency then
+ begin
+  Result:=rpParamCurrency;
+  exit;
+ end;
+ if Value=SRpSDate then
+ begin
+  Result:=rpParamDate;
+  exit;
+ end;
+ if Value=SRpSDateTime then
+ begin
+  Result:=rpParamDateTime;
+  exit;
+ end;
+ if Value=SRpSTime then
+ begin
+  Result:=rpParamTime;
+  exit;
+ end;
+ if Value=SRpSBoolean then
+ begin
+  Result:=rpParamBool;
+  exit;
+ end;
+end;
+
+procedure GetPossibleDataTypes(alist:TStrings);
+begin
+ alist.Clear;
+ alist.Add(SRpSUnknownType);
+ alist.Add(SRpSString);
+ alist.Add(SRpSInteger);
+ alist.Add(SRpSFloat);
+ alist.Add(SRpSCurrency);
+ alist.Add(SRpSDate);
+ alist.Add(SRpSDateTime);
+ alist.Add(SRpSTime);
+ alist.Add(SRpSBoolean);
 end;
 
 end.

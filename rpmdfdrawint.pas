@@ -27,7 +27,11 @@ uses SysUtils, Classes,
   QButtons, QExtCtrls, QControls, QStdCtrls,
   types,
   rpprintitem,rpdrawitem,rpmdobinsint,rpmdconsts,
-  rpgraphutils,rpmunits,rptypes;
+  rpgraphutils,rpmunits,
+{$IFDEF MSWINDOWS}
+  rpvgraphutils,rppdffile,
+{$ENDIF}
+  rptypes;
 
 type
  TRpDrawInterface=class(TRpSizePosInterface)
@@ -540,6 +544,9 @@ var
  aimage:TRpImage;
  rec:TRect;
  dpix,dpiy:integer;
+{$IFDEF MSWINDOWS}
+ bitmapwidth,bitmapheight:integer;
+{$ENDIF}
 begin
  aimage:=TRpImage(printitem);
  try
@@ -555,6 +562,12 @@ begin
    begin
     FBitmap:=TBitmap.Create;
     FBitmap.PixelFormat:=pf32bit;
+{$IFDEF MSWINDOWS}
+    if GetJPegInfo(aimage.Stream,bitmapwidth,bitmapheight) then
+    begin
+     rpvgraphutils.JPegStreamToBitmapStream(aimage.stream);
+    end;
+{$ENDIF}
     // Try to load it
     aimage.Stream.Seek(0,soFromBeginning);
     try

@@ -126,7 +126,7 @@ type
    property IBDatabase:TIBDatabase read FIBDatabase
     write FIBDatabase;
 {$ENDIF}
-   function GetStreamFromSQL(sqlsentence:String;bsmode:TBlobStreamMode;params:TStringList):TStream;
+   function GetStreamFromSQL(sqlsentence:String;params:TStringList):TStream;
    procedure GetTableNames(Alist:TStrings);
    function OpenDatasetFromSQL(sqlsentence:String;params:TStringList;onlyexec:Boolean):TDataset;
   published
@@ -764,7 +764,8 @@ begin
     AlreadyOpen:=False;
     for i:=0 to ASession.DatabaseCount-1 do
     begin
-     if ASession.Databases[i].DatabaseName=FBDEAlias then
+     if ((UpperCase(ASession.Databases[i].DatabaseName)=UpperCase(FBDEAlias)) or
+      (UpperCase(ASession.Databases[i].AliasName)=UpperCase(FBDEAlias))) then
      begin
       if ASession.Databases[i].Connected then
       begin
@@ -1612,9 +1613,11 @@ begin
 end;
 {$ENDIF}
 
-function TRpDatabaseInfoItem.GetStreamFromSQL(sqlsentence:String;bsmode:TBlobStreamMode;params:TStringList):TStream;
+function TRpDatabaseInfoItem.GetStreamFromSQL(sqlsentence:String;params:TStringList):TStream;
 var
  data:TDataset;
+ memstream:TMemoryStream;
+ astream:TStream;
 begin
  Result:=nil;
  data:=OpenDatasetFromSQL(sqlsentence,params,false);
@@ -1623,7 +1626,17 @@ begin
    Raise Exception.Create(SRpExternalSectionNotFound);
   if data.FieldCount<1 then
    Raise Exception.Create(SRpExternalSectionNotFound);
-  Result:=data.CreateBlobStream(data.fields[0],bsmode);
+  memstream:=TMemoryStream.Create;
+  try
+   astream:=data.CreateBlobStream(data.fields[0],bmRead);
+   memstream.SetSize(astream.size);
+   astream.Read(memstream.memory^,memstream.size);
+   memstream.Seek(0,soFromBeginning);
+  except
+   memstream.free;
+   Raise;
+  end;
+  Result:=memstream;
  finally
   data.free;
  end;
@@ -1657,7 +1670,11 @@ begin
   rpdatabde:
    begin
 {$IFDEF USEBDE}
-    FBDEDatabase.GetTableNames(alist);
+    if Assigned(TRpDatabaseInfoList(Collection).FBDESession) then
+     TRpDatabaseInfoList(Collection).FBDESession.GetTableNames(FBDEDatabase.Databasename,'',False,False,alist)
+    else
+     Session.GetTableNames(FBDEDatabase.Databasename,'',False,False,alist);
+//    GetTableNames(alist);
 {$ELSE}
     Raise Exception.Create(SRpDriverNotSupported+SrpDriverBDE);
 {$ENDIF}

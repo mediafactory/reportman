@@ -71,7 +71,8 @@ object FRpParams: TFRpParams
           'DateTime'
           'Currency'
           'Bool'
-          'Expression')
+          'Expression'
+          'Unknown')
         TabOrder = 3
         OnChange = EDescriptionChange
       end

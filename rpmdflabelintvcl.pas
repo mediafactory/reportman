@@ -25,7 +25,7 @@ interface
 
 uses SysUtils, Classes,
   Windows,Graphics, Forms, Buttons, ExtCtrls, Controls,
-  StdCtrls,rpvgraphutils,
+  StdCtrls,rpvgraphutils,rpparams,
   types,
   rpprintitem,rplabelitem,rpmdobinsintvcl,rpmdconsts,
   rpgraphutilsvcl,rptypes;
@@ -230,6 +230,12 @@ begin
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).Expression);
 
+ // Data Type
+ lnames.Add(SRpSDataType);
+ ltypes.Add(SRpSList);
+ if Assigned(lvalues) then
+  ParamTypeToString(TRpExpression(printitem).DataType);
+
  // Display format
  lnames.Add(SrpSDisplayFOrmat);
  ltypes.Add(SRpSString);
@@ -282,6 +288,11 @@ begin
   invalidate;
   exit;
  end;
+ if pname=SRpSDatatype then
+ begin
+  TRpExpression(fprintitem).DataType:=StringToParamType(Value);
+  exit;
+ end;
  if pname=SRpSDisplayFormat then
  begin
   TRpExpression(fprintitem).DisplayFormat:=value;
@@ -326,6 +337,11 @@ begin
  if pname=SrpSExpression then
  begin
   Result:=TRpExpression(printitem).Expression;
+  exit;
+ end;
+ if pname=SRpSDataType then
+ begin
+  Result:=ParamTypeToString(TRpExpression(printitem).DataType);
   exit;
  end;
  if pname=SrpSDisplayFormat then
@@ -380,7 +396,11 @@ begin
   end;
   exit;
  end;
-
+ if pname=SRpSDataType then
+ begin
+  GetPossibleDataTypes(lpossiblevalues);
+  exit;
+ end;
  if pname=SRpSAggregate then
  begin
   for i:=rpAgNone to rpAgGeneral do

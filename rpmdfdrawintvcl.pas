@@ -22,10 +22,10 @@ interface
 
 {$I rpconf.inc}
 
-uses SysUtils, Classes,
-  Windows,Graphics, Forms,
+uses SysUtils, Classes,Windows,
+  Graphics, Forms,
   Buttons, ExtCtrls, Controls, StdCtrls,rpvgraphutils,
-  types,
+  types,jpeg,rppdffile,
   rpprintitem,rpdrawitem,rpmdobinsintvcl,rpmdconsts,
   rpgraphutilsvcl,rpmunits,rptypes;
 
@@ -543,6 +543,8 @@ var
  oldrgn:HRGN;
  newrgn:HRGN;
  aresult:integer;
+ bitmapwidth,bitmapheight:integer;
+ jpegimage:TJPegImage;
 begin
  aimage:=TRpImage(printitem);
  try
@@ -558,10 +560,20 @@ begin
    begin
     FBitmap:=TBitmap.Create;
     FBitmap.PixelFormat:=pf32bit;
-    // Try to load it
     aimage.Stream.Seek(0,soFromBeginning);
     try
-     FBitmap.LoadFromStream(aimage.Stream);
+     if GetJPegInfo(aimage.stream,bitmapwidth,bitmapheight) then
+     begin
+      jpegimage:=TJPegImage.Create;
+      try
+       jpegimage.LoadFromStream(aimage.stream);
+       fbitmap.Assign(jpegimage);
+      finally
+       jpegimage.free;
+      end;
+     end
+     else
+      fbitmap.LoadFromStream(aimage.stream);
     except
      FBitmap.free;
      FBitmap:=nil;

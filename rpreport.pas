@@ -803,14 +803,15 @@ begin
    alias:=SubReports.items[i].Subreport.Alias;
    if Length(alias)>0 then
    begin
-    dbalias:=FDataInfo.Items[i].DatabaseAlias;
+    index:=DataInfo.IndexOf(alias);
+    if index<0 then
+      Raise Exception.Create(SRpSubreportAliasNotFound+':'+alias);
+    dbalias:=FDataInfo.Items[index].DatabaseAlias;
     index:=DatabaseInfo.IndexOf(dbalias);
     if index<0 then
      Raise Exception.Create(SRpSubreportAliasNotFound+':'+alias);
     dbinfo:=DatabaseInfo.Items[index];
     index:=DataInfo.IndexOf(alias);
-    if index<0 then
-      Raise Exception.Create(SRpSubreportAliasNotFound+':'+alias);
     if dbinfo.Driver<>rpdataibx then
     begin
      FDataInfo.Items[index].Cached:=true;

@@ -38,7 +38,8 @@ requires
   Vcldb50,
   vclado50,
   Vclbde50,
-  VCLIB50;
+  VCLIB50,
+  vcljpg50;
 
 contains
   rptypeval in 'rptypeval.pas',

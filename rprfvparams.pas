@@ -158,7 +158,7 @@ begin
    achecknull.OnClick:=CheckNullClick;
    lnulls.AddObject(aparam.Name,acheckNull);
    case aparam.ParamType of
-    rpParamString:
+    rpParamString,rpParamExpre,rpParamUnknown:
      begin
       acontrol:=TEdit.Create(Self);
       acontrol.tag:=i;

@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.3pre1';
+ RM_VERSION='1.3pre14';
 
 function TranslateStr(index:integer;defvalue:Widestring):WideString;
 
@@ -547,7 +547,20 @@ var
   SRpExternalSectionNotFound:WideString='Error reading external section';
   SRpRecordnotExists:WideString='The record does not exist, do you want to create it?';
   SRpLoadSection:WideString='Do you want to load the section?';
-  SRpSInvalidJPEG:WideString='Invalid JPEG stream';
+  SRpSInvalidJPEG:WideString='Invalid JPEG/PNG stream';
+  SRpSJpegImages:WideString='JPeg images';
+  SRpSPNGImages:WideString='PNG images';
+  SRpSXPMImages:WideString='XPM images';
+  SRpSWMFImages:WideString='WMF Windows Metafile';
+  SRpSEMFImages:WideString='EMF Enhaced Metafile';
+  SRpSICOImages:WideString='ICO Icons';
+  SRpSUnknownType:WideString='Unknown';
+  SRpSFloat:WideString='Float';
+  SRpSDate:WideString='Date';
+  SRpSDateTime:WideString='Date Time';
+  SRpSTime:WideString='Time';
+  SRpSBoolean:WideString='Boolean';
+  SRpSDataType:WideString='Data type';
 
 implementation
 
@@ -1085,8 +1098,20 @@ begin
  TranslateVar(866,SRpExternalSectionNotFound);
  TranslateVar(867,SRpRecordnotExists);
  TranslateVar(868,SRpLoadSection);
- TranslateVar(869,SRpSInvalidJPEG);
-
+ TranslateVar(879,SRpSInvalidJPEG);
+ TranslateVar(880,SRpSJpegImages);
+ TranslateVar(881,SRpSPNGImages);
+ TranslateVar(882,SRpSXPMImages);
+ TranslateVar(883,SRpSWMFImages);
+ TranslateVar(884,SRpSEMFImages);
+ TranslateVar(885,SRpSICOImages);
+ TranslateVar(886,SRpSUnknownType);
+ TranslateVar(887,SRpSFloat);
+ TranslateVar(888,SRpSDate);
+ TranslateVar(889,SRpSDateTime);
+ TranslateVar(890,SRpSTime);
+ TranslateVar(891,SRpSBoolean);
+ TranslateVar(892,SRpSDataType);
 end;
 
 {$IFDEF LINUX}

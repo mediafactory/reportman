@@ -33,14 +33,14 @@ object FRpObjInsp: TFRpObjInsp
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = 'bmp'
-    FileName = '*.bmp'
+    FileName = '*.bmp;*.jpg;*.png;*.ddw;*.ico'
     Filter = 'Bitmap images (*.*)'
     FilterIndex = 0
     Height = 0
     Title = 'Open bitmap'
     Width = 0
-    Left = 65528
-    Top = 180
+    Left = 48
+    Top = 160
   end
   object PopUpSection: TPopupMenu
     Left = 212

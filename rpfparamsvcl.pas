@@ -26,7 +26,7 @@ uses SysUtils, Classes,
   Graphics, Forms,Dialogs, ActnList, ImgList, ComCtrls,
   Buttons, ExtCtrls, Controls, StdCtrls,Mask,
   rpdatainfo,Variants,DB,rpmdconsts,rpparams,
-  rpgraphutilsvcl, ToolWin;
+  rpgraphutilsvcl, ToolWin,rptypes;
 
 type
   TFRpParamsVCL = class(TForm)
@@ -143,6 +143,7 @@ begin
  ComboDataType.Items.Strings[6]:=TranslateStr(206,ComboDataType.Items.Strings[6]);
  ComboDataType.Items.Strings[7]:=TranslateStr(207,ComboDataType.Items.Strings[7]);
  ComboDataType.Items.Strings[8]:=TranslateStr(208,ComboDataType.Items.Strings[8]);
+ ComboDataType.Items.Strings[9]:=TranslateStr(886,ComboDataType.Items.Strings[9]);
 
 end;
 
@@ -213,8 +214,8 @@ begin
   if (param.Value<>Null) then
   begin
    case param.ParamType of
-    rpParamString,rpParamExpre:
-     EValue.Text:=param.Value;
+    rpParamString,rpParamExpre,rpParamUnknown:
+     EValue.Text:=param.AsString;
     rpParamInteger:
      EValue.Text:=IntToStr(param.Value);
     rpParamDouble:

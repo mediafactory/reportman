@@ -52,6 +52,11 @@ type
 {$ENDIF}
 
 
+ TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,
+  rpParamTime,rpParamDateTime,rpParamCurrency,rpParamBool,
+  rpParamExpre,rpParamUnknown);
+
+
  TRpParamObject=class(TObject)
   public
    Value:Variant;
@@ -133,7 +138,7 @@ function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
 procedure WriteWideString(Writer:TWriter;Value:WideString);
 function  ReadWideString(Reader:TReader):WideString;
 procedure Generatenewname(Component:TComponent);
-function FormatVariant(displayformat:string;Value:Variant):widestring;
+function FormatVariant(displayformat:string;Value:Variant;paramtype:TRpParamType):widestring;
 function CopyFileTo(const Source, Destination: string): Boolean;
 function GetPrinterConfigName(printerindex:TRpPrinterSelect):string;
 function GetPrinterOffset(printerindex:TRpPrinterSelect):TPoint;
@@ -346,19 +351,40 @@ begin
 end;
 
 
-function FormatVariant(displayformat:string;Value:Variant):widestring;
+function FormatVariant(displayformat:string;Value:Variant;
+ paramtype:TRpParamType):widestring;
 var
  atype:TVarType;
 begin
- if VarIsNull(Value) then
+ if paramtype<>rpParamunknown then
  begin
-  Result:='';
-  exit;
+  if VarIsNull(Value) then
+  begin
+   case paramtype of
+    rpParamString,rpParamExpre:
+     Value:='';
+    rpParamInteger,rpParamDouble,rpParamCurrency:
+     Value:=0;
+    rpParamBool:
+     Value:=false;
+   end;
+  end;
+ end
+ else
+ begin
+  if VarIsNull(Value) then
+  begin
+   Result:='';
+   exit;
+  end;
  end;
- if Length(displayformat)<1 then
+ if Not VarIsNull(Value) then
  begin
-  Result:=widestring(Value);
-  exit;
+  if Length(displayformat)<1 then
+  begin
+   Result:=widestring(Value);
+   exit;
+  end;
  end;
  atype:=VarType(value);
  case atype of

@@ -25,7 +25,7 @@ interface
 {$I rpconf.inc}
 
 uses Sysutils,Classes,rptypes,rpprintitem,rpmdconsts,
- rpmetafile,rpeval,
+ rpmetafile,rpeval,rpparams,
 {$IFDEF MSWINDOWS}
  windows,
 {$ENDIF}
@@ -47,7 +47,6 @@ type
    function GetText:WideString;
    procedure SetAllText(Value:TStrings);
    procedure UpdateAllStrings;
-   procedure UpdateWideText;
    procedure WriteWideText(Writer:TWriter);
    procedure ReadWideText(Reader:TReader);
   protected
@@ -55,6 +54,7 @@ type
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
    procedure Loaded;override;
   public
+   procedure UpdateWideText;
    property AllStrings:TRpWideStrings read FAllStrings write FAllStrings;
    constructor Create(AOwner:TComponent);override;
    property Text:widestring read GetText write SetText;
@@ -77,6 +77,7 @@ type
    FAutoExpand:Boolean;
    FAutoContract:Boolean;
    FDisplayFormat:string;
+   FDataType:TRpParamType;
    FValue:Variant;
    FSumValue:Variant;
    FDataCount:integeR;
@@ -104,6 +105,7 @@ type
    property Expression:widestring read FExpression write FExpression;
    property AgIniValue:widestring read FAgIniValue write FAgIniValue;
   published
+   property DataType:TRpParamType read FDataType write FDataType default rpParamUnknown;
    property DisplayFormat:string read FDisplayformat write FDisplayFormat;
    property Identifier:string read FIdentifier write SetIdentifier;
    property Aggregate:TRpAggregate read FAggregate write FAggregate
@@ -278,6 +280,7 @@ begin
  Width:=1440;
  FIdenExpression:=TIdenRpExpression.Create(Self);
  FIdenExpression.FExpreitem:=Self;
+ FDataType:=rpParamUnknown;
 end;
 
 procedure TRpLabel.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
@@ -362,7 +365,7 @@ begin
  else
  begin
   Evaluate;
-  Result:=FormatVariant(displayformat,FValue);
+  Result:=FormatVariant(displayformat,FValue,FDataType);
  end;
 end;
 
@@ -445,7 +448,8 @@ begin
      case AgType of
       rpagSum:
        begin
-        FValue:=FValue+eval.EvalResult;
+        if Not VarIsNull(eval.EvalResult) then
+         FValue:=FValue+eval.EvalResult;
        end;
       rpagMin:
        begin

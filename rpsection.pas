@@ -633,7 +633,7 @@ begin
    alist.AddObject(ExternalSearchField,aparam);
    errordata:=false;
    try
-    astream:=report.DatabaseInfo.Items[index].GetStreamFromSQL(sqlsentence,bmread,alist);
+    astream:=report.DatabaseInfo.Items[index].GetStreamFromSQL(sqlsentence,alist);
    except
     errordata:=True;
    end;

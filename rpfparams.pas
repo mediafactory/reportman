@@ -25,7 +25,7 @@ interface
 uses SysUtils, Classes,
   QGraphics, QForms,QDialogs, QActnList, QImgList, QComCtrls,
   QButtons, QExtCtrls, QControls, QStdCtrls, QMask,
-  rpdatainfo,Variants,DB,rpmdconsts,rpparams,
+  rpdatainfo,Variants,DB,rpmdconsts,rpparams,rptypes,
   rpgraphutils;
 
 type
@@ -143,6 +143,7 @@ begin
  ComboDataType.Items.Strings[6]:=TranslateStr(206,ComboDataType.Items.Strings[6]);
  ComboDataType.Items.Strings[7]:=TranslateStr(207,ComboDataType.Items.Strings[7]);
  ComboDataType.Items.Strings[8]:=TranslateStr(208,ComboDataType.Items.Strings[8]);
+ ComboDataType.Items.Strings[9]:=TranslateStr(886,ComboDataType.Items.Strings[9]);
 
  SetInitialBounds;
 end;
@@ -214,8 +215,8 @@ begin
   if (param.Value<>Null) then
   begin
    case param.ParamType of
-    rpParamString,rpParamExpre:
-     EValue.Text:=param.Value;
+    rpParamString,rpParamExpre,rpParamUnknown:
+     EValue.Text:=param.AsString;
     rpParamInteger:
      EValue.Text:=IntToStr(param.Value);
     rpParamDouble:
@@ -254,7 +255,7 @@ begin
  if (EValue.Text='') then
  begin
   case param.ParamType of
-   rpParamString,rpParamExpre:
+   rpParamString,rpParamExpre,rpParamUnknown:
     EValue.Text:='';
    rpParamInteger:
     EValue.Text:=IntToStr(0);
@@ -281,7 +282,7 @@ begin
  begin
    EValue.Visible:=true;
    case param.ParamType of
-    rpParamString,rpParamExpre:
+    rpParamString,rpParamExpre,rpParamUnknown:
      param.Value:=EValue.Text;
     rpParamInteger:
      param.Value:=StrToInt(EValue.Text);

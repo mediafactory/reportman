@@ -31,6 +31,7 @@
 {               -Multiline alignment                    }
 {               -Underline and strokeout                }
 {               -Type1 Font selection bold/italic       }
+{               -BMP and JPEG Image support             }
 {                                                       }
 {                                                       }
 {       Still Missing:                                  }
@@ -244,8 +245,6 @@ const
 
 // Font sizes (point 10)
 
-var
-  cajpeg:array [0..10] of char=(chr($FF),chr($D8),chr($FF),chr($E0),chr($0),chr($10),'J','F','I','F',chr(0));
 
   Helvetica_Widths: TWinAnsiWidthsArray = (
     278,278,355,556,556,889,667,191,333,333,389,584,278,333,
@@ -1921,16 +1920,23 @@ begin
    readed:=stream.Read(pbitmapinfo^,bsize);
    if DWORD(readed)<>bsize then
     Raise Exception.Create(SRpBadBitmapStream);
-   if (Not (pbitmapinfo^.biCompression in [BI_BITFIELDS,BI_RGB])) then
-    Raise Exception.Create(SRpRLECompBitmapPDF);
    width:=pbitmapinfo^.biWidth;
    height:=pbitmapinfo^.biheight;
-   imagesize:=width*height*3;
    bitcount:=pbitmapinfo^.biBitCount;
-   if (bitcount=1) then
-    Raise Exception.Create(SRpMonochromeBitmapPDF);
-   if Assigned(FMemBits) then
-    GetDIBBits;
+   // Check support for BI_RGB
+   if (Not (pbitmapinfo^.biCompression in [BI_BITFIELDS,BI_RGB])) then
+   begin
+    // this are BI_RLE4 or BI_RLE8
+    Raise Exception.Create(SRpRLECompBitmapPDF);
+   end
+   else
+   begin
+    imagesize:=width*height*3;
+    if (bitcount=1) then
+     Raise Exception.Create(SRpMonochromeBitmapPDF);
+    if Assigned(FMemBits) then
+     GetDIBBits;
+   end;
   finally
    FreeMem(pbitmapinfo);
   end;

@@ -41,12 +41,14 @@ const
 type
  TRpPosAlign=(rpalnone,rpalbottom,rpalright,rpalbotright);
 
+
  TRpCommonComponent=class(TComponent)
   private
    FHeight:TRpTwips;
    FWidth:TRpTwips;
    FDoBeforePrint,FDoAfterPrint:string;
    FPrintCondition:string;
+   FOnBeforePrint:TNotifyEvent;
    procedure SetWidth(Value:TRpTwips);
    procedure SetHeight(Value:TRpTwips);
   protected
@@ -60,6 +62,7 @@ type
    procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');virtual;
    property Report:TComponent read GetReport;
+   property OnBeforePrint:TNotifyEvent read FOnBeforePrint write FOnBeforePrint;
   published
    property PrintCondition:string read FPrintCondition write FPrintCondition;
    property DoBeforePrint:string read FDoBeforePrint write FDoBeforePrint;
@@ -193,6 +196,11 @@ function TRpCommonComponent.EvaluatePrintCondition:boolean;
 var
  fevaluator:TRpEvaluator;
 begin
+ // On Before print
+ if Assigned(FOnBeforePrint) then
+ begin
+  OnBeforePrint(Self);
+ end;
  if Length(Trim(PrintCondition))<1 then
  begin
   Result:=true;

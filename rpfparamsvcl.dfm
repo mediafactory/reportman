@@ -86,7 +86,8 @@ object FRpParamsVCL: TFRpParamsVCL
           'DateTime'
           'Currency'
           'Bool'
-          'Expression')
+          'Expression'
+          'Unknown')
       end
       object EValue: TMaskEdit
         Left = 284
