@@ -182,6 +182,7 @@ begin
    gettextfromtwips(aheight)+') '+rpunitlabels[defaultunit];
   ComboPageSize.Items.Add(astring);
  end;
+ SetInitialBounds;
 end;
 
 procedure TFRpPageSetup.BOKClick(Sender: TObject);

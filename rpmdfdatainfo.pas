@@ -177,6 +177,7 @@ begin
    ShowMessage(E.message);
   end;
  end;
+ SetInitialBounds;
 end;
 
 procedure TFRpDatainfoconfig.FormDestroy(Sender: TObject);

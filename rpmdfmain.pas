@@ -124,7 +124,7 @@ type
     ToolButton12: TToolButton;
     ToolButton13: TToolButton;
     AAbout: TAction;
-    About1: TMenuItem;
+    MHelp: TMenuItem;
     ReportManager1: TMenuItem;
     MFields: TPopupMenu;
     est1: TMenuItem;
@@ -136,7 +136,7 @@ type
     AUnitCms: TAction;
     AUnitsinchess: TAction;
     MPreferences: TMenuItem;
-    Measurement2: TMenuItem;
+    MMeasurement: TMenuItem;
     Cms1: TMenuItem;
     Inchess1: TMenuItem;
     AUserParams: TAction;
@@ -157,7 +157,7 @@ type
     CDE1: TMenuItem;
     QtSGI1: TMenuItem;
     Platinum1: TMenuItem;
-    Default1: TMenuItem;
+    MQtDefault: TMenuItem;
     AHide: TAction;
     N4: TMenuItem;
     Hide1: TMenuItem;
@@ -178,7 +178,7 @@ type
     ToolButton16: TToolButton;
     ToolButton17: TToolButton;
     ToolButton18: TToolButton;
-    Move1: TMenuItem;
+    MMove: TMenuItem;
     Left1: TMenuItem;
     Right1: TMenuItem;
     Up1: TMenuItem;
@@ -190,7 +190,7 @@ type
     AAlignDown: TAction;
     AAlignHorz: TAction;
     AAlignVert: TAction;
-    Align1: TMenuItem;
+    MAlign: TMenuItem;
     Left2: TMenuItem;
     Right2: TMenuItem;
     Up2: TMenuItem;
@@ -204,6 +204,9 @@ type
     ToolButton24: TToolButton;
     ToolButton25: TToolButton;
     BBarcode: TToolButton;
+    BStatus: TStatusBar;
+    AStatusBar: TAction;
+    Statusbar1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -259,6 +262,7 @@ type
     procedure AAlignDownExecute(Sender: TObject);
     procedure AAlignHorzExecute(Sender: TObject);
     procedure AAlignVertExecute(Sender: TObject);
+    procedure AStatusBarExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrame;
@@ -269,6 +273,7 @@ type
     updatedmfields:boolean;
     AppStyle:TDefaultStyle;
     oldonException:TExceptionEvent;
+    oldonhint:TNotifyEvent;
     procedure FreeInterface;
     procedure CreateInterface;
     function checkmodified:boolean;
@@ -289,6 +294,7 @@ type
     procedure CorrectScrollBoxes;
     procedure UpdateStyle;
     procedure MyExceptionHandler(Sender:TObject;E:Exception);
+    procedure AppHint(Sender:TObject);
   public
     { Public declarations }
     report:TRpReport;
@@ -669,6 +675,104 @@ begin
     thousandseparator:='.'
  end;
 {$ENDIF}
+ // Translate menus and actions
+ File1.Caption:=TranslateStr(0,File1.Caption);
+ Caption:=TranslateStr(1,Caption);
+ MReport.Caption:=TranslateStr(2,MReport.Caption);
+ MEdit.Caption:=TranslateStr(3,MEdit.Caption);
+ MDisplay.Caption:=TranslateStr(4,MDisplay.Caption);
+ MPreferences.Caption:=TranslateStr(5,MPreferences.Caption);
+ MHelp.Caption:=TranslateStr(6,MHelp.Caption);
+ AGridOptions.Caption:=TranslateStr(7,AGridOptions.Caption);
+ AGridOptions.Hint:=TranslateStr(8,AGridOptions.Hint);
+ ACut.Caption:=TranslateStr(9,ACut.Caption);
+ ACopy.Caption:=TranslateStr(10,ACopy.Caption);
+ APaste.Caption:=TranslateStr(11,APaste.Caption);
+ ACut.Hint:=TranslateStr(12,ACut.Hint);
+ ACopy.Hint:=TranslateStr(13,ACopy.Hint);
+ APaste.Hint:=TranslateStr(14,APaste.Hint);
+ AHide.Caption:=TranslateStr(15,AHide.Caption);
+ AHide.Hint:=TranslateStr(16,AHide.Hint);
+ AShowAll.Caption:=TranslateStr(17,AShowAll.Caption);
+ AShowAll.Hint:=TranslateStr(18,AShowAll.Hint);
+ ASelectAll.Caption:=TranslateStr(19,ASelectAll.Caption);
+ ASelectAll.Hint:=TranslateStr(20,ASelectAll.Hint);
+ MSelect.Caption:=TranslateStr(21,MSelect.Caption);
+ MMove.Caption:=TranslateStr(22,MMove.Caption);
+ ALeft.Caption:=TranslateStr(23,ALeft.Caption);
+ ALeft.Hint:=TranslateStr(24,ALeft.Hint);
+ ARight.Caption:=TranslateStr(25,ARight.Caption);
+ ARight.Hint:=TranslateStr(26,ARight.Hint);
+ AUp.Caption:=TranslateStr(27,AUp.Caption);
+ AUp.Hint:=TranslateStr(28,AUp.Hint);
+ ADown.Caption:=TranslateStr(29,ADown.Caption);
+ ADown.Hint:=TranslateStr(30,ADown.Hint);
+ MAlign.Caption:=TranslateStr(31,MAlign.Caption);
+ AAlignLeft.Caption:=TranslateStr(23,AAlignLeft.Caption);
+ AAlignRight.Caption:=TranslateStr(25,AAlignRight.Caption);
+ AAlignUp.Caption:=TranslateStr(27,AAlignUp.Caption);
+ AAlignDown.Caption:=TranslateStr(29,AAlignDown.Caption);
+ AAlignLeft.Hint:=TranslateStr(32,AAlignLeft.Hint);
+ AAlignRight.Hint:=TranslateStr(33,AAlignRight.Hint);
+ AAlignUp.Hint:=TranslateStr(34,AAlignUp.Hint);
+ AAlignDown.Hint:=TranslateStr(35,AAlignDown.Hint);
+ AAlignHorz.Caption:=TranslateStr(36,AAlignHorz.Caption);
+ AAlignHorz.Hint:=TranslateStr(37,AAlignHorz.Hint);
+ AAlignVert.Caption:=TranslateStr(38,AAlignVert.Caption);
+ AAlignVert.Hint:=TranslateStr(39,AAlignVert.Hint);
+ ANew.Caption:=TranslateStr(40,ANew.Caption);
+ ANew.Hint:=TranslateStr(41,ANew.Hint);
+ AOpen.Caption:=TranslateStr(42,AOpen.Caption);
+ AOpen.Hint:=TranslateStr(43,AOpen.Hint);
+ AExit.Caption:=TranslateStr(44,AExit.Caption);
+ AExit.Hint:=TranslateStr(45,AExit.Hint);
+ ASave.Caption:=TranslateStr(46,ASave.Caption);
+ ASave.Hint:=TranslateStr(47,ASave.Hint);
+ ASaveas.Caption:=TranslateStr(48,ASaveas.Caption);
+ ASaveas.Hint:=TranslateStr(49,ASaveas.Hint);
+ APageSetup.Caption:=TranslateStr(50,APageSetup.Caption);
+ APageSetup.Hint:=TranslateStr(51,APageSetup.Hint);
+ APrint.Caption:=TranslateStr(52,APrint.Caption);
+ APrint.Hint:=TranslateStr(53,APrint.Hint);
+ APreview.Caption:=TranslateStr(54,APreview.Caption);
+ APreview.Hint:=TranslateStr(55,APreview.Hint);
+ APrintSetup.Caption:=TranslateStr(56,APrintSetup.Caption);
+ APrintSetup.Hint:=TranslateStr(57,APrintSetup.Hint);
+ AAbout.Caption:=TranslateStr(58,AAbout.Caption);
+ AAbout.Hint:=TranslateStr(59,AABout.Hint);
+ ADocumentation.Caption:=TranslateStr(60,ADocumentation.Caption);
+ ADocumentation.Hint:=TranslateStr(61,ADocumentation.Hint);
+ MMeasurement.Caption:=TranslateStr(62,MMeasurement.Caption);
+ AUnitcms.Caption:=TranslateStr(63,AUnitcms.Caption);
+ AUnitcms.Hint:=TranslateStr(64,AUnitcms.Hint);
+ AUnitsinchess.Caption:=TranslateStr(65,AUnitsinchess.Caption);
+ AUnitsinchess.Hint:=TranslateStr(66,AUnitsinchess.Hint);
+ MDriverSelect.Caption:=TranslateStr(67,MDriverSelect.Caption);
+ ADriverQt.Caption:=TranslateStr(68,ADriverQt.Caption);
+ ADriverQt.Hint:=TranslateStr(69,ADriverQt.Hint);
+ ADriverGDI.Caption:=TranslateStr(70,ADriverGDI.Caption);
+ ADriverGDI.Hint:=TranslateStr(71,ADriverGDI.Hint);
+ ASystemPrintDialog.Caption:=TranslateStr(72,ASystemPrintDialog.Caption);
+ ASystemPrintDialog.Hint:=TranslateStr(73,ASystemPrintDialog.Hint);
+ AKylixPrintBug.Caption:=TranslateStr(74,AKylixPrintBug.Caption);
+ AKylixPrintBug.Hint:=TranslateStr(75,AKylixPrintBug.Hint);
+ AStatusBar.Caption:=TranslateStr(76,AStatusBar.Caption);
+ AStatusBar.Hint:=TranslateStr(77,AStatusBar.Hint);
+ MQtStyle.Caption:=TranslateStr(78,MQtStyle.Caption);
+ MQtStyle.Hint:=TranslateStr(79,MQtStyle.Hint);
+ MQtDefault.Caption:=TranslateStr(80,MQtDefault.Caption);
+ BArrow.Hint:=TranslateStr(81,BArrow.Hint);
+ BLabel.Hint:=TranslateStr(82,BLabel.Hint);
+ BExpression.Hint:=TranslateStr(83,BExpression.Hint);
+ BShape.Hint:=TranslateStr(84,BShape.Hint);
+ BImage.Hint:=TranslateStr(85,BImage.Hint);
+ BBarCode.Hint:=TranslateStr(86,BBarCode.Hint);
+ BChart.Hint:=TranslateStr(87,BChart.Hint);
+
+
+ // Activates OnHint
+ oldonhint:=Application.OnHint;
+ Application.OnHint:=AppHint;
 end;
 
 procedure TFRpMainF.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -1181,6 +1285,8 @@ begin
   AUnitCms.Checked:=inif.ReadBool('Preferences','UnitCms',true);
   ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',true);
   AsystemPrintDialog.Checked:=inif.ReadBool('Preferences','SystemPrintDialog',True);
+  BStatus.Visible:=inif.ReadBool('Preferences','StatusBar',True);
+  AStatusBar.Checked:=BStatus.Visible;
 {$IFDEF LINUX}
   AKylixPrintBug.Checked:=inif.ReadBool('Preferences','KylixPrintBug',False);
   rpqtdriver.kylixprintbug:=AKylixPrintBug.Checked;
@@ -1205,6 +1311,7 @@ begin
   inif.WriteBool('Preferences','UnitCms',AUnitCms.Checked);
   inif.WriteBool('Preferences','DriverQT',ADriverQT.Checked);
   inif.WriteBool('Preferences','SystemPrintDialog',AsystemPrintDialog.Checked);
+  inif.WriteBool('Preferences','StatusBar',BStatus.Visible);
   inif.WriteBool('Preferences','KylixPrintBug',AKylixPrintBug.Checked);
   inif.WriteInteger('Preferences','QtStyle',Integer(AppStyle));
   inif.UpdateFile;
@@ -1431,6 +1538,7 @@ end;
 procedure TFRpMainF.FormDestroy(Sender: TObject);
 begin
  Application.OnException:=oldonexception;
+ Application.OnHint:=oldonhint;
 end;
 
 procedure TFRpMainF.ASelectAllExecute(Sender: TObject);
@@ -1494,6 +1602,17 @@ end;
 procedure TFRpMainF.AAlignVertExecute(Sender: TObject);
 begin
  fobjinsp.AlignSelected(6);
+end;
+
+procedure TFRpMainF.AppHint(Sender:TObject);
+begin
+ BStatus.Panels.Items[0].Text:=Application.Hint;
+end;
+
+procedure TFRpMainF.AStatusBarExecute(Sender: TObject);
+begin
+ AStatusBar.Checked:=Not AStatusBar.Checked;
+ BStatus.Visible:=ASTatusBar.Checked;
 end;
 
 initialization

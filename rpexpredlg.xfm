@@ -1,12 +1,12 @@
 object FrpExpredialog: TFrpExpredialog
   Left = 205
   Top = 144
-  Width = 502
-  Height = 369
-  AutoScroll = False
   ActiveControl = MemoExpre
+  AutoScroll = False
   BorderStyle = fbsDialog
   Caption = 'Expression build'
+  ClientHeight = 369
+  ClientWidth = 502
   Color = clButton
   Position = poScreenCenter
   ShowHint = True

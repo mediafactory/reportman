@@ -148,6 +148,7 @@ begin
  begin
   llistes[i]:=TStringList.create;
  end;
+ SetInitialBounds;
 end;
 
 procedure TFrpExpredialog.Setevaluator(aval:TRpCustomEvaluator);

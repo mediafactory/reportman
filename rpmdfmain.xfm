@@ -6,8 +6,8 @@ object FRpMainF: TFRpMainF
   ActiveControl = ToolButton1
   AutoScroll = False
   Caption = 'Report Manager Designer'
-  ClientHeight = 405
-  ClientWidth = 626
+  ClientHeight = 457
+  ClientWidth = 637
   Color = clBackground
   Menu = MainMenu1
   ShowHint = True
@@ -22,7 +22,7 @@ object FRpMainF: TFRpMainF
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 626
+    Width = 637
     Height = 56
     AutoSize = True
     ButtonHeight = 26
@@ -267,15 +267,15 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton20: TToolButton
       HelpType = htContext
-      Left = 0
-      Top = 30
+      Left = 607
+      Top = 4
       Height = 26
       Action = AAlignLeft
       Caption = 'Left'
     end
     object ToolButton21: TToolButton
       HelpType = htContext
-      Left = 26
+      Left = 0
       Top = 30
       Height = 26
       Action = AAlignRight
@@ -283,7 +283,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton22: TToolButton
       HelpType = htContext
-      Left = 52
+      Left = 26
       Top = 30
       Height = 26
       Action = AAlignUp
@@ -291,7 +291,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton23: TToolButton
       HelpType = htContext
-      Left = 78
+      Left = 52
       Top = 30
       Height = 26
       Action = AAlignDown
@@ -299,7 +299,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton24: TToolButton
       HelpType = htContext
-      Left = 104
+      Left = 78
       Top = 30
       Height = 26
       Action = AAlignHorz
@@ -307,7 +307,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton25: TToolButton
       HelpType = htContext
-      Left = 130
+      Left = 104
       Top = 30
       Height = 26
       Action = AAlignVert
@@ -328,8 +328,8 @@ object FRpMainF: TFRpMainF
   object mainscrollbox: TScrollBox
     Left = 0
     Top = 56
-    Width = 626
-    Height = 349
+    Width = 637
+    Height = 380
     HorzScrollBar.Range = 189
     Align = alClient
     BorderStyle = bsNone
@@ -339,7 +339,7 @@ object FRpMainF: TFRpMainF
       Left = 181
       Top = 0
       Width = 8
-      Height = 349
+      Height = 380
       Beveled = True
       OnMoved = Splitter1Moved
     end
@@ -347,7 +347,7 @@ object FRpMainF: TFRpMainF
       Left = 0
       Top = 0
       Width = 181
-      Height = 349
+      Height = 380
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -361,6 +361,15 @@ object FRpMainF: TFRpMainF
         Beveled = True
       end
     end
+  end
+  object BStatus: TStatusBar
+    Left = 0
+    Top = 436
+    Width = 637
+    Height = 21
+    Panels = <
+      item
+      end>
   end
   object MainMenu1: TMainMenu
     Images = iconlist
@@ -464,7 +473,7 @@ object FRpMainF: TFRpMainF
           Action = ASelectAllText
         end
       end
-      object Move1: TMenuItem
+      object MMove: TMenuItem
         Caption = 'Move'
         object Left1: TMenuItem
           Action = ALeft
@@ -479,7 +488,7 @@ object FRpMainF: TFRpMainF
           Action = ADown
         end
       end
-      object Align1: TMenuItem
+      object MAlign: TMenuItem
         Caption = 'Align'
         object Left2: TMenuItem
           Action = AAlignLeft
@@ -519,7 +528,7 @@ object FRpMainF: TFRpMainF
     end
     object MPreferences: TMenuItem
       Caption = 'Preferences'
-      object Measurement2: TMenuItem
+      object MMeasurement: TMenuItem
         Caption = 'Measurement'
         object Cms1: TMenuItem
           Action = AUnitCms
@@ -543,6 +552,9 @@ object FRpMainF: TFRpMainF
       end
       object MKylixPrintBug: TMenuItem
         Action = AkylixPrintBug
+      end
+      object Statusbar1: TMenuItem
+        Action = AStatusBar
       end
       object MQtStyle: TMenuItem
         Caption = 'Qt Widget Style'
@@ -575,14 +587,14 @@ object FRpMainF: TFRpMainF
           Caption = 'Platinum'
           OnClick = Windows1Click
         end
-        object Default1: TMenuItem
+        object MQtDefault: TMenuItem
           Tag = 6
-          Caption = 'Default'
+          Caption = 'Normal'
           OnClick = Windows1Click
         end
       end
     end
-    object About1: TMenuItem
+    object MHelp: TMenuItem
       Caption = 'Help'
       object utorial1: TMenuItem
         Action = ADocumentation
@@ -748,6 +760,7 @@ object FRpMainF: TFRpMainF
     object AAbout: TAction
       Category = 'Help'
       Caption = 'About Report Manager'
+      Hint = 'Shows information about Report Manger'
       OnExecute = AAboutExecute
     end
     object ADocumentation: TAction
@@ -786,12 +799,13 @@ object FRpMainF: TFRpMainF
       Category = 'Preferences'
       Caption = 'Qt driver (CLX)'
       Checked = True
+      Hint = 'Activates the Qt cross platform graphics and printing driver'
       OnExecute = ADriverQTExecute
     end
     object ADriverGDI: TAction
       Category = 'Preferences'
       Caption = 'GDI Driver (VCL)'
-      Hint = 'Activates the GDI32 direct rendering driver (VCL)'
+      Hint = 'Activates the GDI32 direct rendering driver (VCL), Windows only'
       OnExecute = ADriverGDIExecute
     end
     object ASystemPrintDialog: TAction
@@ -811,7 +825,7 @@ object FRpMainF: TFRpMainF
       Category = 'Edit'
       Caption = 'Hide'
       Enabled = False
-      Hint = 'Hides the selected object'
+      Hint = 'Hide selected objects'
       OnExecute = AHideExecute
     end
     object AShowAll: TAction
@@ -911,6 +925,13 @@ object FRpMainF: TFRpMainF
       Hint = 'Aligns selection distributing vertical space'
       ImageIndex = 30
       OnExecute = AAlignVertExecute
+    end
+    object AStatusBar: TAction
+      Category = 'Preferences'
+      Caption = 'Status bar'
+      Checked = True
+      Hint = 'Shows or hides the status bar'
+      OnExecute = AStatusBarExecute
     end
   end
   object iconlist: TImageList

@@ -21,7 +21,7 @@ interface
 
 uses
   Classes,
-  rpparser,rpeval,rpreport,rppdfreport,
+  rpparser,rpeval,rpreport,rppdfreport,rptranslator,
 {$IFDEF USEVCL}
   rpvclreport,
 {$ENDIF}
@@ -36,6 +36,7 @@ begin
   RegisterComponents('Reportman', [TRpEvaluator]);
   RegisterComponents('Reportman', [TRpAlias]);
   RegisterComponents('Reportman', [TRpLastUsedStrings]);
+  RegisterComponents('Reportman', [TRpTranslator]);
   RegisterComponents('Reportman', [TPDFReport]);
 {$IFDEF USEVCL}
   RegisterComponents('Reportman', [TVCLReport]);

@@ -112,6 +112,7 @@ end;
 procedure TFRpParams.FormCreate(Sender: TObject);
 begin
  params:=TRpParamList.Create(Self);
+ SetInitialBounds;
 end;
 
 procedure TFRpParams.OKBtnClick(Sender: TObject);

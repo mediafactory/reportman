@@ -113,6 +113,7 @@ begin
  fparams:=TRpParamList.Create(Self);
  lcontrols:=TStringList.Create;
  lnulls:=TStringList.Create;
+ SetInitialBounds;
 end;
 
 procedure TFRpRunTimeParams.SetParams(avalue:TRpParamList);

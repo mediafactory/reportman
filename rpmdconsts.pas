@@ -22,7 +22,6 @@ unit rpmdconsts;
 interface
 
 
-
 resourcestring
 
   SRpNoFilename='No filename assigned';
@@ -571,7 +570,36 @@ resourcestring
   SRpIndexOutOfBounds='Index out of bounds';
   SRpSOblique1='Oblique1';
   SRpSOblique2='Oblique2';
+
+  SRpNoFilenameAssignedNotTRpTranslator='No Filename assigned to TRpTranslator';
+
+
+function TranslateStr(index:integer;defvalue:Widestring):WideString;
+
 implementation
 
+uses rptranslator;
 
+var
+ atrans:TRpTranslator;
+
+function TranslateStr(index:integer;defvalue:Widestring):WideString;
+begin
+ if Not Assigned(atrans) then
+ begin
+  atrans:=TRpTranslator.Create(nil);
+  atrans.Filename:='reportmanres';
+  atrans.Active:=true;
+ end;
+ Result:=atrans.LoadString(index,defvalue);
+end;
+
+initialization
+
+finalization
+ if assigned(atrans) then
+ begin
+  atrans.free;
+  atrans:=nil;
+ end;
 end.

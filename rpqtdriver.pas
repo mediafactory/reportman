@@ -828,6 +828,7 @@ procedure TFRpQtProgress.FormCreate(Sender: TObject);
 begin
  LRecordCount.Font.Style:=[fsBold];
  LTittle.Font.Style:=[fsBold];
+ SetInitialBounds;
 end;
 
 procedure TFRpQtProgress.AppIdle(Sender:TObject;var done:boolean);

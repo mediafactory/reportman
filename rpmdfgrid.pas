@@ -43,6 +43,7 @@ type
     procedure GridColorMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure OKBtnClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
     freport:TRpreport;
@@ -106,6 +107,11 @@ begin
  report.GridColor:=GridColor.Brush.Color;
 
  Close;
+end;
+
+procedure TFRpGridOptions.FormCreate(Sender: TObject);
+begin
+ SetInitialBounds;
 end;
 
 end.

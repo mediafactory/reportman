@@ -70,7 +70,7 @@ begin
  LName.Font.Style:=[fsBold];
  LVersion.Font.Size:=16;
  LEmail.Font.Style:=[fsBold];
-// ShowMessage('Pixels per inch:'+IntToStr(PixelsPerInch)+'Screeen:'+IntToStr(Screen.PixelsPerInch));
+ SetInitialBounds;
 end;
 
 end.

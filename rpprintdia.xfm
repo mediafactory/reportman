@@ -1,11 +1,11 @@
 object FRpPrintDialog: TFRpPrintDialog
   Left = 93
   Top = 96
-  Width = 491
-  Height = 276
-  AutoScroll = False
   ActiveControl = OKBtn
+  AutoScroll = False
   Caption = 'Print'
+  ClientHeight = 276
+  ClientWidth = 491
   Color = clButton
   Position = poScreenCenter
   OnCreate = FormCreate

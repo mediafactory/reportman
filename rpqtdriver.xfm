@@ -1,12 +1,12 @@
 object FRpQtProgress: TFRpQtProgress
   Left = 184
   Top = 324
-  Width = 514
-  Height = 124
-  AutoScroll = False
   ActiveControl = CancelBtn
+  AutoScroll = False
   BorderStyle = fbsDialog
   Caption = 'Print progress'
+  ClientHeight = 124
+  ClientWidth = 514
   Color = clButton
   Position = poScreenCenter
   ShowHint = True

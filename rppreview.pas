@@ -259,6 +259,7 @@ begin
    SRpPDFFile+'|*.pdf|'+
    SRpPDFFileUn+'|*.pdf';
 {$ENDIF}
+ SetInitialBounds;
 end;
 
 procedure TFRpPreview.FormDestroy(Sender: TObject);

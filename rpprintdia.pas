@@ -131,6 +131,7 @@ begin
  Bitmap.Height:=Image1.height;
 
  Image1.Picture.Bitmap:=bitmap;
+ SetInitialBounds;
 end;
 
 procedure TFRpPrintDialog.OKBtnClick(Sender: TObject);

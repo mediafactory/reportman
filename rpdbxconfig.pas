@@ -120,6 +120,7 @@ begin
  ComboDrivers.Items.Insert(0,SRpAllDriver);
  ComboDrivers.ItemIndex:=0;
  ComboDriversClick(Self);
+ SetInitialBounds;
 end;
 
 procedure TFRpDBXConfig.ComboDriversClick(Sender: TObject);

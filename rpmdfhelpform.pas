@@ -38,6 +38,7 @@ type
     procedure AExitExecute(Sender: TObject);
     procedure ABackwardExecute(Sender: TObject);
     procedure AForwardExecute(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -62,6 +63,11 @@ end;
 procedure TFRpHelpForm.AForwardExecute(Sender: TObject);
 begin
  TextBrowser1.Forward;
+end;
+
+procedure TFRpHelpForm.FormCreate(Sender: TObject);
+begin
+ SetInitialBounds;
 end;
 
 end.

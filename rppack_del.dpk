@@ -5,6 +5,7 @@ package rppack_del;
 {$R 'rpalias.dcr'}
 {$R 'rplastsav.dcr'}
 {$R 'rppdfreport.dcr'}
+{$R 'rptranslator.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -74,6 +75,7 @@ contains
   rppdfdriver in 'rppdfdriver.pas',
   rppdffile in 'rppdffile.pas',
   rppdfreport in 'rppdfreport.pas',
-  rpcompobase in 'rpcompobase.pas';
+  rpcompobase in 'rpcompobase.pas',
+  rptranslator in 'rptranslator.pas';
 
 end.

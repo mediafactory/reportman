@@ -1,6 +1,6 @@
 object FRpAboutBox: TFRpAboutBox
-  Left = 48
-  Top = 167
+  Left = 231
+  Top = 114
   ActiveControl = OKBtn
   AutoScroll = False
   Caption = 'About Report Manager '

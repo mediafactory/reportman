@@ -1,11 +1,11 @@
 object FRpRunTimeParams: TFRpRunTimeParams
   Left = 21
   Top = 50
-  Width = 583
-  Height = 276
-  AutoScroll = False
   ActiveControl = OKBtn
+  AutoScroll = False
   Caption = 'Dialog'
+  ClientHeight = 276
+  ClientWidth = 583
   Color = clButton
   Position = poScreenCenter
   OnCreate = FormCreate

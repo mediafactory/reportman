@@ -41,6 +41,7 @@ type
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     procedure ToolButton1Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
     procedure CreateControls;
@@ -108,6 +109,11 @@ end;
 procedure TFRpShowSampledata.ToolButton1Click(Sender: TObject);
 begin
  Close;
+end;
+
+procedure TFRpShowSampledata.FormCreate(Sender: TObject);
+begin
+ SetInitialBounds;
 end;
 
 end.
