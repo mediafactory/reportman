@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 2.2
-AppVersion=2.2
-OutputBaseFilename=reportman2_2
+AppVerName=Report Manager 2.2i
+AppVersion=2.2i
+OutputBaseFilename=reportman2_2i
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -143,8 +143,8 @@ Name: {group}\{cm:RegisterActiveX}; Filename: {sys}\regsvr32; Parameters: Report
 Name: {group}\{cm:UnRegisterActiveX}; Filename: {sys}\regsvr32; Parameters: /u Reportman.ocx; Components: activex; WorkingDir: {app}
 Name: {group}\{cm:RegisterPlugin}; Filename: {sys}\regsvr32; Parameters: WebReportmanX.ocx; Components: ieplugin; WorkingDir: {app}
 Name: {group}\{cm:UnRegisterPlugin}; Filename: {sys}\regsvr32; Parameters: /u WebReportmanX.ocx; Components: ieplugin; WorkingDir: {app}
-Name: {userdesktop}\{cm:ReportManagerDesignerXP}; Filename: {app}\repmandxp.exe; WorkingDir: {app}; Components: designer; MinVersion: 4,4; Tasks: desktopicon
-Name: {userdesktop}\{cm:ReportManagerClient}; Filename: {app}\metaviewxp.exe; WorkingDir: {app}; Components: clienttcp; MinVersion: 4,4; Tasks: desktopicon
+Name: {commondesktop}\{cm:ReportManagerDesignerXP}; Filename: {app}\repmandxp.exe; WorkingDir: {app}; Components: designer; MinVersion: 4,4; Tasks: desktopicon
+Name: {commondesktop}\{cm:ReportManagerClient}; Filename: {app}\metaviewxp.exe; WorkingDir: {app}; Components: clienttcp; MinVersion: 4,4; Tasks: desktopicon
 
 [Run]
 Filename: {app}\repmandxp.exe; Description: {cm:LaunchReportManagerDesignerXP}; Components: designer; Flags: nowait postinstall skipifsilent

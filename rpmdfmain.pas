@@ -43,9 +43,6 @@ uses
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
-{$IFDEF HORZPAPERBUG}
- rpmetafile,
-{$ENDIF}
   DB,rpdatainfo,rpmunits,rpgraphutils;
 const
   // File name in menu width

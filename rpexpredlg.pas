@@ -24,7 +24,10 @@ uses
   SysUtils, Classes,
   QGraphics,QControls, QForms, QDialogs,
   QStdCtrls, QExtCtrls,QButtons,
-  rpalias,rpeval, rptypeval,rpstringhash,rphashtable,
+  rpalias,rpeval, rptypeval,
+{$IFDEF USEEVALHASH}
+  rphashtable,rpstringhash,
+{$ENDIF}
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
@@ -189,7 +192,9 @@ var
  i:integer;
  iden:TRpIdentifier;
  rec:TRpRecHelp;
+{$IFDEF USEEVALHASH}
  ait:TstrHashIterator;
+{$ENDIF}
 begin
  Fevaluator:=Aval;
  for i:=0 to FMaxlisthelp-1 do
@@ -207,11 +212,18 @@ begin
    lista1.Objects[i]:=rec;
   end;
  end;
+{$IFDEF USEEVALHASH}
  ait:=aval.identifiers.getiterator;
  while ait.hasnext do
  begin
   ait.next;
   iden:=TRpIdentifier(ait.GetValue);
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+ for i:=0 to aval.identifiers.Count-1 do
+ begin
+  iden:=TRpIdentifier(aval.identifiers.Objects[i]);
+{$ENDIF}
   if iden is TIdenRpExpression then
   begin
    lista1:=llistes[2];
@@ -234,7 +246,12 @@ begin
    end;
   end;
   rec:=TRpRecHelp.Create;
-  rec.rfunction:=ait.getKey;
+{$IFDEF USEEVALHASH}
+  rec.rfunction:=ait.GetKey;
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+  rec.rfunction:=aval.identifiers.Strings[i];
+{$ENDIF}
   rec.help:=iden.Help;
   rec.model:=iden.model;
   rec.params:=iden.aparams;

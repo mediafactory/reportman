@@ -24,7 +24,11 @@ interface
 
 uses
   SysUtils, Classes, QGraphics, QControls, QForms,
-  rpdatainfo,rpmdconsts,rpreport,rptypeval,rpparser,rpstringhash,rphashtable,
+  rpdatainfo,rpmdconsts,rpreport,rptypeval,rpparser,
+{$IFDEF USEEVALHASH}
+  rphashtable,
+  rpstringhash,
+{$ENDIF}
   QDialogs, QComCtrls, QImgList, QMenus, QTypes;
 
 type
@@ -81,7 +85,9 @@ var
  anode,nnode:TTreeNode;
  aiden:TRpIdentifier;
  alist:TStringList;
+{$IFDEF USEEVALHASH}
  ait:TstrHashIterator;
+{$ENDIF}
 begin
  ATree.Items.Clear;
  if FShowDatabases then
@@ -120,11 +126,18 @@ begin
   alist:=TStringList.Create;
   try
    alist.Sorted:=true;
+{$IFDEF USEEVALHASH}
    ait:=FReport.Evaluator.Identifiers.getIterator;
    while ait.hasnext do
    begin
     ait.next;
     aiden:=TRpIdentifier(ait.getValue);
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+   for i:=0 to FReport.Evaluator.Identifiers.Count-1 do
+   begin
+    aiden:=TRpIdentifier(FReport.Evaluator.Identifiers.Objects[i]);
+{$ENDIF}
     if Length(aiden.Idenname)>0 then
     begin
      if alist.Indexof(aiden.IdenName)<0 then
