@@ -1,8 +1,11 @@
+{TODO -oToni -cEngine : User parameters form}
+{TODO -oToni -cEngine : Implementation of ADO/IBX Dataaccess}
+{TODO -oToni -cEngine : Detect existing BDE Databases in rpdatainfo}
 {TODO -oToni -cEngine : Execute after print and before print}
 {TODO -oToni -cEngine : Page size implementation}
 {TODO 1 -oToni -cEngine : Add TotalPages variable}
 {TODO 1 -oToni -cEngine : Add Printing ranges of pages}
-{TODO 1 -oToni -cEngine : Page margins}
+{DONE 1 -oToni -cEngine : Page margins}
 {TODO 1 -oToni -cEngine : Implementation of labels (horizontal movement)}
 {TODO 1 -oToni -cEngine : Add Barcode component}
 {TODO 1 -oToni -cEngine : Program a simple chart component at least with poly lines and dots}
@@ -12,17 +15,17 @@ with the GNUmakefile}
 {TODO 1 -oToni -cEngine : Conversion program for gestor.exe}
 {TODO 1 -oToni -cEngine : Saving and loading from database tables}
 {TODO -oToni -cEngine : Program a component to easily execute reports from delphi and kylix}
-{TODO -oToni -cEngine :
+{DONE -oToni -cEngine :
 Implementation in Linux of the printing with calling metaprint command 
 because sigpipe after connecting to a dataset}
 {TODO -oToni -cEngine : Drop Fields directly from a floating window when click in expression}
-{TODO -oToni -cEngine : Implementation for printing page headers and footers}
-{TODO -oToni -cEngine : Image from a field implementation}
-{TODO -oToni -cEngine : Format expresion implementation}
+{DONE -oToni -cEngine : Implementation for printing page headers and footers}
+{DONE -oToni -cEngine : Image from a field implementation}
+{DONE -oToni -cEngine : Format expresion implementation}
 {TODO -oToni -cEngine : About box}
 {TODO -oToni -cEngine : Write some documentation}
 {TODO -oToni -cEngine : Free pages in metafile while printing, previewing...}
 {TODO -oToni -cEngine : Implementation of one pass and two pas report instead of whole pas}
 {TODO -oToni -cEngine : Implementation of grouping}
-{TODO -oToni -cEngine : Implementation of Font styles, cut text...}
+{TODO -oToni -cEngine : Implementation of cut text,wordwrap...}
 {DONE -oToni -cEngine : Enhace memory consumption by repmetafileobject in a long report}

@@ -29,7 +29,7 @@ uses
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
   rpconsts,rptypes, QExtCtrls,frpstruc, rplastsav,rpsubreport,
   rpobinsint,rpfparams,fdesign,rpobjinsp,fsectionint,
-  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver;
+  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver, IBDatabase, DB;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;
@@ -117,6 +117,8 @@ type
     AAbout: TAction;
     About1: TMenuItem;
     ReportManager1: TMenuItem;
+    IBTransaction1: TIBTransaction;
+    IBDatabase1: TIBDatabase;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);

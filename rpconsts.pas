@@ -46,6 +46,9 @@ resourcestring
   SRpLastPageReached='Last page already reached';
   SRPAliasNotExists='Data alias does not exists: ';
   SRpCopyStreamError='Error copying stream in metafile image object';
+  SRpDriverNotSupported='Database driver not supported';
+  SRpDriverAliasIsNotInterbase='The dbx driver alias is not Interbase';
+  SRpNoDatabase='No Interbase Database specified';
 
   SRpNoDatasets='No datasets defined';
   SRpSampleTextToLabels='Text';

@@ -23,7 +23,7 @@ interface
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,
 {$IFDEF MSWINDOWS}
-  dbtables,
+  dbtables,adodb,
 {$ENDIF}
   rpreport,rpconsts,rpdatainfo,DBConnAdmin,QDialogs,
   rpparams,rpfparams;
@@ -63,6 +63,8 @@ type
     OpenDialog1: TOpenDialog;
     EIndexFields: TEdit;
     LIndexFields: TLabel;
+    LConnectionString: TLabel;
+    EConnectionString: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -83,6 +85,7 @@ type
     procedure CancelBtnClick(Sender: TObject);
     procedure GDriverClick(Sender: TObject);
     procedure BMyBaseClick(Sender: TObject);
+    procedure EConnectionStringChange(Sender: TObject);
   private
     { Private declarations }
     report:TRpReport;
@@ -131,10 +134,6 @@ end;
 procedure TFDatainfoconfig.FormCreate(Sender: TObject);
 begin
  GDriver.ItemIndex:=0;
-{$IFDEF MSWINDOWS}
- GDriver.Items.Add('BDE');
- GDriver.Items.Add('ADO');
-{$ENDIF}
  GDriver.Columns:=GDriver.Items.Count;
  databaseinfo:=TRpDatabaseInfoList.Create(Self);
  params:=TRpParamList.Create(Self);
@@ -193,6 +192,11 @@ begin
   rpdatamybase:
    begin
     // Does nothing
+   end;
+  rpdataado:
+   begin
+     // Gets connection string
+     EConnectionString.Text:=PromptDataSource(0,EConnectionString.Text);
    end;
  end;
  FillCurrentConnections;
@@ -263,6 +267,7 @@ begin
  CheckLoginPrompt.Checked:=dinfoitem.LoginPrompt;
  CheckLoadParams.Checked:=dinfoitem.LoadParams;
  CheckLoadDriverParams.Checked:=dinfoitem.LoadDriverParams;
+ EConnectionString.Text:=dinfoitem.ADOConnectionString;
  GDriver.ItemIndex:=integer(dinfoitem.Driver);
  GDriverClick(Self);
 end;
@@ -432,6 +437,7 @@ begin
  ComboDataSource.Items.Insert(0,'');
  inc(index);
  ComboDatasource.ItemIndex:=Index;
+ MSQLChange(ComboConnection);
 end;
 
 
@@ -616,6 +622,8 @@ begin
   // DBExpress
   rpdatadbexpress:
    begin
+    LConnectionString.Visible:=False;
+    EConnectionString.Visible:=False;
     BConfig.Visible:=true;
     LSQL.Visible:=true;
     ComboAvailable.Visible:=true;
@@ -624,9 +632,24 @@ begin
      conadmin.GetConnectionNames(ComboAvailable.Items,'');
     end;
    end;
+  // DBExpress
+  rpdataibx:
+   begin
+    LConnectionString.Visible:=False;
+    EConnectionString.Visible:=False;
+    BConfig.Visible:=true;
+    LSQL.Visible:=true;
+    ComboAvailable.Visible:=true;
+    if Assigned(ConAdmin) then
+    begin
+     conadmin.GetConnectionNames(ComboAvailable.Items,'Interbase');
+    end;
+   end;
   // My Base
   rpdatamybase:
    begin
+    LConnectionString.Visible:=False;
+    EConnectionString.Visible:=False;
     BConfig.Visible:=false;
     ComboAvailable.Visible:=false;
     ComboAvailable.Items.Clear;
@@ -635,9 +658,22 @@ begin
   rpdatabde:
    begin
 {$IFDEF MSWINDOWS}
+    LConnectionString.Visible:=False;
+    EConnectionString.Visible:=False;
     BConfig.Visible:=false;
     Session.GetAliasNames(ComboAvailable.Items);
     ComboAvailable.Visible:=true;
+{$ENDIF}
+   end;
+  // BDE
+  rpdataado:
+   begin
+{$IFDEF MSWINDOWS}
+    LConnectionString.Visible:=True;
+    EConnectionString.Visible:=True;
+    BConfig.Visible:=true;
+    ComboAvailable.Visible:=false;
+    ComboAvailable.Items.Clear;
 {$ENDIF}
    end;
  end;
@@ -662,6 +698,20 @@ begin
  if OpenDialog1.Execute then
  begin
   EMyBase.Text:=OpenDialog1.FileName;
+ end;
+end;
+
+procedure TFDatainfoconfig.EConnectionStringChange(Sender: TObject);
+var
+ index:integer;
+begin
+ if LConnections.Itemindex>=0 then
+ begin
+  index:=databaseinfo.IndexOf(LConnections.Items.Strings[LConnections.ItemIndex]);
+  if index>=0 then
+  begin
+   databaseinfo.items[index].ADOConnectionString:=EConnectionString.Text;
+  end;
  end;
 end;
 

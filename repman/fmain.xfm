@@ -1242,4 +1242,22 @@ object FMainf: TFMainf
     Left = 280
     Top = 80
   end
+  object IBTransaction1: TIBTransaction
+    Active = False
+    AutoStopAction = saNone
+    Left = 352
+    Top = 84
+  end
+  object IBDatabase1: TIBDatabase
+    Params.Strings = (
+      'user_name=SYSDBA'
+      'password=master'
+      'sql_role_name=role'
+      'lc_ctype=WIN1252')
+    IdleTimer = 0
+    SQLDialect = 3
+    TraceFlags = []
+    Left = 392
+    Top = 60
+  end
 end
