@@ -35,7 +35,9 @@ uses
   Windows,
 {$ENDIF}
 {$IFNDEF USEVARIANTS}
+{$IFNDEF FPC}
   FileCtrl,
+{$ENDIF}
 {$ENDIF}
   rpmdconsts;
 
@@ -77,7 +79,7 @@ function PathAppend; external shlwapi32 name 'PathAppendA';
 
 implementation
 
-
+uses rptypes;
 
 function Obtainininameuserconfig(company,product,filename:string):string;
 var
@@ -108,20 +110,12 @@ begin
  if length(company)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(company)) then
-{$IFDEF USEVARIANTS}
-     RaiseLastOSError;
-{$ELSE}
-     RaiseLastWin32Error;
-{$ENDIF}
+   RaiseLastOSError;
  end;
  if Length(product)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(product)) then
-{$IFDEF USEVARIANTS}
-     RaiseLastOSError;
-{$ELSE}
-     RaiseLastWin32Error;
-{$ENDIF}
+   RaiseLastOSError;
  end;
  Result:=StrPas(szAppdata);
  if Not DirectoryExists(Result) then
@@ -133,11 +127,7 @@ begin
   end;
  end;
  if not PathAppend(szAppdata,Pchar(filename+'.ini')) then
-{$IFDEF USEVARIANTS}
-     RaiseLastOSError;
-{$ELSE}
-     RaiseLastWin32Error;
-{$ENDIF}
+    RaiseLastOSError;
  Result:=StrPas(szAppdata);
 {$ENDIF}
 end;
@@ -160,20 +150,13 @@ begin
  if length(company)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(company)) then
-{$IFDEF USEVARIANTS}
-     RaiseLastOSError;
-{$ELSE}
-     RaiseLastWin32Error;
+   RaiseLastOSError;
 {$ENDIF}
  end;
  if Length(product)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(product)) then
-{$IFDEF USEVARIANTS}
-     RaiseLastOSError;
-{$ELSE}
-     RaiseLastWin32Error;
-{$ENDIF}
+    RaiseLastOSError;
  end;
  Result:=StrPas(szAppdata);
  if Not DirectoryExists(Result) then
@@ -191,13 +174,8 @@ begin
 {$ENDIF}
  end;
  if not PathAppend(szAppdata,Pchar(filename+'.ini')) then
-{$IFDEF USEVARIANTS}
-     RaiseLastOSError;
-{$ELSE}
-     RaiseLastWin32Error;
-{$ENDIF}
+   RaiseLastOSError;
  Result:=StrPas(szAppdata);
-{$ENDIF}
 end;
 
 
@@ -217,20 +195,12 @@ begin
  if length(company)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(company)) then
-{$IFDEF USEVARIANTS}
-     RaiseLastOSError;
-{$ELSE}
-     RaiseLastWin32Error;
-{$ENDIF}
+    RaiseLastOSError;
  end;
  if Length(product)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(product)) then
-{$IFDEF USEVARIANTS}
-     RaiseLastOSError;
-{$ELSE}
-     RaiseLastWin32Error;
-{$ENDIF}
+    RaiseLastOSError;
  end;
  Result:=StrPas(szAppdata);
  if Not DirectoryExists(Result) then
@@ -248,11 +218,7 @@ begin
 {$ENDIF}
  end;
  if not PathAppend(szAppdata,Pchar(filename+'.ini')) then
-{$IFDEF USEVARIANTS}
-     RaiseLastOSError;
-{$ELSE}
-     RaiseLastWin32Error;
-{$ENDIF}
+    RaiseLastOSError;
  Result:=StrPas(szAppdata);
 {$ENDIF}
 end;

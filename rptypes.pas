@@ -147,6 +147,9 @@ function GetPrinterRawOp(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):stri
 procedure FillTreeDir(adirectory:String;alist:TStringList);
 function WideStringToDOS(astring:WideString):WideString;
 function NumberToText(FNumero:currency;female:boolean;idiom:integer):String;
+{$IFNDEF USEVARIANTS}
+procedure RaiseLastOSError;
+{$ENDIF}
 
 {$IFDEF MSWINDOWS}
 function IsWindowsNT:Boolean;
@@ -193,9 +196,42 @@ var
 {$IFNDEF USEVARIANTS}
 
 
+procedure RaiseLastOSError;
+{$IFDEF FPC}
+var
+ LastError:Integer;
+{$ENDIF}
+begin
+{$IFDEF FPC}
+ LastError := GetLastError;
+ if LastError <> 0 then
+  Raise Exception.Create('SystemError: '+IntToStr(LastError));
+//  Error := EOSError.CreateResFmt(@SOSError, [LastError,
+//       SysErrorMessage(LastError)])
+//   else
+//     Error := EOSError.CreateRes(@SUnkOSError);
+//   Error.ErrorCode := LastError;
+//   raise Error;
+// end;
+{$ENDIF}
+{$IFNDEF FPC}
+ RaiseLastWin32Error;
+{$ENDIF}
+end;
+
 function TryStrToFloat(const S: string; out Value: Extended): Boolean;
 begin
+{$IFNDEF FPC}
   Result := TextToFloat(PChar(S), Value, fvExtended);
+{$ENDIF}
+{$IFDEF FPC}
+  Result:=true;
+  try
+   Value:=StrToFloat(S);
+  except
+   Result:=false;
+  end;
+{$ENDIF}
 end;
 
 procedure VerifyBoolStrArray;

@@ -338,6 +338,8 @@ var
 begin
  if logfileerror then
   exit;
+ if Length(FLogFileName)<1 then
+  exit;
  messa:=FormatDateTime('dd/mm/yyyy hh:nn:ss - ',Now)+aMessage;
 {$IFDEF MSWINDOWS}
  messa:=messa+#10+#13;
@@ -636,7 +638,7 @@ begin
     astream.Clear;
     rppdfdriver.PrintReportPDFStream(pdfreport,'',false,true,1,9999,1,
      astream,true);
-    astream.Seek(0,soFromBeginning);
+    Response.Content:='Executed, size:'+IntToStr(astream.size);
     Response.ContentType := 'application/pdf';
     Response.ContentStream:=astream;
     WriteLog(reportname+' Executed ');
@@ -648,7 +650,6 @@ begin
   On E:Exception do
   begin
    Response.Content:=GenerateError(E.Message);
-   WriteLog(SRpError+' - '+reportname+' - '+E.Message);
   end;
  end;
 end;

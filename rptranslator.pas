@@ -84,10 +84,16 @@ const
 
 
 function RegOpenKeyEx(hKey: LongWord; lpSubKey: PChar; ulOptions,
-  samDesired: LongWord; var phkResult: LongWord): Longint; stdcall;
+  samDesired: LongWord; var phkResult: LongWord): Longint;
+{$IFDEF ISDELPHI}
+  stdcall;
+{$ENDIF}
   external advapi32 name 'RegOpenKeyExA';
 function RegQueryValueEx(hKey: LongWord; lpValueName: PChar;
-  lpReserved: Pointer; lpType: Pointer; lpData: PChar; lpcbData: Pointer): Integer; stdcall;
+  lpReserved: Pointer; lpType: Pointer; lpData: PChar; lpcbData: Pointer): Integer;
+{$IFDEF ISDELPHI}
+  stdcall;
+{$ENDIF}
   external advapi32 name 'RegQueryValueExA';
 {$ENDIF}
 
@@ -161,7 +167,10 @@ var
     FindData: TWin32FindData;
     Buffer: array[0..260] of Char;
     GetLongPathName: function (ShortPathName: PChar; LongPathName: PChar;
-      cchBuffer: Integer): Integer stdcall;
+      cchBuffer: Integer): Integer;
+{$IFDEF ISDELPHI}
+  stdcall;
+{$ENDIF}
   begin
 {$R-}
     Result := AFileName;
@@ -193,7 +202,8 @@ var
     begin
       NextBS := FindBS(CurrBS + 1);
       if L + (NextBS - CurrBS) + 1 > SizeOf(Buffer) then Exit;
-      lstrcpyn(Buffer + L, CurrBS, (NextBS - CurrBS) + 1);
+//      lstrcpyn(Buffer + L, CurrBS, (NextBS - CurrBS) + 1);
+      lstrcpyn(@Buffer[L], CurrBS, (NextBS - CurrBS) + 1);
 
       Handle := FindFirstFile(Buffer, FindData);
       if (Handle = -1) then Exit;
@@ -201,7 +211,8 @@ var
 
       if L + 1 + lstrlen(FindData.cFileName) + 1 > SizeOf(Buffer) then Exit;
       Buffer[L] := '\';
-      lstrcpy(Buffer + L + 1, FindData.cFileName);
+//      lstrcpy(Buffer + L + 1, FindData.cFileName);
+      lstrcpy(@Buffer[L + 1], FindData.cFileName);
       Inc(L, lstrlen(FindData.cFileName) + 1);
       CurrBS := NextBS;
     end;
