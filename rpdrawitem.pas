@@ -76,6 +76,8 @@ type
    procedure ReadStream(AStream:TStream);
    procedure WriteStream(AStream:TStream);
    function GetStream:TMemoryStream;
+   procedure WriteExpression(Writer:TWriter);
+   procedure ReadExpression(Reader:TReader);
   public
    constructor Create(AOwner:TComponent);override;
    procedure SetStream(Value:TMemoryStream);
@@ -86,10 +88,10 @@ type
   public
    function GetExtension(adriver:IRpPrintDriver):TPoint;override;
    property Stream:TMemoryStream read FStream write SetStream;
+   property Expression:WideString read FExpression write FExpression;
   published
    // Rotating bitmaps still not implemented
    property Rotation:smallint read FRotation write FRotation default 0;
-   property Expression:WideString read FExpression write FExpression;
    property DrawStyle:TRpImageDrawStyle read FDrawStyle write FDrawStyle
     default rpDrawCrop;
    property dpires:integer read   Fdpires write Fdpires default DEfAULT_DPI;
@@ -154,8 +156,22 @@ begin
  FStream.LoadFromStream(Value);
 end;
 
+procedure TRpImage.WriteExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FExpression);
+end;
+
+procedure TRpImage.ReadExpression(Reader:TReader);
+begin
+ FExpression:=ReadWideString(Reader);
+end;
+
+
 procedure TRpImage.DefineProperties(Filer: TFiler);
 begin
+ inherited;
+ 
+ Filer.DefineProperty('Expression',ReadExpression,WriteExpression,True);
  Filer.DefineBinaryProperty('Stream', ReadStream, WriteStream, true);
 end;
 

@@ -129,8 +129,6 @@ end;
 
 procedure TRpChartInterface.SetProperty(pname:string;value:Widestring);
 begin
- if length(value)<1 then
-  exit;
  if pname=SRpSExpression then
  begin
   TRpChart(fprintitem).ValueExpression:=value;

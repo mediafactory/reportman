@@ -69,8 +69,14 @@ type
    procedure SetChangeExpression(Value:widestring);
    procedure OnReadError(Reader: TReader; const Message: string; var Handled: Boolean);
    procedure SetChildSubReport(Value:TComponent);
+   procedure AssignSection(sec:TRpSection);
+   procedure WriteChangeExpression(Writer:TWriter);
+   procedure ReadChangeExpression(Reader:TReader);
+   procedure WriteBeginPageExpression(Writer:TWriter);
+   procedure ReadBeginPageExpression(Reader:TReader);
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
+   procedure DefineProperties(Filer:TFiler);override;
    procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
    procedure Notification(AComponent: TComponent;
     Operation: TOperation);override;
@@ -90,11 +96,13 @@ type
    procedure GetChildSubReportPossibleValues(lvalues:TStrings);
    function GetChildSubReportName:string;
    procedure SetChildSubReportByName(avalue:String);
+   property ChangeExpression:widestring read FChangeExpression write SetChangeExpression;
+   property BeginPageExpression:widestring read FBeginPageExpression
+    write FBeginPageExpression;
   published
    property SubReport:TComponent read FSubReport write FSubReport;
    property GroupName:String read FGroupName write SetGroupName;
    property ChangeBool:boolean read FChangeBool write FChangeBool;
-   property ChangeExpression:widestring read FChangeExpression write SetChangeExpression;
    property PageRepeat:boolean read FPageRepeat write FPageRepeat;
    property SkipPage:boolean read FSkipPage write FSkipPage;
    property AlignBottom:boolean read FAlignBottom write FAlignBottom;
@@ -105,8 +113,6 @@ type
    property AutoContract:Boolean read FAutoContract write FAutoContract
     default false;
    property HorzDesp:Boolean read FHorzDesp write FHorzDesp default false;
-   property BeginPageExpression:widestring read FBeginPageExpression
-    write FBeginPageExpression;
 //   property IsExternal:Boolean read FIsExternal
 //    write FIsExternal default false;
    // External filename is a alias.field or if not exists a filename
@@ -451,6 +457,7 @@ var
  zlibs:TDeCompressionStream;
  readed:integer;
  memstream:TMemoryStream;
+ tempsec:TRpSection;
 begin
  // Free all components
  for i:=0 to Components.Count-1 do
@@ -477,7 +484,13 @@ begin
    reader:=TReader.Create(memstream,1000);
    try
     reader.OnError:=OnReadError;
-    reader.ReadRootComponent(Self);
+    tempsec:=TRpSection.Create(nil);
+    try
+     reader.ReadRootComponent(tempsec);
+     AssignSection(tempsec);
+    finally
+     tempsec.free;
+    end;
    finally
     reader.free;
    end;
@@ -495,10 +508,6 @@ begin
   end;
   Height:=0;
   exit;
- end;
- for i:=0 to ComponentCount-1 do
- begin
-  Components.Add.Component:=((inherited Components[i]) As TRpCommonComponent);
  end;
 end;
 
@@ -623,6 +632,63 @@ begin
    Raise Exception.Create(SRpCircularDatalink);
  end;
  FChildSubReport:=Value;
+end;
+
+procedure TRpSection.AssignSection(sec:TRpSection);
+var
+ i:integer;
+begin
+ Width:=sec.Width;
+ Height:=sec.Height;
+ FSkipPage:=sec.SkipPage;
+ FAutoExpand:=sec.FAutoExpand;
+ FAutoContract:=sec.FAutoContract;
+ FBeginPageExpression:=sec.FBeginPageExpression;
+ FBeginPage:=sec.FBeginPage;
+ PrintCondition:=sec.PrintCondition;
+ DoBeforePrint:=sec.DoBeforePrint;
+ DoAfterPrint:=sec.DoAfterPrint;
+ for i:=0 to Components.Count-1 do
+ begin
+  if Components.Items[i].Component.Owner=Self then
+   Components.Items[i].Component.Free;
+ end;
+ Components.Clear;
+ for i:=0 to sec.Components.Count-1 do
+ begin
+  (Components.Add).Component:=sec.Components.Items[i].Component;
+  sec.RemoveComponent(sec.Components.Items[i].Component);
+  InsertComponent(sec.Components.Items[i].Component);
+ end;
+end;
+
+
+procedure TRpSection.WriteChangeExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FChangeExpression);
+end;
+
+procedure TRpSection.ReadChangeExpression(Reader:TReader);
+begin
+ FChangeExpression:=ReadWideString(Reader);
+end;
+
+procedure TRpSection.WriteBeginPageExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FBeginPageExpression);
+end;
+
+procedure TRpSection.ReadBeginPageExpression(Reader:TReader);
+begin
+ FBeginPageExpression:=ReadWideString(Reader);
+end;
+
+procedure TRpSection.DefineProperties(Filer:TFiler);
+begin
+ inherited;
+
+ Filer.DefineProperty('ChangeExpression',ReadChangeExpression,WriteChangeExpression,True);
+ Filer.DefineProperty('BeginPageExpression',ReadBeginPageExpression,WriteBeginPageExpression,True);
 end;
 
 

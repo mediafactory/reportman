@@ -124,6 +124,8 @@ type
 
 // Compares 2 streams and returns true if they are equal
 function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
+procedure WriteWideString(Writer:TWriter;Value:WideString);
+function  ReadWideString(Reader:TReader):WideString;
 procedure Generatenewname(Component:TComponent);
 function FormatVariant(displayformat:string;Value:Variant):widestring;
 function CopyFileTo(const Source, Destination: string): Boolean;
@@ -627,6 +629,23 @@ begin
 end;
 {$ENDIF}
 
+
+procedure WriteWideString(Writer:TWriter;Value:WideString);
+var
+  L: Integer;
+  aval:TValueType;
+begin
+ aval:=vaWString;
+ Writer.Write(aval,SizeOf(aval));
+ L := Length(Value);
+ Writer.Write(L, SizeOf(Integer));
+ Writer.Write(Pointer(Value)^, L * 2);
+end;
+
+function ReadWideString(Reader:TReader):WideString;
+begin
+ Result:=Reader.ReadWideString;
+end;
 
 initialization
 

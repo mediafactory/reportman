@@ -23,13 +23,14 @@ interface
 {$I rpconf.inc}
 
 uses
-  SysUtils, Types, Classes,
+  SysUtils, Classes,
+  Types,
   QGraphics, QControls, QForms, QDialogs,QStdCtrls,QExtCtrls,
   Qt,
   rpmdobinsint,rpmdconsts,rpprintitem,
   rpgraphutils,rpsection,rpmunits, rpexpredlg,
   rpalias,rpreport,rpsubreport,rpmdflabelint,rplabelitem,
-  rpmdfdrawint,rpmdfbarcodeint,rpmdfchartint;
+  rpmdfdrawint,rpmdfbarcodeint,rpmdfchartint, QMenus, QTypes;
 
 const
   CONS_LEFTGAP=3;
@@ -84,6 +85,10 @@ type
     RpAlias1: TRpAlias;
     RpExpreDialog1: TRpExpreDialog;
     OpenDialog1: TOpenDialog;
+    PopUpSection: TPopupMenu;
+    MLoadExternal: TMenuItem;
+    MSaveExternal: TMenuItem;
+    procedure MLoadExternalClick(Sender: TObject);
   private
     { Private declarations }
     FProppanels:TStringList;
@@ -335,6 +340,8 @@ begin
   begin
    Control:=TEdit.Create(Self);
    TEdit(Control).OnChange:=EditChange;
+   if LTypes.Strings[i]=SRpSExternalpath then
+    TEdit(Control).PopupMenu:=TFRpObjInsp(Owner).PopUpSection;
   end;
   Control.Top:=Posy;
   Control.Left:=CONS_CONTROLPOS;
@@ -875,6 +882,9 @@ begin
  alist:=TStringList.Create;
  TRpImageInterface.FillAncestors(alist);
  FClassAncestors.AddObject('TRpImageInterface',alist);
+
+ MLoadExternal.Caption:=TranslateStr(835,MLoadExternal.Caption);
+ MSaveExternal.Caption:=TranslateStr(836,MSaveExternal.Caption);
 end;
 
 destructor TFRpObjInsp.Destroy;
@@ -1013,6 +1023,7 @@ begin
  if FSelectedItems.Count<1 then
   exit;
  if (Not (FSelectedItems.Objects[0] is TRpSizePosInterface)) then
+  exit;
  for i:=0 to FSelectedItems.Count-1 do
  begin
   aitem:=TRpSizePosInterface(FSelectedItems.Objects[i]);
@@ -1623,6 +1634,23 @@ begin
   if Assigned(FCurrentPanel) then
    FCurrentPanel.AssignPropertyValues;
  end;
+end;
+
+procedure TFRpObjInsp.MLoadExternalClick(Sender: TObject);
+begin
+ if Not (CompItem is TRpSectionInterface) then
+  exit;
+ if Sender=MLoadExternal then
+ begin
+  TRpSection(TRpSectionInterface(CompItem).printitem).LoadExternal;
+  // Now refresh interface
+  TFRpDesignFrame(FDesignFrame).freportstructure.RefreshInterface;
+ end
+ else
+ if Sender=MSaveExternal then
+ begin
+  TRpSection(TRpSectionInterface(CompItem).printitem).SaveExternal;
+ end
 end;
 
 initialization

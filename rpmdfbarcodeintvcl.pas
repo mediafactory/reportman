@@ -103,9 +103,6 @@ end;
 
 procedure TRpBarcodeInterface.SetProperty(pname:string;value:Widestring);
 begin
- if length(value)<1 then
-  exit;
-
  if pname=SRpSBarcodeType then
  begin
   TRpBarcode(fprintitem).Typ:=StringBarcodeToBarCodeType(value);
@@ -213,6 +210,7 @@ begin
  rec.Right:=Width-1;
  rec.Bottom:=Height-1;
 // Canvas.TextRect(rec,0,0,aexp.Expression,0);
+ Canvas.Brush.Style:=bsClear;
  Canvas.TextOut(0,0,aexp.Expression);
  Canvas.Pen.Color:=clBlack;
  Canvas.Pen.Style:=psDashDotDot;

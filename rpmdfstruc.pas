@@ -74,6 +74,7 @@ type
     property Report:TRpReport read FReport write SetReport;
     property ObjInsp:TFRpObjInsp read FObjInsp write FObjInsp;
     procedure SelectDataItem(data:TObject);
+    procedure RefreshInterface;
   end;
 
 implementation
@@ -617,6 +618,17 @@ begin
   Application.OnIdle:=ActionIdle;
   exit;
  end;
+end;
+
+
+procedure TFRpStructure.RefreshInterface;
+var
+ FRpMainF:TFRpMainF;
+begin
+ FRpMainF:=TFRpMainF(Owner);
+ AAction:=FRpMainf.ANewDetail;
+ oldappidle:=Application.Onidle;
+ Application.OnIdle:=ActionIdle;
 end;
 
 

@@ -123,8 +123,6 @@ end;
 
 procedure TRpLabelInterface.SetProperty(pname:string;value:Widestring);
 begin
- if length(value)<1 then
-  exit;
  if pname=SRpSText then
  begin
   TRpLabel(fprintitem).Text:=value;
@@ -262,8 +260,6 @@ end;
 
 procedure TRpExpressionInterface.SetProperty(pname:string;value:Widestring);
 begin
- if length(value)<1 then
-  exit;
  if pname=SRpSExpression then
  begin
   TRpExpression(fprintitem).Expression:=value;

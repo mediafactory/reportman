@@ -1116,7 +1116,7 @@ begin
    if dataavail then
    begin
     subrep.SubReportChanged(rpSubReportStart);
-    subrep.SubReportChanged(rpDataChange);
+//    subrep.SubReportChanged(rpDataChange);
     subreport:=subrep;
     section:=nil;
 //    oldsectionindex:=-1;

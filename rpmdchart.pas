@@ -97,33 +97,46 @@ type
    function CheckValueCondition:boolean;
    function EvaluateSerieExpression:Variant;
    function EvaluateCaption:Variant;
+   procedure WriteGetValueCondition(Writer:TWriter);
+   procedure ReadGetValueCondition(Reader:TReader);
+   procedure WriteValueExpression(Writer:TWriter);
+   procedure ReadValueExpression(Reader:TReader);
+   procedure WriteChangeSerieExpression(Writer:TWriter);
+   procedure ReadChangeSerieExpression(Reader:TReader);
+   procedure WriteCaptionExpression(Writer:TWriter);
+   procedure ReadCaptionExpression(Reader:TReader);
+   procedure WriteSerieCaption(Writer:TWriter);
+   procedure ReadSerieCaption(Reader:TReader);
+   procedure WriteClearExpression(Writer:TWriter);
+   procedure ReadClearExpression(Reader:TReader);
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
+   procedure DefineProperties(Filer:TFiler);override;
   public
    procedure GetNewValue;
    procedure Evaluate;
    property IdenChart:TVariableGrap read FIdenChart;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    constructor Create(AOwner:TComponent);override;
-  published
-   property Series:TRpSeries read FSeries write SetSeries;
+   property ChangeSerieExpression:widestring read FChangeSerieExpression write
+    FChangeSerieExpression;
    property GetValueCondition:widestring read FGetValueCondition
     write FGetValuecondition;
    property ValueExpression:widestring read FValueExpression
     write FValueExpression;
-   property ChangeSerieExpression:widestring read FChangeSerieExpression write
-    FChangeSerieExpression;
-   property ChangeSerieBool:boolean read FChangeSerieBool write FChangeSerieBool
-    default false;
    property CaptionExpression:widestring read FCaptionExpression
     write FCaptionExpression;
-   property ChartType:TRpChartType read FChartType write FChartType
-    default rpchartline;
-   property Identifier:string read FIdentifier write SetIdentifier;
    property SerieCaption:widestring read FSerieCaption
     write FSerieCaption;
    property ClearExpression:widestring read FClearExpression
     write FClearExpression;
+  published
+   property Series:TRpSeries read FSeries write SetSeries;
+   property ChangeSerieBool:boolean read FChangeSerieBool write FChangeSerieBool
+    default false;
+   property ChartType:TRpChartType read FChartType write FChartType
+    default rpchartline;
+   property Identifier:string read FIdentifier write SetIdentifier;
    property ClearExpressionBool:boolean read FClearExpressionBool write FClearExpressionBool
     default false;
   end;
@@ -592,6 +605,79 @@ procedure TRpChart.OnClear(Sender:TObject);
 begin
  Series.Clear;
 end;
+
+procedure TRpChart.WriteGetValueCondition(Writer:TWriter);
+begin
+ WriteWideString(Writer, FGetValueCondition);
+end;
+
+procedure TRpChart.ReadGetValueCondition(Reader:TReader);
+begin
+ FGetValueCondition:=ReadWideString(Reader);
+end;
+
+procedure TRpChart.WriteValueExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FValueExpression);
+end;
+
+procedure TRpChart.ReadValueExpression(Reader:TReader);
+begin
+ FValueExpression:=ReadWideString(Reader);
+end;
+
+procedure TRpChart.WriteChangeSerieExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FChangeSerieExpression);
+end;
+
+procedure TRpChart.ReadChangeSerieExpression(Reader:TReader);
+begin
+ FChangeSerieExpression:=ReadWideString(Reader);
+end;
+
+procedure TRpChart.WriteCaptionExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FCaptionExpression);
+end;
+
+procedure TRpChart.ReadCaptionExpression(Reader:TReader);
+begin
+ FCaptionExpression:=ReadWideString(Reader);
+end;
+
+procedure TRpChart.WriteSerieCaption(Writer:TWriter);
+begin
+ WriteWideString(Writer, FSerieCaption);
+end;
+
+procedure TRpChart.ReadSerieCaption(Reader:TReader);
+begin
+ FSerieCaption:=ReadWideString(Reader);
+end;
+
+procedure TRpChart.WriteClearExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FClearExpression);
+end;
+
+procedure TRpChart.ReadClearExpression(Reader:TReader);
+begin
+ FClearExpression:=ReadWideString(Reader);
+end;
+
+procedure TRpChart.DefineProperties(Filer:TFiler);
+begin
+ inherited;
+
+ Filer.DefineProperty('GetValueCondition',ReadGetValueCondition,WriteGetValueCondition,True);
+ Filer.DefineProperty('ValueExpression',ReadValueExpression,WriteValueExpression,True);
+ Filer.DefineProperty('ChangeSerieExpression',ReadChangeSerieExpression,WriteChangeSerieExpression,True);
+ Filer.DefineProperty('CaptionExpression',ReadCaptionExpression,WriteCaptionExpression,True);
+ Filer.DefineProperty('SerieCaption',ReadSerieCaption,WriteSerieCaption,True);
+ Filer.DefineProperty('ClearExpression',ReadClearExpression,WriteClearExpression,True);
+end;
+
 
 end.
 

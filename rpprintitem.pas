@@ -49,6 +49,7 @@ type
    FPrintCondition:string;
    procedure SetWidth(Value:TRpTwips);
    procedure SetHeight(Value:TRpTwips);
+   function GetReport:TComponent;
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);virtual;
   public
@@ -58,6 +59,7 @@ type
    function EvaluatePrintCondition:boolean;
    procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');virtual;
+   property Report:TComponent read GetReport;
   published
    property PrintCondition:string read FPrintCondition write FPrintCondition;
    property DoBeforePrint:string read FDoBeforePrint write FDoBeforePrint;
@@ -118,11 +120,17 @@ type
    FVAlignMent:integer;
    FSingleLine:boolean;
    FType1Font:TRpType1Font;
+   procedure ReadWFontName(Reader:TReader);
+   procedure WriteWFontName(Writer:TWriter);
+   procedure ReadLFontName(Reader:TReader);
+   procedure WriteLFontName(Writer:TWriter);
+  protected
+   procedure DefineProperties(Filer:TFiler);override;
   public
    constructor Create(AOwner:TComponent);override;
-  published
    property WFontName:widestring read FWFontName write FWFontName;
    property LFontName:widestring read FLFontName write FLFontName;
+  published
    property Type1Font:TRpType1Font read FType1Font write FType1Font;
    property FontSize:smallint read FFontSize write FFontSize default 10;
    property FontRotation:smallint read FFontRotation write FFontRotation default 0;
@@ -153,6 +161,8 @@ begin
  FHeight:=0;
  FWidth:=0;
 end;
+
+
 
 procedure TRpCommonComponent.SetWidth(Value:TRpTwips);
 begin
@@ -324,10 +334,63 @@ begin
 
 end;
 
+function TRpCommonComponent.GetReport:TComponent;
+begin
+ Result:=nil;
+ if (Owner is TRpReport) then
+ begin
+  Result:=Owner;
+  exit;
+ end;
+ if (Owner is TRpSection) then
+ begin
+  if (TRpSection(Owner).Owner is TRpReport) then
+  begin
+   Result:=TRpSection(Owner).Owner;
+   exit;
+  end;
+ end;
+ if Assigned(Result) then
+  Raise Exception.Create(SRpOnlyAReportOwner);
+end;
 
 procedure TRpCommonComponent.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
 begin
  // Base class does nothing
 end;
+
+
+
+
+procedure TRpGenTextComponent.WriteWFontName(Writer:TWriter);
+begin
+ WriteWideString(Writer, FWFontName);
+end;
+
+procedure TRpGenTextComponent.WriteLFontName(Writer:TWriter);
+begin
+ WriteWideString(Writer, FLFontName);
+end;
+
+
+
+procedure TRpGenTextComponent.ReadLFontName(Reader:TReader);
+begin
+ FLFontName:=ReadWideString(Reader);
+end;
+
+procedure TRpGenTextComponent.ReadWFontName(Reader:TReader);
+begin
+ FWFontName:=ReadWideString(Reader);
+end;
+
+procedure TRpGenTextComponent.DefineProperties(Filer:TFiler);
+begin
+ inherited;
+
+ Filer.DefineProperty('WFontName',ReadWFontName,WriteWFontName,True);
+ Filer.DefineProperty('LFontName',ReadLFontName,WriteLFontName,True);
+end;
+
 
 end.

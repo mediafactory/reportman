@@ -918,7 +918,7 @@ begin
  olddecimal:=decimalseparator;
  try
   decimalseparator:='.';
-  acolor:=color;
+  acolor:=LongWord(color);
   r:=byte(acolor);
   Result:=FormatCurr('0.00',r/256);
   g:=byte(acolor shr 8);

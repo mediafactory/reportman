@@ -48,7 +48,10 @@ type
    procedure SetAllText(Value:TStrings);
    procedure UpdateAllStrings;
    procedure UpdateWideText;
+   procedure WriteWideText(Writer:TWriter);
+   procedure ReadWideText(Reader:TReader);
   protected
+   procedure DefineProperties(Filer:TFiler);override;
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
    procedure Loaded;override;
   public
@@ -56,10 +59,10 @@ type
    constructor Create(AOwner:TComponent);override;
    property Text:widestring read GetText write SetText;
    destructor Destroy;override;
+   property WideText:WideString read FWideText write FWideText;
   published
    // Compatibility with RC1,RC2
    property AllText:TStrings read FAllText write SetAllText;
-   property WideText:WideString read FWideText write FWideText;
   end;
 
  TIdenRpExpression=class;
@@ -85,7 +88,12 @@ type
    FOldString:widestring;
    procedure SetIdentifier(Value:string);
    procedure Evaluate;
+   procedure WriteExpression(Writer:TWriter);
+   procedure ReadExpression(Reader:TReader);
+   procedure WriteAgIniValue(Writer:TWriter);
+   procedure ReadAgIniValue(Reader:TReader);
   protected
+   procedure DefineProperties(Filer:TFiler);override;
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   public
    constructor Create(AOwner:TComponent);override;
@@ -93,16 +101,16 @@ type
    function GetText:widestring;
    property IdenExpression:TIdenRpExpression read FIdenExpression;
    function GetExtension(adriver:IRpPrintDriver):TPoint;override;
+   property Expression:widestring read FExpression write FExpression;
+   property AgIniValue:widestring read FAgIniValue write FAgIniValue;
   published
    property DisplayFormat:string read FDisplayformat write FDisplayFormat;
-   property Expression:widestring read FExpression write FExpression;
    property Identifier:string read FIdentifier write SetIdentifier;
    property Aggregate:TRpAggregate read FAggregate write FAggregate
     default rpagNone;
    property GroupName:string read FGroupName write FGroupName;
    property AgType:TRpAggregateType read FAgType write FAgType
     default rpAgSum;
-   property AgIniValue:widestring read FAgIniValue write FAgIniValue;
    property AutoExpand:Boolean read FAutoExpand write FAutoExpand;
    property AutoContract:Boolean read FAutoContract write FAutoContract;
    property PrintOnlyOne:Boolean read FPrintOnlyOne write FPrintOnlyOne
@@ -526,5 +534,52 @@ begin
  adriver.TextExtent(aText,Result);
  LastExtent:=Result;
 end;
+
+
+procedure TRpExpression.WriteExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FExpression);
+end;
+
+procedure TRpExpression.ReadExpression(Reader:TReader);
+begin
+ FExpression:=ReadWideString(Reader);
+end;
+
+procedure TRpExpression.WriteAgIniValue(Writer:TWriter);
+begin
+ WriteWideString(Writer, FAgIniValue);
+end;
+
+procedure TRpExpression.ReadAgIniValue(Reader:TReader);
+begin
+ FAgIniValue:=ReadWideString(Reader);
+end;
+
+procedure TRpExpression.DefineProperties(Filer:TFiler);
+begin
+ inherited;
+
+ Filer.DefineProperty('Expression',ReadExpression,WriteExpression,True);
+ Filer.DefineProperty('AgIniValue',ReadAgIniValue,WriteAgIniValue,True);
+end;
+
+procedure TRpLabel.WriteWideText(Writer:TWriter);
+begin
+ WriteWideString(Writer, FWideText);
+end;
+
+procedure TRpLabel.ReadWideText(Reader:TReader);
+begin
+ FWideText:=ReadWideString(Reader);
+end;
+
+procedure TRpLabel.DefineProperties(Filer:TFiler);
+begin
+ inherited;
+
+ Filer.DefineProperty('WideText',ReadWideText,WriteWideText,True);
+end;
+
 
 end.

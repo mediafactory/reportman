@@ -146,13 +146,6 @@ begin
     Cancel;
     Raise;
    end;
-   FCOpyDataset.Append;
-   for i:=0 to FDataset.FieldCount-1 do
-   begin
-    AssignField(Fields[i],FCopyDataset.Fields[i]);
-   end;
-   FCOpyDataset.Post;
-   FDataset.Next;
   end;
  end;
 end;
@@ -170,7 +163,8 @@ var
 begin
  if Assigned(FDataset) then
  begin
-  FDataset.Next;
+  if (Not ((recordcount>1) and (RecNo=1))) then
+   FDataset.Next;
     // Copy the record to the copy
   if Not FDataset.Eof then
   begin

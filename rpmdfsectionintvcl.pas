@@ -281,7 +281,7 @@ begin
   lvalues.Add(TRpSection(printitem).GetChildSubReportName);
  // External section
  lnames.Add(SRpSExternalPath);
- ltypes.Add(SRpSString);
+ ltypes.Add(SRpSExternalpath);
  if Assigned(lvalues) then
   lvalues.Add(TRpSection(printitem).ExternalFilename);
 end;
@@ -473,11 +473,9 @@ begin
  end;
 } if Not Assigned(secint.fprintitem) then
   exit;
- if Not Assigned(secint.fprintitem.Owner) then
+ if Not Assigned(secint.fprintitem.Report) then
   exit;
- if Not (secint.fprintitem.Owner is TRpReport) then
-  exit;
- report:=TRpReport(secint.fprintitem.Owner);
+ report:=TRpReport(secint.fprintitem.Report);
  if report.GridVisible then
  begin
   bitmap:=DrawBitmapGrid(width,height,report.GridWidth,report.GridHeight,report.GridColor,report.GridLines);
@@ -697,20 +695,20 @@ begin
  asizeposint:=nil;
  if FRpMainf.BLabel.Down then
  begin
-  asizepos:=TRpLabel.Create(printitem.Owner);
+  asizepos:=TRpLabel.Create(printitem.Report);
   TRpLabel(asizepos).Text:=SRpSampleTextToLabels;
   asizeposint:=TRpLabelInterface.Create(Self,asizepos);
  end;
  if FRpMainf.BExpression.Down then
  begin
-  asizepos:=TRpExpression.Create(printitem.Owner);
+  asizepos:=TRpExpression.Create(printitem.Report);
   // Search if theres a selected field
   TRpExpression(asizepos).Expression:=FRpMainf.GetExpressionText;
   asizeposint:=TRpExpressionInterface.Create(Self,asizepos);
  end;
  if FRpMainf.BBarcode.Down then
  begin
-  asizepos:=TRpBarcode.Create(printitem.Owner);
+  asizepos:=TRpBarcode.Create(printitem.Report);
   // Search if theres a selected field
   TRpBarcode(asizepos).Expression:=FRpMainf.GetExpressionText;
   if (TRpBarcode(asizepos).Expression='2+2') then
@@ -719,19 +717,19 @@ begin
  end;
  if FRpMainf.BChart.Down then
  begin
-  asizepos:=TRpChart.Create(printitem.Owner);
+  asizepos:=TRpChart.Create(printitem.Report);
   // Search if theres a selected field
   TRpChart(asizepos).ValueExpression:=FRpMainf.GetExpressionText;
   asizeposint:=TRpChartInterface.Create(Self,asizepos);
  end;
  if FRpMainf.BShape.Down then
  begin
-  asizepos:=TRpShape.Create(printitem.Owner);
+  asizepos:=TRpShape.Create(printitem.Report);
   asizeposint:=TRpDrawInterface.Create(Self,asizepos);
  end;
  if FRpMainf.BImage.Down then
  begin
-  asizepos:=TRpImage.Create(printitem.Owner);
+  asizepos:=TRpImage.Create(printitem.Report);
   asizeposint:=TRpImageInterface.Create(Self,asizepos);
  end;
 

@@ -92,21 +92,24 @@ type
    procedure MakeModules;
    procedure SetModul(v:integer);
    procedure Evaluate;
-   function CalculateBarcode:string;
+   function  CalculateBarcode:string;
+   procedure WriteExpression(Writer:TWriter);
+   procedure ReadExpression(Reader:TReader);
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
+   procedure DefineProperties(Filer:TFiler);override;
   public
    function GetText:widestring;
    function GetTypText:string;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    constructor Create(Owner:TComponent); override;
 //   procedure DrawText(Canvas:TCanvas);
+   property Expression:widestring read FExpression write FExpression;
   published
     // Width of the smallest line in a Barcode
    property Modul:integer read FModul  write SetModul;
    property Ratio:double  read FRatio  write FRatio;
    property Typ:TRpBarcodeType read FTyp write FTyp default bcCodeEAN13;
-   property Expression:widestring read FExpression write FExpression;
    // build CheckSum ?
    property Checksum:boolean read FCheckSum write FCheckSum default false;
    property DisplayFormat:string read FDisplayformat write FDisplayFormat;
@@ -1591,6 +1594,24 @@ begin
 //Showmessage(Format('Data <%s>', [data]));
  DoLines(data, aposx,aposy,metafile);    // draw the barcode
 
+end;
+
+
+procedure TRpBarcode.WriteExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FExpression);
+end;
+
+procedure TRpBarcode.ReadExpression(Reader:TReader);
+begin
+ FExpression:=ReadWideString(Reader);
+end;
+
+procedure TRpBarcode.DefineProperties(Filer:TFiler);
+begin
+ inherited;
+
+ Filer.DefineProperty('Expression',ReadExpression,WriteExpression,True);
 end;
 
 end.

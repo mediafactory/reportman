@@ -42,4 +42,16 @@ object FRpObjInsp: TFRpObjInsp
     Left = 72
     Top = 120
   end
+  object PopUpSection: TPopupMenu
+    Left = 212
+    Top = 92
+    object MLoadExternal: TMenuItem
+      Caption = 'Load section'
+      OnClick = MLoadExternalClick
+    end
+    object MSaveExternal: TMenuItem
+      Caption = 'Save section'
+      OnClick = MLoadExternalClick
+    end
+  end
 end

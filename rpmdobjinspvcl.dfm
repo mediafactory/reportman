@@ -32,4 +32,16 @@ object FRpObjInspVCL: TFRpObjInspVCL
     Left = 192
     Top = 60
   end
+  object PopUpSection: TPopupMenu
+    Left = 208
+    Top = 92
+    object MLoadExternal: TMenuItem
+      Caption = 'Load section'
+      OnClick = MLoadExternalClick
+    end
+    object MSaveExternal: TMenuItem
+      Caption = 'Save section'
+      OnClick = MLoadExternalClick
+    end
+  end
 end

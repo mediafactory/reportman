@@ -218,8 +218,6 @@ end;
 
 procedure TRpDrawInterface.SetProperty(pname:string;value:Widestring);
 begin
- if length(value)<1 then
-  exit;
  if pname=SRpSShape then
  begin
   TRpShape(fprintitem).Shape:=StringShapeTypeToShape(Value);
@@ -470,8 +468,6 @@ end;
 
 procedure TRpImageInterface.SetProperty(pname:string;value:Widestring);
 begin
- if length(value)<1 then
-  exit;
  if pname=SRpSExpression then
  begin
   TRpImage(fprintitem).Expression:=Value;

@@ -743,19 +743,12 @@ begin
     begin
      FBDEDatabase:=TDatabase.Create(nil);
      createdBDE:=true;
-     FBDEDatabase.KeepConnection:=false;
+     FBDEDatabase.KeepConnection:=False;
      if Assigned(TRpDatabaseInfoList(Collection).FBDESession) then
       FBDEDatabase.SessionName:=TRpDatabaseInfoList(Collection).FBDESession.SessionName;
     end;
-    if FBDEDatabase.DatabaseName=FBDEAlias then
-    begin
-     if FBDEDatabase.Connected then
-      exit;
-    end
-    else
-    begin
-     FBDEDatabase.Connected:=false;
-    end;
+    if FBDEDatabase.Connected then
+     exit;
     ASession:=Session;
     if Assigned(TRpDatabaseInfoList(Collection).FBDESession) then
      ASession:=TRpDatabaseInfoList(Collection).FBDESession;
@@ -834,15 +827,8 @@ begin
 {$IFDEF USEADO}
     if Not Assigned(FADOConnection) then
      FADOConnection:=TADOConnection.Create(nil);
-    if FADOConnection.ConnectionString=ADOConnectionString then
-    begin
-     if FADOConnection.Connected then
-      exit;
-    end
-    else
-    begin
-     FADOConnection.Connected:=false;
-    end;
+    if FADOConnection.Connected then
+     exit;
     FADOConnection.Mode:=cmRead;
     FADOConnection.ConnectionString:=ADOConnectionString;
     FADOConnection.LoginPrompt:=LoginPrompt;
@@ -889,7 +875,7 @@ var
  alist:TStringList;
  i:integer;
 begin
- report:=Collection.Owner as TRpReport;
+ report:=TRpDataInfoList(Collection).FReport As TRpReport;
  eval:=report.Evaluator;
  atable:=TTable(FSQLInternalQuery);
  alist:=TStringList.Create;
@@ -936,7 +922,7 @@ begin
  end;
 {$ENDIF}
 {$IFDEF USEBDE}
- if Assigned(FBDEDatabase) then
+ if (Assigned(FBDEDatabase) and createdBDE) then
   FBDEDatabase.Connected:=false;
 {$ENDIF}
 {$IFDEF USEADO}
@@ -1233,7 +1219,8 @@ begin
       TADOQuery(FSQLInternalQuery).Connection:=databaseinfo[index].FADOConnection;
       TADOQuery(FSQLInternalQuery).SQL.Text:=SQL;
       TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
-      TADOQuery(FSQLInternalQuery).CursorLocation:=clUseServer;
+//      Activating this switches break linked querys
+//      TADOQuery(FSQLInternalQuery).CursorLocation:=clUseServer;
 {$ENDIF}
      end;
     rpdataibo:

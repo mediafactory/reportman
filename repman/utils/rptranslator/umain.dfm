@@ -1,6 +1,6 @@
 object FMain: TFMain
-  Left = 46
-  Top = 21
+  Left = 129
+  Top = 55
   Width = 689
   Height = 496
   Caption = 'Translation utility'
@@ -83,7 +83,7 @@ object FMain: TFMain
     Left = 0
     Top = 28
     Width = 681
-    Height = 401
+    Height = 393
     Align = alClient
     BevelOuter = bvNone
     Caption = 'PParent'
@@ -92,7 +92,7 @@ object FMain: TFMain
     Visible = False
     object Splitter1: TSplitter
       Left = 0
-      Top = 274
+      Top = 266
       Width = 681
       Height = 8
       Cursor = crVSplit
@@ -103,7 +103,7 @@ object FMain: TFMain
     end
     object DBMemo1: TDBMemo
       Left = 0
-      Top = 282
+      Top = 274
       Width = 681
       Height = 119
       Align = alBottom
@@ -117,7 +117,7 @@ object FMain: TFMain
       Left = 0
       Top = 0
       Width = 681
-      Height = 274
+      Height = 266
       Align = alClient
       DataSource = STexts
       Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
@@ -145,7 +145,7 @@ object FMain: TFMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 429
+    Top = 421
     Width = 681
     Height = 21
     Panels = <

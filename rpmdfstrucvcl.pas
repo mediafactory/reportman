@@ -73,6 +73,7 @@ type
     procedure DeleteSelectedNode;
     property Report:TRpReport read FReport write SetReport;
     property ObjInsp:TFRpObjInspVCL read FObjInsp write FObjInsp;
+    procedure RefreshInterface;
     procedure SelectDataItem(data:TObject);
   end;
 
@@ -619,5 +620,14 @@ begin
  end;
 end;
 
+procedure TFRpStructureVCL.RefreshInterface;
+var
+ FRpMainF:TFRpMainFVCL;
+begin
+ FRpMainF:=TFRpMainFVCL(Owner);
+ AAction:=FRpMainf.ANewDetail;
+ oldappidle:=Application.Onidle;
+ Application.OnIdle:=ActionIdle;
+end;
 
 end.

@@ -670,10 +670,10 @@ begin
    if NewTop<0 then
     NewTop:=0;
    // Align to grid
-   if (TRpReport(printitem.Owner).GridEnabled) then
+   if (TRpReport(printitem.Report).GridEnabled) then
    begin
-    NewLeft:=AlignToGridPixels(NewLeft,TRpReport(printitem.Owner).GridWidth);
-    NewTop:=AlignToGridPixels(NewTop,TRpReport(printitem.Owner).GridHeight);
+    NewLeft:=AlignToGridPixels(NewLeft,TRpReport(printitem.Report).GridWidth);
+    NewTop:=AlignToGridPixels(NewTop,TRpReport(printitem.Report).GridHeight);
    end;
    FRectangle.SetBounds(Newleft,NewTop,Width,1);
    FRectangle2.SetBounds(Newleft,NewTop+Height,Width,1);
@@ -711,10 +711,10 @@ begin
   if NewTop+Height>Parent.Height then
    NewTop:=Parent.Height-Height;
   // Align to grid
-  if (TRpReport(printitem.Owner).GridEnabled) then
+  if (TRpReport(printitem.Report).GridEnabled) then
   begin
-   NewLeft:=AlignToGridPixels(NewLeft,TRpReport(printitem.Owner).GridWidth);
-   NewTop:=AlignToGridPixels(NewTop,TRpReport(printitem.Owner).GridHeight);
+   NewLeft:=AlignToGridPixels(NewLeft,TRpReport(printitem.Report).GridWidth);
+   NewTop:=AlignToGridPixels(NewTop,TRpReport(printitem.Report).GridHeight);
   end;
 
   TRpCOmmonPosComponent(printitem).PosX:=pixelstotwips(NewLeft);

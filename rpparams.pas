@@ -27,7 +27,7 @@ uses Classes, SysUtils,rpmdconsts,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
- DB;
+ DB,rptypes;
 
 type
   TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,
@@ -47,14 +47,18 @@ type
     procedure SetValue(AValue:variant);
     procedure SetDescription(ADescription:widestring);
     procedure SetParamType(AParamType:TRpParamType);
+    procedure WriteDescription(Writer:TWriter);
+    procedure ReadDescription(Reader:TReader);
+   protected
+    procedure DefineProperties(Filer:TFiler);override;
    public
     Constructor Create(Collection:TCollection);override;
     procedure Assign(Source:TPersistent);override;
     destructor Destroy;override;
     procedure SetDatasets(AList:TStrings);
+    property Description:widestring read FDescription write SetDescription;
    published
     property Name:string read FName write SetName;
-    property Description:widestring read FDescription write SetDescription;
     property Visible:Boolean read FVisible write SetVisible default True;
     property Value:Variant read FValue write SetValue;
     property ParamType:TRpParamType read FParamtype write SetParamType
@@ -261,6 +265,24 @@ begin
    rpParamExpre:
     Result:=ftString;
   end;
+end;
+
+
+procedure TRpParam.WriteDescription(Writer:TWriter);
+begin
+ WriteWideString(Writer, FDescription);
+end;
+
+procedure TRpParam.ReadDescription(Reader:TReader);
+begin
+ FDescription:=ReadWideString(Reader);
+end;
+
+procedure TRpParam.DefineProperties(Filer:TFiler);
+begin
+ inherited;
+
+ Filer.DefineProperty('Description',ReadDescription,WriteDescription,True);
 end;
 
 
