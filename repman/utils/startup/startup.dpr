@@ -98,6 +98,9 @@ begin
   targetdir:=ExtractFileDir(fullpath);
   targetapp:=ChangeFileExt(fullpath,'');
   SetEnvValue('OLD_LC_NUMERIC',GetEnvironmentVariable('LC_NUMERIC'),false);
+  // New pthreads does not work well with non-console
+  SetEnvValue('LD_ASSUME_KERNEL','2.4.21',false);
+
   // Only set LC_NUMERIC if a KYLIX_PRINTBUG is set
   if compmode then
   begin

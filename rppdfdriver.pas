@@ -43,21 +43,15 @@ type
    FOrientation:TRpOrientation;
    FPageWidth,FPageHeight:integer;
    PageQt:Integer;
+{$IFDEF MSWINDOWS}
 {$IFNDEF FORWEBAX}
 {$IFDEF USETEECHART}
    gdidriver:TObject;
 {$ENDIF}
 {$ENDIF}
+{$ENDIF}
 {$IFDEF USECLXTEECHART}
   qtdriver:TObject;
-{$ENDIF}
-
-{$IFDEF MSWINDOWS}
-{$ENDIF}
-{$IFDEF LINUX}
- {$IFNDEF FORCECONSOLE}
-   qtdriver:=TRpqtdriver;
- {$ENDIF}
 {$ENDIF}
   public
    filename:string;
@@ -120,9 +114,11 @@ procedure DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePa
 implementation
 
 uses
+{$IFDEF MSWINDOWS}
 {$IFNDEF FORWEBAX}
 {$IFDEF USETEECHART}
   rpgdidriver,
+{$ENDIF}
 {$ENDIF}
 {$ENDIF}
 {$IFDEF USECLXTEECHART}
@@ -184,9 +180,11 @@ begin
  FPageWidth:= 11904;
  FPageHeight:= 16836;
  FPDFFile:=TRpPDFFile.Create(nil);
+{$IFDEF MSWINDOWS}
 {$IFNDEF FORWEBAX}
 {$IFDEF USETEECHART}
   gdidriver:=TRpGDIDriver.Create;
+{$ENDIF}
 {$ENDIF}
 {$ENDIF}
 {$IFDEF USECLXTEECHART}
@@ -217,9 +215,11 @@ end;
 procedure TRpPDFDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
    hardwarecollate:boolean);
 begin
+{$IFDEF MSWINDOWS}
 {$IFNDEF FORWEBAX}
 {$IFDEF USETEECHART}
   report.OnDrawChart:=TRpGDIDriver(gdidriver).DoDrawChart;
+{$ENDIF}
 {$ENDIF}
 {$ENDIF}
 {$IFDEF USECLXTEECHART}

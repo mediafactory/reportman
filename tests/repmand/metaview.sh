@@ -15,5 +15,6 @@
 #You can share libraries copying libs to a directory
 #for example /opt/kylixlibs and add the path to ld.so.conf
 #then run ldconfig (as root)
+export LD_ASSUME_KERNEL=2.4.21
 export LD_LIBRARY_PATH=:$PWD:$LD_LIBRARY_PATH
 ./metaview $*
