@@ -36,7 +36,16 @@ object Form1: TForm1
     Width = 441
     Height = 21
     TabOrder = 1
-    Text = 'sample4.rep'
+    Text = '..\..\repman\repsamples\sample5.rep'
+  end
+  object Button2: TButton
+    Left = 292
+    Top = 92
+    Width = 129
+    Height = 45
+    Caption = 'Button2'
+    TabOrder = 2
+    OnClick = Button2Click
   end
   object VCLReport1: TVCLReport
     Filename = 'sample4.rep'
@@ -49,6 +58,14 @@ object Form1: TForm1
     DatabaseName = 'DBDEMOS'
     TableName = 'animals.dbf'
     Left = 168
+    Top = 164
+  end
+  object PDFReport1: TPDFReport
+    Title = 'Untitled'
+    ShowPrintDialog = False
+    ToPage = 1
+    Copies = 1
+    Left = 256
     Top = 164
   end
 end

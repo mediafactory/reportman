@@ -107,7 +107,7 @@ begin
   else
   begin
     Result:=PrintReportPDF(report,Title,Showprogress,false,ffrompage,
-     ftopage,fcopies,FPDFFilename,FCompressed);
+     ftopage,fcopies,FPDFFilename,FCompressed,false);
   end;
  end;
 end;
@@ -117,7 +117,7 @@ function TPDFReport.PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;
 begin
  Result:=rppdfdriver.PrintReportPDF(Report,Title,ShowProgress,false,
-  frompage,topage,copies,fpdffilename,compressed);
+  frompage,topage,copies,fpdffilename,compressed,collate);
 end;
 
 end.

@@ -15,8 +15,13 @@
 
 program rptranslate;
 
+{$I rpconf.inc}
+
 uses
   Forms,
+{$IFDEF USEVARIANTS}
+  midaslib,
+{$ENDIF}
   umain in 'umain.pas' {FMain},
   rptranslator in '..\..\..\rptranslator.pas',
   uflanginfo in 'uflanginfo.pas' {FLangInfo};

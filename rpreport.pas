@@ -218,7 +218,7 @@ type
    function PrintNextPage:boolean;
    procedure PrintAll(Driver:IRpPrintDriver);
    procedure PrintRange(Driver:IRpPrintDriver;allpages:boolean;
-    frompage,topage,copies:integer);
+    frompage,topage,copies:integer;collate:boolean);
    property OnProgress:TRpProgressEvent read FOnProgress write FOnProgress;
    property AliasList:TRpAlias read FAliasList write FAliasList;
    property idenpagenum:TIdenReportVar read fidenpagenum;
@@ -902,12 +902,18 @@ begin
 end;
 
 procedure TRpReport.PrintRange(Driver:IRpPrintDriver;allpages:boolean;
-    frompage,topage,copies:integer);
+    frompage,topage,copies:integer;collate:boolean);
 var
- i:integer;
+ i,j,k:integer;
  finished:boolean;
  printedfirst:boolean;
+ endprintexecuted:boolean;
+ reportcopies:integer;
+ forcetwopass:boolean;
 begin
+ if copies<1 then
+  exit;
+ endprintexecuted:=False;
  printedfirst:=false;
  if allpages then
  begin
@@ -919,6 +925,59 @@ begin
   dec(frompage);
   dec(topage);
  end;
+ // Two pass report printing requires previeous calculation
+ // of the metafile
+ forceTwoPass:=TwoPass;
+ if ((copies>1) and collate) then
+  forcetwopass:=true;
+ reportcopies:=1;
+ if collate then
+ begin
+  reportcopies:=copies;
+  copies:=1;
+ end;
+ if forceTwoPass then
+ begin
+  BeginPrint(Driver);
+  try
+   Driver.NewDocument(metafile);
+   try
+    // Calculate the report first
+    while Not PrintNextPage do;
+
+    EndPrint;
+    endprintexecuted:=true;
+    // Then draw the generated metafile
+    if topage>metafile.PageCount-1 then
+     topage:=metafile.PageCount-1;
+    for k:=1 to reportcopies do
+    begin
+     for j:=frompage to topage do
+     begin
+      for i:=1 to copies do
+      begin
+       if printedfirst then
+        Driver.NewPage;
+       printedfirst:=true;
+       Driver.DrawPage(metafile.pages[j]);
+       Driver.EndPage;
+      end;
+     end;
+    end;
+    Driver.EndDocument;
+   except
+    Driver.AbortDocument;
+    Raise;
+   end;
+  except
+   if not endprintexecuted then
+    EndPrint;
+   Raise;
+  end;
+  exit;
+ end;
+ // One pass is more efficient in memory consuming
+ // it frees each printed page
  printingonepass:=true;
  try
   BeginPrint(Driver);

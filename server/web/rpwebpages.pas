@@ -654,7 +654,7 @@ begin
     astream:=TMemoryStream.Create;
     astream.Clear;
     rppdfdriver.PrintReportPDFStream(pdfreport,'',false,true,1,9999,1,
-     astream,true);
+     astream,true,false);
     Response.Content:='Executed, size:'+IntToStr(astream.size);
     Response.ContentType := 'application/pdf';
     Response.ContentStream:=astream;

@@ -754,7 +754,7 @@ begin
          ActClient.CurrentReport.Metafile.SaveToStream(astream);
          ActClient.cancelled:=false;
          APDFDriver:=TRpPdfDriver.Create;
-         ActClient.CurrentReport.PrintRange(apdfdriver,false,ActClient.FromPage,ActClient.ToPage,ActClient.Copies);
+         ActClient.CurrentReport.PrintRange(apdfdriver,false,ActClient.FromPage,ActClient.ToPage,ActClient.Copies,false);
          CB:=GenerateBlock(repexecutereportpdf,APDFDriver.PDFFile.MainPDF);
          try
           SendBlock(AThread.COnnection,CB);

@@ -121,7 +121,7 @@ function PrintReport (report:TRpReport; Caption:string; progress:boolean;
   allpages:boolean; frompage,topage,copies:integer; collate:boolean):Boolean;
 function ExportReportToPDF (report:TRpReport; Caption:string; progress:boolean;
   allpages:boolean; frompage,topage:integer;
-  showprintdialog:boolean; filename:string;compressed:boolean):Boolean;
+  showprintdialog:boolean; filename:string;compressed:boolean;collate:boolean):Boolean;
 
 
 // Because copies and collation not work in Windows we
@@ -978,7 +978,7 @@ begin
  oldprogres:=RepProgress;
  try
   report.OnProgress:=RepProgress;
-  report.PrintRange(aqtdriver,allpages,frompage,topage,copies);
+  report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate);
  finally
   report.OnProgress:=oldprogres;
  end;
@@ -999,7 +999,7 @@ begin
   oldprogres:=RepProgress;
   try
    report.OnProgress:=RepProgress;
-   report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
+   report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
   finally
    report.OnProgress:=oldprogres;
   end;
@@ -1090,7 +1090,7 @@ begin
      qtdriver:=TRpQtDriver.Create;
      aqtdriver:=qtdriver;
      qtdriver.toprinter:=true;
-     report.PrintRange(aqtdriver,allpages,frompage,topage,copies);
+     report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate);
     end;
    end;
  end
@@ -1172,10 +1172,9 @@ end;
 
 function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
   allpages:boolean;frompage,topage:integer;
-  showprintdialog:boolean;filename:string;compressed:boolean):Boolean;
+  showprintdialog:boolean;filename:string;compressed:boolean;collate:boolean):Boolean;
 var
  copies:integer;
- collate:boolean;
  dia:TFRpQtProgress;
  oldonidle:TIdleEvent;
  pdfdriver:TRpPDFDriver;
@@ -1183,7 +1182,6 @@ var
 begin
  Result:=false;
  allpages:=true;
- collate:=false;
  copies:=1;
  if showprintdialog then
  begin
@@ -1202,6 +1200,7 @@ begin
    dia.report:=report;
    dia.filename:=filename;
    dia.pdfcompressed:=compressed;
+   dia.collate:=collate;
    oldonidle:=Application.Onidle;
    try
     Application.OnIdle:=dia.AppIdlePrintPdf;
@@ -1219,7 +1218,7 @@ begin
   pdfdriver.filename:=filename;
   pdfdriver.compressed:=compressed;
   apdfdriver:=pdfdriver;
-  report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
+  report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
   Result:=True;
  end;
 end;

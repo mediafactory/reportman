@@ -70,14 +70,16 @@ procedure SaveMetafileToPDFStream(metafile:TRpMetafileReport;
  Stream:TStream;compressed:boolean);
 function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
-     filename:string;compressed:boolean):Boolean;
+     filename:string;compressed:boolean;collate:boolean):Boolean;
 function PrintReportPDFStream(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
-     Stream:TStream;compressed:boolean):Boolean;
+     Stream:TStream;compressed:boolean;collate:boolean):Boolean;
 
 
 
 implementation
+
+uses Math;
 
 const
  AlignmentFlags_SingleLine=64;
@@ -153,7 +155,9 @@ begin
  FPDFFile:=TRpPDFFile.Create(nil);
  FPDFFile.FileName:=filename;
  if Assigned(DestStream) then
+ begin
   FPDFFile.DestStream:=DestStream;
+ end;
  FPDFFile.Compressed:=Compressed;
  FPDFFile.PageWidth:=report.CustomX;
  FPDFFile.PageHeight:=report.CustomY;
@@ -395,7 +399,16 @@ begin
 end;
 
 procedure TRpPDFDriver.SetOrientation(Orientation:TRpOrientation);
+var
+ atemp:Integer;
 begin
+ if Orientation=FOrientation then
+  exit;
+ if Orientation=rpOrientationDefault then
+  exit;
+ atemp:=FPageWidth;
+ FPageWidth:=FPageHeight;
+ FPageHeight:=atemp;
  FOrientation:=Orientation;
 end;
 
@@ -417,7 +430,7 @@ end;
 
 function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
-     filename:string;compressed:boolean):Boolean;
+     filename:string;compressed:boolean;collate:boolean):Boolean;
 var
  pdfdriver:TRpPDFDriver;
  apdfdriver:IRpPrintDriver;
@@ -434,7 +447,7 @@ begin
  try
   if progress then
    report.OnProgress:=pdfdriver.RepProgress;
-  report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
+  report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
  finally
   report.OnProgress:=oldprogres;
  end;
@@ -513,7 +526,7 @@ end;
 
 function PrintReportPDFStream(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
-     Stream:TStream;compressed:boolean):Boolean;
+     Stream:TStream;compressed:boolean;collate:boolean):Boolean;
 var
  pdfdriver:TRpPDFDriver;
  apdfdriver:IRpPrintDriver;
@@ -528,7 +541,7 @@ begin
  try
   if progress then
    report.OnProgress:=pdfdriver.RepProgress;
-  report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
+  report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
   Stream.Seek(0,soFromBeginning);
  finally
   report.OnProgress:=oldprogres;

@@ -201,12 +201,12 @@ begin
  if FDriver=rpDriverGDI then
  begin
   rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,true,1,999999,
-   false,filename,compressed);
+   false,filename,compressed,false);
   exit;
  end;
 {$ENDIF}
  rpqtdriver.ExportReportToPDF(report,filename,ShowProgress,true,1,999999,
-  false,filename,compressed)
+  false,filename,compressed,false)
 end;
 
 function TCLXReport.PrintRange(frompage:integer;topage:integer;

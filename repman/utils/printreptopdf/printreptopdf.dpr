@@ -55,6 +55,7 @@ var
  topage:integer;
  copies,acopies:integer;
  compress:boolean;
+ collate:boolean;
 
 procedure PrintHelp;
 begin
@@ -66,6 +67,7 @@ begin
  Writeln(SRpPrintPDFRep6);
  Writeln(SRpPrintPDFRep7);
  Writeln(SRpPrintPDFRep8);
+ Writeln(SRpPrintRep8);
 end;
 
 begin
@@ -81,6 +83,7 @@ begin
    frompage:=1;
    acopies:=0;
    topage:=999999999;
+   collate:=false;
    indexparam:=1;
    filename:='';
    pdffilename:='';
@@ -123,6 +126,11 @@ begin
       compress:=false;
      end
      else
+     if ParamStr(indexparam)='-collate' then
+     begin
+      collate:=true;
+     end
+     else
      begin
       if length(filename)>0 then
       begin
@@ -156,7 +164,7 @@ begin
       copies:=acopies;
      PrintReportPDF(report,filename,showprogress,
        allpages,frompage,topage,copies,
-       PDFfilename,compress);
+       PDFfilename,compress,collate);
     finally
      report.free;
     end;
