@@ -131,7 +131,7 @@ IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
 MinorVer=6
-Release=1
+Release=4
 Build=0
 Debug=0
 PreRelease=0
@@ -143,13 +143,13 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Active X control
-FileVersion=1.6.1.0
+FileVersion=1.6.4.0
 InternalName=ReportManX
 LegalCopyright=MPL License
 LegalTrademarks=
 OriginalFilename=Reportman.ocx
 ProductName=Report Manager ActiveX
-ProductVersion=1.6.1.0
+ProductVersion=1.6.4.0
 Comments=
 OleSelfRegister=1
 [HistoryLists\hlUnitAliases]
