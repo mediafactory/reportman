@@ -35,6 +35,7 @@ const
      toInteger     =      Char(3);
      toFloat       =      Char(4);
      toOperator    =      Char(5);
+     toWString     =      Char(6);
      // Max number of parameters in a function
      Maxparams =  50;
 
@@ -307,6 +308,9 @@ end;
 
 // Math Functions
 function SumTRpValue(Value1,Value2:TRpValue):TRpValue;
+var
+ atype1,atype2:TVarType;
+
 begin
  if Value1=NULL then
  begin
@@ -318,7 +322,25 @@ begin
    Result:=Value1;
   end
   else
-   Result:=Value1+Value2;
+  begin
+   // Bugfix suming widestring+string
+   // The Result should be by default a widestring
+   // but it's a String
+   atype1:=VarType(Value1);
+   atype2:=VarType(Value2);
+   if atype1=atype2 then
+    Result:=Value1+Value2
+   else
+   begin
+    if atype1=varOleStr then
+     Result:=Value1+WideString(Value2)
+    else
+     if atype2=varOleStr then
+      Result:=WideString(Value1)+Value2
+     else
+      Result:=Value1+Value2
+   end;
+  end;
 end;
 
 function DifTRpValue(Value1,Value2:TRpValue):TRpValue;

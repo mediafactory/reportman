@@ -4,7 +4,7 @@
 {       Expression parser for TRpEvaluator              }
 {       Report Manager                                  }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -40,6 +40,8 @@ type
   FTokenPtr:PChar;
   // Pointer to the last string
   FStringPtr:PChar;
+  // WideString Value
+  FWideStr: WideString;
   // Vurrent Linenumber
   FSourceLine:Integer;
   // Token type
@@ -62,7 +64,8 @@ type
   // Token as a type
   function TokenFloat: Extended;
   function TokenInt: Longint;
-  function TokenString: Shortstring;
+  function TokenString: String;
+  function TokenWideString: WideString;
   // Compares the token with S
   function TokenSymbolIs(const S: string): Boolean;
   // Ask for the next token
@@ -98,6 +101,8 @@ begin
         Error(SRpIdentifierExpected);
       toString:
         Error(SRpstringExpected);
+      toWString:
+        Error(SRpstringExpected);
       toInteger, toFloat:
         Error(SRpNumberExpected);
       toOperator:
@@ -130,9 +135,10 @@ end;
 
 function TRpParser.NextToken: Char;
 var
-  I: Integer;
+  I,J: Integer;
   P, S: PChar;
   operador:char;
+  IsWideStr:Boolean;
   operadors:string;
 begin
   SkipBlanks;
@@ -179,6 +185,105 @@ begin
     // Strings and chars
     '#', '''':
       begin
+        IsWideStr := False;
+        J := 0;
+        S := P;
+        while True do
+          case P^ of
+            '#':
+              begin
+                Inc(P);
+                I := 0;
+                while P^ in ['0'..'9'] do
+                begin
+                  I := I * 10 + (Ord(P^) - Ord('0'));
+                  Inc(P);
+                end;
+                if (I > 127) then IsWideStr := True;
+                Inc(J);
+              end;
+            '''':
+              begin
+                Inc(P);
+                while True do
+                begin
+                  case P^ of
+                    #0, #10, #13:
+                      Error(SRpEvalSyntax);
+                    '''':
+                      begin
+                        Inc(P);
+                        if P^ <> '''' then Break;
+                      end;
+                  end;
+                  Inc(J);
+                  Inc(P);
+                end;
+              end;
+          else
+            Break;
+          end;
+        P := S;
+        if IsWideStr then
+         SetLength(FWideStr, J);
+        J := 1;
+        while True do
+          case P^ of
+            '#':
+              begin
+                Inc(P);
+                I := 0;
+                while P^ in ['0'..'9'] do
+                begin
+                  I := I * 10 + (Ord(P^) - Ord('0'));
+                  Inc(P);
+                end;
+                if IsWideStr then
+                begin
+                  FWideStr[J] := WideChar(SmallInt(I));
+                  Inc(J);
+                end else
+                begin
+                  S^ := Chr(I);
+                  Inc(S);
+                end;
+              end;
+            '''':
+              begin
+                Inc(P);
+                while True do
+                begin
+                  case P^ of
+                    #0, #10, #13:
+                      Error(SRpEvalSyntax);
+                    '''':
+                      begin
+                        Inc(P);
+                        if P^ <> '''' then Break;
+                      end;
+                  end;
+                  if IsWideStr then
+                  begin
+                    FWideStr[J] := WideChar(P^);
+                    Inc(J);
+                  end else
+                  begin
+                    S^ := P^;
+                    Inc(S);
+                  end;
+                  Inc(P);
+                end;
+              end;
+          else
+            Break;
+          end;
+        FStringPtr := S;
+        if IsWideStr then
+          Result := toWString
+        else
+          Result := toString;
+      end;
+{      begin
         S := P;
         while True do
           case P^ of
@@ -219,7 +324,7 @@ begin
         FStringPtr := S;
         Result := toString;
       end;
-    // Hex numbers
+}    // Hex numbers
     '$':
       begin
         Inc(P);
@@ -316,20 +421,38 @@ begin
   Result := StrToInt(TokenString);
 end;
 
-function TRpParser.TokenString: Shortstring;
+function TRpParser.TokenString: string;
 var
   L: Integer;
 begin
   if FToken = toString then
-    L := FStringPtr - FTokenPtr else
+    L := FStringPtr - FTokenPtr
+  else
     L := FSourcePtr - FTokenPtr;
-  if L > 255 then L := 255;
-  Result[0] := Char(L);
-  Move(FTokenPtr[0], Result[1], L);
-  // Brackets out
-  if Result[1]='[' then
+  SetString(Result, FTokenPtr, L);
+  if FToken = toSymbol then
   begin
-   Result:=Copy(Result,2,Byte(Result[0])-2);
+   // Brackets out
+   if Result[1]='[' then
+   begin
+    Result:=Copy(Result,2,Length(Result)-1);
+   end;
+  end;
+end;
+
+function TRpParser.TokenWideString: WideString;
+begin
+  if FToken = toString then
+    Result := TokenString
+  else
+    Result := FWideStr;
+  if FToken = toSymbol then
+  begin
+   // Brackets out
+   if Result[1]='[' then
+   begin
+    Result:=Copy(Result,2,Length(Result)-1);
+   end;
   end;
 end;
 

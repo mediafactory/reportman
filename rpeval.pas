@@ -4,7 +4,7 @@
 {       TRpCustomEvaluator: The Expression evaluator for}
 {       Report Manager                                  }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -339,7 +339,7 @@ procedure TRpCustomEvaluator.Evaluate;
 begin
  Rpparser.Expression:=Pchar(FExpression);
  FChecking:=False;
- if ((Rpparser.TokenString='') AND (Rpparser.Token<>tostring)) then
+ if ((Rpparser.TokenString='') AND (Not (Rpparser.Token in [toString,toWString]))) then
  begin
   FEvalResult:=True;
   Exit;
@@ -797,6 +797,11 @@ begin
   toString:
    begin
     Value:=Rpparser.TokenString;
+    Rpparser.NextToken;
+   end;
+  toWString:
+   begin
+    Value:=Rpparser.TokenWideString;
     Rpparser.NextToken;
    end;
   toInteger:
