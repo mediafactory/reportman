@@ -44,7 +44,8 @@ type
    procedure FillGroupValues;
   public
    // Creation and destruction
-   CurrentGroup:string;
+   CurrentGroupName:string;
+   CurrentGroupIndex:integer;
    LastRecord:boolean;
    constructor Create(AOWner:TComponent);override;
    destructor Destroy;override;
@@ -471,7 +472,8 @@ var
  sec:TRpSection;
  eval:TRpEvaluator;
 begin
- CurrentGroup:='';
+ CurrentGroupName:='';
+ CurrentGroupIndex:=0;
  i:=0;
  indexdetail:=GetFirstDetail;
  eval:=TRpReport(Owner).Evaluator;
@@ -528,6 +530,7 @@ begin
   inc(i);
   dec(acount);
  end;
+ CurrentGroupIndex:=Result;
 end;
 
 

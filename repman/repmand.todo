@@ -1,3 +1,6 @@
+{TODO 1 -oToni -cEngine : Add for drivers like pdf export, rtf export, hml export}
+{TODO 1 -oToni -cEngine : Allow Memos autoexpand across multiple pages}
+{TODO 1 -oToni -cEngine : Add a report server via sockets or the web, sending pdfs or html or jpgs.}
 {TODO 3 -oToni -cEngine : Implementation page repeat for groups}
 {TODO 1 -oToni -cEngine : Implementation of external sections}
 {TODO 1 -oToni -cDesign Interface : Add multilect option and show common properties in object inspector}

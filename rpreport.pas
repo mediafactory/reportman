@@ -129,6 +129,7 @@ type
    Fidenfreespace:TIdenReportVar;
    Fidenfreespacecms:TIdenReportVar;
    Fidenfreespaceinch:TIdenReportVar;
+   Fidencurrentgroup:TIdenReportVar;
    FCopies:integer;
    FCollateCopies:boolean;
    FTwoPass:boolean;
@@ -202,6 +203,7 @@ type
    property idenfreespace:TIdenReportVar read fidenfreespace;
    property idenfreespacecms:TIdenReportVar read fidenfreespacecms;
    property idenfreespaceinch:TIdenReportVar read fidenfreespaceinch;
+   property idencurrentgroup:TIdenReportVar read fidencurrentgroup;
   published
    // Grid options
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
@@ -261,8 +263,12 @@ begin
     Result:=twipstocms(freport.freespace)
    else
     if varname='FREESPACEINCH' then
-     Result:=twipstocms(freport.freespace);
-
+     Result:=twipstocms(freport.freespace)
+    else
+     if varname='CURRENTGROUP' then
+     begin
+      Result:=freport.Subreports.Items[freport.CurrentSubreportIndex].SubReport.CurrentGroupIndex;
+     end;
 end;
 
 // Constructors and destructors
@@ -313,6 +319,9 @@ begin
  FIdenfreespaceinch:=TIdenReportVar.Create(nil);
  Fidenfreespaceinch.varname:='FREESPACEINCH';
  Fidenfreespaceinch.FReport:=self;
+ FIdencurrentgroup:=TIdenReportVar.Create(nil);
+ Fidencurrentgroup.varname:='CURRENTGROUP';
+ Fidencurrentgroup.FReport:=self;
  // Metafile
  FMetafile:=TRpMetafileReport.Create(nil);
  FDataAlias:=TRpAlias.Create(nil);
@@ -371,6 +380,7 @@ begin
  FDataAlias.Free;
  FIdenPagenum.free;
  Fidenfreespace.free;
+ FIdenCurrentGroup.free;
  Fidenfreespacecms.free;
  Fidenfreespaceinch.free;
  FTotalPagesList.free;
@@ -892,8 +902,8 @@ begin
   begin
    if not grouprestore then
    begin
-    CurrentGroup:=subrep.GroupChanged;
-    if CurrentGroup>0 then
+    subrep.GroupChanged;
+    if subrep.CurrentGroupIndex>0 then
     begin
      Result:=true;
      data.DoPrior;
@@ -951,31 +961,31 @@ begin
   subrep:=Subreports.Items[CurrentSubReportIndex].SubReport;
   // The first section are the group footers until
   // CurrentGropup
-  while CurrentGroup<>0 do
+  while subrep.CurrentGroupIndex<>0 do
   begin
    lastdetail:=subrep.LastDetail;
    firstdetail:=subrep.FirstDetail;
    inc(CurrentSectionIndex);
-   if CurrentGroup>0 then
+   if subrep.CurrentGroupIndex>0 then
    begin
-    if CurrentGroup<(CurrentSectionIndex-lastdetail) then
+    if subrep.CurrentGroupIndex<(CurrentSectionIndex-lastdetail) then
     begin
      // Restore position
      // And the next will be group headers
      if subrep.LastRecord then
      begin
       CurrentSectionIndex:=subrep.Sections.Count;
-      CurrentGroup:=0;
+      subrep.CurrentGroupIndex:=0;
       break;
      end
      else
      begin
       // Send Messages for each group
-      subrep.InitGroups(CurrentGroup);
+      subrep.InitGroups(subrep.CurrentGroupIndex);
       // Restores position
       NextRecord(true);
-      CurrentSectionIndex:=subrep.FirstDetail-CurrentGroup;
-      CurrentGroup:=-CurrentGroup;
+      CurrentSectionIndex:=subrep.FirstDetail-subrep.CurrentGroupIndex;
+      subrep.CurrentGroupIndex:=-subrep.CurrentGroupIndex;
       sec:=Subrep.Sections[CurrentSectionIndex].Section;
       if Sec.EvaluatePrintCondition then
       begin
@@ -1011,7 +1021,7 @@ begin
     end
     else
     begin
-     CurrentGroup:=0;
+     subrep.CurrentGroupIndex:=0;
      CurrentSectionIndex:=-1;
     end;
    end;
@@ -1047,8 +1057,8 @@ begin
      end
      else
      begin
-      CurrentGroup:=subrep.GroupCount;
       CurrentSectionIndex:=subrep.LastDetail;
+      subrep.CurrentGroupIndex:=subrep.GroupCount;
       break;
      end;
     end
@@ -1067,7 +1077,7 @@ begin
     end;
    end;
   end;
-  if ((Not assigned(Section)) AND (CurrentGroup=0)) then
+  if ((Not assigned(Section)) AND (subrep.CurrentGroupIndex=0)) then
   begin
    inc(CurrentSubReportIndex);
    if CurrentSubReportIndex>=Subreports.count then
@@ -1078,7 +1088,7 @@ begin
    subrep.LastRecord:=false;
   end
   else
-   if CurrentGroup=0 then
+   if subrep.CurrentGroupIndex=0 then
      break;
  end;
  Result:=Assigned(Section);
@@ -1139,6 +1149,7 @@ begin
  // Insert page numeber
  FEvaluator.AddVariable('Page',fidenpagenum);
  FEvaluator.AddVariable('FREE_SPACE',fidenfreespace);
+ FEvaluator.AddVariable('CURRENTGROUP',fidencurrentgroup);
  FEvaluator.AddVariable('FREE_SPACE_CMS',fidenfreespacecms);
  FEvaluator.AddVariable('FREE_SPACE_INCH',fidenfreespaceinch);
  // Insert params into rpEvaluator
@@ -1176,10 +1187,10 @@ begin
  Subreports.Items[0].SubReport.SubReportChanged(rpDataChange);
 
  CurrentSectionIndex:=-1;
- CurrentGroup:=-SubReports.Items[0].Subreport.GroupCount;
- if CurrentGroup<0 then
+ Subreports.Items[0].SubReport.CurrentGroupIndex:=-SubReports.Items[0].Subreport.GroupCount;
+ if Subreports.Items[0].SubReport.CurrentGroupIndex<0 then
  begin
-  CurrentSectionIndex:=SubReports.Items[0].Subreport.FirstDetail+CurrentGroup-1;
+  CurrentSectionIndex:=SubReports.Items[0].Subreport.FirstDetail+Subreports.Items[0].SubReport.CurrentGroupIndex-1;
  end;
  section:=nil;
  subreport:=nil;
@@ -1258,6 +1269,7 @@ var
  pheadercount,pfootercount:integer;
  i:integer;
  psection:TRpSection;
+ afirstdetail:integer;
 begin
  if Headers then
  begin
@@ -1274,6 +1286,25 @@ begin
     PrintSection(false);
    end;
   end;
+  // Now prints repeated group headers
+  afirstdetail:=subreport.FirstDetail;
+  for i:=subreport.GroupCount downto 1 do
+  begin
+   psection:=subreport.Sections.Items[afirstdetail-i].Section;
+   if psection.PageRepeat then
+   begin
+    if Abs(subreport.CurrentGroupIndex)<i then
+    begin
+     if psection.EvaluatePrintCondition then
+     begin
+      asection:=psection;
+      CheckSpace;
+      PrintSection(false);
+     end;
+    end;
+   end;
+  end;
+
   pagefooterpos:=pageposy+freespace;
   // Reserve space for page footers
   // Print conditions for footers are evaluated at the begining of

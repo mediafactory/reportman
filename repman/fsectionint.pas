@@ -234,9 +234,12 @@ begin
   ltypes.Add(SRpSBool);
   lvalues.Add(BoolToStr(TRpSection(printitem).ChangeBool,true));
 
-//  lnames.Add(SRpSPageRepeat);
-//  ltypes.Add(SRpSBool);
-//  lvalues.Add(BoolToStr(TRpSection(printitem).PageRepeat,true));
+  if TrpSection(printitem).SectionType=rpsecgheader then
+  begin
+   lnames.Add(SRpSPageRepeat);
+   ltypes.Add(SRpSBool);
+   lvalues.Add(BoolToStr(TRpSection(printitem).PageRepeat,true));
+  end;
  end;
  if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter,rpsecdetail]) then
  begin

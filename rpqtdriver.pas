@@ -21,6 +21,8 @@ unit rpqtdriver;
 
 interface
 
+{$I rpconf.inc}
+
 uses
 {$IFDEF LINUX}
   Libc,
@@ -669,7 +671,7 @@ end;
 function PrintReport(report:TRpReport;Caption:string;progress:boolean;
   allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
 var
-{$IFDEF LINUX}
+{$IFNDEF NOLINUXPRINTBUG}
  abuffer:array [0..L_tmpnam] of char;
  theparams:array [0..20] of pchar;
  params:array[0..20] of string;
@@ -718,7 +720,7 @@ begin
  end;
  // A bug in Kylix 2 does not allow printing
  // when using dbexpress
-{$IFDEF MSWINDOWS}
+{$IFDEF NOLINUXPRINTBUG}
  if forcecalculation then
   PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate)
  else
@@ -753,8 +755,8 @@ begin
    report.PrintRange(aqtdriver,allpages,frompage,topage,copies);
   end;
  end;
-{$ENDIF}
-{$IFDEF LINUX}
+{$ELSE}
+ // When compiling metaview the bug can be skiped
  // Saves the metafile
  tmpnam(abuffer);
  afilename:=StrPas(abuffer);

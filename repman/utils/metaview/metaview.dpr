@@ -1,5 +1,7 @@
 program metaview;
 
+{%File '..\..\..\rpconf.inc'}
+
 uses
   QForms,
   fmetaview in 'fmetaview.pas' {FMeta},

@@ -164,7 +164,7 @@ begin
  try
   ConAdminObj.DriverConfig.ReadSections(alist);
   top:=CONTROL_DISTANCEY;
-  ConAdmin.GetConnectionParams(connectionname,params);
+          ConAdmin.GetConnectionParams(connectionname,params);
   for i:=0 to params.Count-1 do
   begin
    label1:=TLabel.Create(Self);
@@ -233,12 +233,22 @@ procedure TFDBXConfig.Edit1Change(Sender:TObject);
 var
  paramvalue:string;
  paramname:string;
+ index:integer;
 begin
  if Not Assigned(ConAdmin) then
   exit;
  paramname:=params.Names[TEdit(Sender).Tag];
- paramvalue:=TEdit(Sender).Text;
- params.Values[paramname]:=paramvalue;
+ paramvalue:=TEdit(Sender).Text; 
+ if Length(paramvalue)=0 then
+ begin
+  index:=params.IndexOfName(paramname);
+  if index>=0 then
+  begin
+   params.Strings[index]:=paramname+'=';
+  end;
+ end
+ else
+  params.Values[paramname]:=paramvalue;
  ConAdmin.ModifyConnection(connectionname,params);
 end;
 
