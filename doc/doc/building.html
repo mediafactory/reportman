@@ -12,31 +12,30 @@
   another version, you can change the version (rpmdconts.pas), this is because 
   obvious practical reasons.</p>
 <p><b>Required tools</b></p>
-<table width="90%" border="1">
+<table border="1">
   <tr> 
-    <td bgcolor="#FFFFCC" width="42%"><b>Windows</b></td>
-    <td bgcolor="#FFFFCC" width="58%"><b>Linux</b></td>
+    <td bgcolor="#FFFFCC"><b>Windows</b></td>
+    <td bgcolor="#FFFFCC"><b>Linux</b></td>
   </tr>
   <tr> 
-    <td width="50%"> 
+    <td> 
       <p><a href="http://www.borland.com/delphi" target="_blank">Delphi 6/7 Professional</a></p>
       <p>Enterprise version is required for translation manager features</p>
     </td>
-    <td width="58%"><a href="http://www.borland.com/kylix" target="_blank">Kylix 
-      2/3 Professional</a>, open edition is reported to compile also previous 
-      installation of the FreeCLX</td>
+    <td><a href="http://www.borland.com/kylix" target="_blank">Kylix 2/3 Professional</a>, 
+      open edition is reported to compile also previous installation of the FreeCLX</td>
   </tr>
   <tr> 
-    <td width="42%"><a href="http://www.innosetup.com" target="_blank">InnoSetup</a> 
+    <td><a href="http://www.innosetup.com" target="_blank">InnoSetup</a> 
       2.019 to build autoinstallable executable</td>
-    <td width="58%">GNU Makefile to build the distributable tar.gz package, this 
-      tool is usually provided by all linux distributions</td>
+    <td>GNU Makefile to build the distributable tar.gz package, this tool is usually 
+      provided by all linux distributions</td>
   </tr>
   <tr> 
-    <td width="42%"><a href="http://www.wincvs.org" target="_blank">CVS</a> to 
+    <td><a href="http://www.wincvs.org" target="_blank">CVS</a> to 
       obtain the source also SSH to contribute actively in the project.</td>
-    <td width="58%">CVS client and SSH client are provided in most linux distributions 
-      and is installed by default if developer workstation installation is selected 
+    <td>CVS client and SSH client are provided in most linux distributions and 
+      is installed by default if developer workstation installation is selected 
       (Red Hat,Suse,Mandrake...)</td>
   </tr>
 </table>
@@ -67,47 +66,47 @@
   apps, Pure VCL applications (marqued here as xp) looks like all other applications 
   specially in XP or .Net versions.</p>
 <p>You must open and compile the following project groups:</p>
-<table width="90%" border="1">
+<table border="1">
   <tr> 
-    <td bgcolor="#FFFFCC" width="42%"><b>Windows</b></td>
-    <td bgcolor="#FFFFCC" width="58%"><b>Linux</b></td>
+    <td bgcolor="#FFFFCC"><b>Windows</b></td>
+    <td bgcolor="#FFFFCC"><b>Linux</b></td>
   </tr>
   <tr> 
-    <td width="50%"> 
+    <td> 
       <p>repman\reportman.bpg</p>
     </td>
-    <td width="58%">repman\reportman.bpg</td>
+    <td>repman\reportman.bpg</td>
   </tr>
   <tr> 
-    <td width="42%">repman\reportmanxp.bpg</td>
-    <td width="58%">&nbsp;</td>
+    <td>repman\reportmanxp.bpg</td>
+    <td>&nbsp;</td>
   </tr>
 </table>
 <p><b>4.Build installation packages</b></p>
 <p>After executable applications are build, you can build the distributable packages 
   to easy install Report manager designer in other computers.</p>
-<table width="90%" border="1">
+<table border="1">
   <tr> 
-    <td bgcolor="#FFFFCC" width="42%"><b>Windows</b></td>
-    <td bgcolor="#FFFFCC" width="58%"><b>Linux</b></td>
+    <td bgcolor="#FFFFCC"><b>Windows</b></td>
+    <td bgcolor="#FFFFCC"><b>Linux</b></td>
   </tr>
   <tr> 
-    <td width="50%"> 
+    <td> 
       <p>Open install\reportman.iss with Innosetup if you want all the versions 
         (Qt and no Qt)</p>
     </td>
-    <td width="58%">
+    <td> 
       <p><code>cd tests\repmand</code></p>
       <p><code>make clean</code></p>
       <p><code>make</code></p>
       </td>
   </tr>
   <tr> 
-    <td width="42%">Open \install\reportman.iss with Innosetup if you want the 
+    <td>Open \install\reportman.iss with Innosetup if you want the 
       applications without qt dependences (the docs are also removed because are 
       internet enabled)</td>
-    <td width="58%">Note: Edit GNUmakefile in \tests\repmand and specify your 
-      path to Kylix installation</td>
+    <td>Note: Edit GNUmakefile in \tests\repmand and specify your path to Kylix 
+      installation</td>
   </tr>
 </table>
 <p>&nbsp;</p>

@@ -8,7 +8,7 @@
 <h2>Release Notes</h2>
 <h3>Known issues and workarounds</h3>
 <p></p>
-<table width="95%" border="1">
+<table border="1">
   <tr> 
     <td bgcolor="#00FFFF"><b>Report Manager do not start in some Linux distro</b></td>
   </tr>
@@ -34,7 +34,7 @@
       <p></p>
     </td>
   </tr>
-  <tr>
+  <tr> 
     <td bgcolor="#00FFFF"><b>Error can not load library libsqlxx.so.x connecting 
       to databases</b></td>
   </tr>
@@ -104,9 +104,9 @@
         PrinterSetup dialog before printing or use the GDI driver.</p>
     </td>
   </tr>
-  <tr> 
-    <td bgcolor="#00FFFF"><b>Printing does not work in Linux, the preview is ok 
-      but nothing is send to printer</b></td>
+  <tr bgcolor="#00FFFF"> 
+    <td><b>Printing does not work in Linux, the preview is ok but nothing is send 
+      to printer</b></td>
   </tr>
   <tr> 
     <td> 
@@ -144,6 +144,18 @@
       <p>Kylix 3 solves only the SIGSEV problem but not the silent problem (see 
         release notes of Kylix 3).</p>
     </td>
+  </tr>
+  <tr bgcolor="#00FFFF"> 
+    <td>Access violation passing runtime linked querys to the engine using Delphi 
+      7 </td>
+  </tr>
+  <tr>
+    <td>Delphi 7 introduces a bug when linking a query (datasource) that is linked 
+      to another query, (three linked querys), this situation usually raises an 
+      Access Violation in some memory address when the first dataset moves, the 
+      engine introduces the compiler define QUERYLINKBUG, this will disable all 
+      datasources in correct order, move main dataset and then reenable the datasources 
+      in correct order. Delphi 5 and 6 does not have this bug.</td>
   </tr>
 </table>
 <p>&nbsp;</p>

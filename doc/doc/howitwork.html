@@ -9,53 +9,46 @@
 <h3>Engine overview, how it works?</h3>
 <p>This is a brief introduction of how Report Manager process a report so you 
   can understand the result and design reports in a efficient way.</p>
-<table width="95%" border="1">
-  <tr bgcolor="#00FFFF"> 
-    <td><b>Report Components</b></td>
-  </tr>
-</table>
-<table width="95%" border="1">
+<p><b>Report Components</b></p>
+<table border="1">
   <tr> 
-    <td width="26%" bgcolor="#FFFFCC"><b>Name</b></td>
-    <td width="74%" bgcolor="#FFFFCC"><b>Description</b></td>
+    <td bgcolor="#FFFFCC"><b>Name</b></td>
+    <td bgcolor="#FFFFCC"><b>Description</b></td>
   </tr>
   <tr> 
-    <td width="26%"><b>Datasets</b></td>
-    <td width="74%">Datasets are <b>optional but a report usually prints data 
-      stored in datasets</b>, the datasets are opened at the beginning of the 
-      process, you can <b>open several datasets and establish relations between 
-      them</b></td>
+    <td><b>Datasets</b></td>
+    <td>Datasets are <b>optional but a report usually prints data stored in datasets</b>, 
+      the datasets are opened at the beginning of the process, you can <b>open 
+      several datasets and establish relations between them</b></td>
   </tr>
   <tr> 
-    <td width="26%"><b>Parameters</b></td>
-    <td width="74%">Parameters are variables that can be printed and can be entered 
-      by the end user, <b>you can assign parameters to datasets (parametrized 
-      querys)</b></td>
+    <td><b>Parameters</b></td>
+    <td>Parameters are variables that can be printed and can be entered by the 
+      end user, <b>you can assign parameters to datasets (parametrized querys)</b></td>
   </tr>
   <tr> 
-    <td width="26%"><b>Subreport</b></td>
-    <td width="74%">A Report contains <b>at least one subreport</b>, if it has 
-      more than one the engine will process them in natural order. You can <b>assign 
-      a dataset to a subreport</b>, if you assign a dataset the engine will print 
-      all the <b>detail type sections once for each record</b> in the dataset, 
-      else it will print detail sections once</td>
+    <td><b>Subreport</b></td>
+    <td>A Report contains <b>at least one subreport</b>, if it has more than one 
+      the engine will process them in natural order. You can <b>assign a dataset 
+      to a subreport</b>, if you assign a dataset the engine will print all the 
+      <b>detail type sections once for each record</b> in the dataset, else it 
+      will print detail sections once</td>
   </tr>
   <tr> 
-    <td width="26%"><b>Sections</b></td>
-    <td width="74%">A Subreport contains sections (<b>bands</b>), the most common 
-      section type is <b>detail</b>, but other are <b>page headers, page footers</b> 
-      and <b>group headers and footers</b>. The engine will print page headers 
-      and footers as necessary, it will check group changes, print group headers 
-      and footers and print the detail type sections for each record of the dataset 
+    <td><b>Sections</b></td>
+    <td>A Subreport contains sections (<b>bands</b>), the most common section 
+      type is <b>detail</b>, but other are <b>page headers, page footers</b> and 
+      <b>group headers and footers</b>. The engine will print page headers and 
+      footers as necessary, it will check group changes, print group headers and 
+      footers and print the detail type sections for each record of the dataset 
       assigned to the subreport. A section have useful properties like print condition, 
       align bottom, horizontal displacement etc...</td>
   </tr>
   <tr> 
-    <td width="26%"><b>Components</b></td>
-    <td width="74%">Each section can contain components, the components are the 
-      really printable items, they are <b>labels, expressions (dataset fields), 
-      images, drawings...</b>, this componets have properties like Font properties, 
-      color, print condition...</td>
+    <td><b>Components</b></td>
+    <td>Each section can contain components, the components are the really printable 
+      items, they are <b>labels, expressions (dataset fields), images, drawings...</b>, 
+      this componets have properties like Font properties, color, print condition...</td>
   </tr>
 </table>
 <p>The engine process subreports, using assigned datasets, printing sections (page 
