@@ -3,7 +3,8 @@ unit rpgraphutils;
 interface
 
 uses SysUtils, Classes, QGraphics, QForms,Types,
-  QButtons, QExtCtrls, QControls, QStdCtrls,rpmunits,Qt;
+  QButtons, QExtCtrls, QControls, QStdCtrls,rpmunits,Qt,
+  rpconsts;
 
 
 type
@@ -18,6 +19,9 @@ type
 procedure DrawGrid(Canvas:TCanvas;XWidth,XHeight,PixelsWidth,PixelsHeight:integer;Color:TColor;lines:boolean;XOffset,YOffset:integer);
 function twipstopixels(ATwips:integer):integer;
 function pixelstotwips(apixels:integer):integer;
+function FontStyleToInteger(fontstyle:TFontStyles):integer;
+function IntegerToFontStyle(intfontstyle:integer):TFontStyles;
+function IntegerFontStyleToString(intfontstyle:integer):String;
 
 implementation
 
@@ -123,6 +127,48 @@ end;
 function pixelstotwips(apixels:integer):integer;
 begin
  Result:=Round((APixels/Screen.PixelsPerInch)*TWIPS_PER_INCHESS);
+end;
+
+function FontStyleToInteger(fontstyle:TFontStyles):integer;
+begin
+ Result:=0;
+ if (fsBold in fontstyle) then
+  Result:=Result or 1;
+ if (fsItalic in fontstyle) then
+  Result:=Result or (1 shl 1);
+ if (fsUnderline in fontstyle) then
+  Result:=Result or (1 shl 2);
+ if (fsStrikeOut in fontstyle) then
+  Result:=Result or (1 shl 3);
+end;
+
+function IntegerToFontStyle(intfontstyle:integer):TFontStyles;
+begin
+ Result:=[];
+ if (intfontstyle and 1)>0 then
+  include(Result,fsBold);
+ if (intfontstyle and (1 shl 1))>0 then
+  include(Result,fsItalic);
+ if (intfontstyle and (1 shl 2))>0 then
+  include(Result,fsUnderline);
+ if (intfontstyle and (1 shl 3))>0 then
+  include(Result,fsStrikeOut);
+end;
+
+function IntegerFontStyleToString(intfontstyle:integer):String;
+begin
+ Result:='[';
+ if (intfontstyle and 1)>0 then
+  Result:=Result+SRpBold+',';
+ if (intfontstyle and (1 shl 1))>0 then
+  Result:=Result+SRpItalic+',';
+ if (intfontstyle and (1 shl 2))>0 then
+  Result:=Result+SRpUnderline+',';
+ if (intfontstyle and (1 shl 3))>0 then
+  Result:=Result+SRpStrikeOut+',';
+ if Length(Result)>1 then
+  Result:=Copy(REsult,1,Length(Result)-1);
+ Result:=Result+']';
 end;
 
 end.

@@ -28,6 +28,8 @@ resourcestring
   SRpSpanish='Spanish';
   SRpCatalan='Catalan';
 
+
+  SRpSampleTextToLabels='Text';
   SRpOnlyAReportOwner='Only a report can be the owner of :';
   SrpErrorProcesingFileMenu='Error procesing the File Menu for last saved files';
   SRpRepToTxt1='reptotxt v1.0';
@@ -291,6 +293,11 @@ resourcestring
   SRpParamName='Name';
   SRpParamNameExists='Param name already exists';
   SRpRenameParam='Rename param';
+  // Font propd
+  SRpBold='Bold';
+  SRpUnderline='Underline';
+  SRpItalic='Italic';
+  SRpStrikeOut='StrikeOut';
 
   // Component properties
   SRpSTop='Top';
@@ -299,6 +306,7 @@ resourcestring
   SRpSHeight='Height';
   SRpSCurrency='Currency';
   SRpSString='String';
+  SRpSColor='Color';
   SRpSInteger='Integer';
   SRpSFontName='Font Name';
   SrpSFontSize='Font Size';
@@ -308,6 +316,9 @@ resourcestring
   SrpSTransparent='Transparent';
   SRpSBool='Boolean';
   SrpSText='Text';
+
+  SRpBringToFront='To Front';
+  SRpSendToBack='To Back';
 
   SRpPropertyNotFound='Property not found: ';
   SRpPropertyHaveNoListValues='This property have not a list of values';

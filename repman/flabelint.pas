@@ -4,7 +4,8 @@ interface
 
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,types,
-  rpprintitem,rplabelitem,rpobinsint,rpconsts;
+  rpprintitem,rplabelitem,rpobinsint,rpconsts,
+  rpgraphutils;
 
 type
  TRpLabelInterface=class(TRpGenTextInterface)
@@ -15,7 +16,7 @@ type
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
    procedure SetProperty(pname:string;value:string);override;
-   procedure GetProperty(pname:string;var value:string);override;
+   function GetProperty(pname:string):string;override;
  end;
 
 
@@ -66,44 +67,40 @@ begin
  inherited SetProperty(pname,value);
 end;
 
-procedure TRpLabelInterface.GetProperty(pname:string;var value:string);
+function TRpLabelInterface.GetProperty(pname:string):string;
 begin
+ Result:='';
  if pname=SrpSText then
  begin
-  value:=TRpLabel(printitem).Text;
+  Result:=TRpLabel(printitem).Text;
   exit;
  end;
-
- inherited GetProperty(pname,value);
+ Result:=inherited GetProperty(pname);
 end;
 
 
 procedure TRpLabelInterface.Paint;
 var
  alabel:TRpLabel;
- rec:TRect;
 begin
  alabel:=TRpLabel(printitem);
- if (Not alabel.Transparent) then
- begin
-  Canvas.Brush.Color:=alabel.BackColor;
-  rec.Left:=0;rec.Top:=0;
-  rec.Bottom:=Height;rec.Right:=Width;
-  Canvas.FillRect(rec);
- end
+ Canvas.Pen.Color:=clBlack;
+ Canvas.Pen.Style:=psSolid;
+ if alabel.transparent then
+  Canvas.Brush.Style:=bsClear
  else
  begin
-  Canvas.Pen.Color:=clBlack;
-  Canvas.Pen.Style:=psSolid;
-  Canvas.Brush.Style:=bsClear;
-  Canvas.Rectangle(0,0,Width,Height);
+  Canvas.Brush.Style:=bsSolid;
+  Canvas.Brush.Color:=alabel.BackColor;
  end;
+ Canvas.Rectangle(0,0,Width,Height);
+
  // Draws the text
  Canvas.Font.Name:=alabel.FontName;
  Canvas.Font.Color:=alabel.FontColor;
  Canvas.Font.Size:=alabel.FontSize;
- // The Style must be converted from integer
-// Canvas.Font.Style:=RpFontStyleToQtFontStyle(alabel.FontStyle);
+ Canvas.Font.Style:=IntegerToFontStyle(alabel.FontStyle);
+
  Canvas.TextOut(0,0,alabel.Text);
 end;
 

@@ -217,16 +217,20 @@ begin
   alabel:=TRpLabel.Create(printitem.Owner);
   alabel.PosX:=pixelstotwips(X);
   alabel.PosY:=pixelstotwips(Y);
+  alabel.Text:=SRpSampleTextToLabels;
   GenerateNewName(alabel);
   aitem:=TRpSection(printitem).Components.Add;
   aitem.Component:=alabel;
   labelint:=TRpLabelInterface.Create(Self,alabel);
   labelint.Parent:=parent;
+  labelint.sectionint:=self;
   labelint.UpdatePos;
   labelint.fobjinsp:=fobjinsp;
+  TFObjInsp(fobjinsp).CompItem:=labelint;
 
   childlist.Add(labelint);
-  fmainf.BArrow.Down:=true;
+  if (Not (SSShift in Shift)) then
+   fmainf.BArrow.Down:=true;
  end;
 end;
 
@@ -247,6 +251,7 @@ begin
    labelint.Parent:=parent;
    labelint.UpdatePos;
    labelint.fobjinsp:=fobjinsp;
+   labelint.sectionint:=self;
    childlist.Add(labelint)
   end;
  end;

@@ -43,6 +43,7 @@ type
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    procedure FreeComponents;
+   procedure DeleteComponent(com:TRpCommonComponent);
    property SectionCaption:String read GetSectionCaption;
   published
    property GroupName:String read FGroupName write FGroupName;
@@ -116,6 +117,23 @@ begin
   FComponents.Items[i].Component.free;
  end;
  FComponents.Clear;
+end;
+
+procedure TRpSection.DeleteComponent(com:TRpCommonComponent);
+var
+ i:integer;
+begin
+ i:=0;
+ while i<Components.Count do
+ begin
+  if Components.Items[i].Component=Com then
+  begin
+   com.Free;
+   Components.Delete(i);
+   break;
+  end;
+  inc(i);
+ end;
 end;
 
 end.

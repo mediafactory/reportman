@@ -46,7 +46,7 @@ constructor TRpLabel.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
- Height:=225;
+ Height:=275;
  Width:=1440;
  FAllText:=TStringList.Create;
 end;

@@ -68,6 +68,7 @@ type
    procedure SetItem(index:integer;Value:TRpCommonListItem);
   public
    function Add:TRpCommonListItem;
+   function Insert(index:integer):TRpCommonListItem;
    function IndexOf(Value:TRpCommonComponent):integer;
    property Items[index:integer]:TRpCommonListItem read GetItem write SetItem;default;
    constructor Create(sec:TComponent);
@@ -145,6 +146,12 @@ function TRpCommonList.Add:TRpCommonListItem;
 begin
  Result:=TRpCommonListItem(inherited Add);
 end;
+
+function TRpCommonList.Insert(index:integer):TRpCommonListItem;
+begin
+ Result:=TRpCommonListItem(inherited Insert(index));
+end;
+
 
 function TRpCommonList.IndexOf(Value:TRpCommonComponent):integer;
 var

@@ -24,7 +24,7 @@ unit rpobinsint;
 interface
 
 uses Types,QGraphics,QForms,QControls,rpconsts,classes,sysutils,rpmunits,
-  rpprintitem,rpgraphutils;
+  rpprintitem,rpgraphutils,rpsection;
 
 const
  CONS_MODIWIDTH=5;
@@ -55,7 +55,7 @@ type
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);virtual;
    procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);virtual;
    procedure SetProperty(pname:string;value:string);virtual;
-   procedure GetProperty(pname:string;var value:string);virtual;
+   function GetProperty(pname:string):string;virtual;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);reintroduce;overload;virtual;
    property printitem:TRpCommonComponent read fprintitem;
    property Selected:Boolean read FSelected write SetSelected;
@@ -84,10 +84,11 @@ type
    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
    procedure Paint;override;
   public
+   SectionInt:TRpSizeInterface;
    procedure UpdatePos;override;
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
    procedure SetProperty(pname:string;value:string);override;
-   procedure GetProperty(pname:string;var value:string);override;
+   function GetProperty(pname:string):string;override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
  end;
 
@@ -99,7 +100,7 @@ type
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
    procedure SetProperty(pname:string;value:string);override;
-   procedure GetProperty(pname:string;var value:string);override;
+   function GetProperty(pname:string):string;override;
  end;
 
 
@@ -129,10 +130,10 @@ type
 
  TRpSizeModifier=class(TComponent)
   private
+   FOnSizeChange:TNotifyEvent;
    FAllowOverSize:boolean;
    FBlacks:array[0..3] of TRpBlackControl;
    FControl:TControl;
-   FOnSizeChange:TNotifyEvent;
    FOnlysize:boolean;
    procedure SetControl(Value:TControl);
    procedure SetOnlySize(Value:Boolean);
@@ -194,26 +195,29 @@ begin
  if pname=SRpSWidth then
  begin
   fprintitem.Width:=gettwipsfromtext(value);
+  UpdatePos;
   exit;
  end;
  if pname=SRpSHeight then
  begin
   fprintitem.Height:=gettwipsfromtext(value);
+  UpdatePos;
   exit;
  end;
  Raise Exception.Create(SRpPropertyNotFound+pname);
 end;
 
-procedure TRpSizeInterface.GetProperty(pname:string;var value:string);
+function TRpSizeInterface.GetProperty(pname:string):string;
 begin
+ Result:='';
  if pname=SRpSWidth then
  begin
-  value:=gettextfromtwips(printitem.Width);
+  Result:=gettextfromtwips(printitem.Width);
   exit;
  end;
  if pname=SRpSHeight then
  begin
-  value:=gettextfromtwips(printitem.Height);
+  Result:=gettextfromtwips(printitem.Height);
   exit;
  end;
  Raise Exception.Create(SRpPropertyNotFound+pname);
@@ -258,29 +262,32 @@ begin
  if pname=SRpSTop then
  begin
   TRpCommonPosComponent(fprintitem).PosY:=gettwipsfromtext(value);
+  UpdatePos;
   exit;
  end;
  if pname=SRpSLeft then
  begin
   TRpCommonPosComponent(fprintitem).PosX:=gettwipsfromtext(value);
+  UpdatePos;
   exit;
  end;
  inherited SetProperty(pname,value);
 end;
 
-procedure TRpSizePosInterface.GetProperty(pname:string;var value:string);
+function TRpSizePosInterface.GetProperty(pname:string):string;
 begin
+ Result:='';
  if pname=SRpSTop then
  begin
-  value:=gettextfromtwips(TRpCommonPosComponent(printitem).PosY);
+  Result:=gettextfromtwips(TRpCommonPosComponent(printitem).PosY);
   exit;
  end;
  if pname=SRpSLeft then
  begin
-  value:=gettextfromtwips(TRpCommonPosComponent(printitem).PosX);
+  Result:=gettextfromtwips(TRpCommonPosComponent(printitem).PosX);
   exit;
  end;
- inherited GetProperty(pname,value);
+ Result:=inherited GetProperty(pname);
 end;
 
 procedure TRpSizePosInterface.UpdatePos;
@@ -374,7 +381,13 @@ var
  i:integer;
 begin
  if Not Assigned(FCOntrol) then
+ begin
+  for i:=0 to 3 do
+  begin
+   FBlacks[i].Parent:=nil;
+  end;
   exit;
+ end;
  if Not Assigned(FCOntrol.Parent) then
   exit;
  for i:=0 to 3 do
@@ -783,22 +796,22 @@ begin
 
  // Font Size
  lnames.Add(SrpSFontSize);
- ltypes.Add(SRpSInteger);
+ ltypes.Add(SRpSFontSize);
  lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontSize));
 
  // Font Color
  lnames.Add(SrpSFontColor);
- ltypes.Add(SRpSInteger);
+ ltypes.Add(SRpSColor);
  lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontColor));
 
  // Font Style
  lnames.Add(SrpSFontStyle);
- ltypes.Add(SRpSInteger);
+ ltypes.Add(SrpSFontStyle);
  lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontStyle));
 
  // Back Color
  lnames.Add(SrpSBackColor);
- ltypes.Add(SRpSInteger);
+ ltypes.Add(SRpSColor);
  lvalues.Add(IntToStr(TRpGenTextComponent(printitem).BackColor));
 
  // Transparent
@@ -816,72 +829,79 @@ begin
  if pname=SRpSFontName then
  begin
   TRpGenTextComponent(fprintitem).FontName:=value;
+  Invalidate;
   exit;
  end;
  if pname=SRpSFontSize then
  begin
   TRpGenTextComponent(fprintitem).FontSize:=StrToInt(value);
+  Invalidate;
   exit;
  end;
  if pname=SRpSFontStyle then
  begin
   TRpGenTextComponent(fprintitem).FontStyle:=StrToInt(value);
+  Invalidate;
   exit;
  end;
  if pname=SRpSFontColor then
  begin
   TRpGenTextComponent(fprintitem).FontColor:=StrToInt(value);
+  Invalidate;
   exit;
  end;
  if pname=SRpSBackColor then
  begin
   TRpGenTextComponent(fprintitem).BackColor:=StrToInt(value);
+  Invalidate;
   exit;
  end;
  if pname=SRpSTransParent then
  begin
   TRpGenTextComponent(fprintitem).Transparent:=StrToBool(value);
+  Invalidate;
   exit;
  end;
 
  inherited SetProperty(pname,value);
 end;
 
-procedure TRpGenTextInterface.GetProperty(pname:string;var value:string);
+function TRpGenTextInterface.GetProperty(pname:string):string;
 begin
+ Result:='';
  if pname=SrpSFontName then
  begin
-  value:=TRpGenTextComponent(printitem).FontName;
+  Result:=TRpGenTextComponent(printitem).FontName;
   exit;
  end;
  if pname=SrpSFontSize then
  begin
-  value:=IntToStr(TRpGenTextComponent(printitem).FontSize);
+  Result:=IntToStr(TRpGenTextComponent(printitem).FontSize);
   exit;
  end;
  if pname=SrpSFontStyle then
  begin
-  value:=IntToStr(TRpGenTextComponent(printitem).FontStyle);
+  Result:=IntToStr(TRpGenTextComponent(printitem).FontStyle);
   exit;
  end;
  if pname=SrpSFontColor then
  begin
-  value:=IntToStr(TRpGenTextComponent(printitem).FontColor);
+  Result:=IntToStr(TRpGenTextComponent(printitem).FontColor);
   exit;
  end;
  if pname=SrpSBackColor then
  begin
-  value:=IntToStr(TRpGenTextComponent(printitem).BackColor);
+  Result:=IntToStr(TRpGenTextComponent(printitem).BackColor);
   exit;
  end;
  if pname=SrpSTransparent then
  begin
-  value:=BoolToStr(TRpGenTextComponent(printitem).Transparent,true);
+  Result:=BoolToStr(TRpGenTextComponent(printitem).Transparent,true);
   exit;
  end;
 
 
- inherited GetProperty(pname,value);
+ Result:=inherited GetProperty(pname);
 end;
 
 

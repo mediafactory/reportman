@@ -24,7 +24,8 @@ uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
   rpconsts,rptypes, QExtCtrls,frpstruc, rplastsav,rpsubreport,
-  rpobinsint,rpfparams,fdesign,rpobjinsp;
+  rpobinsint,rpfparams,fdesign,rpobjinsp,fsectionint,
+  rpsection,rpprintitem;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;
@@ -100,6 +101,15 @@ type
     AGridOptions: TAction;
     Grid1: TMenuItem;
     Splitter2: TSplitter;
+    MEdit: TMenuItem;
+    PrintPreview1: TMenuItem;
+    Print1: TMenuItem;
+    ACut: TAction;
+    ACopy: TAction;
+    APaste: TAction;
+    Cut1: TMenuItem;
+    Copy1: TMenuItem;
+    APaste1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -120,6 +130,7 @@ type
     procedure ADataConfigExecute(Sender: TObject);
     procedure AParamsExecute(Sender: TObject);
     procedure AGridOptionsExecute(Sender: TObject);
+    procedure ACutExecute(Sender: TObject);
   private
     { Private declarations }
     report:TRpReport;
@@ -288,6 +299,7 @@ begin
  ADataConfig.Enabled:=false;
  AGridOptions.Enabled:=false;
  MDisplay.Visible:=false;
+ MEdit.Visible:=false;
 
  // Palette
  BArrow.Enabled:=false;
@@ -335,6 +347,7 @@ begin
  ADataConfig.Enabled:=true;
  AGridOptions.Enabled:=true;
  MDisplay.Visible:=true;
+ MEdit.Visible:=true;
 
  // Palette
  BArrow.Enabled:=true;
@@ -611,6 +624,19 @@ procedure TFMainf.AGridOptionsExecute(Sender: TObject);
 begin
  ModifyGridProperties(report);
  fdesignframe.UpdateSelection(true);
+end;
+
+procedure TFMainf.ACutExecute(Sender: TObject);
+var
+ section:TRpSection;
+ pitem:TRpCommonComponent;
+begin
+ // Delete current selection
+ if Not Assigned(fobjinsp.CompItem) then
+  exit;
+ pitem:=TRpSizePosInterface(fobjinsp.CompItem).printitem;
+ section:=TRpSection(TRpSizePosInterface(fobjinsp.CompItem).SectionInt.printitem);
+ section.DeleteComponent(pitem);
 end;
 
 initialization

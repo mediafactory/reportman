@@ -22,30 +22,44 @@ interface
 
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  rpobinsint,QGrids,rpconsts,rpprintitem,QStdCtrls;
+  rpobinsint,QGrids,rpconsts,rpprintitem,QStdCtrls,
+  QExtCtrls,rpgraphutils,rpsection,rpmunits;
 
 const
   CONS_LEFTGAP=3;
   CONS_CONTROLPOS=65;
   CONS_LABELTOPGAP=2;
   CONS_RIGHTBARGAP=25;
-
+  CONS_BUTTONWIDTH=15;
 type
   TFObjInsp = class(TFrame)
+    ColorDialog1: TColorDialog;
+    FontDialog1: TFontDialog;
   private
     { Private declarations }
+    dontfreecombo:Boolean;
     FCompItem:TRpSizeInterface;
     FDesignFrame:TObject;
     LNames:TStringList;
     LTypes:TStringList;
     LValues:TStringList;
+    combo:TComboBox;
+    fchangesize:TRpSizeModifier;
     procedure SetCompItem(Value:TRpSizeInterface);
     procedure ReleaseAllControls;
     procedure EditChange(Sender:TObject);
+    procedure ChangeSizeChange(Sender:TObject);
+    procedure ComboObjectChange(Sender:TObject);
+    procedure SendToBackClick(Sender:TObject);
+    procedure BringToFrontClick(Sender:TObject);
+    procedure ShapeMouseUp(Sender: TObject; Button: TMouseButton;
+     Shift: TShiftState; X, Y: Integer);
+    procedure FontClick(Sender:TObject);
   public
     { Public declarations }
     LLabels:TList;
     LControls:TStringList;
+    LControlsToFree:TList;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
     property CompItem:TRpSizeInterface read FCompItem write SetCompItem;
@@ -58,7 +72,7 @@ implementation
 
 {$R *.xfm}
 
-uses fdesign;
+uses fdesign,fsectionint, fmain;
 
 procedure TFObjInsp.ReleaseAllControls;
 var
@@ -69,14 +83,27 @@ begin
   TObject(LLabels.items[i]).Free;
   LLabels.items[i]:=nil;
  end;
+ Combo:=nil;
  LLabels.Clear;
- for i:=0 to LControls.Count-1 do
+ for i:=0 to LControlsToFree.Count-1 do
  begin
-  TObject(LControls.Objects[i]).Free;
-  LControls.Objects[i]:=nil;
+  if dontfreecombo then
+  begin
+   if TComponent(LControlsToFree.Items[i]).Name='TopCombobox' then
+   begin
+    Combo:=TCombobox(LControlsToFree.Items[i]);
+   end
+   else
+    TObject(LControlsToFree.Items[i]).Free;
+  end
+  else
+   TObject(LControlsToFree.Items[i]).Free;
  end;
  LCOntrols.Clear;
-
+ LCOntrolsToFree.Clear;
+ if dontfreecombo then
+  if assigned(combo) then
+   LControlsToFree.Add(Combo);
 end;
 
 
@@ -87,37 +114,206 @@ var
  posy:integer;
  control:TControl;
  typename:string;
+ aheight:integer;
+ Control2:TControl;
+ alist:TStringList;
+ sectionint:TRpSectionInterface;
+ compo:TComponent;
+ dontrelease:boolean;
 begin
- ReleaseAllControls;
+ aheight:=0;
+ dontrelease:=false;
+ if Assigned(FCompItem) then
+  if Assigned(Value) then
+   if FCompItem.ClassName=Value.ClassName then
+    dontrelease:=true;
+ if not dontrelease then
+  ReleaseAllControls;
  FCompItem:=Value;
  if Not Assigned(Value) then
  begin
+  fchangesize.Control:=nil;
+  fmainf.ACut.Enabled:=false;
+  fmainf.ACopy.Enabled:=false;
+  fmainf.APaste.Enabled:=false;
   exit;
  end;
- HorzScrollBar.Position:=0;
- VertScrollBar.Position:=0;
+ if CompItem is TRpSizePosInterface then
+ begin
+  fchangesize.Control:=CompItem;
+  fmainf.ACut.Enabled:=true;
+  fmainf.ACopy.Enabled:=true;
+  fmainf.APaste.Enabled:=true;
+ end
+ else
+  fchangesize.Control:=nil;
+ if not dontrelease then
+ begin
+  HorzScrollBar.Position:=0;
+  VertScrollBar.Position:=0;
+ end;
  // Creates the labels and controls
- FCompItem.GetProperties(LNames,LTypes,LValues);
+
  posy:=0;
+
+ if ((not (dontfreecombo)) and (not dontrelease)) then
+ begin
+  // Fills the combox of components
+  alist:=TStringList.Create;
+  try
+   alist.sorted:=true;
+   if CompItem is TRpSectionInterface then
+   begin
+    sectionint:=TRpSectionInterface(CompItem);
+   end
+   else
+   begin
+    sectionint:=TRpSectionInterface(TRpSizePosInterface(Compitem).SectionInt);
+   end;
+   for i:=0 to sectionint.childlist.Count-1 do
+   begin
+    compo:=TRpSizeInterface(sectionint.childlist.Items[i]).printitem;
+    alist.AddObject(compo.Name+':'+Compo.className,sectionint.childlist.Items[i]);
+   end;
+   Combo:=TComboBox.Create(Self);
+   Combo.Width:=Width-CONS_RIGHTBARGAP;
+   Combo.Style:=csDropDownList;
+   Combo.Items.Assign(alist);
+   Combo.Name:='TopCombobox';
+   Combo.ItemIndex:=combo.Items.IndexOfObject(CompItem);
+   combo.OnChange:=ComboObjectChange;
+   Combo.Parent:=Self;
+   LControlsToFree.Add(Combo);
+   posy:=posy+Combo.height;
+  finally
+   alist.free;
+  end;
+ end
+ else
+  posy:=posy+Combo.Height;
+ FCompItem.GetProperties(LNames,LTypes,LValues);
  for i:=0 to LNames.Count-1 do
  begin
-  ALabel:=TLabel.Create(Self);
-  ALabel.Left:=CONS_LEFTGAP;
-  ALabel.Top:=posy+CONS_LABELTOPGAP;
-  ALabel.Caption:=LNames.Strings[i];
+  if not dontrelease then
+  begin
+   ALabel:=TLabel.Create(Self);
+   LLabels.Add(ALabel);
+   ALabel.Caption:=LNames.Strings[i];
+   ALabel.Left:=CONS_LEFTGAP;
+   ALabel.Top:=posy+CONS_LABELTOPGAP;
+   ALabel.parent:=self;
+  end;
   typename:=LTypes.Strings[i];
-  Control:=TEdit.Create(Self);
-  Control.Top:=Posy;
-  Control.Left:=CONS_CONTROLPOS;
-  Control.Width:=Self.Width-Control.Left-CONS_RIGHTBARGAP;
-  TEdit(Control).Text:=LValues.Strings[i];
-  TEdit(Control).OnChange:=EditChange;
-  control.parent:=self;
-  ALabel.parent:=self;
+  if LTypes.Strings[i]=SRpSBool then
+  begin
+   if dontrelease then
+    Control:=TControl(LControls.Objects[i])
+   else
+    Control:=TComboBox.Create(Self);
+   TComboBox(Control).Items.Add(FalseBoolStrs[0]);
+   TComboBox(Control).Items.Add(TrueBoolStrs[0]);
+   TComboBox(Control).Style:=csDropDownList;
+   TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(LValues.Strings[i]);
+   TCOmboBox(Control).OnChange:=EditChange;
+  end
+  else
+  if LTypes.Strings[i]=SRpSColor then
+  begin
+   if dontrelease then
+    Control:=TControl(LControls.Objects[i])
+   else
+    Control:=TShape.Create(Self);
+   Control.Height:=aheight;
+   TShape(Control).Shape:=stRectangle;
+   TShape(Control).Brush.Color:=StrToInt(LValues.Strings[i]);
+   TShape(Control).OnMouseUp:=ShapeMouseUp;
+  end
+  else
+  if LTypes.Strings[i]=SRpSFontStyle then
+  begin
+   if dontrelease then
+    Control:=TControl(LControls.Objects[i])
+   else
+    Control:=TEdit.Create(Self);
+   TEdit(Control).Text:=IntegerFontStyleToString(StrToInt(LValues.Strings[i]));
+   TEdit(Control).ReadOnly:=True;
+   TEdit(Control).Color:=clInfoBk;
+   TEdit(Control).OnClick:=FontClick;
+  end
+  else
+  begin
+   if dontrelease then
+    Control:=TControl(LControls.Objects[i])
+   else
+    Control:=TEdit.Create(Self);
+   TEdit(Control).Text:=LValues.Strings[i];
+   TEdit(Control).OnChange:=EditChange;
+  end;
+  if LNames.Strings[i]=SRpSFontName then
+  begin
+   TEdit(Control).OnDblClick:=FontClick;
+  end;
+  if not dontrelease then
+  begin
+   Control.Top:=Posy;
+   Control.Left:=CONS_CONTROLPOS;
+   Control.Width:=Self.Width-Control.Left-CONS_RIGHTBARGAP;
+   control.parent:=self;
+  end;
+  if aheight=0 then
+   aheight:=Control.Height;
   Control.tag:=i;
-  LLabels.Add(ALabel);
-  LControls.AddObject(LNames.Strings[i],Control);
+  if not dontrelease then
+  begin
+   LControls.AddObject(LNames.Strings[i],Control);
+   LControlsToFree.Add(Control);
+  end;
+  // Font button
+  if not dontrelease then
+  begin
+   if LTypes.Strings[i]=SRpSFontSize then
+   begin
+    Control2:=TButton.Create(Self);
+    Control2.Width:=CONS_BUTTONWIDTH;
+    Control2.Top:=Control.Top;
+    Control2.Left:=Control.Left+Control.Width-CONS_BUTTONWIDTH;
+    Control2.Height:=COntrol.Height;
+    Control2.Tag:=i;
+    TButton(Control2).OnClick:=FontClick;
+    TButton(Control2).Caption:='...';
+    Control2.Parent:=Self;
+    LControlsToFree.Add(Control2);
+   end;
+  end;
+
   posy:=posy+control.height;
+ end;
+ // Send to back and bring to front buttons
+ if not dontrelease then
+ begin
+  if (CompItem is TRpSizePosInterface) then
+  begin
+   Control:=TButton.Create(Self);
+   Control.Left:=0;
+   Control.Top:=posy;
+   Control.Height:=aheight;
+   Control.Width:=(Width-CONS_RIGHTBARGAP) div 2;
+   TBUtton(Control).Caption:=SRpSendToBack;
+   TButton(Control).OnClick:=SendToBackClick;
+   Control.parent:=Self;
+   LControlsToFree.Add(Control);
+
+   Control2:=TButton.Create(Self);
+   Control2.Left:=Control.Width;
+   Control2.Top:=posy;
+   Control2.Height:=aheight;
+   Control2.Width:=(Width-CONS_RIGHTBARGAP) div 2;
+   Control2.parent:=Self;
+   TButton(Control2).OnClick:=BringToFrontClick;
+   TBUtton(Control2).Caption:=SRpBringToFront;
+   LControlsToFree.Add(Control2);
+ //  posy:=posy+control.height;
+  end;
  end;
 end;
 
@@ -125,13 +321,19 @@ constructor TFObjInsp.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ fchangesize:=TRpSizeModifier.Create(Self);
+ fchangesize.OnSizeChange:=changesizechange;
+
  LNames:=TStringList.Create;
  LValues:=TStringList.Create;
  LTypes:=TStringList.Create;
 
  LLabels:=TList.Create;
  LControls:=TStringList.Create;
+ LCOntrolsToFree:=TList.Create;
+{$IFDEF LINUX}
  Font.Size:=10;
+{$ENDIF}
 end;
 
 destructor TFObjInsp.Destroy;
@@ -141,6 +343,7 @@ begin
  LTypes.free;
  LLabels.free;
  LControls.free;
+ LControlsToFree.Free;
  inherited Destroy;
 end;
 
@@ -152,6 +355,152 @@ begin
  FCompItem.SetProperty(Lnames.strings[index],TEdit(Sender).Text);
  if Assigned(FDesignFrame) then
   TFDesignFrame(FDesignFrame).UpdateInterface;
+end;
+
+procedure TFObjInsp.ShapeMouseUp(Sender: TObject; Button: TMouseButton;
+     Shift: TShiftState; X, Y: Integer);
+var
+ AShape:TShape;
+begin
+ AShape:=TShape(Sender);
+ ColorDialog1.COlor:=StrToInt(LValues.Strings[AShape.Tag]);
+ if ColorDialog1.Execute then
+ begin
+  AShape.Brush.Color:=ColorDialog1.Color;
+  FCompItem.SetProperty(Lnames.strings[AShape.Tag],IntToStr(ColorDialog1.Color));
+ end;
+end;
+
+procedure TFObjInsp.FontClick(Sender:TObject);
+var
+ index:integer;
+begin
+ FontDialog1.Font.Name:= CompItem.GetProperty(SRpSFontName);
+ FontDialog1.Font.Size:= StrToInt(CompItem.GetProperty(SRpSFontSize));
+ FontDialog1.Font.Color:= StrToInt(CompItem.GetProperty(SRpSFontColor));
+ FontDialog1.Font.Style:=IntegerToFontStyle(StrToInt(CompItem.GetProperty(SrpSFontStyle)));
+ if FontDialog1.Execute then
+ begin
+  index:=LNames.IndexOf(SrpSFontName);
+  if index>=0 then
+  begin
+   TEdit(LControls.Objects[index]).Text:=FontDialog1.Font.Name;
+  end;
+  index:=LNames.IndexOf(SrpSFontSize);
+  if index>=0 then
+  begin
+   TEdit(LControls.Objects[index]).Text:=IntToStr(FontDialog1.Font.Size);
+  end;
+  index:=LNames.IndexOf(SrpSFontColor);
+  if index>=0 then
+  begin
+   TShape(LControls.Objects[index]).Brush.Color:=FontDialog1.Font.Color;
+   CompItem.SetProperty(SRpSFontColor,IntToStr(FontDialog1.Font.Color));
+  end;
+  index:=LNames.IndexOf(SrpSFontStyle);
+  if index>=0 then
+  begin
+   TEdit(LControls.Objects[index]).Text:=IntegerFontStyleToString(FontStyleToInteger(Fontdialog1.Font.Style));
+   CompItem.SetProperty(SRpSFontStyle,IntToStr(FontStyleToInteger(Fontdialog1.Font.Style)));
+  end;
+ end;
+end;
+
+procedure TFObjInsp.ComboObjectChange(Sender:TObject);
+begin
+ dontfreecombo:=true;
+ try
+  CompItem:=TRpSizeInterface(TComboBox(Sender).Items.Objects[TComboBox(Sender).ItemIndex]);
+ finally
+  dontfreecombo:=false;
+ end;
+end;
+
+procedure TFObjInsp.ChangeSizeChange(Sender:TObject);
+var
+ index:integer;
+ sizeposint:TRpSizePosInterface;
+ NewLeft,NewTop,NewWidth,NewHeight:integer;
+begin
+ // Read bounds Values and assign
+ if Not Assigned(fchangesize.Control) then
+  exit;
+ sizeposint:=TRpSizePosInterface(fchangesize.control);
+ NewLeft:=sizeposint.Left;
+ NewTop:=sizeposint.Top;
+ NewWidth:=sizeposint.Width;
+ NewHeight:=sizeposint.Height;
+ index:=LNames.IndexOf(SRpSLeft);
+ if index>=0 then
+ begin
+  sizeposint.SetProperty(SRpSLeft,gettextfromtwips(pixelstotwips(NewLeft)));
+ end;
+ index:=LNames.IndexOf(SRpSTop);
+ if index>=0 then
+ begin
+  sizeposint.SetProperty(SRpSTop,gettextfromtwips(pixelstotwips(NewTop)));
+ end;
+ index:=LNames.IndexOf(SRpSWidth);
+ if index>=0 then
+ begin
+  sizeposint.SetProperty(SRpSWidth,gettextfromtwips(pixelstotwips(NewWidth)));
+ end;
+ index:=LNames.IndexOf(SRpSHeight);
+ if index>=0 then
+ begin
+  sizeposint.SetProperty(SRpSHeight,gettextfromtwips(pixelstotwips(NewHeight)));
+ end;
+end;
+
+procedure TFObjInsp.SendToBackClick(Sender:TObject);
+var
+ section:TRpSection;
+ item:TRpCommonListItem;
+ pitem:TRpCommonComponent;
+ index:integer;
+begin
+ CompItem.SendToBack;
+ TRpSizePosInterface(CompItem).SectionInt.SendToBack;
+ pitem:=CompItem.printitem;
+ section:=TRpSection(TRpSizePosInterface(CompItem).SectionInt.printitem);
+ index:=0;
+ while index<section.Components.Count do
+ begin
+  if (section.Components.Items[index].Component=pitem) then
+   break;
+  inc(index);
+ end;
+ if index>=section.Components.Count then
+  exit;
+ section.Components.Delete(index);
+ item:=section.Components.Insert(0);
+ item.Component:=pitem;
+end;
+
+procedure TFObjInsp.BringToFrontClick(Sender:TObject);
+var
+ section:TRpSection;
+ item:TRpCommonListItem;
+ pitem:TRpCommonComponent;
+ index:integer;
+begin
+ CompItem.BringToFront;
+ fchangesize.UpdatePos;
+
+ pitem:=CompItem.printitem;
+ section:=TRpSection(TRpSizePosInterface(CompItem).SectionInt.printitem);
+ index:=0;
+ while index<section.Components.Count do
+ begin
+  if (section.Components.Items[index].Component=pitem) then
+   break;
+  inc(index);
+ end;
+ if index>=section.Components.Count then
+  exit;
+ section.Components.Delete(index);
+ item:=section.Components.Add;
+ item.Component:=pitem;
 end;
 
 end.
