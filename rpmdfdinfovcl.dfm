@@ -8,14 +8,13 @@ object FRpDInfoVCL: TFRpDInfoVCL
   ParentFont = True
   OldCreateOrder = True
   Position = poScreenCenter
-  Scaled = True
   ShowHint = True
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object PBottom: TPanel
     Left = 0
-    Top = 356
+    Top = 349
     Width = 557
     Height = 39
     Align = alBottom
@@ -43,7 +42,7 @@ object FRpDInfoVCL: TFRpDInfoVCL
     Left = 0
     Top = 0
     Width = 557
-    Height = 356
+    Height = 349
     ActivePage = TabConnections
     Align = alClient
     TabOrder = 1

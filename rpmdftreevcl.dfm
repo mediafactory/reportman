@@ -2,7 +2,7 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
   Left = 0
   Top = 0
   Width = 443
-  Height = 270
+  Height = 277
   VertScrollBar.Range = 30
   Align = alClient
   AutoScroll = False
@@ -110,7 +110,7 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
     Left = 0
     Top = 76
     Width = 443
-    Height = 194
+    Height = 201
     Align = alClient
     HideSelection = False
     Images = imalist
