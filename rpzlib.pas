@@ -3,6 +3,7 @@
 {       Interface to zlib libraries                     }
 {                                                       }
 {                                                       }
+{*******************************************************}
 
 unit rpzlib;
 

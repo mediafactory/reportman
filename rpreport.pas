@@ -29,7 +29,7 @@ interface
 
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpconsts,
  rpdatainfo,rpparams,rplabelitem,rpdrawitem,rpeval,
- rpmetafile,types,rpalias,db,
+ rpmetafile,types,rpalias,db,dateutils,rpzlib,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
@@ -319,8 +319,15 @@ end;
 
 
 procedure TRpReport.SaveToStream(Stream:TStream);
+var
+ zstream:TCompressionStream;
 begin
- Stream.WriteComponent(Self);
+ zstream:=TCompressionStream.Create(clDefault,Stream);
+ try
+   zstream.WriteComponent(Self);
+ finally
+  zstream.free;
+ end;
 end;
 
 procedure TRpReport.FreeSubreports;
