@@ -112,6 +112,16 @@ resourcestring
   SRpPrintRep7='         -copies n Prints pnum copies';
   SRpPrintRep8='         -collate  Collate the copies';
 
+
+  SRpPrintPDFRep1='printreptopdf v1.0';
+  SRpPrintPDFRep2='Prints a report manager (.rep) file to a Adobe PDF file';
+  SRpPrintPDFRep3='Usage: printrep [Options] reportfilename pdffilename';
+  SRpPrintPDFRep4='         -q        Quiet mode, don''t show progress';
+  SRpPrintPDFRep5='         -from   n Prints report from page pnum';
+  SRpPrintPDFRep6='         -to     n Prints report to page pnum';
+  SRpPrintPDFRep7='         -copies n Prints pnum copies';
+  SRpPrintPDFRep8='         -u        Generate not compressed pdf';
+
   SrpSubReport='SubReport';
   SRpRepman='Report manager designer';
   SRpError='Error';

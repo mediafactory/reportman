@@ -4,6 +4,7 @@ package rppack;
 {$R 'rpeval.dcr'}
 {$R 'rpalias.dcr'}
 {$R 'rplastsav.dcr'}
+{$R 'rppdfreport.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -30,7 +31,8 @@ package rppack;
 
 requires
   baseclx,
-  dataclx;
+  dataclx,
+  ibxpress;
 
 contains
   rptypeval in 'rptypeval.pas',
@@ -66,7 +68,11 @@ contains
   rpsecutil in 'rpsecutil.pas',
   rpsubreport in 'rpsubreport.pas',
   rpwriter in 'rpwriter.pas',
-  rpdataset in 'rpdataset.pas';
+  rpdataset in 'rpdataset.pas',
+  rppdfdriver in 'rppdfdriver.pas',
+  rppdffile in 'rppdffile.pas',
+  rppdfreport in 'rppdfreport.pas',
+  rpcompobase in 'rpcompobase.pas';
 
 {%File 'zconf.inc'}
 

@@ -44,6 +44,7 @@ contains
   rppreview in 'rppreview.pas' {FRpPreview},
   rpgraphutils in 'rpgraphutils.pas' {FRpGraphProgres},
   rpqtdriver in 'rpqtdriver.pas' {FRpQtProgress},
-  rpprintdia in 'rpprintdia.pas' {FRpPrintDialog};
+  rpprintdia in 'rpprintdia.pas' {FRpPrintDialog},
+  rprfparams in 'rprfparams.pas' {FRpRunTimeParams};
 
 end.

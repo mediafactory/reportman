@@ -24,7 +24,7 @@ interface
 {$I rpconf.inc}
 
 uses Classes,Sysutils,
-{$IFDEF VARIANTS}
+{$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
 {$IFDEF MSWINDOWS}
@@ -188,7 +188,7 @@ var
  rec:TRect;
  aalign:integer;
  stream:TStream;
- bitmap:TBitmap;
+// bitmap:TBitmap;
 begin
  posx:=obj.Left;
  posy:=obj.Top;

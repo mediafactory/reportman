@@ -2,9 +2,9 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       printrep                                        }
+{       printreptopdf                                   }
 {                                                       }
-{       Process and Prints a report                     }
+{       Preoces and exports to pdf a report             }
 {       you can select the pages to print               }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
@@ -17,7 +17,7 @@
 {                                                       }
 {*******************************************************}
 
-program printrep;
+program printreptopdf;
 
 {$APPTYPE CONSOLE}
 
@@ -30,7 +30,7 @@ uses
   rpsubreport in '..\..\..\rpsubreport.pas',
   rpsection in '..\..\..\rpsection.pas',
   rpsecutil in '..\..\..\rpsecutil.pas',
-  rpqtdriver in '..\..\..\rpqtdriver.pas';
+  rppdfdriver in '..\..\..\rppdfdriver.pas';
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -40,7 +40,7 @@ uses
   rpsubreport in '../../../rpsubreport.pas',
   rpsection in '../../../rpsection.pas',
   rpsecutil in '../../../rpsecutil.pas',
-  rpqtdriver in '../../../rpqtdriver.pas';
+  rppdfdriver in '../../../rppdfdriver.pas';
 {$ENDIF}
 
 var
@@ -48,22 +48,23 @@ var
  indexparam:integer;
  showprogress:boolean;
  filename:string;
+ pdffilename:string;
  allpages:boolean;
  frompage:integer;
  topage:integer;
  copies,acopies:integer;
- collate:boolean;
+ compress:boolean;
 
 procedure PrintHelp;
 begin
- Writeln(SRpPrintRep1);
- Writeln(SRpPrintRep2);
- Writeln(SRpPrintRep3);
- Writeln(SRpPrintRep4);
- Writeln(SRpPrintRep5);
- Writeln(SRpPrintRep6);
- Writeln(SRpPrintRep7);
- Writeln(SRpPrintRep8);
+ Writeln(SRpPrintPDFRep1);
+ Writeln(SRpPrintPDFRep2);
+ Writeln(SRpPrintPDFRep3);
+ Writeln(SRpPrintPDFRep4);
+ Writeln(SRpPrintPDFRep5);
+ Writeln(SRpPrintPDFRep6);
+ Writeln(SRpPrintPDFRep7);
+ Writeln(SRpPrintPDFRep8);
 end;
 
 begin
@@ -74,13 +75,14 @@ begin
    else
    begin
    showprogress:=true;
-   collate:=false;
+   compress:=true;
    allpages:=true;
    frompage:=1;
    acopies:=0;
    topage:=999999999;
    indexparam:=1;
    filename:='';
+   pdffilename:='';
    // Get the options
    while indexparam<ParamCount+1 do
    begin
@@ -115,15 +117,22 @@ begin
        acopies:=1;
      end
      else
-     if ParamStr(indexparam)='-collate' then
+     if ParamStr(indexparam)='-u' then
      begin
-      collate:=true;
+      compress:=false;
      end
      else
      begin
-      filename:=ParamStr(indexparam);
-      inc(indexparam);
-      break;
+      if length(filename)>0 then
+      begin
+       pdffilename:=ParamStr(indexparam);
+       inc(indexparam);
+       break;
+      end
+      else
+      begin
+       filename:=ParamStr(indexparam);
+      end;
      end;
     inc(indexparam);
    end;
@@ -131,7 +140,7 @@ begin
    begin
     Raise Exception.Create(SRpTooManyParams)
    end;
-   if Length(filename)<1 then
+   if ((Length(filename)<1) or (Length(pdffilename)<1)) then
    begin
     PrintHelp;
    end
@@ -144,8 +153,9 @@ begin
       copies:=report.Copies
      else
       copies:=acopies;
-     PrintReport(report,filename,showprogress,allpages,
-      frompage,topage,copies,collate);
+     PrintReportPDF(report,filename,showprogress,
+       allpages,frompage,topage,copies,
+       PDFfilename,compress);
     finally
      report.free;
     end;

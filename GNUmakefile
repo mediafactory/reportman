@@ -29,9 +29,14 @@ clean:
 	-rm -Rf repman/utils/metaview/*.~*
 	-rm -Rf repman/utils/reptotxt/*.dcu
 	-rm -Rf repman/utils/reptotxt/*.dpu
+	-rm -Rf repman/utils/txttorep/*.~*
+	-rm -Rf repman/utils/txttorep/*.dpu
+	-rm -Rf repman/utils/txttorep/*.dcu
 	-rm -Rf repman/utils/reptotxt/*.~*
 	-rm -Rf repman/utils/printrep/*.~*
+	-rm -Rf repman/utils/printreptopdf/*.~*
 	-rm -Rf repman/utils/printrep/*.dcu
+	-rm -Rf repman/utils/printreptopdf/*.dcu
 	-rm -Rf repman/meta.rpmf
 
 
@@ -44,6 +49,7 @@ clean:
 	-rm repman/utils/reptotxt/reptotxt
 	-rm repman/utils/txttorep/txttorep
 	-rm repman/utils/printrep/printrep
+	-rm repman/utils/printreptopdf/printreptopdf
 	-rm repman/utils/metaprint/metaprint
 	-rm repman/utils/metaview/metaview
 	-rm tests/repmand/*.so tests/repmand/*.so.1 tests/repmand/*.so.2
@@ -52,6 +58,7 @@ clean:
 	-rm tests/repmand/dbxconnections
 	-rm tests/repmand/metaview
 	-rm tests/repmand/metaprint
+	-rm repman/repmand
 	-rm tests/repmand/printrep
 	-rm tests/repmand/Project1
 	-rm tests/repmand/sample4.rep
@@ -66,6 +73,9 @@ clean:
 	-rm tests/clxreport/*.dcu
 	-rm tests/clxreport/*.~*
 	-rm tests/clxreport/Project2
+	-rm tests/pdf/pdftest
+	-rm tests/pdf/*.dcu
+	-rm tests/pdf/*.~*
 real_clean: clean
 	-rm -Rf  *.bpl
 	-rm -Rf  *.so
