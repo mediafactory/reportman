@@ -21,10 +21,9 @@ object TRpReport
       Alias = 'ORDERS'
       DatabaseAlias = 'REPSAMPLES'
       SQL = 
-        'SELECT ITEMS.*,ORDERS.* FROM ORDERS '#13#10'LEFT OUTER JOIN ITEMS'#13#10'ON ' +
-        'ITEMS.OrderNo=ORDERS.OrderNo'#13#10'WHERE ORDERS.ORDERNO BETWEEN :firs' +
-        'torder AND :lastorder'#13#10'ORDER BY ORDERS.CustNo,ORDERS.OrderNo,Par' +
-        'tNo '
+        'SELECT ITEMS.*,ORDERS.* FROM ORDERS '#10'LEFT OUTER JOIN ITEMS'#10'ON IT' +
+        'EMS.OrderNo=ORDERS.OrderNo'#10'WHERE ORDERS.ORDERNO BETWEEN :firstor' +
+        'der AND :lastorder'#10'ORDER BY ORDERS.CustNo,ORDERS.OrderNo,PartNo '
       BDEIndexFields = 'CustNo'
       BDETable = 'orders'
     end
@@ -54,7 +53,7 @@ object TRpReport
       LoadParams = True
       LoadDriverParams = True
       LoginPrompt = False
-      Driver = rpdatabde
+      Driver = rpdataibx
       ReportTable = 'REPMAN_REPORTS'
       ReportSearchField = 'REPORT_NAME'
       ReportField = 'REPORT'
@@ -73,6 +72,7 @@ object TRpReport
         'True'
         'False')
       Description = 'Show order detail'
+      Hint = ''
       Search = ''
     end
     item
@@ -82,15 +82,17 @@ object TRpReport
       Datasets.Strings = (
         'ORDERS')
       Description = 'From Order'
+      Hint = ''
       Search = ''
     end
     item
       Name = 'LASTORDER'
-      Value = 1010
+      Value = 9000
       ParamType = rpParamInteger
       Datasets.Strings = (
         'ORDERS')
       Description = 'To Order'
+      Hint = ''
       Search = ''
     end>
   Language = 1
@@ -156,6 +158,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = 'DETAIL'
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -165,6 +168,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpSection1: TRpSection
     Width = 10900
@@ -189,6 +194,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ' '
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -198,6 +204,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpSection2: TRpSection
     Width = 10900
@@ -228,6 +236,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -237,6 +246,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpSection3: TRpSection
     Width = 10900
@@ -281,6 +292,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = 'DETAIL'
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -294,6 +306,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpSection4: TRpSection
     Width = 10900
@@ -315,6 +329,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = 'DETAIL'
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -328,6 +343,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpLabel0: TRpLabel
     Width = 2415
@@ -366,6 +383,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -375,6 +393,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpLabel1: TRpLabel
     Width = 10890
@@ -401,6 +421,9 @@ object TRpReport
     FontStyle = 1
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -408,6 +431,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'CUSTOMERS.Company'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpLabel5: TRpLabel
     Width = 2880
@@ -506,6 +530,9 @@ object TRpReport
     FontSize = 8
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -513,6 +540,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'ORDERS.PartNo'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpExpression7: TRpExpression
     Width = 855
@@ -525,6 +553,9 @@ object TRpReport
     DisplayFormat = '###,###.##'
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -532,6 +563,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'ORDERS.Qty'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpExpression8: TRpExpression
     Width = 810
@@ -544,6 +576,9 @@ object TRpReport
     DisplayFormat = '###.##'
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ' '
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -551,6 +586,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'ORDERS.Discount'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpLabel12: TRpLabel
     Width = 795
@@ -576,6 +612,9 @@ object TRpReport
     FontSize = 8
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -583,6 +622,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'PARTS.Description'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpExpression11: TRpExpression
     Width = 1155
@@ -595,6 +635,9 @@ object TRpReport
     DisplayFormat = '###,###0.00'
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -602,6 +645,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'PARTS.ListPrice'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpExpression9: TRpExpression
     Width = 1260
@@ -614,6 +658,9 @@ object TRpReport
     DisplayFormat = '#,#####0.##'
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ' '
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -621,6 +668,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'ORDERS.Qty*((100-ORDERS.Discount)/100*PARTS.ListPrice)'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpLabel4: TRpLabel
     Width = 1155
@@ -650,6 +698,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ' '
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -659,6 +708,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpSection7: TRpSection
     Width = 10900
@@ -680,6 +731,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = 'DETAIL'
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -689,6 +741,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpLabel13: TRpLabel
     Width = 2985
@@ -717,6 +771,9 @@ object TRpReport
     GroupName = 'ORDER'
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ' '
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -724,6 +781,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'ORDERS.Qty*((100-ORDERS.Discount)/100*PARTS.ListPrice)'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpExpression12: TRpExpression
     Width = 2865
@@ -738,6 +796,9 @@ object TRpReport
     Aggregate = rpAgGeneral
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ' '
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -745,6 +806,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'ORDERS.Qty*((100-ORDERS.Discount)/100*PARTS.ListPrice)'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpExpression5: TRpExpression
     Width = 2175
@@ -760,6 +822,9 @@ object TRpReport
     GroupName = 'CUSTOMER'
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ' '
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -767,6 +832,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'ORDERS.Qty*((100-ORDERS.Discount)/100*PARTS.ListPrice)'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpShape0: TRpShape
     Width = 10890
@@ -782,20 +848,23 @@ object TRpReport
   object TRpExpression4: TRpExpression
     Width = 4935
     Height = 465
-    PosX = 3150
+    PosX = 3173
     PosY = 240
-    Type1Font = poHelvetica
-    FontSize = 15
-    FontStyle = 1
+    Type1Font = poEmbedded
+    FontSize = 26
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
     WFontName = 'Arial'
-    LFontName = 'Helvetica'
+    LFontName = 'bullpen 3d'
     Expression = 'CUSTOMERS.Company'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpShape1: TRpShape
     Width = 2415
@@ -817,6 +886,9 @@ object TRpReport
     FontStyle = 1
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -824,6 +896,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'ORDERS.CustNo'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpLabel3: TRpLabel
     Width = 1035
@@ -848,6 +921,9 @@ object TRpReport
     DisplayFormat = '###,###0'
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ' '
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -855,6 +931,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'ORDERS.OrderNo'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpExpression14: TRpExpression
     Width = 1485
@@ -864,6 +941,9 @@ object TRpReport
     Type1Font = poHelvetica
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ' '
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -871,6 +951,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'NumToText(ORDERS.OrderNo,false)'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpLabel2: TRpLabel
     Width = 1440
@@ -894,6 +975,9 @@ object TRpReport
     FontStyle = 1
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -901,5 +985,6 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'Page'
     AgIniValue = '0'
+    ExportExpression = ''
   end
 end

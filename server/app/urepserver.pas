@@ -303,7 +303,6 @@ begin
  ThreadMan.PoolSize:=10;
  RepServer.ThreadMgr:=ThreadMan;
 {$ENDIF}
- GetIsSMP;
  fport:=3060;
  Clients:=TTHreadList.Create;
  LAliases:=TStringList.Create;
@@ -443,6 +442,7 @@ begin
  finally
   inif.free;
  end;
+ GetIsSMP;
  // Read library configuration
 end;
 

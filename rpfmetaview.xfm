@@ -55,9 +55,20 @@ object FRpMeta: TFRpMeta
       Action = APrevious
       Caption = 'Previous page'
     end
+    object EPageNum: TRpCLXMaskEdit
+      Left = 79
+      Top = 4
+      Width = 44
+      Height = 21
+      Cursor = crIBeam
+      TabOrder = 2
+      OnKeyPress = EPageNumKeyPress
+      Text = '0'
+      EditType = teinteger
+    end
     object ToolButton3: TToolButton
       HelpType = htContext
-      Left = 79
+      Left = 123
       Top = 4
       Height = 26
       Action = ANext
@@ -65,7 +76,7 @@ object FRpMeta: TFRpMeta
     end
     object ToolButton4: TToolButton
       HelpType = htContext
-      Left = 105
+      Left = 149
       Top = 4
       Height = 26
       Action = ALast
@@ -73,7 +84,7 @@ object FRpMeta: TFRpMeta
     end
     object ToolButton6: TToolButton
       HelpType = htContext
-      Left = 139
+      Left = 183
       Top = 4
       Height = 26
       Action = APrint
@@ -81,7 +92,7 @@ object FRpMeta: TFRpMeta
     end
     object ToolButton7: TToolButton
       HelpType = htContext
-      Left = 165
+      Left = 209
       Top = 4
       Height = 26
       Action = ASave
@@ -108,7 +119,7 @@ object FRpMeta: TFRpMeta
     end
     object BExit: TToolButton
       HelpType = htContext
-      Left = 403
+      Left = 447
       Top = 4
       Height = 26
       Action = AExit
@@ -116,7 +127,7 @@ object FRpMeta: TFRpMeta
     end
     object ToolButton5: TToolButton
       HelpType = htContext
-      Left = 225
+      Left = 269
       Top = 4
       Height = 26
       Action = AScale100
@@ -124,7 +135,7 @@ object FRpMeta: TFRpMeta
     end
     object ToolButton9: TToolButton
       HelpType = htContext
-      Left = 251
+      Left = 295
       Top = 4
       Height = 26
       Action = AScaleWide
@@ -132,7 +143,7 @@ object FRpMeta: TFRpMeta
     end
     object ToolButton11: TToolButton
       HelpType = htContext
-      Left = 277
+      Left = 321
       Top = 4
       Height = 26
       Action = AScaleFull
@@ -140,7 +151,7 @@ object FRpMeta: TFRpMeta
     end
     object ToolButton12: TToolButton
       HelpType = htContext
-      Left = 303
+      Left = 347
       Top = 4
       Height = 26
       Action = AScaleLess
@@ -148,7 +159,7 @@ object FRpMeta: TFRpMeta
     end
     object ToolButton13: TToolButton
       HelpType = htContext
-      Left = 329
+      Left = 373
       Top = 4
       Height = 26
       Action = AScaleMore
@@ -156,7 +167,7 @@ object FRpMeta: TFRpMeta
     end
     object BConfig: TToolButton
       HelpType = htContext
-      Left = 363
+      Left = 407
       Top = 4
       Height = 26
       Hint = 'Shows the printer setup dialog'
@@ -168,14 +179,14 @@ object FRpMeta: TFRpMeta
     end
     object ToolButton10: TToolButton
       HelpType = htContext
-      Left = 191
+      Left = 235
       Top = 4
       Height = 26
       Action = AMailTo
       Caption = 'Mail to'
     end
     object ToolButton14: TToolButton
-      Left = 131
+      Left = 175
       Top = 4
       Width = 8
       Height = 26
@@ -184,7 +195,7 @@ object FRpMeta: TFRpMeta
       ImageIndex = 8
     end
     object ToolButton15: TToolButton
-      Left = 217
+      Left = 261
       Top = 4
       Width = 8
       Height = 26
@@ -193,7 +204,7 @@ object FRpMeta: TFRpMeta
       ImageIndex = 8
     end
     object ToolButton16: TToolButton
-      Left = 355
+      Left = 399
       Top = 4
       Width = 8
       Height = 26
