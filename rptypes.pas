@@ -289,8 +289,28 @@ begin
   varEmpty,varNull:
    Result:='';
   varSmallint,varInteger,varSingle,varDouble,varByte:
-   Result:=FormatFloat(displayformat,Value);  varWord,varInt64,varLongWord,varShortInt:   Result:=FormatFloat(displayformat,Value);  varCurrency:   Result:=FormatCurr(displayformat,Value);  varDate:   Result:=FormatDateTime(displayformat,Value);  varString:   Result:=Format(displayformat,[Value]);  varBoolean:   Result:=Format(displayformat,[BoolToStr(Value,true)]);  else  begin{$IFDEF USEBCD}   if atype=varFmtBCD then    Result:=FormatBCD(displayformat,VarToBcd(Value))   else{$ENDIF}    Result:=SRpUnknownType;  end; end;{  varOleStr   = $0008;  varDispatch = $0009;  varError    = $000A;  varVariant  = $000C;  varUnknown  = $000D;  varStrArg   = $0048;  varAny      = $0101;  varTypeMask = $0FFF;  varArray    = $2000;  varByRef    = $4000;
-}
+   Result:=FormatFloat(displayformat,Value);
+  varWord,varInt64,varLongWord,varShortInt:
+   Result:=FormatFloat(displayformat,Value);
+  varCurrency:
+   Result:=FormatCurr(displayformat,Value);
+  varDate:
+   Result:=FormatDateTime(displayformat,Value);
+  varString:
+   Result:=Format(displayformat,[Value]);
+  varBoolean:
+   Result:=Format(displayformat,[BoolToStr(Value,true)]);
+  else
+  begin
+{$IFDEF USEBCD}
+   if atype=varFmtBCD then
+    Result:=FormatBCD(displayformat,VarToBcd(Value))
+   else
+{$ENDIF}
+    Result:=SRpUnknownType;
+  end;
+ end;
+ {  varOleStr   = $0008;  varDispatch = $0009;  varError    = $000A;  varVariant  = $000C;  varUnknown  = $000D;  varStrArg   = $0048;  varAny      = $0101;  varTypeMask = $0FFF;  varArray    = $2000;  varByRef    = $4000;}
 end;
 
 

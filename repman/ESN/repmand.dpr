@@ -6,6 +6,7 @@ library repmand;
 {ITE} {LCID:00000409:00000C0A} {}
 {ITE} {DFMFileType} {vcl\DBLOGDLG.dfm}
 {ITE} {DFMFileType} {vcl\DBPWDLG.dfm}
+{ITE} {DFMFileType} {reportman\rpgdidriver.dfm}
 {ITE} {DFMFileType} {reportman\rprfvparams.dfm}
 {ITE} {DFMFileType} {reportman\rpvpreview.dfm}
 {ITE} {DFMFileType} {reportman\rpdbxconfig.xfm}
@@ -30,6 +31,7 @@ library repmand;
 
 {$R 'vcl\DBLOGDLG.dfm' LoginDialog:TForm(Form)}
 {$R 'vcl\DBPWDLG.dfm' PasswordDialog:TForm(Form)}
+{$R 'reportman\rpgdidriver.dfm' FRpVCLProgress:TForm}
 {$R 'reportman\rprfvparams.dfm' FRpRTParams:TForm}
 {$R 'reportman\rpvpreview.dfm' FRpVPreview:TForm}
 {$R 'reportman\rpdbxconfig.xfm' FRpDBXConfig:TForm}

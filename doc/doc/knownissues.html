@@ -1,0 +1,73 @@
+<html>
+<head>
+<title>Known Issues</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Release Notes</h2>
+<h3>Known issues</h3>
+<p></p>
+<table width="95%" border="1">
+  <tr> 
+    <td bgcolor="#00FFFF"><b>Setting a page size other than default fails</b></td>
+  </tr>
+  <tr> 
+    <td>Not all printer drivers supports custom page sizes, some drivers are reported 
+      to not work when selecting a predefined pagesize (A2), especially in Windows 
+      NT/2000/XP. Some drivers provided by manufactures allow only change page 
+      size from page setup dialog and not in runtime. Dot matrix printers are 
+      more flexible with page sizes. If you use WinGDI (VCL) driver you will see 
+      in the preview exactly the page size supported by the driver using Qt driver 
+      (CLX) the preview can show a page size and the final result may differ (printer 
+      driver processed).</td>
+  </tr>
+  <tr> 
+    <td bgcolor="#00FFFF"><b>Previewing a large page size raises a extranges exceptions 
+      Invalid Canvas State-Invalid handle...</b></td>
+  </tr>
+  <tr> 
+    <td>This only happens in some versions of Windows and only with Qt Driver, 
+      this is a limitation of system resources, the issue affects Win9x/Millenium/NT/2000, 
+      in Windows XP works ok, the VCL driver uses Device Independent Bitmaps and 
+      is not affected.</td>
+  </tr>
+  <tr> 
+    <td bgcolor="#00FFFF"><b>Setting paper orientation to landscape not works</b></td>
+  </tr>
+  <tr> 
+    <td>
+      <p>This issue only affects the Qt Driver (CLX) in Windows systems.</p>
+      <p>This is a <a href="http://www.trolltech.com/developer/changes/3.0.5.html" target="_blank">kwown 
+        bug of Qt Libraries</a> , it's fixed in 3.0.5, the workaround is to call 
+        PrinterSetup dialog before printing.</p>
+    </td>
+  </tr>
+  <tr> 
+    <td bgcolor="#00FFFF"><b>Printing does not work in Linux, the preview is ok 
+      but nothing is send to printer</b></td>
+  </tr>
+  <tr> 
+    <td> 
+      <p>This issue only affects some Linux systems.</p>
+      <p>The CLX print engine does not work well in some Linux systems/configurations, 
+        you can test if your system works ok by writting a small program in kylix 
+        and executing it:</p>
+      <p><code>DBXConnection1.Connected:=True;</code></p>
+      <p><code>printer.begindoc</code></p>
+      <p><code>printer.canvas.textout(100,100,'Hello World');</code></p>
+      <p><code>printer.enddoc;</code></p>
+      <p>If after connecting to a database the printer not works your system have 
+        the 'Kylixprintbugfix'. To fix this set Kylix Print Bug Fix in preferences 
+        (Report Manager Designer) and try again. At runtime you must set rpqtdriver.kylixprintbugfix 
+        variable to true.</p>
+      <p>The workaround uses metaprint command line tool to print a generated 
+        metafile so you must distribute metaprint in the same directory of your 
+        exe. </p>
+    </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</body>
+</html>
