@@ -1203,12 +1203,6 @@ begin
     aTextDriver:=TextDriver;
     TextDriver.SelectPrinter(report.PrinterSelect);
     report.PrintAll(TextDriver);
-{$IFDEF MSWINDOWS}
-    SendControlCodeToPrinter(S);
-{$ENDIF}
-{$IFDEF LINUX}
-    SendTextToPrinter(S,report.PrinterSelect,Caption);
-{$ENDIF}
    end
    else
    begin
@@ -1223,7 +1217,23 @@ begin
  if not kylixprintbug then
  begin
    if forcecalculation then
-    PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate,report.PrinterSelect)
+   begin
+    if istextonly then
+    begin
+     SetLength(S,TextDriver.MemStream.Size);
+     TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
+{$IFDEF MSWINDOWS}
+     SendControlCodeToPrinter(S);
+{$ENDIF}
+{$IFDEF LINUX}
+     SendTextToPrinter(S,report.PrinterSelect,Caption);
+{$ENDIF}
+    end
+    else
+    begin
+     PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate,report.PrinterSelect)
+    end;
+   end
    else
    begin
     if progress then
