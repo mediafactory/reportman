@@ -22,14 +22,13 @@ unit rpqtdriver;
 interface
 
 uses
-
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
 {$IFDEF MSWINDOWS}
   mmsystem,windows,
 {$ENDIF}
-Classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
+ Classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
  rpmunits,QPrinters,QDialogs,rpgraphutils, QControls,
  QStdCtrls,QExtCtrls,types,DateUtils,rptypes,Qt,
  rpreport;

@@ -21,7 +21,7 @@ unit rpclxreport;
 interface
 
 uses Classes,Sysutils,rpreport,rpconsts,
- QPrinters,rpqtdriver,rppreview;
+ QPrinters,rpqtdriver,rppreview,rpalias;
 
 type
  TCLXReport=class(TComponent)
@@ -31,7 +31,10 @@ type
    FPreview:Boolean;
    FShowProgress:Boolean;
    FTitle:WideString;
+   FAliasList:TRpAlias;
    FShowPrintDialog:boolean;
+  protected
+   procedure Notification(AComponent: TComponent; Operation: TOperation);override;
   public
    function Execute:boolean;
    procedure PrinterSetup;
@@ -48,6 +51,7 @@ type
    property Title:widestring read FTitle write FTitle;
    property ShowPrintDialog:boolean read FShowPrintDialog
     write FShowPrintDialog default true;
+   property AliasList:TRpAlias read FAliasList write FAliasList;
   end;
 
 implementation
@@ -64,6 +68,16 @@ begin
  FShowPrintDialog:=True;
 end;
 
+procedure TCLXReport.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+ inherited Notification(AComponent,Operation);
+
+ if Assigned(AComponent) then
+  if Operation=OpRemove then
+   if AComponent=FAliasList then
+    FAliasList:=nil;
+end;
+
 procedure TCLXReport.SetFileName(Value:TFilename);
 begin
  if (csloading in ComponentState) then
@@ -78,6 +92,7 @@ begin
    FReport.free;
    FReport:=nil;
   end;
+  FFilename:=Value;
  end;
 end;
 
@@ -119,6 +134,7 @@ var
  frompage,topage,copies:integer;
 begin
  CheckLoaded;
+ report.AliasList:=AliasList;
  if FPreview then
  begin
   Result:=ShowPreview(report,Title);

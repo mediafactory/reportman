@@ -44,6 +44,7 @@ contains
   rpfparams in 'rpfparams.pas' {FRpParams},
   rppagesetup in 'rppagesetup.pas' {FPageSetup},
   rppreview in 'rppreview.pas' {FRpPreview},
-  rpgraphutils in 'rpgraphutils.pas' {FRpGraphProgres};
+  rpgraphutils in 'rpgraphutils.pas' {FRpGraphProgres},
+  rpprintdia in 'rpprintdia.pas' {FRpPrintDialog};
 
 end.

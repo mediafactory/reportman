@@ -126,6 +126,7 @@ type
    FCollateCopies:boolean;
    FTwoPass:boolean;
    FTotalPagesList:TList;
+   FAliasList:TRpAlias;
    printingonepass:boolean;
 {$IFDEF MSWINDOWS}
    mmfirst,mmlast:DWORD;
@@ -186,6 +187,7 @@ type
    procedure PrintRange(Driver:IRpPrintDriver;allpages:boolean;
     frompage,topage,copies:integer);
    property OnProgress:TRpProgressEvent read FOnProgress write FOnProgress;
+   property AliasList:TRpAlias read FAliasList write FAliasList;
   published
    // Grid options
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
@@ -389,6 +391,11 @@ begin
     if index>=0 then
      FIdentifiers.Delete(index);
    end;
+  end
+  else
+  begin
+   if AComponent=FAliasList then
+    FAliasList:=nil;
   end;
  end;
 end;
@@ -663,6 +670,16 @@ begin
 
   for i:=0 to FDataInfo.Count-1 do
   begin
+   // Watch if external dataset
+   if Assigned(FAliasList) then
+   begin
+    index:=FAliasList.List.indexof(FDataInfo.Items[i].Alias);
+    if index>=0 then
+    begin
+     if Assigned(FAliasList.List.Items[index].dataset) then
+      FDataInfo.Items[i].Dataset:=FAliasList.List.Items[index].dataset;
+    end;
+   end;
    FDataInfo.Items[i].Connect(DatabaseInfo,Params);
    if Assigned(FOnProgress) then
    begin

@@ -31,11 +31,13 @@ package rppack_del;
 requires
   rtl,
   dbrtl,
-  dbexpress,
   dsnap,
+  dbexpress,
   ibxpress,
-  bdertl,
-  adortl;
+  adortl,
+  bdertl;
+
+{%File 'rpconf.inc'}
 
 contains
   rptypeval in 'rptypeval.pas',

@@ -26,9 +26,22 @@
 <p>&nbsp;</p>
 <p>Open the packages in the correct order with delphi/kylix and click Install 
   button.</p>
+<p>If you have problems compiling you can disable some dataaccess components not 
+  available for you at rpconf.inc file, for example if you have not installed 
+  IBX: </p>
+<code><p>// Database drivers to be used</p>
+<p>{$DEFINE USESQLEXPRESS} </p>
+<p>//{$DEFINE USEIBX} </p>
+<p>{$DEFINE USEADO} </p>
+<p>{$DEFINE USEBDE} </p>
+</code>
 <p>New components appear in the palette (reportman section) the most important 
   is the TCLXReport component.</p>
 <p><img src="integrating2.jpg" width="569" height="52"></p>
+<p>To pass custom opened datasets (any dataaccess engine with a TDataset descendant 
+  like Zeos, Direct Oracle Access...) to the reporting engine you can use the 
+  AliasList property in TCLXReport and a TRpAlias component that establishes relations 
+  between aliases and Application datasets.</p>
 <p>Drop the TNewCLXReport to a form and select a report by clicking the button 
   beside the Filename property. You can select also the preview property and the 
   tittle.</p>

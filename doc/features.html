@@ -5,67 +5,75 @@
 </head>
 <body>
   <b>Report Manager is a reporting scheme designer and a printing engine.</b><p></p>
-  <ul>
+  
+<ul>
   <li> Opensource under the MPL license model </li>
   <li> Cross platform supporting Windows and Linux (Kylix/Delphi) </li>
   <li> Database access </li>
-   <ul>
-   <li> Windows: Borland database engine (DBase, Paradox, Interbase, Oracle, DB2, SQL Server, ODBC)  </li>
-   <li> Windows: Microsoft Data Access Objects (Microsoft Jet, ODBC...) </li>
-   <li> Windows & Linux: DBExpress (Interbase, MySQl, PostgreSQL, DB2, Oracle, ODBC)  </li>
-   <li> Windows & Linux: Native Access to Interbase (IBX, no additional libraries needed) </li>
-   <li> Windows & Linux: Borland Native simple local file database (MyBase) </li>
-   </ul>
-  <li> Report definition </li>
-   <ul>
-   <li> Unlimited number of subreports, each subreport can use a dataset </li>
-   <li> Each subreport can have a unlimited number of sections</li>
-    <ul>
-    <li> Page headers (unlimited)</li>
-    <li> Page footers (unlimited)</li>
-    <li> Grouping (unlimited), a group changes when a expression is true or changes </li>
-    <li> Grouping allow sum,min,max,avg and std.desv. operations.</li>
-    <li> You can use groups as report headers and footers (summary) </li>
-    <li> Details (unlimited). All details are printed once for each record of the subreport's dataset </li>
-    </ul>
-   <li> Each section has also some properties </li>
-    <ul>
-    <li> Print condition  </li>
-    <li> Skip page before or after print  </li>
-    </ul>
-   </ul>
-  <li> Printing engine
-   <ul>
-   <li> Horizontal movement (labels) </li>
-   <li> For text controls </li>
-    <ul>
-    <li> Font Name (for each platform) </li>
-    <li> Font Size, Bold, Italic, Color. </li>
-    <li> Background color or transparent </li>
-    <li> Alignment, multiline </li>
-    <li> Display Mask </li>
-    </ul>
-   <li> Page Margins and page orientation </li>
-   <li> Image print support </li>
-    <ul>
-    <li> The image is embedded in the report </li>
-    <li> The image can be loaded from a binary field </li>
-    <li> The image can be stretched, or adapt to pixels per inch </li>
-    </ul>
-   <li> Simple graphic support </li>
-    <ul>
-    <li> Horz line, Vert line, Rectangle, Ellipse, Roundrect... </li>
-    <li> Pen style (dash,dash dot, solid) and color </li>
-    <li> Brush Style (lines, cross, solid, pattern) and color </li>
-    </ul>
-   <li> Expression evaluator, you can use fields and functions </li>
-   <li> Preview </li>
-    <ul>
-    <li> Fast preview </li>
-    <li> Save the report as a metafile report (device independent graphic format) </li>
-    <li> A separate application can print/preview metafiles (metaview) </li>
-    </ul>
-   </ul>
+  <ul>
+    <li> Any TDataset descendant passed from Delphi/Kylix.</li>
+    <li>Windows: Borland database engine (DBase, Paradox, Interbase, Oracle, DB2, 
+      SQL Server, ODBC) </li>
+    <li> Windows: Microsoft Data Access Objects (Microsoft Jet, ODBC...) </li>
+    <li> Windows & Linux: DBExpress (Interbase, MySQl, PostgreSQL, DB2, Oracle, 
+      ODBC) </li>
+    <li> Windows & Linux: Native Access to Interbase (IBX, no additional libraries 
+      needed) </li>
+    <li> Windows & Linux: Borland Native simple local file database (MyBase)</li>
   </ul>
+  <li> Report definition </li>
+  <ul>
+    <li> Unlimited number of subreports, each subreport can use a dataset </li>
+    <li> Each subreport can have a unlimited number of sections</li>
+    <ul>
+      <li> Page headers (unlimited)</li>
+      <li> Page footers (unlimited)</li>
+      <li> Grouping (unlimited), a group changes when a expression is true or 
+        changes </li>
+      <li> Grouping allow sum,min,max,avg and std.desv. operations.</li>
+      <li> You can use groups as report headers and footers (summary) </li>
+      <li> Details (unlimited). All details are printed once for each record of 
+        the subreport's dataset </li>
+    </ul>
+    <li> Each section has also some properties </li>
+    <ul>
+      <li> Print condition </li>
+      <li> Skip page before or after print </li>
+    </ul>
+  </ul>
+  <li> Printing engine 
+    <ul>
+      <li> Horizontal movement (labels) </li>
+      <li> For text controls </li>
+      <ul>
+        <li> Font Name (for each platform) </li>
+        <li> Font Size, Bold, Italic, Color. </li>
+        <li> Background color or transparent </li>
+        <li> Alignment, multiline </li>
+        <li> Display Mask </li>
+      </ul>
+      <li> Page Margins and page orientation </li>
+      <li> Image print support </li>
+      <ul>
+        <li> The image is embedded in the report </li>
+        <li> The image can be loaded from a binary field </li>
+        <li> The image can be stretched, or adapt to pixels per inch </li>
+      </ul>
+      <li> Simple graphic support </li>
+      <ul>
+        <li> Horz line, Vert line, Rectangle, Ellipse, Roundrect... </li>
+        <li> Pen style (dash,dash dot, solid) and color </li>
+        <li> Brush Style (lines, cross, solid, pattern) and color </li>
+      </ul>
+      <li> Expression evaluator, you can use fields and functions </li>
+      <li> Preview </li>
+      <ul>
+        <li> Fast preview </li>
+        <li> Save the report as a metafile report (device independent graphic 
+          format) </li>
+        <li> A separate application can print/preview metafiles (metaview) </li>
+      </ul>
+    </ul>
+</ul>
 </body>
 </html>

@@ -574,7 +574,7 @@ object FAboutBox: TFAboutBox
     Top = 44
     Width = 83
     Height = 13
-    Caption = 'Version 0.99 beta'
+    Caption = 'Version 0.98 beta'
   end
   object Label4: TLabel
     Left = 12

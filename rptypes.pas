@@ -23,7 +23,6 @@ interface
 
 {$I rpconf.inc}
 
-
 uses Sysutils,
 {$IFDEF MSWINDOWS}
  Windows,
