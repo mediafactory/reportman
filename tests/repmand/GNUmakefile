@@ -4,6 +4,7 @@ drivers_path=../../drivers/linux
 rpversion=1_6
 
 install:
+	make clean
 	cp $(kylix_bin)/libqtintf-6.9-qt2.3.so .
 	cp $(kylix_bin)/libborqt-6.9-qt2.3.so .
 	cp $(kylix_bin)/libmidas.so.1 .

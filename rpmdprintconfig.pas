@@ -277,10 +277,16 @@ end;
 
 
 procedure TFRpPrinterConfig.ComboPrintersChange(Sender: TObject);
+var
+ printername:String;
 begin
- if LSelPrinter.ItemIndex<=0 then
+ if LSelPrinter.ItemIndex<0 then
   exit;
- configinifile.WriteString('PrinterNames','Printer'+IntToStr(LSelPrinter.ItemIndex),ComboPrinters.Text);
+ if ComboPrinters.ItemIndex=0 then
+  printername:=''
+ else
+  printername:=ComboPrinters.Text;
+ configinifile.WriteString('PrinterNames','Printer'+IntToStr(LSelPrinter.ItemIndex),printername);
 end;
 
 procedure TFRpPrinterConfig.ELeftMarginChange(Sender: TObject);

@@ -1847,6 +1847,90 @@ end;
 
 
 {$IFDEF LINUX}
+procedure ExecuteRecode(afilename,parameter:String);
+var
+ child:__pid_t;
+ apipe:array [0..1] of integer;
+ pint:PInteger;
+ i:integer;
+ theparams:array [0..10] of pchar;
+ buffer:array [0..1] of char;
+ pbuf:Pchar;
+ readed:integer;
+ astring:string;
+ params:TStringList;
+ doerror:boolean;
+begin
+ doerror:=true;
+ params:=TStringList.Create;
+ try
+  params.Add('recode');
+  params.Add(parameter);
+  params.Add(afilename);
+  // Creates a fork, and provides the input from standard
+  // input to lpr command
+  if params.count>10 then
+   Raise exception.create(SRpTooManyParams);
+  pint:=@apipe;
+  pbuf:=@buffer;
+  for i:=0 to params.count-1 do
+  begin
+   theparams[i]:=Pchar(params[i]);
+  end;
+  theparams[params.count]:=nil;
+  if (-1=pipe(pint)) then
+   Raise Exception.create(SRpErrorCreatePipe);
+  child:=fork;
+  if child=-1 then
+   Raise Exception.Create(SRpErrorForking);
+  if child<>0 then
+  begin
+   __close(apipe[0]);
+   if doerror then
+   begin
+    dup2(apipe[1],2);
+   end
+   else
+   begin
+    dup2(apipe[1],2);
+    dup2(apipe[1],1);
+   end;
+   // The child executes the command
+   execvp(theparams[0],PPChar(@theparams))
+  end
+  else
+  begin
+   __close(apipe[1]);
+   try
+    astring:='';
+    buffer[1]:=chr(0);
+    repeat
+     readed:=__read(apipe[0],pbuf^,1);
+     if readed>0 then
+     begin
+      if pbuf[0]=chr(10) then
+      begin
+       WriteLn(astring);
+       astring:='';
+      end
+      else
+       astring:=astring+pbuf[0];
+     end;
+    until readed=0;
+    if length(astring)>0 then
+     WriteLn(astring);
+   finally
+    __close(apipe[0]);
+   end;
+  end;
+ finally
+  params.Free;
+ end;
+end;
+
+
+
+
 procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title:String);
 var
  printername:string;
@@ -1866,7 +1950,9 @@ var
  abuffer:array [0..L_tmpnam] of char;
  afilename:String;
  files:TFilestream;
+ oemconvert:Boolean;
 begin
+ oemconvert:=GetPrinterEscapeOem(printerindex);
  template:='reportmanXXXXXX';
  tmpnam(abuffer);
  afilename:=StrPas(abuffer);
@@ -1876,12 +1962,16 @@ begin
  finally
   files.free;
  end;
- doerror:=true;
+ doerror:=false;
  // Looks for the printer name
  printernamecommand:='';
  printername:=GetPrinterConfigName(printerindex);
  params:=TStringList.Create;
  try
+  if oemconvert then
+  begin
+   ExecuteRecode(afilename,'..850/');
+  end;
   params.Add('lpr');
   if Length(printername)>0 then
   begin
@@ -1902,6 +1992,11 @@ begin
   // input to lpr command
   if params.count>10 then
    Raise exception.create(SRpTooManyParams);
+//  WriteLn('Executing');
+//  for i:=0 to params.count-1 do
+//  begin
+//   WriteLn(params.Strings[i]);
+//  end;
   pint:=@apipe;
   pbuf:=@buffer;
   for i:=0 to params.count-1 do
