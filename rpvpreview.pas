@@ -32,7 +32,7 @@ uses
 {$ENDIF}
   Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls,rpreport,rpmetafile, ComCtrls,
-  rpgdidriver, ExtCtrls,Menus,rptypes,
+  rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,
   ActnList, ImgList,Printers,rpmdconsts, ToolWin;
 
 type
@@ -270,7 +270,8 @@ procedure TFRpVPreview.FormCreate(Sender: TObject);
 begin
  SaveDialog1.Filter:=SRpRepMetafile+'|*.rpmf|'+
    SRpPDFFile+'|*.pdf|'+
-   SRpPDFFileUn+'|*.pdf';
+   SRpPDFFileUn+'|*.pdf|'+
+   SRpExcelFile+'|*.xls';
 
  APrevious.ShortCut:=ShortCut(VK_PRIOR, []);
  ANext.ShortCut:=ShortCut(VK_NEXT, []);
@@ -407,6 +408,14 @@ begin
 //    report.endprint
 //      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,9999999,
 //       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
+      AppIdle(Self,adone);
+     end
+     else
+     begin
+      if SaveDialog1.FilterIndex=4 then
+      ALastExecute(Self);
+      ExportMetafileToExcel(report.Metafile,SaveDialog1.FileName,
+       true,false,true,1,9999);
       AppIdle(Self,adone);
      end;
    finally

@@ -22,7 +22,8 @@ unit rpvclreport;
 interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
- rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview;
+ rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview,
+ rpexceldriver;
 
 type
  TVCLReport=class(TCBaseReport)
@@ -33,6 +34,7 @@ type
    procedure PrinterSetup;override;
    function ShowParams:boolean;override;
    procedure SaveToPDF(filename:string;compressed:boolean=false);
+   procedure SaveToExcel(filename:string);
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;override;
   published
@@ -113,5 +115,13 @@ begin
  rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,True,1,999999,
   false,filename,compressed,false)
 end;
+
+procedure TVCLReport.SaveToExcel(filename:string);
+begin
+ rpgdidriver.CalcReportWidthProgress(report);
+ rpexceldriver.ExportMetafileToExcel(report.metafile,filename,showprogress,false,
+ true,1,999);
+end;
+
 
 end.

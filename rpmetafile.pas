@@ -924,7 +924,8 @@ begin
    astring:=FormatCurr(aobject.displayformat,PageCount)
   else
    astring:=IntToStr(PageCount);
-  oldtexts:=apage.Objects[aobject.ObjectIndex].TextS;
+//  oldtexts:=apage.Objects[aobject.ObjectIndex].TextS;
+  oldtexts:=9;
   apage.FObjects[aobject.ObjectIndex].TextS:=Length(astring);
   astring:=astring+'                                      ';
   tempstring:=Copy(apage.Pool,1,index-1);

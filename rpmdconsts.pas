@@ -639,6 +639,56 @@ var
   SRpSDraftResolution:WideString='Draft resolution';
   SRpSColorPrinting:WideString='Color printing';
   SRpSMonoPrinting:WideString='Monochrome printing';
+  SRSPlotter:WideString='Plotter, vector printer';
+  SRSRasterDisplay:WideString='Raster display';
+  SRSRasterPrinter:WideString='Raster printer';
+  SRSRasterCamera:WideString='Raster camera';
+  SRSCharStream:WideString='Character stream';
+  SRSDisplayFile:WideString='Display file';
+  SRpSMetafile:WideString='Windows Metafile';
+  SRpSPolyline:WideString='Polyline';
+  SRpSMarker:WideString='Marker';
+  SRpSPolyMarker:WideString='Multiple Marker';
+  SRpSWideCap:WideString='Wide capability';
+  SRpSSTyledCap:WideString='Styled capability';
+  SRpSWideSTyledCap:WideString='Wide styled capability';
+  SRpSInteriorsCap:WideString='Interiors capability';
+  SRpSPolygon:WideString='Polygon capability';
+  SRpSRectanglecap:WideString='Rectangle capability';
+  SRpSWindPolygon:WideString='Winding-fill cap.';
+  SRpSSCANLINE:WideString='Scan line cap.';
+  SRpSCircleCap:WideString='Circle cap.';
+  SRpSPiecap:WideString='Pie wedges cap.';
+  SRpSCHordCap:WideString='Chord arcs cap.';
+  SRpSEllipses:WideString='Ellipses cap.';
+  SRpSRoundRectCap:WideString='Round rect.cap.';
+  SRpSBandingRequired:WideString='Banding required';
+  SRpSBitmapTransfer:WideString='Bitmap transfer cap.';
+  SRpSBitmapTransfer64:WideString='B.transfer>64K cap.';
+  SRpSDIBTransfer:WideString='Dev.Ind.Bitmap support';
+  SRpSDIBDevTransfer:WideString='DIBToDevice support';
+  SRpSFloodFillcap:WideString='Flood Fill cap.';
+  SRpSGDI20Out:WideString='Win.GDI 2.0 support';
+  SRPSPaletteDev:WideString='Palette device';
+  SRpSScalingCap:WideString='Scaling cap.';
+  SRpSStretchCap:WideString='Stretch blitter cap.';
+  SRpSStretchDIBCap:WideString='Stretch DIB cap.';
+  SRpSCharOutput:WideString='Character precision cap.';
+  SRpSCharStroke:WideString='Character stroke precision';
+  SRpSClipStroke:WideString='Clip stroke precision';
+  SRpS90Rotation:WideString='90 Degree Rotation cap.';
+  SRpSAnyRotation:WideString='Any Degree Rotation cap.';
+  SRpSScaleXY:WideString='Scale X/Y direction cap.';
+  SRpSDoubleChar:WideString='Double scale chars cap.';
+  SRpSIntegerScale:WideString='Interger scale only cap.';
+  SRpSAnyrScale:WideString='Exact char scaling cap.';
+  SRpSDoubleWeight:WideString='Double weight cap.';
+  SRpRasterFonts:WideString='Raster fonts';
+  SRpVectorFonts:WideString='Vector fonts';
+  SRpNobitBlockScroll:WideString='No bitblock scroll';
+  SRpExcelFile:WideString='Excel file';
+
+
 implementation
 
 uses rptranslator;

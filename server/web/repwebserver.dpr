@@ -1,8 +1,13 @@
 library repwebserver;
 
+{$I rpconf.inc}
+
 uses
   ActiveX,
   ComObj,
+{$IFDEF MSWINDOWS}
+  midaslib,
+{$ENDIF}
   WebBroker,
   ISAPIThreadPool,
   ISAPIApp,
