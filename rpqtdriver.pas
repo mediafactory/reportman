@@ -95,7 +95,8 @@ type
    bitmapwidth,bitmapheight:integer;
    PreviewStyle:TRpPreviewStyle;
    clientwidth,clientheight:integer;
-   procedure NewDocument(report:TrpMetafileReport);stdcall;
+   procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
+    hardwarecollate:boolean);stdcall;
    procedure EndDocument;stdcall;
    procedure AbortDocument;stdcall;
    procedure NewPage;stdcall;
@@ -109,6 +110,8 @@ type
    function GetPageSize:TPoint;stdcall;
    function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
+   function SupportsCopies(maxcopies:integer):boolean;stdcall;
+   function SupportsCollation:boolean;stdcall;
    constructor Create;
    destructor Destroy;override;
   end;
@@ -190,7 +193,18 @@ begin
  inherited Destroy;
 end;
 
-procedure TRpQtDriver.NewDocument(report:TrpMetafileReport);
+function TRpQtDriver.SupportsCollation:boolean;
+begin
+ Result:=false;
+end;
+
+function TRpQtDriver.SupportsCopies(maxcopies:integer):boolean;
+begin
+ Result:=false;
+end;
+
+procedure TRpQtDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
+  hardwarecollate:boolean);
 var
  awidth,aheight:integer;
  rec:TRect;

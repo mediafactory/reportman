@@ -251,7 +251,7 @@ begin
   else
    gdidriver.devicefonts:=false;
   pagenum:=1;
-  gdidriver.NewDocument(report.Metafile);
+  gdidriver.NewDocument(report.Metafile,1,false);
   gdidriver.lockedpagesize:=true;
   PrintPage;
   PlaceImagePosition;

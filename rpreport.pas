@@ -1065,9 +1065,33 @@ var
  endprintexecuted:boolean;
  reportcopies:integer;
  forcetwopass:boolean;
+ hardwarecopies:integer;
+ hardwarecollate:boolean;
 begin
  if copies<1 then
   exit;
+ hardwarecopies:=1;
+ hardwarecollate:=false;
+ if (copies>1) then
+ begin
+  if collate then
+  begin
+   if Driver.SupportsCopies(copies) then
+   begin
+    if Driver.SupportsCollation then
+    begin
+     hardwarecopies:=copies;
+     hardwarecollate:=true;
+     collate:=false;
+    end;
+   end;
+  end
+  else
+  begin
+   if Driver.SupportsCopies(copies) then
+    hardwarecopies:=copies;
+  end;
+ end;
  endprintexecuted:=False;
  printedfirst:=false;
  if allpages then
@@ -1095,7 +1119,7 @@ begin
  begin
   BeginPrint(Driver);
   try
-   Driver.NewDocument(metafile);
+   Driver.NewDocument(metafile,hardwarecopies,hardwarecollate);
    try
     // Calculate the report first
     while Not PrintNextPage do;
@@ -1116,6 +1140,8 @@ begin
        printedfirst:=true;
        Driver.DrawPage(metafile.pages[j]);
        Driver.EndPage;
+       if hardwarecopies>1 then
+        break;
       end;
      end;
     end;
@@ -1137,7 +1163,7 @@ begin
  try
   BeginPrint(Driver);
   try
-   Driver.NewDocument(metafile);
+   Driver.NewDocument(metafile,hardwarecopies,hardwarecollate);
    try
     finished:=false;
     while Not PrintNextPage do
@@ -1151,6 +1177,8 @@ begin
        printedfirst:=true;
        Driver.DrawPage(metafile.pages[0]);
        Driver.EndPage;
+       if hardwarecopies>1 then
+        break;
       end;
      end;
      if pagenum=topage then
@@ -1170,6 +1198,8 @@ begin
         Driver.NewPage;
        printedfirst:=true;
        Driver.DrawPage(metafile.pages[0]);
+       if hardwarecopies>1 then
+        break;
       end;
      end;
     end;
@@ -1192,7 +1222,7 @@ procedure TRpReport.PrintAll(Driver:IRpPrintDriver);
 begin
  BeginPrint(Driver);
  try
-  Driver.NewDocument(metafile);
+  Driver.NewDocument(metafile,1,false);
   try
    while Not PrintNextPage do;
   finally

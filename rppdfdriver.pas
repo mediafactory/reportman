@@ -46,7 +46,8 @@ type
    DestStream:TStream;
    constructor Create;
    destructor Destroy;override;
-   procedure NewDocument(report:TrpMetafileReport);stdcall;
+   procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
+    hardwarecollate:boolean);stdcall;
    procedure EndDocument;stdcall;
    procedure AbortDocument;stdcall;
    procedure NewPage;stdcall;
@@ -60,6 +61,8 @@ type
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
    procedure SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
+   function SupportsCopies(maxcopies:integer):boolean;stdcall;
+   function SupportsCollation:boolean;stdcall;
    property PDFFile:TRpPDFFile read FPDFFile;
   end;
 
@@ -147,8 +150,18 @@ begin
  end;
 end;
 
+function TRpPDFDriver.SupportsCollation:boolean;
+begin
+ Result:=false;
+end;
 
-procedure TRpPDFDriver.NewDocument(report:TrpMetafileReport);
+function TRpPDFDriver.SupportsCopies(maxcopies:integer):boolean;
+begin
+ Result:=false;
+end;
+
+procedure TRpPDFDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
+   hardwarecollate:boolean);stdcall;
 begin
  if Assigned(FPDFFile) then
  begin
@@ -494,7 +507,7 @@ begin
  adriver:=TRpPDFDriver.Create;
  adriver.filename:=filename;
  adriver.compressed:=compressed;
- adriver.NewDocument(metafile);
+ adriver.NewDocument(metafile,1,false);
  try
   for i:=0 to metafile.PageCount-1 do
   begin
@@ -517,7 +530,7 @@ var
 begin
  adriver:=TRpPDFDriver.Create;
  adriver.compressed:=compressed;
- adriver.NewDocument(metafile);
+ adriver.NewDocument(metafile,1,false);
  try
   for i:=0 to metafile.PageCount-1 do
   begin

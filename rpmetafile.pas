@@ -147,7 +147,8 @@ type
 
  IRpPrintDriver=interface
  ['{11EF15B0-5CDE-40F0-A204-973A25B38B81}']
-  procedure NewDocument(report:TrpMetafileReport);stdcall;
+  procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
+   hardwarecollate:boolean);stdcall;
   procedure EndDocument;stdcall;
   procedure AbortDocument;stdcall;
   procedure NewPage;stdcall;
@@ -159,6 +160,8 @@ type
   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
   procedure DrawPage(apage:TRpMetaFilePage);stdcall;
+  function SupportsCopies(maxcopies:integer):boolean;stdcall;
+  function SupportsCollation:boolean;stdcall;
   function AllowCopies:boolean;stdcall;
   procedure SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
  end;
@@ -870,7 +873,7 @@ end;
 
 procedure TRpMetafileReport.DrawPage(IDriver:IRpPrintDriver);
 begin
- IDriver.NewDocument(self);
+ IDriver.NewDocument(self,1,false);
  try
   DrawPageOnly(IDriver);
   IDriver.EndPage;
@@ -885,7 +888,7 @@ procedure TRpMetafileReport.DrawAll(IDriver:IRpPrintDriver);
 var
  i:integeR;
 begin
- IDriver.NewDocument(self);
+ IDriver.NewDocument(self,1,false);
  try
   for i:=0 to PageCount-1 do
   begin

@@ -64,6 +64,7 @@ function GetCurrentPaper:TGDIPageSize;
 procedure SendControlCodeToPrinter (S: string);
 procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
 function FindFormNameFromSize(width,height:integer):String;
+function PrinterMaxCopiesSupport:Integer;
 
 var
  formslist:TStringlist;
@@ -741,9 +742,6 @@ begin
  Result:=false;
  if printer.Printers.count<1 then
   exit;
- // Not supported
- if printer.Printers.count>=0 then
-  exit;
  // Printer selected not valid error
  printererror:=false;
  try
@@ -817,18 +815,16 @@ begin
 end;
 }
 
-function PrinterSupportsCopies(copies:integer):Boolean;
+
+function PrinterMaxCopiesSupport:Integer;
 var
   DeviceMode: THandle;
   Device, Driver, Port: array[0..1023] of char;
   printererror:boolean;
   maxcopies:integer;
 begin
- Result:=falsE;
+ Result:=1;
  if printer.Printers.count<1 then
-  exit;
- // Not supported
- if printer.Printers.count>=0 then
   exit;
  maxcopies:=1;
  // Printer selected not valid error
@@ -842,17 +838,19 @@ begin
   exit;
  try
    maxcopies:=DeviceCapabilities(Device,Port,DC_COPIES,nil,nil);
-   // Function fail
    if maxcopies<0 then
-    maxcopies:=0;
-//   Result:=copies<=maxcopies;
+    maxcopies:=1;
  except
  end;
- // DeviceCapabilities is not working well, returns 9999 in
- // max number of copies for Epson FX series or Oki Elite series
- // It should return false because no printer copies capability
-// Result:=maxcopies<copies;
- Result:=maxcopies<0;
+ Result:=maxcopies;
+end;
+
+function PrinterSupportsCopies(copies:integer):Boolean;
+var
+ maxcopies:integer;
+begin
+ maxcopies:=PrinterMaxCopiesSupport;
+ Result:=maxcopies>copies;
 end;
 
 procedure SetPrinterCopies(copies:integer);

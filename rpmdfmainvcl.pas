@@ -210,6 +210,8 @@ type
     Statusbar1: TMenuItem;
     ADriverPDF: TAction;
     Nativedriver1: TMenuItem;
+    ASysInfo: TAction;
+    Systeminformation1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -267,6 +269,7 @@ type
     procedure AStatusBarExecute(Sender: TObject);
     procedure ADriverPDFExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure ASysInfoExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrameVCL;
@@ -312,7 +315,7 @@ var
 
 implementation
 
-uses rpfmainmetaviewvcl;
+uses rpfmainmetaviewvcl, rpmdsysinfo;
 
 
 {$R *.dfm}
@@ -794,7 +797,8 @@ begin
  MAdd.Caption:=TranslateStr(149,MAdd.Caption);
  SaveDialog1.Title:=TranslateStr(213,SaveDialog1.Title);
  OpenDialog1.Title:=TranslateStr(214,OpenDialog1.Title);
-
+ ASysInfo.Caption:=SRpSsysInfo;
+ ASysInfo.Hint:=SRpSsysInfoH;
  // Activates OnHint
  oldonhint:=Application.OnHint;
  Application.OnHint:=AppHint;
@@ -1613,6 +1617,11 @@ begin
    DoOpen(ParamStr(1),false);
   end;
  end;
+end;
+
+procedure TFRpMainFVCL.ASysInfoExecute(Sender: TObject);
+begin
+ RpShowSystemInfo;
 end;
 
 initialization

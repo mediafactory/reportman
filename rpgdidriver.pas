@@ -112,7 +112,8 @@ type
    bitmapwidth,bitmapheight:integer;
    PreviewStyle:TRpPreviewStyle;
    clientwidth,clientheight:integer;
-   procedure NewDocument(report:TrpMetafileReport);stdcall;
+   procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
+    hardwarecollate:boolean);stdcall;
    procedure EndDocument;stdcall;
    procedure AbortDocument;stdcall;
    procedure NewPage;stdcall;
@@ -126,6 +127,8 @@ type
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
    procedure SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
+   function SupportsCopies(maxcopies:integer):boolean;stdcall;
+   function SupportsCollation:boolean;stdcall;
    constructor Create;
    destructor Destroy;override;
   end;
@@ -300,7 +303,18 @@ begin
  inherited Destroy;
 end;
 
-procedure TRpGDIDriver.NewDocument(report:TrpMetafileReport);
+function TRpGDIDriver.SupportsCopies(maxcopies:integer):boolean;
+begin
+ Result:=PrinterSupportsCopies(maxcopies);
+end;
+
+function TRpGDIDriver.SupportsCollation:boolean;
+begin
+ Result:=PrinterSupportsCollation;
+end;
+
+procedure TRpGDIDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
+   hardwarecollate:boolean);
 var
  awidth,aheight:integer;
  rec:TRect;
@@ -324,8 +338,8 @@ begin
 
   // A bug in Getting Copies forces me to
   // not use Copies and collation printer capabilities
-  SetPrinterCopies(1);
-  SetPrinterCollation(false);
+  SetPrinterCopies(hardwarecopies);
+  SetPrinterCollation(hardwarecollate);
 
   printer.BeginDoc;
   intdpix:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX); //  printer.XDPI;

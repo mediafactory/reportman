@@ -622,6 +622,7 @@ var
   SRpParseParamsH:WideString='         -paramPARAMNAME=paramvalue  Assign a value to a parameter';
   SrpSClearExpChart:WideString='Clear expression';
   SrpSBoolClearExp:WideString='Bool C.expression';
+  // Translate from here
   SRpStreamFormat:WideString='Invalid Stream format';
   SRpZLibNotSupported:WideString='ZLib Streams not supported';
   SRpPreferedFormat:WideString='Prefered save format';
@@ -629,6 +630,15 @@ var
   SRpStreamBinary:WideString='Binary stream';
   SRpStreamText:WideString='Text stream';
   SRpSOptions:WideString='Options';
+  SRpSReady:WideString='Ready';
+  SRpSsysInfo:WideString='System information';
+  SRpSsysInfoH:WideString='Shows system and printer information';
+  SRpSHighResolution:WideString='High resolution';
+  SRpSMediumResolution:WideString='Medium resolution';
+  SRpSLowResolution:WideString='Low resolution';
+  SRpSDraftResolution:WideString='Draft resolution';
+  SRpSColorPrinting:WideString='Color printing';
+  SRpSMonoPrinting:WideString='Monochrome printing';
 implementation
 
 uses rptranslator;

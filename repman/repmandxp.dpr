@@ -89,7 +89,8 @@ uses
   rpmdfextsecvcl in '..\rpmdfextsecvcl.pas' {FRpExtSectionVCL},
   rpmdfdatasetsvcl in '..\rpmdfdatasetsvcl.pas' {FRpDatasetsVCL: TFrame},
   rpfmetaviewvcl in '..\rpfmetaviewvcl.pas' {FRpMetaVCL},
-  rpfmainmetaviewvcl in '..\rpfmainmetaviewvcl.pas' {FRpMainMetaVCL};
+  rpfmainmetaviewvcl in '..\rpfmainmetaviewvcl.pas' {FRpMainMetaVCL},
+  rpmdsysinfo in '..\rpmdsysinfo.pas' {FRpSysInfo};
 
 {$R *.res}
 
