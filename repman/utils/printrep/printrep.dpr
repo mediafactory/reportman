@@ -44,6 +44,7 @@ uses
 {$ENDIF}
 
 {$IFDEF LINUX}
+  Libc,
   LibcExec in '../../LibcExec.pas',
   rpreport in '../../../rpreport.pas',
   rpparams in '../../../rpparams.pas',
@@ -98,6 +99,7 @@ begin
 end;
 
 var
+ metafile:TRpReportMetafile;
  isstdin:Boolean;
  memstream:TMemoryStream;
  bmpresx,bmpresy:integer;
@@ -108,7 +110,13 @@ var
  aprintername:string;
  aindex:integer;
  amessage:String;
+{$IFDEF LINUX}
+ usekprinter:Boolean;
+{$ENDIF} 
 begin
+{$IFDEF LINUX}
+ usekprinter:=GetEnvironmentVariable('REPMANUSEKPRINTER')='true';
+{$ENDIF}
  bmpresx:=100;
  bmpresy:=100;
  tobmp:=false;
@@ -307,7 +315,29 @@ begin
       doprint:=rprfparams.SHowUserParams(report.Params);
      if not preview then
       if pdialog then
-       doprint:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+{$IDEF LINUX}
+       if usekprinter then
+       begin
+        doprint:=False;
+        metafile:=TRpMetafileReport.Create(nil);
+        try
+         memstream:=tmemoryStream.Create;
+         try
+          rppdfdriver.PrintReportMetafileStream(report,'',false,true,1,9999,1,memstream,false,false);
+          memstream.Seek(0,soFromBeginning);
+          metafile.LoadFromStream(memstream);
+         finally
+          memstream.free;
+         end;
+         // Use kprinter to print the file
+         PrintMetafileUsingKPrinter(metafile);
+        finally
+         metafile.free;
+        end;
+       end
+       else
+{$ENDIF}
+        doprint:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
      if doprint then
      begin
       if topdf or tometafile then

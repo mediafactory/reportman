@@ -30,6 +30,9 @@ uses Classes,Sysutils,rpreport,
  rpgdidriver,Printers,Dialogs,rprfvparams,rpvpreview,rpfmainmetaviewvcl,
  rppagesetupvcl,
 {$ENDIF}
+{$IFDEF LINUX}
+ Libc,
+{$ENDIF}
  rpalias,rpfmainmetaview,rppagesetup;
 
 type
@@ -40,6 +43,9 @@ type
   private
    FUseSystemPrintDialog:boolean;
    FDriver:TRpPrintDriver;
+{$IFDEF LINUX}
+   usekprinter:Boolean;
+{$ENDIF} 
   protected
    procedure InternalExecuteRemote(metafile:TRpMetafileReport);override;
   public
@@ -77,6 +83,9 @@ begin
 
  FUseSystemPrintDialog:=true;
  FDriver:=rpDriverGDI;
+{$IFDEF LINUX}
+ usekprinter:=GetEnvironmentVariable('REPMANUSEKPRINTER')='true';
+{$ENDIF}
 end;
 
 procedure TCLXReport.PrinterSetup;
@@ -120,6 +129,10 @@ var
  allpages,collate,modified:boolean;
  frompage,topage,copies:integer;
  dook:boolean;
+{$IFDEF LINUX}
+ metafile:TRpMEtafileReport;
+ memstream:TMemoryStream;
+{$ENDIF}
 begin
  inherited Execute;
  if Preview then
@@ -167,17 +180,40 @@ begin
     exit;
    end;
 {$ENDIF}
-   if FUseSystemPrintDialog then
-    dook:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate)
-   else
-    dook:=rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
-   if dook then
+{$IFDEF LINUX}
+   if usekprinter then
    begin
-    Result:=rpqtdriver.PrintReport(report,Title,Showprogress,allpages,frompage,
-     topage,copies,collate);
+    metafile:=TRpMetafileReport.Create(nil);
+    try
+     memstream:=tmemoryStream.Create;
+     try
+      rppdfdriver.PrintReportMetafileStream(report,'',false,true,1,9999,1,memstream,false,false);
+      memstream.Seek(0,soFromBeginning);
+      metafile.LoadFromStream(memstream);
+     finally
+      memstream.free;
+     end;
+     // Use kprinter to print the file
+     PrintMetafileUsingKPrinter(metafile);
+    finally
+     metafile.free;
+    end;
    end
    else
-    Result:=false;
+{$ENDIF}
+   begin   
+    if FUseSystemPrintDialog then
+     dook:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate)
+    else
+     dook:=rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+    if dook then
+    begin
+     Result:=rpqtdriver.PrintReport(report,Title,Showprogress,allpages,frompage,
+      topage,copies,collate);
+    end
+    else
+     Result:=false;
+   end;
   end
   else
   begin
