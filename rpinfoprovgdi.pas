@@ -28,6 +28,8 @@ const
  MAXKERNINGS=10000;
 
 type
+
+
  TRpGDIInfoProvider=class(TInterfacedObject,IRpInfoProvider)
   adc:HDC;
   fonthandle:THandle;
@@ -441,6 +443,9 @@ begin
 end;
 {$ENDIF}
 
+function GetCharPlac(DC: HDC; p2: PWideChar; p3, p4:integer;
+   var p5: TGCPResults; p6: DWORD): DWORD;stdcall;external 'gdi32.dll' name 'GetCharacterPlacementW';
+
 
 function TRpGDIInfoProvider.GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):integer;
 var
@@ -480,8 +485,14 @@ begin
   gcp.nMaxFit:=1;
   astring:='';
   astring:=astring+charcode+Widechar(0);
+{$IFDEF USEVARIANTS}
   if GetCharacterPlacementW(adc,PWideChar(astring),1,0,gcp,GCP_DIACRITIC)=0 then
    RaiseLastOSError;
+{$ENDIF}
+{$IFNDEF USEVARIANTS}
+  if GetCharPlac(adc,PWideChar(astring),1,0,gcp,GCP_DIACRITIC)=0 then
+   RaiseLastOSError;
+{$ENDIF}
   data.loadedglyphs[aint]:=WideChar(glyphindex);
   data.loadedg[aint]:=true;
  end

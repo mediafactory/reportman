@@ -88,6 +88,7 @@ var
  anode,nnode:TTreeNode;
  aiden:TRpIdentifier;
  alist:TStringList;
+ astringiden:string;
 {$IFDEF USEEVALHASH}
  ait:TstrHashIterator;
 {$ENDIF}
@@ -135,20 +136,24 @@ begin
    begin
     ait.next;
     aiden:=TRpIdentifier(ait.getValue);
+    astringiden:=ait.;
 {$ENDIF}
 {$IFNDEF USEEVALHASH}
    for i:=0 to FReport.Evaluator.Identifiers.Count-1 do
    begin
     aiden:=TRpIdentifier(FReport.Evaluator.Identifiers.Objects[i]);
+    astringiden:=FReport.Evaluator.Identifiers.Strings[i];
 {$ENDIF}
     if Length(aiden.Idenname)>0 then
+     if ((astringiden<>'CIERTO') AND
+      (astringiden<>'M.PAGINA') AND (astringiden<>'M.NUMPAGINA')) then
     begin
      if alist.Indexof(aiden.IdenName)<0 then
      begin
       if aiden is TIdenConstant then
       begin
-       alist.Add(aiden.IdenName);
-       nnode:=ATree.Items.AddChild(anode,aiden.Idenname);
+       alist.Add(astringiden);
+       nnode:=ATree.Items.AddChild(anode,astringiden);
        nnode.ImageIndex:=2;
        nnode.SelectedIndex:=2;
       end
@@ -156,8 +161,8 @@ begin
       begin
        if aiden is TIdenVariable then
        begin
-        alist.Add(aiden.IdenName);
-        nnode:=ATree.Items.AddChild(anode,'M.'+aiden.idenname);
+        alist.Add(astringiden);
+        nnode:=ATree.Items.AddChild(anode,astringiden);
         nnode.ImageIndex:=2;
         nnode.SelectedIndex:=2;
        end
@@ -167,8 +172,8 @@ begin
         begin
          if TIdenFunction(aiden).ParamCount=0 then
          begin
-          alist.Add(aiden.IdenName);
-          nnode:=ATree.Items.AddChild(anode,aiden.Idenname);
+          alist.Add(astringiden);
+          nnode:=ATree.Items.AddChild(anode,astringiden);
           nnode.ImageIndex:=2;
           nnode.SelectedIndex:=2;
          end;

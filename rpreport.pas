@@ -502,7 +502,6 @@ begin
    else
    begin
     index:=DataInfo.IndexOf(subrep.Alias);
-{$IFDEF USERPDATASET}
     if Length(Datainfo.Items[index].DataSource)<1 then
     begin
      Datainfo.Items[index].Disconnect;
@@ -521,15 +520,16 @@ begin
       end
      end;
     end;
+{$IFDEF USERPDATASET}
     if Datainfo.Items[index].Cached then
     begin
-     if Datainfo.Items[index].Dataset.Bof then
+{     if Datainfo.Items[index].Dataset.Bof then
      begin
 //      Datainfo.Items[index].CachedDataset.DoClose;
       UpdateParamsBeforeOpen(index,true);
       Datainfo.Items[index].CachedDataset.DoOpen;
      end;
-     if (Not Datainfo.Items[index].Dataset.Eof) then
+}     if (Not Datainfo.Items[index].Dataset.Eof) then
      begin
       dataavail:=true;
      end;

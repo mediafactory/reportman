@@ -198,6 +198,7 @@ begin
    FCopyDataset.First;
    while Not FCopyDataset.Eof do
     FCopyDataset.Delete;
+   DoAfterOpen;
   end;
   if Not FDataset.Eof then
   begin

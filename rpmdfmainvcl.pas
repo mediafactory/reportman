@@ -1334,7 +1334,7 @@ begin
   inif.WriteInteger('Preferences','AppFontSize',FAppFontSize);
   inif.WriteInteger('Preferences','AppFontColor',FAppFontColor);
   inif.WriteInteger('Preferences','AppFontStyle',FAppFontStyle);
-  inif.WriteString('Preferences','ObjFontName',FAppFontName);
+  inif.WriteString('Preferences','ObjFontName',FObjFontName);
   inif.WriteInteger('Preferences','ObjFontSize',FObjFontSize);
   inif.WriteInteger('Preferences','ObjFontColor',FObjFontColor);
   inif.WriteInteger('Preferences','ObjFontStyle',FObjFontStyle);

@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=3
 Release=0
-Build=3
+Build=4
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report client and metafile viewer
-FileVersion=2.3.0.3
+FileVersion=2.3.0.4
 InternalName=metaview
 LegalCopyright=MPL/GLP License
 LegalTrademarks=

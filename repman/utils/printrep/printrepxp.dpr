@@ -25,7 +25,7 @@ program printrepxp;
 
 uses
   SysUtils,
-  Classes,
+  Classes,Windows,
   ActiveX,
 {$IFDEF ISDELPHI7}
   XpMan,
@@ -175,6 +175,11 @@ begin
      monobmp:=false;
     end
     else
+//    if ParamStr(indexparam)='-freeconsole' then
+//    begin
+//     FreeConsole;
+ //   end
+ //   else
     if ParamStr(indexparam)='-m' then
     begin
      tometafile:=true;

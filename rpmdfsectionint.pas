@@ -1456,6 +1456,8 @@ begin
   // Search if theres a selected field
   // Search if theres a selected field
   size:=Integer(anode.Data);
+  if size=0 then
+   size:=10;
   fieldname:=ExtractFieldNameEx(anode.Text);
   TRpExpression(asizepos).Expression:=fieldname;
 {$IFDEF MSWINDOWS}
