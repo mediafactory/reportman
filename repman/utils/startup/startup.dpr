@@ -101,18 +101,18 @@ begin
   // Only set LC_NUMERIC if a KYLIX_PRINTBUG is set
   if compmode then
   begin
-   Writeln('Running in compatible mode (CLX_USE_LIBQT-libqtintf)');
+//   Writeln('Running in compatible mode (CLX_USE_LIBQT-libqtintf)');
   end
   else
   begin
   end;
   if (Length(GetEnvironmentVariable('KYLIX_PRINTBUG'))>0) then
   begin
-   Writeln('KYLIX_PRINTBUG defined, fixing LC_NUMERIC');
+//   Writeln('KYLIX_PRINTBUG defined, fixing LC_NUMERIC');
    SetEnvValue('LC_NUMERIC','en_US',false);
   end
   else
-   Writeln('If you experience print problems or not printing at all define KYLIX_PRINTBUG environment variable');
+//   Writeln('If you experience print problems or not printing at all define KYLIX_PRINTBUG environment variable');
   if (Length(GetEnvironmentVariable('KYLIX_DEFINEDENVLOCALES'))<1) then
   begin
    SetEnvValue('KYLIX_DEFINEDENVLOCALES','Yes',false);
@@ -136,25 +136,25 @@ begin
     compmode:=true;
    end;
   end;
-  Writeln('Kylix application launcher');
+//  Writeln('Kylix application launcher');
   if compmode then
   begin
-   Writeln('Running in compatible mode (CLX_USE_LIBQT-libqtintf)');
+//   Writeln('Running in compatible mode (CLX_USE_LIBQT-libqtintf)');
   end
   else
   begin
-   Writeln('Running in standard mode (NOT CLX_USE_LIBQT-libborqt)');
+//   Writeln('Running in standard mode (NOT CLX_USE_LIBQT-libborqt)');
   end;
-  Writeln('If you experience problems change the mode by define/undefine environment variable CLX_USE_LIBQT=true');
-  Writeln('Library path:');
-  Writeln(GetEnvironmentVariable('LD_LIBRARY_PATH'));
+//  Writeln('If you experience problems change the mode by define/undefine environment variable CLX_USE_LIBQT=true');
+//  Writeln('Library path:');
+//  Writeln(GetEnvironmentVariable('LD_LIBRARY_PATH'));
 
   ExecuteApp(targetapp);
   // Not succefull
-  Writeln(ErrOutput,'Error: Unable to execute '+targetapp);
-  Writeln(ErrOutput,Format('code=%d msg=%s',[errno,strerror(errno)]));
+//  Writeln(ErrOutput,'Error: Unable to execute '+targetapp);
+//  Writeln(ErrOutput,Format('code=%d msg=%s',[errno,strerror(errno)]));
 {$ENDIF}
 {$IFDEF MSWINDOWS}
-  Writeln('This application is useful only in Linux');
+///  Writeln('This application is useful only in Linux');
 {$ENDIF}
 end.
