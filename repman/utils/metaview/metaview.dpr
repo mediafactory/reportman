@@ -5,7 +5,7 @@ program metaview;
 uses
   QForms,
 {$IFDEF MSWINDOWS}
-  rpfmetaview in '..\..\..\rpfmetaview.pas' {FRpMeta},
+  rpfmainmetaview in '..\..\..\rpfmainmetaview.pas' {FRpMainMeta},
   rpmetafile in '..\..\..\rpmetafile.pas',
   rpprintdia in '..\..\..\rpprintdia.pas' {FRpPrintDialog},
   rpqtdriver in '..\..\..\rpqtdriver.pas' {TFRpQtProgress},
@@ -21,7 +21,7 @@ uses
   rpmdprintconfig in '..\..\..\rpmdprintconfig.pas' {FRpPrinterConfig};
 {$ENDIF}
 {$IFDEF LINUX}
-  rpfmetaview in '../../../rpfmetaview.pas' {FRpMeta},
+  rpfmainmetaview in '../../../rpfmainmetaview.pas' {FRpMainMeta},
   rpmetafile in '../../../rpmetafile.pas',
   rpprintdia in '../../../rpprintdia.pas' {FRpPrintDialog},
   rppdfdriver in '../../../rppdfdriver.pas',
@@ -41,6 +41,6 @@ uses
 begin
   Application.Initialize;
   Application.Title := 'Report manager metafile report viewer';
-  Application.CreateForm(TFRpMeta, FRpMeta);
+  Application.CreateForm(TFRpMainMeta, FRpMainMeta);
   Application.Run;
 end.

@@ -33,7 +33,7 @@ uses
   ToolWin;
 
 type
-  TFRpMetaVCL = class(TForm)
+  TFRpMetaVCL = class(TFrame)
     BToolBar: TToolBar;
     ImageContainer: TScrollBox;
     AImage: TImage;
@@ -62,7 +62,7 @@ type
     AScaleFull: TAction;
     AScaleLess: TAction;
     AScaleMore: TAction;
-    ToolButton10: TToolButton;
+    BExit: TToolButton;
     SaveDialog1: TSaveDialog;
     ToolButton5: TToolButton;
     ToolButton9: TToolButton;
@@ -123,19 +123,14 @@ type
     AAsyncExec: TAction;
     Asynchronousexecution1: TMenuItem;
     ImageList1: TImageList;
-    procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
     procedure ANextExecute(Sender: TObject);
     procedure APreviousExecute(Sender: TObject);
     procedure ALastExecute(Sender: TObject);
     procedure EPageNumKeyPress(Sender: TObject; var Key: Char);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure APrintExecute(Sender: TObject);
     procedure ASaveExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
-    procedure FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure AExitExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure AImageMouseDown(Sender: TObject; Button: TMouseButton;
@@ -157,9 +152,10 @@ type
   private
     { Private declarations }
     cancelled:boolean;
-    clitree:TFRpCliTreeVCL;
     oldonHint:TNotifyEvent;
     configfile:string;
+    faform:TForm;
+    procedure SetForm(Value:TForm);
     procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
     procedure EnableButtons;
     procedure DisableButtons;
@@ -172,19 +168,23 @@ type
     procedure UpdatePrintSel;
   public
     { Public declarations }
+    clitree:TFRpCliTreeVCL;
     pagenum:integer;
     metafile:TRpMetafileReport;
     gdidriver:TRpGDIDriver;
     printerindex:TRpPrinterSelect;
     agdidriver:IRpPrintDriver;
     bitmap:TBitmap;
+    property aform:TForm read faform write SetForm;
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    constructor Create(AOwner:TComponent);override;
+    destructor Destroy;override;
     procedure PrintPage;
   end;
 
 var
  FRpMetaVCL:TFRpMetaVCL;
-
-procedure PreviewMetafile(metafile:TRpMetafileReport);
 
 implementation
 
@@ -192,56 +192,14 @@ uses rppdfdriver;
 
 {$R *.dfm}
 
-procedure PreviewMetafile(metafile:TRpMetafileReport);
-var
- dia:TFRpMetaVCL;
- memstream:TMemoryStream;
+procedure TFRpMetaVCL.SetForm(Value:TForm);
 begin
- dia:=TFRpMetaVCL.Create(Application);
- try
-  memstream:=TMemoryStream.Create;
-  try
-   metafile.SaveToStream(memstream);
-   memstream.Seek(0,soFromBeginning);
-   dia.metafile.LoadFromStream(memstream);
-   dia.ASave.Enabled:=True;
-   dia.APrint.Enabled:=True;
-   dia.AFirst.Enabled:=True;
-   dia.APrevious.Enabled:=True;
-   dia.ANext.Enabled:=True;
-   dia.ALast.Enabled:=True;
-   dia.pagenum:=1;
-   dia.AViewConnect.Checked:=false;
-   dia.AViewConnect.Enabled:=false;
-   dia.Splitter1.Visible:=false;
-   dia.clitree.visible:=false;
-   if metafile.PreviewWindow=spwMaximized then
-    dia.WindowState:=wsMaximized;
-   dia.AScale100.Checked:=False;
-   dia.AScaleFull.Checked:=False;
-   dia.AScaleWide.Checked:=False;
-   case metafile.PreviewStyle of
-    spNormal:
-     begin
-      dia.AScale100.Checked:=True;
-      dia.gdidriver.PreviewStyle:=spNormal;
-     end;
-    spEntirePage:
-     begin
-      dia.AScaleFull.Checked:=True;
-      dia.gdidriver.PreviewStyle:=spEntirePage;
-     end
-    else
-      dia.AScaleWide.Checked:=True;
-   end;
-   dia.PrintPage;
-   dia.FormResize(dia);
-   dia.ShowModal;
-  finally
-   memstream.free;
-  end;
- finally
-  dia.free;
+ faform:=Value;
+ BExit.Visible:=Assigned(faform);
+ if assigned(faform) then
+ begin
+  faform.OnKeyDown:=FormKeyDown;
+  faform.Menu:=MainMenu1;
  end;
 end;
 
@@ -286,8 +244,9 @@ begin
  EPageNum.Text:=IntToStr(PageNum);
 end;
 
-procedure TFRpMetaVCL.FormCreate(Sender: TObject);
+constructor TFRpMetaVCL.Create(AOwner:TComponent);
 begin
+ inherited Create(AOwner);
  MSelectPrinter.Caption:=TranslateStr(741,MSelectPrinter.Caption);
  MSelPrinter0.Caption:=SRpDefaultPrinter;
  MSelPrinter1.Caption:=SRpReportPrinter;
@@ -413,11 +372,6 @@ begin
   BStatus.Panels.Items[0].Text:=Application.Hint;
 end;
 
-procedure TFRpMetaVCL.FormDestroy(Sender: TObject);
-begin
- Application.OnHint:=oldonhint;
- bitmap.free;
-end;
 
 procedure TFRpMetaVCL.AFirstExecute(Sender: TObject);
 begin
@@ -454,11 +408,15 @@ begin
  end;
 end;
 
-procedure TFRpMetaVCL.FormClose(Sender: TObject; var Action: TCloseAction);
+destructor TFRpMetaVCL.Destroy;
 begin
  cancelled:=true;
  gdidriver:=nil;
  SaveConfig;
+ Application.OnHint:=oldonhint;
+ bitmap.free;
+
+ inherited Destroy;
 end;
 
 procedure TFRpMetaVCL.APrintExecute(Sender: TObject);
@@ -628,7 +586,8 @@ end;
 
 procedure TFRpMetaVCL.AExitExecute(Sender: TObject);
 begin
- Close;
+ if assigned(aform) then
+  aform.Close;
 end;
 
 

@@ -1,29 +1,20 @@
 object FRpMeta: TFRpMeta
-  Left = 121
-  Top = 58
+  Left = 0
+  Top = 0
   Width = 603
   Height = 460
   VertScrollBar.Range = 338
   HorzScrollBar.Range = 561
-  ActiveControl = EPageNum
-  Caption = 'Metafile report preview'
-  Color = clBackground
-  KeyPreview = True
-  Menu = MainMenu1
+  Align = alClient
+  ParentShowHint = False
   ShowHint = True
-  OnClose = FormClose
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
-  OnKeyDown = FormKeyDown
+  TabOrder = 0
   OnResize = FormResize
-  PixelsPerInch = 96
-  TextHeight = 13
-  TextWidth = 6
   object Splitter1: TSplitter
     Left = 0
     Top = 30
     Width = 7
-    Height = 386
+    Height = 409
     Beveled = True
   end
   object BToolBar: TToolBar
@@ -122,7 +113,7 @@ object FRpMeta: TFRpMeta
       TabOrder = 8
       Visible = False
     end
-    object ToolButton10: TToolButton
+    object BExit: TToolButton
       HelpType = htContext
       Left = 357
       Top = 4
@@ -194,7 +185,7 @@ object FRpMeta: TFRpMeta
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 416
+    Top = 439
     Width = 603
     Height = 21
     Panels = <

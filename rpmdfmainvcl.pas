@@ -310,7 +310,7 @@ var
 
 implementation
 
-uses rpfmetaviewvcl;
+uses rpfmainmetaviewvcl;
 
 
 {$R *.dfm}
@@ -1091,7 +1091,7 @@ begin
  if ADriverPDF.Checked then
  begin
   rpgdidriver.CalcReportWidthProgress(report);
-  rpfmetaviewvcl.PreviewMetafile(report.metafile);
+  rpfmainmetaviewvcl.PreviewMetafile(report.metafile);
  end
  else
  begin

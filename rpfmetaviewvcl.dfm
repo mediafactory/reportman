@@ -1,41 +1,27 @@
 object FRpMetaVCL: TFRpMetaVCL
-  Left = 24
-  Top = 29
+  Left = 0
+  Top = 0
   Width = 627
   Height = 458
   HorzScrollBar.Range = 561
   VertScrollBar.Range = 338
-  ActiveControl = EPageNum
+  Align = alClient
   AutoScroll = False
-  Caption = 'Metafile report preview'
-  Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
-  Font.Style = []
-  KeyPreview = True
-  Menu = MainMenu1
-  OldCreateOrder = True
+  ParentShowHint = False
   ShowHint = True
-  OnClose = FormClose
-  OnCreate = FormCreate
-  OnDestroy = FormDestroy
-  OnKeyDown = FormKeyDown
+  TabOrder = 0
   OnResize = FormResize
-  PixelsPerInch = 96
-  TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
     Top = 27
     Width = 7
-    Height = 356
+    Height = 410
     Beveled = True
   end
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 619
+    Width = 627
     Height = 27
     AutoSize = True
     ButtonHeight = 25
@@ -113,7 +99,7 @@ object FRpMetaVCL: TFRpMetaVCL
       Top = 0
       Action = AScaleMore
     end
-    object ToolButton10: TToolButton
+    object BExit: TToolButton
       Left = 356
       Top = 0
       Action = AExit
@@ -160,8 +146,8 @@ object FRpMetaVCL: TFRpMetaVCL
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 383
-    Width = 619
+    Top = 437
+    Width = 627
     Height = 21
     Panels = <
       item

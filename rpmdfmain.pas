@@ -26,7 +26,7 @@ uses
   Types, Classes,
 {$IFDEF MSWINDOWS}
   rpgdidriver,rpvpreview,rprfvparams,windows,Forms,Dialogs,rppagesetupvcl,
-  rpmdfgridvcl,rpfparamsvcl,ShellAPI,rpfmetaviewvcl,
+  rpmdfgridvcl,rpfparamsvcl,ShellAPI,rpfmainmetaviewvcl,
 {$ENDIF}
   QGraphics,QStyle,Qt,QControls, QForms,
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,QExtCtrls,
@@ -35,7 +35,7 @@ uses
   rpmdfgrid,rppreview,rpprintdia,
   rpmdconsts,rptypes, rpmdfstruc, rplastsav,rpsubreport,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
-  rpsection,rpprintitem,rprfparams,rpfmetaview,
+  rpsection,rpprintitem,rprfparams,rpfmainmetaview,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
@@ -1142,7 +1142,7 @@ begin
   if ADriverPDFGDI.Checked then
   begin
    rpgdidriver.CalcReportWidthProgress(report);
-   rpfmetaviewvcl.PreviewMetafile(report.metafile);
+   rpfmainmetaviewvcl.PreviewMetafile(report.metafile);
    exit;
   end
  end;
@@ -1154,7 +1154,7 @@ begin
  else
  begin
   rpqtdriver.CalcReportWidthProgress(report);
-  rpfmetaview.PreviewMetafile(report.metafile);
+  rpfmainmetaview.PreviewMetafile(report.metafile);
   exit;
  end
 end;

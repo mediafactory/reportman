@@ -4,7 +4,7 @@ program metaviewxp;
 
 uses
   Forms,
-  rpfmetaviewvcl in '..\..\..\rpfmetaviewvcl.pas' {FRpMetaVCL},
+  rpfmainmetaviewvcl in '..\..\..\rpfmainmetaviewvcl.pas' {FRpMainMetaVCL},
   rpmetafile in '..\..\..\rpmetafile.pas',
   rppdfdriver in '..\..\..\rppdfdriver.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas',
@@ -15,13 +15,14 @@ uses
   rprfvparams in '..\..\..\rprfvparams.pas' {FRpRTParams},
   rpvgraphutils in '..\..\..\rpvgraphutils.pas',
   rpgdidriver in '..\..\..\rpgdidriver.pas' {FRpVCLProgress},
-  rpmdprintconfigvcl in '..\..\..\rpmdprintconfigvcl.pas' {FRpPrinterConfigVCL};
+  rpmdprintconfigvcl in '..\..\..\rpmdprintconfigvcl.pas' {FRpPrinterConfigVCL},
+  rpfmetaviewvcl in '..\..\..\rpfmetaviewvcl.pas' {FRpMetaVCL: TFrame};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.Title := 'Report manager metafile report viewer';
-  Application.CreateForm(TFRpMetaVCL, FRpMetaVCL);
+  Application.CreateForm(TFRpMainMetaVCL, FRpMainMetaVCL);
   Application.Run;
 end.

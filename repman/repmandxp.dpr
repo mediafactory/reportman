@@ -99,6 +99,7 @@ uses
   rpmdfextsecvcl in '..\rpmdfextsecvcl.pas' {FRpExtSectionVCL},
   rpmdfdatasetsvcl in '..\rpmdfdatasetsvcl.pas' {FRpDatasetsVCL: TFrame},
   rpfmetaviewvcl in '..\rpfmetaviewvcl.pas' {FRpMetaVCL};
+  rpfmetaviewvcl in '..\rpfmainmetaviewvcl.pas' {FRpMainMetaVCL};
 
 {$R *.res}
 
