@@ -25,6 +25,9 @@ uses
 {$IFDEF MSWINDOWS}
   windows,
 {$ENDIF}
+{$IFDEF LINUX}
+  Libc,
+{$ENDIF}
   rpmdconsts;
 
 
@@ -234,6 +237,7 @@ function FindQtLocaleFile:string;
 var
  LangCode,P:PChar;
  I:Integer;
+ afilename:String;
 {$ENDIF}
 {$IFDEF MSWINDOWS}
 var
@@ -308,9 +312,8 @@ var
   end;
 {$ENDIF}
 begin
- afilename:='qt';
- Result:=afilename;
 {$IFDEF LINUX}
+ afilename:='qt';
  LangCode := getenv('LANG');
  if (LangCode = nil) or (LangCode^ = #0) then
   Exit;
@@ -322,9 +325,11 @@ begin
   Result := afilename
  else
  begin
-  Result := afilename + '.' + Copy(LangCode, 1, P - LangCode);
+//  Result := afilename + '.' + Copy(LangCode, 1, P - LangCode);
+  Result:='qt_'+Copy(LangCode, 1, P - LangCode)+'.qm';
   if not FileExists(Result) then
   begin
+   Result := afilename + '.' + Copy(LangCode, 1, P - LangCode);
    // look for modulename.en    (ignoring country code and suffixes)
    I := Length(Result);
    while (I > 0) and not (Result[I] in ['.', '_']) do
@@ -332,6 +337,8 @@ begin
    if (I-1 = Length(Result)) or (I-1 < Length(afilename)) then
     Exit;
    SetLength(Result, I-1);
+   Result:='qt_'+Copy(ExtractFileExt(Result),2,255)+'.qm';
+
    if not FileExists(Result) then
    begin
     Result:=afilename;
@@ -341,6 +348,7 @@ begin
  end;
 {$ENDIF}
 {$IFDEF MSWINDOWS}
+  Result:=afilename;
   afilename:='qt.exe';
   StrCopy(Filename,Pchar(afilename));
   LocaleOverride[0] := #0;

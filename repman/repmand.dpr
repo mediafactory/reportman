@@ -183,9 +183,9 @@ var
   FRpMainF: TFRpMainF;
 
 begin
-{$IFDEF MSWINDOWS}
+//{$IFDEF MSWINDOWS}
   LoadQtTranslator;
-{$ENDIF}
+//{$ENDIF}
   Application.Initialize;
   Application.CreateForm(TFRpMainF, FRpMainF);
   Application.Run;
