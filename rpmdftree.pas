@@ -440,7 +440,7 @@ begin
  else
  begin
   // Construct the filename
-  afilename:=rootfilename+'\'+GetFullFileName(ANode)+'.rep';
+  afilename:=rootfilename+'\'+GetFullFileName(ANode,C_DIRSEPARATOR)+'.rep';
   if report.filename<>afilename then
    report.filename:=afilename;
   report.CheckLoaded;

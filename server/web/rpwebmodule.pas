@@ -18,6 +18,8 @@ type
       Response: TWebResponse; var Handled: Boolean);
     procedure repwebmodaconfigAction(Sender: TObject; Request: TWebRequest;
       Response: TWebResponse; var Handled: Boolean);
+    procedure repwebmodashowaliasAction(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
   private
     { Private declarations }
     pageloader:TRpWebPageLoader;
@@ -68,6 +70,12 @@ procedure Trepwebmod.repwebmodaconfigAction(Sender: TObject;
   Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
 begin
  Response.Content:=pageloader.GetWebPage(Request,rpwConfig);
+end;
+
+procedure Trepwebmod.repwebmodashowaliasAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
+begin
+ Response.Content:=pageloader.GetWebPage(Request,rpwShowAlias);
 end;
 
 end.

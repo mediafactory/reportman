@@ -62,7 +62,8 @@ begin
  db2.AliasName:='IFACTUREMP';
  db2.DatabaseName:='FACTUREMP';
  db1.Params.Add('USER NAME=SYSDBA');
- db1.Params.Add('PASSWORD=masterkey');
+ db1.Params.Add('PASSWORD=tw2000');
+// db1.Params.Add('SERVER NAME=pluton:c:\000');
  db2.Params.Assign(db1.Params);
 end;
 

@@ -3,7 +3,7 @@ unit rpwebpages;
 interface
 
 uses SysUtils,Classes,HTTPApp,rpmdconsts,Inifiles,
- rpmdshfolder;
+ rpmdshfolder,rptypes;
 
 const
  REPMAN_LOGIN_LABEL='ReportManagerLoginLabel';
@@ -12,10 +12,12 @@ const
  REPMAN_INDEX_LABEL='ReportManagerIndexLabel';
  REPMAN_WEBSERVER='RepManWebServer';
  REPMAN_CONFIG_LABEL='ConfigIndexLabel';
- REPMAN_AVAILABLE_LABELS='AvailableAliasesLabel';
+ REPMAN_AVAILABLE_ALIASES='AvailableAliasesLabel';
  REPMAN_CONFIGUR_LABEL='RepManConfigLabel';
+ REPMAN_REPORTS_LABEL='ReportManagerReportsLabel';
+ REPMAN_REPORTSLOC_LABEL='ReportsLocationAlias';
 type
- TRpWebPage=(rpwLogin,rpwConfig,rpwIndex,rpwVersion);
+ TRpWebPage=(rpwLogin,rpwConfig,rpwIndex,rpwVersion,rpwShowAlias);
 
  TRpWebPageLoader=class(TObject)
   private
@@ -30,6 +32,7 @@ type
    loginpage:string;
    indexpage:string;
    configpage:string;
+   showaliaspage:string;
    isadmin:boolean;
    procedure InitConfig;
    procedure CheckInitReaded;
@@ -37,6 +40,7 @@ type
    function LoadLoginPage(Request: TWebRequest):string;
    function LoadIndexPage(Request: TWebRequest):string;
    function LoadConfigPage(Request: TWebRequest):string;
+   function LoadAliasPage(Request: TWebRequest):string;
   public
    procedure CheckLogin(Request:TWebRequest);
    function GetWebPage(Request: TWebRequest;apage:TRpWebPage):String;
@@ -67,8 +71,8 @@ begin
  end;
  if Not LoginCorrect then
  begin
-  Raise Exception.Create(TranslateStr(848,'Incorrect user name or password')+
-   ' User: '+username+' Password: '+password+' Index: '+IntToStr(index));
+  Raise Exception.Create(TranslateStr(848,'Incorrect user name or password'));
+//   ' User: '+username+' Password: '+password+' Index: '+IntToStr(index));
  end;
 end;
 
@@ -108,6 +112,9 @@ end;
 function TRpWebPageLoader.LoadIndexPage(Request: TWebRequest):string;
 var
  astring:String;
+ aliasesstring:String;
+ adminstring:String;
+ i:integer;
 begin
  if Length(FPagesDirectory)<1 then
  begin
@@ -119,14 +126,30 @@ begin
   astring:=aresult.Text;
  end;
  // Substitute translations
+ if isadmin then
+  adminstring:='<p><a href="./config">'+
+  TranslateStr(849,'Report Manager Configuration')+'</a></p>'
+ else
+  adminstring:='';
+ astring:=StringReplace(astring,REPMAN_CONFIG_LABEL,adminstring
+  ,[rfReplaceAll]);
+ astring:=StringReplace(astring,'./config',
+  './config?'+Request.Query,[rfReplaceAll]);
+
  astring:=StringReplace(astring,REPMAN_WEBSERVER,
   TranslateStr(837,'Report Manager Web Server'),[rfReplaceAll]);
  astring:=StringReplace(astring,REPMAN_INDEX_LABEL,
   TranslateStr(846,'Report Manager Index'),[rfReplaceAll]);
- astring:=StringReplace(astring,REPMAN_AVAILABLE_LABELS,
-  TranslateStr(847,'Available Report Groups'),[rfReplaceAll]);
- astring:=StringReplace(astring,'./config',
-  './config?'+Request.Query,[rfReplaceAll]);
+
+ aliasesstring:=TranslateStr(847,'Available Report Groups');
+ for i:=0 to laliases.Count-1 do
+ begin
+  aliasesstring:=aliasesstring+#10+'<p><a href="./showalias?aliasname='+
+   laliases.Names[i]+'&'+Request.Query+'">'+laliases.Names[i]+'</a></p>';
+ end;
+
+ astring:=StringReplace(astring,REPMAN_AVAILABLE_ALIASES,
+  aliasesstring,[rfReplaceAll]);
 
  Result:=astring;
 end;
@@ -147,8 +170,6 @@ begin
  // Substitute translations
  astring:=StringReplace(astring,REPMAN_WEBSERVER,
   TranslateStr(837,'Report Manager Web Server'),[rfReplaceAll]);
- astring:=StringReplace(astring,REPMAN_CONFIGUR_LABEL,
-  TranslateStr(849,'Report Manager Configuration'),[rfReplaceAll]);
 
  Result:=astring;
 end;
@@ -162,15 +183,17 @@ begin
    CheckLogin(Request);
   case apage of
    rpwVersion:
-    Result:=TranslateStr(837,'Report Manager Web Server')+#10+
-     TranslateStr(91,'Version')+' '+RM_VERSION+#10+
-     TranslateStr(743,'Configuration File')+': '+Ffilenameconfig;
+    Result:='<html><body>'+TranslateStr(837,'Report Manager Web Server')+#10+
+     '<p></p>'+TranslateStr(91,'Version')+' '+RM_VERSION+#10+'<p></p>'+
+     TranslateStr(743,'Configuration File')+': '+Ffilenameconfig+'</body></html>';
    rpwLogin:
     Result:=LoadLoginPage(Request);
    rpwIndex:
     Result:=LoadIndexPage(Request);
    rpwConfig:
     Result:=LoadConfigPage(Request);
+   rpwShowAlias:
+    Result:=LoadAliasPage(Request);
   end;
  except
   On E:Exception do
@@ -217,7 +240,7 @@ begin
  aresult.Add('</tr>');
  aresult.Add('</table>');
  aresult.Add('<p>');
- aresult.Add('<input type="submit" name="Submit" value="LoginLabel">');
+ aresult.Add('<input type="submit" value="ReportManagerLoginLabel">');
  aresult.Add('</p>');
  aresult.Add('</form>');
  aresult.Add('<p>&nbsp; </p>');
@@ -233,9 +256,8 @@ begin
  aresult.Add('</head>');
  aresult.Add('<body bgcolor="#FFFFFF">');
  aresult.Add('<h3 align="center"> ReportManagerIndexLabel</h3>');
-// aresult.Add('<p><a href="./config">ConfigIndexLabel</a></p>');
+ aresult.Add('ConfigIndexLabel');
  aresult.Add('<p>AvailableAliasesLabel</p>');
- aresult.Add('<p><a href="./config">Alias1Label</a></p>');
  aresult.Add('</body>');
  aresult.Add('</html>');
  indexpage:=aresult.Text;
@@ -248,9 +270,24 @@ begin
  aresult.Add('</head>');
  aresult.Add('<body bgcolor="#FFFFFF">');
  aresult.Add('<h3 align="center"> RepManConfigLabel</h3>');
+ aresult.Add('<p></p>');
  aresult.Add('</body>');
  aresult.Add('</html>');
  configpage:=aresult.Text;
+
+ aresult.clear;
+ aresult.Add('<html>');
+ aresult.Add('<head>');
+ aresult.Add('<title>RepManWebServer</title>');
+ aresult.Add('<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">');
+ aresult.Add('</head>');
+ aresult.Add('<body bgcolor="#FFFFFF">');
+ aresult.Add('<h3 align="center">ReportManagerReportsLabel</h3>');
+ aresult.Add('<p>ReportsLocationAlias</p>');
+ aresult.Add('</body>');
+ aresult.Add('</html>');
+ showaliaspage:=aresult.text;
+
 
  InitConfig;
 end;
@@ -320,5 +357,43 @@ begin
   end;
  end;
 end;
+
+
+function TRpWebPageLoader.LoadAliasPage(Request: TWebRequest):string;
+var
+ astring:String;
+ reportlist:String;
+ aliasname:String;
+ i:integer;
+ alist:TStringList;
+ dirpath:String;
+begin
+ astring:=showaliaspage;
+ astring:=StringReplace(astring,REPMAN_WEBSERVER,
+  TranslateStr(837,'Report Manager Web Server'),[rfReplaceAll]);
+ astring:=StringReplace(astring,REPMAN_REPORTS_LABEL,
+  TranslateStr(837,'Reports'),[rfReplaceAll]);
+ reportlist:='';
+ aliasname:=Request.QueryFields.Values['aliasname'];
+ if Length(aliasname)>0 then
+ begin
+  dirpath:=laliases.Values[aliasname];
+  alist:=TStringList.Create;
+  try
+   FillTreeDir(dirpath,alist);
+   for i:=0 to alist.Count-1 do
+   begin
+    reportlist:=reportlist+#10+'<p><a href="./showparams?reportname='+
+     alist.Strings[i]+'&'+Request.Query+'">'+alist.Strings[i]+'</a></p>';
+   end;
+  finally
+   alist.free;
+  end;
+ end;
+ astring:=StringReplace(astring,REPMAN_REPORTSLOC_LABEL,
+  reportlist,[rfReplaceAll]);
+ Result:=astring;
+end;
+
 
 end.
