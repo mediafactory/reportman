@@ -19,7 +19,7 @@ unit rpregvcl;
 interface
 
 uses
-  Classes,rpvclreport;
+  Classes,rpvclreport,rpactivexreport;
 
 
 procedure Register;
@@ -30,6 +30,7 @@ implementation
 procedure Register;
 begin
   RegisterComponents('Reportman', [TVCLReport]);
+  RegisterComponents('Reportman', [TRpActiveXReport]);
 end;
 
 end.

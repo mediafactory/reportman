@@ -30,6 +30,7 @@ clean:
         -del /s *.hpp
         -del /s *.obj
         -del /s *.tds
+        -del /s *.ocx
 
         -del tests\eval\project1
         -del tests\metafiles\metafile

@@ -47,7 +47,7 @@ contains
   rpevalfunc in 'rpevalfunc.pas',
   rpparser in 'rpparser.pas',
   rpalias in 'rpalias.pas',
-  rpmreg in 'rmpreg.pas',
+  rpmreg in 'rpmreg.pas',
   rplastsav in 'rplastsav.pas',
   rpdatainfo in 'rpdatainfo.pas',
   rpparams in 'rpparams.pas',
