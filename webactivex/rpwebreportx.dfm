@@ -15,8 +15,8 @@ object WebReportMan: TWebReportMan
   PixelsPerInch = 96
   TextHeight = 13
   object webmetaprint: TRpWebMetaPrint
-    Left = 4
-    Top = 12
+    Left = 28
+    Top = 180
     Width = 413
     Height = 77
     Install = False
@@ -26,5 +26,12 @@ object WebReportMan: TWebReportMan
   object XPManifest1: TXPManifest
     Left = 104
     Top = 144
+  end
+  object Timer1: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = Timer1Timer
+    Left = 108
+    Top = 52
   end
 end

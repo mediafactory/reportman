@@ -35,7 +35,8 @@ uses classes,SysUtils,Windows,graphics,controls,forms,
  rpmetafile,rpreport,rpfmainmetaviewvcl,rpmdconsts,
  IdHttp,rpgdidriver,rpmdprintconfigvcl,rpmdshfolder;
 
-
+//const
+// READ_TIMEOUT=10000;
 type
  TRpWebMetaPrint=class(TCustomControl)
   private
@@ -47,6 +48,7 @@ type
    FPort:integer;
    FPreview:Boolean;
    FInstall:Boolean;
+   FShowProgress:Boolean;
    procedure DoInstall;
    procedure SetCaption(Value:WideString);
   protected
@@ -68,6 +70,8 @@ type
    property FontSize:Integer read FFontSize write FFontSize default 0;
    property FontName:String read FFontName write FFontName;
    property Preview:Boolean read FPreview write FPreview default false;
+   property ShowProgress:Boolean read FShowProgress write FShowProgress
+    default true;
   end;
 
 procedure PrintHttpReport(httpstring:String);
@@ -98,6 +102,7 @@ begin
  connect:=TIdHttp.Create(nil);
  try
   connect.Port:=FPort;
+//  connect.ReadTimeout:=READ_TIMEOUT;
   astream:=TMemoryStream.Create;
   try
    connect.Get(MetaUrl,astream);
@@ -110,7 +115,7 @@ begin
      PreviewMetafile(metafile,aform);
     end
     else
-     rpgdidriver.PrintMetafile(metafile,'Printing',true,true,0,1,1,true,false);
+     rpgdidriver.PrintMetafile(metafile,'Printing',FShowProgress,true,0,1,1,true,false);
    finally
     metafile.free;
    end;
@@ -135,6 +140,7 @@ begin
  FPreview:=false;
  FFontSize:=0;
  FPort:=80;
+ FShowProgress:=True;
 end;
 
 procedure TRpWebMetaPrint.Paint;

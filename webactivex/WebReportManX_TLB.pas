@@ -12,7 +12,7 @@ unit WebReportManX_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 20/01/2003 12:40:00 from Type Library described below.
+// File generated on 20/01/2003 16:30:28 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\webactivex\WebReportManX.tlb (1)
@@ -147,6 +147,10 @@ type
     procedure Set_PrinterConfig(Value: Integer); safecall;
     function Get_MetaUrl: WideString; safecall;
     procedure Set_MetaUrl(const Value: WideString); safecall;
+    function Get_ShowProgress: Integer; safecall;
+    procedure Set_ShowProgress(Value: Integer); safecall;
+    function Get_Embedded: Integer; safecall;
+    procedure Set_Embedded(Value: Integer); safecall;
     property Visible: WordBool read Get_Visible write Set_Visible;
     property AutoScroll: WordBool read Get_AutoScroll write Set_AutoScroll;
     property AutoSize: WordBool read Get_AutoSize write Set_AutoSize;
@@ -168,6 +172,8 @@ type
     property Preview: Integer read Get_Preview write Set_Preview;
     property PrinterConfig: Integer read Get_PrinterConfig write Set_PrinterConfig;
     property MetaUrl: WideString read Get_MetaUrl write Set_MetaUrl;
+    property ShowProgress: Integer read Get_ShowProgress write Set_ShowProgress;
+    property Embedded: Integer read Get_Embedded write Set_Embedded;
   end;
 
 // *********************************************************************//
@@ -198,6 +204,8 @@ type
     property Preview: Integer dispid 217;
     property PrinterConfig: Integer dispid 218;
     property MetaUrl: WideString dispid 219;
+    property ShowProgress: Integer dispid 212;
+    property Embedded: Integer dispid 213;
   end;
 
 // *********************************************************************//
@@ -285,6 +293,8 @@ type
     property Preview: Integer index 217 read GetIntegerProp write SetIntegerProp stored False;
     property PrinterConfig: Integer index 218 read GetIntegerProp write SetIntegerProp stored False;
     property MetaUrl: WideString index 219 read GetWideStringProp write SetWideStringProp stored False;
+    property ShowProgress: Integer index 212 read GetIntegerProp write SetIntegerProp stored False;
+    property Embedded: Integer index 213 read GetIntegerProp write SetIntegerProp stored False;
     property OnActivate: TNotifyEvent read FOnActivate write FOnActivate;
     property OnClick: TNotifyEvent read FOnClick write FOnClick;
     property OnCreate: TNotifyEvent read FOnCreate write FOnCreate;
@@ -318,7 +328,7 @@ const
     EventIID: '{F6EFBA04-D512-4CFB-9D2B-2362E3C173D9}';
     EventCount: 8;
     EventDispIDs: @CEventDispIDs;
-    LicenseKey: nil (*HR:$80040111*);
+    LicenseKey: nil (*HR:$00000000*);
     Flags: $0000001D;
     Version: 401;
     FontCount: 1;

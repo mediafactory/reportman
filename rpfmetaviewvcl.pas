@@ -258,6 +258,8 @@ end;
 constructor TFRpMetaVCL.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+ if AOwner is TWinControl then
+  Parent:=TWinControl(AOwner);
  setmenu:=true;
  MSelectPrinter.Caption:=TranslateStr(741,MSelectPrinter.Caption);
  MSelPrinter0.Caption:=SRpDefaultPrinter;

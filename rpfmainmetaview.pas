@@ -72,9 +72,9 @@ begin
  begin
   dia:=nil;
   MFrame:=TFRpMeta.Create(aform);
+  MFrame.Parent:=aform;
   MFrame.SetMenu:=false;
   MFrame.AForm:=aform;
-  MFrame.Parent:=aform;
   FForm:=aform;
  end;
  try

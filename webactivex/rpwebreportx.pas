@@ -7,25 +7,22 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ActiveX, AxCtrls, WebReportManX_TLB,
-//  rptranslator,rpgdidriver,
   rpwebmetaclient,
-// rpmetafile,rpreport,
-// rpfmainmetaviewvcl,
-// rpmdconsts,
-// IdHttp,
-// rpmdprintconfigvcl,
-// rpmdshfolder,
- StdVcl, StdCtrls, XPMan;
+  StdVcl, StdCtrls, XPMan, ExtCtrls;
 
 type
   TWebReportMan = class(TActiveForm, IWebReportMan)
     webmetaprint: TRpWebMetaPrint;
     XPManifest1: TXPManifest;
+    Timer1: TTimer;
     procedure ActiveFormCreate(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
     { Private declarations }
     FEvents: IWebReportManEvents;
     Preview:Integer;
+    ShowProgress:Integer;
+    Embedded:Integer;
     PrinterConfig:Integer;
     MetaUrl:WideString;
     procedure ActivateEvent(Sender: TObject);
@@ -80,6 +77,10 @@ type
     procedure Set_MetaUrl(const Value: WideString); safecall;
     procedure Set_Preview(Value: Integer); safecall;
     procedure Set_PrinterConfig(Value: Integer); safecall;
+    function Get_ShowProgress: Integer; safecall;
+    procedure Set_ShowProgress(Value: Integer); safecall;
+    function Get_Embedded: Integer; safecall;
+    procedure Set_Embedded(Value: Integer); safecall;
   public
     { Public declarations }
     procedure Initialize; override;
@@ -359,24 +360,7 @@ end;
 procedure TWebReportMan.Set_MetaUrl(const Value: WideString);
 begin
  MetaUrl:=Value;
- try
-  webmetaprint.caption:=Caption;
-  webmetaprint.preview:=Preview<>0;
-  webmetaprint.aForm:=webmetaprint;
-  webmetaprint.PrinterConfig:=PrinterConfig<>0;
-  webmetaprint.Invalidate;
-  webmetaprint.MetaUrl:=MetaUrl;
-  if Length(MetaUrl)>0 then
-  begin
-   webmetaprint.Execute;
-  end;
- except
-  On E:Exception do
-  begin
-   webmetaprint.caption:=E.Message;
-   webmetaprint.Invalidate;
-  end;
- end;
+ Timer1.Enabled:=true;
 end;
 
 procedure TWebReportMan.Set_Preview(Value: Integer);
@@ -393,6 +377,51 @@ end;
 procedure TWebReportMan.ActiveFormCreate(Sender: TObject);
 begin
  webmetaprint.Align:=alclient;
+end;
+
+function TWebReportMan.Get_ShowProgress: Integer;
+begin
+ Result:=ShowProgress;
+end;
+
+procedure TWebReportMan.Set_ShowProgress(Value: Integer);
+begin
+ ShowProgress:=Value;
+end;
+
+function TWebReportMan.Get_Embedded: Integer;
+begin
+ Result:=Embedded;
+end;
+
+procedure TWebReportMan.Set_Embedded(Value: Integer);
+begin
+ Embedded:=Value;
+end;
+
+procedure TWebReportMan.Timer1Timer(Sender: TObject);
+begin
+ Timer1.Enabled:=false;
+ try
+  webmetaprint.caption:=Caption;
+  webmetaprint.preview:=Preview<>0;
+  webmetaprint.ShowProgress:=ShowProgress<>0;
+  if Embedded<>0 then
+   webmetaprint.aForm:=webmetaprint;
+  webmetaprint.PrinterConfig:=PrinterConfig<>0;
+  webmetaprint.Invalidate;
+  webmetaprint.MetaUrl:=MetaUrl;
+  if Length(MetaUrl)>0 then
+  begin
+   webmetaprint.Execute;
+  end;
+ except
+  On E:Exception do
+  begin
+   webmetaprint.caption:=E.Message;
+   webmetaprint.Invalidate;
+  end;
+ end;
 end;
 
 initialization

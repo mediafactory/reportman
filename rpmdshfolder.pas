@@ -56,6 +56,7 @@ const
   shfolder  = 'shfolder.dll';
 {$ENDIF}
 {$IFDEF LINUX}
+const
  DIR_SEPARATOR='/';
 {$ENDIF}
 {$IFDEF MSWINDOWS}

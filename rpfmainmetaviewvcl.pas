@@ -64,6 +64,7 @@ begin
  begin
   dia:=TFRpMainMetaVCL.Create(Application);
   MFrame:=dia.MFrame;
+  MFrame.Parent:=dia;
   FForm:=dia;
  end
  else
@@ -133,8 +134,8 @@ end;
 procedure TFRpMainMetaVCL.FormCreate(Sender: TObject);
 begin
  MFrame:=TFRpMetaVCL.Create(Self);
- MFrame.AForm:=self;
  MFrame.Parent:=Self;
+ MFrame.AForm:=self;
  Caption:=SRpRepMetafile;
 end;
 
