@@ -1168,7 +1168,9 @@ begin
    begin
     Result:=FormatFloat(Params[0],extended(Value));
    end;
-  varDate:
+  // Modify by TAHUL TAMRAKR 27/05/2003
+  // Bugfix for detecting DateTime datatypes (MySQL)
+  varDate,272:
    begin
     Result:=FormatDateTime(Params[0],VarToDateTime(Value));
    end;
