@@ -440,10 +440,10 @@ begin
  ltypes.Add(SRpSString);
  lvalues.Add(IntToStr(TRpImage(printitem).DPIRes));
 
- // CopyMode
- lnames.Add(SRpCopyMode);
- ltypes.Add(SRpSList);
- lvalues.Add(StringCopyModes[TCopyMode(TRpImage(printitem).CopyMode)]);
+ // CopyMode is disabled because it don't work with stretchdraw
+// lnames.Add(SRpCopyMode);
+// ltypes.Add(SRpSList);
+// lvalues.Add(StringCopyModes[TCopyMode(TRpImage(printitem).CopyMode)]);
 end;
 
 

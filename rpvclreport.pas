@@ -167,13 +167,13 @@ begin
   copies:=report.Copies;
   if FShowPrintDialog then
   begin
-//   if DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-//   begin
-//    Result:=PrintReport(report,Title,FShowprogress,allpages,frompage,
-//     topage,copies,collate);
-//   end
-//   else
-//    Result:=false;
+   if DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+   begin
+    Result:=PrintReport(report,Title,FShowprogress,allpages,frompage,
+     topage,copies,collate);
+   end
+   else
+    Result:=false;
   end
   else
   begin

@@ -1,4 +1,4 @@
-object FRpPreview: TFRpPreview
+object FRpVPreview: TFRpVPreview
   Left = 36
   Top = 58
   Width = 640
@@ -134,13 +134,10 @@ object FRpPreview: TFRpPreview
     Left = 0
     Top = 27
     Width = 632
-    Height = 426
+    Height = 419
     HorzScrollBar.Increment = 60
-    HorzScrollBar.Range = 77
     VertScrollBar.Increment = 60
-    VertScrollBar.Range = 70
     Align = alClient
-    AutoScroll = False
     BorderStyle = bsNone
     Color = clAppWorkSpace
     ParentColor = False
@@ -159,7 +156,7 @@ object FRpPreview: TFRpPreview
     Left = 128
     Top = 64
     Bitmap = {
-      494C010108000900040013001300FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010108000900040013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000004C000000390000000100100000000000D821
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -455,7 +452,8 @@ object FRpPreview: TFRpPreview
       7FE01FFC00F00000F303FFE07FE07FFC0CF00000F3C3FFF87FE1FFFC3CF00000
       F3F3FFFE7FE7FFFCFCF00000FFFFFFFFFFFFFFFFFFF00000FFFFFFFFFFFFFFFF
       FFF00000FFFFFFFFFFFFFFFFFFF00000FFFFFFFFFFFFFFFFFFF00000FFFFFFFF
-      FFFFFFFFFFF00000FFFFFFFFFFFFFFFFFFF00000}
+      FFFFFFFFFFF00000FFFFFFFFFFFFFFFFFFF00000000000000000000000000000
+      00000000000000000000}
   end
   object ActionList1: TActionList
     Images = ImageList1
@@ -528,8 +526,8 @@ object FRpPreview: TFRpPreview
     DefaultExt = 'rpmf'
     FileName = '*.rpmf'
     Filter = 
-      'Report Metafile (*.rpmf)|PDF File (*.pdf)|PDF File Uncompressed ' +
-      '(*.pdf)'
+      'Report Metafile (*.rpmf)|*.rpmf|PDF File (*.pdf)|*.pdf|PDF File ' +
+      'Uncompressed (*.pdf)|*.pdf'
     Title = 'Save Metafile As'
     Left = 240
     Top = 84

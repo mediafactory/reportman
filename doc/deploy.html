@@ -1,0 +1,233 @@
+<html>
+<head>
+<title>Deploying Report Manager</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<table width="95%" border="1">
+  <tr> 
+    <td colspan="4" bgcolor="#00FFFF"><b>Deployment of Report Manager Designer</b></td>
+  </tr>
+  <tr> 
+    <td width="88" bgcolor="#FFFFCC"><b>Windows</b></td>
+    <td width="88" bgcolor="#FFFFCC"><b>Linux</b></td>
+    <td width="262" bgcolor="#FFFFCC"><b>Description</b></td>
+    <td width="133" bgcolor="#FFFFCC"><b>Location/Option</b></td>
+  </tr>
+  <tr> 
+    <td width="88">repmand.exe</td>
+    <td width="88">repmand</td>
+    <td width="262">Report Manager Main executable</td>
+    <td width="133">AppDir/Required</td>
+  </tr>
+  <tr> 
+    <td width="88">metaprint.exe</td>
+    <td width="88">metaprint</td>
+    <td width="262"> 
+      <p>Metafile print command line tool.</p>
+      <p>* Required only by Linux because a CLX bug.</p>
+    </td>
+    <td width="133">AppDir/Required*</td>
+  </tr>
+  <tr> 
+    <td width="88">&nbsp;</td>
+    <td width="88">libqtintf-6.5-qt2.3.so</td>
+    <td width="262">Linux interface to QT libs.</td>
+    <td width="133">SysDir/Required</td>
+  </tr>
+  <tr> 
+    <td width="88">qtintf.dll</td>
+    <td width="88">libqt.so.2</td>
+    <td width="262">QT Linux libs and Windows qt libs and interface to qtlibs</td>
+    <td width="133">SysDir/Required</td>
+  </tr>
+  <tr> 
+    <td width="88">&nbsp;</td>
+    <td width="88">libmidas.so.1</td>
+    <td width="262">Database cached dataset and MyBase driver</td>
+    <td width="133">SysDir/Required</td>
+  </tr>
+  <tr> 
+    <td width="88">&nbsp;</td>
+    <td width="88">repmand.sh</td>
+    <td width="262">If you place SysDir libraries in AppDir you must use this 
+      script to start Report Manager Designer</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
+  <tr> 
+    <td width="88">reptotxt.exe</td>
+    <td width="88">reptotxt</td>
+    <td width="262">Converts a report definition to text</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
+  <tr> 
+    <td width="88">txttorep.exe</td>
+    <td width="88">txttorep</td>
+    <td width="262">Converts a text to report definition</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
+  <tr> 
+    <td width="88" height="22">metaview.exe</td>
+    <td width="88" height="22">metaview</td>
+    <td width="262" height="22">Displays and prints Report Metafiles</td>
+    <td width="133" height="22">AppDir/Optional</td>
+  </tr>
+  <tr>
+    <td width="88">printrep.exe</td>
+    <td width="88">printrep</td>
+    <td width="262">Loads a report definition and executes it to printer</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
+  <tr> 
+    <td width="88" height="51">doc directory</td>
+    <td width="88" height="51">doc directory</td>
+    <td width="262">Documentation of Report Manager Designer</td>
+    <td width="133" height="51">AppDir/Optional</td>
+  </tr>
+</table>
+<table width="95%" border="1">
+  <tr bgcolor="#00FFFF"> 
+    <td colspan="3"><b>Deployment of database drivers (SysDir location, Optional)</b></td>
+  </tr>
+  <tr> 
+    <td width="16%" bgcolor="#FFFFCC"><b>Windows</b></td>
+    <td width="16%" bgcolor="#FFFFCC"><b>Linux</b></td>
+    <td width="68%" bgcolor="#FFFFCC"><b>Description</b></td>
+  </tr>
+  <tr> 
+    <td width="16%">dbexpint.dll</td>
+    <td width="16%">libsqlig.so.1</td>
+    <td width="68%">Interbase DBExpress driver</td>
+  </tr>
+  <tr> 
+    <td width="16%">dbexpmysql.dll</td>
+    <td width="16%">libsqlmy.so.1</td>
+    <td width="68%">MySQL DBExpress driver</td>
+  </tr>
+  <tr> 
+    <td width="16%">dbexpmys.dll</td>
+    <td width="16%">libsqlmy23.so.1</td>
+    <td width="68%">Old MySQL DBExpress drivers</td>
+  </tr>
+  <tr> 
+    <td width="16%">dbxoodbc.dll</td>
+    <td width="16%">libdbxoodbc.so</td>
+    <td width="68%">ODBC and Unix-ODBC DBExpress driver</td>
+  </tr>
+  <tr> 
+    <td width="16%">&nbsp;</td>
+    <td width="16%">libsqlpg.so.1.0</td>
+    <td width="68%">PostgreSQL DBExpress driver</td>
+  </tr>
+  <tr> 
+    <td width="16%">dbexpdb2.dll</td>
+    <td width="16%">&nbsp;</td>
+    <td width="68%">DB2 DBExpress driver</td>
+  </tr>
+  <tr> 
+    <td width="16%">dbexpora.dll</td>
+    <td width="16%">&nbsp;</td>
+    <td width="68%">Oracle DBExpress driver</td>
+  </tr>
+</table>
+<table width="95%" border="1">
+  <tr bgcolor="#00FFFF"> 
+    <td>
+      <h2><b>Deployment of native Delphi/Kylix applications</b></h2>
+    </td>
+  </tr>
+</table>
+<table width="95%" border="1">
+  <tr bgcolor="#FFCCCC"> 
+    <td colspan="2"><b>Console applications (not VisualCLX) and VCL Windows applications</b></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFCC" width="47%"><b>Windows</b></td>
+    <td bgcolor="#FFFFCC" width="53%"><b>Linux</b></td>
+  </tr>
+  <tr> 
+    <td width="47%"> 
+      <ul>
+        <li>You must deploy database drivers you use, if you use IBX, IBO, or 
+          something native, none</li>
+        <li> <b>dbxconnections.ini</b> is used by the engine to read connections 
+          configurations for DBX,IBX, IBO..., to obtain the file the engine will 
+          search at registry \Software\Borland\DBExpress the value 'Connection 
+          Registry File', first will search HKEY_LOCAL_MACHINE if not found, will 
+          search HKEY_CURRENT_USER, if not found will search in the application 
+          directory for that file.</li>
+        <li>If you use BDE driver you must deploy the entire BDE with the sqllinks 
+          dlls you use.</li>
+        <li>If you use DBExpress you can include the following units in your project 
+          to disable the need of dlls. 
+          <table width="70%" border="1">
+            <tr> 
+              <td><b>Unit</b></td>
+              <td><b>Dll</b></td>
+            </tr>
+            <tr> 
+              <td>dbExpInt </td>
+              <td>dbexpint.dll</td>
+            </tr>
+            <tr> 
+              <td>dbExpOra</td>
+              <td>dbexpora.dll</td>
+            </tr>
+            <tr> 
+              <td>dbExpDb2</td>
+              <td>dbexpdb2.dll</td>
+            </tr>
+            <tr> 
+              <td>dbExpMySQL</td>
+              <td>dbexpmysql.dll</td>
+            </tr>
+          </table>
+        </li>
+        <li>To not deploy <b>midas.dll</b> file you must include <b>midaslib</b> 
+          unit in your project.</li>
+      </ul>
+    </td>
+    <td width="53%"> 
+      <ul>
+        <li>You must deploy <b>libmidas.so.1</b> because Report Manager uses ClientDataset 
+          components when accessing to databases.</li>
+        <li>Usually you need <b>dbxconnections</b> and <b>dbxdrivers</b> in <b>/home/user/.borland</b></li>
+      </ul>  
+      <ul>
+        <li>You must deploy database drivers you use, if you use IBX, IBO, or 
+          something native, none.</li>
+        <li>You have two options in Linux to deploy the libraries, copy the libs 
+          into the application dir or copy the libs in /usr/lib or some common 
+          path. If you copy the libs in app path you must modify the LD_LIBRARY_PATH 
+          enviroment variable allways you start the application (see repmand.sh 
+          file)</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+<table width="95%" border="1">
+  <tr bgcolor="#FFCCCC"> 
+    <td colspan="2"><b>Visual CLX applications (in addition of previous files)</b></td>
+  </tr>
+  <tr> 
+    <td width="47%" bgcolor="#FFFFCC"><b>Windows</b></td>
+    <td width="53%" bgcolor="#FFFFCC"><b>Linux</b></td>
+  </tr>
+  <tr> 
+    <td width="47%">qtintf.dll</td>
+    <td width="53%">libqtintf-6.5-qt2.3.so</td>
+  </tr>
+  <tr> 
+    <td width="47%">&nbsp;</td>
+    <td width="53%"> 
+      <p>libqt.so.2</p>
+      <p>Most distributions have this file but may be not compatible, some problems 
+        has reported about this. If you have problems use the system libraries 
+        provided by your distro instead of the provided by Borland.</p>
+    </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+</body>
+</html>

@@ -2,9 +2,9 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       rprfparams                                      }
+{       rprfvarams                                      }
 {                                                       }
-{       User parameters form                            }
+{       User parameters form (VCL version)              }
 {                                                       }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
@@ -40,7 +40,7 @@ const
   CONS_NULLWIDTH=40;
   CONS_MAXCLIENTHEIGHT=400;
 type
-  TFRpRunTimeParams = class(TForm)
+  TFRpRTParams = class(TForm)
     PModalButtons: TPanel;
     OKBtn: TButton;
     CancelBtn: TButton;
@@ -70,7 +70,7 @@ implementation
 
 function ShowUserParams(report:TRpReport):boolean;
 var
- dia:TFRpRunTimeParams;
+ dia:TFRpRTParams;
  oneparam:boolean;
  i:integer;
 begin
@@ -89,7 +89,7 @@ begin
   Result:=true;
   exit;
  end;
- dia:=TFRpRunTimeParams.Create(Application);
+ dia:=TFRpRTParams.Create(Application);
  try
   dia.params:=report.Params;
   dia.showmodal;
@@ -103,21 +103,21 @@ begin
  end;
 end;
 
-procedure TFRpRunTimeParams.OKBtnClick(Sender: TObject);
+procedure TFRpRTParams.OKBtnClick(Sender: TObject);
 begin
  SaveParams;
  dook:=true;
  close;
 end;
 
-procedure TFRpRunTimeParams.FormCreate(Sender: TObject);
+procedure TFRpRTParams.FormCreate(Sender: TObject);
 begin
  fparams:=TRpParamList.Create(Self);
  lcontrols:=TStringList.Create;
  lnulls:=TStringList.Create;
 end;
 
-procedure TFRpRunTimeParams.SetParams(avalue:TRpParamList);
+procedure TFRpRTParams.SetParams(avalue:TRpParamList);
 var
  i:integer;
  alabel:TLabel;
@@ -270,13 +270,13 @@ begin
  ClientHeight:=NewClientHeight;
 end;
 
-procedure TFRpRunTimeParams.FormDestroy(Sender: TObject);
+procedure TFRpRTParams.FormDestroy(Sender: TObject);
 begin
  lcontrols.free;
  lnulls.free;
 end;
 
-procedure TFRpRunTimeParams.CheckNullClick(Sender:TObject);
+procedure TFRpRTParams.CheckNullClick(Sender:TObject);
 begin
  if TCheckBox(Sender).Checked then
  begin
@@ -288,7 +288,7 @@ begin
  end;
 end;
 
-procedure TFRpRunTimeParams.SaveParams;
+procedure TFRpRTParams.SaveParams;
 var
  i:integer;
 begin

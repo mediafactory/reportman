@@ -22,6 +22,14 @@ object Form1: TForm1
     TabOrder = 0
     OnClick = Button1Click
   end
+  object Edit1: TEdit
+    Left = 52
+    Top = 152
+    Width = 173
+    Height = 21
+    TabOrder = 1
+    Text = 'sample2.rep'
+  end
   object VCLReport1: TVCLReport
     Filename = 'sample4.rep'
     Title = 'Untitled'

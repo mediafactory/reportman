@@ -6,10 +6,10 @@ uses
   Forms,
   Unit1 in 'Unit1.pas' {Form1},
   rpvclreport in '..\..\rpvclreport.pas',
-  rprfvparams in '..\..\rprfvparams.pas' {FRpRunTimeParams},
+  rprfvparams in '..\..\rprfvparams.pas' {FRpRTParams},
   rpconsts in '..\..\rpconsts.pas',
-  rpvpreview in '..\..\rpvpreview.pas' {FRpPreview},
-  rpgdidriver in '..\..\rpgdidriver.pas' {FRpQtProgress},
+  rpvpreview in '..\..\rpvpreview.pas' {FRpVPreview},
+  rpgdidriver in '..\..\rpgdidriver.pas' {FRpVCLProgress},
   rpvgraphutils in '..\..\rpvgraphutils.pas';
 
 {$R *.RES}

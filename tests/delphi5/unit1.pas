@@ -10,6 +10,7 @@ type
   TForm1 = class(TForm)
     Button1: TButton;
     VCLReport1: TVCLReport;
+    Edit1: TEdit;
     procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
@@ -26,6 +27,7 @@ implementation
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
+ VCLReport1.Filename:=Edit1.Text;
  VCLReport1.Execute;
 end;
 

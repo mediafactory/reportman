@@ -372,6 +372,7 @@ resourcestring
   SRpUnderline='Underline';
   SRpItalic='Italic';
   SRpStrikeOut='StrikeOut';
+  SRpSFontRotation='F.Rotation';
 
   // Component properties
   SRpSTop='Top';

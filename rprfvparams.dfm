@@ -1,4 +1,4 @@
-object FRpRunTimeParams: TFRpRunTimeParams
+object FRpRTParams: TFRpRTParams
   Left = 17
   Top = 30
   Width = 579
@@ -22,7 +22,7 @@ object FRpRunTimeParams: TFRpRunTimeParams
   TextHeight = 13
   object PModalButtons: TPanel
     Left = 0
-    Top = 203
+    Top = 196
     Width = 571
     Height = 41
     Align = alBottom
@@ -52,7 +52,7 @@ object FRpRunTimeParams: TFRpRunTimeParams
     Left = 0
     Top = 0
     Width = 571
-    Height = 203
+    Height = 196
     Align = alClient
     BorderStyle = bsNone
     TabOrder = 1

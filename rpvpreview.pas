@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       rpvpreview                                       }
+{       rpvpreview                                      }
 {       VCL Preview the report                          }
 {                                                       }
 {                                                       }
@@ -36,7 +36,7 @@ uses
   ActnList, ImgList,Printers,rpconsts, ToolWin;
                        
 type
-  TFRpPreview = class(TForm)
+  TFRpVPreview = class(TForm)
     BToolBar: TToolBar;
     ImageContainer: TScrollBox;
     AImage: TImage;
@@ -114,12 +114,12 @@ uses rprfvparams, rppdfdriver;
 
 function ShowPreview(report:TRpReport;caption:string):boolean;
 var
- dia:TFRpPreview;
+ dia:TFRpVPreview;
  oldprogres:TRpProgressEvent;
  hasparams:boolean;
  i:integer;
 begin
- dia:=TFRpPreview.Create(Application);
+ dia:=TFRpVPreview.Create(Application);
  try
   dia.caption:=caption;
   oldprogres:=report.OnProgress;
@@ -148,7 +148,7 @@ begin
  end;
 end;
 
-procedure TFRpPreview.PrintPage;
+procedure TFRpVPreview.PrintPage;
 begin
  try
   if report.Metafile.PageCount>=pagenum then
@@ -194,7 +194,7 @@ begin
  end;
 end;
 
-procedure TFRpPreview.AppIdle(Sender:TObject;var done:boolean);
+procedure TFRpVPreview.AppIdle(Sender:TObject;var done:boolean);
 begin
  Application.OnIdle:=nil;
  done:=false;
@@ -220,7 +220,7 @@ begin
  end;
 end;
 
-procedure TFRpPreview.FormCreate(Sender: TObject);
+procedure TFRpVPreview.FormCreate(Sender: TObject);
 begin
  APrevious.ShortCut:=ShortCut(VK_PRIOR, []);
  ANext.ShortCut:=ShortCut(VK_NEXT, []);
@@ -233,25 +233,25 @@ begin
  AImage.Picture.Bitmap:=bitmap;
 end;
 
-procedure TFRpPreview.FormDestroy(Sender: TObject);
+procedure TFRpVPreview.FormDestroy(Sender: TObject);
 begin
  report.EndPrint;
  bitmap.free;
 end;
 
-procedure TFRpPreview.AFirstExecute(Sender: TObject);
+procedure TFRpVPreview.AFirstExecute(Sender: TObject);
 begin
  pagenum:=1;
  PrintPage;
 end;
 
-procedure TFRpPreview.ANextExecute(Sender: TObject);
+procedure TFRpVPreview.ANextExecute(Sender: TObject);
 begin
  inc(pagenum);
  PrintPage;
 end;
 
-procedure TFRpPreview.APreviousExecute(Sender: TObject);
+procedure TFRpVPreview.APreviousExecute(Sender: TObject);
 begin
  dec(pagenum);
  if pagenum<1 then
@@ -259,13 +259,13 @@ begin
  PrintPage;
 end;
 
-procedure TFRpPreview.ALastExecute(Sender: TObject);
+procedure TFRpVPreview.ALastExecute(Sender: TObject);
 begin
  pagenum:=MaxInt;
  PrintPage;
 end;
 
-procedure TFRpPreview.EPageNumKeyPress(Sender: TObject; var Key: Char);
+procedure TFRpVPreview.EPageNumKeyPress(Sender: TObject; var Key: Char);
 begin
  if Key=chr(13) then
  begin
@@ -274,12 +274,12 @@ begin
  end;
 end;
 
-procedure TFRpPreview.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TFRpVPreview.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
  gdidriver:=nil;
 end;
 
-procedure TFRpPreview.APrintExecute(Sender: TObject);
+procedure TFRpVPreview.APrintExecute(Sender: TObject);
 var
  adone:boolean;
  allpages,collate:boolean;
@@ -289,14 +289,14 @@ begin
  collate:=report.CollateCopies;
  frompage:=1; topage:=999999;
  copies:=report.Copies;
-// if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-//  exit;
+ if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+  exit;
  report.EndPrint;
  PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
  AppIdle(Self,adone);
 end;
 
-procedure TFRpPreview.ASaveExecute(Sender: TObject);
+procedure TFRpVPreview.ASaveExecute(Sender: TObject);
 var
  oldonprogress:TRpMetafileStreamProgres;
  adone:boolean;
@@ -331,7 +331,7 @@ begin
  end;
 end;
 
-procedure TFRpPreview.RepProgress(Sender:TRpReport;var docancel:boolean);
+procedure TFRpVPreview.RepProgress(Sender:TRpReport;var docancel:boolean);
 begin
  BCancel.Caption:=IntToStr(Sender.CurrentSubReportIndex)+' '+SRpPage+':'+
   FormatFloat('####,####',report.PageNum)+':'
@@ -345,17 +345,17 @@ begin
   docancel:=true;
 end;
 
-procedure TFRpPreview.BCancelClick(Sender: TObject);
+procedure TFRpVPreview.BCancelClick(Sender: TObject);
 begin
  cancelled:=true;
 end;
 
-procedure TFRpPreview.ACancelExecute(Sender: TObject);
+procedure TFRpVPreview.ACancelExecute(Sender: TObject);
 begin
  cancelled:=true;
 end;
 
-procedure TFRpPreview.FormCloseQuery(Sender: TObject;
+procedure TFRpVPreview.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 begin
  if Not ANext.Enabled then
@@ -364,7 +364,7 @@ begin
  end;
 end;
 
-procedure TFRpPreview.FormKeyDown(Sender: TObject; var Key: Word;
+procedure TFRpVPreview.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
  increment:integer;
@@ -397,7 +397,7 @@ begin
  end;
 end;
 
-procedure TFRpPreview.DisableControls(enablebar:boolean);
+procedure TFRpVPreview.DisableControls(enablebar:boolean);
 begin
  BCancel.Left:=BSeparator.Left+BSeparator.Width;
  BCancel.Visible:=true;
@@ -413,7 +413,7 @@ begin
  PBar.Visible:=enablebar;
 end;
 
-procedure TFRpPreview.EnableControls;
+procedure TFRpVPreview.EnableControls;
 begin
  BCancel.Visible:=false;
  AFirst.Enabled:=true;
@@ -428,7 +428,7 @@ begin
 end;
 
 
-procedure TFRpPreview.MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
+procedure TFRpVPreview.MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
 begin
  BCancel.Caption:=SRpPage+':'+FormatFloat('####,#####',page)+
   ' -'+FormatFloat('######,####',Position div 1024)+SRpKbytes+' '+SrpCancel;
@@ -452,12 +452,12 @@ begin
 end;
 
 
-procedure TFRpPreview.AExitExecute(Sender: TObject);
+procedure TFRpVPreview.AExitExecute(Sender: TObject);
 begin
  Close;
 end;
 
-procedure TFRpPreview.AParamsExecute(Sender: TObject);
+procedure TFRpVPreview.AParamsExecute(Sender: TObject);
 var
  adone:boolean;
 begin

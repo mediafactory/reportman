@@ -235,6 +235,7 @@ var
  stream:TMemoryStream;
  bitmap:TBitmap;
  aalign:Integer;
+ arec:TRect;
 begin
  // Switch to device points
  posx:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
@@ -263,10 +264,11 @@ begin
     // Not Transparent
     if Not obj.Transparent then
     begin
-     Canvas.TextExtent(page.GetText(obj),rec,aalign);
+     arec:=rec;
+     Canvas.TextExtent(page.GetText(obj),arec,aalign);
      Canvas.Brush.Style:=bsSolid;
      Canvas.Brush.Color:=obj.BackColor;
-     Canvas.FillRect(rec);
+     Canvas.FillRect(arec);
     end;
     Canvas.Brush.Style:=bsClear;
     Canvas.TextRect(rec,posx,posy,page.GetText(Obj),aalign);
@@ -332,7 +334,8 @@ begin
     bitmap:=TBitmap.Create;
     try
      bitmap.LoadFromStream(stream);
-     Canvas.CopyMode:=TCopyMode(obj.CopyMode);
+//     Copy mode does not work for Stretchdraw
+//     Canvas.CopyMode:=TCopyMode(obj.CopyMode);
 
      case TRpImageDrawStyle(obj.DrawImageStyle) of
       rpDrawFull:

@@ -1,31 +1,31 @@
 {TODO 1 -oToni -cEngine : Export PDF implement images and text alignment}
-{TODO 1 -oToni -cEngine : Add for drivers like pdf export, rtf export, hml export}
+{TODO  -oToni -cEngine : Finish the pdf driver images, underline, textalign}
 {TODO 1 -oToni -cEngine : Allow Memos autoexpand across multiple pages}
 {TODO 1 -oToni -cEngine : Add a report server via sockets or the web, sending pdfs or html or jpgs.}
-{DONE 3 -oToni -cEngine : Implementation page repeat for groups}
+
 {TODO 1 -oToni -cEngine : Implementation of external sections}
-{TODO 1 -oToni -cDesign Interface : Add multilect option and show common properties in object inspector}
-{DONE 2 -oToni -cEngine : Conditional define to build reportman package without db drivers}
-{DONE 4 -oToni -cDesign Interface : Select inchess or cms in preferences menu}
+{TODO 1 -oToni -cDesign Interface : Add multiselect option and show common properties in object inspector}
+
+
 {TODO 1 -oToni -cEngine : Add text rotation to text controls}
 {TODO 5 -oToni -cEngine : Implementation for Delphi 5 vcl driver}
-{DONE 2 -oToni -cEngine : Add aliaslist to the report component to use application opened querys}
+
 {TODO 2 -oToni -cDesign Interface : Select the object that produces a error}
 {TODO 1 -oToni -cDesign Interface : Add a alignment window for elements}
 {TODO 1 -oToni -cEngine : Implementation of vertical labels as subreport column width}
 {TODO 1 -oToni -cDesign Interface : Enhace object inspector speed}
-{DONE 2 -oToni -cEngine : Implement skip page expression}
-{DONE 3 -oToni -cEngine : Add Language index to TCLXReport}
+
+
 
 
 {TODO 1 -oToni -cEngine : Image component filename property to load a file on the fly}
-{DONE 2 -oToni -cEngine : User parameters form}
+
 
 {TODO 1 -oToni -cEngine : Detect existing BDE Databases in rpdatainfo}
 
 
-{DONE 2 -oToni -cEngine : Add TotalPages variable}
-{DONE 3  -oToni -cEngine : Add Printing ranges of pages}
+
+
 
 
 {TODO 1  -oToni -cEngine : Implement autoexpand and autocontract for sections}
@@ -35,15 +35,15 @@
 {TODO 1   -oToni -cEngine : Saving and loading reportms from database tables using the designer}
 
 
-{DONE 1 -oToni -cDesign Interface : Drop Fields directly from a floating window when click in expression}
 
 
 
-{DONE 5 -oToni -cDesign Interface : Shows all sections of a subreport in rpsection interface}
-{TODO 1 -oToni -cEngine : Write some documentation}
+
+
+{TODO 1 -oToni -cEngine : Write more documentation}
 {TODO 1 -oToni -cEngine : Free pages in metafile while 
 previewing...}
-{DONE 1 -oToni -cEngine : Implementation of one pass and two pas report instead of whole pas}
 
-{DONE 3 -oToni -cEngine : Implementation of cut text,wordwrap...}
+
+
 

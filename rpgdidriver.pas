@@ -39,19 +39,30 @@ const
  METAPRINTPROGRESS_INTERVAL=20;
 type
   TRpGDIDriver=class;
-  TFRpQtProgress = class(TForm)
+  TFRpVCLProgress = class(TForm)
     CancelBtn: TButton;
     Label1: TLabel;
     LRecordCount: TLabel;
     Label2: TLabel;
     LTittle: TLabel;
+    OKBtn: TButton;
+    GroupBox1: TGroupBox;
+    EFrom: TEdit;
+    ETo: TEdit;
+    Label5: TLabel;
+    Label4: TLabel;
+    RadioAll: TRadioButton;
+    RadioRange: TRadioButton;
     procedure FormCreate(Sender: TObject);
     procedure CancelBtnClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure OKBtnClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     allpages,collate:boolean;
     frompage,topage,copies:integer;
+    dook:boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure AppIdleReport(Sender:TObject;var done:boolean);
     procedure AppIdlePrintPDF(Sender:TObject;var done:boolean);
@@ -103,6 +114,8 @@ function PrintReport(report:TRpReport;Caption:string;progress:boolean;
 function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
   allpages:boolean;frompage,topage:integer;
   showprintdialog:boolean;filename:string;compressed:boolean):Boolean;
+function DoShowPrintDialog(var allpages:boolean;
+ var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
 
 implementation
 
@@ -116,6 +129,63 @@ const
  AlignmentFlags_AlignRight = 2 { $2 };
 
 {$R *.dfm}
+
+
+function DoShowPrintDialog(var allpages:boolean;
+ var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
+var
+ dia:TPrintDialog;
+ diarange:TFRpVCLProgress;
+begin
+ Result:=False;
+ if disablecopies then
+ begin
+  diarange:=TFRpVCLProgress.Create(Application);
+  try
+   diarange.OKBtn.Visible:=true;
+   diarange.GroupBox1.Visible:=true;
+   diarange.RadioAll.Checked:=allpages;
+   diarange.RadioRange.Checked:=not allpages;
+   diarange.ActiveControl:=diarange.OKBtn;
+   diarange.Frompage:=frompage;
+   diarange.ToPage:=topage;
+   diarange.showmodal;
+   if diarange.dook then
+   begin
+    frompage:=diarange.frompage;
+    topage:=diarange.topage;
+    allpages:=diarange.Radioall.Checked;
+    Result:=true;
+   end
+  finally
+   diarange.free;
+  end;
+  exit;
+ end;
+ dia:=TPrintDialog.Create(Application);
+ try
+  dia.Options:=[poPageNums,poWarning,
+        poPrintToFile];
+  dia.MinPage:=1;
+  dia.MaxPage:=65535;
+  dia.collate:=collate;
+  dia.copies:=copies;
+  dia.frompage:=frompage;
+  dia.topage:=topage;
+  if dia.execute then
+  begin
+   allpages:=false;
+   collate:=dia.collate;
+   copies:=dia.copies;
+   frompage:=dia.frompage;
+   topage:=dia.topage;
+   Result:=True;
+  end;
+ finally
+  dia.free;
+ end;
+end;
+
 
 constructor TRpGDIDriver.Create;
 begin
@@ -231,7 +301,7 @@ end;
 procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer);
 var
  posx,posy:integer;
- rec:TRect;
+ rec,recsrc:TRect;
 // recsrc:TRect;
  X, Y, W, H, S: Integer;
  Width,Height:integer;
@@ -240,6 +310,7 @@ var
  aalign:Cardinal;
  abrushstyle:integer;
  atext:widestring;
+ arec:TRect;
 begin
  // Switch to device points
  posx:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
@@ -252,6 +323,10 @@ begin
     Canvas.Font.Style:=CLXIntegerToFontStyle(obj.FontStyle);
     Canvas.Font.Size:=Obj.FontSize;
     aalign:=DT_NOPREFIX;
+    if (obj.AlignMent AND AlignmentFlags_AlignHCenter)>0 then
+     aalign:=aalign or DT_CENTER;
+    if (obj.AlignMent AND AlignmentFlags_SingleLine)>0 then
+     aalign:=aalign or DT_SINGLELINE;
     if (obj.AlignMent AND AlignmentFlags_AlignVCenter)>0 then
     begin
      aalign:=aalign or DT_VCENTER;
@@ -267,8 +342,6 @@ begin
      aalign:=aalign or DT_TOP;
      aalign:=aalign or DT_SINGLELINE;
     end;
-    if (obj.AlignMent AND AlignmentFlags_AlignHCenter)>0 then
-     aalign:=aalign or DT_CENTER;
     if (obj.AlignMent AND AlignmentFlags_AlignLEFT)>0 then
      aalign:=aalign or DT_LEFT;
     if (obj.AlignMent AND AlignmentFlags_AlignRight)>0 then
@@ -285,18 +358,20 @@ begin
     if Not obj.Transparent then
     begin
      // First calculates the text extent
-     DrawTextW(Canvas.Handle,PWideChar(atext),Length(atext),rec,aalign or DT_CALCRECT);
+     arec:=rec;
+     DrawTextW(Canvas.Handle,PWideChar(atext),Length(atext),arec,aalign or DT_CALCRECT);
      Canvas.Brush.Style:=bsSolid;
      Canvas.Brush.Color:=obj.BackColor;
-     Canvas.FillRect(rec);
-    end;
-    Canvas.Brush.Style:=bsClear;
+    end
+    else
+     Canvas.Brush.Style:=bsClear;
     DrawTextW(Canvas.Handle,PWideChar(atext),Length(atext),rec,aalign);
    end;
   rpMetaDraw:
    begin
     Width:=round(obj.Width*dpix/TWIPS_PER_INCHESS);
     Height:=round(obj.Height*dpiy/TWIPS_PER_INCHESS);
+    abrushstyle:=obj.BrushStyle;
     if obj.BrushStyle>integer(bsDiagCross) then
      abrushstyle:=integer(bsDiagCross);
     Canvas.Brush.Style:=TBrushStyle(abrushstyle);
@@ -353,39 +428,48 @@ begin
     rec.Right:=rec.Left+Width-1;
 
     stream:=page.GetStream(obj);
-{    bitmap:=TBitmap.Create;
+    bitmap:=TBitmap.Create;
     try
      bitmap.LoadFromStream(stream);
-     Canvas.CopyMode:=TCopyMode(obj.CopyMode);
+//     Copy mode does not work for Stretchdraw
+//     Canvas.CopyMode:=CLXCopyModeToCopyMode(obj.CopyMode);
 
      case TRpImageDrawStyle(obj.DrawImageStyle) of
       rpDrawFull:
        begin
         rec.Bottom:=rec.Top+round(bitmap.height/obj.dpires)*dpiy-1;
         rec.Right:=rec.Left+round(bitmap.width/obj.dpires)*dpix-1;
-        Canvas.StretchDraw(rec,bitmap);
+        recsrc.Left:=0;
+        recsrc.Top:=0;
+        recsrc.Right:=bitmap.Width-1;
+        recsrc.Bottom:=bitmap.Height-1;
+        DrawBitmap(Canvas,bitmap,rec,recsrc);
        end;
       rpDrawStretch:
-       Canvas.StretchDraw(rec,bitmap);
+       begin
+        recsrc.Left:=0;
+        recsrc.Top:=0;
+        recsrc.Right:=bitmap.Width-1;
+        recsrc.Bottom:=bitmap.Height-1;
+        DrawBitmap(Canvas,bitmap,rec,recsrc);
+       end;
       rpDrawCrop:
        begin
-//      Crop Should cut graphic but it don't work
-//        recsrc.Top:=0;
-//        recsrc.Left:=0;
-//        recsrc.Bottom:=Height-1;
-//        recsrc.Right:=Width-1;
-//        Canvas.CopyRect(rec,bitmap.canvas,recsrc);
-        Canvas.Draw(PosX,PosY,bitmap);
+        recsrc.Left:=0;
+        recsrc.Top:=0;
+        recsrc.Right:=rec.Right-rec.Left;
+        recsrc.Bottom:=rec.Bottom-rec.Top;
+        DrawBitmap(Canvas,bitmap,rec,recsrc);
        end;
       rpDrawTile:
        begin
-//        Canvas.TiledDraw(rec,bitmap);
+        DrawBitmapMosaicSlow(Canvas,rec,bitmap);
        end;
      end;
     finally
      bitmap.Free;
     end;
-}   end;
+   end;
  end;
 end;
 
@@ -460,7 +544,7 @@ begin
 end;
 
 procedure DoPrintMetafile(metafile:TRpMetafileReport;tittle:string;
- aform:TFRpQtProgress;allpages:boolean;frompage,topage,copies:integer;
+ aform:TFRpVCLProgress;allpages:boolean;frompage,topage,copies:integer;
  collate:boolean);
 var
  i:integer;
@@ -566,7 +650,7 @@ function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
  showprogress,allpages:boolean;frompage,topage,copies:integer;
   collate:boolean):boolean;
 var
- dia:TFRpQtProgress;
+ dia:TFRpVCLProgress;
 begin
  Result:=true;
  if Not ShowProgress then
@@ -574,7 +658,7 @@ begin
   DoPrintMetafile(metafile,tittle,nil,allpages,frompage,topage,copies,collate);
   exit;
  end;
- dia:=TFRpQtProgress.Create(Application);
+ dia:=TFRpVCLProgress.Create(Application);
  try
   dia.oldonidle:=Application.OnIdle;
   try
@@ -597,13 +681,13 @@ begin
 end;
 
 
-procedure TFRpQtProgress.FormCreate(Sender: TObject);
+procedure TFRpVCLProgress.FormCreate(Sender: TObject);
 begin
  LRecordCount.Font.Style:=[fsBold];
  LTittle.Font.Style:=[fsBold];
 end;
 
-procedure TFRpQtProgress.AppIdle(Sender:TObject;var done:boolean);
+procedure TFRpVCLProgress.AppIdle(Sender:TObject;var done:boolean);
 begin
  cancelled:=false;
  Application.OnIdle:=nil;
@@ -614,13 +698,13 @@ begin
 end;
 
 
-procedure TFRpQtProgress.CancelBtnClick(Sender: TObject);
+procedure TFRpVCLProgress.CancelBtnClick(Sender: TObject);
 begin
  cancelled:=true;
 end;
 
 
-procedure TFRpQtProgress.RepProgress(Sender:TRpReport;var docancel:boolean);
+procedure TFRpVCLProgress.RepProgress(Sender:TRpReport;var docancel:boolean);
 begin
  if Not Assigned(LRecordCount) then
   exit;
@@ -631,7 +715,7 @@ begin
   docancel:=true;
 end;
 
-procedure TFRpQtProgress.AppIdleReport(Sender:TObject;var done:boolean);
+procedure TFRpVCLProgress.AppIdleReport(Sender:TObject;var done:boolean);
 var
  oldprogres:TRpProgressEvent;
 begin
@@ -652,9 +736,9 @@ end;
 
 function CalcReportWidthProgress(report:TRpReport):boolean;
 var
- dia:TFRpQTProgress;
+ dia:TFRpVCLProgress;
 begin
- dia:=TFRpQTProgress.Create(Application);
+ dia:=TFRpVCLProgress.Create(Application);
  try
   dia.oldonidle:=Application.OnIdle;
   try
@@ -671,7 +755,7 @@ begin
 end;
 
 
-procedure TFRpQtProgress.AppIdlePrintRange(Sender:TObject;var done:boolean);
+procedure TFRpVCLProgress.AppIdlePrintRange(Sender:TObject;var done:boolean);
 var
  oldprogres:TRpProgressEvent;
 begin
@@ -691,7 +775,7 @@ begin
  Close;
 end;
 
-procedure TFRpQtProgress.AppIdlePrintPDF(Sender:TObject;var done:boolean);
+procedure TFRpVCLProgress.AppIdlePrintPDF(Sender:TObject;var done:boolean);
 var
  oldprogres:TRpProgressEvent;
 begin
@@ -720,7 +804,7 @@ var
  GDIDriver:TRpGDIDriver;
  aGDIDriver:IRpPrintDriver;
  forcecalculation:boolean;
- dia:TFRpQtProgress;
+ dia:TFRpVCLProgress;
  oldonidle:TIdleEvent;
 begin
  Result:=true;
@@ -757,7 +841,7 @@ begin
   if progress then
   begin
    // Assign appidle frompage to page...
-   dia:=TFRpQtProgress.Create(Application);
+   dia:=TFRpVCLProgress.Create(Application);
    try
     dia.allpages:=allpages;
     dia.frompage:=frompage;
@@ -787,7 +871,7 @@ begin
 end;
 
 
-procedure TFRpQtProgress.FormClose(Sender: TObject;
+procedure TFRpVCLProgress.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
  GDIDriver:=nil;
@@ -800,7 +884,7 @@ function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
 var
  copies:integer;
  collate:boolean;
- dia:TFRpQtProgress;
+ dia:TFRpVCLProgress;
  oldonidle:TIdleEvent;
  pdfdriver:TRpPDFDriver;
  apdfdriver:IRpPrintDriver;
@@ -809,15 +893,15 @@ begin
  allpages:=true;
  collate:=false;
  copies:=1;
-// if showprintdialog then
-// begin
-//  if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate,true) then
-//   exit;
-// end;
+ if showprintdialog then
+ begin
+  if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate,true) then
+   exit;
+ end;
  if progress then
  begin
   // Assign appidle frompage to page...
-  dia:=TFRpQtProgress.Create(Application);
+  dia:=TFRpVCLProgress.Create(Application);
   try
    dia.allpages:=allpages;
    dia.frompage:=frompage;
@@ -845,6 +929,27 @@ begin
   apdfdriver:=pdfdriver;
   report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
   Result:=True;
+ end;
+end;
+
+procedure TFRpVCLProgress.OKBtnClick(Sender: TObject);
+begin
+ FromPage:=StrToInt(EFrom.Text);
+ ToPage:=StrToInt(ETo.Text);
+ if FromPage<1 then
+  FromPage:=1;
+ if ToPage<FromPage then
+  ToPage:=FromPage;
+ Close;
+ dook:=true;
+end;
+
+procedure TFRpVCLProgress.FormShow(Sender: TObject);
+begin
+ if OKBtn.Visible then
+ begin
+  EFrom.Text:=IntToStr(FromPage);
+  ETo.Text:=IntToStr(ToPage);
  end;
 end;
 

@@ -997,6 +997,7 @@ begin
  ltypes.Add(SrpSFontStyle);
  lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontStyle));
 
+
  // Back Color
  lnames.Add(SrpSBackColor);
  ltypes.Add(SRpSColor);
@@ -1022,6 +1023,10 @@ begin
  ltypes.Add(SRpSBool);
  lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).SingleLine,true));
 
+ // Font Rotation in degrees
+ lnames.Add(SRpSFontRotation);
+ ltypes.Add(SrpSString);
+ lvalues.Add(FormatCurr('#####0.0',TRpGenTextComponent(printitem).FontRotation));
 end;
 
 procedure TRpGenTextInterface.SetProperty(pname:string;value:string);
@@ -1100,6 +1105,11 @@ begin
   Invalidate;
   exit;
  end;
+ if pname=SRpSFontRotation then
+ begin
+  TRpGenTextComponent(fprintitem).FontRotation:=Round(StrToCurr(Value)*10);
+  exit;
+ end;
 
  inherited SetProperty(pname,value);
 end;
@@ -1155,6 +1165,11 @@ begin
  if pname=SrpSCutText then
  begin
   Result:=BoolToStr(TRpGenTextComponent(printitem).CutText,true);
+  exit;
+ end;
+ if pname=SRpSFontRotation then
+ begin
+  Result:=FormatCurr('#####0.0',TRpGenTextComponent(printitem).FontRotation);
   exit;
  end;
 

@@ -833,6 +833,11 @@ begin
     end;
     if not finished then
     begin
+     if not initiated then
+     begin
+      Driver.NewDocument(metafile);
+      initiated:=true;
+     end;
      if ((PageNum>=frompage) and  (PageNum<=topage)) then
      begin
       for i:=0 to copies-1 do

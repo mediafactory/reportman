@@ -1199,9 +1199,15 @@ begin
   Result := '';
   Reg := TRegistry.Create;
   try
-    Reg.RootKey := HKEY_CURRENT_USER;
+    Reg.RootKey := HKEY_LOCAL_MACHINE;
     if Reg.OpenKeyReadOnly(SDBEXPRESSREG_SETTING) then
-      Result := Reg.ReadString(Setting);
+      Result := Reg.ReadString(Setting)
+    else
+    begin
+     Reg.RootKey := HKEY_CURRENT_USER;
+     if Reg.OpenKeyReadOnly(SDBEXPRESSREG_SETTING) then
+      Result := Reg.ReadString(Setting)
+    end;
   finally
     Reg.Free;
   end;
