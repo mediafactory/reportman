@@ -4,10 +4,42 @@ REPORTMANPATH=c:\prog\toni\cvsroot\reportman\reportman;$(DELPHIPATH)\OCX\Servers
 PACKAGESPATH="$(DELPHIPATH)\Projects\Bpl"
 COMPILE="$(DELPHIPATH)\bin\dcc32" -LN$(PACKAGESPATH) -LE$(PACKAGESPATH) -U"$(REPORTMANPATH);$(DELPHIPATH)\projects\bpl" -I"$(REPORTMANPATH)"
 IMPLIB="c:\prog\cbuilder6\bin\implib" 
-all: clean packages reportman
+all: clean packages reportman release
 
 reportman: reportmanutils reportmanserver reportmanutilsxp reportmanserverxp
 
+release:
+        del /S ..\release
+        mkdir ..\release
+        copy repman\repmandxp.exe ..\release
+        copy repman\repmandxp.exe.manifest ..\release
+        copy repman\repmand.exe ..\release
+        copy repman\utils\printrep\printrep.exe ..\release
+        copy repman\utils\printrep\printrepxp.exe ..\release
+        copy repman\utils\printrep\printrepxp.exe.manifest ..\release
+        copy repman\utils\metaview\metaviewxp.exe ..\release
+        copy repman\utils\metaview\metaviewxp.exe.manifest ..\release
+        copy repman\utils\metaview\metaview.exe ..\release
+        copy repman\utils\printrep\printreptopdf.exe ..\release
+        copy repman\utils\txttorep\txttorep.exe ..\release
+        copy repman\utils\reptotxt\reptotxt.exe ..\release
+        copy repman\utils\rptranslator\rptranslate.exe ..\release
+        copy repman\utils\rptranslator\rptranslate.exe.manifest ..\release
+        copy repman\utils\rptranslator\unixtodos.exe ..\release
+        copy server\app\reportserverapp.exe ..\release
+        copy server\app\reportserverappxp.exe ..\release
+        copy server\app\reportserverappxp.exe.manifest ..\release
+        copy server\app\reportservercon.exe ..\release
+        copy server\app\repserverconfig.exe ..\release
+        copy server\app\repserverconfigxp.exe ..\release
+        copy server\app\repserverconfigxp.exe.manifest ..\release
+        copy server\service\repserverservice.exe ..\release
+        copy server\service\repserviceinstall.exe ..\release
+        copy server\service\repserviceinstall.exe.manifest ..\release
+        copy server\web\repwebexe.exe ..\release
+        copy server\web\repwebserver.dll ..\release
+        copy webactivex\WebReportManX.cab ..\release
+        copy activex\ReportMan.ocx ..\release
 
 webx:   clean
         cd webactivex

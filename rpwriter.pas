@@ -23,7 +23,7 @@ uses Classes,
 {$IFDEF USEZLIB}
 rpmzlib,
 {$ENDIF}
-SysUtils;
+SysUtils,rptypes;
 
 
 procedure FileReportToPlainText (reportfile,plainfile:string);
@@ -34,7 +34,7 @@ implementation
 procedure FileReportToPlainText(reportfile,plainfile:string);
 var
  deststream:TFileStream;
- stream:TMemoryStream;
+ stream,astream:TMemoryStream;
 {$IFDEF USEZLIB}
  memstream:TMemoryStream;
  zlibs:TDeCompressionStream;
@@ -46,7 +46,14 @@ var
 begin
  stream:=TMemoryStream.Create;
  try
-  stream.LoadFromFile(reportfile);
+  if Length(reportfile)>0 then
+   stream.LoadFromFile(reportfile)
+  else
+  begin
+   stream.free;
+   stream:=nil;
+   stream:=ReadFromStdInputStream;
+  end;
   stream.Seek(0,soFromBeginning);
   // Looks stream type
   if (stream.size<1) then
@@ -80,11 +87,23 @@ begin
       freemem(buf);
      end;
      memstream.Seek(0,soFrombeginning);
-     deststream:=TFileStream.Create(plainfile,fmCreate);
-     try
-      ObjectBinaryToText(memstream,deststream);
-     finally
-      deststream.Free;
+     if Length(plainfile)>0 then
+     begin
+      deststream:=TFileStream.Create(plainfile,fmCreate);
+      try
+       ObjectBinaryToText(memstream,deststream);
+      finally
+       deststream.Free;
+      end
+     end
+     else
+     begin
+      deststream:=TFileStream.Create(plainfile,fmCreate);
+      try
+       ObjectBinaryToText(memstream,deststream);
+      finally
+       deststream.Free;
+      end
      end;
     finally
      zlibs.free;
@@ -106,11 +125,13 @@ begin
   end
   else
   begin
-   deststream:=TFileStream.Create(plainfile,fmCreate);
+   astream:=TMemoryStream.Create;
    try
-    ObjectBinaryToText(stream,deststream);
+    ObjectBinaryToText(stream,astream);
+    astream.Seek(0,soFromBeginning);
+    WriteStreamToStdOutput(astream);
    finally
-    deststream.Free;
+    astream.Free;
    end;
   end;
  finally
@@ -120,14 +141,22 @@ end;
 
 procedure PlainTextToFileReport(plainfile,reportfile:string);
 var
- sourcestream,deststream:TFileStream;
+ sourcestream,deststream:TStream;
 {$IFDEF USEZLIB}
  zstream:TCompressionStream;
 {$ENDIF}
 begin
- sourcestream:=TFileStream.Create(plainfile,fmOpenRead or fmShareDenyWrite);
+ if Length(plainfile)>0 then
+  sourcestream:=TFileStream.Create(plainfile,fmOpenRead or fmShareDenyWrite)
+ else
+ begin
+  sourcestream:=ReadFromStdInputStream;
+ end;
  try
-  deststream:=TFileStream.Create(reportfile,fmCreate);
+  if Length(reportfile)>0 then
+   deststream:=TFileStream.Create(reportfile,fmCreate)
+  else
+   deststream:=TMemoryStream.Create;
   try
 {$IFDEF USEZLIB}
    zstream:=TCompressionStream.Create(clDefault,deststream);
@@ -140,6 +169,11 @@ begin
 {$IFNDEF USEZLIB}
    ObjectTextToBinary(sourcestream,deststream);
 {$ENDIF}
+   if Length(reportfile)<1 then
+   Begin
+    deststream.Seek(0,soFromBeginning);
+    WriteStreamToStdOutput(deststream);
+   end;
   finally
    deststream.Free;
   end;

@@ -45,10 +45,12 @@ begin
  Writeln(SRpMetaPrint9);
  Writeln(SRpPrintRep9);
  Writeln(SRpPrintRep10);
+ Writeln(SRpCommandLineStdIN);
 end;
 
 
 var
+ isstdin:Boolean;
  indexparam:integer;
  showprogress:boolean;
  dodeletefile:boolean;
@@ -60,9 +62,11 @@ var
  collate:boolean;
  printerindex:TRpPrinterSelect;
  preview,pdialog,doprint:boolean;
+ memstream:TMemoryStream;
 begin
  try
   { TODO -oUser -cConsole Main : Insert code here }
+  isstdin:=false;
   printerindex:=pRpDefaultPrinter;
   if ParamCount<1 then
    PrintHelp
@@ -95,6 +99,9 @@ begin
      else
       if ParamStr(indexparam)='-d' then
        dodeletefile:=true
+      else
+      if ParamStr(indexparam)='-stdin' then
+       isstdin:=true
       else
       if ParamStr(indexparam)='-from' then
       begin
@@ -147,15 +154,30 @@ begin
     end;
     if indexparam<ParamCount+1 then
     begin
+     PrintHelp;
      Raise Exception.Create(SRpTooManyParams)
     end;
-    if Length(filename)<1 then
+    if ((Length(filename)<1) and (not isstdin)) then
     begin
      PrintHelp;
     end
     else
     begin
-     metafile.LoadFromFile(filename);
+     if isstdin then
+     begin
+      memstream:=ReadFromStdInputStream;
+      try
+       memstream.Seek(0,soFromBeginning);
+       metafile.LoadFromStream(memstream);
+      finally
+       memstream.free;
+      end;
+      dodeletefile:=false;
+     end
+     else
+     begin
+      metafile.LoadFromFile(filename);
+     end;
      try
       if ShowProgress then
       begin

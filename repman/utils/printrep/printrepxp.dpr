@@ -22,7 +22,7 @@ program printrepxp;
 {$APPTYPE CONSOLE}
 
 uses
-  SysUtils,
+  SysUtils,Classes,
   midaslib,
   rpreport in '..\..\..\rpreport.pas',
   rpparams in '..\..\..\rpparams.pas',
@@ -61,9 +61,14 @@ begin
  Writeln(SRpPrintRep9);
  Writeln(SRpPrintRep10);
  Writeln(SRpParseParamsH);
+ Writeln(SRpCommandLineStdIN);
 end;
 
+var
+ isstdin:Boolean;
+ memstream:TMemoryStream;
 begin
+  isstdin:=false;
   { TODO -oUser -cConsole Main : Insert code here }
   try
    if ParamCount<1 then
@@ -91,6 +96,9 @@ begin
     else
     if ParamStr(indexparam)='-pdialog' then
      pdialog:=true
+    else
+    if ParamStr(indexparam)='-stdin' then
+     isstdin:=true
     else
     if ParamStr(indexparam)='-from' then
     begin
@@ -135,9 +143,10 @@ begin
    end;
    if indexparam<ParamCount+1 then
    begin
+    PrintHelp;
     Raise Exception.Create(SRpTooManyParams)
    end;
-   if Length(filename)<1 then
+   if ((Length(filename)<1) and (not isstdin)) then
    begin
     PrintHelp;
    end
@@ -145,7 +154,18 @@ begin
    begin
     report:=TRpReport.Create(nil);
     try
-     report.LoadFromFile(filename);
+     if isstdin then
+     begin
+      memstream:=ReadFromStdInputStream;
+      try
+       memstream.Seek(0,soFromBeginning);
+       report.LoadFromStream(memstream);
+      finally
+       memstream.free;
+      end;
+     end
+     else
+      report.LoadFromFile(filename);
      if acopies=0 then
       copies:=report.Copies
      else

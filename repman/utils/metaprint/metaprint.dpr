@@ -56,6 +56,7 @@ begin
  Writeln(SRpMetaPrint9);
  Writeln(SRpPrintRep9);
  Writeln(SRpPrintRep10);
+ Writeln(SRpCommandLineStdIN);
 end;
 
 
@@ -109,6 +110,9 @@ begin
      else
       if ParamStr(indexparam)='-d' then
        dodeletefile:=true
+      else
+      if ParamStr(indexparam)='-stdin' then
+       isstdin:=true
       else
       if ParamStr(indexparam)='-from' then
       begin
@@ -164,58 +168,63 @@ begin
      PrintHelp;
      Raise Exception.Create(SRpTooManyParams)
     end;
-    if Length(filename)<1 then
-     isstdin:=True;
-    if isstdin then
+    if ((Length(filename)<1) and (not isstdin)) then
     begin
-     memstream:=ReadFromStdInputStream;
-     try
-      memstream.Seek(0,soFromBeginning);
-      metafile.LoadFromStream(memstream);
-     finally
-      memstream.free;
-     end;
-     dodeletefile:=false;
+     PrintHelp;
     end
     else
     begin
-     metafile.LoadFromFile(filename);
-    end;
-    try
-     if ShowProgress then
+     if isstdin then
      begin
-      if not isstdin then
-       WriteLn(SRpPrintingFile+':'+filename);
-     end;
-     if preview then
-     begin
-      rpfmainmetaview.PreviewMetafile(metafile,nil,true);
+      memstream:=ReadFromStdInputStream;
+      try
+       memstream.Seek(0,soFromBeginning);
+       metafile.LoadFromStream(memstream);
+      finally
+       memstream.free;
+      end;
+      dodeletefile:=false;
      end
      else
      begin
-      doprint:=true;
-      if pdialog then
-       doprint:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
-      if doprint then
+      metafile.LoadFromFile(filename);
+     end;
+     try
+      if ShowProgress then
       begin
-       if PrintMetafile(metafile,filename,ShowProgress,allpages,
-        frompage,topage,copies,collate,printerindex) then
-       if ShowProgress then
+       if not isstdin then
+        WriteLn(SRpPrintingFile+':'+filename);
+      end;
+      if preview then
+      begin
+       rpfmainmetaview.PreviewMetafile(metafile,nil,true);
+      end
+      else
+      begin
+       doprint:=true;
+       if pdialog then
+        doprint:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+       if doprint then
        begin
-        WriteLn(SRpPrinted);
+        if PrintMetafile(metafile,filename,ShowProgress,allpages,
+         frompage,topage,copies,collate,printerindex) then
+        if ShowProgress then
+        begin
+         WriteLn(SRpPrinted);
+        end;
        end;
       end;
+     finally
+      if dodeletefile then
+       if DeleteFile(filename) then
+        if ShowProgress then
+        begin
+          WriteLn(SRpPrintedFileDeleted);
+        end;
      end;
-    finally
-     if dodeletefile then
-      if DeleteFile(filename) then
-       if ShowProgress then
-       begin
-         WriteLn(SRpPrintedFileDeleted);
-       end;
     end;
    finally
-    metafile.free;
+     metafile.free;
    end;
   end;
  except

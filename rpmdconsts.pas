@@ -101,10 +101,10 @@ var
   SrpErrorProcesingFileMenu:WideString='Error procesing the File Menu for last saved files';
   SRpRepToTxt1:WideString='reptotxt';
   SRpRepToTxt2:WideString='Converts a report file from report manager (.rep) to a plain file';
-  SRpRepToTxt3:WideString='Usage: reptotxt sourcefilename destinationfilename';
+  SRpRepToTxt3:WideString='Usage: reptotxt -stdin|sourcefilename [destinationfilename]';
   SRpMetaPrint1:WideString='metaprint';
   SRpMetaPrint2:WideString='Prints a metafile report (.rpmf)';
-  SRpMetaPrint3:WideString='Usage: metaprint [Options] [metafilename]';
+  SRpMetaPrint3:WideString='Usage: metaprint [Options] -stdin|metafilename';
   SRpMetaPrint4:WideString='Options: -d        Delete the file after printing it';
   SRpMetaPrint5:WideString='         -q        Quiet mode, don''t show progress';
   SRpMetaPrint6:WideString='         -from   n Prints report from page pnum';
@@ -118,7 +118,7 @@ var
   SRpNoDriverPassedToPrint:WideString='No driver passed to beginprint of TrpReport';
   SRpTxtToRep1:WideString='txttorep';
   SRpTxtToRep2:WideString='Converts a plain file containing object descriptions to a report manager (.rep) file';
-  SRpTxtToRep3:WideString='Usage: txttorep sourcefilename destinationfilename';
+  SRpTxtToRep3:WideString='Usage: txttorep -stdin|sourcefilename [destinationfilename]';
   SRpPrintRep1:WideString='printrep';
   SRpPrintRep2:WideString='Prints a report manager (.rep) file';
   SRpPrintRep3:WideString='Usage: printrep [Options] reportfilename';
