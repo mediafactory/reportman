@@ -31,6 +31,9 @@ uses
 {$IFDEF VCLANDCLX}
   rpgdidriver,Dialogs,
 {$ENDIF}
+{$IFDEF LINUX}
+  Libc,
+{$ENDIF}
   Types, Classes, QGraphics, QControls, QForms,
   QStdCtrls,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,rpmdclitree,
   QActnList, QImgList,QPrinters,Qt,rpmdconsts,rptypes, QMenus,
@@ -214,6 +217,9 @@ type
     oldonHint:TNotifyEvent;
     AppStyle:TDefaultStyle;
     configfile:string;
+{$IFDEF LINUX}
+    usekprinter:boolean;
+{$ENDIF}
     faform:TForm;
     procedure SetForm(Value:TForm);
     procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
@@ -313,6 +319,11 @@ end;
 constructor TFRpMeta.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+
+{$IFDEF LINUX}
+ usekprinter:=GetEnvironmentVariable('REPMANUSEKPRINTER')='true';
+{$ENDIF}
+
  ShowPrintDialog:=true;
  setmenu:=true;
  MSelectPrinter.Caption:=TranslateStr(741,MSelectPrinter.Caption);
@@ -570,6 +581,15 @@ var
  selectedok:boolean;
 begin
  // Prints the report
+{$IFDEF LINUX}
+ if usekprinter then
+ begin
+   // Use kprinter to print the file
+   PrintMetafileUsingKPrinter(metafile);
+ end
+ else
+{$ENDIF}
+ begin
  frompage:=1;
  topage:=999999;
  allpages:=true;
@@ -617,6 +637,7 @@ begin
  if selectedok then
   rpqtdriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
     frompage,topage,copies,collate,printerindex);
+ end;
 end;
 
 procedure TFRpMeta.ASaveExecute(Sender: TObject);

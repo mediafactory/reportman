@@ -124,6 +124,9 @@ type
     printed:boolean;
     enableparams:boolean;
     fmodified:Boolean;
+{$IFDEF LINUX}
+    usekprinter:boolean;
+{$ENDIF}
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure RepProgress(Sender:TRpBaseReport;var docancel:boolean);
     procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
@@ -291,6 +294,11 @@ end;
 
 procedure TFRpPreview.FormCreate(Sender: TObject);
 begin
+{$IFDEF LINUX}
+ usekprinter:=GetEnvironmentVariable('REPMANUSEKPRINTER')='true';
+{$ENDIF}
+
+
  BToolBar.ButtonHeight:=EPageNum.Height;
  APrevious.ShortCut:=Key_PageUp;
  ANext.ShortCut:=Key_PageDown;
@@ -429,27 +437,38 @@ begin
  collate:=report.CollateCopies;
  frompage:=1; topage:=999999;
  copies:=report.Copies;
- if systemprintdialog then
+{$IFDEF LINUX}
+ if usekprinter then
  begin
- if Not rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-  exit;
+   ALastExecute(Self);
+   // Use kprinter to print the file
+   PrintMetafileUsingKPrinter(report.metafile);
  end
  else
+{$ENDIF}
  begin
-  if Not rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+  if systemprintdialog then
+  begin
+  if Not rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
    exit;
+  end
+  else
+  begin
+   if Not rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+    exit;
+  end;
+ // report.EndPrint;
+ // PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
+  if not allpages then
+  begin
+   pagenum:=topage+1;
+   PrintPage;
+  end
+  else
+   ALastExecute(Self);
+  PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,
+   collate,report.PrinterSelect);
  end;
-// report.EndPrint;
-// PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
- if not allpages then
- begin
-  pagenum:=topage+1;
-  PrintPage;
- end
- else
-  ALastExecute(Self);
- PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,
- collate,report.PrinterSelect);
  AppIdle(Self,adone);
 end;
 

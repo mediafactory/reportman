@@ -39,6 +39,7 @@ uses
   rpmdconsts,rptypes, rpmdfstruc, rpsubreport,rpeditconn,rpmdfopenlib,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
   rpsection,rpprintitem,rprfparams,rpfmainmetaview,rpmdsysinfoqt,
+  rppdfdriver,rpmetafile,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
@@ -311,6 +312,9 @@ type
     OldHelpFilename:string;
     alibrary:String;
     areportname:WideString;
+{$IFDEF LINUX}
+    usekprinter:boolean;
+{$ENDIF}
     procedure FreeInterface;
     procedure CreateInterface;
     function checkmodified:boolean;
@@ -685,6 +689,10 @@ end;
 
 procedure TFRpMainF.FormCreate(Sender: TObject);
 begin
+{$IFDEF LINUX}
+ usekprinter:=GetEnvironmentVariable('REPMANUSEKPRINTER')='true';
+{$ENDIF}
+
  ToolBar1.ButtonHeight:=26;
  ToolBar1.ButtonWidth:=26;
  // Inits Bools Arrays
@@ -1271,7 +1279,33 @@ var
  allpages,collate:boolean;
  frompage,topage,copies:integer;
  dook:boolean;
+{$IFDEF LINUX}
+ memstream:tmemoryStream;
+ metafile:TRpMetafileReport;
+{$ENDIF}
 begin
+{$IFDEF LINUX}
+ if usekprinter then
+ begin
+   metafile:=TRpMetafileReport.Create(nil);
+   try
+    memstream:=tmemoryStream.Create;
+    try
+     rppdfdriver.PrintReportMetafileStream(report,'',false,true,1,9999,1,memstream,false,false);
+     memstream.Seek(0,soFromBeginning);
+     metafile.LoadFromStream(memstream);
+    finally
+     memstream.free;
+    end;
+    // Use kprinter to print the file
+    PrintMetafileUsingKPrinter(metafile);
+   finally
+    metafile.free;
+   end;
+ end
+ else
+{$ENDIF}
+ begin
 {$IFDEF VCLANDCLX}
  if ((ADriverGDI.Checked) or (ADriverPDFGDI.Checked)) then
  begin
@@ -1310,6 +1344,7 @@ begin
   dook:=rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
  if dook then
   rpqtdriver.PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
+ end
 end;
 
 function TFRpMainF.GetExpressionText:string;

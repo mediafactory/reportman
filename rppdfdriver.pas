@@ -35,6 +35,9 @@ uses Classes,Sysutils,
 {$IFNDEF FORWEBAX}
  rpbasereport,rpreport,rpmdchart,
 {$ENDIF}
+{$IFDEF LINUX}
+ Libc,
+{$ENDIF}
  rpmunits,rpmdconsts,rpmdcharttypes;
 
 type
@@ -101,6 +104,9 @@ procedure DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePa
  aposx,aposy:integer;achart:TObject);
 {$ENDIF}
 
+{$IFDEF LINUX}
+procedure PrintMetafileUsingKPrinter(metafile:TRpMetafileReport);
+{$ENDIF}
 
 implementation
 
@@ -867,6 +873,44 @@ begin
   DoDrawChart(Self,Series,ametafile.Pages[ametafile.CurrentPage],posx,posy,achart);
 {$ENDIF}
 end;
+
+{$IFDEF LINUX}
+procedure PrintMetafileUsingKPrinter(metafile:TRpMetafileReport);
+var
+ afilename:String;
+ destfilename:string;
+ astring:String;
+ alist:TStringList;
+begin
+ // use a temp file
+ alist:=TStringList.Create;
+ try
+  afilename:=rptempfilename;
+  afilename:=changefileext(afilename,'.pdf');
+  destfilename:=rptempfilename;
+  destfilename:=changefileext(destfilename,'.ps');
+  rppdfdriver.SaveMetafileToPDF(metafile,afilename,false);
+  try
+   alist.Add('pdftops');
+   alist.Add(afilename);
+   alist.Add(destfilename);
+   ExecuteSystemApp(alist,true);
+   alist.clear;
+   alist.Add('kprinter');
+   alist.Add(destfilename);
+   try
+    ExecuteSystemApp(alist,true);
+   finally
+    DeleteFile(destfilename);
+   end;
+  finally
+   DeleteFile(afilename);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+{$ENDIF}
 
 
 end.

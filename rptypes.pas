@@ -294,6 +294,7 @@ function CompareMem(const Mem1: array of Byte; const Mem2: array of Byte;
 function PrinterRawOpEnabled(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):Boolean;
 
 {$IFDEF LINUX}
+procedure ExecuteSystemApp(aparams:TStrings;waitend:Boolean);
 procedure  ObtainPrinters(alist:TStrings);
 procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title:String);
 procedure ReadFileLines(filename:String;dest:TStrings);
@@ -2733,6 +2734,38 @@ end;
 
 
 {$IFDEF LINUX}
+procedure ExecuteSystemApp(aparams:TStrings;waitend:Boolean);
+var
+ child:__pid_t;
+ i:integer;
+ theparams:array [0..100] of pchar;
+begin
+ if aparams.count>90 then
+  Raise exception.create(SRpTooManyParams);
+ // Creates a fork, and provides the input from standard
+ // input to lpr command
+ for i:=0 to aparams.count-1 do
+ begin
+  theparams[i]:=Pchar(aparams[i]);
+ end;
+ theparams[aparams.count]:=nil;
+ child:=fork;
+ if child=-1 then
+  Raise Exception.Create(SRpErrorForking);
+ if child=0 then
+ begin
+  // The child executes the command
+  execvp(theparams[0],PPChar(@theparams))
+ end
+ else
+ begin
+  // Waits to the end
+  if waitend then
+   wait(@child);
+ end;
+end;
+
+
 procedure ExecuteRecode(afilename,parameter:String);
 var
  child:__pid_t;

@@ -15,5 +15,9 @@ export LC_NUMERIC=en_US
 #You can share libraries copying libs to a directory
 #for example /opt/kylixlibs and add the path to ld.so.conf
 #then run ldconfig (as root)
+
+# To enable kprinter dialog at preview
+export REPMANUSEKPRINTER=true
+export LD_ASSUME_KERNEL=2.4.21
 export LD_LIBRARY_PATH=:$PWD:$LD_LIBRARY_PATH
 ./repmand $*
