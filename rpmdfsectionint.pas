@@ -219,16 +219,18 @@ procedure TRpSectionInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
  inherited GetProperties(lnames,ltypes,lvalues);
 
- lnames.Add(SRpSAutoExpand);
- ltypes.Add(SRpSBool);
- if Assigned(lvalues) then
-  lvalues.Add(BoolToStr(TRpSection(printitem).AutoExpand,true));
 
- lnames.Add(SRpSAutoContract);
- ltypes.Add(SRpSBool);
- if Assigned(lvalues) then
-  lvalues.Add(BoolToStr(TRpSection(printitem).AutoContract,true));
-
+ if (TrpSection(printitem).SectionType<>rpsecpfooter) then
+ begin
+  lnames.Add(SRpSAutoExpand);
+  ltypes.Add(SRpSBool);
+  if Assigned(lvalues) then
+   lvalues.Add(BoolToStr(TRpSection(printitem).AutoExpand,true));
+  lnames.Add(SRpSAutoContract);
+  ltypes.Add(SRpSBool);
+  if Assigned(lvalues) then
+   lvalues.Add(BoolToStr(TRpSection(printitem).AutoContract,true));
+ end;
  if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter]) then
  begin
   lnames.Add(SRpSGroupName);

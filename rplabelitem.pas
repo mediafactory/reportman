@@ -513,7 +513,11 @@ begin
   rpPageChange:
    begin
     FOldString:='';
-    FUpdated:=False;
+    if (FAggregate=rpAgNone) then
+    begin
+     // Page variable must be recalculated
+     FUpdated:=False;
+    end;
    end;
   rpInvalidateValue:
    begin

@@ -426,6 +426,12 @@ begin
   maxsize:=MaxInt
  else
   maxsize:=Result.X;
+ if ((Not FAutoExpand) and (Not FAutoContract)) then
+ begin
+  Result.Y:=currentsize;
+  lastextent:=Result;
+  exit;
+ end;
  for i:=0 to Components.Count-1 do
  begin
   acompo:=TRpCommonPosComponent(Components.Items[i].Component);

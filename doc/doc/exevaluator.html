@@ -85,7 +85,7 @@
   <tr>
     <td>String</td>
     <td>String types (ansi), place two ' to represent one '</td>
-    <td>'Sample' 'It''s a sample'</td>
+    <td>'Sample' 'It''s a sample' 'A sample with a line feed at end'+#10</td>
   </tr>
   <tr>
     <td>WideString</td>
@@ -371,13 +371,32 @@
     <td>Parameters</td>
     <td>All the report parameters are available in the expression evaluator</td>
   </tr>
-  <tr>
+  <tr> 
     <td>PAGECOUNT</td>
     <td>This is a special expression, can not be combined or included inside another 
       expression, when two pass report option is enabled, the engine will sustitute 
       any PAGECOUNT expression with the integer page count value of the report, 
       but you can still use the display format property to customize the final 
       output </td>
+  </tr>
+  <tr> 
+    <td>FREESPACETWIPS, FREESPACEINCH, FREESPACECMS</td>
+    <td>Returns the available free space (vertical) in current page, in the selected 
+      unit. </td>
+  </tr>
+  <tr> 
+    <td>CURRENTGROUP</td>
+    <td>Returns the actual processing group, it returns 0 if the engine is printing 
+      details (so the next data section will be a detail), it returns a negative 
+      number if the engine is printing group headers (the number indicates what 
+      group header is processing) and a positive number when processing group 
+      footers.</td>
+  </tr>
+  <tr> 
+    <td>FIRSTSECTION</td>
+    <td>Returns true if evaluated inside the first <b>non repeatable data section</b> 
+      printed in the current page, that is if a page header or a group header 
+      with page repeat is printed they don't count for the first section printed.</td>
   </tr>
 </table>
 <p><b>Building expressions</b></p>

@@ -5,6 +5,9 @@ program repwebexe;
 uses
   WebBroker,
   CGIApp,
+{$IFDEF MSWINDOWS}
+  midaslib,
+{$ENDIF}
   rpwebmodule in 'rpwebmodule.pas' {repwebmod: TWebModule},
   rpwebpages in 'rpwebpages.pas';
   

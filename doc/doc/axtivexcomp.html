@@ -58,8 +58,9 @@ one was developed under W/98 and runs under the Windows Scripting Host (WSH).
 The choice of runtime environment dictates the format of the second line of the
 program where the activeX object is created. For example, under Active Server
 Pages VBScript, this line would read </p>
-<pre><code>set blah = WScript.createobject(&quot;ReportMan.ReportManX&quot;)</code></pre>
-<p><code>Here is the example program</code></p>
+<pre><code>set blah = server.createobject(&quot;ReportMan.ReportManX&quot;)</code></pre>
+<p>(please note for ASP work you must use a version 1.3+ of the OCX).
+Here is the example program</p>
 <pre><code>dim blah
 set blah = WScript.createobject(&quot;ReportMan.ReportManX&quot;)
 ' the object blah is an instance of the activex control
@@ -92,11 +93,12 @@ may be utilised in a SQL Select statement such as:</p>
 <p>The parameter &quot;PARAM1&quot; is set from VB/Script by a program line such
 as </p>
 <p><code>blah.setParamValue &quot;PARAM1&quot; , 442380629429</code></p>
-<p><code>Clearly this line is best placed in your program AFTER the report file
+<p>Clearly this line is best placed in your program AFTER the report file
 to be used has been identified. For further information on parameters please see
 <br>
-&quot;<a href="repparams.html">Advanced Report Design/Using Report Parameters</a>&quot;</code></p>
+&quot;<a href="repparams.html">Advanced Report Design/Using Report Parameters</a>&quot;</p>
 <p> </p>
 </body>
 </html>
+
 
