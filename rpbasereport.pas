@@ -122,6 +122,7 @@ type
    FPageBackColor:TRpColor;
    FPreviewStyle:TRpPreviewStyle;
    FPreviewWindow:TRpPreviewWindowStyle;
+   FPreviewMargins:Boolean;
    FOnReadError:TReaderError;
    FDataInfo:TRpDataInfoList;
    FDatabaseInfo:TRpDatabaseInfoList;
@@ -279,6 +280,8 @@ type
    property PageBackColor:TRpColor read FPageBackColor write FPageBackColor;
    property PreviewStyle:TRpPreviewStyle read FPreviewStyle
     write FPreviewStyle default spWide;
+   property PreviewMargins:Boolean read FPreviewMargins
+    write FPreviewMargins default true;
    property PreviewWindow:TRpPreviewWindowStyle read FPreviewWindow
     write FPreviewWindow default spwNormal;
    property LeftMargin:TRpTwips read FLeftMargin write FLeftMargin
@@ -370,6 +373,7 @@ constructor TRpBaseReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FPreviewMargins:=true;
  FGroupHeaders:=TStringList.Create;
  FPreviewAbout:=true;
  FStreamFormat:=rpStreamtext;

@@ -513,7 +513,7 @@ begin
      10:
       begin
        ALastExecute(Self);
-       ExportMetafileToCSV(report.metafile,SaveDialog1.Filename,true,true,
+       ExportMetafileToTextPro(report.metafile,SaveDialog1.Filename,true,true,
         1,9999);
        AppIdle(Self,adone);
       end;

@@ -4,7 +4,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
   AutoScroll = False
   Caption = 'Text file to database table configuration'
   ClientHeight = 412
-  ClientWidth = 511
+  ClientWidth = 517
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -18,13 +18,10 @@ object FRpDataTextVCL: TFRpDataTextVCL
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 511
+    Width = 517
     Height = 53
     Align = alTop
     TabOrder = 0
-    DesignSize = (
-      511
-      53)
     object LFieldsFile: TLabel
       Left = 8
       Top = 8
@@ -42,7 +39,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
     object EFileName: TEdit
       Left = 108
       Top = 4
-      Width = 396
+      Width = 402
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       Color = clInfoBk
@@ -53,7 +50,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
     object ESampleFile: TEdit
       Left = 108
       Top = 24
-      Width = 396
+      Width = 402
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       Color = clInfoBk
@@ -65,7 +62,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
   object PClient: TPanel
     Left = 0
     Top = 53
-    Width = 511
+    Width = 517
     Height = 359
     Align = alClient
     BevelOuter = bvNone
@@ -73,7 +70,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
     object Splitter1: TSplitter
       Left = 0
       Top = 156
-      Width = 511
+      Width = 517
       Height = 8
       Cursor = crVSplit
       Align = alTop
@@ -82,7 +79,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
     object PList: TPanel
       Left = 0
       Top = 0
-      Width = 511
+      Width = 517
       Height = 156
       Align = alTop
       BevelOuter = bvNone
@@ -90,7 +87,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
       object ToolBar1: TToolBar
         Left = 0
         Top = 0
-        Width = 511
+        Width = 517
         Height = 28
         AutoSize = True
         ButtonHeight = 26
@@ -129,7 +126,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
       object GridFields: TDBGrid
         Left = 0
         Top = 28
-        Width = 511
+        Width = 517
         Height = 128
         Align = alClient
         DataSource = SFiedls
@@ -144,7 +141,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
     object PBottom: TPanel
       Left = 0
       Top = 164
-      Width = 511
+      Width = 517
       Height = 195
       Align = alClient
       BevelOuter = bvNone
@@ -152,7 +149,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
       object PFieldProps: TPanel
         Left = 0
         Top = 0
-        Width = 511
+        Width = 517
         Height = 85
         Align = alTop
         BevelOuter = bvNone
@@ -177,7 +174,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
           Width = 81
           Height = 25
           Caption = 'Open'
-          TabOrder = 0
+          TabOrder = 3
           OnClick = BTestClick
         end
         object ERecordseparator: TEdit
@@ -185,7 +182,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
           Top = 4
           Width = 61
           Height = 21
-          TabOrder = 1
+          TabOrder = 0
           Text = 'ERecordseparator'
         end
         object EIgnoreAfterRecordseparator: TEdit
@@ -193,7 +190,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
           Top = 28
           Width = 61
           Height = 21
-          TabOrder = 2
+          TabOrder = 1
           Text = 'ERecordseparator'
         end
         object BOK: TButton
@@ -202,14 +199,14 @@ object FRpDataTextVCL: TFRpDataTextVCL
           Width = 81
           Height = 25
           Caption = 'OK'
-          TabOrder = 3
+          TabOrder = 2
           OnClick = Button1Click
         end
       end
       object PControl: TPageControl
         Left = 0
         Top = 85
-        Width = 511
+        Width = 517
         Height = 110
         ActivePage = TabData
         Align = alClient
@@ -235,7 +232,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
           object GridTest: TDBGrid
             Left = 0
             Top = 0
-            Width = 503
+            Width = 509
             Height = 82
             Align = alClient
             DataSource = SData

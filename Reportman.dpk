@@ -96,7 +96,8 @@ contains
   rpparser in 'rpparser.pas',
   rpmunits in 'rpmunits.pas',
   rptypes in 'rptypes.pas',
-  rpmdshfolder in 'rpmdshfolder.pas';
+  rpmdshfolder in 'rpmdshfolder.pas',
+  rpcsvdriver in 'rpcsvdriver.pas';
 
 [assembly: AssemblyDescription('')]
 [assembly: AssemblyConfiguration('')]

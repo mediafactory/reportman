@@ -1439,7 +1439,7 @@ begin
    Result := Result + ' and '+IntToStr(Fracture) + '/1000';
 end;
 
-
+{$IFNDEF DOTNETD}
 // Function cortesy of Argon Konay * 2004.03.11
 function NumberToTextTurkish(Amount:currency):WideString;
 const
@@ -1507,7 +1507,7 @@ three. *)
     if i <> 0 then
       Result := Result + '%' + IntToStr(i);
 end;
-
+{$ENDIF}
 
 function NumberToTextCatalan(Fnumero:currency;female:boolean):WideString;
 var s:String;
@@ -1986,8 +1986,10 @@ begin
    Result:=NumberToTextCastellano(FNumero,female);
   2:
    Result:=NumberToTextCatalan(FNumero,female);
+{$IFNDEF DOTNETD}
   7:
    Result:=NumberToTextTurkish(FNumero);
+{$ENDIF}
  end;
 end;
 

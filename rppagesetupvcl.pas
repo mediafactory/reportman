@@ -91,6 +91,7 @@ type
     CheckDrawerAfter: TCheckBox;
     CheckDrawerBefore: TCheckBox;
     CheckPreviewAbout: TCheckBox;
+    CheckMargins: TCheckBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -283,6 +284,7 @@ begin
  ComboStyle.Items.Strings[0]:=TranslateStr(843,ComboStyle.Items.Strings[0]);
  ComboStyle.Items.Strings[1]:=TranslateStr(844,ComboStyle.Items.Strings[1]);
  ComboStyle.Items.Strings[2]:=TranslateStr(845,ComboStyle.Items.Strings[2]);
+ CheckMargins.Caption:=SRpPreviewMargins;
  TabPage.Caption:=TranslateStr(857,TabPage.Caption);
  TabPrint.Caption:=TranslateStr(858,TabPrint.Caption);
  TabOptions.Caption:=SRpSOptions;
@@ -352,6 +354,7 @@ begin
  // Other
  report.PrinterFonts:=TRpPrinterFontsOption(ComboPrinterFonts.ItemIndex);
  report.PreviewStyle:=TRpPreviewStyle(ComboStyle.ItemIndex);
+ report.PreviewMargins:=CheckMargins.Checked;
  report.PreviewWindow:=TRpPreviewWindowStyle(ComboPreview.ItemIndex);
  report.StreamFormat:=TRpStreamFormat(ComboFormat.ItemIndex);
 
@@ -412,6 +415,7 @@ begin
  ComboStyle.ItemIndex:=integer(report.PreviewStyle);
  ComboPreview.ItemIndex:=integer(report.PreviewWindow);
  ComboFormat.ItemIndex:=integer(report.StreamFormat);
+ CheckMargins.Checked:=report.PreviewMargins;
 end;
 
 procedure TFRpPageSetupVCL.SColorMouseDown(Sender: TObject;

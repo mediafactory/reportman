@@ -79,8 +79,10 @@ type
    FAutoExpand:Boolean;
    FAutoContract:Boolean;
    FDisplayFormat:string;
+   FExportDisplayFormat:string;
    FDataType:TRpParamType;
    FValue:Variant;
+   FExportValue:Variant;
    FSumValue:Variant;
    FDataCount:integeR;
    FUpdated:boolean;
@@ -92,10 +94,17 @@ type
    FPrintNulls:boolean;
    FIsPartial:Boolean;
    FPartialPos:Integer;
+   FExportExpression:WideString;
+   FExportLine:Integer;
+   FExportPosition:Integer;
+   FExportSize:Integer;
+   FExportDoNewLine:Boolean;
    procedure SetIdentifier(Value:string);
    procedure Evaluate;
    procedure WriteExpression(Writer:TWriter);
    procedure ReadExpression(Reader:TReader);
+   procedure WriteExpExpression(Writer:TWriter);
+   procedure ReadExpExpression(Reader:TReader);
    procedure WriteAgIniValue(Writer:TWriter);
    procedure ReadAgIniValue(Reader:TReader);
   protected
@@ -112,6 +121,8 @@ type
    property Expression:widestring read FExpression write FExpression;
    property AgIniValue:widestring read FAgIniValue write FAgIniValue;
    property IsPartial:Boolean read FIsPartial;
+   //
+   property ExportExpression:widestring read FExportExpression write FExportExpression;
   published
    property DataType:TRpParamType read FDataType write FDataType default rpParamUnknown;
    property DisplayFormat:string read FDisplayformat write FDisplayFormat;
@@ -126,6 +137,12 @@ type
    property PrintOnlyOne:Boolean read FPrintOnlyOne write FPrintOnlyOne
     default false;
    property PrintNulls:Boolean read FPrintNulls write FPrintNulls default true;
+   //
+   property ExportDisplayFormat:string read FExportDisplayformat write FExportDisplayFormat;
+   property ExportLine:Integer read FExportLine write FExportLine default 0;
+   property ExportPosition:Integer read FExportPosition write FExportPosition default 1;
+   property ExportSize:Integer read FExportSize write FExportSize default 20;
+   property ExportDoNewLine:Boolean read FExportDoNewLine write FExportDoNewLine;
   end;
 
   TIdenRpExpression=class(TIdenFunction)
@@ -292,6 +309,11 @@ begin
  FIdenExpression:=TIdenRpExpression.Create(Self);
  FIdenExpression.FExpreitem:=Self;
  FDataType:=rpParamUnknown;
+ FExportLine:=0;
+ FExportSize:=20;
+ FExportSize:=1;
+ FExportDoNewLine:=false;
+ FExportDisplayFormat:='';
 end;
 
 procedure TRpLabel.DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
@@ -372,6 +394,22 @@ begin
    Raise TRpReportException.Create(E.Message+':'+SRpSExpression+' '+Name,self,SRpSExpression);
   end;
  end;
+ if Length(FExportExpression)>0 then
+ begin
+  try
+   fevaluator:=TRpBaseReport(GetReport).Evaluator;
+   FExportValue:=fevaluator.EvaluateText(FExpression);
+  except
+   on E:Exception do
+   begin
+    Raise TRpReportException.Create(E.Message+':'+SRpSExpression+' '+Name,self,SRpSExportExpression);
+   end;
+  end;
+ end
+ else
+ begin
+  FExportValue:=Null;
+ end;
 end;
 
 function TRpExpression.GetText:widestring;
@@ -405,6 +443,7 @@ var
  expre:WideString;
  Textobj:TRpTextObject;
  newposition:Integer;
+ avalue:WideString;
 begin
  inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
  expre:=Trim(Expression);
@@ -433,6 +472,13 @@ begin
  end;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy,
    aposx,Printwidth,Printheight,Textobj,BackColor,Transparent);
+ if Not VarIsNull(FExportValue) then
+ begin
+  avalue:=FormatVariant(exportdisplayformat,FExportValue,rpParamunknown,true);
+  metafile.Pages[metafile.CurrentPage].NewExportObject(aposy,aposx,
+   PrintWidth,PrintHeight,avalue,FExportLine,FExportPosition,FExportSize,
+   FExportDoNewLine);
+ end;
  // Is Total pages variable?
  if (UpperCase(expre)='PAGECOUNT') then
  begin
@@ -679,6 +725,16 @@ begin
  FExpression:=ReadWideString(Reader);
 end;
 
+procedure TRpExpression.WriteExpExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FExportExpression);
+end;
+
+procedure TRpExpression.ReadExpExpression(Reader:TReader);
+begin
+ FExportExpression:=ReadWideString(Reader);
+end;
+
 procedure TRpExpression.WriteAgIniValue(Writer:TWriter);
 begin
  WriteWideString(Writer, FAgIniValue);
@@ -695,6 +751,8 @@ begin
 
  Filer.DefineProperty('Expression',ReadExpression,WriteExpression,True);
  Filer.DefineProperty('AgIniValue',ReadAgIniValue,WriteAgIniValue,True);
+ Filer.DefineProperty('ExportExpression',ReadExpExpression,
+  WriteExpExpression,True);
 end;
 
 procedure TRpLabel.WriteWideText(Writer:TWriter);

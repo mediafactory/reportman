@@ -13,7 +13,6 @@ object FRpSysInfo: TFRpSysInfo
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  ParentFont = True
   object BOK: TButton
     Left = 239
     Top = 320
@@ -178,7 +177,7 @@ object FRpSysInfo: TFRpSysInfo
       Height = 21
       Color = clInfoBk
       ReadOnly = True
-      TabOrder = 0
+      TabOrder = 1
     end
     object EPrinterName: TEdit
       Left = 108
@@ -187,7 +186,7 @@ object FRpSysInfo: TFRpSysInfo
       Height = 21
       Color = clInfoBk
       ReadOnly = True
-      TabOrder = 1
+      TabOrder = 0
     end
     object EDevice: TEdit
       Left = 108

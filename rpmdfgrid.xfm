@@ -28,7 +28,7 @@ object FRpGridOptions: TFRpGridOptions
     Height = 25
     Caption = 'OK'
     Default = True
-    TabOrder = 0
+    TabOrder = 10
     OnClick = BOKClick
   end
   object BCancel: TButton
@@ -39,7 +39,7 @@ object FRpGridOptions: TFRpGridOptions
     Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
-    TabOrder = 1
+    TabOrder = 11
   end
   object Lhorizontal: TLabel
     Left = 8
@@ -53,7 +53,7 @@ object FRpGridOptions: TFRpGridOptions
     Top = 4
     Width = 81
     Height = 21
-    TabOrder = 3
+    TabOrder = 1
     EditType = tecurrency
   end
   object Lvertical: TLabel
@@ -68,7 +68,7 @@ object FRpGridOptions: TFRpGridOptions
     Top = 28
     Width = 81
     Height = 21
-    TabOrder = 5
+    TabOrder = 4
     EditType = tecurrency
   end
   object LGridColor: TLabel
@@ -84,7 +84,7 @@ object FRpGridOptions: TFRpGridOptions
     Width = 217
     Height = 21
     Caption = 'Enabled'
-    TabOrder = 7
+    TabOrder = 6
   end
   object CheckVisible: TCheckBox
     Left = 8
@@ -92,7 +92,7 @@ object FRpGridOptions: TFRpGridOptions
     Width = 209
     Height = 21
     Caption = 'Visible'
-    TabOrder = 8
+    TabOrder = 7
   end
   object LUnits1: TLabel
     Left = 232
@@ -114,7 +114,7 @@ object FRpGridOptions: TFRpGridOptions
     Width = 225
     Height = 21
     Caption = 'Draw lines'
-    TabOrder = 11
+    TabOrder = 8
   end
   object ColorDialog1: TColorDialog
     Left = 152

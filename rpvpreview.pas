@@ -24,6 +24,7 @@ interface
 
 {$I rpconf.inc}
 
+
 uses
   SysUtils,
   windows,
@@ -234,6 +235,7 @@ begin
     pagenum:=report.Metafile.PageCount;
    report.Metafile.CurrentPage:=pagenum-1;
   end;
+  gdidriver.drawclippingregion:=report.PreviewMargins;
   report.metafile.DrawPage(gdidriver);
   if Assigned(gdidriver.bitmap) then
   begin
@@ -488,7 +490,7 @@ begin
      11:
       begin
        ALastExecute(Self);
-       ExportMetafileToCSV(report.metafile,SaveDialog1.Filename,true,true,
+       ExportMetafileToTextPro(report.metafile,SaveDialog1.Filename,true,true,
         1,9999);
        AppIdle(Self,adone);
       end;

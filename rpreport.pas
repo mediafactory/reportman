@@ -868,6 +868,7 @@ begin
  begin
   metafile.Clear;
   metafile.PreviewAbout:=PreviewAbout;
+  metafile.PreviewMargins:=PreviewMargins;
   ClearTotalPagesList;
   // Sets page orientation
   if PageOrientation<>rpOrientationDefault then

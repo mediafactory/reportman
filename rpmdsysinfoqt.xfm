@@ -13,7 +13,6 @@ object FRpSysInfo: TFRpSysInfo
   PixelsPerInch = 96
   TextHeight = 13
   TextWidth = 6
-  ParentFont = True
   object BOK: TButton
     Left = 223
     Top = 384
@@ -22,7 +21,7 @@ object FRpSysInfo: TFRpSysInfo
     Caption = 'OK'
     Default = True
     ModalResult = 1
-    TabOrder = 0
+    TabOrder = 6
   end
   object GSelectedPrinter: TGroupBox
     Left = 8
@@ -30,7 +29,7 @@ object FRpSysInfo: TFRpSysInfo
     Width = 541
     Height = 137
     Caption = 'Selected Printer'
-    TabOrder = 1
+    TabOrder = 0
     object Label1: TLabel
       Left = 8
       Top = 78
@@ -107,7 +106,7 @@ object FRpSysInfo: TFRpSysInfo
     Width = 537
     Height = 157
     Caption = 'System information'
-    TabOrder = 2
+    TabOrder = 1
     object Label10: TLabel
       Left = 364
       Top = 26
@@ -185,7 +184,7 @@ object FRpSysInfo: TFRpSysInfo
     Width = 541
     Height = 193
     Caption = 'System information'
-    TabOrder = 5
+    TabOrder = 4
     object LSysComp: TListBox
       Left = 8
       Top = 24
@@ -232,7 +231,7 @@ object FRpSysInfo: TFRpSysInfo
       '/proc/interrupts'
       '/proc/pci')
     Rows = 8
-    TabOrder = 6
+    TabOrder = 5
     Visible = False
   end
 end

@@ -363,6 +363,53 @@ begin
  lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpExpression(printitem).PrintOnlyOne,true));
+ // Export Expression
+ lnames.Add(SRpSExportExpression);
+ ltypes.Add(SRpSExpression);
+ lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpExpression(printitem).ExportExpression);
+
+ // Export Display format
+ lnames.Add(SRpSExportFormat);
+ ltypes.Add(SRpSString);
+ lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpExpression(printitem).ExportDisplayFormat);
+
+ // Export Line
+ lnames.Add(SRpSExportLine);
+ ltypes.Add(SRpSInteger);
+ lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpExpression(printitem).ExportLine));
+
+ // Export Position
+ lnames.Add(SRpSExportPos);
+ ltypes.Add(SRpSInteger);
+ lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpExpression(printitem).ExportPosition));
+
+ // Export Size
+ lnames.Add(SRpSExportSize);
+ ltypes.Add(SRpSInteger);
+ lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpExpression(printitem).ExportSize));
+
+ // Export Do New Line
+ lnames.Add(SRpSExportDoNewLine);
+ ltypes.Add(SRpSBool);
+ lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpExpression(printitem).ExportDoNewLine,true));
 end;
 
 procedure TRpExpressionInterface.SetProperty(pname:string;value:Widestring);
@@ -421,6 +468,36 @@ begin
  if pname=SrpSOnlyOne then
  begin
   TRpExpression(fprintitem).PrintOnlyOne:=StrToBool(Value);
+  exit;
+ end;
+ if pname=SRpSExportExpression then
+ begin
+  TRpExpression(fprintitem).ExportExpression:=value;
+  exit;
+ end;
+ if pname=SRpSExportFormat then
+ begin
+  TRpExpression(fprintitem).ExportDisplayFormat:=value;
+  exit;
+ end;
+ if pname=SRpSExportLine then
+ begin
+  TRpExpression(fprintitem).ExportLine:=StrToInt(value);
+  exit;
+ end;
+ if pname=SRpSExportPos then
+ begin
+  TRpExpression(fprintitem).ExportPosition:=StrToInt(value);
+  exit;
+ end;
+ if pname=SRpSExportSize then
+ begin
+  TRpExpression(fprintitem).ExportSize:=StrToInt(value);
+  exit;
+ end;
+ if pname=SRpSExportDoNewLine then
+ begin
+  TRpExpression(fprintitem).ExportDoNewLine:=StrToBool(value);
   exit;
  end;
  inherited SetProperty(pname,value);
@@ -484,6 +561,37 @@ begin
   Result:=BoolToStr(TRpExpression(printitem).PrintOnlyOne,true);
   exit;
  end;
+ if pname=SrpSExportExpression then
+ begin
+  Result:=TRpExpression(printitem).ExportExpression;
+  exit;
+ end;
+ if pname=SRpSExportFormat then
+ begin
+  Result:=TRpExpression(printitem).ExportDisplayFormat;
+  exit;
+ end;
+ if pname=SRpSExportLine then
+ begin
+  Result:=IntToStr(TRpExpression(printitem).ExportLine);
+  exit;
+ end;
+ if pname=SRpSExportPos then
+ begin
+  Result:=IntToStr(TRpExpression(printitem).ExportPosition);
+  exit;
+ end;
+ if pname=SRpSExportSize then
+ begin
+  Result:=IntToStr(TRpExpression(printitem).ExportSize);
+  exit;
+ end;
+ if pname=SRpSExportDoNewLine then
+ begin
+  Result:=BoolToStr(TRpExpression(printitem).ExportDoNewLine,true);
+  exit;
+ end;
+
  Result:=inherited GetProperty(pname);
 end;
 

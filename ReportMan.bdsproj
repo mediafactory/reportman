@@ -230,6 +230,7 @@
       <File FileName="rpmunits.pas" ContainerId="" ModuleName="rpmunits"/>
       <File FileName="rptypes.pas" ContainerId="" ModuleName="rptypes"/>
       <File FileName="rpmdshfolder.pas" ContainerId="" ModuleName="rpmdshfolder"/>
+      <File FileName="rpcsvdriver.pas" ContainerId="" ModuleName="rpcsvdriver"/>
     </FileList>
   </DelphiDotNet.Personality>
 </BorlandProject>

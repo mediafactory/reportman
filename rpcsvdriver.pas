@@ -40,6 +40,11 @@ function ExportMetafileToCSV (metafile:TRpMetafileReport; filename:string;
  showprogress,allpages:boolean; frompage,topage:integer):boolean;
 function ExportMetafileToCSVStream (metafile:TRpMetafileReport; stream:TStream;
  showprogress,allpages:boolean; frompage,topage:integer):boolean;
+function ExportMetafileToTextPro (metafile:TRpMetafileReport; filename:string;
+ showprogress,allpages:boolean; frompage,topage:integer):boolean;
+function ExportMetafileToTextProStream (metafile:TRpMetafileReport; stream:TStream;
+ showprogress,allpages:boolean; frompage,topage:integer):boolean;
+
 
 implementation
 
@@ -180,7 +185,86 @@ begin
  Result:=true;
 end;
 
+function ExportMetafileToTextPro (metafile:TRpMetafileReport; filename:string;
+ showprogress,allpages:boolean; frompage,topage:integer):boolean;
+var
+ memstream:TMemoryStream;
+begin
+ memstream:=TMemoryStream.Create;
+ try
+  ExportMetafileToTextProStream(metafile,memstream,showprogress,allpages,frompage,topage);
+  memstream.Seek(0,soFromBeginning);
+  memstream.SaveToFile(filename);
+ finally
+  memstream.free;
+ end;
+ Result:=true;
+end;
 
+function ExportMetafileToTextProStream (metafile:TRpMetafileReport; stream:TStream;
+ showprogress,allpages:boolean; frompage,topage:integer):boolean;
+var
+ alist:TStringList;
+ i,j,z:integer;
+ apage:TrpMetafilePage;
+ aobj:TRpMetaObject;
+ atext:String;
+ originaltext:String;
+ aline:Integer;
+begin
+ alist:=TStringList.Create;
+ try
+  if allpages then
+  begin
+   frompage:=0;
+   topage:=metafile.PageCount-1;
+  end
+  else
+  begin
+   frompage:=frompage-1;
+   topage:=topage-1;
+   if topage>metafile.PageCount-1 then
+    topage:=metafile.PageCount-1;
+  end;
+  for i:=frompage to topage do
+  begin
+   apage:=metafile.Pages[i];
+   for j:=0 to apage.ObjectCount-1 do
+   begin
+    aobj:=apage.Objects[j];
+    if aobj.Metatype in [rpMetaExport] then
+    begin
+     if aobj.Line<=0 then
+      aobj.Line:=1;
+     if aobj.Position<=0 then
+      aobj.Position:=1;
+     if aobj.Size>0 then
+     begin
+      atext:=String(apage.GetText(aobj));
+      while Length(atext)<aobj.Size do
+       atext:=atext+' ';
+      atext:=Copy(atext,1,aobj.size);
+      aline:=aobj.Line-1;
+      while alist.Count<aline do
+       alist.Add('');
+      originaltext:=alist.Strings[aline];
+      while Length(originaltext)<aobj.Position+aobj.Size do
+       originaltext:=originaltext+' ';
+      for z:=1 to Length(atext) do
+      begin
+       originaltext[aobj.Position+z-1]:=atext[z];
+      end;
+      alist.Strings[aline]:=originaltext;
+     end;
+    end;
+   end;
+  end;
+  alist.SaveToStream(Stream);
+ finally
+  alist.free;
+ end;
+ Result:=true;
+end;
 
 
 

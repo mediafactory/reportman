@@ -791,8 +791,8 @@ var
   SRpAdd:WideString='Add';
   SRpDelete:WideString='Delete';
   SRpAliasPath:WideString='To use a report library enter the alias preceded by : symbol (:TESTLIB)';
-  SRpPrintRep11:WideString='         -excel  Output to excel';
-  SRpPrintRep12:WideString='         -showparams  Show Parameters before execution';
+  SRpPrintRep11:WideString='         -excel    Output to excel';
+  SRpPrintRep12:WideString='         -showparams Show Parameters before execution';
   SRpAboutBoxPreview:WideString='About box in preview';
   SRpString:WideString='String';
   SRpInteger:WideString='Integer';
@@ -877,6 +877,17 @@ var
   SRpTurkish:WideString='Turkish';
   SRpCSVFile:WideString='Comma separated values file';
   SRpTXTProFile:WideString='Text processed file';
+  SRpPrintRep15:WideString='         -cvs      Output to comma separated values';
+  SRpPrintRep16:WideString='         -svg      Output to scalable vector graphics format';
+  SRpPreviewMargins:WideString='Printable margins in preview';
+  SRpSExportExpression:WideString='Export Expression';
+  SRpSExportLine:WideString='Exp. Line';
+  SRpSExportPos:WideString='Exp. Position';
+  SRpSExportSize:WideString='Exp. Size';
+  SRpSExportAlign:WideString='Exp. Align';
+  SRpSExportDoNewLine:WideString='Exp. New Line';
+  SRpSExportFormat:WideString='Exp. Format';
+
 implementation
 
 uses rptranslator;

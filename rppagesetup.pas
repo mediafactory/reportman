@@ -87,6 +87,7 @@ type
     CheckDrawerAfter: TCheckBox;
     CheckDrawerBefore: TCheckBox;
     CheckPreviewAbout: TCheckBox;
+    CheckMargins: TCheckBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -249,6 +250,7 @@ begin
  ComboPrinterFonts.Items.Strings[2]:=TranslateStr(115,ComboPrinterFonts.Items.Strings[2]);
  BBAckground.Caption:=TranslateStr(116,BBAckground.Caption);
  CheckPreviewAbout.Caption:=SRpAboutBoxPreview;
+ CheckMargins.Caption:=SRpPreviewMargins;
 
  with ComboSelPrinter.Items do
  begin
@@ -349,6 +351,7 @@ begin
  // Other
  report.PrinterFonts:=TRpPrinterFontsOption(ComboPrinterFonts.ItemIndex);
  report.PreviewStyle:=TRpPreviewStyle(ComboStyle.ItemIndex);
+ report.PreviewMargins:=CheckMargins.Checked;
  report.PreviewWindow:=TRpPreviewWindowStyle(ComboPreview.ItemIndex);
  report.StreamFormat:=TRpStreamFormat(ComboFormat.ItemIndex);
 end;
@@ -407,6 +410,7 @@ begin
  ComboStyle.ItemIndex:=integer(report.PreviewStyle);
  ComboPreview.ItemIndex:=integer(report.PreviewWindow);
  ComboFormat.ItemIndex:=integer(report.StreamFormat);
+ CheckMargins.Checked:=report.PreviewMargins;
 end;
 
 procedure TFRpPageSetup.SColorMouseDown(Sender: TObject;

@@ -71,7 +71,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Width = 421
         Height = 97
         Caption = 'Strings to show (left) and strings to assign (right) '
-        TabOrder = 6
+        TabOrder = 7
         Visible = False
         object MItems: TMemo
           Left = 2
@@ -100,7 +100,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Width = 321
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 4
+        TabOrder = 5
         Text = 'EDescription'
         OnChange = EDescriptionChange
       end
@@ -163,7 +163,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Hint = 'The parameters will be assigned not the selected datasets'
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 7
+        TabOrder = 8
       end
       object BAdddata: TButton
         Left = 184
@@ -171,7 +171,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Width = 33
         Height = 25
         Caption = '>'
-        TabOrder = 8
+        TabOrder = 9
         OnClick = BAdddataClick
       end
       object BDeleteData: TButton
@@ -180,7 +180,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Width = 33
         Height = 25
         Caption = '<'
-        TabOrder = 9
+        TabOrder = 10
         OnClick = BDeleteDataClick
       end
       object LDatasets: TListBox
@@ -189,7 +189,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Width = 193
         Height = 50
         ItemHeight = 13
-        TabOrder = 10
+        TabOrder = 11
       end
       object ESearch: TEdit
         Left = 104
@@ -197,7 +197,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Width = 321
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 5
+        TabOrder = 6
         Visible = False
         OnChange = EDescriptionChange
       end
@@ -208,7 +208,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Height = 17
         Hint = 'Sets if the parameter will be visible to the end user'
         Caption = 'Allow Nulls'
-        TabOrder = 11
+        TabOrder = 4
         OnClick = EDescriptionChange
       end
     end

@@ -15,7 +15,6 @@ object FRpDataText: TFRpDataText
   PixelsPerInch = 96
   TextHeight = 13
   TextWidth = 6
-  ParentFont = True
   object PTop: TPanel
     Left = 0
     Top = 0
@@ -182,7 +181,7 @@ object FRpDataText: TFRpDataText
           Width = 81
           Height = 25
           Caption = 'Open'
-          TabOrder = 0
+          TabOrder = 3
           OnClick = BTestClick
         end
         object ERecordseparator: TEdit
@@ -190,7 +189,7 @@ object FRpDataText: TFRpDataText
           Top = 0
           Width = 61
           Height = 21
-          TabOrder = 1
+          TabOrder = 0
           Text = 'ERecordseparator'
         end
         object EIgnoreAfterRecordseparator: TEdit
@@ -198,7 +197,7 @@ object FRpDataText: TFRpDataText
           Top = 28
           Width = 61
           Height = 21
-          TabOrder = 2
+          TabOrder = 1
           Text = 'ERecordseparator'
         end
         object BOK: TButton
@@ -207,7 +206,7 @@ object FRpDataText: TFRpDataText
           Width = 81
           Height = 25
           Caption = 'OK'
-          TabOrder = 3
+          TabOrder = 2
           OnClick = Button1Click
         end
       end

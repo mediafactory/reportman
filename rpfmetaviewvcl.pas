@@ -299,6 +299,7 @@ begin
   end;
  end;
  Metafile.CurrentPage:=pagenum-1;
+ gdidriver.drawclippingregion:=metafile.PreviewMargins;
  metafile.DrawPage(gdidriver);
  if Assigned(gdidriver.bitmap) then
  begin
@@ -615,7 +616,7 @@ begin
       end;
      11:
       begin
-       ExportMetafileToCSV(metafile,SaveDialog1.Filename,true,true,
+       ExportMetafileToTextPro(metafile,SaveDialog1.Filename,true,true,
         1,9999);
       end;
 {$IFNDEF DOTNETD}

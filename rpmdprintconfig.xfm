@@ -22,7 +22,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
     Height = 29
     Caption = 'OK'
     Default = True
-    TabOrder = 0
+    TabOrder = 16
     OnClick = BOKClick
   end
   object BCancel: TButton
@@ -33,14 +33,14 @@ object FRpPrinterConfig: TFRpPrinterConfig
     Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
-    TabOrder = 1
+    TabOrder = 17
   end
   object LSelPrinter: TListBox
     Left = 4
     Top = 4
     Width = 205
     Height = 289
-    TabOrder = 2
+    TabOrder = 0
     OnClick = LSelPrinterClick
   end
   object LSelectPrinter: TLabel
@@ -57,7 +57,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
     Height = 21
     Style = csDropDownList
     ItemHeight = 15
-    TabOrder = 4
+    TabOrder = 2
     OnChange = ComboPrintersChange
   end
   object CheckPrinterFonts: TCheckBox
@@ -66,7 +66,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
     Width = 281
     Height = 21
     Caption = 'Printer Fonts (Windows GDI Only)'
-    TabOrder = 5
+    TabOrder = 3
     OnClick = CheckPrinterFontsClick
   end
   object GConfigFile: TGroupBox
@@ -75,14 +75,14 @@ object FRpPrinterConfig: TFRpPrinterConfig
     Width = 493
     Height = 101
     Caption = 'Configuraiton file'
-    TabOrder = 6
+    TabOrder = 15
     object EConfigFile: TEdit
       Left = 8
       Top = 68
       Width = 477
       Height = 21
       Color = clButton
-      TabOrder = 0
+      TabOrder = 2
       Text = 'EConfigFile'
     end
     object RadioUser: TRadioButton
@@ -91,7 +91,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
       Width = 329
       Height = 25
       Caption = 'User configuration'
-      TabOrder = 1
+      TabOrder = 0
       OnClick = RadioUserClick
     end
     object RadioSystem: TRadioButton
@@ -100,7 +100,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
       Width = 329
       Height = 25
       Caption = 'System configuration'
-      TabOrder = 2
+      TabOrder = 1
       OnClick = RadioUserClick
     end
   end
@@ -176,7 +176,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
     Width = 145
     Height = 21
     Caption = 'Cut paper'
-    TabOrder = 10
+    TabOrder = 11
     OnClick = CheckCutPaperClick
   end
   object ECutPaper: TEdit
@@ -184,7 +184,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
     Top = 246
     Width = 129
     Height = 21
-    TabOrder = 11
+    TabOrder = 12
     OnChange = ECutPaperChange
   end
   object CheckOpenDrawer: TCheckBox
@@ -193,7 +193,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
     Width = 145
     Height = 21
     Caption = 'Open drawer'
-    TabOrder = 12
+    TabOrder = 13
     OnClick = CheckCutPaperClick
   end
   object EOpenDrawer: TEdit
@@ -201,7 +201,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
     Top = 270
     Width = 129
     Height = 21
-    TabOrder = 13
+    TabOrder = 14
     OnChange = ECutPaperChange
   end
   object LExample2: TLabel
@@ -218,7 +218,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
     Height = 21
     Style = csDropDownList
     ItemHeight = 15
-    TabOrder = 15
+    TabOrder = 5
     OnChange = ComboTextOnlyChange
   end
   object Label1: TLabel
@@ -234,7 +234,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
     Width = 77
     Height = 21
     Caption = 'Oem'
-    TabOrder = 17
+    TabOrder = 6
     OnClick = CheckOemClick
   end
 end

@@ -668,7 +668,7 @@ begin
      end;
     10:
      begin
-      ExportMetafileToCSV(metafile,SaveDialog1.Filename,true,true,
+      ExportMetafileToTextPro(metafile,SaveDialog1.Filename,true,true,
        1,9999);
      end;
 {$IFDEF MSWINDOWS}

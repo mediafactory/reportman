@@ -67,7 +67,7 @@ const
  MILIS_PROGRESS=500;
  RP_SIGNATURELENGTH=13;
  // The metafile signature and version
- RpSignature:string='RPMETAFILE05'+chr(0);
+ RpSignature:string='RPMETAFILE06'+chr(0);
 const
  FIRST_ALLOCATION_OBJECTS=50;
  FIRST_ALLOCATED_WIDESTRING=1000;
@@ -90,7 +90,7 @@ type
    DisplayFormat:widestring;
   end;
 
- TRpMetaObjectType=(rpMetaText,rpMetaDraw,rpMetaImage,rpMetaPolygon);
+ TRpMetaObjectType=(rpMetaText,rpMetaDraw,rpMetaImage,rpMetaPolygon,rpMetaExport);
 
  TRpMetaSeparator=(rpFHeader,rpFPage,rpFObject);
 
@@ -156,6 +156,12 @@ type
      PolyPointCount:integer;
      PolyStreamPos:int64;
      PolyStreamSize:int64);
+   rpMetaExport:
+    (TextExpP,TextExpS:integer;
+     Line:Integer;
+     Position:Integer;
+     Size:Integer;
+     DoNewLine:Boolean);
  end;
 {$ENDIF}
 {$IFDEF DOTNETDBUGS}
@@ -199,6 +205,12 @@ type
      PolyPointCount:integer;
      PolyStreamPos:int64;
      PolyStreamSize:int64;
+//   rpMetaExport:
+    TextExpP,TextExpS:integer;
+     Line:Integer;
+     Position:Integer;
+     Size:Integer;
+     DoNewLine:Boolean;
  end;
 {$ENDIF}
 
@@ -253,6 +265,8 @@ type
    procedure Clear;
    procedure NewTextObject(Top,Left,Width,Height:integer;
     aText:TRpTextObject;BackColor:integer;transparent:boolean);
+   procedure NewExportObject(Top,Left,Width,Height:integer;
+    aText:WideString;Line,Position,Size:Integer;DoNewLine:boolean);
    procedure NewDrawObject(Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenStyle:integer;PenWidth:integer; PenColor:integer);
@@ -283,6 +297,7 @@ type
 {$ENDIF}
    difmilis:int64;
    FPreviewAbout:Boolean;
+   FPreviewMargins:Boolean;
    procedure SetCurrentPage(index:integer);
    function GetPageCount:integer;
    function GetPage(Index:integer):TRpMetafilePage;
@@ -323,6 +338,7 @@ type
    property Pages[Index:integer]:TRpMetafilePage read GetPage;
    property OnProgress:TRpMetafileStreamProgres read FOnProgress write FOnProgress;
    property PreviewAbout:Boolean read FPreviewAbout write FPreviewAbout;
+   property PreviewMargins:Boolean read FPreviewMargins write FPreviewMargins;
   published
   end;
 
@@ -471,6 +487,32 @@ begin
 
 end;
 
+
+procedure TrpMetafilePage.NewExportObject(Top,Left,Width,Height:integer;
+    aText:WideString;Line,Position,Size:Integer;DoNewLine:boolean);
+begin
+ if FObjectCount>=High(FObjects)-1 then
+ begin
+  // Duplicates capacity
+  SetLength(FObjects,High(FObjects)*2);
+ end;
+
+ FObjects[FObjectCount].Left:=Left;
+ FObjects[FObjectCount].Top:=Top;
+ FObjects[FObjectCount].Height:=Height;
+ FObjects[FObjectCount].Width:=Width;
+ FObjects[FObjectCount].Metatype:=rpMetaExport;
+
+ NewWideString(FObjects[FObjectCount].TextExpP,FObjects[FObjectCount].TextExpS,
+  aText);
+ FObjects[FObjectCount].Line:=Line;
+ FObjects[FObjectCount].Position:=Position;
+ FObjects[FObjectCount].Size:=Size;
+ FObjects[FObjectCount].DoNewLine:=DoNewLine;
+
+ inc(FObjectCount);
+
+end;
 
 procedure TrpMetafilePage.NewTextObject(Top,Left,Width,Height:integer;
     aText:TRpTextObject;BackColor:integer;transparent:boolean);
@@ -694,8 +736,11 @@ begin
  Stream.Write(ainteger,sizeof(Integer));
  Stream.Write(OpenDrawerBefore,sizeof(OpenDrawerBefore));
  Stream.Write(OpenDrawerAfter,sizeof(OpenDrawerAfter));
- ainteger:=0;
  if FPreviewAbout then
+  ainteger:=1;
+ Stream.Write(ainteger,sizeof(Integer));
+ ainteger:=0;
+ if FPreviewMargins then
   ainteger:=1;
  Stream.Write(ainteger,sizeof(Integer));
 
@@ -823,6 +868,11 @@ begin
  FPreviewAbout:=true;
  if ainteger=0 then
   FPreviewAbout:=False;
+ if (sizeof(integer)<>Stream.Read(ainteger,sizeof(Integer))) then
+  Raise Exception.Create(SRpBadFileHeader);
+ FPreviewMargins:=true;
+ if ainteger=0 then
+  FPreviewMargins:=False;
 
  // If there is no pages then end of read
  // Read pagecount
@@ -1223,7 +1273,7 @@ var
 begin
 // delimiters:=' '+'.'+','+'-'+'/'+'\'+'='+')'+'('+'*'+'+'+'-'+#10;
  currentpos:=Length(obj.Text);
- originalstring:=obj.Text;
+ originalstring:=Copy(obj.Text,1,currentpos);
  obj.Text:=Copy(originalstring,1,currentpos);
  newextent:=maxextent;
  adriver.TextExtent(obj,newextent);
@@ -1241,7 +1291,7 @@ begin
   while currentpos>0 do
   begin
    Dec(currentpos);
-   if isadelimiter(obj.Text[currentpos]) then
+   if isadelimiter(originalstring[currentpos]) then
     break;
   end;
   if oldcurrentpos=currentpos then

@@ -232,7 +232,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           Top = 44
           Width = 77
           Height = 21
-          TabOrder = 0
+          TabOrder = 1
           EditType = tecurrency
         end
         object EPageWidth: TRpMaskEdit
@@ -240,7 +240,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           Top = 20
           Width = 77
           Height = 21
-          TabOrder = 1
+          TabOrder = 0
           EditType = tecurrency
         end
       end
@@ -289,7 +289,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 201
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 3
       end
       object BConfigure: TButton
@@ -352,7 +352,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 201
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 1
       end
       object ComboPreview: TComboBox
@@ -404,6 +404,14 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Caption = 'About box in preview'
         TabOrder = 12
       end
+      object CheckMargins: TCheckBox
+        Left = 212
+        Top = 192
+        Width = 205
+        Height = 21
+        Caption = 'Printable margins in preview'
+        TabOrder = 13
+      end
     end
     object TabOptions: TTabSheet
       Caption = 'Options'
@@ -421,7 +429,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 181
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
       end
     end
@@ -453,6 +461,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     end
   end
   object ColorDialog1: TColorDialog
+    Ctl3D = True
     Left = 336
     Top = 288
   end

@@ -36,7 +36,7 @@ object FRpParams: TFRpParams
         Width = 421
         Height = 97
         Caption = 'Strings to show (left) and strings to assign (right) '
-        TabOrder = 10
+        TabOrder = 11
         Visible = False
         object MItems: TMemo
           Left = 2
@@ -72,7 +72,7 @@ object FRpParams: TFRpParams
         Width = 321
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 4
+        TabOrder = 5
         Text = 'EDescription'
         OnChange = EDescriptionChange
       end
@@ -156,7 +156,7 @@ object FRpParams: TFRpParams
         Hint = 'The parameters will be assigned not the selected datasets'
         Style = csDropDownList
         ItemHeight = 15
-        TabOrder = 11
+        TabOrder = 12
       end
       object BAdddata: TButton
         Left = 176
@@ -165,7 +165,7 @@ object FRpParams: TFRpParams
         Height = 25
         Hint = 'Include the dataset in the list'
         Caption = '>'
-        TabOrder = 12
+        TabOrder = 13
         OnClick = BAdddataClick
       end
       object BDeleteData: TButton
@@ -175,7 +175,7 @@ object FRpParams: TFRpParams
         Height = 25
         Hint = 'Exclude dataset from the list'
         Caption = '<'
-        TabOrder = 13
+        TabOrder = 14
         OnClick = BDeleteDataClick
       end
       object LDatasets: TListBox
@@ -184,7 +184,7 @@ object FRpParams: TFRpParams
         Width = 193
         Height = 53
         Hint = 'The parameter will be assigned to this datasets'
-        TabOrder = 15
+        TabOrder = 16
       end
       object LSearch: TLabel
         Left = 12
@@ -200,7 +200,7 @@ object FRpParams: TFRpParams
         Width = 321
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 5
+        TabOrder = 6
         Visible = False
         OnChange = EDescriptionChange
       end
@@ -211,7 +211,7 @@ object FRpParams: TFRpParams
         Height = 17
         Hint = 'Sets if the parameter will be visible to the end user'
         Caption = 'Allow Nulls'
-        TabOrder = 16
+        TabOrder = 4
         OnClick = EDescriptionChange
       end
     end
@@ -548,7 +548,7 @@ object FRpParams: TFRpParams
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF00000000000000000003EA55FF0000007E01BFFF7F
+      0200000002000000FFFFFF00000000000000000003FFFFFF0000007E03FFFFFF
       00000CFF83FFFFFF00010FFFC3FFFFFF04000FFFE3FFFFFF0E020FC1F3FFFFFF
       0E040F80F3FFFFFF070C0FC0F3FFFFFF03980FE003FFFFFF01F0000003FFFFFF
       00E00001FBFFFFFF01F00F03FBFFFFFF03900F01FBFFFFFF0F0C0783FBFFFFFF

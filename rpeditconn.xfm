@@ -1,6 +1,6 @@
 object FRpEditCon: TFRpEditCon
-  Left = 271
-  Top = 110
+  Left = 234
+  Top = 122
   Width = 629
   Height = 481
   VertScrollBar.Range = 417
@@ -175,7 +175,7 @@ object FRpEditCon: TFRpEditCon
         Width = 281
         Height = 21
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 7
+        TabOrder = 12
         Text = 'EReportTable'
         OnChange = EReportTableChange
       end
@@ -185,7 +185,7 @@ object FRpEditCon: TFRpEditCon
         Width = 281
         Height = 21
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 6
+        TabOrder = 10
         Text = 'EReportTable'
         OnChange = EReportTableChange
       end
@@ -195,7 +195,7 @@ object FRpEditCon: TFRpEditCon
         Width = 281
         Height = 21
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 5
+        TabOrder = 8
         Text = 'EReportTable'
         OnChange = EReportTableChange
       end
@@ -205,7 +205,7 @@ object FRpEditCon: TFRpEditCon
         Width = 281
         Height = 21
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 4
+        TabOrder = 6
         Text = 'EReportTable'
         OnChange = EReportTableChange
       end
@@ -216,7 +216,7 @@ object FRpEditCon: TFRpEditCon
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         ItemHeight = 15
-        TabOrder = 3
+        TabOrder = 4
         Text = 'ComboDriver'
         OnClick = EReportTableChange
       end
@@ -256,7 +256,7 @@ object FRpEditCon: TFRpEditCon
         Width = 153
         Height = 33
         Caption = 'Configuration'
-        TabOrder = 10
+        TabOrder = 16
         OnClick = BConfigClick
       end
       object EAdoConnection: TEdit
@@ -265,7 +265,7 @@ object FRpEditCon: TFRpEditCon
         Width = 221
         Height = 21
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 8
+        TabOrder = 14
         Text = 'EReportTable'
         OnChange = EReportTableChange
       end
@@ -276,7 +276,7 @@ object FRpEditCon: TFRpEditCon
         Height = 25
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Build...'
-        TabOrder = 9
+        TabOrder = 15
         OnClick = BADOCOnfClick
       end
       object BTest: TButton
@@ -285,7 +285,7 @@ object FRpEditCon: TFRpEditCon
         Width = 153
         Height = 29
         Caption = 'Connect'
-        TabOrder = 12
+        TabOrder = 17
         OnClick = BTestClick
       end
       object BCreateLib: TButton
@@ -294,7 +294,7 @@ object FRpEditCon: TFRpEditCon
         Width = 161
         Height = 33
         Caption = 'Create report library'
-        TabOrder = 11
+        TabOrder = 18
         OnClick = BCreateLibClick
       end
       object BBrowse: TButton
@@ -303,7 +303,7 @@ object FRpEditCon: TFRpEditCon
         Width = 161
         Height = 29
         Caption = 'Browse Report library'
-        TabOrder = 13
+        TabOrder = 19
         OnClick = BBrowseClick
       end
     end
@@ -526,8 +526,8 @@ object FRpEditCon: TFRpEditCon
       00000CFF83FFFFFF00010FFFC3FFFFFF04000FFFE3FFFFFF0E020FC1F3FFFFFF
       0E040F80F3FFFFFF070C0FC0F3FFFFFF03980FE003FFFFFF01F0000003FFFFFF
       00E00001FBFFFFFF01F00F03FBFFFFFF03900F01FBFFFFFF0F0C0783FBFFFFFF
-      1E0607FFFBFFFFFF180303FFFBFFFFFF000001FF93FFFFFF0000007E03FFFFFF
-      0000000003FFFFFF000000000000007F000000000000007F01C000080000007F
+      1E0607FFFBFFE9FF180303FFFBFEEEFF000001FF93F7FFFF0000007E03FFFFFF
+      0000000003FFDFFF000000000000007F000000000000007F01C000080000007F
       01C0000800FFF07F01C0001C00FFF07F01C0001C0080107F01C0003E00B6D07F
       01C0003E0080107F0FF8007F02B6F87F0FF8007F0080387F07F000FF80FFF87F
       07F000FF80B7FF7F03E0001C00FFFF7F03E0001C0001FF7F01C0001C0000387F

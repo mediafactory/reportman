@@ -40,6 +40,8 @@ uses
   rpsecutil in '..\..\..\rpsecutil.pas',
   rphtmldriver in '..\..\..\rphtmldriver.pas',
   rpexceldriver in '..\..\..\rpexceldriver.pas',
+  rpsvgdriver in '..\..\..\rpsvgdriver.pas',
+  rpcsvdriver in '..\..\..\rpcsvdriver.pas',
   rppdffile in '..\..\..\rppdffile.pas',
   rppdfdriver in '..\..\..\rppdfdriver.pas';
 {$ENDIF}
@@ -80,6 +82,7 @@ var
  memstream:TMemoryStream;
  oemconvert:Boolean;
  htmloutput:Boolean;
+ tocsv,tosvg:Boolean;
 
 procedure PrintHelp;
 var
@@ -100,6 +103,8 @@ begin
 {$IFDEF MSWINDOWS}
  Writeln(AnsiString(SRpPrintRep11));
 {$ENDIF}
+ Writeln(AnsiString(SRpPrintRep15));
+ Writeln(AnsiString(SRpPrintRep16));
  Writeln(AnsiString(SRpParseParamsH));
  Writeln(AnsiString(SRpCommandLineStdIN));
  Writeln(AnsiString(SRpPrintPDFRep10));
@@ -127,6 +132,8 @@ begin
 {$IFDEF MSWINDOWS}
   toexcel:=false;
 {$ENDIF}
+  tocsv:=false;
+  tosvg:=false;
   htmloutput:=false;
   stdinput:=false;
   doprintmetafile:=false;
@@ -157,6 +164,12 @@ begin
      toexcel:=true
     else
 {$ENDIF}
+    if ParamStr(indexparam)='-svg' then
+     tosvg:=true
+    else
+    if ParamStr(indexparam)='-csv' then
+     tocsv:=true
+    else
     if ParamStr(indexparam)='-q' then
      showprogress:=false
     else
@@ -285,10 +298,26 @@ begin
       PrintReportToMetafile(report,'',showprogress,allpages,frompage,topage,
        copies,'',collate);
       ExportMetafileToExcel(report.metafile,pdffilename,showprogress,
-       Length(pdffilename)<1,true,1,99999);
+       Length(pdffilename)<1,allpages,frompage,topage);
      end
      else
 {$ENDIF}
+     if tosvg then
+     begin
+      PrintReportToMetafile(report,'',showprogress,allpages,frompage,topage,
+       copies,'',collate);
+      ExportMetafileToSVG(report.metafile,'SVG',pdffilename,showprogress,allpages,
+       frompage,topage);
+     end
+     else
+     if tocsv then
+     begin
+      PrintReportToMetafile(report,'',showprogress,allpages,frompage,topage,
+       copies,'',collate);
+      ExportMetafileToCSV(report.Metafile,pdffilename,showprogress,
+       allpages,frompage,topage);
+     end
+     else
      if htmloutput then
      begin
       if Length(PDFFilename)<1 then
