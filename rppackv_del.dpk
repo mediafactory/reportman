@@ -3,6 +3,7 @@ package rppackv_del;
 {$R *.res}
 {$R 'rpexpredlg.dcr'}
 {$R 'rpruler.dcr'}
+{$R 'rpclxreport.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -36,8 +37,13 @@ requires
 contains
   rpregv in 'rpregv.pas',
   rpexpredlg in 'rpexpredlg.pas' {FrpExpredialog},
-  rpmunits in 'rpmunits.pas',
   rpruler in 'rpruler.pas',
-  rpdbxconfig in 'rpdbxconfig.pas' {FDBXConfig};
+  rpdbxconfig in 'rpdbxconfig.pas' {FDBXConfig},
+  rpclxreport in 'rpclxreport.pas',
+  rpqtdriver in 'rpqtdriver.pas' {FRpQtProgress},
+  rpfparams in 'rpfparams.pas' {FRpParams},
+  rppagesetup in 'rppagesetup.pas' {FPageSetup},
+  rppreview in 'rppreview.pas' {FRpPreview},
+  rpgraphutils in 'rpgraphutils.pas' {FRpGraphProgres};
 
 end.

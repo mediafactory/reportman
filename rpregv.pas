@@ -21,7 +21,8 @@ interface
 uses
   Classes,
   rpexpredlg,
-  rpruler;
+  rpruler,
+  rpclxreport;
 procedure Register;
 
 
@@ -31,6 +32,7 @@ procedure Register;
 begin
  RegisterComponents('Reportman', [TRpExpreDialog]);
  RegisterComponents('Reportman', [TRpRuler]);
+ RegisterComponents('Reportman', [TCLXReport]);
 end;
 
 end.

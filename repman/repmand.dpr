@@ -23,7 +23,6 @@ program repmand;
 
 uses
   QForms,
-  midaslib,
   fmain in 'fmain.pas' {FMainf},
   frpstruc in 'frpstruc.pas' {FRpStructure: TFrame},
   fdesign in 'fdesign.pas' {FDesignFrame: TFrame},

@@ -19,7 +19,7 @@ interface
 
 uses
   Classes,
-  rpparser,rpeval,
+  rpparser,rpeval,rpreport,
   rpevalfunc,rpalias,rptypeval,rplastsav;
 
 procedure Register;

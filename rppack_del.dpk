@@ -31,7 +31,11 @@ package rppack_del;
 requires
   rtl,
   dbrtl,
-  dbexpress;
+  dbexpress,
+  dsnap,
+  ibxpress,
+  bdertl,
+  adortl;
 
 contains
   rptypeval in 'rptypeval.pas',
@@ -44,6 +48,28 @@ contains
   rplastsav in 'rplastsav.pas',
   rpdatainfo in 'rpdatainfo.pas',
   rpparams in 'rpparams.pas',
-  rptypes in 'rptypes.pas';
+  rptypes in 'rptypes.pas',
+  rpsection in 'rpsection.pas',
+  rpreport in 'rpreport.pas',
+  rpsubreport in 'rpsubreport.pas',
+  rpmetafile in 'rpmetafile.pas',
+  rplabelitem in 'rplabelitem.pas',
+  rpdrawitem in 'rpdrawitem.pas',
+  rpprintitem in 'rpprintitem.pas',
+  rpmunits in 'rpmunits.pas',
+  rpsecutil in 'rpsecutil.pas',
+  rpzlib in 'rpzlib.pas',
+  infutil in 'infutil.pas',
+  infblock in 'infblock.pas',
+  infcodes in 'infcodes.pas',
+  inffast in 'inffast.pas',
+  inftrees in 'inftrees.pas',
+  adler in 'adler.pas',
+  zutil in 'zutil.pas',
+  zdeflate in 'zdeflate.pas',
+  zinflate in 'zinflate.pas',
+  zlib in 'zlib.pas',
+  trees in 'trees.pas',
+  rpwriter in 'rpwriter.pas';
 
 end.
