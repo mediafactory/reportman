@@ -28,7 +28,16 @@ procedure TForm1.Button1Click(Sender: TObject);
 begin
  // The connection to SQL Express provoques
  // a bug, the document is lost
+// SQLConnection1.Connected:=True;
+// Printer.SetPrinter('Epson3000');
+ Printer.BeginDoc;
+ try
+  Printer.Canvas.TextOut(100,100,'Hello World');
+ finally
+  Printer.EndDoc;
+ end;
  SQLConnection1.Connected:=True;
+// Printer.SetPrinter('Epson3000');
  Printer.BeginDoc;
  try
   Printer.Canvas.TextOut(100,100,'Hello World');

@@ -1,10 +1,11 @@
 object Form1: TForm1
-  Left = 198
-  Top = 139
+  Left = 202
+  Top = 159
   Width = 696
   Height = 480
   HorzScrollBar.Range = 153
   VertScrollBar.Range = 181
+  ActiveControl = Button1
   Caption = 'Form1'
   Color = clBackground
   PixelsPerInch = 75
@@ -20,13 +21,13 @@ object Form1: TForm1
     OnClick = Button1Click
   end
   object SQLConnection1: TSQLConnection
-    ConnectionName = 'EMPLOYEE'
+    ConnectionName = 'biolife'
     DriverName = 'Interbase'
     GetDriverFunc = 'getSQLDriverINTERBASE'
-    LibraryName = 'libsqlib.so.1'
+    LibraryName = 'libsqlib.so'
     Params.Strings = (
       'DriverName=Interbase'
-      'Database=redhatserv:/var/data/employee.gdb'
+      'Database=localhost:/var/data/biolife.gdb'
       'RoleName=RoleName'
       'User_Name=sysdba'
       'Password=masterkey'
@@ -38,7 +39,7 @@ object Form1: TForm1
       'ErrorResourceFile=./DbxIbErr.msg'
       'LocaleCode=0000'
       'Interbase TransIsolation=ReadCommited')
-    VendorLib = 'libgds.so.0'
+    VendorLib = 'libgds.so'
     Left = 248
     Top = 96
   end

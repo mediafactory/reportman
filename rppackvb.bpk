@@ -4,7 +4,7 @@
   <MACROS>
     <VERSION value="BCB.06.10"/>
     <PROJECT value="bplrppackvb.so"/>
-    <OBJFILES value="rpregv.o"/>
+    <OBJFILES value="rpregv.o rpcppcomp.o"/>
     <RESFILES value="rppackvb.res"/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES)"/>
@@ -22,8 +22,8 @@
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="USEPACKAGES:_RTLDLL"/>
     <MAINSOURCE value="rppackvb.bpf"/>
-    <INCLUDEPATH value="$(BCB)/include/stlport:$(BCB)/include:$(BCB)/include/vcl:/usr/include"/>
-    <LIBPATH value="$(BCB)/lib/obj:$(BCB)/lib:/usr/lib:/lib:/usr/X11R6/lib:$(BCB)/bin"/>
+    <INCLUDEPATH value="../..:$(BCB)/include/stlport:$(BCB)/include:$(BCB)/include/vcl:/usr/include"/>
+    <LIBPATH value="../..:$(BCB)/lib/obj:$(BCB)/lib:/usr/lib:/lib:/usr/X11R6/lib:$(BCB)/bin"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
@@ -40,7 +40,7 @@
     <ALLOBJ value="borinitpkg.o $(PACKAGES) $(OBJFILES)"/>
     <ALLRES value="$(RESFILES)"/>
     <ALLLIB value="rtle_pic.a $(LIBFILES) $(LIBRARIES) libborcrtl.so libborstl.so 
-      libborunwind.so libpthread.so libX11.so libc.so libm.so libdl.so "/>
+      libborunwind.so libpthread.so libX11.so libc.so libm.so libdl.so"/>
   </LINKER>
   <FILELIST>
       <FILE FILENAME="rppackvb.res" FORMNAME="" UNITNAME="rppackvb.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
@@ -49,6 +49,7 @@
       <FILE FILENAME="rpregv.pas" FORMNAME="" UNITNAME="rpregv" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="/opt/kylix3/lib/dataclx.bpi" FORMNAME="" UNITNAME="dataclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="/opt/kylix3/lib/visualclx.bpi" FORMNAME="" UNITNAME="visualclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="rpcppcomp.cpp" FORMNAME="" UNITNAME="rpcppcomp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
