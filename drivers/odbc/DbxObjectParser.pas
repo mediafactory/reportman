@@ -1,6 +1,6 @@
 {
   Part of Kylix / Delphi open source DbExpress driver for ODBC
-  Version 2.04, 2002-12-19
+  Version 2.010, 2003-11-06
 
   Copyright (c) 2002 by Vadim V.Lopushansky
 
@@ -22,10 +22,13 @@ unit DbxObjectParser;
 
 {$IFDEF _DEBUG_}
   // - Debugger options
- {$O-,D+}
+ {$O-,D+,L+}
+ {$UNDEF _TRACE_CALLS_}
+ {.$DEFINE _TRACE_CALLS_} // logging of calls
 {$ELSE}
   // - Release options:
- {$O+,D-}
+ {$O+}
+ {$UNDEF _TRACE_CALLS_}
 {$ENDIF}
 
 {
@@ -49,6 +52,9 @@ uses
            // Author: Andrey V. Sorokin,  St-Petersburg,  Russia
            // home pages: http://anso.da.ru ,  http://anso.virtualave.net
            // e-mail: anso@mail.ru, anso@usa.net
+{$IFDEF _TRACE_CALLS_}
+  DbxOpenOdbcTrace,
+{$ENDIF _TRACE_CALLS_}
   DbxOpenOdbcInterface;
 
 Type
@@ -73,15 +79,15 @@ Type
 
  TObjectNameParser = class
  private
-  fObjectNameTemplateInfo :TObjectNameTemplateInfo;
-  fRegExpr :TRegExpr;
+   fObjectNameTemplateInfo :TObjectNameTemplateInfo;
+   fRegExpr :TRegExpr;
  public
-  constructor Create(AObjectNameTemplateInfo:PObjectNameTemplateInfo; const DbQuote:String);
-  destructor Destroy;override;
-  procedure DecodeObjectFullName(const ObjectFullName:string;
+   constructor Create(AObjectNameTemplateInfo:PObjectNameTemplateInfo; const DbQuote:String);
+   destructor Destroy;override;
+   procedure DecodeObjectFullName(const ObjectFullName:string;
                                    var CatalogName, SchemaName, ObjectName:string);
-  function EncodeObjectFullName(const CatalogName, SchemaName, ObjectName:string):string;
-  function GetQuotedObjectName(const ObjectName:string):string; overload;
+   function EncodeObjectFullName(const CatalogName, SchemaName, ObjectName:string):string;
+   function GetQuotedObjectName(const ObjectName:string):string; overload;
  end;
 
 Const
@@ -128,7 +134,7 @@ DefaultObjectNameTemplateInfo:TObjectNameTemplateInfo = (
   SchemaTemplate      :'"'#2'".';
   ObjectTemplate      :'"'#3'"';
   RequiredParts       :(True,True,True); // if format is <"catalog"."schema"."table">
-    // then call TObjectNameParser.EncodeObjectFullName( catalog='catalog', schena='', object='table')
+    // then call TObjectNameParser.EncodeObjectFullName( catalog='catalog', schema='', object='table')
     // returned empty schema name: <"catalog'.""."table">. But if RequiredParts[idxSchema] will
     // equal False then it returned error result: <"catalog'."table">
 );
@@ -161,10 +167,39 @@ InformixObjectNameTemplateInfo:TObjectNameTemplateInfo = (
   SchemaTemplate      :#2'.';
   ObjectTemplate      :#3;
  RequiredParts       :(False,False,False); // for informix format <catalog:schema.table>
-    // call TObjectNameParser.EncodeObjectFullName( catalog='catalog', schena='', object='table')
+    // call TObjectNameParser.EncodeObjectFullName( catalog='catalog', schema='', object='table')
     // returned: <catalog:table>. Informix format allows to not indicate a name of the scheme.
     // In classic version it would be impossible.
 );
+
+//=================================================================
+// TEXT(CSV) DATABASE OBJECT NAME FORMAT: "FileNameWithExtension"
+//=================================================================
+
+TextMathesIndexes :array [0..5] of integer = (
+   6,       // array length
+   0, 0, 4, // position info for diferent parts. For accessing usage indexes: idxCatalog, idxSchema, idxObject
+   2, 1     // array of object  name matches indexes
+);
+
+TextObjectNameTemplateInfo:TObjectNameTemplateInfo = (
+  sRegExpr              :'^("(.*)"|.*)$';
+  //                       |           |
+  //                        \         /
+  //                          --- ---
+  //                             Y
+  //                             |
+  //                           object = file name with extension
+  //
+  QuoteTemplate       :'"'; // Quote can be redefined at runtime ...
+  RegexpMathesIndexes :@TextMathesIndexes;// result position of catalog, schema, table
+  FullNameTemplate    :'"'#3'"';
+  CatalogTemplate     :'';
+  SchemaTemplate      :'';
+  ObjectTemplate      :'"'#3'"';
+  RequiredParts       :(False,False,True);
+);
+
 
 //==================================
 // DBMS ARRAY ObjectNameTemplateInfo
@@ -179,16 +214,20 @@ DbmsObjectNameTemplateInfo : array[TDbmsType] of PObjectNameTemplateInfo = (
   nil,//eDbmsTypeMySqlMax
   nil,//eDbmsTypeMsAccess
   nil,//eDbmsTypeExcel
-  nil,//eDbmsTypeText
+  @TextObjectNameTemplateInfo, //eDbmsTypeText
   nil,//eDbmsTypeDBase
   nil,//eDbmsTypeParadox
   nil,//eDbmsTypeOracle
   nil,//eDbmsTypeInterbase
-  @InformixObjectNameTemplateInfo,//eDbmsTypeInformix
+  @InformixObjectNameTemplateInfo, //eDbmsTypeInformix
   nil,//eDbmsTypeSybase
   nil,//eDbmsTypeSQLLite
   nil,//eDbmsTypeThinkSQL
-  nil //eDbmsTypeSapDb
+  nil,//eDbmsTypeSapDb
+  nil,//eDbmsTypePervasiveSQL
+  nil,//eDbmsTypeFlashFiler
+  nil,//eDbmsTypePostgreSQL
+  nil //eDbmsTypeInterSystemCache
 );
 
 implementation
@@ -202,8 +241,9 @@ constructor TObjectNameParser.Create(
  var vRegexpQuote :String;
      i :integer;
  const
-     cRegExprSpesialSymbols = '[]\^.$*+?{},&';
+     cRegExprSpesialSymbols = '[]\^.$*+?{},&()/|:=!';
 begin
+  {$IFDEF _TRACE_CALLS_} LogEnterProc(ClassName+'.'+'Create','DbQuote=<'+DbQuote+'>'); try try{$ENDIF _TRACE_CALLS_}
   if AObjectNameTemplateInfo=nil then
    begin
      fObjectNameTemplateInfo := DefaultObjectNameTemplateInfo;
@@ -278,12 +318,21 @@ begin
 
   fRegExpr := TRegExpr.Create;
   fRegExpr.Expression := fObjectNameTemplateInfo.sRegExpr;
+  {$IFDEF _TRACE_CALLS_}
+    except on e:exception do begin LogExceptProc(ClassName+'.'+'Create', e);  raise; end; end;
+    finally LogExitProc(ClassName+'.'+'Create. LasError='+IntToStr(fRegExpr.LastError)); end;
+  {$ENDIF _TRACE_CALLS_}
 end;
 
 destructor TObjectNameParser.Destroy;
 begin
+  {$IFDEF _TRACE_CALLS_} LogEnterProc(ClassName+'.'+'Destroy'); try try {$ENDIF _TRACE_CALLS_}
   fRegExpr.Free;
   inherited;
+  {$IFDEF _TRACE_CALLS_}
+    except on e:exception do begin LogExceptProc(ClassName+'.'+'Destroy', e);  raise; end; end;
+    finally LogExitProc(ClassName+'.'+'Destroy'); end;
+  {$ENDIF _TRACE_CALLS_}
 end;
 
 procedure TObjectNameParser.DecodeObjectFullName(
@@ -294,6 +343,7 @@ procedure TObjectNameParser.DecodeObjectFullName(
    i:integer;
    MathesIndexes:PArrayOfInteger;
 begin
+  {$IFDEF _TRACE_CALLS_} LogEnterProc(ClassName+'.'+'DecodeObjectFullName','ObjectFullName='+ObjectFullName); try try {$ENDIF _TRACE_CALLS_}
   // Parse FullName:
   if fRegExpr.Exec(ObjectFullName) then
   begin
@@ -357,6 +407,10 @@ begin
     SchemaName  := '';
     ObjectName  := ObjectFullName;
   end;
+  {$IFDEF _TRACE_CALLS_}
+    except on e:exception do begin LogExceptProc(ClassName+'.'+'DecodeObjectFullName', e);  raise; end; end;
+    finally LogExitProc(ClassName+'.'+'DecodeObjectFullName', 'CatalogName, SchemaName, ObjectName='+CatalogName+', '+SchemaName+', '+ObjectName); end;
+  {$ENDIF _TRACE_CALLS_}
 end;
 
 function TObjectNameParser.EncodeObjectFullName(const CatalogName,
@@ -365,6 +419,7 @@ function TObjectNameParser.EncodeObjectFullName(const CatalogName,
      i:integer;
      S1,S2,S3:String;
 begin
+  {$IFDEF _TRACE_CALLS_} LogEnterProc(ClassName+'.'+'EncodeObjectFullName','CatalogName, SchemaName, ObjectName='+CatalogName+', '+SchemaName+', '+ObjectName); try try {$ENDIF _TRACE_CALLS_}
   // Aggregation of a parts name into a full name of dbms object according to a template
 
   Result := fObjectNameTemplateInfo.FullNameTemplate;
@@ -428,15 +483,24 @@ begin
                       Length(Result)-Length(S3)
                 );
   end;
+  {$IFDEF _TRACE_CALLS_}
+    except on e:exception do begin LogExceptProc(ClassName+'.'+'EncodeObjectFullName', e);  raise; end; end;
+    finally LogExitProc(ClassName+'.'+'EncodeObjectFullName', 'Result='+Result); end;
+  {$ENDIF _TRACE_CALLS_}
 end;
 
 function TObjectNameParser.GetQuotedObjectName(const ObjectName: string): string;
   var vCatalogName, vSchemaName, vObjectName: string;
 begin
- // Extract of parts name from full name
- DecodeObjectFullName( ObjectName, vCatalogName, vSchemaName, vObjectName );
- // Agregate of parts name into full dbms name ...
- Result := EncodeObjectFullName( vCatalogName, vSchemaName, vObjectName );
+  {$IFDEF _TRACE_CALLS_} LogEnterProc(ClassName+'.'+'GetQuotedObjectName', 'ObjectName='+ObjectName); try try {$ENDIF _TRACE_CALLS_}
+  // Extract of parts name from full name
+  DecodeObjectFullName( ObjectName, vCatalogName, vSchemaName, vObjectName );
+  // Agregate of parts name into full dbms name ...
+  Result := EncodeObjectFullName( vCatalogName, vSchemaName, vObjectName );
+  {$IFDEF _TRACE_CALLS_}
+    except on e:exception do begin LogExceptProc(ClassName+'.'+'GetQuotedObjectName', e);  raise; end; end;
+    finally LogExitProc(ClassName+'.'+'GetQuotedObjectName', 'Result='+Result); end;
+  {$ENDIF _TRACE_CALLS_}
 end;
 
 end.

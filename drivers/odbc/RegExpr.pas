@@ -142,6 +142,10 @@ Legend:
  (-) fixed bug
  (^) upgraded implementation
 
+ v. [unofficial for dbxopenodbc 2.06 2003.04.18]
+ Stig Johansen
+ -=- (^) Compile in Kylix
+
  v. 0.947 2001.10.03
  -=- (+) Word boundary (\b & \B) metachar
  -=- (-) Bug in processing predefined char.classes in non-UseSetOfChar mode
@@ -974,8 +978,10 @@ function RegExprSubExpressions (const ARegExpr : string;
 
 implementation
 
-//uses
-// Windows; // CharUpper/Lower
+{$IFDEF MSWINDOWS}
+uses
+Windows; // CharUpper/Lower
+{$ENDIF}
 
 const
  TRegExprVersionMajor : integer = 0;
@@ -1506,24 +1512,28 @@ destructor TRegExpr.Destroy;
 --------------------------------------------------------------}
 
 class function TRegExpr.InvertCaseFunction (const Ch : REChar) : REChar;
- var
-  ChStr : WideString;
- begin
+begin
   {$IFDEF UniCode}
   if Ch >= #128
    then Result := Ch
   else
   {$ENDIF}
    begin
-    ChStr := WideUpperCase (WideString(Ch));
-    Result := REChar (ChStr[1]);
-    if Result = Ch then
-     begin
-      ChStr := WideLowerCase (WideString(Ch));
-      Result := REChar (ChStr[1]);
-     end;
+{$IFDEF MSWINDOWS} // [Stig Johansen]
+    Result := REChar (CharUpper (pointer (Ch)));
+    if Result = Ch
+     then Result := REChar (CharLower (pointer (Ch)));
+{$ENDIF} // SJ
+{$IFDEF LINUX}
+    Result := UpCase (Ch);   // Modified by Stig Johansen
+    if Result = Ch
+     then
+       case Result of
+       'A'..'Z':  Inc(Result, Ord('a') - Ord('A'));
+       end;
+{$ENDIF}
    end;
- end; { of function TRegExpr.InvertCaseFunction
+end; { of function TRegExpr.InvertCaseFunction
 --------------------------------------------------------------}
 
 function TRegExpr.GetExpression : RegExprString;

@@ -1,6 +1,6 @@
 {
   Kylix / Delphi open source DbExpress driver for ODBC
-  Version 2.03, 2002-11-20
+  Version 2.011, 2003-12-09
 
   Copyright (c) 2001, 2002 Edward Benson
 
@@ -19,7 +19,37 @@ unit DbxOpenOdbcInterface;
 interface
 
 uses
-  Classes;
+  Classes, DBXpress;
+
+Type
+
+  TXSQLConnectionOption = (
+      xeConnAutoCommit, xeConnBlockingMode, xeConnBlobSize, xeConnRoleName,
+      xeConnWaitOnLocks, xeConnCommitRetain, xeConnTxnIsoLevel,
+      xeConnNativeHandle, xeConnServerVersion, xeConnCallBack, xeConnHostName,
+      xeConnDatabaseName, xeConnCallBackInfo, xeConnObjectMode,
+      xeConnMaxActiveComm, xeConnServerCharSet, xeConnSqlDialect,
+      xeConnRollbackRetain, xeConnObjectQuoteChar, xeConnConnectionName,
+      xeConnOSAuthentication, xeConnSupportsTransaction, xeConnMultipleTransaction,
+      xeConnServerPort, xeConnOnLine, xeConnTrimChar, xeConnQualifiedName,
+      xeConnCatalogName, xeConnSchemaName, xeConnObjectName, xeConnQuotedObjectName,
+      xeConnCustomInfo, xeConnTimeOut,
+      // Delphi 8:
+      xeConnConnectionString);
+
+  TXSQLCommandOption = (
+      xeCommRowsetSize, xeCommBlobSize, xeCommBlockRead, xeCommBlockWrite,
+      xeCommParamCount, xeCommNativeHandle, xeCommCursorName, xeCommStoredProc,
+      xeCommSQLDialect, xeCommTransactionID, xeCommPackageName, xeCommTrimChar,
+      xeCommQualifiedName, xeCommCatalogName, xeCommSchemaName, xeCommObjectName,
+      xeCommQuotedObjectName);
+
+  TXSQLMetaDataOption = (xeMetaCatalogName, xeMetaSchemaName, xeMetaDatabaseName,
+      xeMetaDatabaseVersion, xeMetaTransactionIsoLevel, xeMetaSupportsTransaction,
+      xeMetaMaxObjectNameLength, xeMetaMaxColumnsInTable, xeMetaMaxColumnsInSelect,
+      xeMetaMaxRowSize, xeMetaMaxSQLLength, xeMetaObjectQuoteChar,
+      xeMetaSQLEscapeChar, xeMetaProcSupportsCursor, xeMetaProcSupportsCursors,
+      xeMetaSupportsTransactions, xeMetaPackageName);
 
 type
   TOdbcDriverType = (eOdbcDriverTypeUnspecified,
@@ -28,7 +58,10 @@ type
    eOdbcDriverTypeMySql, eOdbcDriverTypeMySql3,
    eOdbcDriverTypeInterbase, eOdbcDriverTypeInformix,
    eOdbcDriverTypeOracle, eOdbcDriverTypeSybase,
-   eOdbcDriverTypeSQLLite, eOdbcDriverTypeThinkSQL, eOdbcDriverTypeMerantOle
+   eOdbcDriverTypeSQLLite, eOdbcDriverTypeThinkSQL, eOdbcDriverTypeMerantOle,
+   eOdbcDriverTypePervasive, {bad support MixedFetch}
+   eOdbcDriverTypeNexusDbFlashFiler,{very bad driver} eOdbcDriverTypePostgreSQL,
+   eOdbcDriverTypeInterSystemCache, eOdbcDriverTypeMerantDBASE, eOdbcDriverTypeSAPDB
    );
 
   TDbmsType = (eDbmsTypeUnspecified,
@@ -36,7 +69,9 @@ type
    eDbmsTypeMySql, eDbmsTypeMySqlMax,
    eDbmsTypeMsAccess, eDbmsTypeExcel, eDbmsTypeText, eDbmsTypeDBase, eDbmsTypeParadox,
    eDbmsTypeOracle, eDbmsTypeInterbase, eDbmsTypeInformix, eDbmsTypeSybase,
-   eDbmsTypeSQLLite, eDbmsTypeThinkSQL, eDbmsTypeSapDb
+   eDbmsTypeSQLLite, {Any type is mapped into the text, with maximum length 2048 }
+   eDbmsTypeThinkSQL, eDbmsTypeSapDb, eDbmsTypePervasiveSQL,
+   eDbmsTypeFlashFiler, eDbmsTypePostgreSQL, eDbmsTypeInterSystemCache
    );
 
 
@@ -76,13 +111,20 @@ end;
     function GetDbmsType: TDbmsType;
     function GetDbmsVersionString: string;
     function GetDbmsVersionMajor: integer;
+    function GetDbmsVersionMinor: Integer;
+    function GetDbmsVersionRelease: Integer;
     function GetLastOdbcSqlState: pchar;
     procedure GetOdbcConnectStrings(ConnectStringList: TStrings);
     function GetOdbcDriverName: string;
     function GetOdbcDriverType: TOdbcDriverType;
     function GetOdbcDriverVersionString: string;
     function GetOdbcDriverVersionMajor: integer;
-    end;
+    function GetOdbcDriverVersionMinor: Integer;
+    function GetOdbcDriverVersionRelease: Integer;
+    // 2.9
+    function GetDbmsVersionBuild: Integer;
+    function GetOdbcDriverVersionBuild: Integer;
+  end;
 
 implementation
 

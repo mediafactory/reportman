@@ -1,8 +1,8 @@
 {
   Delphi translation of the Microsoft ODBC API headers, ODBC version 3.51
-  Version 2.03, 2002-11-20
+  Version 2.09, 2003-10-07
 
-  Copyright (c) 2001, 2002 Edward Benson
+  Copyright (c) 2001-2003 Edward Benson
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -47,6 +47,12 @@ unit OdbcApi;
 //   Edward Benson
 //     Change const xUL to ULONG(x) (former no longer valid for Delphi 6 SP 1)
 //     Various API calls corrected for Delphi
+//     Support Borland C++ Builder
+// Modified  2002-04-04   Edward Benson    - DbxOodbc v 2.05
+//     Type names reformatted to Delphi standard
+// Modified  2002-04-16   Edward Benson    - DbxOodbc v 2.06
+//     Added non-overlaoded versions of SqlColAttribute, SQLGetInfo
+//
 //   Edward Benson
 //     Borland C++ Builder
 //     To avoid linker errors with BCB, you must add ODBC32.LIB to your project.
@@ -54,7 +60,7 @@ unit OdbcApi;
 //     IMPLIB ODBC32.LIB C:\WINNT\SYSTEM32\ODBC32.DLL
 //     or use the ODBC32.LIB that I created.
 //     But don't forget to also add it to your project.
-//      
+//
 //
 //**************************************************************************
 
@@ -77,163 +83,162 @@ interface
 
 // Introduced for convenience
 type
-  TSqlstate = array[0..5] of AnsiChar;
-  PSqlstate = PAnsiChar;
+  TSqlState = array[0..5] of AnsiChar;
+  PSqlState = PAnsiChar;
 
 const
   ODBCVER = $0351;
 
-// API declaration data types
+  // API declaration data types
 type
-  {$EXTERNALSYM SQLCHAR}
-  SQLCHAR = Byte;
-  PSQLCHAR = ^SQLCHAR;
-  {$EXTERNALSYM SQLSCHAR}
-  SQLSCHAR = Char;
-  {$EXTERNALSYM SQLDATE}
-  SQLDATE = Byte; // ??? Defined in DBXpress SQLDATE = Longint;
-  {$EXTERNALSYM SQLDECIMAL}
-  SQLDECIMAL = Byte;
-  {$EXTERNALSYM SQLDOUBLE}
-  SQLDOUBLE = Double;
-  {$EXTERNALSYM SQLFLOAT}
-  SQLFLOAT = Double;
-  {$EXTERNALSYM SQLINTEGER}
-  SQLINTEGER = LongInt;
-  PSQLINTEGER = ^SQLINTEGER;
-  {$EXTERNALSYM SQLNUMERIC}
-  SQLNUMERIC = Byte;
-  {$EXTERNALSYM SQLPOINTER}
-  SQLPOINTER = Pointer;
-  PSQLPOINTER = ^SQLPOINTER;
-  {$EXTERNALSYM SQLREAL}
-  SQLREAL = Single;
-  {$EXTERNALSYM SQLSMALLINT}
-  SQLSMALLINT = SmallInt;
-  PSQLSMALLINT = ^SQLSMALLINT;
-  {$EXTERNALSYM SQLUSMALLINT}
-  SQLUSMALLINT = Word;
-  PSQLUSMALLINT = ^SQLUSMALLINT;
-  {$EXTERNALSYM SQLTIME}
-  SQLTIME = Byte; // ??? Defined in DBXpress SQLTIME = Longint;
-  {$EXTERNALSYM SQLTIMESTAMP}
-  SQLTIMESTAMP = Byte;
-  {$EXTERNALSYM SQLVARCHAR}
-  SQLVARCHAR = Byte;
+{$EXTERNALSYM SQLCHAR}
+  SqlChar = Byte;
+  PSqlChar = ^SqlChar;
+{$EXTERNALSYM SQLSCHAR}
+  SqlSChar = Char;
+{$EXTERNALSYM SQLDATE}
+  SqlDate = Byte; // ??? Defined in DBXpress SQLDATE = Longint;
+{$EXTERNALSYM SQLDECIMAL}
+  SqlDecimal = Byte;
+{$EXTERNALSYM SQLDOUBLE}
+  SqlDouble = Double;
+{$EXTERNALSYM SQLFLOAT}
+  SqlFloat = Double;
+{$EXTERNALSYM SQLINTEGER}
+  SqlInteger = Longint;
+  PSqlInteger = ^SqlInteger;
+{$EXTERNALSYM SQLNUMERIC}
+  SqlNumeric = Byte;
+{$EXTERNALSYM SQLPOINTER}
+  SqlPointer = Pointer;
+  PSqlPointer = ^SqlPointer;
+{$EXTERNALSYM SQLREAL}
+  SqlReal = Single;
+{$EXTERNALSYM SQLSMALLINT}
+  SqlSmallint = Smallint;
+  PSqlSmallint = ^SqlSmallint;
+{$EXTERNALSYM SQLUSMALLINT}
+  SqlUSmallint = Word;
+  PSqlUSmallint = ^SqlUSmallint;
+{$EXTERNALSYM SQLTIME}
+  SqlTime = Byte; // ??? Defined in DBXpress SQLTIME = Longint;
+{$EXTERNALSYM SQLTIMESTAMP}
+  SqlTimestamp = Byte;
+{$EXTERNALSYM SQLVARCHAR}
+  SqlVarchar = Byte;
 
-// function return type
-  {$EXTERNALSYM SQLRETURN}
-  SQLRETURN = SQLSMALLINT;
+  // function return type
+{$EXTERNALSYM SQLRETURN}
+  SqlReturn = SqlSmallint;
 
-// SQL Handle types
-  {$EXTERNALSYM SQLHANDLE}
-  SQLHANDLE = Pointer;
-  PSQLHANDLE = ^SQLHANDLE;
-  {$EXTERNALSYM SQLHENV}
-  SQLHENV = Pointer;
-  PSQLHENV = ^SQLHENV;
-  {$EXTERNALSYM SQLHDBC}
-  SQLHDBC = Pointer;
-  PSQLHDBC = ^SQLHDBC;
-  {$EXTERNALSYM SQLHSTMT}
-  SQLHSTMT = Pointer;
-  PSQLHSTMT = ^SQLHSTMT;
-  {$EXTERNALSYM SQLHDESC}
-  SQLHDESC = Pointer;
-  PSQLHDESC = ^SQLHDESC;
+  // SQL Handle types
+{$EXTERNALSYM SQLHANDLE}
+  SqlHandle = Pointer;
+  PSqlHandle = ^SqlHandle;
+{$EXTERNALSYM SQLHENV}
+  SqlHEnv = Pointer;
+  PSqlHEnv = ^SqlHEnv;
+{$EXTERNALSYM SQLHDBC}
+  SqlHDbc = Pointer;
+  PSqlHDbc = ^SqlHDbc;
+{$EXTERNALSYM SQLHSTMT}
+  SqlHStmt = Pointer;
+  PSqlHStmt = ^SqlHStmt;
+{$EXTERNALSYM SQLHDESC}
+  SqlHDesc = Pointer;
+  PSqlHDesc = ^SqlHDesc;
 
-// SQL portable types
-  {$EXTERNALSYM UCHAR}
-  UCHAR = Byte;
-  {$EXTERNALSYM SCHAR}
-  SCHAR = Char;
-  {$EXTERNALSYM SDWORD}
-  SDWORD = LongInt;
-  {$EXTERNALSYM SWORD}
-  SWORD = SmallInt;
-  {$EXTERNALSYM UDWORD}
-  UDWORD = LongInt;
-  {$EXTERNALSYM UWORD}
-  UWORD = Word;
-  PUWORD = ^UWORD;
-  {$EXTERNALSYM SQLUINTEGER}
-  SQLUINTEGER = UDWORD;
-  PSQLUINTEGER = ^SQLUINTEGER;
-  {$EXTERNALSYM SLONG}
-  SLONG = LongInt;
-  {$EXTERNALSYM SSHORT}
-  SSHORT = SmallInt;
-  {$EXTERNALSYM ULONG}
-  ULONG = LongInt;
-  {$EXTERNALSYM USHORT}
-  USHORT = Word;
-  {$EXTERNALSYM SDOUBLE}
-  SDOUBLE = Double;
-  {$EXTERNALSYM LDOUBLE}
-  LDOUBLE = Double;
-  {$EXTERNALSYM SFLOAT}
-  SFLOAT = Single;
-  {$EXTERNALSYM PTR}
-  PTR = Pointer;
+  // SQL portable types
+{$EXTERNALSYM UCHAR}
+  UChar = Byte;
+{$EXTERNALSYM SCHAR}
+  SChar = Char;
+{$EXTERNALSYM SDWORD}
+  SDword = Longint;
+{$EXTERNALSYM SWORD}
+  SWord = Smallint;
+{$EXTERNALSYM UDWORD}
+  UDword = Longint;
+{$EXTERNALSYM UWORD}
+  UWord = Word;
+  PUWord = ^UWord;
+{$EXTERNALSYM SQLUINTEGER}
+  SqlUInteger = UDword;
+  PSqlUInteger = ^SqlUInteger;
+{$EXTERNALSYM SLONG}
+  SLong = Longint;
+{$EXTERNALSYM SSHORT}
+  SShort = Smallint;
+{$EXTERNALSYM ULONG}
+  ULong = Longint;
+{$EXTERNALSYM USHORT}
+  UShort = Word;
+{$EXTERNALSYM SDOUBLE}
+  SDouble = Double;
+{$EXTERNALSYM LDOUBLE}
+  LDouble = Double;
+{$EXTERNALSYM SFLOAT}
+  SFloat = Single;
+{$EXTERNALSYM PTR}
+  Ptr = Pointer;
 
-  {$EXTERNALSYM HENV}
-  HENV = Pointer;
-  {$EXTERNALSYM HDBC}
-  HDBC = Pointer;
-  {$EXTERNALSYM HSTMT}
-  HSTMT = Pointer;
+{$EXTERNALSYM HENV}
+  HEnv = Pointer;
+{$EXTERNALSYM HDBC}
+  HDbc = Pointer;
+{$EXTERNALSYM HSTMT}
+  HStmt = Pointer;
 
-  {$EXTERNALSYM RETCODE}
-  RETCODE = SmallInt;
+{$EXTERNALSYM RETCODE}
+  Retcode = Smallint;
 
-  {$EXTERNALSYM SQLHWND}
-//  SQLHWND = HWND;
-  SQLHWND = LongWord;
+{$EXTERNALSYM SQLHWND}
+  //  SQLHWND = HWND;
+  SqlHWnd = Longword;
 
-// transfer types for DATE, TIME, TIMESTAMP
-  {$EXTERNALSYM tagDATE_STRUCT}
-  tagDATE_STRUCT = record
-    year:  SQLSMALLINT;
-    month: SQLUSMALLINT;
-    day:   SQLUSMALLINT;
+  // transfer types for DATE, TIME, TIMESTAMP
+{$EXTERNALSYM tagDATE_STRUCT}
+  tagDATE_STRUCT = packed record
+    Year: SqlSmallint;
+    Month: SqlUSmallint;
+    Day: SqlUSmallint;
   end;
   PSqlDateStruct = ^TSqlDateStruct;
   TSqlDateStruct = tagDATE_STRUCT;
-  {$EXTERNALSYM SQL_DATE_STRUCT}
+{$EXTERNALSYM SQL_DATE_STRUCT}
   SQL_DATE_STRUCT = tagDATE_STRUCT;
 
-  {$EXTERNALSYM tagTIME_STRUCT}
-  tagTIME_STRUCT = record
-    hour:   SQLUSMALLINT;
-    minute: SQLUSMALLINT;
-    second: SQLUSMALLINT;
+{$EXTERNALSYM tagTIME_STRUCT}
+  tagTIME_STRUCT = packed record
+    Hour: SqlUSmallint;
+    Minute: SqlUSmallint;
+    Second: SqlUSmallint;
   end;
   PSqlTimeStruct = ^TSqlTimeStruct;
   TSqlTimeStruct = tagTIME_STRUCT;
-  {$EXTERNALSYM SQL_TIME_STRUCT}
+{$EXTERNALSYM SQL_TIME_STRUCT}
   SQL_TIME_STRUCT = tagTIME_STRUCT;
 
-  {$EXTERNALSYM tagTIMESTAMP_STRUCT}
-  tagTIMESTAMP_STRUCT = record
-    year: SQLSMALLINT;
-    month: SQLUSMALLINT;
-    day: SQLUSMALLINT;
-    hour: SQLUSMALLINT;
-    minute: SQLUSMALLINT;
-    second: SQLUSMALLINT;
-    fraction: SQLUINTEGER;
+{$EXTERNALSYM tagTIMESTAMP_STRUCT}
+  tagTIMESTAMP_STRUCT = packed record
+    Year: SqlSmallint;
+    Month: SqlUSmallint;
+    Day: SqlUSmallint;
+    Hour: SqlUSmallint;
+    Minute: SqlUSmallint;
+    Second: SqlUSmallint;
+    Fraction: SqlUInteger;
   end;
 
-  {$EXTERNALSYM SQL_TIMESTAMP_STRUCT}
+{$EXTERNALSYM SQL_TIMESTAMP_STRUCT}
   SQL_TIMESTAMP_STRUCT = tagTIMESTAMP_STRUCT;
-  POdbcTimeStamp = ^TOdbcTimeStamp;
-  TOdbcTimeStamp = tagTIMESTAMP_STRUCT;
+  POdbcTimestamp = ^TOdbcTimestamp;
+  TOdbcTimestamp = tagTIMESTAMP_STRUCT;
 
-
-// enumerations for DATETIME_INTERVAL_SUBCODE values for interval data types
-// these values are from SQL-92
-  {$EXTERNALSYM SQLINTERVAL}
-  SQLINTERVAL = (
+  // enumerations for DATETIME_INTERVAL_SUBCODE values for interval data types
+  // these values are from SQL-92
+{$EXTERNALSYM SQLINTERVAL}
+  SqlInterval = (
     SQL_IS_DUMMY {placeholder for 0},
     SQL_IS_YEAR {= 1},
     SQL_IS_MONTH {= 2},
@@ -248,146 +253,146 @@ type
     SQL_IS_HOUR_TO_MINUTE {= 11},
     SQL_IS_HOUR_TO_SECOND {= 12},
     SQL_IS_MINUTE_TO_SECOND {= 13});
-  ESqlInterval = SQLINTERVAL;
+  ESqlInterval = SqlInterval;
 
-  {$EXTERNALSYM tagSQL_YEAR_MONTH}
-  tagSQL_YEAR_MONTH = record
-    year: SQLUINTEGER;
-    month: SQLUINTEGER;
+{$EXTERNALSYM tagSQL_YEAR_MONTH}
+  tagSQL_YEAR_MONTH = packed record
+    Year: SqlUInteger;
+    Month: SqlUInteger;
   end;
   TSqlYearMonth = tagSQL_YEAR_MONTH;
 
-  {$EXTERNALSYM tagSQL_DAY_SECOND}
-  tagSQL_DAY_SECOND = record
-    day: SQLUINTEGER;
-    hour: SQLUINTEGER;
-    minute: SQLUINTEGER;
-    second: SQLUINTEGER;
-    fraction: SQLUINTEGER;
+{$EXTERNALSYM tagSQL_DAY_SECOND}
+  tagSQL_DAY_SECOND = packed record
+    Day: SqlUInteger;
+    Hour: SqlUInteger;
+    Minute: SqlUInteger;
+    Second: SqlUInteger;
+    Fraction: SqlUInteger;
   end;
   TSqlDaySecond = tagSQL_DAY_SECOND;
 
-  {$EXTERNALSYM tagSQL_INTERVAL_STRUCT}
-  tagSQL_INTERVAL_STRUCT = record
-    interval_type: SQLINTERVAL;
-    interval_sign: SQLSMALLINT;
+{$EXTERNALSYM tagSQL_INTERVAL_STRUCT}
+  tagSQL_INTERVAL_STRUCT = packed record
+    interval_type: SqlInterval;
+    interval_sign: SqlSmallint;
     case ESqlInterval of
       SQL_IS_YEAR_TO_MONTH: (YearMonth: TSqlYearMonth);
       SQL_IS_DAY_TO_SECOND: (DaySecond: TSqlDaySecond);
   end;
   TSqlInterval = tagSQL_INTERVAL_STRUCT;
 
-  {$EXTERNALSYM ODBCINT64}
-  ODBCINT64 = Int64;
-  {$EXTERNALSYM SQLBIGINT}
-  SQLBIGINT = ODBCINT64;
-  {$EXTERNALSYM SQLUBIGINT}
-  SQLUBIGINT = ODBCINT64;
+{$EXTERNALSYM ODBCINT64}
+  OdbcInt64 = Int64;
+{$EXTERNALSYM SQLBIGINT}
+  SqlBigint = OdbcInt64;
+{$EXTERNALSYM SQLUBIGINT}
+  SqlUBigint = OdbcInt64;
 
-// internal representation of numeric data type
+  // internal representation of numeric data type
 const
-  {$EXTERNALSYM SQL_MAX_NUMERIC_LEN}
+{$EXTERNALSYM SQL_MAX_NUMERIC_LEN}
   SQL_MAX_NUMERIC_LEN = 16;
 
 type
-  {$EXTERNALSYM tagSQL_NUMERIC_STRUCT}
-  tagSQL_NUMERIC_STRUCT = record
-    precision: SQLCHAR;
-    scale: SQLSCHAR;
-    sign: SQLCHAR; {= 1 if positive, 0 if negative }
-    val: array[0..SQL_MAX_NUMERIC_LEN-1] of SQLCHAR;
+{$EXTERNALSYM tagSQL_NUMERIC_STRUCT}
+  tagSQL_NUMERIC_STRUCT = packed record
+    Precision: SqlChar;
+    Scale: SqlSChar;
+    Sign: SqlChar; {= 1 if positive, 0 if negative }
+    Val: array[0..SQL_MAX_NUMERIC_LEN - 1] of SqlChar;
   end;
 
-  {$EXTERNALSYM SQLGUID}
-  SQLGUID = TGUID;
+{$EXTERNALSYM SQLGUID}
+  SqlGuid = TGUID;
 
-  {$EXTERNALSYM BOOKMARK}
-  BOOKMARK = LongInt;
+{$EXTERNALSYM BOOKMARK}
+  Bookmark = Longint;
 
-//  SQLWCHAR = Word;
-  {$EXTERNALSYM SQLWCHAR}
-  SQLWCHAR = WideChar;  { WideCharacter - word-sized Unicode character }
-  PSQLWCHAR = ^SQLWCHAR;
+  //  SQLWCHAR = Word;
+{$EXTERNALSYM SQLWCHAR}
+  SqlWChar = WideChar; { WideCharacter - word-sized Unicode character }
+  PSqlWChar = ^SqlWChar;
 
-  {$EXTERNALSYM SQLTCHAR}
+{$EXTERNALSYM SQLTCHAR}
 {$IFDEF UNICODE}
-  SQLTCHAR = SQLWCHAR;
+  SqlTChar = SqlWChar;
 {$ELSE}
-  SQLTCHAR = SQLCHAR;
+  SqlTChar = SqlChar;
 {$ENDIF} {UNICODE}
 
-//##########################################################################
-// sqltypes.h interface section ends here
-// (no implemetation section for sqltypes.h)
-//##########################################################################
+  //##########################################################################
+  // sqltypes.h interface section ends here
+  // (no implemetation section for sqltypes.h)
+  //##########################################################################
 
-//##########################################################################
-// sql.h interface part starts here
-//##########################################################################
+  //##########################################################################
+  // sql.h interface part starts here
+  //##########################################################################
 
-//****************************************************************
-// SQL.H - This is the the main include for ODBC Core functions.
-//
-// preconditions:
-// INCLUDE "windows.h"
-//
-// (C) Copyright 1990 - 1998 By Microsoft Corp.
-//
-// Updated 5/12/93 for 2.00 specification
-// Updated 5/23/94 for 2.01 specification
-// Updated 11/10/94 for 2.10 specification
-// Updated 04/10/95 for 2.50 specification
-// Updated 6/6/95 for 3.00 specification
-// Updated 10/22/97 for 3.51 specification
-//********************************************************************
+  //****************************************************************
+  // SQL.H - This is the the main include for ODBC Core functions.
+  //
+  // preconditions:
+  // INCLUDE "windows.h"
+  //
+  // (C) Copyright 1990 - 1998 By Microsoft Corp.
+  //
+  // Updated 5/12/93 for 2.00 specification
+  // Updated 5/23/94 for 2.01 specification
+  // Updated 11/10/94 for 2.10 specification
+  // Updated 04/10/95 for 2.50 specification
+  // Updated 6/6/95 for 3.00 specification
+  // Updated 10/22/97 for 3.51 specification
+  //********************************************************************
 
-// All version-specific IFDEFs removed, and assume ODBC Version 3.51
+  // All version-specific IFDEFs removed, and assume ODBC Version 3.51
 
 const
-// special length/indicator values
+  // special length/indicator values
   SQL_NULL_DATA = (-1); //??? Defined in DBXpress: SQL_NULL_DATA = 100;
   SQL_DATA_AT_EXEC = (-2);
 
-// return values from functions
-  SQL_SUCCESS = 0;  //??? Defined in DBXpress: SQL_SUCCESS = $0000;
+  // return values from functions
+  SQL_SUCCESS = 0; //??? Defined in DBXpress: SQL_SUCCESS = $0000;
   SQL_SUCCESS_WITH_INFO = 1;
   SQL_NO_DATA = 100;
-  SQL_ERROR = (-1);  //??? Defined in DBXpress: SQL_ERROR = -1;
+  SQL_ERROR = (-1); //??? Defined in DBXpress: SQL_ERROR = -1;
   SQL_INVALID_HANDLE = (-2);
   SQL_STILL_EXECUTING = 2;
   SQL_NEED_DATA = 99;
 
-// MACRO
-// test for SQL_SUCCESS or SQL_SUCCESS_WITH_INFO
-function SQL_SUCCEEDED(const rc: SQLRETURN): boolean;
+  // MACRO
+  // test for SQL_SUCCESS or SQL_SUCCESS_WITH_INFO
+function SQL_SUCCEEDED(const rc: SqlReturn): Boolean;
 
 const
-// flags for null-terminated string
+  // flags for null-terminated string
   SQL_NTS = (-3);
   SQL_NTSL = (-3);
 
-// maximum message length
+  // maximum message length
   SQL_MAX_MESSAGE_LENGTH = 512;
 
-// date/time length constants
+  // date/time length constants
   SQL_DATE_LEN = 10;
   SQL_TIME_LEN = 8; // add P+1 if precision is nonzero
   SQL_TIMESTAMP_LEN = 19; // add P+1 if precision is nonzero
 
-// handle type identifiers
+  // handle type identifiers
   SQL_HANDLE_ENV = 1;
   SQL_HANDLE_DBC = 2;
   SQL_HANDLE_STMT = 3;
   SQL_HANDLE_DESC = 4;
 
-// environment attribute
+  // environment attribute
   SQL_ATTR_OUTPUT_NTS = 10001;
 
-// connection attributes
+  // connection attributes
   SQL_ATTR_AUTO_IPD = 10001;
   SQL_ATTR_METADATA_ID = 10014;
 
-// statement attributes
+  // statement attributes
   SQL_ATTR_APP_ROW_DESC = 10010;
   SQL_ATTR_APP_PARAM_DESC = 10011;
   SQL_ATTR_IMP_ROW_DESC = 10012;
@@ -395,11 +400,11 @@ const
   SQL_ATTR_CURSOR_SCROLLABLE = (-1);
   SQL_ATTR_CURSOR_SENSITIVITY = (-2);
 
-// SQL_ATTR_CURSOR_SCROLLABLE values
+  // SQL_ATTR_CURSOR_SCROLLABLE values
   SQL_NONSCROLLABLE = 0;
   SQL_SCROLLABLE = 1;
 
-// identifiers of fields in the SQL descriptor
+  // identifiers of fields in the SQL descriptor
   SQL_DESC_COUNT = 1001;
   SQL_DESC_TYPE = 1002;
   SQL_DESC_LENGTH = 1003;
@@ -415,7 +420,7 @@ const
   SQL_DESC_OCTET_LENGTH = 1013;
   SQL_DESC_ALLOC_TYPE = 1099;
 
-// identifiers of fields in the diagnostics area*
+  // identifiers of fields in the diagnostics area*
   SQL_DIAG_RETURNCODE = 1;
   SQL_DIAG_NUMBER = 2;
   SQL_DIAG_ROW_COUNT = 3;
@@ -429,7 +434,7 @@ const
   SQL_DIAG_SERVER_NAME = 11;
   SQL_DIAG_DYNAMIC_FUNCTION_CODE = 12;
 
-// dynamic function codes
+  // dynamic function codes
   SQL_DIAG_ALTER_DOMAIN = 3;
   SQL_DIAG_ALTER_TABLE = 4;
   SQL_DIAG_CALL = 7;
@@ -461,7 +466,7 @@ const
   SQL_DIAG_UNKNOWN_STATEMENT = 0;
   SQL_DIAG_UPDATE_WHERE = 82;
 
-// SQL data type codes
+  // SQL data type codes
   SQL_UNKNOWN_TYPE = 0;
   SQL_CHAR = 1;
   SQL_NUMERIC = 2;
@@ -474,88 +479,88 @@ const
   SQL_DATETIME = 9;
   SQL_VARCHAR = 12;
 
-// One-parameter shortcuts for date/time data types
+  // One-parameter shortcuts for date/time data types
   SQL_TYPE_DATE = 91;
   SQL_TYPE_TIME = 92;
   SQL_TYPE_TIMESTAMP = 93;
 
-// Statement attribute values for cursor sensitivity
+  // Statement attribute values for cursor sensitivity
   SQL_UNSPECIFIED = 0;
   SQL_INSENSITIVE = 1;
   SQL_SENSITIVE = 2;
 
-// GetTypeInfo() request for all data types
+  // GetTypeInfo() request for all data types
   SQL_ALL_TYPES = 0;
 
-// Default conversion code for SQLBindCol(), SQLBindParam() and SQLGetData()
+  // Default conversion code for SQLBindCol(), SQLBindParam() and SQLGetData()
   SQL_DEFAULT = 99;
 
-// SQLGetData() code indicating that the application row descriptor
-// specifies the data type
+  // SQLGetData() code indicating that the application row descriptor
+  // specifies the data type
   SQL_ARD_TYPE = (-99);
 
-// SQL date/time type subcodes
+  // SQL date/time type subcodes
   SQL_CODE_DATE = 1;
   SQL_CODE_TIME = 2;
   SQL_CODE_TIMESTAMP = 3;
 
-// CLI option values
+  // CLI option values
   SQL_FALSE = 0;
   SQL_TRUE = 1;
 
-// values of NULLABLE field in descriptor
+  // values of NULLABLE field in descriptor
   SQL_NO_NULLS = 0;
   SQL_NULLABLE = 1;
 
-// Value returned by SQLGetTypeInfo() to denote that it is
-// not known whether or not a data type supports null values.
+  // Value returned by SQLGetTypeInfo() to denote that it is
+  // not known whether or not a data type supports null values.
   SQL_NULLABLE_UNKNOWN = 2;
 
-// Values returned by SQLGetTypeInfo() to show WHERE clause supported
+  // Values returned by SQLGetTypeInfo() to show WHERE clause supported
   SQL_PRED_NONE = 0;
 const
   SQL_PRED_CHAR = 1;
 const
   SQL_PRED_BASIC = 2;
 
-// values of UNNAMED field in descriptor
+  // values of UNNAMED field in descriptor
   SQL_NAMED = 0;
   SQL_UNNAMED = 1;
 
-// values of ALLOC_TYPE field in descriptor
+  // values of ALLOC_TYPE field in descriptor
   SQL_DESC_ALLOC_AUTO = 1;
   SQL_DESC_ALLOC_USER = 2;
 
-// FreeStmt() options
+  // FreeStmt() options
   SQL_CLOSE = 0;
   SQL_DROP = 1;
   SQL_UNBIND = 2;
   SQL_RESET_PARAMS = 3;
 
-// Codes used for FetchOrientation in SQLFetchScroll(), and in SQLDataSources()
+  // Codes used for FetchOrientation in SQLFetchScroll(), and in SQLDataSources()
   SQL_FETCH_NEXT = 1;
   SQL_FETCH_FIRST = 2;
 
-// Other codes used for FetchOrientation in SQLFetchScroll()
+  // Other codes used for FetchOrientation in SQLFetchScroll()
   SQL_FETCH_LAST = 3;
   SQL_FETCH_PRIOR = 4;
   SQL_FETCH_ABSOLUTE = 5;
   SQL_FETCH_RELATIVE = 6;
 
-// SQLEndTran() options
+  // SQLEndTran() options
   SQL_COMMIT = 0;
   SQL_ROLLBACK = 1;
 
-// null handles returned by SQLAllocHandle()
-  SQL_NULL_HENV = SQLHANDLE(0);
-  SQL_NULL_HDBC = SQLHANDLE(0);
-  SQL_NULL_HSTMT = SQLHANDLE(0);
-  SQL_NULL_HDESC = SQLHANDLE(0);
+  // null handles returned by SQLAllocHandle()
+  SQL_NULL_HENV = SqlHandle(0);
+  SQL_NULL_HDBC = SqlHandle(0);
+  SQL_NULL_HSTMT = SqlHandle(0);
+  SQL_NULL_HDESC = SqlHandle(0);
 
-// null handle used in place of parent handle when allocating HENV
-  SQL_NULL_HANDLE = SQLHANDLE(0);
+  // null handle used in place of parent handle when allocating HENV
+  SQL_NULL_HANDLE = SqlHandle(0);
 
-// Values that may appear in the result set of SQLSpecialColumns()
+  // Values that may appear in the result set of SQLSpecialColumns()
   SQL_SCOPE_CURROW = 0;
   SQL_SCOPE_TRANSACTION = 1;
   SQL_SCOPE_SESSION = 2;
@@ -563,19 +568,19 @@ const
   SQL_PC_NON_PSEUDO = 1;
   SQL_PC_PSEUDO = 2;
 
-// Reserved value for the IdentifierType argument of SQLSpecialColumns()
+  // Reserved value for the IdentifierType argument of SQLSpecialColumns()
   SQL_ROW_IDENTIFIER = 1;
 
-// Reserved values for UNIQUE argument of SQLStatistics()
+  // Reserved values for UNIQUE argument of SQLStatistics()
   SQL_INDEX_UNIQUE = 0;
   SQL_INDEX_ALL = 1;
 
-// Values that may appear in the result set of SQLStatistics()
+  // Values that may appear in the result set of SQLStatistics()
   SQL_INDEX_CLUSTERED = 1;
   SQL_INDEX_HASHED = 2;
   SQL_INDEX_OTHER = 3;
 
-// SQLGetFunctions() values to identify ODBC APIs
+  // SQLGetFunctions() values to identify ODBC APIs
   SQL_API_SQLALLOCCONNECT = 1;
   SQL_API_SQLALLOCENV = 2;
   SQL_API_SQLALLOCHANDLE = 1001;
@@ -634,7 +639,7 @@ const
   SQL_API_SQLTABLES = 54;
   SQL_API_SQLTRANSACT = 23;
 
-// Information requested by SQLGetInfo()
+  // Information requested by SQLGetInfo()
   SQL_MAX_DRIVER_CONNECTIONS = 0;
   SQL_MAXIMUM_DRIVER_CONNECTIONS = SQL_MAX_DRIVER_CONNECTIONS;
   SQL_MAX_CONCURRENT_ACTIVITIES = 1;
@@ -702,12 +707,12 @@ const
   SQL_MAX_IDENTIFIER_LEN = 10005;
   SQL_MAXIMUM_IDENTIFIER_LENGTH = SQL_MAX_IDENTIFIER_LEN;
 
-// SQL_ALTER_TABLE bitmasks
+  // SQL_ALTER_TABLE bitmasks
   SQL_AT_ADD_COLUMN = $00000001;
   SQL_AT_DROP_COLUMN = $00000002;
   SQL_AT_ADD_CONSTRAINT = $00000008;
 
-// The following bitmasks are ODBC extensions and defined in sqlext.h
+  // The following bitmasks are ODBC extensions and defined in sqlext.h
   SQL_AT_COLUMN_SINGLE = $00000020;
   SQL_AT_ADD_COLUMN_DEFAULT = $00000040;
   SQL_AT_ADD_COLUMN_COLLATION = $00000080;
@@ -724,18 +729,17 @@ const
   SQL_AT_CONSTRAINT_DEFERRABLE = $00040000;
   SQL_AT_CONSTRAINT_NON_DEFERRABLE = $00080000;
 
-
-// SQL_ASYNC_MODE values
+  // SQL_ASYNC_MODE values
   SQL_AM_NONE = 0;
   SQL_AM_CONNECTION = 1;
   SQL_AM_STATEMENT = 2;
 
-// SQL_CURSOR_COMMIT_BEHAVIOR values
+  // SQL_CURSOR_COMMIT_BEHAVIOR values
   SQL_CB_DELETE = 0;
   SQL_CB_CLOSE = 1;
   SQL_CB_PRESERVE = 2;
 
-// SQL_FETCH_DIRECTION bitmasks
+  // SQL_FETCH_DIRECTION bitmasks
   SQL_FD_FETCH_NEXT = $00000001;
   SQL_FD_FETCH_FIRST = $00000002;
   SQL_FD_FETCH_LAST = $00000004;
@@ -743,18 +747,18 @@ const
   SQL_FD_FETCH_ABSOLUTE = $00000010;
   SQL_FD_FETCH_RELATIVE = $00000020;
 
-// SQL_GETDATA_EXTENSIONS bitmasks
+  // SQL_GETDATA_EXTENSIONS bitmasks
   SQL_GD_ANY_COLUMN = $00000001;
   SQL_GD_ANY_ORDER = $00000002;
 
-// SQL_IDENTIFIER_CASE values
+  // SQL_IDENTIFIER_CASE values
   SQL_IC_UPPER = 1;
   SQL_IC_LOWER = 2;
   SQL_IC_SENSITIVE = 3;
   SQL_IC_MIXED = 4;
 
-// SQL_OJ_CAPABILITIES bitmasks
-// NB: this means 'outer join', not what you may be thinking
+  // SQL_OJ_CAPABILITIES bitmasks
+  // NB: this means 'outer join', not what you may be thinking
   SQL_OJ_LEFT = $00000001;
   SQL_OJ_RIGHT = $00000002;
   SQL_OJ_FULL = $00000004;
@@ -763,20 +767,20 @@ const
   SQL_OJ_INNER = $00000020;
   SQL_OJ_ALL_COMPARISON_OPS = $00000040;
 
-// SQL_SCROLL_CONCURRENCY bitmasks
+  // SQL_SCROLL_CONCURRENCY bitmasks
   SQL_SCCO_READ_ONLY = $00000001;
   SQL_SCCO_LOCK = $00000002;
   SQL_SCCO_OPT_ROWVER = $00000004;
   SQL_SCCO_OPT_VALUES = $00000008;
 
-// SQL_TXN_CAPABLE values
+  // SQL_TXN_CAPABLE values
   SQL_TC_NONE = 0;
   SQL_TC_DML = 1;
   SQL_TC_ALL = 2;
   SQL_TC_DDL_COMMIT = 3;
   SQL_TC_DDL_IGNORE = 4;
 
-// SQL_TXN_ISOLATION_OPTION bitmasks
+  // SQL_TXN_ISOLATION_OPTION bitmasks
   SQL_TXN_READ_UNCOMMITTED = $00000001;
   SQL_TRANSACTION_READ_UNCOMMITTED = SQL_TXN_READ_UNCOMMITTED;
   SQL_TXN_READ_COMMITTED = $00000002;
@@ -786,294 +790,310 @@ const
   SQL_TXN_SERIALIZABLE = $00000008;
   SQL_TRANSACTION_SERIALIZABLE = SQL_TXN_SERIALIZABLE;
 
-// SQL_NULL_COLLATION values
+  // SQL_NULL_COLLATION values
   SQL_NC_HIGH = 0;
   SQL_NC_LOW = 1;
 
 {$IFDEF DynamicOdbcImport}
-  type
-  TSQLAllocConnect = function (
+type
+  TSQLAllocConnect = function(
 {$ELSE}
-  function SQLAllocConnect(
+function SQLAllocConnect(
 {$ENDIF}
-  EnvironmentHandle: SQLHENV;
-  var ConnectionHandle: SQLHDBC
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  EnvironmentHandle: SqlHEnv;
+  var ConnectionHandle: SqlHDbc
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLAllocEnv = function (
+TSQLAllocEnv = function(
 {$ELSE}
-  function SQLAllocEnv(
+function SQLAllocEnv(
 {$ENDIF}
-  var EnvironmentHandle: SQLHENV
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  var EnvironmentHandle: SqlHEnv
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLAllocHandle = function (
+TSQLAllocHandle = function(
 {$ELSE}
-  function SQLAllocHandle(
+function SQLAllocHandle(
 {$ENDIF}
-  HandleType: SQLSMALLINT;
-  InputHandle: SQLHANDLE;
-  var OutputHandle: SQLHANDLE
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HandleType: SqlSmallint;
+  InputHandle: SqlHandle;
+  var OutputHandle: SqlHandle
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
 type
-  TSQLAllocStmt = function (
+  TSQLAllocStmt = function(
 {$ELSE}
-  function SQLAllocStmt(
+function SQLAllocStmt(
 {$ENDIF}
-  ConnectionHandle: SQLHDBC;
-  var StatementHandle: SQLHSTMT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  ConnectionHandle: SqlHDbc;
+  var StatementHandle: SqlHStmt
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLBindCol = function (
+TSQLBindCol = function(
 {$ELSE}
-  function SQLBindCol(
+function SQLBindCol(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  ColumnNumber: SQLUSMALLINT;
-  TargetType: SQLSMALLINT;
-  TargetValue: SQLPOINTER;
-  BufferLength: SQLINTEGER;
-  StrLen_or_Ind: PSQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  ColumnNumber: SqlUSmallint;
+  TargetType: SqlSmallint;
+  TargetValue: SqlPointer;
+  BufferLength: SqlInteger;
+  StrLen_or_Ind: PSqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLBindParam = function (
+TSQLBindParam = function(
 {$ELSE}
-  function SQLBindParam(
+function SQLBindParam(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  ParameterNumber: SQLUSMALLINT;
-  ValueType: SQLSMALLINT;
-  ParameterType: SQLSMALLINT;
-  LengthPrecision: SQLUINTEGER;
-  ParameterScale: SQLSMALLINT;
-  ParameterValue: SQLPOINTER;
-  var StrLen_or_Ind: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  ParameterNumber: SqlUSmallint;
+  ValueType: SqlSmallint;
+  ParameterType: SqlSmallint;
+  LengthPrecision: SqlUInteger;
+  ParameterScale: SqlSmallint;
+  ParameterValue: SqlPointer;
+  var StrLen_or_Ind: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLCancel = function (
+TSQLCancel = function(
 {$ELSE}
-  function SQLCancel(
+function SQLCancel(
 {$ENDIF}
-  StatementHandle: SQLHSTMT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLCloseCursor = function (
+TSQLCloseCursor = function(
 {$ELSE}
-  function SQLCloseCursor(
+function SQLCloseCursor(
 {$ENDIF}
-  StatementHandle: SQLHSTMT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 // SQLColAttribute is overloaded
 
 {$IFDEF DynamicOdbcImport}
-  TSQLColAttributeString = function (
+TSQLColAttribute = function(
 {$ELSE}
-  function SQLColAttributeString(
+function SQLColAttribute(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  ColumnNumber: SQLUSMALLINT;
-  FieldIdentifier: SQLUSMALLINT;
-  CharacterAttribute: SQLPOINTER;
-  BufferLength: SQLSMALLINT;
-  var StringLength: SQLSMALLINT;
-  NumericAttribute: SQLPOINTER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  ColumnNumber: SqlUSmallint;
+  FieldIdentifier: SqlUSmallint;
+  CharacterAttribute: SqlPointer;
+  BufferLength: SqlSmallint;
+  StringLength: pSqlSmallint;
+  NumericAttributePtr: SqlPointer
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLColAttributeInt = function (
+TSQLColAttributeString = function(
 {$ELSE}
-  function SQLColAttributeInt(
+function SQLColAttributeString(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  ColumnNumber: SQLUSMALLINT;
-  FieldIdentifier: SQLUSMALLINT;
-  CharacterAttribute: SQLPOINTER;
-  BufferLength: SQLSMALLINT;
-  StringLength: SQLPOINTER;
-  var NumericAttribute: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+// Overloaded version for String attributes
+  StatementHandle: SqlHStmt;
+  ColumnNumber: SqlUSmallint;
+  FieldIdentifier: SqlUSmallint;
+  CharacterAttribute: SqlPointer;
+  BufferLength: SqlSmallint;
+  var StringLength: SqlSmallint;
+  NumericAttribute: SqlPointer
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLColumns = function (
+TSQLColAttributeInt = function(
 {$ELSE}
-  function SQLColumns(
+function SQLColAttributeInt(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  CatalogName: pAnsiChar;
-  NameLength1: SQLSMALLINT;
-  SchemaName: pAnsiChar;
-  NameLength2: SQLSMALLINT;
-  TableName: pAnsiChar;
-  NameLength3: SQLSMALLINT;
-  ColumnName: pAnsiChar;
-  NameLength4: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+// Overloaded version for Integer attributes
+  StatementHandle: SqlHStmt;
+  ColumnNumber: SqlUSmallint;
+  FieldIdentifier: SqlUSmallint;
+  CharacterAttribute: SqlPointer;
+  BufferLength: SqlSmallint;
+  StringLength: pSqlSmallint;
+  var NumericAttribute: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLConnect = function (
+TSQLColumns = function(
 {$ELSE}
-  function SQLConnect(
+function SQLColumns(
 {$ENDIF}
-  ConnectionHandle: SQLHDBC;
+  StatementHandle: SqlHStmt;
+  CatalogName: PAnsiChar;
+  NameLength1: SqlSmallint;
+  SchemaName: PAnsiChar;
+  NameLength2: SqlSmallint;
+  TableName: PAnsiChar;
+  NameLength3: SqlSmallint;
+  ColumnName: PAnsiChar;
+  NameLength4: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
+
+{$IFDEF DynamicOdbcImport}
+TSQLConnect = function(
+{$ELSE}
+function SQLConnect(
+{$ENDIF}
+  ConnectionHandle: SqlHDbc;
   ServerName: PAnsiChar;
-  NameLength1: SQLSMALLINT;
+  NameLength1: SqlSmallint;
   UserName: PAnsiChar;
-  NameLength2: SQLSMALLINT;
+  NameLength2: SqlSmallint;
   Authentication: PAnsiChar;
-  NameLength3: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  NameLength3: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLCopyDesc = function (
+TSQLCopyDesc = function(
 {$ELSE}
-  function SQLCopyDesc(
+function SQLCopyDesc(
 {$ENDIF}
-  SourceDescHandle: SQLHDESC;
-  TargetDescHandle: SQLHDESC
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  SourceDescHandle: SqlHDesc;
+  TargetDescHandle: SqlHDesc
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLDataSources = function (
+TSQLDataSources = function(
 {$ELSE}
-  function SQLDataSources(
+function SQLDataSources(
 {$ENDIF}
-  EnvironmentHandle: SQLHENV;
-  Direction: SQLUSMALLINT;
-  var ServerName: SQLCHAR;
-  BufferLength1: SQLSMALLINT;
-  var NameLength1: SQLSMALLINT;
-  var Description: SQLCHAR;
-  BufferLength2: SQLSMALLINT;
-  var NameLength2: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  EnvironmentHandle: SqlHEnv;
+  Direction: SqlUSmallint;
+  var ServerName: SqlChar;
+  BufferLength1: SqlSmallint;
+  var NameLength1: SqlSmallint;
+  var Description: SqlChar;
+  BufferLength2: SqlSmallint;
+  var NameLength2: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLDescribeCol = function (
+TSQLDescribeCol = function(
 {$ELSE}
-  function SQLDescribeCol(
+function SQLDescribeCol(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  ColumnNumber: SQLUSMALLINT;
-  ColumnName: pAnsiChar;
-  BufferLength: SQLSMALLINT;
-  var NameLength: SQLSMALLINT;
-  var DataType: SQLSMALLINT;
-  var ColumnSize: SQLUINTEGER;
-  var DecimalDigits: SQLSMALLINT;
-  var Nullable: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  ColumnNumber: SqlUSmallint;
+  ColumnName: PAnsiChar;
+  BufferLength: SqlSmallint;
+  var NameLength: SqlSmallint;
+  var DataType: SqlSmallint;
+  var ColumnSize: SqlUInteger;
+  var DecimalDigits: SqlSmallint;
+  var Nullable: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLDisconnect = function (
+TSQLDisconnect = function(
 {$ELSE}
-  function SQLDisconnect(
+function SQLDisconnect(
 {$ENDIF}
-  ConnectionHandle: SQLHDBC
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  ConnectionHandle: SqlHDbc
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLEndTran = function (
+TSQLEndTran = function(
 {$ELSE}
-  function SQLEndTran(
+function SQLEndTran(
 {$ENDIF}
-  HandleType: SQLSMALLINT;
-  Handle: SQLHANDLE;
-  CompletionType: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HandleType: SqlSmallint;
+  Handle: SqlHandle;
+  CompletionType: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLError = function (
+TSQLError = function(
 {$ELSE}
-  function SQLError(
+function SQLError(
 {$ENDIF}
-  EnvironmentHandle: SQLHENV;
-  ConnectionHandle: SQLHDBC;
-  StatementHandle: SQLHSTMT;
-  var Sqlstate: SQLCHAR;
-  var NativeError: SQLINTEGER;
-  var MessageText: SQLCHAR;
-  BufferLength: SQLSMALLINT;
-  var TextLength: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  EnvironmentHandle: SqlHEnv;
+  ConnectionHandle: SqlHDbc;
+  StatementHandle: SqlHStmt;
+  var Sqlstate: SqlChar;
+  var NativeError: SqlInteger;
+  var MessageText: SqlChar;
+  BufferLength: SqlSmallint;
+  var TextLength: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLExecDirect = function (
+TSQLExecDirect = function(
 {$ELSE}
-  function SQLExecDirect(
+function SQLExecDirect(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  StatementText: pAnsiChar;
-  TextLength: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  StatementText: PAnsiChar;
+  TextLength: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLExecute = function (
+TSQLExecute = function(
 {$ELSE}
-  function SQLExecute(
+function SQLExecute(
 {$ENDIF}
-  StatementHandle: SQLHSTMT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLFetch = function (
+TSQLFetch = function(
 {$ELSE}
-  function SQLFetch(
+function SQLFetch(
 {$ENDIF}
-  StatementHandle: SQLHSTMT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLFetchScroll = function (
+TSQLFetchScroll = function(
 {$ELSE}
-  function SQLFetchScroll(
+function SQLFetchScroll(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  FetchOrientation: SQLSMALLINT;
-  FetchOffset: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  FetchOrientation: SqlSmallint;
+  FetchOffset: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLFreeConnect = function (
+TSQLFreeConnect = function(
 {$ELSE}
-  function SQLFreeConnect(
+function SQLFreeConnect(
 {$ENDIF}
-  ConnectionHandle: SQLHDBC
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  ConnectionHandle: SqlHDbc
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLFreeEnv = function (
+TSQLFreeEnv = function(
 {$ELSE}
-  function SQLFreeEnv(
+function SQLFreeEnv(
 {$ENDIF}
-  EnvironmentHandle: SQLHENV
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  EnvironmentHandle: SqlHEnv
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLFreeHandle = function (
+TSQLFreeHandle = function(
 {$ELSE}
-  function SQLFreeHandle(
+function SQLFreeHandle(
 {$ENDIF}
-  HandleType: SQLSMALLINT;
-  Handle: SQLHANDLE
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HandleType: SqlSmallint;
+  Handle: SqlHandle
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLFreeStmt = function (
+TSQLFreeStmt = function(
 {$ELSE}
-  function SQLFreeStmt(
+function SQLFreeStmt(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  Option: SQLUSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  Option: SqlUSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 // SQLGetConnectAttr is overloaded. See OBDC API doc:
 // "Depending on the value of Attribute,
@@ -1081,132 +1101,132 @@ type
 //  or will point to a null-terminated character string.
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetConnectAttr = function (
+TSQLGetConnectAttr = function(
 {$ELSE}
-  function SQLGetConnectAttr(
+function SQLGetConnectAttr(
 {$ENDIF}
-  ConnectionHandle: SQLHDBC;
-  Attribute: SQLINTEGER;
-  ValuePtr: pointer;
-  BufferLength: SQLINTEGER;
-  pStringLength: PSQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  ConnectionHandle: SqlHDbc;
+  Attribute: SqlInteger;
+  ValuePtr: SqlPointer;
+  BufferLength: SqlInteger;
+  pStringLength: PSqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetConnectOption = function (
+TSQLGetConnectOption = function(
 {$ELSE}
-  function SQLGetConnectOption(
+function SQLGetConnectOption(
 {$ENDIF}
-  ConnectionHandle: SQLHDBC;
-  Option: SQLUSMALLINT;
-  Value: SQLPOINTER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  ConnectionHandle: SqlHDbc;
+  Option: SqlUSmallint;
+  Value: SqlPointer
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetCursorName = function (
+TSQLGetCursorName = function(
 {$ELSE}
-  function SQLGetCursorName(
+function SQLGetCursorName(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  CursorName: pAnsiChar;
-  BufferLength: SQLSMALLINT;
-  var NameLength: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  CursorName: PAnsiChar;
+  BufferLength: SqlSmallint;
+  var NameLength: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetData = function (
+TSQLGetData = function(
 {$ELSE}
-  function SQLGetData(
+function SQLGetData(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  ColumnNumber: SQLUSMALLINT;
-  TargetType: SQLSMALLINT;
-  TargetValue: SQLPOINTER;
-  BufferLength: SQLINTEGER;
-  StrLen_or_Ind: PSQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  ColumnNumber: SqlUSmallint;
+  TargetType: SqlSmallint;
+  TargetValue: SqlPointer;
+  BufferLength: SqlInteger;
+  StrLen_or_Ind: PSqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetDescField = function (
+TSQLGetDescField = function(
 {$ELSE}
-  function SQLGetDescField(
+function SQLGetDescField(
 {$ENDIF}
-  DescriptorHandle: SQLHDESC;
-  RecNumber: SQLSMALLINT;
-  FieldIdentifier: SQLSMALLINT;
-  Value: SQLPOINTER;
-  BufferLength: SQLINTEGER;
-  var StringLength: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  DescriptorHandle: SqlHDesc;
+  RecNumber: SqlSmallint;
+  FieldIdentifier: SqlSmallint;
+  Value: SqlPointer;
+  BufferLength: SqlInteger;
+  var StringLength: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetDescRec = function (
+TSQLGetDescRec = function(
 {$ELSE}
-  function SQLGetDescRec(
+function SQLGetDescRec(
 {$ENDIF}
-  DescriptorHandle: SQLHDESC;
-  RecNumber: SQLSMALLINT;
-  var Name: SQLCHAR;
-  BufferLength: SQLSMALLINT;
-  var StringLength: SQLSMALLINT;
-  var _Type: SQLSMALLINT;
-  var SubType: SQLSMALLINT;
-  var Length: SQLINTEGER;
-  var Precision: SQLSMALLINT;
-  var Scale: SQLSMALLINT;
-  var Nullable: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  DescriptorHandle: SqlHDesc;
+  RecNumber: SqlSmallint;
+  var Name: SqlChar;
+  BufferLength: SqlSmallint;
+  var StringLength: SqlSmallint;
+  var _Type: SqlSmallint;
+  var SubType: SqlSmallint;
+  var Length: SqlInteger;
+  var Precision: SqlSmallint;
+  var Scale: SqlSmallint;
+  var Nullable: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetDiagField = function (
+TSQLGetDiagField = function(
 {$ELSE}
-  function SQLGetDiagField(
+function SQLGetDiagField(
 {$ENDIF}
-  HandleType: SQLSMALLINT;
-  Handle: SQLHANDLE;
-  RecNumber: SQLSMALLINT;
-  DiagIdentifier: SQLSMALLINT;
-  DiagInfo: SQLPOINTER;
-  BufferLength: SQLSMALLINT;
-  var StringLength: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HandleType: SqlSmallint;
+  Handle: SqlHandle;
+  RecNumber: SqlSmallint;
+  DiagIdentifier: SqlSmallint;
+  DiagInfo: SqlPointer;
+  BufferLength: SqlSmallint;
+  var StringLength: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetDiagRec = function (
+TSQLGetDiagRec = function(
 {$ELSE}
-  function SQLGetDiagRec(
+function SQLGetDiagRec(
 {$ENDIF}
-  HandleType: SQLSMALLINT;
-  Handle: SQLHANDLE;
-  RecNumber: SQLSMALLINT;
+  HandleType: SqlSmallint;
+  Handle: SqlHandle;
+  RecNumber: SqlSmallint;
   Sqlstate: PAnsiChar; // pointer to 5 character buffer
-  var NativeError: SQLINTEGER;
+  var NativeError: SqlInteger;
   MessageText: PAnsiChar;
-  BufferLength: SQLSMALLINT;
-  var TextLength: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  BufferLength: SqlSmallint;
+  var TextLength: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetEnvAttr = function (
+TSQLGetEnvAttr = function(
 {$ELSE}
-  function SQLGetEnvAttr(
+function SQLGetEnvAttr(
 {$ENDIF}
-  EnvironmentHandle: SQLHENV;
-  Attribute: SQLINTEGER;
-  Value: SQLPOINTER;
-  BufferLength: SQLINTEGER;
-  var StringLength: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  EnvironmentHandle: SqlHEnv;
+  Attribute: SqlInteger;
+  Value: SqlPointer;
+  BufferLength: SqlInteger;
+  var StringLength: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetFunctions = function (
+TSQLGetFunctions = function(
 {$ELSE}
-  function SQLGetFunctions(
+function SQLGetFunctions(
 {$ENDIF}
-  ConnectionHandle: SQLHDBC;
-  FunctionId: SQLUSMALLINT;
-  var Supported: SQLUSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  ConnectionHandle: SqlHDbc;
+  FunctionId: SqlUSmallint;
+  var Supported: SqlUSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 // SQLGetInfo is overloaded. See OBDC API doc:
 //   "Depending on the InfoType requested,
@@ -1218,179 +1238,190 @@ type
 //     or a SQLUINTEGER binary value."
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetInfoString = function (
+TSQLGetInfo = function(
 {$ELSE}
-  function SQLGetInfoString(
+function SQLGetInfo(
 {$ENDIF}
-  ConnectionHandle: SQLHDBC;
-  InfoType: SQLUSMALLINT;
-  InfoValueString: PAnsiChar;  // PWideChar when calling SQLGetInfoW
-  BufferLength: SQLSMALLINT;
-  var StringLength: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  ConnectionHandle: SqlHDbc;
+  InfoType: SqlUSmallint;
+  InfoValuePtr: SqlPointer;
+  BufferLength: SqlSmallint;
+  StringLengthPtr: SqlPointer
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetInfoSmallint = function (
+TSQLGetInfoString = function(
 {$ELSE}
-  function SQLGetInfoSmallint(
+function SQLGetInfoString(
 {$ENDIF}
-  ConnectionHandle: SQLHDBC;
-  InfoType: SQLUSMALLINT;
-  var InfoValue: SQLUSMALLINT;
-  Ignored1: SQLSMALLINT;
-  Ignored2: pointer
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  ConnectionHandle: SqlHDbc;
+  InfoType: SqlUSmallint;
+  InfoValueString: PAnsiChar; // PWideChar when calling SQLGetInfoW
+  BufferLength: SqlSmallint;
+  var StringLength: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetInfoInt = function (
+TSQLGetInfoSmallint = function(
 {$ELSE}
-  function SQLGetInfoInt(
+function SQLGetInfoSmallint(
 {$ENDIF}
-  ConnectionHandle: SQLHDBC;
-  InfoType: SQLUSMALLINT;
-  var InfoValue: SQLUINTEGER;
-  Ignored1: SQLSMALLINT;
-  Ignored2: pointer
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
-
-
-{$IFDEF DynamicOdbcImport}
-  TSQLGetStmtAttr = function (
-{$ELSE}
-  function SQLGetStmtAttr(
-{$ENDIF}
-  StatementHandle: SQLHSTMT;
-  Attribute: SQLINTEGER;
-  Value: SQLPOINTER;
-  BufferLength: SQLINTEGER;
-  var StringLength: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  ConnectionHandle: SqlHDbc;
+  InfoType: SqlUSmallint;
+  var InfoValue: SqlUSmallint;
+  Ignored1: SqlSmallint;
+  Ignored2: Pointer
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetStmtOption = function (
+TSQLGetInfoInt = function(
 {$ELSE}
-  function SQLGetStmtOption(
+function SQLGetInfoInt(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  Option: SQLUSMALLINT;
-  Value: SQLPOINTER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  ConnectionHandle: SqlHDbc;
+  InfoType: SqlUSmallint;
+  var InfoValue: SqlUInteger;
+  Ignored1: SqlSmallint;
+  Ignored2: Pointer
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLGetTypeInfo = function (
+TSQLGetStmtAttr = function(
 {$ELSE}
-  function SQLGetTypeInfo(
+function SQLGetStmtAttr(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  DataType: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  Attribute: SqlInteger;
+  Value: SqlPointer;
+  BufferLength: SqlInteger;
+  var StringLength: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLNumResultCols = function (
+TSQLGetStmtOption = function(
 {$ELSE}
-  function SQLNumResultCols(
+function SQLGetStmtOption(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  var ColumnCount: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  Option: SqlUSmallint;
+  Value: SqlPointer
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLParamData = function (
+TSQLGetTypeInfo = function(
 {$ELSE}
-  function SQLParamData(
+function SQLGetTypeInfo(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  var Value: SQLPOINTER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  DataType: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLPrepare = function (
+TSQLNumResultCols = function(
 {$ELSE}
-  function SQLPrepare(
+function SQLNumResultCols(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
+  StatementHandle: SqlHStmt;
+  var ColumnCount: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
+
+{$IFDEF DynamicOdbcImport}
+TSQLParamData = function(
+{$ELSE}
+function SQLParamData(
+{$ENDIF}
+  StatementHandle: SqlHStmt;
+  var Value: SqlPointer
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
+
+{$IFDEF DynamicOdbcImport}
+TSQLPrepare = function(
+{$ELSE}
+function SQLPrepare(
+{$ENDIF}
+  StatementHandle: SqlHStmt;
   StatementText: PAnsiChar;
-  TextLength: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  TextLength: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLPutData = function (
+TSQLPutData = function(
 {$ELSE}
-  function SQLPutData(
+function SQLPutData(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  Data: SQLPOINTER;
-  StrLen_or_Ind: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  Data: SqlPointer;
+  StrLen_or_Ind: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLRowCount = function (
+TSQLRowCount = function(
 {$ELSE}
-  function SQLRowCount(
+function SQLRowCount(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  var RowCount: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  var RowCount: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLSetConnectAttr = function (
+TSQLSetConnectAttr = function(
 {$ELSE}
-  function SQLSetConnectAttr(
+function SQLSetConnectAttr(
 {$ENDIF}
-  ConnectionHandle: SQLHDBC;
-  Attribute: SQLINTEGER;
-  ValuePtr: SQLPOINTER;
-  StringLength: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  ConnectionHandle: SqlHDbc;
+  Attribute: SqlInteger;
+  ValuePtr: SqlPointer;
+  StringLength: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLSetConnectOption = function (
+TSQLSetConnectOption = function(
 {$ELSE}
-  function SQLSetConnectOption(
+function SQLSetConnectOption(
 {$ENDIF}
-  ConnectionHandle: SQLHDBC;
-  Option: SQLUSMALLINT;
-  Value: SQLUINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  ConnectionHandle: SqlHDbc;
+  Option: SqlUSmallint;
+  Value: SqlUInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLSetCursorName = function (
+TSQLSetCursorName = function(
 {$ELSE}
-  function SQLSetCursorName(
+function SQLSetCursorName(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  CursorName: pAnsiChar;
-  NameLength: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  CursorName: PAnsiChar;
+  NameLength: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLSetDescField = function (
+TSQLSetDescField = function(
 {$ELSE}
-  function SQLSetDescField(
+function SQLSetDescField(
 {$ENDIF}
-  DescriptorHandle: SQLHDESC;
-  RecNumber: SQLSMALLINT;
-  FieldIdentifier: SQLSMALLINT;
-  Value: SQLPOINTER;
-  BufferLength: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  DescriptorHandle: SqlHDesc;
+  RecNumber: SqlSmallint;
+  FieldIdentifier: SqlSmallint;
+  Value: SqlPointer;
+  BufferLength: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLSetDescRec = function (
+TSQLSetDescRec = function(
 {$ELSE}
-  function SQLSetDescRec(
+function SQLSetDescRec(
 {$ENDIF}
-  DescriptorHandle: SQLHDESC;
-  RecNumber: SQLSMALLINT;
-  _Type: SQLSMALLINT;
-  SubType: SQLSMALLINT;
-  Length: SQLINTEGER;
-  Precision: SQLSMALLINT;
-  Scale: SQLSMALLINT;
-  Data: SQLPOINTER;
-  var StringLength: SQLINTEGER;
-  var Indicator: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  DescriptorHandle: SqlHDesc;
+  RecNumber: SqlSmallint;
+  _Type: SqlSmallint;
+  SubType: SqlSmallint;
+  Length: SqlInteger;
+  Precision: SqlSmallint;
+  Scale: SqlSmallint;
+  Data: SqlPointer;
+  var StringLength: SqlInteger;
+  var Indicator: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 // SQLSetEnvAttr is overloaded. See OBDC API doc:
 //   "Depending on the value of Attribute,
@@ -1398,110 +1429,110 @@ type
 //   or point to a null-terminated character string."
 
 {$IFDEF DynamicOdbcImport}
-  TSQLSetEnvAttr = function (
+TSQLSetEnvAttr = function(
 {$ELSE}
-  function SQLSetEnvAttr(
+function SQLSetEnvAttr(
 {$ENDIF}
-  EnvironmentHandle: SQLHENV;
-  Attribute: SQLINTEGER;
-  ValuePtr: pointer;
-  StringLength: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  EnvironmentHandle: SqlHEnv;
+  Attribute: SqlInteger;
+  ValuePtr: Pointer;
+  StringLength: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLSetParam = function (
+TSQLSetParam = function(
 {$ELSE}
-  function SQLSetParam(
+function SQLSetParam(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  ParameterNumber: SQLUSMALLINT;
-  ValueType: SQLSMALLINT;
-  ParameterType: SQLSMALLINT;
-  LengthPrecision: SQLUINTEGER;
-  ParameterScale: SQLSMALLINT;
-  ParameterValue: SQLPOINTER;
-  var StrLen_or_Ind: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  ParameterNumber: SqlUSmallint;
+  ValueType: SqlSmallint;
+  ParameterType: SqlSmallint;
+  LengthPrecision: SqlUInteger;
+  ParameterScale: SqlSmallint;
+  ParameterValue: SqlPointer;
+  var StrLen_or_Ind: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLSetStmtAttr = function (
+TSQLSetStmtAttr = function(
 {$ELSE}
-  function SQLSetStmtAttr(
+function SQLSetStmtAttr(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  Attribute: SQLINTEGER;
-  Value: SQLPOINTER;
-  StringLength: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  Attribute: SqlInteger;
+  Value: SqlPointer;
+  StringLength: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLSetStmtOption = function (
+TSQLSetStmtOption = function(
 {$ELSE}
-  function SQLSetStmtOption(
+function SQLSetStmtOption(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  Option: SQLUSMALLINT;
-  Value: SQLUINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  Option: SqlUSmallint;
+  Value: SqlUInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLSpecialColumns = function (
+TSQLSpecialColumns = function(
 {$ELSE}
-  function SQLSpecialColumns(
+function SQLSpecialColumns(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  IdentifierType: SQLUSMALLINT;
-  CatalogName: pAnsiChar;
-  NameLength1: SQLSMALLINT;
-  SchemaName: pAnsiChar;
-  NameLength2: SQLSMALLINT;
-  TableName: pAnsiChar;
-  NameLength3: SQLSMALLINT;
-  Scope: SQLUSMALLINT;
-  Nullable: SQLUSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  IdentifierType: SqlUSmallint;
+  CatalogName: PAnsiChar;
+  NameLength1: SqlSmallint;
+  SchemaName: PAnsiChar;
+  NameLength2: SqlSmallint;
+  TableName: PAnsiChar;
+  NameLength3: SqlSmallint;
+  Scope: SqlUSmallint;
+  Nullable: SqlUSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLStatistics = function (
+TSQLStatistics = function(
 {$ELSE}
-  function SQLStatistics(
+function SQLStatistics(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  CatalogName: pAnsiChar;
-  NameLength1: SQLSMALLINT;
-  SchemaName: pAnsiChar;
-  NameLength2: SQLSMALLINT;
-  TableName: pAnsiChar;
-  NameLength3: SQLSMALLINT;
-  Unique: SQLUSMALLINT;
-  Reserved: SQLUSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  CatalogName: PAnsiChar;
+  NameLength1: SqlSmallint;
+  SchemaName: PAnsiChar;
+  NameLength2: SqlSmallint;
+  TableName: PAnsiChar;
+  NameLength3: SqlSmallint;
+  Unique: SqlUSmallint;
+  Reserved: SqlUSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLTables = function (
+TSQLTables = function(
 {$ELSE}
-  function SQLTables(
+function SQLTables(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  CatalogName: pAnsiChar;
-  NameLength1: SQLSMALLINT;
-  SchemaName: pAnsiChar;
-  NameLength2: SQLSMALLINT;
-  TableName: pAnsiChar;
-  NameLength3: SQLSMALLINT;
-  TableType: pAnsiChar;
-  NameLength4: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  CatalogName: PAnsiChar;
+  NameLength1: SqlSmallint;
+  SchemaName: PAnsiChar;
+  NameLength2: SqlSmallint;
+  TableName: PAnsiChar;
+  NameLength3: SqlSmallint;
+  TableType: PAnsiChar;
+  NameLength4: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLTransact = function (
+TSQLTransact = function(
 {$ELSE}
-  function SQLTransact(
+function SQLTransact(
 {$ENDIF}
-  EnvironmentHandle: SQLHENV;
-  ConnectionHandle: SQLHDBC;
-  CompletionType: SQLUSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  EnvironmentHandle: SqlHEnv;
+  ConnectionHandle: SqlHDbc;
+  CompletionType: SqlUSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 //##########################################################################
 // sql.h interface part ends here
@@ -1528,12 +1559,12 @@ type
 
 // copied from sqlucode.h
 const
-SQL_WCHAR = (-8);
-SQL_WVARCHAR = (-9);
-SQL_WLONGVARCHAR = (-10);
-SQL_C_WCHAR = SQL_WCHAR;
+  SQL_WCHAR = (-8);
+  SQL_WVARCHAR = (-9);
+  SQL_WLONGVARCHAR = (-10);
+  SQL_C_WCHAR = SQL_WCHAR;
 
-// generally useful constants
+  // generally useful constants
 const
   SQL_SPEC_MAJOR = 3; // Major version of specification
   SQL_SPEC_MINOR = 51; // Minor version of specification
@@ -1544,33 +1575,33 @@ const
 
   SQL_MAX_OPTION_STRING_LENGTH = 256;
 
-// return code SQL_NO_DATA_FOUND is the same as SQL_NO_DATA*
+  // return code SQL_NO_DATA_FOUND is the same as SQL_NO_DATA*
   SQL_NO_DATA_FOUND = SQL_NO_DATA;
 
-// an env handle type
+  // an env handle type
   SQL_HANDLE_SENV = 5;
 
-// env attribute
+  // env attribute
   SQL_ATTR_ODBC_VERSION = 200;
   SQL_ATTR_CONNECTION_POOLING = 201;
   SQL_ATTR_CP_MATCH = 202;
 
-// values for SQL_ATTR_CONNECTION_POOLING
-  SQL_CP_OFF = ULONG(0);
-  SQL_CP_ONE_PER_DRIVER = ULONG(1);
-  SQL_CP_ONE_PER_HENV = ULONG(2);
+  // values for SQL_ATTR_CONNECTION_POOLING
+  SQL_CP_OFF = ULong(0);
+  SQL_CP_ONE_PER_DRIVER = ULong(1);
+  SQL_CP_ONE_PER_HENV = ULong(2);
   SQL_CP_DEFAULT = SQL_CP_OFF;
 
-// values for SQL_ATTR_CP_MATCH
-  SQL_CP_STRICT_MATCH = ULONG(0);
-  SQL_CP_RELAXED_MATCH = ULONG(1);
+  // values for SQL_ATTR_CP_MATCH
+  SQL_CP_STRICT_MATCH = ULong(0);
+  SQL_CP_RELAXED_MATCH = ULong(1);
   SQL_CP_MATCH_DEFAULT = SQL_CP_STRICT_MATCH;
 
-// values for SQL_ATTR_ODBC_VERSION
-  SQL_OV_ODBC2 = ULONG(2);
-  SQL_OV_ODBC3 = ULONG(3);
+  // values for SQL_ATTR_ODBC_VERSION
+  SQL_OV_ODBC2 = ULong(2);
+  SQL_OV_ODBC3 = ULong(3);
 
-// connection attributes
+  // connection attributes
   SQL_ACCESS_MODE = 101;
   SQL_AUTOCOMMIT = 102;
   SQL_LOGIN_TIMEOUT = 103;
@@ -1584,7 +1615,7 @@ const
   SQL_QUIET_MODE = 111;
   SQL_PACKET_SIZE = 112;
 
-// connection attributes with new names
+  // connection attributes with new names
   SQL_ATTR_ACCESS_MODE = SQL_ACCESS_MODE;
   SQL_ATTR_AUTOCOMMIT = SQL_AUTOCOMMIT;
   SQL_ATTR_CONNECTION_TIMEOUT = 113;
@@ -1603,61 +1634,61 @@ const
   SQL_ATTR_TXN_ISOLATION = SQL_TXN_ISOLATION;
   SQL_ATTR_CONNECTION_DEAD = 1209; // GetConnectAttr only
 
-{ ODBC Driver Manager sets this connection attribute to a unicode driver
-  (which supports SQLConnectW) when the application is an ANSI application
-  (which calls SQLConnect, SQLDriverConnect, or SQLBrowseConnect).
-  This is SetConnectAttr only and application does not set this attribute
-  This attribute was introduced because some unicode driver's some APIs may
-  need to behave differently on ANSI or Unicode applications. A unicode
-  driver, which has same behavior for both ANSI or Unicode applications,
-  should return SQL_ERROR when the driver manager sets this connection
-  attribute. When a unicode driver returns SQL_SUCCESS on this attribute,
-  the driver manager treates ANSI and Unicode connections differently in
-  connection pooling. }
+  { ODBC Driver Manager sets this connection attribute to a unicode driver
+    (which supports SQLConnectW) when the application is an ANSI application
+    (which calls SQLConnect, SQLDriverConnect, or SQLBrowseConnect).
+    This is SetConnectAttr only and application does not set this attribute
+    This attribute was introduced because some unicode driver's some APIs may
+    need to behave differently on ANSI or Unicode applications. A unicode
+    driver, which has same behavior for both ANSI or Unicode applications,
+    should return SQL_ERROR when the driver manager sets this connection
+    attribute. When a unicode driver returns SQL_SUCCESS on this attribute,
+    the driver manager treates ANSI and Unicode connections differently in
+    connection pooling. }
   SQL_ATTR_ANSI_APP = 115;
 
-// SQL_ACCESS_MODE options
-  SQL_MODE_READ_WRITE = ULONG(0);
-  SQL_MODE_READ_ONLY = ULONG(1);
+  // SQL_ACCESS_MODE options
+  SQL_MODE_READ_WRITE = ULong(0);
+  SQL_MODE_READ_ONLY = ULong(1);
   SQL_MODE_DEFAULT = SQL_MODE_READ_WRITE;
 
-// SQL_AUTOCOMMIT options
-  SQL_AUTOCOMMIT_OFF = ULONG(0);
-  SQL_AUTOCOMMIT_ON = ULONG(1);
+  // SQL_AUTOCOMMIT options
+  SQL_AUTOCOMMIT_OFF = ULong(0);
+  SQL_AUTOCOMMIT_ON = ULong(1);
   SQL_AUTOCOMMIT_DEFAULT = SQL_AUTOCOMMIT_ON;
 
-// SQL_LOGIN_TIMEOUT options
-  SQL_LOGIN_TIMEOUT_DEFAULT = ULONG(15);
+  // SQL_LOGIN_TIMEOUT options
+  SQL_LOGIN_TIMEOUT_DEFAULT = ULong(15);
 
-// SQL_OPT_TRACE options
-  SQL_OPT_TRACE_OFF = ULONG(0);
-  SQL_OPT_TRACE_ON = ULONG(1);
+  // SQL_OPT_TRACE options
+  SQL_OPT_TRACE_OFF = ULong(0);
+  SQL_OPT_TRACE_ON = ULong(1);
   SQL_OPT_TRACE_DEFAULT = SQL_OPT_TRACE_OFF;
   SQL_OPT_TRACE_FILE_DEFAULT = '\\SQL.LOG';
 
-// SQL_ODBC_CURSORS options
-  SQL_CUR_USE_IF_NEEDED = ULONG(0);
-  SQL_CUR_USE_ODBC = ULONG(1);
-  SQL_CUR_USE_DRIVER = ULONG(2);
+  // SQL_ODBC_CURSORS options
+  SQL_CUR_USE_IF_NEEDED = ULong(0);
+  SQL_CUR_USE_ODBC = ULong(1);
+  SQL_CUR_USE_DRIVER = ULong(2);
   SQL_CUR_DEFAULT = SQL_CUR_USE_DRIVER;
 
-// values for SQL_ATTR_DISCONNECT_BEHAVIOR
-  SQL_DB_RETURN_TO_POOL = ULONG(0);
-  SQL_DB_DISCONNECT = ULONG(1);
+  // values for SQL_ATTR_DISCONNECT_BEHAVIOR
+  SQL_DB_RETURN_TO_POOL = ULong(0);
+  SQL_DB_DISCONNECT = ULong(1);
   SQL_DB_DEFAULT = SQL_DB_RETURN_TO_POOL;
 
-// values for SQL_ATTR_ENLIST_IN_DTC
+  // values for SQL_ATTR_ENLIST_IN_DTC
   SQL_DTC_DONE = 0;
 
-// values for SQL_ATTR_CONNECTION_DEAD
+  // values for SQL_ATTR_CONNECTION_DEAD
   SQL_CD_TRUE = 1; // Connection is closed/dead
   SQL_CD_FALSE = 0; // Connection is open/available
 
-// values for SQL_ATTR_ANSI_APP
+  // values for SQL_ATTR_ANSI_APP
   SQL_AA_TRUE = 1; // the application is an ANSI app
   SQL_AA_FALSE = 0; // the application is a Unicode app
 
-// statement attributes
+  // statement attributes
   SQL_QUERY_TIMEOUT = 0;
   SQL_MAX_ROWS = 1;
   SQL_NOSCAN = 2;
@@ -1701,10 +1732,10 @@ const
   SQL_ATTR_SIMULATE_CURSOR = SQL_SIMULATE_CURSOR;
   SQL_ATTR_USE_BOOKMARKS = SQL_USE_BOOKMARKS;
 
-//=====================================
-// This block moved to here from below because of dependent decarations
+  //=====================================
+  // This block moved to here from below because of dependent decarations
 
-// SQLColAttributes defines
+  // SQLColAttributes defines
   SQL_COLUMN_COUNT = 0;
   SQL_COLUMN_NAME = 1;
   SQL_COLUMN_TYPE = 2;
@@ -1728,29 +1759,29 @@ const
   SQL_COLATT_OPT_MAX = SQL_COLUMN_LABEL;
   SQL_COLATT_OPT_MIN = SQL_COLUMN_COUNT;
 
-// SQLColAttributes subdefines for SQL_COLUMN_UPDATABLE
+  // SQLColAttributes subdefines for SQL_COLUMN_UPDATABLE
   SQL_ATTR_READONLY = 0;
   SQL_ATTR_WRITE = 1;
   SQL_ATTR_READWRITE_UNKNOWN = 2;
 
-// SQLColAttributes subdefines for SQL_COLUMN_SEARCHABLE
-// These are also used by SQLGetInfo
+  // SQLColAttributes subdefines for SQL_COLUMN_SEARCHABLE
+  // These are also used by SQLGetInfo
   SQL_UNSEARCHABLE = 0;
   SQL_LIKE_ONLY = 1;
   SQL_ALL_EXCEPT_LIKE = 2;
   SQL_SEARCHABLE = 3;
   SQL_PRED_SEARCHABLE = SQL_SEARCHABLE;
 
-// Special return values for SQLGetData
+  // Special return values for SQLGetData
   SQL_NO_TOTAL = (-4);
-// End of move
-//=====================================
+  // End of move
+  //=====================================
 
-// New defines for SEARCHABLE column in SQLGetTypeInfo
+  // New defines for SEARCHABLE column in SQLGetTypeInfo
   SQL_COL_PRED_CHAR = SQL_LIKE_ONLY;
   SQL_COL_PRED_BASIC = SQL_ALL_EXCEPT_LIKE;
 
-// whether an attribute is a pointer or not
+  // whether an attribute is a pointer or not
   SQL_IS_POINTER = (-4);
 
   SQL_IS_UINTEGER = (-5);
@@ -1758,73 +1789,73 @@ const
   SQL_IS_USMALLINT = (-7);
   SQL_IS_SMALLINT = (-8);
 
-// the value of SQL_ATTR_PARAM_BIND_TYPE
-  SQL_PARAM_BIND_BY_COLUMN = ULONG(0);
+  // the value of SQL_ATTR_PARAM_BIND_TYPE
+  SQL_PARAM_BIND_BY_COLUMN = ULong(0);
   SQL_PARAM_BIND_TYPE_DEFAULT = SQL_PARAM_BIND_BY_COLUMN;
 
-// SQL_QUERY_TIMEOUT options
-  SQL_QUERY_TIMEOUT_DEFAULT = ULONG(0);
+  // SQL_QUERY_TIMEOUT options
+  SQL_QUERY_TIMEOUT_DEFAULT = ULong(0);
 
-// SQL_MAX_ROWS options
-  SQL_MAX_ROWS_DEFAULT = ULONG(0);
+  // SQL_MAX_ROWS options
+  SQL_MAX_ROWS_DEFAULT = ULong(0);
 
-// SQL_NOSCAN options
-  SQL_NOSCAN_OFF = ULONG(0); // 1.0 FALSE
-  SQL_NOSCAN_ON = ULONG(1); // 1.0 TRUE
+  // SQL_NOSCAN options
+  SQL_NOSCAN_OFF = ULong(0); // 1.0 FALSE
+  SQL_NOSCAN_ON = ULong(1); // 1.0 TRUE
   SQL_NOSCAN_DEFAULT = SQL_NOSCAN_OFF;
 
-// SQL_MAX_LENGTH options
-  SQL_MAX_LENGTH_DEFAULT = ULONG(0);
+  // SQL_MAX_LENGTH options
+  SQL_MAX_LENGTH_DEFAULT = ULong(0);
 
-// values for SQL_ATTR_ASYNC_ENABLE
-  SQL_ASYNC_ENABLE_OFF = ULONG(0);
-  SQL_ASYNC_ENABLE_ON = ULONG(1);
+  // values for SQL_ATTR_ASYNC_ENABLE
+  SQL_ASYNC_ENABLE_OFF = ULong(0);
+  SQL_ASYNC_ENABLE_ON = ULong(1);
   SQL_ASYNC_ENABLE_DEFAULT = SQL_ASYNC_ENABLE_OFF;
 
-// SQL_BIND_TYPE options
-  SQL_BIND_BY_COLUMN = ULONG(0);
+  // SQL_BIND_TYPE options
+  SQL_BIND_BY_COLUMN = ULong(0);
   SQL_BIND_TYPE_DEFAULT = SQL_BIND_BY_COLUMN; // Default value
 
-// SQL_CONCURRENCY options
+  // SQL_CONCURRENCY options
   SQL_CONCUR_READ_ONLY = 1;
   SQL_CONCUR_LOCK = 2;
   SQL_CONCUR_ROWVER = 3;
   SQL_CONCUR_VALUES = 4;
   SQL_CONCUR_DEFAULT = SQL_CONCUR_READ_ONLY; // Default value
 
-// SQL_CURSOR_TYPE options
-  SQL_CURSOR_FORWARD_ONLY = ULONG(0);
-  SQL_CURSOR_KEYSET_DRIVEN = ULONG(1);
-  SQL_CURSOR_DYNAMIC = ULONG(2);
-  SQL_CURSOR_STATIC = ULONG(3);
+  // SQL_CURSOR_TYPE options
+  SQL_CURSOR_FORWARD_ONLY = ULong(0);
+  SQL_CURSOR_KEYSET_DRIVEN = ULong(1);
+  SQL_CURSOR_DYNAMIC = ULong(2);
+  SQL_CURSOR_STATIC = ULong(3);
   SQL_CURSOR_TYPE_DEFAULT = SQL_CURSOR_FORWARD_ONLY; // Default value
 
-// SQL_ROWSET_SIZE options
-  SQL_ROWSET_SIZE_DEFAULT = ULONG(1);
+  // SQL_ROWSET_SIZE options
+  SQL_ROWSET_SIZE_DEFAULT = ULong(1);
 
-// SQL_KEYSET_SIZE options
-  SQL_KEYSET_SIZE_DEFAULT = ULONG(0);
+  // SQL_KEYSET_SIZE options
+  SQL_KEYSET_SIZE_DEFAULT = ULong(0);
 
-// SQL_SIMULATE_CURSOR options
-  SQL_SC_NON_UNIQUE = ULONG(0);
-  SQL_SC_TRY_UNIQUE = ULONG(1);
-  SQL_SC_UNIQUE = ULONG(2);
+  // SQL_SIMULATE_CURSOR options
+  SQL_SC_NON_UNIQUE = ULong(0);
+  SQL_SC_TRY_UNIQUE = ULong(1);
+  SQL_SC_UNIQUE = ULong(2);
 
-// SQL_RETRIEVE_DATA options
-  SQL_RD_OFF = ULONG(0);
-  SQL_RD_ON = ULONG(1);
+  // SQL_RETRIEVE_DATA options
+  SQL_RD_OFF = ULong(0);
+  SQL_RD_ON = ULong(1);
   SQL_RD_DEFAULT = SQL_RD_ON;
 
-// SQL_USE_BOOKMARKS options
-  SQL_UB_OFF = ULONG(0);
-  SQL_UB_ON = ULONG(1);
+  // SQL_USE_BOOKMARKS options
+  SQL_UB_OFF = ULong(0);
+  SQL_UB_ON = ULong(1);
   SQL_UB_DEFAULT = SQL_UB_OFF;
 
-// New values for SQL_USE_BOOKMARKS attribute
+  // New values for SQL_USE_BOOKMARKS attribute
   SQL_UB_FIXED = SQL_UB_ON;
-  SQL_UB_VARIABLE = ULONG(2);
+  SQL_UB_VARIABLE = ULong(2);
 
-// extended descriptor field
+  // extended descriptor field
   SQL_DESC_ARRAY_SIZE = 20;
   SQL_DESC_ARRAY_STATUS_PTR = 21;
   SQL_DESC_AUTO_UNIQUE_VALUE = SQL_COLUMN_AUTO_INCREMENT;
@@ -1855,12 +1886,12 @@ const
   SQL_DESC_UNSIGNED = SQL_COLUMN_UNSIGNED;
   SQL_DESC_UPDATABLE = SQL_COLUMN_UPDATABLE;
 
-// defines for diagnostics fields
+  // defines for diagnostics fields
   SQL_DIAG_CURSOR_ROW_COUNT = (-1249);
   SQL_DIAG_ROW_NUMBER = (-1248);
   SQL_DIAG_COLUMN_NUMBER = (-1247);
 
-// SQL extended datatypes
+  // SQL extended datatypes
   SQL_DATE = 9;
   SQL_INTERVAL = 10;
   SQL_TIME = 10;
@@ -1874,7 +1905,7 @@ const
   SQL_BIT = (-7);
   SQL_GUID = (-11);
 
-// interval code
+  // interval code
   SQL_CODE_YEAR = 1;
   SQL_CODE_MONTH = 2;
   SQL_CODE_DAY = 3;
@@ -1908,9 +1939,8 @@ const
   SQL_UNICODE_LONGVARCHAR = SQL_WLONGVARCHAR;
   SQL_UNICODE_CHAR = SQL_WCHAR;
 
-
-// C datatype to SQL datatype mapping SQL types
-// -------------------
+  // C datatype to SQL datatype mapping SQL types
+  // -------------------
   SQL_C_CHAR = SQL_CHAR; // CHAR, VARCHAR, DECIMAL, NUMERIC
   SQL_C_LONG = SQL_INTEGER; // INTEGER
   SQL_C_SHORT = SQL_SMALLINT; // SMALLINT
@@ -1921,7 +1951,7 @@ const
   SQL_SIGNED_OFFSET = (-20);
   SQL_UNSIGNED_OFFSET = (-22);
 
-// C datatype to SQL datatype mapping
+  // C datatype to SQL datatype mapping
   SQL_C_DATE = SQL_DATE;
   SQL_C_TIME = SQL_TIME;
   SQL_C_TIMESTAMP = SQL_TIMESTAMP;
@@ -1943,28 +1973,28 @@ const
   SQL_C_INTERVAL_MINUTE_TO_SECOND = SQL_INTERVAL_MINUTE_TO_SECOND;
   SQL_C_BINARY = SQL_BINARY;
   SQL_C_BIT = SQL_BIT;
-  SQL_C_SBIGINT = (SQL_BIGINT+SQL_SIGNED_OFFSET); // SIGNED BIGINT
-  SQL_C_UBIGINT = (SQL_BIGINT+SQL_UNSIGNED_OFFSET); // UNSIGNED BIGINT
+  SQL_C_SBIGINT = (SQL_BIGINT + SQL_SIGNED_OFFSET); // SIGNED BIGINT
+  SQL_C_UBIGINT = (SQL_BIGINT + SQL_UNSIGNED_OFFSET); // UNSIGNED BIGINT
   SQL_C_TINYINT = SQL_TINYINT;
-  SQL_C_SLONG = (SQL_C_LONG+SQL_SIGNED_OFFSET); // SIGNED INTEGER
-  SQL_C_SSHORT = (SQL_C_SHORT+SQL_SIGNED_OFFSET); // SIGNED SMALLINT
-  SQL_C_STINYINT = (SQL_TINYINT+SQL_SIGNED_OFFSET); // SIGNED TINYINT
-  SQL_C_ULONG = (SQL_C_LONG+SQL_UNSIGNED_OFFSET); // UNSIGNED INTEGER
-  SQL_C_USHORT = (SQL_C_SHORT+SQL_UNSIGNED_OFFSET); // UNSIGNED SMALLINT
-  SQL_C_UTINYINT = (SQL_TINYINT+SQL_UNSIGNED_OFFSET); // UNSIGNED TINYINT
+  SQL_C_SLONG = (SQL_C_LONG + SQL_SIGNED_OFFSET); // SIGNED INTEGER
+  SQL_C_SSHORT = (SQL_C_SHORT + SQL_SIGNED_OFFSET); // SIGNED SMALLINT
+  SQL_C_STINYINT = (SQL_TINYINT + SQL_SIGNED_OFFSET); // SIGNED TINYINT
+  SQL_C_ULONG = (SQL_C_LONG + SQL_UNSIGNED_OFFSET); // UNSIGNED INTEGER
+  SQL_C_USHORT = (SQL_C_SHORT + SQL_UNSIGNED_OFFSET); // UNSIGNED SMALLINT
+  SQL_C_UTINYINT = (SQL_TINYINT + SQL_UNSIGNED_OFFSET); // UNSIGNED TINYINT
   SQL_C_BOOKMARK = SQL_C_ULONG; // BOOKMARK
   SQL_C_GUID = SQL_GUID;
 
   SQL_TYPE_NULL = 0;
   SQL_C_VARBOOKMARK = SQL_C_BINARY;
 
-// define for SQL_DIAG_ROW_NUMBER and SQL_DIAG_COLUMN_NUMBER
+  // define for SQL_DIAG_ROW_NUMBER and SQL_DIAG_COLUMN_NUMBER
   SQL_NO_ROW_NUMBER = (-1);
   SQL_NO_COLUMN_NUMBER = (-1);
   SQL_ROW_NUMBER_UNKNOWN = (-2);
   SQL_COLUMN_NUMBER_UNKNOWN = (-2);
 
-// SQLBindParameter extensions
+  // SQLBindParameter extensions
   SQL_DEFAULT_PARAM = (-5);
   SQL_IGNORE = (-6);
   SQL_COLUMN_IGNORE = SQL_IGNORE;
@@ -1973,39 +2003,39 @@ const
 function SQL_LEN_DATA_AT_EXEC(length: Integer): Integer;
 
 const
-// binary length for driver specific attributes
+  // binary length for driver specific attributes
   SQL_LEN_BINARY_ATTR_OFFSET = (-100);
 
 function SQL_LEN_BINARY_ATTR(length: Integer): Integer;
 
 const
-//=====================================
-// SQLBindParameter block moved to here because of dependent decarations
+  //=====================================
+  // SQLBindParameter block moved to here because of dependent decarations
 
-// Defines for SQLBindParameter and
-// SQLProcedureColumns (returned in the result set)
+  // Defines for SQLBindParameter and
+  // SQLProcedureColumns (returned in the result set)
   SQL_PARAM_TYPE_UNKNOWN = 0;
   SQL_PARAM_INPUT = 1;
   SQL_PARAM_INPUT_OUTPUT = 2;
   SQL_RESULT_COL = 3;
   SQL_PARAM_OUTPUT = 4;
   SQL_RETURN_VALUE = 5;
-// End of moved block
-//=====================================
+  // End of moved block
+  //=====================================
 
-// Defines used by Driver Manager when mapping SQLSetParam to SQLBindParameter
+  // Defines used by Driver Manager when mapping SQLSetParam to SQLBindParameter
   SQL_PARAM_TYPE_DEFAULT = SQL_PARAM_INPUT_OUTPUT;
   SQL_SETPARAM_VALUE_MAX = (-1);
 
-// SQLColAttributes block
-// WAS ORIGINALLY HERE
-// Moved above because of dependent declarations
+  // SQLColAttributes block
+  // WAS ORIGINALLY HERE
+  // Moved above because of dependent declarations
 
-//*******************************************
-// SQLGetFunctions: additional values for
-// fFunction to represent functions that
-// are not in the X/Open spec.
-//*******************************************
+  //*******************************************
+  // SQLGetFunctions: additional values for
+  // fFunction to represent functions that
+  // are not in the X/Open spec.
+  //*******************************************
 
   SQL_API_SQLALLOCHANDLESTD = 73;
   SQL_API_SQLBULKOPERATIONS = 24;
@@ -2029,54 +2059,53 @@ const
   SQL_API_SQLSETSCROLLOPTIONS = 69;
   SQL_API_SQLTABLEPRIVILEGES = 70;
 
-
-//--------------------------------------------
-// SQL_API_ALL_FUNCTIONS returns an array
-// of 'booleans' representing whether a
-// function is implemented by the driver.
-//
-// CAUTION: Only functions defined in ODBC
-// version 2.0 and earlier are returned, the
-// new high-range function numbers defined by
-// X/Open break this scheme. See the new
-// method -- SQL_API_ODBC3_ALL_FUNCTIONS
-//--------------------------------------------
+  //--------------------------------------------
+  // SQL_API_ALL_FUNCTIONS returns an array
+  // of 'booleans' representing whether a
+  // function is implemented by the driver.
+  //
+  // CAUTION: Only functions defined in ODBC
+  // version 2.0 and earlier are returned, the
+  // new high-range function numbers defined by
+  // X/Open break this scheme. See the new
+  // method -- SQL_API_ODBC3_ALL_FUNCTIONS
+  //--------------------------------------------
 
   SQL_API_ALL_FUNCTIONS = 0; // See CAUTION above
 
-//----------------------------------------------
-// 2.X drivers export a dummy function with
-// ordinal number SQL_API_LOADBYORDINAL to speed
-// loading under the windows operating system.
-//
-// CAUTION: Loading by ordinal is not supported
-// for 3.0 and above drivers.
-//----------------------------------------------
+  //----------------------------------------------
+  // 2.X drivers export a dummy function with
+  // ordinal number SQL_API_LOADBYORDINAL to speed
+  // loading under the windows operating system.
+  //
+  // CAUTION: Loading by ordinal is not supported
+  // for 3.0 and above drivers.
+  //----------------------------------------------
 
   SQL_API_LOADBYORDINAL = 199; // See CAUTION above
 
-//----------------------------------------------
-// SQL_API_ODBC3_ALL_FUNCTIONS
-// This returns a bitmap, which allows us to*
-// handle the higher-valued function numbers.
-// Use SQL_FUNC_EXISTS(bitmap,function_number)
-// to determine if the function exists.
-//----------------------------------------------
+  //----------------------------------------------
+  // SQL_API_ODBC3_ALL_FUNCTIONS
+  // This returns a bitmap, which allows us to*
+  // handle the higher-valued function numbers.
+  // Use SQL_FUNC_EXISTS(bitmap,function_number)
+  // to determine if the function exists.
+  //----------------------------------------------
 
   SQL_API_ODBC3_ALL_FUNCTIONS = 999;
   SQL_API_ODBC3_ALL_FUNCTIONS_SIZE = 250; // array of 250 words
 
-function SQL_FUNC_EXISTS(pfExists: PUWORD; uwAPI: UWORD): SQLINTEGER;
+function SQL_FUNC_EXISTS(pfExists: PUWord; uwAPI: UWord): SqlInteger;
 
 const
-//***********************************************
-// Extended definitions for SQLGetInfo
-//***********************************************
+  //***********************************************
+  // Extended definitions for SQLGetInfo
+  //***********************************************
 
-//---------------------------------
-// Values in ODBC 2.0 that are not
-// in the X/Open spec
-//---------------------------------
+  //---------------------------------
+  // Values in ODBC 2.0 that are not
+  // in the X/Open spec
+  //---------------------------------
   SQL_INFO_FIRST = 0;
   SQL_ACTIVE_CONNECTIONS = 0; // MAX_DRIVER_CONNECTIONS
   SQL_ACTIVE_STATEMENTS = 1; // MAX_CONCURRENT_ACTIVITIES
@@ -2158,11 +2187,11 @@ const
   SQL_LIKE_ESCAPE_CLAUSE = 113;
   SQL_QUALIFIER_LOCATION = 114;
 
-//-----------------------------------------------
-// ODBC 3.0 SQLGetInfo values that are not part
-// of the X/Open standard at this time. X/Open
-// standard values are in sql.h.
-//-----------------------------------------------
+  //-----------------------------------------------
+  // ODBC 3.0 SQLGetInfo values that are not part
+  // of the X/Open standard at this time. X/Open
+  // standard values are in sql.h.
+  //-----------------------------------------------
 
   SQL_ACTIVE_ENVIRONMENTS = 116;
   SQL_ALTER_DOMAIN = 117;
@@ -2234,30 +2263,30 @@ const
 
   SQL_DTC_TRANSITION_COST = 1750;
 
-// SQL_ALTER_TABLE bitmasks
-// the following bitmasks are defined in sql.h
-{
-  SQL_AT_ADD_COLUMN = $00000001;
-  SQL_AT_DROP_COLUMN = $00000002;
-  SQL_AT_ADD_CONSTRAINT = $00000008;
-//= ODBC 3
-  SQL_AT_ADD_COLUMN_SINGLE = $00000020;
-  SQL_AT_ADD_COLUMN_DEFAULT = $00000040;
-  SQL_AT_ADD_COLUMN_COLLATION = $00000080;
-  SQL_AT_SET_COLUMN_DEFAULT = $00000100;
-  SQL_AT_DROP_COLUMN_DEFAULT = $00000200;
-  SQL_AT_DROP_COLUMN_CASCADE = $00000400;
-  SQL_AT_DROP_COLUMN_RESTRICT = $00000800;
-  SQL_AT_ADD_TABLE_CONSTRAINT = $00001000;
-  SQL_AT_DROP_TABLE_CONSTRAINT_CASCADE = $00002000;
-  SQL_AT_DROP_TABLE_CONSTRAINT_RESTRICT = $00004000;
-  SQL_AT_CONSTRAINT_NAME_DEFINITION = $00008000;
-  SQL_AT_CONSTRAINT_INITIALLY_DEFERRED = $00010000;
-  SQL_AT_CONSTRAINT_INITIALLY_IMMEDIATE = $00020000;
-  SQL_AT_CONSTRAINT_DEFERRABLE = $00040000;
-  SQL_AT_CONSTRAINT_NON_DEFERRABLE = $00080000;
-}
-// SQL_CONVERT_* return value bitmasks
+  // SQL_ALTER_TABLE bitmasks
+  // the following bitmasks are defined in sql.h
+  {
+    SQL_AT_ADD_COLUMN = $00000001;
+    SQL_AT_DROP_COLUMN = $00000002;
+    SQL_AT_ADD_CONSTRAINT = $00000008;
+  //= ODBC 3
+    SQL_AT_ADD_COLUMN_SINGLE = $00000020;
+    SQL_AT_ADD_COLUMN_DEFAULT = $00000040;
+    SQL_AT_ADD_COLUMN_COLLATION = $00000080;
+    SQL_AT_SET_COLUMN_DEFAULT = $00000100;
+    SQL_AT_DROP_COLUMN_DEFAULT = $00000200;
+    SQL_AT_DROP_COLUMN_CASCADE = $00000400;
+    SQL_AT_DROP_COLUMN_RESTRICT = $00000800;
+    SQL_AT_ADD_TABLE_CONSTRAINT = $00001000;
+    SQL_AT_DROP_TABLE_CONSTRAINT_CASCADE = $00002000;
+    SQL_AT_DROP_TABLE_CONSTRAINT_RESTRICT = $00004000;
+    SQL_AT_CONSTRAINT_NAME_DEFINITION = $00008000;
+    SQL_AT_CONSTRAINT_INITIALLY_DEFERRED = $00010000;
+    SQL_AT_CONSTRAINT_INITIALLY_IMMEDIATE = $00020000;
+    SQL_AT_CONSTRAINT_DEFERRABLE = $00040000;
+    SQL_AT_CONSTRAINT_NON_DEFERRABLE = $00080000;
+  }
+  // SQL_CONVERT_* return value bitmasks
   SQL_CVT_CHAR = $00000001;
   SQL_CVT_NUMERIC = $00000002;
   SQL_CVT_DECIMAL = $00000004;
@@ -2284,11 +2313,11 @@ const
   SQL_CVT_WVARCHAR = $00800000;
   SQL_CVT_GUID = $01000000;
 
-// SQL_CONVERT_FUNCTIONS functions
+  // SQL_CONVERT_FUNCTIONS functions
   SQL_FN_CVT_CONVERT = $00000001;
   SQL_FN_CVT_CAST = $00000002;
 
-// SQL_STRING_FUNCTIONS functions
+  // SQL_STRING_FUNCTIONS functions
   SQL_FN_STR_CONCAT = $00000001;
   SQL_FN_STR_INSERT = $00000002;
   SQL_FN_STR_LEFT = $00000004;
@@ -2314,7 +2343,7 @@ const
   SQL_FN_STR_OCTET_LENGTH = $00400000;
   SQL_FN_STR_POSITION = $00800000;
 
-// SQL_SQL92_STRING_FUNCTIONS
+  // SQL_SQL92_STRING_FUNCTIONS
   SQL_SSF_CONVERT = $00000001;
   SQL_SSF_LOWER = $00000002;
   SQL_SSF_UPPER = $00000004;
@@ -2324,7 +2353,7 @@ const
   SQL_SSF_TRIM_LEADING = $00000040;
   SQL_SSF_TRIM_TRAILING = $00000080;
 
-// SQL_NUMERIC_FUNCTIONS functions
+  // SQL_NUMERIC_FUNCTIONS functions
   SQL_FN_NUM_ABS = $00000001;
   SQL_FN_NUM_ACOS = $00000002;
   SQL_FN_NUM_ASIN = $00000004;
@@ -2350,7 +2379,7 @@ const
   SQL_FN_NUM_ROUND = $00400000;
   SQL_FN_NUM_TRUNCATE = $00800000;
 
-// SQL_SQL92_NUMERIC_VALUE_FUNCTIONS
+  // SQL_SQL92_NUMERIC_VALUE_FUNCTIONS
   SQL_SNVF_BIT_LENGTH = $00000001;
   SQL_SNVF_CHAR_LENGTH = $00000002;
   SQL_SNVF_CHARACTER_LENGTH = $00000004;
@@ -2358,7 +2387,7 @@ const
   SQL_SNVF_OCTET_LENGTH = $00000010;
   SQL_SNVF_POSITION = $00000020;
 
-// SQL_TIMEDATE_FUNCTIONS functions
+  // SQL_TIMEDATE_FUNCTIONS functions
   SQL_FN_TD_NOW = $00000001;
   SQL_FN_TD_CURDATE = $00000002;
   SQL_FN_TD_DAYOFMONTH = $00000004;
@@ -2381,17 +2410,17 @@ const
   SQL_FN_TD_CURRENT_TIMESTAMP = $00080000;
   SQL_FN_TD_EXTRACT = $00100000;
 
-// SQL_SQL92_DATETIME_FUNCTIONS
+  // SQL_SQL92_DATETIME_FUNCTIONS
   SQL_SDF_CURRENT_DATE = $00000001;
   SQL_SDF_CURRENT_TIME = $00000002;
   SQL_SDF_CURRENT_TIMESTAMP = $00000004;
 
-// SQL_SYSTEM_FUNCTIONS functions
+  // SQL_SYSTEM_FUNCTIONS functions
   SQL_FN_SYS_USERNAME = $00000001;
   SQL_FN_SYS_DBNAME = $00000002;
   SQL_FN_SYS_IFNULL = $00000004;
 
-// SQL_TIMEDATE_ADD_INTERVALS and SQL_TIMEDATE_DIFF_INTERVALS functions
+  // SQL_TIMEDATE_ADD_INTERVALS and SQL_TIMEDATE_DIFF_INTERVALS functions
   SQL_FN_TSI_FRAC_SECOND = $00000001;
   SQL_FN_TSI_SECOND = $00000002;
   SQL_FN_TSI_MINUTE = $00000004;
@@ -2402,56 +2431,56 @@ const
   SQL_FN_TSI_QUARTER = $00000080;
   SQL_FN_TSI_YEAR = $00000100;
 
-// bitmasks for SQL_DYNAMIC_CURSOR_ATTRIBUTES1,
-//- SQL_FORWARD_ONLY_CURSOR_ATTRIBUTES1,
-//- SQL_KEYSET_CURSOR_ATTRIBUTES1, and SQL_STATIC_CURSOR_ATTRIBUTES1
-//=
+  // bitmasks for SQL_DYNAMIC_CURSOR_ATTRIBUTES1,
+  //- SQL_FORWARD_ONLY_CURSOR_ATTRIBUTES1,
+  //- SQL_KEYSET_CURSOR_ATTRIBUTES1, and SQL_STATIC_CURSOR_ATTRIBUTES1
+  //=
 
-// supported SQLFetchScroll FetchOrientation's
+  // supported SQLFetchScroll FetchOrientation's
   SQL_CA1_NEXT = $00000001;
   SQL_CA1_ABSOLUTE = $00000002;
   SQL_CA1_RELATIVE = $00000004;
   SQL_CA1_BOOKMARK = $00000008;
 
-// supported SQLSetPos LockType's
+  // supported SQLSetPos LockType's
   SQL_CA1_LOCK_NO_CHANGE = $00000040;
   SQL_CA1_LOCK_EXCLUSIVE = $00000080;
   SQL_CA1_LOCK_UNLOCK = $00000100;
 
-// supported SQLSetPos Operations
+  // supported SQLSetPos Operations
   SQL_CA1_POS_POSITION = $00000200;
   SQL_CA1_POS_UPDATE = $00000400;
   SQL_CA1_POS_DELETE = $00000800;
   SQL_CA1_POS_REFRESH = $00001000;
 
-// positioned updates and deletes
+  // positioned updates and deletes
   SQL_CA1_POSITIONED_UPDATE = $00002000;
   SQL_CA1_POSITIONED_DELETE = $00004000;
   SQL_CA1_SELECT_FOR_UPDATE = $00008000;
 
-// supported SQLBulkOperations operations
+  // supported SQLBulkOperations operations
   SQL_CA1_BULK_ADD = $00010000;
   SQL_CA1_BULK_UPDATE_BY_BOOKMARK = $00020000;
   SQL_CA1_BULK_DELETE_BY_BOOKMARK = $00040000;
   SQL_CA1_BULK_FETCH_BY_BOOKMARK = $00080000;
 
-// bitmasks for SQL_DYNAMIC_CURSOR_ATTRIBUTES2,
-//- SQL_FORWARD_ONLY_CURSOR_ATTRIBUTES2,
-//- SQL_KEYSET_CURSOR_ATTRIBUTES2, and SQL_STATIC_CURSOR_ATTRIBUTES2
-//=
+  // bitmasks for SQL_DYNAMIC_CURSOR_ATTRIBUTES2,
+  //- SQL_FORWARD_ONLY_CURSOR_ATTRIBUTES2,
+  //- SQL_KEYSET_CURSOR_ATTRIBUTES2, and SQL_STATIC_CURSOR_ATTRIBUTES2
+  //=
 
-// supported values for SQL_ATTR_SCROLL_CONCURRENCY
+  // supported values for SQL_ATTR_SCROLL_CONCURRENCY
   SQL_CA2_READ_ONLY_CONCURRENCY = $00000001;
   SQL_CA2_LOCK_CONCURRENCY = $00000002;
   SQL_CA2_OPT_ROWVER_CONCURRENCY = $00000004;
   SQL_CA2_OPT_VALUES_CONCURRENCY = $00000008;
 
-// sensitivity of the cursor to its own inserts, deletes, and updates
+  // sensitivity of the cursor to its own inserts, deletes, and updates
   SQL_CA2_SENSITIVITY_ADDITIONS = $00000010;
   SQL_CA2_SENSITIVITY_DELETIONS = $00000020;
   SQL_CA2_SENSITIVITY_UPDATES = $00000040;
 
-// semantics of SQL_ATTR_MAX_ROWS
+  // semantics of SQL_ATTR_MAX_ROWS
   SQL_CA2_MAX_ROWS_SELECT = $00000080;
   SQL_CA2_MAX_ROWS_INSERT = $00000100;
   SQL_CA2_MAX_ROWS_DELETE = $00000200;
@@ -2461,122 +2490,122 @@ const
     SQL_CA2_MAX_ROWS_INSERT or SQL_CA2_MAX_ROWS_DELETE or
     SQL_CA2_MAX_ROWS_UPDATE or SQL_CA2_MAX_ROWS_CATALOG);
 
-// semantics of SQL_DIAG_CURSOR_ROW_COUNT
+  // semantics of SQL_DIAG_CURSOR_ROW_COUNT
   SQL_CA2_CRC_EXACT = $00001000;
   SQL_CA2_CRC_APPROXIMATE = $00002000;
 
-// the kinds of positioned statements that can be simulated
+  // the kinds of positioned statements that can be simulated
   SQL_CA2_SIMULATE_NON_UNIQUE = $00004000;
   SQL_CA2_SIMULATE_TRY_UNIQUE = $00008000;
   SQL_CA2_SIMULATE_UNIQUE = $00010000;
 
-// SQL_ODBC_API_CONFORMANCE values
+  // SQL_ODBC_API_CONFORMANCE values
   SQL_OAC_NONE = $0000;
   SQL_OAC_LEVEL1 = $0001;
   SQL_OAC_LEVEL2 = $0002;
 
-// SQL_ODBC_SAG_CLI_CONFORMANCE values
+  // SQL_ODBC_SAG_CLI_CONFORMANCE values
   SQL_OSCC_NOT_COMPLIANT = $0000;
   SQL_OSCC_COMPLIANT = $0001;
 
-// SQL_ODBC_SQL_CONFORMANCE values
+  // SQL_ODBC_SQL_CONFORMANCE values
   SQL_OSC_MINIMUM = $0000;
   SQL_OSC_CORE = $0001;
   SQL_OSC_EXTENDED = $0002;
 
-// SQL_CONCAT_NULL_BEHAVIOR values
+  // SQL_CONCAT_NULL_BEHAVIOR values
   SQL_CB_NULL = $0000;
   SQL_CB_NON_NULL = $0001;
 
-// SQL_SCROLL_OPTIONS masks
+  // SQL_SCROLL_OPTIONS masks
   SQL_SO_FORWARD_ONLY = $00000001;
   SQL_SO_KEYSET_DRIVEN = $00000002;
   SQL_SO_DYNAMIC = $00000004;
   SQL_SO_MIXED = $00000008;
   SQL_SO_STATIC = $00000010;
 
-// SQL_FETCH_DIRECTION masks
+  // SQL_FETCH_DIRECTION masks
   SQL_FD_FETCH_RESUME = $00000040; // SQL_FETCH_RESUME is no longer supported
   SQL_FD_FETCH_BOOKMARK = $00000080;
 
-// SQL_TXN_ISOLATION_OPTION masks
+  // SQL_TXN_ISOLATION_OPTION masks
   SQL_TXN_VERSIONING = $00000010; // SQL_TXN_VERSIONING is no longer supported
 
-// SQL_CORRELATION_NAME values
+  // SQL_CORRELATION_NAME values
   SQL_CN_NONE = $0000;
   SQL_CN_DIFFERENT = $0001;
   SQL_CN_ANY = $0002;
 
-// SQL_NON_NULLABLE_COLUMNS values
+  // SQL_NON_NULLABLE_COLUMNS values
   SQL_NNC_NULL = $0000;
   SQL_NNC_NON_NULL = $0001;
 
-// SQL_NULL_COLLATION values
+  // SQL_NULL_COLLATION values
   SQL_NC_START = $0002;
   SQL_NC_END = $0004;
 
-// SQL_FILE_USAGE values
+  // SQL_FILE_USAGE values
   SQL_FILE_NOT_SUPPORTED = $0000;
   SQL_FILE_TABLE = $0001;
   SQL_FILE_QUALIFIER = $0002;
   SQL_FILE_CATALOG = SQL_FILE_QUALIFIER; // ODBC 3.0
 
-// SQL_GETDATA_EXTENSIONS values
+  // SQL_GETDATA_EXTENSIONS values
   SQL_GD_BLOCK = $00000004;
   SQL_GD_BOUND = $00000008;
 
-// SQL_POSITIONED_STATEMENTS masks
+  // SQL_POSITIONED_STATEMENTS masks
   SQL_PS_POSITIONED_DELETE = $00000001;
   SQL_PS_POSITIONED_UPDATE = $00000002;
   SQL_PS_SELECT_FOR_UPDATE = $00000004;
 
-// SQL_GROUP_BY values
+  // SQL_GROUP_BY values
   SQL_GB_NOT_SUPPORTED = $0000;
   SQL_GB_GROUP_BY_EQUALS_SELECT = $0001;
   SQL_GB_GROUP_BY_CONTAINS_SELECT = $0002;
   SQL_GB_NO_RELATION = $0003;
   SQL_GB_COLLATE = $0004;
 
-// SQL_OWNER_USAGE masks
+  // SQL_OWNER_USAGE masks
   SQL_OU_DML_STATEMENTS = $00000001;
   SQL_OU_PROCEDURE_INVOCATION = $00000002;
   SQL_OU_TABLE_DEFINITION = $00000004;
   SQL_OU_INDEX_DEFINITION = $00000008;
   SQL_OU_PRIVILEGE_DEFINITION = $00000010;
 
-// SQL_SCHEMA_USAGE masks
+  // SQL_SCHEMA_USAGE masks
   SQL_SU_DML_STATEMENTS = SQL_OU_DML_STATEMENTS;
   SQL_SU_PROCEDURE_INVOCATION = SQL_OU_PROCEDURE_INVOCATION;
   SQL_SU_TABLE_DEFINITION = SQL_OU_TABLE_DEFINITION;
   SQL_SU_INDEX_DEFINITION = SQL_OU_INDEX_DEFINITION;
   SQL_SU_PRIVILEGE_DEFINITION = SQL_OU_PRIVILEGE_DEFINITION;
 
-// SQL_QUALIFIER_USAGE masks
+  // SQL_QUALIFIER_USAGE masks
   SQL_QU_DML_STATEMENTS = $00000001;
   SQL_QU_PROCEDURE_INVOCATION = $00000002;
   SQL_QU_TABLE_DEFINITION = $00000004;
   SQL_QU_INDEX_DEFINITION = $00000008;
   SQL_QU_PRIVILEGE_DEFINITION = $00000010;
 
-// SQL_CATALOG_USAGE masks
+  // SQL_CATALOG_USAGE masks
   SQL_CU_DML_STATEMENTS = SQL_QU_DML_STATEMENTS;
   SQL_CU_PROCEDURE_INVOCATION = SQL_QU_PROCEDURE_INVOCATION;
   SQL_CU_TABLE_DEFINITION = SQL_QU_TABLE_DEFINITION;
   SQL_CU_INDEX_DEFINITION = SQL_QU_INDEX_DEFINITION;
   SQL_CU_PRIVILEGE_DEFINITION = SQL_QU_PRIVILEGE_DEFINITION;
 
-// SQL_SUBQUERIES masks
+  // SQL_SUBQUERIES masks
   SQL_SQ_COMPARISON = $00000001;
   SQL_SQ_EXISTS = $00000002;
   SQL_SQ_IN = $00000004;
   SQL_SQ_QUANTIFIED = $00000008;
   SQL_SQ_CORRELATED_SUBQUERIES = $00000010;
 
-// SQL_UNION masks
+  // SQL_UNION masks
   SQL_U_UNION = $00000001;
   SQL_U_UNION_ALL = $00000002;
 
-// SQL_BOOKMARK_PERSISTENCE values
+  // SQL_BOOKMARK_PERSISTENCE values
   SQL_BP_CLOSE = $00000001;
   SQL_BP_DELETE = $00000002;
   SQL_BP_DROP = $00000004;
@@ -2585,37 +2614,36 @@ const
   SQL_BP_OTHER_HSTMT = $00000020;
   SQL_BP_SCROLL = $00000040;
 
-// SQL_STATIC_SENSITIVITY values
+  // SQL_STATIC_SENSITIVITY values
   SQL_SS_ADDITIONS = $00000001;
   SQL_SS_DELETIONS = $00000002;
   SQL_SS_UPDATES = $00000004;
 
-// SQL_VIEW values
+  // SQL_VIEW values
   SQL_CV_CREATE_VIEW = $00000001;
   SQL_CV_CHECK_OPTION = $00000002;
   SQL_CV_CASCADED = $00000004;
   SQL_CV_LOCAL = $00000008;
 
-// SQL_LOCK_TYPES masks
+  // SQL_LOCK_TYPES masks
   SQL_LCK_NO_CHANGE = $00000001;
   SQL_LCK_EXCLUSIVE = $00000002;
   SQL_LCK_UNLOCK = $00000004;
 
-// SQL_POS_OPERATIONS masks
+  // SQL_POS_OPERATIONS masks
   SQL_POS_POSITION = $00000001;
   SQL_POS_REFRESH = $00000002;
   SQL_POS_UPDATE = $00000004;
   SQL_POS_DELETE = $00000008;
   SQL_POS_ADD = $00000010;
 
-// SQL_QUALIFIER_LOCATION values
+  // SQL_QUALIFIER_LOCATION values
   SQL_QL_START = $0001;
   SQL_QL_END = $0002;
 
+  // Here start return values for ODBC 3.0 SQLGetInfo
 
-// Here start return values for ODBC 3.0 SQLGetInfo
-
-// SQL_AGGREGATE_FUNCTIONS bitmasks
+  // SQL_AGGREGATE_FUNCTIONS bitmasks
   SQL_AF_AVG = $00000001;
   SQL_AF_COUNT = $00000002;
   SQL_AF_MAX = $00000004;
@@ -2624,13 +2652,13 @@ const
   SQL_AF_DISTINCT = $00000020;
   SQL_AF_ALL = $00000040;
 
-// SQL_SQL_CONFORMANCE bit masks
+  // SQL_SQL_CONFORMANCE bit masks
   SQL_SC_SQL92_ENTRY = $00000001;
   SQL_SC_FIPS127_2_TRANSITIONAL = $00000002;
   SQL_SC_SQL92_INTERMEDIATE = $00000004;
   SQL_SC_SQL92_FULL = $00000008;
 
-// SQL_DATETIME_LITERALS masks
+  // SQL_DATETIME_LITERALS masks
   SQL_DL_SQL92_DATE = $00000001;
   SQL_DL_SQL92_TIME = $00000002;
   SQL_DL_SQL92_TIMESTAMP = $00000004;
@@ -2648,37 +2676,37 @@ const
   SQL_DL_SQL92_INTERVAL_HOUR_TO_SECOND = $00004000;
   SQL_DL_SQL92_INTERVAL_MINUTE_TO_SECOND = $00008000;
 
-// SQL_CATALOG_LOCATION values
+  // SQL_CATALOG_LOCATION values
   SQL_CL_START = SQL_QL_START;
   SQL_CL_END = SQL_QL_END;
 
-// values for SQL_BATCH_ROW_COUNT
+  // values for SQL_BATCH_ROW_COUNT
   SQL_BRC_PROCEDURES = $0000001;
   SQL_BRC_EXPLICIT = $0000002;
   SQL_BRC_ROLLED_UP = $0000004;
 
-// bitmasks for SQL_BATCH_SUPPORT
+  // bitmasks for SQL_BATCH_SUPPORT
   SQL_BS_SELECT_EXPLICIT = $00000001;
   SQL_BS_ROW_COUNT_EXPLICIT = $00000002;
   SQL_BS_SELECT_PROC = $00000004;
   SQL_BS_ROW_COUNT_PROC = $00000008;
 
-// Values for SQL_PARAM_ARRAY_ROW_COUNTS getinfo
+  // Values for SQL_PARAM_ARRAY_ROW_COUNTS getinfo
   SQL_PARC_BATCH = 1;
   SQL_PARC_NO_BATCH = 2;
 
-// values for SQL_PARAM_ARRAY_SELECTS
+  // values for SQL_PARAM_ARRAY_SELECTS
   SQL_PAS_BATCH = 1;
   SQL_PAS_NO_BATCH = 2;
   SQL_PAS_NO_SELECT = 3;
 
-// Bitmasks for SQL_INDEX_KEYWORDS
+  // Bitmasks for SQL_INDEX_KEYWORDS
   SQL_IK_NONE = $00000000;
   SQL_IK_ASC = $00000001;
   SQL_IK_DESC = $00000002;
   SQL_IK_ALL = (SQL_IK_ASC or SQL_IK_DESC);
 
-// Bitmasks for SQL_INFO_SCHEMA_VIEWS
+  // Bitmasks for SQL_INFO_SCHEMA_VIEWS
   SQL_ISV_ASSERTIONS = $00000001;
   SQL_ISV_CHARACTER_SETS = $00000002;
   SQL_ISV_CHECK_CONSTRAINTS = $00000004;
@@ -2703,15 +2731,15 @@ const
   SQL_ISV_VIEW_TABLE_USAGE = $00200000;
   SQL_ISV_VIEWS = $00400000;
 
-// Bitmasks for SQL_ASYNC_MODE
-// Already declared in sql.h
-{
-  SQL_AM_NONE = 0;
-  SQL_AM_CONNECTION = 1;
-  SQL_AM_STATEMENT = 2;
-}
+  // Bitmasks for SQL_ASYNC_MODE
+  // Already declared in sql.h
+  {
+    SQL_AM_NONE = 0;
+    SQL_AM_CONNECTION = 1;
+    SQL_AM_STATEMENT = 2;
+  }
 
-// Bitmasks for SQL_ALTER_DOMAIN
+  // Bitmasks for SQL_ALTER_DOMAIN
   SQL_AD_CONSTRAINT_NAME_DEFINITION = $00000001;
   SQL_AD_ADD_DOMAIN_CONSTRAINT = $00000002;
   SQL_AD_DROP_DOMAIN_CONSTRAINT = $00000004;
@@ -2722,30 +2750,30 @@ const
   SQL_AD_ADD_CONSTRAINT_DEFERRABLE = $00000080;
   SQL_AD_ADD_CONSTRAINT_NON_DEFERRABLE = $00000100;
 
-// SQL_CREATE_SCHEMA bitmasks
+  // SQL_CREATE_SCHEMA bitmasks
   SQL_CS_CREATE_SCHEMA = $00000001;
   SQL_CS_AUTHORIZATION = $00000002;
   SQL_CS_DEFAULT_CHARACTER_SET = $00000004;
 
-// SQL_CREATE_TRANSLATION bitmasks
+  // SQL_CREATE_TRANSLATION bitmasks
   SQL_CTR_CREATE_TRANSLATION = $00000001;
 
-// SQL_CREATE_ASSERTION bitmasks
+  // SQL_CREATE_ASSERTION bitmasks
   SQL_CA_CREATE_ASSERTION = $00000001;
   SQL_CA_CONSTRAINT_INITIALLY_DEFERRED = $00000010;
   SQL_CA_CONSTRAINT_INITIALLY_IMMEDIATE = $00000020;
   SQL_CA_CONSTRAINT_DEFERRABLE = $00000040;
   SQL_CA_CONSTRAINT_NON_DEFERRABLE = $00000080;
 
-// SQL_CREATE_CHARACTER_SET bitmasks
+  // SQL_CREATE_CHARACTER_SET bitmasks
   SQL_CCS_CREATE_CHARACTER_SET = $00000001;
   SQL_CCS_COLLATE_CLAUSE = $00000002;
   SQL_CCS_LIMITED_COLLATION = $00000004;
 
-// SQL_CREATE_COLLATION bitmasks
+  // SQL_CREATE_COLLATION bitmasks
   SQL_CCOL_CREATE_COLLATION = $00000001;
 
-// SQL_CREATE_DOMAIN bitmasks
+  // SQL_CREATE_DOMAIN bitmasks
   SQL_CDO_CREATE_DOMAIN = $00000001;
   SQL_CDO_DEFAULT = $00000002;
   SQL_CDO_CONSTRAINT = $00000004;
@@ -2756,7 +2784,7 @@ const
   SQL_CDO_CONSTRAINT_DEFERRABLE = $00000080;
   SQL_CDO_CONSTRAINT_NON_DEFERRABLE = $00000100;
 
-// SQL_CREATE_TABLE bitmasks
+  // SQL_CREATE_TABLE bitmasks
   SQL_CT_CREATE_TABLE = $00000001;
   SQL_CT_COMMIT_PRESERVE = $00000002;
   SQL_CT_COMMIT_DELETE = $00000004;
@@ -2772,65 +2800,65 @@ const
   SQL_CT_TABLE_CONSTRAINT = $00001000;
   SQL_CT_CONSTRAINT_NAME_DEFINITION = $00002000;
 
-// SQL_DDL_INDEX bitmasks
+  // SQL_DDL_INDEX bitmasks
   SQL_DI_CREATE_INDEX = $00000001;
   SQL_DI_DROP_INDEX = $00000002;
 
-// SQL_DROP_COLLATION bitmasks
+  // SQL_DROP_COLLATION bitmasks
   SQL_DC_DROP_COLLATION = $00000001;
 
-// SQL_DROP_DOMAIN bitmasks
+  // SQL_DROP_DOMAIN bitmasks
   SQL_DD_DROP_DOMAIN = $00000001;
   SQL_DD_RESTRICT = $00000002;
   SQL_DD_CASCADE = $00000004;
 
-// SQL_DROP_SCHEMA bitmasks
+  // SQL_DROP_SCHEMA bitmasks
   SQL_DS_DROP_SCHEMA = $00000001;
   SQL_DS_RESTRICT = $00000002;
   SQL_DS_CASCADE = $00000004;
 
-// SQL_DROP_CHARACTER_SET bitmasks
+  // SQL_DROP_CHARACTER_SET bitmasks
   SQL_DCS_DROP_CHARACTER_SET = $00000001;
 
-// SQL_DROP_ASSERTION bitmasks
+  // SQL_DROP_ASSERTION bitmasks
   SQL_DA_DROP_ASSERTION = $00000001;
 
-// SQL_DROP_TABLE bitmasks
+  // SQL_DROP_TABLE bitmasks
   SQL_DT_DROP_TABLE = $00000001;
   SQL_DT_RESTRICT = $00000002;
   SQL_DT_CASCADE = $00000004;
 
-// SQL_DROP_TRANSLATION bitmasks
+  // SQL_DROP_TRANSLATION bitmasks
   SQL_DTR_DROP_TRANSLATION = $00000001;
 
-// SQL_DROP_VIEW bitmasks
+  // SQL_DROP_VIEW bitmasks
   SQL_DV_DROP_VIEW = $00000001;
   SQL_DV_RESTRICT = $00000002;
   SQL_DV_CASCADE = $00000004;
 
-// SQL_INSERT_STATEMENT bitmasks
+  // SQL_INSERT_STATEMENT bitmasks
   SQL_IS_INSERT_LITERALS = $00000001;
   SQL_IS_INSERT_SEARCHED = $00000002;
   SQL_IS_SELECT_INTO = $00000004;
 
-// SQL_ODBC_INTERFACE_CONFORMANCE values
-  SQL_OIC_CORE = ULONG(1);
-  SQL_OIC_LEVEL1 = ULONG(2);
-  SQL_OIC_LEVEL2 = ULONG(3);
+  // SQL_ODBC_INTERFACE_CONFORMANCE values
+  SQL_OIC_CORE = ULong(1);
+  SQL_OIC_LEVEL1 = ULong(2);
+  SQL_OIC_LEVEL2 = ULong(3);
 
-// SQL_SQL92_FOREIGN_KEY_DELETE_RULE bitmasks
+  // SQL_SQL92_FOREIGN_KEY_DELETE_RULE bitmasks
   SQL_SFKD_CASCADE = $00000001;
   SQL_SFKD_NO_ACTION = $00000002;
   SQL_SFKD_SET_DEFAULT = $00000004;
   SQL_SFKD_SET_NULL = $00000008;
 
-// SQL_SQL92_FOREIGN_KEY_UPDATE_RULE bitmasks
+  // SQL_SQL92_FOREIGN_KEY_UPDATE_RULE bitmasks
   SQL_SFKU_CASCADE = $00000001;
   SQL_SFKU_NO_ACTION = $00000002;
   SQL_SFKU_SET_DEFAULT = $00000004;
   SQL_SFKU_SET_NULL = $00000008;
 
-// SQL_SQL92_GRANT bitmasks
+  // SQL_SQL92_GRANT bitmasks
   SQL_SG_USAGE_ON_DOMAIN = $00000001;
   SQL_SG_USAGE_ON_CHARACTER_SET = $00000002;
   SQL_SG_USAGE_ON_COLLATION = $00000004;
@@ -2845,7 +2873,7 @@ const
   SQL_SG_UPDATE_TABLE = $00000800;
   SQL_SG_UPDATE_COLUMN = $00001000;
 
-// SQL_SQL92_PREDICATES bitmasks
+  // SQL_SQL92_PREDICATES bitmasks
   SQL_SP_EXISTS = $00000001;
   SQL_SP_ISNOTNULL = $00000002;
   SQL_SP_ISNULL = $00000004;
@@ -2861,7 +2889,7 @@ const
   SQL_SP_COMPARISON = $00001000;
   SQL_SP_QUANTIFIED_COMPARISON = $00002000;
 
-// SQL_SQL92_RELATIONAL_JOIN_OPERATORS bitmasks
+  // SQL_SQL92_RELATIONAL_JOIN_OPERATORS bitmasks
   SQL_SRJO_CORRESPONDING_CLAUSE = $00000001;
   SQL_SRJO_CROSS_JOIN = $00000002;
   SQL_SRJO_EXCEPT_JOIN = $00000004;
@@ -2873,7 +2901,7 @@ const
   SQL_SRJO_RIGHT_OUTER_JOIN = $00000100;
   SQL_SRJO_UNION_JOIN = $00000200;
 
-// SQL_SQL92_REVOKE bitmasks
+  // SQL_SQL92_REVOKE bitmasks
   SQL_SR_USAGE_ON_DOMAIN = $00000001;
   SQL_SR_USAGE_ON_CHARACTER_SET = $00000002;
   SQL_SR_USAGE_ON_COLLATION = $00000004;
@@ -2890,90 +2918,90 @@ const
   SQL_SR_UPDATE_TABLE = $00002000;
   SQL_SR_UPDATE_COLUMN = $00004000;
 
-// SQL_SQL92_ROW_VALUE_CONSTRUCTOR bitmasks
+  // SQL_SQL92_ROW_VALUE_CONSTRUCTOR bitmasks
   SQL_SRVC_VALUE_EXPRESSION = $00000001;
   SQL_SRVC_NULL = $00000002;
   SQL_SRVC_DEFAULT = $00000004;
   SQL_SRVC_ROW_SUBQUERY = $00000008;
 
-// SQL_SQL92_VALUE_EXPRESSIONS bitmasks
+  // SQL_SQL92_VALUE_EXPRESSIONS bitmasks
   SQL_SVE_CASE = $00000001;
   SQL_SVE_CAST = $00000002;
   SQL_SVE_COALESCE = $00000004;
   SQL_SVE_NULLIF = $00000008;
 
-// SQL_STANDARD_CLI_CONFORMANCE bitmasks
+  // SQL_STANDARD_CLI_CONFORMANCE bitmasks
   SQL_SCC_XOPEN_CLI_VERSION1 = $00000001;
   SQL_SCC_ISO92_CLI = $00000002;
 
-// SQL_UNION_STATEMENT bitmasks
+  // SQL_UNION_STATEMENT bitmasks
   SQL_US_UNION = SQL_U_UNION;
   SQL_US_UNION_ALL = SQL_U_UNION_ALL;
 
-// SQL_DTC_TRANSITION_COST bitmasks
+  // SQL_DTC_TRANSITION_COST bitmasks
   SQL_DTC_ENLIST_EXPENSIVE = $00000001;
   SQL_DTC_UNENLIST_EXPENSIVE = $00000002;
 
-// additional SQLDataSources fetch directions
+  // additional SQLDataSources fetch directions
   SQL_FETCH_FIRST_USER = 31;
   SQL_FETCH_FIRST_SYSTEM = 32;
 
-// Defines for SQLSetPos
+  // Defines for SQLSetPos
   SQL_ENTIRE_ROWSET = 0;
 
-// Operations in SQLSetPos
+  // Operations in SQLSetPos
   SQL_POSITION = 0; // 1.0 FALSE
   SQL_REFRESH = 1; // 1.0 TRUE
   SQL_UPDATE = 2;
   SQL_DELETE = 3;
 
-// Operations in SQLBulkOperations
+  // Operations in SQLBulkOperations
   SQL_ADD = 4;
   SQL_SETPOS_MAX_OPTION_VALUE = SQL_ADD;
   SQL_UPDATE_BY_BOOKMARK = 5;
   SQL_DELETE_BY_BOOKMARK = 6;
   SQL_FETCH_BY_BOOKMARK = 7;
 
-// Lock options in SQLSetPos
+  // Lock options in SQLSetPos
   SQL_LOCK_NO_CHANGE = 0; // 1.0 FALSE
   SQL_LOCK_EXCLUSIVE = 1; // 1.0 TRUE
   SQL_LOCK_UNLOCK = 2;
 
   SQL_SETPOS_MAX_LOCK_VALUE = SQL_LOCK_UNLOCK;
 
-// Macros for SQLSetPos
-function SQL_POSITION_TO(hstmt: SQLHSTMT; irow: SQLUSMALLINT): SQLRETURN;
-function SQL_LOCK_RECORD(hstmt: SQLHSTMT; irow, fLock: SQLUSMALLINT): SQLRETURN;
-function SQL_REFRESH_RECORD(hstmt: SQLHSTMT; irow, fLock: SQLUSMALLINT): SQLRETURN;
-function SQL_UPDATE_RECORD(hstmt: SQLHSTMT; irow: SQLUSMALLINT): SQLRETURN;
-function SQL_DELETE_RECORD(hstmt: SQLHSTMT; irow: SQLUSMALLINT): SQLRETURN;
-function SQL_ADD_RECORD(hstmt: SQLHSTMT; irow: SQLUSMALLINT): SQLRETURN;
+  // Macros for SQLSetPos
+function SQL_POSITION_TO(HStmt: SqlHStmt; irow: SqlUSmallint): SqlReturn;
+function SQL_LOCK_RECORD(HStmt: SqlHStmt; irow, fLock: SqlUSmallint): SqlReturn;
+function SQL_REFRESH_RECORD(HStmt: SqlHStmt; irow, fLock: SqlUSmallint): SqlReturn;
+function SQL_UPDATE_RECORD(HStmt: SqlHStmt; irow: SqlUSmallint): SqlReturn;
+function SQL_DELETE_RECORD(HStmt: SqlHStmt; irow: SqlUSmallint): SqlReturn;
+function SQL_ADD_RECORD(HStmt: SqlHStmt; irow: SqlUSmallint): SqlReturn;
 
 const
 
-// Column types and scopes in SQLSpecialColumns.
+  // Column types and scopes in SQLSpecialColumns.
   SQL_BEST_ROWID = 1;
   SQL_ROWVER = 2;
 
-// Defines for SQLSpecialColumns (returned in the result set
-//= SQL_PC_UNKNOWN and SQL_PC_PSEUDO are defined in sql.h
+  // Defines for SQLSpecialColumns (returned in the result set
+  //= SQL_PC_UNKNOWN and SQL_PC_PSEUDO are defined in sql.h
   SQL_PC_NOT_PSEUDO = 1;
 
-// Defines for SQLStatistics
+  // Defines for SQLStatistics
   SQL_QUICK = 0;
   SQL_ENSURE = 1;
 
-// Defines for SQLStatistics (returned in the result set)
-//-SQL_INDEX_CLUSTERED, SQL_INDEX_HASHED, and SQL_INDEX_OTHER are
-//=defined in sql.h
+  // Defines for SQLStatistics (returned in the result set)
+  //-SQL_INDEX_CLUSTERED, SQL_INDEX_HASHED, and SQL_INDEX_OTHER are
+  //=defined in sql.h
   SQL_TABLE_STAT = 0;
 
-// Defines for SQLTables
+  // Defines for SQLTables
   SQL_ALL_CATALOGS = '%';
   SQL_ALL_SCHEMAS = '%';
   SQL_ALL_TABLE_TYPES = '%';
 
-// Options for SQLDriverConnect
+  // Options for SQLDriverConnect
   SQL_DRIVER_NOPROMPT = 0;
   SQL_DRIVER_COMPLETE = 1;
   SQL_DRIVER_PROMPT = 2;
@@ -2981,19 +3009,19 @@ const
 
 {$IFDEF DynamicOdbcImport}
 type
-  TSQLDriverConnect = function (
+  TSQLDriverConnect = function(
 {$ELSE}
-  function SQLDriverConnect(
+function SQLDriverConnect(
 {$ENDIF}
-  hdbc: SQLHDBC;
-  hwnd: SQLHWND;
+  HDbc: SqlHDbc;
+  hwnd: SqlHWnd;
   szConnStrIn: PAnsiChar;
-  cbConnStrIn: SQLSMALLINT;
+  cbConnStrIn: SqlSmallint;
   szConnStrOut: PAnsiChar;
-  cbConnStrOutMax: SQLSMALLINT;
-  var pcbConnStrOut: SQLSMALLINT;
-  fDriverCompletion: SQLUSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  cbConnStrOutMax: SqlSmallint;
+  var pcbConnStrOut: SqlSmallint;
+  fDriverCompletion: SqlUSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 // Level 2 Functions
 
@@ -3001,7 +3029,7 @@ type
 const
   SQL_FETCH_BOOKMARK = 8;
 
-// SQLExtendedFetch "rgfRowStatus" element values
+  // SQLExtendedFetch "rgfRowStatus" element values
   SQL_ROW_SUCCESS = 0;
   SQL_ROW_DELETED = 1;
   SQL_ROW_UPDATED = 2;
@@ -3012,7 +3040,7 @@ const
   SQL_ROW_PROCEED = 0;
   SQL_ROW_IGNORE = 1;
 
-// value for SQL_DESC_ARRAY_STATUS_PTR
+  // value for SQL_DESC_ARRAY_STATUS_PTR
   SQL_PARAM_SUCCESS = 0;
   SQL_PARAM_SUCCESS_WITH_INFO = 6;
   SQL_PARAM_ERROR = 5;
@@ -3021,29 +3049,29 @@ const
   SQL_PARAM_PROCEED = 0;
   SQL_PARAM_IGNORE = 1;
 
-// Defines for SQLForeignKeys (UPDATE_RULE and DELETE_RULE)
+  // Defines for SQLForeignKeys (UPDATE_RULE and DELETE_RULE)
   SQL_CASCADE = 0;
   SQL_RESTRICT = 1;
   SQL_SET_NULL = 2;
   SQL_NO_ACTION = 3;
   SQL_SET_DEFAULT = 4;
 
-// Note that the following are in a different column of SQLForeignKeys than
-// the previous #defines.   These are for DEFERRABILITY.
+  // Note that the following are in a different column of SQLForeignKeys than
+  // the previous #defines.   These are for DEFERRABILITY.
   SQL_INITIALLY_DEFERRED = 5;
   SQL_INITIALLY_IMMEDIATE = 6;
   SQL_NOT_DEFERRABLE = 7;
 
-// SQLBindParameter block
-// WAS ORIGINALLY HERE
-// Moved above because of dependent declarations
+  // SQLBindParameter block
+  // WAS ORIGINALLY HERE
+  // Moved above because of dependent declarations
 
-// Defines for SQLProcedures (returned in the result set)
+  // Defines for SQLProcedures (returned in the result set)
   SQL_PT_UNKNOWN = 0;
   SQL_PT_PROCEDURE = 1;
   SQL_PT_FUNCTION = 2;
 
-// This define is too large for RC
+  // This define is too large for RC
   SQL_ODBC_KEYWORDS =
     'ABSOLUTE,ACTION,ADA,ADD,ALL,ALLOCATE,ALTER,AND,ANY,ARE,AS,' +
     'ASC,ASSERTION,AT,AUTHORIZATION,AVG,' +
@@ -3079,242 +3107,242 @@ const
 
 {$IFDEF DynamicOdbcImport}
 type
-  TSQLBrowseConnect = function (
+  TSQLBrowseConnect = function(
 {$ELSE}
-  function SQLBrowseConnect(
+function SQLBrowseConnect(
 {$ENDIF}
-  hdbc: SQLHDBC;
-  var szConnStrIn: SQLCHAR;
-  cbConnStrIn: SQLSMALLINT;
-  var szConnStrOut: SQLCHAR;
-  cbConnStrOutMax: SQLSMALLINT;
-  var pcbConnStrOut: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HDbc: SqlHDbc;
+  var szConnStrIn: SqlChar;
+  cbConnStrIn: SqlSmallint;
+  var szConnStrOut: SqlChar;
+  cbConnStrOutMax: SqlSmallint;
+  var pcbConnStrOut: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLBulkOperations = function (
+TSQLBulkOperations = function(
 {$ELSE}
-  function SQLBulkOperations(
+function SQLBulkOperations(
 {$ENDIF}
-  StatementHandle: SQLHSTMT;
-  Operation: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  StatementHandle: SqlHStmt;
+  Operation: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLColAttributes = function (
+TSQLColAttributes = function(
 {$ELSE}
-  function SQLColAttributes(
+function SQLColAttributes(
 {$ENDIF}
-  hstmt: SQLHSTMT;
-  icol: SQLUSMALLINT;
-  fDescType: SQLUSMALLINT;
-  rgbDesc: SQLPOINTER;
-  cbDescMax: SQLSMALLINT;
-  var pcbDesc: SQLSMALLINT;
-  var pfDesc: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt;
+  icol: SqlUSmallint;
+  fDescType: SqlUSmallint;
+  rgbDesc: SqlPointer;
+  cbDescMax: SqlSmallint;
+  var pcbDesc: SqlSmallint;
+  var pfDesc: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLColumnPrivileges = function (
+TSQLColumnPrivileges = function(
 {$ELSE}
-  function SQLColumnPrivileges(
+function SQLColumnPrivileges(
 {$ENDIF}
-  hstmt: SQLHSTMT;
-  var szCatalogName: SQLCHAR;
-  cbCatalogName: SQLSMALLINT;
-  var szSchemaName: SQLCHAR;
-  cbSchemaName: SQLSMALLINT;
-  var szTableName: SQLCHAR;
-  cbTableName: SQLSMALLINT;
-  var szColumnName: SQLCHAR;
-  cbColumnName: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt;
+  var szCatalogName: SqlChar;
+  cbCatalogName: SqlSmallint;
+  var szSchemaName: SqlChar;
+  cbSchemaName: SqlSmallint;
+  var szTableName: SqlChar;
+  cbTableName: SqlSmallint;
+  var szColumnName: SqlChar;
+  cbColumnName: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLDescribeParam = function (
+TSQLDescribeParam = function(
 {$ELSE}
-  function SQLDescribeParam(
+function SQLDescribeParam(
 {$ENDIF}
-  hstmt: SQLHSTMT;
-  ipar: SQLUSMALLINT;
-  var pfSqlType: SQLSMALLINT;
-  var pcbParamDef: SQLUINTEGER;
-  var pibScale: SQLSMALLINT;
-  var pfNullable: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt;
+  ipar: SqlUSmallint;
+  var pfSqlType: SqlSmallint;
+  var pcbParamDef: SqlUInteger;
+  var pibScale: SqlSmallint;
+  var pfNullable: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLExtendedFetch = function (
+TSQLExtendedFetch = function(
 {$ELSE}
-  function SQLExtendedFetch(
+function SQLExtendedFetch(
 {$ENDIF}
-  hstmt: SQLHSTMT;
-  fFetchType: SQLUSMALLINT;
-  irow: SQLINTEGER;
-  var pcrow: SQLUINTEGER;
-  var rgfRowStatus: SQLUSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt;
+  fFetchType: SqlUSmallint;
+  irow: SqlInteger;
+  var pcrow: SqlUInteger;
+  var rgfRowStatus: SqlUSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLForeignKeys = function (
+TSQLForeignKeys = function(
 {$ELSE}
-  function SQLForeignKeys(
+function SQLForeignKeys(
 {$ENDIF}
-  hstmt: SQLHSTMT;
-  var szPkCatalogName: SQLCHAR;
-  cbPkCatalogName: SQLSMALLINT;
-  var szPkSchemaName: SQLCHAR;
-  cbPkSchemaName: SQLSMALLINT;
-  var szPkTableName: SQLCHAR;
-  cbPkTableName: SQLSMALLINT;
-  var szFkCatalogName: SQLCHAR;
-  cbFkCatalogName: SQLSMALLINT;
-  var szFkSchemaName: SQLCHAR;
-  cbFkSchemaName: SQLSMALLINT;
-  var szFkTableName: SQLCHAR;
-  cbFkTableName: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt;
+  var szPkCatalogName: SqlChar;
+  cbPkCatalogName: SqlSmallint;
+  var szPkSchemaName: SqlChar;
+  cbPkSchemaName: SqlSmallint;
+  var szPkTableName: SqlChar;
+  cbPkTableName: SqlSmallint;
+  var szFkCatalogName: SqlChar;
+  cbFkCatalogName: SqlSmallint;
+  var szFkSchemaName: SqlChar;
+  cbFkSchemaName: SqlSmallint;
+  var szFkTableName: SqlChar;
+  cbFkTableName: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLMoreResults = function (
+TSQLMoreResults = function(
 {$ELSE}
-  function SQLMoreResults(
+function SQLMoreResults(
 {$ENDIF}
-  hstmt: SQLHSTMT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLNativeSql = function (
+TSQLNativeSql = function(
 {$ELSE}
-  function SQLNativeSql(
+function SQLNativeSql(
 {$ENDIF}
-  hdbc: SQLHDBC;
-  var szSqlStrIn: SQLCHAR;
-  cbSqlStrIn: SQLINTEGER;
-  var szSqlStr: SQLCHAR;
-  cbSqlStrMax: SQLINTEGER;
-  var pcbSqlStr: SQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HDbc: SqlHDbc;
+  var szSqlStrIn: SqlChar;
+  cbSqlStrIn: SqlInteger;
+  var szSqlStr: SqlChar;
+  cbSqlStrMax: SqlInteger;
+  var pcbSqlStr: SqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLNumParams = function (
+TSQLNumParams = function(
 {$ELSE}
-  function SQLNumParams(
+function SQLNumParams(
 {$ENDIF}
-  hstmt: SQLHSTMT;
-  var pcpar: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt;
+  var pcpar: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLParamOptions = function (
+TSQLParamOptions = function(
 {$ELSE}
-  function SQLParamOptions(
+function SQLParamOptions(
 {$ENDIF}
-  hstmt: SQLHSTMT;
-  crow: SQLUINTEGER;
-  var pirow: SQLUINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt;
+  crow: SqlUInteger;
+  var pirow: SqlUInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLPrimaryKeys = function (
+TSQLPrimaryKeys = function(
 {$ELSE}
-  function SQLPrimaryKeys(
+function SQLPrimaryKeys(
 {$ENDIF}
-  hstmt: SQLHSTMT;
-  szCatalogName: pAnsiChar;
-  cbCatalogName: SQLSMALLINT;
-  szSchemaName: pAnsiChar;
-  cbSchemaName: SQLSMALLINT;
-  szTableName: pAnsiChar;
-  cbTableName: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt;
+  szCatalogName: PAnsiChar;
+  cbCatalogName: SqlSmallint;
+  szSchemaName: PAnsiChar;
+  cbSchemaName: SqlSmallint;
+  szTableName: PAnsiChar;
+  cbTableName: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLProcedureColumns = function (
+TSQLProcedureColumns = function(
 {$ELSE}
-  function SQLProcedureColumns(
+function SQLProcedureColumns(
 {$ENDIF}
-  hstmt: SQLHSTMT;
-  szCatalogName: pAnsiChar;
-  cbCatalogName: SQLSMALLINT;
-  szSchemaName: pAnsiChar;
-  cbSchemaName: SQLSMALLINT;
-  szProcName: pAnsiChar;
-  cbProcName: SQLSMALLINT;
-  szColumnName: pAnsiChar;
-  cbColumnName: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt;
+  szCatalogName: PAnsiChar;
+  cbCatalogName: SqlSmallint;
+  szSchemaName: PAnsiChar;
+  cbSchemaName: SqlSmallint;
+  szProcName: PAnsiChar;
+  cbProcName: SqlSmallint;
+  szColumnName: PAnsiChar;
+  cbColumnName: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLProcedures = function (
+TSQLProcedures = function(
 {$ELSE}
-  function SQLProcedures(
+function SQLProcedures(
 {$ENDIF}
-  hstmt: SQLHSTMT;
-  szCatalogName: pAnsiChar;
-  cbCatalogName: SQLSMALLINT;
-  szSchemaName: pAnsiChar;
-  cbSchemaName: SQLSMALLINT;
-  szProcName: pAnsiChar;
-  cbProcName: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt;
+  szCatalogName: PAnsiChar;
+  cbCatalogName: SqlSmallint;
+  szSchemaName: PAnsiChar;
+  cbSchemaName: SqlSmallint;
+  szProcName: PAnsiChar;
+  cbProcName: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLSetPos = function (
+TSQLSetPos = function(
 {$ELSE}
-  function SQLSetPos(
+function SQLSetPos(
 {$ENDIF}
-  hstmt: SQLHSTMT;
-  irow: SQLUSMALLINT;
-  fOption: SQLUSMALLINT;
-  fLock: SQLUSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt;
+  irow: SqlUSmallint;
+  fOption: SqlUSmallint;
+  fLock: SqlUSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLTablePrivileges = function (
+TSQLTablePrivileges = function(
 {$ELSE}
-  function SQLTablePrivileges(
+function SQLTablePrivileges(
 {$ENDIF}
-  hstmt: SQLHSTMT;
-  var szCatalogName: SQLCHAR;
-  cbCatalogName: SQLSMALLINT;
-  var szSchemaName: SQLCHAR;
-  cbSchemaName: SQLSMALLINT;
-  var szTableName: SQLCHAR;
-  cbTableName: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt;
+  var szCatalogName: SqlChar;
+  cbCatalogName: SqlSmallint;
+  var szSchemaName: SqlChar;
+  cbSchemaName: SqlSmallint;
+  var szTableName: SqlChar;
+  cbTableName: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLDrivers = function (
+TSQLDrivers = function(
 {$ELSE}
-  function SQLDrivers(
+function SQLDrivers(
 {$ENDIF}
-  henv: SQLHENV;
-  fDirection: SQLUSMALLINT;
-  szDriverDesc: pAnsiChar;
-  cbDriverDescMax: SQLSMALLINT;
-  var pcbDriverDesc: SQLSMALLINT;
-  szDriverAttributes: pAnsiChar;
-  cbDrvrAttrMax: SQLSMALLINT;
-  var pcbDrvrAttr: SQLSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HEnv: SqlHEnv;
+  fDirection: SqlUSmallint;
+  szDriverDesc: PAnsiChar;
+  cbDriverDescMax: SqlSmallint;
+  var pcbDriverDesc: SqlSmallint;
+  szDriverAttributes: PAnsiChar;
+  cbDrvrAttrMax: SqlSmallint;
+  var pcbDrvrAttr: SqlSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 {$IFDEF DynamicOdbcImport}
-  TSQLBindParameter= function (
+TSQLBindParameter = function(
 {$ELSE}
-  function SQLBindParameter(
+function SQLBindParameter(
 {$ENDIF}
-  hstmt: SQLHSTMT;
-  ipar: SQLUSMALLINT;
-  fParamType: SQLSMALLINT;
-  fCType: SQLSMALLINT;
-  fSqlType: SQLSMALLINT;
-  cbColDef: SQLUINTEGER;
-  ibScale: SQLSMALLINT;
-  rgbValue: SQLPOINTER;
-  cbValueMax: SQLINTEGER;
-  pcbValue: PSQLINTEGER
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  HStmt: SqlHStmt;
+  ipar: SqlUSmallint;
+  fParamType: SqlSmallint;
+  fCType: SqlSmallint;
+  fSqlType: SqlSmallint;
+  cbColDef: SqlUInteger;
+  ibScale: SqlSmallint;
+  rgbValue: SqlPointer;
+  cbValueMax: SqlInteger;
+  pcbValue: PSqlInteger
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 //---------------------------------------------------------
 // SQLAllocHandleStd is implemented to make SQLAllocHandle
@@ -3340,15 +3368,14 @@ const
 
 {$IFDEF DynamicOdbcImport}
 type
-  TSQLAllocHandleStd = function (
+  TSQLAllocHandleStd = function(
 {$ELSE}
-  function SQLAllocHandleStd(
+function SQLAllocHandleStd(
 {$ENDIF}
-  fHandleType: SQLSMALLINT;
-  hInput: SQLHANDLE;
-  var phOutput: SQLHANDLE
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
-
+  fHandleType: SqlSmallint;
+  hInput: SqlHandle;
+  var phOutput: SqlHandle
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 // Deprecated defines from prior versions of ODBC
 const
@@ -3363,26 +3390,26 @@ const
   SQL_CR_CLOSE = SQL_CB_CLOSE;
   SQL_CC_PRESERVE = SQL_CB_PRESERVE;
   SQL_CR_PRESERVE = SQL_CB_PRESERVE;
-// SQL_FETCH_RESUME is not supported by 2.0+ drivers
+  // SQL_FETCH_RESUME is not supported by 2.0+ drivers
   SQL_FETCH_RESUME = 7;
   SQL_SCROLL_FORWARD_ONLY = 0; //-SQL_CURSOR_FORWARD_ONLY
   SQL_SCROLL_KEYSET_DRIVEN = (-1); //-SQL_CURSOR_KEYSET_DRIVEN
   SQL_SCROLL_DYNAMIC = (-2); //-SQL_CURSOR_DYNAMIC
   SQL_SCROLL_STATIC = (-3); //*-SQL_CURSOR_STATIC
 
-// Deprecated functions from prior versions of ODBC
+  // Deprecated functions from prior versions of ODBC
 {$IFDEF DynamicOdbcImport}
 type
-  TSQLSetScrollOptions = function (
+  TSQLSetScrollOptions = function(
 {$ELSE}
-  function SQLSetScrollOptions(
+function SQLSetScrollOptions(
 {$ENDIF}
-// Use SQLSetStmtOptions
-  hstmt: SQLHSTMT;
-  fConcurrency: SQLUSMALLINT;
-  crowKeyset: SQLINTEGER;
-  crowRowset: SQLUSMALLINT
-  ): SQLRETURN {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  // Use SQLSetStmtOptions
+  HStmt: SqlHStmt;
+  fConcurrency: SqlUSmallint;
+  crowKeyset: SqlInteger;
+  crowRowset: SqlUSmallint
+  ): SqlReturn{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 // Tracing section
 {$IFNDEF DynamicOdbcImport}
@@ -3392,16 +3419,16 @@ const
 function TraceOpenLogFile(
   var _1: WideChar;
   var _2: WideChar;
-  _3: LongInt
-  ): RETCODE {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  _3: Longint
+  ): Retcode{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
-function TraceCloseLogFile: RETCODE {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+function TraceCloseLogFile: Retcode{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 procedure TraceReturn(
-  _1: RETCODE;
-  _2: RETCODE) {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+  _1: Retcode;
+  _2: Retcode){$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
-function TraceVersion: LongInt {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+function TraceVersion: Longint{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 // Functions for Visual Studio Analyzer
 // to turn on/off tracing or VS events,
@@ -3410,7 +3437,7 @@ const
   TRACE_ON = $00000001;
   TRACE_VS_EVENT_ON = $00000002;
 
-function TraceVSControl(_1: LongInt): RETCODE {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+function TraceVSControl(_1: Longint): Retcode{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 
 // Functions for setting the connection pooling failure detection code
 // The "TryWait" value is the time (in seconds) that the DM will wait
@@ -3419,10 +3446,11 @@ function TraceVSControl(_1: LongInt): RETCODE {$ifdef MSWINDOWS} stdcall {$else}
 // interval, connection requests will get "The server appears to be
 // dead" error returns.
 
-function ODBCSetTryWaitValue(dwValue: LongInt): LongBool {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+function ODBCSetTryWaitValue(dwValue: Longint): LongBool{$IFDEF MSWINDOWS} stdcall{$ELSE}
+cdecl{$ENDIF};
 //= In seconds
 
-function ODBCGetTryWaitValue: LongInt {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+function ODBCGetTryWaitValue: Longint{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF};
 //= In Milliseconds(!)
 
 // the flags in ODBC_VS_ARGS
@@ -3433,24 +3461,24 @@ const
   ODBC_VS_FLAG_STOP = $00000008; // Stop firing visual studio analyzer events
 
 type
-  tagODBC_VS_ARGS = record
-    PGuidEvent: PGUID;  // the GUID for event
-    dwFlags: LongWord;  // flags for the call
-    case integer of
-    0: (wszArg: PWideChar;
-        szArg: PCHAR;
-        RetCode: RETCODE);
-    1: (wszCorrelation: PWideChar;
-        szCorrelation: PCHAR;
-        RetCode2: RETCODE);
-    end;
+  tagODBC_VS_ARGS = packed record
+    PGuidEvent: PGUID; // the GUID for event
+    dwFlags: Longword; // flags for the call
+    case Integer of
+      0: (wszArg: PWideChar;
+        szArg: PChar;
+        Retcode: Retcode);
+      1: (wszCorrelation: PWideChar;
+        szCorrelation: PChar;
+        RetCode2: Retcode);
+  end;
 
   ODBC_VS_ARGS = tagODBC_VS_ARGS;
   PODBC_VS_ARGS = ^ODBC_VS_ARGS;
 
-procedure FireVSDebugEvent(var Args: ODBC_VS_ARGS); {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif};
+procedure FireVSDebugEvent(var Args: ODBC_VS_ARGS);
+{$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
 {$ENDIF}
-
 
 //##########################################################################
 // sqlext.h interface part ends here
@@ -3458,99 +3486,100 @@ procedure FireVSDebugEvent(var Args: ODBC_VS_ARGS); {$ifdef MSWINDOWS} stdcall {
 
 {$IFDEF DynamicOdbcImport}
 var
-  SQLAllocConnect:        TSQLAllocConnect;
-  SQLAllocEnv:            TSQLAllocEnv;
-  SQLAllocHandle:         TSQLAllocHandle;
-  SQLAllocStmt:           TSQLAllocStmt;
-  SQLBindCol:             TSQLBindCol;
-  SQLBindParam:           TSQLBindParam;
-  SQLCancel:              TSQLCancel;
-  SQLCloseCursor:         TSQLCloseCursor;
+  SQLAllocConnect: TSQLAllocConnect;
+  SQLAllocEnv: TSQLAllocEnv;
+  SQLAllocHandle: TSQLAllocHandle;
+  SQLAllocStmt: TSQLAllocStmt;
+  SQLBindCol: TSQLBindCol;
+  SQLBindParam: TSQLBindParam;
+  SQLCancel: TSQLCancel;
+  SQLCloseCursor: TSQLCloseCursor;
 
-// SQLColAttribute is overloaded
-  SQLColAttributeString:  TSQLColAttributeString;
-  SQLColAttributeInt:     TSQLColAttributeInt;
+  // SQLColAttribute is overloaded
+  SQLColAttribute: TSQLColAttribute;
+  SQLColAttributeString: TSQLColAttributeString;
+  SQLColAttributeInt: TSQLColAttributeInt;
 
-  SQLColumns:             TSQLColumns;
-  SQLConnect:             TSQLConnect;
-  SQLCopyDesc:            TSQLCopyDesc;
-  SQLDataSources:         TSQLDataSources;
-  SQLDescribeCol:         TSQLDescribeCol;
-  SQLDisconnect:          TSQLDisconnect;
-  SQLEndTran:             TSQLEndTran;
-  SQLError:               TSQLError;
-  SQLExecDirect:          TSQLExecDirect;
-  SQLExecute:             TSQLExecute;
-  SQLFetch:               TSQLFetch;
-  SQLFetchScroll:         TSQLFetchScroll;
-  SQLFreeConnect:         TSQLFreeConnect;
-  SQLFreeEnv:             TSQLFreeEnv;
-  SQLFreeHandle:          TSQLFreeHandle;
-  SQLFreeStmt:            TSQLFreeStmt;
+  SQLColumns: TSQLColumns;
+  SQLConnect: TSQLConnect;
+  SQLCopyDesc: TSQLCopyDesc;
+  SQLDataSources: TSQLDataSources;
+  SQLDescribeCol: TSQLDescribeCol;
+  SQLDisconnect: TSQLDisconnect;
+  SQLEndTran: TSQLEndTran;
+  SQLError: TSQLError;
+  SQLExecDirect: TSQLExecDirect;
+  SQLExecute: TSQLExecute;
+  SQLFetch: TSQLFetch;
+  SQLFetchScroll: TSQLFetchScroll;
+  SQLFreeConnect: TSQLFreeConnect;
+  SQLFreeEnv: TSQLFreeEnv;
+  SQLFreeHandle: TSQLFreeHandle;
+  SQLFreeStmt: TSQLFreeStmt;
 
-  SQLGetConnectAttr:     TSQLGetConnectAttr;
-  SQLGetConnectOption:   TSQLGetConnectOption;
-  SQLGetCursorName:      TSQLGetCursorName;
-  SQLGetData:            TSQLGetData;
-  SQLGetDescField:       TSQLGetDescField;
-  SQLGetDescRec:         TSQLGetDescRec;
-  SQLGetDiagField:       TSQLGetDiagField;
-  SQLGetDiagRec:         TSQLGetDiagRec;
-  SQLGetEnvAttr:         TSQLGetEnvAttr;
-  SQLGetFunctions:       TSQLGetFunctions;
+  SQLGetConnectAttr: TSQLGetConnectAttr;
+  SQLGetConnectOption: TSQLGetConnectOption;
+  SQLGetCursorName: TSQLGetCursorName;
+  SQLGetData: TSQLGetData;
+  SQLGetDescField: TSQLGetDescField;
+  SQLGetDescRec: TSQLGetDescRec;
+  SQLGetDiagField: TSQLGetDiagField;
+  SQLGetDiagRec: TSQLGetDiagRec;
+  SQLGetEnvAttr: TSQLGetEnvAttr;
+  SQLGetFunctions: TSQLGetFunctions;
 
-// SQLGetInfo is overloaded
-  SQLGetInfoString:      TSQLGetInfoString;
-  SQLGetInfoSmallint:    TSQLGetInfoSmallint;
-  SQLGetInfoInt:         TSQLGetInfoInt;
+  // SQLGetInfo is overloaded
+  SQLGetInfo: TSQLGetInfo;
+  SQLGetInfoString: TSQLGetInfoString;
+  SQLGetInfoSmallint: TSQLGetInfoSmallint;
+  SQLGetInfoInt: TSQLGetInfoInt;
 
-  SQLGetStmtAttr:        TSQLGetStmtAttr;
-  SQLGetStmtOption:      TSQLGetStmtOption;
-  SQLGetTypeInfo:        TSQLGetTypeInfo;
-  SQLNumResultCols:      TSQLNumResultCols;
-  SQLParamData:          TSQLParamData;
-  SQLPrepare:            TSQLPrepare;
-  SQLPutData:            TSQLPutData;
-  SQLRowCount:           TSQLRowCount;
-  SQLSetConnectAttr:     TSQLSetConnectAttr;
-  SQLSetConnectOption:   TSQLSetConnectOption;
-  SQLSetCursorName:      TSQLSetCursorName;
-  SQLSetDescField:       TSQLSetDescField;
-  SQLSetDescRec:         TSQLSetDescRec;
-  SQLSetEnvAttr:         TSQLSetEnvAttr;
-  SQLSetParam:           TSQLSetParam;
-  SQLSetStmtAttr:        TSQLSetStmtAttr;
-  SQLSetStmtOption:      TSQLSetStmtOption;
-  SQLSpecialColumns:     TSQLSpecialColumns;
-  SQLStatistics:         TSQLStatistics;
-  SQLTables:             TSQLTables;
-  SQLTransact:           TSQLTransact;
+  SQLGetStmtAttr: TSQLGetStmtAttr;
+  SQLGetStmtOption: TSQLGetStmtOption;
+  SQLGetTypeInfo: TSQLGetTypeInfo;
+  SQLNumResultCols: TSQLNumResultCols;
+  SQLParamData: TSQLParamData;
+  SQLPrepare: TSQLPrepare;
+  SQLPutData: TSQLPutData;
+  SQLRowCount: TSQLRowCount;
+  SQLSetConnectAttr: TSQLSetConnectAttr;
+  SQLSetConnectOption: TSQLSetConnectOption;
+  SQLSetCursorName: TSQLSetCursorName;
+  SQLSetDescField: TSQLSetDescField;
+  SQLSetDescRec: TSQLSetDescRec;
+  SQLSetEnvAttr: TSQLSetEnvAttr;
+  SQLSetParam: TSQLSetParam;
+  SQLSetStmtAttr: TSQLSetStmtAttr;
+  SQLSetStmtOption: TSQLSetStmtOption;
+  SQLSpecialColumns: TSQLSpecialColumns;
+  SQLStatistics: TSQLStatistics;
+  SQLTables: TSQLTables;
+  SQLTransact: TSQLTransact;
 
-  SQLAllocHandleStd:     TSQLAllocHandleStd;
-  SQLBindParameter:      TSQLBindParameter;
-  SQLBrowseConnect:      TSQLBrowseConnect;
-  SQLBulkOperations:     TSQLBulkOperations;
-  SQLColAttributes:      TSQLColAttributes;
-  SQLColumnPrivileges:   TSQLColumnPrivileges;
-  SQLDescribeParam:      TSQLDescribeParam;
-  SQLDriverConnect:      TSQLDriverConnect;
-  SQLDrivers:            TSQLDrivers;
-  SQLExtendedFetch:      TSQLExtendedFetch;
-  SQLForeignKeys:        TSQLForeignKeys;
-  SQLMoreResults:        TSQLMoreResults;
-  SQLNativeSql:          TSQLNativeSql;
-  SQLNumParams:          TSQLNumParams;
-  SQLParamOptions:       TSQLParamOptions;
-  SQLPrimaryKeys:        TSQLPrimaryKeys;
-  SQLProcedureColumns:   TSQLProcedureColumns;
-  SQLProcedures:         TSQLProcedures;
-  SQLSetPos:             TSQLSetPos;
-  SQLSetScrollOptions:   TSQLSetScrollOptions;
-  SQLTablePrivileges:    TSQLTablePrivileges;
+  SQLAllocHandleStd: TSQLAllocHandleStd;
+  SQLBindParameter: TSQLBindParameter;
+  SQLBrowseConnect: TSQLBrowseConnect;
+  SQLBulkOperations: TSQLBulkOperations;
+  SQLColAttributes: TSQLColAttributes;
+  SQLColumnPrivileges: TSQLColumnPrivileges;
+  SQLDescribeParam: TSQLDescribeParam;
+  SQLDriverConnect: TSQLDriverConnect;
+  SQLDrivers: TSQLDrivers;
+  SQLExtendedFetch: TSQLExtendedFetch;
+  SQLForeignKeys: TSQLForeignKeys;
+  SQLMoreResults: TSQLMoreResults;
+  SQLNativeSql: TSQLNativeSql;
+  SQLNumParams: TSQLNumParams;
+  SQLParamOptions: TSQLParamOptions;
+  SQLPrimaryKeys: TSQLPrimaryKeys;
+  SQLProcedureColumns: TSQLProcedureColumns;
+  SQLProcedures: TSQLProcedures;
+  SQLSetPos: TSQLSetPos;
+  SQLSetScrollOptions: TSQLSetScrollOptions;
+  SQLTablePrivileges: TSQLTablePrivileges;
 {$ENDIF}
 
-
-function LoadOdbcDriverManager(LibraryName: pchar): boolean;
+function LoadOdbcDriverManager(LibraryName: PChar): Boolean;
 procedure UnLoadOdbcDriverManager;
 
 implementation
@@ -3565,89 +3594,204 @@ uses
 //##########################################################################
 
 const
-{$ifdef MSWINDOWS}
+{$IFDEF MSWINDOWS}
   ODBC32DLL = 'odbc32.dll';
-{$else}
+{$ELSE}
   ODBC32DLL = 'libodbc.so';
-{$endif}
+{$ENDIF}
 
-// Macro: test for SQL_SUCCESS or SQL_SUCCESS_WITH_INFO
-function SQL_SUCCEEDED(const rc: SQLRETURN): boolean;
+  // Macro: test for SQL_SUCCESS or SQL_SUCCESS_WITH_INFO
+
+function SQL_SUCCEEDED(const rc: SqlReturn): Boolean;
 begin
   Result := (rc and (not 1)) = 0;
 end;
 
 {$IFNDEF DynamicOdbcImport}
-  function SQLAllocConnect;      {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLAllocEnv;          {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLAllocHandle;       {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLAllocStmt;         {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLBindCol;           {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLBindParam;         {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLCancel;            {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLCloseCursor;       {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
+
+function SQLAllocConnect;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLAllocEnv;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLAllocHandle;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLAllocStmt;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLBindCol;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLBindParam;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLCancel;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLCloseCursor;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
 
 // SQLColAttribute is overloaded
-// function SQLColAttribute;    {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLColAttributeString;{$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL name 'SQLColAttribute';
-  function SQLColAttributeInt;   {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL name 'SQLColAttribute';
+function SQLColAttribute;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+function SQLColAttributeString;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL name 'SQLColAttribute';
+function SQLColAttributeInt;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL name 'SQLColAttribute';
 
-  function SQLColumns;           {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLConnect;           {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLCopyDesc;          {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLDataSources;       {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLDescribeCol;       {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLDisconnect;        {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLEndTran;           {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLError;             {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLExecDirect;        {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLExecute;           {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLFetch;             {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLFetchScroll;       {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLFreeConnect;       {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLFreeEnv;           {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLFreeHandle;        {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLFreeStmt;          {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLGetConnectAttr;    {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLGetConnectOption;  {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLGetCursorName;     {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLGetData;           {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLGetDescField;      {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLGetDescRec;        {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLGetDiagField;      {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLGetDiagRec;        {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLGetEnvAttr;        {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLGetFunctions;      {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
+function SQLColumns;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLConnect;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLCopyDesc;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLDataSources;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLDescribeCol;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLDisconnect;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLEndTran;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLError;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLExecDirect;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLExecute;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLFetch;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLFetchScroll;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLFreeConnect;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLFreeEnv;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLFreeHandle;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLFreeStmt;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLGetConnectAttr;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLGetConnectOption;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLGetCursorName;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLGetData;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLGetDescField;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLGetDescRec;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLGetDiagField;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLGetDiagRec;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLGetEnvAttr;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLGetFunctions;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
 
 // SQLGetInfo is overloaded
-//function SQLGetInfo;           {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLGetInfoString;     {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL name 'SQLGetInfo';
-  function SQLGetInfoSmallint;   {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL name 'SQLGetInfo';
-  function SQLGetInfoInt;        {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL name 'SQLGetInfo';
+function SQLGetInfo;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+function SQLGetInfoString;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL name 'SQLGetInfo';
+function SQLGetInfoSmallint;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL name 'SQLGetInfo';
+function SQLGetInfoInt;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL name 'SQLGetInfo';
 
-  function SQLGetStmtAttr;       {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLGetStmtOption;     {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLGetTypeInfo;       {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLNumResultCols;     {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLParamData;         {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLPrepare;           {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLPutData;           {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLRowCount;          {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLSetConnectAttr;    {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLSetConnectOption;  {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLSetCursorName;     {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLSetDescField;      {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLSetDescRec;        {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLSetEnvAttr;        {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLSetParam;          {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLSetStmtAttr;       {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLSetStmtOption;     {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLSpecialColumns;    {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLStatistics;        {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLTables;            {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-  function SQLTransact;          {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
+function SQLGetStmtAttr;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLGetStmtOption;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLGetTypeInfo;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLNumResultCols;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLParamData;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLPrepare;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLPutData;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLRowCount;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLSetConnectAttr;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLSetConnectOption;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLSetCursorName;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLSetDescField;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLSetDescRec;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLSetEnvAttr;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLSetParam;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLSetStmtAttr;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLSetStmtOption;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLSpecialColumns;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLStatistics;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLTables;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLTransact;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
 {$ENDIF}
-
 
 //##########################################################################
 // sql.h implementation part ends here
@@ -3658,10 +3802,10 @@ end;
 //##########################################################################
 
 const
-  ODBCTRAC  = 'odbctrac.dll';
-  ODBCINST  = {$ifdef MSWINDOWS} 'odbcinst.dll' {$else} 'libodbcinst.so' {$endif};
+  ODBCTRAC = 'odbctrac.dll';
+  ODBCINST = {$IFDEF MSWINDOWS} 'odbcinst.dll'{$ELSE} 'libodbcinst.so'{$ENDIF};
 
-// MACROs
+  // MACROs
 
 function SQL_LEN_DATA_AT_EXEC(length: Integer): Integer;
 begin
@@ -3673,7 +3817,7 @@ begin
   result := -(length) + SQL_LEN_BINARY_ATTR_OFFSET;
 end;
 
-function SQL_FUNC_EXISTS(pfExists: PUWORD; uwAPI: UWORD): SQLINTEGER;
+function SQL_FUNC_EXISTS(pfExists: PUWord; uwAPI: UWord): SqlInteger;
 begin
   Inc(pfExists, uwAPI shr 4);
   if (pfExists^ and (1 shl (uwAPI and $000F))) <> 0 then
@@ -3682,69 +3826,124 @@ begin
     result := SQL_FALSE;
 end;
 
-function SQL_POSITION_TO(hstmt: SQLHSTMT; irow: SQLUSMALLINT): SQLRETURN;
+function SQL_POSITION_TO(HStmt: SqlHStmt; irow: SqlUSmallint): SqlReturn;
 begin
-  result := SQLSetPos(hstmt,irow,SQL_POSITION,SQL_LOCK_NO_CHANGE);
+  result := SQLSetPos(HStmt, irow, SQL_POSITION, SQL_LOCK_NO_CHANGE);
 end;
 
-function SQL_LOCK_RECORD(hstmt: SQLHSTMT; irow, fLock: SQLUSMALLINT): SQLRETURN;
+function SQL_LOCK_RECORD(HStmt: SqlHStmt; irow, fLock: SqlUSmallint): SqlReturn;
 begin
-  result := SQLSetPos(hstmt,irow,SQL_POSITION,fLock);
+  result := SQLSetPos(HStmt, irow, SQL_POSITION, fLock);
 end;
 
-function SQL_REFRESH_RECORD(hstmt: SQLHSTMT; irow, fLock: SQLUSMALLINT): SQLRETURN;
+function SQL_REFRESH_RECORD(HStmt: SqlHStmt; irow, fLock: SqlUSmallint): SqlReturn;
 begin
-  result := SQLSetPos(hstmt,irow,SQL_REFRESH,fLock);
+  result := SQLSetPos(HStmt, irow, SQL_REFRESH, fLock);
 end;
 
-function SQL_UPDATE_RECORD(hstmt: SQLHSTMT; irow: SQLUSMALLINT): SQLRETURN;
+function SQL_UPDATE_RECORD(HStmt: SqlHStmt; irow: SqlUSmallint): SqlReturn;
 begin
-  result := SQLSetPos(hstmt,irow,SQL_UPDATE,SQL_LOCK_NO_CHANGE);
+  result := SQLSetPos(HStmt, irow, SQL_UPDATE, SQL_LOCK_NO_CHANGE);
 end;
 
-function SQL_DELETE_RECORD(hstmt: SQLHSTMT; irow: SQLUSMALLINT): SQLRETURN;
+function SQL_DELETE_RECORD(HStmt: SqlHStmt; irow: SqlUSmallint): SqlReturn;
 begin
-  result := SQLSetPos(hstmt,irow,SQL_DELETE,SQL_LOCK_NO_CHANGE);
+  result := SQLSetPos(HStmt, irow, SQL_DELETE, SQL_LOCK_NO_CHANGE);
 end;
 
-function SQL_ADD_RECORD(hstmt: SQLHSTMT; irow: SQLUSMALLINT): SQLRETURN;
+function SQL_ADD_RECORD(HStmt: SqlHStmt; irow: SqlUSmallint): SqlReturn;
 begin
-  result := SQLSetPos(hstmt,irow,SQL_ADD,SQL_LOCK_NO_CHANGE);
+  result := SQLSetPos(HStmt, irow, SQL_ADD, SQL_LOCK_NO_CHANGE);
 end;
 
 {$IFNDEF DynamicOdbcImport}
-function SQLAllocHandleStd;  {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLBindParameter;   {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLBrowseConnect;   {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLBulkOperations;  {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLColAttributes;   {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLColumnPrivileges;{$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLDescribeParam;   {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLDriverConnect;   {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLDrivers;         {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLExtendedFetch;   {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLForeignKeys;     {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLMoreResults;     {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLNativeSql;       {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLNumParams;       {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLParamOptions;    {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLPrimaryKeys;     {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLProcedureColumns;{$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLProcedures;      {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLSetPos;          {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLSetScrollOptions;{$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
-function SQLTablePrivileges; {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBC32DLL;
 
-function TraceOpenLogFile;   {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBCTRAC;
-function TraceCloseLogFile;  {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBCTRAC;
-procedure TraceReturn;       {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBCTRAC;
-function TraceVersion;       {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBCTRAC;
+function SQLAllocHandleStd;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
 
-function TraceVSControl;     {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBCTRAC;
-procedure FireVSDebugEvent;  {$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBCTRAC;
+function SQLBindParameter;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
 
-function ODBCGetTryWaitValue;{$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBCINST;
-function ODBCSetTryWaitValue;{$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; external ODBCINST;
+function SQLBrowseConnect;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLBulkOperations;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLColAttributes;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLColumnPrivileges;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLDescribeParam;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLDriverConnect;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLDrivers;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLExtendedFetch;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLForeignKeys;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLMoreResults;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLNativeSql;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLNumParams;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLParamOptions;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLPrimaryKeys;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLProcedureColumns;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLProcedures;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLSetPos;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLSetScrollOptions;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function SQLTablePrivileges;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBC32DLL;
+
+function TraceOpenLogFile;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBCTRAC;
+
+function TraceCloseLogFile;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBCTRAC;
+
+procedure TraceReturn;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBCTRAC;
+
+function TraceVersion;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBCTRAC;
+
+function TraceVSControl;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBCTRAC;
+
+procedure FireVSDebugEvent;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBCTRAC;
+
+function ODBCGetTryWaitValue;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBCINST;
+
+function ODBCSetTryWaitValue;
+{$IFDEF MSWINDOWS} stdcall{$ELSE} cdecl{$ENDIF}; external ODBCINST;
 {$ENDIF}
 
 //##########################################################################
@@ -3755,15 +3954,14 @@ function ODBCSetTryWaitValue;{$ifdef MSWINDOWS} stdcall {$else} cdecl {$endif}; 
 {$INCLUDE OdbcApiLoad.pas}
 {$ELSE}
 
-function LoadOdbcDriverManager(LibraryName: pchar): boolean;
+function LoadOdbcDriverManager(LibraryName: PChar): Boolean;
 begin
-  Result := true;
+  Result := True;
 end;
 
 procedure UnLoadOdbcDriverManager;
 begin
 end;
 {$ENDIF}
-
 
 end.
