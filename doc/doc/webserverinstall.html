@@ -25,5 +25,33 @@
   and add aliases and users. You can see the generated file location in reportserverapp 
   form, this configuration file will be used by the web report server.</p>
 <p><a href="http://localhost/cgi-bin/repwebserver.dll/login">http://localhost/cgi-bin/repwebserver.dll/login</a></p>
+<p><b>Installing Report Manager web server in Linux Apache</b></p>
+<p>Usually you copy the application (rpwebexe.bin and repwebexe) into a directory 
+  with execution privileges, in Suse 7.3, is /usr/local/httpd/cgi-bin.</p>
+<p>You must place the configuration file of the server in /etc/reportmanserver 
+  file. You can generate it with the <a href="serverserver.html">tcp server application</a> 
+  and the <a href="serverconfig.html">tcp server configuration</a>. </p>
+<p>This file will contain user information (default user Admin with blank password) 
+  and the report directories. A simple file can be:</p>
+<p>[ALIASES]</p>
+<p>SAMPLE=/var/reports</p>
+<p>User running apache process must have read privileges of this directory.</p>
+<p>The database configuration files must be placed in directory /usr/local/etc, 
+  this files are:</p>
+<p>dbxconnections.conf, dbxdrivers.conf</p>
+<p>There information about database location, user names and passwords are stored, 
+  if you use the designer application (repmand) it usually reads and writes this 
+  configuration files to /home/username/.borland directory, you can copy the files 
+  from there to the correct directory.</p>
+<p>Finally the report server application must link to required libraries, you 
+  should place this libs (provided with the report designer) in /opt/kylixlibs 
+  directory, because repwebexe.bin application launcher add this directory to 
+  the path, otherwise you can add other directory to /etc/ld.so.conf file and 
+  run ldconfig command.</p>
+<p>To test the server you can write:</p>
+<p>http://localhost/cgi-bin/repwebexe.bin/version</p>
+<p>It will say you the version and the configuration file location, then you can 
+  test the configured reports:</p>
+<p>http://localhost/cgi-bin/repwebexe.bin/login</p>
 </body>
 </html>
