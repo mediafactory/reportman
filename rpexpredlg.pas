@@ -68,12 +68,12 @@ type
     Label3: TLabel;
     LModel: TLabel;
     LHelp: TLabel;
-    BitBtn1: TBitBtn;
     BCheckSyn: TButton;
     BShowResult: TButton;
     LParams: TLabel;
     BCancel: TButton;
     BOK: TButton;
+    Button1: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure LCategoryClick(Sender: TObject);

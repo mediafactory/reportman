@@ -38,7 +38,7 @@ const
   CONS_CONTROLGAP=5;
   CONS_RIGHTBARGAP=25;
   CONS_NULLWIDTH=40;
-
+  CONS_MAXCLIENTHEIGHT=400;
 type
   TFRpRunTimeParams = class(TForm)
     PModalButtons: TPanel;
@@ -126,6 +126,7 @@ var
  aparam:TRpParam;
  TotalWidth:integer;
  achecknull:TCheckBox;
+ NewClientHeight:integer;
 begin
  acontrol:=nil;
  fparams.assign(avalue);
@@ -253,12 +254,20 @@ begin
    acontrol.Top:=Posy;
    acontrol.Left:=CONS_CONTROLPOS;
    acontrol.Width:=TotalWidth-acontrol.Left;
-   acontrol.parent:=self;
+   acontrol.parent:=MainScrollBox;
    Posy:=PosY+acontrol.Height+CONS_CONTROLGAP;
+  end
+  else
+  begin
+   lcontrols.AddObject('',nil);
+   lnulls.AddObject('',nil);
   end;
  end;
  // Set the height of the form
- ClientHeight:=PModalButtons.Height+PosY+CONS_CONTROLGAP;
+ NewClientHeight:=PModalButtons.Height+PosY+CONS_CONTROLGAP;
+ if  NewClientHeight>CONS_MAXCLIENTHEIGHT then
+  NewClientHeight:=CONS_MAXCLIENTHEIGHT;
+ ClientHeight:=NewClientHeight;
  SetInitialBounds;
 end;
 
@@ -281,8 +290,60 @@ begin
 end;
 
 procedure TFRpRunTimeParams.SaveParams;
+var
+ i:integer;
 begin
-
+ for i:=0 to fparams.Count-1 do
+ begin
+  if fparams.items[i].Visible then
+  begin
+   if TCheckBox(Lnulls.Objects[i]).Checked then
+   begin
+    fparams.items[i].Value:=Null;
+   end
+   else
+   begin
+    case fparams.Items[i].ParamType of
+     rpParamString:
+      begin
+       fparams.items[i].Value:=TEdit(LControls.Objects[i]).Text;
+      end;
+     rpParamInteger:
+      begin
+       fparams.items[i].Value:=StrToInt(TEdit(LControls.Objects[i]).Text);
+      end;
+     rpParamDouble:
+      begin
+       fparams.items[i].Value:=StrToFloat(TEdit(LControls.Objects[i]).Text);
+      end;
+     rpParamCurrency:
+      begin
+       fparams.items[i].Value:=StrtoCurr(TEdit(LControls.Objects[i]).Text);
+      end;
+     rpParamDate:
+      begin
+       fparams.items[i].Value:=StrtoDate(TEdit(LControls.Objects[i]).Text);
+      end;
+     rpParamTime:
+      begin
+       fparams.items[i].Value:=StrtoTime(TEdit(LControls.Objects[i]).Text);
+      end;
+     rpParamDateTime:
+      begin
+       fparams.items[i].Value:=StrtoDateTime(TEdit(LControls.Objects[i]).Text);
+      end;
+     rpParamBool:
+      begin
+       fparams.items[i].Value:=StrtoBool(TComboBox(LControls.Objects[i]).Text);
+      end;
+      else
+      begin
+       fparams.items[i].Value:=TEdit(LControls.Objects[i]).Text;
+      end;
+    end;
+   end;
+  end;
+ end;
 end;
 
 end.

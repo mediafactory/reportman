@@ -19,35 +19,35 @@ object FrpExpredialog: TFrpExpredialog
   object Label1: TLabel
     Left = 8
     Top = 8
-    Width = 74
+    Width = 51
     Height = 13
     Caption = 'Expression'
   end
   object Label2: TLabel
     Left = 4
     Top = 108
-    Width = 58
+    Width = 42
     Height = 13
     Caption = 'Category'
   end
   object Label3: TLabel
     Left = 124
     Top = 108
-    Width = 63
+    Width = 46
     Height = 13
     Caption = 'Operation'
   end
   object LModel: TLabel
     Left = 8
     Top = 248
-    Width = 48
+    Width = 35
     Height = 13
     Caption = 'LModel'
   end
   object LHelp: TLabel
     Left = 8
     Top = 224
-    Width = 30
+    Width = 22
     Height = 13
     Caption = 'Help'
   end
@@ -80,7 +80,7 @@ object FrpExpredialog: TFrpExpredialog
       'Constants'
       'Operators')
     Rows = 5
-    TabOrder = 4
+    TabOrder = 3
     OnClick = LCategoryClick
   end
   object LItems: TListBox
@@ -88,34 +88,12 @@ object FrpExpredialog: TFrpExpredialog
     Top = 124
     Width = 337
     Height = 89
-    TabOrder = 5
+    TabOrder = 4
     OnClick = LItemsClick
     OnDblClick = LItemsDblClick
   end
-  object BitBtn1: TBitBtn
-    Left = 200
-    Top = 80
-    Width = 33
-    Height = 33
-    TabOrder = 2
-    OnClick = BitBtn1Click
-    Glyph.Data = {
-      7A010000424D7601000000000000760000002800000020000000100000000100
-      0400000000000001000000000000000000001000000010000000000000000000
-      800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
-      FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333000333
-      3333333333777F33333333333309033333333333337F7F333333333333090333
-      33333333337F7F33333333333309033333333333337F7F333333333333090333
-      33333333337F7F33333333333309033333333333FF7F7FFFF333333000090000
-      3333333777737777F333333099999990333333373F3333373333333309999903
-      333333337F33337F33333333099999033333333373F333733333333330999033
-      3333333337F337F3333333333099903333333333373F37333333333333090333
-      33333333337F7F33333333333309033333333333337373333333333333303333
-      333333333337F333333333333330333333333333333733333333}
-    NumGlyphs = 2
-  end
   object BCheckSyn: TButton
-    Left = 8
+    Left = 232
     Top = 80
     Width = 113
     Height = 25
@@ -125,13 +103,13 @@ object FrpExpredialog: TFrpExpredialog
     OnClick = BCheckSynClick
   end
   object BShowResult: TButton
-    Left = 280
+    Left = 344
     Top = 80
     Width = 113
     Height = 25
     Hint = 'Evaluates the expresion and shows the result'
     Caption = 'Show Result'
-    TabOrder = 3
+    TabOrder = 2
     OnClick = BShowResultClick
   end
   object BCancel: TButton
@@ -141,7 +119,7 @@ object FrpExpredialog: TFrpExpredialog
     Height = 25
     Caption = '&Cancel'
     ModalResult = 2
-    TabOrder = 6
+    TabOrder = 5
   end
   object BOK: TButton
     Left = 4
@@ -151,6 +129,15 @@ object FrpExpredialog: TFrpExpredialog
     Caption = '&OK'
     Default = True
     ModalResult = 1
-    TabOrder = 7
+    TabOrder = 6
+  end
+  object Button1: TButton
+    Left = 116
+    Top = 80
+    Width = 109
+    Height = 25
+    Caption = 'Add selection'
+    TabOrder = 13
+    OnClick = BitBtn1Click
   end
 end

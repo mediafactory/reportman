@@ -197,6 +197,8 @@ type
     procedure SaveConfig;
     procedure UpdateUnits;
     procedure CorrectScrollBoxes;
+    procedure AppIdleRefreshInterface(Sender:TObject;var done:boolean);
+    procedure RefreshInterface(Sender: TObject);
   public
     { Public declarations }
     report:TRpReport;
@@ -588,14 +590,28 @@ begin
  DoOpen(newfilename,false);
 end;
 
+procedure TFMainf.AppIdleRefreshInterface(Sender:TObject;var done:boolean);
+begin
+ Application.OnIdle:=nil;
+ done:=false;
+ FreeInterface;
+ CreateInterface;
+ FormResize(self);
+end;
+
+procedure TFMainf.RefreshInterface(Sender: TObject);
+begin
+ Application.OnIdle:=AppIdleRefreshInterface;
+end;
+
 procedure TFMainf.ANewPageHeaderExecute(Sender: TObject);
 begin
  // Inserts a new page header
  Assert(report<>nil,'Called AddNew PageHeader without a report assigned');
 
  freportstructure.FindSelectedSubreport.AddPageHeader;
- FreeInterface;
- CreateInterface;
+
+ RefreshInterface(Self);
 end;
 
 procedure TFMainf.ANewPageFooterExecute(Sender: TObject);
@@ -604,8 +620,8 @@ begin
  Assert(report<>nil,'Called AddNewPageFooter without a report assigned');
 
  freportstructure.FindSelectedSubreport.AddPageFooter;
- FreeInterface;
- CreateInterface;
+
+ RefreshInterface(Self);
 end;
 
 procedure TFMainf.ANewGroupExecute(Sender: TObject);
@@ -619,8 +635,8 @@ begin
  if length(newgroupname)>0 then
  begin
   freportstructure.FindSelectedSubreport.AddGroup(newgroupname);
-  FreeInterface;
-  CreateInterface;
+
+  RefreshInterface(Self);
  end;
 end;
 
@@ -631,8 +647,7 @@ begin
 
  report.AddSubReport;
 
- FreeInterface;
- CreateInterface;
+ RefreshInterface(Self);
 end;
 
 procedure TFMainf.ADeleteSelectionExecute(Sender: TObject);
@@ -642,9 +657,7 @@ begin
 
  freportstructure.DeleteSelectedNode;
 
- FreeInterface;
- CreateInterface;
- FormResize(Self);
+ RefreshInterface(Self);
 end;
 
 procedure TFMainf.ANewDetailExecute(Sender: TObject);
@@ -654,8 +667,7 @@ begin
 
  freportstructure.FindSelectedSubreport.AddDetail;
 
- FreeInterface;
- CreateInterface;
+ RefreshInterface(Self);
 end;
 
 procedure TFMainf.ADataConfigExecute(Sender: TObject);

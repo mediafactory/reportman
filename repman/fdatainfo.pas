@@ -20,6 +20,8 @@ unit fdatainfo;
 
 interface
 
+{$I rpconf.inc}
+
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,
 {$IFDEF USEBDE}
@@ -47,9 +49,9 @@ type
     CheckLoadDriverParams: TCheckBox;
     GroupBox2: TGroupBox;
     LDatasets: TListBox;
-    BAdd: TBitBtn;
-    BDelete: TBitBtn;
-    BRename: TBitBtn;
+    BAdd: TButton;
+    BDelete: TButton;
+    BRename: TButton;
     GDataProps: TGroupBox;
     Label2: TLabel;
     ComboConnection: TComboBox;
@@ -57,7 +59,7 @@ type
     ComboDataSource: TComboBox;
     LSQL: TLabel;
     MSQL: TMemo;
-    BShowData: TBitBtn;
+    BShowData: TButton;
     BParams: TButton;
     GDriver: TRadioGroup;
     EMyBase: TEdit;

@@ -28,17 +28,28 @@ uses
 type
   TFRpStructure = class(TFrame)
     RView: TTreeView;
-    Panel1: TPanel;
-    BUp: TSpeedButton;
-    BDown: TSpeedButton;
+    Panel1: TToolBar;
     ActionList1: TActionList;
     ImageList1: TImageList;
     AUp: TAction;
     ADown: TAction;
+    BNew: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
+    ADelete: TAction;
+    PopupMenu1: TPopupMenu;
+    Detail1: TMenuItem;
+    Pageheader1: TMenuItem;
+    Pagefooter1: TMenuItem;
+    Groupheaderandfooter1: TMenuItem;
+    Subreport1: TMenuItem;
     procedure Expand1Click(Sender: TObject);
     procedure RViewClick(Sender: TObject);
     procedure AUpExecute(Sender: TObject);
     procedure ADownExecute(Sender: TObject);
+    procedure ADeleteExecute(Sender: TObject);
+    procedure BNewClick(Sender: TObject);
   private
     { Private declarations }
     FReport:TRpReport;
@@ -217,6 +228,7 @@ var
  asection:TRpSection;
  asec:TRpSection;
  i,index:integer;
+ asectype:TRpSectionType;
  firstdetail,lastdetail:integer;
 begin
  // Goes up
@@ -248,11 +260,12 @@ begin
   begin
    subrep:=FindSelectedSubreport;
    asection:=TRpSection(aobject);
-   // It can be a detail
-   if asection.SectionType=rpsecdetail then
+   // It can be a detail,pheader,pfooter
+   if asection.SectionType in [rpsecdetail,rpsecpheader,rpsecpfooter] then
    begin
-    firstdetail:=subrep.FirstDetail;
-    lastdetail:=subrep.LastDetail;
+    asectype:=asection.SectionType;
+    firstdetail:=subrep.FirstSectionThatIs(asectype);
+    lastdetail:=subrep.LastSectionThatIs(asectype);
     if firstdetail=lastdetail then
      exit;
     index:=-1;
@@ -343,6 +356,13 @@ begin
       // Update
       SetReport(FReport);
       SelectDataItem(asection);
+     end
+     else
+     begin
+      if asection.SectionType=rpsecpheader then
+      begin
+
+      end;
      end;
     end;
    end;
@@ -359,6 +379,7 @@ var
  aobject:TObject;
  index:integer;
  asection,asec:TRpSection;
+ asectype:TRpSectionType;
  firstdetail,lastdetail:integer;
 begin
  // Goes down
@@ -394,11 +415,12 @@ begin
   begin
    subrep:=FindSelectedSubreport;
    asection:=TRpSection(aobject);
-   // It can be a detail
-   if asection.SectionType=rpsecdetail then
+   // It can be a detail,pheader,pfooter
+   if asection.SectionType in [rpsecdetail,rpsecpheader,rpsecpfooter] then
    begin
-    firstdetail:=subrep.FirstDetail;
-    lastdetail:=subrep.LastDetail;
+    asectype:=asection.SectionType;
+    firstdetail:=subrep.FirstSectionThatIs(asectype);
+    lastdetail:=subrep.LastSectionThatIs(asectype);
     if firstdetail=lastdetail then
      exit;
     index:=-1;
@@ -454,45 +476,25 @@ begin
      // Update
      SetReport(FReport);
      SelectDataItem(asection);
-    end
-    else
-    begin
-     if asection.SectionType=rpsecgheader then
-     begin
-      if subrep.GroupCount<2 then
-       exit;
-      index:=-1;
-      lastdetail:=subrep.LastDetail;
-      firstdetail:=subrep.FirstDetail;
-      for i:=1 to subrep.GroupCount do
-      begin
-       asec:=subrep.Sections.Items[firstdetail-i].Section;
-       if asec=asection then
-       begin
-        index:=i;
-        break;
-       end;
-      end;
-      if index<0 then
-       exit;
-      if index<2 then
-       exit;
-      // Group footer
-      asec:=subrep.Sections.Items[lastdetail+index-1].Section;
-      subrep.Sections.Items[lastdetail+index-1].Section:=subrep.Sections.Items[lastdetail+index].Section;
-      subrep.Sections.Items[lastdetail+index].Section:=asec;
-      // Group Header
-      asec:=subrep.Sections.Items[firstdetail-index+1].Section;
-      subrep.Sections.Items[firstdetail-index+1].Section:=subrep.Sections.Items[firstdetail-index].Section;
-      subrep.Sections.Items[firstdetail-index].Section:=asec;
-      // Update
-      SetReport(FReport);
-      SelectDataItem(asection);
-     end;
     end;
    end;
   end;
  end;
+end;
+
+procedure TFRpStructure.ADeleteExecute(Sender: TObject);
+begin
+ fmainf.ADeleteSelection.Execute;
+end;
+
+procedure TFRpStructure.BNewClick(Sender: TObject);
+var
+ apoint:TPoint;
+begin
+ apoint.x:=BNew.Left;
+ apoint.y:=BNew.Top+BNew.Height;
+ apoint:=BNew.Parent.ClientToScreen(apoint);
+ BNew.DropDownMenu.Popup(apoint.x,apoint.y);
 end;
 
 end.

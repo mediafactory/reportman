@@ -355,6 +355,11 @@ begin
  Fidenfreespacecms.free;
  Fidenfreespaceinch.free;
  FTotalPagesList.free;
+ if Assigned(FEvaluator) then
+ begin
+  FEvaluator.free;
+  FEvaluator:=nil;
+ end;
  inherited destroy;
 end;
 
@@ -1111,7 +1116,7 @@ begin
   FEvaluator.free;
   FEvaluator:=nil;
  end;
- FEvaluator:=TRpEvaluator.Create(self);
+ FEvaluator:=TRpEvaluator.Create(nil);
  // Insert page numeber
  FEvaluator.AddVariable('Page',fidenpagenum);
  FEvaluator.AddVariable('FREE_SPACE',fidenfreespace);

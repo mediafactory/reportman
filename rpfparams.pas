@@ -22,16 +22,11 @@ interface
 
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,rpconsts,rpparams, QMask,
-  rpdatainfo,Variants,DB,QDialogs;
+  rpdatainfo,Variants,DB,QDialogs, QActnList, QImgList, QComCtrls;
 
 type
   TFRpParams = class(TForm)
-    OKBtn: TButton;
-    CancelBtn: TButton;
-    LParams: TListBox;
-    BAdd: TBitBtn;
-    BDelete: TBitBtn;
-    BRename: TBitBtn;
+    Panel1: TPanel;
     GProperties: TGroupBox;
     Label1: TLabel;
     EDescription: TEdit;
@@ -46,8 +41,26 @@ type
     BAdddata: TButton;
     BDeleteData: TButton;
     LDatasets: TListBox;
-    BUp: TSpeedButton;
-    BDown: TSpeedButton;
+    Panel2: TPanel;
+    LParams: TListBox;
+    ToolBar1: TToolBar;
+    ToolButton1: TToolButton;
+    ImageList1: TImageList;
+    ActionList1: TActionList;
+    ANewParam: TAction;
+    ADelete: TAction;
+    AUp: TAction;
+    ADown: TAction;
+    ARename: TAction;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
+    ToolButton5: TToolButton;
+    ToolButton6: TToolButton;
+    ToolButton7: TToolButton;
+    Panel3: TPanel;
+    CancelBtn: TButton;
+    OKBtn: TButton;
     procedure FormCreate(Sender: TObject);
     procedure OKBtnClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -63,6 +76,7 @@ type
     procedure BDownClick(Sender: TObject);
   private
     { Private declarations }
+    updating:boolean;
     params:TRpParamList;
     datainfo:TRpDatainfoList;
     dook:boolean;
@@ -148,40 +162,45 @@ begin
   GProperties.Visible:=false;
   exit;
  end;
- if LParams.Itemindex<0 then
-  LParams.ItemIndex:=0;
- GProperties.Visible:=True;
- param:=params.ParamByName(LParams.Items.Strings[LParams.Itemindex]);
- CheckVisible.Checked:=param.Visible;
- CheckNull.Checked:=param.Value=Null;
- EDescription.Text:=param.Description;
- LDatasets.Clear;
- LDatasets.items.Assign(param.Datasets);
- if LDatasets.items.count>0 then
-  LDatasets.ItemIndex:=0;
+ updating:=true;
+ try
+  if LParams.Itemindex<0 then
+   LParams.ItemIndex:=0;
+  GProperties.Visible:=True;
+  param:=params.ParamByName(LParams.Items.Strings[LParams.Itemindex]);
+  CheckVisible.Checked:=param.Visible;
+   CheckNull.Checked:=param.Value=Null;
+  EDescription.Text:=param.Description;
+  LDatasets.Clear;
+  LDatasets.items.Assign(param.Datasets);
+  if LDatasets.items.count>0 then
+   LDatasets.ItemIndex:=0;
 
- ComboDataType.ItemIndex:=Integer(param.ParamType);
- EValue.Text:='';
- if (param.Value<>Null) then
- begin
-  case param.ParamType of
-   rpParamString:
-    EValue.Text:=param.Value;
-   rpParamInteger:
-    EValue.Text:=IntToStr(param.Value);
-   rpParamDouble:
-    EValue.Text:=FloatToStr(param.Value);
-   rpParamCurrency:
-    EValue.Text:=CurrToStr(param.Value);
-   rpParamDate:
-    EValue.Text:=DateToStr(param.Value);
-   rpParamTime:
-    EValue.Text:=TimeToStr(param.Value);
-   rpParamDateTime:
-    EValue.Text:=DateTimeToStr(param.Value);
-   rpParamBool:
-    EValue.Text:=BoolToStr(param.Value);
+  ComboDataType.ItemIndex:=Integer(param.ParamType);
+  EValue.Text:='';
+  if (param.Value<>Null) then
+  begin
+   case param.ParamType of
+    rpParamString:
+     EValue.Text:=param.Value;
+    rpParamInteger:
+     EValue.Text:=IntToStr(param.Value);
+    rpParamDouble:
+     EValue.Text:=FloatToStr(param.Value);
+    rpParamCurrency:
+     EValue.Text:=CurrToStr(param.Value);
+    rpParamDate:
+     EValue.Text:=DateToStr(param.Value);
+    rpParamTime:
+     EValue.Text:=TimeToStr(param.Value);
+    rpParamDateTime:
+     EValue.Text:=DateTimeToStr(param.Value);
+    rpParamBool:
+     EValue.Text:=BoolToStr(param.Value,true);
+   end;
   end;
+ finally
+  updating:=false;
  end;
 end;
 
@@ -252,6 +271,8 @@ procedure TFRpParams.EDescriptionChange(Sender: TObject);
 var
  param:TRpParam;
 begin
+ if updating then
+  exit;
  // Validate the input value
  if (LParams.Itemindex<0) then
   exit;
@@ -265,7 +286,8 @@ begin
    if (Sender=CheckNull) then
    begin
     UpdateValue(param);
-    param.Value:=null;
+    if CheckNull.Checked then
+     param.Value:=null;
    end
    else
     if (Sender=ComboDataType) then
@@ -347,10 +369,11 @@ begin
  paramname:=AnsiUpperCase(Trim(paramname));
 
  param:=params.ParamByName(LParams.Items.strings[LParams.Itemindex]);
- index:=params.IndexOf(LParams.Items.strings[LParams.Itemindex]);
- if index>0 then
-  Raise Exception.Create(SRpParamNameExists);
+ index:=params.IndexOf(paramname);
+ if index>=0 then
+   Raise Exception.Create(SRpParamNameExists);
  param.Name:=paramname;
+ LParams.Items.strings[LParams.Itemindex]:=paramname;
 end;
 
 procedure TFRpParams.BUpClick(Sender: TObject);

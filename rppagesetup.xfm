@@ -103,7 +103,7 @@ object FPageSetup: TFPageSetup
     TabOrder = 5
     Visible = False
   end
-  object BBackground: TBitBtn
+  object BBackground: TButton
     Left = 176
     Top = 256
     Width = 121

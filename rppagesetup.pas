@@ -36,7 +36,7 @@ type
     RCustomOrientation: TRadioGroup;
     ColorDialog1: TColorDialog;
     SColor: TShape;
-    BBackground: TBitBtn;
+    BBackground: TButton;
     Label3: TLabel;
     ComboLanguage: TComboBox;
     GroupBox1: TGroupBox;

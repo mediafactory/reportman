@@ -15,7 +15,7 @@
 
 
 {TODO 1 -oToni -cEngine : Image component filename property to load a file on the fly}
-{TODO 2 -oToni -cEngine : User parameters form}
+{DONE 2 -oToni -cEngine : User parameters form}
 
 {TODO 1 -oToni -cEngine : Detect existing BDE Databases in rpdatainfo}
 

@@ -3,7 +3,7 @@ object FRpPreview: TFRpPreview
   Top = 38
   Width = 640
   Height = 480
-  VertScrollBar.Range = 33
+  VertScrollBar.Range = 30
   ActiveControl = EPageNum
   Caption = 'Report Print Preview'
   Color = clBackground
@@ -21,7 +21,8 @@ object FRpPreview: TFRpPreview
     Left = 0
     Top = 0
     Width = 640
-    Height = 33
+    Height = 30
+    AutoSize = True
     ButtonHeight = 26
     ButtonWidth = 26
     Caption = 'BToolBar'
@@ -32,7 +33,7 @@ object FRpPreview: TFRpPreview
       Left = 493
       Top = 4
       Width = 108
-      Height = 25
+      Height = 26
       Align = alCustom
       Visible = False
     end
@@ -107,7 +108,7 @@ object FRpPreview: TFRpPreview
       Left = 309
       Top = 4
       Width = 184
-      Height = 25
+      Height = 26
       Action = ACancel
       Caption = 'Cancel'
       TabOrder = 8
@@ -150,9 +151,9 @@ object FRpPreview: TFRpPreview
   end
   object ImageContainer: TScrollBox
     Left = 0
-    Top = 33
+    Top = 30
     Width = 640
-    Height = 447
+    Height = 450
     VertScrollBar.Increment = 60
     VertScrollBar.Range = 81
     HorzScrollBar.Increment = 60

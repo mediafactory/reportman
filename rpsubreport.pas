@@ -58,6 +58,8 @@ type
    procedure AddDetail;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
    procedure GetGroupNames(alist:TStrings);
+   function FirstSectionThatIs(atype:TRpSectionType):integer;
+   function LastSectionThatIs(atype:TRpSectionType):integer;
    property FirstDetail:integer read GetFirstDetail;
    property LastDetail:integer read GetLastDetail;
    property DetailCount:integer read GetDetailCount;
@@ -407,7 +409,7 @@ begin
  Result:=counter;
 end;
 
-function TRpSubReport.GetFirstDetail:integer;
+function TRpSubReport.FirstSectionThatIs(atype:TRpSectionType):integer;
 var
  i:integer;
 begin
@@ -415,7 +417,7 @@ begin
  i:=0;
  while i<Sections.Count do
  begin
-  if Sections.Items[i].Section.SectionType=rpsecdetail then
+  if Sections.Items[i].Section.SectionType=atype then
   begin
    Result:=i;
    break;
@@ -424,15 +426,14 @@ begin
  end;
 end;
 
-
-function TRpSubReport.GetLastDetail:integer;
+function TRpSubReport.LastSectionThatIs(atype:TRpSectionType):integer;
 var
  i:integer;
 begin
  i:=0;
  while i<Sections.Count do
  begin
-  if Sections.Items[i].Section.SectionType=rpsecdetail then
+  if Sections.Items[i].Section.SectionType=atype then
   begin
    break;
   end;
@@ -440,7 +441,7 @@ begin
  end;
  while i<Sections.Count do
  begin
-  if Sections.Items[i].Section.SectionType<>rpsecdetail then
+  if Sections.Items[i].Section.SectionType<>atype then
   begin
    break;
   end;
@@ -448,6 +449,18 @@ begin
  end;
  dec(i);
  Result:=i;
+end;
+
+
+function TRpSubReport.GetFirstDetail:integer;
+begin
+ Result:=FirstSectionThatIs(rpsecdetail);
+end;
+
+
+function TRpSubReport.GetLastDetail:integer;
+begin
+ Result:=LastSectionThatIs(rpsecdetail);
 end;
 
 
