@@ -11,7 +11,7 @@
 ; Setup adds the periods automatically (appending a period would result in
 ; two periods being displayed).
 ;
-; $Id: SpanishT.isl,v 1.3 2004/05/01 12:52:09 tonim Exp $
+; $Id: SpanishT.isl,v 1.4 2004/05/15 08:37:01 tonim Exp $
 
 [LangOptions]
 LanguageName=Español
@@ -317,8 +317,8 @@ DBExpressdatabasedrivers=Controladores DBExpress (Borland DBExpress)
 BorlandDatabaseEnginedatabasedrivers=Controladores BDE (Borland Database Engine)
 Commandlinetools=Utilidades de línea de comandos
 Documentation=Documentación
-TCPserver=Servidor de informes TCP/IP
-TCPclientandmetafileviewer=Cliente TCP/IP y visor de metaarchivos
+TCPserver=Servidor de informes de red
+TCPclientandmetafileviewer=Cliente de red y visor de metaarchivos
 Webserver=Servidor web de informes
 ActiveXcomponent=Componente ActiveX para desarrolladores
 InternetExplorerplugin=Plugin para Internet Explorer
@@ -327,8 +327,8 @@ LaunchReportManagerDesignerXP=Ejecutar diseñador de informes
 DesignerXP=Diseñador de informes
 MetafileViewerandReportClientXP=Cliente de informes y visor de metaarchivos
 TranslationUtility=Utilidad de traducción
-ServerapplicationXP=Servidor de informes TCP/IP
-ServerconfigurationXP=Utilidad de configuración del servidor TCP/IP
+ServerapplicationXP=Servidor de informes de red
+ServerconfigurationXP=Utilidad de configuración del servidor de red
 RegisterActiveX=Instalar ActiveX en el registro
 UnRegisterActiveX=Eliminar ActiveX del registro
 RegisterPlugin=Registrar Plugin
