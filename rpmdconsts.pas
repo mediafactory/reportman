@@ -490,6 +490,16 @@ var
   SRpSOblique2:WideString='Oblique2';
   SRpNoFilenameAssignedNotTRpTranslator:WideString='No Filename assigned to TRpTranslator';
   SRpParameter:WideString='Parameter';
+  SRpYes:WideString='Yes';
+  SRpNo:WideString='No';
+  SRpOk:WideString='Ok';
+  SRpRetry:WideString='Retry';
+  SRpAbort:WideString='Abort';
+  SRpIgnore:WideString='Ignore';
+  SRpInformation:WideString='Information';
+  SRpWarning:WideString='Warning';
+  SRpCritical:WideString='Error';
+  SRpNotFound:WideString='Not found';
 
 
 implementation
@@ -985,7 +995,16 @@ begin
  TranslateVar(720,SRpSOblique2);
  TranslateVar(721,SRpNoFilenameAssignedNotTRpTranslator);
  TranslateVar(722,SRpParameter);
-
+ TranslateVar(723,SRpYes);
+ TranslateVar(724,SRpNo);
+ TranslateVar(93,SRpOk);
+ TranslateVar(725,SRpRetry);
+ TranslateVar(726,SRpAbort);
+ TranslateVar(727,SRpIgnore);
+ TranslateVar(728,SrpInformation);
+ TranslateVar(729,SrpWarning);
+ TranslateVar(730,SRpError);
+ TranslateVar(731,SRpNotFound);
 end;
 
 

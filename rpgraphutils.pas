@@ -28,14 +28,27 @@ uses
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
-  rpmdconsts;
+  rpmdconsts, QImgList;
 
 
 type
-  TFRpGraphProgres = class(TForm)
-    CancelBtn: TButton;
+  TFRpMessageDlg = class(TForm)
+    Panel1: TPanel;
+    BCancel: TButton;
+    BOk: TButton;
+    BYes: TButton;
+    BNo: TButton;
+    LMessage: TLabel;
+    BAbort: TButton;
+    BRetry: TButton;
+    BIgnore: TButton;
+    procedure FormCreate(Sender: TObject);
+    procedure BYesClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
+   Buttonpressed,EscapeButton:TMessageButton;
   public
     { Public declarations }
   end;
@@ -49,6 +62,9 @@ function IntegerFontStyleToString(intfontstyle:integer):String;
 function AlignToGrid(Value:integer;scale:integer):integer;
 function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
 procedure LoadQtTranslator;
+function RpMessageBox(const Text: WideString; const Caption: WideString = '';
+  Buttons: TMessageButtons = [smbOK]; Style: TMessageStyle = smsInformation;
+  Default: TMessageButton = smbOK; Escape: TMessageButton = smbCancel): TMessageButton;
 
 implementation
 
@@ -414,6 +430,125 @@ begin
  WDelimiter := '_';
  if QTranslator_load(Translator, @WFileName, nil, @WDelimiter, nil) then
    QApplication_installTranslator(Application.Handle, Translator)
+end;
+
+
+function RpMessageBox(const Text: WideString; const Caption: WideString = '';
+  Buttons: TMessageButtons = [smbOK]; Style: TMessageStyle = smsInformation;
+  Default: TMessageButton = smbOK; Escape: TMessageButton = smbCancel): TMessageButton;
+var
+ dia:TFRpMessageDlg;
+begin
+ dia:=TFRpMessageDlg.Create(Application);
+ try
+  dia.LMessage.Caption:=Text;
+  if smbOK in Buttons then
+   dia.BOK.Visible:=true;
+  if smbCancel in Buttons then
+   dia.BCancel.Visible:=true;
+  if smbYes in Buttons then
+   dia.BYes.Visible:=true;
+  if smbNo in Buttons then
+   dia.BNo.Visible:=true;
+  if smbAbort in Buttons then
+   dia.BAbort.Visible:=true;
+  if smbRetry in Buttons then
+   dia.BRetry.Visible:=true;
+  if smbIgnore in Buttons then
+   dia.BIgnore.Visible:=true;
+  dia.EscapeButton:=Escape;
+  case Default of
+   smbOK:
+    begin
+     dia.BOk.Default:=True;
+     dia.ActiveControl:=dia.BOK;
+    end;
+   smbCancel:
+    begin
+     dia.BCancel.Default:=True;
+     dia.ActiveControl:=dia.BCancel;
+    end;
+   smbYes:
+    begin
+     dia.BYes.Default:=True;
+     dia.ActiveControl:=dia.BYes;
+    end;
+   smbNo:
+    begin
+     dia.BNo.Default:=True;
+     dia.ActiveControl:=dia.BNo;
+    end;
+   smbRetry:
+    begin
+     dia.BRetry.Default:=True;
+     dia.ActiveControl:=dia.BRetry;
+    end;
+   smbIgnore:
+    begin
+     dia.BIgnore.Default:=True;
+     dia.ActiveControl:=dia.BIgnore;
+    end;
+   smbAbort:
+    begin
+     dia.BIgnore.Default:=True;
+     dia.ActiveControl:=dia.BAbort;
+    end;
+  end;
+  case Style of
+   smsInformation:
+    begin
+     dia.Caption:=SRpInformation;
+    end;
+   smsWarning:
+    begin
+     dia.Caption:=SRpWarning;
+    end;
+   smsCritical:
+    begin
+     dia.Caption:=SRpCritical;
+    end;
+  end;
+  dia.ShowModal;
+  Result:=dia.Buttonpressed;
+ finally
+  dia.free;
+ end;
+end;
+
+procedure TFRpMessageDlg.FormCreate(Sender: TObject);
+begin
+ Buttonpressed:=smbCancel;
+ EscapeButton:=smbCancel;
+ BYes.Tag:=integer(smbYes);
+ BNo.Tag:=integer(smbNo);
+ BOk.Tag:=integer(smbOk);
+ BCancel.Tag:=integer(smbCancel);
+ BRetry.Tag:=integer(smbRetry);
+ BIgnore.Tag:=integer(smbIgnore);
+ BIgnore.Tag:=integer(smbIgnore);
+ BYes.Caption:=SRpYes;
+ BNo.Caption:=SRpNo;
+ BOk.Caption:=SRpCancel;
+ BCancel.Caption:=SRpCancel;
+ BIgnore.Caption:=SRpIgnore;
+ BAbort.Caption:=SRpAbort;
+ BRetry.Caption:=SRpRetry;
+end;
+
+procedure TFRpMessageDlg.BYesClick(Sender: TObject);
+begin
+ ButtonPressed:=TMessageButton((Sender As TButton).Tag);
+ Close;
+end;
+
+procedure TFRpMessageDlg.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+ if Key=Key_Escape then
+ begin
+  Buttonpressed:=EscapeButton;
+  Close;
+ end;
 end;
 
 initialization

@@ -38,7 +38,7 @@ uses
   rpmdconsts,rptypes, QExtCtrls,rpmdfstruc, rplastsav,rpsubreport,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
   rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver,
-  DB,rpmdfhelpform,rpmunits,QConsts, QDialogs;
+  DB,rpmdfhelpform,rpmunits,QConsts, QDialogs,rpgraphutils;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;
@@ -316,7 +316,7 @@ uses rppagesetup, rpmdshfolder,rpmdfdatainfo, rpmdfgrid, rppreview, rpmdfabout,
 // Check if it is saved and return true if all is ok
 function TFRpMainF.CheckSave:Boolean;
 var
- res:TmodalResult;
+ res:TMessageButton;
 begin
  Result:=true;
  if report=nil then
@@ -327,10 +327,12 @@ begin
  begin
   if Not CheckModified then
    exit;
-  res:=MessageDlg(SRpReportChanged,mtWarning,[mbYes,mbNo,mbCancel],0);
-  if ((res=mrCancel) or (res=0)) then
+  res:=RpMessageBox(SRpReportChanged,SRpWarning,[smbYes,smbNo,smbCancel],
+   smsWarning,smbYes,smbCancel);
+
+  if (res=smbCancel) then
    Raise EAbort.Create(SRpSaveAborted);
-  if res=mrNo then
+  if res=smbNo then
    exit;
   ASaveExecute(Self);
  end;
@@ -912,7 +914,7 @@ begin
  // Deletes section
  Assert(report<>nil,'Called ADeleteSection a report unassigned');
 
- if MessageDlg(SRpSureDeleteSection,mtWarning,[mbok,mbcancel],0)=mrOk then
+ if RpMessageBox(SRpSureDeleteSection,SRpWarning,[smbok,smbcancel],smsWarning,smbCancel)=smbOk then
  begin
   freportstructure.DeleteSelectedNode;
   RefreshInterface(Self);
@@ -1081,7 +1083,7 @@ end;
 procedure TFRpMainF.OnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
 begin
- Handled:=MessageDlg(SRpErrorReadingReport,Message+#10+SRpIgnoreError,mtWarning,[mbYes,mbNo],0)=mrYes;
+ Handled:=RpMessageBox(SRpErrorReadingReport+#10+Message+#10+SRpIgnoreError,SRpWarning,[smbYes,smbNo],smsWarning,smbYes)=smbYes;
 end;
 
 procedure TFRpMainF.APreviewExecute(Sender: TObject);
@@ -1554,7 +1556,7 @@ begin
   oldonexception(Sender,E);
  end
  else
-  Messagedlg(SRpError,E.Message,mtError,[mbok],0);
+  RpMessageBox(E.Message,SRpError,[smbok]);
 end;
 
 

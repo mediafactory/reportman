@@ -16,7 +16,7 @@ object FRpGridOptions: TFRpGridOptions
   TextWidth = 6
   object GridColor: TShape
     Left = 120
-    Top = 124
+    Top = 128
     Width = 41
     Height = 29
     Pen.Width = 0
@@ -24,7 +24,7 @@ object FRpGridOptions: TFRpGridOptions
   end
   object BOK: TButton
     Left = 19
-    Top = 160
+    Top = 168
     Width = 75
     Height = 25
     Caption = 'OK'
@@ -34,7 +34,7 @@ object FRpGridOptions: TFRpGridOptions
   end
   object BCancel: TButton
     Left = 179
-    Top = 160
+    Top = 168
     Width = 75
     Height = 25
     Cancel = True
@@ -72,7 +72,7 @@ object FRpGridOptions: TFRpGridOptions
   end
   object LGridColor: TLabel
     Left = 8
-    Top = 132
+    Top = 136
     Width = 46
     Height = 13
     Caption = 'Grid Color'
@@ -86,7 +86,7 @@ object FRpGridOptions: TFRpGridOptions
     TabOrder = 7
   end
   object CheckVisible: TCheckBox
-    Left = 16
+    Left = 8
     Top = 80
     Width = 209
     Height = 21

@@ -1,26 +1,113 @@
-object FRpGraphProgres: TFRpGraphProgres
-  Left = 408
-  Top = 226
-  ActiveControl = CancelBtn
+object FRpMessageDlg: TFRpMessageDlg
+  Left = 151
+  Top = 193
   AutoScroll = False
   BorderStyle = fbsDialog
-  Caption = 'Dialog'
-  ClientHeight = 127
-  ClientWidth = 277
+  Caption = 'MessageDlg Caption'
+  ClientHeight = 163
+  ClientWidth = 587
   Color = clButton
   Position = poScreenCenter
   ShowHint = True
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 96
-  TextHeight = 15
-  TextWidth = 7
-  object CancelBtn: TButton
-    Left = 107
-    Top = 88
-    Width = 75
-    Height = 25
-    Cancel = True
-    Caption = 'Cancel'
-    ModalResult = 2
+  TextHeight = 13
+  TextWidth = 6
+  object Panel1: TPanel
+    Left = 0
+    Top = 127
+    Width = 587
+    Height = 36
+    Align = alBottom
+    BevelOuter = bvNone
     TabOrder = 0
+    object BCancel: TButton
+      Left = 339
+      Top = 7
+      Width = 80
+      Height = 25
+      Cancel = True
+      Caption = 'Cancel'
+      TabOrder = 0
+      Visible = False
+      OnClick = BYesClick
+    end
+    object BOk: TButton
+      Left = 171
+      Top = 7
+      Width = 80
+      Height = 25
+      Cancel = True
+      Caption = 'OK'
+      TabOrder = 1
+      Visible = False
+      OnClick = BYesClick
+    end
+    object BYes: TButton
+      Left = 3
+      Top = 7
+      Width = 80
+      Height = 25
+      Cancel = True
+      Caption = 'Yes'
+      TabOrder = 2
+      Visible = False
+      OnClick = BYesClick
+    end
+    object BNo: TButton
+      Left = 255
+      Top = 7
+      Width = 80
+      Height = 25
+      Cancel = True
+      Caption = 'No'
+      TabOrder = 3
+      Visible = False
+      OnClick = BYesClick
+    end
+    object BAbort: TButton
+      Left = 87
+      Top = 7
+      Width = 80
+      Height = 25
+      Cancel = True
+      Caption = 'Abort'
+      TabOrder = 4
+      Visible = False
+      OnClick = BYesClick
+    end
+    object BRetry: TButton
+      Left = 423
+      Top = 7
+      Width = 80
+      Height = 25
+      Cancel = True
+      Caption = 'Retry'
+      TabOrder = 5
+      Visible = False
+      OnClick = BYesClick
+    end
+    object BIgnore: TButton
+      Left = 507
+      Top = 7
+      Width = 80
+      Height = 25
+      Cancel = True
+      Caption = 'Ignore'
+      TabOrder = 6
+      Visible = False
+      OnClick = BYesClick
+    end
+  end
+  object LMessage: TLabel
+    Left = 4
+    Top = 20
+    Width = 577
+    Height = 101
+    Alignment = taCenter
+    AutoSize = False
+    Caption = 'LMessage'
+    WordWrap = True
   end
 end

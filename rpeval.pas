@@ -997,47 +997,6 @@ begin
  end;
 end;
 
-{procedure TRpEvalEditor.Edit;
-begin
- if Component is TRpEvaluator then
- begin
-  (Component As TRpEvaluator).Evaluate;
-  messageDlg((Component as TRpEvaluator).EvalResultString,mtinformation,[mbOK],0);
- end;
-end;
-
-function TRpEvalEditor.GetVerbCount:integer;
-begin
- Result:=3;
-end;
-
-function TRpEvalEditor.GetVerb(Index:integer):string;
-begin
- case index of
-  0:
-   Result:='Evaluate';
-  1:
-   Result:='Syntax checking';
-  2:
-   Result:='Build expression';
- end;
-end;
-
-procedure TRpEvalEditor.ExecuteVerb(Index:Integer);
-begin
- case index of
-  0:
-   begin
-   (Component As TRpEvaluator).Evaluate;
-   messageDlg((Component as TRpEvaluator).EvalResultString,mtinformation,[mbOK],0);
-   end;
-  1:
-   (Component As TRpEvaluator).CheckSyntax;
-  2:
-   (Component As TRpEvaluator).Expression:=ChangeExpression((Component As TRpCustomEvaluator).expression,(Component As TRpCustomEvaluator));
- end;
-end;
-}
 
 function TRpCustomEvaluator.NewVariable(name1:string;ValueIni:TRpValue):TIdenVariable;
 var iden:TIdenVariable;

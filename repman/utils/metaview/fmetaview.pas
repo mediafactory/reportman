@@ -85,6 +85,7 @@ type
     Scaletowindow1: TMenuItem;
     N2: TMenuItem;
     Print2: TMenuItem;
+    ACancel: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -98,7 +99,6 @@ type
     procedure AOpenExecute(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure BCancelClick(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure AImageMouseDown(Sender: TObject; Button: TMouseButton;
@@ -108,6 +108,7 @@ type
     procedure AScaleFullExecute(Sender: TObject);
     procedure AScaleMoreExecute(Sender: TObject);
     procedure AScaleLessExecute(Sender: TObject);
+    procedure ACancelExecute(Sender: TObject);
   private
     { Private declarations }
     cancelled:boolean;
@@ -157,6 +158,36 @@ end;
 
 procedure TFMeta.FormCreate(Sender: TObject);
 begin
+ Caption:=SRpRepMetafile;
+ SaveDialog1.Title:=TranslateStr(216,SaveDialog1.Title);
+ ACancel.Caption:=TranslateStr(94,ACancel.Caption);
+ ACancel.Hint:=TranslateStr(218,ACancel.Hint);
+ APrint.Caption:=TranslateStr(52,APrint.Caption);
+ APrint.Hint:=TranslateStr(53,APrint.Hint);
+ ASave.Caption:=TranslateStr(46,ASave.Caption);
+ ASave.Hint:=TranslateStr(217,ASave.Hint);
+ AExit.Caption:=TranslateStr(44,AExit.Caption);
+ AExit.Hint:=TranslateStr(219,AExit.Hint);
+ AFirst.Caption:=TranslateStr(220,AFirst.Caption);
+ AFirst.Hint:=TranslateStr(221,AFirst.Hint);
+ APrevious.Caption:=TranslateStr(222,APrevious.Caption);
+ APrevious.Hint:=TranslateStr(223,APrevious.Hint);
+ ANext.Caption:=TranslateStr(224,ANext.Caption);
+ ANext.Hint:=TranslateStr(225,ANext.Hint);
+ ALast.Caption:=TranslateStr(226,ALast.Caption);
+ ALast.Hint:=TranslateStr(227,ALast.Hint);
+ AScale100.Caption:=TranslateStr(228,AScale100.Caption);
+ AScale100.Hint:=TranslateStr(229,AScale100.Hint);
+ AScaleWide.Caption:=TranslateStr(230,AScaleWide.Caption);
+ AScaleWide.Hint:=TranslateStr(231,AScaleWide.Hint);
+ AScaleFull.Caption:=TranslateStr(232,AScaleFull.Caption);
+ AScaleFull.Hint:=TranslateStr(233,AScaleFull.Hint);
+ AScaleLess.Caption:=TranslateStr(234,AScaleLess.Caption);
+ AScaleLess.Hint:=TranslateStr(235,AScaleLess.Hint);
+ AScaleMore.Caption:=TranslateStr(236,AScaleMore.Caption);
+ AScaleMore.Hint:=TranslateStr(237,AScaleMore.Hint);
+
+
  APrevious.ShortCut:=Key_PageUp;
  ANext.ShortCut:=Key_PageDown;
  AFirst.ShortCut:=Key_Home;
@@ -340,10 +371,6 @@ begin
 end;
 
 
-procedure TFMeta.BCancelClick(Sender: TObject);
-begin
- cancelled:=true;
-end;
 
 procedure TFMeta.EnableButtons;
 begin
@@ -498,6 +525,11 @@ begin
  end
  else
   AScaleFull.Execute;
+end;
+
+procedure TFMeta.ACancelExecute(Sender: TObject);
+begin
+ cancelled:=true;
 end;
 
 end.

@@ -55,5 +55,12 @@
 <p>A. At page setup option of Report Manager Designer you can set use allways 
   device fonts option. Allways install the correct driver for the printer or a 
   driver that printer is emulating.</p>
+<p><b>Q. Why Report Manager needs TClientDataset?</b></p>
+<p> The engine must be capable of go back one record for the main dataset (Prior 
+  procedure) because grouping feature, but some datasets only support unidirectional 
+  datasets, I use a patched version of TClientDataset (TRpDataset), that no eats 
+  lots of memory like TClientDataset, it frees the records it does not need so 
+  the engine can print/proces millions of records without memory problems but 
+  a bit slower if you print only a few thousand records.</p>
 </body>
 </html>

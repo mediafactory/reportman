@@ -19,7 +19,7 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls,rptranslator, DBCtrls, Grids, DBGrids, Db, DBClient, Menus,
   ActnList, ExtCtrls, ToolWin, ComCtrls,Consts, ImgList, rpeval,
-  clipbrd;
+  clipbrd,rpmdconsts;
 
 
 resourcestring
@@ -99,6 +99,7 @@ type
     procedure APasteExecute(Sender: TObject);
     procedure Proces1Click(Sender: TObject);
     procedure ASearchExecute(Sender: TObject);
+    procedure FindDialog1Find(Sender: TObject);
   private
     { Private declarations }
     atrans:TRpTransLator;
@@ -483,6 +484,35 @@ procedure TFMain.ASearchExecute(Sender: TObject);
 begin
  // Ask the texts
  FindDialog1.Execute;
+end;
+
+procedure TFMain.FindDialog1Find(Sender: TObject);
+var
+ iseof:boolean;
+ index:integer;
+begin
+ DTexts.CheckBrowseMode;
+ iseof:=true;
+ DTexts.DisableControls;
+ try
+  if Not DTexts.Bof then
+   DTexts.Next;
+  While Not DTexts.Eof do
+  begin
+   index:=Pos(UpperCase(FindDialog1.FindText),UpperCase(DTextsTEXT.AsString));
+   if index>0 then
+   begin
+    iseof:=false;
+    GridEdit.SelectedField:=DTextsTEXT;
+    break;
+   end;
+   DTexts.Next;
+  end;
+  if iseof then
+   Raise Exception.Create(SRpNotFound);
+ finally
+  DTexts.EnableControls;
+ end;
 end;
 
 end.

@@ -22,7 +22,7 @@ unit rpdbxconfig;
 interface
 
 uses SysUtils, Classes, QGraphics, QForms,
-  QButtons, QExtCtrls, QControls, QStdCtrls,QDialogs,
+  QButtons, QExtCtrls, QControls, QStdCtrls,QDialogs,rpgraphutils,
   SQLExpr,DBConnAdmin, DBXpress, DB,rpmdconsts, QComCtrls, QImgList;
 
 const
@@ -291,7 +291,7 @@ begin
  if LConnections.ItemIndex<0 then
   exit;
  conname:=LConnections.Items.Strings[LConnections.ItemIndex];
- if mrOk=MessageDlg(SRpDropConnection,SRpSureDropConnection+conname,mtWarning,[mbok,mbCancel],0) then
+ if smbOk=RpMessageBox(SRpSureDropConnection+conname,SRpDropConnection,[smbok,smbCancel],smsWarning,smbCancel) then
  begin
   ConAdmin.DeleteConnection(conname);
   ConAdminObj.ConnectionConfig.UpdateFile;

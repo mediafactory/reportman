@@ -31,7 +31,7 @@ uses SysUtils, Classes, QGraphics, QForms,
   adodb,
 {$ENDIF}
   rpreport,rpmdconsts,rpdatainfo,DBConnAdmin,QDialogs,
-  rpparams,rpfparams, db,QComCtrls;
+  rpparams,rpfparams, db,QComCtrls,rpgraphutils;
 
 type
   TFRpDatainfoconfig = class(TForm)
@@ -705,16 +705,16 @@ end;
 procedure TFRpDatainfoconfig.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 var
- res:TModalResult;
+ res:TMessageButton;
 begin
  if saved then
   exit;
  if docancel then
   exit;
- res:=MessageDlg(SRpSaveChanges,mtWarning,[mbYes,mbNo,mbCancel],0);
- if ((res=mrCancel) or (res=0)) then
+ res:=RpMessageBox(SRpSaveChanges,SRpWarning,[smbYes,smbNo,smbCancel],smsWarning,smbYes);
+ if (res=smbCancel) then
   Raise EAbort.Create(SRpSaveAborted);
- if res=mrYes then
+ if res=smbYes then
   DoSave;
 end;
 

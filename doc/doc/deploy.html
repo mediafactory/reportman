@@ -5,7 +5,7 @@
 </head>
 
 <body>
-<h3>Installation</h3>
+<h2>Installation</h2>
 <h3><b>Deployment of Report Manager Designer</b></h3>
 <table width="95%" border="1">
   <tr> 
@@ -19,6 +19,18 @@
     <td width="88">repmand</td>
     <td width="262">Report Manager Main executable</td>
     <td width="133">AppDir/Required</td>
+  </tr>
+  <tr> 
+    <td width="88">reportmanres.*</td>
+    <td width="88">reportmanres.*</td>
+    <td width="262">Engine resource strings for multiple languages</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
+  <tr>
+    <td width="88">qt_*.qm</td>
+    <td width="88">qt_*.qm</td>
+    <td width="262">Resource strings for Qt library</td>
+    <td width="133">AppDir/Optional</td>
   </tr>
   <tr> 
     <td width="88">metaprint.exe</td>
@@ -157,6 +169,8 @@
       <ul>
         <li>You must deploy database drivers you use, if you use IBX, IBO, or 
           something native, none</li>
+        <li>You can deploy the translated resourcestrings, reportmanres.* so the 
+          engine will select the correct user language</li>
         <li> <b>dbxconnections.ini</b> is used by the engine to read connections 
           configurations for DBX,IBX, IBO..., to obtain the file the engine will 
           search at registry \Software\Borland\DBExpress the value 'Connection 
@@ -197,7 +211,9 @@
     <td width="53%"> 
       <ul>
         <li>You must deploy <b>libmidas.so.1</b> because Report Manager uses ClientDataset 
-          components when accessing to databases.</li>
+          components when accessing to databases</li>
+        <li>You can deploy the translated resourcestrings, reportmanres.* so the 
+          engine will select the correct user language</li>
         <li>Usually you need <b>dbxconnections</b> and <b>dbxdrivers</b> in <b>/home/user/.borland</b></li>
       </ul>  
       <ul>
@@ -245,6 +261,10 @@
   </tr>
   <tr> 
     <td width="47%">Reportman.ocx</td>
+  </tr>
+  <tr>
+    <td width="47%">You can distribute reportmanres.* to show the Preview and 
+      Print dialogs in the language locale of the user.</td>
   </tr>
   <tr> 
     <td width="47%">Note: You must register it with regsvr32 as any other ActiveX 
