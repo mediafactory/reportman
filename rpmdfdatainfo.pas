@@ -91,6 +91,11 @@ type
     LNote: TLabel;
     LDataprops: TLabel;
     LRDataset: TLabel;
+    LRange: TLabel;
+    EBDEFirstRange: TMemo;
+    EBDELastRange: TMemo;
+    LLastRange: TLabel;
+    LFirstRange: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -196,6 +201,9 @@ begin
  LIndexFields.Caption:=TranslateStr(164,LIndexFields.Caption);
  BMyBase.Caption:=TranslateStr(168,BMyBase.Caption);
  Caption:=TranslateStr(178,Caption);
+ LFirstRange.Caption:=TranslateStr(831,LFirstRange.Caption);
+ LLastRange.Caption:=TranslateStr(832,LLastRange.Caption);
+ LRange.Caption:=TranslateStr(833,LRange.Caption);
 
  GDriver.ItemIndex:=0;
  GDriver.Columns:=GDriver.Items.Count;
@@ -492,6 +500,8 @@ begin
  EBDEIndexFields.Text:=dinfo.BDEIndexFields;
  MBDEFilter.Text:=dinfo.BDEFilter;
  EBDEIndexName.Text:=dinfo.BDEIndexName;
+ EBDEFirstRange.Text:=dinfo.BDEFirstRange;
+ EBDELastRange.Text:=dinfo.BDELastRange;
  EBDETable.Text:=dinfo.BDETable;
  EBDEMasterFields.Text:=dinfo.BDEMasterFields;
  RBDEType.ItemIndex:=Integer(dinfo.BDEType);
@@ -642,6 +652,16 @@ begin
  if Sender=EBDEMasterFields then
  begin
   dinfo.BDEMasterFields:=EBDEMasterFields.Text;
+ end
+ else
+ if Sender=EBDEFirstRange then
+ begin
+  dinfo.BDEFirstRange:=EBDEFirstRange.Text;
+ end
+ else
+ if Sender=EBDELastRange then
+ begin
+  dinfo.BDELastRange:=EBDELastRange.Text;
  end;
 end;
 

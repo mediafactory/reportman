@@ -351,8 +351,11 @@ begin
  copies:=report.Copies;
  if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
   exit;
- report.EndPrint;
- PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
+ ALastExecute(Self);
+ PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,
+ collate,false);
+  // report.EndPrint;
+// PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
  AppIdle(Self,adone);
 end;
 
@@ -377,9 +380,11 @@ begin
     else
      if SaveDialog1.FilterIndex in [2,3] then
      begin
-      report.EndPrint;
-      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,9999999,
-       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
+      ALastExecute(Self);
+      SaveMetafileToPDF(report.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
+//    report.endprint
+//      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,9999999,
+//       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
       AppIdle(Self,adone);
      end;
    finally

@@ -40,6 +40,7 @@ type
     LConfigFile: TLabel;
     LPort: TLabel;
     LPortNumber: TLabel;
+    LVersion: TLabel;
     procedure BStartServerClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -108,6 +109,8 @@ begin
  LPort.Caption:=TranslateStr(829,LPort.Caption);
  LPortNumber.Font.Style:=[fsbold];
  LHostName.Font.Style:=[fsbold];
+ LVersion.Caption:=TranslateStr(91,'Version')+' '+RM_VERSION;
+ LVersion.Font.Style:=[fsBold];
  BStartServerClick(Self);
 
  SetInitialBounds;

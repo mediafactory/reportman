@@ -29,7 +29,7 @@ uses
   rppagesetupvcl in '..\rppagesetupvcl.pas' {FRpPageSetupVCL},
   rpfparamsvcl in '..\rpfparamsvcl.pas' {FRpParamsVCL},
   rpgraphutilsvcl in '..\rpgraphutilsvcl.pas' {FRpMessageDlgVCL},
-  rpexpredlgvcl in '..\rpexpredlgvcl.pas' {FrpExpredialogVCL},
+  rpexpredlgvcl in '..\rpexpredlgvcl.pas' {FRpExpredialogVCL},
   rprfvparams in '..\rprfvparams.pas' {FRpRTParams},
   rpmdfsectionintvcl in '..\rpmdfsectionintvcl.pas',
   rpzlibzutil in '..\rpzlibzutil.pas',

@@ -99,7 +99,7 @@ object FSerMain: TFSerMain
       Caption = 'Configuration file'
     end
     object LPort: TLabel
-      Left = 12
+      Left = 8
       Top = 124
       Width = 19
       Height = 13
@@ -111,6 +111,13 @@ object FSerMain: TFSerMain
       Width = 145
       Height = 21
       AutoSize = False
+    end
+    object LVersion: TLabel
+      Left = 308
+      Top = 16
+      Width = 35
+      Height = 13
+      Caption = 'Version'
     end
   end
 end

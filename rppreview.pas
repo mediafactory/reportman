@@ -367,8 +367,11 @@ begin
   if Not rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
    exit;
  end;
- report.EndPrint;
- PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
+// report.EndPrint;
+// PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
+ ALastExecute(Self);
+ PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,
+ collate,pRpDefaultPrinter);
  AppIdle(Self,adone);
 end;
 
@@ -393,9 +396,11 @@ begin
     else
      if SaveDialog1.FilterIndex in [2,3] then
      begin
-      report.EndPrint;
-      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,32000,
-       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
+      ALastExecute(Self);
+      SaveMetafileToPDF(report.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
+//      report.EndPrint;
+//      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,32000,
+//       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
       AppIdle(Self,adone);
      end;
    finally

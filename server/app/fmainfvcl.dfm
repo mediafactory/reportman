@@ -23,7 +23,7 @@ object FSerMainVCL: TFSerMainVCL
     Left = 0
     Top = 149
     Width = 536
-    Height = 178
+    Height = 171
     Align = alClient
     ReadOnly = True
     ScrollBars = ssBoth
@@ -69,7 +69,7 @@ object FSerMainVCL: TFSerMainVCL
       Caption = 'Configuration file'
     end
     object LPort: TLabel
-      Left = 12
+      Left = 8
       Top = 124
       Width = 19
       Height = 13
@@ -81,6 +81,13 @@ object FSerMainVCL: TFSerMainVCL
       Width = 145
       Height = 21
       AutoSize = False
+    end
+    object LVersion: TLabel
+      Left = 308
+      Top = 16
+      Width = 35
+      Height = 13
+      Caption = 'Version'
     end
     object BStartServer: TButton
       Left = 8

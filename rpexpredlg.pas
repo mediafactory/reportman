@@ -62,7 +62,7 @@ type
     property evaluator:TRpEvaluator read Fevaluator write Fevaluator;
   end;
 
-  TFrpExpredialog = class(TForm)
+  TFRpExpredialog = class(TForm)
     LExpression: TLabel;
     MemoExpre: TMemo;
     LCategory: TListBox;
@@ -141,7 +141,7 @@ begin
 end;
 
 
-procedure TFrpExpredialog.FormCreate(Sender: TObject);
+procedure TFRpExpredialog.FormCreate(Sender: TObject);
 var
  i:integer;
 begin
@@ -170,7 +170,7 @@ begin
  SetInitialBounds;
 end;
 
-procedure TFrpExpredialog.Setevaluator(aval:TRpCustomEvaluator);
+procedure TFRpExpredialog.Setevaluator(aval:TRpCustomEvaluator);
 var
  lista1:Tstringlist;
  i:integer;
@@ -306,7 +306,7 @@ begin
  LCategoryClick(self);
 end;
 
-procedure TFrpExpredialog.FormDestroy(Sender: TObject);
+procedure TFRpExpredialog.FormDestroy(Sender: TObject);
 var
  i,j:integer;
 begin
@@ -321,7 +321,7 @@ begin
  end;
 end;
 
-procedure TFrpExpredialog.LCategoryClick(Sender: TObject);
+procedure TFRpExpredialog.LCategoryClick(Sender: TObject);
 begin
   inherited;
  Litems.items.Assign(llistes[lcategory.itemindex]);
@@ -330,7 +330,7 @@ begin
  Lmodel.caption:='';
 end;
 
-procedure TFrpExpredialog.LItemsClick(Sender: TObject);
+procedure TFRpExpredialog.LItemsClick(Sender: TObject);
 begin
   inherited;
  if litems.itemindex>-1 then
@@ -350,7 +350,7 @@ begin
  end;
 end;
 
-procedure TFrpExpredialog.BCheckSynClick(Sender: TObject);
+procedure TFRpExpredialog.BCheckSynClick(Sender: TObject);
 begin
   inherited;
  evaluator.Expression:=Memoexpre.text;
@@ -364,7 +364,7 @@ begin
  end;
 end;
 
-procedure TFrpExpredialog.BShowResultClick(Sender: TObject);
+procedure TFRpExpredialog.BShowResultClick(Sender: TObject);
 begin
  evaluator.Expression:=Memoexpre.text;
  try
@@ -378,14 +378,14 @@ begin
  showmessage(TRpValueToString(evaluator.EvalResult));
 end;
 
-procedure TFrpExpredialog.BitBtn1Click(Sender: TObject);
+procedure TFRpExpredialog.BitBtn1Click(Sender: TObject);
 begin
   inherited;
  if litems.itemindex>-1 then
   memoexpre.text:=memoexpre.text+litems.Items.strings[litems.itemindex];
 end;
 
-procedure TFrpExpredialog.LItemsDblClick(Sender: TObject);
+procedure TFRpExpredialog.LItemsDblClick(Sender: TObject);
 begin
   inherited;
  if litems.itemindex>-1 then

@@ -1,4 +1,4 @@
-object FrpExpredialog: TFrpExpredialog
+object FRpExpredialog: TFRpExpredialog
   Left = 205
   Top = 144
   ActiveControl = MemoExpre

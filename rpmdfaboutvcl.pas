@@ -81,9 +81,8 @@ begin
  LAuthor.Caption:=TranslateStr(89,LAuthor.Caption);
  LProject.Caption:=TranslateStr(90,LProject.Caption);
  LContributors.Caption:=TranslateStr(92,LContributors.Caption);
- LVersion.Caption:=TranslateStr(91,'Version')+' '+LVersion.Caption;
+ LVersion.Caption:=TranslateStr(91,'Version')+' '+RM_VERSION;
  BOK.Caption:=TranslateStr(93,BOK.Caption);
-
 
  LReport.Font.Size:=20;
  LReport.Font.Style:=[fsBold];

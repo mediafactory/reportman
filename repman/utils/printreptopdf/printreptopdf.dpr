@@ -58,7 +58,7 @@ var
 
 procedure PrintHelp;
 begin
- Writeln(SRpPrintPDFRep1);
+ Writeln(SRpPrintPDFRep1+' '+RM_VERSION);
  Writeln(SRpPrintPDFRep2);
  Writeln(SRpPrintPDFRep3);
  Writeln(SRpPrintPDFRep4);

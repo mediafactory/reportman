@@ -295,6 +295,31 @@ object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
             Height = 13
             Caption = 'Note: Write fields separated by ; character'
           end
+          object LFirstRange: TLabel
+            Left = 260
+            Top = 0
+            Width = 49
+            Height = 13
+            Caption = 'First range'
+          end
+          object LLastRange: TLabel
+            Left = 388
+            Top = 0
+            Width = 50
+            Height = 13
+            Caption = 'Last range'
+          end
+          object LRange: TLabel
+            Left = 260
+            Top = 84
+            Width = 249
+            Height = 57
+            AutoSize = False
+            Caption = 
+              'Each line will be evaluated and assigned to each field as the st' +
+              'art of the filter and end of the filter'
+            WordWrap = True
+          end
           object EBDEIndexFields: TComboBox
             Left = 116
             Top = 54
@@ -339,6 +364,22 @@ object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
             TabOrder = 2
             Text = 'EBDEMasterFields'
             OnChange = MSQLChange
+          end
+          object EBDEFirstRange: TMemo
+            Left = 260
+            Top = 16
+            Width = 121
+            Height = 65
+            TabOrder = 4
+            WordWrap = False
+          end
+          object EBDELastRange: TMemo
+            Left = 388
+            Top = 16
+            Width = 121
+            Height = 65
+            TabOrder = 5
+            WordWrap = False
           end
         end
         object TabMySQL: TTabSheet
@@ -511,7 +552,7 @@ object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
     Filter = 'Mybase files;*.cds'
     FilterIndex = 0
     Title = 'Open'
-    Left = 268
-    Top = 300
+    Left = 232
+    Top = 324
   end
 end

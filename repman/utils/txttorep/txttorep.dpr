@@ -36,7 +36,7 @@ uses
 
 procedure PrintHelp;
 begin
- Writeln(SRpTxtToRep1);
+ Writeln(SRpTxtToRep1+' '+RM_VERSION);
  Writeln(SRpTxtToRep2);
  Writeln(SRpTxtToRep3);
 end;

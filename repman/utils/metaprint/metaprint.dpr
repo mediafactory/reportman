@@ -43,7 +43,7 @@ var
 
 procedure PrintHelp;
 begin
- Writeln(SRpMetaPrint1);
+ Writeln(SRpMetaPrint1+' '+RM_VERSION);
  Writeln(SRpMetaPrint2);
  Writeln(SRpMetaPrint3);
  Writeln(SRpMetaPrint4);

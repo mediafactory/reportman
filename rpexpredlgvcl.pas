@@ -62,7 +62,7 @@ type
     property evaluator:TRpEvaluator read Fevaluator write Fevaluator;
   end;
 
-  TFrpExpredialogVCL = class(TForm)
+  TFRpExpredialogVCL = class(TForm)
     LExpression: TLabel;
     MemoExpre: TMemo;
     LCategory: TListBox;
@@ -141,7 +141,7 @@ begin
 end;
 
 
-procedure TFrpExpredialogVCL.FormCreate(Sender: TObject);
+procedure TFRpExpredialogVCL.FormCreate(Sender: TObject);
 var
  i:integer;
 begin
@@ -169,7 +169,7 @@ begin
  
 end;
 
-procedure TFrpExpredialogVCL.Setevaluator(aval:TRpCustomEvaluator);
+procedure TFRpExpredialogVCL.Setevaluator(aval:TRpCustomEvaluator);
 var
  lista1:Tstringlist;
  i:integer;
@@ -305,7 +305,7 @@ begin
  LCategoryClick(self);
 end;
 
-procedure TFrpExpredialogVCL.FormDestroy(Sender: TObject);
+procedure TFRpExpredialogVCL.FormDestroy(Sender: TObject);
 var
  i,j:integer;
 begin
@@ -320,7 +320,7 @@ begin
  end;
 end;
 
-procedure TFrpExpredialogVCL.LCategoryClick(Sender: TObject);
+procedure TFRpExpredialogVCL.LCategoryClick(Sender: TObject);
 begin
   inherited;
  Litems.items.Assign(llistes[lcategory.itemindex]);
@@ -329,7 +329,7 @@ begin
  Lmodel.caption:='';
 end;
 
-procedure TFrpExpredialogVCL.LItemsClick(Sender: TObject);
+procedure TFRpExpredialogVCL.LItemsClick(Sender: TObject);
 begin
   inherited;
  if litems.itemindex>-1 then
@@ -349,7 +349,7 @@ begin
  end;
 end;
 
-procedure TFrpExpredialogVCL.BCheckSynClick(Sender: TObject);
+procedure TFRpExpredialogVCL.BCheckSynClick(Sender: TObject);
 begin
   inherited;
  evaluator.Expression:=Memoexpre.text;
@@ -363,7 +363,7 @@ begin
  end;
 end;
 
-procedure TFrpExpredialogVCL.BShowResultClick(Sender: TObject);
+procedure TFRpExpredialogVCL.BShowResultClick(Sender: TObject);
 begin
  evaluator.Expression:=Memoexpre.text;
  try
@@ -377,14 +377,14 @@ begin
  showmessage(TRpValueToString(evaluator.EvalResult));
 end;
 
-procedure TFrpExpredialogVCL.BitBtn1Click(Sender: TObject);
+procedure TFRpExpredialogVCL.BitBtn1Click(Sender: TObject);
 begin
   inherited;
  if litems.itemindex>-1 then
   memoexpre.text:=memoexpre.text+litems.Items.strings[litems.itemindex];
 end;
 
-procedure TFrpExpredialogVCL.LItemsDblClick(Sender: TObject);
+procedure TFRpExpredialogVCL.LItemsDblClick(Sender: TObject);
 begin
   inherited;
  if litems.itemindex>-1 then

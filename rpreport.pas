@@ -1273,18 +1273,6 @@ begin
  metafile.BackColor:=FPageBackColor;
  LastPage:=false;
  EndPrint;
- PageNum:=-1;
- FRecordCount:=0;
- CurrentSubReportIndex:=0;
- ActivateDatasets;
- try
-  // After activating dataset we must check wich subreport to activate
-  // if printonly if data avaliable report option is check
-  CheckIfDataAvailable;
- except
-  DeActivateDatasets;
-  Raise;
- end;
  // Evaluator
  if Assigned(FEvaluator) then
  begin
@@ -1292,12 +1280,9 @@ begin
   FEvaluator:=nil;
  end;
  FEvaluator:=TRpEvaluator.Create(nil);
- // Insert page numeber
- FEvaluator.AddVariable('Page',fidenpagenum);
- FEvaluator.AddVariable('FREE_SPACE',fidenfreespace);
- FEvaluator.AddVariable('CURRENTGROUP',fidencurrentgroup);
- FEvaluator.AddVariable('FREE_SPACE_CMS',fidenfreespacecms);
- FEvaluator.AddVariable('FREE_SPACE_INCH',fidenfreespaceinch);
+ PageNum:=-1;
+ FRecordCount:=0;
+ CurrentSubReportIndex:=0;
  // Insert params into rpEvaluator
  for i:=0 to Params.Count-1 do
  begin
@@ -1318,6 +1303,23 @@ begin
     TRpChart(FIdentifiers.Objects[i]).IdenChart);
   end
  end;
+ // Maybe parameters are used in ActivateDatasets (BDESetRange)
+
+ ActivateDatasets;
+ try
+  // After activating dataset we must check wich subreport to activate
+  // if printonly if data avaliable report option is check
+  CheckIfDataAvailable;
+ except
+  DeActivateDatasets;
+  Raise;
+ end;
+ // Insert page numeber
+ FEvaluator.AddVariable('Page',fidenpagenum);
+ FEvaluator.AddVariable('FREE_SPACE',fidenfreespace);
+ FEvaluator.AddVariable('CURRENTGROUP',fidencurrentgroup);
+ FEvaluator.AddVariable('FREE_SPACE_CMS',fidenfreespacecms);
+ FEvaluator.AddVariable('FREE_SPACE_INCH',fidenfreespaceinch);
 
 
 

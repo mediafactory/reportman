@@ -104,7 +104,6 @@ type
 {$IFDEF USEIBO}
    FIBODatabase: TIB_Database;
 {$ENDIF}
-
    FDriver:TRpDbDriver;
    procedure SetAlias(Value:string);
    procedure SetConfigFile(Value:string);
@@ -173,12 +172,16 @@ type
    FBDEType:TRpDatasetType;
    FBDEMasterFields:string;
    FBDEFilter:string;
+   FBDEFirstRange,FBDELastRange:string;
    connecting:boolean;
    FCached:Boolean;
    procedure SetDatabaseAlias(Value:string);
    procedure SetAlias(Value:string);
    procedure SetDataSource(Value:string);
    procedure SetSQL(Value:widestring);
+{$IFDEF USEBDE}
+   procedure SetRangeForTable(lastrange:boolean);
+{$ENDIF}
   public
    procedure Assign(Source:TPersistent);override;
    procedure Connect(databaseinfo:TRpDatabaseInfoList;params:TRpParamList);
@@ -202,6 +205,8 @@ type
     default rpdquery;
    property BDEFilter:string read FBDEFilter write FBDEFilter;
    property BDEMasterFields:string read FBDEMasterFields write FBDEMasterFields;
+   property BDEFirstRange:string read FBDEFirstRange write FBDEFirstRange;
+   property BDELastRange:string read FBDELastRange write FBDELastRange;
   end;
 
  TRpDataInfoList=class(TCollection)
@@ -222,6 +227,9 @@ procedure UpdateConAdmin;
 
 implementation
 
+{$IFDEF USEBDE}
+uses rpreport,rpeval;
+{$ENDIF}
 const
   SDRIVERREG_SETTING = 'Driver Registry File';           { Do not localize }
   SCONNECTIONREG_SETTING = 'Connection Registry File';   { Do not localize }
@@ -870,6 +878,46 @@ begin
  end;
 end;
 
+
+
+{$IFDEF USEBDE}
+procedure TRpDatainfoitem.SetRangeForTable(lastrange:boolean);
+var
+ report:TRpReport;
+ eval:TRpEvaluator;
+ atable:TTable;
+ alist:TStringList;
+ i:integer;
+begin
+ report:=Collection.Owner as TRpReport;
+ eval:=report.Evaluator;
+ atable:=TTable(FSQLInternalQuery);
+ alist:=TStringList.Create;
+ try
+  if lastrange then
+  begin
+   atable.SetRangeEnd;
+   alist.Text:=FBDELastRange;
+  end
+  else
+  begin
+   atable.SetRangeStart;
+   alist.Text:=FBDEFirstRange;
+  end;
+  for i:=0 to alist.count-1 do
+  begin
+   if Length(alist.Strings[i])>0 then
+   begin
+    atable.IndexFields[i].AsVariant:=eval.EvaluateText(alist.Strings[i]);
+   end;
+  end;
+  atable.ApplyRange;
+ finally
+  alist.free;
+ end;
+end;
+{$ENDIF}
+
 procedure TRpDatabaseinfoitem.DisConnect;
 begin
 {$IFDEF USESQLEXPRESS}
@@ -921,6 +969,9 @@ begin
   begin
    if FDataset.Active then
    begin
+    // For opened datasets they must go to first record
+    // Before printing
+    FDataset.First;
     if cached then
     begin
      if Not FCachedDataset.Active then
@@ -1164,6 +1215,15 @@ begin
         TTable(FSQLInternalQUery).IndexFieldNames:=FBDEIndexFields;
        if Length(FBDEIndexName)>0 then
         TTable(FSQLInternalQUery).IndexName:=FBDEIndexName;
+       // Set the range start and range end
+       if Length(Trim(FBDEFirstRange))>0 then
+       begin
+        SetRangeForTable(false);
+       end;
+       if Length(Trim(FBDELastRange))>0 then
+       begin
+        SetRangeForTable(true);
+       end;
       end;
 {$ENDIF}
      end;

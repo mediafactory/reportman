@@ -111,11 +111,24 @@ end;
 procedure TRpDataSet.DoOpen;
 var
  i:integer;
+ adef:TFieldDef;
 begin
  if Assigned(FDataset) then
  begin
-  FDataset.FieldDefs.Update;
-  FieldDefs.Assign(FDataset.FieldDefs);
+//  FDataset.FieldDefs.Update;
+//  FieldDefs.Assign(FDataset.FieldDefs);
+  FieldDefs.Clear;
+  for i:=0 to FDataset.FieldCount-1 do
+  begin
+   adef:=FieldDefs.AddFieldDef;
+   adef.Name:=FDataset.Fields[i].FieldName;
+   adef.DataType:=FDataset.Fields[i].DataType;
+   adef.Size:=FDataset.Fields[i].Size;
+{$IFDEF USEBCD}
+   if (FDataset.Fields[i] is TBCDField) then
+    adef.Precision:=TBCDField(FDataset.Fields[i]).Precision;
+{$ENDIF}
+  end;
   CreateDataset;
   FCopyDataset.FieldDefs.Assign(FieldDefs);
   FCopyDataset.CreateDataSet;

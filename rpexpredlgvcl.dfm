@@ -1,4 +1,4 @@
-object FrpExpredialogVCL: TFrpExpredialogVCL
+object FRpExpredialogVCL: TFRpExpredialogVCL
   Left = 245
   Top = 108
   BorderStyle = bsDialog

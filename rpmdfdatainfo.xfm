@@ -182,7 +182,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
         Top = 51
         Width = 539
         Height = 208
-        ActivePage = TabSQL
+        ActivePage = TabBDETable
         Align = alClient
         TabOrder = 0
         object TabSQL: TTabSheet
@@ -332,6 +332,47 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
             Width = 199
             Height = 13
             Caption = 'Note: Write fields separated by ; character'
+          end
+          object LRange: TLabel
+            Left = 260
+            Top = 84
+            Width = 249
+            Height = 57
+            AutoSize = False
+            Caption = 
+              'Each line will be evaluated and assigned to each field as the st' +
+              'art of the filter and end of the filter'
+            WordWrap = True
+          end
+          object EBDEFirstRange: TMemo
+            Left = 260
+            Top = 16
+            Width = 121
+            Height = 65
+            TabOrder = 10
+            WordWrap = False
+          end
+          object EBDELastRange: TMemo
+            Left = 388
+            Top = 16
+            Width = 121
+            Height = 65
+            TabOrder = 11
+            WordWrap = False
+          end
+          object LLastRange: TLabel
+            Left = 388
+            Top = 0
+            Width = 50
+            Height = 13
+            Caption = 'Last range'
+          end
+          object LFirstRange: TLabel
+            Left = 260
+            Top = 0
+            Width = 49
+            Height = 13
+            Caption = 'First range'
           end
         end
         object TabMySQL: TTabSheet

@@ -33,6 +33,11 @@ uses Sysutils,Classes,rptypes,rpmdconsts,
 {$ENDIF}
  rpmetafile;
 
+// Maximum width or height of a element, that is 60 inch
+const
+ MAX_ELEMENT_WIDTH=86400;
+ MAX_ELEMENT_HEIGHT=86400;
+
 type
  TRpPosAlign=(rpalnone,rpalbottom,rpalright,rpalbotright);
 
@@ -42,6 +47,8 @@ type
    FWidth:TRpTwips;
    FDoBeforePrint,FDoAfterPrint:string;
    FPrintCondition:string;
+   procedure SetWidth(Value:TRpTwips);
+   procedure SetHeight(Value:TRpTwips);
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);virtual;
   public
@@ -55,8 +62,8 @@ type
    property PrintCondition:string read FPrintCondition write FPrintCondition;
    property DoBeforePrint:string read FDoBeforePrint write FDoBeforePrint;
    property DoAfterPrint:string read FDoAfterPrint write FDoAfterPrint;
-   property Width:TRpTwips read FWidth write FWidth;
-   property Height:TRpTwips read FHeight write FHeight;
+   property Width:TRpTwips read FWidth write SetWidth;
+   property Height:TRpTwips read FHeight write SetHeight;
   end;
 
  TRpCommonPosComponent=class(TRpCommonComponent)
@@ -145,6 +152,24 @@ begin
  inherited Create(AOwner);
  FHeight:=0;
  FWidth:=0;
+end;
+
+procedure TRpCommonComponent.SetWidth(Value:TRpTwips);
+begin
+ if Value>MAX_ELEMENT_WIDTH then
+  Value:=MAX_ELEMENT_WIDTH;
+ if Value<0 then
+  Value:=0;
+ FWidth:=Value;
+end;
+
+procedure TRpCommonComponent.SetHeight(Value:TRpTwips);
+begin
+ if Value>MAX_ELEMENT_HEIGHT then
+  Value:=MAX_ELEMENT_HEIGHT;
+ if Value<0 then
+  Value:=0;
+ FHeight:=Value;
 end;
 
 function TRpCommonComponent.GetExtension(adriver:IRpPrintDriver):TPoint;

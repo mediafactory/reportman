@@ -2,7 +2,7 @@ object FRpAboutBoxVCL: TFRpAboutBoxVCL
   Left = 142
   Top = 132
   BorderStyle = bsDialog
-  Caption = 'Dialog'
+  Caption = 'About Report Manager'
   ClientHeight = 318
   ClientWidth = 500
   Color = clBtnFace
@@ -870,9 +870,9 @@ object FRpAboutBoxVCL: TFRpAboutBoxVCL
   object LVersion: TLabel
     Left = 72
     Top = 44
-    Width = 39
+    Width = 29
     Height = 13
-    Caption = '1.1B XP'
+    Caption = 'VNum'
   end
   object LProject: TLabel
     Left = 12

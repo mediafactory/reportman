@@ -1706,6 +1706,7 @@ object FRpMainFVCL: TFRpMainFVCL
         end
         object Inchess1: TMenuItem
           Action = AUnitsinchess
+          Caption = 'Inches'
         end
       end
       object MDriverSelect: TMenuItem
