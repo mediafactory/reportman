@@ -1399,8 +1399,8 @@ begin
   ADriverPDFQt.Checked:=false;
   ADriverPDFGDI.Checked:=false;
 {$IFDEF LINUX}
-  ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',false);
-  ADriverPDFQT.Checked:=Not ADriverQt.Checked;
+  ADriverPDFQT.Checked:=inif.ReadBool('Preferences','DriverPDFQt',false);
+  ADriverQT.Checked:=Not ADriverPDFQT.Checked;
 {$ENDIF}
 {$IFDEF MSWINDOWS}
   ADriverPDFQt.Checked:=inif.ReadBool('Preferences','DriverPDFQt',false);

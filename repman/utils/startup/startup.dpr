@@ -12,7 +12,7 @@
 {       It has .bin extension and assumes the executable}
 {       has the same name without extension             }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -97,7 +97,9 @@ begin
   targetdir:=ExtractFileDir(fullpath);
   targetapp:=ChangeFileExt(fullpath,'');
   SetEnvValue('OLD_LC_NUMERIC',GetEnvironmentVariable('LC_NUMERIC'),false);
-  SetEnvValue('LC_NUMERIC','en_US',false);
+  // Only set LC_NUMERIC if a KYLIX_PRINTBUG is set
+  if (Length(GetEnvironmentVariable('KYLIX_PRINTBUG'))>0) then
+   SetEnvValue('LC_NUMERIC','en_US',false);
   if (Length(GetEnvironmentVariable('KYLIX_DEFINEDENVLOCALES'))<1) then
   begin
    SetEnvValue('KYLIX_DEFINEDENVLOCALES','Yes',false);

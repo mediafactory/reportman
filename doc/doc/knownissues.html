@@ -116,9 +116,13 @@
       <p>The fast and effective workaround is to launch your application setting 
         enviroment variable LC_NUMERIC=en_US, see repmand.sh startup script. Then 
         in your Kylix application you can set the DecimalSeparator and ThousandSeparator 
-        variables before print so you can print with your custom locale settings.</p>
+        variables before print so you can print with your custom locale settings, 
+        take care this setting can get international chars not working (Mandrake 
+        9.0 basic install)</p>
       <p>Another workaround to is to use the launcher provided by Report Manager, 
         for example if you have compiled <i>myprogram</i>.</p>
+      <p>But you should enable KYLIX_PRINTBUG first, that is:</p>
+      <p>export KYLIX_PRINTBUG=yes</p>
       <p>cp repmand.bin myprogram.bin</p>
       <p>This launcher add the current directory to LD_LIBRARY_PATH, then save 
         locale configuration to enviroment variables, launch the application without 
