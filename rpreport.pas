@@ -947,6 +947,7 @@ var
  data:TRpDataset;
  docancel:boolean;
 begin
+ data:=nil;
  Result:=false;
  subrep:=Subreports.Items[CurrentSubreportIndex].SubReport;
  if Length(Trim(subrep.Alias))<1 then

@@ -5,7 +5,7 @@ MAKE = make -$(MAKEFLAGS) -f$**
 DCC =dcc $<
 #------------------------------------------------------------------------------
 PROJECTS = repmand metaprint metaview printrep reptotxt txttorep printreptopdf \
-  reportserverapp.exe reportservercon.exe
+  reportserverapp reportservercon
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -13,28 +13,28 @@ default: $(PROJECTS)
 repmand: repmand.dpr
   $(DCC)
 
-metaprint: utils\metaprint\metaprint.dpr
+metaprint: utils/metaprint/metaprint.dpr
   $(DCC)
 
-metaview: utils\metaview\metaview.dpr
+metaview: utils/metaview/metaview.dpr
   $(DCC)
 
-printrep: utils\printrep\printrep.dpr
+printrep: utils/printrep/printrep.dpr
   $(DCC)
 
-reptotxt: utils\reptotxt\reptotxt.dpr
+reptotxt: utils/reptotxt/reptotxt.dpr
   $(DCC)
 
-txttorep: utils\txttorep\txttorep.dpr
+txttorep: utils/txttorep/txttorep.dpr
   $(DCC)
 
-printreptopdf: utils\printreptopdf\printreptopdf.dpr
+printreptopdf: utils/printreptopdf/printreptopdf.dpr
   $(DCC)
 
-reportserverapp.exe: ..\server\app\reportserverapp.dpr
+reportserverapp: ../server/app/reportserverapp.dpr
   $(DCC)
 
-reportservercon.exe: ..\server\app\reportservercon.dpr
+reportservercon: ../server/app/reportservercon.dpr
   $(DCC)
 
 

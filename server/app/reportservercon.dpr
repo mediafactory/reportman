@@ -35,6 +35,5 @@ begin
    end;
   finally
    logobject.free;
-   logobject:=nil;
   end;
 end.

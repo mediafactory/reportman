@@ -26,6 +26,13 @@ package rppackdesign;
 {$DESCRIPTION 'Report Manager Designer Component Package'}
 {$IMPLICITBUILD OFF}
 
+requires
+  rtl,
+  visualclx,
+  dataclx,
+  visualdbclx,
+  rppack,
+  rppackv;
 
 contains
   rpmregdesign in 'rpmregdesign.pas',

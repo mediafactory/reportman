@@ -32,7 +32,7 @@ uses
 {$IFDEF USEBDE}
   dbtables,
 {$ENDIF}
-  rptranslator,rpmdshfolder,inifiles,rpmdprotocol,
+  rptranslator,rpmdshfolder,IniFiles,rpmdprotocol,
   rpreport,rppdfdriver, IdThreadMgrPool;
 
 const
@@ -142,7 +142,9 @@ end;
 function StartServer(onlog:TRpLogMessageEvent):TModServer;
 var
  amod:TModServer;
+{$IFDEF MSWINDOWS}
  wresult:TWaitResult;
+{$ENDIF}
 begin
  amod:=TModServer.Create(nil);
  try
