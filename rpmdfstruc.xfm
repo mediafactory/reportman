@@ -6,7 +6,6 @@ object FRpStructure: TFRpStructure
   ParentShowHint = False
   ShowHint = True
   TabOrder = 0
-  ParentFont = True
   object PControl: TPageControl
     Left = 0
     Top = 0

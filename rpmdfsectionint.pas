@@ -401,30 +401,37 @@ begin
  // Expression
  lnames.Add(SrpSBackExpression);
  ltypes.Add(SRpSExpression);
- lhints.Add('refimage.html');
+ lhints.Add('refsection.html');
  lcat.Add(SRpSection);
  if Assigned(lvalues) then
-  lvalues.Add(TRpImage(printitem).Expression);
+  lvalues.Add(TRpSection(printitem).BackExpression);
  // Image
  lnames.Add(SrpSImage);
  ltypes.Add(SRpSImage);
- lhints.Add('refimage.html');
+ lhints.Add('refsection.html');
  lcat.Add(SRpSection);
  if Assigned(lvalues) then
-  lvalues.Add('['+FormatFloat('###,###0.00',TRpImage(printitem).Stream.Size/1024)+
+  lvalues.Add('['+FormatFloat('###,###0.00',TRpSection(printitem).Stream.Size/1024)+
   SRpKbytes+']');
  // DPI
  lnames.Add(SRpDPIRes);
  ltypes.Add(SRpSString);
- lhints.Add('refimage.html');
+ lhints.Add('refsection.html');
  lcat.Add(SRpSection);
  if Assigned(lvalues) then
-  lvalues.Add(IntToStr(TRpImage(printitem).DPIRes));
+  lvalues.Add(IntToStr(TRpSection(printitem).DPIRes));
  // Back Style
  lnames.Add(SRpSBackStyle);
  ltypes.Add(SRpSList);
  lhints.Add('refsection.html');
  lcat.Add(SRpSection);
+ // DrawStyle
+ lnames.Add(SRpDrawStyle);
+ ltypes.Add(SRpSList);
+ lhints.Add('refsection.html');
+ lcat.Add(SRpSection);
+ if Assigned(lvalues) then
+  lvalues.Add(RpDrawStyleToString(TRpSection(printitem).DrawStyle));
 end;
 
 procedure TRpSectionInterface.SetProperty(pname:string;value:Widestring);
@@ -579,6 +586,13 @@ begin
   TRpSection(fprintitem).BackStyle:=StrToBackStyle(Value);
   exit;
  end;
+ if pname=SRpDrawStyle then
+ begin
+  TRpSection(fprintitem).DrawStyle:=StringDrawStyleToDrawStyle(Value);
+  UpdateBack;
+  exit;
+ end;
+
  
  inherited SetProperty(pname,value);
 end;
@@ -730,7 +744,11 @@ begin
   Result:=BackStyleToStr(TRpSection(fprintitem).BackStyle);
   exit;
  end;
-
+ if pname=SrpDrawStyle then
+ begin
+  Result:=RpDrawStyleToString(TRpSection(printitem).DrawStyle);
+  exit;
+ end;
  Result:=inherited GetProperty(pname);
 end;
 
@@ -775,6 +793,11 @@ begin
  if pname=SRpSBackStyle then
  begin
   GetBackStyleDescriptions(lpossiblevalues);
+  exit;
+ end;
+ if pname=SrpDrawStyle then
+ begin
+  GetDrawStyleDescriptions(lpossiblevalues);
   exit;
  end;
 
@@ -874,12 +897,35 @@ begin
 
       rec.Top:=0;rec.Left:=0;
       rec.Bottom:=Height-1;rec.Right:=Width-1;
+
       // Draws it with the style
       dpix:=Screen.PixelsPerInch;
       dpiy:=Screen.PixelsPerInch;
-      rec.Bottom:=round(abitmap.height/asection.dpires)*dpiy-1;
-      rec.Right:=round(abitmap.width/asection.dpires)*dpix-1;
-      secint.BackBitmap.Canvas.StretchDraw(rec,abitmap);
+      case TRpImageDrawStyle(asection.DrawStyle) of
+       rpDrawFull:
+        begin
+         rec.Bottom:=round(abitmap.height/asection.dpires*dpiy)-1;
+         rec.Right:=round(abitmap.width/asection.dpires*dpix)-1;
+         secint.BackBitmap.Canvas.StretchDraw(rec,abitmap);
+        end;
+       rpDrawStretch:
+        secint.BackBitmap.Canvas.StretchDraw(rec,abitmap);
+       rpDrawCrop:
+        begin
+//       Crop Should cut graphic but it don't work
+//         recsrc.Top:=0;
+//         recsrc.Left:=0;
+//         recsrc.Bottom:=Height-1;
+//         recsrc.Right:=Width-1;
+//         Canvas.CopyRect(rec,bitmap.canvas,recsrc);
+         secint.BackBitmap.Canvas.Draw(0,0,abitmap);
+        end;
+       rpDrawTile:
+        begin
+         secint.BackBitmap.Canvas.TiledDraw(rec,abitmap);
+        end;
+      end;
+
      finally
       abitmap.free;
      end;

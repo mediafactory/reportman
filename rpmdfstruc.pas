@@ -225,6 +225,8 @@ begin
    child.data:=subr.Sections.Items[j].Section;
   end;
  end;
+ if Not Assigned(RView.Selected) then
+  RView.Selected:=RView.TopItem
 end;
 
 

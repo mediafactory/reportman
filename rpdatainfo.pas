@@ -538,6 +538,8 @@ begin
   FBDEType:=TRpDataInfoItem(Source).FBDEType;
   FDataUnions.Assign(TRpDataInfoItem(Source).FDataUnions);
   FGroupUnion:=TRpDataInfoItem(Source).FGroupUnion;
+  FBDEFirstRange:=TRpDataInfoItem(Source).FBDEFirstRange;
+  FBDELastRange:=TRpDataInfoItem(Source).FBDELastRange;
  end
  else
   inherited Assign(Source);

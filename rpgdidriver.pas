@@ -413,6 +413,7 @@ begin
   bitmap:=TBitmap.Create;
 {$IFNDEF DOTNETDBUGS}
   bitmap.PixelFormat:=pf32bit;
+  bitmap.HandleType:=bmDIB;
 {$ENDIF}
   // Sets Orientation
   SetOrientation(report.Orientation);
@@ -556,7 +557,8 @@ begin
   bitmap:=nil;
   bitmap:=TBitmap.create;
 {$IFNDEF DOTNETDBUGS}
-  bitmap.PixelFormat:=pf24bit;
+  bitmap.PixelFormat:=pf32bit;
+  bitmap.HandleType:=bmDIB;
 {$ENDIF}
  end;
 end;
@@ -881,7 +883,7 @@ begin
     bitmap:=TBitmap.Create;
     try
 {$IFNDEF DOTNETDBUGS}
-     bitmap.PixelFormat:=pf24bit;
+     bitmap.PixelFormat:=pf32bit;
      bitmap.HandleType:=bmDIB;
 {$ENDIF}
      if GetJPegInfo(stream,bitmapwidth,bitmapheight) then
@@ -1343,7 +1345,7 @@ begin
     else
     begin
 {$IFNDEF DOTNETDBUGS}
-     tempbitmap.PixelFormat:=pf24bit;
+     tempbitmap.PixelFormat:=pf32bit;
 {$ENDIF}
     end;
     tempbitmap.Height:=pageheight;
@@ -2122,7 +2124,7 @@ begin
    abitmap:=TBitmap.Create;
    try
     abitmap.HandleType:=bmDIB;
-    abitmap.PixelFormat:=pf24bit;
+    abitmap.PixelFormat:=pf32bit;
     // Chart resolution to default screen
     abitmap.Width:=Round(twipstoinchess(nchart.PrintWidth)*nchart.Resolution);
     abitmap.Height:=Round(twipstoinchess(nchart.PrintHeight)*nchart.Resolution);

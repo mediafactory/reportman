@@ -899,7 +899,10 @@ begin
   Raise Exception.Create(SRpErrorWritingPage);
  wsize:=Length(FPool)*2;
  Stream.Write(wsize,sizeof(wsize));
- Stream.Write(FPool[1],wsize);
+ if wsize>0 then
+ begin
+  WriteWideStringToStream(FPool,Stream);
+ end;
  asize:=FMemStream.Size;
  FMemStream.Seek(0,soFromBeginning);
  Stream.Write(asize,sizeof(asize));
@@ -958,23 +961,25 @@ begin
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
  SetLength(FPool,wsize div 2);
  SetLength(abytes,wsize);
-{$IFDEF DOTNETD}
- if (wsize<>Stream.Read(abytes[0],wsize)) then
-  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
- for i:=0 to wsize div 2 do
+ if wsize>0 then
  begin
-  // Revise byte order
-  FPool[i+1]:=WideChar((Integer(abytes[i+1]) shl 8)+abytes[i]);
- end;
-  // System.Array.Copy(abytes,FPool,wsize);
+{$IFDEF DOTNETD}
+  if (wsize<>Stream.Read(abytes[0],wsize)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  for i:=0 to wsize div 2 do
+  begin
+   // Revise byte order
+   FPool[i+1]:=WideChar((Integer(abytes[i+1]) shl 8)+abytes[i]);
+  end;
+   // System.Array.Copy(abytes,FPool,wsize);
 {$ENDIF}
 {$IFNDEF DOTNETD}
- if (wsize<>Stream.Read(abytes[0],wsize)) then
-  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  if (wsize<>Stream.Read(abytes[0],wsize)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
  // Copy the pool
- Move(abytes[0],FPool[1],wsize);
+  Move(abytes[0],FPool[1],wsize);
 {$ENDIF}
-
+ end;
  FPoolPos:=(wsize div 2)+1;
  // The Stream
  if (sizeof(asize)<>Stream.Read(asize,sizeof(asize))) then

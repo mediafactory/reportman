@@ -55,6 +55,7 @@ type
    FBackExpression:WideString;
    Fdpires:integer;
    FBackStyle:TrpBackStyle;
+   FDrawStyle:TRpImageDrawStyle;
    FSubReport:TComponent;
    FChildSubReport:TComponent;
    FGroupName:String;           // [rpsecgheader,rpsecgfooter]
@@ -199,6 +200,8 @@ type
    property Global:Boolean read FGlobal write FGlobal default false;
    property dpires:integer read   Fdpires write Fdpires default DEfAULT_DPI_BACK;
    property BackStyle:TrpBackStyle read FBackStyle write FBackStyle default baDesign;
+   property DrawStyle:TRpImageDrawStyle read FDrawStyle write FDrawStyle
+    default rpDrawFull;
  end;
 
 
@@ -230,6 +233,7 @@ begin
  FFooterAtReportEnd:=true;
  FStream:=TMemoryStream.Create;
  Fdpires:=DEFAULT_DPI_BACK;
+ FDrawStyle:=rpDrawFull;
 
  Width:=Round(C_DEFAULT_SECTION_WIDTH*TWIPS_PER_INCHESS/CMS_PER_INCHESS);
  Height:=Round(C_DEFAULT_SECTION_HEIGHT*TWIPS_PER_INCHESS/CMS_PER_INCHESS);
@@ -443,7 +447,7 @@ begin
   if astream.Size>0 then
   begin
    metafile.Pages[metafile.CurrentPage].NewImageObject(aposy,aposx,
-    Width,Height,10,Integer(rpDrawFull),Integer(dpires),aStream,BackStyle=baPreview);
+    PrintWidth,PrintHeight,10,Integer(FDrawStyle),Integer(dpires),aStream,BackStyle=baPreview);
   end;
  end;
  DoPartialPrint:=False;
@@ -1029,8 +1033,6 @@ begin
    ChildSubReport:=rep.Subreports.items[i].SubReport;
   end;
  end;
- if Assigned(FChildSubReport) then
-  FPageRepeat:=False;
 end;
 
 procedure TRpSection.SetChildSubReport(Value:TComponent);
@@ -1062,8 +1064,6 @@ begin
    Raise Exception.Create(SRpCircularDatalink);
  end;
  FChildSubReport:=Value;
- if Assigned(FChildSubReport) then
-  FPageRepeat:=False;
 end;
 
 procedure TRpSection.AssignSection(sec:TRpSection);
@@ -1234,8 +1234,6 @@ end;
 procedure TRpSection.Loaded;
 begin
  inherited Loaded;
- If (Assigned(FChildSubReport)) then
-  PageRepeat:=false;
 end;
 
 procedure TRpSection.SetPageRepeat(Value:Boolean);
@@ -1250,9 +1248,6 @@ begin
   FPageRepeat:=Value;
   exit;
  end;
- if Value then
-  If (Assigned(FChildSubReport)) then
-   FChildSubReport:=nil;
  FPageRepeat:=Value;
 end;
 

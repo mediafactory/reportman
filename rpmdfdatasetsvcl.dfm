@@ -2,7 +2,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
   Left = 0
   Top = 0
   Width = 443
-  Height = 270
+  Height = 277
   Align = alClient
   AutoScroll = False
   TabOrder = 0
@@ -159,7 +159,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     Left = 0
     Top = 105
     Width = 443
-    Height = 165
+    Height = 172
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -167,8 +167,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       Left = 0
       Top = 0
       Width = 443
-      Height = 165
-      ActivePage = TabSQL
+      Height = 172
+      ActivePage = TabBDETable
       Align = alClient
       TabOrder = 0
       object TabSQL: TTabSheet
@@ -177,7 +177,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 173
           Top = 0
           Width = 8
-          Height = 137
+          Height = 144
           Cursor = crHSplit
           Beveled = True
         end
@@ -185,7 +185,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 181
           Top = 0
           Width = 254
-          Height = 137
+          Height = 144
           Align = alClient
           TabOrder = 0
           WordWrap = False
@@ -195,7 +195,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 0
           Top = 0
           Width = 173
-          Height = 137
+          Height = 144
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
@@ -230,7 +230,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 0
           Top = 37
           Width = 435
-          Height = 100
+          Height = 107
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
@@ -292,9 +292,11 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object LNote: TLabel
           Left = 4
           Top = 104
-          Width = 199
-          Height = 13
+          Width = 249
+          Height = 37
+          AutoSize = False
           Caption = 'Note: Write fields separated by ; character'
+          WordWrap = True
         end
         object LFirstRange: TLabel
           Left = 260

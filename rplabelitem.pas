@@ -592,6 +592,25 @@ begin
      // Page variable must be recalculated
      FUpdated:=False;
     end;
+    if (FAggregate=rpAgPage) then
+    begin
+     // Update with the initial value
+     try
+      eval:=TRpBaseReport(GetReport).Evaluator;
+      eval.Expression:=FAgIniValue;
+      eval.Evaluate;
+     except
+      on E:Exception do
+      begin
+       Raise TRpReportException.Create(E.Message+':'+SrpSIniValue+' '+Name,self,SrpSIniValue);
+      end;
+     end;
+     FValue:=eval.EvalResult;
+     FSumValue:=FValue;
+     FDataCount:=0;
+     FUpdated:=true;
+     SubReportChanged(rpDataChange);
+    end;
    end;
   rpInvalidateValue:
    begin

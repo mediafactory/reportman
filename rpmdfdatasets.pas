@@ -20,9 +20,14 @@ unit rpmdfdatasets;
 
 interface
 
+{$I rpconf.inc}
+
 uses
   SysUtils, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls, QExtCtrls, rpmdconsts,rpgraphutils,
+{$IFDEF USEBDE}
+  DBTables,
+{$ENDIF}
   rptypes,rpdatainfo,rpreport,rpfparams,rpmdfsampledata, QActnList,
   rpdbbrowser,rpparams, QImgList, QComCtrls;
 
@@ -668,6 +673,21 @@ begin
  end;
 {$ENDIF}
 end;
+
+{$IFDEF USEBDE}
+procedure GetIndexFieldNames(atable:TTable;Items:TStrings);
+var
+ i:integer;
+begin
+ atable.IndexDefs.Update;
+ items.Clear;
+ for i:=0 to atable.IndexDefs.Count-1 do
+ begin
+  if Length(atable.IndexDefs.Items[i].Fields)>0 then
+   items.Add(atable.IndexDefs.Items[i].Fields);
+ end;
+end;
+{$ENDIF}
 
 procedure TFRpDatasets.EBDEIndexFieldsDropDown(Sender: TObject);
 {$IFDEF USEBDE}

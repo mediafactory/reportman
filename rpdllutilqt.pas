@@ -99,6 +99,7 @@ end;
 function rp_preview(hreport:integer;Title:PChar):integer;
 var
  report:TRpReport;
+ modified:boolean;
 begin
  rplibdoinit;
  rplasterror:='';
@@ -106,7 +107,7 @@ begin
  try
   report:=FindReport(hreport);
 {$IFDEF MSWINDOWS}
-  ShowPreview(report,Title);
+  ShowPreview(report,Title,modified);
 {$ENDIF}
 {$IFDEF LINUX}
   ShowPreview(report,Title,true);

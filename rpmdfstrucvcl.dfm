@@ -11,7 +11,7 @@ object FRpStructureVCL: TFRpStructureVCL
     Top = 0
     Width = 318
     Height = 207
-    ActivePage = TabData
+    ActivePage = TabStructure
     Align = alClient
     HotTrack = True
     TabOrder = 0

@@ -308,6 +308,7 @@ begin
  bitmap:=TBitmap.Create;
  {$IFNDEF DOTNETDBUGS}
    bitmap.PixelFormat:=pf32bit;
+   bitmap.HandleType:=bmDIB;
  {$ENDIF}
  {$IFDEF DOTNETDBUGS}
 //   bitmap.PixelFormat:=pf24bit;

@@ -69,7 +69,6 @@ var
  StringPenStyle:array [psSolid..psClear] of wideString;
  StringBrushStyle:array [rpbsSolid..rpbsDense7] of wideString;
  StringShapeType:array [rpsRectangle..rpsOblique2] of wideString;
- StringDrawStyles:array [rpDrawCrop..rpDrawTile] of widestring;
 // StringCopyModes:array [cmBlackness..cmCreateMask] of widestring;
  // TCopyMode = (cmBlackness, cmDstInvert, cmMergeCopy, cmMergePaint,
 // cmNotSrcCopy, cmNotSrcErase, cmPatCopy, cmPatInvert,
@@ -79,7 +78,6 @@ var
 function StringPenStyleToInt(Value:widestring):integer;
 function StringBrushStyleToInt(Value:wideString):integer;
 function StringShapeTypeToShape(Value:wideString):TRpShapeType;
-function StringDrawStyleToDrawStyle(Value:widestring):TRpImageDrawStyle;
 //function StringCopyModeToCopyMode(Value:widestring):TCopyMode;
 
 implementation
@@ -195,21 +193,6 @@ begin
   if Value=StringBrushStyle[i] then
   begin
    Result:=Integer(i);
-   break;
-  end;
- end;
-end;
-
-function StringDrawStyleToDrawStyle(Value:widestring):TRpImageDrawStyle;
-var
- i:TRpImageDrawStyle;
-begin
- Result:=rpDrawCrop;
- for i:=rpDrawCrop to rpDrawTile do
- begin
-  if Value=StringDrawStyles[i] then
-  begin
-   Result:=i;
    break;
   end;
  end;
@@ -453,7 +436,7 @@ begin
  lhints.Add('refimage.html');
  lcat.Add(SRpImage);
  if Assigned(lvalues) then
-  lvalues.Add(StringDrawStyles[TRpImage(printitem).DrawStyle]);
+  lvalues.Add(RpDrawStyleToString(TRpImage(printitem).DrawStyle));
 
  // Expression
  lnames.Add(SrpSExpression);
@@ -534,7 +517,7 @@ begin
  end;
  if pname=SrpDrawStyle then
  begin
-  Result:=StringDrawStyles[TRpImage(printitem).DrawStyle];
+  Result:=RpDrawStyleToString(TRpImage(printitem).DrawStyle);
   exit;
  end;
 // if pname=SrpCopyMode then
@@ -669,11 +652,7 @@ var
 begin
  if pname=SrpDrawStyle then
  begin
-  lpossiblevalues.clear;
-  for i:=rpDrawCrop to rpDrawTile do
-  begin
-   lpossiblevalues.Add(StringDrawStyles[i]);
-  end;
+  GetDrawStyleDescriptions(lpossiblevalues);
   exit;
  end;
 { if pname=SrpCopyMode then
@@ -722,11 +701,6 @@ initialization
  StringShapeType[rpsVertLine]:=SRpSVertLine;
  StringShapeType[rpsOblique1]:=SRpSOblique1;
  StringShapeType[rpsOblique2]:=SRpSOblique2;
-
- StringDrawStyles[rpDrawCrop]:=SRPSDrawCrop;
- StringDrawStyles[rpDrawStretch]:=SRPSDrawStretch;
- StringDrawStyles[rpDrawFull]:=SRPSDrawFull;
- StringDrawStyles[rpDrawTile]:=SRPDrawTile;
 
 { StringCopyModes:array [cmBlackness..cmCreateMask] of string=(
   SRpBlackness, SRpDstInvert, SRpMergeCopy, SRpMergePaint,

@@ -485,7 +485,9 @@ var
  lastdetail,firstdetail:integer;
  dataavail:boolean;
  index:integer;
+ SearchGroupHeader:Boolean;
 begin
+ SearchGroupHeader:=false;
  oldsection:=section;
  section:=nil;
 // oldsectionindex:=currentsectionindex;
@@ -502,6 +504,11 @@ begin
    begin
     index:=DataInfo.IndexOf(subrep.Alias);
 {$IFDEF USERPDATASET}
+    if Length(Datainfo.Items[index].DataSource)<1 then
+    begin
+     Datainfo.Items[index].Disconnect;
+     Datainfo.Items[index].Connect(DatabaseInfo,params);
+    end;
     if Datainfo.Items[index].Cached then
     begin
      if Datainfo.Items[index].Dataset.Bof then
@@ -541,9 +548,41 @@ begin
      CurrentSectionIndex:=Subreport.FirstDetail+SubReport.CurrentGroupIndex-1;
     end;
    end;
+  end
+  else
+   SearchGroupHeader:=true;
+ end
+ else
+  SearchGroupHeader:=true;
+ if FGroupHeaders.Count<1 then
+  SearchGroupHeader:=false;
+ if SearchGroupHeader then
+ begin
+  index:=FGroupHeaders.IndexOfObject(oldsection);
+  if index>=0 then
+  begin
+   FGroupHeaders.Delete(index);
+   if FGroupHeaders.Count>0 then
+   begin
+    section:=TRpSection(FGroupHeaders.Objects[0]);
+    CurrentSubReportIndex:=StrToInt(FPendingSections.Strings[FPendingSections.Count-1]);
+    Subreport:=TRpSubReport(Section.SubReport);
+   end
+   else
+   begin
+    Section:=TRpSection(FPendingSections.Objects[FPendingSections.Count-1]);
+    CurrentSubReportIndex:=StrToInt(FPendingSections.Strings[FPendingSections.Count-1]);
+    FPendingSections.Delete(FPendingSections.Count-1);
+    Subreport:=TRpSubReport(Section.SubReport);
+    Currentsectionindex:=Subreport.Sections.IndexOf(Section);
+   end
   end;
  end;
-
+ if assigned(section) then
+ begin
+  Result:=true;
+  exit;
+ end;
  // Check the condition
  while CurrentSubReportIndex<Subreports.count do
  begin
@@ -710,6 +749,7 @@ begin
  begin
   if FPendingSections.Count>0 then
   begin
+   //
    Section:=TRpSection(FPendingSections.Objects[FPendingSections.Count-1]);
    CurrentSubReportIndex:=StrToInt(FPendingSections.Strings[FPendingSections.Count-1]);
    FPendingSections.Delete(FPendingSections.Count-1);
@@ -1229,9 +1269,24 @@ begin
     begin
      if psection.EvaluatePrintCondition then
      begin
-      asection:=psection;
-      CheckSpace;
-      PrintSection(adriver,false,PartialPrint);
+      // Add group headers to be printed at the
+      // main print loop (child subreports and horz/vert.desp)
+//      if FGroupHeaders.Count>0 then
+       FGroupHeaders.AddObject(psection.GroupName,psection)
+{      else
+      begin
+       if Assigned(psection.ChildSubReport) then
+       begin
+        FGroupHeaders.AddObject(psection.GroupName,psection)
+       end
+       else
+       begin
+        asection:=psection;
+        CheckSpace;
+        PrintSection(adriver,false,PartialPrint);
+       end;
+      end;
+}
      end;
     end;
    end;
@@ -1312,6 +1367,7 @@ end;
 
 
 begin
+ FGroupHeaders.Clear;
  printedsomething:=false;
  if Not Assigned(Section) then
   Raise Exception.Create(SRpLastPageReached);
@@ -1375,6 +1431,12 @@ begin
  try
   // Fills the page with fixed sections
   PrintFixedSections(FDriver,true);
+  // Group headers with child subreports
+  if FGroupHeaders.Count>0 then
+  begin
+   FPendingSections.AddObject(IntToStr(CurrentSubReportIndex),section);
+   section:=TRpSection(FGroupHeaders.Objects[0]);
+  end;
   oldsubreport:=subreport;
   lastvertpos.x:=pageposx;
   lastvertpos.y:=pageposy;

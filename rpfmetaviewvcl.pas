@@ -439,6 +439,7 @@ begin
 // qtdriver.toprinter:=true;
  bitmap:=TBitmap.Create;
  bitmap.PixelFormat:=pf32bit;
+ bitmap.HandleType:=bmDIB;
  AImage.Picture.Bitmap:=bitmap;
  metafile:=TrpMetafileReport.Create(Self);
  metafile.OnProgress:=MetProgress;

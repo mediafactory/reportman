@@ -185,6 +185,7 @@ type
     freespace:integer;
     printedsomething:Boolean;
     gheaders,gfooters:TList;
+    FGroupHeaders:TStringList;
 {$IFDEF MSWINDOWS}
    mmfirst,mmlast:DWORD;
 {$ENDIF}
@@ -369,6 +370,7 @@ constructor TRpBaseReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FGroupHeaders:=TStringList.Create;
  FPreviewAbout:=true;
  FStreamFormat:=rpStreamtext;
  gheaders:=TList.Create;
@@ -517,6 +519,7 @@ end;
 
 destructor TRpBaseReport.Destroy;
 begin
+ FGroupHeaders.free;
  gheaders.free;
  gfooters.free;
  FPendingSections.Free;

@@ -36,7 +36,7 @@ uses SysUtils, Classes,
   rpmdobinsintvcl,rpmdobjinspvcl,rpmdfstrucvcl,rpmdflabelintvcl,
   rpgraphutilsvcl,rpmdfdrawintvcl,rpmdfbarcodeintvcl,rpmdfchartintvcl,
   rplabelitem,rpreport,rpprintitem,rpdbbrowservcl,
-  rpmdconsts,rpsection,rptypes,rpdrawitem,rppdffile,
+  rpmdconsts,rpsection,rptypes,rpdrawitem,rppdffile,rpvgraphutils,
   rpsubreport,rpmdbarcode,rpmdchart;
 
 const
@@ -171,6 +171,7 @@ begin
     height:=MIN_GRID_BITMAP_HEIGHT;
    end;
    fBitmap.PixelFormat:=pf32bit;
+   fBitmap.HandleType:=bmDIB;
    fbitmap.Width:=width;
    fbitmap.Height:=height;
    // Then draws the bitmap
@@ -403,30 +404,37 @@ begin
  // Expression
  lnames.Add(SrpSBackExpression);
  ltypes.Add(SRpSExpression);
- lhints.Add('refimage.html');
+ lhints.Add('refsection.html');
  lcat.Add(SRpSection);
  if Assigned(lvalues) then
-  lvalues.Add(TRpImage(printitem).Expression);
+  lvalues.Add(TRpSection(printitem).BackExpression);
  // Image
  lnames.Add(SrpSImage);
  ltypes.Add(SRpSImage);
- lhints.Add('refimage.html');
+ lhints.Add('refsection.html');
  lcat.Add(SRpSection);
  if Assigned(lvalues) then
-  lvalues.Add('['+FormatFloat('###,###0.00',TRpImage(printitem).Stream.Size/1024)+
+  lvalues.Add('['+FormatFloat('###,###0.00',TRpSection(printitem).Stream.Size/1024)+
   SRpKbytes+']');
  // DPI
  lnames.Add(SRpDPIRes);
  ltypes.Add(SRpSString);
- lhints.Add('refimage.html');
+ lhints.Add('refsection.html');
  lcat.Add(SRpSection);
  if Assigned(lvalues) then
-  lvalues.Add(IntToStr(TRpImage(printitem).DPIRes));
+  lvalues.Add(IntToStr(TRpSection(printitem).DPIRes));
  // Back Style
  lnames.Add(SRpSBackStyle);
  ltypes.Add(SRpSList);
  lhints.Add('refsection.html');
  lcat.Add(SRpSection);
+ // DrawStyle
+ lnames.Add(SRpDrawStyle);
+ ltypes.Add(SRpSList);
+ lhints.Add('refsection.html');
+ lcat.Add(SRpSection);
+ if Assigned(lvalues) then
+  lvalues.Add(RpDrawStyleToString(TRpSection(printitem).DrawStyle));
 
 end;
 
@@ -582,6 +590,12 @@ begin
   TRpSection(fprintitem).BackStyle:=StrToBackStyle(Value);
   exit;
  end;
+ if pname=SRpDrawStyle then
+ begin
+  TRpSection(fprintitem).DrawStyle:=StringDrawStyleToDrawStyle(Value);
+  UpdateBack;
+  exit;
+ end;
 
 
  inherited SetProperty(pname,value);
@@ -734,6 +748,11 @@ begin
   Result:=BackStyleToStr(TRpSection(fprintitem).BackStyle);
   exit;
  end;
+ if pname=SrpDrawStyle then
+ begin
+  Result:=RpDrawStyleToString(TRpSection(printitem).DrawStyle);
+  exit;
+ end;
 
  Result:=inherited GetProperty(pname);
 end;
@@ -779,6 +798,12 @@ begin
   GetBackStyleDescriptions(lpossiblevalues);
   exit;
  end;
+ if pname=SrpDrawStyle then
+ begin
+  GetDrawStyleDescriptions(lpossiblevalues);
+  exit;
+ end;
+
  inherited GetPropertyValues(pname,lpossiblevalues);
 end;
 
@@ -808,6 +833,9 @@ var
 {$IFNDEF DOTNETD}
   jpegimage:TJPegImage;
 {$ENDIF}
+ recsrc:TRect;
+ oldrgn,newrgn:HRGN;
+ aresult:integer;
 begin
  errormessage:='';
  if not assigned(secint) then
@@ -856,8 +884,8 @@ begin
     secint.backbitmap.Canvas.FillRect(rec);
     abitmap:=TBitmap.Create;
     try
-     abitmap.HandleType:=bmDIB;
      abitmap.PixelFormat:=pf32bit;
+     abitmap.HandleType:=bmDIB;
      astream.Seek(0,soFromBeginning);
      if GetJPegInfo(astream,bitmapwidth,bitmapheight) then
      begin
@@ -884,9 +912,45 @@ begin
      // Draws it with the style
      dpix:=Screen.PixelsPerInch;
      dpiy:=Screen.PixelsPerInch;
-     rec.Bottom:=round(abitmap.height/asection.dpires)*dpiy-1;
-     rec.Right:=round(abitmap.width/asection.dpires)*dpix-1;
-     secint.BackBitmap.Canvas.StretchDraw(rec,abitmap);
+     case asection.DrawStyle of
+      rpDrawFull:
+       begin
+        rec.Bottom:=round(abitmap.height/asection.dpires*dpiy)-1;
+        rec.Right:=round(abitmap.width/asection.dpires*dpix)-1;
+        secint.BackBitmap.Canvas.StretchDraw(rec,abitmap);
+       end;
+      rpDrawStretch:
+       begin
+        recsrc.Left:=0;
+        recsrc.Top:=0;
+        recsrc.Right:=abitmap.Width-1;
+        recsrc.Bottom:=abitmap.Height-1;
+        DrawBitmap(secint.BackBitmap.Canvas,abitmap,rec,recsrc);
+       end;
+      rpDrawCrop:
+       begin
+        rec.Top:=0;
+        rec.Left:=0;
+        recsrc.Left:=0;
+        recsrc.Top:=0;
+        recsrc.Right:=rec.Right-rec.Left;
+        recsrc.Bottom:=rec.Bottom-rec.Top;
+        DrawBitmap(secint.BackBitmap.Canvas,abitmap,rec,recsrc);
+       end;
+      rpDrawTile:
+       begin
+        // Set clip region
+        oldrgn:=CreateRectRgn(0,0,2,2);
+        aresult:=GetClipRgn(secint.BackBitmap.Canvas.Handle,oldrgn);
+        newrgn:=CreateRectRgn(rec.Left,rec.Top,rec.Right,rec.Bottom);
+        SelectClipRgn(secint.BackBitmap.Canvas.handle,newrgn);
+        DrawBitmapMosaicSlow(secint.BackBitmap.Canvas,rec,abitmap);
+        if aresult=0 then
+         SelectClipRgn(secint.BackBitmap.Canvas.handle,0)
+        else
+         SelectClipRgn(secint.BackBitmap.Canvas.handle,oldrgn);
+       end;
+     end;
     finally
      abitmap.free;
     end;

@@ -20,9 +20,14 @@ unit rpmdfdatasetsvcl;
 
 interface
 
+{$I rpconf.inc}
+
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls, ToolWin, ImgList,rpmdconsts,rpgraphutilsvcl,
+{$IFDEF USEBDE}
+  DBTables,
+{$ENDIF}
   rptypes,rpdatainfo,rpreport,rpfparamsvcl,rpmdfsampledatavcl, ActnList,
   rpdbbrowservcl,rpparams;
 
@@ -157,6 +162,7 @@ begin
  inherited Create(AOwner);
 
  Report:=TRpReport.Create(Self);
+ Report.InitEvaluator;
  BParams.Caption:=TranslateStr(152,BParams.Caption);
  LConnection.Caption:=TranslateStr(154,LConnection.Caption);
  LMasterDataset.Caption:=TranslateStr(155,LMasterDataset.Caption);
@@ -669,6 +675,21 @@ begin
  end;
 {$ENDIF}
 end;
+
+{$IFDEF USEBDE}
+procedure GetIndexFieldNames(atable:TTable;Items:TStrings);
+var
+ i:integer;
+begin
+ atable.IndexDefs.Update;
+ items.Clear;
+ for i:=0 to atable.IndexDefs.Count-1 do
+ begin
+  if Length(atable.IndexDefs.Items[i].Fields)>0 then
+   items.Add(atable.IndexDefs.Items[i].Fields);
+ end;
+end;
+{$ENDIF}
 
 procedure TFRpDatasetsVCL.EBDEIndexFieldsDropDown(Sender: TObject);
 {$IFDEF USEBDE}

@@ -210,6 +210,10 @@ type
   end;
 
 
+function StringDrawStyleToDrawStyle(Value:widestring):TRpImageDrawStyle;
+function RpDrawStyleToString(Value:TRpImageDrawStyle):String;
+procedure GetDrawStyleDescriptionsA(alist:TStrings);
+procedure GetDrawStyleDescriptions(alist:TRpWideStrings);
 function StrToBackStyle(value:string):TrpBackStyle;
 function BackStyleToStr(value:TrpBackStyle):string;
 procedure SendMail(destination,subject,content,filename:String);
@@ -278,6 +282,7 @@ procedure ReadFileLines(filename:String;dest:TStrings);
 function RpTempFileName:String;
 function RpTempPath:String;
 procedure WriteStringToStream(astring:String;deststream:TStream);
+procedure WriteWideStringToStream(astring:WideString;deststream:TStream);
 
 {$IFNDEF USEVARIANTS}
 procedure RaiseLastOSError;
@@ -2687,6 +2692,30 @@ end;
 {$ENDIF}
 
 
+procedure WriteWideStringToStream(astring:WideString;deststream:TStream);
+{$IFDEF DOTNETD}
+var
+ i:integer;
+ buf:array of Byte;
+{$ENDIF}
+begin
+ if Length(astring)<1 then
+  exit;
+{$IFDEF DOTNETD}
+ SetLength(buf,Length(astring)*2);
+ for i:=0 to Length(astring)-1 do
+ begin
+  buf[i*2]:=Byte(astring[i+1]);
+  buf[i*2+1]:=Byte(Word(astring[i+1]) shr 8);
+ end;
+ deststream.Write(buf,Length(astring));
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ deststream.Write(astring[1],Length(astring)*2);
+{$ENDIF}
+end;
+
+
 procedure WriteStringToStream(astring:String;deststream:TStream);
 {$IFDEF DOTNETD}
 var
@@ -2993,6 +3022,53 @@ begin
  end;
 //  ShellExecute(0,PChar('start'),PChar('mailto:'+destination+'?Subject='+subject),nil,nil,SW_SHOWNORMAL);
 {$ENDIF}
+end;
+
+
+function StringDrawStyleToDrawStyle(Value:widestring):TRpImageDrawStyle;
+begin
+ Result:=rpDrawCrop;
+
+ if Value=SRPSDrawStretch then
+  Result:=rpDrawStretch
+ else
+  if Value=SRPSDrawFull then
+   Result:=rpDrawFull
+  else
+  if Value=SRPDrawTile then
+   Result:=rpDrawTile;
+end;
+
+function RpDrawStyleToString(Value:TRpImageDrawStyle):String;
+begin
+ case Value of
+  rpDrawCrop:
+   Result:=SRPSDrawCrop;
+  rpDrawStretch:
+   Result:=SRPSDrawStretch;
+  rpDrawFull:
+   Result:=SRPSDrawFull;
+  rpDrawTile:
+   Result:=SRPDrawTile;
+ end;
+end;
+
+procedure GetDrawStyleDescriptionsA(alist:TStrings);
+begin
+ alist.clear;
+ alist.Add(SRpSDrawCrop);
+ alist.Add(SRpSDrawStretch);
+ alist.Add(SRpSDrawFull);
+ alist.Add(SRpDrawTile);
+end;
+
+procedure GetDrawStyleDescriptions(alist:TRpWideStrings);
+begin
+ alist.clear;
+ alist.Add(SRpSDrawCrop);
+ alist.Add(SRpSDrawStretch);
+ alist.Add(SRpSDrawFull);
+ alist.Add(SRpDrawTile);
 end;
 
 initialization

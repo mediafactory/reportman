@@ -1863,6 +1863,7 @@ begin
  bitmap:=TBitmap.Create;
  try
   bitmap.HandleType:=bmDIB;
+  bitmap.PixelFormat:=pf32bit;
 //  bitmapinfoptr:=nil;
   bitmapinfoptr:=Marshal.AllocHGlobal(sizeof(BitmapInfo));
   Marshal.StructureToPtr(BitmapInfo,BitmapinfoPtr,true);

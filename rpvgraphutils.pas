@@ -137,6 +137,8 @@ var
 begin
  bitmap:=TBitmap.Create;
  try
+  bitmap.PixelFormat:=pf32bit;
+  bitmap.HandleType:=bmDIB;
   AStream.Seek(0,soFromBeginning);
   jpegimage:=TJPegImage.Create;
   try
