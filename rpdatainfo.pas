@@ -1147,7 +1147,7 @@ var
  baseinfo:TRpDatabaseInfoItem;
  doexit:boolean;
  param:TRpParam;
- atype:TDataType;
+ atype:TFieldType;
  avalue:Variant;
  sqlsentence:widestring;
 {$IFDEF USEADO}

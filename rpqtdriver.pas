@@ -793,7 +793,7 @@ var
 {$IFDEF LINUX}
     milifirst,mililast:TDatetime;
 {$ENDIF}
-    difmilis:int64;
+ difmilis:int64;
  totalcount:integer;
  offset:TPoint;
  istextonly:boolean;
@@ -980,7 +980,12 @@ var
  i,j:integer;
  offset:TPoint;
  pagemargins:TRect;
- mmfirst,mmlast:DWORD;
+{$IFDEF MSWINDOWS}
+    mmfirst,mmlast:DWORD;
+{$ENDIF}
+{$IFDEF LINUX}
+    milifirst,mililast:TDatetime;
+{$ENDIF}
  difmilis:int64;
  pageheight,pagewidth:integer;
  tempbitmap:TBitmap;
@@ -988,7 +993,12 @@ var
 begin
  offset.X:=0;
  offset.Y:=0;
+{$IFDEF MSWINDOWS}
  mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+  milifirst:=now;
+{$ENDIF}
  pagemargins.Left:=0;
  pagemargins.Top:=0;
  pagemargins.Bottom:=0;
@@ -1033,12 +1043,23 @@ begin
      PrintObject(tempbitmap.Canvas,apage,apage.Objects[j],resx,resy,1,offset);
      if assigned(aform) then
      begin
+   {$IFDEF MSWINDOWS}
       mmlast:=TimeGetTime;
       difmilis:=(mmlast-mmfirst);
+   {$ENDIF}
+   {$IFDEF LINUX}
+      mililast:=now;
+      difmilis:=MillisecondsBetween(mililast,milifirst);
+   {$ENDIF}
       if difmilis>MILIS_PROGRESS then
       begin
        // Get the time
+     {$IFDEF MSWINDOWS}
        mmfirst:=TimeGetTime;
+     {$ENDIF}
+     {$IFDEF LINUX}
+       milifirst:=now;
+     {$ENDIF}
        aform.LRecordCount.Caption:=SRpPage+':'+ IntToStr(i+1)+
          ' - '+SRpItem+':'+ IntToStr(j+1);
        Application.ProcessMessages;
