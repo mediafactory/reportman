@@ -2,8 +2,8 @@ object modserver: Tmodserver
   OldCreateOrder = False
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
-  Left = 358
-  Top = 240
+  Left = 360
+  Top = 264
   Height = 172
   Width = 309
   object RepServer: TIdTCPServer

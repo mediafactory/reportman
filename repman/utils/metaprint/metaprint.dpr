@@ -60,6 +60,7 @@ end;
 
 
 var
+ isstdin:Boolean;
  indexparam:integer;
  showprogress:boolean;
  dodeletefile:boolean;
@@ -71,9 +72,11 @@ var
  collate:boolean;
  printerindex:TRpPrinterSelect;
  preview,pdialog,doprint:boolean;
+ memstream:TMemoryStream;
 begin
  try
   { TODO -oUser -cConsole Main : Insert code here }
+  isstdin:=false;
   printerindex:=pRpDefaultPrinter;
   if ParamCount<1 then
    PrintHelp
@@ -158,47 +161,58 @@ begin
     end;
     if indexparam<ParamCount+1 then
     begin
+     PrintHelp;
      Raise Exception.Create(SRpTooManyParams)
     end;
     if Length(filename)<1 then
+     isstdin:=True;
+    if isstdin then
     begin
-     PrintHelp;
+     memstream:=ReadFromStdInputStream;
+     try
+      memstream.Seek(0,soFromBeginning);
+      metafile.LoadFromStream(memstream);
+     finally
+      memstream.free;
+     end;
+     dodeletefile:=false;
     end
     else
     begin
      metafile.LoadFromFile(filename);
-     try
-      if ShowProgress then
-      begin
+    end;
+    try
+     if ShowProgress then
+     begin
+      if not isstdin then
        WriteLn(SRpPrintingFile+':'+filename);
-      end;
-      if preview then
+     end;
+     if preview then
+     begin
+      rpfmainmetaview.PreviewMetafile(metafile,nil,true);
+     end
+     else
+     begin
+      doprint:=true;
+      if pdialog then
+       doprint:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+      if doprint then
       begin
-       rpfmainmetaview.PreviewMetafile(metafile,nil,true);
-      end
-      else
-      begin
-       doprint:=true;
-       if pdialog then
-        doprint:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
-       if doprint then
+       if PrintMetafile(metafile,filename,ShowProgress,allpages,
+        frompage,topage,copies,collate,printerindex) then
+       if ShowProgress then
        begin
-        if PrintMetafile(metafile,filename,ShowProgress,allpages,
-         frompage,topage,copies,collate,printerindex) then
-        if ShowProgress then
-        begin
-         WriteLn(SRpPrinted);
-        end;
+        WriteLn(SRpPrinted);
        end;
       end;
-     finally
-      if dodeletefile then
-       if DeleteFile(filename) then
-        if ShowProgress then
-        begin
-         WriteLn(SRpPrintedFileDeleted);
-        end;
      end;
+    finally
+     if dodeletefile then
+      if DeleteFile(filename) then
+       if ShowProgress then
+       begin
+         WriteLn(SRpPrintedFileDeleted);
+       end;
     end;
    finally
     metafile.free;

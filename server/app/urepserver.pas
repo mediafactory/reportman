@@ -42,6 +42,9 @@ uses
 {$IFDEF MSWINDOWS}
   Windows,Forms,
 {$ENDIF}
+{$IFDEF LINUX}
+ Libc,
+{$ENDIF}
   rptranslator,rpmdshfolder,IniFiles,rpmdprotocol,
   rpreport,rppdfdriver, IdThreadMgrPool,rptypes,rpparams;
 
@@ -97,12 +100,12 @@ type
     FLogFile:TFileStream;
     FFileNameConfig:String;
     fport:integer;
-    smp:Boolean;
     procedure InitConfig;
     procedure WriteConfig;
     procedure WriteLog(aMessage:WideString);
     procedure GetIsSMP;
   public
+    smp:Boolean;
     property LogFileName:TFileName read FLogFileName;
     property FileNameConfig:String read FFilenameconfig;
     { Public declarations }
@@ -209,6 +212,8 @@ begin
   amod.FOnLog:=OnLog;
   amod.FHostname:=amod.RepServer.LocalName;
   amod.WriteLog(SRpServerStarted);
+  if amod.smp then
+   amod.WriteLog('SMP Server');
  except
   amod.free;
   raise;
@@ -259,8 +264,24 @@ begin
 end;
 {$ENDIF}
 {$IFDEF LINUX}
+var
+ alist:TStringList;
+ proccount:integer;
+ i:integer;
 begin
- smp:=False;
+ proccount:=1;
+ alist:=TStringList.Create;
+ try
+  ReadFileLines('/proc/cpuinfo',alist);
+  for i:=0 to alist.Count-1 do
+  begin
+   if UpperCase(Copy(alist.Strings[i],1,9))='PROCESSOR' then
+    inc(proccount);
+  end;
+ finally
+  alist.free;
+ end;
+ smp:=proccount>=2;
 end;
 {$ENDIF}
 
@@ -975,13 +996,21 @@ procedure SMPExecuteReport(report:TRpReport;astream:TMemoryStream;metafile:Boole
 var
  memstream:TMemoryStream;
  aparams:TStringList;
- sinfo:TStartupInfo;
  currentdir:String;
+{$IFDEF MSWINDOWS}
+ sinfo:TStartupInfo;
  pinfo:TProcessInformation;
+ secat:TSecurityAttributes;
+{$ENDIF}
  exefull:string;
  toexecute:String;
- secat:TSecurityAttributes;
  repname,pdfname:string;
+{$IFDEF LINUX}
+ child:__pid_t;
+ theparams:array [0..10] of pchar;
+ i:integer;
+ atempname,atempname2:String;
+{$ENDIF}
 begin
  astream.Clear;
  memstream:=TMemoryStream.Create;
@@ -998,12 +1027,6 @@ begin
    aparams.Add(exefull);
    aparams.Add(repname);
    aparams.Add(pdfname);
-{$ENDIF}
-{$IFDEF LINUX}
-   currentdir:=ExtractFilePath(GetExename);
-   exefull:=ExtractFilePath(currentdir)+'/printreptopdf.bin';
-   aparams.Add(exefull);
-   aparams.Add('-stdin');
 {$ENDIF}
 {$IFDEF MSWINDOWS}
    sinfo.cb:=sizeof(sinfo);
@@ -1044,6 +1067,41 @@ begin
     end;
    finally
     DeleteFile(Pchar(repname));
+   end;
+{$ENDIF}
+{$IFDEF LINUX}
+   atempname:=RpTempFileName;
+   atempname2:=RpTempFileName;
+   memstream.SaveToFile(atempname);
+   aparams.Add('printreptopdf');
+   aparams.Add('-m');
+   aparams.Add('-q');
+   aparams.Add(atempname);
+   aparams.Add(atempname2);
+   // Creates a fork, and provides the input from standard
+   for i:=0 to aparams.count-1 do
+   begin
+    theparams[i]:=Pchar(aparams[i]);
+   end;
+   theparams[aparams.count]:=nil;
+   child:=fork;
+   if child=-1 then
+    Raise Exception.Create(SRpErrorForking);
+   if child=0 then
+   begin
+    // The child executes the command
+    execvp(theparams[0],PPChar(@theparams))
+   end
+   else
+   begin
+    try
+     wait(@child);
+    finally
+     DeleteFile(atempname);
+    end;
+    astream.LoadFromFile(atempname2);
+    astream.Seek(0,soFromBeginning);
+    DeleteFile(atempname2);
    end;
 {$ENDIF}
   finally

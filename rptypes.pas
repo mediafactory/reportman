@@ -232,6 +232,7 @@ function ReadStreamFromHandle(handle:THandle):TMemoryStream;
 {$IFDEF LINUX}
 procedure  ObtainPrinters(alist:TStrings);
 procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title:String);
+procedure ReadFileLines(filename:String;dest:TStrings);
 {$ENDIF}
 
 function RpTempFileName:String;
@@ -2015,18 +2016,10 @@ end;
 procedure ExecuteRecode(afilename,parameter:String);
 var
  child:__pid_t;
- apipe:array [0..1] of integer;
- pint:PInteger;
  i:integer;
  theparams:array [0..10] of pchar;
- buffer:array [0..1] of char;
- pbuf:Pchar;
- readed:integer;
- astring:string;
  params:TStringList;
- doerror:boolean;
 begin
- doerror:=true;
  params:=TStringList.Create;
  try
   params.Add('recode');
@@ -2037,57 +2030,23 @@ begin
   // input to lpr command
   if params.count>10 then
    Raise exception.create(SRpTooManyParams);
-  pint:=@apipe;
-  pbuf:=@buffer;
   for i:=0 to params.count-1 do
   begin
    theparams[i]:=Pchar(params[i]);
   end;
   theparams[params.count]:=nil;
-  if (-1=pipe(pint)) then
-   Raise Exception.create(SRpErrorCreatePipe);
   child:=fork;
   if child=-1 then
    Raise Exception.Create(SRpErrorForking);
-  if child<>0 then
+  if child=0 then
   begin
-   __close(apipe[0]);
-   if doerror then
-   begin
-    dup2(apipe[1],2);
-   end
-   else
-   begin
-    dup2(apipe[1],2);
-    dup2(apipe[1],1);
-   end;
    // The child executes the command
    execvp(theparams[0],PPChar(@theparams))
   end
   else
   begin
-   __close(apipe[1]);
-   try
-    astring:='';
-    buffer[1]:=chr(0);
-    repeat
-     readed:=__read(apipe[0],pbuf^,1);
-     if readed>0 then
-     begin
-      if pbuf[0]=chr(10) then
-      begin
-       WriteLn(astring);
-       astring:='';
-      end
-      else
-       astring:=astring+pbuf[0];
-     end;
-    until readed=0;
-    if length(astring)>0 then
-     WriteLn(astring);
-   finally
-    __close(apipe[0]);
-   end;
+   // Waits to the end
+   wait(@child);
   end;
  finally
   params.Free;
@@ -2102,33 +2061,21 @@ var
  printername:string;
  printernamecommand:string;
  child:__pid_t;
- apipe:array [0..1] of integer;
- pint:PInteger;
  i:integer;
  theparams:array [0..10] of pchar;
- buffer:array [0..1] of char;
- pbuf:Pchar;
- readed:integer;
- astring:string;
  params:TStringList;
- doerror:boolean;
- template:String;
- abuffer:array [0..L_tmpnam] of char;
  afilename:String;
  files:TFilestream;
  oemconvert:Boolean;
 begin
  oemconvert:=GetPrinterEscapeOem(printerindex);
- template:='reportmanXXXXXX';
- tmpnam(abuffer);
- afilename:=StrPas(abuffer);
+ afilename:=rpTempFileName;
  files:=TFileStream.Create(afilename,fmCreate or fmShareDenyWrite);
  try
   files.Write(S[1],Length(S));
  finally
   files.free;
  end;
- doerror:=false;
  // Looks for the printer name
  printernamecommand:='';
  printername:=GetPrinterConfigName(printerindex);
@@ -2154,66 +2101,21 @@ begin
    params.Add(Title);
   end;
   params.Add(afilename);
-  // Creates a fork, and provides the input from standard
-  // input to lpr command
+  // Creates a fork
   if params.count>10 then
    Raise exception.create(SRpTooManyParams);
-//  WriteLn('Executing');
-//  for i:=0 to params.count-1 do
-//  begin
-//   WriteLn(params.Strings[i]);
-//  end;
-  pint:=@apipe;
-  pbuf:=@buffer;
   for i:=0 to params.count-1 do
   begin
    theparams[i]:=Pchar(params[i]);
   end;
   theparams[params.count]:=nil;
-  if (-1=pipe(pint)) then
-   Raise Exception.create(SRpErrorCreatePipe);
   child:=fork;
   if child=-1 then
    Raise Exception.Create(SRpErrorForking);
-  if child<>0 then
+  if child=0 then
   begin
-   __close(apipe[0]);
-   if doerror then
-   begin
-    dup2(apipe[1],2);
-   end
-   else
-   begin
-    dup2(apipe[1],2);
-    dup2(apipe[1],1);
-   end;
    // The child executes the command
    execvp(theparams[0],PPChar(@theparams))
-  end
-  else
-  begin
-   __close(apipe[1]);
-   try
-    astring:='';
-    buffer[1]:=chr(0);
-    repeat
-     readed:=__read(apipe[0],pbuf^,1);
-     if readed>0 then
-     begin
-      if pbuf[0]=chr(10) then
-      begin
-       WriteLn(astring);
-       astring:='';
-      end
-      else
-       astring:=astring+pbuf[0];
-     end;
-    until readed=0;
-    if length(astring)>0 then
-     WriteLn(astring);
-   finally
-    __close(apipe[0]);
-   end;
   end;
  finally
   params.Free;
@@ -2309,8 +2211,10 @@ end;
 procedure WriteStreamToHandle(astream:TStream;handle:Integer);
 var
  memstream:TMemoryStream;
+{$IFDEF MSWINDOWS}
  lasterror:Integer;
  writed:DWord;
+{$ENDIF}
 begin
  memstream:=TMemoryStream.Create;
  try
@@ -2361,6 +2265,17 @@ begin
  WriteStreamToHandle(astream,handle);
 end;
 
+
+{$IFDEF LINUX}
+function RpTempFileName:String;
+var
+ abuffer:array [0..L_tmpnam] of char;
+begin
+ tmpnam(abuffer);
+ Result:=StrPas(abuffer);
+end;
+{$ENDIF}
+
 {$IFDEF MSWINDOWS}
 function RpTempFileName:String;
 var
@@ -2381,6 +2296,40 @@ begin
   FreeMem(apath);
  end;
  Result:=StrPas(afilename);
+end;
+{$ENDIF}
+
+
+{$IFDEF LINUX}
+procedure ReadFileLines(filename:String;dest:TStrings);
+var
+ f:TextFile;
+ astring:String;
+begin
+ dest.clear;
+ if (FileExists(filename)) then
+ begin
+  try
+   AssignFile(f,filename);
+   try
+    Reset(f);
+    while not EOF(f) do
+    begin
+     ReadLn(f,astring);
+     dest.Add(Trim(astring));
+    end;
+   finally
+    CloseFile(f);
+   end;
+  except
+   on E:Exception do
+   begin
+    dest.Add(E.Message);
+   end;
+  end;
+ end
+ else
+  dest.Add(filename+' - '+SRpNotFound);
 end;
 {$ENDIF}
 

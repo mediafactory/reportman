@@ -104,7 +104,7 @@ var
   SRpRepToTxt3:WideString='Usage: reptotxt sourcefilename destinationfilename';
   SRpMetaPrint1:WideString='metaprint';
   SRpMetaPrint2:WideString='Prints a metafile report (.rpmf)';
-  SRpMetaPrint3:WideString='Usage: metaprint [Options] metafilename';
+  SRpMetaPrint3:WideString='Usage: metaprint [Options] [metafilename]';
   SRpMetaPrint4:WideString='Options: -d        Delete the file after printing it';
   SRpMetaPrint5:WideString='         -q        Quiet mode, don''t show progress';
   SRpMetaPrint6:WideString='         -from   n Prints report from page pnum';
