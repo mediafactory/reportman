@@ -215,6 +215,7 @@ var
  rec:TRect;
  aalign:integer;
  stream:TStream;
+ astring:AnsiString;
 // bitmap:TBitmap;
 begin
  posx:=obj.Left;
@@ -242,7 +243,11 @@ begin
     rec.Top:=posy;
     rec.Right:=posx+round(obj.Width);
     rec.Bottom:=posy+round(obj.Height);
-    FPDFFile.Canvas.TextRect(rec,page.GetText(Obj),aalign,obj.cuttext,
+    astring:=page.GetText(Obj);
+{$IFDEF LINUX}
+//    astring:=;
+{$ENDIF}
+    FPDFFile.Canvas.TextRect(rec,astring,aalign,obj.cuttext,
     obj.WordWrap,obj.FontRotation);
    end;
   rpMetaDraw:

@@ -151,7 +151,6 @@ begin
  begin
   if not PathAppend(szAppdata,Pchar(company)) then
    RaiseLastOSError;
-{$ENDIF}
  end;
  if Length(product)>0 then
  begin
@@ -176,6 +175,7 @@ begin
  if not PathAppend(szAppdata,Pchar(filename+'.ini')) then
    RaiseLastOSError;
  Result:=StrPas(szAppdata);
+{$ENDIF}
 end;
 
 
