@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.3g';
+ RM_VERSION='1.3h';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
 
@@ -597,6 +597,9 @@ var
   SRpSSkipType:WideString='Skip Type';
   SRpSSkipBefore:WideString='Skip Before';
   SRpSSkipAfter:WideString='Skip After';
+  SRpSSkipToPage:WideString='S.To Page';
+  SRpSPOnlyData:WideString='P.Only data avail.';
+  SRpSTwoPassReportNeeded:WideString='Two pass report needed';
 
 implementation
 
@@ -1185,6 +1188,9 @@ begin
  TranslateVar(924,SRpSSkipBefore);
  TranslateVar(925,SRpSSkipAfter);
  TranslateVar(926,SRpSSkipType);
+ TranslateVar(927,SRpSSkipToPage);
+ TranslateVar(928,SRpSPOnlyData);
+ TranslateVar(929,SRpSTwoPassReportNeeded);
 end;
 
 {$IFDEF LINUX}

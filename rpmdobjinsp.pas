@@ -40,7 +40,7 @@ const
   CONS_BUTTONWIDTH=15;
   CONS_MINWIDTH=160;
 type
-  TRpPanelObj=class(TScrollBox)
+  TRpPanelObj=class(TPanel)
    private
     FCompItem:TRpSizeInterface;
     FSelectedItems:TStringList;
@@ -54,6 +54,7 @@ type
     AList:TStringList;
     // Alias for report datasets
     comboalias:TComboBox;
+    comboprintonly:TComboBox;
     procedure ComboObjectChange(Sender:TObject);
     procedure EditChange(Sender:TObject);
     procedure SendToBackClick(Sender:TObject);
@@ -68,6 +69,7 @@ type
     procedure ExpressionClick(Sender:TObject);
 //    procedure  Subreportprops;
     procedure ComboAliasChange(Sender:TObject);
+    procedure ComboPrintOnlyChange(Sender:TObject);
     procedure UpdatePosValues;
     procedure CreateControlsSubReport;
     procedure SelectProperty(propname:string);
@@ -161,7 +163,8 @@ begin
  LControls:=TStringList.Create;
  AList:=TStringList.Create;
  BorderStyle:=bsNone;
-
+ BevelInner:=bvNone;
+ BevelOuter:=bvNone;
 end;
 
 destructor TrpPanelObj.Destroy;
@@ -216,26 +219,68 @@ var
  alabel:TLabel;
  posy:integer;
  totalwidth:integer;
+ AScrollBox:TScrollBox;
+ PParent:TPanel;
 begin
- totalwidth:=parent.WIdth;
+ totalwidth:=WIdth;
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
  posy:=0;
+
+ AScrollBox:=TScrollBox.Create(Self);
+ AScrollBox.Align:=alClient;
+ AScrollBox.HorzScrollBar.Tracking:=True;
+ AScrollBox.VertScrollBar.Tracking:=True;
+ AScrollBox.BorderStyle:=bsNone;
+ AScrollBox.Parent:=Self;
+
+ PParent:=TPanel.Create(Self);
+ PParent.Left:=0;
+ PParent.Width:=0;
+ PParent.Parent:=AScrollBox;
+ PPArent.BorderStyle:=bsNone;
+ PParent.BevelInner:=bvNone;
+ PParent.BevelOuter:=bvNone;
+ PParent.Align:=AlTop;
+ PParent.Parent:=AScrollBox;
+
  ALabel:=TLabel.Create(Self);
  LLabels.Add(ALabel);
  ALabel.Caption:=SRpMainDataset;
  ALabel.Left:=CONS_LEFTGAP;
  ALabel.Top:=posy+CONS_LABELTOPGAP;
- ALabel.parent:=self;
+ ALabel.parent:=PParent;
 
  ComboAlias:=TComboBox.Create(Self);
  ComboAlias.Style:=csDropDownList;
  ComboAlias.Top:=Posy;
  ComboAlias.Left:=CONS_CONTROLPOS;
  ComboAlias.Width:=TotalWidth-ComboAlias.Left-CONS_RIGHTBARGAP;
- ComboAlias.parent:=self;
+ ComboAlias.parent:=PParent;
+ ComboAlias.Anchors:=[akleft,aktop,akright];
+
+ posy:=posy+ComboAlias.Height;
+ ALabel:=TLabel.Create(Self);
+ LLabels.Add(ALabel);
+ ALabel.Caption:=SRpSPOnlyData;
+ ALabel.Left:=CONS_LEFTGAP;
+ ALabel.Top:=posy+CONS_LABELTOPGAP;
+ ALabel.parent:=PPArent;
+ ComboPrintOnly:=TComboBox.Create(Self);
+ ComboPrintOnly.Style:=csDropDownList;
+ ComboPrintOnly.Top:=Posy;
+ ComboPrintOnly.Left:=CONS_CONTROLPOS;
+ ComboPrintOnly.Items.Add(FalseBoolStrs[0]);
+ ComboPrintOnly.Items.Add(TrueBoolStrs[0]);
+ ComboPrintOnly.Width:=TotalWidth-ComboPrintOnly.Left-CONS_RIGHTBARGAP;
+ ComboPrintOnly.parent:=PParent;
+ ComboPrintOnly.Anchors:=[akleft,aktop,akright];
+
+ posy:=posy+ComboAlias.Height;
+ PParent.Height:=posy;
 
  LControls.AddObject(SRpMainDataset,ComboAlias);
+ LControls.AddObject(SRpMainDataset,ComboPrintOnly);
 end;
 
 
@@ -251,12 +296,13 @@ var
  Control2:TControl;
  FRpMainf:TFRpMainF;
  AScrollBox:TScrollBox;
+ PParent:TPanel;
  APanelTop:TPanel;
  APanelBottom:TPanel;
 begin
  FRpMainf:=TFRpMainF(Owner.Owner);
  FCompItem:=acompo;
- totalwidth:=parent.WIdth;
+ totalwidth:=WIdth;
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
  aheight:=0;
@@ -277,6 +323,7 @@ begin
  combo.OnChange:=ComboObjectChange;
  APanelTop.Height:=Combo.height;
  Combo.Parent:=APanelTop;
+ Combo.Anchors:=[akleft,akright,aktop];
 
  AScrollBox:=TScrollBox.Create(Self);
  AScrollBox.Align:=alClient;
@@ -284,6 +331,16 @@ begin
  AScrollBox.VertScrollBar.Tracking:=True;
  AScrollBox.BorderStyle:=bsNone;
  AScrollBox.Parent:=Self;
+
+ PParent:=TPanel.Create(Self);
+ PParent.Left:=0;
+ PParent.Width:=0;
+ PParent.Parent:=AScrollBox;
+ PPArent.BorderStyle:=bsNone;
+ PParent.BevelInner:=bvNone;
+ PParent.BevelOuter:=bvNone;
+ PParent.Align:=AlTop;
+ PParent.Parent:=AScrollBox;
 
  FCompItem.GetProperties(LNames,LTypes,nil);
  for i:=0 to LNames.Count-1 do
@@ -293,7 +350,7 @@ begin
   ALabel.Caption:=LNames.Strings[i];
   ALabel.Left:=CONS_LEFTGAP;
   ALabel.Top:=posy+CONS_LABELTOPGAP;
-  ALabel.parent:=AScrollBox;
+  ALabel.parent:=PParent;
   typename:=LTypes.Strings[i];
   if LTypes.Strings[i]=SRpSBool then
   begin
@@ -365,7 +422,8 @@ begin
   Control.Top:=Posy;
   Control.Left:=CONS_CONTROLPOS;
   Control.Width:=TotalWidth-Control.Left-CONS_RIGHTBARGAP;
-  control.parent:=AScrollBox;
+  control.parent:=PParent;
+  Control.Anchors:=[akleft,aktop,akright];
 
   if aheight=0 then
    aheight:=Control.Height;
@@ -400,7 +458,8 @@ begin
    Control.Width:=Control.Width-CONS_BUTTONWIDTH;
    TButton(Control2).OnClick:=FontClick;
    TButton(Control2).Caption:='...';
-   Control2.Parent:=AScrollBox;
+   Control2.Parent:=PParent;
+   Control2.Anchors:=[aktop,akright];
   end;
   if (LTypes.Strings[i]=SRpSExpression) then
   begin
@@ -413,7 +472,8 @@ begin
    Control2.Tag:=i;
    TButton(Control2).OnClick:=ExpressionClick;
    TButton(Control2).Caption:='...';
-   Control2.Parent:=AScrollBox;
+   Control2.Parent:=PParent;
+   Control2.Anchors:=[aktop,akright];
   end;
 
   posy:=posy+control.height;
@@ -442,6 +502,7 @@ begin
   APanelBottom.Height:=aheight;
   Control2.Width:=(TotalWidth-CONS_RIGHTBARGAP) div 2;
   Control2.parent:=APanelBottom;
+  Control2.Anchors:=[akleft,aktop,akright];
   TButton(Control2).OnClick:=BringToFrontClick;
   TBUtton(Control2).Caption:=SRpBringToFront;
  end;
@@ -541,6 +602,11 @@ begin
   ComboAlias.Items.Assign(alist);
   ComboAlias.Itemindex:=ComboAlias.Items.IndexOf(subrep.Alias);
   ComboAlias.OnChange:=ComboAliasChange;
+  ComboPrintOnly.OnChange:=ComboPrintOnlyChange;
+  if subrep.PrintOnlyIfDataAvailable then
+   ComboPrintOnly.ItemIndex:=1
+  else
+   ComboPrintOnly.ItemIndex:=0;
   exit;
  end;
  if FCompItem is TRpSizePosInterface then
@@ -1254,6 +1320,13 @@ begin
  subrep.Alias:=TComboBox(Sender).Text;
 end;
 
+procedure TRpPanelObj.ComboPrintOnlyChange(Sender:TObject);
+begin
+ if ComboPrintOnly.ItemIndex=0 then
+  subrep.PrintOnlyIfDataAvailable:=false
+ else
+  subrep.PrintOnlyIfDataAvailable:=true;
+end;
 procedure TFRpObjInsp.RecreateChangeSize;
 begin
  fchangesize.free;

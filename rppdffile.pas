@@ -1367,12 +1367,16 @@ begin
      break;
     rec.Left:=rec.Left+awidth;
     rec.Right:=rec.Left+awidth;
-   until (Rec.Right>ARect.Right+awidth);
+    if (Rec.Right>ARect.Right+awidth) then
+     break;
+   until false;
    if not tile then
     break;
    rec.Top:=rec.Top+aheight;
    rec.Bottom:=rec.Top+aheight;
-  until (Rec.Bottom>ARect.Bottom+aheight);
+   if (Rec.Bottom>ARect.Bottom+aheight) then
+    break;
+  until false;
   SWriteLine(FFile.FsTempStream,'Q');
   // Saves the bitmap to temp bitmaps
   astream:=TMemoryStream.Create;

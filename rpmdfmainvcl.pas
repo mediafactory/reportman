@@ -1054,15 +1054,15 @@ begin
 end;
 
 procedure TFRpMainFVCL.Splitter1Moved(Sender: TObject);
-var
- olditem:TRpSizeInterface;
+//var
+// olditem:TRpSizeInterface;
 begin
  // Assigns then objinsp
- fobjinsp.InvalidatePanels;
+{ fobjinsp.InvalidatePanels;
  olditem:=fobjinsp.CompItem;
  fobjinsp.AddCompItem(nil,true);
  fobjinsp.AddCompItem(olditem,true);
- // Correct scrollboxes
+} // Correct scrollboxes
  CorrectScrollBoxes;
 
 end;

@@ -1088,7 +1088,7 @@ begin
     report.InsertComponent(pitem);
     Generatenewname(pitem);
    end;
-   TFRpObjInspVCL(fobjinsp).AddCompItem(secint.CreateChild(pitem),false);
+   TFRpObjInsp(fobjinsp).AddCompItem(secint.CreateChild(pitem),false);
 //   fdesignframe.UpdateSelection(true);
   finally
    alist.Free;
@@ -1099,17 +1099,8 @@ begin
 end;
 
 procedure TFRpMainF.Splitter1Moved(Sender: TObject);
-var
- olditem:TRpSizeInterface;
 begin
- // Assigns then objinsp
- fobjinsp.InvalidatePanels;
- olditem:=fobjinsp.CompItem;
- fobjinsp.AddCompItem(nil,true);
- fobjinsp.AddCompItem(olditem,true);
- // Correct scrollboxes
  CorrectScrollBoxes;
-
 end;
 
 procedure TFRpMainF.OnReadError(Reader: TReader; const Message: string;

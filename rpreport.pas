@@ -1322,7 +1322,12 @@ begin
     if CurrentSubReportIndex>=Subreports.count then
      break;
     subrep:=Subreports.Items[CurrentSubReportIndex].SubReport;
-   until subrep.ParentSubReport=nil;
+    if subrep.ParentSubreport=nil then
+    begin
+     if subrep.IsDataAvailable then
+      break;
+    end;
+   until false;
    if CurrentSubReportIndex>=Subreports.count then
     break;
 //   subrep.SubReportChanged(rpDataChange);
@@ -1562,20 +1567,27 @@ begin
     dataavail:=true
    else
    begin
-    index:=DataInfo.IndexOf(subrep.Alias);
-    if Datainfo.Items[index].Cached then
+    if subrep.PrintOnlyIfDataAvailable then
     begin
-     if (Not Datainfo.Items[index].CachedDataset.Eof) then
+     index:=DataInfo.IndexOf(subrep.Alias);
+     if Datainfo.Items[index].Cached then
      begin
-      dataavail:=true;
+      if (Not Datainfo.Items[index].CachedDataset.Eof) then
+      begin
+       dataavail:=true;
+      end;
+     end
+     else
+      begin
+      if (Not Datainfo.Items[index].Dataset.Eof) then
+      begin
+       dataavail:=true;
+      end;
      end;
     end
     else
     begin
-     if (Not Datainfo.Items[index].Dataset.Eof) then
-     begin
-      dataavail:=true;
-     end;
+     dataavail:=true;
     end;
    end;
   end;
@@ -1616,13 +1628,98 @@ var
  oldsubreport:TRpSubreport;
  oldprintedsection:TRpSection;
  oldprintedsectionext:TPoint;
+ oldhorzdespposition:integer;
  pagespacex:integer;
  sectionextevaluated:boolean;
+
+
+procedure SkipToPageAndPosition;
+var
+ newpage:integer;
+ newposx,newposy:integer;
+ moveh,movev:boolean;
+begin
+ newposx:=0;
+ newposy:=0;
+ try
+  // Go to page?
+  if Length(asection.SkipToPageExpre)>0 then
+  begin
+   if not TwoPass then
+    Raise Exception.Create(SRpSTwoPassReportNeeded);
+   newpage:=Evaluator.EvaluateText(asection.SkipToPageExpre);
+   newpage:=newpage-1;
+   if newpage<0 then
+    Raise Exception.Create(LoadStr(930));
+   while newpage>Metafile.PageCount do
+   begin
+    Metafile.NewPage;
+    CheckProgress;
+   end;
+   Metafile.CurrentPage:=newpage;
+  end;
+ except
+  on E:Exception do
+  begin
+   Raise TRpReportException.Create(E.Message,asection,SRPSkipPage);
+  end;
+ end;
+ moveh:=false;
+ try
+  // Go to page?
+  if Length(asection.SkipExpreH)>0 then
+  begin
+   newposx:=Evaluator.EvaluateText(asection.SkipExpreH);
+   moveh:=true;
+  end;
+ except
+  on E:Exception do
+  begin
+   Raise TRpReportException.Create(E.Message,asection,SRpSHSkipExpre);
+  end;
+ end;
+ movev:=false;
+ try
+  // Go to page?
+  if Length(asection.SkipExpreV)>0 then
+  begin
+   newposy:=Evaluator.EvaluateText(asection.SkipExpreV);
+   movev:=true;
+  end;
+ except
+  on E:Exception do
+  begin
+   Raise TRpReportException.Create(E.Message,asection,SRpSVSkipExpre);
+  end;
+ end;
+ if moveh then
+ begin
+  if asection.SkipRelativeH then
+   pageposx:=pageposx+newposx
+  else
+   pageposx:=FLeftMargin+newposx;
+ end;
+ if movev then
+ begin
+  if asection.SkipRelativeV then
+   pageposy:=pageposy+newposy
+  else
+   pageposy:=FTopMargin+newposy;
+ end;
+ freespace:=FInternalPageheight-pageposy;
+ if freespace<0 then
+  freespace:=0;
+end;
 
 function CheckSpace:boolean;
 begin
  if not sectionextevaluated then
+ begin
+  // Skip to page and position
+  if asection.SkipType=secskipbefore then
+   SkipToPageAndPosition;
   sectionext:=asection.GetExtension(FDriver);
+ end;
  Result:=true;
  if sectionext.Y>freespace then
  begin
@@ -1662,6 +1759,8 @@ begin
   asection.Print(pageposx,pageposy,metafile);
   freespace:=0;
  end;
+ if asection.SkipType=secskipafter then
+  SkipToPageAndPosition;
 end;
 
 procedure PrintFixedSections(headers:boolean);
@@ -1772,6 +1871,7 @@ begin
 
  freespace:=FInternalPageheight;
  pagespacex:=FInternalPageWidth;
+ oldhorzdespposition:=FLeftMargin;
 
  freespace:=freespace-FTopMargin-FBottomMargin;
 
@@ -1808,13 +1908,11 @@ begin
      end
      else
      begin
-      pageposx:=FLeftMargin;
+      pageposx:=oldhorzdespposition;
      end;
     end
     else
-    begin
-     pageposx:=FLeftMargin;
-    end;
+     oldhorzdespposition:=pageposx;
    end;
    if Not CheckSpace then
     break;

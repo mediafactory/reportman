@@ -23,7 +23,7 @@ unit rpsubreport;
 interface
 
 uses Classes,SysUtils,rpsecutil,rpsection,rptypes,rpmdconsts,
- rplabelitem,rpprintitem,rpeval,rpmdbarcode;
+ rplabelitem,rpprintitem,rpeval,rpmdbarcode,rpdatainfo;
 
 type
  TRpSubReport=class(TComponent)
@@ -76,6 +76,7 @@ type
    function GroupChanged:integer;
    procedure InitGroups(groupindex:integer);
    function GetDisplayName:string;
+   function IsDataAvailable:boolean;
   published
    property Sections:TRpSectionList read FSections write SetSections;
    property Alias:String read FAlias write FAlias;
@@ -84,7 +85,7 @@ type
    property ParentSection:TRpSection read FParentSection
     write FParentSection;
    property PrintOnlyIfDataAvailable:Boolean read FPrintOnlyIfDataAvailable
-    write FPrintOnlyIfDataAvailable default false;
+    write FPrintOnlyIfDataAvailable default true;
  end;
 
 implementation
@@ -298,7 +299,7 @@ begin
  inherited Create(AOwner);
  // Sections
  FSections:=TRpSectionList.Create(Self);
- FPrintOnlyIfDataAvailable:=false;
+ FPrintOnlyIfDataAvailable:=true;
 end;
 
 destructor TRpSubReport.Destroy;
@@ -710,5 +711,38 @@ begin
  if index<=(Length(Name)) then
   Result:=SRpSubReport+'-'+Copy(Name,index,Length(Name));
 end;
+
+function TRpSubReport.IsDataAvailable:boolean;
+var
+ datainfo:TRpDatainfoList;
+ dinfo:TRpDataInfoItem;
+ index:integer;
+begin
+ if Length(alias)<1 then
+ begin
+  Result:=true;
+ end
+ else
+ begin
+  if Not PrintOnlyIfDataAvailable then
+   Result:=true
+  else
+  begin
+   Result:=false;
+   datainfo:=TRpReport(Owner).datainfo;
+   index:=datainfo.IndexOf(Alias);
+   if index>=0 then
+   begin
+    dinfo:=datainfo.Items[index];
+    if dinfo.Dataset.Active then
+    begin
+     if Not dinfo.Dataset.Eof then
+      Result:=true;
+    end;
+   end;
+  end;
+ end;
+end;
+
 
 end.

@@ -73,6 +73,7 @@ type
    FSkipRelativeH:Boolean;
    FSkipExpreH:WideString;
    FSkipExpreV:WideString;
+   FSkipToPageExpre:WideString;
    // deprecated
    FBeginPage:boolean;
    FReadError:Boolean;
@@ -89,8 +90,10 @@ type
    procedure ReadBeginPageExpression(Reader:TReader);
    procedure WriteSkipExpreV(Writer:TWriter);
    procedure WriteSkipExpreH(Writer:TWriter);
+   procedure WriteSkipToPageExpre(Writer:TWriter);
    procedure ReadSkipExpreH(Reader:TReader);
    procedure ReadSkipExpreV(Reader:TReader);
+   procedure ReadSkipToPageExpre(Reader:TReader);
    procedure LoadExternalFromDatabase;
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
@@ -119,6 +122,8 @@ type
    property ChangeExpression:widestring read FChangeExpression write SetChangeExpression;
    property BeginPageExpression:widestring read FBeginPageExpression
     write FBeginPageExpression;
+   property SkipToPageExpre:WideString read FSkipToPageExpre
+    write FSkipToPageExpre;
    property SkipExpreH:Widestring read FSkipExpreH write FSkipExpreH;
    property SkipExpreV:Widestring read FSkipExpreV write FSkipExpreV;
   published
@@ -861,9 +866,19 @@ begin
  WriteWideString(Writer, FSkipExpreH);
 end;
 
+procedure TRpSection.WriteSkipToPageExpre(Writer:TWriter);
+begin
+ WriteWideString(Writer, FSkipToPageExpre);
+end;
+
 procedure TRpSection.ReadSkipExpreV(Reader:TReader);
 begin
  FSkipExpreV:=ReadWideString(Reader);
+end;
+
+procedure TRpSection.ReadSkipToPageExpre(Reader:TReader);
+begin
+ FSkipToPageExpre:=ReadWideString(Reader);
 end;
 
 procedure TRpSection.DefineProperties(Filer:TFiler);
@@ -875,6 +890,7 @@ begin
  Filer.DefineProperty('ChangeExpression',ReadChangeExpression,WriteChangeExpression,True);
  Filer.DefineProperty('SkipExpreV',ReadSkipExpreV,WriteSkipExpreV,True);
  Filer.DefineProperty('SkipExpreH',ReadSkipExpreH,WriteSkipExpreH,True);
+ Filer.DefineProperty('SkipToPageExpre',ReadSkipToPageExpre,WriteSkipToPageExpre,True);
 end;
 
 function TRpSection.GetExternalDataDescription:String;

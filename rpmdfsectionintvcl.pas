@@ -285,6 +285,10 @@ begin
   ltypes.Add(SRpSList);
   if Assigned(lvalues) then
    lvalues.Add(RpSkipTypeToText(TRpSection(printitem).SkipType));
+  lnames.Add(SRpSSkipToPage);
+  ltypes.Add(SRpSExpression);
+  if Assigned(lvalues) then
+   lvalues.Add(TRpSection(printitem).SkipToPageExpre);
   lnames.Add(SRpSHSkipExpre);
   ltypes.Add(SRpSExpression);
   if Assigned(lvalues) then
@@ -391,6 +395,11 @@ begin
    TRpSection(fprintitem).SkipType:=StringToRpSkipType(Value);
    exit;
   end;
+  if pname=SRpSSkipToPage then
+  begin
+   TRpSection(fprintitem).SkipToPageExpre:=Value;
+   exit;
+  end;
   if pname=SRpSHSkipExpre then
   begin
    TRpSection(fprintitem).SkipExpreH:=Value;
@@ -494,6 +503,11 @@ begin
   if pname=SRpSSkipType then
   begin
    Result:=RpSkipTypeToText(TRpSection(fprintitem).SkipType);
+   exit;
+  end;
+  if pname=SRpSSkipToPage then
+  begin
+   Result:=TRpSection(fprintitem).SkipToPageExpre;
    exit;
   end;
   if pname=SRpSHSkipExpre then
