@@ -1005,7 +1005,7 @@ begin
 
  if Screen.PixelsPerInch>90 then
  begin
-  Font.Size:=7;
+  Font.Size:=8;
  end;
 
 

@@ -172,6 +172,7 @@ procedure TRpWebPageLoader.GetWebPage(Request: TWebRequest;apage:TRpWebPage;
  Response:TWebResponse);
 var
  astring:string;
+ atemp:string;
 begin
  try
   CheckInitReaded;
@@ -190,6 +191,26 @@ begin
      begin
       astring:=astring+'<p>'+LogFileErrorMessage+'</p>';
      end;
+     // Configuration
+     astring:=astring+'<p>Decimal separator:'+DecimalSeparator+'</p>';
+     astring:=astring+'<p>Thousand separator:'+ThousandSeparator+'</p>';
+     // Environment variables
+     atemp:=GetEnvironmentVariable('LANG');
+     astring:=astring+'<p>LANG='+atemp+'</p>';
+     atemp:=GetEnvironmentVariable('OLD_LC_NUMERIC');
+     astring:=astring+'<p>OLD_LC_NUMERIC='+atemp+'</p>';
+     atemp:=GetEnvironmentVariable('LC_NUMERIC');
+     astring:=astring+'<p>LC_NUMERIC='+atemp+'</p>';
+     atemp:=GetEnvironmentVariable('KYLIX_DEFINEDENVLOCALES');
+     astring:=astring+'<p>KYLIX_DEFINEDENVLOCALES='+atemp+'</p>';
+     atemp:=GetEnvironmentVariable('KYLIX_THOUSAND_SEPARATOR');
+     astring:=astring+'<p>KYLIX_THOUSAND_SEPARATOR='+atemp+'</p>';
+     atemp:=GetEnvironmentVariable('KYLIX_DECIMAL_SEPARATOR');
+     astring:=astring+'<p>KYLIX_DECIMAL_SEPARATOR='+atemp+'</p>';
+     atemp:=GetEnvironmentVariable('KYLIX_DATE_SEPARATOR');
+     astring:=astring+'<p>KYLIX_DATE_SEPARATOR='+atemp+'</p>';
+     atemp:=GetEnvironmentVariable('KYLIX_TIME_SEPARATOR');
+     astring:=astring+'<p>KYLIX_TIME_SEPARATOR='+atemp+'</p>';
      astring:=astring+'</body></html>';
      Response.Content:=astring;
     end;

@@ -96,12 +96,16 @@ begin
   // Append to PATH variable
   targetdir:=ExtractFileDir(fullpath);
   targetapp:=ChangeFileExt(fullpath,'');
+  SetEnvValue('OLD_LC_NUMERIC',GetEnvironmentVariable('LC_NUMERIC'),false);
   SetEnvValue('LC_NUMERIC','en_US',false);
-  SetEnvValue('KYLIX_DEFINEDENVLOCALES','Yes',false);
-  SetEnvValue('KYLIX_DECIMAL_SEPARATOR',DecimalSeparator,false);
-  SetEnvValue('KYLIX_THOUSAND_SEPARATOR',ThousandSeparator,false);
-  SetEnvValue('KYLIX_DATE_SEPARATOR',DateSeparator,false);
-  SetEnvValue('KYLIX_TIME_SEPARATOR',TimeSeparator,false);
+  if (Length(GetEnvironmentVariable('KYLIX_DEFINEDENVLOCALES'))<1) then
+  begin
+   SetEnvValue('KYLIX_DEFINEDENVLOCALES','Yes',false);
+   SetEnvValue('KYLIX_DECIMAL_SEPARATOR',DecimalSeparator,false);
+   SetEnvValue('KYLIX_THOUSAND_SEPARATOR',ThousandSeparator,false);
+   SetEnvValue('KYLIX_DATE_SEPARATOR',DateSeparator,false);
+   SetEnvValue('KYLIX_TIME_SEPARATOR',TimeSeparator,false);
+  end;
   SetEnvValue('LD_LIBRARY_PATH',targetdir,true);
   SetEnvValue('PATH',targetdir,true);
   ExecuteApp(targetapp);

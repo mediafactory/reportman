@@ -1799,6 +1799,10 @@ begin
    end;
   end;
  end;
+ // Bugfix to reposition the
+ // tool bar and menu
+ Width:=Width+1;
+ FormResize(Self);
 end;
 
 initialization

@@ -36,6 +36,7 @@ install:
 	cp ../../server/app/reportservercon .
 	cp ../../server/config/repserverconfig .
 	cp ../../server/web/repwebexe .
+	cp ../../server/web/.htaccess .
 	cp ../../repman/utils/printreptopdf/printreptopdf .
 	cp ../../repman/reportmanres.es .
 	cp ../../repman/reportmanres.fr .
@@ -53,8 +54,8 @@ install:
 #	cp ../../doc/doc/units/*.html doc/units
 #	cp ../../doc/doc/images/*.jpg doc/images
 #	include repmand.es when linux translation done
-	tar c LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es reportmanres.fr repmand reportserverapp reportserverapp.sh reportservercon reportservercon.sh repserverconfig repserverconfig.sh dbxdrivers dbxconnections metaprint metaview metaview.sh printrep printreptopdf printreptopdf.sh reptotxt txttorep repmand repmand.sh repmand.bin metaview.bin printrep.bin printreptopdf.bin metaprint.bin reportserverapp.bin reportservercon.bin repserverconfig.bin repwebexe repwebexe.bin README *.so *.so.1 qt_* dbxres.en.1 > repmand-1_4p14.i386.tar
-	gzip repmand-1_4p14.i386.tar
+	tar c LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es reportmanres.fr repmand reportserverapp reportserverapp.sh reportservercon reportservercon.sh repserverconfig repserverconfig.sh dbxdrivers dbxconnections metaprint metaview metaview.sh printrep printreptopdf printreptopdf.sh reptotxt txttorep repmand repmand.sh repmand.bin metaview.bin printrep.bin printreptopdf.bin metaprint.bin reportserverapp.bin reportservercon.bin repserverconfig.bin repwebexe repwebexe.bin README *.so *.so.1 qt_* dbxres.en.1 .htaccess > repmand-1_5p18.i386.tar
+	gzip repmand-1_5p18.i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0
 	-rm -f repmand
@@ -74,3 +75,4 @@ clean:
 	-rm -f dbxres.en.*
 	-rm -f reportserverapp
 	-rm -f *.bin
+	-rm -f .htaccess
