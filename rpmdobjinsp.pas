@@ -23,11 +23,11 @@ interface
 {$I rpconf.inc}
 
 uses
-  SysUtils, Classes,rptypes,
+  SysUtils, Classes,
   Types,
   QGraphics, QControls, QForms, QDialogs,QStdCtrls,QExtCtrls,
   Qt,
-  rpmdobinsint,rpmdconsts,rpprintitem,
+  rpmdobinsint,rpmdconsts,rpprintitem,rptypes,
   rpgraphutils,rpsection,rpmunits, rpexpredlg,rpmdfextsec,
   rpalias,rpreport,rpsubreport,rpmdflabelint,rplabelitem,
   rpmdfdrawint,rpmdfbarcodeint,rpmdfchartint, QMenus, QTypes;
@@ -1230,16 +1230,16 @@ begin
   pitem:=aitem.printitem;
   section:=TRpSection(aitem.SectionInt.printitem);
   index:=0;
-  while index<section.Components.Count do
+  while index<section.ReportComponents.Count do
   begin
-   if (section.Components.Items[index].Component=pitem) then
+   if (section.ReportComponents.Items[index].Component=pitem) then
     break;
    inc(index);
   end;
-  if index>=section.Components.Count then
+  if index>=section.ReportComponents.Count then
    exit;
-  section.Components.Delete(index);
-  item:=section.Components.Insert(0);
+  section.ReportComponents.Delete(index);
+  item:=section.ReportComponents.Insert(0);
   item.Component:=pitem;
  end;
  if assigned(TFRpObjInsp(Owner).fchangesize) then
@@ -1266,16 +1266,16 @@ begin
   pitem:=aitem.printitem;
   section:=TRpSection(aitem.SectionInt.printitem);
   index:=0;
-  while index<section.Components.Count do
+  while index<section.ReportComponents.Count do
   begin
-   if (section.Components.Items[index].Component=pitem) then
+   if (section.ReportComponents.Items[index].Component=pitem) then
     break;
    inc(index);
   end;
-  if index>=section.Components.Count then
+  if index>=section.ReportComponents.Count then
    exit;
-  section.Components.Delete(index);
-  item:=section.Components.Add;
+  section.ReportComponents.Delete(index);
+  item:=section.ReportComponents.Add;
   item.Component:=pitem;
  end;
  if assigned(TFRpObjInsp(Owner).fchangesize) then

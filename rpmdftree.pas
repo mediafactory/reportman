@@ -34,7 +34,7 @@ uses
 {$ENDIF}
   SysUtils, Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QDialogs,rpmdconsts, QActnList, QImgList, QComCtrls,rpgraphutils, DB,
-  DBClient, QStdCtrls,QPrinters,
+  DBClient, QStdCtrls,QPrinters,rpdatainfo,
   rpclxreport;
 
 const PROGRESS_INTERVAL=500;
@@ -93,6 +93,7 @@ type
     report:TCLXReport;
     CurrentLoaded:String;
     FOnLoadReport:TRpOnLoadReport;
+    FReportstable,FGroupsTable:String;
     counter:Integer;
 {$IFDEF MSWINDOWS}
     mmfirst,mmlast:DWORD;
@@ -117,6 +118,7 @@ type
     procedure FillTree(groups:TDataset;reports:TDataset);overload;
     procedure FillTree(adir:string);overload;
     procedure FillTree(alist:TStringList);overload;
+    procedure EditTree(dbinfo:TRpDatabaseInfoItem;reporttable,groupstable:string);
     property OnLoadReport:TRpOnLoadReport read FOnLoadReport
      write FOnLoadReport;
   end;
@@ -682,6 +684,30 @@ begin
 end;
 
 
+procedure TFRpDBTree.EditTree(dbinfo:TRpDatabaseInfoItem;reporttable,groupstable:string);
+var
+ adatareports:TDataset;
+ adatagroups:TDataset;
+begin
+ dbinfo.Connect;
+ adatareports:=
+  dbinfo.OpenDatasetFromSQL('SELECT REPORT_NAME,REPORT_GROUP FROM '+
+  reporttable,nil,false);
+ try
+  adatagroups:=
+  dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
+    ' PARENT_GROUP FROM '+groupstable,nil,false);
+  try
+   FReportstable:=reporttable;
+   FGroupsTable:=groupstable;
+   FillTree(adatagroups,adatareports);
+  finally
+   adatagroups.free;
+  end;
+ finally
+  adatareports.free;
+ end;
+end;
 
 
 end.

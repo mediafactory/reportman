@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QDialogs, QStdCtrls,rpgraphutils, QComCtrls, DBXpress, DB, SqlExpr,
-  FMTBcd,rpmdftree,rpmdconsts,dbtables,rptypes;
+  FMTBcd,rpmdftree,rpmdconsts,dbtables,rptypes,rpdatainfo;
 
 type
   TForm1 = class(TForm)
@@ -36,6 +36,8 @@ implementation
 {$R *.xfm}
 
 procedure TForm1.Button1Click(Sender: TObject);
+var
+ dbinfo:TRpDatabaseInfoItem;
 begin
  db1.connected:=true;
  db2.connected:=true;
@@ -43,6 +45,7 @@ begin
  QGroups.Open;
  QReports.Open;
  atree.FillTree(QGroups,QReports);
+ atree.EditTree(dbinfo,'REPMAN_REPORTS','REPMAN_GROUPS');
 // FillTreeView('c:\prog\toni\cvsroot\reportman\reportman',TreeView1.Items,TreeView1.TopItem,'*.rep');
 end;
 

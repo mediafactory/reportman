@@ -38,6 +38,7 @@ uses
   rpmdfsectionintvcl in '..\rpmdfsectionintvcl.pas',
   rpactivexreport in '..\rpactivexreport.pas',
   rpalias in '..\rpalias.pas',
+  rpdatatext in '..\rpdatatext.pas',
   rpcompobase in '..\rpcompobase.pas',
   rpdatainfo in '..\rpdatainfo.pas',
   rpdataset in '..\rpdataset.pas',
@@ -46,9 +47,7 @@ uses
   rpeval in '..\rpeval.pas',
   rpevalfunc in '..\rpevalfunc.pas',
   rpgdidriver in '..\rpgdidriver.pas' {FRpVCLProgress},
-{$IFDEF USEEXCEL}
   rpexceldriver in '..\rpexceldriver.pas' {FRpExcelProgress},
-{$ENDIF}
   rpgdifonts in '..\rpgdifonts.pas',
   rplabelitem in '..\rplabelitem.pas',
   rplastsav in '..\rplastsav.pas',
@@ -57,7 +56,7 @@ uses
   rpmdconsts in '..\rpmdconsts.pas',
   rpmdfbarcodeintvcl in '..\rpmdfbarcodeintvcl.pas',
   rpmdfchartintvcl in '..\rpmdfchartintvcl.pas',
-  rpmdfdatainfovcl in '..\rpmdfdatainfovcl.pas' {FRpDatainfoconfigVCL},
+  rpmdfdatatextvcl in '..\rpmdfdatatextvcl.pas' {FRpDataTextVCL},
   rpmdfdinfovcl in '..\rpmdfdinfovcl.pas' {TFRpDInfoVCL},
   rpmdfdrawintvcl in '..\rpmdfdrawintvcl.pas',
   rpmdfgridvcl in '..\rpmdfgridvcl.pas' {FRpGridOptionsVCL},

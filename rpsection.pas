@@ -59,7 +59,7 @@ type
    FAlignBottom:boolean;        // [rpsecrheader,rpsecrfooter,rpsecgheader,rpsecgfooter,rpsecdetail]
    FSkipPage:boolean;           // [rpsecrheader,rpsecrfooter,rpsecgheader,rpsecgfooter,rpsecdetail]
    FSectionType:TRpSectionType;
-   FComponents:TRpCommonList;
+   FReportComponents:TRpCommonList;
    FAutoExpand:Boolean;
    FAutoContract:Boolean;
    FHorzDesp:Boolean;
@@ -84,7 +84,7 @@ type
    FSkipType:TRpSkipType;
    // Global headers
    FGlobal:Boolean;
-   procedure SetComponents(Value:TRpCommonList);
+   procedure SetReportComponents(Value:TRpCommonList);
    procedure SetGroupName(Value:string);
    procedure SetChangeExpression(Value:widestring);
    procedure OnReadError(Reader: TReader; const Message: string; var Handled: Boolean);
@@ -109,6 +109,7 @@ type
    procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
    procedure Notification(AComponent: TComponent;
     Operation: TOperation);override;
+   function GetOwnedComponent(index:Integer):TComponent;
   public
    GroupValue:Variant;
    constructor Create(AOwner:TComponent);override;
@@ -134,6 +135,8 @@ type
     write FSkipToPageExpre;
    property SkipExpreH:Widestring read FSkipExpreH write FSkipExpreH;
    property SkipExpreV:Widestring read FSkipExpreV write FSkipExpreV;
+   property ReportComponents:TRpCommonList read FReportComponents;
+   property OwnedComponents[index:integer]:TComponent read GetOwnedComponent;
   published
    property SubReport:TComponent read FSubReport write FSubReport;
    property GroupName:String read FGroupName write SetGroupName;
@@ -142,7 +145,7 @@ type
    property SkipPage:boolean read FSkipPage write FSkipPage;
    property AlignBottom:boolean read FAlignBottom write FAlignBottom;
    property SectionType:TRpSectionType read FSectionType write FSectionType;
-   property Components:TRpCommonList read FComponents write SetComponents;
+   property Components:TRpCommonList read FReportComponents write SetReportComponents;
    property AutoExpand:Boolean read FAutoExpand write FAutoExpand
     default false;
    property AutoContract:Boolean read FAutoContract write FAutoContract
@@ -191,7 +194,7 @@ begin
  inherited Create(AOwner);
 
  FSkipType:=secskipdefault;
- FComponents:=TRpCommonList.Create(Self);
+ FReportComponents:=TRpCommonList.Create(Self);
  FExternalTable:='REPMAN_REPORTS';
  FExternalField:='REPORT';
  FExternalSearchField:='REPORT_NAME';
@@ -201,14 +204,14 @@ begin
  Height:=Round(C_DEFAULT_SECTION_HEIGHT*TWIPS_PER_INCHESS/CMS_PER_INCHESS);
 end;
 
-procedure TRpSection.SetComponents(Value:TRpCommonList);
+procedure TRpSection.SetReportComponents(Value:TRpCommonList);
 begin
- FComponents.Assign(Value);
+ FReportComponents.Assign(Value);
 end;
 
 destructor TRpSection.Destroy;
 begin
- FComponents.Free;
+ FReportComponents.Free;
  inherited destroy;
 end;
 
@@ -264,11 +267,11 @@ procedure TRpSection.FreeComponents;
 var
  i:integer;
 begin
- for i:=0 to Components.Count-1 do
+ for i:=0 to FReportComponents.Count-1 do
  begin
-  FComponents.Items[i].Component.free;
+  FReportComponents.Items[i].Component.free;
  end;
- FComponents.Clear;
+ FReportComponents.Clear;
 end;
 
 procedure TRpSection.DeleteComponent(com:TRpCommonComponent);
@@ -276,12 +279,12 @@ var
  i:integer;
 begin
  i:=0;
- while i<Components.Count do
+ while i<FReportComponents.Count do
  begin
-  if Components.Items[i].Component=Com then
+  if FReportComponents.Items[i].Component=Com then
   begin
    com.Free;
-   Components.Items[i].Free;
+   FReportComponents.Items[i].Free;
 //   Components.Delete(i);
    break;
   end;
@@ -401,9 +404,9 @@ begin
 
  DoPartialPrint:=False;
  // Look for a partial print
- for i:=0 to Components.Count-1 do
+ for i:=0 to FReportComponents.Count-1 do
  begin
-  compo:=TRpCommonPosComponent(Components.Items[i].Component);
+  compo:=TRpCommonPosComponent(FReportComponents.Items[i].Component);
   if (compo is TRpExpression) then
    if TRpExpression(compo).IsPartial then
    begin
@@ -412,9 +415,9 @@ begin
    end;
  end;
  PartialPrint:=false;
- for i:=0 to Components.Count-1 do
+ for i:=0 to FReportComponents.Count-1 do
  begin
-  compo:=TRpCommonPosComponent(Components.Items[i].Component);
+  compo:=TRpCommonPosComponent(FReportComponents.Items[i].Component);
   if DoPartialPrint then
   begin
    if (compo is TRpExpression) then
@@ -443,7 +446,7 @@ begin
       newposy:=aposy+compo.PosY;
      end;
      IntPartialPrint:=false;
-     Components.Items[i].Component.Print(adriver,newposx,newposy,metafile,
+     FReportComponents.Items[i].Component.Print(adriver,newposx,newposy,metafile,
       MaxExtent,IntPartialPrint);
      if IntPartialPrint then
       PartialPrint:=True;
@@ -477,7 +480,7 @@ begin
      newposy:=aposy+compo.PosY;
     end;
     IntPartialPrint:=false;
-    Components.Items[i].Component.Print(adriver,newposx,newposy,metafile,
+    FReportComponents.Items[i].Component.Print(adriver,newposx,newposy,metafile,
      MaxExtent,IntPartialPrint);
     if IntPartialPrint then
      PartialPrint:=True;
@@ -515,9 +518,9 @@ begin
  Result:=inherited GetExtension(adriver,MaxExtent);
  DoPartialPrint:=False;
  // Look for a partial print
- for i:=0 to Components.Count-1 do
+ for i:=0 to FReportComponents.Count-1 do
  begin
-  acompo:=TRpCommonPosComponent(Components.Items[i].Component);
+  acompo:=TRpCommonPosComponent(FReportComponents.Items[i].Component);
   if (acompo is TRpExpression) then
    if TRpExpression(acompo).IsPartial then
    begin
@@ -546,9 +549,9 @@ begin
   lastextent:=Result;
   exit;
  end;
- for i:=0 to Components.Count-1 do
+ for i:=0 to FReportComponents.Count-1 do
  begin
-  acompo:=TRpCommonPosComponent(Components.Items[i].Component);
+  acompo:=TRpCommonPosComponent(FReportComponents.Items[i].Component);
   if DoPartialPrint then
   begin
    if (acompo is TRpExpression) then
@@ -603,9 +606,9 @@ var
  writer:TWriter;
 begin
  // Looks if it's not external
- for i:=0 to Components.Count-1 do
+ for i:=0 to FReportComponents.Count-1 do
  begin
-  acompo:=Components.Items[i].Component;
+  acompo:=FReportComponents.Items[i].Component;
   if assigned(acompo) then
   begin
    if (acompo.Owner=Owner) then
@@ -720,12 +723,12 @@ var
  tempsec:TRpSection;
 begin
  // Free all components
- for i:=0 to Components.Count-1 do
+ for i:=0 to FReportComponents.Count-1 do
  begin
-  if Assigned(Components.Items[i].Component) then
-   Components.Items[i].Component.Free;
+  if Assigned(FReportComponents.Items[i].Component) then
+   FReportComponents.Items[i].Component.Free;
  end;
- Components.Clear;
+ FReportComponents.Clear;
  FReadError:=false;
  aMemStream:=TMemoryStream.Create;
  try
@@ -809,7 +812,7 @@ begin
  begin
   for i:=0 to ComponentCount-1 do
   begin
-   inherited Components[i].Free;
+   Components[i].Free;
   end;
   Height:=0;
   exit;
@@ -914,7 +917,7 @@ begin
  if Root = Self then
   for I := 0 to ComponentCount - 1 do
   begin
-   OwnedComponent := inherited Components[I];
+   OwnedComponent := OwnedComponents[I];
    if not OwnedComponent.HasParent then
     Proc(OwnedComponent);
 //   if OwnedComponent is TRpSubReport then
@@ -1018,17 +1021,17 @@ begin
  PrintCondition:=sec.PrintCondition;
  DoBeforePrint:=sec.DoBeforePrint;
  DoAfterPrint:=sec.DoAfterPrint;
- for i:=0 to Components.Count-1 do
+ for i:=0 to FReportComponents.Count-1 do
  begin
-  if Components.Items[i].Component.Owner=Self then
-   Components.Items[i].Component.Free;
+  if FReportComponents.Items[i].Component.Owner=Self then
+   FReportComponents.Items[i].Component.Free;
  end;
- Components.Clear;
- for i:=0 to sec.Components.Count-1 do
+ FReportComponents.Clear;
+ for i:=0 to sec.FReportComponents.Count-1 do
  begin
-  (Components.Add).Component:=sec.Components.Items[i].Component;
-  sec.RemoveComponent(sec.Components.Items[i].Component);
-  InsertComponent(sec.Components.Items[i].Component);
+  (FReportComponents.Add).Component:=sec.FReportComponents.Items[i].Component;
+  sec.RemoveComponent(sec.FReportComponents.Items[i].Component);
+  InsertComponent(sec.FReportComponents.Items[i].Component);
  end;
 end;
 
@@ -1152,6 +1155,11 @@ begin
  alist.Add(SRpSDefault);
  alist.Add(SRpSSkipBefore);
  alist.Add(SRpSSkipAfter);
+end;
+
+function TRpSection.GetOwnedComponent(index:Integer):TComponent;
+begin
+ Result:=inherited Components[index];
 end;
 
 end.

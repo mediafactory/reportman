@@ -21,14 +21,9 @@ unit rpvclreport;
 
 interface
 
-{$I rpconf.inc}
-
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
- rpgdidriver,rpalias,dialogs,rprfvparams,
-{$IFDEF USEEXCEL}
- rpexceldriver,
-{$ENDIF}
- rpvpreview;
+ rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview,
+ rpexceldriver;
 
 type
  TVCLReport=class(TCBaseReport)
@@ -123,14 +118,9 @@ end;
 
 procedure TVCLReport.SaveToExcel(filename:string);
 begin
-{$IFNDEF USEEXCEL}
- Raise Exception.Create(SRpExcelNotSupported);
-{$ENDIF}
-{$IFDEF USEEXCEL}
  rpgdidriver.CalcReportWidthProgress(report);
  rpexceldriver.ExportMetafileToExcel(report.metafile,filename,showprogress,false,
  true,1,999);
-{$ENDIF}
 end;
 
 

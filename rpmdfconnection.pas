@@ -2,11 +2,11 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       rpmdfconnectionvcl                              }
+{       rpmdfconnection                                 }
 {                                                       }
 {       Connections definition frame                    }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -16,19 +16,19 @@
 {                                                       }
 {*******************************************************}
 
-unit rpmdfconnectionvcl;
+unit rpmdfconnection;
 
 interface
 
 {$I rpconf.inc}
 
 uses
-  Windows, Messages, SysUtils,
+  SysUtils,
 {$IFDEF USEVARIANTS}
-  Variants,
+  Variants,Types,
 {$ENDIF}
-  Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, ComCtrls, ToolWin, ActnList, ImgList,
+  Classes, QGraphics, QControls, QForms,
+  QDialogs, QStdCtrls, QExtCtrls, QActnList,
 {$IFDEF USEBDE}
   dbtables,
 {$ENDIF}
@@ -38,11 +38,11 @@ uses
   rpdatainfo,rpmdconsts,
 //  DBConnAdmin,
   rpgraphutilsvcl,rpdbxconfigvcl,
-  Menus;
+  QMenus,
+  QImgList, QTypes, QComCtrls;
 
 type
-  TFRpConnectionVCL = class(TFrame)
-    ImageList1: TImageList;
+  TFRpConnection = class(TFrame)
     ActionList1: TActionList;
     ANewConnection: TAction;
     ADelete: TAction;
@@ -75,6 +75,7 @@ type
     BBuild: TButton;
     ComboDriver: TComboBox;
     BTest: TButton;
+    ImageList1: TImageList;
     procedure GDriverClick(Sender: TObject);
     procedure LConnectionsClick(Sender: TObject);
     procedure BNewClick(Sender: TObject);
@@ -105,9 +106,9 @@ type
 
 implementation
 
-{$R *.dfm}
+{$R *.xfm}
 
-constructor TFRpConnectionVCL.Create(AOwner:TComponent);
+constructor TFRpConnection.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
@@ -129,13 +130,13 @@ begin
  GDriverClick(Self);
 end;
 
-destructor TFRpConnectionVCL.Destroy;
+destructor TFRpConnection.Destroy;
 begin
  conadmin.free;
  inherited destroy;
 end;
 
-procedure TFRpConnectionVCL.SetDatabaseInfo(Value:TRpDatabaseInfoList);
+procedure TFRpConnection.SetDatabaseInfo(Value:TRpDatabaseInfoList);
 var
  i:integer;
 begin
@@ -158,7 +159,7 @@ begin
  GDriverClick(Self);
 end;
 
-procedure TFRpConnectionVCL.LConnectionsClick(Sender: TObject);
+procedure TFRpConnection.LConnectionsClick(Sender: TObject);
 var
  dbinfo:TRpDatabaseInfoItem;
  index:integer;
@@ -200,7 +201,7 @@ begin
  EConnectionString.Text:=dbinfo.ADOConnectionString;
 end;
 
-procedure TFRpConnectionVCL.GDriverClick(Sender: TObject);
+procedure TFRpConnection.GDriverClick(Sender: TObject);
 begin
  if Not Assigned(FDatabaseInfo) then
   exit;
@@ -251,7 +252,7 @@ begin
 end;
 
 
-procedure TFRpConnectionVCL.BNewClick(Sender: TObject);
+procedure TFRpConnection.BNewClick(Sender: TObject);
 var
  apoint:TPoint;
 begin
@@ -263,7 +264,7 @@ begin
  BNew.DropDownMenu.Popup(apoint.x,apoint.y);
 end;
 
-procedure TFRpConnectionVCL.MNewClick(Sender: TObject);
+procedure TFRpConnection.MNewClick(Sender: TObject);
 var
  conname:string;
  item:TRpDatabaseInfoItem;
@@ -285,7 +286,7 @@ begin
  end;
 end;
 
-procedure TFRpConnectionVCL.BConfigClick(Sender: TObject);
+procedure TFRpConnection.BConfigClick(Sender: TObject);
 begin
  ShowDBXConfig(TRpDbDriver(GDriver.ItemIndex) in [rpdataibx,rpdataibo]);
  conadmin.free;
@@ -293,7 +294,7 @@ begin
  conadmin.GetConnectionNames(ComboAvailable.Items,'');
 end;
 
-procedure TFRpConnectionVCL.BBuildClick(Sender: TObject);
+procedure TFRpConnection.BBuildClick(Sender: TObject);
 begin
 {$IFDEF USEADO}
   if LConnections.ItemIndex<0 then
@@ -302,7 +303,7 @@ begin
 {$ENDIF}
 end;
 
-procedure TFRpConnectionVCL.ANewConnectionExecute(Sender: TObject);
+procedure TFRpConnection.ANewConnectionExecute(Sender: TObject);
 var
  apoint:TPoint;
 begin
@@ -315,7 +316,7 @@ begin
 end;
 
 
-procedure TFRpConnectionVCL.PopAddPopup(Sender: TObject);
+procedure TFRpConnection.PopAddPopup(Sender: TObject);
 var
  aitem:TMenuItem;
  i:integer;
@@ -332,7 +333,7 @@ begin
  end;
 end;
 
-procedure TFRpConnectionVCL.ADeleteExecute(Sender: TObject);
+procedure TFRpConnection.ADeleteExecute(Sender: TObject);
 var
  index:integer;
 begin
@@ -346,7 +347,7 @@ begin
  end;
 end;
 
-procedure TFRpConnectionVCL.ComboDriverClick(Sender: TObject);
+procedure TFRpConnection.ComboDriverClick(Sender: TObject);
 var
  index:integeR;
 begin
@@ -408,7 +409,7 @@ begin
  FDatabaseInfo.Items[index].Driver:=TRpDbDriver(ComboDriver.ItemIndex);
 end;
 
-procedure TFRpConnectionVCL.MenuAddClick(Sender:TObject);
+procedure TFRpConnection.MenuAddClick(Sender:TObject);
 var
  conname:String;
  item:TRpDatabaseInfoItem;
@@ -431,7 +432,7 @@ begin
 end;
 
 
-function TFRpConnectionVCL.FindDatabaseInfoItem:TRpDatabaseInfoItem;
+function TFRpConnection.FindDatabaseInfoItem:TRpDatabaseInfoItem;
 var
  index:integer;
 begin
@@ -448,7 +449,7 @@ begin
  Result:=FDatabaseInfo.Items[index];
 end;
 
-procedure TFRpConnectionVCL.BTestClick(Sender: TObject);
+procedure TFRpConnection.BTestClick(Sender: TObject);
 var
  dbinfo:TRpDatabaseInfoItem;
 begin
@@ -465,7 +466,7 @@ end;
 
 
 
-procedure TFRpConnectionVCL.CheckLoginPromptClick(Sender: TObject);
+procedure TFRpConnection.CheckLoginPromptClick(Sender: TObject);
 var
  dinfoitem:TRpDatabaseinfoitem;
 begin
@@ -487,7 +488,7 @@ begin
  end;
 end;
 
-procedure TFRpConnectionVCL.EConnectionStringChange(Sender: TObject);
+procedure TFRpConnection.EConnectionStringChange(Sender: TObject);
 var
  dinfoitem:TRpDatabaseinfoitem;
 begin

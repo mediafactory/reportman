@@ -533,9 +533,9 @@ begin
    // If it's a external section try to load it
    sec.LoadExternal;
 
-   for k:=0 to sec.Components.Count-1 do
+   for k:=0 to sec.ReportComponents.Count-1 do
    begin
-    comp:=sec.Components.items[k].Component;
+    comp:=sec.ReportComponents.items[k].Component;
     if (comp is TRpExpression) then
     begin
      rpexpre:=TRpExpression(comp);

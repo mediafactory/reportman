@@ -26,9 +26,6 @@ uses
 {$IFDEF USEVARIANTS}
   Types,
 {$ENDIF}
-{$IFDEF VER150}
-  D7ComboBoxStringsGetPatch,
-{$ENDIF}
   Classes,
   rpgdidriver,rpvpreview,rprfvparams,windows,
   Controls, Forms,
@@ -1064,7 +1061,7 @@ begin
     pitem:=TrpCommonPosComponent(alist.Items[i]);
     compo.RemoveComponent(pitem);
     pitem.Name:='';
-    (section.Components.Add).Component:=pitem;
+    (section.ReportComponents.Add).Component:=pitem;
     report.InsertComponent(pitem);
     Generatenewname(pitem);
     TFRpObjInspVCL(fobjinsp).AddCompItem(secint.CreateChild(pitem),false);
@@ -1479,9 +1476,9 @@ begin
       for j:=0 to subrep.Sections.Count-1 do
       begin
        sec:=subrep.Sections.Items[j].Section;
-       for k:=0 to sec.components.Count-1 do
+       for k:=0 to sec.ReportComponents.Count-1 do
        begin
-        if printitem=sec.Components.Items[k].Component then
+        if printitem=sec.ReportComponents.Items[k].Component then
         begin
          secsel:=sec;
          break;

@@ -27,9 +27,12 @@ uses
 {$IFDEF MSWINDOWS}
  Windows,
 {$ENDIF}
- Sysutils,IniFiles,rpmdshfolder,Classes,
+ Sysutils,IniFiles,rpmdshfolder,Classes,Consts,
 {$IFDEF USEVARIANTS}
- Variants,Types,
+ Variants,Types,rtlconsts,
+{$ENDIF}
+{$IFNDEF USEVARIANTS}
+  Consts,
 {$ENDIF}
 {$IFDEF USEBCD}
  FMTBcd,
@@ -829,9 +832,37 @@ begin
 end;
 
 function ReadWideString(Reader:TReader):WideString;
+var
+  L: Integer;
+  aResult:String;
+  avalue:TValueType;
 begin
- Result:=Reader.ReadWideString;
+  L := 0;
+  avalue:=Reader.ReadValue;
+  if  avalue<> vaWString then
+  begin
+   case avalue of
+    vaString:
+      Reader.Read(L, SizeOf(Byte));
+    vaLString:
+      Reader.Read(L, SizeOf(Integer));
+    else
+    begin
+     Raise EReadError(SInvalidPropertyValue);
+    end;
+   end;
+   SetString(aResult, PChar(nil), L);
+   Reader.Read(Pointer(aResult)^, L);
+   Result:=aResult;
+  end
+  else
+  begin
+   Reader.Read(L, SizeOf(Integer));
+   SetLength(Result, L);
+   Reader.Read(Pointer(Result)^, L * 2);
+  end;
 end;
+
 
 
 function WideStringToDOS(astring:WideString):WideString;

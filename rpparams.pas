@@ -52,8 +52,8 @@ type
     procedure ReadSearch(Reader:TReader);
     procedure WriteSearch(Writer:TWriter);
     procedure ReadDescription(Reader:TReader);
-    function GetAsString:String;
-    procedure SetAsString(NewValue:String);
+    function GetAsString:WideString;
+    procedure SetAsString(NewValue:WideString);
    protected
     procedure DefineProperties(Filer:TFiler);override;
    public
@@ -65,7 +65,7 @@ type
     procedure SetValues(AList:TStrings);
     property Description:widestring read FDescription write SetDescription;
     property Search:widestring read FSearch write SetSearch;
-    property AsString:String read GetAsString write SetAsString;
+    property AsString:WideString read GetAsString write SetAsString;
    published
     property Name:string read FName write SetName;
     property Visible:Boolean read FVisible write SetVisible default True;
@@ -210,7 +210,12 @@ end;
 
 procedure TRpParam.SetValue(AValue:Variant);
 begin
- FValue:=AValue;
+ if VarType(Value)=varString then
+ begin
+  FValue:=WideString(AValue);
+ end
+ else
+  FValue:=AValue;
  Changed(false);
 end;
 
@@ -367,7 +372,7 @@ begin
  Filer.DefineProperty('Search',ReadSearch,WriteSearch,True);
 end;
 
-function TRpParam.GetAsString:String;
+function TRpParam.GetAsString:WideString;
 begin
  if Value=Null then
  begin
@@ -392,7 +397,7 @@ begin
  end;
 end;
 
-procedure TRpParam.SetAsString(NewValue:String);
+procedure TRpParam.SetAsString(NewValue:WideString);
 begin
  case ParamType of
   rpParamString,rpParamExpreB,rpParamExpreA,rpParamSubst:

@@ -52,7 +52,7 @@ uses Classes,SysUtils,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
- rpdataset;
+ rpdataset,rpdatatext;
 
 {$IFDEF LINUX}
 const
@@ -155,6 +155,7 @@ type
 {$IFDEF USEADO}
    property ADOConnection:TADOConnection read GetADOConnection write SetADOConnection;
 {$ENDIF}
+   property MyBasePath:String read FMyBasePath;
   published
    property Alias:string read FAlias write SetAlias;
    property ConfigFile:string read FConfigFile write SetConfigFile;
@@ -268,8 +269,6 @@ type
 procedure UpdateConAdmin;
 procedure GetRpDatabaseDrivers(alist:TStrings);
 procedure CombineAddDataset(client:TClientDataset;data:TDataset;group:boolean);
-procedure FillClientDatasetFromFile(data:TClientDataSet;fieldsfile:String;
- textfilename:String;IndexFields:String);
 
 implementation
 
@@ -1851,7 +1850,7 @@ begin
     config.CaseSensitive:=false;
    end
    else
-    Raise Exception.Create(SRpConfigFileNotExists+' - '+DBXCONFIGFILENAME);
+    Raise Exception.Create(SRpConfigFileNotExists+' - '+DBXCONFIGFILNAME);
   end
 {$ENDIF}
  end;
@@ -2184,10 +2183,10 @@ procedure GetRpDatabaseDrivers(alist:TStrings);
 begin
  alist.clear;
  alist.Add('Borland DBExpress');
- alist.Add('Borland MyBase');
+ alist.Add('B.MyBase and text files');
  alist.Add('Interbase Express');
  alist.Add('Borland Database Engine');
- alist.Add('Microsoft Data Objects');
+ alist.Add('Microsoft DAO');
  alist.Add('Interbase Objects');
 end;
 
@@ -2394,316 +2393,6 @@ begin
  end;
 end;
 
-// Reads the field definition file as a TInifile
-// Creates the client dataset and fill with information
-// in the file
-type
- TFieldobj=class(TObject)
-  public
-   fieldname:String;
-   posbegin:Integer;
-   fieldsize:Integer;
-   precision:integer;
-   posbeginprecision:integer;
-   sizeprecision:integer;
-   fieldtype:TDataType;
-   fieldtrim:Boolean;
-   yearpos:Integer;
-   yearsize:Integer;
-   monthpos:Integer;
-   monthsize:Integer;
-   daypos:Integer;
-   daysize:Integer;
-   hourpos:Integer;
-   hoursize:Integer;
-   minpos:Integer;
-   minsize:Integer;
-   secpos:Integer;
-   secsize:Integer;
-  end;
-
-
-procedure SaveFieldObjListToFile(lfields:TStringList;fieldsfile:String;
- recordseparator:char;
- ignoreafterrecordseparator:char);
-var
- fobj:TFieldObj;
- ffile:TInifile;
- i:integer;
-begin
- ffile:=TInifile.Create(fieldsfile);
- try
-  ffile.WriteInteger('RECORDCONFIG','RECORDSEPARATOR',Ord(recordseparator));
-  ffile.WriteInteger('RECORDCONFIG','IGNORERECORDSEPARATOR',Ord(ignoreafterrecordseparator));
-  ffile.WriteInteger('RECORDCONFIG','FIELDCOUNT',lfields.count);
-  for i:=0 to lfields.count-1 do
-  begin
-   fobj:=TFieldObj(lfields.Objects[i]);
-   ffile.WriteString('FIELD'+IntToStr(i),'FIELDNAME',fobj.fieldname);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'BEGINPOSITION',fobj.posbegin);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'SIZE',fobj.fieldsize);
-   ffile.WriteBool('FIELD'+IntToStr(i),'TRIM',fobj.fieldtrim);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'DATATYPE',Integer(fobj.fieldtype));
-   ffile.WriteInteger('FIELD'+IntToStr(i),'BEGINPRECISION',fobj.posbeginprecision);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'SIZEPRECISION',fobj.sizeprecision);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'YEARPOS',fobj.yearpos);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'YEARSIZE',fobj.yearsize);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'MONTHPOS',fobj.monthpos);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'MONTHSIZE',fobj.monthsize);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'DAYPOS',fobj.daypos);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'DAYSIZE',fobj.daysize);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'HOURPOS',fobj.hourpos);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'HOURSIZE',fobj.hoursize);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'MINPOS',fobj.minpos);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'MINSIZE',fobj.minsize);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'SECPOS',fobj.secpos);
-   ffile.WriteInteger('FIELD'+IntToStr(i),'SECSIZE',fobj.secsize);
-  end;
-
-  ffile.UpdateFile;
- finally
-  ffile.free;
- end;
-end;
-
-procedure FillFieldObjList(fieldsfile:String;
- lfields:TStringList;
- var recordseparator:char;
- var ignoreafterrecordseparator:char);
-var
- fobj:TFieldObj;
- fieldcount:integer;
- i:integer;
- ffile:TInifile;
-begin
- ffile:=TInifile.Create(fieldsfile);
- try
-  recordseparator:=chr(ffile.ReadInteger('RECORDCONFIG','RECORDSEPARATOR',10));
-  ignoreafterrecordseparator:=chr(ffile.ReadInteger('RECORDCONFIG','IGNORERECORDSEPARATOR',13));
-  fieldcount:=ffile.ReadInteger('RECORDCONFIG','FIELDCOUNT',1);
-  if fieldcount<=0 then
-   fieldcount:=1;
-  for i:=1 to fieldcount do
-  begin
-   fobj:=TFieldObj.Create;
-   lfields.AddObject('FIELD'+IntToStr(i),fobj);
-   fobj.fieldname:=ffile.ReadString('FIELD'+IntToStr(i),'FIELDNAME','FIELD'+IntToStr(i));
-   fobj.posbegin:=ffile.ReadInteger('FIELD'+IntToStr(i),'BEGINPOSITION',1);
-   fobj.fieldsize:=ffile.ReadInteger('FIELD'+IntToStr(i),'SIZE',0);
-   fobj.fieldtrim:=ffile.ReadBool('FIELD'+IntToStr(i),'TRIM',true);
-   fobj.fieldtype:=TDataType(ffile.ReadInteger('FIELD'+IntToStr(i),'DATATYPE',Integer(ftMemo)));
-   fobj.posbeginprecision:=ffile.ReadInteger('FIELD'+IntToStr(i),'BEGINPRECISION',0);
-   fobj.sizeprecision:=ffile.ReadInteger('FIELD'+IntToStr(i),'SIZEPRECISION',0);
-   fobj.yearpos:=ffile.ReadInteger('FIELD'+IntToStr(i),'YEARPOS',0);
-   fobj.yearsize:=ffile.ReadInteger('FIELD'+IntToStr(i),'YEARSIZE',0);
-   fobj.monthpos:=ffile.ReadInteger('FIELD'+IntToStr(i),'MONTHPOS',0);
-   fobj.monthsize:=ffile.ReadInteger('FIELD'+IntToStr(i),'MONTHSIZE',0);
-   fobj.daypos:=ffile.ReadInteger('FIELD'+IntToStr(i),'DAYPOS',0);
-   fobj.daysize:=ffile.ReadInteger('FIELD'+IntToStr(i),'DAYSIZE',0);
-   fobj.hourpos:=ffile.ReadInteger('FIELD'+IntToStr(i),'HOURPOS',0);
-   fobj.hoursize:=ffile.ReadInteger('FIELD'+IntToStr(i),'HOURSIZE',0);
-   fobj.minpos:=ffile.ReadInteger('FIELD'+IntToStr(i),'MINPOS',0);
-   fobj.minsize:=ffile.ReadInteger('FIELD'+IntToStr(i),'MINSIZE',0);
-   fobj.secpos:=ffile.ReadInteger('FIELD'+IntToStr(i),'SECPOS',0);
-   fobj.secsize:=ffile.ReadInteger('FIELD'+IntToStr(i),'SECSIZE',0);
-  end;
- finally
-  ffile.free;
- end;
-end;
-
-procedure FreeFieldObjList(lfields:TStringList);
-var
- i:integer;
-begin
- for i:=0 to lfields.count-1 do
- begin
-  lfields.Objects[i].free;
- end;
-end;
-
-
-procedure FillClientDatasetFromFile(data:TClientDataSet;fieldsfile:String;textfilename:String;indexfields:String);
-var
- recordseparator:char;
- ignoreafterrecordseparator:char;
- lfields:TStringList;
- fobj:TFieldObj;
- i:integer;
- fdef:TFieldDef;
- line,oldline,precision:String;
- memstream:TMemoryStream;
- position,readed:LongInt;
- fieldvalue:Variant;
- buf:String;
- reccount:integer;
- recorddone:boolean;
-begin
- data.Close;
- data.fielddefs.Clear;
- lfields:=TStringList.Create;
- try
-  FillFieldObjList(fieldsfile,lfields,recordseparator,ignoreafterrecordseparator);
-  fdef:=data.FieldDefs.AddFieldDef;
-  fdef.Name:='LNUMBER';
-  fdef.DataType:=ftInteger;
-  for i:=0 to lfields.Count-1 do
-  begin
-   fobj:=TFieldobj(lfields.Objects[i]);
-   fdef:=data.FieldDefs.AddFieldDef;
-   fdef.Name:=fobj.fieldname;
-   fdef.DataType:=fobj.fieldtype;
-   if fobj.fieldsize>0 then
-    fdef.Size:=fobj.fieldsize;
-   fdef.Precision:=fobj.Precision;
-  end;
-  if Length(Trim(IndexFields))<1 then
-  begin
-   data.IndexDefs.Clear;
-   data.IndexDefs.Add('IPRIMINDEX','LNUMBER',[]);
-   data.IndexFieldNames:='LNUMBER';
-  end
-  else
-  begin
-   data.IndexDefs.Clear;
-   data.IndexDefs.Add('IPRIMINDEX',IndexFields,[]);
-   data.IndexFieldNames:=IndexFields;
-  end;
-  data.CreateDataSet;
-  reccount:=0;
-  // Load the file inside the dataset
-  memstream:=TMemoryStream.Create;
-  try
-   memstream.LoadFromFile(textfilename);
-   memstream.Seek(0,soFromBeginning);
-   SetLength(buf,1);
-   line:='';
-   oldline:='';
-   position:=0;
-   recorddone:=false;
-   while position<memstream.Size do
-   begin
-    while position<memstream.Size do
-    begin
-     readed:=memstream.Read(buf[1],1);
-     position:=position+readed;
-     if readed=0 then
-      break;
-     if buf[1]=recordseparator then
-     begin
-      recorddone:=true;
-      oldline:='';
-      // Ignore after record chars
-      while position<memstream.Size do
-      begin
-       readed:=memstream.Read(buf[1],1);
-       position:=position+readed;
-       if readed=0 then
-        break;
-       if buf[1]<>ignoreafterrecordseparator then
-       begin
-        oldline:=buf[1];
-        break;
-       end;
-      end;
-     end
-     else
-      line:=line+buf[1];
-     if recorddone then
-     begin
-      recorddone:=false;
-      break;
-     end;
-    end;
-    if Length(line)>0 then
-    begin
-     // Add a record
-     data.Append;
-     try
-      for i:=0 to lfields.count-1 do
-      begin
-       fobj:=TFieldobj(lfields.Objects[i]);
-       // Reads the field
-       fieldvalue:=Null;
-       case fobj.fieldtype of
-        ftInteger:
-         begin
-          if fobj.fieldsize=0 then
-           fieldvalue:=Copy(line,fobj.posbegin,Length(line))
-          else
-           fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
-          if fobj.fieldtrim then
-           fieldvalue:=Trim(fieldvalue);
-          if Length(fieldvalue)<1 then
-           fieldvalue:=Null
-          else
-           fieldvalue:=StrToInt(fieldvalue);
-         end;
-        ftString,ftBlob,ftMemo:
-         begin
-          if fobj.fieldsize=0 then
-           fieldvalue:=Copy(line,fobj.posbegin,Length(line))
-          else
-           fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
-          if fobj.fieldtrim then
-           fieldvalue:=Trim(fieldvalue);
-          if Length(fieldvalue)<1 then
-            fieldvalue:=Null;
-         end;
-        ftCurrency:
-         begin
-          if fobj.fieldsize=0 then
-           fieldvalue:=Copy(line,fobj.posbegin,Length(line))
-          else
-           fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
-          if fobj.fieldtrim then
-           fieldvalue:=Trim(fieldvalue);
-          if Length(fieldvalue)<1 then
-           fieldvalue:=Null
-          else
-           fieldvalue:=StrToCurr(fieldvalue);
-          if Not VarIsNull(fieldvalue) then
-          begin
-           if fobj.posbeginprecision>0 then
-            if fobj.precision>0 then
-            begin
-             precision:=Trim(Copy(line,fobj.posbeginprecision,fobj.precision));
-             if Length(precision)>0 then
-              fieldvalue:=fieldvalue+StrToCurr('0'+decimalseparator+precision);
-            end;
-          end;
-         end;
-        ftDate:
-         begin
-          end;
-        ftTime:
-         begin
-          end;
-        ftDateTime:
-         begin
-          end;
-       end;
-       data.FieldByName(fobj.fieldname).AsVariant:=fieldvalue;
-      end;
-      inc(reccount);
-      data.FieldByName('LNUMBER').Value:=reccount;
-      data.post;
-     except
-      data.cancel;
-      raise;
-     end;
-    end;
-    line:=oldline;
-   end;
-  finally
-   memstream.free;
-  end;
- finally
-  FreeFieldObjList(lfields);
-  lfields.free;
- end;
- data.first;
-end;
 
 
 initialization

@@ -1,27 +1,28 @@
-object FRpDInfoVCL: TFRpDInfoVCL
+object FRpDInfo: TFRpDInfo
   Left = 183
   Top = 112
   Width = 565
   Height = 422
+  VertScrollBar.Range = 39
+  ActiveControl = BOk
   Caption = 'Database connections and datasets'
-  Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
+  Color = clButton
+  Font.Color = clText
   Font.Height = 11
   Font.Name = 'MS Sans Serif'
   Font.Pitch = fpVariable
   Font.Style = []
-  OldCreateOrder = True
+  Font.Weight = 40
+  ParentFont = False
   Position = poScreenCenter
   Scaled = False
   ShowHint = True
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 13
   object PBottom: TPanel
     Left = 0
-    Top = 349
-    Width = 557
+    Top = 383
+    Width = 565
     Height = 39
     Align = alBottom
     TabOrder = 0
@@ -45,8 +46,8 @@ object FRpDInfoVCL: TFRpDInfoVCL
   object PControl: TPageControl
     Left = 0
     Top = 0
-    Width = 557
-    Height = 349
+    Width = 565
+    Height = 383
     ActivePage = TabConnections
     Align = alClient
     TabOrder = 1

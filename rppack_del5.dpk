@@ -44,7 +44,8 @@ requires
   VCLIB50,
   vcljpg50,
   Indy50,
-  tee50;
+  tee50,
+  dclaxserver50;
 
 contains
   rptypeval in 'rptypeval.pas',

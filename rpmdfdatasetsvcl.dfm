@@ -1,23 +1,23 @@
 object FRpDatasetsVCL: TFRpDatasetsVCL
   Left = 0
   Top = 0
-  Width = 443
-  Height = 277
+  Width = 492
+  Height = 378
   Align = alClient
   AutoScroll = False
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 443
-    Height = 27
+    Width = 492
+    Height = 128
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 443
+      Width = 492
       Height = 27
       AutoSize = True
       ButtonHeight = 25
@@ -79,8 +79,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object PTop1: TPanel
       Left = 0
       Top = 27
-      Width = 443
-      Height = 0
+      Width = 492
+      Height = 101
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
@@ -88,14 +88,15 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         Left = 161
         Top = 0
         Width = 8
-        Height = 0
+        Height = 101
+        Cursor = crHSplit
         Beveled = True
       end
       object LDatasets: TListBox
         Left = 0
         Top = 0
         Width = 161
-        Height = 0
+        Height = 101
         Align = alLeft
         ItemHeight = 13
         TabOrder = 0
@@ -104,14 +105,11 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object PanelBasic: TPanel
         Left = 169
         Top = 0
-        Width = 274
-        Height = 0
+        Width = 323
+        Height = 101
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
-        DesignSize = (
-          274
-          0)
         object LMasterDataset: TLabel
           Left = 4
           Top = 28
@@ -170,8 +168,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
   end
   object PBottom: TPanel
     Left = 0
-    Top = 27
-    Width = 443
+    Top = 128
+    Width = 492
     Height = 250
     Align = alBottom
     BevelOuter = bvNone
@@ -179,7 +177,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 443
+      Width = 492
       Height = 250
       ActivePage = TabMyBase
       Align = alClient
@@ -203,7 +201,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 435
+          Width = 484
           Height = 37
           Align = alTop
           Columns = 2
@@ -216,7 +214,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 435
+          Width = 484
           Height = 185
           Align = alClient
           BevelOuter = bvNone
@@ -421,7 +419,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           TabOrder = 2
           OnClick = BMyBaseClick
         end
-        object Button2: TButton
+        object BSearchFieldsFile: TButton
           Left = 372
           Top = 26
           Width = 77
@@ -492,10 +490,19 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object EMybasedefs: TEdit
           Left = 96
           Top = 26
-          Width = 277
+          Width = 209
           Height = 21
           TabOrder = 5
           OnChange = MSQLChange
+        end
+        object BModify: TButton
+          Left = 304
+          Top = 26
+          Width = 69
+          Height = 23
+          Caption = 'Modify...'
+          TabOrder = 6
+          OnClick = BModifyClick
         end
       end
     end

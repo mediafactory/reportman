@@ -906,7 +906,7 @@ begin
   asizepos.Height:=pixelstotwips(NewHeight);
   asizepos.Width:=pixelstotwips(NewWidth);
   GenerateNewName(asizepos);
-  aitem:=TRpSection(printitem).Components.Add;
+  aitem:=TRpSection(printitem).ReportComponents.Add;
   aitem.Component:=asizepos;
   asizeposint.Parent:=FInterface;
   asizeposint.sectionint:=self;
@@ -986,9 +986,9 @@ var
  labelint:TRpSizePosInterface;
 begin
  sec:=TRpSection(printitem);
- for i:=0 to sec.Components.Count-1 do
+ for i:=0 to sec.ReportComponents.Count-1 do
  begin
-  compo:=TRpCommonPosComponent(sec.Components.Items[i].Component);
+  compo:=TRpCommonPosComponent(sec.ReportComponents.Items[i].Component);
   labelint:=nil;
   if compo is TRpLabel then
   begin

@@ -24,15 +24,7 @@ interface
 
 uses
  mmsystem,windows,
-{$IFDEF USEEXCEL97}
  excel97,
-{$ENDIF}
-{$IFDEF USEEXCEL2000}
- excel2000,
-{$ENDIF}
-{$IFDEF USEEXCELXP}
- excelxp,
-{$ENDIF}
  Classes,sysutils,rpmetafile,rpmdconsts,Graphics,Forms,
  rpmunits,Dialogs, Controls,
  StdCtrls,ExtCtrls,rppdffile,rpgraphutilsvcl,
@@ -390,7 +382,7 @@ begin
    // Creates the excel file
    Excel:=TExcelApplication.Create(Application);
    Excel.Visible[1]:=Visible;
-   wb:=Excel.Workbooks.add(Null,1);
+   wb:=Excel.Workbooks.add(null,1);
    shcount:=1;
    sh:=wb.Worksheets.item[shcount] As ExcelWorkSheet;
    FontName:=sh.Cells.Font.Name;

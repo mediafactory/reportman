@@ -46,13 +46,20 @@ type
   private
    FHeight:TRpTwips;
    FWidth:TRpTwips;
-   FDoBeforePrint,FDoAfterPrint:string;
-   FPrintCondition:string;
+   FDoBeforePrint,FDoAfterPrint:widestring;
+   FPrintCondition:widestring;
    FOnBeforePrint:TNotifyEvent;
    FVisible:Boolean;
    procedure SetWidth(Value:TRpTwips);
    procedure SetHeight(Value:TRpTwips);
+   procedure WritePrintCondition(Writer:TWriter);
+   procedure ReadPrintCondition(Reader:TReader);
+   procedure WriteDoBeforePrint(Writer:TWriter);
+   procedure ReadDoBeforePrint(Reader:TReader);
+   procedure WriteDoAfterPrint(Writer:TWriter);
+   procedure ReadDoAfterPrint(Reader:TReader);
   protected
+   procedure DefineProperties(Filer:TFiler);override;
    function GetReport:TComponent;
    procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);virtual;
@@ -67,10 +74,10 @@ type
    property Report:TComponent read GetReport;
    property OnBeforePrint:TNotifyEvent read FOnBeforePrint write FOnBeforePrint;
    property Visible:Boolean read FVisible write FVisible;
+   property PrintCondition:widestring read FPrintCondition write FPrintCondition;
+   property DoBeforePrint:widestring read FDoBeforePrint write FDoBeforePrint;
+   property DoAfterPrint:widestring read FDoAfterPrint write FDoAfterPrint;
   published
-   property PrintCondition:string read FPrintCondition write FPrintCondition;
-   property DoBeforePrint:string read FDoBeforePrint write FDoBeforePrint;
-   property DoAfterPrint:string read FDoAfterPrint write FDoAfterPrint;
    property Width:TRpTwips read FWidth write SetWidth;
    property Height:TRpTwips read FHeight write SetHeight;
   end;
@@ -187,7 +194,44 @@ begin
  FWidth:=0;
 end;
 
+procedure TRpCommonComponent.DefineProperties(Filer:TFiler);
+begin
+ inherited;
 
+ Filer.DefineProperty('PrintCondition',ReadPrintCondition,WritePrintCondition,True);
+ Filer.DefineProperty('DoBeforePrint',ReadDoBeforePrint,WriteDoBeforePrint,True);
+ Filer.DefineProperty('DoAfterPrint',ReadDoAfterPrint,WriteDoAfterPrint,True);
+end;
+
+procedure TRpCommonComponent.WritePrintCondition(Writer:TWriter);
+begin
+ WriteWideString(Writer, FPrintCondition);
+end;
+
+procedure TRpCommonComponent.ReadPrintCondition(Reader:TReader);
+begin
+ FPrintCondition:=ReadWideString(Reader);
+end;
+
+procedure TRpCommonComponent.WriteDoBeforePrint(Writer:TWriter);
+begin
+ WriteWideString(Writer, FDoBeforePrint);
+end;
+
+procedure TRpCommonComponent.ReadDoBeforePrint(Reader:TReader);
+begin
+ FDoBeforePrint:=ReadWideString(Reader);
+end;
+
+procedure TRpCommonComponent.WriteDoAfterPrint(Writer:TWriter);
+begin
+ WriteWideString(Writer, FDoAfterPrint);
+end;
+
+procedure TRpCommonComponent.ReadDoAfterPrint(Reader:TReader);
+begin
+ FDoAfterPrint:=ReadWideString(Reader);
+end;
 
 procedure TRpCommonComponent.SetWidth(Value:TRpTwips);
 begin

@@ -691,9 +691,9 @@ begin
  for i:=0 to Sections.Count-1 do
  begin
   sec:=Sections.Items[i].Section;
-  for j:=0 to sec.Components.Count-1 do
+  for j:=0 to sec.ReportComponents.Count-1 do
   begin
-   compo:=sec.Components.Items[j].Component;
+   compo:=sec.ReportComponents.Items[j].Component;
    compo.SubReportChanged(newstate,newgroup);
   end;
  end;

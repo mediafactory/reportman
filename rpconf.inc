@@ -38,6 +38,19 @@
 {$ENDIF}
 
 
+// May be you want to enablwe TEECHART under Kylix
+// but take care it needs an X server running
+{$IFDEF MSWINDOWS}
+ {$DEFINE USETEECHART}
+ {$DEFINE USEEXCEL}
+ // Use one of the excel versions
+ // excel 97 for better compatibility
+ {$DEFINE USEEXCEL97}
+// {$DEFINE USEEXCEL2000}
+// {$DEFINE USEEXCELXP}
+{$ENDIF}
+
+
 //  Builder 4 compiler defines
 {$IFDEF VER125}
  {$UNDEF USEVARIANTS}
@@ -48,6 +61,7 @@
  {$UNDEF USEIBX}
  {$UNDEF USEADO}
  {$DEFINE BUILDER4}
+ {$UNDEF USEEXCEL}
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -80,17 +94,6 @@
  {$DEFINE HORZPAPERBUG}
 {$ENDIF}
 
-// May be you want to enablwe TEECHART under Kylix
-// but take care it needs an X server running
-{$IFDEF MSWINDOWS}
- {$DEFINE USETEECHART}
- {$DEFINE USEEXCEL}
- // Use one of the excel versions
- // excel 97 for better compatibility
- {$DEFINE USEEXCEL97}
-// {$DEFINE USEEXCEL2000}
-// {$DEFINE USEEXCELXP}
-{$ENDIF}
 
 
 {$DEFINE ISDELPHI}

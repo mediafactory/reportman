@@ -36,15 +36,22 @@
 <p>When you execute a Linux application it searchs libraries using LD_LIBRARY_PATH 
   variable, repmand.sh set this variable to search the current directory first. 
   To call any command line tool you must set also this option or you can set it 
-  system wide.</p>
+  system wide. The launcher repmand.bin will set also the variable before calling 
+  the application repmand.</p>
 <p>Also there are issues with Borland provided qt libraries, see<a href="knownissues.html"> 
   known issues</a> if you have problems starting the application.</p>
 <p><b>Database configuration files</b></p>
-<p>Report Manager Designer will look for database configuration files dbxdrivers.conf 
-  and dbxconnections.conv at <b>/home/yourusername/.borland</b> directory, if 
-  there are no files there it will create this directory and copy the current 
-  directory files provided to that directory. So any user executing Report Manager 
-  Designer will own their database connections file.</p>
+<p>Report Manager Designer will look for database configuration files, it will 
+  look first at <b>/home/yourusername/.borland</b> directory, will search for 
+  'dbxdrivers' and 'dbxconnections' files, if there are no files there it will 
+  search at '/usr/local/etc' for files 'dbxdrivers.conf' and 'dbxconnections.conf', 
+  if this files does not exists it will search in the current executable directory 
+  and will copy them to /home/yourusername/.borland. So any user executing Report 
+  Manager Designer can own their database connections file or use system common 
+  configuration files.</p>
+<p>When you execute Report Manager command line tools or applications from other 
+  applications (like apache web server) you should copy the database configuration 
+  files to correct path following the above explanation.</p>
 <p><b>Printer configuration file</b></p>
 <p>Report Manager Designer will use a Printer configuration file, only used in 
   printer selection, this file will be searched as /etc/reporman, if not found 

@@ -1,260 +1,278 @@
-object FRpConnectionVCL: TFRpConnectionVCL
-  Left = 0
-  Top = 0
-  Width = 443
-  Height = 277
-  Align = alClient
+object FRpDataTextVCL: TFRpDataTextVCL
+  Left = 217
+  Top = 119
   AutoScroll = False
-  TabOrder = 0
-  object ToolBar1: TToolBar
+  Caption = 'Text file to database table configuration'
+  ClientHeight = 412
+  ClientWidth = 511
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = True
+  Position = poScreenCenter
+  ShowHint = True
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 443
-    Height = 27
-    AutoSize = True
-    ButtonHeight = 25
-    ButtonWidth = 26
-    Caption = 'ToolBar1'
-    Flat = True
-    Images = ImageList1
+    Width = 511
+    Height = 53
+    Align = alTop
     TabOrder = 0
-    object BNew: TToolButton
-      Left = 0
-      Top = 0
-      Action = ANewConnection
-      DropdownMenu = PopAdd
-      Style = tbsDropDown
+    object Label1: TLabel
+      Left = 8
+      Top = 8
+      Width = 43
+      Height = 13
+      Caption = 'Fields file'
     end
-    object ToolButton5: TToolButton
-      Left = 39
-      Top = 0
-      Width = 36
-      Caption = 'ToolButton5'
-      ImageIndex = 4
-      Style = tbsSeparator
+    object Label2: TLabel
+      Left = 8
+      Top = 32
+      Width = 51
+      Height = 13
+      Caption = 'Sample file'
     end
-    object ToolButton4: TToolButton
-      Left = 75
-      Top = 0
-      Action = ADelete
+    object EFileName: TEdit
+      Left = 108
+      Top = 4
+      Width = 396
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      Color = clInfoBk
+      ReadOnly = True
+      TabOrder = 0
+      Text = 'EFileName'
     end
-    object ToolButton6: TToolButton
-      Left = 101
-      Top = 0
-      Width = 40
-      Caption = 'ToolButton6'
-      ImageIndex = 4
-      Style = tbsSeparator
+    object ESampleFile: TEdit
+      Left = 108
+      Top = 24
+      Width = 396
+      Height = 21
+      Anchors = [akLeft, akTop, akRight]
+      Color = clInfoBk
+      ReadOnly = True
+      TabOrder = 1
+      Text = 'EFieldsFile'
     end
   end
-  object PParent: TPanel
+  object PClient: TPanel
     Left = 0
-    Top = 27
-    Width = 443
-    Height = 250
+    Top = 53
+    Width = 511
+    Height = 359
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    object PTop: TPanel
+    object Splitter1: TSplitter
+      Left = 0
+      Top = 156
+      Width = 511
+      Height = 8
+      Cursor = crVSplit
+      Align = alTop
+      Beveled = True
+    end
+    object PList: TPanel
       Left = 0
       Top = 0
-      Width = 443
-      Height = 105
+      Width = 511
+      Height = 156
       Align = alTop
       BevelOuter = bvNone
-      TabOrder = 1
-      object GDriver: TListBox
+      TabOrder = 0
+      object ToolBar1: TToolBar
         Left = 0
         Top = 0
-        Width = 169
-        Height = 105
-        Align = alLeft
-        ItemHeight = 13
+        Width = 511
+        Height = 28
+        AutoSize = True
+        ButtonHeight = 26
+        ButtonWidth = 26
+        Caption = 'ToolBar1'
+        Flat = True
+        Images = ImageList1
         TabOrder = 0
-        OnClick = GDriverClick
-      end
-      object PDriver: TPanel
-        Left = 169
-        Top = 0
-        Width = 274
-        Height = 105
-        Align = alClient
-        BevelOuter = bvNone
-        TabOrder = 1
-        object MHelp: TMemo
-          Left = 0
-          Top = 33
-          Width = 274
-          Height = 72
-          Align = alClient
-          Color = clInfoBk
-          ReadOnly = True
-          TabOrder = 0
-        end
-        object Panel1: TPanel
+        object ToolButton1: TToolButton
           Left = 0
           Top = 0
-          Width = 274
-          Height = 33
-          Align = alTop
-          BevelOuter = bvNone
+          Action = ANewField
+        end
+        object ToolButton5: TToolButton
+          Left = 26
+          Top = 0
+          Width = 36
+          Caption = 'ToolButton5'
+          ImageIndex = 4
+          Style = tbsSeparator
+        end
+        object ToolButton4: TToolButton
+          Left = 62
+          Top = 0
+          Action = ADelete
+        end
+        object ToolButton6: TToolButton
+          Left = 88
+          Top = 0
+          Width = 40
+          Caption = 'ToolButton6'
+          ImageIndex = 4
+          Style = tbsSeparator
+        end
+      end
+      object GridFields: TDBGrid
+        Left = 0
+        Top = 28
+        Width = 511
+        Height = 128
+        Align = alClient
+        DataSource = SFiedls
+        TabOrder = 1
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = []
+      end
+    end
+    object PBottom: TPanel
+      Left = 0
+      Top = 164
+      Width = 511
+      Height = 195
+      Align = alClient
+      BevelOuter = bvNone
+      TabOrder = 1
+      object PFieldProps: TPanel
+        Left = 0
+        Top = 0
+        Width = 511
+        Height = 85
+        Align = alTop
+        BevelOuter = bvNone
+        TabOrder = 0
+        object Label4: TLabel
+          Left = 8
+          Top = 28
+          Width = 197
+          Height = 13
+          Caption = 'Ignore after record separator (ASCII code)'
+        end
+        object Label3: TLabel
+          Left = 8
+          Top = 4
+          Width = 145
+          Height = 13
+          Caption = 'Record separator (ASCII code)'
+        end
+        object BTest: TButton
+          Left = 120
+          Top = 48
+          Width = 81
+          Height = 29
+          Caption = 'Open'
+          TabOrder = 0
+          OnClick = BTestClick
+        end
+        object ERecordseparator: TEdit
+          Left = 248
+          Top = 0
+          Width = 61
+          Height = 21
           TabOrder = 1
-          object BConfig: TButton
-            Left = 5
-            Top = 4
-            Width = 164
-            Height = 25
-            Caption = 'Configure'
+          Text = 'ERecordseparator'
+        end
+        object EIgnoreAfterRecordseparator: TEdit
+          Left = 248
+          Top = 24
+          Width = 61
+          Height = 21
+          TabOrder = 2
+          Text = 'ERecordseparator'
+        end
+        object Button1: TButton
+          Left = 8
+          Top = 48
+          Width = 81
+          Height = 29
+          Caption = 'OK'
+          TabOrder = 3
+          OnClick = Button1Click
+        end
+      end
+      object PControl: TPageControl
+        Left = 0
+        Top = 85
+        Width = 511
+        Height = 110
+        ActivePage = TabSource
+        Align = alClient
+        TabOrder = 1
+        object TabSource: TTabSheet
+          Caption = 'Source'
+          object MSource: TMemo
+            Left = 0
+            Top = 0
+            Width = 503
+            Height = 82
+            Align = alClient
+            Color = clInfoBk
+            ReadOnly = True
+            ScrollBars = ssBoth
             TabOrder = 0
-            OnClick = BConfigClick
+            WordWrap = False
+          end
+        end
+        object TabData: TTabSheet
+          Caption = 'Data'
+          ImageIndex = 1
+          object GridTest: TDBGrid
+            Left = 0
+            Top = 0
+            Width = 503
+            Height = 82
+            Align = alClient
+            DataSource = SData
+            TabOrder = 0
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -11
+            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Style = []
           end
         end
       end
     end
-    object PanelProps: TPanel
-      Left = 0
-      Top = 105
-      Width = 443
-      Height = 145
-      Align = alClient
-      BevelOuter = bvNone
-      TabOrder = 0
-      object GAvailable: TGroupBox
-        Left = 0
-        Top = 0
-        Width = 443
-        Height = 145
-        Align = alClient
-        Caption = 'Available connections'
-        TabOrder = 0
-        object LConnections: TListBox
-          Left = 2
-          Top = 15
-          Width = 169
-          Height = 128
-          Align = alLeft
-          ItemHeight = 13
-          TabOrder = 0
-          OnClick = LConnectionsClick
-        end
-        object PConProps: TPanel
-          Left = 171
-          Top = 15
-          Width = 270
-          Height = 128
-          Align = alClient
-          BevelOuter = bvNone
-          TabOrder = 1
-          object LConnectionString: TLabel
-            Left = 4
-            Top = 92
-            Width = 84
-            Height = 13
-            Caption = 'Connection String'
-            Visible = False
-          end
-          object LAvailable: TLabel
-            Left = 7
-            Top = 144
-            Width = 43
-            Height = 13
-            Caption = 'Available'
-            Visible = False
-          end
-          object LDriver: TLabel
-            Left = 7
-            Top = 8
-            Width = 75
-            Height = 13
-            Caption = 'Database driver'
-          end
-          object CheckLoginPrompt: TCheckBox
-            Left = 5
-            Top = 28
-            Width = 184
-            Height = 17
-            Caption = 'Login prompt'
-            TabOrder = 0
-            Visible = False
-            OnClick = CheckLoginPromptClick
-          end
-          object CheckLoadParams: TCheckBox
-            Left = 5
-            Top = 48
-            Width = 192
-            Height = 17
-            Caption = 'Load params'
-            TabOrder = 1
-            Visible = False
-            OnClick = CheckLoginPromptClick
-          end
-          object CheckLoadDriverParams: TCheckBox
-            Left = 5
-            Top = 68
-            Width = 212
-            Height = 17
-            Caption = 'Load driver params'
-            TabOrder = 2
-            Visible = False
-            OnClick = CheckLoginPromptClick
-          end
-          object EConnectionString: TEdit
-            Left = 136
-            Top = 88
-            Width = 365
-            Height = 21
-            TabOrder = 3
-            Visible = False
-            OnChange = EConnectionStringChange
-          end
-          object ComboAvailable: TComboBox
-            Left = 136
-            Top = 140
-            Width = 365
-            Height = 21
-            Style = csDropDownList
-            ItemHeight = 13
-            TabOrder = 4
-            Visible = False
-          end
-          object BBuild: TButton
-            Left = 124
-            Top = 112
-            Width = 117
-            Height = 25
-            Caption = 'Build...'
-            TabOrder = 5
-            Visible = False
-            OnClick = BBuildClick
-          end
-          object ComboDriver: TComboBox
-            Left = 132
-            Top = 4
-            Width = 369
-            Height = 21
-            Style = csDropDownList
-            ItemHeight = 13
-            TabOrder = 6
-            OnClick = ComboDriverClick
-          end
-          object BTest: TButton
-            Left = 4
-            Top = 112
-            Width = 117
-            Height = 25
-            Caption = 'Connect'
-            TabOrder = 7
-            OnClick = BTestClick
-          end
-        end
-      end
+  end
+  object ActionList1: TActionList
+    Images = ImageList1
+    Left = 252
+    Top = 128
+    object ANewField: TAction
+      Caption = 'New field'
+      Hint = 'Adds a new parameter'
+      ImageIndex = 2
+      OnExecute = ANewFieldExecute
+    end
+    object ADelete: TAction
+      Caption = 'Delete field'
+      Hint = 'Deletes the selected field'
+      ImageIndex = 3
+      OnExecute = ADeleteExecute
     end
   end
   object ImageList1: TImageList
     Height = 19
     Width = 19
-    Left = 384
-    Top = 108
+    Left = 172
+    Top = 200
     Bitmap = {
       494C010105000900040013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000004C000000390000000100200000000000B043
@@ -826,31 +844,158 @@ object FRpConnectionVCL: TFRpConnectionVCL
       FFFFFFFFFFFFFFFFFFF000000000000000000000000000000000000000000000
       0000}
   end
-  object ActionList1: TActionList
-    Images = ImageList1
-    Left = 316
-    Top = 136
-    object ANewConnection: TAction
-      Caption = 'New connection'
-      Hint = 'Adds a new connection'
-      ImageIndex = 2
-      OnExecute = ANewConnectionExecute
+  object DFields: TClientDataSet
+    Aggregates = <>
+    FieldDefs = <>
+    IndexDefs = <
+      item
+        Name = 'IFIELDNAME'
+        Fields = 'FIELDNAME'
+        Options = [ixPrimary]
+      end>
+    Params = <>
+    StoreDefs = True
+    OnNewRecord = DFieldsNewRecord
+    Left = 28
+    Top = 141
+    object DFieldsFIELDNAME: TStringField
+      FieldName = 'FIELDNAME'
+      Required = True
+      Size = 31
     end
-    object ADelete: TAction
-      Caption = 'Delete connection'
-      Hint = 'Deletes the selected connection'
-      ImageIndex = 3
-      OnExecute = ADeleteExecute
+    object DFieldsFIELDTYPE: TIntegerField
+      FieldName = 'FIELDTYPE'
+      Required = True
+      Visible = False
+    end
+    object DFieldsFIELDTYPENAME: TStringField
+      FieldKind = fkLookup
+      FieldName = 'FIELDTYPENAME'
+      LookupDataSet = DDataType
+      LookupKeyFields = 'CODE'
+      LookupResultField = 'DESCRIPTION'
+      KeyFields = 'FIELDTYPE'
+      Lookup = True
+    end
+    object DFieldsFIELDSIZE: TIntegerField
+      FieldName = 'FIELDSIZE'
+      Required = True
+    end
+    object DFieldsPOSBEGIN: TIntegerField
+      FieldName = 'POSBEGIN'
+      Required = True
+    end
+    object DFieldsFIELDTRIM: TBooleanField
+      FieldName = 'FIELDTRIM'
+      Required = True
+      Visible = False
+    end
+    object DFieldsTRIM: TStringField
+      FieldKind = fkLookup
+      FieldName = 'TRIM'
+      LookupDataSet = DYesNo
+      LookupKeyFields = 'CODE'
+      LookupResultField = 'DESCRIPTION'
+      KeyFields = 'FIELDTRIM'
+      Size = 10
+      Lookup = True
+    end
+    object DFieldsPRECISION: TIntegerField
+      FieldName = 'PRECISION'
+      Required = True
+    end
+    object DFieldsPOSBEGINPRECISION: TIntegerField
+      FieldName = 'POSBEGINPRECISION'
+      Required = True
+    end
+    object DFieldsYEARPOS: TIntegerField
+      FieldName = 'YEARPOS'
+      Required = True
+    end
+    object DFieldsYEARSIZE: TIntegerField
+      FieldName = 'YEARSIZE'
+      Required = True
+    end
+    object DFieldsMONTHPOS: TIntegerField
+      FieldName = 'MONTHPOS'
+      Required = True
+    end
+    object DFieldsMONTHSIZE: TIntegerField
+      FieldName = 'MONTHSIZE'
+      Required = True
+    end
+    object DFieldsDAYPOS: TIntegerField
+      FieldName = 'DAYPOS'
+      Required = True
+    end
+    object DFieldsDAYSIZE: TIntegerField
+      FieldName = 'DAYSIZE'
+      Required = True
+    end
+    object DFieldsHOURPOS: TIntegerField
+      FieldName = 'HOURPOS'
+      Required = True
+    end
+    object DFieldsHOURSIZE: TIntegerField
+      FieldName = 'HOURSIZE'
+      Required = True
+    end
+    object DFieldsMINPOS: TIntegerField
+      FieldName = 'MINPOS'
+      Required = True
+    end
+    object DFieldsMINSIZE: TIntegerField
+      FieldName = 'MINSIZE'
+      Required = True
+    end
+    object DFieldsSECPOS: TIntegerField
+      FieldName = 'SECPOS'
+      Required = True
+    end
+    object DFieldsSECSIZE: TIntegerField
+      FieldName = 'SECSIZE'
+      Required = True
     end
   end
-  object PopAdd: TPopupMenu
-    AutoHotkeys = maManual
-    OnPopup = PopAddPopup
-    Left = 32
-    Top = 40
-    object MNew: TMenuItem
-      Caption = 'New...'
-      OnClick = MNewClick
+  object SData: TDataSource
+    DataSet = DData
+    Left = 84
+    Top = 321
+  end
+  object DData: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 44
+    Top = 325
+  end
+  object SFiedls: TDataSource
+    DataSet = DFields
+    Left = 96
+    Top = 137
+  end
+  object DDataType: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 176
+    Top = 141
+    object DDataTypeCODE: TIntegerField
+      FieldName = 'CODE'
+    end
+    object DDataTypeDESCRIPTION: TStringField
+      FieldName = 'DESCRIPTION'
+    end
+  end
+  object DYesNo: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 300
+    Top = 137
+    object DYesNoCODE: TBooleanField
+      FieldName = 'CODE'
+    end
+    object DYesNoDESCRIPTION: TStringField
+      FieldName = 'DESCRIPTION'
+      Size = 10
     end
   end
 end

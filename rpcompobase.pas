@@ -207,9 +207,9 @@ begin
   begin
    sec:=subrep.Sections.Items[j].Section;
    sec.OnBeforePrint:=FOnBeforePrint;
-   for k:=0 to sec.Components.Count-1 do
+   for k:=0 to sec.ReportComponents.Count-1 do
    begin
-    TRpCommonComponent(sec.Components.Items[k].Component).OnBeforePrint:=FOnBeforePrint;
+    TRpCommonComponent(sec.ReportComponents.Items[k].Component).OnBeforePrint:=FOnBeforePrint;
    end;
   end;
  end;

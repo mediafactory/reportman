@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 1.5b
+AppVerName=Report Manager 1.6
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -58,7 +58,7 @@ Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; CopyMode: alwaysov
 Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\dbxdrivers.ini"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\dbxconnections.ini"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\dbxconnections.ini"; DestDir: "{app}"; CopyMode: onlyifdoesntexist
 Source: "..\drivers\win32\dbexpint.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 Source: "..\drivers\win32\dbexpmys.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 Source: "..\drivers\win32\dbexpinf.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall

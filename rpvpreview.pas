@@ -32,10 +32,7 @@ uses
 {$ENDIF}
   Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls,rpreport,rpmetafile, ComCtrls,
-  rpgdidriver, ExtCtrls,Menus,rptypes,
-{$IFDEF USEEXCEL}
-  rpexceldriver,
-{$ENDIF}
+  rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,
   ActnList, ImgList,Printers,rpmdconsts, ToolWin;
 
 type
@@ -273,10 +270,8 @@ procedure TFRpVPreview.FormCreate(Sender: TObject);
 begin
  SaveDialog1.Filter:=SRpRepMetafile+'|*.rpmf|'+
    SRpPDFFile+'|*.pdf|'+
-   SRpPDFFileUn+'|*.pdf';
-{$IFDEF USEEXCEL}
- SaveDialog1.Filter:=SaveDialog1.Filter+'|'+SRpExcelFile+'|*.xls';
-{$ENDIF}
+   SRpPDFFileUn+'|*.pdf|'+
+   SRpExcelFile+'|*.xls';
 
  APrevious.ShortCut:=ShortCut(VK_PRIOR, []);
  ANext.ShortCut:=ShortCut(VK_NEXT, []);
@@ -417,15 +412,11 @@ begin
      end
      else
      begin
- {$IFDEF USEEXCEL}
       if SaveDialog1.FilterIndex=4 then
-      begin
-       ALastExecute(Self);
-       ExportMetafileToExcel(report.Metafile,SaveDialog1.FileName,
-        true,false,true,1,9999);
-       AppIdle(Self,adone);
-      end;
- {$ENDIF}
+      ALastExecute(Self);
+      ExportMetafileToExcel(report.Metafile,SaveDialog1.FileName,
+       true,false,true,1,9999);
+      AppIdle(Self,adone);
      end;
    finally
     EnableControls;

@@ -2,11 +2,11 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       rpmdfdatasetsvcl                                }
+{       rpmdfdatasets                                   }
 {                                                       }
 {       Datasets definition frame                       }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -16,19 +16,18 @@
 {                                                       }
 {*******************************************************}
 
-unit rpmdfdatasetsvcl;
+unit rpmdfdatasets;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, ComCtrls, ToolWin, ImgList,rpmdconsts,rpgraphutilsvcl,
-  rptypes,rpdatainfo,rpreport,rpfparamsvcl,rpmdfsampledatavcl, ActnList,
-  rpparams;
+  SysUtils, Classes, QGraphics, QControls, QForms, QDialogs,
+  QStdCtrls, QExtCtrls, rpmdconsts,rpgraphutilsvcl,
+  rptypes,rpdatainfo,rpreport,rpfparams,rpmdfsampledata, QActnList,
+  rpparams, QImgList, QComCtrls;
 
 type
-  TFRpDatasetsVCL = class(TFrame)
-    ImageList1: TImageList;
+  TFRpDatasets = class(TFrame)
     PTop: TPanel;
     ToolBar1: TToolBar;
     OpenDialog1: TOpenDialog;
@@ -94,6 +93,7 @@ type
     LUnions: TListBox;
     EMybasedefs: TEdit;
     BModify: TButton;
+    ImageList1: TImageList;
     procedure BParamsClick(Sender: TObject);
     procedure LDatasetsClick(Sender: TObject);
     procedure MSQLChange(Sender: TObject);
@@ -134,22 +134,22 @@ type
 
 implementation
 
-uses rpmdfdatatextvcl;
+uses rpmdfdatatext;
 
-{$R *.DFM}
+{$R *.xfm}
 
 
-function TFRpDatasetsVCL.GetParams:TRpParamList;
+function TFRpDatasets.GetParams:TRpParamList;
 begin
  result:=report.params;
 end;
 
-procedure TFRpDatasetsVCL.SetParams(Value:TRpParamList);
+procedure TFRpDatasets.SetParams(Value:TRpParamList);
 begin
  report.params.assign(value);
 end;
 
-constructor TFRpDatasetsVCL.Create(AOwner:TComponent);
+constructor TFRpDatasets.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
@@ -182,18 +182,18 @@ begin
  PBottom.Height:=250;
 end;
 
-procedure TFRpDatasetsVCL.SetDatabaseInfo(Value:TRpDatabaseInfoList);
+procedure TFRpDatasets.SetDatabaseInfo(Value:TRpDatabaseInfoList);
 begin
  report.DatabaseInfo.Assign(Value);
  FillDatasets;
 end;
 
-procedure TFRpDatasetsVCL.SetDataInfo(Value:TRpDataInfoList);
+procedure TFRpDatasets.SetDataInfo(Value:TRpDataInfoList);
 begin
  report.DataInfo.Assign(Value);
 end;
 
-procedure TFRpDatasetsVCL.FillDatasets;
+procedure TFRpDatasets.FillDatasets;
 var
  i:integer;
 begin
@@ -213,22 +213,22 @@ begin
  LDatasetsClick(Self);
 end;
 
-function TFRpDatasetsVCL.GetDatabaseInfo:TRpDatabaseInfoList;
+function TFRpDatasets.GetDatabaseInfo:TRpDatabaseInfoList;
 begin
  Result:=Report.DatabaseInfo;
 end;
 
-function TFRpDatasetsVCL.GetDataInfo:TRpDataInfoList;
+function TFRpDatasets.GetDataInfo:TRpDataInfoList;
 begin
  Result:=Report.DataInfo;
 end;
 
-procedure TFRpDatasetsVCL.BParamsClick(Sender: TObject);
+procedure TFRpDatasets.BParamsClick(Sender: TObject);
 begin
  ShowParamDef(report.params,report.datainfo);
 end;
 
-procedure TFRpDatasetsVCL.LDatasetsClick(Sender: TObject);
+procedure TFRpDatasets.LDatasetsClick(Sender: TObject);
 var
  dinfo:TRpDatainfoItem;
  index:integer;
@@ -299,7 +299,7 @@ begin
 end;
 }
 
-function TFRpDatasetsVCL.FindDataInfoItem:TRpDataInfoItem;
+function TFRpDatasets.FindDataInfoItem:TRpDataInfoItem;
 var
  index:integer;
 begin
@@ -313,7 +313,7 @@ end;
 
 
 
-procedure TFRpDatasetsVCL.MSQLChange(Sender: TObject);
+procedure TFRpDatasets.MSQLChange(Sender: TObject);
 var
  dinfo:TRpDatainfoItem;
  index:integer;
@@ -462,7 +462,7 @@ begin
  end;
 end;
 
-procedure TFRpDatasetsVCL.BMyBaseClick(Sender: TObject);
+procedure TFRpDatasets.BMyBaseClick(Sender: TObject);
 begin
  if Sender=BMyBase then
  begin
@@ -483,7 +483,7 @@ begin
  end;
 end;
 
-procedure TFRpDatasetsVCL.BShowDataClick(Sender: TObject);
+procedure TFRpDatasets.BShowDataClick(Sender: TObject);
 var
  dinfo:TRpDatainfoitem;
 begin
@@ -501,7 +501,7 @@ begin
  end;
 end;
 
-procedure TFRpDatasetsVCL.ANewExecute(Sender: TObject);
+procedure TFRpDatasets.ANewExecute(Sender: TObject);
 var
  aliasname:string;
  aitem:TRpDataInfoItem;
@@ -522,7 +522,7 @@ begin
  end;
 end;
 
-procedure TFRpDatasetsVCL.ADeleteExecute(Sender: TObject);
+procedure TFRpDatasets.ADeleteExecute(Sender: TObject);
 var
  index:integer;
  oldalias:string;
@@ -539,7 +539,7 @@ begin
  FillDatasets;
 end;
 
-procedure TFRpDatasetsVCL.ARenameExecute(Sender: TObject);
+procedure TFRpDatasets.ARenameExecute(Sender: TObject);
 var
  dinfo:TRpDatainfoitem;
  aliasname:string;
@@ -558,7 +558,7 @@ begin
  FillDatasets;
 end;
 
-procedure  TFRpDatasetsVCL.Removedependences(oldalias:string);
+procedure  TFRpDatasets.Removedependences(oldalias:string);
 var
  i:integer;
 begin
@@ -569,7 +569,7 @@ begin
  end;
 end;
 
-procedure TFRpDatasetsVCL.BAddUnionsClick(Sender: TObject);
+procedure TFRpDatasets.BAddUnionsClick(Sender: TObject);
 var
  index:integer;
 begin
@@ -585,7 +585,7 @@ begin
  end;
 end;
 
-procedure TFRpDatasetsVCL.BDelUnionsClick(Sender: TObject);
+procedure TFRpDatasets.BDelUnionsClick(Sender: TObject);
 begin
  if LUnions.Items.Count<1 then
   exit;
@@ -595,7 +595,7 @@ begin
  MSQLChange(BAddUnions);
 end;
 
-procedure TFRpDatasetsVCL.EBDETableDropDown(Sender: TObject);
+procedure TFRpDatasets.EBDETableDropDown(Sender: TObject);
 {$IFDEF USEBDE}
 var
  dinfo:TRpDatainfoItem;
@@ -616,7 +616,7 @@ begin
 {$ENDIF}
 end;
 
-procedure TFRpDatasetsVCL.EBDEIndexNameDropDown(Sender: TObject);
+procedure TFRpDatasets.EBDEIndexNameDropDown(Sender: TObject);
 {$IFDEF USEBDE}
 var
  dinfo:TRpDatainfoItem;
@@ -647,7 +647,7 @@ begin
 {$ENDIF}
 end;
 
-procedure TFRpDatasetsVCL.EBDEIndexFieldsDropDown(Sender: TObject);
+procedure TFRpDatasets.EBDEIndexFieldsDropDown(Sender: TObject);
 {$IFDEF USEBDE}
 var
  dinfo:TRpDatainfoItem;
@@ -672,7 +672,7 @@ begin
 {$ENDIF}
 end;
 
-procedure TFRpDatasetsVCL.BModifyClick(Sender: TObject);
+procedure TFRpDatasets.BModifyClick(Sender: TObject);
 var
  dinfo:TRpDatainfoItem;
  dbinfo:TRpDatabaseInfoItem;

@@ -7,7 +7,7 @@
 {       Resource strings for reportmanager engine and   }
 {       designer                                        }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -689,6 +689,8 @@ var
   SRpExcelFile:WideString='Excel file';
   SRpExcelNotSupported:WideString='Excel not supported';
   SRpPrintConditionHint:WideString='Boolean expression, if evaluated to false this component/section will not print, this is a multiline hint it spans auto across some lines because it does not fit in screen, well may be if a high resolution is selected this hint will be visible in only ';
+  SRpFieldsFileNotDefined:WideString='Fields file not defined';
+  SRpSMemo:WideString='Memo';
 
 
 implementation

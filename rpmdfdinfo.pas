@@ -2,8 +2,8 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       Rpmdfdinfovcl                                   }
-{       : Printer driver for  VCL Lib       }
+{       Rpmdfdinfo                                      }
+{       : Printer driver for  VCL Lib                   }
 {       can be used only for windows                    }
 {       it includes printer and bitmap support          }
 {                                                       }
@@ -16,23 +16,23 @@
 {                                                       }
 {                                                       }
 {*******************************************************}
-unit rpmdfdinfovcl;
+unit rpmdfdinfo;
 
 interface
 
 {$I rpconf.inc}
 
 uses
- windows,Classes,sysutils,Dialogs,Controls,Graphics,Forms,rpmdconsts,
+ Classes,sysutils,QDialogs,QControls,QGraphics,QForms,rpmdconsts,
 {$IFDEF USEVARIANTS}
  types,
 {$ENDIF}
  rptypes,rpdatainfo,rpreport,
- rpmdfdatasetsvcl,rpmdfconnectionvcl,
- StdCtrls, ExtCtrls, ComCtrls;
+ rpmdfdatasets,rpmdfconnection,
+ QStdCtrls, QExtCtrls,QComCtrls;
 
 type
-  TFRpDInfoVCL = class(TForm)
+  TFRpDInfo = class(TForm)
     PBottom: TPanel;
     BOk: TButton;
     BCancel: TButton;
@@ -44,8 +44,8 @@ type
   private
     { Private declarations }
     freport:TRpReport;
-    fdatasets:TFRpDatasetsVCL;
-    fconnections:TFRpConnectionVCL;
+    fdatasets:TFRpDatasets;
+    fconnections:TFRpConnection;
     procedure SetReport(value:TRpReport);
   public
     { Public declarations }
@@ -61,14 +61,14 @@ implementation
 uses rpdbxconfigvcl;
 
 
-{$R *.dfm}
+{$R *.xfm}
 
-procedure TFRpDInfoVCL.SetReport(value:TRpReport);
+procedure TFRpDInfo.SetReport(value:TRpReport);
 begin
  freport:=value;
- fconnections:=TFRpConnectionVCL.Create(Self);
+ fconnections:=TFRpConnection.Create(Self);
  fconnections.Parent:=TabConnections;
- fdatasets:=TFRpDatasetsVCL.Create(Self);
+ fdatasets:=TFRpDatasets.Create(Self);
  fdatasets.Parent:=TabDatasets;
  fdatasets.Datainfo:=report.DataInfo;
  fdatasets.Databaseinfo:=report.DatabaseInfo;
@@ -82,11 +82,11 @@ end;
 
 procedure ShowDataConfig(report:TRpReport);
 var
- dia:TFRpDInfoVCL;
+ dia:TFRpDInfo;
 begin
  UpdateConAdmin;
 
- dia:=TFRpDInfoVCL.Create(Application);
+ dia:=TFRpDInfo.Create(Application);
  try
   dia.report:=report;
   dia.showmodal;
@@ -97,7 +97,7 @@ end;
 
 
 
-procedure TFRpDInfoVCL.FormCreate(Sender: TObject);
+procedure TFRpDInfo.FormCreate(Sender: TObject);
 begin
  BOK.Caption:=TranslateStr(93,BOK.Caption);
  BCancel.Caption:=TranslateStr(94,BCancel.Caption);
@@ -109,7 +109,7 @@ end;
 
 
 
-procedure TFRpDInfoVCL.PControlChange(Sender: TObject);
+procedure TFRpDInfo.PControlChange(Sender: TObject);
 begin
  fdatasets.Databaseinfo:=report.DatabaseInfo;
 end;
