@@ -274,7 +274,7 @@ var
  stream:TMemoryStream;
  bitmap:TBitmap;
  aalign:Integer;
- arec,R:TRect;
+ arec:TRect;
 begin
  // Switch to device points
  posx:=round(obj.Left*dpix/TWIPS_PER_INCHESS);

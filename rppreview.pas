@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       rppreview                                        }
+{       rppreview                                       }
 {       Preview the report                              }
 {                                                       }
 {                                                       }
@@ -328,7 +328,7 @@ begin
      if SaveDialog1.FilterIndex in [2,3] then
      begin
       report.EndPrint;
-      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,9999999,
+      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,32000,
        true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
       AppIdle(Self,adone);
      end;

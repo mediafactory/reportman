@@ -7,7 +7,7 @@
 {TODO 1 -oToni -cDesign Interface : Add multiselect option and show common properties in object inspector}
 
 
-{TODO 1 -oToni -cEngine : Qt Driver text rotation implementation}
+{DONE 1 -oToni -cEngine : Qt Driver text rotation implementation}
 {DONE 5 -oToni -cEngine : Implementation for Delphi 5 vcl driver}
 
 {TODO 2 -oToni -cDesign Interface : Select the object that produces a error}
