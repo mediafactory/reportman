@@ -549,7 +549,8 @@ resourcestring
   SRpRepFile='Report File';
   SRpAnyFile='Any File';
   SRpBitmapImages='Bitmap images';
-
+  SRpUnkownClassForMultiSelect='Unknown class for multi-select';
+  SRpClassNotRegistered='Class not registered -';
 
 implementation
 

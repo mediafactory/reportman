@@ -32,10 +32,11 @@ type
   protected
    procedure Paint;override;
   public
+   class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
-   procedure SetProperty(pname:string;value:string);override;
-   function GetProperty(pname:string):string;override;
+   procedure SetProperty(pname:string;value:Widestring);override;
+   function GetProperty(pname:string):Widestring;override;
  end;
 
  TRpExpressionInterface=class(TRpGenTextInterface)
@@ -43,10 +44,11 @@ type
   protected
    procedure Paint;override;
   public
+   class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
-   procedure SetProperty(pname:string;value:string);override;
-   function GetProperty(pname:string):string;override;
+   procedure SetProperty(pname:string;value:Widestring);override;
+   function GetProperty(pname:string):Widestring;override;
    procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
  end;
 
@@ -100,16 +102,23 @@ begin
  inherited Create(AOwner,pritem);
 end;
 
+class procedure TRpLabelInterface.FillAncestors(alist:TStrings);
+begin
+ inherited FillAncestors(alist);
+ alist.Add('TRpLabelInterface');
+end;
+
 procedure TRpLabelInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
  inherited GetProperties(lnames,ltypes,lvalues);
  // Text
  lnames.Add(SrpSText);
  ltypes.Add(SRpSString);
- lvalues.Add(TRpLabel(printitem).Text);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpLabel(printitem).Text);
 end;
 
-procedure TRpLabelInterface.SetProperty(pname:string;value:string);
+procedure TRpLabelInterface.SetProperty(pname:string;value:Widestring);
 begin
  if length(value)<1 then
   exit;
@@ -122,7 +131,7 @@ begin
  inherited SetProperty(pname,value);
 end;
 
-function TRpLabelInterface.GetProperty(pname:string):string;
+function TRpLabelInterface.GetProperty(pname:string):Widestring;
 begin
  Result:='';
  if pname=SrpSText then
@@ -178,6 +187,7 @@ begin
  Canvas.Pen.Style:=psSolid;
  Canvas.Brush.Style:=bsClear;
  Canvas.Rectangle(0,0,Width,Height);
+ DrawSelected;
 end;
 
 
@@ -188,52 +198,66 @@ begin
  inherited Create(AOwner,pritem);
 end;
 
+class procedure TRpExpressionInterface.FillAncestors(alist:TStrings);
+begin
+ inherited FillAncestors(alist);
+ alist.Add('TRpExpressionInterface');
+end;
+
 procedure TRpExpressionInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
  inherited GetProperties(lnames,ltypes,lvalues);
  // Expression
  lnames.Add(SrpSExpression);
  ltypes.Add(SRpSExpression);
- lvalues.Add(TRpExpression(printitem).Expression);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpExpression(printitem).Expression);
 
  // Display format
  lnames.Add(SrpSDisplayFOrmat);
  ltypes.Add(SRpSString);
- lvalues.Add(TRpExpression(printitem).DisplayFormat);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpExpression(printitem).DisplayFormat);
 
  // Identifier
  lnames.Add(SrpSIdentifier);
  ltypes.Add(SRpSString);
- lvalues.Add(TRpExpression(printitem).Identifier);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpExpression(printitem).Identifier);
 
  // Aggregate
  lnames.Add(SrpSAggregate);
  ltypes.Add(SRpSList);
- lvalues.Add(AggregatesString[TRpExpression(printitem).Aggregate]);
+ if Assigned(lvalues) then
+  lvalues.Add(AggregatesString[TRpExpression(printitem).Aggregate]);
 
 
  // Aggregate group
  lnames.Add(SrpSAgeGroup);
  ltypes.Add(SRpGroup);
- lvalues.Add(TRpExpression(printitem).GroupName);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpExpression(printitem).GroupName);
 
  // Aggregate type
  lnames.Add(SrpSAgeType);
  ltypes.Add(SRpSList);
- lvalues.Add(AggretypeString[TRpExpression(printitem).AgType]);
+ if Assigned(lvalues) then
+  lvalues.Add(AggretypeString[TRpExpression(printitem).AgType]);
 
   // Aggregate Ini value
  lnames.Add(SrpSIniValue);
  ltypes.Add(SRpSExpression);
- lvalues.Add(TRpExpression(printitem).AgIniValue);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpExpression(printitem).AgIniValue);
 
  // Print Only One
  lnames.Add(SRpSOnlyOne);
  ltypes.Add(SRpSBool);
- lvalues.Add(BoolToStr(TRpExpression(printitem).PrintOnlyOne,true));
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpExpression(printitem).PrintOnlyOne,true));
 end;
 
-procedure TRpExpressionInterface.SetProperty(pname:string;value:string);
+procedure TRpExpressionInterface.SetProperty(pname:string;value:Widestring);
 begin
  if length(value)<1 then
   exit;
@@ -283,7 +307,7 @@ begin
  inherited SetProperty(pname,value);
 end;
 
-function TRpExpressionInterface.GetProperty(pname:string):string;
+function TRpExpressionInterface.GetProperty(pname:string):Widestring;
 begin
  Result:='';
  if pname=SrpSExpression then
@@ -400,6 +424,7 @@ begin
  Canvas.Pen.Style:=psDashDot;
  Canvas.Brush.Style:=bsClear;
  Canvas.Rectangle(0,0,Width,Height);
+ DrawSelected;
 end;
 
 

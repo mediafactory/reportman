@@ -18,6 +18,7 @@
 
 unit rpmdfsectionint;
 
+
 interface
 
 uses SysUtils, Classes, QGraphics, QForms,Types,
@@ -27,7 +28,9 @@ uses SysUtils, Classes, QGraphics, QForms,Types,
   rpconsts,rpsection,rptypes,rpdrawitem,rpmdfdrawint,
   rpsubreport;
 
-
+const
+ CONS_MINWIDTH=5;
+ CONS_MINHEIGHT=5;
 type
 
   TRpSectionInterface=class;
@@ -40,10 +43,11 @@ type
     procedure Paint;override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer);override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
    public
     OnPosChange:TNotifyEvent;
     constructor Create(AOwner:TComponent);override;
-
    end;
 
   TRpSectionInterface=class(TRpSizeInterface)
@@ -51,10 +55,20 @@ type
     FOnDestroy:TNotifyEvent;
     FInterface:TRpSectionIntf;
     FOnPosChange:TNotifyEvent;
+    FXOrigin,FYOrigin:integer;
+    FRectangle:TRpRectangle;
+    FRectangle2:TRpRectangle;
+    FRectangle3:TRpRectangle;
+    FRectangle4:TRpRectangle;
     procedure SetOnPosChange(AValue:TNotifyEvent);
+    procedure CalcNewCoords(var NewLeft,
+     NewTop,NewWidth,NewHeight,X,Y:integer);
+    function DoSelectControls(NewLeft,NewTop,NewWidth,NewHeight:integer):Boolean;
    protected
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer);override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
    public
     freportstructure:TFRpStructure;
     childlist:TList;
@@ -63,8 +77,8 @@ type
     constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
     destructor destroy;override;
     procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
-    procedure SetProperty(pname:string;value:string);override;
-    function GetProperty(pname:string):string;override;
+    procedure SetProperty(pname:string;value:Widestring);override;
+    function GetProperty(pname:string):Widestring;override;
     procedure CreateChilds;
     procedure InvalidateAll;
     property OnPosChange:TNotifyEvent read FOnPosChange write SetOnPosChange;
@@ -202,55 +216,64 @@ begin
 
  lnames.Add(SRpSAutoExpand);
  ltypes.Add(SRpSBool);
- lvalues.Add(BoolToStr(TRpSection(printitem).AutoExpand,true));
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpSection(printitem).AutoExpand,true));
 
  lnames.Add(SRpSAutoContract);
  ltypes.Add(SRpSBool);
- lvalues.Add(BoolToStr(TRpSection(printitem).AutoContract,true));
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpSection(printitem).AutoContract,true));
 
  if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter]) then
  begin
   lnames.Add(SRpSGroupName);
   ltypes.Add(SRpSString);
-  lvalues.Add(TRpSection(printitem).GroupName);
+  if Assigned(lvalues) then
+   lvalues.Add(TRpSection(printitem).GroupName);
 
   lnames.Add(SRpSGroupExpression);
   ltypes.Add(SRpSExpression);
-  lvalues.Add(TRpSection(printitem).ChangeExpression);
+  if Assigned(lvalues) then
+   lvalues.Add(TRpSection(printitem).ChangeExpression);
 
   lnames.Add(SRpSChangeBool);
   ltypes.Add(SRpSBool);
-  lvalues.Add(BoolToStr(TRpSection(printitem).ChangeBool,true));
+  if Assigned(lvalues) then
+   lvalues.Add(BoolToStr(TRpSection(printitem).ChangeBool,true));
 
   if TrpSection(printitem).SectionType=rpsecgheader then
   begin
    lnames.Add(SRpSPageRepeat);
    ltypes.Add(SRpSBool);
-   lvalues.Add(BoolToStr(TRpSection(printitem).PageRepeat,true));
+   if Assigned(lvalues) then
+    lvalues.Add(BoolToStr(TRpSection(printitem).PageRepeat,true));
   end;
  end;
  if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter,rpsecdetail]) then
  begin
   lnames.Add(SRpSBeginPage);
   ltypes.Add(SRpSExpression);
-  lvalues.Add(TRpSection(printitem).BeginPageExpression);
+  if Assigned(lvalues) then
+   lvalues.Add(TRpSection(printitem).BeginPageExpression);
 
   lnames.Add(SRpSkipPage);
   ltypes.Add(SRpSBool);
-  lvalues.Add(BoolToStr(TRpSection(printitem).SkipPage,true));
+  if Assigned(lvalues) then
+   lvalues.Add(BoolToStr(TRpSection(printitem).SkipPage,true));
 
   lnames.Add(SRPAlignBottom);
   ltypes.Add(SRpSBool);
-  lvalues.Add(BoolToStr(TRpSection(printitem).AlignBottom,true));
+  if Assigned(lvalues) then
+   lvalues.Add(BoolToStr(TRpSection(printitem).AlignBottom,true));
 
   lnames.Add(SRPHorzDesp);
   ltypes.Add(SRpSBool);
-  lvalues.Add(BoolToStr(TRpSection(printitem).HorzDesp,true));
-
+  if Assigned(lvalues) then
+   lvalues.Add(BoolToStr(TRpSection(printitem).HorzDesp,true));
  end;
 end;
 
-procedure TRpSectionInterface.SetProperty(pname:string;value:string);
+procedure TRpSectionInterface.SetProperty(pname:string;value:Widestring);
 begin
  if length(value)<1 then
   exit;
@@ -313,7 +336,7 @@ begin
  inherited SetProperty(pname,value);
 end;
 
-function TRpSectionInterface.GetProperty(pname:string):string;
+function TRpSectionInterface.GetProperty(pname:string):Widestring;
 begin
  if pname=SRpSAutoContract then
  begin
@@ -376,9 +399,14 @@ end;
 
 
 constructor TRpSectionIntf.Create(AOwner:TComponent);
+var
+ opts:TControlStyle;
 begin
  inherited Create(AOwner);
 
+ opts:=ControlStyle;
+ include(opts,csCaptureMouse);
+ ControlStyle:=opts;
 end;
 
 
@@ -426,30 +454,198 @@ begin
  Canvas.FillRect(rec);
 end;
 
+procedure TRpSectionIntf.MouseMove(Shift: TShiftState; X, Y: Integer);
+begin
+ if MouseCapture then
+  secint.MouseMove(Shift,X,Y);
+end;
+
+procedure TRpSectionIntf.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+ if MouseCapture then
+  secint.MouseUp(Button,Shift,X,Y);
+end;
+
 procedure TRpSectionIntf.MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
 begin
  secint.MouseDown(Button,Shift,X,Y);
 end;
 
-
 procedure TRpSectionInterface.MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
+begin
+ // Captures the origin X and Y
+ FXOrigin:=X;
+ FYOrigin:=Y;
+ if Assigned(FRectangle) then
+ begin
+  FRectangle.free;
+  FRectangle2.free;
+  FRectangle3.free;
+  FRectangle4.free;
+
+  FRectangle:=nil;
+ end;
+end;
+
+procedure TRpSectionInterface.CalcNewCoords(var NewLeft,
+ NewTop,NewWidth,NewHeight,X,Y:integer);
+var
+ gridenabled:boolean;
+ gridx,gridy:integer;
+ FRpMainf:TFRpMainF;
+begin
+ gridenabled:=false;
+ gridx:=1;
+ gridy:=1;
+ FRpMainf:=TFRpMainF(Owner.Owner);
+ // There's a selected item insert it
+ if Not FRpMainf.BArrow.Down then
+ begin
+  if FRpMainF.report.GridEnabled then
+  begin
+   GridEnabled:=True;
+   GridX:=FRpMainf.Report.GridWidth;
+   GridY:=FRpMainf.Report.GridHeight;
+  end;
+ end;
+ if X<0 then
+  X:=0;
+ if Y<0 then
+  Y:=0;
+ if X>FXOrigin then
+ begin
+  NewLeft:=FXOrigin;
+  if gridenabled then
+   NewLeft:=AlignToGridPixels(NewLeft,GridX);
+  NewWidth:=X-FXOrigin;
+ end
+ else
+ begin
+  NewLeft:=X;
+  if gridenabled then
+   NewLeft:=AlignToGridPixels(NewLeft,GridX);
+  NewWidth:=FXOrigin-X;
+ end;
+ if Y>FYOrigin then
+ begin
+  NewTop:=FYOrigin;
+  if gridenabled then
+   NewTop:=AlignToGridPixels(NewTop,GridY);
+  NewHeight:=Y-FYOrigin;
+ end
+ else
+ begin
+  NewTop:=Y;
+  if gridenabled then
+   NewTop:=AlignToGridPixels(NewTop,GridY);
+  NewHeight:=FYOrigin-Y;
+ end;
+ if NewLeft+NewWidth>FInterface.Width then
+  NewWidth:=FInterface.Width-NewLeft;
+ if NewTop+NewHeight>FInterface.Height then
+  NewHeight:=FInterface.Height-NewTop;
+ // Align to grid width and height
+ if GridEnabled then
+  NewWidth:=AlignToGridPixels(NewLeft+NewWidth,GridX)-NewLeft;
+ if GridEnabled then
+  NewHeight:=AlignToGridPixels(NewTop+NewHeight,GridY)-NewTop;
+ if NewHeight<CONS_MINHEIGHT then
+  Newheight:=CONS_MINHEIGHT;
+ if NewWidth<CONS_MINWIDTH then
+  NewWidth:=CONS_MINWIDTH;
+end;
+
+procedure TRpSectionInterface.MouseMove(Shift: TShiftState; X, Y: Integer);
+var NewLeft,
+ NewTop,NewWidth,NewHeight:integer;
+begin
+ // Gets diference
+ if Not Assigned(FRectangle) then
+ begin
+  if ((Abs(X-FXOrigin)<CONS_MINIMUMMOVE) AND
+    (Abs(Y-FYOrigin)<CONS_MINIMUMMOVE)) then
+    exit;
+  // Creates the rectangle
+  FRectangle:=TRpRectangle.Create(Self);
+  FRectangle2:=TRpRectangle.Create(Self);
+  FRectangle3:=TRpRectangle.Create(Self);
+  FRectangle4:=TRpRectangle.Create(Self);
+
+  FRectangle.Parent:=FInterface;
+  FRectangle2.Parent:=FInterface;
+  FRectangle3.Parent:=FInterface;
+  FRectangle4.Parent:=FInterface;
+  FInterface.Invalidate;
+ end;
+ CalcNewCoords(NewLeft,NewTop,NewWidth,NewHeight,X,Y);
+
+ FRectangle.SetBounds(Newleft,NewTop,NewWidth,1);
+ FRectangle2.SetBounds(Newleft,NewTop+NewHeight,NewWidth,1);
+ FRectangle3.SetBounds(Newleft,NewTop,1,NewHeight);
+ FRectangle4.SetBounds(Newleft+NewWidth,NewTop,1,NewHeight);
+end;
+
+
+function TRpSectionInterface.DoSelectControls(NewLeft,NewTop,NewWidth,NewHeight:integer):boolean;
+var
+ i:integer;
+ aitem:TRpSizePosInterface;
+ rec1,rec2:TRect;
+ arec:Trect;
+begin
+ Result:=false;
+ rec1.Left:=NewLeft;
+ rec1.Top:=NewTop;
+ rec1.Bottom:=NewTop+NewHeight;
+ rec1.Right:=NewLeft+NewWidth;
+ for i:=0 to childlist.Count-1 do
+ begin
+  aitem:=TRpSizePosInterface(childlist.Items[i]);
+  rec2.Left:=aitem.Left;
+  rec2.Top:=aitem.Top;
+  rec2.Bottom:=aitem.Top+aitem.Height;
+  rec2.Right:=aitem.Left+aitem.Width;
+  if IntersectRect(arec,Rec1,Rec2) then
+  begin
+   TFRpObjInsp(fobjinsp).AddCompItem(aitem,false);
+   Result:=True;
+  end;
+ end;
+end;
+
+procedure TRpSectionInterface.MouseUp(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
 var
  asizeposint:TRpSizePosInterface;
  asizepos:TRpCommonPosComponent;
  aitem:TRpCommonListItem;
  FRpMainf:TFRpMainF;
+ NewLeft,NewTop,NewWidth,NewHeight:integer;
 begin
  inherited MouseDown(Button,Shift,X,Y);
 
+ CalcNewCoords(NewLeft,NewTop,NewWidth,NewHeight,X,Y);
+ if Assigned(FRectangle) then
+ begin
+  FRectangle.free;
+  FRectangle2.free;
+  FRectangle3.free;
+  FRectangle4.free;
+  FRectangle:=nil;
+ end;
  FRpMainf:=TFRpMainF(Owner.Owner);
  // There's a selected item insert it
  if FRpMainf.BArrow.Down then
  begin
   // Selects object inspector section properties
-  freportstructure.SelectDataItem(printitem);
-  TFRpObjInsp(fobjinsp).CompItem:=self;
+  if (Not (ssshift in Shift)) then
+   TFRpObjInsp(fobjinsp).ClearMultiSelect;
+  if  Not DoSelectControls(NewLeft,NewTop,NewWidth,NewHeight) then
+  begin
+   freportstructure.SelectDataItem(printitem);
+  end;
   exit;
  end;
  asizepos:=nil;
@@ -481,16 +677,10 @@ begin
 
  if Assigned(asizepos) then
  begin
-  if TRpReport(printitem.Owner).GridEnabled then
-  begin
-   asizepos.PosX:=pixelstotwips(AlignToGridPixels(X,TRpReport(printitem.Owner).GridWidth));
-   asizepos.PosY:=pixelstotwips(AlignToGridPixels(Y,TRpReport(printitem.Owner).GridHeight));
-  end
-  else
-  begin
-   asizepos.PosX:=pixelstotwips(X);
-   asizepos.PosY:=pixelstotwips(Y);
-  end;
+  asizepos.PosX:=pixelstotwips(NewLeft);
+  asizepos.PosY:=pixelstotwips(NewTop);
+  asizepos.Height:=pixelstotwips(NewHeight);
+  asizepos.Width:=pixelstotwips(NewWidth);
   GenerateNewName(asizepos);
   aitem:=TRpSection(printitem).Components.Add;
   aitem.Component:=asizepos;
@@ -504,7 +694,7 @@ begin
    TFRpObjInsp(fobjinsp).Combo.Items.AddObject(asizepos.Name,asizeposint);
    TFRpObjInsp(fobjinsp).Combo.ItemIndex:=TFRpObjInsp(fobjinsp).Combo.Items.IndexOfObject(asizeposint);
   end;
-  TFRpObjInsp(fobjinsp).CompItem:=asizeposint;
+  TFRpObjInsp(fobjinsp).AddCompItem(asizeposint,true);
   if (Not (SSShift in Shift)) then
    FRpMainf.BArrow.Down:=true;
  end;

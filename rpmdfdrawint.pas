@@ -31,10 +31,11 @@ type
   protected
    procedure Paint;override;
   public
+   class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
-   procedure SetProperty(pname:string;value:string);override;
-   function GetProperty(pname:string):string;override;
+   procedure SetProperty(pname:string;value:Widestring);override;
+   function GetProperty(pname:string):Widestring;override;
    procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
  end;
 
@@ -44,11 +45,12 @@ type
   protected
    procedure Paint;override;
   public
+   class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
    destructor Destroy;override;
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
-   procedure SetProperty(pname:string;value:string);override;
-   function GetProperty(pname:string):string;override;
+   procedure SetProperty(pname:string;value:Widestring);override;
+   function GetProperty(pname:string):Widestring;override;
    procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
    procedure SetProperty(pname:string;stream:TMemoryStream);override;
    procedure GetProperty(pname:string;var Stream:TMemoryStream);override;
@@ -94,6 +96,12 @@ begin
  inherited Create(AOwner,pritem);
 end;
 
+class procedure TRpDrawInterface.FillAncestors(alist:TStrings);
+begin
+ inherited FillAncestors(alist);
+ alist.Add('TRpDrawInterface');
+end;
+
 procedure TRpDrawInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
  inherited GetProperties(lnames,ltypes,lvalues);
@@ -102,33 +110,39 @@ begin
  // Shape
  lnames.Add(SrpSShape);
  ltypes.Add(SRpSList);
- lvalues.Add(StringShapeType[TRpShapeType(TRpShape(printitem).Shape)]);
+ if Assigned(lvalues) then
+  lvalues.Add(StringShapeType[TRpShapeType(TRpShape(printitem).Shape)]);
 
  // Pen style
  lnames.Add(SrpSPenStyle);
  ltypes.Add(SRpSList);
- lvalues.Add(StringPenStyle[TPenStyle(TRpShape(printitem).PenStyle)]);
+ if Assigned(lvalues) then
+  lvalues.Add(StringPenStyle[TPenStyle(TRpShape(printitem).PenStyle)]);
 
  // Pen Color
  lnames.Add(SrpSPenColor);
  ltypes.Add(SRpSColor);
- lvalues.Add(IntToStr(TRpShape(printitem).PenColor));
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpShape(printitem).PenColor));
 
  // PenWidth
  lnames.Add(SrpSPenWidth);
  ltypes.Add(SRpSString);
- lvalues.Add(gettextfromtwips(TRpShape(printitem).PenWidth));
+ if Assigned(lvalues) then
+  lvalues.Add(gettextfromtwips(TRpShape(printitem).PenWidth));
 
 
  // Brush style
  lnames.Add(SrpSBrushStyle);
  ltypes.Add(SRpSList);
- lvalues.Add(StringBrushStyle[TBrushStyle(TRpShape(printitem).BrushStyle)]);
+ if Assigned(lvalues) then
+  lvalues.Add(StringBrushStyle[TBrushStyle(TRpShape(printitem).BrushStyle)]);
 
  // Brush Color
  lnames.Add(SrpSBrushColor);
  ltypes.Add(SRpSColor);
- lvalues.Add(IntToStr(TRpShape(printitem).BrushColor));
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpShape(printitem).BrushColor));
 
 end;
 
@@ -208,7 +222,7 @@ begin
  end;
 end;
 
-procedure TRpDrawInterface.SetProperty(pname:string;value:string);
+procedure TRpDrawInterface.SetProperty(pname:string;value:Widestring);
 begin
  if length(value)<1 then
   exit;
@@ -252,7 +266,7 @@ begin
  inherited SetProperty(pname,value);
 end;
 
-function TRpDrawInterface.GetProperty(pname:string):string;
+function TRpDrawInterface.GetProperty(pname:string):Widestring;
 begin
  Result:='';
  if pname=SrpSShape then
@@ -348,6 +362,7 @@ begin
     Canvas.LineTo(0,Y+H);
    end;
  end;
+ DrawSelected;
 end;
 
 
@@ -397,6 +412,12 @@ begin
  inherited Create(AOwner,pritem);
 end;
 
+class procedure TRpImageInterface.FillAncestors(alist:TStrings);
+begin
+ inherited FillAncestors(alist);
+ alist.Add('TRpImageInterface');
+end;
+
 destructor TRpImageInterface.Destroy;
 begin
  if Assigned(FBitmap) then
@@ -412,33 +433,38 @@ begin
  // DrawStyle
  lnames.Add(SRpDrawStyle);
  ltypes.Add(SRpSList);
- lvalues.Add(StringDrawStyles[TRpImage(printitem).DrawStyle]);
+ if Assigned(lvalues) then
+  lvalues.Add(StringDrawStyles[TRpImage(printitem).DrawStyle]);
 
  // Expression
  lnames.Add(SrpSExpression);
  ltypes.Add(SRpSExpression);
- lvalues.Add(TRpImage(printitem).Expression);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpImage(printitem).Expression);
 
  // Image
  lnames.Add(SrpSImage);
  ltypes.Add(SRpSImage);
- lvalues.Add('['+FormatFloat('###,###0.00',TRpImage(printitem).Stream.Size/1024)+
+ if Assigned(lvalues) then
+  lvalues.Add('['+FormatFloat('###,###0.00',TRpImage(printitem).Stream.Size/1024)+
   SRpKbytes+']');
 
  // DPI
  lnames.Add(SRpDPIRes);
  ltypes.Add(SRpSString);
- lvalues.Add(IntToStr(TRpImage(printitem).DPIRes));
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpImage(printitem).DPIRes));
 
  // CopyMode is disabled because it don't work with stretchdraw
 // lnames.Add(SRpCopyMode);
 // ltypes.Add(SRpSList);
+// if Assigned(lvalues) then
 // lvalues.Add(StringCopyModes[TCopyMode(TRpImage(printitem).CopyMode)]);
 end;
 
 
 
-procedure TRpImageInterface.SetProperty(pname:string;value:string);
+procedure TRpImageInterface.SetProperty(pname:string;value:Widestring);
 begin
  if length(value)<1 then
   exit;
@@ -475,7 +501,7 @@ begin
  inherited SetProperty(pname,value);
 end;
 
-function TRpImageInterface.GetProperty(pname:string):string;
+function TRpImageInterface.GetProperty(pname:string):Widestring;
 begin
  Result:='';
  if pname=SrpSExpression then
@@ -488,14 +514,20 @@ begin
   Result:=StringDrawStyles[TRpImage(printitem).DrawStyle];
   exit;
  end;
- if pname=SrpCopyMode then
- begin
-  Result:=StringCopyModes[TCopyMode(TRpImage(printitem).CopyMode)];
-  exit;
- end;
+// if pname=SrpCopyMode then
+// begin
+//  Result:=StringCopyModes[TCopyMode(TRpImage(printitem).CopyMode)];
+//  exit;
+// end;
  if pname=SRpDPIRes then
  begin
   Result:=IntToStr(TRpImage(fprintitem).DPIRes);
+  exit;
+ end;
+ if pname=SrpSImage then
+ begin
+  Result:='['+FormatFloat('###,###0.00',TRpImage(printitem).Stream.Size/1024)+
+  SRpKbytes+']';
   exit;
  end;
  Result:=inherited GetProperty(pname);
@@ -513,6 +545,9 @@ begin
  try
   if csDestroying in aimage.ComponentState then
    exit;
+  Canvas.Pen.Color:=clBlack;
+  Canvas.Pen.Style:=psSolid;
+  Canvas.Brush.Style:=bsClear;
   Canvas.Rectangle(0,0,Width,Height);
   if aimage.Stream.Size>0 then
   begin
@@ -564,6 +599,7 @@ begin
  except
   Canvas.TextOut(0,0,SRpInvalidImageFormat);
  end;
+ DrawSelected;
 end;
 
 

@@ -23,7 +23,8 @@ unit rpmunits;
 
 interface
 
-uses rptypes,sysutils;
+uses rptypes,
+sysutils;
 
 const
  CMS_PER_INCHESS=2.51;
@@ -70,6 +71,8 @@ function twipstocms(twips1:TRpTwips):double;
 begin
  Result:=(twips1/TWIPS_PER_INCHESS)*CMS_PER_INCHESS;
 end;
+
+
 
 initialization
  defaultunit:=rpUnitcms;

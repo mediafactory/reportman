@@ -191,7 +191,7 @@ begin
  begin
   if assigned(fobjinsp) then
   begin
-   fobjinsp.CompItem:=nil;
+   fobjinsp.AddCompItem(nil,true);
   end;
   exit;
  end;
@@ -209,7 +209,7 @@ begin
    inc(i);
   end;
   if Assigned(FSectionInterface) then
-   fobjinsp.CompItem:=FSectionInterface;
+   fobjinsp.AddCompItem(FSectionInterface,true);
  end;
 (*{$IFDEF MSWINDOWS}
   Application.ProcessMessages;
@@ -276,7 +276,7 @@ begin
  end;
  Fsubreport:=subreport;
  FObjInsp.RecreateChangesize;
- FObjInsp.CompItem:=nil;
+ fobjinsp.AddCompItem(nil,true);
  if not assigned(fsubreport) then
   exit;
  SectionScrollBox.Visible:=true;

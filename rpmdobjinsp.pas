@@ -24,7 +24,8 @@ uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   rpmdobinsint,QGrids,rpconsts,rpprintitem,QStdCtrls,
   QExtCtrls,rpgraphutils,rpsection,rpmunits, rpexpredlg,
-  rpalias,rpreport,Qt,rpsubreport,rpmdflabelint,rplabelitem;
+  rpalias,rpreport,Qt,rpsubreport,rpmdflabelint,rplabelitem,
+  rpmdfdrawint;
 
 const
   CONS_LEFTGAP=3;
@@ -37,6 +38,7 @@ type
   TRpPanelObj=class(TScrollBox)
    private
     FCompItem:TRpSizeInterface;
+    FSelectedItems:TStringList;
     subrep:TRpSubreport;
     LNames:TStringList;
     LTypes:TStringList;
@@ -63,6 +65,8 @@ type
     procedure UpdatePosValues;
     procedure CreateControlsSubReport;
     procedure SelectProperty(propname:string);
+    procedure SetPropertyFull(propname:string;value:Widestring);overload;
+    procedure SetPropertyFull(propname:string;stream:TMemoryStream);overload;
    public
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
@@ -80,6 +84,10 @@ type
     { Private declarations }
     FProppanels:TStringList;
     FDesignFrame:TObject;
+    FSelectedItems:TStringList;
+    FCommonObject:TRpSizePosInterface;
+    FClasses,FClassAncestors:TStringList;
+    procedure AddCompItemPos(aitem:TRpSizePosInterface;onlyone:boolean);
     procedure SetCompItem(Value:TRpSizeInterface);
     function FindPanelForClass(acompo:TRpSizeInterface):TRpPanelObj;
     function CreatePanel(acompo:TRpSizeInterface):TRpPanelObj;
@@ -87,17 +95,22 @@ type
     procedure ChangeSizeChange(Sender:TObject);
     function GetCompItem:TRpSizeInterface;
     function GetCurrentPanel:TRpPanelObj;
+    function GetCommonClassName:ShortString;
+    function FindCommonClass(baseclass,newclass:ShortString):ShortString;
   public
     { Public declarations }
     fchangesize:TRpSizeModifier;
+    procedure ClearMultiSelect;
     procedure InvalidatePanels;
     procedure SelectProperty(propname:string);
     procedure RecreateChangeSize;
+    procedure AddCompItem(aitem:TRpSizeInterface;onlyone:boolean);
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
-    property CompItem:TRpSizeInterface read GetCompItem write SetCompItem;
+    property CompItem:TRpSizeInterface read GetCompItem;
     property DesignFrame:TObject read FDesignFrame write FDesignFrame;
     property Combo:TComboBox read GetComboBox;
+    property SelectedItems:TStringList read FSelectedItems;
   end;
 
 
@@ -249,7 +262,7 @@ begin
  AScrollBox.BorderStyle:=bsNone;
  AScrollBox.Parent:=Self;
 
- FCompItem.GetProperties(LNames,LTypes,LValues);
+ FCompItem.GetProperties(LNames,LTypes,nil);
  for i:=0 to LNames.Count-1 do
  begin
   ALabel:=TLabel.Create(Self);
@@ -407,6 +420,7 @@ begin
  apanel:=TRpPanelObj.Create(Self);
  apanel.Visible:=false;
  apanel.Parent:=Self;
+ apanel.FSelectedItems:=FSelectedItems;
  if Not Assigned(acompo) then
  begin
   apanel.CreateControlsSubReport;
@@ -453,13 +467,16 @@ end;
 procedure TRpPanelObj.AssignPropertyValues;
 var
  FRpMainF:TFRpMainF;
- i:integer;
+ i,k,j:integer;
  typename:String;
  control:TControl;
  secint:TRpSectionInterface;
  asecitem:TRpSizeInterface;
+ aitem:TRpSizeInterface;
+ selecteditems:TStringList;
 begin
  FRpMainF:=TFRpMainF(Owner.Owner);
+ selecteditems:=TFRpObjInsp(Owner).FSelectedItems;
  if NOt Assigned(FCompItem) then
  begin
   TFRpObjInsp(Owner).fchangesize.Control:=nil;
@@ -482,19 +499,30 @@ begin
  end;
  if FCompItem is TRpSizePosInterface then
  begin
-  TFRpObjInsp(Owner).fchangesize.GridEnabled:=FRpMainf.report.GridEnabled;
-  TFRpObjInsp(Owner).fchangesize.GridX:=FRpMainf.report.GridWidth;
-  TFRpObjInsp(Owner).fchangesize.GridY:=FRpMainf.report.GridHeight;
-  TFRpObjInsp(Owner).fchangesize.Control:=FCompItem;
+  if selecteditems.count<2 then
+  begin
+   TFRpObjInsp(Owner).fchangesize.GridEnabled:=FRpMainf.report.GridEnabled;
+   TFRpObjInsp(Owner).fchangesize.GridX:=FRpMainf.report.GridWidth;
+   TFRpObjInsp(Owner).fchangesize.GridY:=FRpMainf.report.GridHeight;
+   TFRpObjInsp(Owner).fchangesize.Control:=FCompItem;
+   secint:=TrpSectionInterface(TRpSizePosInterface(FCompItem).SectionInt);
+  end
+  else
+  begin
+   TFRpObjInsp(Owner).fchangesize.Control:=nil;
+   secint:=TrpSectionInterface(TRpSizePosInterface(SelectedItems.Objects[0]).SectionInt);
+  end;
   FRpMainf.ACut.Enabled:=true;
   FRpMainf.ACopy.Enabled:=true;
   FRpMainf.AHide.Enabled:=true;
-  secint:=TrpSectionInterface(TRpSizePosInterface(FCompItem).SectionInt);
  end
  else
  begin
   TFRpObjInsp(Owner).fchangesize.Control:=nil;
   secint:=TrpSectionInterface(FCompItem);
+  FRpMainf.ACut.Enabled:=False;
+  FRpMainf.ACopy.Enabled:=False;
+  FRpMainf.AHide.Enabled:=False;
  end;
  FRpMainf.APaste.Enabled:=true;
 
@@ -508,71 +536,161 @@ begin
   alist.AddObject(asecitem.PrintItem.Name,asecitem);
  end;
  combo.items.assign(alist);
- if FCompItem is TRpSizePosInterface then
-  combo.Itemindex:=alist.Indexof(FCompItem.Printitem.Name)
- else
+ if (selectedItems.Count>1) then
+ begin
   combo.Itemindex:=-1;
+ end
+ else
+ begin
+  if FCompItem is TRpSizePosInterface then
+   combo.Itemindex:=alist.Indexof(FCompItem.Printitem.Name)
+  else
+   combo.Itemindex:=-1;
+ end;
  combo.OnChange:=ComboObjectChange;
 
-
- FCompItem.GetProperties(LNames,LTypes,LValues);
- for i:=0 to LNames.Count-1 do
+ // Get the property description for common component of
+ // multiselect
+ FCompItem.GetProperties(LNames,LTypes,nil);
+ LValues.Assign(LNames);
+ for k:=0 to selecteditems.count-1 do
  begin
-  typename:=LTypes.Strings[i];
-  if LTypes.Strings[i]=SRpSBool then
+  aitem:=TRpSizeInterface(selecteditems.Objects[k]);
+  for j:=0 to LNames.Count-1 do
   begin
-   Control:=TControl(LControls.Objects[i]);
-   TCOmboBox(Control).OnChange:=nil;
-   TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(LValues.Strings[i]);
-   TCOmboBox(Control).OnChange:=EditChange;
-  end
-  else
-  if LTypes.Strings[i]=SRpSList then
+   LValues.Strings[j]:=aitem.GetProperty(LNames.Strings[j]);
+  end;
+  for i:=0 to LNames.Count-1 do
   begin
-   Control:=TControl(LControls.Objects[i]);
-   TCOmboBox(Control).OnChange:=nil;
-   TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(LValues.Strings[i]);
-   TCOmboBox(Control).OnChange:=EditChange;
-  end
-  else
-  if LTypes.Strings[i]=SRpSColor then
-  begin
-   Control:=TControl(LControls.Objects[i]);
-   TShape(Control).Brush.Color:=StrToInt(LValues.Strings[i]);
-  end
-  else
-  if LTypes.Strings[i]=SRpSImage then
-  begin
-   Control:=TControl(LControls.Objects[i]);
-   TEdit(Control).Text:=LValues.Strings[i];
-  end
-  else
-  if LTypes.Strings[i]=SRpGroup then
-  begin
-   Control:=TControl(LControls.Objects[i]);
-   subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
-   alist.clear;
-   subrep.GetGroupNames(alist);
-   alist.Insert(0,'');
-   TComboBox(Control).OnChange:=nil;
-   TComboBox(Control).Items.Assign(alist);
-   if FCompItem is TRpExpressionInterface then
-    TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(
-      TRpExpression(TRpExpressionInterface(FCompItem).printitem).GroupName);
-   TComboBox(Control).OnChange:=EditChange;
-  end
-  else
-  if LTypes.Strings[i]=SRpSFontStyle then
-  begin
-   Control:=TControl(LControls.Objects[i]);
-   TEdit(Control).Text:=IntegerFontStyleToString(StrToInt(LValues.Strings[i]));
-  end
-  else
-  begin
-   Control:=TControl(LControls.Objects[i]);
-   TEdit(Control).OnChange:=nil;
-   TEdit(Control).Text:=LValues.Strings[i];
-   TEdit(Control).OnChange:=EditChange;
+   typename:=LTypes.Strings[i];
+   if LTypes.Strings[i]=SRpSBool then
+   begin
+    Control:=TControl(LControls.Objects[i]);
+    if k=0 then
+    begin
+     TCOmboBox(Control).OnChange:=nil;
+     TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(LValues.Strings[i]);
+     TCOmboBox(Control).OnChange:=EditChange;
+    end
+    else
+    begin
+     if TComboBox(Control).ItemIndex>=0 then
+     begin
+      if TComboBox(Control).Items.IndexOf(LValues.Strings[i])<>TComboBox(Control).ItemIndex then
+      begin
+       TComboBox(Control).OnChange:=nil;
+       TComboBox(Control).ItemIndex:=-1;
+       TCOmboBox(Control).OnChange:=EditChange;
+      end;
+     end;
+    end;
+   end
+   else
+   if LTypes.Strings[i]=SRpSList then
+   begin
+    Control:=TControl(LControls.Objects[i]);
+    if k=0 then
+    begin
+     TCOmboBox(Control).OnChange:=nil;
+     TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(LValues.Strings[i]);
+     TCOmboBox(Control).OnChange:=EditChange;
+    end
+    else
+    begin
+     if TComboBox(Control).ItemIndex<>TComboBox(Control).Items.IndexOf(LValues.Strings[i]) then
+     begin
+      TComboBox(Control).OnChange:=nil;
+      TComboBox(Control).ItemIndex:=-1;
+      TCOmboBox(Control).OnChange:=EditChange;
+     end;
+    end;
+   end
+   else
+   if LTypes.Strings[i]=SRpSColor then
+   begin
+    Control:=TControl(LControls.Objects[i]);
+    if k=0 then
+    begin
+     TShape(Control).Brush.Color:=StrToInt(LValues.Strings[i]);
+    end;
+   end
+   else
+   if LTypes.Strings[i]=SRpSImage then
+   begin
+    Control:=TControl(LControls.Objects[i]);
+    if k=0 then
+    begin
+     TEdit(Control).Text:=LValues.Strings[i];
+    end
+    else
+    begin
+     if Length(TEdit(Control).Text)>0 then
+      if TEdit(Control).Text<>LValues.Strings[i] then
+       TEdit(Control).Text:='';
+    end;
+   end
+   else
+   if LTypes.Strings[i]=SRpGroup then
+   begin
+    Control:=TControl(LControls.Objects[i]);
+    if k=0 then
+    begin
+     subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
+     alist.clear;
+     subrep.GetGroupNames(alist);
+     alist.Insert(0,'');
+     TComboBox(Control).OnChange:=nil;
+     TComboBox(Control).Items.Assign(alist);
+     if aitem is TRpExpressionInterface then
+      TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(
+        TRpExpression(TRpExpressionInterface(aitem).printitem).GroupName);
+     TComboBox(Control).OnChange:=EditChange;
+    end
+    else
+    begin
+     if aitem is TRpExpressionInterface then
+      if  TComboBox(Control).ItemIndex<>TComboBox(Control).Items.IndexOf(
+        TRpExpression(TRpExpressionInterface(aitem).printitem).GroupName) then
+      begin
+       TComboBox(Control).OnChange:=nil;
+       TComboBox(Control).ItemIndex:=-1;
+       TComboBox(Control).OnChange:=EditChange;
+      end;
+    end;
+   end
+   else
+   if LTypes.Strings[i]=SRpSFontStyle then
+   begin
+    Control:=TControl(LControls.Objects[i]);
+    if k=0 then
+    begin
+     TEdit(Control).Text:=IntegerFontStyleToString(StrToInt(LValues.Strings[i]));
+    end
+    else
+    begin
+     if TEdit(Control).Text<>IntegerFontStyleToString(StrToInt(LValues.Strings[i])) then
+      TEdit(Control).Text:='';
+    end;
+   end
+   else
+   begin
+    Control:=TControl(LControls.Objects[i]);
+    if k=0 then
+    begin
+     TEdit(Control).OnChange:=nil;
+     TEdit(Control).Text:=LValues.Strings[i];
+     TEdit(Control).OnChange:=EditChange;
+    end
+    else
+    begin
+     if TEdit(Control).Text<>LValues.Strings[i] then
+     begin
+      TEdit(Control).OnChange:=nil;
+      TEdit(Control).Text:='';
+      TEdit(Control).OnChange:=EditChange;
+     end;
+    end;
+   end;
   end;
  end;
 end;
@@ -638,16 +756,17 @@ begin
  FCurrentPanel.FCompItem:=Value;
  FCurrentPanel.Subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
  FCurrentPanel.AssignPropertyValues;
-
-
 end;
 
 constructor TFRpObjInsp.Create(AOwner:TComponent);
 var
  FRpMainF:TFRpMainF;
+ alist:TStrings;
 begin
  inherited Create(AOwner);
  FProppanels:=TStringList.Create;
+ FSelectedItems:=TStringList.Create;
+ FClasses:=TStringList.Create;
 
  FRpMainF:=TFRpMainF(Owner);
 
@@ -665,11 +784,44 @@ begin
  RpExpreDialog1.evaluator.AddVariable('CURRENTGROUP',FRpMainf.report.idencurrentgroup);
  RpExpreDialog1.evaluator.AddVariable('FREE_SPACE_CMS',FRpMainf.report.idenfreespacecms);
  RpExpreDialog1.evaluator.AddVariable('FREE_SPACE_INCH',FRpMainf.report.idenfreespaceinch);
+
+ FClasses.AddObject('TRpExpressionInterface',TRpExpressionInterface.Create(Self));
+ FClasses.AddObject('TRpLabelInterface',TRpLabelInterface.Create(Self));
+ FClasses.AddObject('TRpSizePosInterface',TRpSizePosInterface.Create(Self));
+ FClasses.AddObject('TRpDrawInterface',TRpDrawInterface.Create(Self));
+ FClasses.AddObject('TRpGenTextInterface',TRpGenTextInterface.Create(Self));
+ FClasses.AddObject('TRpImageInterface',TRpImageInterface.Create(Self));
+
+ FClassAncestors:=TStringList.Create;
+ alist:=TStringList.Create;
+ TRpExpressionInterface.FillAncestors(alist);
+ FClassAncestors.AddObject('TRpExpressionInterface',alist);
+ alist:=TStringList.Create;
+ TRpGenTextInterface.FillAncestors(alist);
+ FClassAncestors.AddObject('TRpGenTextInterface',alist);
+ alist:=TStringList.Create;
+ TRpLabelInterface.FillAncestors(alist);
+ FClassAncestors.AddObject('TRpLabelInterface',alist);
+ alist:=TStringList.Create;
+ TRpDrawInterface.FillAncestors(alist);
+ FClassAncestors.AddObject('TRpDrawInterface',alist);
+ alist:=TStringList.Create;
+ TRpImageInterface.FillAncestors(alist);
+ FClassAncestors.AddObject('TRpImageInterface',alist);
 end;
 
 destructor TFRpObjInsp.Destroy;
+var
+ i:integer;
 begin
  FPropPanels.Free;
+ FSelectedItems.Free;
+ FClasses.Free;
+ for i:=0 to FClassAncestors.Count-1 do
+ begin
+  FClassAncestors.Objects[i].Free;
+ end;
+ FClassAncestors.Free;
  inherited Destroy;
 end;
 
@@ -680,21 +832,28 @@ var
 begin
  index:=TControl(Sender).tag;
  aname:=Lnames.strings[index];
- FCompItem.SetProperty(aname,TEdit(Sender).Text);
- if (FCompItem is TRpSectionInterface) then
+ if FSelectedItems.Count<2 then
  begin
-  if ((aname=SRpsWidth) or (aname=SRpsHeight)) then
-   if Assigned(TFRpObjInsp(Owner).FDesignFrame) then
-    TFRpDesignFrame(TFRpObjInsp(Owner).FDesignFrame).UpdateInterface;
- end;
- // If the property es positional update position
- if Assigned(TFRpObjInsp(Owner).fchangesize) then
- begin
-  if ((aname=SRpSWidth) or (aname=SRpsHeight) or
-   (aname=SRpSTop) or (aname=SRpSLeft)) then
+  FCompItem.SetProperty(aname,TEdit(Sender).Text);
+  if (FCompItem is TRpSectionInterface) then
   begin
-   TFRpObjInsp(Owner).fchangesize.UpdatePos;
+   if ((aname=SRpsWidth) or (aname=SRpsHeight)) then
+    if Assigned(TFRpObjInsp(Owner).FDesignFrame) then
+     TFRpDesignFrame(TFRpObjInsp(Owner).FDesignFrame).UpdateInterface;
   end;
+  // If the property es positional update position
+  if Assigned(TFRpObjInsp(Owner).fchangesize) then
+  begin
+   if ((aname=SRpSWidth) or (aname=SRpsHeight) or
+    (aname=SRpSTop) or (aname=SRpSLeft)) then
+   begin
+    TFRpObjInsp(Owner).fchangesize.UpdatePos;
+   end;
+  end;
+ end
+ else
+ begin
+  SetPropertyFull(aname,TEdit(Sender).Text);
  end;
 end;
 
@@ -708,7 +867,7 @@ begin
  if TFRpObjInsp(Owner).ColorDialog1.Execute then
  begin
   AShape.Brush.Color:=TFRpObjInsp(Owner).ColorDialog1.Color;
-  FCompItem.SetProperty(Lnames.strings[AShape.Tag],IntToStr(TFRpObjInsp(Owner).ColorDialog1.Color));
+  SetPropertyFull(Lnames.strings[AShape.Tag],IntToStr(TFRpObjInsp(Owner).ColorDialog1.Color));
  end;
 end;
 
@@ -741,20 +900,20 @@ begin
   if index>=0 then
   begin
    TShape(LControls.Objects[index]).Brush.Color:=TFRpObjInsp(Owner).FontDialog1.Font.Color;
-   FCompItem.SetProperty(SRpSFontColor,IntToStr(TFRpObjInsp(Owner).FontDialog1.Font.Color));
+   SetPropertyFull(SRpSFontColor,IntToStr(TFRpObjInsp(Owner).FontDialog1.Font.Color));
   end;
   index:=LNames.IndexOf(SrpSFontStyle);
   if index>=0 then
   begin
    TEdit(LControls.Objects[index]).Text:=IntegerFontStyleToString(FontStyleToInteger(TFRpObjInsp(Owner).Fontdialog1.Font.Style));
-   FCompItem.SetProperty(SRpSFontStyle,IntToStr(FontStyleToInteger(TFRpObjInsp(Owner).Fontdialog1.Font.Style)));
+   SetPropertyFull(SRpSFontStyle,IntToStr(FontStyleToInteger(TFRpObjInsp(Owner).Fontdialog1.Font.Style)));
   end;
  end;
 end;
 
 procedure TRpPanelObj.ComboObjectChange(Sender:TObject);
 begin
- TFRpObjInsp(Owner).CompItem:=TRpSizeInterface(TComboBox(Sender).Items.Objects[TComboBox(Sender).ItemIndex]);
+ TFRpObjInsp(Owner).AddCompItem(TRpSizeInterface(TComboBox(Sender).Items.Objects[TComboBox(Sender).ItemIndex]),true);
 end;
 
 procedure TFRpObjInsp.ChangeSizeChange(Sender:TObject);
@@ -866,22 +1025,22 @@ begin
  index:=LNames.IndexOf(SRpSLeft);
  if index>=0 then
  begin
-  sizeposint.SetProperty(SRpSLeft,gettextfromtwips(pixelstotwips(NewLeft)));
+  SetPropertyFull(SRpSLeft,gettextfromtwips(pixelstotwips(NewLeft)));
  end;
  index:=LNames.IndexOf(SRpSTop);
  if index>=0 then
  begin
-  sizeposint.SetProperty(SRpSTop,gettextfromtwips(pixelstotwips(NewTop)));
+  SetPropertyFull(SRpSTop,gettextfromtwips(pixelstotwips(NewTop)));
  end;
  index:=LNames.IndexOf(SRpSWidth);
  if index>=0 then
  begin
-  sizeposint.SetProperty(SRpSWidth,gettextfromtwips(pixelstotwips(NewWidth)));
+  SetPropertyFull(SRpSWidth,gettextfromtwips(pixelstotwips(NewWidth)));
  end;
  index:=LNames.IndexOf(SRpSHeight);
  if index>=0 then
  begin
-  sizeposint.SetProperty(SRpSHeight,gettextfromtwips(pixelstotwips(NewHeight)));
+  SetPropertyFull(SRpSHeight,gettextfromtwips(pixelstotwips(NewHeight)));
  end;
 end;
 
@@ -895,10 +1054,35 @@ begin
   try
    Stream.LoadFromFile(TFRpObjInsp(Owner).OpenDialog1.FileName);
    Stream.Seek(0,soFromBeginning);
-   FCompItem.SetProperty(LNames.Strings[TComponent(Sender).Tag],stream);
+   SetPropertyFull(LNames.Strings[TComponent(Sender).Tag],stream);
   finally
    Stream.Free;
   end;
+ end;
+end;
+
+
+procedure TRpPanelObj.SetPropertyFull(propname:string;value:Widestring);
+var
+ i:integer;
+ aitem:TRpSizeInterface;
+begin
+ for i:=0 to FSelectedItems.Count-1 do
+ begin
+  aitem:=TRpSizeInterface(FSelectedItems.Objects[i]);
+  aitem.SetProperty(propname,value);
+ end;
+end;
+
+procedure TRpPanelObj.SetPropertyFull(propname:string;stream:TMemoryStream);
+var
+ i:integer;
+ aitem:TRpSizeInterface;
+begin
+ for i:=0 to FSelectedItems.Count-1 do
+ begin
+  aitem:=TRpSizeInterface(FSelectedItems.Objects[i]);
+  aitem.SetProperty(propname,stream);
  end;
 end;
 
@@ -911,7 +1095,7 @@ begin
  begin
   Stream:=TMemoryStream.Create;
   try
-   FCompItem.SetProperty(LNames.Strings[TComponent(Sender).Tag],stream);
+   SetPropertyFull(LNames.Strings[TComponent(Sender).Tag],stream);
   finally
    Stream.Free;
   end;
@@ -960,8 +1144,177 @@ begin
  end;
 end;
 
+function TFRpObjInsp.FindCommonClass(baseclass,newclass:ShortString):ShortString;
+var
+ indexnew,indexbase,i,j:integer;
+ aorigin,adestination:TStrings;
+ found:boolean;
+begin
+ Result:='TRpSizePosInterface';
+ // Find the index for the baseclass and
+ // for the new class
+ indexnew:=FClassAncestors.IndexOf(newclass);
+ indexbase:=FClassAncestors.IndexOf(baseclass);
+ if indexnew<0 then
+  Raise Exception.Create(SRpUnkownClassForMultiSelect+':'+newclass);
+ if indexbase<0 then
+  Raise Exception.Create(SRpUnkownClassForMultiSelect+':'+baseclass);
+ aorigin:=TStrings(FClassAncestors.Objects[indexbase]);
+ adestination:=TStrings(FClassAncestors.Objects[indexnew]);
+ // For the new class search a coincidence downto level
+ found:=false;
+ for i:=adestination.Count-1 downto 0 do
+ begin
+  for j:=aorigin.Count-1 downto 0 do
+  begin
+   if adestination.Strings[i]=aorigin.Strings[j] then
+   begin
+    Result:=adestination.Strings[i];
+    found:=true;
+    break;
+   end;
+  end;
+  if found then
+   break;
+ end;
+end;
+
+function TFRpObjInsp.GetCommonClassName:ShortString;
+var
+ baseclass:ShortString;
+ newclass:ShortString;
+ i:integer;
+begin
+ baseclass:=FSelectedItems.Objects[0].ClassName;
+ for i:=1 to FSelectedItems.Count-1 do
+ begin
+  newclass:=FSelectedItems.Strings[i];
+  if newclass<>baseclass then
+   baseclass:=FindCommonClass(baseclass,newclass);
+  if baseclass='TRpSizePosInterface' then
+   break;
+ end;
+ Result:=baseclass;
+end;
+
+
+procedure TFRpObjInsp.ClearMultiSelect;
+var
+ i:integer;
+ tempitem:TRpSizePosInterface;
+begin
+ if FSelectedItems.Count>0 then
+ begin
+  if (FSelectedItems.Objects[0] is TRpSizePosInterface) then
+  begin
+   for i:=0 to FSelectedItems.Count-1 do
+   begin
+    tempitem:=TRpSizePosInterface(FSelectedItems.Objects[i]);
+    if tempitem.Selected then
+    begin
+     tempitem.Selected:=False;
+     tempitem.Invalidate;
+    end;
+   end;
+  end;
+ end;
+ FSelectedItems.Clear;
+end;
+
+procedure TFRpObjInsp.AddCompItem(aitem:TRpSizeInterface;onlyone:boolean);
+var
+ i:integer;
+ tempitem:TRpSizePosInterface;
+begin
+ if Not Assigned(aitem) then
+ begin
+  ClearMultiSelect;
+  SetCompItem(aitem);
+  exit;
+ end;
+ if aitem is TRpSizePosInterface then
+ begin
+  if onlyone then
+   ClearMultiSelect;
+  if FSelectedItems.Count=1 then
+   if NOt (FSelectedItems.Objects[0] is TRpSizePosInterface) then
+   begin
+    ClearMultiSelect;
+   end;
+  AddCompItemPos(TRpSizePosInterface(aitem),onlyone);
+  if FSelectedItems.Count>1 then
+  begin
+   fchangesize.Control:=nil;
+   for i:=0 to FSelectedItems.Count-1 do
+   begin
+    tempitem:=TRpSizePosInterface(FSelectedItems.Objects[i]);
+    if Not tempitem.Selected then
+    begin
+     tempitem.Selected:=True;
+     tempitem.Invalidate;
+    end;
+   end;
+  end;
+  exit;
+ end
+ else
+ begin
+  ClearMultiSelect;
+  FSelectedItems.AddObject(aitem.classname,aitem);
+  SetCompItem(aitem);
+ end;
+end;
+
+procedure TFRpObjInsp.AddCompItemPos(aitem:TRpSizePosInterface;onlyone:boolean);
+var
+ parentclassname:ShortString;
+ i,index:integer;
+ found:boolean;
+begin
+ if onlyone then
+ begin
+  FSelectedItems.Clear;
+ end;
+ found:=false;
+ i:=0;
+ while i<FSelectedItems.Count do
+ begin
+  if FSelectedItems.Objects[i]=aitem then
+  begin
+   found:=true;
+   break;
+  end;
+  inc(i);
+ end;
+ if found then
+  exit;
+ FSelectedItems.AddObject(aitem.classname,aitem);
+ if FSelectedItems.Count=1 then
+ begin
+  SetCompItem(aitem);
+  exit;
+ end;
+ // Looks for the most ancestor class of the list
+ parentclassname:=GetCommonClassName;
+ if assigned(FCommonObject) then
+ begin
+  if FCommonObject.ClassName<>parentclassname then
+  begin
+   FCommonObject:=nil;
+  end;
+ end;
+ if Not Assigned(FCommonObject) then
+ begin
+  index:=FClasses.IndexOf(parentclassname);
+  if index<0 then
+   Raise Exception.Create(SRpClassNotRegistered+':'+parentclassname);
+  FCommonObject:=TRpSizePosInterface(FClasses.Objects[index]);
+ end;
+ FCommonObject.SectionInt:=aitem.SectionInt;
+ SetCompItem(FCommonObject);
+end;
+
 
 initialization
-
 
 end.

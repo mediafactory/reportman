@@ -565,6 +565,9 @@ end;
 
 procedure TFRpMainF.FormCreate(Sender: TObject);
 begin
+ // Inits Bools Arraya
+ BoolToStr(True,True);
+
 {$IFDEF VCLFILEFILTERS}
  OpenDialog1.Filter := SRpRepFile+'|*.rep';
 {$ENDIF}
@@ -761,18 +764,28 @@ end;
 procedure TFRpMainF.ACutExecute(Sender: TObject);
 var
  sectionintf:TRpSectionInterface;
- pitem:TRpCommonComponent;
+ aitem:TRpSizePosInterface;
+ alist:TStringList;
+ i:integer;
 begin
  // Delete current selection
- if Not Assigned(fobjinsp.CompItem) then
+ if fobjinsp.SelectedItems.Count<1 then
   exit;
- if fobjinsp.CompItem is TRpSizePosInterface then
- begin
-  pitem:=TRpSizePosInterface(fobjinsp.CompItem).printitem;
-  sectionintf:=TrpSectionInterface(TRpSizePosInterface(fobjinsp.CompItem).sectionint);
-  Clipboard.SetComponent(pitem);
-  sectionintf.DoDeleteComponent(pitem);
-  fobjinsp.CompItem:=nil;
+ if (Not (fobjinsp.SelectedItems.Objects[0] is TRpSizePosInterface)) then
+  exit;
+ ACopy.Execute;
+ alist:=TStringList.Create;
+ try
+  alist.Assign(fobjinsp.SelectedItems);
+  fobjinsp.ClearMultiSelect;
+  for i:=0 to alist.count-1 do
+  begin
+   aitem:=TRpSizePosInterface(alist.Objects[i]);
+   sectionintf:=TRpSectionInterface(aitem.SectionInt);
+   TRpSection(sectionintf.printitem).DeleteComponent(aitem.printitem);
+  end;
+ finally
+  alist.free;
  end;
  fdesignframe.UpdateSelection(true);
 end;
@@ -780,14 +793,31 @@ end;
 procedure TFRpMainF.ACopyExecute(Sender: TObject);
 var
  pitem:TRpCommonComponent;
+ acompo:TComponent;
+ i:integer;
 begin
- // Delete current selection
- if Not Assigned(fobjinsp.CompItem) then
+ if fobjinsp.SelectedItems.Count<1 then
   exit;
- if fobjinsp.CompItem is TRpSizePosInterface then
- begin
-  pitem:=TRpSizePosInterface(fobjinsp.CompItem).printitem;
-  Clipboard.SetComponent(pitem);
+ if (Not (fobjinsp.SelectedItems.Objects[0] is TRpSizePosInterface)) then
+  exit;
+ acompo:=TRpReport.Create(nil);
+ try
+  acompo.Name:='TheOwner';
+  for i:=0 to fobjinsp.SelectedItems.Count-1 do
+  begin
+   pitem:=TRpSizePosInterface(fobjinsp.SelectedItems.Objects[i]).printitem;
+   report.Removecomponent(pitem);
+   acompo.InsertComponent(pitem);
+  end;
+  Clipboard.SetComponent(acompo);
+  for i:=0 to fobjinsp.SelectedItems.Count-1 do
+  begin
+   pitem:=TRpSizePosInterface(fobjinsp.SelectedItems.Objects[i]).printitem;
+   acompo.RemoveComponent(pitem);
+   report.Insertcomponent(pitem);
+  end;
+ finally
+  acompo.free;
  end;
 end;
 
@@ -796,33 +826,51 @@ var
  section:TRpSection;
  secint:TRpSectionInterface;
  compo:TComponent;
+ acompo:TComponent;
+ i:integer;
+ alist:TList;
+ pitem:TRpCommonPosComponent;
 begin
-// 'application/delphi.component'
-
- // Delete current selection
- if Not Assigned(fobjinsp.CompItem) then
+ if fobjinsp.SelectedItems.Count<1 then
   exit;
- if (fobjinsp.CompItem is TRpSectionInterface) then
+ if (fobjinsp.SelectedItems.Objects[0] is TRpSectionInterface) then
  begin
   secint:=TRpSectionInterface(fobjinsp.CompItem);
  end
  else
  begin
-  secint:=TRpSectionInterface(TRpSizePosInterface(fobjinsp.CompItem).SectionInt);
+  secint:=TRpSectionInterface(TRpSizePosInterface(fobjinsp.SelectedItems.Objects[0]).SectionInt);
  end;
  section:=TrpSection(secint.printitem);
- compo:=Clipboard.GetComponent(report,report);
- if compo is TRpCommonPosComponent then
- begin
-  compo.Name:='';
-  Generatenewname(compo);
-  (section.Components.Add).Component:=TRpCommonPosComponent(compo);
-  fobjinsp.CompItem:=nil;
-  fdesignframe.UpdateSelection(true);
- end
- else
- begin
-  Raise Exception.Create(SRpInvalidClipboardFormat);
+ acompo:=TRpReport.Create(nil);
+ try
+  acompo.Name:='AOwner';
+  compo:=Clipboard.GetComponent(acompo,acompo);
+  alist:=TList.Create;
+  try
+   for i:=0 to compo.ComponentCount-1 do
+   begin
+    alist.Add(compo.Components[i]);
+   end;
+   for i:=0 to alist.Count-1 do
+   begin
+    if (not (TObject(alist.items[i]) is TrpCommonPosComponent)) then
+    begin
+     Raise Exception.Create(SRpInvalidClipboardFormat+':'+TObject(alist.items[i]).ClassName);
+    end;
+    pitem:=TrpCommonPosComponent(alist.Items[i]);
+    compo.RemoveComponent(pitem);
+    pitem.Name:='';
+    (section.Components.Add).Component:=pitem;
+    report.InsertComponent(pitem);
+    Generatenewname(pitem);
+   end;
+   fdesignframe.UpdateSelection(true);
+  finally
+   alist.Free;
+  end;
+ finally
+  acompo.Free;
  end;
 end;
 
@@ -833,8 +881,8 @@ begin
  // Assigns then objinsp
  fobjinsp.InvalidatePanels;
  olditem:=fobjinsp.CompItem;
- fobjinsp.CompItem:=nil;
- fobjinsp.CompItem:=olditem;
+ fobjinsp.AddCompItem(nil,true);
+ fobjinsp.AddCompItem(olditem,true);
  // Correct scrollboxes
  CorrectScrollBoxes;
 
@@ -1315,7 +1363,5 @@ begin
 end;
 
 initialization
-
-
 
 end.

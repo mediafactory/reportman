@@ -31,6 +31,7 @@ const
  CONS_MINIMUMMOVE=5;
  CONS_MINHEIGHT=5;
  CONS_MINWIDTH=5;
+ CONS_SELWIDTH=7;
 type
  TRpPropertytype=(rppinteger,rppcurrency,rppstring,rpplist,rpcustom);
 
@@ -53,19 +54,22 @@ type
    procedure UpdatePos;virtual;
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);virtual;
    procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);virtual;
-   procedure SetProperty(pname:string;value:string);overload;virtual;
+   procedure SetProperty(pname:string;value:Widestring);overload;virtual;
    procedure SetProperty(pname:string;stream:TMemoryStream);overload;virtual;
    procedure GetProperty(pname:string;var Stream:TMemoryStream);overload;virtual;
-   function GetProperty(pname:string):string;overload;virtual;
+   function GetProperty(pname:string):Widestring;overload;virtual;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);reintroduce;overload;virtual;
    property printitem:TRpCommonComponent read fprintitem;
    property Selected:Boolean read FSelected write SetSelected;
  end;
 
+ TRpSizePosInterfaceClass=class of TRpSizePosInterface;
+ 
  TRpRectangle=class(TGraphicControl)
   protected
    procedure Paint;override;
   public
+   Solid:boolean;
    constructor Create(AOwner:TComponent);override;
  end;
 
@@ -89,9 +93,10 @@ type
    procedure DoSelect;
    procedure UpdatePos;override;
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
-   procedure SetProperty(pname:string;value:string);override;
-   function GetProperty(pname:string):string;override;
+   procedure SetProperty(pname:string;value:Widestring);override;
+   function GetProperty(pname:string):Widestring;override;
    procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
+   class procedure FillAncestors(alist:TStrings);virtual;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
  end;
 
@@ -100,10 +105,11 @@ type
   private
   protected
   public
+   class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
-   procedure SetProperty(pname:string;value:string);override;
-   function GetProperty(pname:string):string;override;
+   procedure SetProperty(pname:string;value:Widestring);override;
+   function GetProperty(pname:string):Widestring;override;
    procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
  end;
 
@@ -182,29 +188,35 @@ procedure TRpSizeInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
  lnames.clear;
  ltypes.clear;
- lvalues.Clear;
+ if Assigned(lvalues) then
+  lvalues.Clear;
  // PrintCondition
  lnames.Add(SrpSPrintCondition);
  ltypes.Add(SRpSExpression);
- lvalues.Add(printitem.PrintCondition);
+ if Assigned(lvalues) then
+  lvalues.Add(printitem.PrintCondition);
  // Before Print
  lnames.Add(SrpSBeforePrint);
  ltypes.Add(SRpSExpression);
- lvalues.Add(printitem.DoBeforePrint);
+ if Assigned(lvalues) then
+  lvalues.Add(printitem.DoBeforePrint);
  // After Print
  lnames.Add(SrpSAfterPrint);
  ltypes.Add(SRpSExpression);
- lvalues.Add(printitem.DoAfterPrint);
+ if Assigned(lvalues) then
+  lvalues.Add(printitem.DoAfterPrint);
 
 
  // Width
  lnames.Add(SrpSWidth);
  ltypes.Add(SRpSCurrency);
- lvalues.Add(gettextfromtwips(printitem.Width));
+ if Assigned(lvalues) then
+  lvalues.Add(gettextfromtwips(printitem.Width));
  // Height
  lnames.Add(SrpSHeight);
  ltypes.Add(SRpSCurrency);
- lvalues.Add(gettextfromtwips(printitem.Height));
+ if Assigned(lvalues) then
+  lvalues.Add(gettextfromtwips(printitem.Height));
 end;
 
 procedure TRpSizeInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
@@ -222,7 +234,7 @@ begin
  Raise Exception.Create(SRpPropertyisnotstream+pname);
 end;
 
-procedure TRpSizeInterface.SetProperty(pname:string;value:string);
+procedure TRpSizeInterface.SetProperty(pname:string;value:Widestring);
 begin
  if length(value)<1 then
   exit;
@@ -256,7 +268,7 @@ begin
  Raise Exception.Create(SRpPropertyNotFound+pname);
 end;
 
-function TRpSizeInterface.GetProperty(pname:string):string;
+function TRpSizeInterface.GetProperty(pname:string):Widestring;
 begin
  Result:='';
  if pname=SRpSPrintCondition then
@@ -272,6 +284,16 @@ begin
  if pname=SRpSAfterPrint then
  begin
   Result:=printitem.DoAfterPrint;
+  exit;
+ end;
+ if pname=SRpSWidth then
+ begin
+  Result:=gettextfromtwips(printitem.Width);
+  exit;
+ end;
+ if pname=SRpSHeight then
+ begin
+  Result:=gettextfromtwips(printitem.Height);
   exit;
  end;
  Raise Exception.Create(SRpPropertyNotFound+pname);
@@ -291,6 +313,12 @@ begin
  opts:=ControlStyle;
  include(opts,csCaptureMouse);
  ControlStyle:=opts;
+end;
+
+class procedure TRpSizePosInterface.FillAncestors(alist:TStrings);
+begin
+ alist.clear;
+ alist.Add('TRpSizePosInterface');
 end;
 
 procedure TRpSizePosInterface.DoSelect;
@@ -340,20 +368,23 @@ begin
  // Top
  lnames.Add(SrpSTop);
  ltypes.Add(SRpSCurrency);
- lvalues.Add(gettextfromtwips(TRpCommonPosComponent(printitem).PosY));
+ if Assigned(lvalues) then
+  lvalues.Add(gettextfromtwips(TRpCommonPosComponent(printitem).PosY));
  // Left
  lnames.Add(SrpSLeft);
  ltypes.Add(SRpSCurrency);
- lvalues.Add(gettextfromtwips(TRpCommonPosComponent(printitem).PosX));
+ if Assigned(lvalues) then
+  lvalues.Add(gettextfromtwips(TRpCommonPosComponent(printitem).PosX));
 
  lnames.Add(SRPAlign);
  ltypes.Add(SRpSList);
- lvalues.Add(AlignToStr(TRpCommonPosComponent(printitem).Align));
+ if Assigned(lvalues) then
+  lvalues.Add(AlignToStr(TRpCommonPosComponent(printitem).Align));
 end;
 
 
 
-procedure TRpSizePosInterface.SetProperty(pname:string;value:string);
+procedure TRpSizePosInterface.SetProperty(pname:string;value:Widestring);
 begin
  if length(value)<1 then
   exit;
@@ -393,7 +424,7 @@ begin
  inherited GetPropertyValues(pname,lpossiblevalues);
 end;
 
-function TRpSizePosInterface.GetProperty(pname:string):string;
+function TRpSizePosInterface.GetProperty(pname:string):Widestring;
 begin
  Result:='';
  if pname=SRpSTop then
@@ -440,9 +471,14 @@ procedure TRpSizeInterface.DrawSelected;
 begin
  if Not Selected then
   exit;
- Canvas.Brush.Style:=bsClear;
+ Canvas.Brush.Style:=bsSolid;
  Canvas.Pen.Style:=psSolid;
- Canvas.Rectangle(0,0,Width,Height);
+ Canvas.Pen.Color:=clDisabledButton;
+ Canvas.Brush.Color:=clDisabledButton;
+ Canvas.Rectangle(0,0,CONS_SELWIDTH,CONS_SELWIDTH);
+ Canvas.Rectangle(0,Height-CONS_SELWIDTH,CONS_SELWIDTH,Height);
+ Canvas.Rectangle(Width-CONS_SELWIDTH,Height-CONS_SELWIDTH,Width,Height);
+ Canvas.Rectangle(Width-CONS_SELWIDTH,0,Width,CONS_SELWIDTH);
 end;
 
 procedure TRpSizeInterface.SetSelected(Value:boolean);
@@ -670,7 +706,7 @@ begin
   TRpCOmmonPosComponent(printitem).PosY:=pixelstotwips(NewTop);
   UpdatePos;
   if Assigned(fobjinsp) then
-   TFRpObjInsp(fobjinsp).CompItem:=Self;
+   TFRpObjInsp(fobjinsp).AddCompItem(Self,Not (ssShift in Shift));
  end;
 end;
 
@@ -683,6 +719,13 @@ end;
 
 procedure TRpRectangle.Paint;
 begin
+ Canvas.Pen.Color:=clBlack;
+ Canvas.Pen.Style:=psSolid;
+ Canvas.Brush.Color:=clWhite;
+ if Solid then
+  Canvas.Brush.Style:=bsSolid
+ else
+  Canvas.Brush.Style:=bsClear;
  Canvas.Rectangle(0,0,Width,Height);
 end;
 
@@ -931,7 +974,7 @@ begin
   if Control is TRpSizePosInterface then
   begin
    if Assigned(TRpSizePosInterface(Control).fobjinsp) then
-    TFRpObjInsp(TRpSizePosInterface(Control).fobjinsp).CompItem:=TRpSizePosInterface(Control);
+    TFRpObjInsp(TRpSizePosInterface(Control).fobjinsp).AddCompItem(TRpSizePosInterface(Control),true);
   end;
  end;
 end;
@@ -961,6 +1004,11 @@ begin
  inherited Create(AOwner,pritem);
 end;
 
+class procedure TRpGenTextInterface.FillAncestors(alist:TStrings);
+begin
+ inherited FillAncestors(alist);
+ alist.Add('TRpGenTextInterface');
+end;
 
 function HAlignmentToText(value:integer):string;
 begin
@@ -1083,77 +1131,91 @@ begin
  // Alignment
  lnames.Add(SrpSAlignment);
  ltypes.Add(SRpSList);
- lvalues.Add(HAlignmentToText(TRpGenTextComponent(printitem).Alignment));
+ if Assigned(lvalues) then
+  lvalues.Add(HAlignmentToText(TRpGenTextComponent(printitem).Alignment));
 
  // VAlignment
  lnames.Add(SrpSVAlignment);
  ltypes.Add(SRpSList);
- lvalues.Add(VAlignmentToText(TRpGenTextComponent(printitem).VAlignment));
+ if Assigned(lvalues) then
+  lvalues.Add(VAlignmentToText(TRpGenTextComponent(printitem).VAlignment));
 
  // Font Name
  lnames.Add(SrpSWFontName);
  ltypes.Add(SRpSWFontName);
- lvalues.Add(TRpGenTextComponent(printitem).WFontName);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpGenTextComponent(printitem).WFontName);
 
  // Linux Font Name
  lnames.Add(SrpSLFontName);
  ltypes.Add(SRpSLFontName);
- lvalues.Add(TRpGenTextComponent(printitem).LFontName);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpGenTextComponent(printitem).LFontName);
 
  // Type1 Font Name
  lnames.Add(SRpSType1Font);
  ltypes.Add(SRpSList);
- lvalues.Add(Type1FontToText(TRpGenTextComponent(printitem).Type1Font));
+ if Assigned(lvalues) then
+  lvalues.Add(Type1FontToText(TRpGenTextComponent(printitem).Type1Font));
 
 
  // Font Size
  lnames.Add(SrpSFontSize);
  ltypes.Add(SRpSFontSize);
- lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontSize));
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontSize));
 
  // Font Color
  lnames.Add(SrpSFontColor);
  ltypes.Add(SRpSColor);
- lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontColor));
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontColor));
 
  // Font Style
  lnames.Add(SrpSFontStyle);
  ltypes.Add(SrpSFontStyle);
- lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontStyle));
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontStyle));
 
 
  // Back Color
  lnames.Add(SrpSBackColor);
  ltypes.Add(SRpSColor);
- lvalues.Add(IntToStr(TRpGenTextComponent(printitem).BackColor));
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpGenTextComponent(printitem).BackColor));
 
  // Transparent
  lnames.Add(SrpSTransparent);
  ltypes.Add(SRpSBool);
- lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).Transparent,true));
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).Transparent,true));
 
  // Cut Text
  lnames.Add(SrpSCutText);
  ltypes.Add(SRpSBool);
- lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).CutText,true));
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).CutText,true));
 
  // Work wrap
  lnames.Add(SrpSWordwrap);
  ltypes.Add(SRpSBool);
- lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).WordWrap,true));
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).WordWrap,true));
 
  // Single line
  lnames.Add(SrpSSingleLine);
  ltypes.Add(SRpSBool);
- lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).SingleLine,true));
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).SingleLine,true));
 
  // Font Rotation in degrees
  lnames.Add(SRpSFontRotation);
  ltypes.Add(SrpSString);
- lvalues.Add(FormatCurr('#####0.0',TRpGenTextComponent(printitem).FontRotation/10));
+ if Assigned(lvalues) then
+  lvalues.Add(FormatCurr('#####0.0',TRpGenTextComponent(printitem).FontRotation/10));
 end;
 
-procedure TRpGenTextInterface.SetProperty(pname:string;value:string);
+procedure TRpGenTextInterface.SetProperty(pname:string;value:Widestring);
 begin
  if length(value)<1 then
   exit;
@@ -1243,7 +1305,7 @@ begin
  inherited SetProperty(pname,value);
 end;
 
-function TRpGenTextInterface.GetProperty(pname:string):string;
+function TRpGenTextInterface.GetProperty(pname:string):Widestring;
 begin
  Result:='';
  if pname=SrpSAlignMent then
@@ -1306,8 +1368,16 @@ begin
   Result:=FormatCurr('#####0.0',TRpGenTextComponent(printitem).FontRotation/10);
   exit;
  end;
-
-
+ if pname=SrpSWordWrap then
+ begin
+  Result:=BoolToStr(TRpGenTextComponent(printitem).WordWrap,true);
+  exit;
+ end;
+ if pname=SrpSSingleLine then
+ begin
+  Result:=BoolToStr(TRpGenTextComponent(printitem).SingleLine,true);
+  exit;
+ end;
  Result:=inherited GetProperty(pname);
 end;
 
@@ -1346,5 +1416,6 @@ begin
 end;
 
 initialization
+
 
 end.
