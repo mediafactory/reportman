@@ -143,6 +143,10 @@ type
     MGDIDriver: TMenuItem;
     ADriverQT: TAction;
     ADriverGDI: TAction;
+    ASystemPrintDialog: TAction;
+    Systemprintdialog1: TMenuItem;
+    AkylixPrintBug: TAction;
+    MKylixPrintBug: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -180,6 +184,8 @@ type
     procedure AUserParamsExecute(Sender: TObject);
     procedure ADriverQTExecute(Sender: TObject);
     procedure ADriverGDIExecute(Sender: TObject);
+    procedure ASystemPrintDialogExecute(Sender: TObject);
+    procedure AkylixPrintBugExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFDesignFrame;
@@ -543,6 +549,7 @@ begin
 {$ENDIF}
 {$IFDEF LINUX}
   LastUsedFiles.CaseSensitive:=True;
+  MKylixPrintBug.Visible:=True;
 {$ENDIF}
  LastUsedFiles.LoadFromConfigFile(configfile);
  UpdateFileMenu;
@@ -796,7 +803,7 @@ begin
   exit;
  end;
 {$ENDIF MSWINDOWS}
- rppreview.ShowPreview(report,caption);
+ rppreview.ShowPreview(report,caption,AsystemPrintDialog.Checked);
 end;
 
 procedure TFMainf.AAboutExecute(Sender: TObject);
@@ -808,6 +815,7 @@ procedure TFMainf.APrintExecute(Sender: TObject);
 var
  allpages,collate:boolean;
  frompage,topage,copies:integer;
+ dook:boolean;
 begin
 {$IFDEF MSWINDOWS}
  if ADriverGDI.Checked then
@@ -825,12 +833,11 @@ begin
  collate:=report.CollateCopies;
  frompage:=1; topage:=999999;
  copies:=report.Copies;
-{$IFDEF MSWINDOWS}
- if rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-{$ENDIF}
-{$IFDEF LINUX}
- if rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-{$ENDIF}
+ if ASystemPrintDialog.Checked then
+  dook:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate)
+ else
+  dook:=rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+ if dook then
   rpqtdriver.PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
 end;
 
@@ -989,6 +996,8 @@ begin
  try
   AUnitCms.Checked:=inif.ReadBool('Preferences','UnitCms',true);
   ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',true);
+  AsystemPrintDialog.Checked:=inif.ReadBool('Preferences','SystemPrintDialog',True);
+  AKylixPrintBug.Checked:=inif.ReadBool('Preferences','KylixPrintBug',True);
   ADriverGDI.Checked:=Not ADriverQT.Checked;
   AUnitsinchess.Checked:=Not AUnitCms.Checked;
   UpdateUnits;
@@ -1005,6 +1014,8 @@ begin
  try
   inif.WriteBool('Preferences','UnitCms',AUnitCms.Checked);
   inif.WriteBool('Preferences','DriverQT',ADriverQT.Checked);
+  inif.WriteBool('Preferences','SystemPrintDialog',AsystemPrintDialog.Checked);
+  inif.WriteBool('Preferences','KylixPrintBug',AKylixPrintBug.Checked);
   inif.UpdateFile;
  finally
   inif.free;
@@ -1083,6 +1094,17 @@ procedure TFMainf.ADriverGDIExecute(Sender: TObject);
 begin
  ADriverGDI.Checked:=true;
  ADriverQT.Checked:=false;
+end;
+
+procedure TFMainf.ASystemPrintDialogExecute(Sender: TObject);
+begin
+ ASystemPrintDialog.Checked:=Not ASystemPrintDialog.Checked;
+end;
+
+procedure TFMainf.AkylixPrintBugExecute(Sender: TObject);
+begin
+ AKylixPrintBug.Checked:=Not AKylixPrintBug.Checked;
+ rpqtdriver.kylixprintbug:=AKylixPrintBug.Checked;
 end;
 
 initialization

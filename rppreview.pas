@@ -93,6 +93,7 @@ type
     procedure EnableControls;
   public
     { Public declarations }
+    systemprintdialog:boolean;
     pagenum:integer;
     report:TRpReport;
     qtdriver:TRpQtDriver;
@@ -102,7 +103,7 @@ type
   end;
 
 
-function ShowPreview(report:TRpReport;caption:string):boolean;
+function ShowPreview(report:TRpReport;caption:string;systemprintdialog:boolean):boolean;
 
 implementation
 
@@ -114,7 +115,7 @@ uses rprfparams,
 
 {$R *.xfm}
 
-function ShowPreview(report:TRpReport;caption:string):boolean;
+function ShowPreview(report:TRpReport;caption:string;systemprintdialog:boolean):boolean;
 var
  dia:TFRpPreview;
  oldprogres:TRpProgressEvent;
@@ -136,6 +137,7 @@ begin
      break;
     end;
    end;
+   dia.systemprintdialog:=systemprintdialog;
    dia.AParams.Enabled:=hasparams;
    dia.enableparams:=hasparams;
    report.OnProgress:=dia.RepProgress;
@@ -291,14 +293,16 @@ begin
  collate:=report.CollateCopies;
  frompage:=1; topage:=999999;
  copies:=report.Copies;
-{$IFDEF MSWINDOWS}
- if Not rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-  exit;
-{$ENDIF}
-{$IFDEF LINUX}
+ if systemprintdialog then
+ begin
  if Not rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
   exit;
-{$ENDIF}
+ end
+ else
+ begin
+  if Not rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+   exit;
+ end;
  report.EndPrint;
  PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
  AppIdle(Self,adone);

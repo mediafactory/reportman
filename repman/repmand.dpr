@@ -48,6 +48,8 @@ uses
   ShLwApi in 'ShLwApi.pas',
   ShFolder in 'ShFolder.pas',
   midaslib,Crtl,
+  rppdfreport in '..\rppdfreport.pas',
+  rpvclreport in '..\rpvclreport.pas',
   rpvgraphutils in '..\rpvgraphutils.pas',
   rpgdidriver in '..\rpgdidriver.pas',
   rpvpreview in '..\rpvpreview.pas',
@@ -103,6 +105,7 @@ uses
 {$ENDIF}
 
 {$IFDEF LINUX}
+  rpclxreport in '../rppdfreport.pas',
   rpreport in '../rpreport.pas',
   rpsubreport in '../rpsubreport.pas',
   rpconsts in '../rpconsts.pas',

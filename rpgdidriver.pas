@@ -93,6 +93,8 @@ type
    toprinter:boolean;
    pagemargins:TRect;
    drawclippingregion:boolean;
+   oldpagesize,pagesize:TGDIPageSize;
+
    procedure NewDocument(report:TrpMetafileReport);stdcall;
    procedure EndDocument;stdcall;
    procedure AbortDocument;stdcall;
@@ -272,6 +274,7 @@ begin
    asize:=SetPageSize(report.PageSize);
   end;
   printer.BeginDoc;
+  SetCurrentPaper(pagesize);
   intdpix:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX); //  printer.XDPI;
   intdpiy:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY);  // printer.YDPI;
  end
@@ -604,7 +607,9 @@ end;
 
 function TRpGDIDriver.SetPagesize(PagesizeQt:integer):TPoint;
 begin
-// Printer.PrintAdapter.PageSize:=TPageSize(PagesizeQT);
+ pagesize:=QtPageSizeToGDIPageSize(PagesizeQT);
+ SetCurrentPaper(pagesize);
+
  Result:=GetPageSize;
 end;
 
@@ -1030,6 +1035,8 @@ begin
   ETo.Text:=IntToStr(ToPage);
  end;
 end;
+
+
 
 end.
 

@@ -372,6 +372,12 @@ object FMainf: TFMainf
           Action = ADriverGDI
         end
       end
+      object Systemprintdialog1: TMenuItem
+        Action = ASystemPrintDialog
+      end
+      object MKylixPrintBug: TMenuItem
+        Action = AkylixPrintBug
+      end
     end
     object About1: TMenuItem
       Caption = 'Help'
@@ -593,6 +599,19 @@ object FMainf: TFMainf
       Caption = 'GDI Driver (VCL)'
       Hint = 'Activates the GDI32 direct rendering driver (VCL)'
       OnExecute = ADriverGDIExecute
+    end
+    object ASystemPrintDialog: TAction
+      Category = 'Preferences'
+      Caption = 'Qt System print dialog'
+      Hint = 'Shows the system print dialog, or a custom print dialog'
+      OnExecute = ASystemPrintDialogExecute
+    end
+    object AkylixPrintBug: TAction
+      Caption = 'Kylix Print Bufix'
+      Checked = True
+      Hint = 'Uses kylix print bugfix (use metaprint to print metafiles)'
+      Visible = False
+      OnExecute = AkylixPrintBugExecute
     end
   end
   object iconlist: TImageList

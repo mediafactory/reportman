@@ -74,6 +74,7 @@ resourcestring
   SRpSVertLine='Vert.Line';
   SRPHorzDesp='Horz.Desp.';
   SRpInvalidBoolean='Invalid boolean: ';
+  SRpPaperNotFount='Paper name not found';
 
   SRpSureDeleteSection='Delete selected section?';
   SRpNoDatasets='No datasets defined';

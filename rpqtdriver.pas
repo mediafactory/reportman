@@ -56,9 +56,7 @@ type
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure AppIdleReport(Sender:TObject;var done:boolean);
     procedure AppIdlePrintPDF(Sender:TObject;var done:boolean);
-{$IFDEF NOLINUXPRINTBUG}
     procedure AppIdlePrintRange(Sender:TObject;var done:boolean);
-{$ENDIF}
     procedure RepProgress(Sender:TRpReport;var docancel:boolean);
   public
     { Public declarations }
@@ -110,20 +108,23 @@ function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
 
 // Because copies and collation not work in Windows we
 // use the ShowPrintdialog in rpprintdia
-{$IFDEF LINUX}
 function DoShowPrintDialog(var allpages:boolean;
  var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
+
+ var
+{$IFDEF MSWINDOWS}
+  kylixprintbug:boolean=false;
+{$ENDIF}
+{$IFDEF LINUX}
+  kylixprintbug:boolean=true;
 {$ENDIF}
 
 implementation
 
-{$IFDEF MSWINDOWS}
 uses rpprintdia;
-{$ENDIF}
 
 {$R *.xfm}
 
-{$IFDEF LINUX}
 function DoShowPrintDialog(var allpages:boolean;
  var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
 begin
@@ -146,7 +147,6 @@ begin
   Result:=true;
  end;
 end;
-{$ENDIF}
 
 constructor TRpQtDriver.Create;
 begin
@@ -698,7 +698,6 @@ begin
 end;
 
 
-{$IFDEF NOLINUXPRINTBUG}
 procedure TFRpQtProgress.AppIdlePrintRange(Sender:TObject;var done:boolean);
 var
  oldprogres:TRpProgressEvent;
@@ -718,7 +717,6 @@ begin
  end;
  Close;
 end;
-{$ENDIF}
 
 procedure TFRpQtProgress.AppIdlePrintPDF(Sender:TObject;var done:boolean);
 var
@@ -746,7 +744,7 @@ end;
 function PrintReport(report:TRpReport;Caption:string;progress:boolean;
   allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
 var
-{$IFNDEF NOLINUXPRINTBUG}
+{$IFDEF LINUXPRINTBUG}
  abuffer:array [0..L_tmpnam] of char;
  theparams:array [0..20] of pchar;
  params:array[0..20] of string;
@@ -764,12 +762,9 @@ var
 {$ENDIF}
 begin
  Result:=true;
-{$IFDEF MSWINDOWS}
  forcecalculation:=false;
-{$ENDIF}
-{$IFNDEF NOLINUXPRINTBUG}
- forcecalculation:=true;
-{$ENDIF}
+ if kylixprintbug then
+  forcecalculation:=true;
  if ((report.copies>1) and (report.CollateCopies)) then
  begin
   forcecalculation:=true;
@@ -795,89 +790,94 @@ begin
  end;
  // A bug in Kylix 2 does not allow printing
  // when using dbexpress
-{$IFDEF NOLINUXPRINTBUG}
- if forcecalculation then
-  PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate)
+ if not kylixprintbug then
+ begin
+   if forcecalculation then
+    PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate)
+   else
+   begin
+    if progress then
+    begin
+     // Assign appidle frompage to page...
+     dia:=TFRpQtProgress.Create(Application);
+     try
+      dia.allpages:=allpages;
+      dia.frompage:=frompage;
+      dia.topage:=topage;
+      dia.copies:=copies;
+      dia.report:=report;
+      dia.collate:=collate;
+      oldonidle:=Application.Onidle;
+      try
+       Application.OnIdle:=dia.AppIdlePrintRange;
+       dia.ShowModal;
+      finally
+       Application.OnIdle:=oldonidle;
+      end;
+     finally
+      dia.Free;
+     end;
+    end
+    else
+    begin
+     qtdriver:=TRpQtDriver.Create;
+     aqtdriver:=qtdriver;
+     qtdriver.toprinter:=true;
+     report.PrintRange(aqtdriver,allpages,frompage,topage,copies);
+    end;
+   end;
+ end
+{$IFDEF LINUXPRINTBUG}
  else
  begin
-  if progress then
-  begin
-   // Assign appidle frompage to page...
-   dia:=TFRpQtProgress.Create(Application);
-   try
-    dia.allpages:=allpages;
-    dia.frompage:=frompage;
-    dia.topage:=topage;
-    dia.copies:=copies;
-    dia.report:=report;
-    dia.collate:=collate;
-    oldonidle:=Application.Onidle;
-    try
-     Application.OnIdle:=dia.AppIdlePrintRange;
-     dia.ShowModal;
-    finally
-     Application.OnIdle:=oldonidle;
-    end;
-   finally
-    dia.Free;
+   // When compiling metaview the bug can be skiped
+   // Saves the metafile
+   tmpnam(abuffer);
+   afilename:=StrPas(abuffer);
+   report.Metafile.SaveToFile(afilename);
+   params[0]:='metaprint';
+   params[1]:='-d';
+   params[2]:='-copies';
+   params[3]:=IntToStr(copies);
+   paramcount:=4;
+   if collate then
+   begin
+    params[paramcount]:='-collate';
+    inc(paramcount);
    end;
-  end
-  else
-  begin
-   qtdriver:=TRpQtDriver.Create;
-   aqtdriver:=qtdriver;
-   qtdriver.toprinter:=true;
-   report.PrintRange(aqtdriver,allpages,frompage,topage,copies);
-  end;
- end;
-{$ELSE}
- // When compiling metaview the bug can be skiped
- // Saves the metafile
- tmpnam(abuffer);
- afilename:=StrPas(abuffer);
- report.Metafile.SaveToFile(afilename);
- params[0]:='metaprint';
- params[1]:='-d';
- params[2]:='-copies';
- params[3]:=IntToStr(copies);
- paramcount:=4;
- if collate then
- begin
-  params[paramcount]:='-collate';
-  inc(paramcount);
- end;
- if not allpages then
- begin
-  params[paramcount]:='-from';
-  inc(paramcount);
-  params[paramcount]:=IntToStr(frompage);
-  inc(paramcount);
-  params[paramcount]:='-to';
-  inc(paramcount);
-  params[paramcount]:=IntToStr(topage);
-  inc(paramcount);
- end;
- if not progress then
- begin
-  params[paramcount]:='-q';
-  inc(paramcount);
- end;
- params[paramcount]:=afilename;
- inc(paramcount);
+   if not allpages then
+   begin
+    params[paramcount]:='-from';
+    inc(paramcount);
+    params[paramcount]:=IntToStr(frompage);
+    inc(paramcount);
+    params[paramcount]:='-to';
+    inc(paramcount);
+    params[paramcount]:=IntToStr(topage);
+    inc(paramcount);
+   end;
+   if not progress then
+   begin
+    params[paramcount]:='-q';
+    inc(paramcount);
+   end;
+   params[paramcount]:=afilename;
+   inc(paramcount);
 
- for i:=0 to paramcount-1 do
- begin
-  theparams[i]:=Pchar(params[i]);
- end;
- theparams[paramcount]:=nil;
+   for i:=0 to paramcount-1 do
+   begin
+    theparams[i]:=Pchar(params[i]);
+   end;
+   theparams[paramcount]:=nil;
 
- child:=fork;
- if child=-1 then
-  Raise Exception.Create(SRpErrorFork);
- if child<>0 then
- begin
-  execvp(theparams[0],PPChar(@theparams))
- end
+   child:=fork;
+   if child=-1 then
+    Raise Exception.Create(SRpErrorFork);
+   if child<>0 then
+   begin
+    execvp(theparams[0],PPChar(@theparams))
+   end
+ end;
 {$ENDIF}
 end;
 

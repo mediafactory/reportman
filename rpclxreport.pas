@@ -26,12 +26,14 @@ uses Classes,Sysutils,rpreport,rpconsts,rpcompobase,
 type
  TCLXReport=class(TCBaseReport)
   private
+   FUseSystemPrintDialog:boolean;
   protected
   public
    function Execute:boolean;override;
    procedure PrinterSetup;override;
    function ShowParams:boolean;override;
    procedure SaveToPDF(filename:string);
+   constructor Create(AOwner:TComponent);override;
   published
    property Filename;
    property Preview;
@@ -40,15 +42,21 @@ type
    property ShowPrintDialog;
    property AliasList;
    property Language;
+   property UseSystemPrintDialog:Boolean read
+    FUseSystemPrintDialog write FUseSystemPrintDialog default true;
   end;
 
 implementation
 
-{$IFDEF MSWINDOWS}
 uses rpprintdia;
-{$ENDIF}
 
 
+constructor TCLXReport.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+
+ FUseSystemPrintDialog:=true;
+end;
 
 procedure TCLXReport.PrinterSetup;
 begin
@@ -67,11 +75,12 @@ function TCLXReport.Execute:boolean;
 var
  allpages,collate:boolean;
  frompage,topage,copies:integer;
+ dook:boolean;
 begin
  inherited Execute;
  if Preview then
  begin
-  Result:=ShowPreview(report,Title);
+  Result:=ShowPreview(report,Title,FUseSystemPrintDialog);
  end
  else
  begin
@@ -81,12 +90,11 @@ begin
   copies:=report.Copies;
   if ShowPrintDialog then
   begin
-{$IFDEF MSWINDOWS}
-   if rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-{$ENDIF}
-{$IFDEF LINUX}
-   if rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-{$ENDIF}
+   if FUseSystemPrintDialog then
+    dook:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate)
+   else
+    dook:=rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+   if dook then
    begin
     Result:=PrintReport(report,Title,Showprogress,allpages,frompage,
      topage,copies,collate);
