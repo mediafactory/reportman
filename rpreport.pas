@@ -802,9 +802,12 @@ begin
   fmetafile.NewPage;
  end;
  fmetafile.CurrentPage:=PageNum;
- // Tries to print at least a report header
-// subreport:=FSubReports.Items[CurrentSubReportIndex].FSubReport;
- freespace:=Pageheight;
+
+
+ if PageOrientation=rpOrientationLandscape then
+  freespace:=PageWidth
+ else
+  freespace:=Pageheight;
 
  // Fills the page with fixed sections
  PrintFixedSections;

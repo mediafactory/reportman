@@ -121,13 +121,13 @@ begin
   // Sets page size and orientation
   if report.Orientation=rpOrientationLandscape then
   begin
-   bitmap.Width:=awidth;
-   bitmap.Height:=aheight;
+   bitmap.Width:=aheight;
+   bitmap.Height:=awidth;
   end
   else
   begin
-   bitmap.Width:=aheight;
-   bitmap.Height:=awidth;
+   bitmap.Width:=awidth;
+   bitmap.Height:=aheight;
   end;
   Bitmap.Canvas.Brush.Style:=bsSolid;
   Bitmap.Canvas.Brush.Color:=report.BackColor;
@@ -359,7 +359,7 @@ begin
 {$ENDIF}
  printer.Title:=tittle;
  // Sets page size and orientation
- if metafile.Orientation<rpOrientationDefault then
+ if metafile.Orientation<>rpOrientationDefault then
  begin
   if metafile.Orientation=rpOrientationPortrait then
    printer.Orientation:=poPortrait
@@ -368,6 +368,14 @@ begin
  end;
  printer.Begindoc;
  try
+  // Sets page size and orientation
+  if metafile.Orientation<>rpOrientationDefault then
+  begin
+   if metafile.Orientation=rpOrientationPortrait then
+    printer.Orientation:=poPortrait
+   else
+    printer.Orientation:=poLandscape;
+  end;
   dpix:=printer.XDPI;
   dpiy:=printer.YDPI;
   for i:=0 to metafile.PageCount-1 do
