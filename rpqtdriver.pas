@@ -87,6 +87,7 @@ type
     oldonidle:TIdleEvent;
     tittle:string;
     filename:string;
+    errorproces:boolean;
     errormessage:String;
     metafile:TRpMetafileReport;
 {$IFNDEF FORWEBAX}
@@ -1015,6 +1016,8 @@ begin
    dia.collate:=collate;
    Application.OnIdle:=dia.AppIdle;
    dia.ShowModal;
+   if dia.errorproces then
+    Raise Exception.Create(dia.ErrorMessage);
    Result:=Not dia.cancelled;
   finally
    Application.OnIdle:=dia.oldonidle;
@@ -1088,10 +1091,10 @@ begin
   Result.Canvas.FillRect(arec);
   QtDriver:=TRpQtDriver.Create;
   aqtDriver:=QtDriver;
-  for i:=0 to metafile.PageCount-1 do
-  begin
-   tempbitmap:=TBitmap.Create;
-   try
+  tempbitmap:=TBitmap.Create;
+  try
+   for i:=0 to metafile.PageCount-1 do
+   begin
     tempbitmap.PixelFormat:=pf32bit;
     tempbitmap.Height:=(metafile.CustomY*realdpiy*scale) div TWIPS_PER_INCHESS;
     tempbitmap.Width:=(metafile.CustomX*realdpix*scale) div TWIPS_PER_INCHESS;
@@ -1145,9 +1148,9 @@ begin
       if aform.cancelled then
        Raise Exception.Create(SRpOperationAborted);
     end;
-   finally
-    tempbitmap.free;
    end;
+  finally
+   tempbitmap.free;
   end;
   // To obtain monocrhome bitmaps must use convert command line tool
 {$IFDEF LINUX}
@@ -1186,6 +1189,7 @@ function MetafileToBitmap(metafile:TRpMetafileReport;ShowProgress:Boolean;
 var
  dia:TFRpQtProgress;
 begin
+ Result:=nil;
  if Not ShowProgress then
  begin
   Result:=DoMetafileToBitmap(metafile,nil,mono);
@@ -1202,9 +1206,9 @@ begin
    dia.bitmono:=Mono;
    Application.OnIdle:=dia.AppIdleBitmap;
    dia.ShowModal;
-   Result:=dia.MetaBitmap;
-   if not Assigned(Result) then
+   if dia.errorproces then
     Raise Exception.Create(dia.ErrorMessage);
+   Result:=dia.MetaBitmap;
   finally
    Application.OnIdle:=dia.oldonidle;
   end;
@@ -1230,24 +1234,35 @@ begin
  cancelled:=false;
  Application.OnIdle:=nil;
  done:=false;
- LTittle.Caption:=tittle;
- Lprocessing.Visible:=true;
- DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate,printerindex);
+ errorproces:=false;
+ try
+  LTittle.Caption:=tittle;
+  Lprocessing.Visible:=true;
+  DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate,printerindex);
+ except
+  On E:Exception do
+  begin
+   errorproces:=true;
+   ErrorMessage:=E.Message;
+  end;
+ end;
  Close;
 end;
 
 procedure TFRpQtProgress.AppIdleBitmap(Sender:TObject;var done:boolean);
 begin
+ cancelled:=false;
+ Application.OnIdle:=nil;
+ done:=false;
+ errorproces:=false;
  try
-  cancelled:=false;
-  Application.OnIdle:=nil;
-  done:=false;
   LTittle.Caption:=tittle;
   LProcessing.Visible:=true;
   MetaBitmap:=DoMetafileToBitmap(metafile,self,bitmono,bitresx,bitresy);
  except
   on E:Exception do
   begin
+   errorproces:=true;
    ErrorMessage:=E.Message;
   end;
  end;
@@ -1307,11 +1322,11 @@ var
 begin
  Application.Onidle:=nil;
  done:=false;
-
- drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
- istextonly:=Length(drivername)>0;
-
+ errorproces:=false;
  try
+  drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
+  istextonly:=Length(drivername)>0;
+
   if istextonly then
   begin
    TextDriver:=TRpTextDriver.Create;
@@ -1338,9 +1353,11 @@ begin
    end;
   end;
  except
-  cancelled:=True;
-  Close;
-  Raise;
+  On E:Exception do
+  begin
+   errorproces:=true;
+   ErrorMessage:=E.Message;
+  end;
  end;
  Close;
 end;
@@ -1349,6 +1366,7 @@ function CalcReportWidthProgress(report:TRpReport):boolean;
 var
  dia:TFRpQTProgress;
 begin
+ Result:=false;
  dia:=TFRpQTProgress.Create(Application);
  try
   dia.oldonidle:=Application.OnIdle;
@@ -1356,6 +1374,8 @@ begin
    dia.report:=report;
    Application.OnIdle:=dia.AppIdleReport;
    dia.ShowModal;
+   if dia.errorproces then
+    Raise Exception.Create(dia.ErrorMessage);
    Result:=Not dia.cancelled;
   finally
    Application.onidle:=dia.oldonidle;
@@ -1372,16 +1392,24 @@ var
 begin
  Application.Onidle:=nil;
  done:=false;
-
- qtdriver:=TRpQtDriver.Create;
- qtdriver.toprinter:=true;
- aqtdriver:=qtdriver;
- oldprogres:=RepProgress;
+ errorproces:=false;
  try
-  report.OnProgress:=RepProgress;
-  report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate);
- finally
-  report.OnProgress:=oldprogres;
+  qtdriver:=TRpQtDriver.Create;
+  qtdriver.toprinter:=true;
+  aqtdriver:=qtdriver;
+  oldprogres:=RepProgress;
+  try
+   report.OnProgress:=RepProgress;
+   report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate);
+  finally
+   report.OnProgress:=oldprogres;
+  end;
+ except
+  On E:Exception do
+  begin
+   errorproces:=true;
+   ErrorMessage:=E.Message;
+  end;
  end;
  Close;
 end;
@@ -1393,26 +1421,34 @@ var
 begin
  Application.Onidle:=nil;
  done:=false;
-
- TextDriver:=TRpTextDriver.Create;
- aTextDriver:=TextDriver;
- oldprogres:=RepProgress;
+ errorproces:=false;
  try
-  TextDriver.SelectPrinter(report.PrinterSelect);
-  report.OnProgress:=RepProgress;
-  report.PrintRange(aTextDriver,allpages,frompage,topage,copies,collate);
-  // Now Prints to selected printer the stream
-  SetLength(S,TextDriver.MemStream.Size);
-  TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
-  PrinterSelection(report.PrinterSelect);
+  TextDriver:=TRpTextDriver.Create;
+  aTextDriver:=TextDriver;
+  oldprogres:=RepProgress;
+  try
+   TextDriver.SelectPrinter(report.PrinterSelect);
+   report.OnProgress:=RepProgress;
+   report.PrintRange(aTextDriver,allpages,frompage,topage,copies,collate);
+   // Now Prints to selected printer the stream
+   SetLength(S,TextDriver.MemStream.Size);
+   TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
+   PrinterSelection(report.PrinterSelect);
 {$IFDEF VCLANDCLX}
-  SendControlCodeToPrinter(S);
+   SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
-  SendTextToPrinter(S,report.PrinterSelect,tittle);
+   SendTextToPrinter(S,report.PrinterSelect,tittle);
 {$ENDIF}
- finally
-  report.OnProgress:=oldprogres;
+  finally
+   report.OnProgress:=oldprogres;
+  end;
+ except
+  On E:Exception do
+  begin
+   errorproces:=true;
+   ErrorMessage:=E.Message;
+  end;
  end;
  Close;
 end;
@@ -1425,6 +1461,7 @@ var
 begin
  Application.Onidle:=nil;
  done:=false;
+ errorproces:=false;
  try
   pdfdriver:=TRpPDFDriver.Create;
   pdfdriver.filename:=filename;
@@ -1441,9 +1478,14 @@ begin
   finally
    report.OnProgress:=oldprogres;
   end;
- finally
-  Close;
+ except
+  On E:Exception do
+  begin
+   errorproces:=true;
+   ErrorMessage:=E.Message;
+  end;
  end;
+ Close;
 end;
 
 
@@ -1553,6 +1595,8 @@ begin
        else
         Application.OnIdle:=dia.AppIdlePrintRange;
        dia.ShowModal;
+       if dia.errorproces then
+        Raise Exception.Create(dia.ErrorMessage);
       finally
        Application.OnIdle:=oldonidle;
       end;
@@ -1693,6 +1737,8 @@ begin
    try
     Application.OnIdle:=dia.AppIdlePrintPdf;
     dia.ShowModal;
+    if dia.errorproces then
+     Raise Exception.Create(dia.ErrorMessage);
    finally
     Application.OnIdle:=oldonidle;
    end;

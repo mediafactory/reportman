@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=Report Manager
-AppVerName=Report Manager 2.2pre13
-AppVersion=2.2pre13
-OutputBaseFilename=reportmanlite2_2pre13
+AppName=Report Manager Lite
+AppVerName=Report Manager Lite  2.2pre16
+AppVersion=2.2pre16
+OutputBaseFilename=reportmanlite2_2pre16
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman

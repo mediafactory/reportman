@@ -12,7 +12,7 @@ unit Reportman_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 30/06/2004 13:38:27 from Type Library described below.
+// File generated on 09/07/2004 11:45:02 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\reportman.tlb (1)
@@ -356,6 +356,7 @@ type
     procedure GetPDF(const Report: IReportReport; compressed: WordBool); safecall;
     procedure GetCustomText(const Report: IReportReport); safecall;
     procedure GetText(const Report: IReportReport); safecall;
+    procedure GetCSV(const Report: IReportReport); safecall;
   end;
 
 // *********************************************************************//
@@ -368,6 +369,7 @@ type
     procedure GetPDF(const Report: IReportReport; compressed: WordBool); dispid 1;
     procedure GetCustomText(const Report: IReportReport); dispid 2;
     procedure GetText(const Report: IReportReport); dispid 3;
+    procedure GetCSV(const Report: IReportReport); dispid 4;
   end;
 
 

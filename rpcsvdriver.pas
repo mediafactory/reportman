@@ -43,6 +43,7 @@ const
 procedure ExportReportToCSV(report:TRpBaseReport;filename:String;progress:Boolean);
 procedure ExportReportToTextProStream(report:TRpBaseReport;stream:TStream;progress:Boolean);
 procedure ExportReportToTextPro(report:TRpBaseReport;filename:String;progress:Boolean);
+procedure ExportReportToCSVStream(report:TRpBaseReport;stream:TStream;progress:Boolean);
 {$ENDIF}
 function ExportMetafileToCSV (metafile:TRpMetafileReport; filename:string;
  showprogress,allpages:boolean; frompage,topage:integer):boolean;
@@ -283,6 +284,21 @@ end;
 {$IFNDEF FORWEBAX}
 procedure ExportReportToCSV(report:TRpBaseReport;filename:String;progress:Boolean);
 var
+ astream:TMemoryStream;
+begin
+ astream:=TMemoryStream.Create;
+ try
+  ExportReportToCSVStream(report,astream,progress);
+  astream.Seek(0,soFromBeginning);
+  astream.SaveToFile(filename);
+ finally
+  astream.free;
+ end;
+end;
+
+
+procedure ExportReportToCSVStream(report:TRpBaseReport;stream:TStream;progress:Boolean);
+var
  pdfdriver:TRpPDFDriver;
  apdfdriver:IRpPrintDriver;
  oldprogres:TRpProgressEvent;
@@ -304,7 +320,10 @@ begin
    try
     report.TwoPass:=true;
     report.PrintAll(apdfdriver);
-    ExportMetafileToCSV(report.metafile,filename,progress,true,1,9999);
+    astream.SetSize(0);
+    ExportMetafileToCSVStream(report.metafile,astream,progress,true,1,999);
+    astream.Seek(0,soFromBeginning);
+    stream.CopyFrom(astream,astream.size);
    finally
     report.TwoPass:=oldtwopass;
    end;
@@ -315,6 +334,7 @@ begin
   astream.free;
  end;
 end;
+
 
 procedure ExportReportToTextPro(report:TRpBaseReport;filename:String;progress:Boolean);
 var
@@ -355,7 +375,7 @@ begin
     report.PrintAll(apdfdriver);
     ExportMetafileToTextProStream(report.metafile,astream,progress,true,1,99999);
     astream.Seek(0,soFromBeginning);
-    stream.CopyFrom(astream,stream.size);
+    stream.CopyFrom(astream,astream.size);
    finally
     report.TwoPass:=oldtwopass;
    end;

@@ -100,7 +100,7 @@ Conditionals=REPMANRELEASE
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=-sendfax 972306080 sample4.rep
+RunParams=-bmp -bmpcolor -from 1 -to 20 sample4.rep sample4.bmp
 HostApplication=
 Launcher=
 UseLauncher=0

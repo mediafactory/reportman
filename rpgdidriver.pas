@@ -101,6 +101,7 @@ type
     oldonidle:TIdleEvent;
     tittle:string;
     filename:string;
+    errorproces:boolean;
     ErrorMessage:String;
     metafile:TRpMetafileReport;
 {$IFNDEF FORWEBAX}
@@ -1288,6 +1289,8 @@ begin
    dia.printerindex:=printerindex;
    Application.OnIdle:=dia.AppIdle;
    dia.ShowModal;
+   if dia.errorproces then
+    Raise Exception.Create(dia.ErrorMessage);
    Result:=Not dia.cancelled;
   finally
    Application.OnIdle:=dia.oldonidle;
@@ -1355,6 +1358,12 @@ begin
   Result.Width:=pagewidth;
   pageheight:=(metafile.CustomY*resy) div TWIPS_PER_INCHESS;
   Result.Height:=pageheight*metafile.PageCount;
+  arec.Top:=0;
+  arec.Right:=pagewidth*2;
+  arec.Bottom:=pageheight*metafile.Pagecount+pageheight;
+  arec.Left:=0;
+  Result.Canvas.Brush.Color:=CLXColorToVCLColor(metafile.BackColor);
+  Result.Canvas.FillRect(arec);
   GDIDriver:=TRpGDIDriver.Create;
   aGDIDriver:=GDIDriver;
   for i:=0 to metafile.PageCount-1 do
@@ -1371,12 +1380,6 @@ begin
     apage:=metafile.Pages[i];
     ametacanvas:=TMetafileCanvas.Create(ameta,0);
     try
-     arec.Top:=0;arec.Left:=0;
-     arec.Right:=realx*metafile.CustomX div TWIPS_PER_INCHESS*2;
-     arec.Bottom:=realy*metafile.CustomY div TWIPS_PER_INCHESS*2;
-     ametaCanvas.Brush.Color:=metafile.backcolor;
-     ametaCanvas.Brush.Style:=bsSolid;
-     ametaCanvas.FillRect(arec);
      for j:=0 to apage.ObjectCount-1 do
      begin
       PrintObject(ametaCanvas,apage,apage.Objects[j],realx,realy,true,pagemargins,false,offset);
@@ -1442,7 +1445,7 @@ begin
    Application.OnIdle:=dia.AppIdleBitmap;
    dia.ShowModal;
    Result:=dia.MetaBitmap;
-   if Not Assigned(Result) then
+   if dia.errorproces then
     Raise Exception.Create(dia.ErrorMessage);
   finally
    Application.OnIdle:=dia.oldonidle;
@@ -1472,27 +1475,38 @@ end;
 
 procedure TFRpVCLProgress.AppIdle(Sender:TObject;var done:boolean);
 begin
+ errorproces:=false;
  cancelled:=false;
  Application.OnIdle:=nil;
  done:=false;
- LTittle.Caption:=tittle;
- LProcessing.Visible:=true;
- DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate,devicefonts,printerindex);
+ try
+  LTittle.Caption:=tittle;
+  LProcessing.Visible:=true;
+  DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate,devicefonts,printerindex);
+ except
+  On E:Exception do
+  begin
+   ErrorMessage:=E.Message;
+   errorproces:=true;
+  end;
+ end;
  Close;
 end;
 
 procedure TFRpVCLProgress.AppIdleBitmap(Sender:TObject;var done:boolean);
 begin
+ cancelled:=false;
+ Application.OnIdle:=nil;
+ done:=false;
+ errorproces:=false;
  try
-  cancelled:=false;
-  Application.OnIdle:=nil;
-  done:=false;
   LTittle.Caption:=tittle;
   LProcessing.Visible:=true;
   MetaBitmap:=DoMetafileToBitmap(metafile,self,bitmono,bitresx,bitresy);
  except
   on E:Exception do
   begin
+   errorproces:=true;
    ErrorMessage:=E.Message;
   end;
  end;
@@ -1544,6 +1558,8 @@ begin
    try
     Application.OnIdle:=dia.AppIdlePrintPdf;
     dia.ShowModal;
+    if dia.errorproces then
+     Raise Exception.Create(dia.ErrorMessage);
    finally
     Application.OnIdle:=oldonidle;
    end;
@@ -1596,7 +1612,7 @@ begin
   if metafile then
   begin
    agdidriver:=gdidriver;
-   agdidriver.onlycalc:=true;
+   gdidriver.onlycalc:=true;
    report.PrintRange(agdidriver,allpages,frompage,topage,1,collate);
   end
   else
@@ -1657,11 +1673,11 @@ var
 begin
  Application.Onidle:=nil;
  done:=false;
-
- drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
- istextonly:=Length(drivername)>0;
-
+ errorproces:=false;
  try
+  drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
+  istextonly:=Length(drivername)>0;
+
   if istextonly then
   begin
    TextDriver:=TRpTextDriver.Create;
@@ -1693,18 +1709,21 @@ begin
     report.OnProgress:=oldprogres;
    end;
   end;
-  Close;
  except
-  cancelled:=True;
-  Close;
-  Raise;
+  On E:Exception do
+  begin
+   ErrorMessage:=E.Message;
+   errorproces:=true;
+  end;
  end;
+ Close;
 end;
 
 function CalcReportWidthProgress(report:TRpReport):boolean;
 var
  dia:TFRpVCLProgress;
 begin
+ Result:=false;
  dia:=TFRpVCLProgress.Create(Application);
  try
   dia.oldonidle:=Application.OnIdle;
@@ -1712,6 +1731,8 @@ begin
    dia.report:=report;
    Application.OnIdle:=dia.AppIdleReport;
    dia.ShowModal;
+   if dia.errorproces then
+    Raise Exception.Create(dia.ErrorMessage);
    Result:=Not dia.cancelled;
   finally
    Application.onidle:=dia.oldonidle;
@@ -1728,21 +1749,29 @@ var
 begin
  Application.Onidle:=nil;
  done:=false;
-
- GDIDriver:=TRpGDIDriver.Create;
- GDIDriver.toprinter:=true;
- aGDIDriver:=GDIDriver;
- if report.PrinterFonts=rppfontsalways then
-  gdidriver.devicefonts:=true
- else
-  gdidriver.devicefonts:=false;
- gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
- oldprogres:=RepProgress;
+ errorproces:=false;
  try
-  report.OnProgress:=RepProgress;
-  report.PrintRange(aGDIDriver,allpages,frompage,topage,copies,collate);
- finally
-  report.OnProgress:=oldprogres;
+  GDIDriver:=TRpGDIDriver.Create;
+  GDIDriver.toprinter:=true;
+  aGDIDriver:=GDIDriver;
+  if report.PrinterFonts=rppfontsalways then
+   gdidriver.devicefonts:=true
+  else
+   gdidriver.devicefonts:=false;
+  gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
+  oldprogres:=RepProgress;
+  try
+   report.OnProgress:=RepProgress;
+   report.PrintRange(aGDIDriver,allpages,frompage,topage,copies,collate);
+  finally
+   report.OnProgress:=oldprogres;
+  end;
+ except
+  On E:Exception do
+  begin
+   ErrorMessage:=E.Message;
+   errorproces:=true;
+  end;
  end;
  Close;
 end;
@@ -1754,26 +1783,34 @@ var
 begin
  Application.Onidle:=nil;
  done:=false;
-
- TextDriver:=TRpTextDriver.Create;
- aTextDriver:=TextDriver;
- oldprogres:=RepProgress;
+ errorproces:=false;
  try
-  TextDriver.SelectPrinter(report.PrinterSelect);
-  report.OnProgress:=RepProgress;
-  report.PrintRange(aTextDriver,allpages,frompage,topage,copies,collate);
-  // Now Prints to selected printer the stream
-  SetLength(S,TextDriver.MemStream.Size);
+  TextDriver:=TRpTextDriver.Create;
+  aTextDriver:=TextDriver;
+  oldprogres:=RepProgress;
+  try
+   TextDriver.SelectPrinter(report.PrinterSelect);
+   report.OnProgress:=RepProgress;
+   report.PrintRange(aTextDriver,allpages,frompage,topage,copies,collate);
+   // Now Prints to selected printer the stream
+   SetLength(S,TextDriver.MemStream.Size);
 {$IFNDEF DOTNETD}
-  TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
+   TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
 {$ENDIF}
 {$IFDEF DOTNETD}
-   s:=TextDriver.MemStream.ToString;
+    s:=TextDriver.MemStream.ToString;
 {$ENDIF}
-  PrinterSelection(report.PrinterSelect,report.papersource,report.duplex);
-  SendControlCodeToPrinter(S);
- finally
-  report.OnProgress:=oldprogres;
+   PrinterSelection(report.PrinterSelect,report.papersource,report.duplex);
+   SendControlCodeToPrinter(S);
+  finally
+   report.OnProgress:=oldprogres;
+  end;
+ except
+  On E:Exception do
+  begin
+   ErrorMessage:=E.Message;
+   errorproces:=true;
+  end;
  end;
  Close;
 end;
@@ -1787,6 +1824,7 @@ var
 begin
  Application.Onidle:=nil;
  done:=false;
+ errorproces:=false;
  try
   pdfdriver:=TRpPDFDriver.Create;
 
@@ -1804,9 +1842,14 @@ begin
   finally
    report.OnProgress:=oldprogres;
   end;
- finally
-  Close;
+ except
+  On E:Exception do
+  begin
+   ErrorMessage:=E.Message;
+   errorproces:=true;
+  end;
  end;
+ Close;
 end;
 
 
@@ -1894,6 +1937,8 @@ begin
      else
       Application.OnIdle:=dia.AppIdlePrintRange;
      dia.ShowModal;
+     if dia.errorproces then
+      Raise Exception.Create(dia.ErrorMessage);
     finally
      Application.OnIdle:=oldonidle;
     end;

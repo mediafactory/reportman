@@ -150,15 +150,17 @@ to be used has been identified. For further information on parameters please see
   ReportObj.Filename = &quot;c:\inetpub\wwwroot\cgi-bin\nettest.rep&quot;<br>
   Set DelphiASPObj = Server.CreateObject(&quot;ReportMan.ReportmanXAServer&quot;) 
   <br>
-  Response.Clear <br>
-  Response.ContentType=&quot;application/pdf&quot;<br>
   DelphiASPObj.GetPDF ReportObj.Report,false<br>
   %&gt;<br>
   <br>
   When working in the IIS environment remember to place the reports in a directory 
   accessible (permissions) by the user executing IIS.</p>
-<p>Since 2.1 version the ReportmanXAServer also provides GetCustomText and GetText 
-  procedures (with only ReportObj.Report parameter)</p>
+<p>Version 2.2 DelphiASPObj have this procedures:</p>
+<p> procedure GetPDF(const Report: IReportReport; Compressed: WordBool);<br>
+  procedure GetCustomText(const Report: IReportReport);<br>
+  procedure GetText(const Report: IReportReport);<br>
+  procedure GetCSV(const Report: IReportReport);<br>
+</p>
 </body>
 </html>
 

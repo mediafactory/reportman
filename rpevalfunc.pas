@@ -1517,9 +1517,8 @@ end;
 function TIdenFormatNum.GeTRpValue:TRpValue;
 begin
  if VarIsnull(Params[1]) then
-  Params[0]:=0.0;
+  Params[1]:=0.0;
  if Not (Vartype(Params[1]) in  [varSmallInt,varInteger,varSingle,varDouble,varWord,varByte,varCurrency])then
-
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  if ( Not (VarIsString(Params[0]))) then
