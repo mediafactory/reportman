@@ -21,7 +21,7 @@ LIBFILES =
 IDLGENFILES =
 IDLFILES =
 LIBRARIES = rppack_builder4.lib
-SPARELIBS = Vcl40.lib rppack_builder4.lib VCLMID40.lib VCLDB40.lib
+SPARELIBS = Vcl40.lib rppack_builder4.lib VCLMID40.lib VCLDB40.lib VCLX40.lib
 PACKAGES = Vcl40.bpi Vclx40.bpi vcljpg40.bpi Vclmid40.bpi Vcldb40.bpi vcldbx40.bpi \
   dclocx40.bpi
 DEFFILE =

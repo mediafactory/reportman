@@ -21,9 +21,13 @@ unit rpmdfdesign;
 
 interface
 
+{$I rpconf.inc}
+
 uses
-  SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs, QMenus,
-  QTypes, QExtCtrls,rpmdfstruc,rpmdobinsint,rpreport,rpmunits,
+  SysUtils, Types, Classes,
+  QGraphics, QControls, QForms, QDialogs, QMenus,
+  QTypes, QExtCtrls,
+  rpmdfstruc,rpmdobinsint,rpreport,rpmunits,
   rpmdfsectionint,rpsubreport,rpsection, rpruler,rpmdobjinsp;
 
 const
@@ -53,7 +57,6 @@ type
 
   TFRpDesignFrame = class(TFrame)
     PTop: TPanel;
-    TopRuler: TRpRuler;
     PLeft: TPanel;
   private
     { Private declarations }
@@ -71,6 +74,7 @@ type
     freportstructure:TFRpStructure;
     SectionScrollBox: TScrollBox;
     secinterfaces:TList;
+    TopRuler:TRpRuler;
     procedure UpdateInterface;
     procedure ShowAllHiden;
     constructor Create(AOwner:TComponent);override;
@@ -85,7 +89,6 @@ type
 implementation
 
 {$R *.xfm}
-
 uses rpmdfmain;
 
 procedure TrpScrollBox.AutoScrollInView(AControl: TControl);
@@ -114,6 +117,8 @@ end;
 
 
 procedure TRpPaintEventPanel.Paint;
+var
+ rec:TRect;
 begin
  inherited Paint;
 
@@ -126,8 +131,12 @@ begin
  if not assigned(parent) then
   exit;
 
+ rec:=ClientRect;
+ Canvas.Rectangle(rec);
  if (parent.parent is TScrollBox) then
+ begin
   Canvas.TextOut(TScrollBox(parent.parent).HorzScrollBar.Position,0,CaptionText);
+ end;
 end;
 
 
@@ -135,11 +144,20 @@ end;
 constructor TFRpDesignFrame.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+ TopRuler:=TRpRuler.Create(Self);
+ TopRuler.Rtype:=rHorizontal;
+ TopRuler.Left:=20;
+ TopRuler.Width:=389;
+ TopRuler.Height:=20;
+ TopRuler.Parent:=PTop;
+
  panelheight:=Round(1.3*Font.Size/72*Screen.PixelsPerInch);
  SectionScrollBox:=TRpScrollBox.Create(Self);
  SectionScrollBox.BorderStyle:=bsNone;
  SectionScrollBox.Color:=clDisabledForeground;
  SectionScrollBox.Align:=Alclient;
+ SectionScrollBox.HorzScrollBar.Tracking:=True;
+ SectionScrollBox.VertScrollBar.Tracking:=True;
  SectionScrollBox.Parent:=Self;
 
 
@@ -305,7 +323,7 @@ begin
    apanel.Caption:='';
    apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption;
    apanel.Alignment:=taLeftJustify;
-   apanel.BorderStyle:=bsSingle;
+   apanel.BorderStyle:=bsNone;
    apanel.BevelInner:=bvNone;
    apanel.BevelOuter:=bvNone;
    apanel.Top:=posx;
@@ -388,7 +406,7 @@ begin
   begin
    apanel:=TRpPaintEventpanel(toptitles.Items[i]);
    asecint:=TRpSectionInterface(secinterfaces.items[i]);
-   apanel.Color:=clDisabledDark;
+
    apanel.Width:=asecint.Width;
    apanel.Caption:='';
    apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption;

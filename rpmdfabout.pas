@@ -19,8 +19,12 @@ unit rpmdfabout;
 
 interface
 
-uses SysUtils, Classes, QGraphics, QForms,rpmdconsts,
-  QButtons, QExtCtrls, QControls, QStdCtrls,QDialogs;
+{$I rpconf.inc}
+
+uses SysUtils, Classes,
+  QGraphics, QForms,
+  QButtons, QExtCtrls, QControls, QStdCtrls,QDialogs,
+  rpmdconsts;
 
 type
   TFRpAboutBox = class(TForm)
@@ -50,6 +54,9 @@ procedure ShowAbout;
 
 implementation
 
+
+{$R *.xfm}
+
 procedure ShowAbout;
 var dia:TFRpAboutBox;
 begin
@@ -62,11 +69,12 @@ begin
 end;
 
 
-{$R *.xfm}
 
 procedure TFRpAboutBox.FormCreate(Sender: TObject);
 begin
-
+{$IFDEF MSWINDOWS}
+ LReport.Font.Name:='Arial';
+{$ENDIF}
  Caption:=TranslateStr(88,Caption);
  LAuthor.Caption:=TranslateStr(89,LAuthor.Caption);
  LProject.Caption:=TranslateStr(90,LProject.Caption);

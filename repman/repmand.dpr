@@ -22,8 +22,10 @@ program repmand;
 {%ToDo 'repmand.todo'}
 {%File '..\rpconf.inc'}
 
+{$I rpconf.inc}
+
 uses
-  QForms,
+ QForms,
 {$IFDEF MSWINDOWS}
   midaslib,
   rpmdfmain in '..\rpmdfmain.pas' {FRpMainF},
@@ -36,11 +38,11 @@ uses
   rpmdfdrawint in '..\rpmdfdrawint.pas',
   rpmdobjinsp in '..\rpmdobjinsp.pas' {FRpObjInsp: TFrame},
   rpmdfgrid in '..\rpmdfgrid.pas' {FRpGridOptions},
+  rpmdfgridvcl in '..\rpmdfgridvcl.pas' {FRpGridOptionsVCL},
   rpmdflabelint in '..\rpmdflabelint.pas',
   rpmdfbarcodeint in '..\rpmdfbarcodeint.pas',
   rpmdfchartint in '..\rpmdfchartint.pas',
   rpmdfabout in '..\rpmdfabout.pas' {FRpAboutBox},
-  rpmdfhelpform in '..\rpmdfhelpform.pas' {FRpHelpForm},
   rppdfreport in '..\rppdfreport.pas',
   rpvclreport in '..\rpvclreport.pas',
   rpvgraphutils in '..\rpvgraphutils.pas',
@@ -52,6 +54,7 @@ uses
   rpsubreport in '..\rpsubreport.pas',
   rpmdconsts in '..\rpmdconsts.pas',
   rppagesetup in '..\rppagesetup.pas' {FRpPageSetup},
+  rppagesetupvcl in '..\rppagesetupvcl.pas' {FRpPageSetupVCL},
   rpmunits in '..\rpmunits.pas',
   rptypes in '..\rptypes.pas',
   rpdataset in '..\rpdataset.pas',
@@ -66,23 +69,27 @@ uses
   rpexpredlg in '..\rpexpredlg.pas' {FrpExpredialog},
   rpmetafile in '..\rpmetafile.pas',
   rpqtdriver in '..\rpqtdriver.pas' {FRpQtProgress},
+  rppreview in '..\rppreview.pas' {FRpPreview},
+  rpprintdia in '..\rpprintdia.pas' {FRpPrintDialog},
+  rprfparams in '..\rprfparams.pas' {FRpRunTimeParams},
+  rpmdfhelpform in '..\rpmdfhelpform.pas' {FRpHelpForm},
+  rpfparams in '..\rpfparams.pas' {FRpParams},
+  rpfparamsvcl in '..\rpfparamsvcl.pas' {FRpParamsVCL},
+  rpmdprintconfig in '..\rpmdprintconfig.pas' {FRpPrinterConfig},
+  rpmdprintconfigvcl in '..\rpmdprintconfigvcl.pas' {FRpPrinterConfigVCL},
   rpruler in '..\rpruler.pas',
   rptypeval in '..\rptypeval.pas',
   rpwriter in '..\rpwriter.pas',
   rpdatainfo in '..\rpdatainfo.pas',
   rpparams in '..\rpparams.pas',
   rpmdfsectionint in '..\rpmdfsectionint.pas',
-  rpfparams in '..\rpfparams.pas' {FRpParams},
   rpdbxconfig in '..\rpdbxconfig.pas' {FRpDBXConfig},
   rpgraphutils in '..\rpgraphutils.pas' {FRpMessageDlg},
-  rpprintdia in '..\rpprintdia.pas' {FRpPrintDialog},
   rplabelitem in '..\rplabelitem.pas',
   rpmdbarcode in '..\rpmdbarcode.pas',
   rpmdchart in '..\rpmdchart.pas',
   rpdrawitem in '..\rpdrawitem.pas',
   rpmzlib in '..\rpmzlib.pas',
-  rppreview in '..\rppreview.pas' {FRpPreview},
-  rprfparams in '..\rprfparams.pas' {FRpRunTimeParams},
   rpzlibadler in '..\rpzlibadler.pas',
   rpzlibinfblock in '..\rpzlibinfblock.pas',
   rpzlibinfcodes in '..\rpzlibinfcodes.pas',
@@ -98,9 +105,8 @@ uses
   rptranslator in '..\rptranslator.pas',
   rpclxreport in '..\rpclxreport.pas',
   rppdffile in '..\rppdffile.pas',
-  rppdfdriver in '..\rppdfdriver.pas',
   rpmdesigner in '..\rpmdesigner.pas',
-  rpmdprintconfig in '..\rpmdprintconfig.pas' {FRpPrinterConfig};
+  rppdfdriver in '..\rppdfdriver.pas';
 {$ENDIF}
 
 
@@ -180,13 +186,14 @@ uses
 
 {$R *.res}
 
-
 var
   FRpMainF: TFRpMainF;
 
 begin
   Application.Initialize;
   Application.CreateForm(TFRpMainF, FRpMainF);
+  {$IFNDEF PUREVCL}
   LoadQtTranslator;
+{$ENDIF}
   Application.Run;
 end.

@@ -28,11 +28,11 @@ uses Classes,Sysutils,rpreport,
 {$IFDEF HORZPAPERBUG}
  rpmetafile,
 {$ENDIF}
- QPrinters,rpqtdriver,rppreview,rpalias,
+ QPrinters,rpqtdriver,rppreview,rprfparams,
 {$IFDEF MSWINDOWS}
  rpgdidriver,Printers,Dialogs,rprfvparams,rpvpreview,
 {$ENDIF}
- rprfparams;
+ rpalias;
 
 type
  // rpDriverGDI is ignored in Linux

@@ -35,7 +35,10 @@ requires
   Vcl50,
   Vclx50,
   Vclmid50,
-  Vcldb50;
+  Vcldb50,
+  vclado50,
+  Vclbde50,
+  VCLIB50;
 
 contains
   rptypeval in 'rptypeval.pas',

@@ -728,6 +728,7 @@ begin
   rpdatabde:
    begin
 {$IFDEF USEBDE}
+    FOpenedDatabase:=nil;
     FBDEAlias:=Alias;
     CreatedBDE:=false;
     if Not Assigned(FBDEDatabase) then

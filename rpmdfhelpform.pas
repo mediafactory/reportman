@@ -18,9 +18,12 @@ unit rpmdfhelpform;
 
 interface
 
+
 uses
-  SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  QStdCtrls, QActnList, QImgList, QComCtrls,rpmdconsts;
+  SysUtils, Types, Classes,
+  QGraphics, QControls, QForms, QDialogs,
+  QStdCtrls, QActnList, QImgList, QComCtrls,
+  rpmdconsts;
 
 type
   TFRpHelpForm = class(TForm)
@@ -34,7 +37,6 @@ type
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
-    TextBrowser1: TTextBrowser;
     procedure AExitExecute(Sender: TObject);
     procedure ABackwardExecute(Sender: TObject);
     procedure AForwardExecute(Sender: TObject);
@@ -43,6 +45,7 @@ type
     { Private declarations }
   public
     { Public declarations }
+    TextBrowser1:TTextBrowser;
   end;
 
 
@@ -67,6 +70,10 @@ end;
 
 procedure TFRpHelpForm.FormCreate(Sender: TObject);
 begin
+ TextBrowser1:=TTextBrowser.Create(Self);
+ TextBrowser1.Align:=alClient;
+ TextBrowser1.Parent:=Self;
+
  Caption:=TranslateStr(209,Caption);
  ABackward.Hint:=TranslateStr(210,ABackward.Hint);
  AForward.Hint:=TranslateStr(211,AForward.Hint);

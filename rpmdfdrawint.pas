@@ -20,8 +20,12 @@ unit rpmdfdrawint;
 
 interface
 
-uses SysUtils, Classes, QGraphics, QForms,
-  QButtons, QExtCtrls, QControls, QStdCtrls,types,
+{$I rpconf.inc}
+
+uses SysUtils, Classes,
+  QGraphics, QForms,
+  QButtons, QExtCtrls, QControls, QStdCtrls,
+  types,
   rpprintitem,rpdrawitem,rpmdobinsint,rpmdconsts,
   rpgraphutils,rpmunits,rptypes;
 
@@ -59,10 +63,10 @@ type
 
 var
  StringPenStyle:array [psSolid..psClear] of wideString;
- StringBrushStyle:array [bsSolid..bsDense7] of wideString;
+ StringBrushStyle:array [rpbsSolid..rpbsDense7] of wideString;
  StringShapeType:array [rpsRectangle..rpsOblique2] of wideString;
  StringDrawStyles:array [rpDrawCrop..rpDrawTile] of widestring;
- StringCopyModes:array [cmBlackness..cmCreateMask] of widestring;
+// StringCopyModes:array [cmBlackness..cmCreateMask] of widestring;
  // TCopyMode = (cmBlackness, cmDstInvert, cmMergeCopy, cmMergePaint,
 // cmNotSrcCopy, cmNotSrcErase, cmPatCopy, cmPatInvert,
 // cmPatPaint, cmSrcAnd, cmSrcCopy, cmSrcErase,
@@ -72,7 +76,7 @@ function StringPenStyleToInt(Value:widestring):integer;
 function StringBrushStyleToInt(Value:wideString):integer;
 function StringShapeTypeToShape(Value:wideString):TRpShapeType;
 function StringDrawStyleToDrawStyle(Value:widestring):TRpImageDrawStyle;
-function StringCopyModeToCopyMode(Value:widestring):TCopyMode;
+//function StringCopyModeToCopyMode(Value:widestring):TCopyMode;
 
 implementation
 
@@ -125,7 +129,7 @@ begin
  lnames.Add(SrpSBrushStyle);
  ltypes.Add(SRpSList);
  if Assigned(lvalues) then
-  lvalues.Add(StringBrushStyle[TBrushStyle(TRpShape(printitem).BrushStyle)]);
+  lvalues.Add(StringBrushStyle[TRpBrushStyle(TRpShape(printitem).BrushStyle)]);
 
  // Brush Color
  lnames.Add(SrpSBrushColor);
@@ -168,10 +172,10 @@ end;
 
 function StringBrushStyleToInt(Value:wideString):integer;
 var
- i:TBrushStyle;
+ i:TRpBrushStyle;
 begin
  Result:=0;
- for i:=bsSolid to bsDense7 do
+ for i:=rpbsSolid to rpbsDense7 do
  begin
   if Value=StringBrushStyle[i] then
   begin
@@ -196,7 +200,7 @@ begin
  end;
 end;
 
-function StringCopyModeToCopyMode(Value:widestring):TCopyMode;
+{function StringCopyModeToCopyMode(Value:widestring):TCopyMode;
 var
  i:TCopyMode;
 begin
@@ -210,6 +214,7 @@ begin
   end;
  end;
 end;
+}
 
 procedure TRpDrawInterface.SetProperty(pname:string;value:Widestring);
 begin
@@ -281,7 +286,7 @@ begin
 
  if pname=SrpSBrushStyle then
  begin
-  Result:=StringBrushStyle[TBrushStyle(TRpShape(printitem).BrushStyle)];
+  Result:=StringBrushStyle[TRpBrushStyle(TRpShape(printitem).BrushStyle)];
   exit;
  end;
  if pname=SrpSBrushColor then
@@ -369,7 +374,7 @@ end;
 procedure TRpDrawInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
 var
  pi:TPenStyle;
- bi:TBrushStyle;
+ bi:TRpBrushStyle;
  shi:TRpShapeType;
 begin
  if pname=SrpSShape then
@@ -393,7 +398,7 @@ begin
  if pname=SrpSBrushStyle then
  begin
   lpossiblevalues.clear;
-  for bi:=bsSolid to bsDense7 do
+  for bi:=rpbsSolid to rpbsDense7 do
   begin
    lpossiblevalues.Add(StringBrushStyle[bi]);
   end;
@@ -483,13 +488,13 @@ begin
   invalidate;
   exit;
  end;
- if pname=SRpCopyMode then
+{ if pname=SRpCopyMode then
  begin
   TRpImage(fprintitem).CopyMode:=Integer(StringCopyModeToCopyMode(Value));
   invalidate;
   exit;
  end;
- if pname=SRpDPIRes then
+} if pname=SRpDPIRes then
  begin
   TRpImage(fprintitem).DPIRes:=StrToInt(Value);
   if TRpImage(fprintitem).DPIRes<=0 then
@@ -632,7 +637,7 @@ end;
 procedure TRpImageInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
 var
  i:TRpImageDrawStyle;
- k:TCopyMode;
+// k:TCopyMode;
 begin
  if pname=SrpDrawStyle then
  begin
@@ -643,7 +648,7 @@ begin
   end;
   exit;
  end;
- if pname=SrpCopyMode then
+{ if pname=SrpCopyMode then
  begin
   lpossiblevalues.clear;
   for k:=cmBlackness to cmCreateMask do
@@ -652,7 +657,7 @@ begin
   end;
   exit;
  end;
- inherited GetPropertyValues(pname,lpossiblevalues);
+} inherited GetPropertyValues(pname,lpossiblevalues);
 end;
 
 initialization
@@ -663,21 +668,21 @@ initialization
  StringPenStyle[psDashDotDot]:=SRpSPDashDotDot;
  StringPenStyle[psClear]:=SRpSPClear;
 
- StringBrushStyle[bsSolid]:=SRpSBSolid;
- StringBrushStyle[bsClear]:=SRpSBClear;
- StringBrushStyle[bsHorizontal]:=SRpSBHorizontal;
- StringBrushStyle[bsVertical]:=SRpSBVertical;
- StringBrushStyle[bsFDiagonal]:=SRpSBFDiagonal;
- StringBrushStyle[bsBDiagonal]:=SRpSBBDiagonal;
- StringBrushStyle[bsCross]:=SRpSBCross;
- StringBrushStyle[bsDiagCross]:=SRpSBDiagCross;
- StringBrushStyle[bsDense1]:=SRpSBDense1;
- StringBrushStyle[bsDense2]:=SRpSBDense2;
- StringBrushStyle[bsDense3]:=SRpSBDense3;
- StringBrushStyle[bsDense4]:=SRpSBDense4;
- StringBrushStyle[bsDense5]:=SRpSBDense5;
- StringBrushStyle[bsDense6]:=SRpSBDense6;
- StringBrushStyle[bsDense7]:=SRpSBDense7;
+ StringBrushStyle[rpbsSolid]:=SRpSBSolid;
+ StringBrushStyle[rpbsClear]:=SRpSBClear;
+ StringBrushStyle[rpbsHorizontal]:=SRpSBHorizontal;
+ StringBrushStyle[rpbsVertical]:=SRpSBVertical;
+ StringBrushStyle[rpbsFDiagonal]:=SRpSBFDiagonal;
+ StringBrushStyle[rpbsBDiagonal]:=SRpSBBDiagonal;
+ StringBrushStyle[rpbsCross]:=SRpSBCross;
+ StringBrushStyle[rpbsDiagCross]:=SRpSBDiagCross;
+ StringBrushStyle[rpbsDense1]:=SRpSBDense1;
+ StringBrushStyle[rpbsDense2]:=SRpSBDense2;
+ StringBrushStyle[rpbsDense3]:=SRpSBDense3;
+ StringBrushStyle[rpbsDense4]:=SRpSBDense4;
+ StringBrushStyle[rpbsDense5]:=SRpSBDense5;
+ StringBrushStyle[rpbsDense6]:=SRpSBDense6;
+ StringBrushStyle[rpbsDense7]:=SRpSBDense7;
 
  StringShapeType[rpsRectangle]:=SRpsSRectangle;
  StringShapeType[rpsSquare]:=SRpsSSquare;

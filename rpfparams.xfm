@@ -130,7 +130,7 @@ object FRpParams: TFRpParams
       end
       object BAdddata: TButton
         Left = 184
-        Top = 112
+        Top = 116
         Width = 33
         Height = 25
         Caption = '>'

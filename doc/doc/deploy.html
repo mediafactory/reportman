@@ -20,13 +20,20 @@
     <td width="262">Report Manager Main executable</td>
     <td width="133">AppDir/Required</td>
   </tr>
+  <tr>
+    <td width="88">rpmandxp.exe</td>
+    <td width="88">&nbsp;</td>
+    <td width="262">Non Qt Report Manager Designer Version, it supports Windows 
+      XP Themes</td>
+    <td width="133">AppDir/Optional</td>
+  </tr>
   <tr> 
     <td width="88">reportmanres.*</td>
     <td width="88">reportmanres.*</td>
     <td width="262">Engine resource strings for multiple languages</td>
     <td width="133">AppDir/Optional</td>
   </tr>
-  <tr>
+  <tr> 
     <td width="88">repmand.*</td>
     <td width="88">&nbsp;</td>
     <td width="262">Internal resource translations</td>
@@ -55,7 +62,7 @@
     <td width="133">SysDir/Required</td>
   </tr>
   <tr> 
-    <td width="88">qtintf.dll</td>
+    <td width="88">qtintf7.dll</td>
     <td width="88">libborqt.so.2</td>
     <td width="262">QT Linux libs and Windows qt libs and interface to qtlibs</td>
     <td width="133">SysDir/Required</td>
@@ -251,11 +258,12 @@
     <td width="53%" bgcolor="#FFFFCC"><b>Linux</b></td>
   </tr>
   <tr> 
-    <td width="47%">qtintf.dll</td>
+    <td width="47%">qtintf7.dll</td>
     <td width="53%">libborqtintf-6.9-qt2.3.so</td>
   </tr>
   <tr> 
-    <td width="47%">&nbsp;</td>
+    <td width="47%">Note: If you use VCL only components in a VCL Application 
+      you don't need qtintf7.dll</td>
     <td width="53%"> 
       <p>libborqt.so.2</p>
       <p>This are qt runtime files provided by Borland since Kylix 3, if you use 

@@ -232,9 +232,10 @@ begin
   exit;
  try
   fevaluator:=TRpREport(Owner).Evaluator;
-  fevaluator.Expression:=FExpression;
-  fevaluator.Evaluate;
-  FValue:=fevaluator.EvalResult;
+//  fevaluator.Expression:=FExpression;
+//  fevaluator.Evaluate;
+//  FValue:=fevaluator.EvalResult;
+  FValue:=fevaluator.EvaluateText(FExpression);
   FUpdated:=true;
  except
   on E:Exception do

@@ -23,23 +23,27 @@ interface
 {$I rpconf.inc}
 
 uses
-  SysUtils,QStyle,Qt,
-  Types, Classes, QGraphics,
+  SysUtils,
+  Types, Classes,
 {$IFDEF MSWINDOWS}
-  rpgdidriver,rpvpreview,rprfvparams,Dialogs,Forms,
+  rpgdidriver,rpvpreview,rprfvparams,windows,Forms,Dialogs,rppagesetupvcl,
+  rpmdfgridvcl,rpfparamsvcl,
 {$ENDIF}
-  QControls, QForms,
-  QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
-  rpmdconsts,rptypes, QExtCtrls,rpmdfstruc, rplastsav,rpsubreport,
+  QGraphics,QStyle,Qt,QControls, QForms,
+  QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,QExtCtrls,
+  QClipbrd,QPrinters,QConsts, QDialogs,rpqtdriver,rpmdfhelpform,
+  rpreport,rpmdfabout,rppagesetup,rpmdshfolder,rpmdfdatainfo,
+  rpmdfgrid,rppreview,rpprintdia,
+  rpmdconsts,rptypes, rpmdfstruc, rplastsav,rpsubreport,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
-  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver,QConsts, QDialogs,
+  rpsection,rpprintitem,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
 {$IFDEF HORZPAPERBUG}
  rpmetafile,
 {$ENDIF}
-  DB,rpmdfhelpform,rpmunits,rpgraphutils;
+  DB,rpmunits,rpgraphutils;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;
@@ -148,7 +152,7 @@ type
     ADriverQT: TAction;
     ADriverGDI: TAction;
     ASystemPrintDialog: TAction;
-    Systemprintdialog1: TMenuItem;
+    MSystemPrint: TMenuItem;
     AkylixPrintBug: TAction;
     MKylixPrintBug: TMenuItem;
     MQtStyle: TMenuItem;
@@ -308,9 +312,6 @@ type
 
 implementation
 
-uses rppagesetup, rpmdshfolder,rpmdfdatainfo, rpmdfgrid, rppreview, rpmdfabout,
-  rpprintdia,
-  rprfparams;
 
 {$R *.xfm}
 
@@ -538,15 +539,18 @@ begin
   Caption:=SRpRepman+'-'+filename;
  // Create the report structure frame
  fobjinsp:=TFRpObjInsp.Create(Self);
+ fobjinsp.Align:=alclient;
  fobjinsp.Parent:=leftpanel;
  freportstructure:=TFRpStructure.Create(Self);
  freportstructure.Align:=alTop;
  freportstructure.Parent:=leftPanel;
  fdesignframe:=TFRpDesignFrame.Create(Self);
  fobjinsp.DesignFrame:=fdesignframe;
+ fdesignframe.Align:=alclient;
  fdesignframe.Parent:=MainScrollBox;
  fdesignframe.freportstructure:=freportstructure;
  freportstructure.designframe:=fdesignframe;
+ splitter2.Top:=freportstructure.Height+10;
 
  fdesignframe.objinsp:=fobjinsp;
  freportstructure.objinsp:=fobjinsp;
@@ -593,7 +597,14 @@ procedure TFRpMainF.APageSetupExecute(Sender: TObject);
 begin
  Assert(report<>nil,'Called Page setup without a report assigned');
 
- ExecutePageSetup(report);
+{$IFDEF MSWINDOWS}
+ if ADriverGDI.Checked then
+ begin
+  rppagesetupvcl.ExecutePageSetup(report);
+  exit;
+ end;
+{$ENDIF}
+ rppagesetup.ExecutePageSetup(report);
 end;
 
 
@@ -641,7 +652,7 @@ begin
  OpenDialog1.Filter := SRpRepFile+'|*.rep';
 {$ENDIF}
 {$IFDEF VCLFILEFILTERS}
- SaveDialog1.Filter := SRpRepFile+'|*.rep'+SRpAnyFile+'|*.*';
+ SaveDialog1.Filter := SRpRepFile+'|*.rep|'+SRpAnyFile+'|*.*';
 {$ENDIF}
  // Sets on exception event
 {$IFDEF MSWINDOWS}
@@ -651,6 +662,7 @@ begin
  Application.OnException:=MyExceptionHandler;
 
  AppStyle:=dsSystemDefault;
+
  Application.Title:=SRpRepman;
  configfile:=Obtainininameuserconfig('','','repmand');
 {$IFDEF MSWINDOWS}
@@ -937,21 +949,33 @@ end;
 procedure TFRpMainF.ADataConfigExecute(Sender: TObject);
 begin
  // Data info configuration dialog
- ShowDataConfig(report);
- fobjinsp.ClearMultiSelect;
- fdesignframe.UpdateSelection(true);
- updatedmfields:=false;
+ rpmdfdatainfo.ShowDataConfig(report);
 end;
 
 procedure TFRpMainF.AParamsExecute(Sender: TObject);
 begin
- ShowParamDef(report.Params,report.DataInfo);
+{$IFDEF MSWINDOWS}
+ if ADriverGDI.Checked then
+ begin
+  rpfparamsvcl.ShowParamDef(report.Params,report.DataInfo);
+  exit;
+ end;
+{$ENDIF}
+ rpfparams.ShowParamDef(report.Params,report.DataInfo);
 end;
 
 procedure TFRpMainF.AGridOptionsExecute(Sender: TObject);
 begin
  fobjinsp.ClearMultiSelect;
- ModifyGridProperties(report);
+{$IFDEF MSWINDOWS}
+ if ADriverGDI.Checked then
+ begin
+  rpmdfgridvcl.ModifyGridProperties(report);
+  fdesignframe.UpdateSelection(true);
+  exit;
+ end;
+{$ENDIF}
+ rpmdfgrid.ModifyGridProperties(report);
  fdesignframe.UpdateSelection(true);
 end;
 
@@ -1098,7 +1122,7 @@ begin
   rpvpreview.ShowPreview(report,caption);
   exit;
  end;
-{$ENDIF MSWINDOWS}
+{$ENDIF}
  rppreview.ShowPreview(report,caption,AsystemPrintDialog.Checked);
 end;
 
@@ -1265,7 +1289,7 @@ begin
  Directorysep:='/';
 {$ENDIF}
  aurl:=aurl+'doc'+Directorysep+
-  Directorysep+'left.html';
+  'left.html';
  ShowHelp(aurl);
 end;
 
@@ -1319,6 +1343,9 @@ begin
 {$IFDEF LINUX}
   ADriverQT.Checked:=true;
 {$ENDIF}
+  ADriverQt.Checked:=False;
+  ADriverGDI.Checked:=True;
+  AsystemPrintDialog.Checked:=True;
   AsystemPrintDialog.Checked:=inif.ReadBool('Preferences','SystemPrintDialog',True);
   BStatus.Visible:=inif.ReadBool('Preferences','StatusBar',True);
   AStatusBar.Checked:=BStatus.Visible;
@@ -1330,7 +1357,6 @@ begin
   AUnitsinchess.Checked:=Not AUnitCms.Checked;
   AppStyle:=TDefaultStyle(inif.ReadInteger('Preferences','QtStyle',Integer(dsSystemDefault)));
   UpdateStyle;
-
   UpdateUnits;
  finally
   inif.free;

@@ -23,10 +23,12 @@ interface
 {$I rpconf.inc}
 
 uses
-  SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  rpmdobinsint,QGrids,rpmdconsts,rpprintitem,QStdCtrls,
-  QExtCtrls,rpgraphutils,rpsection,rpmunits, rpexpredlg,
-  rpalias,rpreport,Qt,rpsubreport,rpmdflabelint,rplabelitem,
+  SysUtils, Types, Classes,
+  QGraphics, QControls, QForms, QDialogs,QStdCtrls,QExtCtrls,
+  Qt,
+  rpmdobinsint,rpmdconsts,rpprintitem,
+  rpgraphutils,rpsection,rpmunits, rpexpredlg,
+  rpalias,rpreport,rpsubreport,rpmdflabelint,rplabelitem,
   rpmdfdrawint,rpmdfbarcodeint,rpmdfchartint;
 
 const
@@ -263,6 +265,8 @@ begin
 
  AScrollBox:=TScrollBox.Create(Self);
  AScrollBox.Align:=alClient;
+ AScrollBox.HorzScrollBar.Tracking:=True;
+ AScrollBox.VertScrollBar.Tracking:=True;
  AScrollBox.BorderStyle:=bsNone;
  AScrollBox.Parent:=Self;
 
@@ -336,6 +340,7 @@ begin
   Control.Left:=CONS_CONTROLPOS;
   Control.Width:=TotalWidth-Control.Left-CONS_RIGHTBARGAP;
   control.parent:=AScrollBox;
+
   if aheight=0 then
    aheight:=Control.Height;
   Control.tag:=i;

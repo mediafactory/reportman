@@ -30,7 +30,7 @@ uses SysUtils, Classes,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
-  rpreport,rpparams, QControls, QForms, QStdCtrls, QExtCtrls;
+  rpreport,rpparams;
 
 const
   CONS_LEFTGAP=3;

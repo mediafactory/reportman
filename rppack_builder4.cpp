@@ -19,6 +19,7 @@ USERES("rplastsav.dcr");
 USEPACKAGE("Vclx40.bpi");
 USEUNIT("rptranslator.pas");
 USERES("rptranslator.dcr");
+USEUNIT("rpmdshfolder.pas");
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 //---------------------------------------------------------------------------

@@ -20,10 +20,14 @@ unit rpmdfstruc;
 
 interface
 
+{$I rpconf.inc}
+
 uses
-  SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  QComCtrls,rpreport,rpsubreport,rpmdconsts, QMenus, QTypes,
-  rpsection,rpmdobjinsp,rpprintitem, QActnList, QImgList, QButtons, QExtCtrls;
+  SysUtils, Types, Classes,
+  QGraphics, QControls, QForms, QDialogs,
+  QComCtrls,QMenus, QTypes,QActnList, QImgList, QButtons, QExtCtrls,
+  rpreport,rpsubreport,rpmdconsts,
+  rpsection,rpmdobjinsp,rpprintitem;
 
 type
   TFRpStructure = class(TFrame)

@@ -21,7 +21,10 @@ unit rpmdfsectionint;
 
 interface
 
-uses SysUtils, Classes, QGraphics, QForms,Types,
+{$I rpconf.inc}
+
+uses SysUtils, Classes,Types,
+  QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,
   rpmdobinsint,rpreport,rpprintitem,rpgraphutils,
   rpmdobjinsp,rpmdfstruc,rpmdflabelint,rplabelitem,

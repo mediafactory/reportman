@@ -23,8 +23,12 @@ unit rpmdobinsint;
 
 interface
 
-uses Types,QGraphics,QForms,QControls,rpmdconsts,classes,sysutils,rpmunits,
-  rpprintitem,rpgraphutils,rpsection,rpreport,qt,QDialogs,rptypes;
+{$I rpconf.inc}
+
+uses Types,
+  QGraphics,QForms,QControls,Qt,QDialogs,
+ rpmdconsts,classes,sysutils,rpmunits,
+ rpprintitem,rpgraphutils,rpsection,rpreport,rptypes;
 
 const
  CONS_MODIWIDTH=5;
@@ -32,6 +36,8 @@ const
  CONS_MINHEIGHT=5;
  CONS_MINWIDTH=5;
  CONS_SELWIDTH=7;
+ MAX_CHeight=144000;
+ MAX_CWidth=144000;
 type
  TRpPropertytype=(rppinteger,rppcurrency,rppstring,rpplist,rpcustom);
 
@@ -167,6 +173,7 @@ implementation
 
 uses rpmdobjinsp;
 
+
 constructor TRpSizeInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin
  inherited Create(AOwner);
@@ -256,12 +263,20 @@ begin
  if pname=SRpSWidth then
  begin
   fprintitem.Width:=gettwipsfromtext(value);
+  if fprintitem.Width<0 then
+   fprintitem.Width:=0;
+  if fprintitem.Width>MAX_CWIDTH then
+   fprintitem.Width:=MAX_CWIDTH;
   UpdatePos;
   exit;
  end;
  if pname=SRpSHeight then
  begin
   fprintitem.Height:=gettwipsfromtext(value);
+  if fprintitem.Height<0 then
+   fprintitem.Height:=0;
+  if fprintitem.Height>MAX_CHeight then
+   fprintitem.Height:=MAX_CHeight;
   UpdatePos;
   exit;
  end;

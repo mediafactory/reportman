@@ -61,8 +61,15 @@ const
 
 {$IFDEF MSWINDOWS}
 {$EXTERNALSYM SHGetFolderPath}
+{$IFNDEF BUILDER4}
 function SHGetFolderPath(hwnd: HWND; csidl: Integer; hToken: THandle; dwFlags: DWORD; pszPath: PChar): HResult; stdcall;
 function SHGetFolderPath; external shfolder name 'SHGetFolderPathA';
+{$ENDIF}
+{$IFDEF BUILDER4}
+var SHGetFolderPath:function (hwnd: HWND; csidl: Integer; hToken: THandle; dwFlags: DWORD; pszPath: PChar): HResult; stdcall;
+var HandleLib:THandle;
+{$ENDIF}
+
 {$EXTERNALSYM PathAppend}
 function PathAppend(pszPath: PChar; pMore: PChar): BOOL; stdcall;
 function PathAppend; external shlwapi32 name 'PathAppendA';
@@ -250,9 +257,21 @@ begin
 {$ENDIF}
 end;
 
+{$IFDEF BUILDER4}
 initialization
 
+HandleLib:=LoadLibrary(shfolder);
+if HandleLib=0 then
+ RaiseLastWin32Error;
+SHGetFolderPath:=GetProcAddress(HandleLib,PChar('SHGetFolderPathA'));
+if Not Assigned(SHGetFolderPath) then
+ RaiseLastWin32Error;
 
+finalization
+
+if HandleLib<>0 then
+ FreeLibrary(HandleLib);
+{$ENDIF}
 end.
 
 

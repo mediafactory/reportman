@@ -202,6 +202,12 @@ begin
  Rpfunctions.AddObject('INT',iden);
  iden:=TIdenSQRT.Create(nil);
  Rpfunctions.AddObject('SQRT',iden);
+
+ // Functions for compatibility with Gestor reports
+ iden:=TIdenVariable.Create(nil);
+ iden.Value:=True;
+ RpFunctions.AddObject('MODOGRAFICO',iden);
+
  iden:=TIdenSTR.Create(nil);
  Rpfunctions.AddObject('STR',iden);
  iden:=TIdenVal.Create(nil);

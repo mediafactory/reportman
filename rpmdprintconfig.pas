@@ -21,8 +21,12 @@ unit rpmdprintconfig;
 
 interface
 
-uses SysUtils, Classes, QGraphics, QForms, QControls, QStdCtrls,
-  QButtons, QExtCtrls,rpmdconsts,IniFiles,rpmdshfolder,QPrinters,
+{$I rpconf.inc}
+
+uses SysUtils, Classes,
+  QGraphics, QForms, QControls, QStdCtrls,
+  QButtons, QExtCtrls,QPrinters,
+  rpmdconsts,IniFiles,rpmdshfolder,
   rptypes,rpmunits;
 
 type

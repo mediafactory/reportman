@@ -21,10 +21,13 @@ unit rpmdfbarcodeint;
 
 interface
 
-uses SysUtils, Classes, QGraphics, QForms,rpmunits,
-  QButtons, QExtCtrls, QControls, QStdCtrls,types,
+{$I rpconf.inc}
+
+uses SysUtils, Classes,rpmunits,types,
+ QGraphics, QForms,Qt,
+ QButtons, QExtCtrls, QControls, QStdCtrls,
   rpprintitem,rpmdbarcode,rpmdobinsint,rpmdconsts,
-  rpgraphutils,rptypes,Qt;
+  rpgraphutils,rptypes;
 
 type
  TRpBarcodeInterface=class(TRpSizePosInterface)
@@ -209,7 +212,8 @@ begin
  rec.Left:=0;
  rec.Right:=Width-1;
  rec.Bottom:=Height-1;
- Canvas.TextRect(rec,0,0,aexp.Expression,0);
+// Canvas.TextRect(rec,0,0,aexp.Expression,0);
+ Canvas.TextOut(0,0,aexp.Expression);
  Canvas.Pen.Color:=clBlack;
  Canvas.Pen.Style:=psDashDotDot;
  Canvas.Brush.Style:=bsClear;

@@ -1,6 +1,6 @@
 object FRpMainF: TFRpMainF
-  Left = 159
-  Top = 116
+  Left = 82
+  Top = 71
   VertScrollBar.Visible = False
   HorzScrollBar.Visible = False
   ActiveControl = ToolButton1
@@ -547,7 +547,7 @@ object FRpMainF: TFRpMainF
           Action = ADriverGDI
         end
       end
-      object Systemprintdialog1: TMenuItem
+      object MSystemPrint: TMenuItem
         Action = ASystemPrintDialog
       end
       object MKylixPrintBug: TMenuItem

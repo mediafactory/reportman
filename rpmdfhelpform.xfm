@@ -16,7 +16,7 @@ object FRpHelpForm: TFRpHelpForm
     Left = 0
     Top = 0
     Width = 552
-    Height = 33
+    AutoSize = True
     ButtonHeight = 28
     ButtonWidth = 32
     Caption = 'ToolBar1'
@@ -55,14 +55,6 @@ object FRpHelpForm: TFRpHelpForm
       Caption = 'ToolButton4'
       ImageIndex = 3
     end
-  end
-  object TextBrowser1: TTextBrowser
-    Left = 0
-    Top = 33
-    Width = 552
-    Height = 362
-    Align = alClient
-    TabOrder = 1
   end
   object ImageList1: TImageList
     Height = 19

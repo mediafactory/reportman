@@ -75,8 +75,8 @@ object FRpPrinterConfig: TFRpPrinterConfig
     Caption = 'Configuraiton file'
     TabOrder = 6
     object EConfigFile: TEdit
-      Left = 4
-      Top = 72
+      Left = 8
+      Top = 68
       Width = 477
       Height = 21
       Color = clButton

@@ -21,10 +21,14 @@ unit rpmdfchartint;
 
 interface
 
-uses SysUtils, Classes, QGraphics, QForms,
-  QButtons, QExtCtrls, QControls, QStdCtrls,types,
+{$I rpconf.inc}
+
+uses SysUtils, Classes,
+  QGraphics, QForms,Qt,
+  QButtons, QExtCtrls, QControls, QStdCtrls,
+  types,
   rpprintitem,rpmdchart,rpmdobinsint,rpmdconsts,
-  rpgraphutils,rptypes,Qt;
+  rpgraphutils,rptypes;
 
 type
  TRpChartInterface=class(TRpGenTextInterface)
@@ -44,6 +48,7 @@ type
 
 
 implementation
+
 
 
 constructor TRpChartInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
@@ -262,6 +267,7 @@ begin
  end;
  Canvas.Brush.Style:=bsClear;
  Canvas.TextRect(rec,0,0,aexp.ValueExpression,aalign);
+
  Canvas.Pen.Color:=clBlack;
  Canvas.Pen.Style:=psDashDot;
  Canvas.Brush.Style:=bsClear;

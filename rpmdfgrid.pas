@@ -20,9 +20,12 @@ unit rpmdfgrid;
 
 interface
 
-uses SysUtils, Classes, QGraphics, QForms,
-  QButtons, QExtCtrls, QControls, QStdCtrls,rpreport,
-  rpmdconsts,rpmunits,QDialogs;
+{$I rpconf.inc}
+
+uses SysUtils, Classes,
+  QGraphics, QForms,
+  QButtons, QExtCtrls, QControls, QStdCtrls,QDialogs,
+  rpmdconsts,rpmunits,rpreport;
 
 type
   TFRpGridOptions = class(TForm)

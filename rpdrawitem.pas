@@ -300,7 +300,7 @@ begin
  if Not Assigned(FStream) then
   exit;
  FMStream:=GetStream;
- if Not Assigned(FStream) then
+ if Not Assigned(FMStream) then
   exit;
  try
   metafile.Pages[metafile.CurrentPage].NewImageObject(aposy,aposx,

@@ -21,10 +21,14 @@ unit rppagesetup;
 
 interface
 
+{$I rpconf.inc}
+
 uses
-  SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  QStdCtrls,rpreport, QExtCtrls,rpmunits, QButtons,rptypes,
-  rpmetafile,QPrinters,rpmdconsts,rpmdprintconfig;
+  SysUtils, Types, Classes,rpmunits,
+  QGraphics, QControls, QForms, QDialogs,
+  QStdCtrls,rpreport, QExtCtrls,QButtons,QPrinters,
+  rptypes,
+  rpmetafile,rpmdconsts,rpmdprintconfig;
 
 type
   TFRpPageSetup = class(TForm)
@@ -106,6 +110,7 @@ type
     Width: Integer;
     Height: Integer;
   end;
+
 
 
 const PageSizeNames: array [psA4..psNPageSize] of widestring =

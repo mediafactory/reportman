@@ -11,17 +11,17 @@ unit ReportMan_TLB;
 // manual modifications will be lost.                                         
 // ************************************************************************ //
 
-// PASTLWTR : $Revision: 1.2 $
-// File generated on 11/07/2002 20:48:44 from Type Library described below.
+// PASTLWTR : 1.2
+// File generated on 11/09/2002 17:45:10 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
 // LIBID: {D4D26F6B-6564-44F4-A913-03C91CE37740}
 // LCID: 0
 // Helpfile: 
+// HelpString: ReportMan Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINNT\System32\stdole2.tlb)
-//   (2) v4.0 StdVCL, (C:\WINNT\System32\STDVCL40.DLL)
+//   (1) v2.0 stdole, (C:\WINDOWS\System32\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
@@ -95,8 +95,8 @@ type
     function ShowParams: WordBool; safecall;
     procedure SaveToPDF(const filename: WideString; compressed: WordBool); safecall;
     function PrintRange(frompage: Integer; topage: Integer; copies: Integer; collate: WordBool): WordBool; safecall;
-    function Get_Filename: WideString; safecall;
-    procedure Set_Filename(const Value: WideString); safecall;
+    function Get_filename: WideString; safecall;
+    procedure Set_filename(const Value: WideString); safecall;
     function Get_Preview: WordBool; safecall;
     procedure Set_Preview(Value: WordBool); safecall;
     function Get_ShowProgress: WordBool; safecall;
@@ -128,7 +128,7 @@ type
     procedure Set_HelpKeyword(const Value: WideString); safecall;
     procedure SetSubComponent(IsSubComponent: WordBool); safecall;
     procedure AboutBox; safecall;
-    property Filename: WideString read Get_Filename write Set_Filename;
+    property filename: WideString read Get_filename write Set_filename;
     property Preview: WordBool read Get_Preview write Set_Preview;
     property ShowProgress: WordBool read Get_ShowProgress write Set_ShowProgress;
     property ShowPrintDialog: WordBool read Get_ShowPrintDialog write Set_ShowPrintDialog;
@@ -163,7 +163,7 @@ type
     function ShowParams: WordBool; dispid 9;
     procedure SaveToPDF(const filename: WideString; compressed: WordBool); dispid 10;
     function PrintRange(frompage: Integer; topage: Integer; copies: Integer; collate: WordBool): WordBool; dispid 11;
-    property Filename: WideString dispid 12;
+    property filename: WideString dispid 12;
     property Preview: WordBool dispid 13;
     property ShowProgress: WordBool dispid 14;
     property ShowPrintDialog: WordBool dispid 15;
@@ -188,7 +188,7 @@ type
 
 // *********************************************************************//
 // DispIntf:  IReportManXEvents
-// Flags:     (0)
+// Flags:     (4096) Dispatchable
 // GUID:      {50909EA4-8F4F-4865-877D-287FC7072177}
 // *********************************************************************//
   IReportManXEvents = dispinterface
@@ -240,7 +240,8 @@ type
     property Enabled: WordBool index -514 read GetWordBoolProp write SetWordBoolProp;
     property Visible: WordBool index 29 read GetWordBoolProp write SetWordBoolProp;
   published
-    property Filename: WideString index 12 read GetWideStringProp write SetWideStringProp stored False;
+    property Anchors;
+    property filename: WideString index 12 read GetWideStringProp write SetWideStringProp stored False;
     property Preview: WordBool index 13 read GetWordBoolProp write SetWordBoolProp stored False;
     property ShowProgress: WordBool index 14 read GetWordBoolProp write SetWordBoolProp stored False;
     property ShowPrintDialog: WordBool index 15 read GetWordBoolProp write SetWordBoolProp stored False;
@@ -255,6 +256,8 @@ procedure Register;
 
 resourcestring
   dtlServerPage = 'Servers';
+
+  dtlOcxPage = 'ActiveX';
 
 implementation
 
@@ -385,7 +388,7 @@ end;
 
 procedure Register;
 begin
-  RegisterComponents('ActiveX',[TReportManX]);
+  RegisterComponents(dtlOcxPage, [TReportManX]);
 end;
 
 end.

@@ -21,9 +21,13 @@ unit rpdbxconfig;
 
 interface
 
-uses SysUtils, Classes, QGraphics, QForms,
-  QButtons, QExtCtrls, QControls, QStdCtrls,QDialogs,rpgraphutils,
-  SQLExpr,DBConnAdmin, DBXpress, DB,rpmdconsts, QComCtrls, QImgList;
+{$I rpconf.inc}
+
+uses SysUtils, Classes,
+  QGraphics, QForms,QComCtrls, QImgList,
+  QButtons, QExtCtrls, QControls, QStdCtrls,QDialogs,
+  rpgraphutils,
+  SQLExpr,DBConnAdmin, DBXpress, DB,rpmdconsts;
 
 const
  CONTROL_DISTANCEY=5;

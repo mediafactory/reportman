@@ -15,7 +15,7 @@ VERSION = BCB.04.04
 # ---------------------------------------------------------------------------
 PROJECT = rppack_builder4.bpl
 OBJFILES = rpmreg.obj rppdfreport.obj rpvclreport.obj rpalias.obj rpeval.obj rplastsav.obj \
-  rptranslator.obj rppack_builder4.obj
+  rptranslator.obj rpmdshfolder.obj rppack_builder4.obj
 RESFILES = rppack_builder4.res rppdfreport.dcr rpvclreport.dcr rpalias.dcr rpeval.dcr \
   rplastsav.dcr rptranslator.dcr
 DEFFILE =
@@ -23,8 +23,12 @@ RESDEPEN = $(RESFILES)
 LIBFILES =
 IDLFILES =
 IDLGENFILES =
-LIBRARIES = vcldbx40.lib vcljpg40.lib
-SPARELIBS = Vcl40.lib vclx40.lib vcljpg40.lib vclmid40.lib vcldb40.lib vcldbx40.lib
+LIBRARIES = dclocx40.lib inet40.lib inetdb40.lib nmfast40.lib dss40.lib tee40.lib \
+  teedb40.lib teeui40.lib qrpt40.lib ibsmp40.lib bcbsmp40.lib vcldbx40.lib \
+  vcljpg40.lib
+SPARELIBS = Vcl40.lib vclx40.lib vcljpg40.lib vclmid40.lib vcldb40.lib vcldbx40.lib \
+  bcbsmp40.lib ibsmp40.lib qrpt40.lib teeui40.lib teedb40.lib tee40.lib dss40.lib \
+  nmfast40.lib inetdb40.lib inet40.lib dclocx40.lib
 PACKAGES = vcl40.bpi Vclmid40.bpi Vcldb40.bpi Vclx40.bpi
 # ---------------------------------------------------------------------------
 PATHCPP = .;

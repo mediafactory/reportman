@@ -21,10 +21,14 @@ unit rpmdflabelint;
 
 interface
 
-uses SysUtils, Classes, QGraphics, QForms,
-  QButtons, QExtCtrls, QControls, QStdCtrls,types,
+{$I rpconf.inc}
+
+uses SysUtils, Classes,
+  QGraphics, QForms, QButtons, QExtCtrls, QControls,
+  QStdCtrls,Qt,
+  types,
   rpprintitem,rplabelitem,rpmdobinsint,rpmdconsts,
-  rpgraphutils,rptypes,Qt;
+  rpgraphutils,rptypes;
 
 type
  TRpLabelInterface=class(TRpGenTextInterface)
@@ -56,6 +60,8 @@ type
 
 
 implementation
+
+
 
 var
  AggregatesString:array [rpAgNone..rpAgGeneral] of widestring;
@@ -415,6 +421,7 @@ begin
  end;
  Canvas.Brush.Style:=bsClear;
  Canvas.TextRect(rec,0,0,aexp.Expression,aalign);
+
  Canvas.Pen.Color:=clBlack;
  Canvas.Pen.Style:=psDashDot;
  Canvas.Brush.Style:=bsClear;

@@ -12,9 +12,9 @@ package rppackdesign_del;
 {$LOCALSYMBOLS ON}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
-{$OPTIMIZATION ON}
-{$OVERFLOWCHECKS OFF}
-{$RANGECHECKS OFF}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
 {$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES OFF}
@@ -34,8 +34,13 @@ requires
   visualclx,
   visualdbclx,
   rppack_del,
+  ibxpress,
+  adortl,
+  dbexpress,
+  bdertl,
+  rppackvcl_del,
   rppackv_del,
-  rppackvcl_del;
+  rppackdesignvcl_del;
 
 contains
   rpmregdesign in 'rpmregdesign.pas',
@@ -54,6 +59,8 @@ contains
   rpmdobinsint in 'rpmdobinsint.pas',
   rpmdobjinsp in 'rpmdobjinsp.pas' {FRpObjInsp: TFrame},
   rpmdfbarcodeint in 'rpmdfbarcodeint.pas',
-  rpmdfchartint in 'rpmdfchartint.pas';
+  rpmdfchartint in 'rpmdfchartint.pas',
+  rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig},
+  rppagesetup in 'rppagesetup.pas' {FRpPageSetup};
 
 end.

@@ -879,9 +879,9 @@ object FRpAboutBox: TFRpAboutBox
   object LVersion: TLabel
     Left = 72
     Top = 44
-    Width = 39
+    Width = 32
     Height = 13
-    Caption = '1.0 RC2'
+    Caption = '1.1 CP'
   end
   object LProject: TLabel
     Left = 12

@@ -62,5 +62,21 @@
   lots of memory like TClientDataset, it frees the records it does not need so 
   the engine can print/proces millions of records without memory problems but 
   a bit slower if you print only a few thousand records.</p>
+<p><b>Q. Is Report Manager Engine Thread Safe so it can be used in multithreaded 
+  applications (servers)?</b></p>
+<p>Report Manager is thread safe but there are some issues not only related to 
+  Report Manager:<br>
+  - BDE is not thread safe by default (a session must be open for each thread), 
+  in next version you can assign a session to a database report, in current version 
+  you can assign a TDatabase directly to the database report<br>
+  component in runtime.<br>
+  - Warning about local dabase access modes, some database engines like Interbase/Firebird 
+  allow to set a path to the database directly (c:\adatabase.gdb) using local 
+  access to database, you must avoid this because it's not thread safe you must 
+  use net access mode allways (localhost:c:\adatabase.gdb)<br>
+  - Not all VisualCLX components are thread safe so you need to modify this VisualCLX 
+  components in the main thread, so the designer package is, becasuse this issue, 
+  not thread safe.</p>
+<p></p>
 </body>
 </html>

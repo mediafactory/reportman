@@ -20,13 +20,6 @@ object FRpDesignFrame: TFRpDesignFrame
     BevelOuter = bvNone
     Color = clButton
     TabOrder = 0
-    object TopRuler: TRpRuler
-      Left = 20
-      Top = 0
-      Width = 389
-      Height = 20
-      RType = rHorizontal
-    end
   end
   object PLeft: TPanel
     Left = 0

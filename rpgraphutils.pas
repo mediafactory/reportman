@@ -19,20 +19,23 @@ unit rpgraphutils;
 
 interface
 
+{$I rpconf.inc}
+
 uses
 {$IFDEF MSWINDOWS}
   windows,
 {$ENDIF}
-  SysUtils,Classes, QGraphics, QForms,Types,rptranslator,
-  QButtons, QExtCtrls, QControls, QStdCtrls,rpmunits,Qt,
-  QComCtrls,
+  SysUtils,Classes,Types,rptranslator,
+  QGraphics, QForms,QButtons, QExtCtrls,
+  QControls, QStdCtrls,Qt,QImgList,QComCtrls,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
-  rpmdconsts, QImgList;
+  rpmdconsts,rpmunits;
 
 
 type
+
   TFRpMessageDlg = class(TForm)
     Panel1: TPanel;
     BCancel: TButton;
@@ -73,6 +76,8 @@ procedure FillTreeView(path:String;Nodes:TTreeNodes;Node:TTreeNode;pattern:strin
 implementation
 
 {$R *.xfm}
+
+
 {$IFDEF MSWINDOWS}
 const
   kernel = 'kernel32.dll';
@@ -435,7 +440,6 @@ begin
  if QTranslator_load(Translator, @WFileName, nil, @WDelimiter, nil) then
    QApplication_installTranslator(Application.Handle, Translator)
 end;
-
 
 function RpMessageBox(const Text: WideString; const Caption: WideString = '';
   Buttons: TMessageButtons = [smbOK]; Style: TMessageStyle = smsInformation;

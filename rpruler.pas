@@ -18,9 +18,13 @@ unit rpruler;
 
 interface
 
+{$I rpconf.inc}
+
 uses
-  Types,Classes,SysUtils,QGraphics, QControls,
-  rpmdconsts,Qt,QForms;
+  Types,Classes,SysUtils,
+  QGraphics, QControls,
+  Qt,QForms,
+ rpmdconsts;
 
 
 const
@@ -55,18 +59,18 @@ type
   end;
 
 
-function PaintRuler(metrics:TRprulermetric;RType:TRpRulerType;Color:TColor;Width,Height:integer):QGraphics.TBitmap;
 
+function PaintRuler(metrics:TRprulermetric;RType:TRpRulerType;Color:TColor;Width,Height:integer):TBitmap;
 
 implementation
 
 
 
 var
- bitmapHcm:QGraphics.TBitmap;
- bitmapVcm:QGraphics.TBitmap;
- bitmapHin:QGraphics.TBitmap;
- bitmapVin:QGraphics.TBitmap;
+ bitmapHcm:TBitmap;
+ bitmapVcm:TBitmap;
+ bitmapHin:TBitmap;
+ bitmapVin:TBitmap;
 
 
 
@@ -117,7 +121,7 @@ end;
 
 procedure TRpRuler.Paint;
 var
- bit:QGraphics.TBitmap;
+ bit:TBitmap;
 begin
  bit:=PaintRuler(metrics,RType,Color,Width,Height);
  Canvas.Draw(0,0,bit);
@@ -129,18 +133,17 @@ begin
  end;
 end;
 
-function PaintRuler(metrics:TRprulermetric;RType:TRpRulerType;Color:TColor;Width,Height:integer):QGraphics.TBitmap;
+function PaintRuler(metrics:TRprulermetric;RType:TRpRulerType;Color:TColor;Width,Height:integer):TBitmap;
 var rect,rectrefresh:TRect;
     scale:double;
     i,value,Clength,CHeight:integer;
-    bitmap:QGraphics.TBitmap;
+    bitmap:TBitmap;
     pixelsperinchx,pixelsperinchy:Integer;
     windowwidth:integer;
     windowheight:integer;
     h1,h2,h3:integer;
     onethousand,onecent,midthousand:integer;
-//    adc:HDC;
-    han:QPainterH;
+  han:QPainterH;
     bwidth,bheight:integer;
 begin
  Bitmap:=nil;
@@ -213,7 +216,7 @@ begin
   REsult:=Bitmap;
   exit;
  end;
- Bitmap:=QGraphics.TBitmap.create;
+ Bitmap:=TBitmap.create;
  if Metrics=rCms then
  begin
   if RType=rHorizontal then

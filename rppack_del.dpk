@@ -36,7 +36,8 @@ requires
   dbrtl,
   bdertl,
   dbexpress,
-  adortl;
+  adortl,
+  ibxpress;
 
 contains
   rptypeval in 'rptypeval.pas',

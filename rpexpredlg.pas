@@ -18,10 +18,13 @@ unit rpexpredlg;
 
 interface
 
+{$I rpconf.inc}
+
 uses
-  SysUtils, Classes, QGraphics,QControls, QForms, QDialogs,
-  QStdCtrls, QExtCtrls,
-  rpalias,rpeval, QButtons,rptypeval,
+  SysUtils, Classes,
+  QGraphics,QControls, QForms, QDialogs,
+  QStdCtrls, QExtCtrls,QButtons,
+  rpalias,rpeval, rptypeval,
   rpmdconsts;
 
 const

@@ -23,10 +23,21 @@ unit rpmdftree;
 
 interface
 
+{$I rpconf.inc}
+
 uses
   SysUtils, Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QDialogs,rpmdconsts, QActnList, QImgList, QComCtrls,rpgraphutils, DB,
-  DBClient, QStdCtrls,rpclxreport;
+  DBClient, QStdCtrls,
+{$IFDEF LINUX}
+  Libc,
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  mmsystem,windows,
+{$ENDIF}
+  rpclxreport;
+
+const PROGRESS_INTERVAL=500;
 
 type
   TRpOnLoadReport=procedure (reportname:string;memstream:TMemoryStream) of object;
@@ -70,6 +81,7 @@ type
       Node: TTreeNode; const Pt: TPoint);
     procedure AUserParamsExecute(Sender: TObject);
     procedure APrintExecute(Sender: TObject);
+    procedure BCancelClick(Sender: TObject);
   private
     { Private declarations }
     docancel:boolean;
@@ -77,6 +89,14 @@ type
     report:TCLXReport;
     CurrentLoaded:String;
     FOnLoadReport:TRpOnLoadReport;
+{$IFDEF MSWINDOWS}
+    mmfirst,mmlast:DWORD;
+{$ENDIF}
+{$IFDEF LINUX}
+    milifirst,mililast:TDatetime;
+{$ENDIF}
+    difmilis:int64;
+    procedure CheckCancel(acount:integer);
     procedure GenerateTree;
     procedure FillTreeForCurrentRecord(ANode:TTreeNode);
     procedure CheckLoaded;
@@ -145,6 +165,13 @@ var
  acount:integer;
  i:integer;
 begin
+ // Get the time
+{$IFDEF MSWINDOWS}
+ mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+ milifirst:=now;
+{$ENDIF}
  // Transport the dataset to the clientdatasets
  DReports.Close;
  DReportGroups.Close;
@@ -182,10 +209,7 @@ begin
     Raise;
    end;
    inc(acount);
-   BCancel.Caption:=IntToStr(acount)+'-'+SRpCancel;
-   Application.ProcessMessages;
-   if docancel then
-    Raise Exception.Create(SRpOperationAborted);
+   CheckCancel(acount);
    groups.Next;
   end;
 
@@ -202,10 +226,7 @@ begin
     Raise;
    end;
    inc(acount);
-   BCancel.Caption:=IntToStr(acount)+'-'+SRpCancel;
-   Application.ProcessMessages;
-   if docancel then
-    Raise Exception.Create(SRpOperationAborted);
+   CheckCancel(acount);
    reports.Next;
   end;
 
@@ -269,9 +290,7 @@ begin
   DReportGroups2.Next;
   if DReportGroups2.Eof then
    break;
-  Application.ProcessMessages;
-  if docancel then
-   Raise Exception.Create(SRpOperationAborted);
+  CheckCancel(0);
  end;
 end;
 
@@ -319,6 +338,7 @@ begin
       NodeInfo.Node:=ANode;
       ANode.Data:=NodeInfo;
       DReports.Next;
+      CheckCancel(0);
      end;
     end;
    end;
@@ -332,12 +352,39 @@ begin
     if DReportsREPORT_GROUP.Value>=0 then
      break;
    DReports.Next;
+   CHeckCancel(0);
   end;
  finally
   ATree.Items.EndUpdate;
  end;
 end;
 
+procedure TFRpDBTree.CheckCancel(acount:integer);
+begin
+{$IFDEF MSWINDOWS}
+ mmlast:=TimeGetTime;
+ difmilis:=(mmlast-mmfirst);
+{$ENDIF}
+{$IFDEF LINUX}
+ mililast:=now;
+ difmilis:=MillisecondsBetween(mililast,milifirst);
+{$ENDIF}
+ if difmilis>PROGRESS_INTERVAL then
+ begin
+  // Get the time
+{$IFDEF MSWINDOWS}
+  mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+  milifirst:=now;
+{$ENDIF}
+  docancel:=false;
+  BCancel.Caption:=FormatFloat('###,####',acount)+'-'+SRpCancel;
+  Application.ProcessMessages;
+  if docancel then
+   Raise Exception.Create(SRpOperationAborted);
+ end;
+end;
 
 procedure TFRpDBTree.ADeleteExecute(Sender: TObject);
 begin
@@ -439,6 +486,11 @@ begin
  CheckLoaded;
  report.Preview:=false;
  report.Execute;
+end;
+
+procedure TFRpDBTree.BCancelClick(Sender: TObject);
+begin
+ docancel:=true;
 end;
 
 end.

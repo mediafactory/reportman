@@ -636,10 +636,7 @@ begin
    memstream.Seek(0,soFrombeginning);
    reader:=TReader.Create(memstream,1000);
    try
-    if Assigned(FOnReadError) then
-     reader.OnError:=FOnReadError
-    else
-     reader.OnError:=FInternalOnReadError;
+    reader.OnError:=FInternalOnReadError;
     reader.ReadRootComponent(Self);
    finally
     reader.free;
@@ -656,6 +653,10 @@ procedure TRpReport.FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
 begin
  Handled:=false;
+// if Pos('AllText',Message)>0 then
+//  Handled:=True;
+ if Assigned(FOnReadError) then
+  reader.OnError:=FOnReadError
 end;
 
 procedure TRpReport.SetSubReports(Value:TRpSubReportList);

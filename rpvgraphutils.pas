@@ -23,7 +23,7 @@ unit rpvgraphutils;
 interface
 
 uses Classes,SysUtils,Windows,Graphics,rpmunits,Printers,WinSpool,
- rpmdconsts,rptypes;
+ rpmdconsts,rptypes,Forms;
 
 type
  TGDIPageSize=record
@@ -60,6 +60,10 @@ procedure SetCurrentPaper(apapersize:TGDIPageSize);
 function GetCurrentPaper:TGDIPageSize;
 procedure SendControlCodeToPrinter(S: string);
 function FontStyleToCLXInteger(fontstyle:TFontStyles):integer;
+function twipstopixels(ATwips:integer):integer;
+function pixelstotwips(apixels:integer):integer;
+function AlignToGrid(Value:integer;scale:integer):integer;
+function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
 
 var
  osinfo:TOsVersionInfo;
@@ -72,6 +76,34 @@ var
  obtainedversion:Boolean;
  FPrinters:TStringList;
 
+
+function twipstopixels(ATwips:integer):integer;
+begin
+ Result:=Round((ATwips/TWIPS_PER_INCHESS)*Screen.PixelsPerInch);
+end;
+
+function pixelstotwips(apixels:integer):integer;
+begin
+ Result:=Round((APixels/Screen.PixelsPerInch)*TWIPS_PER_INCHESS);
+end;
+
+function AlignToGrid(Value:integer;scale:integer):integer;
+var
+ rest:integer;
+begin
+ Result:=Value div scale;
+ rest:=Value mod scale;
+ Result:=scale*Result;
+ if rest>(scale div 2) then
+  Result:=Result+scale;
+end;
+
+function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
+begin
+ Value:=pixelstotwips(Value);
+ Value:=AlignToGrid(Value,scaletwips);
+ Result:=twipstopixels(Value);
+end;
 
 { Rutina que imprime un bitmap  }
 { Bitmap: el bitmap a imprimir }

@@ -19,7 +19,7 @@ unit rpregvcl;
 interface
 
 uses
-  Classes,rpvclreport,rpactivexreport;
+  Classes,rpvclreport,rpactivexreport,rpexpredlgvcl,rprulervcl;
 
 
 procedure Register;
@@ -30,6 +30,8 @@ implementation
 procedure Register;
 begin
   RegisterComponents('Reportman', [TVCLReport]);
+  RegisterComponents('Reportman', [TRpRulerVCL]);
+  RegisterComponents('Reportman', [TRpExpreDialogVCL]);
   // TRpActiveXReport is a Wrapper to generate the ActiveX version
   // with Delphi 6 Active X Control Wizard
   RegisterComponents('Reportman', [TRpActiveXReport]);
