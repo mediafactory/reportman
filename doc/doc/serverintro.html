@@ -1,0 +1,57 @@
+<html>
+<head>
+<title>Installing Report Manager Server</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Report Manager Server</h2>
+<h3>Introduction</h3>
+<p>Report Manager Server is a multithread service/application that works over 
+  TCP/IP protocol. It allows any number of client machines to execute reports 
+  obtaining ready to print report metafiles.</p>
+<p>You must start the server application (available also as a service) in the 
+  server machine, in the server machine you should have database connectivity 
+  software so the reports can execute on it.</p>
+<p>The database server can be any machine accesible by the report server machine, 
+  so you can distribute the work of generating reports, for example the report 
+  client can be a Internet enabled connection requesting a report to a far network 
+  (also connected to Internet) server, the server generates the report requesting 
+  process intensive querys to a high performance database server, after the calculation 
+  of the report is done, the server sends the result to the report client.</p>
+<p>The report client application can request information about parameters and 
+  also alter them before executing the report.</p>
+<p>The server and the client are optimized to use very little bandwith.</p>
+<p><b>Installation in Microsoft Windows as a Service</b></p>
+<p>If you are running Windows NT/2000/XP you can install the server as a standalone 
+  service, you must run repserverservice /INSTALL, you shoud have a shortcut available 
+  in the start menu inside Report </p>
+<p>Manager group. To unistall it you can run repserverservice /UNINSTALL or the 
+  shortcut menu.</p>
+<p>After installing the service you can set startup options in the same way as 
+  other services.</p>
+<p><b>Installation in Microsoft Windows as a standalone application</b></p>
+<p>If you are running Windows 98/Me you can add a shortcut to reportserverapp.exe 
+  in the Start group so it's started after logging. You can also execute reportservercon.exe, 
+  to start it as a console application.</p>
+<p><b>Installation in Linux as a standalone application</b></p>
+<p>To start the server you must execute reportserverapp.sh or reporservercon.sh 
+  script, the first need an X Server running because is a X application.</p>
+<p><b>Installation in Linux as a service</b></p>
+<p>You can run the report server at boot time, the procedure depends in you linux 
+  distribution, usually the runlevel to start the server is 3 (console network), 
+  that is execute reportservercon.sh.</p>
+<p><b>Configuration</b></p>
+<p>Report Manager server runs using port 3060, you can run the server as an application 
+  and see the report configuration and log files. You can alter all settings using 
+  repserverconfig application except the port (you can alter it modifying the 
+  configuration file).</p>
+<p>By default there is only one user named Admin and widthout password. You can 
+  assign a password to Admin user, and add other users. The Admin user is the 
+  only one with privileges to add Report Server aliases.</p>
+<p>A report alias is a name and a path that points to a directory that can contain 
+  reports and directories containing reports so a report tree is generated using 
+  the directory structure, the reports are stored in the server and the report 
+  tree is send to the report client.</p>
+</body>
+</html>

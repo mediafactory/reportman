@@ -931,7 +931,7 @@ begin
     end;
     doexit:=true;
    end;
-   if FDataset<>FSQLInternalQuery then
+   if ((FDataset<>FSQLInternalQuery) and (not doexit)) then
    begin
     FDataset.Active:=true;
     if cached then
@@ -1332,7 +1332,8 @@ procedure TRpDataInfoItem.DisConnect;
 begin
  if Assigned(FDataset) then
  begin
-  FDataset.Active:=false;
+  if FDataset<>FSQLInternalQuery then
+   FDataset.Active:=false;
   FCachedDataset.DoClose;
  end;
 end;

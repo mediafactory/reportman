@@ -1,17 +1,17 @@
 object Form1: TForm1
   Left = 214
   Top = 291
-  Width = 555
-  Height = 155
+  Width = 516
+  Height = 201
+  VertScrollBar.Range = 193
   HorzScrollBar.Range = 505
-  VertScrollBar.Range = 97
   ActiveControl = Button1
   Caption = 'Form1'
   Color = clBackground
   Position = poScreenCenter
   PixelsPerInch = 96
-  TextHeight = 20
-  TextWidth = 8
+  TextHeight = 13
+  TextWidth = 6
   object Button1: TButton
     Left = 8
     Top = 64
@@ -33,15 +33,15 @@ object Form1: TForm1
   object Label1: TLabel
     Left = 328
     Top = 8
-    Width = 108
-    Height = 20
+    Width = 66
+    Height = 13
     Caption = 'PDF Filename'
   end
   object ETest: TEdit
     Left = 328
     Top = 28
     Width = 177
-    Height = 28
+    Height = 21
     TabOrder = 3
     Text = 'test.pdf'
   end
@@ -58,15 +58,15 @@ object Form1: TForm1
     Left = 12
     Top = 28
     Width = 181
-    Height = 28
+    Height = 21
     TabOrder = 5
     Text = 'sample4.rep'
   end
   object Label2: TLabel
     Left = 12
     Top = 8
-    Width = 120
-    Height = 20
+    Width = 77
+    Height = 13
     Caption = 'Report Filename'
   end
   object BPrint: TButton
@@ -78,6 +78,15 @@ object Form1: TForm1
     TabOrder = 7
     OnClick = BPrintClick
   end
+  object Button3: TButton
+    Left = 12
+    Top = 164
+    Width = 169
+    Height = 29
+    Caption = 'Preview opened in design'
+    TabOrder = 8
+    OnClick = Button3Click
+  end
   object CLXReport1: TCLXReport
     Filename = 'sample4.rep'
     Title = 'Untitled'
@@ -88,5 +97,21 @@ object Form1: TForm1
     Filename = 'sample4.rep'
     Left = 264
     Top = 20
+  end
+  object RpAlias1: TRpAlias
+    List = <
+      item
+        Alias = 'FISH'
+        Dataset = ClientDataSet1
+      end>
+    Left = 204
+    Top = 156
+  end
+  object ClientDataSet1: TClientDataSet
+    Aggregates = <>
+    IndexFieldNames = 'Category'
+    Params = <>
+    Left = 232
+    Top = 156
   end
 end

@@ -1,0 +1,29 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.01
+#------------------------------------------------------------------------------
+!ifndef ROOT
+ROOT = $(MAKEDIR)\..
+!endif
+#------------------------------------------------------------------------------
+MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
+DCC = $(ROOT)\bin\dcc32.exe $**
+BRCC = $(ROOT)\bin\brcc32.exe $**
+#------------------------------------------------------------------------------
+PROJECTS = repmandxp.exe rptranslate.exe unixtodos.exe repserverservice.exe
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+repmandxp.exe: repmandxp.dpr
+  $(DCC)
+
+rptranslate.exe: utils\rptranslator\rptranslate.dpr
+  $(DCC)
+
+unixtodos.exe: utils\unixtodos\unixtodos.dpr
+  $(DCC)
+
+repserverservice.exe: ..\server\service\repserverservice.dpr
+  $(DCC)
+
+

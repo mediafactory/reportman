@@ -89,6 +89,7 @@ type
     report:TRpReport;
     oldleftmargin,oldtopmargin,oldrightmargin,oldbottommargin:string;
     oldcustompagewidth,oldcustompageheight:string;
+    dook:boolean;
     procedure SaveOptions;
     procedure ReadOptions;
   public
@@ -96,7 +97,7 @@ type
   end;
 
 
-procedure ExecutePageSetup(report:TRpReport);
+function ExecutePageSetup(report:TRpReport):boolean;
 
 implementation
 
@@ -163,15 +164,15 @@ const
 
 
 
-procedure ExecutePageSetup(report:TRpReport);
+function ExecutePageSetup(report:TRpReport):boolean;
 var
  dia:TFRpPageSetupVCL;
 begin
  dia:=TFRpPageSetupVCL.Create(Application);
  try
   dia.report:=report;
-
   dia.ShowModal;
+  Result:=dia.dook;
  finally
   dia.free;
  end;
@@ -316,6 +317,8 @@ begin
  report.Language:=ComboLanguage.ItemIndex-1;
  // Other
  report.PrinterFonts:=TRpPrinterFontsOption(ComboPrinterFonts.ItemIndex);
+
+ dook:=true;
 end;
 
 procedure TFRpPageSetupVCL.ReadOptions;

@@ -105,10 +105,31 @@ HostApplication=
 Launcher=
 UseLauncher=0
 DebugCWD=
+[Resource DLL Projects]
+Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
+[RDP Source Files]
+Item0=..\rpmdfmainvcl.dfm
+Item1=..\rpmdfdesignvcl.dfm
+Item2=..\rpmdfaboutvcl.dfm
+Item3=..\rpmdfstrucvcl.dfm
+Item4=..\rpmdobjinspvcl.dfm
+Item5=..\rppagesetupvcl.dfm
+Item6=..\rpfparamsvcl.dfm
+Item7=..\rpgraphutilsvcl.dfm
+Item8=..\rpexpredlgvcl.dfm
+Item9=..\rprfvparams.dfm
+Item10=..\rpdbxconfigvcl.dfm
+Item11=..\rpgdidriver.dfm
+Item12=..\rpmdfdatainfovcl.dfm
+Item13=..\rpmdfgridvcl.dfm
+Item14=..\rpmdfsampledatavcl.dfm
+Item15=..\rpmdprintconfigvcl.dfm
+Item16=..\rpvpreview.dfm
+Item17=repmandxp.drc
 [Language]
 ActiveLang=
-ProjectLang=
-RootDir=C:\Archivos de programa\Borland\Delphi7\Bin\
+ProjectLang=$00000409
+RootDir=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=0
@@ -135,4 +156,11 @@ ProductName=Report Manager Designer
 ProductVersion=1.1.0.0
 Comments=
 [Excluded Packages]
+c:\archivos de programa\borland\delphi7\Bin\dcl31w70.bpl=Delphi 1.0 Compatibility Components
+c:\archivos de programa\borland\delphi7\Bin\dclwebsnap70.bpl=Borland WebSnap Components
+c:\archivos de programa\borland\delphi7\bin\dclRave70.bpl=Rave Reports BE 5.0 Package
+c:\archivos de programa\borland\delphi7\Bin\dclofficexp70.bpl=Microsoft Office XP Sample Automation Server Wrapper Components
+c:\archivos de programa\borland\delphi7\Bin\dclIntraweb_50_70.bpl=Intraweb 5.0 Design Package for Delphi 7
+c:\archivos de programa\borland\delphi7\Bin\dcltee70.bpl=TeeChart Components
+c:\archivos de programa\borland\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
 c:\archivos de programa\borland\delphi7\Bin\dclado70.bpl=Borland ADO DB Components

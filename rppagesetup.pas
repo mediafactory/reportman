@@ -87,6 +87,7 @@ type
   private
     { Private declarations }
     report:TRpReport;
+    dook:boolean;
     oldleftmargin,oldtopmargin,oldrightmargin,oldbottommargin:string;
     oldcustompagewidth,oldcustompageheight:string;
     procedure SaveOptions;
@@ -96,7 +97,7 @@ type
   end;
 
 
-procedure ExecutePageSetup(report:TRpReport);
+function ExecutePageSetup(report:TRpReport):boolean;
 
 implementation
 
@@ -159,7 +160,7 @@ const
 
 
 
-procedure ExecutePageSetup(report:TRpReport);
+function ExecutePageSetup(report:TRpReport):boolean;
 var
  dia:TFRpPageSetup;
 begin
@@ -168,6 +169,7 @@ begin
   dia.report:=report;
 
   dia.ShowModal;
+  Result:=dia.dook;
  finally
   dia.free;
  end;

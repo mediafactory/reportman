@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=1
 MinorVer=1
 Release=0
-Build=0
+Build=1
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report client and metafile viewer
-FileVersion=1.1.0.0
+FileVersion=1.1.0.1
 InternalName=metaview
 LegalCopyright=MPL/GLP License
 LegalTrademarks=
@@ -146,11 +146,6 @@ c:\archivos de programa\borland\delphi7\Bin\dclIntraweb_50_70.bpl=Intraweb 5.0 D
 c:\archivos de programa\borland\delphi7\Bin\dcltee70.bpl=TeeChart Components
 c:\archivos de programa\borland\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
 c:\archivos de programa\borland\delphi7\Bin\dclado70.bpl=Borland ADO DB Components
-[HistoryLists\hlConditionals]
-Count=3
-Item0=NOLINUXPRINTBUG
-Item1=NOLINUXMETABUG
-Item2=METAVIEW
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

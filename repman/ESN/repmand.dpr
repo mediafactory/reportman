@@ -6,7 +6,11 @@ library repmand;
 {ITE} {LCID:00000409:00000C0A} {}
 {ITE} {DFMFileType} {vcl\DBLOGDLG.dfm}
 {ITE} {DFMFileType} {vcl\DBPWDLG.dfm}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpfparamsvcl.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpgdidriver.dfm}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdfgridvcl.dfm}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdprintconfigvcl.dfm}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rppagesetupvcl.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rprfvparams.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpvpreview.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpdbxconfig.xfm}
@@ -32,7 +36,11 @@ library repmand;
 
 {$R 'vcl\DBLOGDLG.dfm' LoginDialog:TForm(Form)}
 {$R 'vcl\DBPWDLG.dfm' PasswordDialog:TForm(Form)}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rpfparamsvcl.dfm' FRpParamsVCL:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpgdidriver.dfm' FRpVCLProgress:TForm}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdfgridvcl.dfm' FRpGridOptionsVCL:TForm}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdprintconfigvcl.dfm' FRpPrinterConfigVCL:TForm}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rppagesetupvcl.dfm' FRpPageSetupVCL:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rprfvparams.dfm' FRpRTParams:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpvpreview.dfm' FRpVPreview:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpdbxconfig.xfm' FRpDBXConfig:TForm}

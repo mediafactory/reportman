@@ -8,7 +8,7 @@ uses
 {$IFDEF MSWINDOWS}
   rpvclreport,
 {$ENDIF}
-  rpcompobase, rpmdesigner;
+  rpcompobase, rpmdesigner, DBClient, rpalias;
 
 
 type
@@ -23,10 +23,14 @@ type
     EReportName: TEdit;
     Label2: TLabel;
     BPrint: TButton;
+    Button3: TButton;
+    RpAlias1: TRpAlias;
+    ClientDataSet1: TClientDataSet;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure BDesignClick(Sender: TObject);
     procedure BPrintClick(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -63,6 +67,18 @@ begin
  CLXReport1.Filename:=EReportName.Text;
  CLXReport1.Preview:=False;
  CLXReport1.Execute;
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+ ClientDataset1.LoadFromFile('biolife.cds');
+ CLXReport1.AliasList:=RpAlias1;
+ try
+  CLXReport1.Preview:=true;
+  CLXReport1.Execute;
+ finally
+  CLXReport1.AliasList:=nil;
+ end;
 end;
 
 end.

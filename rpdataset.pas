@@ -63,13 +63,14 @@ procedure TRpDataSet.DoOpen;
 var
  i:integer;
 begin
- CreateDataset;
- FCopyDataset.FieldDefs.Assign(FieldDefs);
- FCopyDataset.CreateDataSet;
- FCopyDataset.LogChanges:=false;
-
  if Assigned(FDataset) then
  begin
+  FDataset.FieldDefs.Update;
+  FieldDefs.Assign(FDataset.FieldDefs);
+  CreateDataset;
+  FCopyDataset.FieldDefs.Assign(FieldDefs);
+  FCopyDataset.CreateDataSet;
+  FCopyDataset.LogChanges:=false;
   if Not FDataset.Eof then
   begin
    Append;
@@ -173,15 +174,8 @@ begin
  if Active then
   Raise Exception.Create(SRpDatasetActive);
  FDataset:=Value;
- if Assigned(FDataset) then
- begin
-  FDataset.FieldDefs.Update;
-  FieldDefs.Assign(FDataset.FieldDefs);
- end
- else
- begin
+ if Not Assigned(FDataset) then
   Active:=False;
- end;
 end;
 
 procedure TRpDataset.Notification(AComponent: TComponent; Operation: TOperation);

@@ -102,6 +102,26 @@ type
    property PropertyName:string read FPropertyName;
   end;
 
+  TRpWString = record
+    WString: WideString;
+  end;
+
+  TRpWideStrings = class
+  private
+    FWideList: TList;
+    function GetString(Index: Integer): WideString;
+    procedure PutString(Index: Integer; const S: WideString);
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure Clear;
+    function  Count: Integer;
+    procedure Insert(Index: Integer; const S: WideString);
+    function Add(const S: WideString): Integer;
+    property Strings[Index: Integer]: WideString read GetString write PutString;
+  end;
+
+
 // Compares 2 streams and returns true if they are equal
 function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
 procedure Generatenewname(Component:TComponent);
@@ -495,6 +515,89 @@ begin
  adirlength:=Length(adirectory)+1;
  IntFillTreeDir(adirectory);
 end;
+
+constructor TRpWideStrings.Create;
+begin
+  FWideList := TList.Create;
+end;
+
+destructor TRpWideStrings.Destroy;
+var
+  i: Integer;
+  PWStr: ^TRpWString;
+begin
+  for i := 0 to FWideList.Count-1 do
+  begin
+    PWStr := FWideList.Items[i];
+    if PWStr <> nil then
+      Dispose(PWStr);
+  end;
+  FWideList.Free;
+  inherited Destroy;
+end;
+
+function TRpWideStrings.GetString(Index: Integer): WideString;
+var
+  PWStr: ^TRpWString;
+begin
+  Result := '';
+  if ( (Index >= 0) and (Index < FWideList.Count) ) then
+  begin
+    PWStr := FWideList.Items[Index];
+    if PWStr <> nil then
+      Result := PWStr^.WString;
+  end;
+end;
+
+procedure TRpWideStrings.PutString(Index: Integer; const S: WideString);
+begin
+  Insert(Index,S);
+end;
+
+function TRpWideStrings.Add(const S: WideString): Integer;
+var
+  PWStr: ^TRpWString;
+begin
+  New(PWStr);
+  PWStr^.WString := S;
+  Result := FWideList.Add(PWStr);
+end;
+
+function TRpWideStrings.Count: Integer;
+begin
+  Result := FWideList.Count;
+end;
+
+procedure TRpWideStrings.Clear;
+var
+  i: Integer;
+  PWStr: ^TRpWString;
+begin
+  for i:=0 to FWideList.Count-1 do
+  begin
+    PWStr := FWideList.Items[i];
+    if PWStr <> nil then
+      Dispose(PWStr);
+  end;
+  FWideList.Clear;
+end;
+
+procedure TRpWideStrings.Insert(Index: Integer; const S: WideString);
+var
+  PWStr: ^TRpWString;
+begin
+  if((Index < 0) or (Index > FWideList.Count)) then
+    raise Exception.Create(SRpIndexOutOfBounds);
+  if Index < FWideList.Count then
+  begin
+    PWStr := FWideList.Items[Index];
+    if PWStr <> nil then
+      PWStr.WString := S;
+  end
+  else
+    Add(S);
+end;
+
 
 
 initialization

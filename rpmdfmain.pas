@@ -600,11 +600,13 @@ begin
 {$IFDEF MSWINDOWS}
  if ADriverGDI.Checked then
  begin
-  rppagesetupvcl.ExecutePageSetup(report);
+  if rppagesetupvcl.ExecutePageSetup(report) then
+   fdesignframe.UpdateInterface;
   exit;
  end;
 {$ENDIF}
- rppagesetup.ExecutePageSetup(report);
+ if rppagesetup.ExecutePageSetup(report) then
+  fdesignframe.UpdateInterface;
 end;
 
 

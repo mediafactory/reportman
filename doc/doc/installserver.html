@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>Installing Report Manager Server</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Installation</h2>
+<h3>Report Manager Server</h3>
+<p><b>Installation in Microsoft Windows as a Service</b></p>
+<p>If you are running Windows NT/2000/XP you can install the server as a standalone 
+  service, you must run repserverservice /INSTALL, you shoud have a shortcut available 
+  in the start menu inside Report Manager group. To unistall it you can run repserverservice 
+  /UNINSTALL or the shortcut menu.</p>
+<p>After installing the service you can set startup options in the same way as 
+  other services.</p>
+<p><b>Installation in Microsoft Windows as a standalone application</b></p>
+<p>If you are running Windows 98/Me you can add a shortcut to reportserverapp.exe 
+  in the Start group so it's started after logging. You can also execute reportservercon.exe, 
+  to start it as a console application.</p>
+<p><b>Installation in Linux as a standalone application</b></p>
+<p>To start the server you must execute reportserverapp.sh or reporservercon.sh 
+  script, the first need an X Server running because is a X application.</p>
+<p><b>Installation in Linux as a service</b></p>
+<p>You can run the report server at boot time, the procedure depends in you linux 
+  distribution, usually the runlevel to start the server is 3 (console network), 
+  that is execute reportservercon.sh.</p>
+<p>&nbsp;</p>
+</body>
+</html>

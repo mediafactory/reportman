@@ -41,17 +41,25 @@ type
  TRpLabel=class(TRpGenTextComponent)
   private
    FAllText:TStrings;
+   FAllStrings:TRpWideStrings;
+   FWideText:WideString;
    procedure SetText(Value:WideString);
    function GetText:WideString;
    procedure SetAllText(Value:TStrings);
+   procedure UpdateAllStrings;
+   procedure UpdateWideText;
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
+   procedure Loaded;override;
   public
+   property AllStrings:TRpWideStrings read FAllStrings write FAllStrings;
    constructor Create(AOwner:TComponent);override;
    property Text:widestring read GetText write SetText;
    destructor Destroy;override;
   published
+   // Compatibility with RC1,RC2
    property AllText:TStrings read FAllText write SetAllText;
+   property WideText:WideString read FWideText write FWideText;
   end;
 
  TIdenRpExpression=class;
@@ -129,11 +137,13 @@ begin
  Height:=275;
  Width:=1440;
  FAllText:=TStringList.Create;
+ FAllStrings:=TRpWideStrings.Create;
 end;
 
 destructor TRpLabel.Destroy;
 begin
  FAllText.free;
+ FAllStrings.Free;
  inherited destroy;
 end;
 
@@ -142,35 +152,115 @@ end;
 procedure TRpLabel.SetText(Value:WideString);
 var
  langindex:integer;
+ acopy:WideString;
 begin
- langindex:=TRpReport(Owner).Language;
+ langindex:=TRpReport(Owner).Language+1;
  if langindex<0 then
   langindex:=0;
- while ((FAllText.Count-1)<langindex) do
+ acopy:='';
+ if FAllStrings.Count>0 then
+  acopy:=FAllStrings.Strings[0];
+ while ((FAllStrings.Count-1)<langindex) do
  begin
-  FAllText.Add('');
+  FAllStrings.Add(acopy);
  end;
- FAllText.Strings[langindex]:=Value;
+ FAllStrings.Strings[langindex]:=Value;
+ UpdateWideText;
 end;
 
 
 function TRpLabel.GetText:WideString;
 var
  langindex:integer;
+ acopy:WideString;
 begin
  langindex:=TRpReport(Owner).Language+1;
  if langindex<0 then
   langindex:=0;
- if FAlltext.Count>langindex then
-  Result:=FAllText.Strings[langindex]
+ acopy:='';
+ if FAllStrings.Count>0 then
+  acopy:=FAllStrings.Strings[0];
+ if FAllStrings.Count>langindex then
+  Result:=FAllStrings.Strings[langindex]
  else
-  Result:='';
+  Result:=acopy;
 end;
 
 procedure TRpLabel.SetAllText(Value:TStrings);
+var
+ i:integer;
 begin
- FAllTExt.Assign(Value);
+ FAllText.Assign(Value);
+ if FAllText.Count>0 then
+ begin
+  FAllStrings.Clear;
+  for i:=0 to FAllText.Count-1 do
+  begin
+   FAllStrings.Add(FAllText.Strings[i]);
+  end;
+  FAllText.Clear;
+  UpdateWideText;
+ end
 end;
+
+procedure TRpLabel.Loaded;
+var
+ i:integer;
+begin
+ inherited Loaded;
+ if FAllText.Count>0 then
+ begin
+  FAllStrings.Clear;
+  for i:=0 to FAllText.Count-1 do
+  begin
+   FAllStrings.Add(FAllText.Strings[i]);
+  end;
+  FAllText.Clear;
+  UpdateWideText;
+ end
+ else
+  UpdateAllStrings;
+end;
+
+
+procedure TRpLabel.UpdateWideText;
+var
+ i:integer;
+begin
+ FWideText:='';
+ for i:=0 to FAllStrings.Count-1 do
+ begin
+  FWideText:=FWideText+FAllStrings.Strings[i];
+  if i<FAllStrings.Count-1 then
+   FWideText:=FWideText+WideChar(chr(10));
+ end;
+end;
+
+procedure TRpLabel.UpdateAllStrings;
+var
+ i:integer;
+ tempwide:WideString;
+ alength:integer;
+begin
+ FAllStrings.Clear;
+ i:=1;
+ tempwide:='';
+ alength:=Length(FWideText);
+ while i<=alength do
+ begin
+  if FWideText[i]=WideChar(chr(10)) then
+  begin
+   FAllStrings.Add(tempwide);
+   tempwide:='';
+  end
+  else
+   tempwide:=tempwide+FWideText[i];
+  inc(i);
+ end;
+ if Length(tempwide)>0 then
+  FAllStrings.Add(tempwide);
+end;
+
 
 constructor TRpExpression.Create(AOwner:TComponent);
 begin

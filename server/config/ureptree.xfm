@@ -18,6 +18,7 @@ object FReportTree: TFReportTree
     Align = alClient
     Columns = <>
     Images = imalist
+    ReadOnly = True
     TabOrder = 0
   end
   object imalist: TImageList

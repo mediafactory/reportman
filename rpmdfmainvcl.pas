@@ -590,7 +590,8 @@ procedure TFRpMainFVCL.APageSetupExecute(Sender: TObject);
 begin
  Assert(report<>nil,'Called Page setup without a report assigned');
 
- ExecutePageSetup(report);
+ if ExecutePageSetup(report) then
+  fdesignframe.UpdateInterface;
 end;
 
 

@@ -39,7 +39,6 @@ uses
   rpmdfsampledatavcl in '..\rpmdfsampledatavcl.pas' {FRpShowSampledataVCL},
   rpmdobinsintvcl in '..\rpmdobinsintvcl.pas',
   rpmdprintconfigvcl in '..\rpmdprintconfigvcl.pas' {FRpPrinterConfigVCL},
-  rpmdprotocol in '..\rpmdprotocol.pas',
   rpmdshfolder in '..\rpmdshfolder.pas',
   rpmetafile in '..\rpmetafile.pas',
   rpmreg in '..\rpmreg.pas',
