@@ -54,6 +54,7 @@ type
     ToolButton7: TToolButton;
     ACancel: TAction;
     BCancel: TButton;
+    PBar: TProgressBar;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -74,6 +75,9 @@ type
     cancelled:boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure RepProgress(Sender:TRpReport;var docancel:boolean);
+    procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
+    procedure DisableControls(enablebar:boolean);
+    procedure EnableControls;
   public
     { Public declarations }
     pagenum:integer;
@@ -125,14 +129,7 @@ begin
    if Not report.LastPage then
    begin
     cancelled:=false;
-    BCancel.Visible:=true;
-    AFirst.Enabled:=false;
-    ALast.Enabled:=false;
-    APrint.Enabled:=false;
-    ANext.Enabled:=false;
-    APrevious.Enabled:=false;
-    EPageNum.Enabled:=false;
-    ASave.Enabled:=false;
+    DisableControls(false);
     try
      while report.Metafile.PageCount<pagenum do
      begin
@@ -141,14 +138,7 @@ begin
        break;
      end;
     finally
-     BCancel.Visible:=false;
-     AFirst.Enabled:=true;
-     ALast.Enabled:=true;
-     APrint.Enabled:=true;
-     ANext.Enabled:=true;
-     APrevious.Enabled:=true;
-     EPageNum.Enabled:=true;
-     ASave.Enabled:=true;
+     EnableControls;
     end;
    end;
    if report.Metafile.PageCount<pagenum then
@@ -246,12 +236,25 @@ begin
 end;
 
 procedure TFRpPreview.ASaveExecute(Sender: TObject);
+var
+ oldonprogress:TRpMetafileStreamProgres;
 begin
  // Saves the metafile
  if SaveDialog1.Execute then
  begin
-  if CalcReportWidthProgress(report) then
-   report.Metafile.SaveToFile(SaveDialog1.Filename);
+  ALast.Execute;
+  oldonprogress:=report.Metafile.OnProgress;
+  try
+   report.Metafile.OnProgress:=MetProgress;
+   DisableControls(true);
+   try
+    report.Metafile.SaveToFile(SaveDialog1.Filename);
+   finally
+    EnableControls;
+   end;
+  finally
+   report.Metafile.OnProgress:=oldonprogress;
+  end;
  end;
 end;
 
@@ -320,5 +323,55 @@ begin
   ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position-Increment;
  end;
 end;
+
+procedure TFRpPreview.DisableControls(enablebar:boolean);
+begin
+ BCancel.Visible:=true;
+ AFirst.Enabled:=false;
+ ALast.Enabled:=false;
+ APrint.Enabled:=false;
+ ANext.Enabled:=false;
+ APrevious.Enabled:=false;
+ EPageNum.Enabled:=false;
+ ASave.Enabled:=false;
+ PBar.Position:=0;
+ PBar.Visible:=enablebar;
+end;
+
+procedure TFRpPreview.EnableControls;
+begin
+ BCancel.Visible:=false;
+ AFirst.Enabled:=true;
+ ALast.Enabled:=true;
+ APrint.Enabled:=true;
+ ANext.Enabled:=true;
+ APrevious.Enabled:=true;
+ EPageNum.Enabled:=true;
+ ASave.Enabled:=true;
+ PBar.Visible:=false;
+end;
+
+
+procedure TFRpPreview.MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
+begin
+ BCancel.Caption:=SRpPage+':'+FormatFloat('####,#####',page)+
+  ' -'+FormatFloat('######,####',Position div 1024)+SRpKbytes+' '+SrpCancel;
+ if Position=size then
+ begin
+  PBar.Position:=page;
+  PBar.Max:=Sender.PageCount;
+ end
+ else
+ begin
+  PBar.Position:=Position;
+  PBar.Max:=Size;
+ end;
+ Application.ProcessMessages;
+ if ((GetKeyState(VK_ESCAPE) AND $80)>0) then
+  cancelled:=true;
+ if cancelled then
+  Raise Exception.Create(SRpOperationAborted);
+end;
+
 
 end.

@@ -5,7 +5,7 @@ object FMainf: TFMainf
   Height = 429
   VertScrollBar.Range = 30
   ActiveControl = ToolButton1
-  Caption = 'Report manager designer'
+  Caption = 'Report Manager Designer'
   Color = clBackground
   Menu = MainMenu1
   ShowHint = True

@@ -39,9 +39,17 @@ unit rpmetafile;
 
 interface
 
-uses Classes,Sysutils,rpconsts,rpzlib;
+uses Classes,
+{$IFDEF LINUX}
+  Libc,
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  mmsystem,windows,
+{$ENDIF}
+Sysutils,rpconsts,rpzlib;
 
 const
+ MILIS_PROGRESS=500;
  RP_SIGNATURELENGTH=13;
  RpSignature:array[0..RP_SIGNATURELENGTH-1] of char=('R','P','M','E','T','A','F','I','L',
   'E','0','1',#0);
@@ -51,6 +59,7 @@ const
 type
 
  TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
+
 
  ERpBadFileFormat=class(Exception)
   private
@@ -141,16 +150,25 @@ type
    property Objects[Index:integer]:TRpMetaObject read GetObject;
   end;
 
+ TRpMetafileStreamProgres=procedure (Sender:TRpMetafileReport;Position,Size:int64;page:integer) of object;
 
  TRpMetafileReport=class(TComponent)
   private
    FPages:TList;
    FCurrentPage:integer;
+   FOnProgress:TRpMetafileStreamProgres;
+{$IFDEF MSWINDOWS}
+   mmfirst,mmlast:DWORD;
+{$ENDIF}
+{$IFDEF LINUX}
+   milifirst,mililast:TDatetime;
+{$ENDIF}
+   difmilis:int64;
    procedure SetCurrentPage(index:integer);
    function GetPageCount:integer;
    function GetPage(Index:integer):TRpMetafilePage;
-   procedure IntSaveToStream(Stream:TStream);
-   procedure IntLoadFromStream(Stream:TStream);
+   procedure IntSaveToStream(Stream:TStream;SaveStream:TStream);
+   procedure IntLoadFromStream(Stream:TStream;LoadStream:TStream);
   public
    PageSize:integer;
    CustomX:integer;
@@ -173,6 +191,7 @@ type
    property CurrentPage:integer read FCurrentPage write SetCurrentPage;
    property PageCount:integer read GetPageCount;
    property Pages[Index:integer]:TRpMetafilePage read GetPage;
+   property OnProgress:TRpMetafileStreamProgres read FOnProgress write FOnProgress;
   published
   end;
 
@@ -475,15 +494,22 @@ procedure TRpMetafileReport.SaveToStream(Stream:TStream);
 var
  zstream:TCompressionStream;
 begin
+ // Get the time
+{$IFDEF MSWINDOWS}
+ mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+ milifirst:=now;
+{$ENDIF}
  zstream:=TCompressionStream.Create(clDefault,Stream);
  try
-  IntSaveToStream(zstream);
+  IntSaveToStream(zstream,Stream);
  finally
   zstream.free;
  end;
 end;
 
-procedure TRpMetafileReport.IntSaveToStream(Stream:TStream);
+procedure TRpMetafileReport.IntSaveToStream(Stream:TStream;SaveStream:TStream);
 var
  separator:integer;
  i:integer;
@@ -508,6 +534,28 @@ begin
   Stream.Write(separator,sizeof(separator));
 
   TRpMetafilePage(FPages.items[i]).SaveToStream(Stream);
+  if Assigned(FOnProgress) then
+  begin
+{$IFDEF MSWINDOWS}
+   mmlast:=TimeGetTime;
+   difmilis:=(mmlast-mmfirst);
+{$ENDIF}
+{$IFDEF LINUX}
+   mililast:=now;
+   difmilis:=MillisecondsBetween(mililast,milifirst);
+{$ENDIF}
+   if difmilis>MILIS_PROGRESS then
+   begin
+     // Get the time
+{$IFDEF MSWINDOWS}
+    mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+    milifirst:=now;
+{$ENDIF}
+    FOnProgress(Self,SaveStream.Position,SaveStream.Position,i+1);
+   end;
+  end;
  end;
 end;
 
@@ -515,15 +563,23 @@ procedure TRpMetafileReport.LoadFromStream(Stream:TStream);
 var
  zStream:TDeCompressionStream;
 begin
+ Clear;
+ // Get the time
+{$IFDEF MSWINDOWS}
+ mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+ milifirst:=now;
+{$ENDIF}
  zStream:=TDeCompressionStream.Create(Stream);
  try
-  IntLoadFromStream(zStream);
+  IntLoadFromStream(zStream,Stream);
  finally
   zStream.free;
  end;
 end;
 
-procedure TRpMetafileReport.IntLoadFromStream(Stream:TStream);
+procedure TRpMetafileReport.IntLoadFromStream(Stream:TStream;LoadStream:TStream);
 var
  separator:integer;
  buf:array[0..RP_SIGNATURELENGTH-1] of char;
@@ -574,6 +630,28 @@ begin
 
   fpage.LoadFromStream(Stream);
 
+  if Assigned(FOnProgress) then
+  begin
+{$IFDEF MSWINDOWS}
+   mmlast:=TimeGetTime;
+   difmilis:=(mmlast-mmfirst);
+{$ENDIF}
+{$IFDEF LINUX}
+   mililast:=now;
+   difmilis:=MillisecondsBetween(mililast,milifirst);
+{$ENDIF}
+   if difmilis>MILIS_PROGRESS then
+   begin
+     // Get the time
+{$IFDEF MSWINDOWS}
+    mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+    milifirst:=now;
+{$ENDIF}
+    FOnProgress(Self,LoadStream.Position,LoadStream.Size,pagecount);
+   end;
+ end;
   bytesread:=Stream.Read(separator,sizeof(separator));
  end;
  if Fpages.Count>0 then

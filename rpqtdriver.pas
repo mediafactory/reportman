@@ -482,7 +482,8 @@ end;
 
 procedure TFRpQtProgress.RepProgress(Sender:TRpReport;var docancel:boolean);
 begin
- LRecordCount.Caption:=IntToStr(Sender.CurrentSubReportIndex)+':'+FormatFloat('#########,####',Sender.RecordCount);
+ LRecordCount.Caption:=IntToStr(Sender.CurrentSubReportIndex)+':'+SRpPage+':'+
+ FormatFloat('#########,####',Sender.PageNum)+'-'+FormatFloat('#########,####',Sender.RecordCount);
  Application.ProcessMessages;
  if cancelled then
   docancel:=true;

@@ -1,6 +1,6 @@
 object FMeta: TFMeta
-  Left = 16
-  Top = 38
+  Left = 34
+  Top = 88
   Width = 599
   Height = 452
   VertScrollBar.Range = 33
@@ -26,6 +26,14 @@ object FMeta: TFMeta
     Flat = True
     Images = ImageList1
     TabOrder = 0
+    object PBar: TProgressBar
+      Left = 433
+      Top = 4
+      Width = 120
+      Height = 25
+      Align = alCustom
+      Visible = False
+    end
     object ToolButton1: TToolButton
       HelpType = htContext
       Left = 27
@@ -99,6 +107,25 @@ object FMeta: TFMeta
       Height = 26
       Action = AOpen
       Caption = 'Open'
+    end
+    object BCancel: TButton
+      Left = 249
+      Top = 4
+      Width = 184
+      Height = 26
+      Caption = 'Cancel'
+      TabOrder = 9
+      Visible = False
+      OnClick = BCancelClick
+    end
+    object ToolButton9: TToolButton
+      Left = 235
+      Top = 4
+      Width = 14
+      Height = 26
+      Style = tbsSeparator
+      Caption = 'ToolButton9'
+      ImageIndex = 6
     end
   end
   object ImageContainer: TScrollBox

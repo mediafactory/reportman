@@ -35,6 +35,8 @@ type
    function GetDetailCount:integer;
    function GetFirstDetail:integer;
    function GetLastDetail:integer;
+   function GetFirstPageHeader:integer;
+   function GetPageHeaderCount:integer;
   protected
    procedure FillGroupValues;
    procedure CheckCurrentGroupChange;
@@ -55,6 +57,8 @@ type
    property FirstDetail:integer read GetFirstDetail;
    property LastDetail:integer read GetLastDetail;
    property DetailCount:integer read GetDetailCount;
+   property FirstPageHeader:integer read GetFirstPageHeader;
+   property PageHeaderCount:integer read GetPageHeaderCount;
   published
    property Sections:TRpSectionList read FSections write SetSections;
    property Alias:String read FAlias write FAlias;
@@ -428,6 +432,45 @@ begin
    begin
     TRpExpression(compo).SubReportChanged(newstate,newgroup);
    end;
+  end;
+ end;
+end;
+
+
+function TRpSubreport.GetPageHeaderCount:integer;
+var
+ i:integer;
+ detailindex:integer;
+begin
+ Result:=0;
+ i:=0;
+ detailindex:=FirstDetail;
+ while i<detailindex do
+ begin
+  if Sections.Items[i].Section.SectionType=rpsecpheader then
+  begin
+   Inc(Result);
+   break;
+  end;
+ end;
+end;
+
+
+
+function TRpSubreport.GetFirstPageHeader:integer;
+var
+ i:integer;
+ detailindex:integer;
+begin
+ Result:=-1;
+ i:=0;
+ detailindex:=FirstDetail;
+ while i<detailindex do
+ begin
+  if Sections.Items[i].Section.SectionType=rpsecpheader then
+  begin
+   Result:=i;
+   break;
   end;
  end;
 end;

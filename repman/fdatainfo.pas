@@ -103,7 +103,7 @@ procedure ShowDataConfig(report:TRpReport);
 var
  dia:TFDataInfoConfig;
 begin
- CreateConAdmin;
+ UpdateConAdmin;
  dia:=TFDataInfoConfig.Create(Application);
  try
   dia.report:=report;
@@ -153,7 +153,7 @@ end;
 procedure TFDatainfoconfig.BConfigClick(Sender: TObject);
 begin
  ShowDBXConfig;
-
+ UpdateConAdmin;
 
  if Assigned(ConAdmin) then
  begin

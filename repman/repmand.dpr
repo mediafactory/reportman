@@ -68,7 +68,18 @@ uses
   rplabelitem in '..\rplabelitem.pas',
   rpdrawitem in '..\rpdrawitem.pas',
   rpzlib in '..\rpzlib.pas',
-  rppreview in '..\rppreview.pas' {FRpPreview};
+  rppreview in '..\rppreview.pas' {FRpPreview},
+  adler in '..\adler.pas',
+  infblock in '..\infblock.pas',
+  infcodes in '..\infcodes.pas',
+  inffast in '..\inffast.pas',
+  inftrees in '..\inftrees.pas',
+  infutil in '..\infutil.pas',
+  trees in '..\trees.pas',
+  zdeflate in '..\zdeflate.pas',
+  zinflate in '..\zinflate.pas',
+  zlib in '..\zlib.pas',
+  zutil in '..\zutil.pas';
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -100,7 +111,18 @@ uses
   rplabelitem in '../rplabelitem.pas',
   rpdrawitem in '../rpdrawitem.pas',
   rpzlib in '../rpzlib.pas',
-  rppreview in '../rppreview.pas' {FRpPreview};
+  rppreview in '../rppreview.pas' {FRpPreview},
+  adler in '../adler.pas',
+  infblock in '../infblock.pas',
+  infcodes in '../infcodes.pas',
+  inffast in '../inffast.pas',
+  inftrees in '../inftrees.pas',
+  infutil in '../infutil.pas',
+  trees in '../trees.pas',
+  zdeflate in '../zdeflate.pas',
+  zinflate in '../zinflate.pas',
+  zlib in '../zlib.pas',
+  zutil in '../zutil.pas';
 {$ENDIF}
 
 

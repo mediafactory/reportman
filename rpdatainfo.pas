@@ -126,7 +126,7 @@ type
    constructor Create(rep:TComponent);
   end;
 
-procedure CreateConAdmin;
+procedure UpdateConAdmin;
 
 implementation
 
@@ -332,6 +332,15 @@ begin
 end;
 
 
+procedure UpdateConAdmin;
+begin
+ if Assigned(ConAdmin) then
+ begin
+  ConAdmin.Free;
+  ConAdmin:=nil;
+ end;
+ ConAdmin:=TRpConnAdmin.Create;
+end;
 
 procedure CreateConAdmin;
 begin

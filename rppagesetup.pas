@@ -45,6 +45,19 @@ type
     BBackground: TBitBtn;
     Label3: TLabel;
     ComboLanguage: TComboBox;
+    GroupBox1: TGroupBox;
+    Label4: TLabel;
+    ELeftMargin: TEdit;
+    ETopMargin: TEdit;
+    Label5: TLabel;
+    LMetrics3: TLabel;
+    LMetrics4: TLabel;
+    LMetrics5: TLabel;
+    ERightMargin: TEdit;
+    Label9: TLabel;
+    Label10: TLabel;
+    EBottomMargin: TEdit;
+    LMetrics6: TLabel;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -58,6 +71,7 @@ type
     { Private declarations }
     report:TRpReport;
     oldwidth,oldheight:string;
+    oldleftmargin,oldtopmargin,oldrightmargin,oldbottommargin:string;
     procedure SaveOptions;
     procedure ReadOptions;
   public
@@ -125,6 +139,14 @@ begin
   if EWidth.Text<>oldwidth then
    report.PageWidth:=gettwipsfromtext(EWidth.Text);
  end;
+ if ELeftMargin.Text<>oldleftmargin then
+  report.LeftMargin:=gettwipsfromtext(ELeftMargin.Text);
+ if ERightMargin.Text<>oldrightmargin then
+  report.RightMargin:=gettwipsfromtext(ERightMargin.Text);
+ if ETopMargin.Text<>oldtopmargin then
+  report.TopMargin:=gettwipsfromtext(ETopMargin.Text);
+ if EBottomMargin.Text<>oldbottommargin then
+  report.BottomMargin:=gettwipsfromtext(EBottomMargin.Text);
  report.PageOrientation:=rpOrientationDefault;
  if RPageOrientation.itemindex=1 then
  begin
@@ -146,8 +168,17 @@ begin
  RPageSize.ItemIndex:=0;
  EWidth.Text:=gettextfromtwips(report.PageWidth);
  EHeight.Text:=gettextfromtwips(report.PageHeight);
+ ELeftMargin.Text:=gettextfromtwips(report.LeftMargin);
+ ERightMargin.Text:=gettextfromtwips(report.RightMargin);
+ ETopMargin.Text:=gettextfromtwips(report.TopMargin);
+ EBottomMargin.Text:=gettextfromtwips(report.BottomMargin);
  oldwidth:=EWidth.Text;
  oldheight:=EHeight.Text;
+ oldleftmargin:=ELeftMargin.Text;
+ oldrightmargin:=ERightMargin.Text;
+ oldTopmargin:=ETopMargin.Text;
+ oldBottommargin:=EBottomMargin.Text;
+
  if report.Pagesize=RpPageSizeCustom then
  begin
   GPageSize.visible:=true;

@@ -45,7 +45,12 @@ const
  // 29,7/2.51*1440
  DEFAULT_PAGEHEIGHT=17039;
  DEFAULT_PAGEWIDTH=12048;
-
+ // default Margins
+ // Left 1 cm, Right 1 cm, Top 1 cm Bottom 1.5 cm
+ DEFAULT_LEFTMARGIN=574;
+ DEFAULT_RIGHTMARGIN=574;
+ DEFAULT_BOTTOMMARGIN=861;
+ DEFAULT_TOPMARGIN=574;
 type
  TRpReport=class;
  TRpSubReportListItem=class;
@@ -97,6 +102,7 @@ type
    FDataAlias:TRpAlias;
    FOnProgress:TRpProgressEvent;
    FRecordCount:integer;
+   FLeftMargin,FTopMargin,FRightMargin,FBottomMargin:TRpTwips;
 {$IFDEF MSWINDOWS}
    mmfirst,mmlast:DWORD;
 {$ENDIF}
@@ -169,6 +175,14 @@ type
    property PageBackColor:TRpColor read FPageBackColor write FPageBackColor;
    property PreviewStyle:TRpPreviewStyle read FPreviewStyle
     write FPreviewStyle default spWide;
+   property LeftMargin:TRpTwips read FLeftMargin write FLeftMargin
+    default DEFAULT_LEFTMARGIN;
+   property TopMargin:TRpTwips read FTopMargin write FTopMargin
+    default DEFAULT_TOPMARGIN;
+   property RightMargin:TRpTwips read FRightMargin write FRightMargin
+    default DEFAULT_RIGHTMARGIN;
+   property BottomMargin:TRpTwips read FBottomMargin write FBottomMargin
+    default DEFAULT_BOTTOMMARGIN;
    // Subreports
    property SubReports:TRpSubReportList read FSubReports write SetSubReports;
    property DataInfo:TRpDataInfoList read FDataInfo write SetDataInfo;
@@ -189,6 +203,10 @@ begin
  FPageOrientation:=rpOrientationDefault;
  // Means default pagesize
  FPagesize:=rpPageSizeDefault;
+ FLeftMargin:=DEFAULT_LEFTMARGIN;
+ FRightMargin:=DEFAULT_RIGHTMARGIN;
+ FBottomMargin:=DEFAULT_BOTTOMMARGIN;
+ FTopMargin:=DEFAULT_TOPMARGIN;
   // Means white
  FPageBackColor:=High(FPageBackColor);
  FPageWidth:=DEFAULT_PAGEWIDTH;
@@ -758,10 +776,11 @@ var
  subreport:TRpSubreport;
  sectionext:TPoint;
  freespace:integer;
+ asection:TrpSection;
 
 function CheckSpace:boolean;
 begin
- sectionext:=Section.GetExtension;
+ sectionext:=asection.GetExtension;
  Result:=true;
  if sectionext.Y>freespace then
  begin
@@ -778,23 +797,64 @@ begin
  end;
 end;
 
-procedure PrintFixedSections;
+procedure PrintSection(header:boolean);
 begin
+ if not header then
+  printedsomething:=true;
+ asection.Print(pageposx,pageposy,metafile);
+ // If the section is not aligned at bottom of the page then
+ if Not asection.AlignBottom then
+ begin
+  freespace:=freespace-sectionext.Y;
+  pageposy:=pageposy+sectionext.Y;
+ end
+ else
+ // Align to bottom
+ begin
+  freespace:=0;
+  sdxfvvdsx
+ end;
 end;
 
-procedure PrintSection;
+procedure PrintFixedSections(headers:boolean);
+var
+ pheader,pfooter:integer;
+ pheadercount,pfootercount:integer;
+ i:integer;
+ psection:TRpSection;
 begin
- printedsomething:=true;
- section.Print(pageposx,pageposy,metafile);
- freespace:=freespace-sectionext.Y;
- pageposy:=pageposy+sectionext.Y;
+ if Headers then
+ begin
+  // Print the header fixed sections
+  pheader:=subreport.FirstPageHeader;
+  pheadercount:=subreport.PageHeaderCount;
+  for i:=0 to pheadercount-1 do
+  begin
+   psection:=subreport.Sections.Items[i+pheader].Section;
+   if psection.EvaluatePrintCondition then
+   begin
+    asection:=psection;
+    CheckSpace;
+    PrinSection(true);
+   end;
+  end;
+  // Reserve
+  // Print conditions for footers are evaluated at the begining of
+  // the page
+
+ end
+ else
+ begin
+
+ end;
 end;
+
 
 begin
  if Not Assigned(Section) then
   Raise Exception.Create(SRpLastPageReached);
- pageposy:=0;
- pageposx:=0;
+ pageposy:=FTopMargin;
+ pageposx:=FLeftMargin;
  printedsomething:=false;
  inc(Pagenum);
  if fmetafile.PageCount<=PageNum then
@@ -808,15 +868,17 @@ begin
   freespace:=PageWidth
  else
   freespace:=Pageheight;
+ freespace:=freespace-FTopMargin-FBottomMargin;
 
  // Fills the page with fixed sections
  PrintFixedSections;
 
  while Assigned(section)  do
  begin
+  asection:=section;
   if Not CheckSpace then
    break;
-  PrintSection;
+  PrintSection(false);
   NextSection;
  end;
  Result:=Not Assigned(Section);

@@ -3,9 +3,13 @@ unit fmetaview;
 interface
 
 uses
-  SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
+  SysUtils,
+{$IFDEF MSWINDOWS}
+  Windows,
+{$ENDIF}
+  Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,
-  QActnList, QImgList,QPrinters,Qt;
+  QActnList, QImgList,QPrinters,Qt,rpconsts;
 
 type
   TFMeta = class(TForm)
@@ -32,6 +36,9 @@ type
     OpenDialog1: TOpenDialog;
     AOpen: TAction;
     ToolButton8: TToolButton;
+    BCancel: TButton;
+    ToolButton9: TToolButton;
+    PBar: TProgressBar;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -45,8 +52,13 @@ type
     procedure AOpenExecute(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure BCancelClick(Sender: TObject);
   private
     { Private declarations }
+    cancelled:boolean;
+    procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
+    procedure EnableButtons;
+    procedure DisableButtons;
   public
     { Public declarations }
     pagenum:integer;
@@ -98,6 +110,7 @@ begin
  bitmap.PixelFormat:=pf32bit;
  AImage.Picture.Bitmap:=bitmap;
  metafile:=TrpMetafileReport.Create(Self);
+ metafile.OnProgress:=MetProgress;
 end;
 
 procedure TFMeta.FormDestroy(Sender: TObject);
@@ -142,6 +155,7 @@ end;
 
 procedure TFMeta.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+ cancelled:=true;
  qtdriver:=nil;
 end;
 
@@ -153,26 +167,38 @@ end;
 
 procedure TFMeta.ASaveExecute(Sender: TObject);
 begin
+ cancelled:=false;
  // Saves the metafile
  if SaveDialog1.Execute then
  begin
-  Metafile.SaveToFile(SaveDialog1.Filename);
+  DisableButtons;
+  try
+   Metafile.SaveToFile(SaveDialog1.Filename);
+  finally
+   EnableButtons;
+  end;
  end;
 end;
 
 procedure TFMeta.AOpenExecute(Sender: TObject);
 begin
- if OpenDialog1.Execute then
- begin
-  metafile.LoadFromFile(OpenDialog1.Filename);
-  ASave.Enabled:=True;
-  APrint.Enabled:=True;
-  AFirst.Enabled:=True;
-  APrevious.Enabled:=True;
-  ANext.Enabled:=True;
-  ALast.Enabled:=True;
-  pagenum:=1;
-  PrintPage;
+ DisableButtons;
+ try
+  cancelled:=false;
+  if OpenDialog1.Execute then
+  begin
+   metafile.LoadFromFile(OpenDialog1.Filename);
+   ASave.Enabled:=True;
+   APrint.Enabled:=True;
+   AFirst.Enabled:=True;
+   APrevious.Enabled:=True;
+   ANext.Enabled:=True;
+   ALast.Enabled:=True;
+   pagenum:=1;
+   PrintPage;
+  end;
+ finally
+  EnableButtons;
  end;
 end;
 
@@ -208,5 +234,60 @@ begin
   ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position-Increment;
  end;
 end;
+
+procedure TFMeta.MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
+begin
+ BCancel.Caption:=SRpPage+':'+FormatFloat('####,#####',page)+
+  ' -'+FormatFloat('######,####',Position div 1024)+SRpKbytes+' '+SrpCancel;
+ if Position=size then
+ begin
+  PBar.Position:=page;
+  PBar.Max:=Sender.PageCount;
+ end
+ else
+ begin
+  PBar.Position:=Position;
+  PBar.Max:=Size;
+ end;
+ Application.ProcessMessages;
+ if ((GetKeyState(VK_ESCAPE) AND $80)>0) then
+  cancelled:=true;
+ if cancelled then
+  Raise Exception.Create(SRpOperationAborted);
+end;
+
+
+procedure TFMeta.BCancelClick(Sender: TObject);
+begin
+ cancelled:=true;
+end;
+
+procedure TFMeta.EnableButtons;
+begin
+ AFirst.Enabled:=true;
+ ANext.Enabled:=true;
+ APrevious.Enabled:=true;
+ ALast.Enabled:=true;
+ ASave.Enabled:=true;
+ AOpen.Enabled:=true;
+ APrint.Enabled:=true;
+ BCancel.Visible:=false;
+ PBar.Visible:=false;
+end;
+
+procedure TFMeta.DisableButtons;
+begin
+ AFirst.Enabled:=false;
+ ANext.Enabled:=false;
+ APrevious.Enabled:=false;
+ ALast.Enabled:=false;
+ ASave.Enabled:=false;
+ AOpen.Enabled:=false;
+ APrint.Enabled:=false;
+ BCancel.Visible:=true;
+ PBar.Position:=0;
+ PBar.Visible:=true;
+end;
+
 
 end.
