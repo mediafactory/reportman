@@ -34,7 +34,14 @@ requires
   rppack_del,
   rppackvcl_del,
   rppackv_del,
-  rppackdesignvcl_del;
+  rppackdesignvcl_del,
+  visualclx,
+  bdertl,
+  dbexpress,
+  adortl,
+  ibxpress,
+  vcljpg,
+  vcl;
 
 contains
   rpmregdesign in 'rpmregdesign.pas',
@@ -55,6 +62,7 @@ contains
   rpmdfbarcodeint in 'rpmdfbarcodeint.pas',
   rpmdfchartint in 'rpmdfchartint.pas',
   rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig},
-  rppagesetup in 'rppagesetup.pas' {FRpPageSetup};
+  rppagesetup in 'rppagesetup.pas' {FRpPageSetup},
+  rpmdfextsec in 'rpmdfextsec.pas' {FRpExtSection};
 
 end.

@@ -48,6 +48,8 @@ Source: "..\server\config\repserverconfigxp.exe"; DestDir: "{app}"; CopyMode: al
 Source: "..\server\config\repserverconfigxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\server\service\repserviceinstall.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\server\service\repserviceinstall.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\server\web\repwebserver.dll"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\server\web\repwebexe.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; CopyMode: alwaysoverwrite

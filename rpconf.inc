@@ -4,7 +4,7 @@
 {$DEFINE USEADO}
 {$DEFINE USEBDE}
 //{$DEFINE USEIBO}
-{$DEFINE USETEECHART}
+//{$DEFINE USETEECHART}
 
 // Unsupported database drivers in Linux
 {$IFDEF LINUX}

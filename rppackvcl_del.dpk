@@ -33,7 +33,8 @@ requires
   rtl,
   vcl,
   dbrtl,
-  rppack_del;
+  rppack_del,
+  vcljpg;
 
 {%File 'rpconf.inc'}
 

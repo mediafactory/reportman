@@ -11,7 +11,8 @@ BRCC = $(ROOT)\bin\brcc32.exe $**
 #------------------------------------------------------------------------------
 PROJECTS = repmandxp.exe rptranslate.exe unixtodos.exe repserverservice.exe \
   ReportMan.ocx printrepxp.exe metaprintxp.exe metaviewxp.exe \
-  reportserverappxp.exe repserverconfigxp.exe repserviceinstall.exe
+  reportserverappxp.exe repserverconfigxp.exe repserviceinstall.exe \
+  repwebserver.dll
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -47,6 +48,9 @@ repserverconfigxp.exe: ..\server\config\repserverconfigxp.dpr
   $(DCC)
 
 repserviceinstall.exe: ..\server\service\repserviceinstall.dpr
+  $(DCC)
+
+repwebserver.dll: ..\server\web\repwebserver.dpr
   $(DCC)
 
 

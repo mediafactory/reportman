@@ -6,10 +6,8 @@ uses
   WebBroker,
   CGIApp,
   rpwebmodule in 'rpwebmodule.pas' {repwebmod: TWebModule},
-  rpwebpages in 'rpwebpages.pas',
-  rpdatainfo in '../../rpdatainfo.pas',
-  rpmdconsts in '../../rpmdconsts.pas';
-
+  rpwebpages in 'rpwebpages.pas';
+  
 {$R *.res}
 
 begin

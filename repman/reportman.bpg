@@ -5,7 +5,7 @@ MAKE = make -$(MAKEFLAGS) -f$**
 DCC =dcc $<
 #------------------------------------------------------------------------------
 PROJECTS = repmand metaprint metaview printrep reptotxt txttorep printreptopdf \
-  reportserverapp reportservercon repserverconfig startup.bin
+  reportserverapp reportservercon repserverconfig repwebexe startup.bin
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -38,6 +38,9 @@ reportservercon: ../server/app/reportservercon.dpr
 	$(DCC)
 
 repserverconfig: ../server/config/repserverconfig.dpr
+	$(DCC)
+
+repwebexe: ../server/web/repwebexe.dpr
 	$(DCC)
 
 startup.bin: utils/startup/startup.dpr

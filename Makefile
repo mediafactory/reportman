@@ -46,6 +46,9 @@ reportmanserver:
         cd config
         $(COMPILE) repserverconfig.dpr
         cd ..
+        cd web
+        $(COMPILE) repwebexe.dpr
+        cd ..
         cd ..
 
 
@@ -77,6 +80,9 @@ reportmanserverxp:
         cd service
         $(COMPILE) repserverservice.dpr
         $(COMPILE) repserviceinstall.dpr
+        cd ..
+        cd web
+        $(COMPILE) repwebserver.dpr
         cd ..
         cd ..
 

@@ -1,0 +1,77 @@
+<html>
+<head>
+<title>Driver architechture of Report Manager</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Developer</h2>
+<h3>Driver Architechture of Report Manager</h3>
+<p>Report Manager engine is a driver based print engine. That is: you can implement 
+  a driver and you get the desired output.</p>
+<p>The driver is defined as an interface in the unit rpmetafile.pas, so any object 
+  or component can implement it:</p>
+<p>IRpPrintDriver=interface</p>
+<p>The drivers availabe now are:</p>
+<table width="95%" border="1">
+  <tr>
+    <td bgcolor="#FFFFCC"><b>Class</b></td>
+    <td bgcolor="#FFFFCC"><b>Unit</b></td>
+    <td bgcolor="#FFFFCC"><b>Component</b></td>
+    <td bgcolor="#FFFFCC"><b>Platform</b></td>
+  </tr>
+  <tr>
+    <td>TRpGDIDriver</td>
+    <td>rpgdidriver</td>
+    <td>TVCLReport</td>
+    <td>Windows</td>
+  </tr>
+  <tr>
+    <td>TRpQtDriver</td>
+    <td>rpqtdriver</td>
+    <td>TCLXReport</td>
+    <td>Linux/Windows</td>
+  </tr>
+  <tr>
+    <td>TRpPDFDriver</td>
+    <td>rppdffriver</td>
+    <td>TPDFReport</td>
+    <td>Linux/Windows</td>
+  </tr>
+</table>
+<p>The <b>Web Report server and TCP Report Server always work with TRpPDFDriver</b>, 
+  it has not dependences on any Borland Visual Library (VCL or CLX) and can work 
+  without a XServer running (console mode).</p>
+<p><br>
+  The engine calls driver functions, to know the size of a text or a graphic.</p>
+<p>procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;<br>
+  procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;</p>
+<p>When you work with variable sized sections and components, using properties 
+  like AutoExpand or AutoContract, the engine will calculate space for sections 
+  and components calling this driver functions.</p>
+<p>The internal implementation of TRpGDIDriver and TRpQtDriver have a special 
+  property: toprinter, if this property is set the functions about object size 
+  are asked to the printer driver (Printer.Canvas and QPrinter.Canvas), and the 
+  result may be different than the result using the screen canvas (Preview Window), 
+  so you can<br>
+  obtain different output results.</p>
+<p>That is because:</p>
+<ul>
+  <li>Printer resolution may be diferent than screen resolution.</li>
+  <li>Fonts on the screen may be drawn different than on the printer.</li>
+</ul>
+<p>The PDF driver knows exact size about Fonts and work at a fixed resolution 
+  (72 dpi), so the result should be the same in all PDF viewers.</p>
+<ul>
+  <li>One possible enhacement to the engine could be returning the size of the 
+    objects as if they print with current printer, it's not difficult but need 
+    testing and have this issues:</li>
+  <li> If the printer is not installed it should get the screen canvas.</li>
+  <li> If the printer ir offline (in a network) Windows Systems does not allow 
+    opening<br>
+    t, but an error is raised, this situation must be controlled.</li>
+  <li> Texts on the screen may appear incorrectly.</li>
+  <li> Implementation requires a little more low level access to printer.</li>
+</ul>
+</body>
+</html>
