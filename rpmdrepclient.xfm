@@ -2,8 +2,8 @@ object modclient: Tmodclient
   OldCreateOrder = False
   OnCreate = DataModuleCreate
   OnDestroy = DataModuleDestroy
-  Left = 269
-  Top = 133
+  Left = 273
+  Top = 153
   Height = 176
   Width = 278
   object RepClient: TIdTCPClient

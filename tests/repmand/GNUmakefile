@@ -1,5 +1,5 @@
 #kylix_bin=/home/toni/kylix3/bin
-kylix_bin=/opt/kylix3/bin
+kylix_bin=/home/toni/kylix3/bin
 drivers_path=../../drivers/linux
 
 install:
@@ -40,8 +40,8 @@ install:
 	mkdir doc/images
 	cp ../../doc/doc/images/*.jpg doc/images
 #	include repmand.es when linux translation done
-	tar c doc LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es repmand reportserverapp reportserverapp.sh reportservercon reportservercon.sh repserverconfig repserverconfig.sh dbxdrivers dbxconnections metaprint metaview metaview.sh printrep printreptopdf reptotxt txttorep repmand repmand.sh README *.so *.so.1 qt_* dbxres.en.1 > repmand-1_1.i386.tar
-	gzip repmand-1_1.i386.tar
+	tar c doc LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es repmand reportserverapp reportserverapp.sh reportservercon reportservercon.sh repserverconfig repserverconfig.sh dbxdrivers dbxconnections metaprint metaview metaview.sh printrep printreptopdf printreptopdf.sh reptotxt txttorep repmand repmand.sh README *.so *.so.1 qt_* dbxres.en.1 > repmand-1_2.i386.tar
+	gzip repmand-1_2.i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0
 	-rm -f repmand
