@@ -251,6 +251,11 @@ begin
  bitmap:=TBitmap.Create;
  bitmap.PixelFormat:=pf32bit;
  AImage.Picture.Bitmap:=bitmap;
+{$IFDEF KYLIX2}
+ SaveDialog1.Filter:='Report Metafile (*.rpmf)|'+
+   'PDF File (*.pdf)|'+
+   'PDF File Uncompressed (*.pdf)';
+{$ENDIF}
 end;
 
 procedure TFRpPreview.FormDestroy(Sender: TObject);

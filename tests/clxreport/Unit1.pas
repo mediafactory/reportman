@@ -19,10 +19,14 @@ type
     Label1: TLabel;
     ETest: TEdit;
     RpDesigner1: TRpDesigner;
-    Button3: TButton;
+    BDesign: TButton;
+    EReportName: TEdit;
+    Label2: TLabel;
+    BPrint: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
+    procedure BDesignClick(Sender: TObject);
+    procedure BPrintClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -38,18 +42,27 @@ implementation
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
-
+ CLXReport1.Filename:=EReportName.Text;
+ CLXReport1.Preview:=True;
  CLXReport1.Execute;
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
- CLXReport1.SaveToPDF(ETest.text);
+ CLXReport1.SaveToPDF(ETest.text,false);
 end;
 
-procedure TForm1.Button3Click(Sender: TObject);
+procedure TForm1.BDesignClick(Sender: TObject);
 begin
+ RpDesigner1.Filename:=EReportName.Text;
  RpDesigner1.Execute;
+end;
+
+procedure TForm1.BPrintClick(Sender: TObject);
+begin
+ CLXReport1.Filename:=EReportName.Text;
+ CLXReport1.Preview:=False;
+ CLXReport1.Execute;
 end;
 
 end.

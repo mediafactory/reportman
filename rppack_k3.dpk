@@ -1,4 +1,4 @@
-package rppack;
+package rppack_k3;
 
 {$R *.res}
 {$R 'rpeval.dcr'}
@@ -31,8 +31,7 @@ package rppack;
 
 requires
   rtl,
-  dataclx,
-  ibxpress;
+  dataclx;
 
 contains
   rptypeval in 'rptypeval.pas',

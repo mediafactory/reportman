@@ -1,3 +1,6 @@
+[FileVersion]
+Version=6.0
+
 [Compiler]
 A=8
 B=0
@@ -60,11 +63,11 @@ UseLauncher=0
 DebugCWD=
 
 [Excluded Packages]
-$(DELPHI)/bin/dclemacsedit.so.6.5=Borland Editor Emacs Enhancements
-$(DELPHI)/bin/bplHelpViewers.so.6.5=Borland Sample Help Viewer Package
-$(DELPHI)/bin/dclnet.so.6.5=Borland Internet Components
-$(DELPHI)/bin/dclib.so.6.5=InterBase Data Access Components
+/opt/cortez/bin/dclemacsedit.so.6.5=Borland Editor Emacs Enhancements
+/opt/cortez/bin/bplHelpViewers.so.6.5=Borland Sample Help Viewer Package
+/opt/cortez/bin/dclnet.so.6.5=Borland Internet Components
+/opt/cortez/bin/dclib.so.6.5=InterBase Data Access Components
 /home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/ibpack/bplibpack.so=IBAccess components package
 /home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/synedit/bplsynedit_kylix.so=SynEdit package for Kylix
-$(DELPHI)/bin/dclindy.so.6.5=Internet Direct "Indy" for Kylix Property and Component Editors
+/opt/cortez/bin/dclindy.so.6.5=Internet Direct "Indy" for Kylix Property and Component Editors
 

@@ -38,7 +38,7 @@ type
    function Execute:boolean;override;
    procedure PrinterSetup;override;
    function ShowParams:boolean;override;
-   procedure SaveToPDF(filename:string);
+   procedure SaveToPDF(filename:string;compressed:boolean=false);
    constructor Create(AOwner:TComponent);override;
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;override;
@@ -131,11 +131,11 @@ begin
  end;
 end;
 
-procedure TCLXReport.SaveToPDF(filename:string);
+procedure TCLXReport.SaveToPDF(filename:string;compressed:boolean=false);
 begin
  CheckLoaded;
  rpqtdriver.ExportReportToPDF(report,filename,true,true,1,999999,
-  false,filename,true)
+  false,filename,compressed)
 end;
 
 function TCLXReport.PrintRange(frompage:integer;topage:integer;

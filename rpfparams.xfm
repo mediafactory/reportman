@@ -1,8 +1,8 @@
 object FRpParams: TFRpParams
-  Left = 135
-  Top = 113
-  Width = 460
-  Height = 352
+  Left = 139
+  Top = 133
+  Width = 465
+  Height = 354
   VertScrollBar.Range = 202
   ActiveControl = LParams
   BorderStyle = fbsDialog
@@ -16,8 +16,8 @@ object FRpParams: TFRpParams
   PixelsPerInch = 100
   object Panel1: TPanel
     Left = 0
-    Top = 150
-    Width = 460
+    Top = 152
+    Width = 465
     Height = 202
     Align = alBottom
     BevelOuter = bvNone
@@ -32,15 +32,15 @@ object FRpParams: TFRpParams
       object Label1: TLabel
         Left = 12
         Top = 72
-        Width = 73
-        Height = 17
+        Width = 80
+        Height = 20
         Caption = 'Description'
       end
       object EDescription: TEdit
         Left = 104
         Top = 68
         Width = 321
-        Height = 25
+        Height = 28
         Hint = 'Description to be show on the end user dialog'
         TabOrder = 1
         Text = 'EDescription'
@@ -49,18 +49,18 @@ object FRpParams: TFRpParams
       object Label2: TLabel
         Left = 8
         Top = 12
-        Width = 61
-        Height = 17
+        Width = 71
+        Height = 20
         Caption = 'Data type'
       end
       object ComboDataType: TComboBox
         Left = 88
         Top = 8
         Width = 113
-        Height = 25
+        Height = 28
         Hint = 'Data type for the parameter'
         Style = csDropDownList
-        ItemHeight = 19
+        ItemHeight = 22
         Items.Strings = (
           'String'
           'Integer'
@@ -76,15 +76,15 @@ object FRpParams: TFRpParams
       object Label3: TLabel
         Left = 216
         Top = 12
-        Width = 38
-        Height = 17
+        Width = 41
+        Height = 20
         Caption = 'Value'
       end
       object EValue: TMaskEdit
         Left = 284
         Top = 8
         Width = 141
-        Height = 25
+        Height = 28
         TabOrder = 5
         Text = 'EValue'
         OnExit = EValueExit
@@ -112,18 +112,18 @@ object FRpParams: TFRpParams
       object Label4: TLabel
         Left = 12
         Top = 108
-        Width = 122
-        Height = 17
+        Width = 134
+        Height = 20
         Caption = 'Assign to datasets'
       end
       object ComboDatasets: TComboBox
         Left = 12
         Top = 128
         Width = 161
-        Height = 25
+        Height = 28
         Hint = 'The parameters will be assigned not the selected datasets'
         Style = csDropDownList
-        ItemHeight = 19
+        ItemHeight = 22
         TabOrder = 9
       end
       object BAdddata: TButton
@@ -156,16 +156,16 @@ object FRpParams: TFRpParams
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 460
-    Height = 150
+    Width = 465
+    Height = 152
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object LParams: TListBox
       Left = 0
       Top = 30
-      Width = 364
-      Height = 120
+      Width = 369
+      Height = 122
       Align = alClient
       TabOrder = 0
       OnClick = LParamsClick
@@ -173,7 +173,7 @@ object FRpParams: TFRpParams
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 460
+      Width = 465
       Height = 30
       AutoSize = True
       ButtonHeight = 26
@@ -242,10 +242,10 @@ object FRpParams: TFRpParams
       end
     end
     object Panel3: TPanel
-      Left = 364
+      Left = 369
       Top = 30
       Width = 96
-      Height = 120
+      Height = 122
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2
@@ -486,16 +486,16 @@ object FRpParams: TFRpParams
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF00000000000000000002D7DBFD0000000003BAAD02
-      0000000002EDD6900000000001B6BB9000000000036DAA9000000000035B7F00
-      0000000002F6AA9000000000036FB70000000000015B6D900000000003D6DA82
-      0000000002BBD7100000000001D6BD1000000000037DEB900000000002ABAE80
-      0000000001DCD5900000000002EBBE90000000000356EB1000000000037D7510
-      0000000001AB5F90000000000000001000000000000000000000000000000010
-      0000000000000010000000000000001000000000000000000000000000000000
+      0200000002000000FFFFFF000000000000000000000404000000000000000000
+      0000000000000010000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000001000000000000000100000000000000010
-      0000000000000010000000000000001000000000000000000000000000000010}
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000002020200
+      0000000001010100000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000}
   end
   object ActionList1: TActionList
     Images = ImageList1

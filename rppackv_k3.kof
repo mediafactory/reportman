@@ -41,7 +41,7 @@ RemoteSymbols=0
 MinStackSize=16384
 MaxStackSize=1048576
 ImageBase=4194304
-ExeDescription=
+ExeDescription=Report manager visual components
 DynamicLoader=/lib/ld-linux.so.2
 
 [Directories]
@@ -50,7 +50,7 @@ UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
-Packages=baseclx:visualclx:visualdbclx:dataclx
+Packages=baseclx:visualclx:visualdbclx:dataclx:netdataclx:netclx:indy:synedit_kylix:ibxpress
 Conditionals=
 DebugSourceDirs=
 UsePackages=0
@@ -66,8 +66,7 @@ DebugCWD=
 /opt/cortez/bin/dclemacsedit.so.6.5=Borland Editor Emacs Enhancements
 /opt/cortez/bin/bplHelpViewers.so.6.5=Borland Sample Help Viewer Package
 /opt/cortez/bin/dclnet.so.6.5=Borland Internet Components
-/opt/cortez/bin/dclindy.so.6.5=Internet Direct "Indy" for Kylix Property and Component Editors
-/opt/cortez/bin/dclib.so.6.5=InterBase Data Access Components
 /home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/ibpack/bplibpack.so=IBAccess components package
 /home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/synedit/bplsynedit_kylix.so=SynEdit package for Kylix
+/opt/cortez/bin/dclindy.so.6.5=Internet Direct "Indy" for Kylix Property and Component Editors
 

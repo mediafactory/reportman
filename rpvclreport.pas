@@ -32,7 +32,7 @@ type
    function Execute:boolean;override;
    procedure PrinterSetup;override;
    function ShowParams:boolean;override;
-   procedure SaveToPDF(filename:string);
+   procedure SaveToPDF(filename:string;compressed:boolean=false);
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;override;
   published
@@ -107,11 +107,11 @@ begin
 end;
 
 
-procedure TVCLReport.SaveToPDF(filename:string);
+procedure TVCLReport.SaveToPDF(filename:string;compressed:boolean=false);
 begin
  CheckLoaded;
  rpgdidriver.ExportReportToPDF(report,filename,true,true,1,999999,
-  false,filename,true)
+  false,filename,compressed)
 end;
 
 end.

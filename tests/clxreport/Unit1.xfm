@@ -1,67 +1,92 @@
 object Form1: TForm1
-  Left = 192
-  Top = 88
-  Width = 543
-  Height = 375
-  VertScrollBar.Range = 277
-  HorzScrollBar.Range = 521
+  Left = 214
+  Top = 291
+  Width = 555
+  Height = 155
+  HorzScrollBar.Range = 505
+  VertScrollBar.Range = 97
   ActiveControl = Button1
   Caption = 'Form1'
   Color = clBackground
+  Position = poScreenCenter
   PixelsPerInch = 96
-  TextHeight = 13
-  TextWidth = 6
+  TextHeight = 20
+  TextWidth = 8
   object Button1: TButton
-    Left = 224
-    Top = 80
+    Left = 8
+    Top = 64
     Width = 105
-    Height = 57
+    Height = 33
     Caption = 'Preview'
     TabOrder = 0
     OnClick = Button1Click
   end
   object Button2: TButton
-    Left = 224
-    Top = 160
-    Width = 109
-    Height = 61
+    Left = 328
+    Top = 64
+    Width = 137
+    Height = 33
     Caption = 'Save to PDF'
     TabOrder = 1
     OnClick = Button2Click
   end
   object Label1: TLabel
-    Left = 340
-    Top = 160
-    Width = 66
-    Height = 13
+    Left = 328
+    Top = 8
+    Width = 108
+    Height = 20
     Caption = 'PDF Filename'
   end
   object ETest: TEdit
-    Left = 340
-    Top = 180
-    Width = 181
-    Height = 21
+    Left = 328
+    Top = 28
+    Width = 177
+    Height = 28
     TabOrder = 3
     Text = 'test.pdf'
   end
-  object Button3: TButton
-    Left = 80
-    Top = 212
-    Width = 77
-    Height = 65
-    Caption = 'Button3'
+  object BDesign: TButton
+    Left = 224
+    Top = 64
+    Width = 89
+    Height = 33
+    Caption = 'Design'
     TabOrder = 4
-    OnClick = Button3Click
+    OnClick = BDesignClick
+  end
+  object EReportName: TEdit
+    Left = 12
+    Top = 28
+    Width = 181
+    Height = 28
+    TabOrder = 5
+    Text = 'sample4.rep'
+  end
+  object Label2: TLabel
+    Left = 12
+    Top = 8
+    Width = 120
+    Height = 20
+    Caption = 'Report Filename'
+  end
+  object BPrint: TButton
+    Left = 120
+    Top = 64
+    Width = 97
+    Height = 33
+    Caption = 'Print'
+    TabOrder = 7
+    OnClick = BPrintClick
   end
   object CLXReport1: TCLXReport
     Filename = 'sample4.rep'
     Title = 'Untitled'
-    Left = 96
-    Top = 92
+    Left = 232
+    Top = 20
   end
   object RpDesigner1: TRpDesigner
     Filename = 'sample4.rep'
-    Left = 120
-    Top = 132
+    Left = 264
+    Top = 20
   end
 end

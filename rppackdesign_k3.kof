@@ -41,7 +41,7 @@ RemoteSymbols=0
 MinStackSize=16384
 MaxStackSize=1048576
 ImageBase=4194304
-ExeDescription=
+ExeDescription=Report Manager Designer Component Package
 DynamicLoader=/lib/ld-linux.so.2
 
 [Directories]
@@ -63,11 +63,9 @@ UseLauncher=0
 DebugCWD=
 
 [Excluded Packages]
+/opt/cortez/bin/dclnet.so.6.5=Borland Internet Components
+/opt/cortez/bin/dclib.so.6.5=InterBase Data Access Components
 /opt/cortez/bin/dclemacsedit.so.6.5=Borland Editor Emacs Enhancements
 /opt/cortez/bin/bplHelpViewers.so.6.5=Borland Sample Help Viewer Package
-/opt/cortez/bin/dclnet.so.6.5=Borland Internet Components
 /opt/cortez/bin/dclindy.so.6.5=Internet Direct "Indy" for Kylix Property and Component Editors
-/opt/cortez/bin/dclib.so.6.5=InterBase Data Access Components
-/home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/ibpack/bplibpack.so=IBAccess components package
-/home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/synedit/bplsynedit_kylix.so=SynEdit package for Kylix
 

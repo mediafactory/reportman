@@ -28,7 +28,6 @@ uses
 
 const
  CONS_RULER_LEFT=20;
- CT_TITLE_HEIGHT=15;
 type
 
   // A ScrollBox that not scrolls in view focused controls
@@ -55,6 +54,7 @@ type
     PLeft: TPanel;
   private
     { Private declarations }
+    panelheight:integer;
     PSection: TRpPaintEventPanel;
     FReport:TRpReport;
     FObjInsp:TFRpObjInsp;
@@ -122,6 +122,7 @@ end;
 constructor TFRpDesignFrame.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+ panelheight:=Round(1.2*Font.Size/72*Screen.PixelsPerInch);
  SectionScrollBox:=TRpScrollBox.Create(Self);
  SectionScrollBox.BorderStyle:=bsNone;
  SectionScrollBox.Color:=clDisabledForeground;
@@ -286,7 +287,7 @@ begin
   begin
    apanel:=TRpPaintEventPanel.Create(self);
    apanel.OnPaint:=SecPosChange;
-   apanel.Height:=CT_TITLE_HEIGHT;
+   apanel.Height:=panelheight;
    apanel.Caption:='';
    apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption;
    apanel.Alignment:=taLeftJustify;

@@ -1,17 +1,17 @@
 object FRpAboutBox: TFRpAboutBox
-  Left = 28
-  Top = 67
+  Left = 40
+  Top = 127
   Width = 489
   Height = 314
-  VertScrollBar.Range = 289
   HorzScrollBar.Range = 461
+  VertScrollBar.Range = 289
   ActiveControl = OKBtn
   Caption = 'About Report Manager '
   Color = clButton
   Position = poScreenCenter
   Scaled = False
   OnCreate = FormCreate
-  PixelsPerInch = 96
+  PixelsPerInch = 100
   object Image1: TImage
     Left = 8
     Top = 68
@@ -530,64 +530,64 @@ object FRpAboutBox: TFRpAboutBox
   object LReport: TLabel
     Left = 8
     Top = 8
-    Width = 76
-    Height = 13
+    Width = 118
+    Height = 20
     Caption = 'Report manager'
   end
   object Label1: TLabel
     Left = 12
     Top = 164
-    Width = 31
-    Height = 13
+    Width = 48
+    Height = 20
     Caption = 'Author'
   end
   object LName: TLabel
-    Left = 56
+    Left = 104
     Top = 164
-    Width = 50
-    Height = 13
+    Width = 76
+    Height = 20
     Caption = 'Toni Martir'
   end
   object Label2: TLabel
     Left = 12
     Top = 184
-    Width = 28
-    Height = 13
+    Width = 45
+    Height = 20
     Caption = 'E-mail'
   end
   object LEmail: TLabel
-    Left = 56
+    Left = 104
     Top = 184
-    Width = 71
-    Height = 13
+    Width = 108
+    Height = 20
     Caption = 'toni@pala.com'
   end
   object Label3: TLabel
     Left = 12
     Top = 208
-    Width = 113
-    Height = 13
+    Width = 176
+    Height = 20
     Caption = 'From Palafrugell, SPAIN'
   end
   object LVersion: TLabel
     Left = 8
     Top = 44
-    Width = 89
-    Height = 13
-    Caption = 'Version 0.99c beta'
+    Width = 99
+    Height = 20
+    Caption = 'Version 0.99g'
   end
   object Label4: TLabel
     Left = 12
     Top = 232
-    Width = 63
-    Height = 13
+    Width = 96
+    Height = 20
     Caption = 'Project page:'
   end
   object Label5: TLabel
-    Left = 96
+    Left = 120
     Top = 232
-    Width = 199
-    Height = 13
+    Width = 295
+    Height = 20
     Caption = 'http://sourceforge.net/projects/reportman'
   end
   object Memo1: TMemo
@@ -607,8 +607,8 @@ object FRpAboutBox: TFRpAboutBox
   object Label6: TLabel
     Left = 232
     Top = 68
-    Width = 56
-    Height = 13
+    Width = 88
+    Height = 20
     Caption = 'Contributors'
   end
 end

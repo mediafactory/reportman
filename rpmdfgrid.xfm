@@ -1,9 +1,9 @@
 object FRpGridOptions: TFRpGridOptions
   Left = 305
   Top = 237
-  Width = 274
-  Height = 202
-  HorzScrollBar.Range = 244
+  Width = 283
+  Height = 209
+  HorzScrollBar.Range = 247
   VertScrollBar.Range = 185
   ActiveControl = OKBtn
   BorderStyle = fbsDialog
@@ -18,7 +18,6 @@ object FRpGridOptions: TFRpGridOptions
     Top = 124
     Width = 41
     Height = 29
-    Pen.Width = 0
     OnMouseUp = GridColorMouseDown
   end
   object OKBtn: TButton
@@ -44,36 +43,36 @@ object FRpGridOptions: TFRpGridOptions
   object Label1: TLabel
     Left = 8
     Top = 8
-    Width = 119
-    Height = 17
+    Width = 132
+    Height = 20
     Caption = 'Horizontal spacing'
   end
   object EGridX: TEdit
     Left = 144
     Top = 4
     Width = 81
-    Height = 25
+    Height = 28
     TabOrder = 3
   end
   object Label2: TLabel
     Left = 8
     Top = 32
-    Width = 105
-    Height = 17
+    Width = 113
+    Height = 20
     Caption = 'Vertical spacing'
   end
   object EGridY: TEdit
     Left = 144
     Top = 28
     Width = 81
-    Height = 25
+    Height = 28
     TabOrder = 5
   end
   object Label3: TLabel
     Left = 8
     Top = 132
-    Width = 65
-    Height = 17
+    Width = 73
+    Height = 20
     Caption = 'Grid Color'
   end
   object CheckEnabled: TCheckBox
@@ -95,15 +94,15 @@ object FRpGridOptions: TFRpGridOptions
   object LUnits1: TLabel
     Left = 232
     Top = 8
-    Width = 12
-    Height = 17
+    Width = 15
+    Height = 20
     Caption = '   '
   end
   object LUnits2: TLabel
     Left = 232
     Top = 32
-    Width = 12
-    Height = 17
+    Width = 15
+    Height = 20
     Caption = '   '
   end
   object CheckLines: TCheckBox

@@ -1,8 +1,8 @@
 object FRpRunTimeParams: TFRpRunTimeParams
   Left = 17
   Top = 30
-  Width = 579
-  Height = 271
+  Width = 583
+  Height = 276
   VertScrollBar.Range = 41
   ActiveControl = OKBtn
   Caption = 'Dialog'
@@ -11,11 +11,11 @@ object FRpRunTimeParams: TFRpRunTimeParams
   Scaled = False
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
+  PixelsPerInch = 100
   object PModalButtons: TPanel
     Left = 0
-    Top = 230
-    Width = 579
+    Top = 235
+    Width = 583
     Height = 41
     Align = alBottom
     TabOrder = 0
@@ -43,8 +43,8 @@ object FRpRunTimeParams: TFRpRunTimeParams
   object MainScrollBox: TScrollBox
     Left = 0
     Top = 0
-    Width = 579
-    Height = 230
+    Width = 583
+    Height = 235
     Align = alClient
     BorderStyle = bsNone
     TabOrder = 1

@@ -37,7 +37,7 @@ uses
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
   rpconsts,rptypes, QExtCtrls,rpmdfstruc, rplastsav,rpsubreport,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
-  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver, IBDatabase,
+  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver, 
   DB,rpmdfhelpform,rpmunits;
 const
   // File name in menu width
@@ -579,7 +579,9 @@ begin
 {$ENDIF}
 {$IFDEF LINUX}
   LastUsedFiles.CaseSensitive:=True;
-  MKylixPrintBug.Visible:=True;
+{$ENDIF}
+{$IFDEF LINUXPRINTBUG}
+ MKylixPrintBug.Visible:=True;
 {$ENDIF}
  LastUsedFiles.LoadFromConfigFile(configfile);
  UpdateFileMenu;
