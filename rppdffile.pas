@@ -30,6 +30,7 @@
 {       Still Missing:                                  }
 {               -TEXT ALIGNMENT                         }
 {               -Underline, bold, italic                }
+{               -Font Selection                         }
 {               -Brush Patterns                         }
 {               -Multiline text                         }
 {               -Bitmaps                                }

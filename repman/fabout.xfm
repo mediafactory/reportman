@@ -4,7 +4,7 @@ object FAboutBox: TFAboutBox
   Width = 401
   Height = 291
   VertScrollBar.Range = 277
-  HorzScrollBar.Range = 377
+  HorzScrollBar.Range = 381
   ActiveControl = OKBtn
   Caption = 'About Report Manager '
   Color = clButton
@@ -591,19 +591,22 @@ object FAboutBox: TFAboutBox
     Caption = 'http://sourceforge.net/projects/reportman'
   end
   object Memo1: TMemo
-    Left = 148
-    Top = 48
+    Left = 152
+    Top = 84
     Width = 229
-    Height = 161
+    Height = 137
     Lines.Strings = (
-      'K.Nishita (info@nishita.com) PDF Export base')
+      'PDF Export base: K.Nishita (info@nishita.com) '
+      
+        'ZLib Compression: Jean-loup Gailly, Mark Adler, Jacques Nomssi N' +
+        'zali')
     ScrollBars = ssBoth
     TabOrder = 10
     WordWrap = False
   end
   object Label6: TLabel
-    Left = 148
-    Top = 28
+    Left = 152
+    Top = 68
     Width = 56
     Height = 13
     Caption = 'Contributors'
