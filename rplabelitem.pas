@@ -55,6 +55,7 @@ type
    FUpdated:boolean;
    FAgIniValue:widestring;
    procedure SetIdentifier(Value:string);
+   procedure Evaluate;
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   public
@@ -107,6 +108,7 @@ begin
  end;
  FAllText.Strings[langindex]:=Value;
 end;
+
 
 function TRpLabel.GetText:WideString;
 var
@@ -169,26 +171,35 @@ begin
  end;
 end;
 
-function TRpExpression.GetText:widestring;
+procedure TRpExpression.Evaluate;
 var
  fevaluator:TRpEvaluator;
 begin
- if Length(Trim(Expression))<1 then
- begin
-  Result:='';
+ if FUpdated then
   exit;
- end;
  try
   fevaluator:=TRpREport(Owner).Evaluator;
   fevaluator.Expression:=Expression;
   fevaluator.Evaluate;
-  Result:=FormatVariant(displayformat,fevaluator.EvalResult);
+  FValue:=fevaluator.EvalResult;
+  FUpdated:=true;
  except
   on E:Exception do
   begin
    Raise TRpReportException.Create(E.Message+':'+SRpSExpression,self);
   end;
  end;
+end;
+
+function TRpExpression.GetText:widestring;
+begin
+ if Length(Trim(Expression))<1 then
+ begin
+  Result:='';
+  exit;
+ end;
+ Evaluate;
+ Result:=FormatVariant(displayformat,FValue);
 end;
 
 procedure TRpExpression.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
@@ -202,8 +213,65 @@ begin
 end;
 
 procedure TRpExpression.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
+var
+ eval:TRpEvaluator;
 begin
-
+ case newstate of
+  rpReportStart:
+   begin
+    FUpdated:=false;
+    if (FAggregate<>rpAgNone) then
+    begin
+     // Update with the initial value
+     eval:=TRpReport(Owner).Evaluator;
+     eval.Expression:=FAgIniValue;
+     eval.Evaluate;
+     FValue:=eval.EvalResult;
+     FUpdated:=true;
+    end;
+   end;
+  rpPageStart:
+   begin
+    if (FAggregate=rpAgPage) then
+    begin
+     // Update with the initial value plus the current
+     eval:=TRpReport(Owner).Evaluator;
+     eval.Expression:=FAgIniValue;
+     eval.Evaluate;
+     FValue:=eval.EvalResult;
+     FUpdated:=true;
+    end;
+   end;
+  rpDataChange:
+   begin
+    FUpdated:=false;
+    if (FAggregate<>rpAgNone) then
+    begin
+     // Update with the initial value
+     eval:=TRpReport(Owner).Evaluator;
+     eval.Expression:=FExpression;
+     eval.Evaluate;
+     FValue:=FValue+eval.EvalResult;
+     FUpdated:=true;
+    end;
+   end;
+  rpGroupChange:
+   begin
+    FUpdated:=false;
+    if (FAggregate=rpAgGroup) then
+    begin
+     if GroupName=newgroup then
+     begin
+      // Update with the initial value
+      eval:=TRpReport(Owner).Evaluator;
+      eval.Expression:=FAgIniValue;
+      eval.Evaluate;
+      FValue:=eval.EvalResult;
+      FUpdated:=true;
+     end;
+    end;
+   end;
+ end;
 end;
 
 

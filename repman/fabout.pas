@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       fabour                                          }
+{       fabout                                          }
 {       About box for report manager designer           }
 {                                                       }
 {                                                       }

@@ -1,9 +1,8 @@
 {*******************************************************}
 {                                                       }
-{       RpRuler component & TRppane                     }
+{       RpRuler component                               }
 {       A Display ruler that can be horizontal or       }
 {       vertical, in cms or inchess                     }
-{       A panel with OnPosChange event                  }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }

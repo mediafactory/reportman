@@ -1,3 +1,24 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager                                  }
+{                                                       }
+{       rpdataset                                       }
+{                                                       }
+{                                                       }
+{       A client dataset with two record buffer         }
+{       can obtain large amounts of recors without      }
+{       consuming memory                                }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
+{                                                       }
+{                                                       }
+{*******************************************************}
+
 unit rpdataset;
 
 interface

@@ -134,7 +134,6 @@ type
    CurrentSectionIndex:integer;
    PageNum:integer;
    LastPage:Boolean;
-   LastRecord:Boolean;
    property RecordCount:integer read FRecordCount;
    property Metafile:TRpMetafileReport read FMetafile;
    property Identifiers:TStringList read FIdentifiers;
@@ -277,7 +276,11 @@ begin
      rpexpre:=TRpExpression(comp);
      if Length(rpexpre.Identifier)>0 then
      begin
-      FIdentifiers.AddObject(rpexpre.Identifier,comp);
+      try
+       FIdentifiers.AddObject(rpexpre.Identifier,comp);
+      except
+       rpexpre.Identifier:='';
+      end;
      end;
     end;
    end;
@@ -652,7 +655,7 @@ var
 begin
  subrep:=Subreports.Items[CurrentSubreportIndex].SubReport;
  if Length(Trim(subrep.Alias))<1 then
-  Lastrecord:=True
+  subrep.Lastrecord:=True
  else
  begin
   index:=DataInfo.IndexOf(subrep.Alias);
@@ -686,7 +689,9 @@ begin
      Raise Exception.Create(SRpOperationAborted);
    end;
   end;
-  LastRecord:=data.Eof;
+  subrep.LastRecord:=data.Eof;
+  if not data.eof then
+   subrep.SubReportChanged(rpDataChange);
  end;
 end;
 
@@ -694,10 +699,11 @@ function TRpReport.NextSection:boolean;
 var
  subrep:TRpSubreport;
  sec:TRpSection;
-// oldsection:TRpSection;
+ oldsectionindex:integer;
 begin
  Result:=True;
  section:=nil;
+ oldsectionindex:=currentsectionindex;
  // Check the condition
  while CurrentSubReportIndex<Subreports.count do
  begin
@@ -708,12 +714,13 @@ begin
     CurrentSectionIndex:=subrep.FirstDetail
    else
     inc(CurrentSectionIndex);
-   if Not LastRecord then
+   if Not subrep.LastRecord then
    begin
     if CurrentSectionIndex>subrep.LastDetail then
     begin
-     NextRecord;
-     if Not LastRecord then
+     if oldsectionindex>=0 then
+      NextRecord;
+     if Not subrep.LastRecord then
      begin
       CurrentSectionIndex:=subrep.FirstDetail;
       sec:=Subrep.Sections.Items[CurrentSectionIndex].Section;
@@ -745,10 +752,10 @@ begin
    inc(CurrentSubReportIndex);
    if CurrentSubReportIndex>=Subreports.count then
     break;
-//   subrep:=Subreports.Items[CurrentSubReportIndex].SubReport;
+   subrep:=Subreports.Items[CurrentSubReportIndex].SubReport;
+//   subrep.SubReportChanged(rpDataChange);
    CurrentSectionIndex:=-1;
-//    subrep.UpdateGroupValues;
-   LastRecord:=false;
+   subrep.LastRecord:=false;
   end
   else
    break;
@@ -795,7 +802,6 @@ begin
  metafile.Orientation:=FPageOrientation;
  metafile.BackColor:=FPageBackColor;
  LastPage:=false;
- LastRecord:=false;
  EndPrint;
  PageNum:=-1;
  FRecordCount:=0;
@@ -813,8 +819,6 @@ begin
 
 
 
- // Sends the message report header to all components
- Subreports.Items[0].Subreport.SubReportChanged(rpReportStart);
  FDataAlias.List.Clear;
  for i:=0 to DataInfo.Count-1 do
  begin
@@ -825,9 +829,15 @@ begin
   else
    item.Dataset:=DataInfo.Items[i].Dataset;
  end;
-
-
  FEvaluator.Rpalias:=FDataAlias;
+
+ // Sends the message report header to all components
+ for i:=0 to SubReports.Count-1 do
+ begin
+  Subreports.Items[i].Subreport.SubReportChanged(rpReportStart);
+ end;
+ Subreports.Items[0].SubReport.SubReportChanged(rpDataChange);
+
  CurrentSectionIndex:=-1;
  section:=nil;
  subreport:=nil;
@@ -967,6 +977,9 @@ begin
  else
   freespace:=FInternalPageheight;
  freespace:=freespace-FTopMargin-FBottomMargin;
+
+ // New page
+ subreport.SubReportChanged(rpPageStart);
 
  pagefooters:=TStringList.Create;
  try

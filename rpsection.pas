@@ -54,6 +54,7 @@ type
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   public
+   GroupValue:Variant;
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    procedure FreeComponents;

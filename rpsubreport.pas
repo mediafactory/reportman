@@ -23,7 +23,7 @@ unit rpsubreport;
 interface
 
 uses Classes,SysUtils,rpsecutil,rpsection,rptypes,rpconsts,
- rplabelitem,rpprintitem;
+ rplabelitem,rpprintitem,rpeval;
 
 type
  TRpSubReport=class(TComponent)
@@ -45,6 +45,7 @@ type
   public
    // Creation and destruction
    CurrentGroup:string;
+   LastRecord:boolean;
    constructor Create(AOWner:TComponent);override;
    destructor Destroy;override;
    procedure CreateNew;
@@ -71,7 +72,7 @@ type
 
 implementation
 
-
+uses rpreport;
 
 procedure TRpSubReport.AddPageHeader;
 var
@@ -415,8 +416,27 @@ end;
 
 
 procedure TRpSubReport.FillGroupValues;
+var
+ i:integer;
+ indexdetail:integer;
+ sec:TRpSection;
+ eval:TRpEvaluator;
 begin
  CurrentGroup:='';
+ i:=0;
+ indexdetail:=GetFirstDetail;
+ eval:=TRpReport(Owner).Evaluator;
+ while i<indexdetail do
+ begin
+  sec:=Sections.Items[i].Section;
+  if (sec.SectionType=rpsecgheader) then
+  begin
+   eval.Expression:=sec.ChangeExpression;
+   eval.Evaluate;
+   sec.GroupValue:=eval.EvalResult;
+  end;
+  inc(i);
+ end;
 end;
 
 procedure TRpSubReport.CheckCurrentGroupChange;
