@@ -478,7 +478,12 @@ begin
   varDate:
    Result:=FormatDateTime(displayformat,Value);
   varString:
-   Result:=Format(displayformat,[Value]);
+   begin
+    if Length(displayformat)>0 then
+     Result:=Format(displayformat,[Value])
+    else
+     Result:=widestring(Value);
+   end;
   varBoolean:
    Result:=Format(displayformat,[BoolToStr(Value,true)]);
   else

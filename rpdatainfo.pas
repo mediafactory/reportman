@@ -1269,15 +1269,6 @@ begin
         TTable(FSQLInternalQUery).IndexFieldNames:=FBDEIndexFields;
        if Length(FBDEIndexName)>0 then
         TTable(FSQLInternalQUery).IndexName:=FBDEIndexName;
-       // Set the range start and range end
-       if Length(Trim(FBDEFirstRange))>0 then
-       begin
-        SetRangeForTable(false);
-       end;
-       if Length(Trim(FBDELastRange))>0 then
-       begin
-        SetRangeForTable(true);
-       end;
       end;
 {$ENDIF}
      end;
@@ -1428,6 +1419,20 @@ begin
    if Not Assigned(FSQLInternalQuery) then
     Raise Exception.Create(SRpDriverNotSupported);
    FSQLInternalQuery.Active:=true;
+{$IFDEF USEBDE}
+   if (FSQLInternalQuery is TTable) then
+   begin
+    // Set the range start and range end
+    if Length(Trim(FBDEFirstRange))>0 then
+    begin
+     SetRangeForTable(false);
+    end;
+    if Length(Trim(FBDELastRange))>0 then
+    begin
+     SetRangeForTable(true);
+    end;
+   end;
+{$ENDIF}
    if cached then
    begin
     FCachedDataset.DoClose;

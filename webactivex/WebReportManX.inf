@@ -13,7 +13,7 @@ WebReportManX.ocx=WebReportManX.ocx
 [WebReportManX.ocx]
 file-win32-x86=thiscab
 clsid={DF0F146D-1D4B-4216-93A8-B63BE78A3D7E}
-FileVersion=1,4,31,0
+FileVersion=1,4,32,0
 RegisterServer=yes
 
 [reportmanres.es]
