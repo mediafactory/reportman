@@ -116,6 +116,8 @@ begin
  CheckLoginPrompt.Caption:=TranslateStr(144,CheckLoginPrompt.Caption);
  CheckLoadParams.Caption:=TranslateStr(145,CheckLoadParams.Caption);
  CheckLoadDriverParams.Caption:=TranslateStr(146,CheckLoadDriverParams.Caption);
+ BTest.Caption:=TranslateStr(753,BTest.Caption);
+ BBuild.Caption:=TranslateStr(936,BBuild.Caption);
 
  GetRpDatabaseDrivers(GDriver.Items);
  GetRpDatabaseDrivers(ComboDriver.Items);

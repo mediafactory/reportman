@@ -186,7 +186,7 @@ object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
         Top = 66
         Width = 549
         Height = 175
-        ActivePage = TabSQL
+        ActivePage = TabMySQL
         Align = alClient
         TabOrder = 0
         object TabSQL: TTabSheet

@@ -543,6 +543,7 @@ var
   SRpPGetFieldValue:WideString='connname is the connection name, query is the sql query to execute';
   SRpChildSubRep:WideString='Child Subreport';
   SRpNewDatabaseInfo:WideString='Select a driver and click add button';
+  SRpNewDataInfo:WideString='Click add button, then select a connection and the SQL sentence or other options';
   SRpSExternalData:WideString='External database';
   SRpExternalSectionNotFound:WideString='Error reading external section';
   SRpRecordnotExists:WideString='The record does not exist, do you want to create it?';
@@ -1191,6 +1192,7 @@ begin
  TranslateVar(927,SRpSSkipToPage);
  TranslateVar(928,SRpSPOnlyData);
  TranslateVar(929,SRpSTwoPassReportNeeded);
+ TranslateVar(931,SRpNewDataInfo);
 end;
 
 {$IFDEF LINUX}

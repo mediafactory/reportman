@@ -27,7 +27,7 @@ uses
 {$ENDIF}
   Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ComCtrls,
-  rpmdconsts,rpreport,rpmdfconnectionvcl, ExtCtrls;
+  rpmdconsts,rpreport,rpmdfconnectionvcl, ExtCtrls,rpmdfdatasetsvcl;
 
 type
   TFRpWizardVCL = class(TForm)
@@ -43,27 +43,23 @@ type
     TabDatasets: TTabSheet;
     TabFields: TTabSheet;
     TabReportType: TTabSheet;
-    BNExt3: TButton;
-    BNext4: TButton;
-    BFinish: TButton;
-    Button2: TButton;
-    Button3: TButton;
-    Button4: TButton;
-    PBottom2: TPanel;
-    BCancel: TButton;
-    BNext1: TButton;
     PBottom3: TPanel;
-    Button1: TButton;
-    BNext2: TButton;
+    BCancel: TButton;
+    BNext: TButton;
+    BFinish: TButton;
+    BBack: TButton;
     procedure BNext1Click(Sender: TObject);
     procedure BCancelClick(Sender: TObject);
     procedure BFinishClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure BBackClick(Sender: TObject);
+    procedure PControlChange(Sender: TObject);
   private
     { Private declarations }
     report:TRpReport;
     Created:Boolean;
     conframe:TFRpConnectionVCL;
+    dataframe:TFRpDatasetsVCL;
   public
     { Public declarations }
   end;
@@ -92,7 +88,11 @@ end;
 
 procedure TFRpWizardVCL.BNext1Click(Sender: TObject);
 begin
- PControl.ActivePageIndex:=PControl.ActivePageIndex+1;
+ if PControl.ActivePageIndex<PControl.PageCount-1 then
+ begin
+  PControl.ActivePageIndex:=PControl.ActivePageIndex+1;
+  PControlChange(PControl);
+ end;
 end;
 
 procedure TFRpWizardVCL.BCancelClick(Sender: TObject);
@@ -104,7 +104,7 @@ procedure TFRpWizardVCL.BFinishClick(Sender: TObject);
 begin
  // Creates a new report
  report.CreateNew;
-
+ report.Datainfo:=dataframe.Datainfo;
  Created:=True;
  Close;
 end;
@@ -112,6 +112,7 @@ end;
 procedure TFRpWizardVCL.FormCreate(Sender: TObject);
 begin
  // Load strings
+ Caption:=TranslateStr(935,Caption);
  LDesign.Caption:=TranslateStr(869,LDesign.Caption);
  LPass1.Caption:=TranslateStr(870,LPass1.Caption);
  LPass2.Caption:=TranslateStr(871,LPass2.Caption);
@@ -123,11 +124,39 @@ begin
  TabDatasets.Caption:=TranslateStr(876,TabDatasets.Caption);
  TabFields.Caption:=TranslateStr(877,TabFields.Caption);
  TabReportType.Caption:=TranslateStr(878,TabReportType.Caption);
+ BNext.Caption:=TranslateStr(932,BNext.Caption);
+ BBack.Caption:=TranslateStr(933,BBack.Caption);
+ BFinish.Caption:=TranslateStr(934,BFinish.Caption);
 
  // Create the connections frame
  conframe:=TFRpConnectionVCL.Create(Self);
  conframe.Parent:=TabConnections;
+ dataframe:=TFRpDatasetsVCL.Create(Self);
+ dataframe.Parent:=TabDatasets;
  PControl.ActivePage:=TabInstructions;
+ PControlChange(PControl);
+end;
+
+procedure TFRpWizardVCL.BBackClick(Sender: TObject);
+begin
+ if PControl.ActivePageIndex>0 then
+ begin
+  PControl.ActivePageIndex:=PControl.ActivePageIndex-1;
+  PControlChange(PControl);
+ end;
+end;
+
+procedure TFRpWizardVCL.PControlChange(Sender: TObject);
+begin
+ BBack.Enabled:=PControl.ActivePageIndex>0;
+ BNext.Enabled:=PControl.ActivePageIndex<PControl.PageCount-1;
+ BFinish.Enabled:=PControl.ActivePageIndex=PControl.PageCount-1;
+ if PControl.ActivePage=TabDatasets then
+ begin
+  dataframe.Databaseinfo:=conframe.databaseinfo;
+  // Gets the datasets
+  dataframe.FillDatasets;
+ end;
 end;
 
 end.

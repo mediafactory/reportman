@@ -98,7 +98,8 @@ uses
   rpzlibzlib in '..\rpzlibzlib.pas',
   rpmdfconnectionvcl in '..\rpmdfconnectionvcl.pas' {FRpConnectionVCL: TFrame},
   rpmdfwizardvcl in '..\rpmdfwizardvcl.pas' {FRpWizardVCL},
-  rpmdfextsecvcl in '..\rpmdfextsecvcl.pas' {FRpExtSectionVCL};
+  rpmdfextsecvcl in '..\rpmdfextsecvcl.pas' {FRpExtSectionVCL},
+  rpmdfdatasetsvcl in '..\rpmdfdatasetsvcl.pas' {FRpDatasetsVCL: TFrame};
 
 {$R *.res}
 

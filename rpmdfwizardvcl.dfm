@@ -1,9 +1,10 @@
 object FRpWizardVCL: TFRpWizardVCL
   Left = 193
   Top = 114
-  Width = 611
-  Height = 465
+  AutoScroll = False
   Caption = 'New Report Wizard'
+  ClientHeight = 495
+  ClientWidth = 612
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,11 +18,12 @@ object FRpWizardVCL: TFRpWizardVCL
   object PControl: TPageControl
     Left = 0
     Top = 0
-    Width = 603
-    Height = 438
-    ActivePage = TabReportType
+    Width = 612
+    Height = 458
+    ActivePage = TabInstructions
     Align = alClient
     TabOrder = 0
+    OnChange = PControlChange
     object TabInstructions: TTabSheet
       Caption = 'Instructions'
       object LDesign: TLabel
@@ -70,139 +72,71 @@ object FRpWizardVCL: TFRpWizardVCL
         Height = 13
         Caption = 'To begin the wizard click Next button'
       end
-      object PBottom2: TPanel
-        Left = 0
-        Top = 360
-        Width = 595
-        Height = 43
-        BevelOuter = bvNone
-        TabOrder = 0
-        object BCancel: TButton
-          Left = 331
-          Top = 9
-          Width = 97
-          Height = 29
-          Anchors = [akRight, akBottom]
-          Caption = 'Cancel'
-          TabOrder = 0
-          OnClick = BCancelClick
-        end
-        object BNext1: TButton
-          Left = 491
-          Top = 9
-          Width = 97
-          Height = 29
-          Anchors = [akRight, akBottom]
-          Caption = 'Next'
-          TabOrder = 1
-          OnClick = BNext1Click
-        end
-      end
     end
     object TabConnections: TTabSheet
       Caption = 'Connections'
       ImageIndex = 1
-      object PBottom3: TPanel
-        Left = 0
-        Top = 366
-        Width = 595
-        Height = 37
-        Align = alBottom
-        BevelOuter = bvNone
-        TabOrder = 0
-        object Button1: TButton
-          Left = 347
-          Top = 4
-          Width = 97
-          Height = 29
-          Anchors = [akRight, akBottom]
-          Caption = 'Cancel'
-          TabOrder = 0
-          OnClick = BCancelClick
-        end
-        object BNext2: TButton
-          Left = 491
-          Top = 4
-          Width = 97
-          Height = 29
-          Anchors = [akRight, akBottom]
-          Caption = 'Next'
-          TabOrder = 1
-          OnClick = BNext1Click
-        end
-      end
     end
     object TabDatasets: TTabSheet
       Caption = 'Datasets'
       ImageIndex = 2
-      object BNExt3: TButton
-        Left = 491
-        Top = 365
-        Width = 97
-        Height = 29
-        Anchors = [akRight, akBottom]
-        Caption = 'Next'
-        TabOrder = 0
-        OnClick = BNext1Click
-      end
-      object Button2: TButton
-        Left = 359
-        Top = 365
-        Width = 97
-        Height = 29
-        Anchors = [akRight, akBottom]
-        Caption = 'Cancel'
-        TabOrder = 1
-        OnClick = BCancelClick
-      end
     end
     object TabFields: TTabSheet
       Caption = 'Fields'
       ImageIndex = 3
-      object BNext4: TButton
-        Left = 491
-        Top = 365
-        Width = 97
-        Height = 29
-        Anchors = [akRight, akBottom]
-        Caption = 'Next'
-        TabOrder = 0
-        OnClick = BNext1Click
-      end
-      object Button3: TButton
-        Left = 359
-        Top = 365
-        Width = 97
-        Height = 29
-        Anchors = [akRight, akBottom]
-        Caption = 'Cancel'
-        TabOrder = 1
-        OnClick = BCancelClick
-      end
     end
     object TabReportType: TTabSheet
       Caption = 'Report type'
       ImageIndex = 4
-      object BFinish: TButton
-        Left = 491
-        Top = 365
-        Width = 97
-        Height = 29
-        Anchors = [akRight, akBottom]
-        Caption = 'Finish'
-        TabOrder = 0
-        OnClick = BFinishClick
-      end
-      object Button4: TButton
-        Left = 359
-        Top = 365
-        Width = 97
-        Height = 29
-        Anchors = [akRight, akBottom]
-        Caption = 'Cancel'
-        TabOrder = 1
-        OnClick = BCancelClick
-      end
+    end
+  end
+  object PBottom3: TPanel
+    Left = 0
+    Top = 458
+    Width = 612
+    Height = 37
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 1
+    object BCancel: TButton
+      Left = 4
+      Top = 4
+      Width = 97
+      Height = 29
+      Anchors = [akRight, akBottom]
+      Caption = 'Cancel'
+      TabOrder = 0
+      OnClick = BCancelClick
+    end
+    object BNext: TButton
+      Left = 404
+      Top = 4
+      Width = 97
+      Height = 29
+      Anchors = [akRight, akBottom]
+      Caption = 'Next'
+      TabOrder = 1
+      OnClick = BNext1Click
+    end
+    object BFinish: TButton
+      Left = 508
+      Top = 4
+      Width = 97
+      Height = 29
+      Anchors = [akRight, akBottom]
+      Caption = 'Finish'
+      TabOrder = 2
+      OnClick = BFinishClick
+    end
+    object BBack: TButton
+      Left = 300
+      Top = 4
+      Width = 97
+      Height = 29
+      Anchors = [akRight, akBottom]
+      Caption = 'Back'
+      TabOrder = 3
+      OnClick = BBackClick
     end
   end
 end
