@@ -62,6 +62,8 @@ const
  REP_C_WHEELSCALE=4;
  MAX_LANGUAGES=5;
  CONS_MINLINEINFOITEMS=400;
+ LINE_FEED=#13+#10;
+
 
  {$IFNDEF USEVARIANTS}
  varWord     = $0012;
@@ -251,6 +253,7 @@ function GetLastname(astring:string):string;
 function GetPathName(astring:string):string;
 function GetFirstName(astring:string):string;
 {$IFNDEF DOTNETD}
+procedure WriteToStdError(astring:String);
 procedure WriteStreamToStdOutput(astream:TStream);
 procedure WriteStreamToHandle(astream:TStream;handle:Integer);
 function ReadFromStdInputStream:TMemoryStream;
@@ -625,7 +628,7 @@ begin
    end;
   varDate:
    Result:=FormatDateTime(displayformat,Value);
-  varString:
+  varString,varOleStr:
    begin
     if Length(displayformat)>0 then
      Result:=Format(displayformat,[Value])
@@ -639,10 +642,11 @@ begin
 {$IFDEF USEBCD}
    if atype=varFmtBCD then
    begin
-    if ( (BCDCompare(VarToBCD(Value),IntegerToBcd(0))=0) and (not printnulls)) then
+    Value:=BCDToDouble(VarToBCD(Value));
+    if ((Value=0.0) and (not printnulls)) then
      Result:=''
     else
-     Result:=FormatBCD(displayformat,VarToBcd(Value));
+     Result:=FormatFloat(displayformat,Value);
    end
    else
 {$ENDIF}
@@ -2479,6 +2483,43 @@ begin
  end;
 end;
 
+procedure WriteToStdError(astring:String);
+{$IFDEF MSWINDOWS}
+var
+// writed:DWORD;
+ handle:THANDLE;
+{$ENDIF}
+{$IFDEF LINUX}
+var
+// writed:DWORD;
+ handle:integer;
+{$ENDIF}
+ astream:TMemoryStream;
+ i:integer;
+begin
+{$IFDEF MSWINDOWS}
+ // In windows obtain sdtin
+ handle:=Windows.GetStdHandle(STD_ERROR_HANDLE);
+ if handle=INVALID_HANDLE_VALUE then
+  RaiseLastOsError;
+{$ENDIF}
+{$IFDEF LINUX}
+ handle:=2;
+{$ENDIF}
+ astream:=TMemoryStream.Create;
+ try
+  for i:=1 to Length(astring) do
+  begin
+   astream.Write(astring[i],1);
+  end;
+  WriteStreamToHandle(astream,handle);
+ finally
+  astream.free;
+ end;
+end;
+
+{$ENDIF}
+
 procedure WriteStreamToStdOutput(astream:TStream);
 {$IFDEF MSWINDOWS}
 var
@@ -2503,7 +2544,6 @@ begin
  WriteStreamToHandle(astream,handle);
 end;
 
-{$ENDIF}
 
 
 {$IFNDEF DOTNETD}
@@ -2589,7 +2629,8 @@ begin
     varSingle, varDouble: Result := ftFloat;
     varDate: Result := ftDateTime;
     varBoolean: Result := ftBoolean;
-    varString, varOleStr: Result := ftString;
+    varString: Result := ftString;
+    varOleStr: Result := ftWideString;
   else
     Result := ftUnknown;
   end;

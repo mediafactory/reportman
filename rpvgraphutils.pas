@@ -86,6 +86,7 @@ function FindFormNameFromSize(width,height:integer):String;
 function PrinterMaxCopiesSupport:Integer;
 procedure FillTreeView (ATree:TTreeView;alist:TStringList);
 function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
+function GetFontData(Font:TFont):TMemoryStream;
 
 
 implementation
@@ -93,8 +94,43 @@ implementation
 var
  FPrinters:TStringList;
 
- {$IFNDEF DOTNETD}
- procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
+
+function GetFontData(Font:TFont):TMemoryStream;
+var
+ astream:TMemoryStream;
+ asize:DWord;
+ abit:TBitmap;
+begin
+ astream:=nil;
+ abit:=TBitmap.Create;
+ try
+  abit.Height:=20;
+  abit.Width:=20;
+  abit.Canvas.Font.Name:=Font.Name;
+  abit.Canvas.Font.Size:=Font.Size;
+  abit.Canvas.TextOut(0,0,'Hola');
+
+  asize:=Windows.GetFontData(abit.Canvas.Handle,0,0,nil,0);
+  if asize>0 then
+  begin
+   astream:=TMemoryStream.Create;
+   try
+    astream.SetSize(asize);
+    if asize<>Windows.GetFontData(abit.Canvas.Handle,0,0,astream.Memory,asize) then
+     RaiseLastWin32Error;
+   except
+    astream.free;
+   end;
+  end;
+ finally
+  abit.free;
+ end;
+ result:=astream;
+end;
+
+
+{$IFNDEF DOTNETD}
+procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
 var
  jpegimage:TJPegImage;
  bitmap:TBitmap;

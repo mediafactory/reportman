@@ -334,7 +334,7 @@ begin
     Result:=twipstocms(freport.freespace)
    else
     if varname='FREE_SPACE_INCH' then
-     Result:=twipstocms(freport.freespace)
+     Result:=twipstoinchess(freport.freespace)
     else
      if varname='CURRENTGROUP' then
      begin
@@ -1073,7 +1073,7 @@ var
  index:integer;
  dataset:TDataset;
 begin
- if (not (VarType(Params[0])=varString)) then
+ if (not ( (VarType(Params[0])=varString) or (VarType(Params[0])=varOleStr) )) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  Result:=true;

@@ -231,7 +231,7 @@ begin
   end
   else
   begin
-   if VarType(FValue)=varString then
+   if ((VarType(FValue)=varString) or (VarType(FValue)=varOleStr)) then
    begin
     aoption:=fvalues.IndexOf(FValue);
     if aoption<0 then
@@ -396,6 +396,8 @@ begin
    Result:=ftLargeint;
   varString:
    Result:=ftString;
+  varOleStr:
+   Result:=ftWideString;
   else
    Result:=ftUnknown;
  end;

@@ -1122,7 +1122,7 @@ begin
  end;
 end;
 
-function CalcTextExtent(adriver:IRpPrintDriver;maxextent:TPoint;obj:TRpTextObject):integer;
+{function CalcTextExtent(adriver:IRpPrintDriver;maxextent:TPoint;obj:TRpTextObject):integer;
 var
  newextent:TPoint;
  currentPos,lasttested:Integer;
@@ -1184,6 +1184,99 @@ begin
   Result:=CurrentPos;
  end;
 end;
+}
+
+function isadelimiter(achar:WideChar):Boolean;
+const
+ delimiters:string=' .,-/\=)(*,-'+#10;
+var
+ nchar:Char;
+ i:integer;
+begin
+ Result:=false;
+ nchar:=Char(achar);
+ for i:=1 to Length(delimiters) do
+ begin
+  if nchar=delimiters[i] then
+  begin
+   Result:=true;
+   break;
+  end;
+ end;
+end;
+
+function CalcTextExtent(adriver:IRpPrintDriver;maxextent:TPoint;obj:TRpTextObject):integer;
+var
+ newextent:TPoint;
+ currentPos,lasttested,oldcurrentpos:Integer;
+// delimiters:string;
+ originalstring:WideString;
+ minpos,maxpos:integer;
+begin
+// delimiters:=' '+'.'+','+'-'+'/'+'\'+'='+')'+'('+'*'+'+'+'-'+#10;
+ currentpos:=Length(obj.Text);
+ originalstring:=obj.Text;
+ obj.Text:=Copy(originalstring,1,currentpos);
+ newextent:=maxextent;
+ adriver.TextExtent(obj,newextent);
+
+ lasttested:=CurrentPos;
+ minpos:=0;
+ maxpos:=CurrentPos;
+ oldcurrentpos:=0;
+ // Speed enhacement to cut at least lot of size testing
+ while (minpos<maxpos) do
+ begin
+  // The first test is performed
+  CurrentPos:=(minpos+maxpos) div 2;
+  // Word Break
+  while currentpos>0 do
+  begin
+   Dec(currentpos);
+   if isadelimiter(obj.Text[currentpos]) then
+    break;
+  end;
+  if oldcurrentpos=currentpos then
+   break;
+  oldcurrentpos:=currentpos;
+  obj.Text:=Copy(originalstring,1,currentpos);
+  newextent:=maxextent;
+  adriver.TextExtent(obj,newextent);
+  if newextent.Y<=maxextent.Y then
+   minpos:=currentpos
+  else
+  begin
+   lasttested:=currentpos;
+   maxpos:=lasttested;
+  end;
+ end;
+ currentpos:=lasttested;
+ obj.Text:=Copy(originalstring,1,currentpos);
+ newextent:=maxextent;
+ adriver.TextExtent(obj,newextent);
+ while newextent.Y>maxextent.Y do
+ begin
+  while currentpos>0 do
+  begin
+   Dec(currentpos);
+   if isadelimiter(obj.Text[currentpos]) then
+    break;
+  end;
+
+  if currentpos<1 then
+   break;
+  obj.Text:=Copy(originalstring,1,currentpos);
+  newextent:=maxextent;
+  adriver.TextExtent(obj,newextent);
+ end;
+ if currentpos<1 then
+  Result:=Length(obj.Text)
+ else
+ begin
+  Result:=CurrentPos;
+ end;
+end;
+
 
 procedure TRpMetafileReport.PageRange(frompage,topage:integer);
 var

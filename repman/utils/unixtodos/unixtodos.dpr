@@ -159,6 +159,7 @@ begin
    Writeln(SRpmFilesProcessed+':'+FormatFloat('####,####0',processed));
    Writeln(SRpmFilesChanged+':'+FormatFloat('####,####0',changed));
    Writeln(SRpmLastFilename+':'+afilename);
+   ExitCode:=1;
   end;
  end;
 end.

@@ -235,7 +235,8 @@ begin
  except
   On E:Exception do
   begin
-   Writeln(String(SRPError),String(E.Message));
+   WriteToStdError(SRPError+':'+E.Message+LINE_FEED);
+   ExitCode:=1;
   end;
  end;
 end.

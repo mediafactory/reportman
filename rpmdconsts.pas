@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.1pre1';
+ RM_VERSION='2.1pre7';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
@@ -861,6 +861,9 @@ var
   SRpPrintRep14:WideString='         -pdf      Generate PDF output';
   SRpChartHint:WideString='Hint';
   SRpChartLegend:WideString='Legend';
+  //
+  SRpAbs:WideString='Returns absolute value of a number.';
+  SRpPAbs:WideString='num is the number change sign';
 
 
 
@@ -1681,6 +1684,8 @@ begin
  TranslateVar(1227,SRpPrintRep14);
  TranslateVar(1228,SRpChartHint);
  TranslateVar(1229,SRpChartLegend);
+ TranslateVar(1230,SRpAbs);
+ TranslateVar(1231,SRpPAbs);
 end;
 
 {$IFDEF LINUX}

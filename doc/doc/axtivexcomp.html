@@ -69,7 +69,8 @@ time
 <p><b>Since version 1.6 there are this interfaces available</b></p>
 <p>procedure CalcReport(ShowProgress:Boolean);<br>
   procedure Compose(Report:IReportReport;execute:Boolean);<br>
-  procedure SaveToText(const filename, textdriver: String); </p>
+  procedure SaveToText(const filename, textdriver: String);<br>
+  procedure SaveToExcel(const filename: String); // Needs Excel installation</p>
 <p><b>Since version 2.0</b></p>
 <p>procedure SaveToHTML(const filename: String); </p>
 <p>Early binding (VTables) and late binding (OleAuto) is supported<br>

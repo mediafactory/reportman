@@ -456,7 +456,7 @@ begin
   begin
    // A group needs checking for a report using the
    // group or a group using the parent_group
-   astring:='SELECT COUNT(REPORT_GROUP) COUNTG FROM '+dbinfo.ReportTable+
+   astring:='SELECT COUNT(REPORT_GROUP) AS COUNTG FROM '+dbinfo.ReportTable+
     ' WHERE REPORT_GROUP='+IntToStr(ninfo.Group_Code);
    adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false);
    try
@@ -465,7 +465,7 @@ begin
    finally
     adata.free;
    end;
-   astring:='SELECT COUNT(GROUP_CODE) COUNTG FROM '+dbinfo.ReportGroupsTable+
+   astring:='SELECT COUNT(GROUP_CODE) AS COUNTG FROM '+dbinfo.ReportGroupsTable+
    ' WHERE PARENT_GROUP='+IntToStr(ninfo.Group_Code);
    adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false);
    try

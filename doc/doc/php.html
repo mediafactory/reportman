@@ -8,6 +8,17 @@
 <h2>Basic report design</h2>
 <h3><b>Using Report Manager from PHP</b></h3>
 <p>This is a sample provided by Rahul Tamrakar (rahultamrakar@yahoo.com)</p>
+<p>// calling report through any script (PHP,ASP,JSP) basically we need</p>
+<p> 1. full path of the web server<br>
+  2. path of the report manager<br>
+  3. Parameters -&gt; Report name , alias name &amp; rest of the parameter <br>
+  depend on report</p>
+<p> // creating a dynamic link to view report , passing parameter to report<br>
+  // if you click this link yiu will see the actual report</p>
+<p> &lt;a href=&quot;http://192.168.0.227/cgi-bin/repwebexe.bin/execute.pdf?reportname=%2Fr<br>
+  ptsalesorder&amp;aliasname=SALES+ORDER&amp; ParamSONO=$outSO&quot;&gt; View 
+  Report<br>
+  &lt;/a&gt;</p>
 <p><strong>File SalesOrder_Search.php</strong></p>
 <p>&lt;?php<br>
   $ROOT_PATH = &quot;../&quot;;<br>

@@ -906,6 +906,15 @@ begin
        FZConnection.HostName:=alist.Values['HostName'];
        FZConnection.Database:=alist.Values['Database'];
        FZConnection.Protocol:=alist.Values['Database Protocol'];
+       FZConnection.Properties.Add(alist.Values['Property1']);
+       FZConnection.Properties.Add(alist.Values['Property2']);
+       FZConnection.Properties.Add(alist.Values['Property3']);
+       FZConnection.Properties.Add(alist.Values['Property4']);
+       FZConnection.Properties.Add(alist.Values['Property5']);
+       FZConnection.Properties.Add(alist.Values['Property6']);
+       FZConnection.Properties.Add(alist.Values['Property7']);
+       FZConnection.Properties.Add(alist.Values['Property8']);
+       FZConnection.Properties.Add(alist.Values['Property9']);
        transiso:=alist.Values['Zeos TransIsolation'];
        if (transiso='ReadCommited') then
         FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiReadCommitted
@@ -1726,7 +1735,8 @@ begin
       rpdataibo:
        begin
 {$IFDEF USEIBO}
-        TIBOQuery(FSQLInternalQuery).ParamByName(param.Name).AsVariant:=avalue;
+//        TIBOQuery(FSQLInternalQuery).ParamByName(param.Name).AsVariant:=avalue;
+        TIBOQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=avalue;
 {$ENDIF}
        end;
      end;
@@ -2495,7 +2505,8 @@ begin
       end
       else
       begin
-       TIBOQuery(FSQLInternalQuery).ParamByName(paramName).AsVariant:=avariant;
+//       TIBOQuery(FSQLInternalQuery).ParamByName(paramName).AsVariant:=avariant;
+       TIBOQuery(FSQLInternalQuery).ParamByName(paramName).Value:=avariant;
       end;
 {$ENDIF}
      end;

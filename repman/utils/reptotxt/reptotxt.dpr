@@ -73,8 +73,8 @@ begin
  except
   On E:Exception do
   begin
-   WriteLn(E.Message);
-   raise;
+   WriteToStdError(E.Message+LINE_FEED);
+   ExitCode:=1;
   end;
  end;
 end.

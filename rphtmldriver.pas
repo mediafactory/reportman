@@ -33,9 +33,6 @@ uses
  rptypes;
 
 
-const
- LINE_FEED=#13+#10;
-
 
 function ExportMetafileToHtml (metafile:TRpMetafileReport;caption,filename:string;
  showprogress,allpages:boolean; frompage,topage:integer):boolean;

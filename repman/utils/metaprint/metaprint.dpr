@@ -232,7 +232,8 @@ begin
  except
   On E:Exception do
   begin
-   Writeln(SRPError,E.Message);
+   WriteToStdError(SRPError+':'+E.Message+LINE_FEED);
+   ExitCode:=1;
   end;
  end;
 end.

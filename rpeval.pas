@@ -211,6 +211,8 @@ begin
  Rpfunctions.AddObject('ROUND',iden);
  iden:=TIdenInt.Create(nil);
  Rpfunctions.AddObject('INT',iden);
+ iden:=TIdenAbs.Create(nil);
+ Rpfunctions.AddObject('ABS',iden);
  iden:=TIdenSQRT.Create(nil);
  Rpfunctions.AddObject('SQRT',iden);
 

@@ -19,6 +19,8 @@
 
 program printrep;
 
+{$I rpconf.inc}
+
 {$APPTYPE CONSOLE}
 
 uses
@@ -277,7 +279,8 @@ begin
  except
   On E:Exception do
   begin
-   WriteLn(E.Message);
+   WriteToStdError(E.Message+LINE_FEED);
+   ExitCode:=1;
   end;
  end;
 end.

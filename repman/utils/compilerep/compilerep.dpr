@@ -79,8 +79,9 @@ begin
    end;
   except
    on E:Exception do
-    begin
-     WriteLn(E.Message);
+   begin
+    WriteToStdError(E.Message+LINE_FEED);
+    ExitCode:=1;
    end;
   end;
 end.

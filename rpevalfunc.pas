@@ -89,6 +89,14 @@ type
    constructor Create(AOwner:TComponent);override;
   end;
 
+ { Function Abs }
+ TIdenAbs=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
  { Function INT }
  TIdenInt=class(TIdenFunction)
   protected
@@ -611,6 +619,32 @@ begin
 end;
 
 {**************************************************************************}
+
+{ TIdenAbs }
+
+constructor TIdenAbs.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='Abs';
+ Help:=SRpAbs;
+ model:='function '+'Abs'+'(num:double):double';
+ aParams:=SRpPAbs;
+end;
+
+
+{**************************************************************************}
+
+function TIdenAbs.GeTRpValue:TRpValue;
+begin
+ if (not (VarType(Params[0]) in [varSmallInt..varCurrency])) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ Result:=Abs(Extended(Params[0]));
+end;
+
+{**************************************************************************}
+
 
 { TIdenInt }
 

@@ -130,7 +130,7 @@ type
    procedure Ellipse(X1, Y1, X2, Y2: Integer);
    constructor Create(AFile:TRpPDFFile);
    destructor Destroy;override;
-   function CalcCharWidth(charcode:char):double;
+   function CalcCharWidth(charcode:Widechar):double;
   public
    procedure TextExtent(const Text:WideString;var Rect:TRect;wordbreak:boolean;
     singleline:boolean);
@@ -1539,18 +1539,16 @@ end;
 
 
 
+{$IFDEF DOTNETD}
 function TRpPDFCanvas.CalcCharWidth(charcode:char):double;
 var
  intvalue:Byte;
  defaultwidth:integer;
  aarray:TWinAnsiWidthsArray;
- i:integer;
+ isdefault:boolean;
 begin
  defaultwidth:=Default_Font_Width;
- for i:=32 to 255 do
- begin
-  aarray[i]:=defaultwidth;
- end;
+ isdefault:=true;
  if charcode in [#0,#13,#10] then
  begin
   Result:=0;
@@ -1558,7 +1556,7 @@ begin
  end;
  if (FFont.Name=poHelvetica) then
  begin
-  aarray:=Helvetica_Widths;
+  isdefault:=false;
   if FFont.Bold then
   begin
    if FFont.Italic then
@@ -1566,12 +1564,14 @@ begin
   end
   else
    if FFont.Italic then
-    aarray:=Helvetica_Italic_Widths;
+    aarray:=Helvetica_Italic_Widths
+   else
+    aarray:=Helvetica_Widths;
  end
  else
  if (FFont.Name=poTimesRoman) then
  begin
-  aarray:=TimesRoman_Widths;
+  isdefault:=false;
   if FFont.Bold then
   begin
    if FFont.Italic then
@@ -1579,20 +1579,76 @@ begin
   end
   else
    if FFont.Italic then
-    aarray:=TimesRoman_Italic_Widths;
+    aarray:=TimesRoman_Italic_Widths
+   else
+    aarray:=TimesRoman_Widths;
  end;
  intvalue:=Byte(charcode);
- if intvalue<32 then
+ if (isdefault or (intvalue<32)) then
   Result:=defaultwidth
  else
   Result:=aarray[intvalue];
  Result:=Result*FFont.Size/1000;
 end;
+{$ENDIF}
+
+
+{$IFNDEF DOTNETD}
+function TRpPDFCanvas.CalcCharWidth(charcode:widechar):double;
+var
+ intvalue:Byte;
+ defaultwidth:integer;
+ aarray:PWinAnsiWidthsArray;
+ isdefault:boolean;
+begin
+ aarray:=nil;
+ defaultwidth:=Default_Font_Width;
+ isdefault:=true;
+ if charcode in [WideChar(#0),WideChar(#13),WideChar(#10)] then
+ begin
+  Result:=0;
+  exit;
+ end;
+ if (FFont.Name=poHelvetica) then
+ begin
+  aarray:=@Helvetica_Widths;
+  isdefault:=false;
+  if FFont.Bold then
+  begin
+   if FFont.Italic then
+    aarray:=@Helvetica_BoldItalic_Widths;
+  end
+  else
+   if FFont.Italic then
+    aarray:=@Helvetica_Italic_Widths;
+ end
+ else
+ if (FFont.Name=poTimesRoman) then
+ begin
+  aarray:=@TimesRoman_Widths;
+  isdefault:=false;
+  if FFont.Bold then
+  begin
+   if FFont.Italic then
+    aarray:=@TimesRoman_BoldItalic_Widths;
+  end
+  else
+   if FFont.Italic then
+    aarray:=@TimesRoman_Italic_Widths;
+ end;
+ intvalue:=Byte(charcode);
+ if (isdefault or (intvalue<32)) then
+  Result:=defaultwidth
+ else
+  Result:=aarray^[intvalue];
+ Result:=Result*FFont.Size/1000;
+end;
+{$ENDIF}
 
 procedure TRpPDFCanvas.TextExtent(const Text:WideString;var Rect:TRect;
  wordbreak:boolean;singleline:boolean);
 var
- astring:string;
+ astring:widestring;
  i:integer;
  asize:double;
  arec:TRect;
@@ -1614,9 +1670,7 @@ begin
  arec.Left:=0;
  arec.Top:=0;
  arec.Bottom:=0;
-
  asize:=0;
-
  FLineInfoCount:=0;
  position:=1;
  linebreakpos:=0;
@@ -1629,7 +1683,7 @@ begin
  while i<=Length(astring) do
  begin
   newsize:=CalcCharWidth(astring[i]);
-  if (Not (astring[i] in [' ',#10,#13])) then
+  if (Not (astring[i] in [WideChar(' '),WideChar(#10),WideChar(#13)])) then
    lockspace:=false;
   if wordbreak then
   begin
@@ -1645,7 +1699,7 @@ begin
    end
    else
    begin
-    if astring[i] in ['.',',','-',' '] then
+    if astring[i] in [WideChar('.'),WideChar(','),WideChar('-'),WideChar(' ')] then
     begin
      linebreakpos:=i;
      if astring[i]=' ' then

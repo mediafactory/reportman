@@ -25,6 +25,9 @@ uses
 {$IFDEF USEVARIANTS}
  Variants,
 {$ENDIF}
+{$IFDEF USEBCD}
+ FMTBcd,
+{$ENDIF}
  DB,
  rptypes;
 
@@ -299,6 +302,10 @@ begin
 end;
 
 function TIdenField.GeTRpValue:TRpValue;
+{$IFDEF USEBCD}
+var
+ atype:TVarType;
+{$ENDIF}
 begin
  if Field=nil then
  begin
@@ -306,6 +313,13 @@ begin
   Exit;
  end;
  Result:=Field.AsVariant;
+{$IFDEF USEBCD}
+ atype:=VarType(Result);
+ if atype=varFmtBCD then
+ begin
+  Result:=BCDToDouble(VarToBCD(Result));
+ end;
+{$ENDIF}
 end;
 
 // Math Functions
@@ -487,7 +501,7 @@ begin
       Result:=format(sformat,[Integer(Value)]);
     end;
    end;
-  varString:
+  varString,varOleStr:
    if Value='' then Result:='' else
     Result:=format(sformat,[string(Value)]);
   varBoolean:
@@ -552,7 +566,7 @@ begin
  case VarType(Value) of
   varSmallInt..varDouble:
    Result:=(Double(Value)=0);
-  varString:
+  varString,varOleStr:
    Result:=(String(Value)='');
   varBoolean:
    Result:=Not Boolean(Value);

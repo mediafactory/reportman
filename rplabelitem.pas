@@ -425,7 +425,7 @@ begin
     FPartialPos:=0;
    FIsPartial:=true;
    PartialPrint:=true;
-   FPartialPos:=FPartialPos+newposition+1;
+   FPartialPos:=FPartialPos+newposition;
    TextObj.Text:=Copy(TextObj.Text,1,newposition);
   end
   else

@@ -254,7 +254,7 @@ begin
    begin
     // Looks for a string (path to file)
     aValue:=evaluator.EvaluateText(Expression);
-    if (not (VarType(aValue)=varString)) then
+    if (not ((VarType(aValue)=varString) or (VarType(aValue)=varOleStr))) then
      Raise Exception.Create(SRpFieldNotFound+FExpression);
     afilename:=aValue;
     FMStream:=TMemoryStream.Create;
