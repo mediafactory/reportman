@@ -62,7 +62,7 @@ type
    property UseSystemPrintDialog:Boolean read
     FUseSystemPrintDialog write FUseSystemPrintDialog default true;
    property Driver:TRpPrintDriver read FDriver write FDriver
-    default rpDriverQt;
+    default rpDriverGDI;
   end;
 
 implementation
@@ -75,7 +75,7 @@ begin
  inherited Create(AOwner);
 
  FUseSystemPrintDialog:=true;
- FDriver:=rpDriverQt;
+ FDriver:=rpDriverGDI;
 end;
 
 procedure TCLXReport.PrinterSetup;
