@@ -481,7 +481,7 @@ var
 // oldsectionindex:integer;
  lastdetail,firstdetail:integer;
  dataavail:boolean;
- index:integer;
+ index,nindex:integer;
  SearchGroupHeader:Boolean;
 begin
  SearchGroupHeader:=false;
@@ -506,6 +506,9 @@ begin
      Datainfo.Items[index].Disconnect;
      UpdateParamsBeforeOpen(index,true);
      Datainfo.Items[index].Connect(DatabaseInfo,params);
+     nindex:=FDataAlias.List.indexof(Datainfo.Items[index].Alias);
+     if nindex>=0 then
+      FDataAlias.List.Items[nindex].CacheFields;
     end
     else
     begin
@@ -516,6 +519,9 @@ begin
        Datainfo.Items[index].Disconnect;
        UpdateParamsBeforeOpen(index,true);
        Datainfo.Items[index].Connect(DatabaseInfo,params);
+       nindex:=FDataAlias.List.indexof(Datainfo.Items[index].Alias);
+       if nindex>=0 then
+        FDataAlias.List.Items[nindex].CacheFields;
       end
      end;
     end;
@@ -973,6 +979,7 @@ begin
   else
 {$ENDIF}
    item.Dataset:=DataInfo.Items[i].Dataset;
+  item.CacheFields;
  end;
  FEvaluator.Rpalias:=FDataAlias;
 

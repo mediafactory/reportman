@@ -68,12 +68,16 @@ type
    private
     FDataset:TDataSet;
     FAlias:string;
+    FCachedFields:Boolean;
+    FFields:TStringList;
     procedure SetAlias(NewAlias:string);
     function GetDataset:TDataSet;
     procedure SetDataset(NewDataset:TDataSet);
    public
     Constructor Create(Collection:TCollection);override;
     procedure Assign(Source:TPersistent);override;
+    procedure CacheFields;
+    destructor Destroy;override;
    published
     property Alias:string read FAlias write SetAlias;
     property Dataset:TDataSet read GetDataset write SetDataset;
@@ -103,6 +107,15 @@ begin
  inherited Create(Collection);
  FDataset:=nil;
  FAlias:=chr(0);
+ FCachedFields:=false;
+ FFields:=TStringList.Create;
+ FFields.Sorted:=true;
+end;
+
+destructor TRpAliaslistItem.Destroy;
+begin
+ FFields.free;
+ inherited Destroy;
 end;
 
 function TRpAliaslistItem.GetDataset:TDataSet;
@@ -248,24 +261,35 @@ end;
 
 // Seartching a field in the List
 function TRpAlias.searchfield(aname,datasetname:ShortString;var duplicated:Boolean):TRpIdentifier;
-var i:integer;
+var i,index:integer;
     found:Boolean;
     Field:TField;
     Dataset:TDataset;
+    aitem:TRpAliasListItem;
 begin
  Result:=nil;
  duplicated:=False;
  found:=False;
+ datasetname:=AnsiUpperCase(datasetname);
+ aname:=AnsiUpperCase(aname);
  if Length(datasetname)=0 then
  begin
   with List do
   begin
    for i:=0 to count-1 do
    begin
-    Dataset:=items[i].Dataset;
+    aitem:=items[i];
+    Dataset:=aitem.Dataset;
     if Dataset<>nil then
     begin
-     Field:=Dataset.Findfield(aname);
+     if aitem.FCachedFields then
+     begin
+      index:=aitem.FFields.IndexOf(aname);
+      if index>=0 then
+       Field:=TField(aitem.FFields.Objects[index]);
+     end
+     else
+      Field:=Dataset.Findfield(aname);
      if Field<>nil then
      begin
       iden.Field:=Field;
@@ -288,12 +312,20 @@ begin
   begin
    for i:=0 to count-1 do
    begin
-    if (AnsiUpperCase(datasetname)=items[i].alias) then
+    aitem:=items[i];
+    if (datasetname=aitem.alias) then
     begin
-     Dataset:=items[i].Dataset;
+     Dataset:=aitem.Dataset;
      if Dataset<>nil then
      begin
-      Field:=Dataset.Findfield(aname);
+      if aitem.FCachedFields then
+      begin
+       index:=aitem.FFields.IndexOf(aname);
+       if index>=0 then
+        Field:=TField(aitem.FFields.Objects[index]);
+      end
+      else
+       Field:=Dataset.Findfield(aname);
       if Field<>nil then
       begin
        iden.Field:=Field;
@@ -310,6 +342,8 @@ begin
   end;
  end;
 end;
+
+
 
 // Fills a string list with the fieldnames in a
 // Aliaslist as alias.field
@@ -354,5 +388,18 @@ begin
   Result:=-1;
 end;
 
+procedure TRpAliaslistItem.CacheFields;
+var
+ i:integer;
+begin
+ if Not Assigned(Dataset) then
+  exit;
+ FCachedFields:=true;
+ FFields.Clear;
+ for i:=0 to Dataset.Fields.Count-1 do
+ begin
+  FFields.AddObject(AnsiUpperCase(Dataset.Fields[i].FieldName),Dataset.Fields[i]);
+ end;
+end;
 
 end.

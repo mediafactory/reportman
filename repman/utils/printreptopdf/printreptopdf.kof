@@ -55,7 +55,7 @@ DebugSourceDirs=
 UsePackages=0
 
 [Parameters]
-RunParams=-from 1 -to 1 /home/toni/cvsroot/reportman/tests/repmand/testcintaembed.rep /home/toni/cvsroot/reportman/tests/repmand/test.pdf
+RunParams=/home/toni/cvsroot/reportman/tests/repmand/testcinta.rep /home/toni/cvsroot/reportman/tests/repmand/test.pdf
 HostApplication=
 Launcher=/usr/X11R6/bin/xterm -T KylixDebuggerOutput -e bash -i -c %debuggee%
 UseLauncher=0
@@ -66,8 +66,8 @@ DebugCWD=
 
 [HistoryLists\hlConditionals]
 Count=5
-Item0=REPMANRELEASE;FORCECONSOLE
-Item1=REPMANRELEASE
+Item0=REPMANRELEASE
+Item1=REPMANRELEASE;FORCECONSOLE
 Item2=LINUXTEECHART
 Item3=FORWEBAX
 Item4=FORWEBAX;LINUXTEECHART
