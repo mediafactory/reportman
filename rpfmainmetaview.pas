@@ -47,7 +47,7 @@ type
 var
  FRpMainMeta:TFRpMainMeta;
 
-procedure PreviewMetafile(metafile:TRpMetafileReport;aform:TForm);
+procedure PreviewMetafile(metafile:TRpMetafileReport;aform:TForm;ShowPrintDialog:Boolean);
 
 implementation
 
@@ -55,7 +55,7 @@ uses rpprintdia,rppdfdriver;
 
 {$R *.xfm}
 
-procedure PreviewMetafile(metafile:TRpMetafileReport;aform:TForm);
+procedure PreviewMetafile(metafile:TRpMetafileReport;aform:TForm;ShowPrintDialog:Boolean);
 var
  dia:TFRpMainMeta;
  memstream:TMemoryStream;
@@ -78,6 +78,7 @@ begin
   FForm:=aform;
  end;
  try
+  MFrame.ShowPrintDialog:=ShowPrintDialog;
   memstream:=TMemoryStream.Create;
   try
    metafile.SaveToStream(memstream);
@@ -93,6 +94,8 @@ begin
    MFrame.AViewConnect.Checked:=false;
    MFrame.AViewConnect.Enabled:=false;
    MFrame.Splitter1.Visible:=false;
+   MFrame.printerindex:=metafile.PrinterSelect;
+   MFrame.UpdatePrintSel;
    MFrame.clitree.visible:=false;
    if metafile.PreviewWindow=spwMaximized then
     FForm.WindowState:=wsMaximized;

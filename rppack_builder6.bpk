@@ -4,18 +4,19 @@
   <MACROS>
     <VERSION value="BCB.06.00"/>
     <PROJECT value="rppack_builder6.bpl"/>
-    <OBJFILES value="rppack_builder6.obj rpmreg.obj rppdfreport.obj rpalias.obj rpeval.obj 
-      rplastsav.obj"/>
-    <RESFILES value="rppack_builder6.res rppdfreport.dcr rpalias.dcr rpeval.dcr rplastsav.dcr"/>
+    <OBJFILES value="rppack_builder6.obj rpmreg.obj"/>
+    <RESFILES value="rppack_builder6.res rppdfreport.dcr rpalias.dcr rpeval.dcr rplastsav.dcr 
+      rptranslator.dcr"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES)"/>
-    <LIBFILES value=""/>
+    <LIBFILES value="&quot;C:\Archivos de programa\Borland\CBuilder6\Lib\Psdk\shlwapi.lib&quot;"/>
     <LIBRARIES value=""/>
     <SPARELIBS value="dsnap.lib dbrtl.lib bdertl.lib ibxpress.lib adortl.lib rtl.lib"/>
-    <PACKAGES value="rtl.bpi dsnap.bpi dbrtl.bpi bdertl.bpi dclib.bpi dclado.bpi adortl.bpi 
-      ibxpress.bpi"/>
+    <PACKAGES value="rtl.bpi dsnap.bpi dbrtl.bpi bdertl.bpi adortl.bpi ibxpress.bpi vclx.bpi 
+      dbexpress.bpi tee.bpi vcljpg.bpi indy.bpi visualclx.bpi visualdbclx.bpi 
+      vcl.bpi"/>
     <PATHCPP value=".;"/>
     <PATHPAS value=".;"/>
     <PATHRC value=".;"/>
@@ -26,20 +27,21 @@
     <USERDEFINES value=""/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT;_VIS_NOLIB;USEPACKAGES"/>
     <MAINSOURCE value="rppack_builder6.cpp"/>
-    <INCLUDEPATH value="$(BCB)\include;$(BCB)\include\vcl"/>
+    <INCLUDEPATH value="$(BCB)\include;$(BCB)\include\vcl;$(BCL)\Source\vcl"/>
     <LIBPATH value="$(BCB)\lib\obj;$(BCB)\lib"/>
     <WARNINGS value="-w-par -w-8027 -w-8026"/>
     <WARNOPTSTR value=""/>
     <OTHERFILES value=""/>
   </MACROS>
   <OPTIONS>
-    <IDLCFLAGS value="-src_suffix cpp -I$(BCB)\include -I$(BCB)\include\vcl -boa"/>
+    <IDLCFLAGS value="-I$(BCB)\include -I$(BCB)\include\vcl -I$(BCL)\Source\vcl -src_suffix cpp 
+      -boa"/>
     <CFLAG1 value="-Od -H=c:\prog\CBUILD~2\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v 
       -vi- -c -tWM"/>
     <PFLAGS value="-$YD -$W -$O- -$A8 -v -JPHNE -M"/>
     <RFLAGS value=""/>
     <AFLAGS value="/mx /w2 /zd"/>
-    <LFLAGS value="-D&quot;&quot; -aa -Tpp -x -Gn -Gl -Gi -v"/>
+    <LFLAGS value="-D&quot;Report Manager base components (non Visual)&quot; -aa -Tpp -x -Gn -Gl -Gi -v"/>
     <OTHERFILES value=""/>
   </OPTIONS>
   <LINKER>
@@ -52,22 +54,26 @@
       <FILE FILENAME="rppack_builder6.cpp" FORMNAME="" UNITNAME="rppack_builder6" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rppack_builder6.res" FORMNAME="" UNITNAME="rppack_builder6" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rpmreg.pas" FORMNAME="" UNITNAME="rpmreg" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="rppdfreport.pas" FORMNAME="" UNITNAME="rppdfreport" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rppdfreport.dcr" FORMNAME="" UNITNAME="rppdfreport" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="rpalias.pas" FORMNAME="" UNITNAME="rpalias" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rpalias.dcr" FORMNAME="" UNITNAME="rpalias" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="rpeval.pas" FORMNAME="" UNITNAME="rpeval" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rpeval.dcr" FORMNAME="" UNITNAME="rpeval" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="rplastsav.pas" FORMNAME="" UNITNAME="rplastsav" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rplastsav.dcr" FORMNAME="" UNITNAME="rplastsav" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\..\..\..\CBuilder6\Lib\rtl.bpi" FORMNAME="" UNITNAME="rtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\..\..\..\CBuilder6\Lib\dsnap.bpi" FORMNAME="" UNITNAME="dsnap" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\..\..\..\CBuilder6\Lib\dbrtl.bpi" FORMNAME="" UNITNAME="dbrtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\..\..\..\CBuilder6\Lib\bdertl.bpi" FORMNAME="" UNITNAME="bdertl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\..\..\..\CBuilder6\Lib\dclib.bpi" FORMNAME="" UNITNAME="dclib" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="..\..\..\..\CBuilder6\Lib\dclado.bpi" FORMNAME="" UNITNAME="dclado" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="adortl.bpi" FORMNAME="" UNITNAME="adortl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="ibxpress.bpi" FORMNAME="" UNITNAME="ibxpress" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\CBuilder6\Lib\rtl.bpi" FORMNAME="" UNITNAME="rtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\CBuilder6\Lib\dsnap.bpi" FORMNAME="" UNITNAME="dsnap" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\CBuilder6\Lib\dbrtl.bpi" FORMNAME="" UNITNAME="dbrtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\CBuilder6\Lib\bdertl.bpi" FORMNAME="" UNITNAME="bdertl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\adortl.bpi" FORMNAME="" UNITNAME="adortl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\ibxpress.bpi" FORMNAME="" UNITNAME="ibxpress" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\vclx.bpi" FORMNAME="" UNITNAME="vclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\dbexpress.bpi" FORMNAME="" UNITNAME="dbexpress" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\tee.bpi" FORMNAME="" UNITNAME="tee" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\vcljpg.bpi" FORMNAME="" UNITNAME="vcljpg" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\indy.bpi" FORMNAME="" UNITNAME="indy" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\visualclx.bpi" FORMNAME="" UNITNAME="visualclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Psdk\shlwapi.lib" FORMNAME="" UNITNAME="shlwapi" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="rptranslator.dcr" FORMNAME="" UNITNAME="" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\visualdbclx.bpi" FORMNAME="" UNITNAME="visualdbclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\vcl.bpi" FORMNAME="" UNITNAME="vcl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
@@ -99,6 +105,19 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
+
+[HistoryLists\hlIncludePath]
+Count=2
+Item0=$(BCB)\include;$(BCB)\include\vcl;$(BCL)\Source\vcl
+Item1=$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=1
+Item0=$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
 
 [Debugging]
 DebugSourceDirs=$(BCB)\source\vcl

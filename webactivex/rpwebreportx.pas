@@ -28,6 +28,7 @@ type
     Install:Integer;
     MetaUrl:WideString;
     Port:Integer;
+    ShowPrintDialog:Integer;
     procedure ActivateEvent(Sender: TObject);
     procedure ClickEvent(Sender: TObject);
     procedure CreateEvent(Sender: TObject);
@@ -88,6 +89,8 @@ type
     procedure Set_Install(Value: Integer); safecall;
     function Get_Port: Integer; safecall;
     procedure Set_Port(Value: Integer); safecall;
+    function Get_ShowPrintDialog: Integer; safecall;
+    procedure Set_ShowPrintDialog(Value: Integer); safecall;
   public
     { Public declarations }
     procedure Initialize; override;
@@ -420,6 +423,7 @@ begin
   webmetaprint.Install:=Install<>0;
   webmetaprint.MetaUrl:=MetaUrl;
   webmetaprint.Port:=Port;
+  webmetaprint.ShowPrintDialog:=ShowPrintDialog<>0;
   if Length(MetaUrl)>0 then
   begin
    webmetaprint.Execute;
@@ -463,6 +467,16 @@ end;
 procedure TWebReportMan.Set_Port(Value: Integer);
 begin
  Port:=Value;
+end;
+
+function TWebReportMan.Get_ShowPrintDialog: Integer;
+begin
+ Result:=ShowPrintDialog;
+end;
+
+procedure TWebReportMan.Set_ShowPrintDialog(Value: Integer);
+begin
+ ShowPrintDialog:=Value;
 end;
 
 initialization

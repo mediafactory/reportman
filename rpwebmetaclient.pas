@@ -50,6 +50,7 @@ type
    FPreview:Boolean;
    FInstall:Boolean;
    FShowProgress:Boolean;
+   FShowPrintDialog:Boolean;
    procedure DoInstall;
    procedure SetCaption(Value:WideString);
   protected
@@ -74,6 +75,8 @@ type
    property Preview:Boolean read FPreview write FPreview default false;
    property ShowProgress:Boolean read FShowProgress write FShowProgress
     default true;
+   property ShowPrintDialog:Boolean read FShowPrintDialog
+    write FShowPrintDialog default false;
   end;
 
 procedure PrintHttpReport(httpstring:String);
@@ -90,6 +93,10 @@ var
  connect:TIdHttp;
  astream:TMemoryStream;
  metafile:TrpMetafileReport;
+ frompage,topage,copies:integer;
+ allpages,collate:boolean;
+ rpPageSize:TPageSizeQt;
+ okselected:Boolean;
 begin
  if FPrinterconfig then
  begin
@@ -114,10 +121,32 @@ begin
     metafile.LoadFromStream(astream);
     if preview then
     begin
-     Meta:=PreviewMetafile(metafile,aform);
+     Meta:=PreviewMetafile(metafile,aform,ShowPrintDialog);
     end
     else
-     rpgdidriver.PrintMetafile(metafile,'Printing',FShowProgress,true,0,1,1,true,false);
+    begin
+     // Prints the report
+     rpPageSize.Custom:=metafile.PageSize<0;
+     rpPageSize.Indexqt:=metafile.PageSize;
+     rpPageSize.CustomWidth:=metafile.CustomX;
+     rpPageSize.CustomHeight:=metafile.CustomY;
+     frompage:=1;
+     topage:=999999;
+     allpages:=true;
+     collate:=false;
+     copies:=1;
+     rpgdidriver.PrinterSelection(metafile.PrinterSelect);
+     rpgdidriver.PageSizeSelection(rpPageSize);
+     rpgdidriver.OrientationSelection(metafile.orientation);
+
+     okselected:=true;
+     if ShowPrintDialog then
+      okselected:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+     if okselected then
+      rpgdidriver.PrintMetafile(metafile,SRpPrintingFile,FShowProgress,allpages,
+       frompage,topage,copies,collate,
+        GetDeviceFontsOption(metafile.PrinterSelect),metafile.PrinterSelect);
+    end;
    finally
     metafile.free;
    end;

@@ -1092,7 +1092,7 @@ begin
  if ADriverPDF.Checked then
  begin
   if rpgdidriver.CalcReportWidthProgress(report) then
-   rpfmainmetaviewvcl.PreviewMetafile(report.metafile,nil);
+   rpfmainmetaviewvcl.PreviewMetafile(report.metafile,nil,true);
  end
  else
  begin

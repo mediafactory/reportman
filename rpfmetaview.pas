@@ -190,7 +190,6 @@ type
     procedure SaveConfig;
     procedure UpdateStyle;
     procedure ShowHelp(AURL:string);
-    procedure UpdatePrintSel;
   public
     { Public declarations }
     clitree:TFRpCliTree;
@@ -201,6 +200,8 @@ type
     aqtdriver:IRpPrintDriver;
     bitmap:TBitmap;
     setmenu:boolean;
+    ShowPrintDialog:Boolean;
+    procedure UpdatePrintSel;
     property aform:TForm read faform write SetForm;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
@@ -271,6 +272,7 @@ end;
 constructor TFRpMeta.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+ ShowPrintDialog:=true;
  setmenu:=true;
  MSelectPrinter.Caption:=TranslateStr(741,MSelectPrinter.Caption);
  MSelPrinter0.Caption:=SRpDefaultPrinter;
@@ -483,6 +485,7 @@ var
  frompage,topage,copies:integer;
  allpages,collate:boolean;
  rpPageSize:TPageSizeQt;
+ selectedok:boolean;
 begin
  // Prints the report
  frompage:=1;
@@ -503,7 +506,10 @@ begin
   rpgdidriver.PrinterSelection(printerindex);
   rpgdidriver.PageSizeSelection(rpPageSize);
   rpgdidriver.OrientationSelection(metafile.orientation);
-  if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+  selectedok:=true;
+  if ShowPrintDialog then
+   selectedok:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+  if selectedok then
    rpgdidriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
     frompage,topage,copies,collate,GetDeviceFontsOption(printerindex),printerindex);
   exit;
@@ -512,18 +518,21 @@ begin
  rpqtdriver.PrinterSelection(printerindex);
  rpqtdriver.PageSizeSelection(rpPageSize);
  rpqtdriver.OrientationSelection(metafile.orientation);
- if Not ASystemPrintDialog.Checked then
+ selectedok:=true;
+ if ShowPrintDialog then
  begin
-  if rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-   rpqtdriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
-    frompage,topage,copies,collate,printerindex);
- end
- else
- begin
-  if rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-   rpqtdriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
-    frompage,topage,copies,collate,printerindex);
+  if Not ASystemPrintDialog.Checked then
+  begin
+   selectedok:=rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+  end
+  else
+  begin
+   selectedok:=DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+  end;
  end;
+ if selectedok then
+  rpqtdriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
+    frompage,topage,copies,collate,printerindex);
 end;
 
 procedure TFRpMeta.ASaveExecute(Sender: TObject);

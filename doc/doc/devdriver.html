@@ -42,6 +42,14 @@
 <p>The <b>Web Report server and TCP Report Server always work with TRpPDFDriver</b>, 
   it has not dependences on any Borland Visual Library (VCL or CLX) and can work 
   without a XServer running (console mode).</p>
+<p>The engine asks the driver texts sizes, and others while calculating the report, 
+  once calculated (metafile report), the engine use the driver for printing or 
+  previewing the report. This proces is done in a page by page basis when the 
+  report is not marked as a 'two pass report'.</p>
+<p>Note that a report can be calculated using a driver, then print or preview 
+  using another driver, that is the case of generating metafiles using web report 
+  server, and print this metafiles using metaview in Linux (QtDriver) or metaviewxp 
+  in Windows (GDIDriver).</p>
 <p>So a report can be processed directly using one of the drivers above or you 
   can also use any of the drivers to generate a <b>Report Metafile</b>, this is 
   a file that contains all the info necessary to print or display the pages using 
@@ -74,9 +82,8 @@
     objects as if they print with current printer, it's not difficult but need 
     testing and have this issues:</li>
   <li> If the printer is not installed it should get the screen canvas.</li>
-  <li> If the printer ir offline (in a network) Windows Systems does not allow 
-    opening<br>
-    t, but an error is raised, this situation must be controlled.</li>
+  <li> If the printer is offline (in a network) Windows Systems does not allow 
+    opening it, but an error is raised, this situation must be controlled.</li>
   <li> Texts on the screen may appear incorrectly.</li>
   <li> Implementation requires a little more low level access to printer.</li>
 </ul>

@@ -173,18 +173,19 @@ type
     procedure LoadConfig;
     procedure SaveConfig;
     procedure ShowHelp(AURL:string);
-    procedure UpdatePrintSel;
   public
     { Public declarations }
 {$IFNDEF FORWEBAX}
     clitree:TFRpCliTreeVCL;
 {$ENDIF}
+    ShowPrintDialog:Boolean;
     pagenum:integer;
     metafile:TRpMetafileReport;
     gdidriver:TRpGDIDriver;
     printerindex:TRpPrinterSelect;
     agdidriver:IRpPrintDriver;
     bitmap:TBitmap;
+    procedure UpdatePrintSel;
     property aform:TWinControl read faform write SetForm;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -261,6 +262,7 @@ end;
 constructor TFRpMetaVCL.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+ ShowPrintDialog:=true;
  if AOwner is TWinControl then
   Parent:=TWinControl(AOwner);
  MSelectPrinter.Caption:=TranslateStr(741,MSelectPrinter.Caption);
@@ -433,6 +435,7 @@ var
  frompage,topage,copies:integer;
  allpages,collate:boolean;
  rpPageSize:TPageSizeQt;
+ selectedok:Boolean;
 begin
  // Prints the report
  frompage:=1;
@@ -451,9 +454,12 @@ begin
  rpgdidriver.PrinterSelection(printerindex);
  rpgdidriver.PageSizeSelection(rpPageSize);
  rpgdidriver.OrientationSelection(metafile.orientation);
- if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+ selectedok:=true;
+ if ShowPrintDialog then
+  selectedok:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+ if selectedok then
   rpgdidriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
-   frompage,topage,copies,collate,GetDeviceFontsOption(printerindex),printerindex);
+    frompage,topage,copies,collate,GetDeviceFontsOption(printerindex),printerindex);
 end;
 
 procedure TFRpMetaVCL.ASaveExecute(Sender: TObject);

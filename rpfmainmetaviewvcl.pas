@@ -48,7 +48,8 @@ type
 var
  FRpMainMetaVCL:TFRpMainMetaVCL;
 
-function PreviewMetafile(metafile:TRpMetafileReport;aform:TWinControl):TFRpMetaVCL;
+function PreviewMetafile(metafile:TRpMetafileReport;aform:TWinControl;
+ ShowPrintDialog:Boolean):TFRpMetaVCL;
 
 implementation
 
@@ -56,7 +57,8 @@ uses rppdfdriver;
 
 {$R *.dfm}
 
-function PreviewMetafile(metafile:TRpMetafileReport;aform:TWinControl):TFRpMetaVCL;
+function PreviewMetafile(metafile:TRpMetafileReport;aform:TWinControl;
+ ShowPrintDialog:Boolean):TFRpMetaVCL;
 var
  dia:TFRpMainMetaVCL;
  memstream:TMemoryStream;
@@ -79,6 +81,7 @@ begin
   FForm:=aform;
  end;
  try
+  MFrame.ShowPrintDialog:=ShowPrintDialog;
   memstream:=TMemoryStream.Create;
   try
    metafile.SaveToStream(memstream);
@@ -94,6 +97,8 @@ begin
    MFrame.AViewConnect.Checked:=false;
    MFrame.AViewConnect.Enabled:=false;
    MFrame.Splitter1.Visible:=false;
+   MFrame.printerindex:=metafile.PrinterSelect;
+   MFrame.UpdatePrintSel;
    if metafile.PreviewWindow=spwMaximized then
    begin
     if (FForm is TForm) then

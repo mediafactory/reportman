@@ -9,9 +9,11 @@
 <h2>Installation</h2>
 <h3>Using and installing WebReportManX control</h3>
 <h4>Description and use of WebReportManX ActiveX control</h4>
-<p>WebReportManX control is a plugin for Windows Internet Explorer, it allows 
-  you to preview or print <b>server processed reports</b> or Report Manager <b>metafiles 
-  stored in web servers</b>.</p>
+<p>WebReportManX control is <b>a plugin for Windows Internet Explorer</b>, it 
+  allows you to <b>preview or print server processed reports</b> or Report Manager 
+  <b>metafiles stored in web servers</b>. <a href="http://80.32.237.17/reportmanp.hm"><b>Click 
+  here</b></a><b> to obtain the plugin and view a sample report embedded in your 
+  Internet Explorer</b>.</p>
 <p><img src="images/webactivex2.jpg" width="742" height="584"></p>
 <p>You can obtain a Report Metafile using save command in preview window, executing 
   web report server with metafile=1 parameter, executing printreptopdf with -m 
@@ -69,7 +71,8 @@
   default Internet explorer will not ask because <b>default configuration does 
   not allow installation of not signed ActiveX controls</b>, so you must go to 
   <b>configuration and allow Downloading of unsigned ActiveX (ask data)</b>, see 
-  <b>also if you have not Administrator rights it will not ask</b>.</p>
+  <b>also if you have not Administrator rights it will not ask in some cases and 
+  wil not work</b>.</p>
 <p><img src="images/webactivex1.jpg" width="441" height="329"></p>
 <p>The procedure of Internet explorer client setup happens only once, so when 
   it's installed, all the users are available to use the new Installed ActiveX 
@@ -80,8 +83,8 @@
   to a directory usually windows system directory. It's included also in the Designer 
   installation package.</p>
 <p><a href="http://sourceforge.net/projects/reportman" target="_blank">http://sourceforge.net/projects/reportman</a></p>
-<p>Then place the .ocx or .cab (same but compressed) in a web directory in the 
-  web server, for example in Windows IIS you should place it at c:\inetpub\wwwroot, 
+<p>Then place the .ocx or .cab (same but compressed and signed) in a web directory 
+  in the web server, for example in Windows IIS you should place it at c:\inetpub\wwwroot, 
   in Linux in /usr/local/httpd/htdocs</p>
 <p><b>Parameters</b></p>
 <table width="100%" border="1">
@@ -145,18 +148,27 @@
     </td>
     <td>&quot;0&quot;</td>
   </tr>
-  <tr>
+  <tr> 
     <td>MetaUrl</td>
     <td>The location of the Report Metafile file, this can be a http link to a 
       .rpmf file, generated using any utility or directly executing a Report Manager 
       web report server adding metafile=1 option</td>
     <td>&quot;&quot;</td>
   </tr>
+  <tr>
+    <td>ShowPrintDialog</td>
+    <td>
+      <p>Before begin printing it shows the standard print dialog to the end user</p>
+      <p>&quot;0&quot; Don't show the print dialog</p>
+      <p>&quot;1&quot; Show the print dialog</p>
+    </td>
+    <td>&quot;0&quot;</td>
+  </tr>
 </table>
 <p><b>Limitations</b></p>
 <p>For now WebReportManX component can only use http protocol, but you can change 
-  the port (not the protocol). Implementation of https protocol (SSL) requires 
-  some aditional work.</p>
+  the port (not the protocol). Implementation of https protocol (SSL) can be done 
+  but requires some aditional work.</p>
 <p>&nbsp;</p>
 </body>
 </html>
