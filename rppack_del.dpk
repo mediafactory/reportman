@@ -43,6 +43,7 @@ contains
   rpreg in 'rpreg.pas',
   rplastsav in 'rplastsav.pas',
   rpdatainfo in 'rpdatainfo.pas',
-  rpparams in 'rpparams.pas';
+  rpparams in 'rpparams.pas',
+  rptypes in 'rptypes.pas';
 
 end.
