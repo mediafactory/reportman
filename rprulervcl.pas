@@ -148,13 +148,13 @@ end;
 
 function PaintRuler(metrics:TRprulermetric;RType:TRpRulerType;Color:TColor;Width,Height:integer):TBitmap;
 var rect,rectrefresh:TRect;
-    i,value,Clength,CHeight:integer;
+    value,Clength,CHeight:integer;
     bitmap:TBitmap;
     pixelsperinchx,pixelsperinchy:Integer;
     windowwidth:integer;
     windowheight:integer;
-    h1,h2,h3:integer;
-    onethousand,onecent,midthousand:integer;
+    h1,h2,h3,x:integer;
+    i,onethousand,onecent:double;
     han:HDC;
     oldmapmode:integer;
     bwidth,bheight:integer;
@@ -282,15 +282,13 @@ begin
 
  if Metrics=rCms then
  begin
-  onecent:=Round(100/CMS_PER_INCHESS);
+  onecent:=100/CMS_PER_INCHESS;
   onethousand:=onecent*10;
-  midthousand:=onecent*5;
  end
  else
  begin
   onethousand:=1000;
   onecent:=100;
-  midthousand:=500;
  end;
  windowwidth:=Round(1000*rect.right/pixelsperinchx);
  windowheight:=Round(1000*rect.bottom/pixelsperinchy);
@@ -315,49 +313,51 @@ begin
    i:=0;
    Clength:=windowwidth;
    CHeight:=windowheight;
+   x:=0;
    while (i<Clength) do
    begin
-    value:=i Mod onethousand;
+    value:=x mod 10;
     if value=0 then
     // One number
     begin
-     avalue.X:=i;
+     avalue.X:=Round(i);
      avalue.Y:=0;
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
-     TextOut(han,avalue.X,avalue.Y,PChar(IntToStr(i div onethousand)),Length(IntToStr(i div onethousand)));
-     avalue.X:=i;
+     TextOut(han,avalue.X,avalue.Y,PChar(IntToStr(Round(i/onethousand))),Length(IntToStr(Round(i/onethousand))));
+     avalue.X:=Round(i);
      avalue.Y:=CHeight;
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
      Bitmap.Canvas.MoveTo(avalue.X,avalue.Y);
-     avalue.X:=i;
+     avalue.X:=Round(i);
      avalue.Y:=CHeight-h1;
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
      Bitmap.Canvas.LineTo(avalue.X,avalue.Y);
     end
     else
-    if value=midthousand then
+    if value=5 then
     begin
-     avalue.X:=i;
+     avalue.X:=Round(i);
      avalue.Y:=CHeight;
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
      Bitmap.Canvas.MoveTo(avalue.X,avalue.Y);
-     avalue.X:=i;
+     avalue.X:=Round(i);
      avalue.Y:=CHeight-h2;
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
      Bitmap.Canvas.LineTo(avalue.X,avalue.Y);
     end
     else
     begin
-     avalue.X:=i;
+     avalue.X:=Round(i);
      avalue.Y:=CHeight;
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
      Bitmap.Canvas.MoveTo(avalue.X,avalue.Y);
-     avalue.X:=i;
+     avalue.X:=Round(i);
      avalue.Y:=CHeight-h3;
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
      Bitmap.Canvas.LineTo(avalue.X,avalue.Y);
     end;
     i:=i+onecent;
+    inc(x);
    end;
   end
   else
@@ -365,49 +365,51 @@ begin
    i:=0;
    Clength:=windowheight;
    CHeight:=windowwidth;
+   x:=0;
    while (i<Clength) do
    begin
-    value:=i Mod onethousand;
+    value:=x mod 10;
     if value=0 then
     // One number
     begin
      avalue.X:=0;
-     avalue.Y:=i;
+     avalue.Y:=Round(i);
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
-     TextOut(han,avalue.X,avalue.Y,PChar(IntToStr(i div onethousand)),Length(IntToStr(i div onethousand)));
+     TextOut(han,avalue.X,avalue.Y,PChar(IntToStr(Round(i/onethousand))),Length(IntToStr(Round(i/onethousand))));
      avalue.X:=CHEight;
-     avalue.Y:=i;
+     avalue.Y:=Round(i);
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
      Bitmap.Canvas.MoveTo(avalue.X,avalue.Y);
      avalue.X:=CHEight-h1;
-     avalue.Y:=i;
+     avalue.Y:=Round(i);
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
      Bitmap.Canvas.LineTo(avalue.X,avalue.Y);
     end
     else
-    if value=midthousand then
+    if value=5 then
     begin
      avalue.X:=CHEight;
-     avalue.Y:=i;
+     avalue.Y:=Round(i);
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
      Bitmap.Canvas.MoveTo(avalue.X,avalue.Y);
      avalue.X:=CHEight-h2;
-     avalue.Y:=i;
+     avalue.Y:=Round(i);
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
      Bitmap.Canvas.LineTo(avalue.X,avalue.Y);
     end
     else
     begin
      avalue.X:=CHEight;
-     avalue.Y:=i;
+     avalue.Y:=Round(i);
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
      Bitmap.Canvas.MoveTo(avalue.X,avalue.Y);
      avalue.X:=CHEight-h3;
-     avalue.Y:=i;
+     avalue.Y:=Round(i);
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
      Bitmap.Canvas.LineTo(avalue.X,avalue.Y);
     end;
     i:=i+onecent;
+    inc(x);
    end;
   end;
  finally

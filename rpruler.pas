@@ -136,13 +136,13 @@ end;
 function PaintRuler(metrics:TRprulermetric;RType:TRpRulerType;Color:TColor;Width,Height:integer):TBitmap;
 var rect,rectrefresh:TRect;
     scale:double;
-    i,value,Clength,CHeight:integer;
+    value,Clength,CHeight:integer;
     bitmap:TBitmap;
     pixelsperinchx,pixelsperinchy:Integer;
     windowwidth:integer;
     windowheight:integer;
-    h1,h2,h3:integer;
-    onethousand,onecent,midthousand:integer;
+    h1,h2,h3,x:integer;
+    i,onethousand,onecent,midthousand:double;
   han:QPainterH;
     bwidth,bheight:integer;
 begin
@@ -270,10 +270,10 @@ begin
 
  if Metrics=rCms then
  begin
-  onecent:=Round(100/CMS_PER_INCHESS);
-  onethousand:=onecent*10;
-  midthousand:=onecent*5;
-  scale:=pixelsperinchx/CMS_PER_INCHESS+0.15;
+  onecent:=100/CMS_PER_INCHESS;
+  onethousand:=100/CMS_PER_INCHESS*10;
+  midthousand:=100/CMS_PER_INCHESS*5;
+  scale:=pixelsperinchx/CMS_PER_INCHESS;
  end
  else
  begin
@@ -304,32 +304,34 @@ begin
    i:=0;
    Clength:=windowwidth;
    CHeight:=windowheight;
+   x:=0;
    while (i<Clength) do
    begin
-    value:=i Mod onethousand;
+    value:=x mod 10;
     if value=0 then
     // One number
     begin
      QPainter_setWindow(han,rect.left,rect.top,rect.right,rect.bottom);
-     Canvas.TextOut(Round((i/onethousand)*scale),0,IntToStr(i div onethousand));
+     Canvas.TextOut(Round((i/onethousand)*scale),0,IntToStr(Round(i/onethousand)));
      QPainter_SetWindow(han,rect.left,rect.top,windowwidth
       ,windowheight);
 //     Canvas.TextOut(i,CHeight,IntToStr(i div onethousand));
-     Canvas.MoveTo(i,CHeight);
-     Canvas.LineTo(i,CHeight-h1);
+     Canvas.MoveTo(Round(i),CHeight);
+     Canvas.LineTo(Round(i),CHeight-h1);
     end
     else
-    if value=midthousand then
+    if value=5 then
     begin
-     Canvas.MoveTo(i,CHeight);
-     Canvas.LineTo(i,CHeight-h2);
+     Canvas.MoveTo(Round(i),CHeight);
+     Canvas.LineTo(Round(i),CHeight-h2);
     end
     else
     begin
-     Canvas.MoveTo(i,CHeight);
-     Canvas.LineTo(i,CHeight-h3);
+     Canvas.MoveTo(Round(i),CHeight);
+     Canvas.LineTo(Round(i),CHeight-h3);
     end;
     i:=i+onecent;
+    inc(x);
    end;
   end
   else
@@ -337,31 +339,35 @@ begin
    i:=0;
    Clength:=windowheight;
    CHeight:=windowwidth;
+   x:=0;
    while (i<Clength) do
    begin
-    value:=i Mod onethousand;
+    value:=x mod 10;
+//    value:=Round(i/onethousand) mod 10;
+//      value:=Round(i) Mod Round(onethousand);
     if value=0 then
     // One number
     begin
      QPainter_setWindow(han,rect.left,rect.top,rect.right,rect.bottom);
-     Canvas.TextOut(0,Round((i div onethousand)*scale),IntToStr(i div onethousand));
+     Canvas.TextOut(0,Round((i/onethousand)*scale),IntToStr(Round(i/onethousand)));
      QPainter_SetWindow(han,rect.left,rect.top,windowwidth
       ,windowheight);
-     Canvas.MoveTo(CHeight,i);
-     Canvas.LineTo(CHeight-h1,i);
+     Canvas.MoveTo(CHeight,Round(i));
+     Canvas.LineTo(CHeight-h1,Round(i));
     end
     else
-    if value=midthousand then
+    if value=5 then
     begin
-     Canvas.MoveTo(CHeight,i);
-     Canvas.LineTo(CHeight-h2,i);
+     Canvas.MoveTo(CHeight,Round(i));
+     Canvas.LineTo(CHeight-h2,Round(i));
     end
     else
     begin
-     Canvas.MoveTo(CHeight,i);
-     Canvas.LineTo(CHeight-h3,i);
+     Canvas.MoveTo(CHeight,Round(i));
+     Canvas.LineTo(CHeight-h3,Round(i));
     end;
     i:=i+onecent;
+    inc(x);
    end;
   end
  finally

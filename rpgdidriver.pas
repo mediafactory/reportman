@@ -764,6 +764,8 @@ begin
     stream:=page.GetStream(obj);
     bitmap:=TBitmap.Create;
     try
+     bitmap.PixelFormat:=pf32bit;
+     bitmap.HandleType:=bmDIB;
      if GetJPegInfo(stream,bitmapwidth,bitmapheight) then
      begin
       jpegimage:=TJPegImage.Create;

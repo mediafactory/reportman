@@ -30,7 +30,7 @@ object repwebmod: Trepwebmod
     end
     item
       Name = 'aexecute'
-      PathInfo = '/execute'
+      PathInfo = '/execute.pdf'
       OnAction = repwebmodaexecuteAction
     end>
   Left = 192

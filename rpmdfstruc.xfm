@@ -18,6 +18,7 @@ object FRpStructure: TFRpStructure
     ReadOnly = True
     TabOrder = 0
     OnChange = RViewChange
+    OnClick = RViewClick
   end
   object Panel1: TToolBar
     Left = 0

@@ -307,7 +307,7 @@ begin
  aresult.Add('<body bgcolor="#FFFFFF">');
  aresult.Add('<h2>ReportTitleLocation<h2>');
  aresult.Add('<p><h3 align="center">ReportManagerParamsLabel</h3></p>');
- aresult.Add('<form method="get" action="./execute">');
+ aresult.Add('<form method="get" action="./execute.pdf">');
  aresult.Add('ReportHiddenLocation');
  aresult.Add('<p>ReportsParamsTableLocation</p>');
  aresult.Add('<p>');

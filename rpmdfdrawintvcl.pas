@@ -310,10 +310,10 @@ begin
  ashape:=TRpShape(printitem);
  if csDestroying in ashape.ComponentState then
   exit;
+ Canvas.Brush.Color:=ashape.BrushColor;
  Canvas.Brush.Style:=TBrushStyle(ashape.BrushStyle);
  Canvas.Pen.Style:=TPenStyle(ashape.PenStyle);
  Canvas.Pen.Color:=ashape.Pencolor;
- Canvas.Brush.Color:=ashape.BrushColor;
  Canvas.Pen.Width:=Round(Screen.PixelsPerInch*ashape.PenWidth/TWIPS_PER_INCHESS);
 
  X := Canvas.Pen.Width div 2;
@@ -562,6 +562,7 @@ begin
     FBitmap.PixelFormat:=pf32bit;
     aimage.Stream.Seek(0,soFromBeginning);
     try
+     FBitmap.HandleType:=bmDIB;
      if GetJPegInfo(aimage.stream,bitmapwidth,bitmapheight) then
      begin
       jpegimage:=TJPegImage.Create;
@@ -580,7 +581,7 @@ begin
      raise;
     end;
    end;
-   Canvas.CopyMode:=TCopyMode(aimage.CopyMode);
+//   Canvas.CopyMode:=TCopyMode(aimage.CopyMode);
    rec.Top:=0;rec.Left:=0;
    rec.Bottom:=Height-1;rec.Right:=Width-1;
    // Draws it with the style
