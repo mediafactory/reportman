@@ -97,7 +97,7 @@ begin
 {$IFDEF MSWINDOWS}
  if length(filename)<1 then
   Raise Exception.Create(SRpFileNameRequired);
-// SHGetFolderPath(0, CSIDL_APPDATA or CSIDL_FLAG_CREATE, 0, 0, szAppData);
+ SHGetFolderPath(0, CSIDL_APPDATA or CSIDL_FLAG_CREATE, 0, 0, szAppData);
  if length(company)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(company)) then
@@ -119,8 +119,11 @@ begin
  Result:=StrPas(szAppdata);
  if Not DirectoryExists(Result) then
  begin
-  if not CreateDirectory(Pchar(Result),nil) then
+  try
+   if not CreateDirectory(Pchar(Result),nil) then
+  except
    Result:='';
+  end;
  end;
  if not PathAppend(szAppdata,Pchar(filename+'.ini')) then
 {$IFDEF USEVARIANTS}
@@ -145,7 +148,7 @@ begin
 {$IFDEF MSWINDOWS}
  if length(filename)<1 then
   Raise Exception.Create(SRpFileNameRequired);
-// SHGetFolderPath(0, CSIDL_LOCAL_APPDATA or CSIDL_FLAG_CREATE, 0, 0, szAppData);
+ SHGetFolderPath(0, CSIDL_LOCAL_APPDATA or CSIDL_FLAG_CREATE, 0, 0, szAppData);
 
  if length(company)>0 then
  begin
@@ -172,8 +175,12 @@ begin
  ForceDirectories(Result);
 {$ENDIF}
 {$IFNDEF BUILDER4}
+ try
   if not ForceDirectories(Result) then
    Result:='';
+ except
+   Result:='';
+ end;
 {$ENDIF}
  end;
  if not PathAppend(szAppdata,Pchar(filename+'.ini')) then
@@ -199,7 +206,7 @@ begin
 {$IFDEF MSWINDOWS}
  if length(filename)<1 then
   Raise Exception.Create(SRpFileNameRequired);
-// SHGetFolderPath(0, CSIDL_COMMON_APPDATA or CSIDL_FLAG_CREATE, 0, 0, szAppData);
+ SHGetFolderPath(0, CSIDL_COMMON_APPDATA or CSIDL_FLAG_CREATE, 0, 0, szAppData);
  if length(company)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(company)) then
@@ -225,8 +232,12 @@ begin
  ForceDirectories(Result);
 {$ENDIF}
 {$IFNDEF BUILDER4}
+ try
   if not ForceDirectories(Result) then
    Result:='';
+ except
+   Result:='';
+ end;
 {$ENDIF}
  end;
  if not PathAppend(szAppdata,Pchar(filename+'.ini')) then

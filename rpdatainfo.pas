@@ -1394,8 +1394,14 @@ begin
 {$IFDEF LINUX}
  configdir:=GetEnvironmentVariable('HOME')+'/.borland';
  if Not DirectoryExists(configdir) then
-  if Not CreateDir(configdir) then
+ begin
+  try
+   if not CreateDirectory(Pchar(Result),nil) then
+  except
+   Result:='';
    Raise Exception.Create(SRpDirCantBeCreated+configdir);
+  end;
+ end;
  driverfilename:=configdir+'/'+DBXDRIVERFILENAME;
  configfilename:=configdir+'/'+DBXCONFIGFILENAME;
 {$ENDIF}
