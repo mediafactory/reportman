@@ -98,6 +98,7 @@ type
     LDuplex: TLabel;
     EForceFormName: TRpMaskEdit;
     LForceFormName: TLabel;
+    EPaperSource: TRpMaskEdit;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -108,6 +109,8 @@ type
     procedure RPageOrientationClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure BConfigureClick(Sender: TObject);
+    procedure EPaperSourceChange(Sender: TObject);
+    procedure ComboPaperSourceClick(Sender: TObject);
   private
     { Private declarations }
     report:TRpReport;
@@ -222,6 +225,8 @@ begin
   Add(SRpUserPrinter7);
   Add(SRpUserPrinter8);
   Add(SRpUserPrinter9);
+  Add(SRpPlainPrinter);
+  Add(SRpPlainFullPrinter);
  end;
  LSelectPrinter.Caption:=TranslateStr(741,LSelectPrinter.Caption);
  LPaperSOurce.Caption:=SRpPaperSource;
@@ -309,7 +314,7 @@ begin
  report.PreviewMargins:=CheckMargins.Checked;
  report.PreviewWindow:=TRpPreviewWindowStyle(ComboPreview.ItemIndex);
  report.StreamFormat:=TRpStreamFormat(ComboFormat.ItemIndex);
- report.PaperSOurce:=ComboPaperSource.ItemIndex;
+ report.PaperSOurce:=StrToInt(EPaperSource.Text);
  report.Duplex:=ComboDuplex.ItemIndex;
  report.ForcePaperName:=EForceFormName.Text;
 
@@ -371,7 +376,8 @@ begin
  ComboPreview.ItemIndex:=integer(report.PreviewWindow);
  ComboFormat.ItemIndex:=integer(report.StreamFormat);
  CheckMargins.Checked:=report.PreviewMargins;
- ComboPaperSource.ItemIndex:=report.PaperSource;
+ EPaperSource.Text:=IntToStr(report.PaperSource);
+ EPaperSourceChange(Self);
  ComboDuplex.ItemIndex:=report.Duplex;
  EForceFormName.Text:=report.ForcePaperName;
 end;
@@ -409,6 +415,26 @@ begin
  ShowPrintersConfiguration;
 end;
 
+procedure TFRpPageSetupVCL.EPaperSourceChange(Sender: TObject);
+var
+ index:integer;
+begin
+ try
+  index:=StrToInt(EPaperSource.Text);
+ except
+  index:=-1;
+ end;
+ if index<0 then
+  index:=-1;
+ if (index<ComboPaperSource.Items.Count) then
+ begin
+  CombopaperSource.ItemIndex:=index;
+ end;
+end;
 
+procedure TFRpPageSetupVCL.ComboPaperSourceClick(Sender: TObject);
+begin
+ EPaperSource.Text:=IntToStr(ComboPaperSource.ItemIndex);
+end;
 
 end.

@@ -417,7 +417,7 @@ begin
  try
   if Assigned(ConAdmin) then
    ConAdmin.Config.UpdateFile;
-  UpdateConAdmin;
+//  UpdateConAdmin;
  except
   on E:Exception do
   begin

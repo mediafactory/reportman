@@ -21,7 +21,7 @@ interface
 
 {$I rpconf.inc}
 
-uses Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls,
+uses Windows, Messages,SysUtils, Classes, Graphics, Forms, Controls, StdCtrls,
   Buttons, ExtCtrls,Printers,rpmdconsts,WinSpool,Dialogs,rptypes,
   rpmunits;
 
@@ -78,6 +78,8 @@ type
     LPageSize: TLabel;
     LOrientation: TLabel;
     LOrientationL: TLabel;
+    LPaperSources: TLabel;
+    ComboSource: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
@@ -111,6 +113,9 @@ end;
 
 procedure TFRpSysInfo.FormCreate(Sender: TObject);
 begin
+{$IFNDEF DOTNETD}
+ SendMessage(ComboSource.Handle, CB_SETDROPPEDWIDTH, 250, 0);
+{$ENDIF}
  Caption:=TranslateStr(976,Caption);
  BOK.Caption:=SRpOk;
  LMaxCopies.Font.Style:=[fsBold];
@@ -136,6 +141,7 @@ begin
  Label5.Caption:=TranslateStr(1066,Label5.Caption);
  Label6.Caption:=TranslateStr(1067,Label6.Caption);
  Label7.Caption:=TranslateStr(1068,Label7.Caption);
+ LPaperSources.Caption:=TranslateStr(1323,LPaperSources.Caption);
  Label9.Caption:=TranslateStr(1069,Label9.Caption);
  Label15.Caption:=TranslateStr(1070,Label15.Caption);
  Label16.Caption:=TranslateStr(1071,Label16.Caption);
@@ -157,6 +163,8 @@ begin
 end;
 
 procedure TFRpSysInfo.FormShow(Sender: TObject);
+type
+ TBin_name=array [0..23] of char;
 var
  printererror:boolean;
  printererrormessage:String;
@@ -168,6 +176,9 @@ var
  pdevmode:^DEVMODE;
  buf:PChar;
  pforminfo:^Form_info_1;
+ numbins,i:integer;
+ bufint:array of Word;
+ bufchar:array of TBin_name;
 {$ENDIF}
 {$IFDEF DOTNETD}
  DeviceMode: IntPtr;
@@ -185,6 +196,9 @@ var
  pagesize:TPoint;
  laste:integer;
 begin
+ ComboSource.Items.Clear;
+ ComboSource.Items.Add(SRpUnknown);
+ ComboSource.ItemIndex:=0;
  dc:=0;
  pagesize.x:=0;
  pagesize.y:=0;
@@ -352,6 +366,30 @@ begin
         end;
        end;
       end;
+      // Se obtienen las posibles bandejas de entrada
+      ComboSource.Items.Clear;
+      numbins:=DeviceCapabilities(Device,Port,DC_BINS,nil,nil);
+      if numbins=0 then
+      begin
+       ComboSource.Items.Add(SRpNo);
+      end
+      else
+      begin
+       SetLength(bufint,numbins);
+       DeviceCapabilities(Device,Port,DC_BINS,@bufint[0],nil);
+       for i:=0 to numbins-1 do
+       begin
+        ComboSource.Items.Add(IntToStr(bufint[i]));
+       end;
+       SetLength(bufchar,numbins);
+       DeviceCapabilities(Device,Port,DC_BINNAMES,@bufchar[0],nil);
+       for i:=0 to numbins-1 do
+       begin
+        ComboSource.Items.Strings[i]:=ComboSource.Items.Strings[i]
+         +'-'+StrPas(bufchar[i]);
+       end;
+      end;
+      ComboSource.ItemIndex:=0;
      finally
       FreeMem(pdevmode);
      end;

@@ -113,9 +113,9 @@ RootDir=C:\prog\Delphi7\Bin\
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=2
-MinorVer=2
+MinorVer=3
 Release=0
-Build=11
+Build=1
 Debug=0
 PreRelease=0
 Special=0
@@ -126,19 +126,22 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Server config client
-FileVersion=2.2.0.11
+FileVersion=2.3.0.1
 InternalName=repserverconfig
 LegalCopyright=MPL License
 LegalTrademarks=
 OriginalFilename=repserverconf.exe
 ProductName=Report Manager
-ProductVersion=2.1.0.0
+ProductVersion=2.3.0.0
 Comments=
+[Excluded Packages]
+h:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
+h:\prog\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
 [HistoryLists\hlConditionals]
 Count=3
 Item0=REPMANRELEASE
-Item1=FORWEBAX
-Item2=NOLINUXPRINTBUG;FORWEBAX
+Item1=NOLINUXPRINTBUG;FORWEBAX
+Item2=FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

@@ -1,8 +1,8 @@
 {
   Kylix / Delphi open source DbExpress driver for ODBC
-  Version 2.04, 2002-12-19
+  Version 3.010, 2004-06-07
 
-  Copyright (c) 2001 Edward Benson
+  Copyright (c) 2001, 2003 Edward Benson
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -17,17 +17,16 @@
 library dbxoodbc;
 // DLL version of DbExpress Open Source Odbc Driver.
 uses
-  {$ifdef MSWINDOWS}
-    DbxOpenOdbc;
-  {$else}
-    ShareExcept,
-    DbxOpenOdbc;
-  {$endif}
+{$IFDEF LINUX}
+  ShareExcept,
+{$ENDIF}
+  DbxOpenOdbc;
 
-{$ifdef MSWINDOWS}
- {$R *.res}  // Include Library information
-{$endif}
+{$IFDEF MSWINDOWS}
+{$R *.res} // Include Library information
+{$ENDIF}
 
 exports getSQLDriverODBC;
+
 begin
 end.

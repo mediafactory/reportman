@@ -383,6 +383,7 @@ begin
  begin
   databaseinfo.Delete(index);
   SetDatabaseInfo(databaseinfo);
+  LConnectionsClick(Self);
  end;
 end;
 

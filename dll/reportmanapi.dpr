@@ -23,21 +23,20 @@ uses
 
 exports
  rp_open,
+ rp_new,
  rp_execute,
  rp_close,
  rp_lasterror,
  rp_executeremote,
+ rp_executeremote_report,
+ rp_getremoteparams,
  rp_setparamvalue,
  rp_getparamname,
  rp_getparamcount;
 
 begin
  // We want to map Linux Signals to Kylix Exceptions, so
- // we call HookSignal to hook all the default signals.
- HookSignal(RTL_SIGDEFAULT);
-
- // Install the Exit handler.
- DLLProc := @DLLHandler;
+ // we call HookSignal to hook all the default signals.  HookSignal(RTL_SIGDEFAULT);   // Install the Exit handler.  DLLProc := @DLLHandler;
 end.
 
 

@@ -484,7 +484,7 @@ begin
  if MultiPage then
  begin
   maxextent.X:=PrintWidth;
-  newposition:=CalcTextExtent(adriver,maxextent,Textobj);
+  newposition:=CalcTextExtent(adriver.GetFontDriver,maxextent,Textobj);
   if newposition<Length(TextObj.Text) then
   begin
    if Not FIsPartial then
@@ -748,7 +748,7 @@ begin
  if MultiPage then
  begin
   maxextent.X:=Result.X;
-  aposition:=CalcTextExtent(adriver,maxextent,aText);
+  aposition:=CalcTextExtent(adriver.GetFontDriver,maxextent,aText);
   if aposition<Length(aText.Text) then
    ispartial:=true;
   aText.Text:=Copy(aText.Text,1,aposition);

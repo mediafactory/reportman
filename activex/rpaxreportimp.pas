@@ -12,7 +12,7 @@ uses
   Windows, ActiveX, SysUtils,Classes, Controls, Graphics, Menus, Forms, StdCtrls,
   ComServ, StdVCL, AXCtrls, Reportman_TLB, rpactivexreport,rpreport,
   rpparams,rptypes,rpgdidriver,rpmetafile,comobj,rpaxreportparameters,
-  rpaxreportreport,rpexceldriver,rphtmldriver;
+  rpaxreportreport,rpexceldriver,rphtmldriver,printers,rpmdconsts;
 
 type
   TReportManX = class(TActiveXControl, IReportManX)
@@ -93,6 +93,13 @@ type
     procedure SaveToCustomText(const filename: WideString); safecall;
     procedure SaveToSVG(const filename: WideString); safecall;
     procedure SaveToMetafile(const filename: WideString); safecall;
+    procedure SaveToExcel2(const filename: WideString); safecall;
+    procedure SetDefaultPrinter(const device: WideString); safecall;
+    function Get_DefaultPrinter: WideString; safecall;
+    procedure Set_DefaultPrinter(const Value: WideString); safecall;
+    function Get_PrintersAvailable: WideString; safecall;
+    procedure GetRemoteParams(const hostname: WideString; port: Integer;
+      const user, password, aliasname, reportname: WideString); safecall;
   end;
 
 implementation
@@ -417,7 +424,7 @@ begin
  FDelphiControl.GetReport.TwoPass:=true;
  rpgdidriver.CalcReportWidthProgress(FDelphiControl.GetReport);
  ExportMetafileToExcel (FDelphiControl.GetReport.metafile,filename,
-  true,false,true,1,9999999);
+  true,false,true,1,9999999,false);
 end;
 
 
@@ -450,6 +457,69 @@ end;
 procedure TReportManX.SaveToMetafile(const filename: WideString);
 begin
   FDelphiControl.SaveToMetafile(filename);
+end;
+
+procedure TReportManX.SaveToExcel2(const filename: WideString);
+begin
+ FDelphiControl.GetReport.TwoPass:=true;
+ rpgdidriver.CalcReportWidthProgress(FDelphiControl.GetReport);
+ ExportMetafileToExcel (FDelphiControl.GetReport.metafile,filename,
+  true,false,true,1,9999999,true);
+end;
+
+procedure TReportManX.SetDefaultPrinter(const device: WideString);
+var
+ adevice:string;
+ i:integer;
+ itemindex:integer;
+ printerlist:string;
+begin
+ adevice:=UpperCase(device);
+ itemindex:=-1;
+ printerlist:='';
+ for i:=0 to printer.printers.count-1 do
+ begin
+  if UpperCase(printer.printers.strings[i])=adevice then
+  begin
+   itemindex:=i;
+   break;
+  end;
+  printerlist:=printerlist+printer.printers.strings[i]+#10;
+ end;
+ if itemindex<0 then
+  Raise Exception.Create(SRpErrorOpenImp+':'+device+#10+printerlist);
+ printer.printerindex:=itemindex;
+end;
+
+function TReportManX.Get_DefaultPrinter: WideString;
+begin
+ Result:='';
+ if printer.printerindex>0 then
+  Result:=printer.printers[printer.printerindex];
+end;
+
+procedure TReportManX.Set_DefaultPrinter(const Value: WideString);
+begin
+ SetDefaultPrinter(Value);
+end;
+
+function TReportManX.Get_PrintersAvailable: WideString;
+var
+ i:integer;
+begin
+ Result:='';
+ for i:=0 to printer.printers.count do
+ begin
+  if i>0 then
+   Result:=Result+#10;
+  Result:=Result+printer.printers[i];
+ end;
+end;
+
+procedure TReportManX.GetRemoteParams(const hostname: WideString;
+  port: Integer; const user, password, aliasname, reportname: WideString);
+begin
+ FDelphiControl.GetRemoteParams(hostname,port,user,password,aliasname,reportname);
 end;
 
 initialization

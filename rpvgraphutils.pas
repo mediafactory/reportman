@@ -1384,7 +1384,6 @@ begin
 {$IFDEF DOTNETD}
  GlobalUnLock(Integer(DeviceMode));
 {$ENDIF}
- Printer.SetPrinter(Device, Driver, Port, DeviceMode);
 end;
 
 
@@ -1683,7 +1682,14 @@ begin
  finally
   GlobalUnLock(DeviceMode);
  end;
- Printer.SetPrinter(Device, Driver, Port, DeviceMode);
+ if not printer.Printing then
+  Printer.SetPrinter(Device, Driver, Port, DeviceMode)
+ else
+ begin
+  DocumentProperties(0,Printer.Handle,Device, PDevMode^,
+        PDevMode^, DM_MODIFY);
+  ResetDC(Printer.Handle,PDevMode^);
+ end;
 end;
 
 

@@ -60,7 +60,7 @@ type
     hardwarecollate:boolean);
    procedure EndDocument;
    procedure AbortDocument;
-   procedure NewPage;
+   procedure NewPage(metafilepage:TRpMetafilePage);
    procedure EndPage;
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
    procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
@@ -75,6 +75,7 @@ type
    function SupportsCopies(maxcopies:integer):boolean;
    function SupportsCollation:boolean;
    property PDFFile:TRpPDFFile read FPDFFile;
+   function GetFontDriver:IRpPrintDriver;
   end;
 
 
@@ -180,9 +181,15 @@ begin
  FPDFFile:=nil;
 end;
 
-procedure TRpPDFDriver.NewPage;
+procedure TRpPDFDriver.NewPage(metafilepage:TRpMetafilePage);
 begin
- FPDFFile.NewPage;
+ // Sets the page size for the pdf file, first if it's a qt page
+ if metafilepage.UpdatedPageSize then
+ begin
+  FPageWidth:=metafilepage.PageSizeQt.PhysicWidth;
+  FPageHeight:=metafilepage.PageSizeQt.PhysicHeight;
+ end;
+ FPDFFile.NewPage(FPageWidth,FPageHeight);
 end;
 
 
@@ -498,7 +505,10 @@ begin
     adriver.DrawPage(metafile.Pages[i]);
     if ((i<metafile.PageCount-1) or (j<copies-1)) then
     begin
-     adriver.NewPage;
+     if j<copies-1 then
+      adriver.NewPage(metafile.Pages[i])
+     else
+      adriver.NewPage(metafile.Pages[i+1]);
     end;
    end;
   end;
@@ -530,7 +540,7 @@ begin
   begin
    adriver.DrawPage(metafile.Pages[i]);
    if i<metafile.PageCount-1 then
-    adriver.NewPage;
+    adriver.NewPage(metafile.Pages[i+1]);
   end;
   adriver.EndDocument;
   adriver.PDFFile.MainPDF.Seek(0,soFromBeginning);
@@ -615,20 +625,24 @@ begin
  astring:=SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
   +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
   FormatFloat('#########,####',Sender.RecordCount);
+{$I-}
 {$IFDEF USEVARIANTS}
  WriteLn(astring);
 {$ELSE}
  WriteLn(String(astring));
 {$ENDIF}
+{$I+}
  // If it's the last page prints additional info
  if Sender.LastPage then
  begin
   astring:=Format('%-20.20s',[SRpPage])+FormatFloat('0000000000',Sender.PageNum+1);
+{$I-}
 {$IFDEF USEVARIANTS}
   WriteLn(astring);
 {$ELSE}
   WriteLn(String(astring));
 {$ENDIF}
+{$I+}
  end;
 end;
 
@@ -869,5 +883,9 @@ begin
 end;
 {$ENDIF}
 
+function TRpPDFDriver.GetFontDriver:IRpPrintDriver;
+begin
+ Result:=Self;
+end;
 
 end.

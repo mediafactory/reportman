@@ -29,7 +29,7 @@ uses
 {$IFDEF EMPTYCOMBOBUG}
   D7ComboBoxStringsGetPatch,
 {$ENDIF}
-  Classes,
+  Classes,Graphics,
   rpgdidriver,rpvpreview,rprfvparams,windows,
   Controls, Forms,
   StdCtrls, ComCtrls, ActnList, ImgList, Menus,ExtCtrls,
@@ -226,6 +226,9 @@ type
     Saveto1: TMenuItem;
     AOpenFrom: TAction;
     ASaveTo: TAction;
+    MAppFont: TMenuItem;
+    MObjFont: TMenuItem;
+    FontDialog1: TFontDialog;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -288,6 +291,8 @@ type
     procedure ADeleteExecute(Sender: TObject);
     procedure AOpenFromExecute(Sender: TObject);
     procedure ASaveToExecute(Sender: TObject);
+    procedure MAppFontClick(Sender: TObject);
+    procedure MObjFontClick(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrameVCL;
@@ -299,6 +304,14 @@ type
     alibrary:String;
     areportname:WideString;
     oldappidle:TIdleEvent;
+    FAppFontName:String;
+    FAppFontSize:integer;
+    FAppFontStyle:integer;
+    FAppFontColor:Integer;
+    FObjFontName:String;
+    FObjFontSize:integer;
+    FObjFontStyle:integer;
+    FObjFontColor:Integer;
     procedure FreeInterface;
     procedure CreateInterface;
     function checkmodified:boolean;
@@ -322,6 +335,7 @@ type
     procedure DoOpenStream(astream:TStream);
     procedure DoOpenFromLib(alibname:String;arepname:WideString);
     procedure IdleMaximize(Sender:TObject;var done:Boolean);
+    procedure UpdateFonts;
   public
     { Public declarations }
     report:TRpReport;
@@ -329,6 +343,7 @@ type
     freportstructure:TFRpStructureVCL;
     browsecommandline:boolean;
     procedure RefreshInterface(Sender: TObject);
+    constructor Create(AOwner:TComponent);override;
     function GetExpressionText:string;
   end;
 
@@ -338,8 +353,31 @@ var
 implementation
 
 
-
 {$R *.dfm}
+
+
+procedure TFRpMainFVCL.UpdateFonts;
+begin
+  Screen.IconFont.Name:=FAppFontName;
+  Screen.IconFont.Size:=FAppFontSize;
+  Screen.IconFont.Style:=CLXIntegerToFontStyle(FAppFontStyle);
+  Graphics.DefFontData.Name:=Screen.IconFont.Name;
+  Graphics.DefFontData.Height:=Screen.IconFont.Height;
+  Graphics.DefFontData.Style:=Screen.IconFont.Style;
+  Self.Font.Assign(Screen.IconFont);
+  if assigned(freportstructure) then
+  begin
+   RefreshInterface(Self);
+  end;
+end;
+
+
+constructor TFRpMainFVCL.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ LoadConfig;
+end;
+
 
 // Check if it is saved and return true if all is ok
 function TFRpMainFVCL.CheckSave:Boolean;
@@ -543,6 +581,10 @@ begin
  end;
  // Create the report structure frame
  fobjinsp:=TFRpObjInspVCL.Create(Self);
+ fobjinsp.Font.Style:=CLXIntegerToFontStyle(FObjFontStyle);
+ fobjinsp.Font.Name:=FObjFontName;
+ fobjinsp.Font.Size:=FObjFontSize;
+ fobjinsp.Font.Color:=FObjFontColor;
  fobjinsp.Align:=alclient;
  fobjinsp.Parent:=leftpanel;
  freportstructure:=TFRpStructureVCL.Create(Self);
@@ -654,9 +696,11 @@ begin
   // Visible driver selection
  LastUsedFiles.LoadFromConfigFile(configfile);
  UpdateFileMenu;
- LoadConfig;
+// LoadConfig;
  // A bug in Kylix loading decimal sep, and thousand sep
  // Translate menus and actions
+ MAppFont.Caption:=TranslateStr(1347,MAppFont.Caption);
+ MObjFont.Caption:=TranslateStr(1348,MAppFont.Caption);
  File1.Caption:=TranslateStr(0,File1.Caption);
  Caption:=TranslateStr(1,Caption);
  MReport.Caption:=TranslateStr(2,MReport.Caption);
@@ -1242,6 +1286,22 @@ var
 begin
  inif:=TIniFile.Create(configfile);
  try
+  FAppFontName:=inif.ReadString('Preferences','AppFontName',Screen.IconFont.Name);
+  FAppFontSize:=inif.ReadInteger('Preferences','AppFontSize',Screen.IconFont.Size);
+  FAppFontColor:=inif.ReadInteger('Preferences','AppFontColor',Screen.IconFont.Color);
+  if FAppFontSize<3 then
+   FAppFontSize:=8;
+  FAppFontStyle:=inif.ReadInteger('Preferences','AppFontStyle',FontStyleTOCLXInteger(Screen.IconFont.Style));
+
+  FObjFontName:=inif.ReadString('Preferences','ObjFontName',Screen.IconFont.Name);
+  FObjFontSize:=inif.ReadInteger('Preferences','ObjFontSize',7);
+  FObjFontColor:=inif.ReadInteger('Preferences','ObjFontColor',Screen.IconFont.Color);
+  if FObjFontSize<3 then
+   FObjFontSize:=8;
+  FObjFontStyle:=inif.ReadInteger('Preferences','ObjFontStyle',FontStyleTOCLXInteger(Screen.IconFont.Style));
+
+  UpdateFonts;
+
   AUnitCms.Checked:=inif.ReadBool('Preferences','UnitCms',true);
   ADriverPDF.Checked:=inif.ReadBool('Preferences','DriverPDF',false);
   ADriverQt.Checked:=False;
@@ -1265,6 +1325,15 @@ var
 begin
  inif:=TIniFile.Create(configfile);
  try
+  inif.WriteString('Preferences','AppFontName',FAppFontName);
+  inif.WriteInteger('Preferences','AppFontSize',FAppFontSize);
+  inif.WriteInteger('Preferences','AppFontColor',FAppFontColor);
+  inif.WriteInteger('Preferences','AppFontStyle',FAppFontStyle);
+  inif.WriteString('Preferences','ObjFontName',FAppFontName);
+  inif.WriteInteger('Preferences','ObjFontSize',FObjFontSize);
+  inif.WriteInteger('Preferences','ObjFontColor',FObjFontColor);
+  inif.WriteInteger('Preferences','ObjFontStyle',FObjFontStyle);
+
   inif.WriteBool('Preferences','UnitCms',AUnitCms.Checked);
   inif.WriteBool('Preferences','DriverQT',ADriverQT.Checked);
   inif.WriteBool('Preferences','DriverPDF',ADriverPDF.Checked);
@@ -1812,6 +1881,39 @@ begin
   UpdateFileMenu;
  finally
   astream.free;
+ end;
+end;
+
+procedure TFRpMainFVCL.MAppFontClick(Sender: TObject);
+begin
+ FontDialog1.Font.Assign(Screen.IconFont);
+ if FontDialog1.Execute then
+ begin
+  FAppFontName:=FontDialog1.Font.Name;
+  FAppFontSize:=FontDialog1.Font.Size;
+  FAppFontColor:=FontDialog1.Font.Color;
+  if FAppFontSize<3 then
+   FAppFontSize:=8;
+  FAppFontStyle:=FontStyleTOCLXInteger(FontDialog1.Font.Style);
+  UpdateFonts;
+ end;
+end;
+
+procedure TFRpMainFVCL.MObjFontClick(Sender: TObject);
+begin
+ FontDialog1.Font.Name:=FObjFontName;
+ FontDialog1.Font.Size:=FObjFontSize;
+ FontDialog1.Font.Color:=FObjFontColor;
+ FontDialog1.Font.Style:=CLXIntegerToFontStyle(FObjFontStyle);
+ if FontDialog1.Execute then
+ begin
+  FObjFontName:=FontDialog1.Font.Name;
+  FObjFontSize:=FontDialog1.Font.Size;
+  FObjFontColor:=FontDialog1.Font.Color;
+  if FObjFontSize<3 then
+   FObjFontSize:=8;
+  FObjFontStyle:=FontStyleTOCLXInteger(FontDialog1.Font.Style);
+  UpdateFonts;
  end;
 end;
 

@@ -49,7 +49,7 @@ uses
  teEngine,ArrowCha,BubbleCh,GanttCh,
 {$ENDIF}
 {$ENDIF}
- rppdfdriver,rptextdriver, Mask, rpmaskedit;
+ rppdfdriver,rptextdriver, Mask, WinSpool,rpmaskedit;
 
 
 const
@@ -124,6 +124,7 @@ type
 
  TRpGDIDriver=class(TInterfacedObject,IRpPrintDriver)
   private
+    BackColor:integer;
    intdpix,intdpiy:integer;
    metacanvas:TMetafilecanvas;
    meta:TMetafile;
@@ -132,10 +133,11 @@ type
    selectedprinter:TRpPrinterSelect;
    DrawerBefore,DrawerAfter:Boolean;
    procedure SendAfterPrintOperations;
+   function DoNewPage(aorientation:TRpOrientation;apagesizeqt:TPageSizeQt):Boolean;
+   procedure UpdateBitmapSize(report:TrpMetafileReport;apage:TrpMetafilePage);
   public
    offset:TPoint;
-   lockedpagesize:boolean;
-   CurrentPageSize:Tpoint;
+//   CurrentPageSize:Tpoint;
    bitmap:TBitmap;
    dpi:integer;
    toprinter:boolean;
@@ -150,11 +152,12 @@ type
    bitmapwidth,bitmapheight:integer;
    PreviewStyle:TRpPreviewStyle;
    clientwidth,clientheight:integer;
+   FontDriver:IRpPrintDriver;
    procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
     hardwarecollate:boolean);
    procedure EndDocument;
    procedure AbortDocument;
-   procedure NewPage;
+   procedure NewPage(metafilepage:TRpMetafilePage);
    procedure EndPage;
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
 {$IFNDEF FORWEBAX}
@@ -178,6 +181,7 @@ type
    function SupportsCollation:boolean;
    constructor Create;
    destructor Destroy;override;
+   function GetFontDriver:IRpPrintDriver;
   end;
 
 function PrintMetafile (metafile:TRpMetafileReport; tittle:string;
@@ -219,6 +223,56 @@ const
  AlignmentFlags_AlignVCenter = 32 { $20 };
  AlignmentFlags_AlignLeft = 1 { $1 };
  AlignmentFlags_AlignRight = 2 { $2 };
+
+function EqualsPageSizeQt(a,b:TPageSizeQt):Boolean;
+begin
+ Result:=true;
+ if (a.Indexqt<>b.Indexqt) then
+ begin
+  Result:=false;
+  exit;
+ end;
+ if (a.Custom<>b.Custom) then
+ begin
+  Result:=false;
+  exit;
+ end;
+ if (a.CustomWidth<>b.CustomWidth) then
+ begin
+  Result:=false;
+  exit;
+ end;
+ if (a.CustomHeight<>b.CustomHeight) then
+ begin
+  Result:=false;
+  exit;
+ end;
+ if (a.PaperSource<>b.PaperSource) then
+ begin
+  Result:=false;
+  exit;
+ end;
+ if (a.ForcePaperName<>b.ForcePaperName) then
+ begin
+  Result:=false;
+  exit;
+ end;
+ if (a.Duplex<>b.Duplex) then
+ begin
+  Result:=false;
+  exit;
+ end;
+end;
+
+function TRpGDIDriver.DoNewPage(aorientation:TRpOrientation;apagesizeqt:TPageSizeQt):Boolean;
+begin
+ Result:=true;
+ Windows.EndPage(Printer.handle);
+ SetOrientation(aorientation);
+ SetPageSize(apagesizeqt);
+ Windows.StartPage(printer.handle);
+ Printer.Canvas.Refresh;
+end;
 
 
 function DoShowPrintDialog(var allpages:boolean;
@@ -284,7 +338,7 @@ begin
  offset.X:=0;
  offset.Y:=0;
  dpi:=Screen.PixelsPerInch;
- drawclippingregion:=true;
+ drawclippingregion:=false;
  oldpagesize.PageIndex:=-1;
  scale:=1;
 end;
@@ -319,80 +373,52 @@ begin
  Result:=PrinterSupportsCollation;
 end;
 
-procedure TRpGDIDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
-   hardwarecollate:boolean);
+procedure TRpGDIDriver.UpdateBitmapSize(report:TrpMetafileReport;apage:TrpMetafilePage);
 var
+ asize:TPoint;
+ qtsize:integer;
  awidth,aheight:integer;
  rec:TRect;
- asize:TPoint;
- aregion:HRGN;
  scale2:double;
- qtsize:integer;
+// aregion:HRGN;
 begin
-{$IFNDEF FORWEBAX}
-{$IFDEF USETEECHART}
- report.OnDrawChart:=Self.DoDrawChart;
- {$ENDIF}
-{$ENDIF}
- DrawerBefore:=report.OpenDrawerBefore;
- DrawerAfter:=report.OpenDrawerAfter;
- if devicefonts then
+ // Offset is 0 in preview
+ offset.X:=0;
+ offset.Y:=0;
+ // Sets Orientation
+ if assigned(report) then
  begin
-  UpdatePrinterFontList;
- end;
- if ToPrinter then
- begin
-  printer.Title:=SRpUntitled;
-  SetOrientation(report.Orientation);
-  // Gets pagesize
-  asize:=GetPageSize(qtsize);
-  pagemargins:=GetPageMarginsTWIPS;
-  if Length(printer.Title)<1 then
-   printer.Title:='Untitled';
-
-  SetPrinterCopies(hardwarecopies);
-  SetPrinterCollation(hardwarecollate);
-
-  if DrawerBefore then
-   SendControlCodeToPrinter(GetPrinterRawOp(selectedprinter,rawopopendrawer));
-  printer.BeginDoc;
-  intdpix:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX); //  printer.XDPI;
-  intdpiy:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY);  // printer.YDPI;
- end
- else
- begin
-  // Offset is 0 in preview
-  offset.X:=0;
-  offset.Y:=0;
-  if assigned(bitmap) then
+  BackColor:=report.BackColor;
+  if drawclippingregion then
   begin
-   bitmap.free;
-   bitmap:=nil;
-  end;
-  bitmap:=TBitmap.Create;
-{$IFNDEF DOTNETDBUGS}
-  bitmap.PixelFormat:=pf32bit;
-  bitmap.HandleType:=bmDIB;
-{$ENDIF}
-  // Sets Orientation
-  SetOrientation(report.Orientation);
-  // Gets pagesize
-  if lockedpagesize then
-  begin
-   asize:=CurrentPageSize;
+   SetOrientation(report.Orientation);
+   // Gets pagesize
+   asize:=GetPageSize(qtsize);
+   pagemargins:=GetPageMarginsTWIPS;
+//   CurrentPageSize:=asize;
   end
   else
   begin
-   asize:=GetPageSize(qtsize);
-   pagemargins:=GetPageMarginsTWIPS;
-   CurrentPageSize:=asize;
+   asize.X:=report.CustomX;
+   asize.Y:=report.CustomY;
   end;
-  bitmapwidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
-  bitmapheight:=Round((asize.y/TWIPS_PER_INCHESS)*dpi);
+ end
+ else
+ begin
+  if drawclippingregion then
+  begin
+   SetOrientation(apage.Orientation);
+   pagemargins:=GetPageMarginsTWIPS;
+  end;
+  asize.X:=apage.PageSizeqt.PhysicWidth;
+  asize.Y:=apage.PageSizeqt.PhysicHeight;
+ end;
+ bitmapwidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
+ bitmapheight:=Round((asize.y/TWIPS_PER_INCHESS)*dpi);
 
 
-  awidth:=bitmapwidth;
-  aheight:=bitmapheight;
+ awidth:=bitmapwidth;
+ aheight:=bitmapheight;
 
 
 
@@ -423,7 +449,29 @@ begin
    scale:=0.01;
   if scale>10 then
    scale:=10;
-
+  if Not assigned(bitmap) then
+  begin
+   bitmap:=TBitmap.Create;
+{$IFNDEF DOTNETDBUGS}
+   bitmap.PixelFormat:=pf32bit;
+   bitmap.HandleType:=bmDIB;
+{$ENDIF}
+  end;
+(*  end
+  else
+  begin
+   if ((bitmap.Width<>bitmapwidth) or (bitmap.height<>bitmapheight)) then
+   begin
+    bitmap.free;
+    bitmap:=nil;
+    bitmap:=TBitmap.Create;
+ {$IFNDEF DOTNETDBUGS}
+    bitmap.PixelFormat:=pf32bit;
+    bitmap.HandleType:=bmDIB;
+ {$ENDIF}
+   end;
+  end;
+*)
   bitmap.Width:=Round(awidth*scale);
   bitmap.Height:=Round(aheight*scale);
   if bitmap.Width<1 then
@@ -432,23 +480,91 @@ begin
    bitmap.Height:=1;
 
   Bitmap.Canvas.Brush.Style:=bsSolid;
-  Bitmap.Canvas.Brush.Color:=CLXColorToVCLColor(report.BackColor);
+  Bitmap.Canvas.Brush.Color:=CLXColorToVCLColor(BackColor);
   rec.Top:=0;
   rec.Left:=0;
-  rec.Right:=Bitmap.Width-1;
-  rec.Bottom:=Bitmap.Height-1;
+  rec.Right:=Bitmap.Width+1;
+  rec.Bottom:=Bitmap.Height+1;
   bitmap.Canvas.FillRect(rec);
   // Define clipping region
-  rec.Left:=Round((pagemargins.Left/TWIPS_PER_INCHESS)*dpi*scale);
-  rec.Top:=Round((pagemargins.Top/TWIPS_PER_INCHESS)*dpi*scale);
-  rec.Right:=Round((pagemargins.Right/TWIPS_PER_INCHESS)*dpi*scale);
-  rec.Bottom:=Round((pagemargins.Bottom/TWIPS_PER_INCHESS)*dpi*scale);
-  pagecliprec:=rec;
-  if (Not drawclippingregion) then
+  if drawclippingregion then
+  begin
+   rec.Left:=Round((pagemargins.Left/TWIPS_PER_INCHESS)*dpi*scale);
+   rec.Top:=Round((pagemargins.Top/TWIPS_PER_INCHESS)*dpi*scale);
+   rec.Right:=Round((pagemargins.Right/TWIPS_PER_INCHESS)*dpi*scale);
+   rec.Bottom:=Round((pagemargins.Bottom/TWIPS_PER_INCHESS)*dpi*scale);
+   pagecliprec:=rec;
+  end;
+{  if (Not drawclippingregion) then
   begin
    aregion:=CreateRectRgn(rec.Left,rec.Top,rec.Right,rec.Bottom);
    SelectClipRgn(bitmap.Canvas.handle,aregion);
   end;
+}
+end;
+
+procedure TRpGDIDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
+   hardwarecollate:boolean);
+var
+ asize:TPoint;
+ qtsize:integer;
+ rpagesizeQt:TPageSizeQt;
+begin
+{$IFNDEF FORWEBAX}
+{$IFDEF USETEECHART}
+ report.OnDrawChart:=Self.DoDrawChart;
+ {$ENDIF}
+{$ENDIF}
+ DrawerBefore:=report.OpenDrawerBefore;
+ DrawerAfter:=report.OpenDrawerAfter;
+ if devicefonts then
+ begin
+  UpdatePrinterFontList;
+ end;
+ if ToPrinter then
+ begin
+  printer.Title:=SRpUntitled;
+  SetOrientation(report.Orientation);
+  // Gets pagesize
+  asize:=GetPageSize(qtsize);
+  pagemargins:=GetPageMarginsTWIPS;
+  if Length(printer.Title)<1 then
+   printer.Title:='Untitled';
+
+  SetPrinterCopies(hardwarecopies);
+  SetPrinterCollation(hardwarecollate);
+
+  if DrawerBefore then
+   SendControlCodeToPrinter(GetPrinterRawOp(selectedprinter,rawopopendrawer));
+  // Sets pagesize
+  rpagesizeQt.papersource:=report.PaperSource;
+  rpagesizeQt.duplex:=report.duplex;
+  if report.PageSize<0 then
+  begin
+   rpagesizeqt.Custom:=True;
+   rPageSizeQt.CustomWidth:=report.CustomX;
+   rPageSizeQt.CustomHeight:=report.CustomY;
+  end
+  else
+  begin
+   rpagesizeqt.Indexqt:=report.PageSize;
+   rpagesizeqt.Custom:=False;
+  end;
+  try
+   SetPagesize(rpagesizeqt);
+  except
+   On E:Exception do
+   begin
+    rpgraphutilsvcl.RpMessageBox(E.Message);
+   end;
+  end;
+  printer.BeginDoc;
+  intdpix:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX); //  printer.XDPI;
+  intdpiy:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY);  // printer.YDPI;
+ end
+ else
+ begin
+  UpdateBitmapSize(report,nil);
  end;
 end;
 
@@ -504,21 +620,18 @@ begin
  end;
 end;
 
-procedure TRpGDIDriver.NewPage;
+procedure TRpGDIDriver.NewPage(metafilepage:TRpMetafilePage);
 begin
  if toprinter then
  begin
-  printer.NewPage;
+  if metafilepage.UpdatedPageSize then
+   DoNewPage(metafilepage.orientation,metafilepage.pagesizeqt)
+  else
+   Printer.NewPage;
  end
  else
  begin
-  bitmap.free;
-  bitmap:=nil;
-  bitmap:=TBitmap.create;
-{$IFNDEF DOTNETDBUGS}
-  bitmap.PixelFormat:=pf32bit;
-  bitmap.HandleType:=bmDIB;
-{$ENDIF}
+  UpdateBitmapSize(nil,metafilepage);
  end;
 end;
 
@@ -937,6 +1050,7 @@ begin
  end
  else
  begin
+  UpdateBitmapSize(nil,apage);
   if assigned(metacanvas) then
   begin
    metacanvas.free;
@@ -1056,7 +1170,32 @@ begin
 end;
 
 procedure TRpGDIDriver.SetOrientation(Orientation:TRpOrientation);
+var
+  Device, Driver, Port: array[0..1023] of char;
+  DeviceMode: THandle;
+  PDevmode:^TDevicemode;
 begin
+ if Printer.Printing then
+ begin
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+  if DeviceMode=0 then
+   exit;
+  PDevMode := GlobalLock(DeviceMode);
+  try
+   PDevMode.dmFields:=dm_Orientation;
+   if Orientation=rpOrientationPortrait then
+    PDevMode.dmOrientation := 1
+   else
+   if Orientation=rpOrientationLandscape then
+    PDevMode.dmOrientation := 2;
+   DocumentProperties(0,Printer.Handle,Device, PDevMode^,
+        PDevMode^, DM_MODIFY);
+   ResetDC(Printer.Handle,PDevMode^);
+  finally
+   GlobalUnLock(DeviceMode);
+  end;
+  exit;
+ end;
  if Orientation=rpOrientationPortrait then
  begin
   if Printer.Orientation<>poPortrait then
@@ -1156,8 +1295,9 @@ begin
    rpagesizeqt.Indexqt:=metafile.PageSize;
    rpagesizeqt.Custom:=False;
   end;
+  gdidriver:=TRpGDIDriver.Create;
   try
-   gdidriver:=TRpGDIDriver.Create;
+   gdidriver.toprinter:=True;
    gdidriver.SetPagesize(rpagesizeqt);
   except
    On E:Exception do
@@ -1225,10 +1365,10 @@ begin
     begin
      for count2:=0 to pagecopies-1 do
      begin
-      if totalcount>0 then
-       printer.NewPage;
-      inc(totalcount);
       apage:=metafile.Pages[i];
+      if totalcount>0 then
+       gdidriver.NewPage(apage);
+      inc(totalcount);
       for j:=0 to apage.ObjectCount-1 do
       begin
        PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,true,pagemargins,devicefonts,offset);
@@ -1672,20 +1812,24 @@ begin
   astring:=SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
    +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
    FormatFloat('#########,####',Sender.RecordCount);
+{$I-}
  {$IFDEF USEVARIANTS}
   WriteLn(astring);
  {$ELSE}
   WriteLn(String(astring));
  {$ENDIF}
+{$I+}
   // If it's the last page prints additional info
   if Sender.LastPage then
   begin
    astring:=Format('%-20.20s',[SRpPage])+FormatFloat('0000000000',Sender.PageNum+1);
+{$I-}
  {$IFDEF USEVARIANTS}
-   WriteLn(astring);
+  WriteLn(astring);
  {$ELSE}
    WriteLn(String(astring));
  {$ENDIF}
+{$I+}
   end;
  end;
  LRecordCount.Caption:=IntToStr(Sender.CurrentSubReportIndex)+':'+SRpPage+':'+
@@ -2378,6 +2522,14 @@ begin
  finally
   diarange.free;
  end;
+end;
+
+function TRpGdiDriver.GetFontDriver:IRpPrintDriver;
+begin
+ if Assigned(FontDriver) then
+  Result:=FontDriver
+ else
+  Result:=Self;
 end;
 
 end.

@@ -23,6 +23,7 @@ object FRpObjInspVCL: TFRpObjInspVCL
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
+    Device = fdBoth
     MinFontSize = 0
     MaxFontSize = 0
     Left = 192

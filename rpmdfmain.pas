@@ -49,8 +49,11 @@ const
   C_FILENAME_WIDTH=40;
 type
   TFRpMainF = class(TForm)
+    FontDialog1:TFontDialog;
     MainMenu1: TMainMenu;
     File1: TMenuItem;
+    MAppFont: TMenuItem;
+    MObjFont: TMenuItem;
     ActionList1: TActionList;
     iconlist: TImageList;
     ToolBar1: TToolBar;
@@ -294,6 +297,8 @@ type
     procedure ADeleteExecute(Sender: TObject);
     procedure AOpenFromExecute(Sender: TObject);
     procedure ASaveToExecute(Sender: TObject);
+    procedure MAppFontClick(Sender: TObject);
+    procedure MObjFontClick(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrame;
@@ -312,7 +317,14 @@ type
 {$IFDEF LINUX}
     usekprinter:boolean;
 {$ENDIF}
-    procedure FreeInterface;
+    FAppFontName:String;
+    FAppFontSize:integer;
+    FAppFontStyle:integer;
+    FAppFontColor:Integer;
+    FObjFontName:String;
+    FObjFontSize:integer;
+    FObjFontStyle:integer;
+    FObjFontColor:Integer;    procedure FreeInterface;
     procedure CreateInterface;
     function checkmodified:boolean;
     procedure DoSave;
@@ -339,6 +351,7 @@ type
     procedure DoOpenFromLib(alibname:String;arepname:WideString);
     procedure DoOpenStream(astream:TStream);
     procedure IdleMaximize(Sender:TObject;var done:Boolean);
+    procedure UpdateFonts;
   public
     { Public declarations }
     report:TRpReport;
@@ -346,6 +359,7 @@ type
     freportstructure:TFRpStructure;
     browsecommandline:boolean;
     procedure RefreshInterface(Sender: TObject);
+    constructor Create(AOwner:TComponent);override;
     function GetExpressionText:string;
   end;
 
@@ -356,6 +370,27 @@ uses Math;
 
 
 {$R *.xfm}
+
+procedure TFRpMainF.UpdateFonts;
+begin
+  Self.Font.Name:=FAppFontName;
+  Self.Font.Size:=FAppFontSize;
+  Self.Font.Style:=IntegerToFontStyle(FAppFontStyle);
+{  QGraphics.DefFontData.Name:=Screen.IconFont.Name;
+  QGraphics.DefFontData.Height:=Screen.IconFont.Height;
+  QGraphics.DefFontData.Style:=Screen.IconFont.Style;
+}  if assigned(freportstructure) then
+  begin
+   RefreshInterface(Self);
+  end;
+end;
+
+
+constructor TFRpMainF.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ LoadConfig;
+end;
 
 // Check if it is saved and return true if all is ok
 function TFRpMainF.CheckSave:Boolean;
@@ -553,6 +588,10 @@ begin
   Caption:=SRpRepman+'-'+filename;
  // Create the report structure frame
  fobjinsp:=TFRpObjInsp.Create(Self);
+ fobjinsp.Font.Style:=IntegerToFontStyle(FObjFontStyle);
+ fobjinsp.Font.Name:=FObjFontName;
+ fobjinsp.Font.Size:=FObjFontSize;
+ fobjinsp.Font.Color:=FObjFontColor;
  fobjinsp.Align:=alclient;
  fobjinsp.Parent:=leftpanel;
  freportstructure:=TFRpStructure.Create(Self);
@@ -740,7 +779,7 @@ begin
 {$ENDIF}
  LastUsedFiles.LoadFromConfigFile(configfile);
  UpdateFileMenu;
- LoadConfig;
+// LoadConfig;
  // A bug in Kylix loading decimal sep, and thousand sep
 {$IFDEF LINUX}
  if thousandseparator=chr(0) then
@@ -753,6 +792,8 @@ begin
  end;
 {$ENDIF}
  // Translate menus and actions
+ MAppFont.Caption:=TranslateStr(1347,MAppFont.Caption);
+ MObjFont.Caption:=TranslateStr(1348,MAppFont.Caption);
  File1.Caption:=TranslateStr(0,File1.Caption);
  Caption:=TranslateStr(1,Caption);
  MReport.Caption:=TranslateStr(2,MReport.Caption);
@@ -1499,9 +1540,31 @@ end;
 procedure TFRpMainF.LoadConfig;
 var
  inif:TInifile;
+ deffontsize:Integer;
 begin
  inif:=TIniFile.Create(configfile);
  try
+  deffontsize:=Self.Font.Size;
+  if Screen.PixelsPerInch>90 then
+  begin
+   deffontsize:=8;
+  end;
+  FAppFontName:=inif.ReadString('Preferences','AppFontName',Self.Font.Name);
+  FAppFontSize:=inif.ReadInteger('Preferences','AppFontSize',deffontsize);
+  FAppFontColor:=inif.ReadInteger('Preferences','AppFontColor',Self.Font.Color);
+  if FAppFontSize<3 then
+   FAppFontSize:=8;
+  FAppFontStyle:=inif.ReadInteger('Preferences','AppFontStyle',FontStyleToInteger(Self.Font.Style));
+
+  FObjFontName:=inif.ReadString('Preferences','ObjFontName',Self.Font.Name);
+  FObjFontSize:=inif.ReadInteger('Preferences','ObjFontSize',7);
+  FObjFontColor:=inif.ReadInteger('Preferences','ObjFontColor',Self.Font.Color);
+  if FObjFontSize<3 then
+   FObjFontSize:=8;
+  FObjFontStyle:=inif.ReadInteger('Preferences','ObjFontStyle',FontStyleToInteger(Self.Font.Style));
+
+  UpdateFonts;
+
   AUnitCms.Checked:=inif.ReadBool('Preferences','UnitCms',true);
   ADriverQt.Checked:=false;
   ADriverGDI.Checked:=false;
@@ -1546,6 +1609,15 @@ var
 begin
  inif:=TIniFile.Create(configfile);
  try
+  inif.WriteString('Preferences','AppFontName',FAppFontName);
+  inif.WriteInteger('Preferences','AppFontSize',FAppFontSize);
+  inif.WriteInteger('Preferences','AppFontColor',FAppFontColor);
+  inif.WriteInteger('Preferences','AppFontStyle',FAppFontStyle);
+  inif.WriteString('Preferences','ObjFontName',FAppFontName);
+  inif.WriteInteger('Preferences','ObjFontSize',FObjFontSize);
+  inif.WriteInteger('Preferences','ObjFontColor',FObjFontColor);
+  inif.WriteInteger('Preferences','ObjFontStyle',FObjFontStyle);
+
   inif.WriteBool('Preferences','UnitCms',AUnitCms.Checked);
   inif.WriteBool('Preferences','DriverQT',ADriverQT.Checked);
   inif.WriteBool('Preferences','DriverGDI',ADriverGDI.Checked);
@@ -2088,5 +2160,37 @@ begin
  end;
 end;
 
+procedure TFRpMainF.MAppFontClick(Sender: TObject);
+begin
+ FontDialog1.Font.Assign(Self.Font);
+ if FontDialog1.Execute then
+ begin
+  FAppFontName:=FontDialog1.Font.Name;
+  FAppFontSize:=FontDialog1.Font.Size;
+  FAppFontColor:=FontDialog1.Font.Color;
+  if FAppFontSize<3 then
+   FAppFontSize:=8;
+  FAppFontStyle:=FontStyleToInteger(FontDialog1.Font.Style);
+  UpdateFonts;
+ end;
+end;
+
+procedure TFRpMainF.MObjFontClick(Sender: TObject);
+begin
+ FontDialog1.Font.Name:=FObjFontName;
+ FontDialog1.Font.Size:=FObjFontSize;
+ FontDialog1.Font.Color:=FObjFontColor;
+ FontDialog1.Font.Style:=IntegerToFontStyle(FObjFontStyle);
+ if FontDialog1.Execute then
+ begin
+  FObjFontName:=FontDialog1.Font.Name;
+  FObjFontSize:=FontDialog1.Font.Size;
+  FObjFontColor:=FontDialog1.Font.Color;
+  if FObjFontSize<3 then
+   FObjFontSize:=8;
+  FObjFontStyle:=FontStyleTOInteger(FontDialog1.Font.Style);
+  UpdateFonts;
+ end;
+end;
 
 end.

@@ -23,12 +23,18 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+int rp_new(void);
 int rp_open(char *filename);
 int rp_execute(int hreport,char *outputfilename,int metafile,int compressed);
 int  rp_close(int hreport);
 int rp_executeremote(char *hostname,int port,char *user,char *password,
  char *aliasname,char *reportname,char *outputfilename,int metafile,
  int compressed);
+int rp_executeremote_report(int hreport,char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *outputfilename,int metafile,
+ int compressed);
+int rp_getremoteparams(int hreport,char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname);
 int rp_setparamvalue(int hreport,char *paramname,int paramtype,
  void *paramvalue);
 int rp_getparamcount(int hreport,int *paramcount);

@@ -64,10 +64,13 @@ type
   FChecking:Boolean;
   FLanguage:Integer;
   FOnGraphicOp:TRpGraphicOpProc;
+  FOnOrientationOp:TRpOrientationOpProc;
+  FOnPageOp:TRpPageOpProc;
   FOnImageOp:TRpImageOpProc;
   FOnBarcodeOp:TRpBarcodeOpProc;
   FOnReOpenOp:TRpReOpenOp;
   FOnTextOp:TRpTextOpProc;
+  FOnTextHeight:TRpTextHeightProc;
   FOnNewLanguage:TRpNewLanguage;
   FOnGetSQLValue:TRpOnGetSQLValue;
   procedure SetExpression(Value:string);
@@ -137,9 +140,12 @@ type
 {$ENDIF}
   property Language:Integer read FLanguage write FLanguage;
   property OnGraphicOp:TRpGraphicOpProc read FOnGraphicOp write FOnGraphicOp;
+  property OnOrientationOp:TRpOrientationOpProc read FOnOrientationOp write FOnOrientationOp;
+  property OnPageOp:TRpPageOpProc read FOnPageOp write FOnPageOp;
   property OnImageOp:TRpImageOpProc read FOnImageOp write FOnImageOp;
   property OnBarcodeOp:TRpbarcodeOpProc read FOnBarcodeOp write FOnBarcodeOp;
   property OnTextOp:TRpTextOpProc read FOnTextOp write FOnTextOp;
+  property OnTextHeight:TRpTextHeightProc read FOnTextHeight write FOnTextHeight;
   property OnReOpenOp:TRpReOpenOp read FOnReOpenOp write FOnReOpenOp;
   property OnGetSQLValue:TRpOnGetSQLValue read FOnGetSQLValue write FOnGetSQLValue;
   property OnNewLanguage:TRpNewLanguage read FOnNewLanguage write FOnNewLanguage;
@@ -319,10 +325,16 @@ begin
  iden:=TIdenReplaceStr.Create(nil);
  Rpfunctions.AddObject('REPLACESTR',iden);
  // Advanced reporting drawing operations
+ iden:=TIdenOrientationOperation.Create(nil);
+ Rpfunctions.AddObject('SETPAGEORIENTATION',iden);
+ iden:=TIdenPageOperation.Create(nil);
+ Rpfunctions.AddObject('SETPAGESOURCE',iden);
  iden:=TIdenGraphicOperation.Create(nil);
  Rpfunctions.AddObject('GRAPHICOP',iden);
  iden:=TIdenTextOperation.Create(nil);
  Rpfunctions.AddObject('TEXTOP',iden);
+ iden:=TIdenTextHeight.Create(nil);
+ Rpfunctions.AddObject('TEXTHEIGHT',iden);
  iden:=TIdenImageOperation.Create(nil);
  Rpfunctions.AddObject('IMAGEOP',iden);
  iden:=TIdenBarcodeOperation.Create(nil);

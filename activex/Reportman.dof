@@ -113,9 +113,9 @@ RootDir=C:\prog\Delphi6\Bin\
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=2
-MinorVer=2
-Release=2
-Build=10
+MinorVer=3
+Release=0
+Build=1
 Debug=0
 PreRelease=1
 Special=0
@@ -126,13 +126,13 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Active X control
-FileVersion=2.2.2.10
+FileVersion=2.3.0.1
 InternalName=ReportManX
 LegalCopyright=MPL License
 LegalTrademarks=
 OriginalFilename=Reportman.ocx
 ProductName=Report Manager ActiveX
-ProductVersion=2.1.0.0
+ProductVersion=2.3.0.0
 Comments=
 OleSelfRegister=1
 [Excluded Packages]
@@ -141,8 +141,8 @@ h:\prog\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
 [HistoryLists\hlConditionals]
 Count=3
 Item0=REPMANRELEASE
-Item1=FORWEBAX
-Item2=NOLINUXPRINTBUG;FORWEBAX
+Item1=NOLINUXPRINTBUG;FORWEBAX
+Item2=FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

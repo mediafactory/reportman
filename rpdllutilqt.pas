@@ -46,6 +46,8 @@ function rp_print(hreport:integer;Title:PChar;
 function rp_preview(hreport:integer;Title:PChar):integer;stdcall;
 function rp_previewremote(hostname:PChar;port:integer;user,password,aliasname,reportname,title:PChar):integer;stdcall;
 function rp_printremote(hostname:PChar;port:integer;user,password,aliasname,reportname,title:PChar;showprogress,showprintdialog:integer):integer;stdcall;
+function rp_previewremote_report(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname,title:PChar):integer;stdcall;
+function rp_printremote_report(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname,title:PChar;showprogress,showprintdialog:integer):integer;stdcall;
 
 
 implementation
@@ -112,6 +114,101 @@ begin
 {$IFDEF LINUX}
   ShowPreview(report,Title,true,modified);
 {$ENDIF}
+ except
+  on E:Exception do
+  begin
+   rplasterror:=E.Message;
+   Result:=0;
+  end;
+ end;
+end;
+
+function rp_previewremote_report(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname,title:PChar):integer;stdcall;
+var
+{$IFDEF MSWINDOWS}
+ rep:TVCLReport;
+{$ENDIF}
+{$IFDEF LINUX}
+ rep:TCLXReport;
+{$ENDIF}
+ memstream:TMemoryStream;
+ report:TRpReport;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ Result:=1;
+ try
+{$IFDEF MSWINDOWS}
+  rep:=TVCLReport.Create(nil);
+{$ENDIF}
+{$IFDEF LINUX}
+  rep:=TCLXReport.Create(nil);
+{$ENDIF}
+  try
+   rep.Preview:=true;
+   rep.Title:=title;
+   report:=FindReport(hreport);
+   memstream:=TMemoryStream.Create;
+   try
+    report.SaveToStream(memstream);
+    memstream.Seek(0,soFromBeginning);
+    rep.LoadFromStream(memstream);
+   finally
+    memstream.free;
+   end;
+   rep.ExecuteRemote(hostname,port,user,password,aliasname,reportname);
+  finally
+   rep.free;
+  end;
+ except
+  on E:Exception do
+  begin
+   rplasterror:=E.Message;
+   Result:=0;
+  end;
+ end;
+end;
+
+
+function rp_printremote_report(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname,title:PChar;showprogress,showprintdialog:integer):integer;stdcall;
+var
+{$IFDEF MSWINDOWS}
+ rep:TVCLReport;
+{$ENDIF}
+{$IFDEF LINUX}
+ rep:TCLXReport;
+{$ENDIF}
+ memstream:TMemoryStream;
+ report:TRpReport;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ Result:=1;
+ try
+{$IFDEF MSWINDOWS}
+  rep:=TVCLReport.Create(nil);
+{$ENDIF}
+{$IFDEF LINUX}
+  rep:=TCLXReport.Create(nil);
+{$ENDIF}
+  try
+   rep.Preview:=false;
+   rep.Title:=title;
+   rep.ShowPrintDialog:=(showprintdialog<>0);
+   rep.ShowProgress:=(showprogress<>0);
+   report:=FindReport(hreport);
+   memstream:=TMemoryStream.Create;
+   try
+    report.SaveToStream(memstream);
+    memstream.Seek(0,soFromBeginning);
+    rep.LoadFromStream(memstream);
+   finally
+    memstream.free;
+   end;
+   rep.ExecuteRemote(hostname,port,user,password,aliasname,reportname);
+  finally
+   rep.free;
+  end;
  except
   on E:Exception do
   begin

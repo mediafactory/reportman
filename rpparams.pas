@@ -275,7 +275,7 @@ begin
   end;
   if aoption>=fvalues.Count then
   begin
-   Result:=Null;
+   Result:=FValue;
   end
   else
   begin

@@ -67,7 +67,8 @@ const
  MILIS_PROGRESS=500;
  RP_SIGNATURELENGTH=13;
  // The metafile signature and version
- RpSignature:string='RPMETAFILE07'+chr(0);
+ RpSignature:string='RPMETAFILE08'+chr(0);
+ RpSignature2_2:string='RPMETAFILE07'+chr(0);
 const
  FIRST_ALLOCATION_OBJECTS=50;
  FIRST_ALLOCATED_WIDESTRING=1000;
@@ -221,7 +222,7 @@ type
    hardwarecollate:boolean);
   procedure EndDocument;
   procedure AbortDocument;
-  procedure NewPage;
+  procedure NewPage(metafilepage:TRpMetafilePage);
   procedure EndPage;
   function GetPageSize(var PageSizeQt:Integer):TPoint;
   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
@@ -237,6 +238,7 @@ type
   function SupportsCollation:boolean;
   function AllowCopies:boolean;
   procedure SelectPrinter(printerindex:TRpPrinterSelect);
+  function GetFontDriver:IRpPrintDriver;
  end;
 
 {$IFNDEF FORWEBAX}
@@ -246,6 +248,8 @@ type
 
  TRpMetafilePage=class(TObject)
   private
+   Fversion2_2:Boolean;
+   FUpdatedPageSize:Boolean;
    FObjects:array of TRpMetaObject;
    FObjectCount:Integer;
    FPool:Widestring;
@@ -254,6 +258,8 @@ type
    FMemStream:TMemoryStream;
    FIntStream:TMemoryStream;
    FMark:Integer;
+   FOrientation:TRpOrientation;
+   FPageSizeqt:TPageSizeQt;
    function GetObject(index:integer):TRpMetaObject;
    procedure NewWideString(var position,size:integer;const text:widestring);
   public
@@ -280,6 +286,10 @@ type
    property ObjectCount:integer read FObjectCount;
    property Pool:WideString read FPool;
    property Objects[Index:integer]:TRpMetaObject read GetObject;
+   property Orientation:TRpOrientation read FOrientation write FOrientation;
+   property PageSizeqt:TPageSizeQt read FPageSizeQt write FPageSizeQt;
+   property UpdatedPageSize:Boolean read FUpdatedPageSize
+    write FUpdatedPageSize default false;
   end;
 
  TRpMetafileStreamProgres=procedure (Sender:TRpMetafileReport;Position,Size:int64;page:integer) of object;
@@ -298,6 +308,7 @@ type
    difmilis:int64;
    FPreviewAbout:Boolean;
    FPreviewMargins:Boolean;
+   Fversion2_2:Boolean;
    procedure SetCurrentPage(index:integer);
    function GetPageCount:integer;
    function GetPage(Index:integer):TRpMetafilePage;
@@ -840,6 +851,7 @@ begin
  // Clears the report metafile
  if clearfirst then
   Clear;
+ FVersion2_2:=false;
  SetLength(buf,RP_SIGNATURELENGTH);
  bytesread:=Stream.Read(buf[0],RP_SIGNATURELENGTH);
  if (bytesread<RP_SIGNATURELENGTH) then
@@ -850,7 +862,12 @@ begin
   bufstring:=bufstring+Char(buf[i]);
  end;
  if (bufstring<>rpSignature) then
-  Raise Exception.Create(SRpBadSignature);
+ begin
+  if bufstring=RpSignature2_2 then
+   FVersion2_2:=true
+  else
+   Raise Exception.Create(SRpBadSignature);
+ end;
  if (sizeof(separator)<>Stream.Read(separator,sizeof(separator))) then
   Raise Exception.Create(SRpBadFileHeader);
  if (separator<>integer(rpFHeader)) then
@@ -912,7 +929,7 @@ begin
   // New page and load from stream
   fpage:=TRpMetafilePage.Create;
   FPages.Add(fpage);
-
+  FPage.Fversion2_2:=Fversion2_2;
   fpage.LoadFromStream(Stream);
 
   if Assigned(FOnProgress) then
@@ -957,6 +974,9 @@ begin
  separator:=integer(rpFObject);
  Stream.Write(separator,sizeof(separator));
  Stream.Write(FMark,sizeof(FMark));
+ Stream.Write(orientation,sizeof(orientation));
+ Stream.Write(pagesizeqt,sizeof(pagesizeqt));
+ Stream.Write(FUpdatedPageSize,sizeof(FUpdatedPageSize));
  Stream.Write(FObjectCount,sizeof(FObjectCount));
  byteswrite:=sizeof(TRpMetaObject)*FObjectCount;
  SetLength(abytes,byteswrite);
@@ -1009,6 +1029,18 @@ begin
  bytesread:=Stream.Read(FMark,sizeof(FMark));
  if (bytesread<>sizeof(FMark)) then
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+ if FVersion2_2 then
+ begin
+  bytesread:=Stream.Read(Forientation,sizeof(Forientation));
+  if (bytesread<>sizeof(Forientation)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  bytesread:=Stream.Read(Fpagesizeqt,sizeof(Fpagesizeqt));
+  if (bytesread<>sizeof(Fpagesizeqt)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  bytesread:=Stream.Read(FUpdatedPageSize,sizeof(FUpdatedPageSize));
+  if (bytesread<>sizeof(FUpdatedPageSize)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+ end;
  bytesread:=Stream.Read(objcount,sizeof(objcount));
  if (bytesread<>sizeof(objcount)) then
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
@@ -1145,7 +1177,7 @@ begin
   for i:=0 to PageCount-1 do
   begin
    if i>0 then
-    IDriver.NewPage;
+    IDriver.NewPage(Pages[i]);
    CurrentPage:=i;
    DrawPageOnly(IDriver);
   end;

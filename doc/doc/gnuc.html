@@ -76,9 +76,10 @@
 <p>Note the libraries that ususally uses the designer and the database libraries 
   must be in library path, and you should use the same launch script (repmand.sh) 
   to start your compiled applications.</p>
-<p>Libarary functionality is about returning a handle to a report and process 
-  this report passing the handle to next report engine function calls:</p>
-<p>int rp_open(char *filename);<br>
+<p>Library functionality is about returning a handle to a report and process this 
+  report passing the handle to next report engine function calls:</p>
+<p>int rp_new();<br>
+  int rp_open(char *filename);<br>
   int rp_execute(int hreport,char *outputfilename,int metafile,int compressed);<br>
   <br>
   int rp_close(int hreport);<br>
@@ -86,10 +87,20 @@
   int rp_print(int hreport,char *title,int showprogress,int showprintdialog);<br>
   int rp_previewremote(char *hostname,int port,char *user,char *password, char 
   *aliasname,char *reportname,char *title);<br>
+  int rp_getremoteparams(int hreport,char *hostname,int port,char *user,char *password, 
+  char *aliasname,char *reportname);<br>
   int rp_executeremote(char *hostname,int port,char *user,char *password, char 
   *aliasname,char *reportname,char *outputfilename,int metafile, int compressed);<br>
   int rp_printremote(char *hostname,int port,char *user,char *password, char *aliasname,char 
   *reportname,char *title,int showprogress, int showprintdialog)<br>
+  int rp_previewremote_report(int hreport,char *hostname,int port,char *user,char 
+  *password, char *aliasname,char *reportname,char *title);<br>
+  int rp_executeremote_report(int hreport,char *hostname,int port,char *user,char 
+  *password, char *aliasname,char *reportname,char *outputfilename,int metafile, 
+  int compressed);<br>
+  int rp_printremote_report(int hreport,char *hostname,int port,char *user,char 
+  *password, char *aliasname,char *reportname,char *title,int showprogress, int 
+  showprintdialog)<br>
   int rp_preview(int hreport,char *title);<br>
   int rp_setparamvalue(int hreport,char *paramname, int paramtype,void *paramvalue);<br>
   int rp_setparamvaluevar(int hreport,char *paramname, OleVariant paramvalue);<br>

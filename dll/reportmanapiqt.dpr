@@ -25,7 +25,10 @@ uses
 
 exports
  rp_open,
+ rp_new,
  rp_execute,
+ rp_executeremote,
+ rp_executeremote_report,
  rp_close,
  rp_lasterror,
  rp_setparamvalue,
@@ -33,8 +36,11 @@ exports
  rp_getparamcount,
  rp_print,
  rp_preview,
+ rp_previewremote_report,
  rp_previewremote,
- rp_printremote;
+ rp_printremote,
+ rp_printremote_report;
+
 
 type
  Tobjexp=class(TObject)
@@ -53,11 +59,7 @@ var
 
 begin
  // We want to map Linux Signals to Kylix Exceptions, so
- // we call HookSignal to hook all the default signals.
- HookSignal(RTL_SIGDEFAULT);
-
- // Install the Exit handler.
- DLLProc := @DLLHandler;
+ // we call HookSignal to hook all the default signals.  HookSignal(RTL_SIGDEFAULT);   // Install the Exit handler.  DLLProc := @DLLHandler;
  objexp:=TObjExp.Create;
  Application.OnException:=objexp.OnException;
 end.

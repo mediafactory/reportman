@@ -83,7 +83,7 @@ procedure ShowDataConfig(report:TRpReport);
 var
  dia:TFRpDInfoVCL;
 begin
- UpdateConAdmin;
+// UpdateConAdmin;
 
  dia:=TFRpDInfoVCL.Create(Application);
  try

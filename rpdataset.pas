@@ -185,6 +185,7 @@ begin
  {$ENDIF}
    end;
    CreateDataset;
+   FCopyDataset.Close;
    FCopyDataset.FieldDefs.Assign(FieldDefs);
    FCopyDataset.CreateDataSet;
    FCopyDataset.LogChanges:=false;

@@ -352,7 +352,7 @@ begin
       data.Seek(0,soFromBeginning);
       if syncexec then
       begin
-       if CB.Command in [repexecutereportmeta,repexecutereportpdf,repopenreport,reperror] then
+       if CB.Command in [repgetparams,repsetparams,repauth,repexecutereportmeta,repexecutereportpdf,repopenreport,reperror] then
        begin
         if threadsafeexec then
         begin
@@ -411,7 +411,21 @@ begin
 
   arec:=GenerateUserNameData(user,password);
   try
-   SendBlock(amod.RepClient,arec);
+   amod.ClientHandleThread.threadsafeexec:=true;
+//   if asynchronous then
+//   begin
+//    SendBlock(RepClient,arec);
+//   end
+//   else
+   begin
+    amod.ClientHandleThread.syncexec:=true;
+    amod.FEndReport.ReSetEvent;
+    // Sets an event and waits for its signal
+    SendBlock(amod.RepClient,arec);
+    amod.FEndReport.WaitFor(20000);
+    if Not amod.FAuthorized then
+     Raise Exception.Create(SRpAuthFailed);
+   end;
   finally
    FreeBlock(arec);
   end;
@@ -501,6 +515,7 @@ begin
   alist.add(aliasname+'='+reportname);
   arec:=GenerateBlock(repopenreport,alist);
   try
+   ClientHandleThread.threadsafeexec:=threadsafeexec;
    if asynchronous then
    begin
     SendBlock(RepClient,arec);
@@ -528,8 +543,10 @@ var
 begin
  alist:=TStringList.Create;
  try
+  ClientHandleThread.threadsafeexec:=threadsafeexec;
   arec:=GenerateBlock(repexecutereportmeta,alist);
   try
+   ClientHandleThread.threadsafeexec:=threadsafeexec;
    if asynchronous then
    begin
     SendBlock(RepClient,arec);
@@ -644,7 +661,19 @@ begin
  try
   arec:=GenerateBlock(repgetparams,alist);
   try
-   SendBlock(RepClient,arec);
+   ClientHandleThread.threadsafeexec:=threadsafeexec;
+   if asynchronous then
+   begin
+    SendBlock(RepClient,arec);
+   end
+   else
+   begin
+    ClientHandleThread.syncexec:=true;
+    FEndReport.ReSetEvent;
+    // Sets an event and waits for its signal
+    SendBlock(RepClient,arec);
+    FEndReport.WaitFor($FFFFFFFF);
+   end;
   finally
    FreeBlock(arec);
   end;
@@ -927,7 +956,19 @@ begin
   astream.Seek(0,soFromBeginning);
   arec:=GenerateBlock(repsetparams,astream);
   try
-   SendBlock(RepClient,arec);
+   ClientHandleThread.threadsafeexec:=threadsafeexec;
+   if asynchronous then
+   begin
+    SendBlock(RepClient,arec);
+   end
+   else
+   begin
+    ClientHandleThread.syncexec:=true;
+    FEndReport.ReSetEvent;
+    // Sets an event and waits for its signal
+    SendBlock(RepClient,arec);
+    FEndReport.WaitFor($FFFFFFFF);
+   end;
   finally
    FreeBlock(arec);
   end;

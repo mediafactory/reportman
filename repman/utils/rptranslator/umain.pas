@@ -19,7 +19,7 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls,rptranslator, DBCtrls, Grids, DBGrids, Db, DBClient, Menus,
   ActnList, ExtCtrls, ToolWin, ComCtrls,Consts, ImgList, rpeval,
-  clipbrd,rpmdconsts,comobj;
+  clipbrd,rpmdconsts,comobj, TntDBGrids;
 
 
 resourcestring
@@ -47,7 +47,7 @@ type
     ToolBar1: TToolBar;
     PParent: TPanel;
     DBMemo1: TDBMemo;
-    GridEdit: TDBGrid;
+    GridEdit: TTntDBGrid;
     Options1: TMenuItem;
     AllowInsert1: TMenuItem;
     Splitter1: TSplitter;
@@ -371,7 +371,7 @@ begin
  begin
   GridEdit.Canvas.Brush.Color:=clInfoBk;
  end;
- GridEdit.DefaultDrawColumnCell(Rect,DataCol,Column,State);
+ GridEdit.DefaultDrawColumnCell(Rect,DataCol,TTntColumn(Column),State);
 end;
 
 procedure TFMain.AppHint(Sender:TObject);

@@ -204,6 +204,21 @@ type
    constructor Create(AOwner:TComponent);override;
   end;
 
+ TIdenOrientationOperation=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+ TIdenPageOperation=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+
  TIdenImageOperation=class(TIdenFunction)
   protected
    function GetRpValue:TRpValue;override;
@@ -226,6 +241,13 @@ type
   end;
 
  TIdenTextOperation=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+ TIdenTextHeight=class(TIdenFunction)
   protected
    function GetRpValue:TRpValue;override;
   public
@@ -1931,6 +1953,43 @@ begin
   Result:=false;
 end;
 
+{ TIdenTextHeight }
+
+constructor TIdenTextHeight.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=8;
+ IdenName:='TextHeight';
+ Help:='';
+ model:='function OnTextheight(Text,LFontName,WFontName:WideString;'+#10+
+     'RectWidth,FontSize,FontStyle,Type1Font:integer;'+#10+
+     'PrintStep:integer):integer';
+ aParams:='';
+end;
+
+{**************************************************************************}
+
+function TIdenTextHeight.GeTRpValue:TRpValue;
+var
+ i:integer;
+begin
+ for i:=0 to ParamCount-1 do
+ begin
+  if (i in [0..2]) then
+   if (Not (VarIsString(Params[i]))) then
+    Raise TRpNamedException.Create(SRpEvalType,IdenName);
+  if (i in [3..7]) then
+   if (Not (VarIsInteger(Params[i]))) then
+    Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ end;
+ if Assigned((evaluator As TRpEvaluator).OnTextHeight) then
+  Result:=(evaluator As TRpEvaluator).OnTextHeight(Params[0],Params[1],Params[2],
+   Params[3],Params[4],params[5],Params[6],Params[7])
+ else
+  Result:=0;
+end;
+
+
 { TIdenBarcodeOperation }
 
 constructor TIdenBarcodeOperation.Create(AOwner:TComponent);
@@ -1986,6 +2045,77 @@ begin
  else
   Result:=false;
 end;
+
+// Operations to change orientation and page size
+constructor TIdenOrientationOperation.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='SetPageOrientation';
+ Help:='';
+ model:='function '+'SetPageOrientation'+'(orientation:integer):Boolean';
+ aParams:='';
+end;
+
+{**************************************************************************}
+
+function TIdenOrientationOperation.GeTRpValue:TRpValue;
+begin
+ if (Not VarIsInteger(Params[0])) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if Assigned((evaluator As TRpEvaluator).OnOrientationOp) then
+  Result:=(evaluator As TRpEvaluator).OnOrientationOp(Params[0])
+ else
+  Result:=false;
+end;
+
+constructor TIdenPageOperation.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=7;
+ IdenName:='SetPageSource';
+ Help:='';
+{ TPageSizeQt=record
+  Indexqt:integer;
+  Custom:boolean;
+  CustomWidth:integer;
+  CustomHeight:integer;
+  PaperSource:integer;
+  ForcePaperName:String;
+  Duplex:integer;
+ end;
+}
+ model:='function '+'SetPageSource'+'(QtIndex:integer;'+#10+
+  'Custom:Boolean;CustomWidth,CustomHeight,PaperSource:integer;'+#10+
+  'ForcePaperName:String;Duplex:integer):Boolean';
+ aParams:='';
+end;
+
+{**************************************************************************}
+
+function TIdenPageOperation.GeTRpValue:TRpValue;
+begin
+ if (Not VarIsInteger(Params[0])) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if Vartype(Params[1])<>varBoolean then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not VarIsInteger(Params[2])) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not VarIsInteger(Params[3])) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not VarIsInteger(Params[4])) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not VarIsString(Params[5])) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not VarIsInteger(Params[6])) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if Assigned((evaluator As TRpEvaluator).OnPageOp) then
+  Result:=(evaluator As TRpEvaluator).OnPageOp(Params[0],
+   Params[1],Params[2],Params[3],Params[4],Params[5],Params[6])
+ else
+  Result:=false;
+end;
+
 
 
 end.

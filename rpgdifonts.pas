@@ -28,7 +28,7 @@ uses windows, Messages, SysUtils, Classes, Graphics, Controls,printers,
 {$IFDEF DOTNETD}
  System.Drawing,
 {$ENDIF}
- rptypes;
+ rptypes,syncobjs;
 
 type
   TPrinterFont=class(TObject)
@@ -233,7 +233,12 @@ var
  fm:array of FontFamily;
  Fontimp:TPrinterFont;
 {$ENDIF}
+ critsec:TCriticalSection;
 begin
+ critsec:=TCriticalSection.Create;
+ try
+  critsec.Enter;
+  try
  Result:=false;
  if Printer.printers.count<1 then
  begin
@@ -279,6 +284,12 @@ begin
 {$ENDIF}
  printerFonts.Sort(CompareFonts);
  printerSorted.Assign(Printer.Fonts);
+ finally
+  critsec.Leave;
+ end;
+ finally
+  critsec.free;
+ end;
 end;
 
 procedure FindScreenDeviceFont(FOnt:TFont;fstep:TRpFontStep);

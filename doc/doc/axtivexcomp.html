@@ -71,6 +71,7 @@ time
   procedure Compose(Report:IReportReport;execute:Boolean);<br>
   procedure SaveToText(const filename, textdriver: String);<br>
   procedure SaveToExcel(const filename: String); // Needs Excel installation</p>
+<p>&nbsp;</p>
 <p><b>Since version 2.0</b></p>
 <p>procedure SaveToHTML(const filename: String); </p>
 <p>Early binding (VTables) and late binding (OleAuto) is supported<br>
@@ -82,7 +83,14 @@ procedure SaveToSVG(const filename: String);<br>
 procedure SetRecordSet(const datasetname: String,recordset: OleVariant);
 </p>
 <p><b>Since version 2.3</b></p>
-<p>procedure SaveToMetafile(const filename: String);</p>
+<p>procedure SaveToMetafile(const filename: String);<br>
+  procedure SaveExcel2(const filename: String); // Save to excel in only one sheet 
+  <br>
+  property SetDefaultPrinter:WideString; // Sets &amp; gets the default printer 
+  for Report Manager Engine<br>
+  property PrintersAvailable:WideString; // Gets a list of the available printers 
+  separated by a LF (Chr(10))<br>
+  procedure GetRemoteParams(hostname:string;port:integer;user,password,aliasname,hostname:string)</p>
 <h3>Using the control with VB like languages</h3>
 <p>The ActiveX control may be used directly in VB, VBScript, ASP and WSH. In the 
   VB environment you are generally recommended to &quot;Reference&quot; the control 
@@ -161,9 +169,8 @@ to be used has been identified. For further information on parameters please see
 <p> procedure GetPDF(const Report: IReportReport; Compressed: WordBool);<br>
   procedure GetCustomText(const Report: IReportReport);<br>
   procedure GetText(const Report: IReportReport);<br>
-  procedure GetCSV(const Report: IReportReport);<br>
-</p>
-<p>Version 2.2 DelphiASPObj have this new procedures:</p>
+  procedure GetCSV(const Report: IReportReport);</p>
+<p>Version 2.3 DelphiASPObj have this new procedures:</p>
 <p>procedure GetMetafile(const Report: IReportReport);<br>
 </p>
 <p>&nbsp; </p>

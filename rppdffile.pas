@@ -88,7 +88,10 @@ type
  TRpPDFFile=class;
 
 
-
+ TRpPageInfo=class(TObject)
+  public
+   APageWidth,APageHeight:integer
+ end;
 
  TRpPDFCanvas=class(TObject)
   private
@@ -142,6 +145,7 @@ type
 
  TRpPDFFile=class(TComponent)
   private
+   FPageInfos:TStringList;
    FCanvas:TRpPDFCanvas;
    FPrinting:Boolean;
    FCompressed:boolean;
@@ -186,7 +190,7 @@ type
    procedure SetFontType;
    procedure CreateFont(Subtype,BaseFont,Encoding:string);
    procedure SetPages;
-   procedure SetPageObject;
+   procedure SetPageObject(index:integer);
    procedure SetArray;
    procedure SetCatalog;
    procedure SetXref;
@@ -194,10 +198,11 @@ type
    procedure SetResolution(Newres:integer);
    procedure ClearBitmaps;
    procedure WriteBitmap(index:Integer);
+   procedure FreePageInfos;
  public
    DestStream:TStream;
    procedure BeginDoc;
-   procedure NewPage;
+   procedure NewPage(NPageWidth,NPageHeight:integer);
    procedure EndDoc;
    procedure AbortDoc;
    constructor Create(AOwner:TComponent);override;
@@ -434,6 +439,7 @@ constructor TRpPDFFile.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FPageInfos:=TStringList.create;
  FCanvas:=TRpPDFCanvas.Create(Self);
  FMainPDF:=TMemoryStream.Create;
  FTempStream:=TMemoryStream.Create;
@@ -450,6 +456,7 @@ end;
 
 destructor TRpPDFFile.Destroy;
 begin
+ FreePageInfos;
  FMainPDF.Free;
  FTempStream.Free;
  FsTempStream.Free;
@@ -477,7 +484,16 @@ begin
 end;
 
 procedure TRpPDFFile.BeginDoc;
+var
+ aobj:TRpPageInfo;
 begin
+ FreePageInfos;
+
+ aobj:=TRpPageInfo.Create;
+ aobj.APageWidth:=FPageWidth;
+ aobj.APageHeight:=FPageHeight;
+ FPageInfos.AddObject('',aobj);
+
  ClearBitmaps;
  FPrinting:=true;
  FStreamValid:=false;
@@ -574,11 +590,19 @@ begin
 end;
 
 
-procedure TRpPDFFile.NewPage;
+procedure TRpPDFFile.NewPage(NPageWidth,NPageHeight:integer);
 var
  TempSize:LongInt;
+ aobj:TRpPageInfo;
 begin
  CheckPrinting;
+
+ FPageWidth:=NPageWidth;
+ FPageHeight:=NPageHeight;
+ aobj:=TRpPageInfo.Create;
+ aobj.APageWidth:=NPageWidth;
+ aobj.APageHeight:=NPageHeight;
+ FPageInfos.AddObject('',aobj);
 
  FPage:=FPage+1;
 
@@ -724,14 +748,20 @@ begin
  FTempStream.SaveToStream(FMainPDF);
 end;
 
-procedure TrpPDFFile.SetPageObject;
+procedure TrpPDFFile.SetPageObject(index:integer);
+var
+ aobj:TRpPageInfo;
 begin
+ aobj:=TRpPageInfo(FPageInfos.Objects[index-1]);
+
  FObjectCount:=FObjectCount+1;
  FTempStream.Clear;
  SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
  SWriteLine(FTempStream,'<< /Type /Page');
  SWriteLine(FTempStream,'/Parent '+IntToStr(FParentNum)+' 0 R');
- SWriteLine(FTempStream,'/MediaBox [ 0 0 '+Canvas.UnitsToTextX(FPageWidth)+' '+Canvas.UnitsToTextX(FPageHEight)+']');
+// SWriteLine(FTempStream,'/MediaBox [ 0 0 '+Canvas.UnitsToTextX(FPageWidth)+' '+Canvas.UnitsToTextX(FPageHEight)+']');
+ SWriteLine(FTempStream,'/MediaBox [ 0 0 '+
+  Canvas.UnitsToTextX(aobj.APageWidth)+' '+Canvas.UnitsToTextX(aobj.APageHEight)+']');
  SWriteLine(FTempStream,'/Contents '+FPages.Strings[FCurrentSetPageObject]+' 0 R');
  SWriteLine(FTempStream,'/Resources '+IntToStr(FResourceNum)+' 0 R');
  SWriteLine(FTempStream,'>>');
@@ -900,7 +930,7 @@ begin
   WriteBitmap(i);
  for i:= 1 to FPage do
  begin
-  SetPageObject;
+  SetPageObject(i);
  end;
  SetCatalog;
  SetXref;
@@ -2842,7 +2872,16 @@ begin
  end;
 end;
 
-
+procedure TRpPDFFile.FreePageInfos;
+var
+ i:integer;
+begin
+ for i:=0 to FPageInfos.Count-1 do
+ begin
+  FPageInfos.Objects[i].free;
+ end;
+ FPageInfos.Clear;
+end;
 
 end.
 

@@ -23,10 +23,11 @@ interface
 {$I rpconf.inc}
 
 uses Classes,Sysutils,rpreport,rpmdconsts,
- rpalias,rpsubreport,rpsection,rpprintitem,rptypes,rpdatainfo,
+ rpalias,rpsubreport,rpsection,rpprintitem,rptypes,
+ rpdatainfo,
  rphtmldriver,rpcsvdriver,rpsvgdriver,
 {$IFDEF USEINDY}
- rpmdrepclient,
+ rpmdrepclient,rpparams,SyncObjs,
 {$ENDIF}
  rpmetafile;
 
@@ -48,6 +49,7 @@ type
    FRemoteError:Boolean;
    FRemoteMessage:WideString;
    procedure OnRemoteError(Sender:TObject;aMessage:WideString);
+   procedure OnGetParams(astream:TMemoryStream);
 {$ENDIF}
    procedure InternalSetBeforePrint;
    function GetReport:TRpReport;
@@ -75,6 +77,7 @@ type
    procedure LoadFromFile(AFilename:string);
    procedure LoadFromStream(stream:TStream);
    procedure ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
+   procedure GetRemoteParams(hostname:String;port:integer;user,password,aliasname,reportname:String);
    property Report:TRpReport read GetReport;
    property Preview:Boolean read FPreview write FPreview default true;
    property ShowProgress:boolean read FShowProgress write FShowProgress
@@ -267,11 +270,60 @@ begin
 end;
 {$ENDIF}
 
+
+{$IFDEF USEINDY}
+procedure TCBaseReport.OnGetParams(astream:TMemoryStream);
+var
+ acompo:TRpParamComp;
+ reader:TReader;
+begin
+ acompo:=TRpParamComp.Create(nil);
+ try
+  reader:=TReader.Create(astream,4096);
+  try
+   reader.ReadRootComponent(acompo);
+   if assigned(FReport) then
+   begin
+    FReport.free;
+    FReport:=nil;
+   end;
+   FReport:=TRpReport.Create(Self);
+   FReport.Params.Assign(acompo.params);
+  finally
+   reader.free;
+  end;
+ finally
+  acompo.free;
+ end;
+end;
+{$ENDIF}
+
+procedure TCBaseReport.GetRemoteParams(hostname:String;port:integer;user,password,aliasname,reportname:String);
+{$IFDEF USEINDY}
+var
+ client:Tmodclient;
+{$ENDIF}
+begin
+{$IFDEF USEINDY}
+ client:=Connect(hostname,user,password,port);
+ try
+  client.threadsafeexec:=true;
+  client.OnError:=OnRemoteError;
+  client.OnGetParams:=OnGetParams;
+  client.OpenReport(aliasname,reportname);
+  client.GetParams;
+ finally
+  Disconnect(client);
+ end;
+{$ENDIF}
+end;
+
 procedure TCBaseReport.ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
 {$IFDEF USEINDY}
 var
  client:Tmodclient;
  metafile:TRpMetafileReport;
+ acompo:TRpParamComp;
 {$ENDIF}
 begin
 {$IFDEF USEINDY}
@@ -282,7 +334,19 @@ begin
    client.threadsafeexec:=true;
    Fremoteerror:=false;
    client.OnError:=OnRemoteError;
-   client.Execute(aliasname,reportname);
+   client.OpenReport(aliasname,reportname);
+   if Assigned(FReport) then
+   begin
+    acompo:=TRpParamComp.Create(nil);
+    try
+     acompo.Params.Assign(FReport.Params);
+     client.ModifyParams(acompo);
+    finally
+     acompo.free;
+    end;
+   end;
+   client.Execute;
+//   client.Execute(aliasname,reportname);
    if Fremoteerror then
     Raise Exception.Create(Fremotemessage);
    client.Stream.Seek(0,soFromBeginning);

@@ -33,11 +33,15 @@ var
  lasthandle:integer;
  rplasterror:String;
 
+function rp_new:integer;stdcall;
 function rp_open(filename:PChar):integer;stdcall;
 function rp_execute(hreport:integer;outputfilename:PChar;metafile,
  compressed:integer):integer;stdcall;
 function rp_executeremote(hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
  compressed:integer):integer;stdcall;
+function rp_executeremote_report(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
+ compressed:integer):integer;stdcall;
+function rp_getremoteparams(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname:PChar):integer;stdcall;
 function rp_close(hreport:integer):integer;stdcall;
 function rp_lasterror:PChar;stdcall;
 function rp_setparamvalue(hreport:integer;paramname:pchar;paramtype:integer;
@@ -81,7 +85,6 @@ begin
  begin
   rpreport.RegisterRpReportClasses;
   rptypeval.DefaultDecimals:=2;
-  rpdatainfo.ConAdmin:=nil;
  end;
 end;
 
@@ -116,7 +119,34 @@ begin
   report:=TRpReport.Create(nil);
   try
    report.LoadFromFile(filename);
-    rplasterror:='Error';
+   inc(lasthandle);
+   Result:=lasthandle;
+   lreports.AddObject(IntToStr(lasthandle),report);
+  except
+   on E:Exception do
+   begin
+    report.free;
+    raise;
+   end;
+  end;
+ except
+  on E:Exception do
+  begin
+   rplasterror:=E.Message;
+   Result:=0;
+  end;
+ end;
+end;
+
+function rp_new:integer;
+var
+ report:TRpReport;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ try
+  report:=TRpReport.Create(nil);
+  try
    inc(lasthandle);
    Result:=lasthandle;
    lreports.AddObject(IntToStr(lasthandle),report);
@@ -160,6 +190,70 @@ begin
   begin
    rppdfdriver.PrintReportToMetafile(report,'',false,true,1,99999,1,
     StrPas(outputfilename),false);
+  end;
+ except
+  on E:Exception do
+  begin
+   rplasterror:=E.Message;
+   Result:=0;
+  end;
+ end;
+end;
+
+function rp_getremoteparams(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname:PChar):integer;stdcall;
+var
+  pdfreport:TPDFReport;
+  report:TRpReport;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ Result:=1;
+ try
+  report:=FindReport(hreport);
+  pdfreport:=TPDFReport.Create(nil);
+  try
+   pdfreport.GetRemoteParams(hostname,port,user,password,aliasname,reportname);
+   report.params.Assign(pdfreport.Report.Params);
+  finally
+   pdfreport.free;
+  end;
+ except
+  on E:Exception do
+  begin
+   rplasterror:=E.Message;
+   Result:=0;
+  end;
+ end;
+end;
+
+function rp_executeremote_report(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
+ compressed:integer):integer;
+var
+ pdfreport:TPDFReport;
+ report:TRpReport;
+ memstream:TMemoryStream;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ Result:=1;
+ try
+  report:=FindReport(hreport);
+  pdfreport:=TPDFReport.Create(nil);
+  try
+   memstream:=TMemoryStream.Create;
+   try
+    report.SaveToStream(memstream);
+    memstream.Seek(0,soFromBeginning);
+    pdfreport.LoadFromStream(memstream);
+   finally
+    memstream.free;
+   end;
+   pdfreport.PDFFilename:=outputfilename;
+   pdfreport.Compressed:=(compressed<>0);
+   pdfreport.AsMetafile:=(metafile<>0);
+   pdfreport.ExecuteRemote(hostname,port,user,password,aliasname,reportname);
+  finally
+   pdfreport.free;
   end;
  except
   on E:Exception do

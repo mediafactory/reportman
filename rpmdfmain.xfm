@@ -597,6 +597,15 @@ object FRpMainF: TFRpMainF
       object Statusbar1: TMenuItem
         Action = AStatusBar
       end
+      object MAppFont: TMenuItem
+        Caption = 'Application Font'
+        Visible = False
+        OnClick = MAppFontClick
+      end
+      object MObjFont: TMenuItem
+        Caption = 'Object inspector Font'
+        OnClick = MObjFontClick
+      end
       object MQtStyle: TMenuItem
         Caption = 'Qt Widget Style'
         object Windows1: TMenuItem
@@ -2340,6 +2349,16 @@ object FRpMainF: TFRpMainF
     Connections = <>
     Left = 136
     Top = 142
+  end
+  object FontDialog1: TFontDialog
+    Font.Color = clBlack
+    Font.Height = 11
+    Font.Name = 'MS Shell Dlg'
+    Font.Pitch = fpVariable
+    Font.Style = []
+    Font.Weight = 40
+    Left = 384
+    Top = 122
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = 'rep'

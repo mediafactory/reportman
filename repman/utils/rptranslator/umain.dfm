@@ -132,7 +132,7 @@ object FMain: TFMain
       TabOrder = 0
       WordWrap = False
     end
-    object GridEdit: TDBGrid
+    object GridEdit: TTntDBGrid
       Left = 0
       Top = 0
       Width = 681

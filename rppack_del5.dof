@@ -37,7 +37,7 @@ RemoteSymbols=0
 MinStackSize=16384
 MaxStackSize=1048576
 ImageBase=4194304
-ExeDescription=Reportmanager components
+ExeDescription=Report Manager components
 [Directories]
 OutputDir=
 UnitOutputDir=
@@ -77,19 +77,21 @@ ProductName=
 ProductVersion=1.0.0.0
 ?4=????8
 [Excluded Packages]
-$(DELPHI)\Bin\dclqrt50.bpl=QuickReport Components
-$(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
+$(DELPHI)\Projects\Bpl\Gestor.bpl=Componentes del gestor de Informes
+$(DELPHI)\Projects\Bpl\Mycompos.bpl=Utils generales
+$(DELPHI)\Bin\dclnet50.bpl=Borland Internet Components
+$(DELPHI)\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package
+$(DELPHI)\Bin\dclwbm50.bpl=Borland InternetExpress Components
 $(DELPHI)\Bin\dcltee50.bpl=TeeChart 5.0 Components
 $(DELPHI)\Bin\dcl31w50.bpl=Delphi 1.0 Compatibility Components
 $(DELPHI)\Bin\applet50.bpl=Borland Control Panel Applet Package
 $(DELPHI)\Bin\dclsmpedit50.bpl=Borland Editor Script Enhancements
-$(DELPHI)\Bin\dclnet50.bpl=Borland Internet Components
-$(DELPHI)\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package
 $(DELPHI)\Bin\DCLNMF50.bpl=NetMasters Fastnet Tools
-$(DELPHI)\Bin\dclwbm50.bpl=Borland InternetExpress Components
 $(DELPHI)\Bin\dclie50.bpl=Internet Explorer Components
 $(DELPHI)\Bin\dcldss50.bpl=Borland Decision Cube Components
 $(DELPHI)\Bin\dcltqr50.bpl=TeeChart 5.0 for QuickReport Components Design Package
+$(DELPHI)\Bin\dclqrt50.bpl=QuickReport Components
+$(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

@@ -19,7 +19,7 @@ object FRpMainFVCL: TFRpMainFVCL
   TextHeight = 13
   object BStatus: TStatusBar
     Left = 0
-    Top = 403
+    Top = 411
     Width = 567
     Height = 21
     Panels = <
@@ -266,7 +266,7 @@ object FRpMainFVCL: TFRpMainFVCL
     Left = 0
     Top = 70
     Width = 567
-    Height = 333
+    Height = 341
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
@@ -275,7 +275,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 181
       Top = 0
       Width = 8
-      Height = 333
+      Height = 341
       Cursor = crHSplit
       Beveled = True
       ResizeStyle = rsUpdate
@@ -285,7 +285,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 0
       Top = 0
       Width = 181
-      Height = 333
+      Height = 341
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -2388,7 +2388,7 @@ object FRpMainFVCL: TFRpMainFVCL
   object MainMenu1: TMainMenu
     Images = iconlist
     Left = 336
-    Top = 224
+    Top = 228
     object File1: TMenuItem
       Caption = 'File'
       object New1: TMenuItem
@@ -2599,6 +2599,15 @@ object FRpMainFVCL: TFRpMainFVCL
       object Statusbar1: TMenuItem
         Action = AStatusBar
       end
+      object MAppFont: TMenuItem
+        Caption = 'Application Font'
+        Visible = False
+        OnClick = MAppFontClick
+      end
+      object MObjFont: TMenuItem
+        Caption = 'Object inspector Font'
+        OnClick = MObjFontClick
+      end
     end
     object MHelp: TMenuItem
       Caption = 'Help'
@@ -2629,5 +2638,16 @@ object FRpMainFVCL: TFRpMainFVCL
     Connections = <>
     Left = 136
     Top = 142
+  end
+  object FontDialog1: TFontDialog
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    MinFontSize = 0
+    MaxFontSize = 0
+    Left = 384
+    Top = 122
   end
 end

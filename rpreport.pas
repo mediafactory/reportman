@@ -53,6 +53,7 @@ type
   private
    printingonepass:boolean;
   protected
+    procedure DoUpdatepageSize(Driver:IRpPrintDriver;metafilepage:TRpMetafilePage);
     procedure Notification(AComponent:TComponent;Operation:TOperation);override;
     procedure Loaded;override;
     function NextSection(child:boolean):boolean;
@@ -277,7 +278,6 @@ begin
    try
     // Calculate the report first
     while Not PrintNextPage do;
-
     EndPrint;
     endprintexecuted:=true;
     // Then draw the generated metafile
@@ -290,7 +290,9 @@ begin
       for i:=1 to copies do
       begin
        if printedfirst then
-        Driver.NewPage;
+       begin
+        Driver.NewPage(metafile.pages[j]);
+       end;
        printedfirst:=true;
        Driver.DrawPage(metafile.pages[j]);
        Driver.EndPage;
@@ -341,7 +343,7 @@ begin
       for i:=0 to copies-1 do
       begin
        if printedfirst then
-        Driver.NewPage;
+        Driver.NewPage(metafile.pages[0]);
        printedfirst:=true;
        Driver.DrawPage(metafile.pages[0]);
        Driver.EndPage;
@@ -363,7 +365,7 @@ begin
       for i:=0 to copies-1 do
       begin
        if printedfirst then
-        Driver.NewPage;
+        Driver.NewPage(metafile.pages[0]);
        printedfirst:=true;
        Driver.DrawPage(metafile.pages[0]);
        if hardwarecopies>1 then
@@ -817,6 +819,35 @@ begin
 end;
 
 
+procedure TRpReport.DoUpdatepageSize(Driver:IRpPrintDriver;metafilepage:TRpMetafilePage);
+var
+ apagesize:TPoint;
+begin
+ // Sets page orientation and size
+ rpagesizeqt.PhysicWidth:=metafile.CustomX;
+ rpagesizeqt.PhysicHeight:=metafile.CustomY;
+ metafilepage.Orientation:=currentorientation;
+ metafilepage.PageSizeqt:=rPageSizeQt;
+ if Not FUpdatePageSize then
+  exit;
+ metafilepage.UpdatedPageSize:=true;
+ // Sets and gets page size from the driver
+ Driver.SetOrientation(currentorientation);
+ if PageSize<>rpPageSizeDefault then
+ begin
+  apagesize:=Driver.SetPagesize(rPageSizeQt);
+ end
+ else
+ begin
+  apagesize:=Driver.GetPageSize(rPageSizeqt.indexqt);
+ end;
+ FInternalPageWidth:=apagesize.X;
+ FInternalPageHeight:=apagesize.Y;
+
+ rpagesizeqt.PhysicWidth:=apagesize.X;
+ rpagesizeqt.PhysicHeight:=apagesize.Y;
+ metafilepage.PageSizeqt:=rPageSizeQt;
+end;
 
 procedure TRpReport.BeginPrint(Driver:IRpPrintDriver);
 var
@@ -824,11 +855,11 @@ var
  item:TRpAliaslistItem;
  apagesize:TPoint;
  paramname:string;
- rPageSizeQt:TPageSizeQt;
  subrep:TRpSubReport;
  dataavail:Boolean;
  newpagesize:integer;
 begin
+ FUpdatePageSize:=false;
  FillGlobalHeaders;
  FDriver:=Driver;
  FPendingSections.Clear;
@@ -850,6 +881,7 @@ begin
   metafile.PreviewMargins:=PreviewMargins;
   ClearTotalPagesList;
   // Sets page orientation
+  currentorientation:=PageOrientation;
   if PageOrientation<>rpOrientationDefault then
   begin
    FDriver.SetOrientation(PageOrientation);
@@ -1121,6 +1153,8 @@ begin
    while newpage>Metafile.PageCount do
    begin
     Metafile.NewPage;
+    Metafile.Pages[Metafile.PageCount-1].Orientation:=currentorientation;
+    Metafile.Pages[Metafile.PageCount-1].PageSizeQt:=rpagesizeqt;
     CheckProgress(false);
    end;
    Metafile.CurrentPage:=newpage;
@@ -1425,6 +1459,30 @@ end;
 begin
  if errorprocessing then
   Raise Exception.Create(SRpErrorProcessing+#10+lasterrorprocessing);
+ inc(Pagenum);
+ inc(Pagenumgroup);
+
+ // Updates page size, and orientation
+ if not printingonepass then
+ begin
+  if metafile.PageCount<=PageNum then
+  begin
+   metafile.NewPage;
+  end;
+  metafile.CurrentPage:=PageNum;
+ end
+ else
+ begin
+  if metafile.PageCount<1 then
+  begin
+   metafile.NewPage;
+  end
+  else
+   metafile.Pages[0].Clear;
+ end;
+ DoUpdatePageSize(FDriver,Metafile.Pages[Metafile.PageCount-1]);
+
+
  FGroupHeaders.Clear;
  printedsomething:=false;
  if Not Assigned(Section) then
@@ -1439,8 +1497,6 @@ begin
  havepagefooters:=false;
  sectionextevaluated:=false;
  oldprintedsection:=nil;
- inc(Pagenum);
- inc(Pagenumgroup);
  if Not FCompose then
  begin
   freespace:=FInternalPageheight;
@@ -1465,16 +1521,6 @@ begin
   FCompose:=false;
  end;
 
- if not printingonepass then
- begin
-  if metafile.PageCount<=PageNum then
-  begin
-   metafile.NewPage;
-  end;
-  metafile.CurrentPage:=PageNum;
- end
- else
-  metafile.NewPage;
 
  pagespacex:=FInternalPageWidth;
  oldhorzdespposition:=LeftMargin;

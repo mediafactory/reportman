@@ -277,8 +277,11 @@ end;
 
 procedure TFRpMeta.PrintPage;
 var
- rPageSizeQt:TPageSizeQt;
+// rPageSizeQt:TPageSizeQt;
+ oldwidth,oldheight:integer;
 begin
+ oldwidth:=AImage.Width;
+ oldheight:=AImage.Height;
  AAbout.Visible:=Metafile.PreviewAbout;
  ADocumentation.Visible:=Metafile.PreviewAbout;
  MHelp.Visible:=Metafile.PreviewAbout;
@@ -289,7 +292,7 @@ begin
  begin
   pagenum:=Metafile.PageCount;
  end;
- rpagesizeQt.papersource:=metafile.PaperSource;
+{ rpagesizeQt.papersource:=metafile.PaperSource;
  rpagesizeQt.duplex:=metafile.duplex;
  if Metafile.PageSize<0 then
  begin
@@ -303,7 +306,7 @@ begin
   rpagesizeqt.Custom:=False;
  end;
  qtdriver.SetPagesize(rpagesizeqt);
- Metafile.CurrentPage:=pagenum-1;
+} Metafile.CurrentPage:=pagenum-1;
  metafile.DrawPage(qtdriver);
  if Assigned(qtdriver.bitmap) then
  begin
@@ -312,8 +315,11 @@ begin
   AImage.Picture.Bitmap.Assign(qtdriver.bitmap);
   AImage.Invalidate;
  end;
+
  pagenum:=Metafile.CurrentPage+1;
  EPageNum.Text:=IntToStr(PageNum);
+ if ((oldwidth<>AImage.Width) or (oldheight<>AImage.Height)) then
+  PlaceImagePosition;
 end;
 
 constructor TFRpMeta.Create(AOwner:TComponent);
@@ -896,8 +902,6 @@ begin
   end;
   if pagenum>=1 then
    PrintPage;
-  if pagenum>=1 then
-   PlaceImagePosition;
  end;
 end;
 

@@ -184,6 +184,8 @@ type
    procedure SetBidiModes(Value:TStrings);
    function Newlanguage(alanguage:integer):integer;
   protected
+    FUpdatePageSize:Boolean;
+    currentorientation:TRpOrientation;
     errorprocessing:Boolean;
     lasterrorprocessing:WideString;
     FTotalPagesList:TList;
@@ -223,6 +225,7 @@ type
 {$IFDEF LINUX}
    milifirst,mililast:TDatetime;
 {$ENDIF}
+    rPageSizeQt:TPageSizeQt;
     procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
     procedure UpdateCachedSources(alias:string);
     procedure CheckProgress(finished:Boolean);
@@ -231,6 +234,10 @@ type
     function OnGraphicOp(Top,Left,Width,Height:integer;
      DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
      PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean;
+    function OnPageOp(indexqt:integer;custom:Boolean;
+     customwidth,customheight,papersource:integer;
+     ForcePaperName:String;duplex:integer):Boolean;
+    function OnOrienationOp(orientation:integer):Boolean;
     function OnImageOp(Top,Left,Width,Height:integer;
      DrawStyle,DPIRes:integer;PreviewOnly:Boolean;Image:WideString):Boolean;
     function OnBarcodeOp (Top,Left,Width,Height:integer;
@@ -241,6 +248,9 @@ type
      FontSize,FontRotation,FontStyle,FontColor,Type1Font:integer;
      CutText:boolean;Alignment:integer;WordWrap,RightToLeft:Boolean;
      PrintStep,BackColor:integer;transparent:boolean):Boolean;
+    function OnTextheight(Text,LFontName,WFontName:WideString;
+     RectWidth,FontSize,FontStyle,Type1Font:integer;
+     PrintStep:integer):integer;
     function ReOpenOp(datasetname:String;sql:Widestring):BOolean;
     procedure CheckIfDataAvailable;
     procedure UpdateParamsBeforeOpen(index:integer;doeval:boolean);
@@ -327,7 +337,7 @@ type
    property PreviewStyle:TRpPreviewStyle read FPreviewStyle
     write FPreviewStyle default spWide;
    property PreviewMargins:Boolean read FPreviewMargins
-    write FPreviewMargins default true;
+    write FPreviewMargins default false;
    property PreviewWindow:TRpPreviewWindowStyle read FPreviewWindow
     write FPreviewWindow default spwNormal;
    property LeftMargin:TRpTwips read FLeftMargin write FLeftMargin
@@ -448,7 +458,7 @@ begin
 
  FPaperSource:=0;
  FDuplex:=0;
- FPreviewMargins:=true;
+ FPreviewMargins:=false;
  FGroupHeaders:=TStringList.Create;
  FPreviewAbout:=true;
  FStreamFormat:=rpStreamtext;
@@ -1242,6 +1252,34 @@ begin
  end;
 end;
 
+function TRpBaseReport.OnPageOp(indexqt:integer;custom:Boolean;
+     customwidth,customheight,papersource:integer;
+     ForcePaperName:String;duplex:integer):Boolean;
+begin
+ rpagesizeqt.Indexqt:=indexqt;
+ rpagesizeqt.Custom:=custom;
+ rPageSizeQt.CustomHeight:=customheight;
+ rPageSizeQt.CustomWidth:=customwidth;
+ rPageSizeQt.papersource:=papersource;
+ rPageSizeQt.ForcePaperName:=forcepapername;
+ Result:=true;
+ FUpdatePageSize:=true;
+end;
+
+function TRpBaseReport.OnOrienationOp(orientation:integer):Boolean;
+begin
+ if Not orientation in [0..2] then
+ begin
+  Result:=false
+ end
+ else
+ begin
+  currentorientation:=TRpOrientation(orientation);
+  Result:=true;
+ end;
+ FUpdatePageSize:=true;
+end;
+
 function TRpBaseReport.OnGraphicOp(Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean;
@@ -1307,6 +1345,32 @@ begin
  finally
   barcode.Free;
  end;
+end;
+
+function TRpBaseReport.OnTextheight(Text,LFontName,WFontName:WideString;
+     RectWidth,FontSize,FontStyle,Type1Font:integer;
+     PrintStep:integer):integer;
+var
+ textr:TRpTextObject;
+ extent:TPoint;
+begin
+ textr.Text:=Text;
+ textr.LFontName:=LFontName;
+ textr.WFontName:=WFontName;
+ textr.FontSize:=FontSize;
+ textr.FontRotation:=0;
+ textr.FontStyle:=FontStyle;
+ textr.FontColor:=0;;
+ textr.Type1Font:=Type1Font;
+ textr.CutText:=false;
+ textr.Alignment:=0;
+ textr.WordWrap:=true;
+ textr.RightToLeft:=false;
+ textr.PrintStep:=TRpSelectFontStep(PrintStep);
+ extent.Y:=0;
+ extent.x:=rectwidth;
+ FDriver.TextExtent(textr,extent);
+ Result:=extent.Y;
 end;
 
 function TRpBaseReport.OnTextOp(Top,Left,Width,Height:integer;
@@ -1412,9 +1476,12 @@ begin
  FEvaluator.Language:=Language;
  FEvaluator.OnNewLanguage:=Newlanguage;
  FEvaluator.OnGraphicOp:=OnGraphicOp;
+ FEvaluator.OnOrientationOp:=OnOrienationOp;
+ FEvaluator.OnpageOp:=OnPageOp;
  FEvaluator.OnImageOp:=OnImageOp;
  FEvaluator.OnBarcodeOp:=OnBarcodeOp;
  FEvaluator.OnTextOp:=OnTextOp;
+ FEvaluator.OnTextHeight:=OnTextHeight;
  FEvaluator.OnReOpenOp:=ReOpenOp;
  FEvaluator.OnGetSQLValue:=GetSQLValue;
 end;
@@ -1536,5 +1603,7 @@ begin
  if Assigned(FEvaluator) then
   FEvaluator.Language:=FLanguage;
 end;
+
+
 
 end.

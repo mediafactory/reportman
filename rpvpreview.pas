@@ -208,7 +208,11 @@ begin
 end;
 
 procedure TFRpVPreview.PrintPage;
+var
+ oldwidth,oldheight:integer;
 begin
+ oldwidth:=AImage.Width;
+ oldheight:=AImage.Height;
  try
   if report.Metafile.PageCount>=pagenum then
   begin
@@ -248,6 +252,8 @@ begin
    AImage.Invalidate;
   end;
   EPageNum.Text:=IntToStr(PageNum);
+  if ((oldwidth<>AImage.Width) or (oldheight<>AImage.Height)) then
+   PlaceImagePosition;
  except
   EPageNum.Text:='0';
   raise;
@@ -257,13 +263,20 @@ end;
 procedure TFRpVPreview.AppIdle(Sender:TObject;var done:boolean);
 var
  rPageSizeQt:TPageSizeQt;
+ drivername:string;
+ istextonly:boolean;
 begin
  Application.OnIdle:=nil;
  done:=false;
  try
   DisableControls(false);
   report.OnProgress:=RepProgress;
-  gdidriver.lockedpagesize:=false;
+  drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
+  istextonly:=Length(drivername)>0;
+  if istextonly then
+  begin
+   gdidriver.FontDriver:=TRpTextDriver.Create;
+  end;
   if report.TwoPass then
   begin
    if Not CalcReportWidthProgress(report) then
@@ -301,9 +314,7 @@ begin
    gdidriver.devicefonts:=false;
   pagenum:=1;
   gdidriver.NewDocument(report.Metafile,1,false);
-  gdidriver.lockedpagesize:=true;
   PrintPage;
-  PlaceImagePosition;
   printed:=true;
   EnableControls;
  except
@@ -321,6 +332,7 @@ begin
    SRpPDFFile+'|*.pdf|'+
    SRpPDFFileUn+'|*.pdf|'+
    SRpExcelFile+'|*.xls|'+
+   SRpExcelFileNoMulti+'|*.xls|'+
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
    SRpHtmlFile+'|*.html|'+
@@ -486,14 +498,14 @@ begin
 //       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
        AppIdle(Self,adone);
       end;
-     4:
+     4,5:
       begin
        ALastExecute(Self);
        ExportMetafileToExcel(report.Metafile,SaveDialog1.FileName,
-        true,false,true,1,9999);
+        true,false,true,1,9999,SaveDialog1.FilterIndex=5);
        AppIdle(Self,adone);
       end;
-     6:
+     7:
       begin
        horzres:=100;
        vertres:=100;
@@ -510,28 +522,28 @@ begin
         end;
        end;
       end;
-     7:
+     8:
       begin
        ALastExecute(Self);
        ExportMetafileToHtml(report.Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
        AppIdle(Self,adone);
       end;
-     8:
+     9:
       begin
        ALastExecute(Self);
        ExportMetafileToSVG(report.Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
        AppIdle(Self,adone);
       end;
-     9:
+     10:
       begin
        ALastExecute(Self);
        ExportMetafileToCSV(report.metafile,SaveDialog1.Filename,true,true,
         1,9999);
        AppIdle(Self,adone);
       end;
-     10:
+     11:
       begin
        ALastExecute(Self);
        ExportMetafileToTextPro(report.metafile,SaveDialog1.Filename,true,true,
@@ -539,7 +551,7 @@ begin
        AppIdle(Self,adone);
       end;
 {$IFNDEF DOTNETD}
-     11:
+     12:
       begin
        ALastExecute(Self);
        MetafileToExe(report.metafile,SaveDialog1.Filename);
@@ -760,8 +772,6 @@ begin
   end;
   if pagenum>=1 then
    PrintPage;
-  if pagenum>=1 then
-   PlaceImagePosition;
  end;
 end;
 

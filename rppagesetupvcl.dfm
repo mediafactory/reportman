@@ -19,7 +19,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     Top = 0
     Width = 458
     Height = 392
-    ActivePage = TabPage
+    ActivePage = TabPrint
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -330,7 +330,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 3
       end
       object BConfigure: TButton
@@ -395,7 +395,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 1
       end
       object ComboPreview: TComboBox
@@ -459,14 +459,15 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         TabOrder = 13
       end
       object ComboPaperSource: TComboBox
-        Left = 252
+        Left = 300
         Top = 116
-        Width = 193
+        Width = 145
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 14
+        OnClick = ComboPaperSourceClick
       end
       object ComboDuplex: TComboBox
         Left = 252
@@ -475,8 +476,17 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 15
+      end
+      object EPaperSource: TRpMaskEdit
+        Left = 252
+        Top = 116
+        Width = 45
+        Height = 21
+        TabOrder = 16
+        OnChange = EPaperSourceChange
+        EditType = teinteger
       end
     end
     object TabOptions: TTabSheet

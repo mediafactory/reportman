@@ -47,7 +47,7 @@ type
    procedure SaveToPDF(filename:string;compressed:boolean=false);
    procedure SaveToMetafile(filename:string);
    procedure SaveToText(filename:string;textdriver:String='');override;
-   procedure SaveToExcel(filename:string);
+   procedure SaveToExcel(filename:string;onesheet:Boolean=false);
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;override;
   published
@@ -130,17 +130,25 @@ begin
 end;
 
 procedure TVCLReport.SaveToMetafile(filename:string);
+var
+ memstream:TMemoryStream;
 begin
  CheckLoaded;
- rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,True,1,999999,1,
-  false,filename,false,true)
+ memstream:=TMemoryStream.Create;
+ try
+  ExportReportToPDFMetaStream(report,filename,showprogress,true,1,999999,1,false,memstream,false,false,true);
+  memstream.Seek(0,soFromBeginning);
+  memstream.SaveToFile(filename);
+ finally
+  memstream.free;
+ end;
 end;
 
-procedure TVCLReport.SaveToExcel(filename:string);
+procedure TVCLReport.SaveToExcel(filename:string;onesheet:Boolean=false);
 begin
  rpgdidriver.CalcReportWidthProgress(report);
  rpexceldriver.ExportMetafileToExcel(report.metafile,filename,showprogress,false,
- true,1,999);
+ true,1,999,onesheet);
 end;
 
 procedure TVCLReport.InternalExecuteRemote(metafile:TRpMetafileReport);

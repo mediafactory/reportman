@@ -20,7 +20,7 @@ object FRpPageSetup: TFRpPageSetup
     Top = 0
     Width = 486
     Height = 402
-    ActivePage = TabPage
+    ActivePage = TabPrint
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -468,14 +468,24 @@ object FRpPageSetup: TFRpPageSetup
         Caption = 'Select paper source'
       end
       object ComboPaperSource: TComboBox
-        Left = 236
+        Left = 304
         Top = 116
-        Width = 233
+        Width = 165
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
         ItemHeight = 15
         TabOrder = 22
+        OnClick = ComboPaperSourceClick
+      end
+      object EPaperSource: TRpCLXMaskEdit
+        Left = 236
+        Top = 116
+        Width = 61
+        Height = 21
+        TabOrder = 23
+        OnChange = EPaperSourceChange
+        EditType = teinteger
       end
     end
     object TabOptions: TTabSheet

@@ -494,10 +494,6 @@ begin
  fchangesize.OnSizeChange:=changesizechange;
 
 
- if Screen.PixelsPerInch>90 then
- begin
-  Font.Size:=8;
- end;
 
 
  FClasses.AddObject('TRpExpressionInterface',TRpExpressionInterface.Create(Self));
@@ -692,6 +688,7 @@ begin
  expredia:=TRpExpreDialog.Create(Application);
  try
   expredia.Rpalias:=TFRpObjInsp(Owner).RpAlias1;
+  report.InitEvaluator;
   report.AddReportItemsToEvaluator(expredia.evaluator);
   expredia.Expresion.Text:=TEdit(LControls.Objects[TButton(Sender).Tag]).Text;
   if expredia.Execute then

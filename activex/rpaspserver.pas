@@ -119,8 +119,8 @@ begin
  areport:=TRpReport(Report.VCLReport);
  memstream:=TMemoryStream.Create;
  try
-  rppdfdriver.PrintReportPDFStream(areport,'',false,true,
-   1,99999,1,memstream,false,true);
+  rppdfdriver.PrintReportMetafileStream(areport,'',false,true,
+   1,99999,1,memstream,false,false);
   memstream.Seek(0,soFromBeginning);
 
   Response.Clear;

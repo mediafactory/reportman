@@ -27,6 +27,7 @@ exports
   DllCanUnloadNow,
   DllRegisterServer,
   DllUnregisterServer,
+  rp_new,
   rp_open,
   rp_close,
   rp_execute,
@@ -34,12 +35,16 @@ exports
   rp_print,
   rp_preview,
   rp_executeremote,
+  rp_executeremote_report,
   rp_printremote,
+  rp_printremote_report,
   rp_previewremote,
+  rp_previewremote_report,
   rp_setparamvalue,
   rp_setparamvaluevar,
   rp_getparamname,
   rp_getparamcount,
+  rp_getremoteparams,
   rp_setadoconnectionstring;
 
 {$R *.TLB}

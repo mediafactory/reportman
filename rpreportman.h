@@ -25,6 +25,7 @@ extern "C" {
 #endif
 /* Add __stdcall in Microsoft Windows? */
 int rp_open(char *filename);
+int rp_new(void);
 int rp_execute(int hreport,char *outputfilename,int metafile,int compressed);
 int rp_setparamvalue(int hreport,char *paramname,int paramtype,
  void *paramvalue);
@@ -37,11 +38,23 @@ int rp_preview(int hreport,char *title);
 int rp_executeremote(char *hostname,int port,char *user,char *password,
  char *aliasname,char *reportname,char *outputfilename,int metafile,
  int compressed);
+int rp_getremoteparams(char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname);
+int rp_executeremote_report(int hreport,char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *outputfilename,int metafile,
+ int compressed);
 int rp_previewremote(char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *title);
+int rp_previewremote_report(int hreport,char *hostname,int port,char *user,char *password,
  char *aliasname,char *reportname,char *title);
 int rp_printremote(char *hostname,int port,char *user,char *password,
  char *aliasname,char *reportname,char *title,int showprogress,
  int showprintdialog);
+int rp_printremote_report(int hreport,char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *title,int showprogress,
+ int showprintdialog);
+
+
 
 /*int rp_setparamvaluevar(int hreport,char *paramname,OleVariant paramvalue);*/
 int rp_setadoconnectionstring(int hreport,char *conname,char *constring);

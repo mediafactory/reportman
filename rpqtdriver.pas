@@ -114,6 +114,7 @@ type
 
  TRpQtDriver=class(TInterfacedObject,IRpPrintDriver)
   private
+    BackColor:integer;
    intdpix,intdpiy:integer;
    FOrientation:TRpOrientation;
    FIntPageSize:TPageSizeQt;
@@ -124,6 +125,7 @@ type
 {$IFDEF VCLANDCLX}
    procedure SendAfterPrintOperations;
 {$ENDIF}
+   procedure UpdateBitmapSize(report:TrpMetafileReport;apage:TrpMetafilePage);
   public
    forceprintername:string;
    bitmap:TBitmap;
@@ -135,11 +137,12 @@ type
    PreviewStyle:TRpPreviewStyle;
    clientwidth,clientheight:integer;
    printerindex:TRpPrinterSelect;
+   FontDriver:IRpPrintDriver;
    procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
     hardwarecollate:boolean);
    procedure EndDocument;
    procedure AbortDocument;
-   procedure NewPage;
+   procedure NewPage(metafilepage:TRpMetafilePage);
    procedure EndPage;
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
 {$IFNDEF FORWEBAX}
@@ -163,6 +166,7 @@ type
    function SupportsCollation:boolean;
    constructor Create;
    destructor Destroy;override;
+   function GetFontDriver:IRpPrintDriver;
   end;
 
 function PrintMetafile (metafile:TRpMetafileReport; tittle:string;
@@ -271,82 +275,44 @@ begin
  Result:=false;
 end;
 
-procedure TRpQtDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
-  hardwarecollate:boolean);
+procedure TRpQtDriver.UpdateBitmapSize(report:TrpMetafileReport;apage:TrpMetafilePage);
 var
  awidth,aheight:integer;
  rec:TRect;
  asize:TPoint;
  scale2:double;
- sizeqt:integer;
 begin
-{$IFDEF USECLXTEECHART}
-   report.OnDrawChart:=DoDrawChart;
-{$ENDIF}
- printerindex:=report.PrinterSelect;
- DrawerBefore:=report.OpenDrawerBefore;
- DrawerAfter:=report.OpenDrawerAfter;
- if ToPrinter then
- begin
-  scale:=1.0;
-  printer.Title:=SRpUntitled;
-  SetOrientation(report.Orientation);
-  // Sets pagesize, only supports default and qt index
-  if report.PageSize<0 then
-  begin
-   asize:=GetPageSize(sizeqt);
-  end
-  else
-  begin
-   asize:=InternalSetPageSize(report.PageSize);
-  end;
-  if Length(printer.Title)<1 then
-   printer.Title:='Untitled';
-  QPrinter_setFullPage(QPrinterH(Printer.Handle),true);
-//  begin
-//   QPrinter_setOrientation(QPrinterH(Printer.Handle),QPrinterOrientation_Portrait);
-//   QPrinter_setOrientation(QPrinterH(Printer.Handle),QPrinterOrientation_Landscape);
-//  end;
-  if Not Printer.Printing then
-   if DrawerBefore then
-   begin
-{$IFDEF VCLANDCLX}
-    SendControlCodeToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer));
-{$ENDIF}
-{$IFDEF LINUX}
-    SendTextToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer),printerindex,SRpOpenDrawerAfter,forceprintername);
-{$ENDIF}
-   end;
-  if Not Printer.Printing then
-   printer.BeginDoc;
-  intdpix:=printer.XDPI;
-  intdpiy:=printer.YDPI;
- end
- else
- begin
   // Offset is 0 in preview
   offset.X:=0;
   offset.Y:=0;
-  if assigned(bitmap) then
+  if Not assigned(bitmap) then
   begin
-   bitmap.free;
-   bitmap:=nil;
+   bitmap:=TBitmap.Create;
+   bitmap.PixelFormat:=pf32bit;
   end;
-  bitmap:=TBitmap.Create;
-  bitmap.PixelFormat:=pf32bit;
-  // Set full page
-  QPrinter_setFullPage(QPrinterH(Printer.Handle),true);
-
-  // Sets Orientation
-  SetOrientation(report.Orientation);
-  // Sets pagesize
-  if report.PageSize<0 then
+  if Assigned(report) then
   begin
-   asize:=GetPageSize(sizeqt);
+   BackColor:=report.BackColor;
+{   // Sets Orientation
+   SetOrientation(report.Orientation);
+   // Sets pagesize
+   if report.PageSize<0 then
+   begin
+    asize:=GetPageSize(sizeqt);
+   end
+   else
+   begin
+    asize:=InternalSetPageSize(report.PageSize);
+   end;
+}
+   asize.X:=report.CustomX;
+   asize.Y:=report.CustomY;
   end
   else
   begin
-   asize:=InternalSetPageSize(report.PageSize);
+   SetOrientation(apage.Orientation);
+   asize.X:=apage.PageSizeqt.PhysicWidth;
+   asize.Y:=apage.PageSizeqt.PhysicHeight;
   end;
   bitmapwidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
   bitmapheight:=Round((asize.y/TWIPS_PER_INCHESS)*dpi);
@@ -390,11 +356,11 @@ begin
    bitmap.Height:=1;
 
   Bitmap.Canvas.Brush.Style:=bsSolid;
-  Bitmap.Canvas.Brush.Color:=report.BackColor;
+  Bitmap.Canvas.Brush.Color:=BackColor;
   rec.Top:=0;
   rec.Left:=0;
-  rec.Right:=Bitmap.Width-1;
-  rec.Bottom:=Bitmap.Height-1;
+  rec.Right:=Bitmap.Width+1;
+  rec.Bottom:=Bitmap.Height+1;
   bitmap.Canvas.FillRect(rec);
 
   // Draw Page Margins none for qt driver because they
@@ -406,7 +372,62 @@ begin
   bitmap.Canvas.rectangle(amargins.cx,amargins.cy,
   rec.Right-amargins.cx,rec.Bottom-amargins.cy);
 }
+end;
 
+procedure TRpQtDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
+  hardwarecollate:boolean);
+var
+ asize:TPoint;
+ sizeqt:integer;
+begin
+{$IFDEF USECLXTEECHART}
+   report.OnDrawChart:=DoDrawChart;
+{$ENDIF}
+ printerindex:=report.PrinterSelect;
+ DrawerBefore:=report.OpenDrawerBefore;
+ DrawerAfter:=report.OpenDrawerAfter;
+ if printer.Printers.Count>0 then
+  QPrinter_setFullPage(QPrinterH(Printer.Handle),true);
+ if ToPrinter then
+ begin
+  scale:=1.0;
+  // Set full page
+  printer.Title:=SRpUntitled;
+  SetOrientation(report.Orientation);
+  // Sets pagesize, only supports default and qt index
+  if report.PageSize<0 then
+  begin
+   asize:=GetPageSize(sizeqt);
+  end
+  else
+  begin
+   asize:=InternalSetPageSize(report.PageSize);
+  end;
+  if Length(printer.Title)<1 then
+   printer.Title:='Untitled';
+  QPrinter_setFullPage(QPrinterH(Printer.Handle),true);
+//  begin
+//   QPrinter_setOrientation(QPrinterH(Printer.Handle),QPrinterOrientation_Portrait);
+//   QPrinter_setOrientation(QPrinterH(Printer.Handle),QPrinterOrientation_Landscape);
+//  end;
+  if Not Printer.Printing then
+   if DrawerBefore then
+   begin
+{$IFDEF VCLANDCLX}
+    SendControlCodeToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer));
+{$ENDIF}
+{$IFDEF LINUX}
+    SendTextToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer),printerindex,SRpOpenDrawerAfter,forceprintername);
+{$ENDIF}
+   end;
+  if Not Printer.Printing then
+   printer.BeginDoc;
+  intdpix:=printer.XDPI;
+  intdpiy:=printer.YDPI;
+ end
+ else
+ begin
+  UpdateBitmapSize(report,nil);
  end;
 end;
 
@@ -449,18 +470,20 @@ begin
  end;
 end;
 
-procedure TRpQtDriver.NewPage;
+procedure TRpQtDriver.NewPage(metafilepage:TRpMetafilePage);
 begin
  if toprinter then
  begin
-  printer.NewPage;
+  if metafilepage.UpdatedPageSize then
+  begin
+   QPrinter_newPage(QPrinterH(Printer.Handle));
+  end
+  else
+   printer.NewPage;
  end
  else
  begin
-  bitmap.free;
-  bitmap:=nil;
-  bitmap:=TBitmap.create;
-  bitmap.PixelFormat:=pf32bit;
+  UpdateBitmapSize(nil,metafilepage);
  end;
 end;
 
@@ -738,6 +761,10 @@ procedure TRpQtDriver.DrawPage(apage:TRpMetaFilePage);
 var
  j:integer;
 begin
+ if not toprinter then
+ begin
+  UpdateBitmapSize(nil,apage);
+ end;
  for j:=0 to apage.ObjectCount-1 do
  begin
   DrawObject(apage,apage.Objects[j]);
@@ -961,10 +988,12 @@ begin
     begin
      for count2:=0 to pagecopies-1 do
      begin
-      if totalcount>0 then
-       printer.NewPage;
-      inc(totalcount);
       apage:=metafile.Pages[i];
+      if totalcount>0 then
+      begin
+       printer.NewPage;
+      end;
+      inc(totalcount);
       for j:=0 to apage.ObjectCount-1 do
       begin
        PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,1,offset,true);
@@ -1328,20 +1357,24 @@ begin
   astring:=SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
    +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
    FormatFloat('#########,####',Sender.RecordCount);
+{$I-}
  {$IFDEF USEVARIANTS}
   WriteLn(astring);
  {$ELSE}
   WriteLn(String(astring));
  {$ENDIF}
+{$I+}
   // If it's the last page prints additional info
   if Sender.LastPage then
   begin
    astring:=Format('%-20.20s',[SRpPage])+FormatFloat('0000000000',Sender.PageNum+1);
+{$I-}
  {$IFDEF USEVARIANTS}
    WriteLn(astring);
  {$ELSE}
    WriteLn(String(astring));
  {$ENDIF}
+{$I+}
   end;
  end;
  LRecordCount.Caption:=IntToStr(Sender.CurrentSubReportIndex)+':'+SRpPage+':'+
@@ -1557,7 +1590,6 @@ var
  drivername:String;
  S:String;
 begin
- TextDriver:=nil;
  drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
  istextonly:=Length(drivername)>0;
  Result:=true;
@@ -1604,21 +1636,7 @@ begin
  begin
    if forcecalculation then
    begin
-    if istextonly then
-    begin
-     SetLength(S,TextDriver.MemStream.Size);
-     TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
-{$IFDEF VCLANDCLX}
-     SendControlCodeToPrinter(S);
-{$ENDIF}
-{$IFDEF LINUX}
-     SendTextToPrinter(S,report.PrinterSelect,Caption,forceprintername);
-{$ENDIF}
-    end
-    else
-    begin
-     PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate,report.PrinterSelect,forceprintername)
-    end;
+    PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate,report.PrinterSelect,forceprintername);
    end
    else
    begin
@@ -2231,6 +2249,15 @@ begin
  dook:=true;
  Close;
 end;
+
+function TRpQtDriver.GetFontDriver:IRpPrintDriver;
+begin
+ if Assigned(FontDriver) then
+  Result:=FontDriver
+ else
+  Result:=Self;
+end;
+
 
 end.
 

@@ -84,7 +84,6 @@ begin
  Writeln(AnsiString(SRpPrintRep21));
  Writeln(AnsiString(SRpPrintRep22));
  Writeln(AnsiString(SRpPrintRep23));
- Writeln(AnsiString(SRpPrintRep24));
  Writeln(AnsiString(SRpPrintRep25));
  Writeln(AnsiString(SRpParseParamsH));
  Writeln(AnsiString(SRpCommandLineStdIN));

@@ -104,6 +104,10 @@ type
  TRpGraphicOpProc=function (Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean of object;
+ TRpOrientationOpProc=function (orientation:integer):Boolean of object;
+ TRpPageOpProc=function (indexqt:integer;custom:Boolean;
+  customwidth,customheight,papersource:integer;
+  ForcePaperName:String;duplex:integer):Boolean of object;
  TRpImageOpProc=function (Top,Left,Width,Height:integer;
     DrawStyle,DPIRes:integer;PreviewOnly:Boolean;Image:WideString):Boolean of object;
  TRpBarcodeOpProc=function (Top,Left,Width,Height:integer;
@@ -114,6 +118,10 @@ type
   FontSize,FontRotation,FontStyle,FontColor,Type1Font:integer;
   CutText:boolean;Alignment:integer;WordWrap,RightToLeft:Boolean;
   PrintStep,BackColor:integer;transparent:boolean):Boolean of Object;
+ TRpTextHeightProc=function (Text,LFontName,WFontName:WideString;
+     RectWidth,FontSize,FontStyle,Type1Font:integer;
+     PrintStep:integer):integer of object;
+
  TRpReOpenOp=function (datasetname:String;sql:Widestring):Boolean of object;
 
  TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
@@ -161,6 +169,8 @@ type
   Custom:boolean;
   CustomWidth:integer;
   CustomHeight:integer;
+  PhysicWidth:integer;
+  PhysicHeight:integer;
   PaperSource:integer;
   ForcePaperName:String;
   Duplex:integer;
@@ -172,7 +182,7 @@ type
   pRpTicketPrinter2,pRpUserPrinter1,pRpUserPrinter2,
   pRpUserPrinter3,pRpUserPrinter4,pRpUserPrinter5,
   pRpUserPrinter6,pRpUserPrinter7,pRpUserPrinter8,
-  pRpUserPrinter9);
+  pRpUserPrinter9,pRpPlainPrinter,pRpPlainFullPrinter);
 
  TRpColor=integer;
 
@@ -602,6 +612,10 @@ begin
  Component.Name:=name1+IntToStr(i);
 end;
 
+const
+ varDecimalType=14;
+
+
 
 function FormatVariant(displayformat:string;Value:Variant;
  paramtype:TRpParamType;printnulls:boolean):widestring;
@@ -645,7 +659,7 @@ begin
        displayformat:=ShortTimeFormat
       else
        displayformat:=ShortDateFormat+' '+ShortTimeFormat;
-     if VarType(value) in [varDate,varDouble,varSingle,varCurrency,varInteger] then
+     if VarType(value) in [varDate,varDouble,varSingle,varCurrency,varInteger,varDecimalType] then
       Result:=FormatDateTime(displayformat,TDateTime(Value))
      else
       Result:=widestring(Value);
@@ -710,6 +724,41 @@ begin
        end;
       end;
      end;
+   end;
+  varDecimalType:
+   begin
+    Value:=double(Value);
+    if ((Value=0.0) and (Not printnulls)) then
+     Result:=''
+    else
+    begin
+     if (paramtype in [rpParamDate,rpParamTime,rpParamDateTime]) then
+     begin
+      if Length(displayformat)<1 then
+      begin
+       if paramtype=rpParamDate then
+        displayformat:=ShortDateFormat
+       else
+        if paramtype=rpParamTime then
+         displayformat:=ShortTimeFormat
+        else
+         displayformat:=ShortDateFormat+' '+ShortTimeFormat;
+      end;
+      Result:=FormatDateTime(displayformat,Value);
+     end
+     else
+     begin
+      if length(displayformat)<1 then
+       Result:=widestring(Value)
+      else
+      begin
+       if displayformat[1]='*' then
+        Result:=FormatCurrAdv(Copy(displayformat,2,Length(displayformat)),Value)
+       else
+        Result:=FormatFloat(displayformat,Value);
+      end;
+     end;
+    end;
    end;
   varSingle,varDouble:
    begin
@@ -847,9 +896,16 @@ begin
  CheckLoadedPrinterConfig;
  def:='';
  if printerindex=prpTicketPrinter then
-  def:='EPSONTMU210';
+  def:='EPSONTMU210'
+ else
  if printerindex=prpCharacterPrinter then
-  def:='EPSON';
+  def:='EPSON'
+ else
+ if printerindex=prpPlainPrinter then
+  def:='PLAIN'
+ else
+ if printerindex=prpPlainFullPrinter then
+  def:='PLAINFULL';
  Result:=printerconfigfile.ReadString('PrinterDriver','Printer'+IntToStr(integer(printerindex)),def);
 end;
 
@@ -2619,6 +2675,7 @@ begin
  drivernames.Add('EPSONTM88II');
  drivernames.Add('HP-PCL');
  drivernames.Add('VT100');
+ drivernames.Add('PLAINFULL');
 end;
 
 procedure WriteStringToDevice(S,Device:String);
@@ -3212,7 +3269,7 @@ begin
     varSmallint, varByte: Result := ftSmallInt;
     varInteger: Result := ftInteger;
     varCurrency: Result := ftBCD;
-    varSingle, varDouble: Result := ftFloat;
+    varSingle, varDouble,varDecimalType: Result := ftFloat;
     varDate: Result := ftDateTime;
     varBoolean: Result := ftBoolean;
     varString: Result := ftString;

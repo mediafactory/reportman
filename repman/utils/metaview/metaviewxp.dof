@@ -107,16 +107,6 @@ UseLauncher=0
 DebugCWD=
 [Resource DLL Projects]
 Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
-[RDP Source Files]
-Item0=..\..\..\rpfmainmetaviewvcl.dfm
-Item1=..\..\..\rpmdclitreevcl.dfm
-Item2=..\..\..\rpmdfaboutvcl.dfm
-Item3=..\..\..\rprfvparams.dfm
-Item4=..\..\..\rpgdidriver.dfm
-Item5=..\..\..\rpmdprintconfigvcl.dfm
-Item6=..\..\..\rpfmetaviewvcl.dfm
-Item7=..\..\..\rpexceldriver.dfm
-Item8=metaviewxp.drc
 [Language]
 ActiveLang=
 ProjectLang=$00000409
@@ -125,9 +115,9 @@ RootDir=
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=2
-MinorVer=2
+MinorVer=3
 Release=0
-Build=36
+Build=2
 Debug=0
 PreRelease=0
 Special=0
@@ -138,18 +128,21 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report client and metafile viewer
-FileVersion=2.2.0.36
+FileVersion=2.3.0.2
 InternalName=metaview
 LegalCopyright=MPL/GLP License
 LegalTrademarks=
 OriginalFilename=metaview
 ProductName=Report Manager Metafile viewer/client
-ProductVersion=2.1.0.0
+ProductVersion=2.3.0.0
+[Excluded Packages]
+h:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
+h:\prog\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
 [HistoryLists\hlConditionals]
 Count=3
 Item0=REPMANRELEASE
-Item1=FORWEBAX
-Item2=NOLINUXPRINTBUG;FORWEBAX
+Item1=NOLINUXPRINTBUG;FORWEBAX
+Item2=FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

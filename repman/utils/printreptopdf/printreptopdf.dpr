@@ -68,6 +68,7 @@ var
  report:TRpReport;
  indexparam:integer;
  showprogress:boolean;
+ onesheet:Boolean;
  filename:string;
  pdffilename:string;
  allpages:boolean;
@@ -115,6 +116,7 @@ begin
  Writeln(AnsiString(SRpPrintRep8));
 {$IFDEF MSWINDOWS}
  Writeln(AnsiString(SRpPrintRep11));
+ Writeln(AnsiString(SRpPrintRep26));
 {$ENDIF}
  Writeln(AnsiString(SRpPrintRep15));
  Writeln(AnsiString(SRpPrintRep16));
@@ -156,6 +158,7 @@ begin
   tocsv:=false;
   toctxt:=false;
   tosvg:=false;
+  onesheet:=false;
   htmloutput:=false;
   stdinput:=false;
   doprintmetafile:=false;
@@ -184,6 +187,9 @@ begin
 {$IFDEF MSWINDOWS}
     if ParamStr(indexparam)='-excel' then
      toexcel:=true
+    else
+    if ParamStr(indexparam)='-onesheet' then
+     onesheet:=true
     else
 {$ENDIF}
     if ParamStr(indexparam)='-svg' then
@@ -340,7 +346,7 @@ begin
       PrintReportToMetafile(report,'',showprogress,allpages,frompage,topage,
        copies,'',collate);
       ExportMetafileToExcel(report.metafile,pdffilename,showprogress,
-       Length(pdffilename)<1,allpages,frompage,topage);
+       Length(pdffilename)<1,allpages,frompage,topage,onesheet);
      end
      else
 {$ENDIF}

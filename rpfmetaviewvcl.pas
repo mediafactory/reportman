@@ -266,8 +266,11 @@ end;
 
 procedure TFRpMetaVCL.PrintPage;
 var
- rPageSizeQt:TPageSizeQt;
+// rPageSizeQt:TPageSizeQt;
+ oldwidth,oldheight:integer;
 begin
+ oldwidth:=AImage.Width;
+ oldheight:=AImage.Height;
  AAbout.Visible:=Metafile.PreviewAbout;
  ADocumentation.Visible:=Metafile.PreviewAbout;
  MHelp.Visible:=Metafile.PreviewAbout;
@@ -279,6 +282,8 @@ begin
  begin
   pagenum:=Metafile.PageCount;
  end;
+{ apage:=metafile.Pages[pagenum-1];
+ rpagesizeQt:=apage.PageSizeqt;
  rpagesizeQt.papersource:=metafile.PaperSource;
  rpagesizeQt.duplex:=metafile.duplex;
  if Metafile.PageSize<0 then
@@ -292,6 +297,7 @@ begin
   rpagesizeqt.Indexqt:=metafile.PageSize;
   rpagesizeqt.Custom:=False;
  end;
+
  try
   gdidriver.SetPagesize(rpagesizeqt);
  except
@@ -300,6 +306,7 @@ begin
    rpgraphutilsvcl.RpMessageBox(E.Message);
   end;
  end;
+}
  Metafile.CurrentPage:=pagenum-1;
  gdidriver.drawclippingregion:=metafile.PreviewMargins;
  metafile.DrawPage(gdidriver);
@@ -312,6 +319,8 @@ begin
  end;
  pagenum:=Metafile.CurrentPage+1;
  EPageNum.Text:=IntToStr(PageNum);
+ if ((oldwidth<>AImage.Width) or (oldheight<>AImage.Height)) then
+  PlaceImagePosition;
 end;
 
 constructor TFRpMetaVCL.Create(AOwner:TComponent);
@@ -367,6 +376,7 @@ begin
    SRpPDFFile+'|*.pdf|'+
    SRpPDFFileUn+'|*.pdf|'+
    SRpExcelFile+'|*.xls|'+
+   SRpExcelFileNoMulti+'|*.xls|'+
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
    SRpHtmlFile+'|*.html|'+
@@ -587,12 +597,12 @@ begin
       else
        SaveMetafileToPDF(metafile,SaveDialog1.filename,false);
      end;
-    4:
+    4,5:
      begin
       ExportMetafileToExcel(Metafile,SaveDialog1.FileName,
-       true,false,true,1,9999);
+       true,false,true,1,9999,SaveDialog1.FilterIndex=5);
      end;
-    6:
+    7:
      begin
       horzres:=100;
       vertres:=100;
@@ -608,28 +618,28 @@ begin
        end;
       end;
      end;
-     7:
+     8:
       begin
        ExportMetafileToHtml(Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
       end;
-     8:
+     9:
       begin
        ExportMetafileToSVG(Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
       end;
-     9:
+     10:
       begin
        ExportMetafileToCSV(metafile,SaveDialog1.Filename,true,true,
         1,9999);
       end;
-     10:
+     11:
       begin
        ExportMetafileToTextPro(metafile,SaveDialog1.Filename,true,true,
         1,9999);
       end;
 {$IFNDEF DOTNETD}
-     11:
+     12:
       begin
        MetafileToExe(metafile,SaveDialog1.Filename);
       end;
@@ -811,8 +821,6 @@ begin
   end;
   if pagenum>=1 then
    PrintPage;
-  if pagenum>=1 then
-   PlaceImagePosition;
  end;
 end;
 

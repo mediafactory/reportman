@@ -148,6 +148,8 @@ begin
   Add(SRpUserPrinter7);
   Add(SRpUserPrinter8);
   Add(SRpUserPrinter9);
+  Add(SRpPlainPrinter);
+  Add(SRpPlainFullPrinter);
  end;
  LSelPrinter.ItemIndex:=0;
  LSelPrinterClick(Self);

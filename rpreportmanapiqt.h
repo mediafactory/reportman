@@ -23,6 +23,7 @@
 extern "C" {
 #endif
 /* Add __stdcall in Microsoft Windows? */
+int rp_new(void);
 int rp_open(char *filename);
 int rp_execute(int hreport,char *outputfilename,int metafile,int compressed);
 int rp_close(int hreport);
@@ -36,9 +37,19 @@ int rp_preview(int hreport,char *title);
 int rp_executeremote(char *hostname,int port,char *user,char *password,
  char *aliasname,char *reportname,char *outputfilename,int metafile,
  int compressed);
+int rp_executeremote_report(int hreport,char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *outputfilename,int metafile,
+ int compressed);
+int rp_getremoteparams(int hreport,char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname);
 int rp_previewremote(char *hostname,int port,char *user,char *password,
  char *aliasname,char *reportname,char *title);
 int rp_printremote(char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *title,int showprogress,
+ int showprintdialog);
+int rp_previewremote_report(int hreport,char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *title);
+int rp_printremote_report(int hreport,char *hostname,int port,char *user,char *password,
  char *aliasname,char *reportname,char *title,int showprogress,
  int showprintdialog);
 

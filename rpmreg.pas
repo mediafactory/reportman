@@ -26,7 +26,7 @@ uses
 {$IFNDEF USEVARIANTS}
   rpvclreport,rpmaskedit,
   {$IFNDEF BUILDER4}
-   rprulervcl,rpmdesignervcl,
+   rprulervcl,rpmdesignervcl,rpdbgridvcl,
   {$ENDIF}
    DsgnIntf,
 {$ENDIF}
@@ -49,6 +49,7 @@ begin
   {$IFNDEF BUILDER4}
    RegisterComponents('Reportman', [TRpRulerVCL]);
    RegisterComponents('Reportman', [TRpDesignerVCL]);
+   RegisterComponents('Reportman', [TRpGrid]);
   {$ENDIF}
 {$ENDIF}
 

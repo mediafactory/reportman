@@ -328,8 +328,6 @@ begin
 {$IFNDEF BUILDER4}
  ShowDBXConfig(TRpDbDriver(ComboDriver.ItemIndex) in [rpdataibx,rpdataibo,rpdatamybase]);
 {$ENDIF}
- conadmin.free;
- conadmin:=TRPCOnnAdmin.Create;
 // conadmin.GetConnectionNames(ComboAvailable.Items,'');
 end;
 

@@ -30,14 +30,27 @@
   PreviewOnly:Boolean;Expression:String):Boolean<br>
 </p>
 <p><strong>Barcode operation function</strong></p>
-<p>function ImageOp(Top,Left,Width,Height:integer; <br>
-  ImageDrawStyle:integer;PixelsPerInchg:integer; <br>
-  PreviewOnly:Boolean;Expression:String):Boolean</p>
-<p><strong>Parameters</strong></p>
-<p> function OnBarcodeOp (Top,Left,Width,Height:integer;<br>
+<p>function OnBarcodeOp (Top,Left,Width,Height:integer;<br>
   Expression,DisplayFormat:WideString;BarType,Modul:Integer;Ratio,Rotation:Currency;<br>
-  CalcChecksum:Boolean;BColor:Integer):Boolean;<br>
+  CalcChecksum:Boolean;BColor:Integer):Boolean;</p>
+<p><strong>Text height funtion, returns text height in twips</strong></p>
+<p>function TextHeight(Text,LFontName,WFontName:WideString; <br>
+  RectWidth,FontSize,FontStyle,Type1Font:integer; <br>
+  PrintStep,BackColor:integer;transparent:boolean):Boolean</p>
+<p> <strong>SetPageSource, set page size, and paper source</strong></p>
+<p>function SetPageSource(QtIndex:integer;<br>
+  Custom:Boolean;CustomWidth,CustomHeight,PaperSource:integer;<br>
+  ForcePaperName:String;Duplex:integer):Boolean</p>
+<p>QtIndex is the index of the paper as shown in page setup, papersource is the 
+  integer value for paper source (0=default, force paper name are integer indexes 
+  as shown in page setup.<br>
 </p>
+<p> <strong>SetPageOrientation, set page orientation</strong></p>
+<p></p>
+<p>function SetPageOrientation(orientation:integer):Boolean;</p>
+<p>Orientation is: 0-Default, 1-Portrait, 2-Landscape<br>
+</p>
+<p><strong>Parameters</strong></p>
 <table border="1">
   <tr> 
     <td bgcolor="#FFFFCC"><strong>Name</strong></td>
@@ -470,9 +483,13 @@
     <td>CalcCheckSum</td>
     <td>The barcode will calculate checksum values for some barcodes</td>
   </tr>
-  <tr>
+  <tr> 
     <td>BColor</td>
     <td>Barcode color for bars</td>
+  </tr>
+  <tr>
+    <td>RecWidth</td>
+    <td>Rectangle width for height calculation (in twips)</td>
   </tr>
 </table>
 <p>&nbsp;</p>

@@ -539,6 +539,7 @@ begin
  begin
   Datainfo.Items[i].Disconnect;
  end;
+ report.InitEvaluator;
  report.AddReportItemsToEvaluator(report.Evaluator);
  Report.PrepareParamsBeforeOpen;
  dinfo.Connect(databaseinfo,report.params);

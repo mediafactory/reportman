@@ -36,6 +36,7 @@ uses
 
 const
  DEFAULT_SARRAY_SIZE=100;
+ INIT_POOLSIZE=32000;
 
 type
  TRpStringInfo=record
@@ -50,6 +51,7 @@ type
    FActive:Boolean;
    FPool:WideString;
    FPoolPos:integer;
+   FPoolSize:integer;
    FAutoLocale:Boolean;
    FStrings:array of TRpStringInfo;
    FArraySize:integer;
@@ -104,7 +106,8 @@ function RegQueryValueEx(hKey: LongWord; lpValueName: PChar;
 constructor TRpTranslator.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
- FPool:='';
+ SetLength(FPool,INIT_POOLSIZE);
+ FPoolSize:=INIT_POOLSIZE;
  FPoolPos:=1;
  SetLength(FStrings,DEFAULT_SARRAY_SIZE);
  FArraySize:=DEFAULT_SARRAY_SIZE;
@@ -417,6 +420,7 @@ end;
 procedure TRpTranslator.AddString(Value:WideString);
 var
  alength:integer;
+ i:integer;
 begin
  alength:=Length(value);
  if FStringCount>(FArraySize-2) then
@@ -424,11 +428,21 @@ begin
   SetLength(FStrings,FArraySize*2);
   FArraySize:=FArraySize*2;
  end;
- FPool:=FPool+Value;
+ if (FPoolPos+alength)>FPoolSize-1 then
+ begin
+  FPoolSize:=FPoolSize*2;
+  SetLength(FPool,FPoolSize);
+ end;
  FStrings[FStringCount].Position:=FPoolPos;
+ for i:=1 to alength do
+ begin
+  FPool[FPoolPos]:=Value[i];
+  inc(FPoolPos);
+ end;
+// FPool:=FPool+Value;
  FStrings[FStringCount].Size:=alength;
  FStringCount:=FStringCount+1;
- FPoolPos:=FPoolPos+alength;
+// FPoolPos:=FPoolPos+alength;
 end;
 
 

@@ -81,6 +81,7 @@ type
     allpages:boolean;
     isvisible:boolean;
     frompage,topage:integer;
+    onesheet:boolean;
     dook:boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
   public
@@ -95,7 +96,8 @@ type
 
 
 function ExportMetafileToExcel (metafile:TRpMetafileReport; filename:string;
- showprogress,visible,allpages:boolean; frompage,topage:integer):boolean;
+ showprogress,visible,allpages:boolean; frompage,topage:integer;
+ onesheet:Boolean=false):boolean;
 
 implementation
 
@@ -156,9 +158,20 @@ begin
  end;
 end;
 
+function VarTryStrToDate(S: string; var Value: TDateTime): Boolean;
+begin
+ Result:=true;
+ try
+  Value:=StrToDate(S);
+ except
+  Result:=false;
+ end;
+end;
+
+
 {$IFNDEF DOTNETD}
 procedure PrintObject(sh:Variant;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;
- rows,columns:TStringList;FontName:String;FontSize:integer);
+ rows,columns:TStringList;FontName:String;FontSize,rowinit:integer);
 var
  aansitext:string;
  arow,acolumn:integer;
@@ -167,10 +180,12 @@ var
  isanumber:boolean;
  afontStyle:TFontStyles;
  acolor:TColor;
+ isadate:boolean;
+ adate:TDateTime;
 begin
  topstring:=FormatCurr('0000000000',obj.Top/XLS_PRECISION);
  leftstring:=FormatCurr('0000000000',obj.Left/XLS_PRECISION);
- arow:=rows.IndexOf(topstring)+1;
+ arow:=rows.IndexOf(topstring)+1+rowinit;
  acolumn:=columns.IndexOf(leftstring)+1;
  if acolumn<1 then
   acolumn:=1;
@@ -186,12 +201,20 @@ begin
      sh.Cells.item[arow,acolumn].Value:=number
     else
     begin
-     if Length(aansitext)>0 then
+     isadate:=VarTryStrToDate(aansitext,adate);
+     if isadate then
      begin
-      if aansitext[1]='=' then
-       aansitext:=''''+aansitext;
+      sh.Cells.item[arow,acolumn].Value:=FormatDateTime('mm"/"dd"/"yyyy',adate);
+     end
+     else
+     begin
+      if Length(aansitext)>0 then
+      begin
+        if aansitext[1]='=' then
+        aansitext:=''''+aansitext;
+      end;
+      sh.Cells.item[arow,acolumn].Value:=aansitext;
      end;
-     sh.Cells.item[arow,acolumn].Value:=aansitext;
     end;
     if FontName<>page.GetWFontName(Obj) then
      sh.Cells.item[arow,acolumn].Font.Name:=page.GetWFontName(Obj);
@@ -375,7 +398,8 @@ end;
 
 
 procedure DoExportMetafile(metafile:TRpMetafileReport;filename:string;
- aform:TFRpExcelProgress;visible,allpages:boolean;frompage,topage:integer);
+ aform:TFRpExcelProgress;visible,allpages:boolean;frompage,topage:integer;
+  onesheet:Boolean);
 {$IFNDEF DOTNETD}
 var
  i:integer;
@@ -394,6 +418,7 @@ var
  shcount:integer;
  FontName:String;
  FontSize:integer;
+ rowinit:integer;
 {$ENDIF}
 begin
 {$IFNDEF DOTNETD}
@@ -430,32 +455,48 @@ begin
 
    for i:=frompage to topage do
    begin
-    if wb.Worksheets.Count<shcount then
-//     wb.Worksheets.Add(NULL,wb.Worksheets.Item[wb.Worksheets.Count],1,NULL,1);
-     wb.Worksheets.Add(NULL,wb.Worksheets.Item[wb.Worksheets.Count],1,NULL);
-    sh:=wb.Worksheets.item[shcount];
-    inc(shcount);
     apage:=metafile.Pages[i];
-    rows.clear;
-    columns.clear;
     for j:=0 to apage.ObjectCount-1 do
     begin
      if apage.Objects[j].Metatype in [rpMetaText,rpMetaImage] then
      begin
-      topstring:=FormatCurr('0000000000',apage.Objects[j].Top/XLS_PRECISION);
       leftstring:=FormatCurr('0000000000',apage.Objects[j].Left/XLS_PRECISION);
-      index:=rows.IndexOf(topstring);
-      if index<0 then
-       rows.Add(topstring);
       index:=columns.IndexOf(leftstring);
       if index<0 then
        columns.Add(leftstring);
      end;
     end;
+   end;
+   rowinit:=0;
+   for i:=frompage to topage do
+   begin
+    if not onesheet then
+    begin
+     rowinit:=0;
+     if wb.Worksheets.Count<shcount then
+      wb.Worksheets.Add(NULL,wb.Worksheets.Item[wb.Worksheets.Count],1,NULL);
+     sh:=wb.Worksheets.item[shcount];
+    end
+    else
+     rowinit:=rowinit+rows.count;
+    inc(shcount);
+    apage:=metafile.Pages[i];
+    rows.clear;
+    for j:=0 to apage.ObjectCount-1 do
+    begin
+     if apage.Objects[j].Metatype in [rpMetaText,rpMetaImage] then
+     begin
+      topstring:=FormatCurr('0000000000',apage.Objects[j].Top/XLS_PRECISION);
+      index:=rows.IndexOf(topstring);
+      if index<0 then
+       rows.Add(topstring);
+     end;
+    end;
+
     for j:=0 to apage.ObjectCount-1 do
     begin
      PrintObject(sh,apage,apage.Objects[j],dpix,dpiy,true,
-      rows,columns,FontName,FontSize);
+      rows,columns,FontName,FontSize,rowinit);
      if assigned(aform) then
      begin
       mmlast:=TimeGetTime;
@@ -490,14 +531,15 @@ begin
 end;
 
 function ExportMetafileToExcel (metafile:TRpMetafileReport; filename:string;
- showprogress,visible,allpages:boolean; frompage,topage:integer):boolean;
+ showprogress,visible,allpages:boolean; frompage,topage:integer;
+ onesheet:Boolean=false):boolean;
 var
  dia:TFRpExcelProgress;
 begin
  Result:=true;
  if Not ShowProgress then
  begin
-  DoExportMetafile(metafile,filename,nil,visible,allpages,frompage,topage);
+  DoExportMetafile(metafile,filename,nil,visible,allpages,frompage,topage,onesheet);
   exit;
  end;
  dia:=TFRpExcelProgress.Create(Application);
@@ -508,6 +550,7 @@ begin
    dia.filename:=filename;
    dia.allpages:=allpages;
    dia.frompage:=frompage;
+   dia.onesheet:=onesheet;
    dia.isvisible:=visible;
    dia.topage:=topage;
    Application.OnIdle:=dia.AppIdle;
@@ -547,7 +590,7 @@ begin
  done:=false;
  LTittle.Caption:=tittle;
  LProcessing.Visible:=true;
- DoExportMetafile(metafile,filename,self,isvisible,allpages,frompage,topage);
+ DoExportMetafile(metafile,filename,self,isvisible,allpages,frompage,topage,onesheet);
 end;
 
 

@@ -2,7 +2,7 @@ object FRpMetaVCL: TFRpMetaVCL
   Left = 0
   Top = 0
   Width = 443
-  Height = 270
+  Height = 277
   HorzScrollBar.Range = 561
   VertScrollBar.Range = 338
   Align = alClient
@@ -18,6 +18,7 @@ object FRpMetaVCL: TFRpMetaVCL
     Top = 27
     Width = 7
     Height = 290
+    Cursor = crHSplit
     Beveled = True
   end
   object BToolBar: TToolBar
@@ -159,6 +160,8 @@ object FRpMetaVCL: TFRpMetaVCL
       Top = 0
       Width = 64
       Height = 25
+      Min = 0
+      Max = 100
       TabOrder = 0
       Visible = False
     end
@@ -193,6 +196,7 @@ object FRpMetaVCL: TFRpMetaVCL
       item
         Width = 50
       end>
+    SimplePanel = False
   end
   object ActionList1: TActionList
     Images = ImageList1
@@ -368,6 +372,7 @@ object FRpMetaVCL: TFRpMetaVCL
       'Report Metafile (*.rpmf)|PDF File (*.pdf)|PDF File Uncompressed ' +
       '(*.pdf)'
     FilterIndex = 0
+    Options = [ofHideReadOnly, ofNoChangeDir, ofEnableSizing]
     Title = 'Save Metafile As'
     Left = 240
     Top = 84

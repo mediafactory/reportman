@@ -123,6 +123,7 @@ type
    FSQLConnection:TSQLConnection;
    FSQLInternalConnection:TSQLConnection;
 {$ENDIF}
+   ConAdmin:TRpConnAdmin;
    FConfigFile:string;
    FLoadParams:boolean;
    FReportTable,FReportGroupsTable,FReportSearchField,FReportField:String;
@@ -166,6 +167,7 @@ type
   protected
     procedure DefineProperties(Filer:TFiler);override;
   public
+   procedure UpdateConAdmin;
    procedure Assign(Source:TPersistent);override;
    destructor Destroy;override;
    procedure Connect;
@@ -349,16 +351,12 @@ type
     dbinfoitem:TRpDatabaseInfoItem;
     constructor Create;
   end;
-procedure UpdateConAdmin;
 procedure GetRpDatabaseDrivers(alist:TStrings);
 {$IFDEF USERPDATASET}
 procedure CombineAddDataset(client:TClientDataset;data:TDataset;group:boolean);
 {$ENDIF}
 procedure FillFieldsInfo(adata:TDataset;fieldnames,fieldtypes,fieldsizes:TStrings);
 procedure ExtractFieldNameAndSize(astring:String;var fieldname:String;var size:Integer);
-
-var
- ConAdmin:TRpConnAdmin;
 
 implementation
 
@@ -775,6 +773,11 @@ begin
 {$IFDEF USEADO}
  FADOConnection.free;
 {$ENDIF}
+ if Assigned(ConAdmin) then
+ begin
+  ConAdmin.free;
+  ConAdmin:=nil;
+ end;
  inherited Destroy;
 end;
 
@@ -881,7 +884,7 @@ begin
  FReportField:='REPORT';
 end;
 
-procedure UpdateConAdmin;
+procedure TRpDatabaseinfoitem.UpdateConAdmin;
 begin
  if Assigned(ConAdmin) then
  begin
@@ -891,10 +894,6 @@ begin
  ConAdmin:=TRpConnAdmin.Create;
 end;
 
-procedure CreateConAdmin;
-begin
- ConAdmin:=TRpConnAdmin.Create;
-end;
 
 
 {$IFDEF USEADO}
@@ -960,14 +959,14 @@ begin
      if (FLoadParams) then
      begin
       if Not Assigned(ConAdmin) then
-       CreateConAdmin;
+       UpdateConAdmin;
       ConAdmin.GetConnectionParams(conname,FSQLConnection.params);
      end;
      // Load vendor lib, library name...
      if (FLoadDriverParams) then
      begin
       if Not Assigned(ConAdmin) then
-       CreateConAdmin;
+       UpdateConAdmin;
       drivername:=FSQLCOnnection.DriverName;
       if Length(drivername)<1 then
        drivername:=FSQLConnection.params.Values['DriverName'];
@@ -1021,7 +1020,7 @@ begin
      if (FLoadParams) then
      begin
       if Not Assigned(ConAdmin) then
-       CreateConAdmin;
+       UpdateConAdmin;
       ConAdmin.GetConnectionParams(conname,FIBDatabase.params);
      end;
      ConvertParamsFromDBXToIBX(FIBDatabase);
@@ -1052,7 +1051,7 @@ begin
      if (FLoadParams) then
      begin
       if Not Assigned(ConAdmin) then
-       CreateConAdmin;
+       UpdateConAdmin;
       alist:=TStringList.Create;
       try
        ConAdmin.GetConnectionParams(conname,alist);
@@ -1105,7 +1104,7 @@ begin
     if (FLoadParams) then
     begin
      if Not Assigned(ConAdmin) then
-      CreateConAdmin;
+      UpdateConAdmin;
      alist:=TStringList.Create;
      try
       ConAdmin.GetConnectionParams(conname,alist);
@@ -1176,7 +1175,7 @@ begin
        adparams:=TStringList.Create;
        try
         if Not Assigned(ConAdmin) then
-         CreateConAdmin;
+         UpdateConAdmin;
         ConAdmin.GetConnectionParams(FBDEAlias,adparams);
         AddParamsFromDBXToBDE(adparams,FBDEDatabase.Params);
        finally
@@ -1245,7 +1244,7 @@ begin
      if (FLoadParams) then
      begin
       if Not Assigned(ConAdmin) then
-       CreateConAdmin;
+       UpdateConAdmin;
       ConAdmin.GetConnectionParams(conname,FIBODatabase.params);
      end;
      ConvertParamsFromDBXToIBO(FIBODatabase);
@@ -3390,6 +3389,10 @@ begin
    begin
     typestring:=SRpInteger;
    end;
+  ftLargeInt:
+   begin
+    typestring:=SRpSLargeInteger;
+   end;
   ftWord:
    begin
     typestring:=SRpWord;
@@ -3671,19 +3674,6 @@ begin
 {$ENDIF}
 end;
 
-
-
-initialization
-
-ConAdmin:=nil;
-
-finalization
-
-if Assigned(ConAdmin) then
-begin
- ConAdmin.free;
- ConAdmin:=nil;
-end;
 
 
 

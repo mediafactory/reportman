@@ -228,6 +228,13 @@ object FRpSysInfo: TFRpSysInfo
       Height = 13
       Caption = 'Page size'
     end
+    object LPaperSources: TLabel
+      Left = 272
+      Top = 108
+      Width = 68
+      Height = 13
+      Caption = 'Paper sources'
+    end
     object EStatus: TEdit
       Left = 380
       Top = 16
@@ -322,6 +329,16 @@ object FRpSysInfo: TFRpSysInfo
       Color = clInfoBk
       ItemHeight = 13
       TabOrder = 9
+    end
+    object ComboSource: TComboBox
+      Left = 380
+      Top = 104
+      Width = 153
+      Height = 21
+      Style = csDropDownList
+      Color = clInfoBk
+      ItemHeight = 13
+      TabOrder = 10
     end
   end
   object GroupBox2: TGroupBox

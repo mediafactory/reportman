@@ -65,6 +65,7 @@ type
    selectedprinter:TRpPrinterSelect;
    FOrientation:TRpOrientation;
    FPageWidth,FPageHeight:integer;
+   FFullPlain:Boolean;
    FLinesPerInch:Currency;
    FLines:array of TRpPrintLine;
    FLineInfo:array of TRpLineInfo;
@@ -113,7 +114,7 @@ type
     hardwarecollate:boolean);
    procedure EndDocument;
    procedure AbortDocument;
-   procedure NewPage;
+   procedure NewPage(metafilepage:TRpMetafilePage);
    procedure EndPage;
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
    procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
@@ -129,8 +130,10 @@ type
    function SupportsCollation:boolean;
    property LinesPerInch:Currency read FLinesPerInch write FLinesPerInch;
    property PlainText:Boolean read FPlainText write FPlainText default false;
+   property FullPlain:Boolean read FFullPlain write FFullPlain default false;
    property OemConvert:Boolean read FOemConvert write FOemConvert default false;
    property ForceDriverName:String read FForceDriverName write FForceDriverName;
+   function GetFontDriver:IRpPrintDriver;
   end;
 
 
@@ -201,7 +204,7 @@ begin
   allowedsizes[j]:=Length(escapecodes[i])>0;
  end;
  RecalcSize;
- FPrinterDriverName:='EPSON';
+ FPrinterDriverName:='PLAIN';
 end;
 
 procedure FreeObjects(FLines:TStringList);
@@ -328,10 +331,16 @@ begin
  MemStream:=TMemoryStream.Create;
 end;
 
-procedure TRpTextDriver.NewPage;
+procedure TRpTExtDriver.NewPage(metafilepage:TRpMetafilePage);
 begin
  // Writes the page to the stream
  WriteCurrentPage(false);
+ // Recalculate page size
+ if metafilepage.UpdatedPageSize then
+ begin
+  FPageWidth:=metafilepage.PageSizeqt.PhysicWidth;
+  FPageHeight:=metafilepage.PageSizeqt.PhysicHeight;
+ end;
  // Reinitialize the page
  RecalcSize;
 end;
@@ -521,6 +530,7 @@ procedure TRpTextDriver.RepProgress(Sender:TRpBaseReport;var docancel:boolean);
 var
  astring:WideString;
 begin
+{$I-}
 {$IFDEF USEVARIANTS}
  WriteLn(SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
   +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
@@ -530,15 +540,18 @@ begin
   +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
   FormatFloat('#########,####',Sender.RecordCount)));
 {$ENDIF}
+{$I+}
  // If it's the last page prints additional info
  if Sender.LastPage then
  begin
   astring:=Format('%-20.20s',[SRpPage])+FormatFloat('0000000000',Sender.PageNum+1);
+{$I-}
 {$IFDEF USEVARIANTS}
   WriteLn(astring);
 {$ELSE}
   WriteLn(String(astring));
 {$ENDIF}
+{$I+}
  end;
 end;
 
@@ -626,6 +639,7 @@ procedure TRpTextDriver.FillEspcapes(FPrinterDriverName:String);
 var
  i:TPrinterRawOp;
 begin
+ FFullPlain:=false;
  for i:=Low(TPrinterRawOp) to High(TPrinterRawOp) do
  begin
   escapecodes[i]:='';
@@ -866,6 +880,14 @@ begin
   escapecodes[rpescapecr]:=#13;
  end
  else
+ if FPrinterDriverName='PLAINFULL' then
+ begin
+  escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rpescapecr]:=#13;
+  FFullPlain:=true;
+  FPlainText:=true;
+ end
+ else
  if FPrinterDriverName='VT100' then
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode
@@ -1008,6 +1030,7 @@ begin
  if copies<0 then
   copies:=1;
  adriver:=TRpTextDriver.Create;
+ adriver.ForceDriverName:=rptypes.GetPrinterEscapeStyleDriver(metafile.Printerselect);
  adriver.NewDocument(metafile,1,false);
  try
   for i:=frompage to topage do
@@ -1017,7 +1040,10 @@ begin
     adriver.DrawPage(metafile.Pages[i]);
     if ((i<metafile.PageCount-1) or (j<copies-1)) then
     begin
-     adriver.NewPage;
+     if j<copies-1 then
+      adriver.NewPage(metafile.Pages[i])
+     else
+      adriver.NewPage(metafile.Pages[i+1]);
     end;
    end;
   end;
@@ -1050,7 +1076,7 @@ begin
   begin
    adriver.DrawPage(metafile.Pages[i]);
    if i<metafile.PageCount-1 then
-    adriver.NewPage;
+    adriver.NewPage(metafile.Pages[i+1]);
   end;
   adriver.EndDocument;
   adriver.MemStream.Seek(0,soFromBeginning);
@@ -1782,6 +1808,12 @@ begin
  for i:=0 to lastline do
  begin
   codedstring:=EnCodeLine(FLines[i],i);
+  if FFullPlain then
+  begin
+   codedstring:=Trim(codedstring);
+   if Length(codedstring)>0 then
+    codedstring:=codedstring+escapecodes[rpescapelinefeed];
+  end;
   WriteStringToStream(codedstring,MemStream);
  end;
 end;
@@ -1822,5 +1854,9 @@ begin
 
 end;
 
+function TRpTextDriver.GetFontDriver:IRpPrintDriver;
+begin
+ Result:=Self;
+end;
 
 end.

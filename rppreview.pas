@@ -213,7 +213,11 @@ begin
 end;
 
 procedure TFRpPreview.PrintPage;
+var
+ oldwidth,oldheight:integer;
 begin
+ oldwidth:=AImage.Width;
+ oldheight:=AImage.Height;
  try
   if report.Metafile.PageCount>=pagenum then
   begin
@@ -256,13 +260,24 @@ begin
   EPageNum.Text:='0';
   raise;
  end;
+ if ((oldwidth<>AImage.Width) or (oldheight<>AImage.Height)) then
+  PlaceImagePosition;
 end;
 
 procedure TFRpPreview.AppIdle(Sender:TObject;var done:boolean);
+var
+ drivername:string;
+ istextonly:boolean;
 begin
  done:=false;
  Application.OnIdle:=nil;
  try
+  drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
+  istextonly:=Length(drivername)>0;
+  if istextonly then
+  begin
+   qtdriver.FontDriver:=TRpTextDriver.Create;
+  end;
   if report.PreviewWindow=spwMaximized then
    WindowState:=wsMaximized;
   report.OnProgress:=RepProgress;
@@ -279,7 +294,6 @@ begin
   pagenum:=1;
   qtdriver.NewDocument(report.Metafile,1,false);
   PrintPage;
-  PlaceImagePosition;
   printed:=true;
   EnableControls;
   ActiveControl:=EPageNum;
@@ -784,8 +798,6 @@ begin
   end;
   if pagenum>=1 then
    PrintPage;
-  if pagenum>=1 then
-   PlaceImagePosition;
  end;
 end;
 

@@ -12,7 +12,7 @@ unit Reportman_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 29/11/2004 20:43:51 from Type Library described below.
+// File generated on 25/01/2005 21:03:17 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\reportman.tlb (1)
@@ -21,7 +21,7 @@ unit Reportman_TLB;
 // Helpfile: 
 // HelpString: Report Manager ActiveX Library
 // DepndLst: 
-//   (1) v2.0 stdole, (H:\WINDOWS\system32\STDOLE2.TLB)
+//   (1) v2.0 stdole, (H:\WINDOWS\system32\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
@@ -180,6 +180,13 @@ type
     procedure SaveToCSV(const filename: WideString); safecall;
     procedure SaveToSVG(const filename: WideString); safecall;
     procedure SaveToMetafile(const filename: WideString); safecall;
+    procedure SaveToExcel2(const filename: WideString); safecall;
+    function Get_DefaultPrinter: WideString; safecall;
+    procedure Set_DefaultPrinter(const Value: WideString); safecall;
+    function Get_PrintersAvailable: WideString; safecall;
+    procedure GetRemoteParams(const hostname: WideString; port: Integer; const user: WideString; 
+                              const password: WideString; const aliasname: WideString; 
+                              const reportname: WideString); safecall;
     property filename: WideString read Get_filename write Set_filename;
     property Preview: WordBool read Get_Preview write Set_Preview;
     property ShowProgress: WordBool read Get_ShowProgress write Set_ShowProgress;
@@ -195,6 +202,8 @@ type
     property HelpType: TxHelpType read Get_HelpType write Set_HelpType;
     property HelpKeyword: WideString read Get_HelpKeyword write Set_HelpKeyword;
     property Report: ReportReport read Get_Report;
+    property DefaultPrinter: WideString read Get_DefaultPrinter write Set_DefaultPrinter;
+    property PrintersAvailable: WideString read Get_PrintersAvailable;
   end;
 
 // *********************************************************************//
@@ -251,6 +260,12 @@ type
     procedure SaveToCSV(const filename: WideString); dispid 36;
     procedure SaveToSVG(const filename: WideString); dispid 37;
     procedure SaveToMetafile(const filename: WideString); dispid 38;
+    procedure SaveToExcel2(const filename: WideString); dispid 39;
+    property DefaultPrinter: WideString dispid 42;
+    property PrintersAvailable: WideString readonly dispid 44;
+    procedure GetRemoteParams(const hostname: WideString; port: Integer; const user: WideString; 
+                              const password: WideString; const aliasname: WideString; 
+                              const reportname: WideString); dispid 40;
   end;
 
 // *********************************************************************//
@@ -427,6 +442,10 @@ type
     procedure SaveToCSV(const filename: WideString);
     procedure SaveToSVG(const filename: WideString);
     procedure SaveToMetafile(const filename: WideString);
+    procedure SaveToExcel2(const filename: WideString);
+    procedure GetRemoteParams(const hostname: WideString; port: Integer; const user: WideString; 
+                              const password: WideString; const aliasname: WideString; 
+                              const reportname: WideString);
     property  ControlInterface: IReportManX read GetControlInterface;
     property  DefaultInterface: IReportManX read GetControlInterface;
     property DoubleBuffered: WordBool index 18 read GetWordBoolProp write SetWordBoolProp;
@@ -435,6 +454,7 @@ type
     property Enabled: WordBool index -514 read GetWordBoolProp write SetWordBoolProp;
     property Visible: WordBool index 29 read GetWordBoolProp write SetWordBoolProp;
     property Report: ReportReport read Get_Report;
+    property PrintersAvailable: WideString index 44 read GetWideStringProp;
   published
     property Anchors;
     property  TabStop;
@@ -460,6 +480,7 @@ type
     property Cursor: Smallint index 30 read GetSmallintProp write SetSmallintProp stored False;
     property HelpType: TOleEnum index 31 read GetTOleEnumProp write SetTOleEnumProp stored False;
     property HelpKeyword: WideString index 32 read GetWideStringProp write SetWideStringProp stored False;
+    property DefaultPrinter: WideString index 42 read GetWideStringProp write SetWideStringProp stored False;
   end;
 
 // *********************************************************************//
@@ -704,6 +725,18 @@ end;
 procedure TReportManX.SaveToMetafile(const filename: WideString);
 begin
   DefaultInterface.SaveToMetafile(filename);
+end;
+
+procedure TReportManX.SaveToExcel2(const filename: WideString);
+begin
+  DefaultInterface.SaveToExcel2(filename);
+end;
+
+procedure TReportManX.GetRemoteParams(const hostname: WideString; port: Integer; 
+                                      const user: WideString; const password: WideString; 
+                                      const aliasname: WideString; const reportname: WideString);
+begin
+  DefaultInterface.GetRemoteParams(hostname, port, user, password, aliasname, reportname);
 end;
 
 class function CoReportReport.Create: IReportReport;

@@ -451,12 +451,6 @@ begin
  fchangesize.OnSizeChange:=changesizechange;
 
 
- if Screen.PixelsPerInch>90 then
- begin
-  Font.Size:=7;
- end;
-
-
  FClasses.AddObject('TRpExpressionInterface',TRpExpressionInterface.Create(Self));
  FClasses.AddObject('TRpBarcodeInterface',TRpBarcodeInterface.Create(Self));
  FClasses.AddObject('TRpChartInterface',TRpChartInterface.Create(Self));
@@ -650,6 +644,7 @@ begin
  expredia:=TRpExpreDialogVCL.Create(Application);
  try
   expredia.Rpalias:=TFRpObjInspVCL(Owner).RpAlias1;
+  report.InitEvaluator;
   report.AddReportItemsToEvaluator(expredia.evaluator);
   expredia.Expresion.Text:=TRpMaskEdit(LControls.Objects[TButton(Sender).Tag]).Text;
   if expredia.Execute then
@@ -2245,6 +2240,16 @@ begin
    TComboBox(acontrol).Text:=TComboBox(Sender).Text;
   TComboBox(acontrol).OnChange:=OldOnChange;
  end
+{$IFDEF USETNTUNICODE}
+ else
+ if (aControl is TTntEdit) then
+ begin
+  oldonchange:=TTntEdit(acontrol).OnChange;
+  TTntEdit(acontrol).OnChange:=nil;
+  TTntEdit(acontrol).Text:=TTntEdit(Sender).Text;
+  TTntEdit(acontrol).OnChange:=OldOnChange;
+ end
+{$ENDIF}
  else
  if acontrol is TShape then
  begin
