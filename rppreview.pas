@@ -59,7 +59,7 @@ type
     BCancel: TButton;
     PBar: TProgressBar;
     AExit: TAction;
-    ToolButton8: TToolButton;
+    BSeparator: TToolButton;
     ToolButton9: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -375,6 +375,7 @@ end;
 
 procedure TFRpPreview.DisableControls(enablebar:boolean);
 begin
+ BCancel.Left:=BSeparator.Left+BSeparator.Width;
  BCancel.Visible:=true;
  AFirst.Enabled:=false;
  ALast.Enabled:=false;

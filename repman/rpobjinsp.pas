@@ -24,7 +24,7 @@ uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   rpobinsint,QGrids,rpconsts,rpprintitem,QStdCtrls,
   QExtCtrls,rpgraphutils,rpsection,rpmunits, rpexpredlg,
-  rpalias,rpreport,Qt,rpsubreport;
+  rpalias,rpreport,Qt,rpsubreport,flabelint,rplabelitem;
 
 const
   CONS_LEFTGAP=3;
@@ -286,6 +286,26 @@ begin
    TEdit(Control).Color:=clInfoBk;
    TEdit(Control).OnClick:=ImageClick;
    TEdit(Control).OnKeyDown:=ImageKeyDown;
+  end
+  else
+  if LTypes.Strings[i]=SRpGroup then
+  begin
+   if dontrelease then
+   begin
+    Control:=TControl(LControls.Objects[i]);
+   end
+   else
+   begin
+    Control:=TComboBox.Create(Self);
+    subrep:=fmainf.freportstructure.FindSelectedSubreport;
+    TComboBox(Control).Style:=csDropDownList;
+    subrep.GetGroupNames(TComboBox(Control).Items);
+    TComboBox(Control).Items.Insert(0,'');
+    if CompItem is TRpExpressionInterface then
+     TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(
+      TRpExpression(TRpExpressionInterface(CompItem).printitem).GroupName);
+    TComboBox(Control).OnChange:=EditChange;
+   end;
   end
   else
   if LTypes.Strings[i]=SRpSFontStyle then

@@ -24,7 +24,7 @@ interface
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,types,
   rpprintitem,rplabelitem,rpobinsint,rpconsts,
-  rpgraphutils;
+  rpgraphutils,rptypes;
 
 type
  TRpLabelInterface=class(TRpGenTextInterface)
@@ -47,6 +47,7 @@ type
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
    procedure SetProperty(pname:string;value:string);override;
    function GetProperty(pname:string):string;override;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
  end;
 
 
@@ -64,6 +65,43 @@ type
 
 
 implementation
+
+const
+ AggregatesString:array [rpAgNone..rpAgGeneral] of string=
+  (SRpNone,SRpGroup,SRpPage,SRpGeneral);
+ AggretypeString:array [rpagSum..rpagStdDev] of string=
+  (SrpSum,SRpAvg,SRpStdDev);
+
+
+function StringToAgeType(value:string):TRpAggregateType;
+var
+ i:TRpAggregateType;
+begin
+ Result:=rpAgSum;
+ for i:=rpAgsum to rpAgStdDev do
+ begin
+  if AggreTypeString[i]=Value then
+  begin
+   Result:=i;
+   break;
+  end;
+ end;
+end;
+
+function StringToAggregate(value:string):TRpAggregate;
+var
+ i:TRpAggregate;
+begin
+ Result:=rpAgNone;
+ for i:=rpAgNone to rpAgGeneral do
+ begin
+  if AggregatesString[i]=Value then
+  begin
+   Result:=i;
+   break;
+  end;
+ end;
+end;
 
 {$R *.xfm}
 
@@ -163,6 +201,33 @@ begin
  lnames.Add(SrpSDisplayFOrmat);
  ltypes.Add(SRpSString);
  lvalues.Add(TRpExpression(printitem).DisplayFormat);
+
+ // Identifier
+ lnames.Add(SrpSIdentifier);
+ ltypes.Add(SRpSString);
+ lvalues.Add(TRpExpression(printitem).Identifier);
+
+ // Aggregate
+ lnames.Add(SrpSAggregate);
+ ltypes.Add(SRpSList);
+ lvalues.Add(AggregatesString[TRpExpression(printitem).Aggregate]);
+
+
+ // Aggregate group
+ lnames.Add(SrpSAgeGroup);
+ ltypes.Add(SRpGroup);
+ lvalues.Add(TRpExpression(printitem).GroupName);
+
+ // Aggregate type
+ lnames.Add(SrpSAgeType);
+ ltypes.Add(SRpSList);
+ lvalues.Add(AggretypeString[TRpExpression(printitem).AgType]);
+
+  // Aggregate Ini value
+ lnames.Add(SrpSIniValue);
+ ltypes.Add(SRpSExpression);
+ lvalues.Add(TRpExpression(printitem).AgIniValue);
+
 end;
 
 procedure TRpExpressionInterface.SetProperty(pname:string;value:string);
@@ -181,6 +246,32 @@ begin
   invalidate;
   exit;
  end;
+ if pname=SRpSIdentifier then
+ begin
+  TRpExpression(fprintitem).Identifier:=value;
+  invalidate;
+  exit;
+ end;
+ if pname=SrpSAggregate then
+ begin
+  TRpExpression(fprintitem).Aggregate:=StringToAggregate(Value);
+  exit;
+ end;
+ if pname=SrpSAgeGroup then
+ begin
+  TRpExpression(fprintitem).GroupName:=Value;
+  exit;
+ end;
+ if pname=SrpSAgeType then
+ begin
+  TRpExpression(fprintitem).AgType:=StringToAgeType(Value);
+  exit;
+ end;
+ if pname=SrpSIniValue then
+ begin
+  TRpExpression(fprintitem).AgIniValue:=Value;
+  exit;
+ end;
  inherited SetProperty(pname,value);
 end;
 
@@ -197,7 +288,60 @@ begin
   Result:=TRpExpression(printitem).DisplayFormat;
   exit;
  end;
+ if pname=SrpSIdentifier then
+ begin
+  Result:=TRpExpression(printitem).Identifier;
+  exit;
+ end;
+ if pname=SrpSAggregate then
+ begin
+  Result:=AggregatesString[TRpExpression(printitem).Aggregate];
+  exit;
+ end;
+ if pname=SrpSAgeGroup then
+ begin
+  Result:=TRpExpression(printitem).GroupName;
+  exit;
+ end;
+ if pname=SrpSAgeType then
+ begin
+  Result:=AggretypeString[TRpExpression(printitem).AgType];
+  exit;
+ end;
+ if pname=SrpSIniValue then
+ begin
+  Result:=TRpExpression(printitem).AgIniValue;
+  exit;
+ end;
+
  Result:=inherited GetProperty(pname);
+end;
+
+procedure TRpExpressionInterface.GetPropertyValues(pname:string;
+ lpossiblevalues:TStrings);
+var
+ i:TRpAggregate;
+ it:TRpAggregateType;
+begin
+ if pname=SRpSAgeType then
+ begin
+  for it:=rpAgsum to rpAgStdDev do
+  begin
+   lpossiblevalues.Add(AggreTypeString[it]);
+  end;
+  exit;
+ end;
+
+ if pname=SRpSAggregate then
+ begin
+  for i:=rpAgNone to rpAgGeneral do
+  begin
+   lpossiblevalues.Add(AggregatesString[i]);
+  end;
+  exit;
+ end;
+
+ inherited GetPropertyValues(pname,lpossiblevalues);
 end;
 
 

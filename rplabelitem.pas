@@ -31,11 +31,12 @@ type
    procedure SetText(Value:WideString);
    function GetText:WideString;
    procedure SetAllText(Value:TStrings);
+  protected
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   public
    constructor Create(AOwner:TComponent);override;
    property Text:widestring read GetText write SetText;
    destructor Destroy;override;
-   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   published
    property AllText:TStrings read FAllText write SetAllText;
   end;
@@ -50,13 +51,18 @@ type
    FAutoExpand:Boolean;
    FAutoContract:Boolean;
    FDisplayFormat:string;
+   FValue:Variant;
+   FUpdated:boolean;
+   FAgIniValue:widestring;
    procedure SetIdentifier(Value:string);
+  protected
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   public
    constructor Create(AOwner:TComponent);override;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
    function GetText:widestring;
-   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   published
+   property DisplayFormat:string read FDisplayformat write FDisplayFormat;
    property Expression:widestring read FExpression write FExpression;
    property Identifier:string read FIdentifier write SetIdentifier;
    property Aggregate:TRpAggregate read FAggregate write FAggregate
@@ -64,9 +70,9 @@ type
    property GroupName:string read FGroupName write FGroupName;
    property AgType:TRpAggregateType read FAgType write FAgType
     default rpAgSum;
+   property AgIniValue:widestring read FAgIniValue write FAgIniValue;
    property AutoExpand:Boolean read FAutoExpand write FAutoExpand;
    property AutoContract:Boolean read FAutoContract write FAutoContract;
-   property DisplayFormat:string read FDisplayformat write FDisplayFormat;
   end;
 
 implementation
@@ -122,10 +128,11 @@ constructor TRpExpression.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
  Height:=275;
+ FAgIniValue:='0';
  Width:=1440;
 end;
 
-procedure TRpLabel.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpLabel.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 begin
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
   aposx+PosX,width,height,Text,WFontName,LFontName,FontSize,
@@ -140,7 +147,7 @@ var
 begin
  if (csloading in componentstate) then
  begin
-  FIdentifier:='';
+  FIdentifier:=Value;
   exit;
  end;
  // Check if the identifier is used
@@ -151,10 +158,14 @@ begin
  index:=fidens.IndexOf(Value);
  if index>=0 then
   Raise Exception.Create(SRpIdentifierAlreadyExists);
+ // Erases previous identifier
+ index:=fidens.IndexOf(FIdentifier);
+ if index>=0 then
+  fidens.Delete(index);
  FIdentifier:=Value;
  if Length(FIdentifier)>0 then
  begin
-  fidens.Add(FIdentifier);
+  fidens.AddObject(FIdentifier,self);
  end;
 end;
 
@@ -180,7 +191,7 @@ begin
  end;
 end;
 
-procedure TRpExpression.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpExpression.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 var
  Text:string;
 begin

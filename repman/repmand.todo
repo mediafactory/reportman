@@ -1,3 +1,4 @@
+{TODO -oToni -cDesign Interface : Add up-down in report structure for groups, and sections}
 {DONE -oToni -cEngine : In PrintReport use a temp filename and a temp directory}
 {TODO -oToni -cEngine : Image component filename property to load a file on the fly}
 {TODO -oToni -cEngine : User parameters form}
@@ -6,7 +7,7 @@
 {TODO -oToni -cEngine : Execute after print and before print}
 {DONE -oToni -cEngine : Page size implementation}
 {TODO 1 -oToni -cEngine : Add TotalPages variable}
-{TODO 1 -oToni -cEngine : Add Printing ranges of pages}
+{TODO  -oToni -cEngine : Add Printing ranges of pages}
 {DONE 1 -oToni -cEngine : Page margins}
 {TODO 1 -oToni -cEngine : Implementation of labels (horizontal movement)}
 {TODO 1 -oToni -cEngine : Add Barcode component}

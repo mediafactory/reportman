@@ -32,11 +32,13 @@ type
    FWidth:TRpTwips;
    FDoBeforePrint,FDoAfterPrint:string;
    FPrintCondition:string;
+  protected
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);virtual;
   public
    constructor Create(AOwner:TComponent);override;
    function GetExtension:TPoint;virtual;
    function EvaluatePrintCondition:boolean;
-   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);virtual;
+   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);
   published
    property PrintCondition:string read FPrintCondition write FPrintCondition;
    property DoBeforePrint:string read FDoBeforePrint write FDoBeforePrint;
@@ -151,9 +153,47 @@ begin
  end;
 end;
 
-procedure TRpCommonComponent.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+
+procedure TRpCommonComponent.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 begin
 
+end;
+
+
+procedure TRpCommonComponent.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+var
+ fevaluator:TRpEvaluator;
+begin
+ // Do Before print and doafter print
+ if Length(FDoBeforePrint)>0 then
+ begin
+  try
+   fevaluator:=TRpREport(Owner).Evaluator;
+   fevaluator.Expression:=FDoBeforePrint;
+   fevaluator.Evaluate;
+  except
+   on E:Exception do
+   begin
+    Raise TRpReportException.Create(E.Message+':'+SRpSExpression,self);
+   end;
+  end;
+ end;
+
+ DoPrint(aposx,aposy,metafile);
+
+ if Length(FDoAfterPrint)>0 then
+ begin
+  try
+   fevaluator:=TRpREport(Owner).Evaluator;
+   fevaluator.Expression:=FDoAfterPrint;
+   fevaluator.Evaluate;
+  except
+   on E:Exception do
+   begin
+    Raise TRpReportException.Create(E.Message+':'+SRpSExpression,self);
+   end;
+  end;
+ end;
 end;
 
 constructor TrpCOmmonList.Create(sec:TComponent);

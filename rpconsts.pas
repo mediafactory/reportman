@@ -53,6 +53,16 @@ resourcestring
   SRpDriverAliasIsNotInterbase='The dbx driver alias is not Interbase';
   SRpNoDatabase='No Interbase Database specified';
   SRpSubreportAliasNotFound='Subreport alias not found:';
+  SrpSAggregate='Aggregate';
+  SRpNone='None';
+  SRpGeneral='General';
+  SrpSAgeGroup='Ag.Group';
+  SrpSAgeType='Ag.Type';
+  SrpSum='Sum';
+  SRpAvg='Average';
+  SRpStdDev='Std.Desv.';
+  SrpSIniValue='Ag.I.Value';
+  SrpSIdentifier='Identifier';
 
   SRpNoDatasets='No datasets defined';
   SRpSampleTextToLabels='Text';

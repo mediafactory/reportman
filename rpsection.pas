@@ -51,13 +51,14 @@ type
    function GetSectionCaption:String;
    procedure SetComponents(Value:TRpCommonList);
    procedure SetGroupName(Value:string);
+  protected
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   public
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    procedure FreeComponents;
    procedure DeleteComponent(com:TRpCommonComponent);
    property SectionCaption:String read GetSectionCaption;
-   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   published
    property SubReport:TComponent read FSubReport write FSubReport;
    property GroupName:String read FGroupName write SetGroupName;
@@ -199,13 +200,15 @@ begin
  end;
 end;
 
-procedure TRpSection.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpSection.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 var
  i:integer;
 begin
  for i:=0 to Components.Count-1 do
  begin
-  Components.Items[i].Component.Print(aposx,aposy,metafile);
+  // Evaluates print condition of each comonent
+  if Components.Items[i].Component.EvaluatePrintCondition then
+   Components.Items[i].Component.Print(aposx,aposy,metafile);
  end;
 end;
 

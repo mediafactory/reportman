@@ -56,6 +56,7 @@ type
    procedure AddGroup(groupname:string);
    procedure AddDetail;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
+   procedure GetGroupNames(alist:TStrings);
    property FirstDetail:integer read GetFirstDetail;
    property LastDetail:integer read GetLastDetail;
    property DetailCount:integer read GetDetailCount;
@@ -93,6 +94,20 @@ begin
  Generatenewname(sec);
 end;
 
+
+procedure TRpSubReport.GetGroupNames(alist:TStrings);
+var
+ i:integer;
+begin
+ alist.clear;
+ i:=0;
+ while i<GetFirstDetail do
+ begin
+  if (Sections.Items[i].Section.SectionType=rpsecgheader) then
+   alist.Add(Sections.Items[i].Section.GroupName);
+  inc(i);
+ end;
+end;
 
 procedure TRpSubReport.AddDetail;
 var

@@ -42,10 +42,11 @@ type
    FPenColor:integer;
    FShape:integer;
    FPenWidth:integer;
+  protected
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   public
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
-   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   published
    property BrushStyle:integer read FBrushStyle write FBrushStyle default 0;
    property BrushColor:integer read FBrushColor write FBrushColor default $FFFFFF;
@@ -71,8 +72,8 @@ type
    destructor Destroy;override;
   protected
    procedure DefineProperties(Filer: TFiler);override;
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   public
-   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);override;
    property Stream:TMemoryStream read FStream write SetStream;
   published
    property Expression:WideString read FExpression write FExpression;
@@ -110,7 +111,7 @@ begin
  inherited destroy;
 end;
 
-procedure TRpShape.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpShape.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 begin
  metafile.Pages[metafile.CurrentPage].NewDrawObject(aposy+PosY,aposx+PosX,Width,Height,
   Shape,BrushStyle,BrushColor,PenStyle,PenWidth,PenColor);
@@ -167,7 +168,7 @@ begin
  AStream.Write(FStream.Memory^,ssize);
 end;
 
-procedure TRpImage.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpImage.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 var
  evaluator:TRpEvaluator;
  iden:TIdentifier;

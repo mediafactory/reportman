@@ -277,7 +277,7 @@ begin
      rpexpre:=TRpExpression(comp);
      if Length(rpexpre.Identifier)>0 then
      begin
-      FIdentifiers.Add(rpexpre.Identifier);
+      FIdentifiers.AddObject(rpexpre.Identifier,comp);
      end;
     end;
    end;
@@ -287,7 +287,7 @@ end;
 
 
 procedure TRpReport.Notification(AComponent:TComponent;Operation:TOperation);
-var i:integer;
+var i,index:integer;
 begin
  inherited Notification(AComponent,Operation);
 
@@ -305,6 +305,16 @@ begin
        Items[i].FSubReport:=nil;
      end;
     end;
+   end;
+  end
+  else
+  if (AComponent is TRpExpression) then
+  begin
+   if Length(TRpExpression(AComponent).Identifier)>0 then
+   begin
+    index:=FIdentifiers.IndexOf(TRpExpression(AComponent).Identifier);
+    if index>=0 then
+     FIdentifiers.Delete(index);
    end;
   end;
  end;
@@ -798,6 +808,11 @@ begin
  begin
   FEvaluator.NewVariable(params.items[i].Name,params.items[i].Value);
  end;
+ // Here identifiers should  be added
+
+
+
+
  // Sends the message report header to all components
  Subreports.Items[0].Subreport.SubReportChanged(rpReportStart);
  FDataAlias.List.Clear;
