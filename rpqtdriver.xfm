@@ -1,6 +1,6 @@
 object FRpQtProgress: TFRpQtProgress
-  Left = 172
-  Top = 264
+  Left = 176
+  Top = 284
   Width = 455
   Height = 117
   HorzScrollBar.Range = 453
@@ -14,7 +14,7 @@ object FRpQtProgress: TFRpQtProgress
   ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 75
+  PixelsPerInch = 100
   object CancelBtn: TButton
     Left = 207
     Top = 84

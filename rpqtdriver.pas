@@ -83,6 +83,7 @@ type
    bitmap:TBitmap;
    dpi:integer;
    toprinter:boolean;
+   scale:double;
    procedure NewDocument(report:TrpMetafileReport);stdcall;
    procedure EndDocument;stdcall;
    procedure AbortDocument;stdcall;
@@ -154,6 +155,7 @@ constructor TRpQtDriver.Create;
 begin
  // By default 1:1 scale
  dpi:=Screen.PixelsPerInch;
+ scale:=0.5;
 end;
 
 procedure TRpQtDriver.NewDocument(report:TrpMetafileReport);
@@ -165,6 +167,7 @@ var
 begin
  if ToPrinter then
  begin
+  scale:=1.0;
   printer.Title:='Untitled';
   printer.SetPrinter(Printer.Printers.Strings[0]);
   SetOrientation(report.Orientation);
@@ -214,8 +217,8 @@ begin
   awidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
   aheight:=Round((asize.y/TWIPS_PER_INCHESS)*dpi);
   // Sets page size and orientation
-  bitmap.Width:=awidth;
-  bitmap.Height:=aheight;
+  bitmap.Width:=Round(awidth*scale);
+  bitmap.Height:=Round(aheight*scale);
 
   Bitmap.Canvas.Brush.Style:=bsSolid;
   Bitmap.Canvas.Brush.Color:=report.BackColor;
@@ -284,7 +287,8 @@ begin
  // Does nothing
 end;
 
-procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer);
+procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;
+ dpix,dpiy:integer;scale:double);
 var
  posx,posy:integer;
  rec:TRect;
@@ -295,11 +299,11 @@ var
  stream:TMemoryStream;
  bitmap:TBitmap;
  aalign:Integer;
- arec:TRect;
+ arec,R:TRect;
 begin
  // Switch to device points
- posx:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
- posy:=round(obj.Top*dpiy/TWIPS_PER_INCHESS);
+ posx:=round(obj.Left*dpix*scale/TWIPS_PER_INCHESS);
+ posy:=round(obj.Top*dpiy*scale/TWIPS_PER_INCHESS);
  case obj.Metatype of
   rpMetaText:
    begin
@@ -319,8 +323,8 @@ begin
      aalign:=aalign or Integer(AlignmentFlags_WordBreak);
     rec.Left:=posx;
     rec.Top:=posy;
-    rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);
-    rec.Bottom:=posy+round(obj.Height*dpiy/TWIPS_PER_INCHESS);
+    rec.Right:=posx+round(obj.Width*dpix*scale/TWIPS_PER_INCHESS);
+    rec.Bottom:=posy+round(obj.Height*dpiy*scale/TWIPS_PER_INCHESS);
     // Not Transparent
     if Not obj.Transparent then
     begin
@@ -342,6 +346,7 @@ begin
       try
        QPainter_translate(Canvas.Handle,posx,posy);
        QPainter_rotate(Canvas.Handle,-obj.FontRotation/10);
+       QPainter_scale(Canvas.Handle,scale,scale);
        QPainter_drawText(Canvas.Handle,0,0,PWideString(@atext),Length(Atext));
       finally
        QPainter_restore(Canvas.Handle);
@@ -351,17 +356,44 @@ begin
      end;
     end
     else
-     Canvas.TextRect(rec,posx,posy,atext,aalign);
+    begin
+     posx:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
+     posy:=round(obj.Top*dpiy/TWIPS_PER_INCHESS);
+     rec.Left:=posx;
+     rec.Top:=posy;
+     rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);
+     rec.Bottom:=posy+round(obj.Height*dpiy/TWIPS_PER_INCHESS);
+     Canvas.Start;
+     try
+      R.Left := posx;
+      R.Top := posy;
+      R.Right := rec.Right;
+      R.Bottom := rec.Bottom;
+      QPainter_setFont(Canvas.Handle, Canvas.Font.Handle);
+      QPainter_setPen(Canvas.Handle, Canvas.Font.FontPen);
+      QPainter_save(Canvas.Handle);
+      try
+       QPainter_scale(Canvas.Handle,scale,scale);
+       QPainter_drawText(Canvas.Handle, @R, aalign, PWideString(@atext), -1,
+        @Rec, nil);
+      finally
+       QPainter_restore(Canvas.Handle);
+      end;
+     finally
+       Canvas.Stop;
+      end;
+//      Canvas.TextRect(rec,posx,posy,atext,aalign);
+    end;
    end;
   rpMetaDraw:
    begin
-    Width:=round(obj.Width*dpix/TWIPS_PER_INCHESS);
-    Height:=round(obj.Height*dpiy/TWIPS_PER_INCHESS);
+    Width:=round(obj.Width*dpix*scale/TWIPS_PER_INCHESS);
+    Height:=round(obj.Height*dpiy*scale/TWIPS_PER_INCHESS);
     Canvas.Pen.Color:=obj.Pencolor;
     Canvas.Pen.Style:=TPenStyle(obj.PenStyle);
     Canvas.Brush.Color:=obj.BrushColor;
     Canvas.Brush.Style:=TBrushStyle(obj.BrushStyle);
-    Canvas.Pen.Width:=Round(dpix*obj.PenWidth/TWIPS_PER_INCHESS);
+    Canvas.Pen.Width:=Round(dpix*scale*obj.PenWidth/TWIPS_PER_INCHESS);
     X := Canvas.Pen.Width div 2;
     Y := X;
     W := Width - Canvas.Pen.Width + 1;
@@ -403,8 +435,8 @@ begin
    end;
   rpMetaImage:
    begin
-    Width:=round(obj.Width*dpix/TWIPS_PER_INCHESS);
-    Height:=round(obj.Height*dpiy/TWIPS_PER_INCHESS);
+    Width:=round(obj.Width*dpix*scale/TWIPS_PER_INCHESS);
+    Height:=round(obj.Height*dpiy*scale/TWIPS_PER_INCHESS);
     rec.Top:=PosY;
     rec.Left:=PosX;
     rec.Bottom:=rec.Top+Height-1;
@@ -420,8 +452,8 @@ begin
      case TRpImageDrawStyle(obj.DrawImageStyle) of
       rpDrawFull:
        begin
-        rec.Bottom:=rec.Top+round(bitmap.height/obj.dpires)*dpiy-1;
-        rec.Right:=rec.Left+round(bitmap.width/obj.dpires)*dpix-1;
+        rec.Bottom:=rec.Top+round((bitmap.height/obj.dpires)*dpiy*scale)-1;
+        rec.Right:=rec.Left+round((bitmap.width/obj.dpires)*dpix*scale)-1;
         Canvas.StretchDraw(rec,bitmap);
        end;
       rpDrawStretch:
@@ -479,7 +511,7 @@ begin
   dpix:=dpi;
   dpiy:=dpi;
  end;
- PrintObject(Canvas,page,obj,dpix,dpiy);
+ PrintObject(Canvas,page,obj,dpix,dpiy,scale);
 end;
 
 function TRpQtDriver.AllowCopies:boolean;
@@ -600,7 +632,7 @@ begin
      apage:=metafile.Pages[i];
      for j:=0 to apage.ObjectCount-1 do
      begin
-      PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy);
+      PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,1);
       if assigned(aform) then
       begin
   {$IFDEF MSWINDOWS}

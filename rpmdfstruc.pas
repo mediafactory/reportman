@@ -51,6 +51,7 @@ type
     procedure ADeleteExecute(Sender: TObject);
     procedure BNewClick(Sender: TObject);
     procedure MPHeaderClick(Sender: TObject);
+    procedure RViewChange(Sender: TObject; Node: TTreeNode);
   private
     { Private declarations }
     oldappidle:TIdleEvent;
@@ -588,6 +589,11 @@ begin
   Application.OnIdle:=ActionIdle;
   exit;
  end;
+end;
+
+procedure TFRpStructure.RViewChange(Sender: TObject; Node: TTreeNode);
+begin
+ RViewClick(Sender);
 end;
 
 end.

@@ -129,8 +129,7 @@ type
     MFields: TPopupMenu;
     est1: TMenuItem;
     ext21: TMenuItem;
-    ATutorial: TAction;
-    AFeatures: TAction;
+    ADocumentation: TAction;
     Features1: TMenuItem;
     utorial1: TMenuItem;
     APrintSetup: TAction;
@@ -193,7 +192,7 @@ type
     procedure BExpressionMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure ShowHelp(AURL:string);
-    procedure ATutorialExecute(Sender: TObject);
+    procedure ADocumentationExecute(Sender: TObject);
     procedure AFeaturesExecute(Sender: TObject);
     procedure APrintSetupExecute(Sender: TObject);
     procedure AUnitCmsExecute(Sender: TObject);
@@ -979,9 +978,15 @@ begin
   FHelp:=TFRpHelpform.Create(Application);
  FHelp.TextBrowser1.FileName:=AURL;
  FHelp.Show;
+ if Length(FHelp.TextBrowser1.Text)<1 then
+ begin
+  FHelp.TextBrowser1.Text:=SRpDocNotInstalled+#10+
+   SRpDocNotInstalled2+#10+
+   SRpDocNotInstalled3+#10;
+ end;
 end;
 
-procedure TFRpMainF.ATutorialExecute(Sender: TObject);
+procedure TFRpMainF.ADocumentationExecute(Sender: TObject);
 var
  aurl:string;
  Directorysep:string;
@@ -993,7 +998,7 @@ begin
 {$IFDEF LINUX}
  Directorysep:='/';
 {$ENDIF}
- aurl:=aurl+'doc'+Directorysep+'tutorial'+
+ aurl:=aurl+'doc'+Directorysep+
   Directorysep+'left.html';
  ShowHelp(aurl);
 end;

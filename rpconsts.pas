@@ -526,6 +526,10 @@ resourcestring
   SRpRecordCount='Record count';
 
   SRpNoStreamToSaveReport='No Stream to save Report (TRpDesigner)';
+  SRpDocNotInstalled='Documentation not installed.';
+  SRpDocNotInstalled2='Download it and install in the application directory.';
+  SRpDocNotInstalled3='http://reportman.sourceforge.net';
+
 implementation
 
 
