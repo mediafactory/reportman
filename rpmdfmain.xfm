@@ -389,6 +389,12 @@ object FRpMainF: TFRpMainF
       object N1: TMenuItem
         Caption = '-'
       end
+      object Libraries1: TMenuItem
+        Action = ALibraries
+      end
+      object N7: TMenuItem
+        Caption = '-'
+      end
       object Save1: TMenuItem
         Action = ASave
       end
@@ -975,6 +981,12 @@ object FRpMainF: TFRpMainF
         'Aligns all sections height to 1/6 inchess for dot matrix compati' +
         'bility'
       OnExecute = AAlign1_6Execute
+    end
+    object ALibraries: TAction
+      Category = 'File'
+      Caption = 'Libraries...'
+      Hint = 'Open report libraries dialog'
+      OnExecute = ALibrariesExecute
     end
   end
   object iconlist: TImageList

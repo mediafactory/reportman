@@ -42,7 +42,7 @@ uses
 {$IFDEF HORZPAPERBUG}
  rpmetafile,
 {$ENDIF}
-  DB,rpmunits,rpgraphutils;
+  DB,rpmunits,rpgraphutils, rpalias;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;
@@ -221,6 +221,9 @@ type
     N6: TMenuItem;
     Alignheightto161: TMenuItem;
     RpAlias1: TRpAlias;
+    ALibraries: TAction;
+    N7: TMenuItem;
+    Libraries1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -283,6 +286,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure ASysInfoExecute(Sender: TObject);
     procedure AAlign1_6Execute(Sender: TObject);
+    procedure ALibrariesExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrame;
@@ -1904,6 +1908,12 @@ procedure TFRpMainF.AAlign1_6Execute(Sender: TObject);
 begin
  report.AlignSectionsTo1_6inchess;
  RefreshInterface(Self);
+end;
+
+procedure TFRpMainF.ALibrariesExecute(Sender: TObject);
+begin
+// ShowModifyConnections(RPalias1.Connections);
+// SaveConfig;
 end;
 
 end.

@@ -279,6 +279,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure ASysInfoExecute(Sender: TObject);
     procedure ALibrariesExecute(Sender: TObject);
+    procedure AAlign1_6Execute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrameVCL;
@@ -1657,6 +1658,13 @@ procedure TFRpMainFVCL.ALibrariesExecute(Sender: TObject);
 begin
  ShowModifyConnections(RPalias1.Connections);
  SaveConfig;
+end;
+
+
+procedure TFRpMainFVCL.AAlign1_6Execute(Sender: TObject);
+begin
+ report.AlignSectionsTo1_6inchess;
+ RefreshInterface(Self);
 end;
 
 end.

@@ -193,7 +193,6 @@ function RpBidiModeToString(BidiMode:TRpBidiMode):String;
 function StringToRpBidiMode(Value:String):TRpBidiMode;
 function DoReverseString(Value:String):String;
 function DoReverseStringW(Value:WideString):WideString;
-<<<<<<< rptypes.pas
 function GetWheelInc(Shift:TShiftState):integer;
 procedure GetStepDescriptions(alist:TRpWideStrings);
 procedure GetStepDescriptionsA(alist:TStrings);
@@ -1578,7 +1577,6 @@ begin
  end;
 end;
 
-<<<<<<< rptypes.pas
 function GetWheelInc(Shift:TShiftState):integer;
 var
  multiplier:integer;
