@@ -16,6 +16,8 @@
 {                                                       }
 {*******************************************************}
 
+{$I rpconf.inc}
+
 unit rpvgraphutils;
 
 interface
