@@ -2,7 +2,7 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
   Left = 0
   Top = 0
   Width = 443
-  Height = 277
+  Height = 270
   VertScrollBar.Range = 30
   Align = alClient
   AutoScroll = False
@@ -110,7 +110,7 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
     Left = 0
     Top = 76
     Width = 443
-    Height = 201
+    Height = 194
     Align = alClient
     HideSelection = False
     Images = imalist
@@ -959,7 +959,7 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
     Top = 80
     object DReportsREPORT_NAME: TStringField
       FieldName = 'REPORT_NAME'
-      Size = 50
+      Size = 100
     end
     object DReportsREPORT_GROUP: TIntegerField
       FieldName = 'REPORT_GROUP'
@@ -983,7 +983,7 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
     end
     object DReportGroupsGROUP_NAME: TStringField
       FieldName = 'GROUP_NAME'
-      Size = 50
+      Size = 100
     end
     object DReportGroupsPARENT_GROUP: TIntegerField
       FieldName = 'PARENT_GROUP'
@@ -1014,7 +1014,7 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
     end
     object DReportGroups2GROUP_NAME: TStringField
       FieldName = 'GROUP_NAME'
-      Size = 50
+      Size = 100
     end
     object DReportGroups2PARENT_GROUP: TIntegerField
       FieldName = 'PARENT_GROUP'

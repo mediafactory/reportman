@@ -143,7 +143,7 @@ type
  TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull,rpDrawTile,rpDrawTiledpi);
  TRpAggregate=(rpAgNone,rpAgGroup,rpAgPage,rpAgGeneral);
  TRpAggregateType=(rpagSum,rpagMin,rpagMax,rpagAvg,rpagStdDev);
- TRpReportChanged=(rpReportStart,rpDataChange,rpGroupChange,rpPageChange,rpInvalidateValue,rpSubReportStart);
+ TRpReportChanged=(rpReportStart,rpDataChange,rpGroupChange,rpPageChange,rpInvalidateValue,rpSubReportStart,rpSubReportEnd);
  TRpShapeType=(rpsRectangle, rpsSquare, rpsRoundRect, rpsRoundSquare,
   rpsEllipse, rpsCircle,rpsHorzLine,rpsVertLine,rpsOblique1,rpsOblique2);
 
@@ -1400,12 +1400,14 @@ begin
       Reader.Read(L, SizeOf(Byte));
       SetString(aResult, PChar(nil), L);
       Reader.Read(Pointer(aResult)^, L);
+      Result:=aResult;
      end;
     Integer(vaLString):
      begin
       Reader.Read(L, SizeOf(Integer));
       SetString(aResult, PChar(nil), L);
       Reader.Read(Pointer(aResult)^, L);
+      Result:=aResult;
      end;
 {$IFDEF USEVARIANTS}
     Integer(vaUTF8String):
@@ -1417,14 +1419,13 @@ begin
       Reader.Read(L, SizeOf(Integer));
       SetString(aResult, PChar(nil), L);
       Reader.Read(Pointer(aResult)^, L);
-      aResult:=Utf8Decode(aResult);
+      Result:=Utf8Decode(aResult);
      end;
     else
     begin
      Raise EReadError.Create(SInvalidPropertyValue);
     end;
    end;
-   Result:=aResult;
   end
   else
   begin
@@ -2742,8 +2743,7 @@ var
 begin
  if aparams.count>90 then
   Raise exception.create(SRpTooManyParams);
- // Creates a fork, and provides the input from standard
- // input to lpr command
+ // Creates a fork, 
  for i:=0 to aparams.count-1 do
  begin
   theparams[i]:=Pchar(aparams[i]);

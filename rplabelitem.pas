@@ -80,8 +80,8 @@ type
    FIdentifier:string;
    FAutoExpand:Boolean;
    FAutoContract:Boolean;
-   FDisplayFormat:string;
-   FExportDisplayFormat:string;
+   FDisplayFormat:Widestring;
+   FExportDisplayFormat:Widestring;
    FDataType:TRpParamType;
    FValue:Variant;
    FExportValue:Variant;
@@ -101,33 +101,44 @@ type
    FExportPosition:Integer;
    FExportSize:Integer;
    FExportDoNewLine:Boolean;
+   FIsPageCount:Boolean;
+   FIsGroupPageCount:Boolean;
    procedure SetIdentifier(Value:string);
    procedure Evaluate;
    procedure WriteExpression(Writer:TWriter);
    procedure ReadExpression(Reader:TReader);
+   procedure WriteDispFormat(Writer:TWriter);
+   procedure ReadDispFormat(Reader:TReader);
+   procedure WriteExpDispFormat(Writer:TWriter);
+   procedure ReadExpDispFormat(Reader:TReader);
    procedure WriteExpExpression(Writer:TWriter);
    procedure ReadExpExpression(Reader:TReader);
    procedure WriteAgIniValue(Writer:TWriter);
    procedure ReadAgIniValue(Reader:TReader);
+   procedure SetExpression(avalue:WideString);
+   procedure UpdateIsPageCount;
   protected
    procedure DefineProperties(Filer:TFiler);override;
    procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
+   procedure Loaded;override;
   public
+   LastMetaIndex:integer;
    constructor Create(AOwner:TComponent);override;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    function GetTextObject:TRpTextObject;
    function GetText:widestring;
    property IdenExpression:TIdenRpExpression read FIdenExpression;
    function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
-   property Expression:widestring read FExpression write FExpression;
+   property Expression:widestring read FExpression write SetExpression;
    property AgIniValue:widestring read FAgIniValue write FAgIniValue;
    property IsPartial:Boolean read FIsPartial;
    //
    property ExportExpression:widestring read FExportExpression write FExportExpression;
+   property IsGroupPageCount:Boolean read FIsGroupPageCount write FIsGroupPageCount;
   published
    property DataType:TRpParamType read FDataType write FDataType default rpParamUnknown;
-   property DisplayFormat:string read FDisplayformat write FDisplayFormat;
+   property DisplayFormat:Widestring read FDisplayformat write FDisplayFormat;
    property Identifier:string read FIdentifier write SetIdentifier;
    property Aggregate:TRpAggregate read FAggregate write FAggregate
     default rpagNone;
@@ -140,7 +151,7 @@ type
     default false;
    property PrintNulls:Boolean read FPrintNulls write FPrintNulls default true;
    //
-   property ExportDisplayFormat:string read FExportDisplayformat write FExportDisplayFormat;
+   property ExportDisplayFormat:Widestring read FExportDisplayformat write FExportDisplayFormat;
    property ExportLine:Integer read FExportLine write FExportLine default 0;
    property ExportPosition:Integer read FExportPosition write FExportPosition default 1;
    property ExportSize:Integer read FExportSize write FExportSize default 20;
@@ -242,6 +253,8 @@ begin
  end
 end;
 
+
+
 procedure TRpLabel.Loaded;
 var
  i:integer;
@@ -316,6 +329,9 @@ begin
  FExportSize:=1;
  FExportDoNewLine:=false;
  FExportDisplayFormat:='';
+ FIsPageCount:=false;
+ FIsGroupPageCount:=false;
+ FExportValue:=Null;
 end;
 
 procedure TRpLabel.DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
@@ -426,7 +442,7 @@ begin
   exit;
  end;
  // Is Total pages variable?
- if (UpperCase(expre)='PAGECOUNT') then
+ if (FIsPageCount or FIsGroupPageCount) then
  begin
   // 20 spaces
   Result:='                    ';
@@ -456,6 +472,7 @@ var
  avalue:WideString;
 begin
  inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
+ LastMetaIndex:=-1;
  expre:=Trim(Expression);
  Textobj:=GetTextObject;
  if PrintOnlyOne then
@@ -482,8 +499,9 @@ begin
  end;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy,
    aposx,Printwidth,Printheight,Textobj,BackColor,Transparent);
+ LastMetaIndex:=metafile.Pages[metafile.CurrentPage].ObjectCount-1;
  // Is Total pages variable?
- if (UpperCase(expre)='PAGECOUNT') then
+ if (FIsPageCount) then
  begin
   TRpBaseReport(GetReport).AddTotalPagesItem(metafile.currentpage,metafile.Pages[metafile.currentpage].ObjectCount-1,displayformat);
  end;
@@ -511,6 +529,7 @@ begin
  case newstate of
   rpReportStart:
    begin
+    FExportValue:=Null;
     FIsPartial:=false;
     FOldString:='';
     FUpdated:=false;
@@ -535,6 +554,7 @@ begin
    end;
   rpSubReportStart:
    begin
+    FExportValue:=Null;
     FIsPartial:=false;
     FOldString:='';
     FUpdated:=false;
@@ -752,6 +772,27 @@ begin
  FExpression:=ReadWideString(Reader);
 end;
 
+procedure TRpExpression.WriteDispFormat(Writer:TWriter);
+begin
+ WriteWideString(Writer, FDisplayFormat);
+end;
+
+procedure TRpExpression.ReadDispFormat(Reader:TReader);
+begin
+ FDisplayFormat:=ReadWideString(Reader);
+end;
+
+procedure TRpExpression.WriteExpDispFormat(Writer:TWriter);
+begin
+ WriteWideString(Writer, FExportDisplayFormat);
+end;
+
+procedure TRpExpression.ReadExpDispFormat(Reader:TReader);
+begin
+ FExportDisplayFormat:=ReadWideString(Reader);
+end;
+
+
 procedure TRpExpression.WriteExpExpression(Writer:TWriter);
 begin
  WriteWideString(Writer, FExportExpression);
@@ -777,6 +818,8 @@ begin
  inherited;
 
  Filer.DefineProperty('Expression',ReadExpression,WriteExpression,True);
+ Filer.DefineProperty('DisplayFormat',ReadDispFormat,WriteDispFormat,True);
+ Filer.DefineProperty('ExportDisplayFormat',ReadExpDispFormat,WriteExpDispFormat,True);
  Filer.DefineProperty('AgIniValue',ReadAgIniValue,WriteAgIniValue,True);
  Filer.DefineProperty('ExportExpression',ReadExpExpression,
   WriteExpExpression,True);
@@ -832,5 +875,24 @@ begin
  LastExtent:=Result;
 end;
 
+procedure TRpExpression.UpdateIsPageCount;
+begin
+ if UpperCase(Trim(FExpression))='PAGECOUNT' then
+  FIsPageCount:=true;
+ if UpperCase(Trim(FExpression))='GROUPPAGECOUNT' then
+  FIsGroupPageCount:=true;
+end;
+
+procedure TRpExpression.SetExpression(avalue:WideString);
+begin
+ FExpression:=avalue;
+ UpdateIsPageCount;
+end;
+
+procedure TRpExpression.Loaded;
+begin
+ inherited Loaded;
+ UpdateIsPageCount;
+end;
 
 end.

@@ -91,6 +91,7 @@ type
    FSkipType:TRpSkipType;
    // Global headers
    FGlobal:Boolean;
+   FPageGroupCountList:TList;
    procedure SetReportComponents(Value:TRpCommonList);
    procedure SetGroupName(Value:string);
    procedure SetChangeExpression(Value:widestring);
@@ -114,6 +115,8 @@ type
    procedure ReadBackExpression(Reader:TReader);
    procedure ReadStream(AStream:TStream);
    procedure WriteStream(AStream:TStream);
+   procedure AddPageGroupCountItem(apageindex,aobjectindex:integer;
+    adisplayformat:widestring);
   protected
    procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
@@ -126,6 +129,7 @@ type
    procedure Loaded;override;
   public
    GroupValue:Variant;
+   FirstPage:Integer;
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    function SectionCaption(addchild:boolean):WideString;
@@ -142,8 +146,10 @@ type
    function GetExternalDataDescription:String;
    procedure GetChildSubReportPossibleValues(lvalues:TRpWideStrings);
    function AddComponent(componentclass:TRpCommonPosClass):TRpCommonPosComponent;
+   procedure UpdatePageCounts;
    function GetChildSubReportName:string;
    procedure SetChildSubReportByName(avalue:String);
+   procedure ClearPageCountList;
    procedure SetStream(Value:TMemoryStream);
    property ChangeExpression:widestring read FChangeExpression write SetChangeExpression;
    property BeginPageExpression:widestring read FBeginPageExpression
@@ -228,6 +234,7 @@ constructor TRpSection.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FPageGroupCountList:=TList.Create;
  FSkipType:=secskipdefault;
  FReportComponents:=TRpCommonList.Create(Self);
  FExternalTable:='REPMAN_REPORTS';
@@ -251,6 +258,7 @@ end;
 
 destructor TRpSection.Destroy;
 begin
+ FPageGroupCountList.free;
  FReportComponents.Free;
  FStream.free;
  FDecompStream.free;
@@ -559,11 +567,15 @@ begin
    if compo.EvaluatePrintCondition then
    begin
     IntPartialPrint:=false;
-    FReportComponents.Items[i].Component.Print(adriver,newposx,newposy,
+    compo.Print(adriver,newposx,newposy,
      newwidth,newheight,metafile,
      MaxExtent,IntPartialPrint);
     if IntPartialPrint then
      PartialPrint:=True;
+    if compo is TRpExpression then
+     if TRpExpression(compo).IsGroupPageCount then
+      if TRpExpression(compo).LastMetaIndex>0 then
+       AddPageGroupCountItem(metafile.currentpage,TRpExpression(compo).LastMetaIndex,TRpExpression(compo).displayformat);
    end;
   end;
  end;
@@ -1568,5 +1580,46 @@ begin
   end;
  end;
 end;
+
+procedure TRpSection.AddPageGroupCountItem(apageindex,aobjectindex:integer;
+ adisplayformat:widestring);
+var
+ aobject:TTotalPagesObject;
+ subrep:TRpSubReport;
+ index:integer;
+begin
+ subrep:=TRpSubReport(SubReport);
+ index:=subrep.GroupIndex(groupname);
+ if index>0 then
+ begin
+  aobject:=TTotalPagesObject.Create;
+  subrep.Sections[subrep.FirstDetail-index].Section.FPageGroupCountList.Add(aobject);
+  aobject.PageIndex:=apageindex;
+  aobject.ObjectIndex:=aobjectindex;
+  aobject.DisplayFormat:=adisplayformat;
+ end;
+end;
+
+procedure TRpSection.ClearPageCountList;
+var
+ i:integer;
+begin
+ for i:=0 to FPageGroupCountList.Count-1 do
+ begin
+  TObject(FPageGroupCountList.Items[i]).Free;
+ end;
+ FPageGroupCountList.Clear;
+end;
+
+procedure TRpSection.UpdatePageCounts;
+var
+ areport:TRpBaseReport;
+ ametafile:TRpMetafileReport;
+begin
+ areport:=TRpBaseReport(Owner);
+ ametafile:=areport.metafile;
+ ametafile.UpdateTotalPagesPCount(FPageGroupCountList,ametafile.PageCount-FirstPage);
+end;
+
 
 end.

@@ -62,6 +62,7 @@ type
    procedure CheckGroupExists(groupname:string);
    function AddGroup(groupname:string):TRpSection;
    function AddDetail:TRpSection;
+   function GroupIndex(groupname:String):Integer;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
    procedure GetGroupNames(alist:TStrings);
    function FirstSectionThatIs(atype:TRpSectionType):integer;
@@ -581,8 +582,6 @@ begin
    begin
     Result:=acount;
     FillGroupValues;
-    if sec.IniNumPage then
-     TRpBaseReport(Owner).Ininumpage:=true;
     break;
    end;
   end
@@ -592,8 +591,6 @@ begin
    begin
     Result:=acount;
     FillGroupValues;
-    if sec.IniNumPage then
-     TRpBaseReport(Owner).Ininumpage:=true;
     break;
    end;
   end;
@@ -682,6 +679,27 @@ begin
 end;
 
 
+function TRpSubReport.GroupIndex(groupname:String):Integer;
+var
+ index:integer;
+begin
+ Result:=-1;
+ index:=FirstSectionThatIs(rpsecgheader);
+ if index>=0 then
+ begin
+  while index<Sections.Count do
+  begin
+   if Sections.Items[index].Section.SectionType<>rpsecgheader then
+    break;
+   if Sections.Items[index].Section.GroupName=groupname then
+   begin
+    Result:=FirstDetail-index;
+    break;
+   end;
+   Inc(index);
+  end;
+ end;
+end;
 
 procedure TRpSubReport.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
 var
@@ -689,11 +707,44 @@ var
  j:integer;
  sec:TRpSection;
  compo:TRpCommonComponent;
+ index:integer;
+ ffirstdetail,flastdetail:integer;
 begin
  // Updates group values
  if (newstate in [rpReportStart,rpSubReportStart]) then
  begin
   FillGroupValues;
+  for i:=0 to Sections.Count-1 do
+  begin
+   sec:=Sections.Items[i].Section;
+   sec.ClearPageCountList;
+  end;
+ end
+ else
+ begin
+  index:=-1;
+  if newstate=rpGroupChange then
+  begin
+   index:=GroupIndex(newgroup);
+  end
+  else
+  if newstate=rpSubReportEnd then
+  begin
+   index:=GroupCount;
+  end;
+  if index>0 then
+  begin
+   ffirstdetail:=FirstDetail;
+   flastdetail:=LastDetail;
+   while index>0 do
+   begin
+    Sections.Items[ffirstdetail-index].Section.UpdatePageCounts;
+    Sections.Items[ffirstdetail-index].Section.ClearPageCountList;
+    Sections.Items[flastdetail+index].Section.UpdatePageCounts;
+    Sections.Items[ffirstdetail+index].Section.ClearPageCountList;
+    dec(index);
+   end;
+  end;
  end;
  for i:=0 to Sections.Count-1 do
  begin
@@ -774,6 +825,7 @@ begin
   end;
  end;
 end;
+
 
 
 end.

@@ -336,6 +336,7 @@ type
    property CurrentPage:integer read FCurrentPage write SetCurrentPage;
    property PageCount:integer read GetPageCount;
    procedure UpdateTotalPages(alist:TList);
+   procedure UpdateTotalPagesPCount(alist:TList;pcount:integer);
    procedure PageRange(frompage,topage:integer);
    property Pages[Index:integer]:TRpMetafilePage read GetPage;
    property OnProgress:TRpMetafileStreamProgres read FOnProgress write FOnProgress;
@@ -1175,6 +1176,35 @@ begin
    astring:=FormatCurr(aobject.displayformat,PageCount)
   else
    astring:=IntToStr(PageCount);
+//  oldtexts:=apage.Objects[aobject.ObjectIndex].TextS;
+  oldtexts:=9;
+  apage.FObjects[aobject.ObjectIndex].TextS:=Length(astring);
+  astring:=astring+'                                      ';
+  tempstring:=Copy(apage.Pool,1,index-1);
+  tempstring:=tempstring+Copy(astring,1,oldtexts);
+  tempstring:=tempstring+Copy(apage.Pool,index+oldtexts,Length(apage.Pool));
+  apage.FPool:=tempstring;
+ end;
+end;
+
+procedure TRpMetafileReport.UpdateTotalPagesPCount(alist:TList;pcount:integer);
+var
+ i,index:integer;
+ aobject:TTotalPagesObject;
+ apage:TrpMetafilePage;
+ astring:widestring;
+ oldtexts:integer;
+ tempstring:widestring;
+begin
+ for i:=0 to alist.count-1 do
+ begin
+  aobject:=TTotalPagesObject(alist.Items[i]);
+  apage:=Pages[aobject.PageIndex];
+  index:=apage.Objects[aobject.ObjectIndex].TextP;
+  if Length(aobject.displayformat)>0 then
+   astring:=FormatCurr(aobject.displayformat,PCount)
+  else
+   astring:=IntToStr(PCount);
 //  oldtexts:=apage.Objects[aobject.ObjectIndex].TextS;
   oldtexts:=9;
   apage.FObjects[aobject.ObjectIndex].TextS:=Length(astring);

@@ -7,7 +7,6 @@ object FRpDBTree: TFRpDBTree
   Align = alClient
   AutoScroll = False
   TabOrder = 0
-  ParentFont = True
   object BToolBar: TToolBar
     Left = 0
     Top = 0
@@ -799,7 +798,7 @@ object FRpDBTree: TFRpDBTree
     Top = 80
     object DReportsREPORT_NAME: TStringField
       FieldName = 'REPORT_NAME'
-      Size = 50
+      Size = 100
     end
     object DReportsREPORT_GROUP: TIntegerField
       FieldName = 'REPORT_GROUP'
@@ -823,7 +822,7 @@ object FRpDBTree: TFRpDBTree
     end
     object DReportGroupsGROUP_NAME: TStringField
       FieldName = 'GROUP_NAME'
-      Size = 50
+      Size = 100
     end
     object DReportGroupsPARENT_GROUP: TIntegerField
       FieldName = 'PARENT_GROUP'
@@ -854,7 +853,7 @@ object FRpDBTree: TFRpDBTree
     end
     object DReportGroups2GROUP_NAME: TStringField
       FieldName = 'GROUP_NAME'
-      Size = 50
+      Size = 100
     end
     object DReportGroups2PARENT_GROUP: TIntegerField
       FieldName = 'PARENT_GROUP'

@@ -12,7 +12,7 @@ unit Reportman_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 30/08/2004 18:01:51 from Type Library described below.
+// File generated on 29/11/2004 20:43:51 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\reportman.tlb (1)
@@ -21,7 +21,7 @@ unit Reportman_TLB;
 // Helpfile: 
 // HelpString: Report Manager ActiveX Library
 // DepndLst: 
-//   (1) v2.0 stdole, (H:\WINDOWS\System32\stdole2.tlb)
+//   (1) v2.0 stdole, (H:\WINDOWS\system32\STDOLE2.TLB)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
@@ -179,6 +179,7 @@ type
     procedure SaveToCustomText(const filename: WideString); safecall;
     procedure SaveToCSV(const filename: WideString); safecall;
     procedure SaveToSVG(const filename: WideString); safecall;
+    procedure SaveToMetafile(const filename: WideString); safecall;
     property filename: WideString read Get_filename write Set_filename;
     property Preview: WordBool read Get_Preview write Set_Preview;
     property ShowProgress: WordBool read Get_ShowProgress write Set_ShowProgress;
@@ -249,6 +250,7 @@ type
     procedure SaveToCustomText(const filename: WideString); dispid 35;
     procedure SaveToCSV(const filename: WideString); dispid 36;
     procedure SaveToSVG(const filename: WideString); dispid 37;
+    procedure SaveToMetafile(const filename: WideString); dispid 38;
   end;
 
 // *********************************************************************//
@@ -357,6 +359,7 @@ type
     procedure GetCustomText(const Report: IReportReport); safecall;
     procedure GetText(const Report: IReportReport); safecall;
     procedure GetCSV(const Report: IReportReport); safecall;
+    procedure GetMetafile(const Report: IReportReport); safecall;
   end;
 
 // *********************************************************************//
@@ -370,6 +373,7 @@ type
     procedure GetCustomText(const Report: IReportReport); dispid 2;
     procedure GetText(const Report: IReportReport); dispid 3;
     procedure GetCSV(const Report: IReportReport); dispid 4;
+    procedure GetMetafile(const Report: IReportReport); dispid 5;
   end;
 
 
@@ -422,6 +426,7 @@ type
     procedure SaveToCustomText(const filename: WideString);
     procedure SaveToCSV(const filename: WideString);
     procedure SaveToSVG(const filename: WideString);
+    procedure SaveToMetafile(const filename: WideString);
     property  ControlInterface: IReportManX read GetControlInterface;
     property  DefaultInterface: IReportManX read GetControlInterface;
     property DoubleBuffered: WordBool index 18 read GetWordBoolProp write SetWordBoolProp;
@@ -694,6 +699,11 @@ end;
 procedure TReportManX.SaveToSVG(const filename: WideString);
 begin
   DefaultInterface.SaveToSVG(filename);
+end;
+
+procedure TReportManX.SaveToMetafile(const filename: WideString);
+begin
+  DefaultInterface.SaveToMetafile(filename);
 end;
 
 class function CoReportReport.Create: IReportReport;

@@ -27,6 +27,9 @@ uses
 {$IFDEF USEVARIANTS}
   Types,Variants,
 {$ENDIF}
+{$IFDEF USETNTUNICODE}
+  TntStdCtrls,
+{$ENDIF}
   Classes,rppdfdriver, Dialogs, ExtDlgs, Menus, rpalias,
   Windows,Graphics, Controls, Forms,ExtCtrls,StdCtrls,
   rpmdobinsintvcl,rpmdconsts,rpprintitem,comctrls,
@@ -1578,6 +1581,7 @@ begin
   end
   else
   begin
+{$IFNDEF USETNTUNICODE}
    Control:=TRpMaskEdit.Create(Self);
    TRpMaskEdit(Control).OnChange:=EditChange;
    if LTypes.Strings[i]=SRpSExternalpath then
@@ -1587,6 +1591,18 @@ begin
    TRpMaskEdit(NControl).OnChange:=EditChange;
    if LTypes.Strings[i]=SRpSExternalpath then
     TRpMaskEdit(NControl).PopupMenu:=TFRpObjInspVCL(Owner).PopUpSection;
+{$ENDIF}
+{$IFDEF USETNTUNICODE}
+   Control:=TTntEdit.Create(Self);
+   TTntEdit(Control).OnChange:=EditChange;
+   if LTypes.Strings[i]=SRpSExternalpath then
+    TTntEdit(Control).PopupMenu:=TFRpObjInspVCL(Owner).PopUpSection;
+
+   NControl:=TTntEdit.Create(Self);
+   TTntEdit(NControl).OnChange:=EditChange;
+   if LTypes.Strings[i]=SRpSExternalpath then
+    TTntEdit(NControl).PopupMenu:=TFRpObjInspVCL(Owner).PopUpSection;
+{$ENDIF}
   end;
   Control.Top:=Posy;
   Control.Left:=CONS_LEFTGAP;
@@ -2129,6 +2145,35 @@ begin
    begin
     Control:=TControl(LControls.Objects[i]);
     Control2:=TControl(LControls2.Objects[i]);
+{$IFDEF USETNTUNICODE}
+    if (Control is TTntEdit) then
+    begin
+      if k=0 then
+      begin
+       TTntEdit(Control).OnChange:=nil;
+       TTntEdit(Control).Text:=LValues.Strings[i];
+       TTntEdit(Control).OnChange:=EditChange;
+
+       TTntEdit(Control2).OnChange:=nil;
+       TTntEdit(Control2).Text:=LValues.Strings[i];
+       TTntEdit(Control2).OnChange:=EditChange;
+      end
+      else
+      begin
+       if TRpMaskEdit(Control).Text<>LValues.Strings[i] then
+       begin
+        TTntEdit(Control).OnChange:=nil;
+        TTntEdit(Control).Text:='';
+        TTntEdit(Control).OnChange:=EditChange;
+
+        TTntEdit(Control2).OnChange:=nil;
+        TTntEdit(Control2).Text:='';
+        TTntEdit(Control2).OnChange:=EditChange;
+       end;
+      end;
+    end
+    else
+{$ENDIF}
     if k=0 then
     begin
      TRpMaskEdit(Control).OnChange:=nil;
@@ -2219,6 +2264,13 @@ begin
  aname:=Lnames.strings[index];
  if FSelectedItems.Count<2 then
  begin
+{$IFDEF USETNTUNICODE}
+  if Sender is TTntEdit then
+  begin
+   FCompItem.SetProperty(aname,TTntEdit(Sender).Text);
+  end
+  else
+{$ENDIF}
   if Sender is TRpMaskEdit then
   begin
    FCompItem.SetProperty(aname,String(TRpMaskEdit(Sender).Value));
@@ -2249,6 +2301,13 @@ begin
  end
  else
  begin
+{$IFDEF USETNTUNICODE}
+  if Sender is TTntEdit then
+  begin
+   SetPropertyFull(aname,TTntEdit(Sender).Text);
+  end
+  else
+{$ENDIF}
   if Sender is TRpMaskEdit then
   begin
    SetPropertyFull(aname,String(TRpMaskEdit(Sender).Value));

@@ -246,7 +246,6 @@ type
     procedure UpdateParamsBeforeOpen(index:integer;doeval:boolean);
     procedure DefineProperties(Filer:TFiler);override;
   public
-   Ininumpage:boolean;
    FailIfLoadExternalError:Boolean;
    printing:boolean;
    CurrentSubReportIndex:integer;

@@ -40,7 +40,7 @@ type
     LogFont:TLogFont;
     isred:boolean;
     constructor Create;virtual;
-    destructor destroy;override;
+    destructor Destroy;override;
     property Font:TFont read FFont write SetFont;
    end;
 
@@ -53,7 +53,7 @@ type
      fstep:TRpFontStep;
      fixed:boolean;
      constructor Create;
-     destructor destroy;override;
+     destructor Destroy;override;
     end;
 
 function UpdatePrinterFontList:boolean;

@@ -53,6 +53,7 @@ type
    procedure PrinterSetup;override;
    function ShowParams:boolean;override;
    procedure SaveToPDF(filename:string;compressed:boolean=false);
+   procedure SaveToMetafile(filename:string);
    procedure SaveToText(filename:string;textdriver:String='');override;
    constructor Create(AOwner:TComponent);override;
    function PrintRange(frompage:integer;topage:integer;
@@ -245,6 +246,24 @@ begin
  rpqtdriver.ExportReportToPDF(report,filename,ShowProgress,true,1,999999,1,
   false,filename,compressed,false)
 end;
+
+procedure TCLXReport.SaveToMetafile(filename:string);
+begin
+ CheckLoaded;
+{$IFDEF VCLANDCLX}
+ if FDriver=rpDriverGDI then
+ begin
+  rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,true,1,999999,1,
+   false,filename,false,true);
+  exit;
+ end;
+{$ENDIF}
+ rpqtdriver.ExportReportToPDF(report,filename,ShowProgress,true,1,999999,1,
+  false,filename,false,true)
+end;
+
+
+
 
 function TCLXReport.PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;

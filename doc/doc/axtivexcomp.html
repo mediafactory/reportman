@@ -81,6 +81,8 @@ procedure SaveToCSV(const filename: String);<br>
 procedure SaveToSVG(const filename: String);<br>
 procedure SetRecordSet(const datasetname: String,recordset: OleVariant);
 </p>
+<p><b>Since version 2.3</b></p>
+<p>procedure SaveToMetafile(const filename: String);</p>
 <h3>Using the control with VB like languages</h3>
 <p>The ActiveX control may be used directly in VB, VBScript, ASP and WSH. In the 
   VB environment you are generally recommended to &quot;Reference&quot; the control 
@@ -161,6 +163,10 @@ to be used has been identified. For further information on parameters please see
   procedure GetText(const Report: IReportReport);<br>
   procedure GetCSV(const Report: IReportReport);<br>
 </p>
+<p>Version 2.2 DelphiASPObj have this new procedures:</p>
+<p>procedure GetMetafile(const Report: IReportReport);<br>
+</p>
+<p>&nbsp; </p>
 </body>
 </html>
 

@@ -65,6 +65,11 @@ type
    function ShowParams:boolean;
    procedure SaveToPDF(filename:string;compressed:boolean=false);
    procedure SaveToText(filename:string;textdriver:String);
+   procedure SaveToMetafile(filename:string);
+   procedure SaveToHTML(filename:string);
+   procedure SaveToCustomText(filename:string);
+   procedure SaveToSVG(filename:string);
+   procedure SaveToCSV(filename:string);
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;
    procedure ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
@@ -181,6 +186,31 @@ end;
 procedure TRpActiveXReport.SaveToText(filename:string;textdriver:String);
 begin
  FVCLReport.SaveToText(filename,textdriver);
+end;
+
+procedure TRpActiveXReport.SaveToMetafile(filename:string);
+begin
+ FVCLReport.SaveToMetafile(filename);
+end;
+
+procedure TRpActiveXReport.SaveToHTML(filename:string);
+begin
+ FVCLReport.SaveToHtml(filename);
+end;
+
+procedure TRpActiveXReport.SaveToCustomText(filename:string);
+begin
+ FVCLReport.SaveToCustomText(filename);
+end;
+
+procedure TRpActiveXReport.SaveToSVG(filename:string);
+begin
+ FVCLReport.SaveToSVG(filename);
+end;
+
+procedure TRpActiveXReport.SaveToCSV(filename:string);
+begin
+ FVCLReport.SaveToCSV(filename);
 end;
 
 function TRpActiveXReport.PrintRange(frompage:integer;topage:integer;

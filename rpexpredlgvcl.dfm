@@ -15,7 +15,7 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
   TextHeight = 13
   object PBottom: TPanel
     Left = 0
-    Top = 172
+    Top = 179
     Width = 508
     Height = 285
     Align = alBottom
@@ -112,7 +112,7 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
     Left = 0
     Top = 0
     Width = 508
-    Height = 172
+    Height = 179
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -120,7 +120,7 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
       Left = 0
       Top = 0
       Width = 508
-      Height = 139
+      Height = 146
       Align = alClient
       Lines.Strings = (
         'MemoExpre')
@@ -130,7 +130,7 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
     end
     object Panel1: TPanel
       Left = 0
-      Top = 139
+      Top = 146
       Width = 508
       Height = 33
       Align = alBottom

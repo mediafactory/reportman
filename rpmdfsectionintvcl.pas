@@ -91,7 +91,7 @@ type
     procedure UpdatePos;override;
     property OnDestroy:TNotifyEvent read FOnDestroy write FOnDestroy;
     constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
-    destructor destroy;override;
+    destructor Destroy;override;
     procedure GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);override;
     procedure SetProperty(pname:string;value:Widestring);override;
     function GetProperty(pname:string):Widestring;override;

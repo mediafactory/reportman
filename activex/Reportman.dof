@@ -114,8 +114,8 @@ IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=2
 MinorVer=2
-Release=0
-Build=8
+Release=2
+Build=10
 Debug=0
 PreRelease=1
 Special=0
@@ -126,7 +126,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Active X control
-FileVersion=2.2.0.8
+FileVersion=2.2.2.10
 InternalName=ReportManX
 LegalCopyright=MPL License
 LegalTrademarks=
@@ -136,13 +136,8 @@ ProductVersion=2.1.0.0
 Comments=
 OleSelfRegister=1
 [Excluded Packages]
-c:\prog\delphi7\Bin\dclmcn70.bpl=Borland DataSnap Connection Components
-c:\prog\delphi7\Bin\dclwbm70.bpl=Borland InternetExpress Components
-c:\prog\delphi7\Bin\dclwebsnap70.bpl=Borland WebSnap Components
-c:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
-c:\prog\delphi7\Projects\Bpl\GESTORX.bpl=Interface Gestor DelphiX
-c:\prog\delphi7\Projects\Bpl\UtilsVariats.bpl=Utils Variats (Jordi Farràs)
-c:\prog\delphi7\Projects\Bpl\Mycompos_d6.bpl=Utils generales
+h:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
+h:\prog\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
 [HistoryLists\hlConditionals]
 Count=3
 Item0=REPMANRELEASE

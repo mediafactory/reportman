@@ -192,6 +192,8 @@ begin
  // Transport the dataset to the clientdatasets
  DReports.Close;
  DReportGroups.Close;
+ DReportsREPORT_NAME.Size:=reports.FieldByName('REPORT_NAME').size;
+ DReportGroupsGROUP_NAME.Size:=groups.FieldByName('GROUP_NAME').Size;
  DReports.CreateDataSet;
  DReportGroups.CreateDataset;
  DReportGroups2.Close;

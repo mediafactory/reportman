@@ -45,6 +45,7 @@ type
      copies:integer;collate:boolean):boolean;override;
    constructor Create(AOwner:TComponent);override;
    procedure SaveToText(filename:string;textdriver:String='');override;
+   procedure SaveToMetafile(filename:string);
   published
    property ShowProgress;
    property Filename;
@@ -152,5 +153,12 @@ begin
  rptextdriver.PrintReportToText(report,'',false,true,1,999,
    1,filename,true,true,textdriver);
 end;
+
+procedure TPDFReport.SaveToMetafile(filename:string);
+begin
+ rppdfdriver.PrintReportToMetafile(Report,Title,ShowProgress,true,
+  1,999999,1,filename,false);
+end;
+
 
 end.

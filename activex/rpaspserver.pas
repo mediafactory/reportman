@@ -14,6 +14,7 @@ type
     procedure GetCustomText(const Report: IReportReport); safecall;
     procedure GetText(const Report: IReportReport); safecall;
     procedure GetCSV(const Report: IReportReport); safecall;
+    procedure GetMetafile(const Report: IReportReport); safecall;
   end;
 
 implementation
@@ -104,6 +105,30 @@ begin
   SetLength(astring,memstream.size);
   memstream.Read(astring[1],memstream.size);
   Response.BinaryWrite(astring);
+ finally
+  memstream.free;
+ end;
+end;
+
+procedure TReportmanXAServer.GetMetafile(const Report: IReportReport);
+var
+ areport:TRpReport;
+ memstream:TMemoryStream;
+ abyte:array of byte;
+begin
+ areport:=TRpReport(Report.VCLReport);
+ memstream:=TMemoryStream.Create;
+ try
+  rppdfdriver.PrintReportPDFStream(areport,'',false,true,
+   1,99999,1,memstream,false,true);
+  memstream.Seek(0,soFromBeginning);
+
+  Response.Clear;
+  Response.ContentType := 'application/rpmf';
+  SetLength(abyte,memstream.size);
+  memstream.Seek(0,soFromBeginning);
+  memstream.Read(abyte[0],memstream.size);
+  Response.BinaryWrite(abyte);
  finally
   memstream.free;
  end;

@@ -728,6 +728,7 @@ begin
    if Assigned(subrep.ParentSubReport) then
     break;
    repeat
+    subrep.SubReportChanged(rpSubReportEnd);
     inc(CurrentSubReportIndex);
     if CurrentSubReportIndex>=Subreports.count then
      break;
@@ -1221,6 +1222,16 @@ var
  MaxExtent:TPoint;
  ispagerepeat:boolean;
 begin
+ if subreport.CurrentGroupIndex<0 then
+ begin
+  if section.groupname=
+   subreport.Sections[SubReport.FirstDetail+subreport.CurrentGroupIndex].Section.groupname then
+  begin
+   if section.IniNumPage then
+    PageNumGroup:=0;
+   section.FirstPage:=metafile.CurrentPage;
+  end;
+ end;
  pagefooterpos:=pageposy+freespace;
  PartialPrint:=False;
  MaxExtent.x:=pagespacex;
@@ -1429,11 +1440,6 @@ begin
  sectionextevaluated:=false;
  oldprintedsection:=nil;
  inc(Pagenum);
- if ininumpage then
- begin
-  Pagenumgroup:=-1;
-  ininumpage:=false;
- end;
  inc(Pagenumgroup);
  if Not FCompose then
  begin

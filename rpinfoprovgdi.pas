@@ -38,7 +38,7 @@ type
   function GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;
   function GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;
   constructor Create;
-  destructor destroy;override;
+  destructor Destroy;override;
  end;
 
 implementation

@@ -92,6 +92,7 @@ type
     procedure SaveToCSV(const filename: WideString); safecall;
     procedure SaveToCustomText(const filename: WideString); safecall;
     procedure SaveToSVG(const filename: WideString); safecall;
+    procedure SaveToMetafile(const filename: WideString); safecall;
   end;
 
 implementation
@@ -433,17 +434,22 @@ end;
 
 procedure TReportManX.SaveToCSV(const filename: WideString);
 begin
-
+  FDelphiControl.SaveToCSV(filename);
 end;
 
 procedure TReportManX.SaveToCustomText(const filename: WideString);
 begin
-
+  FDelphiControl.SaveToCustomText(filename);
 end;
 
 procedure TReportManX.SaveToSVG(const filename: WideString);
 begin
+  FDelphiControl.SaveToSVG(filename);
+end;
 
+procedure TReportManX.SaveToMetafile(const filename: WideString);
+begin
+  FDelphiControl.SaveToMetafile(filename);
 end;
 
 initialization

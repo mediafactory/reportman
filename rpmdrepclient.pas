@@ -37,6 +37,12 @@ uses
   IdStreamVCL,
  {$ENDIF}
 {$ENDIF}
+{$IFNDEF DOTNETD}
+ {$IFDEF INDY10}
+  IdStream,
+  IdStreamVCL,
+ {$ENDIF}
+{$ENDIF}
   SyncObjs,rpparams;
 
 type
@@ -269,7 +275,7 @@ begin
  except
   On E:Exception do
   begin
-   amod.OnError(amod,'Internael error:'+E.Message);
+   amod.OnError(amod,'Internal error:'+E.Message);
   end;
  end;
 end;
@@ -281,6 +287,12 @@ var
  astream:TIdStream;
  {$ENDIF}
  {$IFDEF INDY10}
+ astream:TIdStreamVCL;
+ {$ENDIF}
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ {$IFDEF INDY10}
+var
  astream:TIdStreamVCL;
  {$ENDIF}
 {$ENDIF}
@@ -318,7 +330,17 @@ begin
  {$ENDIF}
 {$ENDIF}
 {$IFNDEF DOTNETD}
+ {$IFDEF INDY10}
+     astream:=TIdStreamVCL.Create(data);
+     try
+      amod.RepClient.IOHandler.ReadStream(astream);
+     finally
+      astream.free;
+     end;
+ {$ENDIF}
+ {$IFNDEF INDY10}
      amod.RepClient.ReadStream(data);
+ {$ENDIF}
 {$ENDIF}
      data.Seek(0,soFromBeginning);
      CB:=ReadRpComBlockFromStream(data);

@@ -117,7 +117,9 @@ begin
    connect:=TIdHttp.Create(nil);
    try
 {$IFNDEF DOTNETD}
+ {$IFNDEF INDY10}
     connect.Port:=FPort;
+ {$ENDIF}
 {$ENDIF}
   //  connect.ReadTimeout:=READ_TIMEOUT;
     astream:=TMemoryStream.Create;
@@ -252,7 +254,9 @@ begin
  connect:=TIdHttp.Create(nil);
  try
 {$IFNDEF DOTNETD}
+ {$IFNDEF INDY10}
   connect.Port:=FPort;
+ {$ENDIF}
 {$ENDIF}
   astream:=TMemoryStream.Create;
   try

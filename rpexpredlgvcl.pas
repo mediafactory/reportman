@@ -57,8 +57,8 @@ type
     procedure Notification(AComponent:TComponent;Operation:TOperation);override;
   public
     { Public declarations }
-    constructor create(AOwner:TComponent);override;
-    destructor destroy;override;
+    constructor Create(AOwner:TComponent);override;
+    destructor Destroy;override;
     function Execute:Boolean;
   published
     { Published declarations }

@@ -84,7 +84,7 @@ type
    config:TMemInifile;
    drivers:TMemInifile;
    constructor Create;
-   destructor destroy;override;
+   destructor Destroy;override;
    procedure LoadConfig;
    procedure GetDriverNames(alist:TStrings);
    procedure GetConnectionParams(conname:string;params:TStrings);
@@ -132,6 +132,8 @@ type
 {$IFDEF USEIBX}
    FIBInternalDatabase:TIBDatabase;
    FIBDatabase:TIBDatabase;
+   FIBTransaction:TIBTransaction;
+   FIBInternalTransaction:TIBTransaction;
 {$ENDIF}
 {$IFDEF USEZEOS}
    FZInternalDatabase:TZConnection;
@@ -175,6 +177,8 @@ type
 {$IFDEF USEIBX}
    property IBDatabase:TIBDatabase read FIBDatabase
     write FIBDatabase;
+   property IBTransaction:TIBTransaction read FIBTransaction
+    write FIBTransaction;
 {$ENDIF}
 {$IFDEF USEZEOS}
    property ZConnection:TZConnection read FZConnection
@@ -192,6 +196,7 @@ type
 {$ENDIF}
    property MyBasePath:String read FMyBasePath;
    property ADOConnectionString:widestring read FADOConnectionString write FADOConnectionString;
+   procedure DoCommit;
   published
    property Alias:string read FAlias write SetAlias;
    property ConfigFile:string read FConfigFile write SetConfigFile;
@@ -744,8 +749,11 @@ begin
 {$IFDEF USEIBX}
  if Assigned(FIBInternalDatabase) then
  begin
-  FIBInternalDatabase.DefaultTransaction.Free;
   FIBInternalDatabase.Free;
+ end;
+ if Assigned(FIBInternalTransaction) then
+ begin
+  FIBInternalTransaction.Free;
  end;
 {$ENDIF}
 {$IFDEF USEZEOS}
@@ -988,11 +996,22 @@ begin
      if Not Assigned(FIBDatabase) then
      begin
       FIBInternalDatabase:=TIBDatabase.Create(nil);
+
       FIBInternalDatabase.DefaultTransaction:=TIBTransaction.Create(nil);
       FIBInternalDatabase.DefaultTransaction.DefaultDatabase:=FIBInternalDatabase;
       FIBInternalDatabase.DefaultTransaction.Params.Add('concurrency');
       FIBInternalDatabase.DefaultTransaction.Params.Add('nowait');
       FIBDatabase:=FIBInternalDatabase;
+      FIBTransaction:=FIBInternalDatabase.DefaultTransaction;
+      FIBInternalTransaction:=FIBTransaction;
+     end;
+     if Not Assigned(FIBTransaction) then
+     begin
+      FIBInternalTransaction:=TIBTransaction.Create(nil);
+      FIBInternalTransaction.DefaultDatabase:=FIBDatabase;
+      FIBInternalTransaction.Params.Add('concurrency');
+      FIBInternalTransaction.Params.Add('nowait');
+      FIBTransaction:=FIBInternalTransaction;
      end;
      if FIBDatabase.Connected then
       exit;
@@ -1007,6 +1026,12 @@ begin
      end;
      ConvertParamsFromDBXToIBX(FIBDatabase);
      FIBDatabase.Connected:=true;
+     if FIBTransaction=FIBInternalTransaction then
+     begin
+      if FIBInternalTransaction.InTransaction then
+       FIBInternalTransaction.Commit;
+      FIBInternalTransaction.StartTransaction;
+     end;
 {$ELSE}
     Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
 {$ENDIF}
@@ -1615,8 +1640,7 @@ begin
       TIBQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
       if Assigned(TIBQuery(FSQLInternalQuery).Database) then
       begin
-       TIBQuery(FSQLInternalQuery).Transaction:=
-        TIBQuery(FSQLInternalQuery).Database.DefaultTransaction;
+       TIBQuery(FSQLInternalQuery).Transaction:=baseinfo.FIBTransaction;
       end;
       TIBQuery(FSQLInternalQuery).UniDirectional:=true;
       TIBQuery(FSQLInternalQuery).DataSource:=nil;
@@ -2524,8 +2548,7 @@ begin
     TIBQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
     if Assigned(TIBQuery(FSQLInternalQuery).Database) then
     begin
-     TIBQuery(FSQLInternalQuery).Transaction:=
-      TIBQuery(FSQLInternalQuery).Database.DefaultTransaction;
+     TIBQuery(FSQLInternalQuery).Transaction:=FIBTransaction;
     end;
     TIBQuery(FSQLInternalQuery).UniDirectional:=true;
 {$ELSE}
@@ -3178,6 +3201,7 @@ begin
     '=:REPNAME';
    params.AddObject('REPORT',aparam2);
    OpenDatasetFromSQL(astring,params,true);
+   DoCommit;
   finally
    aparam.free;
    aparam2.free;
@@ -3623,6 +3647,30 @@ begin
 
 
 end;
+
+procedure TRpDatabaseInfoItem.DoCommit;
+begin
+{$IFDEF USESQLEXPRESS}
+// if Assigned(FSQLConnection) then
+// begin
+//  if FSQLCOnnection.InTransaction then
+//   FSQLConnection.Commit;
+// end;
+{$ENDIF}
+{$IFDEF USEIBX}
+ if Assigned(FIBTransaction) then
+ begin
+  FIBTransaction.Commit;
+ end;
+{$ENDIF}
+{$IFDEF USEZEOS}
+ if Assigned(FZInternalDatabase) then
+ begin
+  FZInternalDatabase.Commit;
+ end;
+{$ENDIF}
+end;
+
 
 
 initialization

@@ -77,7 +77,7 @@ type
 
  TRpBarcode = class(TRpCommonPosComponent)
   private
-   FDisplayFormat:string;
+   FDisplayFormat:Widestring;
    FExpression:widestring;
    FValue:Variant;
    FModul:integer;
@@ -162,6 +162,8 @@ type
                                                 Bitmask       : DWord);
    function CodewordToBitmask (RowNumber : Integer;
                                              Codeword  : Integer) : DWord;
+   procedure WriteDispFormat(Writer:TWriter);
+   procedure ReadDispFormat(Reader:TReader);
   protected
    procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
@@ -190,7 +192,7 @@ type
    property Typ:TRpBarcodeType read FTyp write FTyp default bcCodeEAN13;
    // build CheckSum ?
    property Checksum:boolean read FCheckSum write FCheckSum default false;
-   property DisplayFormat:string read FDisplayformat write FDisplayFormat;
+   property DisplayFormat:Widestring read FDisplayformat write FDisplayFormat;
    property Rotation:smallint read FRotation write FRotation default 0;
    property BColor:integer read FBColor write FBColor default $0;
    // PDF417
@@ -216,6 +218,17 @@ type
 implementation
 
 uses rpbasereport;
+
+procedure TRpBarcode.WriteDispFormat(Writer:TWriter);
+begin
+ WriteWideString(Writer, FDisplayFormat);
+end;
+
+procedure TRpBarcode.ReadDispFormat(Reader:TReader);
+begin
+ FDisplayFormat:=ReadWideString(Reader);
+end;
+
 
 function StringBarcodeToBarCodeType(value:string):TRpBarCodeType;
 var
@@ -1713,6 +1726,7 @@ procedure TRpBarcode.DefineProperties(Filer:TFiler);
 begin
  inherited;
 
+ Filer.DefineProperty('DisplayFormat',ReadDispFormat,WriteDispFormat,True);
  Filer.DefineProperty('Expression',ReadExpression,WriteExpression,True);
 end;
 

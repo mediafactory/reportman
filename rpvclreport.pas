@@ -45,6 +45,7 @@ type
    procedure PageSetup;
    function ShowParams:boolean;override;
    procedure SaveToPDF(filename:string;compressed:boolean=false);
+   procedure SaveToMetafile(filename:string);
    procedure SaveToText(filename:string;textdriver:String='');override;
    procedure SaveToExcel(filename:string);
    function PrintRange(frompage:integer;topage:integer;
@@ -126,6 +127,13 @@ begin
  CheckLoaded;
  rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,True,1,999999,1,
   false,filename,compressed,false)
+end;
+
+procedure TVCLReport.SaveToMetafile(filename:string);
+begin
+ CheckLoaded;
+ rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,True,1,999999,1,
+  false,filename,false,true)
 end;
 
 procedure TVCLReport.SaveToExcel(filename:string);

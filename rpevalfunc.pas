@@ -255,7 +255,7 @@ type
  { Function  }
  TIdenASC2=class(TIdenFunction)
  protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOWner:TComponent);override;
   end;

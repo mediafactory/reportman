@@ -26,10 +26,16 @@ interface
 
 uses SysUtils,Classes,rpmdconsts,
 {$IFDEF DOTNETD}
- IdStream,
-{$IFDEF INDY10}
- IdStreamVCL,
+  IdStream,
+ {$IFDEF INDY10}
+  IdStreamVCL,
+ {$ENDIF}
 {$ENDIF}
+{$IFNDEF DOTNETD}
+ {$IFDEF INDY10}
+  IdStream,
+  IdStreamVCL,
+ {$ENDIF}
 {$ENDIF}
  IdTCPConnection;
 
@@ -243,6 +249,11 @@ var
  astream:TIdStream;
 {$ENDIF}
 {$ENDIF}
+{$IFNDEF DOTNETD}
+{$IFDEF INDY10}
+ astream:TIdStreamVCL;
+{$ENDIF}
+{$ENDIF}
  memstream:TMemoryStream;
 begin
  if Not AConnection.Connected then
@@ -270,7 +281,17 @@ begin
 {$ENDIF}
 {$ENDIF}
 {$IFNDEF DOTNETD}
+{$IFDEF INDY10}
+  astream:=TIdStreamVCL.Create(memstream);
+  try
+   AConnection.IOHandler.Write(astream);
+  finally
+   astream.Free;
+  end;
+{$ENDIF}
+{$IFNDEF INDY10}
   AConnection.WriteStream(memstream,true,true);
+{$ENDIF}
 {$ENDIF}
  finally
   memstream.free;

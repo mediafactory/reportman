@@ -177,6 +177,9 @@ begin
    nnode:=ATree.Items.AddChild(anode,'PAGECOUNT');
    nnode.ImageIndex:=2;
    nnode.SelectedIndex:=2;
+   nnode:=ATree.Items.AddChild(anode,'GROUPPAGECOUNT');
+   nnode.ImageIndex:=2;
+   nnode.SelectedIndex:=2;
   finally
    alist.free;
   end;
