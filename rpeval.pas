@@ -33,6 +33,7 @@ type
  TRpCustomEvaluator=class(TComponent)
  private
   // Component to access fields
+  Rpfunctions:TStringList;
   fRpalias:TRpalias;
   // Error information
   FError:string;
@@ -70,6 +71,9 @@ type
   function Searchwithoutdot(name1:Shortstring):TRpIdentifier;
   function GetEvalResultString:string;
   procedure AddIdentifiers;
+  procedure Freerprmfunctions;
+  procedure InitRpFunctions;
+  procedure FillFunctions;
  protected
   procedure Notification(AComponent:TComponent;Operation:TOperation);override;
  public
@@ -121,14 +125,11 @@ type
    property Expression;
   end;
 
-procedure InitRpFunctions;
 
 implementation
 
 uses rpevalfunc;
 
-var
- Rpfunctions:TStringList;
 
 
 
@@ -152,6 +153,7 @@ end;
 constructor TRpCustomEvaluator.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+ InitRpFunctions;
  Evaluating:=false;
  FExpression:=String(chr(0));
  // The parser
@@ -164,9 +166,7 @@ begin
  AddIdentifiers;
 end;
 
-// Creates only one instance of functions for all
-// Evaluators
-procedure FillRpcache;
+procedure TRpCustomEvaluator.FillFunctions;
 var iden:TRpIdentifier;
 begin
  if Rpfunctions.count>0 then
@@ -265,7 +265,7 @@ end;
 // Adds the identifiers that are on cache
 procedure TRpCustomEvaluator.AddIdentifiers;
 begin
- FillRpcache;
+ FillFunctions;
  Identifiers.Assign(Rpfunctions);
 end;
 
@@ -274,6 +274,7 @@ begin
  if Rpparser<>nil then
   Rpparser.free;
  FIdentifiers.free;
+ FreeRprmFunctions;
  inherited Destroy;
 end;
 
@@ -1033,7 +1034,7 @@ begin
   Raise Exception.Create(SRpVariabledefined+name1)
 end;
 
-procedure Freerprmfunctions;
+procedure TRpCustomEvaluator.Freerprmfunctions;
 var
  i:integer;
 begin
@@ -1043,7 +1044,7 @@ begin
  end;
 end;
 
-procedure InitRpFunctions;
+procedure TRpCustomEvaluator.InitRpFunctions;
 begin
  Rpfunctions:=TStringList.create;
  Rpfunctions.Sorted:=True;
@@ -1051,14 +1052,12 @@ begin
 end;
 
 
+
 initialization
 
-// Cache of functions used by all of Rpevaluators
-InitRpFunctions;
 
 
 finalization
 
-Freerprmfunctions;
 
 end.

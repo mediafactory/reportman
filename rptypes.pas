@@ -1009,6 +1009,101 @@ begin
  Writer.Write(Pointer(Value)^, L * 2);
 end;
 
+
+{$IFNDEF USEVARIANTS}
+type
+  UTF8String = type string;
+
+function Utf8ToUnicode(Dest: PWideChar; MaxDestChars: Cardinal; Source: PChar; SourceBytes: Cardinal): Cardinal;
+var
+  i, count: Cardinal;
+  c: Byte;
+  wc: Cardinal;
+begin
+  if Source = nil then
+  begin
+    Result := 0;
+    Exit;
+  end;
+  Result := Cardinal(-1);
+  count := 0;
+  i := 0;
+  if Dest <> nil then
+  begin
+    while (i < SourceBytes) and (count < MaxDestChars) do
+    begin
+      wc := Cardinal(Source[i]);
+      Inc(i);
+      if (wc and $80) <> 0 then
+      begin
+        if i >= SourceBytes then Exit;          // incomplete multibyte char
+        wc := wc and $3F;
+        if (wc and $20) <> 0 then
+        begin
+          c := Byte(Source[i]);
+          Inc(i);
+          if (c and $C0) <> $80 then Exit;      // malformed trail byte or out of range char
+          if i >= SourceBytes then Exit;        // incomplete multibyte char
+          wc := (wc shl 6) or (c and $3F);
+        end;
+        c := Byte(Source[i]);
+        Inc(i);
+        if (c and $C0) <> $80 then Exit;       // malformed trail byte
+
+        Dest[count] := WideChar((wc shl 6) or (c and $3F));
+      end
+      else
+        Dest[count] := WideChar(wc);
+      Inc(count);
+    end;
+    if count >= MaxDestChars then count := MaxDestChars-1;
+    Dest[count] := #0;
+  end
+  else
+  begin
+    while (i < SourceBytes) do
+    begin
+      c := Byte(Source[i]);
+      Inc(i);
+      if (c and $80) <> 0 then
+      begin
+        if i >= SourceBytes then Exit;          // incomplete multibyte char
+        c := c and $3F;
+        if (c and $20) <> 0 then
+        begin
+          c := Byte(Source[i]);
+          Inc(i);
+          if (c and $C0) <> $80 then Exit;      // malformed trail byte or out of range char
+          if i >= SourceBytes then Exit;        // incomplete multibyte char
+        end;
+        c := Byte(Source[i]);
+        Inc(i);
+        if (c and $C0) <> $80 then Exit;       // malformed trail byte
+      end;
+      Inc(count);
+    end;
+  end;
+  Result := count+1;
+end;
+
+function Utf8Decode(const S: UTF8String): WideString;
+var
+  L: Integer;
+  Temp: WideString;
+begin
+  Result := '';
+  if S = '' then Exit;
+  SetLength(Temp, Length(S));
+
+  L := Utf8ToUnicode(PWideChar(Temp), Length(Temp)+1, PChar(S), Length(S));
+  if L > 0 then
+    SetLength(Temp, L-1)
+  else
+    Temp := '';
+  Result := Temp;
+end;
+{$ENDIF}
+
 function ReadWideString(Reader:TReader):WideString;
 var
   L: Integer;
@@ -1019,18 +1114,36 @@ begin
   avalue:=Reader.ReadValue;
   if  avalue<> vaWString then
   begin
-   case avalue of
-    vaString:
+   case Integer(avalue) of
+    Integer(vaString):
+     begin
       Reader.Read(L, SizeOf(Byte));
-    vaLString:
+      SetString(aResult, PChar(nil), L);
+      Reader.Read(Pointer(aResult)^, L);
+     end;
+    Integer(vaLString):
+     begin
       Reader.Read(L, SizeOf(Integer));
+      SetString(aResult, PChar(nil), L);
+      Reader.Read(Pointer(aResult)^, L);
+     end;
+{$IFDEF USEVARIANTS}
+    Integer(vaUTF8String):
+{$ENDIF}
+{$IFNDEF USEVARIANTS}
+    20:
+{$ENDIF}
+     begin
+      Reader.Read(L, SizeOf(Integer));
+      SetString(aResult, PChar(nil), L);
+      Reader.Read(Pointer(aResult)^, L);
+      aResult:=Utf8Decode(aResult);
+     end;
     else
     begin
-     Raise EReadError(SInvalidPropertyValue);
+     Raise EReadError.Create(SInvalidPropertyValue);
     end;
    end;
-   SetString(aResult, PChar(nil), L);
-   Reader.Read(Pointer(aResult)^, L);
    Result:=aResult;
   end
   else

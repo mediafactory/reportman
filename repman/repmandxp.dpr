@@ -67,7 +67,6 @@ uses
   rpmdprintconfigvcl in '..\rpmdprintconfigvcl.pas' {FRpPrinterConfigVCL},
   rpmdshfolder in '..\rpmdshfolder.pas',
   rpmetafile in '..\rpmetafile.pas',
-  rpmreg in '..\rpmreg.pas',
   rpmunits in '..\rpmunits.pas',
   rpparams in '..\rpparams.pas',
   rpparser in '..\rpparser.pas',

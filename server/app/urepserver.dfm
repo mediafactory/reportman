@@ -23,7 +23,7 @@ object modserver: Tmodserver
     Top = 12
   end
   object ThreadMan: TIdThreadMgrPool
-    PoolSize = 1
+    PoolSize = 10
     Left = 112
     Top = 60
   end

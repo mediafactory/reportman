@@ -251,19 +251,21 @@ begin
  FInitEvent:=TEvent.Create(nil,false,true,eventname);
  // Gets the log file and try to create it
  FLogFilename:=Obtainininamecommonconfig('','','reportmanlog');
- if Not (FileExists(FLogFileName)) then
- begin
-  try
-   FLogFile:=TFileStream.Create(FLogFilename,fmOpenReadWrite or fmCreate);
-  except
-   // If fails try with local filename
-   FLogFilename:=Obtainininamelocalconfig('','','reportmanlog');
-   if Not (FileExists(FLogFileName)) then
-    FLogFile:=TFileStream.Create(FLogFilename,fmOpenReadWrite or fmCreate);
-  end;
-  FLogFile.Free;
-  FLogFile:=nil;
+ try
+  if Not (FileExists(FLogFileName)) then
+   FLogFile:=TFileStream.Create(FLogFilename,fmOpenReadWrite or fmCreate)
+  else
+   FLogFile:=TFileStream.Create(FLogFilename,fmOpenReadWrite or fmShareDenyWrite);
+ except
+  // If fails try with local filename
+  FLogFilename:=Obtainininamelocalconfig('','','reportmanlog');
+  if Not (FileExists(FLogFileName)) then
+   FLogFile:=TFileStream.Create(FLogFilename,fmOpenReadWrite or fmCreate)
+  else
+   FLogFile:=TFileStream.Create(FLogFilename,fmOpenReadWrite or fmShareDenyWrite);
  end;
+ FLogFile.Free;
+ FLogFile:=nil;
  FLogFile:=TFileStream.Create(FLogFilename,fmOpenReadWrite or fmShareDenyWrite);
  FLogFile.Seek(0,soFromEnd);
 end;
