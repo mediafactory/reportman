@@ -2999,7 +2999,7 @@ begin
  end;
 end;
 
-procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title,forceprintername:String);
+(*procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title,forceprintername:String);
 var
  printername:String;
  printernamecommand:string;
@@ -3067,6 +3067,7 @@ begin
   params.Free;
  end;
 end;
+*)
 {$ENDIF}
 
 

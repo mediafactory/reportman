@@ -137,7 +137,7 @@ begin
    begin
     ait.next;
     aiden:=TRpIdentifier(ait.getValue);
-    astringiden:=ait.;
+    astringiden:=ait.getKey;
 {$ENDIF}
 {$IFNDEF USEEVALHASH}
    for i:=0 to FReport.Evaluator.Identifiers.Count-1 do
