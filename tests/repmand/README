@@ -1,0 +1,39 @@
+Report Manager Designer Version 0.91 beta
+
+Author:	Toni Martir
+	toni@pala.com (no free support)
+
+http://sourceforge.net/projects/reportman
+
+To install:
+
+tar zxvf repmand-0.91.i386.tar.gz
+
+To execute the application:
+
+./repmand.sh
+
+To execute other utils set first the library path (see repmand.sh script)
+
+Notes:
+
+Linux version:
+
+Supported databases (dbexpress):
+- Interbase/Firebird (tested & working)
+- PostgreSQL (untested)
+- MySQL & MySQL 2.3 (untested)
+- ODBC throught UNIXodbc (untested)
+
+Limitations (expected finished in release 1.0)
+
+- No group headers and footers
+- No database graphic fields (but fixed images work)
+
+Bugs:
+- Please submit bugs to sourceforge project.
+
+Support:
+- Submit support questions and other to egroups.
+
+Thanks
