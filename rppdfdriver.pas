@@ -53,6 +53,7 @@ type
    procedure DrawPage(apage:TRpMetaFilePage);stdcall;
    function AllowCopies:boolean;stdcall;
    function GetPageSize:TPoint;stdcall;
+   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
    function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
    property PDFFile:TRpPDFFile read FPDFFile;
@@ -69,6 +70,8 @@ function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
 
 implementation
 
+const
+ AlignmentFlags_SingleLine=64;
 
 type
   TPageWidthHeight = record
@@ -174,6 +177,31 @@ end;
 procedure TRpPDFDriver.NewPage;
 begin
  FPDFFile.NewPage;
+end;
+
+
+procedure TRpPDFDriver.TextExtent(atext:TRpTextObject;var extent:TPoint);
+var
+ singleline:boolean;
+ rect:TRect;
+begin
+ if atext.FontRotation<>0 then
+  exit;
+ if atext.CutText then
+  exit;
+ // single line
+ singleline:=(atext.Alignment AND AlignmentFlags_SingleLine)>0;
+ FPDFFile.Canvas.Font.Name:=TRpType1Font(atext.Type1Font);
+ FPDFFile.Canvas.Font.Size:=atext.FontSize;
+ FPDFFile.Canvas.Font.Bold:=(atext.Fontstyle and 1)>0;
+ FPDFFile.Canvas.Font.Italic:=(atext.Fontstyle and (1 shl 1))>0;
+ Rect.Left:=0;
+ Rect.Top:=0;
+ Rect.Bottom:=0;
+ Rect.Right:=extent.X;
+ FPDFFile.Canvas.TextExtent(atext.Text,Rect,atext.WordWrap,singleline);
+ extent.X:=Rect.Right;
+ extent.Y:=Rect.Bottom;
 end;
 
 procedure TRpPDFDriver.EndPage;

@@ -26,8 +26,11 @@ interface
 
 uses Sysutils,Classes,rptypes,rpprintitem,rpconsts,
  rpmetafile,rpeval,
+{$IFDEF MSWINDOWS}
+ windows,
+{$ENDIF}
 {$IFDEF USEVARIANTS}
-  Variants,
+  Variants,Types,
 {$ENDIF}
  rptypeval,math;
 
@@ -81,6 +84,7 @@ type
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
    function GetText:widestring;
    property IdenExpression:TIdenRpExpression read FIdenExpression;
+   function GetExtension(adriver:IRpPrintDriver):TPoint;override;
   published
    property DisplayFormat:string read FDisplayformat write FDisplayFormat;
    property Expression:widestring read FExpression write FExpression;
@@ -386,6 +390,23 @@ begin
  end;
 end;
 
+function TRpExpression.GetExtension(adriver:IRpPrintDriver):TPoint;
+var
+ aText:TRpTextObject;
+begin
+ Result:=inherited GetExtension(adriver);
+ aText.Text:=GetText;
+ aText.LFontName:=LFontName;
+ aText.WFontName:=WFontName;
+ aText.FontSize:=FontSize;
+ aText.FontRotation:=FontRotation;
+ aText.FontStyle:=FontStyle;
+ aText.Type1Font:=integer(Type1Font);
+ aText.CutText:=CutText;
+ aText.Alignment:=Alignment;
+ aText.WordWrap:=WordWrap;
 
+ adriver.TextExtent(aText,Result);
+end;
 
 end.

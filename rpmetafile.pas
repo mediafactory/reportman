@@ -87,6 +87,19 @@ type
 
  TRpMetaSeparator=(rpFHeader,rpFPage,rpFObject);
 
+ TRpTextObject=record
+  Text:WideString;
+  LFontName:WideString;
+  WFontName:WideString;
+  FontSize:smallint;
+  FontRotation:smallint;
+  FontStyle:smallint;
+  Type1Font:smallint;
+  CutText:boolean;
+  Alignment:integer;
+  WordWrap:boolean;
+ end;
+
  TRpMetaObject=record
   Top,Left,Width,Height:integer;
   case Metatype:TRpMetaObjectType of
@@ -128,6 +141,7 @@ type
   function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
   procedure SetOrientation(Orientation:TRpOrientation);stdcall;
   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
+  procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
   procedure DrawPage(apage:TRpMetaFilePage);stdcall;
   function AllowCopies:boolean;stdcall;
  end;

@@ -229,6 +229,7 @@ begin
   else
    gdidriver.devicefonts:=false;
   pagenum:=1;
+  gdidriver.NewDocument(report.Metafile);
   PrintPage;
   PlaceImagePosition;
   printed:=true;

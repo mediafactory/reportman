@@ -1242,7 +1242,7 @@ var
 function CheckSpace:boolean;
 begin
  if not sectionextevaluated then
-  sectionext:=asection.GetExtension;
+  sectionext:=asection.GetExtension(FDriver);
  Result:=true;
  if sectionext.Y>freespace then
  begin
@@ -1353,7 +1353,7 @@ begin
   for i:=0 to pagefooters.Count-1 do
   begin
    asection:=oldsubreport.Sections.Items[StrToInt(pagefooters.Strings[i])].Section;
-   sectionext:=asection.GetExtension;
+   sectionext:=asection.GetExtension(FDriver);
    PrintSection(false);
   end;
  end;
@@ -1409,7 +1409,7 @@ begin
     begin
      if section.HorzDesp then
      begin
-      sectionext:=section.GetExtension;
+      sectionext:=section.GetExtension(FDriver);
       sectionextevaluated:=true;
       if (pageposx+oldprintedsectionext.X+sectionext.X)<=pagespacex then
       begin

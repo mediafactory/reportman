@@ -4,7 +4,7 @@
 {                                                       }
 {       Rpgdidriver                                     }
 {       TRpGDIDriver: Printer driver for  VCL Lib       }
-{       can be used only for windows                   }
+{       can be used only for windows                    }
 {       it includes printer and bitmap support          }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
@@ -113,6 +113,7 @@ type
    procedure DrawPage(apage:TRpMetaFilePage);stdcall;
    function AllowCopies:boolean;stdcall;
    function GetPageSize:TPoint;stdcall;
+   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
    function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
    constructor Create;
@@ -266,6 +267,16 @@ end;
 
 destructor TRpGDIDriver.Destroy;
 begin
+ if assigned(metacanvas) then
+ begin
+  metacanvas.free;
+  metacanvas:=nil;
+ end;
+ if assigned(meta) then
+ begin
+  meta.free;
+  meta:=nil;
+ end;
  if assigned(bitmap) then
  begin
   bitmap.free;
@@ -321,6 +332,23 @@ begin
   aheight:=bitmapheight;
 
 
+  if assigned(metacanvas) then
+  begin
+   metacanvas.free;
+   metacanvas:=nil;
+  end;
+  if assigned(meta) then
+  begin
+   meta.free;
+   meta:=nil;
+   meta:=TMetafile.Create;
+  end;
+  meta:=TMetafile.Create;
+  meta.Enhanced:=true;
+  meta.Width:=bitmapwidth;
+  meta.Height:=bitmapheight;
+  metacanvas:=TMetafileCanvas.Create(meta,0);
+
   if clientwidth>0 then
   begin
    // Calculates the scale
@@ -355,7 +383,6 @@ begin
    bitmap.Width:=1;
   if bitmap.Height<1 then
    bitmap.Height:=1;
-
 
   Bitmap.Canvas.Brush.Style:=bsSolid;
   Bitmap.Canvas.Brush.Color:=CLXColorToVCLColor(report.BackColor);
@@ -449,6 +476,74 @@ end;
 procedure TRpGDIDriver.EndPage;
 begin
  // Does nothing
+end;
+
+
+procedure TRpGDIDriver.TextExtent(atext:TRpTextObject;var extent:TPoint);
+var
+ Canvas:TCanvas;
+ dpix,dpiy:integer;
+ aalign:Cardinal;
+ aatext:widestring;
+ aansitext:string;
+ arec:TRect;
+begin
+ if atext.FontRotation<>0 then
+  exit;
+ if atext.CutText then
+  exit;
+ if (toprinter) then
+ begin
+  if not printer.Printing then
+   Raise Exception.Create(SRpGDIDriverNotInit);
+  dpix:=intdpix;
+  dpiy:=intdpiy;
+  Canvas:=printer.canvas;
+ end
+ else
+ begin
+  if not Assigned(bitmap) then
+   Raise Exception.Create(SRpGDIDriverNotInit);
+  if not Assigned(metacanvas) then
+   Raise Exception.Create(SRpGDIDriverNotInit);
+  Canvas:=metacanvas;
+  dpix:=Screen.PixelsPerInch;
+  dpiy:=Screen.PixelsPerInch;
+ end;
+ Canvas.Font.Name:=atext.WFontName;
+ Canvas.Font.Style:=CLXIntegerToFontStyle(atext.FontStyle);
+ Canvas.Font.Size:=atext.FontSize;
+ // Find device font
+ if devicefonts then
+  FindDeviceFont(Canvas.Handle,Canvas.Font,FontSizeToStep(Canvas.Font.Size));
+ aalign:=DT_NOPREFIX;
+ if (atext.AlignMent AND AlignmentFlags_AlignHCenter)>0 then
+  aalign:=aalign or DT_CENTER;
+ if (atext.AlignMent AND AlignmentFlags_SingleLine)>0 then
+  aalign:=aalign or DT_SINGLELINE;
+ if (atext.AlignMent AND AlignmentFlags_AlignLEFT)>0 then
+  aalign:=aalign or DT_LEFT;
+ if (atext.AlignMent AND AlignmentFlags_AlignRight)>0 then
+  aalign:=aalign or DT_RIGHT;
+ if atext.WordWrap then
+  aalign:=aalign or DT_WORDBREAK;
+ if Not atext.CutText then
+  aalign:=aalign or DT_NOCLIP;
+ aatext:=atext.text;
+ aansitext:=aatext;
+ arec.Left:=0;
+ arec.Top:=0;
+ arec.Bottom:=0;
+ arec.Right:=Round(extent.X*dpix/TWIPS_PER_INCHESS);
+ // calculates the text extent
+ // Win9x does not support drawing WideChars
+ if IsWindowsNT then
+  DrawTextW(Canvas.Handle,PWideChar(aatext),Length(aatext),arec,aalign or DT_CALCRECT)
+ else
+  DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),arec,aalign or DT_CALCRECT);
+ // Transformates to twips
+ extent.X:=Round(arec.Right/dpix*TWIPS_PER_INCHESS);
+ extent.Y:=Round(arec.Bottom/dpiy*TWIPS_PER_INCHESS);
 end;
 
 procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;pagemargins:TRect;devicefonts:boolean);
@@ -692,6 +787,16 @@ begin
  end
  else
  begin
+  if assigned(metacanvas) then
+  begin
+   metacanvas.free;
+   metacanvas:=nil;
+  end;
+  if assigned(meta) then
+  begin
+   meta.free;
+   meta:=nil;
+  end;
   meta:=TMetafile.Create;
   try
    meta.Enhanced:=true;
@@ -722,6 +827,7 @@ begin
    end;
   finally
    meta.free;
+   meta:=nil;
   end;
  end;
 end;

@@ -200,13 +200,13 @@ procedure TRpSectionInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
  inherited GetProperties(lnames,ltypes,lvalues);
 
-// lnames.Add(SRpSAutoExpand);
-// ltypes.Add(SRpSBool);
-// lvalues.Add(BoolToStr(TRpSection(printitem).AutoExpand,true));
+ lnames.Add(SRpSAutoExpand);
+ ltypes.Add(SRpSBool);
+ lvalues.Add(BoolToStr(TRpSection(printitem).AutoExpand,true));
 
-// lnames.Add(SRpSAutoContract);
-// ltypes.Add(SRpSBool);
-// lvalues.Add(BoolToStr(TRpSection(printitem).AutoContract,true));
+ lnames.Add(SRpSAutoContract);
+ ltypes.Add(SRpSBool);
+ lvalues.Add(BoolToStr(TRpSection(printitem).AutoContract,true));
 
  if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter]) then
  begin

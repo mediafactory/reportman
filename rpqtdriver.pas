@@ -96,6 +96,7 @@ type
    procedure EndPage;stdcall;
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
    procedure DrawPage(apage:TRpMetaFilePage);stdcall;
+   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
    function AllowCopies:boolean;stdcall;
    function GetPageSize:TPoint;stdcall;
    function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
@@ -337,6 +338,55 @@ end;
 procedure TRpQtDriver.EndPage;
 begin
  // Does nothing
+end;
+
+procedure TRpQtDriver.TextExtent(atext:TRpTextObject;var extent:TPoint);
+var
+ dpix,dpiy:integer;
+ Canvas:TCanvas;
+ aalign:integeR;
+ arec:Trect;
+begin
+ if atext.FontRotation<>0 then
+  exit;
+ if atext.CutText then
+  exit;
+ if (toprinter) then
+ begin
+  if not printer.Printing then
+   Raise Exception.Create(SRpQtDriverNotInit);
+  dpix:=intdpix;
+  dpiy:=intdpiy;
+  Canvas:=printer.canvas;
+ end
+ else
+ begin
+  if not Assigned(bitmap) then
+   Raise Exception.Create(SRpQtDriverNotInit);
+  Canvas:=bitmap.canvas;
+  dpix:=dpi;
+  dpiy:=dpi;
+ end;
+{$IFDEF MSWINDOWS}
+ Canvas.Font.Name:=atext.WFontName;
+{$ENDIF}
+{$IFDEF LINUX}
+ Canvas.Font.Name:=atext.LFontName;
+{$ENDIF}
+ Canvas.Font.Style:=IntegerToFontStyle(atext.FontStyle);
+ Canvas.Font.Size:=atext.FontSize;
+ aalign:=atext.Alignment;
+ if Not atext.CutText then
+  aalign:=aalign or Integer(AlignmentFlags_DontClip);
+ if atext.Wordwrap then
+  aalign:=aalign or Integer(AlignmentFlags_WordBreak);
+ arec.Left:=0;
+ arec.Top:=0;
+ arec.Right:=Round(extent.X*dpix/TWIPS_PER_INCHESS);
+ arec.Bottom:=0;
+ Canvas.TextExtent(atext.Text,arec,aalign);
+ extent.Y:=Round(arec.Bottom/dpiy*TWIPS_PER_INCHESS);
+ extent.X:=Round(arec.Right/dpix*TWIPS_PER_INCHESS);
 end;
 
 procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;

@@ -22,7 +22,14 @@ unit rpsection;
 
 interface
 
-uses Classes,rptypes,rpconsts,rpmunits,rpprintitem,rplabelitem,
+uses Classes,
+{$IFDEF MSWINDOWS}
+ windows,
+{$ENDIF}
+{$IFDEF USEVARIANTS}
+ Types,
+{$ENDIF}
+ rptypes,rpconsts,rpmunits,rpprintitem,rplabelitem,
  sysutils,rpmetafile,rpeval;
 
 const
@@ -66,6 +73,7 @@ type
    procedure FreeComponents;
    procedure DeleteComponent(com:TRpCommonComponent);
    property SectionCaption:String read GetSectionCaption;
+   function GetExtension(adriver:IRpPrintDriver):TPoint;override;
    function EvaluateBeginPage:boolean;
   published
    property SubReport:TComponent read FSubReport write FSubReport;
@@ -269,6 +277,51 @@ begin
  eval.Expression:=FBeginPageExpression;
  eval.Evaluate;
  Result:=eval.EvalResult;
+end;
+
+
+function TRpSection.GetExtension(adriver:IRpPrintDriver):TPoint;
+var
+ minsize,maxsize,currentsize:integer;
+ compsize:TPoint;
+ newsize:integer;
+ i:integer;
+ acompo:TRpCommonPosComponent;
+begin
+ Result:=inherited GetExtension(adriver);
+ if ((Not FAutoExpand) AND (Not FAutoContract)) then
+  exit;
+ if FAutoContract then
+ begin
+  minsize:=0;
+  currentsize:=0;
+ end
+ else
+ begin
+  minsize:=Result.Y;
+  currentsize:=Result.Y;
+ end;
+ if Not FAutoExpand then
+  maxsize:=Result.Y
+ else
+  maxsize:=MaxInt;
+ for i:=0 to Components.Count-1 do
+ begin
+  acompo:=TRpCommonPosComponent(Components.Items[i].Component);
+  compsize:=acompo.GetExtension(adriver);
+  if compsize.Y>0 then
+  begin
+   newsize:=acompo.PosY+compsize.Y;
+   if newsize<maxsize then
+   begin
+    if newsize>currentsize then
+     currentsize:=newsize;
+   end;
+  end;
+ end;
+ if currentsize<minsize then
+  currentsize:=minsize;
+ Result.Y:=currentsize;
 end;
 
 end.

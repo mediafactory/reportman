@@ -228,6 +228,7 @@ begin
    report.BeginPrint(qtdriver);
   end;
   pagenum:=1;
+  qtdriver.NewDocument(report.Metafile);
   PrintPage;
   PlaceImagePosition;
   printed:=true;

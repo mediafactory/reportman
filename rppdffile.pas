@@ -129,10 +129,10 @@ type
    procedure Ellipse(X1, Y1, X2, Y2: Integer);
    constructor Create(AFile:TRpPDFFile);
    destructor Destroy;override;
-   procedure TextExtent(const Text:WideString;var Rect:TRect;wordbreak:boolean;
-    singleline:boolean);
    function CalcCharWidth(charcode:char):double;
   public
+   procedure TextExtent(const Text:WideString;var Rect:TRect;wordbreak:boolean;
+    singleline:boolean);
 
    property Font:TRpPDFFont read FFOnt;
   end;

@@ -46,7 +46,7 @@ type
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);virtual;
   public
    constructor Create(AOwner:TComponent);override;
-   function GetExtension:TPoint;virtual;
+   function GetExtension(adriver:IRpPrintDriver):TPoint;virtual;
    function EvaluatePrintCondition:boolean;
    procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);
   published
@@ -141,7 +141,7 @@ begin
  FWidth:=0;
 end;
 
-function TRpCommonComponent.GetExtension:TPoint;
+function TRpCommonComponent.GetExtension(adriver:IRpPrintDriver):TPoint;
 begin
  Result.X:=Width;
  Result.Y:=Height;
