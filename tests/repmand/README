@@ -1,4 +1,4 @@
-Report Manager Designer Version 1.3
+Report Manager Designer Version 1.4pre10
 
 Author:	Toni Martir
 	toni@pala.com (no free support)
@@ -15,7 +15,7 @@ http://reportman.sourceforge.net
 
 To install:
 
-tar zxvf repmand-1_3.i386.tar.gz
+tar zxvf repmand-1_4p104p104p104p10.i386.tar.gz
 
 To execute the application:
 

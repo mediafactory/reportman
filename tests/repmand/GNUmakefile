@@ -1,5 +1,5 @@
-kylix_bin=/opt/kylix3/bin
-#kylix_bin=/home/toni/kylix3/bin
+#kylix_bin=/opt/kylix3/bin
+kylix_bin=/home/toni/kylix3/bin
 drivers_path=../../drivers/linux
 
 install:
@@ -52,8 +52,8 @@ install:
 #	cp ../../doc/doc/units/*.html doc/units
 #	cp ../../doc/doc/images/*.jpg doc/images
 #	include repmand.es when linux translation done
-	tar c LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es repmand reportserverapp reportserverapp.sh reportservercon reportservercon.sh repserverconfig repserverconfig.sh dbxdrivers dbxconnections metaprint metaview metaview.sh printrep printreptopdf printreptopdf.sh reptotxt txttorep repmand repmand.sh repmand.bin metaview.bin printrep.bin printreptopdf.bin metaprint.bin reportserverapp.bin reportservercon.bin repserverconfig.bin repwebexe repwebexe.bin README *.so *.so.1 qt_* dbxres.en.1 > repmand-1_3.i386.tar
-	gzip repmand-1_3.i386.tar
+	tar c LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es repmand reportserverapp reportserverapp.sh reportservercon reportservercon.sh repserverconfig repserverconfig.sh dbxdrivers dbxconnections metaprint metaview metaview.sh printrep printreptopdf printreptopdf.sh reptotxt txttorep repmand repmand.sh repmand.bin metaview.bin printrep.bin printreptopdf.bin metaprint.bin reportserverapp.bin reportservercon.bin repserverconfig.bin repwebexe repwebexe.bin README *.so *.so.1 qt_* dbxres.en.1 > repmand-1_4p10.i386.tar
+	gzip repmand-1_4p10.i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0
 	-rm -f repmand
