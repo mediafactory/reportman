@@ -217,13 +217,13 @@ type
     procedure SaveConfig;
     procedure UpdateUnits;
     procedure CorrectScrollBoxes;
-    procedure AppIdleRefreshInterface(Sender:TObject;var done:boolean);
-    procedure RefreshInterface(Sender: TObject);
   public
     { Public declarations }
     report:TRpReport;
     filename:string;
     freportstructure:TFRpStructure;
+    procedure RefreshInterface(Sender: TObject);
+    procedure AppIdleRefreshInterface(Sender:TObject;var done:boolean);
     function GetExpressionText:string;
   end;
 
@@ -243,6 +243,8 @@ var
 begin
  Result:=true;
  if report=nil then
+  exit;
+ if Not ASave.Visible then
   exit;
  if report<>nil then
  begin

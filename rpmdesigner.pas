@@ -107,31 +107,49 @@ function TRpDesigner.Execute:boolean;
 var
  handled:boolean;
  stream:TStream;
+ dia:TFRpMainf;
 begin
  CheckLoaded;
  // Creates the form and on close do the save event
-
- if FReadonly then
-  exit;
- handled:=false;
- stream:=nil;
- if Assigned(FOnSave) then
- begin
-  FOnSave(stream,Freport,handled);
- end;
- if not handled then
- begin
-  if Not Assigned(stream) then
+ dia:=TFRpMainf.Create(nil);
+ try
+//  dia.ANew.Enabled:=false;
+//  dia.AOpen.Enabled:=false;
+//  dia.ASave.Enabled:=false;
+//  dia.ASaveAs.Enabled:=false;
+  dia.ANew.Visible:=false;
+  dia.AOpen.Visible:=false;
+  dia.ASave.Visible:=false;
+  dia.ASaveAs.Visible:=false;
+  dia.report:=FReport;
+  dia.RefreshInterface(dia);
+  dia.ShowModal;
+  if FReadonly then
+   exit;
+  handled:=false;
+  stream:=nil;
+  if Assigned(FOnSave) then
   begin
-   if Length(FFileName)>0 then
+   FOnSave(stream,Freport,handled);
+  end;
+  if not handled then
+  begin
+   if Not Assigned(stream) then
    begin
-    FReport.SaveToFile(FFilename);
-   end
-   else
-   begin
-    Raise Exception.Create(SRpNoStreamToSaveReport);
+    if Length(FFileName)>0 then
+    begin
+     FReport.SaveToFile(FFilename);
+    end
+    else
+    begin
+     Raise Exception.Create(SRpNoStreamToSaveReport);
+    end;
    end;
   end;
+  FReport.Free;
+  FReport:=nil;
+ finally
+  dia.free;
  end;
 end;
 
