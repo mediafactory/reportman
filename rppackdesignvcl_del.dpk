@@ -37,7 +37,6 @@ requires
   vcldb,
   vcljpg,
   indy,
-  tee,
   vclx,
   rppackvcl_del;
 

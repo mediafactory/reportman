@@ -35,7 +35,6 @@ requires
   dbrtl,
   dsnap,
   indy,
-  tee,
   rppack_del,
   rppackvcl_del,
   rppackdesignvcl_del,

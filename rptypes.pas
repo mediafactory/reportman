@@ -105,6 +105,9 @@ type
     PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean of object;
  TRpImageOpProc=function (Top,Left,Width,Height:integer;
     DrawStyle,DPIRes:integer;PreviewOnly:Boolean;Image:WideString):Boolean of object;
+ TRpBarcodeOpProc=function (Top,Left,Width,Height:integer;
+    Expression,DisplayFormat:WideString;BarType,Modul:Integer;Ratio,Rotation:Currency;
+     CalcChecksum:Boolean;BrushColor:Integer):Boolean of object;
  TRpTextOpProc=function (Top,Left,Width,Height:integer;
   Text,LFontName,WFontName:WideString;
   FontSize,FontRotation,FontStyle,FontColor,Type1Font:integer;
@@ -307,6 +310,8 @@ function FormatCurrAdv(mask:String;number:Currency):String;
 // Rounding a number with not balanced system
 // always the upper value if in the middle
 function Roundfloat(num:double;redondeo:double):double;
+
+function RpCharToOem(source:String):String;
 
 {$IFNDEF USEVARIANTS}
 procedure RaiseLastOSError;
@@ -3942,6 +3947,28 @@ begin
  alist.Add(SRpDuplexHor);
 end;
 
+function RpCharToOem(source:String):String;
+var
+ abuf:Pchar;
+ i:integer;
+begin
+ Result:='';
+ if Length(source)<1 then
+  exit;
+ abuf:=AllocMem(Length(source)+1);
+ try
+  CharToOem(Pchar(source),abuf);
+  Result:=StrPas(abuf);
+  for i:=1 to Length(Result) do
+  begin
+   // The Euro symbol
+   if Source[i]=chr(128) then
+    Result[i]:=chr($D5);
+  end;
+ finally
+  FreeMem(abuf);
+ end;
+end;
 
 initialization
 

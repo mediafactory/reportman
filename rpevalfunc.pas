@@ -105,6 +105,14 @@ type
    constructor Create(AOwner:TComponent);override;
   end;
 
+ { Function CompareValue }
+ TIdenCompareValue=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
  { Function INT }
  TIdenInt=class(TIdenFunction)
   protected
@@ -197,6 +205,13 @@ type
   end;
 
  TIdenImageOperation=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+ TIdenBarcodeOperation=class(TIdenFunction)
   protected
    function GetRpValue:TRpValue;override;
   public
@@ -681,6 +696,38 @@ begin
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  Result:=Abs(Double(Params[0]));
+end;
+
+{**************************************************************************}
+
+
+{ TIdenCompareValue }
+
+constructor TIdenCompareValue.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=3;
+ IdenName:='CompareValue';
+ Help:=SRpCompareValue;
+ model:='function '+'Compare'+'(num1,num2,epsilon:double):integer';
+ aParams:=SRpPCompareValue;
+end;
+
+
+{**************************************************************************}
+
+function TIdenCompareValue.GeTRpValue:TRpValue;
+begin
+ if (not VarIsNumber(Params[0])) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if (not VarIsNumber(Params[1])) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if (not VarIsNumber(Params[2])) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ result:=Integer(CompareValue(double(Params[0]),double(Params[1]),double(Params[2])));
 end;
 
 {**************************************************************************}
@@ -1741,7 +1788,7 @@ begin
  IdenName:='ImageOp';
  Help:='';
  model:='function '+'ImageOp'+'(Top,Left,Width,Height:integer;'+#10+
-    'DrawStyle:integer;PreviewOnly:Boolean;Image:String):Boolean';
+    'DrawStyle,PixelsPerinch:integer;PreviewOnly:Boolean;Image:String):Boolean';
  aParams:='';
 end;
 
@@ -1774,7 +1821,7 @@ begin
 end;
 
 
-{ TIdenImageOperation }
+{ TIdenReOpenOp }
 
 constructor TIdenReOpenOp.Create(AOwner:TComponent);
 begin
@@ -1850,5 +1897,62 @@ begin
  else
   Result:=false;
 end;
+
+{ TIdenBarcodeOperation }
+
+constructor TIdenBarcodeOperation.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=12;
+ IdenName:='BarcodeOp';
+ Help:='';
+ model:='function '+'BarcodeOp'+'(Top,Left,Width,Height:integer; '+#10+
+    'Expression,DisplayFormat:WideString; BarType,Modul:Integer; Ratio,Rotation:Currency;'+
+    #10+'CalcChecksum:Boolean; BColor:Integer):Boolean';
+ aParams:='';
+end;
+
+{**************************************************************************}
+
+function TIdenBarcodeOperation.GeTRpValue:TRpValue;
+var
+ i:integer;
+begin
+ for i:=0 to 3 do
+ begin
+  if (Not VarIsNumber(Params[i])) then
+   Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ end;
+ if (Not VarIsString(Params[4])) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not VarIsString(Params[5])) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not VarIsInteger(Params[6])) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not VarIsInteger(Params[7])) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not VarIsNumber(Params[8])) then
+   Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not VarIsNumber(Params[9])) then
+   Raise TRpNamedException.Create(SRpEvalType,IdenName);
+
+ if Vartype(Params[10])<>varBoolean then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+
+ if Not VarIsInteger(Params[11]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+
+ if Assigned((evaluator As TRpEvaluator).OnBarcodeOp) then
+  Result:=(evaluator As TRpEvaluator).OnBarcodeOp(Round(Params[0]),Round(Params[1]),Round(Params[2]),Round(Params[3]),
+   WideString(Params[4]),WideString(Params[5]),
+   Integer(Params[6]),Integer(Params[7]),
+   Currency(Params[8]),Currency(Params[9]),
+   Boolean(Params[10]),Integer(Params[11]))
+ else
+  Result:=false;
+end;
+
 
 end.

@@ -35,7 +35,6 @@ requires
   rppack_del,
   indy,
   dsnap,
-  tee,
   ibxpress,
   bdertl,
   dbexpress;

@@ -4,8 +4,6 @@ library repmandxp;
 
 {$R *.RES}
 {ITE} {LCID:00000C0A:00000C0A} {}
-{ITE} {DFMFileType} {vcl\DBLOGDLG.dfm}
-{ITE} {DFMFileType} {vcl\DBPWDLG.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpdbbrowservcl.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpdbxconfigvcl.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpeditconnvcl.dfm}
@@ -36,10 +34,10 @@ library repmandxp;
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rppagesetupvcl.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rprfvparams.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpvpreview.dfm}
+{ITE} {DFMFileType} {vcl\DBLOGDLG.dfm}
+{ITE} {DFMFileType} {vcl\DBPWDLG.dfm}
 {ITE} {RCFileType} {repmandxp_DRC.rc}
 
-{$R 'vcl\DBLOGDLG.dfm' LoginDialog:TForm(Form)}
-{$R 'vcl\DBPWDLG.dfm' PasswordDialog:TForm(Form)}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpdbbrowservcl.dfm' FRpBrowserVCL:TFrame}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpdbxconfigvcl.dfm' FRpDBXConfigVCL:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpeditconnvcl.dfm' FRpEditConVCL:TForm}
@@ -70,6 +68,8 @@ library repmandxp;
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rppagesetupvcl.dfm' FRpPageSetupVCL:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rprfvparams.dfm' FRpRTParams:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpvpreview.dfm' FRpVPreview:TForm}
+{$R 'vcl\DBLOGDLG.dfm' LoginDialog:TForm(Form)}
+{$R 'vcl\DBPWDLG.dfm' PasswordDialog:TForm(Form)}
 {$R 'repmandxp_DRC.res' 'repmandxp_DRC.rc'}
 
 {$E ESN}

@@ -1715,26 +1715,15 @@ var
  i:integer;
  atposition:integer;
  atindex:integer;
-{$IFDEF MSWINDOWS}
- {$IFNDEF DOTNETD}
-  res:PChar;
- {$ENDIF}
-{$ENDIF}
  wasunderline:boolean;
  currentcount:integer;
  trimed:boolean;
 begin
 {$IFDEF MSWINDOWS}
-{$IFNDEF DOTNETD}
  if OemConvert then
  begin
-  res:=AllocMem(Length(Line.Value)+1);
-  StrPCopy(res,Line.Value);
-  CharToOEM(PChar(res),PChar(res));
-  Line.Value:=StrPas(res);
-  FreeMem(res);
+  Line.Value:=RpCharToOem(Line.Value);
  end;
-{$ENDIF}
 {$ENDIF}
  encoded:='';
  // Only set size if previos size is different

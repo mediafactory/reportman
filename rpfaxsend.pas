@@ -25,8 +25,10 @@ interface
 uses Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls,
   Buttons, ExtCtrls,rpmetafile, AdFaxCvt, AdPort, AdFax, AdFStat, OoMisc,
   AdTapi,rpgdidriver,rptypes,rpmunits, ComCtrls, AdFView,rpgraphutilsvcl,
-  rpreport,rpmdshfolder,inifiles,rpmdconsts;
+  rpreport,rpmdshfolder,inifiles,rpmdconsts,AdExcept;
 
+const
+ CT_FAXHEADER='$D $T, $S $P / $N';
 type
   TFRpFaxSend = class(TForm)
     BCancel: TButton;
@@ -50,6 +52,8 @@ type
   private
     { Private declarations }
     apffile,bitmapfile,coverfile:String;
+    codeerror:Integer;
+    Errormessage:String;
     sendok:Boolean;
     oldonidle:TIdleEvent;
     phonenumber,covertext:String;
@@ -60,14 +64,18 @@ type
     abitmap:TBitmap;
     docancel:Boolean;
     tapidevice:String;
+    showprogress:Boolean;
+    sendingfax:Boolean;
+    highres:Boolean;
+    headerline:string;
     procedure AppIdle(Sender:TObject;var done:Boolean);
   public
     { Public declarations }
   end;
 
 
-function SendFaxReport(phonenumber:String;covertext:string;tapidevice:String;report:TRpReport):Boolean;
-function SendFaxMetafile(phonenumber:String;covertext:string;tapidevice:String;metafile:TRpMetafileReport):Boolean;
+function SendFaxReport(phonenumber:String;covertext:string;tapidevice:String;report:TRpReport;showprogress:Boolean;highres:Boolean=false;headerline:string=CT_FAXHEADER):Boolean;
+function SendFaxMetafile(phonenumber:String;covertext:string;tapidevice:String;metafile:TRpMetafileReport;showprogress:Boolean;highres:Boolean=false;headerline:string=CT_FAXHEADER):Boolean;
 function SelectTApiDevice:String;
 function GetDefaultTApiDevice:String;
 procedure ChangeDefaultTApiDevice;
@@ -78,15 +86,13 @@ uses Math;
 
 {$R *.dfm}
 
-function SendFaxReport(phonenumber:String;covertext:string;tapidevice:String;report:TRpReport):Boolean;
+function SendFaxReport(phonenumber:String;covertext:string;tapidevice:String;report:TRpReport;showprogress:Boolean;highres:Boolean=false;headerline:string=CT_FAXHEADER):Boolean;
 begin
  rpgdidriver.CalcReportWidthProgress(Report);
- if Length(covertext)<0 then
-  covertext:=SRpReportHeader;
- Result:=SendFaxMetafile(phonenumber,covertext,tapidevice,Report.Metafile);
+ Result:=SendFaxMetafile(phonenumber,covertext,tapidevice,Report.Metafile,showprogress,highres,headerline);
 end;
 
-function SendFaxMetafile(phonenumber:String;covertext:string;tapidevice:String;metafile:TRpMetafileReport):Boolean;
+function SendFaxMetafile(phonenumber:String;covertext:string;tapidevice:String;metafile:TRpMetafileReport;showprogress:Boolean;highres:Boolean=false;headerline:string=CT_FAXHEADER):Boolean;
 var
  dia:TFRpFaxSend;
  apffile,coverfile,bitmapfile:string;
@@ -101,10 +107,25 @@ begin
   dia.metafile:=metafile;
   dia.tapidevice:=tapidevice;
   dia.covertext:=covertext;
-  Application.OnIdle:=dia.AppIdle;
-  dia.ShowModal;
+  dia.headerline:=headerline;
+  dia.showprogress:=showprogress;
+  dia.highres:=highres;
+  if showprogress then
+  begin
+   Application.OnIdle:=dia.AppIdle;
+   dia.ShowModal;
+  end
+  else
+  begin
+   Application.OnIdle:=dia.AppIdle;
+   dia.ApdFaxStatus1.Fax:=nil;
+   dia.ApdSendFax1.StatusDisplay:=nil;
+   dia.ShowModal;
+  end;
   Result:=dia.Sendok;
   Application.OnIdle:=dia.oldonidle;
+  if not dia.sendok then
+   Raise Exception.Create(IntToStr(dia.codeerror)+':'+dia.Errormessage);
   apffile:=dia.apffile;
   coverfile:=dia.coverfile;
   bitmapfile:=dia.bitmapfile;
@@ -128,7 +149,6 @@ begin
  coverfile:='';
  bitmapfile:='';
  apffile:='';
-
  // Ask phone number if necesary
  if Length(phonenumber)<1 then
  begin
@@ -142,7 +162,10 @@ begin
  pageheight:=metafile.CustomY*100 div TWIPS_PER_INCHESS;
  totallines:=pageheight*metafile.PageCount;
  pconvers.Max:=totallines;
- abitmap:=rpgdidriver.MetafileToBitmap(metafile,true,true);
+ if highres then
+  abitmap:=rpgdidriver.MetafileToBitmap(metafile,showprogress,true,200,200)
+ else
+  abitmap:=rpgdidriver.MetafileToBitmap(metafile,showprogress,true,200,100);
  if not assigned(abitmap) then
   Raise Exception.Create('Error generating fax');
  if abitmap.Height<1 then
@@ -151,6 +174,12 @@ begin
  abitmap.SaveToFile(bitmapfile);
  try
   apffile:=ChangeFileExt(RpTempFileName,'.apf');
+  if highres then
+  begin
+   ApdFaxConverter1.Resolution:=frHigh;
+  end
+  else
+   ApdFaxConverter1.Resolution:=frNormal;
   ApdFaxConverter1.DocumentFile:=bitmapfile;
   ApdFaxConverter1.OutFileName:=apffile;
   numlinea:=0;
@@ -170,7 +199,12 @@ begin
   end;
   ApdSendFax1.FaxFile:=apffile;
   ApdSendFax1.CoverFile:=coverfile;
+ end
+ else
+ begin
+  ApdSendFax1.FaxFile:=apffile;
  end;
+ ApdSendFax1.HeaderLine:=headerline;
  apdComPort1.AutoOpen:=true;
  if Length(tapidevice)<1 then
   ApdTapiDevice1.SelectDevice
@@ -178,6 +212,7 @@ begin
   ApdTapiDevice1.SelectedDevice:=tapidevice;
  ApdSendFax1.PhoneNumber:=phonenumber;
  ApdSendFax1.StartTransmit;
+ sendingfax:=true;
 end;
 
 procedure TFRpFaxSend.FormCreate(Sender: TObject);
@@ -242,9 +277,16 @@ end;
 procedure TFRpFaxSend.ApdSendFax1FaxFinish(CP: TObject;
   ErrorCode: Integer);
 begin
+ sendingfax:=false;
  if ErrorCode=0 then
-  sendok:=true;
- Close;
+  sendok:=true
+ else
+ begin
+  CodeError:=ErrorCode;
+  Errormessage:=ErrorMsg(ErrorCode);
+ end;
+// if showprogress then
+  Close;
 end;
 
 function GetDefaultTApiDevice:String;

@@ -1375,6 +1375,8 @@ var
  realx,realy:Integer;
  ameta:TMetaFile;
  ametacanvas:TMetafileCanvas;
+ rgbintensity:integer;
+ aobj:TrpMetaObject;
 begin
  // Maximum resolution
  if resx>MAX_RES_BITMAP then
@@ -1442,7 +1444,21 @@ begin
     try
      for j:=0 to apage.ObjectCount-1 do
      begin
-      PrintObject(ametaCanvas,apage,apage.Objects[j],realx,realy,true,pagemargins,false,offset);
+      aobj:=apage.Objects[j];
+      if mono then
+      begin
+       if apage.Objects[j].Metatype=rpMetaText then
+       begin
+        rgbintensity:=(aobj.FontColor AND $FF)+
+         ((aobj.FontColor AND $FF00) shr 8)+
+         ((aobj.FontColor AND $FF0000) shr 16);
+        if rgbintensity>128*3 then
+         aobj.FontColor:=clWhite
+        else
+         aobj.FontColor:=clBlack;
+       end;
+      end;
+      PrintObject(ametaCanvas,apage,aobj,realx,realy,true,pagemargins,false,offset);
       if assigned(aform) then
       begin
        mmlast:=TimeGetTime;
@@ -1490,7 +1506,7 @@ var
 begin
  if Not ShowProgress then
  begin
-  Result:=DoMetafileToBitmap(metafile,nil,mono);
+  Result:=DoMetafileToBitmap(metafile,nil,mono,resx,resy);
   exit;
  end;
  dia:=TFRpVCLProgress.Create(Application);

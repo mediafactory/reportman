@@ -168,10 +168,20 @@
     <td bgcolor="#66FFFF"><strong>Connecting to MySQL from ADO/ODBC returns invalid 
       field size and other errors</strong></td>
   </tr>
-  <tr>
+  <tr> 
     <td>Try setting OPTION=3 in connection string. It is the same as setting &quot;Don't 
       optimize column width&quot; and &quot;Return matching rows&quot; in MyODBC 
       configuration screen</td>
+  </tr>
+  <tr>
+    <td bgcolor="#66FFFF"><strong>Problems connecting to ODBC datasources in Microsoft 
+      Windows</strong></td>
+  </tr>
+  <tr>
+    <td><p>From Paul MacDougall [paul_macdougall@yahoo.ca]</p>
+      <p>If you have problems, make sure you have an entry in the registry:</p>
+      <p>HKEY_LOCAL_MACHINE\SOFTWARE\ODBC\ODBC.INI\DSN_NAME<br>
+        (where DSN_NAME is the name of your dsn)</p></td>
   </tr>
 </table>
 <p>&nbsp;</p>

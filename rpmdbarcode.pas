@@ -76,8 +76,8 @@ type
    FCheckSum:boolean;
    FUpdated:boolean;
    FRotation:SmallInt;
+   FBColor:integer;
    modules:array[0..3] of integer;
-   procedure DoLines(data:string;FLeft,FTop:integer;meta:TRpMetafileReport);
    function Code_2_5_interleaved:string;
    function Code_2_5_industrial:string;
    function Code_2_5_matrix:string;
@@ -94,7 +94,6 @@ type
    procedure MakeModules;
    procedure SetModul(v:integer);
    procedure Evaluate;
-   function  CalculateBarcode:string;
    procedure WriteExpression(Writer:TWriter);
    procedure ReadExpression(Reader:TReader);
   protected
@@ -102,6 +101,9 @@ type
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
   public
+   CurrentText:String;
+   function  CalculateBarcode:string;
+   procedure DoLines(data:string;FLeft,FTop:integer;meta:TRpMetafileReport);
    function GetText:widestring;
    function GetTypText:string;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
@@ -117,6 +119,7 @@ type
    property Checksum:boolean read FCheckSum write FCheckSum default false;
    property DisplayFormat:string read FDisplayformat write FDisplayFormat;
    property Rotation:smallint read FRotation write FRotation default 0;
+   property BColor:integer read FBColor write FBColor default $0;
   end;
 
  const BarcodeTypeStrings:array[bcCode_2_5_interleaved..bcCodeEAN13] of string=
@@ -219,6 +222,7 @@ end;
 constructor TRpBarcode.Create(Owner:TComponent);
 begin
 	inherited Create(owner);
+  FBColor:=0;
 	FRatio := 2.0;
 	FModul := 10;
 	FTyp   := bcCodeEAN13;
@@ -331,11 +335,11 @@ var
 begin
 	if FCheckSum then
            begin
-           tmp := '00000000'+string(GetText);
+           tmp := '00000000'+string(CurrentText);
            tmp := getEAN(copy(tmp,length(tmp)-6,7)+'0');
            end
         else
-           tmp := string(GetText);
+           tmp := string(CurrentText);
 
 	result := '505';   // Startcode
 
@@ -396,11 +400,11 @@ var
 begin
 	if FCheckSum then
 	begin
-		tmp := '0000000000000'+String(GetText);
+		tmp := '0000000000000'+String(CurrentText);
 		tmp := getEAN(copy(tmp,length(tmp)-11,12)+'0');
 	end
 	else
-		tmp := string(GetText);
+		tmp := string(CurrentText);
 
 	LK := StrToInt(tmp[1]);
 	tmp := copy(tmp,2,12);
@@ -451,7 +455,7 @@ var
 	c : char;
         FText:string;
 begin
-        FText:=string(GetText);
+        FText:=string(CurrentText);
 	result := '5050';   // Startcode
 
 	for i:=1 to Length(FText) div 2 do
@@ -481,7 +485,7 @@ var
         FText:string;
 begin
 	result := '606050';   // Startcode
-        FText:=GetText;
+        FText:=CurrentText;
 	for i:=1 to Length(FText) do
 	begin
 		for j:= 1 to 5 do
@@ -503,7 +507,7 @@ var
         FText:string;
 begin
 	result := '705050';   // Startcode
-        FText:=GetText;
+        FText:=CurrentText;
 	for i:=1 to Length(FText) do
 	begin
 		for j:= 1 to 5 do
@@ -606,7 +610,7 @@ begin
 	// Startcode
 	result := tabelle_39[FindIdx('*')].data + '0';
 
-        FText:=GetText;
+        FText:=CurrentText;
 	for i:=1 to Length(FText) do
 	begin
 		idx := FindIdx(FText[i]);
@@ -660,7 +664,7 @@ var
 	i : integer;
         FText:string;
 begin
-        FText:=GetText;
+        FText:=CurrentText;
 	save := FText;
 	FText := '';
 
@@ -899,7 +903,7 @@ begin
  checksum:=0;
  Result:='';
  i:=1;
- FText:=GetText;
+ FText:=CurrentText;
 
  While i<=Length(FText) do
  begin
@@ -1101,7 +1105,7 @@ var
 	weightC, weightK : integer;
         FText:string;
 begin
-        FText:=GetText;
+        FText:=CurrentText;
 
 	result := Convert('111141');   // Startcode
 
@@ -1176,7 +1180,7 @@ var
         FText:string;
 begin
 //	CharToOem(PChar(FText), save);
-        FText:=GetText;
+        FText:=CurrentText;
 
 
 
@@ -1218,7 +1222,7 @@ var
 	check_even, check_odd, checksum:integer;
         FText:string;
 begin
-        FText:=GetText;
+        FText:=CurrentText;
 	result := '60';    // Startcode
 	check_even := 0;
 	check_odd  := 0;
@@ -1264,7 +1268,7 @@ var
 	i:integer;
         FText:string;
 begin
-        FText:=GetText;
+        FText:=CurrentText;
 	result := '51';
 
 	for i:=1 to Length(FText) do
@@ -1328,7 +1332,7 @@ var
         FText:string;
 begin
 	result := tabelle_cb[Find_Codabar('A')].data + '0';
-        FText:=GetText;
+        FText:=CurrentText;
 	for i:=1 to Length(FText) do
 	begin
 		idx := Find_Codabar(FText[i]);
@@ -1463,7 +1467,7 @@ begin
 			end;
 			if (lt = black) or (lt = black_half) then
 			begin
-				PenColor := 0;
+				PenColor := BColor;
 			end
 			else
 			begin
@@ -1599,11 +1603,10 @@ procedure TRpBarCode.DoPrint(adriver:IRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
- aText:string;
  data:string;
 begin
  inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
- aText:=GetText;
+ CurrentText:=GetText;
  try
   data:=Calculatebarcode;
  except

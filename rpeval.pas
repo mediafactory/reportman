@@ -57,6 +57,7 @@ type
   FLanguage:Integer;
   FOnGraphicOp:TRpGraphicOpProc;
   FOnImageOp:TRpImageOpProc;
+  FOnBarcodeOp:TRpBarcodeOpProc;
   FOnReOpenOp:TRpReOpenOp;
   FOnTextOp:TRpTextOpProc;
   FOnGetSQLValue:TRpOnGetSQLValue;
@@ -123,6 +124,7 @@ type
   property Language:Integer read FLanguage write FLanguage;
   property OnGraphicOp:TRpGraphicOpProc read FOnGraphicOp write FOnGraphicOp;
   property OnImageOp:TRpImageOpProc read FOnImageOp write FOnImageOp;
+  property OnBarcodeOp:TRpbarcodeOpProc read FOnBarcodeOp write FOnBarcodeOp;
   property OnTextOp:TRpTextOpProc read FOnTextOp write FOnTextOp;
   property OnReOpenOp:TRpReOpenOp read FOnReOpenOp write FOnReOpenOp;
   property OnGetSQLValue:TRpOnGetSQLValue read FOnGetSQLValue write FOnGetSQLValue;
@@ -232,6 +234,8 @@ begin
  Rpfunctions.AddObject('INT',iden);
  iden:=TIdenAbs.Create(nil);
  Rpfunctions.AddObject('ABS',iden);
+ iden:=TIdenCompareValue.Create(nil);
+ Rpfunctions.AddObject('COMPAREVALUE',iden);
  iden:=TIdenSQRT.Create(nil);
  Rpfunctions.AddObject('SQRT',iden);
  iden:=TIdenASC2.Create(nil);
@@ -296,6 +300,8 @@ begin
  Rpfunctions.AddObject('TEXTOP',iden);
  iden:=TIdenImageOperation.Create(nil);
  Rpfunctions.AddObject('IMAGEOP',iden);
+ iden:=TIdenBarcodeOperation.Create(nil);
+ Rpfunctions.AddObject('BARCODEOP',iden);
  // Other
 
  // Graphic functions

@@ -5,7 +5,7 @@ library ReportMan;
 {%File 'ReportmanXAServer.asp'}
 
 uses
-  ComServ,
+  ComServ,DBPwdlg,
 {$IFDEF USEVARIANTS}
   MidasLib,
 {$ENDIF}

@@ -876,7 +876,7 @@ var
   SRpTurkish:WideString='Turkish';
   SRpCSVFile:WideString='Comma separated values file';
   SRpTXTProFile:WideString='Custom text file';
-  SRpPrintRep15:WideString='         -cvs      Output to comma separated values';
+  SRpPrintRep15:WideString='         -csv      Output to comma separated values';
   SRpPrintRep16:WideString='         -svg      Output to scalable vector graphics format';
   SRpPrintRep17:WideString='         -ctxt     Output to custom text';
   SRpPreviewMargins:WideString='Printable margins in preview';
@@ -938,6 +938,11 @@ var
   SRpFormName:WideString='Form name';
   SRpFormPageSize:WideString='Form page size';
   SRpPageSize:WideString='Page size';
+  //
+  SRpCompareValue:WideString='Returns -1 if first number is lower, 1 if first number is greater or zero if equal.';
+  SRpPCompareValue:WideString='num1 and num2 are numbers to compare, epsilon de diference tolerance';
+
+
 implementation
 
 uses rptranslator;
@@ -1829,8 +1834,6 @@ begin
  TranslateVar(1320,SRpFormName);
  TranslateVar(1321,SRpFormPageSize);
  TranslateVar(1322,SRpPageSize);
- TranslateVar(1320,SRpForceForm);
- TranslateVar(1320,SRpForceForm);
 end;
 
 

@@ -118,6 +118,14 @@ begin
  lcat.Add(SRpBarcode);
  if Assigned(lvalues) then
   lvalues.Add(FormatCurr('#####0.0',TRpBarcode(printitem).Rotation/10));
+ // Brush Color
+ lnames.Add(SrpSColor);
+ ltypes.Add(SRpSColor);
+ lhints.Add('refbarcode.html');
+ lcat.Add(SRpBarcode);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpBarcode(printitem).BColor));
+
 end;
 
 procedure TRpBarcodeInterface.SetProperty(pname:string;value:Widestring);
@@ -163,6 +171,12 @@ begin
   TRpBarcode(fprintitem).Rotation:=Round(StrToCurr(Value)*10);
   exit;
  end;
+ if pname=SRpSColor then
+ begin
+  TRpBarcode(fprintitem).BColor:=StrToInt(Value);
+  invalidate;
+  exit;
+ end;
  inherited SetProperty(pname,value);
 end;
 
@@ -202,6 +216,11 @@ begin
  if pname=SRpSRotation then
  begin
   Result:=FormatCurr('#####0.0',TRpBarcode(printitem).Rotation/10);
+  exit;
+ end;
+ if pname=SrpSColor then
+ begin
+  Result:=IntToStr(TRpBarcode(printitem).BColor);
   exit;
  end;
  Result:=inherited GetProperty(pname);

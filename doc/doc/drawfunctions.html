@@ -19,38 +19,51 @@
   CutText:boolean;Alignment:integer;WordWrap,RightToLeft:Boolean; <br>
   PrintStep,BackColor:integer;transparent:boolean):Boolean<br>
 </p>
-<p><strong>Graphic operation functoin</strong></p>
-<p>function GraphicOp'+'(Top,Left,Width,Height:integer; <br>
+<p><strong>Graphic operation function</strong></p>
+<p>function GraphicOp(Top,Left,Width,Height:integer; <br>
   DrawStyle:integer;BrushStyle:integer; BrushColor:integer;<br>
   PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean<br>
 </p>
+<p><strong>Image operation function</strong></p>
+<p>function ImageOp(Top,Left,Width,Height:integer; <br>
+  ImageDrawStyle:integer;PixelsPerInchg:integer; <br>
+  PreviewOnly:Boolean;Expression:String):Boolean<br>
+</p>
+<p><strong>Barcode operation function</strong></p>
+<p>function ImageOp(Top,Left,Width,Height:integer; <br>
+  ImageDrawStyle:integer;PixelsPerInchg:integer; <br>
+  PreviewOnly:Boolean;Expression:String):Boolean</p>
 <p><strong>Parameters</strong></p>
+<p> function OnBarcodeOp (Top,Left,Width,Height:integer;<br>
+  Expression,DisplayFormat:WideString;BarType,Modul:Integer;Ratio,Rotation:Currency;<br>
+  CalcChecksum:Boolean;BColor:Integer):Boolean;<br>
+</p>
 <table border="1">
-  <tr>
+  <tr> 
     <td bgcolor="#FFFFCC"><strong>Name</strong></td>
     <td bgcolor="#FFFFCC"><strong>Meaning</strong></td>
   </tr>
-  <tr>
+  <tr> 
     <td>Top, Left, Width, Height</td>
     <td>Position and size of the element in twips (1440 twips=1 inch)</td>
   </tr>
-  <tr>
+  <tr> 
     <td> Text</td>
     <td>Text to print, can be also a expression</td>
   </tr>
-  <tr>
+  <tr> 
     <td>LFontName, WFontName</td>
     <td>Font names for Linux and Windows</td>
   </tr>
-  <tr>
+  <tr> 
     <td>FontSize</td>
     <td>Font size</td>
   </tr>
-  <tr>
+  <tr> 
     <td>FontRotation</td>
     <td>Rotation in 1/10 degrees unit</td>
   </tr>
-  <tr>
+  <tr> 
     <td>FontStyle</td>
     <td><p>A integer 0 value=no style, to add styles sum this values:</p>
       <table border="1">
@@ -73,192 +86,183 @@
       </table>
       <p>So a font italic bold font will be 3</p></td>
   </tr>
-  <tr>
+  <tr> 
     <td>FontColor, PenColor, BrushColor, BackColor</td>
     <td><p>An integer value representing the color you can use hexadecimal notation 
         with the syntax $BBGGRR</p>
       <p>That is white is $FFFFFF, red is $RR, blue is $BB0000</p></td>
   </tr>
-  <tr>
+  <tr> 
     <td>FontSize</td>
     <td>Size in standard point units (1 point=1/72 inch)</td>
   </tr>
-  <tr>
+  <tr> 
     <td>Type1Font</td>
     <td><p>Font for Adobe PDF export, this is an integer with the following table:</p>
       <table border="1">
-        <tr>
+        <tr> 
           <td>0</td>
           <td>Helvetica</td>
         </tr>
-        <tr>
+        <tr> 
           <td>1</td>
           <td>Courier</td>
         </tr>
-        <tr>
+        <tr> 
           <td>2</td>
           <td>Times Roman</td>
         </tr>
-        <tr>
+        <tr> 
           <td>3</td>
           <td>Symbol</td>
         </tr>
-        <tr>
+        <tr> 
           <td>4</td>
           <td>ZapfDingbats</td>
         </tr>
-      </table>
-      
-    </td>
+      </table></td>
   </tr>
-  <tr>
+  <tr> 
     <td>CutText</td>
     <td>Cuts the text when does not fit the rectangle size</td>
   </tr>
-  <tr>
+  <tr> 
     <td>Alignment</td>
     <td><p>Alignment information, 0 for default alignment or a combination (sum) 
         of the folowing values, note you can only combine horizontal and vertical 
         alignments:</p>
       <table border="1">
-        <tr>
+        <tr> 
           <td>1</td>
           <td>Align left</td>
         </tr>
-        <tr>
+        <tr> 
           <td>2</td>
           <td>Align right</td>
         </tr>
-        <tr>
+        <tr> 
           <td>4</td>
           <td>Align center horizontally</td>
         </tr>
-        <tr>
+        <tr> 
           <td>8</td>
           <td>Align top</td>
         </tr>
-        <tr>
+        <tr> 
           <td>16</td>
           <td>Align bottom</td>
         </tr>
-        <tr>
+        <tr> 
           <td>32</td>
           <td>Align center vertically</td>
         </tr>
-      </table>
-      
-    </td>
+      </table></td>
   </tr>
-  <tr>
+  <tr> 
     <td>Wordwrap</td>
     <td>Break sentences into lines if the text does not fit horizontally</td>
   </tr>
-  <tr>
+  <tr> 
     <td>RightToLeft</td>
     <td>If True draw the text in right to left mode</td>
   </tr>
-  <tr>
+  <tr> 
     <td>Transparent</td>
     <td>If true does the background of the text is transparent and BackColor is 
       ignored </td>
   </tr>
-  <tr>
+  <tr> 
     <td>PrintStep</td>
     <td><p>Selects the font for dot matrix print drivers and text output to dot 
         matrix printers:</p>
       <table border="1">
-        <tr>
+        <tr> 
           <td>0</td>
           <td>By size</td>
         </tr>
-        <tr>
+        <tr> 
           <td>1</td>
           <td>20 cpi</td>
         </tr>
-        <tr>
+        <tr> 
           <td>2</td>
           <td>17 cpi</td>
         </tr>
-        <tr>
+        <tr> 
           <td>3</td>
           <td>15 cpi</td>
         </tr>
-        <tr>
+        <tr> 
           <td>4</td>
           <td>12 cpi</td>
         </tr>
-        <tr>
+        <tr> 
           <td>5</td>
           <td>10 cpi</td>
         </tr>
-        <tr>
+        <tr> 
           <td>6</td>
           <td>6 cpi</td>
         </tr>
-        <tr>
+        <tr> 
           <td>7</td>
           <td>5 cpi</td>
         </tr>
-      </table>
-      
-    </td>
+      </table></td>
   </tr>
-  <tr>
+  <tr> 
     <td>DrawStyle</td>
     <td><p>Draw type for graphic operation:</p>
       <table border="1">
-        <tr>
+        <tr> 
           <td>0</td>
           <td>Rectangle</td>
         </tr>
-        <tr>
+        <tr> 
           <td>1</td>
           <td>Square</td>
         </tr>
-        <tr>
+        <tr> 
           <td>2</td>
           <td>Round rectangl</td>
         </tr>
-        <tr>
+        <tr> 
           <td>3</td>
           <td>Round square</td>
         </tr>
-        <tr>
+        <tr> 
           <td>4</td>
           <td>Ellipse</td>
         </tr>
-        <tr>
+        <tr> 
           <td>5</td>
           <td>Circle</td>
         </tr>
-        <tr>
+        <tr> 
           <td>6</td>
           <td>Horzontal line</td>
         </tr>
-        <tr>
+        <tr> 
           <td>7</td>
           <td>Vertical line</td>
         </tr>
-        <tr>
+        <tr> 
           <td>8</td>
           <td>Oblique line 1</td>
         </tr>
-        <tr>
+        <tr> 
           <td>9</td>
           <td>Oblique line 2</td>
         </tr>
-      </table>
-      
-    </td>
+      </table></td>
   </tr>
-  <tr>
+  <tr> 
     <td>PenWidth</td>
     <td>Pen width in twips (0=minimum device width)</td>
   </tr>
-  <tr>
+  <tr> 
     <td>BrushStyle</td>
-    <td>
-<table border="1">
+    <td> <table border="1">
         <tr> 
           <td>0</td>
           <td>Solid</td>
@@ -295,39 +299,180 @@
           <td>8..15</td>
           <td>Dense 1..7</td>
         </tr>
-      </table>
-    </td>
+      </table></td>
   </tr>
-  <tr>
+  <tr> 
     <td>PenStyle</td>
     <td><table border="1">
-        <tr>
+        <tr> 
           <td>0</td>
           <td>Solid</td>
         </tr>
-        <tr>
+        <tr> 
           <td>1</td>
           <td>Dash</td>
         </tr>
-        <tr>
+        <tr> 
           <td>2</td>
           <td>Dot</td>
         </tr>
-        <tr>
+        <tr> 
           <td>3</td>
           <td>Dash-Dot</td>
         </tr>
-        <tr>
+        <tr> 
           <td>4</td>
           <td>Dash-Dot-Dot</td>
         </tr>
-        <tr>
+        <tr> 
           <td>5</td>
           <td>Clear/Transparent</td>
         </tr>
+      </table></td>
+  </tr>
+  <tr> 
+    <td>ImageDrawStyle</td>
+    <td><table border="1">
+        <tr> 
+          <td>0</td>
+          <td>Cut</td>
+        </tr>
+        <tr> 
+          <td>1</td>
+          <td>Stretch</td>
+        </tr>
+        <tr> 
+          <td>2</td>
+          <td>Full</td>
+        </tr>
+        <tr> 
+          <td>3</td>
+          <td>Mosaic</td>
+        </tr>
       </table>
-      
-    </td>
+      Same meaning as in TRpImage documentation</td>
+  </tr>
+  <tr> 
+    <td>PixelsPerInch</td>
+    <td>Same meaning as in TRpImage documentation</td>
+  </tr>
+  <tr> 
+    <td>PreviewOnly</td>
+    <td>Same meaning as in TRpImage documentation</td>
+  </tr>
+  <tr> 
+    <td><p>Expression (for image)</p></td>
+    <td><p>This must be always a string, so if you want to print a image stored 
+        inside a field:</p>
+      <p>'YOURDATASET.YOURFIELD'</p>
+      <p>If the field contains a path to a file:</p>
+      <p>''''+'YOURDATASET.YOURFIELD'+''''</p>
+      <p>If you place a filepath directly:</p>
+      <p>'''c:\images\backgroung.bmp'''</p></td>
+  </tr>
+  <tr> 
+    <td>Expression (for barcode)</td>
+    <td><p>This must be always a string, if you want to print a barcode stored 
+        inside a field, provide the field as a string:</p>
+      <p>'YOURDATASET.YOURFIELD'</p>
+      <p>To provide the barcode directly write</p>
+      <p>''''+'12356789012'+''''''</p></td>
+  </tr>
+  <tr> 
+    <td>DisplayFormat (for barcode)</td>
+    <td>The resulting expression will be formatted with this string before calculating 
+      the barcode.</td>
+  </tr>
+  <tr> 
+    <td>BarType</td>
+    <td><p>Barcode type as an integer</p>
+      <table border="1">
+        <tr> 
+          <td>0</td>
+          <td>2_5 interleaved</td>
+        </tr>
+        <tr> 
+          <td>1</td>
+          <td>2_5 industrial</td>
+        </tr>
+        <tr> 
+          <td>2</td>
+          <td>2_5 matrix</td>
+        </tr>
+        <tr> 
+          <td>3</td>
+          <td>Code 39</td>
+        </tr>
+        <tr> 
+          <td>4</td>
+          <td>Code 39 extended</td>
+        </tr>
+        <tr> 
+          <td>5</td>
+          <td>128A</td>
+        </tr>
+        <tr> 
+          <td>6</td>
+          <td>128B</td>
+        </tr>
+        <tr> 
+          <td>7</td>
+          <td>128C</td>
+        </tr>
+        <tr> 
+          <td>8</td>
+          <td>128</td>
+        </tr>
+        <tr> 
+          <td>9</td>
+          <td>Code93</td>
+        </tr>
+        <tr> 
+          <td>10</td>
+          <td>Code93 extended</td>
+        </tr>
+        <tr> 
+          <td>11</td>
+          <td>MSI</td>
+        </tr>
+        <tr> 
+          <td>12</td>
+          <td>Postnet</td>
+        </tr>
+        <tr> 
+          <td>13</td>
+          <td>Code Codabar</td>
+        </tr>
+        <tr> 
+          <td>14</td>
+          <td>EAN8</td>
+        </tr>
+        <tr> 
+          <td>15</td>
+          <td>EAN13</td>
+        </tr>
+      </table>
+      <p>&nbsp;</p></td>
+  </tr>
+  <tr> 
+    <td>Modul</td>
+    <td>Barcode module in twips, that is the smallest bar with unit in twips.</td>
+  </tr>
+  <tr> 
+    <td>Ratio</td>
+    <td>The ratio is applied to some barcodes see documentation.</td>
+  </tr>
+  <tr> 
+    <td>Rotation</td>
+    <td>Rotation for the barcode, currently supported are 0,90,180 and 270</td>
+  </tr>
+  <tr> 
+    <td>CalcCheckSum</td>
+    <td>The barcode will calculate checksum values for some barcodes</td>
+  </tr>
+  <tr>
+    <td>BColor</td>
+    <td>Barcode color for bars</td>
   </tr>
 </table>
 <p>&nbsp;</p>

@@ -139,9 +139,11 @@ c:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
 c:\prog\delphi7\Projects\Bpl\UtilsVariats.bpl=Utils Variats (Jordi Farràs)
 c:\prog\delphi7\Projects\Bpl\GESTORX.bpl=Interface Gestor DelphiX
 c:\prog\delphi7\Projects\Bpl\Mycompos_d6.bpl=Utils generales
+[HistoryLists\hlConditionals]
+Count=3
+Item0=REPMANRELEASE
+Item1=FORWEBAX
+Item2=NOLINUXPRINTBUG;FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
-[HistoryLists\hlBPLOutput]
-Count=1
-Item0=c:\provacomp

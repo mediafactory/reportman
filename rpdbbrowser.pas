@@ -137,7 +137,7 @@ begin
        if aiden is TIdenVariable then
        begin
         alist.Add(aiden.IdenName);
-        nnode:=ATree.Items.AddChild(anode,aiden.idenname);
+        nnode:=ATree.Items.AddChild(anode,'.M'+aiden.idenname);
         nnode.ImageIndex:=2;
         nnode.SelectedIndex:=2;
        end

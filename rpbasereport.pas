@@ -27,7 +27,7 @@ interface
 {$I rpconf.inc}
 
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpmdconsts,
- rpdatainfo,rpparams,rpeval,rptypeval,rpprintitem,
+ rpdatainfo,rpparams,rpeval,rptypeval,rpprintitem,rpmdbarcode,
  rpmetafile,
 {$IFDEF USEVARIANTS}
  types,dateutils,Variants,
@@ -231,6 +231,9 @@ type
      PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean;
     function OnImageOp(Top,Left,Width,Height:integer;
      DrawStyle,DPIRes:integer;PreviewOnly:Boolean;Image:WideString):Boolean;
+    function OnBarcodeOp (Top,Left,Width,Height:integer;
+     Expression,DisplayFormat:WideString;BarType,Modul:Integer;Ratio,Rotation:Currency;
+     CalcChecksum:Boolean;BrushColor:Integer):Boolean;
     function OnTextOp(Top,Left,Width,Height:integer;
      Text,LFontName,WFontName:WideString;
      FontSize,FontRotation,FontStyle,FontColor,Type1Font:integer;
@@ -1258,6 +1261,43 @@ begin
  end;
 end;
 
+function TRpBaseReport.OnBarcodeOp (Top,Left,Width,Height:integer;
+     Expression,DisplayFormat:WideString;BarType,Modul:Integer;Ratio,Rotation:Currency;
+     CalcChecksum:Boolean;BrushColor:Integer):Boolean;
+var
+ barcode:TRpBarcode;
+ FValue:Variant;
+ data:string;
+begin
+ Result:=False;
+ barcode:=TRpBarcode.Create(Self);
+ try
+  barcode.Width:=Width;
+  barcode.Height:=Height;
+  barcode.Typ:=TRpBarcodeType(BarType);
+  barcode.Modul:=Modul;
+  barcode.Ratio:=Ratio;
+  barcode.Rotation:=Round(Rotation*10);
+  barcode.Checksum:=CalcChecksum;
+  FValue:=Evaluator.EvaluateText(Expression);
+  barcode.CurrentText:=FormatVariant(displayformat,FValue,rpParamUnknown,true);
+  try
+   data:=barcode.Calculatebarcode;
+  except
+   on E:Exception do
+   begin
+    Raise TRpReportException.Create(E.Message+':'+SrpSCalculatingBarcode+' ',barcode,SRpSBarcode);
+   end;
+  end;
+  // Draws Barcode
+  barcode.PrintHeight:=Height;
+  barcode.BColor:=BrushColor;
+  barcode.DoLines(data, Left,Top,metafile);    // draw the barcode
+  Result:=true;
+ finally
+  barcode.Free;
+ end;
+end;
 
 function TRpBaseReport.OnTextOp(Top,Left,Width,Height:integer;
     Text,LFontName,WFontName:WideString;
@@ -1362,6 +1402,7 @@ begin
  FEvaluator.Language:=Language;
  FEvaluator.OnGraphicOp:=OnGraphicOp;
  FEvaluator.OnImageOp:=OnImageOp;
+ FEvaluator.OnBarcodeOp:=OnBarcodeOp;
  FEvaluator.OnTextOp:=OnTextOp;
  FEvaluator.OnReOpenOp:=ReOpenOp;
  FEvaluator.OnGetSQLValue:=GetSQLValue;

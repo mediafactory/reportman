@@ -76,9 +76,9 @@ LocaleToUnicode=1
 ImagebaseMultiple=1
 SuspiciousTypecast=1
 PrivatePropAccessor=1
-UnsafeType=1
-UnsafeCode=1
-UnsafeCast=1
+UnsafeType=0
+UnsafeCode=0
+UnsafeCast=0
 [Linker]
 MapFile=0
 OutputObjs=0
@@ -107,6 +107,38 @@ UseLauncher=0
 DebugCWD=
 [Resource DLL Projects]
 Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
+[RDP Source Files]
+Item0=..\rpmdfmainvcl.dfm
+Item1=..\rpmdfdesignvcl.dfm
+Item2=..\rpmdfaboutvcl.dfm
+Item3=..\rpmdfstrucvcl.dfm
+Item4=..\rpmdobjinspvcl.dfm
+Item5=..\rppagesetupvcl.dfm
+Item6=..\rpfparamsvcl.dfm
+Item7=..\rpgraphutilsvcl.dfm
+Item8=..\rpexpredlgvcl.dfm
+Item9=..\rprfvparams.dfm
+Item10=..\rpdbxconfigvcl.dfm
+Item11=..\rpdbbrowservcl.dfm
+Item12=..\rpgdidriver.dfm
+Item13=..\rpexceldriver.dfm
+Item14=..\rpmdfdatatextvcl.dfm
+Item15=..\rpmdfdinfovcl.dfm
+Item16=..\rpmdfgridvcl.dfm
+Item17=..\rpmdfsampledatavcl.dfm
+Item18=..\rpmdprintconfigvcl.dfm
+Item19=..\rpvpreview.dfm
+Item20=..\rpmdfconnectionvcl.dfm
+Item21=..\rpmdfwizardvcl.dfm
+Item22=..\rpmdfextsecvcl.dfm
+Item23=..\rpmdfdatasetsvcl.dfm
+Item24=..\rpfmetaviewvcl.dfm
+Item25=..\rpfmainmetaviewvcl.dfm
+Item26=..\rpmdsysinfo.dfm
+Item27=..\rpeditconnvcl.dfm
+Item28=..\rpmdftreevcl.dfm
+Item29=..\rpmdfopenlibvcl.dfm
+Item30=repmandxp.drc
 [Language]
 ActiveLang=
 ProjectLang=$00000C0A
@@ -117,7 +149,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=2
 Release=0
-Build=61
+Build=66
 Debug=0
 PreRelease=0
 Special=0
@@ -128,7 +160,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Designer
-FileVersion=2.2.0.61
+FileVersion=2.2.0.66
 InternalName=repmandxp
 LegalCopyright=MPL/GPL License
 LegalTrademarks=
@@ -136,22 +168,3 @@ OriginalFilename=repmandxp
 ProductName=Report Manager Designer
 ProductVersion=2.2.0.0
 Comments=
-[Excluded Packages]
-c:\prog\delphi7\Projects\Bpl\rppackdesignvcl_del.bpl=Report Manager Designer VCL Components
-c:\prog\delphi7\Projects\Bpl\rppackdesigntime_del.bpl=Report Manager Design Time Package
-c:\prog\delphi7\Projects\Bpl\rppackdesign_del.bpl=Report Manager Designer Component Package
-c:\prog\delphi7\Bin\dclmcn70.bpl=Borland DataSnap Connection Components
-c:\prog\delphi7\Bin\dclwbm70.bpl=Borland InternetExpress Components
-c:\prog\delphi7\Bin\dclwebsnap70.bpl=Borland WebSnap Components
-c:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
-c:\prog\delphi7\Projects\Bpl\GESTORX.bpl=Interface Gestor DelphiX
-c:\prog\delphi7\Projects\Bpl\UtilsVariats.bpl=Utils Variats (Jordi Farràs)
-c:\prog\delphi7\Projects\Bpl\Mycompos_d6.bpl=Utils generales
-[HistoryLists\hlConditionals]
-Count=3
-Item0=REPMANRELEASE
-Item1=FORWEBAX
-Item2=NOLINUXPRINTBUG;FORWEBAX
-[HistoryLists\hlUnitAliases]
-Count=1
-Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

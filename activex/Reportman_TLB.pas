@@ -12,16 +12,16 @@ unit Reportman_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 15/07/2004 21:23:10 from Type Library described below.
+// File generated on 23/08/2004 17:25:26 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\reportman.tlb (1)
+// Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
 // LIBID: {D4D26F6B-6564-44F4-A913-03C91CE37740}
 // LCID: 0
 // Helpfile: 
 // HelpString: Report Manager ActiveX Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINDOWS\System32\stdole2.tlb)
+//   (1) v2.0 stdole, (H:\WINDOWS\System32\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}

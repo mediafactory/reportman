@@ -31,6 +31,9 @@ uses Classes,SysUtils,Windows,Graphics,rpmunits,Printers,WinSpool,
  System.Runtime.InteropServices,
 {$ENDIF}
  ComCtrls;
+const
+ // Max bitmap size for tile result operation
+ MAX_BITMAP_SIZE=20*1024*1024;
 
 type
  TRpNodeInfo=class(TObject)
@@ -401,8 +404,82 @@ begin
  end;
 end;
 
-
 procedure DrawBitmapMosaicSlow(canvas:TCanvas;rec:Trect;bitmap:TBitmap);
+var
+ arec,recsrc:TRect;
+ abitmap:TBitmap;
+ bitmapwidth,bitmapheight:integer;
+ dopatblt:boolean;
+ aresult:integer;
+ abrush:HBrush;
+ oldobj:THandle;
+begin
+ dopatblt:=false;
+ if IsWindowsNT then
+ begin
+  dopatblt:=true;
+  aresult:=GetDevicecaps(Canvas.Handle,RASTERCAPS);
+  if ((aresult AND RC_BITBLT)=0) then
+   dopatblt:=false;
+ end;
+ if dopatblt then
+ begin
+  abrush:=CreatePatternBrush(bitmap.handle);
+  if abrush=0 then
+   dopatblt:=false
+  else
+  begin
+   try
+    oldobj:=SelectObject(Canvas.handle,abrush);
+    try
+     PatBlt(Canvas.Handle,rec.Left,rec.Top,rec.Right-rec.Left,rec.Bottom-rec.Top,PATCOPY);
+    finally
+     SelectObject(Canvas.Handle,oldobj);
+    end;
+   finally
+    DeleteObject(abrush);
+   end;
+  end;
+ end;
+ if not dopatblt then
+ begin
+  abitmap:=TBitmap.Create;
+  try
+   arec.Left:=0;
+   arec.Top:=0;
+   arec.Bottom:=rec.Bottom-rec.Top;
+   arec.Right:=rec.Right-rec.Left;
+ {$IFNDEF DOTNETD}
+   abitmap.PixelFormat:=pf32bit;
+   bitmap.HandleType:=bmDIB;
+ {$ENDIF}
+   bitmapwidth:=rec.Right-rec.Left+1;
+   bitmapheight:=rec.Bottom-rec.Top+1;
+   // Must reduce te bitmap size to maximum bitmap size
+   while bitmapheight*bitmapwidth*4>MAX_BITMAP_SIZE do
+   begin
+    bitmapheight:=bitmapheight div 2;
+    bitmapwidth:=bitmapwidth div 2;
+   end;
+
+   abitmap.Width:=rec.Right-rec.Left+1;
+   abitmap.Height:=rec.Bottom-rec.Top+1;
+   DrawBitmapMosaic(abitmap.Canvas,arec,bitmap);
+   recsrc.Left:=0;
+   recsrc.Top:=0;
+   recsrc.Right:=aBitmap.Width-1;
+   recsrc.Bottom:=aBitmap.Height-1;
+   DrawBitmap(Canvas,aBitmap,rec,recsrc)
+  finally
+   abitmap.free;
+  end;
+ end;
+end;
+
+
+
+
+{procedure DrawBitmapMosaicSlow(canvas:TCanvas;rec:Trect;bitmap:TBitmap);
 var
  x,y:integer;
  arec,recsrc:TRect;
@@ -428,6 +505,7 @@ begin
   y:=y+bitmap.Height;
  end;
 end;
+}
 
 function GetPageMarginsTWIPS:TRect;
 var rec:TRect;
