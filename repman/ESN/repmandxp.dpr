@@ -28,7 +28,7 @@ library repmandxp;
 {$R 'vcl\DBLOGDLG.dfm' LoginDialog:TForm(Form)}
 {$R 'vcl\DBPWDLG.dfm' PasswordDialog:TForm(Form)}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpdbxconfigvcl.dfm' FRpDBXConfigVCL:TForm}
-{$R 'C\prog\toni\cvsroot\reportman\reportman\rpexpredlgvcl.dfm' FrpExpredialogVCL:TForm}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rpexpredlgvcl.dfm' FRpExpredialogVCL:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpfparamsvcl.dfm' FRpParamsVCL:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpgdidriver.dfm' FRpVCLProgress:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpgraphutilsvcl.dfm' FRpMessageDlgVCL:TForm}
