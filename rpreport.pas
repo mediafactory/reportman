@@ -28,7 +28,7 @@ interface
 
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpmdconsts,
  rpdatainfo,rpparams,rplabelitem,rpdrawitem,rpeval,rptypeval,
- rpmetafile,
+ rpmetafile,rpmdbarcode,
 {$IFDEF USEVARIANTS}
  types,dateutils,
 {$ENDIF}
@@ -1460,5 +1460,6 @@ initialization
  Classes.RegisterClass(TRpShape);
  Classes.RegisterClass(TRpLabel);
  Classes.RegisterClass(TRpExpression);
+ Classes.RegisterClass(TRpBarcode);
 
 end.

@@ -26,7 +26,7 @@ uses SysUtils, Classes, QGraphics, QForms,Types,
   rpmdobinsint,rpreport,rpprintitem,rpgraphutils,
   rpmdobjinsp,rpmdfstruc,rpmdflabelint,rplabelitem,
   rpmdconsts,rpsection,rptypes,rpdrawitem,rpmdfdrawint,
-  rpsubreport;
+  rpsubreport,rpmdbarcode,rpmdfbarcodeint;
 
 const
  CONS_MINWIDTH=5;
@@ -663,6 +663,15 @@ begin
   TRpExpression(asizepos).Expression:=FRpMainf.GetExpressionText;
   asizeposint:=TRpExpressionInterface.Create(Self,asizepos);
  end;
+ if FRpMainf.BBarcode.Down then
+ begin
+  asizepos:=TRpBarcode.Create(printitem.Owner);
+  // Search if theres a selected field
+  TRpBarcode(asizepos).Expression:=FRpMainf.GetExpressionText;
+  if (TRpBarcode(asizepos).Expression=SRpSampleExpression) then
+   TRpBarcode(asizepos).Expression:=QuotedStr(SRpSampleBarCode);
+  asizeposint:=TRpBarcodeInterface.Create(Self,asizepos);
+ end;
  if FRpMainf.BShape.Down then
  begin
   asizepos:=TRpShape.Create(printitem.Owner);
@@ -721,6 +730,10 @@ begin
   if compo is TRpExpression then
   begin
    labelint:=TRpExpressionInterface.Create(Self,compo);
+  end;
+  if compo is TRpBarcode then
+  begin
+   labelint:=TRpBarcodeInterface.Create(Self,compo);
   end;
   if compo is TRpShape then
   begin

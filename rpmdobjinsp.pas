@@ -25,7 +25,7 @@ uses
   rpmdobinsint,QGrids,rpmdconsts,rpprintitem,QStdCtrls,
   QExtCtrls,rpgraphutils,rpsection,rpmunits, rpexpredlg,
   rpalias,rpreport,Qt,rpsubreport,rpmdflabelint,rplabelitem,
-  rpmdfdrawint;
+  rpmdfdrawint,rpmdfbarcodeint;
 
 const
   CONS_LEFTGAP=3;
@@ -834,6 +834,7 @@ begin
  RpExpreDialog1.evaluator.AddVariable('FREE_SPACE_INCH',FRpMainf.report.idenfreespaceinch);
 
  FClasses.AddObject('TRpExpressionInterface',TRpExpressionInterface.Create(Self));
+ FClasses.AddObject('TRpBarcodeInterface',TRpBarcodeInterface.Create(Self));
  FClasses.AddObject('TRpLabelInterface',TRpLabelInterface.Create(Self));
  FClasses.AddObject('TRpSizePosInterface',TRpSizePosInterface.Create(Self));
  FClasses.AddObject('TRpDrawInterface',TRpDrawInterface.Create(Self));
@@ -844,6 +845,9 @@ begin
  alist:=TStringList.Create;
  TRpExpressionInterface.FillAncestors(alist);
  FClassAncestors.AddObject('TRpExpressionInterface',alist);
+ alist:=TStringList.Create;
+ TRpBarcodeInterface.FillAncestors(alist);
+ FClassAncestors.AddObject('TRpBarcodeInterface',alist);
  alist:=TStringList.Create;
  TRpGenTextInterface.FillAncestors(alist);
  FClassAncestors.AddObject('TRpGenTextInterface',alist);

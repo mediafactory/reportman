@@ -22,7 +22,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Controls,
-  rpvclreport,Graphics,rpreport;
+  rpvclreport,Graphics,rpreport,rpmdconsts;
 
 
 const
@@ -50,10 +50,16 @@ type
     { Protected declarations }
     procedure Paint;override;
   public
+   procedure SetDatasetSQL(datasetname:string;sqlsentence:string);
+   procedure SetDatabaseConnectionString(databasename:string;connectionstring:string);
+   function GetDatasetSQL(datasetname:string):string;
+   function GetDatabaseConnectionString(databasename:string):string;
+   procedure SetParamValue(paramname:string;paramvalue:Variant);
+   function GetParamValue(paramname:string):Variant;
    function Execute:Boolean;
    procedure PrinterSetup;
    function ShowParams:boolean;
-   procedure SaveToPDF(filename:string);
+   procedure SaveToPDF(filename:string;compressed:boolean=false);
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;
    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer);override;
@@ -147,9 +153,9 @@ begin
  Result:=FVCLReport.ShowParams;
 end;
 
-procedure TRpActiveXReport.SaveToPDF(filename:string);
+procedure TRpActiveXReport.SaveToPDF(filename:string;compressed:boolean=false);
 begin
- FVCLReport.SaveToPDF(filename);
+ FVCLReport.SaveToPDF(filename,compressed);
 end;
 
 function TRpActiveXReport.PrintRange(frompage:integer;topage:integer;
@@ -158,6 +164,55 @@ begin
  Result:=FVCLReport.PrintRange(frompage,topage,copies,collate);
 end;
 
+procedure TRpActiveXReport.SetDatabaseConnectionString(databasename:string;connectionstring:string);
+var
+ index:integer;
+begin
+ index:=FVCLReport.Report.DatabaseInfo.IndexOf(databasename);
+ if index<0 then
+  Raise Exception.Create(SRpDatabaseNotExists+':'+databasename);
+ FVCLReport.Report.DatabaseInfo.Items[index].ADOConnectionString:=connectionstring;
+end;
+
+procedure TRpActiveXReport.SetDatasetSQL(datasetname:string;sqlsentence:string);
+var
+ index:integer;
+begin
+ index:=FVCLReport.Report.DataInfo.IndexOf(datasetname);
+ if index<0 then
+  Raise Exception.Create(SRpDatasetNotExists+':'+datasetname);
+ FVCLReport.Report.DataInfo.Items[index].SQL:=sqlsentence;
+end;
+
+procedure TRpActiveXReport.SetParamValue(paramname:string;paramvalue:Variant);
+begin
+ FVCLReport.Report.Params.ParamByName(paramname).Value:=paramvalue;
+end;
+
+function TRpActiveXReport.GetDatasetSQL(datasetname:string):string;
+var
+ index:integer;
+begin
+ index:=FVCLReport.Report.DataInfo.IndexOf(datasetname);
+ if index<0 then
+  Raise Exception.Create(SRpDatasetNotExists+':'+datasetname);
+ Result:=FVCLReport.Report.DataInfo.Items[index].SQL;
+end;
+
+function TRpActiveXReport.GetDatabaseConnectionString(databasename:string):string;
+var
+ index:integer;
+begin
+ index:=FVCLReport.Report.DatabaseInfo.IndexOf(databasename);
+ if index<0 then
+  Raise Exception.Create(SRpDatabaseNotExists+':'+databasename);
+ Result:=FVCLReport.Report.DatabaseInfo.Items[index].ADOConnectionString;
+end;
+
+function TRpActiveXReport.GetParamValue(paramname:string):Variant;
+begin
+ Result:=FVCLReport.Report.Params.ParamByName(paramname).Value;
+end;
 
 end.
 

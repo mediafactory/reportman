@@ -600,7 +600,10 @@ object FRpAboutBox: TFRpAboutBox
       'PDF Export base: K.Nishita (info@nishita.com) '
       
         'ZLib Compression: Jean-loup Gailly, Mark Adler, Jacques Nomssi N' +
-        'zali')
+        'zali'
+      
+        'Barcode codebase: Andreas Schmidth and friends (shmia@bizerba.de' +
+        ')')
     ScrollBars = ssBoth
     TabOrder = 10
     WordWrap = False

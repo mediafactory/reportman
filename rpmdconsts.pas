@@ -402,9 +402,17 @@ resourcestring
   SRpSList='List';
   SrpSText='Text';
   SrpSExpression='Expression';
+  SrpSBarcode='Expression';
+  SrpSCalculatingBarcode='Error calculating barcode';
   SrpSDisplayFormat='Display format';
   SRpUnknownType='(Unknown type)';
   SrpSOnlyOne='P.Only One';
+  SRpSBarcodeType='Bar type';
+  SRpSShowText='Show Text';
+  SRpSChecksum='Calc.Checksum';
+  SRpSModul='Bar.Modul';
+  SRpSRatio='Bar.Ratio';
+  SRpWrongBarcodeType='Wrong Barcode Type';
 
   SRpSBSolid='Solid';
   SRpSBClear='Clear';
@@ -551,7 +559,9 @@ resourcestring
   SRpBitmapImages='Bitmap images';
   SRpUnkownClassForMultiSelect='Unknown class for multi-select';
   SRpClassNotRegistered='Class not registered -';
-
+  SRpSampleBarCode='5449000000996';
+  SRpDatasetNotExists='Dataset not exists';
+  SRpDatabaseNotExists='Database not exists';
 implementation
 
 

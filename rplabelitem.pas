@@ -228,7 +228,7 @@ begin
   exit;
  try
   fevaluator:=TRpREport(Owner).Evaluator;
-  fevaluator.Expression:=Expression;
+  fevaluator.Expression:=FExpression;
   fevaluator.Evaluate;
   FValue:=fevaluator.EvalResult;
   FUpdated:=true;

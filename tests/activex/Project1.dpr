@@ -5,8 +5,8 @@ uses
   Unit1 in 'Unit1.pas' {Form1},
   rpvclreport in '..\..\rpvclreport.pas',
   rpactivexreport in '..\..\rpactivexreport.pas',
-  rpcompobase in '..\..\rpcompobase.pas';
-
+  rpcompobase in '..\..\rpcompobase.pas',
+  rpmdconsts in '..\..\rpmdconsts.pas';
 {$R *.res}
 
 begin

@@ -23,7 +23,7 @@ unit rpsubreport;
 interface
 
 uses Classes,SysUtils,rpsecutil,rpsection,rptypes,rpmdconsts,
- rplabelitem,rpprintitem,rpeval;
+ rplabelitem,rpprintitem,rpeval,rpmdbarcode;
 
 type
  TRpSubReport=class(TComponent)
@@ -637,6 +637,10 @@ begin
    if (compo is TRpExpression) then
    begin
     TRpExpression(compo).SubReportChanged(newstate,newgroup);
+   end;
+   if (compo is TRpBarcode) then
+   begin
+    TRpBarcode(compo).SubReportChanged(newstate,newgroup);
    end;
   end;
  end;
