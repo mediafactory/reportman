@@ -39,14 +39,20 @@
     <td>Linux/Windows</td>
   </tr>
   <tr> 
-    <td>TRpExcelDriver</td>
+    <td>--</td>
     <td>rpexceldriver</td>
     <td>--</td>
     <td>Windows</td>
   </tr>
-  <tr>
+  <tr> 
     <td>TRpTextDriver</td>
     <td>rptextdriver</td>
+    <td>--</td>
+    <td>Linux/Windows</td>
+  </tr>
+  <tr>
+    <td>--</td>
+    <td>rphtmldriver</td>
     <td>--</td>
     <td>Linux/Windows</td>
   </tr>
@@ -58,6 +64,8 @@
   once calculated (metafile report), the engine use the driver for printing or 
   previewing the report. This proces is done in a page by page basis when the 
   report is not marked as a 'two pass report'.</p>
+<p>The excel and html driver calculate sizes with the pdfdriver, they can only 
+  process metafiles, not reports.</p>
 <p>Note that a report can be calculated using a driver, then print or preview 
   using another driver, that is the case of generating metafiles using web report 
   server, and print this metafiles using metaview in Linux (QtDriver) or metaviewxp 

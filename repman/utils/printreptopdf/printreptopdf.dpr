@@ -38,7 +38,9 @@ uses
   rpsubreport in '..\..\..\rpsubreport.pas',
   rpsection in '..\..\..\rpsection.pas',
   rpsecutil in '..\..\..\rpsecutil.pas',
+  rphtmldriver in '..\..\..\rphtmldriver.pas',
   rpexceldriver in '..\..\..\rpexceldriver.pas',
+  rppdffile in '..\..\..\rppdffile.pas',
   rppdfdriver in '..\..\..\rppdfdriver.pas';
 {$ENDIF}
 
@@ -51,6 +53,8 @@ uses
   rpsubreport in '../../../rpsubreport.pas',
   rpsection in '../../../rpsection.pas',
   rpsecutil in '../../../rpsecutil.pas',
+  rphtmldriver in '../../../rphtmldriver.pas',
+  rppdffile in '../../../rppdffile.pas',
   rppdfdriver in '../../../rppdfdriver.pas';
 {$ENDIF}
 
@@ -75,6 +79,7 @@ var
  textdriver:String;
  memstream:TMemoryStream;
  oemconvert:Boolean;
+ htmloutput:Boolean;
 
 procedure PrintHelp;
 var
@@ -100,6 +105,7 @@ begin
  Writeln(AnsiString(SRpPrintPDFRep10));
  Writeln(AnsiString(SRpPrintPDFRep11));
  Writeln(AnsiString(SRpPrintPDFRep12));
+ Writeln(AnsiString(SRpPrintPDFRep13));
  astring:=SRpTextDrivers+' ';
  alist:=TStringList.Create;
  try
@@ -121,6 +127,7 @@ begin
 {$IFDEF MSWINDOWS}
   toexcel:=false;
 {$ENDIF}
+  htmloutput:=false;
   stdinput:=false;
   doprintmetafile:=false;
   doprintastext:=False;
@@ -189,6 +196,11 @@ begin
      if ParamStr(indexparam)='-m' then
      begin
       doprintmetafile:=true;
+     end
+     else
+     if ParamStr(indexparam)='-html' then
+     begin
+      htmloutput:=true;
      end
      else
      if ParamStr(indexparam)='-text' then
@@ -277,6 +289,16 @@ begin
      end
      else
 {$ENDIF}
+     if htmloutput then
+     begin
+      if Length(PDFFilename)<1 then
+       Raise Exception.Create(SRpOutputFilenameHTML);
+      PrintReportToMetafile(report,'',showprogress,allpages,frompage,topage,
+       copies,'',collate);
+      ExportMetafileToHtml(report.metafile,pdffilename,pdffilename,showprogress,
+       true,1,99999);
+     end
+     else
      begin
       if Length(PDFFilename)<1 then
        showprogress:=false;

@@ -90,6 +90,7 @@ uses
   rpvgraphutils in '..\rpvgraphutils.pas',
   rpvpreview in '..\rpvpreview.pas' {FRpVPreview},
   rpwriter in '..\rpwriter.pas',
+  rphtmldriver in '..\rphtmldriver.pas',
   rpmdfconnectionvcl in '..\rpmdfconnectionvcl.pas' {FRpConnectionVCL: TFrame},
   rpmdfwizardvcl in '..\rpmdfwizardvcl.pas' {FRpWizardVCL},
   rpmdfextsecvcl in '..\rpmdfextsecvcl.pas' {FRpExtSectionVCL},

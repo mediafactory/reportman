@@ -21,15 +21,19 @@
     <td>Unique complete package (no report design)</td>
   </tr>
   <tr> 
-    <td rowspan="5" bgcolor="#FFFFCC">Builder 6</td>
+    <td rowspan="6" bgcolor="#FFFFCC">Builder 6</td>
     <td>rppack_builder6.bpk</td>
-    <td>Report Components VCL</td>
+    <td>Report Components (non Visual)</td>
+  </tr>
+  <tr>
+    <td>rppackvcl_builder6.bpk</td>
+    <td>Report Componentes (VCL)</td>
   </tr>
   <tr> 
     <td>rppackdesignvcl_builder6.bpk</td>
     <td>Report Manager Designer VCL components</td>
   </tr>
-  <tr>
+  <tr> 
     <td>rppackdesigntime_builder.bpk</td>
     <td>Report Manager Design editors</td>
   </tr>
@@ -46,7 +50,8 @@
 <p>C++Builder 6 does not allow sharing VCL and CLX forms in the same project as 
   Delphi allow, because this, when you use the TCLXReport component, the GDI driver 
   is never used, only Qt printing is available. Also TeeChart have the limitation 
-  of compiling as a CLX or a VCL (default)</p>
+  of compiling as a CLX or a VCL (default), that is TeeChart is not available 
+  in CLX applications by default.</p>
 <p>Note: C++Builder have known problems using qt library wrappers, and QPrinter, 
   to fix QPrinter you must install a updated qtintf.dll library, installed after 
   Delphi 6 Update Pack #2, but to fix problems with Qt library wrappers you should 
