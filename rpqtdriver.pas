@@ -222,6 +222,7 @@ var
  Width,Height:integer;
  stream:TMemoryStream;
  bitmap:TBitmap;
+ aalign:Integer;
 begin
  // Switch to device points
  posx:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
@@ -238,13 +239,18 @@ begin
     Canvas.Font.Color:=Obj.FontColor;
     Canvas.Font.Style:=IntegerToFontStyle(obj.FontStyle);
     Canvas.Font.Size:=Obj.FontSize;
+    aalign:=obj.Alignment;
+    if Not obj.CutText then
+     aalign:=aalign or Integer(AlignmentFlags_DontClip);
+    if obj.Wordwrap then
+     aalign:=aalign or Integer(AlignmentFlags_WordBreak);
     if obj.CutText then
     begin
      rec.Top:=posx;
      rec.Left:=posy;
      rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);
      rec.Bottom:=posy+round(obj.Height*dpiy/TWIPS_PER_INCHESS);
-     Canvas.TextRect(rec,posx,posy,page.GetText(Obj),obj.Alignment);
+     Canvas.TextRect(rec,posx,posy,page.GetText(Obj),aalign);
     end
     else
      Canvas.TextOut(posx,posy,page.GetText(Obj));

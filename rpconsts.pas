@@ -435,6 +435,8 @@ resourcestring
   SRPAlignBottom='Align Bottom';
   SRpIdentifierAlreadyExists='Identifier already exists';
   SrpSCutText='Cut Text';
+  SrpSWordwrap='Word wrap';
+  SrpSSingleLine='Single Line';
   SrpSAlignment='H.Alignment';
   SrpSVAlignment='V.Alignment';
   SRpSAlignNone='None';

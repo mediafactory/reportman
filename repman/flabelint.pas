@@ -24,7 +24,7 @@ interface
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,types,
   rpprintitem,rplabelitem,rpobinsint,rpconsts,
-  rpgraphutils,rptypes;
+  rpgraphutils,rptypes,Qt;
 
 type
  TRpLabelInterface=class(TRpGenTextInterface)
@@ -150,6 +150,7 @@ procedure TRpLabelInterface.Paint;
 var
  alabel:TRpLabel;
  rec:TRect;
+ aalign:integer;
 begin
  alabel:=TRpLabel(printitem);
  if csDestroying in alabel.ComponentState then
@@ -180,7 +181,14 @@ begin
  rec.Left:=0;
  rec.Right:=Width-1;
  rec.Bottom:=Height-1;
- Canvas.TextRect(rec,0,0,alabel.Text,alabel.Alignment or alabel.VAlignment);
+ // Adds word wrap and single line
+ aalign:=alabel.Alignment or alabel.VAlignment;
+ if alabel.SingleLine then
+  aalign:=aalign or Integer(AlignmentFlags_SingleLine);
+ if alabel.Wordwrap then
+  aalign:=aalign or Integer(AlignmentFlags_WordBreak);
+
+ Canvas.TextRect(rec,0,aalign,alabel.Text);
 end;
 
 
@@ -364,6 +372,7 @@ procedure TRpExpressionInterface.Paint;
 var
  aexp:TRpExpression;
  rec:TRect;
+ aalign:integer;
 begin
  aexp:=TRpExpression(printitem);
  if csDestroying in aexp.ComponentState then
@@ -394,7 +403,13 @@ begin
  rec.Left:=0;
  rec.Right:=Width-1;
  rec.Bottom:=Height-1;
- Canvas.TextRect(rec,0,0,aexp.Expression,aexp.Alignment or aexp.VAlignment);
+ aalign:=aexp.Alignment or aexp.VAlignment;
+ if aexp.SingleLine then
+  aalign:=aalign or Integer(AlignmentFlags_SingleLine);
+ if aexp.Wordwrap then
+  aalign:=aalign or Integer(AlignmentFlags_WordBreak);
+
+ Canvas.TextRect(rec,0,0,aexp.Expression,aalign);
 end;
 
 

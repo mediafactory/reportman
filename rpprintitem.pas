@@ -104,6 +104,7 @@ type
    FWordWrap:Boolean;
    FAlignMent:integer;
    FVAlignMent:integer;
+   FSingleLine:boolean;
   public
    constructor Create(AOwner:TComponent);override;
   published
@@ -119,6 +120,7 @@ type
    property Alignment:integer read FAlignment write FAlignment default 0;
    property VAlignment:integer read FVAlignment write FVAlignment default 0;
    property WordWrap:Boolean read FWordWrap write FWordWrap default false;
+   property SingleLine:boolean read FSingleLine write FSingleLine default false;
   end;
 
 implementation

@@ -21,6 +21,7 @@ unit rplabelitem;
 
 interface
 
+
 {$I rpconf.inc}
 
 uses Sysutils,Classes,rptypes,rpprintitem,rpconsts,
@@ -29,6 +30,9 @@ uses Sysutils,Classes,rptypes,rpprintitem,rpconsts,
   Variants,
 {$ENDIF}
  rptypeval,math;
+
+const
+ AlignmentFlags_SingleLine=64;
 
 type
  TRpLabel=class(TRpGenTextComponent)
@@ -171,10 +175,15 @@ begin
 end;
 
 procedure TRpLabel.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
+var
+ aalign:integer;
 begin
+ aalign:=Alignment or VAlignment;
+ if SingleLine then
+  aalign:=aalign or AlignmentFlags_SingleLine;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
   aposx+PosX,width,height,Text,WFontName,LFontName,FontSize,FontRotation,
-  FontStyle,FOntColor,BackColor,Transparent,CutText,Alignment or VAlignment,WordWrap);
+  FontStyle,FOntColor,BackColor,Transparent,CutText,aalign,WordWrap);
 end;
 
 
@@ -254,7 +263,7 @@ procedure TRpExpression.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 var
  aText:WideString;
  expre:WideString;
-
+ aalign:integer;
 begin
  expre:=Trim(Expression);
  aText:=GetText;
@@ -264,9 +273,12 @@ begin
    exit;
   FOldString:=aText;
  end;
+ aalign:=Alignment or VAlignment;
+ if SingleLine then
+  aalign:=aalign or AlignmentFlags_SingleLine;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
    aposx+PosX,width,height,aText,WFontName,LFontName,FontSize,FontRotation,
-   FontStyle,FOntColor,BackColor,Transparent,CutText,Alignment or VAlignment,WordWrap);
+   FontStyle,FOntColor,BackColor,Transparent,CutText,aalign,WordWrap);
  // Is Total pages variable?
  if (UpperCase(expre)='PAGECOUNT') then
  begin

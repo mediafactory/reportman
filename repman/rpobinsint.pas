@@ -1012,6 +1012,15 @@ begin
  ltypes.Add(SRpSBool);
  lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).CutText,true));
 
+ // Work wrap
+ lnames.Add(SrpSWordwrap);
+ ltypes.Add(SRpSBool);
+ lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).WordWrap,true));
+
+ // Single line
+ lnames.Add(SrpSSingleLine);
+ ltypes.Add(SRpSBool);
+ lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).SingleLine,true));
 
 end;
 
@@ -1076,6 +1085,18 @@ begin
  if pname=SRpSCutText then
  begin
   TRpGenTextComponent(fprintitem).CutText:=StrToBool(value);
+  Invalidate;
+  exit;
+ end;
+ if pname=SRpSWordWrap then
+ begin
+  TRpGenTextComponent(fprintitem).WordWrap:=StrToBool(value);
+  Invalidate;
+  exit;
+ end;
+ if pname=SRpSSingleLine then
+ begin
+  TRpGenTextComponent(fprintitem).SingleLine:=StrToBool(value);
   Invalidate;
   exit;
  end;
