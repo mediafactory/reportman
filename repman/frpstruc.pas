@@ -157,9 +157,12 @@ begin
 end;
 
 procedure TFRpStructure.RViewClick(Sender: TObject);
+var
+ aobject:TObject;
 begin
  TFDesignFrame(designframe).UpdateSelection(false);
- if (FindSelectedObject is TRpSubReport) then
+ aobject:=FindSelectedObject;
+ if Assigned(aobject) then
  begin
   AUp.Enabled:=True;
   ADown.Enabled:=True;
@@ -205,11 +208,16 @@ procedure TFRpStructure.AUpExecute(Sender: TObject);
 var
  subrep:TRpSubreport;
  arep:TRpSubReport;
+ aobject:TObject;
  changesubrep:integer;
- i:integer;
+ asection:TRpSection;
+ asec:TRpSection;
+ i,index:integer;
+ firstdetail,lastdetail:integer;
 begin
  // Goes up
- if (FindSelectedObject is TRpSubReport) then
+ aobject:=FindSelectedObject;
+ if (aobject is TRpSubReport) then
  begin
   subrep:=TRpSubReport(FindSelectedObject);
   i:=0;
@@ -229,6 +237,112 @@ begin
    changesubrep:=i;
    inc(i);
   end;
+ end
+ else
+ begin
+  if (aobject is TRpSection) then
+  begin
+   subrep:=FindSelectedSubreport;
+   asection:=TRpSection(aobject);
+   // It can be a detail
+   if asection.SectionType=rpsecdetail then
+   begin
+    firstdetail:=subrep.FirstDetail;
+    lastdetail:=subrep.LastDetail;
+    if firstdetail=lastdetail then
+     exit;
+    index:=-1;
+    for i:=firstdetail to lastdetail do
+    begin
+     if subrep.Sections[i].Section=asection then
+     begin
+      index:=i;
+      break;
+     end;
+    end;
+    if index>=0 then
+    begin
+     if index>firstdetail then
+     begin
+      asec:=subrep.Sections[index-1].Section;
+      subrep.Sections[index-1].Section:=subrep.Sections[index].Section;
+      subrep.Sections[index].Section:=asec;
+      SetReport(FReport);
+      SelectDataItem(asection);
+     end;
+    end;
+   end
+   else
+   begin
+    if asection.SectionType=rpsecgfooter then
+    begin
+     if subrep.GroupCount<2 then
+      exit;
+     index:=-1;
+     lastdetail:=subrep.LastDetail;
+     firstdetail:=subrep.FirstDetail;
+     for i:=1 to subrep.GroupCount do
+     begin
+      asec:=subrep.Sections.Items[lastdetail+i].Section;
+      if asec=asection then
+      begin
+       index:=i;
+       break;
+      end;
+     end;
+     if index<0 then
+      exit;
+     if index<2 then
+      exit;
+     // Group footer
+     asec:=subrep.Sections.Items[lastdetail+index-1].Section;
+     subrep.Sections.Items[lastdetail+index-1].Section:=subrep.Sections.Items[lastdetail+index].Section;
+     subrep.Sections.Items[lastdetail+index].Section:=asec;
+     // Group Header
+     asec:=subrep.Sections.Items[firstdetail-index+1].Section;
+     subrep.Sections.Items[firstdetail-index+1].Section:=subrep.Sections.Items[firstdetail-index].Section;
+     subrep.Sections.Items[firstdetail-index].Section:=asec;
+     // Update
+     SetReport(FReport);
+     SelectDataItem(asection);
+    end
+    else
+    begin
+     if asection.SectionType=rpsecgheader then
+     begin
+      if subrep.GroupCount<2 then
+       exit;
+      index:=-1;
+      lastdetail:=subrep.LastDetail;
+      firstdetail:=subrep.FirstDetail;
+      for i:=1 to subrep.GroupCount do
+      begin
+       asec:=subrep.Sections.Items[firstdetail-i].Section;
+       if asec=asection then
+       begin
+        index:=i;
+        break;
+       end;
+      end;
+      if index<0 then
+       exit;
+      if index>=subrep.groupcount then
+       exit;
+      // Group footer
+      asec:=subrep.Sections.Items[lastdetail+index+1].Section;
+      subrep.Sections.Items[lastdetail+index+1].Section:=subrep.Sections.Items[lastdetail+index].Section;
+      subrep.Sections.Items[lastdetail+index].Section:=asec;
+      // Group Header
+      asec:=subrep.Sections.Items[firstdetail-index-1].Section;
+      subrep.Sections.Items[firstdetail-index-1].Section:=subrep.Sections.Items[firstdetail-index].Section;
+      subrep.Sections.Items[firstdetail-index].Section:=asec;
+      // Update
+      SetReport(FReport);
+      SelectDataItem(asection);
+     end;
+    end;
+   end;
+  end;
  end;
 end;
 
@@ -238,9 +352,14 @@ var
  arep:TRpSubReport;
  changesubrep:integer;
  i:integer;
+ aobject:TObject;
+ index:integer;
+ asection,asec:TRpSection;
+ firstdetail,lastdetail:integer;
 begin
  // Goes down
- if (FindSelectedObject is TRpSubReport) then
+ aobject:=FindSelectedObject;
+ if (aobject is TRpSubReport) then
  begin
   subrep:=TRpSubReport(FindSelectedObject);
   i:=0;
@@ -263,6 +382,111 @@ begin
     end;
    end;
    inc(i);
+  end;
+ end
+ else
+ begin
+  if (aobject is TRpSection) then
+  begin
+   subrep:=FindSelectedSubreport;
+   asection:=TRpSection(aobject);
+   // It can be a detail
+   if asection.SectionType=rpsecdetail then
+   begin
+    firstdetail:=subrep.FirstDetail;
+    lastdetail:=subrep.LastDetail;
+    if firstdetail=lastdetail then
+     exit;
+    index:=-1;
+    for i:=firstdetail to lastdetail do
+    begin
+     if subrep.Sections[i].Section=asection then
+     begin
+      index:=i;
+      break;
+     end;
+    end;
+    if index<0 then
+     exit;
+    if index<lastdetail then
+    begin
+     asec:=subrep.Sections[index+1].Section;
+     subrep.Sections[index+1].Section:=subrep.Sections[index].Section;
+     subrep.Sections[index].Section:=asec;
+     SetReport(FReport);
+     SelectDataItem(asection);
+    end;
+   end
+   else
+   begin
+    if asection.SectionType=rpsecgfooter then
+    begin
+     if subrep.GroupCount<2 then
+      exit;
+     index:=-1;
+     lastdetail:=subrep.LastDetail;
+     firstdetail:=subrep.FirstDetail;
+     for i:=1 to subrep.GroupCount do
+     begin
+      asec:=subrep.Sections.Items[lastdetail+i].Section;
+      if asec=asection then
+      begin
+       index:=i;
+       break;
+      end;
+     end;
+     if index<0 then
+      exit;
+     if index>=subrep.GroupCount then
+      exit;
+     // Group footer
+     asec:=subrep.Sections.Items[lastdetail+index+1].Section;
+     subrep.Sections.Items[lastdetail+index+1].Section:=subrep.Sections.Items[lastdetail+index].Section;
+     subrep.Sections.Items[lastdetail+index].Section:=asec;
+     // Group Header
+     asec:=subrep.Sections.Items[firstdetail-index-1].Section;
+     subrep.Sections.Items[firstdetail-index-1].Section:=subrep.Sections.Items[firstdetail-index].Section;
+     subrep.Sections.Items[firstdetail-index].Section:=asec;
+     // Update
+     SetReport(FReport);
+     SelectDataItem(asection);
+    end
+    else
+    begin
+     if asection.SectionType=rpsecgheader then
+     begin
+      if subrep.GroupCount<2 then
+       exit;
+      index:=-1;
+      lastdetail:=subrep.LastDetail;
+      firstdetail:=subrep.FirstDetail;
+      for i:=1 to subrep.GroupCount do
+      begin
+       asec:=subrep.Sections.Items[firstdetail-i].Section;
+       if asec=asection then
+       begin
+        index:=i;
+        break;
+       end;
+      end;
+      if index<0 then
+       exit;
+      if index<2 then
+       exit;
+      // Group footer
+      asec:=subrep.Sections.Items[lastdetail+index-1].Section;
+      subrep.Sections.Items[lastdetail+index-1].Section:=subrep.Sections.Items[lastdetail+index].Section;
+      subrep.Sections.Items[lastdetail+index].Section:=asec;
+      // Group Header
+      asec:=subrep.Sections.Items[firstdetail-index+1].Section;
+      subrep.Sections.Items[firstdetail-index+1].Section:=subrep.Sections.Items[firstdetail-index].Section;
+      subrep.Sections.Items[firstdetail-index].Section:=asec;
+      // Update
+      SetReport(FReport);
+      SelectDataItem(asection);
+     end;
+    end;
+   end;
   end;
  end;
 end;

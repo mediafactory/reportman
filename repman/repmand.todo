@@ -1,36 +1,38 @@
+{TODO 1 -oToni -cEngine : Implementation for Delphi 5 (ADO-NOADO) and C++Builder 4}
+{TODO 1 -oToni -cEngine : Add aliaslist to the report component to use application opened querys}
+{TODO 1 -oToni -cDesign Interface : Select the object that produces a error}
+{TODO 1 -oToni -cEngine : Add barcode component}
+{TODO 1 -oToni -cEngine : Implementation of vertical labels as subreport column width}
+{TODO 1 -oToni -cDesign Interface : Enhace object inspector speed}
 {TODO 1 -oToni -cEngine : Implement pagerepeat for group headers}
 {TODO 1 -oToni -cEngine : Finish TRpGDIDriver and program a TGDIReport to support VCL}
-{TODO 3 -oToni -cDesign Interface : Add up-down in report structure for groups, and sections}
-{DONE 1 -oToni -cEngine : In PrintReport use a temp filename and a temp directory}
+
+
 {TODO 1 -oToni -cEngine : Image component filename property to load a file on the fly}
 {TODO 1 -oToni -cEngine : User parameters form}
-{DONE 1 -oToni -cEngine : Implementation of ADO/IBX Dataaccess}
+
 {TODO 1 -oToni -cEngine : Detect existing BDE Databases in rpdatainfo}
-{DONE 1 -oToni -cEngine : Execute after print and before print}
-{DONE 1 -oToni -cEngine : Page size implementation}
+
+
 {TODO 1 -oToni -cEngine : Add TotalPages variable}
 {TODO 3  -oToni -cEngine : Add Printing ranges of pages}
-{DONE 1 -oToni -cEngine : Page margins}
-{TODO 2 -oToni -cEngine : Implementation of labels (horizontal movement)}
+
+
 {TODO 1  -oToni -cEngine : Implement autoexpand and autocontract for sections}
 {TODO 1 -oToni -cEngine : Program a simple chart component at least with poly lines and dots}
-{DONE 1 -oToni -cEngine :
-Instaler for Windows do Innosetup setup and for linux a tar or something
-with the GNUmakefile}
+
 {TODO 1 -oToni -cOthers : Conversion program for gestor.exe}
-{TODO 1 -oToni -cEngine : Saving and loading from database tables}
-{DONE 1 -oToni -cEngine : Program a component to easily execute reports from delphi and kylix}
-{DONE 1 -oToni -cEngine :
-Implementation in Linux of the printing with calling metaprint command 
-because sigpipe after connecting to a dataset}
+{TODO 1  -oToni -cEngine : Saving and loading from database tables}
+
+
 {TODO 1 -oToni -cDesign Interface : Drop Fields directly from a floating window when click in expression}
-{DONE 1 -oToni -cEngine : Implementation for printing page headers and footers}
-{DONE 1 -oToni -cEngine : Image from a field implementation}
-{DONE 1 -oToni -cEngine : Format expresion implementation}
+
+
+
 {DONE 1 -oToni -cEngine : About box}
 {TODO 1 -oToni -cEngine : Write some documentation}
 {TODO 1 -oToni -cEngine : Free pages in metafile while printing, previewing...}
 {TODO 1 -oToni -cEngine : Implementation of one pass and two pas report instead of whole pas}
-{DONE 3 -oToni -cEngine : Implementation of grouping}
+
 {TODO 1 -oToni -cEngine : Implementation of cut text,wordwrap...}
-{DONE 1 -oToni -cEngine : Enhace memory consumption by repmetafileobject in a long report}
+

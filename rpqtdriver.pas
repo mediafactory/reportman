@@ -252,7 +252,7 @@ begin
     Canvas.Pen.Style:=TPenStyle(obj.PenStyle);
     Canvas.Pen.Color:=obj.Pencolor;
     Canvas.Brush.Color:=obj.BrushColor;
-    Canvas.Pen.Width:=obj.PenWidth;
+    Canvas.Pen.Width:=Round(dpix*obj.PenWidth/TWIPS_PER_INCHESS);
     X := Canvas.Pen.Width div 2;
     Y := X;
     W := Width - Canvas.Pen.Width + 1;
@@ -266,20 +266,30 @@ begin
      S := W
     else
      S := H;
-    if TShapeType(obj.DrawStyle) in [stSquare, stRoundSquare, stCircle] then
+    if TRpShapeType(obj.DrawStyle) in [rpsSquare, rpsRoundSquare, rpsCircle] then
     begin
      Inc(X, (W - S) div 2);
      Inc(Y, (H - S) div 2);
      W := S;
      H := S;
     end;
-    case TShapeType(obj.DrawStyle) of
-     stRectangle, stSquare:
+    case TRpShapeType(obj.DrawStyle) of
+     rpsRectangle, rpsSquare:
       Canvas.Rectangle(X+PosX, Y+PosY, X+PosX + W, Y +PosY+ H);
-     stRoundRect, stRoundSquare:
+     rpsRoundRect, rpsRoundSquare:
       Canvas.RoundRect(X, Y, X + W, Y + H, S div 4, S div 4);
-     stCircle, stEllipse:
+     rpsCircle, rpsEllipse:
       Canvas.Ellipse(X+PosX, Y+PosY, X+PosX + W, Y+PosY + H);
+     rpsHorzLine:
+      begin
+       Canvas.MoveTo(X+PosX, Y+PosY);
+       Canvas.LineTo(X+PosX+W, Y+PosY);
+      end;
+     rpsVertLine:
+      begin
+       Canvas.MoveTo(X+PosX, Y+PosY);
+       Canvas.LineTo(X+PosX, Y+PosY+H);
+      end;
     end;
    end;
   rpMetaImage:

@@ -71,9 +71,9 @@ const
   (SRpSBSolid, SRpSBClear, SRpSBHorizontal, SRpSBVertical, SRpSBFDiagonal,
   SRpSBBDiagonal, SRpSBCross, SRpSBDiagCross, SRpSBDense1, SRpSBDense2,
   SRpSBDense3, SRpSBDense4, SRpSBDense5, SRpSBDense6,SRpSBDense7);
- StringShapeType:array [stRectangle..stCircle] of String=(
+ StringShapeType:array [rpsRectangle..rpsVertLine] of String=(
   SRpsSRectangle,SRpsSSquare,SRpsSRoundRect,
-  SRpsSRoundSquare,SRpsSEllipse,SRpsSCircle);
+  SRpsSRoundSquare,SRpsSEllipse,SRpsSCircle,SRpSHorzLine,SRpSVertLine);
  StringDrawStyles:array [rpDrawCrop..rpDrawTile] of string=(
   SRPSDrawCrop,SRPSDrawStretch,SRPSDrawFull,SRpDrawTile);
  StringCopyModes:array [cmBlackness..cmCreateMask] of string=(
@@ -88,7 +88,7 @@ const
 
 function StringPenStyleToInt(Value:String):integer;
 function StringBrushStyleToInt(Value:String):integer;
-function StringShapeTypeToInt(Value:String):integer;
+function StringShapeTypeToShape(Value:String):TRpShapeType;
 function StringDrawStyleToDrawStyle(Value:string):TRpImageDrawStyle;
 function StringCopyModeToCopyMode(Value:string):TCopyMode;
 
@@ -112,7 +112,7 @@ begin
  // Shape
  lnames.Add(SrpSShape);
  ltypes.Add(SRpSList);
- lvalues.Add(StringShapeType[TShapeType(TRpShape(printitem).Shape)]);
+ lvalues.Add(StringShapeType[TRpShapeType(TRpShape(printitem).Shape)]);
 
  // Pen style
  lnames.Add(SrpSPenStyle);
@@ -157,16 +157,16 @@ begin
  end;
 end;
 
-function StringShapeTypeToInt(Value:String):integer;
+function StringShapeTypeToShape(Value:String):TRpShapeType;
 var
- i:TShapetype;
+ i:TRpShapetype;
 begin
- Result:=0;
- for i:=stRectangle to stCircle do
+ Result:=rpsRectangle;
+ for i:=rpsRectangle to rpsVertLine do
  begin
   if Value=StringShapeType[i] then
   begin
-   Result:=Integer(i);
+   Result:=i;
    break;
   end;
  end;
@@ -224,7 +224,7 @@ begin
   exit;
  if pname=SRpSShape then
  begin
-  TRpShape(fprintitem).Shape:=StringShapeTypeToInt(Value);
+  TRpShape(fprintitem).Shape:=StringShapeTypeToShape(Value);
   invalidate;
   exit;
  end;
@@ -267,7 +267,7 @@ begin
  Result:='';
  if pname=SrpSShape then
  begin
-  Result:=StringShapeType[TShapeType(TRpShape(printitem).Shape)];
+  Result:=StringShapeType[TRpShapeType(TRpShape(printitem).Shape)];
   exit;
  end;
  if pname=SrpSPenStyle then
@@ -307,12 +307,16 @@ var
  ashape:TRpShape;
  X, Y, W, H, S: Integer;
 begin
+ Canvas.Brush.Style:=bsClear;
+ Canvas.Pen.Style:=psDashDot;
+ Canvas.Pen.Width:=0;
+ Canvas.Rectangle(0, 0, Width ,Height);
  ashape:=TRpShape(printitem);
  Canvas.Brush.Style:=TBrushStyle(ashape.BrushStyle);
  Canvas.Pen.Style:=TPenStyle(ashape.PenStyle);
  Canvas.Pen.Color:=ashape.Pencolor;
  Canvas.Brush.Color:=ashape.BrushColor;
- Canvas.Pen.Width:=ashape.PenWidth;
+ Canvas.Pen.Width:=Round(Screen.PixelsPerInch*ashape.PenWidth/TWIPS_PER_INCHESS);
 
  X := Canvas.Pen.Width div 2;
  Y := X;
@@ -327,20 +331,30 @@ begin
   S := W
  else
   S := H;
- if TShapeType(ashape.Shape) in [stSquare, stRoundSquare, stCircle] then
+ if ashape.Shape in [rpsSquare, rpsRoundSquare, rpsCircle] then
  begin
   Inc(X, (W - S) div 2);
   Inc(Y, (H - S) div 2);
   W := S;
   H := S;
  end;
- case TShapeType(ashape.Shape) of
-  stRectangle, stSquare:
+ case ashape.Shape of
+  rpsRectangle, rpsSquare:
    Canvas.Rectangle(X, Y, X + W, Y + H);
-  stRoundRect, stRoundSquare:
+  rpsRoundRect, rpsRoundSquare:
    Canvas.RoundRect(X, Y, X + W, Y + H, S div 4, S div 4);
-  stCircle, stEllipse:
+  rpsCircle, rpsEllipse:
    Canvas.Ellipse(X, Y, X + W, Y + H);
+  rpsHorzLine:
+   begin
+    Canvas.MoveTo(0,0);
+    Canvas.LineTo(X+W,0);
+   end;
+  rpsVertLine:
+   begin
+    Canvas.MoveTo(0,0);
+    Canvas.LineTo(0,Y+H);
+   end;
  end;
 end;
 
@@ -350,12 +364,12 @@ procedure TRpDrawInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrin
 var
  pi:TPenStyle;
  bi:TBrushStyle;
- shi:TShapeType;
+ shi:TRpShapeType;
 begin
  if pname=SrpSShape then
  begin
   lpossiblevalues.clear;
-  for shi:=stRectangle to stCircle do
+  for shi:=rpsRectangle to rpsVertLine do
   begin
    lpossiblevalues.Add(StringShapeType[shi]);
   end;

@@ -117,6 +117,9 @@ type
     AAbout: TAction;
     About1: TMenuItem;
     ReportManager1: TMenuItem;
+    MFields: TPopupMenu;
+    est1: TMenuItem;
+    ext21: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -142,12 +145,15 @@ type
     procedure APreviewExecute(Sender: TObject);
     procedure AAboutExecute(Sender: TObject);
     procedure APrintExecute(Sender: TObject);
+    procedure BExpressionMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
     fdesignframe:TFDesignFrame;
     fobjinsp:TFObjInsp;
     lastsaved:TMemoryStream;
     configfile:string;
+    updatedmfields:boolean;
     procedure FreeInterface;
     procedure CreateInterface;
     function checkmodified:boolean;
@@ -160,11 +166,14 @@ type
     procedure DoOpen(newfilename:string;showopendialog:boolean);
     procedure OnReadError(Reader: TReader; const Message: string;
      var Handled: Boolean);
+    procedure UpdateMFields;
+    procedure MFieldsItemClick(Sender:TObject);
   public
     { Public declarations }
     report:TRpReport;
     filename:string;
     freportstructure:TFRpStructure;
+    function GetExpressionText:string;
   end;
 
 var
@@ -345,6 +354,7 @@ begin
  fdesignframe:=nil;
  freportstructure:=nil;
  mainscrollbox.Visible:=false;
+ updatedmfields:=false;
 end;
 
 procedure TFMainF.CreateInterface;
@@ -617,6 +627,7 @@ begin
  // Data info configuration dialog
  ShowDataConfig(report);
  fdesignframe.UpdateSelection(true);
+ updatedmfields:=false;
 end;
 
 procedure TFMainf.AParamsExecute(Sender: TObject);
@@ -723,6 +734,89 @@ procedure TFMainf.APrintExecute(Sender: TObject);
 begin
  PrintReport(report,Caption,true);
 end;
+
+
+procedure TFMainf.MFieldsItemClick(Sender:TObject);
+var
+ i:integer;
+begin
+ for i:=0 to MFields.Items.Count-1 do
+ begin
+  if MFields.Items[i]=Sender then
+   MFields.Items[i].Checked:=true
+  else
+   MFields.Items[i].Checked:=false;
+ end;
+end;
+
+procedure TFMainf.UpdateMFields;
+var
+ i,j:integer;
+ alist:TStringList;
+ datas:TDataset;
+ alias:string;
+ aitem:TMenuItem;
+begin
+ if updatedmfields then
+  exit;
+ updatedmfields:=true;
+ MFields.Items.Clear;
+ alist:=TStringList.Create;
+ try
+  for i:=0 to report.DataInfo.Count-1 do
+  begin
+   try
+    alias:=report.DataInfo.Items[i].Alias;
+    report.DataInfo.Items[i].Connect(report.DatabaseInfo,report.Params);
+    datas:=report.DataInfo.Items[i].Dataset;
+    for j:=0 to datas.FieldCount-1 do
+    begin
+     aitem:=TMenuItem.Create(MFields);
+     aitem.Caption:=alias+'.'+datas.fields[j].FieldName;
+     aitem.OnClick:=MFieldsItemClick;
+     MFields.Items.Add(aitem);
+    end;
+   except
+
+   end;
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
+procedure TFMainf.BExpressionMouseUp(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+ apoint:TPoint;
+begin
+ // Popups Fields
+ UpdateMFields;
+
+ if MFields.Items.Count>0 then
+ begin
+  apoint.x:=BExpression.Left;
+  apoint.Y:=BExpression.Top+BExpression.Height;
+  apoint:=ClientToScreen(apoint);
+  MFields.Popup(apoint.x,apoint.Y);
+ end;
+end;
+
+
+function TFMainf.GetExpressionText:string;
+var
+ i:integer;
+begin
+ Result:=SRpSampleExpression;
+ for i:=0 to MFields.Items.Count-1 do
+ begin
+  if MFields.Items[i].Checked then
+  begin
+   Result:=MFields.Items[i].Caption;
+  end;
+ end;
+end;
+
 
 initialization
 

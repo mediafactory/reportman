@@ -372,6 +372,7 @@ begin
     Control2.Left:=Control.Left+Control.Width-CONS_BUTTONWIDTH;
     Control2.Height:=COntrol.Height;
     Control2.Tag:=i;
+    Control.Width:=Control.Width-CONS_BUTTONWIDTH;
     TButton(Control2).OnClick:=FontClick;
     TButton(Control2).Caption:='...';
     Control2.Parent:=Self;
@@ -384,6 +385,7 @@ begin
     Control2.Top:=Control.Top;
     Control2.Left:=Control.Left+Control.Width-CONS_BUTTONWIDTH;
     Control2.Height:=COntrol.Height;
+    Control.Width:=Control.Width-CONS_BUTTONWIDTH;
     Control2.Tag:=i;
     TButton(Control2).OnClick:=ExpressionClick;
     TButton(Control2).Caption:='...';

@@ -66,6 +66,9 @@ resourcestring
   SrpSIniValue='Ag.I.Value';
   SrpSIdentifier='Identifier';
   SRpErrorIdenExpression='Error expression item no assigned (idenexpression)';
+  SRpSHorzLine='Horz.Line';
+  SRpSVertLine='Vert.Line';
+  SRPHorzDesp='Horz.Desp.';
 
   SRpNoDatasets='No datasets defined';
   SRpSampleTextToLabels='Text';

@@ -36,6 +36,8 @@ type
  TRpAggregate=(rpAgNone,rpAgGroup,rpAgPage,rpAgGeneral);
  TRpAggregateType=(rpagSum,rpagMin,rpagMax,rgagAvg,rpagStdDev);
  TRpReportChanged=(rpReportStart,rpDataChange,rpGroupChange);
+ TRpShapeType=(rpsRectangle, rpsSquare, rpsRoundRect, rpsRoundSquare,
+  rpsEllipse, rpsCircle,rpsHorzLine,rpsVertLine);
 
  TRpPageSize=(rpPageSizeDefault,rpPageSizeCustom);
 

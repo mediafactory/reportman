@@ -25,7 +25,7 @@ unit rpreport;
 interface
 
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpconsts,
- rpdatainfo,rpparams,rplabelitem,rpdrawitem,rpeval,
+ rpdatainfo,rpparams,rplabelitem,rpdrawitem,rpeval,rptypeval,
  rpmetafile,types,rpalias,db,dateutils,rpzlib,rpdataset,
 {$IFDEF LINUX}
   Libc,
@@ -76,6 +76,13 @@ type
    property SubReport:TRpSubReport read FSubReport write SetSubReport;
  end;
 
+ TIdenPageNum=class(TIdenFunction)
+   FReport:TRpReport;
+  private
+  protected
+   function GeTRpValue:TRpValue;override;
+ end;
+
  TRpReport=class(TComponent)
   private
    FSubReports:TRpSubReportList;
@@ -107,6 +114,7 @@ type
    FRecordCount:integer;
    FDriver:IRpPrintDriver;
    FLeftMargin,FTopMargin,FRightMargin,FBottomMargin:TRpTwips;
+   Fidenpagenum:TIdenpagenum;
 {$IFDEF MSWINDOWS}
    mmfirst,mmlast:DWORD;
 {$ENDIF}
@@ -203,6 +211,12 @@ type
 implementation
 
 uses rpprintitem, rpsecutil;
+
+function TIdenPageNum.GeTRpValue:TRpValue;
+begin
+ Result:=freport.PageNum+1;
+end;
+
 // Constructors and destructors
 constructor TRpReport.Create(AOwner:TComponent);
 begin
@@ -237,6 +251,9 @@ begin
  FIdentifiers:=TStringList.Create;
  FIdentifiers.Sorted:=true;
  FIdentifiers.Duplicates:=dupError;
+ // Pagenum
+ FIdenPagenum:=TIdenPageNum.Create(nil);
+ Fidenpagenum.FReport:=self;
  // Metafile
  FMetafile:=TRpMetafileReport.Create(nil);
  FDataAlias:=TRpAlias.Create(nil);
@@ -251,6 +268,7 @@ begin
  FIdentifiers.free;
  FMetafile.Free;
  FDataAlias.Free;
+ FIdenPagenum.free;
  inherited destroy;
 end;
 
@@ -918,7 +936,14 @@ begin
  CurrentSubReportIndex:=0;
  ActivateDatasets;
  // Evaluator
+ if Assigned(FEvaluator) then
+ begin
+  FEvaluator.free;
+  FEvaluator:=nil;
+ end;
  FEvaluator:=TRpEvaluator.Create(self);
+ // Insert page numeber
+ FEvaluator.AddVariable('Page',fidenpagenum);
  // Insert params into rpEvaluator
  for i:=0 to Params.Count-1 do
  begin
@@ -981,10 +1006,15 @@ var
  pagefooterpos:integer;
  havepagefooters:boolean;
  oldsubreport:TRpSubreport;
+ oldprintedsection:TRpSection;
+ oldprintedsectionext:TPoint;
+ pagespacex:integer;
+ sectionextevaluated:boolean;
 
 function CheckSpace:boolean;
 begin
- sectionext:=asection.GetExtension;
+ if not sectionextevaluated then
+  sectionext:=asection.GetExtension;
  Result:=true;
  if sectionext.Y>freespace then
  begin
@@ -999,12 +1029,17 @@ begin
     SRpSection+':'+IntToStr(CurrentSectionIndex));
   end;
  end;
+ sectionextevaluated:=false;
 end;
 
 procedure PrintSection(datasection:boolean);
 begin
  if datasection then
+ begin
   printedsomething:=true;
+  oldprintedsection:=section;
+  oldprintedsectionext:=sectionext;
+ end;
  // If the section is not aligned at bottom of the page then
  if Not asection.AlignBottom then
  begin
@@ -1081,8 +1116,10 @@ begin
  if Not Assigned(Section) then
   Raise Exception.Create(SRpLastPageReached);
  havepagefooters:=false;
+ sectionextevaluated:=false;
  pageposy:=FTopMargin;
  pageposx:=FLeftMargin;
+ oldprintedsection:=nil;
  printedsomething:=false;
  inc(Pagenum);
  if fmetafile.PageCount<=PageNum then
@@ -1093,9 +1130,15 @@ begin
 
 
  if PageOrientation=rpOrientationLandscape then
-  freespace:=FInternalPageWidth
+ begin
+  freespace:=FInternalPageWidth;
+  pagespacex:=FInternalPageheight;
+ end
  else
+ begin
   freespace:=FInternalPageheight;
+  pagespacex:=FInternalPageWidth;
+ end;
  freespace:=freespace-FTopMargin-FBottomMargin;
 
  pagefooters:=TStringList.Create;
@@ -1111,6 +1154,33 @@ begin
      break;
    end;
    asection:=section;
+   // Horz.Desp.
+   if Assigned(oldprintedsection) then
+   begin
+    if oldprintedsection.HorzDesp then
+    begin
+     if section.HorzDesp then
+     begin
+      sectionext:=section.GetExtension;
+      sectionextevaluated:=true;
+      if (pageposx+oldprintedsectionext.X+sectionext.X)<=pagespacex then
+      begin
+       pageposx:=pageposx+oldprintedsectionext.X;
+       pageposy:=pageposy-oldprintedsectionext.Y;
+      end
+      else
+       pageposx:=FLeftMargin;
+     end
+     else
+     begin
+      pageposx:=FLeftMargin;
+     end;
+    end
+    else
+    begin
+     pageposx:=FLeftMargin;
+    end;
+   end;
    if Not CheckSpace then
     break;
    PrintSection(true);

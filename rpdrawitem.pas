@@ -40,7 +40,7 @@ type
    FBrushColor:integer;
    FPenStyle:integer;
    FPenColor:integer;
-   FShape:integer;
+   FShape:TRpShapeType;
    FPenWidth:integer;
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
@@ -52,7 +52,7 @@ type
    property BrushColor:integer read FBrushColor write FBrushColor default $FFFFFF;
    property PenStyle:integer read FPenStyle write FPenStyle default 0;
    property PenColor:integer read FPenColor write FPenColor default 0;
-   property Shape:integer read FShape write FShape default 0;
+   property Shape:TRpShapeType read FShape write FShape default rpsRectangle;
    property PenWidth:integer read FPenWidth write FPenWidth default 10;
 
   end;
@@ -114,7 +114,7 @@ end;
 procedure TRpShape.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 begin
  metafile.Pages[metafile.CurrentPage].NewDrawObject(aposy+PosY,aposx+PosX,Width,Height,
-  Shape,BrushStyle,BrushColor,PenStyle,PenWidth,PenColor);
+  integer(Shape),BrushStyle,BrushColor,PenStyle,PenWidth,PenColor);
 end;
 
 constructor TRpImage.Create(AOwner:TComponent);

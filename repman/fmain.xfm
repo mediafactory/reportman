@@ -114,6 +114,7 @@ object FMainf: TFMainf
       Left = 227
       Top = 4
       Height = 26
+      Hint = 'Inserts a static text'
       Style = tbsCheck
       Caption = 'BLabel'
       Enabled = False
@@ -124,6 +125,7 @@ object FMainf: TFMainf
       Left = 201
       Top = 4
       Height = 26
+      Hint = 'Select objects'
       Style = tbsCheck
       Caption = 'BArrow'
       Enabled = False
@@ -134,16 +136,19 @@ object FMainf: TFMainf
       Left = 253
       Top = 4
       Height = 26
+      Hint = 'Inserts a expression'
       Style = tbsCheck
       Caption = 'BExpression'
       Enabled = False
       Grouped = True
       ImageIndex = 10
+      OnMouseUp = BExpressionMouseUp
     end
     object BShape: TToolButton
       Left = 279
       Top = 4
       Height = 26
+      Hint = 'Inserts a simple drawing'
       Style = tbsCheck
       Caption = 'BShape'
       Enabled = False
@@ -154,6 +159,7 @@ object FMainf: TFMainf
       Left = 305
       Top = 4
       Height = 26
+      Hint = 'Inserts a image'
       Style = tbsCheck
       Caption = 'BImage'
       Enabled = False
@@ -164,6 +170,7 @@ object FMainf: TFMainf
       Left = 331
       Top = 4
       Height = 26
+      Hint = 'Inserts a chart'
       Style = tbsCheck
       Caption = 'BChart'
       Enabled = False
@@ -1241,5 +1248,15 @@ object FMainf: TFMainf
     SaveIndex = 0
     Left = 280
     Top = 80
+  end
+  object MFields: TPopupMenu
+    Left = 412
+    Top = 76
+    object est1: TMenuItem
+      Caption = 'Test'
+    end
+    object ext21: TMenuItem
+      Caption = 'Text2'
+    end
   end
 end

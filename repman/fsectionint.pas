@@ -41,6 +41,7 @@ type
   TRpSectionInterface=class(TRpSizeInterface)
    private
     FOnDestroy:TNotifyEvent;
+    calledposchange:Boolean;
    protected
     procedure Paint;override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -217,6 +218,10 @@ begin
   ltypes.Add(SRpSBool);
   lvalues.Add(BoolToStr(TRpSection(printitem).AlignBottom,true));
 
+  lnames.Add(SRPHorzDesp);
+  ltypes.Add(SRpSBool);
+  lvalues.Add(BoolToStr(TRpSection(printitem).HorzDesp,true));
+
  end;
 end;
 
@@ -272,6 +277,11 @@ begin
   if pname=SRPAlignBottom then
   begin
    TRpSection(fprintitem).AlignBottom:=StrToBool(Value);
+   exit;
+  end;
+  if pname=SRpHorzDesp then
+  begin
+   TRpSection(fprintitem).HorzDesp:=StrToBool(Value);
    exit;
   end;
  end;
@@ -330,6 +340,11 @@ begin
    Result:=BoolToStr(TRpSection(fprintitem).AlignBottom,true);
    exit;
   end;
+  if pname=SRPHorzDesp then
+  begin
+   Result:=BoolToStr(TRpSection(fprintitem).HorzDesp,true);
+   exit;
+  end;
  end;
  Result:=inherited GetProperty(pname);
 end;
@@ -340,8 +355,18 @@ var
  rec:TRect;
  bitmap:TBitmap;
 begin
- if Assigned(OnPosChange) then
-  OnPosChange(Self);
+ // Bug in WINDOWS when changing the size of a section
+ // Remove this when clx updated
+ if not calledposchange then
+ begin
+  calledposchange:=true;
+  try
+   if Assigned(OnPosChange) then
+    OnPosChange(Self);
+  finally
+   calledposchange:=false;
+  end;
+ end;
  if Not Assigned(fprintitem) then
   exit;
  if Not Assigned(fprintitem.Owner) then
@@ -394,7 +419,8 @@ begin
  if fmainf.BExpression.Down then
  begin
   asizepos:=TRpExpression.Create(printitem.Owner);
-  TRpExpression(asizepos).Expression:= SRpSampleExpression;
+  // Search if theres a selected field
+  TRpExpression(asizepos).Expression:=fmainf.GetExpressionText;
   asizeposint:=TRpExpressionInterface.Create(Self,asizepos);
  end;
  if fmainf.BShape.Down then

@@ -34,10 +34,13 @@ type
   public
    function Execute:boolean;
    procedure PrinterSetup;
+   function GetReport:TRpReport;
    constructor Create(AOwner:TComponent);override;
-   property Report:TRpReport read FReport;
+   procedure CheckLoaded;
+   procedure SetFileName(Value:TFilename);
+   property Report:TRpReport read GetReport;
   published
-   property Filename:TFilename read FFilename write FFilename;
+   property Filename:TFilename read FFilename write SetFilename;
    property Preview:Boolean read FPreview write FPreview default true;
    property ShowProgress:boolean read FShowProgress write FShowProgress
     default true;
@@ -52,21 +55,61 @@ begin
  FShowProgress:=true;
  FFilename:='';
  FPreview:=true;
- FReport:=TRpReport.Create(Self);
  FTitle:=SRpUntitled;
 end;
+
+procedure TCLXReport.SetFileName(Value:TFilename);
+begin
+ if (csloading in ComponentState) then
+ begin
+  FFilename:=Value;
+  exit;
+ end;
+ if FFilename<>Value then
+ begin
+  if Assigned(FReport) then
+  begin
+   FReport.free;
+   FReport:=nil;
+  end;
+ end;
+end;
+
+
+
+function TCLXReport.GetReport:TRpReport;
+begin
+ CheckLoaded;
+ Result:=FReport;
+end;
+
 
 procedure TCLXReport.PrinterSetup;
 begin
  Printer.ExecuteSetup;
 end;
 
-function TCLXReport.Execute:boolean;
+procedure TCLXReport.CheckLoaded;
 begin
  // Loads the report
  if Length(FFilename)<1 then
   Raise Exception.Create(SRpNoFilename);
- FReport.LoadFromFile(FFilename);
+ if Assigned(FReport) then
+  exit;
+ FReport:=TRpReport.Create(Self);
+ try
+  FReport.LoadFromFile(FFilename);
+ except
+  FReport.Free;
+  FReport:=nil;
+  raise;
+ end;
+end;
+
+
+function TCLXReport.Execute:boolean;
+begin
+ CheckLoaded;
  if FPreview then
  begin
   Result:=ShowPreview(report,Title);

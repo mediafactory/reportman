@@ -48,6 +48,7 @@ type
    FComponents:TRpCommonList;
    FAutoExpand:Boolean;
    FAutoContract:Boolean;
+   FHorzDesp:Boolean;
    function GetSectionCaption:String;
    procedure SetComponents(Value:TRpCommonList);
    procedure SetGroupName(Value:string);
@@ -75,6 +76,7 @@ type
     default false;
    property AutoContract:Boolean read FAutoContract write FAutoContract
     default false;
+   property HorzDesp:Boolean read FHorzDesp write FHorzDesp default false;
  end;
 
 implementation
