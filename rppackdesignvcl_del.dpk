@@ -66,6 +66,10 @@ contains
   rpmdfwizardvcl in 'rpmdfwizardvcl.pas' {FRpWizardVCL},
   rpmdsysinfo in 'rpmdsysinfo.pas' {FRpSysInfo},
   rpmdfdatatextvcl in 'rpmdfdatatextvcl.pas' {FRpDataTextVCL},
-  rpwebmetaclient in 'rpwebmetaclient.pas';
+  rpwebmetaclient in 'rpwebmetaclient.pas',
+  D7ComboBoxStringsGetPatch in 'D7ComboBoxStringsGetPatch.pas',
+  rpeditconnvcl in 'rpeditconnvcl.pas' {FRpEditConVCL},
+  rpmdfopenlibvcl in 'rpmdfopenlibvcl.pas' {FRpOpenLibVCL},
+  rpmdftreevcl in 'rpmdftreevcl.pas' {FRpDBTreeVCL: TFrame};
 
 end.

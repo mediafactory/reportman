@@ -34,7 +34,7 @@ begin
   RegisterComponents('Reportman', [TRpExpreDialogVCL]);
   // TRpActiveXReport is a Wrapper to generate the ActiveX version
   // with Delphi 6 Active X Control Wizard
-  RegisterComponents('Reportman', [TRpActiveXReport]);
+//  RegisterComponents('Reportman', [TRpActiveXReport]);
 end;
 
 end.

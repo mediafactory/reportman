@@ -120,6 +120,16 @@ begin
  BTest.Caption:=TranslateStr(753,BTest.Caption);
  BBuild.Caption:=TranslateStr(168,BBuild.Caption);
 
+ GAvailable.Caption:=TranslateStr(1098,GAvailable.Caption);
+ LConnectionString.Caption:=TranslateStr(1099,LConnectionString.Caption);
+ LAvailable.Caption:=TranslateStr(1100,LAvailable.Caption);
+ LDriver.Caption:=TranslateStr(1101,LDriver.Caption);
+ MNew.Caption:=TranslateStr(40,MNew.Caption);
+ ANewConnection.Caption:=TranslateStr(1102,ANewConnection.Caption);
+ ANewConnection.Hint:=TranslateStr(1103,ANewConnection.Hint);
+ ADelete.Caption:=TranslateStr(1104,ADelete.Caption);
+ ADelete.Hint:=TranslateStr(1105,ADelete.Hint);
+
  GetRpDatabaseDrivers(GDriver.Items);
  GetRpDatabaseDrivers(ComboDriver.Items);
 

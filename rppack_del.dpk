@@ -88,6 +88,9 @@ contains
   rpmdshfolder in 'rpmdshfolder.pas',
   rpmdrepclient in 'rpmdrepclient.pas' {modclient: TDataModule},
   rpmdprotocol in 'rpmdprotocol.pas',
-  rpdatatext in 'rpdatatext.pas';
+  rpdatatext in 'rpdatatext.pas',
+  rptextdriver in 'rptextdriver.pas',
+  rpvgraphutils in 'rpvgraphutils.pas',
+  rpgraphutilsvcl in 'rpgraphutilsvcl.pas' {FRpMessageDlgVCL};
 
 end.

@@ -183,3 +183,9 @@ c:\archivos de programa\borland\delphi7\bin\dclRave70.bpl=Rave Reports BE 5.0 Pa
 c:\archivos de programa\borland\delphi7\Bin\dclofficexp70.bpl=Microsoft Office XP Sample Automation Server Wrapper Components
 c:\archivos de programa\borland\delphi7\Bin\dclIntraweb_50_70.bpl=Intraweb 5.0 Design Package for Delphi 7
 c:\archivos de programa\borland\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+[HistoryLists\hlBPLOutput]
+Count=1
+Item0=c:\provacomp

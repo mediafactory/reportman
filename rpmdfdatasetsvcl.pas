@@ -48,10 +48,9 @@ type
     PanelBasic: TPanel;
     LMasterDataset: TLabel;
     LConnection: TLabel;
-    BShowData: TButton;
     ComboDataSource: TComboBox;
     ComboConnection: TComboBox;
-    Button1: TButton;
+    BShowData: TButton;
     Splitter1: TSplitter;
     PBottom: TPanel;
     PControl: TPageControl;
@@ -80,12 +79,12 @@ type
     TabMyBase: TTabSheet;
     LIndexFields: TLabel;
     LMyBase: TLabel;
-    Label1: TLabel;
+    LFields: TLabel;
     EMyBase: TEdit;
     EIndexFields: TEdit;
     BMyBase: TButton;
     BSearchFieldsFile: TButton;
-    GroupBox1: TGroupBox;
+    GUnions: TGroupBox;
     LabelUnions: TLabel;
     ComboUnions: TComboBox;
     CheckGroupUnion: TCheckBox;
@@ -171,14 +170,25 @@ begin
  LMyBase.Caption:=TranslateStr(167,LMyBase.Caption);
  LIndexFields.Caption:=TranslateStr(164,LIndexFields.Caption);
  BMyBase.Caption:=TranslateStr(168,BMyBase.Caption);
+ BSearchFieldsFile.Caption:=TranslateStr(168,BSearchFieldsFile.Caption);
  Caption:=TranslateStr(178,Caption);
  LFirstRange.Caption:=TranslateStr(831,LFirstRange.Caption);
  LLastRange.Caption:=TranslateStr(832,LLastRange.Caption);
  LRange.Caption:=TranslateStr(833,LRange.Caption);
- // ANew.Hint:=TranslateStr(833,ANew.Hint);
-// ADelete.Hint:=TranslateStr(833,ADelete.Hint);
-// ARename.Hint:=TranslateStr(833,ARename.Hint);
-// BParams.Hint:=TranslateStr(152,BParams.Hint);
+ GUnions.Caption:=TranslateStr(1082,GUnions.Caption);
+ LabelUnions.Caption:=TranslateStr(1083,LabelUnions.Caption);
+ CheckGroupUnion.Caption:=TranslateStr(1084,CheckGroupUnion.Caption);
+ LFields.Caption:=TranslateStr(1085,LFields.Caption);
+ BModify.Caption:=TranslateStr(1086,BModify.Caption);
+
+ ANew.Caption:=TranslateStr(539,ANew.Caption);
+ ANew.Hint:=Anew.Caption;
+ ARename.Caption:=TranslateStr(540,ARename.Caption);
+ ARename.Hint:=ARename.Caption;
+ ADelete.Caption:=TranslateStr(150,ADelete.Caption);
+ ADelete.Hint:=ARename.Caption;
+ BParams.Hint:=TranslateStr(152,BParams.Hint);
+
  PBottom.Height:=250;
 end;
 

@@ -34,9 +34,9 @@ uses SysUtils, Classes, QGraphics, QForms,
 type
   TFRpDataText = class(TForm)
     PTop: TPanel;
-    Label1: TLabel;
+    LFieldsFile: TLabel;
     EFileName: TEdit;
-    Label2: TLabel;
+    LSampleFile: TLabel;
     ESampleFile: TEdit;
     PClient: TPanel;
     ActionList1: TActionList;
@@ -71,7 +71,7 @@ type
     DDataTypeCODE: TIntegerField;
     DFieldsFIELDNAME: TStringField;
     DFieldsFIELDTYPE: TIntegerField;
-    Button1: TButton;
+    BOK: TButton;
     DDataTypeDESCRIPTION: TStringField;
     DFieldsFIELDTYPENAME: TStringField;
     DFieldsFIELDSIZE: TIntegerField;
@@ -151,6 +151,9 @@ end;
 
 procedure TFRpDataText.FormCreate(Sender: TObject);
 begin
+ Caption:=TranslateStr(1088,Caption);
+ BOK.Caption:=SRpOk;
+
  lfields:=TStringList.Create;
  DDataType.CreateDataset;
  DDataType.AppendRecord([Integer(ftInteger),AnsiString(SRpSInteger)]);
@@ -166,6 +169,18 @@ begin
  DYesNo.CreateDataset;
  DYesNo.AppendRecord([True,AnsiString(SRpYes)]);
  DYesNo.AppendRecord([False,AnsiString(SRpNo)]);
+
+ LFieldsFile.Caption:=TranslateStr(1085,LFieldsFile.Caption);
+ LSampleFile.Caption:=TranslateStr(1087,LSampleFile.Caption);
+ Label3.Caption:=TranslateStr(1089,Label3.Caption);
+ Label4.Caption:=TranslateStr(1090,Label4.Caption);
+ BTest.Caption:=TranslateStr(42,BTest.Caption);
+ ANewField.Caption:=TranslateStr(1091,ANewField.Caption);
+ ANewField.Hint:=TranslateStr(1092,ANewField.Hint);
+ ADelete.Caption:=TranslateStr(1093,ADelete.Caption);
+ ADelete.Hint:=TranslateStr(1094,ADelete.Hint);
+ TabData.Caption:=TranslateStr(1094,TabData.Caption);
+ TabSource.Caption:=TranslateStr(1095,TabSource.Caption);
 end;
 
 

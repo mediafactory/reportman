@@ -56,6 +56,8 @@ prerelease:
         copy webactivex\WebReportManX.cab ..\prerelease
         copy activex\ReportMan.ocx ..\prerelease
         -mkdir ..\prerelease\doc
+        -mkdir ..\prerelease\tutorial
+        xcopy /s doc\tutorial ..\prerelease\tutorial
         xcopy /s doc\doc ..\prerelease\doc
 
 webx:   clean

@@ -26,14 +26,17 @@ object FRpDataTextVCL: TFRpDataTextVCL
     Height = 53
     Align = alTop
     TabOrder = 0
-    object Label1: TLabel
+    DesignSize = (
+      511
+      53)
+    object LFieldsFile: TLabel
       Left = 8
       Top = 8
       Width = 43
       Height = 13
       Caption = 'Fields file'
     end
-    object Label2: TLabel
+    object LSampleFile: TLabel
       Left = 8
       Top = 32
       Width = 51
@@ -160,30 +163,30 @@ object FRpDataTextVCL: TFRpDataTextVCL
         TabOrder = 0
         object Label4: TLabel
           Left = 8
-          Top = 28
+          Top = 32
           Width = 197
           Height = 13
           Caption = 'Ignore after record separator (ASCII code)'
         end
         object Label3: TLabel
           Left = 8
-          Top = 4
+          Top = 8
           Width = 145
           Height = 13
           Caption = 'Record separator (ASCII code)'
         end
         object BTest: TButton
-          Left = 120
-          Top = 48
+          Left = 112
+          Top = 56
           Width = 81
-          Height = 29
+          Height = 25
           Caption = 'Open'
           TabOrder = 0
           OnClick = BTestClick
         end
         object ERecordseparator: TEdit
           Left = 248
-          Top = 0
+          Top = 4
           Width = 61
           Height = 21
           TabOrder = 1
@@ -191,17 +194,17 @@ object FRpDataTextVCL: TFRpDataTextVCL
         end
         object EIgnoreAfterRecordseparator: TEdit
           Left = 248
-          Top = 24
+          Top = 28
           Width = 61
           Height = 21
           TabOrder = 2
           Text = 'ERecordseparator'
         end
-        object Button1: TButton
+        object BOK: TButton
           Left = 8
-          Top = 48
+          Top = 56
           Width = 81
-          Height = 29
+          Height = 25
           Caption = 'OK'
           TabOrder = 3
           OnClick = Button1Click
@@ -257,13 +260,13 @@ object FRpDataTextVCL: TFRpDataTextVCL
     Top = 128
     object ANewField: TAction
       Caption = 'New field'
-      Hint = 'Adds a new parameter'
+      Hint = 'Adds a new field definition'
       ImageIndex = 2
       OnExecute = ANewFieldExecute
     end
     object ADelete: TAction
       Caption = 'Delete field'
-      Hint = 'Deletes the selected field'
+      Hint = 'Deletes the selected field definition'
       ImageIndex = 3
       OnExecute = ADeleteExecute
     end

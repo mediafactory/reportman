@@ -4,8 +4,8 @@ object FRpDataText: TFRpDataText
   ActiveControl = EFileName
   AutoScroll = False
   Caption = 'Text file to database table configuration'
-  ClientHeight = 420
-  ClientWidth = 479
+  ClientHeight = 447
+  ClientWidth = 550
   Color = clButton
   Position = poScreenCenter
   ShowHint = True
@@ -13,34 +13,34 @@ object FRpDataText: TFRpDataText
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 20
-  TextWidth = 8
+  TextHeight = 13
+  TextWidth = 6
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 479
+    Width = 550
     Height = 65
     Align = alTop
     TabOrder = 0
-    object Label1: TLabel
+    object LFieldsFile: TLabel
       Left = 8
       Top = 8
-      Width = 67
-      Height = 20
+      Width = 43
+      Height = 13
       Caption = 'Fields file'
     end
-    object Label2: TLabel
+    object LSampleFile: TLabel
       Left = 8
       Top = 40
-      Width = 80
-      Height = 20
+      Width = 51
+      Height = 13
       Caption = 'Sample file'
     end
     object EFileName: TEdit
       Left = 108
       Top = 4
-      Width = 364
-      Height = 28
+      Width = 435
+      Height = 21
       Anchors = [akLeft, akTop, akRight]
       Color = clInfoBk
       ReadOnly = True
@@ -49,9 +49,9 @@ object FRpDataText: TFRpDataText
     end
     object ESampleFile: TEdit
       Left = 108
-      Top = 32
-      Width = 364
-      Height = 28
+      Top = 36
+      Width = 435
+      Height = 21
       Anchors = [akLeft, akTop, akRight]
       Color = clInfoBk
       ReadOnly = True
@@ -62,15 +62,15 @@ object FRpDataText: TFRpDataText
   object PClient: TPanel
     Left = 0
     Top = 65
-    Width = 479
-    Height = 355
+    Width = 550
+    Height = 382
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object Splitter1: TSplitter
       Left = 0
       Top = 156
-      Width = 479
+      Width = 550
       Height = 8
       Cursor = crVSplit
       Align = alTop
@@ -79,7 +79,7 @@ object FRpDataText: TFRpDataText
     object PList: TPanel
       Left = 0
       Top = 0
-      Width = 479
+      Width = 550
       Height = 156
       Align = alTop
       BevelOuter = bvNone
@@ -87,7 +87,7 @@ object FRpDataText: TFRpDataText
       object ToolBar1: TToolBar
         Left = 0
         Top = 0
-        Width = 479
+        Width = 550
         Height = 30
         AutoSize = True
         ButtonHeight = 26
@@ -132,54 +132,54 @@ object FRpDataText: TFRpDataText
       object GridFields: TDBGrid
         Left = 0
         Top = 30
-        Width = 479
+        Width = 550
         Height = 126
         Align = alClient
         DataSource = SFiedls
         TabOrder = 1
         TitleFont.Color = clBlack
-        TitleFont.Height = 16
-        TitleFont.Name = 'adobe-helvetica'
+        TitleFont.Height = 11
+        TitleFont.Name = 'MS Shell Dlg'
         TitleFont.Pitch = fpVariable
         TitleFont.Style = []
-        TitleFont.Weight = 0
+        TitleFont.Weight = 40
       end
     end
     object PBottom: TPanel
       Left = 0
       Top = 164
-      Width = 479
-      Height = 191
+      Width = 550
+      Height = 218
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
       object PFieldProps: TPanel
         Left = 0
         Top = 0
-        Width = 479
+        Width = 550
         Height = 85
         Align = alTop
         BevelOuter = bvNone
         TabOrder = 0
         object Label4: TLabel
           Left = 8
-          Top = 28
-          Width = 305
-          Height = 20
+          Top = 32
+          Width = 197
+          Height = 13
           Caption = 'Ignore after record separator (ASCII code)'
         end
         object Label3: TLabel
           Left = 8
           Top = 4
-          Width = 224
-          Height = 20
+          Width = 145
+          Height = 13
           Caption = 'Record separator (ASCII code)'
         end
         object BTest: TButton
           Left = 96
           Top = 56
           Width = 81
-          Height = 29
+          Height = 25
           Caption = 'Open'
           TabOrder = 0
           OnClick = BTestClick
@@ -188,23 +188,23 @@ object FRpDataText: TFRpDataText
           Left = 321
           Top = 0
           Width = 61
-          Height = 28
+          Height = 21
           TabOrder = 1
           Text = 'ERecordseparator'
         end
         object EIgnoreAfterRecordseparator: TEdit
           Left = 321
-          Top = 24
+          Top = 28
           Width = 61
-          Height = 28
+          Height = 21
           TabOrder = 2
           Text = 'ERecordseparator'
         end
-        object Button1: TButton
+        object BOK: TButton
           Left = 8
           Top = 56
           Width = 81
-          Height = 29
+          Height = 25
           Caption = 'OK'
           TabOrder = 3
           OnClick = Button1Click
@@ -213,8 +213,8 @@ object FRpDataText: TFRpDataText
       object PControl: TPageControl
         Left = 0
         Top = 85
-        Width = 479
-        Height = 106
+        Width = 550
+        Height = 133
         ActivePage = TabSource
         Align = alClient
         TabOrder = 1
@@ -223,8 +223,8 @@ object FRpDataText: TFRpDataText
           object MSource: TMemo
             Left = 0
             Top = 0
-            Width = 471
-            Height = 75
+            Width = 542
+            Height = 103
             Align = alClient
             Color = clInfoBk
             ReadOnly = True
@@ -239,17 +239,17 @@ object FRpDataText: TFRpDataText
           object GridTest: TDBGrid
             Left = 0
             Top = 0
-            Width = 471
-            Height = 75
+            Width = 542
+            Height = 103
             Align = alClient
             DataSource = SData
             TabOrder = 0
             TitleFont.Color = clBlack
-            TitleFont.Height = 16
-            TitleFont.Name = 'adobe-helvetica'
+            TitleFont.Height = 11
+            TitleFont.Name = 'MS Shell Dlg'
             TitleFont.Pitch = fpVariable
             TitleFont.Style = []
-            TitleFont.Weight = 0
+            TitleFont.Weight = 40
           end
         end
       end
@@ -351,11 +351,11 @@ object FRpDataText: TFRpDataText
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFF0000424DD6000000000000003E000000280000002600000013000000
       010001000000000098000000120B0000120B00000200000002000000FFFFFF00
-      000000000000000001E270100000000001CDE0020000000003FFFF0000000000
-      00EFFFFD00000000022DD0100000000001000000000000000000000000000000
-      000000000000000002C7E8020000000001CDE0020000000003FFFF0000000000
-      03FFFF000000000003FFFF000000000003FFFF000000000003FFFF0000000000
-      03FFFF000000000003FFFF000000000003FFFF000000000003FFFF00}
+      000000000000000003FFFFFF0000000003FFFFFF0000000003FFFFFF0FFE0000
+      23FFFFFF0802008003FFFFFF080201C043FFFFFF080201C083FFFFFF080200E1
+      83FFFFFF0802007303FFFFFF0802003E03FFFFFF0802001C03FFFFFF0802003E
+      03FFFFFF081E007203FFFFFF081401E183FFFFFF081803C0C3FFFFFF0FF00300
+      63FFFFFF0000000003FFFFFF0000000003FFFFFF0000000003FFFFFF}
   end
   object DFields: TClientDataSet
     Aggregates = <>

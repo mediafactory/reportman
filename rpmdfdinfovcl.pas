@@ -71,12 +71,12 @@ begin
  fdatasets.Parent:=TabDatasets;
  fdatasets.Datainfo:=report.DataInfo;
  fdatasets.Databaseinfo:=report.DatabaseInfo;
+ fconnections.Databaseinfo:=report.DatabaseInfo;
  fdatasets.params:=report.params;
  if report.DatabaseInfo.Count>0 then
   PControl.ActivePage:=TabDatasets
  else
   PControl.ActivePage:=TabConnections;
- fconnections.Databaseinfo:=report.DatabaseInfo;
 end;
 
 procedure ShowDataConfig(report:TRpReport);
@@ -100,7 +100,9 @@ procedure TFRpDInfoVCL.FormCreate(Sender: TObject);
 begin
  BOK.Caption:=TranslateStr(93,BOK.Caption);
  BCancel.Caption:=TranslateStr(94,BCancel.Caption);
-// Caption:=TranslateStr(259,Caption);
+ Caption:=TranslateStr(1097,Caption);
+ TabConnections.Caption:=TranslateStr(142,TabConnections.Caption);
+ TabDatasets.Caption:=TranslateStr(148,TabDatasets.Caption);
 end;
 
 

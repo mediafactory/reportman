@@ -1,11 +1,9 @@
 {TODO -oToni -cDesigner : Add Categories to the object inspector}
 {TODO -oToni -cEngine : Add Between function to evaluator}
 {TODO 2 -oToni -cDesigner : Rename components in design time}
-{TODO 2 -oToni -cEngine :
-Add more parameters features, expresions before open dataset,
-string sustitution in SQL sentence, list of values, dataset lookup}
-{TODO 1 -oToni -cEngine : Add alter params as parameters to printrep and printreptopdf}
-{TODO 2 -oToni -cEngine : Add a text only driver and addons for Epson/Proprinter/TM drivers}
+
+
+
 
 
 {TODO 1 -oToni -cDesigner : Add Wizards to create reports}
@@ -20,10 +18,6 @@ string sustitution in SQL sentence, list of values, dataset lookup}
 
 
 
-{TODO 1 -oToni -cEngine : Allow Memos autoexpand across multiple pages}
-{DONE 3  -oToni -cEngine : Add a report web server}
-
-{DONE 4 -oToni -cEngine : Implementation of external sections}
 
 
 
@@ -32,7 +26,11 @@ string sustitution in SQL sentence, list of values, dataset lookup}
 
 
 
-{TODO 1 -oToni -cEngine : Implementation of vertical labels as subreport column width}
+
+
+
+
+
 
 
 
@@ -51,7 +49,7 @@ string sustitution in SQL sentence, list of values, dataset lookup}
 
 {TODO 1 -oToni -cEngine : Enhace charting adding poliline to metafiles}
 
-{DONE 1 -oToni -cOthers : Conversion program for gestor.exe}
+
 {TODO 2   -oToni -cEngine : Saving and loading reports from database tables using the designer}
 
 

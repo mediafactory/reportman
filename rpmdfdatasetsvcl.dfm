@@ -1,15 +1,15 @@
 object FRpDatasetsVCL: TFRpDatasetsVCL
   Left = 0
   Top = 0
-  Width = 443
-  Height = 277
+  Width = 526
+  Height = 368
   Align = alClient
   AutoScroll = False
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 443
+    Width = 526
     Height = 105
     Align = alTop
     BevelOuter = bvNone
@@ -17,7 +17,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 443
+      Width = 526
       Height = 27
       AutoSize = True
       ButtonHeight = 25
@@ -78,7 +78,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object PTop1: TPanel
       Left = 0
       Top = 27
-      Width = 443
+      Width = 526
       Height = 78
       Align = alClient
       BevelOuter = bvNone
@@ -103,14 +103,11 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object PanelBasic: TPanel
         Left = 169
         Top = 0
-        Width = 274
+        Width = 357
         Height = 78
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
-        DesignSize = (
-          274
-          78)
         object LMasterDataset: TLabel
           Left = 4
           Top = 28
@@ -125,16 +122,6 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Height = 13
           Caption = 'Connection'
         end
-        object BShowData: TButton
-          Left = 831
-          Top = 0
-          Width = 87
-          Height = 29
-          Anchors = [akTop, akRight]
-          Caption = 'Show data'
-          TabOrder = 0
-          OnClick = BShowDataClick
-        end
         object ComboDataSource: TComboBox
           Left = 112
           Top = 24
@@ -142,7 +129,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Height = 21
           Style = csDropDownList
           ItemHeight = 13
-          TabOrder = 1
+          TabOrder = 0
           OnChange = MSQLChange
         end
         object ComboConnection: TComboBox
@@ -152,16 +139,16 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Height = 21
           Style = csDropDownList
           ItemHeight = 13
-          TabOrder = 2
+          TabOrder = 1
           OnChange = MSQLChange
         end
-        object Button1: TButton
+        object BShowData: TButton
           Left = 5
           Top = 48
           Width = 132
           Height = 25
           Caption = 'Show data'
-          TabOrder = 3
+          TabOrder = 2
           OnClick = BShowDataClick
         end
       end
@@ -170,17 +157,17 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
   object PBottom: TPanel
     Left = 0
     Top = 105
-    Width = 443
-    Height = 172
+    Width = 526
+    Height = 263
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 443
-      Height = 172
-      ActivePage = TabSQL
+      Width = 526
+      Height = 263
+      ActivePage = TabMyBase
       Align = alClient
       TabOrder = 0
       object TabSQL: TTabSheet
@@ -188,8 +175,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object MSQL: TMemo
           Left = 0
           Top = 0
-          Width = 435
-          Height = 144
+          Width = 460
+          Height = 175
           Align = alClient
           TabOrder = 0
           WordWrap = False
@@ -202,7 +189,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 435
+          Width = 518
           Height = 37
           Align = alTop
           Columns = 2
@@ -215,15 +202,15 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 435
-          Height = 107
+          Width = 518
+          Height = 198
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
           object PBDEFilter: TPanel
             Left = 0
             Top = 0
-            Width = 458
+            Width = 460
             Height = 17
             Align = alTop
             Alignment = taLeftJustify
@@ -234,8 +221,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           object MBDEFilter: TMemo
             Left = 0
             Top = 17
-            Width = 458
-            Height = 122
+            Width = 460
+            Height = 121
             Align = alClient
             ScrollBars = ssBoth
             TabOrder = 1
@@ -388,7 +375,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Height = 13
           Caption = 'MyBase Filename'
         end
-        object Label1: TLabel
+        object LFields: TLabel
           Left = 0
           Top = 28
           Width = 61
@@ -429,7 +416,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           TabOrder = 3
           OnClick = BMyBaseClick
         end
-        object GroupBox1: TGroupBox
+        object GUnions: TGroupBox
           Left = 0
           Top = 76
           Width = 449
@@ -449,7 +436,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             Width = 165
             Height = 21
             Style = csDropDownList
-            ItemHeight = 0
+            ItemHeight = 13
             TabOrder = 0
           end
           object CheckGroupUnion: TCheckBox
@@ -499,7 +486,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object BModify: TButton
           Left = 304
           Top = 26
-          Width = 69
+          Width = 65
           Height = 23
           Caption = 'Modify...'
           TabOrder = 6
@@ -1089,8 +1076,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     Filter = 'Mybase files|*.cds|Text files|*.txt|All files|*.*|Inifiles|*.ini'
     FilterIndex = 0
     Title = 'Open'
-    Left = 232
-    Top = 324
+    Left = 164
+    Top = 88
   end
   object ActionList1: TActionList
     Images = ImageList1
