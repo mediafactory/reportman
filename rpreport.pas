@@ -145,6 +145,8 @@ type
    Fidenpagenumgroup:TIdenReportVar;
    FidenEof:TIdenEof;
    Fidenfreespace:TIdenReportVar;
+   Fidenpagewidth:TIdenReportVar;
+   Fidenpageheight:TIdenReportVar;
    Fidenfreespacecms:TIdenReportVar;
    Fidenfreespaceinch:TIdenReportVar;
    Fidencurrentgroup:TIdenReportVar;
@@ -185,6 +187,9 @@ type
    procedure CheckIfDataAvailable;
    procedure UpdateCachedSources(alias:string);
    procedure CheckProgress;
+   function OnGraphicOp(Top,Left,Width,Height:integer;
+    DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
+    PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean;
   protected
     section:TRpSection;
     subreport:TRpSubreport;
@@ -343,6 +348,16 @@ begin
      if varname='FIRSTSECTION' then
      begin
       Result:=not freport.printedsomething;
+     end
+     else
+     if varname='PAGEWIDTH' then
+     begin
+      Result:=freport.FInternalPageWidth;
+     end
+     else
+     if varname='PAGEHEIGHT' then
+     begin
+      Result:=freport.FInternalPageHeight;
      end;
 end;
 
@@ -400,6 +415,12 @@ begin
  FIdenfreespace:=TIdenReportVar.Create(nil);
  Fidenfreespace.varname:='FREE_SPACE_TWIPS';
  Fidenfreespace.FReport:=self;
+ FIdenpagewidth:=TIdenReportVar.Create(nil);
+ Fidenpagewidth.varname:='PAGEWIDTH';
+ Fidenpagewidth.FReport:=self;
+ FIdenpageheight:=TIdenReportVar.Create(nil);
+ Fidenpageheight.varname:='PAGEHEIGHT';
+ Fidenpageheight.FReport:=self;
  FIdenfreespacecms:=TIdenReportVar.Create(nil);
  Fidenfreespacecms.varname:='FREE_SPACE_CMS';
  Fidenfreespacecms.FReport:=self;
@@ -505,6 +526,8 @@ begin
  FIdenPagenum.free;
  FIdenPagenumgroup.free;
  Fidenfreespace.free;
+ FIdenPagewidth.free;
+ FIdenPageHeight.free;
  FIdenCurrentGroup.free;
  FIdenFirstSection.free;
  Fidenfreespacecms.free;
@@ -1671,6 +1694,8 @@ begin
  eval.AddVariable('PAGE',fidenpagenum);
  eval.AddVariable('PAGENUM',fidenpagenumgroup);
  eval.AddVariable('FREE_SPACE_TWIPS',fidenfreespace);
+ eval.AddVariable('PAGEWIDTH',fidenpagewidth);
+ eval.AddVariable('PAGEHEIGHT',fidenpageheight);
  eval.AddVariable('CURRENTGROUP',fidencurrentgroup);
  eval.AddVariable('FIRSTSECTION',fidenfirstsection);
  eval.AddVariable('FREE_SPACE_CMS',fidenfreespacecms);
@@ -1769,6 +1794,7 @@ begin
  end;
  FEvaluator:=TRpEvaluator.Create(nil);
  FEvaluator.Language:=Language;
+ FEvaluator.OnGraphicOp:=OnGraphicOp;
  PageNumGroup:=-1;
  FRecordCount:=0;
 
@@ -2420,6 +2446,15 @@ begin
    sec.Height:=Round((TWIPS_PER_INCHESS/6)*Round(sec.Height/(TWIPS_PER_INCHESS/6)));
   end;
  end;
+end;
+
+function TRpReport.OnGraphicOp(Top,Left,Width,Height:integer;
+    DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
+    PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean;
+begin
+ Result:=true;
+ metafile.Pages[metafile.CurrentPage].NewDrawObject(Top,Left,Width,Height,
+  DrawStyle,BrushStyle,BrushColor,PenStyle,PenWidth,PenColor);
 end;
 
 

@@ -140,6 +140,14 @@ type
    constructor Create(AOwner:TComponent);override;
   end;
 
+ TIdenGraphicOperation=class(TIdenFunction)
+  protected
+   function GeTRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+
  { Function Modul }
  TIdenModul=class(TIdenFunction)
   protected
@@ -1223,6 +1231,7 @@ begin
 end;
 
 
+
 constructor TVariableGrap.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
@@ -1277,6 +1286,39 @@ begin
    Raise TRpNamedException.Create(SRpEvalType,IdenName);
  Result:=StringReplace(String(Params[0]),String(Params[1]),String(Params[2]),
   [rfReplaceAll, rfIgnoreCase]);
+end;
+
+
+{ TIdenGraphicOperation }
+
+constructor TIdenGraphicOperation.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=10;
+ IdenName:='GraphicOp';
+ Help:='';
+ model:='function '+'GraphicOp'+'(Top,Left,Width,Height:integer;'+#10+
+    'DrawStyle:integer;BrushStyle:integer;BrushColor:integer;'+#10+
+    'PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean';
+ aParams:='';
+end;
+
+{**************************************************************************}
+
+function TIdenGraphicOperation.GeTRpValue:TRpValue;
+var
+ i:integer;
+begin
+ for i:=0 to ParamCount-1 do
+ begin
+  if (Vartype(Params[i])<>varInteger) then
+   Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ end;
+ if Assigned((evaluator As TRpEvaluator).OnGraphicOp) then
+  Result:=(evaluator As TRpEvaluator).OnGraphicOp(Params[0],Params[1],Params[2],Params[3],Params[4],
+   Params[5],Params[6],Params[7],Params[8],Params[9])
+ else
+  Result:=false;
 end;
 
 

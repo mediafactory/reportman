@@ -131,7 +131,7 @@ var
   SRpPrintRep10:WideString='         -pdialog  Show the print dialog';
   SRpPrintPDFRep1:WideString='printreptopdf';
   SRpPrintPDFRep2:WideString='Prints a report manager (.rep) file to a Adobe PDF file';
-  SRpPrintPDFRep3:WideString='Usage: printrep [Options] reportfilename pdffilename';
+  SRpPrintPDFRep3:WideString='Usage: printreptopdf [Options] -stdin|reportfilename [outputfilename]';
   SRpPrintPDFRep4:WideString='         -q        Quiet mode, don''t show progress';
   SRpPrintPDFRep5:WideString='         -from   n Prints report from page pnum';
   SRpPrintPDFRep6:WideString='         -to     n Prints report to page pnum';
@@ -739,9 +739,14 @@ var
   SRpErrorForking:WideString='Error creating fork';
   SRpCreatingTempFile:WideString='Error creating temporary file';
   SRpPlainFile:WideString='Text file';
+  // Form here
   SRpOpenDrawerBefore:WideString='Open drawer before';
   SRpOpenDrawerAfter:WideString='Open drawer after';
-
+  SRpPrintPDFRep10:WideString='         -text     Generate text output with escape codes to print';
+  SRpPrintPDFRep11:WideString='         -textdriver driver Use the text driver for text output';
+  SRpPrintPDFRep12:WideString='         -oemconvert        Force recode to oem for text output';
+  SRpCommandLineStdIN:WideString='         -stdin    Read from standard input instead from a file';
+  SRpTextDrivers:WideString='Text drivers';
 implementation
 
 uses rptranslator;
@@ -1440,6 +1445,11 @@ begin
  TranslateVar(1051,SRpPrintRep10);
  TranslateVar(1052,SRpOpenDrawerBefore);
  TranslateVar(1053,SRpOpenDrawerAfter);
+ TranslateVar(1054,SRpPrintPDFRep10);
+ TranslateVar(1055,SRpPrintPDFRep11);
+ TranslateVar(1056,SRpPrintPDFRep12);
+ TranslateVar(1057,SRpCommandLineStdIN);
+ TranslateVar(1058,SRpTextDrivers);
 end;
 
 {$IFDEF LINUX}

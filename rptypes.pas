@@ -76,6 +76,11 @@ type
   step:TRpFontStep;
  end;
 
+ TRpGraphicOpProc=function (Top,Left,Width,Height:integer;
+    DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
+    PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean of object;
+
+
  TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
 
  TRpStreamFormat=(rpStreamzlib,rpStreamText,rpStreambinary);
@@ -215,6 +220,8 @@ procedure WriteStringToDevice(S,Device:String);
 function GetLastname(astring:string):string;
 function GetPathName(astring:string):string;
 function GetFirstName(astring:string):string;
+function ReadFromStdInputStream:TMemoryStream;
+procedure WriteStreamToStdOutput(astream:TStream);
 {$IFDEF LINUX}
 procedure  ObtainPrinters(alist:TStrings);
 procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title:String);
@@ -1765,6 +1772,7 @@ begin
  drivernames.Add('EPSONTM88IICUT');
  drivernames.Add('EPSONTM88II');
  drivernames.Add('HP-PCL');
+ drivernames.Add('VT100');
 end;
 
 procedure WriteStringToDevice(S,Device:String);
@@ -2090,6 +2098,109 @@ begin
 end;
 {$ENDIF}
 
+function ReadFromStdInputStream:TMemoryStream;
+var
+ memstream:TMemoryStream;
+ astring:String;
+ buffer:array [0..3] of char;
+ pbuf:Pchar;
+ finish:boolean;
+{$IFDEF LINUX}
+ readed:Integer;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+ readed:DWORD;
+ handle:THANDLE;
+ lasterror:Integer;
+{$ENDIF}
+begin
+ memstream:=TMemoryStream.Create;
+ try
+{$IFDEF MSWINDOWS}
+  // In windows obtain sdtin
+  handle:=GetStdHandle(STD_INPUT_HANDLE);
+  if handle=INVALID_HANDLE_VALUE then
+   RaiseLastOsError;
+{$ENDIF}
+  pbuf:=@buffer;
+  astring:='';
+  finish:=false;
+  buffer[1]:=chr(0);
+  repeat
+{$IFDEF LINUX}
+   // In linux the handle 0 is the stdinput
+   readed:=__read(0,pbuf^,1);
+   if readed=0 then
+    finish:=true;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+   if not ReadFile(handle,pbuf^,1,readed,nil) then
+   begin
+    lasterror:=GetLastError;
+    if ((lasterror<>ERROR_HANDLE_EOF) AND (lasterror<>ERROR_BROKEN_PIPE)) then
+    begin
+     RaiseLastOSError;
+    end
+    else
+    begin
+     finish:=true;
+     readed:=0;
+    end;
+   end;
+{$ENDIF}
+   if readed>0 then
+   begin
+    astring:=astring+pbuf[0];
+   end;
+  until finish;
+  if Length(astring)>0 then
+  begin
+   memstream.Write(astring[1],Length(astring));
+   memstream.Seek(0,soFromBeginning);
+  end;
+  Result:=memstream;
+ except
+  memstream.free;
+  raise;
+ end;
+end;
+
+procedure WriteStreamToStdOutput(astream:TStream);
+var
+ memstream:TMemoryStream;
+{$IFDEF LINUX}
+// writed:Integer;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+// writed:DWORD;
+ handle:THANDLE;
+{$ENDIF}
+begin
+{$IFDEF MSWINDOWS}
+ // In windows obtain sdtin
+ handle:=GetStdHandle(STD_OUTPUT_HANDLE);
+ if handle=INVALID_HANDLE_VALUE then
+  RaiseLastOsError;
+{$ENDIF}
+ memstream:=TMemoryStream.Create;
+ try
+  memstream.LoadFromStream(astream);
+  memstream.Seek(0,soFromBeginning);
+{$IFDEF MSWINDOWS}
+//  writed:=FileWrite(handle,MemStream.Memory^,MemStream.Size);
+  FileWrite(handle,MemStream.Memory^,MemStream.Size);
+{$ENDIF}
+{$IFDEF LINUX}
+  __write(1,MemStream.Memory^,MemStream.Size);
+//  writed:=__write(1,MemStream.Memory^,MemStream.Size);
+{$ENDIF}
+// Estandard output interrupted is not a critical error
+//  if LongInt(writed)<>MemStream.Size then
+//   RaiseLastOSError;
+ finally
+  memstream.free;
+ end;
+end;
 
 initialization
 

@@ -23,7 +23,7 @@ interface
 
 uses
   SysUtils, Classes,DB,rptypeval,
-  rpmdconsts,sysconst,rpparser,
+  rpmdconsts,sysconst,rpparser,rptypes,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
@@ -49,6 +49,7 @@ type
   // Variable that contains if we are doing syntax checking
   FChecking:Boolean;
   FLanguage:Integer;
+  FOnGraphicOp:TRpGraphicOpProc;
   procedure SetExpression(Value:string);
   // Recursive functions to evaluate the expresion
   procedure variables(var Value:TRpValue);
@@ -102,6 +103,7 @@ type
   // Database access component link
   property Rpalias:TRpalias read FRpalias write FRpalias;
   property Language:Integer read FLanguage write FLanguage;
+  property OnGraphicOp:TRpGraphicOpProc read FOnGraphicOp write FOnGraphicOp;
  end;
 
  // The visual component
@@ -245,6 +247,9 @@ begin
  //added FRB 20030204
  iden:=TIdenReplaceStr.Create(nil);
  Rpfunctions.AddObject('REPLACESTR',iden);
+ //
+ iden:=TIdenGraphicOperation.Create(nil);
+ Rpfunctions.AddObject('GRAPHICOP',iden);
 
  // Graphic functions
  iden:=TIdenGraphicClear.Create(nil);

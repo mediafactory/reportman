@@ -327,6 +327,8 @@ begin
  else
  begin
   sizeqt.Indexqt:=report.PageSize;
+  sizeqt.CustomWidth:=Round(PageSizeArray[sizeqt.Indexqt].Width/1000*TWIPS_PER_INCHESS);
+  sizeqt.CustomHeight:=Round(PageSizeArray[sizeqt.Indexqt].Height/1000*TWIPS_PER_INCHESS);
  end;
  SetPagesize(sizeqt);
 
@@ -552,7 +554,6 @@ begin
   +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
   FormatFloat('#########,####',Sender.RecordCount)));
 {$ENDIF}
-
 end;
 
 
@@ -565,9 +566,10 @@ var
  oldprogres:TRpProgressEvent;
 begin
  TextDriver:=TRpTextDriver.Create;
- TextDriver.OemConvert:=oemconvert;
- TextDriver.LoadOemConvert:=false;
  TextDriver.ForceDriverName:=Trim(forcedrivername);
+ TextDriver.OemConvert:=oemconvert;
+ if Length(TextDriver.ForceDriverName)>0 then
+  TextDriver.LoadOemConvert:=false;
  aTextDriver:=TextDriver;
  // If report progress must print progress
  oldprogres:=report.OnProgress;
@@ -594,9 +596,10 @@ begin
  if Length(Trim(filename))<0 then
   Raise Exception.Create(SRpNoFileNameProvided+':TXT');
  TextDriver:=TRpTextDriver.Create;
- TextDriver.LoadOemConvert:=false;
- TextDriver.OemConvert:=oemconvert;
  TextDriver.ForceDriverName:=Trim(forcedrivername);
+ TextDriver.OemConvert:=oemconvert;
+ if Length(TextDriver.ForceDriverName)>0 then
+  TextDriver.LoadOemConvert:=false;
  aTextDriver:=TextDriver;
  // If report progress must print progress
  oldprogres:=report.OnProgress;
@@ -869,13 +872,22 @@ begin
  else
  if FPrinterDriverName='PLAIN' then
  begin
-  for i:=Low(TPrinterRawOp) to High(TPrinterRawOp) do
-  begin
-   escapecodes[i]:='';
-  end;
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
- end;
+ end
+ else
+ if FPrinterDriverName='VT100' then
+ begin
+  // Init Printer-Line spacing to 1/6 - Draft mode
+//  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2'+#27+'x'+#0;
+  escapecodes[rpescapelinefeed]:=#10;
+//  escapecodes[rpescapecr]:=#13;
+//  escapecodes[rpescapeformfeed]:=#12;
+//  escapecodes[rpescapenormal]:=#27+'[0m';
+  // Set 10 or 12 cpi, enabled-disable double wide, enable-disable condensed
+  escapecodes[rpescape5cpi]:=#27+'#'+'6';
+  escapecodes[rpescape10cpi]:=#27+'#'+'5';
+ end
 end;
 
 
@@ -885,7 +897,7 @@ var
  j:TRpFontStep;
 begin
  FForceDriverName:=Trim(FForceDriverName);
- if Length(FForceDriverName)<0 then
+ if Length(FForceDriverName)<1 then
  begin
   FPrinterDriver:=GetPrinterEscapeStyleOption(selectedprinter);
   FPlainText:=FPrinterDriver in [rpPrinterDefault,rpPrinterPlain];
@@ -895,6 +907,7 @@ begin
   if UpperCase(FForceDriverName)='PLAIN' then
   begin
    FPrinterDriver:=rpPrinterPlain;
+   FPrinterDriverName:='PLAIN';
    FPlainText:=true;
   end
   else
@@ -924,7 +937,8 @@ begin
   end
   else
   begin
-   FPrinterDriverName:=GetPrinterEscapeStyleDriver(selectedprinter);
+   if Length(FForceDriverName)<1 then
+    FPrinterDriverName:=GetPrinterEscapeStyleDriver(selectedprinter);
    FillEspcapes(FPrinterDriverName);
   end;
  end;
@@ -1436,6 +1450,21 @@ begin
   Result:=#27+'!'+Chr(aselect);
   exit;
  end;
+ if (FPRinterDriverName='VT100') then
+ begin
+  Result:='';
+  if (fontstyle and 1)>0 then
+   Result:=Result+';1';
+  if Length(Result)<1 then
+   if (fontstyle and (1 shl 1))>0 then
+    Result:=Result+';5';
+  if Length(Result)<1 then
+   if (fontstyle and (1 shl 2))>0 then
+    Result:=Result+';4';
+  Result:=#27+'[0'+Result+'m';
+  exit;
+ end;
+
  Result:=escapecodes[rpescapenormal];
  if (fontstyle and 1)>0 then
   Result:=Result+escapecodes[rpescapebold];

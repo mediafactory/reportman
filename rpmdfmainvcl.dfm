@@ -30,6 +30,7 @@ object FRpMainFVCL: TFRpMainFVCL
       item
         Width = 50
       end>
+    SimplePanel = False
   end
   object ToolBar1: TToolBar
     Left = 0
@@ -283,6 +284,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Top = 0
       Width = 8
       Height = 314
+      Cursor = crHSplit
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
@@ -2632,6 +2634,7 @@ object FRpMainFVCL: TFRpMainFVCL
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = 'rep'
+    Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
     Left = 292
     Top = 140
   end
