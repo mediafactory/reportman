@@ -40,6 +40,7 @@ type
 
   TRpSectionInterface=class(TRpSizeInterface)
    private
+    FOnDestroy:TNotifyEvent;
    protected
     procedure Paint;override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -48,6 +49,7 @@ type
     OnPosChange:TNotifyEvent;
     freportstructure:TFRpStructure;
     childlist:TList;
+    property OnDestroy:TNotifyEvent read FOnDestroy write FOnDestroy;
     constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
     destructor destroy;override;
     procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
@@ -162,6 +164,10 @@ end;
 
 destructor TRpSectionInterface.destroy;
 begin
+ if Assigned(FOnDestroy) then
+ begin
+  FOnDestroy(Self);
+ end;
  childlist.free;
  inherited destroy;
 end;

@@ -412,10 +412,10 @@ begin
  LLabels:=TList.Create;
  LControls:=TStringList.Create;
  LCOntrolsToFree:=TList.Create;
-{$IFDEF LINUX}
-// if Screen.PixelsPerInch>90 then
-//  Font.Size:=7;
-{$ENDIF}
+ if Screen.PixelsPerInch>90 then
+ begin
+  Font.Size:=7;
+ end;
 end;
 
 destructor TFObjInsp.Destroy;

@@ -4,12 +4,6 @@ object FObjInsp: TFObjInsp
   Width = 451
   Height = 304
   Align = alClient
-  Font.Color = clBlack
-  Font.Height = 10
-  Font.Name = 'helvetica'
-  Font.Pitch = fpVariable
-  Font.Style = []
-  ParentFont = False
   ParentShowHint = False
   ShowHint = True
   TabOrder = 0

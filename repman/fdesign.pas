@@ -41,6 +41,7 @@ type
     FReport:TRpReport;
     FObjInsp:TFObjInsp;
     FSectionInterface:TRpSectionInterface;
+    procedure SectionDestroy(Sender:TObject);
     procedure SetReport(Value:TRpReport);
     procedure SecPosChange(Sender:TObject);
   public
@@ -130,6 +131,7 @@ begin
  if (dataobj is TRpSection) then
  begin
   FSectionInterface:=TRpSectionInterface.Create(Self,TRpSection(dataobj));
+  FSectionInterface.OnDestroy:=SectionDestroy;
   FSectionInterface.OnPosChange:=SecPosChange;
   FSectionInterface.fobjinsp:=FObjInsp;
   FSectionInterface.Parent:=PSection;
@@ -145,10 +147,15 @@ begin
   begin
    fobjinsp.CompItem:=FSectionInterface;
   end;
-//  Application.ProcessMessages;
+{$IFDEF MSWINDOWS}
+  Application.ProcessMessages;
+{$ENDIF}
   SectionScrollBox.HorzScrollBar.Position:=0;
   SectionScrollBox.VertScrollBar.Position:=0;
-//  FSectionInterface.InvalidateAll;
+{$IFDEF MSWINDOWS}
+  if Assigned(FSectionInterface) then
+   FSectionInterface.InvalidateAll;
+{$ENDIF}
  end;
 end;
 
@@ -158,6 +165,11 @@ begin
  LeftRuler.Top:=-SectionScrollBox.VertScrollBar.Position;;
  PSection.Height:=FSectionInterface.Height;
  PSection.Width:=FSectionInterface.Width;
+end;
+
+procedure TFDesignFrame.SectionDestroy(Sender:TObject);
+begin
+ FSectionInterface:=nil;
 end;
 
 end.
