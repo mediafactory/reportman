@@ -1,8 +1,9 @@
 
-DELPHIPATH=c:\Archivos de programa\Borland\Delphi7
-REPORTMANPATH=c:\prog\toni\cvsroot\reportman\reportman
-COMPILE="$(DELPHIPATH)\bin\dcc32" -U"$(REPORTMANPATH);$(DELPHIPATH)\projects\bpl" -I"$(REPORTMANPATH)"
-
+;DELPHIPATH=c:\Archivos de programa\Borland\Delphi7
+DELPHIPATH=c:\prog\Delphi7
+REPORTMANPATH=c:\prog\toni\cvsroot\reportman\reportman;$(DELPHIPATH)\OCX\Servers
+PACKAGESPATH="$(DELPHIPATH)\Projects\Bpl"
+COMPILE="$(DELPHIPATH)\bin\dcc32" -LN$(PACKAGESPATH) -LE$(PACKAGESPATH) -U"$(REPORTMANPATH);$(DELPHIPATH)\projects\bpl" -I"$(REPORTMANPATH)"
 all: clean packages reportman
 
 reportman: reportmanutils reportmanserver reportmanutilsxp reportmanserverxp

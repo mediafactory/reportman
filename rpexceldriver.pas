@@ -24,7 +24,15 @@ interface
 
 uses
  mmsystem,windows,
+{$IFDEF USEEXCEL97}
  excel97,
+{$ENDIF}
+{$IFDEF USEEXCEL2000}
+ excel97,
+{$ENDIF}
+{$IFDEF USEEXCELXP}
+ excelXP,
+{$ENDIF}
  Classes,sysutils,rpmetafile,rpmdconsts,Graphics,Forms,
  rpmunits,Dialogs, Controls,
  StdCtrls,ExtCtrls,rppdffile,rpgraphutilsvcl,
@@ -450,7 +458,12 @@ begin
  end;
  if Length(Filename)>0 then
  begin
+{$IFDEF USEEXCELXP}
+  wb.SaveAs(Filename, Null, Null, Null, False, False, xlNoChange, Null, True, Null, Null,0,Null);
+{$ENDIF}
+{$IFNDEF USEEXCELXP}
   wb.SaveAs(Filename, Null, Null, Null, False, False, xlNoChange, Null, True, Null, Null,0);
+{$ENDIF}
   wb.Close(True,Filename,False,0);
  end;
  if not visible then

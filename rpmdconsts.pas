@@ -687,6 +687,7 @@ var
   SRpVectorFonts:WideString='Vector fonts';
   SRpNobitBlockScroll:WideString='No bitblock scroll';
   SRpExcelFile:WideString='Excel file';
+  SRpExcelNotSupported:WideString='Excel not supported';
 
 
 implementation

@@ -46,7 +46,9 @@ uses
   rpeval in '..\rpeval.pas',
   rpevalfunc in '..\rpevalfunc.pas',
   rpgdidriver in '..\rpgdidriver.pas' {FRpVCLProgress},
+{$IFDEF USEEXCEL}
   rpexceldriver in '..\rpexceldriver.pas' {FRpExcelProgress},
+{$ENDIF}
   rpgdifonts in '..\rpgdifonts.pas',
   rplabelitem in '..\rplabelitem.pas',
   rplastsav in '..\rplastsav.pas',
