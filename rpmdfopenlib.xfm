@@ -1,0 +1,70 @@
+object FRpOpenLib: TFRpOpenLib
+  Left = 245
+  Top = 108
+  Width = 391
+  Height = 344
+  VertScrollBar.Range = 69
+  ActiveControl = BOK
+  Caption = 'Library reports'
+  Color = clButton
+  Position = poScreenCenter
+  ShowHint = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  TextWidth = 6
+  object Panel1: TPanel
+    Left = 0
+    Top = 308
+    Width = 391
+    Height = 36
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 0
+    object BOK: TButton
+      Left = 7
+      Top = 7
+      Width = 75
+      Height = 25
+      Caption = 'OK'
+      Default = True
+      TabOrder = 0
+      OnClick = BOKClick
+    end
+    object BCancel: TButton
+      Left = 87
+      Top = 7
+      Width = 75
+      Height = 25
+      Cancel = True
+      Caption = 'Cancel'
+      ModalResult = 2
+      TabOrder = 1
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Top = 0
+    Width = 391
+    Height = 33
+    Align = alTop
+    TabOrder = 1
+    object LLibrary: TLabel
+      Left = 12
+      Top = 8
+      Width = 76
+      Height = 13
+      Caption = 'Library selection'
+    end
+    object ComboLibrary: TComboBox
+      Left = 112
+      Top = 4
+      Width = 233
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 15
+      TabOrder = 0
+      OnClick = ComboLibraryClick
+    end
+  end
+end

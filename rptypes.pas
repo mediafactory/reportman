@@ -1029,14 +1029,32 @@ end;
 {$IFDEF MSWINDOWS}
 function IsWindowsNT:Boolean;
 begin
- if Not obtainedversion then
- begin
+{$IFNDEF DOTNETD}
+ try
+  if Not obtainedversion then
+  begin
    osinfo.dwOSVersionInfoSize:=sizeof(osinfo);
-  if Not GetVersionEx(osinfo) then
-   Raise Exception.Create(SRpError+' GetVersionEx');
-  obtainedversion:=True;
+   if Not GetVersionEx(osinfo) then
+    RaiseLastOsError;
+   obtainedversion:=True;
+  end;
+  Result:=osinfo.dwPlatformId=VER_PLATFORM_WIN32_NT;
+ except
+  on E:Exception do
+  begin
+   E.Message:=E.Message+' - VersionEx';
+   raise;
+  end;
  end;
- Result:=osinfo.dwPlatformId=VER_PLATFORM_WIN32_NT;
+{$ENDIF}
+{$IFDEF DOTNETD}
+//  osinfo.dwOSVersionInfoSize:=sizeof(osinfo);
+//  System.Console.WriteLine(osinfo.dwOSVersionInfoSize);
+//  if Not GetVersionEx(osinfo) then
+// GetVersionEx does not return the required size
+//   System.Console.WriteLine(osinfo.dwOSVersionInfoSize);
+ Result:=true;
+{$ENDIF}
 end;
 {$ENDIF}
 

@@ -36,7 +36,7 @@ type
  TRpNodeInfo=class(TObject)
   public
    Node:TTreeNode;
-   ReportName:String;
+   ReportName:WideString;
    Group_Code:Integer;
    Parent_Group:integer;
    Path:String;
