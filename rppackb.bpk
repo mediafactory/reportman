@@ -9,9 +9,9 @@
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES)"/>
     <LIBFILES value=""/>
-    <LIBRARIES value=""/>
-    <SPARELIBS value="rtl.a"/>
-    <PACKAGES value="rtl.bpi dataclx.bpi"/>
+    <LIBRARIES value="libc.so.6"/>
+    <SPARELIBS value="rtl.a dataclx.a indy.a libc.so.6"/>
+    <PACKAGES value="rtl.bpi dataclx.bpi indy.bpi"/>
     <PATHCPP value=".;"/>
     <PATHPAS value=".;"/>
     <PATHRC value=".;"/>
@@ -39,7 +39,7 @@
     <ALLOBJ value="borinitpkg.o $(PACKAGES) $(OBJFILES)"/>
     <ALLRES value="$(RESFILES)"/>
     <ALLLIB value="rtle_pic.a $(LIBFILES) $(LIBRARIES) libborcrtl.so libborstl.so 
-      libborunwind.so libpthread.so libX11.so libc.so libm.so libdl.so"/>
+      libborunwind.so libpthread.so libX11.so libc.so libm.so libdl.so "/>
   </LINKER>
   <FILELIST>
       <FILE FILENAME="rppackb.res" FORMNAME="" UNITNAME="rppackb.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
@@ -47,6 +47,7 @@
       <FILE FILENAME="/opt/kylix3/lib/rtl.bpi" FORMNAME="" UNITNAME="rtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rpmreg.pas" FORMNAME="" UNITNAME="rpmreg" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="/opt/kylix3/lib/dataclx.bpi" FORMNAME="" UNITNAME="dataclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="/opt/kylix3/lib/indy.bpi" FORMNAME="" UNITNAME="indy" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>

@@ -25,13 +25,12 @@ interface
 
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,
-  rpmdconsts,
+  rpmdconsts,rpmaskeditclx,
   Variants,rptypes,
   rpparams;
 
 const
   CONS_LEFTGAP=3;
-  CONS_CONTROLPOS=360;
   CONS_LABELTOPGAP=2;
   CONS_CONTROLGAP=5;
   CONS_RIGHTBARGAP=25;
@@ -43,6 +42,10 @@ type
     BOK: TButton;
     BCancel: TButton;
     MainScrollBox: TScrollBox;
+    PParent: TPanel;
+    PLeft: TPanel;
+    Splitter1: TSplitter;
+    PRight: TPanel;
     procedure BOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -131,7 +134,7 @@ var
 begin
  acontrol:=nil;
  fparams.assign(avalue);
- TotalWidth:=MainScrollBox.Width-CONS_NULLWIDTH-CONS_RIGHTBARGAP;
+ TotalWidth:=PRight.Width-CONS_NULLWIDTH-CONS_RIGHTBARGAP;
  posy:=CONS_CONTROLGAP;
  // Creates all controls from params
  for i:=0 to fparams.Count-1 do
@@ -143,17 +146,19 @@ begin
    alabel.Caption:=aparam.Description;
    aLabel.Left:=CONS_LEFTGAP;
    aLabel.Top:=posy+CONS_LABELTOPGAP;
-   alabel.Parent:=MainScrollBox;
+   alabel.Parent:=PLeft;
    achecknull:=TCheckBox.Create(Self);
-   achecknull.Left:=TotalWidth-CONS_NULLWIDTH;
-   achecknull.Top:=posy;
+   achecknull.Left:=TotalWidth-CONS_NULLWIDTH+3;
+   achecknull.Top:=posy-5;
    achecknull.Tag:=i;
    achecknull.Width:=CONS_NULLWIDTH;
    achecknull.Left:=TotalWidth;
    achecknull.Caption:=SRpNull;
-   achecknull.Parent:=MainScrollBox;
+   achecknull.Parent:=PRight;
+   achecknull.Anchors:=[akTop,akRight];
    achecknull.OnClick:=CheckNullClick;
    lnulls.AddObject(aparam.Name,acheckNull);
+   achecknull.Visible:=aparam.AllowNulls;
    case aparam.ParamType of
     rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamUnknown:
      begin
@@ -172,10 +177,15 @@ begin
      end;
    rpParamInteger,rpParamDouble,rpParamCurrency:
      begin
-      acontrol:=TEdit.Create(Self);
+      acontrol:=TRpCLXMaskEdit.Create(Self);
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
       TEdit(acontrol).Text:='0';
+      TRpCLXMaskEdit(acontrol).DisplayMask:='####,##0.##';
+      if aparam.ParamType=rpParamInteger then
+       TRpCLXMaskEdit(acontrol).EditType:=teInteger
+      else
+       TRpCLXMaskEdit(acontrol).EditType:=teCurrency;
       if aparam.Value=Null then
       begin
        achecknull.Checked:=true;
@@ -271,9 +281,13 @@ begin
      end;
    end;
    acontrol.Top:=Posy;
-   acontrol.Left:=CONS_CONTROLPOS;
+   acontrol.Left:=CONS_LEFTGAP;
    acontrol.Width:=TotalWidth-acontrol.Left;
-   acontrol.parent:=MainScrollBox;
+   acontrol.parent:=PRight;
+   acontrol.Anchors:=[akLeft,akTop,akRight];
+   if aparam.allownulls then
+    if VarIsNull(aparam.Value) then
+     acontrol.Visible:=false;
    Posy:=PosY+acontrol.Height+CONS_CONTROLGAP;
   end
   else
@@ -282,12 +296,12 @@ begin
    lnulls.AddObject('',nil);
   end;
  end;
+ PParent.Height:=PosY;
  // Set the height of the form
  NewClientHeight:=PModalButtons.Height+PosY+CONS_CONTROLGAP;
  if  NewClientHeight>CONS_MAXCLIENTHEIGHT then
   NewClientHeight:=CONS_MAXCLIENTHEIGHT;
  ClientHeight:=NewClientHeight;
-
  SetInitialBounds;
 end;
 

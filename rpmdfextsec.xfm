@@ -13,6 +13,7 @@ object FRpExtSection: TFRpExtSection
   PixelsPerInch = 96
   TextHeight = 13
   TextWidth = 6
+  ParentFont = True
   object LConnection: TLabel
     Left = 12
     Top = 16

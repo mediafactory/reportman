@@ -27,10 +27,16 @@ uses
  Classes,sysutils,rpmetafile,rpmdconsts,Graphics,Forms,
  rpmunits,Dialogs, Controls,Comobj,
  StdCtrls,ExtCtrls,rppdffile,rpgraphutilsvcl,
+{$IFNDEF DOTNETD}
+ jpeg,
+{$ENDIF}
+{$IFDEF DOTNETD}
+ System.ComponentModel,
+{$ENDIF}
 {$IFDEF USEVARIANTS}
  types,Variants,
 {$ENDIF}
- rptypes,rpvgraphutils,jpeg;
+ rptypes,rpvgraphutils;
 
 
 const
@@ -111,7 +117,13 @@ const
 function IsValidNumberChar(achar:char):Boolean;
 begin
  Result:=false;
+{$IFNDEF DOTNETD}
  if (achar in ['-','+','e','E','0'..'9',' ',DecimalSeparator]) then
+{$ENDIF}
+{$IFDEF DOTNETD}
+ if ((achar in ['-','+','e','E','0'..'9',' ']) or
+  (achar=DecimalSeparator[1])) then
+{$ENDIF}
   Result:=true;
 end;
 
@@ -144,6 +156,7 @@ begin
  end;
 end;
 
+{$IFNDEF DOTNETD}
 procedure PrintObject(sh:Variant;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;
  rows,columns:TStringList;FontName:String;FontSize:integer);
 var
@@ -350,11 +363,12 @@ begin
    end;
  end;
 end;
-
+{$ENDIF}
 
 
 procedure DoExportMetafile(metafile:TRpMetafileReport;filename:string;
  aform:TFRpExcelProgress;visible,allpages:boolean;frompage,topage:integer);
+{$IFNDEF DOTNETD}
 var
  i:integer;
  j:integer;
@@ -372,7 +386,9 @@ var
  shcount:integer;
  FontName:String;
  FontSize:integer;
+{$ENDIF}
 begin
+{$IFNDEF DOTNETD}
  dpix:=Screen.PixelsPerInch;
  dpiy:=dpix;
  // Get the time
@@ -462,6 +478,7 @@ begin
   Excel.Quit;
  if assigned(aform) then
   aform.close;
+{$ENDIF}
 end;
 
 function ExportMetafileToExcel (metafile:TRpMetafileReport; filename:string;
@@ -555,34 +572,6 @@ begin
  end;
 end;
 
-procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
-var
- graphic:TBitmap;
- jpegimage:TJpegImage;
- bitmapwidth,bitmapheight:integer;
-begin
- if dpi<=0 then
-  exit;
- graphic:=TBitmap.Create;
- try
-  if GetJPegInfo(Stream,bitmapwidth,bitmapheight) then
-  begin
-   jpegimage:=TJpegImage.Create;
-   try
-    jpegimage.LoadFromStream(Stream);
-    graphic.Assign(jpegimage);
-   finally
-    jpegimage.free;
-   end;
-  end
-  else
-   Graphic.LoadFromStream(Stream);
-  extent.X:=Round(graphic.width/dpi*TWIPS_PER_INCHESS);
-  extent.Y:=Round(graphic.height/dpi*TWIPS_PER_INCHESS);
- finally
-  graphic.Free;
- end;
-end;
 
 end.
 

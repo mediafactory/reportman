@@ -1,6 +1,6 @@
 object FRpQtProgress: TFRpQtProgress
-  Left = 286
-  Top = 355
+  Left = 288
+  Top = 379
   ActiveControl = BCancel
   AutoScroll = False
   BorderStyle = fbsDialog
@@ -13,7 +13,7 @@ object FRpQtProgress: TFRpQtProgress
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 22
+  TextHeight = 20
   TextWidth = 7
   object BCancel: TButton
     Left = 203
@@ -29,8 +29,8 @@ object FRpQtProgress: TFRpQtProgress
   object LProcessing: TLabel
     Left = 8
     Top = 60
-    Width = 73
-    Height = 22
+    Width = 62
+    Height = 20
     Caption = 'Processing'
   end
   object LRecordCount: TLabel
@@ -43,8 +43,8 @@ object FRpQtProgress: TFRpQtProgress
   object LTitle: TLabel
     Left = 8
     Top = 4
-    Width = 31
-    Height = 22
+    Width = 26
+    Height = 20
     Caption = 'Tittle'
     Visible = False
   end

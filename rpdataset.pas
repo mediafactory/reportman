@@ -68,7 +68,10 @@ var
 {$ENDIF}
 begin
  {$IFNDEF BLOBSTREAMBUG}
-   Destination.Assign(Source);
+   if Source.Datatype=ftLargeInt then
+    TLargeIntField(Destination).AsLargeInt:=TLargeIntField(Source).AsLargeInt
+   else
+    Destination.Assign(Source);
  {$ENDIF}
  {$IFDEF BLOBSTREAMBUG}
    if (Destination is TBlobField) then
@@ -96,7 +99,10 @@ begin
    end
    else
    begin
-    Destination.Assign(Source);
+    if Source.Datatype=ftLargeInt then
+     TLargeIntField(Destination).AsLargeInt:=TLargeIntField(Source).AsLargeInt
+    else
+     Destination.Assign(Source);
    end;
  {$ENDIF}
 end;

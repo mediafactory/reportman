@@ -24,7 +24,7 @@ interface
 {$I rpconf.inc}
 
 uses SysUtils, Classes,
-  QGraphics, QForms,Qt,
+  QGraphics, QForms,Qt,rpmdcharttypes,
   QButtons, QExtCtrls, QControls, QStdCtrls,
   types,
   rpprintitem,rpmdchart,rpmdobinsint,rpmdconsts,
@@ -72,6 +72,7 @@ begin
  lnames.Add(SrpSExpression);
  ltypes.Add(SRpSExpression);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartData);
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).ValueExpression);
 
@@ -79,6 +80,7 @@ begin
  lnames.Add(SrpSIdentifier);
  ltypes.Add(SRpSString);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartData);
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).Identifier);
 
@@ -86,6 +88,7 @@ begin
  lnames.Add(SrpSChartType);
  ltypes.Add(SRpSList);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(RpChartTypeToString(TRpChart(printitem).ChartType));
 
@@ -93,6 +96,7 @@ begin
  lnames.Add(SrpSGetValueCondition);
  ltypes.Add(SRpSExpression);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartData);
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).GetValueCondition);
 
@@ -100,6 +104,7 @@ begin
  lnames.Add(SrpSChangeSerieExp);
  ltypes.Add(SRpSExpression);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartData);
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).ChangeSerieExpression);
 
@@ -107,6 +112,7 @@ begin
  lnames.Add(SrpSChangeSerieBool);
  ltypes.Add(SRpSBool);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartData);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpChart(printitem).ChangeSerieBool,True));
 
@@ -114,6 +120,7 @@ begin
  lnames.Add(SrpSClearExpChart);
  ltypes.Add(SRpSExpression);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartData);
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).ClearExpression);
 
@@ -121,6 +128,7 @@ begin
  lnames.Add(SrpSBoolClearExp);
  ltypes.Add(SRpSBool);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartData);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpChart(printitem).ClearExpressionBool,True));
 
@@ -128,6 +136,7 @@ begin
  lnames.Add(SrpSCaptionExp);
  ltypes.Add(SRpSExpression);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartData);
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).CaptionExpression);
 
@@ -135,6 +144,7 @@ begin
  lnames.Add(SrpSDriver);
  ltypes.Add(SRpSList);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(RpChartDriverToString(TRpChart(printitem).Driver));
 
@@ -142,6 +152,7 @@ begin
  lnames.Add(SRpSView3D);
  ltypes.Add(SRpSBool);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpChart(printitem).View3D,True));
 
@@ -149,6 +160,7 @@ begin
  lnames.Add(SRpSView3DWalls);
  ltypes.Add(SRpSBool);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpChart(printitem).View3DWalls,True));
 
@@ -156,6 +168,7 @@ begin
  lnames.Add(SRpSPerspective);
  ltypes.Add(SRpSInteger);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).Perspective));
 
@@ -163,6 +176,7 @@ begin
  lnames.Add(SRpSElevation);
  ltypes.Add(SRpSInteger);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).Elevation));
 
@@ -170,6 +184,7 @@ begin
  lnames.Add(SRpSRotation);
  ltypes.Add(SRpSInteger);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).Rotation));
 
@@ -177,6 +192,7 @@ begin
  lnames.Add(SRpSOrthogonal);
  ltypes.Add(SRpSBool);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpChart(printitem).Orthogonal,True));
 
@@ -184,6 +200,7 @@ begin
  lnames.Add(SRpSZoom);
  ltypes.Add(SRpSInteger);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).Zoom));
 
@@ -191,6 +208,7 @@ begin
  lnames.Add(SRpSHOffset);
  ltypes.Add(SRpSInteger);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).HorzOffset));
 
@@ -198,6 +216,7 @@ begin
  lnames.Add(SRpSVOffset);
  ltypes.Add(SRpSInteger);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).VertOffset));
 
@@ -205,16 +224,40 @@ begin
  lnames.Add(SRpSTilt);
  ltypes.Add(SRpSInteger);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).Tilt));
+
+ // Resolution
+ lnames.Add(SRpDPIRes);
+ ltypes.Add(SRpSInteger);
+ lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpChart(printitem).Resolution));
 
  // Multibar
  lnames.Add(SRpSMultibar);
  ltypes.Add(SRpSList);
  lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(RpMultiBarToString(TRpChart(printitem).MultiBar));
 
+ // Hint
+ lnames.Add(SrpChartHint);
+ ltypes.Add(SRpSBool);
+ lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpChart(printitem).ShowHint,True));
+ // Legend
+ lnames.Add(SrpChartLegend);
+ ltypes.Add(SRpSBool);
+ lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpChart(printitem).ShowLegend,True));
 end;
 
 procedure TRpChartInterface.SetProperty(pname:string;value:Widestring);
@@ -319,9 +362,24 @@ begin
   TRpChart(fprintitem).Tilt:=StrToInt(value);
   exit;
  end;
+ if pname=SRpDPIRes then
+ begin
+  TRpChart(fprintitem).Resolution:=StrToInt(value);
+  exit;
+ end;
  if pname=SrpSMultibar then
  begin
   TRpChart(fprintitem).Multibar:=StringToRpMultibar(value);
+  exit;
+ end;
+ if pname=SrpChartHint then
+ begin
+  TRpChart(fprintitem).ShowHint:=StrToBool(value);
+  exit;
+ end;
+ if pname=SrpChartLegend then
+ begin
+  TRpChart(fprintitem).ShowLegend:=StrToBool(value);
   exit;
  end;
  inherited SetProperty(pname,value);
@@ -430,9 +488,24 @@ begin
   Result:=IntToStr(TRpChart(printitem).Tilt);
   exit;
  end;
+ if pname=SRpDPIRes then
+ begin
+  Result:=IntToStr(TRpChart(printitem).Resolution);
+  exit;
+ end;
  if pname=SrpSMultibar then
  begin
   Result:=RpMultiBarToString(TRpChart(printitem).Multibar);
+  exit;
+ end;
+ if pname=SrpChartHint then
+ begin
+  Result:=BoolToStr(TRpChart(printitem).ShowHint,True);
+  exit;
+ end;
+ if pname=SrpChartLegend then
+ begin
+  Result:=BoolToStr(TRpChart(printitem).ShowLegend,True);
   exit;
  end;
  Result:=inherited GetProperty(pname);

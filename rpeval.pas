@@ -23,18 +23,23 @@ interface
 
 uses
   SysUtils, Classes,DB,rptypeval,
-  rpmdconsts,sysconst,rpparser,rptypes,
+  rpmdconsts,sysconst,rpparser,
+{$IFDEF USEREPORTFUNC}
+  rpalias,
+{$ENDIF}
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
-  rpalias;
+  rptypes;
   
 type
  TRpCustomEvaluator=class(TComponent)
  private
   // Component to access fields
   Rpfunctions:TStringList;
+{$IFDEF USEREPORTFUNC}
   fRpalias:TRpalias;
+{$ENDIF}
   // Error information
   FError:string;
   FPosError:LongInt;
@@ -107,7 +112,9 @@ type
   property LineError:Word read FLineError;
   property EvalResultString:string read GetEvalResultString;
   // Database access component link
+{$IFDEF USEREPORTFUNC}
   property Rpalias:TRpalias read FRpalias write FRpalias;
+{$ENDIF}
   property Language:Integer read FLanguage write FLanguage;
   property OnGraphicOp:TRpGraphicOpProc read FOnGraphicOp write FOnGraphicOp;
   property OnTextOp:TRpTextOpProc read FOnTextOp write FOnTextOp;
@@ -121,7 +128,9 @@ type
    { Public declarations }
   published
    { Published declarations }
+{$IFDEF USEREPORTFUNC}
    property Rpalias;
+{$ENDIF}
    property EvalResult;
    property Expression;
   end;
@@ -132,9 +141,6 @@ function EvaluateExpression(aexpression:WideString):Variant;
 implementation
 
 uses rpevalfunc;
-
-
-
 
 // TRpCustomEvaluator
 
@@ -245,6 +251,8 @@ begin
  Rpfunctions.AddObject('HOURMINSEC',iden);
  iden:=TIdenUppercase.Create(nil);
  Rpfunctions.AddObject('UPPERCASE',iden);
+ iden:=TIdenFileExists.Create(nil);
+ Rpfunctions.AddObject('FILEEXISTS',iden);
  iden:=TIdenLowercase.Create(nil);
  Rpfunctions.AddObject('LOWERCASE',iden);
  iden:=TIdenEvalText.Create(nil);
@@ -302,7 +310,9 @@ begin
   try
    oldiden:=eval.Identifiers;
    eval.Identifiers:=Identifiers;
+{$IFDEF USEREPORTFUNC}
    eval.Rpalias:=FRpalias;
+{$ENDIF}
    eval.Expression:=text;
    eval.Evaluate;
    Result:=eval.EvalResult;
@@ -322,7 +332,7 @@ end;
 // Checking for syntax
 procedure TRpCustomEvaluator.CheckSyntax;
 begin
- Rpparser.Expression:=Pchar(FExpression);
+ Rpparser.Expression:=FExpression;
 
  if Rpparser.TokenString='' then
  begin
@@ -341,9 +351,9 @@ end;
 
 procedure TRpCustomEvaluator.Evaluate;
 begin
- Rpparser.Expression:=Pchar(FExpression);
+ Rpparser.Expression:=FExpression;
  FChecking:=False;
- if ((Rpparser.TokenString='') AND (Not (Rpparser.Token in [toString,toWString]))) then
+ if ((Rpparser.TokenString='') AND (Not (Rpparser.Token in [tkString,toWString]))) then
  begin
   FEvalResult:=True;
   Exit;
@@ -798,7 +808,7 @@ begin
     Value:=iden.Value;
     Rpparser.NextToken;
    end;
-  toString:
+  tkString:
    begin
     Value:=Rpparser.TokenString;
     Rpparser.NextToken;
@@ -870,6 +880,9 @@ begin
  // Decision term
  Rpparser.NextToken;
  variables(Value);
+ // Null means false
+ if VarIsNull(Value) then
+  Value:=false;
  // Not boolean error
  if ((VarType(Value)<>varBoolean) AND (Not FChecking)) then
    Raise TRpEvalException.Create(SRpEvalType,'IIF',
@@ -885,7 +898,7 @@ begin
  // If yes and not checking syntax
  if Not FChecking then
  begin
-  if Value then
+  if Boolean(Value) then
   begin
    variables(Value);
    // Skip the second term
@@ -976,8 +989,10 @@ begin
    Exit;
   end;
   // May be a field ?
+{$IFDEF USEREPORTFUNC}
   if FRpalias<>nil then
    Result:=FRpalias.Searchfield(name1,'',Doble);
+{$ENDIF}
   if Doble then
      Raise TRpEvalException.Create(SRpFieldDuplicated+ Rpparser.TokenString,
        Rpparser.TokenString,Rpparser.SourceLine,Rpparser.SourcePos);
@@ -1008,8 +1023,10 @@ begin
   Exit;
  end;
  sensepunt:=copy(name1,pospunt+1,ord(name1[0])-pospunt);
+{$IFDEF USEREPORTFUNC}
  if FRpalias<>nil then
   Result:=FRpalias.Searchfield(sensepunt,primer,Doble);
+{$ENDIF}
 end;
 
 function TRpCustomEvaluator.GetEvalResultString:string;
@@ -1022,8 +1039,10 @@ begin
  inherited Notification(AComponent,Operation);
  if operation=opRemove then
  begin
+{$IFDEF USEREPORTFUNC}
   if AComponent=FRpalias then
    Rpalias:=nil;
+{$ENDIF}
  end;
 end;
 

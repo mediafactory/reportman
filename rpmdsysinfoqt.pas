@@ -31,7 +31,7 @@ uses SysUtils, Classes, QGraphics, QForms, QControls, QStdCtrls,
 type
   TFRpSysInfo = class(TForm)
     BOK: TButton;
-    GroupBox1: TGroupBox;
+    GSelectedPrinter: TGroupBox;
     Label1: TLabel;
     EStatus: TEdit;
     EPrinterName: TEdit;
@@ -70,9 +70,6 @@ procedure RpShowSystemInfoQt;
 
 implementation
 
-{$IFDEF MSWINDOWS}
-uses rpvgraphutils;
-{$ENDIF}
 
 {$R *.xfm}
 
@@ -140,6 +137,7 @@ begin
 {$IFDEF LINUX}
  GWinInfo.Visible:=false;
 {$ENDIF}
+ GSelectedPrinter.Caption:=SRpSelectedPrinter;
  Label2.Caption:=TranslateStr(1061,Label2.Caption);
  Label1.Caption:=TranslateStr(1062,Label1.Caption);
  Label3.Caption:=TranslateStr(1063,Label3.Caption);
@@ -149,7 +147,10 @@ begin
  Label12.Caption:=TranslateStr(91,Label12.Caption);
  Label11.Caption:=TranslateStr(1078,Label11.Caption);
  Label13.Caption:=TranslateStr(1079,Label13.Caption);
+ Label9.Caption:=TranslateStr(1069,Label9.Caption);
  GWinInfo.Caption:=TranslateStr(976,GWinInfo.Caption);
+
+ SetInitialBounds;
 end;
 
 procedure TFRpSysInfo.FormShow(Sender: TObject);

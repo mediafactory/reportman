@@ -23,8 +23,9 @@ interface
 {$I rpconf.inc}
 
 uses Classes,Sysutils,rpreport,rpmdconsts,
- rpalias,rpsubreport,rpsection,rpprintitem,rptypes,
-{$IFNDEF BUILDER4}
+ rpalias,rpsubreport,rpsection,rpprintitem,rptypes,rpdatainfo,
+ rphtmldriver,
+{$IFDEF USEINDY}
  rpmdrepclient,
 {$ENDIF}
  rpmetafile;
@@ -42,19 +43,20 @@ type
    FShowPrintDialog:boolean;
    FLanguage:integer;
    FOnBeforePrint:TNotifyEvent;
-   FReportName:WideString;
+   FReportName:String;
+{$IFDEF USEINDY}
    FRemoteError:Boolean;
    FRemoteMessage:WideString;
-   procedure ReadReportName(Reader:TReader);
-   procedure WriteReportName(Writer:TWriter);
+   procedure OnRemoteError(Sender:TObject;aMessage:WideString);
+{$ENDIF}
    procedure InternalSetBeforePrint;
    function GetReport:TRpReport;
    procedure SetFileName(Value:TFilename);
    procedure SetOnBeforePrint(NewValue:TNotifyEvent);
-   procedure OnRemoteError(Sender:TObject;aMessage:WideString);
+   procedure SetConnectionName(Value:String);
+   procedure SetReportName(Value:String);
   protected
    procedure Notification(AComponent: TComponent; Operation: TOperation);override;
-   procedure DefineProperties(Filer:TFiler);override;
    procedure InternalExecuteRemote(metafile:TRpMetafileReport);virtual;
   public
    function Execute:boolean;virtual;
@@ -66,11 +68,11 @@ type
     copies:integer;collate:boolean):boolean;virtual;abstract;
   // Defined as public but will be published in descendants
    procedure SaveToText(filename:string;textdriver:String='');virtual;abstract;
+   procedure SaveToHTML(filename:string);
    procedure LoadFromFile(AFilename:string);
    procedure LoadFromStream(stream:TStream);
    procedure ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
    property Report:TRpReport read GetReport;
-   property Filename:TFilename read FFilename write SetFilename;
    property Preview:Boolean read FPreview write FPreview default true;
    property ShowProgress:boolean read FShowProgress write FShowProgress
     default true;
@@ -79,9 +81,10 @@ type
     write FShowPrintDialog default true;
    property AliasList:TRpAlias read FAliasList write FAliasList;
    property Language:integer read FLanguage write FLanguage default -1;
-   property ConnectionName:String read FConnectionName write FConnectionName;
-   property ReportName:WideString read FReportName write FReportName;
   published
+   property Filename:TFilename read FFilename write SetFilename;
+   property ConnectionName:String read FConnectionName write SetConnectionName;
+   property ReportName:String read FReportName write SetReportName;
    property OnBeforePrint:TNotifyEvent read FOnBeforePrint
     write SetOnBeforePrint;
   end;
@@ -140,6 +143,9 @@ end;
 
 
 procedure TCBaseReport.CheckLoaded;
+var
+ dblist:TRpDatabaseInfoList;
+ astream:TStream;
 begin
  // Loads the report
  if Assigned(FReport) then
@@ -147,9 +153,26 @@ begin
   FReport.AliasList:=AliasList;
   exit;
  end;
- if Length(FFilename)<1 then
-  Raise Exception.Create(SRpNoFilename);
- LoadFromFile(FFilename);
+ if Length(FFilename)>0 then
+ begin
+  LoadFromFile(FFilename);
+ end
+ else
+ begin
+  if Length(ConnectionName)<1 then
+   Raise Exception.Create(SRpNoFilename);
+  if Length(ReportName)<1 then
+   Raise Exception.Create(SRpNoFilename);
+  if Not Assigned(AliasList) then
+   Raise Exception.Create(SRpPRpAliasRequired);
+  dblist:=AliasList.Connections;
+  astream:=dblist.GetReportStream(ConnectionName,ReportName);
+  try
+   LoadFromStream(astream);
+  finally
+   astream.free;
+  end;
+ end;
  InternalSetBeforePrint;
  if Assigned(FReport) then
  begin
@@ -173,19 +196,14 @@ begin
 end;
 
 procedure TCBaseReport.LoadFromFile(AFilename:string);
+var
+ astream:TFileStream;
 begin
- if Assigned(FReport) then
- begin
-  FReport.Free;
-  FReport:=nil;
- end;
- FReport:=TRpReport.Create(Self);
+ astream:=TFileStream.Create(AFilename,fmOpenRead or fmShareDenyNone);
  try
-  FReport.LoadFromFile(AFilename);
- except
-  FReport.Free;
-  FReport:=nil;
-  raise;
+  LoadFromStream(astream);
+ finally
+  astream.free;
  end;
 end;
 
@@ -231,42 +249,29 @@ begin
  end;
 end;
 
-procedure TCBaseReport.DefineProperties(Filer:TFiler);
-begin
- inherited;
 
- Filer.DefineProperty('ReportName',ReadReportName,WriteReportName,True);
-end;
-
-procedure TCBaseReport.ReadReportName(Reader:TReader);
-begin
- FReportName:=ReadWideString(Reader);
-end;
-
-procedure TCBaseReport.WriteReportName(Writer:TWriter);
-begin
- WriteWideString(Writer, FReportName);
-end;
 
 procedure TCBaseReport.InternalExecuteRemote(metafile:TRpMetafileReport);
 begin
  // Implemented in derived classes
 end;
 
+{$IFDEF USEINDY}
 procedure TCBaseReport.OnRemoteError(Sender:TObject;aMessage:WideString);
 begin
  Fremoteerror:=true;
  Fremotemessage:=aMessage;
 end;
+{$ENDIF}
 
 procedure TCBaseReport.ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
-{$IFNDEF BUILDER4}
+{$IFDEF USEINDY}
 var
  client:Tmodclient;
  metafile:TRpMetafileReport;
 {$ENDIF}
 begin
-{$IFNDEF BUILDER4}
+{$IFDEF USEINDY}
  client:=Connect(hostname,user,password,port);
  try
   metafile:=TRpMetafileReport.Create(nil);
@@ -288,5 +293,51 @@ begin
  end;
 {$ENDIF}
 end;
+
+procedure TCBaseReport.SetReportName(Value:String);
+begin
+ if (csloading in ComponentState) then
+ begin
+  FReportName:=Value;
+  exit;
+ end;
+ if FReportname<>Value then
+ begin
+  if Assigned(FReport) then
+  begin
+   FReport.free;
+   FReport:=nil;
+  end;
+  FReportName:=Value;
+  if Length(FReportName)>0 then
+   FFilename:='';
+ end;
+end;
+
+procedure TCBaseReport.SetConnectionName(Value:String);
+begin
+ if (csloading in ComponentState) then
+ begin
+  FConnectionName:=Value;
+  exit;
+ end;
+ if FConnectionName<>Value then
+ begin
+  if Assigned(FReport) then
+  begin
+   FReport.free;
+   FReport:=nil;
+  end;
+  FConnectionName:=Value;
+  if Length(FConnectionName)>0 then
+   FFilename:='';
+ end;
+end;
+
+procedure TCBaseReport.SaveToHTML(filename:string);
+begin
+ ExportReportToHtml(report,filename,showprogress);
+end;
+
 
 end.

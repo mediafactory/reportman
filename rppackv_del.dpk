@@ -2,8 +2,8 @@ package rppackv_del;
 
 {$R *.res}
 {$R 'rpexpredlg.dcr'}
-{$R 'rpruler.dcr'}
 {$R 'rpclxreport.dcr'}
+{$R 'rpmaskeditclx.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -33,25 +33,18 @@ requires
   dbrtl,
   visualclx,
   rppack_del,
-  vcl,
   rppackvcl_del,
-  bdertl,
   indy,
+  dsnap,
   vcljpg,
-  tee,
-  dbexpress,
-  adortl,
-  ibxpress,
-  dsnap;
+  tee;
 
 contains
   rpregv in 'rpregv.pas',
   rpexpredlg in 'rpexpredlg.pas' {FrpExpredialog},
-  rpruler in 'rpruler.pas',
   rpdbxconfig in 'rpdbxconfig.pas' {FDBXConfig},
   rpclxreport in 'rpclxreport.pas',
   rpqtdriver in 'rpqtdriver.pas' {FRpQtProgress},
-  rpfparams in 'rpfparams.pas' {FRpParams},
   rppreview in 'rppreview.pas' {FRpPreview},
   rpgraphutils in 'rpgraphutils.pas' {FRpGraphProgres},
   rpprintdia in 'rpprintdia.pas' {FRpPrintDialog},
@@ -61,6 +54,7 @@ contains
   rpmdclitree in 'rpmdclitree.pas' {FRpCliTree: TFrame},
   rpmdfabout in 'rpmdfabout.pas' {FRpAboutBox},
   rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig},
-  rpmdfhelpform in 'rpmdfhelpform.pas' {FRpHelpForm};
+  rpmdfhelpform in 'rpmdfhelpform.pas' {FRpHelpForm},
+  rpmaskeditclx in 'rpmaskeditclx.pas';
 
 end.

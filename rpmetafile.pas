@@ -47,11 +47,17 @@ uses Classes,
 {$ENDIF}
 {$IFDEF MSWINDOWS}
   mmsystem,windows,
+ {$IFNDEF DOTNETD}
+  rpcompilerep,
+ {$ENDIF}
 {$ENDIF}
 {$IFDEF USEVARIANTS}
  types,
 {$ENDIF}
  Sysutils,rpmdconsts,
+{$IFNDEF FORWEBAX}
+ rpmdcharttypes,
+{$ENDIF}
 {$IFDEF USEZLIB}
  rpmzlib,
 {$ENDIF}
@@ -61,13 +67,11 @@ const
  MILIS_PROGRESS=500;
  RP_SIGNATURELENGTH=13;
  // The metafile signature and version
- RpSignature:array[0..RP_SIGNATURELENGTH-1] of char=('R','P','M','E','T','A','F','I','L',
-  'E','0','4',#0);
+ RpSignature:string='RPMETAFILE05'+chr(0);
 const
  FIRST_ALLOCATION_OBJECTS=50;
  FIRST_ALLOCATED_WIDESTRING=1000;
 type
-
 
  ERpBadFileFormat=class(Exception)
   private
@@ -106,6 +110,13 @@ type
   PrintStep:TRpSelectFontStep;
  end;
 
+
+// This is not a safe type, so
+// .net metafiles are not compatible
+// need to rework all streaming to
+// be compatible or enlarge the file size a lot
+// size *4
+{$IFNDEF DOTNETDBUGS}
  TRpMetaObject=packed record
   Top,Left,Width,Height:integer;
   case Metatype:TRpMetaObjectType of
@@ -145,28 +156,79 @@ type
      PolyStreamPos:int64;
      PolyStreamSize:int64);
  end;
+{$ENDIF}
+{$IFDEF DOTNETDBUGS}
+ TRpMetaObject=packed record
+  Top,Left,Width,Height:integer;
+//  case Metatype:TRpMetaObjectType of
+   Metatype:TRpMetaObjectType;
+//   rpMetaText:
+    TextP,TextS:integer;
+    LFontNameP,LFontNameS:integer;
+    WFontNameP,WFontNameS:integer;
+    FontSize:smallint;
+    FontRotation:smallint;
+    FontStyle:smallint;
+    Type1Font:smallint;
+    FontColor:integer;
+    BackColor:integer;
+    Transparent:boolean;
+    CutText:boolean;Alignment:integer;WordWrap:boolean;
+    RightToLeft:Boolean;PrintStep:TRpSelectFontStep;
+//   rpMetaDraw:
+    DrawStyle:integer;
+    BrushStyle:integer;
+    BrushColor:integer;
+    PenStyle:integer;
+    PenWidth:integer;
+    PenColor:integer;
+//   rpMetaImage:
+    CopyMode:integer;
+     DrawImageStyle:integer;
+     DPIres:integer;
+     StreamPos:int64;
+     StreamSize:int64;
+//   rpMetaPolygon:
+    PolyBrushStyle:integer;
+     PolyBrushColor:integer;
+     PolyPenStyle:integer;
+     PolyPenWidth:integer;
+     PolyPenColor:integer;
+     PolyPointCount:integer;
+     PolyStreamPos:int64;
+     PolyStreamSize:int64;
+ end;
+{$ENDIF}
+
 
  IRpPrintDriver=interface
  ['{11EF15B0-5CDE-40F0-A204-973A25B38B81}']
   procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
-   hardwarecollate:boolean);stdcall;
-  procedure EndDocument;stdcall;
-  procedure AbortDocument;stdcall;
-  procedure NewPage;stdcall;
-  procedure EndPage;stdcall;
-  function GetPageSize(var PageSizeQt:Integer):TPoint;stdcall;
-  function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
-  procedure SetOrientation(Orientation:TRpOrientation);stdcall;
-  procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
-  procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
-  procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
-  procedure DrawPage(apage:TRpMetaFilePage);stdcall;
-  function SupportsCopies(maxcopies:integer):boolean;stdcall;
-  function SupportsCollation:boolean;stdcall;
-  function AllowCopies:boolean;stdcall;
-  procedure SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
+   hardwarecollate:boolean);
+  procedure EndDocument;
+  procedure AbortDocument;
+  procedure NewPage;
+  procedure EndPage;
+  function GetPageSize(var PageSizeQt:Integer):TPoint;
+  function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
+  procedure SetOrientation(Orientation:TRpOrientation);
+  procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
+{$IFNDEF FORWEBAX}
+  procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
+{$ENDIF}
+  procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
+  procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
+  procedure DrawPage(apage:TRpMetaFilePage);
+  function SupportsCopies(maxcopies:integer):boolean;
+  function SupportsCollation:boolean;
+  function AllowCopies:boolean;
+  procedure SelectPrinter(printerindex:TRpPrinterSelect);
  end;
 
+{$IFNDEF FORWEBAX}
+ TDoDrawChartEvent=procedure (adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
+  aposx,aposy:integer;achart:TObject) of Object;
+{$ENDIF}
 
  TRpMetafilePage=class(TObject)
   private
@@ -218,6 +280,7 @@ type
    milifirst,mililast:TDatetime;
 {$ENDIF}
    difmilis:int64;
+   FPreviewAbout:Boolean;
    procedure SetCurrentPage(index:integer);
    function GetPageCount:integer;
    function GetPage(Index:integer):TRpMetafilePage;
@@ -234,6 +297,9 @@ type
    PreviewWindow:TRpPreviewWindowStyle;
    OpenDrawerBefore:Boolean;
    OpenDrawerAfter:Boolean;
+{$IFNDEF FORWEBAX}
+   OnDrawChart:TDoDrawChartEvent;
+{$ENDIF}
    procedure Clear;
    procedure LoadFromStream(Stream:TStream;clearfirst:boolean=true);
    procedure LoadFromFile(filename:string;clearfirst:boolean=true);
@@ -251,17 +317,26 @@ type
    property CurrentPage:integer read FCurrentPage write SetCurrentPage;
    property PageCount:integer read GetPageCount;
    procedure UpdateTotalPages(alist:TList);
+   procedure PageRange(frompage,topage:integer);
    property Pages[Index:integer]:TRpMetafilePage read GetPage;
    property OnProgress:TRpMetafileStreamProgres read FOnProgress write FOnProgress;
+   property PreviewAbout:Boolean read FPreviewAbout write FPreviewAbout;
   published
   end;
 
   function CalcTextExtent(adriver:IRpPrintDriver;maxextent:TPoint;obj:TRpTextObject):integer;
 
+{$IFDEF MSWINDOWS}
+{$IFNDEF DOTNETD}
+  procedure  MetafileToExe(metafile:TRpMetafileReport;filename:String);
+{$ENDIF}
+{$ENDIF}
+
 implementation
 
 constructor TrpMetafilePage.Create;
 begin
+ inherited Create;
  SetLength(FObjects,FIRST_ALLOCATION_OBJECTS);
  FObjectCount:=0;
  FMark:=0;
@@ -596,21 +671,31 @@ var
  separator:integer;
  i:integer;
  acount:integer;
+ ainteger:integer;
 begin
- Stream.Write(rpSignature,RP_SIGNATURELENGTH);
+ WriteStringToStream(rpSignature,Stream);
  separator:=integer(rpFHeader);
  Stream.Write(separator,sizeof(separator));
  // Report header
  Stream.Write(PageSize,sizeof(pagesize));
  Stream.Write(CustomX,sizeof(CustomX));
  Stream.Write(CustomY,sizeof(CustomY));
- Stream.Write(Orientation,sizeof(Orientation));
+ ainteger:=Integer(Orientation);
+ Stream.Write(ainteger,sizeof(integer));
  Stream.Write(BackColor,sizeof(BackColor));
- Stream.Write(PrinterSelect,sizeof(PrinterSelect));
- Stream.Write(PreviewStyle,sizeof(TRpPreviewStyle));
- Stream.Write(PreviewWindow,sizeof(TRpPreviewWindowStyle));
+ ainteger:=Integer(PrinterSelect);
+ Stream.Write(ainteger,sizeof(integer));
+ ainteger:=Integer(PreviewStyle);
+ Stream.Write(ainteger,sizeof(integer));
+ ainteger:=Integer(PreviewWindow);
+ Stream.Write(ainteger,sizeof(Integer));
  Stream.Write(OpenDrawerBefore,sizeof(OpenDrawerBefore));
  Stream.Write(OpenDrawerAfter,sizeof(OpenDrawerAfter));
+ ainteger:=0;
+ if FPreviewAbout then
+  ainteger:=1;
+ Stream.Write(ainteger,sizeof(Integer));
+
  // Pages
  // Write pagecount
  acount:=FPages.Count;
@@ -680,19 +765,26 @@ end;
 procedure TRpMetafileReport.IntLoadFromStream(Stream:TStream;LoadStream:TStream;clearfirst:boolean=true);
 var
  separator:integer;
- buf:array[0..RP_SIGNATURELENGTH-1] of char;
+ buf:array of Byte;
+ bufstring:String;
  bytesread:integer;
  fpage:TRpMetafilePage;
  acount:integer;
+ i,ainteger:integer;
 begin
  // Clears the report metafile
  if clearfirst then
   Clear;
-
- bytesread:=Stream.Read(buf,RP_SIGNATURELENGTH);
+ SetLength(buf,RP_SIGNATURELENGTH);
+ bytesread:=Stream.Read(buf[0],RP_SIGNATURELENGTH);
  if (bytesread<RP_SIGNATURELENGTH) then
   Raise Exception.Create(SRpBadSignature);
- if (StrPas(buf)<>StrPas(rpSignature)) then
+ bufstring:='';
+ for i:=0 to RP_SIGNATURELENGTH-1 do
+ begin
+  bufstring:=bufstring+Char(buf[i]);
+ end;
+ if (bufstring<>rpSignature) then
   Raise Exception.Create(SRpBadSignature);
  if (sizeof(separator)<>Stream.Read(separator,sizeof(separator))) then
   Raise Exception.Create(SRpBadFileHeader);
@@ -705,20 +797,29 @@ begin
   Raise Exception.Create(SRpBadFileHeader);
  if (sizeof(CustomY)<>Stream.Read(CustomY,sizeof(CustomY))) then
   Raise Exception.Create(SRpBadFileHeader);
- if (sizeof(Orientation)<>Stream.Read(Orientation,sizeof(Orientation))) then
+ if (sizeof(integer)<>Stream.Read(ainteger,sizeof(Integer))) then
   Raise Exception.Create(SRpBadFileHeader);
+ Orientation:=TRpOrientation(ainteger);
  if (sizeof(BackColor)<>Stream.Read(BackColor,sizeof(BackColor))) then
   Raise Exception.Create(SRpBadFileHeader);
- if (sizeof(PrinterSelect)<>Stream.Read(PrinterSelect,sizeof(PrinterSelect))) then
+ if (sizeof(integer)<>Stream.Read(ainteger,sizeof(integer))) then
   Raise Exception.Create(SRpBadFileHeader);
- if (sizeof(PreviewStyle)<>Stream.Read(PreviewStyle,sizeof(TRpPreviewStyle))) then
+ PrinterSelect:=TRpPrinterSelect(ainteger);
+ if (sizeof(integer)<>Stream.Read(ainteger,sizeof(integer))) then
   Raise Exception.Create(SRpBadFileHeader);
- if (sizeof(PreviewWindow)<>Stream.Read(PreviewWindow,sizeof(TRpPreviewWindowStyle))) then
+ PreviewStyle:=TRpPreviewStyle(ainteger);
+ if (sizeof(integer)<>Stream.Read(ainteger,sizeof(integer))) then
   Raise Exception.Create(SRpBadFileHeader);
- if (sizeof(OpenDrawerBefore)<>Stream.Read(PreviewWindow,sizeof(OpenDrawerBefore))) then
+ PreviewWindow:=TRpPreviewWindowStyle(ainteger);
+ if (sizeof(OpenDrawerBefore)<>Stream.Read(OpenDrawerBefore,sizeof(OpenDrawerBefore))) then
   Raise Exception.Create(SRpBadFileHeader);
- if (sizeof(OpenDrawerAfter)<>Stream.Read(PreviewWindow,sizeof(OpenDrawerAfter))) then
+ if (sizeof(OpenDrawerAfter)<>Stream.Read(OpenDrawerAfter,sizeof(OpenDrawerAfter))) then
   Raise Exception.Create(SRpBadFileHeader);
+ if (sizeof(integer)<>Stream.Read(ainteger,sizeof(Integer))) then
+  Raise Exception.Create(SRpBadFileHeader);
+ FPreviewAbout:=true;
+ if ainteger=0 then
+  FPreviewAbout:=False;
 
  // If there is no pages then end of read
  // Read pagecount
@@ -775,6 +876,7 @@ var
  asize:int64;
  wsize:integer;
  byteswrite:integer;
+ abytes:array of Byte;
 begin
  // Objects
  // Save all objects
@@ -783,7 +885,14 @@ begin
  Stream.Write(FMark,sizeof(FMark));
  Stream.Write(FObjectCount,sizeof(FObjectCount));
  byteswrite:=sizeof(TRpMetaObject)*FObjectCount;
- if byteswrite<>Stream.Write(FObjects[0],byteswrite) then
+ SetLength(abytes,byteswrite);
+{$IFDEF DOTNETD}
+ System.Array.Copy(FObjects,abytes,byteswrite);
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ Move(FObjects[0],abytes[0],byteswrite);
+{$ENDIF}
+ if byteswrite<>Stream.Write(abytes[0],byteswrite) then
   Raise Exception.Create(SRpErrorWritingPage);
  wsize:=Length(FPool)*2;
  Stream.Write(wsize,sizeof(wsize));
@@ -791,7 +900,12 @@ begin
  asize:=FMemStream.Size;
  FMemStream.Seek(0,soFromBeginning);
  Stream.Write(asize,sizeof(asize));
+{$IFDEF DOTNETD}
+ Stream.Write(FMemStream.Memory,FMemStream.Size);
+{$ENDIF}
+{$IFNDEF DOTNETD}
  Stream.Write(FMemStream.Memory^,FMemStream.Size);
+{$ENDIF}
 end;
 
 procedure TRpMetafilePage.LoadFromStream(Stream:TStream);
@@ -801,6 +915,10 @@ var
  objcount:integer;
  asize:int64;
  wsize:integer;
+{$IFDEF DOTNETD}
+ i:integer;
+{$ENDIF}
+ abytes:array of Byte;
 begin
  // read the object separator
  bytesread:=Stream.Read(separator,sizeof(separator));
@@ -820,16 +938,40 @@ begin
   SetLength(FObjects,objcount+1);
  // Read then whole array
  bytesread:=objcount*sizeof(TRpMetaObject);
- if (bytesread<>Stream.Read(FObjects[0],bytesread)) then
+ SetLength(abytes,bytesread);
+ if (bytesread<>Stream.Read(abytes[0],bytesread)) then
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+{$IFDEF DOTNETD}
+ System.Array.Copy(abytes,FObjects,bytesread);
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ Move(abytes[0],FObjects[0],bytesread);
+{$ENDIF}
+
  // Read string pool
  if (sizeof(wsize)<>Stream.Read(wsize,sizeof(wsize))) then
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
  if wsize<0 then
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
  SetLength(FPool,wsize div 2);
- if (wsize<>Stream.Read(FPool[1],wsize)) then
+ SetLength(abytes,wsize);
+{$IFDEF DOTNETD}
+ if (wsize<>Stream.Read(abytes[0],wsize)) then
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+ for i:=0 to wsize div 2 do
+ begin
+  // Revise byte order
+  FPool[i+1]:=WideChar((Integer(abytes[i+1]) shl 8)+abytes[i]);
+ end;
+  // System.Array.Copy(abytes,FPool,wsize);
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ if (wsize<>Stream.Read(abytes[0],wsize)) then
+  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+ // Copy the pool
+ Move(abytes[0],FPool[1],wsize);
+{$ENDIF}
+
  FPoolPos:=(wsize div 2)+1;
  // The Stream
  if (sizeof(asize)<>Stream.Read(asize,sizeof(asize))) then
@@ -843,8 +985,12 @@ begin
  end
  else
   FMemStream.SetSize(asize);
- FMemStream.Seek(0,soFromBeginning);
+{$IFDEF DOTNETD}
+ if (asize<>Stream.Read(FMemStream.Memory[0],asize)) then
+{$ENDIF}
+{$IFNDEF DOTNETD}
  if (asize<>Stream.Read(FMemStream.Memory^,asize)) then
+{$ENDIF}
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
 
  FObjectCount:=objcount;
@@ -979,13 +1125,40 @@ end;
 function CalcTextExtent(adriver:IRpPrintDriver;maxextent:TPoint;obj:TRpTextObject):integer;
 var
  newextent:TPoint;
- currentPos:Integer;
+ currentPos,lasttested:Integer;
  delimiters:string;
  originalstring:WideString;
 begin
  delimiters:=' '+'.'+','+'-'+'/'+'\'+'='+')'+'('+'*'+'+'+'-';
  currentpos:=Length(obj.Text);
  originalstring:=obj.Text;
+ obj.Text:=Copy(originalstring,1,currentpos);
+ newextent:=maxextent;
+ adriver.TextExtent(obj,newextent);
+
+ lasttested:=CurrentPos;
+ // Speed enhacement to cut at least lot of size testing
+ while (newextent.Y>maxextent.Y) do
+ begin
+  currentpos:=currentpos div 2;
+  while currentpos>0 do
+  begin
+   Dec(currentpos);
+   if isdelimiter(delimiters,obj.Text,currentpos) then
+    break;
+  end;
+
+  if currentpos<1 then
+   break;
+  obj.Text:=Copy(originalstring,1,currentpos);
+  newextent:=maxextent;
+  adriver.TextExtent(obj,newextent);
+  if newextent.Y<=maxextent.Y then
+   break
+  else
+   lasttested:=currentpos;
+ end;
+ currentpos:=lasttested;
  obj.Text:=Copy(originalstring,1,currentpos);
  newextent:=maxextent;
  adriver.TextExtent(obj,newextent);
@@ -1011,6 +1184,48 @@ begin
   Result:=CurrentPos;
  end;
 end;
+
+procedure TRpMetafileReport.PageRange(frompage,topage:integer);
+var
+ newpagecount:integer;
+begin
+ // Delete to first page
+ newpagecount:=topage-frompage+1;
+ if newpagecount=0 then
+ begin
+  Clear;
+  exit;
+ end;
+ while frompage>1 do
+ begin
+  DeletePage(0);
+  Dec(frompage);
+  if pagecount<1 then
+   break;
+ end;
+ while newpagecount<PageCount do
+ begin
+  DeletePage(PageCount-1);
+ end;
+end;
+
+{$IFDEF MSWINDOWS}
+{$IFNDEF DOTNETD}
+procedure  MetafileToExe(metafile:TRpMetafileReport;filename:String);
+var
+ tempfile:String;
+begin
+ tempfile:=RpTempFileName;
+ tempfile:=changeFileExt(tempfile,'.rpmf');
+ metafile.SaveToFile(tempfile);
+ try
+  ReportFileToExe(tempfile,filename,true,true,true,true);
+ finally
+  DeleteFile(tempfile);
+ end;
+end;
+{$ENDIF}
+{$ENDIF}
 
 
 end.

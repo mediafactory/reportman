@@ -27,7 +27,19 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ExtCtrls, ComCtrls, ToolWin, ActnList,rpalias,
-  Dsgnintf,TypInfo,DB,rpdatainfo,
+{$IFNDEF USEVARIANTS}
+  Dsgnintf,
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ {$IFDEF USEVARIANTS}
+   Designintf,DesignEditors,
+ {$ENDIF}
+{$ENDIF}
+{$IFDEF DOTNETD}
+  Borland.Vcl.Design.DesignIntf,
+  Borland.Vcl.Design.DesignEditors,
+{$ENDIF}
+  TypInfo,DB,rpdatainfo,
   rpeditconnvcl,
   ImgList, StdCtrls;
 
@@ -64,6 +76,9 @@ type
     rpalias1:TRpAlias;
 {$IFNDEF USEVARIANTS}
     Designer:IFormDesigner;
+{$ENDIF}
+{$IFDEF USEVARIANTS}
+    Designer:IDesigner;
 {$ENDIF}
     procedure UpdateList;
     procedure FillComboDataset;

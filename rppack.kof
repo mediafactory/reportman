@@ -62,12 +62,5 @@ UseLauncher=0
 DebugCWD=
 
 [Excluded Packages]
-/home/toni/prog/cvsroot/reportman/bplrppack.so=Report manager designer (non visual)
-/home/toni/prog/cvsroot/reportman/bplrppackv.so=Report manager visual components
-/opt/cortez/bin/dclemacsedit.so.6.5=Borland Editor Emacs Enhancements
-/opt/cortez/bin/bplHelpViewers.so.6.5=Borland Sample Help Viewer Package
-/opt/cortez/bin/dclnet.so.6.5=Borland Internet Components
-/home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/ibpack/bplibpack.so=IBAccess components package
-/home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/synedit/bplsynedit_kylix.so=SynEdit package for Kylix
-/opt/cortez/bin/dclindy.so.6.5=Internet Direct "Indy" for Kylix Property and Component Editors
+/home/toni/cvsroot/teechart/Sources/dclTee6K3.so=TeeChart 6 Components
 

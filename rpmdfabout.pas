@@ -34,20 +34,22 @@ uses SysUtils, Classes,
 
 type
   TFRpAboutBox = class(TForm)
+    Memo1: TMemo;
+    Panel1: TPanel;
     BOK: TButton;
+    Panel2: TPanel;
+    Image1: TImage;
+    Image2: TImage;
     LReport: TLabel;
     LAuthor: TLabel;
     LName: TLabel;
     Label2: TLabel;
     LEmail: TLabel;
     Label3: TLabel;
-    Image1: TImage;
     LVersion: TLabel;
     LProject: TLabel;
     Label5: TLabel;
-    Memo1: TMemo;
     LContributors: TLabel;
-    Image2: TImage;
     procedure FormCreate(Sender: TObject);
     procedure Label5MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);

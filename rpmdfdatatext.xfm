@@ -15,6 +15,7 @@ object FRpDataText: TFRpDataText
   PixelsPerInch = 96
   TextHeight = 13
   TextWidth = 6
+  ParentFont = True
   object PTop: TPanel
     Left = 0
     Top = 0

@@ -20,18 +20,20 @@ interface
 {$I rpconf.inc}
 
 uses
-  Classes,
+  Classes,rpcompobase,
   rpparser,rpeval,rpreport,rppdfreport,rptranslator,
-{$IFDEF USEVCL}
-  rpvclreport,
-{$ENDIF}
+  rpevalfunc,rptypes,rpdatainfo,rpalias,rptypeval,
 {$IFNDEF USEVARIANTS}
-{$IFNDEF BUILDER4}
-  rprulervcl,rpmdesignervcl,
+  rpvclreport,rpmaskedit,
+  {$IFNDEF BUILDER4}
+   rprulervcl,rpmdesignervcl,
+  {$ENDIF}
+   DsgnIntf,
 {$ENDIF}
-  DsgnIntf,rpeditalias,rpdatainfo,
+{$IFDEF DOTNETD}
+ rpvclreport,
 {$ENDIF}
-  rpevalfunc,rpalias,rptypeval,rplastsav;
+  rplastsav;
 
 procedure Register;
 
@@ -44,17 +46,19 @@ begin
   RegisterComponents('Reportman', [TRpLastUsedStrings]);
   RegisterComponents('Reportman', [TRpTranslator]);
   RegisterComponents('Reportman', [TPDFReport]);
-{$IFDEF USEVCL}
-  RegisterComponents('Reportman', [TVCLReport]);
-  RegisterPropertyEditor(TypeInfo(TRpAliasList),TRpAlias,'',TRpAliasPropEditor);
-{$ENDIF}
 {$IFNDEF USEVARIANTS}
-{$IFNDEF BUILDER4}
-  RegisterComponents('Reportman', [TRpRulerVCL]);
-  RegisterComponents('Reportman', [TRpDesignerVCL]);
-  RegisterPropertyEditor(TypeInfo(TRpDatabaseInfoList),TRpAlias,'',TRpConnectionPropEditor);
+  RegisterComponents('Reportman', [TVCLReport]);
+  RegisterComponents('Reportman', [TRpMaskEdit]);
+  {$IFNDEF BUILDER4}
+   RegisterComponents('Reportman', [TRpRulerVCL]);
+   RegisterComponents('Reportman', [TRpDesignerVCL]);
+  {$ENDIF}
 {$ENDIF}
+{$IFDEF DOTNETD}
+ RegisterComponents('Reportman', [TVCLReport]);
 {$ENDIF}
+
+
 end;
 
 end.

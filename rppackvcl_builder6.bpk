@@ -4,25 +4,25 @@
   <MACROS>
     <VERSION value="BCB.06.00"/>
     <PROJECT value="rppackvcl_builder6.bpl"/>
-    <OBJFILES value="rppackvcl_builder6.obj rpregvcl.obj"/>
-    <RESFILES value="rppackvcl_builder6.res rpactivexreport.dcr rpexpredlgvcl.dcr 
-      rprulervcl.dcr rpvclreport.dcr"/>
+    <OBJFILES value="rppackvcl_builder6.obj rpregvcl.obj rpvclreport.obj rpexpredlgvcl.obj 
+      rpmaskedit.obj"/>
+    <RESFILES value="rppackvcl_builder6.res rpvclreport.dcr rpexpredlgvcl.dcr rpmaskedit.dcr"/>
     <IDLFILES value=""/>
     <IDLGENFILES value=""/>
     <DEFFILE value=""/>
-    <RESDEPEN value="$(RESFILES)"/>
+    <RESDEPEN value="$(RESFILES) rpexpredlgvcl.dfm"/>
     <LIBFILES value=""/>
-    <LIBRARIES value="bcb2kaxserver.lib indy.lib dbxcds.lib dclocx.lib soaprtl.lib bcbie.lib 
-      nmfast.lib inetdbxpress.lib inetdbbde.lib bcbsmp.lib dsnapcon.lib 
-      dsnapcrba.lib visualdbclx.lib teeqr.lib dss.lib teedb.lib teeui.lib 
-      qrpt.lib bdecds.lib cds.lib vcldbx.lib vcldb.lib"/>
+    <LIBRARIES value="bcb2kaxserver.lib dbxcds.lib dclocx.lib soaprtl.lib nmfast.lib 
+      inetdbxpress.lib inetdbbde.lib dsnapcon.lib dsnapcrba.lib visualdbclx.lib 
+      teeqr.lib dss.lib teedb.lib teeui.lib qrpt.lib bdecds.lib vcldbx.lib"/>
     <SPARELIBS value="rtl.lib vcldb.lib adortl.lib bdertl.lib vcldbx.lib ibxpress.lib cds.lib 
       bdecds.lib qrpt.lib teeui.lib teedb.lib tee.lib dss.lib teeqr.lib 
       visualdbclx.lib dsnapcrba.lib dsnapcon.lib bcbsmp.lib inetdbbde.lib 
       inetdbxpress.lib dbexpress.lib nmfast.lib bcbie.lib soaprtl.lib dclocx.lib 
       dbxcds.lib indy.lib bcb2kaxserver.lib rppack_builder6.lib"/>
-    <PACKAGES value="rtl.bpi rppack_builder6.bpi vcl.bpi adortl.bpi bdertl.bpi ibxpress.bpi 
-      tee.bpi dbexpress.bpi"/>
+    <PACKAGES value="rtl.bpi rppack_builder6.bpi vcljpg.bpi adortl.bpi bdertl.bpi dsnap.bpi 
+      ibxpress.bpi indy.bpi tee.bpi vcl.bpi vcldb.bpi dbexpress.bpi dbrtl.bpi 
+      cds.bpi bcbie.bpi bcbsmp.bpi"/>
     <PATHCPP value=".;"/>
     <PATHPAS value=".;"/>
     <PATHRC value=".;"/>
@@ -33,16 +33,16 @@
     <USERDEFINES value="_DEBUG"/>
     <SYSDEFINES value="_RTLDLL;NO_STRICT;USEPACKAGES"/>
     <MAINSOURCE value="rppackvcl_builder6.cpp"/>
-    <INCLUDEPATH value="&quot;C:\Archivos de programa\Borland\CBuilder6\Projects&quot;;$(BCB)\include;$(BCB)\include\vcl"/>
-    <LIBPATH value="$(BCB)\Projects\Lib;&quot;C:\Archivos de programa\Borland\CBuilder6\Projects&quot;;$(BCB)\lib\obj;$(BCB)\lib"/>
+    <INCLUDEPATH value="$(BCB)\Projects;$(BCB)\include;$(BCB)\include\vcl"/>
+    <LIBPATH value="$(BCB)\Projects\Lib;$(BCB)\lib\obj;$(BCB)\lib"/>
     <WARNINGS value="-w-par"/>
     <OTHERFILES value=""/>
   </MACROS>
   <OPTIONS>
-    <IDLCFLAGS value="-I&quot;C:\Archivos de programa\Borland\CBuilder6\Projects&quot; -I$(BCB)\include 
-      -I$(BCB)\include\vcl -src_suffix cpp -D_DEBUG -boa"/>
-    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -5 -b- -k -y -v -vi- 
-      -c -tWM"/>
+    <IDLCFLAGS value="-I$(BCB)\Projects -I$(BCB)\include -I$(BCB)\include\vcl -src_suffix cpp 
+      -D_DEBUG -boa"/>
+    <CFLAG1 value="-Od -H=$(BCB)\lib\vcl60.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -c 
+      -tWM"/>
     <PFLAGS value="-$YD -$W -$O- -$A8 -v -JPHNE -M"/>
     <RFLAGS value=""/>
     <AFLAGS value="/mx /w2 /zd"/>
@@ -58,19 +58,29 @@
   <FILELIST>
       <FILE FILENAME="rppackvcl_builder6.res" FORMNAME="" UNITNAME="rppackvcl_builder6.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rppackvcl_builder6.cpp" FORMNAME="" UNITNAME="rppackvcl_builder6" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\rtl.bpi" FORMNAME="" UNITNAME="rtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="rtl.bpi" FORMNAME="" UNITNAME="rtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rpregvcl.pas" FORMNAME="" UNITNAME="rpregvcl" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Projects\Lib\rppack_builder6.bpi" FORMNAME="" UNITNAME="rppack_builder6" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\vcl.bpi" FORMNAME="" UNITNAME="vcl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\adortl.bpi" FORMNAME="" UNITNAME="adortl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\bdertl.bpi" FORMNAME="" UNITNAME="bdertl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\ibxpress.bpi" FORMNAME="" UNITNAME="ibxpress" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\tee.bpi" FORMNAME="" UNITNAME="tee" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\dbexpress.bpi" FORMNAME="" UNITNAME="dbexpress" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="rpactivexreport.dcr" FORMNAME="" UNITNAME="" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="rpexpredlgvcl.dcr" FORMNAME="" UNITNAME="" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="rprulervcl.dcr" FORMNAME="" UNITNAME="" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="rppack_builder6.bpi" FORMNAME="" UNITNAME="rppack_builder6" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="vcljpg.bpi" FORMNAME="" UNITNAME="vcljpg" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="adortl.bpi" FORMNAME="" UNITNAME="adortl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="bdertl.bpi" FORMNAME="" UNITNAME="bdertl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="dsnap.bpi" FORMNAME="" UNITNAME="dsnap" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="ibxpress.bpi" FORMNAME="" UNITNAME="ibxpress" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="indy.bpi" FORMNAME="" UNITNAME="indy" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="tee.bpi" FORMNAME="" UNITNAME="tee" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="vcl.bpi" FORMNAME="" UNITNAME="vcl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="vcldb.bpi" FORMNAME="" UNITNAME="vcldb" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="dbexpress.bpi" FORMNAME="" UNITNAME="dbexpress" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="vclreport.pas" FORMNAME="" UNITNAME="rpvclreport" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rpvclreport.dcr" FORMNAME="" UNITNAME="" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="dbrtl.bpi" FORMNAME="" UNITNAME="dbrtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="cds.bpi" FORMNAME="" UNITNAME="cds" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="rpexpredlgvcl.pas" FORMNAME="FRpExpredialogVCL" UNITNAME="rpexpredlgvcl" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="rpexpredlgvcl.dcr" FORMNAME="" UNITNAME="" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="rpmaskedit.pas" FORMNAME="" UNITNAME="rpmaskedit" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="rpmaskedit.dcr" FORMNAME="" UNITNAME="" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="bcbie.bpi" FORMNAME="" UNITNAME="bcbie" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="bcbsmp.bpi" FORMNAME="" UNITNAME="bcbsmp" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>
@@ -104,7 +114,8 @@ ProductVersion=1.0.0.0
 Comments=
 
 [Excluded Packages]
-c:\archivos de programa\borland\cbuilder6\Projects\Bpl\rppackv_builder6.bpl=rppackv_builder6
+c:\program files\borland\cbuilder6\bin\dclClxIBXtras60.bpl=Borland InterBase Express Extras (Clx)
+c:\program files\borland\cbuilder6\Bin\dclIBXtras60.bpl=Borland InterBase Express Extras
 
 [Debugging]
 DebugSourceDirs=$(BCB)\source\vcl

@@ -245,7 +245,12 @@ begin
    11:
     aparam.Value:=Boolean(paramvalue^);
    14:
+{$IFDEF USEVARIANTS}
     aparam.Value:=Int64(paramvalue^);
+{$ENDIF}
+{$IFNDEF USEVARIANTS}
+    aparam.Value:=Integer(paramvalue^);
+{$ENDIF}
    256:
     aparam.Value:=StrPas(PChar(paramvalue));
    else

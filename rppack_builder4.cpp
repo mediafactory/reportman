@@ -22,6 +22,9 @@ USERES("rptranslator.dcr");
 USEUNIT("rpmdshfolder.pas");
 USEPACKAGE("vcljpg40.bpi");
 USEPACKAGE("tee40.bpi");
+USEUNIT("rpmdcharttypes.pas");
+USEUNIT("rpbasereport.pas");
+USEFORMNS("rpmdprintconfigvcl.pas", Rpmdprintconfigvcl, FRpPrinterConfigVCL);
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 //---------------------------------------------------------------------------

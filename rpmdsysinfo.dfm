@@ -1,6 +1,6 @@
 object FRpSysInfo: TFRpSysInfo
-  Left = 245
-  Top = 108
+  Left = 359
+  Top = 221
   BorderStyle = bsDialog
   Caption = 'System information'
   ClientHeight = 358
@@ -13,6 +13,7 @@ object FRpSysInfo: TFRpSysInfo
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
+  ParentFont = True
   object BOK: TButton
     Left = 239
     Top = 320
@@ -23,7 +24,7 @@ object FRpSysInfo: TFRpSysInfo
     ModalResult = 1
     TabOrder = 0
   end
-  object GroupBox1: TGroupBox
+  object GSelectedPrinter: TGroupBox
     Left = 8
     Top = 8
     Width = 541

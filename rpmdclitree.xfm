@@ -5,6 +5,7 @@ object FRpCliTree: TFRpCliTree
   Height = 464
   VertScrollBar.Range = 149
   TabOrder = 0
+  ParentFont = True
   object PTop: TPanel
     Left = 0
     Top = 0

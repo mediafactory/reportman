@@ -2,6 +2,7 @@ package rppackdesign;
 
 {$R *.res}
 {$R 'rpmdesigner.dcr'}
+{$R 'rpruler.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -26,8 +27,13 @@ package rppackdesign;
 {$DESCRIPTION 'Report Manager Designer Component Package'}
 {$IMPLICITBUILD OFF}
 
+requires
+  rppack,
+  rppackv,
+  designide,
+  visualclx;
+
 contains
-  rpmregdesign in 'rpmregdesign.pas',
   rpmdesigner in 'rpmdesigner.pas',
   rpmdfdinfo in 'rpmdfdinfo.pas' {FRpDatainfoconfig},
   rpmdfdesign in 'rpmdfdesign.pas' {FDesignFrame: TFrame},
@@ -47,6 +53,8 @@ contains
   rpmdfconnection in 'rpmdfconnection.pas' {FRpConnection: TFrame},
   rpmdfdatasets in 'rpmdfdatasets.pas' {FRpDatasets: TFrame},
   rpmdfdatatext in 'rpmdfdatatext.pas' {FRpDataText},
-  rpmdsysinfoqt in 'rpmdsysinfoqt.pas' {FRpSysInfo};
+  rpmdsysinfoqt in 'rpmdsysinfoqt.pas' {FRpSysInfo},
+  rpmregdesign in 'rpmregdesign.pas',
+  rpruler in 'rpruler.pas';
 
 end.

@@ -1,27 +1,42 @@
 // This is enabled by the make webx command
-// to make the plugin
+// to make the plugin, this is already done by makefile
+// and the dpr also defines it
 //{$DEFINE FORWEBAX}
+
+{$DEFINE USEDESIGNEDITORS}
+{$DEFINE USERPDATASET}
+{$DEFINE USEREPORTFUNC}
 
 // ZLIB Support by default enabled
 {$DEFINE USEZLIB}
+// Indy support , remote report execution for base components
+{$DEFINE USEINDY}
 
-// Database drivers to be used
+// Database drivers to be used by default
 {$DEFINE USESQLEXPRESS}
 {$DEFINE USEIBX}
 {$DEFINE USEADO}
 {$DEFINE USEBDE}
-{$DEFINE USEZEOS}
+//{$DEFINE USEZEOS}
 //{$DEFINE USEIBO}
+
 
 // Unsupported database drivers in Linux
 // To enable IBX under Kylix remove the related UNDEF
 // By default is not defined becuase Borland don't provide
 // it in default installation
 {$IFDEF LINUX}
-// {$UNDEF USEIBX}
+ {$UNDEF USEIBX}
  {$UNDEF USEADO}
  {$UNDEF USEBDE}
  {$UNDEF USEIBO}
+{$ENDIF}
+
+// Database drivers to be used when performing a release
+{$IFDEF REPMANRELEASE}
+ {$DEFINE USEZEOS}
+ {$DEFINE LINUXTEECHART}
+ {$DEFINE USEIBX}
 {$ENDIF}
 
 
@@ -35,9 +50,38 @@
  {$UNDEF USEBCD}
  {$UNDEF USESQLEXPRESS}
  {$DEFINE MSWINDOWS}
- {$DEFINE USEVCL}
+// {$UNDEF USEINDY}
 {$ENDIF}
 
+// Delphi 4  compiler defines
+{$IFDEF VER120}
+ {$UNDEF USEVARIANTS}
+ {$UNDEF USEBCD}
+ {$UNDEF USESQLEXPRESS}
+ {$DEFINE MSWINDOWS}
+ {$DEFINE USEVCL}
+ {$UNDEF USEIBX}
+ {$UNDEF USEZEOS}
+ {$DEFINE BUILDER4}
+ {$UNDEF USEDESIGNEDITORS}
+ {$UNDEF USEEXCEL}
+ {$UNDEF USEADO}
+ {$UNDEF USEINDY}
+{$ENDIF}
+
+
+//  Builder 4 compiler defines
+{$IFDEF VER125}
+ {$UNDEF USEVARIANTS}
+ {$UNDEF USEBCD}
+ {$UNDEF USESQLEXPRESS}
+ {$DEFINE MSWINDOWS}
+ {$UNDEF USEIBX}
+ {$UNDEF USEADO}
+ {$DEFINE BUILDER4}
+ {$UNDEF USEEXCEL}
+ {$UNDEF USEINDY}
+{$ENDIF}
 
 // May be you want to enable TEECHART under Kylix
 // but take care it needs an X server running
@@ -49,20 +93,6 @@
  {$IFDEF LINUX}
   {$DEFINE USETEECHART}
  {$ENDIF}
-{$ENDIF}
-
-
-//  Builder 4 compiler defines
-{$IFDEF VER125}
- {$UNDEF USEVARIANTS}
- {$UNDEF USEBCD}
- {$UNDEF USESQLEXPRESS}
- {$DEFINE MSWINDOWS}
- {$DEFINE USEVCL}
- {$UNDEF USEIBX}
- {$UNDEF USEADO}
- {$DEFINE BUILDER4}
- {$UNDEF USEEXCEL}
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -82,10 +112,33 @@
 {$IFDEF VER150}
  {$DEFINE VCLFILEFILTERS}
  {$DEFINE EMPTYCOMBOBUG}
+ {$DEFINE ISDELPHI7}
  {$IFDEF MSWINDOWS}
   {$DEFINE BLOBSTREAMBUG}
 //  {$DEFINE QUERYLINKBUG}
  {$ENDIF}
+{$ENDIF}
+{$IFDEF CLR}
+ {$DEFINE DOTNETD}
+{$ENDIF}
+// DOT NET PREVIEW
+{$IFDEF DOTNETD}
+ {$DEFINE DOTNETDBUGS}
+ {$DEFINE VCLFILEFILTERS}
+ {$DEFINE MSWINDOWS}
+ {$UNDEF USEZLIB}
+ {$UNDEF USEADO}
+ {$UNDEF USEDESIGNEDITORS}
+// {$UNDEF USESQLEXPRESS}
+// {$UNDEF USEIBX}
+ {$UNDEF USEZEOS}
+// {$UNDEF USETEECHART}
+// {$UNDEF USEBDE}
+// {$DEFINE FORWEBAX}
+//  {$DEFINE QUERYLINKBUG}
+//  {$UNDEF USEINDY}
+// {$UNDEF USERPDATASET}
+// {$UNDEF USEREPORTFUNC}
 {$ENDIF}
 
 
@@ -113,7 +166,33 @@
  {$UNDEF USEADO}
  {$UNDEF USEBDE}
  {$UNDEF USEIBO}
- {$UNDEF USETEECHART}
- {$UNDEF USEZLIB}
+ {$UNDEF USEZEOS}
+ {$UNDEF USEBCD}
+ {$UNDEF USEREPORTFUNC}
+ {$UNDEF USERPDATASET}
+{$ENDIF}
+
+
+
+// VCL and CLX sharing compatibility
+{$IFDEF MSWINDOWS}
+ {$DEFINE VCLANDCLX}
+ // C++ Builder 6 does not allow VCL and CLX
+ {$IFDEF BCB}
+  {$UNDEF VCLANDCLX}
+ {$ENDIF}
+ {$IFNDEF BCB}
+  {$IFNDEF FORWEBAX}
+   {$DEFINE USECLXTEECHART}
+  {$ENDIF}
+ {$ENDIF}
+{$ENDIF}
+
+{$IFDEF USETEECHART}
+ {$IFDEF LINUX}
+  {$IFNDEF FORWEBAX}
+   {$DEFINE USECLXTEECHART}
+  {$ENDIF}
+ {$ENDIF}
 {$ENDIF}
 

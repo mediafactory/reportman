@@ -6,10 +6,12 @@ object FRpMainF: TFRpMainF
   ActiveControl = ToolButton1
   AutoScroll = False
   Caption = 'Report Manager Designer'
-  ClientHeight = 318
-  ClientWidth = 444
+  ClientHeight = 340
+  ClientWidth = 532
   Color = clBackground
   Menu = MainMenu1
+  Position = poScreenCenter
+  Scaled = False
   ShowHint = True
   WindowState = wsMaximized
   OnClose = FormClose
@@ -19,12 +21,11 @@ object FRpMainF: TFRpMainF
   OnResize = FormResize
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 13
-  TextWidth = 6
+  ParentFont = True
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 444
+    Width = 532
     Height = 56
     AutoSize = True
     ButtonHeight = 26
@@ -149,7 +150,6 @@ object FRpMainF: TFRpMainF
       Enabled = False
       Grouped = True
       ImageIndex = 10
-      OnMouseUp = BExpressionMouseUp
     end
     object BShape: TToolButton
       Left = 279
@@ -195,31 +195,31 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton11: TToolButton
       HelpType = htContext
-      Left = 1
-      Top = 30
+      Left = 425
+      Top = 4
       Height = 26
       Action = ACut
       Caption = 'Cut'
     end
     object ToolButton12: TToolButton
       HelpType = htContext
-      Left = 27
-      Top = 30
+      Left = 451
+      Top = 4
       Height = 26
       Action = ACopy
       Caption = 'Copy'
     end
     object ToolButton13: TToolButton
       HelpType = htContext
-      Left = 53
-      Top = 30
+      Left = 477
+      Top = 4
       Height = 26
       Action = APaste
       Caption = 'Paste'
     end
     object ToolButton14: TToolButton
-      Left = 79
-      Top = 30
+      Left = 503
+      Top = 4
       Width = 14
       Height = 26
       Style = tbsSeparator
@@ -228,7 +228,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton15: TToolButton
       HelpType = htContext
-      Left = 93
+      Left = 1
       Top = 30
       Height = 26
       Action = ALeft
@@ -236,7 +236,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton16: TToolButton
       HelpType = htContext
-      Left = 119
+      Left = 27
       Top = 30
       Height = 26
       Action = ARight
@@ -244,7 +244,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton17: TToolButton
       HelpType = htContext
-      Left = 145
+      Left = 53
       Top = 30
       Height = 26
       Action = AUp
@@ -252,14 +252,14 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton18: TToolButton
       HelpType = htContext
-      Left = 171
+      Left = 79
       Top = 30
       Height = 26
       Action = ADown
       Caption = 'Down'
     end
     object ToolButton19: TToolButton
-      Left = 197
+      Left = 105
       Top = 30
       Width = 12
       Height = 26
@@ -269,7 +269,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton20: TToolButton
       HelpType = htContext
-      Left = 209
+      Left = 117
       Top = 30
       Height = 26
       Action = AAlignLeft
@@ -277,7 +277,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton21: TToolButton
       HelpType = htContext
-      Left = 235
+      Left = 143
       Top = 30
       Height = 26
       Action = AAlignRight
@@ -285,7 +285,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton22: TToolButton
       HelpType = htContext
-      Left = 261
+      Left = 169
       Top = 30
       Height = 26
       Action = AAlignUp
@@ -293,7 +293,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton23: TToolButton
       HelpType = htContext
-      Left = 287
+      Left = 195
       Top = 30
       Height = 26
       Action = AAlignDown
@@ -301,7 +301,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton24: TToolButton
       HelpType = htContext
-      Left = 313
+      Left = 221
       Top = 30
       Height = 26
       Action = AAlignHorz
@@ -309,7 +309,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton25: TToolButton
       HelpType = htContext
-      Left = 339
+      Left = 247
       Top = 30
       Height = 26
       Action = AAlignVert
@@ -338,8 +338,8 @@ object FRpMainF: TFRpMainF
   object mainscrollbox: TScrollBox
     Left = 0
     Top = 56
-    Width = 444
-    Height = 241
+    Width = 532
+    Height = 263
     HorzScrollBar.Range = 189
     Align = alClient
     BorderStyle = bsNone
@@ -349,7 +349,7 @@ object FRpMainF: TFRpMainF
       Left = 181
       Top = 0
       Width = 8
-      Height = 241
+      Height = 263
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
@@ -358,7 +358,7 @@ object FRpMainF: TFRpMainF
       Left = 0
       Top = 0
       Width = 181
-      Height = 241
+      Height = 263
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -376,8 +376,8 @@ object FRpMainF: TFRpMainF
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 297
-    Width = 444
+    Top = 319
+    Width = 532
     Height = 21
     Panels = <
       item
@@ -399,8 +399,17 @@ object FRpMainF: TFRpMainF
         Caption = '-'
       end
       object MLibraries: TMenuItem
-        Action = ALibraries
-        Visible = False
+        Caption = 'Libraries'
+        Hint = 'Open report libraries dialog'
+        object Configure1: TMenuItem
+          Action = ALibraries
+        end
+        object Openfrom1: TMenuItem
+          Action = AOpenFrom
+        end
+        object Copyto1: TMenuItem
+          Action = ASaveTo
+        end
       end
       object N7: TMenuItem
         Caption = '-'
@@ -997,8 +1006,8 @@ object FRpMainF: TFRpMainF
       OnExecute = AAlign1_6Execute
     end
     object ALibraries: TAction
-      Category = 'File'
-      Caption = 'Libraries...'
+      Category = 'Library'
+      Caption = 'Libraries'
       Hint = 'Open report libraries dialog'
       OnExecute = ALibrariesExecute
     end
@@ -1009,6 +1018,18 @@ object FRpMainF: TFRpMainF
       Hint = 'Delete the selected object'
       ImageIndex = 20
       OnExecute = ADeleteExecute
+    end
+    object AOpenFrom: TAction
+      Category = 'Library'
+      Caption = 'Open from'
+      Hint = 'Open a report from a library'
+      OnExecute = AOpenFromExecute
+    end
+    object ASaveTo: TAction
+      Category = 'Library'
+      Caption = 'Save to'
+      Hint = 'Save the report to a database library'
+      OnExecute = ASaveToExecute
     end
   end
   object iconlist: TImageList
@@ -2337,16 +2358,5 @@ object FRpMainF: TFRpMainF
     SaveIndex = 0
     Left = 280
     Top = 80
-  end
-  object MFields: TPopupMenu
-    AutoHotkeys = maManual
-    Left = 412
-    Top = 80
-    object est1: TMenuItem
-      Caption = 'Test'
-    end
-    object ext21: TMenuItem
-      Caption = 'Text2'
-    end
   end
 end

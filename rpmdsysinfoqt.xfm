@@ -1,6 +1,6 @@
 object FRpSysInfo: TFRpSysInfo
-  Left = 249
-  Top = 128
+  Left = 452
+  Top = 131
   ActiveControl = BOK
   AutoScroll = False
   Caption = 'System information'
@@ -13,8 +13,9 @@ object FRpSysInfo: TFRpSysInfo
   PixelsPerInch = 96
   TextHeight = 13
   TextWidth = 6
+  ParentFont = True
   object BOK: TButton
-    Left = 227
+    Left = 223
     Top = 384
     Width = 110
     Height = 33
@@ -23,7 +24,7 @@ object FRpSysInfo: TFRpSysInfo
     ModalResult = 1
     TabOrder = 0
   end
-  object GroupBox1: TGroupBox
+  object GSelectedPrinter: TGroupBox
     Left = 8
     Top = 8
     Width = 541
@@ -68,7 +69,7 @@ object FRpSysInfo: TFRpSysInfo
     object LResolution: TLabel
       Left = 192
       Top = 107
-      Width = 281
+      Width = 329
       Height = 20
       AutoSize = False
     end
@@ -158,7 +159,7 @@ object FRpSysInfo: TFRpSysInfo
     end
     object LVersion: TLabel
       Left = 136
-      Top = 48
+      Top = 56
       Width = 329
       Height = 17
       AutoSize = False
@@ -174,13 +175,13 @@ object FRpSysInfo: TFRpSysInfo
   object LDisplay: TLabel
     Left = 132
     Top = 152
-    Width = 345
+    Width = 417
     Height = 25
     AutoSize = False
   end
   object GLinINfo: TGroupBox
     Left = 12
-    Top = 172
+    Top = 180
     Width = 541
     Height = 193
     Caption = 'System information'

@@ -28,7 +28,11 @@ uses
 {$IFDEF USEVARIANTS}
  Variants,Types,
 {$ENDIF}
- DB,DBClient,rpmdconsts;
+ DB,
+{$IFDEF USERPDATASET}
+ DBClient,
+{$ENDIF}
+ rpmdconsts;
 
 type
  TRpFieldobj=class(TObject)
@@ -54,8 +58,10 @@ type
    secsize:Integer;
   end;
 
+{$IFDEF USERPDATASET}
 procedure FillClientDatasetFromFile(data:TClientDataSet;fieldsfile:String;
  textfilename:String;IndexFields:String);
+{$ENDIF}
 procedure FillFieldObjList(fieldsfile:String;
  lfields:TStringList;
  var recordseparator:char;
@@ -171,6 +177,7 @@ begin
 end;
 
 
+{$IFDEF USERPDATASET}
 procedure FillClientDatasetFromFile(data:TClientDataSet;fieldsfile:String;textfilename:String;indexfields:String);
 var
  recordseparator:char;
@@ -183,7 +190,7 @@ var
  memstream:TMemoryStream;
  position,readed:LongInt;
  fieldvalue:Variant;
- buf:String;
+ buf:array of Byte;
  reccount:integer;
  recorddone:boolean;
  ayear,amonth,aday:Word;
@@ -239,7 +246,7 @@ begin
      position:=position+readed;
      if readed=0 then
       break;
-     if buf[1]=recordseparator then
+     if Char(buf[1])=recordseparator then
      begin
       recorddone:=true;
       oldline:='';
@@ -250,15 +257,15 @@ begin
        position:=position+readed;
        if readed=0 then
         break;
-       if buf[1]<>ignoreafterrecordseparator then
+       if Char(buf[1])<>ignoreafterrecordseparator then
        begin
-        oldline:=buf[1];
+        oldline:=char(buf[1]);
         break;
        end;
       end;
      end
      else
-      line:=line+buf[1];
+      line:=line+char(buf[1]);
      if recorddone then
      begin
       recorddone:=false;
@@ -395,5 +402,6 @@ begin
  end;
  data.first;
 end;
+{$ENDIF}
 
 end.

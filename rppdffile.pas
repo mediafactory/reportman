@@ -55,17 +55,17 @@ interface
 {$I rpconf.inc}
 
 uses Classes,Sysutils,
-//{$IFDEF MSWINDOWS}
-// Windows,
-//{$ENDIF}
+{$IFDEF MSWINDOWS}
+ Windows,
+{$ENDIF}
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
-{$IFNDEF USEVARIANTS}
- Windows,
-{$ENDIF}
 {$IFDEF USEZLIB}
  rpmzlib,
+{$ENDIF}
+{$IFDEF DOTNETD}
+ Graphics,System.Runtime.InteropServices,
 {$ENDIF}
  rpmdconsts,rptypes,rpmunits;
 
@@ -400,6 +400,8 @@ end;
 
 constructor TrpPdfFont.Create;
 begin
+ inherited Create;
+
  Name:=poCourier;
  Size:=10;
 end;
@@ -408,13 +410,15 @@ end;
 procedure SWriteLine(Stream:TStream;astring:string);
 begin
  astring:=astring+#13+#10;
- Stream.Write(astring[1],Length(astring));
+ WriteStringToStream(astring,Stream);
 end;
 
 
 
 constructor TrpPDFCanvas.Create(AFile:TRpPDFFile);
 begin
+ inherited Create;
+
  FFont:=TRpPDFFont.Create;
  FFile:=AFile;
  SetLength(FLineInfo,CONS_MINLINEINFOITEMS);
@@ -756,7 +760,12 @@ end;
 
 function TRpPDFCanvas.UnitsToTextText(Value:integer;FontSize:integer):string;
 var
+{$IFDEF DOTNETD}
+ olddecimalseparator:String;
+{$ENDIF}
+{$IFNDEF DOTNETD}
  olddecimalseparator:char;
+{$ENDIF}
 begin
  olddecimalseparator:=decimalseparator;
  decimalseparator:='.';
@@ -769,7 +778,12 @@ end;
 
 function NumberToText(Value:double):string;
 var
+{$IFDEF DOTNETD}
+ olddecimalseparator:String;
+{$ENDIF}
+{$IFNDEF DOTNETD}
  olddecimalseparator:char;
+{$ENDIF}
 begin
  olddecimalseparator:=decimalseparator;
  decimalseparator:='.';
@@ -782,7 +796,12 @@ end;
 
 function TRpPDFCanvas.UnitsToTextX(Value:integer):string;
 var
+{$IFDEF DOTNETD}
+ olddecimalseparator:String;
+{$ENDIF}
+{$IFNDEF DOTNETD}
  olddecimalseparator:char;
+{$ENDIF}
 begin
  olddecimalseparator:=decimalseparator;
  decimalseparator:='.';
@@ -795,7 +814,12 @@ end;
 
 function TRpPDFCanvas.UnitsToTextY(Value:integer):string;
 var
+{$IFDEF DOTNETD}
+ olddecimalseparator:String;
+{$ENDIF}
+{$IFNDEF DOTNETD}
  olddecimalseparator:char;
+{$ENDIF}
 begin
  olddecimalseparator:=decimalseparator;
  decimalseparator:='.';
@@ -928,7 +952,12 @@ function RGBToFloats(color:integer):string;
 var
  r,g,b:byte;
  acolor:LongWord;
+{$IFDEF DOTNETD}
+ olddecimal:String;
+{$ENDIF}
+{$IFNDEF DOTNETD}
  olddecimal:char;
+{$ENDIF}
 begin
  olddecimal:=decimalseparator;
  try
@@ -1406,7 +1435,7 @@ begin
   begin
    // Read image dimensions
    fimagestream.SetSize(abitmap.size);
-   abitmap.Read(fimagestream.memory^,fimagestream.size);
+   fimagestream.LoadFromStream(abitmap);
    fimagestream.Seek(0,soFromBeginning);
   end
   else
@@ -1514,50 +1543,49 @@ function TRpPDFCanvas.CalcCharWidth(charcode:char):double;
 var
  intvalue:Byte;
  defaultwidth:integer;
- parray:PWinAnsiWidthsArray;
+ aarray:TWinAnsiWidthsArray;
+ i:integer;
 begin
+ defaultwidth:=Default_Font_Width;
+ for i:=32 to 255 do
+ begin
+  aarray[i]:=defaultwidth;
+ end;
  if charcode in [#0,#13,#10] then
  begin
   Result:=0;
   exit;
  end;
- parray:=nil;
  if (FFont.Name=poHelvetica) then
  begin
-  parray:=@Helvetica_Widths;
+  aarray:=Helvetica_Widths;
   if FFont.Bold then
   begin
    if FFont.Italic then
-    parray:=@Helvetica_BoldItalic_Widths;
+    aarray:=Helvetica_BoldItalic_Widths;
   end
   else
    if FFont.Italic then
-    parray:=@Helvetica_Italic_Widths;
+    aarray:=Helvetica_Italic_Widths;
  end
  else
  if (FFont.Name=poTimesRoman) then
  begin
-  parray:=@TimesRoman_Widths;
+  aarray:=TimesRoman_Widths;
   if FFont.Bold then
   begin
    if FFont.Italic then
-    parray:=@TimesRoman_BoldItalic_Widths;
+    aarray:=TimesRoman_BoldItalic_Widths;
   end
   else
    if FFont.Italic then
-    parray:=@TimesRoman_Italic_Widths;
+    aarray:=TimesRoman_Italic_Widths;
  end;
- defaultwidth:=Default_Font_Width;
  intvalue:=Byte(charcode);
- if assigned(parray) then
- begin
-  if intvalue<32 then
-   Result:=defaultwidth
-  else
-   Result:=parray^[intvalue];
- end
+ if intvalue<32 then
+  Result:=defaultwidth
  else
-  Result:=defaultwidth;
+  Result:=aarray[intvalue];
  Result:=Result*FFont.Size/1000;
 end;
 
@@ -1750,6 +1778,190 @@ type
   end;
  PBitmapCoreHeader = ^TBitmapCoreHeader;
 
+
+
+{$IFDEF DOTNETD}
+procedure GetBitmapInfo(stream:TStream;var width,height,imagesize:integer;FMemBits:TMemoryStream);
+var
+ fileheader:TBitmapFileHeader;
+ bitmapinfo:TBitmapInfoHeader;
+ coreheader:TBitmapCoreHeader;
+ bsize:DWORD;
+ readed:longint;
+ numcolors:integer;
+ bitcount:integer;
+ iscoreheader:boolean;
+ qcolors:array of TRGBQuad;
+ tcolors:array of TRGBTriple;
+ values:array of TRGBTriple;
+ qvalues:array of TRGBQuad;
+ indexvalues:array of Byte;
+ acolors:array of Byte;
+ avalues:array of Byte;
+// orgvalues:array of TRGBQuad;
+procedure GetDIBBitsNet;
+var
+ bitmap:TBitmap;
+ bits:TBytes;
+ bitmapinfoptr,abits:Intptr;
+ abitmapinfo:tagBitmapinfo;
+begin
+ bitmap:=TBitmap.Create;
+ try
+  bitmap.HandleType:=bmDIB;
+//  bitmapinfoptr:=nil;
+  bitmapinfoptr:=Marshal.AllocHGlobal(sizeof(BitmapInfo));
+  Marshal.StructureToPtr(BitmapInfo,BitmapinfoPtr,true);
+  stream.Seek(0,soFromBeginning);
+  bitmap.LoadFromStream(stream);
+  SetLength(bits,bitmap.width*bitmap.Height*3);
+//  if not GetDIB(bitmap.Handle,bitmap.Palette,bitmapinfoptr,bits) then
+//   RaiseLastOsError;
+//  ShowMessage('hello2');
+  abitmapinfo.bmiHeader.biSize:=sizeof(abitmapinfo.bmiHeader);
+  abitmapinfo.bmiheader.biWidth:=bitmapinfo.biWidth;
+  abitmapinfo.bmiheader.biHeight:=bitmapinfo.biHeight;
+  abitmapinfo.bmiheader.biPlanes:=bitmapinfo.biPlanes;
+  abitmapinfo.bmiheader.biBitCount:=bitmapinfo.biBitCount;
+  abitmapinfo.bmiHeader.biCompression:=bitmapinfo.biCompression;
+  abitmapinfo.bmiHeader.biSizeImage:=bitmapinfo.biSizeImage;
+  abitmapinfo.bmiHeader.biXPelsPerMeter:=bitmapinfo.biXPelsPerMeter;
+  abitmapinfo.bmiHeader.biYPelsPerMeter:=bitmapinfo.biYPelsPerMeter;
+  abitmapinfo.bmiHeader.biClrUsed:=bitmapinfo.biClrUsed;
+  abitmapinfo.bmiHeader.biClrImportant:=bitmapinfo.biClrImportant;
+
+
+  if GetDIBits(CreateCompatibleDC(0),bitmap.handle,0,bitmap.height,abits,abitmapinfo,DIB_RGB_COLORS)=0 then
+   RaiseLastOsError;
+  FMemBits.Write(bits,Length(bits));
+ finally
+  bitmap.Free;
+ end;
+end;
+
+function bytestofileheader(const abytes:TBytes):TBitmapFileHeader;
+begin
+ Result.bfType := System.BitConverter.ToUInt16(ABytes, 0);
+ Result.bfSize := System.BitConverter.ToUInt32(ABytes, sizeof(Result.bfType));
+ Result.bfReserved1 := System.BitConverter.ToUInt16(ABytes,
+  sizeof(Result.bfType)+sizeof(Result.bfSize));
+ Result.bfReserved2 := System.BitConverter.ToUInt16(ABytes,
+  sizeof(Result.bfType)+sizeof(Result.bfSize)+sizeof(Result.bfReserved1));
+ Result.bfOffBits := System.BitConverter.ToUInt16(ABytes,
+  sizeof(Result.bfType)+sizeof(Result.bfSize)+sizeof(Result.bfReserved1)+
+  sizeof(Result.bfReserved2));
+end;
+
+
+function bytestocoreheader(const abytes:TBytes):TBitmapCoreheader;
+begin
+ Result.bcSize := System.BitConverter.ToUInt32(ABytes, 0);
+ Result.bcWidth := System.BitConverter.ToUInt16(ABytes, sizeof(Result.bcSize));
+ Result.bcHeight:= System.BitConverter.ToUInt16(ABytes,
+  sizeof(Result.bcSize)+sizeof(Result.bcWidth));
+ Result.bcPlanes:=System.BitConverter.ToUInt16(ABytes,
+  sizeof(Result.bcSize)+sizeof(Result.bcWidth)+sizeof(Result.bcHeight));
+ Result.bcBitCount:=System.BitConverter.ToUInt16(ABytes,
+  sizeof(Result.bcSize)+sizeof(Result.bcWidth)+sizeof(Result.bcHeight)+
+   sizeof(Result.bcPlanes));
+end;
+
+function bytestobitmapinfo(const abytes:TBytes):TBitmapInfoHeader;
+var
+ currindex:integer;
+begin
+ currindex:=0;
+ Result.biSize:=System.BitConverter.ToUInt32(ABytes, 0);
+ currindex:=sizeof(Result.biSize);
+ Result.biWidth:=System.BitConverter.ToUInt32(ABytes, currindex);
+ currindex:=currindex+sizeof(Result.biWidth);
+ Result.biHeight:=System.BitConverter.ToUInt32(ABytes, currindex);
+ currindex:=currindex+sizeof(Result.biHeight);
+ Result.biPlanes:=System.BitConverter.ToUInt16(ABytes, currindex);
+ currindex:=currindex+sizeof(Result.biPlanes);
+ Result.biBitCount:=System.BitConverter.ToUInt16(ABytes, currindex);
+ currindex:=currindex+sizeof(Result.biBitCount);
+ Result.biCompression:=System.BitConverter.ToUInt32(ABytes, currindex);
+ currindex:=currindex+sizeof(Result.biCompression);
+ Result.biSizeImage:=System.BitConverter.ToUInt32(ABytes, currindex);
+ currindex:=currindex+sizeof(Result.biSizeImage);
+ Result.biXPelsPerMeter:=System.BitConverter.ToUInt32(ABytes, currindex);
+ currindex:=currindex+sizeof(Result.biXPelsPerMeter);
+ Result.biYPelsPerMeter:=System.BitConverter.ToUInt32(ABytes, currindex);
+ currindex:=currindex+sizeof(Result.biYPelsPerMeter);
+ Result.biClrUsed:=System.BitConverter.ToUInt32(ABytes, currindex);
+ currindex:=currindex+sizeof(Result.biClrUsed);
+ Result.biClrImportant:=System.BitConverter.ToUInt32(ABytes, currindex);
+end;
+
+
+begin
+ SetLength(avalues,sizeof(fileheader));
+ readed:=stream.Read(avalues,sizeof(fileheader));
+ if readed<>sizeof(fileheader) then
+  Raise Exception.Create(SRpBadBitmapFileHeader);
+ fileheader:=bytestofileheader(avalues);
+ // The header must contain 'BM'
+ if fileheader.bfType<>19778 then
+  Raise Exception.Create(SRpBadBitmapFileHeader);
+
+ // read de size of bitmapinfo
+ readed:=stream.Read(bsize,sizeof(bsize));
+ if readed<>sizeof(bsize) then
+  Raise Exception.Create(SRpBadBitmapFileHeader);
+ if ((bsize<2) or (bsize>MAX_BITMAPHEADERSIZE)) then
+  Raise Exception.Create(SRpInvalidBitmapHeaderSize);
+ iscoreheader:=false;
+ if bsize<15 then
+  iscoreheader:=true;
+ readed:=stream.Seek(sizeof(fileheader),soFromBeginning);
+ // Allocates memory
+ if iscoreheader then
+ begin
+  SetLength(avalues,bsize);
+  // Reads the pbitmapinfo
+  readed:=stream.Read(avalues,bsize);
+  if DWORD(readed)<>bsize then
+   Raise Exception.Create(SRpBadBitmapStream);
+  coreheader:=bytestocoreheader(avalues);
+  width:=coreheader.bcWidth;
+  height:=coreheader.bcheight;
+  imagesize:=width*height*3;
+  bitcount:=coreheader.bcBitCount;
+  if Assigned(FMemBits) then
+   GetDIBBitsNet;
+ end
+ else
+ begin
+  SetLength(avalues,bsize);
+  // Reads the pbitmapinfo
+  readed:=stream.Read(avalues,bsize);
+  if DWORD(readed)<>bsize then
+   Raise Exception.Create(SRpBadBitmapStream);
+  bitmapinfo:=bytestobitmapinfo(avalues);
+
+  width:=bitmapinfo.biWidth;
+  height:=bitmapinfo.biheight;
+  bitcount:=bitmapinfo.biBitCount;
+   // Check support for BI_RGB
+   if (Not (bitmapinfo.biCompression in [BI_BITFIELDS,BI_RGB])) then
+   begin
+    // this are BI_RLE4 or BI_RLE8
+    Raise Exception.Create(SRpRLECompBitmapPDF);
+   end
+   else
+   begin
+    imagesize:=width*height*3;
+    if (bitcount=1) then
+     Raise Exception.Create(SRpMonochromeBitmapPDF);
+    if Assigned(FMemBits) then
+     GetDIBBitsNet;
+   end;
+ end;
+end;
+{$ENDIF}
+
+{$IFNDEF DOTNETD}
 procedure GetBitmapInfo(stream:TStream;var width,height,imagesize:integer;FMemBits:TMemoryStream);
 var
  fileheader:TBitmapFileHeader;
@@ -2045,6 +2257,7 @@ begin
   end;
  end;
 end;
+{$ENDIF}
 
 const
   M_SOF0  = $C0;        { Start Of Frame N }

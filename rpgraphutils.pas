@@ -23,7 +23,7 @@ interface
 
 uses
 {$IFDEF MSWINDOWS}
-  windows,rpvgraphutils,
+  windows,
 {$ENDIF}
   SysUtils,Classes,Types,rptranslator,
   QGraphics, QForms,QButtons, QExtCtrls,QPrinters,
@@ -38,7 +38,7 @@ type
   TRpNodeInfo=class(TObject)
    public
     Node:TTreeNode;
-    ReportName:String;
+    ReportName:WideString;
     Group_Code:Integer;
     Parent_Group:integer;
     Path:String;
@@ -76,8 +76,8 @@ function AlignToGrid (Value:integer;scale:integer):integer;
 function AlignToGridPixels (Value:integer;scaletwips:integer):integer;
 procedure LoadQtTranslator;
 function RpMessageBox (const Text: WideString; const Caption: WideString = '';
-  Buttons: TMessageButtons = [smbOK]; Style: TMessageStyle = smsInformation;
-  Default: TMessageButton = smbOK; Escape: TMessageButton = smbCancel): TMessageButton;
+  Buttons: TMessageButtons = [QForms.smbOK]; Style: TMessageStyle = QForms.smsInformation;
+  Default: TMessageButton = QForms.smbOK; Escape: TMessageButton = QForms.smbCancel): TMessageButton;
 function RpInputBox (const ACaption, APrompt, ADefault:WideString ):WideString;
 procedure FillTreeView (ATree:TTreeView;alist:TStringList);
 function GetFullFileName (ANode:TTreeNode;dirseparator:char):String;
@@ -671,6 +671,13 @@ begin
    if Length(alist.Strings[i])<1 then
     continue;
    astring:=alist.Strings[i];
+   // Dir separator can be / or
+{$IFDEF MSWINDOWS}
+   astring:=StringReplace(astring,'/',C_DIRSEPARATOR,[rfReplaceAll]);
+{$ENDIF}
+{$IFDEF LINUX}
+   astring:=StringReplace(astring,'\',C_DIRSEPARATOR,[rfReplaceAll]);
+{$ENDIF}
    repname:=GetLastName(astring);
    dirname:=GetPathName(astring);
    anode:=SearchNode(FTopItems,ATree,dirname);

@@ -45,6 +45,7 @@ type
    constructor Create(AOwner:TComponent);override;
    procedure SaveToText(filename:string;textdriver:String='');override;
   published
+   property ShowProgress;
    property Filename;
    property Title;
    property ShowPrintDialog;
@@ -54,7 +55,7 @@ type
    property PDFFilename:string read FPDFFilename write FPDFFilename;
    property Compressed:Boolean read FCompressed write FCompressed default True;
    property FromPage:integer read FFromPage write FFromPage default 1;
-   property ToPage:integer read FFromPage write FToPage default 9999999;
+   property ToPage:integer read FToPage write FToPage default 9999999;
    property Copies:integer read FCopies write FCopies default 9999999;
   end;
 

@@ -21,42 +21,68 @@ unit rpmdfopenlibvcl;
 interface
 
 uses Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls,
-  Buttons, ExtCtrls,rpmdconsts,rpmdftreevcl,DB,rpdatainfo;
+  Buttons, ExtCtrls,rpmdconsts,rpmdftreevcl,DB,rpdatainfo,
+  rpvgraphutils,
+  ComCtrls;
 
 type
   TFRpOpenLibVCL = class(TForm)
     Panel1: TPanel;
     BOK: TButton;
     BCancel: TButton;
+    Panel2: TPanel;
+    LLibrary: TLabel;
+    ComboLibrary: TComboBox;
     procedure BOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure ComboLibraryClick(Sender: TObject);
   private
     { Private declarations }
     dook:Boolean;
     atree:TFRpDBTreeVCL;
+    dbinfo:TRpDatabaseInfoList;
   public
     { Public declarations }
-    SelectedReport:String;
+    SelectedReport:WideString;
   end;
 
-function SelectReportFromLibrary(dbinfo:TRpDatabaseInfoItem):String;
+function SelectReportFromLibrary(dbinfo:TRpDatabaseInfoList;var alibrary:string):WideString;
 
 implementation
 
 {$R *.DFM}
 
 
-function SelectReportFromLibrary(dbinfo:TRpDatabaseInfoItem):String;
+function SelectReportFromLibrary(dbinfo:TRpDatabaseInfoList;var alibrary:string):WideString;
 var
  dia:TFRpOpenLibVCL;
+ i:integer;
 begin
  Result:='';
+ If dbinfo.Count<1 then
+  Raise Exception.Create(SRPDabaseAliasNotFound);
  dia:=TFRpOpenLibVCL.Create(Application);
  try
-  dia.atree.EditTree(dbinfo);
+  dia.dbinfo:=dbinfo;
+  dia.ComboLibrary.OnClick:=nil;
+  dia.ComboLibrary.Items.Clear;
+  for i:=0 to dbinfo.Count-1 do
+  begin
+   dia.ComboLibrary.Items.Add(dbinfo.Items[i].Alias);
+  end;
+  dia.ComboLibrary.ItemIndex:=0;
+  if Length(alibrary)>0 then
+  begin
+   i:=dbinfo.IndexOf(alibrary);
+   dia.ComboLibrary.ItemIndex:=i;
+  end;
+  dia.ComboLibrary.OnClick:=dia.ComboLibraryClick;
+  dia.ComboLibraryClick(dia.ComboLibrary);
   dia.ShowModal;
   if dia.dook then
   begin
+   alibrary:=dia.ComboLibrary.Text;
+   Result:=dia.SelectedReport;
   end;
  finally
   dia.free;
@@ -64,8 +90,19 @@ begin
 end;
 
 procedure TFRpOpenLibVCL.BOKClick(Sender: TObject);
+var
+ anode:TTreeNode;
+ ninfo:TRpNodeInfo;
 begin
  // Is there a report selected?
+ SelectedReport:='';
+ anode:=atree.ATree.Selected;
+ if Not Assigned(anode) then
+  Raise Exception.Create(SRpSelectReport);
+ ninfo:=TRpNodeInfo(anode.data);
+ if Length(ninfo.ReportName)<1 then
+  Raise Exception.Create(SRpSelectReport);
+ SelectedReport:=ninfo.ReportName;
  dook:=True;
  Close;
 end;
@@ -77,6 +114,23 @@ begin
  atree.Top:=0;
  atree.Left:=0;
  atree.Parent:=Self;
+ BOK.Caption:=SRpOk;
+ BCancel.Caption:=SRpCancel;
+ LLibrary.Caption:=SRpLibSelection;
+ Caption:=TranslateStr(1123,Caption);
+end;
+
+procedure TFRpOpenLibVCL.ComboLibraryClick(Sender: TObject);
+var
+ i:integer;
+ dbitem:TRpDatabaseInfoItem;
+begin
+ // Open and fill the selected
+ i:=dbinfo.IndexOf(ComboLibrary.Text);
+ if i<0 then
+  exit;
+ dbitem:=dbinfo.Items[i];
+ atree.EditTree(dbitem,false);
 end;
 
 end.

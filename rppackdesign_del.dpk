@@ -2,6 +2,7 @@ package rppackdesign_del;
 
 {$R *.res}
 {$R 'rpmdesigner.dcr'}
+{$R 'rpruler.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -32,18 +33,11 @@ requires
   dbrtl,
   visualdbclx,
   rppack_del,
-  rppackvcl_del,
   rppackv_del,
-  rppackdesignvcl_del,
+  rppackvcl_del,
   visualclx,
-  bdertl,
-  dbexpress,
-  adortl,
-  ibxpress,
-  vcljpg,
-  vcl,
   indy,
-  tee;
+  rppackdesignvcl_del;
 
 contains
   rpmregdesign in 'rpmregdesign.pas',
@@ -66,6 +60,12 @@ contains
   rppagesetup in 'rppagesetup.pas' {FRpPageSetup},
   rpmdfextsec in 'rpmdfextsec.pas' {FRpExtSection},
   rpmdsysinfoqt in 'rpmdsysinfoqt.pas' {FRpSysInfo},
-  rpmdfdatatext in 'rpmdfdatatext.pas' {FRpDataText};
+  rpmdfdatatext in 'rpmdfdatatext.pas' {FRpDataText},
+  rpeditconn in 'rpeditconn.pas' {FRpEditCon},
+  rpmdfopenlib in 'rpmdfopenlib.pas' {FRpOpenLib},
+  rpmdftree in 'rpmdftree.pas' {FRpDBTree: TFrame},
+  rpdbbrowser in 'rpdbbrowser.pas' {FRpBrowser: TFrame},
+  rpruler in 'rpruler.pas',
+  rpfparams in 'rpfparams.pas' {FRpParams};
 
 end.

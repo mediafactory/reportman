@@ -25,16 +25,16 @@ interface
 uses SysUtils, Classes,
   Graphics, Forms,
   Buttons, ExtCtrls, Controls, StdCtrls,Dialogs,
-  rpmdconsts,rpmunits,rpreport;
+  rpmdconsts,rpmunits,rpreport, Mask, rpmaskedit;
 
 type
   TFRpGridOptionsVCL = class(TForm)
     BOK: TButton;
     BCancel: TButton;
     Lhorizontal: TLabel;
-    EGridX: TEdit;
+    EGridX: TRpMaskEdit;
     Lvertical: TLabel;
-    EGridY: TEdit;
+    EGridY: TRpMaskEdit;
     LGridColor: TLabel;
     ColorDialog1: TColorDialog;
     GridColor: TShape;

@@ -51,7 +51,8 @@ type
    procedure ReadWideText(Reader:TReader);
   protected
    procedure DefineProperties(Filer:TFiler);override;
-   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;
+    aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure Loaded;override;
   public
@@ -99,7 +100,7 @@ type
    procedure ReadAgIniValue(Reader:TReader);
   protected
    procedure DefineProperties(Filer:TFiler);override;
-   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
   public
    constructor Create(AOwner:TComponent);override;
@@ -131,7 +132,7 @@ type
   private
    FExpreitem:TRpExpression;
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
   end;
 
@@ -139,7 +140,7 @@ type
 implementation
 
 
-uses rpreport,Math;
+uses rpbasereport,Math;
 
 function TIdenRpExpression.GeTRpValue:TRpValue;
 begin
@@ -173,7 +174,7 @@ var
  langindex:integer;
  acopy:WideString;
 begin
- langindex:=TRpReport(GetReport).Language+1;
+ langindex:=TRpBaseReport(GetReport).Language+1;
  if langindex<0 then
   langindex:=0;
  acopy:='';
@@ -193,7 +194,7 @@ var
  langindex:integer;
  acopy:WideString;
 begin
- langindex:=TRpReport(GetReport).Language+1;
+ langindex:=TRpBaseReport(GetReport).Language+1;
  if langindex<0 then
   langindex:=0;
  acopy:='';
@@ -293,13 +294,13 @@ begin
  FDataType:=rpParamUnknown;
 end;
 
-procedure TRpLabel.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpLabel.DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  aalign:integer;
  aTextObj:TRpTextObject;
 begin
- inherited DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
+ inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
  aTextObj.Text:=Text;
  aTextObj.LFontName:=LFontName;
  aTextObj.WFontName:=WFontName;
@@ -319,7 +320,7 @@ begin
 
 
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy,
-  aposx,width,height,aTextObj,BackColor,Transparent);
+  aposx,Printwidth,Printheight,aTextObj,BackColor,Transparent);
 end;
 
 
@@ -337,7 +338,7 @@ begin
  Value:=UpperCase(Trim(Value));
  if Value=FIdentifier then
   exit;
- fidens:=TRpReport(GetReport).Identifiers;
+ fidens:=TRpBaseReport(GetReport).Identifiers;
  index:=fidens.IndexOf(Value);
  if index>=0 then
   Raise Exception.Create(SRpIdentifierAlreadyExists);
@@ -359,7 +360,7 @@ begin
  if FUpdated then
   exit;
  try
-  fevaluator:=TRpREport(GetReport).Evaluator;
+  fevaluator:=TRpBaseReport(GetReport).Evaluator;
 //  fevaluator.Expression:=FExpression;
 //  fevaluator.Evaluate;
 //  FValue:=fevaluator.EvalResult;
@@ -398,14 +399,14 @@ begin
  end;
 end;
 
-procedure TRpExpression.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpExpression.DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  expre:WideString;
  Textobj:TRpTextObject;
  newposition:Integer;
 begin
- inherited DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
+ inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
  expre:=Trim(Expression);
  Textobj:=GetTextObject;
  if PrintOnlyOne then
@@ -416,7 +417,7 @@ begin
  end;
  if MultiPage then
  begin
-  maxextent.X:=Width;
+  maxextent.X:=PrintWidth;
   newposition:=CalcTextExtent(adriver,maxextent,Textobj);
   if newposition<Length(TextObj.Text) then
   begin
@@ -431,11 +432,11 @@ begin
    FIsPartial:=false;
  end;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy,
-   aposx,width,height,Textobj,BackColor,Transparent);
+   aposx,Printwidth,Printheight,Textobj,BackColor,Transparent);
  // Is Total pages variable?
  if (UpperCase(expre)='PAGECOUNT') then
  begin
-  TRpReport(GetReport).AddTotalPagesItem(metafile.currentpage,metafile.Pages[metafile.currentpage].ObjectCount-1,displayformat);
+  TRpBaseReport(GetReport).AddTotalPagesItem(metafile.currentpage,metafile.Pages[metafile.currentpage].ObjectCount-1,displayformat);
  end;
 end;
 
@@ -455,7 +456,7 @@ begin
     begin
      // Update with the initial value
      try
-      eval:=TRpReport(GetReport).Evaluator;
+      eval:=TRpBaseReport(GetReport).Evaluator;
       eval.Expression:=FAgIniValue;
       eval.Evaluate;
       FValue:=eval.EvalResult;
@@ -479,7 +480,7 @@ begin
     begin
      // Update with the initial value
      try
-      eval:=TRpReport(GetReport).Evaluator;
+      eval:=TRpBaseReport(GetReport).Evaluator;
       eval.Expression:=FAgIniValue;
       eval.Evaluate;
       FValue:=eval.EvalResult;
@@ -502,7 +503,7 @@ begin
     begin
      try
       // Update with the initial value
-      eval:=TRpReport(GetReport).Evaluator;
+      eval:=TRpBaseReport(GetReport).Evaluator;
       eval.Expression:=FExpression;
       eval.Evaluate;
       // Do the operation
@@ -567,7 +568,7 @@ begin
      begin
       // Update with the initial value
       try
-       eval:=TRpReport(GetReport).Evaluator;
+       eval:=TRpBaseReport(GetReport).Evaluator;
        eval.Expression:=FAgIniValue;
        eval.Evaluate;
       except

@@ -38,7 +38,6 @@ contains
   rpevalfunc in 'rpevalfunc.pas',
   rpparser in 'rpparser.pas',
   rpalias in 'rpalias.pas',
-  rpmreg in 'rpmreg.pas',
   rplastsav in 'rplastsav.pas',
   rptypes in 'rptypes.pas',
   rpdatainfo in 'rpdatainfo.pas',
@@ -66,6 +65,7 @@ contains
   rpsubreport in 'rpsubreport.pas',
   rpwriter in 'rpwriter.pas',
   rpdataset in 'rpdataset.pas',
+  rphtmldriver in 'rphtmldriver.pas',
   rppdfdriver in 'rppdfdriver.pas',
   rppdffile in 'rppdffile.pas',
   rppdfreport in 'rppdfreport.pas',
@@ -73,7 +73,14 @@ contains
   rpmdchart in 'rpmdchart.pas',
   rpmdbarcode in 'rpmdbarcode.pas',
   rptranslator in 'rptranslator.pas',
-  rpmdshfolder in 'rpmdshfolder.pas';
+  rpmdshfolder in 'rpmdshfolder.pas',
+  rpmdrepclient in 'rpmdrepclient.pas' {modclient: TDataModule},
+  rpmdprotocol in 'rpmdprotocol.pas',
+  rptextdriver in 'rptextdriver.pas',
+  rpbasereport in 'rpbasereport.pas',
+  rpdatatext in 'rpdatatext.pas',
+  rpmreg in 'rpmreg.pas',
+  rpmdcharttypes in 'rpmdcharttypes.pas';
 
 {%File 'zconf.inc'}
 

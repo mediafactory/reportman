@@ -31,7 +31,10 @@ uses Classes,Sysutils,
  Windows,
 {$ENDIF}
  rptypes,rpmetafile,rppdffile,
- rpmunits,rpreport,rpmdconsts;
+{$IFNDEF FORWEBAX}
+ rpbasereport,rpreport,rpmdchart,
+{$ENDIF}
+ rpmunits,rpmdconsts,rpmdcharttypes;
 
 type
  TRpPdfDriver=class(TInterfacedObject,IRpPrintDriver)
@@ -40,30 +43,33 @@ type
    FOrientation:TRpOrientation;
    FPageWidth,FPageHeight:integer;
    PageQt:Integer;
-   procedure RepProgress(Sender:TRpReport;var docancel:boolean);
   public
    filename:string;
    Compressed:boolean;
    DestStream:TStream;
    constructor Create;
    destructor Destroy;override;
+{$IFNDEF FORWEBAX}
+   procedure RepProgress(Sender:TRpBaseReport;var docancel:boolean);
+{$ENDIF}
    procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
-    hardwarecollate:boolean);stdcall;
-   procedure EndDocument;stdcall;
-   procedure AbortDocument;stdcall;
-   procedure NewPage;stdcall;
-   procedure EndPage;stdcall;
-   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
-   procedure DrawPage(apage:TRpMetaFilePage);stdcall;
-   function AllowCopies:boolean;stdcall;
-   function GetPageSize(var PageSizeQt:Integer):TPoint;stdcall;
-   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
-   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
-   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
-   procedure SetOrientation(Orientation:TRpOrientation);stdcall;
-   procedure SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
-   function SupportsCopies(maxcopies:integer):boolean;stdcall;
-   function SupportsCollation:boolean;stdcall;
+    hardwarecollate:boolean);
+   procedure EndDocument;
+   procedure AbortDocument;
+   procedure NewPage;
+   procedure EndPage;
+   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
+   procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
+   procedure DrawPage(apage:TRpMetaFilePage);
+   function AllowCopies:boolean;
+   function GetPageSize(var PageSizeQt:Integer):TPoint;
+   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
+   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
+   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
+   procedure SetOrientation(Orientation:TRpOrientation);
+   procedure SelectPrinter(printerindex:TRpPrinterSelect);
+   function SupportsCopies(maxcopies:integer):boolean;
+   function SupportsCollation:boolean;
    property PDFFile:TRpPDFFile read FPDFFile;
   end;
 
@@ -75,6 +81,7 @@ procedure SaveMetafileRangeToPDF(metafile:TRpMetafileReport;
 
  procedure SaveMetafileToPDFStream(metafile:TRpMetafileReport;
  Stream:TStream;compressed:boolean);
+{$IFNDEF FORWEBAX}
 function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
      filename:string;compressed:boolean;collate:boolean):Boolean;
@@ -87,7 +94,9 @@ function PrintReportMetafileStream(report:TRpReport;
 function PrintReportToMetafile(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
      filename:string;collate:boolean):Boolean;
-
+procedure DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
+ aposx,aposy:integer;achart:TObject);
+{$ENDIF}
 
 
 implementation
@@ -143,6 +152,7 @@ const
 
 constructor TRpPDFDriver.Create;
 begin
+ inherited Create;
  PageQt:=0;
  FPageWidth:= 11904;
  FPageHeight:= 16836;
@@ -156,6 +166,7 @@ begin
   FPDFFile.free;
   FPDFFile:=nil;
  end;
+ inherited Destroy;
 end;
 
 function TRpPDFDriver.SupportsCollation:boolean;
@@ -169,7 +180,7 @@ begin
 end;
 
 procedure TRpPDFDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
-   hardwarecollate:boolean);stdcall;
+   hardwarecollate:boolean);
 begin
  if Assigned(FPDFFile) then
  begin
@@ -394,7 +405,7 @@ begin
  Result.Y:=FPageHeight;
 end;
 
-function TRpPDFDriver.SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
+function TRpPDFDriver.SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
 var
  newwidth,newheight:integer;
 begin
@@ -447,75 +458,10 @@ begin
 end;
 
 
-procedure TRpPDFDriver.RepProgress(Sender:TRpReport;var docancel:boolean);
-begin
-{$IFDEF USEVARIANTS}
- WriteLn(SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
-  +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
-  FormatFloat('#########,####',Sender.RecordCount));
-{$ELSE}
- WriteLn(String(SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
-  +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
-  FormatFloat('#########,####',Sender.RecordCount)));
-{$ENDIF}
-
-end;
 
 
-function PrintReportToMetafile(report:TRpReport;Caption:string;progress:boolean;
-     allpages:boolean;frompage,topage,copies:integer;
-     filename:string;collate:boolean):Boolean;
-var
- pdfdriver:TRpPDFDriver;
- apdfdriver:IRpPrintDriver;
- oldprogres:TRpProgressEvent;
-begin
- if Length(Trim(filename))<0 then
-  Raise Exception.Create(SRpNoFileNameProvided+':Metafile');
- pdfdriver:=TRpPDFDriver.Create;
- pdfdriver.compressed:=false;
- apdfdriver:=pdfdriver;
- report.TwoPass:=true;
- // If report progress must print progress
- oldprogres:=report.OnProgress;
- try
-  if progress then
-   report.OnProgress:=pdfdriver.RepProgress;
-  report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
-  report.Metafile.SaveToFile(filename);
- finally
-  report.OnProgress:=oldprogres;
- end;
- Result:=True;
-end;
 
-function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
-     allpages:boolean;frompage,topage,copies:integer;
-     filename:string;compressed:boolean;collate:boolean):Boolean;
-var
- pdfdriver:TRpPDFDriver;
- apdfdriver:IRpPrintDriver;
- oldprogres:TRpProgressEvent;
-begin
- if Length(Trim(filename))<0 then
-  Raise Exception.Create(SRpNoFileNameProvided+':PDF');
- pdfdriver:=TRpPDFDriver.Create;
- pdfdriver.filename:=filename;
- pdfdriver.compressed:=compressed;
- apdfdriver:=pdfdriver;
- // If report progress must print progress
- oldprogres:=report.OnProgress;
- try
-  if progress then
-   report.OnProgress:=pdfdriver.RepProgress;
-  report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
- finally
-  report.OnProgress:=oldprogres;
- end;
- Result:=True;
-end;
-
-procedure TRpPDFDriver.SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
+procedure TRpPDFDriver.SelectPrinter(printerindex:TRpPrinterSelect);
 begin
  // No printer to select
 end;
@@ -604,13 +550,16 @@ begin
   end;
   adriver.EndDocument;
   adriver.PDFFile.MainPDF.Seek(0,soFromBeginning);
-  Stream.Write(adriver.PDFFile.MainPDF.Memory^,adriver.PDFFile.MainPDF.Size);
+  Stream.CopyFrom(adriver.PDFFile.MainPDF,adriver.PDFFile.MainPDF.Size);
+  adriver.PDFFile.MainPDF.Seek(0,soFromBeginning);
+//  Stream.Write(adriver.PDFFile.MainPDF.Memory^,adriver.PDFFile.MainPDF.Size);
  except
   adriver.AbortDocument;
   raise;
  end;
 end;
 
+{$IFNDEF FORWEBAX}
 function PrintReportPDFStream(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
      Stream:TStream;compressed:boolean;collate:boolean):Boolean;
@@ -636,6 +585,7 @@ begin
  Result:=True;
 end;
 
+
 function PrintReportMetafileStream(report:TRpReport;
  Caption:string;progress:boolean;allpages:boolean;frompage,topage,copies:integer;
  Stream:TStream;compressed:boolean;collate:boolean):Boolean;
@@ -656,9 +606,11 @@ begin
   try
    if progress then
     report.OnProgress:=pdfdriver.RepProgress;
+   report.TwoPass:=true;
 //   report.PrintAll(apdfdriver);
    report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
-
+   if not allpages then
+    report.Metafile.PageRange(frompage,topage);
    report.Metafile.SaveToStream(Stream);
    Stream.Seek(0,soFromBeginning);
   finally
@@ -668,6 +620,218 @@ begin
  finally
   astream.free;
  end;
+end;
+
+procedure TRpPDFDriver.RepProgress(Sender:TRpBaseReport;var docancel:boolean);
+begin
+{$IFDEF USEVARIANTS}
+ WriteLn(SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
+  +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
+  FormatFloat('#########,####',Sender.RecordCount));
+{$ELSE}
+ WriteLn(String(SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
+  +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
+  FormatFloat('#########,####',Sender.RecordCount)));
+{$ENDIF}
+
+end;
+
+
+function PrintReportToMetafile(report:TRpReport;Caption:string;progress:boolean;
+     allpages:boolean;frompage,topage,copies:integer;
+     filename:string;collate:boolean):Boolean;
+var
+ pdfdriver:TRpPDFDriver;
+ apdfdriver:IRpPrintDriver;
+ oldprogres:TRpProgressEvent;
+begin
+ if Length(Trim(filename))<0 then
+  Raise Exception.Create(SRpNoFileNameProvided+':Metafile');
+ pdfdriver:=TRpPDFDriver.Create;
+ pdfdriver.compressed:=false;
+ apdfdriver:=pdfdriver;
+ report.TwoPass:=true;
+ // If report progress must print progress
+ oldprogres:=report.OnProgress;
+ try
+  if progress then
+   report.OnProgress:=pdfdriver.RepProgress;
+  report.TwoPass:=true;
+  report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
+  if not allpages then
+   report.Metafile.PageRange(frompage,topage);
+  if Length(filename)>0 then
+   report.Metafile.SaveToFile(filename);
+ finally
+  report.OnProgress:=oldprogres;
+ end;
+ Result:=True;
+end;
+
+function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
+     allpages:boolean;frompage,topage,copies:integer;
+     filename:string;compressed:boolean;collate:boolean):Boolean;
+var
+ pdfdriver:TRpPDFDriver;
+ apdfdriver:IRpPrintDriver;
+ oldprogres:TRpProgressEvent;
+begin
+ if Length(Trim(filename))<0 then
+  Raise Exception.Create(SRpNoFileNameProvided+':PDF');
+ pdfdriver:=TRpPDFDriver.Create;
+ pdfdriver.filename:=filename;
+ pdfdriver.compressed:=compressed;
+ apdfdriver:=pdfdriver;
+ // If report progress must print progress
+ oldprogres:=report.OnProgress;
+ try
+  if progress then
+   report.OnProgress:=pdfdriver.RepProgress;
+  report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
+ finally
+  report.OnProgress:=oldprogres;
+ end;
+ Result:=True;
+end;
+
+procedure DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
+ aposx,aposy:integer;achart:TObject);
+var
+ nchart:TRpChart;
+ i:integer;
+ Maxvalue,Minvalue:double;
+ aserie:TRpSeriesItem;
+ gridvsep:integer;
+ horzgap,vertgap:integer;
+ numvlabels:integer;
+ valueinc:double;
+ posy:integer;
+ avalue:double;
+ aText:WideString;
+ aalign:integer;
+ xdesp:integer;
+ origin,destination:TPoint;
+ j:integer;
+ shape:TRpShapeType;
+ acolor:integer;
+ pencolor:integer;
+ MaxValueCount:integer;
+ aTextObj:TRpTextObject;
+begin
+ nchart:=TRpChart(achart);
+ // To draw for each serie find macvalue and minvalue
+ MaxValue:=-10e300;
+ MinValue:=+10e300;
+ MaxValueCount:=0;
+ for i:=0 to Series.Count-1 do
+ begin
+  aserie:=Series.Items[i];
+  if aserie.MaxValue>MaxValue then
+   MaxValue:=aserie.MaxValue;
+  if aserie.MinValue<MinValue then
+   MinValue:=aserie.MinValue;
+  if aserie.ValueCount>MaxValueCount then
+   MaxValueCount:=aserie.ValueCount;
+ end;
+ // The number of grid rows depends on font height
+ gridvsep:=Round(nchart.FontSize/POINTS_PER_INCHESS*TWIPS_PER_INCHESS*2);
+ vertgap:=Round(nchart.FontSize/POINTS_PER_INCHESS*TWIPS_PER_INCHESS*1.5);
+ horzgap:=CONS_HORZGAP;
+ // Draws coordinate system
+ page.NewDrawObject(aposy,aposx+horzgap,1,nchart.PrintHeight-vertgap,
+  integer(rpsVertLine),0,0,0,0,0);
+ // Draws coordinate system
+ page.NewDrawObject(aposy+nchart.PrintHeight-vertgap,aposx+horzgap,nchart.PrintWidth-horzgap,1,
+  integer(rpsHorzLine),0,0,0,0,0);
+ // Draw Texts for scales
+ numvlabels:=(nchart.PrintHeight-vertgap) div gridvsep;
+ // Value relation
+ valueinc:=gridvsep*(MaxValue-MinValue)/(nchart.PrintHeight-vertgap);
+ avalue:=MinValue;
+ for i:=0 to numvlabels do
+ begin
+  posy:=nchart.PrintHeight-vertgap-i*gridvsep;
+  // Draw the line
+  page.NewDrawObject(aposy+posy,aposx+horzgap,nchart.PrintWidth-horzgap,1,
+   integer(rpsHorzLine),0,0,1,0,0);
+  // Draw the caption
+  aText:=FormatFloat('########0.00',avalue);
+  aTextObj.Text:=aText;
+  aTextObj.LFontName:=nchart.LFontName;
+  aTextObj.WFontName:=nchart.WFontName;
+  aTextObj.FontSize:=nchart.FontSize;
+  aTextObj.FontRotation:=nchart.FontRotation;
+  aTextObj.FontStyle:=nchart.FontStyle;
+  aTextObj.FontColor:=nchart.FontColor;
+  aTextObj.Type1Font:=integer(nchart.Type1Font);
+  aTextObj.CutText:=nchart.CutText;
+  aTextObj.WordWrap:=nchart.WordWrap;
+  aTextObj.RightToLeft:=nchart.RightToLeft;
+  aTextObj.PrintStep:=nchart.PrintStep;
+  aalign:=nchart.PrintAlignment or nchart.VAlignment;
+  if nchart.SingleLine then
+   aalign:=aalign or AlignmentFlags_SingleLine;
+  aTextObj.Alignment:=aalign;
+  page.NewTextObject(aposy+posy-(gridvsep div 4),
+   aposx,horzgap,gridvsep,aTextobj,nchart.BackColor,nchart.Transparent);
+  avalue:=avalue+valueinc;
+ end;
+ // Draws the lines
+ acolor:=0;
+ xdesp:=Round((nchart.PrintWidth-horzgap)/(MaxValueCount));
+ for i:=0 to Series.Count-1 do
+ begin
+  aserie:=Series.Items[i];
+  pencolor:=SeriesColors[acolor];
+  if ASerie.MinValue<>ASerie.MaxValue then
+  begin
+   for j:=0 to aserie.ValueCount-1 do
+   begin
+    if j=0 then
+    begin
+     origin.X:=horzgap;
+     origin.Y:=nchart.PrintHeight-vertgap-Round((aserie.Values[j]-MinValue)/(MaxValue-MinValue)*(nchart.PrintHeight-vertgap));
+    end;
+    destination.X:=origin.X+xdesp;
+    destination.Y:=nchart.PrintHeight-vertgap-Round((aserie.Values[j]-MinValue)/(MaxValue-MinValue)*(nchart.PrintHeight-vertgap));
+    if destination.Y>origin.Y then
+    begin
+     shape:=rpsOblique1;
+     // Draw the line
+      page.NewDrawObject(aposy+origin.Y,aposx+origin.X,xdesp,Destination.Y-Origin.Y,
+       integer(shape),0,0,0,0,pencolor);
+    end
+    else
+    begin
+     if destination.Y<origin.Y then
+     begin
+      shape:=rpsOblique2;
+      page.NewDrawObject(aposy+origin.Y-(origin.Y-destination.Y),aposx+origin.X,xdesp,Origin.Y-Destination.Y,
+       integer(shape),0,0,0,0,pencolor);
+     end
+     else
+     begin
+      shape:=rpsHorzLine;
+      page.NewDrawObject(aposy+origin.Y,aposx+origin.X,xdesp,1,
+       integer(shape),0,0,0,0,pencolor);
+     end;
+    end;
+    Origin:=Destination;
+   end;
+  end;
+  acolor:=((acolor+1) mod MAX_SERIECOLORS);
+ end;
+end;
+{$ENDIF}
+
+procedure TRpPDFDriver.DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
+begin
+{$IFNDEF FORWEBAX}
+ if assigned(ametafile.OnDrawChart) then
+  ametafile.OnDrawChart(Self,Series,ametafile.Pages[ametafile.CurrentPage],posx,posy,achart)
+ else
+  DoDrawChart(Self,Series,ametafile.Pages[ametafile.CurrentPage],posx,posy,achart);
+{$ENDIF}
 end;
 
 

@@ -25,7 +25,10 @@ uses
   windows,
   SysUtils,Classes,
 {$IFDEF USEVARIANTS}
-  Types,
+  Types,Variants,
+{$ENDIF}
+{$IFDEF DOTNETD}
+  Registry,
 {$ENDIF}
   rptranslator,
   Graphics, Forms,Buttons, ExtCtrls,
@@ -56,6 +59,7 @@ type
   private
     { Private declarations }
    Buttonpressed,EscapeButton:TMessageButton;
+   function ComponentToTMessageButton(Sender:TObject):TMessageButton;
   public
     { Public declarations }
   end;
@@ -87,13 +91,15 @@ const
   OldLocaleOverrideKey = 'Software\Borland\Delphi\Locales';
   NewLocaleOverrideKey = 'Software\Borland\Locales';
 
-
+{$IFNDEF DOTNETD}
 function RegOpenKeyEx(hKey: LongWord; lpSubKey: PChar; ulOptions,
   samDesired: LongWord; var phkResult: LongWord): Longint; stdcall;
   external advapi32 name 'RegOpenKeyExA';
 function RegQueryValueEx(hKey: LongWord; lpValueName: PChar;
   lpReserved: Pointer; lpType: Pointer; lpData: PChar; lpcbData: Pointer): Integer; stdcall;
   external advapi32 name 'RegQueryValueExA';
+{$ENDIF}
+
 {$ENDIF}
 
 function AlignToGrid(Value:integer;scale:integer):integer;
@@ -291,173 +297,6 @@ begin
 end;
 
 
-function FindQtLocaleFile:string;
-{$IFDEF LINUX}
-var
- LangCode,P:PChar;
- I:Integer;
- afilename:String;
-{$ENDIF}
-{$IFDEF MSWINDOWS}
-var
-  FileName: array[0..260] of Char;
-  Key: LongWord;
-  LocaleName, LocaleOverride: array[0..4] of Char;
-  Size: Integer;
-  P: PChar;
-  afilename:string;
-
-  function FindBS(Current: PChar): PChar;
-  begin
-    Result := Current;
-    while (Result^ <> #0) and (Result^ <> '\') do
-      Result := CharNext(Result);
-  end;
-
-  function ToLongPath(AFileName: PChar): PChar;
-  var
-    CurrBS, NextBS: PChar;
-     L: Integer;
-     Handle:Integer;
-    FindData: TWin32FindData;
-    Buffer: array[0..260] of Char;
-    GetLongPathName: function (ShortPathName: PChar; LongPathName: PChar;
-      cchBuffer: Integer): Integer stdcall;
-  begin
-{$R-}
-    Result := AFileName;
-    Handle := GetModuleHandle(kernel);
-    if Handle <> 0 then
-    begin
-      @GetLongPathName := GetProcAddress(Handle, 'GetLongPathNameA');
-      if Assigned(GetLongPathName) and
-         (GetLongPathName(AFileName, Buffer, SizeOf(Buffer)) <> 0) then
-      begin
-        lstrcpy(AFileName, Buffer);
-        Exit;
-      end;
-    end;
-
-    if AFileName[0] = '\' then
-    begin
-      if AFileName[1] <> '\' then Exit;
-      CurrBS := FindBS(AFileName + 2);  // skip server name
-      if CurrBS^ = #0 then Exit;
-      CurrBS := FindBS(CurrBS + 1);     // skip share name
-      if CurrBS^ = #0 then Exit;
-    end else
-      CurrBS := AFileName + 2;          // skip drive name
-
-    L := CurrBS - AFileName;
-    lstrcpyn(Buffer, AFileName, L + 1);
-    while CurrBS^ <> #0 do
-    begin
-      NextBS := FindBS(CurrBS + 1);
-      if L + (NextBS - CurrBS) + 1 > SizeOf(Buffer) then Exit;
-      lstrcpyn(Buffer + L, CurrBS, (NextBS - CurrBS) + 1);
-
-      Handle := FindFirstFile(Buffer, FindData);
-      if (Handle = -1) then Exit;
-      windows.FindClose(Handle);
-
-      if L + 1 + lstrlen(FindData.cFileName) + 1 > SizeOf(Buffer) then Exit;
-      Buffer[L] := '\';
-      lstrcpy(Buffer + L + 1, FindData.cFileName);
-      Inc(L, lstrlen(FindData.cFileName) + 1);
-      CurrBS := NextBS;
-    end;
-    lstrcpy(AFileName, Buffer);
-{$R+}
-  end;
-{$ENDIF}
-begin
-{$IFDEF LINUX}
- afilename:='qt';
- LangCode := getenv('LANG');
- if (LangCode = nil) or (LangCode^ = #0) then
-  Exit;
- // look for modulename.en_US
- P := LangCode;
- while P^ in ['a'..'z', 'A'..'Z', '_'] do
-  Inc(P);
- if P = LangCode then
-  Result := afilename
- else
- begin
-//  Result := afilename + '.' + Copy(LangCode, 1, P - LangCode);
-  Result:='qt_'+Copy(LangCode, 1, P - LangCode)+'.qm';
-  if not FileExists(Result) then
-  begin
-   Result := afilename + '.' + Copy(LangCode, 1, P - LangCode);
-   // look for modulename.en    (ignoring country code and suffixes)
-   I := Length(Result);
-   while (I > 0) and not (Result[I] in ['.', '_']) do
-    Dec(I);
-   if (I-1 = Length(Result)) or (I-1 < Length(afilename)) then
-    Exit;
-   SetLength(Result, I-1);
-   Result:='qt_'+Copy(ExtractFileExt(Result),2,255)+'.qm';
-
-   if not FileExists(Result) then
-   begin
-    Result:=afilename;
-    Exit;
-   end;
-  end;
- end;
-{$ENDIF}
-{$IFDEF MSWINDOWS}
-  Result:=afilename;
-  afilename:='qt.exe';
-  StrCopy(Filename,Pchar(afilename));
-  LocaleOverride[0] := #0;
-  if (RegOpenKeyEx(HKEY_CURRENT_USER, NewLocaleOverrideKey, 0, KEY_ALL_ACCESS, Key) = 0) or
-   (RegOpenKeyEx(HKEY_CURRENT_USER, OldLocaleOverrideKey, 0, KEY_ALL_ACCESS, Key) = 0) then
-  try
-    Size := SizeOf(LocaleOverride);
-    if RegQueryValueEx(Key, ToLongPath(FileName), nil, nil, LocaleOverride, @Size) <> 0 then
-      RegQueryValueEx(Key, '', nil, nil, LocaleOverride, @Size);
-  finally
-    RegCloseKey(Key);
-  end;
-  GetLocaleInfo(GetThreadLocale, LOCALE_SABBREVLANGNAME, LocaleName, SizeOf(LocaleName));
-  Result := '';
-  if (FileName[0] <> #0) and ((LocaleName[0] <> #0) or (LocaleOverride[0] <> #0)) then
-  begin
-    P := PChar(@FileName) + lstrlen(FileName);
-    while (P^ <> '.') and (P <> @FileName) do Dec(P);
-    if P <> @FileName then
-    begin
-      Inc(P);
-      // First look for a locale registry override
-      if LocaleOverride[0] <> #0 then
-      begin
-        lstrcpy(P, LocaleOverride);
-        afilename:='qt_'+Copy(ExtractFileExt(StrPas(FileName)),2,255)+'.qm';
-        if FileExists(aFileName) then
-         Result := aFileName;
-      end;
-      if (Result ='') and (LocaleName[0] <> #0) then
-      begin
-        // Then look for a potential language/country translation
-        lstrcpy(P, LocaleName);
-        afilename:='qt_'+Copy(ExtractFileExt(StrPas(FileName)),2,255)+'.qm';
-        if FileExists(aFileName) then
-         Result := aFileName;
-        if Result = '' then
-        begin
-          // Finally look for a language only translation
-          LocaleName[2] := #0;
-          lstrcpy(P, LocaleName);
-          afilename:='qt_'+Copy(ExtractFileExt(StrPas(FileName)),2,255)+'.qm';
-          if FileExists(aFileName) then
-           Result := aFileName;
-        end;
-      end;
-    end;
-  end;
-{$ENDIF}
-end;
 
 
 
@@ -543,17 +382,32 @@ begin
  end;
 end;
 
+function TFRpMessageDlgVCL.ComponentToTMessageButton(Sender:TObject):TMessageButton;
+begin
+ Result:=smbCancel;
+ if Sender=BYes then
+  Result:=smbYes
+ else
+ if Sender=BOk then
+  Result:=smbOk
+ else
+ if Sender=BCancel then
+  Result:=smbCancel
+ else
+ if Sender=BNo then
+  Result:=smbNo
+ else
+ if Sender=BRetry then
+  Result:=smbRetry
+ else
+ if Sender=BIgnore then
+  Result:=smbIgnore;
+end;
+
 procedure TFRpMessageDlgVCL.FormCreate(Sender: TObject);
 begin
  Buttonpressed:=smbCancel;
  EscapeButton:=smbCancel;
- BYes.Tag:=integer(smbYes);
- BNo.Tag:=integer(smbNo);
- BOk.Tag:=integer(smbOk);
- BCancel.Tag:=integer(smbCancel);
- BRetry.Tag:=integer(smbRetry);
- BIgnore.Tag:=integer(smbIgnore);
- BIgnore.Tag:=integer(smbIgnore);
  BYes.Caption:=SRpYes;
  BNo.Caption:=SRpNo;
  BOk.Caption:=SRpOk;
@@ -565,7 +419,7 @@ end;
 
 procedure TFRpMessageDlgVCL.BYesClick(Sender: TObject);
 begin
- ButtonPressed:=TMessageButton((Sender As TButton).Tag);
+ ButtonPressed:=ComponentToTMessageButton(Sender);
  Close;
 end;
 
@@ -763,6 +617,8 @@ end;
 
 
 initialization
+{$IFNDEF DOTNETDBUGS}
  if ChangeFileExt(ExtractFileName(UpperCase(Application.ExeName)),'')='REPMANDXP' then
   Application.Title:=TranslateStr(1,Application.Title);
+{$ENDIF}
 end.

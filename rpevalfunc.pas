@@ -36,7 +36,15 @@ type
  { Function Uppercase }
  TIdenUppercase=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+ { Function FileExists }
+ TIdenFileExists=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -44,7 +52,7 @@ type
  { Function Lowercase }
  TIdenLowercase=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -52,7 +60,7 @@ type
  { Function HourMinSec }
  TIdenHourMinSec=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -60,7 +68,7 @@ type
  { Function Sinus }
  TIdenSinus=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -68,7 +76,7 @@ type
  { Function FloatToDataTime }
  TIdenFloatToDateTime=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -76,7 +84,7 @@ type
  { Function Round }
  TIdenRound=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -84,7 +92,7 @@ type
  { Function INT }
  TIdenInt=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -92,7 +100,7 @@ type
  { Function Val }
  TIdenVal=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -100,7 +108,7 @@ type
  { Function STR }
  TIdenSTR=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -108,7 +116,7 @@ type
  { Function LEFT }
  TIdenTrim=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -116,7 +124,7 @@ type
  { Function LEFT }
  TIdenLEFT=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -124,7 +132,7 @@ type
  { Function Pos }
  TIdenPos=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -132,27 +140,27 @@ type
  { Function GraphicLear }
  TIdenGraphicClear=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
  TIdenGraphicNew=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
 
  TIdenGraphicOperation=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
 
  TIdenTextOperation=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -160,7 +168,7 @@ type
  { Function Modul }
  TIdenModul=class(TIdenFunction)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -168,7 +176,7 @@ type
  { Function SQRT }
  TIdenSQRT=class(TIdenFunction)
  protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOWner:TComponent);override;
   end;
@@ -176,7 +184,7 @@ type
  { Constant }
  TIdenToday=class(TIdenConstant)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -184,21 +192,21 @@ type
  { Constant }
  TIdenTime=class(TIdenConstant)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
 
  TIdenNow=class(TIdenConstant)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
 
  TIdenNULL=class(TIdenConstant)
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -206,14 +214,14 @@ type
  { Returns the month }
  TIdenMonth=Class(TIdenFunction)
  protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOWner:TComponent);override;
   end;
 
  TIdenEvalText=class(TIdenFunction)
  protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
  public
    constructor Create(AOWner:TComponent);override;
  end;
@@ -221,56 +229,56 @@ type
 
  TIdenMonthname=Class(TIdenFunction)
  protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOWner:TComponent);override;
   end;
 
  TIdenYear=Class(TIdenFunction)
  protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOWner:TComponent);override;
   end;
 
  TIdenDay=Class(TIdenFunction)
  protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOWner:TComponent);override;
   end;
 
  TIdenRight=Class(TIdenFunction)
  protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOWner:TComponent);override;
   end;
 
  TIdenSubstr=Class(TIdenFunction)
  protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOWner:TComponent);override;
   end;
 
  TIdenFormatStr=class(TIdenFunction)
  protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOWner:TComponent);override;
   end;
 
  TIdenFormatMask=class(TIdenFunction)
  protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOWner:TComponent);override;
   end;
 
  TIdenNumToText=class(TIdenFunction)
  protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOWner:TComponent);override;
   end;
@@ -295,7 +303,7 @@ type
  //added FRB 20030204
  TIdenReplaceStr=class(TIdenFunction)
  protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOWner:TComponent);override;
   end;
@@ -309,6 +317,13 @@ type
 implementation
 
 uses rpeval,Math;
+
+function VarIsString(avar:Variant):Boolean;
+begin
+ Result:=false;
+ if ((VarType(avar)=varstring) or (VarType(avar)=varOleStr)) then
+  Result:=true;
+end;
 
 {**************************************************************************}
 
@@ -326,6 +341,7 @@ end;
 
 {**************************************************************************}
 
+
 function TIdenUppercase.GeTRpValue:TRpValue;
 begin
  if Params[0]=NULL then
@@ -333,13 +349,40 @@ begin
   result:='';
   exit;
  end;
- if VarType(Params[0])<>varString then
+ if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  Result:=Uppercase(Params[0]);
 end;
 
 {**************************************************************************}
+
+{ TIdenFileExists }
+
+constructor TIdenFileExists.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='FileExists';
+ Help:=SRpFileExists;
+ Model:='function '+'FileExists'+'(s:string):Boolean';
+ AParams:=SRpPFileExists;
+end;
+
+{**************************************************************************}
+
+function TIdenLowercase.GeTRpValue:TRpValue;
+begin
+ if Params[0]=NULL then
+ begin
+  result:='';
+  exit;
+ end;
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ Result:=Lowercase(Params[0]);
+end;
 
 { TIdenLowercase }
 
@@ -355,17 +398,17 @@ end;
 
 {**************************************************************************}
 
-function TIdenLowercase.GeTRpValue:TRpValue;
+function TIdenFileExists.GeTRpValue:TRpValue;
 begin
  if Params[0]=NULL then
  begin
-  result:='';
+  result:=False;
   exit;
  end;
- if VarType(Params[0])<>varString then
+ if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- Result:=Lowercase(Params[0]);
+ Result:=FileExists(String(Params[0]));
 end;
 
 {**************************************************************************}
@@ -391,13 +434,13 @@ var
  minuts,segons:word;
  minutsstr,segonsstr:string;
 begin
- if (not (VarType(Params[1])=varString)) then
+ if (not VarIsString(Params[1])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if (not (VarType(Params[2])=varString)) then
+ if (not VarIsString(Params[2])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if (not (VarType(Params[3])=varString)) then
+ if (not VarIsString(Params[3])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  case Vartype(Params[0]) of
@@ -444,7 +487,7 @@ end;
 function TIdenFloatToDateTime.GeTRpValue:TRpValue;
 begin
  case Vartype(Params[0]) of
-  varSmallInt..varCurrency:
+  varSmallInt,varInteger,varSingle,varDouble,varWord,varByte,varCurrency:
    begin
     Result:=TDateTime(Params[0]);
    end;
@@ -540,8 +583,10 @@ begin
   escala:=escala*10;
  end;
  // Integers
- intnum:=int(provanum);
- intredon:=int(provaredon);
+ intnum:=Trunc(provanum);
+ intredon:=Trunc(provaredon);
+// intnum:=Int(provanum);
+// intredon:=Int(provaredon);
  // Mod
  quocient:=intnum/intredon;
  reste:=Round(intnum-intredon*Int(quocient));
@@ -618,9 +663,9 @@ end;
 
 function TIdenSTR.GeTRpValue:TRpValue;
 begin
- if VarType(Params[0])=varString then
-   Raise TRpNamedException.Create(SRpEvalType,
-         IdenName);
+// if VarType(Params[0])=varString then
+//   Raise TRpNamedException.Create(SRpEvalType,
+//         IdenName);
  if VarIsNull(Params[0]) then
   Result:=''
  else
@@ -646,7 +691,7 @@ end;
 function TIdenVal.GeTRpValue:TRpValue;
 begin
  try
-  if VarType(Params[0])=varstring then
+  if VarIsString(Params[0]) then
   begin
    if Params[0]=''+chr(0) then
    begin
@@ -684,12 +729,12 @@ end;
 
 function TIdenTrim.GeTRpValue:TRpValue;
 begin
- if Params[0]=NULL then
+ if Params[0]=Null then
  begin
   result:='';
   exit;
  end;
- if Vartype(Params[0])<>varstring then
+ if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  Result:=Trim(String(Params[0]));
@@ -713,10 +758,10 @@ end;
 
 function TIdenLEFT.GeTRpValue:TRpValue;
 begin
- if Vartype(Params[0])<>varstring then
+ if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if ( Not (VarType(Params[1]) in [varSmallInt..varInteger])) then
+ if ( Not (VarType(Params[1]) in [varSmallInt..varInteger,varWord,varByte])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  Result:=Copy(String(Params[0]),1,Integer(Params[1]));
@@ -743,10 +788,10 @@ begin
   Result:=0;
   exit;
  end;
- if Vartype(Params[0])<>varstring then
+ if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if Vartype(Params[1])<>varstring then
+ if Not VarIsString(Params[1]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  Result:=Pos(String(Params[0]),string(Params[1]));
@@ -768,11 +813,11 @@ function TIdenGraphicClear.GeTRpValue:TRpValue;
 var
  iden:TRpIdentifier;
 begin
- if Vartype(Params[0])<>varstring then
+ if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  // Buscamos el identificador
- iden:=(evaluator As TRpEvaluator).Searchidentifier(Params[0]);
+ iden:=(evaluator As TRpEvaluator).Searchidentifier(String(Params[0]));
  if iden=nil then
  begin
    Raise TRpNamedException.Create(SRpIdentifierexpected,
@@ -801,23 +846,23 @@ function TIdenGraphicNew.GeTRpValue:TRpValue;
 var
  iden:TRpIdentifier;
 begin
- if Vartype(Params[0])<>varstring then
+ if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if Not (Vartype(Params[1]) in [varsmallint..varcurrency]) then
+ if Not (Vartype(Params[1]) in [varsmallint..varcurrency,varword,varbyte]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  if Vartype(Params[2])<>varBoolean then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if Vartype(Params[3])<>varstring then
+ if Not VarIsString(Params[3]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if Vartype(Params[4])<>varstring then
+ if Not VarIsString(Params[4]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  // Buscamos el identificador
- iden:=(evaluator As TRpEvaluator).SearchIdentifier(Params[0]);
+ iden:=(evaluator As TRpEvaluator).SearchIdentifier(String(Params[0]));
  if iden=nil then
  begin
    Raise TRpNamedException.Create(SRpIdentifierexpected,
@@ -911,7 +956,7 @@ constructor TIdenTime.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
  IdenName:='Time';
- Help:=SRpTime;
+ Help:=SRpTimeH;
  model:='function '+'Time'+':time';
 end;
 
@@ -1007,7 +1052,7 @@ end;
 function TIdenEvalText.GeTRpValue:TRpValue;
 var avaluador:TRpEvaluator;
 begin
- if varType(Params[0])<>varstring then
+ if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  // Evalue
@@ -1121,10 +1166,10 @@ end;
 
 function TIdenRight.GeTRpValue:TRpValue;
 begin
- if Vartype(Params[0])<>varstring then
+ if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if ( Not (VarType(Params[1]) in [varSmallInt..varInteger])) or
+ if ( Not (VarType(Params[1]) in [varSmallInt..varInteger,varWord,varByte])) or
     ( Integer(Params[1])<1 ) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
@@ -1151,12 +1196,12 @@ end;
 
 function TIdenSubstr.GeTRpValue:TRpValue;
 begin
- if Vartype(Params[0])<>varstring then
+ if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if ( Not (VarType(Params[1]) in [varSmallInt..varInteger])) or
+ if ( Not (VarType(Params[1]) in [varSmallInt..varInteger,varWord,varByte])) or
     ( Integer(Params[1])<1 ) or
-    ( Not (VarType(Params[2]) in [varSmallInt..varInteger])) or
+    ( Not (VarType(Params[2]) in [varSmallInt..varInteger,varWord,varByte])) or
     ( Integer(Params[2])<1 )  then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
@@ -1184,7 +1229,7 @@ function TIdenFormatstr.GeTRpValue:TRpValue;
 var
  Value:variant;
 begin
- if Vartype(Params[0])<>varstring then
+ if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
 
@@ -1195,7 +1240,7 @@ begin
   exiT;
  end;
  case vartype(Value) of
-  varSmallint..VarCurrency:
+  varSmallint,varInteger,varSingle,varDouble,varWord,varByte,VarCurrency:
    begin
     Result:=FormatFloat(Params[0],extended(Value));
    end;
@@ -1203,11 +1248,16 @@ begin
   // Bugfix for detecting DateTime datatypes (MySQL)
   varDate,272:
    begin
+{$IFDEF DOTNETD}
+    Result:=FormatDateTime(Params[0],TDateTime(Value));
+{$ENDIF}
+{$IFNDEF DOTNETD}
     Result:=FormatDateTime(Params[0],VarToDateTime(Value));
+{$ENDIF}
    end;
   varBoolean:
    begin
-    if Value.asboolean then
+    if Boolean(Value) then
      result:='True'
     else
      result:='False';
@@ -1237,7 +1287,7 @@ function TIdenFormatMask.GeTRpValue:TRpValue;
 var
  Value:variant;
 begin
- if Vartype(Params[0])<>varstring then
+ if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  Value:=Params[1];
@@ -1245,7 +1295,7 @@ begin
  begin
   Value:='';
  end;
- if Vartype(Params[1])<>varstring then
+ if Not VarIsString(Params[1]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  Result:=FormatMaskText(Params[0],Value);
@@ -1260,7 +1310,7 @@ begin
  FParamcount:=2;
  IdenName:='NumToText';
  Help:=SRpNumToText;
- model:='function '+'NumToText'+'(n:double,f:boolean):string';
+ model:='function '+'NumToText'+'(n:double,f:boolean):WideString';
  aParams:=SRpPNumToText;
 end;
 
@@ -1336,9 +1386,9 @@ end;
 
 function TIdenReplaceStr.GeTRpValue:TRpValue;
 begin
- if (Vartype(Params[0])<>varstring)
-  or (Vartype(Params[1])<>varstring)
-  or (Vartype(Params[2])<>varstring) then
+ if (Not VarIsString(Params[0]))
+  or (Not VarIsString(Params[1]))
+  or (Not VarIsString(Params[2])) then
    Raise TRpNamedException.Create(SRpEvalType,IdenName);
  Result:=StringReplace(String(Params[0]),String(Params[1]),String(Params[2]),
   [rfReplaceAll, rfIgnoreCase]);
@@ -1407,16 +1457,16 @@ begin
  for i:=0 to ParamCount-1 do
  begin
   if (i in [0..3]) then
-   if (Not (Vartype(Params[i]) in [varSmallInt..varCurrency,varShortInt..varInt64])) then
+   if (Not (Vartype(Params[i]) in [varSmallInt..varCurrency,varShortInt..varInt64,varWord,varByte])) then
     Raise TRpNamedException.Create(SRpEvalType,IdenName);
   if (i in [7..11,13,16,17]) then
-   if (Not (Vartype(Params[i]) in [varSmallInt..varInteger,varShortInt..varInt64])) then
+   if (Not (Vartype(Params[i]) in [varSmallInt..varInteger,varShortInt..varInt64,varWord,varByte])) then
     Raise TRpNamedException.Create(SRpEvalType,IdenName);
   if (i in [12,14,15,18]) then
    if (Not (Vartype(Params[i])=varBoolean)) then
     Raise TRpNamedException.Create(SRpEvalType,IdenName);
   if (i in [4..6]) then
-   if (Not (Vartype(Params[i])=varString)) then
+   if (Not (VarIsString(Params[i]))) then
     Raise TRpNamedException.Create(SRpEvalType,IdenName);
  end;
  if Assigned((evaluator As TRpEvaluator).OnTextOp) then

@@ -1,6 +1,6 @@
 object FRpPageSetup: TFRpPageSetup
-  Left = 24
-  Top = 4
+  Left = 118
+  Top = 106
   ActiveControl = PControl
   AutoScroll = False
   BorderStyle = fbsDialog
@@ -20,7 +20,7 @@ object FRpPageSetup: TFRpPageSetup
     Top = 0
     Width = 440
     Height = 329
-    ActivePage = TabPrint
+    ActivePage = TabPage
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -51,7 +51,7 @@ object FRpPageSetup: TFRpPageSetup
         Width = 233
         Height = 65
         Caption = 'Custom size'
-        TabOrder = 1
+        TabOrder = 2
         Visible = False
         object ComboPageSize: TComboBox
           Left = 4
@@ -72,7 +72,7 @@ object FRpPageSetup: TFRpPageSetup
           'Default'
           'Custom')
         Caption = 'Page orientation'
-        TabOrder = 2
+        TabOrder = 3
         OnClick = RPageOrientationClick
       end
       object RCustomOrientation: TRadioGroup
@@ -84,7 +84,7 @@ object FRpPageSetup: TFRpPageSetup
           'Portrait'
           'Landscape')
         Caption = 'Custom page orientation'
-        TabOrder = 3
+        TabOrder = 4
         Visible = False
       end
       object BBackground: TButton
@@ -93,7 +93,7 @@ object FRpPageSetup: TFRpPageSetup
         Width = 153
         Height = 33
         Caption = 'Background color'
-        TabOrder = 4
+        TabOrder = 6
         OnClick = BBackgroundClick
       end
       object GPageMargins: TGroupBox
@@ -110,19 +110,21 @@ object FRpPageSetup: TFRpPageSetup
           Height = 13
           Caption = 'Left'
         end
-        object ELeftMargin: TEdit
+        object ELeftMargin: TRpCLXMaskEdit
           Left = 80
           Top = 12
           Width = 77
           Height = 21
           TabOrder = 1
+          EditType = tecurrency
         end
-        object ETopMargin: TEdit
+        object ETopMargin: TRpCLXMaskEdit
           Left = 80
           Top = 40
           Width = 77
           Height = 21
           TabOrder = 2
+          EditType = tecurrency
         end
         object LTop: TLabel
           Left = 16
@@ -152,12 +154,13 @@ object FRpPageSetup: TFRpPageSetup
           Height = 13
           Caption = 'inch.'
         end
-        object ERightMargin: TEdit
+        object ERightMargin: TRpCLXMaskEdit
           Left = 272
           Top = 12
           Width = 77
           Height = 21
           TabOrder = 7
+          EditType = tecurrency
         end
         object LRight: TLabel
           Left = 212
@@ -173,12 +176,13 @@ object FRpPageSetup: TFRpPageSetup
           Height = 13
           Caption = 'Bottom'
         end
-        object EBottomMargin: TEdit
+        object EBottomMargin: TRpCLXMaskEdit
           Left = 272
           Top = 40
           Width = 77
           Height = 21
           TabOrder = 10
+          EditType = tecurrency
         end
         object LMetrics6: TLabel
           Left = 360
@@ -194,7 +198,7 @@ object FRpPageSetup: TFRpPageSetup
         Width = 241
         Height = 73
         Caption = 'Custom page size (Windows only)'
-        TabOrder = 6
+        TabOrder = 1
         Visible = False
         object LMetrics7: TLabel
           Left = 190
@@ -210,19 +214,21 @@ object FRpPageSetup: TFRpPageSetup
           Height = 13
           Caption = 'inch.'
         end
-        object EPageheight: TEdit
+        object EPageheight: TRpCLXMaskEdit
           Left = 100
           Top = 44
           Width = 77
           Height = 21
           TabOrder = 2
+          EditType = tecurrency
         end
-        object EPageWidth: TEdit
+        object EPageWidth: TRpCLXMaskEdit
           Left = 100
           Top = 20
           Width = 77
           Height = 21
           TabOrder = 3
+          EditType = tecurrency
         end
         object LWidth: TLabel
           Left = 16
@@ -257,7 +263,7 @@ object FRpPageSetup: TFRpPageSetup
         Height = 21
         Style = csDropDownList
         ItemHeight = 15
-        TabOrder = 1
+        TabOrder = 5
       end
       object BConfigure: TButton
         Left = 4
@@ -265,7 +271,7 @@ object FRpPageSetup: TFRpPageSetup
         Width = 213
         Height = 25
         Caption = 'Configure printers'
-        TabOrder = 2
+        TabOrder = 6
         OnClick = BConfigureClick
       end
       object CheckTwoPass: TCheckBox
@@ -274,7 +280,7 @@ object FRpPageSetup: TFRpPageSetup
         Width = 213
         Height = 21
         Caption = 'Two pass report'
-        TabOrder = 3
+        TabOrder = 11
       end
       object CheckPrintOnlyIfData: TCheckBox
         Left = 4
@@ -282,14 +288,15 @@ object FRpPageSetup: TFRpPageSetup
         Width = 209
         Height = 21
         Caption = 'Print only if data available'
-        TabOrder = 4
+        TabOrder = 14
       end
-      object ECopies: TEdit
+      object ECopies: TRpCLXMaskEdit
         Left = 144
         Top = 144
         Width = 69
         Height = 21
-        TabOrder = 5
+        TabOrder = 7
+        EditType = teinteger
       end
       object LCopies: TLabel
         Left = 4
@@ -304,7 +311,7 @@ object FRpPageSetup: TFRpPageSetup
         Width = 205
         Height = 21
         Caption = 'Collate copies'
-        TabOrder = 7
+        TabOrder = 8
       end
       object LPrinterFonts: TLabel
         Left = 4
@@ -324,7 +331,7 @@ object FRpPageSetup: TFRpPageSetup
           'Default'
           'Always use printer fonts'
           'Never use printer fonts')
-        TabOrder = 9
+        TabOrder = 1
       end
       object ComboLanguage: TComboBox
         Left = 220
@@ -333,7 +340,7 @@ object FRpPageSetup: TFRpPageSetup
         Height = 21
         Style = csDropDownList
         ItemHeight = 15
-        TabOrder = 10
+        TabOrder = 2
       end
       object LRLang: TLabel
         Left = 4
@@ -359,7 +366,7 @@ object FRpPageSetup: TFRpPageSetup
         Items.Strings = (
           'Normal'
           'Maxmized')
-        TabOrder = 13
+        TabOrder = 3
       end
       object ComboStyle: TComboBox
         Left = 324
@@ -372,7 +379,7 @@ object FRpPageSetup: TFRpPageSetup
           'Wide'
           'Normal'
           'Page')
-        TabOrder = 14
+        TabOrder = 4
       end
       object CheckDrawerAfter: TCheckBox
         Left = 4
@@ -380,7 +387,7 @@ object FRpPageSetup: TFRpPageSetup
         Width = 373
         Height = 21
         Caption = 'Open drawer after printing'
-        TabOrder = 15
+        TabOrder = 16
       end
       object CheckDrawerBefore: TCheckBox
         Left = 4
@@ -388,7 +395,15 @@ object FRpPageSetup: TFRpPageSetup
         Width = 405
         Height = 21
         Caption = 'Open drawer before printing'
-        TabOrder = 16
+        TabOrder = 15
+      end
+      object CheckPreviewAbout: TCheckBox
+        Left = 212
+        Top = 168
+        Width = 205
+        Height = 21
+        Caption = 'About box in preview'
+        TabOrder = 17
       end
     end
     object TabOptions: TTabSheet
@@ -439,7 +454,7 @@ object FRpPageSetup: TFRpPageSetup
     end
   end
   object ColorDialog1: TColorDialog
-    Left = 412
-    Top = 320
+    Left = 340
+    Top = 280
   end
 end

@@ -126,14 +126,14 @@ object FRpParamsVCL: TFRpParamsVCL
           'Expression'
           'Unknown')
       end
-      object EValue: TMaskEdit
+      object EValue: TRpMaskEdit
         Left = 284
         Top = 8
         Width = 141
         Height = 21
         TabOrder = 1
-        Text = 'EValue'
         OnExit = EValueExit
+        Text = 'EValue'
       end
       object CheckVisible: TCheckBox
         Left = 12
@@ -146,9 +146,9 @@ object FRpParamsVCL: TFRpParamsVCL
         OnClick = EDescriptionChange
       end
       object CheckNull: TCheckBox
-        Left = 216
+        Left = 208
         Top = 40
-        Width = 197
+        Width = 85
         Height = 17
         Hint = 'Sets this parameter to null'
         Caption = 'Null value'
@@ -200,6 +200,16 @@ object FRpParamsVCL: TFRpParamsVCL
         TabOrder = 5
         Visible = False
         OnChange = EDescriptionChange
+      end
+      object CheckAllowNulls: TCheckBox
+        Left = 304
+        Top = 40
+        Width = 117
+        Height = 17
+        Hint = 'Sets if the parameter will be visible to the end user'
+        Caption = 'Allow Nulls'
+        TabOrder = 11
+        OnClick = EDescriptionChange
       end
     end
   end

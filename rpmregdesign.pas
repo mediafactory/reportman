@@ -17,7 +17,7 @@ unit rpmregdesign;
 
 interface
 
-uses Classes,rpmdesigner;
+uses Classes,rpmdesigner,rpruler;
 
 procedure Register;
 
@@ -26,6 +26,7 @@ implementation
 procedure Register;
 begin
  RegisterComponents('Reportman', [TRpDesigner]);
+ RegisterComponents('Reportman', [TRpRuler]);
 end;
 
 end.

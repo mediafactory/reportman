@@ -23,7 +23,7 @@ interface
 
 {$I rpconf.inc}
 
-uses Sysutils,Classes,rptypes,rpmdconsts,
+uses Sysutils,Classes,rptypes,
  rpeval,
 {$IFDEF MSWINDOWS}
  Windows,
@@ -31,7 +31,7 @@ uses Sysutils,Classes,rptypes,rpmdconsts,
 {$IFDEF USEVARIANTS}
  types,
 {$ENDIF}
- rpmetafile;
+ rpmdconsts,rpmetafile;
 
 // Maximum width or height of a element, that is 60 inch
 const
@@ -39,7 +39,6 @@ const
  MAX_ELEMENT_HEIGHT=86400;
 
 type
- TRpPosAlign=(rpalnone,rpalbottom,rpalright,rpalbotright);
 
 
  TRpCommonComponent=class(TComponent)
@@ -61,14 +60,17 @@ type
   protected
    procedure DefineProperties(Filer:TFiler);override;
    function GetReport:TComponent;
-   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;
+    aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);virtual;
   public
    lastextent:TPoint;
+   oldowner:TComponent;
+   PrintWidth,PrintHeight:Integer;
    constructor Create(AOwner:TComponent);override;
    function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;virtual;
    function EvaluatePrintCondition:boolean;
-   procedure Print(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure Print(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');virtual;
    property Report:TComponent read GetReport;
@@ -179,7 +181,7 @@ type
 
 implementation
 
-uses rpreport,rpsection;
+uses rpbasereport,rpsection;
 
 const
  AlignmentFlags_AlignLeft = 1 { $1 };
@@ -189,7 +191,7 @@ constructor TRpCommonComponent.Create(AOwner:TComponent);
 begin
  // The owner must be a report
  if Assigned(AOwner) then
-  if (Not (AOwner is TRpReport)) then
+  if (Not (AOwner is TRpBaseReport)) then
    if (Not (AOwner is TRpSection)) then
     Raise Exception.Create(SRpOnlyAReportOwner+classname);
 
@@ -273,10 +275,10 @@ begin
   exit;
  end;
  try
-  fevaluator:=TRpREport(GetReport).Evaluator;
+  fevaluator:=TRpBaseREport(GetReport).Evaluator;
   fevaluator.Expression:=PrintCondition;
   fevaluator.Evaluate;
-  Result:=fevaluator.EvalResult;
+  Result:=Boolean(fevaluator.EvalResult);
  except
   on E:Exception do
   begin
@@ -286,7 +288,7 @@ begin
 end;
 
 
-procedure TRpCommonComponent.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpCommonComponent.DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 begin
  // Executes OnBeforePrint
@@ -294,11 +296,20 @@ begin
  begin
   OnBeforePrint(Self);
  end;
+ if newwidth>=0 then
+  PrintWidth:=newwidth
+ else
+  PrintWidth:=Width;
+ if newheight>=0 then
+  PrintHeight:=newheight
+ else
+  PrintHeight:=Height;
  PartialPrint:=False;
 end;
 
 
-procedure TRpCommonComponent.Print(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpCommonComponent.Print(adriver:IRpPrintDriver;
+ aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  fevaluator:TRpEvaluator;
@@ -310,7 +321,7 @@ begin
  if Length(FDoBeforePrint)>0 then
  begin
   try
-   fevaluator:=TRpREport(GetReport).Evaluator;
+   fevaluator:=TRpBaseREport(GetReport).Evaluator;
    fevaluator.Expression:=FDoBeforePrint;
    fevaluator.Evaluate;
   except
@@ -321,12 +332,12 @@ begin
   end;
  end;
 
- DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
+ DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
 
  if Length(FDoAfterPrint)>0 then
  begin
   try
-   fevaluator:=TRpREport(GetReport).Evaluator;
+   fevaluator:=TRpBaseREport(GetReport).Evaluator;
    fevaluator.Expression:=FDoAfterPrint;
    fevaluator.Evaluate;
   except
@@ -447,7 +458,7 @@ var
  langindex:integer;
 begin
  Result:=rpBidiNo;
- langindex:=TRpReport(GetReport).Language+1;
+ langindex:=TRpBaseReport(GetReport).Language+1;
  if langindex<0 then
   langindex:=0;
  if BidiModes.Count>langindex then
@@ -464,7 +475,7 @@ procedure TRpGenTextComponent.SetBidiMode(Value:TRpBidiMode);
 var
  langindex:integer;
 begin
- langindex:=TRpReport(GetReport).Language+1;
+ langindex:=TRpBaseReport(GetReport).Language+1;
  if langindex<0 then
   langindex:=0;
  while (BidiModes.Count<=langindex) do
@@ -489,14 +500,14 @@ end;
 function TRpCommonComponent.GetReport:TComponent;
 begin
  Result:=nil;
- if (Owner is TRpReport) then
+ if (Owner is TRpBaseReport) then
  begin
   Result:=Owner;
   exit;
  end;
  if (Owner is TRpSection) then
  begin
-  if (TRpSection(Owner).Owner is TRpReport) then
+  if (TRpSection(Owner).Owner is TRpBaseReport) then
   begin
    Result:=TRpSection(Owner).Owner;
    exit;

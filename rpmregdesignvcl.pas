@@ -17,7 +17,7 @@ unit rpmregdesignvcl;
 
 interface
 
-uses Classes,rpmdesignervcl,rpwebmetaclient;
+uses Classes,rpmdesignervcl,rprulervcl,rpwebmetaclient;
 
 procedure Register;
 
@@ -26,7 +26,8 @@ implementation
 procedure Register;
 begin
  RegisterComponents('Reportman', [TRpDesignerVCL]);
-// RegisterComponents('Reportman', [TRpWebMetaPrint]);
+ RegisterComponents('Reportman', [TRpWebMetaPrint]);
+ RegisterComponents('Reportman', [TRpRulerVCL]);
 end;
 
 end.

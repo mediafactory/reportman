@@ -75,19 +75,21 @@ object FRpGridOptionsVCL: TFRpGridOptionsVCL
     ModalResult = 2
     TabOrder = 1
   end
-  object EGridX: TEdit
+  object EGridX: TRpMaskEdit
     Left = 144
     Top = 4
     Width = 81
     Height = 21
     TabOrder = 2
+    EditType = tecurrency
   end
-  object EGridY: TEdit
+  object EGridY: TRpMaskEdit
     Left = 144
     Top = 28
     Width = 81
     Height = 21
     TabOrder = 3
+    EditType = tecurrency
   end
   object CheckEnabled: TCheckBox
     Left = 8

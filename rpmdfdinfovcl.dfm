@@ -5,15 +5,10 @@ object FRpDInfoVCL: TFRpDInfoVCL
   Height = 422
   Caption = 'Database connections and datasets'
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = 11
-  Font.Name = 'MS Sans Serif'
-  Font.Pitch = fpVariable
-  Font.Style = []
+  ParentFont = True
   OldCreateOrder = True
   Position = poScreenCenter
-  Scaled = False
+  Scaled = True
   ShowHint = True
   OnCreate = FormCreate
   PixelsPerInch = 96

@@ -26,13 +26,16 @@ interface
 uses
   SysUtils,Inifiles,
 {$IFDEF MSWINDOWS}
-  Windows,Dialogs,rpgdidriver,
+  Windows,
 {$ENDIF}
-  Types, Classes, QGraphics, QControls, QForms, QDialogs,
+{$IFDEF VCLANDCLX}
+  rpgdidriver,Dialogs,
+{$ENDIF}
+  Types, Classes, QGraphics, QControls, QForms,
   QStdCtrls,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,rpmdclitree,
   QActnList, QImgList,QPrinters,Qt,rpmdconsts,rptypes, QMenus,
-  rpmdfabout,QTypes,QStyle,rpmdshfolder,rpmdprintconfig,rptextdriver,
-  rpmdfhelpform;
+  rpmdfabout,QTypes,QStyle,rpmdshfolder,rpmdprintconfig,rptextdriver,rphtmldriver,
+  rpmdfhelpform, QDialogs,rpprintdia,rppdfdriver, QMask, rpmaskeditclx;
 
 type
   TFRpMeta = class(TFrame)
@@ -47,7 +50,7 @@ type
     ALast: TAction;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
-    EPageNum: TEdit;
+    EPageNum: TRpCLXMaskEdit;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
     APrint: TAction;
@@ -140,7 +143,27 @@ type
     PrintersConfiguration1: TMenuItem;
     AAsyncExec: TAction;
     Asynchronousexecution1: TMenuItem;
-    ToolButton10: TToolButton;
+    BConfig: TToolButton;
+    MPrintMenu: TPopupMenu;
+    PrinterSetup2: TMenuItem;
+    PrintersConfiguration2: TMenuItem;
+    MSelectPrinter2: TMenuItem;
+    MSelPrinter20: TMenuItem;
+    MSelPrinter21: TMenuItem;
+    MSelPrinter22: TMenuItem;
+    MSelPrinter23: TMenuItem;
+    MSelPrinter26: TMenuItem;
+    MSelPrinter25: TMenuItem;
+    MSelPrinter27: TMenuItem;
+    MSelPrinter28: TMenuItem;
+    MSelPrinter29: TMenuItem;
+    MSelPrinter210: TMenuItem;
+    MSelPrinter211: TMenuItem;
+    MSelPrinter212: TMenuItem;
+    MSelPrinter213: TMenuItem;
+    MSelPrinter214: TMenuItem;
+    MSelPrinter215: TMenuItem;
+    MSelPrinter24: TMenuItem;
     procedure AFirstExecute(Sender: TObject);
     procedure ANextExecute(Sender: TObject);
     procedure APreviousExecute(Sender: TObject);
@@ -175,6 +198,8 @@ type
       MousePos: TPoint; var Handled: Boolean);
     procedure FrameMouseWheelUp(Sender: TObject; Shift: TShiftState;
       MousePos: TPoint; var Handled: Boolean);
+    procedure BConfigClick(Sender: TObject);
+    procedure AMailToExecute(Sender: TObject);
   private
     { Private declarations }
     fhelp:TFRpHelpform;
@@ -221,7 +246,6 @@ var
 
 implementation
 
-uses rpprintdia,rppdfdriver;
 
 {$R *.xfm}
 
@@ -236,14 +260,17 @@ begin
   if setmenu then
    faform.Menu:=MainMenu1;
  end;
- BExit.Visible:=Not Assigned(faform);
- Exit1.Visible:=BExit.Visible;
 end;
 
 procedure TFRpMeta.PrintPage;
 var
  rPageSizeQt:TPageSizeQt;
 begin
+ AAbout.Visible:=Metafile.PreviewAbout;
+ ADocumentation.Visible:=Metafile.PreviewAbout;
+ MHelp.Visible:=Metafile.PreviewAbout;
+ AAsyncExec.Visible:=Metafile.PreviewAbout;
+ AViewConnect.Visible:=Metafile.PreviewAbout;
  EPageNum.Text:='0';
  if pagenum>Metafile.PageCount then
  begin
@@ -297,7 +324,26 @@ begin
  MSelPrinter14.Caption:=SRpUserPrinter8;
  MSelPrinter15.Caption:=SRpUserPrinter9;
 
-{$IFDEF MSWINDOWS}
+ MSelectPrinter2.Caption:=TranslateStr(741,MSelectPrinter.Caption);
+ MSelPrinter20.Caption:=SRpDefaultPrinter;
+ MSelPrinter21.Caption:=SRpReportPrinter;
+ MSelPrinter22.Caption:=SRpTicketPrinter;
+ MSelPrinter23.Caption:=SRpGraphicprinter;
+ MSelPrinter24.Caption:=SRpCharacterprinter;
+ MSelPrinter25.Caption:=SRpReportPrinter2;
+ MSelPrinter26.Caption:=SRpTicketPrinter2;
+ MSelPrinter27.Caption:=SRpUserPrinter1;
+ MSelPrinter28.Caption:=SRpUserPrinter2;
+ MSelPrinter29.Caption:=SRpUserPrinter3;
+ MSelPrinter210.Caption:=SRpUserPrinter4;
+ MSelPrinter211.Caption:=SRpUserPrinter5;
+ MSelPrinter212.Caption:=SRpUserPrinter6;
+ MSelPrinter213.Caption:=SRpUserPrinter7;
+ MSelPrinter214.Caption:=SRpUserPrinter8;
+ MSelPrinter215.Caption:=SRpUserPrinter9;
+ BConfig.Hint:=TranslateStr(57,APrintSetup.Hint);
+
+{$IFDEF VCLANDCLX}
   // Visible driver selection
   MDriverSelect.Visible:=true;
 {$ENDIF}
@@ -308,7 +354,11 @@ begin
    SRpPDFFileUn+'|*.pdf|'+
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
-   SRpBitmapFileMono+'|*.bmp';
+   SRpBitmapFileMono+'|*.bmp|'+
+   SRpHtmlFile+'|*.html';
+{$IFDEF MSWINDOWS}
+ SaveDialog1.Filter:=SaveDialog1.Filter+'|'+SRpExeMetafile+'|*.exe';
+{$ENDIF}
  OpenDialog1.Filter:=SRpRepMetafile+'|*.rpmf';
 {$ENDIF}
 {$IFNDEF VCLFILEFILTERS}
@@ -317,7 +367,11 @@ begin
    SRpPDFFileUn+' (*.pdf)|'+
    SRpPlainFile+' (*.txt)|'+
    SRpBitmapFile+' (*.bmp)|'+
-   SRpBitmapFileMono+' (*.bmp)';
+   SRpBitmapFileMono+' (*.bmp)|'+
+   SRpHtmlFile+' (*.html)';
+{$IFDEF MSWINDOWS}
+  SaveDialog1.Filter:=SaveDialog1.Filter+'|'+SRpExeMetafile+' (*.exe)';
+{$ENDIF}
  OpenDialog1.Filter:=SRpRepMetafile+' (*.rpmf)';
 {$ENDIF}
  AppStyle:=dsSystemDefault;
@@ -338,6 +392,8 @@ begin
  APrintersConfiguration.Caption:=TranslateStr(742,APrintersConfiguration.Caption);
  ASave.Caption:=TranslateStr(46,ASave.Caption);
  ASave.Hint:=TranslateStr(217,ASave.Hint);
+ AMailTo.Caption:=TranslateStr(1230,AMailTo.Caption);
+ AMailTo.Hint:=TranslateStr(1231,AMailTo.Hint);
  AExit.Caption:=TranslateStr(44,AExit.Caption);
  AExit.Hint:=TranslateStr(219,AExit.Hint);
  AFirst.Caption:=TranslateStr(220,AFirst.Caption);
@@ -407,6 +463,8 @@ begin
  // Activates OnHint
  oldonhint:=Application.OnHint;
  Application.OnHint:=AppHint;
+
+ SaveDialog1.FilterIndex:=2;
 
  LoadConfig;
 end;
@@ -508,7 +566,7 @@ begin
  rpPageSize.Indexqt:=metafile.PageSize;
  rpPageSize.CustomWidth:=metafile.CustomX;
  rpPageSize.CustomHeight:=metafile.CustomY;
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
  if ADriverGDI.Checked then
  begin
   allpages:=true;
@@ -538,7 +596,7 @@ begin
   end
   else
   begin
-   selectedok:=DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+   selectedok:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
   end;
  end;
  if selectedok then
@@ -580,6 +638,17 @@ begin
        abitmap.free;
       end;
      end;
+    7:
+     begin
+      ExportMetafileToHtml(Metafile,Caption,SaveDialog1.FileName,
+       true,true,1,9999);
+     end;
+{$IFDEF MSWINDOWS}
+    8:
+     begin
+      MetafileToExe(metafile,SaveDialog1.Filename);
+     end;
+{$ENDIF}
     else
     begin
      // Plain text file
@@ -597,6 +666,7 @@ procedure TFRpMeta.DoOpen(afilename:String);
 begin
  metafile.LoadFromFile(afilename);
  ASave.Enabled:=True;
+ AMailTo.Enabled:=true;
  APrint.Enabled:=True;
  AFirst.Enabled:=True;
  APrevious.Enabled:=True;
@@ -686,6 +756,7 @@ begin
  APrevious.Enabled:=true;
  ALast.Enabled:=true;
  ASave.Enabled:=true;
+ AMailTo.Enabled:=true;
  AOpen.Enabled:=true;
  APrint.Enabled:=true;
  BCancel.Visible:=false;
@@ -699,6 +770,7 @@ begin
  APrevious.Enabled:=false;
  ALast.Enabled:=false;
  ASave.Enabled:=false;
+ AMailTo.Enabled:=false;
  AOpen.Enabled:=false;
  AOpen.Enabled:=false;
  APrint.Enabled:=false;
@@ -845,6 +917,7 @@ procedure TFRpMeta.ExecuteServer(Sender:TObject);
 begin
  metafile.LoadFromStream(clitree.Stream);
  ASave.Enabled:=True;
+ AMailTo.Enabled:=true;
  APrint.Enabled:=True;
  AFirst.Enabled:=True;
  APrevious.Enabled:=True;
@@ -889,7 +962,7 @@ var
 begin
  inif:=TIniFile.Create(configfile);
  try
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
   ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',false);
 {$ENDIF}
 {$IFDEF LINUX}
@@ -973,12 +1046,12 @@ begin
 end;
 
 procedure TFRpMeta.APrintSetupExecute(Sender: TObject);
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
 var
  psetup:TPrinterSetupDialog;
 {$ENDIF}
 begin
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
  if ADriverGDI.Checked then
  begin
   psetup:=TPrinterSetupDialog.Create(nil);
@@ -1000,6 +1073,10 @@ begin
  for i:=0 to MSelectPrinter.Count-1 do
  begin
   MSelectPrinter.Items[i].Checked:=MSelectPrinter.Items[i].Tag=Integer(printerindex);
+ end;
+ for i:=0 to MSelectPrinter2.Count-1 do
+ begin
+  MSelectPrinter2.Items[i].Checked:=MSelectPrinter2.Items[i].Tag=Integer(printerindex);
  end;
 end;
 
@@ -1039,5 +1116,30 @@ begin
   ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position-GetWheelInc(Shift);
  Handled:=true;
 end;
+
+procedure TFRpMeta.BConfigClick(Sender: TObject);
+var
+ apoint:TPoint;
+begin
+ apoint.X:=BConfig.Left;
+ apoint.Y:=BConfig.Top+BConfig.Height;
+ apoint:=BConfig.Parent.ClientToScreen(apoint);
+ // SHows the printer menu
+ MPrintMenu.Popup(apoint.X,apoint.Y);
+end;
+
+procedure TFRpMetaVCL.AMailToExecute(Sender: TObject);
+var
+ afilename:String;
+begin
+ afilename:=ChangeFileExt(RpTempFileName,'.pdf');
+ SaveMetafileToPDF(Metafile,afilename,true);
+ try
+  rptypes.SendMail('',ExtractFileName(afilename),'',afilename);
+ finally
+  SysUtils.DeleteFile(afilename);
+ end;
+end;
+
 
 end.

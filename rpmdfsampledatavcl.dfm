@@ -6,17 +6,13 @@ object FRpShowSampledataVCL: TFRpShowSampledataVCL
   ClientHeight = 362
   ClientWidth = 475
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
-  Font.Style = []
   OldCreateOrder = True
   Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
+  ParentFont = True
   object ToolBar1: TToolBar
     Left = 0
     Top = 0

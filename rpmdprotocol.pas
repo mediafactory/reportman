@@ -24,27 +24,30 @@ interface
 
 {$I rpconf.inc}
 
-uses SysUtils,Classes,rpmdconsts,IdTCPConnection;
+uses SysUtils,Classes,rpmdconsts,
+{$IFDEF DOTNETD}
+ IdStream,
+{$ENDIF}
+ IdTCPConnection;
 
 const
   REPSERBUFSIZE=4096;
+  MAX_BLOCK=200000000;
 
 type
-{$IFNDEF USEVARIANTS}
- PByte=^Byte;
-{$ENDIF}
   TRepCommand=(repauth,repopenalias,repopenreport,repexecutereportmeta,
    repexecutereportpdf,reperror,replog,repgetusers,repgetaliases,repaddalias,
-   repdeletealias,repadduser,repdeleteuser,repgettree,repgetparams,repsetparams);
+   repdeletealias,repadduser,repdeleteuser,repgettree,
+   repgetparams,repsetparams,repgetgroups,repaddgroup,repdeletegroup,
+   repgetusergroups,repuserdeletegroup,repuseraddgroup,
+   repgetaliasgroups,repaliasdeletegroup,repaliasaddgroup);
 
   TRpLogMessageEvent=procedure (Sender:TObject;aMessage:WideString) of object;
 
-  PRpComBlock = ^TRpComBlock;
   TRpComBlock = record
-   Size:integer;
    Command:TRepCommand;
    Datasize:integer;
-   Data:PByte;
+   Data:TMemoryStream;
   end;
 
   // The real data of the command is stored at the end
@@ -75,125 +78,173 @@ type
   // Server:Returns the executed report in pdf format
 
 
-function GenerateUserNameData(user,password:string):PRpComBlock;
-function GenerateCBErrorMessage(amessage:WideString):PRpComBLock;
-function GenerateCBLogMessage(amessage:WideString):PRpComBLock;
-function GenerateBlock(command:TRepCommand;Stream:TMemoryStream):PRpComBlock;overload;
-function GenerateBlock(command:TRepCommand;alist:TStringList):PRpComBlock;overload;
-procedure FreeBlock(ablock:PRpComBlock);
-procedure SendBlock(AConnection:TIdTCPConnection;CB:PRpComBlock);
+function GenerateUserNameData(user,password:string):TRpComBlock;
+function GenerateCBErrorMessage(amessage:WideString):TRpComBLock;
+function GenerateCBLogMessage(amessage:WideString):TRpComBLock;
+function GenerateBlock(command:TRepCommand;Stream:TMemoryStream):TRpComBlock;overload;
+function GenerateBlock(command:TRepCommand;alist:TStringList):TRpComBlock;overload;
+procedure FreeBlock(ablock:TRpComBlock);
+procedure SendBlock(AConnection:TIdTCPConnection;CB:TRpComBlock);
+procedure WriteRpComBlockToStream(CB:TRpComBlock;astream:TStream);
+function ReadRpComBlockFromStream(astream:TStream):TRpComBlock;
+function RPComBlockToWideString(CB:TRpComBlock):WideString;
 
 implementation
 
 
-function GenerateUserNameData(user,password:string):PRpComBlock;
+procedure WriteRpComBlockToStream(CB:TRpComBlock;astream:TStream);
+var
+ aint:integer;
+begin
+ aint:=integer(CB.Command);
+ astream.Write(aint,sizeof(aint));
+ astream.Write(CB.Datasize,sizeof(CB.DataSize));
+ CB.Data.Seek(0,soFromBeginning);
+ astream.CopyFrom(CB.Data,CB.Datasize);
+end;
+
+
+function ReadRpComBlockFromStream(astream:TStream):TRpComBlock;
+var
+ aint:integer;
+begin
+ astream.Seek(0,soFromBeginning);
+ astream.Read(aint,sizeof(aint));
+ Result.Command:=TRepCommand(aint);
+ astream.Read(Result.DataSize,sizeof(Result.Datasize));
+ if Result.Datasize<0 then
+  Result.Datasize:=0;
+ if Result.Datasize>MAX_BLOCK then
+  Raise Exception.Create(SRpMax+' BLOCKSIZE');
+ Result.Data:=TMemoryStream.Create;
+ Result.Data.SetSize(Result.DataSize);
+ if Result.Datasize>0 then
+  Result.Data.CopyFrom(astream,Result.Datasize);
+end;
+
+
+function GenerateUserNameData(user,password:string):TRpComBlock;
 var
  alist:TStringList;
- arec:PRpComBlock;
- mem2:TMemoryStream;
- asize:integer;
 begin
- mem2:=TMemoryStream.Create;
+ alist:=TStringList.Create;
+ try
+  alist.Add(user+'='+password);
+  Result:=GenerateBlock(repauth,alist);
+ finally
+  alist.free;
+ end;
+end;
+
+function GenerateCBErrorMessage(amessage:WideString):TRpComBLock;
+var
+ astream:TMemoryStream;
+ alist:TStringList;
+begin
+ astream:=TMemoryStream.Create;
  try
   alist:=TStringList.Create;
   try
-   alist.Add(user+'='+password);
-   alist.SaveToStream(mem2);
+   alist.Add(amessage);
+   alist.SaveToStream(aStream);
+   Result:=GenerateBlock(reperror,astream);
   finally
    alist.free;
   end;
-  asize:=sizeof(TRpComBlock)-sizeof(PByte)+mem2.Size;
-  arec:=AllocMem(asize);
-  arec^.Size:=asize;
-  arec^.Command:=repauth;
-  mem2.Seek(0,soFromBeginning);
-  arec^.Datasize:=mem2.Size;
-  mem2.Read((@(arec^.Data))^,mem2.size);
  finally
-  mem2.free;
+  astream.free;
  end;
- Result:=arec;
 end;
 
-function GenerateCBErrorMessage(amessage:WideString):PRpComBLock;
+function RPComBlockToWideString(CB:TRpComBlock):WideString;
 var
- arec:PRpComBlock;
- asize:integer;
+ alist:TStringList;
 begin
- asize:=sizeof(TRpComBlock)-sizeof(PByte)+Length(amessage)*2;
- arec:=AllocMem(asize);
- arec^.size:=asize;
- arec^.Command:=reperror;
- arec^.Datasize:=Length(amessage)*2;
- move(amessage[1],(@(arec^.Data))^,arec^.Datasize);
- Result:=arec;
+ alist:=TStringList.Create;
+ try
+  CB.Data.Seek(0,soFromBeginning);
+  alist.LoadFromStream(CB.Data);
+  Result:=alist.Text;
+ finally
+  alist.free;
+ end;
 end;
 
-function GenerateCBLogMessage(amessage:WideString):PRpComBLock;
+
+function GenerateCBLogMessage(amessage:WideString):TRpComBLock;
 var
- arec:PRpComBlock;
- asize:integer;
+ astream:TMemoryStream;
+ alist:TStringList;
 begin
- asize:=sizeof(TRpComBlock)-sizeof(PByte)+Length(amessage)*2;
- arec:=AllocMem(asize);
- arec^.size:=asize;
- arec^.Command:=replog;
- arec^.Datasize:=Length(amessage)*2;
- move(amessage[1],(@(arec^.Data))^,arec^.Datasize);
- Result:=arec;
+ astream:=TMemoryStream.Create;
+ try
+  alist:=TStringList.Create;
+  try
+   alist.Add(amessage);
+   alist.SaveToStream(aStream);
+   Result:=GenerateBlock(replog,astream);
+  finally
+   alist.free;
+  end;
+ finally
+  astream.free;
+ end;
 end;
 
-function GenerateBlock(command:TRepCommand;Stream:TMemoryStream):PRpComBlock;overload;
-var
- arec:PRpComBlock;
- asize:integer;
+function GenerateBlock(command:TRepCommand;Stream:TMemoryStream):TRpComBlock;overload;
 begin
  Stream.Seek(0,soFromBeginning);
- asize:=sizeof(TRpComBlock)-sizeof(PByte)+Stream.Size;
- arec:=AllocMem(asize);
- arec^.Size:=asize;
- arec^.cOmmand:=command;
- arec^.Datasize:=Stream.Size;
- Stream.Read((@(arec^.Data))^,Stream.size);
- Result:=arec;
+ Result.Command:=command;
+ Result.Datasize:=Stream.Size;
+ Result.Data:=TMemoryStream.Create;
+ Result.Data.SetSize(Result.Datasize);
+ Result.Data.CopyFrom(Stream,Result.Datasize);
+ Result.Data.Seek(0,soFromBeginning);
 end;
 
-function GenerateBlock(command:TRepCommand;alist:TStringList):PRpComBlock;overload;
+function GenerateBlock(command:TRepCommand;alist:TStringList):TRpComBlock;overload;
 var
  mems:TMemoryStream;
- arec:PRpComBlock;
- asize:integer;
 begin
  mems:=TMemoryStream.Create;
  try
   alist.SaveToStream(mems);
   mems.Seek(0,soFromBeginning);
-  asize:=sizeof(TRpComBlock)-sizeof(PByte)+mems.Size;
-  arec:=AllocMem(asize);
-  arec^.Size:=asize;
-  arec^.cOmmand:=command;
-  arec^.Datasize:=mems.Size;
-  mems.Read((@(arec^.Data))^,mems.size);
+  Result:=GenerateBlock(command,mems);
  finally
   mems.free;
  end;
- Result:=arec;
 end;
 
-procedure FreeBlock(ablock:PRpComBlock);
+procedure FreeBlock(ablock:TRpComBlock);
 begin
- FreeMem(ablock);
+ ablock.Data.free;
+ ablock.Data:=nil;
+ ablock.DataSize:=0;
 end;
 
-procedure SendBlock(AConnection:TIdTCPConnection;CB:PRpComBlock);
+procedure SendBlock(AConnection:TIdTCPConnection;CB:TRpComBlock);
 var
+{$IFDEF DOTNETD}
+ astream:TIdStream;
+{$ENDIF}
  memstream:TMemoryStream;
 begin
  memstream:=TMemoryStream.Create;
  try
-  memstream.SetSize(CB^.Size);
-  memstream.Write(CB^,CB^.Size);
+  WriteRpComBlockToStream(CB,memstream);
+  memstream.Seek(0,soFromBeginning);
+{$IFDEF DOTNETD}
+  astream:=TIdStream.Create(memstream);
+  try
+   AConnection.IOHandler.Write(AStream);
+  finally
+   astream.Free;
+  end;
+{$ENDIF}
+{$IFNDEF DOTNETD}
   AConnection.WriteStream(memstream,true,true);
+{$ENDIF}
  finally
   memstream.free;
  end;

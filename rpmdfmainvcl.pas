@@ -34,13 +34,23 @@ uses
   Controls, Forms,
   StdCtrls, ComCtrls, ActnList, ImgList, Menus,ExtCtrls,
   Clipbrd,Printers,Consts, Dialogs,ShellApi,
-  rpreport,rpmdshfolder,
+  rpreport,rpmdshfolder,rpbasereport,
   rpmdfdesignvcl,rpmdfaboutvcl,rppagesetupvcl,
   rpmdobjinspvcl, rplastsav, ToolWin,rpmdfdinfovcl,rpmdfsectionintvcl,
   rpmdfgridvcl,rpmdfstrucvcl,rpmdobinsintvcl,rpfparamsvcl,
   rpmdconsts,rptypes, rpsubreport,
-  IniFiles,
-  rpsection,rpprintitem,
+  IniFiles,rpdatainfo,
+{$IFDEF USEINDY}
+  rpfmainmetaviewvcl, 
+{$ENDIF}
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
+{$IFDEF DOTNETD}
+ System.ComponentModel,
+{$ENDIF}
+  rpmdsysinfo,
+  rpsection,rpprintitem,rpmdfopenlibvcl,rpeditconnvcl,
   DB,rpmunits,rpgraphutilsvcl,rpmdfwizardvcl, rpalias;
 
 const
@@ -130,9 +140,6 @@ type
     AAbout: TAction;
     MHelp: TMenuItem;
     ReportManager1: TMenuItem;
-    MFields: TPopupMenu;
-    est1: TMenuItem;
-    ext21: TMenuItem;
     ADocumentation: TAction;
     utorial1: TMenuItem;
     APrintSetup: TAction;
@@ -154,14 +161,6 @@ type
     MSystemPrint: TMenuItem;
     AkylixPrintBug: TAction;
     MKylixPrintBug: TMenuItem;
-    MQtStyle: TMenuItem;
-    Windows1: TMenuItem;
-    Motif1: TMenuItem;
-    MotifPlus1: TMenuItem;
-    CDE1: TMenuItem;
-    QtSGI1: TMenuItem;
-    Platinum1: TMenuItem;
-    MQtDefault: TMenuItem;
     AHide: TAction;
     N4: TMenuItem;
     Hide1: TMenuItem;
@@ -223,6 +222,11 @@ type
     ADelete: TAction;
     BDelete: TToolButton;
     Delete1: TMenuItem;
+    Configure1: TMenuItem;
+    Openfrom1: TMenuItem;
+    Saveto1: TMenuItem;
+    AOpenFrom: TAction;
+    ASaveTo: TAction;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -248,8 +252,6 @@ type
     procedure APreviewExecute(Sender: TObject);
     procedure AAboutExecute(Sender: TObject);
     procedure APrintExecute(Sender: TObject);
-    procedure BExpressionMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure ShowHelp(AURL:string);
     procedure ShowDoc(document:String);
     procedure ADocumentationExecute(Sender: TObject);
@@ -285,15 +287,18 @@ type
     procedure ALibrariesExecute(Sender: TObject);
     procedure AAlign1_6Execute(Sender: TObject);
     procedure ADeleteExecute(Sender: TObject);
+    procedure AOpenFromExecute(Sender: TObject);
+    procedure ASaveToExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrameVCL;
     fobjinsp:TFRpObjInspVCL;
     lastsaved:TMemoryStream;
     configfile,configfilelib:string;
-    updatedmfields:boolean;
     oldonException:TExceptionEvent;
     oldonhint:TNotifyEvent;
+    alibrary:String;
+    areportname:WideString;
     procedure FreeInterface;
     procedure CreateInterface;
     function checkmodified:boolean;
@@ -306,8 +311,6 @@ type
     procedure DoOpen(newfilename:string;showopendialog:boolean);
     procedure OnReadError(Reader: TReader; const Message: string;
      var Handled: Boolean);
-    procedure UpdateMFields;
-    procedure MFieldsItemClick(Sender:TObject);
     procedure LoadConfig;
     procedure SaveConfig;
     procedure UpdateUnits;
@@ -316,6 +319,8 @@ type
     procedure MyExceptionHandler(Sender:TObject;E:Exception);
     procedure AppHint(Sender:TObject);
     procedure DeleteSelection;
+    procedure DoOpenStream(astream:TStream);
+    procedure DoOpenFromLib(alibname:String;arepname:WideString);
   public
     { Public declarations }
     report:TRpReport;
@@ -331,7 +336,6 @@ var
 
 implementation
 
-uses rpfmainmetaviewvcl, rpmdsysinfo, rpeditconnvcl;
 
 
 {$R *.dfm}
@@ -410,41 +414,6 @@ begin
  Close;
 end;
 
-procedure TFRpMainFVCL.DoOpen(newfilename:string;showopendialog:boolean);
-begin
- if Not checksave then
-  exit;
- // Opens an existing report
- if Showopendialog then
- begin
-  if Not OpenDialog1.execute then
-   exit;
- end
- else
-  OpenDialog1.Filename:=newfilename;
- FreeInterface;
- filename:='';
- report.free;
- report:=nil;
- DoDisable;
- // Creates a new report
- report:=TRpReport.Create(Self);
- try
-  report.OnReadError:=OnReadError;
-  report.FailIfLoadExternalError:=false;
-  report.LoadFromFile(OpenDialog1.FileName);
-  filename:=OpenDialog1.FileName;
-  Savedialog1.filename:=filename;
-  LastUsedFiles.UseString(filename);
-  UpdateFileMenu;
-  DoEnable;
- except
-  report.free;
-  report:=nil;
-  filename:='';
-  raise;
- end;
-end;
 
 procedure TFRpMainFVCL.AOpenExecute(Sender: TObject);
 begin
@@ -456,7 +425,7 @@ procedure TFRpMainFVCL.ASaveExecute(Sender: TObject);
 begin
  Assert(report<>nil,'Called Save without a report assigned');
  // Saves the current report
- if Length(filename)>0 then
+ if ((Length(filename)>0) or (Length(alibrary)>0)) then
  begin
   DoSave;
  end
@@ -519,7 +488,6 @@ begin
  fdesignframe:=nil;
  freportstructure:=nil;
  mainscrollbox.Visible:=false;
- updatedmfields:=false;
 end;
 
 procedure TFRpMainFVCL.CreateInterface;
@@ -559,10 +527,17 @@ begin
  BArrow.Down:=true;
 
  AParams.Enabled:=True;
- if length(filename)<1 then
-  Caption:=SRpRepman+'-'+SRpUntitled
- else
+ if length(filename)>0 then
+ begin
   Caption:=SRpRepman+'-'+filename;
+ end
+ else
+ begin
+  if Length(alibrary)>0 then
+   Caption:=SRpRepman+'-'+alibrary+'->'+areportname
+  else
+   Caption:=SRpRepman+'-'+SRpUntitled
+ end;
  // Create the report structure frame
  fobjinsp:=TFRpObjInspVCL.Create(Self);
  fobjinsp.Align:=alclient;
@@ -592,32 +567,15 @@ begin
  // Saves the report
  if SaveDialog1.Execute then
  begin
+  filename:=SaveDialog1.filename;
+  alibrary:='';
+  areportname:='';
   DoSave;
  end
  else
   Raise EAbort.Create(SRpSaveAborted);
 end;
 
-procedure TFRpMainFVCL.DoSave;
-begin
- Assert(report<>nil,'Called DoSave without a report assigned');
-
- report.SaveToFile(savedialog1.filename);
-
- // After saving update the lastsaved stream
- if assigned(lastsaved) then
- begin
-  lastsaved.free;
-  lastsaved:=nil;
- end;
- lastsaved:=TMemorystream.create;
- report.SaveToStream(lastsaved);
-
- filename:=savedialog1.filename;
- LastUsedFiles.UseString(filename);
- UpdateFileMenu;
- Caption:=SRpRepman+'-'+filename;
-end;
 
 procedure TFRpMainFVCL.APageSetupExecute(Sender: TObject);
 begin
@@ -625,7 +583,7 @@ begin
 
  if ExecutePageSetup(report) then
  begin
-  fdesignframe.UpdateInterface;
+  fdesignframe.UpdateInterface(true);
   fdesignframe.UpdateSelection(false);
  end;
 end;
@@ -678,7 +636,6 @@ begin
  ACopy.ShortCut:=ShortCut(Ord('C'),[ssCtrl,ssAlt]);
  APaste.ShortCut:=ShortCut(Ord('V'),[ssCtrl,ssAlt]);
  ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssCtrl,ssAlt]);
- MQtStyle.Visible:=false;
  MSystemPrint.Visible:=false;
 
  OpenDialog1.Filter := SRpRepFile+'|*.rep';
@@ -788,9 +745,6 @@ begin
  MPreferences.Caption:=TranslateStr(5,MPreferences.Caption);
  ASystemPrintDialog.Caption:=TranslateStr(72,ASystemPrintDialog.Caption);
  ASystemPrintDialog.Hint:=TranslateStr(73,ASystemPrintDialog.Hint);
- MQtStyle.Caption:=TranslateStr(78,MQtStyle.Caption);
- MQtStyle.Hint:=TranslateStr(79,MQtStyle.Hint);
- MQtDefault.Caption:=TranslateStr(80,MQtDefault.Caption);
  BArrow.Hint:=TranslateStr(81,BArrow.Hint);
  BLabel.Hint:=TranslateStr(82,BLabel.Hint);
  BExpression.Hint:=TranslateStr(83,BExpression.Hint);
@@ -805,6 +759,12 @@ begin
  MSysInfo.Caption:=TranslateStr(976,MSysInfo.Caption);
  MSysInfo.Hint:=TranslateStr(977,MSysInfo.Hint);
 
+ ALibraries.Caption:=SRpConfigLib;
+ ALibraries.Hint:=SRpConfigLibH;
+ AOpenFrom.Caption:=SRpOpenFrom;
+ AOpenFrom.Hint:=SRpOpenFromH;
+ ASaveTo.Caption:=SRpSaveTo;
+ ASaveTo.Hint:=SRpSaveToH;
 
  ANewPageHeader.Caption:=TranslateStr(119,ANewPageHeader.Caption);
  ANewPageHeader.Hint:=TranslateStr(120,ANewPageHeader.Hint);
@@ -829,6 +789,10 @@ begin
  OpenDialog1.Title:=TranslateStr(214,OpenDialog1.Title);
  ASysInfo.Caption:=SRpSsysInfo;
  ASysInfo.Hint:=SRpSsysInfoH;
+{$IFNDEF USEINDY}
+ ADriverPDF.Enabled:=false;
+{$ENDIF}
+
  // Activates OnHint
  oldonhint:=Application.OnHint;
  Application.OnHint:=AppHint;
@@ -880,14 +844,6 @@ begin
  end;
 end;
 
-procedure TFRpMainFVCL.OnFileClick(Sender:TObject);
-var
- newfilename:string;
-begin
- newfilename:=LastusedFiles.LastUsed.Strings[TComponent(Sender).tag];
- // Try to open the file
- DoOpen(newfilename,false);
-end;
 
 
 procedure TFRpMainFVCL.RefreshInterface(Sender: TObject);
@@ -971,7 +927,7 @@ begin
  ShowDataConfig(report);
  fobjinsp.ClearMultiSelect;
  fdesignframe.UpdateSelection(true);
- updatedmfields:=false;
+ fdesignframe.freportstructure.Report:=report;
 end;
 
 procedure TFRpMainFVCL.AParamsExecute(Sender: TObject);
@@ -1040,7 +996,8 @@ begin
   for i:=0 to fobjinsp.SelectedItems.Count-1 do
   begin
    pitem:=TRpSizePosInterface(fobjinsp.SelectedItems.Objects[i]).printitem;
-   report.Removecomponent(pitem);
+   pitem.oldowner:=pitem.owner;
+   pitem.owner.Removecomponent(pitem);
    acompo.InsertComponent(pitem);
   end;
   Clipboard.SetComponent(acompo);
@@ -1048,7 +1005,7 @@ begin
   begin
    pitem:=TRpSizePosInterface(fobjinsp.SelectedItems.Objects[i]).printitem;
    acompo.RemoveComponent(pitem);
-   report.Insertcomponent(pitem);
+   pitem.oldowner.Insertcomponent(pitem);
   end;
  finally
   acompo.free;
@@ -1097,7 +1054,10 @@ begin
     compo.RemoveComponent(pitem);
     pitem.Name:='';
     (section.ReportComponents.Add).Component:=pitem;
-    report.InsertComponent(pitem);
+    if section.IsExternal then
+     section.InsertComponent(pitem)
+    else
+     report.InsertComponent(pitem);
     Generatenewname(pitem);
     TFRpObjInspVCL(fobjinsp).AddCompItem(secint.CreateChild(pitem),false);
    end;
@@ -1131,16 +1091,26 @@ begin
 end;
 
 procedure TFRpMainFVCL.APreviewExecute(Sender: TObject);
+var
+ modified:boolean;
 begin
  // Previews the report
  if ADriverPDF.Checked then
  begin
+{$IFDEF USEINDY}
   if rpgdidriver.CalcReportWidthProgress(report) then
-   rpfmainmetaviewvcl.PreviewMetafile(report.metafile,nil,true);
+   rpfmainmetaviewvcl.PreviewMetafile(report.metafile,nil,true,true);
+{$ENDIF}
  end
  else
  begin
-  rpvpreview.ShowPreview(report,caption);
+  modified:=false;
+  rpvpreview.ShowPreview(report,caption,modified);
+  if modified then
+  begin
+   fdesignframe.UpdateInterface(true);
+   fdesignframe.UpdateSelection(false);
+  end;
  end;
 end;
 
@@ -1173,90 +1143,22 @@ begin
 end;
 
 
-procedure TFRpMainFVCL.MFieldsItemClick(Sender:TObject);
-var
- i:integer;
-begin
- for i:=0 to MFields.Items.Count-1 do
- begin
-  if MFields.Items[i]=Sender then
-   MFields.Items[i].Checked:=true
-  else
-   MFields.Items[i].Checked:=false;
- end;
-end;
 
-procedure TFRpMainFVCL.UpdateMFields;
-var
- i,j:integer;
- alist:TStringList;
- datas:TDataset;
- alias:string;
- aitem:TMenuItem;
-begin
- if updatedmfields then
-  exit;
- updatedmfields:=true;
- MFields.Items.Clear;
- aitem:=TMenuItem.Create(MFields);
- aitem.Caption:='PAGECOUNT';
- aitem.OnClick:=MFieldsItemClick;
- MFields.Items.Add(aitem);
- alist:=TStringList.Create;
- try
-  for i:=0 to report.DataInfo.Count-1 do
-  begin
-   try
-    alias:=report.DataInfo.Items[i].Alias;
-    report.DataInfo.Items[i].Connect(report.DatabaseInfo,report.Params);
-    datas:=report.DataInfo.Items[i].Dataset;
-    for j:=0 to datas.FieldCount-1 do
-    begin
-     aitem:=TMenuItem.Create(MFields);
-     aitem.Caption:=alias+'.'+datas.fields[j].FieldName;
-     aitem.OnClick:=MFieldsItemClick;
-     MFields.Items.Add(aitem);
-    end;
-   except
 
-   end;
-  end;
- finally
-  alist.free;
- end;
-end;
-
-procedure TFRpMainFVCL.BExpressionMouseUp(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-var
- apoint:TPoint;
-begin
- // Popups Fields
- UpdateMFields;
-
- if MFields.Items.Count>0 then
- begin
-  apoint.x:=BExpression.Left;
-  apoint.Y:=BExpression.Top+BExpression.Height;
-  apoint:=ClientToScreen(apoint);
-  MFields.Popup(apoint.x,apoint.Y);
- end;
-end;
 
 
 function TFRpMainFVCL.GetExpressionText:string;
 var
- i:integer;
+ anode:TTreeNode;
+ asize:Integer;
 begin
  Result:='2+2';
- for i:=0 to MFields.Items.Count-1 do
+ if Assigned(freportstructure) then
  begin
-  if MFields.Items[i].Checked then
+  anode:=freportstructure.browser.ATree.Selected;
+  if assigned(anode) then
   begin
-   Result:=MFields.Items[i].Caption;
-   if Pos(' ',Trim(Result))>0 then
-    Result:='['+Trim(Result)+']';
-   break;
+   ExtractFieldNameAndSize(anode.Text,Result,asize);
   end;
  end;
 end;
@@ -1264,7 +1166,9 @@ end;
 procedure TFRpMainFVCL.ShowHelp(AURL:string);
 begin
  // Starts the default explorer
+{$IFNDEF DOTNETD}
  ShellExecute(Self.handle,Pchar('open'),Pchar(AURL),nil,nil,SW_SHOWNORMAL);
+{$ENDIF}
 end;
 
 
@@ -1373,7 +1277,7 @@ begin
   rpmunits.defaultunit:=rpUnitinchess;
  if assigned(fdesignframe) then
  begin
-  fdesignframe.UpdateInterface;
+  fdesignframe.UpdateInterface(true);
   fdesignframe.UpdateSelection(true);
  end;
 end;
@@ -1700,6 +1604,190 @@ begin
  if (Not (fobjinsp.SelectedItems.Objects[0] is TRpSizePosInterface)) then
   exit;
  DeleteSelection;
+end;
+
+
+procedure TFRpMainFVCL.DoOpenFromLib(alibname:String;arepname:WideString);
+var
+ oldfilename:String;
+ oldreportname:WideString;
+ oldlibraryname:String;
+ astream:TStream;
+begin
+ oldfilename:=filename;
+ oldreportname:=areportname;
+ oldlibraryname:=alibrary;
+ try
+  alibrary:=alibname;
+  areportname:=arepname;
+  astream:=rpalias1.Connections.GetReportStream(alibrary,areportname);
+  try
+   filename:='';
+   DoOpenStream(astream);
+   Savedialog1.filename:='';
+   LastUsedFiles.UseString(alibrary+'->'+areportname);
+   UpdateFileMenu;
+  finally
+   astream.free;
+  end;
+ except
+  alibrary:=oldlibraryname;
+  areportname:=oldreportname;
+  filename:=oldfilename;
+  raise;
+ end;
+end;
+
+procedure TFRpMainFVCL.AOpenFromExecute(Sender: TObject);
+var
+ alibname:String;
+ arepname:WideString;
+begin
+ arepname:=SelectReportFromLibrary(rpalias1.Connections,alibname);
+ if Length(arepname)<1 then
+  exit;
+ DoOpenFromLib(alibname,arepname);
+end;
+
+procedure TFRpMainFVCL.ASaveToExecute(Sender: TObject);
+var
+ arepname,oldrepname:WideString;
+ alibname,oldlibname,oldfilename:String;
+begin
+ arepname:=SelectReportFromLibrary(rpalias1.Connections,alibname);
+ if Length(arepname)<1 then
+  exit;
+ try
+  oldlibname:=alibrary;
+  oldrepname:=areportname;
+  oldfilename:=filename;
+  filename:='';
+  alibrary:=alibname;
+  areportname:=arepname;
+  DoSave;
+ except
+  alibrary:=oldlibname;
+  areportname:=oldrepname;
+  filename:=oldfilename;
+  raise;
+ end;
+end;
+
+
+procedure TFRpMainFVCL.OnFileClick(Sender:TObject);
+var
+ newfilename:string;
+ apos:integer;
+begin
+ newfilename:=LastusedFiles.LastUsed.Strings[TComponent(Sender).tag];
+ if Length(newfilename)<1 then
+  exit;
+ // Try to open the file
+ apos:=Pos('->',newfilename);
+ // Check if it's a database library report
+ if apos=0 then
+  DoOpen(newfilename,false)
+ else
+ begin
+  DoOpenFromLib(Copy(newfilename,1,apos-1),Copy(newfilename,apos+2,Length(newfilename)));
+ end;
+end;
+
+procedure TFRpMainFVCL.DoSave;
+var
+ astream:TStream;
+begin
+ Assert(report<>nil,'Called DoSave without a report assigned');
+
+ if Length(filename)>0 then
+ begin
+  report.SaveToFile(savedialog1.filename);
+  Caption:=SRpRepman+'-'+filename;
+  filename:=savedialog1.filename;
+  LastUsedFiles.UseString(filename);
+ end
+ else
+ begin
+  astream:=TMemoryStream.Create;
+  try
+   report.SaveToStream(astream);
+   astream.Seek(0,soFromBeginning);
+   RpAlias1.Connections.SaveReportStream(alibrary,areportname,astream);
+  finally
+   astream.free;
+  end;
+  Caption:=SRpRepman+'-'+alibrary+'->'+areportname;
+  filename:='';
+  LastUsedFiles.UseString(alibrary+'->'+areportname);
+ end;
+
+ // After saving update the lastsaved stream
+ if assigned(lastsaved) then
+ begin
+  lastsaved.free;
+  lastsaved:=nil;
+ end;
+ lastsaved:=TMemorystream.create;
+ report.SaveToStream(lastsaved);
+
+ UpdateFileMenu;
+end;
+
+procedure TFRpMainFVCL.DoOpenStream(astream:TStream);
+begin
+ // Creates a new report
+ FreeInterface;
+ report.free;
+ report:=nil;
+ DoDisable;
+ report:=TRpReport.Create(Self);
+ try
+  report.OnReadError:=OnReadError;
+  report.FailIfLoadExternalError:=false;
+  report.LoadFromStream(astream);
+  DoEnable;
+ except
+  report.free;
+  report:=nil;
+  filename:='';
+  raise;
+ end;
+end;
+
+procedure TFRpMainFVCL.DoOpen(newfilename:string;showopendialog:boolean);
+var
+ astream:TFileStream;
+ oldfilename:String;
+begin
+ if Not checksave then
+  exit;
+ // Opens an existing report
+ if Showopendialog then
+ begin
+  if Not OpenDialog1.execute then
+   Raise EAbort.Create(SRpAbort);
+  newfilename:=OpenDialog1.Filename;
+ end
+ else
+  OpenDialog1.Filename:=newfilename;
+ astream:=TFileStream.Create(OpenDialog1.Filename,fmOpenRead);
+ try
+  oldfilename:=filename;
+  filename:=newfilename;
+  try
+   DoOpenStream(astream);
+  except
+   filename:=oldfilename;
+   raise;
+  end;
+  alibrary:='';
+  areportname:='';
+  Savedialog1.filename:=filename;
+  LastUsedFiles.UseString(filename);
+  UpdateFileMenu;
+ finally
+  astream.free;
+ end;
 end;
 
 end.

@@ -24,12 +24,12 @@ interface
 {$I rpconf.inc}
 
 uses SysUtils, Classes,Types,
-  QGraphics, QForms,
+  QGraphics, QForms,rpdbbrowser,QComCtrls,
   QButtons, QExtCtrls, QControls, QStdCtrls,
   rpmdobinsint,rpreport,rpprintitem,rpgraphutils,
   rpmdobjinsp,rpmdfstruc,rpmdflabelint,rplabelitem,
   rpmdconsts,rpsection,rptypes,rpdrawitem,rpmdfdrawint,
-  rpsubreport,rpmdbarcode,rpmdchart,
+  rpsubreport,rpmdbarcode,rpmdchart,rpdatainfo,
   rpmdfbarcodeint,rpmdfchartint;
 
 const
@@ -43,6 +43,9 @@ type
    private
     calledposchange:Boolean;
     secint:TRpSectionInterface;
+    procedure DoDragDrop(Sender, Source: TObject; X, Y: Integer);
+    procedure DoDragOver(Sender, Source: TObject; X, Y: Integer; State: TDragState;
+     var Accept: Boolean);
    protected
     procedure Paint;override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -76,6 +79,7 @@ type
    public
     freportstructure:TFRpStructure;
     childlist:TList;
+    procedure DoDragDrop(Sender, Source: TObject; X, Y: Integer);
     procedure UpdatePos;override;
     property OnDestroy:TNotifyEvent read FOnDestroy write FOnDestroy;
     constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
@@ -226,6 +230,7 @@ begin
   lnames.Add(SRpGeneralPageHeader);
   ltypes.Add(SRpSBool);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).Global,true));
  end;
@@ -234,11 +239,13 @@ begin
   lnames.Add(SRpSAutoExpand);
   ltypes.Add(SRpSBool);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).AutoExpand,true));
   lnames.Add(SRpSAutoContract);
   ltypes.Add(SRpSBool);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).AutoContract,true));
  end;
@@ -247,24 +254,28 @@ begin
   lnames.Add(SRpIniNumPage);
   ltypes.Add(SRpSBool);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).IniNumPage,true));
 
   lnames.Add(SRpSGroupName);
   ltypes.Add(SRpSString);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).GroupName);
 
   lnames.Add(SRpSGroupExpression);
   ltypes.Add(SRpSExpression);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).ChangeExpression);
 
   lnames.Add(SRpSChangeBool);
   ltypes.Add(SRpSBool);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).ChangeBool,true));
 
@@ -273,6 +284,7 @@ begin
    lnames.Add(SRpSPageRepeat);
    ltypes.Add(SRpSBool);
    lhints.Add('refsection.html');
+   lcat.Add(SRpSection);
    if Assigned(lvalues) then
     lvalues.Add(BoolToStr(TRpSection(printitem).PageRepeat,true));
   end;
@@ -282,61 +294,78 @@ begin
   lnames.Add(SRpSBeginPage);
   ltypes.Add(SRpSExpression);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).BeginPageExpression);
 
   lnames.Add(SRpSkipPage);
   ltypes.Add(SRpSBool);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).SkipPage,true));
 
   lnames.Add(SRPAlignBottom);
   ltypes.Add(SRpSBool);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).AlignBottom,true));
 
   lnames.Add(SRPHorzDesp);
   ltypes.Add(SRpSBool);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).HorzDesp,true));
+  lnames.Add(SRPVertDesp);
+  ltypes.Add(SRpSBool);
+  lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
+  if Assigned(lvalues) then
+   lvalues.Add(BoolToStr(TRpSection(printitem).VertDesp,true));
   // Skip page expression
   lnames.Add(SRpSSkipType);
   ltypes.Add(SRpSList);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(RpSkipTypeToText(TRpSection(printitem).SkipType));
   lnames.Add(SRpSSkipToPage);
   ltypes.Add(SRpSExpression);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).SkipToPageExpre);
   lnames.Add(SRpSHSkipExpre);
   ltypes.Add(SRpSExpression);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).SkipExpreH);
   lnames.Add(SRpSHRelativeSkip);
   ltypes.Add(SRpSBool);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).SkipRelativeH,true));
   lnames.Add(SRpSVSkipExpre);
   ltypes.Add(SRpSExpression);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).SkipExpreV);
   lnames.Add(SRpSVRelativeSkip);
   ltypes.Add(SRpSBool);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).SkipRelativeV,true));
   // Child Subreport
   lnames.Add(SRpChildSubRep);
   ltypes.Add(SRpSList);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).GetChildSubReportName);
  end;
@@ -345,6 +374,7 @@ begin
   lnames.Add(SRpSForcePrint);
   ltypes.Add(SRpSBool);
   lhints.Add('refsection.html');
+  lcat.Add(SRpSection);
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).FooterAtReportEnd,true));
  end;
@@ -352,11 +382,13 @@ begin
  lnames.Add(SRpSExternalPath);
  ltypes.Add(SRpSExternalpath);
  lhints.Add('refsection.html');
+ lcat.Add(SRpSection);
  if Assigned(lvalues) then
   lvalues.Add(TRpSection(printitem).ExternalFilename);
  lnames.Add(SRpSExternalData);
  ltypes.Add(SRpSExternalData);
  lhints.Add('refsection.html');
+ lcat.Add(SRpSection);
  if Assigned(lvalues) then
   lvalues.Add(TRpSection(printitem).GetExternalDataDescription);
 end;
@@ -430,6 +462,11 @@ begin
   if pname=SRpHorzDesp then
   begin
    TRpSection(fprintitem).HorzDesp:=StrToBool(Value);
+   exit;
+  end;
+  if pname=SRpVertDesp then
+  begin
+   TRpSection(fprintitem).VertDesp:=StrToBool(Value);
    exit;
   end;
   if pname=SRpSSkipType then
@@ -552,6 +589,11 @@ begin
    Result:=BoolToStr(TRpSection(fprintitem).HorzDesp,true);
    exit;
   end;
+  if pname=SRPVertDesp then
+  begin
+   Result:=BoolToStr(TRpSection(fprintitem).VertDesp,true);
+   exit;
+  end;
   if pname=SRpSSkipType then
   begin
    Result:=RpSkipTypeToText(TRpSection(fprintitem).SkipType);
@@ -636,6 +678,8 @@ begin
  opts:=ControlStyle;
  include(opts,csCaptureMouse);
  ControlStyle:=opts;
+ OnDragOver:=DoDragOver;
+ OnDragDrop:=DoDragDrop;
 end;
 
 
@@ -869,6 +913,7 @@ var
  aitem:TRpCommonListItem;
  FRpMainf:TFRpMainF;
  NewLeft,NewTop,NewWidth,NewHeight:integer;
+ theowner:TComponent;
 begin
  inherited MouseDown(Button,Shift,X,Y);
 
@@ -894,24 +939,28 @@ begin
   end;
   exit;
  end;
+ if TRpSection(printitem).IsExternal then
+  theowner:=printitem
+ else
+  theowner:=printitem.Report;
  asizepos:=nil;
  asizeposint:=nil;
  if FRpMainf.BLabel.Down then
  begin
-  asizepos:=TRpLabel.Create(printitem.Report);
+  asizepos:=TRpLabel.Create(theowner);
   TRpLabel(asizepos).Text:=SRpSampleTextToLabels;
   asizeposint:=TRpLabelInterface.Create(Self,asizepos);
  end;
  if FRpMainf.BExpression.Down then
  begin
-  asizepos:=TRpExpression.Create(printitem.Report);
+  asizepos:=TRpExpression.Create(theowner);
   // Search if theres a selected field
   TRpExpression(asizepos).Expression:=FRpMainf.GetExpressionText;
   asizeposint:=TRpExpressionInterface.Create(Self,asizepos);
  end;
  if FRpMainf.BBarcode.Down then
  begin
-  asizepos:=TRpBarcode.Create(printitem.Report);
+  asizepos:=TRpBarcode.Create(theowner);
   // Search if theres a selected field
   TRpBarcode(asizepos).Expression:=FRpMainf.GetExpressionText;
   if (TRpBarcode(asizepos).Expression='2+2') then
@@ -920,19 +969,19 @@ begin
  end;
  if FRpMainf.BChart.Down then
  begin
-  asizepos:=TRpChart.Create(printitem.Report);
+  asizepos:=TRpChart.Create(theowner);
   // Search if theres a selected field
   TRpChart(asizepos).ValueExpression:=FRpMainf.GetExpressionText;
   asizeposint:=TRpChartInterface.Create(Self,asizepos);
  end;
  if FRpMainf.BShape.Down then
  begin
-  asizepos:=TRpShape.Create(printitem.Report);
+  asizepos:=TRpShape.Create(theowner);
   asizeposint:=TRpDrawInterface.Create(Self,asizepos);
  end;
  if FRpMainf.BImage.Down then
  begin
-  asizepos:=TRpImage.Create(printitem.Report);
+  asizepos:=TRpImage.Create(theowner);
   asizeposint:=TRpImageInterface.Create(Self,asizepos);
  end;
 
@@ -1098,6 +1147,109 @@ begin
    TRpSizePosInterface(childlist.items[i]).Free;
    TRpSection(printitem).DeleteComponent(TRpCommonCOmponent(aitem));
   end;
+ end;
+end;
+
+
+procedure TRpSectionInTf.DoDragOver(Sender, Source: TObject; X, Y: Integer; State: TDragState;
+     var Accept: Boolean);
+var
+ anode:TTreeNode;
+begin
+ Accept:=false;
+ if Source is TFRpBrowser then
+ begin
+  anode:=TFRpBrowser(Source).Atree.Selected;
+  if Not assigned(anode) then
+   exit;
+  Accept:=true;
+ end;
+end;
+
+
+
+procedure TRpSectionInTf.DoDragDrop(Sender, Source: TObject; X, Y: Integer);
+begin
+ secint.DoDragDrop(Sender,Source,X,Y);
+end;
+
+
+function getmstring(asize:Integer):String;
+var
+ i:integer;
+begin
+ Result:='';
+ for i:=1 to asize do
+ begin
+  Result:=Result+'M';
+ end;
+end;
+
+procedure TRpSectionInterface.DoDragDrop(Sender, Source: TObject; X, Y: Integer);
+var
+ aitem:TRpCommonListItem;
+ anode:TTreeNode;
+ asizepos:TRpExpression;
+ asizeposint:TRpExpressionInterface;
+ fieldname:String;
+ size:Integer;
+ apoint:TPoint;
+begin
+ if Source is TFRpBrowser then
+ begin
+  anode:=TFRpBrowser(Source).Atree.Selected;
+  if Not assigned(anode) then
+   exit;
+  if TRpSection(printitem).IsExternal then
+   asizepos:=TRpExpression.Create(printitem)
+  else
+   asizepos:=TRpExpression.Create(printitem.Report);
+  // Search if theres a selected field
+  // Search if theres a selected field
+  ExtractFieldNameAndSize(anode.Text,fieldname,size);
+  TRpExpression(asizepos).Expression:=fieldname;
+{$IFDEF MSWINDOWS}
+  Canvas.Font.Name:=TRpExpression(asizepos).WFontName;
+{$ENDIF}
+{$IFDEF LINUX}
+  Canvas.Font.Name:=TRpExpression(asizepos).LFontName;
+{$ENDIF}
+  Canvas.Font.Size:=TRpExpression(asizepos).FontSize;
+
+  asizeposint:=TRpExpressionInterface.Create(Self,asizepos);
+
+  asizepos.PosX:=pixelstotwips(X);
+  asizepos.PosY:=pixelstotwips(Y);
+
+  if size<=100 then
+  begin
+   apoint.y:=Canvas.TextHeight('Mg');
+   apoint.x:=Canvas.TextWidth(getmstring(size));
+  end
+  else
+  begin
+   apoint.y:=Canvas.TextHeight('Mg')*((size div 100)+1);
+   apoint.x:=Canvas.TextWidth(getmstring(size));
+  end;
+  apoint.x:=pixelstotwips(apoint.x);
+  apoint.y:=pixelstotwips(apoint.y);
+  asizepos.Height:=Round(apoint.y*1.1);
+  asizepos.Width:=apoint.x;
+
+  GenerateNewName(asizepos);
+  aitem:=TRpSection(printitem).ReportComponents.Add;
+  aitem.Component:=asizepos;
+  asizeposint.Parent:=FInterface;
+  asizeposint.sectionint:=self;
+  asizeposint.UpdatePos;
+  asizeposint.fobjinsp:=fobjinsp;
+  childlist.Add(asizeposint);
+  if assigned(TFRpObjInsp(fobjinsp).Combo) then
+  begin
+   TFRpObjInsp(fobjinsp).Combo.Items.AddObject(asizepos.Name,asizeposint);
+   TFRpObjInsp(fobjinsp).Combo.ItemIndex:=TFRpObjInsp(fobjinsp).Combo.Items.IndexOfObject(asizeposint);
+  end;
+  TFRpObjInsp(fobjinsp).AddCompItem(asizeposint,true);
  end;
 end;
 

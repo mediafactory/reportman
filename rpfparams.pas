@@ -26,7 +26,7 @@ uses SysUtils, Classes,
   QGraphics, QForms,QDialogs, QActnList, QImgList, QComCtrls,
   QButtons, QExtCtrls, QControls, QStdCtrls, QMask,
   rpdatainfo,Variants,DB,rpmdconsts,rpparams,rptypes,
-  rpgraphutils;
+  rpgraphutils, rpmaskeditclx;
 
 type
   TFRpParams = class(TForm)
@@ -37,7 +37,7 @@ type
     LDataType: TLabel;
     ComboDataType: TComboBox;
     LValue: TLabel;
-    EValue: TMaskEdit;
+    EValue: TRpCLXMaskEdit;
     CheckVisible: TCheckBox;
     CheckNull: TCheckBox;
     LAssign: TLabel;
@@ -70,6 +70,7 @@ type
     GValues: TGroupBox;
     MItems: TMemo;
     MValues: TMemo;
+    CheckAllowNulls: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -139,6 +140,8 @@ begin
  LValue.Caption:=TranslateStr(194,LValue.Caption);
  CheckVisible.Caption:=TranslateStr(195,CheckVisible.Caption);
  CheckVisible.Hint:=TranslateStr(952,CheckVisible.Caption);
+ CheckAllowNulls.Caption:=SRpAllowNulls;
+ CheckAllowNulls.Hint:=SRpAllowNullsHint;
  CheckNull.Caption:=TranslateStr(196,CheckNull.Caption);
  LDescription.Caption:=TranslateStr(197,LDescription.Caption);
  LAssign.Caption:=TranslateStr(198,LAssign.Caption);
@@ -211,6 +214,7 @@ begin
   GProperties.Visible:=True;
   param:=params.ParamByName(LParams.Items.Strings[LParams.Itemindex]);
   CheckVisible.Checked:=param.Visible;
+  CheckAllowNulls.Checked:=param.AllowNulls;
    CheckNull.Checked:=param.Value=Null;
   EDescription.Text:=param.Description;
   ESearch.Text:=param.Search;
@@ -223,6 +227,7 @@ begin
 
   ComboDataType.ItemIndex:=
    ComboDataType.Items.IndexOf(ParamTypeToString(param.ParamType));
+  EValue.EditType:=teGeneral;
   EValue.Text:='';
   if (param.Value<>Null) then
   begin
@@ -230,11 +235,20 @@ begin
     rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamUnknown:
      EValue.Text:=param.AsString;
     rpParamInteger:
-     EValue.Text:=IntToStr(param.Value);
+     begin
+      EValue.Text:=IntToStr(param.Value);
+      EValue.EditType:=teInteger;
+     end;
     rpParamDouble:
-     EValue.Text:=FloatToStr(param.Value);
+     begin
+      EValue.Text:=FloatToStr(param.Value);
+      EValue.EditType:=teFloat;
+     end;
     rpParamCurrency:
-     EValue.Text:=CurrToStr(param.Value);
+     begin
+      EValue.Text:=CurrToStr(param.Value);
+      EValue.EditType:=teCurrency;
+     end;
     rpParamDate:
      EValue.Text:=DateToStr(param.Value);
     rpParamTime:
@@ -342,6 +356,9 @@ begin
   if (Sender=CheckVisible) then
    param.Visible:=CheckVisible.Checked
   else
+  if (Sender=CheckAllowNulls) then
+   param.AllowNulls:=CheckAllowNulls.Checked
+  else
    if (Sender=CheckNull) then
    begin
     UpdateValue(param);
@@ -392,6 +409,7 @@ end;
 procedure TFRpParams.BAddClick(Sender: TObject);
 var
  paramname:string;
+ aparam:TRpParam;
 begin
  paramname:=RpInputBox(SRpNewParam,SRpParamName,'');
  paramname:=AnsiUpperCase(Trim(paramname));
@@ -399,7 +417,10 @@ begin
   exit;
 
  // Adds a param
- params.Add(paramname);
+ aparam:=params.Add(paramname);
+ aparam.AllowNulls:=false;
+ aparam.Value:='';
+
  FillParamList;
  LParams.ItemIndex:=LParams.Items.Count-1;
  LParamsClick(Self);

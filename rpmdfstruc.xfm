@@ -1,68 +1,85 @@
 object FRpStructure: TFRpStructure
   Left = 0
   Top = 0
-  Width = 216
-  Height = 165
-  VertScrollBar.Range = 30
+  Width = 279
+  Height = 235
   ParentShowHint = False
   ShowHint = True
   TabOrder = 0
-  object RView: TTreeView
-    Left = 0
-    Top = 30
-    Width = 216
-    Height = 135
-    Align = alClient
-    BorderStyle = bsNone
-    Columns = <>
-    ReadOnly = True
-    TabOrder = 0
-    OnChange = RViewChange
-    OnClick = RViewClick
-  end
-  object Panel1: TToolBar
+  ParentFont = True
+  object PControl: TPageControl
     Left = 0
     Top = 0
-    Width = 216
-    Height = 30
-    AutoSize = True
-    ButtonHeight = 26
-    ButtonWidth = 26
-    Flat = True
-    Images = ImageList1
-    TabOrder = 1
-    object BNew: TToolButton
-      Left = 1
-      Top = 4
-      Height = 26
-      Hint = 'Adds a section to the selected subreport'
-      Style = tbsDropDown
-      Caption = 'ANewSection'
-      DropDownMenu = PopupMenu1
-      ImageIndex = 2
-      OnClick = BNewClick
+    Width = 279
+    Height = 235
+    ActivePage = TabStructure
+    Align = alClient
+    HotTrack = True
+    TabOrder = 0
+    object TabStructure: TTabSheet
+      Caption = 'Structure'
+      object RView: TTreeView
+        Left = 0
+        Top = 30
+        Width = 271
+        Height = 175
+        Align = alClient
+        BorderStyle = bsNone
+        Columns = <>
+        ReadOnly = True
+        TabOrder = 0
+        OnChange = RViewChange
+        OnClick = RViewClick
+      end
+      object Panel1: TToolBar
+        Left = 0
+        Top = 0
+        Width = 271
+        Height = 30
+        AutoSize = True
+        ButtonHeight = 26
+        ButtonWidth = 26
+        Flat = True
+        Images = ImageList1
+        TabOrder = 1
+        object BNew: TToolButton
+          Left = 1
+          Top = 4
+          Height = 26
+          Hint = 'Adds a section to the selected subreport'
+          Style = tbsDropDown
+          Caption = 'ANewSection'
+          DropDownMenu = PopupMenu1
+          ImageIndex = 2
+          OnClick = BNewClick
+        end
+        object ToolButton2: TToolButton
+          HelpType = htContext
+          Left = 41
+          Top = 4
+          Height = 26
+          Action = ADelete
+          Caption = 'Delete section'
+        end
+        object ToolButton3: TToolButton
+          HelpType = htContext
+          Left = 67
+          Top = 4
+          Height = 26
+          Action = AUp
+        end
+        object ToolButton4: TToolButton
+          HelpType = htContext
+          Left = 93
+          Top = 4
+          Height = 26
+          Action = ADown
+        end
+      end
     end
-    object ToolButton2: TToolButton
-      HelpType = htContext
-      Left = 41
-      Top = 4
-      Height = 26
-      Action = ADelete
-      Caption = 'Delete section'
-    end
-    object ToolButton3: TToolButton
-      HelpType = htContext
-      Left = 67
-      Top = 4
-      Height = 26
-      Action = AUp
-    end
-    object ToolButton4: TToolButton
-      HelpType = htContext
-      Left = 93
-      Top = 4
-      Height = 26
-      Action = ADown
+    object TabData: TTabSheet
+      Caption = 'Data'
+      ImageIndex = 1
     end
   end
   object ActionList1: TActionList

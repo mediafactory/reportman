@@ -20,7 +20,12 @@ unit rpmdfextsecvcl;
 
 interface
 
+{$I rpconf.inc}
+
 uses Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls,
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
   Buttons, ExtCtrls,rpmdconsts,rpdatainfo,rpreport,rpsection,
   db,rptypes,rpgraphutilsvcl;
 

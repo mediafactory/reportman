@@ -30,21 +30,15 @@ uses
   Classes,
   Graphics, Controls, Forms, Dialogs,
   ComCtrls,Menus, ActnList, ImgList, Buttons, ExtCtrls,
-  rpreport,rpsubreport,rpmdconsts,
+  rpreport,rpsubreport,rpmdconsts,rpdbbrowservcl,
   rpsection,rpmdobjinspvcl,rpprintitem, ToolWin;
 
 type
   TFRpStructureVCL = class(TFrame)
-    RView: TTreeView;
-    Panel1: TToolBar;
     ActionList1: TActionList;
     ImageList1: TImageList;
     AUp: TAction;
     ADown: TAction;
-    BNew: TToolButton;
-    ToolButton2: TToolButton;
-    ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
     ADelete: TAction;
     PopupMenu1: TPopupMenu;
     MDetail: TMenuItem;
@@ -52,6 +46,15 @@ type
     MPFooter: TMenuItem;
     MGHeader: TMenuItem;
     MSubReport: TMenuItem;
+    PControl: TPageControl;
+    TabStructure: TTabSheet;
+    RView: TTreeView;
+    Panel1: TToolBar;
+    BNew: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
+    TabData: TTabSheet;
     procedure Expand1Click(Sender: TObject);
     procedure RViewClick(Sender: TObject);
     procedure AUpExecute(Sender: TObject);
@@ -72,6 +75,7 @@ type
   public
     { Public declarations }
     designframe:TControl;
+    browser:TFRpBrowserVCL;
     procedure UpdateCaptions;
     function FindSelectedSubreport:TRpSubreport;
     function FindSelectedObject:TObject;
@@ -111,6 +115,13 @@ begin
  AUp.Hint:=TranslateStr(139,AUp.Hint);
  ADown.Hint:=TranslateStr(140,ADown.Hint);
  BNew.Hint:=TranslateStr(734,BNew.Hint);
+
+ TabStructure.Caption:=SRpStructure;
+ TabData.Caption:=SRpData;
+ browser:=TFRpBrowserVCL.Create(Self);
+ browser.ShowDatabases:=false;
+ browser.Parent:=TabData;
+ PControl.ActivePageIndex:=0;
 end;
 
 procedure TFRpStructureVCL.SetReport(Value:TRpReport);
@@ -120,8 +131,8 @@ begin
   exit;
  // Creates the interface
  CreateInterface;
- RView.Selected:=RView.Items.Item[0];
  RView.FullExpand;
+ Browser.Report:=FReport;
  if Assigned(designframe) then
  begin
   TFRpDesignFrameVCL(designframe).UpdateSelection(true);
@@ -150,6 +161,10 @@ begin
  Result:=nil;
  selectednode:=RView.Selected;
  if Not Assigned(selectednode) then
+ begin
+  selectednode:=RView.Items[0];
+ end;
+ if Not Assigned(selectednode) then
   Raise Exception.Create(SRPNoSelectedSubreport);
  Assert(selectednode.data<>nil,'Node without data assertion error');
  if (TObject(selectednode.data) is TRpSubReport) then
@@ -173,6 +188,10 @@ var
  selectednode:TTreeNode;
 begin
  selectednode:=RView.Selected;
+ if Not Assigned(selectednode) then
+ begin
+  selectednode:=RView.Items[0];
+ end;
  if Not Assigned(selectednode) then
   Raise Exception.Create(SRPNoSelectedSubreport);
  Assert(selectednode.data<>nil,'Node without data assertion error');
@@ -211,7 +230,7 @@ begin
  for i:=0 to Report.SubReports.Count-1 do
  begin
   subr:=Report.SubReports.Items[i].SubReport;
-  anew:=RView.Items.Add(nil,subr.GetDisplayName);
+  anew:=RView.Items.Add(nil,subr.GetDisplayName(true));
   anew.data:=Report.SubReports.Items[i].SubReport;
   for j:=0 to subr.Sections.Count-1 do
   begin

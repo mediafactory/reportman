@@ -31,9 +31,9 @@ uses
   Libc,
 {$ENDIF}
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  QStdCtrls,rpreport,rpmetafile, QComCtrls,
-  rpqtdriver, QExtCtrls,rptypes,rptextdriver,
-  QActnList, QImgList,QPrinters,rpmdconsts,Qt;
+  QStdCtrls,rpbasereport,rpreport,rpmetafile, QComCtrls,
+  rpqtdriver, QExtCtrls,rptypes,rptextdriver,rphtmldriver,rppagesetupvcl,
+  QActnList, QImgList,QPrinters,rpmdconsts,Qt, QMask, rpmaskeditclx;
 
 
 type
@@ -49,7 +49,7 @@ type
     ALast: TAction;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
-    EPageNum: TEdit;
+    EPageNum: TRpCLXMaskEdit;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
     APrint: TAction;
@@ -74,6 +74,7 @@ type
     ToolButton13: TToolButton;
     ToolButton5: TToolButton;
     ToolButton10: TToolButton;
+    ToolButton9: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -107,13 +108,16 @@ type
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
     procedure ImageContainerMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure AMailToExecute(Sender: TObject);
+    procedure APageSetupExecute(Sender: TObject);
   private
     { Private declarations }
     cancelled:boolean;
     printed:boolean;
     enableparams:boolean;
+    fmodified:Boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
-    procedure RepProgress(Sender:TRpReport;var docancel:boolean);
+    procedure RepProgress(Sender:TRpBaseReport;var docancel:boolean);
     procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
     procedure DisableControls(enablebar:boolean);
     procedure EnableControls;
@@ -127,10 +131,11 @@ type
     aqtdriver:IRpPrintDriver;
     bitmap:TBitmap;
     procedure PrintPage;
+    property modified:Boolean read fmodified;
   end;
 
 
-function ShowPreview(report:TRpReport;caption:string;systemprintdialog:boolean):boolean;
+function ShowPreview(report:TRpReport;caption:string;systemprintdialog:boolean;var modified:boolean):boolean;
 
 implementation
 
@@ -140,13 +145,14 @@ uses rprfparams,
 
 {$R *.xfm}
 
-function ShowPreview(report:TRpReport;caption:string;systemprintdialog:boolean):boolean;
+function ShowPreview(report:TRpReport;caption:string;systemprintdialog:boolean;var modified:boolean):boolean;
 var
  dia:TFRpPreview;
  oldprogres:TRpProgressEvent;
  hasparams:boolean;
  i:integer;
 begin
+ modified:=false;
  dia:=TFRpPreview.Create(Application);
  try
   dia.caption:=caption;
@@ -185,6 +191,7 @@ begin
    report.OnProgress:=dia.RepProgress;
    Application.OnIdle:=dia.AppIdle;
    dia.ShowModal;
+   modified:=dia.Modified;
    Result:=dia.printed;
   finally
    report.OnProgress:=oldprogres;
@@ -292,7 +299,11 @@ begin
    SRpPDFFileUn+'|*.pdf|'+
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
-   SRpBitmapFileMono+'|*.bmp';
+   SRpBitmapFileMono+'|*.bmp|'+
+   SRpHtmlFile+'|*.html';
+{$IFDEF MSWINDOWS}
+ SaveDialog1.Filter:=SaveDialog1.Filter+'|'+SRpExeMetafile+'|*.exe';
+{$ENDIF}
 {$ENDIF}
 {$IFNDEF VCLFILEFILTERS}
  SaveDialog1.Filter:=SRpRepMetafile+' (*.rpmf)|'+
@@ -300,7 +311,11 @@ begin
    SRpPDFFileUn+' (*.pdf)|'+
    SRpPlainFile+' (*.txt)|'+
    SRpBitmapFile+' (*.bmp)|'+
-   SRpBitmapFileMono+' (*.bmp)';
+   SRpBitmapFileMono+' (*.bmp)|'+
+   SRpHtmlFile+' (*.html)';
+{$IFDEF MSWINDOWS}
+  SaveDialog1.Filter:=SaveDialog1.Filter+'|'+SRpExeMetafile+' (*.exe)';
+{$ENDIF}
 {$ENDIF}
 
  Caption:=TranslateStr(215,Caption);
@@ -311,6 +326,8 @@ begin
  APrint.Hint:=TranslateStr(53,APrint.Hint);
  ASave.Caption:=TranslateStr(46,ASave.Caption);
  ASave.Hint:=TranslateStr(217,ASave.Hint);
+ AMailTo.Caption:=TranslateStr(1230,AMailTo.Caption);
+ AMailTo.Hint:=TranslateStr(1231,AMailTo.Hint);
  AExit.Caption:=TranslateStr(44,AExit.Caption);
  AExit.Hint:=TranslateStr(219,AExit.Hint);
  AParams.Caption:=TranslateStr(135,Aparams.Caption);
@@ -333,9 +350,13 @@ begin
  AScaleLess.Hint:=TranslateStr(235,AScaleLess.Hint);
  AScaleMore.Caption:=TranslateStr(236,AScaleMore.Caption);
  AScaleMore.Hint:=TranslateStr(237,AScaleMore.Hint);
+ APageSetup.Caption:=TranslateStr(50,APageSetup.Caption);
+ APageSetup.Hint:=TranslateStr(51,APageSetup.Hint);
+
  ActiveControl:=EPageNum;
 
 
+ SaveDialog1.FilterIndex:=2;
  SetInitialBounds;
 end;
 
@@ -454,6 +475,20 @@ begin
         abitmap.free;
        end;
       end;
+     7:
+      begin
+       ALastExecute(Self);
+       ExportMetafileToHtml(report.Metafile,Caption,SaveDialog1.FileName,
+        true,true,1,9999);
+       AppIdle(Self,adone);
+      end;
+{$IFDEF MSWINDOWS}
+     8:
+      begin
+       ALastExecute(Self);
+       MetafileToExe(report.metafile,SaveDialog1.Filename);
+      end;
+{$ENDIF}
      else
      begin
       // Plain text file
@@ -471,7 +506,7 @@ begin
  end;
 end;
 
-procedure TFRpPreview.RepProgress(Sender:TRpReport;var docancel:boolean);
+procedure TFRpPreview.RepProgress(Sender:TRpBaseReport;var docancel:boolean);
 begin
  BCancel.Caption:=IntToStr(Sender.CurrentSubReportIndex)+' '+SRpPage+':'+
   FormatFloat('####,####',report.PageNum)+':'
@@ -558,6 +593,7 @@ begin
  APrevious.Enabled:=false;
  EPageNum.Enabled:=false;
  ASave.Enabled:=false;
+ AMailTo.Enabled:=false;
  AParams.Enabled:=false;
  PBar.Position:=0;
  PBar.Visible:=enablebar;
@@ -579,6 +615,7 @@ begin
  APrevious.Enabled:=true;
  EPageNum.Enabled:=true;
  ASave.Enabled:=true;
+ AMailTo.Enabled:=true;
  AParams.Enabled:=enableparams;
  PBar.Visible:=false;
  AExit.Enabled:=true;
@@ -782,6 +819,29 @@ procedure TFRpPreview.ImageContainerMouseWheel(Sender: TObject;
   var Handled: Boolean);
 begin
  Handled:=false;
+end;
+
+
+procedure TFRpPreview.AMailToExecute(Sender: TObject);
+var
+ afilename:String;
+begin
+ ALastExecute(Self);
+ afilename:=ChangeFileExt(RpTempFileName,'.pdf');
+ SaveMetafileToPDF(report.Metafile,afilename,true);
+ rptypes.SendMail('',Caption,'',afilename);
+end;
+
+procedure TFRpPreview.APageSetupExecute(Sender: TObject);
+var
+ adone:boolean;
+begin
+ if ExecutePageSetup(report) then
+ begin
+  fModified:=true;
+  // Reexecutes the report
+  AppIdle(Self,adone);
+ end;
 end;
 
 end.

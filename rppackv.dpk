@@ -1,9 +1,9 @@
 package rppackv;
 
 {$R *.res}
-{$R 'rpexpredlg.dcr'}
-{$R 'rpruler.dcr'}
 {$R 'rpclxreport.dcr'}
+{$R 'rpexpredlg.dcr'}
+{$R 'rpmaskeditclx.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -25,34 +25,32 @@ package rppackv;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'Report manager visual components'}
 {$IMPLICITBUILD OFF}
 
 requires
-  visualclx,
   rppack,
-  vcl,
-  rtl,
-  dataclx,
-  indy;
+  visualclx;
 
 contains
-  rpregv in 'rpregv.pas',
-  rpexpredlg in 'rpexpredlg.pas' {FrpExpredialog},
-  rpruler in 'rpruler.pas',
-  rpdbxconfig in 'rpdbxconfig.pas' {FDBXConfig},
   rpclxreport in 'rpclxreport.pas',
+  rpdbbrowser in 'rpdbbrowser.pas' {FRpBrowser: TFrame},
+  rpdbxconfig in 'rpdbxconfig.pas' {FRpDBXConfig},
+  rpeditconn in 'rpeditconn.pas' {FRpEditCon},
+  rpexpredlg in 'rpexpredlg.pas' {FRpExpredialog},
+  rpfmainmetaview in 'rpfmainmetaview.pas' {FRpMainMeta},
+  rpfmetaview in 'rpfmetaview.pas' {FRpMeta: TFrame},
+  rpgraphutils in 'rpgraphutils.pas' {FRpMessageDlg},
+  rpmaskeditclx in 'rpmaskeditclx.pas',
+  rpmdclitree in 'rpmdclitree.pas' {FRpCliTree: TFrame},
+  rpmdfabout in 'rpmdfabout.pas' {FRpAboutBox},
+  rpmdfhelpform in 'rpmdfhelpform.pas' {FRpHelpForm},
+  rpmdfopenlib in 'rpmdfopenlib.pas' {FRpOpenLib},
+  rpmdftree in 'rpmdftree.pas' {FRpDBTree: TFrame},
   rppagesetup in 'rppagesetup.pas' {FPageSetup},
   rppreview in 'rppreview.pas' {FRpPreview},
-  rpgraphutils in 'rpgraphutils.pas' {FRpGraphProgres},
   rpqtdriver in 'rpqtdriver.pas' {FRpQtProgress},
   rpprintdia in 'rpprintdia.pas' {FRpPrintDialog},
   rprfparams in 'rprfparams.pas' {FRpRunTimeParams},
-  rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig},
-  rpfmainmetaview in 'rpfmainmetaview.pas' {FRpMainMeta},
-  rpfmetaview in 'rpfmetaview.pas' {FRpMeta: TFrame},
-  rpmdclitree in 'rpmdclitree.pas' {FRpCliTree: TFrame},
-  rpmdfabout in 'rpmdfabout.pas' {FRpAboutBox},
-  rpmdfhelpform in 'rpmdfhelpform.pas' {FRpHelpForm};
+  rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig};
 
 end.

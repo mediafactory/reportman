@@ -19,13 +19,15 @@ unit rpmdsysinfo;
 
 interface
 
+{$I rpconf.inc}
+
 uses Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls,
   Buttons, ExtCtrls,Printers,rpmdconsts,WinSpool,Dialogs;
 
 type
   TFRpSysInfo = class(TForm)
     BOK: TButton;
-    GroupBox1: TGroupBox;
+    GSelectedPrinter: TGroupBox;
     Label1: TLabel;
     EStatus: TEdit;
     EPrinterName: TEdit;
@@ -112,6 +114,7 @@ begin
  LOS.Font.Style:=[fsBold];
  LVersion.Font.Style:=[fsBold];
  LTechnology.Font.Style:=[fsBold];
+ GSelectedPrinter.Caption:=SRpSelectedPrinter;
  Label2.Caption:=TranslateStr(1061,Label2.Caption);
  Label1.Caption:=TranslateStr(1062,Label1.Caption);
  Label3.Caption:=TranslateStr(1063,Label3.Caption);
@@ -120,7 +123,7 @@ begin
  Label5.Caption:=TranslateStr(1066,Label5.Caption);
  Label6.Caption:=TranslateStr(1067,Label6.Caption);
  Label7.Caption:=TranslateStr(1068,Label7.Caption);
- Label9.Caption:=TranslateStr(1069,Label7.Caption);
+ Label9.Caption:=TranslateStr(1069,Label9.Caption);
  Label15.Caption:=TranslateStr(1070,Label15.Caption);
  Label16.Caption:=TranslateStr(1071,Label16.Caption);
  Label17.Caption:=TranslateStr(1072,Label17.Caption);
@@ -138,14 +141,21 @@ end;
 
 procedure TFRpSysInfo.FormShow(Sender: TObject);
 var
- DeviceMode: THandle;
- Device, Driver, Port: array[0..1023] of char;
  printererror:boolean;
  printererrormessage:String;
- FPrinterHandle:THandle;
  maxcopies:Integer;
+ FPrinterHandle:THandle;
+{$IFNDEF DOTNETD}
+ DeviceMode: THandle;
+ Device, Driver, Port: array[0..1023] of char;
  pdevmode:^DEVMODE;
  buf:PChar;
+{$ENDIF}
+{$IFDEF DOTNETD}
+ DeviceMode: IntPtr;
+ PDevMode :  TDeviceMode;
+ Device, Driver, Port:String;
+{$ENDIF}
  asize:integer;
  cadenaimp:String;
  sysinfo:SYSTEM_INFO;
@@ -176,9 +186,16 @@ begin
   else
   begin
    EStatus.Text:=SRpSReady;
+{$IFNDEF DOTNETD}
    EDevice.Text:=StrPas(Device);
    EDriver.Text:=StrPas(Driver);
    EPort.Text:=StrPas(Port);
+{$ENDIF}
+{$IFDEF DOTNETD}
+   EDevice.Text:=Device;
+   EDriver.Text:=Driver;
+   EPort.Text:=Port;
+{$ENDIF}
    maxcopies:=PrinterMaxCopiesSupport;
    LMaxCopies.Caption:=FormatFloat('####,0',maxcopies);
    if PrinterSupportsCollation then
@@ -186,6 +203,7 @@ begin
    else
     LCollation.Caption:=SRpNo;
    cadenaimp:=Device;
+{$IFNDEF DOTNETD}
    buf:=Pchar(cadenaimp);
    if OpenPrinter(buf,fprinterhandle,nil) then
    begin
@@ -246,6 +264,7 @@ begin
      ClosePrinter(fprinterhandle);
     end;
    end;
+{$ENDIF}
    caps:=GetDeviceCaps(dc,TECHNOLOGY);
    case caps of
     DT_PLOTTER:
@@ -418,7 +437,12 @@ begin
    LOS.Caption:='Windows 95/98/ME';
   LVersion.Caption:=IntToStr(osinfo.dwMajorVersion)+
    '.'+IntToStr(osinfo.dwMinorVersion)+' Build:'+IntToStr(osinfo.dwBuildNumber)+
+{$IFNDEF DOTNETD}
    '-'+StrPas(osinfo.szCSDVersion);
+{$ENDIF}
+{$IFDEF DOTNETD}
+   '-'+osinfo.szCSDVersion;
+{$ENDIF}
  end;
 end;
 

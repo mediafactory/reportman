@@ -10,6 +10,7 @@ package rppack_del5;
 {$R 'rprulervcl.dcr'}
 {$R 'rpexpredlgvcl.dcr'}
 {$R 'rpmdesignervcl.dcr'}
+{$R 'rpmaskedit.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -132,6 +133,18 @@ contains
   rpmdfdinfovcl in 'rpmdfdinfovcl.pas' {FRpDInfoVCL},
   rpmdfdatasetsvcl in 'rpmdfdatasetsvcl.pas' {FRpDatasetsVCL: TFrame},
   rpdatatext in 'rpdatatext.pas',
-  rpeditconnvcl in 'rpeditconnvcl.pas' {FRpEditConVCL};
+  rpeditconnvcl in 'rpeditconnvcl.pas' {FRpEditConVCL},
+  rpmdesigneditors in 'rpmdesigneditors.pas',
+  rpmdfopenlibvcl in 'rpmdfopenlibvcl.pas' {FRpOpenLibVCL},
+  rpmdftreevcl in 'rpmdftreevcl.pas' {FRpDBTreeVCL: TFrame},
+  rpdbbrowservcl in 'rpdbbrowservcl.pas' {FRpBrowserVCL: TFrame},
+  rptextdriver in 'rptextdriver.pas',
+  rpbasereport in 'rpbasereport.pas',
+  rpcompilerep in 'rpcompilerep.pas',
+  rpmregdesigntime in 'rpmregdesigntime.pas',
+  rpmdcharttypes in 'rpmdcharttypes.pas',
+  rphtmldriver in 'rphtmldriver.pas',
+  rpmdrepclient in 'rpmdrepclient.pas',
+  rpmaskedit in 'rpmaskedit.pas';
 
 end.

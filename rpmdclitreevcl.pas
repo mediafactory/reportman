@@ -171,7 +171,9 @@ procedure TFRpCliTreeVCL.OnExecute(Sender:TObject);
 begin
  stream.Clear;
  stream.SetSize(amod.Stream.Size);
- stream.Write(amod.Stream.Memory^,amod.Stream.Size);
+ stream.Seek(0,soFromBeginning);
+ amod.Stream.Seek(0,soFromBeginning);
+ stream.CopyFrom(amod.Stream,amod.Stream.Size);
  stream.Seek(0,soFromBeginning);
  if Assigned(OnExecuteServer) then
   OnExecuteServer(Self);

@@ -35,12 +35,11 @@ uses
   Graphics, Controls, Forms,
   Dialogs,rpmdconsts, ActnList, ImgList, ComCtrls,rpvgraphutils, DB,
   DBClient, StdCtrls,Printers,rpdatainfo,rpgraphutilsvcl,
-  rpvclreport, ToolWin;
+  rptypes,rpvclreport, rpreport,ToolWin, ExtCtrls;
 
 const PROGRESS_INTERVAL=500;
 
 type
-  TRpOnLoadReport=procedure (reportname:string;memstream:TMemoryStream) of object;
 
   TFRpDBTreeVCL = class(TFrame)
     BToolBar: TToolBar;
@@ -78,26 +77,37 @@ type
     ToolButton9: TToolButton;
     SaveDialog1: TSaveDialog;
     PrinterSetupDialog1: TPrinterSetupDialog;
+    ANewFolder: TAction;
+    ToolButton10: TToolButton;
+    ToolButton11: TToolButton;
+    AFind: TAction;
+    AExportFolder: TAction;
+    PFind: TPanel;
+    EFind: TEdit;
     procedure ADeleteExecute(Sender: TObject);
     procedure APreviewExecute(Sender: TObject);
-    procedure ATreeItemClick(Sender: TObject; Button: TMouseButton;
-      Node: TTreeNode; const Pt: TPoint);
     procedure AUserParamsExecute(Sender: TObject);
     procedure APrintExecute(Sender: TObject);
     procedure BCancelClick(Sender: TObject);
     procedure APrintSetupExecute(Sender: TObject);
     procedure ToolButton9Click(Sender: TObject);
+    procedure ANewFolderExecute(Sender: TObject);
+    procedure ANewExecute(Sender: TObject);
+    procedure AFindExecute(Sender: TObject);
+    procedure FindDialog1Find(Sender: TObject);
+    procedure ATreeChange(Sender: TObject; Node: TTreeNode);
   private
     { Private declarations }
     docancel:boolean;
     lobjects:TList;
     report:TVCLReport;
     CurrentLoaded:String;
-    FOnLoadReport:TRpOnLoadReport;
     FReportstable,FGroupsTable:String;
     counter:Integer;
     mmfirst,mmlast:DWORD;
     difmilis:int64;
+    dbinfo:TRpDatabaseInfoItem;
+    doreadonly:Boolean;
     procedure IntFillTree(adir:string;anode:TTreeNode);
     procedure SaveDir(adir:String;anode:TTreeNode);
     procedure CheckCancel(acount:integer);
@@ -114,9 +124,7 @@ type
     procedure FillTree(groups:TDataset;reports:TDataset);overload;
     procedure FillTree(adir:string);overload;
     procedure FillTree(alist:TStringList);overload;
-    procedure EditTree(dbinfo:TRpDatabaseInfoItem);
-    property OnLoadReport:TRpOnLoadReport read FOnLoadReport
-     write FOnLoadReport;
+    procedure EditTree(adbinfo:TRpDatabaseInfoItem;readonly:boolean);
   end;
 
 
@@ -143,6 +151,16 @@ begin
  APrintSetup.Hint:=TranslateStr(57,APrintSetup.Hint);
  AUserParams.Caption:=TranslateStr(135,AUserparams.Caption);
  AUserParams.Hint:=TranslateStr(136,AUserparams.Hint);
+ ANew.Caption:=SRpNewReport;
+ Anew.Hint:=SRpNewReport;
+ ANewFolder.Caption:=SRpNewFolder;
+ ANewFolder.Hint:=SRpNewFolder;
+ ADelete.Caption:=SRpDeleteSelection;
+ ADelete.Hint:=SRpDeleteSelection;
+ AFind.Caption:=SRpSearchReport;
+ AFind.Hint:=SRpSearchReport;
+ AExportFolder.Caption:=SRpExportFolder;
+ AExportFolder.Hint:=SRpExportFolderH;
 end;
 
 destructor TFRpDBTreeVCL.Destroy;
@@ -248,7 +266,8 @@ begin
  While (DReportGroups2PARENT_GROUP.Value=agroup) do
  begin
   NewNode:=ATree.Items.AddChild(ANode,DReportGroups2GROUP_NAME.AsString);
-  NewNode.ImageIndex:=2;
+  NewNode.ImageIndex:=9;
+  NewNode.SelectedIndex:=9;
   ninfo:=TRpNodeInfo.Create;
   lobjects.Add(ninfo);
   ninfo.ReportName:='';
@@ -274,7 +293,8 @@ begin
     if DReportsREPORT_GROUP.Value<>DReportGroups2GROUP_CODE.Value then
       break;
     ANewNode:=ATree.Items.AddChild(NewNode,DReportsREPORT_NAME.AsString);
-    ANewNode.ImageIndex:=3;
+    ANewNode.ImageIndex:=10;
+    ANewNode.SelectedIndex:=10;
     ninfo:=TRpNodeInfo.Create;
     lobjects.Add(ninfo);
     ninfo.ReportName:=DReportsREPORT_NAME.AsString;
@@ -294,7 +314,7 @@ end;
 
 procedure TFRpDBTreeVCL.GenerateTree;
 var
- ANode:TTreeNode;
+ ANode,NewNode:TTreeNode;
  ATopItem:TTreeNode;
  ninfo:TRpNodeInfo;
 begin
@@ -307,7 +327,8 @@ begin
    if DReportGroupsPARENT_GROUP.Value=0 then
    begin
     ANode:=ATree.Items.AddChild(ATopItem,DReportGroupsGROUP_NAME.AsString);
-    ANode.ImageIndex:=2;
+    ANode.ImageIndex:=9;
+    ANode.SelectedIndex:=9;
     ninfo:=TRpNodeInfo.Create;
     lobjects.Add(ninfo);
     ninfo.ReportName:='';
@@ -326,15 +347,16 @@ begin
        break;
       if DReportsREPORT_GROUP.Value<>DReportGroupsGROUP_CODE.Value then
        break;
-      ANode:=ATree.Items.AddChild(ANode,DReportsREPORT_NAME.AsString);
-      ANode.ImageIndex:=3;
+      NewNode:=ATree.Items.AddChild(ANode,DReportsREPORT_NAME.AsString);
+      NewNode.ImageIndex:=10;
+      NewNode.SelectedIndex:=10;
       ninfo:=TRpNodeInfo.Create;
       lobjects.Add(ninfo);
       ninfo.ReportName:=DReportsREPORT_NAME.AsString;
       ninfo.Group_Code:=DReportsREPORT_GROUP.AsInteger;
       ninfo.Parent_Group:=0;
-      ninfo.Node:=ANode;
-      ANode.Data:=ninfo;
+      ninfo.Node:=NewNode;
+      NewNode.Data:=ninfo;
       DReports.Next;
       CheckCancel(0);
      end;
@@ -347,8 +369,19 @@ begin
   While Not DReports.Eof do
   begin
    if Not DReportsREPORT_GROUP.IsNull then
-    if DReportsREPORT_GROUP.Value>=0 then
-     break;
+    if DReportsREPORT_GROUP.Value=0 then
+    begin
+     NewNode:=ATree.Items.AddChild(nil,DReportsREPORT_NAME.AsString);
+     NewNode.ImageIndex:=10;
+     NewNode.SelectedIndex:=10;
+     ninfo:=TRpNodeInfo.Create;
+     lobjects.Add(ninfo);
+     ninfo.ReportName:=DReportsREPORT_NAME.AsString;
+     ninfo.Group_Code:=DReportsREPORT_GROUP.AsInteger;
+     ninfo.Parent_Group:=0;
+     ninfo.Node:=NewNode;
+     NewNode.Data:=ninfo;
+    end;
    DReports.Next;
    CHeckCancel(0);
   end;
@@ -374,10 +407,68 @@ begin
 end;
 
 procedure TFRpDBTreeVCL.ADeleteExecute(Sender: TObject);
+var
+ curnode:TTreeNode;
+ ninfo:TRpNodeInfo;
+ astring:String;
+ adata:TDataset;
+ params:TStringList;
+ aparam:TRpParamObject;
 begin
  if smbYes<>RpMessageBox(SRpSureDeleteSection,SRpWarning,[smbYes,smbCancel],smsWarning,smbYes) then
   exit;
- // This deletes the selected report
+ // Creates a new group
+ curnode:=ATree.Selected;
+ if Not assigned(curnode) then
+  exit;
+ ninfo:=TRpNodeInfo(curnode.data);
+ params:=TStringList.Create;
+ try
+  if Length(ninfo.ReportName)>0 then
+  begin
+   // A report can always be deleted
+   astring:='DELETE FROM '+dbinfo.ReportTable+' WHERE '+
+    dbinfo.ReportSearchField+'=:REPNAME';
+   aparam:=TRpParamObject.Create;
+   try
+    aparam.Value:=ninfo.ReportName;
+    params.AddObject('REPNAME',aparam);
+    dbinfo.OpenDatasetFromSQL(astring,params,true);
+   finally
+    aparam.free;
+   end;
+   EditTree(dbinfo,doreadonly);
+  end
+  else
+  begin
+   // A group needs checking for a report using the
+   // group or a group using the parent_group
+   astring:='SELECT COUNT(REPORT_GROUP) COUNTG FROM '+dbinfo.ReportTable+
+    ' WHERE REPORT_GROUP='+IntToStr(ninfo.Group_Code);
+   adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false);
+   try
+    if adata.FieldByName('COUNTG').AsInteger>0 then
+     Raise Exception.Create(SRpExistReportInThisGroup);
+   finally
+    adata.free;
+   end;
+   astring:='SELECT COUNT(GROUP_CODE) COUNTG FROM '+dbinfo.ReportGroupsTable+
+   ' WHERE PARENT_GROUP='+IntToStr(ninfo.Group_Code);
+   adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false);
+   try
+    if adata.FieldByName('COUNTG').AsInteger>0 then
+     Raise Exception.Create(SRpGroupParent);
+   finally
+    adata.free;
+   end;
+   astring:='DELETE FROM '+dbinfo.ReportGroupsTable+
+    ' WHERE GROUP_CODE='+IntToStr(ninfo.Group_Code);
+   dbinfo.OpenDatasetFromSQL(astring,nil,true);
+   EditTree(dbinfo,doreadonly);
+  end;
+ finally
+  params.free;
+ end;
 end;
 
 procedure TFRpDBTreeVCL.APreviewExecute(Sender: TObject);
@@ -391,7 +482,7 @@ procedure TFRpDBTreeVCL.CheckLoaded;
 var
  ANode:TTreeNode;
  ninfo:TRpNodeInfo;
- memstream:TMemoryStream;
+ memstream:TStream;
  afilename:String;
 begin
  if Not Assigned(Report) then
@@ -407,15 +498,10 @@ begin
    Raise Exception.Create(SRptReportnotfound);
   if CurrentLoaded=ninfo.ReportName then
    exit;
-  if Not Assigned(FOnLoadReport) then
-   Raise Exception.Create(SRptReportnotfound);
-  memstream:=TMemoryStream.Create;
+  memstream:=dbinfo.GetReportStream(ninfo.ReportName);
   try
-   FOnLoadReport(ninfo.ReportName,memstream);
    memstream.Seek(0,soFromBeginning);
-   CurrentLoaded:='';
    report.LoadFromStream(memstream);
-   report.Report.SaveToFile('c:\Documents and Settings\Toni\Mis Documentos\LastOpened.rep');
    CurrentLoaded:=ninfo.ReportName;
   finally
    memstream.free;
@@ -431,35 +517,6 @@ begin
  end;
 end;
 
-procedure TFRpDBTreeVCL.ATreeItemClick(Sender: TObject; Button: TMouseButton;
-  Node: TTreeNode; const Pt: TPoint);
-var
- ANode:TTreeNode;
- ninfo:TRpNodeInfo;
-begin
- // See if selected node is a report
- if Not Assigned(ATree.Selected) then
- begin
-  DisableButtonsReport;
-  exit;
- end;
- ANode:=ATree.Selected;
- if Not Assigned(Anode.Data) then
- begin
-  if ANode.ImageIndex=2 then
-   DisableButtonsReport
-  else
-   EnableButtonsReport;
- end
- else
- begin
-  ninfo:=TRpNodeInfo(ANode.Data);
-  if Length(ninfo.ReportName)<1 then
-   DisableButtonsReport
-  else
-   EnableButtonsReport;
- end;
-end;
 
 procedure TFRpDBTreeVCL.DisableButtonsReport;
 begin
@@ -523,11 +580,8 @@ begin
   end
   else
   begin
-   if Not Assigned(FOnLoadReport) then
-    Raise Exception.Create(SRptReportnotfound);
-   memstream:=TMemoryStream.Create;
+   memstream:=TMemoryStream(dbinfo.GetReportStream(ainfo.ReportName));
    try
-    FOnLoadReport(ainfo.ReportName,memstream);
     memstream.Seek(0,soFromBeginning);
     repname:=StringReplace(ainfo.ReportName,'/','-',[rfReplaceAll]);
     repname:=StringReplace(repname,'\','-',[rfReplaceAll]);
@@ -582,11 +636,8 @@ begin
    end
    else
    begin
-    if Not Assigned(FOnLoadReport) then
-     Raise Exception.Create(SRptReportnotfound);
     memstream:=TMemoryStream.Create;
     try
-     FOnLoadReport(ainfo.ReportName,memstream);
      memstream.Seek(0,soFromBeginning);
      repname:=StringReplace(ainfo.ReportName,'/','-',[rfReplaceAll]);
      repname:=StringReplace(repname,'\','-',[rfReplaceAll]);
@@ -626,14 +677,16 @@ begin
      if ((srec.Name<>'.') AND (srec.Name<>'..')) then
      begin
       NewNode:=ATree.Items.AddChild(ANode,srec.Name);
-      NewNode.ImageIndex:=2;
+      NewNode.ImageIndex:=9;
+      NewNode.SelectedIndex:=9;
       IntFillTree(adir+'\'+srec.Name,NewNode);
      end;
     end
     else
     begin
      NewNode:=ATree.Items.AddChild(ANode,srec.Name);
-     NewNode.ImageIndex:=3;
+     NewNode.ImageIndex:=10;
+     NewNode.SelectedIndex:=10;
     end;
    until FindNext(srec)<>0;
   end;
@@ -661,15 +714,25 @@ begin
 end;
 
 
-procedure TFRpDBTreeVCL.EditTree(dbinfo:TRpDatabaseInfoItem);
+procedure TFRpDBTreeVCL.EditTree(adbinfo:TRpDatabaseInfoItem;readonly:boolean);
 var
  adatareports:TDataset;
  adatagroups:TDataset;
 begin
+ doreadonly:=readonly;
+ if readonly then
+ begin
+  ANew.Enabled:=false;
+  AExportFolder.Enabled:=false;
+  ANewFolder.Enabled:=false;
+  ADelete.Enabled:=false;
+ end;
+ dbinfo:=adbinfo;
  dbinfo.Connect;
+ ATree.Items.Clear;
  adatareports:=
-  dbinfo.OpenDatasetFromSQL('SELECT '+dbinfo.ReportSearchField+',REPORT_GROUP FROM '+
-  dbinfo.reporttable,nil,false);
+ dbinfo.OpenDatasetFromSQL('SELECT '+dbinfo.ReportSearchField+',REPORT_GROUP FROM '+
+ dbinfo.reporttable,nil,false);
  try
   adatagroups:=
   dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
@@ -686,5 +749,221 @@ begin
  end;
 end;
 
+
+procedure TFRpDBTreeVCL.ANewFolderExecute(Sender: TObject);
+var
+ curnode:TTreeNode;
+ ninfo:TRpNodeInfo;
+ groupcode,newgroup:integer;
+ astring:String;
+ group_name:String;
+ adata:TDataset;
+ params:TStringList;
+ aparam:TRpParamObject;
+begin
+ // Creates a new group
+ curnode:=ATree.Selected;
+ if assigned(curnode) then
+ begin
+  ninfo:=TRpNodeInfo(curnode.data);
+  if Length(ninfo.ReportName)>0 then
+  begin
+   groupcode:=ninfo.Group_Code;
+  end
+  else
+   groupcode:=ninfo.Group_Code;
+ end
+ else
+ begin
+  groupcode:=0;
+ end;
+ // Ask for the new group name
+ group_name:=RpInputBox(SRpNewGroup,SRpSGroupName,'');
+ if Length(group_name)<1 then
+  exit;
+ // obtain the next group code
+ astring:='SELECT MAX(GROUP_CODE) GCODE'+' FROM '+dbinfo.ReportGroupsTable;
+ adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false);
+ try
+  if ((adata.eof) and (adata.bof)) then
+   newgroup:=1
+  else
+  begin
+   if adata.FieldByName('GCODE').IsNull then
+    newgroup:=1
+   else
+    newgroup:=adata.FieldByName('GCODE').AsInteger+1;
+  end;
+ finally
+  adata.free;
+ end;
+ params:=TStringList.Create;
+ try
+  // A report can always be deleted
+  astring:='DELETE FROM '+dbinfo.ReportTable+' WHERE '+
+   dbinfo.ReportSearchField+'=:REPNAME';
+  aparam:=TRpParamObject.Create;
+  try
+   aparam.Value:=group_name;
+   params.AddObject('GROUPNAME',aparam);
+   astring:='INSERT INTO '+dbinfo.ReportGroupsTable+
+    ' (GROUP_CODE,GROUP_NAME,PARENT_GROUP)  VALUES ('+
+    IntToStr(newgroup)+',:GROUPNAME,'+IntToStr(groupcode)+')';
+   dbinfo.OpenDatasetFromSQL(astring,params,true);
+  finally
+   aparam.free;
+  end;
+ finally
+  params.free;
+ end;
+ EditTree(dbinfo,doreadonly);
+end;
+
+procedure TFRpDBTreeVCL.ANewExecute(Sender: TObject);
+var
+ curnode:TTreeNode;
+ ninfo:TRpNodeInfo;
+ groupcode:integer;
+ reportname:String;
+ astring:String;
+ params:TStringList;
+ aparam:TRpParamObject;
+ aparam2:TRpParamObject;
+ areport:TRpReport;
+begin
+ // inside or outside a group
+ curnode:=ATree.Selected;
+ if assigned(curnode) then
+ begin
+  ninfo:=TRpNodeInfo(curnode.data);
+  groupcode:=ninfo.Group_Code;
+ end
+ else
+  groupcode:=0;
+ // Ask to the user for the new report name
+ reportname:=RpInputBox(SRpNewReport,SRpReportName,'');
+ if Length(reportname)<1 then
+  exit;
+ params:=TStringList.Create;
+ try
+  aparam:=TRpParamObject.Create;
+  aparam2:=TRpParamObject.Create;
+  try
+   astring:='INSERT INTO '+dbinfo.ReportTable+' ( '+
+    dbinfo.ReportSearchField+','+dbinfo.ReportField;
+   if Length(dbinfo.ReportGroupsTable)>0 then
+    astring:=astring+',REPORT_GROUP';
+   astring:=astring+') VALUES (:REPNAME,:REPORT';
+   if Length(dbinfo.ReportGroupsTable)>0 then
+    astring:=astring+','+IntToStr(groupcode);
+   astring:=astring+')';
+   aparam.Value:=reportname;
+   aparam2.Value:=Null;
+   params.AddObject('REPNAME',aparam);
+   params.AddObject('REPORT',aparam2);
+   areport:=TRpReport.Create(nil);
+   try
+    areport.CreateNew;
+    aparam2.Stream:=TMemoryStream.Create;
+    try
+     areport.SaveToStream(aparam2.Stream);
+     aparam2.Stream.Seek(0,soFromBeginning);
+     dbinfo.OpenDatasetFromSQL(astring,params,true);
+    finally
+     aparam2.Stream.free;
+    end;
+   finally
+    areport.free;
+   end;
+   EditTree(dbinfo,doreadonly);
+   EFind.Text:=reportname;
+   FindDialog1Find(Self);
+  finally
+   aparam.free;
+   aparam2.free;
+  end;
+ finally
+  params.free;
+ end;
+end;
+
+procedure TFRpDBTreeVCL.AFindExecute(Sender: TObject);
+begin
+ FindDialog1Find(Self);
+end;
+
+procedure TFRpDBTreeVCL.FindDialog1Find(Sender: TObject);
+var
+ curnode:TTreeNode;
+ i:integer;
+ dofirst:Boolean;
+begin
+ dofirst:=false;
+ // Finds the string inside the tree
+ curnode:=ATree.Selected;
+ if Not Assigned(curnode) then
+ begin
+  dofirst:=true;
+  curnode:=ATree.TopItem;
+ end;
+ if Not Assigned(curnode) then
+  Exit;
+ // Omits until curnode
+ i:=0;
+ if not dofirst then
+ begin
+  while i<Atree.Items.Count do
+  begin
+   if Atree.Items[i]=curnode then
+   begin
+    inc(i);
+    break;
+   end;
+   inc(i);
+  end;
+ end;
+ while i<Atree.Items.Count do
+ begin
+  if Pos(UpperCase(EFind.Text),UpperCase(Atree.Items[i].Text))>0 then
+  begin
+   ATree.Selected:=Atree.Items[i];
+   break;
+  end
+  else
+   inc(i);
+ end;
+ if i>=Atree.items.Count then
+  Raise Exception.Create(SRptReportnotfound);
+end;
+
+
+procedure TFRpDBTreeVCL.ATreeChange(Sender: TObject; Node: TTreeNode);
+var
+ ANode:TTreeNode;
+ ninfo:TRpNodeInfo;
+begin
+ // See if selected node is a report
+ if Not Assigned(ATree.Selected) then
+ begin
+  DisableButtonsReport;
+  exit;
+ end;
+ ANode:=ATree.Selected;
+ if Not Assigned(Anode.Data) then
+ begin
+  if ANode.ImageIndex=9 then
+   DisableButtonsReport
+  else
+   EnableButtonsReport;
+ end
+ else
+ begin
+  ninfo:=TRpNodeInfo(ANode.Data);
+  if Length(ninfo.ReportName)<1 then
+   DisableButtonsReport
+  else
+   EnableButtonsReport;
+ end;
+end;
 
 end.

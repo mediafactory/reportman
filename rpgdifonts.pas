@@ -19,10 +19,16 @@
 
 unit rpgdifonts;
 
+{$I rpconf.inc}
+
 interface
 
 uses windows, Messages, SysUtils, Classes, Graphics, Controls,printers,
- rpmunits,Forms,rptypes;
+ rpmunits,Forms,
+{$IFDEF DOTNETD}
+ System.Drawing,
+{$ENDIF}
+ rptypes;
 
 type
   TPrinterFont=class(TObject)
@@ -79,7 +85,12 @@ begin
  caracfonts.clear;
 end;
 
-function CompareFonts(font1,font2:pointer):integer;
+{$IFDEF DOTNETD}
+function CompareFonts(font1,font2:TObject):integer;
+{$ENDIF}
+{$IFNDEF DOTNETD}
+function CompareFonts(font1,font2:Pointer):integer;
+{$ENDIF}
 var
  log1,log2:TPrinterFont;
 begin
@@ -104,12 +115,13 @@ end;
 
 constructor TPrinterFont.Create;
 begin
+ inherited Create;
  FFOnt:=TFont.Create;
 end;
 
 destructor TPrinterFont.Destroy;
 begin
- FFont.Destroy;
+ FFont.free;
  inherited Destroy;
 end;
 
@@ -118,16 +130,20 @@ begin
  FFOnt.Assign(Valor);
 end;
 
+{$IFNDEF DOTNETD}
 function enumfontfamprocbase(var ENUMLOGFONT:TEnumlogfont;var TextMetric:TNewTextMetric;
-          FontType:integer;Data:integer):integer;stdcall;
+          FontType:integer;Data:Integer):integer;stdcall;
 begin
  TStringList(Data).Add(enumlogfont.elfLogFont.lfFaceName);
  Result:=1;
 end;
+{$ENDIF}
 
 
+{$IFNDEF DOTNETD}
 function enumfontfamproc(var ENUMLOGFONT:TEnumlogfont;var TextMetric:TNewTextMetric;
-          FontType:integer;Data:integer):integer;stdcall;
+          FontType:integer;Data:integer):integer;
+stdcall;
 var
  Fontimp:TPrinterFont;
  index:integer;
@@ -203,13 +219,20 @@ begin
  end;
  Result:=1;
 end;
+{$ENDIF}
 
 
 function UpdatePrinterFontList:boolean;
 var
- Anticmapmode:HDC;
  base:TStringList;
  i:integer;
+{$IFNDEF DOTNETD}
+ Anticmapmode:HDC;
+{$ENDIF}
+{$IFDEF DOTNETD}
+ fm:array of FontFamily;
+ Fontimp:TPrinterFont;
+{$ENDIF}
 begin
  Result:=false;
  if Printer.printers.count<1 then
@@ -224,6 +247,7 @@ begin
  currentprinter:=printer.printerindex;
  lliberacaracfonts;
  PrinterFonts.Clear;
+{$IFNDEF DOTNETD}
  anticmapmode:=SetMapMode(Printer.Handle,MM_TWIPS);
  try
   base:=TStringList.create;
@@ -239,6 +263,17 @@ begin
  finally
   SetMapMode(Printer.Handle,anticmapmode);
  end;
+{$ENDIF}
+{$IFDEF DOTNETD}
+ fm:=System.Drawing.FontFamily.Families;
+ for i:=0 to High(fm) do
+ begin
+  Fontimp:=TPrinterFont.Create;
+  Fontimp.Font.Name:=fm[i].Name;
+  System.Drawing.Font.Create(fm[i].Name,0).Tologfont(Fontimp.LogFont);
+  printerfonts.Add(Fontimp);
+ end;
+{$ENDIF}
  printerFonts.Sort(CompareFonts);
  printerSorted.Assign(Printer.Fonts);
 end;
@@ -444,14 +479,21 @@ begin
   logfont.lfclipprecision:=CLIP_DEFAULT_PRECIS;
   logfont.lfQuality:=DRAFT_QUALITY;
   logfont.lfPitchAndFamily:=DEFAULT_PiTCH;
+{$IFNDEF DOTNETD}
   logfont.lfFaceName[0]:=chr(0);
   StrPCopy(LogFont.lffACEnAME,Font.Name);
+{$ENDIF}
+{$IFDEF DOTNETD}
+  LogFont.lfFaceName:=Font.Name;
+{$ENDIF}
   Result:=CreateFontIndirect(LOGFONT);
 end;
 
 
 constructor TCaracfont.Create;
 begin
+ inherited Create;
+
  sizes:=TStringList.create;
  sizes.sorted:=true;
 end;
@@ -474,7 +516,7 @@ caracfonts:=TStringlist.create;
 caracfonts.sorted:=true;
 ScreenSorted.Assign(Screen.Fonts);
 currentprinter:=-1;
-sizestruetype:=Tstringlist.create;
+sizestruetype:=TStringlist.create;
 with sizestruetype do
 begin
  Add('  8');
@@ -494,7 +536,6 @@ begin
  Add(' 48');
  Add(' 72');
 end;
-
 
 finalization
 PrinterFonts.free;

@@ -1,15 +1,15 @@
 object FRpDatasetsVCL: TFRpDatasetsVCL
   Left = 0
   Top = 0
-  Width = 526
-  Height = 368
+  Width = 443
+  Height = 270
   Align = alClient
   AutoScroll = False
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 526
+    Width = 443
     Height = 105
     Align = alTop
     BevelOuter = bvNone
@@ -17,7 +17,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 526
+      Width = 443
       Height = 27
       AutoSize = True
       ButtonHeight = 25
@@ -78,7 +78,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object PTop1: TPanel
       Left = 0
       Top = 27
-      Width = 526
+      Width = 443
       Height = 78
       Align = alClient
       BevelOuter = bvNone
@@ -88,6 +88,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         Top = 0
         Width = 8
         Height = 78
+        Cursor = crHSplit
         Beveled = True
       end
       object LDatasets: TListBox
@@ -103,7 +104,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object PanelBasic: TPanel
         Left = 169
         Top = 0
-        Width = 357
+        Width = 274
         Height = 78
         Align = alClient
         BevelOuter = bvNone
@@ -157,30 +158,56 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
   object PBottom: TPanel
     Left = 0
     Top = 105
-    Width = 526
-    Height = 263
+    Width = 443
+    Height = 165
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 526
-      Height = 263
-      ActivePage = TabMyBase
+      Width = 443
+      Height = 165
+      ActivePage = TabSQL
       Align = alClient
       TabOrder = 0
       object TabSQL: TTabSheet
         Caption = 'SQL'
-        object MSQL: TMemo
-          Left = 0
+        object Splitter2: TSplitter
+          Left = 173
           Top = 0
-          Width = 460
-          Height = 175
+          Width = 8
+          Height = 137
+          Cursor = crHSplit
+          Beveled = True
+        end
+        object MSQL: TMemo
+          Left = 181
+          Top = 0
+          Width = 254
+          Height = 137
           Align = alClient
           TabOrder = 0
           WordWrap = False
           OnChange = MSQLChange
+        end
+        object PBrowser: TPanel
+          Left = 0
+          Top = 0
+          Width = 173
+          Height = 137
+          Align = alLeft
+          BevelOuter = bvNone
+          TabOrder = 1
+          object PLBrowser: TPanel
+            Left = 0
+            Top = 0
+            Width = 173
+            Height = 21
+            Align = alTop
+            Caption = 'Database Browser'
+            TabOrder = 0
+          end
         end
       end
       object TabBDEType: TTabSheet
@@ -189,7 +216,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 518
+          Width = 435
           Height = 37
           Align = alTop
           Columns = 2
@@ -202,8 +229,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 518
-          Height = 198
+          Width = 435
+          Height = 100
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
@@ -436,7 +463,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             Width = 165
             Height = 21
             Style = csDropDownList
-            ItemHeight = 13
+            ItemHeight = 0
             TabOrder = 0
           end
           object CheckGroupUnion: TCheckBox

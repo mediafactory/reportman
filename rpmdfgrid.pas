@@ -25,16 +25,16 @@ interface
 uses SysUtils, Classes,
   QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,QDialogs,
-  rpmdconsts,rpmunits,rpreport;
+  rpmdconsts,rpmunits,rpreport, QMask, rpmaskeditclx;
 
 type
   TFRpGridOptions = class(TForm)
     BOK: TButton;
     BCancel: TButton;
     Lhorizontal: TLabel;
-    EGridX: TEdit;
+    EGridX: TRpCLXMaskEdit;
     Lvertical: TLabel;
-    EGridY: TEdit;
+    EGridY: TRpCLXMaskEdit;
     LGridColor: TLabel;
     ColorDialog1: TColorDialog;
     GridColor: TShape;

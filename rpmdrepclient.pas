@@ -25,10 +25,14 @@ interface
 {$I rpconf.inc}
 
 uses
-  SysUtils, Classes, IdBaseComponent, IdComponent, IdTCPConnection,
+  SysUtils, Classes,
+  IdBaseComponent,IdComponent,IdTCPConnection,
   IdTCPClient, rptranslator,rpmdprotocol,rpmdconsts,
 {$IFNDEF USEVARIANTS}
   forms,
+{$ENDIF}
+{$IFDEF DOTNETD}
+  IdStream,
 {$ENDIF}
   SyncObjs,rpparams;
 
@@ -38,13 +42,10 @@ type
   TGetStringList=procedure (alist:TStringList) of object;
   TGetStream=procedure (astream:TMemoryStream) of object;
 
-  Tmodclient = class(TDataModule)
-    RepClient: TIdTCPClient;
-    procedure DataModuleCreate(Sender: TObject);
-    procedure DataModuleDestroy(Sender: TObject);
-    procedure RepClientDisconnected(Sender: TObject);
+  Tmodclient = class(TComponent)
   private
     { Private declarations }
+    RepClient: TIdTCPClient;
     FStream:TMemoryStream;
     FEndReport:TEvent;
     FAuthorized:Boolean;
@@ -55,29 +56,44 @@ type
     FAliases:TStringList;
     FTree:TStringList;
     FOnGetUsers:TGetStringList;
+    FOnGetUserGroups:TGetStringList;
+    FOnGetGroups:TGetStringList;
     FOnGetAliases:TGetStringList;
+    FOnGetAliasGroups:TGetStringList;
     FOnAuthorization:TNotifyEvent;
     FOnGetParams:TGetStream;
     FPDF:Boolean;
     ClientHandleThread:TRpClientHandleThread;
+    procedure RepClientDisconnected(Sender: TObject);
   public
     { Public declarations }
     asynchronous:boolean;
     dirseparator:char;
     threadsafeexec:boolean;
+    constructor Create(AOwner:TComponent);override;
+    destructor Destroy;override;
     property PDF:Boolean read FPDF write FPDF default false;
     procedure GetUsers;
+    procedure GetGroups;
+    procedure GetUserGroups(username:String);
     procedure GetParams;
     procedure ModifyParams(compo:TRpParamComp);
     procedure GetTree(aliasname:string);
     procedure AddUser(username,password:string);
+    procedure AddUserGroup(username,groupname:string);
+    procedure AddGroup(groupname:string);
     procedure AddAlias(aliasname,path:string);
+    procedure AddAliasGroup(aliasname,groupname:string);
     procedure GetAliases;
+    procedure GetAliasGroups(aliasname:String);
     procedure OpenReport(aliasname,reportname:string);
     procedure Execute(aliasname,reportname:string);overload;
     procedure Execute;overload;
     procedure DeleteUser(username:string);
+    procedure DeleteUserGroup(username,groupname:string);
+    procedure DeleteGroup(groupname:string);
     procedure DeleteAlias(aliasname:string);
+    procedure DeleteAliasGroup(aliasname,groupname:string);
     property Aliases:TStringList read FAliases;
     property LastTree:TStringList read FTree;
     property OnError:TRpLogMessageEvent read FOnError write FOnError;
@@ -85,9 +101,12 @@ type
     property OnAuthorization:TNotifyEvent read FOnAuthorization write FOnAuthorization;
     property OnExecute:TNotifyEvent read FOnExecute write FOnExecute;
     property OnGetUsers:TGetStringList read FOnGetUsers write FOnGetUsers;
+    property OnGetUserGroups:TGetStringList read FOnGetUserGroups write FOnGetUserGroups;
+    property OnGetGroups:TGetStringList read FOnGetGroups write FOnGetGroups;
     property OnGetTree:TGetStringList read FOnGetTree write FOnGetTree;
     property OnGetParams:TGetStream read FOnGetparams write FOnGetParams;
     property OnGetAliases:TGetStringList read FOnGetAliases write FOnGetAliases;
+    property OnGetAliasGroups:TGetStringList read FOnGetAliasGroups write FOnGetAliasGroups;
     property Authorized:boolean read FAuthorized;
     property Stream:TMemoryStream read FStream;
   end;
@@ -96,7 +115,7 @@ type
   TRpClientHandleThread = class(TThread)
   private
    amod:TModClient;
-   CB:PRpComBlock;
+   CB:TRpComBlock;
    data:TMemoryStream;
    FEndreport:TEvent;
    syncexec:boolean;
@@ -114,15 +133,6 @@ procedure Disconnect(amod:TModClient);
 
 implementation
 
-{$IFDEF USEVARIANTS}
-{$R *.xfm}
-{$ENDIF}
-
-{$IFNDEF USEVARIANTS}
-{$R *.dfm}
-{$ENDIF}
-
-
 procedure TRpClientHandleThread.DoErrorMessage;
 begin
  if Assigned(amod) then
@@ -136,24 +146,20 @@ end;
 
 procedure TRpClientHandleThread.HandleInput;
 var
- amessage:WideString;
  alist:TStringList;
 begin
  // Handles the input this is VCLX thread safe
+ try
  case CB.Command of
   reperror:
    if Assigned(amod.OnError) then
    begin
-    SetLength(amessage,CB^.Datasize div 2);
-    move((@CB^.Data)^,amessage[1],CB^.Datasize);
-    amod.OnError(amod,amessage);
+    amod.OnError(amod,RPComBlockToWideString(CB));
    end;
   replog:
    if Assigned(amod.OnLog) then
    begin
-    SetLength(amessage,CB^.Datasize div 2);
-    move((@CB^.Data)^,amessage[1],CB^.Datasize);
-    amod.OnLog(amod,amessage);
+    amod.OnLog(amod,RPComBlockToWideString(CB));
    end;
   repauth:
    begin
@@ -202,11 +208,45 @@ begin
      alist.free;
     end;
    end;
+  repgetgroups:
+   if Assigned(amod.FOnGetGroups) then
+   begin
+    alist:=TStringList.Create;
+    try
+     alist.LoadFromStream(data);
+     amod.FOnGetGroups(alist);
+    finally
+     alist.free;
+    end;
+   end;
+  repgetusergroups:
+   if Assigned(amod.FOnGetUserGroups) then
+   begin
+    alist:=TStringList.Create;
+    try
+     alist.LoadFromStream(data);
+     amod.FOnGetUserGroups(alist);
+    finally
+     alist.free;
+    end;
+   end;
+  repgetaliasgroups:
+   if Assigned(amod.FOnGetAliasGroups) then
+   begin
+    alist:=TStringList.Create;
+    try
+     alist.LoadFromStream(data);
+     amod.FOnGetAliasGroups(alist);
+    finally
+     alist.free;
+    end;
+   end;
   repexecutereportmeta:
    begin
     amod.Stream.Clear;
     amod.Stream.SetSize(data.Size);
-    amod.Stream.Write(data.Memory^,data.Size);
+    data.Seek(0,soFromBeginning);
+    amod.Stream.CopyFrom(data,data.size);
     amod.Stream.Seek(0,soFromBeginning);
     if Assigned(amod.OnExecute) then
     begin
@@ -214,9 +254,19 @@ begin
     end;
    end;
  end;
+ except
+  On E:Exception do
+  begin
+   amod.OnError(amod,'Internael error:'+E.Message);
+  end;
+ end;
 end;
 
 procedure TRpClientHandleThread.Execute;
+{$IFDEF DOTNETD}
+var
+ astream:TIdStream;
+{$ENDIF}
 begin
  data:=TMemoryStream.Create;
  try
@@ -232,14 +282,24 @@ begin
    else
    begin
     try
-     amod.RepClient.ReadStream(data);
-     data.Seek(0,soFromBeginning);
-     CB:=AllocMem(data.Size);
+{$IFDEF DOTNETD}
+     astream:=TIdStream.Create(data);
      try
-      data.Read(CB^,data.size);
-      data.Clear;
-      data.SetSize(CB^.Datasize);
-      data.Write((@CB^.Data)^,data.Size);
+      amod.RepClient.IOHandler.ReadStream(astream);
+     finally
+      astream.free;
+     end;
+{$ENDIF}
+{$IFNDEF DOTNETD}
+     amod.RepClient.ReadStream(data);
+{$ENDIF}
+     data.Seek(0,soFromBeginning);
+     CB:=ReadRpComBlockFromStream(data);
+     try
+      data.SetSize(CB.Data.Size);
+      CB.data.Seek(0,soFromBeginning);
+      data.Seek(0,soFromBeginning);
+      data.CopyFrom(CB.Data,CB.Data.Size);
       data.Seek(0,soFromBeginning);
       if syncexec then
       begin
@@ -262,7 +322,7 @@ begin
        Synchronize(HandleInput);
       data.Clear;
      finally
-      FreeMem(CB);
+      FreeBlock(CB);
      end;
     except
      on E:Exception do
@@ -285,7 +345,7 @@ end;
 function Connect(hostname:string;user:string;password:string;port:integer):TModClient;
 var
  amod:TModClient;
- arec:PRpComBlock;
+ arec:TRpComBlock;
 begin
  amod:=TModClient.Create(nil);
  try
@@ -323,8 +383,13 @@ end;
 
 
 
-procedure Tmodclient.DataModuleCreate(Sender: TObject);
+constructor Tmodclient.Create(AOwner:TComponent);
 begin
+ inherited Create(AOwner);
+
+ RepClient:=TIdTCPClient.Create(Self);
+ RepClient.Port:=3060;
+ RepClient.OnDisconnected:=RepClientDisconnected;
  dirseparator:=C_DIRSEPARATOR;
  FPDF:=False;
  FEndReport:=TEvent.Create(nil,false,false,'');
@@ -333,7 +398,7 @@ begin
  FTree:=TStringList.Create;
 end;
 
-procedure Tmodclient.DataModuleDestroy(Sender: TObject);
+destructor TModClient.Destroy;
 begin
  FEndReport.SetEvent;
  FEndReport.Free;
@@ -342,12 +407,13 @@ begin
  FTree.Free;
  if Assigned(ClientHandleThread) then
   CLientHandleThread.amod:=nil;
+ inherited destroy;
 end;
 
 
 procedure TModClient.Execute(aliasname,reportname:string);
 var
- arec:PRpComBlock;
+ arec:TRpComBlock;
  alist:TStringList;
 begin
  alist:=TStringList.Create;
@@ -378,7 +444,7 @@ end;
 
 procedure TModClient.OpenReport(aliasname,reportname:string);
 var
- arec:PRpComBlock;
+ arec:TRpComBlock;
  alist:TStringList;
 begin
  alist:=TStringList.Create;
@@ -408,7 +474,7 @@ end;
 
 procedure TModClient.Execute;
 var
- arec:PRpComBlock;
+ arec:TRpComBlock;
  alist:TStringList;
 begin
  alist:=TStringList.Create;
@@ -443,7 +509,7 @@ end;
 
 procedure Tmodclient.GetUsers;
 var
- arec:PRpComBlock;
+ arec:TRpComBlock;
  alist:TStringList;
 begin
  // Get the users
@@ -460,9 +526,49 @@ begin
  end;
 end;
 
+procedure Tmodclient.GetUserGroups(username:String);
+var
+ arec:TRpComBlock;
+ alist:TStringList;
+begin
+ // Get the users
+ alist:=TStringList.Create;
+ try
+  alist.Add(username);
+  arec:=GenerateBlock(repgetusergroups,alist);
+  try
+   SendBlock(RepClient,arec);
+  finally
+   FreeBlock(arec);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
+procedure Tmodclient.GetAliasGroups(aliasname:String);
+var
+ arec:TRpComBlock;
+ alist:TStringList;
+begin
+ // Get the users
+ alist:=TStringList.Create;
+ try
+  alist.Add(aliasname);
+  arec:=GenerateBlock(repgetaliasgroups,alist);
+  try
+   SendBlock(RepClient,arec);
+  finally
+   FreeBlock(arec);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
 procedure Tmodclient.GetParams;
 var
- arec:PRpComBlock;
+ arec:TRpComBlock;
  alist:TStringList;
 begin
  // Get the users
@@ -482,7 +588,7 @@ end;
 
 procedure Tmodclient.GetTree(aliasname:string);
 var
- arec:PRpComBlock;
+ arec:TRpComBlock;
  alist:TStringList;
 begin
  // Get the users
@@ -500,9 +606,28 @@ begin
  end;
 end;
 
+procedure TModClient.GetGroups;
+var
+ arec:TRpComBlock;
+ alist:TStringList;
+begin
+ // Get the users
+ alist:=TStringList.Create;
+ try
+  arec:=GenerateBlock(repgetgroups,alist);
+  try
+   SendBlock(RepClient,arec);
+  finally
+   FreeBlock(arec);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
 procedure Tmodclient.GetAliases;
 var
- arec:PRpComBlock;
+ arec:TRpComBlock;
  alist:TStringList;
 begin
  // Get the users
@@ -521,7 +646,7 @@ end;
 
 procedure Tmodclient.AddAlias(aliasname,path:string);
 var
- arec:PRpComBlock;
+ arec:TRpComBlock;
  alist:TStringList;
 begin
  // Get the users
@@ -541,7 +666,7 @@ end;
 
 procedure Tmodclient.AddUser(username,password:string);
 var
- arec:PRpComBlock;
+ arec:TRpComBlock;
  alist:TStringList;
 begin
  alist:=TStringList.Create;
@@ -558,9 +683,68 @@ begin
  end;
 end;
 
+procedure Tmodclient.AddUserGroup(username,groupname:string);
+var
+ arec:TRpComBlock;
+ alist:TStringList;
+begin
+ alist:=TStringList.Create;
+ try
+  alist.Add(username);
+  alist.Add(groupname);
+  arec:=GenerateBlock(repuseraddgroup,alist);
+  try
+   SendBlock(RepClient,arec);
+  finally
+   FreeBlock(arec);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
+procedure Tmodclient.AddAliasGroup(aliasname,groupname:string);
+var
+ arec:TRpComBlock;
+ alist:TStringList;
+begin
+ alist:=TStringList.Create;
+ try
+  alist.Add(aliasname);
+  alist.Add(groupname);
+  arec:=GenerateBlock(repaliasaddgroup,alist);
+  try
+   SendBlock(RepClient,arec);
+  finally
+   FreeBlock(arec);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
+procedure Tmodclient.AddGroup(groupname:string);
+var
+ arec:TRpComBlock;
+ alist:TStringList;
+begin
+ alist:=TStringList.Create;
+ try
+  alist.Add(groupname);
+  arec:=GenerateBlock(repaddgroup,alist);
+  try
+   SendBlock(RepClient,arec);
+  finally
+   FreeBlock(arec);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
 procedure Tmodclient.DeleteAlias(aliasname:string);
 var
- arec:PRpComBlock;
+ arec:TRpComBlock;
  alist:TStringList;
 begin
  alist:=TStringList.Create;
@@ -577,9 +761,28 @@ begin
  end;
 end;
 
+procedure Tmodclient.DeleteGroup(groupname:string);
+var
+ arec:TRpComBlock;
+ alist:TStringList;
+begin
+ alist:=TStringList.Create;
+ try
+  alist.Add(groupname);
+  arec:=GenerateBlock(repdeletegroup,alist);
+  try
+   SendBlock(RepClient,arec);
+  finally
+   FreeBlock(arec);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
 procedure Tmodclient.DeleteUser(username:string);
 var
- arec:PRpComBlock;
+ arec:TRpComBlock;
  alist:TStringList;
 begin
  // Get the users
@@ -597,11 +800,53 @@ begin
  end;
 end;
 
+procedure Tmodclient.DeleteUserGroup(username,groupname:string);
+var
+ arec:TRpComBlock;
+ alist:TStringList;
+begin
+ // Get the users
+ alist:=TStringList.Create;
+ try
+  alist.Add(username);
+  alist.Add(groupname);
+  arec:=GenerateBlock(repuserdeletegroup,alist);
+  try
+   SendBlock(RepClient,arec);
+  finally
+   FreeBlock(arec);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
+procedure Tmodclient.DeleteAliasGroup(aliasname,groupname:string);
+var
+ arec:TRpComBlock;
+ alist:TStringList;
+begin
+ // Get the users
+ alist:=TStringList.Create;
+ try
+  alist.Add(aliasname);
+  alist.Add(groupname);
+  arec:=GenerateBlock(repaliasdeletegroup,alist);
+  try
+   SendBlock(RepClient,arec);
+  finally
+   FreeBlock(arec);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
 procedure Tmodclient.ModifyParams(compo:TRpParamComp);
 var
  writer:TWriter;
  astream:TMemoryStream;
- arec:PRpComBlock;
+ arec:TRpComBlock;
 begin
  astream:=TMemoryStream.Create;
  try

@@ -9,6 +9,7 @@ object FRpPreview: TFRpPreview
   Color = clBackground
   KeyPreview = True
   Position = poScreenCenter
+  Scaled = False
   ShowHint = True
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
@@ -20,8 +21,6 @@ object FRpPreview: TFRpPreview
   OnMouseWheelUp = FormMouseWheelUp
   OnResize = FormResize
   PixelsPerInch = 96
-  TextHeight = 13
-  TextWidth = 6
   object BToolBar: TToolBar
     Left = 0
     Top = 0
@@ -35,7 +34,7 @@ object FRpPreview: TFRpPreview
     Images = ImageList1
     TabOrder = 0
     object PBar: TProgressBar
-      Left = 383
+      Left = 395
       Top = 4
       Width = 64
       Height = 26
@@ -58,14 +57,15 @@ object FRpPreview: TFRpPreview
       Action = APrevious
       Caption = 'Previous page'
     end
-    object EPageNum: TEdit
+    object EPageNum: TRpCLXMaskEdit
       Left = 53
       Top = 4
       Width = 44
       Height = 21
       TabOrder = 2
-      Text = '0'
       OnKeyPress = EPageNumKeyPress
+      Text = '0'
+      EditType = teinteger
     end
     object ToolButton3: TToolButton
       HelpType = htContext
@@ -85,7 +85,7 @@ object FRpPreview: TFRpPreview
     end
     object ToolButton6: TToolButton
       HelpType = htContext
-      Left = 149
+      Left = 161
       Top = 4
       Height = 26
       Action = APrint
@@ -93,7 +93,7 @@ object FRpPreview: TFRpPreview
     end
     object ToolButton7: TToolButton
       HelpType = htContext
-      Left = 175
+      Left = 187
       Top = 4
       Height = 26
       Action = ASave
@@ -101,7 +101,7 @@ object FRpPreview: TFRpPreview
     end
     object BCancel: TButton
       HelpType = htContext
-      Left = 447
+      Left = 459
       Top = 4
       Width = 148
       Height = 26
@@ -112,7 +112,7 @@ object FRpPreview: TFRpPreview
     end
     object BExit: TToolButton
       HelpType = htContext
-      Left = 357
+      Left = 369
       Top = 4
       Height = 26
       Action = AExit
@@ -120,7 +120,7 @@ object FRpPreview: TFRpPreview
     end
     object ToolButton8: TToolButton
       HelpType = htContext
-      Left = 201
+      Left = 213
       Top = 4
       Height = 26
       Action = AParams
@@ -128,7 +128,7 @@ object FRpPreview: TFRpPreview
     end
     object ToolButton11: TToolButton
       HelpType = htContext
-      Left = 227
+      Left = 239
       Top = 4
       Height = 26
       Action = AScale100
@@ -136,7 +136,7 @@ object FRpPreview: TFRpPreview
     end
     object ToolButton12: TToolButton
       HelpType = htContext
-      Left = 253
+      Left = 265
       Top = 4
       Height = 26
       Action = AScaleWide
@@ -144,7 +144,7 @@ object FRpPreview: TFRpPreview
     end
     object ToolButton13: TToolButton
       HelpType = htContext
-      Left = 279
+      Left = 291
       Top = 4
       Height = 26
       Action = AScaleFull
@@ -152,7 +152,7 @@ object FRpPreview: TFRpPreview
     end
     object ToolButton5: TToolButton
       HelpType = htContext
-      Left = 305
+      Left = 317
       Top = 4
       Height = 26
       Action = AScaleLess
@@ -160,11 +160,20 @@ object FRpPreview: TFRpPreview
     end
     object ToolButton10: TToolButton
       HelpType = htContext
-      Left = 331
+      Left = 343
       Top = 4
       Height = 26
       Action = AScaleMore
       Caption = 'Zoom+'
+    end
+    object ToolButton9: TToolButton
+      Left = 149
+      Top = 4
+      Width = 12
+      Height = 26
+      Style = tbsSeparator
+      Caption = 'ToolButton9'
+      ImageIndex = 7
     end
   end
   object ImageContainer: TScrollBox
@@ -744,14 +753,14 @@ object FRpPreview: TFRpPreview
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF424DCE030000
       000000003E000000280000004C0000004C000000010001000000000090030000
-      120B0000120B00000200000002000000FFFFFF000000000000001414895402AA
-      50CFFFFF00000BE36002E01FC31FFFFF00030417D104140FFFCFFFFF000783FF
-      F0512AAF8F8FFFFF000F8BE3A0010017C04FFFFF001F0416F107F80FFFCFFFFF
-      03FE0000001046AF8D8FFFFF0FBC09EBE0028017C28FFFFF1FDC0410C13FC800
-      03EFFFFF1FE80000984101A48F8FFFFF3FFC0923E0044016FE0FFFFF3FFC0428
-      0116C80FFCEFFFFF37FC0391204010A48B8FFFFF37FC052200044010C00FFFFF
-      13F807E0000F000FFCEFFFFF18F800009854448C780FFFFF0FF0010000000000
-      000FFFFF03C000000000000003EFFFFF0000000000000000000FFFFF00000000
+      120B0000120B00000200000002000000FFFFFF00000000000000155F15001700
+      FE1FFFFF00000020BE8820A07FFFFFFF0003101FFF8289557C7FFFFF0007955F
+      5D000800BE0FFFFF000F8020B7883FC07FFFFFFF001F1000000080AD7C6FFFFF
+      03FE154F5F001400BE1FFFFF0FBC00208609FE40001FFFFF1FDC100004C20A05
+      247FFFFF1FE801491F002200B7FFFFFF3FFC00214008B4C07FEFFFFF3FFC001C
+      8902000D245FFFFF37FC152910002200860FFFFF37FC003F000078007FEFFFFF
+      13F8000004C2AA2463CFFFFF18F8010800000000000FFFFF0FF0000000000000
+      001FFFFF03C0000000000000000FFFFF0000000000000000000FFFFF00000000
       00000000000FFFFF1FFF0FFFF0FFFF00000FFFFF17FF0AFFD0800100018FFFFF
       10030A00D09FF90003CFFFFF10030A00D097F90007CFFFFF10030A00D0901900
       0F8FFFFF10030A00D0901901FF0FFFFF10030A00D0901907DE0FFFFF10030A00

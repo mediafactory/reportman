@@ -37,7 +37,7 @@ interface
 uses
  SysUtils, Classes,rpmdconsts,rptypes,rpeval,rpmetafile,
 {$IFDEF USEVARIANTS}
- Types,
+ Types,Variants,
 {$ENDIF}
 {$IFNDEF USEVARIANTS}
  Windows,
@@ -63,6 +63,7 @@ type
 		bcCodeEAN13
 				);
 
+ TRpDigit='0'..'9';
 
  TRpBarcode = class(TRpCommonPosComponent)
   private
@@ -97,7 +98,7 @@ type
    procedure WriteExpression(Writer:TWriter);
    procedure ReadExpression(Reader:TReader);
   protected
-   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
   public
@@ -129,7 +130,7 @@ type
 
 implementation
 
-uses rpreport;
+uses rpbasereport;
 
 function StringBarcodeToBarCodeType(value:string):TRpBarCodeType;
 var
@@ -341,7 +342,7 @@ begin
 	for i:=1 to 4 do
             for j:= 1 to 4 do
                 begin
-                result := result + tabelle_EAN_A[tmp[i], j] ;
+                result := result + tabelle_EAN_A[TRpDigit(tmp[i]), j] ;
                 end;
 
  	result := result + '05050';   // Trennzeichen
@@ -349,7 +350,7 @@ begin
 	for i:=5 to 8 do
             for j:= 1 to 4 do
                 begin
-                result := result + tabelle_EAN_C[tmp[i], j] ;
+                result := result + tabelle_EAN_C[TRpDigit(tmp[i]), j] ;
                 end;
 
         result := result + '505';   // Stopcode
@@ -410,11 +411,11 @@ begin
 	begin
 		case tabelle_ParityEAN13[LK,i] of
 			'A' : for j:= 1 to 4 do
-						result := result + tabelle_EAN_A[tmp[i], j] ;
+						result := result + tabelle_EAN_A[TRpDigit(tmp[i]), j] ;
 			'B' : for j:= 1 to 4 do
-						result := result + tabelle_EAN_B[tmp[i], j] ;
+						result := result + tabelle_EAN_B[TRpDigit(tmp[i]), j] ;
 			'C' : for j:= 1 to 4 do
-						result := result + tabelle_EAN_C[tmp[i], j] ;
+						result := result + tabelle_EAN_C[TRpDigit(tmp[i]), j] ;
 	end;
 	end;
 
@@ -423,7 +424,7 @@ begin
 	for i:=7 to 12 do
 		for j:= 1 to 4 do
 		begin
-			result := result + tabelle_EAN_C[tmp[i], j] ;
+			result := result + tabelle_EAN_C[TRpDigit(tmp[i]), j] ;
 		end;
 
 	result := result + '505';   // Stopcode
@@ -457,12 +458,12 @@ begin
 	begin
 		for j:= 1 to 5 do
 		begin
-			if tabelle_2_5[FText[i*2-1], j] = '1' then
+			if tabelle_2_5[TRpDigit(FText[i*2-1]), j] = '1' then
 				c := '6'
 			else
 				c := '5';
 			result := result + c;
-			if tabelle_2_5[FText[i*2], j] = '1' then
+			if tabelle_2_5[TRpDigit(FText[i*2]), j] = '1' then
 				c := '1'
 			else
 				c := '0';
@@ -485,7 +486,7 @@ begin
 	begin
 		for j:= 1 to 5 do
 		begin
-		if tabelle_2_5[FText[i], j] = '1' then
+		if tabelle_2_5[TRpDigit(FText[i]), j] = '1' then
 			result := result + '60'
 		else
 			result := result + '50';
@@ -507,7 +508,7 @@ begin
 	begin
 		for j:= 1 to 5 do
 		begin
-			if tabelle_2_5[FText[i], j] = '1' then
+			if tabelle_2_5[TRpDigit(FText[i]), j] = '1' then
 				c := '1'
 			else
 				c := '0';
@@ -698,7 +699,12 @@ const tabelle_128: array[0..102] of TCode128 = (
 	( a:')'; b:')'; c:'09'; data:'221213'; ),
 	( a:'*'; b:'*'; c:'10'; data:'221312'; ),
 	( a:'+'; b:'+'; c:'11'; data:'231212'; ),
+{$IFDEF DOTNETD}
+	( a:''''; b:''''; c:'12'; data:'112232'; ),
+{$ENDIF}
+{$IFNDEF DOTNETD}
 	( a:'´'; b:'´'; c:'12'; data:'112232'; ),
+{$ENDIF}
 	( a:'-'; b:'-'; c:'13'; data:'122132'; ),
 	( a:'.'; b:'.'; c:'14'; data:'122231'; ),
 	( a:'/'; b:'/'; c:'15'; data:'113222'; ),
@@ -788,7 +794,12 @@ const tabelle_128: array[0..102] of TCode128 = (
 	( a:' '; b:' '; c:'99'; data:'113141'; ),
 	( a:' '; b:' '; c:'  '; data:'114131'; ),
 	( a:' '; b:' '; c:'  '; data:'311141'; ),
+{$IFDEF DOTNETD}
+	( a:'?'; b:'?'; c:'  '; data:'411131'; )
+{$ENDIF}
+{$IFNDEF DOTNETD}
 	( a:'¿'; b:'¿'; c:'  '; data:'411131'; )
+{$ENDIF}
 	);
 
 StartA = '211412';
@@ -1219,7 +1230,7 @@ begin
 		else
 			check_even := check_even+ord(FText[i]);
 
-		result := result + tabelle_MSI[FText[i]];
+		result := result + tabelle_MSI[TRpDigit(FText[i])];
 	end;
 
 	checksum := quersumme(check_odd*2) + check_even;
@@ -1228,7 +1239,7 @@ begin
 	if checksum > 0 then
 		checksum := 10-checksum;
 
-	result := result + tabelle_MSI[chr(ord('0')+checksum)];
+	result := result + tabelle_MSI[TRpDigit(chr(ord('0')+checksum))];
 
 	result := result + '515'; // Stopcode
 end;
@@ -1258,7 +1269,7 @@ begin
 
 	for i:=1 to Length(FText) do
 	begin
-		result := result + tabelle_PostNet[FText[i]];
+		result := result + tabelle_PostNet[TRpDigit(FText[i])];
 	end;
 	result := result + '5';
 end;
@@ -1461,9 +1472,9 @@ begin
 			BrushColor := PenColor;
 
 			if lt = black_half then
-				aheight := Height * 2 div 5
+				aheight := PrintHeight * 2 div 5
 			else
-				aheight := Height;
+				aheight := PrintHeight;
 
 
 
@@ -1510,7 +1521,7 @@ begin
  if FUpdated then
   exit;
  try
-  fevaluator:=TRpReport(GetReport).Evaluator;
+  fevaluator:=TRpBaseReport(GetReport).Evaluator;
   fevaluator.Expression:=FExpression;
   fevaluator.Evaluate;
   FValue:=fevaluator.EvalResult;
@@ -1584,13 +1595,14 @@ begin
  Result:=data;
 end;
 
-procedure TRpBarCode.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpBarCode.DoPrint(adriver:IRpPrintDriver;
+    aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  aText:string;
  data:string;
 begin
- inherited DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
+ inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
  aText:=GetText;
  try
   data:=Calculatebarcode;

@@ -52,7 +52,8 @@ type
    FShape:TRpShapeType;
    FPenWidth:integer;
   protected
-   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;
+   aposx,aposy,newwidth,newheight:Integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
   public
    constructor Create(AOwner:TComponent);override;
@@ -85,7 +86,8 @@ type
    destructor Destroy;override;
   protected
    procedure DefineProperties(Filer: TFiler);override;
-   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;
+    aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
   public
    function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
@@ -102,7 +104,7 @@ type
 
 implementation
 
-uses rpreport;
+uses rpbasereport;
 
 { Paradox graphic BLOB header }
 
@@ -128,11 +130,12 @@ begin
  inherited destroy;
 end;
 
-procedure TRpShape.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpShape.DoPrint(adriver:IRpPrintDriver;
+    aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 begin
- inherited DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
- metafile.Pages[metafile.CurrentPage].NewDrawObject(aposy,aposx,Width,Height,
+ inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
+ metafile.Pages[metafile.CurrentPage].NewDrawObject(aposy,aposx,PrintWidth,PrintHeight,
   integer(Shape),BrushStyle,BrushColor,PenStyle,PenWidth,PenColor);
 end;
 
@@ -174,7 +177,7 @@ end;
 procedure TRpImage.DefineProperties(Filer: TFiler);
 begin
  inherited;
- 
+
  Filer.DefineProperty('Expression',ReadExpression,WriteExpression,True);
  Filer.DefineBinaryProperty('Stream', ReadStream, WriteStream, true);
 end;
@@ -187,8 +190,16 @@ begin
   Raise Exception.Create(SRpInvalidStreaminRpImage);
  FStream.SetSize(ssize);
  FStream.Seek(0,soFromBeginning);
+ if ssize=0 then
+  exit;
+{$IFDEF DOTNETD}
+ if ssize<>FStream.CopyFrom(AStream,ssize) then
+  Raise Exception.Create(SRpInvalidStreaminRpImage);
+{$ENDIF}
+{$IFNDEF DOTNETD}
  if ssize<>AStream.Read(FStream.memory^,ssize) then
   Raise Exception.Create(SRpInvalidStreaminRpImage);
+{$ENDIF}
 end;
 
 procedure TRpImage.WriteStream(AStream:TStream);
@@ -198,8 +209,19 @@ begin
  ssize:=FStream.Size;
  AStream.Write(ssize,sizeof(ssize));
  FStream.Seek(0,soFromBeginning);
- AStream.Write(FStream.Memory^,ssize);
+ AStream.CopyFrom(FStream,ssize);
+// AStream.Write(FStream.Memory^,ssize);
 end;
+
+{$IFDEF DOTNETD}
+function BytesToGraphicHeader(const ABytes: TBytes): TGraphicHeader;
+begin
+  Result.Count := System.BitConverter.ToUInt16(ABytes, 0);
+  Result.HType := System.BitConverter.ToUInt16(ABytes, sizeof(Result.Count));
+  Result.Size := System.BitConverter.ToUInt32(ABytes, sizeof(Result.Count) +
+    sizeof(Result.HType));
+end;
+{$ENDIF}
 
 function TRpImage.GetStream:TMemoryStream;
 var
@@ -212,15 +234,18 @@ var
  FMStream:TMemoryStream;
  aValue:Variant;
  afilename:TFilename;
+{$IFDEF DOTNETD}
+ Temp:TBytes;
+{$ENDIF}
 begin
  try
   Result:=nil;
   if Length(Trim(Expression))>0 then
   begin
    // If the expression is a field
-   if Not Assigned(TRpReport(GetReport).Evaluator) then
+   if Not Assigned(TRpBaseReport(GetReport).Evaluator) then
     Exit;
-   evaluator:=TRpReport(GetReport).evaluator;
+   evaluator:=TRpBaseReport(GetReport).evaluator;
    iden:=evaluator.SearchIdentifier(Expression);
    if Assigned(iden) then
     if (Not (iden is TIdenField)) then
@@ -240,15 +265,32 @@ begin
       FMStream.SetSize(Size);
       if Size >= SizeOf(TGraphicHeader) then
       begin
+{$IFDEF DOTNETD}
+      SetLength(Temp,SizeOf(Header));
+      AStream.Read(Temp, SizeOf(Header));
+      Header := BytesToGraphicHeader(Temp);
+      if (Header.Count <> 1) or (Header.HType <> $0100) or
+        (Header.Size <> Size - SizeOf(Header)) then
+        AStream.Position := 0
+      else
+        FMStream.SetSize(AStream.Size-SizeOf(Header));
+{$ENDIF}
+{$IFNDEF DOTNETD}
         AStream.Read(Header, SizeOf(Header));
         if (Header.Count <> 1) or (Header.HType <> $0100) or
           (Header.Size <> Size - SizeOf(Header)) then
           AStream.Position := 0
         else
          FMStream.SetSize(AStream.Size-SizeOf(Header));
+{$ENDIF}
       end;
       FMStream.Seek(0,soFromBeginning);
+{$IFNDEF DOTNETD}
       readed:=AStream.Read(FMStream.Memory^,FMStream.Size);
+{$ENDIF}
+{$IFDEF DOTNETD}
+      readed:=FMStream.CopyFrom(AStream,FMStream.Size);
+{$ENDIF}
       if readed<>FMStream.Size then
        Raise Exception.Create(SRpErrorReadingFromFieldStream);
       FMStream.Seek(0,soFromBeginning);
@@ -276,15 +318,32 @@ begin
       FMStream.SetSize(Size);
       if Size >= SizeOf(TGraphicHeader) then
       begin
+{$IFDEF DOTNETD}
+       SetLength(Temp,SizeOf(Header));
+       AStream.Read(Temp, SizeOf(Header));
+       Header := BytesToGraphicHeader(Temp);
+       if (Header.Count <> 1) or (Header.HType <> $0100) or
+         (Header.Size <> Size - SizeOf(Header)) then
+         AStream.Position := 0
+       else
+        FMStream.SetSize(AStream.Size-SizeOf(Header));
+{$ENDIF}
+{$IFNDEF DOTNETD}
         AStream.Read(Header, SizeOf(Header));
         if (Header.Count <> 1) or (Header.HType <> $0100) or
           (Header.Size <> Size - SizeOf(Header)) then
           AStream.Position := 0
         else
          FMStream.SetSize(AStream.Size-SizeOf(Header));
+{$ENDIF}
       end;
       FMStream.Seek(0,soFromBeginning);
+{$IFNDEF DOTNETD}
       readed:=AStream.Read(FMStream.Memory^,FMStream.Size);
+{$ENDIF}
+{$IFDEF DOTNETD}
+      readed:=FMStream.CopyFrom(AStream,FMStream.Size);
+{$ENDIF}
       if readed<>FMStream.Size then
        Raise Exception.Create(SRpErrorReadingFromFieldStream);
       FMStream.Seek(0,soFromBeginning);
@@ -314,12 +373,13 @@ end;
 
 
 
-procedure TRpImage.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpImage.DoPrint(adriver:IRpPrintDriver;
+    aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  FMStream:TMemoryStream;
 begin
- inherited DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
+ inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
  if Not Assigned(FStream) then
   exit;
  FMStream:=GetStream;
@@ -327,7 +387,7 @@ begin
   exit;
  try
   metafile.Pages[metafile.CurrentPage].NewImageObject(aposy,aposx,
-   Width,Height,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),FMStream);
+   PrintWidth,PrintHeight,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),FMStream);
  finally
   if FMStream<>FStream then
    FMStream.free;

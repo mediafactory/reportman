@@ -40,7 +40,7 @@ type
   TFRpEditConVCL = class(TForm)
     ImageList1: TImageList;
     ActionList1: TActionList;
-    ANewParam: TAction;
+    ANewConn: TAction;
     ADelete: TAction;
     ARename: TAction;
     ToolBar1: TToolBar;
@@ -55,36 +55,36 @@ type
     PConnections: TPanel;
     Splitter2: TSplitter;
     LConnections: TListBox;
-    PCon2: TPanel;
+    PCon2: TScrollBox;
+    BTest: TButton;
+    BConfig: TButton;
+    BBrowse: TButton;
+    BCreateLib: TButton;
+    BADOCOnf: TButton;
+    EAdoConnection: TEdit;
+    LAdoConnection: TLabel;
+    LGroupsTable: TLabel;
     EReportGroupsTable: TEdit;
+    LRSearchField: TLabel;
     EReportSearchfield: TEdit;
+    LReportField: TLabel;
     EReportField: TEdit;
+    LReportTable: TLabel;
     EReportTable: TEdit;
     ComboDriver: TComboBox;
-    Label2: TLabel;
-    Label3: TLabel;
-    Label4: TLabel;
-    Label5: TLabel;
-    Label6: TLabel;
+    LDriver: TLabel;
     CheckLoginPrompt: TCheckBox;
     CheckLoadDriverParams: TCheckBox;
     CheckLoadParams: TCheckBox;
-    BConfig: TButton;
-    EAdoConnection: TEdit;
-    Label1: TLabel;
-    Button1: TButton;
-    BTest: TButton;
-    BCreateLib: TButton;
-    BBrowse: TButton;
     procedure FormCreate(Sender: TObject);
-    procedure ANewParamExecute(Sender: TObject);
+    procedure ANewConnExecute(Sender: TObject);
     procedure LAliasesClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ADeleteExecute(Sender: TObject);
     procedure ARenameExecute(Sender: TObject);
     procedure EReportTableChange(Sender: TObject);
     procedure BConfigClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    procedure BADOCOnfClick(Sender: TObject);
     procedure BTestClick(Sender: TObject);
     procedure BCreateLibClick(Sender: TObject);
     procedure BBrowseClick(Sender: TObject);
@@ -126,7 +126,7 @@ end;
 
 
 
-procedure TFRpEditConVCL.ANewParamExecute(Sender: TObject);
+procedure TFRpEditConVCL.ANewConnExecute(Sender: TObject);
 var
  aname:String;
 begin
@@ -293,6 +293,30 @@ begin
  BConfig.Visible:=False;
  BBrowse.Visible:=False;
 {$ENDIF}
+
+ BOk.Caption:=SRpOk;
+ BCancel.Caption:=SRpCancel;
+ ANewConn.Caption:=TranslateStr(1102,ANewConn.Caption);
+ ANewConn.Hint:=TranslateStr(1103,ANewConn.Hint);
+ ADelete.Caption:=TranslateStr(1104,ADelete.Caption);
+ ADelete.Hint:=TranslateStr(1105,ADelete.Hint);
+ ARename.Caption:=TranslateStr(151,ARename.Caption);
+ ARename.Hint:=TranslateStr(512,ARename.Hint);
+ CheckLoadParams.Caption:=TranslateStr(145,CheckLoadParams.Caption);
+ CheckLoadDriverParams.Caption:=TranslateStr(146,CheckLoadDriverParams.Caption);
+ CheckLoginPrompt.Caption:=TranslateStr(144,CheckLoginPrompt.Caption);
+ LDriver.Caption:=TranslateStr(147,LDriver.Caption);
+ LReportTable.Caption:=TranslateStr(1115,LReportTable.Caption);
+ LReportField.Caption:=TranslateStr(1116,LReportField.Caption);
+ LRSearchField.Caption:=TranslateStr(1117,LRSearchField.Caption);
+ LGroupsTable.Caption:=TranslateStr(1118,LGroupsTable.Caption);
+ LAdoConnection.Caption:=TranslateStr(1119,LAdoConnection.Caption);
+ BConfig.Caption:=TranslateStr(143,BConfig.Caption);
+ BCreateLib.Caption:=TranslateStr(1120,BCreateLib.Caption);
+ BTest.Caption:=TranslateStr(748,BTest.Caption);
+ BBrowse.Caption:=TranslateStr(1121,BBrowse.Caption);
+ BADOConf.Caption:=TranslateStr(143,BADOConf.Caption);
+ Caption:=TranslateStr(1122,Caption);
 end;
 
 
@@ -306,7 +330,7 @@ begin
 // conadmin.GetConnectionNames(ComboAvailable.Items,'');
 end;
 
-procedure TFRpEditConVCL.Button1Click(Sender: TObject);
+procedure TFRpEditConVCL.BADOCOnfClick(Sender: TObject);
 begin
 {$IFDEF USEADO}
   if LConnections.ItemIndex<0 then
@@ -342,8 +366,10 @@ begin
 end;
 
 procedure TFRpEditConVCL.BBrowseClick(Sender: TObject);
+{$IFNDEF BUILDER4}
 var
- dbitem:TRpDatabaseinfoItem;
+ alibrary:String;
+{$ENDIF}
 begin
  // Change any data
  if LConnections.Items.Count<1 then
@@ -351,8 +377,8 @@ begin
  if LConnections.ItemIndex<0 then
   exit;
 {$IFNDEF BUILDER4}
- dbitem:=rpalias1.Connections.Items[LConnections.ItemIndex];
- SelectReportFromLibrary(dbitem);
+ alibrary:=LConnections.Items.Strings[LConnections.ItemIndex];
+ SelectReportFromLibrary(rpalias1.Connections,alibrary);
 {$ENDIF}
 end;
 

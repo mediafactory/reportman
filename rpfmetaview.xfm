@@ -32,8 +32,8 @@ object FRpMeta: TFRpMeta
     Images = ImageList1
     TabOrder = 0
     object PBar: TProgressBar
-      Left = 1
-      Top = 29
+      Left = 141
+      Top = 30
       Width = 64
       Height = 25
       Align = alCustom
@@ -55,14 +55,16 @@ object FRpMeta: TFRpMeta
       Action = APrevious
       Caption = 'Previous page'
     end
-    object EPageNum: TEdit
+    object EPageNum: TRpCLXMaskEdit
       Left = 79
       Top = 4
       Width = 44
       Height = 21
+      Cursor = crIBeam
       TabOrder = 2
-      Text = '0'
       OnKeyPress = EPageNumKeyPress
+      Text = '0'
+      EditType = teinteger
     end
     object ToolButton3: TToolButton
       HelpType = htContext
@@ -106,8 +108,8 @@ object FRpMeta: TFRpMeta
     end
     object BCancel: TButton
       HelpType = htContext
-      Left = 409
-      Top = 4
+      Left = 1
+      Top = 30
       Width = 140
       Height = 26
       Action = ACancel
@@ -117,7 +119,7 @@ object FRpMeta: TFRpMeta
     end
     object BExit: TToolButton
       HelpType = htContext
-      Left = 383
+      Left = 397
       Top = 4
       Height = 26
       Action = AExit
@@ -163,13 +165,17 @@ object FRpMeta: TFRpMeta
       Action = AScaleMore
       Caption = 'Zoom+'
     end
-    object ToolButton10: TToolButton
+    object BConfig: TToolButton
       HelpType = htContext
       Left = 357
       Top = 4
       Height = 26
-      Action = APrintSetup
-      Caption = 'Printer Setup...'
+      Hint = 'Shows the printer setup dialog'
+      Style = tbsDropDown
+      Caption = 'BConfig'
+      DropDownMenu = MPrintMenu
+      ImageIndex = 14
+      OnClick = BConfigClick
     end
   end
   object ImageContainer: TScrollBox
@@ -754,13 +760,13 @@ object FRpMeta: TFRpMeta
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF424DCE030000
       000000003E000000280000004C0000004C000000010001000000000090030000
       120B0000120B00000200000002000000FFFFFF00000000000000003FC0000000
-      000FFFFF0000003FC0E00700000FFFFF0003003FC1FFFF80000FFFFF000787FF
-      C17FFF80000FFFFF000F87FFC1FFFF80000FFFFF001F07FFC17FFF80000FFFFF
-      03FE05FFE1AAAA80000FFFFF0FBC06FFF1FFFF80000FFFFF1FDC057FF87FFE00
-      000FFFFF1FE806ABC07FFE00000FFFFF3FFC0555C07FFE00000FFFFF3FFC06FF
-      C0000000000FFFFF37FC03BFF0001F00000FFFFF37FC003FF0001F00000FFFFF
-      13F8003FD07FFF00000FFFFF18F8003FC07FFC00000FFFFF0FF0003FC07FFF00
-      000FFFFF03C0003FC0001F00000FFFFF0000003FC0001F00000FFFFF000007FF
+      FE0FFFFF0000003FC0E007207FFFFFFF0003003FC1FFFFD57C7FFFFF000787FF
+      C17FFF80BE0FFFFF000F87FFC1FFFFC07FFFFFFF001F07FFC17FFF957C6FFFFF
+      03FE05FFE1AAAA80BE1FFFFF0FBC06FFF1FFFFC0001FFFFF1FDC057FF87FFE0D
+      247FFFFF1FE806ABC07FFE00B7FFFFFF3FFC0555C07FFE407FEFFFFF3FFC06FF
+      C000000D245FFFFF37FC03BFF0001F00860FFFFF37FC003FF0001F007FEFFFFF
+      13F8003FD07FFF2463CFFFFF18F8003FC07FFC00000FFFFF0FF0003FC07FFF00
+      001FFFFF03C0003FC0001F00000FFFFF0000003FC0001F00000FFFFF000007FF
       F8000000000FFFFF1FFF057FE8FFFF00000FFFFF17FF050068800100018FFFFF
       10030500689FF90003CFFFFF100305006897F90007CFFFFF1003050068901900
       0F8FFFFF1003050068901901FF0FFFFF1003050068901907DE0FFFFF10030507
@@ -1039,56 +1045,6 @@ object FRpMeta: TFRpMeta
     end
     object MPreferences: TMenuItem
       Caption = 'Preferences'
-      object MDriverSelect: TMenuItem
-        Caption = 'Driver'
-        Visible = False
-        object WindowsGDIDriver1: TMenuItem
-          Action = ADriverGDI
-        end
-        object QtDriver1: TMenuItem
-          Action = ADriverQt
-        end
-      end
-      object QtSystemPrintDialog1: TMenuItem
-        Action = ASystemPrintDialog
-      end
-      object MQtStyle: TMenuItem
-        Caption = 'Qt Widget Style'
-        object Windows1: TMenuItem
-          Caption = '&Windows'
-          OnClick = Windows1Click
-        end
-        object Motif1: TMenuItem
-          Tag = 1
-          Caption = '&Motif'
-          OnClick = Windows1Click
-        end
-        object MotifPlus1: TMenuItem
-          Tag = 2
-          Caption = 'M&otif Plus'
-          OnClick = Windows1Click
-        end
-        object CDE1: TMenuItem
-          Tag = 3
-          Caption = '&CDE'
-          OnClick = Windows1Click
-        end
-        object QtSGI1: TMenuItem
-          Tag = 4
-          Caption = '&QtSGI'
-          OnClick = Windows1Click
-        end
-        object Platinum1: TMenuItem
-          Tag = 5
-          Caption = '&Platinum'
-          OnClick = Windows1Click
-        end
-        object MQtDefault: TMenuItem
-          Tag = 6
-          Caption = 'Normal'
-          OnClick = Windows1Click
-        end
-      end
       object MSelectPrinter: TMenuItem
         Caption = 'Select Printer'
         object MSelPrinter0: TMenuItem
@@ -1158,6 +1114,56 @@ object FRpMeta: TFRpMeta
       object PrintersConfiguration1: TMenuItem
         Action = APrintersConfiguration
       end
+      object MDriverSelect: TMenuItem
+        Caption = 'Driver'
+        Visible = False
+        object WindowsGDIDriver1: TMenuItem
+          Action = ADriverGDI
+        end
+        object QtDriver1: TMenuItem
+          Action = ADriverQt
+        end
+      end
+      object QtSystemPrintDialog1: TMenuItem
+        Action = ASystemPrintDialog
+      end
+      object MQtStyle: TMenuItem
+        Caption = 'Qt Widget Style'
+        object Windows1: TMenuItem
+          Caption = '&Windows'
+          OnClick = Windows1Click
+        end
+        object Motif1: TMenuItem
+          Tag = 1
+          Caption = '&Motif'
+          OnClick = Windows1Click
+        end
+        object MotifPlus1: TMenuItem
+          Tag = 2
+          Caption = 'M&otif Plus'
+          OnClick = Windows1Click
+        end
+        object CDE1: TMenuItem
+          Tag = 3
+          Caption = '&CDE'
+          OnClick = Windows1Click
+        end
+        object QtSGI1: TMenuItem
+          Tag = 4
+          Caption = '&QtSGI'
+          OnClick = Windows1Click
+        end
+        object Platinum1: TMenuItem
+          Tag = 5
+          Caption = '&Platinum'
+          OnClick = Windows1Click
+        end
+        object MQtDefault: TMenuItem
+          Tag = 6
+          Caption = 'Normal'
+          OnClick = Windows1Click
+        end
+      end
       object Asynchronousexecution1: TMenuItem
         Action = AAsyncExec
       end
@@ -1169,6 +1175,82 @@ object FRpMeta: TFRpMeta
       end
       object Documentation1: TMenuItem
         Action = ADocumentation
+      end
+    end
+  end
+  object MPrintMenu: TPopupMenu
+    Left = 300
+    Top = 128
+    object PrinterSetup2: TMenuItem
+      Action = APrintSetup
+    end
+    object PrintersConfiguration2: TMenuItem
+      Action = APrintersConfiguration
+    end
+    object MSelectPrinter2: TMenuItem
+      Caption = 'Select printer'
+      object MSelPrinter20: TMenuItem
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter21: TMenuItem
+        Tag = 1
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter22: TMenuItem
+        Tag = 2
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter23: TMenuItem
+        Tag = 3
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter24: TMenuItem
+        Tag = 4
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter25: TMenuItem
+        Tag = 5
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter26: TMenuItem
+        Tag = 6
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter27: TMenuItem
+        Tag = 7
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter28: TMenuItem
+        Tag = 8
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter29: TMenuItem
+        Tag = 9
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter210: TMenuItem
+        Tag = 10
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter211: TMenuItem
+        Tag = 11
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter212: TMenuItem
+        Tag = 12
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter213: TMenuItem
+        Tag = 13
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter214: TMenuItem
+        Tag = 14
+        OnClick = MSelPrinter0Click
+      end
+      object MSelPrinter215: TMenuItem
+        Tag = 15
+        OnClick = MSelPrinter0Click
       end
     end
   end

@@ -1,6 +1,6 @@
 [Designer]
 Version=1
-Left=285
+Left=211
 Top=161
 Width=741
 Height=479
@@ -20,7 +20,7 @@ PrintToFile=0
 PrintBorders=1
 PrintSelected=0
 PrintVisible=0
-ExpandedItems=modclient
+ExpandedItems=
 
 [DataDiagrams]
 Version=1

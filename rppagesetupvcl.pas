@@ -32,7 +32,7 @@ uses
   Graphics, Controls, Forms, Dialogs,
   StdCtrls,rpreport, ExtCtrls,Buttons,Printers,
   rptypes,
-  rpmetafile,rpmdconsts,rpmdprintconfigvcl, ComCtrls;
+  rpmetafile,rpmdconsts,rpmdprintconfigvcl, ComCtrls, Mask, rpmaskedit;
 
 type
   TFRpPageSetupVCL = class(TForm)
@@ -58,17 +58,17 @@ type
     LRight: TLabel;
     LBottom: TLabel;
     LMetrics6: TLabel;
-    ELeftMargin: TEdit;
-    ETopMargin: TEdit;
-    ERightMargin: TEdit;
-    EBottomMargin: TEdit;
+    ELeftMargin: TRpMaskEdit;
+    ETopMargin: TRpMaskEdit;
+    ERightMargin: TRpMaskEdit;
+    EBottomMargin: TRpMaskEdit;
     GUserDefined: TGroupBox;
     LMetrics7: TLabel;
     LMetrics8: TLabel;
     LWidth: TLabel;
     LHeight: TLabel;
-    EPageheight: TEdit;
-    EPageWidth: TEdit;
+    EPageheight: TRpMaskEdit;
+    EPageWidth: TRpMaskEdit;
     ColorDialog1: TColorDialog;
     LSelectPrinter: TLabel;
     ComboSelPrinter: TComboBox;
@@ -76,7 +76,7 @@ type
     CheckPrintOnlyIfData: TCheckBox;
     CheckTwoPass: TCheckBox;
     LCopies: TLabel;
-    ECopies: TEdit;
+    ECopies: TRpMaskEdit;
     CheckCollate: TCheckBox;
     LPrinterFonts: TLabel;
     ComboPrinterFonts: TComboBox;
@@ -90,6 +90,7 @@ type
     ComboFormat: TComboBox;
     CheckDrawerAfter: TCheckBox;
     CheckDrawerBefore: TCheckBox;
+    CheckPreviewAbout: TCheckBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -254,6 +255,7 @@ begin
  ComboPrinterFonts.Items.Strings[1]:=TranslateStr(114,ComboPrinterFonts.Items.Strings[1]);
  ComboPrinterFonts.Items.Strings[2]:=TranslateStr(115,ComboPrinterFonts.Items.Strings[2]);
  BBAckground.Caption:=TranslateStr(116,BBAckground.Caption);
+ CheckPreviewAbout.Caption:=SRpAboutBoxPreview;
  with ComboSelPrinter.Items do
  begin
   Add(SRpDefaultPrinter);
@@ -309,6 +311,7 @@ begin
  report.Copies:=acopies;
  report.CollateCopies:=CheckCollate.Checked;
  report.TwoPass:=CheckTwoPass.Checked;
+ report.PreviewAbout:=CheckPreviewAbout.Checked;
  report.PrintOnlyIfDataAvailable:=CheckPrintOnlyIfData.Checked;
  FReportAction:=[];
  if CheckDrawerAfter.Checked then
@@ -364,6 +367,8 @@ begin
  CheckPrintOnlyIfData.Checked:=report.PrintOnlyIfDataAvailable;
  CheckDrawerBefore.Checked:=rpDrawerBefore in report.ReportAction;
  CheckDrawerAfter.Checked:=rpDrawerAfter in report.ReportAction;
+ CheckPreviewAbout.Checked:=report.PreviewAbout;
+
  // Size
  ComboPageSize.ItemIndex:=report.PagesizeQt;
  GPageSize.Visible:=false;

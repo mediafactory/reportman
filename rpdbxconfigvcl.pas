@@ -34,6 +34,9 @@ uses SysUtils, Classes,
 {$IFDEF USEZEOS}
  ZDbcIntfs,ZConnection,
 {$ENDIF}
+{$IFDEF USEVARIANTS}
+ Variants,
+{$ENDIF}
   DB,rpmdconsts, ToolWin;
 
 const

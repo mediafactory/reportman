@@ -26,8 +26,8 @@ interface
 {$I rpconf.inc}
 
 uses Types,
-  QGraphics,QForms,QControls,Qt,QDialogs,
- rpmdconsts,classes,sysutils,rpmunits,
+ QGraphics,QForms,QControls,Qt,QDialogs,QComCtrls,
+ rpmdconsts,classes,sysutils,rpmunits,rpdbbrowser,QMenus,
  rpprintitem,rpgraphutils,rpsection,rpreport,rptypes;
 
 const
@@ -71,7 +71,7 @@ type
  end;
 
  TRpSizePosInterfaceClass=class of TRpSizePosInterface;
- 
+
  TRpRectangle=class(TGraphicControl)
   protected
    procedure Paint;override;
@@ -97,12 +97,18 @@ type
    FRectangle2:TRpRectangle;
    FRectangle3:TRpRectangle;
    FRectangle4:TRpRectangle;
+   procedure RenameClick(Sender:TObject);
+   procedure DoDragOver(Sender, Source: TObject; X, Y: Integer; State: TDragState;
+     var Accept: Boolean);
+   procedure DoDragDrop(Sender, Source: TObject; X, Y: Integer);
   protected
+   FContextMenu:TPopUpMenu;
    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
    procedure MouseMove(Shift: TShiftState; X, Y: Integer);override;
    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
    procedure Paint;override;
+   procedure InitPopUpMenu;virtual;
   public
    SectionInt:TRpSizeInterface;
    procedure DoSelect;
@@ -180,11 +186,11 @@ type
 
 implementation
 
-uses rpmdobjinsp;
+uses rpmdobjinsp,rpmdfsectionint,rpmdfdesign;
 
 const
  AlignmentFlags_AlignHJustify = 1024 { $400 };
- 
+
 constructor TRpSizeInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin
  inherited Create(AOwner);
@@ -209,8 +215,8 @@ procedure TRpSizeInterface.UpdatePos;
 var
  NewWidth,NewHeight:integer;
 begin
- NewWidth:=twipstopixels(TRpCOmmonPosComponent(printitem).Width);
- NewHeight:=twipstopixels(TRpCOmmonPosComponent(printitem).Height);
+ NewWidth:=twipstopixels(TRpCOmmonComponent(printitem).Width);
+ NewHeight:=twipstopixels(TRpCOmmonComponent(printitem).Height);
  SetBounds(Left,Top,NewWidth,NewHeight);
 end;
 
@@ -225,18 +231,21 @@ begin
  lnames.Add(SrpSPrintCondition);
  ltypes.Add(SRpSExpression);
  lhints.Add('refcommon.html');
+ lcat.Add(SRpPosition);
  if Assigned(lvalues) then
   lvalues.Add(printitem.PrintCondition);
  // Before Print
  lnames.Add(SrpSBeforePrint);
  ltypes.Add(SRpSExpression);
  lhints.Add('refcommon.html');
+ lcat.Add(SRpPosition);
  if Assigned(lvalues) then
   lvalues.Add(printitem.DoBeforePrint);
  // After Print
  lnames.Add(SrpSAfterPrint);
  ltypes.Add(SRpSExpression);
  lhints.Add('refcommon.html');
+ lcat.Add(SRpPosition);
  if Assigned(lvalues) then
   lvalues.Add(printitem.DoAfterPrint);
 
@@ -245,12 +254,14 @@ begin
  lnames.Add(SrpSWidth);
  ltypes.Add(SRpSCurrency);
  lhints.Add('refcommon.html');
+ lcat.Add(SRpPosition);
  if Assigned(lvalues) then
   lvalues.Add(gettextfromtwips(printitem.Width));
  // Height
  lnames.Add(SrpSHeight);
  ltypes.Add(SRpSCurrency);
  lhints.Add('refcommon.html');
+ lcat.Add(SRpPosition);
  if Assigned(lvalues) then
   lvalues.Add(gettextfromtwips(printitem.Height));
 end;
@@ -355,6 +366,11 @@ begin
  opts:=ControlStyle;
  include(opts,csCaptureMouse);
  ControlStyle:=opts;
+ OnDragOver:=DoDragOver;
+ OnDragDrop:=DoDragDrop;
+ FContextMenu:=TPopUpMenu.Create(Self);
+ PopupMenu:=FContextMenu;
+ InitPopUpMenu;
 end;
 
 class procedure TRpSizePosInterface.FillAncestors(alist:TStrings);
@@ -369,40 +385,6 @@ begin
  MouseUp(mbLeft,[],0,0);
 end;
 
-function AlignToStr(value:TRpPosAlign):string;
-begin
- case value of
-  rpalnone:
-   REsult:=SRpNone;
-  rpalbottom:
-   Result:=SRPBottom;
-  rpalright:
-   Result:=SRPSRight;
-  rpalbotright:
-   Result:=SRPBottom+'/'+SRpSRight;
- end;
-end;
-
-function StrToAlign(value:string):TRpPosAlign;
-begin
- Result:=rpalnone;
- if value=SRPBottom then
- begin
-  Result:=rpalbottom;
-  exit;
- end;
- if value=SRPSRight then
- begin
-  Result:=rpalright;
-  exit;
- end;
- if value=SRPBottom+'/'+SRpSRight then
- begin
-  Result:=rpalbotright;
-  exit;
- end;
-end;
-
 procedure TRpSizePosInterface.GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);
 begin
  inherited GetProperties(lnames,ltypes,lvalues,lhints,lcat);
@@ -411,18 +393,21 @@ begin
  lnames.Add(SrpSTop);
  ltypes.Add(SRpSCurrency);
  lhints.Add('refcommon.html');
+ lcat.Add(SRpPosition);
  if Assigned(lvalues) then
   lvalues.Add(gettextfromtwips(TRpCommonPosComponent(printitem).PosY));
  // Left
  lnames.Add(SrpSLeft);
  ltypes.Add(SRpSCurrency);
  lhints.Add('refcommon.html');
+ lcat.Add(SRpPosition);
  if Assigned(lvalues) then
   lvalues.Add(gettextfromtwips(TRpCommonPosComponent(printitem).PosX));
 
  lnames.Add(SRPAlign);
  ltypes.Add(SRpSList);
  lhints.Add('refcommon.html');
+ lcat.Add(SRpPosition);
  if Assigned(lvalues) then
   lvalues.Add(AlignToStr(TRpCommonPosComponent(printitem).Align));
 end;
@@ -462,6 +447,9 @@ begin
   lpossiblevalues.Add(SRpBottom);
   lpossiblevalues.Add(SRpSRight);
   lpossiblevalues.Add(SRPBottom+'/'+SRpSRight);
+  lpossiblevalues.Add(SRPLeftRight);
+  lpossiblevalues.Add(SRPTopBottom);
+  lpossiblevalues.Add(SRPAllClient);
   exit;
  end;
  inherited GetPropertyValues(pname,lpossiblevalues);
@@ -641,6 +629,8 @@ procedure TRpSizePosInterface.MouseDown(Button: TMouseButton; Shift: TShiftState
 begin
  inherited MouseDown(Button,Shift,X,Y);
 
+ if Button<>mbLeft then
+  exit;
  if Not Assigned(FRectangle) then
  begin
   FRectangle:=TRpRectangle.Create(Self);
@@ -720,6 +710,8 @@ var
 begin
  inherited MouseUp(Button,Shift,X,Y);
 
+ if Button<>mbLeft then
+  exit;
  if Assigned(FRectangle) then
  begin
   FRectangle.Free;
@@ -1241,6 +1233,7 @@ begin
  lnames.Add(SrpSAlignment);
  ltypes.Add(SRpSList);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(HAlignmentToText(TRpGenTextComponent(printitem).Alignment));
 
@@ -1248,6 +1241,7 @@ begin
  lnames.Add(SrpSVAlignment);
  ltypes.Add(SRpSList);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(VAlignmentToText(TRpGenTextComponent(printitem).VAlignment));
 
@@ -1255,6 +1249,7 @@ begin
  lnames.Add(SrpSWFontName);
  ltypes.Add(SRpSWFontName);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(TRpGenTextComponent(printitem).WFontName);
 
@@ -1262,6 +1257,7 @@ begin
  lnames.Add(SrpSLFontName);
  ltypes.Add(SRpSLFontName);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(TRpGenTextComponent(printitem).LFontName);
 
@@ -1269,6 +1265,7 @@ begin
  lnames.Add(SRpSType1Font);
  ltypes.Add(SRpSList);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(Type1FontToText(TRpGenTextComponent(printitem).Type1Font));
 
@@ -1276,6 +1273,7 @@ begin
  lnames.Add(SRpSFontStep);
  ltypes.Add(SRpSList);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(FontStepToString(TRpGenTextComponent(printitem).PrintStep));
 
@@ -1284,6 +1282,7 @@ begin
  lnames.Add(SrpSFontSize);
  ltypes.Add(SRpSFontSize);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontSize));
 
@@ -1291,6 +1290,7 @@ begin
  lnames.Add(SrpSFontColor);
  ltypes.Add(SRpSColor);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontColor));
 
@@ -1298,6 +1298,7 @@ begin
  lnames.Add(SrpSFontStyle);
  ltypes.Add(SrpSFontStyle);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontStyle));
 
@@ -1305,12 +1306,14 @@ begin
  lnames.Add(SrpSRightToLeft);
  ltypes.Add(SRpSList);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(RpBidiModeToString(TRpGenTextComponent(printitem).BidiMode));
  // Back Color
  lnames.Add(SrpSBackColor);
  ltypes.Add(SRpSColor);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpGenTextComponent(printitem).BackColor));
 
@@ -1318,6 +1321,7 @@ begin
  lnames.Add(SrpSTransparent);
  ltypes.Add(SRpSBool);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).Transparent,true));
 
@@ -1325,6 +1329,7 @@ begin
  lnames.Add(SrpSCutText);
  ltypes.Add(SRpSBool);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).CutText,true));
 
@@ -1332,6 +1337,7 @@ begin
  lnames.Add(SrpSWordwrap);
  ltypes.Add(SRpSBool);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).WordWrap,true));
 
@@ -1339,6 +1345,7 @@ begin
  lnames.Add(SrpSSingleLine);
  ltypes.Add(SRpSBool);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).SingleLine,true));
 
@@ -1346,6 +1353,7 @@ begin
  lnames.Add(SRpSFontRotation);
  ltypes.Add(SrpSString);
  lhints.Add('refcommontext.html');
+ lcat.Add(SRpText);
  if Assigned(lvalues) then
   lvalues.Add(FormatCurr('#####0.0',TRpGenTextComponent(printitem).FontRotation/10));
 end;
@@ -1578,6 +1586,55 @@ begin
   exit;
  end;
  inherited GetPropertyValues(pname,lpossiblevalues);
+end;
+
+
+procedure TRpSizePosInterface.DoDragOver(Sender, Source: TObject; X, Y: Integer; State: TDragState;
+     var Accept: Boolean);
+var
+ anode:TTreeNode;
+begin
+ Accept:=false;
+ if Source is TFRpBrowser then
+ begin
+  anode:=TFRpBrowser(Source).Atree.Selected;
+  if Not assigned(anode) then
+   exit;
+  Accept:=true;
+ end;
+end;
+
+procedure TRpSizePosInterface.DoDragDrop(Sender, Source: TObject; X, Y: Integer);
+begin
+ if Assigned(SectionInt) then
+ begin
+  TRpSectionInterface(SectionInt).DoDragDrop(SectionInt,Source,Left+X,Top+Y);
+ end;
+end;
+
+procedure TRpSizePosInterface.InitPopUpMenu;
+var
+ aitem:TMenuItem;
+begin
+ aitem:=TMenuItem.Create(FContextMenu);
+ aitem.Caption:=SRpRename;
+ aitem.Hint:=SRpRenameHint;
+ aitem.OnClick:=RenameClick;
+ FContextMenu.Items.Add(aitem);
+end;
+
+procedure TRpSizePosInterface.RenameClick(Sender:TObject);
+var
+ newname:String;
+begin
+ newname:=RpInputBox(SRpRename,SRpnewName,'');
+ newname:=Trim(newname);
+ if Length(newname)<1 then
+  exit;
+ if nil<>fprintitem.Owner.FindComponent(newname) then
+  Raise Exception.Create(SRpAlreadyWithname);
+ fprintitem.Name:=newname;
+ TFRpObjInsp(fobjinsp).AddCompItem(self,true);
 end;
 
 initialization

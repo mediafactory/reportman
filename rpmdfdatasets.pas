@@ -24,7 +24,7 @@ uses
   SysUtils, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls, QExtCtrls, rpmdconsts,rpgraphutils,
   rptypes,rpdatainfo,rpreport,rpfparams,rpmdfsampledata, QActnList,
-  rpparams, QImgList, QComCtrls;
+  rpdbbrowser,rpparams, QImgList, QComCtrls;
 
 type
   TFRpDatasets = class(TFrame)
@@ -93,6 +93,9 @@ type
     EMybasedefs: TEdit;
     BModify: TButton;
     ImageList1: TImageList;
+    PBrowser: TPanel;
+    Splitter2: TSplitter;
+    PLBrowser: TPanel;
     procedure BParamsClick(Sender: TObject);
     procedure LDatasetsClick(Sender: TObject);
     procedure MSQLChange(Sender: TObject);
@@ -110,6 +113,7 @@ type
   private
     { Private declarations }
     Report:TRpReport;
+    browser:TFRpBrowser;
     procedure SetDataInfo(Value:TRpDataInfoList);
     procedure SetDatabaseInfo(Value:TRpDatabaseInfoList);
     procedure SetParams(Value:TRpParamList);
@@ -190,11 +194,19 @@ begin
  BParams.Hint:=TranslateStr(152,BParams.Hint);
 
  PBottom.Height:=250;
+
+ PLBrowser.Caption:=SRpDatabaseBrowser;
+ browser:=TFRpBrowser.Create(Self);
+ browser.ShowDatasets:=false;
+ browser.ShowEval:=false;
+ browser.Align:=alClient;
+ browser.Parent:=PBrowser;
 end;
 
 procedure TFRpDatasets.SetDatabaseInfo(Value:TRpDatabaseInfoList);
 begin
  report.DatabaseInfo.Assign(Value);
+ browser.Report:=Report;
  FillDatasets;
 end;
 

@@ -28,7 +28,7 @@ uses SysUtils, Classes,
   types,
   rpprintitem,rpdrawitem,rpmdobinsint,rpmdconsts,
   rpgraphutils,rpmunits,
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
   rpvgraphutils,rppdffile,
 {$ENDIF}
   rptypes;
@@ -108,6 +108,7 @@ begin
  lnames.Add(SrpSShape);
  ltypes.Add(SRpSList);
  lhints.Add('refdraw.html');
+ lcat.Add(SRpShape);
  if Assigned(lvalues) then
   lvalues.Add(StringShapeType[TRpShapeType(TRpShape(printitem).Shape)]);
 
@@ -115,6 +116,7 @@ begin
  lnames.Add(SrpSPenStyle);
  ltypes.Add(SRpSList);
  lhints.Add('refdraw.html');
+ lcat.Add(SRpShape);
  if Assigned(lvalues) then
   lvalues.Add(StringPenStyle[TPenStyle(TRpShape(printitem).PenStyle)]);
 
@@ -122,6 +124,7 @@ begin
  lnames.Add(SrpSPenColor);
  ltypes.Add(SRpSColor);
  lhints.Add('refdraw.html');
+ lcat.Add(SRpShape);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpShape(printitem).PenColor));
 
@@ -129,6 +132,7 @@ begin
  lnames.Add(SrpSPenWidth);
  ltypes.Add(SRpSString);
  lhints.Add('refdraw.html');
+ lcat.Add(SRpShape);
  if Assigned(lvalues) then
   lvalues.Add(gettextfromtwips(TRpShape(printitem).PenWidth));
 
@@ -137,6 +141,7 @@ begin
  lnames.Add(SrpSBrushStyle);
  ltypes.Add(SRpSList);
  lhints.Add('refdraw.html');
+ lcat.Add(SRpShape);
  if Assigned(lvalues) then
   lvalues.Add(StringBrushStyle[TRpBrushStyle(TRpShape(printitem).BrushStyle)]);
 
@@ -144,6 +149,7 @@ begin
  lnames.Add(SrpSBrushColor);
  ltypes.Add(SRpSColor);
  lhints.Add('refdraw.html');
+ lcat.Add(SRpShape);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpShape(printitem).BrushColor));
 end;
@@ -445,6 +451,7 @@ begin
  lnames.Add(SRpDrawStyle);
  ltypes.Add(SRpSList);
  lhints.Add('refimage.html');
+ lcat.Add(SRpImage);
  if Assigned(lvalues) then
   lvalues.Add(StringDrawStyles[TRpImage(printitem).DrawStyle]);
 
@@ -452,6 +459,7 @@ begin
  lnames.Add(SrpSExpression);
  ltypes.Add(SRpSExpression);
  lhints.Add('refimage.html');
+ lcat.Add(SRpImage);
  if Assigned(lvalues) then
   lvalues.Add(TRpImage(printitem).Expression);
 
@@ -459,6 +467,7 @@ begin
  lnames.Add(SrpSImage);
  ltypes.Add(SRpSImage);
  lhints.Add('refimage.html');
+ lcat.Add(SRpImage);
  if Assigned(lvalues) then
   lvalues.Add('['+FormatFloat('###,###0.00',TRpImage(printitem).Stream.Size/1024)+
   SRpKbytes+']');
@@ -467,6 +476,7 @@ begin
  lnames.Add(SRpDPIRes);
  ltypes.Add(SRpSString);
  lhints.Add('refimage.html');
+ lcat.Add(SRpImage);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpImage(printitem).DPIRes));
 
@@ -553,7 +563,7 @@ var
  aimage:TRpImage;
  rec:TRect;
  dpix,dpiy:integer;
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
  bitmapwidth,bitmapheight:integer;
 {$ENDIF}
 begin
@@ -571,7 +581,7 @@ begin
    begin
     FBitmap:=TBitmap.Create;
     FBitmap.PixelFormat:=pf32bit;
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
     if GetJPegInfo(aimage.Stream,bitmapwidth,bitmapheight) then
     begin
      rpvgraphutils.JPegStreamToBitmapStream(aimage.stream);

@@ -27,7 +27,10 @@ uses Classes, SysUtils,rpmdconsts,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
- DB,rptypes;
+{$IFNDEF FORWEBAX}
+ DB,
+{$ENDIF}
+ rptypes;
 
 type
 
@@ -37,12 +40,14 @@ type
     FDescription:widestring;
     FSearch:WideString;
     FVisible:boolean;
+    FAllowNulls:boolean;
     FValue:variant;
     FParamType:TRpParamType;
     FDatasets:TStrings;
     FItems:TStrings;
     FValues:TStrings;
     procedure SetVisible(AVisible:boolean);
+    procedure SetAllowNulls(AAllowNulls:boolean);
     procedure SetName(AName:String);
     procedure SetValue(AValue:variant);
     procedure SetDescription(ADescription:widestring);
@@ -63,20 +68,25 @@ type
     procedure SetDatasets(AList:TStrings);
     procedure SetItems(AList:TStrings);
     procedure SetValues(AList:TStrings);
+{$IFNDEF FORWEBAX}
     function GetListValue:Variant;
+{$ENDIF}
     property Description:widestring read FDescription write SetDescription;
     property Search:widestring read FSearch write SetSearch;
     property AsString:WideString read GetAsString write SetAsString;
    published
     property Name:string read FName write SetName;
     property Visible:Boolean read FVisible write SetVisible default True;
+    property AllowNulls:Boolean read FAllowNulls write SetAllowNulls default True;
     property Value:Variant read FValue write SetValue;
     property ParamType:TRpParamType read FParamtype write SetParamType
      default rpParamString;
     property Datasets:TStrings read FDatasets write SetDatasets;
     property Items:TStrings read FItems write SetItems;
     property Values:TStrings read FValues write SetValues;
+{$IFNDEF FORWEBAX}
     property ListValue:Variant read GetListValue;
+{$ENDIF}
   end;
 
   TRpParamList=class(TCollection)
@@ -105,8 +115,11 @@ type
      SetParams;
    end;
 
+{$IFNDEF FORWEBAX}
 function ParamTypeToDataType(paramtype:TRpParamType):TFieldType;
 function VariantTypeToDataType(avariant:Variant):TFieldType;
+{$ENDIF}
+
 function ParamTypeToString(paramtype:TRpParamType):String;
 function StringToParamType(Value:String):TRpParamType;
 procedure GetPossibleDataTypes(alist:TRpWideStrings);
@@ -115,7 +128,9 @@ procedure ParseCommandLineParams(params:TRpParamList);
 
 implementation
 
+{$IFNDEF FORWEBAX}
 uses rpeval;
+{$ENDIF}
 
 procedure TRpParamComp.SetParams(avalue:TRpParamList);
 begin
@@ -132,6 +147,7 @@ Constructor TRpParam.Create(Collection:TCollection);
 begin
  inherited Create(Collection);
  FVisible:=true;
+ FAllowNulls:=true;
  FParamType:=rpParamString;
  FDatasets:=TStringList.Create;
  FItems:=TStringList.Create;
@@ -144,6 +160,7 @@ begin
  begin
   FName:=TRpParam(Source).FName;
   FVisible:=TRpParam(Source).FVisible;
+  FAllowNulls:=TRpParam(Source).FAllowNulls;
   FDescription:=TRpParam(Source).FDescription;
   FSearch:=TRpParam(Source).FSearch;
   FValue:=TRpParam(Source).FValue;
@@ -170,6 +187,12 @@ begin
  Changed(false);
 end;
 
+procedure TRpParam.SetAllowNulls(AAllowNulls:boolean);
+begin
+ FAllowNulls:=AAllowNulls;
+ Changed(false);
+end;
+
 procedure TRpParam.SetDatasets(AList:TStrings);
 begin
  FDatasets.Assign(Alist);
@@ -188,6 +211,7 @@ begin
  Changed(False);
 end;
 
+{$IFNDEF FORWEBAX}
 function TRpParam.GetListValue:Variant;
 var
  aexpression:String;
@@ -226,14 +250,19 @@ begin
    except
     on E:Exception do
     begin
+{$IFDEF DOTNETD}
+     Raise Exception.Create(E.Message+' - '+SRpParameter+':'+Name);
+{$ENDIF}
+{$IFNDEF DOTNETD}
      E.Message:=E.Message+' - '+SRpParameter+':'+Name;
      raise;
+{$ENDIF}
     end;
    end;
   end;
  end;
 end;
-
+{$ENDIF}
 
 procedure TRpParam.SetName(AName:String);
 begin
@@ -261,12 +290,18 @@ end;
 
 procedure TRpParam.SetValue(AValue:Variant);
 begin
- if VarType(Value)=varString then
+ if VarType(AValue)=varString then
  begin
   FValue:=WideString(AValue);
  end
  else
-  FValue:=AValue;
+ begin
+  // To be compatible with Delhi 4-5
+  if VarType(AValue)=20 then
+   FValue:=Integer(AValue)
+  else
+   FValue:=AValue;
+ end;
  Changed(false);
 end;
 
@@ -296,6 +331,7 @@ begin
  Result:=TRpParam(inherited Add);
  Result.FName:=AName;
  Result.FVisible:=true;
+ Result.FAllowNulls:=true;
  Result.FParamType:=rpParamString;
  Result.FValue:=Null;
 end;
@@ -340,6 +376,7 @@ begin
 end;
 
 
+{$IFNDEF FORWEBAX}
 function VariantTypeToDataType(avariant:Variant):TFieldType;
 begin
  case VarType(avariant) of
@@ -393,7 +430,7 @@ begin
     Result:=ftString;
   end;
 end;
-
+{$ENDIF}
 
 procedure TRpParam.WriteDescription(Writer:TWriter);
 begin

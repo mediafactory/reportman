@@ -112,7 +112,7 @@ type
     secinterfaces:TList;
     TopRuler:TRpRuler;
     procedure InvalidateCaptions;
-    procedure UpdateInterface;
+    procedure UpdateInterface(refreshobjinsp:boolean);
     procedure ShowAllHiden;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
@@ -201,7 +201,7 @@ begin
  TopRuler.Height:=20;
  TopRuler.Parent:=PTop;
 
- panelheight:=Round(1.3*Font.Size/72*Screen.PixelsPerInch);
+ panelheight:=Round(1.5*Font.Size/72*Screen.PixelsPerInch);
  SectionScrollBox:=TRpScrollBox.Create(Self);
  SectionScrollBox.BorderStyle:=bsNone;
  SectionScrollBox.Color:=clDisabledForeground;
@@ -431,6 +431,7 @@ begin
    rpanel:=TRpPanelRight.Create(self);
    rpanel.FFrame:=Self;
    rpanel.Height:=asecint.Height;
+   rpanel.Left:=asecint.Width;
    rpanel.Caption:='';
    rpanel.Top:=posx;
    rpanel.Width:=CONS_RIGHTPWIDTH;
@@ -496,7 +497,7 @@ begin
 end;
 
 
-procedure TFRpDesignFrame.UpdateInterface;
+procedure TFRpDesignFrame.UpdateInterface(refreshobjinsp:boolean);
 var
  i,j:integer;
  asecint:TRpSectionInterface;
@@ -555,7 +556,8 @@ begin
    posx:=posx+asecint.Height;
    asecint.SendToBack;
    if ObjInsp.CompItem=asecint then
-    ObjInsp.AddCompItem(asecint,true);
+    if refreshobjinsp then
+     ObjInsp.AddCompItem(asecint,true);
   end;
   apanel:=TRpPaintEventpanel(toptitles.Items[secinterfaces.Count]);
   apanel.Width:=asecint.Width;
@@ -726,7 +728,7 @@ begin
    asection.Height:=pixelstotwips(NewTop-MaxY);
    if asection.Height=0 then
     asection.Height:=0;
-   FFrame.UpdateInterface;
+   FFrame.UpdateInterface(true);
   end;
  end;
  if allowselect then
@@ -849,7 +851,7 @@ begin
 
   section.Width:=pixelstotwips(NewLeft);
 
-  FFrame.UpdateInterface;
+  FFrame.UpdateInterface(true);
  end;
 end;
 

@@ -28,7 +28,7 @@ uses
   QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpreport, QExtCtrls,QButtons,QPrinters,
   rptypes,
-  rpmetafile,rpmdconsts,rpmdprintconfig, QComCtrls;
+  rpmetafile,rpmdconsts,rpmdprintconfig, QComCtrls, QMask, rpmaskeditclx;
 
 type
   TFRpPageSetup = class(TForm)
@@ -48,22 +48,22 @@ type
     BBackground: TButton;
     GPageMargins: TGroupBox;
     LLeft: TLabel;
-    ELeftMargin: TEdit;
-    ETopMargin: TEdit;
+    ELeftMargin: TRpCLXMaskEdit;
+    ETopMargin: TRpCLXMaskEdit;
     LTop: TLabel;
     LMetrics3: TLabel;
     LMetrics4: TLabel;
     LMetrics5: TLabel;
-    ERightMargin: TEdit;
+    ERightMargin: TRpCLXMaskEdit;
     LRight: TLabel;
     LBottom: TLabel;
-    EBottomMargin: TEdit;
+    EBottomMargin: TRpCLXMaskEdit;
     LMetrics6: TLabel;
     GUserDefined: TGroupBox;
     LMetrics7: TLabel;
     LMetrics8: TLabel;
-    EPageheight: TEdit;
-    EPageWidth: TEdit;
+    EPageheight: TRpCLXMaskEdit;
+    EPageWidth: TRpCLXMaskEdit;
     LWidth: TLabel;
     LHeight: TLabel;
     LSelectPrinter: TLabel;
@@ -71,7 +71,7 @@ type
     BConfigure: TButton;
     CheckTwoPass: TCheckBox;
     CheckPrintOnlyIfData: TCheckBox;
-    ECopies: TEdit;
+    ECopies: TRpCLXMaskEdit;
     LCopies: TLabel;
     CheckCollate: TCheckBox;
     LPrinterFonts: TLabel;
@@ -86,6 +86,7 @@ type
     LPreferedFormat: TLabel;
     CheckDrawerAfter: TCheckBox;
     CheckDrawerBefore: TCheckBox;
+    CheckPreviewAbout: TCheckBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -247,6 +248,8 @@ begin
  ComboPrinterFonts.Items.Strings[1]:=TranslateStr(114,ComboPrinterFonts.Items.Strings[1]);
  ComboPrinterFonts.Items.Strings[2]:=TranslateStr(115,ComboPrinterFonts.Items.Strings[2]);
  BBAckground.Caption:=TranslateStr(116,BBAckground.Caption);
+ CheckPreviewAbout.Caption:=SRpAboutBoxPreview;
+
  with ComboSelPrinter.Items do
  begin
   Add(SRpDefaultPrinter);
@@ -304,6 +307,7 @@ begin
  report.Copies:=acopies;
  report.CollateCopies:=CheckCollate.Checked;
  report.TwoPass:=CheckTwoPass.Checked;
+ report.PreviewAbout:=CheckPreviewAbout.Checked;
  report.PrintOnlyIfDataAvailable:=CheckPrintOnlyIfData.Checked;
  FReportAction:=[];
  if CheckDrawerAfter.Checked then
@@ -358,6 +362,7 @@ begin
  CheckPrintOnlyIfData.Checked:=report.PrintOnlyIfDataAvailable;
  CheckDrawerBefore.Checked:=rpDrawerBefore in report.ReportAction;
  CheckDrawerAfter.Checked:=rpDrawerAfter in report.ReportAction;
+ CheckPreviewAbout.Checked:=report.PreviewAbout;
 
  // Size
  ComboPageSize.ItemIndex:=report.PagesizeQt;

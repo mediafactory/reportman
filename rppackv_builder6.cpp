@@ -2,6 +2,8 @@
 
 #include <basepch.h>
 #pragma hdrstop
+USEFORMNS("rpexpredlg.pas", Rpexpredlg, FRpExpredialog);
+//---------------------------------------------------------------------------
 #pragma package(smart_init)
 //---------------------------------------------------------------------------
 

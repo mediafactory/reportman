@@ -72,7 +72,7 @@ object FRpParams: TFRpParams
         Width = 321
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 5
+        TabOrder = 4
         Text = 'EDescription'
         OnChange = EDescriptionChange
       end
@@ -112,14 +112,14 @@ object FRpParams: TFRpParams
         Height = 13
         Caption = 'Value'
       end
-      object EValue: TMaskEdit
+      object EValue: TRpCLXMaskEdit
         Left = 284
         Top = 8
         Width = 141
         Height = 21
         TabOrder = 1
-        Text = 'EValue'
         OnExit = EValueExit
+        Text = 'EValue'
       end
       object CheckVisible: TCheckBox
         Left = 12
@@ -200,9 +200,19 @@ object FRpParams: TFRpParams
         Width = 321
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 7
+        TabOrder = 5
         Visible = False
         OnChange = EDescriptionChange
+      end
+      object CheckAllowNulls: TCheckBox
+        Left = 304
+        Top = 40
+        Width = 129
+        Height = 17
+        Hint = 'Sets if the parameter will be visible to the end user'
+        Caption = 'Allow Nulls'
+        TabOrder = 16
+        OnClick = EDescriptionChange
       end
     end
   end
@@ -538,7 +548,7 @@ object FRpParams: TFRpParams
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF00000000000000000003FFFFFF0000007E03FFFFFF
+      0200000002000000FFFFFF00000000000000000003EA55FF0000007E01BFFF7F
       00000CFF83FFFFFF00010FFFC3FFFFFF04000FFFE3FFFFFF0E020FC1F3FFFFFF
       0E040F80F3FFFFFF070C0FC0F3FFFFFF03980FE003FFFFFF01F0000003FFFFFF
       00E00001FBFFFFFF01F00F03FBFFFFFF03900F01FBFFFFFF0F0C0783FBFFFFFF

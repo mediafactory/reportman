@@ -15,11 +15,12 @@ VERSION = BCB.04.04
 # ---------------------------------------------------------------------------
 PROJECT = rppack_builder4.bpl
 OBJFILES = rpmreg.obj rppdfreport.obj rpvclreport.obj rpalias.obj rpeval.obj rplastsav.obj \
-  rptranslator.obj rpmdshfolder.obj rppack_builder4.obj
+  rptranslator.obj rpmdshfolder.obj rpmdcharttypes.obj rpbasereport.obj \
+  rpmdprintconfigvcl.obj rppack_builder4.obj
 RESFILES = rppack_builder4.res rppdfreport.dcr rpvclreport.dcr rpalias.dcr rpeval.dcr \
   rplastsav.dcr rptranslator.dcr
 DEFFILE =
-RESDEPEN = $(RESFILES)
+RESDEPEN = $(RESFILES) rpmdprintconfigvcl.dfm
 LIBFILES =
 IDLFILES =
 IDLGENFILES =

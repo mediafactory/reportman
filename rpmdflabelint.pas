@@ -118,6 +118,7 @@ begin
  lnames.Add(SrpSText);
  ltypes.Add(SRpSString);
  lhints.Add('reflabel.html');
+ lcat.Add(SRpLabel);
  if Assigned(lvalues) then
   lvalues.Add(TRpLabel(printitem).Text);
 end;
@@ -213,6 +214,7 @@ begin
  lnames.Add(SrpSExpression);
  ltypes.Add(SRpSExpression);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).Expression);
 
@@ -220,6 +222,7 @@ begin
  lnames.Add(SRpSDataType);
  ltypes.Add(SRpSList);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   ParamTypeToString(TRpExpression(printitem).DataType);
 
@@ -227,17 +230,20 @@ begin
  lnames.Add(SrpSDisplayFOrmat);
  ltypes.Add(SRpSString);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).DisplayFormat);
  // Multipage
  lnames.Add(SRpMultiPage);
  ltypes.Add(SRpSBool);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpExpression(printitem).MultiPage,true));
  lnames.Add(SRpPrintNulls);
  ltypes.Add(SRpSBool);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpExpression(printitem).PrintNulls,true));
 
@@ -245,6 +251,7 @@ begin
  lnames.Add(SrpSIdentifier);
  ltypes.Add(SRpSString);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).Identifier);
 
@@ -252,6 +259,7 @@ begin
  lnames.Add(SrpSAggregate);
  ltypes.Add(SRpSList);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(AggregatesString[TRpExpression(printitem).Aggregate]);
 
@@ -260,6 +268,7 @@ begin
  lnames.Add(SrpSAgeGroup);
  ltypes.Add(SRpGroup);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).GroupName);
 
@@ -267,6 +276,7 @@ begin
  lnames.Add(SrpSAgeType);
  ltypes.Add(SRpSList);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(AggretypeString[TRpExpression(printitem).AgType]);
 
@@ -274,6 +284,7 @@ begin
  lnames.Add(SrpSIniValue);
  ltypes.Add(SRpSExpression);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).AgIniValue);
 
@@ -281,6 +292,7 @@ begin
  lnames.Add(SRpSOnlyOne);
  ltypes.Add(SRpSBool);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpExpression(printitem).PrintOnlyOne,true));
 end;

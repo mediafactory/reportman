@@ -35,8 +35,8 @@ uses Classes,SysUtils,
 {$IFDEF USESQLEXPRESS}
  SqlExpr,DBXpress,SqlConst,//DBExpMYSQL,DbExpMyS,dbExpDB2,dbExpORA,dbExpINT
 {$ENDIF}
- rpmdconsts,
- DB,rpparams,Inifiles,rptypes,DBClient,
+ rpmdconsts,rpmdshfolder,
+ DB,rpparams,Inifiles,rptypes,
 {$IFDEF USEIBX}
  IBQuery,IBDatabase,
 {$ENDIF}
@@ -47,7 +47,12 @@ uses Classes,SysUtils,
   dbtables,
 {$ENDIF}
 {$IFDEF USEADO}
+ {$IFNDEF DOTNETD}
   adodb,
+ {$ENDIF}
+ {$IFDEF DOTNETD}
+  ADONetDb,
+ {$ENDIF}
 {$ENDIF}
 {$IFDEF USEIBO}
   IB_Components,IBODataset,
@@ -55,7 +60,10 @@ uses Classes,SysUtils,
 {$IFDEF USEVARIANTS}
   Variants,Types,
 {$ENDIF}
- rpdataset,rpdatatext;
+{$IFDEF USERPDATASET}
+ rpdataset,DBClient,
+{$ENDIF}
+ rpdatatext;
 
 {$IFDEF LINUX}
 const
@@ -84,20 +92,25 @@ type
    procedure DeleteConnection(conname:string);
  end;
 
+
  IRpDatabaseDriver=interface
   ['{B3BA37D5-5401-4B9E-8804-698C214F8B0C}']
-  procedure Connect;stdcall;
-  procedure AssignParams(params:TStrings);stdcall;
-  procedure GetParams(params:TStrings);stdcall;
+  procedure Connect;
+  procedure AssignParams(params:TStrings);
+  procedure GetParams(params:TStrings);
+  function GetStreamFromSQL(sqlsentence:String;params:TStringList):TStream;
+  procedure GetTableNames(Alist:TStrings);
+  procedure GetFieldNames(atable:String;fieldlist,fieldtypes,fieldsizes:TStrings);
+  function OpenDatasetFromSQL(sqlsentence:String;params:TStringList;onlyexec:Boolean):TDataset;
  end;
 
  IRpDataDriver=interface
   ['{5094336F-C953-4108-94E3-1EC0E3D3D94C}']
-  function Open:TDataset;stdcall;
-  procedure Close;stdcall;
-  procedure SetDatabase(IDatabase:IRpDatabaseDriver);stdcall;
-  procedure AssignParams(params:TStrings);stdcall;
-  procedure GetParams(params:TStrings);stdcall;
+  function Open:TDataset;
+  procedure Close;
+  procedure SetDatabase(IDatabase:IRpDatabaseDriver);
+  procedure AssignParams(params:TStrings);
+  procedure GetParams(params:TStrings);
  end;
 
  TRpDatabaseInfoItem=class(TCollectionItem)
@@ -167,8 +180,11 @@ type
 {$ENDIF}
    function GetStreamFromSQL(sqlsentence:String;params:TStringList):TStream;
    procedure GetTableNames(Alist:TStrings);
+   procedure GetFieldNames(atable:String;fieldlist,fieldtypes,fieldsizes:TStrings);
    function OpenDatasetFromSQL(sqlsentence:String;params:TStringList;onlyexec:Boolean):TDataset;
    procedure CreateLibrary(reporttable,reportfield,reportsearchfield,groupstable:String);
+   function GetReportStream(ReportName:WideString):TStream;
+   procedure SaveReportStream(ReportName:WideString;astream:TStream);
 {$IFDEF USEADO}
    property ADOConnection:TADOConnection read GetADOConnection write SetADOConnection;
 {$ENDIF}
@@ -201,8 +217,11 @@ type
 {$ENDIF}
    function Add(alias:string):TRpDatabaseInfoItem;
    function IndexOf(Value:string):integer;
+   function GetReportStream(ConnectionName:String;ReportName:WideString):TStream;
+   procedure SaveReportStream(ConnectionName:String;ReportName:WideString;astream:TStream);
    procedure SaveToFile(ainifile:String);
    procedure LoadFromFile(ainifile:String);
+   procedure FillTreeDir(ConnectionName:String;alist:TStrings);
    property Items[index:integer]:TRpDatabaseInfoItem read GetItem write SetItem;default;
    constructor Create(rep:TComponent);
    destructor Destroy;override;
@@ -218,7 +237,9 @@ type
    FDataSource:string;
    FAlias:string;
    FDataset:TDataset;
+{$IFDEF USERPDATASET}
    FCachedDataset:TRpDataset;
+{$ENDIF}
    FSQLInternalQuery:TDataset;
    FMyBaseFilename:string;
    FMyBaseFields:String;
@@ -253,7 +274,9 @@ type
    destructor Destroy;override;
    constructor Create(Collection:TCollection);override;
    property Dataset:TDataset read FDataset write FDataset;
+{$IFDEF USERPDATASET}
    property CachedDataset:TRpDataset read FCachedDataset;
+{$ENDIF}
    property Cached:Boolean read FCached write FCached;
   published
    property Alias:string read FAlias write SetAlias;
@@ -294,7 +317,11 @@ type
 
 procedure UpdateConAdmin;
 procedure GetRpDatabaseDrivers(alist:TStrings);
+{$IFDEF USERPDATASET}
 procedure CombineAddDataset(client:TClientDataset;data:TDataset;group:boolean);
+{$ENDIF}
+procedure FillFieldsInfo(adata:TDataset;fieldnames,fieldtypes,fieldsizes:TStrings);
+procedure ExtractFieldNameAndSize(astring:String;var fieldname:String;var size:Integer);
 
 var
  ConAdmin:TRpConnAdmin;
@@ -994,8 +1021,13 @@ begin
       except
        on E:Exception do
        begin
+{$IFDEF DOTNETD}
+        Raise Exception.Create(E.Message+':BDE-ALIAS:'+FBDEAlias);
+{$ENDIF}
+{$IFNDEF DOTNETD}
         E.Message:=E.Message+':BDE-ALIAS:'+FBDEAlias;
         Raise;
+{$ENDIF}
        end;
       end;
      end;
@@ -1170,6 +1202,7 @@ begin
     // For opened datasets they must go to first record
     // Before printing
     FDataset.First;
+{$IFDEF USERPDATASET}
     if cached then
     begin
      if Not FCachedDataset.Active then
@@ -1178,6 +1211,7 @@ begin
       FCachedDataset.DoOpen;
      end;
     end;
+{$ENDIF}
     doexit:=true;
    end;
    if ((FDataset<>FSQLInternalQuery) and (not doexit)) then
@@ -1190,12 +1224,14 @@ begin
       Raise Exception.Create(E.Message);
      end;
     end;
+{$IFDEF USERPDATASET}
     if cached then
     begin
      FCachedDataset.DoClose;
      FCachedDataset.Dataset:=FDataset;
      FCachedDataset.DoOpen;
     end;
+{$ENDIF}
     doexit:=true;
    end;
   end;
@@ -1270,7 +1306,12 @@ begin
       end;
      rpdatamybase:
       begin
+{$IFDEF USERPDATASET}
        FSQLInternalQuery:=TClientDataset.Create(nil);
+{$ENDIF}
+{$IFNDEF USERPDATASET}
+       Raise Exception.Create(SRpClientDatasetNotSupported);
+{$ENDIF}
       end;
      rpdatabde:
       begin
@@ -1436,6 +1477,10 @@ begin
      end;
     rpdatamybase:
      begin
+{$IFNDEF USERPDATASET}
+      Raise Exception.Create(SRpClientDatasetNotSupported);
+{$ENDIF}
+{$IFDEF USERPDATASET}
       try
        TClientDataSet(FSQLInternalQuery).IndexName:='';
        TClientDataSet(FSQLInternalQuery).IndexFieldNames:='';
@@ -1476,6 +1521,7 @@ begin
        FSQLInternalQuery:=nil;
        raise;
       end;
+{$ENDIF}
      end;
     rpdatabde:
      begin
@@ -1616,7 +1662,7 @@ begin
    for i:=0 to params.count-1 do
    begin
     param:=params.items[i];
-    atype:=ParamTypeToDataType(param.ParamType);
+    atype:=rpparams.ParamTypeToDataType(param.ParamType);
     avalue:=param.ListValue;
     if atype=ftUnknown then
      atype:=VarTypeToDataType(Vartype(avalue));
@@ -1666,7 +1712,7 @@ begin
         for j := 0 to TADOQuery(FSQLInternalQuery).Parameters.Count - 1 do
         begin
          adoParam := TADOQuery(FSQLInternalQuery).Parameters.Items[j];
-         if (adoParam.Name = param.Name) then
+         if (UpperCase(adoParam.Name) = UpperCase(param.Name)) then
          begin
           adoParam.DataType := atype;
           adoParam.Value := avalue;
@@ -1704,12 +1750,14 @@ begin
     end;
    end;
 {$ENDIF}
+{$IFDEF USERPDATASET}
    if cached then
    begin
     FCachedDataset.DoClose;
     FCachedDataset.Dataset:=FDataset;
     FCachedDataset.DoOpen;
    end;
+{$ENDIF}
   end;
 
   connecting:=false;
@@ -1728,8 +1776,10 @@ begin
  begin
   if FDataset=FSQLInternalQuery then
    FDataset.Active:=false;
+{$IFDEF USERPDATASET}
   if Assigned(FCachedDataset) then
    FCachedDataset.DoClose;
+{$ENDIF}
  end;
 end;
 
@@ -1739,15 +1789,19 @@ begin
 
  FDataUnions:=TStringList.Create;
  FBDEType:=rpdquery;
+{$IFDEF USERPDATASET}
  FCachedDataset:=TRpDataset.Create(nil);
+{$ENDIF}
 end;
 
 destructor TRpDataInfoItem.Destroy;
 begin
  try
   FDataUnions.free;
+{$IFDEF USERPDATASET}
   FCachedDataset.free;
   FCachedDataset:=nil;
+{$ENDIF}
   if assigned(FSQLInternalQuery) then
   begin
    if Assigned(FSQLInternalQuery.datasource) then
@@ -1761,6 +1815,7 @@ end;
 
 constructor TRpConnAdmin.Create;
 begin
+ inherited Create;
  LoadConfig;
 end;
 
@@ -2054,7 +2109,12 @@ begin
   try
    astream:=data.CreateBlobStream(data.fields[0],bmRead);
    memstream.SetSize(astream.size);
+{$IFDEF DOTNETD}
+   astream.Read(memstream.memory[1],memstream.size);
+{$ENDIF}
+{$IFNDEF DOTNETD}
    astream.Read(memstream.memory^,memstream.size);
+{$ENDIF}
    memstream.Seek(0,soFromBeginning);
   except
    memstream.free;
@@ -2065,6 +2125,88 @@ begin
   data.free;
  end;
 end;
+
+procedure TRpDatabaseInfoItem.GetFieldNames(atable:String;fieldlist,fieldtypes,fieldsizes:TStrings);
+{$IFDEF USEZEOS}
+var
+ res:IZResultSet;
+{$ENDIF}
+{$IFDEF USEBDE}
+var
+  bdetable:TTable;
+{$ENDIF}
+begin
+ Connect;
+ case Driver of
+  rpdatadbexpress:
+   begin
+{$IFDEF USESQLEXPRESS}
+    SQLConnection.GetFieldNames(atable,fieldlist);
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverDBX);
+{$ENDIF}
+   end;
+  rpdataibx:
+   begin
+{$IFDEF USEIBX}
+    FIBDatabase.GetFieldNames(atable,fieldlist);
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
+{$ENDIF}
+   end;
+  rpdatazeos:
+   begin
+{$IFDEF USEZEOS}
+    res:=FZConnection.DbcConnection.GetMetadata.GetColumns('','',atable,'');
+    fieldlist.Clear;
+    if res.First then
+     fieldlist.Add(res.GetStringByName('COLUMN_NAME'));
+    while res.Next do
+     fieldlist.Add(res.GetStringByName('COLUMN_NAME'));
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverZeos);
+{$ENDIF}
+   end;
+  rpdatamybase:
+   begin
+    fieldlist.Clear;
+   end;
+  rpdatabde:
+   begin
+{$IFDEF USEBDE}
+    bdetable:=TTable.Create(nil);
+    try
+     bdetable.DatabaseName:=FBDEDatabase.Databasename;
+     bdetable.TableName:=atable;
+     if Assigned(TRpDatabaseInfoList(Collection).FBDESession) then
+      bdetable.SessionName:=TRpDatabaseInfoList(Collection).FBDESession.SessionName;
+     bdetable.GetFieldNames(fieldlist);
+    finally
+     bdetable.free;
+    end;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverBDE);
+{$ENDIF}
+   end;
+  rpdataado:
+   begin
+{$IFDEF USEADO}
+    ADOConnection.GetFieldNames(atable,fieldlist);
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverADO);
+{$ENDIF}
+   end;
+  rpdataibo:
+   begin
+{$IFDEF USEIBO}
+    fieldlist.clear;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBO);
+{$ENDIF}
+   end;
+ end;
+end;
+
 
 procedure TRpDatabaseInfoItem.GetTableNames(Alist:TStrings);
 {$IFDEF USEZEOS}
@@ -2206,7 +2348,7 @@ begin
      TQuery(FSQLInternalQuery).SessionName:=TRpDatabaseInfoList(Collection).FBDESession.SessionName;
     TQuery(FSQLInternalQuery).DatabaseName:=FBDEDatabase.DatabaseName;
     TQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
-    TQuery(FSQLInternalQUery).UniDirectional:=True;
+//    TQuery(FSQLInternalQUery).UniDirectional:=True;
 {$ELSE}
     Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverBDE);
 {$ENDIF}
@@ -2217,7 +2359,7 @@ begin
     FSQLInternalQuery:=TADOQuery.Create(nil);
     TADOQuery(FSQLInternalQuery).Connection:=ADOConnection;
     TADOQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
-    TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
+//    TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
 {$ELSE}
     Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverADO);
 {$ENDIF}
@@ -2324,7 +2466,7 @@ begin
        for j := 0 to TADOQuery(FSQLInternalQuery).Parameters.Count - 1 do
        begin
         adoParam := TADOQuery(FSQLInternalQuery).Parameters.Items[j];
-        if (adoParam.Name = paramName) then
+        if (UpperCase(adoParam.Name) = UpperCase(paramName)) then
         begin
          adoParam.DataType:=ftBlob;
          adoParam.LoadFromStream(astream,ftBlob);
@@ -2543,6 +2685,7 @@ begin
  list.add(fieldrest);
 end;
 
+{$IFDEF USERPDATASET}
 procedure CombineAddDataset(client:TClientDataset;data:TDataset;group:boolean);
 var
  i,index:integer;
@@ -2630,6 +2773,7 @@ begin
   groupfieldindex.free;
  end;
 end;
+{$ENDIF}
 
 procedure TRpDatabaseInfoItem.DefineProperties(Filer:TFiler);
 begin
@@ -2811,6 +2955,465 @@ begin
 end;
 
 
+function TRpDatabaseInfoList.GetReportStream(ConnectionName:String;ReportName:WideString):TStream;
+var
+ index:integer;
+begin
+ index:=IndexOf(ConnectionName);
+ if index<0 then
+  Raise Exception.Create(SRPDabaseAliasNotFound+':'+ConnectionName);
+ Result:=Items[index].GetReportStream(Reportname);
+end;
+
+procedure TRpDatabaseInfoList.SaveReportStream(ConnectionName:String;ReportName:WideString;astream:TStream);
+var
+ index:integer;
+begin
+ index:=IndexOf(ConnectionName);
+ if index<0 then
+  Raise Exception.Create(SRPDabaseAliasNotFound+':'+ConnectionName);
+ Items[index].SaveReportStream(Reportname,astream);
+end;
+
+
+function TRpDatabaseInfoItem.GetReportStream(ReportName:WideString):TStream;
+var
+ astring:String;
+ params:TStringList;
+ aparam:TRpParamObject;
+ adata:TDataset;
+ astream:TStream;
+begin
+ Result:=nil;
+ astring:='SELECT '+ReportField+' FROM '+
+  ReportTable+' WHERE '+ReportSearchField+
+  '=:REPNAME';
+ params:=TStringList.Create;
+ try
+  aparam:=TRpParamObject.Create;
+  try
+   aparam.Value:=reportname;
+   params.AddObject('REPNAME',aparam);
+   adata:=OpenDatasetFromSQL(astring,params,false);
+   try
+    if adata.eof and adata.Bof then
+     Raise Exception.Create(SRptReportnotfound+':'+Alias+':'+ReportName);
+    astream:=adata.CreateBlobStream(adata.Fields[0],bmRead);
+    try
+     Result:=TMemoryStream.Create;
+     Result.CopyFrom(astream,astream.Size);
+     Result.Seek(0,soFromBeginning);
+    finally
+     astream.free;
+    end;
+   finally
+    adata.free;
+   end;
+  finally
+   aparam.free;
+  end;
+ finally
+  params.free;
+ end;
+end;
+
+procedure TRpDatabaseInfoItem.SaveReportStream(ReportName:WideString;astream:TStream);
+var
+ astring:String;
+ params:TStringList;
+ aparam,aparam2:TRpParamObject;
+ adata:TDataset;
+begin
+ params:=TStringList.Create;
+ try
+  aparam:=TRpParamObject.Create;
+  aparam2:=TRpParamObject.Create;
+  try
+   aparam.Value:=reportname;
+   aparam2.Stream:=astream;
+   params.AddObject('REPNAME',aparam);
+   // if the report does not exists raise an error
+   astring:='SELECT '+ReportSearchField+' FROM '+
+    ReportTable+' WHERE '+ReportSearchField+
+    '=:REPNAME';
+   adata:=OpenDatasetFromSQL(astring,params,false);
+   try
+    if adata.eof and adata.Bof then
+     Raise Exception.Create(SRptReportnotfound+':'+Alias+':'+ReportName);
+   finally
+    adata.free;
+   end;
+   astring:='UPDATE '+ReportTable+' SET '+ReportField+'=:REPORT'
+    +' WHERE '+ReportSearchField+
+    '=:REPNAME';
+   params.AddObject('REPORT',aparam2);
+   OpenDatasetFromSQL(astring,params,true);
+  finally
+   aparam.free;
+   aparam2.free;
+  end;
+ finally
+  params.free;
+ end;
+end;
+
+procedure TRpDatabaseInfoList.FillTreeDir(ConnectionName:String;alist:TStrings);
+var
+ index:integer;
+ adatareports:TDataset;
+ adatagroups:TDataset;
+ dbinfo:TRpDatabaseInfoItem;
+ DReportgroups,DReportgroups2:TClientDataset;
+ Dreports:TClientDataset;
+ groupcode:Integer;
+ grouppath:string;
+ i:integer;
+
+
+ function CalcGroupPath(acode:Integer):String;
+ var
+  parent:integer;
+  agroupname:String;
+ begin
+  if DReportgroups2.FindKey([acode]) then
+  begin
+   parent:=0;
+   if Not DReportgroups2.FieldByName('PARENT_GROUP').IsNull then
+    parent:=DReportgroups2.FieldByName('PARENT_GROUP').AsInteger;
+   if parent<0 then
+    parent:=0;
+   agroupname:=DReportgroups2.FieldByName('GROUP_NAME').AsString;
+   if parent>0 then
+    Result:=CalcGroupPath(parent)+C_DIRSEPARATOR+agroupname
+   else
+    Result:=agroupname;
+  end
+  else
+   Result:='';
+ end;
+
+begin
+ index:=IndexOf(ConnectionName);
+ if index<0 then
+  Raise Exception.Create(SRPAliasNotExists+' - '+Connectionname);
+ alist.Clear;
+ dbinfo:=Items[Index];
+ dbinfo.Connect;
+ adatareports:=
+  dbinfo.OpenDatasetFromSQL('SELECT '+dbinfo.ReportSearchField+',REPORT_GROUP FROM '+
+  dbinfo.reporttable,nil,false);
+ try
+  adatagroups:=
+   dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
+     ' PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false);
+  try
+   // Fill client dataset helpers
+   DReportGroups:=TClientDataSet.Create(nil);
+   DReportGroups2:=TClientDataSet.Create(nil);
+   DReports:=TClientDataSet.Create(nil);
+   try
+    DReportGroups.FieldDefs.Add('GROUP_CODE',ftInteger,0,true);
+    DReportGroups.FieldDefs.Add('GROUP_NAME',ftString,50,false);
+    DReportGroups.FieldDefs.Add('PARENT_GROUP',ftInteger,0,false);
+    DReportGroups.FieldDefs.Add('GROUP_PATH',ftMemo,250,false);
+    DReportGroups2.FieldDefs.Assign(DReportGroups.FieldDefs);
+    DReports.FieldDefs.Add('REPORT_NAME',ftString,50,true);
+    DReports.FieldDefs.Add('REPORT_GROUP',ftInteger,0,false);
+    DReports.IndexDefs.Add('IGROUP','REPORT_GROUP',[]);
+    DReports.IndexFieldNames:='REPORT_GROUP';
+    DReportGroups.IndexDefs.Add('IGROUP','GROUP_CODE',[]);
+    DReportGroups.IndexFieldNames:='GROUP_CODE';
+    DReportGroups2.IndexDefs.Add('IGROUP','GROUP_CODE',[]);
+    DReportGroups2.IndexFieldNames:='GROUP_CODE';
+    DReportGroups.CreateDataset;
+    DReportGroups2.CreateDataset;
+    DReports.CreateDataset;
+    // Fill the datasets
+    While Not adatagroups.Eof do
+    begin
+     DReportGroups.Append;
+     try
+      DReportGroups.FieldByName('GROUP_CODE').Value:=adatagroups.FieldByName('GROUP_CODE').Value;
+      DReportGroups.FieldByName('GROUP_NAME').AsVariant:=adatagroups.FieldByName('GROUP_NAME').AsVariant;
+      DReportGroups.FieldByname('PARENT_GROUP').AsVariant:=adatagroups.FieldByName('PARENT_GROUP').AsVariant;
+      DReportGroups2.Append;
+      try
+       for i:=0 to DReportGroups2.Fields.Count-1 do
+       begin
+        DReportGroups2.Fields[i].AsVariant:=DReportGroups.Fields[i].AsVariant;
+       end;
+       DReportGroups2.Post;
+      except
+       DReportGroups2.Cancel;
+       Raise;
+      end;
+      DReportGroups.Post;
+     except
+      DReportGroups.Cancel;
+      Raise;
+     end;
+     adatagroups.Next;
+    end;
+    While Not adatareports.Eof do
+    begin
+     DReports.Append;
+     try
+      DReports.FieldByname('REPORT_NAME').Value:=adatareports.FieldByName('REPORT_NAME').Value;
+      DReports.FieldByName('REPORT_GROUP').AsVariant:=adatareports.FieldByName('REPORT_GROUP').AsVariant;
+      DReports.Post;
+     except
+      DReports.Cancel;
+      Raise;
+     end;
+     adatareports.Next;
+    end;
+    // Fill the string for each group
+    DReportgroups.First;
+    while Not DReportGroups.Eof do
+    begin
+     groupcode:=DReportGroups.FieldByName('GROUP_CODE').AsInteger;
+     // If the group have no reports, delete it
+     if Not Dreports.FindKey([groupcode]) then
+     begin
+      DReportGroups.Delete;
+     end
+     else
+     begin
+      grouppath:=CalcGroupPath(groupcode);
+      while ((DReports.FieldByName('REPORT_GROUP').AsInteger=groupcode) and
+       (Not DReports.Eof)) do
+      begin
+       alist.Add(grouppath+C_DIRSEPARATOR+Dreports.FieldByName('REPORT_NAME').AsString);
+       DReports.Next;
+      end;
+
+      DReportGroups.Next;
+     end;
+    end;
+   finally
+    DReportGroups.free;
+    DReportGroups2.free;
+    DReports.free;
+   end;
+//   FillTree(adatagroups,adatareports);
+  finally
+   adatagroups.free;
+  end;
+ finally
+  adatareports.free;
+ end;
+end;
+
+procedure FieldToDataString(afield:TField;var typestring,sizestring:String);
+begin
+ sizestring:='';
+ if afield.size>0 then
+  sizestring:=IntToStr(afield.Size);
+ case afield.datatype of
+  ftString:
+   begin
+    typestring:=SRpString;
+   end;
+  ftSmallint:
+   begin
+    typestring:=SRpSmallInt;
+   end;
+  ftInteger:
+   begin
+    typestring:=SRpInteger;
+   end;
+  ftWord:
+   begin
+    typestring:=SRpWord;
+   end;
+  ftBoolean:
+   begin
+    typestring:=SRpBoolean;
+   end;
+  ftFloat:
+   begin
+    typestring:=SRpFloat;
+   end;
+  ftCurrency:
+   begin
+    typestring:=SRpCurrency;
+   end;
+  ftBCD:
+   begin
+    typestring:=SRpBCD;
+   end;
+  ftDate:
+   begin
+    typestring:=SRpDate;
+   end;
+  ftTime:
+   begin
+    typestring:=SRpTime;
+   end;
+  ftDateTime:
+   begin
+    typestring:=SRpDateTime;
+   end;
+  ftBytes:
+   begin
+    typestring:=SRpBytes;
+   end;
+  ftVarBytes:
+   begin
+    typestring:=SRpVarBytes;
+   end;
+  ftAutoInc:
+   begin
+    typestring:=SRpAutoInc;
+   end;
+  ftBlob:
+   begin
+    typestring:=SRpBlob;
+   end;
+  ftMemo:
+   begin
+    typestring:=SRpMemo;
+   end;
+  ftGraphic:
+   begin
+    typestring:=SRpGraphic;
+   end;
+  ftFmtMemo:
+   begin
+    typestring:=SRpFmtmemo;
+   end;
+  ftParadoxOle:
+   begin
+    typestring:=SRpParadoxOLE;
+   end;
+  ftDBaseOLE:
+   begin
+    typestring:=SRpDBaseOLE;
+   end;
+  ftTypedBinary:
+   begin
+    typestring:=SRpTypedBinary;
+   end;
+  ftCursor:
+   begin
+    typestring:=SRpCursor;
+   end;
+  ftFixedChar:
+   begin
+    typestring:=SRpFixedChar;
+   end;
+  ftWideString:
+   begin
+    typestring:=SRpWideString;
+   end;
+  ftADT:
+   begin
+    typestring:=SRpADT;
+   end;
+  ftArray:
+   begin
+    typestring:=SRpArray;
+   end;
+  ftReference:
+   begin
+    typestring:=SRpReference;
+   end;
+  ftDataset:
+   begin
+    typestring:=SRpDataset;
+   end;
+{$IFNDEF BUILDER4}
+  ftOraBlob:
+   begin
+    typestring:=SRpOraBlob;
+   end;
+  ftOraClob:
+   begin
+    typestring:=SRpOraClob;
+   end;
+  ftVariant:
+   begin
+    typestring:=SRpVariant;
+   end;
+  ftInterface:
+   begin
+    typestring:=SRpInterface;
+   end;
+  ftIDispatch:
+   begin
+    typestring:=SRpIDispatch;
+   end;
+  ftGUID:
+   begin
+    typestring:=SRpGUID;
+   end;
+{$ENDIF}
+{$IFDEF USEVARIANTS}
+  ftTimeStamp:
+   begin
+    typestring:=SRpTimeStamp;
+   end;
+  ftFmtBCD:
+   begin
+    typestring:=SRpFmtBCD;
+   end;
+{$ENDIF}
+  else
+   begin
+    typestring:=SRpUnknown;
+    sizestring:='';
+   end;
+ end;
+end;
+
+procedure ExtractFieldNameAndSize(astring:String;var fieldname:String;var size:Integer);
+var
+ index:integer;
+ newstring:string;
+begin
+ fieldname:='';
+ size:=10;
+ if Length(astring)<1 then
+  exit;
+ if astring[1]='[' then
+  index:=Pos(']',astring)
+ else
+  index:=Pos(' ',astring);
+ if index>0 then
+ begin
+  fieldname:=Copy(astring,1,index-1);
+  newstring:=Copy(astring,index+1,Length(astring));
+  index:=Pos('(',newstring);
+  if index>=0 then
+  begin
+   newstring:=Copy(newstring,index+1,Length(astring));
+   index:=Pos(')',newstring);
+   if index>0 then
+   begin
+    size:=StrToInt(Copy(newstring,1,index-1));
+   end;
+  end
+ end
+ else
+  fieldname:=astring;
+end;
+
+procedure FillFieldsInfo(adata:TDataset;fieldnames,fieldtypes,fieldsizes:TStrings);
+var
+ i:integer;
+ afield:TField;
+ typestring,sizestring:String;
+begin
+ adata.GetFieldNames(fieldnames);
+ for i:=0 to fieldnames.Count-1 do
+ begin
+  afield:=adata.FieldByName(fieldnames[i]);
+  FieldToDataString(afield,typestring,sizestring);
+  fieldtypes.Add(typestring);
+  fieldsizes.Add(sizestring);
+ end;
+end;
+
 initialization
 
 ConAdmin:=nil;
@@ -2822,6 +3425,7 @@ begin
  ConAdmin.free;
  ConAdmin:=nil;
 end;
+
 
 
 end.

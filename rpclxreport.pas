@@ -26,7 +26,7 @@ interface
 uses Classes,Sysutils,rpreport,
  rpmdconsts,rpcompobase,rptypes,rpmetafile,rptextdriver,
  QPrinters,rpqtdriver,rppreview,rprfparams,rpgraphutils,
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
  rpgdidriver,Printers,Dialogs,rprfvparams,rpvpreview,rpfmainmetaviewvcl,
 {$ENDIF}
  rpalias,rpfmainmetaview;
@@ -78,12 +78,12 @@ begin
 end;
 
 procedure TCLXReport.PrinterSetup;
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
 var
  dia:TPrinterSetupDialog;
 {$ENDIF}
 begin
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
  if FDriver=rpDriverGDI then
  begin
   dia:=TPrinterSetupDialog.Create(nil);
@@ -102,7 +102,7 @@ end;
 function TCLXReport.ShowParams:boolean;
 begin
  CheckLoaded;
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
  if FDriver=rpDriverGDI then
  begin
   Result:=rprfvparams.ShowUserParams(report.params);
@@ -115,21 +115,21 @@ end;
 
 function TCLXReport.Execute:boolean;
 var
- allpages,collate:boolean;
+ allpages,collate,modified:boolean;
  frompage,topage,copies:integer;
  dook:boolean;
 begin
  inherited Execute;
  if Preview then
  begin
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
   if FDriver=rpDriverGDI then
   begin
-   Result:=rpvpreview.ShowPreview(report,Title);
+   Result:=rpvpreview.ShowPreview(report,Title,modified);
    exit;
   end;
 {$ENDIF}
-  Result:=rppreview.ShowPreview(report,Title,FUseSystemPrintDialog);
+  Result:=rppreview.ShowPreview(report,Title,FUseSystemPrintDialog,modified);
  end
  else
  begin
@@ -152,7 +152,7 @@ begin
 
   if ShowPrintDialog then
   begin
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
    if FDriver=rpDriverGDI then
    begin
     if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
@@ -179,7 +179,7 @@ begin
   end
   else
   begin
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
    if FDriver=rpDriverGDI then
    begin
     Result:=rpgdidriver.PrintReport(report,Title,Showprogress,true,1,
@@ -196,7 +196,7 @@ end;
 procedure TCLXReport.SaveToPDF(filename:string;compressed:boolean=false);
 begin
  CheckLoaded;
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
  if FDriver=rpDriverGDI then
  begin
   rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,true,1,999999,
@@ -211,7 +211,7 @@ end;
 function TCLXReport.PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;
 begin
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
  if FDriver=rpDriverGDI then
  begin
   Result:=rpgdidriver.PrintReport(Report,Title,ShowProgress,false,
@@ -233,14 +233,14 @@ begin
 
  if Preview then
  begin
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
   if FDriver=rpDriverGDI then
   begin
-   rpfmainmetaviewvcl.PreviewMetafile(metafile,nil,true);
+   rpfmainmetaviewvcl.PreviewMetafile(metafile,nil,true,true);
    exit;
   end;
 {$ENDIF}
-  rpfmainmetaview.PreviewMetafile(metafile,nil,true);
+  rpfmainmetaview.PreviewMetafile(metafile,nil,true,true);
   exit;
  end;
 
@@ -263,7 +263,7 @@ begin
 
  if ShowPrintDialog then
  begin
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
   if FDriver=rpDriverGDI then
   begin
    if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
@@ -285,7 +285,7 @@ begin
  end
  else
  begin
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
   if FDriver=rpDriverGDI then
   begin
    rpgdidriver.PrintMetafile(metafile,Title,ShowProgress,allpages,frompage,topage,copies,collate,GetDeviceFontsOption(metafile.PrinterSelect),metafile.PrinterSelect);
@@ -302,5 +302,6 @@ begin
  rptextdriver.PrintReportToText(report,'',false,true,1,999,
    1,filename,true,true,textdriver);
 end;
+
 
 end.

@@ -19,7 +19,6 @@ object FRpGridOptions: TFRpGridOptions
     Top = 128
     Width = 41
     Height = 29
-    Pen.Width = 0
     OnMouseUp = GridColorMouseDown
   end
   object BOK: TButton
@@ -49,12 +48,13 @@ object FRpGridOptions: TFRpGridOptions
     Height = 13
     Caption = 'Horizontal spacing'
   end
-  object EGridX: TEdit
+  object EGridX: TRpCLXMaskEdit
     Left = 144
     Top = 4
     Width = 81
     Height = 21
     TabOrder = 3
+    EditType = tecurrency
   end
   object Lvertical: TLabel
     Left = 8
@@ -63,12 +63,13 @@ object FRpGridOptions: TFRpGridOptions
     Height = 13
     Caption = 'Vertical spacing'
   end
-  object EGridY: TEdit
+  object EGridY: TRpCLXMaskEdit
     Left = 144
     Top = 28
     Width = 81
     Height = 21
     TabOrder = 5
+    EditType = tecurrency
   end
   object LGridColor: TLabel
     Left = 8

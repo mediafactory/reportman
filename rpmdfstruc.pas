@@ -26,21 +26,15 @@ uses
   SysUtils, Types, Classes,
   QGraphics, QControls, QForms, QDialogs,
   QComCtrls,QMenus, QTypes,QActnList, QImgList, QButtons, QExtCtrls,
-  rpreport,rpsubreport,rpmdconsts,
+  rpreport,rpsubreport,rpmdconsts,rpdbbrowser,
   rpsection,rpmdobjinsp,rpprintitem, QStdCtrls;
 
 type
   TFRpStructure = class(TFrame)
-    RView: TTreeView;
-    Panel1: TToolBar;
     ActionList1: TActionList;
     ImageList1: TImageList;
     AUp: TAction;
     ADown: TAction;
-    BNew: TToolButton;
-    ToolButton2: TToolButton;
-    ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
     ADelete: TAction;
     PopupMenu1: TPopupMenu;
     MDetail: TMenuItem;
@@ -48,6 +42,15 @@ type
     MPFooter: TMenuItem;
     MGHeader: TMenuItem;
     MSubReport: TMenuItem;
+    PControl: TPageControl;
+    TabStructure: TTabSheet;
+    TabData: TTabSheet;
+    RView: TTreeView;
+    Panel1: TToolBar;
+    BNew: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
     procedure Expand1Click(Sender: TObject);
     procedure RViewClick(Sender: TObject);
     procedure AUpExecute(Sender: TObject);
@@ -68,6 +71,7 @@ type
   public
     { Public declarations }
     designframe:TControl;
+    browser:TFRpBrowser;
     procedure UpdateCaptions;
     function FindSelectedSubreport:TRpSubreport;
     function FindSelectedObject:TObject;
@@ -107,6 +111,13 @@ begin
  AUp.Hint:=TranslateStr(139,AUp.Hint);
  ADown.Hint:=TranslateStr(140,ADown.Hint);
  BNew.Hint:=TranslateStr(734,BNew.Hint);
+
+ TabStructure.Caption:=SRpStructure;
+ TabData.Caption:=SRpData;
+ browser:=TFRpBrowser.Create(Self);
+ browser.ShowDatabases:=false;
+ browser.Parent:=TabData;
+ PControl.ActivePageIndex:=0;
 end;
 
 procedure TFRpStructure.SetReport(Value:TRpReport);
@@ -118,6 +129,7 @@ begin
  CreateInterface;
  RView.Selected:=RView.Items.Item[0];
  RView.FullExpand;
+ Browser.Report:=FReport;
  if Assigned(designframe) then
  begin
   TFRpDesignFrame(designframe).UpdateSelection(true);
@@ -205,7 +217,7 @@ begin
  for i:=0 to Report.SubReports.Count-1 do
  begin
   subr:=Report.SubReports.Items[i].SubReport;
-  anew:=RView.Items.Add(nil,SRpSubReport);
+  anew:=RView.Items.Add(nil,subr.GetDisplayName(true));
   anew.data:=Report.SubReports.Items[i].SubReport;
   for j:=0 to subr.Sections.Count-1 do
   begin

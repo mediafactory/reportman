@@ -25,7 +25,7 @@ interface
 
 uses
   SysUtils,Inifiles,
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
   Windows,Dialogs,rpgdidriver,
 {$ENDIF}
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
@@ -49,7 +49,8 @@ type
 var
  FRpMainMeta:TFRpMainMeta;
 
-procedure PreviewMetafile(metafile:TRpMetafileReport;aform:TForm;ShowPrintDialog:Boolean);
+procedure PreviewMetafile(metafile:TRpMetafileReport;aform:TForm;
+ ShowPrintDialog:Boolean;showexit:Boolean);
 
 implementation
 
@@ -57,7 +58,8 @@ uses rpprintdia,rppdfdriver;
 
 {$R *.xfm}
 
-procedure PreviewMetafile(metafile:TRpMetafileReport;aform:TForm;ShowPrintDialog:Boolean);
+procedure PreviewMetafile(metafile:TRpMetafileReport;aform:TForm;ShowPrintDialog:Boolean;
+ showexit:Boolean);
 var
  dia:TFRpMainMeta;
  memstream:TMemoryStream;
@@ -79,6 +81,8 @@ begin
   MFrame.AForm:=aform;
   FForm:=aform;
  end;
+ MFrame.BExit.Visible:=ShowExit;
+ MFrame.Exit1.Visible:=ShowExit;
  try
   MFrame.ShowPrintDialog:=ShowPrintDialog;
   memstream:=TMemoryStream.Create;
@@ -139,6 +143,7 @@ begin
  MFrame.AForm:=self;
  MFrame.Parent:=Self;
  Caption:=SRpRepMetafile;
+ Application.Title:=SRpRepMetafile;
 end;
 
 

@@ -52,7 +52,7 @@ var
  FRpMainMetaVCL:TFRpMainMetaVCL;
 
 function PreviewMetafile(metafile:TRpMetafileReport;aform:TWinControl;
- ShowPrintDialog:Boolean):TFRpMetaVCL;
+ ShowPrintDialog:Boolean;ShowExit:Boolean):TFRpMetaVCL;
 
 implementation
 
@@ -61,7 +61,7 @@ uses rppdfdriver;
 {$R *.dfm}
 
 function PreviewMetafile(metafile:TRpMetafileReport;aform:TWinControl;
- ShowPrintDialog:Boolean):TFRpMetaVCL;
+ ShowPrintDialog:Boolean;ShowExit:Boolean):TFRpMetaVCL;
 var
  dia:TFRpMainMetaVCL;
  memstream:TMemoryStream;
@@ -83,6 +83,8 @@ begin
   MFrame.AForm:=aform;
   FForm:=aform;
  end;
+ MFrame.BExit.Visible:=ShowExit;
+ MFrame.Exit1.Visible:=ShowExit;
  try
   MFrame.ShowPrintDialog:=ShowPrintDialog;
   memstream:=TMemoryStream.Create;
@@ -99,8 +101,10 @@ begin
    MFrame.pagenum:=1;
    MFrame.AViewConnect.Checked:=false;
    MFrame.AViewConnect.Enabled:=false;
+{$IFDEF USEINDY}
    if assigned(MFrame.clitree) then
     MFrame.clitree.Visible:=false;
+{$ENDIF}
    MFrame.Splitter1.Visible:=false;
    MFrame.printerindex:=metafile.PrinterSelect;
    MFrame.UpdatePrintSel;
@@ -147,6 +151,7 @@ begin
  MFrame.Parent:=Self;
  MFrame.AForm:=self;
  Caption:=SRpRepMetafile;
+ Application.Title:=SRpRepMetafile;
  // Bugfix for TEdit height
  MFrame.EPageNum.Left:=MFrame.EPageNum.Left+1;
 end;

@@ -9,6 +9,7 @@ object FRpDesignFrame: TFRpDesignFrame
   Color = clDisabledForeground
   ParentColor = False
   ParentShowHint = False
+  ParentFont = True
   ShowHint = True
   TabOrder = 0
   object PTop: TPanel

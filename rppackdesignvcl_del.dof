@@ -134,6 +134,3 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
-[Excluded Packages]
-c:\archivos de programa\borland\delphi7\Projects\Bpl\rppackdesign_del.bpl=Report Manager Designer Component Package
-c:\archivos de programa\borland\delphi7\Projects\Bpl\Gestor.bpl=Componentes del gestor de Informes

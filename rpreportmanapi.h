@@ -31,7 +31,7 @@ int rp_executeremote(char *hostname,int port,char *user,char *password,
  int compressed);
 int rp_setparamvalue(int hreport,char *paramname,int paramtype,
  void *paramvalue);
-int rp_getparamcount(int hreport:integer;int *paramcount);
+int rp_getparamcount(int hreport,int *paramcount);
 int rp_getparamname(int hreport,int index,char *abuffer);
 char *rp_lasterror(void);
 

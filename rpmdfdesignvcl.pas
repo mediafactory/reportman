@@ -39,6 +39,39 @@ const
  CONS_RULER_LEFT=20;
  CONS_RIGHTPWIDTH=6;
 type
+  TRpPaintEventPanel=class;
+
+  TFRpDesignFrameVCL = class(TFrame)
+    PTop: TPanel;
+    PLeft: TPanel;
+  private
+    { Private declarations }
+    panelheight:integer;
+    PSection: TRpPaintEventPanel;
+    FReport:TRpReport;
+    FObjInsp:TFRpObjInspVCL;
+    leftrulers:Tlist;
+    FSubReport:TRpSubreport;
+    toptitles:Tlist;
+    righttitles:Tlist;
+    procedure SetReport(Value:TRpReport);
+    procedure SecPosChange(Sender:TObject);
+  public
+    { Public declarations }
+    freportstructure:TFRpStructureVCL;
+    SectionScrollBox: TScrollBox;
+    secinterfaces:TList;
+    TopRuler:TRpRulerVCL;
+    procedure InvalidateCaptions;
+    procedure UpdateInterface(refreshobjinsp:boolean);
+    procedure ShowAllHiden;
+    constructor Create(AOwner:TComponent);override;
+    destructor Destroy;override;
+    procedure UpdateSelection(force:boolean);
+    procedure SelectSubReport(subreport:TRpSubReport);
+    property Report:TRpReport read FReport write SetReport;
+    property ObjInsp:TFRpObjInspVCL read FObjInsp write FObjInsp;
+  end;
 
   // A ScrollBox that not scrolls in view focused controls
   TRpScrollBox=class(TScrollBox)
@@ -46,7 +79,6 @@ type
     procedure AutoScrollInView(AControl: TControl); override;
    end;
 
-  TFRpDesignFrameVCL=class;
 
   TRpPanelRight=Class(TPanel)
    private
@@ -96,37 +128,6 @@ type
     property OnPosChange:TNotifyEvent read FOnPosChange write FOnPosChange;
    end;
 
-  TFRpDesignFrameVCL = class(TFrame)
-    PTop: TPanel;
-    PLeft: TPanel;
-  private
-    { Private declarations }
-    panelheight:integer;
-    PSection: TRpPaintEventPanel;
-    FReport:TRpReport;
-    FObjInsp:TFRpObjInspVCL;
-    leftrulers:Tlist;
-    FSubReport:TRpSubreport;
-    toptitles:Tlist;
-    righttitles:Tlist;
-    procedure SetReport(Value:TRpReport);
-    procedure SecPosChange(Sender:TObject);
-  public
-    { Public declarations }
-    freportstructure:TFRpStructureVCL;
-    SectionScrollBox: TScrollBox;
-    secinterfaces:TList;
-    TopRuler:TRpRulerVCL;
-    procedure InvalidateCaptions;
-    procedure UpdateInterface;
-    procedure ShowAllHiden;
-    constructor Create(AOwner:TComponent);override;
-    destructor Destroy;override;
-    procedure UpdateSelection(force:boolean);
-    procedure SelectSubReport(subreport:TRpSubReport);
-    property Report:TRpReport read FReport write SetReport;
-    property ObjInsp:TFRpObjInspVCL read FObjInsp write FObjInsp;
-  end;
 
 
 implementation
@@ -212,6 +213,7 @@ end;
 constructor TFRpDesignFrameVCL.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+
  TopRuler:=TRpRulerVCL.Create(Self);
  TopRuler.Rtype:=rHorizontal;
  TopRuler.Left:=20;
@@ -268,7 +270,6 @@ end;
 
 procedure TFRpDesignFrameVCL.UpdateSelection(force:boolean);
 var
- data:Pointer;
  dataobj:TOBject;
  FSectionInterface:TRpSectionInterface;
  i:integer;
@@ -278,15 +279,14 @@ begin
   exit;
  if Not Assigned(freportstructure.RView.Selected) then
   exit;
- data:=freportstructure.RView.Selected.Data;
- if Not Assigned(data) then
+ if Not Assigned(freportstructure.RView.Selected.Data) then
   exit;
  if force then
  begin
   SelectSubReport(nil);
  end;
 
- dataobj:=TObject(data);
+ dataobj:=TObject(freportstructure.RView.Selected.Data);
  // Looks if there is a subreport selected
  asubreport:=freportstructure.FindSelectedSubreport;
  if asubreport<>FSubReport then
@@ -512,7 +512,7 @@ begin
 end;
 
 
-procedure TFRpDesignFrameVCL.UpdateInterface;
+procedure TFRpDesignFrameVCL.UpdateInterface(refreshobjinsp:boolean);
 var
  i,j:integer;
  asecint:TRpSectionInterface;
@@ -572,7 +572,8 @@ begin
    posx:=posx+asecint.Height;
    asecint.SendToBack;
    if ObjInsp.CompItem=asecint then
-    ObjInsp.AddCompItem(asecint,true);
+    if refreshobjinsp then
+     ObjInsp.AddCompItem(asecint,true);
   end;
   apanel:=TRpPaintEventpanel(toptitles.Items[secinterfaces.Count]);
   apanel.Width:=asecint.Width;
@@ -741,7 +742,7 @@ begin
    asection.Height:=pixelstotwips(NewTop-MaxY);
    if asection.Height=0 then
     asection.Height:=0;
-   FFrame.UpdateInterface;
+   FFrame.UpdateInterface(true);
   end;
  end;
  if allowselect then
@@ -864,7 +865,7 @@ begin
 
   section.Width:=pixelstotwips(NewLeft);
 
-  FFrame.UpdateInterface;
+  FFrame.UpdateInterface(true);
  end;
 end;
 

@@ -27,27 +27,8 @@ package rppack_del;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'Report Manager base components (non Visual)'}
+{$DESCRIPTION 'Report Manager components(non-visual)'}
 {$IMPLICITBUILD OFF}
-
-requires
-  rtl,
-  dbrtl,
-  dsnap,
-  ibxpress,
-  adortl,
-  dbexpress,
-  tee,
-  vcljpg,
-  indy,
-  bdertl,
-  vcl,
-  ZPlain,
-  ZCore,
-  ZParseSql,
-  ZParse,
-  ZComponent,
-  ZDbc;
 
 contains
   rptypeval in 'rptypeval.pas',
@@ -56,7 +37,6 @@ contains
   rpevalfunc in 'rpevalfunc.pas',
   rpparser in 'rpparser.pas',
   rpalias in 'rpalias.pas',
-  rpmreg in 'rpmreg.pas',
   rplastsav in 'rplastsav.pas',
   rpdatainfo in 'rpdatainfo.pas',
   rpparams in 'rpparams.pas',
@@ -92,11 +72,15 @@ contains
   rpcompobase in 'rpcompobase.pas',
   rptranslator in 'rptranslator.pas',
   rpmdshfolder in 'rpmdshfolder.pas',
-  rpmdrepclient in 'rpmdrepclient.pas' {modclient: TDataModule},
+  rpmdrepclient in 'rpmdrepclient.pas',
   rpmdprotocol in 'rpmdprotocol.pas',
   rpdatatext in 'rpdatatext.pas',
   rptextdriver in 'rptextdriver.pas',
-  rpvgraphutils in 'rpvgraphutils.pas',
-  rpgraphutilsvcl in 'rpgraphutilsvcl.pas' {FRpMessageDlgVCL};
+  rpbasereport in 'rpbasereport.pas',
+  rpcompilerep in 'rpcompilerep.pas',
+  rphtmldriver in 'rphtmldriver.pas',
+  rpmreg in 'rpmreg.pas',
+  rpmdcharttypes in 'rpmdcharttypes.pas';
+
 
 end.

@@ -2,6 +2,8 @@ package rppackdesignvcl_del;
 
 {$R *.res}
 {$R 'rpmdesignervcl.dcr'}
+{$R 'rprulervcl.dcr'}
+{$R 'rpwebmetaclient.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -33,20 +35,16 @@ requires
   dbrtl,
   vcl,
   vcldb,
-  rppackvcl_del,
-  bdertl,
-  dbexpress,
-  adortl,
-  ibxpress,
   vcljpg,
   indy,
-  tee;
+  tee,
+  vclx,
+  rppackvcl_del;
 
 contains
   rpmdesignervcl in 'rpmdesignervcl.pas',
   rpmregdesignvcl in 'rpmregdesignvcl.pas',
   rpmdobjinspvcl in 'rpmdobjinspvcl.pas' {FRpObjInspVCL: TFrame},
-  rpdbxconfigvcl in 'rpdbxconfigvcl.pas' {FRpDBXConfigVCL},
   rpmdfbarcodeintvcl in 'rpmdfbarcodeintvcl.pas',
   rpmdfchartintvcl in 'rpmdfchartintvcl.pas',
   rpmdfdinfovcl in 'rpmdfdinfovcl.pas' {FRpDatainfoconfigVCL},
@@ -66,10 +64,13 @@ contains
   rpmdfwizardvcl in 'rpmdfwizardvcl.pas' {FRpWizardVCL},
   rpmdsysinfo in 'rpmdsysinfo.pas' {FRpSysInfo},
   rpmdfdatatextvcl in 'rpmdfdatatextvcl.pas' {FRpDataTextVCL},
-  rpwebmetaclient in 'rpwebmetaclient.pas',
   D7ComboBoxStringsGetPatch in 'D7ComboBoxStringsGetPatch.pas',
+  rpdbbrowservcl in 'rpdbbrowservcl.pas' {FRpBrowserVCL: TFrame},
+  rprulervcl in 'rprulervcl.pas',
   rpeditconnvcl in 'rpeditconnvcl.pas' {FRpEditConVCL},
+  rpwebmetaclient in 'rpwebmetaclient.pas',
   rpmdfopenlibvcl in 'rpmdfopenlibvcl.pas' {FRpOpenLibVCL},
-  rpmdftreevcl in 'rpmdftreevcl.pas' {FRpDBTreeVCL: TFrame};
+  rpmdftreevcl in 'rpmdftreevcl.pas' {FRpDBTreeVCL: TFrame},
+  rpdbxconfigvcl in 'rpdbxconfigvcl.pas' {FRpDBXConfigVCL};
 
 end.

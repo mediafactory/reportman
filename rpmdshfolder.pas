@@ -39,10 +39,14 @@ uses
   FileCtrl,
 {$ENDIF}
 {$ENDIF}
+{$IFDEF DOTNETD}
+  System.IO,
+{$ENDIF}
   rpmdconsts;
 
 {$IFDEF MSWINDOWS}
 const
+{$IFNDEF DOTNETD}
   {$EXTERNALSYM CSIDL_APPDATA}
   CSIDL_APPDATA              = $001A;  // Application Data, new for NT4
   {$EXTERNALSYM CSIDL_FLAG_CREATE}
@@ -51,6 +55,7 @@ const
   CSIDL_LOCAL_APPDATA        = $001C;  // non roaming,
   {$EXTERNALSYM CSIDL_COMMON_APPDATA}
   CSIDL_COMMON_APPDATA       = $0023;  // All Users\Application Data
+{$ENDIF}
 
   shlwapi32 = 'shlwapi.dll';
   shfolder  = 'shfolder.dll';
@@ -69,25 +74,32 @@ const
   function Obtainininamecommonconfig (company, product, filename:string):string;
   function GetTheSystemDirectory:String;
 {$IFDEF MSWINDOWS}
-{$EXTERNALSYM SHGetFolderPath}
 {$IFNDEF BUILDER4}
+{$IFNDEF DOTNETD}
+{$EXTERNALSYM SHGetFolderPath}
 function SHGetFolderPath(hwnd: HWND; csidl: Integer; hToken: THandle; dwFlags: DWORD; pszPath: PChar): HResult; stdcall;
 function SHGetFolderPath; external shfolder name 'SHGetFolderPathA';
 {$ENDIF}
+{$ENDIF}
 {$IFDEF BUILDER4}
+{$IFNDEF DOTNETD}
 var SHGetFolderPath:function (hwnd: HWND; csidl: Integer; hToken: THandle; dwFlags: DWORD; pszPath: PChar): HResult; stdcall;
 var HandleLib:THandle;
 {$ENDIF}
+{$ENDIF}
 
+{$IFNDEF DOTNETD}
 {$EXTERNALSYM PathAppend}
 function PathAppend(pszPath: PChar; pMore: PChar): BOOL; stdcall;
 function PathAppend; external shlwapi32 name 'PathAppendA';
+{$ENDIF}
 {$ENDIF}
 
 implementation
 
 uses rptypes;
 
+{$IFNDEF DOTNETD}
 function Obtainininameuserconfig(company,product,filename:string):string;
 var
  szAppData:array [0..MAX_PATH] of char;
@@ -127,11 +139,17 @@ begin
  Result:=StrPas(szAppdata);
  if Not DirectoryExists(Result) then
  begin
-  try
-   if not CreateDirectory(Pchar(Result),nil) then
-  except
+{$IFDEF BUILDER4}
+ ForceDirectories(Result);
+{$ENDIF}
+{$IFNDEF BUILDER4}
+ try
+  if not ForceDirectories(Result) then
    Result:='';
-  end;
+ except
+   Result:='';
+ end;
+{$ENDIF}
  end;
  if not PathAppend(szAppdata,Pchar(filename+'.ini')) then
     RaiseLastOSError;
@@ -258,7 +276,80 @@ begin
  end;
 {$ENDIF}
 end;
+{$ENDIF}
 
+{$IFDEF DOTNETD}
+function Obtainininameuserconfig(company,product,filename:string):string;
+begin
+ Result:=Environment.GetFolderPath (System.Environment.SpecialFolder.ApplicationData);
+ if length(filename)<1 then
+  Raise Exception.Create(SRpFileNameRequired);
+ if length(company)>0 then
+  Result:=System.IO.Path.Combine(Result,company);
+ if Length(product)>0 then
+ begin
+  Result:=System.IO.Path.Combine(Result,product);
+ end;
+ if Not System.IO.Directory.Exists(Result) then
+ begin
+   System.IO.Directory.CreateDirectory(Result);
+   if Not System.IO.Directory.Exists(Result) then
+    Result:='';
+ end;
+ if Length(Result)>0 then
+  Result:=System.IO.Path.Combine(Result,filename+'.ini');
+end;
+
+
+function Obtainininamelocalconfig(company,product,filename:string):string;
+begin
+ Result:=Environment.GetFolderPath (System.Environment.SpecialFolder.LocalApplicationData);
+ if length(filename)<1 then
+  Raise Exception.Create(SRpFileNameRequired);
+ if length(company)>0 then
+  Result:=System.IO.Path.Combine(Result,company);
+ if Length(product)>0 then
+ begin
+  Result:=System.IO.Path.Combine(Result,product);
+ end;
+ if Not System.IO.Directory.Exists(Result) then
+ begin
+   System.IO.Directory.CreateDirectory(Result);
+   if Not System.IO.Directory.Exists(Result) then
+    Result:='';
+ end;
+ if Length(Result)>0 then
+  Result:=System.IO.Path.Combine(Result,filename+'.ini');
+end;
+
+
+function Obtainininamecommonconfig(company,product,filename:string):string;
+begin
+ Result:=Environment.GetFolderPath (System.Environment.SpecialFolder.CommonApplicationData);
+ if length(filename)<1 then
+  Raise Exception.Create(SRpFileNameRequired);
+ if length(company)>0 then
+  Result:=System.IO.Path.Combine(Result,company);
+ if Length(product)>0 then
+ begin
+  Result:=System.IO.Path.Combine(Result,product);
+ end;
+ if Not System.IO.Directory.Exists(Result) then
+ begin
+   System.IO.Directory.CreateDirectory(Result);
+   if Not System.IO.Directory.Exists(Result) then
+    Result:='';
+ end;
+ if Length(Result)>0 then
+  Result:=System.IO.Path.Combine(Result,filename+'.ini');
+end;
+
+function GetTheSystemDirectory:String;
+begin
+ Result:=Environment.GetFolderPath (System.Environment.SpecialFolder.System);
+end;
+
+{$ENDIF}
 
 
 {$IFDEF BUILDER4}
@@ -277,6 +368,13 @@ if HandleLib<>0 then
  FreeLibrary(HandleLib);
 {$ENDIF}
 end.
+
+
+
+
+
+
+
 
 
 

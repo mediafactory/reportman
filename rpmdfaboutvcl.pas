@@ -28,20 +28,22 @@ uses Windows,SysUtils, Classes,
 
 type
   TFRpAboutBoxVCL = class(TForm)
+    Memo1: TMemo;
+    Panel1: TPanel;
     BOK: TButton;
+    Panel2: TPanel;
+    Image1: TImage;
+    Image2: TImage;
     LReport: TLabel;
     LAuthor: TLabel;
     LName: TLabel;
     Label2: TLabel;
     LEmail: TLabel;
     Label3: TLabel;
-    Image1: TImage;
     LVersion: TLabel;
     LProject: TLabel;
     Label5: TLabel;
-    Memo1: TMemo;
     LContributors: TLabel;
-    Image2: TImage;
     procedure FormCreate(Sender: TObject);
     procedure Label5MouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -89,6 +91,7 @@ begin
  LName.Font.Style:=[fsBold];
  LVersion.Font.Size:=16;
  LEmail.Font.Style:=[fsBold];
+ Label5.Font.Color := clHighlight;
 
 end;
 
@@ -96,7 +99,9 @@ procedure TFRpAboutBoxVCL.Label5MouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
  // Starts the explorer
+{$IFNDEF DOTNETD}
  ShellExecute(Self.handle,Pchar('open'),Pchar(TLabel(Sender).Caption),nil,nil,SW_SHOWNORMAL);
+{$ENDIF}
 end;
 
 end.

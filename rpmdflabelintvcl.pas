@@ -128,6 +128,7 @@ begin
  lnames.Add(SrpSText);
  ltypes.Add(SRpSString);
  lhints.Add('reflabel.html');
+ lcat.Add(SRpLabel);
  if Assigned(lvalues) then
   lvalues.Add(TRpLabel(printitem).Text);
 end;
@@ -216,10 +217,18 @@ begin
  begin
   // First calculates the text extent
   // Win9x does not support drawing WideChars
+{$IFNDEF DOTNETD}
   if IsWindowsNT then
    DrawTextW(Canvas.Handle,PWideChar(alabel.text),Length(alabel.text),arec,aalign or DT_CALCRECT)
   else
    DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),arec,aalign or DT_CALCRECT);
+{$ENDIF}
+{$IFDEF DOTNETD}
+  if IsWindowsNT then
+   DrawTextW(Canvas.Handle,alabel.text,Length(alabel.text),arec,aalign or DT_CALCRECT)
+  else
+   DrawTextA(Canvas.Handle,aansitext,Length(aansitext),arec,aalign or DT_CALCRECT);
+{$ENDIF}
   Canvas.Brush.Style:=bsSolid;
   Canvas.Brush.Color:=alabel.BackColor;
  end
@@ -233,10 +242,18 @@ begin
  begin
   rec.Top:=rec.Top+((rec.bottom-arec.bottom) div 2);
  end;
+{$IFNDEF DOTNETD}
  if IsWindowsNT then
   DrawTextW(Canvas.Handle,PWideChar(alabel.text),Length(alabel.text),rec,aalign)
  else
   DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),rec,aalign);
+{$ENDIF}
+{$IFDEF DOTNETD}
+ if IsWindowsNT then
+  DrawTextW(Canvas.Handle,alabel.text,Length(alabel.text),rec,aalign)
+ else
+  DrawTextA(Canvas.Handle,aansitext,Length(aansitext),rec,aalign);
+{$ENDIF}
  Canvas.Pen.Color:=clBlack;
  Canvas.Pen.Style:=psSolid;
  Canvas.Brush.Style:=bsClear;
@@ -265,6 +282,7 @@ begin
  lnames.Add(SrpSExpression);
  ltypes.Add(SRpSExpression);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).Expression);
 
@@ -272,6 +290,7 @@ begin
  lnames.Add(SRpSDataType);
  ltypes.Add(SRpSList);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   ParamTypeToString(TRpExpression(printitem).DataType);
 
@@ -279,17 +298,20 @@ begin
  lnames.Add(SrpSDisplayFOrmat);
  ltypes.Add(SRpSString);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).DisplayFormat);
  // Multipage
  lnames.Add(SRpMultiPage);
  ltypes.Add(SRpSBool);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpExpression(printitem).MultiPage,true));
  lnames.Add(SRpPrintNulls);
  ltypes.Add(SRpSBool);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpExpression(printitem).PrintNulls,true));
 
@@ -297,6 +319,7 @@ begin
  lnames.Add(SrpSIdentifier);
  ltypes.Add(SRpSString);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).Identifier);
 
@@ -304,6 +327,7 @@ begin
  lnames.Add(SrpSAggregate);
  ltypes.Add(SRpSList);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(AggregatesString[TRpExpression(printitem).Aggregate]);
 
@@ -312,6 +336,7 @@ begin
  lnames.Add(SrpSAgeGroup);
  ltypes.Add(SRpGroup);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).GroupName);
 
@@ -319,6 +344,7 @@ begin
  lnames.Add(SrpSAgeType);
  ltypes.Add(SRpSList);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(AggretypeString[TRpExpression(printitem).AgType]);
 
@@ -326,6 +352,7 @@ begin
  lnames.Add(SrpSIniValue);
  ltypes.Add(SRpSExpression);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).AgIniValue);
 
@@ -333,6 +360,7 @@ begin
  lnames.Add(SRpSOnlyOne);
  ltypes.Add(SRpSBool);
  lhints.Add('refexpression.html');
+ lcat.Add(SRpExpression);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpExpression(printitem).PrintOnlyOne,true));
 end;
@@ -550,10 +578,18 @@ begin
  begin
   // First calculates the text extent
   // Win9x does not support drawing WideChars
+{$IFNDEF DOTNETD}
   if IsWindowsNT then
    DrawTextW(Canvas.Handle,PWideChar(aexp.Expression),Length(aexp.Expression),arec,aalign or DT_CALCRECT)
   else
    DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),arec,aalign or DT_CALCRECT);
+{$ENDIF}
+{$IFDEF DOTNETD}
+  if IsWindowsNT then
+   DrawTextW(Canvas.Handle,aexp.Expression,Length(aexp.Expression),arec,aalign or DT_CALCRECT)
+  else
+   DrawTextA(Canvas.Handle,aansitext,Length(aansitext),arec,aalign or DT_CALCRECT);
+{$ENDIF}
   Canvas.Brush.Style:=bsSolid;
   Canvas.Brush.Color:=aexp.BackColor;
  end
@@ -567,11 +603,18 @@ begin
  begin
   rec.Top:=rec.Top+((rec.bottom-arec.bottom) div 2);
  end;
+{$IFNDEF DOTNETD}
  if IsWindowsNT then
   DrawTextW(Canvas.Handle,PWideChar(aexp.Expression),Length(aexp.Expression),rec,aalign)
  else
   DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),rec,aalign);
-
+{$ENDIF}
+{$IFDEF DOTNETD}
+ if IsWindowsNT then
+  DrawTextW(Canvas.Handle,aexp.Expression,Length(aexp.Expression),rec,aalign)
+ else
+  DrawTextA(Canvas.Handle,aansitext,Length(aansitext),rec,aalign);
+{$ENDIF}
  Canvas.Pen.Color:=clBlack;
  Canvas.Pen.Style:=psDashDot;
  Canvas.Brush.Style:=bsClear;

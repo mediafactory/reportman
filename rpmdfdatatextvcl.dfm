@@ -6,11 +6,6 @@ object FRpDataTextVCL: TFRpDataTextVCL
   ClientHeight = 412
   ClientWidth = 511
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
-  Font.Style = []
   OldCreateOrder = True
   Position = poScreenCenter
   ShowHint = True
@@ -19,6 +14,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
+  ParentFont = True
   object PTop: TPanel
     Left = 0
     Top = 0
@@ -26,9 +22,6 @@ object FRpDataTextVCL: TFRpDataTextVCL
     Height = 53
     Align = alTop
     TabOrder = 0
-    DesignSize = (
-      511
-      53)
     object LFieldsFile: TLabel
       Left = 8
       Top = 8

@@ -22,9 +22,6 @@ object FRpDBXConfigVCL: TFRpDBXConfigVCL
     Height = 53
     Align = alTop
     TabOrder = 0
-    DesignSize = (
-      585
-      53)
     object LDriversFile: TLabel
       Left = 8
       Top = 8

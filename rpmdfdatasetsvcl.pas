@@ -24,7 +24,7 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls, ToolWin, ImgList,rpmdconsts,rpgraphutilsvcl,
   rptypes,rpdatainfo,rpreport,rpfparamsvcl,rpmdfsampledatavcl, ActnList,
-  rpparams;
+  rpdbbrowservcl,rpparams;
 
 type
   TFRpDatasetsVCL = class(TFrame)
@@ -93,6 +93,9 @@ type
     LUnions: TListBox;
     EMybasedefs: TEdit;
     BModify: TButton;
+    PBrowser: TPanel;
+    Splitter2: TSplitter;
+    PLBrowser: TPanel;
     procedure BParamsClick(Sender: TObject);
     procedure LDatasetsClick(Sender: TObject);
     procedure MSQLChange(Sender: TObject);
@@ -121,6 +124,7 @@ type
     procedure  Removedependences(oldalias:string);
   public
     { Public declarations }
+    browser:TFRpBrowserVCL;
     constructor Create(AOwner:TComponent);override;
     procedure FillDatasets;
     property Datainfo:TRpDataInfoList read GetDatainfo
@@ -190,11 +194,19 @@ begin
  BParams.Hint:=TranslateStr(152,BParams.Hint);
 
  PBottom.Height:=250;
+
+ PLBrowser.Caption:=SRpDatabaseBrowser;
+ browser:=TFRpBrowserVCL.Create(Self);
+ browser.ShowDatasets:=false;
+ browser.ShowEval:=false;
+ browser.Align:=alClient;
+ browser.Parent:=PBrowser;
 end;
 
 procedure TFRpDatasetsVCL.SetDatabaseInfo(Value:TRpDatabaseInfoList);
 begin
  report.DatabaseInfo.Assign(Value);
+ browser.Report:=report;
  FillDatasets;
 
 end;

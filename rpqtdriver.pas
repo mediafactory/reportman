@@ -30,13 +30,23 @@ uses
 {$IFDEF MSWINDOWS}
   mmsystem,windows,winspool,
 {$ENDIF}
- Classes,sysutils,rpmetafile,rpmdconsts,QGraphics,QForms,
- rpmunits,QPrinters,QDialogs,rpgraphutils, QControls,
+ Classes,sysutils,rpmetafile,rpmdconsts,QForms,
+ rpmunits,QPrinters,QDialogs,rpgraphutils,
  QStdCtrls,QExtCtrls,types,DateUtils,rptypes,Qt,rppdffile,
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
  rpvgraphutils,
 {$ENDIF}
- rpreport,rptextdriver,rppdfdriver;
+{$IFNDEF FORWEBAX}
+ rpbasereport,rpreport,rpmdchart,rpmdcharttypes,
+ {$IFDEF USECLXTEECHART}
+  Chart,Series,rpdrawitem,
+  {$IFDEF MSWINDOWS}
+  Controls,Graphics,rpgraphutilsvcl,
+  {$ENDIF}
+  teEngine,ArrowCha,BubbleCh,GanttCh,
+ {$ENDIF}
+{$ENDIF}
+ rptextdriver,rppdfdriver,QGraphics, QControls;
 
 const
  METAPRINTPROGRESS_INTERVAL=20;
@@ -63,11 +73,13 @@ type
     bitmono:Boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure AppIdleBitmap(Sender:TObject;var done:boolean);
+{$IFNDEF FORWEBAX}
     procedure AppIdleReport(Sender:TObject;var done:boolean);
     procedure AppIdlePrintPDF(Sender:TObject;var done:boolean);
     procedure AppIdlePrintRange(Sender:TObject;var done:boolean);
     procedure AppIdlePrintRangeText(Sender:TObject;var done:boolean);
-    procedure RepProgress(Sender:TRpReport;var docancel:boolean);
+    procedure RepProgress(Sender:TRpBaseReport;var docancel:boolean);
+{$ENDIF}
   public
     { Public declarations }
     pdfcompressed:boolean;
@@ -76,7 +88,9 @@ type
     tittle:string;
     filename:string;
     metafile:TRpMetafileReport;
+{$IFNDEF FORWEBAX}
     report:TRpReport;
+{$ENDIF}
     qtdriver:TRpQtDriver;
     aqtdriver:IRpPrintDriver;
     TextDriver:TRpTextDriver;
@@ -94,6 +108,15 @@ type
    OldOrientation:TPrinterOrientation;
    DrawerBefore,DrawerAfter:Boolean;
    function InternalSetPagesize(PagesizeQt:integer):TPoint;
+{$IFDEF VCLANDCLX}
+   procedure SendAfterPrintOperations;
+{$ENDIF}
+{$IFNDEF FORWEBAX}
+ {$IFDEF USECLXTEECHART}
+   procedure DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
+    aposx,aposy:integer;xchart:TObject);
+ {$ENDIF}
+{$ENDIF}
   public
    bitmap:TBitmap;
    dpi:integer;
@@ -105,22 +128,25 @@ type
    clientwidth,clientheight:integer;
    printerindex:TRpPrinterSelect;
    procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
-    hardwarecollate:boolean);stdcall;
-   procedure EndDocument;stdcall;
-   procedure AbortDocument;stdcall;
-   procedure NewPage;stdcall;
-   procedure EndPage;stdcall;
-   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
-   procedure DrawPage(apage:TRpMetaFilePage);stdcall;
-   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
-   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
-   function AllowCopies:boolean;stdcall;
-   procedure SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
-   function GetPageSize(var PageSizeQt:Integer):TPoint;stdcall;
-   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
-   procedure SetOrientation(Orientation:TRpOrientation);stdcall;
-   function SupportsCopies(maxcopies:integer):boolean;stdcall;
-   function SupportsCollation:boolean;stdcall;
+    hardwarecollate:boolean);
+   procedure EndDocument;
+   procedure AbortDocument;
+   procedure NewPage;
+   procedure EndPage;
+   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
+{$IFNDEF FORWEBAX}
+   procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
+{$ENDIF}
+   procedure DrawPage(apage:TRpMetaFilePage);
+   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
+   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
+   function AllowCopies:boolean;
+   procedure SelectPrinter(printerindex:TRpPrinterSelect);
+   function GetPageSize(var PageSizeQt:Integer):TPoint;
+   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
+   procedure SetOrientation(Orientation:TRpOrientation);
+   function SupportsCopies(maxcopies:integer):boolean;
+   function SupportsCollation:boolean;
    constructor Create;
    destructor Destroy;override;
   end;
@@ -130,13 +156,17 @@ function PrintMetafile (metafile:TRpMetafileReport; tittle:string;
   collate:boolean; printerindex:TRpPrinterSelect):boolean;
 function MetafileToBitmap(metafile:TRpMetafileReport;ShowProgress:Boolean;
  Mono:Boolean;resx:integer=200;resy:integer=100):TBitmap;
+{$IFNDEF FORWEBAX}
 function CalcReportWidthProgress (report:TRpReport):boolean;
 function PrintReport (report:TRpReport; Caption:string; progress:boolean;
   allpages:boolean; frompage,topage,copies:integer; collate:boolean):Boolean;
 function ExportReportToPDF (report:TRpReport; Caption:string; progress:boolean;
   allpages:boolean; frompage,topage:integer;
   showprintdialog:boolean; filename:string;compressed:boolean;collate:boolean):Boolean;
-
+function ExportReportToPDFMetaStream (report:TRpReport; Caption:string; progress:boolean;
+  allpages:boolean; frompage,topage:integer;
+  showprintdialog:boolean; stream:TStream; compressed:boolean;collate:boolean;metafile:Boolean):Boolean;
+{$ENDIF}
 
 // Because copies and collation not work in Windows we
 // use the ShowPrintdialog in rpprintdia
@@ -225,13 +255,16 @@ var
  scale2:double;
  sizeqt:integer;
 begin
+{$IFDEF USECLXTEECHART}
+   report.OnDrawChart:=DoDrawChart;
+{$ENDIF}
  printerindex:=report.PrinterSelect;
  DrawerBefore:=report.OpenDrawerBefore;
  DrawerAfter:=report.OpenDrawerAfter;
  if ToPrinter then
  begin
   scale:=1.0;
-  printer.Title:='Untitled';
+  printer.Title:=SRpUntitled;
   SetOrientation(report.Orientation);
   // Sets pagesize, only supports default and qt index
   if report.PageSize<0 then
@@ -243,7 +276,7 @@ begin
    asize:=InternalSetPageSize(report.PageSize);
   end;
   if Length(printer.Title)<1 then
-   printer.Title:=SRpUntitled;
+   printer.Title:='Untitled';
   QPrinter_setFullPage(QPrinterH(Printer.Handle),true);
 //  begin
 //   QPrinter_setOrientation(QPrinterH(Printer.Handle),QPrinterOrientation_Portrait);
@@ -252,7 +285,7 @@ begin
   if Not Printer.Printing then
    if DrawerBefore then
    begin
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
     SendControlCodeToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer));
 {$ENDIF}
 {$IFDEF LINUX}
@@ -359,13 +392,17 @@ begin
   printer.EndDoc;
   if DrawerAfter then
   begin
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
    SendControlCodeToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer));
 {$ENDIF}
 {$IFDEF LINUX}
    SendTextToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer),printerindex,SRpOpenDrawerAfter);
 {$ENDIF}
   end;
+{$IFDEF VCLANDCLX}
+  // Send Especial operations
+  SendAfterPrintOperations;
+{$ENDIF}
  end
  else
  begin
@@ -628,7 +665,7 @@ begin
     bitmap:=TBitmap.Create;
     try
 // Windows does not have support for jpeg in CLX
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
      if GetJPegInfo(stream,bitmapwidth,bitmapheight) then
      begin
       rpvgraphutils.JPegStreamToBitmapStream(stream);
@@ -709,7 +746,7 @@ begin
 end;
 
 
-function TrpQtDriver.GetPageSize(var PageSizeQt:Integer):TPoint;stdcall;
+function TrpQtDriver.GetPageSize(var PageSizeQt:Integer):TPoint;
 begin
  // If no printer installed get A4 pagesize
  if Printer.printers.count<1 then
@@ -726,9 +763,18 @@ begin
  end
  else
  begin
-  PageSizeQt:=Printer.PageNumber;
-  Result.x:=Round((Printer.PageWidth/Printer.XDPI)*TWIPS_PER_INCHESS);
-  Result.y:=Round((Printer.PageHeight/Printer.YDPI)*TWIPS_PER_INCHESS);
+  if ((Printer.XDPI=0) or (Printer.YDPI=0)) then
+  begin
+   result.y:=16637;
+   result.x:=12047;
+   exit;
+  end
+  else
+  begin
+   PageSizeQt:=Printer.PageNumber;
+   Result.x:=Round((Printer.PageWidth/Printer.XDPI)*TWIPS_PER_INCHESS);
+   Result.y:=Round((Printer.PageHeight/Printer.YDPI)*TWIPS_PER_INCHESS);
+  end;
  end;
 end;
 
@@ -816,7 +862,7 @@ begin
   end;
   // Now Prints to selected printer the stream
   PrinterSelection(metafile.PrinterSelect);
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
   SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
@@ -1155,7 +1201,8 @@ begin
 end;
 
 
-procedure TFRpQtProgress.RepProgress(Sender:TRpReport;var docancel:boolean);
+{$IFNDEF FORWEBAX}
+procedure TFRpQtProgress.RepProgress(Sender:TRpBaseReport;var docancel:boolean);
 begin
  if Not Assigned(LRecordCount) then
   exit;
@@ -1177,7 +1224,7 @@ begin
  Application.Onidle:=nil;
  done:=false;
 
- drivername:=Trim(GetPrinterEscapeStyleDriver(printerindex));
+ drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
  istextonly:=Length(drivername)>0;
 
  try
@@ -1274,7 +1321,7 @@ begin
   SetLength(S,TextDriver.MemStream.Size);
   TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
   PrinterSelection(report.PrinterSelect);
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
   SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
@@ -1290,6 +1337,9 @@ end;
 procedure TFRpQtProgress.AppIdlePrintPDF(Sender:TObject;var done:boolean);
 var
  oldprogres:TRpProgressEvent;
+{$IFDEF USECLXTEECHART}
+ qtdriver:TRpQtDriver;
+{$ENDIF}
 begin
  Application.Onidle:=nil;
  done:=false;
@@ -1297,6 +1347,10 @@ begin
   pdfdriver:=TRpPDFDriver.Create;
   pdfdriver.filename:=filename;
   pdfdriver.compressed:=pdfcompressed;
+{$IFDEF USECLXTEECHART}
+  qtdriver:=TRpQtDriver.Create;
+  report.metafile.OnDrawChart:=qtdriver.DoDrawChart;
+{$ENDIF}
   apdfdriver:=pdfdriver;
   oldprogres:=RepProgress;
   try
@@ -1385,7 +1439,7 @@ begin
     begin
      SetLength(S,TextDriver.MemStream.Size);
      TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
      SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
@@ -1435,7 +1489,7 @@ begin
       SetLength(S,TextDriver.MemStream.Size);
       TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
       PrinterSelection(report.PrinterSelect);
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
       SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
@@ -1521,13 +1575,6 @@ begin
 end;
 
 
-procedure TFRpQtProgress.FormClose(Sender: TObject;
-  var Action: TCloseAction);
-begin
- qtdriver:=nil;
-end;
-
-
 function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
   allpages:boolean;frompage,topage:integer;
   showprintdialog:boolean;filename:string;compressed:boolean;collate:boolean):Boolean;
@@ -1536,6 +1583,9 @@ var
  dia:TFRpQtProgress;
  oldonidle:TIdleEvent;
  pdfdriver:TRpPDFDriver;
+{$IFDEF USECLXTEECHART}
+ qtdriver:TRpQtDriver;
+{$ENDIF}
  apdfdriver:IRpPrintDriver;
 begin
  Result:=false;
@@ -1576,15 +1626,64 @@ begin
   pdfdriver.filename:=filename;
   pdfdriver.compressed:=compressed;
   apdfdriver:=pdfdriver;
+{$IFDEF USECLXTEECHART}
+  qtdriver:=TRpQtDriver.Create;
+  report.Metafile.OnDrawChart:=qtdriver.DoDrawChart;
+{$ENDIF}
   report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
   Result:=True;
  end;
 end;
 
+function ExportReportToPDFMetaStream (report:TRpReport; Caption:string; progress:boolean;
+  allpages:boolean; frompage,topage:integer;
+  showprintdialog:boolean; stream:TStream; compressed:boolean;collate:boolean;metafile:Boolean):Boolean;
+var
+ pdfdriver:TRpPDFDriver;
+ qtdriver:TRpQtDriver;
+ oldtwopass:Boolean;
+ apdfdriver:IRpPrintDriver;
+ onprog:TRpProgressEvent;
+begin
+ oldtwopass:=report.TwoPass;
+ onprog:=report.OnPRogress;
+ try
+  if metafile then
+   report.TwoPass:=true;
+  qtdriver:=TRpQtDriver.create;
+  pdfdriver:=TRpPDFDriver.Create;
+  if not metafile then
+   pdfdriver.DestStream:=stream;
+  pdfdriver.compressed:=compressed;
+  apdfdriver:=pdfdriver;
+  if progress then
+   report.OnProgress:=pdfdriver.RepProgress;
+{$IFDEF USECLXTEECHART}
+  report.Metafile.OnDrawChart:=qtdriver.DoDrawChart;
+{$ENDIF}
+  report.PrintRange(apdfdriver,allpages,frompage,topage,1,collate);
+  if metafile then
+   report.Metafile.SaveToStream(stream);
+ finally
+  report.TwoPass:=oldtwopass;
+  report.OnPRogress:=onprog;
+ end;
+ Result:=True;
+end;
+
+
+{$ENDIF}
+
+procedure TFRpQtProgress.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+ qtdriver:=nil;
+end;
+
 procedure TRpQtDriver.GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
 var
  graphic:TBitmap;
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
  bitmapwidth,bitmapheight:integer;
 {$ENDIF}
 begin
@@ -1593,7 +1692,7 @@ begin
  graphic:=TBitmap.Create;
  try
 // CLX Graphics in Windows does not support jpeg
-{$IFDEF MSWINDOWS}
+{$IFDEF VCLANDCLX}
   if GetJPegInfo(Stream,bitmapwidth,bitmapheight) then
   begin
    rpvgraphutils.JPegStreamToBitmapStream(Stream);
@@ -1653,6 +1752,25 @@ begin
  Printer.PrintAdapter.PageSize:=TPageSize(rpPagesize.Indexqt);
 end;
 
+{$IFDEF VCLANDCLX}
+procedure TRpQtDriver.SendAfterPrintOperations;
+var
+ Operation:String;
+ i:TPrinterRawOp;
+begin
+ for i:=Low(TPrinterRawOp) to High(TPrinterRawOp) do
+ begin
+  if PrinterRawOpEnabled(printerindex,i) then
+  begin
+   Operation:=GetPrinterRawOp(printerindex,i);
+   if Length(Operation)>0 then
+    SendControlCodeToPrinter(Operation);
+  end;
+ end;
+end;
+{$ENDIF}
+
+
 procedure OrientationSelection(neworientation:TRpOrientation);
 begin
  if Printer.Printers.Count<1 then
@@ -1665,6 +1783,216 @@ begin
   Printer.Orientation:=poLandscape;
 end;
 
+
+{$IFNDEF FORWEBAX}
+ {$IFDEF USECLXTEECHART}
+procedure TRpQtDriver.DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
+  aposx,aposy:integer;xchart:TObject);
+var
+ nchart:TRpChart;
+ achart:TChart;
+ aserie:TChartSeries;
+ i,j,afontsize:integer;
+ rec:TRect;
+ intserie:TRpSeriesItem;
+{$IFDEF MSWINDOWS}
+ abitmap:Graphics.TBitmap;
+{$ENDIF}
+{$IFDEF LINUX}
+ abitmap:TBitmap;
+{$ENDIF}
+ FMStream:TMemoryStream;
+ acolor:integer;
+begin
+ nchart:=TRpChart(xchart);
+ if nchart.Driver=rpchartdriverengine then
+ begin
+  rppdfdriver.DoDrawChart(adriver,Series,page,aposx,aposy,xchart);
+  exit;
+ end;
+ achart:=TChart.Create(nil);
+ try
+{$IFDEF MSWINDOWS}
+  achart.BevelOuter:=Controls.bvNone;
+{$ENDIF}
+{$IFDEF LINUX}
+  achart.BevelOuter:=bvNone;
+{$ENDIF}
+  afontsize:=Round(nchart.FontSize*nchart.Resolution/100);
+  achart.View3D:=nchart.View3d;
+  achart.View3DOptions.Rotation:=nchart.Rotation;
+  achart.View3DOptions.Perspective:=nchart.Perspective;
+  achart.View3DOptions.Elevation:=nchart.Elevation;
+  achart.View3DOptions.Orthogonal:=nchart.Orthogonal;
+  achart.View3DOptions.Zoom:=nchart.Zoom;
+  achart.View3DOptions.Tilt:=nchart.Tilt;
+  achart.View3DOptions.HorizOffset:=nchart.HorzOffset;
+  achart.View3DOptions.VertOffset:=nchart.VertOffset;
+  achart.View3DWalls:=nchart.View3DWalls;
+  achart.BackColor:=clTeeColor;
+{$IFDEF MSWINDOWS}
+  achart.BackWall.Brush.Style:=Graphics.bsClear;
+{$ENDIF}
+{$IFDEF LINUX}
+  achart.BackWall.Brush.Style:=bsClear;
+{$ENDIF}
+  achart.Gradient.Visible:=false;
+  achart.Color:=clWhite;
+{$IFDEF MSWINDOWS}
+  achart.LeftAxis.LabelsFont.Name:=nchart.WFontName;
+  achart.BottomAxis.LabelsFont.Name:=nchart.WFontName;
+  achart.Legend.Font.Name:=nchart.WFontName;
+{$ENDIF}
+{$IFDEF LINUX}
+  achart.LeftAxis.LabelsFont.Name:=nchart.LFontName;
+  achart.BottomAxis.LabelsFont.Name:=nchart.LFontName;
+  achart.Legend.Font.Name:=nchart.LFontName;
+{$ENDIF}
+  achart.LeftAxis.LabelsFont.Size:=aFontSize;
+  // Convert to degrees first
+  achart.LeftAxis.LabelsAngle:=Abs(nchart.FontRotation div 10) mod 360;
+{$IFDEF MSWINDOWS}
+  achart.LeftAxis.LabelsFont.Style:=CLXIntegerToFontStyle(nchart.FontStyle);
+  achart.Legend.Font.Style:=CLXIntegerToFontStyle(nchart.FontStyle);
+{$ENDIF}
+{$IFDEF LINUX}
+  achart.LeftAxis.LabelsFont.Style:=IntegerToFontStyle(nchart.FontStyle);
+  achart.Legend.Font.Style:=IntegerToFontStyle(nchart.FontStyle);
+{$ENDIF}
+  achart.BottomAxis.LabelsFont.Size:=aFontSize;
+  achart.Legend.Font.Size:=aFontSize;
+  // Convert to degrees first
+  achart.BottomAxis.LabelsAngle:=Abs(nchart.FontRotation div 10) mod 360;
+{$IFDEF MSWINDOWS}
+  achart.BottomAxis.LabelsFont.Style:=CLXIntegerToFontStyle(nchart.FontStyle);
+{$ENDIF}
+{$IFDEF LINUX}
+  achart.BottomAxis.LabelsFont.Style:=IntegerToFontStyle(nchart.FontStyle);
+{$ENDIF}
+  achart.Legend.Visible:=nchart.ShowLegend;
+  acolor:=0;
+  for i:=0 to Series.Count-1 do
+  begin
+   aserie:=nil;
+   case nchart.ChartType of
+    rpchartline:
+     begin
+      aserie:=TLineSeries.Create(nil);
+     end;
+    rpchartbar:
+     begin
+      aserie:=TBarSeries.Create(nil);
+      case nchart.MultiBar of
+       rpMultiNone:
+        TBarSeries(aserie).MultiBar:=mbNone;
+       rpMultiside:
+        TBarSeries(aserie).MultiBar:=mbSide;
+       rpMultiStacked:
+        TBarSeries(aserie).MultiBar:=mbStacked;
+       rpMultiStacked100:
+        TBarSeries(aserie).MultiBar:=mbStacked100;
+      end;
+     end;
+    rpchartpoint:
+     aserie:=TPointSeries.Create(nil);
+    rpcharthorzbar:
+     aserie:=THorizBarSeries.Create(nil);
+    rpchartarea:
+     aserie:=TAreaSeries.Create(nil);
+    rpchartpie:
+     begin
+      aserie:=TPieSeries.Create(nil);
+      aserie.Marks.Style:=smsPercent;
+     end;
+    rpchartarrow:
+     aserie:=TArrowSeries.Create(nil);
+    rpchartbubble:
+     aserie:=TBubbleSeries.Create(nil);
+    rpchartgantt:
+     aserie:=TGanttSeries.Create(nil);
+   end;
+   if not assigned(aserie) then
+    exit;
+   aserie.Marks.Visible:=nchart.ShowHint;
+{$IFDEF MSWINDOWS}
+   aserie.Marks.Font.Name:=nchart.WFontName;
+   aserie.Marks.Font.Style:=CLXIntegerToFontStyle(nchart.FontStyle);
+{$ENDIF}
+{$IFDEF LINUX}
+   aserie.Marks.Font.Name:=nchart.lFontName;
+   aserie.Marks.Font.Style:=IntegerToFontStyle(nchart.FontStyle);
+{$ENDIF}
+   aserie.Marks.Font.Size:=aFontSize;
+   aserie.ParentChart:=achart;
+   // Assigns the color for this serie
+   intserie:=Series.Items[i];
+   for j:=0 to intserie.ValueCount-1 do
+   begin
+    if nchart.ChartType=rpchartpie then
+     aserie.Add(intserie.Values[j],
+      intSerie.ValueCaptions[j],SeriesColors[aColor])
+    else
+    aserie.Add(intserie.Values[j],
+     intSerie.ValueCaptions[j],SeriesColors[aColor]);
+    if series.count<2 then
+    begin
+     if nchart.ChartType=rpchartpie then
+      acolor:=((acolor+1) mod (MAX_SERIECOLORS));
+    end;
+   end;
+{$IFDEF MSWINDOWS}
+   abitmap:=Graphics.TBitmap.Create;
+   try
+    abitmap.HandleType:=bmDIB;
+    abitmap.PixelFormat:=pf24bit;
+{$ENDIF}
+{$IFDEF LINUX}
+   abitmap:=TBitmap.Create;
+   try
+    abitmap.PixelFormat:=pf32bit;
+{$ENDIF}
+    // Chart resolution to default screen
+    abitmap.Width:=Round(twipstoinchess(nchart.PrintWidth)*nchart.Resolution);
+    abitmap.Height:=Round(twipstoinchess(nchart.PrintHeight)*nchart.Resolution);
+    rec.Top:=0;
+    rec.Left:=0;
+    rec.Bottom:=abitmap.Height-1;
+    rec.Right:=abitmap.Width-1;
+    achart.Draw(abitmap.Canvas,rec);
+    // Finally print it
+    FMStream:=TMemoryStream.Create;
+    try
+     abitmap.SaveToStream(FMStream);
+     page.NewImageObject(aposy,aposx,
+      nchart.PrintWidth,nchart.PrintHeight,DEF_COPYMODE,Integer(rpDrawStretch),
+      nchart.Resolution,FMStream);
+    finally
+     FMStream.Free;
+    end;
+   finally
+    abitmap.free;
+   end;
+   acolor:=((acolor+1) mod MAX_SERIECOLORS);
+  end;
+ finally
+  while achart.SeriesList.Count>0 do
+  begin
+   TObject(achart.SeriesList.Items[0]).free;
+  end;
+  achart.Free;
+ end;
+end;
+{$ENDIF}
+{$ENDIF}
+
+{$IFNDEF FORWEBAX}
+procedure TRpQtDriver.DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
+begin
+ {$IFDEF USECLXTEECHART}
+   DoDrawChart(Self,Series,ametafile.Pages[ametafile.CurrentPage],posx,posy,achart);
+ {$ENDIF}
+end;
+{$ENDIF}
 end.
 
 

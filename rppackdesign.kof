@@ -62,9 +62,7 @@ UseLauncher=0
 DebugCWD=
 
 [Excluded Packages]
-/opt/cortez/bin/dclnet.so.6.5=Borland Internet Components
-/opt/cortez/bin/dclib.so.6.5=InterBase Data Access Components
-/opt/cortez/bin/dclemacsedit.so.6.5=Borland Editor Emacs Enhancements
-/opt/cortez/bin/bplHelpViewers.so.6.5=Borland Sample Help Viewer Package
-/opt/cortez/bin/dclindy.so.6.5=Internet Direct "Indy" for Kylix Property and Component Editors
+/home/toni/cvsroot/reportman/bplrppackdesign.so=Report Manager Designer Component Package
+/home/toni/cvsroot/reportman/bplrppackdesigntime.so=Report Manager Design time package
+/home/toni/cvsroot/teechart/Sources/dclTee6K3.so=TeeChart 6 Components
 
