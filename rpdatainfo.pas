@@ -35,7 +35,7 @@ const
  DBXCONFIGFILENAME='dbxconnections';
 {$ENDIF}
 type
- TRpDbDriver=(rpdatadbexpress,rpdatabde,rpdataado,rpdataibx);
+ TRpDbDriver=(rpdatadbexpress,rpdataibx,rpdatabde,rpdataado);
 
 
  TRpConnAdmin=class(TObject)

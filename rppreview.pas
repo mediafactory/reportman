@@ -58,6 +58,9 @@ type
     ACancel: TAction;
     BCancel: TButton;
     PBar: TProgressBar;
+    AExit: TAction;
+    ToolButton8: TToolButton;
+    ToolButton9: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -73,6 +76,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure AExitExecute(Sender: TObject);
   private
     { Private declarations }
     cancelled:boolean;
@@ -409,5 +413,10 @@ begin
   Raise Exception.Create(SRpOperationAborted);
 end;
 
+
+procedure TFRpPreview.AExitExecute(Sender: TObject);
+begin
+ Close;
+end;
 
 end.

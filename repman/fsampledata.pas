@@ -22,7 +22,7 @@ interface
 
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,DB, QDBCtrls, QGrids, QDBGrids,
-  QComCtrls;
+  QComCtrls, QImgList;
 
 const
  DCONTROL_DISTANCEY=5;
@@ -37,6 +37,10 @@ type
     ToolBar1: TToolBar;
     DBNavigator1: TDBNavigator;
     ScrollBox1: TScrollBox;
+    ImageList1: TImageList;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    procedure ToolButton1Click(Sender: TObject);
   private
     { Private declarations }
     procedure CreateControls;
@@ -100,5 +104,10 @@ begin
  end;
 end;
 
+
+procedure TFShowSampledata.ToolButton1Click(Sender: TObject);
+begin
+ Close;
+end;
 
 end.

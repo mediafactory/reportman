@@ -125,9 +125,9 @@ procedure TFDatainfoconfig.FormCreate(Sender: TObject);
 begin
  GDriver.ItemIndex:=0;
 {$IFDEF MSWINDOWS}
+ GDriver.Items.Add('IBX');
  GDriver.Items.Add('BDE');
  GDriver.Items.Add('ADO');
- GDriver.Items.Add('IBX');
  GDriver.Columns:=GDriver.Items.Count;
 {$ENDIF}
  databaseinfo:=TRpDatabaseInfoList.Create(Self);

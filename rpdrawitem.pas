@@ -86,6 +86,15 @@ implementation
 
 uses rpreport;
 
+{ Paradox graphic BLOB header }
+
+type
+  TGraphicHeader = record
+    Count: Word;                { Fixed at 1 }
+    HType: Word;                { Fixed at $0100 }
+    Size: Longint;              { Size not including header }
+  end;
+
 constructor TRpShape.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
@@ -165,6 +174,8 @@ var
  afield:TField;
  AStream:TStream;
  FMStream:TMemoryStream;
+ Size: Longint;
+ Header: TGraphicHeader;
 begin
  if Not Assigned(FStream) then
   exit;
@@ -188,13 +199,25 @@ begin
   try
    AStream:=AField.DataSet.CreateBlobStream(AField,bmRead);
    try
+    Size := AStream.Size;
     FMStream.SetSize(AStream.Size);
-    if AStream.Size<>AStream.Read(FMStream.Memory^,AStream.Size) then
+    if Size >= SizeOf(TGraphicHeader) then
+    begin
+      AStream.Read(Header, SizeOf(Header));
+      if (Header.Count <> 1) or (Header.HType <> $0100) or
+        (Header.Size <> Size - SizeOf(Header)) then
+        AStream.Position := 0
+      else
+       FMStream.SetSize(AStream.Size-SizeOf(Header));
+    end;
+    if FMStream.Size<>AStream.Read(FMStream.Memory^,FMStream.Size) then
      Raise Exception.Create(SRpErrorReadingFromFieldStream);
     FMStream.Seek(0,soFromBeginning);
     if FMStream.Size>0 then
+    begin
      metafile.Pages[metafile.CurrentPage].NewImageObject(aposy+PosY,aposx+PosX,
       Width,Height,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),FMStream);
+    end;
    finally
     AStream.free;
    end;

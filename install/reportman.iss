@@ -19,16 +19,19 @@ Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "A
 Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; MinVersion: 4,4; Flags: unchecked
 
 [Files]
-Source: "C:\prog\toni\cvsroot\reportman\reportman\repman\repmand.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "C:\prog\toni\cvsroot\reportman\reportman\repman\utils\metaview\metaview.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "C:\prog\toni\cvsroot\reportman\reportman\repman\utils\metaprint\metaprint.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "C:\prog\toni\cvsroot\reportman\reportman\repman\utils\printrep\printrep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "C:\prog\toni\cvsroot\reportman\reportman\repman\dbxdrivers.ini"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "C:\prog\toni\cvsroot\reportman\reportman\repman\dbxconnections.ini"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "C:\prog\delphi6\bin\dbexpint.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "C:\prog\delphi6\bin\dbexpmys.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "C:\prog\delphi6\bin\dbexpora.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "C:\prog\delphi6\bin\dbexpdb2.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
+Source: "..\repman\repmand.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\metaview\metaview.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\metaprint\metaprint.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\printrep\printrep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\reptotxt\reptotxt.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\txttorep\txttorep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\dbxdrivers.ini"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\dbxconnections.ini"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\drivers\win32\dbexpint.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
+Source: "..\drivers\win32\dbexpmys.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
+Source: "..\drivers\win32\dbexpora.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
+Source: "..\drivers\win32\dbexpdb2.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
+Source: "..\drivers\win32\dbxoodbc.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 Source: "C:\winnt\system32\qtintf.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 
 [Icons]
@@ -36,6 +39,7 @@ Name: "{group}\Report Manager"; Filename: "{app}\repmand.exe";
 Name: "{group}\Report Manager"; Filename: "{app}\metaview.exe";
 Name: "{userdesktop}\Report Manager"; Filename: "{app}\repmand.exe"; MinVersion: 4,4; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Report Manager"; Filename: "{app}\repmand.exe"; MinVersion: 4,4; Tasks: quicklaunchicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Metafile Report Viewer"; Filename: "{app}\metaview.exe"; MinVersion: 4,4; Tasks: quicklaunchicon
 
 [Run]
 Filename: "{app}\repmand.exe"; Description: "Launch Report Manager"; Flags: nowait postinstall skipifsilent

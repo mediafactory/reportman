@@ -51,6 +51,8 @@ type
     ImageList1: TImageList;
     ToolButton2: TToolButton;
     BConnect: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure ComboDriversClick(Sender: TObject);
     procedure LConnectionsClick(Sender: TObject);
@@ -60,6 +62,7 @@ type
     procedure BShowPropsClick(Sender: TObject);
     procedure BConnectClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure ToolButton4Click(Sender: TObject);
   private
     { Private declarations }
     DriversFile:string;
@@ -251,6 +254,7 @@ begin
  if Length(newname)<1 then
   exit;
  ConAdmin.AddConnection(newname,ComboDrivers.Text);
+ ConAdminObj.ConnectionConfig.UpdateFile;
  ComboDriversClick(Self);
 end;
 
@@ -266,6 +270,7 @@ begin
  if mrOk=MessageDlg(SRpDropConnection,SRpSureDropConnection+conname,mtWarning,[mbok,mbCancel],0) then
  begin
   ConAdmin.DeleteConnection(conname);
+  ConAdminObj.ConnectionConfig.UpdateFile;
   ComboDriversCLick(Self);
  end;
 end;
@@ -314,5 +319,10 @@ begin
 
 end;
 
+
+procedure TFDBXConfig.ToolButton4Click(Sender: TObject);
+begin
+ Close;
+end;
 
 end.

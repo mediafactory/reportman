@@ -209,6 +209,7 @@ begin
 {$ENDIF}
     Canvas.Font.Color:=Obj.FontColor;
     Canvas.Font.Style:=IntegerToFontStyle(obj.FontStyle);
+    Canvas.Font.Size:=Obj.FontSize;
     if obj.CutText then
     begin
      rec.Top:=posx;
