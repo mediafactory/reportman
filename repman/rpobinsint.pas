@@ -24,7 +24,7 @@ unit rpobinsint;
 interface
 
 uses Types,QGraphics,QForms,QControls,rpconsts,classes,sysutils,rpmunits,
-  rpprintitem,rpgraphutils,rpsection;
+  rpprintitem,rpgraphutils,rpsection,rpreport;
 
 const
  CONS_MODIWIDTH=5;
@@ -135,6 +135,8 @@ type
    FBlacks:array[0..3] of TRpBlackControl;
    FControl:TControl;
    FOnlysize:boolean;
+   FGridEnabled:boolean;
+   FGridX,FGridY:integer;
    procedure SetControl(Value:TControl);
    procedure SetOnlySize(Value:Boolean);
    procedure SetAllowOversize(Value:Boolean);
@@ -146,6 +148,9 @@ type
    property OnSizeChange:TNotifyEvent read FOnSizeChange write FOnSizeChange;
    property OnlySize:Boolean read FOnlySize write SetOnlySize default false;
    property AllowOverSize:Boolean read FAllowOverSize write SetAllowOverSize default false;
+   property GridX:integer read FGridX write FGridX;
+   property GridY:integer read FGridY write FGridY;
+   property GridEnabled:boolean read FGridEnabled write FGridEnabled;
   end;
 
 implementation
@@ -489,6 +494,12 @@ begin
     NewLeft:=0;
    if NewTop<0 then
     NewTop:=0;
+   // Align to grid
+   if (TRpReport(printitem.Owner).GridEnabled) then
+   begin
+    NewLeft:=AlignToGridPixels(NewLeft,TRpReport(printitem.Owner).GridWidth);
+    NewTop:=AlignToGridPixels(NewTop,TRpReport(printitem.Owner).GridHeight);
+   end;
    FRectangle.SetBounds(Newleft,NewTop,Width,1);
    FRectangle2.SetBounds(Newleft,NewTop+Height,Width,1);
    FRectangle3.SetBounds(Newleft,NewTop,1,Height);
@@ -524,6 +535,13 @@ begin
    NewLeft:=Parent.Width-Width;
   if NewTop+Height>Parent.Height then
    NewTop:=Parent.Height-Height;
+  // Align to grid
+  if (TRpReport(printitem.Owner).GridEnabled) then
+  begin
+   NewLeft:=AlignToGridPixels(NewLeft,TRpReport(printitem.Owner).GridWidth);
+   NewTop:=AlignToGridPixels(NewTop,TRpReport(printitem.Owner).GridHeight);
+  end;
+
   TRpCOmmonPosComponent(printitem).PosX:=pixelstotwips(NewLeft);
   TRpCOmmonPosComponent(printitem).PosY:=pixelstotwips(NewTop);
   UpdatePos;
@@ -587,6 +605,8 @@ end;
 
 procedure TRpBlackControl.CalcNewCoords(var NewLeft,
  NewTop,NewWidth,NewHeight,X,Y:integer);
+var
+ difx,dify:integer;
 begin
   // Depending on tag must do different coordinates
   case Tag of
@@ -594,6 +614,12 @@ begin
     begin
      NewLeft:=Control.Left-FXOrigin+X;
      NewTop:=Control.Top-FYOrigin+Y;
+     // Align to grid
+     if TRpSizeModifier(Owner).GridEnabled then
+     begin
+      NewLeft:=AlignToGridPixels(NewLeft,TRpSizeModifier(Owner).GridX);
+      NewTop:=AlignToGridPixels(NewTop,TRpSizeModifier(Owner).GridY);
+     end;
      // It mantains the bottom corner position
      if NewTop>Control.Top+Control.Height then
      begin
@@ -623,8 +649,15 @@ begin
     begin
      NewLeft:=Control.Left;
      NewWidth:=Control.Width-FXOrigin+X;
+     if TRpSizeModifier(Owner).GridEnabled then
+      NewWidth:=AlignToGridPixels(NewLeft+NewWidth,TRpSizeModifier(Owner).GridX)-NewLeft;
      NewTop:=Control.Top-FYOrigin+Y;
 
+     // Align to grid
+     if TRpSizeModifier(Owner).GridEnabled then
+     begin
+      NewTop:=AlignToGridPixels(NewTop,TRpSizeModifier(Owner).GridY);
+     end;
      // It mantains the bottom corner position
      if NewTop>Control.Top+Control.Height then
      begin
@@ -651,6 +684,14 @@ begin
      NewLeft:=Control.Left-FXOrigin+X;
      NewHeight:=Control.Height-FYOrigin+Y;
      NewTop:=Control.Top;
+     if TRpSizeModifier(Owner).GridEnabled then
+      NewHeight:=AlignToGridPixels(NewTop+NewHeight,TRpSizeModifier(Owner).GridY)-NewTop;
+
+     // Align to grid
+     if TRpSizeModifier(Owner).GridEnabled then
+     begin
+      NewLeft:=AlignToGridPixels(NewLeft,TRpSizeModifier(Owner).GridX);
+     end;
 
      if NewHeight<0 then
      begin
@@ -679,7 +720,11 @@ begin
      NewTop:=Control.Top;
      NewLeft:=Control.Left;
      NewWidth:=Control.Width-FXOrigin+X;
-
+     if TRpSizeModifier(Owner).GridEnabled then
+     begin
+      NewWidth:=AlignToGridPixels(NewLeft+NewWidth,TRpSizeModifier(Owner).GridX)-NewLeft;
+      NewHeight:=AlignToGridPixels(NewTop+NewHeight,TRpSizeModifier(Owner).GridY)-NewTop;
+     end;
      if NewHeight<0 then
      begin
       NewHeight:=-NewHeight;

@@ -149,6 +149,9 @@ begin
  end;
  if CompItem is TRpSizePosInterface then
  begin
+  fchangesize.GridEnabled:=fmainf.report.GridEnabled;
+  fchangesize.GridX:=fmainf.report.GridWidth;
+  fchangesize.GridY:=fmainf.report.GridHeight;
   fchangesize.Control:=CompItem;
   fmainf.ACut.Enabled:=true;
   fmainf.ACopy.Enabled:=true;

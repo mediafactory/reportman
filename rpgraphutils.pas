@@ -22,10 +22,31 @@ function pixelstotwips(apixels:integer):integer;
 function FontStyleToInteger(fontstyle:TFontStyles):integer;
 function IntegerToFontStyle(intfontstyle:integer):TFontStyles;
 function IntegerFontStyleToString(intfontstyle:integer):String;
+function AlignToGrid(Value:integer;scale:integer):integer;
+function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
 
 implementation
 
 {$R *.xfm}
+
+function AlignToGrid(Value:integer;scale:integer):integer;
+var
+ rest:integer;
+begin
+ Result:=Value div scale;
+ rest:=Value mod scale;
+ Result:=scale*Result;
+ if rest>(scale div 2) then
+  Result:=Result+scale;
+end;
+
+function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
+begin
+ Value:=pixelstotwips(Value);
+ Value:=AlignToGrid(Value,scaletwips);
+ Result:=twipstopixels(Value);
+end;
+
 
 procedure DrawGrid(Canvas:TCanvas;XWidth,XHeight,PixelsWidth,PixelsHeight:integer;Color:TColor;lines:boolean;XOffset,YOffset:integer);
 var
