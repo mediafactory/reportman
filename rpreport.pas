@@ -52,7 +52,6 @@ type
  TRpReport=class(TRpBaseReport)
   private
    printingonepass:boolean;
-   procedure UpdateParamsBeforeOpen(index:integer);
   protected
     procedure Notification(AComponent:TComponent;Operation:TOperation);override;
     procedure Loaded;override;
@@ -66,7 +65,6 @@ type
    function PrintNextPage:boolean;override;
    procedure PrintRange(Driver:IRpPrintDriver;allpages:boolean;
     frompage,topage,copies:integer;collate:boolean);
-   procedure InitEvaluator;
    procedure AddReportItemsToEvaluator(eval:TRpEvaluator);
  end;
 
@@ -74,22 +72,6 @@ procedure RegisterRpReportClasses;
 
 implementation
 
-procedure TRpReport.InitEvaluator;
-begin
- if Assigned(FEvaluator) then
- begin
-  FEvaluator.free;
-  FEvaluator:=nil;
- end;
- FEvaluator:=TRpEvaluator.Create(nil);
- FEvaluator.Language:=Language;
- FEvaluator.OnGraphicOp:=OnGraphicOp;
- FEvaluator.OnTextOp:=OnTextOp;
- FEvaluator:=TRpEvaluator.Create(nil);
- FEvaluator.Language:=Language;
- FEvaluator.OnGraphicOp:=OnGraphicOp;
- FEvaluator.OnTextOp:=OnTextOp;
-end;
 
 procedure TRpReport.Loaded;
 var
@@ -482,7 +464,7 @@ begin
 
   inc(FRecordCount);
 
-  CheckProgress;
+  CheckProgress(false);
  end;
 {$IFDEF QUERYLINKBUG}
  datainfo.EnableLinks;
@@ -522,15 +504,27 @@ begin
     if Length(Datainfo.Items[index].DataSource)<1 then
     begin
      Datainfo.Items[index].Disconnect;
-     UpdateParamsBeforeOpen(index);
+     UpdateParamsBeforeOpen(index,true);
      Datainfo.Items[index].Connect(DatabaseInfo,params);
+    end
+    else
+    begin
+     if (Datainfo.Items[index].Dataset.Eof) then
+     begin
+      if subrep.ReOpenOnPrint then
+      begin
+       Datainfo.Items[index].Disconnect;
+       UpdateParamsBeforeOpen(index,true);
+       Datainfo.Items[index].Connect(DatabaseInfo,params);
+      end
+     end;
     end;
     if Datainfo.Items[index].Cached then
     begin
      if Datainfo.Items[index].Dataset.Bof then
      begin
       Datainfo.Items[index].CachedDataset.DoClose;
-      UpdateParamsBeforeOpen(index);
+      UpdateParamsBeforeOpen(index,true);
       Datainfo.Items[index].CachedDataset.DoOpen;
      end;
      if (Not Datainfo.Items[index].Dataset.Eof) then
@@ -548,7 +542,7 @@ begin
     end;
    end;
    subrep.LastRecord:=Not dataavail;
-   if dataavail then
+   if (dataavail or (Not subrep.PrintOnlyIfDataAvailable)) then
    begin
     subrep.SubReportChanged(rpSubReportStart);
 //    subrep.SubReportChanged(rpDataChange);
@@ -603,14 +597,14 @@ begin
  // Check the condition
  while CurrentSubReportIndex<Subreports.count do
  begin
-  CheckProgress;
+  CheckProgress(false);
 
   subrep:=Subreports.Items[CurrentSubReportIndex].SubReport;
   // The first section are the group footers until
   // CurrentGropup
   while subrep.CurrentGroupIndex<>0 do
   begin
-   CheckProgress;
+   CheckProgress(false);
 
    lastdetail:=subrep.LastDetail;
    firstdetail:=subrep.FirstDetail;
@@ -679,7 +673,7 @@ begin
    break;
   while CurrentSectionIndex<subrep.Sections.Count do
   begin
-   CheckProgress;
+   CheckProgress(false);
    if CurrentSectionIndex<0 then
     CurrentSectionIndex:=subrep.FirstDetail
    else
@@ -820,38 +814,6 @@ begin
  eval.AddIden('EOF',fideneof);
 end;
 
-procedure TRpReport.UpdateParamsBeforeOpen(index:integer);
-var
- i:integer;
- paramname:string;
-begin
- for i:=0 to Params.Count-1 do
- begin
-  if Params.Items[i].Datasets.IndexOf(datainfo.Items[index].Alias)>=0 then
-  if params.items[i].ParamType=rpParamExpreB then
-  begin
-   paramname:=params.items[i].Name;
-   try
-    if Not VarIsNull(params.items[i].Value) then
-    begin
-     FEvaluator.EvaluateText(paramname+':=('+String(params.items[i].Value)+')');
-     params.items[i].LastValue:=FEvaluator.EvaluateText(paramname);
-    end;
-   except
-    on E:Exception do
-    begin
-{$IFDEF DOTNETD}
-     Raise Exception.Create(E.Message+SRpParameter+'-'+paramname);
-{$ENDIF}
-{$IFNDEF DOTNETD}
-     E.Message:=E.Message+SRpParameter+'-'+paramname;
-     Raise;
-{$ENDIF}
-    end;
-   end;
-  end;
-end;
-end;
 
 
 procedure TRpReport.BeginPrint(Driver:IRpPrintDriver);
@@ -868,6 +830,7 @@ begin
  FillGlobalHeaders;
  FDriver:=Driver;
  FPendingSections.Clear;
+ errorprocessing:=false;
  if Not Assigned(FDriver) then
   Raise Exception.Create(SRpNoDriverPassedToPrint);
  Driver.SelectPrinter(PrinterSelect);
@@ -1140,7 +1103,7 @@ begin
    while newpage>Metafile.PageCount do
    begin
     Metafile.NewPage;
-    CheckProgress;
+    CheckProgress(false);
    end;
    Metafile.CurrentPage:=newpage;
    PageNum:=Metafile.CurrentPage;
@@ -1253,9 +1216,12 @@ begin
    ispagerepeat:=asection.Pagerepeat;
   if Not ispagerepeat then
   begin
-   printedsomething:=true;
    oldprintedsection:=section;
    oldprintedsectionext:=sectionext;
+   // If the section have been derived from a page repeat
+   //...
+   if FGroupHeaders.Count<1 then
+    printedsomething:=true;
   end;
  end;
  // If the section is not aligned at bottom of the page then
@@ -1429,6 +1395,8 @@ end;
 
 
 begin
+ if errorprocessing then
+  Raise Exception.Create(SRpErrorProcessing+#10+lasterrorprocessing);
  FGroupHeaders.Clear;
  printedsomething:=false;
  if Not Assigned(Section) then
@@ -1607,11 +1575,20 @@ begin
    end;
   end;
   PrintFixedSections(FDriver,false);
- finally
   pagefooters.Free;
+ except
+  on E:Exception do
+  begin
+   pagefooters.Free;
+   errorprocessing:=true;
+   lasterrorprocessing:=E.Message;
+   raise;
+  end;
  end;
  Result:=Not Assigned(Section);
  LastPage:=Result;
+ if LastPage then
+  CheckProgress(true);
 end;
 
 

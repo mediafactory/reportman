@@ -533,6 +533,7 @@ begin
  if dinfo=nil then
   exit;
  dinfo.Disconnect;
+ Report.PrepareParamsBeforeOpen;
  dinfo.Connect(databaseinfo,report.params);
  try
   ShowDataset(dinfo.Dataset);

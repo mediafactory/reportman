@@ -32,7 +32,7 @@ type
    FAlias:string;
    FParentSubReport:TRpSubReport;
    FParentSection:TRpSection;
-   FPrintOnlyIfDataAvailable:Boolean;
+   FPrintOnlyIfDataAvailable,FReOpenOnPrint:Boolean;
    // Methots for writing internal indexes
    procedure SetSections(Value:TRpSectionList);
    function GetDetailCount:integer;
@@ -87,6 +87,8 @@ type
     write FParentSection;
    property PrintOnlyIfDataAvailable:Boolean read FPrintOnlyIfDataAvailable
     write FPrintOnlyIfDataAvailable default true;
+   property ReOpenOnPrint:Boolean read FReOpenOnPrint
+    write FReOpenOnPrint default true;
  end;
 
 implementation
@@ -310,6 +312,7 @@ begin
  // Sections
  FSections:=TRpSectionList.Create(Self);
  FPrintOnlyIfDataAvailable:=true;
+ FReOpenOnPrint:=true;
 end;
 
 destructor TRpSubReport.Destroy;

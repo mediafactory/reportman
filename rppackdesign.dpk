@@ -28,10 +28,7 @@ package rppackdesign;
 {$IMPLICITBUILD OFF}
 
 requires
-  rppack,
-  rppackv,
-  designide,
-  visualclx;
+  designide;
 
 contains
   rpmdesigner in 'rpmdesigner.pas',

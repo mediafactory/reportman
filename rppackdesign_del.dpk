@@ -34,10 +34,8 @@ requires
   visualdbclx,
   rppack_del,
   rppackv_del,
-  rppackvcl_del,
   visualclx,
-  indy,
-  rppackdesignvcl_del;
+  indy;
 
 contains
   rpmregdesign in 'rpmregdesign.pas',

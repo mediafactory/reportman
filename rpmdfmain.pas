@@ -391,6 +391,8 @@ begin
  report.FailIfLoadExternalError:=false;
  report.CreateNew;
  filename:='';
+ alibrary:='';
+ areportname:='';
 
  DoEnable;
  FormResize(Self);

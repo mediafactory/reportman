@@ -33,13 +33,10 @@ requires
   dbrtl,
   visualclx,
   rppack_del,
-  rppackvcl_del,
   indy,
   dsnap,
-  vcljpg,
   tee,
   ibxpress,
-  adortl,
   bdertl,
   dbexpress;
 

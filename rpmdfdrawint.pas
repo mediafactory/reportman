@@ -50,6 +50,7 @@ type
  TRpImageInterface=class(TRpSizePosInterface)
   private
    FBitmap:TBitmap;
+   FIntStream:TMemoryStream;
   protected
    procedure Paint;override;
   public
@@ -407,6 +408,7 @@ end;
 
 constructor TRpImageInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin
+ FIntStream:=TMemoryStream.Create;
  if Not (pritem is TRpImage) then
   Raise Exception.Create(SRpIncorrectComponentForInterface);
  inherited Create(AOwner,pritem);
@@ -420,6 +422,7 @@ end;
 
 destructor TRpImageInterface.Destroy;
 begin
+ FIntStream.free;
  if Assigned(FBitmap) then
   FBitmap.free;
  inherited destroy;
@@ -549,6 +552,7 @@ var
 {$IFDEF VCLANDCLX}
  bitmapwidth,bitmapheight:integer;
 {$ENDIF}
+ astream:TMemoryStream;
 begin
  aimage:=TRpImage(printitem);
  try
@@ -560,20 +564,30 @@ begin
   Canvas.Rectangle(0,0,Width,Height);
   if aimage.Stream.Size>0 then
   begin
+   if IsCompressed(aimage.Stream) then
+   begin
+    FIntStream.SetSize(0);
+    DecompressStream(aimage.Stream,FIntStream);
+    astream:=FIntStream;
+    FIntStream.Seek(0,soFromBeginning);
+   end
+   else
+    astream:=aimage.Stream;
+   
    if Not Assigned(FBitmap) then
    begin
     FBitmap:=TBitmap.Create;
     FBitmap.PixelFormat:=pf32bit;
 {$IFDEF VCLANDCLX}
-    if GetJPegInfo(aimage.Stream,bitmapwidth,bitmapheight) then
+    if GetJPegInfo(aStream,bitmapwidth,bitmapheight) then
     begin
-     rpvgraphutils.JPegStreamToBitmapStream(aimage.stream);
+     rpvgraphutils.JPegStreamToBitmapStream(astream);
     end;
 {$ENDIF}
     // Try to load it
-    aimage.Stream.Seek(0,soFromBeginning);
+    aStream.Seek(0,soFromBeginning);
     try
-     FBitmap.LoadFromStream(aimage.Stream);
+     FBitmap.LoadFromStream(aStream);
     except
      FBitmap.free;
      FBitmap:=nil;

@@ -52,6 +52,8 @@ type
  TRpImageInterface=class(TRpSizePosInterface)
   private
    FBitmap:TBitmap;
+   FIntStream:TMemoryStream;
+
   protected
    procedure Paint;override;
   public
@@ -411,9 +413,11 @@ end;
 
 constructor TRpImageInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin
+ FIntStream:=TMemoryStream.Create;
  if Not (pritem is TRpImage) then
   Raise Exception.Create(SRpIncorrectComponentForInterface);
  inherited Create(AOwner,pritem);
+ FIntStream:=TMemoryStream.Create;
 end;
 
 class procedure TRpImageInterface.FillAncestors(alist:TStrings);
@@ -424,6 +428,7 @@ end;
 
 destructor TRpImageInterface.Destroy;
 begin
+ FIntStream.free;
  if Assigned(FBitmap) then
   FBitmap.free;
  inherited destroy;
@@ -557,6 +562,7 @@ var
 {$IFNDEF DOTNETD}
  jpegimage:TJPegImage;
 {$ENDIF}
+ astream:TStream;
 begin
  aimage:=TRpImage(printitem);
  try
@@ -568,30 +574,43 @@ begin
   Canvas.Rectangle(0,0,Width,Height);
   if aimage.Stream.Size>0 then
   begin
+   if IsCompressed(aimage.Stream) then
+   begin
+    FIntStream.SetSize(0);
+    DecompressStream(aimage.Stream,FIntStream);
+    astream:=FIntStream;
+    FIntStream.Seek(0,soFromBeginning);
+   end
+   else
+    astream:=aimage.Stream;
+
    if Not Assigned(FBitmap) then
    begin
     FBitmap:=TBitmap.Create;
     FBitmap.PixelFormat:=pf32bit;
-    aimage.Stream.Seek(0,soFromBeginning);
+    aStream.Seek(0,soFromBeginning);
     try
      FBitmap.HandleType:=bmDIB;
-     if GetJPegInfo(aimage.stream,bitmapwidth,bitmapheight) then
+     if GetJPegInfo(astream,bitmapwidth,bitmapheight) then
      begin
 {$IFNDEF DOTNETD}
       jpegimage:=TJPegImage.Create;
       try
-       jpegimage.LoadFromStream(aimage.stream);
+       jpegimage.LoadFromStream(astream);
        fbitmap.Assign(jpegimage);
       finally
        jpegimage.free;
       end;
 {$ENDIF}
 {$IFDEF DOTNETD}
-      fbitmap.LoadFromStream(aimage.stream);
+      fbitmap.LoadFromStream(astream);
 {$ENDIF}
      end
      else
-      fbitmap.LoadFromStream(aimage.stream);
+     begin
+      aStream.Seek(0,soFromBeginning);
+      fbitmap.LoadFromStream(astream);
+     end;
     except
      FBitmap.free;
      FBitmap:=nil;

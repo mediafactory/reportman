@@ -248,6 +248,7 @@ begin
    if TObject(Node.Data) is TRpDataInfoItem then
    begin
     ditem:=TRpDataInfoItem(TObject(Node.Data));
+    FReport.PrepareParamsBeforeOpen;
     ditem.Connect(Freport.DatabaseInfo,FReport.Params);
     alist:=TStringList.Create;
     fieldtypes:=TStringList.Create;

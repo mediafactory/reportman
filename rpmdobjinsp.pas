@@ -26,7 +26,7 @@ uses
   SysUtils, Classes,
   Types,
   QGraphics, QControls, QForms, QDialogs,QStdCtrls,QExtCtrls,
-  Qt,QComctrls,rpmaskeditclx,
+  Qt,QComctrls,rpmaskeditclx,rppdfdriver,
   rpmdobinsint,rpmdconsts,rpprintitem,rptypes,
   rpgraphutils,rpsection,rpmunits, rpexpredlg,rpmdfextsec,
   rpalias,rpreport,rpsubreport,rpmdflabelint,rplabelitem,
@@ -49,6 +49,7 @@ type
 
   TRpPanelObj=class(TPanel)
    private
+    fpdfdriver:TRpPDFDriver;    
     FCompItem:TRpSizeInterface;
     FSelectedItems:TStringList;
     subrep:TRpSubreport;
@@ -167,6 +168,8 @@ end;
 constructor TrpPanelObj.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+
+ fpdfdriver:=TRpPdfDriver.Create;
 
  TFRpObjInsp(Owner).OpenDialog1.Filter:=
   SrpBitmapImages+'(*.bmp)|'+
@@ -668,7 +671,7 @@ begin
  FRpMainF:=TFRpMainF(Owner.Owner);
  report:=FRpMainf.report;
  try
-  report.ActivateDatasets;
+  report.BeginPrint(fpdfdriver);
  except
   on E:Exception do
   begin

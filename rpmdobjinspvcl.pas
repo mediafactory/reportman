@@ -27,7 +27,7 @@ uses
 {$IFDEF USEVARIANTS}
   Types,Variants,
 {$ENDIF}
-  Classes,
+  Classes,rppdfdriver,
   Windows,Graphics, Controls, Forms, Dialogs,StdCtrls,ExtCtrls,
   rpmdobinsintvcl,rpmdconsts,rpprintitem,comctrls,
   rpgraphutilsvcl,rpsection,rpmunits, rpexpredlgvcl,rpmdfextsecvcl,
@@ -99,6 +99,7 @@ type
 
   TRpPanelObj=class(TPanel)
    private
+    fpdfdriver:TRpPDFDriver;
     FCompItem:TRpSizeInterface;
     FSelectedItems:TStringList;
     subrep:TRpSubreport;
@@ -607,7 +608,7 @@ begin
  FRpMainF:=TFRpMainFVCL(Owner.Owner);
  report:=FRpMainf.report;
  try
-  report.ActivateDatasets;
+  report.BeginPrint(fpdfdriver);
  except
   on E:Exception do
   begin
@@ -1702,6 +1703,8 @@ end;
 constructor TrpPanelObj.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+
+ fpdfdriver:=TRpPdfDriver.Create;
 
  TFRpObjInspVCL(Owner).OpenDialog1.Filter:=
   SrpBitmapImages+'|*.bmp|'+

@@ -39,7 +39,10 @@
       <p>For example for a DateTime value you can use the format string: 'dd/mm/yyyy 
         hh:nn:ss', for a number: '###,###0.00', where the , says the use of thousand 
         separator, the 0 are required format positions and # are not required 
-        format positions</p></td>
+        format positions.</p>
+      <p>The engine will use FormatStr function, see documentation, but if the 
+        first character is a *, the FormatNum function will be used (only for 
+        numbers), using the mask without the first char.</p></td>
   </tr>
   <tr> 
     <td>Multi page</td>

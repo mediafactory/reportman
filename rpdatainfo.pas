@@ -232,6 +232,7 @@ type
 
  TRpDatasetType=(rpdquery,rpdtable);
 
+ TRpDataLink=class;
 
  TRpDataInfoItem=class(TCollectionItem)
   private
@@ -240,6 +241,7 @@ type
    FDataSource:string;
    FAlias:string;
    FDataset:TDataset;
+   FDataLink:TRpDatalink;
 {$IFDEF USERPDATASET}
    FCachedDataset:TRpDataset;
 {$ENDIF}
@@ -273,7 +275,6 @@ type
 {$IFDEF USEBDE}
    procedure SetRangeForTable(lastrange:boolean);
 {$ENDIF}
-   procedure DoAfterScroll(DataSet:TDataSet);
   public
    procedure Assign(Source:TPersistent);override;
    procedure Connect(databaseinfo:TRpDatabaseInfoList;params:TRpParamList);
@@ -327,6 +328,17 @@ type
    constructor Create(rep:TComponent);
   end;
 
+  TRpDataLink=class(TDataLink)
+   protected
+
+    procedure RecordChanged(Field:TField);override;
+   public
+    databaseinfo:TRpDatabaseInfoList;
+    datainfo:TRpDataInfoList;
+    datainfoitem:TRpDataInfoItem;
+    dbinfoitem:TRpDatabaseInfoItem;
+    constructor Create;
+  end;
 procedure UpdateConAdmin;
 procedure GetRpDatabaseDrivers(alist:TStrings);
 {$IFDEF USERPDATASET}
@@ -362,6 +374,103 @@ const
 {$ENDIF}
 
 
+
+{$IFDEF USEZEOS}
+procedure  AssignParamValuesZ(ZQuery:TZReadOnlyQuery;Dataset:TDataset);
+var
+ i:integer;
+ afield:TField;
+begin
+ for i:=0 to ZQuery.Params.Count-1 do
+ begin
+  afield:=Dataset.FindField(ZQuery.Params.Items[i].Name);
+  if Assigned(afield) then
+  begin
+   ZQuery.Params.Items[i].Clear;
+   ZQuery.Params.Items[i].DataType:=afield.DataType;
+   if Not afield.IsNull then
+    ZQuery.Params.Items[i].Value:=afield.Value;
+  end;
+ end;
+end;
+
+function  EqualParamValuesZ(ZQuery:TZReadOnlyQuery;Dataset:TDataset):Boolean;
+var
+ i:integer;
+ afield:TField;
+ qvalue:Variant;
+begin
+ Result:=true;
+ for i:=0 to ZQuery.Params.Count-1 do
+ begin
+  afield:=Dataset.FindField(ZQuery.Params.Items[i].Name);
+  if Assigned(afield) then
+  begin
+   qvalue:=ZQuery.Params.Items[i].Value;
+   if VarType(qvalue)=varEmpty then
+   begin
+    Result:=false;
+    break;
+   end;
+   if Not (qvalue=afield.AsVariant) then
+   begin
+    Result:=false;
+    break;
+   end;
+  end;
+ end;
+end;
+{$ENDIF}
+
+
+{$IFDEF USESQLEXPRESS}
+procedure  AssignParamValuesS(ZQuery:TSQLQuery;Dataset:TDataset);
+var
+ i:integer;
+ afield:TField;
+begin
+ for i:=0 to ZQuery.Params.Count-1 do
+ begin
+  afield:=Dataset.FindField(ZQuery.Params.Items[i].Name);
+  if Assigned(afield) then
+  begin
+   ZQuery.Params.Items[i].Clear;
+   ZQuery.Params.Items[i].DataType:=afield.DataType;
+   if Not afield.IsNull then
+    ZQuery.Params.Items[i].Value:=afield.Value;
+  end;
+ end;
+end;
+
+function  EqualParamValuesS(ZQuery:TSQLQuery;Dataset:TDataset):Boolean;
+var
+ i:integer;
+ afield:TField;
+ qvalue:Variant;
+begin
+ Result:=true;
+ for i:=0 to ZQuery.Params.Count-1 do
+ begin
+  afield:=Dataset.FindField(ZQuery.Params.Items[i].Name);
+  if Assigned(afield) then
+  begin
+   qvalue:=ZQuery.Params.Items[i].Value;
+   if VarType(qvalue)=varEmpty then
+   begin
+    Result:=false;
+    break;
+   end;
+   if Not (qvalue=afield.AsVariant) then
+   begin
+    Result:=false;
+    break;
+   end;
+  end;
+ end;
+end;
+{$ENDIF}
+
+
 {$IFDEF USEBDE}
 procedure AddParamsFromDBXToBDE(paramssource,params:TStrings);
 var
@@ -372,6 +481,9 @@ begin
   params.Add(paramssource.Strings[index]);
 end;
 {$ENDIF}
+
+
+
 
 {$IFDEF USEIBX}
 procedure ConvertParamsFromDBXToIBX(base:TIBDatabase);
@@ -1155,6 +1267,7 @@ begin
 end;
 {$ENDIF}
 
+
 procedure TRpDatabaseinfoitem.DisConnect;
 begin
 {$IFDEF USESQLEXPRESS}
@@ -1224,8 +1337,10 @@ begin
    if FDataset.Active then
    begin
     // For opened datasets they must go to first record
-    // Before printing
-    FDataset.First;
+    // Before printing, must not go first here because
+    // child subreports and master-source master-fields
+    if FDataset<>FSQLInternalQuery then
+     FDataset.First;
 {$IFDEF USERPDATASET}
     if cached then
     begin
@@ -1276,22 +1391,15 @@ begin
     end;
    end;
 
+   if Assigned(FDataLink) then
+   begin
+    FDataLink.Free;
+    FDataLink:=nil;
+   end;
    if Assigned(FMasterSource) then
    begin
     FMasterSource.Free;
     FMasterSource:=nil;
-   end;
-   // Connect first the parent datasource
-   if Length(DataSource)>0 then
-   begin
-    index:=TRpDatainfolist(Collection).IndexOf(datasource);
-    if index<0 then
-     Raise Exception.Create(SRPMasterNotFound+alias+' - '+datasource);
-    datainfosource:=TRpDatainfolist(Collection).Items[index];
-{$IFDEF USEZEOS}
-    if databaseinfo.Items[databaseinfo.IndexOf(datainfosource.FDatabaseAlias)].Driver<>rpdatazeos then
-{$ENDIF}
-     datainfosource.connect(databaseinfo,params);
    end;
    // Opens the connection
    index:=databaseinfo.IndexOf(Databasealias);
@@ -1299,6 +1407,16 @@ begin
     Raise Exception.Create(SRPDabaseAliasNotFound+' : '+FDatabaseAlias);
    baseinfo:=databaseinfo.items[index];
    baseinfo.Connect;
+
+   // Connect first the parent datasource
+   if Length(DataSource)>0 then
+   begin
+    index:=TRpDatainfolist(Collection).IndexOf(datasource);
+    if index<0 then
+     Raise Exception.Create(SRPMasterNotFound+alias+' - '+datasource);
+    datainfosource:=TRpDatainfolist(Collection).Items[index];
+    datainfosource.connect(databaseinfo,params);
+   end;
 
 
    if not assigned(FSQLInternalQuery) then
@@ -1617,6 +1735,17 @@ begin
      rpdatadbexpress:
       begin
 {$IFDEF USESQLEXPRESS}
+       FDataLink:=TRpDataLink.Create;
+       FDataLink.databaseinfo:=databaseinfo;
+       FDataLink.datainfo:=TRpDataInfoList(collection);
+       FDataLink.datainfoitem:=self;
+       FDataLink.DataSource:=FMasterSource;
+       FDataLink.dbinfoitem:=databaseinfo.ItemByName(FDatabaseAlias);
+       if datainfosource.cached then
+        FMasterSource.DataSet:=datainfosource.CachedDataset
+       else
+        FMasterSource.DataSet:=datainfosource.Dataset;
+       AssignParamValuesS(TSQlQuery(FSQLInternalQuery),datainfosource.Dataset);
 //       TSQLQuery(FSQLInternalQuery).DataSource:=FMasterSource;
 //       if datainfosource.cached then
 //        FMasterSource.DataSet:=datainfosource.CachedDataset
@@ -1637,12 +1766,17 @@ begin
      rpdatazeos:
       begin
 {$IFDEF USEZEOS}
-{       TZReadOnlyQuery(FSQLInternalQuery).DataSource:=FMasterSource;
+       FDataLink:=TRpDataLink.Create;
+       FDataLink.databaseinfo:=databaseinfo;
+       FDataLink.datainfo:=TRpDataInfoList(collection);
+       FDataLink.datainfoitem:=self;
+       FDataLink.DataSource:=FMasterSource;
+       FDataLink.dbinfoitem:=databaseinfo.ItemByName(FDatabaseAlias);
        if datainfosource.cached then
         FMasterSource.DataSet:=datainfosource.CachedDataset
        else
         FMasterSource.DataSet:=datainfosource.Dataset;
-}
+       AssignParamValuesZ(TZReadOnlyQuery(FSQLInternalQuery),datainfosource.Dataset);
 {$ENDIF}
       end;
      rpdatamybase:
@@ -1709,7 +1843,7 @@ begin
     end
     else
      avalue:=param.ListValue;
-    if atype=ftUnknown then
+    if ((atype=ftUnknown) or (param.ParamType=rpParamExpreB)) then
      atype:=VarTypeToDataType(Vartype(avalue));
     if param.ParamType=rpParamSubst then
      continue;
@@ -1780,7 +1914,7 @@ begin
    end;
    if Not Assigned(FSQLInternalQuery) then
     Raise Exception.Create(SRpDriverNotSupported);
-   FSQLInternalQuery.AfterScroll:=DoAfterScroll;
+
    FSQLInternalQuery.Active:=true;
 {$IFDEF USEBDE}
    if (FSQLInternalQuery is TTable) then
@@ -2918,143 +3052,6 @@ begin
  OpenDatasetFromSQL(astring,nil,true);
 end;
 
-procedure TRpDataInfoItem.DoAfterScroll(DataSet:TDataSet);
-{$IFDEF USENEWLINK}
-var
- dlist:TRpDataInfoList;
- ditem:TRpDataInfoItem;
- dbitem:TRpDatabaseInfoItem;
- i,j:integer;
- index:integer;
-{$IFDEF USEZEOS}
- ZQuery:TZReadOnlyQuery;
-{$ENDIF}
-{$IFDEF USESQLEXPRESS}
- SQuery:TSQLQuery;
-{$ENDIF}
- reopen:Boolean;
- afield:TField;
-{$ENDIF}
-begin
- // For zeos update linked querys
-{$IFDEF USENEWLINK}
-  if not assigned(FDBInfoList) then
-   exit;
-  dlist:=TRpDataInfoList(Collection);
-  for i:=0 to dlist.Count-1 do
-  begin
-   ditem:=dlist.Items[i];
-   if (ditem<>Self) then
-   begin
-    if ditem.DataSource=self.FAlias then
-    begin
-     index:=FDBInfoList.IndexOf(ditem.DatabaseAlias);
-     if index<0 then
-      Raise Exception.Create(SRPDabaseAliasNotFound+' : '+ditem.DatabaseAlias);
-     dbitem:=FDBInfoList.items[index];
-{$IFDEF USEZEOS}
-     if (dbitem.Driver=rpdatazeos)  then
-     begin
-      reopen:=true;
-      if Assigned(ditem.Dataset) then
-      begin
-       if ditem.Dataset.Active then
-       begin
-        ZQuery:=TZReadOnlyQuery(ditem.FSQLInternalQuery);
-        reopen:=false;
-        for j:=0 to ZQuery.Params.Count-1 do
-        begin
-         afield:=Dataset.FindField(ZQuery.Params.Items[j].Name);
-         if Assigned(afield) then
-         begin
-          if afield.Value<>ZQuery.Params.Items[j].Value then
-          begin
-           reopen:=true;
-           break;
-          end;
-         end;
-        end;
-       end
-      end
-      else
-      begin
-       ditem.Connect(FDBInfoList,FParamsList);
-      end;
-      if reopen then
-      begin
-       if Not ditem.Dataset.Active then
-        ditem.Connect(FDBInfoList,FParamsList);
-       ditem.Disconnect;
-       ZQuery:=TZReadOnlyQuery(ditem.FSQLInternalQuery);
-       for j:=0 to ZQuery.Params.Count-1 do
-       begin
-        afield:=Dataset.FindField(ZQuery.Params.Items[j].Name);
-        if Assigned(afield) then
-        begin
-         ZQuery.Params.Items[j].Clear;
-         ZQuery.Params.Items[j].DataType:=afield.DataType;
-         if Not afield.IsNull then
-          ZQuery.Params.Items[j].Value:=afield.Value;
-        end;
-       end;
-       ditem.Connect(FDBInfoList,FParamsList);
-      end;
-     end;
-{$ENDIF}
-{$IFDEF USESQLEXPRESS}
-     if (dbitem.Driver=rpdatadbexpress)  then
-     begin
-      reopen:=true;
-      if Assigned(ditem.Dataset) then
-      begin
-       if ditem.Dataset.Active then
-       begin
-        SQuery:=TSQLQuery(ditem.FSQLInternalQuery);
-        reopen:=false;
-        for j:=0 to SQuery.Params.Count-1 do
-        begin
-         afield:=Dataset.FindField(SQuery.Params.Items[j].Name);
-         if Assigned(afield) then
-         begin
-          if afield.Value<>SQuery.Params.Items[j].Value then
-          begin
-           reopen:=true;
-           break;
-          end;
-         end;
-        end;
-       end
-      end
-      else
-      begin
-       ditem.Connect(FDBInfoList,FParamsList);
-      end;
-      if reopen then
-      begin
-       if Not ditem.Dataset.Active then
-        ditem.Connect(FDBInfoList,FParamsList);
-       ditem.Disconnect;
-       SQuery:=TSQLQuery(ditem.FSQLInternalQuery);
-       for j:=0 to SQuery.Params.Count-1 do
-       begin
-        afield:=Dataset.FindField(SQuery.Params.Items[j].Name);
-        if Assigned(afield) then
-        begin
-         SQuery.Params.Items[j].Clear;
-         SQuery.Params.Items[j].DataType:=afield.DataType;
-         if Not afield.IsNull then
-          SQuery.Params.Items[j].Value:=afield.Value;
-        end;
-       end;
-       ditem.Connect(FDBInfoList,FParamsList);
-      end;
-     end;
-{$ENDIF}
-    end;
-   end;
-  end;
-{$ENDIF}
-end;
 
 
 function TRpDatabaseInfoList.GetReportStream(ConnectionName:String;ReportName:WideString):TStream;
@@ -3494,7 +3491,7 @@ begin
  if Length(astring)<1 then
   exit;
  if astring[1]='[' then
-  index:=Pos(']',astring)
+  index:=Pos(']',astring)+1
  else
   index:=Pos(' ',astring);
  if index>0 then
@@ -3553,6 +3550,52 @@ begin
 end;
 
 
+
+procedure TRpDataLink.RecordChanged(Field:TField);
+var
+ oldopen:Boolean;
+ reopen:boolean;
+ dtype:TRpDbDriver;
+begin
+ inherited RecordChanged(Field);
+
+ reopen:=false;
+ dtype:=dbinfoitem.driver;
+ // See if the parameters are equal
+{$IFDEF USEZEOS}
+ if dtype=rpdatazeos then
+  if Not EqualParamValuesZ(TZReadOnlyQuery(datainfoitem.dataset),DataSource.Dataset) then
+   reopen:=true;
+{$ENDIF}
+{$IFDEF USESQLEXPRESS}
+ if dtype=rpdatadbexpress then
+  if Not EqualParamValuesS(TSQLQuery(datainfoitem.dataset),DataSource.Dataset) then
+   reopen:=true;
+{$ENDIF}
+ if reopen then
+ begin
+  oldopen:=datainfoitem.dataset.Active;
+  datainfoitem.dataset.Active:=false;
+{$IFDEF USEZEOS}
+  if dtype=rpdatazeos then
+   AssignParamValuesZ(TZReadOnlyQuery(datainfoitem.dataset),DataSource.Dataset);
+{$ENDIF}
+{$IFDEF USESQLEXPRESS}
+ if dtype=rpdatadbexpress then
+   AssignParamValuesS(TSQLQuery(datainfoitem.dataset),DataSource.Dataset);
+{$ENDIF}
+  datainfoitem.dataset.Active:=oldopen;
+ end;
+end;
+
+constructor TRpDataLink.Create;
+begin
+ inherited Create;
+
+
+end;
+
+
 initialization
 
 ConAdmin:=nil;
@@ -3564,6 +3607,7 @@ begin
  ConAdmin.free;
  ConAdmin:=nil;
 end;
+
 
 
 

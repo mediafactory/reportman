@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.2pre3';
+ RM_VERSION='2.2pre7';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
@@ -888,11 +888,11 @@ var
   SRpSExportDoNewLine:WideString='Exp. New Line';
   SRpSExportFormat:WideString='Exp. Format';
   SRpSFeaturenotsup:WideString='Feature not supported';
-  SRpFormatNum:WideString='Formats a number with some options';
-  SRpPFormatNum:WideString='intd integer digits, decd decimal digits, and other options';
-  //
+  SRpFormatNum:WideString='Formats a number using a mask';
+  SRpPFormatNum:WideString='The mask can be like ##,##,##,##0.00';
   SRpNoTrueType:WideString='The font is not TrueType';
   SRpFontDataIndexNotFound:WideString='Font data index not found';
+  SRpErrorProcessing:WideString='Can not continue processing report because a previous error';
 
 implementation
 
@@ -1741,6 +1741,9 @@ begin
  TranslateVar(1272,SRpSFeaturenotsup);
  TranslateVar(1273,SRpFormatNum);
  TranslateVar(1274,SRpPFormatNum);
+ TranslateVar(1276,SRpNoTrueType);
+ TranslateVar(1277,SRpFontDataIndexNotFound);
+ TranslateVar(1278,SRpErrorProcessing);
 end;
 
 

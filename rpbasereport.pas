@@ -157,6 +157,8 @@ type
    procedure SetGridWidth(Value:TRpTwips);
    procedure SetGridHeight(Value:TRpTwips);
   protected
+    errorprocessing:Boolean;
+    lasterrorprocessing:WideString;
     FTotalPagesList:TList;
     FEvaluator:TRpEvaluator;
     FIdentifiers:TStringList;
@@ -195,7 +197,7 @@ type
 {$ENDIF}
     procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
     procedure UpdateCachedSources(alias:string);
-    procedure CheckProgress;
+    procedure CheckProgress(finished:Boolean);
     procedure  FillGlobalHeaders;
     procedure ClearTotalPagesList;
     function OnGraphicOp(Top,Left,Width,Height:integer;
@@ -207,6 +209,7 @@ type
      CutText:boolean;Alignment:integer;WordWrap,RightToLeft:Boolean;
      PrintStep,BackColor:integer;transparent:boolean):Boolean;
     procedure CheckIfDataAvailable;
+    procedure UpdateParamsBeforeOpen(index:integer;doeval:boolean);
   public
    Ininumpage:boolean;
    FailIfLoadExternalError:Boolean;
@@ -216,6 +219,7 @@ type
    PageNum:integer;
    PageNumGroup:integer;
    LastPage:Boolean;
+   procedure InitEvaluator;
    procedure BeginPrint(Driver:IRpPrintDriver);virtual;abstract;
    procedure EndPrint;virtual;abstract;
    function PrintNextPage:boolean;virtual;abstract;
@@ -254,6 +258,7 @@ type
    property MilisProgres:integer read FMilisProgres write FMilisProgres
     default MILIS_PROGRESS_DEFAULT;
    procedure AlignSectionsTo(linesperinch:integer);
+   procedure PrepareParamsBeforeOpen;
    // Grid options
   published
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
@@ -452,6 +457,8 @@ begin
  // Other
  FPrinterFonts:=rppfontsdefault;
  FReportAction:=[];
+ //
+ InitEvaluator;
 end;
 
 procedure  TRpBaseReport.FillGlobalHeaders;
@@ -946,12 +953,13 @@ begin
       FDataInfo.Items[i].Dataset:=FAliasList.List.Items[index].dataset;
     end;
    end;
-   CheckProgress;
+   CheckProgress(false);
   end;
   for i:=0 to FDataInfo.Count-1 do
   begin
+   UpdateParamsBeforeOpen(i,true);
    FDataInfo.Items[i].Connect(DatabaseInfo,Params);
-   CheckProgress;
+   CheckProgress(false);
   end;
  except
   for i:=0 to FDataInfo.Count-1 do
@@ -1002,7 +1010,7 @@ end;
 
 
 
-procedure TRpBaseReport.CheckProgress;
+procedure TRpBaseReport.CheckProgress(finished:Boolean);
 var
  docancel:boolean;
 begin
@@ -1016,7 +1024,7 @@ begin
    mililast:=now;
    difmilis:=MillisecondsBetween(mililast,milifirst);
 {$ENDIF}
-   if difmilis>FMilisProgres then
+   if ((difmilis>FMilisProgres) or finished) then
    begin
      // Get the time
 {$IFDEF MSWINDOWS}
@@ -1200,6 +1208,65 @@ begin
 end;
 
 
+procedure TRpBaseReport.UpdateParamsBeforeOpen(index:integer;doeval:boolean);
+var
+ i:integer;
+ paramname:string;
+begin
+ for i:=0 to Params.Count-1 do
+ begin
+  if Params.Items[i].Datasets.IndexOf(datainfo.Items[index].Alias)>=0 then
+  if params.items[i].ParamType=rpParamExpreB then
+  begin
+   paramname:=params.items[i].Name;
+   try
+    if Not VarIsNull(params.items[i].Value) then
+    begin
+     if doeval then
+     begin
+      FEvaluator.EvaluateText(paramname+':=('+String(params.items[i].Value)+')');
+      params.items[i].LastValue:=FEvaluator.EvaluateText(paramname);
+     end
+     else
+     begin
+      params.items[i].LastValue:=FEvaluator.EvaluateText(String(params.items[i].Value));
+     end;
+    end;
+   except
+    on E:Exception do
+    begin
+{$IFDEF DOTNETD}
+     Raise Exception.Create(E.Message+SRpParameter+'-'+paramname);
+{$ENDIF}
+{$IFNDEF DOTNETD}
+     E.Message:=E.Message+SRpParameter+'-'+paramname;
+     Raise;
+{$ENDIF}
+    end;
+   end;
+  end;
+end;
+end;
 
+procedure TRpBaseReport.PrepareParamsBeforeOpen;
+var
+ i:integer;
+begin
+ for i:=0 to DataInfo.Count-1 do
+  UpdateParamsBeforeOpen(i,false);
+end;
+
+procedure TRpBaseReport.InitEvaluator;
+begin
+ if Assigned(FEvaluator) then
+ begin
+  FEvaluator.free;
+  FEvaluator:=nil;
+ end;
+ FEvaluator:=TRpEvaluator.Create(nil);
+ FEvaluator.Language:=Language;
+ FEvaluator.OnGraphicOp:=OnGraphicOp;
+ FEvaluator.OnTextOp:=OnTextOp;
+end;
 
 end.

@@ -290,6 +290,10 @@ function RpTempFileName:String;
 function RpTempPath:String;
 procedure WriteStringToStream(astring:String;deststream:TStream);
 procedure WriteWideStringToStream(astring:WideString;deststream:TStream);
+function FormatCurrAdv(mask:String;number:Currency):String;
+// Rounding a number with not balanced system
+// always the upper value if in the middle
+function Roundfloat(num:double;redondeo:double):double;
 
 {$IFNDEF USEVARIANTS}
 procedure RaiseLastOSError;
@@ -619,7 +623,12 @@ begin
      if length(displayformat)<1 then
       Result:=widestring(Value)
      else
-      Result:=FormatFloat(displayformat,Value);
+     begin
+      if displayformat[1]='*' then
+       Result:=FormatCurrAdv(Copy(displayformat,2,Length(displayformat)),Value)
+      else
+       Result:=FormatFloat(displayformat,Value);
+     end;
     end;
    end;
   varWord,varInt64,varLongWord,varShortInt:
@@ -647,7 +656,12 @@ begin
       if length(displayformat)<1 then
        Result:=widestring(Value)
       else
-       Result:=FormatFloat(displayformat,Value);
+      begin
+       if displayformat[1]='*' then
+        Result:=FormatCurrAdv(Copy(displayformat,2,Length(displayformat)),Value)
+       else
+        Result:=FormatFloat(displayformat,Value);
+       end;
       end;
      end;
    end;
@@ -677,7 +691,10 @@ begin
        Result:=widestring(Value)
       else
       begin
-       Result:=FormatFloat(displayformat,Value);
+       if displayformat[1]='*' then
+        Result:=FormatCurrAdv(Copy(displayformat,2,Length(displayformat)),Value)
+       else
+        Result:=FormatFloat(displayformat,Value);
       end;
      end;
     end;
@@ -691,8 +708,13 @@ begin
      if length(displayformat)<1 then
       Result:=widestring(Value)
      else
-      Result:=FormatCurr(displayformat,Value);
+     begin
+      if displayformat[1]='*' then
+       Result:=FormatCurrAdv(Copy(displayformat,2,Length(displayformat)),Value)
+      else
+       Result:=FormatCurr(displayformat,Value);
      end;
+    end;
    end;
   varDate:
    Result:=FormatDateTime(displayformat,Value);
@@ -717,7 +739,12 @@ begin
     if ((Value=0.0) and (not printnulls)) then
      Result:=''
     else
-     Result:=FormatFloat(displayformat,Value);
+    begin
+     if displayformat[1]='*' then
+      Result:=FormatCurrAdv(Copy(displayformat,2,Length(displayformat)),Value)
+     else
+      Result:=FormatFloat(displayformat,Value);
+    end;
    end
    else
 {$ENDIF}
@@ -3491,6 +3518,8 @@ begin
  alist.Add(SRpDrawTile);
 end;
 
+
+
 function IsCompressed(astream:TMemoryStream):Boolean;
 var
  achar:Char;
@@ -3621,6 +3650,212 @@ begin
  begin
   Result:=poEmbedded;
   exit;
+ end;
+end;
+
+
+// Rounding a number with not balanced system
+// always the upper value if in the middle
+function Roundfloat(num:double;redondeo:double):double;
+var
+ provanum,provaredon,quocient:currency;
+ intnum,intredon:Comp;
+ reste:integer;
+ signenum,escala:integer;
+begin
+ if ((redondeo=0) or (num=0)) then
+ begin
+  result:=num;
+  exit;
+ end;
+ // Original number
+ signenum:=1;
+ if num<0 then
+  signenum:=-1;
+ // Has decimal?
+ provanum:=abs(num);
+ provaredon:=abs(redondeo);
+ escala:=1;
+ While (frac(provanum)<>0) do
+ begin
+  provanum:=provanum*10;
+  provaredon:=provaredon*10;
+  escala:=escala*10;
+ end;
+ While (frac(provaredon)<>0) do
+ begin
+  provanum:=provanum*10;
+  provaredon:=provaredon*10;
+  escala:=escala*10;
+ end;
+ // Integers
+ intnum:=Trunc(provanum);
+ intredon:=Trunc(provaredon);
+// intnum:=Int(provanum);
+// intredon:=Int(provaredon);
+ // Mod
+ quocient:=intnum/intredon;
+ reste:=Round(intnum-intredon*Int(quocient));
+ if (reste<(intredon/2)) then
+  intnum:=intnum-reste
+ else
+  intnum:=intnum-reste+intredon;
+ result:=intnum/escala*signenum;
+end;
+
+// 0.## Decimal separator
+// 0:## Hidden decimal separator
+// Thousand separator must be placed ok
+// ###,###,##0.00
+// Decimal separator
+// Optional left fill char, for example blank
+// L 000,000
+// Optional thousand char for example blank
+// T.000,000
+function FormatCurrAdv(mask:String;number:Currency):String;
+var
+ decseparator:boolean;
+ hiddendecseparator:boolean;
+ decimalplacesvariable:boolean;
+ index:integer;
+ leftfillchar:char;
+ astring:string;
+ intstring,decstring:string;
+ decchar:char;
+ thchar:char;
+ leftmask:string;
+ rightmask:String;
+ i:integer;
+ allzeros:boolean;
+begin
+ decseparator:=true;
+ hiddendecseparator:=false;
+ leftfillchar:='0';
+ rightmask:='';
+ decimalplacesvariable:=true;
+ decchar:=decimalseparator;
+ if decchar=chr(0) then
+  decchar:='.';
+ thchar:=thousandseparator;
+ // Decimal separator options
+ index:=Pos('.',mask);
+ if index<1 then
+ begin
+  index:=Pos(':',mask);
+  if index>=0 then
+   hiddendecseparator:=true;
+ end;
+ if index>0 then
+ begin
+  if index<Length(mask) then
+  begin
+   if mask[index+1]='0' then
+    decimalplacesvariable:=false;
+  end
+  else
+   decseparator:=false;
+ end
+ else
+  decseparator:=false;
+ // Right mask
+ if index>0 then
+  rightmask:=Copy(mask,index+1,Length(mask));
+ // Left mask option
+ if index=0 then
+  index:=Length(mask);
+ leftmask:='';
+ while index>0 do
+ begin
+  if mask[index] in ['#',',','0'] then
+   leftmask:=leftmask+mask[index];
+  dec(index);
+ end;
+
+ // Fill char options
+ index:=Pos('L',mask);
+ if index>0 then
+ begin
+  if index<Length(mask) then
+   leftfillchar:=mask[index+1];
+ end;
+ // Thousand  char
+ index:=Pos('T',mask);
+ if index>0 then
+ begin
+  if index<Length(mask) then
+   thchar:=mask[index+1];
+ end;
+ index:=Pos('D',mask);
+ if index>0 then
+ begin
+  if index<Length(mask) then
+   decchar:=mask[index+1];
+ end;
+
+ // Now formats the number
+ intstring:='';
+ decstring:='';
+ astring:='##.';
+ if decimalplacesvariable then
+  astring:=astring+'#'
+ else
+  astring:=astring+rightmask;
+ astring:=FormatFloat(astring,number);
+ index:=Pos(decimalseparator,astring);
+ if index>=0 then
+ begin
+  decstring:=Copy(astring,index+1,Length(astring));
+  intstring:=Copy(astring,1,index-1);
+ end;
+ // Convert the number integer number
+ i:=1;
+ index:=Length(intstring);
+ astring:='';
+ allzeros:=true;
+ while index>0 do
+ begin
+  // Negative case
+  if intstring[index]='-' then
+  begin
+   astring:=intstring[index]+astring;
+   break;
+  end;
+  while i<=Length(leftmask) do
+  begin
+   if leftmask[i]=',' then
+   begin
+    astring:=thchar+astring;
+    inc(i)
+   end
+   else
+   begin
+    if leftmask[i]='#' then
+     allzeros:=false;
+    inc(i);
+    break;
+   end;
+  end;
+  astring:=intstring[index]+astring;
+  dec(index);
+ end;
+ // Now fills if all 0
+ while (allzeros and (i<=Length(leftmask))) do
+ begin
+  if leftmask[i]='#' then
+   allzeros:=false
+  else
+   astring:=leftfillchar+astring;
+  inc(i);
+ end;
+
+ if hiddendecseparator then
+  Result:=astring+decstring
+ else
+ begin
+  if (decseparator and (Length(decstring)>0)) then
+   Result:=astring+decchar+decstring
+  else
+   Result:=astring;
  end;
 end;
 

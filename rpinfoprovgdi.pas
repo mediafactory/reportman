@@ -204,7 +204,6 @@ begin
     end;
 {$IFNDEF USEKERNING}
     data.havekerning:=false;
-    data.numkernings:=0;
 {$ENDIF}
 {$IFDEF USEKERNING}
     // Get kerning pairs feature

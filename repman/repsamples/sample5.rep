@@ -11,8 +11,8 @@ object TRpReport
       Alias = 'FISH'
       DatabaseAlias = 'BIOLIFE'
       SQL = 
-        'SELECT * FROM BIOLIFE '#10'WHERE CATEGORY>=:CATINI'#10'AND CATEGORY<=:CA' +
-        'TEND'#10'ORDER BY CATEGORY'
+        'SELECT * FROM BIOLIFE '#13#10'WHERE CATEGORY>=:CATINI'#13#10'AND CATEGORY<=:' +
+        'CATEND'#13#10'ORDER BY CATEGORY'
       MyBaseFilename = 'biolife.cds'
       MyBaseIndexFields = 'Category'
     end>
@@ -35,6 +35,7 @@ object TRpReport
       Datasets.Strings = (
         'FISH')
       Description = 'From category'
+      Hint = ''
       Search = ''
     end
     item
@@ -43,6 +44,7 @@ object TRpReport
       Datasets.Strings = (
         'FISH')
       Description = 'To category'
+      Hint = ''
       Search = ''
     end>
   TwoPass = True
@@ -103,6 +105,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ' '
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -140,6 +143,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -175,6 +179,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -207,6 +212,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -383,6 +389,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -415,6 +422,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''

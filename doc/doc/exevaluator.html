@@ -323,7 +323,51 @@
       to the data type, for example for a DateTime value you can use the format 
       string: 'dd/mm/yyyy hh:nn:ss', for a number: '###,###0.00', where the , 
       says the use of thousand separator, the 0 are required format positions 
-      and # are not required format positions</td>
+      and # are not required format positions, this function is used in display 
+      format property for expressions</td>
+  </tr>
+  <tr>
+    <td>FormatNum(mask:String; number:double)</td>
+    <td><p>Formats a number with a mask, this function is used in display format 
+        property for expressions. The mask is similar to the one used in FormatStr 
+        but allow the use of repeatable thousand separator amd other options:</p>
+      <p>A hidden decimal separator can be specified (indicates the position for 
+        the separation of integer and decimal part) as :, also you can include 
+        this pairs of chars indicating:</p>
+      <p>LX Where X is the character used to fill needed numers on the left, the 
+        default is 0</p>
+      <p>TX Where X is the character used as thousand separator.</p>
+      <p>Some samples:</p>
+      <table border="1">
+        <tr bgcolor="#FFFFCC"> 
+          <td>Mask</td>
+          <td>Sample</td>
+          <td>Result</td>
+          <td>Description</td>
+        </tr>
+        <tr> 
+          <td>##,##,##,##,##0.00</td>
+          <td>123123456.789</td>
+          <td>1,23,23,456.79</td>
+          <td>Indian formatting</td>
+        </tr>
+        <tr> 
+          <td>T'000,000,000,000.00</td>
+          <td>123123456.789</td>
+          <td>000123'123'456.79</td>
+          <td>Changing thousand separator, see thousand separator is not used 
+            when padding length</td>
+        </tr>
+        <tr> 
+          <td>LI000000000000.00</td>
+          <td>1231234.789</td>
+          <td>IIIII1231234.79</td>
+          <td>Left padding with a character (usually a blank space)</td>
+        </tr>
+      </table>
+      <p><br>
+      </p>
+      </td>
   </tr>
   <tr> 
     <td> function NumToText (n:double,f:boolean):string</td>
@@ -337,7 +381,7 @@
     <td>function ReplaceStr(S,OldPattern, NewPattern:Sring):String</td>
     <td>Search OldPattern inside S replacing it if found with NewPattern</td>
   </tr>
-  <tr>
+  <tr> 
     <td>function FileExists (s:String):boolean</td>
     <td>Return true if the file exists</td>
   </tr>

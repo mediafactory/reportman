@@ -40,7 +40,6 @@ requires
   tee,
   vcldb,
   ibxpress,
-  adortl,
   bdertl,
   dbexpress;
 

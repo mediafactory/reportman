@@ -377,6 +377,8 @@ begin
 // if Not NewReportWizard(report) then
   report.CreateNew;
  filename:='';
+ alibrary:='';
+ areportname:='';
 
  DoEnable;
  FormResize(Self);

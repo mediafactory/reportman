@@ -634,17 +634,27 @@ begin
 end;
 
 procedure TRpPDFDriver.RepProgress(Sender:TRpBaseReport;var docancel:boolean);
+var
+ astring:WideString;
 begin
+ astring:=SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
+  +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
+  FormatFloat('#########,####',Sender.RecordCount);
 {$IFDEF USEVARIANTS}
- WriteLn(SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
-  +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
-  FormatFloat('#########,####',Sender.RecordCount));
+ WriteLn(astring);
 {$ELSE}
- WriteLn(String(SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
-  +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
-  FormatFloat('#########,####',Sender.RecordCount)));
+ WriteLn(String(astring));
 {$ENDIF}
-
+ // If it's the last page prints additional info
+ if Sender.LastPage then
+ begin
+  astring:=Format('%-20.20s',[SRpPage])+FormatFloat('0000000000',Sender.PageNum);
+{$IFDEF USEVARIANTS}
+  WriteLn(astring);
+{$ELSE}
+  WriteLn(String(astring));
+{$ENDIF}
+ end;
 end;
 
 
