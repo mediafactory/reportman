@@ -1,6 +1,8 @@
 [Installed Drivers]
 Interbase=1
 MySQL=1
+OpenOdbc=1
+PostgreSQL=1
 
 [Interbase]
 GetDriverFunc=getSQLDriverINTERBASE
@@ -30,6 +32,25 @@ Password=password
 BlobSize=-1
 ErrorResourceFile=./DbxMySqlErr.msg
 LocaleCode=0000
+
+[OpenOdbc]
+GetDriverFunc=getSQLDriverODBC
+LibraryName=libdbxoodbc.so
+VendorLib=libodbc.so
+Database=DSN=SAMPLE;UID=user;PWD=password;DB=master;LANG=chinese
+
+[PostgreSQL]
+GetDriverFunc=getSQLDriverPGSQL
+LibraryName=libsqlpg.so.1.0
+VendorLib=libpq.so
+HostName=hostname
+Database=test
+User_Name=user
+Password=password
+BlobSize=-1
+ErrorResourceFile=./DbxPostgreErr.msg
+LocaleCode=0000
+
 
 [AutoCommit]
 False=0
