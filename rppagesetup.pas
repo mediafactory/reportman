@@ -110,8 +110,6 @@ implementation
 
 {$R *.xfm}
 
-var
- rplangdesc:array [0..MAX_LANGUAGES-1] of widestring;
 
 
 type
@@ -189,7 +187,6 @@ end;
 
 procedure TFRpPageSetup.FormCreate(Sender: TObject);
 var
- i:integer;
  psize:TPagesize;
  astring:widestring;
  awidth:integer;
@@ -201,11 +198,8 @@ begin
  LMetrics6.Caption:=LMetrics3.Caption;
  LMetrics7.Caption:=LMetrics3.Caption;
  LMetrics8.Caption:=LMetrics3.Caption;
- ComboLanguage.Items.Add(TranslateStr(95,'Default'));
- for i:=0 to MAX_LANGUAGES-1 do
- begin
-  ComboLanguage.Items.Add(rplangdesc[i]);
- end;
+ GetLanguageDescriptions(ComboLanguage.Items);
+ ComboLanguage.Items.Insert(0,TranslateStr(95,'Default'));
  for psize:=Low(psize) to High(psize) do
  begin
   astring:=PageSizeNames[psize];
@@ -419,10 +413,6 @@ begin
  ShowPrintersConfiguration;
 end;
 
-initialization
 
- rplangdesc[0]:=SRpEnglish;
- rplangdesc[1]:=SRpSpanish;
- rplangdesc[2]:=SRpCatalan;
 
 end.

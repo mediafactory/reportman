@@ -26,7 +26,10 @@ interface
 uses
   SysUtils,Inifiles,
   Windows,Dialogs,rpgdidriver,ShellApi,rpgraphutilsvcl,
-  Types, Classes, Graphics, Controls, Forms,
+{$IFDEF USEVARIANTS}
+  Types,
+{$ENDIF}
+  Classes, Graphics, Controls, Forms,
   StdCtrls,rpmetafile, ComCtrls,ExtCtrls,
 {$IFNDEF FORWEBAX}
   rpmdclitreevcl,
@@ -36,6 +39,7 @@ uses
   ToolWin;
 
 type
+
   TFRpMetaVCL = class(TFrame)
     BToolBar: TToolBar;
     ImageContainer: TScrollBox;
@@ -181,7 +185,6 @@ type
     printerindex:TRpPrinterSelect;
     agdidriver:IRpPrintDriver;
     bitmap:TBitmap;
-    setmenu:boolean;
     property aform:TWinControl read faform write SetForm;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -260,7 +263,6 @@ begin
  inherited Create(AOwner);
  if AOwner is TWinControl then
   Parent:=TWinControl(AOwner);
- setmenu:=true;
  MSelectPrinter.Caption:=TranslateStr(741,MSelectPrinter.Caption);
  MSelPrinter0.Caption:=SRpDefaultPrinter;
  MSelPrinter1.Caption:=SRpReportPrinter;

@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.4pre10';
+ RM_VERSION='1.4pre14';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
 
@@ -46,6 +46,7 @@ var
  SRpEnglish:WideString='English';
  SRpSpanish:WideString='Spanish';
  SRpCatalan:WideString='Catalan';
+ SRpFrench:WideString='French';
  SRpDirCantBeCreated:WideString='Directory can''t be created: ';
  SRpConfigFileNotExists:WideString='Configuration file missing: ';
  SRpPage:WideString='Page';
@@ -1195,6 +1196,7 @@ begin
  TranslateVar(929,SRpSTwoPassReportNeeded);
  TranslateVar(931,SRpNewDataInfo);
  TranslateVar(932,SRpPrintPDFRep9);
+ TranslateVar(933,SRpFrench);
 end;
 
 {$IFDEF LINUX}

@@ -57,6 +57,7 @@ procedure SetCurrentPaper (apapersize:TGDIPageSize);
 function GetCurrentPaper:TGDIPageSize;
 procedure SendControlCodeToPrinter (S: string);
 procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
+function FindFormNameFromSize(width,height:integer):String;
 
 var
  formslist:TStringlist;
@@ -507,8 +508,8 @@ begin
   if Result.PageIndex=0 then
   begin
    // Converts to decs of milimeter
-   Result.Width:=Round(Result.Width*1000/2510);
-   Result.Height:=Round(Result.Height*1000/2510);
+   Result.Width:=Round(Result.Width*1000/2540);
+   Result.Height:=Round(Result.Height*1000/2540);
   end
   else
   begin
@@ -632,6 +633,48 @@ begin
 end;
 
 
+function FindFormNameFromSize(width,height:integer):String;
+var
+ pforms,p:^Form_info_1;
+ needed,received:dword;
+ fprinterhandle:THandle;
+ buf:Pchar;
+ i:integer;
+ cadenaimp:String;
+ forminfo:Form_info_1;
+begin
+ cadenaimp:=GetPrinters[Printer.PrinterIndex];
+ buf:=Pchar(cadenaimp);
+ Result:='';
+ if Not OpenPrinter(buf,fprinterhandle,nil) then
+   Raise Exception.create(SRpError+Strpas(buf));
+ try
+  pforms:=nil;
+  if Not EnumForms(fprinterhandle,1,pforms,0,needed,received) then
+    if GetLastError<>122 then
+     RaiseLastOSError;
+  pforms:=Allocmem(needed);
+  try
+   if NOt EnumForms(fprinterhandle,1,pforms,needed,needed,received) then
+    RaiseLastOSError;
+   for i:=0 to received-1 do
+   begin
+    p:=Pointer(integer(pforms)+sizeof(Form_info_1)*i);
+    forminfo:=p^;
+    if forminfo.Size.cx=width*100 then
+     if forminfo.Size.cy=height*100 then
+     begin
+      Result:=StrPas(forminfo.pName);
+     end;
+   end;
+  finally
+   Freemem(pforms);
+  end;
+ finally
+  ClosePrinter(fprinterhandle);
+ end;
+end;
+
 procedure FillFormsList;
 var
  pforms,p:^Form_info_1;
@@ -659,19 +702,11 @@ begin
    pforms:=nil;
    if Not EnumForms(fprinterhandle,1,pforms,0,needed,received) then
     if GetLastError<>122 then
-{$IFDEF USEVARIANTS}
      RaiseLastOSError;
-{$ELSE}
-     RaiseLastWin32Error;
-{$ENDIF}
    pforms:=Allocmem(needed);
    try
     if NOt EnumForms(fprinterhandle,1,pforms,needed,needed,received) then
-{$IFDEF USEVARIANTS}
      RaiseLastOSError;
-{$ELSE}
-     RaiseLastWin32Error;
-{$ENDIF}
     for i:=0 to received-1 do
     begin
      p:=Pointer(integer(pforms)+sizeof(Form_info_1)*i);
@@ -734,20 +769,21 @@ begin
    end
    else
    begin
-    // In Windows NT we must search or create a form
     foundpaper:=false;
-    // Busquem un form que s'adapti
-    apapername:='User ('+
-    IntToStr(apapersize.Width)+'x'+
-    IntToStr(apapersize.Height)+')';
-
+    // In Windows NT we must search or create a form
+    apapername:=FindFormNameFromSize(apapersize.Width,apapersize.Height);
+    if Length(apapername)>0 then
+     foundpaper:=true;
+    if not foundpaper then
+    begin
+     // Busquem un form que s'adapti
+     apapername:='User ('+
+     IntToStr(apapersize.Width)+'x'+
+     IntToStr(apapersize.Height)+')';
+    end;
     PrinterName := Format('%s', [Device]);
     if not OpenPrinter(PChar(PrinterName), FPrinterHandle, nil) then
-{$IFDEF USEVARIANTS}
      RaiseLastOSError;
-{$ELSE}
-     RaiseLastWin32Error;
-{$ENDIF}
     try
      pforminfo:=allocmem(sizeof(form_info_1));
      try
@@ -755,11 +791,7 @@ begin
       begin
        laste:=GetLasterror;
        if ((laste<>122) AND (Laste<>123) AND (laste<>1902)) then
-{$IFDEF USEVARIANTS}
         RaiseLastOSError
-{$ELSE}
-        RaiseLastWin32Error
-{$ENDIF}
        else
        begin
         if laste<>1902 then
@@ -769,11 +801,7 @@ begin
           freemem(pforminfo);
           pforminfo:=AllocMem(needed);
           if Not GetForm(FPrinterhandle,Pchar(apapername),1,pforminfo,needed,needed) then
-{$IFDEF USEVARIANTS}
            RaiseLastOSError;
-{$ELSE}
-           RaiseLastWin32Error;
-{$ENDIF}
          if pforminfo^.pname<>nil then
           foundpaper:=true;
          // Si l'ha trobat trobem el seu index
@@ -793,11 +821,7 @@ begin
        pforminfo^.ImageableArea.Bottom:=pforminfo^.size.cy;
        try
         if not AddForm(fprinterhandle,1,pforminfo) then
-{$IFDEF USEVARIANTS}
          RaiseLastOSError;
-{$ELSE}
-         RaiseLastWin32Error;
-{$ENDIF}
        except
         on E:Exception do
         begin
@@ -808,26 +832,26 @@ begin
        // Updates the form list
        FillFormsList;
       end;
-      FillFormsList;
-      indexpaper:=FindIndexPaperName(printername,apapername);
-      if indexpaper=0 then
-      begin
-       FillFormsList;
-       indexpaper:=FindIndexPaperName(printername,apapername);
-       if indexpaper=0 then
-        Raise Exception.Create(SRpPaperNotFount+':'+apapername);
-      end;
-      // Seleccionem per fi
-      PDevMode.dmPaperSize :=indexpaper;
-      PDevMode.dmPaperlength := apapersize.height;
-      PDevMode.dmPaperwidth  := apapersize.Width;
-      // It can also selected by name
-//      StrPCopy(PDevMode.dmFormName,apapername);
-//      PDevMode.dmFields:=PDevMode.dmFields or dm_formname;
-//      PDevMode.dmFields:=PDevMode.dmFields AND (NOT dm_papersize);
      finally
       freemem(pforminfo);
      end;
+     FillFormsList;
+     indexpaper:=FindIndexPaperName(printername,apapername);
+     if indexpaper=0 then
+     begin
+      FillFormsList;
+      indexpaper:=FindIndexPaperName(printername,apapername);
+      if indexpaper=0 then
+       Raise Exception.Create(SRpPaperNotFount+':'+apapername);
+     end;
+     // Seleccionem per fi
+     PDevMode.dmPaperSize :=indexpaper;
+     PDevMode.dmPaperlength := apapersize.height;
+     PDevMode.dmPaperwidth  := apapersize.Width;
+      // It can also selected by name
+ //      StrPCopy(PDevMode.dmFormName,apapername);
+//      PDevMode.dmFields:=PDevMode.dmFields or dm_formname;
+//      PDevMode.dmFields:=PDevMode.dmFields AND (NOT dm_papersize);
     finally
      ClosePrinter(FPrinterhandle);
     end;
@@ -904,11 +928,7 @@ begin
  Printer.GetPrinter(Device, Driver, Port, hDeviceMode);
  PrinterName := Format('%s', [Device]);
  if not OpenPrinter(PChar(PrinterName), Handle, nil) then
-{$IFDEF USEVARIANTS}
    RaiseLastOSError;
-{$ELSE}
-   RaiseLastWin32Error;
-{$ENDIF}
  try
   with DocInfo1 do
   begin
@@ -924,11 +944,7 @@ begin
    try
     copymemory(buf,Pchar(s),lbuf);
     if not WritePrinter(Handle, buf, lbuf, N) then
-{$IFDEF USEVARIANTS}
      RaiseLastOSError;
-{$ELSE}
-     RaiseLastWin32Error;
-{$ENDIF}
    finally
     freemem(buf);
    end;

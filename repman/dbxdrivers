@@ -5,6 +5,7 @@ PostgreSQL=1
 DB2=1
 Oracle=1
 Informix=1
+OpenODBC=1
 
 [Interbase]
 GetDriverFunc=getSQLDriverINTERBASE

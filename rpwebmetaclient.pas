@@ -33,7 +33,8 @@ uses classes,SysUtils,Windows,graphics,controls,forms,
  Types
 {$ENDIF}
  rpmetafile,rpreport,rpfmainmetaviewvcl,rpmdconsts,
- IdHttp,rpgdidriver,rpmdprintconfigvcl,rpmdshfolder;
+ IdHttp,rpgdidriver,rpmdprintconfigvcl,rpmdshfolder,
+ rpfmetaviewvcl;
 
 //const
 // READ_TIMEOUT=10000;
@@ -55,6 +56,7 @@ type
    procedure Paint;override;
   public
    aForm:TWinControl;
+   Meta:TFRpMetaVCL;
    constructor Create(AOwner:TComponent);override;
    procedure Execute;
   published
@@ -112,7 +114,7 @@ begin
     metafile.LoadFromStream(astream);
     if preview then
     begin
-     PreviewMetafile(metafile,aform);
+     Meta:=PreviewMetafile(metafile,aform);
     end
     else
      rpgdidriver.PrintMetafile(metafile,'Printing',FShowProgress,true,0,1,1,true,false);
@@ -205,6 +207,11 @@ begin
     Raise Exception.Create(SRpNotFound+' - '+MetaUrl);
    astream.Seek(0,soFromBeginning);
    astream.SaveToFile(sysdir+DIR_SEPARATOR+'reportmanres.es');
+   connect.Get(MetaUrl+'/WebReportManX.ocx.manifest',astream);
+   if astream.size=0 then
+    Raise Exception.Create(SRpNotFound+' - '+MetaUrl);
+   astream.Seek(0,soFromBeginning);
+   astream.SaveToFile(sysdir+DIR_SEPARATOR+'WebReportManX.ocx.manifest');
   finally
    astream.free;
   end;

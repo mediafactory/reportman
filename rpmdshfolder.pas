@@ -266,10 +266,10 @@ initialization
 
 HandleLib:=LoadLibrary(shfolder);
 if HandleLib=0 then
- RaiseLastWin32Error;
+ RaiseLastOSError;
 SHGetFolderPath:=GetProcAddress(HandleLib,PChar('SHGetFolderPathA'));
 if Not Assigned(SHGetFolderPath) then
- RaiseLastWin32Error;
+ RaiseLastOSError;
 
 finalization
 

@@ -12,11 +12,12 @@ uses
 
 type
   TWebReportMan = class(TActiveForm, IWebReportMan)
-    webmetaprint: TRpWebMetaPrint;
-    XPManifest1: TXPManifest;
     Timer1: TTimer;
+    webmetaprint: TRpWebMetaPrint;
     procedure ActiveFormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
+    procedure ActiveFormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     FEvents: IWebReportManEvents;
@@ -24,6 +25,7 @@ type
     ShowProgress:Integer;
     Embedded:Integer;
     PrinterConfig:Integer;
+    Install:Integer;
     MetaUrl:WideString;
     procedure ActivateEvent(Sender: TObject);
     procedure ClickEvent(Sender: TObject);
@@ -81,6 +83,8 @@ type
     procedure Set_ShowProgress(Value: Integer); safecall;
     function Get_Embedded: Integer; safecall;
     procedure Set_Embedded(Value: Integer); safecall;
+    function Get_Install: Integer; safecall;
+    procedure Set_Install(Value: Integer); safecall;
   public
     { Public declarations }
     procedure Initialize; override;
@@ -360,7 +364,6 @@ end;
 procedure TWebReportMan.Set_MetaUrl(const Value: WideString);
 begin
  MetaUrl:=Value;
- Timer1.Enabled:=true;
 end;
 
 procedure TWebReportMan.Set_Preview(Value: Integer);
@@ -376,7 +379,7 @@ end;
 
 procedure TWebReportMan.ActiveFormCreate(Sender: TObject);
 begin
- webmetaprint.Align:=alclient;
+ Timer1.Enabled:=true;
 end;
 
 function TWebReportMan.Get_ShowProgress: Integer;
@@ -403,13 +406,14 @@ procedure TWebReportMan.Timer1Timer(Sender: TObject);
 begin
  Timer1.Enabled:=false;
  try
+  webmetaprint.Align:=alclient;
   webmetaprint.caption:=Caption;
   webmetaprint.preview:=Preview<>0;
   webmetaprint.ShowProgress:=ShowProgress<>0;
   if Embedded<>0 then
    webmetaprint.aForm:=webmetaprint;
   webmetaprint.PrinterConfig:=PrinterConfig<>0;
-  webmetaprint.Invalidate;
+  webmetaprint.Install:=Install<>0;
   webmetaprint.MetaUrl:=MetaUrl;
   if Length(MetaUrl)>0 then
   begin
@@ -418,10 +422,32 @@ begin
  except
   On E:Exception do
   begin
-   webmetaprint.caption:=E.Message;
-   webmetaprint.Invalidate;
+   ShowMessage(E.Message);
+   caption:=E.Message;
+   webmetaprint.visible:=false;
+   Invalidate;
   end;
  end;
+end;
+
+
+function TWebReportMan.Get_Install: Integer;
+begin
+ Result:=Install;
+end;
+
+
+procedure TWebReportMan.Set_Install(Value: Integer);
+begin
+ Install:=Value;
+end;
+
+
+procedure TWebReportMan.ActiveFormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+ if assigned(webmetaprint.Meta) then
+  webmetaprint.Meta.FormKeyDown(Self,Key,Shift);
 end;
 
 initialization

@@ -24,7 +24,11 @@ interface
 
 uses
   SysUtils, Classes, IdBaseComponent, IdComponent, IdTCPConnection,
-  IdTCPClient, rptranslator,rpmdprotocol,rpmdconsts,SyncObjs,rpparams;
+  IdTCPClient, rptranslator,rpmdprotocol,rpmdconsts,
+{$IFNDEF USEVARIANTS}
+  forms,
+{$ENDIF}
+  SyncObjs,rpparams;
 
 type
   TRpClientHandleThread=class;
@@ -104,7 +108,13 @@ procedure Disconnect(amod:TModClient);
 
 implementation
 
+{$IFDEF USEVARIANTS}
 {$R *.xfm}
+{$ENDIF}
+
+{$IFNDEF USEVARIANTS}
+{$R *.dfm}
+{$ENDIF}
 
 
 procedure TRpClientHandleThread.DoErrorMessage;

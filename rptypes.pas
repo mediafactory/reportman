@@ -147,6 +147,7 @@ function GetPrinterRawOp(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):stri
 procedure FillTreeDir(adirectory:String;alist:TStringList);
 function WideStringToDOS(astring:WideString):WideString;
 function NumberToText(FNumero:currency;female:boolean;idiom:integer):String;
+procedure GetLanguageDescriptions(alist:TStrings);
 {$IFNDEF USEVARIANTS}
 procedure RaiseLastOSError;
 {$ENDIF}
@@ -155,9 +156,6 @@ procedure RaiseLastOSError;
 function IsWindowsNT:Boolean;
 {$ENDIF}
 
-// Language identifiers
-var
- rplangids:array [0..MAX_LANGUAGES-1] of string=('EN','ES','CAT');
 
 
 {$IFNDEF USEVARIANTS}
@@ -1231,7 +1229,16 @@ begin
 end;
 
 
-
+procedure GetLanguageDescriptions(alist:TStrings);
+//var
+// rplangids:array [0..MAX_LANGUAGES-1] of string=('EN','ES','CAT','FR');
+begin
+ alist.Clear;
+ alist.Add(SRpEnglish);
+ alist.Add(SRpSpanish);
+ alist.Add(SRpCatalan);
+ alist.Add(SRpFrench);
+end;
 
 initialization
 

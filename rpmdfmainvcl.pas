@@ -349,7 +349,7 @@ begin
  report:=TRpReport.Create(Self);
  report.OnReadError:=OnReadError;
  report.FailIfLoadExternalError:=false;
- if Not NewReportWizard(report) then
+// if Not NewReportWizard(report) then
   report.CreateNew;
  filename:='';
 

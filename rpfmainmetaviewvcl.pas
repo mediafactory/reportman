@@ -26,7 +26,10 @@ interface
 uses
   SysUtils,Inifiles,
   Windows,Dialogs,rpgdidriver,ShellApi,rpgraphutilsvcl,
-  Types, Classes, Graphics, Controls, Forms,
+{$IFDEF USEVARIANTS}
+  Types,
+{$ENDIF}
+  Classes, Graphics, Controls, Forms,
   StdCtrls,rpmetafile, ComCtrls,ExtCtrls,rpmdclitreevcl,
   ActnList, ImgList,Printers,rpmdconsts,rptypes, Menus,
   rpmdfaboutvcl,rpmdshfolder,rpmdprintconfigvcl,
@@ -45,7 +48,7 @@ type
 var
  FRpMainMetaVCL:TFRpMainMetaVCL;
 
-procedure PreviewMetafile(metafile:TRpMetafileReport;aform:TWinControl);
+function PreviewMetafile(metafile:TRpMetafileReport;aform:TWinControl):TFRpMetaVCL;
 
 implementation
 
@@ -53,7 +56,7 @@ uses rppdfdriver;
 
 {$R *.dfm}
 
-procedure PreviewMetafile(metafile:TRpMetafileReport;aform:TWinControl);
+function PreviewMetafile(metafile:TRpMetafileReport;aform:TWinControl):TFRpMetaVCL;
 var
  dia:TFRpMainMetaVCL;
  memstream:TMemoryStream;
@@ -72,7 +75,6 @@ begin
   dia:=nil;
   MFrame:=TFRpMetaVCL.Create(aform);
   MFrame.Parent:=aform;
-  MFrame.SetMenu:=False;
   MFrame.AForm:=aform;
   FForm:=aform;
  end;
@@ -128,6 +130,7 @@ begin
   if not assigned(aform) then
    dia.free;
  end;
+ Result:=MFrame;
 end;
 
 
@@ -137,6 +140,8 @@ begin
  MFrame.Parent:=Self;
  MFrame.AForm:=self;
  Caption:=SRpRepMetafile;
+ // Bugfix for TEdit height
+ MFrame.EPageNum.Left:=MFrame.EPageNum.Left+1;
 end;
 
 

@@ -12,7 +12,7 @@ unit WebReportManX_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 20/01/2003 16:30:28 from Type Library described below.
+// File generated on 22/01/2003 18:50:17 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\webactivex\WebReportManX.tlb (1)
@@ -151,6 +151,8 @@ type
     procedure Set_ShowProgress(Value: Integer); safecall;
     function Get_Embedded: Integer; safecall;
     procedure Set_Embedded(Value: Integer); safecall;
+    function Get_Install: Integer; safecall;
+    procedure Set_Install(Value: Integer); safecall;
     property Visible: WordBool read Get_Visible write Set_Visible;
     property AutoScroll: WordBool read Get_AutoScroll write Set_AutoScroll;
     property AutoSize: WordBool read Get_AutoSize write Set_AutoSize;
@@ -174,6 +176,7 @@ type
     property MetaUrl: WideString read Get_MetaUrl write Set_MetaUrl;
     property ShowProgress: Integer read Get_ShowProgress write Set_ShowProgress;
     property Embedded: Integer read Get_Embedded write Set_Embedded;
+    property Install: Integer read Get_Install write Set_Install;
   end;
 
 // *********************************************************************//
@@ -206,6 +209,7 @@ type
     property MetaUrl: WideString dispid 219;
     property ShowProgress: Integer dispid 212;
     property Embedded: Integer dispid 213;
+    property Install: Integer dispid 220;
   end;
 
 // *********************************************************************//
@@ -295,6 +299,7 @@ type
     property MetaUrl: WideString index 219 read GetWideStringProp write SetWideStringProp stored False;
     property ShowProgress: Integer index 212 read GetIntegerProp write SetIntegerProp stored False;
     property Embedded: Integer index 213 read GetIntegerProp write SetIntegerProp stored False;
+    property Install: Integer index 220 read GetIntegerProp write SetIntegerProp stored False;
     property OnActivate: TNotifyEvent read FOnActivate write FOnActivate;
     property OnClick: TNotifyEvent read FOnClick write FOnClick;
     property OnCreate: TNotifyEvent read FOnCreate write FOnCreate;

@@ -272,6 +272,8 @@ end;
 constructor TRpGDIDriver.Create;
 begin
  // By default 1:1 scale
+ offset.X:=0;
+ offset.Y:=0;
  dpi:=Screen.PixelsPerInch;
  drawclippingregion:=true;
  oldpagesize.PageIndex:=-1;
@@ -977,10 +979,7 @@ begin
  if printerindex<>pRpDefaultPrinter then
   offset:=PrinterSelection(printerindex)
  else
- begin
-  if metafile.PrinterSelect<>pRpDefaultPrinter then
-   offset:=PrinterSelection(metafile.PrinterSelect);
- end;
+  offset:=PrinterSelection(metafile.PrinterSelect);
  UpdatePrinterFontList;
  pagemargins:=GetPageMarginsTWIPS;
  // Get the time
@@ -1145,7 +1144,7 @@ begin
  if Not Assigned(LRecordCount) then
   exit;
  LRecordCount.Caption:=IntToStr(Sender.CurrentSubReportIndex)+':'+SRpPage+':'+
- FormatFloat('#########,####',Sender.PageNum)+'-'+FormatFloat('#########,####',Sender.RecordCount);
+ FormatFloat('#########,####',Sender.PageNum+1)+'-'+FormatFloat('#########,####',Sender.RecordCount+1);
  Application.ProcessMessages;
  if cancelled then
   docancel:=true;

@@ -172,6 +172,8 @@ end;
 
 constructor TRpQtDriver.Create;
 begin
+ offset.X:=0;
+ offset.Y:=0;
  // By default 1:1 scale
  FIntPageSize.Custom:=false;
  dpi:=Screen.PixelsPerInch;
@@ -743,8 +745,7 @@ begin
   offset:=PrinterSelection(printerindex)
  else
  begin
-  if metafile.PrinterSelect<>pRpDefaultPrinter then
-   offset:=PrinterSelection(metafile.PrinterSelect);
+  offset:=PrinterSelection(metafile.PrinterSelect);
  end;
  // Get the time
 {$IFDEF MSWINDOWS}
