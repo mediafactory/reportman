@@ -650,8 +650,6 @@ begin
  AUp.ShortCut:=ShortCut(Key_Up,[ssCtrl]);
  ADown.ShortCut:=ShortCut(Key_Down,[ssCtrl]);
 
- DecimalSeparator:=',';
- ThousandSeparator:='.';
 {$IFDEF VCLFILEFILTERS}
  OpenDialog1.Filter := SRpRepFile+'|*.rep';
 {$ENDIF}

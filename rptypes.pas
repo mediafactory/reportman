@@ -134,6 +134,7 @@ function GetPrinterOffset(printerindex:TRpPrinterSelect):TPoint;
 function GetDeviceFontsOption(printerindex:TRpPrinterSelect):boolean;
 function GetPrinterRawOp(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):string;
 procedure FillTreeDir(adirectory:String;alist:TStringList);
+function WideStringToDOS(astring:WideString):WideString;
 {$IFDEF MSWINDOWS}
 function IsWindowsNT:Boolean;
 {$ENDIF}
@@ -645,6 +646,40 @@ end;
 function ReadWideString(Reader:TReader):WideString;
 begin
  Result:=Reader.ReadWideString;
+end;
+
+
+function WideStringToDOS(astring:WideString):WideString;
+var
+ i:integer;
+ along:integer;
+begin
+ Result:='';
+ i:=1;
+ along:=Length(astring);
+ while i<=along do
+ begin
+  // ignore #13
+  while Ord(astring[i])=13 do
+  begin
+   inc(i);
+   if i>along then
+    exit;
+  end;
+  // Adds lines
+  while Ord(astring[i])=10 do
+  begin
+   inc(i);
+   Result:=Result+WideChar(13)+WideChar(10);
+   if i>along then
+    exit;
+  end;
+  if (Ord(astring[i])<>13) then
+  begin
+   Result:=Result+astring[i];
+  end;
+  inc(i);
+ end;
 end;
 
 initialization

@@ -1,6 +1,6 @@
 // Database drivers to be used
 {$DEFINE USESQLEXPRESS}
-//{$DEFINE USEIBX}
+{$DEFINE USEIBX}
 {$DEFINE USEADO}
 {$DEFINE USEBDE}
 //{$DEFINE USEIBO}
@@ -41,6 +41,7 @@
  {$DEFINE MSWINDOWS}
  {$DEFINE USEVCL}
 {$ENDIF}
+
 
 //  Builder 4 compiler defines
 {$IFDEF VER125}

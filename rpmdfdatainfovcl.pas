@@ -23,7 +23,7 @@ interface
 {$I rpconf.inc}
 
 uses SysUtils, Classes, Graphics, Forms,
-  Buttons, ExtCtrls, Controls, StdCtrls,
+  Buttons, ExtCtrls, Controls, StdCtrls,rptypes,
 {$IFDEF USEBDE}
   dbtables,
 {$ENDIF}
@@ -493,7 +493,7 @@ begin
   exit;
  end;
  GDataProps.Visible:=true;
- MSQL.Text:=dinfo.SQL;
+ MSQL.Text:=WideStringToDOS(dinfo.SQL);
  EMyBase.Text:=dinfo.MyBaseFilename;
  EIndexFields.Text:=dinfo.MyBaseIndexFields;
  EBDEIndexFields.Text:=dinfo.BDEIndexFields;

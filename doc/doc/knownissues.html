@@ -111,7 +111,13 @@
   <tr> 
     <td> 
       <p>This issue only affects some Linux systems the source seems the printer 
-        queue, in Kylix2 the issue is related also to qt libs.</p>
+        queue, in Kylix2 the issue is related to qt libs and Borland runtime library 
+        localization </p>
+      <p>The fast and effective workaround is to launch your application setting 
+        enviroment variable LC_NUMERIC=en_US, see repmand.sh startup script. Then 
+        in your Kylix application you can set the DecimalSeparator and ThousandSeparator 
+        variables before print so you can print with your custom locale settings.</p>
+      <p>The way to reproduce the bug is:</p>
       <p>The CLX print engine does not work well in some Linux systems/configurations, 
         you can test if your system works ok by writting a small program in kylix 
         and executing it:</p>

@@ -52,7 +52,7 @@ object FRpStructureVCL: TFRpStructureVCL
     Indent = 19
     ReadOnly = True
     TabOrder = 1
-    OnClick = RViewClick
+    OnChange = RViewChange
   end
   object ImageList1: TImageList
     Height = 19

@@ -628,6 +628,7 @@ end;
 
 procedure TFRpMainFVCL.FormCreate(Sender: TObject);
 begin
+ Application.UpdateFormatSettings:=false;
  // Inits Bools Arrays
  BoolToStr(True,True);
  ALeft.ShortCut:=ShortCut(VK_LEFT,[ssCtrl]);

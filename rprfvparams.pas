@@ -236,9 +236,9 @@ begin
    rpParamBool:
      begin
       acontrol:=TComboBox.Create(Self);
+      TComboBox(acontrol).Style:=csDropDownList;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
-      TComboBox(acontrol).Style:=csDropDownList;
       // Can't add items without a parent
       acontrol.parent:=MainScrollBox;
       TComboBox(acontrol).Items.Add(BoolToStr(false,true));

@@ -563,7 +563,7 @@ var
 begin
  rep:=TRpReport(Subreport.Owner);
  lvalues.clear;
- lvalues.Add('');
+ lvalues.Add(' ');
  for i:=0 to rep.Subreports.count-1 do
  begin
   if rep.Subreports.items[i].SubReport<>SubReport then
@@ -575,7 +575,7 @@ end;
 
 function TRpSection.GetChildSubReportName:string;
 begin
- Result:='';
+ Result:=' ';
  if Assigned(ChildSubReport) then
   Result:=TRpSubReport(ChildSubReport).GetDisplayName;
 end;

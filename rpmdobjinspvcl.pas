@@ -284,21 +284,21 @@ begin
   if LTypes.Strings[i]=SRpSBool then
   begin
    Control:=TComboBox.Create(Self);
+   TComboBox(Control).Style:=csDropDownList;
    Control.Visible:=false;
    Control.Parent:=AScrollBox;
    TComboBox(Control).Items.Add(FalseBoolStrs[0]);
    TComboBox(Control).Items.Add(TrueBoolStrs[0]);
-   TComboBox(Control).Style:=csDropDownList;
    TCOmboBox(Control).OnChange:=EditChange;
   end
   else
   if LTypes.Strings[i]=SRpSList then
   begin
    Control:=TComboBox.Create(Self);
+   TComboBox(Control).Style:=csDropDownList;
    Control.Visible:=false;
    Control.Parent:=AScrollBox;
    FCompItem.GetPropertyValues(LNames.Strings[i],TComboBox(Control).Items);
-   TComboBox(Control).Style:=csDropDownList;
    TCOmboBox(Control).OnChange:=EditChange;
   end
   else
@@ -322,12 +322,12 @@ begin
   if LTypes.Strings[i]=SRpGroup then
   begin
    Control:=TComboBox.Create(Self);
+   TComboBox(Control).Style:=csDropDownList;
    Control.Visible:=false;
    Control.Parent:=AScrollBox;
    subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
-   TComboBox(Control).Style:=csDropDownList;
    subrep.GetGroupNames(TComboBox(Control).Items);
-   TComboBox(Control).Items.Insert(0,'');
+   TComboBox(Control).Items.Insert(0,' ');
    TComboBox(Control).OnChange:=EditChange;
   end
   else
@@ -517,7 +517,7 @@ begin
   // Assigns the datasets
   ComboAlias.OnChange:=nil;
   alist.clear;
-  alist.add('');
+  alist.add(' ');
   for i:=0 to FRpMainf.report.DataInfo.Count-1 do
   begin
    alist.Add(FRpMainf.report.DataInfo.items[i].Alias);
@@ -593,7 +593,7 @@ begin
  // Assigns combo values
  combo.OnChange:=nil;
  alist.clear;
- alist.Add('');
+ alist.Add(' ');
  for i:=0 to secint.childlist.count-1 do
  begin
   asecitem:=TRpSizePosInterface(secint.childlist.items[i]);
@@ -702,7 +702,7 @@ begin
      subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
      alist.clear;
      subrep.GetGroupNames(alist);
-     alist.Insert(0,'');
+     alist.Insert(0,' ');
      TComboBox(Control).OnChange:=nil;
      TComboBox(Control).Items.Assign(alist);
      if aitem is TRpExpressionInterface then
