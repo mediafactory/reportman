@@ -5,8 +5,8 @@ object FRpPageSetup: TFRpPageSetup
   AutoScroll = False
   BorderStyle = fbsDialog
   Caption = 'Report page setup'
-  ClientHeight = 375
-  ClientWidth = 472
+  ClientHeight = 443
+  ClientWidth = 486
   Color = clBackground
   Position = poScreenCenter
   ShowHint = True
@@ -18,9 +18,9 @@ object FRpPageSetup: TFRpPageSetup
   object PControl: TPageControl
     Left = 0
     Top = 0
-    Width = 472
-    Height = 334
-    ActivePage = TabPrint
+    Width = 486
+    Height = 402
+    ActivePage = TabPage
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -251,14 +251,14 @@ object FRpPageSetup: TFRpPageSetup
       ImageIndex = 1
       object LSelectPrinter: TLabel
         Left = 4
-        Top = 88
+        Top = 92
         Width = 63
         Height = 13
         Caption = 'Select Printer'
       end
       object ComboSelPrinter: TComboBox
-        Left = 220
-        Top = 84
+        Left = 236
+        Top = 88
         Width = 237
         Height = 21
         Style = csDropDownList
@@ -267,7 +267,7 @@ object FRpPageSetup: TFRpPageSetup
       end
       object BConfigure: TButton
         Left = 4
-        Top = 108
+        Top = 168
         Width = 213
         Height = 25
         Caption = 'Configure printers'
@@ -276,15 +276,15 @@ object FRpPageSetup: TFRpPageSetup
       end
       object CheckTwoPass: TCheckBox
         Left = 4
-        Top = 192
+        Top = 252
         Width = 213
         Height = 21
         Caption = 'Two pass report'
-        TabOrder = 10
+        TabOrder = 9
       end
       object CheckPrintOnlyIfData: TCheckBox
         Left = 4
-        Top = 216
+        Top = 276
         Width = 209
         Height = 21
         Caption = 'Print only if data available'
@@ -292,7 +292,7 @@ object FRpPageSetup: TFRpPageSetup
       end
       object ECopies: TRpCLXMaskEdit
         Left = 144
-        Top = 144
+        Top = 200
         Width = 69
         Height = 21
         TabOrder = 7
@@ -300,14 +300,14 @@ object FRpPageSetup: TFRpPageSetup
       end
       object LCopies: TLabel
         Left = 4
-        Top = 148
+        Top = 204
         Width = 32
         Height = 13
         Caption = 'Copies'
       end
       object CheckCollate: TCheckBox
         Left = 4
-        Top = 168
+        Top = 228
         Width = 205
         Height = 21
         Caption = 'Collate copies'
@@ -321,7 +321,7 @@ object FRpPageSetup: TFRpPageSetup
         Caption = 'Printer Fonts (Windows GDI Only)'
       end
       object ComboPrinterFonts: TComboBox
-        Left = 220
+        Left = 236
         Top = 4
         Width = 237
         Height = 21
@@ -334,7 +334,7 @@ object FRpPageSetup: TFRpPageSetup
         TabOrder = 1
       end
       object ComboLanguage: TComboBox
-        Left = 220
+        Left = 236
         Top = 32
         Width = 237
         Height = 21
@@ -357,7 +357,7 @@ object FRpPageSetup: TFRpPageSetup
         Caption = 'Preview window and scale'
       end
       object ComboPreview: TComboBox
-        Left = 220
+        Left = 236
         Top = 60
         Width = 113
         Height = 21
@@ -369,7 +369,7 @@ object FRpPageSetup: TFRpPageSetup
         TabOrder = 3
       end
       object ComboStyle: TComboBox
-        Left = 336
+        Left = 352
         Top = 60
         Width = 121
         Height = 21
@@ -383,7 +383,7 @@ object FRpPageSetup: TFRpPageSetup
       end
       object CheckDrawerAfter: TCheckBox
         Left = 4
-        Top = 264
+        Top = 324
         Width = 373
         Height = 21
         Caption = 'Open drawer after printing'
@@ -391,7 +391,7 @@ object FRpPageSetup: TFRpPageSetup
       end
       object CheckDrawerBefore: TCheckBox
         Left = 4
-        Top = 240
+        Top = 300
         Width = 405
         Height = 21
         Caption = 'Open drawer before printing'
@@ -399,19 +399,51 @@ object FRpPageSetup: TFRpPageSetup
       end
       object CheckPreviewAbout: TCheckBox
         Left = 212
-        Top = 168
-        Width = 245
+        Top = 228
+        Width = 261
         Height = 21
         Caption = 'About box in preview'
         TabOrder = 17
       end
       object CheckMargins: TCheckBox
         Left = 212
-        Top = 192
-        Width = 245
+        Top = 252
+        Width = 261
         Height = 21
         Caption = 'Printable margins in preview'
         TabOrder = 18
+      end
+      object ComboDuplex: TComboBox
+        Left = 236
+        Top = 144
+        Width = 237
+        Height = 21
+        Style = csDropDownList
+        ItemHeight = 15
+        TabOrder = 19
+      end
+      object LDuplex: TLabel
+        Left = 4
+        Top = 148
+        Width = 65
+        Height = 13
+        Caption = 'Duplex option'
+      end
+      object LPaperSource: TLabel
+        Left = 4
+        Top = 120
+        Width = 95
+        Height = 13
+        Caption = 'Select paper source'
+      end
+      object ComboPaperSource: TComboBox
+        Left = 236
+        Top = 116
+        Width = 233
+        Height = 21
+        Style = csDropDownList
+        ItemHeight = 15
+        TabOrder = 22
       end
     end
     object TabOptions: TTabSheet
@@ -437,8 +469,8 @@ object FRpPageSetup: TFRpPageSetup
   end
   object Panel1: TPanel
     Left = 0
-    Top = 334
-    Width = 472
+    Top = 402
+    Width = 486
     Height = 41
     Align = alBottom
     TabOrder = 1

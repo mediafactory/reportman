@@ -27,9 +27,11 @@ uses
   SysUtils,
   Classes,
   ActiveX,
-  midaslib,
 {$IFDEF ISDELPHI7}
   XpMan,
+{$ENDIF}
+{$IFDEF USEVARIANTS}
+  MidasLib,
 {$ENDIF}
   rpreport in '..\..\..\rpreport.pas',
   rpparams in '..\..\..\rpparams.pas',
@@ -58,22 +60,22 @@ var
 
 procedure PrintHelp;
 begin
- Writeln(SRpPrintRep1+' XP '+RM_VERSION);
- Writeln(SRpPrintRep2);
- Writeln(SRpPrintRep3);
- Writeln(SRpPrintRep4);
- Writeln(SRpPrintRep5);
- Writeln(SRpPrintRep6);
- Writeln(SRpPrintRep7);
- Writeln(SRpPrintRep8);
- Writeln(SRpPrintRep9);
- Writeln(SRpPrintRep10);
- Writeln(SRpPrintRep12);
- Writeln(SRpPrintPDFRep8);
- Writeln(SRpPrintPDFRep9);
- Writeln(SRpPrintRep14);
- Writeln(SRpParseParamsH);
- Writeln(SRpCommandLineStdIN);
+ Writeln(AnsiString(SRpPrintRep1+' XP '+RM_VERSION));
+ Writeln(AnsiString(SRpPrintRep2));
+ Writeln(AnsiString(SRpPrintRep3));
+ Writeln(AnsiString(SRpPrintRep4));
+ Writeln(AnsiString(SRpPrintRep5));
+ Writeln(AnsiString(SRpPrintRep6));
+ Writeln(AnsiString(SRpPrintRep7));
+ Writeln(AnsiString(SRpPrintRep8));
+ Writeln(AnsiString(SRpPrintRep9));
+ Writeln(AnsiString(SRpPrintRep10));
+ Writeln(AnsiString(SRpPrintRep12));
+ Writeln(AnsiString(SRpPrintPDFRep8));
+ Writeln(AnsiString(SRpPrintPDFRep9));
+ Writeln(AnsiString(SRpPrintRep14));
+ Writeln(AnsiString(SRpParseParamsH));
+ Writeln(AnsiString(SRpCommandLineStdIN));
 end;
 
 var
@@ -202,6 +204,7 @@ begin
    begin
     report:=TRpReport.Create(nil);
     try
+     report.ProgressToStdOut:=true;
      if assigned(memstream) then
      begin
       try

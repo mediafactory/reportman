@@ -406,10 +406,18 @@
       change, Etiq is the text of the value and Caption is the text of the serie</td>
   </tr>
   <tr> 
+    <td>function GraphicBounds (Gr:string; autol,autoh:boolean; low,high:double;log:boolean; 
+      logbase:double; inverted:boolean):Boolean;<br></td>
+    <td>Establish upper and lower bound for a chart, the axis can be inverted 
+      and also a logaritthmic scale can be used. Set autol (automatic lower bound) 
+      to false and set a value to the low parameter, idem for autoh (automatic 
+      higher bound)</td>
+  </tr>
+  <tr> 
     <td>Identifer </td>
-    <td>Any identifier property assigned to a report component will create a variable 
-      in the expression evaluator, so you can calculate totals and then use the 
-      calculated value in other report components</td>
+    <td>Any identifier property assigned to a report component usually (TRpExpressions 
+      and TRpCharts) will create a variable in the expression evaluator, so you 
+      can calculate totals and then use the calculated value in other report components</td>
   </tr>
   <tr> 
     <td>Page </td>
@@ -433,7 +441,7 @@
     <td>Parameters</td>
     <td>All the report parameters are available in the expression evaluator</td>
   </tr>
-  <tr>
+  <tr> 
     <td><a href="drawfunctions.html">Draw functions</a></td>
     <td>See draw functions page for details</td>
   </tr>
@@ -473,6 +481,12 @@
   <tr> 
     <td><p>PAGEHEIGHT, PAGEWIDTH</p></td>
     <td>Returns the page witdh and page height in twips ((1440 twips = 1 inches)</td>
+  </tr>
+  <tr> 
+    <td> function GetValueFromSQL (connectionname:String; sql:String):Variant<br></td>
+    <td>This function uses the sql parameter to execute, and open a sql query 
+      using a connection name, it will return the first column value of the first 
+      row, or NULL if the opened dataset is empty.</td>
   </tr>
 </table>
 <p><b>Building expressions</b></p>

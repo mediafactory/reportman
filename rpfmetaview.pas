@@ -283,6 +283,8 @@ begin
  begin
   pagenum:=Metafile.PageCount;
  end;
+ rpagesizeQt.papersource:=metafile.PaperSource;
+ rpagesizeQt.duplex:=metafile.duplex;
  if Metafile.PageSize<0 then
  begin
   rpagesizeqt.Custom:=True;
@@ -575,6 +577,8 @@ begin
  allpages:=true;
  collate:=false;
  copies:=1;
+ rppagesize.papersource:=metafile.PaperSource;
+ rppagesize.duplex:=metafile.duplex;
  rpPageSize.Custom:=metafile.PageSize<0;
  rpPageSize.Indexqt:=metafile.PageSize;
  rpPageSize.CustomWidth:=metafile.CustomX;
@@ -585,7 +589,7 @@ begin
   allpages:=true;
   frompage:=1; topage:=999999;
   copies:=1;
-  rpgdidriver.PrinterSelection(printerindex);
+  rpgdidriver.PrinterSelection(printerindex,metafile.PaperSource,metafile.Duplex);
   rpgdidriver.PageSizeSelection(rpPageSize);
   rpgdidriver.OrientationSelection(metafile.orientation);
   selectedok:=true;

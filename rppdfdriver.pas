@@ -23,6 +23,12 @@ interface
 
 {$I rpconf.inc}
 
+{$IFNDEF BCB}
+{$IFDEF MSWINDOWS}
+ {$UNDEF USECLXTEECHART}
+{$ENDIF}
+{$ENDIF}
+
 uses Classes,Sysutils,
 {$IFDEF USEVARIANTS}
  Types,

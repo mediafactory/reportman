@@ -219,6 +219,7 @@ begin
    begin
     report:=TRpReport.Create(nil);
     try
+     report.ProgressToStdOut:=true;
      if isstdin then
      begin
       memstream:=ReadFromStdInputStream;

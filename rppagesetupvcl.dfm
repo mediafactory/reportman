@@ -3,8 +3,8 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   Top = 108
   BorderStyle = bsDialog
   Caption = 'Dialog'
-  ClientHeight = 376
-  ClientWidth = 442
+  ClientHeight = 436
+  ClientWidth = 458
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -17,9 +17,9 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   object PControl: TPageControl
     Left = 0
     Top = 0
-    Width = 442
-    Height = 335
-    ActivePage = TabOptions
+    Width = 458
+    Height = 395
+    ActivePage = TabPrint
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -98,7 +98,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
       object GPageMargins: TGroupBox
         Left = 4
         Top = 172
-        Width = 413
+        Width = 441
         Height = 69
         Caption = 'Page Margins'
         TabOrder = 5
@@ -131,28 +131,28 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           Caption = 'inch.'
         end
         object LMetrics5: TLabel
-          Left = 360
+          Left = 392
           Top = 16
           Width = 23
           Height = 13
           Caption = 'inch.'
         end
         object LRight: TLabel
-          Left = 212
+          Left = 244
           Top = 16
           Width = 25
           Height = 13
           Caption = 'Right'
         end
         object LBottom: TLabel
-          Left = 212
+          Left = 244
           Top = 44
           Width = 33
           Height = 13
           Caption = 'Bottom'
         end
         object LMetrics6: TLabel
-          Left = 360
+          Left = 392
           Top = 44
           Width = 23
           Height = 13
@@ -175,7 +175,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           EditType = tecurrency
         end
         object ERightMargin: TRpMaskEdit
-          Left = 272
+          Left = 304
           Top = 12
           Width = 77
           Height = 21
@@ -183,7 +183,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           EditType = tecurrency
         end
         object EBottomMargin: TRpMaskEdit
-          Left = 272
+          Left = 304
           Top = 40
           Width = 77
           Height = 21
@@ -194,41 +194,41 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
       object GUserDefined: TGroupBox
         Left = 184
         Top = 8
-        Width = 241
+        Width = 261
         Height = 73
         Caption = 'Custom page size (Windows only)'
         TabOrder = 1
         Visible = False
         object LMetrics7: TLabel
-          Left = 190
+          Left = 218
           Top = 24
           Width = 23
           Height = 13
           Caption = 'inch.'
         end
         object LMetrics8: TLabel
-          Left = 190
+          Left = 218
           Top = 48
           Width = 23
           Height = 13
           Caption = 'inch.'
         end
         object LWidth: TLabel
-          Left = 16
+          Left = 12
           Top = 24
           Width = 28
           Height = 13
           Caption = 'Width'
         end
         object LHeight: TLabel
-          Left = 16
+          Left = 12
           Top = 48
           Width = 31
           Height = 13
           Caption = 'Height'
         end
         object EPageheight: TRpMaskEdit
-          Left = 100
+          Left = 128
           Top = 44
           Width = 77
           Height = 21
@@ -236,7 +236,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           EditType = tecurrency
         end
         object EPageWidth: TRpMaskEdit
-          Left = 100
+          Left = 128
           Top = 20
           Width = 77
           Height = 21
@@ -257,7 +257,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
       end
       object LCopies: TLabel
         Left = 8
-        Top = 148
+        Top = 212
         Width = 32
         Height = 13
         Caption = 'Copies'
@@ -283,18 +283,32 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Height = 13
         Caption = 'Preview window and scale'
       end
+      object LPaperSource: TLabel
+        Left = 8
+        Top = 120
+        Width = 95
+        Height = 13
+        Caption = 'Select paper source'
+      end
+      object LDuplex: TLabel
+        Left = 8
+        Top = 148
+        Width = 65
+        Height = 13
+        Caption = 'Duplex option'
+      end
       object ComboSelPrinter: TComboBox
-        Left = 224
+        Left = 252
         Top = 88
-        Width = 201
+        Width = 193
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 3
       end
       object BConfigure: TButton
         Left = 8
-        Top = 112
+        Top = 176
         Width = 213
         Height = 25
         Caption = 'Configure printers'
@@ -303,7 +317,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
       end
       object CheckPrintOnlyIfData: TCheckBox
         Left = 8
-        Top = 220
+        Top = 284
         Width = 209
         Height = 21
         Caption = 'Print only if data available'
@@ -311,7 +325,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
       end
       object CheckTwoPass: TCheckBox
         Left = 8
-        Top = 196
+        Top = 260
         Width = 209
         Height = 21
         Caption = 'Two pass report'
@@ -319,7 +333,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
       end
       object ECopies: TRpMaskEdit
         Left = 152
-        Top = 144
+        Top = 208
         Width = 69
         Height = 21
         TabOrder = 6
@@ -327,16 +341,16 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
       end
       object CheckCollate: TCheckBox
         Left = 8
-        Top = 172
+        Top = 236
         Width = 213
         Height = 21
         Caption = 'Collate copies'
         TabOrder = 7
       end
       object ComboPrinterFonts: TComboBox
-        Left = 224
+        Left = 252
         Top = 4
-        Width = 201
+        Width = 193
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
@@ -347,18 +361,18 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           'Never use printer fonts')
       end
       object ComboLanguage: TComboBox
-        Left = 224
+        Left = 252
         Top = 32
-        Width = 201
+        Width = 193
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 1
       end
       object ComboPreview: TComboBox
-        Left = 224
+        Left = 252
         Top = 60
-        Width = 100
+        Width = 96
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
@@ -368,9 +382,9 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           'Maxmized')
       end
       object ComboStyle: TComboBox
-        Left = 328
+        Left = 352
         Top = 60
-        Width = 97
+        Width = 93
         Height = 21
         Style = csDropDownList
         ItemHeight = 13
@@ -382,7 +396,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
       end
       object CheckDrawerAfter: TCheckBox
         Left = 8
-        Top = 268
+        Top = 332
         Width = 373
         Height = 21
         Caption = 'Open drawer after printing'
@@ -390,7 +404,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
       end
       object CheckDrawerBefore: TCheckBox
         Left = 8
-        Top = 244
+        Top = 308
         Width = 405
         Height = 21
         Caption = 'Open drawer before printing'
@@ -398,19 +412,37 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
       end
       object CheckPreviewAbout: TCheckBox
         Left = 212
-        Top = 168
-        Width = 205
+        Top = 232
+        Width = 233
         Height = 21
         Caption = 'About box in preview'
         TabOrder = 12
       end
       object CheckMargins: TCheckBox
         Left = 212
-        Top = 192
-        Width = 205
+        Top = 256
+        Width = 233
         Height = 21
         Caption = 'Printable margins in preview'
         TabOrder = 13
+      end
+      object ComboPaperSource: TComboBox
+        Left = 252
+        Top = 116
+        Width = 193
+        Height = 21
+        Style = csDropDownList
+        ItemHeight = 13
+        TabOrder = 14
+      end
+      object ComboDuplex: TComboBox
+        Left = 252
+        Top = 144
+        Width = 193
+        Height = 21
+        Style = csDropDownList
+        ItemHeight = 13
+        TabOrder = 15
       end
     end
     object TabOptions: TTabSheet
@@ -429,15 +461,15 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 181
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
       end
     end
   end
   object Panel1: TPanel
     Left = 0
-    Top = 335
-    Width = 442
+    Top = 395
+    Width = 458
     Height = 41
     Align = alBottom
     TabOrder = 1

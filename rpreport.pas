@@ -852,6 +852,8 @@ begin
   begin
    FDriver.SetOrientation(PageOrientation);
   end;
+  rPageSizeQt.papersource:=papersource;
+  rPageSizeQt.duplex:=duplex;
   if PageSize<>rpPageSizeDefault then
   begin
    if PageSize=rpPageSizeUser then

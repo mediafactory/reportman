@@ -337,6 +337,7 @@ type
     procedure DeleteSelection;
     procedure DoOpenFromLib(alibname:String;arepname:WideString);
     procedure DoOpenStream(astream:TStream);
+    procedure IdleMaximize(Sender:TObject;var done:Boolean);
   public
     { Public declarations }
     report:TRpReport;
@@ -1278,7 +1279,7 @@ begin
   collate:=report.CollateCopies;
   frompage:=1; topage:=999999;
   copies:=report.Copies;
-  rpgdidriver.PrinterSelection(report.PrinterSelect);
+  rpgdidriver.PrinterSelection(report.PrinterSelect,report.PaperSource,report.Duplex);
   if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
    rpgdidriver.PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
   exit;
@@ -1886,6 +1887,17 @@ begin
  // Bugfix but removed because kylix unofficial bugfixes
  // loops for about 5 seconds waiting an event
 // WindowState:=wsMaximized;
+ // New functionality test
+ oldappidle:=Application.OnIdle;
+ Application.OnIdle:=IdleMaximize;
+end;
+
+procedure TFRpMainF.IdleMaximize(Sender:TObject;var done:Boolean);
+begin
+ done:=false;
+ Application.OnIdle:=oldappidle;
+
+ WindowState:=wsMaximized;
 end;
 
 procedure TFRpMainF.ASysInfoExecute(Sender: TObject);

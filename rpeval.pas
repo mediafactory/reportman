@@ -57,6 +57,7 @@ type
   FLanguage:Integer;
   FOnGraphicOp:TRpGraphicOpProc;
   FOnTextOp:TRpTextOpProc;
+  FOnGetSQLValue:TRpOnGetSQLValue;
   procedure SetExpression(Value:string);
   // Recursive functions to evaluate the expresion
   procedure variables(var Value:TRpValue);
@@ -118,6 +119,7 @@ type
   property Language:Integer read FLanguage write FLanguage;
   property OnGraphicOp:TRpGraphicOpProc read FOnGraphicOp write FOnGraphicOp;
   property OnTextOp:TRpTextOpProc read FOnTextOp write FOnTextOp;
+  property OnGetSQLValue:TRpOnGetSQLValue read FOnGetSQLValue write FOnGetSQLValue;
  end;
 
  // The visual component
@@ -283,6 +285,10 @@ begin
  Rpfunctions.AddObject('GRAPHICNEW',iden);
  iden:=TIdenGraphicBounds.Create(nil);
  Rpfunctions.AddObject('GRAPHICBOUNDS',iden);
+ // SQl functions
+ iden:=TIdenGetValueFromSQL.Create(nil);
+ Rpfunctions.AddObject('GETVALUEFROMSQL',iden);
+
 end;
 
 // Adds the identifiers that are on cache

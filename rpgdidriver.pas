@@ -190,7 +190,7 @@ function ExportReportToPDFMetaStream (report:TRpReport; Caption:string; progress
 {$ENDIF}
 function DoShowPrintDialog (var allpages:boolean;
  var frompage,topage,copies:integer; var collate:boolean;disablecopies:boolean=false) :boolean;
-function PrinterSelection (printerindex:TRpPrinterSelect) :TPoint;
+function PrinterSelection (printerindex:TRpPrinterSelect;papersource,duplex:integer) :TPoint;
 procedure PageSizeSelection (rpPageSize:TPageSizeQt);
 procedure OrientationSelection (neworientation:TRpOrientation);
 
@@ -1132,15 +1132,15 @@ begin
    memstream.free;
   end;
   // Now Prints to selected printer the stream
-  PrinterSelection(metafile.PrinterSelect);
+  PrinterSelection(metafile.PrinterSelect,metafile.papersource,metafile.duplex);
   SendControlCodeToPrinter(S);
  end
  else
  begin
   if printerindex<>pRpDefaultPrinter then
-   offset:=PrinterSelection(printerindex)
+   offset:=PrinterSelection(printerindex,metafile.papersource,metafile.duplex)
   else
-   offset:=PrinterSelection(metafile.PrinterSelect);
+   offset:=PrinterSelection(metafile.PrinterSelect,metafile.papersource,metafile.duplex);
   UpdatePrinterFontList;
   pagemargins:=GetPageMarginsTWIPS;
   // Get the time
@@ -1569,11 +1569,36 @@ begin
 end;
 
 procedure TFRpVCLProgress.RepProgress(Sender:TRpBaseReport;var docancel:boolean);
+var
+ astring:WideString;
 begin
  if Not Assigned(LRecordCount) then
   exit;
+ if Sender.ProgressToStdOut then
+ begin
+  astring:=SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
+   +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
+   FormatFloat('#########,####',Sender.RecordCount);
+ {$IFDEF USEVARIANTS}
+  WriteLn(astring);
+ {$ELSE}
+  WriteLn(String(astring));
+ {$ENDIF}
+  // If it's the last page prints additional info
+  if Sender.LastPage then
+  begin
+   astring:=Format('%-20.20s',[SRpPage])+FormatFloat('0000000000',Sender.PageNum+1);
+ {$IFDEF USEVARIANTS}
+   WriteLn(astring);
+ {$ELSE}
+   WriteLn(String(astring));
+ {$ENDIF}
+  end;
+ end;
  LRecordCount.Caption:=IntToStr(Sender.CurrentSubReportIndex)+':'+SRpPage+':'+
  FormatFloat('#########,####',Sender.PageNum+1)+'-'+FormatFloat('#########,####',Sender.RecordCount+1);
+ if Sender.LastPage then
+  LRecordCount.Caption:=Format('%-20.20s',[SRpPage])+FormatFloat('0000000000',Sender.PageNum+1);
  Application.ProcessMessages;
  if cancelled then
   docancel:=true;
@@ -1703,7 +1728,7 @@ begin
 {$IFDEF DOTNETD}
    s:=TextDriver.MemStream.ToString;
 {$ENDIF}
-  PrinterSelection(report.PrinterSelect);
+  PrinterSelection(report.PrinterSelect,report.papersource,report.duplex);
   SendControlCodeToPrinter(S);
  finally
   report.OnProgress:=oldprogres;
@@ -1849,7 +1874,7 @@ begin
 {$IFDEF DOTNETD}
    s:=TextDriver.MemStream.ToString;
 {$ENDIF}
-    PrinterSelection(report.PrinterSelect);
+    PrinterSelection(report.PrinterSelect,report.papersource,report.duplex);
     SendControlCodeToPrinter(S);
    end
    else
@@ -1934,11 +1959,12 @@ begin
  end;
 end;
 
-function PrinterSelection(printerindex:TRpPrinterSelect):TPoint;
+function PrinterSelection(printerindex:TRpPrinterSelect;papersource,duplex:integer):TPoint;
 var
  printername:String;
  index:integer;
  offset:TPoint;
+ apage:TGDIPageSize;
 begin
  printername:=GetPrinterConfigName(printerindex);
  offset:=GetPrinterOffset(printerindex);
@@ -1948,12 +1974,21 @@ begin
   if index>=0 then
    Printer.PrinterIndex:=index;
  end;
+ if ((papersource>0) or (duplex>0)) then
+ begin
+  apage:=GetCurrentPaper;
+  if papersource>0 then
+   apage.papersource:=papersource;
+  if duplex>0 then
+   apage.duplex:=duplex;
+  SetCurrentPaper(apage);
+ end;
  Result:=offset;
 end;
 
 procedure TRpGDIDriver.SelectPrinter(printerindex:TRpPrinterSelect);
 begin
- offset:=PrinterSelection(printerindex);
+ offset:=PrinterSelection(printerindex,0,0);
  selectedprinter:=printerindex;
  if neverdevicefonts then
   exit;

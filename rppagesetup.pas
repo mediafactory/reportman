@@ -88,6 +88,10 @@ type
     CheckDrawerBefore: TCheckBox;
     CheckPreviewAbout: TCheckBox;
     CheckMargins: TCheckBox;
+    ComboDuplex: TComboBox;
+    LDuplex: TLabel;
+    LPaperSource: TLabel;
+    ComboPaperSource: TComboBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -271,6 +275,8 @@ begin
   Add(SRpUserPrinter8);
   Add(SRpUserPrinter9);
  end;
+ LPaperSource.Caption:=SRpPaperSource;
+ LDuplex.Caption:=SRpDuplex;
  LSelectPrinter.Caption:=TranslateStr(741,LSelectPrinter.Caption);
  BConfigure.Caption:=TranslateStr(143,BConfigure.Caption);
  LPreview.Caption:=TranslateStr(840,LPreview.Caption);
@@ -288,6 +294,8 @@ begin
  ComboFormat.Items.Add(SRpStreamBinary);
  CheckDrawerAfter.Caption:=SRpOpenDrawerAfter;
  CheckDrawerBefore.Caption:=SRpOpenDrawerBefore;
+ GetPaperSourceDescriptions(ComboPaperSource.Items);
+ GetDuplexDescriptions(ComboDuplex.Items);
 
  SetInitialBounds;
 end;
@@ -354,6 +362,8 @@ begin
  report.PreviewMargins:=CheckMargins.Checked;
  report.PreviewWindow:=TRpPreviewWindowStyle(ComboPreview.ItemIndex);
  report.StreamFormat:=TRpStreamFormat(ComboFormat.ItemIndex);
+ report.PaperSOurce:=ComboPaperSource.ItemIndex;
+ report.Duplex:=ComboDuplex.ItemIndex;
 end;
 
 procedure TFRpPageSetup.ReadOptions;
@@ -411,6 +421,8 @@ begin
  ComboPreview.ItemIndex:=integer(report.PreviewWindow);
  ComboFormat.ItemIndex:=integer(report.StreamFormat);
  CheckMargins.Checked:=report.PreviewMargins;
+ ComboPaperSource.ItemIndex:=report.PaperSource;
+ ComboDuplex.ItemIndex:=report.Duplex;
 end;
 
 procedure TFRpPageSetup.SColorMouseDown(Sender: TObject;

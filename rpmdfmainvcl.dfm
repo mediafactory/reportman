@@ -26,6 +26,7 @@ object FRpMainFVCL: TFRpMainFVCL
       item
         Width = 50
       end>
+    SimplePanel = False
   end
   object ToolBar1: TToolBar
     Left = 0
@@ -77,26 +78,18 @@ object FRpMainFVCL: TFRpMainFVCL
       ImageIndex = 5
       Style = tbsSeparator
     end
-    object ToolButton6: TToolButton
-      Left = 120
-      Top = 0
-      Width = 8
-      Caption = 'ToolButton6'
-      ImageIndex = 5
-      Style = tbsSeparator
-    end
     object ToolButton7: TToolButton
-      Left = 128
+      Left = 120
       Top = 0
       Action = APrint
     end
     object ToolButton8: TToolButton
-      Left = 154
+      Left = 146
       Top = 0
       Action = APreview
     end
     object ToolButton9: TToolButton
-      Left = 180
+      Left = 172
       Top = 0
       Width = 20
       Caption = 'ToolButton9'
@@ -104,7 +97,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Style = tbsSeparator
     end
     object BArrow: TToolButton
-      Left = 200
+      Left = 192
       Top = 0
       Hint = 'Select objects'
       Caption = 'BArrow'
@@ -114,7 +107,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Style = tbsCheck
     end
     object BLabel: TToolButton
-      Left = 226
+      Left = 218
       Top = 0
       Hint = 'Inserts a static text'
       Caption = 'BLabel'
@@ -124,7 +117,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Style = tbsCheck
     end
     object BExpression: TToolButton
-      Left = 252
+      Left = 244
       Top = 0
       Hint = 'Inserts a expression'
       Caption = 'BExpression'
@@ -134,7 +127,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Style = tbsCheck
     end
     object BShape: TToolButton
-      Left = 278
+      Left = 270
       Top = 0
       Hint = 'Inserts a simple drawing'
       Caption = 'BShape'
@@ -144,7 +137,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Style = tbsCheck
     end
     object BImage: TToolButton
-      Left = 304
+      Left = 296
       Top = 0
       Hint = 'Inserts a image'
       Caption = 'BImage'
@@ -154,7 +147,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Style = tbsCheck
     end
     object BChart: TToolButton
-      Left = 330
+      Left = 322
       Top = 0
       Hint = 'Inserts a chart'
       Caption = 'BChart'
@@ -164,7 +157,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Style = tbsCheck
     end
     object BBarcode: TToolButton
-      Left = 356
+      Left = 348
       Top = 0
       Hint = 'Inserts a barcode'
       Caption = 'BBarcode'
@@ -283,6 +276,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Top = 0
       Width = 8
       Height = 333
+      Cursor = crHSplit
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved

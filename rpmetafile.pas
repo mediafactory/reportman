@@ -67,7 +67,7 @@ const
  MILIS_PROGRESS=500;
  RP_SIGNATURELENGTH=13;
  // The metafile signature and version
- RpSignature:string='RPMETAFILE06'+chr(0);
+ RpSignature:string='RPMETAFILE07'+chr(0);
 const
  FIRST_ALLOCATION_OBJECTS=50;
  FIRST_ALLOCATED_WIDESTRING=1000;
@@ -308,6 +308,8 @@ type
    CustomX:integer;
    CustomY:integer;
    Orientation:TRpOrientation;
+   PaperSource:Integer;
+   Duplex:integer;
    BackColor:integer;
    PrinterSelect:TRpPrinterSelect;
    PreviewStyle:TRpPreviewStyle;
@@ -728,6 +730,8 @@ begin
  ainteger:=Integer(Orientation);
  Stream.Write(ainteger,sizeof(integer));
  Stream.Write(BackColor,sizeof(BackColor));
+ Stream.Write(PaperSource,sizeof(PaperSource));
+ Stream.Write(Duplex,sizeof(Duplex));
  ainteger:=Integer(PrinterSelect);
  Stream.Write(ainteger,sizeof(integer));
  ainteger:=Integer(PreviewStyle);
@@ -861,6 +865,10 @@ begin
   Raise Exception.Create(SRpBadFileHeader);
  Orientation:=TRpOrientation(ainteger);
  if (sizeof(BackColor)<>Stream.Read(BackColor,sizeof(BackColor))) then
+  Raise Exception.Create(SRpBadFileHeader);
+ if (sizeof(PaperSource)<>Stream.Read(BackColor,sizeof(PaperSource))) then
+  Raise Exception.Create(SRpBadFileHeader);
+ if (sizeof(Duplex)<>Stream.Read(BackColor,sizeof(Duplex))) then
   Raise Exception.Create(SRpBadFileHeader);
  if (sizeof(integer)<>Stream.Read(ainteger,sizeof(integer))) then
   Raise Exception.Create(SRpBadFileHeader);

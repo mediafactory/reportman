@@ -560,6 +560,8 @@ end;
 
 {$IFNDEF FORWEBAX}
 procedure TRpTextDriver.RepProgress(Sender:TRpBaseReport;var docancel:boolean);
+var
+ astring:WideString;
 begin
 {$IFDEF USEVARIANTS}
  WriteLn(SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
@@ -570,6 +572,16 @@ begin
   +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
   FormatFloat('#########,####',Sender.RecordCount)));
 {$ENDIF}
+ // If it's the last page prints additional info
+ if Sender.LastPage then
+ begin
+  astring:=Format('%-20.20s',[SRpPage])+FormatFloat('0000000000',Sender.PageNum+1);
+{$IFDEF USEVARIANTS}
+  WriteLn(astring);
+{$ELSE}
+  WriteLn(String(astring));
+{$ENDIF}
+ end;
 end;
 
 

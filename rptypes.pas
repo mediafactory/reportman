@@ -99,6 +99,7 @@ type
   lastline:Boolean;
  end;
 
+ TRpOnGetSQLValue=function (connectionname,sql:String):Variant of object;
  TRpGraphicOpProc=function (Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean of object;
@@ -153,6 +154,8 @@ type
   Custom:boolean;
   CustomWidth:integer;
   CustomHeight:integer;
+  PaperSource:integer;
+  Duplex:integer;
  end;
 
  TRpPrinterSelect=(pRpDefaultPrinter,pRpReportPrinter,
@@ -285,6 +288,9 @@ procedure  ObtainPrinters(alist:TStrings);
 procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title:String);
 procedure ReadFileLines(filename:String;dest:TStrings);
 {$ENDIF}
+
+procedure GetPaperSourceDescriptions(alist:TStrings);
+procedure GetDuplexDescriptions(alist:TStrings);
 
 function RpTempFileName:String;
 function RpTempPath:String;
@@ -3859,6 +3865,36 @@ begin
  end;
 end;
 
+
+procedure GetPaperSourceDescriptions(alist:TStrings);
+begin
+ alist.Clear;
+ alist.Add(SRpSDefault);
+ alist.Add(SRpBinFirst);
+ alist.Add(SRpBinLower);
+ alist.Add(SRpBinMiddle);
+ alist.Add(SRpBinManual);
+ alist.Add(SRpBinEnvelope);
+ alist.Add(SRpBinEnvelopeManual);
+ alist.Add(SRpBinAuto);
+ alist.Add(SRpBinTractor);
+ alist.Add(SRpBinSmallFMT);
+ alist.Add(SRpBinLargeFMT);
+ alist.Add(SRpBinLargeCapacity);
+ alist.Add('---');
+ alist.Add('---');
+ alist.Add(SRpBinCassette);
+ alist.Add(SRpFormSource);
+end;
+
+procedure GetDuplexDescriptions(alist:TStrings);
+begin
+ alist.Clear;
+ alist.Add(SRpSDefault);
+ alist.Add(SRpDuplexS);
+ alist.Add(SRpDuplexVer);
+ alist.Add(SRpDuplexHor);
+end;
 
 
 initialization

@@ -166,6 +166,13 @@ type
   public
    constructor Create(AOwner:TComponent);override;
   end;
+ {SQL function}
+ TIdenGetValueFromSQL=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
 
  TIdenGraphicBounds=class(TIdenFunction)
   protected
@@ -924,6 +931,31 @@ begin
  Result:=True;
  (iden As TVariableGrap).NewValue(single(Params[1]),Boolean(Params[2]),string(Params[3]),string(Params[4]));
 end;
+
+constructor TIdenGetValueFromSQL.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=2;
+ IdenName:='GetValueFromSQL';
+ Help:=SRpGetValueFromSQL;
+ model:='function '+'GetValueFromSQL'+'(connectionname:String;sql:String):Variant';
+ aParams:=SRpGetValueFromSQLP;
+end;
+
+function TIdenGetValueFromSQL.GetRpValue:TRpValue;
+begin
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Not VarIsString(Params[1]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ Result:=Null;
+ if assigned((evaluator As TRpEvaluator).OnGetSQLValue) then
+  Result:=(evaluator As TRpEvaluator).OnGetSQLValue(Params[0],Params[1]);
+end;
+
+
 
 
 constructor TIdenGraphicBounds.Create(AOwner:TComponent);

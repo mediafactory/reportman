@@ -330,10 +330,10 @@ begin
      avalue.Y:=0;
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
 {$IFNDEF DOTNETD}
-     TextOut(han,avalue.X,avalue.Y,PChar(IntToStr(Round(i/onethousand))),Length(IntToStr(Round(i/onethousand))));
+     TextOut(han,avalue.X+1,avalue.Y,PChar(IntToStr(Round(i/onethousand))),Length(IntToStr(Round(i/onethousand))));
 {$ENDIF}
 {$IFDEF DOTNETD}
-     TextOut(han,avalue.X,avalue.Y,IntToStr(Round(i/onethousand)),Length(IntToStr(Round(i/onethousand))));
+     TextOut(han,avalue.X+1,avalue.Y,IntToStr(Round(i/onethousand)),Length(IntToStr(Round(i/onethousand))));
 {$ENDIF}
      avalue.X:=Round(i);
      avalue.Y:=CHeight;
@@ -387,10 +387,10 @@ begin
      avalue.Y:=Round(i);
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
 {$IFNDEF DOTNETD}
-     TextOut(han,avalue.X,avalue.Y,PChar(IntToStr(Round(i/onethousand))),Length(IntToStr(Round(i/onethousand))));
+     TextOut(han,avalue.X+1,avalue.Y,PChar(IntToStr(Round(i/onethousand))),Length(IntToStr(Round(i/onethousand))));
 {$ENDIF}
 {$IFDEF DOTNETD}
-     TextOut(han,avalue.X,avalue.Y,IntToStr(Round(i/onethousand)),Length(IntToStr(Round(i/onethousand))));
+     TextOut(han,avalue.X+1,avalue.Y,IntToStr(Round(i/onethousand)),Length(IntToStr(Round(i/onethousand))));
 {$ENDIF}
      avalue.X:=CHEight;
      avalue.Y:=Round(i);

@@ -1206,11 +1206,36 @@ end;
 
 {$IFNDEF FORWEBAX}
 procedure TFRpQtProgress.RepProgress(Sender:TRpBaseReport;var docancel:boolean);
+var
+ astring:WideString;
 begin
  if Not Assigned(LRecordCount) then
   exit;
+ if Sender.ProgressToStdOut then
+ begin
+  astring:=SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
+   +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
+   FormatFloat('#########,####',Sender.RecordCount);
+ {$IFDEF USEVARIANTS}
+  WriteLn(astring);
+ {$ELSE}
+  WriteLn(String(astring));
+ {$ENDIF}
+  // If it's the last page prints additional info
+  if Sender.LastPage then
+  begin
+   astring:=Format('%-20.20s',[SRpPage])+FormatFloat('0000000000',Sender.PageNum+1);
+ {$IFDEF USEVARIANTS}
+   WriteLn(astring);
+ {$ELSE}
+   WriteLn(String(astring));
+ {$ENDIF}
+  end;
+ end;
  LRecordCount.Caption:=IntToStr(Sender.CurrentSubReportIndex)+':'+SRpPage+':'+
- FormatFloat('#########,####',Sender.PageNum)+'-'+FormatFloat('#########,####',Sender.RecordCount);
+  FormatFloat('#########,####',Sender.PageNum)+'-'+FormatFloat('#########,####',Sender.RecordCount);
+ if Sender.LastPage then
+   LRecordCount.Caption:=Format('%-20.20s',[SRpPage])+FormatFloat('0000000000',Sender.PageNum+1);
  Application.ProcessMessages;
  if cancelled then
   docancel:=true;

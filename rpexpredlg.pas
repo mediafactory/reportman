@@ -66,19 +66,21 @@ type
   end;
 
   TFRpExpredialog = class(TForm)
-    LExpression: TLabel;
-    MemoExpre: TMemo;
-    LCategory: TListBox;
-    LabelCategory: TLabel;
-    LItems: TListBox;
-    LOperation: TLabel;
+    PBottom: TPanel;
     LModel: TLabel;
     LHelp: TLabel;
-    BCheckSyn: TButton;
-    BShowResult: TButton;
     LParams: TLabel;
     BCancel: TButton;
     BOK: TButton;
+    LItems: TListBox;
+    LCategory: TListBox;
+    LabelCategory: TLabel;
+    LOperation: TLabel;
+    PTop: TPanel;
+    MemoExpre: TMemo;
+    PBot: TPanel;
+    BCheckSyn: TButton;
+    BShowResult: TButton;
     BAdd: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -165,7 +167,7 @@ begin
 
  BOK.Caption:=TranslateStr(93,BOK.Caption);
  BCancel.Caption:=TranslateStr(94,BCancel.Caption);
- LExpression.Caption:=TranslateStr(239,LExpression.Caption);
+// LExpression.Caption:=TranslateStr(239,LExpression.Caption);
  Caption:=TranslateStr(240,Caption);
  LabelCategory.Caption:=TranslateStr(241,LabelCategory.Caption);
  LOperation.Caption:=TranslateStr(242,LOperation.Caption);

@@ -143,7 +143,7 @@ begin
        allpages:=true;
        collate:=false;
        copies:=FCopies;
-       rpgdidriver.PrinterSelection(metafile.PrinterSelect);
+       rpgdidriver.PrinterSelection(metafile.PrinterSelect,metafile.papersource,metafile.duplex);
        rpgdidriver.PageSizeSelection(rpPageSize);
        rpgdidriver.OrientationSelection(metafile.orientation);
 

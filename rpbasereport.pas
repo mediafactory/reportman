@@ -166,6 +166,8 @@ type
    FBidiModes:TStrings;
    FMultiPage:Boolean;
    FPrintStep:TRpSelectFontStep;
+   FPaperSource:Integer;
+   FDuplex:Integer;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -243,6 +245,7 @@ type
    PageNum:integer;
    PageNumGroup:integer;
    LastPage:Boolean;
+   ProgressToStdOut:Boolean;
    procedure InitEvaluator;
    procedure BeginPrint(Driver:IRpPrintDriver);virtual;abstract;
    procedure EndPrint;virtual;abstract;
@@ -285,6 +288,7 @@ type
    procedure PrepareParamsBeforeOpen;
    procedure AssignDefaultFontTo(aitem:TRpGenTextComponent);
    procedure GetDefaultFontFrom(aitem:TRpGenTextComponent);
+   function GetSQLValue(connectionname,sql:String):Variant;
    // Default Font properties
    property WFontName:widestring read FWFontName write FWFontName;
    property LFontName:widestring read FLFontName write FLFontName;
@@ -364,6 +368,10 @@ type
    property MultiPage:Boolean read FMultiPage write FMultiPage default false;
    property PrintStep:TRpSelectFontStep read FPrintStep write FPrintStep
     default rpselectsize;
+   // Paper source
+   property PaperSource:Integer read FPaperSource write FPaperSource default 0;
+   property Duplex:Integer read FDuplex write FDuplex default 0;
+
  end;
 
 
@@ -423,6 +431,8 @@ constructor TRpBaseReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FPaperSource:=0;
+ FDuplex:=0;
  FPreviewMargins:=true;
  FGroupHeaders:=TStringList.Create;
  FPreviewAbout:=true;
@@ -1324,6 +1334,7 @@ begin
  FEvaluator.Language:=Language;
  FEvaluator.OnGraphicOp:=OnGraphicOp;
  FEvaluator.OnTextOp:=OnTextOp;
+ FEvaluator.OnGetSQLValue:=GetSQLValue;
 end;
 
 procedure TRpBaseReport.SetBidiModes(Value:TStrings);
@@ -1402,6 +1413,18 @@ begin
  PrintStep:=aitem.PrintStep;
  LFontName:=aitem.LFontName;
  WFontName:=aitem.WFontName;
+end;
+
+function TRpBaseReport.GetSQLValue(connectionname,sql:String):Variant;
+var
+ adataset:TDataset;
+begin
+ Result:=Null;
+ adataset:=databaseinfo.ItemByName(connectionname).OpenDatasetFromSQL(sql,nil,false);
+ if Not adataset.Eof then
+ begin
+  Result:=adataset.Fields[0].AsVariant;
+ end;
 end;
 
 end.

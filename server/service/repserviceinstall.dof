@@ -118,7 +118,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=2
 Release=0
-Build=3
+Build=4
 Debug=0
 PreRelease=0
 Special=0
@@ -129,7 +129,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Service installation tool for Report Manager
-FileVersion=2.2.0.3
+FileVersion=2.2.0.4
 InternalName=repserviceinstall
 LegalCopyright=Open Source MPL
 LegalTrademarks=

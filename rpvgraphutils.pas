@@ -50,6 +50,8 @@ type
   Width:integer;
   Height:integer;
   papername:string;
+  papersource:integer;
+  duplex:integer;
  end;
 
 
@@ -612,6 +614,8 @@ end;
 
 function GDIPageSizeToQtPageSize (gdisize:TGDIPageSize):TPageSizeQt;
 begin
+ Result.papersource:=gdisize.papersource;
+ Result.duplex:=gdisize.duplex;
  Result.Custom:=False;
  case gdisize.PageIndex of
   DMPAPER_A4:
@@ -667,6 +671,8 @@ end;
 
 function QtPageSizeToGDIPageSize(qtsize:TPageSizeQt):TGDIPageSize;
 begin
+ Result.papersource:=qtsize.papersource;
+ Result.Duplex:=qtsize.duplex;
  if qtsize.Custom then
  begin
   Result.PageIndex:=0;
@@ -878,6 +884,8 @@ begin
   Result.Width:=0;
   Result.papername:=PDevmode.dmFormName;
  end;
+ Result.papersource:=PDevMode.dmDefaultSource;
+ Result.duplex:=PDevMode.dmDuplex;
 {$IFNDEF DOTNETD}
  GlobalUnLock(DeviceMode);
 {$ENDIF}
@@ -1156,6 +1164,16 @@ begin
    PDevMode.dmPaperlength := apapersize.Height;
    PDevMode.dmPaperwidth  := apapersize.Width;
   end;
+  if apapersize.papersource>0 then
+  begin
+   PDevMode.dmFields:=PDevMode.dmFields or dm_defaultsource;
+   PDevMode.dmDefaultSource:=apapersize.papersource;
+  end;
+  if apapersize.duplex>0 then
+  begin
+   PDevMode.dmFields:=PDevMode.dmFields or dm_duplex;
+   PDevMode.dmDuplex:=apapersize.duplex;
+  end;
  finally
   GlobalUnLock(DeviceMode);
  end;
@@ -1340,6 +1358,18 @@ begin
    PDevMode.dmPaperSize :=apapersize.PageIndex;
    PDevMode.dmPaperlength := apapersize.Height;
    PDevMode.dmPaperwidth  := apapersize.Width;
+  end;
+  if apapersize.papersource>0 then
+   PDevMode.dmDefaultSource:=apapersize.papersource;
+  if apapersize.papersource>0 then
+  begin
+   PDevMode.dmFields:=PDevMode.dmFields or dm_defaultsource;
+   PDevMode.dmDefaultSource:=apapersize.papersource;
+  end;
+  if apapersize.duplex>0 then
+  begin
+   PDevMode.dmFields:=PDevMode.dmFields or dm_duplex;
+   PDevMode.dmDuplex:=apapersize.duplex;
   end;
  finally
   GlobalUnLock(Integer(DeviceMode));

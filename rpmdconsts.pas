@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.2pre12';
+ RM_VERSION='2.2pre13';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
@@ -899,6 +899,26 @@ var
   SRpPGraphicBounds:WideString='Gr is the graphic identifier,automatic, lower and higher bounds values';
   SRpSetFontPropsAsDefault:WideString='Set font as default';
   SRpSetFontPropsAsDefaultHint:WideString='Set this component font properties as default for new components';
+  SRpGetValueFromSQL:WideString='Obtain a value from a sql sentence';
+  SRpGetValueFromSQLP:WideString='You use a connection name and a sql sentence that should return a value';
+  SRpPaperSource:WideString='Paper source (Windows)';
+  SRpBinFirst:WideString='First source';
+  SRpBinLower:WideString='Lower source';
+  SRpBinMiddle:WideString='Middle source';
+  SRpBinManual:WideString='Manual source';
+  SRpBinEnvelope:WideString='Envelope source';
+  SRpBinEnvelopeManual:WideString='Manual envelope source';
+  SRpBinAuto:WideString='Automatic source';
+  SRpBinTractor:WideString='Tractor source';
+  SRpBinSmallFMT:WideString='Small format source';
+  SRpBinLargeFMT:WideString='Large format source';
+  SRpBinLargeCapacity:WideString='Large capacity source';
+  SRpBinCassette:WideString='Cassette source';
+  SRpFormSource:WideString='Form source';
+  SRpDuplex:WideString='Duplex option (Windows)';
+  SRpDuplexS:WideString='Simple duplex';
+  SRpDuplexHor:WideString='Horizontal duplex';
+  SRpDuplexVer:WideString='Vertical duplex';
 
 implementation
 

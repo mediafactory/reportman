@@ -110,7 +110,6 @@ type
     APreview: TAction;
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
-    ToolButton6: TToolButton;
     ToolButton7: TToolButton;
     ToolButton8: TToolButton;
     ToolButton9: TToolButton;
@@ -299,6 +298,7 @@ type
     oldonhint:TNotifyEvent;
     alibrary:String;
     areportname:WideString;
+    oldappidle:TIdleEvent;
     procedure FreeInterface;
     procedure CreateInterface;
     function checkmodified:boolean;
@@ -321,6 +321,7 @@ type
     procedure DeleteSelection;
     procedure DoOpenStream(astream:TStream);
     procedure DoOpenFromLib(alibname:String;arepname:WideString);
+    procedure IdleMaximize(Sender:TObject;var done:Boolean);
   public
     { Public declarations }
     report:TRpReport;
@@ -1139,7 +1140,7 @@ begin
   collate:=report.CollateCopies;
   frompage:=1; topage:=999999;
   copies:=report.Copies;
-  rpgdidriver.PrinterSelection(report.PrinterSelect);
+  rpgdidriver.PrinterSelection(report.PrinterSelect,report.papersource,report.duplex);
   rpgdidriver.OrientationSelection(report.PageOrientation);
   if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
   begin
@@ -1585,6 +1586,15 @@ begin
    DoOpen(ParamStr(1),false);
   end;
  end;
+ oldappidle:=Application.OnIdle;
+ Application.OnIdle:=IdleMaximize;
+end;
+
+procedure TFRpMainFVCL.IdleMaximize(Sender:TObject;var done:Boolean);
+begin
+ done:=false;
+ Application.OnIdle:=oldappidle;
+
  WindowState:=wsMaximized;
 end;
 
