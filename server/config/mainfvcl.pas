@@ -23,7 +23,7 @@ interface
 uses
   SysUtils, Types, Classes, Variants, Graphics, Controls, Forms,
   Dialogs, StdCtrls, rptranslator, DB, DBClient, Grids, DBGrids,
-  rpmdrepclient,rpmdconsts, ComCtrls;
+  rpmdrepclient,rpmdconsts, ComCtrls, Buttons,rpgraphutilsvcl;
 
 type
   TFMainVCL = class(TForm)
@@ -46,18 +46,32 @@ type
     LPort: TLabel;
     ComboPort: TComboBox;
     PControl: TPageControl;
-    TabSheet1: TTabSheet;
+    TabUsers: TTabSheet;
     GUsers: TGroupBox;
     LUsers: TListBox;
     BDeleteUser: TButton;
     BAddUser: TButton;
     BChangePassword: TButton;
+    TabAliases: TTabSheet;
     GReportDirectories: TGroupBox;
     DBGrid1: TDBGrid;
     BAddAlias: TButton;
     BDeleteAlias: TButton;
     BPreviewTree: TButton;
-    TabSheet2: TTabSheet;
+    GGroups: TGroupBox;
+    LGroups: TListBox;
+    BAddGroup: TButton;
+    BDeleteGroup: TButton;
+    GUserGroups: TGroupBox;
+    LUserGroups: TListBox;
+    GGroups2: TGroupBox;
+    LGroups2: TListBox;
+    GAliasGroups: TGroupBox;
+    LAliasGroups: TListBox;
+    BAddUserGroup: TBitBtn;
+    BDeleteUserGroup: TBitBtn;
+    BDeleteAliasGroup: TBitBtn;
+    BAddAliasGroup: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure BConnectClick(Sender: TObject);
     procedure BCloseConnectionClick(Sender: TObject);
@@ -69,12 +83,23 @@ type
     procedure BDeleteAliasClick(Sender: TObject);
     procedure OnLog(Sender:TObject;aMessage:WideString);
     procedure BPreviewTreeClick(Sender: TObject);
+    procedure LUsersClick(Sender: TObject);
+    procedure BAddGroupClick(Sender: TObject);
+    procedure BDeleteGroupClick(Sender: TObject);
+    procedure BAddUserGroupClick(Sender: TObject);
+    procedure BDeleteUserGroupClick(Sender: TObject);
+    procedure BAddAliasGroupClick(Sender: TObject);
+    procedure BDeleteAliasGroupClick(Sender: TObject);
+    procedure DDirectoriesAfterScroll(DataSet: TDataSet);
   private
     { Private declarations }
     repclient:TModClient;
     procedure OnGetUsers(alist:TStringList);
     procedure OnGetTree(alist:TStringList);
     procedure OnGetAliases(alist:TStringList);
+    procedure OnGetGroups(alist:TStringList);
+    procedure OnGetUserGroups(alist:TStringList);
+    procedure OnGetAliasGroups(alist:TStringList);
   public
     { Public declarations }
   end;
@@ -112,23 +137,17 @@ begin
  BPreviewTree.Caption:=Trans.LoadString(761,BPreviewTree.Caption);
  BCloseConnection.Caption:=Trans.LoadString(762,BCloseConnection.Caption);
  LPort.Caption:=TranslateStr(829,LPort.Caption);
+ PControl.ActivePageIndex:=0;
+ TabAliases.Caption:=Trans.LoadString(758,GReportDirectories.Caption);
+ TabUsers.Caption:=Trans.LoadString(750,GUser.Caption);
+ GGroups.Caption:=SRpuserGroups;
+ GGroups2.Caption:=SRpuserGroups;
+ GAliasGroups.Caption:=SRpAliasGroups;
+ GUserGroups.Caption:=SRpUserGroupsHint;
+ BAddGroup.Caption:=SrpAdd;
+ BDeleteGroup.Caption:=SRpDelete;
 end;
 
-procedure TFMainVCL.BConnectClick(Sender: TObject);
-begin
- repclient:=Connect(ComboHost.Text,EUsername.Text,EPassword.Text,StrToInt(ComboPort.Text));
- ComboHost.Enabled:=False;
- ComboPort.Enabled:=False;
- GUser.Visible:=False;
- GServerInfo.Visible:=True;
- repclient.OnGetUsers:=OnGetUsers;
- repclient.OnGetAliases:=OnGetAliases;
- repclient.OnLog:=OnLog;
- repclient.OnError:=OnLog;
- repclient.OnGetTree:=OnGetTree;
- repclient.GetUsers;
- repclient.GetAliases;
-end;
 
 procedure TFMainVCL.BCloseConnectionClick(Sender: TObject);
 begin
@@ -150,10 +169,6 @@ begin
  end;
 end;
 
-procedure TFMainVCL.OnGetUsers(alist:TStringList);
-begin
- LUsers.Items.Assign(Alist);
-end;
 
 procedure TFMainVCL.OnGetAliases(alist:TStringList);
 var
@@ -254,5 +269,170 @@ begin
  ShowReportTree(alist);
 end;
 
+procedure TFMainVCL.OnGetGroups(alist:TStringList);
+var
+ i:integer;
+begin
+ LGroups.Items.Clear;
+ for i:=0 to alist.count-1 do
+ begin
+  LGroups.Items.Add(alist.Strings[i]);
+ end;
+ LGroups2.Items.Assign(LGroups.Items);
+end;
+
+procedure TFMainVCL.LUsersClick(Sender: TObject);
+var
+ username:String;
+begin
+ // Read groups for this user
+ LUserGroups.Clear;
+ username:='ADMIN';
+ if LUSers.ItemIndex>=0 then
+  username:=LUsers.Items.Strings[LUsers.ItemIndex];
+ repclient.GetUserGroups(username);
+end;
+
+procedure TFMainVCL.OnGetUsers(alist:TStringList);
+begin
+ LUsers.Items.Assign(Alist);
+ LUsersClick(Self);
+end;
+
+procedure TFMainVCL.OnGetUserGroups(alist:TStringList);
+var
+ i:integer;
+begin
+ LUserGroups.Clear;
+ for i:=0 to alist.Count-1 do
+ begin
+  LUserGroups.Items.Add(alist.Names[i]);
+ end;
+end;
+
+procedure TFMainVCL.OnGetAliasGroups(alist:TStringList);
+var
+ i:integer;
+begin
+ LAliasGroups.Clear;
+ for i:=0 to alist.Count-1 do
+ begin
+  LAliasGroups.Items.Add(alist.Names[i]);
+ end;
+end;
+
+procedure TFMainVCL.BConnectClick(Sender: TObject);
+begin
+ repclient:=Connect(ComboHost.Text,EUsername.Text,EPassword.Text,StrToInt(ComboPort.Text));
+ ComboHost.Enabled:=False;
+ ComboPort.Enabled:=False;
+ GUser.Visible:=False;
+ GServerInfo.Visible:=True;
+ repclient.OnGetUsers:=OnGetUsers;
+ repclient.OnGetAliases:=OnGetAliases;
+ repclient.OnGetGroups:=OnGetGroups;
+ repclient.OnGetAliasGroups:=OnGetAliasGroups;
+ repclient.OnGetUserGroups:=OnGetUserGroups;
+ repclient.OnLog:=OnLog;
+ repclient.OnError:=OnLog;
+ repclient.OnGetTree:=OnGetTree;
+ repclient.GetUsers;
+ repclient.GetAliases;
+ repclient.GetGroups;
+end;
+
+
+procedure TFMainVCL.BAddGroupClick(Sender: TObject);
+var
+ groupname:String;
+begin
+ groupname:=RpInputBox(SRpNewGroup,SRpGroup,'');
+ repclient.AddGroup(groupname);
+ repclient.GetUsers;
+ repclient.GetGroups;
+end;
+
+procedure TFMainVCL.BDeleteGroupClick(Sender: TObject);
+var
+ groupname:String;
+begin
+ if LGroups.ItemIndex<0 then
+  exit;
+ groupname:=LGroups.Items.Strings[Lgroups.Itemindex];
+ repclient.DeleteGroup(groupname);
+ repclient.GetUsers;
+ repclient.GetGroups;
+end;
+
+procedure TFMainVCL.BAddUserGroupClick(Sender: TObject);
+var
+ username:String;
+ groupname:String;
+begin
+ if LUSers.ITemIndex<0 then
+  exit;
+ username:=LUSers.Items.Strings[LUSers.ITemIndex];
+ if username='ADMIN' then
+  exit;
+ if LGroups.ItemIndex<0 then
+  exit;
+ groupname:=LGroups.Items.Strings[LGroups.Itemindex];
+ repclient.AddUserGroup(username,groupname);
+ repclient.GetUserGroups(username);
+end;
+
+procedure TFMainVCL.BDeleteUserGroupClick(Sender: TObject);
+var
+ username:String;
+ groupname:String;
+begin
+ if LUSers.ITemIndex<0 then
+  exit;
+ username:=LUSers.Items.Strings[LUSers.ITemIndex];
+ if username='ADMIN' then
+  exit;
+ groupname:=LUserGroups.Items.Strings[LUserGroups.Itemindex];
+ repclient.DeleteUserGroup(username,groupname);
+ repclient.GetUserGroups(username);
+end;
+
+procedure TFMainVCL.BAddAliasGroupClick(Sender: TObject);
+var
+ aliasname:String;
+ groupname:String;
+begin
+ if (DDirectories.Eof and DDirectories.Bof) then
+  exit;
+ aliasname:=DDirectoriesAlias.AsString;
+ if LGroups2.ItemIndex<0 then
+  exit;
+ groupname:=LGroups2.Items.Strings[LGroups2.Itemindex];
+ repclient.AddAliasGroup(aliasname,groupname);
+ repclient.GetAliasGroups(aliasname);
+end;
+
+procedure TFMainVCL.BDeleteAliasGroupClick(Sender: TObject);
+var
+ aliasname:String;
+ groupname:String;
+begin
+ if (DDirectories.Eof and DDirectories.Bof) then
+  exit;
+ aliasname:=DDirectoriesAlias.AsString;
+ groupname:=LAliasGroups.Items.Strings[LAliasGroups.Itemindex];
+ repclient.DeleteAliasGroup(aliasname,groupname);
+ repclient.GetAliasGroups(aliasname);
+end;
+
+procedure TFMainVCL.DDirectoriesAfterScroll(DataSet: TDataSet);
+var
+ aliasname:String;
+begin
+ if (DDirectories.Eof and DDirectories.Bof) then
+  exit;
+ aliasname:=DDirectoriesAlias.AsString;
+ repclient.GetAliasGroups(aliasname);
+end;
 
 end.
+

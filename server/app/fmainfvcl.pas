@@ -29,7 +29,7 @@ uses
 {$IFDEF USEVARIANTS}
   Types,Variants,
 {$ENDIF}
-   Classes, Graphics, Controls, Forms,
+   Classes, Graphics, Controls, Forms,rpeditconnvcl,
   Dialogs, StdCtrls, rptranslator,urepserver,rpmdconsts,  ExtCtrls;
 
 type
@@ -47,10 +47,12 @@ type
     LPort: TLabel;
     LPortNumber: TLabel;
     LVersion: TLabel;
+    BConfigLibs: TButton;
     procedure BStartServerClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BStopServerClick(Sender: TObject);
+    procedure BConfigLibsClick(Sender: TObject);
   private
     { Private declarations }
     mserver:TModServer;
@@ -113,6 +115,7 @@ begin
  LConfigFile.Caption:=TranslateStr(743,LConfigFile.Caption);
  BStopServer.Caption:=TranslateStr(785,BStopServer.Caption);
  LPort.Caption:=TranslateStr(829,LPort.Caption);
+ BConfigLibs.Caption:=SRpConfigLib;
  LPortNumber.Font.Style:=[fsbold];
  LHostName.Font.Style:=[fsbold];
  LVersion.Caption:=TranslateStr(91,'Version')+' '+RM_VERSION;
@@ -149,5 +152,11 @@ begin
  end;
 end;
 
+
+procedure TFSerMainVCL.BConfigLibsClick(Sender: TObject);
+begin
+ ShowModifyConnections(mserver.RpAliasLibs.Connections);
+ mserver.WriteConfig;
+end;
 
 end.

@@ -24,7 +24,8 @@ interface
 
 uses
   SysUtils, Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
-  QDialogs, QStdCtrls, rptranslator,urepserver,rpmdconsts,  QExtCtrls;
+  QDialogs, QStdCtrls, rptranslator,urepserver,rpmdconsts,  QExtCtrls,
+  rpeditconn;
 
 type
   TFSerMain = class(TForm)
@@ -41,10 +42,12 @@ type
     LPort: TLabel;
     LPortNumber: TLabel;
     LVersion: TLabel;
+    BConfigLibs: TButton;
     procedure BStartServerClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BStopServerClick(Sender: TObject);
+    procedure BConfigLibsClick(Sender: TObject);
   private
     { Private declarations }
     mserver:TModServer;
@@ -105,6 +108,7 @@ begin
  LHost.Caption:=TranslateStr(747,LHost.Caption);
  LLog.Caption:=TranslateStr(786,LLog.Caption);
  LConfigFile.Caption:=TranslateStr(743,LConfigFile.Caption);
+ BConfigLibs.Caption:=SRpConfigLib;
  BStopServer.Caption:=TranslateStr(785,BStopServer.Caption);
  LPort.Caption:=TranslateStr(829,LPort.Caption);
  LPortNumber.Font.Style:=[fsbold];
@@ -145,5 +149,12 @@ begin
  end;
 end;
 
+
+procedure TFSerMain.BConfigLibsClick(Sender: TObject);
+begin
+ // Configure libraries
+ ShowModifyConnections(mserver.RpAliasLibs.Connections);
+ mserver.WriteConfig;
+end;
 
 end.

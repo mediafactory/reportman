@@ -23,7 +23,7 @@ object FSerMainVCL: TFSerMainVCL
     Left = 0
     Top = 149
     Width = 536
-    Height = 178
+    Height = 171
     Align = alClient
     ReadOnly = True
     ScrollBars = ssBoth
@@ -37,6 +37,9 @@ object FSerMainVCL: TFSerMainVCL
     Height = 149
     Align = alTop
     TabOrder = 1
+    DesignSize = (
+      536
+      149)
     object LLog: TLabel
       Left = 8
       Top = 72
@@ -80,8 +83,8 @@ object FSerMainVCL: TFSerMainVCL
       AutoSize = False
     end
     object LVersion: TLabel
-      Left = 308
-      Top = 16
+      Left = 292
+      Top = 44
       Width = 35
       Height = 13
       Caption = 'Version'
@@ -124,6 +127,15 @@ object FSerMainVCL: TFSerMainVCL
       Color = clInfoBk
       ReadOnly = True
       TabOrder = 3
+    end
+    object BConfigLibs: TButton
+      Left = 300
+      Top = 8
+      Width = 141
+      Height = 29
+      Caption = 'Configure Libraries'
+      TabOrder = 4
+      OnClick = BConfigLibsClick
     end
   end
 end

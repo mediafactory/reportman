@@ -113,10 +113,10 @@ ProjectLang=$00000409
 RootDir=
 [Version Info]
 IncludeVerInfo=1
-AutoIncBuild=0
-MajorVer=1
-MinorVer=6
-Release=0
+AutoIncBuild=1
+MajorVer=2
+MinorVer=0
+Release=1
 Build=0
 Debug=0
 PreRelease=0
@@ -128,13 +128,13 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Designer
-FileVersion=1.6.0.0
+FileVersion=2.0.1.0
 InternalName=repmandxp
 LegalCopyright=MPL/GPL License
 LegalTrademarks=
 OriginalFilename=repmandxp
 ProductName=Report Manager Designer
-ProductVersion=1.6.0.0
+ProductVersion=
 Comments=
 [HistoryLists\hlUnitAliases]
 Count=1

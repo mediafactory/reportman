@@ -45,7 +45,7 @@ uses
 {$IFDEF LINUX}
  Libc,
 {$ENDIF}
-  rptranslator,rpmdshfolder,IniFiles,rpmdprotocol,
+  rptranslator,rpmdshfolder,IniFiles,rpmdprotocol,rpalias,
   rpreport,rpbasereport,rppdfdriver, IdThreadMgrPool,rptypes,rpparams;
 
 const
@@ -91,21 +91,27 @@ type
     { Private declarations }
     // Data for all clients
     Clients:TThreadList;
+    FRpAliasLibs:TRpAlias;
     FInitEvent:TEvent;
     EventName:String;
     FHostName:String;
-    LAliases,LUsers,LGroups:TStringList;
+    LAliases,LUsers,LGroups,LUserGroups,LAliasGroups:TStringList;
     FOnlog:TRpLogMessageEvent;
     FLogFilename:TFilename;
     FLogFile:TFileStream;
     FFileNameConfig:String;
     fport:integer;
-    procedure InitConfig;
-    procedure WriteConfig;
+    procedure ClearLists;
     procedure WriteLog(aMessage:WideString);
     procedure GetIsSMP;
+    procedure LoadReport(alist:TStringList;ActClient:TRpClient);
+    function CheckPrivileges(username,aliasname:String):boolean;
+    procedure DoFillTreeDir(apath:String;alist:TStringList);
   public
     smp:Boolean;
+    procedure InitConfig;
+    procedure WriteConfig;
+    property RpAliasLibs:TRpAlias read  FRpAliasLibs;
     property LogFileName:TFileName read FLogFileName;
     property FileNameConfig:String read FFilenameconfig;
     { Public declarations }
@@ -286,12 +292,15 @@ end;
 
 procedure Tmodserver.DataModuleCreate(Sender: TObject);
 begin
+ FRpAliasLibs:=TRpAlias.Create(Self);
  GetIsSMP;
  fport:=3060;
  Clients:=TTHreadList.Create;
  LAliases:=TStringList.Create;
  LUsers:=TStringList.Create;
  LGroups:=TStringList.Create;
+ LUserGroups:=TStringList.Create;
+ LAliasGroups:=TStringList.Create;
  // Creates the event
  eventname:='REPORTMANRUNNINGEVENT';
  FInitEvent:=TEvent.Create(nil,false,true,eventname);
@@ -316,12 +325,32 @@ begin
  FLogFile.Seek(0,soFromEnd);
 end;
 
+procedure TmodServer.ClearLists;
+var
+ i:integer;
+begin
+ laliases.clear;
+ lusers.clear;
+ lgroups.Clear;
+ for i:=0 to LUserGroups.Count-1 do
+ begin
+  TStringList(LUserGroups.Objects[i]).free;
+ end;
+ LUserGroups.Clear;
+ for i:=0 to LAliasGroups.Count-1 do
+ begin
+  TStringList(LAliasGroups.Objects[i]).Free;
+ end;
+ LAliasGroups.Clear;
+end;
+
 // Read users and passwords
 // Also read directories and aliases
 procedure TmodServer.InitConfig;
 var
  inif:TMemInifile;
  i:integer;
+ alist:TStringList;
 begin
  Ffilenameconfig:=Obtainininamecommonconfig('','','reportmanserver');
  inif:=TMemInifile.Create(ffilenameconfig);
@@ -340,9 +369,8 @@ begin
  ForceDirectories(ExtractFilePath(ffilenameconfig));
  inif:=TMemInifile.Create(filenameconfig);
  try
-  laliases.clear;
-  lusers.clear;
-  lgroups.Clear;
+  ClearLists;
+  inif.CaseSensitive:=false;
   fport:=inif.ReadInteger('CONFIG','TCPPORT',3060);
   inif.ReadSectionValues('USERS',lusers);
   inif.ReadSectionValues('GROUPS',lgroups);
@@ -383,17 +411,36 @@ begin
   end;
   if lusers.IndexOfName('ADMIN')<0 then
    lusers.Add('ADMIN=');
+  // Read privilege lists
+  for i:=0 to lusers.Count-1 do
+  begin
+   if lusers.Names[i]<>'ADMIN' then
+   begin
+    alist:=TStringList.Create;
+    LUserGroups.AddObject(lusers.Names[i],alist);
+    inif.ReadSectionValues('USERGROUPS'+lusers.Names[i],alist);
+   end;
+  end;
+  for i:=0 to LAliases.Count-1 do
+  begin
+   alist:=TStringList.Create;
+   LAliasGroups.AddObject(LAliases.Names[i],alist);
+   inif.ReadSectionValues('GROUPALLOW'+LAliases.Names[i],alist);
+  end;
  finally
   inif.free;
  end;
+ // Read library configuration
+ FRpAliasLibs.Connections.LoadFromFile(FFilenameConfig);
 end;
 
 // Write users and passwords and aliases
 procedure TmodServer.WriteConfig;
 var
  inif:TMemInifile;
- i:integer;
+ i,j:integer;
  adups:TStringList;
+ alist:TStringList;
 begin
  Ffilenameconfig:=Obtainininamecommonconfig('','','reportmanserver');
  if Not FileExists(FFilenameConfig) then
@@ -440,6 +487,36 @@ begin
      end;
     end;
    end;
+   // Write privilege lists
+   for i:=0 to luserGroups.Count-1 do
+   begin
+    if lusergroups.Strings[i]<>'ADMIN' then
+    begin
+     alist:=TStringList(LUserGroups.Objects[i]);
+     for j:=0 to LGroups.Count-1 do
+     begin
+      inif.DeleteKey('USERGROUPS'+LUserGRoups.Strings[i],LGroups.Names[j]);
+     end;
+     for j:=0 to alist.Count-1 do
+     begin
+      inif.WriteString('USERGROUPS'+luserGroups.Strings[i],alist.Names[j],
+        alist.Names[j]);
+     end;
+    end;
+   end;
+   for i:=0 to LAliasGroups.Count-1 do
+   begin
+    alist:=TStringList(LAliasGroups.Objects[i]);
+    for j:=0 to LGroups.Count-1 do
+    begin
+     inif.DeleteKey('GROUPALLOW'+LAliasGRoups.Strings[i],LGroups.Names[j]);
+    end;
+    for j:=0 to alist.Count-1 do
+    begin
+     inif.WriteString('GROUPALLOW'+LAliasGRoups.Strings[i],alist.Names[j],
+       alist.Names[j]);
+    end;
+   end;
    inif.UpdateFile;
   finally
    adups.free;
@@ -447,11 +524,14 @@ begin
  finally
   inif.free;
  end;
+ // Write library configuration
+ FRpAliasLibs.Connections.SaveToFile(FFilenameConfig);
 end;
 
 
 procedure Tmodserver.DataModuleDestroy(Sender: TObject);
 begin
+ ClearLists;
  Clients.Free;
  LAliases.free;
  LUsers.free;
@@ -464,11 +544,98 @@ begin
  end;
 end;
 
+function TModServer.CheckPrivileges(username,aliasname:String):Boolean;
+var
+ i,index:integer;
+ lugroups:TStringList;
+ lagroups:TStringList;
+begin
+ Result:=true;
+ if username='ADMIN' then
+  exit;
+ index:=LUserGroups.IndexOf(username);
+ if index<0 then
+  Raise Exception.Create(SRpAuthFailed+' - '+username);
+ lugroups:=TStringList(LUserGroups.Objects[index]);
+ index:=LAliasGroups.IndexOf(aliasname);
+ if index<0 then
+  Raise Exception.Create(SRpAuthFailed+' - '+aliasname);
+ lagroups:=TStringList(LAliasGroups.Objects[index]);
+ if ((lagroups.Count>0) and (lugroups.Count>0)) then
+ begin
+  Result:=false;
+  for i:=0 to lugroups.Count-1 do
+  begin
+   if lagroups.IndexOfName(lugroups.Names[i])>=0 then
+   begin
+    Result:=true;
+    break;
+   end;
+  end;
+ end;
+end;
+
+procedure TModServer.DoFillTreeDir(apath:String;alist:TStringList);
+begin
+ if Length(apath)<1 then
+  Raise Exception.Create(SRpAuthFailed);
+ alist.clear;
+ if apath[1]=':' then
+  RpAliasLibs.Connections.FillTreeDir(Copy(apath,2,Length(apath)),alist)
+ else
+  rptypes.FillTreeDir(apath,alist);
+end;
+
+procedure TModserver.LoadReport(alist:TStringList;ActClient:TRpClient);
+var
+ aliasname,apath,username:String;
+ index:integer;
+ astream:TStream;
+ reportname:String;
+begin
+ if alist.count<=0 then
+ begin
+  if Assigned(ActClient.CurrentReport) then
+   exit
+  else
+   Raise Exception.Create(SRPAliasNotExists);
+ end;
+ aliasname:=alist.Names[0];
+ index:=LAliases.IndexOfName(aliasname);
+ if index<0 then
+  Raise Exception.Create(SRPAliasNotExists+' - '+aliasname);
+ // Check for privileges
+ username:=ActClient.Username;
+ if Not CheckPrivileges(username,aliasname) then
+  Raise Exception.Create(SRpAuthFailed+' - '+username+' - '+aliasname);
+ apath:=LAliases.Values[LAliases.Names[index]];
+ if Length(apath)<1 then
+  Raise Exception.Create(SRPEmptyAliasPath+' - '+aliasname);
+ if apath[1]<>':' then
+ begin
+  ActClient.CreateReport;
+  ActClient.CurrentReport.LoadFromFile(apath+C_DIRSEPARATOR+alist.Values[alist.Names[0]]);
+ end
+ else
+ begin
+  ActClient.CreateReport;
+  reportname:=alist.Values[alist.Names[0]];
+  reportname:=ChangeFileExt(reportname,'');
+  reportname:=ExtractFilename(reportname);
+  astream:=RpAliasLibs.Connections.GetReportStream(Copy(apath,2,Length(apath)),reportname);
+  try
+   ActClient.CurrentReport.LoadFromStream(astream);
+  finally
+   astream.free;
+  end;
+ end;
+end;
+
 procedure Tmodserver.RepServerExecute(AThread: TIdPeerThread);
 var
  CB,ACB:PRpComBlock;
  astream:TMemoryStream;
- alist:TStringList;
+ templist,alist:TStringList;
  username,groupname,password:string;
  aliasname,apath:string;
  correct:boolean;
@@ -550,442 +717,230 @@ begin
         end;
        end
        else
-       begin
-        // Sends a error message
-        ActClient.Auth:=False;
-        CB:=GenerateCBErrorMessage(SRpAuthFailed);
+        Raise Exception.Create(SRpAuthFailed);
+      end;
+     repgetusers:
+      begin
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        for i:=0 to LUsers.Count-1 do
+         alist.Add(LUsers.Names[i]);
+        CB:=GenerateBlock(repgetusers,alist);
         try
          SendBlock(AThread.COnnection,CB);
         finally
          FreeBlock(CB);
         end;
+       finally
+        alist.free;
        end;
       end;
-     repgetusers:
+     repgetgroups:
       begin
-       if ActClient.IsAdmin then
-       begin
-        alist:=TStringList.Create;
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        for i:=0 to LGroups.Count-1 do
+         alist.Add(LGroups.Names[i]);
+        CB:=GenerateBlock(repgetgroups,alist);
         try
-         for i:=0 to LUsers.Count-1 do
-          alist.Add(LUsers.Names[i]);
-         CB:=GenerateBlock(repgetusers,alist);
-         try
-          SendBlock(AThread.COnnection,CB);
-         finally
-          FreeBlock(CB);
-         end;
+         SendBlock(AThread.COnnection,CB);
         finally
-         alist.free;
+         FreeBlock(CB);
         end;
+       finally
+        alist.free;
        end;
       end;
      repgetaliases:
       begin
        if Not ActClient.Auth then
-       begin
-        // Sends a error message
-        CB:=GenerateCBErrorMessage(SRpAuthFailed);
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        for i:=0 to LAliases.Count-1 do
+        begin
+         if CheckPrivileges(ActClient.username,LAliases.Names[i]) then
+          alist.Add(LAliases.Strings[i]);
+        end;
+        CB:=GenerateBlock(repgetaliases,alist);
         try
          SendBlock(AThread.COnnection,CB);
         finally
          FreeBlock(CB);
         end;
-       end
-       else
-       begin
-        CB:=GenerateBlock(repgetaliases,LAliases);
-        try
-         SendBlock(AThread.COnnection,CB);
-        finally
-         FreeBlock(CB);
-        end;
+       finally
+        alist.free;
        end;
       end;
      repaddalias:
       begin
        // Add a alias (only admin)
-       if ActClient.IsAdmin then
-       begin
-        alist:=TStringList.Create;
-        try
-         alist.LoadFromStream(astream);
-         if alist.count>0 then
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.count>0 then
+        begin
+         aliasname:=UpperCase(AList.Names[0]);
+         apath:=Alist.Values[aliasname];
+         if LAliases.IndexOfName(aliasname)<0 then
          begin
-          aliasname:=UpperCase(AList.Names[0]);
-          apath:=Alist.Values[aliasname];
-          if LAliases.IndexOfName(aliasname)<0 then
+          if length(apath)>0 then
           begin
-           if length(apath)>0 then
-           begin
-            LAliases.Add(aliasname+'='+apath);
-            WriteConfig;
-            InitConfig;
-           end;
+           LAliases.Add(aliasname+'='+apath);
+           WriteConfig;
+           InitConfig;
           end;
          end;
-        finally
-         alist.free;
         end;
+       finally
+        alist.free;
        end;
       end;
      repdeletealias:
       begin
        // Add a alias (only admin)
-       if ActClient.IsAdmin then
-       begin
-        alist:=TStringList.Create;
-        try
-         alist.LoadFromStream(astream);
-         if alist.count>0 then
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.count>0 then
+        begin
+         aliasname:=UpperCase(AList.Names[0]);
+         index:=LAliases.IndexOfName(aliasname);
+         if index>=0 then
          begin
-          aliasname:=UpperCase(AList.Names[0]);
-          index:=LAliases.IndexOfName(aliasname);
-          if index>=0 then
-          begin
-           LAliases.Delete(index);
-           WriteConfig;
-           InitConfig;
-          end;
+          LAliases.Delete(index);
+          WriteConfig;
+          InitConfig;
          end;
-        finally
-         alist.free;
         end;
+       finally
+        alist.free;
        end;
       end;
      repadduser:
       begin
        // Add a user (only admin)
-       if ActClient.IsAdmin then
-       begin
-        alist:=TStringList.Create;
-        try
-         alist.LoadFromStream(astream);
-         if alist.count>0 then
-         begin
-          username:=Trim(UpperCase(AList.Names[0]));
-          password:=Alist.Values[username];
-          index:=LUsers.IndexOfName(username);
-          if index>=0 then
-           LUsers.Delete(index);
-          LUsers.Add(username+'='+password);
-          WriteConfig;
-          InitConfig;
-         end;
-        finally
-         alist.free;
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.count>0 then
+        begin
+         username:=Trim(UpperCase(AList.Names[0]));
+         password:=Alist.Values[username];
+         index:=LUsers.IndexOfName(username);
+         if index>=0 then
+          LUsers.Delete(index);
+         LUsers.Add(username+'='+password);
+         WriteConfig;
+         InitConfig;
         end;
+       finally
+        alist.free;
        end;
       end;
      repdeleteuser:
       begin
        // delete user (only admin)
-       if ActClient.IsAdmin then
-       begin
-        alist:=TStringList.Create;
-        try
-         alist.LoadFromStream(astream);
-         if alist.count>0 then
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.count>0 then
+        begin
+         username:=Trim(Uppercase(AList.Names[0]));
+         if username<>'ADMIN' then
          begin
-          username:=Trim(Uppercase(AList.Names[0]));
-          if username<>'ADMIN' then
-          begin
-           index:=LUsers.IndexOfName(username);
-           if index>=0 then
-           begin
-            LUsers.Delete(index);
-            WriteConfig;
-            InitConfig;
-            // Break user connections?
-            //Clients.LockList;
-           end;
-          end;
-         end;
-        finally
-         alist.free;
-        end;
-       end;
-      end;
-     repaddgroup:
-      begin
-       // Add a group (only admin)
-       if ActClient.IsAdmin then
-       begin
-        alist:=TStringList.Create;
-        try
-         alist.LoadFromStream(astream);
-         if alist.count>0 then
-         begin
-          groupname:=Trim(UpperCase(AList.Strings[0]));
-          index:=LGroups.IndexOfName(groupname);
-          if index>=0 then
-           LGroups.Delete(index);
-          LGroups.Add(groupname);
-          WriteConfig;
-          InitConfig;
-         end;
-        finally
-         alist.free;
-        end;
-       end;
-      end;
-     repdeletegroup:
-      begin
-       // delete group (only admin)
-       if ActClient.IsAdmin then
-       begin
-        alist:=TStringList.Create;
-        try
-         alist.LoadFromStream(astream);
-         if alist.count>0 then
-         begin
-          groupname:=Trim(Uppercase(AList.Strings[0]));
-          index:=LGroups.IndexOfName(groupname);
+          index:=LUsers.IndexOfName(username);
           if index>=0 then
           begin
-           LGroups.Delete(index);
+           LUsers.Delete(index);
            WriteConfig;
            InitConfig;
            // Break user connections?
            //Clients.LockList;
           end;
          end;
-        finally
-         alist.free;
         end;
+       finally
+        alist.free;
        end;
       end;
-     repopenreport:
+     repaddgroup:
       begin
-       if Not ActClient.Auth then
-       begin
-        // Sends a error message
-        CB:=GenerateCBErrorMessage(SRpAuthFailed);
-        try
-         SendBlock(AThread.COnnection,CB);
-        finally
-         FreeBlock(CB);
+       // Add a group (only admin)
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.count>0 then
+        begin
+         groupname:=Trim(UpperCase(AList.Strings[0]));
+         index:=LGroups.IndexOfName(groupname);
+         if index>=0 then
+          LGroups.Delete(index);
+         LGroups.Add(groupname);
+         WriteConfig;
+         InitConfig;
         end;
-       end
-       else
-       begin
-        alist:=TStringList.Create;
-        try
-         alist.LoadFromStream(astream);
-         if alist.count>0 then
+       finally
+        alist.free;
+       end;
+      end;
+     repdeletegroup:
+      begin
+       // delete group (only admin)
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.count>0 then
+        begin
+         groupname:=Trim(Uppercase(AList.Strings[0]));
+         index:=LGroups.IndexOfName(groupname);
+         if index>=0 then
          begin
-          aliasname:=alist.Names[0];
-          index:=LAliases.IndexOfName(aliasname);
+          LGroups.Delete(index);
+          WriteConfig;
+          InitConfig;
+          // Break user connections?
+          //Clients.LockList;
+         end;
+        end;
+       finally
+        alist.free;
+       end;
+      end;
+     repgetusergroups:
+      begin
+       // Return groups access for a user
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.count>0 then
+        begin
+         username:=Trim(Uppercase(AList.Strings[0]));
+         if username<>'ADMIN' then
+         begin
+          index:=LUserGroups.IndexOf(username);
           if index>=0 then
           begin
-           apath:=LAliases.Values[LAliases.Names[index]];
-           ActClient.CreateReport;
-           ActClient.CurrentReport.LoadFromFile(apath+C_DIRSEPARATOR+alist.Values[alist.Names[0]]);
-          end;
-         end;
-         CB:=GenerateBlock(repopenreport,alist);
-         try
-          SendBlock(AThread.COnnection,CB);
-         finally
-          FreeBlock(CB);
-         end;
-        finally
-         alist.Free;
-        end;
-       end;
-      end;
-     repgetparams:
-      begin
-       if Assigned(ActClient.CurrentReport) then
-       begin
-        astream.clear;
-        acompo:=TRpParamcomp.Create(nil);
-        try
-         acompo.Params.Assign(ActClient.CurrentReport.Params);
-         writer:=TWriter.Create(astream,4096);
-         try
-          writer.WriteRootComponent(acompo);
-         finally
-          writer.free;
-         end;
-        finally
-         acompo.free;
-        end;
-        astream.Seek(0,soFromBeginning);
-        CB:=GenerateBlock(repgetparams,astream);
-        try
-         SendBlock(AThread.COnnection,CB);
-        finally
-         FreeBlock(CB);
-        end;
-       end;
-      end;
-     repsetparams:
-      begin
-       if Assigned(ActClient.CurrentReport) then
-       begin
-        acompo:=TRpParamcomp.Create(nil);
-        try
-         acompo.Params.Assign(ActClient.CurrentReport.Params);
-         reader:=TReader.Create(astream,4096);
-         try
-          Reader.ReadRootComponent(acompo);
-         finally
-          Reader.free;
-         end;
-         ActClient.CurrentReport.Params.Assign(acompo.Params);
-        finally
-         acompo.free;
-        end;
-        alist:=TStringList.Create;
-        try
-         CB:=GenerateBlock(repsetparams,alist);
-         try
-          SendBlock(AThread.COnnection,CB);
-         finally
-          FreeBlock(CB);
-         end;
-        finally
-         alist.free;
-        end;
-       end;
-      end;
-     repexecutereportmeta:
-      begin
-       if Not ActClient.Auth then
-       begin
-        // Sends a error message
-        CB:=GenerateCBErrorMessage(SRpAuthFailed);
-        try
-         SendBlock(AThread.COnnection,CB);
-        finally
-         FreeBlock(CB);
-        end;
-       end
-       else
-       begin
-        alist:=TStringList.Create;
-        try
-         alist.LoadFromStream(astream);
-         if alist.count>0 then
-         begin
-          aliasname:=alist.Names[0];
-          index:=LAliases.IndexOfName(aliasname);
-          if index>=0 then
-          begin
-           apath:=LAliases.Values[LAliases.Names[index]];
-           ActClient.CreateReport;
-           ActClient.CurrentReport.LoadFromFile(apath+C_DIRSEPARATOR+alist.Values[alist.Names[0]]);
-          end;
-         end;
-         if Assigned(ActClient.CurrentReport) then
-         begin
-          if smp then
-          begin
-           SMPExecuteReport(ActClient.CurrentReport,astream,true);
-          end
-          else
-          begin
-           ActClient.cancelled:=false;
-           APDFDriver:=TRpPdfDriver.Create;
-           ActClient.CurrentReport.PrintAll(APDFDriver);
-           astream.Clear;
-           ActClient.CurrentReport.Metafile.SaveToStream(astream);
-           astream.Seek(0,soFromBeginning);
-          end;
-          CB:=GenerateBlock(repexecutereportmeta,astream);
-          try
-           SendBlock(AThread.COnnection,CB);
-          finally
-           FreeBlock(CB);
-          end;
-         end;
-        finally
-         alist.Free;
-        end;
-       end;
-      end;
-     repexecutereportpdf:
-      begin
-       if Not ActClient.Auth then
-       begin
-        // Sends a error message
-        CB:=GenerateCBErrorMessage(SRpAuthFailed);
-        try
-         SendBlock(AThread.COnnection,CB);
-        finally
-         FreeBlock(CB);
-        end;
-       end
-       else
-       begin
-        alist:=TStringList.Create;
-        try
-         alist.LoadFromStream(astream);
-         if alist.count>0 then
-         begin
-          aliasname:=alist.Names[0];
-          index:=LAliases.IndexOfName(aliasname);
-          if index>=0 then
-          begin
-           apath:=LAliases.Values[LAliases.Names[index]];
-           ActClient.CreateReport;
-           ActClient.CurrentReport.LoadFromFile(apath+C_DIRSEPARATOR+alist.Values[alist.Names[0]]);
-          end;
-         end;
-         if assigned(ActClient.CurrentReport) then
-         begin
-          if smp then
-          begin
-           SMPExecuteReport(ActClient.CurrentReport,astream,false);
-           CB:=GenerateBlock(repexecutereportpdf,astream);
-          end
-          else
-          begin
-           ActClient.cancelled:=false;
-           ActClient.CurrentReport.Metafile.SaveToStream(astream);
-           ActClient.cancelled:=false;
-           APDFDriver:=TRpPdfDriver.Create;
-           ActClient.CurrentReport.PrintRange(apdfdriver,false,ActClient.FromPage,ActClient.ToPage,ActClient.Copies,false);
-           CB:=GenerateBlock(repexecutereportpdf,APDFDriver.PDFFile.MainPDF);
-          end;
-          try
-           SendBlock(AThread.COnnection,CB);
-          finally
-           FreeBlock(CB);
-          end;
-         end;
-        finally
-         alist.Free;
-        end;
-       end;
-      end;
-     repgettree:
-      begin
-       if Not ActClient.Auth then
-       begin
-        // Sends a error message
-        CB:=GenerateCBErrorMessage(SRpAuthFailed);
-        try
-         SendBlock(AThread.COnnection,CB);
-        finally
-         FreeBlock(CB);
-        end;
-       end
-       else
-       begin
-        alist:=TStringList.Create;
-        try
-         alist.LoadFromStream(astream);
-         if alist.count>0 then
-         begin
-          index:=LAliases.IndexOfName(alist.Names[0]);
-          if index>=0 then
-          begin
-           apath:=LAliases.Values[alist.Names[0]];
-           alist.clear;
-           rptypes.FillTreeDir(apath,alist);
-           CB:=GenerateBlock(repgettree,alist);
+           CB:=GenerateBlock(repgetusergroups,TStringList(LUserGroups.Objects[index]));
            try
             SendBlock(AThread.COnnection,CB);
            finally
@@ -993,9 +948,337 @@ begin
            end;
           end;
          end;
-        finally
-         alist.free;
         end;
+       finally
+        alist.free;
+       end;
+      end;
+     repuserdeletegroup:
+      begin
+       // Delete a group from user access list
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.count>1 then
+        begin
+         username:=Trim(UpperCase(AList.Strings[0]));
+         if username<>'ADMIN' then
+         begin
+          index:=LUsers.IndexOfName(username);
+          if index>=0 then
+          begin
+           groupname:=Trim(UpperCase(AList.Strings[1]));
+           index:=LUserGroups.IndexOf(username);
+           if index>=0 then
+           begin
+            templist:=TStringList(LUserGroups.Objects[index]);
+            index:=templist.IndexOfName(groupname);
+            if index>=0 then
+            begin
+             templist.Delete(index);
+             WriteConfig;
+             InitConfig;
+            end;
+           end;
+          end;
+         end;
+        end;
+       finally
+        alist.free;
+       end;
+      end;
+     repuseraddgroup:
+      begin
+       // Add a group inside a user access list
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.count>1 then
+        begin
+         username:=Trim(UpperCase(AList.Strings[0]));
+         if username<>'ADMIN' then
+         begin
+          index:=LUsers.IndexOfName(username);
+          if index>=0 then
+          begin
+           groupname:=Trim(UpperCase(AList.Strings[1]));
+           index:=LGroups.IndexOfName(groupname);
+           if index>=0 then
+           begin
+            index:=LUserGroups.IndexOf(username);
+            if index>=0 then
+            begin
+             if 0>TStringList(LUserGroups.Objects[Index]).IndexOfName(groupname) then
+             begin
+              TStringList(LUserGroups.Objects[Index]).Add(groupname+'='+groupname);
+              WriteConfig;
+              InitConfig;
+             end;
+            end;
+           end;
+          end;
+         end;
+        end;
+       finally
+        alist.free;
+       end;
+      end;
+     repgetaliasgroups:
+      begin
+       // Return alias access for a user
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.count>0 then
+        begin
+         aliasname:=Trim(Uppercase(AList.Strings[0]));
+         index:=LAliasGroups.IndexOf(aliasname);
+         if index>=0 then
+         begin
+          CB:=GenerateBlock(repgetaliasgroups,TStringList(LAliasGroups.Objects[index]));
+          try
+           SendBlock(AThread.COnnection,CB);
+          finally
+           FreeBlock(CB);
+          end;
+         end;
+        end;
+       finally
+        alist.free;
+       end;
+      end;
+     repaliasdeletegroup:
+      begin
+       // Delete a group from alias access list
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.count>1 then
+        begin
+         aliasname:=Trim(UpperCase(AList.Strings[0]));
+         groupname:=Trim(UpperCase(AList.Strings[1]));
+         index:=LAliasGroups.IndexOf(aliasname);
+         if index>=0 then
+         begin
+          templist:=TStringList(LAliasGroups.Objects[index]);
+          index:=templist.IndexOfName(groupname);
+          if index>=0 then
+          begin
+           templist.Delete(index);
+           WriteConfig;
+           InitConfig;
+          end;
+         end;
+        end;
+       finally
+        alist.free;
+       end;
+      end;
+     repaliasaddgroup:
+      begin
+       // Add a group inside a alias
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.count>1 then
+        begin
+         aliasname:=Trim(UpperCase(AList.Strings[0]));
+         groupname:=Trim(UpperCase(AList.Strings[1]));
+         index:=LGroups.IndexOfName(groupname);
+         if index>=0 then
+         begin
+          index:=LAliasGroups.IndexOf(aliasname);
+          if index>=0 then
+          begin
+           if 0>TStringList(LAliasGroups.Objects[Index]).IndexOfName(groupname) then            begin
+            TStringList(LAliasGroups.Objects[Index]).Add(groupname+'='+groupname);
+            WriteConfig;
+            InitConfig;
+           end;
+          end;
+         end;
+        end;
+       finally
+        alist.free;
+       end;
+      end;
+     repopenreport:
+      begin
+       if Not ActClient.Auth then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        LoadReport(alist,ActClient);
+        CB:=GenerateBlock(repopenreport,alist);
+        try
+         SendBlock(AThread.COnnection,CB);
+        finally
+         FreeBlock(CB);
+        end;
+       finally
+        alist.Free;
+       end;
+      end;
+     repgetparams:
+      begin
+       if Not Assigned(ActClient.CurrentReport) then
+        Raise Exception.Create(SRpNoFilename);
+       astream.clear;
+       acompo:=TRpParamcomp.Create(nil);
+       try
+        acompo.Params.Assign(ActClient.CurrentReport.Params);
+        writer:=TWriter.Create(astream,4096);
+        try
+         writer.WriteRootComponent(acompo);
+        finally
+         writer.free;
+        end;
+       finally
+        acompo.free;
+       end;
+       astream.Seek(0,soFromBeginning);
+       CB:=GenerateBlock(repgetparams,astream);
+       try
+        SendBlock(AThread.COnnection,CB);
+       finally
+        FreeBlock(CB);
+       end;
+      end;
+     repsetparams:
+      begin
+       if Not Assigned(ActClient.CurrentReport) then
+        Raise Exception.Create(SRpNoFilename);
+       acompo:=TRpParamcomp.Create(nil);
+       try
+        acompo.Params.Assign(ActClient.CurrentReport.Params);
+        reader:=TReader.Create(astream,4096);
+        try
+         Reader.ReadRootComponent(acompo);
+        finally
+         Reader.free;
+        end;
+        ActClient.CurrentReport.Params.Assign(acompo.Params);
+       finally
+        acompo.free;
+       end;
+       alist:=TStringList.Create;
+       try
+        CB:=GenerateBlock(repsetparams,alist);
+        try
+         SendBlock(AThread.COnnection,CB);
+        finally
+         FreeBlock(CB);
+        end;
+       finally
+        alist.free;
+       end;
+      end;
+     repexecutereportmeta:
+      begin
+       if Not ActClient.Auth then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        LoadReport(alist,ActClient);
+        if Assigned(ActClient.CurrentReport) then
+        begin
+         if smp then
+         begin
+          SMPExecuteReport(ActClient.CurrentReport,astream,true);
+         end
+         else
+         begin
+          ActClient.cancelled:=false;
+          APDFDriver:=TRpPdfDriver.Create;
+          ActClient.CurrentReport.PrintAll(APDFDriver);
+          astream.Clear;
+          ActClient.CurrentReport.Metafile.SaveToStream(astream);
+          astream.Seek(0,soFromBeginning);
+         end;
+         CB:=GenerateBlock(repexecutereportmeta,astream);
+         try
+          SendBlock(AThread.COnnection,CB);
+         finally
+          FreeBlock(CB);
+         end;
+        end;
+       finally
+        alist.Free;
+       end;
+      end;
+     repexecutereportpdf:
+      begin
+       if Not ActClient.Auth then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        LoadReport(alist,ActClient);
+        if assigned(ActClient.CurrentReport) then
+        begin
+         if smp then
+         begin
+          SMPExecuteReport(ActClient.CurrentReport,astream,false);
+          CB:=GenerateBlock(repexecutereportpdf,astream);
+         end
+         else
+         begin
+          ActClient.cancelled:=false;
+          ActClient.CurrentReport.Metafile.SaveToStream(astream);
+          ActClient.cancelled:=false;
+          APDFDriver:=TRpPdfDriver.Create;
+          ActClient.CurrentReport.PrintRange(apdfdriver,false,ActClient.FromPage,ActClient.ToPage,ActClient.Copies,false);
+          CB:=GenerateBlock(repexecutereportpdf,APDFDriver.PDFFile.MainPDF);
+         end;
+         try
+           SendBlock(AThread.COnnection,CB);
+         finally
+          FreeBlock(CB);
+         end;
+        end;
+       finally
+        alist.Free;
+       end;
+      end;
+     repgettree:
+      begin
+       if Not ActClient.Auth then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.Count<1 then
+         Raise Exception.Create(SRpAuthFailed);
+        aliasname:=alist.Names[0];
+        index:=LAliases.IndexOfName(aliasname);
+        if index<0 then
+         Raise Exception.Create(SRpAuthFailed);
+        username:=ActClient.Username;
+        // Must check for privileges
+        if Not CheckPrivileges(username,aliasname) then
+         Raise Exception.Create(SRpAuthFailed+' - '+username+' - '+aliasname);
+        apath:=LAliases.Values[alist.Names[0]];
+        DoFillTreeDir(apath,alist);
+        CB:=GenerateBlock(repgettree,alist);
+        try
+         SendBlock(AThread.COnnection,CB);
+        finally
+         FreeBlock(CB);
+        end;
+       finally
+        alist.free;
        end;
       end;
     end;

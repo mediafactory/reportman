@@ -27,6 +27,7 @@ uses
   unewaliasvcl in 'unewaliasvcl.pas' {FNewAliasVCL},
   midaslib,
   rpmdrepclient in '..\..\rpmdrepclient.pas' {modclient: TDataModule},
+  rpmdprotocol in '..\..\rpmdprotocol.pas',
   ureptreevcl in 'ureptreevcl.pas' {FReportTreeVCL};
 
 {$R *.res}

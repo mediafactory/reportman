@@ -34,9 +34,16 @@ object FNewAliasVCL: TFNewAliasVCL
     Height = 13
     Caption = 'Directory Path'
   end
+  object LAliasbase: TLabel
+    Left = 120
+    Top = 72
+    Width = 52
+    Height = 13
+    Caption = 'LAliasBase'
+  end
   object BOk: TButton
     Left = 11
-    Top = 84
+    Top = 96
     Width = 75
     Height = 25
     Caption = 'OK'
@@ -46,7 +53,7 @@ object FNewAliasVCL: TFNewAliasVCL
   end
   object BCancel: TButton
     Left = 135
-    Top = 84
+    Top = 96
     Width = 75
     Height = 25
     Cancel = True

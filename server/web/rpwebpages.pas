@@ -4,7 +4,7 @@ unit rpwebpages;
 
 interface
 
-uses SysUtils,Classes,HTTPApp,rpmdconsts,Inifiles,
+uses SysUtils,Classes,HTTPApp,rpmdconsts,Inifiles,rpalias,
  rpmdshfolder,rptypes,rpreport,rppdfdriver,Variants,
 {$IFDEF USEBDE}
   dbtables,
@@ -34,7 +34,7 @@ type
    Ffilenameconfig:string;
    fport:integer;
    laliases:TStringList;
-   lusers,lgroups:TStringList;
+   lusers,lgroups,LUserGroups,LAliasGroups:TStringList;
    aresult:TStringList;
    FPagesDirectory:String;
    initreaded:boolean;
@@ -45,6 +45,7 @@ type
    showaliaspage:string;
    paramspage:string;
    isadmin:boolean;
+   FRpAliasLibs:TRpAlias;
 {$IFDEF USEBDE}
    ASession:TSession;
    BDESessionDir:String;
@@ -60,6 +61,9 @@ type
    function LoadIndexPage(Request: TWebRequest):string;
    function LoadAliasPage(Request: TWebRequest):string;
    function LoadParamsPage(Request: TWebRequest):string;
+   function CheckPrivileges(username,aliasname:String):Boolean;
+   procedure ClearLists;
+   procedure LoadReport(pdfreport:TRpReport;aliasname,reportname:String);
   public
    procedure WriteLog(aMessage:String);
    procedure ExecuteReport(Request: TWebRequest;Response:TWebResponse);
@@ -72,15 +76,68 @@ type
 
 implementation
 
+
+procedure TRpWebPageLoader.ClearLists;
+var
+ i:integer;
+begin
+ laliases.clear;
+ lusers.clear;
+ lgroups.Clear;
+ for i:=0 to LUserGroups.Count-1 do
+ begin
+  TStringList(LUserGroups.Objects[i]).free;
+ end;
+ LUserGroups.Clear;
+ for i:=0 to LAliasGroups.Count-1 do
+ begin
+  TStringList(LAliasGroups.Objects[i]).Free;
+ end;
+ LAliasGroups.Clear;
+end;
+
+function TRpWebPageLoader.CheckPrivileges(username,aliasname:String):Boolean;
+var
+ i,index:integer;
+ lugroups:TStringList;
+ lagroups:TStringList;
+begin
+ Result:=true;
+ if username='ADMIN' then
+  exit;
+ index:=LUserGroups.IndexOf(username);
+ if index<0 then
+  Raise Exception.Create(SRpAuthFailed+' - '+username);
+ lugroups:=TStringList(LUserGroups.Objects[index]);
+ index:=LAliasGroups.IndexOf(aliasname);
+ if index<0 then
+  Raise Exception.Create(SRpAuthFailed+' - '+aliasname);
+ lagroups:=TStringList(LAliasGroups.Objects[index]);
+ if ((lagroups.Count>0) and (lugroups.Count>0)) then
+ begin
+  Result:=false;
+  for i:=0 to lugroups.Count-1 do
+  begin
+   if lagroups.IndexOfName(lugroups.Names[i])>=0 then
+   begin
+    Result:=true;
+    break;
+   end;
+  end;
+ end;
+end;
+
 procedure TRpWebPageLoader.CheckLogin(Request:TWebRequest);
 var
  username,password:string;
+ aliasname:String;
  index:integer;
  logincorrect:boolean;
 begin
  logincorrect:=false;
  username:=UpperCase(Request.QueryFields.Values['username']);
  password:=Request.QueryFields.Values['password'];
+ aliasname:=Request.QueryFields.Values['aliasname'];
  index:=LUsers.IndexOfName(username);
  if index>=0 then
  begin
@@ -94,6 +151,11 @@ begin
  begin
   Raise Exception.Create(TranslateStr(848,'Incorrect user name or password'));
 //   ' User: '+username+' Password: '+password+' Index: '+IntToStr(index));
+ end;
+ if Length(aliasname)>0 then
+ begin
+  if not CheckPrivileges(username,aliasname) then
+   Raise Exception.Create(TranslateStr(848,'Incorrect user name or password'));
  end;
 end;
 
@@ -134,10 +196,11 @@ end;
 
 function TRpWebPageLoader.LoadIndexPage(Request: TWebRequest):string;
 var
- astring:String;
+ astring,username:String;
  aliasesstring:String;
  i:integer;
 begin
+ username:=UpperCase(Request.QueryFields.Values['username']);
  if Length(FPagesDirectory)<1 then
  begin
   astring:=indexpage;
@@ -155,8 +218,9 @@ begin
  aliasesstring:=TranslateStr(847,'Available Report Groups');
  for i:=0 to laliases.Count-1 do
  begin
-  aliasesstring:=aliasesstring+#10+'<p><a href="./showalias?aliasname='+
-   laliases.Names[i]+'&'+Request.Query+'">'+laliases.Names[i]+'</a></p>';
+  if CheckPrivileges(username,laliases.Names[i]) then
+   aliasesstring:=aliasesstring+#10+'<p><a href="./showalias?aliasname='+
+    laliases.Names[i]+'&'+Request.Query+'">'+laliases.Names[i]+'</a></p>';
  end;
 
  astring:=StringReplace(astring,REPMAN_AVAILABLE_ALIASES,
@@ -173,6 +237,7 @@ procedure TRpWebPageLoader.GetWebPage(Request: TWebRequest;apage:TRpWebPage;
 var
  astring:string;
  atemp:string;
+ i:integer;
 begin
  try
   CheckInitReaded;
@@ -193,6 +258,13 @@ begin
      end;
      // Configuration
      astring:=astring+'<p>[CONFIG]PAGESDIR='+FPagesDirectory+'</p>';
+     astring:=astring+'<p>Configured libs:'+ThousandSeparator;
+     // Configured libs
+     for i:=0 to FRpAliasLibs.Connections.Count-1 do
+     begin
+      astring:=astring+'|'+FRpAliasLibs.Connections.Items[i].Alias;
+     end;
+     astring:=astring+'</p>';
      astring:=astring+'<p>Decimal separator:'+DecimalSeparator+'</p>';
      astring:=astring+'<p>Thousand separator:'+ThousandSeparator+'</p>';
      // Environment variables
@@ -254,10 +326,15 @@ end;
 
 constructor TRpWebPageLoader.Create(AOwner:TComponent);
 begin
+ inherited Create;
  Owner:=AOwner;
  initreaded:=false;
+ FRpAliasLibs:=TRpAlias.Create(nil);
+
  lusers:=TStringList.Create;
  lgroups:=TStringList.Create;
+ lusergroups:=TStringList.Create;
+ laliasgroups:=TStringList.Create;
  laliases:=TStringList.Create;
  aresult:=TStringList.Create;
 
@@ -347,8 +424,12 @@ end;
 
 destructor TRpWebPageLoader.Destroy;
 begin
+ FRpAliasLibs.free;
+ ClearLists;
  lusers.free;
  lgroups.free;
+ LUserGroups.free;
+ LAliasGroups.free;
  laliases.Free;
  aresult.free;
 
@@ -385,21 +466,20 @@ var
  inif:TMemInifile;
  i:integer;
  FLogFile:TFileStream;
+ alist:TStringList;
 begin
  try
   Ffilenameconfig:=Obtainininamecommonconfig('','','reportmanserver');
   ForceDirectories(ExtractFilePath(ffilenameconfig));
   inif:=TMemInifile.Create(ffilenameconfig);
   try
-   laliases.clear;
-   lusers.clear;
-   lgroups.Clear;
+   ClearLists;
    inif.CaseSensitive:=false;
    FPagesDirectory:=Trim(inif.Readstring('CONFIG','PAGESDIR',''));
    fport:=inif.ReadInteger('CONFIG','TCPPORT',3060);
    inif.ReadSectionValues('USERS',lusers);
-   inif.ReadSectionValues('ALIASES',laliases);
    inif.ReadSectionValues('GROUPS',lgroups);
+   inif.ReadSectionValues('ALIASES',laliases);
    i:=0;
    while i<lusers.count do
    begin
@@ -435,6 +515,24 @@ begin
    end;
    if lusers.IndexOfName('ADMIN')<0 then
     lusers.Add('ADMIN=');
+   // Read privilege lists
+   for i:=0 to lusers.Count-1 do
+   begin
+    if lusers.Names[i]<>'ADMIN' then
+    begin
+     alist:=TStringList.Create;
+     LUserGroups.AddObject(lusers.Names[i],alist);
+     inif.ReadSectionValues('USERGROUPS'+lusers.Names[i],alist);
+    end;
+   end;
+   for i:=0 to LAliases.Count-1 do
+   begin
+    alist:=TStringList.Create;
+    LAliasGroups.AddObject(LAliases.Names[i],alist);
+    inif.ReadSectionValues('GROUPALLOW'+LAliases.Names[i],alist);
+   end;
+
+
    // Gets the log file and try to create it
    logfileerror:=false;
    LogFileErrorMessage:='';
@@ -456,8 +554,9 @@ begin
     end;
    end;
   finally
-  inif.free;
+   inif.free;
   end;
+  FRpAliasLibs.Connections.LoadFromFile(FFilenameConfig);
   initreaded:=true;
  except
   on E:Exception do
@@ -497,7 +596,16 @@ begin
   dirpath:=laliases.Values[aliasname];
   alist:=TStringList.Create;
   try
-   FillTreeDir(dirpath,alist);
+   if Length(dirpath)<1 then
+    Raise Exception.Create(SRPAliasNotExists);
+   if dirpath[1]=':' then
+    FRpAliasLibs.Connections.FillTreeDir(Copy(dirpath,2,Length(dirpath)),alist)
+   else
+   begin
+    if Not DirectoryExists(dirpath) then
+     Raise Exception.Create(SrpDirectoryNotExists+ ' - '+dirpath);
+    FillTreeDir(dirpath,alist);
+   end;
    for i:=0 to alist.Count-1 do
    begin
     reportname:=alist.Strings[i];
@@ -518,28 +626,51 @@ begin
  Result:=astring;
 end;
 
+procedure TRpWebPageLoader.LoadReport(pdfreport:TRpReport;aliasname,reportname:String);
+var
+ dirpath:String;
+ astream:TStream;
+begin
+ dirpath:=laliases.Values[aliasname];
+ if Length(dirpath)<1 then
+  Raise Exception.Create(SRPAliasNotExists);
+ if dirpath[1]=':' then
+ begin
+  astream:=FRpAliasLibs.Connections.GetReportStream(Copy(dirpath,2,Length(dirpath)),
+   ExtractFileName(reportname));
+  try
+   pdfreport.LoadFromStream(astream);
+  finally
+   astream.free;
+  end;
+ end
+ else
+ begin
+  reportname:=dirpath+C_DIRSEPARATOR+reportname;
+  reportname:=ChangeFileExt(reportname,'.rep');
+  pdfreport.LoadFromFile(reportname);
+ end;
+end;
+
 // returns emptystring
 function TRpWebPageLoader.LoadParamsPage(Request: TWebRequest):string;
 var
  pdfreport:TRpReport;
- dirpath,reportname,areportname:string;
- aliasname:string;
+ aliasname,reportname,areportname:string;
  visibleparam:Boolean;
  i:integer;
  astring,inputstring:String;
  aparamstring:String;
 begin
+ aliasname:=Request.QueryFields.Values['aliasname'];
+ reportname:=Request.QueryFields.Values['reportname'];
  Result:='';
  // Load the report
  pdfreport:=TRpReport.Create(Owner);
  try
-  aliasname:=Request.QueryFields.Values['aliasname'];
   if Length(aliasname)>0 then
   begin
-   dirpath:=laliases.Values[aliasname];
-   reportname:=dirpath+C_DIRSEPARATOR+Request.QueryFields.Values['reportname'];
-   reportname:=ChangeFileExt(reportname,'.rep');
-   pdfreport.LoadFromFile(reportname);
+   LoadReport(pdfreport,aliasname,reportname);
    // Count visible parameters
    visibleparam:=false;
    for i:=0 to pdfreport.Params.Count-1 do
@@ -641,7 +772,7 @@ end;
 procedure TRpWebPageLoader.ExecuteReport(Request: TWebRequest;Response:TWebResponse);
 var
  pdfreport:TRpReport;
- username,dirpath,reportname:string;
+ username,reportname:string;
  aliasname:string;
  astream:TMemoryStream;
  paramname,paramvalue:string;
@@ -654,68 +785,61 @@ begin
  reportname:='';
  try
   aliasname:=Request.QueryFields.Values['aliasname'];
-  if Length(aliasname)>0 then
-  begin
-   dirpath:=laliases.Values[aliasname];
-   reportname:=dirpath+C_DIRSEPARATOR+Request.QueryFields.Values['reportname'];
-//   Response.Content:=reportname;
-   pdfreport:=CreateReport;
-   try
-    reportname:=ChangeFileExt(reportname,'.rep');
-    pdfreport.LoadFromFile(reportname);
-    // Assigns parameters to the report
-    for i:=0 to Request.QueryFields.Count-1 do
+  reportname:=Request.QueryFields.Values['reportname'];
+  pdfreport:=CreateReport;
+  try
+   LoadReport(pdfreport,aliasname,reportname);
+   // Assigns parameters to the report
+   for i:=0 to Request.QueryFields.Count-1 do
+   begin
+    if Pos('Param',Request.QueryFields.Names[i])=1 then
     begin
-     if Pos('Param',Request.QueryFields.Names[i])=1 then
+     paramname:=Copy(Request.QueryFields.Names[i],6,Length(Request.QueryFields.Names[i]));
+     paramvalue:=Request.QueryFields.Values[Request.QueryFields.Names[i]];
+     paramisnull:=false;
+     index:=Request.QueryFields.IndexOfName('NULLParam'+paramname);
+     if index>=0 then
      begin
-      paramname:=Copy(Request.QueryFields.Names[i],6,Length(Request.QueryFields.Names[i]));
-      paramvalue:=Request.QueryFields.Values[Request.QueryFields.Names[i]];
-      paramisnull:=false;
-      index:=Request.QueryFields.IndexOfName('NULLParam'+paramname);
-      if index>=0 then
-      begin
-       if Request.QueryFields.Values[Request.QueryFields.Names[index]]='NULL' then
-        paramisnull:=True;
-      end;
-      if paramisnull then
-       pdfreport.Params.ParamByName(paramname).Value:=Null
-      else
-      begin
-       // Assign the parameter as a string
-       pdfreport.Params.ParamByName(paramname).AsString:=paramvalue;
-      end;
+      if Request.QueryFields.Values[Request.QueryFields.Names[index]]='NULL' then
+       paramisnull:=True;
      end;
-     if Uppercase(Request.QueryFields.Names[i])='METAFILE' then
-      dometafile:=Request.QueryFields.Values['METAFILE']='1';
+     if paramisnull then
+      pdfreport.Params.ParamByName(paramname).Value:=Null
+     else
+     begin
+      // Assign the parameter as a string
+      pdfreport.Params.ParamByName(paramname).AsString:=paramvalue;
+     end;
     end;
-    // Assigns pusername param if exists
-    index:=pdfreport.Params.IndexOf('PUSERNAME');
-    if index>=0 then
-     pdfreport.Params.ParamByName('PUSERNAME').Value:=username;
-
-    astream:=TMemoryStream.Create;
-    astream.Clear;
-    if dometafile then
-    begin
-     rppdfdriver.PrintReportMetafileStream(pdfreport,'',false,true,1,9999,1,
-      astream,true,false);
-     Response.Content:='Executed, size:'+IntToStr(astream.size);
-     Response.ContentType := 'application/rpmf';
-     Response.ContentStream:=astream;
-     WriteLog(reportname+' Executed Metafile');
-    end
-    else
-    begin
-     rppdfdriver.PrintReportPDFStream(pdfreport,'',false,true,1,9999,1,
-      astream,true,false);
-     Response.Content:='Executed, size:'+IntToStr(astream.size);
-     Response.ContentType := 'application/pdf';
-     Response.ContentStream:=astream;
-     WriteLog(reportname+' Executed PDF');
-    end;
-   finally
-    pdfreport.Free;
+    if Uppercase(Request.QueryFields.Names[i])='METAFILE' then
+     dometafile:=Request.QueryFields.Values['METAFILE']='1';
    end;
+   // Assigns pusername param if exists
+   index:=pdfreport.Params.IndexOf('PUSERNAME');
+   if index>=0 then
+    pdfreport.Params.ParamByName('PUSERNAME').Value:=username;
+   astream:=TMemoryStream.Create;
+   astream.Clear;
+   if dometafile then
+   begin
+    rppdfdriver.PrintReportMetafileStream(pdfreport,'',false,true,1,9999,1,
+     astream,true,false);
+    Response.Content:='Executed, size:'+IntToStr(astream.size);
+    Response.ContentType := 'application/rpmf';
+    Response.ContentStream:=astream;
+    WriteLog(reportname+' Executed Metafile');
+   end
+   else
+   begin
+    rppdfdriver.PrintReportPDFStream(pdfreport,'',false,true,1,9999,1,
+     astream,true,false);
+    Response.Content:='Executed, size:'+IntToStr(astream.size);
+    Response.ContentType := 'application/pdf';
+    Response.ContentStream:=astream;
+    WriteLog(reportname+' Executed PDF');
+   end;
+  finally
+   pdfreport.Free;
   end;
  except
   On E:Exception do

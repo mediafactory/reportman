@@ -31,6 +31,7 @@ type
     EAliasName: TEdit;
     EPath: TEdit;
     LPath: TLabel;
+    LAliasbase: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure BOkClick(Sender: TObject);
   private
@@ -77,7 +78,8 @@ begin
  LPath.Caption:=TranslateStr(808,LPath.Caption);
  BOK.Caption:=TranslateStr(93,BOK.Caption);
  BCancel.Caption:=TranslateStr(94,BCancel.Caption);
-
+ LAliasBase.Caption:=SRpAliasPath;
+ LAliasBase.Font.Style:=[fsBold];
 end;
 
 procedure TFNewAliasVCL.BOkClick(Sender: TObject);

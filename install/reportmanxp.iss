@@ -52,8 +52,11 @@ Source: "..\server\config\repserverconfigxp.exe"; DestDir: "{app}"; Flags: ignor
 Source: "..\server\config\repserverconfigxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\server\service\repserviceinstall.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\server\service\repserviceinstall.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\server\web\repwebserver.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\server\web\repwebexe.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\server\web\repwebserver.dll"; DestDir: "{app}\webserver"; Flags: ignoreversion
+Source: "..\server\web\repwebexe.exe"; DestDir: "{app}\webserver"; Flags: ignoreversion
+; Report Server custom files
+Source: "..\server\web\*.html"; DestDir: "{app}\webserver"; Flags: ignoreversion
+
 Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; Flags: ignoreversion
