@@ -1,4 +1,4 @@
-object FMetaVCL: TFMetaVCL
+object FRpMetaVCL: TFRpMetaVCL
   Left = 24
   Top = 29
   Width = 627
@@ -29,7 +29,7 @@ object FMetaVCL: TFMetaVCL
     Left = 0
     Top = 27
     Width = 7
-    Height = 364
+    Height = 356
     Beveled = True
   end
   object BToolBar: TToolBar
@@ -160,7 +160,7 @@ object FMetaVCL: TFMetaVCL
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 391
+    Top = 383
     Width = 619
     Height = 21
     Panels = <

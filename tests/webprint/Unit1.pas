@@ -29,8 +29,20 @@ implementation
 {$R *.dfm}
 
 procedure TForm1.Button1Click(Sender: TObject);
+var
+ acontrol:TrpWebMetaPrint;
 begin
- rpwebmetaclient.PrintHttpReport(Edit1.Text);
+// rpwebmetaclient.PrintHttpReport(Edit1.Text);
+ acontrol:=TrpWebMetaPrint.Create(Self);
+ acontrol.parent:=Self;
+ acontrol.Width:=100;
+ acontrol.Height:=100;
+ acontrol.Left:=200;
+ acontrol.Top:=200;
+ acontrol.caption:='Hello';
+ acontrol.preview:=true;
+ acontrol.MetaUrl:=Edit1.Text;
+ acontrol.Execute;
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);

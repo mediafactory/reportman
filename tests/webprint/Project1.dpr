@@ -3,7 +3,8 @@ program Project1;
 uses
   Forms,
   Unit1 in 'Unit1.pas' {Form1},
-  rpwebmetaclient in '..\..\rpwebmetaclient.pas';
+  rpwebmetaclient in '..\..\rpwebmetaclient.pas',
+  fmetaviewvcl in '..\..\fmetaviewvcl.pas' {FRpMetaVCL};
 
 {$R *.res}
 

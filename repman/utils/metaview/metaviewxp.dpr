@@ -4,7 +4,7 @@ program metaviewxp;
 
 uses
   Forms,
-  fmetaviewvcl in 'fmetaviewvcl.pas' {FMetaVCL},
+  fmetaviewvcl in '..\..\..\fmetaviewvcl.pas' {FRpMetaVCL},
   rpmetafile in '..\..\..\rpmetafile.pas',
   rppdfdriver in '..\..\..\rppdfdriver.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas',
@@ -22,6 +22,6 @@ uses
 begin
   Application.Initialize;
   Application.Title := 'Report manager metafile report viewer';
-  Application.CreateForm(TFMetaVCL, FMetaVCL);
+  Application.CreateForm(TFRpMetaVCL, FRpMetaVCL);
   Application.Run;
 end.
