@@ -5,7 +5,7 @@
 #export LANG=en_US
 #Bug fix in some distros need LC_NUMERIC en_US or print will not work
 #That is to enable a bugfix, use it only if print does not work
-#export LC_NUMERIC=en_US
+export LC_NUMERIC=en_US
 #Use this env.variables to override language locale
 #export KYLIX_DEFINEDENVLOCALES=Yes
 #export KYLIX_THOUSAND_SEPARATOR=.

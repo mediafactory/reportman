@@ -99,8 +99,20 @@ begin
   targetapp:=ChangeFileExt(fullpath,'');
   SetEnvValue('OLD_LC_NUMERIC',GetEnvironmentVariable('LC_NUMERIC'),false);
   // Only set LC_NUMERIC if a KYLIX_PRINTBUG is set
+  if compmode then
+  begin
+   Writeln('Running in compatible mode (CLX_USE_LIBQT-libqtintf)');
+  end
+  else
+  begin
+  end;
   if (Length(GetEnvironmentVariable('KYLIX_PRINTBUG'))>0) then
+  begin
+   Writeln('KYLIX_PRINTBUG defined, fixing LC_NUMERIC');
    SetEnvValue('LC_NUMERIC','en_US',false);
+  end
+  else
+   Writeln('If you experience print problems or not printing at all define KYLIX_PRINTBUG environment variable');
   if (Length(GetEnvironmentVariable('KYLIX_DEFINEDENVLOCALES'))<1) then
   begin
    SetEnvValue('KYLIX_DEFINEDENVLOCALES','Yes',false);
