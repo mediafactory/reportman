@@ -82,8 +82,12 @@ resourcestring
   SRpMetaPrint1='metaprint v1.0';
   SRpMetaPrint2='Prints a metafile report (.rpmf)';
   SRpMetaPrint3='Usage: metaprint [Options] metafilename';
-  SRpMetaPrint4='Options: -d Delete the file after printing it';
-  SRpMetaPrint5='         -q Quiet mode, don''t show progress';
+  SRpMetaPrint4='Options: -d        Delete the file after printing it';
+  SRpMetaPrint5='         -q        Quiet mode, don''t show progress';
+  SRpMetaPrint6='         -from   n Prints report from page pnum';
+  SRpMetaPrint7='         -to     n Prints report to page pnum';
+  SRpMetaPrint8='         -copies n Prints pnum copies';
+  SRpMetaPrint9='         -collate  Collate the copies';
   SRpTooManyParams='Too many parameters';
   SRpPrintingFile='Printing';
   SRpPrinted='Printed';
@@ -96,7 +100,12 @@ resourcestring
 
   SRpPrintRep1='printrep v1.0';
   SRpPrintRep2='Prints a report manager (.rep) file';
-  SRpPrintRep3='Usage: printrep reportfilename';
+  SRpPrintRep3='Usage: printrep [Options] reportfilename';
+  SRpPrintRep4='         -q        Quiet mode, don''t show progress';
+  SRpPrintRep5='         -from   n Prints report from page pnum';
+  SRpPrintRep6='         -to     n Prints report to page pnum';
+  SRpPrintRep7='         -copies n Prints pnum copies';
+  SRpPrintRep8='         -collate  Collate the copies';
 
   SrpSubReport='SubReport';
   SRpRepman='Report manager designer';

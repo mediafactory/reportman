@@ -25,7 +25,7 @@ uses Sysutils,
 {$IFDEF MSWINDOWS}
 windows,
 {$ENDIF}
-Classes,rpconsts,Variants,fmtbcd;
+Classes,rpconsts,Variants,FMTBcd;
 
 const
  MAX_LANGUAGES=3;

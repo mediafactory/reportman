@@ -26,42 +26,117 @@ uses
 
 var
  report:TRpReport;
+ indexparam:integer;
+ showprogress:boolean;
+ filename:string;
+ allpages:boolean;
+ frompage:integer;
+ topage:integer;
+ copies,acopies:integer;
+ collate:boolean;
 
 procedure PrintHelp;
 begin
  Writeln(SRpPrintRep1);
  Writeln(SRpPrintRep2);
  Writeln(SRpPrintRep3);
+ Writeln(SRpPrintRep4);
+ Writeln(SRpPrintRep5);
+ Writeln(SRpPrintRep6);
+ Writeln(SRpPrintRep7);
+ Writeln(SRpPrintRep8);
 end;
 
 begin
   { TODO -oUser -cConsole Main : Insert code here }
   try
-   if ParamCount<>1 then
+   if ParamCount<1 then
     PrintHelp
+   else
+   begin
+   showprogress:=true;
+   collate:=false;
+   allpages:=true;
+   frompage:=1;
+   acopies:=0;
+   topage:=999999999;
+   indexparam:=1;
+   filename:='';
+   // Get the options
+   while indexparam<ParamCount+1 do
+   begin
+    if ParamStr(indexparam)='-q' then
+     showprogress:=false
+    else
+    if ParamStr(indexparam)='-from' then
+    begin
+     inc(indexparam);
+     if indexparam>=Paramcount+1 then
+      Raise Exception.Create(SRpNumberexpected);
+     frompage:=StrToInt(ParamStr(indexparam));
+     allpages:=false;
+    end
+    else
+     if ParamStr(indexparam)='-to' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpNumberexpected);
+      topage:=StrToInt(ParamStr(indexparam));
+      allpages:=false;
+     end
+     else
+     if ParamStr(indexparam)='-copies' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpNumberexpected);
+      acopies:=StrToInt(ParamStr(indexparam));
+      if acopies<=0 then
+       acopies:=1;
+     end
+     else
+     if ParamStr(indexparam)='-collate' then
+     begin
+      collate:=true;
+     end
+     else
+     begin
+      filename:=ParamStr(indexparam);
+      inc(indexparam);
+      break;
+     end;
+    inc(indexparam);
+   end;
+   if indexparam<ParamCount+1 then
+   begin
+    Raise Exception.Create(SRpTooManyParams)
+   end;
+   if Length(filename)<1 then
+   begin
+    PrintHelp;
+   end
    else
    begin
     report:=TRpReport.Create(nil);
     try
-     report.LoadFromFile(ParamStr(1));
-{     report.BeginPrint;
-     try
-      while Not report.PrintNextPage do;
-     finally
-      report.EndPrint;
-     end;
-     PrintMetafile(report.Metafile,ParamStr(1),false);
-}     if CalcReportWidthProgress(report) then
-      PrintMetafile(report.Metafile,ParamStr(1),true);
+     report.LoadFromFile(filename);
+     if acopies=0 then
+      copies:=report.Copies
+     else
+      copies:=acopies;
+     PrintReport(report,filename,showprogress,allpages,
+      frompage,topage,copies,collate);
     finally
      report.free;
     end;
    end;
-  except
-   On E:Exception do
-   begin
-    WriteLn(E.Message);
-    raise;
-   end;
   end;
+ except
+  On E:Exception do
+  begin
+   WriteLn(E.Message);
+   raise;
+  end;
+ end;
 end.

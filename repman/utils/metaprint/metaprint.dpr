@@ -27,6 +27,10 @@ begin
  Writeln(SRpMetaPrint3);
  Writeln(SRpMetaPrint4);
  Writeln(SRpMetaPrint5);
+ Writeln(SRpMetaPrint6);
+ Writeln(SRpMetaPrint7);
+ Writeln(SRpMetaPrint8);
+ Writeln(SRpMetaPrint9);
 end;
 
 
@@ -35,6 +39,11 @@ var
  showprogress:boolean;
  dodeletefile:boolean;
  filename:string;
+ allpages:boolean;
+ frompage:integer;
+ topage:integer;
+ copies:integer;
+ collate:boolean;
 begin
  try
   { TODO -oUser -cConsole Main : Insert code here }
@@ -43,6 +52,11 @@ begin
   else
   begin
    showprogress:=true;
+   collate:=false;
+   allpages:=true;
+   frompage:=1;
+   topage:=999999999;
+   copies:=1;
    dodeletefile:=false;
    metafile:=TRpMetafileReport.Create(nil);
    try
@@ -57,6 +71,39 @@ begin
       if ParamStr(indexparam)='-d' then
        dodeletefile:=true
       else
+      if ParamStr(indexparam)='-from' then
+      begin
+       inc(indexparam);
+       if indexparam>=Paramcount+1 then
+        Raise Exception.Create(SRpNumberexpected);
+       frompage:=StrToInt(ParamStr(indexparam));
+       allpages:=false;
+      end
+      else
+      if ParamStr(indexparam)='-to' then
+      begin
+       inc(indexparam);
+       if indexparam>=Paramcount+1 then
+        Raise Exception.Create(SRpNumberexpected);
+       topage:=StrToInt(ParamStr(indexparam));
+       allpages:=false;
+      end
+      else
+      if ParamStr(indexparam)='-copies' then
+      begin
+       inc(indexparam);
+       if indexparam>=Paramcount+1 then
+        Raise Exception.Create(SRpNumberexpected);
+       copies:=StrToInt(ParamStr(indexparam));
+       if copies<=0 then
+        copies:=1;
+      end
+      else
+      if ParamStr(indexparam)='-collate' then
+      begin
+       collate:=true;
+      end
+      else
       begin
        filename:=ParamStr(indexparam);
        inc(indexparam);
@@ -68,7 +115,6 @@ begin
     begin
      Raise Exception.Create(SRpTooManyParams)
     end;
-
     if Length(filename)<1 then
     begin
      PrintHelp;
@@ -81,7 +127,8 @@ begin
       begin
        WriteLn(SRpPrintingFile+':'+filename);
       end;
-      if PrintMetafile(metafile,filename,ShowProgress) then
+      if PrintMetafile(metafile,filename,ShowProgress,allpages,
+       frompage,topage,copies,collate) then
        if ShowProgress then
        begin
         WriteLn(SRpPrinted);

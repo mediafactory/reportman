@@ -3,14 +3,14 @@ object FDrawInterface: TFDrawInterface
   Top = 172
   Width = 320
   Height = 240
-  VertScrollBar.Range = 205
   HorzScrollBar.Range = 234
+  VertScrollBar.Range = 205
   ActiveControl = OKBtn
   Caption = 'Dialog'
   Color = clButton
   Position = poScreenCenter
   Scaled = False
-  PixelsPerInch = 96
+  PixelsPerInch = 100
   object OKBtn: TButton
     Left = 79
     Top = 180

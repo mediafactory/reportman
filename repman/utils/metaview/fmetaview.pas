@@ -77,6 +77,8 @@ var
 
 implementation
 
+uses rpprintdia;
+
 {$R *.xfm}
 
 
@@ -163,9 +165,19 @@ begin
 end;
 
 procedure TFMeta.APrintExecute(Sender: TObject);
+var
+ frompage,topage,copies:integer;
+ allpages,collate:boolean;
 begin
  // Prints the report
- PrintMetafile(metafile,opendialog1.FileName,true);
+ frompage:=1;
+ topage:=99999999;
+ allpages:=true;
+ collate:=false;
+ copies:=1;
+ if DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+  PrintMetafile(metafile,opendialog1.FileName,true,allpages,
+   frompage,topage,copies,collate);
 end;
 
 procedure TFMeta.ASaveExecute(Sender: TObject);

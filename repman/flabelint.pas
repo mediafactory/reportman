@@ -152,6 +152,8 @@ var
  rec:TRect;
 begin
  alabel:=TRpLabel(printitem);
+ if csDestroying in alabel.ComponentState then
+  exit;
  Canvas.Pen.Color:=clBlack;
  Canvas.Pen.Style:=psSolid;
  if alabel.transparent then
@@ -351,6 +353,8 @@ var
  rec:TRect;
 begin
  aexp:=TRpExpression(printitem);
+ if csDestroying in aexp.ComponentState then
+  exit;
  Canvas.Pen.Color:=clBlack;
  Canvas.Pen.Style:=psDashDot;
  if aexp.transparent then

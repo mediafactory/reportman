@@ -312,6 +312,8 @@ begin
  Canvas.Pen.Width:=0;
  Canvas.Rectangle(0, 0, Width ,Height);
  ashape:=TRpShape(printitem);
+ if csDestroying in ashape.ComponentState then
+  exit;
  Canvas.Brush.Style:=TBrushStyle(ashape.BrushStyle);
  Canvas.Pen.Style:=TPenStyle(ashape.PenStyle);
  Canvas.Pen.Color:=ashape.Pencolor;
@@ -519,6 +521,8 @@ var
 begin
  aimage:=TRpImage(printitem);
  try
+  if csDestroying in aimage.ComponentState then
+   exit;
   Canvas.Rectangle(0,0,Width,Height);
   if aimage.Stream.Size>0 then
   begin

@@ -54,7 +54,9 @@ type
     frompage,topage,copies:integer;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure AppIdleReport(Sender:TObject;var done:boolean);
+{$IFDEF MSWINDOWS}
     procedure AppIdlePrintRange(Sender:TObject;var done:boolean);
+{$ENDIF}
     procedure RepProgress(Sender:TRpReport;var docancel:boolean);
   public
     { Public declarations }
@@ -640,6 +642,7 @@ begin
 end;
 
 
+{$IFDEF MSWINDOWS}
 procedure TFRpQtProgress.AppIdlePrintRange(Sender:TObject;var done:boolean);
 var
  oldprogres:TRpProgressEvent;
@@ -659,19 +662,19 @@ begin
  end;
  Close;
 end;
-
+{$ENDIF}
 
 function PrintReport(report:TRpReport;Caption:string;progress:boolean;
   allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
 var
 {$IFDEF LINUX}
  abuffer:array [0..L_tmpnam] of char;
- theparams:array [0..3] of pchar;
- param1:string;
- param2:string;
- param3:string;
+ theparams:array [0..20] of pchar;
+ params:array[0..20] of string;
+ paramcount:integer;
  afilename:string;
  child:__pid_t;
+ i:integer;
 {$ENDIF}
  qtdriver:TRpQtDriver;
  aqtdriver:IRpPrintDriver;
@@ -754,13 +757,40 @@ begin
  tmpnam(abuffer);
  afilename:=StrPas(abuffer);
  report.Metafile.SaveToFile(afilename);
- param1:='metaprint';
- param2:='-d';
- param3:=afilename;
- theparams[0]:=Pchar(param1);
- theparams[1]:=Pchar(param2);
- theparams[2]:=PChar(afilename);
- theparams[3]:=nil;
+ params[0]:='metaprint';
+ params[1]:='-d';
+ params[2]:='-copies';
+ params[3]:=IntToStr(copies);
+ paramcount:=4;
+ if collate then
+ begin
+  params[paramcount]:='-collate';
+  inc(paramcount);
+ end;
+ if not allpages then
+ begin
+  params[paramcount]:='-from';
+  inc(paramcount);
+  params[paramcount]:=IntToStr(frompage);
+  inc(paramcount);
+  params[paramcount]:='-to';
+  inc(paramcount);
+  params[paramcount]:=IntToStr(topage);
+  inc(paramcount);
+ end;
+ if not progress then
+ begin
+  params[paramcount]:='-q';
+  inc(paramcount);
+ end;
+ params[paramcount]:=afilename;
+ inc(paramcount);
+
+ for i:=0 to paramcount-1 do
+ begin
+  theparams[i]:=Pchar(params[i]);
+ end;
+ theparams[paramcount]:=nil;
 
  child:=fork;
  if child=-1 then

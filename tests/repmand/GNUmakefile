@@ -19,7 +19,7 @@ install:
 	cp ../../repman/utils/reptotxt/reptotxt .
 	cp ../../repman/utils/txttorep/txttorep .
 	-cp ../clxreport/Project1 .
-	cp ../clxreport/sample4.rep .
+	cp ../../repman/repsamples/sample4.rep .
 	cp ../clxreport/biolife.cds .
 	-mkdir doc
 	cp ../../doc/*.html doc
@@ -37,3 +37,5 @@ clean:
 	-rm -f *.rep
 	-rm -f *.cds
 	-rm -Rf doc
+	-rm *.rpmf
+	-rm *.tar
