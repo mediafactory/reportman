@@ -2,12 +2,23 @@ program Project1;
 
 uses
   QForms,
-  midaslib,
   Unit1 in 'Unit1.pas' {Form1},
+{$IFDEF MSWINDOWS}
+  midaslib,
   rpclxreport in '..\..\rpclxreport.pas',
   rpalias in '..\..\rpalias.pas',
   rpreport in '..\..\rpreport.pas',
-  rpdatainfo in '..\..\rpdatainfo.pas';
+  rpdatainfo in '..\..\rpdatainfo.pas',
+  rpqtdriver in '..\..\rpqtdriver.pas' {FRpQtProgress};
+{$ENDIF}
+
+{$IFDEF LINUX}
+  rpclxreport in '../../rpclxreport.pas',
+  rpalias in '../../rpalias.pas',
+  rpreport in '../../rpreport.pas',
+  rpdatainfo in '../../rpdatainfo.pas';
+{$ENDIF}
+
 
 {$R *.res}
 

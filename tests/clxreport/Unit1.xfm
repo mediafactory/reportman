@@ -1,24 +1,48 @@
 object Form1: TForm1
-  Left = 196
-  Top = 127
+  Left = 200
+  Top = 147
   Width = 543
   Height = 375
-  VertScrollBar.Range = 137
-  HorzScrollBar.Range = 329
+  HorzScrollBar.Range = 521
+  VertScrollBar.Range = 221
   ActiveControl = Button1
   Caption = 'Form1'
   Color = clBackground
   PixelsPerInch = 96
-  TextHeight = 13
-  TextWidth = 6
+  TextHeight = 15
+  TextWidth = 7
   object Button1: TButton
     Left = 224
     Top = 80
     Width = 105
     Height = 57
-    Caption = 'Button1'
+    Caption = 'Preview'
     TabOrder = 0
     OnClick = Button1Click
+  end
+  object Button2: TButton
+    Left = 224
+    Top = 160
+    Width = 109
+    Height = 61
+    Caption = 'Save to PDF'
+    TabOrder = 1
+    OnClick = Button2Click
+  end
+  object Label1: TLabel
+    Left = 340
+    Top = 160
+    Width = 80
+    Height = 15
+    Caption = 'PDF Filename'
+  end
+  object ETest: TEdit
+    Left = 340
+    Top = 180
+    Width = 181
+    Height = 25
+    TabOrder = 3
+    Text = 'test.pdf'
   end
   object CLXReport1: TCLXReport
     Filename = 'sample4.rep'

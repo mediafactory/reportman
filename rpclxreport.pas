@@ -45,6 +45,7 @@ type
    procedure SetFileName(Value:TFilename);
    property Report:TRpReport read GetReport;
    function ShowParams:boolean;
+   procedure SaveToPDF(filename:string);
   published
    property Filename:TFilename read FFilename write SetFilename;
    property Preview:Boolean read FPreview write FPreview default true;
@@ -175,5 +176,11 @@ begin
  end;
 end;
 
+procedure TCLXReport.SaveToPDF(filename:string);
+begin
+ CheckLoaded;
+ rpqtdriver.ExportReportToPDF(report,filename,true,true,1,999999,
+  false,filename,true)
+end;
 
 end.

@@ -20,7 +20,14 @@
 program repmand;
 
 {%ToDo 'repmand.todo'}
+
+{$IFDEF MSWINDOWS}
 {%File '..\rpconf.inc'}
+{$ENDIF}
+
+{$IFDEF LINUX}
+{%File '../rpconf.inc'}
+{$ENDIF}
 
 uses
   QForms,
