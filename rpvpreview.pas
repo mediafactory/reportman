@@ -376,7 +376,7 @@ begin
   exit;
  ALastExecute(Self);
  PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,
- collate,false);
+ collate,false,report.Metafile.PrinterSelect);
   // report.EndPrint;
 // PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
  AppIdle(Self,adone);

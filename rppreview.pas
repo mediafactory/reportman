@@ -394,7 +394,7 @@ begin
 // PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
  ALastExecute(Self);
  PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,
- collate,pRpDefaultPrinter);
+ collate,report.PrinterSelect);
  AppIdle(Self,adone);
 end;
 

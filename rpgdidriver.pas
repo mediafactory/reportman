@@ -1358,7 +1358,7 @@ begin
   end;
  end;
  if forcecalculation then
-  PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate,devicefonts)
+  PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate,devicefonts,report.PrinterSelect)
  else
  begin
   if progress then

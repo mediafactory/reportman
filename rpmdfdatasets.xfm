@@ -1,15 +1,15 @@
 object FRpDatasets: TFRpDatasets
   Left = 0
   Top = 0
-  Width = 524
-  Height = 384
+  Width = 451
+  Height = 304
   VertScrollBar.Range = 105
   Align = alClient
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 524
+    Width = 451
     Height = 105
     Align = alTop
     BevelOuter = bvNone
@@ -17,7 +17,7 @@ object FRpDatasets: TFRpDatasets
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 524
+      Width = 451
       Height = 30
       AutoSize = True
       ButtonHeight = 26
@@ -43,11 +43,12 @@ object FRpDatasets: TFRpDatasets
         ImageIndex = 3
       end
       object ToolButton3: TToolButton
+        HelpType = htContext
         Left = 50
         Top = 4
         Height = 26
-        Caption = 'ToolButton3'
-        ImageIndex = 3
+        Action = ADelete
+        Caption = 'Delete dataset'
       end
       object ToolButton5: TToolButton
         Left = 76
@@ -87,7 +88,7 @@ object FRpDatasets: TFRpDatasets
     object PTop1: TPanel
       Left = 0
       Top = 30
-      Width = 524
+      Width = 451
       Height = 75
       Align = alClient
       BevelOuter = bvNone
@@ -111,7 +112,7 @@ object FRpDatasets: TFRpDatasets
       object PanelBasic: TPanel
         Left = 169
         Top = 0
-        Width = 355
+        Width = 282
         Height = 75
         Align = alClient
         BevelOuter = bvNone
@@ -119,19 +120,19 @@ object FRpDatasets: TFRpDatasets
         object LMasterDataset: TLabel
           Left = 4
           Top = 28
-          Width = 108
-          Height = 20
+          Width = 70
+          Height = 13
           Caption = 'Master dataset'
         end
         object LConnection: TLabel
           Left = 4
           Top = 4
-          Width = 82
-          Height = 20
+          Width = 54
+          Height = 13
           Caption = 'Connection'
         end
         object BShowData: TButton
-          Left = 889
+          Left = 816
           Top = 0
           Width = 87
           Height = 29
@@ -144,9 +145,9 @@ object FRpDatasets: TFRpDatasets
           Left = 151
           Top = 27
           Width = 161
-          Height = 28
+          Height = 21
           Style = csDropDownList
-          ItemHeight = 22
+          ItemHeight = 15
           TabOrder = 1
           OnChange = MSQLChange
         end
@@ -154,9 +155,9 @@ object FRpDatasets: TFRpDatasets
           Left = 151
           Top = 0
           Width = 161
-          Height = 28
+          Height = 21
           Style = csDropDownList
-          ItemHeight = 22
+          ItemHeight = 15
           TabOrder = 2
           OnChange = MSQLChange
         end
@@ -175,16 +176,16 @@ object FRpDatasets: TFRpDatasets
   object PBottom: TPanel
     Left = 0
     Top = 105
-    Width = 524
-    Height = 279
+    Width = 451
+    Height = 199
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 524
-      Height = 279
+      Width = 451
+      Height = 199
       ActivePage = TabSQL
       Align = alClient
       TabOrder = 0
@@ -193,8 +194,8 @@ object FRpDatasets: TFRpDatasets
         object MSQL: TMemo
           Left = 0
           Top = 0
-          Width = 516
-          Height = 248
+          Width = 443
+          Height = 169
           Align = alClient
           TabOrder = 0
           WordWrap = False
@@ -207,7 +208,7 @@ object FRpDatasets: TFRpDatasets
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 516
+          Width = 443
           Height = 37
           Items.Strings = (
             'Query'
@@ -220,15 +221,15 @@ object FRpDatasets: TFRpDatasets
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 516
-          Height = 211
+          Width = 443
+          Height = 132
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
           object PBDEFilter: TPanel
             Left = 0
             Top = 0
-            Width = 516
+            Width = 443
             Height = 17
             Align = alTop
             Alignment = taLeftJustify
@@ -239,8 +240,8 @@ object FRpDatasets: TFRpDatasets
           object MBDEFilter: TMemo
             Left = 0
             Top = 17
-            Width = 516
-            Height = 194
+            Width = 443
+            Height = 115
             Align = alClient
             ScrollBars = ssBoth
             TabOrder = 1
@@ -255,51 +256,51 @@ object FRpDatasets: TFRpDatasets
         object LBDEIndexFields: TLabel
           Left = 5
           Top = 67
-          Width = 86
-          Height = 20
+          Width = 56
+          Height = 13
           Caption = 'Index Fields'
         end
         object LIndexName: TLabel
           Left = 4
           Top = 36
-          Width = 88
-          Height = 20
+          Width = 57
+          Height = 13
           Caption = 'Index Name'
         end
         object LTable: TLabel
           Left = 4
           Top = 10
-          Width = 40
-          Height = 20
+          Width = 27
+          Height = 13
           Caption = 'Table'
         end
         object LMasterFields: TLabel
           Left = 4
           Top = 99
-          Width = 91
-          Height = 20
+          Width = 59
+          Height = 13
           Caption = 'Master fields'
         end
         object LNote: TLabel
           Left = 4
           Top = 124
-          Width = 253
-          Height = 37
+          Width = 199
+          Height = 13
           Caption = 'Note: Write fields separated by ; character'
           WordWrap = True
         end
         object LFirstRange: TLabel
           Left = 260
           Top = 0
-          Width = 77
-          Height = 20
+          Width = 49
+          Height = 13
           Caption = 'First range'
         end
         object LLastRange: TLabel
           Left = 388
           Top = 0
-          Width = 77
-          Height = 20
+          Width = 50
+          Height = 13
           Caption = 'Last range'
         end
         object LRange: TLabel
@@ -317,8 +318,8 @@ object FRpDatasets: TFRpDatasets
           Left = 116
           Top = 63
           Width = 137
-          Height = 28
-          ItemHeight = 22
+          Height = 21
+          ItemHeight = 15
           Items.Strings = (
             '')
           TabOrder = 1
@@ -329,8 +330,8 @@ object FRpDatasets: TFRpDatasets
           Left = 116
           Top = 32
           Width = 137
-          Height = 28
-          ItemHeight = 22
+          Height = 21
+          ItemHeight = 15
           Items.Strings = (
             '')
           TabOrder = 3
@@ -341,8 +342,8 @@ object FRpDatasets: TFRpDatasets
           Left = 116
           Top = 2
           Width = 137
-          Height = 28
-          ItemHeight = 22
+          Height = 21
+          ItemHeight = 15
           Items.Strings = (
             '')
           TabOrder = 0
@@ -353,7 +354,7 @@ object FRpDatasets: TFRpDatasets
           Left = 116
           Top = 95
           Width = 137
-          Height = 28
+          Height = 21
           TabOrder = 2
           Text = 'EBDEMasterFields'
           OnChange = MSQLChange
@@ -383,29 +384,29 @@ object FRpDatasets: TFRpDatasets
         object LIndexFields: TLabel
           Left = 0
           Top = 65
-          Width = 81
-          Height = 20
+          Width = 53
+          Height = 13
           Caption = 'Index fields'
         end
         object LMyBase: TLabel
           Left = 0
           Top = 6
-          Width = 129
-          Height = 20
+          Width = 83
+          Height = 13
           Caption = 'MyBase Filename'
         end
         object Label1: TLabel
           Left = 0
           Top = 34
-          Width = 95
-          Height = 20
+          Width = 61
+          Height = 13
           Caption = 'Field defs file'
         end
         object EMyBase: TEdit
           Left = 144
           Top = 2
           Width = 277
-          Height = 28
+          Height = 21
           TabOrder = 0
           OnChange = MSQLChange
         end
@@ -413,7 +414,7 @@ object FRpDatasets: TFRpDatasets
           Left = 144
           Top = 61
           Width = 149
-          Height = 28
+          Height = 21
           TabOrder = 1
           OnChange = MSQLChange
         end
@@ -445,17 +446,17 @@ object FRpDatasets: TFRpDatasets
           object LabelUnions: TLabel
             Left = 4
             Top = 20
-            Width = 50
-            Height = 20
+            Width = 33
+            Height = 13
             Caption = 'Unions'
           end
           object ComboUnions: TComboBox
             Left = 4
             Top = 44
             Width = 189
-            Height = 28
+            Height = 21
             Style = csDropDownList
-            ItemHeight = 22
+            ItemHeight = 15
             TabOrder = 0
           end
           object CheckGroupUnion: TCheckBox
@@ -497,7 +498,7 @@ object FRpDatasets: TFRpDatasets
           Left = 144
           Top = 32
           Width = 209
-          Height = 28
+          Height = 21
           TabOrder = 5
           OnChange = MSQLChange
         end
@@ -757,15 +758,15 @@ object FRpDatasets: TFRpDatasets
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF00000000000000000003BFFF000000000003FFFF80
-      0000000003FBFF800000000003FFEF800000000002EB6E800000000002D97C90
-      0000000002DF6D800000000002FBAD8000000000036977800000000003DFAD80
-      00000000026D6E800000000002DB6C800000000002F9EF8000000000036B7580
-      00000000035F6D800000000003DF6D800000000003E9AF8000000000036F6F80
-      0000000002FF7680000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000
-      0000000000000000000000000000000000000000000000000000000000000000}
+      0200000002000000FFFFFF00000000000000000003FFFFFF0000007E03FFFFFF
+      00000CFF83FFFFFF00010FFFC3FFFFFF04000FFFE3FFFFFF0E020FC1F3FFFFFF
+      0E040F80F3FFFFFF070C0FC0F3FFFFFF03980FE003FFFFFF01F0000003FFFFFF
+      00E00001FBFFFFFF01F00F03FBFFFFFF03900F01FBFFFFFF0F0C0783FBFFFFFF
+      1E0607FFFBFFFFFF180303FFFBFFFFFF000001FF93FFFFFF0000007E03FFFFFF
+      0000000003FFFFFF000000000000007F000000000000007F01C000080000007F
+      01C0000800FFF07F01C0001C00FFF07F01C0001C0080107F01C0003E00B6D07F
+      01C0003E0080107F0FF8007F02B6F87F0FF8007F0080387F07F000FF80FFF87F
+      07F000FF80B7FF7F03E0001C00FFFF7F03E0001C0001FF7F01C0001C0000387F
+      01C0001C0000387F0080001C0000387F0080001C0000007F000000000000007F}
   end
 end
