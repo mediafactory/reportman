@@ -103,6 +103,10 @@ type
       MousePos: TPoint; var Handled: Boolean);
     procedure FormMouseWheelUp(Sender: TObject; Shift: TShiftState;
       MousePos: TPoint; var Handled: Boolean);
+    procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure ImageContainerMouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
   private
     { Private declarations }
     cancelled:boolean;
@@ -747,6 +751,19 @@ begin
  else
   ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position-GetWheelInc(Shift);
  Handled:=true;
+end;
+
+procedure TFRpPreview.FormMouseWheel(Sender: TObject; Shift: TShiftState;
+  WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+begin
+ Handled:=false;
+end;
+
+procedure TFRpPreview.ImageContainerMouseWheel(Sender: TObject;
+  Shift: TShiftState; WheelDelta: Integer; MousePos: TPoint;
+  var Handled: Boolean);
+begin
+ Handled:=false;
 end;
 
 end.

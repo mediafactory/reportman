@@ -125,7 +125,7 @@ end;
 
 procedure TFRpSysInfo.FormCreate(Sender: TObject);
 begin
-// Caption:=TranslateStr(1,Caption);
+ Caption:=TranslateStr(976,Caption);
  BOK.Caption:=SRpOk;
  Lresolution.Font.Style:=[fsBold];
  LCollation.Font.Style:=[fsBold];
@@ -140,6 +140,16 @@ begin
 {$IFDEF LINUX}
  GWinInfo.Visible:=false;
 {$ENDIF}
+ Label2.Caption:=TranslateStr(1061,Label2.Caption);
+ Label1.Caption:=TranslateStr(1062,Label1.Caption);
+ Label3.Caption:=TranslateStr(1063,Label3.Caption);
+ GLinInfo.Caption:=TranslateStr(976,GLinInfo.Caption);
+ Label14.Caption:=TranslateStr(1076,Label14.Caption);
+ Label10.Caption:=TranslateStr(1077,Label10.Caption);
+ Label12.Caption:=TranslateStr(91,Label12.Caption);
+ Label11.Caption:=TranslateStr(1078,Label11.Caption);
+ Label13.Caption:=TranslateStr(1079,Label13.Caption);
+ GWinInfo.Caption:=TranslateStr(976,GWinInfo.Caption);
 end;
 
 procedure TFRpSysInfo.FormShow(Sender: TObject);

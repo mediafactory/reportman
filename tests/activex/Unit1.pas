@@ -3,7 +3,11 @@ unit Unit1;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Windows, Messages, SysUtils,
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
+  Classes, Graphics, Controls, Forms,
   Dialogs,rpactivexreport, StdCtrls;
 
 type
@@ -36,7 +40,7 @@ end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
- axreport.Filename:='c:\prog\toni\cvsroot\reportman\reportman\repman\repsamples\sample1.rep';
+ axreport.Filename:='c:\prog\toni\cvsroot\reportman\reportman\repman\repsamples\sample2.rep';
  axreport.Title:='Test';
  axreport.Execute;
 end;

@@ -152,3 +152,6 @@ ProductName=Report Manager ActiveX
 ProductVersion=1.6.1.0
 Comments=
 OleSelfRegister=1
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

@@ -49,7 +49,6 @@ implementation
 function SelectReportFromLibrary(dbinfo:TRpDatabaseInfoItem):String;
 var
  dia:TFRpOpenLibVCL;
- astring:String;
 begin
  Result:='';
  dia:=TFRpOpenLibVCL.Create(Application);

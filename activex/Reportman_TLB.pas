@@ -12,7 +12,7 @@ unit Reportman_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 26/07/2003 19:17:21 from Type Library described below.
+// File generated on 31/07/2003 17:20:52 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
@@ -42,7 +42,7 @@ uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL, Variants;
 const
   // TypeLibrary Major and minor versions
   ReportmanMajorVersion = 1;
-  ReportmanMinorVersion = 5;
+  ReportmanMinorVersion = 6;
 
   LIBID_Reportman: TGUID = '{D4D26F6B-6564-44F4-A913-03C91CE37740}';
 
@@ -155,14 +155,13 @@ type
     procedure Set_HelpKeyword(const Value: WideString); safecall;
     procedure SetSubComponent(IsSubComponent: WordBool); safecall;
     procedure AboutBox; safecall;
-    function Get_Report: IReportReport; safecall;
-    procedure Set_Report(const Value: IReportReport); safecall;
     procedure ExecuteRemote(const hostname: WideString; port: Integer; const user: WideString; 
                             const password: WideString; const aliasname: WideString; 
                             const reportname: WideString); safecall;
     procedure CalcReport(ShowProgress: WordBool); safecall;
     procedure Compose(const Report: IReportReport; Execute: WordBool); safecall;
     procedure SaveToText(const filename: WideString; const textdriver: WideString); safecall;
+    function Get_Report: IReportReport; safecall;
     property filename: WideString read Get_filename write Set_filename;
     property Preview: WordBool read Get_Preview write Set_Preview;
     property ShowProgress: WordBool read Get_ShowProgress write Set_ShowProgress;
@@ -177,7 +176,7 @@ type
     property Cursor: Smallint read Get_Cursor write Set_Cursor;
     property HelpType: TxHelpType read Get_HelpType write Set_HelpType;
     property HelpKeyword: WideString read Get_HelpKeyword write Set_HelpKeyword;
-    property Report: IReportReport read Get_Report write Set_Report;
+    property Report: IReportReport read Get_Report;
   end;
 
 // *********************************************************************//
@@ -220,13 +219,13 @@ type
     property HelpKeyword: WideString dispid 32;
     procedure SetSubComponent(IsSubComponent: WordBool); dispid 34;
     procedure AboutBox; dispid -552;
-    property Report: IReportReport dispid 38;
     procedure ExecuteRemote(const hostname: WideString; port: Integer; const user: WideString; 
                             const password: WideString; const aliasname: WideString; 
                             const reportname: WideString); dispid 201;
     procedure CalcReport(ShowProgress: WordBool); dispid 202;
     procedure Compose(const Report: IReportReport; Execute: WordBool); dispid 203;
     procedure SaveToText(const filename: WideString; const textdriver: WideString); dispid 204;
+    property Report: IReportReport readonly dispid 205;
   end;
 
 // *********************************************************************//
@@ -245,12 +244,10 @@ type
 // *********************************************************************//
   IReportParameters = interface(IUnknown)
     ['{CBFA9AE3-1390-4EC6-8156-FB446D9A547B}']
-    function Get_Count: Integer; safecall;
-    procedure Set_Count(Value: Integer); safecall;
     function Get_Items(index: Integer): IReportParam; safecall;
-    procedure Set_Items(index: Integer; const Value: IReportParam); safecall;
-    property Count: Integer read Get_Count write Set_Count;
-    property Items[index: Integer]: IReportParam read Get_Items write Set_Items;
+    function Get_Count: Integer; safecall;
+    property Items[index: Integer]: IReportParam read Get_Items;
+    property Count: Integer read Get_Count;
   end;
 
 // *********************************************************************//
@@ -260,8 +257,8 @@ type
 // *********************************************************************//
   IReportParametersDisp = dispinterface
     ['{CBFA9AE3-1390-4EC6-8156-FB446D9A547B}']
-    property Count: Integer dispid 5;
-    property Items[index: Integer]: IReportParam dispid 7;
+    property Items[index: Integer]: IReportParam readonly dispid 101;
+    property Count: Integer readonly dispid 102;
   end;
 
 // *********************************************************************//
@@ -310,9 +307,8 @@ type
   IReportReport = interface(IUnknown)
     ['{3468D0A7-7616-4E17-95B4-16A59E7BF064}']
     function Get_Params: IReportParameters; safecall;
-    procedure Set_Params(const Value: IReportParameters); safecall;
     function Get_VCLReport: PChar; safecall;
-    property Params: IReportParameters read Get_Params write Set_Params;
+    property Params: IReportParameters read Get_Params;
     property VCLReport: PChar read Get_VCLReport;
   end;
 
@@ -323,8 +319,8 @@ type
 // *********************************************************************//
   IReportReportDisp = dispinterface
     ['{3468D0A7-7616-4E17-95B4-16A59E7BF064}']
-    property Params: IReportParameters dispid 2;
-    property VCLReport: {??PChar}OleVariant readonly dispid 101;
+    property Params: IReportParameters readonly dispid 101;
+    property VCLReport: {??PChar}OleVariant readonly dispid 103;
   end;
 
 
@@ -345,7 +341,6 @@ type
     procedure CreateControl;
     procedure InitControlData; override;
     function Get_Report: IReportReport;
-    procedure Set_Report(const Value: IReportReport);
   public
     procedure SetDatasetSQL(const datasetname: WideString; const sqlsentence: WideString);
     procedure SetDatabaseConnectionString(const databasename: WideString; 
@@ -379,6 +374,7 @@ type
     property VisibleDockClientCount: Integer index 20 read GetIntegerProp;
     property Enabled: WordBool index -514 read GetWordBoolProp write SetWordBoolProp;
     property Visible: WordBool index 29 read GetWordBoolProp write SetWordBoolProp;
+    property Report: IReportReport read Get_Report;
   published
     property Anchors;
     property  TabStop;
@@ -404,7 +400,6 @@ type
     property Cursor: Smallint index 30 read GetSmallintProp write SetSmallintProp stored False;
     property HelpType: TOleEnum index 31 read GetTOleEnumProp write SetTOleEnumProp stored False;
     property HelpKeyword: WideString index 32 read GetWideStringProp write SetWideStringProp stored False;
-    property Report: IReportReport read Get_Report write Set_Report stored False;
   end;
 
 procedure Register;
@@ -452,11 +447,6 @@ end;
 function TReportManX.Get_Report: IReportReport;
 begin
     Result := DefaultInterface.Report;
-end;
-
-procedure TReportManX.Set_Report(const Value: IReportReport);
-begin
-  DefaultInterface.Set_Report(Value);
 end;
 
 procedure TReportManX.SetDatasetSQL(const datasetname: WideString; const sqlsentence: WideString);

@@ -120,7 +120,15 @@ as </p>
 to be used has been identified. For further information on parameters please see
 <br>
 &quot;<a href="repparams.html">Advanced Report Design/Using Report Parameters</a>&quot;</p>
-<p> </p>
+<p><strong>Obtaining information about report parameters</strong> </p>
+<p>You can obtain information about parameters by accessing the Report property.</p>
+<p> rp.filename = &quot;c:\sample2.rep&quot;<br>
+  rp.Report.Params.Items(2).Value = 1920<br>
+  rp.Preview = True<br>
+  rp.Execute<br>
+  MessageBox.Show(Str(rp.Report.Params.Count), &quot;Paramcount&quot;, MessageBoxButtons.OK, 
+  MessageBoxIcon.Exclamation)<br>
+</p>
 </body>
 </html>
 

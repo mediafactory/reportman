@@ -42,7 +42,7 @@ end;
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
- EReportName.Text:='c:\prog\toni\cvsroot\reportman\reportman\repman\repsamples\sample5.rep';
+ EReportName.Text:='c:\prog\toni\cvsroot\reportman\reportman\repman\repsamples\sample2.rep';
 
 end;
 

@@ -4,8 +4,8 @@ object FRpSysInfo: TFRpSysInfo
   ActiveControl = BOK
   AutoScroll = False
   Caption = 'System information'
-  ClientHeight = 427
-  ClientWidth = 554
+  ClientHeight = 424
+  ClientWidth = 560
   Color = clButton
   Position = poScreenCenter
   OnCreate = FormCreate
@@ -66,7 +66,7 @@ object FRpSysInfo: TFRpSysInfo
       Caption = 'Printer resolution dpi (HorzxVert)'
     end
     object LResolution: TLabel
-      Left = 256
+      Left = 192
       Top = 107
       Width = 281
       Height = 20
@@ -101,7 +101,7 @@ object FRpSysInfo: TFRpSysInfo
     end
   end
   object GWinInfo: TGroupBox
-    Left = 8
+    Left = 12
     Top = 180
     Width = 537
     Height = 157
@@ -109,7 +109,7 @@ object FRpSysInfo: TFRpSysInfo
     TabOrder = 2
     object Label10: TLabel
       Left = 364
-      Top = 22
+      Top = 26
       Width = 41
       Height = 13
       Caption = 'OEM ID:'
@@ -122,7 +122,7 @@ object FRpSysInfo: TFRpSysInfo
       Caption = 'Number of processors'
     end
     object LProcessors: TLabel
-      Left = 192
+      Left = 140
       Top = 88
       Width = 117
       Height = 17
@@ -136,7 +136,7 @@ object FRpSysInfo: TFRpSysInfo
       AutoSize = False
     end
     object LOS: TLabel
-      Left = 152
+      Left = 140
       Top = 23
       Width = 209
       Height = 17
@@ -157,8 +157,8 @@ object FRpSysInfo: TFRpSysInfo
       Caption = 'Version'
     end
     object LVersion: TLabel
-      Left = 184
-      Top = 56
+      Left = 136
+      Top = 48
       Width = 329
       Height = 17
       AutoSize = False
@@ -172,16 +172,16 @@ object FRpSysInfo: TFRpSysInfo
     Caption = 'Display (WidthxHeight)'
   end
   object LDisplay: TLabel
-    Left = 200
+    Left = 132
     Top = 152
     Width = 345
     Height = 25
     AutoSize = False
   end
   object GLinINfo: TGroupBox
-    Left = 8
-    Top = 176
-    Width = 537
+    Left = 12
+    Top = 172
+    Width = 541
     Height = 193
     Caption = 'System information'
     TabOrder = 5
@@ -205,7 +205,7 @@ object FRpSysInfo: TFRpSysInfo
       OnClick = LSysCompClick
     end
     object ESysInfo: TMemo
-      Left = 216
+      Left = 212
       Top = 24
       Width = 313
       Height = 161

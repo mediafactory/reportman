@@ -100,7 +100,7 @@ end;
 
 procedure TFRpSysInfo.FormCreate(Sender: TObject);
 begin
-// Caption:=TranslateStr(1,Caption);
+ Caption:=TranslateStr(976,Caption);
  BOK.Caption:=SRpOk;
  LMaxCopies.Font.Style:=[fsBold];
  Lresolution.Font.Style:=[fsBold];
@@ -112,6 +112,28 @@ begin
  LOS.Font.Style:=[fsBold];
  LVersion.Font.Style:=[fsBold];
  LTechnology.Font.Style:=[fsBold];
+ Label2.Caption:=TranslateStr(1061,Label2.Caption);
+ Label1.Caption:=TranslateStr(1062,Label1.Caption);
+ Label3.Caption:=TranslateStr(1063,Label3.Caption);
+ Label4.Caption:=TranslateStr(1064,Label4.Caption);
+ Label8.Caption:=TranslateStr(1065,Label8.Caption);
+ Label5.Caption:=TranslateStr(1066,Label5.Caption);
+ Label6.Caption:=TranslateStr(1067,Label6.Caption);
+ Label7.Caption:=TranslateStr(1068,Label7.Caption);
+ Label9.Caption:=TranslateStr(1069,Label7.Caption);
+ Label15.Caption:=TranslateStr(1070,Label15.Caption);
+ Label16.Caption:=TranslateStr(1071,Label16.Caption);
+ Label17.Caption:=TranslateStr(1072,Label17.Caption);
+ Label18.Caption:=TranslateStr(1073,Label18.Caption);
+ Label19.Caption:=TranslateStr(1074,Label19.Caption);
+ Label20.Caption:=TranslateStr(1075,Label20.Caption);
+ GroupBox2.Caption:=TranslateStr(976,GroupBox2.Caption);
+ Label14.Caption:=TranslateStr(1076,Label14.Caption);
+ Label10.Caption:=TranslateStr(1077,Label10.Caption);
+ Label12.Caption:=TranslateStr(91,Label12.Caption);
+ Label11.Caption:=TranslateStr(1078,Label11.Caption);
+ Label13.Caption:=TranslateStr(1079,Label13.Caption);
+
 end;
 
 procedure TFRpSysInfo.FormShow(Sender: TObject);

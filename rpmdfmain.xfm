@@ -6,8 +6,8 @@ object FRpMainF: TFRpMainF
   ActiveControl = ToolButton1
   AutoScroll = False
   Caption = 'Report Manager Designer'
-  ClientHeight = 440
-  ClientWidth = 502
+  ClientHeight = 337
+  ClientWidth = 501
   Color = clBackground
   Menu = MainMenu1
   ShowHint = True
@@ -23,7 +23,7 @@ object FRpMainF: TFRpMainF
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 502
+    Width = 501
     Height = 56
     AutoSize = True
     ButtonHeight = 26
@@ -329,8 +329,8 @@ object FRpMainF: TFRpMainF
   object mainscrollbox: TScrollBox
     Left = 0
     Top = 56
-    Width = 502
-    Height = 363
+    Width = 501
+    Height = 260
     HorzScrollBar.Range = 189
     Align = alClient
     BorderStyle = bsNone
@@ -340,7 +340,7 @@ object FRpMainF: TFRpMainF
       Left = 181
       Top = 0
       Width = 8
-      Height = 363
+      Height = 260
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
@@ -349,7 +349,7 @@ object FRpMainF: TFRpMainF
       Left = 0
       Top = 0
       Width = 181
-      Height = 363
+      Height = 260
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -367,8 +367,8 @@ object FRpMainF: TFRpMainF
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 419
-    Width = 502
+    Top = 316
+    Width = 501
     Height = 21
     Panels = <
       item
@@ -389,11 +389,13 @@ object FRpMainF: TFRpMainF
       object N1: TMenuItem
         Caption = '-'
       end
-      object Libraries1: TMenuItem
+      object MLibraries: TMenuItem
         Action = ALibraries
+        Visible = False
       end
       object N7: TMenuItem
         Caption = '-'
+        Visible = False
       end
       object Save1: TMenuItem
         Action = ASave
@@ -530,7 +532,7 @@ object FRpMainF: TFRpMainF
       object N6: TMenuItem
         Caption = '-'
       end
-      object Alignheightto161: TMenuItem
+      object MAlign1_6: TMenuItem
         Action = AAlign1_6
       end
     end
@@ -619,7 +621,7 @@ object FRpMainF: TFRpMainF
       object utorial1: TMenuItem
         Action = ADocumentation
       end
-      object Systeminformation1: TMenuItem
+      object MSysInfo: TMenuItem
         Action = ASysInfo
       end
       object ReportManager1: TMenuItem

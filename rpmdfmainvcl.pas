@@ -214,11 +214,12 @@ type
     ADriverPDF: TAction;
     Nativedriver1: TMenuItem;
     ASysInfo: TAction;
-    Systeminformation1: TMenuItem;
+    MSysInfo: TMenuItem;
     RpAlias1: TRpAlias;
     ALibraries: TAction;
     N6: TMenuItem;
-    Libraries1: TMenuItem;
+    MLibraries: TMenuItem;
+    Malign1_6: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -786,6 +787,13 @@ begin
  BImage.Hint:=TranslateStr(85,BImage.Hint);
  BBarCode.Hint:=TranslateStr(86,BBarCode.Hint);
  BChart.Hint:=TranslateStr(87,BChart.Hint);
+ MAlign1_6.Caption:=TranslateStr(1059,MAlign1_6.Caption);
+ MAlign1_6.Hint:=TranslateStr(1060,MAlign1_6.Hint);
+ MLibraries.Caption:=TranslateStr(1080,MLibraries.Caption);
+ MLibraries.Hint:=TranslateStr(1081,MLibraries.Hint);
+ MSysInfo.Caption:=TranslateStr(976,MSysInfo.Caption);
+ MSysInfo.Hint:=TranslateStr(977,MSysInfo.Hint);
+
 
  ANewPageHeader.Caption:=TranslateStr(119,ANewPageHeader.Caption);
  ANewPageHeader.Hint:=TranslateStr(120,ANewPageHeader.Hint);

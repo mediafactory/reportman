@@ -35,21 +35,16 @@ type
   TIReportParameters=class(TInterfacedObject,IReportParameters)
    private
     FReport:TRpReport;
-    FReportParam:TIReportParam;
    protected
     function  Get_Count: Integer; safecall;
-    procedure Set_Count(Value: Integer); safecall;
-    function  Get_Items(index: Integer): IReportParam; safecall;
-    procedure Set_Items(index: Integer; const Value: IReportParam); safecall;
+    function Get_Items(index: Integer): IReportParam; safecall;
   end;
 
   TIReportReport=class(TInterfacedObject,IReportReport)
    private
     FReport:TRpReport;
-    FReportParameters:TIReportParameters;
    protected
     function  Get_Params: IReportParameters; safecall;
-    procedure Set_Params(const Value: IReportParameters); safecall;
     function Get_VCLReport: PChar; safecall;
   end;
 
@@ -59,7 +54,6 @@ type
     { Private declarations }
     FDelphiControl: TRpActiveXReport;
     FEvents: IReportManXEvents;
-    FReportI:TIReportReport;
   protected
     { Protected declarations }
     procedure DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage); override;
@@ -117,13 +111,13 @@ type
       paramvalue: OleVariant); safecall;
     procedure SetSubComponent(IsSubComponent: WordBool); safecall;
     function Get_Report: IReportReport; safecall;
-    procedure Set_Report(const Value: IReportReport); safecall;
     procedure ExecuteRemote(const hostname: WideString; port: Integer;
       const user, password, aliasname, reportname: WideString); safecall;
     procedure CalcReport(ShowProgress: WordBool); safecall;
     procedure Compose(const Report: IReportReport; Execute: WordBool);
       safecall;
     procedure SaveToText(const filename, textdriver: WideString); safecall;
+    function Report: IReportReport; safecall;
   end;
 
 implementation
@@ -390,20 +384,14 @@ begin
 end;
 
 function TReportManX.Get_Report: IReportReport;
+var
+ FReportI:TIReportReport;
 begin
- if Not Assigned(FReportI) then
- begin
-  FReportI:=TIReportReport.Create;
- end;
+ FReportI:=TIReportReport.Create;
  FReportI.FReport:=FDelphiControl.GetReport;
- FReportI._AddRef;
  Result:=FReportI;
 end;
 
-procedure TReportManX.Set_Report(const Value: IReportReport);
-begin
- Raise Exception.Create('Report property can''t be assigned');
-end;
 
 
 function TIReportReport.Get_VCLReport: PChar; safecall;
@@ -412,20 +400,14 @@ begin
 end;
 
 function  TIReportReport.Get_Params: IReportParameters;
+var
+ FReportParameters:TIReportParameters;
 begin
- if Not Assigned(FReportParameters) then
- begin
-  FReportParameters:=TIReportParameters.Create;
- end;
+ FReportParameters:=TIReportParameters.Create;
  FReportParameters.FReport:=FReport;
- FReportParameters._AddRef;
  Result:=FReportParameters;
 end;
 
-procedure TIReportReport.Set_Params(const Value: IReportParameters);
-begin
- Raise Exception.Create('You can''t assign Params property');
-end;
 
 
 function  TIReportParameters.Get_Count: Integer; safecall;
@@ -433,28 +415,18 @@ begin
  Result:=FReport.Params.Count;
 end;
 
-procedure TIReportParameters.Set_Count(Value: Integer); safecall;
-begin
- Raise Exception.Create('You can''t set count Params property');
-end;
 
 function  TIReportParameters.Get_Items(index: Integer): IReportParam; safecall;
+var
+ FReportParam:TIReportParam;
 begin
- if Not Assigned(FReportParam) then
- begin
-  FReportParam:=TIReportParam.Create;
- end;
+ FReportParam:=TIReportParam.Create;
  FReportParam.FReport:=FReport;
  FReportParam.ParamName:=FReport.Params.items[index].Name;
  FReportParam.FParam:=FReport.Params.ParamByName(FReportParam.ParamName);
- FReportParam._AddRef;
  Result:=FReportParam;
 end;
 
-procedure TIReportParameters.Set_Items(index: Integer; const Value: IReportParam); safecall;
-begin
- Raise Exception.Create('You can''t set items Params property');
-end;
 
 
 function  TIReportParam.Get_Description: PWideChar;
@@ -545,6 +517,11 @@ end;
 procedure TReportManX.SaveToText(const filename, textdriver: WideString);
 begin
   FDelphiControl.SaveToText(filename, textdriver);
+end;
+
+function TReportManX.Report: IReportReport;
+begin
+
 end;
 
 initialization

@@ -1,5 +1,3 @@
-[FileVersion]
-Version=6.0
 [Compiler]
 A=8
 B=0
@@ -53,12 +51,9 @@ UsePackages=0
 [Parameters]
 RunParams=
 HostApplication=
-Launcher=
-UseLauncher=0
-DebugCWD=
 [Language]
 ActiveLang=
-ProjectLang=
+ProjectLang=$00000C0A
 RootDir=C:\prog\Delphi6\Bin\
 [Version Info]
 IncludeVerInfo=0

@@ -3,8 +3,8 @@ object FRpSysInfo: TFRpSysInfo
   Top = 108
   BorderStyle = bsDialog
   Caption = 'System information'
-  ClientHeight = 357
-  ClientWidth = 547
+  ClientHeight = 358
+  ClientWidth = 556
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -115,7 +115,7 @@ object FRpSysInfo: TFRpSysInfo
       AutoSize = False
     end
     object LResolution: TLabel
-      Left = 180
+      Left = 176
       Top = 108
       Width = 137
       Height = 17

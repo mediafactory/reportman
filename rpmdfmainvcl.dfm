@@ -30,7 +30,6 @@ object FRpMainFVCL: TFRpMainFVCL
       item
         Width = 50
       end>
-    SimplePanel = False
   end
   object ToolBar1: TToolBar
     Left = 0
@@ -284,7 +283,6 @@ object FRpMainFVCL: TFRpMainFVCL
       Top = 0
       Width = 8
       Height = 314
-      Cursor = crHSplit
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
@@ -2398,11 +2396,13 @@ object FRpMainFVCL: TFRpMainFVCL
       object N6: TMenuItem
         Caption = '-'
       end
-      object Libraries1: TMenuItem
+      object MLibraries: TMenuItem
         Action = ALibraries
+        Visible = False
       end
       object N1: TMenuItem
         Caption = '-'
+        Visible = False
       end
       object Save1: TMenuItem
         Action = ASave
@@ -2539,7 +2539,7 @@ object FRpMainFVCL: TFRpMainFVCL
       object AboutReportManager1: TMenuItem
         Caption = '-'
       end
-      object Alignheight161: TMenuItem
+      object Malign1_6: TMenuItem
         Action = AAlign1_6
       end
     end
@@ -2619,7 +2619,7 @@ object FRpMainFVCL: TFRpMainFVCL
       object utorial1: TMenuItem
         Action = ADocumentation
       end
-      object Systeminformation1: TMenuItem
+      object MSysInfo: TMenuItem
         Action = ASysInfo
       end
       object ReportManager1: TMenuItem

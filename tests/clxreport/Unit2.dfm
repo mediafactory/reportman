@@ -23,9 +23,9 @@ object Form1: TForm1
   end
   object Button1: TButton
     Left = 176
-    Top = 88
+    Top = 92
     Width = 85
-    Height = 41
+    Height = 37
     Caption = 'Button1'
     TabOrder = 0
     OnClick = Button1Click
@@ -36,7 +36,7 @@ object Form1: TForm1
     Width = 441
     Height = 21
     TabOrder = 1
-    Text = '..\..\repman\repsamples\sample5.rep'
+    Text = '..\..\repman\repsamples\sample1.rep'
   end
   object Button2: TButton
     Left = 292
