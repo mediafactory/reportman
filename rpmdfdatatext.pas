@@ -28,7 +28,7 @@ uses SysUtils, Classes, QGraphics, QForms,
 {$IFDEF USEVARIANTS}
  Variants,Types,
 {$ENDIF}
-  rpparams,rpfparamsvcl, db,rpgraphutilsvcl, DBClient, QGrids,
+  rpparams,rpfparams, db,rpgraphutils, DBClient, QGrids,
   QDBGrids, QActnList, QImgList, QComCtrls, QControls, QExtCtrls;
 
 type

@@ -37,7 +37,7 @@ uses
 {$ENDIF}
   rpdatainfo,rpmdconsts,
 //  DBConnAdmin,
-  rpgraphutilsvcl,rpdbxconfigvcl,
+  rpgraphutils,rpdbxconfig,
   QMenus,
   QImgList, QTypes, QComCtrls;
 

@@ -1850,7 +1850,7 @@ begin
     config.CaseSensitive:=false;
    end
    else
-    Raise Exception.Create(SRpConfigFileNotExists+' - '+DBXCONFIGFILNAME);
+    Raise Exception.Create(SRpConfigFileNotExists+' - '+DBXCONFIGFILENAME);
   end
 {$ENDIF}
  end;

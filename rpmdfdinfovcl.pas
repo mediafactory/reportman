@@ -3,9 +3,6 @@
 {       Report Manager                                  }
 {                                                       }
 {       Rpmdfdinfovcl                                   }
-{       : Printer driver for  VCL Lib       }
-{       can be used only for windows                    }
-{       it includes printer and bitmap support          }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }

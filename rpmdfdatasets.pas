@@ -22,7 +22,7 @@ interface
 
 uses
   SysUtils, Classes, QGraphics, QControls, QForms, QDialogs,
-  QStdCtrls, QExtCtrls, rpmdconsts,rpgraphutilsvcl,
+  QStdCtrls, QExtCtrls, rpmdconsts,rpgraphutils,
   rptypes,rpdatainfo,rpreport,rpfparams,rpmdfsampledata, QActnList,
   rpparams, QImgList, QComCtrls;
 

@@ -20,8 +20,8 @@ object FRpDataText: TFRpDataText
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 13
-  TextWidth = 6
+  TextHeight = 18
+  TextWidth = 5
   object PTop: TPanel
     Left = 0
     Top = 0
@@ -32,22 +32,22 @@ object FRpDataText: TFRpDataText
     object Label1: TLabel
       Left = 8
       Top = 8
-      Width = 43
-      Height = 13
+      Width = 42
+      Height = 18
       Caption = 'Fields file'
     end
     object Label2: TLabel
       Left = 8
       Top = 32
-      Width = 51
-      Height = 13
+      Width = 49
+      Height = 18
       Caption = 'Sample file'
     end
     object EFileName: TEdit
       Left = 108
       Top = 4
       Width = 396
-      Height = 21
+      Height = 26
       Anchors = [akLeft, akTop, akRight]
       Color = clInfoBk
       ReadOnly = True
@@ -58,7 +58,7 @@ object FRpDataText: TFRpDataText
       Left = 108
       Top = 24
       Width = 396
-      Height = 21
+      Height = 26
       Anchors = [akLeft, akTop, akRight]
       Color = clInfoBk
       ReadOnly = True
@@ -171,15 +171,15 @@ object FRpDataText: TFRpDataText
         object Label4: TLabel
           Left = 8
           Top = 28
-          Width = 197
-          Height = 13
+          Width = 199
+          Height = 18
           Caption = 'Ignore after record separator (ASCII code)'
         end
         object Label3: TLabel
           Left = 8
           Top = 4
-          Width = 145
-          Height = 13
+          Width = 144
+          Height = 18
           Caption = 'Record separator (ASCII code)'
         end
         object BTest: TButton
@@ -195,7 +195,7 @@ object FRpDataText: TFRpDataText
           Left = 248
           Top = 0
           Width = 61
-          Height = 21
+          Height = 26
           TabOrder = 1
           Text = 'ERecordseparator'
         end
@@ -203,7 +203,7 @@ object FRpDataText: TFRpDataText
           Left = 248
           Top = 24
           Width = 61
-          Height = 21
+          Height = 26
           TabOrder = 2
           Text = 'ERecordseparator'
         end
@@ -358,11 +358,11 @@ object FRpDataText: TFRpDataText
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFF0000424DD6000000000000003E000000280000002600000013000000
       010001000000000098000000120B0000120B00000200000002000000FFFFFF00
-      000000000000000003FFFFFF0000000003FFFFFF0000000003FFFFFF0FFE0000
-      23FFFFFF0802008003FFFFFF080201C043FFFFFF080201C083FFFFFF080200E1
-      83FFFFFF0802007303FFFFFF0802003E03FFFFFF0802001C03FFFFFF0802003E
-      03FFFFFF081E007203FFFFFF081401E183FFFFFF081803C0C3FFFFFF0FF00300
-      63FFFFFF0000000003FFFFFF0000000003FFFFFF0000000003FFFFFF}
+      000000000000000001E270100000000001CDE0020000000003FFFF0000000000
+      00EFFFFD00000000022DD0100000000001000000000000000000000000000000
+      000000000000000002C7E8020000000001CDE0020000000003FFFF0000000000
+      03FFFF000000000003FFFF000000000003FFFF000000000003FFFF0000000000
+      03FFFF000000000003FFFF000000000003FFFF000000000003FFFF00}
   end
   object DFields: TClientDataSet
     Aggregates = <>
