@@ -227,6 +227,7 @@ begin
  begin
   lnames.Add(SRpGeneralPageHeader);
   ltypes.Add(SRpSBool);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).Global,true));
  end;
@@ -234,10 +235,12 @@ begin
  begin
   lnames.Add(SRpSAutoExpand);
   ltypes.Add(SRpSBool);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).AutoExpand,true));
   lnames.Add(SRpSAutoContract);
   ltypes.Add(SRpSBool);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).AutoContract,true));
  end;
@@ -245,21 +248,25 @@ begin
  begin
   lnames.Add(SRpIniNumPage);
   ltypes.Add(SRpSBool);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).IniNumPage,true));
 
   lnames.Add(SRpSGroupName);
   ltypes.Add(SRpSString);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).GroupName);
 
   lnames.Add(SRpSGroupExpression);
   ltypes.Add(SRpSExpression);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).ChangeExpression);
 
   lnames.Add(SRpSChangeBool);
   ltypes.Add(SRpSBool);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).ChangeBool,true));
 
@@ -267,6 +274,7 @@ begin
   begin
    lnames.Add(SRpSPageRepeat);
    ltypes.Add(SRpSBool);
+   lhints.Add('refsection.html');
    if Assigned(lvalues) then
     lvalues.Add(BoolToStr(TRpSection(printitem).PageRepeat,true));
   end;
@@ -275,51 +283,62 @@ begin
  begin
   lnames.Add(SRpSBeginPage);
   ltypes.Add(SRpSExpression);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).BeginPageExpression);
 
   lnames.Add(SRpSkipPage);
   ltypes.Add(SRpSBool);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).SkipPage,true));
 
   lnames.Add(SRPAlignBottom);
   ltypes.Add(SRpSBool);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).AlignBottom,true));
 
   lnames.Add(SRPHorzDesp);
   ltypes.Add(SRpSBool);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).HorzDesp,true));
   // Skip page expression
   lnames.Add(SRpSSkipType);
   ltypes.Add(SRpSList);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(RpSkipTypeToText(TRpSection(printitem).SkipType));
   lnames.Add(SRpSSkipToPage);
   ltypes.Add(SRpSExpression);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).SkipToPageExpre);
   lnames.Add(SRpSHSkipExpre);
   ltypes.Add(SRpSExpression);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).SkipExpreH);
   lnames.Add(SRpSHRelativeSkip);
   ltypes.Add(SRpSBool);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).SkipRelativeH,true));
   lnames.Add(SRpSVSkipExpre);
   ltypes.Add(SRpSExpression);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).SkipExpreV);
   lnames.Add(SRpSVRelativeSkip);
   ltypes.Add(SRpSBool);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).SkipRelativeV,true));
   // Child Subreport
   lnames.Add(SRpChildSubRep);
   ltypes.Add(SRpSList);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).GetChildSubReportName);
  end;
@@ -327,16 +346,19 @@ begin
  begin
   lnames.Add(SRpSForcePrint);
   ltypes.Add(SRpSBool);
+  lhints.Add('refsection.html');
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).FooterAtReportEnd,true));
  end;
  // External section
  lnames.Add(SRpSExternalPath);
  ltypes.Add(SRpSExternalpath);
+ lhints.Add('refsection.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpSection(printitem).ExternalFilename);
  lnames.Add(SRpSExternalData);
  ltypes.Add(SRpSExternalData);
+ lhints.Add('refsection.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpSection(printitem).GetExternalDataDescription);
 end;

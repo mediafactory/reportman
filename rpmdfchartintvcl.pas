@@ -81,48 +81,56 @@ begin
  // Expression
  lnames.Add(SrpSExpression);
  ltypes.Add(SRpSExpression);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).ValueExpression);
 
  // Identifier
  lnames.Add(SrpSIdentifier);
  ltypes.Add(SRpSString);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).Identifier);
 
  // Chart type
  lnames.Add(SrpSChartType);
  ltypes.Add(SRpSList);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(RpChartTypeToString(TRpChart(printitem).ChartType));
 
  // GetValue condition
  lnames.Add(SrpSGetValueCondition);
  ltypes.Add(SRpSExpression);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).GetValueCondition);
 
  // Serie Expression
  lnames.Add(SrpSChangeSerieExp);
  ltypes.Add(SRpSExpression);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).ChangeSerieExpression);
 
  // Serie Bool  Expression
  lnames.Add(SrpSChangeSerieBool);
  ltypes.Add(SRpSBool);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpChart(printitem).ChangeSerieBool,True));
 
  // Clear Expression
  lnames.Add(SrpSClearExpChart);
  ltypes.Add(SRpSExpression);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).ClearExpression);
 
  // Clear Expression Bool
  lnames.Add(SrpSBoolClearExp);
  ltypes.Add(SRpSBool);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpChart(printitem).ClearExpressionBool,True));
 
@@ -130,78 +138,91 @@ begin
  // Caption Expression
  lnames.Add(SrpSCaptionExp);
  ltypes.Add(SRpSExpression);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).CaptionExpression);
 
  // Chart Driver
  lnames.Add(SrpSDriver);
  ltypes.Add(SRpSList);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(RpChartDriverToString(TRpChart(printitem).Driver));
 
  // View3D
  lnames.Add(SRpSView3D);
  ltypes.Add(SRpSBool);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpChart(printitem).View3D,True));
 
  // View3D Walls
  lnames.Add(SRpSView3DWalls);
  ltypes.Add(SRpSBool);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpChart(printitem).View3DWalls,True));
 
  // Perspective
  lnames.Add(SRpSPerspective);
  ltypes.Add(SRpSInteger);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).Perspective));
 
  // Elevation
  lnames.Add(SRpSElevation);
  ltypes.Add(SRpSInteger);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).Elevation));
 
  // Rotation
  lnames.Add(SRpSRotation);
  ltypes.Add(SRpSInteger);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).Rotation));
 
  // Orthogonal
  lnames.Add(SRpSOrthogonal);
  ltypes.Add(SRpSBool);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpChart(printitem).Orthogonal,True));
 
  // Zoom
  lnames.Add(SRpSZoom);
  ltypes.Add(SRpSInteger);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).Zoom));
 
  // H.Offset
  lnames.Add(SRpSHOffset);
  ltypes.Add(SRpSInteger);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).HorzOffset));
 
  // H.Offset
  lnames.Add(SRpSVOffset);
  ltypes.Add(SRpSInteger);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).VertOffset));
 
  // Tilt
  lnames.Add(SRpSTilt);
  ltypes.Add(SRpSInteger);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).Tilt));
 
  // Multibar
  lnames.Add(SRpSMultibar);
  ltypes.Add(SRpSList);
+ lhints.Add('refchart.html');
  if Assigned(lvalues) then
   lvalues.Add(RpMultiBarToString(TRpChart(printitem).MultiBar));
 

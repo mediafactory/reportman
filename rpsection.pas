@@ -110,6 +110,9 @@ type
    procedure Notification(AComponent: TComponent;
     Operation: TOperation);override;
    function GetOwnedComponent(index:Integer):TComponent;
+   procedure SetPageRepeat(Value:Boolean);
+  protected
+   procedure Loaded;override;
   public
    GroupValue:Variant;
    constructor Create(AOwner:TComponent);override;
@@ -141,7 +144,7 @@ type
    property SubReport:TComponent read FSubReport write FSubReport;
    property GroupName:String read FGroupName write SetGroupName;
    property ChangeBool:boolean read FChangeBool write FChangeBool;
-   property PageRepeat:boolean read FPageRepeat write FPageRepeat;
+   property PageRepeat:boolean read FPageRepeat write SetPageRepeat;
    property SkipPage:boolean read FSkipPage write FSkipPage;
    property AlignBottom:boolean read FAlignBottom write FAlignBottom;
    property SectionType:TRpSectionType read FSectionType write FSectionType;
@@ -187,7 +190,7 @@ procedure GetSkipTypePossibleValues(alist:TRpWideStrings);
 
 implementation
 
-uses rpsubreport,rpreport;
+uses rpsubreport,rpreport, Math;
 
 constructor TRpSection.Create(AOwner:TComponent);
 begin
@@ -970,6 +973,8 @@ begin
    ChildSubReport:=rep.Subreports.items[i].SubReport;
   end;
  end;
+ if Assigned(FChildSubReport) then
+  FPageRepeat:=False;
 end;
 
 procedure TRpSection.SetChildSubReport(Value:TComponent);
@@ -1001,6 +1006,8 @@ begin
    Raise Exception.Create(SRpCircularDatalink);
  end;
  FChildSubReport:=Value;
+ if Assigned(FChildSubReport) then
+  FPageRepeat:=False;
 end;
 
 procedure TRpSection.AssignSection(sec:TRpSection);
@@ -1161,5 +1168,31 @@ function TRpSection.GetOwnedComponent(index:Integer):TComponent;
 begin
  Result:=inherited Components[index];
 end;
+
+procedure TRpSection.Loaded;
+begin
+ inherited Loaded;
+ If (Assigned(FChildSubReport)) then
+  PageRepeat:=false;
+end;
+
+procedure TRpSection.SetPageRepeat(Value:Boolean);
+begin
+ if (csReading in ComponentState) then
+ begin
+  FPageRepeat:=Value;
+  exit;
+ end;
+ if (csLoading in ComponentState) then
+ begin
+  FPageRepeat:=Value;
+  exit;
+ end;
+ if Value then
+  If (Assigned(FChildSubReport)) then
+   FChildSubReport:=nil;
+ FPageRepeat:=Value;
+end;
+
 
 end.

@@ -127,6 +127,7 @@ begin
  // Text
  lnames.Add(SrpSText);
  ltypes.Add(SRpSString);
+ lhints.Add('reflabel.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpLabel(printitem).Text);
 end;
@@ -263,23 +264,27 @@ begin
  // Expression
  lnames.Add(SrpSExpression);
  ltypes.Add(SRpSExpression);
+ lhints.Add('refexpression.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).Expression);
 
  // Data Type
  lnames.Add(SRpSDataType);
  ltypes.Add(SRpSList);
+ lhints.Add('refexpression.html');
  if Assigned(lvalues) then
   ParamTypeToString(TRpExpression(printitem).DataType);
 
  // Display format
  lnames.Add(SrpSDisplayFOrmat);
  ltypes.Add(SRpSString);
+ lhints.Add('refexpression.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).DisplayFormat);
  // Multipage
  lnames.Add(SRpMultiPage);
  ltypes.Add(SRpSBool);
+ lhints.Add('refexpression.html');
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpExpression(printitem).MultiPage,true));
  lnames.Add(SRpPrintNulls);
@@ -290,12 +295,14 @@ begin
  // Identifier
  lnames.Add(SrpSIdentifier);
  ltypes.Add(SRpSString);
+ lhints.Add('refexpression.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).Identifier);
 
  // Aggregate
  lnames.Add(SrpSAggregate);
  ltypes.Add(SRpSList);
+ lhints.Add('refexpression.html');
  if Assigned(lvalues) then
   lvalues.Add(AggregatesString[TRpExpression(printitem).Aggregate]);
 
@@ -303,24 +310,28 @@ begin
  // Aggregate group
  lnames.Add(SrpSAgeGroup);
  ltypes.Add(SRpGroup);
+ lhints.Add('refexpression.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).GroupName);
 
  // Aggregate type
  lnames.Add(SrpSAgeType);
  ltypes.Add(SRpSList);
+ lhints.Add('refexpression.html');
  if Assigned(lvalues) then
   lvalues.Add(AggretypeString[TRpExpression(printitem).AgType]);
 
   // Aggregate Ini value
  lnames.Add(SrpSIniValue);
  ltypes.Add(SRpSExpression);
+ lhints.Add('refexpression.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).AgIniValue);
 
  // Print Only One
  lnames.Add(SRpSOnlyOne);
  ltypes.Add(SRpSBool);
+ lhints.Add('refexpression.html');
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpExpression(printitem).PrintOnlyOne,true));
 end;

@@ -106,24 +106,28 @@ begin
  // Shape
  lnames.Add(SrpSShape);
  ltypes.Add(SRpSList);
+ lhints.Add('refdraw.html');
  if Assigned(lvalues) then
   lvalues.Add(StringShapeType[TRpShapeType(TRpShape(printitem).Shape)]);
 
  // Pen style
  lnames.Add(SrpSPenStyle);
  ltypes.Add(SRpSList);
+ lhints.Add('refdraw.html');
  if Assigned(lvalues) then
   lvalues.Add(StringPenStyle[TPenStyle(TRpShape(printitem).PenStyle)]);
 
  // Pen Color
  lnames.Add(SrpSPenColor);
  ltypes.Add(SRpSColor);
+ lhints.Add('refdraw.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpShape(printitem).PenColor));
 
  // PenWidth
  lnames.Add(SrpSPenWidth);
  ltypes.Add(SRpSString);
+ lhints.Add('refdraw.html');
  if Assigned(lvalues) then
   lvalues.Add(gettextfromtwips(TRpShape(printitem).PenWidth));
 
@@ -131,12 +135,14 @@ begin
  // Brush style
  lnames.Add(SrpSBrushStyle);
  ltypes.Add(SRpSList);
+ lhints.Add('refdraw.html');
  if Assigned(lvalues) then
   lvalues.Add(StringBrushStyle[TRpBrushStyle(TRpShape(printitem).BrushStyle)]);
 
  // Brush Color
  lnames.Add(SrpSBrushColor);
  ltypes.Add(SRpSColor);
+ lhints.Add('refdraw.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpShape(printitem).BrushColor));
 
@@ -438,18 +444,21 @@ begin
  // DrawStyle
  lnames.Add(SRpDrawStyle);
  ltypes.Add(SRpSList);
+ lhints.Add('refimage.html');
  if Assigned(lvalues) then
   lvalues.Add(StringDrawStyles[TRpImage(printitem).DrawStyle]);
 
  // Expression
  lnames.Add(SrpSExpression);
  ltypes.Add(SRpSExpression);
+ lhints.Add('refimage.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpImage(printitem).Expression);
 
  // Image
  lnames.Add(SrpSImage);
  ltypes.Add(SRpSImage);
+ lhints.Add('refimage.html');
  if Assigned(lvalues) then
   lvalues.Add('['+FormatFloat('###,###0.00',TRpImage(printitem).Stream.Size/1024)+
   SRpKbytes+']');
@@ -457,6 +466,7 @@ begin
  // DPI
  lnames.Add(SRpDPIRes);
  ltypes.Add(SRpSString);
+ lhints.Add('refimage.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpImage(printitem).DPIRes));
 

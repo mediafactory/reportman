@@ -7,21 +7,6 @@
 <body>
 <h2>Developer</h2>
 <h3>Devoloper notes about Report Manager</h3>
-<h4>What about accesing Report Manager with C API using non Borland compilers?</h4>
-<p>Report Manager supports C++Builder and Kylix C++.</p>
-<p>To allow other compilers link directly to the engine (GCC) a shared library 
-  must be build/programmed (dll for windows, so for Linux), the interface function 
-  definitions and implementation are the key here,<br>
-  shared libraries does not allow sharing objects so it must be implemented via 
-  handles like:</p>
-<p>int OpenReport(char *filename);<br>
-  void PreviewReport(int report_handle);</p>
-<p>I estimate the implementation of the library could take about 20-30 hours of 
-  work.</p>
-<p>Anyway you can use command line tools like printreptopdf, printrep metaprint, 
-  metaview, but of course they have not the same integration as a call to a function 
-  in a dll, if you are using Windows may be <br>
-  ActiveX is the way to go...</p>
 <h4>TClientDataset and BCD types, why Delphi 5 enterprise version at least need</h4>
 <p>TRpDataset (rpdataset.pas) is a TClientDataset to buffer all the datasets passed 
   to the engine that can feature grouping, so the main dataset go forward only 
@@ -79,7 +64,8 @@
   (WinXP).</p>
 <p>A patch for this issue is expected in a service pack, but for now all the empty 
   selectable items of comboboxes are replaced with a a space (' ') to solve this 
-  issue. </p>
+  issue. For your convenience the engine also includes a patch unit (D7GetComboBoxStringsPatch.pas) 
+  for your projects</p>
 <p><b>The Open/Save dialog Windows CLX bug since Delphi 7</b></p>
 <p>Delphi 7 has another horrible bug in CLX Open/Save Dialogs, a 'Drive C: not 
   found' exception is raised if you try to select a file that is not in the root 
@@ -87,7 +73,11 @@
   pure VCL version is provided (repmandxp.exe) I don't worry about this issue 
   but if you find a workaround feel free to send me it. You can reproduce it compiling 
   repmand.exe for Windows and saving files in Windows 9x OS.</p>
-<p><b>BiDi Support (ez_bikbon@hotmail.com)</b></p>
+<p><b>BiDi Support </b></p>
+<p>Bidi support is now implemented allowing each label to have a diffetent value 
+  for each language, here are the comments about the user introducing the main 
+  idea. </p>
+<p><b>(ez_bikbon@hotmail.com)</b></p>
 <p>INTRODUCTION<br>
   ------------------------</p>
 <p>I think that you should not bother yourself too much with providing<br>

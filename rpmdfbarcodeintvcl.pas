@@ -72,40 +72,47 @@ begin
  // Barcode Type
  lnames.Add(SRpSBarcodeType);
  ltypes.Add(SRpSList);
+ lhints.Add('refbarcode.html');
  if Assigned(lvalues) then
   lvalues.Add(BarcodeTypeStrings[TRpBarcode(printitem).Typ]);
 
  // Checksum
  lnames.Add(SRpSChecksum);
  ltypes.Add(SRpSBool);
+ lhints.Add('refbarcode.html');
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpBarcode(printitem).CheckSum,True));
  // Modul
  lnames.Add(SrpSModul);
  ltypes.Add(SRpSCurrency);
+ lhints.Add('refbarcode.html');
  if Assigned(lvalues) then
   lvalues.Add(gettextfromtwips(TRpBarcode(printitem).Modul));
  // Ratio
  lnames.Add(SrpSRatio);
  ltypes.Add(SRpSCurrency);
+ lhints.Add('refbarcode.html');
  if Assigned(lvalues) then
   lvalues.Add(FormatCurr('#####0.00',TRpBarcode(printitem).Ratio));
 
  // Expression
  lnames.Add(SrpSExpression);
  ltypes.Add(SRpSExpression);
+ lhints.Add('refbarcode.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpBarcode(printitem).Expression);
 
  // Display format
  lnames.Add(SrpSDisplayFOrmat);
  ltypes.Add(SRpSString);
+ lhints.Add('refbarcode.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpBarcode(printitem).DisplayFormat);
 
  // Rotation in degrees
  lnames.Add(SRpSRotation);
  ltypes.Add(SrpSList);
+ lhints.Add('refbarcode.html');
  if Assigned(lvalues) then
   lvalues.Add(FormatCurr('#####0.0',TRpBarcode(printitem).Rotation/10));
 end;

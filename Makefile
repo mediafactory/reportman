@@ -18,6 +18,7 @@ prerelease:
         -del /S /Q ..\prerelease
         -mkdir ..\prerelease
         copy repman\repmandxp.exe ..\prerelease
+        copy repman\reportmanres.* ..\prerelease
         copy repman\repmandxp.exe.manifest ..\prerelease
         copy repman\repmand.exe ..\prerelease
         copy repman\dbxdrivers.ini ..\prerelease
@@ -54,6 +55,8 @@ prerelease:
         copy server\web\repwebserver.dll ..\prerelease
         copy webactivex\WebReportManX.cab ..\prerelease
         copy activex\ReportMan.ocx ..\prerelease
+        -mkdir ..\prerelease\doc
+        xcopy /s doc\doc ..\prerelease\doc
 
 webx:   clean
         cd webactivex

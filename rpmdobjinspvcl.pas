@@ -283,6 +283,7 @@ begin
  ALabel:=TLabel.Create(Self);
  LLabels.Add(ALabel);
  ALabel.Caption:=SRpMainDataset;
+ ALabel.Hint:='refsubreport.html';
  ALabel.Left:=CONS_LEFTGAP;
  ALabel.Top:=posy+CONS_LABELTOPGAP;
  ALabel.parent:=PLeft;
@@ -299,6 +300,7 @@ begin
  ALabel:=TLabel.Create(Self);
  LLabels.Add(ALabel);
  ALabel.Caption:=SRpSPOnlyData;
+ ALabel.Hint:='refsubreport.html';
  ALabel.Left:=CONS_LEFTGAP;
  ALabel.Top:=posy+CONS_LABELTOPGAP;
  ALabel.parent:=PLeft;

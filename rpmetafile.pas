@@ -177,6 +177,7 @@ type
    FStreamPos:int64;
    FMemStream:TMemoryStream;
    FIntStream:TMemoryStream;
+   FMark:Integer;
    function GetObject(index:integer):TRpMetaObject;
    procedure NewWideString(var position,size:integer;const text:widestring);
   public
@@ -197,6 +198,7 @@ type
    function GetWFontName(arecord:TRpMetaObject):widestring;
    function GetLFontName(arecord:TRpMetaObject):widestring;
    function GetStream(arecord:TRpMetaObject):TMemoryStream;
+   property Mark:Integer read FMark write FMark;
    property ObjectCount:integer read FObjectCount;
    property Pool:WideString read FPool;
    property Objects[Index:integer]:TRpMetaObject read GetObject;
@@ -262,6 +264,7 @@ constructor TrpMetafilePage.Create;
 begin
  SetLength(FObjects,FIRST_ALLOCATION_OBJECTS);
  FObjectCount:=0;
+ FMark:=0;
  FPoolPos:=1;
  FStreamPos:=0;
  FMemStream:=TMemoryStream.Create;
@@ -271,6 +274,7 @@ procedure TRpMetafilePage.Clear;
 begin
  SetLength(FObjects,FIRST_ALLOCATION_OBJECTS);
  FObjectCount:=0;
+ FMark:=0;
  FPoolPos:=1;
  FStreamPos:=0;
 end;
@@ -776,6 +780,7 @@ begin
  // Save all objects
  separator:=integer(rpFObject);
  Stream.Write(separator,sizeof(separator));
+ Stream.Write(FMark,sizeof(FMark));
  Stream.Write(FObjectCount,sizeof(FObjectCount));
  byteswrite:=sizeof(TRpMetaObject)*FObjectCount;
  if byteswrite<>Stream.Write(FObjects[0],byteswrite) then
@@ -803,6 +808,9 @@ begin
   Raise ERpBadFileFormat.CreatePos(SrpMtObjectSeparatorExpected,Stream.Position,0);
  if (separator<>integer(rpFObject)) then
   Raise ERpBadFileFormat.CreatePos(SrpMtObjectSeparatorExpected,Stream.Position,0);
+ bytesread:=Stream.Read(FMark,sizeof(FMark));
+ if (bytesread<>sizeof(FMark)) then
+  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
  bytesread:=Stream.Read(objcount,sizeof(objcount));
  if (bytesread<>sizeof(objcount)) then
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
