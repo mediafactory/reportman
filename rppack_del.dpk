@@ -41,6 +41,12 @@ requires
   vcljpg,
   indy,
   bdertl,
+//  ZCore,
+//  ZDbc,
+//  ZParse,
+//  ZParseSQL,
+//  ZPlain,
+//  ZComponent,
   vcl;
 
 contains

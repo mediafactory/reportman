@@ -235,6 +235,8 @@ type
    FMasterSource:TDataSource;
    FDataUnions:TStrings;
    FGroupUnion:Boolean;
+   FDBInfoList:TRpDatabaseInfoList;
+   FParamsList:TRpParamList;
    procedure SetDataUnions(Value:TStrings);
    procedure SetDatabaseAlias(Value:string);
    procedure SetAlias(Value:string);
@@ -243,6 +245,7 @@ type
 {$IFDEF USEBDE}
    procedure SetRangeForTable(lastrange:boolean);
 {$ENDIF}
+   procedure DoAfterScroll(DataSet:TDataSet);
   public
    procedure Assign(Source:TPersistent);override;
    procedure Connect(databaseinfo:TRpDatabaseInfoList;params:TRpParamList);
@@ -1150,6 +1153,8 @@ begin
   Raise Exception.Create(SRpCircularDatalink+' - '+alias);
  connecting:=true;
  try
+  FDBInfoList:=databaseinfo;
+  FParamsList:=params;
   doexit:=false;
   datainfosource:=nil;
   if assigned(FDataset) then
@@ -1217,7 +1222,10 @@ begin
     if index<0 then
      Raise Exception.Create(SRPMasterNotFound+alias+' - '+datasource);
     datainfosource:=TRpDatainfolist(Collection).Items[index];
-    datainfosource.connect(databaseinfo,params);
+{$IFDEF USEZEOS}
+    if databaseinfo.Items[databaseinfo.IndexOf(datainfosource.FDatabaseAlias)].Driver<>rpdatazeos then
+{$ENDIF}
+     datainfosource.connect(databaseinfo,params);
    end;
    // Opens the connection
    index:=databaseinfo.IndexOf(Databasealias);
@@ -1663,6 +1671,7 @@ begin
    end;
    if Not Assigned(FSQLInternalQuery) then
     Raise Exception.Create(SRpDriverNotSupported);
+   FSQLInternalQuery.AfterScroll:=DoAfterScroll;
    FSQLInternalQuery.Active:=true;
 {$IFDEF USEBDE}
    if (FSQLInternalQuery is TTable) then
@@ -2675,6 +2684,88 @@ begin
   'GROUP_NAME VARCHAR(50),PARENT_GROUP INTEGER NOT NULL,'+
   'PRIMARY KEY (GROUP_CODE))';
  OpenDatasetFromSQL(astring,nil,true);
+end;
+
+procedure TRpDataInfoItem.DoAfterScroll(DataSet:TDataSet);
+{$IFDEF USEZEOS}
+var
+ dlist:TRpDataInfoList;
+ ditem:TRpDataInfoItem;
+ dbitem:TRpDatabaseInfoItem;
+ i,j:integer;
+ index:integer;
+ ZQuery:TZReadOnlyQuery;
+ reopen:Boolean;
+ afield:TField;
+{$ENDIF}
+begin
+ // For zeos update linked querys
+{$IFDEF USEZEOS}
+  if not assigned(FDBInfoList) then
+   exit;
+  dlist:=TRpDataInfoList(Collection);
+  for i:=0 to dlist.Count-1 do
+  begin
+   ditem:=dlist.Items[i];
+   if (ditem<>Self) then
+   begin
+    if ditem.DataSource=self.FAlias then
+    begin
+     index:=FDBInfoList.IndexOf(ditem.DatabaseAlias);
+     if index<0 then
+      Raise Exception.Create(SRPDabaseAliasNotFound+' : '+ditem.DatabaseAlias);
+     dbitem:=FDBInfoList.items[index];
+     if dbitem.Driver=rpdatazeos then
+     begin
+      reopen:=true;
+      if Assigned(ditem.Dataset) then
+      begin
+       if ditem.Dataset.Active then
+       begin
+        ZQuery:=TZReadOnlyQuery(ditem.FSQLInternalQuery);
+        reopen:=false;
+        for j:=0 to ZQuery.Params.Count-1 do
+        begin
+         afield:=Dataset.FindField(ZQuery.Params.Items[j].Name);
+         if Assigned(afield) then
+         begin
+          if afield.Value<>ZQuery.Params.Items[j].Value then
+          begin
+           reopen:=true;
+           break;
+          end;
+         end;
+        end;
+       end
+      end
+      else
+      begin
+       ditem.Connect(FDBInfoList,FParamsList);
+      end;
+      if reopen then
+      begin
+       if Not ditem.Dataset.Active then
+        ditem.Connect(FDBInfoList,FParamsList);
+       ditem.Disconnect;
+       ZQuery:=TZReadOnlyQuery(ditem.FSQLInternalQuery);
+       for j:=0 to ZQuery.Params.Count-1 do
+       begin
+        afield:=Dataset.FindField(ZQuery.Params.Items[j].Name);
+        if Assigned(afield) then
+        begin
+         ZQuery.Params.Items[j].Clear;
+         ZQuery.Params.Items[j].DataType:=afield.DataType;
+         if Not afield.IsNull then
+          ZQuery.Params.Items[j].Value:=afield.Value;
+        end;
+       end;
+       ditem.Connect(FDBInfoList,FParamsList);
+      end;
+     end;
+    end;
+   end;
+  end;
+{$ENDIF}
 end;
 
 
