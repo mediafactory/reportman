@@ -1,3 +1,6 @@
+[FileVersion]
+Version=6.0
+
 [Compiler]
 A=8
 B=0
@@ -35,8 +38,7 @@ OutputObjs=0
 ConsoleApp=1
 DebugInfo=0
 RemoteSymbols=0
-MinStackSize=16384
-MaxStackSize=1048576
+ResourceReserve=1048576
 ImageBase=4194304
 ExeDescription=Report Manager Designer Component Package
 DynamicLoader=/lib/ld-linux.so.2

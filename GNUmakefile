@@ -13,6 +13,8 @@ repman:
 
 clean:
 	-rm -Rf *.dcu repman/*.dcu
+	-rm -Rf *.hpp *.tds *.map *.a *.bpi
+	-rm -Rf repman/*.map
 	-rm -Rf *.dpu repman/*.dpu
 	-rm -Rf *.~* repman/*.~*
 	-rm -Rf *.exe repman/*.exe
