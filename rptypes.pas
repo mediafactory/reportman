@@ -263,7 +263,9 @@ procedure RaiseLastOSError;
 
 {$IFDEF MSWINDOWS}
 function IsWindowsNT:Boolean;
-function ExeResourceToStream (resId: Integer):TMemoryStream;
+ {$IFNDEF DOTNETD}
+  function ExeResourceToStream (resId: Integer):TMemoryStream;
+ {$ENDIF}
 {$ENDIF}
 
 
@@ -457,8 +459,14 @@ begin
  // If the same size then compare memory
  Stream1.Seek(0,soFromBeginning);
  Stream2.Seek(0,soFromBeginning);
+{$IFNDEF DOTNETD}
  readcount:=Stream1.Read(buf1[0],SIZE_BUF);
  Stream2.Read(buf2[0],SIZE_BUF);
+{$ENDIF}
+{$IFDEF DOTNETD}
+ readcount:=Stream1.Read(buf1,SIZE_BUF);
+ Stream2.Read(buf2,SIZE_BUF);
+{$ENDIF}
  while (readcount<>0) do
  begin
 {$IFDEF DOTNETD}
@@ -471,8 +479,14 @@ begin
    result:=False;
    break;
   end;
+{$IFNDEF DOTNETD}
   readcount:=Stream1.Read(buf1[0],SIZE_BUF);
   Stream2.Read(buf2[0],SIZE_BUF);
+{$ENDIF}
+{$IFDEF DOTNETD}
+  readcount:=Stream1.Read(buf1,SIZE_BUF);
+  Stream2.Read(buf2,SIZE_BUF);
+{$ENDIF}
  end;
 end;
 
@@ -2604,6 +2618,7 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
+{$IFNDEF DOTNETD}
 function ExeResourceToStream (resId: Integer):TMemoryStream;
 var
   Res: TResourceStream;
@@ -2629,6 +2644,7 @@ begin
    Res.Free;
   end;
 end;
+{$ENDIF}
 {$ENDIF}
 
 

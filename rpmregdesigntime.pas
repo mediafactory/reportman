@@ -24,15 +24,19 @@ uses
  {$IFNDEF USEVARIANTS}
    DsgnIntf,
  {$ENDIF}
- {$IFNDEF DOTNETDBUGS}
   rpmdesigneditors,
-  rpeditalias,rpwebmetaclient,
- {$ENDIF}
+  rpeditalias,
+{$IFDEF USEINDY}
+  rpwebmetaclient,
+{$ENDIF}
+{$IFNDEF DOTNETD}
  {$IFDEF USEVARIANTS}
-  {$IFNDEF DOTNETDBUGS}
     DesignIntf,
-  {$ENDIF}
  {$ENDIF}
+{$ENDIF}
+{$IFDEF DOTNETD}
+  Borland.Vcl.Design.DesignIntf,
+{$ENDIF}
   rpalias;
 
 procedure Register;
@@ -41,7 +45,9 @@ implementation
 
 procedure Register;
 begin
+{$IFDEF USEINDY}
   RegisterComponents('Reportman', [TRpWebMetaPrint]);
+{$ENDIF}
   RegisterPropertyEditor(TypeInfo(String),TCBaseReport,'ConnectionName',TRpReportLibNamePropEditor);
   RegisterPropertyEditor(TypeInfo(String),TCBaseReport,'ReportName',TRpReportNamePropEditor);
   RegisterPropertyEditor(TypeInfo(TRpDatabaseInfoList),TRpAlias,'',TRpConnectionPropEditor);

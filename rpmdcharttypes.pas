@@ -21,7 +21,11 @@ interface
 
 {$I rpconf.inc}
 
-uses Classes,SysUtils,rptypes,rpmdconsts;
+uses Classes,SysUtils,rptypes,
+{$IFDEF USEVARIANTS}
+ Variants,
+{$ENDIF}
+ rpmdconsts;
 
 const
  CONS_HORZGAP=1000;

@@ -26,7 +26,7 @@ interface
 {$I rpconf.inc}
 
 uses
-  SysUtils, Classes, IdThreadMgr, IdThreadMgrDefault,
+  SysUtils, Classes,
   IdBaseComponent, IdComponent,rpmdconsts,SyncObjs,
   IdTCPServer,
 {$IFNDEF USEVARIANTS}
@@ -44,6 +44,9 @@ uses
 {$ENDIF}
 {$IFDEF LINUX}
  Libc,
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ IdThreadMgr, IdThreadMgrDefault,
 {$ENDIF}
   rptranslator,rpmdshfolder,IniFiles,rpmdprotocol,rpalias,
   rpreport,rpbasereport,rppdfdriver, IdThreadMgrPool,rptypes,rpparams;
@@ -81,7 +84,6 @@ type
 
   Tmodserver = class(TDataModule)
     RepServer: TIdTCPServer;
-    ThreadMan: TIdThreadMgrPool;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure RepServerExecute(AThread: TIdPeerThread);
@@ -90,6 +92,9 @@ type
   private
     { Private declarations }
     // Data for all clients
+{$IFNDEF DOTNETD}
+    ThreadMan: TIdThreadMgrPool;
+{$ENDIF}
     Clients:TThreadList;
     FRpAliasLibs:TRpAlias;
     FInitEvent:TEvent;
@@ -181,7 +186,7 @@ end;
 procedure TRpClient.OnProgress(Sender:TRpBaseReport;var docancel:boolean);
 var
  astring:WideString;
- CB:PRpComBLock;
+ CB:TRpComBLock;
 begin
  // Sends the message progress to the thread
  astring:=IntToStr(Sender.CurrentSubReportIndex)+' '+SRpPage+':'+
@@ -292,6 +297,11 @@ end;
 
 procedure Tmodserver.DataModuleCreate(Sender: TObject);
 begin
+{$IFNDEF DOTNETD}
+ ThreadMan:=TIdThreadMgrPool.Create(Self);
+ ThreadMan.PoolSize:=10;
+ RepServer.ThreadMgr:=ThreadMan;
+{$ENDIF}
  FRpAliasLibs:=TRpAlias.Create(Self);
  GetIsSMP;
  fport:=3060;
@@ -633,7 +643,7 @@ end;
 
 procedure Tmodserver.RepServerExecute(AThread: TIdPeerThread);
 var
- CB,ACB:PRpComBlock;
+ CB,ACB:TRpComBlock;
  astream:TMemoryStream;
  templist,alist:TStringList;
  username,groupname,password:string;
@@ -654,18 +664,17 @@ begin
   astream:=TMemoryStream.Create;
   try
    AThread.Connection.ReadStream(astream);
-   ACB:=AllocMem(astream.Size);
+   ACB:=ReadRpComBlockFromStream(astream);
    try
     astream.Seek(0,soFromBeginning);
-    astream.Read(ACB^,astream.size);
-    astream.Clear;
-    astream.SetSize(ACB^.Datasize);
-    astream.Write((@(ACB^.Data))^,astream.size);
+    ACB.Data.Seek(0,soFromBeginning);
+    astream.SetSize(ACB.Data.Size);
+    astream.CopyFrom(ACB.Data,ACB.Data.Size);
     astream.Seek(0,soFromBeginning);
     ActClient := TRpClient(AThread.Data);
     ActClient.LastAction := Now;  // update the time of last action
     // if is a auth message return the key
-    case ACB^.Command of
+    case ACB.Command of
      repauth:
       begin
        username:='';
@@ -1283,7 +1292,7 @@ begin
       end;
     end;
    finally
-    FreeMem(ACB);
+    FreeBlock(ACB);
    end;
   finally
    astream.free;
@@ -1406,9 +1415,16 @@ begin
    toexecute:=toexecute+' -q '+repname+' '+pdfname;
    memstream.SaveToFile(repname);
    try
-    if not CreateProcess(PChar('printreptopdf.exe'),Pchar(toexecute),nil,nil,false,
-      NORMAL_PRIORITY_CLASS or DETACHED_PROCESS,nil,PChar(Currentdir),sinfo,pinfo) then
-       RaiseLastOsError;
+    try
+     if not CreateProcess(PChar('printreptopdf.exe'),Pchar(toexecute),nil,nil,false,
+       NORMAL_PRIORITY_CLASS or DETACHED_PROCESS,nil,PChar(Currentdir),sinfo,pinfo) then
+        RaiseLastOsError;
+    except
+     On E:Exception do
+     begin
+      Raise Exception.Create(SRpPrintPDFRep1+' '+E.Message);
+     end;
+    end;
     WaitForSingleObject(pinfo.hProcess,INFINITE);
     try
      astream.LoadFromFile(pdfname);

@@ -330,6 +330,10 @@ var
  astring:array of WideChar;
  asize,i:integer;
  tempstring:widestring;
+{$IFDEF DOTNETD}
+ wsize:integer;
+ abytes:Array of byte;
+{$ENDIF}
 begin
  // Finds the file and read the strings
  // The format is translations separator is a #10, two #10 is a true single #10.
@@ -359,7 +363,20 @@ begin
   memstream.LoadFromFile(afilename);
   memstream.Seek(0,soFromBeginning);
   SetLength(astring,memstream.size div 2);
+{$IFNDEF DOTNETD}
   memstream.Read(astring[0],memstream.Size);
+{$ENDIF}
+{$IFDEF DOTNETD}
+ wsize:=memstream.Size;
+ SetLength(abytes,wsize);
+ if (wsize<>memstream.Read(abytes,wsize)) then
+  Raise Exception.Create(SRpStreamNotValid);
+ for i:=0 to (wsize div 2)-1 do
+ begin
+  // Revise byte order
+  astring[i]:=WideChar((Integer(abytes[i*2+1]) shl 8)+abytes[i*2]);
+ end;
+{$ENDIF}
  finally
   memstream.free;
  end;

@@ -205,7 +205,12 @@ begin
       end
       else
       begin
+{$IFNDEF DOTNETD}
        TDateTimePicker(acontrol).Date:=TDateTime(aparam.Value);
+{$ENDIF}
+{$IFDEF DOTNETD}
+       TDateTimePicker(acontrol).Date:=TDate(aparam.Value);
+{$ENDIF}
       end;
      end;
    rpParamTime:
@@ -220,7 +225,12 @@ begin
       end
       else
       begin
+{$IFDEF DOTNETD}
+       TDateTimePicker(acontrol).Time:=TTime(aparam.Value);
+{$ENDIF}
+{$IFNDEF DOTNETD}
        TDateTimePicker(acontrol).Time:=TDateTime(aparam.Value);
+{$ENDIF}
       end;
      end;
    rpParamDateTime:
@@ -355,11 +365,11 @@ begin
       end;
      rpParamDate:
       begin
-       fparams.items[i].Value:=TDateTimePicker(LControls.Objects[i]).Date;
+       fparams.items[i].Value:=Variant(TDateTimePicker(LControls.Objects[i]).Date);
       end;
      rpParamTime:
       begin
-       fparams.items[i].Value:=TDateTimePicker(LControls.Objects[i]).Time;
+       fparams.items[i].Value:=Variant(TDateTimePicker(LControls.Objects[i]).Time);
       end;
      rpParamDateTime:
       begin

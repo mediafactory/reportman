@@ -279,9 +279,11 @@ begin
    SRpExcelFile+'|*.xls|'+
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
-   SRpBitmapFileMono+'|*.bmp'+
-   '|'+SRpExeMetafile+'|*.exe';
-
+   SRpBitmapFileMono+'|*.bmp';
+{$IFNDEF DOTNETD}
+  SaveDialog1.Filter:=SaveDialog1.Filter+
+    '|'+SRpExeMetafile+'|*.exe';
+{$ENDIF}
  APrevious.ShortCut:=ShortCut(VK_PRIOR, []);
  ANext.ShortCut:=ShortCut(VK_NEXT, []);
  AFirst.ShortCut:=ShortCut(VK_HOME, []);
@@ -444,11 +446,13 @@ begin
         abitmap.free;
        end;
       end;
+{$IFNDEF DOTNETD}
      8:
       begin
        ALastExecute(Self);
        MetafileToExe(report.metafile,SaveDialog1.Filename);
       end;
+{$ENDIF}
      else
      begin
       ALastExecute(Self);

@@ -8,7 +8,7 @@ uses
   rpmetafile in '..\..\..\rpmetafile.pas',
   rppdfdriver in '..\..\..\rppdfdriver.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas',
-  rpmdrepclient in '..\..\..\rpmdrepclient.pas' {modclient: TDataModule},
+  rpmdrepclient in '..\..\..\rpmdrepclient.pas',
   rpmdprotocol in '..\..\..\rpmdprotocol.pas',
   rpmdclitreevcl in '..\..\..\rpmdclitreevcl.pas' {FRpCliTreeVCL: TFrame},
   rpmdfaboutvcl in '..\..\..\rpmdfaboutvcl.pas' {FRpAboutBoxVCL},

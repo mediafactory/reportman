@@ -18,13 +18,7 @@ object modserver: Tmodserver
     ReplyExceptionCode = 0
     ReplyTexts = <>
     ReplyUnknownCommand.NumericCode = 0
-    ThreadMgr = ThreadMan
     Left = 32
     Top = 12
-  end
-  object ThreadMan: TIdThreadMgrPool
-    PoolSize = 10
-    Left = 112
-    Top = 60
   end
 end

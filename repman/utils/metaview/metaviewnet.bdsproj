@@ -3,14 +3,14 @@
 	<PersonalityInfo>
 		<Option>
 			<Option Name="Personality" Type="String">DelphiDotNet.Personality</Option>
-			<Option Name="ProjectType" Type="String"></Option>
+			<Option Name="ProjectType" Type="String">VCLApplication</Option>
 			<Option Name="Version" Type="String">1.0</Option>
-			<Option Name="GUID" Type="String">{91DEDE98-0F14-4EF7-9E0C-BAA0878726C5}</Option>
+			<Option Name="GUID" Type="String">{956FFCED-4858-4668-AA70-EDF8478B46DD}</Option>
 		</Option>
 	</PersonalityInfo>
 	<DelphiDotNet.Personality>
 		<Source>
-			<Source Name="MainSource" Type="String">ReportManDesign.dpk</Source>
+			<Source Name="MainSource" Type="String">metaviewnet.dpr</Source>
 		</Source>
 		<FileVersion>
 			<FileVersion Name="Version" Type="String">7.0</FileVersion>
@@ -119,11 +119,11 @@
 			<Directories Name="UnitOutputDir" Type="String"></Directories>
 			<Directories Name="PackageDLLOutputDir" Type="String"></Directories>
 			<Directories Name="PackageDCPOutputDir" Type="String"></Directories>
-			<Directories Name="SearchPath" Type="String"></Directories>
-			<Directories Name="Packages" Type="String">Borland.VclDbExpress;Borland.VclBdeRtl;Borland.VclRtl;Borland.VclDSnap;Borland.VclDbRtl;Borland.Vcl;ReportMan;Borland.Delphi</Directories>
+			<Directories Name="SearchPath" Type="String">h:\windows\microsoft.net\framework\v1.1.4322</Directories>
+			<Directories Name="Packages" Type="String">h:\windows\microsoft.net\framework\v1.1.4322\System.XML.dll;h:\windows\microsoft.net\framework\v1.1.4322\System.Drawing.dll;h:\windows\microsoft.net\framework\v1.1.4322\System.Data.dll;h:\windows\microsoft.net\framework\v1.1.4322\System.dll</Directories>
 			<Directories Name="Conditionals" Type="String"></Directories>
 			<Directories Name="DebugSourceDirs" Type="String"></Directories>
-			<Directories Name="UsePackages" Type="Boolean">False</Directories>
+			<Directories Name="UsePackages" Type="Boolean">True</Directories>
 		</Directories>
 		<Parameters>
 			<Parameters Name="RunParams" Type="String"></Parameters>
@@ -156,17 +156,29 @@
 			<VersionInfo Name="DLL" Type="Boolean">False</VersionInfo>
 			<VersionInfo Name="Locale" Type="Integer">3082</VersionInfo>
 			<VersionInfo Name="CodePage" Type="Integer">1252</VersionInfo>
-		</VersionInfo>  <FileList>
-      <File FileName="Borland.Delphi.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.Delphi" AssemblyName="borland.delphi" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="ReportMan.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="ReportMan" AssemblyName="ReportMan" Version="1.0.1434.22521" LinkUnits="False"/>
-      <File FileName="Borland.Vcl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.Vcl" AssemblyName="Borland.Vcl" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="Borland.VclDbRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDbRtl" AssemblyName="Borland.VclDbRtl" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="Borland.VclDSnap.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDSnap" AssemblyName="Borland.VclDSnap" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="Borland.VclRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclRtl" AssemblyName="Borland.VclRtl" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="Borland.Vcl.Design.Standard.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclRtl" AssemblyName="Borland.VclRtl" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="Borland.VclBdeRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclBdeRtl" AssemblyName="Borland.VclBdeRtl" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="Borland.VclDbExpress.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDbExpress" AssemblyName="Borland.VclDbExpress" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="rpmreg.pas" ContainerId="" ModuleName="rpmreg"/>
+		</VersionInfo>  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <FileList>
+      <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="System" AssemblyName="system" Version="1.0.5000.0" LinkUnits="False"/>
+      <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.Data.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="System.Data" AssemblyName="system.data" Version="1.0.5000.0" LinkUnits="False"/>
+      <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.Drawing.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="System.Drawing" AssemblyName="system.drawing" Version="1.0.5000.0" LinkUnits="False"/>
+      <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.XML.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="System.XML" AssemblyName="system.xml" Version="1.0.5000.0" LinkUnits="False"/>
+      <File FileName="" ContainerId="" ModuleName="System.Reflection"/>
+      <File FileName="" ContainerId="" ModuleName="System.Runtime.CompilerServices"/>
+      <File FileName="" ContainerId="" ModuleName="SysUtils"/>
+      <File FileName="" ContainerId="" ModuleName="Forms"/>
+      <File FileName="..\..\..\rpfmainmetaviewvcl.pas" ContainerId="" ModuleName="rpfmainmetaviewvcl"/>
     </FileList>
   </DelphiDotNet.Personality>
 </BorlandProject>

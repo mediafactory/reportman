@@ -114,7 +114,9 @@ begin
   begin
    connect:=TIdHttp.Create(nil);
    try
+{$IFNDEF DOTNETD}
     connect.Port:=FPort;
+{$ENDIF}
   //  connect.ReadTimeout:=READ_TIMEOUT;
     astream:=TMemoryStream.Create;
     try
@@ -246,7 +248,9 @@ begin
  // Install need the url to install languages from
  connect:=TIdHttp.Create(nil);
  try
+{$IFNDEF DOTNETD}
   connect.Port:=FPort;
+{$ENDIF}
   astream:=TMemoryStream.Create;
   try
    sysdir:=GetTheSystemDirectory;

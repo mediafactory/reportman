@@ -1,55 +1,40 @@
-package ReportManDesign;
+program metaviewnet;
 
-{$ALIGN 0}
-{$ASSERTIONS ON}
-{$BOOLEVAL OFF}
-{$DEBUGINFO ON}
-{$EXTENDEDSYNTAX ON}
-{$IMPORTEDDATA ON}
-{$IOCHECKS ON}
-{$LOCALSYMBOLS ON}
-{$LONGSTRINGS ON}
-{$OPENSTRINGS ON}
-{$OPTIMIZATION ON}
-{$OVERFLOWCHECKS OFF}
-{$RANGECHECKS OFF}
-{$REFERENCEINFO ON}
-{$SAFEDIVIDE OFF}
-{$STACKFRAMES OFF}
-{$TYPEDADDRESS OFF}
-{$VARSTRINGCHECKS ON}
-{$WRITEABLECONST OFF}
-{$MINENUMSIZE 1}
-{$IMAGEBASE $400000}
-{$DESIGNONLY}
-{$IMPLICITBUILD OFF}
+{%DelphiDotNetAssemblyCompiler '$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.dll'}
+{%DelphiDotNetAssemblyCompiler '$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.Data.dll'}
+{%DelphiDotNetAssemblyCompiler '$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.Drawing.dll'}
+{%DelphiDotNetAssemblyCompiler '$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.XML.dll'}
 
-requires
-  Borland.Delphi,
-  ReportMan,
-  Borland.Vcl,
-  Borland.VclDbRtl,
-  Borland.VclDSnap,
-  Borland.VclRtl,
-  Borland.VclBdeRtl,
-  Borland.VclDbExpress,
-  Borland.Vcl.Design.Standard;
+uses
+  System.Reflection,
+  System.Runtime.CompilerServices,
+  SysUtils,
+  Forms,
+  rpfmainmetaviewvcl in '..\..\..\rpfmainmetaviewvcl.pas';
 
-contains
-  rpmregdesigntime in 'rpmregdesigntime.pas',
-  rpeditalias in 'rpeditalias.pas',
-  rpeditconnvcl in 'rpeditconnvcl.pas',
-  rpdbxconfigvcl in 'rpdbxconfigvcl.pas',
-  rpmdesigneditors in 'rpmdesigneditors.pas';
+{$R *.res}
 
-[assembly: AssemblyTitle('Report Manager Design Editors')]
-[assembly: AssemblyDescription('Report Manager Design Editors for Report Manager components')]
+{$REGION 'Program/Assembly Information'}
+//
+// General Information about an assembly is controlled through the following
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+//
+
+[assembly: AssemblyDescription('')]
 [assembly: AssemblyConfiguration('')]
-[assembly: AssemblyCompany('Toni Martir')]
-[assembly: AssemblyProduct('Report Manager')]
-[assembly: AssemblyCopyright('Copyright 2003 Toni Martir')]
+[assembly: AssemblyCompany('')]
+[assembly: AssemblyProduct('')]
+[assembly: AssemblyCopyright('')]
 [assembly: AssemblyTrademark('')]
 [assembly: AssemblyCulture('')]
+
+// The Delphi compiler controls the AssemblyTitleAttribute via the ExeDescription.
+// You can set this in the IDE via the Project Options.
+// Manually setting the AssemblyTitle attribute below will override the IDE
+// setting.
+// [assembly: AssemblyTitle('')]
+
 
 //
 // Version information for an assembly consists of the following four values:
@@ -82,14 +67,23 @@ contains
 //           in the KeyFile is installed into the CSP and used.
 //   (*) In order to create a KeyFile, you can use the sn.exe (Strong Name) utility.
 //       When specifying the KeyFile, the location of the KeyFile should be
-//       relative to the project output directory. For example, if your KeyFile is
+//       relative to the project output directory which is
+//       Project Directory\bin\<configuration>. For example, if your KeyFile is
 //       located in the project directory, you would specify the AssemblyKeyFile 
-//       attribute as [assembly: AssemblyKeyFile('mykey.snk')], provided your output
-//       directory is the project directory (the default).
+//       attribute as [assembly: AssemblyKeyFile('..\\..\\mykey.snk')]
 //   (*) Delay Signing is an advanced option - see the Microsoft .NET Framework
 //       documentation for more information on this.
 //
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile('')]
 [assembly: AssemblyKeyName('')]
+{$ENDREGION}
+
+[STAThread]
+begin
+  Application.Initialize;
+  Application.CreateForm(TFRpMainMetaVCL, FRpMainMetaVCL);
+  FRpMainMetaVCL.MFrame.CreateClitree;
+  FRpMainMetaVCL.browsecommandline:=true;
+  Application.Run;
 end.

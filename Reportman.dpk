@@ -6,6 +6,7 @@ package ReportMan;
 {$R 'rpalias.dcr'}
 {$R 'rppdfreport.dcr'}
 {$R 'rpvclreport.dcr'}
+{$R 'rpexpredlgvcl.dcr'}
 {$ALIGN 0}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -38,6 +39,8 @@ requires
   Borland.VclDSnap,
   Borland.Delphi,
   Borland.VclRtl,
+  IndyNetCore,
+  IndyNet,
   Borland.VclIBXpress;
 
 contains
@@ -82,7 +85,17 @@ contains
   rpvpreview in 'rpvpreview.pas',
   rpmdfopenlibvcl in 'rpmdfopenlibvcl.pas',
   rpmdftreevcl in 'rpmdftreevcl.pas',
-  rpmreg in 'rpmreg.pas';
+  rpmreg in 'rpmreg.pas',
+  rpmdcharttypes in 'rpmdcharttypes.pas',
+  rpexpredlgvcl in 'rpexpredlgvcl.pas',
+  rpfmetaviewvcl in 'rpfmetaviewvcl.pas',
+  rpfmainmetaviewvcl in 'rpfmainmetaviewvcl.pas',
+  rpmdprotocol in 'rpmdprotocol.pas',
+  rpmdrepclient in 'rpmdrepclient.pas',
+  rpmdprintconfigvcl in 'rpmdprintconfigvcl.pas',
+  rpmdclitreevcl in 'rpmdclitreevcl.pas',
+  rpmdfaboutvcl in 'rpmdfaboutvcl.pas',
+  rpregvcl in 'rpregvcl.pas';
 
 [assembly: AssemblyTitle('Report Manager Components')]
 [assembly: AssemblyDescription('Report Manager engine components, to access Report Manager reports')]

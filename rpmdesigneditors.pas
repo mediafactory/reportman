@@ -30,12 +30,18 @@ uses Classes,SysUtils,rptypes,rpcompobase,rpalias,rpdatainfo,DB,rpeval,
 {$IFDEF LINUX}
  rpmdfopenlib,rprfparams,rpexpredlg,QDialogs,
 {$ENDIF}
-{$IFDEF USEVARIANTS}
- Designintf,
- DesignEditors,
+{$IFNDEF DOTNETD}
+ {$IFDEF USEVARIANTS}
+  Designintf,
+  DesignEditors,
+ {$ENDIF}
+ {$IFNDEF USEVARIANTS}
+  Dsgnintf,
+ {$ENDIF}
 {$ENDIF}
-{$IFNDEF USEVARIANTS}
- Dsgnintf,
+{$IFDEF DOTNETD}
+  Borland.Vcl.Design.DesignIntf,
+  Borland.Vcl.Design.DesignEditors,
 {$ENDIF}
  TypInfo;
 
