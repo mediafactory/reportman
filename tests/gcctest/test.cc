@@ -1,11 +1,11 @@
 #include <stdio.h>
-#include "../../rpreportmanapi.h"
+#include "rpreportmanapi.h"
 
 int main(void)
 {
  int hreport;
 
- char reportmanfile[]="/home/toni/cvsroot/reportman/repman/repsamples/sample4.rep";
+ char reportmanfile[]="sample4.rep";
  printf("Test for report manager\n");
  printf("Will load :");
  printf(reportmanfile);
@@ -21,7 +21,7 @@ int main(void)
  else
  {
   printf("%d \n",hreport);
-  if (0==rp_execute(hreport,"pp.pdf",0,0))
+  if (0==rp_execute(hreport,"sample4.pdf",0,0))
   {
    printf(rp_lasterror());
    printf("\n");

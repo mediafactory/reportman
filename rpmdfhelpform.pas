@@ -51,6 +51,7 @@ type
 
 implementation
 
+
 {$R *.xfm}
 
 procedure TFRpHelpForm.AExitExecute(Sender: TObject);
@@ -81,5 +82,7 @@ begin
 
  SetInitialBounds;
 end;
+
+
 
 end.

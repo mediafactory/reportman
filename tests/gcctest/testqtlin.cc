@@ -1,11 +1,11 @@
 #include <stdio.h>
-#include "../../rpreportmanapiqt.h"
+#include "rpreportmanapiqt.h"
 
 int main(void)
 {
  int hreport;
 
- char reportmanfile[]="../../repman/repsamples/sample4.rep";
+ char reportmanfile[]="sample4.rep";
  printf("Test for report manager\n");
  printf("Will load :");
  printf(reportmanfile);
@@ -21,16 +21,16 @@ int main(void)
  else
  {
   printf("%d \n",hreport);
-//  if (0==rp_preview(hreport,"Hello"))
-//  {
-//   printf(rp_lasterror());
-//   printf("\n");
-//  }
-  if (0==rp_print(hreport,"Test",0,0))
+  if (0==rp_preview(hreport,"Hello"))
   {
-	  printf(rp_lasterror());
-	  printf("\n");
+   printf(rp_lasterror());
+   printf("\n");
   }
+//f (0==rp_print(hreport,"Test",0,1))
+//{
+// printf(rp_lasterror());
+// printf("\n");
+//}
   
   rp_close(hreport);
  }

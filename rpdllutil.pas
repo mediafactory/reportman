@@ -38,6 +38,8 @@ function rp_lasterror:PChar;stdcall;
 function FindReportIndex(hreport:integer):integer;
 function FindReport(hreport:integer):TRpReport;
 procedure rplibdoinit;
+procedure DLLHandler(Reason: Integer);
+
 
 implementation
 
@@ -186,6 +188,16 @@ begin
  end;
  lreports.clear;
 end;
+
+procedure DLLHandler(Reason: Integer);
+begin
+ // 0 means unloading, 1 means loading.
+ if Reason = 0 then
+ // Now we want to remove our signal handler.
+ UnhookSignal(RTL_SIGDEFAULT);
+end;
+
+
 
 initialization
  lreports:=nil;

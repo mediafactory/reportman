@@ -1,11 +1,13 @@
 #kylix_bin=/opt/kylix3/bin
 kylix_bin=/home/toni/kylix3/bin
 drivers_path=../../drivers/linux
+rpversion=1_6
 
 install:
 	cp $(kylix_bin)/libqtintf-6.9-qt2.3.so .
 	cp $(kylix_bin)/libborqt-6.9-qt2.3.so .
 	cp $(kylix_bin)/libmidas.so.1 .
+	cp $(kylix_bin)/libborunwind.so.6.0 .
 	cp $(drivers_path)/libsqldb2.so .
 	cp $(drivers_path)/libsqlib.so .
 	cp $(drivers_path)/libsqlinf.so .
@@ -15,7 +17,10 @@ install:
 	cp $(drivers_path)/libsqlora.so .
 	cp $(drivers_path)/libdbxoodbc.so .
 	cp $(drivers_path)/dbxres.en.1 .
-	cp ../../dll/libreportmanapi.so libreportmanapi.so
+	mkdir apilib
+	mkdir apilib/sample
+	cp ../../dll/libreportmanapi.so ../../dll/libreportmanapiqt.so apilib
+	cp ../gcctest/test.cc ../gcctest/testqtlin.cc ../gcctest/GNUmakefile ../gcctest/testqtlin.sh ../gcctest/test.sh ../../rpreportmanapi.h ../../rpreportmanapiqt.h apilib/sample
 	cp ../../repman/repmand .
 	cp ../../repman/dbxdrivers .
 	cp ../../repman/dbxconnections .
@@ -48,15 +53,23 @@ install:
 	-cp ../clxreport/Project1 .
 	cp ../../repman/repsamples/sample4.rep .
 	cp ../clxreport/biolife.cds .
-#	-mkdir doc
-#	cp ../../doc/doc/*.html doc
-#	mkdir doc/images
-#	mkdir doc/units
-#	cp ../../doc/doc/units/*.html doc/units
-#	cp ../../doc/doc/images/*.jpg doc/images
+	cp biolife.cds apilib/sample
+	cp sample4.rep apilib/sample
+	mkdir doc
+	cp ../../doc/doc/*.html doc
+	mkdir doc/images
+	mkdir doc/units
+	cp ../../doc/doc/units/*.html doc/units
+	cp ../../doc/doc/images/*.jpg doc/images
 #	include repmand.es when linux translation done
-	tar c LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es reportmanres.fr repmand reportserverapp reportserverapp.sh reportservercon reportservercon.sh repserverconfig repserverconfig.sh dbxdrivers dbxconnections metaprint metaview metaview.sh printrep printreptopdf printreptopdf.sh reptotxt txttorep repmand repmand.sh repmand.bin metaview.bin printrep.bin printreptopdf.bin metaprint.bin reportserverapp.bin reportservercon.bin repserverconfig.bin repwebexe repwebexe.bin README *.so *.so.1 qt_* dbxres.en.1 .htaccess printrep.sh libreportmanapi.so > repmand-1_6.i386.tar
-	gzip repmand-1_6.i386.tar
+	tar c LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es reportmanres.fr repmand dbxdrivers dbxconnections repmand repmand.sh repmand.bin README *.so *.so.1 qt_* dbxres.en.1 libborunwind.so.6.0 > rpdesigner-$(rpversion).i386.tar
+	gzip rpdesigner-$(rpversion).i386.tar
+	tar c LICENSE.TXT reportserverapp reportserverapp.sh reportserverapp.bin reportservercon reportservercon.sh reportservercon.bin repserverconfig repserverconfig.sh repserverconfig.bin metaprint metaprint.sh metaprint.bin metaview metaview.sh metaview.bin printrep printrep.sh printrep.bin printreptopdf printreptopdf.sh printreptopdf.bin reptotxt txttorep repwebexe repwebexe.bin .htaccess > rpservercline-$(rpversion).i386.tar
+	gzip rpservercline-$(rpversion).i386.tar
+	tar c LICENSE.TXT apilib > rplibapi-$(rpversion).i386.tar
+	gzip rplibapi-$(rpversion).i386.tar
+	tar c LICENSE.TXT doc > rpdocs-$(rpversion).i386.tar
+	gzip rpdocs-$(rpversion).i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0
 	-rm -f repmand
@@ -77,3 +90,5 @@ clean:
 	-rm -f reportserverapp
 	-rm -f *.bin
 	-rm -f .htaccess
+	-rm -Rf apilib
+	-rm libborunwind.so.6.0

@@ -287,8 +287,11 @@ type
     configfile:string;
     updatedmfields:boolean;
     AppStyle:TDefaultStyle;
+    oldappidle:TIdleEvent;
     oldonException:TExceptionEvent;
     oldonhint:TNotifyEvent;
+    HighLightText:String;
+    OldHelpFilename:string;
     procedure FreeInterface;
     procedure CreateInterface;
     function checkmodified:boolean;
@@ -308,8 +311,12 @@ type
     procedure UpdateUnits;
     procedure CorrectScrollBoxes;
     procedure UpdateStyle;
+    procedure OnHighLightText(Sender: TObject;
+     const HighlightedText: WideString);
     procedure MyExceptionHandler(Sender:TObject;E:Exception);
     procedure AppHint(Sender:TObject);
+    procedure OnHelpClick(Sender:TObject);
+    procedure HelpOnIdle(Sender:TObject;var done:Boolean);
   public
     { Public declarations }
     report:TRpReport;
@@ -1339,21 +1346,59 @@ begin
   ShowHelp(REPMAN_WEBSITE+'/doc/'+document);
 end;
 
+procedure TFRpMainF.HelpOnIdle(Sender:TObject;var done:Boolean);
+begin
+ Application.OnIdle:=oldappidle;
+ done:=false;
+ if Length(FHelp.TextBrowser1.Text)=0 then
+ begin
+  if Copy(HighLightText,1,7)='http://' then
+  begin
+   ShowHelp(HighLightText);
+   FHelp.TextBrowser1.Filename:=OldHelpFilename;
+  end;
+ end;
+end;
+
+procedure TFRpMainF.OnHelpClick(Sender:TObject);
+begin
+ oldappidle:=Application.OnIdle;
+ Application.OnIdle:=HelpOnIdle;
+end;
+
+procedure TFRpMainF.OnHighLightText(Sender: TObject;
+ const HighlightedText: WideString);
+begin
+ if Length(HighLightedText)>0 then
+ begin
+  HighLightText:=HighlightedText;
+  OldHelpFilename:=FHelp.TextBrowser1.Filename;
+  Writeln('Changed'+HighlightedText);
+ end;
+end;
+
 procedure TFRpMainF.ShowHelp(AURL:string);
 begin
- if FileExists(AURL) then
+ if Not (AURL='http://') then
  begin
-  if Not Assigned(FHelp) then
-   FHelp:=TFRpHelpform.Create(Application);
-  FHelp.TextBrowser1.FileName:=AURL;
-  if Length(FHelp.TextBrowser1.Text)<1 then
+  if FileExists(AURL) then
   begin
-   FHelp.TextBrowser1.Text:=SRpDocNotInstalled+#10+
-    SRpDocNotInstalled2+#10+
-   SRpDocNotInstalled3+#10;
+   if Not Assigned(FHelp) then
+   begin
+    FHelp:=TFRpHelpform.Create(Application);
+    FHelp.TextBrowser1.OnHighLightText:=OnHighLightText;
+    FHelp.TextBrowser1.OnClick:=OnHelpClick;
+   end;
+   FHelp.TextBrowser1.FileName:=AURL;
+   if Length(FHelp.TextBrowser1.Text)<1 then
+   begin
+    FHelp.TextBrowser1.Text:=SRpDocNotInstalled+#10+
+     SRpDocNotInstalled2+#10+
+    SRpDocNotInstalled3+#10;
+   end;
+   FHelp.Show;
+   exit;
   end;
-  FHelp.Show;
-  exit;
  end;
 {$IFDEF LINUX}
   Libc.system(PChar('konqueror "'+aurl+'"&'))

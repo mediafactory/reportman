@@ -87,6 +87,7 @@ end;
 var
  fullpath:string;
  targetdir,targetapp:string;
+ compmode:Boolean;
 {$ENDIF}
 begin
   { TODO -oUser -cConsole Main : Insert code here }
@@ -110,6 +111,32 @@ begin
   end;
   SetEnvValue('LD_LIBRARY_PATH',targetdir,true);
   SetEnvValue('PATH',targetdir,true);
+  compmode:=false;
+  if (Length(GetEnvironmentVariable('KYLIX_QT_FIX'))>1) then
+  begin
+   SetEnvValue('CLX_USE_LIBQT','True',false);
+   compmode:=true;
+  end
+  else
+  begin
+   if (Length(GetEnvironmentVariable('CLX_USE_LIBQT'))>1) then
+   begin
+    compmode:=true;
+   end;
+  end;
+  Writeln('Kylix application launcher');
+  if compmode then
+  begin
+   Writeln('Running in compatible mode (CLX_USE_LIBQT-libqtintf)');
+  end
+  else
+  begin
+   Writeln('Running in standard mode (NOT CLX_USE_LIBQT-libborqt)');
+  end;
+  Writeln('If you experience problems change the mode by define/undefine environment variable CLX_USE_LIBQT=true');
+  Writeln('Library path:');
+  Writeln(GetEnvironmentVariable('LD_LIBRARY_PATH'));
+
   ExecuteApp(targetapp);
   // Not succefull
   Writeln(ErrOutput,'Error: Unable to execute '+targetapp);

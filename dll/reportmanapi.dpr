@@ -12,6 +12,7 @@ library reportmanapi;
 {$I rpconf.inc}
 
 uses
+  ShareExcept,
   SysUtils,
   Classes,
   rpdllutil in '../rpdllutil.pas',
@@ -27,6 +28,13 @@ exports
  rp_lasterror;
 
 begin
+ // We want to map Linux Signals to Kylix Exceptions, so
+ // we call HookSignal to hook all the default signals.
+ HookSignal(RTL_SIGDEFAULT);
+
+ // Install the Exit handler.
+ DLLProc := @DLLHandler;
 end.
+
 
 

@@ -13,13 +13,15 @@ library reportmanapiqt;
 {$E so}
 
 uses
+  rpnotlibrary in 'rpnotlibrary.pas',
   SysUtils,
   Classes,
-  rpnotlibrary in 'rpnotlibrary.pas',
   rpdllutil in '../rpdllutil.pas',
   rpmdconsts in '../rpmdconsts.pas',
   rppdfdriver in '../rppdfdriver.pas',
-  rpdllutilqt in '../rpdllutilqt.pas';
+  rpdllutilqt in '../rpdllutilqt.pas',
+  rpqtdriver in '../rpqtdriver.pas' {FRpQtProgress},
+  QForms;
 
 exports
  rp_open,
@@ -29,7 +31,30 @@ exports
  rp_print,
  rp_preview;
 
+type
+ Tobjexp=class(TObject)
+  public
+   procedure OnException(Sender: TObject; E: Exception);
+  end;
+
+procedure Tobjexp.OnException(Sender: TObject; E: Exception);
 begin
+ WriteLn(E.Message);
+ Raise E;
+end;
+
+var
+ objexp:TObjExp;
+
+begin
+ // We want to map Linux Signals to Kylix Exceptions, so
+ // we call HookSignal to hook all the default signals.
+ HookSignal(RTL_SIGDEFAULT);
+
+ // Install the Exit handler.
+ DLLProc := @DLLHandler;
+ objexp:=TObjExp.Create;
+ Application.OnException:=objexp.OnException;
 end.
 
 

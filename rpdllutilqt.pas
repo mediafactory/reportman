@@ -71,7 +71,7 @@ begin
   copies:=report.Copies;
   if ShowPrintDialog<>0 then
   begin
-   if DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+   if rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
    begin
     if Not PrintReport(report,Title,aShowprogress,allpages,frompage,
      topage,copies,collate) then
