@@ -46,7 +46,6 @@ uses
   rpmdfbarcodeint in '..\rpmdfbarcodeint.pas',
   rpinfoprovid in '..\rpinfoprovid.pas',
   rpinfoprovgdi in '..\rpinfoprovgdi.pas',
-  rpinfoprovft in '..\rpinfoprovft.pas',
   rpmdfchartint in '..\rpmdfchartint.pas',
   rpmdfabout in '..\rpmdfabout.pas' {FRpAboutBox},
   rppdfreport in '..\rppdfreport.pas',

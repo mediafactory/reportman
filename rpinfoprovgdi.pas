@@ -13,12 +13,17 @@
 
 unit rpinfoprovgdi;
 
+{$I rpconf.inc}
+
+{$DEFINE USEKERNINGS}
 
 interface
 
 uses Classes,SysUtils,Windows,rpinfoprovid,
-    rpgraphutilsvcl,rpmdconsts,rptypes;
+    rpmdconsts,rptypes;
 
+const
+ MAXKERNINGS=10000;
 
 type
  TRpGDIInfoProvider=class(TInterfacedObject,IRpInfoProvider)
@@ -26,9 +31,11 @@ type
   fonthandle:THandle;
   currentname:String;
   currentstyle:integer;
+  loadedwidths:TStringList;
   procedure SelectFont(pdffont:TRpPDFFOnt);
-  procedure FillFontInfo(pdffont:TRpPDFFont;info:TRpTTFontInfo);
   procedure FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
+  function GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;
+  function GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;
   constructor Create;
   destructor destroy;override;
  end;
@@ -45,10 +52,12 @@ begin
  currentstyle:=0;
  fonthandle:=0;
  adc:=CreateCompatibleDC(GetDC(0));
+ loadedwidths:=TStringList.Create;
 end;
 
 destructor TRpGDIInfoProvider.destroy;
 begin
+ loadedwidths.free;
  ReleaseDC(0,adc);
  if fonthandle<>0 then
   DeleteObject(fonthandle);
@@ -61,6 +70,7 @@ var
 begin
  if ((currentname=pdffont.WFontName) and (currentstyle=pdffont.Style)) then
   exit;
+ loadedwidths.clear;
  currentname:=pdffont.WFontName;
  currentstyle:=pdffont.Style;
  if fonthandle<>0 then
@@ -106,20 +116,6 @@ begin
 end;
 
 
-procedure TRpGDIInfoProvider.FillFontInfo(pdffont:TRpPDFFont;info:TRpTTFontInfo);
-var
- logx,i:integer;
- aabc:array [32..255] of ABC;
-begin
- SelectFont(pdffont);
- logx:=GetDeviceCaps(adc,LOGPIXELSX);
- if not GetCharABCWidths(adc,32,255,aabc[32]) then
-  RaiseLastOSError;
- for i:=32 to 255 do
-  info.charwidths[i]:=Round(
-   (Integer(aabc[i].abcA)+Integer(aabc[i].abcB)+Integer(aabc[i].abcC))/logx*72000/TTF_PRECISION
-   );
-end;
 
 procedure TRpGDIInfoProvider.FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
 var
@@ -131,10 +127,17 @@ var
  apchar:PChar;
  alog:LOGFONT;
  acomp:byte;
+{$IFDEF USEKERNINGS}
+ akernings:array [0..MAXKERNINGS]of KERNINGPAIR;
+ numkernings:integer;
+ langinfo:DWord;
+ i:integer;
+{$ENDIF}
 begin
    // See if data can be embedded
    embeddable:=false;
    SelectFont(pdffont);
+   logx:=GetDeviceCaps(adc,LOGPIXELSX);
    data.postcriptname:=StringReplace(pdfFont.WFontName,' ','',[rfReplaceAll]);
    data.Encoding:='WinAnsiEncoding';
    asize:=GetOutlineTextMetrics(adc,0,nil);
@@ -146,7 +149,6 @@ begin
      begin
       if (potm^.otmfsType AND $8000)=0 then
        embeddable:=true;
-      logx:=GetDeviceCaps(adc,LOGPIXELSX);
       multipli:=1/logx*72000/TTF_PRECISION;
       data.Ascent:=Round(potm^.otmTextMetrics.tmAscent*multipli);
       data.Descent:=-Round(potm^.otmTextMetrics.tmDescent*multipli);
@@ -201,7 +203,36 @@ begin
     finally
      FreeMem(potm);
     end;
+{$IFNDEF USEKERNINGS}
+    data.havekerning:=false;
+    data.numkernings:=0;
+{$ENDIF}
+{$IFDEF USEKERNINGS}
+    // Get kerning pairs feature
+    langinfo:=GetFontLanguageInfo(adc);
+    data.havekerning:=(langinfo AND GCP_USEKERNING)>0;
+    numkernings:=0;
+    if data.havekerning then
+    begin
+     numkernings:=GetKerningPairs(adc,MAXKERNINGS,akernings[0]);
+     if numkernings<0 then
+     begin
+      numkernings:=0;
+     end;
+    end;
+    if numkernings>0 then
+    begin
+     for i:=0 to numkernings-1 do
+     begin
+      data.loadedkernings.AddObject(
+       FormatFloat('000000',akernings[i].wFirst)+
+       FormatFloat('000000',akernings[i].wSecond),
+       TObject(Round(-akernings[i].iKernAmount/logx*72000/TTF_PRECISION)));
+     end;
+    end;
+{$ENDIF}
    end;
+
    if embeddable then
    begin
     asize:=GetFontData(adc,0,0,nil,0);
@@ -215,5 +246,46 @@ begin
     end;
    end;
 end;
+
+function TRpGDIInfoProvider.GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):integer;
+var
+ logx:integer;
+ aabc:array [1..1] of ABC;
+ searchname:string;
+ index:integer;
+begin
+ searchname:=FormatFloat('000000',Integer(charcode));
+ index:=data.loadedwidths.IndexOf(searchname);
+ if index>=0 then
+ begin
+  Result:=Integer(data.loadedwidths.Objects[index]);
+  exit;
+ end;
+ SelectFont(pdffont);
+ logx:=GetDeviceCaps(adc,LOGPIXELSX);
+ if not GetCharABCWidths(adc,Cardinal(charcode),Cardinal(charcode),aabc[1]) then
+  RaiseLastOSError;
+ Result:=Round(
+   (Integer(aabc[1].abcA)+Integer(aabc[1].abcB)+Integer(aabc[1].abcC))/logx*72000/TTF_PRECISION
+   );
+ // Add to the cache
+ data.loadedwidths.AddObject(FormatFloat('000000',integer(charcode)),TObject(Result));
+end;
+
+
+function TRpGDIInfoProvider.GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;
+var
+ index:integer;
+begin
+ // Looks for the cached kerning
+ index:=data.loadedkernings.IndexOf(
+       FormatFloat('000000',Integer(leftchar))+
+       FormatFloat('000000',Integer(rightchar)));
+ if index>=0 then
+  Result:=Integer(data.loadedkernings.Objects[index])
+ else
+  Result:=0;
+end;
+
 
 end.

@@ -60,7 +60,6 @@ contains
   rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig},
   rpmdfhelpform in 'rpmdfhelpform.pas' {FRpHelpForm},
   rpmaskeditclx in 'rpmaskeditclx.pas',
-  rppagesetup in 'rppagesetup.pas' {FRpPageSetup},
-  rpinfoprovclx in 'rpinfoprovclx.pas';
+  rppagesetup in 'rppagesetup.pas' {FRpPageSetup};
 
 end.

@@ -17,7 +17,7 @@ object TRpReport
   end
   object TRpSection0: TRpSection
     Width = 10772
-    Height = 1701
+    Height = 2970
     SubReport = TRpSubReport0
     ChangeBool = False
     PageRepeat = False
@@ -36,6 +36,9 @@ object TRpReport
       end
       item
         Component = TRpLabel2
+      end
+      item
+        Component = TRpLabel3
       end>
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
@@ -52,20 +55,6 @@ object TRpReport
     SkipToPageExpre = ''
     BackExpression = ''
     Stream = {0000000000000000}
-  end
-  object TRpLabel0: TRpLabel
-    Width = 9555
-    Height = 870
-    PosX = 573
-    PosY = 800
-    Type1Font = poEmbedded
-    FontSize = 26
-    PrintCondition = ''
-    DoBeforePrint = ''
-    DoAfterPrint = ''
-    WFontName = 'Comic Sans MS'
-    LFontName = 'bullpen 3d'
-    WideText = 'Testing truetype in pdf output'
   end
   object TRpLabel1: TRpLabel
     Width = 4018
@@ -404,5 +393,33 @@ object TRpReport
       C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
       C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6
       C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C6C684848400}
+  end
+  object TRpLabel0: TRpLabel
+    Width = 9555
+    Height = 870
+    PosX = 570
+    PosY = 810
+    Type1Font = poEmbedded
+    FontSize = 26
+    PrintCondition = ''
+    DoBeforePrint = ''
+    DoAfterPrint = ''
+    WFontName = 'Palatino Linotype'
+    LFontName = 'bullpen 3d'
+    WideText = 'Testing truetype in pdf output'
+  end
+  object TRpLabel3: TRpLabel
+    Width = 9555
+    Height = 870
+    PosX = 570
+    PosY = 1950
+    Type1Font = poEmbedded
+    FontSize = 26
+    PrintCondition = ''
+    DoBeforePrint = ''
+    DoAfterPrint = ''
+    WFontName = 'Palatino Linotype'
+    LFontName = 'bullpen 3d'
+    WideText = 'BRAVO BRAVO AWAY HERE'
   end
 end

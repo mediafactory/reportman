@@ -46,12 +46,7 @@ type
    constructor Create;
   end;
 
- TRpTTFontInfo=class(TObject)
-  charwidths:TWinAnsiWidthsArray;
-  ttname:String;
-  ObjectName:String;
-  ObjectIndex:integer;
- end;
+
 
  TRpTTFontData=class(TObject)
   embedded:Boolean;
@@ -71,18 +66,41 @@ type
   FaceName:String;
   StyleName:String;
   type1:boolean;
+  havekerning:Boolean;
+  ObjectName:String;
   ObjectIndex:integer;
+  ObjectIndexParent:integer;
   DescriptorIndex:Integer;
+  loadedwidths,loadedkernings:TStringList;
+  constructor Create;
+  destructor Destroy;override;
  end;
 
  IRpInfoProvider=interface
   ['{59F66653-ACEC-4FC9-B918-C22136F576F1}']
-  procedure FillFontInfo(pdffont:TRpPDFFont;info:TRpTTFontInfo);
   procedure FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
+  function GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;
+  function GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;
  end;
 
 
 implementation
+
+constructor TRpTTFontData.Create;
+begin
+ loadedwidths:=TStringList.Create;
+ loadedwidths.sorted:=true;
+ loadedkernings:=TStringList.Create;
+ loadedkernings.sorted:=true;
+end;
+
+destructor TRpTTFontData.Destroy;
+begin
+ loadedkernings.free;
+ loadedwidths.free;
+
+ inherited;
+end;
 
 constructor TrpPdfFont.Create;
 begin

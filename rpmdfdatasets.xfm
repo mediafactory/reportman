@@ -1,15 +1,15 @@
 object FRpDatasets: TFRpDatasets
   Left = 0
   Top = 0
-  Width = 535
-  Height = 305
+  Width = 529
+  Height = 399
   VertScrollBar.Range = 113
   Align = alClient
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 535
+    Width = 529
     Height = 113
     Align = alTop
     BevelOuter = bvNone
@@ -17,7 +17,7 @@ object FRpDatasets: TFRpDatasets
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 535
+      Width = 529
       Height = 30
       AutoSize = True
       ButtonHeight = 26
@@ -88,7 +88,7 @@ object FRpDatasets: TFRpDatasets
     object PTop1: TPanel
       Left = 0
       Top = 30
-      Width = 535
+      Width = 529
       Height = 83
       Align = alClient
       BevelOuter = bvNone
@@ -112,7 +112,7 @@ object FRpDatasets: TFRpDatasets
       object PanelBasic: TPanel
         Left = 169
         Top = 0
-        Width = 366
+        Width = 360
         Height = 83
         Align = alClient
         BevelOuter = bvNone
@@ -166,16 +166,16 @@ object FRpDatasets: TFRpDatasets
   object PBottom: TPanel
     Left = 0
     Top = 113
-    Width = 535
-    Height = 192
+    Width = 529
+    Height = 286
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 535
-      Height = 192
+      Width = 529
+      Height = 286
       ActivePage = TabMyBase
       Align = alClient
       TabOrder = 0
@@ -185,14 +185,14 @@ object FRpDatasets: TFRpDatasets
           Left = 161
           Top = 0
           Width = 8
-          Height = 162
+          Height = 256
           Beveled = True
         end
         object MSQL: TMemo
           Left = 169
           Top = 0
-          Width = 358
-          Height = 162
+          Width = 352
+          Height = 256
           Align = alClient
           TabOrder = 0
           WordWrap = False
@@ -202,7 +202,7 @@ object FRpDatasets: TFRpDatasets
           Left = 0
           Top = 0
           Width = 161
-          Height = 162
+          Height = 256
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
@@ -223,7 +223,7 @@ object FRpDatasets: TFRpDatasets
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 527
+          Width = 521
           Height = 37
           Items.Strings = (
             'Query'
@@ -236,15 +236,15 @@ object FRpDatasets: TFRpDatasets
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 527
-          Height = 125
+          Width = 521
+          Height = 219
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
           object PBDEFilter: TPanel
             Left = 0
             Top = 0
-            Width = 527
+            Width = 521
             Height = 17
             Align = alTop
             Alignment = taLeftJustify
@@ -255,8 +255,8 @@ object FRpDatasets: TFRpDatasets
           object MBDEFilter: TMemo
             Left = 0
             Top = 17
-            Width = 527
-            Height = 108
+            Width = 521
+            Height = 202
             Align = alClient
             ScrollBars = ssBoth
             TabOrder = 1
@@ -453,7 +453,7 @@ object FRpDatasets: TFRpDatasets
         end
         object GUnions: TGroupBox
           Left = 0
-          Top = 92
+          Top = 120
           Width = 497
           Height = 109
           Caption = 'Dataset client side unions'
@@ -525,6 +525,21 @@ object FRpDatasets: TFRpDatasets
           Caption = 'Modify...'
           TabOrder = 5
           OnClick = BModifyClick
+        end
+        object EMasterFields: TEdit
+          Left = 144
+          Top = 89
+          Width = 205
+          Height = 21
+          TabOrder = 10
+          OnChange = MSQLChange
+        end
+        object LMasterfi: TLabel
+          Left = 0
+          Top = 93
+          Width = 59
+          Height = 13
+          Caption = 'Master fields'
         end
       end
     end
@@ -773,12 +788,12 @@ object FRpDatasets: TFRpDatasets
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF0000000000000000000011027F0000007E0200407F
-      00000CFF8080087F00010FFFC008017F04000FFFE202437F0E020FC1F020007F
-      0E040F80F000097F070C0FC0F004807F03980FE00080007F01F000000020207F
-      00E00001F802047F01F00F03F900017F03900F01F808807F0F0C0783F840107F
-      1E0607FFF800047F180303FFF802007F000001FF9110807F0000007E0000127F
-      000000000000007F000000000000007F000000000000007F01C000080000007F
+      0200000002000000FFFFFF00000000000000000003FFFFFF0000007E03FFFFFF
+      00000CFF83FFFFFF00010FFFC3FFFFFF04000FFFE3FFFFFF0E020FC1F222027F
+      0E040F80F000807F070C0FC0F000207F03980FE00084047F01F000000020007F
+      00E00001F801007F01F00F03F800487F03900F01F920027F0F0C0783F808007F
+      1E0607FFF801007F180303FFF880487F000001FF9010027F0000007E0004007F
+      000000000080887F000000000000007F000000000000007F01C000080000007F
       01C0000800FFF07F01C0001C00FFF07F01C0001C0080107F01C0003E00B6D07F
       01C0003E0080107F0FF8007F02B6F87F0FF8007F0080387F07F000FF80FFF87F
       07F000FF80B7FF7F03E0001C00FFFF7F03E0001C0001FF7F01C0001C0000387F

@@ -146,6 +146,9 @@ contains
   rphtmldriver in 'rphtmldriver.pas',
   rpmdrepclient in 'rpmdrepclient.pas',
   rpmaskedit in 'rpmaskedit.pas',
-  rpsvgdriver in 'rpsvgdriver.pas';
+  rpsvgdriver in 'rpsvgdriver.pas',
+  rpinfoprovgdi in 'rpinfoprovgdi.pas',
+  rpcsvdriver in 'rpcsvdriver.pas',
+  rpinfoprovid in 'rpinfoprovid.pas';
 
 end.

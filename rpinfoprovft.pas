@@ -30,7 +30,6 @@ uses Classes,SysUtils,
 
 
 type
- TRpWidths=array [32..255] of integer;
 
  TRpLogFont=class(TObject)
   fixedpitch:boolean;
@@ -40,7 +39,6 @@ type
   italic:Boolean;
   bold:Boolean;
   filename:String;
-  widths:TRpWidths;
   ascent:integer;
   descent:integer;
   weight:integer;
@@ -49,23 +47,30 @@ type
   Capheight:integer;
   ItalicAngle:double;
   BBox:TRect;
+  fullinfo:Boolean;
   StemV:double;
+  ftface:FT_Face;
+  faceinit:boolean;
   // kerning is not implemented but here checked
   havekerning:Boolean;
   type1:boolean;
+  convfactor,widthmult:Double;
+  loadedwidths,loadedkernings:TStringList;
+  constructor Create;
+  destructor Destroy;override;
  end;
 
  TRpFTInfoProvider=class(TInterfacedObject,IRpInfoProvider)
   currentname:String;
   defaultfont:TRpLogFont;
   currentstyle:integer;
-  alibrary:FT_Library;
   currentfont:TRpLogFont;
   crit:TCriticalSection;
   procedure InitLibrary;
   procedure SelectFont(pdffont:TRpPDFFOnt);
-  procedure FillFontInfo(pdffont:TRpPDFFont;info:TRpTTFontInfo);
   procedure FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
+  function GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;
+  function GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;
   constructor Create;
   destructor destroy;override;
  end;
@@ -76,7 +81,8 @@ var
   fontlist:TStringList;
   fontpaths:TStringList;
   fontfiles:TStringList;
-
+  ftlibrary:FT_Library;
+  initialized:boolean;
 
 const
  TTF_PRECISION=1000;
@@ -113,12 +119,28 @@ end;
 // also includes subdirectories
 procedure GetFontsDirectories(alist:TStringList);
 var
+{$IFDEF LINUX}
  afile:TStringList;
  astring:String;
  diderror:Boolean;
  apath:String;
  index:integer;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  abuf:pchar;
+{$ENDIF}
 begin
+{$IFDEF MSWINDOWS}
+ abuf:=AllocMem(255);
+ try
+  GetWindowsDirectory(abuf,255);
+  alist.Add(StrPas(abuf)+'\fonts');
+ finally
+  FreeMem(abuf);
+ end;
+ exit;
+{$ENDIF}
+{$IFDEF LINUX}
  diderror:=false;
  alist.clear;
  afile:=TStringList.create;
@@ -149,6 +171,7 @@ begin
   end;
   index:=Pos('<dir>',astring);
  end;
+{$ENDIF}
 end;
 
 procedure TRpFTInfoProvider.InitLibrary;
@@ -158,16 +181,9 @@ var
  retvalue:integer;
  aobj:TRpLogFont;
  afilename:string;
+ errorface:FT_Error;
 // kerningfile:string;
- alibrary:FT_Library;
  aface:FT_Face;
- w:FT_UInt;
- validcmap:boolean;
- awide:WideString;
- aucs:UCS4String;
- convfactor,widthmult:Double;
- j,k:FT_ULong;
- indexl,indexr:FT_UInt;
 begin
  if Assigned(fontlist) then
   exit;
@@ -218,74 +234,73 @@ begin
   end;
  end;
  defaultfont:=nil;
- CheckFreeType(FT_Init_FreeType(alibrary));
- try
-  // Now fill the font list with all font files
-  for i:=0 to fontfiles.Count-1 do
+ CheckFreeType(FT_Init_FreeType(ftlibrary));
+ initialized:=true;
+
+ // Now fill the font list with all font files
+ for i:=0 to fontfiles.Count-1 do
+ begin
+  afilename:=fontfiles.strings[i];
+  errorface:=FT_New_Face(ftlibrary,Pchar(afilename),0,aface);
+  if errorface=0 then
   begin
-   afilename:=fontfiles.strings[i];
-   if FT_New_Face(alibrary,Pchar(afilename),0,aface)=0 then
-   begin
-    try
-     // Add it only if it's a TrueType or OpenType font
-     // Type1 fonts also supported
-     if  (FT_FACE_FLAG_SCALABLE AND aface.face_flags)<>0 then
-     begin
-      CheckFreeType(FT_Set_Char_Size(aface,0,64*100,300,300));
-      aobj:=TRpLogFont.Create;
-      try
-       // Fill font properties
-       aobj.Type1:=(FT_FACE_FLAG_SFNT AND aface.face_flags)=0;
-       if aobj.Type1 then
-       begin
-        convfactor:=1;
-        widthmult:=1;
-        // Try finding and reading kernings
+   try
+    // Add it only if it's a TrueType or OpenType font
+    // Type1 fonts also supported
+    if  (FT_FACE_FLAG_SCALABLE AND aface.face_flags)<>0 then
+    begin
+     CheckFreeType(FT_Set_Char_Size(aface,0,64*100,720,720));
+     aobj:=TRpLogFont.Create;
+     try
+      aobj.FullInfo:=false;
+      // Fill font properties
+      aobj.Type1:=(FT_FACE_FLAG_SFNT AND aface.face_flags)=0;
+      if aobj.Type1 then
+      begin
+       aobj.convfactor:=1000/aface.units_per_EM;
+       aobj.widthmult:=aobj.convfactor;
+//        convfactor:=1;
+//        widthmult:=1;
+       // Try finding and reading kernings
 //        kerningfile:=ChangeFileExt(afilename,'.afm');
 //        if FileExists(kerningfile) then
 //        begin
 //         CheckFreeType(FT_Attach_File(aface,Pchar(kerningfile)));
 //        end;
-       end
-       else
-       begin
-        // Sizes perfect in Suse 9.1
-        // Truetype should contain 2048 value but contains 1000
-        // In Suse 9.0 contains 2048
-
-//        convfactor:=916/1880*2048/aface.units_per_EM;
+      end
+      else
+      begin
 //        convfactor:=916/1880;
-//        convfactor:=1400/1880;
-        convfactor:=1;
-        widthmult:=1;
-        // Note same text printed with OpenOffice, can be larger
-        // If exported to PDF from OpenOffice will be the same
-       end;
-       aobj.filename:=fontfiles.strings[i];
-       aobj.postcriptname:=StringReplace(StrPas(aface.family_name),' ','',[rfReplaceAll]);
-       aobj.familyname:=StrPas(aface.family_name);
-       aobj.fixedpitch:=(aface.face_flags AND FT_FACE_FLAG_FIXED_WIDTH)<>0;
-       aobj.HaveKerning:=(aface.face_flags AND FT_FACE_FLAG_KERNING)<>0;
-       aobj.BBox.Left:=Round(convfactor*aface.bbox.xMin);
-       aobj.BBox.Right:=Round(convfactor*aface.bbox.xMax);
-       aobj.BBox.Top:=Round(convfactor*aface.bbox.yMax);
-       aobj.BBox.Bottom:=Round(convfactor*aface.bbox.yMin);
-       aobj.ascent:=Round(convfactor*aface.ascender);
-       aobj.descent:=Round(convfactor*aface.descender);
-       aobj.MaxWidth:=Round(convfactor*aface.max_advance_width);
-       aobj.Capheight:=Round(convfactor*aface.ascender);
-       aobj.stylename:=StrPas(aface.style_name);
-       aobj.bold:=(aface.style_flags AND FT_STYLE_FLAG_BOLD)<>0;
-       aobj.italic:=(aface.style_flags AND FT_STYLE_FLAG_ITALIC)<>0;
-       validcmap:=false;
-       if FT_Select_Charmap(aface,FT_ENCODING_ADOBE_LATIN_1)=0 then
-        validcmap:=true
-       else
-       if FT_Select_Charmap(aface,FT_ENCODING_UNICODE)=0 then
-        validcmap:=true
-       else
-         if FT_Select_Charmap(aface,FT_ENCODING_ADOBE_STANDARD)=0 then
-          validcmap:=true
+       aobj.convfactor:=1000/aface.units_per_EM;
+       aobj.widthmult:=aobj.convfactor;
+       // Note same text printed with OpenOffice, can be larger
+       // If exported to PDF from OpenOffice will be the same
+      end;
+      aobj.filename:=fontfiles.strings[i];
+      aobj.postcriptname:=StringReplace(StrPas(aface.family_name),' ','',[rfReplaceAll]);
+      aobj.familyname:=StrPas(aface.family_name);
+      aobj.fixedpitch:=(aface.face_flags AND FT_FACE_FLAG_FIXED_WIDTH)<>0;
+      aobj.HaveKerning:=(aface.face_flags AND FT_FACE_FLAG_KERNING)<>0;
+      aobj.BBox.Left:=Round(aobj.convfactor*aface.bbox.xMin);
+      aobj.BBox.Right:=Round(aobj.convfactor*aface.bbox.xMax);
+      aobj.BBox.Top:=Round(aobj.convfactor*aface.bbox.yMax);
+      aobj.BBox.Bottom:=Round(aobj.convfactor*aface.bbox.yMin);
+      aobj.ascent:=Round(aobj.convfactor*aface.ascender);
+      aobj.descent:=Round(aobj.convfactor*aface.descender);
+      aobj.MaxWidth:=Round(aobj.convfactor*aface.max_advance_width);
+      aobj.Capheight:=Round(aobj.convfactor*aface.ascender);
+      aobj.stylename:=StrPas(aface.style_name);
+      aobj.bold:=(aface.style_flags AND FT_STYLE_FLAG_BOLD)<>0;
+      aobj.italic:=(aface.style_flags AND FT_STYLE_FLAG_ITALIC)<>0;
+{      validcmap:=false;
+      if FT_Select_Charmap(aface,FT_ENCODING_ADOBE_LATIN_1)=0 then
+       validcmap:=true
+      else
+      if FT_Select_Charmap(aface,FT_ENCODING_UNICODE)=0 then
+       validcmap:=true
+      else
+        if FT_Select_Charmap(aface,FT_ENCODING_ADOBE_STANDARD)=0 then
+         validcmap:=true
          else
           if FT_Select_Charmap(aface,FT_ENCODING_OLD_LATIN_2)=0 then
            validcmap:=true;
@@ -293,8 +308,11 @@ begin
        begin
         if validcmap then
         begin
-         if 0=FT_Load_Char(aface,j,FT_LOAD_NO_SCALE) then
+//         if 0=FT_Load_Char(aface,j,FT_LOAD_NO_SCALE) then
+         w:=FT_Get_Char_Index(aface,j);
+         if w>0 then
          begin
+          CheckFreeType(FT_Load_Glyph(aface,w,FT_LOAD_NO_SCALE));
           // Some fonts translated from freetype returns fixed
           // advance (wrong result)
           // for example casmira.ttf
@@ -307,7 +325,7 @@ begin
         else
          aobj.Widths[j]:=0;
        end;
-
+}
        if not assigned(defaultfont) then
        begin
         if ((not aobj.italic) and (not aobj.bold)) then
@@ -334,9 +352,6 @@ begin
     end;
    end;
   end;
- finally
-  FT_Done_FreeType(alibrary);
- end;
 end;
 
 constructor TRpFTInfoProvider.Create;
@@ -384,9 +399,6 @@ begin
  crit.Enter;
  try
   InitLibrary;
- finally
-  crit.Leave;
- end;
 {$IFDEF MSWINDOWS}
  afontname:=UpperCase(pdffont.WFontName);
 {$ENDIF}
@@ -475,34 +487,18 @@ begin
  currentfont:=defaultfont;
  if not assigned(currentfont) then
   Raise Exception.Create('No active font');
-end;
-
-
-procedure TRpFTInfoProvider.FillFontInfo(pdffont:TRpPDFFont;info:TRpTTFontInfo);
-var
- i:integer;
-begin
- crit.Enter;
- try
-  InitLibrary;
  finally
   crit.Leave;
  end;
- SelectFont(pdffont);
- for i:=32 to 255 do
- begin
-  info.charwidths[i]:=currentfont.widths[i];
- end;
 end;
+
+
 
 procedure TRpFTInfoProvider.FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
 begin
  crit.Enter;
  try
   InitLibrary;
- finally
-  crit.Leave;
- end;
  // See if data can be embedded
  SelectFont(pdffont);
  data.fontdata.Clear;
@@ -518,6 +514,7 @@ begin
  data.FontWeight:=0;
  data.MaxWidth:=currentfont.MaxWidth;
  data.AvgWidth:=currentfont.avCharWidth;
+ data.havekerning:=currentfont.havekerning;
  data.StemV:=0;
  data.FontStretch:='/Normal';
  data.FontBBox:=currentfont.BBox;
@@ -547,11 +544,137 @@ begin
   end;
  end;
  data.Type1:=currentfont.Type1;
+ finally
+  crit.Leave;
+ end;
 end;
 
 
+function TRpFTInfoProvider.GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;
+var
+ index,awidth:integer;
+ searchname:string;
+begin
+ crit.Enter;
+ try
+  InitLibrary;
+  searchname:=FormatFloat('000000',integer(charcode));
+  index:=data.loadedwidths.IndexOf(searchname);
+  if index>=0 then
+  begin
+   Result:=Integer(data.loadedwidths.Objects[index]);
+  end
+  else
+  begin
+   SelectFont(pdffont);
+   index:=currentfont.loadedwidths.IndexOf(searchname);
+   if index>=0 then
+   begin
+    awidth:=Integer(currentfont.loadedwidths.Objects[index]);
+   end
+   else
+   begin
+    if Not currentfont.faceinit then
+    begin
+     CheckFreeType(FT_New_Face(ftlibrary,PChar(currentfont.filename),0,currentfont.ftface));
+     currentfont.faceinit:=true;
+    end;
+    if 0=FT_Load_Char(currentfont.ftface,Cardinal(charcode),FT_LOAD_NO_SCALE) then
+     awidth:=Round(currentfont.widthmult*currentfont.ftface.glyph.advance.x)
+    else
+     awidth:=0;
+    currentfont.loadedwidths.AddObject(searchname,TObject(awidth))
+   end;
+   data.loadedwidths.AddObject(searchname,TObject(awidth));
+   Result:=awidth;
+  end;
+ finally
+  crit.Leave;
+ end;
+end;
+
+function TRpFTInfoProvider.GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;
+var
+ index:integer;
+ searchname:string;
+ kervalue:integer;
+ wl,wr:FT_UInt;
+ akerning:FT_Vector;
+begin
+ crit.Enter;
+ try
+  InitLibrary;
+  SelectFont(pdffont);
+  if not currentfont.havekerning then
+   Result:=0
+  else
+  begin
+   kervalue:=0;
+   searchname:=FormatFloat('000000',integer(leftchar))+
+    FormatFloat('000000',integer(rightchar));
+   index:=data.loadedkernings.IndexOf(searchname);
+   if index>=0 then
+   begin
+    result:=Integer(data.loadedkernings.objects[index]);
+   end
+   else
+   begin
+    index:=currentfont.loadedkernings.IndexOf(searchname);
+    if index>=0 then
+    begin
+     result:=Integer(currentfont.loadedkernings.objects[index]);
+    end
+    else
+    begin
+     if Not currentfont.faceinit then
+     begin
+      CheckFreeType(FT_New_Face(ftlibrary,PChar(currentfont.filename),0,currentfont.ftface));
+      currentfont.faceinit:=true;
+     end;
+     wl:=FT_Get_Char_Index(currentfont.ftface,Cardinal(leftchar));
+     if wl>0 then
+     begin
+      wr:=FT_Get_Char_Index(currentfont.ftface,Cardinal(rightchar));
+      if wr>0 then
+      begin
+       CheckFreeType(FT_Get_Kerning(currentfont.ftface,wl,wr,FT_KERNING_UNSCALED,akerning));
+       kervalue:=Round(currentfont.widthmult*akerning.x);
+      end;
+     end;
+     currentfont.loadedkernings.AddObject(searchname,TObject(kervalue));
+     result:=kervalue;
+    end;
+    data.loadedkernings.AddObject(searchname,TObject(kervalue));
+   end;
+  end;
+ finally
+  crit.Leave;
+ end;
+end;
+
+constructor TRpLogFont.Create;
+begin
+ loadedwidths:=TStringList.Create;
+ loadedwidths.sorted:=true;
+ loadedkernings:=TStringList.Create;
+ loadedkernings.Sorted:=true;
+ faceinit:=false;
+end;
+
+destructor TRpLogFont.Destroy;
+begin
+ loadedwidths.free;
+ loadedkernings.free;
+ if faceinit then
+  CheckFreeType(FT_Done_Face(ftface));
+ inherited destroy;
+end;
+
 initialization
  fontlist:=nil;
+ initialized:=false;
 finalization
  FreeFontList;
+ if initialized then
+  FT_Done_FreeType(ftlibrary);
 end.

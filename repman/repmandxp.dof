@@ -117,7 +117,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=1
 Release=0
-Build=41
+Build=43
 Debug=0
 PreRelease=0
 Special=0
@@ -128,7 +128,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Designer
-FileVersion=2.1.0.41
+FileVersion=2.1.0.43
 InternalName=repmandxp
 LegalCopyright=MPL/GPL License
 LegalTrademarks=
@@ -137,4 +137,7 @@ ProductName=Report Manager Designer
 ProductVersion=2.1.0.0
 Comments=
 [Excluded Packages]
+c:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
+c:\prog\delphi7\Projects\Bpl\GESTORX.bpl=Interface Gestor DelphiX
+c:\prog\delphi7\Projects\Bpl\UtilsVariats.bpl=Utils Variats (Jordi Farràs)
 c:\prog\delphi7\Projects\Bpl\Mycompos_d6.bpl=Utils generales

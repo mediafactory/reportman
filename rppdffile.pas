@@ -55,7 +55,7 @@ interface
 
 {$I rpconf.inc}
 
-uses Classes,Sysutils,rpinfoprovid,rpinfoprovft,
+uses Classes,Sysutils,rpinfoprovid,
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
@@ -67,6 +67,9 @@ uses Classes,Sysutils,rpinfoprovid,rpinfoprovft,
 {$ENDIF}
 {$IFDEF DOTNETD}
  Graphics,System.Runtime.InteropServices,
+{$ENDIF}
+{$IFDEF LINUX}
+ rpinfoprovft,
 {$ENDIF}
  rpmdconsts,rptypes,rpmunits;
 
@@ -96,13 +99,13 @@ type
    FLineInfo:array of TRpLineInfo;
    FLineInfoMaxItems:integer;
    FLineInfoCount:integer;
-   FFontTTList:TStringList;
    FFontTTData:TStringList;
    procedure NewLineInfo(info:TRpLineInfo);
    procedure SetDash;
    procedure SaveGraph;
    procedure RestoreGraph;
    procedure SetInfoProvider(aprov:IRpInfoProvider);
+   function GetTTFontData:TRpTTFontData;
   public
    PenColor:integer;
    PenStyle:integer;
@@ -128,6 +131,7 @@ type
    function CalcCharWidth(charcode:Widechar):double;
    procedure UpdateFonts;
    procedure FreeFonts;
+   function PDFCompatibleTextWidthKerning(astring:String;adata:TRpTTFontData;pdffont:TRpPDFFont):String;
   public
    procedure TextExtent(const Text:WideString;var Rect:TRect;wordbreak:boolean;
     singleline:boolean);
@@ -382,18 +386,6 @@ const
     500,444);
 
 
-function PDFCompatibleText(astring:string):string;
-var
- i:integer;
-begin
- Result:='';
- for i:=1 to Length(astring) do
- begin
-  if astring[i] in ['(',')','\'] then
-   Result:=Result+'\';
-  Result:=Result+astring[i];
- end;
-end;
 
 
 // Writes a line into a Stream that is add #13+#10
@@ -411,7 +403,6 @@ begin
 
 {$IFDEF MSWINDOWS}
  FInfoProvider:=TRpGDIInfoProvider.Create;
-// FInfoProvider:=TRpFtInfoProvider.Create;
 {$ENDIF}
 {$IFDEF LINUX}
  FInfoProvider:=TRpFtInfoProvider.Create;
@@ -419,7 +410,6 @@ begin
  FDefInfoProvider:=FInfoProvider;
  FFont:=TRpPDFFont.Create;
  FFile:=AFile;
- FFontTTList:=TStringList.Create;
  FFontTTData:=TStringList.Create;
  SetLength(FLineInfo,CONS_MINLINEINFOITEMS);
  FLineInfoMaxItems:=CONS_MINLINEINFOITEMS;
@@ -430,7 +420,6 @@ destructor TrpPDFCanvas.Destroy;
 begin
  FreeFonts;
  FFont.free;
- FFontTTList.free;
  FFontTTData.free;
  FFont:=nil;
  inherited Destroy;
@@ -705,7 +694,7 @@ end;
 procedure TrpPDFFile.SetArray;
 var
  i:Integer;
- ainfo:TRpTTFontInfo;
+ adata:TRpTTFontData;
 begin
  FObjectCount:=FObjectCount+1;
  FResourceNum:=FObjectCount;
@@ -720,11 +709,11 @@ begin
 
  for i:=1 to FFontCount do
   SWriteLine(FTempStream,'/F'+IntToStr(i)+' '+FFontList.Strings[i-1]+' 0 R ');
- for i:=0 to Canvas.FFontTTList.Count-1 do
+ for i:=0 to Canvas.FFontTTData.Count-1 do
  begin
-  ainfo:=TRpTTFontInfo(Canvas.FFontTTList.Objects[i]);
-  SWriteLine(FTempStream,'/F'+ainfo.ttname+
-   ' '+IntToStr(ainfo.ObjectIndex)+' 0 R ');
+  adata:=TRpTTFontData(Canvas.FFontTTData.Objects[i]);
+  SWriteLine(FTempStream,'/F'+Canvas.FFontTTData.Strings[i]+
+   ' '+IntToStr(adata.ObjectIndexParent)+' 0 R ');
  end;
  SWriteLine(FTempStream,'>>');
  SWriteLine(FTempStream,'>>');
@@ -1313,6 +1302,8 @@ var
  PosLine,PosLineX1,PosLineY1,PosLineX2,PosLineY2:integer;
  astring:String;
  afontname:string;
+ adata:TRpTTFontData;
+ havekerning:boolean;
 begin
  FFile.CheckPrinting;
  if (Rotation<>0) then
@@ -1354,7 +1345,19 @@ begin
   begin
    astring:=DoReverseString(astring);
   end;
-  SWriteLine(FFile.FsTempStream,'('+PDFCompatibleText(astring)+') Tj');
+  havekerning:=false;
+  adata:=GetTTFontData;
+  if assigned(adata) then
+  begin
+   if adata.havekerning then
+    havekerning:=true;
+  end;
+  if havekerning then
+  begin
+   SWriteLine(FFile.FsTempStream,PDFCompatibleTextWidthKerning(astring,adata,Font)+' TJ');
+  end
+  else
+   SWriteLine(FFile.FsTempStream,'('+PDFCompatibleText(astring)+') Tj');
   SWriteLine(FFile.FsTempStream,'ET');
  finally
   if (Rotation<>0) then
@@ -1634,11 +1637,12 @@ begin
   if (FFont.Name in [poLinked,poEmbedded]) then
   begin
    // Ask for font size
-   index:=FFontTTList.IndexOf(afontname+IntToStr(Font.Style));
+   index:=FFontTTData.IndexOf(afontname+IntToStr(Font.Style));
    if index>=0 then
    begin
-    aarray:=@(TRpTTFontInfo(FFontTTList.Objects[index]).charwidths);
-    isdefault:=false;
+    Result:=InfoProvider.GetCharWidth(Font,TRpTTFontData(FFontTTData.Objects[index]),charcode);
+    Result:=Result*FFont.Size/1000;
+    exit;
    end;
   end
   else
@@ -1696,8 +1700,19 @@ var
  alastsize:double;
  lockspace:boolean;
  createsnewline:boolean;
+ havekerning:boolean;
+ adata:TRpTTFontData;
+ kerningamount:integer;
 begin
  // Text extent for the simple strings, wide strings not supported
+ havekerning:=false;
+ adata:=GetTTFontData;
+ if assigned(adata) then
+ begin
+  if adata.havekerning then
+   havekerning:=true;
+ end;
+
  createsnewline:=false;
  astring:=Text;
  arec:=Rect;
@@ -1717,6 +1732,14 @@ begin
  while i<=Length(astring) do
  begin
   newsize:=CalcCharWidth(astring[i]);
+  if havekerning then
+  begin
+   if i<Length(astring) then
+   begin
+    kerningamount:=infoprovider.GetKerning(Font,adata,astring[i],astring[i+1]);
+    newsize:=newsize-(kerningamount*FFont.Size/1000);
+   end;
+  end;
   if (Not (astring[i] in [WideChar(' '),WideChar(#10),WideChar(#13)])) then
    lockspace:=false;
   if wordbreak then
@@ -2571,11 +2594,6 @@ procedure TRpPDFCanvas.FreeFonts;
 var
  i:integer;
 begin
- for i:=0 to FFontTTList.Count-1 do
- begin
-  FFontTTList.Objects[i].Free;
- end;
- FFontTTList.Clear;
  for i:=0 to FFontTTData.Count-1 do
  begin
   TRpTTFontData(FFontTTData.Objects[i]).fontdata.free;
@@ -2584,11 +2602,11 @@ begin
  FFontTTData.Clear;
 end;
 
+
 procedure TRpPDFCanvas.UpdateFonts;
 var
  uniquename:String;
  searchname:string;
- aobj:TRpTTFontInfo;
  adata:TRpTTFontData;
  index:integer;
  afontname:string;
@@ -2604,7 +2622,7 @@ begin
   afontname:=StringReplace(Font.LFontName,' ','',[rfReplaceAll]);
 {$ENDIF}
  searchname:=afontname+IntToStr(Font.Style);
- index:=FFontTTList.IndexOf(searchname);
+ index:=FFontTTData.IndexOf(searchname);
  if index<0 then
  begin
   index:=FFontTTData.Indexof(searchname);
@@ -2627,11 +2645,6 @@ begin
     if adata.Fontdata.Size>0 then
      adata.embedded:=true;
   end;
-  aobj:=TRpTTFontInfo.Create;
-  aobj.ttname:=uniquename;
-  FFontTTList.AddObject(searchname,aobj);
-  aobj.objectname:=searchname;
-  InfoProvider.FillFontInfo(Font,aobj);
  end;
 end;
 
@@ -2639,10 +2652,10 @@ procedure TRpPDFFile.SetFontType;
 var
  i:integer;
  adata:TRpTTFontData;
- ainfo:TRpTTFontInfo;
  index:integer;
  awidths:string;
  j:integer;
+ newchar:Integer;
 begin
  CreateFont('Type1','Helvetica','WinAnsiEncoding');
  CreateFont('Type1','Helvetica-Bold','WinAnsiEncoding');
@@ -2743,16 +2756,12 @@ begin
   FTempStream.SaveToStream(FMainPDF);
  end;
  // Creates the fonts of the font list
- for i:=0 to Canvas.FFontTTList.Count-1 do
+ for i:=0 to Canvas.FFontTTData.Count-1 do
  begin
-  ainfo:=TRpTTFontInfo(Canvas.FFontTTList.Objects[i]);
-  index:=Canvas.FFontTTData.IndexOf(ainfo.ObjectName);
-  if index<0 then
-   Raise Exception.Create(SRpFontDataIndexNotFound);
   adata:=TRpTTFontData(Canvas.FFontTTData.Objects[i]);
   FObjectCount:=FObjectCount+1;
   FTempStream.Clear;
-  ainfo.ObjectIndex:=FObjectCount;
+  adata.ObjectIndexParent:=FObjectCount;
   SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
   SWriteLine(FTempStream,'<< /Type /Font');
   if adata.Type1 then
@@ -2763,17 +2772,31 @@ begin
   begin
    SWriteLine(FTempStream,'/Subtype /TrueType');
   end;
-   SWriteLine(FTempStream,'/Name /F'+ainfo.ObjectName);
+   SWriteLine(FTempStream,'/Name /F'+adata.ObjectName);
   SWriteLine(FTempStream,'/BaseFont /'+adata.postcriptname);
-  SWriteLine(FTempStream,'/FirstChar 32');
-  SWriteLine(FTempStream,'/LastChar 255');
+  SWriteLine(FTempStream,'/FirstChar '+IntToStr(StrToInt(adata.loadedwidths.Strings[0])));
+  SWriteLine(FTempStream,'/LastChar '+IntToStr(StrToInt(adata.loadedwidths.Strings[adata.loadedwidths.count-1])));
   awidths:='[';
-  for j:=32 to 255 do
-  begin
-   awidths:=awidths+IntToStr(ainfo.charwidths[j])+' ';
-   if (j mod 8)=7 then
-   awidths:=awidths+LINE_FEED;
-  end;
+  j:=0;
+  index:=StrToInt(adata.loadedwidths.Strings[0]);
+  repeat
+   awidths:=awidths+IntToStr(Integer(adata.loadedwidths.Objects[j]))+' ';
+   inc(j);
+   if j<adata.loadedwidths.Count then
+   begin
+    newchar:=StrToInt(adata.loadedwidths.Strings[j]);
+    inc(index);
+    if (index mod 8)=7 then
+     awidths:=awidths+LINE_FEED;
+    while index<newchar do
+    begin
+     awidths:=awidths+'0 ';
+     inc(index);
+     if (index mod 8)=7 then
+      awidths:=awidths+LINE_FEED;
+    end;
+   end;
+  until j>adata.loadedwidths.Count-1;
   awidths:=awidths+']';
   SWriteLine(FTempStream,'/Widths '+awidths);
   SWriteLine(FTempStream,'/FontDescriptor '+
@@ -2784,7 +2807,6 @@ begin
   AddToOffset(FTempStream.Size);
   FTempStream.SaveToStream(FMainPDF);
  end;
-
 end;
 
 procedure TRpPDFCanvas.SetInfoProvider(aprov:IRpInfoProvider);
@@ -2798,4 +2820,82 @@ begin
  end;
 end;
 
+function TRpPDFCanvas.GetTTFontData:TRpTTFontData;
+var
+ afontname,searchname:String;
+ index:integer;
+begin
+ Result:=nil;
+ if Not (Font.Name in [poLinked,poEmbedded]) then
+  exit;
+ if Not Assigned(InfoProvider) then
+  exit;
+ UpdateFonts;
+{$IFDEF MSWINDOWS}
+  afontname:=StringReplace(Font.WFontName,' ','',[rfReplaceAll]);
+{$ENDIF}
+{$IFDEF LINUX}
+  afontname:=StringReplace(Font.LFontName,' ','',[rfReplaceAll]);
+{$ENDIF}
+ searchname:=afontname+IntToStr(Font.Style);
+ index:=FFontTTData.IndexOf(searchname);
+ if index>=0 then
+ begin
+  Result:=TRpTTFontData(FFontTTData.Objects[index]);
+ end;
+end;
+
+
+function TRpPDFCanvas.PDFCompatibleTextWidthKerning(astring:String;adata:TRpTTFontData;pdffont:TRpPDFFont):String;
+var
+ i:integer;
+ closeparent:boolean;
+ kerningvalue:integer;
+begin
+ if Length(astring)<1 then
+ begin
+  Result:='[]';
+  exit;
+ end;
+ Result:='[(';
+ closeparent:=true;
+ for i:=1 to Length(astring) do
+ begin
+  if astring[i] in ['(',')','\'] then
+   Result:=Result+'\';
+  Result:=Result+astring[i];
+  if (i<Length(astring)) then
+  begin
+   kerningvalue:=infoprovider.GetKerning(pdffont,adata,WideChar(astring[i]),WideChar(astring[i+1]));
+   if kerningvalue<>0 then
+   begin
+    Result:=Result+')'+' '+IntToStr(kerningvalue);
+    if i=Length(astring) then
+     closeparent:=false
+    else
+     Result:=Result+' (';
+   end;
+  end;
+ end;
+ if closeparent then
+  Result:=Result+')';
+ Result:=Result+']';
+end;
+
+function PDFCompatibleText(astring:string):string;
+var
+ i:integer;
+begin
+ Result:='';
+ for i:=1 to Length(astring) do
+ begin
+  if astring[i] in ['(',')','\'] then
+   Result:=Result+'\';
+  Result:=Result+astring[i];
+ end;
+end;
+
+
+
 end.
+

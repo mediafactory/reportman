@@ -21,9 +21,10 @@ object TRpReport
       Alias = 'ORDERS'
       DatabaseAlias = 'REPSAMPLES'
       SQL = 
-        'SELECT ITEMS.*,ORDERS.* FROM ORDERS '#10'LEFT OUTER JOIN ITEMS'#10'ON IT' +
-        'EMS.OrderNo=ORDERS.OrderNo'#10'WHERE ORDERS.ORDERNO BETWEEN :firstor' +
-        'der AND :lastorder'#10'ORDER BY ORDERS.CustNo,ORDERS.OrderNo,PartNo '
+        'SELECT ITEMS.*,ORDERS.* FROM ORDERS '#13#10'LEFT OUTER JOIN ITEMS'#13#10'ON ' +
+        'ITEMS.OrderNo=ORDERS.OrderNo'#13#10'WHERE ORDERS.ORDERNO BETWEEN :firs' +
+        'torder AND :lastorder'#13#10'ORDER BY ORDERS.CustNo,ORDERS.OrderNo,Par' +
+        'tNo '
       BDEIndexFields = 'CustNo'
       BDETable = 'orders'
     end
@@ -286,6 +287,9 @@ object TRpReport
       end
       item
         Component = TRpExpression14
+      end
+      item
+        Component = TRpLabel6
       end>
     AutoExpand = True
     AutoContract = True
@@ -984,5 +988,19 @@ object TRpReport
     Expression = 'Page'
     AgIniValue = '0'
     ExportExpression = ''
+  end
+  object TRpLabel6: TRpLabel
+    Width = 2295
+    Height = 480
+    PosX = 5910
+    PosY = 0
+    Type1Font = poEmbedded
+    FontSize = 36
+    PrintCondition = ''
+    DoBeforePrint = ''
+    DoAfterPrint = ''
+    WFontName = 'Palatino Linotype'
+    LFontName = 'Helvetica'
+    WideText = #10#10'AWAY again'
   end
 end

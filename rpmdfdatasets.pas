@@ -101,6 +101,8 @@ type
     PBrowser: TPanel;
     Splitter2: TSplitter;
     PLBrowser: TPanel;
+    EMasterFields: TEdit;
+    LMasterfi: TLabel;
     procedure BParamsClick(Sender: TObject);
     procedure LDatasetsClick(Sender: TObject);
     procedure MSQLChange(Sender: TObject);
@@ -175,6 +177,7 @@ begin
  LIndexName.Caption:=TranslateStr(163,LIndexName.Caption);
  LBDEIndexFields.Caption:=TranslateStr(164,LBDEIndexFields.Caption);
  LMasterFields.Caption:=TranslateStr(165,LMasterFields.Caption);
+ LMasterFi.Caption:=TranslateStr(165,LMasterFi.Caption);
  LNote.Caption:=TranslateStr(166,LNote.Caption);
  LMyBase.Caption:=TranslateStr(167,LMyBase.Caption);
  LIndexFields.Caption:=TranslateStr(164,LIndexFields.Caption);
@@ -288,6 +291,7 @@ begin
  EBDELastRange.Text:=dinfo.BDELastRange;
  EBDETable.Text:=dinfo.BDETable;
  EBDEMasterFields.Text:=dinfo.BDEMasterFields;
+ EMasterFields.Text:=dinfo.MyBaseMasterFields;
  RBDEType.ItemIndex:=Integer(dinfo.BDEType);
  index:=ComboConnection.Items.IndexOf(dinfo.DatabaseAlias);
  if index<0 then
@@ -481,6 +485,11 @@ begin
  if Sender=EBDEMasterFields then
  begin
   dinfo.BDEMasterFields:=EBDEMasterFields.Text;
+ end
+ else
+ if Sender=EMasterFields then
+ begin
+  dinfo.MyBaseMasterFields:=EMasterFields.Text;
  end
  else
  if Sender=EBDEFirstRange then

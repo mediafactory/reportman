@@ -1,15 +1,15 @@
 object FRpDatasetsVCL: TFRpDatasetsVCL
   Left = 0
   Top = 0
-  Width = 466
-  Height = 313
+  Width = 516
+  Height = 336
   Align = alClient
   AutoScroll = False
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 466
+    Width = 516
     Height = 105
     Align = alTop
     BevelOuter = bvNone
@@ -17,7 +17,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 466
+      Width = 516
       Height = 27
       AutoSize = True
       ButtonHeight = 25
@@ -78,7 +78,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object PTop1: TPanel
       Left = 0
       Top = 27
-      Width = 466
+      Width = 516
       Height = 78
       Align = alClient
       BevelOuter = bvNone
@@ -104,7 +104,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object PanelBasic: TPanel
         Left = 169
         Top = 0
-        Width = 297
+        Width = 347
         Height = 78
         Align = alClient
         BevelOuter = bvNone
@@ -158,16 +158,16 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
   object PBottom: TPanel
     Left = 0
     Top = 105
-    Width = 466
-    Height = 208
+    Width = 516
+    Height = 231
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 466
-      Height = 208
+      Width = 516
+      Height = 231
       ActivePage = TabMyBase
       Align = alClient
       TabOrder = 0
@@ -216,7 +216,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 458
+          Width = 508
           Height = 37
           Align = alTop
           Columns = 2
@@ -229,8 +229,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 458
-          Height = 143
+          Width = 508
+          Height = 166
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
@@ -411,6 +411,13 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Height = 13
           Caption = 'Field defs file'
         end
+        object LMasterfi: TLabel
+          Left = 0
+          Top = 77
+          Width = 59
+          Height = 13
+          Caption = 'Master fields'
+        end
         object EMyBase: TEdit
           Left = 96
           Top = 2
@@ -447,7 +454,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         end
         object GUnions: TGroupBox
           Left = 0
-          Top = 76
+          Top = 100
           Width = 449
           Height = 89
           Caption = 'Dataset client side unions'
@@ -521,6 +528,14 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Caption = 'Modify...'
           TabOrder = 3
           OnClick = BModifyClick
+        end
+        object EMasterFields: TEdit
+          Left = 96
+          Top = 73
+          Width = 209
+          Height = 21
+          TabOrder = 7
+          OnChange = MSQLChange
         end
       end
     end

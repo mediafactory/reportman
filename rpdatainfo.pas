@@ -247,6 +247,7 @@ type
    FMyBaseFilename:string;
    FMyBaseFields:String;
    FMyBaseIndexFields:string;
+   FMyBaseMasterFields:string;
    FBDEIndexFields:string;
    FBDEIndexName:string;
    FBDETable:string;
@@ -295,6 +296,7 @@ type
    property MyBaseFilename:string read FMyBaseFilename write FMyBaseFilename;
    property MyBaseFields:string read FMyBaseFields write FMyBaseFields;
    property MyBaseIndexFields:string read FMyBaseIndexFields write FMyBaseIndexFields;
+   property MyBaseMasterFields:string read FMyBaseMasterFields write FMyBaseMasterFields;
    property BDEIndexFields:string read FBDEIndexFields write FBDEIndexFields;
    property BDEIndexName:string read FBDEIndexName write FBDEIndexName;
    property BDETable:string read FBDETable write FBDETable;
@@ -542,6 +544,7 @@ begin
   FMyBaseIndexFields:=TRpDataInfoItem(Source).FMyBaseIndexFields;
   FBDEIndexFields:=TRpDataInfoItem(Source).FBDEIndexFields;
   FBDEMasterFields:=TRpDataInfoItem(Source).FBDEMasterFields;
+  FMyBaseMasterFields:=TRpDataInfoItem(Source).FMyBaseMasterFields;
   FBDEIndexName:=TRpDataInfoItem(Source).FBDEIndexName;
   FBDEFilter:=TRpDataInfoItem(Source).FBDEFilter;
   FBDETable:=TRpDataInfoItem(Source).FBDETable;
@@ -1641,6 +1644,15 @@ begin
         FMasterSource.DataSet:=datainfosource.Dataset;
 }
 {$ENDIF}
+      end;
+     rpdatamybase:
+      begin
+       TClientDataset(FSQLInternalQuery).MasterFields:=MyBaseMasterFields;
+       TClientDataset(FSQLInternalQuery).MasterSource:=FMasterSource;
+       if datainfosource.cached then
+        FMasterSource.DataSet:=datainfosource.CachedDataset
+       else
+        FMasterSource.DataSet:=datainfosource.Dataset;
       end;
      rpdatabde:
       begin
@@ -3037,8 +3049,8 @@ begin
        ditem.Connect(FDBInfoList,FParamsList);
       end;
      end;
+{$ENDIF}
     end;
-    {$ENDIF}
    end;
   end;
 {$ENDIF}

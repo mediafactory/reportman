@@ -595,8 +595,8 @@ begin
        displayformat:=ShortTimeFormat
       else
        displayformat:=ShortDateFormat+' '+ShortTimeFormat;
-     if VarType(value)=varDate then
-      Result:=FormatDateTime(displayformat,Value)
+     if VarType(value) in [varDate,varDouble,varSingle,varCurrency,varInteger] then
+      Result:=FormatDateTime(displayformat,TDateTime(Value))
      else
       Result:=widestring(Value);
     end

@@ -24,7 +24,9 @@ uses
   Graphics,
   Forms,
   Controls,
+{$IFDEF USEVARIANTS}
   midaslib,
+{$ENDIF}
   rpmdfmainvcl in '..\rpmdfmainvcl.pas' {FRpMainFVCL},
   rpmdfdesignvcl in '..\rpmdfdesignvcl.pas' {FRpDesignFrameVCL: TFrame},
   rpmdfaboutvcl in '..\rpmdfaboutvcl.pas' {FRpAboutBoxVCL},
