@@ -26,12 +26,14 @@ uses
   rpqtdriver in '..\..\..\rpqtdriver.pas',
   rpmetafile in '..\..\..\rpmetafile.pas',
   rpreport in '..\..\..\rpreport.pas',
+  rptypes in '..\..\..\rptypes.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas';
 {$ENDIF}
 
 {$IFDEF LINUX}
   rpqtdriver in '../../../rpqtdriver.pas',
   rpmetafile in '../../../rpmetafile.pas',
+  rptypes in '../../../rptypes.pas',
   rpreport in '../../../rpreport.pas',
   rpmdconsts in '../../../rpmdconsts.pas';
 {$ENDIF}
@@ -63,9 +65,11 @@ var
  topage:integer;
  copies:integer;
  collate:boolean;
+ printerindex:TRpPrinterSelect;
 begin
  try
   { TODO -oUser -cConsole Main : Insert code here }
+  printerindex:=pRpDefaultPrinter;
   if ParamCount<1 then
    PrintHelp
   else
@@ -118,6 +122,15 @@ begin
         copies:=1;
       end
       else
+      // Printer selection
+      if ParamStr(indexparam)='-p' then
+      begin
+       inc(indexparam);
+       if indexparam>=Paramcount+1 then
+        Raise Exception.Create(SRpNumberexpected);
+       printerindex:=TRpPrinterSelect(StrToInt(ParamStr(indexparam)));
+      end
+      else
       if ParamStr(indexparam)='-collate' then
       begin
        collate:=true;
@@ -147,7 +160,7 @@ begin
        WriteLn(SRpPrintingFile+':'+filename);
       end;
       if PrintMetafile(metafile,filename,ShowProgress,allpages,
-       frompage,topage,copies,collate) then
+       frompage,topage,copies,collate,printerindex) then
        if ShowProgress then
        begin
         WriteLn(SRpPrinted);

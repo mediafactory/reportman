@@ -121,6 +121,16 @@ begin
  ComboPrinters.Items.Assign(Printer.Printers);
  QPrinter_printerName(QPrinterH(Printer.Handle),@abuffer);
  LPrinterDevice.Caption:=abuffer;
+ // If there is no printer selected, selects one
+ if Printer.Printers.Count>0 then
+ begin
+  if Length(LPrinterDevice.Caption)<1 then
+  begin
+   Printer.SetPrinter(Printer.Printers.Strings[0]);
+   QPrinter_printerName(QPrinterH(Printer.Handle),@abuffer);
+   LPrinterDevice.Caption:=abuffer;
+  end;
+ end;
  ComboPrinters.ItemIndex:=Printer.Printers.Indexof(LPrinterDevice.Caption);
  LPrinterDevice.Font.Style:=[fsBold];
  ComboOutputType.ItemIndex:=Integer(Printer.OutPutType);

@@ -55,6 +55,7 @@ type
     { Private declarations }
     allpages,collate:boolean;
     frompage,topage,copies:integer;
+    printerindex:TRpPrinterSelect;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure AppIdleReport(Sender:TObject;var done:boolean);
     procedure AppIdlePrintPDF(Sender:TObject;var done:boolean);
@@ -110,7 +111,7 @@ type
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
  showprogress,allpages:boolean;frompage,topage,copies:integer;
-  collate:boolean):boolean;
+  collate:boolean;printerindex:TRpPrinterSelect=pRpDefaultPrinter):boolean;
 function CalcReportWidthProgress(report:TRpReport):boolean;
 function PrintReport(report:TRpReport;Caption:string;progress:boolean;
   allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
@@ -676,7 +677,7 @@ end;
 
 procedure DoPrintMetafile(metafile:TRpMetafileReport;tittle:string;
  aform:TFRpQtProgress;allpages:boolean;frompage,topage,copies:integer;
- collate:boolean);
+ collate:boolean;printerindex:TRpPrinterSelect=pRpDefaultPrinter);
 var
  i:integer;
  j:integer;
@@ -694,6 +695,7 @@ var
     difmilis:int64;
  totalcount:integer;
 begin
+ PrinterSelection(printerindex);
  // Get the time
 {$IFDEF MSWINDOWS}
  mmfirst:=TimeGetTime;
@@ -800,14 +802,14 @@ end;
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
  showprogress,allpages:boolean;frompage,topage,copies:integer;
-  collate:boolean):boolean;
+  collate:boolean;printerindex:TRpPrinterSelect=pRpDefaultPrinter):boolean;
 var
  dia:TFRpQtProgress;
 begin
  Result:=true;
  if Not ShowProgress then
  begin
-  DoPrintMetafile(metafile,tittle,nil,allpages,frompage,topage,copies,collate);
+  DoPrintMetafile(metafile,tittle,nil,allpages,frompage,topage,copies,collate,printerindex);
   exit;
  end;
  dia:=TFRpQtProgress.Create(Application);
@@ -815,6 +817,7 @@ begin
   dia.oldonidle:=Application.OnIdle;
   try
    dia.metafile:=metafile;
+   dia.printerindex:=printerindex;
    dia.tittle:=tittle;
    dia.allpages:=allpages;
    dia.frompage:=frompage;
@@ -851,7 +854,7 @@ begin
  done:=false;
  LTittle.Caption:=tittle;
  Lprocessing.Visible:=true;
- DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate);
+ DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate,printerindex);
 end;
 
 
@@ -1045,7 +1048,7 @@ begin
    // When compiling metaview the bug can be skiped
    // Saves the metafile
    // Selects the printer for that report
-   PrinterSelection(report.PrinterSelect);
+//   PrinterSelection(report.PrinterSelect);
    tmpnam(abuffer);
    afilename:=StrPas(abuffer);
    report.Metafile.SaveToFile(afilename);
@@ -1053,7 +1056,9 @@ begin
    params[1]:='-d';
    params[2]:='-copies';
    params[3]:=IntToStr(copies);
-   paramcount:=4;
+   params[4]:='-p';
+   params[5]:=IntToStr(integer(report.PrinterSelect));
+   paramcount:=6;
    if collate then
    begin
     params[paramcount]:='-collate';
@@ -1187,7 +1192,9 @@ end;
 procedure PrinterSelection(printerindex:TRpPrinterSelect);
 var
  printername:String;
+ abuffer:widestring;
  index:integer;
+ qtprintername:WideString;
 begin
  printername:=GetPrinterConfigName(printerindex);
  if length(printername)>0 then
@@ -1195,6 +1202,17 @@ begin
   index:=Printer.Printers.IndexOf(printername);
   if index>=0 then
    Printer.SetPrinter(printername);
+ end;
+ // Gets the printer name if no printer selected select the first one
+ if Printer.Printers.Count>0 then
+ begin
+  SetLength(abuffer,500);
+  QPrinter_printerName(QPrinterH(Printer.Handle),@abuffer);
+  qtprintername:=abuffer;
+  if Length(qtprintername)<1 then
+  begin
+   Printer.SetPrinter(Printer.Printers.Strings[0]);
+  end;
  end;
 end;
 
