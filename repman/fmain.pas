@@ -652,7 +652,7 @@ procedure TFMainf.ADataConfigExecute(Sender: TObject);
 begin
  // Data info configuration dialog
  ShowDataConfig(report);
- fdesignframe.UpdateSelection(true);
+// fdesignframe.UpdateSelection(true);
  updatedmfields:=false;
 end;
 
@@ -664,7 +664,7 @@ end;
 procedure TFMainf.AGridOptionsExecute(Sender: TObject);
 begin
  ModifyGridProperties(report);
- fdesignframe.UpdateSelection(true);
+// fdesignframe.UpdateSelection(true);
 end;
 
 procedure TFMainf.ACutExecute(Sender: TObject);
@@ -680,7 +680,7 @@ begin
  Clipboard.SetComponent(pitem);
  section.DeleteComponent(pitem);
  fobjinsp.CompItem:=nil;
- fdesignframe.UpdateSelection(true);
+// fdesignframe.UpdateSelection(true);
 end;
 
 procedure TFMainf.ACopyExecute(Sender: TObject);
@@ -721,7 +721,7 @@ begin
   Generatenewname(compo);
   (section.Components.Add).Component:=TRpCommonPosComponent(compo);
   fobjinsp.CompItem:=nil;
-  fdesignframe.UpdateSelection(true);
+//  fdesignframe.UpdateSelection(true);
  end
  else
  begin
@@ -934,7 +934,7 @@ begin
  if assigned(fdesignframe) then
  begin
   fdesignframe.UpdateInterface;
-  fdesignframe.UpdateSelection(true);
+//  fdesignframe.UpdateSelection(true);
  end;
 end;
 

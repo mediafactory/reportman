@@ -499,9 +499,9 @@ begin
   if Assigned(labelint) then
   begin
    labelint.Parent:=parent;
+   labelint.sectionint:=self;
    labelint.UpdatePos;
    labelint.fobjinsp:=fobjinsp;
-   labelint.sectionint:=self;
    childlist.Add(labelint)
   end;
  end;

@@ -1,10 +1,11 @@
+{TODO 1 -oToni -cDesign Interface : Add multilect option and show common properties in object inspector}
 {TODO 2 -oToni -cEngine : Conditional define to build reportman package without db drivers}
 {DONE 4 -oToni -cDesign Interface : Select inchess or cms in preferences menu}
 {TODO 1 -oToni -cEngine : Add text rotation to text controls}
 {TODO 1 -oToni -cEngine : Implementation for Delphi 5 (ADO-NOADO) and C++Builder 4}
 {TODO 2 -oToni -cEngine : Add aliaslist to the report component to use application opened querys}
 {TODO 1 -oToni -cDesign Interface : Select the object that produces a error}
-{TODO 1 -oToni -cEngine : Add barcode component}
+{TODO 1 -oToni -cDesign Interface : Add a alignment window for elements}
 {TODO 1 -oToni -cEngine : Implementation of vertical labels as subreport column width}
 {TODO 1 -oToni -cDesign Interface : Enhace object inspector speed}
 {TODO 2 -oToni -cEngine : Implement pagerepeat for group headers}
@@ -32,7 +33,7 @@
 
 
 
-{DONE 1 -oToni -cEngine : About box}
+{DONE 5 -oToni -cDesign Interface : Shows all sections of a subreport in rpsection interface}
 {TODO 1 -oToni -cEngine : Write some documentation}
 {TODO 1 -oToni -cEngine : Free pages in metafile while 
 previewing...}

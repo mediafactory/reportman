@@ -148,7 +148,18 @@ begin
  if Assigned(FCompItem) then
   if Assigned(Value) then
    if FCompItem.ClassName=Value.ClassName then
+   begin
+    if FCompItem is TRpSectionInterface then
+    begin
+     if TRpSection(TRpSectionInterface(FCompItem).printitem).SectionType=
+      TRpSection(TRpSectionInterface(Value).printitem).SectionType then
+       dontrelease:=true;
+    end
+    else
+    begin
      dontrelease:=true;
+    end;
+   end;
  if not dontrelease then
   ReleaseAllControls;
  FCompItem:=Value;

@@ -23,7 +23,6 @@ object FDesignFrame: TFDesignFrame
       Width = 389
       Height = 20
       RType = rHorizontal
-      Visible = False
     end
   end
   object PLeft: TPanel
@@ -34,13 +33,6 @@ object FDesignFrame: TFDesignFrame
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1
-    object LeftRuler: TRpRuler
-      Left = 0
-      Top = 0
-      Width = 20
-      Height = 283
-      Visible = False
-    end
   end
   object SectionScrollBox: TScrollBox
     Left = 20
