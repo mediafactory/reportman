@@ -47,21 +47,28 @@ type
     ToolButton6: TToolButton;
     PParent: TPanel;
     PanelProps: TPanel;
+    PopAdd: TPopupMenu;
+    MNew: TMenuItem;
+    PTop: TPanel;
     GDriver: TListBox;
+    PDriver: TPanel;
+    MHelp: TMemo;
+    Panel1: TPanel;
     BConfig: TButton;
+    GAvailable: TGroupBox;
     LConnections: TListBox;
     PConProps: TPanel;
+    LConnectionString: TLabel;
+    LAvailable: TLabel;
+    LDriver: TLabel;
     CheckLoginPrompt: TCheckBox;
     CheckLoadParams: TCheckBox;
     CheckLoadDriverParams: TCheckBox;
-    LConnectionString: TLabel;
     EConnectionString: TEdit;
     ComboAvailable: TComboBox;
-    LAvailable: TLabel;
-    MHelp: TMemo;
     BBuild: TButton;
-    PopAdd: TPopupMenu;
-    MNew: TMenuItem;
+    ComboDriver: TComboBox;
+    BTest: TButton;
     procedure GDriverClick(Sender: TObject);
     procedure LConnectionsClick(Sender: TObject);
     procedure BNewClick(Sender: TObject);
@@ -70,11 +77,18 @@ type
     procedure BBuildClick(Sender: TObject);
     procedure ANewConnectionExecute(Sender: TObject);
     procedure PopAddPopup(Sender: TObject);
+    procedure ADeleteExecute(Sender: TObject);
+    procedure ComboDriverClick(Sender: TObject);
+    procedure BTestClick(Sender: TObject);
+    procedure CheckLoginPromptClick(Sender: TObject);
+    procedure EConnectionStringChange(Sender: TObject);
   private
     { Private declarations }
     conadmin:IConnectionAdmin;
     FDatabaseInfo:TRpDatabaseInfoList;
     procedure SetDatabaseInfo(Value:TRpDatabaseInfoList);
+    procedure MenuAddClick(Sender:TObject);
+    function FindDatabaseInfoItem:TRpDatabaseInfoItem;
   public
     { Public declarations }
     constructor Create(AOwner:TComponent);override;
@@ -91,7 +105,13 @@ begin
  inherited Create(AOwner);
 
  // Translations
+ BConfig.Caption:=TranslateStr(143,BConfig.Caption);
+ CheckLoginPrompt.Caption:=TranslateStr(144,CheckLoginPrompt.Caption);
+ CheckLoadParams.Caption:=TranslateStr(145,CheckLoadParams.Caption);
+ CheckLoadDriverParams.Caption:=TranslateStr(146,CheckLoadDriverParams.Caption);
 
+ GetRpDatabaseDrivers(GDriver.Items);
+ GetRpDatabaseDrivers(ComboDriver.Items);
 
 {$IFDEF USECONADMIN}
  UpdateConAdmin;
@@ -128,6 +148,9 @@ begin
 end;
 
 procedure TFRpConnectionVCL.LConnectionsClick(Sender: TObject);
+var
+ dbinfo:TRpDatabaseInfoItem;
+ index:integer;
 begin
  if Not Assigned(FDatabaseInfo) then
   exit;
@@ -140,32 +163,42 @@ begin
   LConnectionString.Visible:=False;
   EConnectionString.Visible:=false;
   BBuild.Visible:=false;
+  BTest.Visible:=false;
+  ComboDriver.Visible:=false;
+  LDriver.Visible:=false;
   Exit;
  end;
+ If LConnections.ItemIndex<0 then
+  exit;
+ index:=FDatabaseInfo.IndexOf(LConnections.Items[LConnections.ItemIndex]);
+ if index<0 then
+  exit;
  CheckLoginPrompt.Visible:=True;
  CheckLoadParams.Visible:=True;
+ BTest.Visible:=True;
  CheckLoadDriverParams.Visible:=True;
+ ComboDriver.Visible:=true;
+ LDriver.Visible:=true;
+ // Get information about the dabaseinfo
+ dbinfo:=FDatabaseinfo.Items[index];
+ ComboDriver.ItemIndex:=Integer(dbinfo.Driver);
+ ComboDriverClick(Self);
+ CheckLoginPrompt.Checked:=dbinfo.LoginPrompt;
+ CheckLoadParams.Checked:=dbinfo.LoadParams;
+ CheckLoadDriverParams.Checked:=dbinfo.LoadDriverParams;
+ EConnectionString.Text:=dbinfo.ADOConnectionString;
 end;
 
 procedure TFRpConnectionVCL.GDriverClick(Sender: TObject);
-var
- index:integeR;
 begin
  if Not Assigned(FDatabaseInfo) then
   exit;
- LConnectionString.Visible:=False;
- EConnectionString.Visible:=false;
- BBuild.Visible:=false;
  // Loads the alias config
  case TrpDbDriver(GDriver.ItemIndex) of
   // DBExpress
   rpdatadbexpress:
    begin
-    LConnectionString.Visible:=False;
-//    LAvailable.Visible:=True;
-    EConnectionString.Visible:=False;
     BConfig.Visible:=true;
-//    ComboAvailable.Visible:=true;
     if Assigned(ConAdmin) then
     begin
      conadmin.GetConnectionNames(ComboAvailable.Items,'');
@@ -174,11 +207,7 @@ begin
   // IBX and IBO
   rpdataibx,rpdataibo:
    begin
-    LConnectionString.Visible:=False;
-//    LAvailable.Visible:=True;
-    EConnectionString.Visible:=False;
     BConfig.Visible:=true;
-//    ComboAvailable.Visible:=true;
     if Assigned(ConAdmin) then
     begin
      conadmin.GetConnectionNames(ComboAvailable.Items,'Interbase');
@@ -187,53 +216,27 @@ begin
   // My Base
   rpdatamybase:
    begin
-    LConnectionString.Visible:=False;
-//    LAvailable.Visible:=False;
-    EConnectionString.Visible:=False;
     BConfig.Visible:=false;
-//    ComboAvailable.Visible:=false;
     ComboAvailable.Items.Clear;
    end;
   // BDE
   rpdatabde:
    begin
 {$IFDEF USEBDE}
-    LConnectionString.Visible:=False;
-//    LAvailable.Visible:=True;
-    EConnectionString.Visible:=False;
-    BConfig.Visible:=false;
+    BConfig.Visible:=true;
     Session.GetAliasNames(ComboAvailable.Items);
-//    ComboAvailable.Visible:=true;
 {$ENDIF}
    end;
   // ADO
   rpdataado:
    begin
 {$IFDEF MSWINDOWS}
-    LConnectionString.Visible:=True;
-//    LAvailable.Visible:=False;
-    EConnectionString.Visible:=True;
-    BConfig.Visible:=true;
+    BConfig.Visible:=false;
     BBuild.Visible:=false;
-//    ComboAvailable.Visible:=false;
     ComboAvailable.Items.Clear;
 {$ENDIF}
    end;
  end;
- if ComboAvailable.Items.count>0 then
- begin
-  ComboAvailable.Itemindex:=0;
-  ComboAvailable.Invalidate;
- end;
- if LConnections.ItemIndex>=0 then
- begin
-  index:=databaseinfo.IndexOf(Lconnections.Items.Strings[LConnections.ItemIndex]);
-  if index>=0 then
-  begin
-   databaseinfo.items[index].Driver:=TRpDbDriver(GDriver.ItemIndex);
-  end;
- end;
- LConnectionsClick(Self);
 end;
 
 
@@ -327,8 +330,174 @@ begin
  begin
   aitem:=TMenuItem.Create(PopAdd);
   aitem.Caption:=ComboAvailable.Items.Strings[i];
+  aitem.OnClick:=MenuAddClick;
   PopAdd.Items.Add(aitem);
  end;
+end;
+
+procedure TFRpConnectionVCL.ADeleteExecute(Sender: TObject);
+var
+ index:integer;
+begin
+ if LConnections.Itemindex<0 then
+  exit;
+ index:=databaseinfo.IndexOf(LConnections.items.strings[LConnections.Itemindex]);
+ if index>=0 then
+ begin
+  databaseinfo.Delete(index);
+  SetDatabaseInfo(databaseinfo);
+ end;
+end;
+
+procedure TFRpConnectionVCL.ComboDriverClick(Sender: TObject);
+var
+ index:integeR;
+begin
+ if Not Assigned(FDatabaseInfo) then
+  exit;
+ if ComboDriver.ItemIndex<0 then
+  exit;
+ LConnectionString.Visible:=False;
+ EConnectionString.Visible:=false;
+ BBuild.Visible:=false;
+ // Loads the alias config
+ case TrpDbDriver(ComboDriver.ItemIndex) of
+  // DBExpress
+  rpdatadbexpress:
+   begin
+    LConnectionString.Visible:=False;
+    EConnectionString.Visible:=False;
+    if Assigned(ConAdmin) then
+    begin
+     conadmin.GetConnectionNames(ComboAvailable.Items,'');
+    end;
+   end;
+  // IBX and IBO
+  rpdataibx,rpdataibo:
+   begin
+    LConnectionString.Visible:=False;
+    EConnectionString.Visible:=False;
+   end;
+  // My Base
+  rpdatamybase:
+   begin
+    LConnectionString.Visible:=False;
+    EConnectionString.Visible:=False;
+    BTest.Visible:=false;
+   end;
+  // BDE
+  rpdatabde:
+   begin
+{$IFDEF USEBDE}
+    LConnectionString.Visible:=False;
+    EConnectionString.Visible:=False;
+{$ENDIF}
+   end;
+  // ADO
+  rpdataado:
+   begin
+{$IFDEF MSWINDOWS}
+    LConnectionString.Visible:=True;
+    EConnectionString.Visible:=True;
+    BBuild.Visible:=true;
+{$ENDIF}
+   end;
+ end;
+ if LConnections.ItemIndex<0 then
+  exit;
+ index:=FDatabaseInfo.Indexof(LConnections.Items.Strings[LConnections.ItemIndex]);
+ if index<0 then
+  exit;
+ FDatabaseInfo.Items[index].Driver:=TRpDbDriver(ComboDriver.ItemIndex);
+end;
+
+procedure TFRpConnectionVCL.MenuAddClick(Sender:TObject);
+var
+ conname:String;
+ item:TRpDatabaseInfoItem;
+ index:integer;
+begin
+ if Not Assigned(FDatabaseInfo) then
+  exit;
+ conname:=UpperCase(Trim(TMenuItem(Sender).Caption));
+ if Length(conname)<1 then
+  exit;
+ item:=Fdatabaseinfo.Add(conname);
+ item.Driver:=TRpDbDriver(GDriver.ItemIndex);
+ SetDatabaseInfo(Fdatabaseinfo);
+ index:=FDatabaseinfo.IndexOf(conname);
+ if index>=0 then
+ begin
+  LConnections.ItemIndex:=index;
+  LConnectionsClick(Self);
+ end;
+end;
+
+
+function TFRpConnectionVCL.FindDatabaseInfoItem:TRpDatabaseInfoItem;
+var
+ index:integer;
+begin
+ Result:=nil;
+ if Not Assigned(FDatabaseInfo) then
+  exit;
+ If LConnections.Items.Count<1 then
+  exit;
+ If LConnections.ItemIndex<0 then
+  exit;
+ index:=FDatabaseInfo.IndexOf(LConnections.Items[LConnections.ItemIndex]);
+ if index<0 then
+  exit;
+ Result:=FDatabaseInfo.Items[index];
+end;
+
+procedure TFRpConnectionVCL.BTestClick(Sender: TObject);
+var
+ dbinfo:TRpDatabaseInfoItem;
+begin
+ dbinfo:=FindDatabaseInfoItem;
+ if Not Assigned(dbinfo) then
+  exit;
+ dbinfo.Connect;
+ try
+  ShowMessage(SRpConnectionOk);
+ finally
+  dbinfo.DisConnect;
+ end;
+end;
+
+
+
+procedure TFRpConnectionVCL.CheckLoginPromptClick(Sender: TObject);
+var
+ dinfoitem:TRpDatabaseinfoitem;
+begin
+ dinfoitem:=FindDatabaseInfoItem;
+ if Not Assigned(dinfoitem) then
+  exit;
+ if Sender=CheckLoginPrompt then
+ begin
+  dinfoitem.LoginPrompt:=CheckLoginPrompt.Checked;
+ end
+ else
+ if Sender=CheckLoadParams then
+ begin
+  dinfoitem.LoadParams:=CheckLoadParams.Checked;
+ end
+ else
+ begin
+  dinfoitem.LoadDriverParams:=CheckLoadDriverParams.Checked;
+ end;
+end;
+
+procedure TFRpConnectionVCL.EConnectionStringChange(Sender: TObject);
+var
+ dinfoitem:TRpDatabaseinfoitem;
+begin
+ dinfoitem:=FindDatabaseInfoItem;
+ if Not Assigned(dinfoitem) then
+  exit;
+ dinfoitem.ADOConnectionString:=EConnectionString.Text;
 end;
 
 end.

@@ -195,6 +195,7 @@ type
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    procedure FreeSubreports;
+   procedure AddReportItemsToEvaluator(eval:TRpEvaluator);
    procedure AddSubReport;
    procedure DeleteSubReport(subr:TRpSubReport);
    // Streaming functions and properties
@@ -590,8 +591,6 @@ begin
   FSubReports.Items[i].FSubReport.Free;
  end;
  FSubReports.Clear;
- FDataInfo.Clear;
- FDatabaseInfo.Clear;
 end;
 
 
@@ -1337,7 +1336,38 @@ begin
   Raise Exception.Create(SRpNoDataAvailableToPrint);
 end;
 
-
+procedure TRpReport.AddReportItemsToEvaluator(eval:TRpEvaluator);
+var
+ i:integer;
+begin
+ // Insert params into rpEvaluator
+ for i:=0 to Params.Count-1 do
+ begin
+  eval.NewVariable(params.items[i].Name,params.items[i].Value);
+ end;
+ // Here identifiers are added to evaluator
+ for i:=0 to Identifiers.Count-1 do
+ begin
+  if FIdentifiers.Objects[i] is TRpExpression then
+  begin
+   eval.AddVariable(FIdentifiers.Strings[i],
+    TRpExpression(FIdentifiers.Objects[i]).IdenExpression);
+  end
+  else
+  if FIdentifiers.Objects[i] is TRpChart then
+  begin
+   eval.AddVariable(FIdentifiers.Strings[i],
+    TRpChart(FIdentifiers.Objects[i]).IdenChart);
+  end
+ end;
+ // Insert page number and other variables
+ eval.AddVariable('PAGE',fidenpagenum);
+ eval.AddVariable('FREE_SPACE',fidenfreespace);
+ eval.AddVariable('CURRENTGROUP',fidencurrentgroup);
+ eval.AddVariable('FREE_SPACE_CMS',fidenfreespacecms);
+ eval.AddVariable('FREE_SPACE_INCH',fidenfreespaceinch);
+ eval.AddIden('EOF',fideneof);
+end;
 
 procedure TRpReport.BeginPrint(Driver:IRpPrintDriver);
 var
@@ -1412,26 +1442,9 @@ begin
  FEvaluator.Language:=Language;
  PageNum:=-1;
  FRecordCount:=0;
- // Insert params into rpEvaluator
- for i:=0 to Params.Count-1 do
- begin
-  FEvaluator.NewVariable(params.items[i].Name,params.items[i].Value);
- end;
- // Here identifiers are added to evaluator
- for i:=0 to Identifiers.Count-1 do
- begin
-  if FIdentifiers.Objects[i] is TRpExpression then
-  begin
-   FEvaluator.AddVariable(FIdentifiers.Strings[i],
-    TRpExpression(FIdentifiers.Objects[i]).IdenExpression);
-  end
-  else
-  if FIdentifiers.Objects[i] is TRpChart then
-  begin
-   FEvaluator.AddVariable(FIdentifiers.Strings[i],
-    TRpChart(FIdentifiers.Objects[i]).IdenChart);
-  end
- end;
+
+ // Add the report items to the evaluator
+ AddReportItemsToEvaluator(FEvaluator);
  // Maybe parameters are used in ActivateDatasets (BDESetRange)
 
  ActivateDatasets;
@@ -1443,16 +1456,6 @@ begin
   DeActivateDatasets;
   Raise;
  end;
-
- // Insert page numeber
- FEvaluator.AddVariable('PAGE',fidenpagenum);
- FEvaluator.AddVariable('FREE_SPACE',fidenfreespace);
- FEvaluator.AddVariable('CURRENTGROUP',fidencurrentgroup);
- FEvaluator.AddVariable('FREE_SPACE_CMS',fidenfreespacecms);
- FEvaluator.AddVariable('FREE_SPACE_INCH',fidenfreespaceinch);
- FEvaluator.AddIden('EOF',fideneof);
-
-
 
 
  FDataAlias.List.Clear;

@@ -19,7 +19,7 @@ object FRpWizardVCL: TFRpWizardVCL
     Top = 0
     Width = 603
     Height = 431
-    ActivePage = TabInstructions
+    ActivePage = TabReportType
     Align = alClient
     TabOrder = 0
     object TabInstructions: TTabSheet

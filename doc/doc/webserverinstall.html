@@ -17,7 +17,7 @@
 <p>You can test the installation by calling the application with /version command:</p>
 <p><a href="http://localhost/cgi-bin/repwebserver.dll/version">http://localhost/cgi-bin/repwebserver.dll/version</a></p>
 <p>This will give you info about the configuration file the report web server 
-  is using.</p>
+  is using, including the location of the configuration file.</p>
 <p>For security reasons you can't add/remove users or aliases from the web. To 
   configure users and aliases you can use repserverapp(xp) and repserverconfig(xp), 
   execute repserverapp as a privileged user (root or Admin) so it opens the system 
@@ -53,5 +53,10 @@
 <p>It will say you the version and the configuration file location, then you can 
   test the configured reports:</p>
 <p>http://localhost/cgi-bin/repwebexe.bin/login</p>
+<h4>Using a log file to track web report server activity</h4>
+<p>You can specify a log file to write information about executed reports. To 
+  enable the log file edit your configuration file and insert:</p>
+<p>[CONFIG]</p>
+<p>LOGFILE=/var/log/reportmanweb.txt</p>
 </body>
 </html>

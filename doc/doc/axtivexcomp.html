@@ -1,3 +1,4 @@
+<!-- saved from url=(0022)http://internet.e-mail -->
 <html>
 <head>
 <title>Using Report Manager ActiveX control</title>
@@ -18,7 +19,8 @@
 <p>In your development enviroment you usually must activate (or include into your 
   project) to use, is called ReportManX Control or Reportman Library.</p>
 <p></p>
-<p> Usually you use Filename, Preview property and Visible properties at designtime 
+<p> Usually you use Filename, Preview property and Visible properties at design
+time 
   and Execute method at runtime.</p>
 <p>Here is a list of properties and methods:</p>
 <p> procedure SetDatasetSQL(datasetname:string;sqlsentence:string);<br>
@@ -45,18 +47,56 @@
   property Title:string read FTitle write SetTitle;<br>
   property Language:integer read FLanguage write SetLanguage;<br>
 </p>
-<p><b>Sample using Visual Basic Script</b></p>
-<p><code>(testit.vbs)<br>
-  ===========<br>
-  dim blah<br>
-  set blah = WScript.createobject(&quot;ReportMan.ReportManX&quot;)<br>
-  blah.Preview = false<br>
-  blah.ShowProgress = false<br>
-  blah.ShowPrintDialog = false<br>
-  blah.Filename = &quot;C:\sample4.rep&quot;<br>
-  blah.execute<br>
-  ============</code></p>
-<p>You sustitute execute with</p>
+<h3>Using the control with VB like languages</h3>
+<p>The ActiveX control may be used directly in VB, VBScript, ASP and WSH. In the
+VB environment you are generally recommended to &quot;Reference&quot; the
+control from within a VB Project. This gives &quot;early binding&quot; which
+improves the performance of your application over &quot;late binding&quot;. This
+is not an option within VBScript languages. </p>
+<p>Here is an complete example of the use of control in a VBScript program. This
+one was developed under W/98 and runs under the Windows Scripting Host (WSH).
+The choice of runtime environment dictates the format of the second line of the
+program where the activeX object is created. For example, under Active Server
+Pages VBScript, this line would read </p>
+<pre><code>set blah = WScript.createobject(&quot;ReportMan.ReportManX&quot;)</code></pre>
+<p><code>Here is the example program</code></p>
+<pre><code>dim blah
+set blah = WScript.createobject(&quot;ReportMan.ReportManX&quot;)
+' the object blah is an instance of the activex control
+' set some environment variables 
+blah.Preview = false
+blah.ShowProgress = false
+blah.ShowPrintDialog = false
+' define the location of the report file to be generated 
+blah.Filename = &quot;C:/sample4.rep&quot;
+' generate the report 
+blah.execute
+</code></pre>
+<p>Rather than execute (print) the report you might instead choose to generate a
+PDF file to be later viewed with the Adobe Acrobat Reader. To do this substitute
+the line &quot;blah.execute&quot; with</p>
 <p><code>blah.SaveToPDF &quot;hello.pdf&quot;,true</code></p>
+<p>This action creates a pdf format file named &quot;hello.pdf&quot;. For a more
+complete list of methods available on the control please see the table at the
+top of this page. </p>
+<h4>Setting report parameters from VBScript</h4>
+<p>It is possible to pass parameters to the report at run time. These parameters
+could, for example, change the set of data that is returned from the database
+and reported. The parameters are identified within the report definition and
+used within the SQL Select statement by preceeding the parameter name with a
+colon (:) character. So if a parameter named &quot;PARAM1&quot; was defined it
+may be utilised in a SQL Select statement such as:</p>
+<p> </p>
+<pre>Select * from testtable where column1 = :PARAM1</pre>
+<p> </p>
+<p>The parameter &quot;PARAM1&quot; is set from VB/Script by a program line such
+as </p>
+<p><code>blah.setParamValue &quot;PARAM1&quot; , 442380629429</code></p>
+<p><code>Clearly this line is best placed in your program AFTER the report file
+to be used has been identified. For further information on parameters please see
+<br>
+&quot;<a href="repparams.html">Advanced Report Design/Using Report Parameters</a>&quot;</code></p>
+<p> </p>
 </body>
 </html>
+

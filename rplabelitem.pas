@@ -287,6 +287,7 @@ procedure TRpLabel.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 var
  aalign:integer;
 begin
+ inherited DoPrint(aposx,aposy,metafile);
  aalign:=Alignment or VAlignment;
  if SingleLine then
   aalign:=aalign or AlignmentFlags_SingleLine;
@@ -375,6 +376,7 @@ var
  expre:WideString;
  aalign:integer;
 begin
+ inherited DoPrint(aposx,aposy,metafile);
  expre:=Trim(Expression);
  aText:=GetText;
  if PrintOnlyOne then

@@ -707,6 +707,7 @@ var
  pencolor:integer;
  MaxValueCount:integer;
 begin
+ inherited DoPrint(aposx,aposy,metafile);
  if FSeries.Count<1 then
   exit;
  // Draws a TeeChart

@@ -1,14 +1,14 @@
 object FRpConnectionVCL: TFRpConnectionVCL
   Left = 0
   Top = 0
-  Width = 516
-  Height = 352
+  Width = 542
+  Height = 325
   Align = alClient
   TabOrder = 0
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 516
+    Width = 542
     Height = 27
     AutoSize = True
     ButtonHeight = 25
@@ -45,154 +45,214 @@ object FRpConnectionVCL: TFRpConnectionVCL
       ImageIndex = 4
       Style = tbsSeparator
     end
-    object BConfig: TButton
-      Left = 141
-      Top = 0
-      Width = 164
-      Height = 25
-      Caption = 'Configure'
-      TabOrder = 0
-      OnClick = BConfigClick
-    end
   end
   object PParent: TPanel
     Left = 0
     Top = 27
-    Width = 516
-    Height = 325
+    Width = 542
+    Height = 298
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    object PanelProps: TPanel
+    object PTop: TPanel
       Left = 0
-      Top = 136
-      Width = 516
-      Height = 189
-      Align = alBottom
+      Top = 0
+      Width = 542
+      Height = 105
+      Align = alTop
       BevelOuter = bvNone
-      TabOrder = 0
+      TabOrder = 1
       object GDriver: TListBox
         Left = 0
         Top = 0
         Width = 169
-        Height = 189
+        Height = 105
         Align = alLeft
         ItemHeight = 13
-        Items.Strings = (
-          'Borland DBExpress'
-          'Borland MyBase'
-          'Interbase Express'
-          'Borland Database Engine'
-          'Microsoft Data Objects'
-          'Interbase Objects')
         TabOrder = 0
         OnClick = GDriverClick
       end
-      object PConProps: TPanel
+      object PDriver: TPanel
         Left = 169
         Top = 0
-        Width = 347
-        Height = 189
+        Width = 373
+        Height = 105
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
-        DesignSize = (
-          347
-          189)
-        object LConnectionString: TLabel
-          Left = 4
-          Top = 96
-          Width = 84
-          Height = 13
-          Caption = 'Connection String'
-          Visible = False
-        end
-        object LAvailable: TLabel
-          Left = 7
-          Top = 8
-          Width = 43
-          Height = 13
-          Caption = 'Available'
-          Visible = False
-        end
-        object CheckLoginPrompt: TCheckBox
-          Left = 5
-          Top = 28
-          Width = 184
-          Height = 17
-          Caption = 'Login prompt'
+        object MHelp: TMemo
+          Left = 0
+          Top = 33
+          Width = 373
+          Height = 72
+          Align = alClient
+          Color = clInfoBk
+          ReadOnly = True
           TabOrder = 0
-          Visible = False
         end
-        object CheckLoadParams: TCheckBox
-          Left = 5
-          Top = 48
-          Width = 192
-          Height = 17
-          Caption = 'Load params'
+        object Panel1: TPanel
+          Left = 0
+          Top = 0
+          Width = 373
+          Height = 33
+          Align = alTop
+          BevelOuter = bvNone
           TabOrder = 1
-          Visible = False
-        end
-        object CheckLoadDriverParams: TCheckBox
-          Left = 5
-          Top = 68
-          Width = 212
-          Height = 17
-          Caption = 'Load driver params'
-          TabOrder = 2
-          Visible = False
-        end
-        object EConnectionString: TEdit
-          Left = 128
-          Top = 92
-          Width = 208
-          Height = 21
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 3
-          Visible = False
-        end
-        object ComboAvailable: TComboBox
-          Left = 125
-          Top = 4
-          Width = 214
-          Height = 21
-          Style = csDropDownList
-          Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 13
-          TabOrder = 4
-          Visible = False
-        end
-        object BBuild: TButton
-          Left = 128
-          Top = 116
-          Width = 117
-          Height = 25
-          Caption = 'Build...'
-          TabOrder = 5
-          Visible = False
-          OnClick = BBuildClick
+          object BConfig: TButton
+            Left = 5
+            Top = 4
+            Width = 164
+            Height = 25
+            Caption = 'Configure'
+            TabOrder = 0
+            OnClick = BConfigClick
+          end
         end
       end
     end
-    object LConnections: TListBox
+    object PanelProps: TPanel
       Left = 0
-      Top = 0
-      Width = 169
-      Height = 136
-      Align = alLeft
-      ItemHeight = 13
-      TabOrder = 1
-      OnClick = LConnectionsClick
-    end
-    object MHelp: TMemo
-      Left = 169
-      Top = 0
-      Width = 347
-      Height = 136
+      Top = 105
+      Width = 542
+      Height = 193
       Align = alClient
-      Color = clInfoBk
-      ReadOnly = True
-      TabOrder = 2
+      BevelOuter = bvNone
+      TabOrder = 0
+      object GAvailable: TGroupBox
+        Left = 0
+        Top = 0
+        Width = 542
+        Height = 193
+        Align = alClient
+        Caption = 'Available connections'
+        TabOrder = 0
+        object LConnections: TListBox
+          Left = 2
+          Top = 15
+          Width = 169
+          Height = 176
+          Align = alLeft
+          ItemHeight = 13
+          TabOrder = 0
+          OnClick = LConnectionsClick
+        end
+        object PConProps: TPanel
+          Left = 171
+          Top = 15
+          Width = 369
+          Height = 176
+          Align = alClient
+          BevelOuter = bvNone
+          TabOrder = 1
+          DesignSize = (
+            369
+            176)
+          object LConnectionString: TLabel
+            Left = 4
+            Top = 96
+            Width = 84
+            Height = 13
+            Caption = 'Connection String'
+            Visible = False
+          end
+          object LAvailable: TLabel
+            Left = 7
+            Top = 152
+            Width = 43
+            Height = 13
+            Caption = 'Available'
+            Visible = False
+          end
+          object LDriver: TLabel
+            Left = 7
+            Top = 8
+            Width = 75
+            Height = 13
+            Caption = 'Database driver'
+          end
+          object CheckLoginPrompt: TCheckBox
+            Left = 5
+            Top = 28
+            Width = 184
+            Height = 17
+            Caption = 'Login prompt'
+            TabOrder = 0
+            Visible = False
+            OnClick = CheckLoginPromptClick
+          end
+          object CheckLoadParams: TCheckBox
+            Left = 5
+            Top = 48
+            Width = 192
+            Height = 17
+            Caption = 'Load params'
+            TabOrder = 1
+            Visible = False
+            OnClick = CheckLoginPromptClick
+          end
+          object CheckLoadDriverParams: TCheckBox
+            Left = 5
+            Top = 68
+            Width = 212
+            Height = 17
+            Caption = 'Load driver params'
+            TabOrder = 2
+            Visible = False
+            OnClick = CheckLoginPromptClick
+          end
+          object EConnectionString: TEdit
+            Left = 124
+            Top = 92
+            Width = 244
+            Height = 21
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 3
+            Visible = False
+            OnChange = EConnectionStringChange
+          end
+          object ComboAvailable: TComboBox
+            Left = 124
+            Top = 148
+            Width = 243
+            Height = 21
+            Style = csDropDownList
+            Anchors = [akLeft, akTop, akRight]
+            ItemHeight = 13
+            TabOrder = 4
+            Visible = False
+          end
+          object BBuild: TButton
+            Left = 124
+            Top = 116
+            Width = 117
+            Height = 25
+            Caption = 'Build...'
+            TabOrder = 5
+            Visible = False
+            OnClick = BBuildClick
+          end
+          object ComboDriver: TComboBox
+            Left = 124
+            Top = 4
+            Width = 243
+            Height = 21
+            Style = csDropDownList
+            Anchors = [akLeft, akTop, akRight]
+            ItemHeight = 13
+            TabOrder = 6
+            OnClick = ComboDriverClick
+          end
+          object BTest: TButton
+            Left = 4
+            Top = 116
+            Width = 117
+            Height = 25
+            Caption = 'Connect'
+            TabOrder = 7
+            OnClick = BTestClick
+          end
+        end
+      end
     end
   end
   object ImageList1: TImageList
@@ -514,9 +574,11 @@ object FRpConnectionVCL: TFRpConnectionVCL
       Caption = 'Delete connection'
       Hint = 'Deletes the selected connection'
       ImageIndex = 3
+      OnExecute = ADeleteExecute
     end
   end
   object PopAdd: TPopupMenu
+    AutoHotkeys = maManual
     OnPopup = PopAddPopup
     Left = 32
     Top = 40

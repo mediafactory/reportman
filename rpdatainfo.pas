@@ -230,6 +230,7 @@ type
 {$IFDEF USECONADMIN}
 procedure UpdateConAdmin;
 {$ENDIF}
+procedure GetRpDatabaseDrivers(alist:TStrings);
 
 implementation
 
@@ -592,7 +593,7 @@ function TRpDatabaseInfoList.Add(alias:string):TRpDatabaseInfoItem;
 begin
  // Then function is defined by teh class TCollectionItem
  alias:=AnsiUpperCase(alias);
- if Indexof(alias)>0 then
+ if Indexof(alias)>=0 then
   Raise Exception.Create(SRpAliasExists);
  Result:=TRpDatabaseInfoItem(inherited Add);
  Result.Alias:=alias;
@@ -1939,6 +1940,17 @@ begin
   FSQLInternalQuery.Free
  else
   Result:=FSQLInternalQuery;
+end;
+
+procedure GetRpDatabaseDrivers(alist:TStrings);
+begin
+ alist.clear;
+ alist.Add('Borland DBExpress');
+ alist.Add('Borland MyBase');
+ alist.Add('Interbase Express');
+ alist.Add('Borland Database Engine');
+ alist.Add('Microsoft Data Objects');
+ alist.Add('Interbase Objects');
 end;
 
 initialization

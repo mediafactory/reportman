@@ -23,7 +23,7 @@ interface
 {$I rpconf.inc}
 
 uses Classes,Sysutils,rpreport,rpmdconsts,
- rpalias;
+ rpalias,rpsubreport,rpsection,rpprintitem;
 
 type
  TCBaseReport=class(TComponent)
@@ -36,8 +36,11 @@ type
    FAliasList:TRpAlias;
    FShowPrintDialog:boolean;
    FLanguage:integer;
+   FOnBeforePrint:TNotifyEvent;
+   procedure InternalSetBeforePrint;
    function GetReport:TRpReport;
    procedure SetFileName(Value:TFilename);
+   procedure SetOnBeforePrint(NewValue:TNotifyEvent);
   protected
    procedure Notification(AComponent: TComponent; Operation: TOperation);override;
   public
@@ -62,6 +65,9 @@ type
     write FShowPrintDialog default true;
    property AliasList:TRpAlias read FAliasList write FAliasList;
    property Language:integer read FLanguage write FLanguage default -1;
+  published
+   property OnBeforePrint:TNotifyEvent read FOnBeforePrint
+    write SetOnBeforePrint;
   end;
 
 
@@ -125,8 +131,14 @@ begin
  if Length(FFilename)<1 then
   Raise Exception.Create(SRpNoFilename);
  LoadFromFile(FFilename);
+ InternalSetBeforePrint;
 end;
 
+procedure TCBaseReport.SetOnBeforePrint(NewValue:TNotifyEvent);
+begin
+ FOnBeforePrint:=NewValue;
+ InternalSetBeforePrint;
+end;
 
 
 function TCBaseReport.Execute:boolean;
@@ -166,6 +178,7 @@ begin
  FReport:=TRpReport.Create(Self);
  try
   FReport.LoadFromStream(Stream);
+  InternalSetBeforePrint;
  except
   FReport.Free;
   FReport:=nil;
@@ -173,6 +186,28 @@ begin
  end;
 end;
 
+procedure TCBaseReport.InternalSetBeforePrint;
+var
+ i,j,k:integer;
+ subrep:TRpSubReport;
+ sec:TRpSection;
+begin
+ If not Assigned(FReport) then
+  exit;
+ for i:=0 to FReport.SubReports.Count-1 do
+ begin
+  subrep:=FReport.SubReports.Items[i].SubReport;
+  for j:=0 to subrep.Sections.Count-1 do
+  begin
+   sec:=subrep.Sections.Items[j].Section;
+   sec.OnBeforePrint:=FOnBeforePrint;
+   for k:=0 to sec.Components.Count-1 do
+   begin
+    TRpCommonComponent(sec.Components.Items[k].Component).OnBeforePrint:=FOnBeforePrint;
+   end;
+  end;
+ end;
+end;
 
 
 end.

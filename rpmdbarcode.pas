@@ -1581,6 +1581,7 @@ var
  aText:string;
  data:string;
 begin
+ inherited DoPrint(aposx,aposy,metafile);
  aText:=GetText;
  try
   data:=Calculatebarcode;

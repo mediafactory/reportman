@@ -6,10 +6,6 @@ object FRpObjInspVCL: TFRpObjInspVCL
   ParentShowHint = False
   ShowHint = True
   TabOrder = 0
-  object RpExpreDialog1: TRpExpreDialogVCL
-    Left = 256
-    Top = 92
-  end
   object RpAlias1: TRpAlias
     List = <>
     Left = 296

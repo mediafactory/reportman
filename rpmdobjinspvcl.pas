@@ -82,7 +82,6 @@ type
     ColorDialog1: TColorDialog;
     FontDialog1: TFontDialog;
     RpAlias1: TRpAlias;
-    RpExpreDialog1: TRpExpreDialogVCL;
     PopUpSection: TPopupMenu;
     MLoadExternal: TMenuItem;
     MSaveExternal: TMenuItem;
@@ -838,7 +837,6 @@ end;
 
 constructor TFRpObjInspVCL.Create(AOwner:TComponent);
 var
- FRpMainF:TFRpMainFVCL;
  alist:TStrings;
 begin
  inherited Create(AOwner);
@@ -850,8 +848,6 @@ begin
  FSelectedItems:=TStringList.Create;
  FClasses:=TStringList.Create;
 
- FRpMainF:=TFRpMainFVCL(Owner);
-
  fchangesize:=TRpSizeModifier.Create(Self);
  fchangesize.OnSizeChange:=changesizechange;
 
@@ -861,12 +857,6 @@ begin
   Font.Size:=7;
  end;
 
- RpExpreDialog1.evaluator.AddVariable('Page',FRpMainf.report.idenpagenum);
- RpExpreDialog1.evaluator.AddVariable('FREE_SPACE',FRpMainf.report.idenfreespace);
- RpExpreDialog1.evaluator.AddVariable('CURRENTGROUP',FRpMainf.report.idencurrentgroup);
- RpExpreDialog1.evaluator.AddVariable('FREE_SPACE_CMS',FRpMainf.report.idenfreespacecms);
- RpExpreDialog1.evaluator.AddVariable('FREE_SPACE_INCH',FRpMainf.report.idenfreespaceinch);
- RpExpreDialog1.evaluator.AddVariable('EOF',FRpMainf.report.ideneof);
 
  FClasses.AddObject('TRpExpressionInterface',TRpExpressionInterface.Create(Self));
  FClasses.AddObject('TRpBarcodeInterface',TRpBarcodeInterface.Create(Self));
@@ -1127,6 +1117,7 @@ var
  i:integer;
  item:TRpAliaslistItem;
  FRpMainF:TFRpMainFVCL;
+ expredia:TRpExpreDialogVCL;
 begin
  FRpMainF:=TFRpMainFVCL(Owner.Owner);
  report:=FRpMainf.report;
@@ -1146,9 +1137,16 @@ begin
   item.Alias:=report.DataInfo.Items[i].Alias;
   item.Dataset:=report.DataInfo.Items[i].Dataset;
  end;
- TFRpObjInspVCL(Owner).RpExpreDialog1.Expresion.Text:=TEdit(LControls.Objects[TButton(Sender).Tag]).Text;
- if TFRpObjInspVCL(Owner).RpExpreDialog1.Execute then
-  TEdit(LControls.Objects[TButton(Sender).Tag]).Text:=Trim(TFRpObjInspVCL(Owner).RpExpreDialog1.Expresion.Text);
+ expredia:=TRpExpreDialogVCL.Create(Application);
+ try
+  expredia.Rpalias:=TFRpObjInspVCL(Owner).RpAlias1;
+  report.AddReportItemsToEvaluator(expredia.evaluator);
+  expredia.Expresion.Text:=TEdit(LControls.Objects[TButton(Sender).Tag]).Text;
+  if expredia.Execute then
+   TEdit(LControls.Objects[TButton(Sender).Tag]).Text:=Trim(expredia.Expresion.Text);
+ finally
+  expredia.Free;
+ end;
 end;
 
 procedure TRpPanelObj.UpdatePosValues;

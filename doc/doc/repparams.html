@@ -7,7 +7,8 @@
 <body>
 <h2>Advanced report design</h2>
 <h3>Using report parameters</h3>
-<p></p>
+<h4></h4>
+<h4>Parameter features</h4>
 <p>Report parameters is a powerful feature, here is a list of samples you can 
   do with parameters</p>
 <ul>
@@ -23,6 +24,7 @@
 </ul>
 <p>You can define the parameters, and also preview how the parameters will show 
   to the user.</p>
+<h4>Parameter definition</h4>
 <p>Parameter definition window allows to add, modify and delete parameters, you 
   can assign parameters to datasets (parametrized querys). The parameters can 
   be visible or not visible to the user. You can assign a single parameter to 
@@ -35,7 +37,16 @@
 <p>The user parameters window is called in preview window when user click the 
   parameters button:</p>
 <p><img src="images/paramdef3.jpg" width="591" height="163"></p>
-<p>You can call parameter window from your application with the method ShowParams:</p>
+<p><b>How to modify parameter values at runtime</b></p>
+<p>Report parameters are added to the evaluator as variables when the report begin, 
+  so if you want to modify the values while the report is executing you must alter 
+  the variable value using a expression like:</p>
+<p>paramname:='NewStringValue'</p>
+<p>From Delphi/Kylix/Builder you can evaluate this expression:</p>
+<p>CLXReport1.Report.Evaluator.EvaluateText('paramname:=''NewStringValue''');. 
+</p>
+<p><b>Using parameters from Delphi/Builder/Kylix/ActiveX</b></p>
+<p>You can call parameter window from your application with <b>the method ShowParam</b>s:</p>
 <p>VCL/CLX Components:</p>
 <p><code>if CLXReport1.ShowParams then</code></p>
 <p><code> CLXReport1.Execute</code></p>

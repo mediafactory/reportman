@@ -196,11 +196,6 @@ function TRpCommonComponent.EvaluatePrintCondition:boolean;
 var
  fevaluator:TRpEvaluator;
 begin
- // On Before print
- if Assigned(FOnBeforePrint) then
- begin
-  OnBeforePrint(Self);
- end;
  if Length(Trim(PrintCondition))<1 then
  begin
   Result:=true;
@@ -222,7 +217,11 @@ end;
 
 procedure TRpCommonComponent.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 begin
-
+ // Executes OnBeforePrint
+ if Assigned(FOnBeforePrint) then
+ begin
+  OnBeforePrint(Self);
+ end;
 end;
 
 

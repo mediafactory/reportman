@@ -39,6 +39,7 @@ type
    FPagesDirectory:String;
    initreaded:boolean;
    InitErrorMessage:string;
+   LogFileErrorMessage:String;
    loginpage:string;
    indexpage:string;
    showaliaspage:string;
@@ -49,6 +50,8 @@ type
    BDESessionDir:String;
    BDESessionDirOK:String;
 {$ENDIF}
+   logfileerror:boolean;
+   FLogFilename:String;
    function CreateReport:TRpReport;
    procedure InitConfig;
    procedure CheckInitReaded;
@@ -58,6 +61,7 @@ type
    function LoadAliasPage(Request: TWebRequest):string;
    function LoadParamsPage(Request: TWebRequest):string;
   public
+   procedure WriteLog(aMessage:String);
    procedure ExecuteReport(Request: TWebRequest;Response:TWebResponse);
    procedure CheckLogin(Request:TWebRequest);
    procedure GetWebPage(Request: TWebRequest;apage:TRpWebPage;Response:TWebResponse);
@@ -179,6 +183,13 @@ begin
      astring:='<html><body>'+TranslateStr(837,'Report Manager Web Server')+#10+
       '<p></p>'+TranslateStr(91,'Version')+' '+RM_VERSION+#10+'<p></p>'+
       TranslateStr(743,'Configuration File')+': '+Ffilenameconfig;
+     if Length(FLogFileName)>0 then
+      astring:=astring+'<p>Log File:'+FLogFileName+'</p>';
+
+     if Length(LogFileErrorMessage)>0 then
+     begin
+      astring:=astring+'<p>'+LogFileErrorMessage+'</p>';
+     end;
      astring:=astring+'</body></html>';
      Response.Content:=astring;
     end;
@@ -320,11 +331,34 @@ begin
  inherited Destroy;
 end;
 
+procedure TRpWebPageLoader.WriteLog(aMessage:String);
+var
+ messa:String;
+ FLogFile:TFileStream;
+begin
+ if logfileerror then
+  exit;
+ messa:=FormatDateTime('dd/mm/yyyy hh:nn:ss - ',Now)+aMessage;
+{$IFDEF MSWINDOWS}
+ messa:=messa+#10+#13;
+{$ENDIF}
+{$IFDEF LINUX}
+ messa:=messa+#10;
+{$ENDIF}
+ FLogFile:=TFileStream.Create(FLogFilename,fmOpenReadWrite or fmShareDenyNone);
+ try
+  FLogFile.Seek(0,soFromEnd);
+  FLogFile.Write(messa[1],Length(messa));
+ finally
+  FLogFile.Free;
+ end;
+end;
 
 procedure TRpWebPageLoader.InitConfig;
 var
  inif:TMemInifile;
  i:integer;
+ FLogFile:TFileStream;
 begin
  try
   Ffilenameconfig:=Obtainininamecommonconfig('','','reportmanserver');
@@ -370,6 +404,28 @@ begin
   inif.free;
   end;
   initreaded:=true;
+  // Gets the log file and try to create it
+  logfileerror:=false;
+  LogFileErrorMessage:='';
+  FLogFilename:=inif.Readstring('CONFIG','LOGFILE','');
+  if Length(FLogFilename)>0 then
+  begin
+   if Not (FileExists(FLogFileName)) then
+   begin
+    try
+     FLogFile:=TFileStream.Create(FLogFilename,fmOpenReadWrite or fmCreate);
+     FLogFile.Free;
+    except
+     On E:Exception do
+     begin
+      logfileerror:=true;
+      LogFileErrorMessage:=E.Message;
+     end;
+    end;
+   end;
+  end;
+
+
  except
   on E:Exception do
   begin
@@ -543,6 +599,7 @@ var
  i,index:integer;
  paramisnull:boolean;
 begin
+ reportname:='';
  try
   aliasname:=Request.QueryFields.Values['aliasname'];
   if Length(aliasname)>0 then
@@ -584,6 +641,7 @@ begin
     astream.Seek(0,soFromBeginning);
     Response.ContentType := 'application/pdf';
     Response.ContentStream:=astream;
+    WriteLog(reportname+' Executed ');
    finally
     pdfreport.Free;
    end;
@@ -592,6 +650,7 @@ begin
   On E:Exception do
   begin
    Response.Content:=GenerateError(E.Message);
+   WriteLog(SRpError+' - '+reportname+' - '+E.Message);
   end;
  end;
 end;

@@ -128,6 +128,7 @@ end;
 
 procedure TRpShape.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 begin
+ inherited DoPrint(aposx,aposy,metafile);
  metafile.Pages[metafile.CurrentPage].NewDrawObject(aposy,aposx,Width,Height,
   integer(Shape),BrushStyle,BrushColor,PenStyle,PenWidth,PenColor);
 end;
@@ -313,6 +314,7 @@ procedure TRpImage.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 var
  FMStream:TMemoryStream;
 begin
+ inherited DoPrint(aposx,aposy,metafile);
  if Not Assigned(FStream) then
   exit;
  FMStream:=GetStream;

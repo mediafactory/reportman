@@ -324,6 +324,8 @@ var
  compo:TRpCommonPosComponent;
  newposx,newposy:integer;
 begin
+ inherited DoPrint(aposx,aposy,metafile);
+
  for i:=0 to Components.Count-1 do
  begin
   compo:=TRpCommonPosComponent(Components.Items[i].Component);
