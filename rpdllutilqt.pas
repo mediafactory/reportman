@@ -20,9 +20,11 @@ unit rpdllutilqt;
 
 {$I rpconf.inc}
 
+
 interface
 
-uses SysUtils,Classes,rpreport,rpmdconsts,
+
+uses ShareExcept,SysUtils,Classes,rpreport,rpmdconsts,
 {$IFDEF MSWINDOWS}
  rpgdidriver,
  rpvpreview,
@@ -34,9 +36,33 @@ uses SysUtils,Classes,rpreport,rpmdconsts,
  rpdllutil;
 
 
+
 function rp_print(hreport:integer;Title:PChar;
- showprogress,ShowPrintDialog:integer):integer;stdcall;
-function rp_preview(hreport:integer;Title:PChar):integer;stdcall;
+ showprogress,ShowPrintDialog:integer):integer;
+{$IFDEF MSWINDOWS}
+stdcall;
+{$ENDIF}
+{$IFDEF LINUX}
+cdecl;
+{$ENDIF}
+
+function rp_preview(hreport:integer;Title:PChar):integer;
+{$IFDEF MSWINDOWS}
+stdcall;
+{$ENDIF}
+{$IFDEF LINUX}
+cdecl;
+{$ENDIF}
+
+{$IFDEF LINUX}
+exports
+ rp_open,
+ rp_execute,
+ rp_close,
+ rp_lasterror,
+ rp_print,
+ rp_preview;
+{$ENDIF}
 
 implementation
 
@@ -48,6 +74,7 @@ var
  frompage,topage,copies:integer;
  ashowprogress:boolean;
 begin
+ rplibdoinit;
  rplasterror:='';
  Result:=1;
  try
@@ -89,17 +116,21 @@ function rp_preview(hreport:integer;Title:PChar):integer;
 var
  report:TRpReport;
 begin
+ rplibdoinit;
+ Writeln('Hello1');
  rplasterror:='';
  Result:=1;
  try
+  Writeln('Hello2');
   report:=FindReport(hreport);
+  Writeln('Hello3');
 {$IFDEF MSWINDOWS}
   ShowPreview(report,Title);
 {$ENDIF}
 {$IFDEF LINUX}
   ShowPreview(report,Title,true);
 {$ENDIF}
-
+  Writeln('Hello4');
  except
   on E:Exception do
   begin

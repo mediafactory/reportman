@@ -15,18 +15,18 @@ int main(void)
  if (hreport==0)
  {	 
    printf("Error loading: ");
-   printf(rp_lasterror());
+//   printf(rp_lasterror());
    printf("\n");
  }
  else
  {
-  printf("%d \n",hreport);
-  if (0==rp_execute(hreport,"pp.pdf",0,0))
-  {
-   printf(rp_lasterror());
-   printf("\n");
-  }
-  rp_close(hreport);
+//  printf("%d \n",hreport);
+//  if (0==rp_execute(hreport,"pp.pdf",0,0))
+//  {
+//   printf(rp_lasterror());
+//   printf("\n");
+//  }
+//  rp_close(hreport);
  }
  printf("\n");
 }

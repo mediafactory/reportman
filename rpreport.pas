@@ -300,6 +300,8 @@ type
     write FStreamFormat default rpStreamzlib;
  end;
 
+procedure RegisterRpReportClasses;
+
 implementation
 
 uses rpprintitem, rpsecutil;
@@ -2380,8 +2382,8 @@ begin
 end;
 
 
-initialization
- // Need clas registration to be streamable
+procedure RegisterRpReportClasses;
+begin
  Classes.RegisterClass(TRpSection);
  Classes.RegisterClass(TRpReport);
  Classes.RegisterClass(TRpSubReport);
@@ -2391,4 +2393,9 @@ initialization
  Classes.RegisterClass(TRpExpression);
  Classes.RegisterClass(TRpBarcode);
  Classes.RegisterClass(TRpChart);
+end;
+
+initialization
+ // Need clas registration to be streamable
+ RegisterRpReportClasses;
 end.

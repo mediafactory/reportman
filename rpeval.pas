@@ -117,6 +117,8 @@ type
    property Expression;
   end;
 
+procedure InitRpFunctions;
+
 implementation
 
 uses rpevalfunc;
@@ -1032,12 +1034,18 @@ begin
  end;
 end;
 
+procedure InitRpFunctions;
+begin
+ Rpfunctions:=TStringList.create;
+ Rpfunctions.Sorted:=True;
+ Rpfunctions.Duplicates:=dupError;
+end;
+
+
 initialization
 
 // Cache of functions used by all of Rpevaluators
-Rpfunctions:=TStringList.create;
-Rpfunctions.Sorted:=True;
-Rpfunctions.Duplicates:=dupError;
+InitRpFunctions;
 
 
 finalization

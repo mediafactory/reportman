@@ -270,6 +270,9 @@ procedure UpdateConAdmin;
 procedure GetRpDatabaseDrivers(alist:TStrings);
 procedure CombineAddDataset(client:TClientDataset;data:TDataset;group:boolean);
 
+var
+ ConAdmin:TRpConnAdmin;
+
 implementation
 
 {$IFDEF USEBDE}
@@ -293,8 +296,6 @@ const
   SConfExtension = '.conf';                       { Do not localize }
 {$ENDIF}
 
-var
- ConAdmin:TRpConnAdmin;
 
 {$IFDEF USEBDE}
 procedure AddParamsFromDBXToBDE(paramssource,params:TStrings);
