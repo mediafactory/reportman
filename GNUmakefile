@@ -30,6 +30,8 @@ clean:
 	-rm repman/utils/reptotxt/reptotxt
 	-rm repman/utils/txttorep/txttorep
 	-rm repman/utils/printrep/printrep
+	-rm tests/repmand/*.so tests/repmand/*.so.1 tests/repmand/*.so.2
+	-rm tests/repmand/repmand
 real_clean: clean
 	-rm -Rf  *.bpl
 	-rm -Rf  *.so

@@ -97,7 +97,7 @@ uses
   rplabelitem in '../rplabelitem.pas',
   rpdrawitem in '../rpdrawitem.pas',
   rpprintrep in '../rpprintrep.pas',
-  rppreview in '..\rppreview.pas' {FRpPreview};
+  rppreview in '../rppreview.pas' {FRpPreview};
 {$ENDIF}
 
 
