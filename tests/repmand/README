@@ -1,4 +1,4 @@
-Report Manager Designer Version 1.4pre10
+Report Manager Designer Version 1.4pre14
 
 Author:	Toni Martir
 	toni@pala.com (no free support)
@@ -40,13 +40,13 @@ MYBASE
 - The sample4.rep sample report uses MyBase to access biolife.cds dataset.
 
 ALL DBEXPRESS DRIVERS
-- Interbase
-- PostgreSQL (untested)
+- Interbase (tested)
+- PostgreSQL (tested)
 - MySQL & MySQL 3.23 (tested)
-- Oracle
+- Oracle (tested, some issues)
 - DB2
 - Informix
-- ODBC throught UNIXodbc (tested) you must get the driver from sourceforge
+- ODBC throught UNIXodbc (tested) 
 
 Bugs:
 - Please submit bugs to sourceforge project.

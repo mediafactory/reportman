@@ -22,6 +22,8 @@ unit rpmdrepclient;
 
 interface
 
+{$I rpconf.inc}
+
 uses
   SysUtils, Classes, IdBaseComponent, IdComponent, IdTCPConnection,
   IdTCPClient, rptranslator,rpmdprotocol,rpmdconsts,
