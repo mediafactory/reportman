@@ -26,9 +26,9 @@ program printreptopdf;
 uses
   SysUtils,Classes,
 {$IFDEF MSWINDOWS}
-  ActiveX,
+  ActiveX,mmsystem,
 {$IFDEF USEVARIANTS}
-  midaslib,
+  midaslib,types,
 {$ENDIF}
   rpreport in '..\..\..\rpreport.pas',
   rpparams in '..\..\..\rpparams.pas',
@@ -86,6 +86,15 @@ var
  oemconvert:Boolean;
  htmloutput:Boolean;
  tocsv,tosvg,toctxt:Boolean;
+ dotime:boolean;
+ seconds,minutes,hours:integer;
+ difmilis:int64;
+{$IFDEF MSWINDOWS}
+   mmfirst,mmlast:DWORD;
+{$ENDIF}
+{$IFDEF LINUX}
+   milifirst,mililast:TDatetime;
+{$ENDIF}
 
 procedure PrintHelp;
 var
@@ -136,6 +145,13 @@ begin
 {$IFDEF MSWINDOWS}
   toexcel:=false;
 {$ENDIF}
+{$IFDEF MSWINDOWS}
+  mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+  milifirst:=0;
+{$ENDIF}
+  dotime:=false;
   tocsv:=false;
   toctxt:=false;
   tosvg:=false;
@@ -180,6 +196,9 @@ begin
     else
     if ParamStr(indexparam)='-q' then
      showprogress:=false
+    else
+    if ParamStr(indexparam)='-time' then
+     dotime:=true
     else
     if ParamStr(indexparam)='-from' then
     begin
@@ -286,6 +305,15 @@ begin
    end
    else
    begin
+    if dotime then
+    begin
+{$IFDEF MSWINDOWS}
+     mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+     milifirst:=now;
+{$ENDIF}
+    end;
     report:=TRpReport.Create(nil);
     try
      if stdinput then
@@ -396,6 +424,25 @@ begin
      report.free;
     end;
    end;
+  end;
+  if dotime then
+  begin
+{$IFDEF MSWINDOWS}
+   mmlast:=TimeGetTime;
+   difmilis:=(mmlast-mmfirst);
+{$ENDIF}
+{$IFDEF LINUX}
+   mililast:=now;
+   difmilis:=MillisecondsBetween(mililast,milifirst);
+{$ENDIF}
+   seconds:=difmilis div 1000;
+   minutes:=seconds div 60;
+   hours:=minutes div 60;
+   seconds:=seconds-minutes*60;
+   minutes:=minutes-hours*60;
+   WriteLn('Time: '+FormatFloat('00',hours)+timeseparator+
+    FormatFloat('00',minutes)+timeseparator+
+    FormatFloat('00',seconds)+' '+IntToStr(difmilis mod 1000)+' ms');
   end;
  except
   On E:Exception do

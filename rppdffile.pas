@@ -129,8 +129,8 @@ type
    procedure Ellipse(X1, Y1, X2, Y2: Integer);
    constructor Create(AFile:TRpPDFFile);
    destructor Destroy;override;
-   function CalcCharWidth(charcode:Widechar):double;
-   procedure UpdateFonts;
+   function CalcCharWidth(charcode:Widechar;fontdata:TRpTTFontData):double;
+   function UpdateFonts:TRpTTFontData;
    procedure FreeFonts;
    function PDFCompatibleTextWidthKerning(astring:String;adata:TRpTTFontData;pdffont:TRpPDFFont):String;
   public
@@ -412,6 +412,7 @@ begin
  FFont:=TRpPDFFont.Create;
  FFile:=AFile;
  FFontTTData:=TStringList.Create;
+ FFontTTData.Sorted:=true;
  SetLength(FLineInfo,CONS_MINLINEINFOITEMS);
  FLineInfoMaxItems:=CONS_MINLINEINFOITEMS;
 end;
@@ -1302,7 +1303,6 @@ var
  rotstring:string;
  PosLine,PosLineX1,PosLineY1,PosLineX2,PosLineY2:integer;
  astring:String;
- afontname:string;
  adata:TRpTTFontData;
  havekerning:boolean;
 begin
@@ -1312,17 +1312,12 @@ begin
   SaveGraph;
  end;
  try
-{$IFDEF MSWINDOWS}
-  afontname:=StringReplace(Font.WFontName,' ','',[rfReplaceAll]);
-{$ENDIF}
-{$IFDEF LINUX}
-  afontname:=StringReplace(Font.LFontName,' ','',[rfReplaceAll]);
-{$ENDIF}
+
   SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' RG');
   SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' rg');
   SWriteLine(FFile.FsTempStream,'BT');
   SWriteLine(FFile.FsTempStream,'/F'+
-  Type1FontTopdfFontName(Font.Name,Font.Italic,Font.Bold,afontname,Font.Style)+' '+
+  Type1FontTopdfFontName(Font.Name,Font.Italic,Font.Bold,Font.fontname,Font.Style)+' '+
    IntToStr(Font.Size)+ ' Tf');
 
   // Rotates
@@ -1609,13 +1604,12 @@ end;
 
 
 {$IFNDEF DOTNETD}
-function TRpPDFCanvas.CalcCharWidth(charcode:widechar):double;
+function TRpPDFCanvas.CalcCharWidth(charcode:Widechar;fontdata:TRpTTFontData):double;
 var
  intvalue:Byte;
  defaultwidth:integer;
  aarray:PWinAnsiWidthsArray;
  isdefault:boolean;
- afontname:string;
  index:integer;
 begin
   aarray:=nil;
@@ -1628,20 +1622,10 @@ begin
   end;
   if (FFont.Name in [poLinked,poEmbedded]) then
   begin
-{$IFDEF MSWINDOWS}
-   afontname:=StringReplace(Font.WFontName,' ','',[rfReplaceAll]);
-{$ENDIF}
-{$IFDEF LINUX}
-   afontname:=StringReplace(Font.LFontName,' ','',[rfReplaceAll]);
-{$ENDIF}
    // Ask for font size
-   index:=FFontTTData.IndexOf(afontname+IntToStr(Font.Style));
-   if index>=0 then
-   begin
-    Result:=InfoProvider.GetCharWidth(Font,TRpTTFontData(FFontTTData.Objects[index]),charcode);
-    Result:=Result*FFont.Size/1000;
-    exit;
-   end;
+   Result:=InfoProvider.GetCharWidth(Font,fontdata,charcode);
+   Result:=Result*FFont.Size/1000;
+   exit;
   end
   else
   if (FFont.Name=poHelvetica) then
@@ -1728,7 +1712,7 @@ begin
  lockspace:=false;
  while i<=Length(astring) do
  begin
-  newsize:=CalcCharWidth(astring[i]);
+  newsize:=CalcCharWidth(astring[i],adata);
   if havekerning then
   begin
    if i<Length(astring) then
@@ -2600,49 +2584,36 @@ begin
 end;
 
 
-procedure TRpPDFCanvas.UpdateFonts;
+function TRpPDFCanvas.UpdateFonts:TRpTTFontData;
 var
- uniquename:String;
  searchname:string;
  adata:TRpTTFontData;
  index:integer;
- afontname:string;
 begin
+ Result:=nil;
  if Not (Font.Name in [poLinked,poEmbedded]) then
   exit;
  if Not Assigned(InfoProvider) then
   exit;
-{$IFDEF MSWINDOWS}
-  afontname:=StringReplace(Font.WFontName,' ','',[rfReplaceAll]);
-{$ENDIF}
-{$IFDEF LINUX}
-  afontname:=StringReplace(Font.LFontName,' ','',[rfReplaceAll]);
-{$ENDIF}
- searchname:=afontname+IntToStr(Font.Style);
+ searchname:=Font.fontname+IntToStr(Font.Style);
  index:=FFontTTData.IndexOf(searchname);
  if index<0 then
  begin
   index:=FFontTTData.Indexof(searchname);
   if index<0 then
   begin
-   uniquename:=searchname;
    adata:=TRpTTFontData.Create;
    adata.fontdata:=TMemoryStream.Create;
    adata.embedded:=false;
-   FFontTTData.AddObject(uniquename,adata);
+   FFontTTData.AddObject(searchname,adata);
    InfoProvider.FillFontData(Font,adata);
    if adata.fontdata.size>0 then
     adata.embedded:=Font.Name=poEmbedded;
-  end
-  else
-  begin
-   adata:=TRpTTFontData(FFontTTData.Objects[index]);
-   uniquename:=FFontTTData.Strings[index];
-   if Font.Name=poEmbedded then
-    if adata.Fontdata.Size>0 then
-     adata.embedded:=true;
+   Result:=adata;
   end;
- end;
+ end
+ else
+  Result:=TRpTTFontData(FFontTTData.Objects[index]);
 end;
 
 procedure TRpPDFFile.SetFontType;
@@ -2771,29 +2742,16 @@ begin
   end;
    SWriteLine(FTempStream,'/Name /F'+adata.ObjectName);
   SWriteLine(FTempStream,'/BaseFont /'+adata.postcriptname);
-  SWriteLine(FTempStream,'/FirstChar '+IntToStr(StrToInt(adata.loadedwidths.Strings[0])));
-  SWriteLine(FTempStream,'/LastChar '+IntToStr(StrToInt(adata.loadedwidths.Strings[adata.loadedwidths.count-1])));
+  SWriteLine(FTempStream,'/FirstChar '+IntToStr(adata.firstloaded));
+  SWriteLine(FTempStream,'/LastChar '+IntToStr(adata.lastloaded));
   awidths:='[';
-  j:=0;
-  index:=StrToInt(adata.loadedwidths.Strings[0]);
+  index:=adata.firstloaded;
   repeat
-   awidths:=awidths+IntToStr(Integer(adata.loadedwidths.Objects[j]))+' ';
-   inc(j);
-   if j<adata.loadedwidths.Count then
-   begin
-    newchar:=StrToInt(adata.loadedwidths.Strings[j]);
-    inc(index);
-    if (index mod 8)=7 then
-     awidths:=awidths+LINE_FEED;
-    while index<newchar do
-    begin
-     awidths:=awidths+'0 ';
-     inc(index);
-     if (index mod 8)=7 then
-      awidths:=awidths+LINE_FEED;
-    end;
-   end;
-  until j>adata.loadedwidths.Count-1;
+   awidths:=awidths+IntToStr(adata.loadedwidths[index])+' ';
+   inc(index);
+   if (index mod 8)=7 then
+    awidths:=awidths+LINE_FEED;
+  until index>adata.lastloaded;
   awidths:=awidths+']';
   SWriteLine(FTempStream,'/Widths '+awidths);
   SWriteLine(FTempStream,'/FontDescriptor '+
@@ -2821,7 +2779,7 @@ end;
 
 function TRpPDFCanvas.GetTTFontData:TRpTTFontData;
 var
- afontname,searchname:String;
+ searchname:String;
  index:integer;
 begin
  Result:=nil;
@@ -2829,19 +2787,7 @@ begin
   exit;
  if Not Assigned(InfoProvider) then
   exit;
- UpdateFonts;
-{$IFDEF MSWINDOWS}
-  afontname:=StringReplace(Font.WFontName,' ','',[rfReplaceAll]);
-{$ENDIF}
-{$IFDEF LINUX}
-  afontname:=StringReplace(Font.LFontName,' ','',[rfReplaceAll]);
-{$ENDIF}
- searchname:=afontname+IntToStr(Font.Style);
- index:=FFontTTData.IndexOf(searchname);
- if index>=0 then
- begin
-  Result:=TRpTTFontData(FFontTTData.Objects[index]);
- end;
+ Result:=UpdateFonts;
 end;
 
 

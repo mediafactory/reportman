@@ -36,6 +36,7 @@ type
    Name:TRpType1Font;
    WFontName:WideString;
    LFontName:WideString;
+   fontname:String;
    Size:integer;
    Color:integer;
    Style:Integer;
@@ -71,7 +72,12 @@ type
   ObjectIndex:integer;
   ObjectIndexParent:integer;
   DescriptorIndex:Integer;
-  loadedwidths,loadedkernings:TStringList;
+  loadedkernings:array [0..65535] of TStringList;
+  loadedk:array [0..65535] of boolean;
+  loadedwidths:array [0..65535] of integer;
+  loaded:array [0..65535] of boolean;
+  firstloaded,lastloaded:integer;
+  kerningsadded:TStringList;
   constructor Create;
   destructor Destroy;override;
  end;
@@ -87,19 +93,26 @@ type
 implementation
 
 constructor TRpTTFontData.Create;
+var
+ i:integer;
 begin
  inherited Create;
 
- loadedwidths:=TStringList.Create;
- loadedwidths.sorted:=true;
- loadedkernings:=TStringList.Create;
- loadedkernings.sorted:=true;
+ kerningsadded:=TStringList.Create;
+ kerningsadded.sorted:=true;
+ firstloaded:=65536;
+ lastloaded:=-1;
 end;
 
 destructor TRpTTFontData.Destroy;
+var
+ i:integer;
 begin
- loadedkernings.free;
- loadedwidths.free;
+ for i:=0 to kerningsadded.count-1 do
+ begin
+  loadedkernings[StrToInt(kerningsadded.Strings[i])].Free;
+ end;
+ kerningsadded.free;
 
  inherited;
 end;
