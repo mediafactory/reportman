@@ -1,4 +1,4 @@
-Report Manager Designer Version 1.0 Release Candidate 2
+Report Manager Designer Version 1.1
 
 Author:	Toni Martir
 	toni@pala.com (no free support)
@@ -13,7 +13,7 @@ http://reportman.sourceforge.net
 
 To install:
 
-tar zxvf repmand-1RC1.i386.tar.gz
+tar zxvf repmand-1_1.i386.tar.gz
 
 To execute the application:
 
@@ -22,17 +22,20 @@ Then execute:
 
 ./repmand.sh
 
+To execute the report server or report client use
+./reportserverapp.sh
+./metaview.sh
 
 To execute other commandline tools  set first the library path (see repmand.sh script)
 
 Notes:
 
-This is the prerelease of 1.0 version.
+This is the 1.1 version.
 
 What's new:
 
-- Translation kit (Windows)
-- Documentation included
+- Report server and report client
+- Updated Documentation
 - Few bugfixes
 
 Linux version:

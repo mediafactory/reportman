@@ -630,7 +630,9 @@ end;
 
 initialization
 
+{$IFDEF MSWINDOWS}
 obtainedversion:=false;
+{$ENDIF}
 printerconfigfile:=nil;
 
 finalization

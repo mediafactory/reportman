@@ -534,6 +534,7 @@ var
   SRpServiceStopped:WideString='Stopped';
   SRpServiceStarted:WideString='Started';
   SRpServiceUnInstalled:WideString='Not Installed';
+
 implementation
 
 uses rptranslator;

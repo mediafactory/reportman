@@ -1,10 +1,10 @@
 object FMain: TFMain
-  Left = 134
-  Top = 83
+  Left = 138
+  Top = 103
   Width = 490
   Height = 426
-  VertScrollBar.Range = 417
   HorzScrollBar.Range = 473
+  VertScrollBar.Range = 417
   ActiveControl = ComboHost
   BorderStyle = fbsDialog
   Caption = 'Report Manager Server configuration'
@@ -13,8 +13,8 @@ object FMain: TFMain
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 13
-  TextWidth = 6
+  TextHeight = 15
+  TextWidth = 7
   object GUser: TGroupBox
     Left = 8
     Top = 44
@@ -25,15 +25,15 @@ object FMain: TFMain
     object LUserName: TLabel
       Left = 8
       Top = 24
-      Width = 51
-      Height = 13
+      Width = 59
+      Height = 15
       Caption = 'User name'
     end
     object EUserName: TEdit
       Left = 112
       Top = 20
       Width = 205
-      Height = 21
+      Height = 23
       TabOrder = 1
       Text = 'Admin'
     end
@@ -41,15 +41,15 @@ object FMain: TFMain
       Left = 112
       Top = 48
       Width = 205
-      Height = 21
+      Height = 23
       EchoMode = emPassword
       TabOrder = 2
     end
     object LPassword: TLabel
       Left = 8
       Top = 52
-      Width = 46
-      Height = 13
+      Width = 54
+      Height = 15
       Caption = 'Password'
     end
     object BConnect: TButton
@@ -86,11 +86,11 @@ object FMain: TFMain
         ReadOnly = True
         TabOrder = 0
         TitleFont.Color = clBlack
-        TitleFont.Height = 11
-        TitleFont.Name = 'MS Shell Dlg'
+        TitleFont.Height = 13
+        TitleFont.Name = 'adobe-helvetica'
         TitleFont.Pitch = fpVariable
         TitleFont.Style = []
-        TitleFont.Weight = 40
+        TitleFont.Weight = 0
       end
       object BAddAlias: TButton
         Left = 4
@@ -175,16 +175,16 @@ object FMain: TFMain
   object LHost: TLabel
     Left = 4
     Top = 12
-    Width = 22
-    Height = 13
+    Width = 25
+    Height = 15
     Caption = 'Host'
   end
   object ComboHost: TComboBox
     Left = 92
     Top = 8
     Width = 213
-    Height = 21
-    ItemHeight = 15
+    Height = 23
+    ItemHeight = 17
     Items.Strings = (
       'localhost')
     TabOrder = 0
