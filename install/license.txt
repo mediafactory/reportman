@@ -11,7 +11,7 @@ The plain explanation of the license is:
 - The source code is avaliable.
 - If you enhace this tool or the reporting engine
 and distribute it you must also distribute the source code.
-- That it derived versions of this tool must be open source.
+- That is derived versions of this tool must be open source.
 - You can't missinterpret or omit the author/s of this tool.
 - You can use it in commercial applications.
 

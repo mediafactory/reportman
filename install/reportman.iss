@@ -22,9 +22,13 @@ Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescri
 Source: "..\repman\repmand.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaview\metaview.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaprint\metaprint.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "license.txt"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\printrep\printrep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\reptotxt\reptotxt.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\txttorep\txttorep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\dbxdrivers.ini"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\dbxconnections.ini"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\drivers\win32\dbexpint.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
@@ -35,8 +39,9 @@ Source: "..\drivers\win32\dbxoodbc.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesn
 Source: "C:\winnt\system32\qtintf.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 
 [Icons]
-Name: "{group}\Report Manager"; Filename: "{app}\repmand.exe";
-Name: "{group}\Report Manager"; Filename: "{app}\metaview.exe";
+Name: "{group}\Report Manager Designer"; Filename: "{app}\repmand.exe"; WorkingDir: "{app}"
+Name: "{group}\Metafile Viewer"; Filename: "{app}\metaview.exe"; WorkingDir: "{app}"
+Name: "{group}\License"; Filename: "{app}\license.txt";
 Name: "{userdesktop}\Report Manager"; Filename: "{app}\repmand.exe"; MinVersion: 4,4; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Report Manager"; Filename: "{app}\repmand.exe"; MinVersion: 4,4; Tasks: quicklaunchicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Metafile Report Viewer"; Filename: "{app}\metaview.exe"; MinVersion: 4,4; Tasks: quicklaunchicon
