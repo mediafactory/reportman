@@ -167,10 +167,11 @@ reportmanserverxp:
         cd ..
         cd ..
 
-packages: rtlpackages designtimepackages clxpackages vcldesignpackages designpackages
+packages: rtlpackages vcldesignpackages designtimepackages clxpackages designpackages
 
 rtlpackages:
         $(COMPILE) rppack_del.dpk
+        $(COMPILE) rppackvcl_del.dpk
 designpackages:
         $(COMPILE) rppackdesigntime_del.dpk
 clxpackages:
@@ -191,7 +192,6 @@ clean_noexe:
         -del /s *.ppw
         -del /s *.rst
         -del *.hpp
-	  copy builderclx\antivcl.hpp .	
         -del /s *.obj
         -del /s *.tds
         -del *.bpl

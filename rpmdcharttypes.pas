@@ -97,7 +97,6 @@ procedure GetRpMultiBarPossibleValues(alist:TRpWideStrings);
 
 implementation
 
-uses rpbasereport;
 
 
 const
