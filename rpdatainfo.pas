@@ -33,7 +33,7 @@ uses Classes,SysUtils,
  Libc,
 {$ENDIF}
 {$IFDEF USESQLEXPRESS}
- SqlExpr,DBXpress,SqlConst,//DBExpMYSQL,DbExpMyS,
+ SqlExpr,DBXpress,SqlConst,//DBExpMYSQL,DbExpMyS,dbExpDB2,dbExpORA,dbExpINT
 {$ENDIF}
  rpmdconsts,
  DB,rpparams,Inifiles,rptypes,DBClient,
