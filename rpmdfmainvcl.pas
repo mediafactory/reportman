@@ -674,7 +674,7 @@ begin
 // Shortcuts disabled, must check if there is a TEdit active
 
  ACut.ShortCut:=ShortCut(Ord('X'),[ssCtrl,ssAlt]);
- ADelete.ShortCut:=ShortCut(VK_DELETE,[ssCtrl,ssAlt]);
+ ADelete.ShortCut:=ShortCut(VK_DELETE,[ssCtrl]);
  ACopy.ShortCut:=ShortCut(Ord('C'),[ssCtrl,ssAlt]);
  APaste.ShortCut:=ShortCut(Ord('V'),[ssCtrl,ssAlt]);
  ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssCtrl,ssAlt]);

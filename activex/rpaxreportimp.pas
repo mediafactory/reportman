@@ -20,10 +20,10 @@ type
     ParamName:String;
     FParam:TRpParam;
    protected
-    function  Get_Description: PWideChar; safecall;
-    procedure Set_Description(Value: PWideChar); safecall;
-    function  Get_Name: PChar; safecall;
-    procedure Set_Name(Value: PChar); safecall;
+    function  Get_Description: OleVariant; safecall;
+    procedure Set_Description(Value: OleVariant); safecall;
+    function  Get_Name: OleVariant; safecall;
+    procedure Set_Name(Value: OleVariant); safecall;
     function  Get_Visible: WordBool; safecall;
     procedure Set_Visible(Value: WordBool); safecall;
     function  Get_Value: OleVariant; safecall;
@@ -429,24 +429,24 @@ end;
 
 
 
-function  TIReportParam.Get_Description: PWideChar;
+function  TIReportParam.Get_Description: OleVariant;
 begin
- Result:=PWideChar(FParam.Description);
+ Result:=FParam.Description;
 end;
 
-procedure TIReportParam.Set_Description(Value: PWideChar);
+procedure TIReportParam.Set_Description(Value: OleVariant);
 begin
  FParam.Description:=Value;
 end;
 
-function  TIReportParam.Get_Name: PChar;
+function  TIReportParam.Get_Name: OleVariant;
 begin
- Result:=PChar(FParam.Name);
+ Result:=FParam.Name;
 end;
 
-procedure TIReportParam.Set_Name(Value: PChar);
+procedure TIReportParam.Set_Name(Value: OleVariant);
 begin
- FParam.Name:=StrPas(Value);
+ FParam.Name:=Value;
 end;
 
 function  TIReportParam.Get_Visible: WordBool;

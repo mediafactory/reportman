@@ -22,9 +22,12 @@ interface
 
 uses
   SysUtils, Classes,
-  rpmdconsts,DB,MaskUtils,
+  rpmdconsts,DB,
 {$IFDEF USEVARIANTS}
-  Variants,
+  Variants,MaskUtils,
+{$ENDIF}
+{$IFNDEF USEVARIANTS}
+  Mask,
 {$ENDIF}
   rptypeval,rptypes;
 
