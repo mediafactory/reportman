@@ -142,7 +142,7 @@ end;
 procedure TFMeta.APrintExecute(Sender: TObject);
 begin
  // Prints the report
- PrintMetafile(metafile,opendialog1.FileName);
+ PrintMetafile(metafile,opendialog1.FileName,true);
 end;
 
 procedure TFMeta.ASaveExecute(Sender: TObject);

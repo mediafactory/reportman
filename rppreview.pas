@@ -1,3 +1,21 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager                                  }
+{                                                       }
+{       rppreview                                        }
+{       Preview the report                              }
+{                                                       }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the GPL license              }
+{       A comercial license is also available           }
+{       See license.txt for licensing details           }
+{                                                       }
+{                                                       }
+{*******************************************************}
+
 unit rppreview;
 
 interface
@@ -5,7 +23,7 @@ interface
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpreport,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,
-  QActnList, QImgList,QPrinters;
+  QActnList, QImgList,QPrinters,rpconsts;
 
 type
   TFRpPreview = class(TForm)
@@ -29,6 +47,8 @@ type
     ASave: TAction;
     SaveDialog1: TSaveDialog;
     ToolButton7: TToolButton;
+    ACancel: TAction;
+    BCancel: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -39,9 +59,14 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure APrintExecute(Sender: TObject);
     procedure ASaveExecute(Sender: TObject);
+    procedure BCancelClick(Sender: TObject);
+    procedure ACancelExecute(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     { Private declarations }
+    cancelled:boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
+    procedure RepProgress(Sender:TRpReport;var docancel:boolean);
   public
     { Public declarations }
     pagenum:integer;
@@ -53,21 +78,29 @@ type
   end;
 
 
-procedure ShowPreview(report:TRpReport);
+procedure ShowPreview(report:TRpReport;caption:string);
 
 implementation
 
 {$R *.xfm}
 
-procedure ShowPreview(report:TRpReport);
+procedure ShowPreview(report:TRpReport;caption:string);
 var
  dia:TFRpPreview;
+ oldprogres:TRpProgressEvent;
 begin
  dia:=TFRpPreview.Create(Application);
  try
-  dia.report:=report;
-  Application.OnIdle:=dia.AppIdle;
-  dia.ShowModal;
+  dia.caption:=caption;
+  oldprogres:=report.OnProgress;
+  try
+   dia.report:=report;
+   report.OnProgress:=dia.RepProgress;
+   Application.OnIdle:=dia.AppIdle;
+   dia.ShowModal;
+  finally
+   report.OnProgress:=oldprogres;
+  end;
  finally
   dia.Free;
  end;
@@ -75,33 +108,59 @@ end;
 
 procedure TFRpPreview.PrintPage;
 begin
- EPageNum.Text:='0';
- if report.Metafile.PageCount>=pagenum then
- begin
-  report.Metafile.CurrentPage:=pagenum-1;
- end
- else
- begin
-  while report.Metafile.PageCount<pagenum do
+ try
+  if report.Metafile.PageCount>=pagenum then
   begin
-   if report.LastPage then
-    break;
-   if Not report.PrintNextPage then
-    break;
+   report.Metafile.CurrentPage:=pagenum-1;
+  end
+  else
+  begin
+   if Not report.LastPage then
+   begin
+    cancelled:=false;
+    BCancel.Visible:=true;
+    AFirst.Enabled:=false;
+    ALast.Enabled:=false;
+    APrint.Enabled:=false;
+    ANext.Enabled:=false;
+    APrevious.Enabled:=false;
+    EPageNum.Enabled:=false;
+    ASave.Enabled:=false;
+    try
+     while report.Metafile.PageCount<pagenum do
+     begin
+      // Canbe canceled
+      if report.PrintNextPage then
+       break;
+     end;
+    finally
+     BCancel.Visible:=false;
+     AFirst.Enabled:=true;
+     ALast.Enabled:=true;
+     APrint.Enabled:=true;
+     ANext.Enabled:=true;
+     APrevious.Enabled:=true;
+     EPageNum.Enabled:=true;
+     ASave.Enabled:=true;
+    end;
+   end;
+   if report.Metafile.PageCount<pagenum then
+    pagenum:=report.Metafile.PageCount;
+   report.Metafile.CurrentPage:=pagenum-1;
   end;
-  if report.Metafile.PageCount<pagenum then
-   pagenum:=report.Metafile.PageCount;
-  report.Metafile.CurrentPage:=pagenum-1;
+  report.metafile.DrawPage(qtdriver);
+  if Assigned(qtdriver.bitmap) then
+  begin
+   AImage.Width:=qtdriver.bitmap.Width;
+   AImage.Height:=qtdriver.bitmap.Height;
+   AImage.Picture.Bitmap.Assign(qtdriver.bitmap);
+   AImage.Invalidate;
+  end;
+  EPageNum.Text:=IntToStr(PageNum);
+ except
+  EPageNum.Text:='0';
+  raise;
  end;
- report.metafile.DrawPage(qtdriver);
- if Assigned(qtdriver.bitmap) then
- begin
-  AImage.Width:=qtdriver.bitmap.Width;
-  AImage.Height:=qtdriver.bitmap.Height;
-  AImage.Picture.Bitmap.Assign(qtdriver.bitmap);
-  AImage.Invalidate;
- end;
- EPageNum.Text:=IntToStr(PageNum);
 end;
 
 procedure TFRpPreview.AppIdle(Sender:TObject;var done:boolean);
@@ -171,18 +230,8 @@ end;
 
 procedure TFRpPreview.APrintExecute(Sender: TObject);
 begin
- while not report.LastPage do
- begin
-  report.PrintNextPage;
- end;
- // Prints the report
- Printer.ExecuteSetup;
- qtdriver.toprinter:=true;
- try
-  report.Metafile.DrawAll(QtDriver);
- finally
-  qtdriver.toprinter:=false;
- end;
+ if CalcReportWidthProgress(report) then
+  PrintMetafile(report.Metafile,caption,true);
 end;
 
 procedure TFRpPreview.ASaveExecute(Sender: TObject);
@@ -190,10 +239,36 @@ begin
  // Saves the metafile
  if SaveDialog1.Execute then
  begin
-  if Not report.LastPage then
-   while Not report.PrintNextPage do;
+  if CalcReportWidthProgress(report) then
+   report.Metafile.SaveToFile(SaveDialog1.Filename);
+ end;
+end;
 
-  report.Metafile.SaveToFile(SaveDialog1.Filename);
+procedure TFRpPreview.RepProgress(Sender:TRpReport;var docancel:boolean);
+begin
+ BCancel.Caption:=IntToStr(Sender.CurrentSubReportIndex)+':'
+  +FormatFloat('####,####',report.RecordCount)+'-'+SRpCancel;
+ Application.ProcessMessages;
+ if cancelled then
+  docancel:=true;
+end;
+
+procedure TFRpPreview.BCancelClick(Sender: TObject);
+begin
+ cancelled:=true;
+end;
+
+procedure TFRpPreview.ACancelExecute(Sender: TObject);
+begin
+ cancelled:=true;
+end;
+
+procedure TFRpPreview.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+ if Not ANext.Enabled then
+ begin
+  cancelled:=true;
  end;
 end;
 

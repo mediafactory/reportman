@@ -705,7 +705,7 @@ end;
 procedure TFMainf.APreviewExecute(Sender: TObject);
 begin
  // Previews the report
- ShowPreview(report);
+ ShowPreview(report,caption);
 end;
 
 procedure TFMainf.APrintExecute(Sender: TObject);

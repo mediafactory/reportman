@@ -347,6 +347,7 @@ procedure TRpMetafileReport.SaveToStream(Stream:TStream);
 var
  separator:integer;
  i:integer;
+ acount:integer;
 begin
  Stream.Write(rpSignature,RP_SIGNATURELENGTH);
  separator:=integer(rpFHeader);
@@ -358,6 +359,9 @@ begin
  Stream.Write(Orientation,sizeof(Orientation));
  Stream.Write(BackColor,sizeof(BackColor));
  // Pages
+ // Write pagecount
+ acount:=FPages.Count;
+ Stream.Write(acount,sizeof(acount));
  for i:=0 to FPages.count-1 do
  begin
   separator:=integer(rpFPage);
@@ -374,6 +378,7 @@ var
  buf:array[0..RP_SIGNATURELENGTH-1] of char;
  bytesread:integer;
  fpage:TRpMetafilePage;
+ acount:integer;
 begin
  // Clears the report metafile
  Clear;
@@ -400,6 +405,11 @@ begin
  if (sizeof(BackColor)<>Stream.Read(BackColor,sizeof(BackColor))) then
   Raise Exception.Create(SRpBadFileHeader);
  // If there is no pages then end of read
+ // Read pagecount
+ if (sizeof(acount)<>Stream.Read(acount,sizeof(acount))) then
+  Raise Exception.Create(SRpBadFileHeader);
+
+
  // Pages
  bytesread:=Stream.Read(separator,sizeof(separator));
  while (bytesread>0) do

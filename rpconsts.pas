@@ -31,6 +31,7 @@ resourcestring
   SRpConfigFileNotExists='Configuration file missing: ';
   SRpPage='Page';
   SRpItem='Item';
+  SRpCancel='Cancel';
   SRpInvalidClipboardFormat='Invalid clipboard format';
   SRpErrorReadingReport='Error reading report: ';
   SRpIgnoreError='Ignore?';
