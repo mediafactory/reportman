@@ -3,7 +3,7 @@ object FRpPreview: TFRpPreview
   Top = 137
   Width = 633
   Height = 471
-  VertScrollBar.Range = 30
+  AutoScroll = False
   ActiveControl = EPageNum
   Caption = 'Report Print Preview'
   Color = clBackground
@@ -16,7 +16,7 @@ object FRpPreview: TFRpPreview
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnResize = FormResize
-  PixelsPerInch = 100
+  PixelsPerInch = 96
   TextHeight = 13
   TextWidth = 6
   object BToolBar: TToolBar

@@ -3,7 +3,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
   Top = 44
   Width = 539
   Height = 463
-  VertScrollBar.Range = 129
+  AutoScroll = False
   ActiveControl = LConnections
   Caption = 'Data access configuration'
   Color = clButton
@@ -13,7 +13,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  PixelsPerInch = 100
+  PixelsPerInch = 96
   TextHeight = 13
   TextWidth = 6
   object GConnections: TGroupBox

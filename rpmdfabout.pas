@@ -20,7 +20,7 @@ unit rpmdfabout;
 interface
 
 uses SysUtils, Classes, QGraphics, QForms, 
-  QButtons, QExtCtrls, QControls, QStdCtrls;
+  QButtons, QExtCtrls, QControls, QStdCtrls,QDialogs;
 
 type
   TFRpAboutBox = class(TForm)
@@ -70,6 +70,7 @@ begin
  LName.Font.Style:=[fsBold];
  LVersion.Font.Size:=16;
  LEmail.Font.Style:=[fsBold];
+// ShowMessage('Pixels per inch:'+IntToStr(PixelsPerInch)+'Screeen:'+IntToStr(Screen.PixelsPerInch));
 end;
 
 end.
