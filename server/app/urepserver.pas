@@ -258,7 +258,7 @@ var
 begin
  smp:=false;
  GetSystemInfo(sysinfo);
- if sysinfo.dwNumberOfProcessors>0 then
+ if sysinfo.dwNumberOfProcessors>1 then
   smp:=true;
 end;
 {$ENDIF}
