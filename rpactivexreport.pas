@@ -20,8 +20,12 @@ unit rpactivexreport;
 
 interface
 
+{$I rpconf.inc}
 uses
   Windows, Messages, SysUtils, Classes, Controls,
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
   rpvclreport,Graphics,rpreport,rpmdconsts;
 
 
