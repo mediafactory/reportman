@@ -37,10 +37,12 @@
 {               -Brush Patterns                         }
 {               -RLE and monocrhome Bitmaps             }
 {               -RoundRect                              }
+{               -Embedding True Type fonts              }
+{               -Widechar Fonts                         }
 {                                                       }
 {       This file is under the MPL license              }
-{       If you enhace this file you must provide        }
-{       source code                                     }
+{       If you enhace the functionality of this file    }
+{       you must provide source code                    }
 {                                                       }
 {                                                       }
 {*******************************************************}
