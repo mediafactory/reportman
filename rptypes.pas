@@ -593,7 +593,10 @@ begin
        displayformat:=ShortTimeFormat
       else
        displayformat:=ShortDateFormat+' '+ShortTimeFormat;
-     Result:=FormatDateTime(displayformat,Value);
+     if VarType(value)=varDate then
+      Result:=FormatDateTime(displayformat,Value)
+     else
+      Result:=widestring(Value);
     end
     else
      Result:=widestring(Value);
