@@ -788,7 +788,7 @@ begin
       DrawTextA(Canvas.Handle,aansitext,Length(aansitext),arec,aalign or DT_CALCRECT);
 {$ENDIF}
      Canvas.Brush.Style:=bsSolid;
-     Canvas.Brush.Color:=obj.BackColor;
+     Canvas.Brush.Color:=CLXColorToVCLColor(obj.BackColor);
     end
     else
      Canvas.Brush.Style:=bsClear;
@@ -803,7 +803,12 @@ begin
     if obj.Transparent then
      SetBkMode(Canvas.Handle,TRANSPARENT)
     else
+    begin
+//   This does not work on XP?
      SetBkMode(Canvas.Handle,OPAQUE);
+//     SetBkColor(Canvas.Handle,Canvas.Brush.Color);
+//     SelectObject(Canvas.Handle,Canvas.Font.Handle);
+    end;
 {$IFDEF DOTNETD}
     if IsWindowsNT then
      DrawTextW(Canvas.Handle,atext,Length(atext),rec,aalign)
