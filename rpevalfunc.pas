@@ -1309,13 +1309,18 @@ function TIdenGraphicOperation.GeTRpValue:TRpValue;
 var
  i:integer;
 begin
- for i:=0 to ParamCount-1 do
+ for i:=0 to 3 do
  begin
-  if (Vartype(Params[i])<>varInteger) then
+  if (Not Vartype(Params[i]) in [varSmallInt..varCurrency,varShortInt..varInt64]) then
+   Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ end;
+ for i:=4 to ParamCount-1 do
+ begin
+  if (Not Vartype(Params[i]) in [varSmallInt..varInteger,varShortInt..varInt64]) then
    Raise TRpNamedException.Create(SRpEvalType,IdenName);
  end;
  if Assigned((evaluator As TRpEvaluator).OnGraphicOp) then
-  Result:=(evaluator As TRpEvaluator).OnGraphicOp(Params[0],Params[1],Params[2],Params[3],Params[4],
+  Result:=(evaluator As TRpEvaluator).OnGraphicOp(Round(Params[0]),Round(Params[1]),Round(Params[2]),Round(Params[3]),Params[4],
    Params[5],Params[6],Params[7],Params[8],Params[9])
  else
   Result:=false;

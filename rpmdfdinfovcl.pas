@@ -110,7 +110,7 @@ end;
 
 procedure TFRpDInfoVCL.PControlChange(Sender: TObject);
 begin
- fdatasets.Databaseinfo:=report.DatabaseInfo;
+ fdatasets.Databaseinfo:=fconnections.DatabaseInfo;
 end;
 
 procedure TFRpDInfoVCL.BOkClick(Sender: TObject);

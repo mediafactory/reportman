@@ -75,7 +75,7 @@ type
    FPrinterDriver:TRpPrinterEscapeStyle;
    FPrinterDriverName:String;
    FForceDriverName:String;
-   masterselect,limitedmaster:boolean;
+   masterselect,limitedmaster,condensedmaster:boolean;
    DrawerBefore,DrawerAfter:Boolean;
    master10,master12,mastercond,masterwide,masterbold,masteritalic,masterunderline:Byte;
    function GetLineIndex(posy:integer):integer;
@@ -649,6 +649,7 @@ begin
  FPrinterDriverName:=UpperCase(FPrinterDriverName);
  masterselect:=false;
  limitedmaster:=false;
+ condensedmaster:=false;
  // Epson old printers only share expanded and compressed
  // character codes and underline.
  if FPrinterDriverName='EPSON' then
@@ -690,6 +691,7 @@ begin
   escapecodes[rpescapeformfeed]:=#12;
   masterselect:=true;
   limitedmaster:=false;
+  condensedmaster:=false;
 
   // Open drawer
   escapecodes[rpescapepulse]:=#27+#112+#0+#100+#100;
@@ -788,6 +790,7 @@ begin
   //escapecodes[rpescapeformfeed]:=#12;
   masterselect:=true;
   limitedmaster:=true;
+  condensedmaster:=false;
 
   // Can select red font
   escapecodes[rpescaperedfont]:=#27+'r'+#1;
@@ -807,6 +810,7 @@ begin
   //escapecodes[rpescapeformfeed]:=#12;
   masterselect:=true;
   limitedmaster:=true;
+  condensedmaster:=false;
   // Can select red font
   escapecodes[rpescaperedfont]:=#27+'r'+#1;
   escapecodes[rpescapeblackfont]:=#27+'r'+#0;
@@ -825,6 +829,7 @@ begin
   //escapecodes[rpescapeformfeed]:=#12;
   masterselect:=true;
   limitedmaster:=true;
+  condensedmaster:=true;
 
   escapecodes[rpescapeendprint]:=#27+#64;
   // Open drawer
@@ -840,6 +845,7 @@ begin
   //escapecodes[rpescapeformfeed]:=#12;
   masterselect:=true;
   limitedmaster:=true;
+  condensedmaster:=true;
   // Cut paper
   escapecodes[rpescapeendprint]:=#27+'m'+#27+#64;
   // Open drawer
@@ -951,8 +957,17 @@ begin
   allowedsizes[rpcpi15]:=False;
   if limitedmaster then
   begin
-   allowedsizes[rpcpi17]:=False;
-   allowedsizes[rpcpi20]:=False;
+   if condensedmaster then
+   begin
+    allowedsizes[rpcpi10]:=False;
+    allowedsizes[rpcpi5]:=False;
+    allowedsizes[rpcpi20]:=False;
+   end
+   else
+   begin
+    allowedsizes[rpcpi17]:=False;
+    allowedsizes[rpcpi20]:=False;
+   end;
   end;
  end
  else
@@ -1349,21 +1364,43 @@ begin
    Result:='';
   end;
   aselect:=0;
-  case FontStep of
-   rpcpi20:
-    aselect:=master12 or condcode;
-   rpcpi17:
-    aselect:=master10 or condcode;
-   rpcpi15:
-    Result:='';
-   rpcpi12:
-    aselect:=master12;
-   rpcpi10:
-    aselect:=master10;
-   rpcpi6:
-    aselect:=master12 or masterwide;
-   rpcpi5:
-    aselect:=master10 or masterwide;
+  if (limitedmaster and condensedmaster) then
+  begin
+   case FontStep of
+    rpcpi20:
+     aselect:=0;
+    rpcpi17:
+     aselect:=master12;
+    rpcpi15:
+     aselect:=0;
+    rpcpi12:
+     aselect:=master10;
+    rpcpi10:
+     aselect:=0;
+    rpcpi6:
+     aselect:=master10 or masterwide;
+    rpcpi5:
+     aselect:=0;
+   end;
+  end
+  else
+  begin
+   case FontStep of
+    rpcpi20:
+     aselect:=master12 or condcode;
+    rpcpi17:
+     aselect:=master10 or condcode;
+    rpcpi15:
+     Result:='';
+    rpcpi12:
+     aselect:=master12;
+    rpcpi10:
+     aselect:=master10;
+    rpcpi6:
+     aselect:=master12 or masterwide;
+    rpcpi5:
+     aselect:=master10 or masterwide;
+   end;
   end;
   Result:=#27+'!'+Chr(aselect);
   // Red font
@@ -1422,21 +1459,43 @@ begin
   else
    condcode:=mastercond;
   aselect:=0;
-  case FontStep of
-   rpcpi20:
-    aselect:=master12 or condcode;
-   rpcpi17:
-    aselect:=master10 or condcode;
-   rpcpi15:
-    Result:='';
-   rpcpi12:
-    aselect:=master12;
-   rpcpi10:
-    aselect:=master10;
-   rpcpi6:
-    aselect:=master12 or masterwide;
-   rpcpi5:
-    aselect:=master10 or masterwide;
+  if limitedmaster then
+  begin
+   case FontStep of
+    rpcpi20:
+     aselect:=0;
+    rpcpi17:
+     aselect:=master12;
+    rpcpi15:
+     aselect:=0;
+    rpcpi12:
+     aselect:=master10;
+    rpcpi10:
+     aselect:=0;
+    rpcpi6:
+     aselect:=master10 or masterwide;
+    rpcpi5:
+     aselect:=0;
+   end;
+  end
+  else
+  begin
+   case FontStep of
+    rpcpi20:
+     aselect:=master12 or condcode;
+    rpcpi17:
+     aselect:=master10 or condcode;
+    rpcpi15:
+     Result:='';
+    rpcpi12:
+     aselect:=master12;
+    rpcpi10:
+     aselect:=master10;
+    rpcpi6:
+     aselect:=master12 or masterwide;
+    rpcpi5:
+     aselect:=master10 or masterwide;
+   end;
   end;
   if (fontstyle and 1)>0 then
    aselect:=aselect or masterbold;

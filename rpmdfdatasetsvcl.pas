@@ -186,6 +186,7 @@ procedure TFRpDatasetsVCL.SetDatabaseInfo(Value:TRpDatabaseInfoList);
 begin
  report.DatabaseInfo.Assign(Value);
  FillDatasets;
+
 end;
 
 procedure TFRpDatasetsVCL.SetDataInfo(Value:TRpDataInfoList);

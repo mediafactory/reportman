@@ -1007,19 +1007,42 @@ end;
 procedure TFRpQtProgress.AppIdleReport(Sender:TObject;var done:boolean);
 var
  oldprogres:TRpProgressEvent;
+ istextonly:Boolean;
+ drivername:String;
+ TextDriver:TRpTextDriver;
+ aTextDriver:IRpPrintDriver;
 begin
  Application.Onidle:=nil;
  done:=false;
 
+ drivername:=Trim(GetPrinterEscapeStyleDriver(printerindex));
+ istextonly:=Length(drivername)>0;
+
  try
-  qtdriver:=TRpQtDriver.Create;
-  aqtdriver:=qtdriver;
-  oldprogres:=report.OnProgress;
-  try
-   report.OnProgress:=RepProgress;
-   report.PrintAll(qtdriver);
-  finally
-   report.OnProgress:=oldprogres;
+  if istextonly then
+  begin
+   TextDriver:=TRpTextDriver.Create;
+   aTextDriver:=TextDriver;
+   TextDriver.SelectPrinter(report.PrinterSelect);
+   oldprogres:=RepProgress;
+   try
+    report.OnProgress:=RepProgress;
+    report.PrintAll(TextDriver);
+   finally
+    report.OnProgress:=oldprogres;
+   end;
+  end
+  else
+  begin
+   qtdriver:=TRpQtDriver.Create;
+   aqtdriver:=qtdriver;
+   oldprogres:=report.OnProgress;
+   try
+    report.OnProgress:=RepProgress;
+    report.PrintAll(qtdriver);
+   finally
+    report.OnProgress:=oldprogres;
+   end;
   end;
  except
   cancelled:=True;

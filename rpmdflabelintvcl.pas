@@ -161,6 +161,9 @@ var
  aalign:Cardinal;
  aansitext:String;
  lalignment:integer;
+ alvcenter,alvbottom:boolean;
+ calcrect:boolean;
+ arec:TRect;
 begin
  alabel:=TRpLabel(printitem);
  if csDestroying in alabel.ComponentState then
@@ -202,6 +205,33 @@ begin
  else
   SetBkMode(Canvas.Handle,OPAQUE);
  aansitext:=alabel.text;
+
+ alvbottom:=(alabel.VAlignMent AND AlignmentFlags_AlignBottom)>0;
+ alvcenter:=(alabel.VAlignMent AND AlignmentFlags_AlignVCenter)>0;
+
+ calcrect:=(not alabel.Transparent) or alvbottom or alvcenter;
+ arec:=rec;
+ if calcrect then
+ begin
+  // First calculates the text extent
+  // Win9x does not support drawing WideChars
+  if IsWindowsNT then
+   DrawTextW(Canvas.Handle,PWideChar(alabel.text),Length(alabel.text),arec,aalign or DT_CALCRECT)
+  else
+   DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),arec,aalign or DT_CALCRECT);
+  Canvas.Brush.Style:=bsSolid;
+  Canvas.Brush.Color:=alabel.BackColor;
+ end
+ else
+  Canvas.Brush.Style:=bsClear;
+ if alvbottom then
+ begin
+  rec.Top:=rec.Top+(rec.bottom-arec.bottom)
+ end;
+ if alvcenter then
+ begin
+  rec.Top:=rec.Top+((rec.bottom-arec.bottom) div 2);
+ end;
  if IsWindowsNT then
   DrawTextW(Canvas.Handle,PWideChar(alabel.text),Length(alabel.text),rec,aalign)
  else
@@ -456,6 +486,10 @@ var
  aalign:Cardinal;
  aansitext:String;
  eAlignMent:integer;
+ alvcenter:Boolean;
+ alvbottom:Boolean;
+ arec:TRect;
+ calcrect:boolean;
 begin
  aexp:=TRpExpression(printitem);
  if csDestroying in aexp.ComponentState then
@@ -494,6 +528,33 @@ begin
  else
   SetBkMode(Canvas.Handle,OPAQUE);
  aansitext:=aexp.Expression;
+
+ alvbottom:=(aexp.VAlignMent AND AlignmentFlags_AlignBottom)>0;
+ alvcenter:=(aexp.VAlignMent AND AlignmentFlags_AlignVCenter)>0;
+
+ calcrect:=(not aexp.Transparent) or alvbottom or alvcenter;
+ arec:=rec;
+ if calcrect then
+ begin
+  // First calculates the text extent
+  // Win9x does not support drawing WideChars
+  if IsWindowsNT then
+   DrawTextW(Canvas.Handle,PWideChar(aexp.Expression),Length(aexp.Expression),arec,aalign or DT_CALCRECT)
+  else
+   DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),arec,aalign or DT_CALCRECT);
+  Canvas.Brush.Style:=bsSolid;
+  Canvas.Brush.Color:=aexp.BackColor;
+ end
+ else
+  Canvas.Brush.Style:=bsClear;
+ if alvbottom then
+ begin
+  rec.Top:=rec.Top+(rec.bottom-arec.bottom)
+ end;
+ if alvcenter then
+ begin
+  rec.Top:=rec.Top+((rec.bottom-arec.bottom) div 2);
+ end;
  if IsWindowsNT then
   DrawTextW(Canvas.Handle,PWideChar(aexp.Expression),Length(aexp.Expression),rec,aalign)
  else

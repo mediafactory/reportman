@@ -629,9 +629,11 @@ var
  def:String;
 begin
  CheckLoadedPrinterConfig;
- def:='EPSON';
+ def:='';
  if printerindex=prpTicketPrinter then
   def:='EPSONTMU210';
+ if printerindex=prpCharacterPrinter then
+  def:='EPSON';
  Result:=printerconfigfile.ReadString('PrinterDriver','Printer'+IntToStr(integer(printerindex)),def);
 end;
 

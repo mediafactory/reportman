@@ -58,7 +58,7 @@ uses
   rpmdfbarcodeintvcl in '..\rpmdfbarcodeintvcl.pas',
   rpmdfchartintvcl in '..\rpmdfchartintvcl.pas',
   rpmdfdatatextvcl in '..\rpmdfdatatextvcl.pas' {FRpDataTextVCL},
-  rpmdfdinfovcl in '..\rpmdfdinfovcl.pas' {TFRpDInfoVCL},
+  rpmdfdinfovcl in '..\rpmdfdinfovcl.pas' {FRpDInfoVCL},
   rpmdfdrawintvcl in '..\rpmdfdrawintvcl.pas',
   rpmdfgridvcl in '..\rpmdfgridvcl.pas' {FRpGridOptionsVCL},
   rpmdflabelintvcl in '..\rpmdflabelintvcl.pas',

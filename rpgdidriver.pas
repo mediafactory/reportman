@@ -1156,9 +1156,9 @@ begin
    printer.Abort;
    raise;
   end;
-  if assigned(aform) then
-   aform.close;
  end;
+ if assigned(aform) then
+  aform.close;
 end;
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
@@ -1247,25 +1247,48 @@ end;
 procedure TFRpVCLProgress.AppIdleReport(Sender:TObject;var done:boolean);
 var
  oldprogres:TRpProgressEvent;
+ istextonly:Boolean;
+ drivername:String;
+ TextDriver:TRpTextDriver;
+ aTextDriver:IRpPrintDriver;
 begin
  Application.Onidle:=nil;
  done:=false;
 
- try
-  GDIDriver:=TRpGDIDriver.Create;
-  aGDIDriver:=GDIDriver;
-  if report.PrinterFonts=rppfontsalways then
-   gdidriver.devicefonts:=true
-  else
-   gdidriver.devicefonts:=false;
-  gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
+ drivername:=Trim(GetPrinterEscapeStyleDriver(printerindex));
+ istextonly:=Length(drivername)>0;
 
-  oldprogres:=RepProgress;
-  try
-   report.OnProgress:=RepProgress;
-   report.PrintAll(GDIDriver);
-  finally
-   report.OnProgress:=oldprogres;
+ try
+  if istextonly then
+  begin
+   TextDriver:=TRpTextDriver.Create;
+   aTextDriver:=TextDriver;
+   TextDriver.SelectPrinter(report.PrinterSelect);
+   oldprogres:=RepProgress;
+   try
+    report.OnProgress:=RepProgress;
+    report.PrintAll(TextDriver);
+   finally
+    report.OnProgress:=oldprogres;
+   end;
+  end
+  else
+  begin
+   GDIDriver:=TRpGDIDriver.Create;
+   aGDIDriver:=GDIDriver;
+   if report.PrinterFonts=rppfontsalways then
+    gdidriver.devicefonts:=true
+   else
+    gdidriver.devicefonts:=false;
+   gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
+
+   oldprogres:=RepProgress;
+   try
+    report.OnProgress:=RepProgress;
+    report.PrintAll(GDIDriver);
+   finally
+    report.OnProgress:=oldprogres;
+   end;
   end;
   Close;
  except

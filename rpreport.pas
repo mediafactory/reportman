@@ -1693,6 +1693,10 @@ begin
  // Insert page number and other variables
  eval.AddVariable('PAGE',fidenpagenum);
  eval.AddVariable('PAGENUM',fidenpagenumgroup);
+ // Compatibility with earlier versions
+ eval.AddVariable('PAGINA',fidenpagenum);
+ eval.AddVariable('NUMPAGINA',fidenpagenumgroup);
+ // Free space and sizes
  eval.AddVariable('FREE_SPACE_TWIPS',fidenfreespace);
  eval.AddVariable('PAGEWIDTH',fidenpagewidth);
  eval.AddVariable('PAGEHEIGHT',fidenpageheight);
