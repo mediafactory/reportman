@@ -1293,6 +1293,13 @@ begin
  end;
 end;
 
+type
+  LogPal = record
+   lpal : TLogPalette;
+   dummy:Array[0..5] of TPaletteEntry;
+  end;
+
+
 function DoMetafileToBitmap(metafile:TRpMetafileReport;aform:TFRpVCLProgress;
  Mono:Boolean;resx:integer=200;resy:integer=100):TBitmap;
 var
@@ -1305,8 +1312,11 @@ var
  mmfirst,mmlast:DWORD;
  difmilis:int64;
  pageheight,pagewidth:integer;
- tempbitmap:TBitmap;
  arec:TRect;
+ syspal:Logpal;
+ realx,realy:Integer;
+ ameta:TMetaFile;
+ ametacanvas:TMetafileCanvas;
 begin
  offset.X:=0;
  offset.Y:=0;
@@ -1320,7 +1330,16 @@ begin
   Result.HandleType:=bmDIB;
   if Mono then
   begin
-   Result.PixelFormat:=pf1bit
+   Result.PixelFormat:=pf1bit;
+   syspal.lpal.palNumEntries:=2;
+   syspal.lpal.palVersion:=$300;
+   syspal.lpal.palPalEntry[0].peRed:=255;
+   syspal.lpal.palPalEntry[0].peGreen:=255;
+   syspal.lpal.palPalEntry[0].peBlue:=255;
+   syspal.dummy[0].peRed:=0;
+   syspal.dummy[0].peGreen:=0;
+   syspal.dummy[0].peBlue:=0;
+   Result.Palette:=CreatePalette(syspal.lpal);
   end
   else
   begin
@@ -1336,49 +1355,51 @@ begin
   aGDIDriver:=GDIDriver;
   for i:=0 to metafile.PageCount-1 do
   begin
-   tempbitmap:=TBitmap.Create;
+   ameta:=TMetafile.Create;
    try
-    tempbitmap.HandleType:=bmDIB;
-    if Mono then
-    begin
-     tempbitmap.PixelFormat:=pf1bit
-    end
-    else
-    begin
-{$IFNDEF DOTNETDBUGS}
-     tempbitmap.PixelFormat:=pf32bit;
-{$ENDIF}
-    end;
-    tempbitmap.Height:=pageheight;
-    tempbitmap.Width:=pagewidth;
-    arec.Top:=0;arec.Bottom:=0;
-    arec.Right:=tempbitmap.Width;
-    arec.Bottom:=tempbitmap.Height;
-
+    ameta.Enhanced:=true;
+    if mono then
+     ameta.Palette:=CreatePalette(syspal.lpal);
+    realx:=GetDeviceCaps(GetDC(0),LOGPIXELSX);
+    realy:=GetDeviceCaps(GetDC(0),LOGPIXELSY);
+    ameta.Width:=metafile.CustomX*realx div TWIPS_PER_INCHESS;
+    ameta.height:=metafile.CustomY*realy div TWIPS_PER_INCHESS;
     apage:=metafile.Pages[i];
-    tempbitmap.Canvas.Brush.Color:=clWhite;
-    tempbitmap.Canvas.Brush.Style:=bsSolid;
-    tempbitmap.Canvas.FillRect(arec);
-    for j:=0 to apage.ObjectCount-1 do
-    begin
-     PrintObject(tempbitmap.Canvas,apage,apage.Objects[j],resx,resy,true,pagemargins,false,offset);
-     if assigned(aform) then
+    ametacanvas:=TMetafileCanvas.Create(ameta,0);
+    try
+     arec.Top:=0;arec.Left:=0;
+     arec.Right:=realx*metafile.CustomX div TWIPS_PER_INCHESS*2;
+     arec.Bottom:=realy*metafile.CustomY div TWIPS_PER_INCHESS*2;
+     ametaCanvas.Brush.Color:=clWhite;
+     ametaCanvas.Brush.Style:=bsSolid;
+     ametaCanvas.FillRect(arec);
+     for j:=0 to apage.ObjectCount-1 do
      begin
-      mmlast:=TimeGetTime;
-      difmilis:=(mmlast-mmfirst);
-      if difmilis>MILIS_PROGRESS then
+      PrintObject(ametaCanvas,apage,apage.Objects[j],realx,realy,true,pagemargins,false,offset);
+      if assigned(aform) then
       begin
-       // Get the time
-       mmfirst:=TimeGetTime;
-       aform.LRecordCount.Caption:=SRpPage+':'+ IntToStr(i+1)+
-         ' - '+SRpItem+':'+ IntToStr(j+1);
-       Application.ProcessMessages;
-       if aform.cancelled then
-        Raise Exception.Create(SRpOperationAborted);
+       mmlast:=TimeGetTime;
+       difmilis:=(mmlast-mmfirst);
+       if difmilis>MILIS_PROGRESS then
+       begin
+        // Get the time
+        mmfirst:=TimeGetTime;
+        aform.LRecordCount.Caption:=SRpPage+':'+ IntToStr(i+1)+
+          ' - '+SRpItem+':'+ IntToStr(j+1);
+        Application.ProcessMessages;
+        if aform.cancelled then
+         Raise Exception.Create(SRpOperationAborted);
+       end;
       end;
      end;
+    finally
+     ametacanvas.free;
     end;
-    Result.Canvas.Draw(0,pageheight*i,tempbitmap);
+    arec.Top:=pageheight*i;
+    arec.Left:=0;
+    arec.Bottom:=arec.Top+pageheight;
+    arec.Right:=pagewidth;
+    Result.Canvas.StretchDraw(arec,ameta);
     if assigned(aform) then
     begin
      Application.ProcessMessages;
@@ -1386,7 +1407,7 @@ begin
        Raise Exception.Create(SRpOperationAborted);
     end;
    finally
-    tempbitmap.free;
+    ameta.free;
    end;
   end;
  except

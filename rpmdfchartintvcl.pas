@@ -390,7 +390,7 @@ begin
   TRpChart(fprintitem).ShowHint:=StrToBool(value);
   exit;
  end;
- if pname=SrpChartHint then
+ if pname=SrpChartLegend then
  begin
   TRpChart(fprintitem).ShowLegend:=StrToBool(value);
   exit;

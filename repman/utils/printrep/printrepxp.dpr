@@ -33,6 +33,7 @@ uses
 {$IFDEF USEVARIANTS}
   MidasLib,
 {$ENDIF}
+  Graphics,rpfaxsend,
   rpreport in '..\..\..\rpreport.pas',
   rpparams in '..\..\..\rpparams.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas',
@@ -42,6 +43,7 @@ uses
   rpsecutil in '..\..\..\rpsecutil.pas',
   rpvpreview in '..\..\..\rpvpreview.pas',
   rpgdidriver in '..\..\..\rpgdidriver.pas',
+  rpmetafile in '..\..\..\rpmetafile.pas',
   rprfvparams in '..\..\..\rprfvparams.pas' {FRpRTParams};
 
 var
@@ -57,6 +59,7 @@ var
  preview:boolean;
  pdialog:boolean;
  compress,doprint:boolean;
+ faxcovertext:String;
 
 procedure PrintHelp;
 begin
@@ -74,6 +77,13 @@ begin
  Writeln(AnsiString(SRpPrintPDFRep8));
  Writeln(AnsiString(SRpPrintPDFRep9));
  Writeln(AnsiString(SRpPrintRep14));
+ Writeln(AnsiString(SRpPrintRep18));
+ Writeln(AnsiString(SRpPrintRep19));
+ Writeln(AnsiString(SRpPrintRep20));
+ Writeln(AnsiString(SRpPrintRep24));
+ Writeln(AnsiString(SRpPrintRep21));
+ Writeln(AnsiString(SRpPrintRep22));
+ Writeln(AnsiString(SRpPrintRep23));
  Writeln(AnsiString(SRpParseParamsH));
  Writeln(AnsiString(SRpCommandLineStdIN));
 end;
@@ -81,10 +91,21 @@ end;
 var
  isstdin:Boolean;
  memstream:TMemoryStream;
- topdf,tometafile,showparams,modified:Boolean;
+ topdf,tobmp,monobmp,tometafile,showparams,modified:Boolean;
+ bmpresx,bmpresy:integer;
+ meta:TrpMetafileReport;
+ abitmap:TBitmap;
+ sendfax,faxdevice,faxcoverstring:string;
  outputfilename:String;
 
 begin
+ faxdevice:='';
+ faxcoverstring:=SRpReportHeader;
+ bmpresx:=100;
+ bmpresy:=100;
+ sendfax:='';
+ tobmp:=false;
+ monobmp:=true;
  topdf:=false;
  tometafile:=false;
  outputfilename:='';
@@ -141,6 +162,16 @@ begin
      topdf:=true;
     end
     else
+    if ParamStr(indexparam)='-bmp' then
+    begin
+     tobmp:=true;
+    end
+    else
+    if ParamStr(indexparam)='-bmpcolor' then
+    begin
+     monobmp:=false;
+    end
+    else
     if ParamStr(indexparam)='-m' then
     begin
      tometafile:=true;
@@ -165,6 +196,50 @@ begin
        acopies:=1;
      end
      else
+     if ParamStr(indexparam)='-bmpresx' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpNumberexpected);
+      bmpresx:=StrToInt(ParamStr(indexparam));
+      if bmpresx<=0 then
+       bmpresx:=200;
+     end
+     else
+     if ParamStr(indexparam)='-bmpresy' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpNumberexpected);
+      bmpresy:=StrToInt(ParamStr(indexparam));
+      if bmpresy<=0 then
+       bmpresy:=200;
+     end
+     else
+     if ParamStr(indexparam)='-sendfax' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpstringexpected);
+      sendfax:=ParamStr(indexparam);
+     end
+     else
+     if ParamStr(indexparam)='-faxcover' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpstringexpected);
+      faxcovertext:=ParamStr(indexparam);
+     end
+     else
+     if ParamStr(indexparam)='-faxdevice' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpstringexpected);
+      faxdevice:=ParamStr(indexparam);
+     end
+     else
      if ParamStr(indexparam)='-collate' then
      begin
       collate:=true;
@@ -181,7 +256,8 @@ begin
       else
       begin
        filename:=ParamStr(indexparam);
-       if ((not topdf) and (not tometafile)) then
+       if ((not topdf) and (not tometafile) and (not tobmp) and
+        (sendfax='')) then
        begin
         inc(indexparam);
         break;
@@ -264,6 +340,43 @@ begin
          memstream.SaveToFile(outputfilename)
         else
          WriteStreamToStdOutput(memstream);
+       finally
+        memstream.Free;
+       end;
+      end
+      else
+      if (tobmp or (Length(sendfax)>0)) then
+      begin
+       memstream:=TMemoryStream.Create;
+       try
+        rpgdidriver.ExportReportToPDFMetaStream(report,filename,showprogress,
+         allpages,frompage,topage,pdialog,memstream,compress,collate,true);
+        memstream.Seek(0,soFromBeginning);
+        meta:=TRpMetafileReport.Create(nil);
+        try
+         meta.LoadFromStream(memstream);
+         if Length(sendfax)>0 then
+         begin
+          SendFaxMetafile(sendfax,faxcovertext,faxdevice,meta);
+         end
+         else
+         begin
+          abitmap:=rpgdidriver.MetafileToBitmap(meta,showprogress,monobmp,bmpresx,bmpresy);
+          try
+           memstream.SetSize(0);
+           abitmap.SaveToStream(memstream);
+           memstream.Seek(0,soFromBeginning);
+           if Length(outputfilename)>0 then
+            memstream.SaveToFile(outputfilename)
+           else
+            WriteStreamToStdOutput(memstream);
+          finally
+           abitmap.free;
+          end;
+         end;
+        finally
+         meta.free;
+        end;
        finally
         memstream.Free;
        end;

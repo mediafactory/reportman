@@ -598,17 +598,27 @@ begin
         end;
        rpagAvg:
         begin
-         FSumValue:=FSumValue+eval.EvalResult;
-         FValue:=FSumValue/FDataCount;
+         if VarIsNull(eval.EvalResult) then
+          Dec(FDataCount)
+         else
+         begin
+          FSumValue:=FSumValue+eval.EvalResult;
+          FValue:=FSumValue/FDataCount;
+         end;
         end;
        rpagStdDev:
         begin
-         SetLength(FValues,FDataCount);
-         FValues[FDatacount-1]:=eval.EvalResult;
-         if High(FValues)=Low(FValues) then
-          FValue:=0
+         if VarIsNull(eval.EvalResult) then
+          Dec(FDataCount)
          else
-          FValue:=StdDev(FValues);
+         begin
+          SetLength(FValues,FDataCount);
+          FValues[FDatacount-1]:=eval.EvalResult;
+          if High(FValues)=Low(FValues) then
+           FValue:=0
+          else
+           FValue:=StdDev(FValues);
+         end;
         end;
       end;
       FUpdated:=true;

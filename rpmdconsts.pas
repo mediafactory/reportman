@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.2pre13';
+ RM_VERSION='2.2pre15';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
@@ -919,7 +919,16 @@ var
   SRpDuplexS:WideString='Simple duplex';
   SRpDuplexHor:WideString='Horizontal duplex';
   SRpDuplexVer:WideString='Vertical duplex';
-
+  SRpPrintRep18:WideString='         -bmp       Generate Bitmap output';
+  SRpPrintRep19:WideString='         -bmpresx   Bitmap Horzontal DPI resolution(100)';
+  SRpPrintRep20:WideString='         -bmpresx   Bitmap Verticall DPI resolution(100)';
+  SRpPrintRep21:WideString='         -sendfax   phonenum Sends the report to a fax number';
+  SRpPrintRep22:WideString='         -faxcover  coverstring Fax conver string, default report name';
+  SRpPrintRep23:WideString='         -faxdevice TAPI device, default, show selection dialog';
+  SRpPrintRep24:WideString='         -bmpcolor  Save to full color bmp';
+  SRpPhoneNum:WideString='Phone number';
+  SRpStatus:WideString='Status';
+  SRpConversion:WideString='Conversion';
 implementation
 
 uses rptranslator;

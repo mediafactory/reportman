@@ -25,27 +25,27 @@ interface
 uses Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls,
   Buttons, ExtCtrls,rpmetafile, AdFaxCvt, AdPort, AdFax, AdFStat, OoMisc,
   AdTapi,rpgdidriver,rptypes,rpmunits, ComCtrls, AdFView,rpgraphutilsvcl,
-  rpreport,rpmdshfolder,inifiles;
+  rpreport,rpmdshfolder,inifiles,rpmdconsts;
 
 type
   TFRpFaxSend = class(TForm)
-    CancelBtn: TButton;
-    Label1: TLabel;
+    BCancel: TButton;
+    LEstatus: TLabel;
     LStatus: TLabel;
     LPhone: TLabel;
-    Label3: TLabel;
+    LPhoneNum: TLabel;
     ApdTapiDevice1: TApdTapiDevice;
     ApdFaxStatus1: TApdFaxStatus;
     ApdFaxLog1: TApdFaxLog;
     ApdSendFax1: TApdSendFax;
     ApdComPort1: TApdComPort;
     ApdFaxConverter1: TApdFaxConverter;
-    Label2: TLabel;
+    LConversion: TLabel;
     PConvers: TProgressBar;
     procedure FormCreate(Sender: TObject);
     procedure ApdFaxConverter1ReadUserLine(F: TObject; Data: PByteArray;
       var Len: Integer; var EndOfPage, MorePages: Boolean);
-    procedure CancelBtnClick(Sender: TObject);
+    procedure BCancelClick(Sender: TObject);
     procedure ApdSendFax1FaxFinish(CP: TObject; ErrorCode: Integer);
   private
     { Private declarations }
@@ -74,11 +74,15 @@ procedure ChangeDefaultTApiDevice;
 
 implementation
 
+uses Math;
+
 {$R *.dfm}
 
 function SendFaxReport(phonenumber:String;covertext:string;tapidevice:String;report:TRpReport):Boolean;
 begin
  rpgdidriver.CalcReportWidthProgress(Report);
+ if Length(covertext)<0 then
+  covertext:=SRpReportHeader;
  Result:=SendFaxMetafile(phonenumber,covertext,tapidevice,Report.Metafile);
 end;
 
@@ -178,6 +182,10 @@ end;
 
 procedure TFRpFaxSend.FormCreate(Sender: TObject);
 begin
+ LPhoneNum.Caption:=SRpPhoneNum;
+ LStatus.Caption:=SRpStatus;
+ LConversion.Caption:=SRpConversion;
+ BCancel.Caption:=SRpCancel;
  LStatus.Font.Style:=[fsBold];
  LPhone.Font.Style:=[fsBold];
 end;
@@ -210,7 +218,7 @@ begin
  end;
 end;
 
-procedure TFRpFaxSend.CancelBtnClick(Sender: TObject);
+procedure TFRpFaxSend.BCancelClick(Sender: TObject);
 begin
  docancel:=true;
 end;

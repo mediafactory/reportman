@@ -24,7 +24,7 @@ program printrep;
 {$APPTYPE CONSOLE}
 
 uses
-  SysUtils,Classes,
+  SysUtils,Classes,QGraphics,
 {$IFDEF MSWINDOWS}
   midaslib,ActiveX,
   QThemed in '..\..\QThemed.pas',
@@ -39,6 +39,7 @@ uses
   rppreview in '..\..\..\rppreview.pas',
   rpsecutil in '..\..\..\rpsecutil.pas',
   rprfparams in '..\..\..\rprfparams.pas',
+  rpmetafile in '..\..\..\rpmetafile.pas',
   rpqtdriver in '..\..\..\rpqtdriver.pas';
 {$ENDIF}
 
@@ -53,6 +54,7 @@ uses
   rppreview in '../../../rppreview.pas',
   rpsecutil in '../../../rpsecutil.pas',
   rprfparams in '../../../rprfparams.pas',
+  rpmetafile in '../../../rpmetafile.pas',
   rpqtdriver in '../../../rpqtdriver.pas';
 {$ENDIF}
 
@@ -86,6 +88,10 @@ begin
  Writeln(SRpPrintPDFRep8);
  Writeln(SRpPrintPDFRep9);
  Writeln(SRpPrintRep14);
+ Writeln(SRpPrintRep18);
+ Writeln(SRpPrintRep19);
+ Writeln(SRpPrintRep20);
+ Writeln(SRpPrintRep24);
  Writeln(SRpParseParamsH);
  Writeln(SRpCommandLineStdIN);
 end;
@@ -93,10 +99,17 @@ end;
 var
  isstdin:Boolean;
  memstream:TMemoryStream;
- topdf,tometafile,showparams:Boolean;
+ bmpresx,bmpresy:integer;
+ meta:TrpMetafileReport;
+ abitmap:TBitmap;
+ topdf,tobmp,monobmp,tometafile,showparams:Boolean;
  outputfilename:String;
 
 begin
+ bmpresx:=100;
+ bmpresy:=100;
+ tobmp:=false;
+ monobmp:=true;
  topdf:=false;
  tometafile:=false;
  outputfilename:='';
@@ -157,6 +170,16 @@ begin
      topdf:=true;
     end
     else
+    if ParamStr(indexparam)='-bmp' then
+    begin
+     tobmp:=true;
+    end
+    else
+    if ParamStr(indexparam)='-bmpcolor' then
+    begin
+     monobmp:=false;
+    end
+    else
     if ParamStr(indexparam)='-m' then
     begin
      tometafile:=true;
@@ -197,7 +220,7 @@ begin
       else
       begin
        filename:=ParamStr(indexparam);
-       if ((not topdf) and (not tometafile)) then
+       if ((not topdf) and (not tometafile) and (not tobmp)) then
        begin
         inc(indexparam);
         break;
@@ -256,6 +279,36 @@ begin
          memstream.SaveToFile(outputfilename)
         else
          WriteStreamToStdOutput(memstream);
+       finally
+        memstream.Free;
+       end;
+      end
+      else
+      if (tobmp) then
+      begin
+       memstream:=TMemoryStream.Create;
+       try
+        rpqtdriver.ExportReportToPDFMetaStream(report,filename,showprogress,
+         allpages,frompage,topage,pdialog,memstream,compress,collate,true);
+        memstream.Seek(0,soFromBeginning);
+        meta:=TRpMetafileReport.Create(nil);
+        try
+         meta.LoadFromStream(memstream);
+         abitmap:=rpqtdriver.MetafileToBitmap(meta,showprogress,monobmp,bmpresx,bmpresy);
+         try
+          memstream.SetSize(0);
+          abitmap.SaveToStream(memstream);
+          memstream.Seek(0,soFromBeginning);
+          if Length(outputfilename)>0 then
+           memstream.SaveToFile(outputfilename)
+          else
+           WriteStreamToStdOutput(memstream);
+         finally
+          abitmap.free;
+         end;
+        finally
+         meta.free;
+        end;
        finally
         memstream.Free;
        end;

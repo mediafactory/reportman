@@ -1055,7 +1055,12 @@ begin
  Result:=TBitmap.Create;
  try
   if Mono then
-   Result.PixelFormat:=pf1bit
+{$IFDEF MSWINDOWS}
+     tempbitmap.PixelFormat:=pf32bit
+{$ENDIF}
+{$IFDEF LINUX}
+     tempbitmap.PixelFormat:=pf1bit
+{$ENDIF}
   else
    Result.PixelFormat:=pf32bit;
   pagewidth:=(metafile.CustomX*resx) div TWIPS_PER_INCHESS;
