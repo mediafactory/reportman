@@ -247,20 +247,30 @@ object FRpStructure: TFRpStructure
   object PopupMenu1: TPopupMenu
     Left = 140
     Top = 64
-    object Pageheader1: TMenuItem
-      Action = FRpMainF.ANewPageHeader
+    object MPHeader: TMenuItem
+      Caption = 'Page header'
+      Hint = 'Inserts a page header in the selected subreport'
+      OnClick = MPHeaderClick
     end
-    object Pagefooter1: TMenuItem
-      Action = FRpMainF.ANewPageFooter
+    object MPFooter: TMenuItem
+      Caption = 'Page footer'
+      Hint = 'Inserts a page footer in the selected subreport'
+      OnClick = MPHeaderClick
     end
-    object Groupheaderandfooter1: TMenuItem
-      Action = FRpMainF.ANewGroup
+    object MGHeader: TMenuItem
+      Caption = 'Group header and footer'
+      Hint = 'Insert a group header an footer'
+      OnClick = MPHeaderClick
     end
-    object Subreport1: TMenuItem
-      Action = FRpMainF.ANewSubreport
+    object MSubReport: TMenuItem
+      Caption = 'Subreport'
+      Hint = 'Insert a new subreport'
+      OnClick = MPHeaderClick
     end
-    object Detail1: TMenuItem
-      Action = FRpMainF.ANewDetail
+    object MDetail: TMenuItem
+      Caption = 'Detail'
+      Hint = 'Inserts a detail section in the selected subreport'
+      OnClick = MPHeaderClick
     end
   end
 end

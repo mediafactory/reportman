@@ -39,21 +39,25 @@ type
     ToolButton4: TToolButton;
     ADelete: TAction;
     PopupMenu1: TPopupMenu;
-    Detail1: TMenuItem;
-    Pageheader1: TMenuItem;
-    Pagefooter1: TMenuItem;
-    Groupheaderandfooter1: TMenuItem;
-    Subreport1: TMenuItem;
+    MDetail: TMenuItem;
+    MPHeader: TMenuItem;
+    MPFooter: TMenuItem;
+    MGHeader: TMenuItem;
+    MSubReport: TMenuItem;
     procedure Expand1Click(Sender: TObject);
     procedure RViewClick(Sender: TObject);
     procedure AUpExecute(Sender: TObject);
     procedure ADownExecute(Sender: TObject);
     procedure ADeleteExecute(Sender: TObject);
     procedure BNewClick(Sender: TObject);
+    procedure MPHeaderClick(Sender: TObject);
   private
     { Private declarations }
+    oldappidle:TIdleEvent;
+    AAction:TAction;
     FReport:TRpReport;
     FObjInsp:TFRpObjInsp;
+    procedure ActionIdle(Sender:TObject;var done:boolean);
     procedure SetReport(Value:TRpReport);
     procedure CreateInterface;
   public
@@ -84,8 +88,15 @@ begin
  RView.FullExpand;
  if Assigned(designframe) then
  begin
-  TFDesignFrame(designframe).UpdateSelection(true);
+  TFRpDesignFrame(designframe).UpdateSelection(true);
  end;
+end;
+
+procedure TFRpStructure.ActionIdle(Sender:TObject;var done:boolean);
+begin
+ Application.OnIdle:=oldappidle;
+ done:=false;
+ AAction.Execute;
 end;
 
 function TFRpStructure.FindSelectedSubreport:TRpSubreport;
@@ -175,7 +186,7 @@ procedure TFRpStructure.RViewClick(Sender: TObject);
 var
  aobject:TObject;
 begin
- TFDesignFrame(designframe).UpdateSelection(false);
+ TFRpDesignFrame(designframe).UpdateSelection(false);
  aobject:=FindSelectedObject;
  if Assigned(aobject) then
  begin
@@ -518,7 +529,9 @@ var
  FRpMainF:TFRpMainF;
 begin
  FRpMainF:=TFRpMainF(Owner);
- FRpMainf.ADeleteSelection.Execute;
+ AAction:=FRpMainf.ADeleteSelection;
+ oldappidle:=Application.Onidle;
+ Application.OnIdle:=ActionIdle;
 end;
 
 procedure TFRpStructure.BNewClick(Sender: TObject);
@@ -529,6 +542,52 @@ begin
  apoint.y:=BNew.Top+BNew.Height;
  apoint:=BNew.Parent.ClientToScreen(apoint);
  BNew.DropDownMenu.Popup(apoint.x,apoint.y);
+end;
+
+procedure TFRpStructure.MPHeaderClick(Sender: TObject);
+var
+ FRpMainF:TFRpMainF;
+begin
+ if Sender=MPHeader then
+ begin
+  FRpMainF:=TFRpMainF(Owner);
+  AAction:=FRpMainf.ANewPageHeader;
+  oldappidle:=Application.Onidle;
+  Application.OnIdle:=ActionIdle;
+  exit;
+ end;
+ if Sender=MPFooter then
+ begin
+  FRpMainF:=TFRpMainF(Owner);
+  AAction:=FRpMainf.ANewPageHeader;
+  oldappidle:=Application.Onidle;
+  Application.OnIdle:=ActionIdle;
+  exit;
+ end;
+ if Sender=MGHeader then
+ begin
+  FRpMainF:=TFRpMainF(Owner);
+  AAction:=FRpMainf.ANewGroup;
+  oldappidle:=Application.Onidle;
+  Application.OnIdle:=ActionIdle;
+  exit;
+ end;
+ if Sender=MSubReport then
+ begin
+  FRpMainF:=TFRpMainF(Owner);
+  AAction:=FRpMainf.ANewSubreport;
+  oldappidle:=Application.Onidle;
+  Application.OnIdle:=ActionIdle;
+  exit;
+ end;
+ if Sender=MDetail then
+ begin
+  FRpMainF:=TFRpMainF(Owner);
+  AAction:=FRpMainf.ANewDetail;
+  oldappidle:=Application.Onidle;
+  Application.OnIdle:=ActionIdle;
+  exit;
+ end;
 end;
 
 end.

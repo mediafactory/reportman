@@ -29,7 +29,7 @@ uses
   midaslib,
   rpmdfmain in '..\rpmdfmain.pas' {FRpMainF},
   rpmdfstruc in '..\rpmdfstruc.pas' {FRpStructure: TFrame},
-  rpmdfdesign in '..\rpmdfdesign.pas' {FDesignFrame: TFrame},
+  rpmdfdesign in '..\rpmdfdesign.pas' {FRpDesignFrame: TFrame},
   rpmdshfolder in '..\rpmdshfolder.pas',
   rpmdfdatainfo in '..\rpmdfdatainfo.pas' {FRpDatainfoconfig},
   rpmdfsampledata in '..\rpmdfsampledata.pas' {FRpShowSampledata},
@@ -102,7 +102,7 @@ uses
 {$IFDEF LINUX}
   rpmdfmain in '../rpmdfmain.pas' {FRpMainF},
   rpmdfstruc in '../rpmdfstruc.pas' {FRpStructure: TFrame},
-  rpmdfdesign in '../rpmdfdesign.pas' {FDesignFrame: TFrame},
+  rpmdfdesign in '../rpmdfdesign.pas' {FRpDesignFrame: TFrame},
   rpmdshfolder in '../rpmdshfolder.pas',
   rpmdfdatainfo in '../rpmdfdatainfo.pas' {FRpDatainfoconfig},
   rpmdfsampledata in '../rpmdfsampledata.pas' {FRpShowSampledata},

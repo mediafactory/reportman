@@ -109,6 +109,7 @@ var
  stream:TStream;
  dia:TFRpMainf;
 begin
+ Result:=false;
  CheckLoaded;
  // Creates the form and on close do the save event
  dia:=TFRpMainf.Create(nil);

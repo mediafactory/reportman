@@ -40,7 +40,6 @@ type
     procedure Paint;override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
-
    public
     OnPosChange:TNotifyEvent;
     constructor Create(AOwner:TComponent);override;
@@ -389,6 +388,8 @@ var
  rec:TRect;
  bitmap:TBitmap;
 begin
+ if not assigned(secint) then
+  exit;
  // Bug in WINDOWS when changing the size of a section
  // Remove this when clx updated
  if not calledposchange then

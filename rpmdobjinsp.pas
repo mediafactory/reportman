@@ -32,28 +32,23 @@ const
   CONS_LABELTOPGAP=2;
   CONS_RIGHTBARGAP=25;
   CONS_BUTTONWIDTH=15;
-  CONS_MINWIDTH=150;
+  CONS_MINWIDTH=160;
 type
-  TFRpObjInsp = class(TFrame)
-    ColorDialog1: TColorDialog;
-    FontDialog1: TFontDialog;
-    RpAlias1: TRpAlias;
-    RpExpreDialog1: TRpExpreDialog;
-    OpenDialog1: TOpenDialog;
-  private
-    { Private declarations }
-    dontfreecombo:Boolean;
+  TRpPanelObj=class(TPanel)
+   private
     FCompItem:TRpSizeInterface;
-    FDesignFrame:TObject;
+    subrep:TRpSubreport;
     LNames:TStringList;
     LTypes:TStringList;
     LValues:TStringList;
-    subrep:TRpSubreport;
-    procedure SetCompItem(Value:TRpSizeInterface);
-    procedure ReleaseAllControls;
-    procedure EditChange(Sender:TObject);
-    procedure ChangeSizeChange(Sender:TObject);
+    combo:TComboBox;
+    LLabels:TList;
+    LControls:TStringList;
+    AList:TStringList;
+    // Alias for report datasets
+    comboalias:TComboBox;
     procedure ComboObjectChange(Sender:TObject);
+    procedure EditChange(Sender:TObject);
     procedure SendToBackClick(Sender:TObject);
     procedure BringToFrontClick(Sender:TObject);
     procedure ShapeMouseUp(Sender: TObject; Button: TMouseButton;
@@ -63,21 +58,45 @@ type
     procedure ImageKeyDown(Sender: TObject;
      var Key: Word; Shift: TShiftState);
     procedure ExpressionClick(Sender:TObject);
-    procedure  Subreportprops;
+//    procedure  Subreportprops;
     procedure ComboAliasChange(Sender:TObject);
+    procedure UpdatePosValues;
+    procedure CreateControlsSubReport;
+   public
+    constructor Create(AOwner:TComponent);override;
+    destructor Destroy;override;
+    procedure ResizeComps;
+    procedure CreateControls(acompo:TRpSizeInterface);
+    procedure AssignPropertyValues;
+  end;
+
+  TFRpObjInsp = class(TFrame)
+    ColorDialog1: TColorDialog;
+    FontDialog1: TFontDialog;
+    RpAlias1: TRpAlias;
+    RpExpreDialog1: TRpExpreDialog;
+    OpenDialog1: TOpenDialog;
+  private
+    { Private declarations }
+    FCurrentPanel:TRpPanelObj;
+    FProppanels:TStringList;
+    FDesignFrame:TObject;
+    procedure SetCompItem(Value:TRpSizeInterface);
+    function FindPanelForClass(acompo:TRpSizeInterface):TRpPanelObj;
+    function CreatePanel(acompo:TRpSizeInterface):TRpPanelObj;
+    function GetComboBox:TComboBox;
+    procedure ChangeSizeChange(Sender:TObject);
+    function GetCompItem:TRpSizeInterface;
   public
     { Public declarations }
-    combo:TComboBox;
     fchangesize:TRpSizeModifier;
-    LLabels:TList;
-    LControls:TStringList;
-    LControlsToFree:TList;
-    procedure UpdatePosValues;
+    procedure InvalidatePanels;
     procedure RecreateChangeSize;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
-    property CompItem:TRpSizeInterface read FCompItem write SetCompItem;
+    property CompItem:TRpSizeInterface read GetCompItem write SetCompItem;
     property DesignFrame:TObject read FDesignFrame write FDesignFrame;
+    property Combo:TComboBox read GetComboBox;
   end;
 
 
@@ -88,153 +107,331 @@ implementation
 
 uses rpmdfdesign,rpmdfsectionint, rpmdfmain;
 
-procedure TFRpObjInsp.ReleaseAllControls;
-var
- i:integer;
+
+constructor TrpPanelObj.Create(AOwner:TComponent);
 begin
- Visible:=false;
- try
-  for i:=0 to LLabels.Count-1 do
-  begin
-   TObject(LLabels.items[i]).Free;
-   LLabels.items[i]:=nil;
+ inherited Create(AOwner);
+
+ LNames:=TStringList.Create;
+ LTypes:=TStringList.Create;
+ LValues:=TStringList.Create;
+ LLabels:=TList.Create;
+ LControls:=TStringList.Create;
+ AList:=TStringList.Create;
+ BorderStyle:=bsNone;
+ BevelInner:=bvNone;
+ BevelOuter:=bvNone;
+end;
+
+destructor TrpPanelObj.Destroy;
+begin
+ LNames.Free;
+ LTypes.Free;
+ LValues.Free;
+ LLabels.Free;
+ LControls.Free;
+ AList.Free;
+
+ inherited Destroy;
+end;
+
+
+function FindClassName(acompo:TRpSizeInterface):string;
+var
+ asec:TRpSection;
+begin
+ if not assigned(acompo) then
+ begin
+  Result:='TRpSubReport';
+  exit;
+ end;
+ if acompo is TRpSectionInterface then
+ begin
+  asec:=TrpSection(TRpSectionInterface(acompo).printitem);
+  Result:=asec.Name;
+  case asec.SectionType of
+   rpsecgheader:
+    Result:='TRpSectionGroupHeader';
+   rpsecgfooter:
+    Result:='TRpSectionGroupFooter';
+   rpsecdetail:
+    Result:='TRpSectionDetail';
+   rpsecpheader:
+    Result:='TRpSectionPageHeader';
+   rpsecpfooter:
+    Result:='TRpSectionPageFooter';
   end;
-  Combo:=nil;
-  LLabels.Clear;
-  for i:=0 to LControlsToFree.Count-1 do
-  begin
-   if dontfreecombo then
-   begin
-    if TComponent(LControlsToFree.Items[i]).Name='TopCombobox' then
-    begin
-     Combo:=TCombobox(LControlsToFree.Items[i]);
-    end
-    else
-     TObject(LControlsToFree.Items[i]).Free;
-   end
-   else
-    TObject(LControlsToFree.Items[i]).Free;
-  end;
-  LCOntrols.Clear;
-  LCOntrolsToFree.Clear;
-  if dontfreecombo then
-   if assigned(combo) then
-    LControlsToFree.Add(Combo);
- finally
-  Visible:=true;
+ end
+ else
+ begin
+  Result:=acompo.ClassName;
  end;
 end;
 
 
-procedure TFRpObjInsp.SetCompItem(Value:TRpSizeInterface);
+// Creates an object inspector panel for the component
+procedure TrpPanelObj.CreateControlsSubReport;
 var
- i:integer;
- ALabel:TLabel;
+ alabel:TLabel;
  posy:integer;
- control:TControl;
- typename:string;
- aheight:integer;
- Control2:TControl;
- alist:TStringList;
- sectionint:TRpSectionInterface;
- compo:TComponent;
- dontrelease:boolean;
  totalwidth:integer;
- FRpMainF:TFRpMainF;
 begin
- FRpMainF:=TFRpMainF(Owner);
  totalwidth:=WIdth;
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
+ posy:=0;
+ ALabel:=TLabel.Create(Self);
+ LLabels.Add(ALabel);
+ ALabel.Caption:=SRpMainDataset;
+ ALabel.Left:=CONS_LEFTGAP;
+ ALabel.Top:=posy+CONS_LABELTOPGAP;
+ ALabel.parent:=self;
+
+ ComboAlias:=TComboBox.Create(Self);
+ ComboAlias.Style:=csDropDownList;
+ ComboAlias.Top:=Posy;
+ ComboAlias.Left:=CONS_CONTROLPOS;
+ ComboAlias.Width:=TotalWidth-ComboAlias.Left-CONS_RIGHTBARGAP;
+ ComboAlias.parent:=self;
+ PosY:=PosY+ComboAlias.Height;
+
+ LControls.AddObject('ComboAlias',ComboAlias);
+ Width:=TotalWidth-CONS_RIGHTBARGAP;
+ Height:=PosY;
+end;
+
+
+
+
+procedure TRpPanelObj.CreateControls(acompo:TRpSizeInterface);
+var
+ totalwidth,aheight:integer;
+ posy,i:integer;
+ ALabel:TLabel;
+ control:TControl;
+ typename:string;
+ Control2:TControl;
+ FRpMainf:TFRpMainF;
+begin
+ FRpMainf:=TFRpMainF(Owner.Owner);
+ FCompItem:=acompo;
+ totalwidth:=parent.WIdth;
+ if totalwidth<CONS_MINWIDTH then
+  totalwidth:=CONS_MINWIDTH;
  aheight:=0;
- dontrelease:=false;
- if Assigned(FCompItem) then
-  if Assigned(Value) then
-   if FCompItem.ClassName=Value.ClassName then
-   begin
-    if FCompItem is TRpSectionInterface then
-    begin
-     if TRpSection(TRpSectionInterface(FCompItem).printitem).SectionType=
-      TRpSection(TRpSectionInterface(Value).printitem).SectionType then
-       dontrelease:=true;
-    end
-    else
-    begin
-     dontrelease:=true;
-    end;
-   end;
- if not dontrelease then
-  ReleaseAllControls;
- FCompItem:=Value;
- if Not Assigned(Value) then
+
+ // Creates the labels and controls
+ posy:=0;
+ // The combobox
+ Combo:=TComboBox.Create(Self);
+ Combo.Width:=TotalWidth-CONS_RIGHTBARGAP;
+ Combo.Style:=csDropDownList;
+ Combo.Name:='TopCombobox'+FCompItem.classname;
+ combo.OnChange:=ComboObjectChange;
+ Combo.Parent:=Self;
+ posy:=posy+Combo.height;
+
+ FCompItem.GetProperties(LNames,LTypes,LValues);
+ for i:=0 to LNames.Count-1 do
  begin
-  fchangesize.Control:=nil;
-  FRpMainf.ACut.Enabled:=false;
-  FRpMainf.ACopy.Enabled:=false;
-  FRpMainf.APaste.Enabled:=false;
-  // Addes subreport props
-  Subreportprops;
-  exit;
+  ALabel:=TLabel.Create(Self);
+  LLabels.Add(ALabel);
+  ALabel.Caption:=LNames.Strings[i];
+  ALabel.Left:=CONS_LEFTGAP;
+  ALabel.Top:=posy+CONS_LABELTOPGAP;
+  ALabel.parent:=self;
+  typename:=LTypes.Strings[i];
+  if LTypes.Strings[i]=SRpSBool then
+  begin
+   Control:=TComboBox.Create(Self);
+   TComboBox(Control).Items.Add(FalseBoolStrs[0]);
+   TComboBox(Control).Items.Add(TrueBoolStrs[0]);
+   TComboBox(Control).Style:=csDropDownList;
+   TCOmboBox(Control).OnChange:=EditChange;
+  end
+  else
+  if LTypes.Strings[i]=SRpSList then
+  begin
+   Control:=TComboBox.Create(Self);
+   FCompItem.GetPropertyValues(LNames.Strings[i],TComboBox(Control).Items);
+   TComboBox(Control).Style:=csDropDownList;
+   TCOmboBox(Control).OnChange:=EditChange;
+  end
+  else
+  if LTypes.Strings[i]=SRpSColor then
+  begin
+   Control:=TShape.Create(Self);
+   Control.Height:=aheight;
+   TShape(Control).Shape:=stRectangle;
+   TShape(Control).OnMouseUp:=ShapeMouseUp;
+  end
+  else
+  if LTypes.Strings[i]=SRpSImage then
+  begin
+   Control:=TEdit.Create(Self);
+   TEdit(Control).ReadOnly:=True;
+   TEdit(Control).Color:=clInfoBk;
+   TEdit(Control).OnClick:=ImageClick;
+   TEdit(Control).OnKeyDown:=ImageKeyDown;
+  end
+  else
+  if LTypes.Strings[i]=SRpGroup then
+  begin
+   Control:=TComboBox.Create(Self);
+   subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
+   TComboBox(Control).Style:=csDropDownList;
+   subrep.GetGroupNames(TComboBox(Control).Items);
+   TComboBox(Control).Items.Insert(0,'');
+   TComboBox(Control).OnChange:=EditChange;
+  end
+  else
+  if LTypes.Strings[i]=SRpSFontStyle then
+  begin
+   Control:=TEdit.Create(Self);
+   TEdit(Control).ReadOnly:=True;
+   TEdit(Control).Color:=clInfoBk;
+   TEdit(Control).OnClick:=FontClick;
+  end
+  else
+  begin
+   Control:=TEdit.Create(Self);
+   TEdit(Control).OnChange:=EditChange;
+  end;
+  Control.Top:=Posy;
+  Control.Left:=CONS_CONTROLPOS;
+  Control.Width:=TotalWidth-Control.Left-CONS_RIGHTBARGAP;
+  control.parent:=self;
+  if aheight=0 then
+   aheight:=Control.Height;
+  Control.tag:=i;
+  LControls.AddObject(LNames.Strings[i],Control);
+  // Font button
+{$IFDEF MSWINDOWS}
+  if LTypes.Strings[i]=SRpSWFontName then
+  begin
+   TEdit(Control).OnDblClick:=FontClick;
+  end;
+{$ENDIF}
+{$IFDEF LINUX}
+  if LTypes.Strings[i]=SRpSLFontName then
+  begin
+   TEdit(Control).OnDblClick:=FontClick;
+  end;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  if LTypes.Strings[i]=SRpSWFontName then
+{$ENDIF}
+{$IFDEF LINUX}
+  if LTypes.Strings[i]=SRpSLFontName then
+{$ENDIF}
+  begin
+   Control2:=TButton.Create(Self);
+   Control2.Width:=CONS_BUTTONWIDTH;
+   Control2.Top:=Control.Top;
+   Control2.Left:=Control.Left+Control.Width-CONS_BUTTONWIDTH;
+   Control2.Height:=COntrol.Height;
+   Control2.Tag:=i;
+   Control.Width:=Control.Width-CONS_BUTTONWIDTH;
+   TButton(Control2).OnClick:=FontClick;
+   TButton(Control2).Caption:='...';
+   Control2.Parent:=Self;
+  end;
+  if (LTypes.Strings[i]=SRpSExpression) then
+  begin
+   Control2:=TButton.Create(Self);
+   Control2.Width:=CONS_BUTTONWIDTH;
+   Control2.Top:=Control.Top;
+   Control2.Left:=Control.Left+Control.Width-CONS_BUTTONWIDTH;
+   Control2.Height:=COntrol.Height;
+   Control.Width:=Control.Width-CONS_BUTTONWIDTH;
+   Control2.Tag:=i;
+   TButton(Control2).OnClick:=ExpressionClick;
+   TButton(Control2).Caption:='...';
+   Control2.Parent:=Self;
+  end;
+
+  posy:=posy+control.height;
  end;
- if CompItem is TRpSizePosInterface then
+ // Send to back and bring to front buttons
+ if (FCompItem is TRpSizePosInterface) then
  begin
-  fchangesize.GridEnabled:=FRpMainf.report.GridEnabled;
-  fchangesize.GridX:=FRpMainf.report.GridWidth;
-  fchangesize.GridY:=FRpMainf.report.GridHeight;
-  fchangesize.Control:=CompItem;
-  FRpMainf.ACut.Enabled:=true;
-  FRpMainf.ACopy.Enabled:=true;
+  Control:=TButton.Create(Self);
+  Control.Left:=0;
+  Control.Top:=posy;
+  Control.Height:=aheight;
+  Control.Width:=(TotalWidth-CONS_RIGHTBARGAP) div 2;
+  TBUtton(Control).Caption:=SRpSendToBack;
+  TButton(Control).OnClick:=SendToBackClick;
+  Control.parent:=Self;
+  Control2:=TButton.Create(Self);
+  Control2.Left:=Control.Width;
+  Control2.Top:=posy;
+  Control2.Height:=aheight;
+  Control2.Width:=(TotalWidth-CONS_RIGHTBARGAP) div 2;
+  Control2.parent:=Self;
+  TButton(Control2).OnClick:=BringToFrontClick;
+  TBUtton(Control2).Caption:=SRpBringToFront;
+  PosY:=PosY+Control.Height;
+ end;
+ Width:=TotalWidth-CONS_RIGHTBARGAP;
+ Height:=Posy;
+end;
+
+// Creates an object inspector panel for the component
+function TFRpObjInsp.CreatePanel(acompo:TRpSizeInterface):TRpPanelObj;
+var
+ apanel:TRpPanelObj;
+begin
+ apanel:=TRpPanelObj.Create(Self);
+ apanel.Visible:=false;
+ apanel.Parent:=Self;
+ if Not Assigned(acompo) then
+ begin
+  apanel.CreateControlsSubReport;
  end
  else
-  fchangesize.Control:=nil;
- FRpMainf.APaste.Enabled:=true;
- if not dontrelease then
+  // Creates a panel and fills it
+  apanel.CreateControls(acompo);
+ Result:=apanel;
+end;
+
+function TFRpObjInsp.FindPanelForClass(acompo:TRpSizeInterface):TRpPanelObj;
+var
+ newclassname:string;
+ i,index:integer;
+begin
+ newclassname:=FindClassName(acompo);
+ // Looks if the panel exists
+ index:=FPropPanels.IndexOf(newclassname);
+ if (index>=0) then
+ begin
+  Result:=TrpPanelObj(FPropPanels.Objects[index]);
+ end
+ else
+ begin
+  // Creates the panel
+  Result:=CreatePanel(acompo);
+  FPropPanels.AddObject(newclassname,Result);
+ end;
+ // Invisible all other panels
+ for i:=0 to FPropPanels.Count-1 do
+ begin
+//  TRpPanelObj(FPropPanels.Objects[i]).ResizeComps;
+  if FPropPanels.Objects[i]<>Result then
+   TRpPanelObj(FPropPanels.Objects[i]).Visible:=False;
+ end;
+ // Visible this panel
+ if Not Result.Visible then
  begin
   HorzScrollBar.Position:=0;
   VertScrollBar.Position:=0;
  end;
- // Creates the labels and controls
+ Result.Visible:=True;
+end;
 
- posy:=0;
+(*
 
- if ((not (dontfreecombo)) and (not dontrelease)) then
- begin
-  // Fills the combox of components
-  alist:=TStringList.Create;
-  try
-   alist.sorted:=true;
-   if CompItem is TRpSectionInterface then
-   begin
-    sectionint:=TRpSectionInterface(CompItem);
-   end
-   else
-   begin
-    sectionint:=TRpSectionInterface(TRpSizePosInterface(Compitem).SectionInt);
-   end;
-   for i:=0 to sectionint.childlist.Count-1 do
-   begin
-    compo:=TRpSizeInterface(sectionint.childlist.Items[i]).printitem;
-    alist.AddObject(compo.Name,sectionint.childlist.Items[i]);
-   end;
-   Combo:=TComboBox.Create(Self);
-   Combo.Width:=TotalWidth-CONS_RIGHTBARGAP;
-   Combo.Style:=csDropDownList;
-   Combo.Items.Assign(alist);
-   Combo.Name:='TopCombobox';
-   Combo.ItemIndex:=combo.Items.IndexOfObject(CompItem);
-   combo.OnChange:=ComboObjectChange;
-   Combo.Parent:=Self;
-   LControlsToFree.Add(Combo);
-   posy:=posy+Combo.height;
-  finally
-   alist.free;
-  end;
- end
- else
- begin
-  posy:=posy+Combo.Height;
-  Combo.ItemIndex:=combo.Items.IndexOfObject(CompItem);
- end;
+
  FCompItem.GetProperties(LNames,LTypes,LValues);
  for i:=0 to LNames.Count-1 do
  begin
@@ -437,6 +634,161 @@ begin
  //  posy:=posy+control.height;
   end;
  end;
+*)
+
+
+procedure TRpPanelObj.AssignPropertyValues;
+var
+ FRpMainF:TFRpMainF;
+ i:integer;
+ typename:String;
+ control:TControl;
+ secint:TRpSectionInterface;
+ asecitem:TRpSizeInterface;
+begin
+ FRpMainF:=TFRpMainF(Owner.Owner);
+ if NOt Assigned(FCompItem) then
+ begin
+  TFRpObjInsp(Owner).fchangesize.Control:=nil;
+  FRpMainf.ACut.Enabled:=false;
+  FRpMainf.ACopy.Enabled:=false;
+  FRpMainf.AHide.Enabled:=false;
+  FRpMainf.APaste.Enabled:=false;
+  // Assigns the datasets
+  ComboAlias.OnChange:=nil;
+  alist.clear;
+  alist.add('');
+  for i:=0 to FRpMainf.report.DataInfo.Count-1 do
+  begin
+   alist.Add(FRpMainf.report.DataInfo.items[i].Alias);
+  end;
+  ComboAlias.Items.Assign(alist);
+  ComboAlias.Itemindex:=ComboAlias.Items.IndexOf(subrep.Alias);
+  ComboAlias.OnChange:=ComboAliasChange;
+  exit;
+ end;
+ if FCompItem is TRpSizePosInterface then
+ begin
+  TFRpObjInsp(Owner).fchangesize.GridEnabled:=FRpMainf.report.GridEnabled;
+  TFRpObjInsp(Owner).fchangesize.GridX:=FRpMainf.report.GridWidth;
+  TFRpObjInsp(Owner).fchangesize.GridY:=FRpMainf.report.GridHeight;
+  TFRpObjInsp(Owner).fchangesize.Control:=FCompItem;
+  FRpMainf.ACut.Enabled:=true;
+  FRpMainf.ACopy.Enabled:=true;
+  FRpMainf.AHide.Enabled:=true;
+  secint:=TrpSectionInterface(TRpSizePosInterface(FCompItem).SectionInt);
+ end
+ else
+ begin
+  TFRpObjInsp(Owner).fchangesize.Control:=nil;
+  secint:=TrpSectionInterface(FCompItem);
+ end;
+ FRpMainf.APaste.Enabled:=true;
+
+ // Assigns combo values
+ combo.OnChange:=nil;
+ alist.clear;
+ alist.Add('');
+ for i:=0 to secint.childlist.count-1 do
+ begin
+  asecitem:=TRpSizePosInterface(secint.childlist.items[i]);
+  alist.AddObject(asecitem.PrintItem.Name,asecitem);
+ end;
+ combo.items.assign(alist);
+ if FCompItem is TRpSizePosInterface then
+  combo.Itemindex:=alist.Indexof(FCompItem.Printitem.Name)
+ else
+  combo.Itemindex:=-1;
+ combo.OnChange:=ComboObjectChange;
+
+
+ FCompItem.GetProperties(LNames,LTypes,LValues);
+ for i:=0 to LNames.Count-1 do
+ begin
+  typename:=LTypes.Strings[i];
+  if LTypes.Strings[i]=SRpSBool then
+  begin
+   Control:=TControl(LControls.Objects[i]);
+   TCOmboBox(Control).OnChange:=nil;
+   TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(LValues.Strings[i]);
+   TCOmboBox(Control).OnChange:=EditChange;
+  end
+  else
+  if LTypes.Strings[i]=SRpSList then
+  begin
+   Control:=TControl(LControls.Objects[i]);
+   TCOmboBox(Control).OnChange:=nil;
+   TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(LValues.Strings[i]);
+   TCOmboBox(Control).OnChange:=EditChange;
+  end
+  else
+  if LTypes.Strings[i]=SRpSColor then
+  begin
+   Control:=TControl(LControls.Objects[i]);
+   TShape(Control).Brush.Color:=StrToInt(LValues.Strings[i]);
+  end
+  else
+  if LTypes.Strings[i]=SRpSImage then
+  begin
+   Control:=TControl(LControls.Objects[i]);
+   TEdit(Control).Text:=LValues.Strings[i];
+  end
+  else
+  if LTypes.Strings[i]=SRpGroup then
+  begin
+   Control:=TControl(LControls.Objects[i]);
+   subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
+   alist.clear;
+   subrep.GetGroupNames(alist);
+   alist.Insert(0,'');
+   TComboBox(Control).OnChange:=nil;
+   TComboBox(Control).Items.Assign(alist);
+   if FCompItem is TRpExpressionInterface then
+    TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(
+      TRpExpression(TRpExpressionInterface(FCompItem).printitem).GroupName);
+   TComboBox(Control).OnChange:=EditChange;
+  end
+  else
+  if LTypes.Strings[i]=SRpSFontStyle then
+  begin
+   Control:=TControl(LControls.Objects[i]);
+   TEdit(Control).Text:=IntegerFontStyleToString(StrToInt(LValues.Strings[i]));
+  end
+  else
+  begin
+   Control:=TControl(LControls.Objects[i]);
+   TEdit(Control).OnChange:=nil;
+   TEdit(Control).Text:=LValues.Strings[i];
+   TEdit(Control).OnChange:=EditChange;
+  end;
+ end;
+end;
+
+function TFRpObjInsp.GetCompItem:TRpSizeInterface;
+var
+ i:integer;
+begin
+ Result:=nil;
+ for i:=0 to FPropPanels.Count-1 do
+ begin
+  if TRpPanelObj(FPropPanels.Objects[i]).Visible then
+  begin
+   Result:=TRpPanelObj(FPropPanels.Objects[i]).FCompItem;
+  end;
+ end;
+end;
+
+procedure TFRpObjInsp.SetCompItem(Value:TRpSizeInterface);
+var
+ FRpMainf:TFRpMainF;
+begin
+ FRpMainf:=TFRpMainF(Owner);
+ FCurrentPanel:=FindPanelForClass(Value);
+ FCurrentPanel.FCompItem:=Value;
+ FCurrentPanel.Subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
+ FCurrentPanel.AssignPropertyValues;
+
+
 end;
 
 constructor TFRpObjInsp.Create(AOwner:TComponent);
@@ -444,18 +796,14 @@ var
  FRpMainF:TFRpMainF;
 begin
  inherited Create(AOwner);
+ FProppanels:=TStringList.Create;
+
  FRpMainF:=TFRpMainF(Owner);
 
  fchangesize:=TRpSizeModifier.Create(Self);
  fchangesize.OnSizeChange:=changesizechange;
 
- LNames:=TStringList.Create;
- LValues:=TStringList.Create;
- LTypes:=TStringList.Create;
 
- LLabels:=TList.Create;
- LControls:=TStringList.Create;
- LCOntrolsToFree:=TList.Create;
  if Screen.PixelsPerInch>90 then
  begin
   Font.Size:=7;
@@ -470,16 +818,11 @@ end;
 
 destructor TFRpObjInsp.Destroy;
 begin
- LNames.free;
- LValues.free;
- LTypes.free;
- LLabels.free;
- LControls.free;
- LControlsToFree.Free;
+ FPropPanels.Free;
  inherited Destroy;
 end;
 
-procedure TFRpObjInsp.EditChange(Sender:TObject);
+procedure TRpPanelObj.EditChange(Sender:TObject);
 var
  index:integer;
  aname:string;
@@ -490,82 +833,77 @@ begin
  if (FCompItem is TRpSectionInterface) then
  begin
   if ((aname=SRpsWidth) or (aname=SRpsHeight)) then
-   if Assigned(FDesignFrame) then
-    TFDesignFrame(FDesignFrame).UpdateInterface;
+   if Assigned(TFRpObjInsp(Owner).FDesignFrame) then
+    TFRpDesignFrame(TFRpObjInsp(Owner).FDesignFrame).UpdateInterface;
  end;
  // If the property es positional update position
- if Assigned(fchangesize) then
+ if Assigned(TFRpObjInsp(Owner).fchangesize) then
  begin
   if ((aname=SRpSWidth) or (aname=SRpsHeight) or
    (aname=SRpSTop) or (aname=SRpSLeft)) then
   begin
-   fchangesize.UpdatePos;
+   TFRpObjInsp(Owner).fchangesize.UpdatePos;
   end;
  end;
 end;
 
-procedure TFRpObjInsp.ShapeMouseUp(Sender: TObject; Button: TMouseButton;
+procedure TRpPanelObj.ShapeMouseUp(Sender: TObject; Button: TMouseButton;
      Shift: TShiftState; X, Y: Integer);
 var
  AShape:TShape;
 begin
  AShape:=TShape(Sender);
- ColorDialog1.COlor:=StrToInt(LValues.Strings[AShape.Tag]);
- if ColorDialog1.Execute then
+ TFRpObjInsp(Owner).ColorDialog1.COlor:=StrToInt(LValues.Strings[AShape.Tag]);
+ if TFRpObjInsp(Owner).ColorDialog1.Execute then
  begin
-  AShape.Brush.Color:=ColorDialog1.Color;
-  FCompItem.SetProperty(Lnames.strings[AShape.Tag],IntToStr(ColorDialog1.Color));
+  AShape.Brush.Color:=TFRpObjInsp(Owner).ColorDialog1.Color;
+  FCompItem.SetProperty(Lnames.strings[AShape.Tag],IntToStr(TFRpObjInsp(Owner).ColorDialog1.Color));
  end;
 end;
 
-procedure TFRpObjInsp.FontClick(Sender:TObject);
+procedure TRpPanelObj.FontClick(Sender:TObject);
 var
  index:integer;
 begin
 {$IFDEF MSWINDOWS}
- FontDialog1.Font.Name:= CompItem.GetProperty(SRpSWFontName);
+ TFRpObjInsp(Owner).FontDialog1.Font.Name:=FCompItem.GetProperty(SRpSWFontName);
 {$ENDIF}
 {$IFDEF LINUX}
  FontDialog1.Font.Name:= CompItem.GetProperty(SRpSLFontName);
 {$ENDIF}
- FontDialog1.Font.Size:= StrToInt(CompItem.GetProperty(SRpSFontSize));
- FontDialog1.Font.Color:= StrToInt(CompItem.GetProperty(SRpSFontColor));
- FontDialog1.Font.Style:=IntegerToFontStyle(StrToInt(CompItem.GetProperty(SrpSFontStyle)));
- if FontDialog1.Execute then
+ TFRpObjInsp(Owner).FontDialog1.Font.Size:= StrToInt(FCompItem.GetProperty(SRpSFontSize));
+ TFRpObjInsp(Owner).FontDialog1.Font.Color:= StrToInt(FCompItem.GetProperty(SRpSFontColor));
+ TFRpObjInsp(Owner).FontDialog1.Font.Style:=IntegerToFontStyle(StrToInt(FCompItem.GetProperty(SrpSFontStyle)));
+ if TFRpObjInsp(Owner).FontDialog1.Execute then
  begin
   index:=TComponent(Sender).Tag;
   if index>=0 then
   begin
-   TEdit(LControls.Objects[index]).Text:=FontDialog1.Font.Name;
+   TEdit(LControls.Objects[index]).Text:=TFRpObjInsp(Owner).FontDialog1.Font.Name;
   end;
   index:=LNames.IndexOf(SrpSFontSize);
   if index>=0 then
   begin
-   TEdit(LControls.Objects[index]).Text:=IntToStr(FontDialog1.Font.Size);
+   TEdit(LControls.Objects[index]).Text:=IntToStr(TFRpObjInsp(Owner).FontDialog1.Font.Size);
   end;
   index:=LNames.IndexOf(SrpSFontColor);
   if index>=0 then
   begin
-   TShape(LControls.Objects[index]).Brush.Color:=FontDialog1.Font.Color;
-   CompItem.SetProperty(SRpSFontColor,IntToStr(FontDialog1.Font.Color));
+   TShape(LControls.Objects[index]).Brush.Color:=TFRpObjInsp(Owner).FontDialog1.Font.Color;
+   FCompItem.SetProperty(SRpSFontColor,IntToStr(TFRpObjInsp(Owner).FontDialog1.Font.Color));
   end;
   index:=LNames.IndexOf(SrpSFontStyle);
   if index>=0 then
   begin
-   TEdit(LControls.Objects[index]).Text:=IntegerFontStyleToString(FontStyleToInteger(Fontdialog1.Font.Style));
-   CompItem.SetProperty(SRpSFontStyle,IntToStr(FontStyleToInteger(Fontdialog1.Font.Style)));
+   TEdit(LControls.Objects[index]).Text:=IntegerFontStyleToString(FontStyleToInteger(TFRpObjInsp(Owner).Fontdialog1.Font.Style));
+   FCompItem.SetProperty(SRpSFontStyle,IntToStr(FontStyleToInteger(TFRpObjInsp(Owner).Fontdialog1.Font.Style)));
   end;
  end;
 end;
 
-procedure TFRpObjInsp.ComboObjectChange(Sender:TObject);
+procedure TRpPanelObj.ComboObjectChange(Sender:TObject);
 begin
- dontfreecombo:=true;
- try
-  CompItem:=TRpSizeInterface(TComboBox(Sender).Items.Objects[TComboBox(Sender).ItemIndex]);
- finally
-  dontfreecombo:=false;
- end;
+ TFRpObjInsp(Owner).CompItem:=TRpSizeInterface(TComboBox(Sender).Items.Objects[TComboBox(Sender).ItemIndex]);
 end;
 
 procedure TFRpObjInsp.ChangeSizeChange(Sender:TObject);
@@ -573,20 +911,20 @@ begin
  // Read bounds Values and assign
  if Not Assigned(fchangesize.Control) then
   exit;
- UpdatePosValues;
+ FCurrentPanel.UpdatePosValues;
 end;
 
-procedure TFRpObjInsp.SendToBackClick(Sender:TObject);
+procedure TRpPanelObj.SendToBackClick(Sender:TObject);
 var
  section:TRpSection;
  item:TRpCommonListItem;
  pitem:TRpCommonComponent;
  index:integer;
 begin
- CompItem.SendToBack;
- TRpSizePosInterface(CompItem).SectionInt.SendToBack;
- pitem:=CompItem.printitem;
- section:=TRpSection(TRpSizePosInterface(CompItem).SectionInt.printitem);
+ FCompItem.SendToBack;
+ TRpSizePosInterface(FCompItem).SectionInt.SendToBack;
+ pitem:=FCompItem.printitem;
+ section:=TRpSection(TRpSizePosInterface(FCompItem).SectionInt.printitem);
  index:=0;
  while index<section.Components.Count do
  begin
@@ -601,18 +939,18 @@ begin
  item.Component:=pitem;
 end;
 
-procedure TFRpObjInsp.BringToFrontClick(Sender:TObject);
+procedure TRpPanelObj.BringToFrontClick(Sender:TObject);
 var
  section:TRpSection;
  item:TRpCommonListItem;
  pitem:TRpCommonComponent;
  index:integer;
 begin
- CompItem.BringToFront;
- fchangesize.UpdatePos;
+ FCompItem.BringToFront;
+ TFRpObjInsp(Owner).fchangesize.UpdatePos;
 
- pitem:=CompItem.printitem;
- section:=TRpSection(TRpSizePosInterface(CompItem).SectionInt.printitem);
+ pitem:=FCompItem.printitem;
+ section:=TRpSection(TRpSizePosInterface(FCompItem).SectionInt.printitem);
  index:=0;
  while index<section.Components.Count do
  begin
@@ -629,14 +967,14 @@ end;
 
 
 
-procedure TFRpObjInsp.ExpressionClick(Sender:TObject);
+procedure TRpPanelObj.ExpressionClick(Sender:TObject);
 var
  report:TRpReport;
  i:integer;
  item:TRpAliaslistItem;
  FRpMainF:TFRpMainF;
 begin
- FRpMainF:=TFRpMainF(Owner);
+ FRpMainF:=TFRpMainF(Owner.Owner);
  report:=FRpMainf.report;
  try
   report.ActivateDatasets;
@@ -647,25 +985,25 @@ begin
   end;
  end;
 
- RpAlias1.List.Clear;
+ TFRpObjInsp(Owner).RpAlias1.List.Clear;
  for i:=0 to report.DataInfo.Count-1 do
  begin
-  item:=RpAlias1.List.Add;
+  item:=TFRpObjInsp(Owner).RpAlias1.List.Add;
   item.Alias:=report.DataInfo.Items[i].Alias;
   item.Dataset:=report.DataInfo.Items[i].Dataset;
  end;
- RpExpreDialog1.Expresion.Text:=TEdit(LControls.Objects[TButton(Sender).Tag]).Text;
- if RpExpreDialog1.Execute then
-  TEdit(LControls.Objects[TButton(Sender).Tag]).Text:=Trim(RpExpreDialog1.Expresion.Text);
+ TFRpObjInsp(Owner).RpExpreDialog1.Expresion.Text:=TEdit(LControls.Objects[TButton(Sender).Tag]).Text;
+ if TFRpObjInsp(Owner).RpExpreDialog1.Execute then
+  TEdit(LControls.Objects[TButton(Sender).Tag]).Text:=Trim(TFRpObjInsp(Owner).RpExpreDialog1.Expresion.Text);
 end;
 
-procedure TFRpObjInsp.UpdatePosValues;
+procedure TRpPanelObj.UpdatePosValues;
 var
  index:integer;
  sizeposint:TRpSizePosInterface;
  NewLeft,NewTop,NewWidth,NewHeight:integer;
 begin
- sizeposint:=TRpSizePosInterface(fchangesize.control);
+ sizeposint:=TRpSizePosInterface(TFRpObjInsp(Owner).fchangesize.control);
  NewLeft:=sizeposint.Left;
  NewTop:=sizeposint.Top;
  NewWidth:=sizeposint.Width;
@@ -692,24 +1030,24 @@ begin
  end;
 end;
 
-procedure TFRpObjInsp.ImageClick(Sender:TObject);
+procedure TRpPanelObj.ImageClick(Sender:TObject);
 var
  Stream:TMemoryStream;
 begin
- if OpenDialog1.Execute then
+ if TFRpObjInsp(Owner).OpenDialog1.Execute then
  begin
   Stream:=TMemoryStream.Create;
   try
-   Stream.LoadFromFile(OpenDialog1.FileName);
+   Stream.LoadFromFile(TFRpObjInsp(Owner).OpenDialog1.FileName);
    Stream.Seek(0,soFromBeginning);
-   CompItem.SetProperty(LNames.Strings[TComponent(Sender).Tag],stream);
+   FCompItem.SetProperty(LNames.Strings[TComponent(Sender).Tag],stream);
   finally
    Stream.Free;
   end;
  end;
 end;
 
-procedure TFRpObjInsp.ImageKeyDown(Sender: TObject;
+procedure TRpPanelObj.ImageKeyDown(Sender: TObject;
      var Key: Word; Shift: TShiftState);
 var
  Stream:TMemoryStream;
@@ -718,53 +1056,15 @@ begin
  begin
   Stream:=TMemoryStream.Create;
   try
-   CompItem.SetProperty(LNames.Strings[TComponent(Sender).Tag],stream);
+   FCompItem.SetProperty(LNames.Strings[TComponent(Sender).Tag],stream);
   finally
    Stream.Free;
   end;
  end;
 end;
 
-procedure  TFRpObjInsp.Subreportprops;
-var
- alabel:TLabel;
- posy:integer;
- comboalias:TComboBox;
- i,totalwidth:integer;
- FRpMainF:TFRpMainF;
-begin
- FRpMainF:=TFRpMainF(Owner);
- totalwidth:=WIdth;
- if totalwidth<CONS_MINWIDTH then
-  totalwidth:=CONS_MINWIDTH;
- posy:=0;
- subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
- ALabel:=TLabel.Create(Self);
- LLabels.Add(ALabel);
- ALabel.Caption:=SRpMainDataset;
- ALabel.Left:=CONS_LEFTGAP;
- ALabel.Top:=posy+CONS_LABELTOPGAP;
- ALabel.parent:=self;
 
- ComboAlias:=TComboBox.Create(Self);
- ComboAlias.Style:=csDropDownList;
- ComboAlias.Items.Add('');
- for i:=0 to FRpMainf.report.DataInfo.Count-1 do
- begin
-  ComboAlias.Items.Add(FRpMainf.report.DataInfo.items[i].Alias);
- end;
- ComboAlias.Itemindex:=ComboAlias.Items.IndexOf(subrep.Alias);
- ComboAlias.OnChange:=ComboAliasChange;
- ComboAlias.Top:=Posy;
- ComboAlias.Left:=CONS_CONTROLPOS;
- ComboAlias.Width:=TotalWidth-ComboAlias.Left-CONS_RIGHTBARGAP;
- ComboAlias.parent:=self;
-
- LControls.AddObject(subrep.name,ComboAlias);
- LControlsToFree.Add(ComboAlias);
-end;
-
-procedure TFRpObjInsp.ComboAliasChange(Sender:TObject);
+procedure TRpPanelObj.ComboAliasChange(Sender:TObject);
 begin
  subrep.Alias:=TComboBox(Sender).Text;
 end;
@@ -775,6 +1075,43 @@ begin
  fchangesize:=nil;
  fchangesize:=TRpSizeModifier.Create(Self);
  fchangesize.OnSizeChange:=changesizechange;
+end;
+
+
+procedure TFRpObjInsp.InvalidatePanels;
+var
+ i:integer;
+begin
+ // Panels must be resized when show
+ for i:=0 to FPropPanels.Count-1 do
+ begin
+//  TPanel(FPropPanels.Objects[i]).Tag:=1;
+  FPropPanels.Objects[i].Free;
+ end;
+ FPropPanels.Clear;
+end;
+
+procedure TrpPanelObj.ResizeComps;
+begin
+ if Tag=1 then
+ begin
+
+  Tag:=0;
+ end;
+end;
+
+function TFRpObjInsp.GetComboBox:TComboBox;
+var
+ i:integer;
+begin
+ Result:=nil;
+ for i:=0 to FPropPanels.Count-1 do
+ begin
+  if TrpPanelObj(FPropPanels.Objects[i]).Visible then
+  begin
+   Result:=TrpPanelObj(FPropPanels.Objects[i]).Combo;
+  end;
+ end;
 end;
 
 

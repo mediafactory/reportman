@@ -49,7 +49,7 @@ type
     property OnPaint:TNotifyEvent read FOnPaint write FOnPaint;
    end;
 
-  TFDesignFrame = class(TFrame)
+  TFRpDesignFrame = class(TFrame)
     PTop: TPanel;
     TopRuler: TRpRuler;
     PLeft: TPanel;
@@ -69,6 +69,7 @@ type
     freportstructure:TFRpStructure;
     SectionScrollBox: TScrollBox;
     procedure UpdateInterface;
+    procedure ShowAllHiden;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
     procedure UpdateSelection(force:boolean);
@@ -118,7 +119,7 @@ end;
 
 
 
-constructor TFDesignFrame.Create(AOwner:TComponent);
+constructor TFRpDesignFrame.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
  SectionScrollBox:=TRpScrollBox.Create(Self);
@@ -136,7 +137,7 @@ begin
  PSection.OnPaint:=SecPosChange;
 end;
 
-destructor TFDesignFrame.Destroy;
+destructor TFRpDesignFrame.Destroy;
 begin
  leftrulers.free;
  toptitles.free;
@@ -146,7 +147,7 @@ begin
 end;
 
 
-procedure TFDesignFrame.SetReport(Value:TRpReport);
+procedure TFRpDesignFrame.SetReport(Value:TRpReport);
 begin
  FReport:=Value;
  if Not Assigned(FReport) then
@@ -157,7 +158,7 @@ end;
 
 
 
-procedure TFDesignFrame.UpdateSelection(force:boolean);
+procedure TFRpDesignFrame.UpdateSelection(force:boolean);
 var
  data:Pointer;
  dataobj:TOBject;
@@ -221,7 +222,7 @@ begin
 *)end;
 
 
-procedure TFDesignFrame.SecPosChange(Sender:TObject);
+procedure TFRpDesignFrame.SecPosChange(Sender:TObject);
 var
  i:integer;
  aruler:TRpRuler;
@@ -247,7 +248,7 @@ end;
 
 
 
-procedure TFDesignFrame.SelectSubReport(subreport:TRpSubReport);
+procedure TFRpDesignFrame.SelectSubReport(subreport:TRpSubReport);
 var
  i:integer;
  asecint:TRpSectionInterface;
@@ -350,7 +351,7 @@ begin
 end;
 
 
-procedure TFDesignFrame.UpdateInterface;
+procedure TFRpDesignFrame.UpdateInterface;
 var
  i,j:integer;
  asecint:TRpSectionInterface;
@@ -412,5 +413,21 @@ begin
  SectionScrollBox.VertScrollBar.Position:=0;
 end;
 
+procedure TFRpDesignFrame.ShowAllHiden;
+var
+ asecint:TRpSectionInterface;
+ aposint:TRpSizePosInterface;
+ i,j:integer;
+begin
+ for i:=0 to secinterfaces.Count-1 do
+ begin
+  asecint:=TRpSectionInterface(secinterfaces.items[i]);
+  for j:=0 to asecint.childlist.Count-1 do
+  begin
+   aposint:=TRpSizePosInterface(asecint.childlist.items[j]);
+   aposint.Visible:=true;
+  end;
+ end;
+end;
 
 end.

@@ -160,6 +160,11 @@ type
     QtSGI1: TMenuItem;
     Platinum1: TMenuItem;
     Default1: TMenuItem;
+    AHide: TAction;
+    N4: TMenuItem;
+    Hide1: TMenuItem;
+    AShowAll: TAction;
+    Showall1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -200,9 +205,11 @@ type
     procedure ASystemPrintDialogExecute(Sender: TObject);
     procedure AkylixPrintBugExecute(Sender: TObject);
     procedure Windows1Click(Sender: TObject);
+    procedure AHideExecute(Sender: TObject);
+    procedure AShowAllExecute(Sender: TObject);
   private
     { Private declarations }
-    fdesignframe:TFDesignFrame;
+    fdesignframe:TFRpDesignFrame;
     fhelp:TFRpHelpform;
     fobjinsp:TFRpObjInsp;
     lastsaved:TMemoryStream;
@@ -235,7 +242,6 @@ type
     filename:string;
     freportstructure:TFRpStructure;
     procedure RefreshInterface(Sender: TObject);
-    procedure AppIdleRefreshInterface(Sender:TObject;var done:boolean);
     function GetExpressionText:string;
   end;
 
@@ -391,6 +397,8 @@ begin
  ACut.Enabled:=False;
  ACopy.Enabled:=FalsE;
  APaste.Enabled:=False;
+ AShowAll.Enabled:=False;
+ AHide.Enabled:=False;
  APrint.Enabled:=false;
  AGridOptions.Enabled:=false;
  MDisplay.Visible:=false;
@@ -441,7 +449,9 @@ begin
  APreview.Enabled:=true;
  ACut.Enabled:=False;
  ACopy.Enabled:=FalsE;
+ AHide.Enabled:=False;
  APaste.Enabled:=true;
+ AShowAll.Enabled:=True;
  APrint.Enabled:=true;
  AGridOptions.Enabled:=true;
  MDisplay.Visible:=true;
@@ -467,7 +477,7 @@ begin
  freportstructure:=TFRpStructure.Create(Self);
  freportstructure.Align:=alTop;
  freportstructure.Parent:=leftPanel;
- fdesignframe:=TFDesignFrame.Create(Self);
+ fdesignframe:=TFRpDesignFrame.Create(Self);
  fobjinsp.DesignFrame:=fdesignframe;
  fdesignframe.Parent:=MainScrollBox;
  fdesignframe.freportstructure:=freportstructure;
@@ -627,18 +637,12 @@ begin
  DoOpen(newfilename,false);
 end;
 
-procedure TFRpMainF.AppIdleRefreshInterface(Sender:TObject;var done:boolean);
-begin
- Application.OnIdle:=nil;
- done:=false;
- FreeInterface;
- CreateInterface;
- FormResize(self);
-end;
 
 procedure TFRpMainF.RefreshInterface(Sender: TObject);
 begin
- Application.OnIdle:=AppIdleRefreshInterface;
+ FreeInterface;
+ CreateInterface;
+ FormResize(self);
 end;
 
 procedure TFRpMainF.ANewPageHeaderExecute(Sender: TObject);
@@ -736,11 +740,14 @@ begin
  // Delete current selection
  if Not Assigned(fobjinsp.CompItem) then
   exit;
- pitem:=TRpSizePosInterface(fobjinsp.CompItem).printitem;
- sectionintf:=TrpSectionInterface(TRpSizePosInterface(fobjinsp.CompItem).sectionint);
- Clipboard.SetComponent(pitem);
- sectionintf.DoDeleteComponent(pitem);
- fobjinsp.CompItem:=nil;
+ if fobjinsp.CompItem is TRpSizePosInterface then
+ begin
+  pitem:=TRpSizePosInterface(fobjinsp.CompItem).printitem;
+  sectionintf:=TrpSectionInterface(TRpSizePosInterface(fobjinsp.CompItem).sectionint);
+  Clipboard.SetComponent(pitem);
+  sectionintf.DoDeleteComponent(pitem);
+  fobjinsp.CompItem:=nil;
+ end;
  fdesignframe.UpdateSelection(true);
 end;
 
@@ -751,8 +758,11 @@ begin
  // Delete current selection
  if Not Assigned(fobjinsp.CompItem) then
   exit;
- pitem:=TRpSizePosInterface(fobjinsp.CompItem).printitem;
- Clipboard.SetComponent(pitem);
+ if fobjinsp.CompItem is TRpSizePosInterface then
+ begin
+  pitem:=TRpSizePosInterface(fobjinsp.CompItem).printitem;
+  Clipboard.SetComponent(pitem);
+ end;
 end;
 
 procedure TFRpMainF.APasteExecute(Sender: TObject);
@@ -795,6 +805,7 @@ var
  olditem:TRpSizeInterface;
 begin
  // Assigns then objinsp
+ fobjinsp.InvalidatePanels;
  olditem:=fobjinsp.CompItem;
  fobjinsp.CompItem:=nil;
  fobjinsp.CompItem:=olditem;
@@ -1165,6 +1176,21 @@ begin
  // Sets the style
  AppStyle:=TDefaultStyle((Sender As TComponent).Tag);
  UpdateStyle;
+end;
+
+procedure TFRpMainF.AHideExecute(Sender: TObject);
+begin
+ // Delete current selection
+ if Not Assigned(fobjinsp.CompItem) then
+  exit;
+ if fobjinsp.CompItem is TRpSizePosInterface then
+  TRpSizePosInterface(fobjinsp.CompItem).Visible:=false;
+end;
+
+procedure TFRpMainF.AShowAllExecute(Sender: TObject);
+begin
+ // Shows all components
+ fdesignframe.ShowAllHiden;
 end;
 
 initialization
