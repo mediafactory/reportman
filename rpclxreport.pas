@@ -44,7 +44,9 @@ type
 
 implementation
 
+{$IFDEF MSWINDOWS}
 uses rpprintdia;
+{$ENDIF}
 
 
 
@@ -79,7 +81,12 @@ begin
   copies:=report.Copies;
   if ShowPrintDialog then
   begin
-   if DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+{$IFDEF MSWINDOWS}
+   if rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+{$ENDIF}
+{$IFDEF LINUX}
+   if rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+{$ENDIF}
    begin
     Result:=PrintReport(report,Title,Showprogress,allpages,frompage,
      topage,copies,collate);

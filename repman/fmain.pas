@@ -222,7 +222,10 @@ var
 implementation
 
 uses rppagesetup, rpshfolder,  fdatainfo, frpgrid, rppreview, fabout,
-  rpprintdia, rprfparams;
+{$IFDEF MSWINDOWS}
+  rpprintdia,
+{$ENDIF}
+  rprfparams;
 
 {$R *.xfm}
 
@@ -822,7 +825,12 @@ begin
  collate:=report.CollateCopies;
  frompage:=1; topage:=999999;
  copies:=report.Copies;
+{$IFDEF MSWINDOWS}
  if rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+{$ENDIF}
+{$IFDEF LINUX}
+ if rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+{$ENDIF}
   rpqtdriver.PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
 end;
 

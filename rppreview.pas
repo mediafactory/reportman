@@ -106,7 +106,11 @@ function ShowPreview(report:TRpReport;caption:string):boolean;
 
 implementation
 
-uses rpprintdia, rprfparams, rppdfdriver;
+uses rprfparams,
+{$IFDEF MSWINDOWS}
+    rpprintdia,
+{$ENDIF}
+    rppdfdriver;
 
 {$R *.xfm}
 
@@ -287,8 +291,14 @@ begin
  collate:=report.CollateCopies;
  frompage:=1; topage:=999999;
  copies:=report.Copies;
- if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+{$IFDEF MSWINDOWS}
+ if Not rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
   exit;
+{$ENDIF}
+{$IFDEF LINUX}
+ if Not rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+  exit;
+{$ENDIF}
  report.EndPrint;
  PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
  AppIdle(Self,adone);

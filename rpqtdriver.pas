@@ -107,11 +107,46 @@ function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
   allpages:boolean;frompage,topage:integer;
   showprintdialog:boolean;filename:string;compressed:boolean):Boolean;
 
+
+// Because copies and collation not work in Windows we
+// use the ShowPrintdialog in rpprintdia
+{$IFDEF LINUX}
+function DoShowPrintDialog(var allpages:boolean;
+ var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
+{$ENDIF}
+
 implementation
 
+{$IFDEF MSWINDOWS}
 uses rpprintdia;
+{$ENDIF}
 
 {$R *.xfm}
+
+{$IFDEF LINUX}
+function DoShowPrintDialog(var allpages:boolean;
+ var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
+begin
+ Result:=false;
+ QPrinter_setMinMax(QPrinterH(Printer.Handle),1,999999);
+ QPrinter_setNumCopies(QprinterH(printer.Handle),copies);
+ QPrinter_setFromTo(QPrinterH(Printer.Handle),frompage,topage);
+ if Not Collate then
+  QPrinter_setPageOrder(QPrinterH(Printer.Handle),qt.QPrinterPageOrder_FirstPageFirst)
+ else
+  QPrinter_setPageOrder(QPrinterH(Printer.Handle),qt.QPrinterPageOrder_LastPageFirst);
+ if QPrinter_setup(QPrinterH(Printer.handle),nil) then
+ begin
+  frompage:=QPrinter_fromPage(QPrinterH(Printer.handle));
+  topage:=QPrinter_toPage(QPrinterH(Printer.handle));
+  // Collate does not work, copies does not work
+  copies:=QPrinter_numCopies(QPrinterH(Printer.Handle));
+  collate:=qt.QPrinterPageOrder_LastPageFirst=QPrinter_PageOrder(QPrinterH(Printer.Handle));
+  allpages:=false;
+  Result:=true;
+ end;
+end;
+{$ENDIF}
 
 constructor TRpQtDriver.Create;
 begin
