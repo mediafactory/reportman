@@ -1522,12 +1522,12 @@ begin
    Control:=TRpMaskEdit.Create(Self);
    TEdit(Control).OnChange:=EditChange;
    TRpMaskEdit(Control).EditType:=tecurrency;
-   TRpMaskEdit(Control).DisplayMask:='##,##0.##';
+   TRpMaskEdit(Control).DisplayMask:='##,##0.###';
 
    NControl:=TRpMaskEdit.Create(Self);
    TEdit(NControl).OnChange:=EditChange;
    TRpMaskEdit(NControl).EditType:=tecurrency;
-   TRpMaskEdit(NControl).DisplayMask:='##,##0.##';
+   TRpMaskEdit(NControl).DisplayMask:='##,##0.###';
   end
   else
   if ((LTypes.Strings[i]=SRpSInteger) or (LTypes.Strings[i]=SRpSFontSize)) then

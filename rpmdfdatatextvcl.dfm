@@ -6,6 +6,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
   ClientHeight = 412
   ClientWidth = 511
   Color = clBtnFace
+  ParentFont = True
   OldCreateOrder = True
   Position = poScreenCenter
   ShowHint = True
@@ -14,7 +15,6 @@ object FRpDataTextVCL: TFRpDataTextVCL
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
-  ParentFont = True
   object PTop: TPanel
     Left = 0
     Top = 0
@@ -22,6 +22,9 @@ object FRpDataTextVCL: TFRpDataTextVCL
     Height = 53
     Align = alTop
     TabOrder = 0
+    DesignSize = (
+      511
+      53)
     object LFieldsFile: TLabel
       Left = 8
       Top = 8
@@ -208,7 +211,7 @@ object FRpDataTextVCL: TFRpDataTextVCL
         Top = 85
         Width = 511
         Height = 110
-        ActivePage = TabSource
+        ActivePage = TabData
         Align = alClient
         TabOrder = 1
         object TabSource: TTabSheet

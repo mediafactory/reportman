@@ -26,13 +26,20 @@ interface
 uses
 {$IFDEF MSWINDOWS}
  Windows,
+{$IFNDEF FPC}
+ ShellApi,
+ MApi,
+{$ENDIF}
 {$ENDIF}
 {$IFDEF LINUX}
  Libc,
 {$ENDIF}
  Sysutils,IniFiles,rpmdshfolder,Classes,
 {$IFDEF USEVARIANTS}
- Variants,Types,rtlconsts,
+ Variants,Types,
+ {$IFNDEF FPC}
+  rtlconsts,
+ {$ENDIF}
 {$ENDIF}
 {$IFNDEF USEVARIANTS}
   consts,
@@ -42,6 +49,7 @@ uses
 {$ENDIF}
 {$IFDEF DOTNETD}
  System.IO,
+ System.Runtime.InteropServices,
 {$ENDIF}
 {$IFDEF BUILDER4}
  Db,
@@ -200,6 +208,7 @@ type
 
 
 
+procedure SendMail(destination,subject,content,filename:String);
 function StrToAlign(value:string):TRpPosAlign;
 function AlignToStr(value:TRpPosAlign):string;
 function VarIsString(avar:Variant):Boolean;
@@ -2707,6 +2716,168 @@ begin
   Result:=rpalclient;
   exit;
  end;
+end;
+
+procedure SendMail(destination,subject,content,filename:String);
+{$IFDEF MSWINDOWS}
+procedure CheckMAPI(avalue:Cardinal);
+begin
+ if avalue=SUCCESS_SUCCESS then
+  exit;
+ case avalue of
+  MAPI_E_AMBIGUOUS_RECIPIENT:
+   Raise Exception.Create(TranslateStr(1232,
+    'A recipient matched more than one of the recipient descriptor structures and MAPI_DIALOG was not set. No message was sent.'));
+  MAPI_E_ATTACHMENT_NOT_FOUND:
+   Raise Exception.Create(TranslateStr(1233,
+    'The specified attachment could not be open; no message was sent'));
+  MAPI_E_ATTACHMENT_OPEN_FAILURE:
+   Raise Exception.Create(TranslateStr(1234,
+    'The specified attachment could not be open; no message was sent.'));
+  MAPI_E_BAD_RECIPTYPE:
+   Raise Exception.Create(TranslateStr(1235,
+    'The specified attachment could not be open; no message was sent.'));
+  MAPI_E_FAILURE:
+   Raise Exception.Create(TranslateStr(1236,
+    'One or more unspecified errors occurred; no message was sent.'));
+  MAPI_E_INSUFFICIENT_MEMORY:
+   Raise Exception.Create(TranslateStr(1237,
+    'There was insufficient memory to proceed. No message was sent.'));
+  MAPI_E_LOGIN_FAILURE:
+   Raise Exception.Create(TranslateStr(1238,
+    'There was no default logon, and the user failed to log on successfully when the logon dialog box was displayed. No message was sent.'));
+  MAPI_E_TEXT_TOO_LARGE:
+   Raise Exception.Create(TranslateStr(1239,
+    'The text in the message was too large to sent; the message was not sent.'));
+  MAPI_E_TOO_MANY_FILES:
+   Raise Exception.Create(TranslateStr(1240,
+    'There were too many file attachments; no message was sent.'));
+  MAPI_E_TOO_MANY_RECIPIENTS:
+   Raise Exception.Create(TranslateStr(1241,
+    'There were too many recipients; no message was sent.'));
+  MAPI_E_UNKNOWN_RECIPIENT:
+   Raise Exception.Create(TranslateStr(1242,
+    'A recipient did not appear in the address list; no message was sent.'));
+  MAPI_E_USER_ABORT:
+   Raise Exception.Create(TranslateStr(1243 ,
+    'The user canceled one of the dialog boxes; no message was sent.'));
+  MAPI_E_TOO_MANY_SESSIONS:
+   Raise Exception.Create(TranslateStr(1244 ,
+    'The user had too many sessions open simultaneously. No session handle was returned.'));
+  MAPI_E_INVALID_RECIPS:
+   Raise Exception.Create(TranslateStr(1245 ,
+    'Invalid recipient. No message was sent.'));
+  else
+   Raise Exception.Create(TranslateStr(1236,
+    'One or more unspecified errors occurred; no message was sent.')+
+     ' Error: '+IntToStr(avalue));
+ end;
+end;
+
+var
+ Sessionh:LHandle;
+ amessage:MapiMessage;
+{$IFDEF DOTNETD}
+ recip:MAPIRecipDesc;
+ filep:MapiFileDesc;
+{$ENDIF}
+{$ENDIF}
+begin
+{$IFDEF MSWINDOWS}
+{$IFNDEF DOTNETD}
+ CheckMAPI(MapiLogOn(0,nil,nil,MAPI_LOGON_UI,0,@Sessionh));
+{$ENDIF}
+{$IFDEF DOTNETD}
+ CheckMAPI(MapiLogOn(0,nil,nil,MAPI_LOGON_UI,0,Sessionh));
+{$ENDIF}
+ try
+  amessage.ulReserved:=0;
+  amessage.lpszSubject:=nil;
+  if Length(subject)>0 then
+{$IFNDEF DOTNETD}
+   amessage.lpszSubject:=Pchar(subject);
+{$ENDIF}
+{$IFDEF DOTNETD}
+   amessage.lpszSubject:=subject;
+{$ENDIF}
+  if Length(content)<1 then
+   content:=' ';
+{$IFNDEF DOTNETD}
+  amessage.lpszNoteText:=PChar(content);
+{$ENDIF}
+{$IFDEF DOTNETD}
+  amessage.lpszNoteText:=content;
+{$ENDIF}
+  amessage.lpszMessageType:=nil;
+  amessage.lpszDateReceived:=nil;
+  amessage.lpszConversationID:=nil;
+  amessage.lpszDateReceived:=nil;
+  amessage.nRecipCount:=0;
+  amessage.lpRecips:=nil;
+  if Length(destination)>0 then
+  begin
+   amessage.nRecipCount:=1;
+{$IFNDEF DOTNETD}
+   amessage.lpRecips:=AllocMem(sizeof(MAPIRecipDesc));
+   amessage.lpRecips.lpszName:=Pchar(destination);
+   amessage.lpRecips.lpszAddress:=Pchar(destination);
+   amessage.lpRecips.ulEIDSize:=0;
+   amessage.lpRecips.lpEntryID:=nil;
+{$ENDIF}
+{$IFDEF DOTNETD}
+   amessage.lpRecips:=Marshal.AllocHGlobal(sizeof(MAPIRecipDesc));
+   recip:=MapiRecipDesc(Marshal.PtrToStructure(amessage.lpRecips,TypeOf(MAPIRecipDesc)));
+   recip.ulReserved:=0;
+   recip.ulRecipClass:=1;
+   recip.lpszName:=destination;
+   recip.lpszAddress:=Marshal.StringToHGlobalAnsi(destination);
+   recip.ulEIDSize:=0;
+   recip.lpEntryID:=nil;
+{$ENDIF}
+  end;
+
+  amessage.flFlags:=MAPI_RECEIPT_REQUESTED;
+  amessage.lpOriginator:=nil;
+{  amessage.lpOriginator:=AllocMem(sizeof(MAPIRecipDesc));
+  amessage.lpOriginator.ulReserved:=0;
+  amessage.lpOriginator.lpszName:=PChar('');
+  amessage.lpOriginator.lpszAddress:=PChar('');
+  amessage.lpOriginator.ulEIDSize:=0;
+  amessage.lpOriginator.ulRecipClass:=0;
+  amessage.lpOriginator.lpEntryID:=nil;
+}
+  amessage.nFileCount:=0;
+  amessage.lpFiles:=nil;
+
+  if Length(filename)>0 then
+  begin
+   amessage.nFileCount:=1;
+{$IFNDEF DOTNETD}
+   amessage.lpFiles:=AllocMem(sizeof(MapiFileDesc));
+   amessage.lpFiles.ulReserved:=0;
+   amessage.lpFiles.flFlags:=0;
+   amessage.lpFiles.lpszPathName:=Pchar(filename);
+   amessage.lpFiles.lpszFileName:=PChar(ExtractFileName(filename));
+   amessage.lpFiles.nPosition:=0;
+   amessage.lpFiles.lpFileType:=nil;
+{$ENDIF}
+{$IFDEF DOTNETD}
+   amessage.lpFiles:=Marshal.AllocHGlobal(sizeof(MapiFileDesc));
+   filep:=MapiFileDesc(Marshal.PtrToStructure(amessage.lpFiles,TypeOf(MAPIFileDesc)));
+   filep.ulReserved:=0;
+   filep.flFlags:=0;
+   filep.lpszPathName:=filename;
+   filep.lpszFileName:=Marshal.StringToHGlobalAnsi(ExtractFileName(filename));
+   filep.nPosition:=0;
+   filep.lpFileType:=nil;
+{$ENDIF}
+  end;
+  CheckMAPI(MapiSendMail(sessionh,0,amessage,MAPI_DIALOG,0));
+ finally
+  CheckMAPI(MapiLogOff(sessionh,0,0,0));
+ end;
+//  ShellExecute(0,PChar('start'),PChar('mailto:'+destination+'?Subject='+subject),nil,nil,SW_SHOWNORMAL);
+{$ENDIF}
 end;
 
 initialization

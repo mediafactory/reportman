@@ -43,6 +43,10 @@ uses
 {$R *.res}
 
 begin
+  with Application do
+  begin
+   Title:=SRpRepMetafile;
+  end;
   Application.Initialize;
   Application.CreateForm(TFRpMainMeta, FRpMainMeta);
   FRpMainMeta.Browsecommandline:=true;

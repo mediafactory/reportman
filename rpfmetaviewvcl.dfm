@@ -1,8 +1,8 @@
 object FRpMetaVCL: TFRpMetaVCL
   Left = 0
   Top = 0
-  Width = 573
-  Height = 311
+  Width = 689
+  Height = 349
   HorzScrollBar.Range = 561
   VertScrollBar.Range = 338
   Align = alClient
@@ -17,14 +17,13 @@ object FRpMetaVCL: TFRpMetaVCL
     Left = 0
     Top = 27
     Width = 7
-    Height = 290
-    Cursor = crHSplit
+    Height = 301
     Beveled = True
   end
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 561
+    Width = 689
     Height = 27
     AutoSize = True
     ButtonHeight = 25
@@ -125,8 +124,16 @@ object FRpMetaVCL: TFRpMetaVCL
       Top = 0
       Action = AScaleMore
     end
-    object BConfig: TToolButton
+    object ToolButton16: TToolButton
       Left = 398
+      Top = 0
+      Width = 8
+      Caption = 'ToolButton16'
+      ImageIndex = 8
+      Style = tbsSeparator
+    end
+    object BConfig: TToolButton
+      Left = 406
       Top = 0
       DropdownMenu = MPrintMenu
       ImageIndex = 14
@@ -134,26 +141,24 @@ object FRpMetaVCL: TFRpMetaVCL
       OnClick = BConfigClick
     end
     object BExit: TToolButton
-      Left = 437
+      Left = 445
       Top = 0
       Action = AExit
     end
     object BCancel: TButton
-      Left = 463
+      Left = 471
       Top = 0
-      Width = 140
+      Width = 106
       Height = 25
       Action = ACancel
       TabOrder = 1
       Visible = False
     end
     object PBar: TProgressBar
-      Left = 603
+      Left = 577
       Top = 0
       Width = 64
       Height = 25
-      Min = 0
-      Max = 100
       TabOrder = 0
       Visible = False
     end
@@ -181,14 +186,13 @@ object FRpMetaVCL: TFRpMetaVCL
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 317
-    Width = 561
+    Top = 328
+    Width = 689
     Height = 21
     Panels = <
       item
         Width = 50
       end>
-    SimplePanel = False
   end
   object ActionList1: TActionList
     Images = ImageList1
@@ -521,7 +525,7 @@ object FRpMetaVCL: TFRpMetaVCL
     Left = 128
     Top = 64
     Bitmap = {
-      494C010110001300040013001300FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010110001300040013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000004C0000005F0000000100200000000000D070
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1463,7 +1467,8 @@ object FRpMetaVCL: TFRpMetaVCL
       7FE01FFC00F00000F303FFE07FE07FFC0CF00000F3C3FFF87FE1FFFC3CF00000
       F3F3FFFE7FE7FFFCFCF00000FFFFFFFFFFFFFFFFFFF00000FFFFFFFFFFFFFFFF
       FFF00000FFFFFFFFFFFFFFFFFFF00000FFFFFFFFFFFFFFFFFFF00000FFFFFFFF
-      FFFFFFFFFFF00000FFFFFFFFFFFFFFFFFFF00000}
+      FFFFFFFFFFF00000FFFFFFFFFFFFFFFFFFF00000000000000000000000000000
+      00000000000000000000}
   end
   object MPrintMenu: TPopupMenu
     Left = 300

@@ -7,6 +7,7 @@ package ReportMan;
 {$R 'rppdfreport.dcr'}
 {$R 'rpvclreport.dcr'}
 {$R 'rpexpredlgvcl.dcr'}
+{$R 'rpmaskedit.dcr'}
 {$ALIGN 0}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -96,7 +97,9 @@ contains
   rpmdclitreevcl in 'rpmdclitreevcl.pas',
   rpmdfaboutvcl in 'rpmdfaboutvcl.pas',
   rpregvcl in 'rpregvcl.pas',
-  rphtmldriver in 'rphtmldriver.pas';
+  rphtmldriver in 'rphtmldriver.pas',
+  rpmaskedit in 'rpmaskedit.pas',
+  rppagesetupvcl in 'rppagesetupvcl.pas';
 
 [assembly: AssemblyTitle('Report Manager Components')]
 [assembly: AssemblyDescription('Report Manager engine components, to access Report Manager reports')]

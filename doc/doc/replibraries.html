@@ -29,5 +29,17 @@
 <p>You can create report libraries with PosgreSQL, but you need to create a domain 
   BLOB in your database to identify the binary datatype:</p>
 <p>CREATE DOMAIN BLOB AS bytea</p>
+<p><strong>Creating the library yourself</strong></p>
+<p>Report Manager executes a SQL standard sentences to create report libraries, 
+  if you experience problems you can create the libraries manually.</p>
+<p>For example using postgresql:</p>
+<p>CREATE TABLE public.repman_reports (<br>
+  report_name varchar(50) NOT NULL, <br>
+  report bytea, //not use domain blob <br>
+  report_group int4, <br>
+  user_flag int4, <br>
+  CONSTRAINT repman_reports_pkey PRIMARY KEY (report_name)<br>
+  ) WITH OIDS;<br>
+</p>
 </body>
 </html>

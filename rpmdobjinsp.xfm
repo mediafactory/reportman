@@ -7,12 +7,17 @@ object FRpObjInsp: TFRpObjInsp
   ParentShowHint = False
   ShowHint = True
   TabOrder = 0
-  ParentFont = True
   object ColorDialog1: TColorDialog
     Left = 156
     Top = 88
   end
   object FontDialog1: TFontDialog
+    Font.Color = clBlack
+    Font.Height = 11
+    Font.Name = 'MS Shell Dlg'
+    Font.Pitch = fpVariable
+    Font.Style = []
+    Font.Weight = 40
     Left = 228
     Top = 60
   end

@@ -712,7 +712,6 @@ begin
 
  AppStyle:=dsSystemDefault;
 
- Application.Title:=SRpRepman;
  configfile:=Obtainininameuserconfig('','','repmand');
  configfilelib:=Obtainininameuserconfig('','','repmandlib');
 {$IFDEF MSWINDOWS}

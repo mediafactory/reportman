@@ -1759,7 +1759,6 @@ begin
    end;
 {$ENDIF}
   end;
-
   connecting:=false;
  except
   on E:Exception do
@@ -2110,7 +2109,7 @@ begin
    astream:=data.CreateBlobStream(data.fields[0],bmRead);
    memstream.SetSize(astream.size);
 {$IFDEF DOTNETD}
-   astream.Read(memstream.memory[1],memstream.size);
+   memstream.CopyFrom(astream,memstream.size);
 {$ENDIF}
 {$IFNDEF DOTNETD}
    astream.Read(memstream.memory^,memstream.size);
@@ -3067,6 +3066,8 @@ var
  Dreports:TClientDataset;
  groupcode:Integer;
  grouppath:string;
+ sqltext:string;
+ havegroup:Boolean;
  i:integer;
 
 
@@ -3096,16 +3097,22 @@ begin
  index:=IndexOf(ConnectionName);
  if index<0 then
   Raise Exception.Create(SRPAliasNotExists+' - '+Connectionname);
+ adatagroups:=nil;
  alist.Clear;
  dbinfo:=Items[Index];
  dbinfo.Connect;
- adatareports:=
-  dbinfo.OpenDatasetFromSQL('SELECT '+dbinfo.ReportSearchField+',REPORT_GROUP FROM '+
-  dbinfo.reporttable,nil,false);
+ sqltext:='SELECT '+dbinfo.ReportSearchField;
+ if Length(dbinfo.Reportgroupstable)>0 then
+  sqltext:=sqltext+',REPORT_GROUP';
+ sqltext:=sqltext+' FROM '+dbinfo.reporttable;
+ adatareports:=dbinfo.OpenDatasetFromSQL(sqltext,nil,false);
  try
-  adatagroups:=
-   dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
-     ' PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false);
+  if Length(dbinfo.Reportgroupstable)>0 then
+  begin
+   adatagroups:=
+    dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
+      ' PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false);
+  end;
   try
    // Fill client dataset helpers
    DReportGroups:=TClientDataSet.Create(nil);
@@ -3129,37 +3136,42 @@ begin
     DReportGroups2.CreateDataset;
     DReports.CreateDataset;
     // Fill the datasets
-    While Not adatagroups.Eof do
+    if Length(dbinfo.Reportgroupstable)>0 then
     begin
-     DReportGroups.Append;
-     try
-      DReportGroups.FieldByName('GROUP_CODE').Value:=adatagroups.FieldByName('GROUP_CODE').Value;
-      DReportGroups.FieldByName('GROUP_NAME').AsVariant:=adatagroups.FieldByName('GROUP_NAME').AsVariant;
-      DReportGroups.FieldByname('PARENT_GROUP').AsVariant:=adatagroups.FieldByName('PARENT_GROUP').AsVariant;
-      DReportGroups2.Append;
+     While Not adatagroups.Eof do
+     begin
+      DReportGroups.Append;
       try
-       for i:=0 to DReportGroups2.Fields.Count-1 do
-       begin
-        DReportGroups2.Fields[i].AsVariant:=DReportGroups.Fields[i].AsVariant;
+       DReportGroups.FieldByName('GROUP_CODE').Value:=adatagroups.FieldByName('GROUP_CODE').Value;
+       DReportGroups.FieldByName('GROUP_NAME').AsVariant:=adatagroups.FieldByName('GROUP_NAME').AsVariant;
+       DReportGroups.FieldByname('PARENT_GROUP').AsVariant:=adatagroups.FieldByName('PARENT_GROUP').AsVariant;
+       DReportGroups2.Append;
+       try
+        for i:=0 to DReportGroups2.Fields.Count-1 do
+        begin
+         DReportGroups2.Fields[i].AsVariant:=DReportGroups.Fields[i].AsVariant;
+        end;
+        DReportGroups2.Post;
+       except
+        DReportGroups2.Cancel;
+        Raise;
        end;
-       DReportGroups2.Post;
+       DReportGroups.Post;
       except
-       DReportGroups2.Cancel;
+       DReportGroups.Cancel;
        Raise;
       end;
-      DReportGroups.Post;
-     except
-      DReportGroups.Cancel;
-      Raise;
+      adatagroups.Next;
      end;
-     adatagroups.Next;
     end;
+    havegroup:=adatareports.FindField('REPORT_GROUP')<>nil;
     While Not adatareports.Eof do
     begin
      DReports.Append;
      try
       DReports.FieldByname('REPORT_NAME').Value:=adatareports.FieldByName('REPORT_NAME').Value;
-      DReports.FieldByName('REPORT_GROUP').AsVariant:=adatareports.FieldByName('REPORT_GROUP').AsVariant;
+      if havegroup then
+       DReports.FieldByName('REPORT_GROUP').AsVariant:=adatareports.FieldByName('REPORT_GROUP').AsVariant;
       DReports.Post;
      except
       DReports.Cancel;
@@ -3197,7 +3209,8 @@ begin
    end;
 //   FillTree(adatagroups,adatareports);
   finally
-   adatagroups.free;
+   if Length(dbinfo.Reportgroupstable)>0 then
+    adatagroups.free;
   end;
  finally
   adatareports.free;

@@ -699,7 +699,4 @@ begin
 end;
 
 
-initialization
- if ChangeFileExt(ExtractFileName(UpperCase(Application.ExeName)),'')='REPMAND' then
-  Application.Title:=TranslateStr(1,Application.Title);
 end.

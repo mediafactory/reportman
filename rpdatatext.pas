@@ -242,30 +242,30 @@ begin
    begin
     while position<memstream.Size do
     begin
-     readed:=memstream.Read(buf[1],1);
+     readed:=memstream.Read(buf[0],1);
      position:=position+readed;
      if readed=0 then
       break;
-     if Char(buf[1])=recordseparator then
+     if Char(buf[0])=recordseparator then
      begin
       recorddone:=true;
       oldline:='';
       // Ignore after record chars
       while position<memstream.Size do
       begin
-       readed:=memstream.Read(buf[1],1);
+       readed:=memstream.Read(buf[0],1);
        position:=position+readed;
        if readed=0 then
         break;
-       if Char(buf[1])<>ignoreafterrecordseparator then
+       if Char(buf[0])<>ignoreafterrecordseparator then
        begin
-        oldline:=char(buf[1]);
+        oldline:=char(buf[0]);
         break;
        end;
       end;
      end
      else
-      line:=line+char(buf[1]);
+      line:=line+char(buf[0]);
      if recorddone then
      begin
       recorddone:=false;

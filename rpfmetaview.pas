@@ -164,6 +164,12 @@ type
     MSelPrinter214: TMenuItem;
     MSelPrinter215: TMenuItem;
     MSelPrinter24: TMenuItem;
+    AMailTo: TAction;
+    Mailto1: TMenuItem;
+    ToolButton10: TToolButton;
+    ToolButton14: TToolButton;
+    ToolButton15: TToolButton;
+    ToolButton16: TToolButton;
     procedure AFirstExecute(Sender: TObject);
     procedure ANextExecute(Sender: TObject);
     procedure APreviousExecute(Sender: TObject);
@@ -1128,7 +1134,7 @@ begin
  MPrintMenu.Popup(apoint.X,apoint.Y);
 end;
 
-procedure TFRpMetaVCL.AMailToExecute(Sender: TObject);
+procedure TFRpMeta.AMailToExecute(Sender: TObject);
 var
  afilename:String;
 begin

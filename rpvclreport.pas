@@ -77,13 +77,13 @@ end;
 
 function TVCLReport.Execute:boolean;
 var
- allpages,collate:boolean;
+ allpages,collate,modified:boolean;
  frompage,topage,copies:integer;
 begin
  inherited Execute;
  if Preview then
  begin
-  Result:=ShowPreview(report,Title);
+  Result:=ShowPreview(report,Title,modified);
  end
  else
  begin

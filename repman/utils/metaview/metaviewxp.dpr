@@ -23,6 +23,10 @@ uses
 {$R *.res}
 
 begin
+  with Application do
+  begin
+   Title:=SRpRepMetafile;
+  end;
   Graphics.DefFontData.Name:=Screen.IconFont.Name;
   Application.Initialize;
   Application.CreateForm(TFRpMainMetaVCL, FRpMainMetaVCL);
@@ -31,3 +35,4 @@ begin
   FRpMainMetaVCL.browsecommandline:=true;
   Application.Run;
 end.
+

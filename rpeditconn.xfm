@@ -8,7 +8,6 @@ object FRpEditCon: TFRpEditCon
   ActiveControl = BOK
   Caption = 'Edit connections'
   Color = clButton
-  ParentFont = True 
   Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
@@ -21,7 +20,6 @@ object FRpEditCon: TFRpEditCon
     Top = 0
     Width = 629
     Height = 30
-    AutoSize = False
     ButtonHeight = 26
     ButtonWidth = 26
     Caption = 'ToolBar1'
@@ -117,7 +115,6 @@ object FRpEditCon: TFRpEditCon
       Width = 153
       Height = 353
       Align = alLeft
-      ItemHeight = 13
       TabOrder = 0
       OnClick = LAliasesClick
     end
@@ -180,7 +177,7 @@ object FRpEditCon: TFRpEditCon
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 7
         Text = 'EReportTable'
-        OnClick = EReportTableChange
+        OnChange = EReportTableChange
       end
       object EReportSearchfield: TEdit
         Left = 116
@@ -190,7 +187,7 @@ object FRpEditCon: TFRpEditCon
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 6
         Text = 'EReportTable'
-        OnClick = EReportTableChange
+        OnChange = EReportTableChange
       end
       object EReportField: TEdit
         Left = 116
@@ -200,7 +197,7 @@ object FRpEditCon: TFRpEditCon
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 5
         Text = 'EReportTable'
-        OnClick = EReportTableChange
+        OnChange = EReportTableChange
       end
       object EReportTable: TEdit
         Left = 116
@@ -270,7 +267,7 @@ object FRpEditCon: TFRpEditCon
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 8
         Text = 'EReportTable'
-        OnClick = EReportTableChange
+        OnChange = EReportTableChange
       end
       object BADOCOnf: TButton
         Left = 308

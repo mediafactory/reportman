@@ -14,12 +14,12 @@
     <LIBRARIES value="qt.lib qtintf.lib bcb2kaxserver.lib dbxcds.lib dclocx.lib soaprtl.lib 
       nmfast.lib inetdbxpress.lib inetdbbde.lib bcbsmp.lib dsnapcon.lib 
       dsnapcrba.lib visualdbclx.lib teeqr.lib dss.lib tee.lib teedb.lib 
-      teeui.lib qrpt.lib bdecds.lib vcldbx.lib vcldb.lib"/>
+      teeui.lib qrpt.lib bdecds.lib vcldbx.lib vcldb.lib dbrtl.lib"/>
     <SPARELIBS value="rtl.lib vcldb.lib adortl.lib bdertl.lib vcldbx.lib ibxpress.lib cds.lib 
       bdecds.lib qrpt.lib teeui.lib teedb.lib tee.lib dss.lib teeqr.lib 
       visualdbclx.lib dsnapcrba.lib dsnapcon.lib bcbsmp.lib inetdbbde.lib 
       inetdbxpress.lib dbexpress.lib nmfast.lib bcbie.lib soaprtl.lib dclocx.lib 
-      dbxcds.lib indy.lib bcb2kaxserver.lib rppack_builder6.lib qtintf.lib qt.lib"/>
+      dbxcds.lib indy.lib bcb2kaxserver.lib rppack_builder6.lib qtintf.lib qt.lib dbrtl.lib"/>
     <PACKAGES value="rtl.bpi designide.bpi rppack_builder6.bpi adortl.bpi dbrtl.bpi bdertl.bpi 
       dbexpress.bpi dsnap.bpi ibxpress.bpi cds.bpi indy.bpi visualclx.bpi 
       vcl.bpi bcbie.bpi"/>
@@ -108,9 +108,6 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 
-[Excluded Packages]
-c:\program files\borland\cbuilder6\bin\dclClxIBXtras60.bpl=Borland InterBase Express Extras (Clx)
-c:\program files\borland\cbuilder6\Bin\dclIBXtras60.bpl=Borland InterBase Express Extras
 
 [Debugging]
 DebugSourceDirs=$(BCB)\source\vcl

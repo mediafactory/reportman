@@ -32,7 +32,8 @@ uses
 {$ENDIF}
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpbasereport,rpreport,rpmetafile, QComCtrls,
-  rpqtdriver, QExtCtrls,rptypes,rptextdriver,rphtmldriver,rppagesetupvcl,
+  rpqtdriver, QExtCtrls,rptypes,rptextdriver,rphtmldriver,
+  rppagesetup,
   QActnList, QImgList,QPrinters,rpmdconsts,Qt, QMask, rpmaskeditclx;
 
 
@@ -75,6 +76,13 @@ type
     ToolButton5: TToolButton;
     ToolButton10: TToolButton;
     ToolButton9: TToolButton;
+    ToolButton14: TToolButton;
+    ToolButton15: TToolButton;
+    APageSetup: TAction;
+    AMailTo: TAction;
+    ToolButton16: TToolButton;
+    ToolButton17: TToolButton;
+    ToolButton18: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);

@@ -29,6 +29,7 @@ type
     MetaUrl:WideString;
     Port:Integer;
     ShowPrintDialog:Integer;
+    Copies:Integer;
     procedure ActivateEvent(Sender: TObject);
     procedure ClickEvent(Sender: TObject);
     procedure CreateEvent(Sender: TObject);
@@ -91,6 +92,8 @@ type
     procedure Set_Port(Value: Integer); safecall;
     function Get_ShowPrintDialog: Integer; safecall;
     procedure Set_ShowPrintDialog(Value: Integer); safecall;
+    function Get_Copies: Integer; safecall;
+    procedure Set_Copies(Value: Integer); safecall;
   public
     { Public declarations }
     procedure Initialize; override;
@@ -129,6 +132,7 @@ begin
   OnDestroy := DestroyEvent;
   OnKeyPress := KeyPressEvent;
   OnPaint := PaintEvent;
+  Copies:=1;
 end;
 
 function TWebReportMan.Get_Active: WordBool;
@@ -423,6 +427,7 @@ begin
   webmetaprint.Install:=Install<>0;
   webmetaprint.MetaUrl:=MetaUrl;
   webmetaprint.Port:=Port;
+  webmetaprint.Copies:=Copies;
   webmetaprint.ShowPrintDialog:=ShowPrintDialog<>0;
   if Length(MetaUrl)>0 then
   begin
@@ -477,6 +482,16 @@ end;
 procedure TWebReportMan.Set_ShowPrintDialog(Value: Integer);
 begin
  ShowPrintDialog:=Value;
+end;
+
+function TWebReportMan.Get_Copies: Integer;
+begin
+ Result:=Copies;
+end;
+
+procedure TWebReportMan.Set_Copies(Value: Integer);
+begin
+ Copies:=Value;
 end;
 
 initialization

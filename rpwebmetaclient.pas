@@ -51,6 +51,7 @@ type
    FInstall:Boolean;
    FShowProgress:Boolean;
    FShowPrintDialog:Boolean;
+   FCopies:Integer;
    errormessage:String;
    procedure DoInstall;
    procedure SetCaption(Value:WideString);
@@ -74,6 +75,7 @@ type
    property FontSize:Integer read FFontSize write FFontSize default 0;
    property FontName:String read FFontName write FFontName;
    property Preview:Boolean read FPreview write FPreview default false;
+   property Copies:Integer read FCopies write FCopies default 1;
    property ShowProgress:Boolean read FShowProgress write FShowProgress
     default true;
    property ShowPrintDialog:Boolean read FShowPrintDialog
@@ -140,7 +142,7 @@ begin
        topage:=999999;
        allpages:=true;
        collate:=false;
-       copies:=1;
+       copies:=FCopies;
        rpgdidriver.PrinterSelection(metafile.PrinterSelect);
        rpgdidriver.PageSizeSelection(rpPageSize);
        rpgdidriver.OrientationSelection(metafile.orientation);
@@ -186,6 +188,7 @@ begin
  FFontSize:=0;
  FPort:=80;
  FShowProgress:=True;
+ FCopies:=1;
 end;
 
 procedure TRpWebMetaPrint.Paint;

@@ -1577,12 +1577,12 @@ begin
    Control:=TRpCLXMaskEdit.Create(Self);
    TEdit(Control).OnChange:=EditChange;
    TRpCLXMaskEdit(Control).EditType:=tecurrency;
-   TRpCLXMaskEdit(Control).DisplayMask:='##,##0.##';
+   TRpCLXMaskEdit(Control).DisplayMask:='##,##0.###';
 
    NControl:=TRpCLXMaskEdit.Create(Self);
    TEdit(NControl).OnChange:=EditChange;
    TRpCLXMaskEdit(NControl).EditType:=tecurrency;
-   TRpCLXMaskEdit(NControl).DisplayMask:='##,##0.##';
+   TRpCLXMaskEdit(NControl).DisplayMask:='##,##0.###';
   end
   else
   if ((LTypes.Strings[i]=SRpSInteger) or (LTypes.Strings[i]=SRpSFontSize)) then

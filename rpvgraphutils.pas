@@ -120,7 +120,7 @@ end;
 
 // Bitmap print routine
 {$IFNDEF DOTNETD}
-procedure DrawBitmap (Destination:TCanvas;Bitmap:TBitmap;Rec,RecSrc:TRect);
+(*procedure DrawBitmap (Destination:TCanvas;Bitmap:TBitmap;Rec,RecSrc:TRect);
 var
   Info:PBitmapInfo;
   InfoSize:DWORD;
@@ -152,6 +152,141 @@ begin
   end;
  end;
 end;
+*)
+// Bitmap print routine
+// Bugfix sent by Walter de Boer
+procedure DrawBitmap (Destination:TCanvas;Bitmap:TBitmap;Rec,RecSrc:TRect);
+type
+  PPalEntriesArray = ^TPalEntriesArray; {for palette re-construction}
+  TPalEntriesArray = array[0..0] of TPaletteEntry;
+var
+  dc: hdc;                             {screen dc}
+  IsPaletteDevice: bool;               {if the device uses palettes}
+  IsDestPaletteDevice: bool;           {if the device uses palettes}
+  BitmapInfoSize: Integer;             {sizeof the bitmapinfoheader}
+  lpBitmapInfo: PBitmapInfo;           {the bitmap info header}
+  hBm: hBitmap;                        {handle to the bitmap}
+  hPal: hPalette;                      {handle to the palette}
+  OldPal: hPalette;                    {temp palette}
+  hBits: THandle;                      {handle to the DIB bits}
+  pBits: pointer;                      {pointer to the DIB bits}
+  lPPalEntriesArray: PPalEntriesArray; {palette entry array}
+  NumPalEntries: Integer;              {number of palette entries}
+  i: Integer;                          {looping variable}
+begin
+  {$IFOPT R+}
+  {$DEFINE CKRANGE}
+  {$R-}
+  {$ENDIF}
+  dc := GetDc(0);
+  IsPaletteDevice := GetDeviceCaps(dc, RASTERCAPS) and RC_PALETTE = RC_PALETTE;
+
+  dc := ReleaseDc(0, dc);
+
+  if IsPaletteDevice then
+    BitmapInfoSize := sizeof(TBitmapInfo) + (sizeof(TRGBQUAD) * 255)
+  else
+    BitmapInfoSize := sizeof(TBitmapInfo);
+  GetMem(lpBitmapInfo, BitmapInfoSize);
+  try
+    FillChar(lpBitmapInfo^, BitmapInfoSize, #0);
+    lpBitmapInfo^.bmiHeader.biSize := sizeof(TBitmapInfoHeader);
+    lpBitmapInfo^.bmiHeader.biWidth := Bitmap.Width;
+    lpBitmapInfo^.bmiHeader.biHeight := Bitmap.Height;
+    lpBitmapInfo^.bmiHeader.biPlanes := 1;
+    if IsPaletteDevice then
+      lpBitmapInfo^.bmiHeader.biBitCount := 8
+    else
+      lpBitmapInfo^.bmiHeader.biBitCount := 24;
+    lpBitmapInfo^.bmiHeader.biCompression := BI_RGB;
+    lpBitmapInfo^.bmiHeader.biSizeImage :=
+      ((lpBitmapInfo^.bmiHeader.biWidth * Longint(lpBitmapInfo^.bmiHeader.biBitCount)) div 8) *
+      lpBitmapInfo^.bmiHeader.biHeight;
+    lpBitmapInfo^.bmiHeader.biXPelsPerMeter := 0;
+    lpBitmapInfo^.bmiHeader.biYPelsPerMeter := 0;
+    if IsPaletteDevice then
+    begin
+      lpBitmapInfo^.bmiHeader.biClrUsed := 256;
+      lpBitmapInfo^.bmiHeader.biClrImportant := 256;
+    end
+    else
+    begin
+      lpBitmapInfo^.bmiHeader.biClrUsed := 0;
+      lpBitmapInfo^.bmiHeader.biClrImportant := 0;
+    end;
+    hBm := Bitmap.ReleaseHandle;
+    hPal := Bitmap.ReleasePalette;
+    dc := GetDc(0);
+    if IsPaletteDevice then
+    begin
+      OldPal := SelectPalette(dc, hPal, True);
+      RealizePalette(dc);
+    end;
+    GetDiBits(dc, hBm, 0, lpBitmapInfo^.bmiHeader.biHeight, Nil,
+      TBitmapInfo(lpBitmapInfo^), DIB_RGB_COLORS);
+    hBits := GlobalAlloc(GMEM_MOVEABLE, lpBitmapInfo^.bmiHeader.biSizeImage);
+    pBits := GlobalLock(hBits);
+    try
+      GetDiBits(dc, hBm, 0,lpBitmapInfo^.bmiHeader.biHeight, pBits,
+        TBitmapInfo(lpBitmapInfo^), DIB_RGB_COLORS);
+      if IsPaletteDevice then
+      begin
+        try
+         GetMem(lPPalEntriesArray, sizeof(TPaletteEntry) * 256);
+         {$IFDEF VER100}
+         NumPalEntries := GetPaletteEntries(hPal, 0, 256,   lPPalEntriesArray^);
+         {$ELSE}
+         NumPalEntries := GetSystemPaletteEntries(dc, 0,256,lPPalEntriesArray^);
+         {$ENDIF}
+         for i := 0 to (NumPalEntries - 1) do
+         begin
+           lpBitmapInfo^.bmiColors[i].rgbRed := lPPalEntriesArray^[i].peRed;
+           lpBitmapInfo^.bmiColors[i].rgbGreen := lPPalEntriesArray^[i].peGreen;
+           lpBitmapInfo^.bmiColors[i].rgbBlue := lPPalEntriesArray^[i].peBlue;
+         end;
+        finally
+         FreeMem(lPPalEntriesArray, sizeof(TPaletteEntry) * 256);
+        end;
+      end;
+      if IsPaletteDevice then
+      begin
+        SelectPalette(dc, OldPal, True);
+        RealizePalette(dc);
+      end;
+      dc := ReleaseDc(0, dc);
+
+      IsDestPaletteDevice := GetDeviceCaps(Destination.Handle, RASTERCAPS) and RC_PALETTE = RC_PALETTE;
+      if IsPaletteDevice then
+      begin
+        OldPal := SelectPalette(Destination.Handle, hPal, True);
+        RealizePalette(Destination.Handle);
+      end;
+      StretchDiBits(
+        Destination.Handle,
+        rec.Left,rec.Top,rec.Right-rec.Left+1, rec.Bottom-rec.Top+1,
+        recsrc.Left,recsrc.Top, recsrc.Right-recsrc.Left+1,recsrc.Bottom-recsrc.Top+1,
+        pBits, lpBitmapInfo^, DIB_RGB_COLORS, SrcCopy
+      );
+      if IsDestPaletteDevice then
+      begin
+        SelectPalette(Destination.Handle, OldPal, True);
+        RealizePalette(Destination.Handle);
+      end;
+    finally
+     GlobalUnLock(hBits);
+     GlobalFree(hBits);
+    end;
+  finally
+   FreeMem(lpBitmapInfo, BitmapInfoSize);
+  end;
+  Bitmap.Handle := hBm;
+  Bitmap.Palette := hPal;
+  {$IFDEF CKRANGE}
+  {$UNDEF CKRANGE}
+  {$R+}
+  {$ENDIF}
+end;
+
 {$ENDIF}
 
 // Bitmap print routine
@@ -289,11 +424,18 @@ begin
 
  apagewidth:=GetDeviceCaps(DC,HORZRES);
  apageheight:=GetDeviceCaps(DC,VERTRES);
+ // Bugfix for axiom printers
+ if apageheight<10 then
+  apageheight:=apagewidth;
+
  pagesize.x:=Round(apagewidth/dpix*TWIPS_PER_INCHESS);
  pagesize.y:=Round(apageheight/dpiy*TWIPS_PER_INCHESS);
 
  physical.x:=GetDeviceCaps(DC,PHYSICALWIDTH);
  physical.y:=GetDeviceCaps(DC,PHYSICALHEIGHT);
+ // Bugfix for axiom printers
+ if physical.y<10 then
+  physical.y:=physical.x;
  // Transform to twips
  physical.X:=Round(physical.X/dpix*TWIPS_PER_INCHESS);
  physical.Y:=Round(physical.Y/dpiy*TWIPS_PER_INCHESS);
@@ -385,6 +527,9 @@ begin
 
  Result.x:=GetDeviceCaps(DC,PHYSICALWIDTH);
  Result.y:=GetDeviceCaps(DC,PHYSICALHEIGHT);
+ // Bugfix for axiom printers
+ if Result.y<10 then
+  Result.y:=Result.x;
  // Transform to twips
  Result.X:=Round(Result.X/dpix*TWIPS_PER_INCHESS);
  Result.Y:=Round(Result.Y/dpiy*TWIPS_PER_INCHESS);
@@ -680,7 +825,7 @@ begin
 {$ENDIF}
  // Warning the custom page size does not work in all drivers
  // especially in Windows NT drivers
- if PDevMode.dmPapersize=256 then
+ if PDevMode.dmPapersize>=256 then
  begin
   Result.PageIndex:= 0;     { User defined (custom page size) }
   Result.Height:=PDevMode.dmPaperlength;

@@ -12,7 +12,7 @@ unit WebReportManX_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 23/12/2003 15:41:00 from Type Library described below.
+// File generated on 29/01/2004 21:04:58 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\webactivex\WebReportManX.tlb (1)
@@ -21,7 +21,7 @@ unit WebReportManX_TLB;
 // Helpfile: 
 // HelpString: WebReportManX Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINDOWS\System32\stdole2.tlb)
+//   (1) v2.0 stdole, (H:\WINDOWS\System32\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
@@ -157,6 +157,8 @@ type
     procedure Set_Port(Value: Integer); safecall;
     function Get_ShowPrintDialog: Integer; safecall;
     procedure Set_ShowPrintDialog(Value: Integer); safecall;
+    function Get_Copies: Integer; safecall;
+    procedure Set_Copies(Value: Integer); safecall;
     property Visible: WordBool read Get_Visible write Set_Visible;
     property AutoScroll: WordBool read Get_AutoScroll write Set_AutoScroll;
     property AutoSize: WordBool read Get_AutoSize write Set_AutoSize;
@@ -183,6 +185,7 @@ type
     property Install: Integer read Get_Install write Set_Install;
     property Port: Integer read Get_Port write Set_Port;
     property ShowPrintDialog: Integer read Get_ShowPrintDialog write Set_ShowPrintDialog;
+    property Copies: Integer read Get_Copies write Set_Copies;
   end;
 
 // *********************************************************************//
@@ -218,6 +221,7 @@ type
     property Install: Integer dispid 220;
     property Port: Integer dispid 221;
     property ShowPrintDialog: Integer dispid 222;
+    property Copies: Integer dispid 223;
   end;
 
 // *********************************************************************//
@@ -310,6 +314,7 @@ type
     property Install: Integer index 220 read GetIntegerProp write SetIntegerProp stored False;
     property Port: Integer index 221 read GetIntegerProp write SetIntegerProp stored False;
     property ShowPrintDialog: Integer index 222 read GetIntegerProp write SetIntegerProp stored False;
+    property Copies: Integer index 223 read GetIntegerProp write SetIntegerProp stored False;
     property OnActivate: TNotifyEvent read FOnActivate write FOnActivate;
     property OnClick: TNotifyEvent read FOnClick write FOnClick;
     property OnCreate: TNotifyEvent read FOnCreate write FOnCreate;

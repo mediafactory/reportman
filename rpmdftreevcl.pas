@@ -121,7 +121,7 @@ type
     rootfilename:string;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
-    procedure FillTree(groups:TDataset;reports:TDataset);overload;
+    procedure FillTree(adbinfo:TRpDatabaseInfoItem;groups:TDataset;reports:TDataset);overload;
     procedure FillTree(adir:string);overload;
     procedure FillTree(alist:TStringList);overload;
     procedure EditTree(adbinfo:TRpDatabaseInfoItem;readonly:boolean);
@@ -179,10 +179,11 @@ begin
  inherited Destroy;
 end;
 
-procedure TFRpDBTreeVCL.FillTree(groups:TDataset;reports:TDataset);
+procedure TFRpDBTreeVCL.FillTree(adbinfo:TRpDatabaseInfoItem;groups:TDataset;reports:TDataset);
 var
  acount:integer;
  i:integer;
+ agroup,aname:String;
 begin
  // Get the time
 {$IFDEF MSWINDOWS}
@@ -234,8 +235,20 @@ begin
   begin
    DReports.Append;
    try
-    DReportsREPORT_NAME.Value:=reports.FieldByName('REPORT_NAME').Value;
-    DReportsREPORT_GROUP.AsVariant:=reports.FieldByName('REPORT_GROUP').AsVariant;
+    agroup:='REPORT_GROUP';
+    aname:='REPORT_NAME';
+    if Assigned(adbinfo) then
+    begin
+     aname:=adbinfo.ReportSearchField;
+     if length(adbinfo.ReportGroupsTable)<1 then
+      agroup:='';
+    end;
+
+    DReportsREPORT_NAME.Value:=reports.FieldByName(aname).Value;
+    if length(agroup)>0 then
+     DReportsREPORT_GROUP.AsVariant:=reports.FieldByName(agroup).AsVariant
+    else
+     DReportsREPORT_GROUP.Value:=0;
     DReports.Post;
    except
     DReports.Cancel;
@@ -718,6 +731,7 @@ procedure TFRpDBTreeVCL.EditTree(adbinfo:TRpDatabaseInfoItem;readonly:boolean);
 var
  adatareports:TDataset;
  adatagroups:TDataset;
+ sqltext:String;
 begin
  doreadonly:=readonly;
  if readonly then
@@ -730,17 +744,31 @@ begin
  dbinfo:=adbinfo;
  dbinfo.Connect;
  ATree.Items.Clear;
- adatareports:=
- dbinfo.OpenDatasetFromSQL('SELECT '+dbinfo.ReportSearchField+',REPORT_GROUP FROM '+
- dbinfo.reporttable,nil,false);
+ sqltext:='SELECT '+dbinfo.ReportSearchField;
+ if length(dbinfo.ReportGroupsTable)>0 then
+  sqltext:=sqltext+','+dbinfo.ReportField;
+ sqltext:=sqltext+' FROM '+dbinfo.ReportTable;
+ adatareports:=dbinfo.OpenDatasetFromSQL(sqltext,nil,false);
  try
-  adatagroups:=
-  dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
-    ' PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false);
+  adatagroups:=nil;
+  if Length(dbinfo.ReportGroupsTable)>0 then
+  begin
+   adatagroups:=
+   dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
+     ' PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false);
+  end
+  else
+  begin
+   adatagroups:=TClientDataset.Create(nil);
+   adatagroups.FieldDefs.Add('GROUP_CODE',ftinteger);
+   adatagroups.FieldDefs.Add('GROUP_NAME',ftstring,50);
+   adatagroups.FieldDefs.Add('PARENT_GROUP',ftinteger);
+   TClientDataset(adatagroups).CreateDataSet;
+  end;
   try
    FReportstable:=dbinfo.reporttable;
    FGroupsTable:=dbinfo.Reportgroupstable;
-   FillTree(adatagroups,adatareports);
+   FillTree(dbinfo,adatagroups,adatareports);
   finally
    adatagroups.free;
   end;

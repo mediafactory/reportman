@@ -179,8 +179,8 @@ begin
  ANewField.Hint:=TranslateStr(1092,ANewField.Hint);
  ADelete.Caption:=TranslateStr(1093,ADelete.Caption);
  ADelete.Hint:=TranslateStr(1094,ADelete.Hint);
- TabData.Caption:=TranslateStr(1094,TabData.Caption);
- TabSource.Caption:=TranslateStr(1095,TabSource.Caption);
+ TabData.Caption:=TranslateStr(1095,TabData.Caption);
+ TabSource.Caption:=TranslateStr(1096,TabSource.Caption);
 end;
 
 

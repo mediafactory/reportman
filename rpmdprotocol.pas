@@ -98,6 +98,10 @@ var
 begin
  aint:=integer(CB.Command);
  astream.Write(aint,sizeof(aint));
+// Bug in delphi.net when sending streams
+//{$IFDEF DOTNETD}
+// astream.Write(aint,sizeof(aint));
+//{$ENDIF}
  astream.Write(CB.Datasize,sizeof(CB.DataSize));
  CB.Data.Seek(0,soFromBeginning);
  astream.CopyFrom(CB.Data,CB.Datasize);

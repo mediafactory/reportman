@@ -104,11 +104,16 @@ uses
   rpmdsysinfo in '..\rpmdsysinfo.pas' {FRpSysInfo},
   rpeditconnvcl in '..\rpeditconnvcl.pas' {FRpEditConVCL},
   rpmdftreevcl in '..\rpmdftreevcl.pas' {FRpDBTreeVCL: TFrame},
-  rpmdfopenlibvcl in '..\rpmdfopenlibvcl.pas' {FRpOpenLibVCL};
+  rpmdfopenlibvcl in '..\rpmdfopenlibvcl.pas' {FRpOpenLibVCL},
+  rpsvgdriver in '..\rpsvgdriver.pas';
 
 {$R *.res}
 
 begin
+  with Application do
+  begin
+   Title:=TranslateStr(1,Title);
+  end;
   Graphics.DefFontData.Name:=Screen.IconFont.Name;
   Application.Initialize;
   Application.CreateForm(TFRpMainFVCL, FRpMainFVCL);

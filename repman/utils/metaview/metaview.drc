@@ -8,358 +8,360 @@
   resources were bound to the produced executable.
 */
 
-#define IdResourceStrings_RSStackHOST_NOT_FOUND 65056
-#define IdResourceStrings_RSSocksRequestFailed 65057
-#define IdResourceStrings_RSSocksRequestServerFailed 65058
-#define IdResourceStrings_RSSocksRequestIdentFailed 65059
-#define IdResourceStrings_RSSocksUnknownError 65060
-#define IdResourceStrings_RSSocksServerRespondError 65061
-#define IdResourceStrings_RSSocksAuthMethodError 65062
-#define IdResourceStrings_RSSocksAuthError 65063
-#define IdResourceStrings_RSSocksServerGeneralError 65064
-#define IdResourceStrings_RSSocksServerPermissionError 65065
-#define IdResourceStrings_RSSocksServerNetUnreachableError 65066
-#define IdResourceStrings_RSSocksServerHostUnreachableError 65067
-#define IdResourceStrings_RSSocksServerConnectionRefusedError 65068
-#define IdResourceStrings_RSSocksServerTTLExpiredError 65069
-#define IdResourceStrings_RSSocksServerCommandError 65070
-#define IdResourceStrings_RSSocksServerAddressError 65071
-#define IdResourceStrings_RSStackENETUNREACH 65072
-#define IdResourceStrings_RSStackENETRESET 65073
-#define IdResourceStrings_RSStackECONNABORTED 65074
-#define IdResourceStrings_RSStackECONNRESET 65075
-#define IdResourceStrings_RSStackENOBUFS 65076
-#define IdResourceStrings_RSStackEISCONN 65077
-#define IdResourceStrings_RSStackENOTCONN 65078
-#define IdResourceStrings_RSStackESHUTDOWN 65079
-#define IdResourceStrings_RSStackETOOMANYREFS 65080
-#define IdResourceStrings_RSStackETIMEDOUT 65081
-#define IdResourceStrings_RSStackECONNREFUSED 65082
-#define IdResourceStrings_RSStackELOOP 65083
-#define IdResourceStrings_RSStackENAMETOOLONG 65084
-#define IdResourceStrings_RSStackEHOSTDOWN 65085
-#define IdResourceStrings_RSStackEHOSTUNREACH 65086
-#define IdResourceStrings_RSStackENOTEMPTY 65087
-#define IdResourceStrings_RSStackEWOULDBLOCK 65088
-#define IdResourceStrings_RSStackEINPROGRESS 65089
-#define IdResourceStrings_RSStackEALREADY 65090
-#define IdResourceStrings_RSStackENOTSOCK 65091
-#define IdResourceStrings_RSStackEDESTADDRREQ 65092
-#define IdResourceStrings_RSStackEMSGSIZE 65093
-#define IdResourceStrings_RSStackEPROTOTYPE 65094
-#define IdResourceStrings_RSStackENOPROTOOPT 65095
-#define IdResourceStrings_RSStackEPROTONOSUPPORT 65096
-#define IdResourceStrings_RSStackESOCKTNOSUPPORT 65097
-#define IdResourceStrings_RSStackEOPNOTSUPP 65098
-#define IdResourceStrings_RSStackEPFNOSUPPORT 65099
-#define IdResourceStrings_RSStackEAFNOSUPPORT 65100
-#define IdResourceStrings_RSStackEADDRINUSE 65101
-#define IdResourceStrings_RSStackEADDRNOTAVAIL 65102
-#define IdResourceStrings_RSStackENETDOWN 65103
-#define IdResourceStrings_RSWS2LoadError 65104
-#define IdResourceStrings_RSStatusResolving 65105
-#define IdResourceStrings_RSStatusConnecting 65106
-#define IdResourceStrings_RSStatusConnected 65107
-#define IdResourceStrings_RSStatusDisconnecting 65108
-#define IdResourceStrings_RSStatusDisconnected 65109
-#define IdResourceStrings_RSStatusText 65110
-#define IdResourceStrings_RSConnectTimeout 65111
-#define IdResourceStrings_RSInvalidServiceName 65112
-#define IdResourceStrings_RSStackError 65113
-#define IdResourceStrings_RSStackEINTR 65114
-#define IdResourceStrings_RSStackEBADF 65115
-#define IdResourceStrings_RSStackEACCES 65116
-#define IdResourceStrings_RSStackEFAULT 65117
-#define IdResourceStrings_RSStackEINVAL 65118
-#define IdResourceStrings_RSStackEMFILE 65119
-#define IdResourceStrings_RSAlreadyConnected 65120
-#define IdResourceStrings_RSCannotAllocateSocket 65121
-#define IdResourceStrings_RSConnectionClosedGracefully 65122
-#define IdResourceStrings_RSCouldNotBindSocket 65123
-#define IdResourceStrings_RSNotEnoughDataInBuffer 65124
-#define IdResourceStrings_RSWinsockInitializationError 65125
-#define IdResourceStrings_RSSetSizeExceeded 65126
-#define IdResourceStrings_RSFileNotFound 65127
-#define IdResourceStrings_RSOnlyOneAntiFreeze 65128
-#define IdResourceStrings_RSNotConnected 65129
-#define IdResourceStrings_RSIdNoDataToRead 65130
-#define IdResourceStrings_RSCanNotBindRange 65131
-#define IdResourceStrings_RSInvalidPortRange 65132
-#define IdResourceStrings_RSReadTimeout 65133
-#define IdResourceStrings_RSReadLnMaxLineLengthExceeded 65134
-#define IdResourceStrings_RSWS2CallError 65135
-#define ExtCtrls_clNameInactiveCaptionText 65136
-#define ExtCtrls_clNameInfoBk 65137
-#define ExtCtrls_clNameInfoText 65138
-#define ExtCtrls_clNameMenu 65139
-#define ExtCtrls_clNameMenuText 65140
-#define ExtCtrls_clNameNone 65141
-#define ExtCtrls_clNameScrollBar 65142
-#define ExtCtrls_clName3DDkShadow 65143
-#define ExtCtrls_clName3DLight 65144
-#define ExtCtrls_clNameWindow 65145
-#define ExtCtrls_clNameWindowFrame 65146
-#define ExtCtrls_clNameWindowText 65147
-#define WinHelpViewer_hNoKeyword 65148
-#define JConsts_sChangeJPGSize 65149
-#define JConsts_sJPEGError 65150
-#define JConsts_sJPEGImageFile 65151
-#define ExtCtrls_clNameMedGray 65152
-#define ExtCtrls_clNameActiveBorder 65153
-#define ExtCtrls_clNameActiveCaption 65154
-#define ExtCtrls_clNameAppWorkSpace 65155
-#define ExtCtrls_clNameBackground 65156
-#define ExtCtrls_clNameBtnFace 65157
-#define ExtCtrls_clNameBtnHighlight 65158
-#define ExtCtrls_clNameBtnShadow 65159
-#define ExtCtrls_clNameBtnText 65160
-#define ExtCtrls_clNameCaptionText 65161
-#define ExtCtrls_clNameDefault 65162
-#define ExtCtrls_clNameGrayText 65163
-#define ExtCtrls_clNameHighlight 65164
-#define ExtCtrls_clNameHighlightText 65165
-#define ExtCtrls_clNameInactiveBorder 65166
-#define ExtCtrls_clNameInactiveCaption 65167
-#define ExtCtrls_clNameOlive 65168
-#define ExtCtrls_clNameNavy 65169
-#define ExtCtrls_clNamePurple 65170
-#define ExtCtrls_clNameTeal 65171
-#define ExtCtrls_clNameGray 65172
-#define ExtCtrls_clNameSilver 65173
-#define ExtCtrls_clNameRed 65174
-#define ExtCtrls_clNameLime 65175
-#define ExtCtrls_clNameYellow 65176
-#define ExtCtrls_clNameBlue 65177
-#define ExtCtrls_clNameFuchsia 65178
-#define ExtCtrls_clNameAqua 65179
-#define ExtCtrls_clNameWhite 65180
-#define ExtCtrls_clNameMoneyGreen 65181
-#define ExtCtrls_clNameSkyBlue 65182
-#define ExtCtrls_clNameCream 65183
-#define Consts_SmkcIns 65184
-#define Consts_SmkcDel 65185
-#define Consts_SmkcShift 65186
-#define Consts_SmkcCtrl 65187
-#define Consts_SmkcAlt 65188
-#define Consts_SIconToClipboard 65189
-#define Consts_SInvalidPrinterOp 65190
-#define Consts_SNoDefaultPrinter 65191
-#define Consts_SDuplicateMenus 65192
-#define Consts_SDockedCtlNeedsName 65193
-#define Consts_SDockTreeRemoveError 65194
-#define Consts_SDockZoneNotFound 65195
-#define Consts_SDockZoneHasNoCtl 65196
-#define ExtCtrls_clNameBlack 65197
-#define ExtCtrls_clNameMaroon 65198
-#define ExtCtrls_clNameGreen 65199
-#define Consts_SMsgDlgAll 65200
-#define Consts_SMsgDlgNoToAll 65201
-#define Consts_SMsgDlgYesToAll 65202
-#define Consts_SmkcBkSp 65203
-#define Consts_SmkcTab 65204
-#define Consts_SmkcEsc 65205
-#define Consts_SmkcEnter 65206
-#define Consts_SmkcSpace 65207
-#define Consts_SmkcPgUp 65208
-#define Consts_SmkcPgDn 65209
-#define Consts_SmkcEnd 65210
-#define Consts_SmkcHome 65211
-#define Consts_SmkcLeft 65212
-#define Consts_SmkcUp 65213
-#define Consts_SmkcRight 65214
-#define Consts_SmkcDown 65215
-#define Consts_SVMetafiles 65216
-#define Consts_SVEnhMetafiles 65217
-#define Consts_SVIcons 65218
-#define Consts_SVBitmaps 65219
-#define Consts_SMsgDlgWarning 65220
-#define Consts_SMsgDlgError 65221
-#define Consts_SMsgDlgInformation 65222
-#define Consts_SMsgDlgConfirm 65223
-#define Consts_SMsgDlgYes 65224
-#define Consts_SMsgDlgNo 65225
-#define Consts_SMsgDlgOK 65226
-#define Consts_SMsgDlgCancel 65227
-#define Consts_SMsgDlgHelp 65228
-#define Consts_SMsgDlgAbort 65229
-#define Consts_SMsgDlgRetry 65230
-#define Consts_SMsgDlgIgnore 65231
-#define Consts_SInvalidPrinter 65232
-#define Consts_SDeviceOnPort 65233
-#define Consts_SGroupIndexTooLow 65234
-#define Consts_SNoMDIForm 65235
-#define Consts_SControlParentSetToSelf 65236
-#define Consts_SOKButton 65237
-#define Consts_SCancelButton 65238
-#define Consts_SYesButton 65239
-#define Consts_SNoButton 65240
-#define Consts_SHelpButton 65241
-#define Consts_SCloseButton 65242
-#define Consts_SIgnoreButton 65243
-#define Consts_SRetryButton 65244
-#define Consts_SAbortButton 65245
-#define Consts_SAllButton 65246
-#define Consts_SCannotDragForm 65247
-#define Consts_SImageReadFail 65248
-#define Consts_SImageWriteFail 65249
-#define Consts_SWindowDCError 65250
-#define Consts_SWindowClass 65251
-#define Consts_SCannotFocus 65252
-#define Consts_SParentRequired 65253
-#define Consts_SMDIChildNotVisible 65254
-#define Consts_SVisibleChanged 65255
-#define Consts_SCannotShowModal 65256
-#define Consts_SMenuIndexError 65257
-#define Consts_SMenuReinserted 65258
-#define Consts_SMenuNotFound 65259
-#define Consts_SNoTimers 65260
-#define Consts_SNotPrinting 65261
-#define Consts_SPrinting 65262
-#define Consts_SPrinterIndexError 65263
-#define HelpIntfs_hNoTableOfContents 65264
-#define HelpIntfs_hNothingFound 65265
-#define HelpIntfs_hNoContext 65266
-#define HelpIntfs_hNoTopics 65267
-#define Consts_SInvalidBitmap 65268
-#define Consts_SInvalidIcon 65269
-#define Consts_SInvalidMetafile 65270
-#define Consts_SInvalidPixelFormat 65271
-#define Consts_SScanLine 65272
-#define Consts_SChangeIconSize 65273
-#define Consts_SUnknownClipboardFormat 65274
-#define Consts_SOutOfResources 65275
-#define Consts_SNoCanvasHandle 65276
-#define Consts_SInvalidImageSize 65277
-#define Consts_SInvalidImageList 65278
-#define Consts_SImageIndexError 65279
-#define QConsts_SInvalidHandle 65280
-#define QConsts_SUnableToWrite 65281
-#define QConsts_sPageIndexError 65282
-#define QConsts_sListRadioItemBadParent 65283
-#define QConsts_sOwnerNotCustomHeaderSections 65284
-#define QConsts_SUndo 65285
-#define QConsts_SRedo 65286
-#define QConsts_SLine 65287
-#define QConsts_SCut 65288
-#define QConsts_SCopy 65289
-#define QConsts_SPaste 65290
-#define QConsts_SClear 65291
-#define QConsts_SSelectAll 65292
-#define QConsts_SLoadingEllipsis 65293
-#define QConsts_SNoAppInLib 65294
-#define QConsts_SDuplicateApp 65295
-#define QConsts_SDuplicateMenus 65296
-#define QConsts_SNoPreview 65297
-#define QConsts_SImageIndexError 65298
-#define QConsts_SInvalidImageDimensions 65299
-#define QConsts_SInvalidImageDimension 65300
-#define QConsts_SInvalidRangeError 65301
-#define QConsts_SInvalidMimeSourceStream 65302
-#define QConsts_SMimeNotSupportedForIcon 65303
-#define QConsts_SOpen 65304
-#define QConsts_SSave 65305
-#define QConsts_SOverwriteCaption 65306
-#define QConsts_SOverwriteText 65307
-#define QConsts_SFileMustExist 65308
-#define QConsts_SPathMustExist 65309
-#define QConsts_SDriveNotFound 65310
-#define QConsts_SUnknownImageFormat 65311
-#define QConsts_SAlreadyExists 65312
-#define QConsts_SConfirmDeleteTitle 65313
-#define QConsts_SConfirmDeleteMany 65314
-#define QConsts_SConfirmDeleteOne 65315
-#define QConsts_SContinueDelete 65316
-#define QConsts_SName 65317
-#define QConsts_SSize 65318
-#define QConsts_SType 65319
-#define QConsts_SDate 65320
-#define QConsts_SAttributes 65321
-#define QConsts_SDefaultFilter 65322
-#define QConsts_SVolume 65323
-#define QConsts_SFreeSpace 65324
-#define QConsts_SMegs 65325
-#define QConsts_SDirectory 65326
-#define QConsts_SFile 65327
-#define QConsts_SVIcons 65328
-#define QConsts_SVBitmaps 65329
-#define QConsts_SVPixmaps 65330
-#define QConsts_SVPNGs 65331
-#define QConsts_SDrawings 65332
-#define QConsts_SMsgDlgWarning 65333
-#define QConsts_SMsgDlgError 65334
-#define QConsts_SMsgDlgInformation 65335
-#define QConsts_SMsgDlgConfirm 65336
-#define QConsts_SUnnamed 65337
-#define QConsts_SCannotCreateDirName 65338
-#define QConsts_SAccessDeniedTo 65339
-#define QConsts_SCannotReadDirectory 65340
-#define QConsts_SDirectoryNotEmpty 65341
-#define QConsts_SNewFolder 65342
-#define QConsts_SFileNameNotFound 65343
-#define QConsts_SGroupIndexTooLow 65344
-#define QConsts_SNoMDIForm 65345
-#define QConsts_SNotAnMDIForm 65346
-#define QConsts_SMDIChildNotVisible 65347
-#define QConsts_SControlParentSetToSelf 65348
-#define QConsts_SOKButton 65349
-#define QConsts_SCancelButton 65350
-#define QConsts_SYesButton 65351
-#define QConsts_SNoButton 65352
-#define QConsts_SHelpButton 65353
-#define QConsts_SCloseButton 65354
-#define QConsts_SIgnoreButton 65355
-#define QConsts_SRetryButton 65356
-#define QConsts_SAbortButton 65357
-#define QConsts_SAllButton 65358
-#define QConsts_SCannotDragForm 65359
-#define QConsts_SmkcAlt 65360
-#define QConsts_SInvalidPixelFormat 65361
-#define QConsts_SNoCanvasHandle 65362
-#define QConsts_SInvalidCanvasState 65363
-#define QConsts_SInvalidImageSize 65364
-#define QConsts_SInvalidColorDepth 65365
-#define QConsts_SCannotFocus 65366
-#define QConsts_SParentRequired 65367
-#define QConsts_SVisibleChanged 65368
-#define QConsts_SMenuIndexError 65369
-#define QConsts_SMenuReinserted 65370
-#define QConsts_SNoMenuRecursion 65371
-#define QConsts_SMenuNotFound 65372
-#define QConsts_SMenuSetFormError 65373
-#define QConsts_SNoAdapter 65374
-#define QConsts_SDeviceOnPort 65375
-#define QConsts_SmkcEsc 65376
-#define QConsts_SmkcReturn 65377
-#define QConsts_SmkcEnter 65378
-#define QConsts_SmkcSpace 65379
-#define QConsts_SmkcPgUp 65380
-#define QConsts_SmkcPgDn 65381
-#define QConsts_SmkcEnd 65382
-#define QConsts_SmkcHome 65383
-#define QConsts_SmkcLeft 65384
-#define QConsts_SmkcUp 65385
-#define QConsts_SmkcRight 65386
-#define QConsts_SmkcDown 65387
-#define QConsts_SmkcIns 65388
-#define QConsts_SmkcDel 65389
-#define QConsts_SmkcShift 65390
-#define QConsts_SmkcCtrl 65391
-#define RTLConsts_SReadError 65392
-#define RTLConsts_SReadOnlyProperty 65393
-#define RTLConsts_SRegGetDataFailed 65394
-#define RTLConsts_SResNotFound 65395
-#define RTLConsts_SSeekNotImplemented 65396
-#define RTLConsts_SSortedListError 65397
-#define RTLConsts_SUnknownGroup 65398
-#define RTLConsts_SUnknownProperty 65399
-#define RTLConsts_SWriteError 65400
-#define RTLConsts_SThreadCreateError 65401
-#define RTLConsts_SThreadError 65402
-#define QConsts_SInvalidCreateWidget 65403
-#define QConsts_STooManyMessageBoxButtons 65404
-#define QConsts_SmkcBkSp 65405
-#define QConsts_SmkcTab 65406
-#define QConsts_SmkcBackTab 65407
+#define IdResourceStrings_RSSocksServerCommandError 65040
+#define IdResourceStrings_RSSocksServerAddressError 65041
+#define IdResourceStrings_RSStackEHOSTUNREACH 65056
+#define IdResourceStrings_RSStackENOTEMPTY 65057
+#define IdResourceStrings_RSStackHOST_NOT_FOUND 65058
+#define IdResourceStrings_RSSocksRequestFailed 65059
+#define IdResourceStrings_RSSocksRequestServerFailed 65060
+#define IdResourceStrings_RSSocksRequestIdentFailed 65061
+#define IdResourceStrings_RSSocksUnknownError 65062
+#define IdResourceStrings_RSSocksServerRespondError 65063
+#define IdResourceStrings_RSSocksAuthMethodError 65064
+#define IdResourceStrings_RSSocksAuthError 65065
+#define IdResourceStrings_RSSocksServerGeneralError 65066
+#define IdResourceStrings_RSSocksServerPermissionError 65067
+#define IdResourceStrings_RSSocksServerNetUnreachableError 65068
+#define IdResourceStrings_RSSocksServerHostUnreachableError 65069
+#define IdResourceStrings_RSSocksServerConnectionRefusedError 65070
+#define IdResourceStrings_RSSocksServerTTLExpiredError 65071
+#define IdResourceStrings_RSStackEADDRNOTAVAIL 65072
+#define IdResourceStrings_RSStackENETDOWN 65073
+#define IdResourceStrings_RSStackENETUNREACH 65074
+#define IdResourceStrings_RSStackENETRESET 65075
+#define IdResourceStrings_RSStackECONNABORTED 65076
+#define IdResourceStrings_RSStackECONNRESET 65077
+#define IdResourceStrings_RSStackENOBUFS 65078
+#define IdResourceStrings_RSStackEISCONN 65079
+#define IdResourceStrings_RSStackENOTCONN 65080
+#define IdResourceStrings_RSStackESHUTDOWN 65081
+#define IdResourceStrings_RSStackETOOMANYREFS 65082
+#define IdResourceStrings_RSStackETIMEDOUT 65083
+#define IdResourceStrings_RSStackECONNREFUSED 65084
+#define IdResourceStrings_RSStackELOOP 65085
+#define IdResourceStrings_RSStackENAMETOOLONG 65086
+#define IdResourceStrings_RSStackEHOSTDOWN 65087
+#define IdResourceStrings_RSStackEINVAL 65088
+#define IdResourceStrings_RSStackEMFILE 65089
+#define IdResourceStrings_RSStackEWOULDBLOCK 65090
+#define IdResourceStrings_RSStackEINPROGRESS 65091
+#define IdResourceStrings_RSStackEALREADY 65092
+#define IdResourceStrings_RSStackENOTSOCK 65093
+#define IdResourceStrings_RSStackEDESTADDRREQ 65094
+#define IdResourceStrings_RSStackEMSGSIZE 65095
+#define IdResourceStrings_RSStackEPROTOTYPE 65096
+#define IdResourceStrings_RSStackENOPROTOOPT 65097
+#define IdResourceStrings_RSStackEPROTONOSUPPORT 65098
+#define IdResourceStrings_RSStackESOCKTNOSUPPORT 65099
+#define IdResourceStrings_RSStackEOPNOTSUPP 65100
+#define IdResourceStrings_RSStackEPFNOSUPPORT 65101
+#define IdResourceStrings_RSStackEAFNOSUPPORT 65102
+#define IdResourceStrings_RSStackEADDRINUSE 65103
+#define IdResourceStrings_RSReadLnMaxLineLengthExceeded 65104
+#define IdResourceStrings_RSWS2CallError 65105
+#define IdResourceStrings_RSWS2LoadError 65106
+#define IdResourceStrings_RSStatusResolving 65107
+#define IdResourceStrings_RSStatusConnecting 65108
+#define IdResourceStrings_RSStatusConnected 65109
+#define IdResourceStrings_RSStatusDisconnecting 65110
+#define IdResourceStrings_RSStatusDisconnected 65111
+#define IdResourceStrings_RSStatusText 65112
+#define IdResourceStrings_RSConnectTimeout 65113
+#define IdResourceStrings_RSInvalidServiceName 65114
+#define IdResourceStrings_RSStackError 65115
+#define IdResourceStrings_RSStackEINTR 65116
+#define IdResourceStrings_RSStackEBADF 65117
+#define IdResourceStrings_RSStackEACCES 65118
+#define IdResourceStrings_RSStackEFAULT 65119
+#define JConsts_sJPEGError 65120
+#define JConsts_sJPEGImageFile 65121
+#define IdResourceStrings_RSAlreadyConnected 65122
+#define IdResourceStrings_RSCannotAllocateSocket 65123
+#define IdResourceStrings_RSConnectionClosedGracefully 65124
+#define IdResourceStrings_RSCouldNotBindSocket 65125
+#define IdResourceStrings_RSNotEnoughDataInBuffer 65126
+#define IdResourceStrings_RSWinsockInitializationError 65127
+#define IdResourceStrings_RSSetSizeExceeded 65128
+#define IdResourceStrings_RSFileNotFound 65129
+#define IdResourceStrings_RSOnlyOneAntiFreeze 65130
+#define IdResourceStrings_RSNotConnected 65131
+#define IdResourceStrings_RSIdNoDataToRead 65132
+#define IdResourceStrings_RSCanNotBindRange 65133
+#define IdResourceStrings_RSInvalidPortRange 65134
+#define IdResourceStrings_RSReadTimeout 65135
+#define ExtCtrls_clNameInactiveBorder 65136
+#define ExtCtrls_clNameInactiveCaption 65137
+#define ExtCtrls_clNameInactiveCaptionText 65138
+#define ExtCtrls_clNameInfoBk 65139
+#define ExtCtrls_clNameInfoText 65140
+#define ExtCtrls_clNameMenu 65141
+#define ExtCtrls_clNameMenuText 65142
+#define ExtCtrls_clNameNone 65143
+#define ExtCtrls_clNameScrollBar 65144
+#define ExtCtrls_clName3DDkShadow 65145
+#define ExtCtrls_clName3DLight 65146
+#define ExtCtrls_clNameWindow 65147
+#define ExtCtrls_clNameWindowFrame 65148
+#define ExtCtrls_clNameWindowText 65149
+#define WinHelpViewer_hNoKeyword 65150
+#define JConsts_sChangeJPGSize 65151
+#define ExtCtrls_clNameSkyBlue 65152
+#define ExtCtrls_clNameCream 65153
+#define ExtCtrls_clNameMedGray 65154
+#define ExtCtrls_clNameActiveBorder 65155
+#define ExtCtrls_clNameActiveCaption 65156
+#define ExtCtrls_clNameAppWorkSpace 65157
+#define ExtCtrls_clNameBackground 65158
+#define ExtCtrls_clNameBtnFace 65159
+#define ExtCtrls_clNameBtnHighlight 65160
+#define ExtCtrls_clNameBtnShadow 65161
+#define ExtCtrls_clNameBtnText 65162
+#define ExtCtrls_clNameCaptionText 65163
+#define ExtCtrls_clNameDefault 65164
+#define ExtCtrls_clNameGrayText 65165
+#define ExtCtrls_clNameHighlight 65166
+#define ExtCtrls_clNameHighlightText 65167
+#define ExtCtrls_clNameMaroon 65168
+#define ExtCtrls_clNameGreen 65169
+#define ExtCtrls_clNameOlive 65170
+#define ExtCtrls_clNameNavy 65171
+#define ExtCtrls_clNamePurple 65172
+#define ExtCtrls_clNameTeal 65173
+#define ExtCtrls_clNameGray 65174
+#define ExtCtrls_clNameSilver 65175
+#define ExtCtrls_clNameRed 65176
+#define ExtCtrls_clNameLime 65177
+#define ExtCtrls_clNameYellow 65178
+#define ExtCtrls_clNameBlue 65179
+#define ExtCtrls_clNameFuchsia 65180
+#define ExtCtrls_clNameAqua 65181
+#define ExtCtrls_clNameWhite 65182
+#define ExtCtrls_clNameMoneyGreen 65183
+#define Consts_SmkcRight 65184
+#define Consts_SmkcDown 65185
+#define Consts_SmkcIns 65186
+#define Consts_SmkcDel 65187
+#define Consts_SmkcShift 65188
+#define Consts_SmkcCtrl 65189
+#define Consts_SmkcAlt 65190
+#define Consts_SIconToClipboard 65191
+#define Consts_SInvalidPrinterOp 65192
+#define Consts_SNoDefaultPrinter 65193
+#define Consts_SDuplicateMenus 65194
+#define Consts_SDockedCtlNeedsName 65195
+#define Consts_SDockTreeRemoveError 65196
+#define Consts_SDockZoneNotFound 65197
+#define Consts_SDockZoneHasNoCtl 65198
+#define ExtCtrls_clNameBlack 65199
+#define Consts_SMsgDlgRetry 65200
+#define Consts_SMsgDlgIgnore 65201
+#define Consts_SMsgDlgAll 65202
+#define Consts_SMsgDlgNoToAll 65203
+#define Consts_SMsgDlgYesToAll 65204
+#define Consts_SmkcBkSp 65205
+#define Consts_SmkcTab 65206
+#define Consts_SmkcEsc 65207
+#define Consts_SmkcEnter 65208
+#define Consts_SmkcSpace 65209
+#define Consts_SmkcPgUp 65210
+#define Consts_SmkcPgDn 65211
+#define Consts_SmkcEnd 65212
+#define Consts_SmkcHome 65213
+#define Consts_SmkcLeft 65214
+#define Consts_SmkcUp 65215
+#define Consts_SAllButton 65216
+#define Consts_SCannotDragForm 65217
+#define Consts_SVMetafiles 65218
+#define Consts_SVEnhMetafiles 65219
+#define Consts_SVIcons 65220
+#define Consts_SVBitmaps 65221
+#define Consts_SMsgDlgWarning 65222
+#define Consts_SMsgDlgError 65223
+#define Consts_SMsgDlgInformation 65224
+#define Consts_SMsgDlgConfirm 65225
+#define Consts_SMsgDlgYes 65226
+#define Consts_SMsgDlgNo 65227
+#define Consts_SMsgDlgOK 65228
+#define Consts_SMsgDlgCancel 65229
+#define Consts_SMsgDlgHelp 65230
+#define Consts_SMsgDlgAbort 65231
+#define Consts_SPrinting 65232
+#define Consts_SPrinterIndexError 65233
+#define Consts_SInvalidPrinter 65234
+#define Consts_SDeviceOnPort 65235
+#define Consts_SGroupIndexTooLow 65236
+#define Consts_SNoMDIForm 65237
+#define Consts_SControlParentSetToSelf 65238
+#define Consts_SOKButton 65239
+#define Consts_SCancelButton 65240
+#define Consts_SYesButton 65241
+#define Consts_SNoButton 65242
+#define Consts_SHelpButton 65243
+#define Consts_SCloseButton 65244
+#define Consts_SIgnoreButton 65245
+#define Consts_SRetryButton 65246
+#define Consts_SAbortButton 65247
+#define Consts_SInvalidImageList 65248
+#define Consts_SImageIndexError 65249
+#define Consts_SImageReadFail 65250
+#define Consts_SImageWriteFail 65251
+#define Consts_SWindowDCError 65252
+#define Consts_SWindowClass 65253
+#define Consts_SCannotFocus 65254
+#define Consts_SParentRequired 65255
+#define Consts_SMDIChildNotVisible 65256
+#define Consts_SVisibleChanged 65257
+#define Consts_SCannotShowModal 65258
+#define Consts_SMenuIndexError 65259
+#define Consts_SMenuReinserted 65260
+#define Consts_SMenuNotFound 65261
+#define Consts_SNoTimers 65262
+#define Consts_SNotPrinting 65263
+#define QConsts_SNoAppInLib 65264
+#define QConsts_SDuplicateApp 65265
+#define HelpIntfs_hNoTableOfContents 65266
+#define HelpIntfs_hNothingFound 65267
+#define HelpIntfs_hNoContext 65268
+#define HelpIntfs_hNoTopics 65269
+#define Consts_SInvalidBitmap 65270
+#define Consts_SInvalidIcon 65271
+#define Consts_SInvalidMetafile 65272
+#define Consts_SInvalidPixelFormat 65273
+#define Consts_SScanLine 65274
+#define Consts_SChangeIconSize 65275
+#define Consts_SUnknownClipboardFormat 65276
+#define Consts_SOutOfResources 65277
+#define Consts_SNoCanvasHandle 65278
+#define Consts_SInvalidImageSize 65279
+#define QConsts_SDriveNotFound 65280
+#define QConsts_SUnknownImageFormat 65281
+#define QConsts_SInvalidHandle 65282
+#define QConsts_SUnableToWrite 65283
+#define QConsts_sPageIndexError 65284
+#define QConsts_sListRadioItemBadParent 65285
+#define QConsts_sOwnerNotCustomHeaderSections 65286
+#define QConsts_SUndo 65287
+#define QConsts_SRedo 65288
+#define QConsts_SLine 65289
+#define QConsts_SCut 65290
+#define QConsts_SCopy 65291
+#define QConsts_SPaste 65292
+#define QConsts_SClear 65293
+#define QConsts_SSelectAll 65294
+#define QConsts_SLoadingEllipsis 65295
+#define QConsts_SDirectory 65296
+#define QConsts_SFile 65297
+#define QConsts_SDuplicateMenus 65298
+#define QConsts_SNoPreview 65299
+#define QConsts_SImageIndexError 65300
+#define QConsts_SInvalidImageDimensions 65301
+#define QConsts_SInvalidImageDimension 65302
+#define QConsts_SInvalidRangeError 65303
+#define QConsts_SInvalidMimeSourceStream 65304
+#define QConsts_SMimeNotSupportedForIcon 65305
+#define QConsts_SOpen 65306
+#define QConsts_SSave 65307
+#define QConsts_SOverwriteCaption 65308
+#define QConsts_SOverwriteText 65309
+#define QConsts_SFileMustExist 65310
+#define QConsts_SPathMustExist 65311
+#define QConsts_SNewFolder 65312
+#define QConsts_SFileNameNotFound 65313
+#define QConsts_SAlreadyExists 65314
+#define QConsts_SConfirmDeleteTitle 65315
+#define QConsts_SConfirmDeleteMany 65316
+#define QConsts_SConfirmDeleteOne 65317
+#define QConsts_SContinueDelete 65318
+#define QConsts_SName 65319
+#define QConsts_SSize 65320
+#define QConsts_SType 65321
+#define QConsts_SDate 65322
+#define QConsts_SAttributes 65323
+#define QConsts_SDefaultFilter 65324
+#define QConsts_SVolume 65325
+#define QConsts_SFreeSpace 65326
+#define QConsts_SMegs 65327
+#define QConsts_SAllButton 65328
+#define QConsts_SCannotDragForm 65329
+#define QConsts_SVIcons 65330
+#define QConsts_SVBitmaps 65331
+#define QConsts_SVPixmaps 65332
+#define QConsts_SVPNGs 65333
+#define QConsts_SDrawings 65334
+#define QConsts_SMsgDlgWarning 65335
+#define QConsts_SMsgDlgError 65336
+#define QConsts_SMsgDlgInformation 65337
+#define QConsts_SMsgDlgConfirm 65338
+#define QConsts_SUnnamed 65339
+#define QConsts_SCannotCreateDirName 65340
+#define QConsts_SAccessDeniedTo 65341
+#define QConsts_SCannotReadDirectory 65342
+#define QConsts_SDirectoryNotEmpty 65343
+#define QConsts_SNoAdapter 65344
+#define QConsts_SDeviceOnPort 65345
+#define QConsts_SGroupIndexTooLow 65346
+#define QConsts_SNoMDIForm 65347
+#define QConsts_SNotAnMDIForm 65348
+#define QConsts_SMDIChildNotVisible 65349
+#define QConsts_SControlParentSetToSelf 65350
+#define QConsts_SOKButton 65351
+#define QConsts_SCancelButton 65352
+#define QConsts_SYesButton 65353
+#define QConsts_SNoButton 65354
+#define QConsts_SHelpButton 65355
+#define QConsts_SCloseButton 65356
+#define QConsts_SIgnoreButton 65357
+#define QConsts_SRetryButton 65358
+#define QConsts_SAbortButton 65359
+#define QConsts_SmkcShift 65360
+#define QConsts_SmkcCtrl 65361
+#define QConsts_SmkcAlt 65362
+#define QConsts_SInvalidPixelFormat 65363
+#define QConsts_SNoCanvasHandle 65364
+#define QConsts_SInvalidCanvasState 65365
+#define QConsts_SInvalidImageSize 65366
+#define QConsts_SInvalidColorDepth 65367
+#define QConsts_SCannotFocus 65368
+#define QConsts_SParentRequired 65369
+#define QConsts_SVisibleChanged 65370
+#define QConsts_SMenuIndexError 65371
+#define QConsts_SMenuReinserted 65372
+#define QConsts_SNoMenuRecursion 65373
+#define QConsts_SMenuNotFound 65374
+#define QConsts_SMenuSetFormError 65375
+#define QConsts_SmkcTab 65376
+#define QConsts_SmkcBackTab 65377
+#define QConsts_SmkcEsc 65378
+#define QConsts_SmkcReturn 65379
+#define QConsts_SmkcEnter 65380
+#define QConsts_SmkcSpace 65381
+#define QConsts_SmkcPgUp 65382
+#define QConsts_SmkcPgDn 65383
+#define QConsts_SmkcEnd 65384
+#define QConsts_SmkcHome 65385
+#define QConsts_SmkcLeft 65386
+#define QConsts_SmkcUp 65387
+#define QConsts_SmkcRight 65388
+#define QConsts_SmkcDown 65389
+#define QConsts_SmkcIns 65390
+#define QConsts_SmkcDel 65391
+#define RTLConsts_SPropertyException 65392
+#define RTLConsts_SPrinting 65393
+#define RTLConsts_SReadError 65394
+#define RTLConsts_SReadOnlyProperty 65395
+#define RTLConsts_SRegGetDataFailed 65396
+#define RTLConsts_SResNotFound 65397
+#define RTLConsts_SSeekNotImplemented 65398
+#define RTLConsts_SSortedListError 65399
+#define RTLConsts_SUnknownGroup 65400
+#define RTLConsts_SUnknownProperty 65401
+#define RTLConsts_SWriteError 65402
+#define RTLConsts_SThreadCreateError 65403
+#define RTLConsts_SThreadError 65404
+#define QConsts_SInvalidCreateWidget 65405
+#define QConsts_STooManyMessageBoxButtons 65406
+#define QConsts_SmkcBkSp 65407
 #define RTLConsts_SFCreateErrorEx 65408
 #define RTLConsts_SFOpenErrorEx 65409
 #define RTLConsts_SIniFileWriteError 65410
@@ -372,10 +374,10 @@
 #define RTLConsts_SListCapacityError 65417
 #define RTLConsts_SListCountError 65418
 #define RTLConsts_SListIndexError 65419
-#define RTLConsts_SMemoryStreamError 65420
-#define RTLConsts_SNotPrinting 65421
-#define RTLConsts_SPropertyException 65422
-#define RTLConsts_SPrinting 65423
+#define RTLConsts_SMaskErr 65420
+#define RTLConsts_SMaskEditErr 65421
+#define RTLConsts_SMemoryStreamError 65422
+#define RTLConsts_SNotPrinting 65423
 #define SysConst_SLongDayNameWed 65424
 #define SysConst_SLongDayNameThu 65425
 #define SysConst_SLongDayNameFri 65426
@@ -490,6 +492,10 @@
 #define SysConst_SDiskFull 65535
 STRINGTABLE
 BEGIN
+	IdResourceStrings_RSSocksServerCommandError,	"Command not supported."
+	IdResourceStrings_RSSocksServerAddressError,	"Address type not supported."
+	IdResourceStrings_RSStackEHOSTUNREACH,	"No route to host."
+	IdResourceStrings_RSStackENOTEMPTY,	"Directory not empty"
 	IdResourceStrings_RSStackHOST_NOT_FOUND,	"Host not found."
 	IdResourceStrings_RSSocksRequestFailed,	"Request rejected or failed."
 	IdResourceStrings_RSSocksRequestServerFailed,	"Request rejected because SOCKS server cannot connect."
@@ -504,8 +510,8 @@ BEGIN
 	IdResourceStrings_RSSocksServerHostUnreachableError,	"Host unreachable."
 	IdResourceStrings_RSSocksServerConnectionRefusedError,	"Connection refused."
 	IdResourceStrings_RSSocksServerTTLExpiredError,	"TTL expired."
-	IdResourceStrings_RSSocksServerCommandError,	"Command not supported."
-	IdResourceStrings_RSSocksServerAddressError,	"Address type not supported."
+	IdResourceStrings_RSStackEADDRNOTAVAIL,	"Cannot assign requested address."
+	IdResourceStrings_RSStackENETDOWN,	"Network is down."
 	IdResourceStrings_RSStackENETUNREACH,	"Network is unreachable."
 	IdResourceStrings_RSStackENETRESET,	"Net dropped connection or reset."
 	IdResourceStrings_RSStackECONNABORTED,	"Software caused connection abort."
@@ -520,8 +526,8 @@ BEGIN
 	IdResourceStrings_RSStackELOOP,	"Too many levels of symbolic links."
 	IdResourceStrings_RSStackENAMETOOLONG,	"File name too long."
 	IdResourceStrings_RSStackEHOSTDOWN,	"Host is down."
-	IdResourceStrings_RSStackEHOSTUNREACH,	"No route to host."
-	IdResourceStrings_RSStackENOTEMPTY,	"Directory not empty"
+	IdResourceStrings_RSStackEINVAL,	"Invalid argument."
+	IdResourceStrings_RSStackEMFILE,	"Too many open files."
 	IdResourceStrings_RSStackEWOULDBLOCK,	"Operation would block. "
 	IdResourceStrings_RSStackEINPROGRESS,	"Operation now in progress."
 	IdResourceStrings_RSStackEALREADY,	"Operation already in progress."
@@ -536,8 +542,8 @@ BEGIN
 	IdResourceStrings_RSStackEPFNOSUPPORT,	"Protocol family not supported."
 	IdResourceStrings_RSStackEAFNOSUPPORT,	"Address family not supported by protocol family."
 	IdResourceStrings_RSStackEADDRINUSE,	"Address already in use."
-	IdResourceStrings_RSStackEADDRNOTAVAIL,	"Cannot assign requested address."
-	IdResourceStrings_RSStackENETDOWN,	"Network is down."
+	IdResourceStrings_RSReadLnMaxLineLengthExceeded,	"Max line length exceeded."
+	IdResourceStrings_RSWS2CallError,	"Error on call Winsock2 library function %s"
 	IdResourceStrings_RSWS2LoadError,	"Error on loading Winsock2 library (%s)"
 	IdResourceStrings_RSStatusResolving,	"Resolving hostname %s."
 	IdResourceStrings_RSStatusConnecting,	"Connecting to %s."
@@ -552,8 +558,8 @@ BEGIN
 	IdResourceStrings_RSStackEBADF,	"Bad file number."
 	IdResourceStrings_RSStackEACCES,	"Access denied."
 	IdResourceStrings_RSStackEFAULT,	"Bad address."
-	IdResourceStrings_RSStackEINVAL,	"Invalid argument."
-	IdResourceStrings_RSStackEMFILE,	"Too many open files."
+	JConsts_sJPEGError,	"JPEG error #%d"
+	JConsts_sJPEGImageFile,	"JPEG Image File"
 	IdResourceStrings_RSAlreadyConnected,	"Already connected."
 	IdResourceStrings_RSCannotAllocateSocket,	"Cannot allocate socket."
 	IdResourceStrings_RSConnectionClosedGracefully,	"Connection Closed Gracefully."
@@ -568,8 +574,8 @@ BEGIN
 	IdResourceStrings_RSCanNotBindRange,	"Can not bind in port range (%d - %d)"
 	IdResourceStrings_RSInvalidPortRange,	"Invalid Port Range (%d - %d)"
 	IdResourceStrings_RSReadTimeout,	"Read Timeout"
-	IdResourceStrings_RSReadLnMaxLineLengthExceeded,	"Max line length exceeded."
-	IdResourceStrings_RSWS2CallError,	"Error on call Winsock2 library function %s"
+	ExtCtrls_clNameInactiveBorder,	"Inactive Border"
+	ExtCtrls_clNameInactiveCaption,	"Inactive Caption"
 	ExtCtrls_clNameInactiveCaptionText,	"Inactive Caption Text"
 	ExtCtrls_clNameInfoBk,	"Info Background"
 	ExtCtrls_clNameInfoText,	"Info Text"
@@ -584,8 +590,8 @@ BEGIN
 	ExtCtrls_clNameWindowText,	"Window Text"
 	WinHelpViewer_hNoKeyword,	"No help keyword specified."
 	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
-	JConsts_sJPEGError,	"JPEG error #%d"
-	JConsts_sJPEGImageFile,	"JPEG Image File"
+	ExtCtrls_clNameSkyBlue,	"Sky Blue"
+	ExtCtrls_clNameCream,	"Cream"
 	ExtCtrls_clNameMedGray,	"Medium Gray"
 	ExtCtrls_clNameActiveBorder,	"Active Border"
 	ExtCtrls_clNameActiveCaption,	"Active Caption"
@@ -600,8 +606,8 @@ BEGIN
 	ExtCtrls_clNameGrayText,	"Gray Text"
 	ExtCtrls_clNameHighlight,	"Highlight Background"
 	ExtCtrls_clNameHighlightText,	"Highlight Text"
-	ExtCtrls_clNameInactiveBorder,	"Inactive Border"
-	ExtCtrls_clNameInactiveCaption,	"Inactive Caption"
+	ExtCtrls_clNameMaroon,	"Maroon"
+	ExtCtrls_clNameGreen,	"Green"
 	ExtCtrls_clNameOlive,	"Olive"
 	ExtCtrls_clNameNavy,	"Navy"
 	ExtCtrls_clNamePurple,	"Purple"
@@ -616,8 +622,8 @@ BEGIN
 	ExtCtrls_clNameAqua,	"Aqua"
 	ExtCtrls_clNameWhite,	"White"
 	ExtCtrls_clNameMoneyGreen,	"Money Green"
-	ExtCtrls_clNameSkyBlue,	"Sky Blue"
-	ExtCtrls_clNameCream,	"Cream"
+	Consts_SmkcRight,	"Right"
+	Consts_SmkcDown,	"Down"
 	Consts_SmkcIns,	"Ins"
 	Consts_SmkcDel,	"Del"
 	Consts_SmkcShift,	"Shift+"
@@ -632,8 +638,8 @@ BEGIN
 	Consts_SDockZoneNotFound,	" - Dock zone not found"
 	Consts_SDockZoneHasNoCtl,	" - Dock zone has no control"
 	ExtCtrls_clNameBlack,	"Black"
-	ExtCtrls_clNameMaroon,	"Maroon"
-	ExtCtrls_clNameGreen,	"Green"
+	Consts_SMsgDlgRetry,	"&Retry"
+	Consts_SMsgDlgIgnore,	"&Ignore"
 	Consts_SMsgDlgAll,	"&All"
 	Consts_SMsgDlgNoToAll,	"N&o to All"
 	Consts_SMsgDlgYesToAll,	"Yes to &All"
@@ -648,8 +654,8 @@ BEGIN
 	Consts_SmkcHome,	"Home"
 	Consts_SmkcLeft,	"Left"
 	Consts_SmkcUp,	"Up"
-	Consts_SmkcRight,	"Right"
-	Consts_SmkcDown,	"Down"
+	Consts_SAllButton,	"&All"
+	Consts_SCannotDragForm,	"Cannot drag a form"
 	Consts_SVMetafiles,	"Metafiles"
 	Consts_SVEnhMetafiles,	"Enhanced Metafiles"
 	Consts_SVIcons,	"Icons"
@@ -664,8 +670,8 @@ BEGIN
 	Consts_SMsgDlgCancel,	"Cancel"
 	Consts_SMsgDlgHelp,	"&Help"
 	Consts_SMsgDlgAbort,	"&Abort"
-	Consts_SMsgDlgRetry,	"&Retry"
-	Consts_SMsgDlgIgnore,	"&Ignore"
+	Consts_SPrinting,	"Printing in progress"
+	Consts_SPrinterIndexError,	"Printer index out of range"
 	Consts_SInvalidPrinter,	"Printer selected is not valid"
 	Consts_SDeviceOnPort,	"%s on %s"
 	Consts_SGroupIndexTooLow,	"GroupIndex cannot be less than a previous menu item's GroupIndex"
@@ -680,8 +686,8 @@ BEGIN
 	Consts_SIgnoreButton,	"&Ignore"
 	Consts_SRetryButton,	"&Retry"
 	Consts_SAbortButton,	"Abort"
-	Consts_SAllButton,	"&All"
-	Consts_SCannotDragForm,	"Cannot drag a form"
+	Consts_SInvalidImageList,	"Invalid ImageList"
+	Consts_SImageIndexError,	"Invalid ImageList Index"
 	Consts_SImageReadFail,	"Failed to read ImageList data from stream"
 	Consts_SImageWriteFail,	"Failed to write ImageList data to stream"
 	Consts_SWindowDCError,	"Error creating window device context"
@@ -696,8 +702,8 @@ BEGIN
 	Consts_SMenuNotFound,	"Sub-menu is not in menu"
 	Consts_SNoTimers,	"Not enough timers available"
 	Consts_SNotPrinting,	"Printer is not currently printing"
-	Consts_SPrinting,	"Printing in progress"
-	Consts_SPrinterIndexError,	"Printer index out of range"
+	QConsts_SNoAppInLib,	"Fatal error: Cannot create application object in a shared object or library."
+	QConsts_SDuplicateApp,	"Fatal error: Cannot create more than one TApplication instance"
 	HelpIntfs_hNoTableOfContents,	"Unable to find a Table of Contents"
 	HelpIntfs_hNothingFound,	"No help found for %s"
 	HelpIntfs_hNoContext,	"No context-sensitive help installed"
@@ -712,8 +718,8 @@ BEGIN
 	Consts_SOutOfResources,	"Out of system resources"
 	Consts_SNoCanvasHandle,	"Canvas does not allow drawing"
 	Consts_SInvalidImageSize,	"Invalid image size"
-	Consts_SInvalidImageList,	"Invalid ImageList"
-	Consts_SImageIndexError,	"Invalid ImageList Index"
+	QConsts_SDriveNotFound,	"Drive %s does not exist.\r\nPlease verify the correct drive was given."
+	QConsts_SUnknownImageFormat,	"Image format not recognized"
 	QConsts_SInvalidHandle,	"Invalid handle value for %s"
 	QConsts_SUnableToWrite,	"Unable to write bitmap"
 	QConsts_sPageIndexError,	"%d is an invalid PageIndex value.  PageIndex must be between 0 and %d"
@@ -728,8 +734,8 @@ BEGIN
 	QConsts_SClear,	"Clear"
 	QConsts_SSelectAll,	"Select All"
 	QConsts_SLoadingEllipsis,	"Loading..."
-	QConsts_SNoAppInLib,	"Fatal error: Cannot create application object in a shared object or library."
-	QConsts_SDuplicateApp,	"Fatal error: Cannot create more than one TApplication instance"
+	QConsts_SDirectory,	"Directory"
+	QConsts_SFile,	"File"
 	QConsts_SDuplicateMenus,	"Menu '%s' is already being used by another form"
 	QConsts_SNoPreview,	"No Preview Available"
 	QConsts_SImageIndexError,	"Invalid ImageList Index"
@@ -744,8 +750,8 @@ BEGIN
 	QConsts_SOverwriteText,	"\"%s\" already exists.\r\nDo you want to replace it?"
 	QConsts_SFileMustExist,	"\"%s\"\r\nFile not found.\r\nPlease verify the correct filename was given."
 	QConsts_SPathMustExist,	"\"%s\"\r\nPath not found.\r\nPlease verify the correct path was given."
-	QConsts_SDriveNotFound,	"Drive %s does not exist.\r\nPlease verify the correct drive was given."
-	QConsts_SUnknownImageFormat,	"Image format not recognized"
+	QConsts_SNewFolder,	"New Folder"
+	QConsts_SFileNameNotFound,	"\"%s\"\nFile not found."
 	QConsts_SAlreadyExists,	"A file with that name already exists. Please specify a different filename."
 	QConsts_SConfirmDeleteTitle,	"Confirm file deletion"
 	QConsts_SConfirmDeleteMany,	"Are you sure you want to delete these %d items?"
@@ -760,8 +766,8 @@ BEGIN
 	QConsts_SVolume,	"Volume"
 	QConsts_SFreeSpace,	"Free Space"
 	QConsts_SMegs,	"%d MB"
-	QConsts_SDirectory,	"Directory"
-	QConsts_SFile,	"File"
+	QConsts_SAllButton,	"&All"
+	QConsts_SCannotDragForm,	"Cannot drag a form"
 	QConsts_SVIcons,	"Icons"
 	QConsts_SVBitmaps,	"Bitmaps"
 	QConsts_SVPixmaps,	"Pixmaps"
@@ -776,8 +782,8 @@ BEGIN
 	QConsts_SAccessDeniedTo,	"Access denied to \"%s\""
 	QConsts_SCannotReadDirectory,	"Cannot read directory:\r\n\"%s\""
 	QConsts_SDirectoryNotEmpty,	"Directory \"%s\" is not empty."
-	QConsts_SNewFolder,	"New Folder"
-	QConsts_SFileNameNotFound,	"\"%s\"\nFile not found."
+	QConsts_SNoAdapter,	"No printer adapter available for printing"
+	QConsts_SDeviceOnPort,	"%s on %s"
 	QConsts_SGroupIndexTooLow,	"GroupIndex cannot be less than a previous menu item's GroupIndex"
 	QConsts_SNoMDIForm,	"Cannot create form. No MDI forms are currently active"
 	QConsts_SNotAnMDIForm,	"Invalid MDIParent for class %s"
@@ -792,8 +798,8 @@ BEGIN
 	QConsts_SIgnoreButton,	"&Ignore"
 	QConsts_SRetryButton,	"&Retry"
 	QConsts_SAbortButton,	"Abort"
-	QConsts_SAllButton,	"&All"
-	QConsts_SCannotDragForm,	"Cannot drag a form"
+	QConsts_SmkcShift,	"Shift+"
+	QConsts_SmkcCtrl,	"Ctrl+"
 	QConsts_SmkcAlt,	"Alt+"
 	QConsts_SInvalidPixelFormat,	"Invalid pixel format"
 	QConsts_SNoCanvasHandle,	"Canvas does not allow drawing"
@@ -808,8 +814,8 @@ BEGIN
 	QConsts_SNoMenuRecursion,	"Menu insertion recursion not allowed"
 	QConsts_SMenuNotFound,	"Sub-menu is not in menu"
 	QConsts_SMenuSetFormError,	"TMenu.SetForm: argument must be TCustomForm"
-	QConsts_SNoAdapter,	"No printer adapter available for printing"
-	QConsts_SDeviceOnPort,	"%s on %s"
+	QConsts_SmkcTab,	"Tab"
+	QConsts_SmkcBackTab,	"BackTab"
 	QConsts_SmkcEsc,	"Esc"
 	QConsts_SmkcReturn,	"Return"
 	QConsts_SmkcEnter,	"Enter"
@@ -824,8 +830,8 @@ BEGIN
 	QConsts_SmkcDown,	"Down"
 	QConsts_SmkcIns,	"Ins"
 	QConsts_SmkcDel,	"Del"
-	QConsts_SmkcShift,	"Shift+"
-	QConsts_SmkcCtrl,	"Ctrl+"
+	RTLConsts_SPropertyException,	"Error reading %s%s%s: %s"
+	RTLConsts_SPrinting,	"Printing in progress"
 	RTLConsts_SReadError,	"Stream read error"
 	RTLConsts_SReadOnlyProperty,	"Property is read-only"
 	RTLConsts_SRegGetDataFailed,	"Failed to get data for '%s'"
@@ -840,8 +846,6 @@ BEGIN
 	QConsts_SInvalidCreateWidget,	"Class %s could not create QT widget"
 	QConsts_STooManyMessageBoxButtons,	"Too many buttons specified for message box"
 	QConsts_SmkcBkSp,	"Backspace"
-	QConsts_SmkcTab,	"Tab"
-	QConsts_SmkcBackTab,	"BackTab"
 	RTLConsts_SFCreateErrorEx,	"Cannot create file \"%s\". %s"
 	RTLConsts_SFOpenErrorEx,	"Cannot open file \"%s\". %s"
 	RTLConsts_SIniFileWriteError,	"Unable to write to %s"
@@ -854,10 +858,10 @@ BEGIN
 	RTLConsts_SListCapacityError,	"List capacity out of bounds (%d)"
 	RTLConsts_SListCountError,	"List count out of bounds (%d)"
 	RTLConsts_SListIndexError,	"List index out of bounds (%d)"
+	RTLConsts_SMaskErr,	"Invalid input value"
+	RTLConsts_SMaskEditErr,	"Invalid input value.  Use escape key to abandon changes"
 	RTLConsts_SMemoryStreamError,	"Out of memory while expanding memory stream"
 	RTLConsts_SNotPrinting,	"Printer is not currently printing"
-	RTLConsts_SPropertyException,	"Error reading %s%s%s: %s"
-	RTLConsts_SPrinting,	"Printing in progress"
 	SysConst_SLongDayNameWed,	"Wednesday"
 	SysConst_SLongDayNameThu,	"Thursday"
 	SysConst_SLongDayNameFri,	"Friday"

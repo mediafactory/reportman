@@ -19,14 +19,13 @@ object FRpMainFVCL: TFRpMainFVCL
   TextHeight = 13
   object BStatus: TStatusBar
     Left = 0
-    Top = 411
+    Top = 403
     Width = 567
     Height = 21
     Panels = <
       item
         Width = 50
       end>
-    SimplePanel = False
   end
   object ToolBar1: TToolBar
     Left = 0
@@ -274,7 +273,7 @@ object FRpMainFVCL: TFRpMainFVCL
     Left = 0
     Top = 70
     Width = 567
-    Height = 341
+    Height = 333
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
@@ -283,8 +282,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 181
       Top = 0
       Width = 8
-      Height = 341
-      Cursor = crHSplit
+      Height = 333
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
@@ -293,7 +291,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 0
       Top = 0
       Width = 181
-      Height = 341
+      Height = 333
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -315,7 +313,7 @@ object FRpMainFVCL: TFRpMainFVCL
     Left = 248
     Top = 196
     Bitmap = {
-      494C010121002200040013001300FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010121002200040013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000004C000000AB000000010020000000000010CB
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2008,7 +2006,7 @@ object FRpMainFVCL: TFRpMainFVCL
       00700000F001F800FF001FE000700000F001FC7F8F001FE000700000F003FFFF
       CF001FE000700000F007FFFBAF001FE000700000F00FFFFC7F001FE000700000
       FFFFFFFFFF001FE000700000FFFFFFFFFF001FFFFFF00000FFFFFFFFFFFFFFFF
-      FFF00000}
+      FFF0000000000000000000000000000000000000000000000000}
   end
   object ActionList1: TActionList
     Images = iconlist

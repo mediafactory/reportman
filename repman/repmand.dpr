@@ -224,6 +224,10 @@ var
   FRpMainF: TFRpMainF;
 
 begin
+  with Application do
+  begin
+   Title:=TranslateStr(1,Title);
+  end;
   Application.Initialize;
   Application.CreateForm(TFRpMainF, FRpMainF);
   FRpMainF.BrowseCommandLine:=true;

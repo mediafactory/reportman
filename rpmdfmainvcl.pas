@@ -645,7 +645,6 @@ begin
  Forms.Application.OnException:=MyExceptionHandler;
 
 
- Application.Title:=SRpRepman;
  configfile:=Obtainininameuserconfig('','','repmand');
  configfilelib:=Obtainininameuserconfig('','','repmandlib');
   LastUsedFiles.CaseSensitive:=False;

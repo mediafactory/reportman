@@ -93,6 +93,7 @@ begin
    memstream.Seek(0,soFromBeginning);
    MFrame.metafile.LoadFromStream(memstream);
    MFrame.ASave.Enabled:=True;
+   MFrame.AMailTo.Enabled:=True;
    MFrame.APrint.Enabled:=True;
    MFrame.AFirst.Enabled:=True;
    MFrame.APrevious.Enabled:=True;
@@ -151,7 +152,7 @@ begin
  MFrame.Parent:=Self;
  MFrame.AForm:=self;
  Caption:=SRpRepMetafile;
- Application.Title:=SRpRepMetafile;
+// Application.Title:=SRpRepMetafile;
  // Bugfix for TEdit height
  MFrame.EPageNum.Left:=MFrame.EPageNum.Left+1;
 end;

@@ -30,7 +30,7 @@ uses
 {$IFDEF USEVARIANTS}
   Types,
 {$ENDIF}
-  Classes, Graphics, Controls, Forms, Dialogs,
+  Classes, Graphics, Controls, Forms, Dialogs,rppagesetupvcl,
   StdCtrls,rpbasereport,rpreport,rpmetafile, ComCtrls,rphtmldriver,
   rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,rptextdriver,
   ActnList, ImgList,Printers,rpmdconsts, ToolWin, Mask, rpmaskedit;
@@ -74,6 +74,13 @@ type
     AScaleMore: TAction;
     ToolButton15: TToolButton;
     ToolButton5: TToolButton;
+    AMailTo: TAction;
+    ToolButton9: TToolButton;
+    APageSetup: TAction;
+    ToolButton10: TToolButton;
+    ToolButton16: TToolButton;
+    ToolButton17: TToolButton;
+    ToolButton18: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -104,11 +111,14 @@ type
       MousePos: TPoint; var Handled: Boolean);
     procedure EPageNumKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure AMailToExecute(Sender: TObject);
+    procedure APageSetupExecute(Sender: TObject);
   private
     { Private declarations }
     cancelled:boolean;
     printed:boolean;
     enableparams:boolean;
+    fmodified:Boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure RepProgress(Sender:TRpBaseReport;var docancel:boolean);
     procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
@@ -123,10 +133,11 @@ type
     agdidriver:IRpPrintDriver;
     bitmap:TBitmap;
     procedure PrintPage;
+    property modified:Boolean read fmodified;
   end;
 
 
-function ShowPreview(report:TRpReport;caption:string):boolean;
+function ShowPreview(report:TRpReport;caption:string;var modified:boolean):boolean;
 
 implementation
 
@@ -134,13 +145,14 @@ uses rprfvparams, rppdfdriver;
 
 {$R *.dfm}
 
-function ShowPreview(report:TRpReport;caption:string):boolean;
+function ShowPreview(report:TRpReport;caption:string;var modified:boolean):boolean;
 var
  dia:TFRpVPreview;
  oldprogres:TRpProgressEvent;
  hasparams:boolean;
  i:integer;
 begin
+ modified:=false;
  dia:=TFRpVPreview.Create(Application);
  try
   dia.caption:=caption;
@@ -180,6 +192,7 @@ begin
    report.OnProgress:=dia.RepProgress;
    Application.OnIdle:=dia.AppIdle;
    dia.ShowModal;
+   modified:=dia.Modified;
    Result:=dia.printed;
   finally
    report.OnProgress:=oldprogres;
@@ -310,6 +323,8 @@ begin
  APrint.Hint:=TranslateStr(53,APrint.Hint);
  ASave.Caption:=TranslateStr(46,ASave.Caption);
  ASave.Hint:=TranslateStr(217,ASave.Hint);
+ AMailTo.Caption:=TranslateStr(1230,AMailTo.Caption);
+ AMailTo.Hint:=TranslateStr(1231,AMailTo.Hint);
  AExit.Caption:=TranslateStr(44,AExit.Caption);
  AExit.Hint:=TranslateStr(219,AExit.Hint);
  AParams.Caption:=TranslateStr(135,Aparams.Caption);
@@ -332,6 +347,10 @@ begin
  AScaleLess.Hint:=TranslateStr(235,AScaleLess.Hint);
  AScaleMore.Caption:=TranslateStr(236,AScaleMore.Caption);
  AScaleMore.Hint:=TranslateStr(237,AScaleMore.Hint);
+ APageSetup.Caption:=TranslateStr(50,APageSetup.Caption);
+ APageSetup.Hint:=TranslateStr(51,APageSetup.Hint);
+
+ SaveDialog1.FilterIndex:=2;
 end;
 
 procedure TFRpVPreview.FormDestroy(Sender: TObject);
@@ -557,6 +576,7 @@ begin
  APrevious.Enabled:=false;
  EPageNum.Enabled:=false;
  ASave.Enabled:=false;
+ AMailTo.Enabled:=false;
  AParams.Enabled:=false;
  PBar.Position:=0;
  PBar.Visible:=enablebar;
@@ -578,6 +598,7 @@ begin
  APrevious.Enabled:=true;
  EPageNum.Enabled:=true;
  ASave.Enabled:=true;
+ AMailTo.Enabled:=true;
  AParams.Enabled:=enableparams;
  PBar.Visible:=false;
  AExit.Enabled:=true;
@@ -763,6 +784,32 @@ begin
  begin
   pagenum:=StrToInt(EPageNum.Text);
   PrintPage;
+ end;
+end;
+
+procedure TFRpVPreview.AMailToExecute(Sender: TObject);
+var
+ afilename:String;
+begin
+ ALastExecute(Self);
+ afilename:=ChangeFileExt(RpTempFileName,'.pdf');
+ SaveMetafileToPDF(report.Metafile,afilename,true);
+ try
+  rptypes.SendMail('',ExtractFileName(afilename),'',afilename);
+ finally
+  sysutils.DeleteFile(afilename);
+ end;
+end;
+
+procedure TFRpVPreview.APageSetupExecute(Sender: TObject);
+var
+ adone:boolean;
+begin
+ if ExecutePageSetup(report) then
+ begin
+  fModified:=true;
+  // Reexecutes the report
+  AppIdle(Self,adone);
  end;
 end;
 

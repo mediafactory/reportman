@@ -91,6 +91,7 @@ begin
    memstream.Seek(0,soFromBeginning);
    MFrame.metafile.LoadFromStream(memstream);
    MFrame.ASave.Enabled:=True;
+   MFrame.AMailTo.Enabled:=True;
    MFrame.APrint.Enabled:=True;
    MFrame.AFirst.Enabled:=True;
    MFrame.APrevious.Enabled:=True;
@@ -143,7 +144,7 @@ begin
  MFrame.AForm:=self;
  MFrame.Parent:=Self;
  Caption:=SRpRepMetafile;
- Application.Title:=SRpRepMetafile;
+// Application.Title:=SRpRepMetafile;
 end;
 
 

@@ -156,6 +156,7 @@ type
     AMailTo: TAction;
     ToolButton14: TToolButton;
     ToolButton15: TToolButton;
+    ToolButton16: TToolButton;
     procedure AFirstExecute(Sender: TObject);
     procedure ANextExecute(Sender: TObject);
     procedure APreviousExecute(Sender: TObject);
