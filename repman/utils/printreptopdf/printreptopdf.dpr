@@ -38,6 +38,7 @@ uses
   rpsubreport in '..\..\..\rpsubreport.pas',
   rpsection in '..\..\..\rpsection.pas',
   rpsecutil in '..\..\..\rpsecutil.pas',
+  rpexceldriver in '..\..\..\rpexceldriver.pas',
   rppdfdriver in '..\..\..\rppdfdriver.pas';
 {$ENDIF}
 
@@ -68,6 +69,9 @@ var
  doprintmetafile:boolean;
  stdinput:boolean;
  doprintastext:Boolean;
+{$IFDEF MSWINDOWS}
+ toexcel:Boolean;
+{$ENDIF}
  textdriver:String;
  memstream:TMemoryStream;
  oemconvert:Boolean;
@@ -88,6 +92,9 @@ begin
  Writeln(AnsiString(SRpPrintPDFRep8));
  Writeln(AnsiString(SRpPrintPDFRep9));
  Writeln(AnsiString(SRpPrintRep8));
+{$IFDEF MSWINDOWS}
+ Writeln(AnsiString(SRpPrintRep8));
+{$ENDIF}
  Writeln(AnsiString(SRpParseParamsH));
  Writeln(AnsiString(SRpCommandLineStdIN));
  Writeln(AnsiString(SRpPrintPDFRep10));
@@ -110,6 +117,9 @@ end;
 begin
 {$IFDEF USEADO}
   CoInitialize(nil);
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  toexcel:=false;
 {$ENDIF}
   stdinput:=false;
   doprintmetafile:=false;
@@ -135,6 +145,11 @@ begin
    // Get the options
    while indexparam<ParamCount+1 do
    begin
+{$IFDEF MSWINDOWS}
+    if ParamStr(indexparam)='-excel' then
+     toexcel:=true
+    else
+{$ENDIF}
     if ParamStr(indexparam)='-q' then
      showprogress:=false
     else
@@ -233,8 +248,6 @@ begin
    end
    else
    begin
-    if Length(PDFFilename)<1 then
-     showprogress:=false;
     report:=TRpReport.Create(nil);
     try
      if stdinput then
@@ -254,32 +267,46 @@ begin
      else
       copies:=acopies;
      ParseCommandLineParams(report.Params);
-     memstream:=TMemoryStream.Create;
-     try
-      if doprintmetafile then
-      begin
-       PrintReportMetafileStream(report,'',showprogress,allpages,frompage,topage,
-        copies,memstream,compress,collate);
-      end
-      else
-      if doprintastext then
-      begin
-       PrintReportToStream(report,filename,showprogress,allpages,
-       frompage,topage,copies,memstream,collate,oemconvert,textdriver);
-      end
-      else
-      begin
-       PrintReportPDFStream(report,filename,showprogress,
-         allpages,frompage,topage,copies,
-          memstream,compress,collate);
-      end;
-      memstream.Seek(0,soFromBeginning);
+{$IFDEF MSWINDOWS}
+     if toexcel then
+     begin
+      PrintReportToMetafile(report,'',showprogress,allpages,frompage,topage,
+       copies,'',collate);
+      ExportMetafileToExcel(report.metafile,pdffilename,showprogress,
+       Length(pdffilename)<1,true,1,99999);
+     end
+     else
+{$ENDIF}
+     begin
       if Length(PDFFilename)<1 then
-       WriteStreamToStdOutput(memstream)
-      else
-       memstream.SaveToFile(PDFFilename);
-     finally
-      memstream.free;
+       showprogress:=false;
+      memstream:=TMemoryStream.Create;
+      try
+       if doprintmetafile then
+       begin
+        PrintReportMetafileStream(report,'',showprogress,allpages,frompage,topage,
+         copies,memstream,compress,collate);
+       end
+       else
+       if doprintastext then
+       begin
+        PrintReportToStream(report,filename,showprogress,allpages,
+        frompage,topage,copies,memstream,collate,oemconvert,textdriver);
+       end
+       else
+       begin
+        PrintReportPDFStream(report,filename,showprogress,
+          allpages,frompage,topage,copies,
+           memstream,compress,collate);
+       end;
+       memstream.Seek(0,soFromBeginning);
+       if Length(PDFFilename)<1 then
+        WriteStreamToStdOutput(memstream)
+       else
+        memstream.SaveToFile(PDFFilename);
+      finally
+       memstream.free;
+      end;
      end;
     finally
      report.free;

@@ -304,7 +304,7 @@ begin
  ARename.Caption:=TranslateStr(151,ARename.Caption);
  ARename.Hint:=TranslateStr(512,ARename.Hint);
  CheckLoadParams.Caption:=TranslateStr(145,CheckLoadParams.Caption);
- CheckLoadDriverParams.Caption:=TranslateStr(146,CheckLoadParams.Caption);
+ CheckLoadDriverParams.Caption:=TranslateStr(146,CheckLoadDriverParams.Caption);
  CheckLoginPrompt.Caption:=TranslateStr(144,CheckLoginPrompt.Caption);
  LDriver.Caption:=TranslateStr(147,LDriver.Caption);
  LReportTable.Caption:=TranslateStr(1115,LReportTable.Caption);

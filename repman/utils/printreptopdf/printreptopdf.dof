@@ -100,7 +100,7 @@ Conditionals=
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=-textdriver VT100 sample2.rep prova.txt
+RunParams=-excel sample4.rep
 HostApplication=
 Launcher=
 UseLauncher=0

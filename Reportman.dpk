@@ -27,6 +27,7 @@ package ReportMan;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
+{$RUNONLY}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 
@@ -42,7 +43,6 @@ requires
   Borland.VclIBXpress;
 
 contains
-  rpmregnet in 'rpmregnet.pas',
   rplastsav in 'rplastsav.pas',
   rpmdconsts in 'rpmdconsts.pas',
   rptranslator in 'rptranslator.pas',
@@ -81,7 +81,9 @@ contains
   rptextdriver in 'rptextdriver.pas',
   rpexceldriver in 'rpexceldriver.pas',
   rprfvparams in 'rprfvparams.pas',
-  rpvpreview in 'rpvpreview.pas';
+  rpvpreview in 'rpvpreview.pas',
+  rpmdfopenlibvcl in 'rpmdfopenlibvcl.pas',
+  rpmdftreevcl in 'rpmdftreevcl.pas';
 
 [assembly: AssemblyTitle('Report Manager Components')]
 [assembly: AssemblyDescription('Report Manager engine components, to access Report Manager reports')]
