@@ -187,13 +187,14 @@ clean_noexe:
         -del *.bpl
         -del *.bpi
         -del activex\*.lib
+        -del /s *.pdb
 
 
 clean:  clean_noexe
         -del /s *.exe
+        -del /s repman\*.bin
         -del /s server\*.bin
-        -del /s repman\*.dll
-        -del /s server\*.dll
+        -del /s *.dll
         -del /s *.ocx
 
 

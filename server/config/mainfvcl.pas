@@ -23,7 +23,7 @@ interface
 uses
   SysUtils, Types, Classes, Variants, Graphics, Controls, Forms,
   Dialogs, StdCtrls, rptranslator, DB, DBClient, Grids, DBGrids,
-  rpmdrepclient,rpmdconsts;
+  rpmdrepclient,rpmdconsts, ComCtrls;
 
 type
   TFMainVCL = class(TForm)
@@ -37,24 +37,27 @@ type
     LPassword: TLabel;
     BConnect: TButton;
     GServerinfo: TGroupBox;
+    DDirectories: TClientDataSet;
+    DDirectoriesAlias: TStringField;
+    DDirectoriesServerPath: TStringField;
+    SDirectories: TDataSource;
+    BCloseConnection: TButton;
+    LMessages: TListBox;
+    LPort: TLabel;
+    ComboPort: TComboBox;
+    PControl: TPageControl;
+    TabSheet1: TTabSheet;
     GUsers: TGroupBox;
     LUsers: TListBox;
     BDeleteUser: TButton;
     BAddUser: TButton;
+    BChangePassword: TButton;
     GReportDirectories: TGroupBox;
-    DDirectories: TClientDataSet;
-    DDirectoriesAlias: TStringField;
-    DDirectoriesServerPath: TStringField;
     DBGrid1: TDBGrid;
-    SDirectories: TDataSource;
     BAddAlias: TButton;
     BDeleteAlias: TButton;
     BPreviewTree: TButton;
-    BCloseConnection: TButton;
-    BChangePassword: TButton;
-    LMessages: TListBox;
-    LPort: TLabel;
-    ComboPort: TComboBox;
+    TabSheet2: TTabSheet;
     procedure FormCreate(Sender: TObject);
     procedure BConnectClick(Sender: TObject);
     procedure BCloseConnectionClick(Sender: TObject);

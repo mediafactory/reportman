@@ -130,8 +130,25 @@ to be used has been identified. For further information on parameters please see
   rp.Preview = True<br>
   rp.Execute<br>
   MessageBox.Show(Str(rp.Report.Params.Count), &quot;Paramcount&quot;, MessageBoxButtons.OK, 
-  MessageBoxIcon.Exclamation)<br>
-</p>
+  MessageBoxIcon.Exclamation)</p>
+<p><strong>Using report Manager ActiveX from ASP pages</strong></p>
+<p>You can use the Report Manager ActiveX to generate the pdf inside a ASP page 
+  and return it to the current processing page on the fly. For that purpose there 
+  is a Microsoft Transaction Server Object, so you can retrieve the entire stream. 
+  You must pass the prepared report to the object. This sample will help you:</p>
+<p>&lt;%@ Language=VBScript %&gt;<br>
+  &lt;% Set Reportobj = Server.CreateObject(&quot;ReportMan.ReportmanX&quot;) 
+  <br>
+  ReportObj.Filename = &quot;c:\inetpub\wwwroot\cgi-bin\nettest.rep&quot;<br>
+  Set DelphiASPObj = Server.CreateObject(&quot;ReportMan.ReportmanXAServer&quot;) 
+  <br>
+  Response.Clear <br>
+  Response.ContentType=&quot;application/pdf&quot;<br>
+  DelphiASPObj.GetPDF ReportObj.Report,false<br>
+  %&gt;<br>
+  <br>
+  When working in the IIS environment remember place the reports in a directory 
+  accessible bythe user executing IIS.</p>
 </body>
 </html>
 

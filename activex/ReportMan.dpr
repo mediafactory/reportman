@@ -2,6 +2,8 @@ library ReportMan;
 
 {$I rpconf.inc}
 
+{%File 'ReportmanXAServer.asp'}
+
 uses
   ComServ,
 {$IFDEF USEVARIANTS}
@@ -15,7 +17,8 @@ uses
   rpactivexreport in '..\rpactivexreport.pas',
   rpaxreportreport in 'rpaxreportreport.pas' {ReportReport: CoClass},
   rpaxreportparameters in 'rpaxreportparameters.pas' {ReportParameters: CoClass},
-  rpaxreportparam in 'rpaxreportparam.pas' {ReportParam: CoClass};
+  rpaxreportparam in 'rpaxreportparam.pas' {ReportParam: CoClass},
+  rpaspserver in 'rpaspserver.pas' {ReportmanXAServer: CoClass};
 
 {$E ocx}
 

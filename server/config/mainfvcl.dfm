@@ -1,8 +1,8 @@
 object FMainVCL: TFMainVCL
   Left = 134
   Top = 83
-  Width = 500
-  Height = 456
+  Width = 523
+  Height = 469
   HorzScrollBar.Range = 389
   VertScrollBar.Range = 161
   ActiveControl = ComboHost
@@ -84,111 +84,126 @@ object FMainVCL: TFMainVCL
   object GServerinfo: TGroupBox
     Left = 8
     Top = 44
-    Width = 469
-    Height = 301
+    Width = 497
+    Height = 325
     Caption = 'Server information'
     TabOrder = 2
     Visible = False
-    object GReportDirectories: TGroupBox
-      Left = 8
-      Top = 124
-      Width = 461
-      Height = 133
-      Caption = 'Report server directories'
-      TabOrder = 1
-      object DBGrid1: TDBGrid
-        Left = 4
-        Top = 16
-        Width = 445
-        Height = 81
-        DataSource = SDirectories
-        ReadOnly = True
-        TabOrder = 0
-        TitleFont.Charset = DEFAULT_CHARSET
-        TitleFont.Color = clWindowText
-        TitleFont.Height = -11
-        TitleFont.Name = 'MS Sans Serif'
-        TitleFont.Style = []
-      end
-      object BAddAlias: TButton
-        Left = 4
-        Top = 97
-        Width = 133
-        Height = 28
-        Caption = 'Add'
-        TabOrder = 1
-        OnClick = BAddAliasClick
-      end
-      object BDeleteAlias: TButton
-        Left = 140
-        Top = 96
-        Width = 133
-        Height = 30
-        Caption = 'Delete'
-        TabOrder = 2
-        OnClick = BDeleteAliasClick
-      end
-      object BPreviewTree: TButton
-        Left = 276
-        Top = 96
-        Width = 173
-        Height = 30
-        Caption = 'Preview Report Tree'
-        TabOrder = 3
-        OnClick = BPreviewTreeClick
-      end
-    end
-    object GUsers: TGroupBox
-      Left = 8
-      Top = 16
-      Width = 453
-      Height = 105
-      Caption = 'Users'
-      TabOrder = 0
-      object LUsers: TListBox
-        Left = 8
-        Top = 16
-        Width = 305
-        Height = 85
-        ItemHeight = 13
-        TabOrder = 0
-      end
-      object BDeleteUser: TButton
-        Left = 316
-        Top = 76
-        Width = 133
-        Height = 25
-        Caption = 'Delete'
-        TabOrder = 3
-        OnClick = BDeleteUserClick
-      end
-      object BAddUser: TButton
-        Left = 316
-        Top = 17
-        Width = 133
-        Height = 24
-        Caption = 'Add'
-        TabOrder = 1
-        OnClick = BAddUserClick
-      end
-      object BChangePassword: TButton
-        Left = 316
-        Top = 45
-        Width = 133
-        Height = 28
-        Caption = 'Change Password'
-        TabOrder = 2
-        OnClick = BChangePasswordClick
-      end
-    end
     object BCloseConnection: TButton
       Left = 12
-      Top = 261
+      Top = 285
       Width = 173
       Height = 33
       Caption = 'Close connection'
-      TabOrder = 2
+      TabOrder = 0
       OnClick = BCloseConnectionClick
+    end
+    object PControl: TPageControl
+      Left = 8
+      Top = 12
+      Width = 465
+      Height = 269
+      ActivePage = TabSheet1
+      TabOrder = 1
+      object TabSheet1: TTabSheet
+        Caption = 'General'
+        object GUsers: TGroupBox
+          Left = 0
+          Top = 0
+          Width = 453
+          Height = 105
+          Caption = 'Users'
+          TabOrder = 0
+          object LUsers: TListBox
+            Left = 8
+            Top = 16
+            Width = 305
+            Height = 85
+            ItemHeight = 13
+            TabOrder = 0
+          end
+          object BDeleteUser: TButton
+            Left = 316
+            Top = 76
+            Width = 133
+            Height = 25
+            Caption = 'Delete'
+            TabOrder = 3
+            OnClick = BDeleteUserClick
+          end
+          object BAddUser: TButton
+            Left = 316
+            Top = 17
+            Width = 133
+            Height = 24
+            Caption = 'Add'
+            TabOrder = 1
+            OnClick = BAddUserClick
+          end
+          object BChangePassword: TButton
+            Left = 316
+            Top = 45
+            Width = 133
+            Height = 28
+            Caption = 'Change Password'
+            TabOrder = 2
+            OnClick = BChangePasswordClick
+          end
+        end
+        object GReportDirectories: TGroupBox
+          Left = -4
+          Top = 108
+          Width = 461
+          Height = 133
+          Caption = 'Report server directories'
+          TabOrder = 1
+          object DBGrid1: TDBGrid
+            Left = 4
+            Top = 16
+            Width = 445
+            Height = 81
+            DataSource = SDirectories
+            ReadOnly = True
+            TabOrder = 0
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -11
+            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Style = []
+          end
+          object BAddAlias: TButton
+            Left = 4
+            Top = 97
+            Width = 133
+            Height = 28
+            Caption = 'Add'
+            TabOrder = 1
+            OnClick = BAddAliasClick
+          end
+          object BDeleteAlias: TButton
+            Left = 140
+            Top = 96
+            Width = 133
+            Height = 30
+            Caption = 'Delete'
+            TabOrder = 2
+            OnClick = BDeleteAliasClick
+          end
+          object BPreviewTree: TButton
+            Left = 276
+            Top = 96
+            Width = 173
+            Height = 30
+            Caption = 'Preview Report Tree'
+            TabOrder = 3
+            OnClick = BPreviewTreeClick
+          end
+        end
+      end
+      object TabSheet2: TTabSheet
+        Caption = 'Security'
+        ImageIndex = 1
+      end
     end
   end
   object ComboHost: TComboBox
@@ -203,8 +218,8 @@ object FMainVCL: TFMainVCL
   end
   object LMessages: TListBox
     Left = 8
-    Top = 348
-    Width = 469
+    Top = 372
+    Width = 497
     Height = 53
     ItemHeight = 13
     TabOrder = 3

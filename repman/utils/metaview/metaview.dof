@@ -96,7 +96,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=vcl;rtl;vclx;dbrtl;dsnap;bdertl;dbexpress;ibxpress;rppack_del;adortl;visualclx;rppackv_del;rppackvcl_del;indy;vcldb;vcldbx;visualdbclx;rppackdesignvcl_del;rppackdesign_del
-Conditionals=NOLINUXPRINTBUG
+Conditionals=NOLINUXPRINTBUG;FORWEBAX
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
@@ -147,6 +147,9 @@ LegalTrademarks=
 OriginalFilename=metaview
 ProductName=Report Manager Metafile viewer/client
 ProductVersion=1.6.0.0
+[HistoryLists\hlConditionals]
+Count=1
+Item0=NOLINUXPRINTBUG;FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

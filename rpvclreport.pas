@@ -23,7 +23,6 @@ unit rpvclreport;
 
 interface
 
-
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
  rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview,
  rpexceldriver,rptextdriver,rppdfdriver,

@@ -181,9 +181,10 @@ type
     FWideList: TList;
     function GetString(Index: Integer): WideString;
     procedure PutString(Index: Integer; const S: WideString);
+  protected
+    procedure AssignTo(destination:TPersistent);override;
   public
     constructor Create;
-    procedure AssignTo(destination:TPersistent);override;
     destructor Destroy; override;
     procedure Clear;
     function  Count: Integer;
@@ -295,11 +296,12 @@ var
 //  cajpeg:array [0..10] of char=(chr($FF),chr($D8),chr($FF),chr($E0),chr($0),chr($10),'J','F','I','F',chr(0));
  printerconfigfile:TMemInifile;
 
+{$IFNDEF DOTNETD}
 {$IFDEF MSWINDOWS}
 var
  obtainedversion:Boolean;
 {$ENDIF}
-
+{$ENDIF}
 
 {$IFNDEF USEVARIANTS}
 
@@ -738,7 +740,7 @@ begin
      begin
       Inc(index);
       I := 0;
-      while astring[index] in ['0'..'9'] do
+      while Ord(astring[index]) in [Ord('0')..Ord('9')] do
       begin
        I := I * 10 + (Ord(astring[index]) - Ord('0'));
        Inc(index);
@@ -2471,8 +2473,10 @@ end;
 
 initialization
 
+{$IFNDEF DOTNETD}
 {$IFDEF MSWINDOWS}
 obtainedversion:=false;
+{$ENDIF}
 {$ENDIF}
 printerconfigfile:=nil;
 

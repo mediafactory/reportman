@@ -412,6 +412,7 @@ begin
   true,false,true,1,9999999);
 end;
 
+
 initialization
   TActiveXControlFactory.Create(
     ComServer,

@@ -11,8 +11,8 @@ unit Reportman_TLB;
 // manual modifications will be lost.                                         
 // ************************************************************************ //
 
-// PASTLWTR : $Revision: 1.23 $
-// File generated on 10/11/2003 20:12:11 from Type Library described below.
+// PASTLWTR : $Revision: 1.24 $
+// File generated on 11/11/2003 20:03:48 from Type Library described below.
 
 // ************************************************************************ //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
@@ -50,6 +50,8 @@ const
   CLASS_ReportParameters: TGUID = '{F79CF82C-C2AD-46CC-ABEA-084016CFE58A}';
   IID_IReportParam: TGUID = '{F1634F9E-DE5A-411E-9A9E-3A46707A7ABB}';
   CLASS_ReportParam: TGUID = '{E96B253E-143E-40E8-BFDA-366C5F112DAE}';
+  IID_IReportmanXAServer: TGUID = '{F3A6B88C-D629-402E-BC62-BAB0E2EE39AF}';
+  CLASS_ReportmanXAServer: TGUID = '{FD3BE5E5-CBE4-4C29-A733-8CB842999075}';
 
 // *********************************************************************//
 // Declaration of Enumerations defined in Type Library                    
@@ -93,6 +95,8 @@ type
   IReportParametersDisp = dispinterface;
   IReportParam = interface;
   IReportParamDisp = dispinterface;
+  IReportmanXAServer = interface;
+  IReportmanXAServerDisp = dispinterface;
 
 // *********************************************************************//
 // Declaration of CoClasses defined in Type Library                       
@@ -102,6 +106,7 @@ type
   ReportReport = IReportReport;
   ReportParameters = IReportParameters;
   ReportParam = IReportParam;
+  ReportmanXAServer = IReportmanXAServer;
 
 
 // *********************************************************************//
@@ -326,6 +331,26 @@ type
     property Value: OleVariant dispid 5;
   end;
 
+// *********************************************************************//
+// Interface: IReportmanXAServer
+// Flags:     (4416) Dual OleAutomation Dispatchable
+// GUID:      {F3A6B88C-D629-402E-BC62-BAB0E2EE39AF}
+// *********************************************************************//
+  IReportmanXAServer = interface(IDispatch)
+    ['{F3A6B88C-D629-402E-BC62-BAB0E2EE39AF}']
+    procedure GetPDF(const Report: IReportReport; compressed: WordBool); safecall;
+  end;
+
+// *********************************************************************//
+// DispIntf:  IReportmanXAServerDisp
+// Flags:     (4416) Dual OleAutomation Dispatchable
+// GUID:      {F3A6B88C-D629-402E-BC62-BAB0E2EE39AF}
+// *********************************************************************//
+  IReportmanXAServerDisp = dispinterface
+    ['{F3A6B88C-D629-402E-BC62-BAB0E2EE39AF}']
+    procedure GetPDF(const Report: IReportReport; compressed: WordBool); dispid 1;
+  end;
+
 
 // *********************************************************************//
 // OLE Control Proxy class declaration
@@ -439,6 +464,18 @@ type
   CoReportParam = class
     class function Create: IReportParam;
     class function CreateRemote(const MachineName: string): IReportParam;
+  end;
+
+// *********************************************************************//
+// The Class CoReportmanXAServer provides a Create and CreateRemote method to          
+// create instances of the default interface IReportmanXAServer exposed by              
+// the CoClass ReportmanXAServer. The functions are intended to be used by             
+// clients wishing to automate the CoClass objects exposed by the         
+// server of this typelibrary.                                            
+// *********************************************************************//
+  CoReportmanXAServer = class
+    class function Create: IReportmanXAServer;
+    class function CreateRemote(const MachineName: string): IReportmanXAServer;
   end;
 
 procedure Register;
@@ -630,6 +667,16 @@ end;
 class function CoReportParam.CreateRemote(const MachineName: string): IReportParam;
 begin
   Result := CreateRemoteComObject(MachineName, CLASS_ReportParam) as IReportParam;
+end;
+
+class function CoReportmanXAServer.Create: IReportmanXAServer;
+begin
+  Result := CreateComObject(CLASS_ReportmanXAServer) as IReportmanXAServer;
+end;
+
+class function CoReportmanXAServer.CreateRemote(const MachineName: string): IReportmanXAServer;
+begin
+  Result := CreateRemoteComObject(MachineName, CLASS_ReportmanXAServer) as IReportmanXAServer;
 end;
 
 procedure Register;

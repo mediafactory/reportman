@@ -37,8 +37,11 @@ uses Classes,Sysutils,
 {$IFDEF MSWINDOWS}
  Windows,
 {$ENDIF}
+{$IFNDEF FORWEBAX}
+ rpbasereport,rpreport,
+{$ENDIF}
  rptypes,rpmetafile,
- rpmunits,rpbasereport,rpreport,rpmdconsts;
+ rpmunits,rpmdconsts;
 
 const
  DEFAULT_LINESPERINCH=6;
@@ -79,7 +82,9 @@ type
    DrawerBefore,DrawerAfter:Boolean;
    master10,master12,mastercond,masterwide,masterbold,masteritalic,masterunderline:Byte;
    function GetLineIndex(posy:integer):integer;
+{$IFNDEF FORWEBAX}
    procedure RepProgress(Sender:TRpBaseReport;var docancel:boolean);
+{$ENDIF}
    procedure RecalcSize;
    procedure CalculateTextExtent(text:WideString;var Rect:TRect;
     WordBreak:Boolean;singleline:Boolean;fontstep:TRpFontStep);
@@ -137,6 +142,7 @@ procedure SaveMetafileRangeToText(metafile:TRpMetafileReport;
 procedure SaveMetafileRangeToFile(metafile:TRpMetafileReport;
  allpages:boolean;frompage,topage,copies:integer;filename:String);
 
+{$IFNDEF FORWEBAX}
 function PrintReportToText(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
      filename:string;collate:boolean;oemconvert:boolean;forcedrivername:String):Boolean;
@@ -144,7 +150,7 @@ function PrintReportToText(report:TRpReport;Caption:string;progress:boolean;
 function PrintReportToStream(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
      stream:TStream;collate:Boolean;oemconvert:boolean;forcedrivername:string):Boolean;
-
+{$ENDIF}
 
 implementation
 
@@ -553,6 +559,7 @@ begin
 end;
 
 
+{$IFNDEF FORWEBAX}
 procedure TRpTextDriver.RepProgress(Sender:TRpBaseReport;var docancel:boolean);
 begin
 {$IFDEF USEVARIANTS}
@@ -624,7 +631,7 @@ begin
  TextDriver.MemStream.SaveToFile(filename);
  Result:=True;
 end;
-
+{$ENDIF}
 
 procedure TRpTextDriver.WritePageSize;
 var

@@ -36,7 +36,9 @@ uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpmdconsts,
 {$IFDEF USEZLIB}
  rpmzlib,
 {$ENDIF}
+{$IFDEF USERPDATASET}
  rpdataset,
+{$ENDIF}
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
@@ -93,7 +95,7 @@ type
   private
    FReport:TRpBaseReport;
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    varname:string;
   end;
@@ -102,7 +104,7 @@ type
   private
    FReport:TRpBaseReport;
   protected
-   function GeTRpValue:TRpValue;override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -315,6 +317,7 @@ function TIdenReportVar.GeTRpValue:TRpValue;
 var
  subrep:TRpSubReport;
 begin
+ Result:=Null;
  if varname='PAGE' then
   Result:=freport.PageNum+1
  else
@@ -969,8 +972,10 @@ begin
   begin
    if datainfo.Items[i].Cached then
    begin
+{$IFDEF USERPDATASET}
     datainfo.Items[i].CachedDataset.DoClose;
     datainfo.Items[i].CachedDataset.DoOpen;
+{$ENDIF}
    end
    else
     if Not datainfo.Items[i].Dataset.Active then
@@ -1072,9 +1077,11 @@ begin
  index:=FReport.DataInfo.IndexOf(aliasname);
  if index<0 then
   exit;
+{$IFDEF USERPDATASET}
  if FReport.DataInfo.Items[index].Cached then
   dataset:=FReport.DataInfo.Items[index].CachedDataset
  else
+{$ENDIF}
   dataset:=FReport.DataInfo.Items[index].Dataset;
  if Not dataset.Active then
   exit;

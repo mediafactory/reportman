@@ -326,7 +326,12 @@ begin
      avalue.X:=Round(i);
      avalue.Y:=0;
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
+{$IFNDEF DOTNETD}
      TextOut(han,avalue.X,avalue.Y,PChar(IntToStr(Round(i/onethousand))),Length(IntToStr(Round(i/onethousand))));
+{$ENDIF}
+{$IFDEF DOTNETD}
+     TextOut(han,avalue.X,avalue.Y,IntToStr(Round(i/onethousand)),Length(IntToStr(Round(i/onethousand))));
+{$ENDIF}
      avalue.X:=Round(i);
      avalue.Y:=CHeight;
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
@@ -378,7 +383,12 @@ begin
      avalue.X:=0;
      avalue.Y:=Round(i);
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);
+{$IFNDEF DOTNETD}
      TextOut(han,avalue.X,avalue.Y,PChar(IntToStr(Round(i/onethousand))),Length(IntToStr(Round(i/onethousand))));
+{$ENDIF}
+{$IFDEF DOTNETD}
+     TextOut(han,avalue.X,avalue.Y,IntToStr(Round(i/onethousand)),Length(IntToStr(Round(i/onethousand))));
+{$ENDIF}
      avalue.X:=CHEight;
      avalue.Y:=Round(i);
      avalue:=LogicalPointToDevicePoint(origin,destination,avalue);

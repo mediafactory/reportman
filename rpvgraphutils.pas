@@ -90,8 +90,6 @@ function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
 
 implementation
 
-
-
 var
  FPrinters:TStringList;
 
@@ -164,14 +162,18 @@ var
  arec:TRect;
 begin
  abitmap:=TBitmap.Create;
- abitmap.Width:=RecSrc.Right-RecSrc.Left;
- abitmap.Height:=RecSrc.Bottom-RecSrc.Top;
- arec.Top:=0;
- arec.Left:=0;
- arec.Bottom:=abitmap.Height-1;
- arec.Right:=abitmap.Width-1;
- abitmap.Canvas.CopyRect(arec,bitmap.canvas,recsrc);
- Destination.StretchDraw(rec,abitmap);
+ try
+  abitmap.Width:=RecSrc.Right-RecSrc.Left;
+  abitmap.Height:=RecSrc.Bottom-RecSrc.Top;
+  arec.Top:=0;
+  arec.Left:=0;
+  arec.Bottom:=abitmap.Height-1;
+  arec.Right:=abitmap.Width-1;
+  abitmap.Canvas.CopyRect(arec,bitmap.canvas,recsrc);
+  Destination.StretchDraw(rec,abitmap);
+ finally
+  abitmap.free;
+ end;
 end;
 {$ENDIF}
 

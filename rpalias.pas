@@ -21,8 +21,13 @@ unit rpalias;
 
 interface
 
+{$I rpconf.inc}
+
 uses SysUtils,Classes,DB,TypInfo,
-  rptypeval,rpdatainfo;
+{$IFDEF USEREPORTFUNC}
+  rpdatainfo,
+{$ENDIF}
+  rptypeval;
 type
   // Forward definitions
   TRpAliaslist=class;
@@ -37,9 +42,11 @@ type
    private
     Iden:TIdenField;
     FList:TRpAliaslist;
+{$IFDEF USEREPORTFUNC}
     FConnections:TRpDatabaseInfoList;
-    procedure SetList(Newlist:TRpAliaslist);
     procedure SetConnections(Newconn:TRpDatabaseInfoList);
+{$ENDIF}
+    procedure SetList(Newlist:TRpAliaslist);
    protected
     procedure Notification(AComponent:TComponent;Operation:TOperation);override;
    public
@@ -50,7 +57,9 @@ type
     function IndexOf(Dataset:TDataSet):integer;
    published
     property List:TRpAliaslist read FList write SetList;
+{$IFDEF USEREPORTFUNC}
     property Connections:TRpDatabaseInfoList read FConnections write SetConnections;
+{$ENDIF}
    end;
 
 
@@ -211,13 +220,17 @@ begin
  inherited Create(AOWner);
  FList:=TRpAliaslist.Create(Self);
  Iden:=TIdenField.CreateField(Self,'');
+{$IFDEF USEREPORTFUNC}
  FConnections:=TRpDatabaseInfoList.Create(Self);
+{$ENDIF}
 end;
 
 destructor TRpAlias.Destroy;
 begin
  FList.free;
+{$IFDEF USEREPORTFUNC}
  FConnections.free;
+{$ENDIF}
  inherited Destroy;
 end;
 
@@ -226,10 +239,12 @@ begin
  FList.Assign(Newlist);
 end;
 
+{$IFDEF USEREPORTFUNC}
 procedure TRpAlias.SetConnections(Newconn:TRpDatabaseInfoList);
 begin
  FConnections.Assign(Newconn);
 end;
+{$ENDIF}
 
 // Seartching a field in the List
 function TRpAlias.searchfield(aname,datasetname:ShortString;var duplicated:Boolean):TRpIdentifier;

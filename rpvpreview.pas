@@ -287,7 +287,13 @@ begin
  gdidriver:=TRpgdidriver.Create;
  agdidriver:=gdidriver;
  bitmap:=TBitmap.Create;
- bitmap.PixelFormat:=pf32bit;
+ {$IFNDEF DOTNETDBUGS}
+   bitmap.PixelFormat:=pf32bit;
+ {$ENDIF}
+ {$IFDEF DOTNETDBUGS}
+//   bitmap.PixelFormat:=pf24bit;
+//   bitmap.HandleType:=bmDIB;
+ {$ENDIF}
  AImage.Picture.Bitmap:=bitmap;
 
  Caption:=TranslateStr(215,Caption);

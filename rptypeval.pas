@@ -21,11 +21,12 @@ unit rptypeval;
 interface
 
 uses
- SysUtils,Classes,rpmdconsts,rptypes,
+ SysUtils,Classes,rpmdconsts,
 {$IFDEF USEVARIANTS}
  Variants,
 {$ENDIF}
- DB;
+ Db,
+ rptypes;
 
 const
      // Parser datatypes for constants
@@ -74,8 +75,8 @@ type
  TRpIdentifier=class(TComponent)
   protected
    FParamCount:integer;
-   procedure SeTRpValue(Value:TRpValue);virtual;abstract;
-   function GeTRpValue:TRpValue;virtual;abstract;
+   procedure SetRpValue(Value:TRpValue);virtual;abstract;
+   function GetRpValue:TRpValue;virtual;abstract;
   public
    evaluator:TComponent;
    // Identifier type
@@ -98,7 +99,7 @@ type
  // Generic function, all function can inherit from this object
  TIdenFunction=class(TRpIdentifier)
   protected
-   procedure SeTRpValue(Value:TRpValue);override;
+   procedure SetRpValue(Value:TRpValue);override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -107,8 +108,8 @@ type
  TIdenVariable=class(TRpIdentifier)
   protected
    FValue:TRpValue;
-   procedure SeTRpValue(Value:TRpValue);override;
-   function GeTRpValue:TRpValue;override;
+   procedure SetRpValue(Value:TRpValue);override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -117,8 +118,8 @@ type
  TIdenConstant=class(TRpIdentifier)
   protected
    FValue:TRpValue;
-   procedure SeTRpValue(Value:TRpValue);override;
-   function GeTRpValue:TRpValue;override;
+   procedure SetRpValue(Value:TRpValue);override;
+   function GetRpValue:TRpValue;override;
   public
    constructor Create(AOwner:TComponent);override;
   end;
@@ -128,8 +129,8 @@ type
  private
   FField:TField;
  protected
-   function GeTRpValue:TRpValue;override;
-   procedure SeTRpValue(Value:TRpValue);override;
+   function GetRpValue:TRpValue;override;
+   procedure SetRpValue(Value:TRpValue);override;
  public
    constructor Create(AOwner:TComponent);override;
    constructor CreateField(AOWner:TComponent;Nom:string);
@@ -517,7 +518,7 @@ begin
       if TDateTime(Value)<1 then
         Result:=FormatDateTime(LongTimeFormat,TDateTime(Value))
       else
-       if TDateTime(Value)-Trunc(Value)=0 then
+       if TDateTime(Value)-Trunc(double(Value))=0 then
         Result:=FormatDateTime(LongDateFormat,TDateTime(Value))
        else
         Result:=FormatDateTime(LongDateFormat+' '+LongTimeFormat,TDateTime(Value))
@@ -532,7 +533,7 @@ begin
       if TDateTime(Value)<1 then
         Result:=FormatDateTime(ShortTimeFormat,TDateTime(Value))
       else
-       if TDateTime(Value)-Trunc(Value)=0 then
+       if TDateTime(Value)-Trunc(double(Value))=0 then
         Result:=FormatDateTime(ShortDateFormat,TDateTime(Value))
        else
         Result:=FormatDateTime(ShortDateFormat+' '+ShortTimeFormat,TDateTime(Value))

@@ -56,7 +56,7 @@ Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
 [Language]
 ActiveLang=
 ProjectLang=$00000409
-RootDir=C:\prog\toni\cvsroot\reportman\reportman\repman
+RootDir=C:\prog\toni\cvsroot\reportman\reportman\repman\
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=0
@@ -82,3 +82,5 @@ OriginalFilename=repmandxp
 ProductName=Report Manager Designer
 ProductVersion=1.6.0.0
 Comments=
+[Excluded Packages]
+c:\prog\delphi7\Projects\Bpl\rppackb_del.bpl=(untitled)

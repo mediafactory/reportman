@@ -94,7 +94,7 @@ type
     FInitEvent:TEvent;
     EventName:String;
     FHostName:String;
-    LAliases,LUsers:TStringList;
+    LAliases,LUsers,LGroups:TStringList;
     FOnlog:TRpLogMessageEvent;
     FLogFilename:TFilename;
     FLogFile:TFileStream;
@@ -291,6 +291,7 @@ begin
  Clients:=TTHreadList.Create;
  LAliases:=TStringList.Create;
  LUsers:=TStringList.Create;
+ LGroups:=TStringList.Create;
  // Creates the event
  eventname:='REPORTMANRUNNINGEVENT';
  FInitEvent:=TEvent.Create(nil,false,true,eventname);
@@ -341,14 +342,24 @@ begin
  try
   laliases.clear;
   lusers.clear;
+  lgroups.Clear;
   fport:=inif.ReadInteger('CONFIG','TCPPORT',3060);
   inif.ReadSectionValues('USERS',lusers);
+  inif.ReadSectionValues('GROUPS',lgroups);
   inif.ReadSectionValues('ALIASES',laliases);
   i:=0;
   while i<lusers.count do
   begin
    if Length(Trim(lusers.strings[i]))<1 then
     LUsers.delete(i)
+   else
+    inc(i);
+  end;
+  i:=0;
+  while i<lgroups.count do
+  begin
+   if Length(Trim(lgroups.strings[i]))<1 then
+    LGroups.delete(i)
    else
     inc(i);
   end;
@@ -408,6 +419,14 @@ begin
      end;
     end;
    end;
+   inif.EraseSection('GROUPS');
+   for i:=0 to lgroups.Count-1 do
+   begin
+    if Length(lgroups.Strings[i])>0 then
+    begin
+     inif.WriteString('GROUPS',lgroups.Strings[i],lgroups.Values[lgroups.Strings[i]]);
+    end;
+   end;
    inif.EraseSection('ALIASES');
    adups.clear;
    for i:=0 to laliases.Count-1 do
@@ -436,6 +455,7 @@ begin
  Clients.Free;
  LAliases.free;
  LUsers.free;
+ LGroups.free;
  FInitEvent.Free;
  if assigned(FLogFile) then
  begin
@@ -635,7 +655,7 @@ begin
       end;
      repadduser:
       begin
-       // Add a alias (only admin)
+       // Add a user (only admin)
        if ActClient.IsAdmin then
        begin
         alist:=TStringList.Create;
@@ -659,7 +679,7 @@ begin
       end;
      repdeleteuser:
       begin
-       // Add a alias (only admin)
+       // delete user (only admin)
        if ActClient.IsAdmin then
        begin
         alist:=TStringList.Create;
@@ -679,6 +699,55 @@ begin
             // Break user connections?
             //Clients.LockList;
            end;
+          end;
+         end;
+        finally
+         alist.free;
+        end;
+       end;
+      end;
+     repaddgroup:
+      begin
+       // Add a group (only admin)
+       if ActClient.IsAdmin then
+       begin
+        alist:=TStringList.Create;
+        try
+         alist.LoadFromStream(astream);
+         if alist.count>0 then
+         begin
+          groupname:=Trim(UpperCase(AList.Strings[0]));
+          index:=LGroups.IndexOfName(groupname);
+          if index>=0 then
+           LGroups.Delete(index);
+          LGroups.Add(groupname);
+          WriteConfig;
+          InitConfig;
+         end;
+        finally
+         alist.free;
+        end;
+       end;
+      end;
+     repdeletegroup:
+      begin
+       // delete group (only admin)
+       if ActClient.IsAdmin then
+       begin
+        alist:=TStringList.Create;
+        try
+         alist.LoadFromStream(astream);
+         if alist.count>0 then
+         begin
+          groupname:=Trim(Uppercase(AList.Strings[0]));
+          index:=LGroups.IndexOfName(groupname);
+          if index>=0 then
+          begin
+           Groups.Delete(index);
+           WriteConfig;
+           InitConfig;
+           // Break user connections?
+           //Clients.LockList;
           end;
          end;
         finally

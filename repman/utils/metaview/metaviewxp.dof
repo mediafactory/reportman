@@ -96,7 +96,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=vcl;rtl;dbrtl;dsnap;bdertl;dbexpress;ibxpress;rppack_del;adortl;rppackvcl_del;indy;vcldb;rppackdesignvcl_del;visualclx;visualdbclx
-Conditionals=NOLINUXPRINTBUG
+Conditionals=NOLINUXPRINTBUG;FORWEBAX
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
@@ -128,7 +128,7 @@ AutoIncBuild=1
 MajorVer=1
 MinorVer=6
 Release=0
-Build=0
+Build=5
 Debug=0
 PreRelease=0
 Special=0
@@ -139,13 +139,18 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report client and metafile viewer
-FileVersion=1.6.0.0
+FileVersion=1.6.0.5
 InternalName=metaview
 LegalCopyright=MPL/GLP License
 LegalTrademarks=
 OriginalFilename=metaview
 ProductName=Report Manager Metafile viewer/client
 ProductVersion=1.6.0.0
+[Excluded Packages]
+c:\prog\delphi7\Projects\Bpl\rppackb_del.bpl=(untitled)
+[HistoryLists\hlConditionals]
+Count=1
+Item0=NOLINUXPRINTBUG;FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

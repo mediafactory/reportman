@@ -11,7 +11,7 @@ uses
 {$ENDIF}
   rptypes;
 
-type
+type                    
   TReportParam = class(TAutoObject, IReportParam)
   protected
     function Get_Name: WideString; safecall;

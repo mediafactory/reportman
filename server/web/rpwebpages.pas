@@ -34,7 +34,7 @@ type
    Ffilenameconfig:string;
    fport:integer;
    laliases:TStringList;
-   lusers:TStringList;
+   lusers,lgroups:TStringList;
    aresult:TStringList;
    FPagesDirectory:String;
    initreaded:boolean;
@@ -257,6 +257,7 @@ begin
  Owner:=AOwner;
  initreaded:=false;
  lusers:=TStringList.Create;
+ lgroups:=TStringList.Create;
  laliases:=TStringList.Create;
  aresult:=TStringList.Create;
 
@@ -347,6 +348,7 @@ end;
 destructor TRpWebPageLoader.Destroy;
 begin
  lusers.free;
+ lgroups.free;
  laliases.Free;
  aresult.free;
 
@@ -391,16 +393,25 @@ begin
   try
    laliases.clear;
    lusers.clear;
+   lgroups.Clear;
    inif.CaseSensitive:=false;
    FPagesDirectory:=Trim(inif.Readstring('CONFIG','PAGESDIR',''));
    fport:=inif.ReadInteger('CONFIG','TCPPORT',3060);
    inif.ReadSectionValues('USERS',lusers);
    inif.ReadSectionValues('ALIASES',laliases);
+   inif.ReadSectionValues('GROUPS',lgroups);
    i:=0;
    while i<lusers.count do
    begin
     if Length(Trim(lusers.strings[i]))<1 then
      LUsers.delete(i)
+    else
+     inc(i);
+   end;
+   while i<lgroups.count do
+   begin
+    if Length(Trim(lgroups.strings[i]))<1 then
+     LGroups.delete(i)
     else
      inc(i);
    end;
@@ -544,14 +555,13 @@ begin
     // Creates the parameters form
     if Length(FPagesDirectory)<1 then
     begin
-     astring:=loginpage;
+     astring:=paramspage;
     end
     else
     begin
      aresult.LoadFromFile(FPagesDirectory+'rpparams.html');
      astring:=aresult.Text;
     end;
-    astring:=paramspage;
     astring:=StringReplace(astring,REPMAN_WEBSERVER,
      TranslateStr(837,'Report Manager Web Server'),[rfReplaceAll]);
     astring:=StringReplace(astring,REPMAN_PARAMSLABEL,
