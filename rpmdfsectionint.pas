@@ -543,6 +543,11 @@ end;
 
 procedure TRpSectionInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
 begin
+ if pname=SRpSSkipType then
+ begin
+  GetSkipTypePossibleValues(lpossiblevalues);
+  exit;
+ end;
  if pname=SRpChildSubRep then
  begin
   TRpSection(printitem).GetChildSubReportPossibleValues(lpossiblevalues);

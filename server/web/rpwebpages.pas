@@ -444,7 +444,15 @@ var
  alist:TStringList;
  dirpath:String;
 begin
- astring:=showaliaspage;
+ if Length(FPagesDirectory)<1 then
+ begin
+  astring:=showaliaspage;
+ end
+ else
+ begin
+  aresult.LoadFromFile(FPagesDirectory+'rpalias.html');
+  astring:=aresult.Text;
+ end;
  astring:=StringReplace(astring,REPMAN_WEBSERVER,
   TranslateStr(837,'Report Manager Web Server'),[rfReplaceAll]);
  astring:=StringReplace(astring,REPMAN_REPORTS_LABEL,
@@ -512,6 +520,15 @@ begin
    if visibleparam then
    begin
     // Creates the parameters form
+    if Length(FPagesDirectory)<1 then
+    begin
+     astring:=loginpage;
+    end
+    else
+    begin
+     aresult.LoadFromFile(FPagesDirectory+'rpparams.html');
+     astring:=aresult.Text;
+    end;
     astring:=paramspage;
     astring:=StringReplace(astring,REPMAN_WEBSERVER,
      TranslateStr(837,'Report Manager Web Server'),[rfReplaceAll]);

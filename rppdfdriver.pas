@@ -215,7 +215,7 @@ var
  rec:TRect;
  aalign:integer;
  stream:TStream;
- astring:AnsiString;
+ astring:String;
 // bitmap:TBitmap;
 begin
  posx:=obj.Left;
@@ -244,9 +244,6 @@ begin
     rec.Right:=posx+round(obj.Width);
     rec.Bottom:=posy+round(obj.Height);
     astring:=page.GetText(Obj);
-{$IFDEF LINUX}
-//    astring:=;
-{$ENDIF}
     FPDFFile.Canvas.TextRect(rec,astring,aalign,obj.cuttext,
     obj.WordWrap,obj.FontRotation);
    end;
