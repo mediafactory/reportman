@@ -187,7 +187,7 @@ var
 
 implementation
 
-uses rpprintdia,rppdfdriver;
+uses rppdfdriver;
 
 {$R *.dfm}
 

@@ -234,6 +234,7 @@ begin
  finally
   updating:=false;
  end;
+ EDescriptionChange(CheckNull);
 end;
 
 procedure TFRpParamsVCL.EValueExit(Sender: TObject);

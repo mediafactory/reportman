@@ -32,7 +32,7 @@ object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
     DesignSize = (
       557
       129)
-    object Label1: TLabel
+    object LAvailable: TLabel
       Left = 8
       Top = 16
       Width = 43

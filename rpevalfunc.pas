@@ -268,8 +268,7 @@ type
    property OnNewValue:TRpNewValue read FOnNewValue write FOnNewValue;
   end;
 
-
- function Roudfloat(num:double;redondeo:double):double;
+ function Roundfloat(num:double;redondeo:double):double;
 
 
 
@@ -475,7 +474,7 @@ end;
 
 {**************************************************************************}
 
-function Roudfloat(num:double;redondeo:double):double;
+function Roundfloat(num:double;redondeo:double):double;
 var
  provanum,provaredon,quocient:currency;
  intnum,intredon:Comp;
@@ -505,7 +504,7 @@ begin
   provaredon:=provaredon*10;
   escala:=escala*10;
  end;
- // Enters
+ // Integers
  intnum:=int(provanum);
  intredon:=int(provaredon);
  // Mod
@@ -528,7 +527,7 @@ begin
  if (not (VarType(Params[1]) in [varSmallInt..varCurrency])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- Result:=Roudfloat(Extended(Params[0]),Extended(Params[1]));
+ Result:=Roundfloat(Extended(Params[0]),Extended(Params[1]));
 end;
 
 {**************************************************************************}
@@ -920,7 +919,7 @@ begin
  REsult:=Now;
 end;
 
-{ TIdenMes }
+{ TIdenMonthname }
 {**************************************************************************}
 
 constructor TIdenMonthname.Create(AOwner:TComponent);
@@ -1239,6 +1238,7 @@ function TVariableGrap.GetRpValue:TRpValue;
 begin
  Raise Exception.Create(SRpErrorIdenExpression);
 end;
+
 
 
 

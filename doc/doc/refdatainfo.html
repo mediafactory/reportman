@@ -1,0 +1,307 @@
+<html>
+<head>
+<title>Database configuration in a report reference</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Component Reference</h2>
+<h3>Database configuration in report</h3>
+<p><b>Sumary</b></p>
+<table width="90%" border="1">
+  <tr> 
+    <td width="45%">Internal component name</td>
+    <td width="55%">TRpDatabaseInfoList</td>
+  </tr>
+  <tr> 
+    <td width="45%">Parent class</td>
+    <td width="55%">TCollection</td>
+  </tr>
+  <tr> 
+    <td width="45%">CLX/VCLReport property</td>
+    <td width="55%">Report.DatabaseInfo</td>
+  </tr>
+  <tr> 
+    <td width="45%">ActiveX Report property</td>
+    <td width="55%">Available only by ActiveX interface</td>
+  </tr>
+  <tr> 
+    <td width="45%">Unit name</td>
+    <td width="55%">rpdatainfo.pas</td>
+  </tr>
+</table>
+<p><b>Description</b></p>
+<p>This is a collection that describes the properties of each database connection 
+  used in the report. The items of this collection are edited in the designer 
+  in the <b>data configuration dialog</b>. It has the same properties and methods 
+  of standard collections, for example the IndexOf method allow you to locate 
+  the index of a database connection by name.</p>
+<table width="90%" border="1">
+  <tr> 
+    <td width="16%" bgcolor="#FFFFCC"><b>Designer name</b></td>
+    <td width="16%" bgcolor="#FFFFCC"><b>Internal name</b></td>
+    <td width="17%" bgcolor="#FFFFCC"><b>Type</b></td>
+    <td width="51%" bgcolor="#FFFFCC"><b>Description</b></td>
+  </tr>
+  <tr> 
+    <td width="16%"> 
+      <p>Database connections</p>
+      <p>(The connections listbox)</p>
+    </td>
+    <td width="16%">Items[index]</td>
+    <td width="17%"> 
+      <p>TRpDatabaseInfoItem</p>
+    </td>
+    <td width="51%">The properties of this collection items are described bellow</td>
+  </tr>
+</table>
+<p><b>Sumary</b></p>
+<table width="90%" border="1">
+  <tr> 
+    <td width="45%">Internal component name</td>
+    <td width="55%">TRpDatabaseInfoItem</td>
+  </tr>
+  <tr> 
+    <td width="45%">Parent class</td>
+    <td width="55%">TCollectionItem</td>
+  </tr>
+  <tr> 
+    <td width="45%">CLX/VCLReport property</td>
+    <td width="55%">Report.DatabaseInfo.Items[index]</td>
+  </tr>
+  <tr> 
+    <td width="45%">ActiveX Report property</td>
+    <td width="55%">Available only by ActiveX interface</td>
+  </tr>
+  <tr> 
+    <td width="45%">Unit name</td>
+    <td width="55%">rpdatainfo.pas</td>
+  </tr>
+</table>
+<p><b>Description</b></p>
+<p>Each item describes a connection, based on a database connection driver.</p>
+<table width="90%" border="1">
+  <tr> 
+    <td width="16%" bgcolor="#FFFFCC"><b>Designer name</b></td>
+    <td width="16%" bgcolor="#FFFFCC"><b>Internal name</b></td>
+    <td width="17%" bgcolor="#FFFFCC"><b>Type</b></td>
+    <td width="51%" bgcolor="#FFFFCC"><b>Description</b></td>
+  </tr>
+  <tr> 
+    <td width="16%">Con.Name</td>
+    <td width="16%">Alias</td>
+    <td width="17%">String</td>
+    <td width="51%"> 
+      <p>The connection name links to the connection name for each defined dataset, 
+        aditionally the name can be used to obtain data from configuration files 
+        like path to database, user name, password...</p>
+      <p>It depends on the selected driver:</p>
+      <p>DbExpress: DBExpress connection name</p>
+      <p>BDE Driver: The BDE Alias</p>
+      <p>MyBase: No information needed</p>
+      <p>IBX: It will load DBExpress connection settings</p>
+      <p>ADO: The connection string provide all the info about the connection.</p>
+      <p>IBO: It will load DBExpress connection settings</p>
+    </td>
+  </tr>
+</table>
+<p><b>Sumary</b></p>
+<table width="90%" border="1">
+  <tr> 
+    <td width="45%">Internal component name</td>
+    <td width="55%">TRpDataInfoList</td>
+  </tr>
+  <tr> 
+    <td width="45%">Parent class</td>
+    <td width="55%">TCollection</td>
+  </tr>
+  <tr> 
+    <td width="45%">CLX/VCLReport property</td>
+    <td width="55%">Report.DataInfo</td>
+  </tr>
+  <tr>
+    <td width="45%">ActiveX Report property</td>
+    <td width="55%">Available only by ActiveX interface</td>
+  </tr>
+  <tr> 
+    <td width="45%">Unit name</td>
+    <td width="55%">rpdatainfo.pas</td>
+  </tr>
+</table>
+<p><b>Description</b></p>
+<p>This is a collection that describes the properties of each dataset used in 
+  the report. The items of this collection are edited in the designer in the <b>data 
+  configuration dialog</b>. It has the same properties and methos of standard 
+  collections, for example the IndexOf method allow you to locate the index of 
+  a dataset alias by name.</p>
+<table width="90%" border="1">
+  <tr> 
+    <td width="16%" bgcolor="#FFFFCC"><b>Designer name</b></td>
+    <td width="16%" bgcolor="#FFFFCC"><b>Internal name</b></td>
+    <td width="17%" bgcolor="#FFFFCC"><b>Type</b></td>
+    <td width="51%" bgcolor="#FFFFCC"><b>Description</b></td>
+  </tr>
+  <tr> 
+    <td width="16%"> 
+      <p>Datasets</p>
+      <p>(The dataset listbox)</p>
+    </td>
+    <td width="16%">Items[index]</td>
+    <td width="17%"> 
+      <p>TRpDataInfoItem</p>
+    </td>
+    <td width="51%">The properties of this collection items are described bellow</td>
+  </tr>
+</table>
+<p><b>Sumary</b></p>
+<table width="90%" border="1">
+  <tr> 
+    <td width="45%">Internal component name</td>
+    <td width="55%">TRpDataInfoItem</td>
+  </tr>
+  <tr> 
+    <td width="45%">Parent class</td>
+    <td width="55%">TCollectionItem</td>
+  </tr>
+  <tr> 
+    <td width="45%">CLX/VCLReport property</td>
+    <td width="55%">Report.DataInfo.Items[index]</td>
+  </tr>
+  <tr> 
+    <td width="45%">ActiveX Report property</td>
+    <td width="55%">Available only by ActiveX interface</td>
+  </tr>
+  <tr> 
+    <td width="45%">Unit name</td>
+    <td width="55%">rpdatainfo.pas</td>
+  </tr>
+</table>
+<p><b>Description</b></p>
+<p>Each item have properties about opening a dataset, the connection name will 
+  select a database connection from the database connections collection (see below), 
+  the alias name</p>
+<p><b>Properties in Page Setup dialog</b></p>
+<table width="90%" border="1">
+  <tr> 
+    <td width="14%" bgcolor="#FFFFCC"><b>Designer name</b></td>
+    <td width="27%" bgcolor="#FFFFCC"><b>Internal name</b></td>
+    <td width="21%" bgcolor="#FFFFCC"><b>Type</b></td>
+    <td width="38%" bgcolor="#FFFFCC"><b>Description</b></td>
+  </tr>
+  <tr> 
+    <td width="14%">Select Printer</td>
+    <td width="27%">PrinterSelect</td>
+    <td width="21%"> 
+      <p>TRpPrinterSelect</p>
+    </td>
+    <td width="38%">Printer selection before printing, 'Default Printer' will 
+      not select a printer. You can define printers clicking configure, see also 
+      <a href="pagesetup.html">page setup</a>.</td>
+  </tr>
+  <tr> 
+    <td width="14%">Page size</td>
+    <td width="27%">Pagesize</td>
+    <td width="21%"> 
+      <p>TRpPageSize</p>
+    </td>
+    <td width="38%">The Pagesize property can be Default (printer selected default 
+      page size), Custom (you can specify a standard page size) or User defined 
+      (you must enter page width and height), see also <a href="pages">page setup</a> 
+      and <a href="knownissues.html">known issues</a>.</td>
+  </tr>
+  <tr> 
+    <td width="14%">Custom size</td>
+    <td width="27%">PageSizeQt</td>
+    <td width="21%">Integer</td>
+    <td width="38%">This is the page size standard index in the Qt library sequence, 
+      it apply only when Custom page size is selected</td>
+  </tr>
+  <tr> 
+    <td width="14%">Width (Custom Size)</td>
+    <td width="27%">CustomPageWidth</td>
+    <td width="21%"> 
+      <p>Numeric (Designer)</p>
+      <p>TRpTwips (Internally)</p>
+    </td>
+    <td width="38%">Page width, in the designerWidth in logical units (cms or 
+      inchess), internally is in twips, only applicable with user defined page 
+      sizes, see <a href="know">known issues</a>.</td>
+  </tr>
+  <tr> 
+    <td width="14%">Height (Custom Size)</td>
+    <td width="27%">CustomPageHeight</td>
+    <td width="21%"> 
+      <p>Numeric (Designer)</p>
+      <p>TRpTwips (Internally)</p>
+    </td>
+    <td width="38%">Page height, in the designerWidth in logical units (cms or 
+      inchess), internally is in twips, only applicable with user defined page 
+      sizes, see <a href="know">known issues</a>.</td>
+  </tr>
+  <tr> 
+    <td width="14%">Left, Top, Right, Bottom (Page Margins)</td>
+    <td width="27%">LeftMargin, TopMargin, RightMargin, BottomMargin</td>
+    <td width="21%"> 
+      <p>Numeric (Designer)</p>
+      <p>TRpTwips (Internally)</p>
+    </td>
+    <td width="38%">Physical margins, in logical units in the the designer, in 
+      twips internally.</td>
+  </tr>
+  <tr> 
+    <td width="14%">Copies</td>
+    <td width="27%">Copies</td>
+    <td width="21%">Integer</td>
+    <td width="38%">Number of copies to print by default, you can modify this 
+      value in printer setup dialog</td>
+  </tr>
+  <tr> 
+    <td width="14%">Collate copies</td>
+    <td width="27%">CollateCopies</td>
+    <td width="21%">Boolean</td>
+    <td width="38%">If more than one copy, if selected it will print first all 
+      the pages of one copy and then all the pages of next copy</td>
+  </tr>
+  <tr> 
+    <td width="14%">Background Color</td>
+    <td width="27%">PageBackColor</td>
+    <td width="21%">Integer</td>
+    <td width="38%">Background page color (only in preview) it will not print 
+      the physical page with this color</td>
+  </tr>
+  <tr> 
+    <td width="14%">Print only if data available</td>
+    <td width="27%">PrintOnlyIfDataAvailable</td>
+    <td width="21%">Boolean</td>
+    <td width="38%">If there is no data to print, it will show a message (no data 
+      to print) and will print nothing.</td>
+  </tr>
+  <tr>
+    <td width="14%">Two pass report</td>
+    <td width="27%">Twopass</td>
+    <td width="21%">Boolean</td>
+    <td width="38%">Some printing issues need the precalculation of the entire 
+      report before printing the first page, that is for example the use/print 
+      of TOTAL_PAGES variable</td>
+  </tr>
+  <tr> 
+    <td width="14%">Printer Fonts</td>
+    <td width="27%">PrinterFonts</td>
+    <td width="21%">TRpPrinterFontsOption</td>
+    <td width="38%">Here you can force the use of printer fonts (always use) or 
+      left the printers configuration do the selection (default)</td>
+  </tr>
+  <tr> 
+    <td width="14%">Report Language</td>
+    <td width="27%">Language</td>
+    <td width="21%">Integer</td>
+    <td width="38%">Language index, you can select a language, then alter the 
+      text in labels for each language you want to define the report.</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<p><b>Data access configuration</b></p>
+<p>&nbsp;</p>
+<p><b>Parameter definition</b></p>
+</body>
+</html>

@@ -8,78 +8,6 @@
   resources were bound to the produced executable.
 */
 
-#define QConsts_SLine 64816
-#define QConsts_SCut 64817
-#define QConsts_SCopy 64818
-#define QConsts_SPaste 64819
-#define QConsts_SClear 64820
-#define QConsts_SSelectAll 64821
-#define QConsts_SNoAppInLib 64822
-#define QConsts_SDuplicateApp 64823
-#define QConsts_SSize 64832
-#define QConsts_SType 64833
-#define QConsts_SDate 64834
-#define QConsts_SAttributes 64835
-#define QConsts_SDuplicateMenus 64836
-#define QConsts_SImageIndexError 64837
-#define QConsts_SInvalidImageDimensions 64838
-#define QConsts_SInvalidImageDimension 64839
-#define QConsts_SInvalidMimeSourceStream 64840
-#define QConsts_SMimeNotSupportedForIcon 64841
-#define QConsts_SOpen 64842
-#define QConsts_SSave 64843
-#define QConsts_SUnknownImageFormat 64844
-#define QConsts_SUnableToWrite 64845
-#define QConsts_SUndo 64846
-#define QConsts_SRedo 64847
-#define QConsts_SNotAnMDIForm 64848
-#define QConsts_SMDIChildNotVisible 64849
-#define QConsts_SControlParentSetToSelf 64850
-#define QConsts_SOKButton 64851
-#define QConsts_SCancelButton 64852
-#define QConsts_SYesButton 64853
-#define QConsts_SNoButton 64854
-#define QConsts_SHelpButton 64855
-#define QConsts_SCloseButton 64856
-#define QConsts_SIgnoreButton 64857
-#define QConsts_SRetryButton 64858
-#define QConsts_SAbortButton 64859
-#define QConsts_SAllButton 64860
-#define QConsts_SCannotDragForm 64861
-#define QConsts_SUnnamed 64862
-#define QConsts_SName 64863
-#define QConsts_SmkcAlt 64864
-#define QConsts_SInvalidPixelFormat 64865
-#define QConsts_SNoCanvasHandle 64866
-#define QConsts_SInvalidCanvasState 64867
-#define QConsts_SInvalidImageSize 64868
-#define QConsts_SInvalidColorDepth 64869
-#define QConsts_SCannotFocus 64870
-#define QConsts_SParentRequired 64871
-#define QConsts_SVisibleChanged 64872
-#define QConsts_SMenuIndexError 64873
-#define QConsts_SMenuReinserted 64874
-#define QConsts_SNoMenuRecursion 64875
-#define QConsts_SMenuNotFound 64876
-#define QConsts_SMenuSetFormError 64877
-#define QConsts_SGroupIndexTooLow 64878
-#define QConsts_SNoMDIForm 64879
-#define QConsts_SmkcEsc 64880
-#define QConsts_SmkcReturn 64881
-#define QConsts_SmkcEnter 64882
-#define QConsts_SmkcSpace 64883
-#define QConsts_SmkcPgUp 64884
-#define QConsts_SmkcPgDn 64885
-#define QConsts_SmkcEnd 64886
-#define QConsts_SmkcHome 64887
-#define QConsts_SmkcLeft 64888
-#define QConsts_SmkcUp 64889
-#define QConsts_SmkcRight 64890
-#define QConsts_SmkcDown 64891
-#define QConsts_SmkcIns 64892
-#define QConsts_SmkcDel 64893
-#define QConsts_SmkcShift 64894
-#define QConsts_SmkcCtrl 64895
 #define IdResourceStrings_RSSocksServerRespondError 64896
 #define IdResourceStrings_RSSocksAuthMethodError 64897
 #define IdResourceStrings_RSSocksAuthError 64898
@@ -91,11 +19,6 @@
 #define IdResourceStrings_RSSocksServerTTLExpiredError 64904
 #define IdResourceStrings_RSSocksServerCommandError 64905
 #define IdResourceStrings_RSSocksServerAddressError 64906
-#define QConsts_SInvalidCreateWidget 64907
-#define QConsts_STooManyMessageBoxButtons 64908
-#define QConsts_SmkcBkSp 64909
-#define QConsts_SmkcTab 64910
-#define QConsts_SmkcBackTab 64911
 #define IdResourceStrings_RSStackEISCONN 64912
 #define IdResourceStrings_RSStackENOTCONN 64913
 #define IdResourceStrings_RSStackESHUTDOWN 64914
@@ -722,78 +645,6 @@
 #define SysConst_SAccessDenied 65535
 STRINGTABLE
 BEGIN
-	QConsts_SLine,	"-"
-	QConsts_SCut,	"Cut"
-	QConsts_SCopy,	"Copy"
-	QConsts_SPaste,	"Paste"
-	QConsts_SClear,	"Clear"
-	QConsts_SSelectAll,	"Select All"
-	QConsts_SNoAppInLib,	"Fatal error: Cannot create application object in a shared object or library."
-	QConsts_SDuplicateApp,	"Fatal error: Cannot create more than one TApplication instance"
-	QConsts_SSize,	"Size"
-	QConsts_SType,	"Type"
-	QConsts_SDate,	"Date Modified"
-	QConsts_SAttributes,	"Attributes"
-	QConsts_SDuplicateMenus,	"Menu '%s' is already being used by another form"
-	QConsts_SImageIndexError,	"Invalid ImageList Index"
-	QConsts_SInvalidImageDimensions,	"Image width and heigth must match"
-	QConsts_SInvalidImageDimension,	"Invalid image dimension"
-	QConsts_SInvalidMimeSourceStream,	"MimeSource format must have an associated data stream"
-	QConsts_SMimeNotSupportedForIcon,	"Mime format not supported for TIcon"
-	QConsts_SOpen,	"Open"
-	QConsts_SSave,	"Save"
-	QConsts_SUnknownImageFormat,	"Image format not recognized"
-	QConsts_SUnableToWrite,	"Unable to write bitmap"
-	QConsts_SUndo,	"Undo"
-	QConsts_SRedo,	"Redo"
-	QConsts_SNotAnMDIForm,	"Invalid MDIParent for class %s"
-	QConsts_SMDIChildNotVisible,	"Cannot hide an MDI Child Form"
-	QConsts_SControlParentSetToSelf,	"A control cannot have itself as its parent"
-	QConsts_SOKButton,	"OK"
-	QConsts_SCancelButton,	"Cancel"
-	QConsts_SYesButton,	"&Yes"
-	QConsts_SNoButton,	"&No"
-	QConsts_SHelpButton,	"&Help"
-	QConsts_SCloseButton,	"&Close"
-	QConsts_SIgnoreButton,	"&Ignore"
-	QConsts_SRetryButton,	"&Retry"
-	QConsts_SAbortButton,	"Abort"
-	QConsts_SAllButton,	"&All"
-	QConsts_SCannotDragForm,	"Cannot drag a form"
-	QConsts_SUnnamed,	"Unnamed"
-	QConsts_SName,	"Name"
-	QConsts_SmkcAlt,	"Alt+"
-	QConsts_SInvalidPixelFormat,	"Invalid pixel format"
-	QConsts_SNoCanvasHandle,	"Canvas does not allow drawing"
-	QConsts_SInvalidCanvasState,	"Invalid canvas state request"
-	QConsts_SInvalidImageSize,	"Invalid image size"
-	QConsts_SInvalidColorDepth,	"Color depth must be 1, 8 or 32 bpp"
-	QConsts_SCannotFocus,	"Cannot focus a disabled or invisible window (%s)"
-	QConsts_SParentRequired,	"Control '%s' has no parent widget"
-	QConsts_SVisibleChanged,	"Cannot change Visible in OnShow or OnHide"
-	QConsts_SMenuIndexError,	"Menu index out of range"
-	QConsts_SMenuReinserted,	"Menu inserted twice"
-	QConsts_SNoMenuRecursion,	"Menu insertion recursion not allowed"
-	QConsts_SMenuNotFound,	"Sub-menu is not in menu"
-	QConsts_SMenuSetFormError,	"TMenu.SetForm: argument must be TCustomForm"
-	QConsts_SGroupIndexTooLow,	"GroupIndex cannot be less than a previous menu item's GroupIndex"
-	QConsts_SNoMDIForm,	"Cannot create form. No MDI forms are currently active"
-	QConsts_SmkcEsc,	"Esc"
-	QConsts_SmkcReturn,	"Return"
-	QConsts_SmkcEnter,	"Enter"
-	QConsts_SmkcSpace,	"Space"
-	QConsts_SmkcPgUp,	"PgUp"
-	QConsts_SmkcPgDn,	"PgDn"
-	QConsts_SmkcEnd,	"End"
-	QConsts_SmkcHome,	"Home"
-	QConsts_SmkcLeft,	"Left"
-	QConsts_SmkcUp,	"Up"
-	QConsts_SmkcRight,	"Right"
-	QConsts_SmkcDown,	"Down"
-	QConsts_SmkcIns,	"Ins"
-	QConsts_SmkcDel,	"Del"
-	QConsts_SmkcShift,	"Shift+"
-	QConsts_SmkcCtrl,	"Ctrl+"
 	IdResourceStrings_RSSocksServerRespondError,	"Socks server did not respond."
 	IdResourceStrings_RSSocksAuthMethodError,	"Invalid socks authentication method."
 	IdResourceStrings_RSSocksAuthError,	"Authentication error to socks server."
@@ -805,11 +656,6 @@ BEGIN
 	IdResourceStrings_RSSocksServerTTLExpiredError,	"TTL expired."
 	IdResourceStrings_RSSocksServerCommandError,	"Command not supported."
 	IdResourceStrings_RSSocksServerAddressError,	"Address type not supported."
-	QConsts_SInvalidCreateWidget,	"Class %s could not create QT widget"
-	QConsts_STooManyMessageBoxButtons,	"Too many buttons specified for message box"
-	QConsts_SmkcBkSp,	"Backspace"
-	QConsts_SmkcTab,	"Tab"
-	QConsts_SmkcBackTab,	"BackTab"
 	IdResourceStrings_RSStackEISCONN,	"Socket is already connected."
 	IdResourceStrings_RSStackENOTCONN,	"Socket is not connected."
 	IdResourceStrings_RSStackESHUTDOWN,	"Cannot send or receive after socket is closed."

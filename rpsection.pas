@@ -24,7 +24,7 @@ interface
 
 {$I rpconf.inc}
 
-uses Classes,
+uses Classes,rpmzlib,
 {$IFDEF MSWINDOWS}
  windows,
 {$ENDIF}
@@ -57,17 +57,20 @@ type
    FAutoExpand:Boolean;
    FAutoContract:Boolean;
    FHorzDesp:Boolean;
-   FIsExternal:boolean;
+//   FIsExternal:boolean;
    FExternalFilename:string;
    FBeginPageExpression:widestring;
    // deprecated
    FBeginPage:boolean;
+   FReadError:Boolean;
    function GetSectionCaption:String;
    procedure SetComponents(Value:TRpCommonList);
    procedure SetGroupName(Value:string);
    procedure SetChangeExpression(Value:widestring);
+   procedure OnReadError(Reader: TReader; const Message: string; var Handled: Boolean);
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
+   procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
   public
    GroupValue:Variant;
    constructor Create(AOwner:TComponent);override;
@@ -77,6 +80,8 @@ type
    property SectionCaption:String read GetSectionCaption;
    function GetExtension(adriver:IRpPrintDriver):TPoint;override;
    function EvaluateBeginPage:boolean;
+   procedure LoadExternal;
+   procedure SaveExternal;
   published
    property SubReport:TComponent read FSubReport write FSubReport;
    property GroupName:String read FGroupName write SetGroupName;
@@ -94,8 +99,10 @@ type
    property HorzDesp:Boolean read FHorzDesp write FHorzDesp default false;
    property BeginPageExpression:widestring read FBeginPageExpression
     write FBeginPageExpression;
-   property IsExternal:Boolean read FIsExternal
-    write FIsExternal default false;
+//   property IsExternal:Boolean read FIsExternal
+//    write FIsExternal default false;
+   // External filename is a alias.field or if not exists a filename
+   // If it's lenght is 0 it's not external
    property ExternalFilename:string read FExternalFilename write FExternalFilename;
    // Deprecated properties for compatibility only
    property BeginPage:boolean read FBeginpage write FBeginPage default false;
@@ -353,6 +360,146 @@ begin
   currentsize:=minsize;
  Result.Y:=currentsize;
  lastextent:=Result;
+end;
+
+
+procedure TRpSection.SaveExternal;
+var
+ i:integer;
+ acompo:TComponent;
+ AStream:TStream;
+ zstream:TCompressionStream;
+ writer:TWriter;
+begin
+ // Saves the components as a external section
+ if Length(FExternalFilename)<1 then
+  exit;
+ // Looks if it's not external
+ for i:=0 to Components.Count-1 do
+ begin
+  acompo:=Components.Items[i].Component;
+  if assigned(acompo) then
+  begin
+   if (acompo.Owner=Owner) then
+   begin
+    Owner.RemoveComponent(acompo);
+    Self.InsertComponent(acompo);
+   end;
+  end;
+ end;
+ AStream:=TFileStream.Create(FExternalFilename,fmCreate);
+ try
+  zstream:=TCompressionStream.Create(clDefault,AStream);
+  try
+   writer:=TWriter.Create(zStream,4096);
+   try
+    writer.WriteRootComponent(Self);
+   finally
+    writer.free;
+   end;
+  finally
+   zstream.free;
+  end;
+ finally
+  AStream.free;
+ end;
+end;
+
+procedure TRpSection.LoadExternal;
+var
+ i:integer;
+ reader:TReader;
+ AStream:TStream;
+ buf:pointer;
+ zlibs:TDeCompressionStream;
+ readed:integer;
+ memstream:TMemoryStream;
+begin
+ // Try to load the section as an external section
+ if Length(FExternalFilename)<1 then
+  exit;
+ // Free all components
+ for i:=0 to Components.Count-1 do
+ begin
+  if Assigned(Components.Items[i].Component) then
+   Components.Items[i].Component.Free;
+ end;
+ Components.Clear;
+ FReadError:=false;
+ AStream:=TFileStream.Create(FExternalFilename,fmOpenRead or fmShareDenyWrite);
+ try
+  MemStream:=TMemoryStream.Create;
+  try
+   zlibs:=TDeCompressionStream.Create(AStream);
+   try
+    buf:=AllocMem(120000);
+    try
+     repeat
+      readed:=zlibs.Read(buf^,120000);
+      memstream.Write(buf^,readed);
+     until readed<120000;
+    finally
+     freemem(buf);
+    end;
+    memstream.Seek(0,soFrombeginning);
+    reader:=TReader.Create(memstream,1000);
+    try
+     reader.OnError:=OnReadError;
+     reader.ReadRootComponent(Self);
+    finally
+     reader.free;
+    end;
+   finally
+    zlibs.Free;
+   end;
+  finally
+   MemStream.free;
+  end;
+ finally
+  AStream.free;
+ end;
+ if FReadError then
+ begin
+  for i:=0 to ComponentCount-1 do
+  begin
+   inherited Components[i].Free;
+  end;
+  Height:=0;
+  exit;
+ end;
+ for i:=0 to ComponentCount-1 do
+ begin
+  Components.Add.Component:=((inherited Components[i]) As TRpCommonComponent);
+ end;
+end;
+
+procedure TRpSection.OnReadError(Reader: TReader;
+ const Message: string; var Handled: Boolean);
+begin
+ // Omit Messages
+ FReadError:=true;
+end;
+
+// GetChildren helps streaming the subreports
+procedure TRpSection.GetChildren(Proc: TGetChildProc; Root: TComponent);
+var
+  I: Integer;
+  OwnedComponent: TComponent;
+//  rpsubreport:TRpSubReport;
+begin
+ inherited GetChildren(Proc, Root);
+ if Root = Self then
+  for I := 0 to ComponentCount - 1 do
+  begin
+   OwnedComponent := inherited Components[I];
+   if not OwnedComponent.HasParent then
+    Proc(OwnedComponent);
+//   if OwnedComponent is TRpSubReport then
+//   begin
+//    if subreport.
+//      Proc(OwnedComponent);
+//   end;
+  end;
 end;
 
 end.

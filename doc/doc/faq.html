@@ -96,6 +96,11 @@
 <p>Other way to do this is write a driver for Report Manager (now Report<br>
   Manager has three drivers:Qt,PDF,WinGDI), the output of this driver can be<br>
   only text for example, or text with escape codes...</p>
-<p>&nbsp; </p>
+<p><b>Q. Is TeeChart supported?</b></p>
+<p>No, for now, because Teechart has no easy way to vectorize the chart so it 
+  can not be included in metafiles as vectors (scalable), also it's not included 
+  in any version of Kylix.</p>
+<p>You can use the chart provided (it's very simple, only supports lines for now). 
+  To include support for TeeChart is not difficult but can take some work.</p>
 </body>
 </html>

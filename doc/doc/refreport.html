@@ -1,0 +1,196 @@
+<html>
+<head>
+<title>Report reference</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Component Reference</h2>
+<h3>Report</h3>
+<p></p>
+<p><b>Sumary</b></p>
+<table width="90%" border="1">
+  <tr> 
+    <td width="45%">Internal component name</td>
+    <td width="55%">TRpReport</td>
+  </tr>
+  <tr> 
+    <td width="45%">Parent class</td>
+    <td width="55%">TComponent</td>
+  </tr>
+  <tr> 
+    <td width="45%">CLX/VCLReport property</td>
+    <td width="55%">Report</td>
+  </tr>
+  <tr>
+    <td width="45%">ActiveX Report property</td>
+    <td width="55%">Not available</td>
+  </tr>
+  <tr> 
+    <td width="45%">Unit name</td>
+    <td width="55%">rpreport.pas</td>
+  </tr>
+</table>
+<p><b>Description</b></p>
+<p>The report is the top level object, that is coneptually when you open a file 
+  you are reading a report, you can access report properties with <b>page setup 
+  item file menu</b>, the <b>Grid item of Display menu</b>, <b>Dataaccess configuration 
+  </b>and<b> Parameter definition</b> in Report menu.</p>
+<p><b>Published properties</b></p>
+<table width="90%" border="1">
+  <tr> 
+    <td width="16%" bgcolor="#FFFFCC"><b> Property Name</b></td>
+    <td width="17%" bgcolor="#FFFFCC"><b>Type</b></td>
+    <td width="51%" bgcolor="#FFFFCC"><b>Description</b></td>
+  </tr>
+  <tr> 
+    <td width="16%">GridWith</td>
+    <td width="17%"> 
+      <p>TRpTwips</p>
+    </td>
+    <td width="51%">Horizontal grid spacing</td>
+  </tr>
+  <tr> 
+    <td width="16%">GridHeight</td>
+    <td width="17%"> 
+      <p>TRpTwips</p>
+    </td>
+    <td width="51%">Vertical grid spacing</td>
+  </tr>
+  <tr> 
+    <td width="16%">GridEnabled</td>
+    <td width="17%">Boolean</td>
+    <td width="51%">Enables or disables the grid</td>
+  </tr>
+  <tr> 
+    <td width="16%">GridVisible</td>
+    <td width="17%">Boolean</td>
+    <td width="51%">Shows or hides the grid</td>
+  </tr>
+  <tr> 
+    <td width="16%">GridLines</td>
+    <td width="17%">Boolean</td>
+    <td width="51%">Draw the grid as lines or points</td>
+  </tr>
+  <tr> 
+    <td width="16%">GridColor</td>
+    <td width="17%">Integer</td>
+    <td width="51%">Grid color</td>
+  </tr>
+  <tr> 
+    <td width="27%">PrinterSelect</td>
+    <td width="21%"> 
+      <p>TRpPrinterSelect</p>
+    </td>
+    <td width="38%">Printer selection before printing, 'Default Printer' will 
+      not select a printer. You can define printers clicking configure, see also 
+      <a href="pagesetup.html">page setup</a>.</td>
+  </tr>
+  <tr> 
+    <td width="27%">Pagesize</td>
+    <td width="21%"> 
+      <p>TRpPageSize</p>
+    </td>
+    <td width="38%">The Pagesize property can be Default (printer selected default 
+      page size), Custom (you can specify a standard page size) or User defined 
+      (you must enter page width and height), see also <a href="pages">page setup</a> 
+      and <a href="knownissues.html">known issues</a>.</td>
+  </tr>
+  <tr> 
+    <td width="27%">PageSizeQt</td>
+    <td width="21%">Integer</td>
+    <td width="38%">This is the page size standard index in the Qt library sequence, 
+      it apply only when Custom page size is selected</td>
+  </tr>
+  <tr> 
+    <td width="27%">CustomPageWidth</td>
+    <td width="21%"> 
+      <p>TRpTwips</p>
+      </td>
+    <td width="38%">Page width, in the designerWidth in logical units (cms or 
+      inchess), internally is in twips, only applicable with user defined page 
+      sizes, see <a href="know">known issues</a>.</td>
+  </tr>
+  <tr> 
+    <td width="27%">CustomPageHeight</td>
+    <td width="21%"> 
+      <p>TRpTwips</p>
+      </td>
+    <td width="38%">Page height, in the designerWidth in logical units (cms or 
+      inchess), internally is in twips, only applicable with user defined page 
+      sizes, see <a href="know">known issues</a>.</td>
+  </tr>
+  <tr> 
+    <td width="27%">LeftMargin, TopMargin, RightMargin, BottomMargin</td>
+    <td width="21%"> 
+      <p>TRpTwips</p>
+      </td>
+    <td width="38%">Physical margins</td>
+  </tr>
+  <tr> 
+    <td width="27%">Copies</td>
+    <td width="21%">Integer</td>
+    <td width="38%">Number of copies to print by default, you can modify this 
+      value in printer setup dialog</td>
+  </tr>
+  <tr> 
+    <td width="27%">CollateCopies</td>
+    <td width="21%">Boolean</td>
+    <td width="38%">If more than one copy, if selected it will print first all 
+      the pages of one copy and then all the pages of next copy</td>
+  </tr>
+  <tr> 
+    <td width="27%">PageBackColor</td>
+    <td width="21%">Integer</td>
+    <td width="38%">Background page color (only in preview) it will not print 
+      the physical page with this color</td>
+  </tr>
+  <tr> 
+    <td width="27%">PrintOnlyIfDataAvailable</td>
+    <td width="21%">Boolean</td>
+    <td width="38%">If there is no data to print, it will show a message (no data 
+      to print) and will print nothing.</td>
+  </tr>
+  <tr> 
+    <td width="27%">Twopass</td>
+    <td width="21%">Boolean</td>
+    <td width="38%">Some printing issues need the precalculation of the entire 
+      report before printing the first page, that is for example the use/print 
+      of TOTAL_PAGES variable</td>
+  </tr>
+  <tr> 
+    <td width="27%">PrinterFonts</td>
+    <td width="21%">TRpPrinterFontsOption</td>
+    <td width="38%">Here you can force the use of printer fonts (always use) or 
+      left the printers configuration do the selection (default)</td>
+  </tr>
+  <tr> 
+    <td width="27%">Language</td>
+    <td width="21%">Integer</td>
+    <td width="38%">Language index, you can select a language, then alter the 
+      text in labels for each language you want to define the report.</td>
+  </tr>
+  <tr> 
+    <td width="16%">DataInfo</td>
+    <td width="17%">TRpDataInfoList</td>
+    <td width="51%">Colletion of datasets definitions, see <a href="refdatainfo.html">Database 
+      configuration reference </a></td>
+  </tr>
+  <tr> 
+    <td width="16%">DatabaseInfo</td>
+    <td width="17%">TRpDatabaseInfoList</td>
+    <td width="51%">Collection of connection definitions, see <a href="refdatainfo.html">Database 
+      configuration reference</a></td>
+  </tr>
+  <tr>
+    <td width="16%">Params</td>
+    <td width="17%">TRpParamList</td>
+    <td width="51%">
+      <p>Collection of report parameters, see <a href="refparameters.html">Report 
+        Parameters reference</a></p>
+      </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+</body>
+</html>

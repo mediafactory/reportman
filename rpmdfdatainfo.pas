@@ -39,7 +39,7 @@ type
     LConnections: TListBox;
     BAddCon: TButton;
     BDeletecon: TButton;
-    Label1: TLabel;
+    LAvailable: TLabel;
     ComboAvailable: TComboBox;
     BConfig: TButton;
     CheckLoginPrompt: TCheckBox;
@@ -742,6 +742,7 @@ begin
   rpdatadbexpress:
    begin
     LConnectionString.Visible:=False;
+    LAvailable.Visible:=True;
     EConnectionString.Visible:=False;
     BConfig.Visible:=true;
     ComboAvailable.Visible:=true;
@@ -754,6 +755,7 @@ begin
   rpdataibx,rpdataibo:
    begin
     LConnectionString.Visible:=False;
+    LAvailable.Visible:=True;
     EConnectionString.Visible:=False;
     BConfig.Visible:=true;
     ComboAvailable.Visible:=true;
@@ -766,6 +768,7 @@ begin
   rpdatamybase:
    begin
     LConnectionString.Visible:=False;
+    LAvailable.Visible:=False;
     EConnectionString.Visible:=False;
     BConfig.Visible:=false;
     ComboAvailable.Visible:=false;
@@ -776,6 +779,7 @@ begin
    begin
 {$IFDEF USEBDE}
     LConnectionString.Visible:=False;
+    LAvailable.Visible:=True;
     EConnectionString.Visible:=False;
     BConfig.Visible:=false;
     Session.GetAliasNames(ComboAvailable.Items);
@@ -787,6 +791,7 @@ begin
    begin
 {$IFDEF MSWINDOWS}
     LConnectionString.Visible:=True;
+    LAvailable.Visible:=False;
     EConnectionString.Visible:=True;
     BConfig.Visible:=true;
     ComboAvailable.Visible:=false;

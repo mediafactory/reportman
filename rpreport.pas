@@ -433,6 +433,9 @@ begin
   for j:=0 to Subrep.Sections.Count-1 do
   begin
    sec:=SubRep.Sections.Items[j].Section;
+   // If it's a external section try to load it
+   sec.LoadExternal;
+
    for k:=0 to sec.Components.Count-1 do
    begin
     comp:=sec.Components.items[k].Component;
@@ -1208,6 +1211,8 @@ begin
  if not dataavail then
   Raise Exception.Create(SRpNoDataAvailableToPrint);
 end;
+
+
 
 procedure TRpReport.BeginPrint(Driver:IRpPrintDriver);
 var

@@ -25,7 +25,7 @@ interface
 uses
   SysUtils, Types, Classes, Variants, Graphics, Controls, Forms,
   Dialogs, rptranslator, StdCtrls, ExtCtrls,rpmdrepclient,
-  rpmdconsts, ActnList, ImgList, ComCtrls,rpvgraphutils,rpparams,
+  rpmdconsts, ActnList, ImgList, ComCtrls,rpparams,rpvgraphutils,
   rprfvparams, ToolWin;
 
 type

@@ -1555,8 +1555,9 @@ begin
  LibraryName:=drivers.ReadString(DriverName,DLLLIB_KEY,'');
  VendorLib:=drivers.ReadString(DriverName,VENDORLIB_KEY,'');
 end;
-
 {$ENDIF}
+
+
 
 initialization
 
@@ -1573,6 +1574,7 @@ begin
  ConAdmin:=nil;
 end;
 {$ENDIF}
+
 
 end.
 

@@ -104,24 +104,24 @@ object FRpMainFVCL: TFRpMainFVCL
       ImageIndex = 7
       Style = tbsSeparator
     end
-    object BLabel: TToolButton
-      Left = 200
-      Top = 0
-      Hint = 'Inserts a static text'
-      Caption = 'BLabel'
-      Enabled = False
-      Grouped = True
-      ImageIndex = 9
-      Style = tbsCheck
-    end
     object BArrow: TToolButton
-      Left = 226
+      Left = 200
       Top = 0
       Hint = 'Select objects'
       Caption = 'BArrow'
       Enabled = False
       Grouped = True
       ImageIndex = 8
+      Style = tbsCheck
+    end
+    object BLabel: TToolButton
+      Left = 226
+      Top = 0
+      Hint = 'Inserts a static text'
+      Caption = 'BLabel'
+      Enabled = False
+      Grouped = True
+      ImageIndex = 9
       Style = tbsCheck
     end
     object BExpression: TToolButton
@@ -133,6 +133,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Grouped = True
       ImageIndex = 10
       Style = tbsCheck
+      OnMouseUp = BExpressionMouseUp
     end
     object BShape: TToolButton
       Left = 278

@@ -534,6 +534,9 @@ var
   SRpServiceStopped:WideString='Stopped';
   SRpServiceStarted:WideString='Started';
   SRpServiceUnInstalled:WideString='Not Installed';
+  SRpSExternalpath:WideString='External path';
+  SRpGetFieldValue:WideString='Executes a query and returns the first field value';
+  SRpPGetFieldValue:WideString='connname is the connection name, query is the sql query to execute';
 
 implementation
 
@@ -1062,6 +1065,9 @@ begin
  TranslateVar(822,SRpServiceUnInstalled);
  TranslateVar(823,SRpServiceStopped);
  TranslateVar(824,SRpServiceStarted);
+ TranslateVar(830,SRpSExternalpath);
+ TranslateVar(831,SRpGetFieldValue);
+ TranslateVar(832,SRpPGetFieldValue);
 end;
 
 

@@ -21,7 +21,7 @@ unit unewuservcl;
 interface
 
 uses SysUtils, Classes, Graphics, Forms,
-  Buttons, ExtCtrls, Controls, StdCtrls,rpgraphutils,rpmdconsts;
+  Buttons, ExtCtrls, Controls, StdCtrls,rpmdconsts;
 
 type
   TFNewUserVCL = class(TForm)

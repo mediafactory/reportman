@@ -132,14 +132,15 @@ type
 
 implementation
 
-uses rpreport;
+uses rpreport,rpsection;
 
 constructor TRpCommonComponent.Create(AOwner:TComponent);
 begin
  // The owner must be a report
  if Assigned(AOwner) then
   if (Not (AOwner is TRpReport)) then
-   Raise Exception.Create(SRpOnlyAReportOwner+classname);
+   if (Not (AOwner is TRpSection)) then
+    Raise Exception.Create(SRpOnlyAReportOwner+classname);
 
  inherited Create(AOwner);
  FHeight:=0;

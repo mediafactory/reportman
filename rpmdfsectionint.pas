@@ -275,6 +275,11 @@ begin
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).HorzDesp,true));
  end;
+ // External section
+// lnames.Add(SRpSExternalPath);
+// ltypes.Add(SRpSString);
+// if Assigned(lvalues) then
+//  lvalues.Add(TRpSection(printitem).ExternalFilename);
 end;
 
 procedure TRpSectionInterface.SetProperty(pname:string;value:Widestring);
@@ -337,6 +342,12 @@ begin
    exit;
   end;
  end;
+ if pname=SRpSExternalPath then
+ begin
+  TRpSection(fprintitem).ExternalFilename:=Trim(Value);
+  exit;
+ end;
+
  inherited SetProperty(pname,value);
 end;
 
@@ -398,6 +409,12 @@ begin
    exit;
   end;
  end;
+ if pname=SRpSExternalPath then
+ begin
+  Result:=TRpSection(fprintitem).ExternalFileName;
+  exit;
+ end;
+
  Result:=inherited GetProperty(pname);
 end;
 
