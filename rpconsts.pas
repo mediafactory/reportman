@@ -28,7 +28,7 @@ resourcestring
   SRpSpanish='Spanish';
   SRpCatalan='Catalan';
 
- SRpInvalidClipboardFormat='Invalid clipboard format';
+  SRpInvalidClipboardFormat='Invalid clipboard format';
 
   SRpSampleTextToLabels='Text';
   SRpOnlyAReportOwner='Only a report can be the owner of :';
@@ -317,6 +317,7 @@ resourcestring
   SrpSTransparent='Transparent';
   SRpSBool='Boolean';
   SrpSText='Text';
+  SrpSExpression='Expression';
 
   SRpBringToFront='To Front';
   SRpSendToBack='To Back';

@@ -199,7 +199,9 @@ procedure TRpSectionInterface.MouseDown(Button: TMouseButton; Shift: TShiftState
       X, Y: Integer);
 var
  labelint:TRpLabelInterface;
+ expreint:TRpExpressionInterface;
  alabel:TRpLabel;
+ aexpre:TRpExpression;
  aitem:TRpCommonListItem;
 begin
  inherited MouseDown(Button,Shift,X,Y);
@@ -232,22 +234,52 @@ begin
   if (Not (SSShift in Shift)) then
    fmainf.BArrow.Down:=true;
  end;
+
+ if fmainf.BExpression.Down then
+ begin
+  aexpre:=TRpExpression.Create(printitem.Owner);
+  aexpre.PosX:=pixelstotwips(X);
+  aexpre.PosY:=pixelstotwips(Y);
+  aexpre.Expression:='2+2';
+  GenerateNewName(aexpre);
+  aitem:=TRpSection(printitem).Components.Add;
+  aitem.Component:=aexpre;
+  expreint:=TRpExpressionInterface.Create(Self,aexpre);
+  expreint.Parent:=parent;
+  expreint.sectionint:=self;
+  expreint.UpdatePos;
+  expreint.fobjinsp:=fobjinsp;
+  TFObjInsp(fobjinsp).CompItem:=expreint;
+
+  childlist.Add(expreint);
+  if (Not (SSShift in Shift)) then
+   fmainf.BArrow.Down:=true;
+ end;
+
 end;
 
 procedure TRpSectionInterface.CreateChilds;
 var
  sec:TRpSection;
  i:integer;
- compo:TRpCommonComponent;
- labelint:TRpLabelInterface;
+ compo:TRpCommonPosComponent;
+ labelint:TRpSizePosInterface;
 begin
  sec:=TRpSection(printitem);
  for i:=0 to sec.Components.Count-1 do
  begin
-  compo:=sec.Components.Items[i].Component;
+  compo:=TRpCommonPosComponent(sec.Components.Items[i].Component);
+  labelint:=nil;
   if compo is TRpLabel then
   begin
    labelint:=TRpLabelInterface.Create(Self,compo);
+  end;
+  if compo is TRpExpression then
+  begin
+   labelint:=TRpExpressionInterface.Create(Self,compo);
+  end;
+  if Assigned(labelint) then
+  begin
    labelint.Parent:=parent;
    labelint.UpdatePos;
    labelint.fobjinsp:=fobjinsp;

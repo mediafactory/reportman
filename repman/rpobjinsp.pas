@@ -23,7 +23,8 @@ interface
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   rpobinsint,QGrids,rpconsts,rpprintitem,QStdCtrls,
-  QExtCtrls,rpgraphutils,rpsection,rpmunits;
+  QExtCtrls,rpgraphutils,rpsection,rpmunits, rpexpredlg,
+  rpalias,rpreport;
 
 const
   CONS_LEFTGAP=3;
@@ -31,10 +32,13 @@ const
   CONS_LABELTOPGAP=2;
   CONS_RIGHTBARGAP=25;
   CONS_BUTTONWIDTH=15;
+  CONS_MINWIDTH=130;
 type
   TFObjInsp = class(TFrame)
     ColorDialog1: TColorDialog;
     FontDialog1: TFontDialog;
+    RpAlias1: TRpAlias;
+    RpExpreDialog1: TRpExpreDialog;
   private
     { Private declarations }
     dontfreecombo:Boolean;
@@ -55,6 +59,7 @@ type
     procedure ShapeMouseUp(Sender: TObject; Button: TMouseButton;
      Shift: TShiftState; X, Y: Integer);
     procedure FontClick(Sender:TObject);
+    procedure ExpressionClick(Sender:TObject);
   public
     { Public declarations }
     LLabels:TList;
@@ -120,7 +125,11 @@ var
  sectionint:TRpSectionInterface;
  compo:TComponent;
  dontrelease:boolean;
+ totalwidth:integer;
 begin
+ totalwidth:=WIdth;
+ if totalwidth<CONS_MINWIDTH then
+  totalwidth:=CONS_MINWIDTH;
  aheight:=0;
  dontrelease:=false;
  if Assigned(FCompItem) then
@@ -176,7 +185,7 @@ begin
     alist.AddObject(compo.Name+':'+Compo.className,sectionint.childlist.Items[i]);
    end;
    Combo:=TComboBox.Create(Self);
-   Combo.Width:=Width-CONS_RIGHTBARGAP;
+   Combo.Width:=TotalWidth-CONS_RIGHTBARGAP;
    Combo.Style:=csDropDownList;
    Combo.Items.Assign(alist);
    Combo.Name:='TopCombobox';
@@ -260,7 +269,7 @@ begin
   begin
    Control.Top:=Posy;
    Control.Left:=CONS_CONTROLPOS;
-   Control.Width:=Self.Width-Control.Left-CONS_RIGHTBARGAP;
+   Control.Width:=TotalWidth-Control.Left-CONS_RIGHTBARGAP;
    control.parent:=self;
   end;
   if aheight=0 then
@@ -287,6 +296,19 @@ begin
     Control2.Parent:=Self;
     LControlsToFree.Add(Control2);
    end;
+   if (LNames.Strings[i]=SRpSExpression) then
+   begin
+    Control2:=TButton.Create(Self);
+    Control2.Width:=CONS_BUTTONWIDTH;
+    Control2.Top:=Control.Top;
+    Control2.Left:=Control.Left+Control.Width-CONS_BUTTONWIDTH;
+    Control2.Height:=COntrol.Height;
+    Control2.Tag:=i;
+    TButton(Control2).OnClick:=ExpressionClick;
+    TButton(Control2).Caption:='...';
+    Control2.Parent:=Self;
+    LControlsToFree.Add(Control2);
+   end;
   end;
 
   posy:=posy+control.height;
@@ -300,7 +322,7 @@ begin
    Control.Left:=0;
    Control.Top:=posy;
    Control.Height:=aheight;
-   Control.Width:=(Width-CONS_RIGHTBARGAP) div 2;
+   Control.Width:=(TotalWidth-CONS_RIGHTBARGAP) div 2;
    TBUtton(Control).Caption:=SRpSendToBack;
    TButton(Control).OnClick:=SendToBackClick;
    Control.parent:=Self;
@@ -310,7 +332,7 @@ begin
    Control2.Left:=Control.Width;
    Control2.Top:=posy;
    Control2.Height:=aheight;
-   Control2.Width:=(Width-CONS_RIGHTBARGAP) div 2;
+   Control2.Width:=(TotalWidth-CONS_RIGHTBARGAP) div 2;
    Control2.parent:=Self;
    TButton(Control2).OnClick:=BringToFrontClick;
    TBUtton(Control2).Caption:=SRpBringToFront;
@@ -515,6 +537,36 @@ begin
  section.Components.Delete(index);
  item:=section.Components.Add;
  item.Component:=pitem;
+end;
+
+
+
+procedure TFObjInsp.ExpressionClick(Sender:TObject);
+var
+ report:TRpReport;
+ i:integer;
+ item:TRpAliaslistItem;
+begin
+ report:=fmainf.report;
+ try
+  report.ActivateDatasets;
+ except
+  on E:Exception do
+  begin
+   ShowMessage(E.Message);
+  end;
+ end;
+
+ RpAlias1.List.Clear;
+ for i:=0 to report.DataInfo.Count-1 do
+ begin
+  item:=RpAlias1.List.Add;
+  item.Alias:=report.DataInfo.Items[i].Alias;
+  item.Dataset:=report.DataInfo.Items[i].Dataset;
+ end;
+ RpExpreDialog1.Expresion.Text:=TEdit(LControls.Objects[TButton(Sender).Tag]).Text;
+ if RpExpreDialog1.Execute then
+  TEdit(LControls.Objects[TButton(Sender).Tag]).Text:=Trim(RpExpreDialog1.Expresion.Text);
 end;
 
 end.

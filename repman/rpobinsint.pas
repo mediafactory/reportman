@@ -485,6 +485,10 @@ begin
     NewLeft:=Parent.Width-Width;
    if NewTop+Height>Parent.Height then
     NewTop:=Parent.Height-Height;
+   if NewLeft<0 then
+    NewLeft:=0;
+   if NewTop<0 then
+    NewTop:=0;
    FRectangle.SetBounds(Newleft,NewTop,Width,1);
    FRectangle2.SetBounds(Newleft,NewTop+Height,Width,1);
    FRectangle3.SetBounds(Newleft,NewTop,1,Height);

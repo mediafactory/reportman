@@ -93,7 +93,7 @@ type
     ToolButton9: TToolButton;
     BLabel: TToolButton;
     BArrow: TToolButton;
-    BText: TToolButton;
+    BExpression: TToolButton;
     BDraw: TToolButton;
     BImage: TToolButton;
     BChart: TToolButton;
@@ -133,9 +133,9 @@ type
     procedure ACutExecute(Sender: TObject);
     procedure ACopyExecute(Sender: TObject);
     procedure APasteExecute(Sender: TObject);
+    procedure Splitter1Moved(Sender: TObject);
   private
     { Private declarations }
-    report:TRpReport;
     fdesignframe:TFDesignFrame;
     fobjinsp:TFObjInsp;
     lastsaved:TMemoryStream;
@@ -153,6 +153,7 @@ type
     procedure DoOpen(newfilename:string;showopendialog:boolean);
   public
     { Public declarations }
+    report:TRpReport;
     filename:string;
   end;
 
@@ -306,13 +307,13 @@ begin
  // Palette
  BArrow.Enabled:=false;
  BLabel.Enabled:=false;
- BText.Enabled:=false;
+ BExpression.Enabled:=false;
  BDraw.Enabled:=false;
  BImage.Enabled:=false;
  BChart.Enabled:=false;
  BArrow.Down:=false;
  BLabel.Down:=false;
- BText.Down:=false;
+ BExpression.Down:=false;
  BDraw.Down:=false;
  BImage.Down:=false;
  BChart.Down:=false;
@@ -354,7 +355,7 @@ begin
  // Palette
  BArrow.Enabled:=true;
  BLabel.Enabled:=true;
- BText.Enabled:=true;
+ BExpression.Enabled:=true;
  BDraw.Enabled:=true;
  BImage.Enabled:=true;
  BChart.Enabled:=true;
@@ -688,6 +689,16 @@ begin
  begin
   Raise Exception.Create(SRpInvalidClipboardFormat);
  end;
+end;
+
+procedure TFMainf.Splitter1Moved(Sender: TObject);
+var
+ olditem:TRpSizeInterface;
+begin
+ // Assigns then objinsp
+ olditem:=fobjinsp.CompItem;
+ fobjinsp.CompItem:=nil;
+ fobjinsp.CompItem:=olditem;
 end;
 
 initialization

@@ -21,4 +21,14 @@ object FObjInsp: TFObjInsp
     Left = 228
     Top = 60
   end
+  object RpAlias1: TRpAlias
+    List = <>
+    Left = 296
+    Top = 92
+  end
+  object RpExpreDialog1: TRpExpreDialog
+    Rpalias = RpAlias1
+    Left = 256
+    Top = 92
+  end
 end

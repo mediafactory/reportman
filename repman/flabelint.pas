@@ -19,6 +19,16 @@ type
    function GetProperty(pname:string):string;override;
  end;
 
+ TRpExpressionInterface=class(TRpGenTextInterface)
+  private
+  protected
+   procedure Paint;override;
+  public
+   constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
+   procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
+   procedure SetProperty(pname:string;value:string);override;
+   function GetProperty(pname:string):string;override;
+ end;
 
 
 
@@ -103,5 +113,73 @@ begin
 
  Canvas.TextOut(0,0,alabel.Text);
 end;
+
+
+constructor TRpExpressionInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
+begin
+ if Not (pritem is TRpExpression) then
+  Raise Exception.Create(SRpIncorrectComponentForInterface);
+ inherited Create(AOwner,pritem);
+end;
+
+procedure TRpExpressionInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+begin
+ inherited GetProperties(lnames,ltypes,lvalues);
+ // Text
+ lnames.Add(SrpSExpression);
+ ltypes.Add(SRpSString);
+ lvalues.Add(TRpExpression(printitem).Expression);
+end;
+
+procedure TRpExpressionInterface.SetProperty(pname:string;value:string);
+begin
+ if length(value)<1 then
+  exit;
+ if pname=SRpSExpression then
+ begin
+  TRpExpression(fprintitem).Expression:=value;
+  invalidate;
+  exit;
+ end;
+ inherited SetProperty(pname,value);
+end;
+
+function TRpExpressionInterface.GetProperty(pname:string):string;
+begin
+ Result:='';
+ if pname=SrpSExpression then
+ begin
+  Result:=TRpExpression(printitem).Expression;
+  exit;
+ end;
+ Result:=inherited GetProperty(pname);
+end;
+
+
+procedure TRpExpressionInterface.Paint;
+var
+ aexp:TRpExpression;
+begin
+ aexp:=TRpExpression(printitem);
+ Canvas.Pen.Color:=clBlack;
+ Canvas.Pen.Style:=psDashDot;
+ if aexp.transparent then
+  Canvas.Brush.Style:=bsClear
+ else
+ begin
+  Canvas.Brush.Style:=bsSolid;
+  Canvas.Brush.Color:=aexp.BackColor;
+ end;
+ Canvas.Rectangle(0,0,Width,Height);
+
+ // Draws the text
+ Canvas.Font.Name:=aexp.FontName;
+ Canvas.Font.Color:=aexp.FontColor;
+ Canvas.Font.Size:=aexp.FontSize;
+ Canvas.Font.Style:=IntegerToFontStyle(aexp.FontStyle);
+
+ Canvas.TextOut(0,0,aexp.Expression);
+end;
+
 
 end.

@@ -33,10 +33,19 @@ type
   public
    constructor Create(AOwner:TComponent);override;
    property Text:widestring read GetText write SetText;
+   destructor Destroy;override;
   published
    property AllText:TStrings read FAllText write SetAllText;
   end;
 
+ TRpExpression=class(TRpGenTextComponent)
+  private
+   FExpression:widestring;
+  public
+   constructor Create(AOwner:TComponent);override;
+  published
+   property Expression:widestring read FExpression write FExpression;
+  end;
 
 implementation
 
@@ -49,6 +58,12 @@ begin
  Height:=275;
  Width:=1440;
  FAllText:=TStringList.Create;
+end;
+
+destructor TRpLabel.Destroy;
+begin
+ FAllText.free;
+ inherited destroy;
 end;
 
 procedure TRpLabel.SetText(Value:WideString);
@@ -77,6 +92,13 @@ end;
 procedure TRpLabel.SetAllText(Value:TStrings);
 begin
  FAllTExt.Assign(Value);
+end;
+
+constructor TRpExpression.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ Height:=275;
+ Width:=1440;
 end;
 
 end.

@@ -107,6 +107,7 @@ type
    procedure Createnew;
    // Print functions
    procedure PrintAll;
+   procedure ActivateDatasets;
   published
    // Grid options
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
@@ -441,6 +442,24 @@ begin
  FParams.Assign(Value);
 end;
 
+procedure TRpReport.ActivateDatasets;
+var
+ i:integer;
+begin
+ try
+  for i:=0 to FDataInfo.Count-1 do
+  begin
+   FDataInfo.Items[i].Connect(DatabaseInfo,Params);
+  end;
+ except
+  for i:=0 to FDataInfo.Count-1 do
+  begin
+   FDataInfo.Items[i].Disconnect;
+  end;
+  Raise;
+ end;
+end;
+
 
 procedure TRpReport.PrintAll;
 begin
@@ -455,5 +474,6 @@ initialization
  RegisterClass(TRpSubReport);
  RegisterClass(TRpCommonComponent);
  RegisterClass(TRpLabel);
+ RegisterClass(TRpExpression);
 
 end.

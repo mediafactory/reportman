@@ -132,11 +132,8 @@ end;
 
 function PaintRuler(metrics:TRprulermetric;RType:TRpRulerType;Color:TColor;Width,Height:integer):QGraphics.TBitmap;
 var rect,rectrefresh:TRect;
-    Oldmapmode:Integer;
     scale:double;
     i,value,Clength,CHeight:integer;
-    punts:array[0..2] of TPoint;
-    punts2:array[0..0] of TPoint;
     bitmap:QGraphics.TBitmap;
     pixelsperinchx,pixelsperinchy:Integer;
     pixelspercmsx:extended;
