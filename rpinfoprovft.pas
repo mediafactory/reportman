@@ -610,7 +610,7 @@ begin
    data.lastloaded:=aint;
   Result:=awidth;
   // Get glyph index
-  data.loadedglyphs[aint]:=FT_Get_Char_Index(currentfont.ftface,Cardinal(charcode));
+  data.loadedglyphs[aint]:=WideChar(FT_Get_Char_Index(currentfont.ftface,Cardinal(charcode)));
   data.loadedg[aint]:=true;
  end;
 end;
