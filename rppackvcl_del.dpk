@@ -32,13 +32,8 @@ package rppackvcl_del;
 requires
   rtl,
   vcl,
-  dsnap,
   dbrtl,
-  rppack_del,
-  adortl,
-  dbexpress,
-  bdertl,
-  ibxpress;
+  rppack_del;
 
 {%File 'rpconf.inc'}
 
