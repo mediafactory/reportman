@@ -361,8 +361,8 @@ end;
 
 function TrpQtDriver.GetPageSize:TPoint;
 begin
- Result.x:=Round((Printer.PageWidth/251)*TWIPS_PER_INCHESS);
- Result.y:=Round((Printer.PageHeight/251)*TWIPS_PER_INCHESS);
+ Result.x:=Round((Printer.PageWidth/Printer.XDPI)*TWIPS_PER_INCHESS);
+ Result.y:=Round((Printer.PageHeight/Printer.YDPI)*TWIPS_PER_INCHESS);
 end;
 
 function TRpQTDriver.SetPagesize(PagesizeQt:integer):TPoint;

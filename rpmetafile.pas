@@ -46,7 +46,7 @@ uses Classes,
 {$IFDEF MSWINDOWS}
   mmsystem,windows,
 {$ENDIF}
-Sysutils,rpconsts,rpzlib;
+Sysutils,rpconsts,rpzlib,types;
 
 const
  MILIS_PROGRESS=500;

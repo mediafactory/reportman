@@ -116,7 +116,7 @@ uses
   rpdrawitem in '../rpdrawitem.pas',
   rpzlib in '../rpzlib.pas',
   rppreview in '../rppreview.pas' {FRpPreview},
-  adler in '../adler.pas',
+  rpzlibadler in '../rpzlibadler.pas',
   rpzlibinfblock in '../rpzlibinfblock.pas',
   rpzlibinfcodes in '../rpzlibinfcodes.pas',
   rpzlibinffast in '../rpzlibinffast.pas',

@@ -87,7 +87,7 @@ type
   end;
 
 
-const PageSizeNames: array [psA4..psNPageSize] of string =
+const PageSizeNames: array [psA4..psNPageSize] of widestring =
 ('A4', 'B5','Letter','Legal','Executive','A0', 'A1', 'A2',
     'A3', 'A5', 'A6', 'A7', 'A8', 'A9', 'B0', 'B1', 'B10', 'B2',
      'B3', 'B4', 'B6','B7', 'B8', 'B9', 'C5E', 'Comm10E',
@@ -155,6 +155,9 @@ procedure TFPageSetup.FormCreate(Sender: TObject);
 var
  i:integer;
  psize:TPagesize;
+ astring:widestring;
+ awidth:integer;
+ aheight:integer;
 begin
  LMetrics3.Caption:=rpunitlabels[defaultunit];
  LMetrics4.Caption:=LMetrics3.Caption;
@@ -166,7 +169,12 @@ begin
  end;
  for psize:=Low(psize) to High(psize) do
  begin
-  ComboPageSize.Items.Add(PageSizeNames[psize]);
+  astring:=PageSizeNames[psize];
+  awidth:=Round(PageSizeArray[Integer(psize)].Width/1000*TWIPS_PER_INCHESS);
+  aheight:=Round(PageSizeArray[Integer(psize)].Height/1000*TWIPS_PER_INCHESS);
+  astring:=astring+' ('+gettextfromtwips(awidth)+'x'+
+   gettextfromtwips(aheight)+') '+rpunitlabels[defaultunit];
+  ComboPageSize.Items.Add(astring);
  end;
 end;
 
