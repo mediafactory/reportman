@@ -136,6 +136,8 @@ begin
   FSectionInterface.fobjinsp:=FObjInsp;
   FSectionInterface.Parent:=PSection;
   FSectionInterface.freportstructure:=freportstructure;
+  PSection.Left:=0;
+  PSection.TOp:=0;
   FSectionInterface.Top:=0;
   FSectionInterface.Left:=0;
   TopRuler.Width:=FSectionInterface.Width;
@@ -148,7 +150,7 @@ begin
    fobjinsp.CompItem:=FSectionInterface;
   end;
 {$IFDEF MSWINDOWS}
-  Application.ProcessMessages;
+//  Application.ProcessMessages;
 {$ENDIF}
   SectionScrollBox.HorzScrollBar.Position:=0;
   SectionScrollBox.VertScrollBar.Position:=0;

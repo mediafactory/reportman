@@ -7,10 +7,12 @@ object FRpPreview: TFRpPreview
   ActiveControl = EPageNum
   Caption = 'Report Print Preview'
   Color = clBackground
+  KeyPreview = True
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 96
   TextHeight = 13
   TextWidth = 6
@@ -101,7 +103,6 @@ object FRpPreview: TFRpPreview
       Caption = 'Cancel'
       TabOrder = 8
       Visible = False
-      OnClick = BCancelClick
     end
   end
   object ImageContainer: TScrollBox
@@ -109,7 +110,9 @@ object FRpPreview: TFRpPreview
     Top = 33
     Width = 543
     Height = 342
+    VertScrollBar.Increment = 60
     VertScrollBar.Range = 81
+    HorzScrollBar.Increment = 60
     HorzScrollBar.Range = 89
     Align = alClient
     BorderStyle = bsNone

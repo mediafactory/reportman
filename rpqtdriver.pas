@@ -31,7 +31,7 @@ uses
 {$ENDIF}
 Classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
  rpmunits,QPrinters,QDialogs,rpgraphutils, QControls,
- QStdCtrls,
+ QStdCtrls,QExtCtrls,
  rpreport;
 
 
@@ -73,7 +73,7 @@ type
    procedure AbortDocument;stdcall;
    procedure NewPage;stdcall;
    procedure EndPage;stdcall;
-   procedure DrawObject(obj:TRpMetafileObject);stdcall;
+   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
    function AllowCopies:boolean;stdcall;
    constructor Create;
   end;
@@ -164,9 +164,85 @@ begin
  // Does nothing
 end;
 
-procedure TRpQtDriver.DrawObject(obj:TRpMetafileObject);
+procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer);
 var
- x,y:integer;
+ posx,posy:integer;
+ rec:TRect;
+ X, Y, W, H, S: Integer;
+ Width,Height:integer;
+begin
+ // Switch to device points
+ posx:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
+ posy:=round(obj.Top*dpiy/TWIPS_PER_INCHESS);
+ case obj.Metatype of
+  rpMetaText:
+   begin
+{$IFDEF MSWINDOWS}
+    Canvas.Font.Name:=page.GetWFontName(Obj);
+{$ENDIF}
+{$IFDEF LINUX}
+    Canvas.Font.Name:=page.GetLFontName(Obj);
+{$ENDIF}
+    Canvas.Font.Color:=Obj.FontColor;
+    Canvas.Font.Style:=IntegerToFontStyle(obj.FontStyle);
+    if obj.CutText then
+    begin
+     rec.Top:=posx;
+     rec.Left:=posy;
+     rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);
+     rec.Bottom:=posy+round(obj.Height*dpiy/TWIPS_PER_INCHESS);
+     Canvas.TextRect(rec,posx,posy,page.GetText(Obj));
+    end
+    else
+     Canvas.TextOut(posx,posy,page.GetText(Obj));
+   end;
+  rpMetaDraw:
+   begin
+    Width:=round(obj.Width*dpix/TWIPS_PER_INCHESS);
+    Height:=round(obj.Height*dpiy/TWIPS_PER_INCHESS);
+    Canvas.Brush.Style:=TBrushStyle(obj.BrushStyle);
+    Canvas.Pen.Style:=TPenStyle(obj.PenStyle);
+    Canvas.Pen.Color:=obj.Pencolor;
+    Canvas.Brush.Color:=obj.BrushColor;
+    Canvas.Pen.Width:=obj.PenWidth;
+    X := Canvas.Pen.Width div 2;
+    Y := X;
+    W := Width - Canvas.Pen.Width + 1;
+    H := Height - Canvas.Pen.Width + 1;
+    if Canvas.Pen.Width = 0 then
+    begin
+     Dec(W);
+     Dec(H);
+    end;
+    if W < H then
+     S := W
+    else
+     S := H;
+    if TShapeType(obj.DrawStyle) in [stSquare, stRoundSquare, stCircle] then
+    begin
+     Inc(X, (W - S) div 2);
+     Inc(Y, (H - S) div 2);
+     W := S;
+     H := S;
+    end;
+    case TShapeType(obj.DrawStyle) of
+     stRectangle, stSquare:
+      Canvas.Rectangle(X+PosX, Y+PosY, X+PosX + W, Y +PosY+ H);
+     stRoundRect, stRoundSquare:
+      Canvas.RoundRect(X, Y, X + W, Y + H, S div 4, S div 4);
+     stCircle, stEllipse:
+      Canvas.Ellipse(X+PosX, Y+PosY, X+PosX + W, Y+PosY + H);
+    end;
+   end;
+  rpMetaImage:
+   begin
+
+   end;
+ end;
+end;
+
+procedure TRpQtDriver.DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
+var
  dpix,dpiy:integer;
  Canvas:TCanvas;
 begin
@@ -186,25 +262,9 @@ begin
   dpix:=dpi;
   dpiy:=dpi;
  end;
- case obj.Metatype of
-  rpMetaText:
-   begin
-    // Switch to device points
-    x:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
-    y:=round(obj.Top*dpiy/TWIPS_PER_INCHESS);
-    Canvas.Font.Name:=Obj.FontName;
-    Canvas.Font.Color:=Obj.FontColor;
-    Canvas.TextOut(x,y,obj.Text);
-   end;
-  rpMetaDraw:
-   begin
+ PrintObject(Canvas,page,obj,dpix,dpiy);
 
-   end;
-  rpMetaImage:
-   begin
 
-   end;
- end;
 end;
 
 function TRpQtDriver.AllowCopies:boolean;
@@ -212,30 +272,6 @@ begin
  Result:=false;
 end;
 
-procedure PrintObject(obj:TRpMetafileObject;dpix,dpiy:integer);
-var
- x,y:integer;
-begin
- case obj.Metatype of
-  rpMetaText:
-   begin
-    // Switch to device points
-    x:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
-    y:=round(obj.Top*dpiy/TWIPS_PER_INCHESS);
-    Printer.Canvas.Font.Name:=Obj.FontName;
-    Printer.Canvas.Font.Color:=Obj.FontColor;
-    Printer.Canvas.TextOut(x,y,obj.Text)
-   end;
-  rpMetaDraw:
-   begin
-
-   end;
-  rpMetaImage:
-   begin
-
-   end;
- end;
-end;
 
 procedure DoPrintMetafile(metafile:TRpMetafileReport;tittle:string;aform:TFRpQtProgress);
 var
@@ -270,7 +306,7 @@ begin
    apage:=metafile.Pages[i];
    for j:=0 to apage.ObjectCount-1 do
    begin
-    PrintObject(apage.Objects[j],dpix,dpiy);
+    PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy);
     if assigned(aform) then
     begin
 {$IFDEF MSWINDOWS}

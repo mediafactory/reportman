@@ -20,7 +20,7 @@ unit rpdrawitem;
 
 interface
 
-uses Sysutils,Classes,rptypes,rpprintitem,rpconsts;
+uses Sysutils,Classes,rptypes,rpprintitem,rpconsts,rpmetafile;
 
 const
  DEF_DRAWWIDTH=500;
@@ -36,6 +36,7 @@ type
   public
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
+   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   published
    property BrushStyle:integer read FBrushStyle write FBrushStyle default 0;
    property BrushColor:integer read FBrushColor write FBrushColor default $FFFFFF;
@@ -81,6 +82,14 @@ destructor TRpShape.Destroy;
 begin
 
  inherited destroy;
+end;
+
+procedure TRpShape.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+var
+ Text:string;
+begin
+ metafile.Pages[metafile.CurrentPage].NewDrawObject(aposy+PosY,aposx+PosX,Width,Height,
+  Shape,BrushStyle,BrushColor,PenStyle,PenWidth,PenColor);
 end;
 
 constructor TRpImage.Create(AOwner:TComponent);

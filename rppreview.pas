@@ -23,7 +23,7 @@ interface
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpreport,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,
-  QActnList, QImgList,QPrinters,rpconsts;
+  QActnList, QImgList,QPrinters,rpconsts,Qt;
 
 type
   TFRpPreview = class(TForm)
@@ -62,6 +62,8 @@ type
     procedure BCancelClick(Sender: TObject);
     procedure ACancelExecute(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     cancelled:boolean;
@@ -174,6 +176,10 @@ end;
 
 procedure TFRpPreview.FormCreate(Sender: TObject);
 begin
+ APrevious.ShortCut:=Key_PageUp;
+ ANext.ShortCut:=Key_PageDown;
+ AFirst.ShortCut:=Key_Home;
+ ALast.ShortCut:=Key_End;
  qtdriver:=TRpQtDriver.Create;
  aqtdriver:=qtdriver;
 // qtdriver.toprinter:=true;
@@ -269,6 +275,39 @@ begin
  if Not ANext.Enabled then
  begin
   cancelled:=true;
+ end;
+end;
+
+procedure TFRpPreview.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+var
+ increment:integer;
+begin
+ if (ssShift in Shift) then
+  increment:=1
+ else
+  increment:=ImageContainer.VertScrollBar.Increment;
+ if Key=Key_Down then
+ begin
+  if ImageContainer.VertScrollBar.Position+increment>ImageContainer.VertScrollBar.Range-ImageContainer.Height then
+   ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Range-ImageContainer.Height+increment
+  else
+   ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position+Increment;
+ end;
+ if Key=Key_Up then
+ begin
+  ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position-Increment;
+ end;
+ if Key=Key_Right then
+ begin
+  if ImageContainer.HorzScrollBar.Position+increment>ImageContainer.HorzScrollBar.Range-ImageContainer.Width then
+   ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Range-ImageContainer.Width+increment
+  else
+   ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position+Increment;
+ end;
+ if Key=Key_Left then
+ begin
+  ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position-Increment;
  end;
 end;
 

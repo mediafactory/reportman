@@ -34,7 +34,7 @@ type
    procedure AbortDocument;stdcall;
    procedure NewPage;stdcall;
    procedure EndPage;stdcall;
-   procedure DrawObject(obj:TRpMetafileObject);stdcall;
+   procedure DrawObject(page:TRpMetafilePage;obj:TRpMetaObject);stdcall;
    function AllowCopies:boolean;stdcall;
    procedure DrawMetaToBitmapStream(Width,Height:integer;stream:TStream);
   end;
@@ -91,14 +91,14 @@ begin
  end;
 end;
 
-procedure TRpWinGDIDriver.DrawObject(obj:TRpMetafileObject);
+procedure TRpWinGDIDriver.DrawObject(page:TRpMetafilePage;obj:TRpMetaObject);
 begin
  if not Assigned(canvas) then
   Raise Exception.Create(SRpWinGDINotInit);
  case obj.Metatype of
   rpMetaText:
    begin
-    Canvas.TextOut(obj.Left,obj.Top,obj.Text);
+    Canvas.TextOut(obj.Left,obj.Top,page.GetText(obj));
    end;
   rpMetaDraw:
    begin

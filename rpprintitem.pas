@@ -88,6 +88,8 @@ type
    FBackColor:integer;
    FTransparent:Boolean;
    FCutText:Boolean;
+   FWordWrap:Boolean;
+   FAlignMent:integer;
   public
    constructor Create(AOwner:TComponent);override;
   published
@@ -99,6 +101,8 @@ type
    property BackColor:integer read FBackColor write FBackColor default $FFFFFF;
    property Transparent:Boolean read FTransparent write FTransparent default true;
    property CutText:Boolean read FCutText write FCutText default true;
+   property Alignment:integer read FAlignment write FAlignment default 0;
+   property WordWrap:Boolean read FWordWrap write FWordWrap default false;
   end;
 
 implementation

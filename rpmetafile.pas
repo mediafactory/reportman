@@ -45,8 +45,11 @@ const
  RP_SIGNATURELENGTH=13;
  RpSignature:array[0..RP_SIGNATURELENGTH-1] of char=('R','P','M','E','T','A','F','I','L',
   'E','0','1',#0);
-
+const
+ FIRST_ALLOCATION_OBJECTS=500;
+ FIRST_ALLOCATED_WIDESTRING=1000;
 type
+
  ERpBadFileFormat=class(Exception)
   private
    FPosition:integer;
@@ -54,8 +57,38 @@ type
    constructor Create(Msg:String;APosition:LongInt);
    property position:LongInt read FPosition;
   end;
- TRpMetafileobject=class;
  TrpMetafileReport=class;
+ TrpMetafilePage=class;
+
+
+ TRpMetaObjectType=(rpMetaText,rpMetaDraw,rpMetaImage);
+
+ TRpMetaSeparator=(rpFHeader,rpFPage,rpFObject);
+
+ TRpMetaObject=record
+  Top,Left,Width,Height:integer;
+  case Metatype:TRpMetaObjectType of
+   rpMetaText:
+    (TextP,TextS:integer;
+    LFontNameP,LFontNameS:integer;
+    WFontNameP,WFontNameS:integer;
+    FontSize:integer;
+    FontStyle:integer;
+    FontColor:integer;
+    BackColor:integer;
+    Transparent:boolean;
+    CutText:boolean;Alignment:integer;WordWrap:boolean);
+   rpMetaDraw:
+    (DrawStyle:integer;
+    BrushStyle:integer;
+    BrushColor:integer;
+    PenStyle:integer;
+    PenWidth:integer;
+    PenColor:integer);
+   rpMetaImage:
+    (StreamPos:int64;
+     StreamSize:int64);
+ end;
 
  IRpPrintDriver=interface
  ['{11EF15B0-5CDE-40F0-A204-973A25B38B81}']
@@ -64,58 +97,41 @@ type
   procedure AbortDocument;stdcall;
   procedure NewPage;stdcall;
   procedure EndPage;stdcall;
-  procedure DrawObject(obj:TRpMetafileObject);stdcall;
+  procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
   function AllowCopies:boolean;stdcall;
  end;
 
- TRpMetaObjectType=(rpMetaText,rpMetaDraw,rpMetaImage);
-
- TRpMetaSeparator=(rpFHeader,rpFPage,rpEPage,rpFObject,rpEObject);
-
- TRpMetafileObject=class(TObject)
-  public
-   Metatype:TRpMetaObjectType;
-   Top,Left,Width,Height:integer;
-   Text:widestring;
-   FontName:widestring;
-   FontSize:integer;
-   FontStyle:integer;
-   FontColor:integer;
-   BackColor:integer;
-   Transparent:boolean;
-   DrawStyle:integer;
-   BrushStyle:integer;
-   BrushColor:integer;
-   PenWidth:integer;
-   PenColor:integer;
-   StreamedImage:TMemoryStream;
-   procedure LoadFromStream(stream:TStream);
-   procedure SaveToStream(stream:TStream);
-   destructor Destroy;override;
-  end;
 
  TRpMetafilePage=class(TObject)
   private
-   FObjects:TList;
-   function GetObjectCount:integer;
-   function GetObject(index:integer):TRpMetafileObject;
+   FObjects:array of TRpMetaObject;
+   FObjectCount:Integer;
+   FPool:Widestring;
+   FPoolPos:integer;
+   FStreamPos:int64;
+   FMemStream:TMemoryStream;
+   function GetObject(index:integer):TRpMetaObject;
+   procedure NewWideString(var position,size:integer;const text:widestring);
   public
    procedure LoadFromStream(Stream:TStream);
    procedure SaveToStream(Stream:TStream);
    procedure DeleteObject(index:integer);
    constructor Create;
    destructor Destroy;override;
+   procedure Clear;
    procedure NewTextObject(Top,Left,Width,Height:integer;
-    Text:widestring;FontName:widestring;FontSize:integer;FontStyle:integer;
-    FontColor:integer;BackColor:integer;transparent:boolean);
+    Text:widestring;WFontName:widestring;LFontName:widestring;FontSize:integer;FontStyle:integer;
+    FontColor:integer;BackColor:integer;transparent:boolean;cuttext:boolean;Alignment:integer;WordWrap:boolean);
    procedure NewDrawObject(Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
-    PenWidth:integer; PenColor:integer);
+    PenStyle:integer;PenWidth:integer; PenColor:integer);
    procedure NewImageObject(Top,Left,Width,Height:integer;
     stream:TStream);
-
-   property ObjectCount:integer read GetObjectCount;
-   property Objects[Index:integer]:TRpMetafileObject read GetObject;
+   function GetText(arecord:TRpMetaObject):widestring;
+   function GetWFontName(arecord:TRpMetaObject):widestring;
+   function GetLFontName(arecord:TRpMetaObject):widestring;
+   property ObjectCount:integer read FObjectCount;
+   property Objects[Index:integer]:TRpMetaObject read GetObject;
   end;
 
 
@@ -153,88 +169,167 @@ type
 
 implementation
 
+constructor TrpMetafilePage.Create;
+begin
+ SetLength(FObjects,FIRST_ALLOCATION_OBJECTS);
+ FObjectCount:=0;
+ FPoolPos:=1;
+ FStreamPos:=0;
+ FMemStream:=TMemoryStream.Create;
+end;
+
+procedure TRpMetafilePage.Clear;
+begin
+ FObjectCount:=0;
+ FPoolPos:=1;
+ FStreamPos:=0;
+end;
+
+destructor TRpMetafilePage.Destroy;
+var
+ i:integer;
+begin
+ FMemStream.Free;
+ FMemStream:=nil;
+
+ inherited Destroy;
+end;
+
 
 procedure TrpMetafilePage.NewImageObject(Top,Left,Width,Height:integer;
     stream:TStream);
-var
- FObject:TrpMetafileObject;
 begin
- FObject:=TRpMetafileObject.Create;
- FObject.Left:=Left;
- FObject.Top:=Top;
- FObject.Width:=Width;
- FObject.Height:=Height;
- FObject.StreamedImage:=TMemoryStream.Create;
+ if FObjectCount>=High(FObjects)-1 then
+ begin
+  // Duplicates capacity
+  SetLength(FObjects,High(FObjects)*2);
+ end;
+ FObjects[FObjectCount].Left:=Left;
+ FObjects[FObjectCount].Top:=Top;
+ FObjects[FObjectCount].Height:=Height;
+ FObjects[FObjectCount].Width:=Width;
+ FObjects[FObjectCount].Metatype:=rpMetaImage;
+ FObjects[FObjectCount].StreamPos:=FStreamPos;
+ FObjects[FObjectCount].StreamSize:=stream.Size;
  Stream.Seek(soFromBeginning,0);
- FObject.StreamedImage.LoadFromStream(Stream);
-
- FObjects.Add(FObject);
+ FMemStream.Seek(soFromBeginning,FStreamPos);
+ if (Stream.size<>FMemStream.CopyFrom(stream,stream.Size)) then
+  Raise Exception.Create(SRpCopyStreamError);
+ FStreamPos:=FMemStream.Position;
+ LoadFromStream(Stream);
+ inc(FObjectCount);
 end;
 
 procedure TrpMetafilePage.NewDrawObject(Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
-    PenWidth:integer; PenColor:integer);
-var
- FObject:TrpMetafileObject;
+    PenStyle:integer;PenWidth:integer; PenColor:integer);
 begin
- FObject:=TRpMetafileObject.Create;
- FObject.Left:=Left;
- FObject.Top:=Top;
- FObject.Width:=Width;
- FObject.Height:=Height;
- FObject.DrawStyle:=DrawStyle;
- FObject.BrushStyle:=BrushStyle;
- FObject.BrushColor:=BrushColor;
- FObject.PenColor:=PenColor;
- FObject.PenWidth:=PenWidth;
+ if FObjectCount>=High(FObjects)-1 then
+ begin
+  // Duplicates capacity
+  SetLength(FObjects,High(FObjects)*2);
+ end;
+ FObjects[FObjectCount].Left:=Left;
+ FObjects[FObjectCount].Top:=Top;
+ FObjects[FObjectCount].Height:=Height;
+ FObjects[FObjectCount].Width:=Width;
+ FObjects[FObjectCount].Metatype:=rpMetaDraw;
 
- FObjects.Add(FObject);
+ FObjects[FObjectCount].DrawStyle:=DrawStyle;
+ FObjects[FObjectCount].BrushStyle:=BrushStyle;
+ FObjects[FObjectCount].BrushColor:=BrushColor;
+ FObjects[FObjectCount].PenColor:=PenColor;
+ FObjects[FObjectCount].PenWidth:=PenWidth;
+ FObjects[FObjectCount].PenStyle:=PenStyle;
+
+ inc(FObjectCount);
 end;
 
-procedure TrpMetafilePage.NewTextObject(Top,Left,Width,Height:integer;
-    Text:widestring;FontName:widestring;FontSize:integer;FontStyle:integer;
-    FontColor:integer;BackColor:integer;transparent:boolean);
-var
- FObject:TrpMetafileObject;
+procedure TrpMetafilePage.NewWideString(var position,size:integer;const text:widestring);
 begin
- FObject:=TRpMetafileObject.Create;
- FObject.Left:=Left;
- FObject.Top:=Top;
- FObject.Width:=Width;
- FObject.Height:=Height;
- FObject.Text:=Text;
- FObject.FontName:=FontName;
- FObject.FontColor:=FontColor;
- FObject.FontStyle:=FontStyle;
- FObject.BackColor:=BackColor;
- FObject.FontSize:=FontSize;
- FObject.Transparent:=Transparent;
- FObjects.Add(FObject);
+
+ size:=Length(Text);
+ FPool:=FPool+Text;
+ position:=FPoolPos;
+ FPoolPos:=FPoolPos+size;
+
+end;
+
+
+procedure TrpMetafilePage.NewTextObject(Top,Left,Width,Height:integer;
+    Text:widestring;WFontName:widestring;LFontName:widestring;FontSize:integer;FontStyle:integer;
+    FontColor:integer;BackColor:integer;transparent:boolean;cuttext:boolean;Alignment:integer;WordWrap:boolean);
+var
+ position,size:integer;
+begin
+ if FObjectCount>=High(FObjects)-1 then
+ begin
+  // Duplicates capacity
+  SetLength(FObjects,High(FObjects)*2);
+ end;
+ FObjects[FObjectCount].Left:=Left;
+ FObjects[FObjectCount].Top:=Top;
+ FObjects[FObjectCount].Height:=Height;
+ FObjects[FObjectCount].Width:=Width;
+ FObjects[FObjectCount].Metatype:=rpMetaText;
+
+ NewWideString(FObjects[FObjectCount].TextP,FObjects[FObjectCount].TextS,Text);
+ NewWideString(FObjects[FObjectCount].WFontNameP,
+  FObjects[FObjectCount].WFontNameS,WFontName);
+ NewWideString(FObjects[FObjectCount].LFontNameP,
+  FObjects[FObjectCount].LFontNameS,LFontName);
+ FObjects[FObjectCount].FontSize:=FontSize;
+ FObjects[FObjectCount].FontStyle:=FontStyle;
+ FObjects[FObjectCount].FontColor:=FontColor;
+ FObjects[FObjectCount].BackColor:=BackColor;
+ FObjects[FObjectCount].Transparent:=Transparent;
+ FObjects[FObjectCount].CutText:=CutText;
+ FObjects[FObjectCount].Alignment:=Alignment;
+ FObjects[FObjectCount].WordWrap:=WordWrap;
+
+ inc(FObjectCount);
+
+end;
+
+function TrpMetafilePage.GetText(arecord:TRpMetaObject):widestring;
+begin
+ Result:=Copy(FPool,arecord.TextP,arecord.TextS);
+end;
+
+function TrpMetafilePage.GetWFontName(arecord:TRpMetaObject):widestring;
+begin
+ Result:=Copy(FPool,arecord.WFontNameP,arecord.WFontNameS);
+end;
+
+function TrpMetafilePage.GetLFontName(arecord:TRpMetaObject):widestring;
+begin
+ Result:=Copy(FPool,arecord.LFontNameP,arecord.LFontNameS);
 end;
 
 procedure TrpMetafilePage.DeleteObject(index:integer);
+var
+ i:integer;
 begin
  if index<0 then
   Raise Exception.Create(SRpMetaIndexObjectOutofBounds);
- if index>FObjects.Count-1 then
+ if index>FObjectCount-1 then
   Raise Exception.Create(SRpMetaIndexObjectOutofBounds);
- TObject(Fobjects.items[index]).free;
- FObjects.delete(index);
+ dec(FObjectCount);
+ for i:=index to FObjectCount-1 do
+ begin
+  FObjects[index]:=FObjects[index+1];
+ end;
 end;
 
-function TrpMetafilePage.GetObject(index:integer):TrpMetafileObject;
+function TrpMetafilePage.GetObject(index:integer):TrpMetaObject;
 begin
  if index<0 then
   Raise Exception.Create(SRpMetaIndexObjectOutofBounds);
- if index>FObjects.Count-1 then
+ if index>FObjectCount-1 then
   Raise Exception.Create(SRpMetaIndexObjectOutofBounds);
- Result:=TRpMetafileObject(FObjects.items[index]);
+ Result:=FObjects[index];
 end;
 
-function TrpMetafilePage.GetObjectCount:integer;
-begin
- Result:=FObjects.count;
-end;
 
 function TRpMetafileReport.GetPageCount:integer;
 begin
@@ -308,7 +403,7 @@ var
 begin
  for i:=0 to FPages.Count-1 do
  begin
-  TObject(FPages.Items[i]).free;
+  TRpMetafilePage(FPages.Items[i]).Clear;
  end;
  FPages.clear;
  FCurrentPage:=-1;
@@ -324,24 +419,7 @@ end;
 
 
 
-constructor TRpMetafilePage.Create;
-begin
- FObjects:=TList.Create;
-end;
 
-destructor TRpMetafilePage.Destroy;
-var
- i:integer;
-begin
- for i:=0 to FObjects.Count-1 do
- begin
-  TObject(FObjects.Items[i]).free;
- end;
- FObjects.clear;
- FObjects.free;
-
- inherited Destroy;
-end;
 
 procedure TRpMetafileReport.SaveToStream(Stream:TStream);
 var
@@ -392,7 +470,6 @@ begin
   Raise Exception.Create(SRpBadFileHeader);
  if (separator<>integer(rpFHeader)) then
   Raise Exception.Create(SRpBadFileHeader);
-
  // Report header
  if (sizeof(pagesize)<>Stream.Read(PageSize,sizeof(pagesize))) then
   Raise Exception.Create(SRpBadFileHeader);
@@ -431,51 +508,86 @@ begin
 end;
 
 
-procedure TRpMetafilePage.LoadFromStream(Stream:TStream);
-var
- separator:integer;
- bytesread:integer;
- fobject:TRpMetafileObject;
-begin
- // read the object separator
- bytesread:=Stream.Read(separator,sizeof(separator));
- while (bytesread>0) do
- begin
-  if (bytesread<>sizeof(separator)) then
-   Raise ERpBadFileFormat.Create(SrpMtObjectSeparatorExpected,Stream.Position);
-  if (separator=integer(rpEObject)) then
-   break;
-  if (separator<>integer(rpFObject)) then
-   Raise ERpBadFileFormat.Create(SrpMtObjectSeparatorExpected,Stream.Position);
-  // Creates a new object
-  fobject:=TRpMetafileObject.Create;
-  FObjects.Add(fobject);
-  fobject.LoadFromStream(Stream);
-
-  bytesread:=Stream.Read(separator,sizeof(separator));
- end;
-end;
-
 procedure TRpMetafilePage.SaveToStream(Stream:TStream);
 var
  i:integer;
  separator:integer;
+ asize:int64;
+ wsize:integer;
+ byteswrite:integer;
 begin
  // Objects
- i:=0;
- while i<FObjects.count do
- begin
-  separator:=integer(rpFObject);
-  Stream.Write(separator,sizeof(separator));
-
-  TRpMetafileObject(FObjects.items[i]).SaveToStream(Stream);
-  inc(i);
- end;
- separator:=integer(rpEObject);
+ // Save all objects
+ separator:=integer(rpFObject);
  Stream.Write(separator,sizeof(separator));
+ Stream.Write(FObjectCount,sizeof(FObjectCount));
+ byteswrite:=sizeof(TRpMetaObject)*FObjectCount;
+ if byteswrite<>Stream.Write(FObjects[0],byteswrite) then
+  Raise Exception.Create(SRpErrorWritingPage);
+ wsize:=Length(FPool)*2;
+ Stream.Write(wsize,sizeof(wsize));
+ Stream.Write(FPool[1],wsize);
+ asize:=FMemStream.Size;
+ FMemStream.Seek(soFromBeginning,0);
+ Stream.Write(asize,sizeof(asize));
+ Stream.Write(FMemStream.Memory^,FMemStream.Size);
 end;
 
-procedure TRpMetafileObject.LoadFromStream(stream:TStream);
+procedure TRpMetafilePage.LoadFromStream(Stream:TStream);
+var
+ separator:integer;
+ bytesread:integer;
+ objcount:integer;
+ asize:int64;
+ wsize:integer;
+ stringsize:integer;
+begin
+ // read the object separator
+ bytesread:=Stream.Read(separator,sizeof(separator));
+ if (bytesread<>sizeof(separator)) then
+  Raise ERpBadFileFormat.Create(SrpMtObjectSeparatorExpected,Stream.Position);
+ if (separator<>integer(rpFObject)) then
+  Raise ERpBadFileFormat.Create(SrpMtObjectSeparatorExpected,Stream.Position);
+ bytesread:=Stream.Read(objcount,sizeof(objcount));
+ if (bytesread<>sizeof(objcount)) then
+  Raise ERpBadFileFormat.Create(SrpStreamErrorPage,Stream.Position);
+ if (objcount<0) then
+  Raise ERpBadFileFormat.Create(SrpStreamErrorPage,Stream.Position);
+ if High(FObjects)-1<objcount then
+  SetLength(FObjects,objcount+1);
+ // Read then whole array
+ bytesread:=objcount*sizeof(TRpMetaObject);
+ if (bytesread<>Stream.Read(FObjects[0],bytesread)) then
+  Raise ERpBadFileFormat.Create(SrpStreamErrorPage,Stream.Position);
+ // Read string pool
+ if (sizeof(wsize)<>Stream.Read(wsize,sizeof(wsize))) then
+  Raise ERpBadFileFormat.Create(SrpStreamErrorPage,Stream.Position);
+ if wsize<0 then
+  Raise ERpBadFileFormat.Create(SrpStreamErrorPage,Stream.Position);
+ SetLength(FPool,wsize div 2);
+ if (wsize<>Stream.Read(FPool[1],wsize)) then
+  Raise ERpBadFileFormat.Create(SrpStreamErrorPage,Stream.Position);
+ // The Stream
+ if (sizeof(asize)<>Stream.Read(asize,sizeof(asize))) then
+  Raise ERpBadFileFormat.Create(SrpStreamErrorPage,Stream.Position);
+ if asize<0 then
+  Raise ERpBadFileFormat.Create(SrpStreamErrorPage,Stream.Position);
+ if asize=0 then
+ begin
+  FMemStream.Free;
+  FMemStream:=TMemoryStream.Create;
+ end
+ else
+  FMemStream.SetSize(asize);
+ FMemStream.Seek(soFromBeginning,0);
+ if (asize<>Stream.Read(FMemStream.Memory^,asize)) then
+  Raise ERpBadFileFormat.Create(SrpStreamErrorPage,Stream.Position);
+
+ FObjectCount:=objcount;
+end;
+
+
+{procedure TRpMetafileObject.LoadFromStream(stream:TStream);
 var
  ssize:Int64;
  numbytes:integer;
@@ -551,8 +663,9 @@ begin
  end;
 
 end;
+}
 
-procedure TRpMetafileObject.SaveToStream(stream:TStream);
+{procedure TRpMetafileObject.SaveToStream(stream:TStream);
 var
  ssize:Int64;
  numbytes:integer;
@@ -600,21 +713,13 @@ begin
  end;
 
 end;
-
+}
 constructor ErpBadFileFormat.Create(Msg:String;APosition:LongInt);
 begin
  FPosition:=Position;
  inherited Create(Msg);
 end;
 
-destructor TRpMetafileObject.Destroy;
-begin
- if Assigned(StreamedImage) then
- begin
-  StreamedImage.free;
-  StreamedImage:=nil;
- end;
-end;
 
 procedure TRpMetafileReport.SaveToFile(filename:string);
 var
@@ -651,7 +756,7 @@ begin
  FPage:=TRpMetafilePage(FPages.items[FCurrentPage]);
  for i:=0 to FPage.ObjectCount-1 do
  begin
-  IDriver.DrawObject(TRpMetafileObject(FPage.FObjects[i]))
+  IDriver.DrawObject(FPage,FPage.Objects[i])
  end;
 end;
 

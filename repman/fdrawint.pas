@@ -74,8 +74,8 @@ const
  StringShapeType:array [stRectangle..stCircle] of String=(
   SRpsSRectangle,SRpsSSquare,SRpsSRoundRect,
   SRpsSRoundSquare,SRpsSEllipse,SRpsSCircle);
- StringDrawStyles:array [rpDrawCrop..rpDrawFull] of string=(
-  SRPSDrawCrop,SRPSDrawStretch,SRPSDrawFull);
+ StringDrawStyles:array [rpDrawCrop..rpDrawTile] of string=(
+  SRPSDrawCrop,SRPSDrawStretch,SRPSDrawFull,SRpDrawTile);
 
 function StringPenStyleToInt(Value:String):integer;
 function StringBrushStyleToInt(Value:String):integer;
@@ -183,7 +183,7 @@ var
  i:TRpImageDrawStyle;
 begin
  Result:=rpDrawCrop;
- for i:=rpDrawCrop to rpDrawFull do
+ for i:=rpDrawCrop to rpDrawTile do
  begin
   if Value=StringDrawStyles[i] then
   begin
@@ -513,7 +513,7 @@ begin
  if pname=SrpDrawStyle then
  begin
   lpossiblevalues.clear;
-  for i:=rpDrawCrop to rpDrawFull do
+  for i:=rpDrawCrop to rpDrawTile do
   begin
    lpossiblevalues.Add(StringDrawStyles[i]);
   end;

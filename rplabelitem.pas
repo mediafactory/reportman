@@ -124,18 +124,10 @@ begin
 end;
 
 procedure TRpLabel.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
-var
- FontName:String;
 begin
-{$IFDEF LINUX}
-  FontName:=LFontName;
-{$ENDIF}
-{$IFDEF MSWINDOWS}
-  FontName:=WFontName;
-{$ENDIF}
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
-  aposx+PosX,width,height,Text,FontName,FontSize,
-  FontStyle,FOntColor,BackColor,Transparent);
+  aposx+PosX,width,height,Text,WFontName,LFontName,FontSize,
+  FontStyle,FOntColor,BackColor,Transparent,CutText,Alignment,WordWrap);
 end;
 
 
@@ -191,19 +183,12 @@ end;
 
 procedure TRpExpression.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
 var
- FontName:String;
  Text:string;
 begin
  Text:=GetText;
-{$IFDEF LINUX}
-  FontName:=LFontName;
-{$ENDIF}
-{$IFDEF MSWINDOWS}
-  FontName:=WFontName;
-{$ENDIF}
-  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
-   aposx+PosX,width,height,Text,FontName,FontSize,
-   FontStyle,FOntColor,BackColor,Transparent);
+ metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
+   aposx+PosX,width,height,Text,WFontName,LFontName,FontSize,
+   FontStyle,FOntColor,BackColor,Transparent,CutText,Alignment,WordWrap);
 end;
 
 procedure TRpExpression.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');

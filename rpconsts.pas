@@ -44,6 +44,7 @@ resourcestring
   SRpNothingToPrint='Nothing to print';
   SRpLastPageReached='Last page already reached';
   SRPAliasNotExists='Data alias does not exists: ';
+  SRpCopyStreamError='Error copying stream in metafile image object';
 
   SRpNoDatasets='No datasets defined';
   SRpSampleTextToLabels='Text';
@@ -402,6 +403,9 @@ resourcestring
   SrpSPenWIdth='Pen Width';
 
   SRpDrawStyle='Draw Style';
+  SRpDrawTile='Tile';
+  SRpErrorWritingPage='Error writting metafile page';
+  SrpStreamErrorPage='Error in metafile page format';
 
   SRpBringToFront='To Front';
   SRpSendToBack='To Back';

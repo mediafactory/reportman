@@ -29,7 +29,7 @@ const
 type
  TRpTwips=integer;
  TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
- TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull);
+ TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull,rpDrawTile);
  TRpAggregate=(rpAgNone,rpAgGroup,rpAgPage,rpAgGeneral);
  TRpAggregateType=(rpagSum,rgagAvg,rpagStdDev);
  TRpReportChanged=(rpReportStart,rpPageStart,rpDataChange,rpGroupChange,rpEndData);
