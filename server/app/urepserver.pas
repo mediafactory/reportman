@@ -46,7 +46,7 @@ uses
  Libc,
 {$ENDIF}
   rptranslator,rpmdshfolder,IniFiles,rpmdprotocol,
-  rpreport,rppdfdriver, IdThreadMgrPool,rptypes,rpparams;
+  rpreport,rpbasereport,rppdfdriver, IdThreadMgrPool,rptypes,rpparams;
 
 const
  DEFAULT_MILIS_PROGRESS=10000;
@@ -72,7 +72,7 @@ type
     ASession:TSession;
     SessionNumber:integer;
 {$ENDIF}
-    procedure OnProgress(Sender:TRpReport;var docancel:boolean);
+    procedure OnProgress(Sender:TRpBaseReport;var docancel:boolean);
     procedure CreateReport;
   public
     destructor Destroy;override;
@@ -172,7 +172,7 @@ begin
  inherited Destroy;
 end;
 
-procedure TRpClient.OnProgress(Sender:TRpReport;var docancel:boolean);
+procedure TRpClient.OnProgress(Sender:TRpBaseReport;var docancel:boolean);
 var
  astring:WideString;
  CB:PRpComBLock;

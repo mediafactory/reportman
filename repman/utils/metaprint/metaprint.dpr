@@ -32,6 +32,7 @@ uses
 {$ENDIF}
 
 {$IFDEF LINUX}
+  LibcExec in '../../LibcExec.pas',
   rpqtdriver in '../../../rpqtdriver.pas',
   rpmetafile in '../../../rpmetafile.pas',
   rptypes in '../../../rptypes.pas',

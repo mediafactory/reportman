@@ -21,6 +21,7 @@ uses
   rpmdprintconfig in '..\..\..\rpmdprintconfig.pas' {FRpPrinterConfig};
 {$ENDIF}
 {$IFDEF LINUX}
+  LibcExec in '../../LibcExec.pas',
   rpfmainmetaview in '../../../rpfmainmetaview.pas' {FRpMainMeta},
   rpmetafile in '../../../rpmetafile.pas',
   rpprintdia in '../../../rpprintdia.pas' {FRpPrintDialog},

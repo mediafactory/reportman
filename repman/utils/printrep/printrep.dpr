@@ -37,6 +37,7 @@ uses
 {$ENDIF}
 
 {$IFDEF LINUX}
+  LibcExec in '../../LibcExec.pas',
   rpreport in '../../../rpreport.pas',
   rpparams in '../../../rpparams.pas',
   rpmdconsts in '../../../rpmdconsts.pas',

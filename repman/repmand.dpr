@@ -125,6 +125,7 @@ uses
 
 
 {$IFDEF LINUX}
+  LibcExec in 'LibcExec.pas',
   rpmdfmain in '../rpmdfmain.pas' {FRpMainF},
   rpmdfstruc in '../rpmdfstruc.pas' {FRpStructure: TFrame},
   rpmdfdesign in '../rpmdfdesign.pas' {FRpDesignFrame: TFrame},
