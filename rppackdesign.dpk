@@ -26,13 +26,6 @@ package rppackdesign;
 {$DESCRIPTION 'Report Manager Designer Component Package'}
 {$IMPLICITBUILD OFF}
 
-requires
-  rtl,
-  visualclx,
-  dataclx,
-  visualdbclx,
-  rppack,
-  rppackv;
 
 contains
   rpmregdesign in 'rpmregdesign.pas',
@@ -51,6 +44,8 @@ contains
   rpmdobinsint in 'rpmdobinsint.pas',
   rpmdobjinsp in 'rpmdobjinsp.pas' {FRpObjInsp: TFrame},
   rpmdshfolder in 'rpmdshfolder.pas',
-  rpfparams in 'rpfparams.pas' {FRpParams};
+  rpfparams in 'rpfparams.pas' {FRpParams},
+  rpmdfbarcodeint in 'rpmdfbarcodeint.pas',
+  rpmdfchartint in 'rpmdfchartint.pas';
 
 end.

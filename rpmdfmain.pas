@@ -632,7 +632,7 @@ begin
  OpenDialog1.Filter := SRpRepFile+'|*.rep';
 {$ENDIF}
 {$IFDEF VCLFILEFILTERS}
- SabeDialog1.Filter := SRpRepFile+'|*.rep'+SRpAnyFile+'|*.*';
+ SaveDialog1.Filter := SRpRepFile+'|*.rep'+SRpAnyFile+'|*.*';
 {$ENDIF}
  // Sets on exception event
 {$IFDEF MSWINDOWS}

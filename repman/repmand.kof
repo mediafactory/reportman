@@ -1,3 +1,6 @@
+[FileVersion]
+Version=6.0
+
 [Compiler]
 A=8
 B=0
@@ -60,5 +63,5 @@ UseLauncher=0
 DebugCWD=
 
 [Excluded Packages]
-$(DELPHI)/bin/dclindy.so.6.5=Internet Direct "Indy" for Kylix Property and Component Editors
+/opt/kylix3/bin/dclindy.so.6.5=Internet Direct "Indy" for Kylix Property and Component Editors
 

@@ -20,6 +20,8 @@ unit rpmdobjinsp;
 
 interface
 
+{$I rpconf.inc}
+
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   rpmdobinsint,QGrids,rpmdconsts,rpprintitem,QStdCtrls,
@@ -131,7 +133,7 @@ begin
 
 
 {$IFDEF VCLFILEFILTERS}
- OpenDialog1.Filter:=SrpBitmapImages+'|*.bmp';
+ TFRpObjInsp(Owner).OpenDialog1.Filter:=SrpBitmapImages+'|*.bmp';
 {$ENDIF}
 
  Align:=alClient;

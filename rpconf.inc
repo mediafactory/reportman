@@ -1,6 +1,6 @@
 // Database drivers to be used
 {$DEFINE USESQLEXPRESS}
-{$DEFINE USEIBX}
+//{$DEFINE USEIBX}
 {$DEFINE USEADO}
 {$DEFINE USEBDE}
 //{$DEFINE USEIBO}
@@ -20,7 +20,7 @@
 {$ENDIF}
 
 // Vcl File Filters is a missing feature of CLX Dialogs
-//{$DEFINE VCLFILEFILTERS}
+{$DEFINE VCLFILEFILTERS}
 
 {$IFDEF USEIBX}
  {$DEFINE USECONADMIN}

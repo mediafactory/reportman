@@ -32,6 +32,8 @@ unit rpmdbarcode;
 
 interface
 
+{$I rpconf.inc}
+
 uses
  SysUtils, Classes,rpmdconsts,rptypes,rpeval,rpmetafile,
 {$IFDEF USEVARIANTS}

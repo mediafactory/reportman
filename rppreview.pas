@@ -20,6 +20,8 @@ unit rppreview;
 
 interface
 
+{$I rpconf.inc}
+
 uses
   SysUtils,
 {$IFDEF MSWINDOWS}

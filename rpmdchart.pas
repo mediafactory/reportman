@@ -20,6 +20,8 @@ unit rpmdchart;
 
 interface
 
+{$I rpconf.inc}
+
 uses Classes,SysUtils,Math,rpprintitem,rpmdconsts,rpeval,
  rptypeval,rptypes,
 {$IFNDEF USEVARIANTS}

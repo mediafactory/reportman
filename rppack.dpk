@@ -29,9 +29,6 @@ package rppack;
 {$DESCRIPTION 'Report manager designer (non visual)'}
 {$IMPLICITBUILD OFF}
 
-requires
-  rtl,
-  dataclx;
 
 contains
   rptypeval in 'rptypeval.pas',
@@ -71,7 +68,9 @@ contains
   rppdfdriver in 'rppdfdriver.pas',
   rppdffile in 'rppdffile.pas',
   rppdfreport in 'rppdfreport.pas',
-  rpcompobase in 'rpcompobase.pas';
+  rpcompobase in 'rpcompobase.pas',
+  rpmdchart in 'rpmdchart.pas',
+  rpmdbarcode in 'rpmdbarcode.pas';
 
 {%File 'zconf.inc'}
 
