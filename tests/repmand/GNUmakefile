@@ -19,6 +19,10 @@ install:
 	cp ../../repman/utils/reptotxt/reptotxt .
 	cp ../../repman/utils/txttorep/txttorep .
 	cp ../../repman/utils/printreptopdf/printreptopdf .
+	cp ../../repman/reportmanres.es .
+	cp ../../repman/reportmanres.en .
+	cp ../../repman/qttranslation/linux/qt_* .
+#	cp ../../repman/repmand.es .
 	-cp ../clxreport/Project1 .
 	cp ../../repman/repsamples/sample4.rep .
 	cp ../clxreport/biolife.cds .
@@ -26,8 +30,9 @@ install:
 	cp ../../doc/doc/*.html doc
 	mkdir doc/images
 	cp ../../doc/doc/images/*.jpg doc/images
-	tar c doc sample4.rep biolife.cds repmand dbxdrivers dbxconnections metaprint metaview printrep printreptopdf reptotxt txttorep repmand repmand.sh README *.so *.so.1 *.so.2 *.so.1.0 > repmand-1RC1.i386.tar
-	gzip repmand-1RC1.i386.tar
+#	include repmand.es when linux translation done
+	tar c doc sample4.rep biolife.cds repmand dbxdrivers dbxconnections metaprint metaview printrep printreptopdf reptotxt txttorep repmand repmand.sh README *.so *.so.1 *.so.2 *.so.1.0 qt_* > repmand-1RC1.i386.tar
+	gzip repmand-1RC2.i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0
 	-rm -f repmand
@@ -37,6 +42,9 @@ clean:
 	-rm -f *.rep
 	-rm -f *.cds
 	-rm -Rf doc
-	-rm *.rpmf
-	-rm *.tar
-	-rm *.pdf
+	-rm -f *.rpmf
+	-rm -f *.tar
+	-rm -f *.pdf
+	-rm -f qt_*
+	-rm -f repmand.es
+	-rm -f reportmanres*
