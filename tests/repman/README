@@ -1,0 +1,21 @@
+Installation of Report Manager packages
+
+- Unzip to a directory
+
+- Install in this order:
+rppack_k3.dpk
+rppackv_k3.dpk
+rppackdesign_k3.dpk
+
+Open in Kylix the Project1.dpr project of sample directory and execute it to see the engine working.
+
+Note: You need Report Manager Designer to create your report definitions, it's available also for free and Opensource, but in a separate package.
+
+- rppack_k3.dpk is the main package not dependen on VisualCLX capable of generating pdfs without the need of Qt (and X server running)
+- rppackv_k3.dpk is the package for printing and previewing reports wiht the Qt/CLX Libraries
+- rppackdesign_k3.dpk is the package you need to include the designer embeded in your applications
+
+
+For more information, Designer download  and documention:
+
+http://reportman.sourceforge.net
