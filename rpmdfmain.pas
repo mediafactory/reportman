@@ -347,6 +347,7 @@ begin
  // Creates a new report
  report:=TRpReport.Create(Self);
  report.OnReadError:=OnReadError;
+ report.FailIfLoadExternalError:=false;
  report.CreateNew;
  filename:='';
 
@@ -407,6 +408,7 @@ begin
  report:=TRpReport.Create(Self);
  try
   report.OnReadError:=OnReadError;
+  report.FailIfLoadExternalError:=false;
   report.LoadFromFile(OpenDialog1.FileName);
   filename:=OpenDialog1.FileName;
   Savedialog1.filename:=filename;

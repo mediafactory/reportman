@@ -185,6 +185,7 @@ type
     // changed and sets internally CurrentGroup
     function NextRecord(grouprestore:boolean):boolean;
   public
+   FailIfLoadExternalError:Boolean;
    printing:boolean;
    CurrentSubReportIndex:integer;
    CurrentSectionIndex:integer;
@@ -327,6 +328,7 @@ constructor TRpReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FailIfLoadExternalError:=True;
  FMilisProgres:=MILIS_PROGRESS_DEFAULT;
  FLanguage:=-1;
  FCopies:=1;

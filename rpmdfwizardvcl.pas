@@ -124,9 +124,9 @@ begin
  TabDatasets.Caption:=TranslateStr(876,TabDatasets.Caption);
  TabFields.Caption:=TranslateStr(877,TabFields.Caption);
  TabReportType.Caption:=TranslateStr(878,TabReportType.Caption);
- BNext.Caption:=TranslateStr(932,BNext.Caption);
- BBack.Caption:=TranslateStr(933,BBack.Caption);
- BFinish.Caption:=TranslateStr(934,BFinish.Caption);
+ BNext.Caption:=TranslateStr(933,BNext.Caption);
+ BBack.Caption:=TranslateStr(934,BBack.Caption);
+ BFinish.Caption:=TranslateStr(935,BFinish.Caption);
 
  // Create the connections frame
  conframe:=TFRpConnectionVCL.Create(Self);

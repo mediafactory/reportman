@@ -343,6 +343,7 @@ begin
  // Creates a new report
  report:=TRpReport.Create(Self);
  report.OnReadError:=OnReadError;
+ report.FailIfLoadExternalError:=false;
  if Not NewReportWizard(report) then
   report.CreateNew;
  filename:='';
@@ -404,6 +405,7 @@ begin
  report:=TRpReport.Create(Self);
  try
   report.OnReadError:=OnReadError;
+  report.FailIfLoadExternalError:=false;
   report.LoadFromFile(OpenDialog1.FileName);
   filename:=OpenDialog1.FileName;
   Savedialog1.filename:=filename;
@@ -1068,7 +1070,6 @@ begin
  fobjinsp.AddCompItem(olditem,true);
 } // Correct scrollboxes
  CorrectScrollBoxes;
-
 end;
 
 procedure TFRpMainFVCL.OnReadError(Reader: TReader; const Message: string;

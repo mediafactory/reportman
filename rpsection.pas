@@ -628,22 +628,32 @@ end;
 procedure TRpSection.LoadExternal;
 var
  AStream:TStream;
+ report:TRpReport;
 begin
- // Try to load the section as an external section
- if Length(FExternalFilename)>0 then
- begin
-  AStream:=TFileStream.Create(FExternalFilename,fmOpenRead or fmShareDenyWrite);
-  try
-   LoadFromStream(AStream);
-  finally
-   AStream.free;
-  end;
- end
- else
- begin
-  if Length(GetExternalDataDescription)>0 then
+ report:=TRpReport(Owner);
+ try
+  // Try to load the section as an external section
+  if Length(FExternalFilename)>0 then
   begin
-   LoadExternalFromDatabase;
+   AStream:=TFileStream.Create(FExternalFilename,fmOpenRead or fmShareDenyWrite);
+   try
+    LoadFromStream(AStream);
+   finally
+    AStream.free;
+   end;
+  end
+  else
+  begin
+   if Length(GetExternalDataDescription)>0 then
+   begin
+    LoadExternalFromDatabase;
+   end;
+  end;
+ except
+  On E:Exception do
+  begin
+   if report.FailIfLoadExternalError then
+    Raise;
   end;
  end;
 end;
