@@ -44,7 +44,7 @@ uses Classes,SysUtils,
   dbtables,
 {$ENDIF}
 {$IFDEF USEADO}
-  adodb,
+  adodb,ActiveX,
 {$ENDIF}
 {$IFDEF USEIBO}
   IB_Components,IBODataset,
@@ -2159,6 +2159,9 @@ end;
 initialization
 
 ConAdmin:=nil;
+{$IFDEF USEADO}
+CoInitialize(nil);
+{$ENDIF}
 
 finalization
 
