@@ -140,12 +140,12 @@ object FMainf: TFMainf
       Grouped = True
       ImageIndex = 10
     end
-    object BDraw: TToolButton
+    object BShape: TToolButton
       Left = 279
       Top = 4
       Height = 26
       Style = tbsCheck
-      Caption = 'BDraw'
+      Caption = 'BShape'
       Enabled = False
       Grouped = True
       ImageIndex = 11
@@ -169,6 +169,7 @@ object FMainf: TFMainf
       Enabled = False
       Grouped = True
       ImageIndex = 13
+      Visible = False
     end
   end
   object mainscrollbox: TScrollBox

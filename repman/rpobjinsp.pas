@@ -28,7 +28,7 @@ uses
 
 const
   CONS_LEFTGAP=3;
-  CONS_CONTROLPOS=65;
+  CONS_CONTROLPOS=70;
   CONS_LABELTOPGAP=2;
   CONS_RIGHTBARGAP=25;
   CONS_BUTTONWIDTH=15;
@@ -47,7 +47,6 @@ type
     LNames:TStringList;
     LTypes:TStringList;
     LValues:TStringList;
-    combo:TComboBox;
     fchangesize:TRpSizeModifier;
     procedure SetCompItem(Value:TRpSizeInterface);
     procedure ReleaseAllControls;
@@ -62,6 +61,7 @@ type
     procedure ExpressionClick(Sender:TObject);
   public
     { Public declarations }
+    combo:TComboBox;
     LLabels:TList;
     LControls:TStringList;
     LControlsToFree:TList;
@@ -186,7 +186,7 @@ begin
    for i:=0 to sectionint.childlist.Count-1 do
    begin
     compo:=TRpSizeInterface(sectionint.childlist.Items[i]).printitem;
-    alist.AddObject(compo.Name+':'+Compo.className,sectionint.childlist.Items[i]);
+    alist.AddObject(compo.Name,sectionint.childlist.Items[i]);
    end;
    Combo:=TComboBox.Create(Self);
    Combo.Width:=TotalWidth-CONS_RIGHTBARGAP;
@@ -205,7 +205,7 @@ begin
  else
  begin
   posy:=posy+Combo.Height;
-  Combo.ItemIndex:=combo.Items.IndexOfObject(CompItem);
+  Combo.ItemIndex:=combo.Items.IndexOfObject(CompItem.printitem);
  end;
  FCompItem.GetProperties(LNames,LTypes,LValues);
  for i:=0 to LNames.Count-1 do
@@ -229,6 +229,20 @@ begin
     Control:=TComboBox.Create(Self);
     TComboBox(Control).Items.Add(FalseBoolStrs[0]);
     TComboBox(Control).Items.Add(TrueBoolStrs[0]);
+    TComboBox(Control).Style:=csDropDownList;
+    TCOmboBox(Control).OnChange:=EditChange;
+   end;
+   TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(LValues.Strings[i]);
+  end
+  else
+  if LTypes.Strings[i]=SRpSList then
+  begin
+   if dontrelease then
+    Control:=TControl(LControls.Objects[i])
+   else
+   begin
+    Control:=TComboBox.Create(Self);
+    CompItem.GetPropertyValues(LNames.Strings[i],TComboBox(Control).Items);
     TComboBox(Control).Style:=csDropDownList;
     TCOmboBox(Control).OnChange:=EditChange;
    end;

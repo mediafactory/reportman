@@ -94,7 +94,7 @@ type
     BLabel: TToolButton;
     BArrow: TToolButton;
     BExpression: TToolButton;
-    BDraw: TToolButton;
+    BShape: TToolButton;
     BImage: TToolButton;
     BChart: TToolButton;
     MDisplay: TMenuItem;
@@ -312,13 +312,13 @@ begin
  BArrow.Enabled:=false;
  BLabel.Enabled:=false;
  BExpression.Enabled:=false;
- BDraw.Enabled:=false;
+ BShape.Enabled:=false;
  BImage.Enabled:=false;
  BChart.Enabled:=false;
  BArrow.Down:=false;
  BLabel.Down:=false;
  BExpression.Down:=false;
- BDraw.Down:=false;
+ BShape.Down:=false;
  BImage.Down:=false;
  BChart.Down:=false;
 
@@ -360,7 +360,7 @@ begin
  BArrow.Enabled:=true;
  BLabel.Enabled:=true;
  BExpression.Enabled:=true;
- BDraw.Enabled:=true;
+ BShape.Enabled:=true;
  BImage.Enabled:=true;
  BChart.Enabled:=true;
  BArrow.Down:=true;

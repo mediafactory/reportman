@@ -29,6 +29,7 @@ uses
   fdatainfo in 'fdatainfo.pas' {FDatainfoconfig},
   fsampledata in 'fsampledata.pas' {FShowSampledata},
   rpobinsint in 'rpobinsint.pas',
+  fdrawint in 'fdrawint.pas' {FDrawInterface},
   rpobjinsp in 'rpobjinsp.pas' {FObjInsp: TFrame},
   frpgrid in 'frpgrid.pas' {FRpGridOptions},
   flabelint in 'flabelint.pas' {FLabelInterface},
@@ -62,7 +63,8 @@ uses
   rpfparams in '..\rpfparams.pas' {FRpParams},
   rpdbxconfig in '..\rpdbxconfig.pas' {FDBXConfig},
   rpgraphutils in '..\rpgraphutils.pas' {FRpGraphProgres},
-  rplabelitem in '..\rplabelitem.pas';
+  rplabelitem in '..\rplabelitem.pas',
+  rpdrawitem in '..\rpdrawitem.pas';
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -91,7 +93,8 @@ uses
   rpfparams in '../rpfparams.pas' {FRpParams},
   rpdbxconfig in '../rpdbxconfig.pas' {FDBXConfig},
   rpgraphutils in '../rpgraphutils.pas' {FRpGraphProgres},
-  rplabelitem in '../rplabelitem.pas';
+  rplabelitem in '../rplabelitem.pas',
+  rpdrawitem in '../rpdrawitem.pas';
 {$ENDIF}
 
 

@@ -419,6 +419,7 @@ begin
   for i:=0 to 3 do
   begin
    FBlacks[i].Visible:=true;
+   FBlacks[i].BringToFront;
   end;
  end;
 end;

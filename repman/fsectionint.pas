@@ -24,7 +24,7 @@ uses SysUtils, Classes, QGraphics, QForms,Types,
   QButtons, QExtCtrls, QControls, QStdCtrls,
   rpobinsint,rpreport,rpprintitem,rpgraphutils,
   rpobjinsp,frpstruc,flabelint,rplabelitem,
-  rpconsts,rpsection,rptypes;
+  rpconsts,rpsection,rptypes,rpdrawitem,fdrawint;
 
 
 type
@@ -198,10 +198,8 @@ end;
 procedure TRpSectionInterface.MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
 var
- labelint:TRpLabelInterface;
- expreint:TRpExpressionInterface;
- alabel:TRpLabel;
- aexpre:TRpExpression;
+ asizeposint:TRpSizePosInterface;
+ asizepos:TRpCommonPosComponent;
  aitem:TRpCommonListItem;
 begin
  inherited MouseDown(Button,Shift,X,Y);
@@ -214,63 +212,57 @@ begin
   TFObjInsp(fobjinsp).CompItem:=self;
   exit;
  end;
+ asizepos:=nil;
+ asizeposint:=nil;
  if fmainf.BLabel.Down then
  begin
-  alabel:=TRpLabel.Create(printitem.Owner);
-  if TRpReport(printitem.Owner).GridEnabled then
-  begin
-   alabel.PosX:=pixelstotwips(AlignToGridPixels(X,TRpReport(printitem.Owner).GridWidth));
-   alabel.PosY:=pixelstotwips(AlignToGridPixels(Y,TRpReport(printitem.Owner).GridHeight));
-  end
-  else
-  begin
-   alabel.PosX:=pixelstotwips(X);
-   alabel.PosY:=pixelstotwips(Y);
-  end;
-  alabel.Text:=SRpSampleTextToLabels;
-  GenerateNewName(alabel);
-  aitem:=TRpSection(printitem).Components.Add;
-  aitem.Component:=alabel;
-  labelint:=TRpLabelInterface.Create(Self,alabel);
-  labelint.Parent:=parent;
-  labelint.sectionint:=self;
-  labelint.UpdatePos;
-  labelint.fobjinsp:=fobjinsp;
-  TFObjInsp(fobjinsp).CompItem:=labelint;
-
-  childlist.Add(labelint);
-  if (Not (SSShift in Shift)) then
-   fmainf.BArrow.Down:=true;
+  asizepos:=TRpLabel.Create(printitem.Owner);
+  TRpLabel(asizepos).Text:=SRpSampleTextToLabels;
+  asizeposint:=TRpLabelInterface.Create(Self,asizepos);
  end;
-
  if fmainf.BExpression.Down then
  begin
-  aexpre:=TRpExpression.Create(printitem.Owner);
+  asizepos:=TRpExpression.Create(printitem.Owner);
+  TRpExpression(asizepos).Expression:= SRpSampleExpression;
+  asizeposint:=TRpExpressionInterface.Create(Self,asizepos);
+ end;
+ if fmainf.BShape.Down then
+ begin
+  asizepos:=TRpShape.Create(printitem.Owner);
+  asizeposint:=TRpDrawInterface.Create(Self,asizepos);
+ end;
+
+
+ if Assigned(asizepos) then
+ begin
   if TRpReport(printitem.Owner).GridEnabled then
   begin
-   aexpre.PosX:=pixelstotwips(AlignToGridPixels(X,TRpReport(printitem.Owner).GridWidth));
-   aexpre.PosY:=pixelstotwips(AlignToGridPixels(Y,TRpReport(printitem.Owner).GridHeight));
+   asizepos.PosX:=pixelstotwips(AlignToGridPixels(X,TRpReport(printitem.Owner).GridWidth));
+   asizepos.PosY:=pixelstotwips(AlignToGridPixels(Y,TRpReport(printitem.Owner).GridHeight));
   end
   else
   begin
-   aexpre.PosX:=pixelstotwips(X);
-   aexpre.PosY:=pixelstotwips(Y);
+   asizepos.PosX:=pixelstotwips(X);
+   asizepos.PosY:=pixelstotwips(Y);
   end;
-  aexpre.Expression:='2+2';
-  GenerateNewName(aexpre);
+  GenerateNewName(asizepos);
   aitem:=TRpSection(printitem).Components.Add;
-  aitem.Component:=aexpre;
-  expreint:=TRpExpressionInterface.Create(Self,aexpre);
-  expreint.Parent:=parent;
-  expreint.sectionint:=self;
-  expreint.UpdatePos;
-  expreint.fobjinsp:=fobjinsp;
-  TFObjInsp(fobjinsp).CompItem:=expreint;
-
-  childlist.Add(expreint);
+  aitem.Component:=asizepos;
+  asizeposint.Parent:=parent;
+  asizeposint.sectionint:=self;
+  asizeposint.UpdatePos;
+  asizeposint.fobjinsp:=fobjinsp;
+  childlist.Add(asizeposint);
+  if assigned(TFObjInsp(fobjinsp).Combo) then
+  begin
+   TFObjInsp(fobjinsp).Combo.Items.AddObject(asizepos.Name,asizepos);
+   TFObjInsp(fobjinsp).Combo.ItemIndex:=TFObjInsp(fobjinsp).Combo.Items.IndexOfObject(asizepos);
+  end;
+  TFObjInsp(fobjinsp).CompItem:=asizeposint;
   if (Not (SSShift in Shift)) then
    fmainf.BArrow.Down:=true;
  end;
+
 
 end;
 
