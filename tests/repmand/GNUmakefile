@@ -8,7 +8,7 @@ install:
 	cp $(drivers_path)/libsqldb2.so .
 	cp $(drivers_path)/libsqlib.so .
 	cp $(drivers_path)/libsqlinf.so .
-	cp $(drivers_path)/libsqlmy.so .
+	cp $(drivers_path)/libsqlmy.so.1 .
 	cp $(drivers_path)/libsqlmy23.so .
 	cp $(drivers_path)/libsqlpg.so .
 	cp $(drivers_path)/libsqlora.so .

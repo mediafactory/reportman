@@ -36,7 +36,7 @@ uses
   rpmdfgrid,rppreview,rpprintdia,
   rpmdconsts,rptypes, rpmdfstruc, rplastsav,rpsubreport,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
-  rpsection,rpprintitem,
+  rpsection,rpprintitem,rprfparams,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
@@ -1456,7 +1456,7 @@ begin
   exit;
  end;
 {$ENDIF}
- ShowUserParams(report);
+ rprfparams.ShowUserParams(report);
 end;
 
 procedure TFRpMainF.ADriverQTExecute(Sender: TObject);
