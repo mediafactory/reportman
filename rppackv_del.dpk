@@ -32,7 +32,8 @@ requires
   rtl,
   dbrtl,
   visualclx,
-  rppack_del;
+  rppack_del,
+  vcl;
 
 contains
   rpregv in 'rpregv.pas',
@@ -46,6 +47,12 @@ contains
   rppreview in 'rppreview.pas' {FRpPreview},
   rpgraphutils in 'rpgraphutils.pas' {FRpGraphProgres},
   rpprintdia in 'rpprintdia.pas' {FRpPrintDialog},
-  rprfparams in 'rprfparams.pas' {FRpRunTimeParams};
+  rprfparams in 'rprfparams.pas' {FRpRunTimeParams},
+  rpgdifonts in 'rpgdifonts.pas',
+  rpgdidriver in 'rpgdidriver.pas' {FRpVCLProgress},
+  rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig},
+  rprfvparams in 'rprfvparams.pas' {FRpRTParams},
+  rpvgraphutils in 'rpvgraphutils.pas',
+  rpvpreview in 'rpvpreview.pas' {FRpVPreview};
 
 end.

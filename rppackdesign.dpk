@@ -27,10 +27,6 @@ package rppackdesign;
 {$IMPLICITBUILD OFF}
 
 requires
-  rtl,
-  visualclx,
-  dataclx,
-  visualdbclx,
   rppack,
   rppackv;
 

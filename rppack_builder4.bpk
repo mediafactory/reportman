@@ -15,17 +15,17 @@ VERSION = BCB.04.04
 # ---------------------------------------------------------------------------
 PROJECT = rppack_builder4.bpl
 OBJFILES = rpmreg.obj rppdfreport.obj rpvclreport.obj rpalias.obj rpeval.obj rplastsav.obj \
-  rppack_builder4.obj
+  rptranslator.obj rppack_builder4.obj
 RESFILES = rppack_builder4.res rppdfreport.dcr rpvclreport.dcr rpalias.dcr rpeval.dcr \
-  rplastsav.dcr
+  rplastsav.dcr rptranslator.dcr
 DEFFILE =
 RESDEPEN = $(RESFILES)
 LIBFILES =
 IDLFILES =
 IDLGENFILES =
-LIBRARIES = vcldbx40.lib vcljpg40.lib vclx40.lib
+LIBRARIES = vcldbx40.lib vcljpg40.lib
 SPARELIBS = Vcl40.lib vclx40.lib vcljpg40.lib vclmid40.lib vcldb40.lib vcldbx40.lib
-PACKAGES = vcl40.bpi Vclmid40.bpi Vcldb40.bpi
+PACKAGES = vcl40.bpi Vclmid40.bpi Vcldb40.bpi Vclx40.bpi
 # ---------------------------------------------------------------------------
 PATHCPP = .;
 PATHASM = .;

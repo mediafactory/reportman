@@ -24,6 +24,7 @@ unit rpmdshfolder;
 
 interface
 
+{$I rpconf.inc}
 
 uses
   SysUtils, Classes,
@@ -32,6 +33,9 @@ uses
 {$ENDIF}
 {$IFDEF MSWINDOWS}
   Windows,
+{$ENDIF}
+{$IFNDEF USEVARIANTS}
+  FileCtrl,
 {$ENDIF}
   rpmdconsts;
 
@@ -93,16 +97,24 @@ begin
 {$IFDEF MSWINDOWS}
  if length(filename)<1 then
   Raise Exception.Create(SRpFileNameRequired);
- SHGetFolderPath(0, CSIDL_APPDATA or CSIDL_FLAG_CREATE, 0, 0, szAppData);
+// SHGetFolderPath(0, CSIDL_APPDATA or CSIDL_FLAG_CREATE, 0, 0, szAppData);
  if length(company)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(company)) then
-   RaiseLastOSError;
+{$IFDEF USEVARIANTS}
+     RaiseLastOSError;
+{$ELSE}
+     RaiseLastWin32Error;
+{$ENDIF}
  end;
  if Length(product)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(product)) then
-   RaiseLastOSError;
+{$IFDEF USEVARIANTS}
+     RaiseLastOSError;
+{$ELSE}
+     RaiseLastWin32Error;
+{$ENDIF}
  end;
  Result:=StrPas(szAppdata);
  if Not DirectoryExists(Result) then
@@ -111,7 +123,11 @@ begin
    Result:='';
  end;
  if not PathAppend(szAppdata,Pchar(filename+'.ini')) then
-  RaiseLastOSError;
+{$IFDEF USEVARIANTS}
+     RaiseLastOSError;
+{$ELSE}
+     RaiseLastWin32Error;
+{$ENDIF}
  Result:=StrPas(szAppdata);
 {$ENDIF}
 end;
@@ -129,26 +145,43 @@ begin
 {$IFDEF MSWINDOWS}
  if length(filename)<1 then
   Raise Exception.Create(SRpFileNameRequired);
- SHGetFolderPath(0, CSIDL_LOCAL_APPDATA or CSIDL_FLAG_CREATE, 0, 0, szAppData);
+// SHGetFolderPath(0, CSIDL_LOCAL_APPDATA or CSIDL_FLAG_CREATE, 0, 0, szAppData);
 
  if length(company)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(company)) then
-   RaiseLastOSError;
+{$IFDEF USEVARIANTS}
+     RaiseLastOSError;
+{$ELSE}
+     RaiseLastWin32Error;
+{$ENDIF}
  end;
  if Length(product)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(product)) then
-   RaiseLastOSError;
+{$IFDEF USEVARIANTS}
+     RaiseLastOSError;
+{$ELSE}
+     RaiseLastWin32Error;
+{$ENDIF}
  end;
  Result:=StrPas(szAppdata);
  if Not DirectoryExists(Result) then
  begin
+{$IFDEF BUILDER4}
+ ForceDirectories(Result);
+{$ENDIF}
+{$IFNDEF BUILDER4}
   if not ForceDirectories(Result) then
    Result:='';
+{$ENDIF}
  end;
  if not PathAppend(szAppdata,Pchar(filename+'.ini')) then
-  RaiseLastOSError;
+{$IFDEF USEVARIANTS}
+     RaiseLastOSError;
+{$ELSE}
+     RaiseLastWin32Error;
+{$ENDIF}
  Result:=StrPas(szAppdata);
 {$ENDIF}
 end;
@@ -166,25 +199,42 @@ begin
 {$IFDEF MSWINDOWS}
  if length(filename)<1 then
   Raise Exception.Create(SRpFileNameRequired);
- SHGetFolderPath(0, CSIDL_COMMON_APPDATA or CSIDL_FLAG_CREATE, 0, 0, szAppData);
+// SHGetFolderPath(0, CSIDL_COMMON_APPDATA or CSIDL_FLAG_CREATE, 0, 0, szAppData);
  if length(company)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(company)) then
-   RaiseLastOSError;
+{$IFDEF USEVARIANTS}
+     RaiseLastOSError;
+{$ELSE}
+     RaiseLastWin32Error;
+{$ENDIF}
  end;
  if Length(product)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(product)) then
-   RaiseLastOSError;
+{$IFDEF USEVARIANTS}
+     RaiseLastOSError;
+{$ELSE}
+     RaiseLastWin32Error;
+{$ENDIF}
  end;
  Result:=StrPas(szAppdata);
  if Not DirectoryExists(Result) then
  begin
+{$IFDEF BUILDER4}
+ ForceDirectories(Result);
+{$ENDIF}
+{$IFNDEF BUILDER4}
   if not ForceDirectories(Result) then
    Result:='';
+{$ENDIF}
  end;
  if not PathAppend(szAppdata,Pchar(filename+'.ini')) then
-  RaiseLastOSError;
+{$IFDEF USEVARIANTS}
+     RaiseLastOSError;
+{$ELSE}
+     RaiseLastWin32Error;
+{$ENDIF}
  Result:=StrPas(szAppdata);
 {$ENDIF}
 end;
@@ -193,3 +243,7 @@ initialization
 
 
 end.
+
+
+
+

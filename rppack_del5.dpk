@@ -31,7 +31,11 @@ package rppack_del5;
 {$DESCRIPTION 'Reportmanager components'}
 {$IMPLICITBUILD OFF}
 
-{%File 'rpconf.inc'}
+requires
+  Vcl50,
+  Vclx50,
+  Vclmid50,
+  Vcldb50;
 
 contains
   rptypeval in 'rptypeval.pas',
@@ -80,6 +84,7 @@ contains
   rpcompobase in 'rpcompobase.pas',
   rpmdbarcode in 'rpmdbarcode.pas',
   rpmdchart in 'rpmdchart.pas',
-  rptranslator in 'rptranslator.pas';
+  rptranslator in 'rptranslator.pas',
+  rpmdshfolder in 'rpmdshfolder.pas';
 
 end.

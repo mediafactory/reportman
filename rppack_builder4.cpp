@@ -16,6 +16,9 @@ USEUNIT("rpeval.pas");
 USERES("rpeval.dcr");
 USEUNIT("rplastsav.pas");
 USERES("rplastsav.dcr");
+USEPACKAGE("Vclx40.bpi");
+USEUNIT("rptranslator.pas");
+USERES("rptranslator.dcr");
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 //---------------------------------------------------------------------------

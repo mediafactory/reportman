@@ -32,22 +32,14 @@ requires
   vcl,
   dsnap,
   dbrtl,
-  dbexpress,
-  adortl,
-  bdertl,
-  ibxpress,
-  rppack_del;
+  rppack_del,
+  rppackv_del;
 
 {%File 'rpconf.inc'}
 
 contains
   rpvclreport in 'rpvclreport.pas',
-  rpgdidriver in 'rpgdidriver.pas' {FRpVCLProgress},
-  rpvpreview in 'rpvpreview.pas' {FRpVPreview},
-  rpvgraphutils in 'rpvgraphutils.pas',
-  rprfvparams in 'rprfvparams.pas' {FRpRTParams},
   rpregvcl in 'rpregvcl.pas',
-  rpgdifonts in 'rpgdifonts.pas',
   rpactivexreport in 'rpactivexreport.pas';
 
 end.
