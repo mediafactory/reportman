@@ -1045,7 +1045,7 @@ begin
      Raise Exception.Create(SRpSubreportAliasNotFound+':'+alias);
     dbinfo:=DatabaseInfo.Items[index];
     index:=DataInfo.IndexOf(alias);
-    if (Not (dbinfo.Driver in [rpdataibx,rpdatamybase])) then
+    if (Not (dbinfo.Driver in [rpdataibx,rpdatamybase,rpdatazeos])) then
     begin
      FDataInfo.Items[index].Cached:=true;
     end;
