@@ -8,6 +8,7 @@ object FLangInfo: TFLangInfo
   ParentFont = True
   OldCreateOrder = True
   Position = poScreenCenter
+  ShowHint = True
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13

@@ -144,6 +144,8 @@ var
  langindex:integer;
 begin
  langindex:=TRpReport(Owner).Language;
+ if langindex<0 then
+  langindex:=0;
  while ((FAllText.Count-1)<langindex) do
  begin
   FAllText.Add('');
@@ -350,7 +352,7 @@ begin
           FValue:=eval.EvalResult;
         end;
        end;
-      rgagAvg:
+      rpagAvg:
        begin
         FSumValue:=FSumValue+eval.EvalResult;
         FValue:=FSumValue/FDataCount;

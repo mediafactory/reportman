@@ -19,8 +19,12 @@ unit rpgraphutils;
 
 interface
 
-uses SysUtils, Classes, QGraphics, QForms,Types,
+uses
+  SysUtils,Classes, QGraphics, QForms,Types,
   QButtons, QExtCtrls, QControls, QStdCtrls,rpmunits,Qt,
+{$IFDEF MSWINDOWS}
+  windows,
+{$ENDIF}
   rpmdconsts;
 
 
@@ -41,10 +45,25 @@ function IntegerToFontStyle(intfontstyle:integer):TFontStyles;
 function IntegerFontStyleToString(intfontstyle:integer):String;
 function AlignToGrid(Value:integer;scale:integer):integer;
 function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
+procedure LoadQtTranslator;
 
 implementation
 
 {$R *.xfm}
+{$IFDEF MSWINDOWS}
+const
+  kernel = 'kernel32.dll';
+  OldLocaleOverrideKey = 'Software\Borland\Delphi\Locales'; // do not localize
+  NewLocaleOverrideKey = 'Software\Borland\Locales'; // do not localize
+
+
+function RegOpenKeyEx(hKey: LongWord; lpSubKey: PChar; ulOptions,
+  samDesired: LongWord; var phkResult: LongWord): Longint; stdcall;
+  external advapi32 name 'RegOpenKeyExA';
+function RegQueryValueEx(hKey: LongWord; lpValueName: PChar;
+  lpReserved: Pointer; lpType: Pointer; lpData: PChar; lpcbData: Pointer): Integer; stdcall;
+  external advapi32 name 'RegQueryValueExA';
+{$ENDIF}
 
 function AlignToGrid(Value:integer;scale:integer):integer;
 var
@@ -208,5 +227,188 @@ begin
   Result:=Copy(REsult,1,Length(Result)-1);
  Result:=Result+']';
 end;
+
+
+function FindQtLocaleFile:string;
+{$IFDEF LINUX}
+var
+ LangCode,P:PChar;
+ I:Integer;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+var
+  FileName: array[0..260] of Char;
+  Key: LongWord;
+  LocaleName, LocaleOverride: array[0..4] of Char;
+  Size: Integer;
+  P: PChar;
+  afilename:string;
+
+  function FindBS(Current: PChar): PChar;
+  begin
+    Result := Current;
+    while (Result^ <> #0) and (Result^ <> '\') do
+      Result := CharNext(Result);
+  end;
+
+  function ToLongPath(AFileName: PChar): PChar;
+  var
+    CurrBS, NextBS: PChar;
+     L: Integer;
+     Handle:Integer;
+    FindData: TWin32FindData;
+    Buffer: array[0..260] of Char;
+    GetLongPathName: function (ShortPathName: PChar; LongPathName: PChar;
+      cchBuffer: Integer): Integer stdcall;
+  begin
+{$R-}
+    Result := AFileName;
+    Handle := GetModuleHandle(kernel);
+    if Handle <> 0 then
+    begin
+      @GetLongPathName := GetProcAddress(Handle, 'GetLongPathNameA');
+      if Assigned(GetLongPathName) and
+         (GetLongPathName(AFileName, Buffer, SizeOf(Buffer)) <> 0) then
+      begin
+        lstrcpy(AFileName, Buffer);
+        Exit;
+      end;
+    end;
+
+    if AFileName[0] = '\' then
+    begin
+      if AFileName[1] <> '\' then Exit;
+      CurrBS := FindBS(AFileName + 2);  // skip server name
+      if CurrBS^ = #0 then Exit;
+      CurrBS := FindBS(CurrBS + 1);     // skip share name
+      if CurrBS^ = #0 then Exit;
+    end else
+      CurrBS := AFileName + 2;          // skip drive name
+
+    L := CurrBS - AFileName;
+    lstrcpyn(Buffer, AFileName, L + 1);
+    while CurrBS^ <> #0 do
+    begin
+      NextBS := FindBS(CurrBS + 1);
+      if L + (NextBS - CurrBS) + 1 > SizeOf(Buffer) then Exit;
+      lstrcpyn(Buffer + L, CurrBS, (NextBS - CurrBS) + 1);
+
+      Handle := FindFirstFile(Buffer, FindData);
+      if (Handle = -1) then Exit;
+      windows.FindClose(Handle);
+
+      if L + 1 + lstrlen(FindData.cFileName) + 1 > SizeOf(Buffer) then Exit;
+      Buffer[L] := '\';
+      lstrcpy(Buffer + L + 1, FindData.cFileName);
+      Inc(L, lstrlen(FindData.cFileName) + 1);
+      CurrBS := NextBS;
+    end;
+    lstrcpy(AFileName, Buffer);
+{$R+}
+  end;
+{$ENDIF}
+begin
+ afilename:='qt';
+ Result:=afilename;
+{$IFDEF LINUX}
+ LangCode := getenv('LANG');
+ if (LangCode = nil) or (LangCode^ = #0) then
+  Exit;
+ // look for modulename.en_US
+ P := LangCode;
+ while P^ in ['a'..'z', 'A'..'Z', '_'] do
+  Inc(P);
+ if P = LangCode then
+  Result := afilename
+ else
+ begin
+  Result := afilename + '.' + Copy(LangCode, 1, P - LangCode);
+  if not FileExists(Result) then
+  begin
+   // look for modulename.en    (ignoring country code and suffixes)
+   I := Length(Result);
+   while (I > 0) and not (Result[I] in ['.', '_']) do
+    Dec(I);
+   if (I-1 = Length(Result)) or (I-1 < Length(afilename)) then
+    Exit;
+   SetLength(Result, I-1);
+   if not FileExists(Result) then
+   begin
+    Result:=afilename;
+    Exit;
+   end;
+  end;
+ end;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  afilename:='qt.exe';
+  StrCopy(Filename,Pchar(afilename));
+  LocaleOverride[0] := #0;
+  if (RegOpenKeyEx(HKEY_CURRENT_USER, NewLocaleOverrideKey, 0, KEY_ALL_ACCESS, Key) = 0) or
+   (RegOpenKeyEx(HKEY_CURRENT_USER, OldLocaleOverrideKey, 0, KEY_ALL_ACCESS, Key) = 0) then
+  try
+    Size := SizeOf(LocaleOverride);
+    if RegQueryValueEx(Key, ToLongPath(FileName), nil, nil, LocaleOverride, @Size) <> 0 then
+      RegQueryValueEx(Key, '', nil, nil, LocaleOverride, @Size);
+  finally
+    RegCloseKey(Key);
+  end;
+  GetLocaleInfo(GetThreadLocale, LOCALE_SABBREVLANGNAME, LocaleName, SizeOf(LocaleName));
+  Result := '';
+  if (FileName[0] <> #0) and ((LocaleName[0] <> #0) or (LocaleOverride[0] <> #0)) then
+  begin
+    P := PChar(@FileName) + lstrlen(FileName);
+    while (P^ <> '.') and (P <> @FileName) do Dec(P);
+    if P <> @FileName then
+    begin
+      Inc(P);
+      // First look for a locale registry override
+      if LocaleOverride[0] <> #0 then
+      begin
+        lstrcpy(P, LocaleOverride);
+        afilename:='qt_'+Copy(ExtractFileExt(StrPas(FileName)),2,255)+'.qm';
+        if FileExists(aFileName) then
+         Result := aFileName;
+      end;
+      if (Result ='') and (LocaleName[0] <> #0) then
+      begin
+        // Then look for a potential language/country translation
+        lstrcpy(P, LocaleName);
+        afilename:='qt_'+Copy(ExtractFileExt(StrPas(FileName)),2,255)+'.qm';
+        if FileExists(aFileName) then
+         Result := aFileName;
+        if Result = '' then
+        begin
+          // Finally look for a language only translation
+          LocaleName[2] := #0;
+          lstrcpy(P, LocaleName);
+          afilename:='qt_'+Copy(ExtractFileExt(StrPas(FileName)),2,255)+'.qm';
+          if FileExists(aFileName) then
+           Result := aFileName;
+        end;
+      end;
+    end;
+  end;
+{$ENDIF}
+end;
+
+
+procedure LoadQtTranslator;
+var
+  Translator: QTranslatorH;
+  Filename:string;
+  WFileName,
+  WDelimiter: WideString;
+begin
+ Filename:=FindQtLocaleFile;
+ Translator := QTranslator_create(nil, nil);
+ WFileName := FileName;
+ WDelimiter := '_';
+ if QTranslator_load(Translator, @WFileName, nil, @WDelimiter, nil) then
+   QApplication_installTranslator(Application.Handle, Translator)
+end;
+
+initialization
+
 
 end.

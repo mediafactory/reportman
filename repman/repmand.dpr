@@ -44,9 +44,9 @@ uses
   rppdfreport in '..\rppdfreport.pas',
   rpvclreport in '..\rpvclreport.pas',
   rpvgraphutils in '..\rpvgraphutils.pas',
-  rpgdidriver in '..\rpgdidriver.pas',
-  rpvpreview in '..\rpvpreview.pas',
-  rprfvparams in '..\rprfvparams.pas',
+  rpgdidriver in '..\rpgdidriver.pas' {TFRpVCLProgress},
+  rpvpreview in '..\rpvpreview.pas' {TFRpVPreview},
+  rprfvparams in '..\rprfvparams.pas'{TFRpRTParams},
   rpgdifonts in '..\rpgdifonts.pas',
   rpreport in '..\rpreport.pas',
   rpsubreport in '..\rpsubreport.pas',
@@ -183,6 +183,9 @@ var
   FRpMainF: TFRpMainF;
 
 begin
+{$IFDEF MSWINDOWS}
+  LoadQtTranslator;
+{$ENDIF}
   Application.Initialize;
   Application.CreateForm(TFRpMainF, FRpMainF);
   Application.Run;

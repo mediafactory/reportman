@@ -244,6 +244,10 @@ end;
 
 procedure TFRpVPreview.FormCreate(Sender: TObject);
 begin
+ SaveDialog1.Filter:=SRpRepMetafile+'|*.rpmf|'+
+   SRpPDFFile+'|*.pdf|'+
+   SRpPDFFileUn+'|*.pdf';
+
  APrevious.ShortCut:=ShortCut(VK_PRIOR, []);
  ANext.ShortCut:=ShortCut(VK_NEXT, []);
  AFirst.ShortCut:=ShortCut(VK_HOME, []);

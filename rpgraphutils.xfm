@@ -1,12 +1,12 @@
 object FRpGraphProgres: TFRpGraphProgres
   Left = 408
   Top = 226
-  Width = 277
-  Height = 127
-  AutoScroll = False
   ActiveControl = CancelBtn
+  AutoScroll = False
   BorderStyle = fbsDialog
   Caption = 'Dialog'
+  ClientHeight = 127
+  ClientWidth = 277
   Color = clButton
   Position = poScreenCenter
   ShowHint = True

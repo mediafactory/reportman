@@ -56,9 +56,33 @@ HostApplication=
 Launcher=
 UseLauncher=0
 DebugCWD=
+[Resource DLL Projects]
+Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
+[RDP Source Files]
+Item0=..\rpmdfmain.xfm
+Item1=..\rpmdfstruc.xfm
+Item2=..\rpmdfdesign.xfm
+Item3=..\rpmdfdatainfo.xfm
+Item4=..\rpmdfsampledata.xfm
+Item5=..\rpmdobjinsp.xfm
+Item6=..\rpmdfgrid.xfm
+Item7=..\rpmdfabout.xfm
+Item8=..\rpmdfhelpform.xfm
+Item9=..\rpvpreview.dfm
+Item10=..\rprfvparams.dfm
+Item11=..\rppagesetup.xfm
+Item12=..\rpexpredlg.xfm
+Item13=..\rpqtdriver.xfm
+Item14=..\rpfparams.xfm
+Item15=..\rpdbxconfig.xfm
+Item16=..\rpgraphutils.xfm
+Item17=..\rpprintdia.xfm
+Item18=..\rppreview.xfm
+Item19=..\rprfparams.xfm
+Item20=repmand.drc
 [Language]
 ActiveLang=
-ProjectLang=
+ProjectLang=$00000409
 RootDir=
 [Version Info]
 IncludeVerInfo=1

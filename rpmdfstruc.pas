@@ -585,7 +585,7 @@ begin
  if Sender=MPFooter then
  begin
   FRpMainF:=TFRpMainF(Owner);
-  AAction:=FRpMainf.ANewPageHeader;
+  AAction:=FRpMainf.ANewPageFooter;
   oldappidle:=Application.Onidle;
   Application.OnIdle:=ActionIdle;
   exit;

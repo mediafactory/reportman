@@ -57,34 +57,22 @@ type
  end;
 
 
-const
- StringPenStyle:array [psSolid..psClear] of String=
-  (SRpSPSolid, SRpSPDash, SRpSPDot, SRpSPDashDot, SRpSPDashDotDot, SRpSPClear);
- StringBrushStyle:array [bsSolid..bsDense7] of String=
-  (SRpSBSolid, SRpSBClear, SRpSBHorizontal, SRpSBVertical, SRpSBFDiagonal,
-  SRpSBBDiagonal, SRpSBCross, SRpSBDiagCross, SRpSBDense1, SRpSBDense2,
-  SRpSBDense3, SRpSBDense4, SRpSBDense5, SRpSBDense6,SRpSBDense7);
- StringShapeType:array [rpsRectangle..rpsOblique2] of String=(
-  SRpsSRectangle,SRpsSSquare,SRpsSRoundRect,
-  SRpsSRoundSquare,SRpsSEllipse,SRpsSCircle,SRpSHorzLine,SRpSVertLine,
-  SRpSOblique1,SRpSOblique2);
- StringDrawStyles:array [rpDrawCrop..rpDrawTile] of string=(
-  SRPSDrawCrop,SRPSDrawStretch,SRPSDrawFull,SRpDrawTile);
- StringCopyModes:array [cmBlackness..cmCreateMask] of string=(
-  SRpBlackness, SRpDstInvert, SRpMergeCopy, SRpMergePaint,
-  SRpNotSrcCopy, SRpNotSrcErase, SRpPatCopy, SRpPatInvert,
-  SRpPatPaint, SRpSrcAnd, SRpSrcCopy, SRpSrcErase,
-  SRpSrcInvert, SRpSrcPaint, SRpWhiteness, SRpCreateMask);
-// TCopyMode = (cmBlackness, cmDstInvert, cmMergeCopy, cmMergePaint,
+var
+ StringPenStyle:array [psSolid..psClear] of wideString;
+ StringBrushStyle:array [bsSolid..bsDense7] of wideString;
+ StringShapeType:array [rpsRectangle..rpsOblique2] of wideString;
+ StringDrawStyles:array [rpDrawCrop..rpDrawTile] of widestring;
+ StringCopyModes:array [cmBlackness..cmCreateMask] of widestring;
+ // TCopyMode = (cmBlackness, cmDstInvert, cmMergeCopy, cmMergePaint,
 // cmNotSrcCopy, cmNotSrcErase, cmPatCopy, cmPatInvert,
 // cmPatPaint, cmSrcAnd, cmSrcCopy, cmSrcErase,
 // cmSrcInvert, cmSrcPaint, cmWhiteness, cmCreateMask);
 
-function StringPenStyleToInt(Value:String):integer;
-function StringBrushStyleToInt(Value:String):integer;
-function StringShapeTypeToShape(Value:String):TRpShapeType;
-function StringDrawStyleToDrawStyle(Value:string):TRpImageDrawStyle;
-function StringCopyModeToCopyMode(Value:string):TCopyMode;
+function StringPenStyleToInt(Value:widestring):integer;
+function StringBrushStyleToInt(Value:wideString):integer;
+function StringShapeTypeToShape(Value:wideString):TRpShapeType;
+function StringDrawStyleToDrawStyle(Value:widestring):TRpImageDrawStyle;
+function StringCopyModeToCopyMode(Value:widestring):TCopyMode;
 
 implementation
 
@@ -147,7 +135,7 @@ begin
 
 end;
 
-function StringPenStyleToInt(Value:String):integer;
+function StringPenStyleToInt(Value:wideString):integer;
 var
  i:TPenStyle;
 begin
@@ -162,7 +150,7 @@ begin
  end;
 end;
 
-function StringShapeTypeToShape(Value:String):TRpShapeType;
+function StringShapeTypeToShape(Value:wideString):TRpShapeType;
 var
  i:TRpShapetype;
 begin
@@ -178,7 +166,7 @@ begin
 end;
 
 
-function StringBrushStyleToInt(Value:String):integer;
+function StringBrushStyleToInt(Value:wideString):integer;
 var
  i:TBrushStyle;
 begin
@@ -193,7 +181,7 @@ begin
  end;
 end;
 
-function StringDrawStyleToDrawStyle(Value:string):TRpImageDrawStyle;
+function StringDrawStyleToDrawStyle(Value:widestring):TRpImageDrawStyle;
 var
  i:TRpImageDrawStyle;
 begin
@@ -208,7 +196,7 @@ begin
  end;
 end;
 
-function StringCopyModeToCopyMode(Value:string):TCopyMode;
+function StringCopyModeToCopyMode(Value:widestring):TCopyMode;
 var
  i:TCopyMode;
 begin
@@ -667,5 +655,50 @@ begin
  inherited GetPropertyValues(pname,lpossiblevalues);
 end;
 
+initialization
+ StringPenStyle[psSolid]:=SRpSPSolid;
+ StringPenStyle[psDash]:=SRpSPDash;
+ StringPenStyle[psDot]:=SRpSPDot;
+ StringPenStyle[psDashDot]:=SRpSPDashDot;
+ StringPenStyle[psDashDotDot]:=SRpSPDashDotDot;
+ StringPenStyle[psClear]:=SRpSPClear;
 
+ StringBrushStyle[bsSolid]:=SRpSBSolid;
+ StringBrushStyle[bsClear]:=SRpSBClear;
+ StringBrushStyle[bsHorizontal]:=SRpSBHorizontal;
+ StringBrushStyle[bsVertical]:=SRpSBVertical;
+ StringBrushStyle[bsFDiagonal]:=SRpSBFDiagonal;
+ StringBrushStyle[bsBDiagonal]:=SRpSBBDiagonal;
+ StringBrushStyle[bsCross]:=SRpSBCross;
+ StringBrushStyle[bsDiagCross]:=SRpSBDiagCross;
+ StringBrushStyle[bsDense1]:=SRpSBDense1;
+ StringBrushStyle[bsDense2]:=SRpSBDense2;
+ StringBrushStyle[bsDense3]:=SRpSBDense3;
+ StringBrushStyle[bsDense4]:=SRpSBDense4;
+ StringBrushStyle[bsDense5]:=SRpSBDense5;
+ StringBrushStyle[bsDense6]:=SRpSBDense6;
+ StringBrushStyle[bsDense7]:=SRpSBDense7;
+
+ StringShapeType[rpsRectangle]:=SRpsSRectangle;
+ StringShapeType[rpsSquare]:=SRpsSSquare;
+ StringShapeType[rpsRoundRect]:=SRpsSRoundRect;
+ StringShapeType[rpsRoundSquare]:=SRpsSRoundSquare;
+ StringShapeType[rpsEllipse]:=SRpsSEllipse;
+ StringShapeType[rpsCircle]:=SRpsSCircle;
+ StringShapeType[rpsHorzLine]:=SRpSHorzLine;
+ StringShapeType[rpsVertLine]:=SRpSVertLine;
+ StringShapeType[rpsOblique1]:=SRpSOblique1;
+ StringShapeType[rpsOblique2]:=SRpSOblique2;
+
+ StringDrawStyles[rpDrawCrop]:=SRPSDrawCrop;
+ StringDrawStyles[rpDrawStretch]:=SRPSDrawStretch;
+ StringDrawStyles[rpDrawFull]:=SRPSDrawFull;
+ StringDrawStyles[rpDrawTile]:=SRPDrawTile;
+
+{ StringCopyModes:array [cmBlackness..cmCreateMask] of string=(
+  SRpBlackness, SRpDstInvert, SRpMergeCopy, SRpMergePaint,
+  SRpNotSrcCopy, SRpNotSrcErase, SRpPatCopy, SRpPatInvert,
+  SRpPatPaint, SRpSrcAnd, SRpSrcCopy, SRpSrcErase,
+  SRpSrcInvert, SRpSrcPaint, SRpWhiteness, SRpCreateMask);
+}
 end.

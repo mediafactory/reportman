@@ -59,9 +59,7 @@ implementation
 
 var
  AggregatesString:array [rpAgNone..rpAgGeneral] of widestring;
- AggretypeString:array [rpagSum..rpagStdDev] of string=
-  (SrpSum,SRpMin,SRpMax,SRpAvg,SRpStdDev);
-
+ AggretypeString:array [rpagSum..rpagStdDev] of widestring;
 
 function StringToAgeType(value:widestring):TRpAggregateType;
 var
@@ -429,4 +427,9 @@ initialization
  AggregatesString[rpAgGroup]:=SRpGroup;
  AggregatesString[rpAgPage]:=SRpPage;
  AggregatesString[rpAgGeneral]:=SRpGeneral;
+ AggretypeString[rpagSum]:=SrpSum;
+ AggretypeString[rpagMin]:=SrpMin;
+ AggretypeString[rpagMax]:=SrpMax;
+ AggretypeString[rpagAvg]:=SrpAvg;
+ AggretypeString[rpagStdDev]:=SrpStdDev;
 end.

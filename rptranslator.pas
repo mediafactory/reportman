@@ -71,6 +71,9 @@ type
    property Filename:string read FFilename write FFilename;
   end;
 
+
+function AddLocaleSufix(afilename:string):string;
+
 implementation
 
 {$IFDEF MSWINDOWS}

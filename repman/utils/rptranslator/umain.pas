@@ -18,7 +18,8 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls,rptranslator, DBCtrls, Grids, DBGrids, Db, DBClient, Menus,
-  ActnList, ExtCtrls, ToolWin, ComCtrls,Consts, ImgList;
+  ActnList, ExtCtrls, ToolWin, ComCtrls,Consts, ImgList, rpeval,
+  clipbrd;
 
 
 resourcestring
@@ -68,6 +69,17 @@ type
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
+    APaste: TAction;
+    RpEvaluator1: TRpEvaluator;
+    MEdit: TMenuItem;
+    ToolButton6: TToolButton;
+    ToolButton7: TToolButton;
+    Paste1: TMenuItem;
+    Proces1: TMenuItem;
+    ASearch: TAction;
+    FindDialog1: TFindDialog;
+    ToolButton8: TToolButton;
+    Search1: TMenuItem;
     procedure AOpenExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ASaveasExecute(Sender: TObject);
@@ -84,6 +96,9 @@ type
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure AMergeExecute(Sender: TObject);
     procedure AShowLangInfoExecute(Sender: TObject);
+    procedure APasteExecute(Sender: TObject);
+    procedure Proces1Click(Sender: TObject);
+    procedure ASearchExecute(Sender: TObject);
   private
     { Private declarations }
     atrans:TRpTransLator;
@@ -139,6 +154,8 @@ begin
     ASave.Enabled:=True;
     AMerge.Enabled:=True;
     ASaveAs.Enabled:=True;
+    APaste.Enabled:=True;
+    ASearch.Enabled:=True;
     AAllowInsert.Checked:=False
    finally
     reading:=false;
@@ -178,6 +195,11 @@ begin
  Utilities1.Caption:=formtrans.LoadString(28,Utilities1.Caption);
  AShowLangInfo.Caption:=formtrans.LoadString(29,AShowLangInfo.Caption);
  AShowLangInfo.Hint:=formtrans.LoadString(30,AShowLangInfo.Hint);
+ MEdit.Caption:=formtrans.LoadString(31,MEdit.Caption);
+ APaste.Caption:=formtrans.LoadString(32,APaste.Caption);
+ APaste.Hint:=formtrans.LoadString(33,Apaste.Hint);
+ ASearch.Caption:=formtrans.LoadString(34,ASearch.Caption);
+ ASearch.Hint:=formtrans.LoadString(35,ASearch.Hint);
 
  Application.OnHint:=AppHint;
 end;
@@ -217,6 +239,8 @@ begin
    ASave.Enabled:=True;
    AMerge.Enabled:=True;
    ASaveAs.Enabled:=True;
+   APaste.Enabled:=True;
+   ASearch.Enabled:=True;
    CurrentFilename:=filename;
    Caption:=FormCaption+'-'+CurrentFilename;
   finally
@@ -242,6 +266,8 @@ begin
  ASave.Enabled:=False;
  AMerge.Enabled:=True;
  ASaveAs.Enabled:=True;
+ APaste.Enabled:=True;
+ ASearch.Enabled:=True;
  modified:=false;
  PParent.Visible:=true;
  AAllowInsert.Checked:=True;
@@ -358,6 +384,105 @@ end;
 procedure TFMain.AShowLangInfoExecute(Sender: TObject);
 begin
  ShowLangInfo;
+end;
+
+procedure TFMain.APasteExecute(Sender: TObject);
+var
+ alist,alist2:TStringList;
+ astring:string;
+ identifier:string;
+ i,index:integer;
+begin
+ DTexts.CheckBrowseMode;
+ if Clipboard.HasFormat(CF_TEXT) then
+ begin
+  alist:=TStringList.Create;
+  alist2:=TStringList.Create;
+  try
+   alist.text:=Clipboard.AsText;
+   DTexts.Disablecontrols;
+   try
+    for i:=0 to alist.count-1 do
+    begin
+     if (Not AAllowInsert.Checked) then
+      AAllowInsert.Checked:=True;
+     astring:=alist.strings[i];
+     index:=Pos('=',astring);
+     if index>0 then
+     begin
+      astring:=Copy(astring,index+1,Length(astring));
+      astring:=Trim(astring);
+      if astring[Length(astring)]=';' then
+       astring[Length(astring)]:=' ';
+      astring:=RpEvaluator1.EvaluateText(astring);
+      identifier:=alist.strings[i];
+      index:=Pos(':',identifier);
+      if index>0 then
+      begin
+       identifier:=Trim(Copy(identifier,1,index-1));
+      end
+      else
+       identifier:='';
+     end;
+     DTexts.Append;
+     try
+      DTextsTEXT.Text:=astring;
+      DTExts.Post;
+      if Length(identifier)>0 then
+      begin
+       identifier:=' TranslateVar('+DTextsPOSITION.AsString+','+Identifier+');';
+       alist2.add(identifier);
+      end;
+     except
+      DTexts.Cancel;
+     end;
+    end;
+    if alist2.count>0 then
+    begin
+     clipboard.AsText:=alist2.Text;
+    end;
+   finally
+    DTexts.EnableControls;
+   end;
+  finally
+   alist.free;
+   alist2.free;
+  end;
+ end;
+end;
+
+procedure TFMain.Proces1Click(Sender: TObject);
+var
+ alist:TStringList;
+ i,index:integer;
+ alist2:TStringList;
+ astring:string;
+begin
+ alist:=TStringList.Create;
+ alist2:=TStringList.Create;
+ try
+  alist.Text:=clipboard.AsText;
+  for i:=0 to alist.count-1 do
+  begin
+   astring:=alist.strings[i];
+   index:=Pos('=',astring);
+   if index>0 then
+   begin
+    astring:=Copy(astring,1,index-1)+':WideString'+Copy(astring,index,Length(astring));
+    alist2.Add(astring);
+   end;
+  end;
+  clipboard.AsText:=alist2.Text;
+ finally
+  alist.Free;
+  alist2.Free;
+ end;
+end;
+
+procedure TFMain.ASearchExecute(Sender: TObject);
+begin
+ // Ask the texts
+ FindDialog1.Execute;
 end;
 
 end.

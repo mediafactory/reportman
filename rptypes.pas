@@ -58,7 +58,7 @@ type
  TRpTwips=integer;
  TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull,rpDrawTile);
  TRpAggregate=(rpAgNone,rpAgGroup,rpAgPage,rpAgGeneral);
- TRpAggregateType=(rpagSum,rpagMin,rpagMax,rgagAvg,rpagStdDev);
+ TRpAggregateType=(rpagSum,rpagMin,rpagMax,rpagAvg,rpagStdDev);
  TRpReportChanged=(rpReportStart,rpDataChange,rpGroupChange,rpPageChange);
  TRpShapeType=(rpsRectangle, rpsSquare, rpsRoundRect, rpsRoundSquare,
   rpsEllipse, rpsCircle,rpsHorzLine,rpsVertLine,rpsOblique1,rpsOblique2);

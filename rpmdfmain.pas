@@ -38,7 +38,7 @@ uses
   rpmdconsts,rptypes, QExtCtrls,rpmdfstruc, rplastsav,rpsubreport,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
   rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver, 
-  DB,rpmdfhelpform,rpmunits;
+  DB,rpmdfhelpform,rpmunits,QConsts;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;

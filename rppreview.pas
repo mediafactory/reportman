@@ -259,6 +259,11 @@ begin
    SRpPDFFile+'|*.pdf|'+
    SRpPDFFileUn+'|*.pdf';
 {$ENDIF}
+{$IFNDEF VCLFILEFILTERS}
+ SaveDialog1.Filter:=SRpRepMetafile+' (*.rpmf)|'+
+   SRpPDFFile+' (*.pdf)|'+
+   SRpPDFFileUn+' (*.pdf)';
+{$ENDIF}
 
  Caption:=TranslateStr(215,Caption);
  SaveDialog1.Title:=TranslateStr(216,SaveDialog1.Title);
