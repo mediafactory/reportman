@@ -64,7 +64,13 @@ resourcestring
 
   SRpMetaPrint1='metaprint v1.0';
   SRpMetaPrint2='Prints a metafile report (.rpmf)';
-  SRpMetaPrint3='Usage: metaprint metafilename';
+  SRpMetaPrint3='Usage: metaprint [Options] metafilename';
+  SRpMetaPrint4='Options: -d Delete the file after printing it';
+  SRpMetaPrint5='         -q Quiet mode, don''t show progress';
+  SRpTooManyParams='Too many parameters';
+  SRpPrintingFile='Printing';
+  SRpPrinted='Printed';
+  SRpPrintedFileDeleted='Printed file deleted';
 
   SRpTxtToRep1='txttorep v1.0';
   SRpTxtToRep2='Converts a plain file containing object descriptions to a report manager (.rep) file';

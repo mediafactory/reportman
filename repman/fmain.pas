@@ -477,8 +477,6 @@ begin
 end;
 
 procedure TFMainf.FormCreate(Sender: TObject);
-var
- abuffer:array [0..L_tmpnam] of char;
 begin
  configfile:=Obtainininameuserconfig('','','repmand');
 {$IFDEF MSWINDOWS}
@@ -489,8 +487,6 @@ begin
 {$ENDIF}
  LastUsedFiles.LoadFromConfigFile(configfile);
  UpdateFileMenu;
- tmpnam(abuffer);
- ShowMessage(StrPas(abuffer));
 end;
 
 procedure TFMainf.FormClose(Sender: TObject; var Action: TCloseAction);

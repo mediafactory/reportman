@@ -53,9 +53,19 @@ clean:
 	-rm tests/repmand/metaview
 	-rm tests/repmand/metaprint
 	-rm tests/repmand/printrep
+	-rm tests/repmand/Project1
+	-rm tests/repmand/sample4.rep
+	-rm tests/repmand/biolife.cds
+	-rm tests/repmand/*.0
+	-rm tests/repmand/*.tar
+	-rm tests/repmand/*.gz
 	-rm tests/repmand/meta.rpmf
 	-rm tests/repmand/reptotxt
 	-rm tests/repmand/txttorep
+	-rm tests/clxreport/Project1
+	-rm tests/clxreport/*.dcu
+	-rm tests/clxreport/*.~*
+	-rm tests/clxreport/Project2
 real_clean: clean
 	-rm -Rf  *.bpl
 	-rm -Rf  *.so

@@ -535,9 +535,12 @@ end;
 function PrintReport(report:TRpReport;Caption:string;progress:boolean):Boolean;
 {$IFDEF LINUX}
 var
+ abuffer:array [0..L_tmpnam] of char;
  theparams:array [0..3] of pchar;
  param1:string;
  param2:string;
+ param3:string;
+ afilename:string;
  child:__pid_t;
 {$ENDIF}
 begin
@@ -562,12 +565,16 @@ begin
 {$ENDIF}
 {$IFDEF LINUX}
  // Saves the metafile
- report.Metafile.SaveToFile('meta.rpmf');
+ tmpnam(abuffer);
+ afilename:=StrPas(abuffer);
+ report.Metafile.SaveToFile(afilename);
  param1:='metaprint';
- param2:='meta.rpmf';
+ param2:='-d';
+ param3:=afilename;
  theparams[0]:=Pchar(param1);
  theparams[1]:=Pchar(param2);
- theparams[2]:=nil;
+ theparams[2]:=PChar(afilename);
+ theparams[3]:=nil;
 
  child:=fork;
  if child=-1 then
