@@ -3,15 +3,17 @@ object FDesignFrame: TFDesignFrame
   Top = 0
   Width = 451
   Height = 304
+  VertScrollBar.Range = 20
+  HorzScrollBar.Range = 20
   Align = alClient
   TabOrder = 0
-  object SectionScrollBox: TScrollBox
+  object PTop: TPanel
     Left = 0
     Top = 0
     Width = 451
-    Height = 304
-    Align = alClient
-    BorderStyle = bsNone
+    Height = 20
+    Align = alTop
+    BevelOuter = bvNone
     TabOrder = 0
     object TopRuler: TRpRuler
       Left = 20
@@ -21,12 +23,30 @@ object FDesignFrame: TFDesignFrame
       RType = rHorizontal
       Visible = False
     end
+  end
+  object PLeft: TPanel
+    Left = 0
+    Top = 20
+    Width = 20
+    Height = 284
+    Align = alLeft
+    BevelOuter = bvNone
+    TabOrder = 1
     object LeftRuler: TRpRuler
       Left = 0
-      Top = 20
+      Top = 0
       Width = 20
       Height = 283
       Visible = False
     end
+  end
+  object SectionScrollBox: TScrollBox
+    Left = 20
+    Top = 20
+    Width = 431
+    Height = 284
+    Align = alClient
+    BorderStyle = bsNone
+    TabOrder = 2
   end
 end

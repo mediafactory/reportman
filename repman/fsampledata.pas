@@ -1,3 +1,21 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager Designer                         }
+{                                                       }
+{       FSampledata                                     }
+{       Show data of a unidirectional query             }
+{                                                       }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the GPL license              }
+{       A comercial license is also available           }
+{       See license.txt for licensing details           }
+{                                                       }
+{                                                       }
+{*******************************************************}
+
 unit fsampledata;
 
 interface

@@ -46,7 +46,7 @@ type
     Exit1: TMenuItem;
     ToolButton3: TToolButton;
     ASave: TAction;
-    ToolButton4: TToolButton;
+    BSave: TToolButton;
     N2: TMenuItem;
     Save1: TMenuItem;
     SaveDialog1: TSaveDialog;
@@ -82,6 +82,20 @@ type
     Dataaccessconfiguration1: TMenuItem;
     AParams: TAction;
     Parameters1: TMenuItem;
+    APrint: TAction;
+    APreview: TAction;
+    ToolButton4: TToolButton;
+    ToolButton5: TToolButton;
+    ToolButton6: TToolButton;
+    ToolButton7: TToolButton;
+    ToolButton8: TToolButton;
+    ToolButton9: TToolButton;
+    BLabel: TToolButton;
+    BArrow: TToolButton;
+    BText: TToolButton;
+    BDraw: TToolButton;
+    BImage: TToolButton;
+    BChart: TToolButton;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -267,6 +281,21 @@ begin
  ADeleteSelection.Enabled:=false;
  AnewDetail.Enabled:=false;
  ADataConfig.Enabled:=false;
+
+ // Palette
+ BArrow.Enabled:=false;
+ BLabel.Enabled:=false;
+ BText.Enabled:=false;
+ BDraw.Enabled:=false;
+ BImage.Enabled:=false;
+ BChart.Enabled:=false;
+ BArrow.Down:=false;
+ BLabel.Down:=false;
+ BText.Down:=false;
+ BDraw.Down:=false;
+ BImage.Down:=false;
+ BChart.Down:=false;
+
  AParams.Enabled:=False;
  APageSetup.Enabled:=false;
  filename:='';
@@ -297,6 +326,16 @@ begin
  ADeleteSelection.Enabled:=true;
  AnewDetail.Enabled:=true;
  ADataConfig.Enabled:=true;
+
+ // Palette
+ BArrow.Enabled:=true;
+ BLabel.Enabled:=true;
+ BText.Enabled:=true;
+ BDraw.Enabled:=true;
+ BImage.Enabled:=true;
+ BChart.Enabled:=true;
+ BArrow.Down:=true;
+
  AParams.Enabled:=True;
  if length(filename)<1 then
   Caption:=SRpRepman+'-'+SRpUntitled

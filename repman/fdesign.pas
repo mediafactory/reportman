@@ -26,17 +26,22 @@ uses
   QTypes, QExtCtrls,frpstruc,rpobinsint,rpreport,
   fsectionint,rpsubreport,rpsection, rpruler,rpobjinsp;
 
+const
+ CONS_RULER_LEFT=20;
 type
   TFDesignFrame = class(TFrame)
-    SectionScrollBox: TScrollBox;
+    PTop: TPanel;
     TopRuler: TRpRuler;
+    PLeft: TPanel;
     LeftRuler: TRpRuler;
+    SectionScrollBox: TScrollBox;
   private
     { Private declarations }
     FReport:TRpReport;
     FObjInsp:TFObjInsp;
     FSectionInterface:TRpSectionInterface;
     procedure SetReport(Value:TRpReport);
+    procedure SecPosChange(Sender:TObject);
   public
     { Public declarations }
     freportstructure:TFRpStructure;
@@ -48,9 +53,12 @@ type
     property ObjInsp:TFObjInsp read FObjInsp write FObjInsp;
   end;
 
+
 implementation
 
 {$R *.xfm}
+
+uses fmain;
 
 constructor TFDesignFrame.Create(AOwner:TComponent);
 begin
@@ -92,8 +100,8 @@ begin
  begin
   if assigned(fobjinsp) then
   begin
-   if (fobjinsp.CompItem=FSectionInterface) then
-    fobjinsp.CompItem:=nil;
+   if freportstructure.FindSelectedObject=FSectionInterface.printitem then
+    exit;
   end;
   FSectionInterface.free;
   FSectionInterface:=nil;
@@ -113,9 +121,11 @@ begin
  if (dataobj is TRpSection) then
  begin
   FSectionInterface:=TRpSectionInterface.Create(Self,TRpSection(dataobj));
+  FSectionInterface.OnPosChange:=SecPosChange;
   FSectionInterface.Parent:=SectionScrollBox;
-  FSectionInterface.Top:=TopRuler.Height;
-  FSectionInterface.Left:=LeftRuler.Width;
+  FSectionInterface.freportstructure:=freportstructure;
+  FSectionInterface.Top:=0;
+  FSectionInterface.Left:=0;
   TopRuler.Width:=FSectionInterface.Width;
   LeftRuler.Height:=FSectionInterface.Height;
   TopRuler.Visible:=true;
@@ -125,6 +135,12 @@ begin
    fobjinsp.CompItem:=FSectionInterface;
   end;
  end;
+end;
+
+procedure TFDesignFrame.SecPosChange(Sender:TObject);
+begin
+ TopRuler.Left:=CONS_RULER_LEFT+FSectionInterface.Left;
+ LeftRuler.Top:=FSectionInterface.Top;
 end;
 
 end.

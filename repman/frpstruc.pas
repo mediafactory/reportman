@@ -23,7 +23,7 @@ interface
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QComCtrls,rpreport,rpsubreport,rpconsts, QMenus, QTypes,
-  rpsection,rpobjinsp;
+  rpsection,rpobjinsp,rpprintitem;
 
 type
   TFRpStructure = class(TFrame)
@@ -44,6 +44,7 @@ type
     procedure DeleteSelectedNode;
     property Report:TRpReport read FReport write SetReport;
     property ObjInsp:TFObjInsp read FObjInsp write FObjInsp;
+    procedure SelectDataItem(data:TObject);
   end;
 
 implementation
@@ -148,5 +149,35 @@ procedure TFRpStructure.RViewClick(Sender: TObject);
 begin
  TFDesignFrame(designframe).UpdateSelection;
 end;
+
+function FindDataInTree(nodes:TTreeNodes;data:TObject):TTreeNode;
+var
+ i:integer;
+begin
+ Result:=nil;
+ i:=0;
+ while i<nodes.Count do
+ begin
+  if nodes.item[i].data=Data then
+  begin
+   Result:=nodes.item[i];
+   break;
+  end;
+  inc(i);
+ end;
+end;
+
+procedure TFRpStructure.SelectDataItem(data:TObject);
+var
+ anode:TTreeNode;
+begin
+ anode:=FindDataInTree(RView.Items,data);
+ if Assigned(anode) then
+ begin
+  RView.Selected:=anode;
+  RViewClick(Self);
+ end;
+end;
+
 
 end.

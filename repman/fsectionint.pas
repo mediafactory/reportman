@@ -1,3 +1,21 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager Designer                         }
+{                                                       }
+{       Rpsectionint                                    }
+{       Implementation of section designer              }
+{                                                       }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the GPL license              }
+{       A comercial license is also available           }
+{       See license.txt for licensing details           }
+{                                                       }
+{                                                       }
+{*******************************************************}
+
 unit fsectionint;
 
 interface
@@ -5,6 +23,7 @@ interface
 uses SysUtils, Classes, QGraphics, QForms,Types,
   QButtons, QExtCtrls, QControls, QStdCtrls,
   rpobinsint,rpreport,rpprintitem,rpgraphutils,
+  rpobjinsp,frpstruc,
   rpconsts,rpsection;
 
 
@@ -19,16 +38,26 @@ type
   end;
 
   TRpSectionInterface=class(TRpSizeInterface)
-  protected
-   procedure Paint;override;
-  public
-   constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
+   private
+   protected
+    procedure Paint;override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer); override;
+   public
+    OnPosChange:TNotifyEvent;
+    freportstructure:TFRpStructure;
+
+    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
   end;
 
 
 procedure FreeGridBitmap;
 
 implementation
+
+uses fmain, fdesign;
+
+{$R *.xfm}
 
 const
  MIN_GRID_BITMAP_WITH=800;
@@ -123,7 +152,6 @@ begin
 end;
 
 
-{$R *.xfm}
 
 
 
@@ -155,6 +183,21 @@ begin
   rec.Right:=Height;
   Canvas.Brush.Color:=clwhite;
   Canvas.FillRect(rec);
+ end;
+ if Assigned(OnPosChange) then
+  OnPosChange(Self);
+end;
+
+procedure TRpSectionInterface.MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
+begin
+ inherited MouseDown(Button,Shift,X,Y);
+
+ // There's a selected item insert it
+ if fmainf.BArrow.Down then
+ begin
+  // Selects object inspector section properties
+  freportstructure.SelectDataItem(printitem);
  end;
 end;
 
