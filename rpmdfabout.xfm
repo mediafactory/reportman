@@ -1,7 +1,7 @@
 object FRpAboutBox: TFRpAboutBox
   Left = 231
   Top = 114
-  ActiveControl = OKBtn
+  ActiveControl = BOK
   AutoScroll = False
   Caption = 'About Report Manager '
   ClientHeight = 314
@@ -517,9 +517,9 @@ object FRpAboutBox: TFRpAboutBox
       F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9F9FAFAFAF9F9F9FA
       FAFAF9F9F9F9F9F9F9F9F9FAFAFAFAFAFA00}
   end
-  object OKBtn: TButton
+  object BOK: TButton
     Left = 195
-    Top = 264
+    Top = 268
     Width = 75
     Height = 25
     Caption = 'OK'
@@ -534,7 +534,7 @@ object FRpAboutBox: TFRpAboutBox
     Height = 13
     Caption = 'Report manager'
   end
-  object Label1: TLabel
+  object LAuthor: TLabel
     Left = 12
     Top = 164
     Width = 31
@@ -565,27 +565,27 @@ object FRpAboutBox: TFRpAboutBox
   object Label3: TLabel
     Left = 12
     Top = 208
-    Width = 113
+    Width = 87
     Height = 13
-    Caption = 'From Palafrugell, SPAIN'
+    Caption = 'Palafrugell, SPAIN'
   end
   object LVersion: TLabel
     Left = 8
     Top = 44
-    Width = 77
+    Width = 39
     Height = 13
-    Caption = 'Version 1.0 RC2'
+    Caption = '1.0 RC2'
   end
-  object Label4: TLabel
+  object LProject: TLabel
     Left = 12
-    Top = 232
+    Top = 240
     Width = 63
     Height = 13
     Caption = 'Project page:'
   end
   object Label5: TLabel
-    Left = 120
-    Top = 232
+    Left = 172
+    Top = 240
     Width = 199
     Height = 13
     Caption = 'http://sourceforge.net/projects/reportman'
@@ -607,7 +607,7 @@ object FRpAboutBox: TFRpAboutBox
     TabOrder = 10
     WordWrap = False
   end
-  object Label6: TLabel
+  object LContributors: TLabel
     Left = 232
     Top = 68
     Width = 56

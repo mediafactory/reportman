@@ -19,24 +19,24 @@ unit rpmdfabout;
 
 interface
 
-uses SysUtils, Classes, QGraphics, QForms, 
+uses SysUtils, Classes, QGraphics, QForms,rpmdconsts,
   QButtons, QExtCtrls, QControls, QStdCtrls,QDialogs;
 
 type
   TFRpAboutBox = class(TForm)
-    OKBtn: TButton;
+    BOK: TButton;
     LReport: TLabel;
-    Label1: TLabel;
+    LAuthor: TLabel;
     LName: TLabel;
     Label2: TLabel;
     LEmail: TLabel;
     Label3: TLabel;
     Image1: TImage;
     LVersion: TLabel;
-    Label4: TLabel;
+    LProject: TLabel;
     Label5: TLabel;
     Memo1: TMemo;
-    Label6: TLabel;
+    LContributors: TLabel;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
@@ -65,11 +65,21 @@ end;
 
 procedure TFRpAboutBox.FormCreate(Sender: TObject);
 begin
+
+ Caption:=TranslateStr(88,Caption);
+ LAuthor.Caption:=TranslateStr(89,LAuthor.Caption);
+ LProject.Caption:=TranslateStr(90,LProject.Caption);
+ LContributors.Caption:=TranslateStr(92,LContributors.Caption);
+ LVersion.Caption:=TranslateStr(91,'Version')+' '+LVersion.Caption;
+ BOK.Caption:=TranslateStr(93,BOK.Caption);
+
+
  LReport.Font.Size:=20;
  LReport.Font.Style:=[fsBold];
  LName.Font.Style:=[fsBold];
  LVersion.Font.Size:=16;
  LEmail.Font.Style:=[fsBold];
+
  SetInitialBounds;
 end;
 

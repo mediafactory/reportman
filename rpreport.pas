@@ -241,7 +241,7 @@ type
    property DatabaseInfo:TRpDatabaseInfoList read FDatabaseInfo write SetDatabaseInfo;
    property Params:TRpParamList read FParams write SetParams;
    // Language
-   property Language:integer read FLanguage write FLanguage default 0;
+   property Language:integer read FLanguage write FLanguage default -1;
    // Other
    property Copies:integer read FCopies write FCopies default 1;
    property CollateCopies:boolean read FCollateCopies write FCollateCopies default false;
@@ -279,6 +279,7 @@ constructor TRpReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FLanguage:=-1;
  FCopies:=1;
  FPageOrientation:=rpOrientationDefault;
  // Means default pagesize

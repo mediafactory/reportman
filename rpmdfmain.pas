@@ -696,6 +696,8 @@ begin
  AShowAll.Caption:=TranslateStr(17,AShowAll.Caption);
  AShowAll.Hint:=TranslateStr(18,AShowAll.Hint);
  ASelectAll.Caption:=TranslateStr(19,ASelectAll.Caption);
+ ASelectAllText.Caption:=TranslateStr(117,ASelectAllText.Caption);
+ ASelectAllText.Hint:=TranslateStr(118,ASelectAllText.Hint);
  ASelectAll.Hint:=TranslateStr(20,ASelectAll.Hint);
  MSelect.Caption:=TranslateStr(21,MSelect.Caption);
  MMove.Caption:=TranslateStr(22,MMove.Caption);
@@ -768,6 +770,26 @@ begin
  BImage.Hint:=TranslateStr(85,BImage.Hint);
  BBarCode.Hint:=TranslateStr(86,BBarCode.Hint);
  BChart.Hint:=TranslateStr(87,BChart.Hint);
+
+ ANewPageHeader.Caption:=TranslateStr(119,ANewPageHeader.Caption);
+ ANewPageHeader.Hint:=TranslateStr(120,ANewPageHeader.Hint);
+ ANewPageFooter.Caption:=TranslateStr(121,ANewPageFooter.Caption);
+ ANewPageFooter.Hint:=TranslateStr(122,ANewPageFooter.Hint);
+ ANewGroup.Caption:=TranslateStr(123,ANewGroup.Caption);
+ ANewGroup.Hint:=TranslateStr(124,ANewGroup.Hint);
+ ANewSubReport.Caption:=TranslateStr(125,ANewSubreport.Caption);
+ ANewSubReport.Hint:=TranslateStr(126,ANewSubreport.Hint);
+ ADeleteSelection.Caption:=TranslateStr(127,ADeleteSelection.Caption);
+ ADeleteSelection.Hint:=TranslateStr(128,ADeleteSelection.Hint);
+ ANewDetail.Caption:=TranslateStr(129,ANewDetail.Caption);
+ ANewDetail.Hint:=TranslateStr(130,ANewDetail.Hint);
+ ADataConfig.Caption:=TranslateStr(131,ADataConfig.Caption);
+ ADataConfig.Hint:=TranslateStr(132,ADataConfig.Hint);
+ AParams.Caption:=TranslateStr(133,Aparams.Caption);
+ AParams.Hint:=TranslateStr(134,Aparams.Hint);
+ AUserParams.Caption:=TranslateStr(135,AUserparams.Caption);
+ AUserParams.Hint:=TranslateStr(136,AUserparams.Hint);
+ MAdd.Caption:=TranslateStr(149,MAdd.Caption);
 
 
  // Activates OnHint

@@ -34,8 +34,8 @@ const
 type
   TFRpDBXConfig = class(TForm)
     Panel1: TPanel;
-    Label1: TLabel;
-    Label2: TLabel;
+    LDriversFile: TLabel;
+    LConnsFile: TLabel;
     EDriversFile: TEdit;
     EConnectionsFile: TEdit;
     SQLConnection1: TSQLConnection;
@@ -51,10 +51,10 @@ type
     ToolButton2: TToolButton;
     BConnect: TToolButton;
     ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
+    BClose: TToolButton;
     Panel2: TPanel;
     ComboDrivers: TComboBox;
-    Label3: TLabel;
+    LShowDriver: TLabel;
     ScrollParams: TScrollBox;
     procedure FormCreate(Sender: TObject);
     procedure ComboDriversClick(Sender: TObject);
@@ -65,7 +65,7 @@ type
     procedure BShowPropsClick(Sender: TObject);
     procedure BConnectClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure ToolButton4Click(Sender: TObject);
+    procedure BCloseClick(Sender: TObject);
   private
     { Private declarations }
     DriversFile:string;
@@ -103,6 +103,16 @@ end;
 
 procedure TFRpDBXConfig.FormCreate(Sender: TObject);
 begin
+ LDriversFile.Caption:=TranslateStr(169,LDriversFile.Caption);
+ LConnsFile.Caption:=TranslateStr(170,LConnsFile.Caption);
+ LShowDriver.Caption:=TranslateStr(171,LShowDriver.Caption);
+ BClose.Hint:=TranslateStr(172,BCLose.Hint);
+ BShowProps.Hint:=TranslateStr(173,BShowProps.Hint);
+ BConnect.Hint:=TranslateStr(174,BConnect.Hint);
+ BDelete.Hint:=TranslateStr(175,BDelete.Hint);
+ BAdd.Hint:=TranslateStr(176,BAdd.Hint);
+ Caption:=TranslateStr(177,Caption);
+
  params:=TStringList.Create;
  // Read the drivers file
  DriversFile:=GetDriverRegistryFile;
@@ -334,7 +344,7 @@ begin
 end;
 
 
-procedure TFRpDBXConfig.ToolButton4Click(Sender: TObject);
+procedure TFRpDBXConfig.BCloseClick(Sender: TObject);
 begin
  Close;
 end;

@@ -22,7 +22,7 @@ interface
 
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,DB, QDBCtrls, QGrids, QDBGrids,
-  QComCtrls, QImgList;
+  QComCtrls, QImgList,rpmdconsts;
 
 const
  DCONTROL_DISTANCEY=5;
@@ -113,6 +113,8 @@ end;
 
 procedure TFRpShowSampledata.FormCreate(Sender: TObject);
 begin
+ Caption:=TranslateStr(41,Caption);
+
  SetInitialBounds;
 end;
 

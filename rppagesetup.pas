@@ -24,7 +24,7 @@ interface
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpreport, QExtCtrls,rpmunits, QButtons,rptypes,
-  rpmetafile,QPrinters;
+  rpmetafile,QPrinters,rpmdconsts;
 
 type
   TFRpPageSetup = class(TForm)
@@ -37,28 +37,27 @@ type
     ColorDialog1: TColorDialog;
     SColor: TShape;
     BBackground: TButton;
-    Label3: TLabel;
+    LRLang: TLabel;
     ComboLanguage: TComboBox;
-    GroupBox1: TGroupBox;
-    Label4: TLabel;
+    GPageMargins: TGroupBox;
+    LLeft: TLabel;
     ELeftMargin: TEdit;
     ETopMargin: TEdit;
-    Label5: TLabel;
+    LTop: TLabel;
     LMetrics3: TLabel;
     LMetrics4: TLabel;
     LMetrics5: TLabel;
     ERightMargin: TEdit;
-    Label9: TLabel;
-    Label10: TLabel;
+    LRight: TLabel;
+    LBottom: TLabel;
     EBottomMargin: TEdit;
     LMetrics6: TLabel;
-    Label1: TLabel;
     ComboPageSize: TComboBox;
-    Label2: TLabel;
+    LCopies: TLabel;
     ECopies: TEdit;
     CheckCollate: TCheckBox;
     CheckTwoPass: TCheckBox;
-    Label6: TLabel;
+    LPrinterFonts: TLabel;
     ComboPrinterFonts: TComboBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -169,6 +168,7 @@ begin
  LMetrics4.Caption:=LMetrics3.Caption;
  LMetrics5.Caption:=LMetrics3.Caption;
  LMetrics6.Caption:=LMetrics3.Caption;
+ ComboLanguage.Items.Add(TranslateStr(95,'Default'));
  for i:=0 to MAX_LANGUAGES-1 do
  begin
   ComboLanguage.Items.Add(rplangdesc[i]);
@@ -182,6 +182,34 @@ begin
    gettextfromtwips(aheight)+') '+rpunitlabels[defaultunit];
   ComboPageSize.Items.Add(astring);
  end;
+ BOK.Caption:=TranslateStr(93,BOK.Caption);
+ BCancel.Caption:=TranslateStr(94,BCancel.Caption);
+ RPageSize.Items.Strings[0]:=TranslateStr(95,RPageSize.Items.Strings[0]);
+ RPageSize.Items.Strings[1]:=TranslateStr(96,RPageSize.Items.Strings[1]);
+ RPageOrientation.Items.Strings[0]:=TranslateStr(95,RPageOrientation.Items.Strings[0]);
+ RPageOrientation.Items.Strings[1]:=TranslateStr(96,RPageOrientation.Items.Strings[1]);
+ RPageSize.Caption:=TranslateStr(97,RPageSize.Caption);
+ GPageSize.Caption:=TranslateStr(104,GPageSize.Caption);
+ RPageOrientation.Caption:=TranslateStr(98,RPageOrientation.Caption);
+ GPageMargins.Caption:=TranslateStr(99,GPagemargins.Caption);
+ LLeft.Caption:=TranslateStr(100,LLeft.Caption);
+ LRight.Caption:=TranslateStr(101,LRight.Caption);
+ LTop.Caption:=TranslateStr(102,LTop.Caption);
+ LBottom.Caption:=TranslateStr(103,LBottom.Caption);
+ RCustomOrientation.Caption:=TranslateStr(105,RCustomOrientation.Caption);
+ RCustomOrientation.Items.Strings[0]:=TranslateStr(106,RCustomOrientation.Items.Strings[0]);
+ RCustomOrientation.Items.Strings[1]:=TranslateStr(107,RCustomOrientation.Items.Strings[1]);
+ LCopies.Caption:=TranslateStr(108,LCopies.Caption);
+ CheckCollate.Caption:=TranslateStr(109,CheckCollate.Caption);
+ Caption:=TranslateStr(110,Caption);
+ CheckTwoPass.Caption:=TranslateStr(111,CheckTwoPass.Caption);
+ LRLang.Caption:=TranslateStr(112,LRLang.Caption);
+ LPrinterFonts.Caption:=TranslateStr(113,LPrinterFonts.Caption);
+ ComboPrinterFonts.Items.Strings[0]:=TranslateStr(95,ComboPrinterFonts.Items.Strings[0]);
+ ComboPrinterFonts.Items.Strings[1]:=TranslateStr(114,ComboPrinterFonts.Items.Strings[1]);
+ ComboPrinterFonts.Items.Strings[2]:=TranslateStr(115,ComboPrinterFonts.Items.Strings[2]);
+ BBAckground.Caption:=TranslateStr(116,BBAckground.Caption);
+
  SetInitialBounds;
 end;
 
@@ -234,7 +262,7 @@ begin
  end;
  report.PageBackColor:=SColor.Brush.Color;
  // Language
- report.Language:=ComboLanguage.ItemIndex;
+ report.Language:=ComboLanguage.ItemIndex-1;
  // Other
  report.PrinterFonts:=TRpPrinterFontsOption(ComboPrinterFonts.ItemIndex);
 end;
@@ -282,8 +310,8 @@ begin
  // Language
  ComboLanguage.ItemIndex:=0;
  ComboPrinterFonts.ItemIndex:=integer(report.PrinterFonts);
- if report.Language<ComboLanguage.Items.Count then
-  ComboLanguage.ItemIndex:=report.Language;
+ if (report.Language+1)<ComboLanguage.Items.Count then
+  ComboLanguage.ItemIndex:=report.Language+1;
 end;
 
 procedure TFRpPageSetup.SColorMouseDown(Sender: TObject;

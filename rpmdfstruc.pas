@@ -66,6 +66,7 @@ type
     designframe:TControl;
     function FindSelectedSubreport:TRpSubreport;
     function FindSelectedObject:TObject;
+    constructor Create(AOwner:TComponent);override;
     procedure DeleteSelectedNode;
     property Report:TRpReport read FReport write SetReport;
     property ObjInsp:TFRpObjInsp read FObjInsp write FObjInsp;
@@ -77,6 +78,30 @@ implementation
 {$R *.xfm}
 
 uses rpmdfdesign, rpmdfmain;
+
+
+constructor TFRpStructure.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+
+ MPHeader.Caption:=TranslateStr(119,MPHeader.Caption);
+ MPHeader.Hint:=TranslateStr(120,MPHeader.Hint);
+ MPFooter.Caption:=TranslateStr(121,MPFooter.Caption);
+ MPFooter.Hint:=TranslateStr(122,MPFooter.Hint);
+ MGHeader.Caption:=TranslateStr(123,MGHeader.Caption);
+ MGHeader.Hint:=TranslateStr(124,MGHeader.Hint);
+ MSubReport.Caption:=TranslateStr(125,MSubreport.Caption);
+ MSubReport.Hint:=TranslateStr(126,MSubreport.Hint);
+ MDetail.Caption:=TranslateStr(129,MDetail.Caption);
+ MDetail.Hint:=TranslateStr(130,MDetail.Hint);
+
+ ADelete.Caption:=TranslateStr(137,ADelete.Caption);
+ ADelete.Hint:=TranslateStr(138,ADelete.Hint);
+
+ AUp.Hint:=TranslateStr(139,AUp.Hint);
+ ADown.Hint:=TranslateStr(140,ADown.Hint);
+
+end;
 
 procedure TFRpStructure.SetReport(Value:TRpReport);
 begin

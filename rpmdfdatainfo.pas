@@ -51,8 +51,8 @@ type
     OpenDialog1: TOpenDialog;
     LConnectionString: TLabel;
     EConnectionString: TEdit;
-    CancelBtn: TButton;
-    OKBtn: TButton;
+    BCancel: TButton;
+    BOK: TButton;
     PControl: TPageControl;
     TabSQL: TTabSheet;
     MSQL: TMemo;
@@ -61,12 +61,12 @@ type
     ComboDataSource: TComboBox;
     LMasterDataset: TLabel;
     ComboConnection: TComboBox;
-    Label2: TLabel;
+    LConnection: TLabel;
     TabBDETable: TTabSheet;
     TabBDEType: TTabSheet;
     RBDEType: TRadioGroup;
     Panel2: TPanel;
-    Panel3: TPanel;
+    PBDEFilter: TPanel;
     MBDEFilter: TMemo;
     LBDEIndexFields: TLabel;
     LIndexName: TLabel;
@@ -88,9 +88,9 @@ type
     LDatasets: TListBox;
     BDelete: TButton;
     BRename: TButton;
-    Label3: TLabel;
-    Label4: TLabel;
-    Label5: TLabel;
+    LNote: TLabel;
+    LDataprops: TLabel;
+    LRDataset: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -103,12 +103,12 @@ type
     procedure BDeleteClick(Sender: TObject);
     procedure BRenameClick(Sender: TObject);
     procedure MSQLChange(Sender: TObject);
-    procedure OKBtnClick(Sender: TObject);
+    procedure BOKClick(Sender: TObject);
     procedure BDeleteconClick(Sender: TObject);
     procedure BShowDataClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure BParamsClick(Sender: TObject);
-    procedure CancelBtnClick(Sender: TObject);
+    procedure BCancelClick(Sender: TObject);
     procedure GDriverClick(Sender: TObject);
     procedure BMyBaseClick(Sender: TObject);
     procedure EConnectionStringChange(Sender: TObject);
@@ -164,6 +164,39 @@ end;
 
 procedure TFRpDatainfoconfig.FormCreate(Sender: TObject);
 begin
+ // Translation
+ GConnections.Caption:=TranslateStr(142,GConnections.Caption);
+ BConfig.Caption:=TranslateStr(143,BConfig.Caption);
+ BOK.Caption:=TranslateStr(93,BOK.Caption);
+ BCancel.Caption:=TranslateStr(94,BCancel.Caption);
+ CheckLoginPrompt.Caption:=TranslateStr(144,CheckLoginPrompt.Caption);
+ CheckLoadParams.Caption:=TranslateStr(145,CheckLoadParams.Caption);
+ CheckLoadDriverParams.Caption:=TranslateStr(146,CheckLoadDriverParams.Caption);
+ GDriver.Caption:=TranslateStr(147,GDriver.Caption);
+ LRDataset.Caption:=TranslateStr(148,LRDataset.Caption);
+ BAdd.Caption:=TranslateStr(149,BAdd.Caption);
+ BDelete.Caption:=TranslateStr(150,BDelete.Caption);
+ BRename.Caption:=TranslateStr(151,BRename.Caption);
+ BParams.Caption:=TranslateStr(152,BParams.Caption);
+ LDataprops.Caption:=TranslateStr(153,LDataprops.Caption);
+ LConnection.Caption:=TranslateStr(154,LConnection.Caption);
+ LMasterDataset.Caption:=TranslateStr(155,LMasterDataset.Caption);
+ BShowData.Caption:=TranslateStr(156,BShowData.Caption);
+ TAbBDEType.Caption:=TranslateStr(157,TabBDEType.Caption);
+ TAbBDETable.Caption:=TranslateStr(158,TabBDETable.Caption);
+ RBDEType.Items.Strings[0]:=TranslateStr(159,RBDEType.Items.Strings[0]);
+ RBDEType.Items.Strings[1]:=TranslateStr(160,RBDEType.Items.Strings[1]);
+ PBDEFilter.Caption:=TranslateStr(161,PBDEFilter.Caption);
+ LTable.Caption:=TranslateStr(162,LTable.Caption);
+ LIndexName.Caption:=TranslateStr(163,LIndexName.Caption);
+ LBDEIndexFields.Caption:=TranslateStr(164,LBDEIndexFields.Caption);
+ LMasterFields.Caption:=TranslateStr(165,LMasterFields.Caption);
+ LNote.Caption:=TranslateStr(166,LNote.Caption);
+ LMyBase.Caption:=TranslateStr(167,LMyBase.Caption);
+ LIndexFields.Caption:=TranslateStr(164,LIndexFields.Caption);
+ BMyBase.Caption:=TranslateStr(168,BMyBase.Caption);
+ Caption:=TranslateStr(178,Caption);
+
  GDriver.ItemIndex:=0;
  GDriver.Columns:=GDriver.Items.Count;
  databaseinfo:=TRpDatabaseInfoList.Create(Self);
@@ -631,7 +664,7 @@ begin
  saved:=true;
 end;
 
-procedure TFRpDatainfoconfig.OKBtnClick(Sender: TObject);
+procedure TFRpDatainfoconfig.BOKClick(Sender: TObject);
 begin
  DoSave;
  Close;
@@ -690,7 +723,7 @@ begin
  ShowParamDef(params,datainfo);
 end;
 
-procedure TFRpDatainfoconfig.CancelBtnClick(Sender: TObject);
+procedure TFRpDatainfoconfig.BCancelClick(Sender: TObject);
 begin
  docancel:=true;
  Close;
