@@ -173,7 +173,7 @@ begin
       copies:=acopies;
      if doprintmetafile then
      begin
-      afstream:=TFileStream.Create(filename,fmCreate);
+      afstream:=TFileStream.Create(PDFfilename,fmCreate);
       try
        PrintReportMetafileStream(report,'',showprogress,allpages,frompage,topage,
         copies,afstream,compress,collate);
