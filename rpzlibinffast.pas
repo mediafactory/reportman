@@ -4,7 +4,7 @@
 {                                                       }
 {*******************************************************}
 
-unit inffast;
+unit rpzlibinffast;
 
 
 interface

@@ -4,7 +4,7 @@
 {                                                       }
 {*******************************************************}
 
-unit zutil;
+unit rpzlibzutil;
 
 
 interface

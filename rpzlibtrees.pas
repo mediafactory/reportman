@@ -4,7 +4,7 @@
 {                                                       }
 {*******************************************************}
 
-unit trees;
+unit rpzlibtrees;
 
 {$T-}
 {$define ORG_DEBUG}

@@ -4,7 +4,7 @@
 {                                                       }
 {*******************************************************}
 
-unit infblock;
+unit rpzlibinfblock;
 
 
 interface

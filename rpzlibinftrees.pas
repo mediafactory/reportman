@@ -4,7 +4,7 @@
 {                                                       }
 {*******************************************************}
 
-unit inftrees;
+unit rpzlibinftrees;
 
 interface
 

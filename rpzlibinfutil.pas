@@ -4,7 +4,7 @@
 {                                                       }
 {*******************************************************}
 
-unit infutil;
+unit rpzlibinfutil;
 
 
 interface

@@ -1,4 +1,4 @@
-unit zdeflate;
+unit rpzlibzdeflate;
 
 
 {  ALGORITHM
@@ -42,7 +42,7 @@ unit zdeflate;
        Fiala,E.R., and Greene,D.H.
           Data Compression with Finite Windows, Comm.ACM, 32,4 (1989) 490-595}
 
-{ $Id: zdeflate.pas,v 1.3 2002/04/19 21:00:39 toni Exp $ }
+{ $Id: rpzlibzdeflate.pas,v 1.1 2002/04/29 17:51:45 toni Exp $ }
 
 interface
 

@@ -4,7 +4,7 @@
 {                                                       }
 {*******************************************************}
 
-unit  zinflate;
+unit  rpzlibzinflate;
 
 
 interface

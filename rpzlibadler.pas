@@ -5,7 +5,7 @@
 {*******************************************************}
 
 
-unit adler;
+unit rpzlibadler;
 
 
 interface

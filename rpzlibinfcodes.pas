@@ -4,8 +4,8 @@
 {                                                       }
 {*******************************************************}
 
-unit infcodes;
-
+unit rpzlibinfcodes;
+      
 
 interface
 
