@@ -2176,7 +2176,7 @@ try
     eConnObjectMode:
     // Boolean value to enable or disable object fields in Oracle8 tables
       raise EDbxNotSupported.Create('TSqlDriverOdbc.GetOption(eConnObjectMode) not supported - applies to Oracle only');
-    eConnMaxActiveConnection:
+{    eConnMaxActiveConnection:
       begin
       if not fConnected then
         begin
@@ -2202,7 +2202,7 @@ try
         Smallint(PropValue^) := SmallintAttrVal;
         end;
       end;
-    eConnServerCharSet:
+}    eConnServerCharSet:
       begin
       OdbcRetCode := SQLGetInfoString(fhCon, SQL_COLLATION_SEQ, PropValue, MaxLength, Length);
       OdbcCheck(OdbcRetCode, 'SQLGetConnectAttr(SQL_COLLATION_SEQ)');
@@ -2390,8 +2390,8 @@ try
     eConnObjectMode:
     // Boolean value to enable or disable object fields in Oracle8 tables
       raise EDbxNotSupported.Create('TSqlDriverOdbc.SetOption(eConnObjectMode) not supported - applies to Oracle only');
-    eConnMaxActiveConnection:
-      raise EDbxInvalidCall.Create('TSqlConnectionOdbc.SetOption(eConnMaxActiveConnection) not valid (Read-only)');
+//    eConnMaxActiveConnection:
+//      raise EDbxInvalidCall.Create('TSqlConnectionOdbc.SetOption(eConnMaxActiveConnection) not valid (Read-only)');
     eConnServerCharSet:
       raise EDbxInvalidCall.Create('TSqlConnectionOdbc.SetOption(eConnServerCharSet) not valid (Read-only)');
     eConnSqlDialect:
