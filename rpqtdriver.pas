@@ -101,6 +101,7 @@ type
    function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
    constructor Create;
+   destructor Destroy;override;
   end;
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
@@ -161,6 +162,16 @@ begin
  // By default 1:1 scale
  dpi:=Screen.PixelsPerInch;
  scale:=1;
+end;
+
+destructor TRpQtDriver.Destroy;
+begin
+ if assigned(bitmap) then
+ begin
+  bitmap.free;
+  bitmap:=nil;
+ end;
+ inherited Destroy;
 end;
 
 procedure TRpQtDriver.NewDocument(report:TrpMetafileReport);
@@ -385,9 +396,10 @@ begin
       QPainter_setPen(Canvas.Handle, Canvas.Font.FontPen);
       QPainter_save(Canvas.Handle);
       try
-       QPainter_translate(Canvas.Handle,posx,posy);
+       QPainter_translate(Canvas.Handle,posx,posy+Round(Canvas.Font.Size/72*dpiy)*scale);
        QPainter_rotate(Canvas.Handle,-obj.FontRotation/10);
        QPainter_scale(Canvas.Handle,scale,scale);
+       // Qt driver does not support oriented multiline text
        QPainter_drawText(Canvas.Handle,0,0,PWideString(@atext),Length(Atext));
       finally
        QPainter_restore(Canvas.Handle);
@@ -405,8 +417,7 @@ begin
      rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);
      rec.Bottom:=posy+round(obj.Height*dpiy/TWIPS_PER_INCHESS);
      Canvas.Start;
-     try
-      R.Left := posx;
+     try      R.Left := posx;
       R.Top := posy;
       R.Right := rec.Right;
       R.Bottom := rec.Bottom;
@@ -414,11 +425,7 @@ begin
       QPainter_setPen(Canvas.Handle, Canvas.Font.FontPen);
       QPainter_save(Canvas.Handle);
       try
-       QPainter_scale(Canvas.Handle,scale,scale);
-       QPainter_drawText(Canvas.Handle, @R, aalign, PWideString(@atext), -1,
-        @Rec, nil);
-      finally
-       QPainter_restore(Canvas.Handle);
+       QPainter_scale(Canvas.Handle,scale,scale);       QPainter_drawText(Canvas.Handle, @R, aalign, PWideString(@atext), -1,        @Rec, nil);      finally       QPainter_restore(Canvas.Handle);
       end;
      finally
        Canvas.Stop;
@@ -1045,7 +1052,7 @@ begin
  copies:=1;
  if showprintdialog then
  begin
-  if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate,true) then
+  if Not rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate,true) then
    exit;
  end;
  if progress then

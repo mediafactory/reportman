@@ -65,7 +65,7 @@ const
  CONS_UNDERLINEWIDTH=0.1;
  CONS_SRIKEOUTWIDTH=0.05;
  CONS_UNDERLINEPOS=1.1;
- CONS_SRIKEOUTPOS=0.7;
+ CONS_STRIKEOUTPOS=0.7;
 type
  TRpPDFFont=class(TObject)
   public
@@ -114,7 +114,7 @@ type
    function UnitsToTextY(Value:integer):string;
    function UnitsToTextText(Value:integer;FontSize:integer):string;
    procedure Line(x1,y1,x2,y2:Integer);
-   procedure TextOut(X, Y: Integer; const Text: string;Rotation:integer=0);
+   procedure TextOut(X, Y: Integer; const Text: string;LineWidth,Rotation:integer);
    procedure TextRect(ARect: TRect; Text: string;
                        Alignment: integer; Clipping: boolean;
                        Wordbreak:boolean;Rotation:integer=0);
@@ -1054,7 +1054,6 @@ var
  i:integer;
  posx,posY:integer;
  singleline:boolean;
- Posline:integer;
 begin
  FFile.CheckPrinting;
 
@@ -1103,26 +1102,7 @@ begin
    begin
     PosX:=ARect.Left+(((Arect.Right-Arect.Left)-FLineInfo[i].Width) div 2);
    end;
-   TextOut(PosX,PosY+FLineInfo[i].TopPos,Copy(Text,FLineInfo[i].Position,FLineInfo[i].Size),Rotation);
-   // Underline and strikeout
-   // The line will be 1/10 of the
-   // font size and will  be at 7/10 of height size
-   if FFont.Underline then
-   begin
-    PenStyle:=0;
-    PenWidth:=Round((Font.Size/CONS_PDFRES*FResolution)*CONS_UNDERLINEWIDTH);
-    PenColor:=FFont.Color;
-    Posline:=Round(PosY+FLineInfo[i].TopPos+CONS_UNDERLINEPOS*(Font.Size/CONS_PDFRES*FResolution));
-    Line(PosX,Posline,PosX+FLineinfo[i].Width,Posline);
-   end;
-   if FFont.StrikeOut then
-   begin
-    PenStyle:=0;
-    PenWidth:=Round((Font.Size/CONS_PDFRES*FResolution)* CONS_SRIKEOUTWIDTH);
-    PenColor:=FFont.Color;
-    Posline:=Round(PosY+FLineInfo[i].TopPos+CONS_SRIKEOUTPOS*(Font.Size/CONS_PDFRES*FResolution));
-    Line(PosX,Posline,PosX+FLineinfo[i].Width,Posline);
-   end;
+   TextOut(PosX,PosY+FLineInfo[i].TopPos,Copy(Text,FLineInfo[i].Position,FLineInfo[i].Size),FLineInfo[i].Width,Rotation);
   end;
  finally
   if (Clipping or (Rotation<>0)) then
@@ -1167,10 +1147,12 @@ begin
  end;
 end;
 
-procedure TRpPDFCanvas.TextOut(X, Y: Integer; const Text: string;Rotation:integer=0);
+
+procedure TRpPDFCanvas.TextOut(X, Y: Integer; const Text: string;LineWidth,Rotation:integer);
 var
- rotrad:double;
+ rotrad,fsize:double;
  rotstring:string;
+ PosLine,PosLineX1,PosLineY1,PosLineX2,PosLineY2:integer;
 begin
  FFile.CheckPrinting;
  if (Rotation<>0) then
@@ -1207,6 +1189,61 @@ begin
   if (Rotation<>0) then
   begin
    RestoreGraph;
+  end;
+ end;
+ // Underline and strikeout
+ if FFont.Underline then
+ begin
+  PenStyle:=0;
+  PenWidth:=Round((Font.Size/CONS_PDFRES*FResolution)*CONS_UNDERLINEWIDTH);
+  PenColor:=FFont.Color;
+  if Rotation=0 then
+  begin
+   Posline:=Round(CONS_UNDERLINEPOS*(Font.Size/CONS_PDFRES*FResolution));
+   Line(X,Y+Posline,X+LineWidth,Y+Posline);
+  end
+  else
+  begin
+   Y:=Y+Round(CONS_UNDERLINEPOS*(Font.Size/CONS_PDFRES*FResolution));
+   rotrad:=Rotation/10*(2*PI/360);
+   fsize:=CONS_UNDERLINEPOS*Font.Size/CONS_PDFRES*FResolution-Font.Size/CONS_PDFRES*FResolution;
+   PosLineX1:=-Round(fsize*cos(rotrad));
+   PosLineY1:=-Round(fsize*sin(rotrad));
+   PosLineX2:=Round(LineWidth*cos(rotrad));
+   PoslineY2:=-Round(LineWidth*sin(rotrad));
+   Line(X+PosLineX1,Y+PosLineY1,X+PosLineX2,Y+PosLineY2);
+   Y:=Y-Round(CONS_UNDERLINEPOS*(Font.Size/CONS_PDFRES*FResolution));
+  end;
+ end;
+ if FFont.StrikeOut then
+ begin
+  PenStyle:=0;
+  PenWidth:=Round((Font.Size/CONS_PDFRES*FResolution)*CONS_UNDERLINEWIDTH);
+  PenColor:=FFont.Color;
+  if Rotation=0 then
+  begin
+   Posline:=Round(CONS_STRIKEOUTPOS*(Font.Size/CONS_PDFRES*FResolution));
+   Line(X,Y+Posline,X+LineWidth,Y+Posline);
+  end
+  else
+  begin
+   Y:=Y+Round(CONS_UNDERLINEPOS*(Font.Size/CONS_PDFRES*FResolution));
+   rotrad:=Rotation/10*(2*PI/360);
+   fsize:=CONS_UNDERLINEPOS*Font.Size/CONS_PDFRES*FResolution-Font.Size/CONS_PDFRES*FResolution;
+   PosLineX1:=-Round(fsize*cos(rotrad));
+   PosLineY1:=-Round(fsize*sin(rotrad));
+   PosLineX2:=Round(LineWidth*cos(rotrad));
+   PoslineY2:=-Round(LineWidth*sin(rotrad));
+   fsize:=(1-CONS_STRIKEOUTPOS)*Font.Size/CONS_PDFRES*FResolution;
+   PosLineX1:=X+PosLineX1;
+   PosLineY1:=Y+PosLineY1;
+   PosLineX2:=X+PosLineX2;
+   PosLineY2:=Y+PosLineY2;
+   PoslineX1:=PosLineX1-Round(fsize*sin(rotrad));
+   PoslineY1:=PosLineY1-Round(fsize*cos(rotrad));
+   PoslineX2:=PosLineX2-Round(fsize*sin(rotrad));
+   PoslineY2:=PosLineY2-Round(fsize*cos(rotrad));
+   Line(PoslineX1,PosLineY1,PosLineX2,PosLineY2);
   end;
  end;
 end;

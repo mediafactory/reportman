@@ -1,6 +1,6 @@
 object FRpMainF: TFRpMainF
-  Left = 44
-  Top = 86
+  Left = 37
+  Top = 103
   VertScrollBar.Visible = False
   HorzScrollBar.Visible = False
   ActiveControl = ToolButton1

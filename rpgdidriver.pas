@@ -116,6 +116,7 @@ type
    function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
    constructor Create;
+   destructor Destroy;override;
   end;
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
@@ -261,6 +262,16 @@ begin
  drawclippingregion:=true;
  oldpagesize.PageIndex:=-1;
  scale:=1;
+end;
+
+destructor TRpGDIDriver.Destroy;
+begin
+ if assigned(bitmap) then
+ begin
+  bitmap.free;
+  bitmap:=nil;
+ end;
+ inherited Destroy;
 end;
 
 procedure TRpGDIDriver.NewDocument(report:TrpMetafileReport);
@@ -453,6 +464,9 @@ var
  atext:widestring;
  aansitext:string;
  arec:TRect;
+ calcrect:boolean;
+ alvbottom,alvcenter:boolean;
+ rotrad,fsize:double;
 begin
  // Switch to device points
  if toprinter then
@@ -473,26 +487,29 @@ begin
     Canvas.Font.Color:=CLXColorToVCLColor(Obj.FontColor);
     Canvas.Font.Style:=CLXIntegerToFontStyle(obj.FontStyle);
     Canvas.Font.Size:=Obj.FontSize;
+    if obj.FontRotation<>0 then
+    begin
+     // Find rotated font
+     Canvas.Font.Handle:=FindRotatedFont(Canvas.Handle,Canvas.Font,obj.FontRotation);
+     // Moves the print position
+     rotrad:=obj.FontRotation/10*(2*PI/360);
+     fsize:=Obj.FontSize/72*dpiy;
+     posx:=posx-Round(fsize*sin(rotrad));
+     posy:=posy+Round(fsize-fsize*cos(rotrad));
+    end
+    else
+    begin
+     // Find device font
+     if devicefonts then
+      FindDeviceFont(Canvas.Handle,Canvas.Font,FontSizeToStep(Canvas.Font.Size));
+    end;
+
+
     aalign:=DT_NOPREFIX;
     if (obj.AlignMent AND AlignmentFlags_AlignHCenter)>0 then
      aalign:=aalign or DT_CENTER;
     if (obj.AlignMent AND AlignmentFlags_SingleLine)>0 then
      aalign:=aalign or DT_SINGLELINE;
-    if (obj.AlignMent AND AlignmentFlags_AlignVCenter)>0 then
-    begin
-     aalign:=aalign or DT_VCENTER;
-     aalign:=aalign or DT_SINGLELINE;
-    end;
-    if (obj.AlignMent AND AlignmentFlags_AlignBottom)>0 then
-    begin
-     aalign:=aalign or DT_BOTTOM;
-     aalign:=aalign or DT_SINGLELINE;
-    end;
-    if (obj.AlignMent AND AlignmentFlags_AlignTop)>0 then
-    begin
-     aalign:=aalign or DT_TOP;
-     aalign:=aalign or DT_SINGLELINE;
-    end;
     if (obj.AlignMent AND AlignmentFlags_AlignLEFT)>0 then
      aalign:=aalign or DT_LEFT;
     if (obj.AlignMent AND AlignmentFlags_AlignRight)>0 then
@@ -507,21 +524,14 @@ begin
     rec.Bottom:=posy+round(obj.Height*dpiy/TWIPS_PER_INCHESS);
     atext:=page.GetText(Obj);
     aansitext:=atext;
-    if obj.FontRotation<>0 then
-    begin
-     // Find rotated font
-     Canvas.Font.Handle:=FindRotatedFont(Canvas.Handle,Canvas.Font,obj.FontRotation)
-    end
-    else
-    begin
-     // Find device font
-     if devicefonts then
-      FindDeviceFont(Canvas.Handle,Canvas.Font,FontSizeToStep(Canvas.Font.Size));
-    end;
-    if Not obj.Transparent then
+    alvbottom:=(obj.AlignMent AND AlignmentFlags_AlignBottom)>0;
+    alvcenter:=(obj.AlignMent AND AlignmentFlags_AlignVCenter)>0;
+
+    calcrect:=(not obj.Transparent) or alvbottom or alvcenter;
+    arec:=rec;
+    if calcrect then
     begin
      // First calculates the text extent
-     arec:=rec;
      // Win9x does not support drawing WideChars
      if IsWindowsNT then
       DrawTextW(Canvas.Handle,PWideChar(atext),Length(atext),arec,aalign or DT_CALCRECT)
@@ -532,6 +542,19 @@ begin
     end
     else
      Canvas.Brush.Style:=bsClear;
+    if alvbottom then
+    begin
+     rec.Top:=rec.Top+(rec.bottom-arec.bottom)
+    end;
+    if alvcenter then
+    begin
+     rec.Top:=rec.Top+((rec.bottom-arec.bottom) div 2);
+    end;
+    if obj.Transparent then
+     SetBkMode(Canvas.Handle,TRANSPARENT)
+    else
+     SetBkMode(Canvas.Handle,OPAQUE);
+
     if IsWindowsNT then
      DrawTextW(Canvas.Handle,PWideChar(atext),Length(atext),rec,aalign)
     else
