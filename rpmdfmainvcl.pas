@@ -340,7 +340,7 @@ begin
  // Creates a new report
  report:=TRpReport.Create(Self);
  report.OnReadError:=OnReadError;
- if Not NewReportWizard(report) then
+// if Not NewReportWizard(report) then
   report.CreateNew;
  filename:='';
 

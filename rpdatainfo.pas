@@ -98,6 +98,7 @@ type
 {$ENDIF}
 {$IFDEF USEADO}
    FADOConnection:TADOConnection;
+   FProvidedADOConnection:TADOConnection;
 {$ENDIF}
 {$IFDEF USEBDE}
    FBDEDatabase:TDatabase;
@@ -113,6 +114,10 @@ type
    procedure SetLoadParams(Value:boolean);
    procedure SetLoadDriverParams(Value:boolean);
    procedure SetLoginPrompt(Value:boolean);
+{$IFDEF USEADO}
+   procedure SetADOConnection(Value:TADOConnection);
+   function GetADOConnection:TADOConnection;
+{$ENDIF}
   public
    procedure Assign(Source:TPersistent);override;
    destructor Destroy;override;
@@ -129,6 +134,9 @@ type
    function GetStreamFromSQL(sqlsentence:String;params:TStringList):TStream;
    procedure GetTableNames(Alist:TStrings);
    function OpenDatasetFromSQL(sqlsentence:String;params:TStringList;onlyexec:Boolean):TDataset;
+{$IFDEF USEADO}
+   property ADOConnection:TADOConnection read GetADOConnection write SetADOConnection;
+{$ENDIF}
   published
    property Alias:string read FAlias write SetAlias;
    property ConfigFile:string read FConfigFile write SetConfigFile;
@@ -643,6 +651,27 @@ begin
 end;
 {$ENDIF}
 
+
+{$IFDEF USEADO}
+procedure TRpDatabaseinfoitem.SetADOConnection(Value:TADOConnection);
+begin
+ FProvidedADOConnection:=Value;
+end;
+
+function TRpDatabaseinfoitem.GetADOConnection:TADOConnection;
+begin
+ if Assigned(FProvidedADOConnection) then
+  Result:=FProvidedADOConnection
+ else
+ begin
+  if Not Assigned(FADOConnection) then
+    FADOConnection:=TADOConnection.Create(nil);
+  Result:=FADOConnection;
+ end;
+end;
+
+{$ENDIF}
+
 procedure TRpDatabaseinfoitem.Connect;
 var
  conname:string;
@@ -833,14 +862,17 @@ begin
   rpdataado:
    begin
 {$IFDEF USEADO}
-    if Not Assigned(FADOConnection) then
-     FADOConnection:=TADOConnection.Create(nil);
-    if FADOConnection.Connected then
+    if ADOConnection.Connected then
      exit;
-    FADOConnection.Mode:=cmRead;
-    FADOConnection.ConnectionString:=ADOConnectionString;
-    FADOConnection.LoginPrompt:=LoginPrompt;
-    FADOConnection.Connected:=true;
+    if Not Assigned(FProvidedADOCOnnection) then
+    begin
+     ADOConnection.Mode:=cmRead;
+     ADOConnection.ConnectionString:=ADOConnectionString;
+     ADOConnection.LoginPrompt:=LoginPrompt;
+     ADOConnection.Connected:=true;
+    end
+    else
+     FProvidedADOConnection.Connected:=True;
 {$ELSE}
     Raise Exception.Create(SRpDriverNotSupported+SrpDriverADO);
 {$ENDIF}
@@ -1226,7 +1258,7 @@ begin
     rpdataado:
      begin
 {$IFDEF USEADO}
-      TADOQuery(FSQLInternalQuery).Connection:=baseinfo.FADOConnection;
+      TADOQuery(FSQLInternalQuery).Connection:=baseinfo.ADOConnection;
       TADOQuery(FSQLInternalQuery).SQL.Text:=SQL;
       TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
 //      Activating this switches break linked querys
@@ -1699,7 +1731,7 @@ begin
   rpdataado:
    begin
 {$IFDEF USEADO}
-    FADOConnection.GetTableNames(alist);
+    ADOConnection.GetTableNames(alist);
 {$ELSE}
     Raise Exception.Create(SRpDriverNotSupported+SrpDriverADO);
 {$ENDIF}
@@ -1776,7 +1808,7 @@ begin
    begin
 {$IFDEF USEADO}
     FSQLInternalQuery:=TADOQuery.Create(nil);
-    TADOQuery(FSQLInternalQuery).Connection:=FADOConnection;
+    TADOQuery(FSQLInternalQuery).Connection:=ADOConnection;
     TADOQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
     TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
 {$ELSE}
