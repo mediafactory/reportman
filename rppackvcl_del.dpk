@@ -39,7 +39,9 @@ requires
   dbexpress,
   adortl,
   ibxpress,
-  dsnap;
+  dsnap,
+  indy,
+  tee;
 
 {%File 'rpconf.inc'}
 
@@ -54,6 +56,11 @@ contains
   rpgdidriver in 'rpgdidriver.pas' {FRpVCLProgress},
   rpgdifonts in 'rpgdifonts.pas',
   rpmdprintconfigvcl in 'rpmdprintconfigvcl.pas' {FRpPrinterConfig},
-  rprulervcl in 'rprulervcl.pas';
+  rprulervcl in 'rprulervcl.pas',
+  rpfmainmetaviewvcl in 'rpfmainmetaviewvcl.pas' {FRpMainMetaVCL},
+  rpfmetaviewvcl in 'rpfmetaviewvcl.pas' {FRpMetaVCL: TFrame},
+  rpmdclitreevcl in 'rpmdclitreevcl.pas' {FRpCliTreeVCL: TFrame},
+  rpexceldriver in 'rpexceldriver.pas' {FRpExcelProgress},
+  rpmdfaboutvcl in 'rpmdfaboutvcl.pas' {FRpAboutBoxVCL};
 
 end.

@@ -22,13 +22,21 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* Add __stdcall in Microsoft Windows */
+/* Add __stdcall in Microsoft Windows? */
 int rp_open(char *filename);
 int rp_execute(int hreport,char *outputfilename,int metafile,int compressed);
 int rp_close(int hreport);
 char * rp_lasterror(void);
 int rp_print(int hreport,char *title,int showprogress,int showprintdialog);
 int rp_preview(int hreport,char *title);
+int rp_executeremote(char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *outputfilename,int metafile,
+ int compressed);
+int rp_previewremote(char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *title);
+int rp_printremote(char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *title,int showprogress,
+ int showprintdialog);
 
 #ifdef __cplusplus
 }

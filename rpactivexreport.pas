@@ -62,6 +62,7 @@ type
    procedure SaveToPDF(filename:string;compressed:boolean=false);
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;
+   procedure ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer);override;
    constructor Create(AOwner:TComponent);override;
    function GetReport:TRpReport;
@@ -118,6 +119,11 @@ end;
 function TRpActiveXReport.Execute:boolean;
 begin
  Result:=FVCLReport.Execute;
+end;
+
+procedure TRpActiveXReport.ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
+begin
+ FVCLReport.ExecuteRemote(hostname,port,user,password,aliasname,reportname);
 end;
 
 function TRpActiveXReport.GetReport:TRpReport;

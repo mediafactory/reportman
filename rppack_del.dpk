@@ -40,7 +40,8 @@ requires
   tee,
   vcljpg,
   indy,
-  bdertl;
+  bdertl,
+  vcl;
 
 contains
   rptypeval in 'rptypeval.pas',
@@ -84,6 +85,9 @@ contains
   rppdfreport in 'rppdfreport.pas',
   rpcompobase in 'rpcompobase.pas',
   rptranslator in 'rptranslator.pas',
-  rpmdshfolder in 'rpmdshfolder.pas';
+  rpmdshfolder in 'rpmdshfolder.pas',
+  rpmdrepclient in 'rpmdrepclient.pas' {modclient: TDataModule},
+  rpmdprotocol in 'rpmdprotocol.pas',
+  rpdatatext in 'rpdatatext.pas';
 
 end.

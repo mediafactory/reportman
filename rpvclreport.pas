@@ -23,12 +23,13 @@ interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
  rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview,
- rpexceldriver;
+ rpexceldriver,rpfmainmetaviewvcl,rpmetafile,rptypes;
 
 type
  TVCLReport=class(TCBaseReport)
   private
   protected
+   procedure InternalExecuteRemote(metafile:TRpMetafileReport);override;
   public
    function Execute:boolean;override;
    procedure PrinterSetup;override;
@@ -123,5 +124,35 @@ begin
  true,1,999);
 end;
 
+procedure TVCLReport.InternalExecuteRemote(metafile:TRpMetafileReport);
+var
+ allpages,collate:boolean;
+ frompage,topage,copies:integer;
+ doprint:boolean;
+begin
+ inherited InternalExecuteRemote(metafile);
+
+ if Preview then
+ begin
+  rpfmainmetaviewvcl.PreviewMetafile(metafile,nil,true);
+ end
+ else
+ begin
+  allpages:=true;
+  collate:=false;
+  frompage:=1; topage:=999999;
+  copies:=1;
+  doprint:=true;
+  if ShowPrintDialog then
+  begin
+   if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+    doprint:=false;
+  end;
+  if doprint then
+  begin
+   rpgdidriver.PrintMetafile(metafile,Title,ShowProgress,allpages,frompage,topage,copies,collate,GetDeviceFontsOption(metafile.PrinterSelect),metafile.PrinterSelect)
+  end;
+ end;
+end;
 
 end.

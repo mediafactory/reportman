@@ -1643,8 +1643,5 @@ begin
  RpShowSystemInfo;
 end;
 
-initialization
-
-
 
 end.

@@ -9,7 +9,7 @@
 {       and you can use it in console apps              }
 {                                                       }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -24,7 +24,7 @@ unit rppdfreport;
 interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
- rppdfdriver,rpalias;
+ rppdfdriver,rpalias,rpmetafile;
 
 type
  TPDFReport=class(TCBaseReport)
@@ -33,7 +33,9 @@ type
    FCompressed:Boolean;
    FFromPage,FToPAge:integer;
    FCopies:integer;
+   FAsMetafile:Boolean;
   protected
+   procedure InternalExecuteRemote(metafile:TRpMetafileReport);override;
   public
    function Execute:boolean;override;
    procedure PrinterSetup;override;
@@ -47,6 +49,7 @@ type
    property ShowPrintDialog;
    property AliasList;
    property Language;
+   property AsMetafile:Boolean read FAsMetafile write FAsMetafile default false;
    property PDFFilename:string read FPDFFilename write FPDFFilename;
    property Compressed:Boolean read FCompressed write FCompressed default True;
    property FromPage:integer read FFromPage write FFromPage default 1;
@@ -106,8 +109,15 @@ begin
   end
   else
   begin
+   if FAsMetafile then
+   begin
+    Result:=PrintReportToMetafile(report,Title,ShowProgress,false,ffrompage,ftopage,fcopies,filename,false);
+   end
+   else
+   begin
     Result:=PrintReportPDF(report,Title,Showprogress,false,ffrompage,
      ftopage,fcopies,FPDFFilename,FCompressed,false);
+   end;
   end;
  end;
 end;
@@ -118,6 +128,20 @@ function TPDFReport.PrintRange(frompage:integer;topage:integer;
 begin
  Result:=rppdfdriver.PrintReportPDF(Report,Title,ShowProgress,false,
   frompage,topage,copies,fpdffilename,compressed,collate);
+end;
+
+procedure TPDFReport.InternalExecuteRemote(metafile:TRpMetafileReport);
+begin
+ inherited InternalExecuteRemote(metafile);
+ if FAsMetafile then
+ begin
+  SaveMetafileRangeToPDF(metafile,false,ffrompage,
+    ftopage,fcopies,FPDFFilename,FCompressed);
+ end
+ else
+ begin
+  metafile.SaveToFile(FPDFFilename);
+ end;
 end;
 
 end.

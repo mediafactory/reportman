@@ -117,6 +117,8 @@ type
     procedure SetSubComponent(IsSubComponent: WordBool); safecall;
     function Get_Report: IReportReport; safecall;
     procedure Set_Report(const Value: IReportReport); safecall;
+    procedure ExecuteRemote(const hostname: WideString; port: Integer;
+      const user, password, aliasname, reportname: WideString); safecall;
   end;
 
 implementation
@@ -495,6 +497,12 @@ begin
  FParam.ParamType:=TRpParamtype(Value);
 end;
 
+
+procedure TReportManX.ExecuteRemote(const hostname: WideString;
+  port: Integer; const user, password, aliasname, reportname: WideString);
+begin
+ FDelphiControl.ExecuteRemote(hostname,port,user,password,aliasname,reportname);
+end;
 
 initialization
   TActiveXControlFactory.Create(

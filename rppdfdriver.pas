@@ -70,7 +70,10 @@ type
 
 procedure SaveMetafileToPDF(metafile:TRpMetafileReport;
  filename:string;compressed:boolean);
-procedure SaveMetafileToPDFStream(metafile:TRpMetafileReport;
+procedure SaveMetafileRangeToPDF(metafile:TRpMetafileReport;
+ allpages:boolean;frompage,topage,copies:integer;filename:string;compressed:boolean);
+
+ procedure SaveMetafileToPDFStream(metafile:TRpMetafileReport;
  Stream:TStream;compressed:boolean);
 function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
@@ -532,29 +535,55 @@ begin
  extent.Y:=Round(bitmapheight/dpi*TWIPS_PER_INCHESS);
 end;
 
-
-procedure SaveMetafileToPDF(metafile:TRpMetafileReport;
- filename:string;compressed:boolean);
+procedure SaveMetafileRangeToPDF(metafile:TRpMetafileReport;
+ allpages:boolean;frompage,topage,copies:integer;filename:string;compressed:boolean);
 var
  adriver:TRpPDFDriver;
  i:integer;
+ j:integer;
 begin
+ if allpages then
+ begin
+  frompage:=0;
+  topage:=metafile.PageCount-1;
+ end
+ else
+ begin
+  frompage:=frompage-1;
+  topage:=topage-1;
+  if topage>metafile.PageCount-1 then
+   topage:=metafile.PageCount-1;
+ end;
+ if copies<0 then
+  copies:=1;
  adriver:=TRpPDFDriver.Create;
  adriver.filename:=filename;
  adriver.compressed:=compressed;
  adriver.NewDocument(metafile,1,false);
  try
-  for i:=0 to metafile.PageCount-1 do
+  for i:=frompage to topage do
   begin
-   adriver.DrawPage(metafile.Pages[i]);
-   if i<metafile.PageCount-1 then
-    adriver.NewPage;
+   for j:=0 to copies-1 do
+   begin
+    adriver.DrawPage(metafile.Pages[i]);
+    if ((i<metafile.PageCount-1) or (j<copies-1)) then
+    begin
+     adriver.NewPage;
+    end;
+   end;
   end;
   adriver.EndDocument;
  except
   adriver.AbortDocument;
   raise;
  end;
+end;
+
+
+procedure SaveMetafileToPDF(metafile:TRpMetafileReport;
+ filename:string;compressed:boolean);
+begin
+ SaveMetafileRangeToPDF(metafile,false,1,99999,1,filename,compressed);
 end;
 
 procedure SaveMetafileToPDFStream(metafile:TRpMetafileReport;

@@ -6,7 +6,7 @@
 {       Report component base                           }
 {                                                       }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -23,7 +23,8 @@ interface
 {$I rpconf.inc}
 
 uses Classes,Sysutils,rpreport,rpmdconsts,
- rpalias,rpsubreport,rpsection,rpprintitem,rptypes;
+ rpalias,rpsubreport,rpsection,rpprintitem,rptypes,
+ rpmdrepclient,rpmetafile;
 
 type
  TCBaseReport=class(TComponent)
@@ -48,19 +49,20 @@ type
   protected
    procedure Notification(AComponent: TComponent; Operation: TOperation);override;
    procedure DefineProperties(Filer:TFiler);override;
+   procedure InternalExecuteRemote(metafile:TRpMetafileReport);virtual;
   public
    function Execute:boolean;virtual;
    procedure PrinterSetup;virtual;abstract;
    constructor Create(AOwner:TComponent);override;
    procedure CheckLoaded;
-   property Report:TRpReport read GetReport;
    function ShowParams:boolean;virtual;abstract;
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;virtual;abstract;
   // Defined as public but will be published in descendants
-  public
    procedure LoadFromFile(AFilename:string);
    procedure LoadFromStream(stream:TStream);
+   procedure ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
+   property Report:TRpReport read GetReport;
    property Filename:TFilename read FFilename write SetFilename;
    property Preview:Boolean read FPreview write FPreview default true;
    property ShowProgress:boolean read FShowProgress write FShowProgress
@@ -239,5 +241,30 @@ begin
  WriteWideString(Writer, FReportName);
 end;
 
+procedure TCBaseReport.InternalExecuteRemote(metafile:TRpMetafileReport);
+begin
+ // Implemented in derived classes
+end;
+
+procedure TCBaseReport.ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
+var
+ client:Tmodclient;
+ metafile:TRpMetafileReport;
+begin
+ client:=Connect(hostname,user,password,port);
+ try
+  metafile:=TRpMetafileReport.Create(nil);
+  try
+   client.Execute(aliasname,reportname);
+   client.Stream.Seek(0,soFromBeginning);
+   metafile.LoadFromStream(client.Stream);
+   InternalExecuteRemote(metafile);
+  finally
+   metafile.free;
+  end;
+ finally
+  Disconnect(client);
+ end;
+end;
 
 end.

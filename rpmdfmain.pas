@@ -1890,8 +1890,6 @@ begin
  RpShowSystemInfoQt;
 end;
 
-initialization
-
 
 
 end.

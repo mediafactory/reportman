@@ -50,10 +50,16 @@
 <p>Functionality is about returning a handle to a report and process this report 
   passing the handle to next report engine function calls:</p>
 <p>int rp_open(char *filename);<br>
-  int rp_execute(int hreport,char *outputfilename,int metafile,int compressed);<br>
+  int rp_execute(int hreport,char *outputfilename,int metafile,int compressed);<br><br>
   int rp_close(int hreport);<br>
   char *rp_lasterror(void);<br>
-  int rp_print(int hreport,char *title,int showprogress,int showprintdialog);<br>
+  int rp_print(int hreport,char *title,int showprogress,int showprintdialog);<br>int rp_previewremote(char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *title);<br>
+  int rp_executeremote(char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *outputfilename,int metafile,
+ int compressed);<br>int rp_printremote(char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *title,int showprogress,
+ int showprintdialog)<br>
   int rp_preview(int hreport,char *title);</p>
 <p>All the functions returns 0 if fail, the rp_lasterror function returns the 
   error message for the last library call so the call of a report engine function 

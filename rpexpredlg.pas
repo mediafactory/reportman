@@ -25,6 +25,9 @@ uses
   QGraphics,QControls, QForms, QDialogs,
   QStdCtrls, QExtCtrls,QButtons,
   rpalias,rpeval, rptypeval,
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
   rpmdconsts;
 
 const

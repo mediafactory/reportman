@@ -58,11 +58,13 @@ type
     FOnGetAliases:TGetStringList;
     FOnAuthorization:TNotifyEvent;
     FOnGetParams:TGetStream;
+    FPDF:Boolean;
     ClientHandleThread:TRpClientHandleThread;
   public
     { Public declarations }
     asynchronous:boolean;
     dirseparator:char;
+    property PDF:Boolean read FPDF write FPDF default false;
     procedure GetUsers;
     procedure GetParams;
     procedure ModifyParams(compo:TRpParamComp);
@@ -296,7 +298,7 @@ begin
   amod.free;
   raise;
  end;
- Result:=amod
+ Result:=amod;
 end;
 
 procedure Disconnect(amod:TModClient);
@@ -311,6 +313,7 @@ end;
 procedure Tmodclient.DataModuleCreate(Sender: TObject);
 begin
  dirseparator:=C_DIRSEPARATOR;
+ FPDF:=False;
  FEndReport:=TEvent.Create(nil,false,false,'');
  FStream:=TMemoryStream.Create;
  FAliases:=TStringList.Create;

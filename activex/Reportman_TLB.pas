@@ -6,40 +6,30 @@ unit Reportman_TLB;
 // The types declared in this file were generated from data read from a       
 // Type Library. If this type library is explicitly or indirectly (via        
 // another type library referring to this type library) re-imported, or the   
-// 'Refresh' command of the Type Library Editor activated while editing the
+// 'Refresh' command of the Type Library Editor activated while editing the   
 // Type Library, the contents of this file will be regenerated and all        
 // manual modifications will be lost.                                         
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 20/05/2003 12:32:25 from Type Library described below.
+// File generated on 14/06/2003 10:33:35 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
 // LIBID: {D4D26F6B-6564-44F4-A913-03C91CE37740}
 // LCID: 0
-// Helpfile:
+// Helpfile: 
 // HelpString: Report Manager ActiveX Library
-// DepndLst:
+// DepndLst: 
 //   (1) v2.0 stdole, (C:\WINNT\System32\stdole2.tlb)
 // ************************************************************************ //
-
-{$I rpconf.inc}
-{$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers.
-
-{$IFDEF USEVARIANTS}
+{$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
-{$VARPROPSETTER ON}
-{$ENDIF}
-
 {$WRITEABLECONST ON}
+{$VARPROPSETTER ON}
 interface
 
-uses Windows, ActiveX, Classes, Graphics, OleCtrls,
-{$IFDEF USEVARIANTS}
- Variants,
-{$ENDIF}
- StdVCL;
+uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL, Variants;
   
 
 // *********************************************************************//
@@ -167,6 +157,9 @@ type
     procedure AboutBox; safecall;
     function Get_Report: IReportReport; safecall;
     procedure Set_Report(const Value: IReportReport); safecall;
+    procedure ExecuteRemote(const hostname: WideString; port: Integer; const user: WideString; 
+                            const password: WideString; const aliasname: WideString; 
+                            const reportname: WideString); safecall;
     property filename: WideString read Get_filename write Set_filename;
     property Preview: WordBool read Get_Preview write Set_Preview;
     property ShowProgress: WordBool read Get_ShowProgress write Set_ShowProgress;
@@ -225,6 +218,9 @@ type
     procedure SetSubComponent(IsSubComponent: WordBool); dispid 34;
     procedure AboutBox; dispid -552;
     property Report: IReportReport dispid 38;
+    procedure ExecuteRemote(const hostname: WideString; port: Integer; const user: WideString; 
+                            const password: WideString; const aliasname: WideString; 
+                            const reportname: WideString); dispid 201;
   end;
 
 // *********************************************************************//
@@ -361,6 +357,9 @@ type
     function UseRightToLeftScrollBar: WordBool;
     procedure SetSubComponent(IsSubComponent: WordBool);
     procedure AboutBox;
+    procedure ExecuteRemote(const hostname: WideString; port: Integer; const user: WideString; 
+                            const password: WideString; const aliasname: WideString; 
+                            const reportname: WideString);
     property  ControlInterface: IReportManX read GetControlInterface;
     property  DefaultInterface: IReportManX read GetControlInterface;
     property DoubleBuffered: WordBool index 18 read GetWordBoolProp write SetWordBoolProp;
@@ -524,6 +523,13 @@ end;
 procedure TReportManX.AboutBox;
 begin
   DefaultInterface.AboutBox;
+end;
+
+procedure TReportManX.ExecuteRemote(const hostname: WideString; port: Integer; 
+                                    const user: WideString; const password: WideString; 
+                                    const aliasname: WideString; const reportname: WideString);
+begin
+  DefaultInterface.ExecuteRemote(hostname, port, user, password, aliasname, reportname);
 end;
 
 procedure Register;

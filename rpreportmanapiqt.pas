@@ -38,7 +38,11 @@ function rp_close(hreport:integer):integer;stdcall;external REP_LIBNAME;
 function rp_lasterror:PChar;stdcall;external REP_LIBNAME;
 function rp_print(hreport:integer;Title:PChar;
  showprogress,ShowPrintDialog:integer):integer;stdcall;external REP_LIBNAME;
+function rp_executeremote(hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
+ compressed:integer):integer;stdcall;external REP_LIBNAME;
 function rp_preview(hreport:integer;Title:PChar):integer;stdcall;external REP_LIBNAME;
+function rp_previewremote(hostname:PChar;port:integer;user,password,aliasname,reportname,title:PChar):integer;stdcall;external REP_LIBNAME;
+function rp_printremote(hostname:PChar;port:integer;user,password,aliasname,reportname,title:PChar;showprogress,showprintdialog:integer):integer;stdcall;external REP_LIBNAME;
 
 implementation
 

@@ -29,7 +29,9 @@ time
   function GetDatabaseConnectionString(databasename:string):string;<br>
   procedure SetParamValue(paramname:string;paramvalue:Variant);<br>
   function GetParamValue(paramname:string):Variant;<br>
-  function Execute:Boolean;<br>
+  function Execute:Boolean;<br>   
+  procedure ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
+<br>
   procedure PrinterSetup;<br>
   function ShowParams:boolean;<br>
   procedure SaveToPDF(filename:string;compressed:boolean=false);<br>

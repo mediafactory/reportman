@@ -30,9 +30,9 @@ uses Classes,Sysutils,rpreport,
 {$ENDIF}
  QPrinters,rpqtdriver,rppreview,rprfparams,
 {$IFDEF MSWINDOWS}
- rpgdidriver,Printers,Dialogs,rprfvparams,rpvpreview,
+ rpgdidriver,Printers,Dialogs,rprfvparams,rpvpreview,rpfmainmetaviewvcl,
 {$ENDIF}
- rpalias;
+ rpalias,rpfmainmetaview;
 
 type
  // rpDriverGDI is ignored in Linux
@@ -43,6 +43,7 @@ type
    FUseSystemPrintDialog:boolean;
    FDriver:TRpPrintDriver;
   protected
+   procedure InternalExecuteRemote(metafile:TRpMetafileReport);override;
   public
    function Execute:boolean;override;
    procedure PrinterSetup;override;
@@ -223,6 +224,83 @@ begin
  Result:=rpqtdriver.PrintReport(Report,Title,ShowProgress,false,
   frompage,topage,copies,collate);
 end;
+
+
+procedure TCLXReport.InternalExecuteRemote(metafile:TRpMetafileReport);
+var
+ allpages,collate,dook:boolean;
+ frompage,topage,copies:integer;
+begin
+ inherited InternalExecuteRemote(metafile);
+
+ if Preview then
+ begin
+{$IFDEF MSWINDOWS}
+  if FDriver=rpDriverGDI then
+  begin
+   rpfmainmetaviewvcl.PreviewMetafile(metafile,nil,true);
+   exit;
+  end;
+{$ENDIF}
+  rpfmainmetaview.PreviewMetafile(metafile,nil,true);
+  exit;
+ end;
+
+ allpages:=true;
+ collate:=false;
+ frompage:=1; topage:=999999;
+ copies:=1;
+{$IFDEF HORZPAPERBUG}
+ if metafile.Orientation=rpOrientationPortrait then
+ begin
+  printer.Orientation:=poPortrait;
+ end
+ else
+ if metafile.Orientation=rpOrientationLandscape then
+ begin
+  printer.Orientation:=poLandscape;
+ end;
+{$ENDIF}
+
+
+ if ShowPrintDialog then
+ begin
+{$IFDEF MSWINDOWS}
+  if FDriver=rpDriverGDI then
+  begin
+   if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+   begin
+    rpgdidriver.PrintMetafile(metafile,Title,ShowProgress,allpages,frompage,topage,copies,collate,GetDeviceFontsOption(metafile.PrinterSelect),metafile.PrinterSelect)
+   end;
+   exit;
+  end;
+{$ENDIF}
+  if FUseSystemPrintDialog then
+   dook:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate)
+  else
+   dook:=rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+  if dook then
+  begin
+   rpqtdriver.PrintMetafile(metafile,Title,ShowProgress,allpages,frompage,topage,copies,collate,metafile.PrinterSelect)
+  end;
+  exit;
+ end
+ else
+ begin
+{$IFDEF MSWINDOWS}
+  if FDriver=rpDriverGDI then
+  begin
+   rpgdidriver.PrintMetafile(metafile,Title,ShowProgress,allpages,frompage,topage,copies,collate,GetDeviceFontsOption(metafile.PrinterSelect),metafile.PrinterSelect);
+   exit;
+  end;
+{$ENDIF}
+  rpqtdriver.PrintReport(report,Title,Showprogress,true,1,
+     9999999,report.copies,report.collatecopies);
+ end;
+end;
+
+
+
 
 
 end.

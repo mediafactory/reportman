@@ -34,7 +34,15 @@ requires
   visualclx,
   rppack_del,
   vcl,
-  rppackvcl_del;
+  rppackvcl_del,
+  bdertl,
+  indy,
+  vcljpg,
+  tee,
+  dbexpress,
+  adortl,
+  ibxpress,
+  dsnap;
 
 contains
   rpregv in 'rpregv.pas',
@@ -47,6 +55,12 @@ contains
   rppreview in 'rppreview.pas' {FRpPreview},
   rpgraphutils in 'rpgraphutils.pas' {FRpGraphProgres},
   rpprintdia in 'rpprintdia.pas' {FRpPrintDialog},
-  rprfparams in 'rprfparams.pas' {FRpRunTimeParams};
+  rprfparams in 'rprfparams.pas' {FRpRunTimeParams},
+  rpfmainmetaview in 'rpfmainmetaview.pas' {FRpMainMeta},
+  rpfmetaview in 'rpfmetaview.pas' {FRpMeta: TFrame},
+  rpmdclitree in 'rpmdclitree.pas' {FRpCliTree: TFrame},
+  rpmdfabout in 'rpmdfabout.pas' {FRpAboutBox},
+  rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig},
+  rpmdfhelpform in 'rpmdfhelpform.pas' {FRpHelpForm};
 
 end.

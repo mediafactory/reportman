@@ -26,6 +26,9 @@ extern "C" {
 int rp_open(char *filename);
 int rp_execute(int hreport,char *outputfilename,int metafile,int compressed);
 int  rp_close(int hreport);
+int rp_executeremote(char *hostname,int port,char *user,char *password,
+ char *aliasname,char *reportname,char *outputfilename,int metafile,
+ int compressed);
 char *rp_lasterror(void);
 #ifdef __cplusplus
 }

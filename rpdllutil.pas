@@ -22,7 +22,7 @@ unit rpdllutil;
 interface
 
 uses SysUtils,Classes,rpreport,rpmdconsts,rppdfdriver,
- rptypes,rpeval,rptypeval,rpdatainfo;
+ rptypes,rpeval,rptypeval,rpdatainfo,rppdfreport;
 
 var
  lreports:TStringList;
@@ -32,14 +32,17 @@ var
 function rp_open(filename:PChar):integer;stdcall;
 function rp_execute(hreport:integer;outputfilename:PChar;metafile,
  compressed:integer):integer;stdcall;
+function rp_executeremote(hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
+ compressed:integer):integer;stdcall;
 function rp_close(hreport:integer):integer;stdcall;
 function rp_lasterror:PChar;stdcall;
 
 function FindReportIndex(hreport:integer):integer;
 function FindReport(hreport:integer):TRpReport;
 procedure rplibdoinit;
+{$IFDEF LINUX}
 procedure DLLHandler(Reason: Integer);
-
+{$ENDIF}
 
 implementation
 
@@ -152,6 +155,34 @@ begin
  end;
 end;
 
+function rp_executeremote(hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
+ compressed:integer):integer;
+var
+ pdfreport:TPDFReport;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ Result:=1;
+ try
+  pdfreport:=TPDFReport.Create(nil);
+  try
+   pdfreport.PDFFilename:=outputfilename;
+   pdfreport.Compressed:=(compressed<>0);
+   pdfreport.AsMetafile:=(metafile<>0);
+   pdfreport.ExecuteRemote(hostname,port,user,password,aliasname,reportname);
+  finally
+   pdfreport.free;
+  end;
+ except
+  on E:Exception do
+  begin
+   rplasterror:=E.Message;
+   Result:=0;
+  end;
+ end;
+end;
+
+
 function rp_close(hreport:integer):integer;
 var
  index:integer;
@@ -189,6 +220,7 @@ begin
  lreports.clear;
 end;
 
+{$IFDEF LINUX}
 procedure DLLHandler(Reason: Integer);
 begin
  // 0 means unloading, 1 means loading.
@@ -196,6 +228,7 @@ begin
  // Now we want to remove our signal handler.
  UnhookSignal(RTL_SIGDEFAULT);
 end;
+{$ENDIF}
 
 
 

@@ -26,7 +26,10 @@ exports
   rp_execute,
   rp_lasterror,
   rp_print,
-  rp_preview;
+  rp_preview,
+  rp_executeremote,
+  rp_printremote,
+  rp_previewremote;
 
 {$R *.TLB}
 

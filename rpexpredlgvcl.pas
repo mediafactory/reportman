@@ -25,6 +25,9 @@ uses
   Graphics,Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls,Buttons,
   rpalias,rpeval, rptypeval,
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
   rpmdconsts;
 
 const
