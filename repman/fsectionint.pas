@@ -29,6 +29,8 @@ uses SysUtils, Classes, QGraphics, QForms,Types,
 
 
 type
+
+
   TFSectionProps = class(TForm)
     OKBtn: TButton;
     CancelBtn: TButton;
@@ -38,18 +40,35 @@ type
     { Public declarations }
   end;
 
-  TRpSectionInterface=class(TRpSizeInterface)
+  TRpSectionInterface=class;
+
+  TRpSectionIntf=class(TCustomControl)
    private
-    FOnDestroy:TNotifyEvent;
     calledposchange:Boolean;
+    secint:TRpSectionInterface;
    protected
     procedure Paint;override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
+
    public
     OnPosChange:TNotifyEvent;
+
+   end;
+
+  TRpSectionInterface=class(TRpSizeInterface)
+   private
+    FOnDestroy:TNotifyEvent;
+    FInterface:TRpSectionIntf;
+    FOnPosChange:TNotifyEvent;
+    procedure SetOnPosChange(AValue:TNotifyEvent);
+   protected
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer); override;
+   public
     freportstructure:TFRpStructure;
     childlist:TList;
+    procedure UpdatePos;override;
     property OnDestroy:TNotifyEvent read FOnDestroy write FOnDestroy;
     constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
     destructor destroy;override;
@@ -58,6 +77,8 @@ type
     function GetProperty(pname:string):string;override;
     procedure CreateChilds;
     procedure InvalidateAll;
+    property OnPosChange:TNotifyEvent read FOnPosChange write SetOnPosChange;
+    procedure DoDeleteComponent(aitem:TComponent);
   end;
 
 
@@ -80,6 +101,8 @@ var
  fxgrid,fygrid:integer;
  fcolor:TColor;
  flines:boolean;
+
+
 
 procedure FreeGridBitmap;
 begin
@@ -161,6 +184,9 @@ begin
  include(opts,csCaptureMouse);
  ControlStyle:=opts;
  ChildList:=TList.Create;
+ FInterface:=TRpSectionIntf.Create(Self);
+ Visible:=false;
+ FInterface.secint:=Self;
 end;
 
 destructor TRpSectionInterface.destroy;
@@ -171,6 +197,13 @@ begin
  end;
  childlist.free;
  inherited destroy;
+end;
+
+
+procedure TRpSectionInterface.SetOnPosChange(AValue:TNotifyEvent);
+begin
+ FOnPosChange:=AValue;
+ FInterface.OnPosChange:=AValue;
 end;
 
 
@@ -349,7 +382,8 @@ begin
  Result:=inherited GetProperty(pname);
 end;
 
-procedure TRpSectionInterface.Paint;
+
+procedure TRpSectionIntf.Paint;
 var
  report:TRpReport;
  rec:TRect;
@@ -367,13 +401,13 @@ begin
    calledposchange:=false;
   end;
  end;
- if Not Assigned(fprintitem) then
+ if Not Assigned(secint.fprintitem) then
   exit;
- if Not Assigned(fprintitem.Owner) then
+ if Not Assigned(secint.fprintitem.Owner) then
   exit;
- if Not (fprintitem.Owner is TRpReport) then
+ if Not (secint.fprintitem.Owner is TRpReport) then
   exit;
- report:=TRpReport(fprintitem.Owner);
+ report:=TRpReport(secint.fprintitem.Owner);
  if report.GridVisible then
  begin
   bitmap:=DrawBitmapGrid(width,height,report.GridWidth,report.GridHeight,report.GridColor,report.GridLines);
@@ -390,6 +424,13 @@ begin
  Canvas.Brush.Color:=clwhite;
  Canvas.FillRect(rec);
 end;
+
+procedure TRpSectionIntf.MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
+begin
+ secint.MouseDown(Button,Shift,X,Y);
+end;
+
 
 procedure TRpSectionInterface.MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
@@ -450,7 +491,7 @@ begin
   GenerateNewName(asizepos);
   aitem:=TRpSection(printitem).Components.Add;
   aitem.Component:=asizepos;
-  asizeposint.Parent:=parent;
+  asizeposint.Parent:=FInterface;
   asizeposint.sectionint:=self;
   asizeposint.UpdatePos;
   asizeposint.fobjinsp:=fobjinsp;
@@ -498,7 +539,7 @@ begin
   end;
   if Assigned(labelint) then
   begin
-   labelint.Parent:=parent;
+   labelint.Parent:=FInterface;
    labelint.sectionint:=self;
    labelint.UpdatePos;
    labelint.fobjinsp:=fobjinsp;
@@ -514,6 +555,33 @@ begin
  for i:=0 to childlist.count-1 do
  begin
   TRpSizeInterface(childlist.items[i]).Invalidate;
+ end;
+end;
+
+procedure TRpSectionInterface.UpdatePos;
+begin
+ inherited UpdatePos;
+
+ if Assigned(FInterface) then
+ begin
+  FInterface.SetBounds(Left,Top,Width,Height);
+  FInterface.Parent:=Parent;
+ end;
+end;
+
+
+procedure TRpSectionInterface.DoDeleteComponent(aitem:TComponent);
+var
+ i:integer;
+begin
+ for i:=0 to childlist.Count-1 do
+ begin
+  if TRpSizePosInterface(childlist.items[i]).printitem=aitem then
+  begin
+   TRpSizePosInterface(childlist.items[i]).Parent:=nil;
+   TRpSizePosInterface(childlist.items[i]).Free;
+   TRpSection(printitem).DeleteComponent(TRpCommonCOmponent(aitem));
+  end;
  end;
 end;
 

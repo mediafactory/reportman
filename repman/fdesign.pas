@@ -30,14 +30,24 @@ const
  CONS_RULER_LEFT=20;
  CT_TITLE_HEIGHT=15;
 type
+  TRpPaintEventPanel=Class(TPanel)
+   private
+    FOnPaint:TNotifyEvent;
+   protected
+    procedure Paint;override;
+   public
+    constructor Create(AOwner:TComponent);override;
+    property OnPaint:TNotifyEvent read FOnPaint write FOnPaint;
+   end;
+
   TFDesignFrame = class(TFrame)
     PTop: TPanel;
     TopRuler: TRpRuler;
     PLeft: TPanel;
     SectionScrollBox: TScrollBox;
-    PSection: TPanel;
   private
     { Private declarations }
+    PSection: TRpPaintEventPanel;
     FReport:TRpReport;
     FObjInsp:TFObjInsp;
     leftrulers:Tlist;
@@ -65,6 +75,25 @@ implementation
 
 uses fmain;
 
+constructor TrpPaintEventPanel.Create(AOwner:TComponent);
+begin
+ Inherited Create(AOwner);
+
+ BevelInner:=bvNone;
+ BevelOuter:=bvNone;
+ BorderStyle:=bsNone;
+end;
+
+procedure TRpPaintEventPanel.Paint;
+begin
+ inherited Paint;
+
+ if Assigned(FOnPaint) then
+  FOnPaint(Self);
+end;
+
+
+
 constructor TFDesignFrame.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
@@ -72,6 +101,9 @@ begin
  toptitles:=Tlist.Create;
  secinterfaces:=TList.Create;
 
+ PSection:=TRpPaintEventPanel.Create(Self);
+ PSection.Parent:=SectionSCrollBox;
+ PSection.OnPaint:=SecPosChange;
 end;
 
 destructor TFDesignFrame.Destroy;
@@ -168,7 +200,7 @@ procedure TFDesignFrame.SelectSubReport(subreport:TRpSubReport);
 var
  i:integer;
  asecint:TRpSectionInterface;
- apanel:Tpanel;
+ apanel:TRpPaintEventpanel;
  aruler:TRpRuler;
  posx:integer;
  maxwidth:integer;
@@ -191,13 +223,14 @@ begin
  Fsubreport:=subreport;
  if not assigned(fsubreport) then
   exit;
- SectionScrollBox.Visible:=false;
+ SectionScrollBox.Visible:=true;
  try
   maxwidth:=0;
   posx:=0;
   for i:=0 to fsubreport.Sections.Count-1 do
   begin
-   apanel:=TPanel.Create(self);
+   apanel:=TRpPaintEventPanel.Create(self);
+   apanel.OnPaint:=SecPosChange;
    apanel.Height:=CT_TITLE_HEIGHT;
    apanel.Caption:=' '+FSubReport.Sections.Items[i].Section.SectionCaption;
    apanel.Alignment:=taLeftJustify;
@@ -219,6 +252,7 @@ begin
    asecint.UpdatePos;
    asecint.Parent:=PSection;
    asecint.CreateChilds;
+   asecint.UpdatePos;
    secinterfaces.Add(asecint);
 
    apanel.Width:=asecint.Width;

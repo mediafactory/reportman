@@ -166,6 +166,7 @@ type
     procedure APrintSetupExecute(Sender: TObject);
     procedure AUnitCmsExecute(Sender: TObject);
     procedure AUnitsinchessExecute(Sender: TObject);
+    procedure FormResize(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFDesignFrame;
@@ -669,18 +670,18 @@ end;
 
 procedure TFMainf.ACutExecute(Sender: TObject);
 var
- section:TRpSection;
+ sectionintf:TRpSectionInterface;
  pitem:TRpCommonComponent;
 begin
  // Delete current selection
  if Not Assigned(fobjinsp.CompItem) then
   exit;
  pitem:=TRpSizePosInterface(fobjinsp.CompItem).printitem;
- section:=TRpSection(TRpSizePosInterface(fobjinsp.CompItem).SectionInt.printitem);
+ sectionintf:=TrpSectionInterface(TRpSizePosInterface(fobjinsp.CompItem).sectionint);
  Clipboard.SetComponent(pitem);
- section.DeleteComponent(pitem);
+ sectionintf.DoDeleteComponent(pitem);
  fobjinsp.CompItem:=nil;
-// fdesignframe.UpdateSelection(true);
+ fdesignframe.UpdateSelection(true);
 end;
 
 procedure TFMainf.ACopyExecute(Sender: TObject);
@@ -951,6 +952,12 @@ begin
  AUnitCms.Checked:=false;
  AUnitsInchess.Checked:=true;
  UpdateUnits;
+end;
+
+procedure TFMainf.FormResize(Sender: TObject);
+begin
+// if assigned(fdesignframe) then
+//  fdesignframe.UpdateInterface;
 end;
 
 initialization

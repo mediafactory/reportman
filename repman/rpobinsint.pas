@@ -343,18 +343,10 @@ end;
 procedure TRpSizePosInterface.UpdatePos;
 var
  NewLeft,NewTop,NewWidth,NewHeight:integer;
- despx,despy:integer;
 begin
- despx:=0;
- despy:=0;
- if assigned(sectionint) then
- begin
-  despx:=SectionInt.Left;
-  despy:=SectionInt.Top;
- end;
- NewLeft:=twipstopixels(TRpCOmmonPosComponent(printitem).PosX)+despx;
+ NewLeft:=twipstopixels(TRpCOmmonPosComponent(printitem).PosX);
  NewWidth:=twipstopixels(TRpCOmmonPosComponent(printitem).Width);
- NewTop:=twipstopixels(TRpCOmmonPosComponent(printitem).PosY)+despy;
+ NewTop:=twipstopixels(TRpCOmmonPosComponent(printitem).PosY);
  NewHeight:=twipstopixels(TRpCOmmonPosComponent(printitem).Height);
  SetBounds(NewLeft,NewTop,NewWidth,NewHeight);
 end;

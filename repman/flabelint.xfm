@@ -3,14 +3,14 @@ object FLabelInterface: TFLabelInterface
   Top = 225
   Width = 320
   Height = 240
-  HorzScrollBar.Range = 305
   VertScrollBar.Range = 205
+  HorzScrollBar.Range = 305
   ActiveControl = OKBtn
   Caption = 'Dialog'
   Color = clButton
   Position = poScreenCenter
   Scaled = False
-  PixelsPerInch = 100
+  PixelsPerInch = 96
   object Bevel1: TBevel
     Left = 8
     Top = 8
