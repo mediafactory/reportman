@@ -10,15 +10,15 @@
 <h3>Using and installing WebReportManX control</h3>
 <h4>Description and use of WebReportManX ActiveX control</h4>
 <p>WebReportManX control is a plugin for Windows Internet Explorer, it allows 
-  you to preview or execute <b>server processed reports</b> or Report Manager 
-  <b>metafiles stored in web servers</b>.</p>
+  you to preview or print <b>server processed reports</b> or Report Manager <b>metafiles 
+  stored in web servers</b>.</p>
 <p><img src="images/webactivex2.jpg" width="742" height="584"></p>
 <p>You can obtain a Report Metafile using save command in preview window, executing 
   web report server with metafile=1 parameter, executing printreptopdf with -m 
   command line option.</p>
-<p>For example you can execute a report using Report Manager web server and preview 
-  it in an Internet explorer window. In the server you should place a html file 
-  with this content:</p>
+<p>For example you can execute a report using Report Manager web server in a Linux 
+  machine and preview it in an Internet explorer window. In the server you should 
+  place a html file with this content:</p>
 <p>&lt;html&gt;<br>
   &lt;head&gt;<br>
   &lt;title&gt;Report Manager ActiveX plugin test&lt;/title&gt;<br>
@@ -35,7 +35,7 @@
   &lt;tr&gt;<br>
   &lt;td height=&quot;100%&quot;&gt;&lt;object<br>
   classid=&quot;clsid:DF0F146D-1D4B-4216-93A8-B63BE78A3D7E&quot;<br>
-  codebase=&quot;http://192.168.0.6/WebReportManX.ocx#version=1,4,25,0&quot;<br>
+  codebase=&quot;http://80.32.237.17/WebReportManX.cab#version=1,4,30,0&quot;<br>
   width=100%<br>
   height=100%<br>
   align=center<br>
@@ -49,7 +49,7 @@
   &lt;param name=&quot;Install&quot; value=&quot;0&quot;&gt;<br>
   &lt;param name=&quot;PrinterConfig&quot; value=&quot;0&quot;&gt;<br>
   &lt;param name=&quot;Caption&quot; value=&quot;Printing&quot;&gt;<br>
-  &lt;param name=&quot;MetaUrl&quot; value=&quot;http://192.168.0.6/cgi-bin/repwebexe2.bin/execute.pdf?reportname=%2Forders&amp;aliasname=SAMPLE&amp;username=Admin&amp;password=&amp;ParamDETAIL=True&amp;ParamFIRSTORDER=1000&amp;ParamLASTORDER=1010&amp;Metafile=1&quot;&gt;<br>
+  &lt;param name=&quot;MetaUrl&quot; value=&quot;http://80.32.237.17/sample6.rpmf&quot;&gt;<br>
   &lt;/object&gt;&lt;/td&gt;<br>
   &lt;/tr&gt;<br>
   &lt;/table&gt;<br>
@@ -59,17 +59,17 @@
   &lt;/body&gt;<br>
   &lt;/html&gt;</p>
 <p>See the codebase property of Object control contains the path to the installable 
-  .ocx control, with version information, ask <b>version information for the .ocx 
-  file in windows explorer</b> if you are not sure about the version.</p>
-<p>When a Internet Explorer client reads this web page it reads the .ocx file 
-  (you can also point to a compressed .cab file if available), looks for authenticode 
-  signature (currently the control have no signature) and then looks the security 
-  configuration, then <b>posibly ask the user to install the .ocx file in the 
-  client computer</b>, take care that by default Internet explorer will not ask 
-  because <b>default configuration does not allow installation of not signed ActiveX 
-  controls</b>, so you must go to <b>configuration and allow Downloading of unsigned 
-  ActiveX (ask data)</b>, see <b>also if you have not Administrator rights it 
-  will not ask</b>.</p>
+  .cab file that contains the .ocx control, ask <b>version information for the 
+  .ocx file in windows explorer</b> if you are not sure about the version.</p>
+<p>When a Internet Explorer client reads this web page it reads the .cab file 
+  (you can also point to the .ocx file if available), looks for authenticode signature 
+  (<b>currently the control have a root test signature</b>) and then looks the 
+  security configuration, then <b>ask the user to install the .ocx/.cab file in 
+  the client computer</b>, take care that if you provide a not signed file, by 
+  default Internet explorer will not ask because <b>default configuration does 
+  not allow installation of not signed ActiveX controls</b>, so you must go to 
+  <b>configuration and allow Downloading of unsigned ActiveX (ask data)</b>, see 
+  <b>also if you have not Administrator rights it will not ask</b>.</p>
 <p><img src="images/webactivex1.jpg" width="441" height="329"></p>
 <p>The procedure of Internet explorer client setup happens only once, so when 
   it's installed, all the users are available to use the new Installed ActiveX 

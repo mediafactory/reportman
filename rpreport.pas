@@ -1581,6 +1581,26 @@ begin
  AddReportItemsToEvaluator(FEvaluator);
  // Maybe parameters are used in ActivateDatasets (BDESetRange)
 
+ // Evaluates parameter expressions before open
+ for i:=0 to Params.Count-1 do
+ begin
+  if params.items[i].ParamType=rpParamExpreB then
+  begin
+   paramname:=params.items[i].Name;
+   try
+    if Not VarIsNull(params.items[i].Value) then
+    FEvaluator.EvaluateText(paramname+':=('+String(params.items[i].Value)+')')
+   except
+    on E:Exception do
+    begin
+     E.Message:=E.Message+SRpParameter+'-'+paramname;
+     Raise;
+    end;
+   end;
+  end;
+ end;
+
+
  ActivateDatasets;
  try
   // After activating dataset we must check wich subreport to activate
@@ -1604,10 +1624,10 @@ begin
  end;
  FEvaluator.Rpalias:=FDataAlias;
 
- // Evaluates parameter expressions
+ // Evaluates parameter expressions after open
  for i:=0 to Params.Count-1 do
  begin
-  if params.items[i].ParamType=rpParamExpre then
+  if params.items[i].ParamType=rpParamExpreA then
   begin
    paramname:=params.items[i].Name;
    try

@@ -35,6 +35,7 @@ type
    private
     FName:string;
     FDescription:widestring;
+    FSearch:WideString;
     FVisible:boolean;
     FValue:variant;
     FParamType:TRpParamType;
@@ -43,8 +44,11 @@ type
     procedure SetName(AName:String);
     procedure SetValue(AValue:variant);
     procedure SetDescription(ADescription:widestring);
+    procedure SetSearch(ASearch:widestring);
     procedure SetParamType(AParamType:TRpParamType);
     procedure WriteDescription(Writer:TWriter);
+    procedure ReadSearch(Reader:TReader);
+    procedure WriteSearch(Writer:TWriter);
     procedure ReadDescription(Reader:TReader);
     function GetAsString:String;
     procedure SetAsString(NewValue:String);
@@ -56,6 +60,7 @@ type
     destructor Destroy;override;
     procedure SetDatasets(AList:TStrings);
     property Description:widestring read FDescription write SetDescription;
+    property Search:widestring read FSearch write SetSearch;
     property AsString:String read GetAsString write SetAsString;
    published
     property Name:string read FName write SetName;
@@ -126,6 +131,7 @@ begin
   FName:=TRpParam(Source).FName;
   FVisible:=TRpParam(Source).FVisible;
   FDescription:=TRpParam(Source).FDescription;
+  FSearch:=TRpParam(Source).FSearch;
   FValue:=TRpParam(Source).FValue;
   FParamType:=TRpParam(Source).FParamType;
   FDatasets.Assign(TRpParam(Source).FDatasets);
@@ -167,6 +173,12 @@ end;
 procedure TRpParam.SetDescription(ADescription:wideString);
 begin
  FDescription:=ADescription;
+ Changed(false);
+end;
+
+procedure TRpParam.SetSearch(ASearch:wideString);
+begin
+ FSearch:=ASearch;
  Changed(false);
 end;
 
@@ -291,7 +303,11 @@ begin
     Result:=ftTime;
    rpParamBool:
     Result:=ftBoolean;
-   rpParamExpre:
+   rpParamExpreB:
+    Result:=ftString;
+   rpParamExpreA:
+    Result:=ftString;
+   rpParamSubst:
     Result:=ftString;
   end;
 end;
@@ -307,11 +323,22 @@ begin
  FDescription:=ReadWideString(Reader);
 end;
 
+procedure TRpParam.WriteSearch(Writer:TWriter);
+begin
+ WriteWideString(Writer, FSearch);
+end;
+
+procedure TRpParam.ReadSearch(Reader:TReader);
+begin
+ FSearch:=ReadWideString(Reader);
+end;
+
 procedure TRpParam.DefineProperties(Filer:TFiler);
 begin
  inherited;
 
  Filer.DefineProperty('Description',ReadDescription,WriteDescription,True);
+ Filer.DefineProperty('Search',ReadSearch,WriteSearch,True);
 end;
 
 function TRpParam.GetAsString:String;
@@ -324,7 +351,7 @@ begin
  case ParamType of
   rpParamUnknown:
    Result:='';
-  rpParamString,rpParamExpre:
+  rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst:
    Result:=Value;
   rpParamInteger,rpParamDouble,rpParamCurrency:
    Result:=FloatToStr(Value);
@@ -342,7 +369,7 @@ end;
 procedure TRpParam.SetAsString(NewValue:String);
 begin
  case ParamType of
-  rpParamString,rpParamExpre:
+  rpParamString,rpParamExpreB,rpParamExpreA,rpParamSubst:
    Value:=NewValue;
   rpParamInteger,rpParamDouble,rpParamCurrency:
    Value:=StrToFloat(NewValue);
@@ -365,8 +392,14 @@ end;
 function ParamTypeToString(paramtype:TRpParamType):String;
 begin
  case ParamType of
-  rpParamString,rpParamExpre:
+  rpParamString:
    Result:=SRpSString;
+  rpParamExpreB:
+   Result:=SrpSExpressionB;
+  rpParamExpreA:
+   Result:=SrpSExpressionA;
+  rpParamSubst:
+   Result:=SRpSParamSubs;
   rpParamInteger:
    Result:=SRpSInteger;
   rpParamDouble:
@@ -393,6 +426,21 @@ begin
  if Value=SRpSString then
  begin
   Result:=rpParamString;
+  exit;
+ end;
+ if Value=SrpSExpressionA then
+ begin
+  Result:=rpParamExpreA;
+  exit;
+ end;
+ if Value=SrpSExpressionB then
+ begin
+  Result:=rpParamExpreB;
+  exit;
+ end;
+ if Value=SRpSParamSubs then
+ begin
+  Result:=rpParamSubst;
   exit;
  end;
  if Value=SRpSInteger then
@@ -444,6 +492,9 @@ begin
  alist.Add(SRpSDateTime);
  alist.Add(SRpSTime);
  alist.Add(SRpSBoolean);
+ alist.Add(SrpSExpressionB);
+ alist.Add(SrpSExpressionA);
+ alist.Add(SRpSParamSubs);
 end;
 
 end.

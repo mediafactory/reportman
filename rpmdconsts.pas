@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.4pre14';
+ RM_VERSION='1.4pre16';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
 
@@ -604,7 +604,10 @@ var
   SRpSPOnlyData:WideString='P.Only data avail.';
   SRpSTwoPassReportNeeded:WideString='Two pass report needed';
   SRpIniNumPage:WideString='Init.PageNum';
-
+  SRpPrintNulls:WideString='Print Nulls';
+  SrpSExpressionB:WideString='Expres.Bef.Open';
+  SrpSExpressionA:WideString='Expres.Aft.Open';
+  SRpSParamSubs:WideString='String Substi.';
 implementation
 
 uses rptranslator;
@@ -1199,6 +1202,9 @@ begin
  TranslateVar(932,SRpPrintPDFRep9);
  TranslateVar(933,SRpFrench);
  TranslateVar(940,SRpIniNumPage);
+ TranslateVar(941,SRpPrintNulls);
+ TranslateVar(942,SrpSExpressionB);
+ TranslateVar(943,SrpSExpressionA);
 end;
 
 {$IFDEF LINUX}

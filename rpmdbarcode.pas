@@ -1527,7 +1527,7 @@ begin
   exit;
  end;
  Evaluate;
- Result:=FormatVariant(displayformat,FValue,rpParamUnknown);
+ Result:=FormatVariant(displayformat,FValue,rpParamUnknown,true);
 end;
 
 procedure TRpBarcode.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');

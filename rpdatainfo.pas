@@ -986,6 +986,7 @@ var
  baseinfo:TRpDatabaseInfoItem;
  doexit:boolean;
  param:TRpParam;
+ sqlsentence:widestring;
 begin
  if connecting then
   Raise Exception.Create(SRpCircularDatalink+' - '+alias);
@@ -1024,6 +1025,21 @@ begin
   end;
   if (not doexit) then
   begin
+   // Substitute text in parameters
+   sqlsentence:=FSQL;
+   for i:=0 to params.Count-1 do
+   begin
+    param:=params.items[i];
+    if param.ParamType=rpParamSubst then
+    begin
+     index:=param.Datasets.IndexOf(Alias);
+     if index>=0 then
+     begin
+      sqlsentence:=StringReplace(sqlsentence,param.Search,param.Value,[rfReplaceAll, rfIgnoreCase]);
+     end;
+    end;
+   end;
+
    if Assigned(FMasterSource) then
    begin
     FMasterSource.Free;
@@ -1185,14 +1201,14 @@ begin
 
    FDataset:=FSQLInternalQuery;
 
-   // Assigns the connectoin
+   // Assigns the connection
    case baseinfo.Driver of
     rpdatadbexpress:
      begin
 {$IFDEF USESQLEXPRESS}
       TSQLQuery(FSQLInternalQuery).SQLConnection:=
        baseinfo.SQLConnection;
-      TSQLQuery(FSQLInternalQuery).SQL.Text:=SQL;
+      TSQLQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
       TSQLQuery(FSQLInternalQuery).DataSource:=nil;
 {$ENDIF}
      end;
@@ -1201,7 +1217,7 @@ begin
 {$IFDEF USEIBX}
       TIBQuery(FSQLInternalQuery).Database:=
        baseinfo.FIBDatabase;
-      TIBQuery(FSQLInternalQuery).SQL.Text:=SQL;
+      TIBQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
       if Assigned(TIBQuery(FSQLInternalQuery).Database) then
       begin
        TIBQuery(FSQLInternalQuery).Transaction:=
@@ -1239,7 +1255,7 @@ begin
        TBDEDataset(FSQLInternalQuery).Filtered:=True;
       if FBDEType=rpdquery then
       begin
-       TQuery(FSQLInternalQuery).SQL.Text:=SQL;
+       TQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
        TQuery(FSQLInternalQUery).UniDirectional:=True;
        TQuery(FSQLInternalQuery).DataSource:=nil;
       end
@@ -1269,7 +1285,7 @@ begin
      begin
 {$IFDEF USEADO}
       TADOQuery(FSQLInternalQuery).Connection:=baseinfo.ADOConnection;
-      TADOQuery(FSQLInternalQuery).SQL.Text:=SQL;
+      TADOQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
       TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
       TADOQuery(FSQLInternalQuery).DataSource:=nil;
 //      Activating this switches break linked querys
@@ -1280,7 +1296,7 @@ begin
      begin
 {$IFDEF USEIBO}
       TIBOQuery(FSQLInternalQuery).IB_Connection:=baseinfo.FIBODatabase;
-      TIBOQuery(FSQLInternalQuery).SQL.Text:=SQL;
+      TIBOQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
       TIBOQuery(FSQLInternalQuery).UniDirectional:=true;
       TIBOQuery(FSQLInternalQuery).DataSource:=nil;
 {$ENDIF}

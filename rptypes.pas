@@ -54,7 +54,7 @@ type
 
  TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,
   rpParamTime,rpParamDateTime,rpParamCurrency,rpParamBool,
-  rpParamExpre,rpParamUnknown);
+  rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamUnknown);
 
 
  TRpParamObject=class(TObject)
@@ -138,7 +138,7 @@ function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
 procedure WriteWideString(Writer:TWriter;Value:WideString);
 function  ReadWideString(Reader:TReader):WideString;
 procedure Generatenewname(Component:TComponent);
-function FormatVariant(displayformat:string;Value:Variant;paramtype:TRpParamType):widestring;
+function FormatVariant(displayformat:string;Value:Variant;paramtype:TRpParamType;printnulls:boolean):widestring;
 function CopyFileTo(const Source, Destination: string): Boolean;
 function GetPrinterConfigName(printerindex:TRpPrinterSelect):string;
 function GetPrinterOffset(printerindex:TRpPrinterSelect):TPoint;
@@ -386,7 +386,7 @@ end;
 
 
 function FormatVariant(displayformat:string;Value:Variant;
- paramtype:TRpParamType):widestring;
+ paramtype:TRpParamType;printnulls:boolean):widestring;
 var
  atype:TVarType;
 begin
@@ -395,7 +395,7 @@ begin
   if VarIsNull(Value) then
   begin
    case paramtype of
-    rpParamString,rpParamExpre:
+    rpParamString,rpParamExpreB,rpParamExpreA,rpParamSubst:
      Value:='';
     rpParamInteger,rpParamDouble,rpParamCurrency:
      Value:=0;
@@ -416,20 +416,65 @@ begin
  begin
   if Length(displayformat)<1 then
   begin
-   Result:=widestring(Value);
-   exit;
+   if printnulls then
+   begin
+    Result:=widestring(Value);
+    exit;
+   end;
   end;
  end;
  atype:=VarType(value);
  case atype of
   varEmpty,varNull:
    Result:='';
-  varSmallint,varInteger,varSingle,varDouble,varByte:
-   Result:=FormatFloat(displayformat,Value);
+  varSmallint,varInteger,varByte:
+   begin
+    if ((Value=0) and (Not printnulls)) then
+     Result:=''
+    else
+    begin
+     if length(displayformat)<1 then
+      Result:=widestring(Value)
+     else
+      Result:=FormatFloat(displayformat,Value);
+    end;
+   end;
   varWord,varInt64,varLongWord,varShortInt:
-   Result:=FormatFloat(displayformat,Value);
+   begin
+    if ((Value=0) and (Not printnulls)) then
+     Result:=''
+    else
+    begin
+     if length(displayformat)<1 then
+      Result:=widestring(Value)
+     else
+      Result:=FormatFloat(displayformat,Value);
+     end;
+   end;
+  varSingle,varDouble:
+   begin
+    if ((Value=0.0) and (Not printnulls)) then
+     Result:=''
+    else
+    begin
+     if length(displayformat)<1 then
+      Result:=widestring(Value)
+     else
+      Result:=FormatFloat(displayformat,Value);
+     end;
+   end;
   varCurrency:
-   Result:=FormatCurr(displayformat,Value);
+   begin
+    if ((Value=0.0) and (Not printnulls)) then
+     Result:=''
+    else
+    begin
+     if length(displayformat)<1 then
+      Result:=widestring(Value)
+     else
+      Result:=FormatCurr(displayformat,Value);
+     end;
+   end;
   varDate:
    Result:=FormatDateTime(displayformat,Value);
   varString:
@@ -440,7 +485,12 @@ begin
   begin
 {$IFDEF USEBCD}
    if atype=varFmtBCD then
-    Result:=FormatBCD(displayformat,VarToBcd(Value))
+   begin
+    if ( (BCDCompare(VarToBCD(Value),IntegerToBcd(0))=0) and (not printnulls)) then
+     Result:=''
+    else
+     Result:=FormatBCD(displayformat,VarToBcd(Value));
+   end
    else
 {$ENDIF}
     Result:=SRpUnknownType;

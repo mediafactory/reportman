@@ -87,6 +87,7 @@ type
    FPrintOnlyOne:boolean;
    FIdenExpression:TIdenRpExpression;
    FOldString:widestring;
+   FPrintNulls:boolean;
    procedure SetIdentifier(Value:string);
    procedure Evaluate;
    procedure WriteExpression(Writer:TWriter);
@@ -117,6 +118,7 @@ type
    property AutoContract:Boolean read FAutoContract write FAutoContract;
    property PrintOnlyOne:Boolean read FPrintOnlyOne write FPrintOnlyOne
     default false;
+   property PrintNulls:Boolean read FPrintNulls write FPrintNulls default true;
   end;
 
   TIdenRpExpression=class(TIdenFunction)
@@ -275,6 +277,7 @@ end;
 constructor TRpExpression.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+ FPrintNulls:=true;
  Height:=275;
  FAgIniValue:='0';
  Width:=1440;
@@ -366,7 +369,7 @@ begin
  else
  begin
   Evaluate;
-  Result:=FormatVariant(displayformat,FValue,FDataType);
+  Result:=FormatVariant(displayformat,FValue,FDataType,FPrintNulls);
  end;
 end;
 

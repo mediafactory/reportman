@@ -65,6 +65,8 @@ type
     Panel3: TPanel;
     BCancel: TButton;
     BOK: TButton;
+    LSearch: TLabel;
+    ESearch: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -134,16 +136,7 @@ begin
  LDescription.Caption:=TranslateStr(197,LDescription.Caption);
  LAssign.Caption:=TranslateStr(198,LAssign.Caption);
  Caption:=TranslateStr(199,Caption);
- ComboDataType.Items.Strings[0]:=TranslateStr(200,ComboDataType.Items.Strings[0]);
- ComboDataType.Items.Strings[1]:=TranslateStr(201,ComboDataType.Items.Strings[1]);
- ComboDataType.Items.Strings[2]:=TranslateStr(202,ComboDataType.Items.Strings[2]);
- ComboDataType.Items.Strings[3]:=TranslateStr(203,ComboDataType.Items.Strings[3]);
- ComboDataType.Items.Strings[4]:=TranslateStr(204,ComboDataType.Items.Strings[4]);
- ComboDataType.Items.Strings[5]:=TranslateStr(205,ComboDataType.Items.Strings[5]);
- ComboDataType.Items.Strings[6]:=TranslateStr(206,ComboDataType.Items.Strings[6]);
- ComboDataType.Items.Strings[7]:=TranslateStr(207,ComboDataType.Items.Strings[7]);
- ComboDataType.Items.Strings[8]:=TranslateStr(208,ComboDataType.Items.Strings[8]);
- ComboDataType.Items.Strings[9]:=TranslateStr(886,ComboDataType.Items.Strings[9]);
+ GetPossibleDataTypes(ComboDataType.Items);
 
  SetInitialBounds;
 end;
@@ -205,17 +198,19 @@ begin
   CheckVisible.Checked:=param.Visible;
    CheckNull.Checked:=param.Value=Null;
   EDescription.Text:=param.Description;
+  ESearch.Text:=param.Search;
   LDatasets.Clear;
   LDatasets.items.Assign(param.Datasets);
   if LDatasets.items.count>0 then
    LDatasets.ItemIndex:=0;
 
-  ComboDataType.ItemIndex:=Integer(param.ParamType);
+  ComboDataType.ItemIndex:=
+   ComboDataType.Items.IndexOf(ParamTypeToString(param.ParamType));
   EValue.Text:='';
   if (param.Value<>Null) then
   begin
    case param.ParamType of
-    rpParamString,rpParamExpre,rpParamUnknown:
+    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamUnknown:
      EValue.Text:=param.AsString;
     rpParamInteger:
      EValue.Text:=IntToStr(param.Value);
@@ -252,10 +247,12 @@ end;
 
 procedure TFRpParams.UpdateValue(param:TRpParam);
 begin
+ ESearch.Visible:=param.ParamType=rpParamSubst;
+ LSearch.Visible:=ESearch.Visible;
  if (EValue.Text='') then
  begin
   case param.ParamType of
-   rpParamString,rpParamExpre,rpParamUnknown:
+   rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamUnknown:
     EValue.Text:='';
    rpParamInteger:
     EValue.Text:=IntToStr(0);
@@ -282,7 +279,7 @@ begin
  begin
    EValue.Visible:=true;
    case param.ParamType of
-    rpParamString,rpParamExpre,rpParamUnknown:
+    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamUnknown:
      param.Value:=EValue.Text;
     rpParamInteger:
      param.Value:=StrToInt(EValue.Text);
@@ -315,6 +312,9 @@ begin
  if Sender=EDescription then
   param.Description:=EDescription.Text
  else
+ if Sender=ESearch then
+  param.Search:=ESearch.Text
+ else
   if (Sender=CheckVisible) then
    param.Visible:=CheckVisible.Checked
   else
@@ -327,9 +327,9 @@ begin
    else
     if (Sender=ComboDataType) then
     begin
-     if (param.ParamType=TRpParamType(COmboDataType.ItemIndex)) then
+     if (param.ParamType=StringToParamType(COmboDataType.Text)) then
       exit;
-     param.ParamType:=TRpParamType(COmboDataType.ItemIndex);
+     param.ParamType:=StringToParamType(COmboDataType.Text);
      EValue.Text:='';
      UpdateValue(param);
     end;

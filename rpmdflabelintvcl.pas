@@ -243,6 +243,10 @@ begin
  ltypes.Add(SRpSString);
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).DisplayFormat);
+ lnames.Add(SRpPrintNulls);
+ ltypes.Add(SRpSBool);
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpExpression(printitem).PrintNulls,true));
 
  // Identifier
  lnames.Add(SrpSIdentifier);
@@ -300,6 +304,11 @@ begin
   TRpExpression(fprintitem).DisplayFormat:=value;
   exit;
  end;
+ if pname=SRpPrintNulls then
+ begin
+  TRpExpression(fprintitem).PrintNulls:=StrToBool(Value);
+  exit;
+ end;
  if pname=SRpSIdentifier then
  begin
   TRpExpression(fprintitem).Identifier:=value;
@@ -349,6 +358,11 @@ begin
  if pname=SrpSDisplayFormat then
  begin
   Result:=TRpExpression(printitem).DisplayFormat;
+  exit;
+ end;
+ if pname=SrpPrintNulls then
+ begin
+  Result:=BoolToStr(TRpExpression(printitem).PrintNulls,true);
   exit;
  end;
  if pname=SrpSIdentifier then

@@ -3,8 +3,8 @@ object FRpParamsVCL: TFRpParamsVCL
   Top = 165
   BorderStyle = bsDialog
   Caption = 'Dialog'
-  ClientHeight = 370
-  ClientWidth = 439
+  ClientHeight = 398
+  ClientWidth = 453
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -17,8 +17,8 @@ object FRpParamsVCL: TFRpParamsVCL
   object Panel1: TPanel
     Left = 0
     Top = 168
-    Width = 439
-    Height = 202
+    Width = 453
+    Height = 230
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
@@ -26,12 +26,12 @@ object FRpParamsVCL: TFRpParamsVCL
       Left = 2
       Top = 5
       Width = 439
-      Height = 185
+      Height = 216
       TabOrder = 0
       Visible = False
       object LDescription: TLabel
         Left = 12
-        Top = 72
+        Top = 88
         Width = 53
         Height = 13
         Caption = 'Description'
@@ -57,9 +57,17 @@ object FRpParamsVCL: TFRpParamsVCL
         Height = 13
         Caption = 'Assign to datasets'
       end
+      object LSearch: TLabel
+        Left = 12
+        Top = 64
+        Width = 77
+        Height = 13
+        Caption = 'Search for string'
+        Visible = False
+      end
       object EDescription: TEdit
         Left = 104
-        Top = 68
+        Top = 84
         Width = 321
         Height = 21
         Hint = 'Description to be show on the end user dialog'
@@ -154,12 +162,22 @@ object FRpParamsVCL: TFRpParamsVCL
         ItemHeight = 13
         TabOrder = 8
       end
+      object ESearch: TEdit
+        Left = 104
+        Top = 60
+        Width = 321
+        Height = 21
+        Hint = 'Description to be show on the end user dialog'
+        TabOrder = 9
+        Visible = False
+        OnChange = EDescriptionChange
+      end
     end
   end
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 439
+    Width = 453
     Height = 168
     Align = alClient
     BevelOuter = bvNone
@@ -167,7 +185,7 @@ object FRpParamsVCL: TFRpParamsVCL
     object LParams: TListBox
       Left = 0
       Top = 28
-      Width = 343
+      Width = 357
       Height = 140
       Align = alClient
       ItemHeight = 13
@@ -177,7 +195,7 @@ object FRpParamsVCL: TFRpParamsVCL
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 439
+      Width = 453
       Height = 28
       AutoSize = True
       ButtonHeight = 26
@@ -229,7 +247,7 @@ object FRpParamsVCL: TFRpParamsVCL
       end
     end
     object Panel3: TPanel
-      Left = 343
+      Left = 357
       Top = 28
       Width = 96
       Height = 140
