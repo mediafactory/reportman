@@ -24,7 +24,7 @@ interface
 
 uses Classes,SysUtils,SqlExpr,rpconsts, DBXpress,
  DB,rpparams,Inifiles,rptypes,DBClient,
- IBQuery,IBDatabase,
+ IBQuery,IBDatabase,rpdataset,
 {$IFDEF MSWINDOWS}
   dbtables,adodb,
 {$ENDIF}
@@ -113,10 +113,12 @@ type
    FDataSource:string;
    FAlias:string;
    FDataset:TDataset;
+   FCachedDataset:TRpDataset;
    FSQLInternalQuery:TDataset;
    FMyBaseFilename:string;
    FMyBaseIndexFields:string;
    connecting:boolean;
+   FCached:Boolean;
    procedure SetDatabaseAlias(Value:string);
    procedure SetAlias(Value:string);
    procedure SetDataSource(Value:string);
@@ -126,7 +128,10 @@ type
    procedure Connect(databaseinfo:TRpDatabaseInfoList;params:TRpParamList);
    procedure Disconnect;
    destructor Destroy;override;
+   constructor Create(Collection:TCollection);override;
    property Dataset:TDataset read FDataset write FDataset;
+   property CachedDataset:TRpDataset read FCachedDataset;
+   property Cached:Boolean read FCached write FCached;
   published
    property Alias:string read FAlias write SetAlias;
    property DatabaseAlias:string read FDatabaseAlias write SetDatabaseAlias;
@@ -605,10 +610,26 @@ begin
   if assigned(FDataset) then
   begin
    if FDataset.Active then
+   begin
+    if cached then
+    begin
+     if Not FCachedDataset.Active then
+     begin
+      FCachedDataset.Dataset:=FDataset;
+      FCachedDataset.DoOpen;
+     end;
+    end;
     doexit:=true;
+   end;
    if FDataset<>FSQLInternalQuery then
    begin
     FDataset.Active:=true;
+    if cached then
+    begin
+     FCachedDataset.DoClose;
+     FCachedDataset.Dataset:=FDataset;
+     FCachedDataset.DoOpen;
+    end;
     doexit:=true;
    end;
   end;
@@ -733,6 +754,7 @@ begin
        TClientDataSet(FSQLInternalQuery).IndexFieldNames:=FMyBaseIndexFields;
        TClientDataSet(FSQLInternalQuery).LoadFromFile(FMyBaseFilename);
       except
+       FDataset:=nil;
        FSQLInternalQuery.free;
        FSQLInternalQuery:=nil;
        raise;
@@ -764,20 +786,29 @@ begin
       begin
        if Not Assigned(TSQLQuery(FSQLInternalQuery).DataSource) then
         TSQLQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
-       TSQLQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+       if datainfosource.cached then
+        TSQLQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+       else
+        TSQLQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
       end;
      rpdataibx:
       begin
        if Not Assigned(TIBQuery(FSQLInternalQuery).DataSource) then
         TIBQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
-       TIBQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+       if datainfosource.cached then
+        TIBQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+       else
+        TIBQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
       end;
      rpdatabde:
       begin
 {$IFDEF MSWINDOWS}
        if Not Assigned(TQuery(FSQLInternalQuery).DataSource) then
         TQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
-       TQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+       if datainfosource.cached then
+        TQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+       else
+        TQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
 {$ENDIF}
       end;
      rpdataado:
@@ -785,7 +816,10 @@ begin
 {$IFDEF MSWINDOWS}
        if Not Assigned(TADOQuery(FSQLInternalQuery).DataSource) then
         TADOQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
-       TADOQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+       if datainfosource.cached then
+        TADOQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+       else
+        TADOQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
 {$ENDIF}
       end;
     end;
@@ -832,6 +866,12 @@ begin
    if Not Assigned(FSQLInternalQuery) then
     Raise Exception.Create(SRpDriverNotSupported);
    FSQLInternalQuery.Active:=true;
+   if cached then
+   begin
+    FCachedDataset.DoClose;
+    FCachedDataset.Dataset:=FDataset;
+    FCachedDataset.DoOpen;
+   end;
   end;
  finally
   connecting:=false;
@@ -843,12 +883,22 @@ begin
  if Assigned(FDataset) then
  begin
   FDataset.Active:=false;
+  FCachedDataset.DoClose;
  end;
+end;
+
+constructor TRpDatainfoitem.Create(Collection:TCollection);
+begin
+ inherited Create(Collection);
+
+ FCachedDataset:=TRpDataset.Create(nil);
 end;
 
 destructor TRpDataInfoItem.Destroy;
 begin
  try
+  FCachedDataset.free;
+  FCachedDataset:=nil;
   if assigned(FSQLInternalQuery) then
   begin
    if Assigned(FSQLInternalQuery.datasource) then

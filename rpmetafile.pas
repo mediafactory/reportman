@@ -111,6 +111,9 @@ type
   procedure AbortDocument;stdcall;
   procedure NewPage;stdcall;
   procedure EndPage;stdcall;
+  function GetPageSize:TPoint;stdcall;
+  function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
+  procedure SetOrientation(Orientation:TRpOrientation);stdcall;
   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
   function AllowCopies:boolean;stdcall;
  end;
@@ -461,8 +464,8 @@ begin
 
  FCurrentPage:=-1;
  // Standard sizes
- CustomX:=2100;
- CustomY:=2970;
+ CustomX:=12047;
+ CustomY:=17039;
 
  FPages:=TList.Create;
 end;

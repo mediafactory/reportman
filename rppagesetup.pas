@@ -24,7 +24,7 @@ interface
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpreport, QExtCtrls,rpmunits, QButtons,rptypes,
-  rpmetafile;
+  rpmetafile,QPrinters;
 
 type
   TFPageSetup = class(TForm)
@@ -32,12 +32,6 @@ type
     BCancel: TButton;
     RPageSize: TRadioGroup;
     GPageSize: TGroupBox;
-    Label1: TLabel;
-    EWidth: TEdit;
-    EHeight: TEdit;
-    Label2: TLabel;
-    LMetrics1: TLabel;
-    LMetrics2: TLabel;
     RPageOrientation: TRadioGroup;
     RCustomOrientation: TRadioGroup;
     ColorDialog1: TColorDialog;
@@ -58,6 +52,8 @@ type
     Label10: TLabel;
     EBottomMargin: TEdit;
     LMetrics6: TLabel;
+    Label1: TLabel;
+    ComboPageSize: TComboBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -70,7 +66,6 @@ type
   private
     { Private declarations }
     report:TRpReport;
-    oldwidth,oldheight:string;
     oldleftmargin,oldtopmargin,oldrightmargin,oldbottommargin:string;
     procedure SaveOptions;
     procedure ReadOptions;
@@ -84,6 +79,56 @@ procedure ExecutePageSetup(report:TRpReport);
 implementation
 
 {$R *.xfm}
+
+type
+  TPageWidthHeight = record
+    Width: Integer;
+    Height: Integer;
+  end;
+
+
+const PageSizeNames: array [psA4..psNPageSize] of string =
+('A4', 'B5','Letter','Legal','Executive','A0', 'A1', 'A2',
+    'A3', 'A5', 'A6', 'A7', 'A8', 'A9', 'B0', 'B1', 'B10', 'B2',
+     'B3', 'B4', 'B6','B7', 'B8', 'B9', 'C5E', 'Comm10E',
+     'DLE', 'Folio', 'Ledger', 'Tabloid', 'psNPageSize');
+
+const
+  PageSizeArray: array[0..30] of TPageWidthHeight =
+    (
+      (Width: 8268; Height: 11693),  // psA4
+      (Width: 7165; Height: 10118),  // psB5
+      (Width: 8500; Height: 11000),  // psLetter
+      (Width: 8500; Height: 14000),  // psLegal
+      (Width: 7500; Height: 10000),  // psExecutive
+      (Width: 33110; Height: 46811), // psA0
+      (Width: 23386; Height: 33110), // psA1
+      (Width: 16535; Height: 23386), // psA2
+      (Width: 11693; Height: 16535), // psA3
+      (Width: 5827; Height: 8268),   // psA5
+      (Width: 4134; Height: 5827),   // psA6
+      (Width: 2913; Height: 4134),   // psA7
+      (Width: 2047; Height: 2913),   // psA8
+      (Width: 1457; Height: 2047),   // psA9
+      (Width: 40551; Height: 57323), // psB0
+      (Width: 28661; Height: 40551), // psB1
+      (Width: 1260; Height: 1772),   // psB10
+      (Width: 20276; Height: 28661), // psB2
+      (Width: 14331; Height: 20276), // psB3
+      (Width: 10118; Height: 14331), // psB4
+      (Width: 5039; Height: 7165),   // psB6
+      (Width: 3583; Height: 5039),   // psB7
+      (Width: 2520; Height: 3583),   // psB8
+      (Width: 1772; Height: 2520),   // psB9
+      (Width: 6417; Height: 9016),   // psC5E
+      (Width: 4125; Height: 9500),   // psComm10E
+      (Width: 4331; Height: 8661),   // psDLE
+      (Width: 8250; Height: 13000),  // psFolio
+      (Width: 17000; Height: 11000), // psLedger
+      (Width: 11000; Height: 17000), // psTabloid
+      (Width: -1; Height: -1)        // psNPageSize
+    );
+
 
 
 
@@ -109,12 +154,19 @@ end;
 procedure TFPageSetup.FormCreate(Sender: TObject);
 var
  i:integer;
+ psize:TPagesize;
 begin
- LMetrics1.Caption:=rpunitlabels[defaultunit];
- LMetrics2.Caption:=LMetrics1.Caption;
+ LMetrics3.Caption:=rpunitlabels[defaultunit];
+ LMetrics4.Caption:=LMetrics3.Caption;
+ LMetrics5.Caption:=LMetrics3.Caption;
+ LMetrics6.Caption:=LMetrics3.Caption;
  for i:=0 to MAX_LANGUAGES-1 do
  begin
   ComboLanguage.Items.Add(rplangdesc[i]);
+ end;
+ for psize:=Low(psize) to High(psize) do
+ begin
+  ComboPageSize.Items.Add(PageSizeNames[psize]);
  end;
 end;
 
@@ -134,11 +186,12 @@ begin
  else
  begin
   report.Pagesize:=rpPageSizeCustom;
-  if EHeight.Text<>oldheight then
-   report.PageHeight:=gettwipsfromtext(EHeight.Text);
-  if EWidth.Text<>oldwidth then
-   report.PageWidth:=gettwipsfromtext(EWidth.Text);
+  // Assigns the with and height in twips
+  report.PagesizeQt:=ComboPageSize.ItemIndex;
+  report.PageHeight:=Round(PageSizeArray[report.PageSizeQt].Height*1000/TWIPS_PER_INCHESS);
+  report.PageWidth:=Round(PageSizeArray[report.PageSizeQt].Width*1000/TWIPS_PER_INCHESS);
  end;
+ report.PagesizeQt:=ComboPageSize.ItemIndex;
  if ELeftMargin.Text<>oldleftmargin then
   report.LeftMargin:=gettwipsfromtext(ELeftMargin.Text);
  if ERightMargin.Text<>oldrightmargin then
@@ -164,16 +217,13 @@ procedure TFPageSetup.ReadOptions;
 begin
  // ReadOptions
  // Size
+ ComboPageSize.ItemIndex:=report.PagesizeQt;
  GPageSize.Visible:=false;
  RPageSize.ItemIndex:=0;
- EWidth.Text:=gettextfromtwips(report.PageWidth);
- EHeight.Text:=gettextfromtwips(report.PageHeight);
  ELeftMargin.Text:=gettextfromtwips(report.LeftMargin);
  ERightMargin.Text:=gettextfromtwips(report.RightMargin);
  ETopMargin.Text:=gettextfromtwips(report.TopMargin);
  EBottomMargin.Text:=gettextfromtwips(report.BottomMargin);
- oldwidth:=EWidth.Text;
- oldheight:=EHeight.Text;
  oldleftmargin:=ELeftMargin.Text;
  oldrightmargin:=ERightMargin.Text;
  oldTopmargin:=ETopMargin.Text;

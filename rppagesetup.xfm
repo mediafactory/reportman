@@ -3,8 +3,8 @@ object FPageSetup: TFPageSetup
   Top = 73
   Width = 446
   Height = 374
-  HorzScrollBar.Range = 421
   VertScrollBar.Range = 369
+  HorzScrollBar.Range = 421
   ActiveControl = RPageSize
   BorderStyle = fbsDialog
   Caption = 'Report page setup'
@@ -14,8 +14,8 @@ object FPageSetup: TFPageSetup
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 15
-  TextWidth = 7
+  TextHeight = 13
+  TextWidth = 6
   object SColor: TShape
     Left = 136
     Top = 252
@@ -63,46 +63,20 @@ object FPageSetup: TFPageSetup
     TabOrder = 3
     Visible = False
     object Label1: TLabel
-      Left = 16
+      Left = 4
       Top = 16
-      Width = 31
-      Height = 15
-      Caption = 'Width'
+      Width = 46
+      Height = 13
+      Caption = 'Page size'
     end
-    object EWidth: TEdit
-      Left = 80
-      Top = 12
-      Width = 77
-      Height = 23
+    object ComboPageSize: TComboBox
+      Left = 4
+      Top = 32
+      Width = 225
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 15
       TabOrder = 1
-    end
-    object EHeight: TEdit
-      Left = 80
-      Top = 40
-      Width = 77
-      Height = 23
-      TabOrder = 2
-    end
-    object Label2: TLabel
-      Left = 16
-      Top = 44
-      Width = 36
-      Height = 15
-      Caption = 'Height'
-    end
-    object LMetrics1: TLabel
-      Left = 168
-      Top = 16
-      Width = 27
-      Height = 15
-      Caption = 'inch.'
-    end
-    object LMetrics2: TLabel
-      Left = 168
-      Top = 40
-      Width = 27
-      Height = 15
-      Caption = 'inch.'
     end
   end
   object RPageOrientation: TRadioGroup
@@ -141,17 +115,17 @@ object FPageSetup: TFPageSetup
   object Label3: TLabel
     Left = 12
     Top = 300
-    Width = 92
-    Height = 15
+    Width = 79
+    Height = 13
     Caption = 'Report language'
   end
   object ComboLanguage: TComboBox
     Left = 112
     Top = 296
     Width = 137
-    Height = 23
+    Height = 21
     Style = csDropDownList
-    ItemHeight = 17
+    ItemHeight = 15
     TabOrder = 8
   end
   object GroupBox1: TGroupBox
@@ -164,85 +138,85 @@ object FPageSetup: TFPageSetup
     object Label4: TLabel
       Left = 16
       Top = 16
-      Width = 20
-      Height = 15
+      Width = 18
+      Height = 13
       Caption = 'Left'
     end
     object ELeftMargin: TEdit
       Left = 80
       Top = 12
       Width = 77
-      Height = 23
+      Height = 21
       TabOrder = 1
     end
     object ETopMargin: TEdit
       Left = 80
       Top = 40
       Width = 77
-      Height = 23
+      Height = 21
       TabOrder = 2
     end
     object Label5: TLabel
       Left = 16
       Top = 44
-      Width = 21
-      Height = 15
+      Width = 19
+      Height = 13
       Caption = 'Top'
     end
     object LMetrics3: TLabel
       Left = 168
       Top = 16
-      Width = 27
-      Height = 15
+      Width = 23
+      Height = 13
       Caption = 'inch.'
     end
     object LMetrics4: TLabel
       Left = 168
       Top = 40
-      Width = 27
-      Height = 15
+      Width = 23
+      Height = 13
       Caption = 'inch.'
     end
     object LMetrics5: TLabel
       Left = 360
       Top = 16
-      Width = 27
-      Height = 15
+      Width = 23
+      Height = 13
       Caption = 'inch.'
     end
     object ERightMargin: TEdit
       Left = 272
       Top = 12
       Width = 77
-      Height = 23
+      Height = 21
       TabOrder = 7
     end
     object Label9: TLabel
       Left = 212
       Top = 16
-      Width = 28
-      Height = 15
+      Width = 25
+      Height = 13
       Caption = 'Right'
     end
     object Label10: TLabel
       Left = 212
       Top = 44
-      Width = 37
-      Height = 15
+      Width = 33
+      Height = 13
       Caption = 'Bottom'
     end
     object EBottomMargin: TEdit
       Left = 272
       Top = 40
       Width = 77
-      Height = 23
+      Height = 21
       TabOrder = 10
     end
     object LMetrics6: TLabel
       Left = 360
       Top = 44
-      Width = 27
-      Height = 15
+      Width = 23
+      Height = 13
       Caption = 'inch.'
     end
   end

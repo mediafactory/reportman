@@ -492,9 +492,9 @@ begin
    EMyBase.Visible:=true;
    BMyBase.Visible:=true;
    EIndexFields.Visible:=true;
-   LMasterDataset.Visible:=true;
+   LMasterDataset.Visible:=false;
    LIndexFields.Visible:=true;
-   ComboDataSource.Visible:=true;
+   ComboDataSource.Visible:=false;
    LSQL.Visible:=false;
    MSQL.Visible:=false;
   end
@@ -506,9 +506,9 @@ begin
    EMyBase.Visible:=false;
    BMyBase.Visible:=false;
    EIndexFields.Visible:=false;
-   ComboDataSource.Visible:=false;
+   ComboDataSource.Visible:=true;
    LIndexFields.Visible:=false;
-   LMasterDataset.Visible:=false;
+   LMasterDataset.Visible:=true;
   end;
  end
  else

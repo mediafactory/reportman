@@ -1,10 +1,10 @@
-{TODO -oToni -cEngine : In PrintReport use a temp filename and a temp directory}
+{DONE -oToni -cEngine : In PrintReport use a temp filename and a temp directory}
 {TODO -oToni -cEngine : Image component filename property to load a file on the fly}
 {TODO -oToni -cEngine : User parameters form}
 {DONE -oToni -cEngine : Implementation of ADO/IBX Dataaccess}
 {TODO -oToni -cEngine : Detect existing BDE Databases in rpdatainfo}
 {TODO -oToni -cEngine : Execute after print and before print}
-{TODO -oToni -cEngine : Page size implementation}
+{DONE -oToni -cEngine : Page size implementation}
 {TODO 1 -oToni -cEngine : Add TotalPages variable}
 {TODO 1 -oToni -cEngine : Add Printing ranges of pages}
 {DONE 1 -oToni -cEngine : Page margins}
@@ -16,7 +16,7 @@ Instaler for Windows do Innosetup setup and for linux a tar or something
 with the GNUmakefile}
 {TODO 1 -oToni -cEngine : Conversion program for gestor.exe}
 {TODO 1 -oToni -cEngine : Saving and loading from database tables}
-{TODO -oToni -cEngine : Program a component to easily execute reports from delphi and kylix}
+{DONE -oToni -cEngine : Program a component to easily execute reports from delphi and kylix}
 {DONE -oToni -cEngine :
 Implementation in Linux of the printing with calling metaprint command 
 because sigpipe after connecting to a dataset}

@@ -174,7 +174,7 @@ begin
  Application.OnIdle:=nil;
  done:=false;
  try
-  report.BeginPrint;
+  report.BeginPrint(qtdriver);
   pagenum:=1;
   PrintPage;
   printed:=true;

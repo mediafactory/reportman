@@ -36,6 +36,9 @@ type
    procedure DrawObject(page:TRpMetafilePage;obj:TRpMetaObject);stdcall;
    function AllowCopies:boolean;stdcall;
    procedure DrawMetaToBitmapStream(Width,Height:integer;stream:TStream);
+   function GetPageSize:TPoint;stdcall;
+   function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
+   procedure SetOrientation(Orientation:TRpOrientation);stdcall;
   end;
 
 
@@ -58,6 +61,22 @@ begin
  meta.Height:=report.CustomY;
  Canvas:=TMetafileCanvas.Create(meta,0);
 end;
+
+function TRpWinGDIDriver.GetPageSize:TPoint;
+begin
+
+end;
+
+function TRpWinGDIDriver.SetPagesize(PagesizeQt:integer):TPoint;
+begin
+
+end;
+
+procedure TRpWinGDIDriver.SetOrientation(Orientation:TRpOrientation);
+begin
+
+end;
+
 
 procedure TRpWinGDIDriver.EndDocument;
 begin

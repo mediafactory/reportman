@@ -38,6 +38,7 @@ Classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
 const
  METAPRINTPROGRESS_INTERVAL=20;
 type
+  TRpQtDriver=class;
   TFRpQtProgress = class(TForm)
     CancelBtn: TButton;
     Label1: TLabel;
@@ -46,6 +47,7 @@ type
     LTittle: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure CancelBtnClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     procedure AppIdle(Sender:TObject;var done:boolean);
@@ -58,6 +60,8 @@ type
     tittle:string;
     metafile:TRpMetafileReport;
     report:TRpReport;
+    qtdriver:TRpQtDriver;
+    aqtdriver:IRpPrintDriver;
   end;
 
 
@@ -75,6 +79,9 @@ type
    procedure EndPage;stdcall;
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
    function AllowCopies:boolean;stdcall;
+   function GetPageSize:TPoint;stdcall;
+   function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
+   procedure SetOrientation(Orientation:TRpOrientation);stdcall;
    constructor Create;
   end;
 
@@ -96,11 +103,22 @@ procedure TRpQtDriver.NewDocument(report:TrpMetafileReport);
 var
  awidth,aheight:integer;
  rec:TRect;
+ asize:TPoint;
 begin
  if ToPrinter then
  begin
   printer.Title:='Untitled';
   printer.SetPrinter(Printer.Printers.Strings[0]);
+  SetOrientation(report.Orientation);
+  // Sets pagesize
+  if report.PageSize>=0 then
+  begin
+   asize:=GetPageSize;
+  end
+  else
+  begin
+   asize:=SetPageSize(report.PageSize);
+  end;
   printer.BeginDoc;
   intdpix:=printer.XDPI;
   intdpiy:=printer.YDPI;
@@ -117,19 +135,23 @@ begin
   // milimeter
   bitmap:=TBitmap.Create;
   bitmap.PixelFormat:=pf32bit;
-  awidth:=Round(report.CustomX*dpi/(CMS_PER_INCHESS*100));
-  aheight:=Round(report.CustomY*dpi/(CMS_PER_INCHESS*100));
-  // Sets page size and orientation
-  if report.Orientation=rpOrientationLandscape then
+  // Sets Orientation
+  SetOrientation(report.Orientation);
+  // Sets pagesize
+  if report.PageSize>=0 then
   begin
-   bitmap.Width:=aheight;
-   bitmap.Height:=awidth;
+   asize:=GetPageSize;
   end
   else
   begin
-   bitmap.Width:=awidth;
-   bitmap.Height:=aheight;
+   asize:=SetPageSize(report.PageSize);
   end;
+  awidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
+  aheight:=Round((asize.y/TWIPS_PER_INCHESS)*dpi);
+  // Sets page size and orientation
+  bitmap.Width:=awidth;
+  bitmap.Height:=aheight;
+
   Bitmap.Canvas.Brush.Style:=bsSolid;
   Bitmap.Canvas.Brush.Color:=report.BackColor;
   rec.Top:=0;
@@ -337,6 +359,28 @@ begin
  Result:=false;
 end;
 
+function TrpQtDriver.GetPageSize:TPoint;
+begin
+ Result.x:=Round((Printer.PageWidth/251)*TWIPS_PER_INCHESS);
+ Result.y:=Round((Printer.PageHeight/251)*TWIPS_PER_INCHESS);
+end;
+
+function TRpQTDriver.SetPagesize(PagesizeQt:integer):TPoint;
+begin
+ Printer.PrintAdapter.PageSize:=TPageSize(PagesizeQT);
+ Result:=GetPageSize;
+end;
+
+procedure TRpQTDriver.SetOrientation(Orientation:TRpOrientation);
+begin
+ if Orientation=rpOrientationPortrait then
+ begin
+  Printer.Orientation:=poPortrait;
+ end
+ else
+ if Orientation=rpOrientationLandscape then
+  Printer.Orientation:=poLandsCape;
+end;
 
 procedure DoPrintMetafile(metafile:TRpMetafileReport;tittle:string;aform:TFRpQtProgress);
 var
@@ -368,16 +412,14 @@ begin
   else
    printer.Orientation:=poLandscape;
  end;
+ // Sets pagesize
+ if metafile.PageSize>=0 then
+  Printer.PrintAdapter.PageSize:=TPageSize(metafile.PageSize);
+
+
+
  printer.Begindoc;
  try
-  // Sets page size and orientation
-  if metafile.Orientation<>rpOrientationDefault then
-  begin
-   if metafile.Orientation=rpOrientationPortrait then
-    printer.Orientation:=poPortrait
-   else
-    printer.Orientation:=poLandscape;
-  end;
   dpix:=printer.XDPI;
   dpiy:=printer.YDPI;
   for i:=0 to metafile.PageCount-1 do
@@ -497,10 +539,13 @@ var
 begin
  Application.Onidle:=nil;
  done:=false;
+
+ qtdriver:=TRpQtDriver.Create;
+ aqtdriver:=qtdriver;
  oldprogres:=RepProgress;
  try
   report.OnProgress:=RepProgress;
-  report.BeginPrint;
+  report.BeginPrint(qtdriver);
   try
    while Not report.PrintNextPage do;
   finally
@@ -533,8 +578,8 @@ begin
 end;
 
 function PrintReport(report:TRpReport;Caption:string;progress:boolean):Boolean;
-{$IFDEF LINUX}
 var
+{$IFDEF LINUX}
  abuffer:array [0..L_tmpnam] of char;
  theparams:array [0..3] of pchar;
  param1:string;
@@ -543,6 +588,8 @@ var
  afilename:string;
  child:__pid_t;
 {$ENDIF}
+ qtdriver:TRpQtDriver;
+ aqtdriver:IRpPrintDriver;
 begin
  Result:=true;
  if progress then
@@ -555,7 +602,9 @@ begin
  end
  else
  begin
-  report.PrintAll;
+  qtdriver:=TRpQtDriver.Create;
+  aqtdriver:=qtdriver;
+  report.PrintAll(qtdriver);
  end;
 
  // A bug in Kylix 2 does not allow printing
@@ -586,6 +635,12 @@ begin
 {$ENDIF}
 end;
 
+
+procedure TFRpQtProgress.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+ qtdriver:=nil;
+end;
 
 end.
 

@@ -26,7 +26,7 @@ interface
 
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpconsts,
  rpdatainfo,rpparams,rplabelitem,rpdrawitem,rpeval,
- rpmetafile,types,rpalias,db,dateutils,rpzlib,
+ rpmetafile,types,rpalias,db,dateutils,rpzlib,rpdataset,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
@@ -81,8 +81,11 @@ type
    FSubReports:TRpSubReportList;
    FPageOrientation:TRpOrientation;
    FPagesize:TRpPagesize;
+   FPageSizeQt:integer;
    FPageWidth:TRpTwips;
    FPageHeight:TRpTwips;
+   FInternalPageWidth:TRpTwips;
+   FInternalPageHeight:TRpTwips;
    FPageBackColor:TRpColor;
    FPreviewStyle:TRpPreviewStyle;
    FOnReadError:TReaderError;
@@ -102,6 +105,7 @@ type
    FDataAlias:TRpAlias;
    FOnProgress:TRpProgressEvent;
    FRecordCount:integer;
+   FDriver:IRpPrintDriver;
    FLeftMargin,FTopMargin,FRightMargin,FBottomMargin:TRpTwips;
 {$IFDEF MSWINDOWS}
    mmfirst,mmlast:DWORD;
@@ -151,10 +155,10 @@ type
    procedure ActivateDatasets;
    procedure DeActivateDatasets;
    property Evaluator:TRpEvaluator read FEvaluator;
-   procedure BeginPrint;
+   procedure BeginPrint(Driver:IRpPrintDriver);
    procedure EndPrint;
    function PrintNextPage:boolean;
-   procedure PrintAll;
+   procedure PrintAll(Driver:IRpPrintDriver);
    property OnProgress:TRpProgressEvent read FOnProgress write FOnProgress;
   published
    // Grid options
@@ -169,6 +173,8 @@ type
     write FPageOrientation default rpOrientationDefault;
    property Pagesize:TRpPageSize read FPagesize write FPageSize
      default rpPageSizeDefault;
+   property PagesizeQt:integer read FPagesizeQt write FPageSizeQt
+     default 0;
    property PageHeight:TRpTwips read FPageHeight write FPageHeight
     default DEFAULT_PAGEHEIGHT;
    property PageWidth:TRpTwips read FPageWidth write FPageWidth
@@ -548,12 +554,30 @@ end;
 
 procedure TRpReport.ActivateDatasets;
 var
- i:integer;
+ i,index:integer;
  docancel:boolean;
+ alias:string;
 begin
  if FDataInfo.Count<1 then
   exit;
  try
+  for i:=0 to FDataInfo.Count-1 do
+  begin
+   FDataInfo.Items[i].Cached:=false;
+  end;
+  // The main datasets must be cached
+  for i:=0 to SubReports.Count-1 do
+  begin
+   alias:=SubReports.items[i].Subreport.Alias;
+   if Length(alias)>0 then
+   begin
+    index:=DataInfo.IndexOf(alias);
+    if index<0 then
+      Raise Exception.Create(SRpSubreportAliasNotFound+':'+alias);
+    FDataInfo.Items[index].Cached:=true;
+   end;
+  end;
+
   for i:=0 to FDataInfo.Count-1 do
   begin
    FDataInfo.Items[i].Connect(DatabaseInfo,Params);
@@ -588,9 +612,9 @@ begin
  end;
 end;
 
-procedure TRpReport.PrintAll;
+procedure TRpReport.PrintAll(Driver:IRpPrintDriver);
 begin
- BeginPrint;
+ BeginPrint(Driver);
  try
   while Not PrintNextPage do;
  finally
@@ -613,7 +637,7 @@ procedure TRpReport.NextRecord;
 var
  subrep:TRpSubreport;
  index:integeR;
- data:TDataset;
+ data:TRpDataset;
  docancel:boolean;
 begin
  subrep:=Subreports.Items[CurrentSubreportIndex].SubReport;
@@ -624,8 +648,8 @@ begin
   index:=DataInfo.IndexOf(subrep.Alias);
   if index<0 then
    Raise TRpReportException.Create(SRPAliasNotExists+subrep.alias,subrep);
-  data:=DataInfo.Items[index].Dataset;
-  data.Next;
+  data:=DataInfo.Items[index].CachedDataset;
+  data.DoNext;
   inc(FRecordCount);
   if Assigned(FOnProgress) then
   begin
@@ -722,11 +746,33 @@ begin
  Result:=Assigned(Section);
 end;
 
-procedure TRpReport.BeginPrint;
+procedure TRpReport.BeginPrint(Driver:IRpPrintDriver);
 var
  i:integer;
  item:TRpAliaslistItem;
+ apagesize:TPoint;
 begin
+ FDriver:=Driver;
+ if Not Assigned(FDriver) then
+  Raise Exception.Create(SRpNoDriverPassedToPrint);
+ metafile.Clear;
+ // Sets page orientation
+ if PageOrientation<>rpOrientationDefault then
+ begin
+  FDriver.SetOrientation(PageOrientation);
+ end;
+ if PageSize<>rpPageSizeDefault then
+ begin
+  metafile.PageSize:=-1;
+  apagesize:=Driver.SetPagesize(PageSizeQt);
+ end
+ else
+ begin
+  metafile.PageSize:=PageSizeQt;
+  apagesize:=Driver.GetPageSize;
+ end;
+ FInternalPageWidth:=apagesize.X;
+ FInternalPageHeight:=apagesize.Y;
  // Get the time
 {$IFDEF MSWINDOWS}
  mmfirst:=TimeGetTime;
@@ -734,9 +780,8 @@ begin
 {$IFDEF LINUX}
  milifirst:=now;
 {$ENDIF}
- metafile.Clear;
- metafile.CustomX:=Round((PageWidth/1440)*251);
- metafile.CustomY:=Round((PageHeight/1440)*251);
+ metafile.CustomX:=FInternalPageWidth;
+ metafile.CustomY:=FInternalPageHeight;
  metafile.Orientation:=FPageOrientation;
  metafile.BackColor:=FPageBackColor;
  LastPage:=false;
@@ -760,8 +805,13 @@ begin
  begin
   item:=FDataAlias.List.Add;
   item.Alias:=DataInfo.Items[i].Alias;
-  item.Dataset:=DataInfo.Items[i].Dataset;
+  if Datainfo.Items[i].Cached then
+   item.Dataset:=DataInfo.Items[i].CachedDataset
+  else
+   item.Dataset:=DataInfo.Items[i].Dataset;
  end;
+
+
  FEvaluator.Rpalias:=FDataAlias;
  CurrentSectionIndex:=-1;
  section:=nil;

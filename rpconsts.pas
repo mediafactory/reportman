@@ -52,6 +52,7 @@ resourcestring
   SRpDriverNotSupported='Database driver not supported';
   SRpDriverAliasIsNotInterbase='The dbx driver alias is not Interbase';
   SRpNoDatabase='No Interbase Database specified';
+  SRpSubreportAliasNotFound='Subreport alias not found:';
 
   SRpNoDatasets='No datasets defined';
   SRpSampleTextToLabels='Text';
@@ -71,6 +72,7 @@ resourcestring
   SRpPrintingFile='Printing';
   SRpPrinted='Printed';
   SRpPrintedFileDeleted='Printed file deleted';
+  SRpNoDriverPassedToPrint='No driver passed to beginprint of TrpReport';
 
   SRpTxtToRep1='txttorep v1.0';
   SRpTxtToRep2='Converts a plain file containing object descriptions to a report manager (.rep) file';
