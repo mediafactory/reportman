@@ -4,12 +4,15 @@
 {$DEFINE USEADO}
 {$DEFINE USEBDE}
 //{$DEFINE USEIBO}
+{$DEFINE USETEECHART}
 
 // Unsupported database drivers in Linux
 {$IFDEF LINUX}
  {$UNDEF USEADO}
  {$UNDEF USEBDE}
  {$UNDEF USEIBO}
+ // For now teechart is not supported in Linux
+ {$UNDEF USETEECHART}
 {$ENDIF}
 
 // Windows qtintf.dll has a bug about selecting horz paper

@@ -4,7 +4,6 @@
 {                                                       }
 {       rpmdfmain                                       }
 {       Main form of report manager designer            }
-{       Used by a subreport                             }
 {                                                       }
 {                                                       }
 {                                                       }

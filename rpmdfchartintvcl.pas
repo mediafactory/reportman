@@ -89,10 +89,10 @@ begin
   lvalues.Add(TRpChart(printitem).Identifier);
 
  // Chart type
-// lnames.Add(SrpSChartType);
-// ltypes.Add(SRpSList);
- //if Assigned(lvalues) then
-//  lvalues.Add(ChartTypeStrings[TRpChart(printitem).ChartType]);
+ lnames.Add(SrpSChartType);
+ ltypes.Add(SRpSList);
+ if Assigned(lvalues) then
+  lvalues.Add(RpChartTypeToString(TRpChart(printitem).ChartType));
 
  // GetValue condition
  lnames.Add(SrpSGetValueCondition);
@@ -118,22 +118,14 @@ begin
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).CaptionExpression);
 
+ // Chart Driver
+ lnames.Add(SrpSDriver);
+ ltypes.Add(SRpSList);
+ if Assigned(lvalues) then
+  lvalues.Add(RpChartDriverToString(TRpChart(printitem).Driver));
+
 end;
 
-function StringToChartType(Value:string):TRpChartType;
-var
- i:TRpChartType;
-begin
- Result:=rpchartline;
- for i:=rpchartline to rpchartpoint do
- begin
-  if ChartTypeStrings[i]=Value then
-  begin
-   Result:=i;
-   break;
-  end;
- end;
-end;
 
 procedure TRpChartInterface.SetProperty(pname:string;value:Widestring);
 begin
@@ -149,7 +141,7 @@ begin
  end;
  if pname=SrpSChartType then
  begin
-  TRpChart(fprintitem).ChartType:=StringToChartType(Value);
+  TRpChart(fprintitem).ChartType:=StringToRpChartType(Value);
   invalidate;
   exit;
  end;
@@ -173,6 +165,11 @@ begin
   TRpChart(fprintitem).CaptionExpression:=value;
   exit;
  end;
+ if pname=SrpSDriver then
+ begin
+  TRpChart(fprintitem).Driver:=StringToRpChartDriver(Value);
+  exit;
+ end;
  inherited SetProperty(pname,value);
 end;
 
@@ -191,7 +188,7 @@ begin
  end;
  if pname=SrpSChartType then
  begin
-  Result:=ChartTypeStrings[TRpChart(printitem).ChartType];
+  Result:=RpChartTypeToString(TRpChart(printitem).ChartType);
   exit;
  end;
  if pname=SrpSGetValueCondition then
@@ -214,20 +211,25 @@ begin
   Result:=TRpChart(printitem).CaptionExpression;
   exit;
  end;
+ if pname=SrpSDriver then
+ begin
+  Result:=RpChartDriverToString(TRpChart(printitem).Driver);
+  exit;
+ end;
  Result:=inherited GetProperty(pname);
 end;
 
 procedure TRpChartInterface.GetPropertyValues(pname:string;
  lpossiblevalues:TStrings);
-var
- it:TRpChartType;
 begin
  if pname=SRpSChartType then
  begin
-  for it:=rpchartline to rpchartpoint do
-  begin
-   lpossiblevalues.Add(ChartTypeStrings[it]);
-  end;
+  GetRpChartTypePossibleValues(lpossiblevalues);
+  exit;
+ end;
+ if pname=SRpSDriver then
+ begin
+  GetRpChartDriverPossibleValues(lpossiblevalues);
   exit;
  end;
  inherited GetPropertyValues(pname,lpossiblevalues);

@@ -2,9 +2,9 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       rplabelitem                                     }
-{       TRpLabel printable component constant text      }
-{       TRpExpression printable expression              }
+{       rpdrawitem                                      }
+{       TRpImage printable image component              }
+{       TRpShape printable simple drawingv              }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }

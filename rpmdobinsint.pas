@@ -243,8 +243,6 @@ end;
 
 procedure TRpSizeInterface.SetProperty(pname:string;value:Widestring);
 begin
- if length(value)<1 then
-  exit;
  if pname=SRpSPrintCOndition then
  begin
   fprintitem.PrintCondition:=Value;
@@ -401,8 +399,6 @@ end;
 
 procedure TRpSizePosInterface.SetProperty(pname:string;value:Widestring);
 begin
- if length(value)<1 then
-  exit;
  if pname=SRpSTop then
  begin
   TRpCommonPosComponent(fprintitem).PosY:=gettwipsfromtext(value);
@@ -1232,8 +1228,6 @@ end;
 
 procedure TRpGenTextInterface.SetProperty(pname:string;value:Widestring);
 begin
- if length(value)<1 then
-  exit;
  if pname=SRpSAlignment then
  begin
   TRpGenTextComponent(fprintitem).Alignment:=StringHAlignmentToInt(Value);

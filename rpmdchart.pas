@@ -30,6 +30,16 @@ uses Classes,SysUtils,Math,rpprintitem,rpmdconsts,rpeval,
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
+{$IFDEF USETEECHART}
+ Chart,Series,Graphics,rpdrawitem,
+ teEngine,arrowcha,bubblech,ganttch,
+ {$IFDEF MSWINDOWS}
+   rpgraphutilsvcl,rpvgraphutils,
+ {$ENDIF}
+ {$IFDEF LINUX}
+   rpgraphutils,
+ {$ENDIF}
+{$ENDIF}
  rpmetafile;
 
 const
@@ -38,8 +48,16 @@ const
  DEFAULT_STRINGALLOCATION=2000;
  MAX_SERIECOLORS=7;
 
+
 type
- TRpChartType=(rpchartline,rpchartbar,rpchartpoint);
+ TRpChartType=(rpchartline,rpchartbar,rpchartpoint,
+  rpcharthorzbar,rpchartarea,rpchartpie,rpchartarrow,
+  rpchartbubble,rpchartgantt);
+
+ TRpChartDriver=(rpchartdriverdefault,rpchartdriverengine,rpchartdriverteechart);
+
+ TRpMultiBar=(rpMultiNone,rpMultiside,rpMultiStacked,
+  rpMultiStacked100);
 
  TRpSeriesItem=class(TCollectionItem)
   private
@@ -56,9 +74,11 @@ type
    FChangeValue:Variant;
    procedure SetValue(index:integer;AValue:double);
    function GetValue(index:integer):double;
+   function GetValueCaption(index:integer):WideString;
   public
    constructor Create(Collection: TCollection);override;
    property Values[index:integer]:double read GetValue write SetValue;
+   property ValueCaptions[index:integer]:WideString read GetValueCaption;
    property ValueCount:integer read FValueCount;
    procedure AddValue(avalue:double;acaption:widestring='');
    procedure Assign(Source:TPersistent);override;
@@ -90,6 +110,18 @@ type
    FCaptionExpression,FSerieCaption,FClearExpression:widestring;
    FIdenChart:TVariableGrap;
    FIdentifier:string;
+   FDriver:TRpChartDriver;
+   FView3d:Boolean;
+   FView3dWalls:Boolean;
+   FPerspective:Integer;
+   FElevation:Integer;
+   FRotation:Integer;
+   FOrthogonal:Boolean;
+   FZoom:Integer;
+   FHorzOffset:Integer;
+   FVertOffset:Integer;
+   FTilt:Integer;
+   FMultiBar:TRpMultiBar;
    procedure OnClear(Sender:TObject);
    procedure OnNewValue(Y:Single;Cambio:Boolean;leyen,textleyen:string);
    procedure SetIdentifier(Value:string);
@@ -109,6 +141,9 @@ type
    procedure ReadSerieCaption(Reader:TReader);
    procedure WriteClearExpression(Writer:TWriter);
    procedure ReadClearExpression(Reader:TReader);
+{$IFDEF USETEECHART}
+   procedure DoPrintTeeChart(aposx,aposy:integer;metafile:TRpMetafileReport);
+{$ENDIF}
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
    procedure DefineProperties(Filer:TFiler);override;
@@ -139,13 +174,32 @@ type
    property Identifier:string read FIdentifier write SetIdentifier;
    property ClearExpressionBool:boolean read FClearExpressionBool write FClearExpressionBool
     default false;
+   property Driver:TRpChartDriver read FDriver write FDriver;
+   property View3d:Boolean read FView3d write FView3d default true;
+   property View3dWalls:Boolean read FView3dWalls write FView3dWalls default true;
+   property Perspective:Integer read FPerspective write FPersPective default 15;
+   property Elevation:Integer read FElevation write FElevation default 345;
+   property Rotation:Integer read FRotation write FRotation default 345;
+   property Zoom:Integer read FZoom write FZoom default 100;
+   property HorzOffset:Integer read FHorzOffset write FHorzOffset default 0;
+   property VertOffset:Integer read FVertOffset write FVertOffset default 0;
+   property Tilt:Integer read FTilt write FTilt default 0;
+   property Orthogonal:Boolean read FOrthogonal write FOrthogonal default true;
+   property MultiBar:TRpMultiBar read FMultiBar write FMultiBar
+    default rpMultiside;
   end;
 
 
-  const ChartTypeStrings:array[rpchartline..rpchartpoint] of string=
-   ('Lines','Bars','Points');
   const SeriesColors:Array[0..MAX_SERIECOLORS-1] of integer=
    ($000000,$FF0000,$00FF00,$0000FF,$FFFF00,$FF00FF,$00FFFF);
+
+function RpChartTypeToString(charttype:TRpChartType):String;
+function StringToRpChartType(Value:String):TRpChartType;
+procedure GetRpChartTypePossibleValues(alist:TStrings);
+
+function RpChartDriverToString(driver:TRpChartDriver):String;
+function StringToRpChartDriver(Value:String):TRpChartDriver;
+procedure GetRpChartDriverPossibleValues(alist:TStrings);
 
 implementation
 
@@ -214,6 +268,13 @@ begin
  Result:=FValues[index];
 end;
 
+function TRpSeriesItem.GetValueCaption(index:integer):WideString;
+begin
+ if index>=FValueCount then
+  Raise Exception.Create(SRpIndexOutOfBounds+':'+ClassName);
+ Result:=Copy(FPool,FPoolPositions[index],FPoolSizes[index]);
+end;
+
 procedure TRpSeriesItem.ClearValues;
 begin
  FValueCount:=0;
@@ -265,6 +326,13 @@ begin
  FIdenChart:=TVariableGrap.Create(Self);
  FIdenChart.OnClear:=OnClear;
  FIdenChart.OnNewValue:=OnNewValue;
+ FView3d:=true;
+ FPerspective:=15;
+ FElevation:=345;
+ FRotation:=345;
+ FZoom:=100;
+ FOrthogonal:=True;
+ FMultiBar:=rpMultiside;
 end;
 
 procedure TRpChart.SetSeries(avalue:TRpSeries);
@@ -454,6 +522,142 @@ begin
 end;
 
 
+{$IFDEF USETEECHART}
+procedure TRpChart.DoPrintTeeChart(aposx,aposy:integer;metafile:TRpMetafileReport);
+var
+ achart:TChart;
+ aserie:TChartSeries;
+ i,j:integer;
+ rec:TRect;
+ intserie:TRpSeriesItem;
+ abitmap:TBitmap;
+ FMStream:TMemoryStream;
+ acolor:integer;
+begin
+ achart:=TChart.Create(nil);
+ try
+  achart.Legend.Visible:=false;
+  achart.View3D:=FView3d;
+  achart.View3DOptions.Rotation:=FRotation;
+  achart.View3DOptions.Perspective:=FPerspective;
+  achart.View3DOptions.Elevation:=FElevation;
+  achart.View3DOptions.Orthogonal:=FOrthogonal;
+  achart.View3DOptions.Zoom:=FZoom;
+  achart.View3DOptions.Tilt:=FTilt;
+  achart.View3DOptions.HorizOffset:=FHorzOffset;
+  achart.View3DOptions.VertOffset:=FVertOffset;
+  achart.View3DWalls:=FView3DWalls;
+  achart.BackColor:=clTeeColor;
+  achart.BackWall.Brush.Style:=bsClear;
+  achart.Gradient.Visible:=false;
+  achart.Color:=clWhite;
+{$IFDEF MSWINDOWS}
+  achart.LeftAxis.LabelsFont.Name:=WFontName;
+  achart.BottomAxis.LabelsFont.Name:=WFontName;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  achart.LeftAxis.LabelsFont.Name:=LFontName;
+  achart.BottomAxis.LabelsFont.Name:=LFontName;
+{$ENDIF}
+  achart.LeftAxis.LabelsFont.Size:=FontSize;
+  // Convert to degrees first
+  achart.LeftAxis.LabelsAngle:=FontRotation;
+  achart.LeftAxis.LabelsFont.Style:=CLXIntegerToFontStyle(FontStyle);
+  achart.BottomAxis.LabelsFont.Size:=FontSize;
+  // Convert to degrees first
+  achart.BottomAxis.LabelsAngle:=FontRotation;
+  achart.BottomAxis.LabelsFont.Style:=CLXIntegerToFontStyle(FontStyle);
+
+  acolor:=0;
+  for i:=0 to Series.Count-1 do
+  begin
+   aserie:=nil;
+   case ChartType of
+    rpchartline:
+     begin
+      aserie:=TLineSeries.Create(nil);
+     end;
+    rpchartbar:
+     begin
+      aserie:=TBarSeries.Create(nil);
+      case FMultiBar of
+       rpMultiNone:
+        TBarSeries(aserie).MultiBar:=mbNone;
+       rpMultiside:
+        TBarSeries(aserie).MultiBar:=mbSide;
+       rpMultiStacked:
+        TBarSeries(aserie).MultiBar:=mbStacked;
+       rpMultiStacked100:
+        TBarSeries(aserie).MultiBar:=mbStacked100;
+      end;
+     end;
+    rpchartpoint:
+     aserie:=TPointSeries.Create(nil);
+    rpcharthorzbar:
+     aserie:=THorizBarSeries.Create(nil);
+    rpchartarea:
+     aserie:=TAreaSeries.Create(nil);
+    rpchartpie:
+     aserie:=TPieSeries.Create(nil);
+    rpchartarrow:
+     aserie:=TArrowSeries.Create(nil);
+    rpchartbubble:
+     aserie:=TBubbleSeries.Create(nil);
+    rpchartgantt:
+     aserie:=TGanttSeries.Create(nil);
+   end;
+   if not assigned(aserie) then
+    exit;
+   aserie.ParentChart:=achart;
+   // Assigns the color for this serie
+   intserie:=Series.Items[i];
+   for j:=0 to intserie.FValueCount-1 do
+   begin
+    aserie.Add(intserie.Values[j],
+     intSerie.ValueCaptions[j],SeriesColors[aColor]);
+    if series.count<2 then
+    begin
+     if ChartType=rpchartpie then
+      acolor:=((acolor+1) mod MAX_SERIECOLORS);
+    end;
+   end;
+   abitmap:=TBitmap.Create;
+   try
+    abitmap.HandleType:=bmDIB;
+    abitmap.PixelFormat:=pf24bit;
+    // Chart resolution to default screen
+    abitmap.Width:=Round(twipstoinchess(Width)*twipstopixels(TWIPS_PER_INCHESS));
+    abitmap.Height:=Round(twipstoinchess(Height)*twipstopixels(TWIPS_PER_INCHESS));
+    rec.Top:=0;
+    rec.Left:=0;
+    rec.Bottom:=abitmap.Height-1;
+    rec.Right:=abitmap.Width-1;
+    achart.Draw(abitmap.Canvas,rec);
+    // Finally print it
+    FMStream:=TMemoryStream.Create;
+    try
+     abitmap.SaveToStream(FMStream);
+     metafile.Pages[metafile.CurrentPage].NewImageObject(aposy,aposx,
+      Width,Height,DEF_COPYMODE,Integer(rpDrawStretch),
+      Integer(DEFAULT_DPI),FMStream);
+    finally
+     FMStream.Free;
+    end;
+   finally
+    abitmap.free;
+   end;
+   acolor:=((acolor+1) mod MAX_SERIECOLORS);
+  end;
+ finally
+  for i:=0 to achart.SeriesList.Count-1 do
+  begin
+   TObject(achart.SeriesList.Items[i]).free;
+  end;
+  achart.Free;
+ end;
+end;
+{$ENDIF}
+
 procedure TRpChart.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 {var
  aText:WideString;
@@ -479,16 +683,16 @@ var
  pencolor:integer;
  MaxValueCount:integer;
 begin
-{
-
- expre:=Trim(Expression);
- aText:=GetText;
- metafile.Pages[metafile.CurrentPage].NewTextObject(aposy,
-   aposx,width,height,aText,WFontName,LFontName,FontSize,FontRotation,
-   FontStyle,smallint(Type1Font),FOntColor,BackColor,Transparent,CutText,aalign,WordWrap);
-}
  if FSeries.Count<1 then
   exit;
+ // Draws a TeeChart
+{$IFDEF USETEECHART}
+ if FDriver<>rpchartdriverengine then
+ begin
+  DoPrintTeeChart(aposx,aposy,metafile);
+  exit;
+ end;
+{$ENDIF}
  aalign:=Alignment or VAlignment;
  if SingleLine then
   aalign:=aalign or AlignmentFlags_SingleLine;
@@ -678,6 +882,124 @@ begin
  Filer.DefineProperty('ClearExpression',ReadClearExpression,WriteClearExpression,True);
 end;
 
+function RpChartDriverToString(driver:TRpChartDriver):String;
+begin
+ case driver of
+  rpchartdriverdefault:
+   Result:=SRpSDefault;
+  rpchartdriverengine:
+   Result:=SRpSChartDriverEngine;
+  rpchartdriverteechart:
+   Result:=SRpSChartDriverTeeChart;
+ end;
+end;
+
+procedure GetRpChartDriverPossibleValues(alist:TStrings);
+begin
+ alist.Clear;
+ alist.Add(SRpSDefault);
+ alist.Add(SRpSChartDriverEngine);
+ alist.Add(SRpSChartDriverTeeChart);
+end;
+
+function StringToRpChartDriver(Value:String):TRpChartDriver;
+begin
+ Result:=rpchartdriverdefault;
+ if Value=SRpSChartDriverEngine then
+ begin
+  Result:=rpchartdriverengine;
+  exit;
+ end;
+ if Value=SRpSChartDriverTeeChart then
+ begin
+  Result:=rpchartdriverteechart;
+  exit;
+ end;
+end;
+
+function RpChartTypeToString(charttype:TRpChartType):String;
+begin
+ Result:=SRpChartLine;
+ case charttype of
+  rpchartline:
+   Result:=SRpChartLine;
+  rpchartbar:
+   Result:=SRpChartBar;
+  rpchartpoint:
+   Result:=SRpChartPoint;
+  rpcharthorzbar:
+   Result:=SRpChartHorzBar;
+  rpchartarea:
+   Result:=SRpChartArea;
+  rpchartpie:
+   Result:=SRpChartPie;
+  rpchartarrow:
+   Result:=SRpChartArrow;
+  rpchartgantt:
+   Result:=SRpChartgantt;
+  rpchartbubble:
+   Result:=SRpChartBubble;
+ end;
+end;
+
+function StringToRpChartType(Value:String):TRpChartType;
+begin
+ Result:=rpchartline;
+ if Value=SRpChartBar then
+ begin
+  Result:=rpchartbar;
+  exit;
+ end;
+ if Value=SRpChartPoint then
+ begin
+  Result:=rpchartpoint;
+  exit;
+ end;
+ if Value=SRpChartHorzBar then
+ begin
+  Result:=rpcharthorzbar;
+  exit;
+ end;
+ if Value=SRpChartArea then
+ begin
+  Result:=rpchartarea;
+  exit;
+ end;
+ if Value=SRpChartPie then
+ begin
+  Result:=rpchartpie;
+  exit;
+ end;
+ if Value=SRpChartArrow then
+ begin
+  Result:=rpchartarrow;
+  exit;
+ end;
+ if Value=SRpChartBubble then
+ begin
+  Result:=rpchartbubble;
+  exit;
+ end;
+ if Value=SRpChartgantt then
+ begin
+  Result:=rpchartgantt;
+  exit;
+ end;
+end;
+
+procedure GetRpChartTypePossibleValues(alist:TStrings);
+begin
+ alist.Clear;
+ alist.add(SRpChartLine);
+ alist.Add(SRpChartBar);
+ alist.Add(SRpChartPoint);
+ alist.Add(SRpChartHorzBar);
+ alist.Add(SRpChartArea);
+ alist.Add(SRpChartPie);
+// alist.Add(SRpChartArrow);
+// alist.Add(SRpChartBubble);
+// alist.Add(SRpChartGantt);
+end;
 
 end.
 

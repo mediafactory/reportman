@@ -561,6 +561,19 @@ var
   SRpSTime:WideString='Time';
   SRpSBoolean:WideString='Boolean';
   SRpSDataType:WideString='Data type';
+  SRpSDefault:WideString='Default';
+  SRpSDriver:WideString='Driver';
+  SRpSChartDriverEngine:WideString='RpChart';
+  SRpSChartDriverTeeChart:WideString='TeeChart';
+  SRpChartLine:WideString='Line';
+  SRpChartBar:WideString='Bar';
+  SRpChartPoint:WideString='Point';
+  SRpChartHorzBar:WideString='Horz.Bar';
+  SRpChartArea:WideString='Area';
+  SRpChartPie:WideString='Pie';
+  SRpChartArrow:WideString='Arrow';
+  SRpChartBubble:WideString='Bubble';
+  SRpChartGantt:WideString='Gantt';
 
 implementation
 
@@ -593,6 +606,7 @@ end;
 
 procedure ConvertAllStrings;
 begin
+ TranslateVar(95,SRpSDefault);
  TranslateVar(262,SRpNoFilename);
  TranslateVar(263,SRpErrorFork);
  TranslateVar(264,SRpEnglish);
@@ -1112,6 +1126,20 @@ begin
  TranslateVar(890,SRpSTime);
  TranslateVar(891,SRpSBoolean);
  TranslateVar(892,SRpSDataType);
+ TranslateVar(893,SRpSChartDriverEngine);
+ TranslateVar(894,SRpSChartDriverTeeChart);
+ TranslateVar(67,SRpSDriver);
+
+ TranslateVar(895,SRpChartLine);
+ TranslateVar(896,SRpChartBar);
+ TranslateVar(897,SRpChartPoint);
+ TranslateVar(898,SRpChartHorzBar);
+ TranslateVar(899,SRpChartArea);
+ TranslateVar(900,SRpChartPie);
+ TranslateVar(901,SRpChartArrow);
+ TranslateVar(902,SRpChartBubble);
+ TranslateVar(903,SRpChartGantt);
+
 end;
 
 {$IFDEF LINUX}
