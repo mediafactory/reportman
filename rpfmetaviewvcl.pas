@@ -282,18 +282,9 @@ begin
  MSelPrinter15.Caption:=SRpUserPrinter9;
 
  configfile:=Obtainininameuserconfig('','','repmand');
-{$IFDEF VCLFILEFILTERS}
  SaveDialog1.Filter:=SRpRepMetafile+'|*.rpmf|'+
    SRpPDFFile+'|*.pdf|'+
    SRpPDFFileUn+'|*.pdf';
- OpenDialog1.Filter:=SRpRepMetafile+'|*.rpmf';
-{$ENDIF}
-{$IFNDEF VCLFILEFILTERS}
- SaveDialog1.Filter:=SRpRepMetafile+' (*.rpmf)|'+
-   SRpPDFFile+' (*.pdf)|'+
-   SRpPDFFileUn+' (*.pdf)';
- OpenDialog1.Filter:=SRpRepMetafile+' (*.rpmf)';
-{$ENDIF}
 {$IFNDEF FORWEBAX}
  clitree:=TFRpCliTreeVCL.Create(Self);
  clitree.Align:=alLeft;

@@ -557,7 +557,7 @@ begin
   Control.Left:=0;
   Control.Top:=0;
   Control.Height:=aheight;
-  Control.Width:=(TotalWidth-CONS_RIGHTBARGAP) div 2;
+  Control.Width:=70;
   TBUtton(Control).Caption:=SRpSendToBack;
   TButton(Control).OnClick:=SendToBackClick;
   Control.parent:=APanelBottom;
@@ -566,7 +566,7 @@ begin
   Control2.Top:=0;
   Control2.Height:=aheight;
   APanelBottom.Height:=aheight;
-  Control2.Width:=(TotalWidth-CONS_RIGHTBARGAP) div 2;
+  Control2.Width:=Control.Parent.Width-70;
   Control2.parent:=APanelBottom;
   Control2.Anchors:=[akleft,aktop,akright];
   TButton(Control2).OnClick:=BringToFrontClick;
