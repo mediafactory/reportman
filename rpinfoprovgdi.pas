@@ -170,11 +170,16 @@ begin
       data.FullName:=StrPas(@apchar[Integer(potm^.otmpFullName)]);
       data.StyleName:=StrPas(@apchar[Integer(potm^.otmpStyleName)]);
       data.FaceName:=StrPas(@apchar[Integer(potm^.otmpFaceName)]);
-      data.ItalicAngle:=potm^.otmItalicAngle/10;
+      data.ItalicAngle:=Round(potm^.otmItalicAngle/10);
       if ((potm^.otmTextMetrics.tmPitchAndFamily AND TMPF_TRUETYPE)=0) then
        Raise Exception.Create(SRpNoTrueType+'-'+data.FaceName);
-      data.postcriptname:=data.FamilyName;
-      data.postcriptname:=StringReplace(data.postcriptname,' ','',[rfReplaceAll]);
+      data.postcriptname:=StringReplace(data.familyname,' ','',[rfReplaceAll]);
+      // Italic emulation
+      if pdffont.Italic then
+       if data.ItalicAngle=0 then
+       begin
+        data.postcriptname:=data.postcriptname+',Italic';
+       end;
       //
       data.Flags:=32;
       // Fixed pitch? Doc says inverse meaning
@@ -188,7 +193,8 @@ begin
        if ((acomp or FF_ROMAN)=alog.lfPitchAndFamily) then
         data.Flags:=data.Flags+2;
       end;
-      if potm^.otmTextMetrics.tmItalic<>0 then
+      if Round(potm^.otmItalicAngle/10)<>0 then
+//      if potm^.otmTextMetrics.tmItalic<>0 then
        data.Flags:=data.Flags+64;
       data.FontStretch:='/Normal';
      end;

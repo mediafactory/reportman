@@ -33,6 +33,7 @@ uses Classes,SysUtils,
  Libc,
 {$ENDIF}
 {$IFDEF USESQLEXPRESS}
+ {$DEFINE USENEWLINK}
  SqlExpr,DBXpress,SqlConst,//DBExpMYSQL,DbExpMyS,dbExpDB2,dbExpORA,dbExpINT
 {$ENDIF}
  rpmdconsts,rpmdshfolder,
@@ -41,6 +42,7 @@ uses Classes,SysUtils,
  IBQuery,IBDatabase,
 {$ENDIF}
 {$IFDEF USEZEOS}
+ {$DEFINE USENEWLINK}
  ZDbcIntfs,ZAbstractRODataset, ZDataset, ZConnection,
 {$ENDIF}
 {$IFDEF USEBDE}
@@ -1467,7 +1469,7 @@ begin
       TSQLQuery(FSQLInternalQuery).SQLConnection:=
        baseinfo.SQLConnection;
       TSQLQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
-      TSQLQuery(FSQLInternalQuery).DataSource:=nil;
+//      TSQLQuery(FSQLInternalQuery).DataSource:=nil;
 {$ENDIF}
      end;
     rpdataibx:
@@ -1612,11 +1614,11 @@ begin
      rpdatadbexpress:
       begin
 {$IFDEF USESQLEXPRESS}
-       TSQLQuery(FSQLInternalQuery).DataSource:=FMasterSource;
-       if datainfosource.cached then
-        FMasterSource.DataSet:=datainfosource.CachedDataset
-       else
-        FMasterSource.DataSet:=datainfosource.Dataset;
+//       TSQLQuery(FSQLInternalQuery).DataSource:=FMasterSource;
+//       if datainfosource.cached then
+//        FMasterSource.DataSet:=datainfosource.CachedDataset
+//       else
+//        FMasterSource.DataSet:=datainfosource.Dataset;
 {$ENDIF}
       end;
      rpdataibx:
@@ -2905,20 +2907,25 @@ begin
 end;
 
 procedure TRpDataInfoItem.DoAfterScroll(DataSet:TDataSet);
-{$IFDEF USEZEOS}
+{$IFDEF USENEWLINK}
 var
  dlist:TRpDataInfoList;
  ditem:TRpDataInfoItem;
  dbitem:TRpDatabaseInfoItem;
  i,j:integer;
  index:integer;
+{$IFDEF USEZEOS}
  ZQuery:TZReadOnlyQuery;
+{$ENDIF}
+{$IFDEF USESQLEXPRESS}
+ SQuery:TSQLQuery;
+{$ENDIF}
  reopen:Boolean;
  afield:TField;
 {$ENDIF}
 begin
  // For zeos update linked querys
-{$IFDEF USEZEOS}
+{$IFDEF USENEWLINK}
   if not assigned(FDBInfoList) then
    exit;
   dlist:=TRpDataInfoList(Collection);
@@ -2933,7 +2940,8 @@ begin
      if index<0 then
       Raise Exception.Create(SRPDabaseAliasNotFound+' : '+ditem.DatabaseAlias);
      dbitem:=FDBInfoList.items[index];
-     if dbitem.Driver=rpdatazeos then
+{$IFDEF USEZEOS}
+     if (dbitem.Driver=rpdatazeos)  then
      begin
       reopen:=true;
       if Assigned(ditem.Dataset) then
@@ -2980,7 +2988,57 @@ begin
        ditem.Connect(FDBInfoList,FParamsList);
       end;
      end;
+{$ENDIF}
+{$IFDEF USESQLEXPRESS}
+     if (dbitem.Driver=rpdatadbexpress)  then
+     begin
+      reopen:=true;
+      if Assigned(ditem.Dataset) then
+      begin
+       if ditem.Dataset.Active then
+       begin
+        SQuery:=TSQLQuery(ditem.FSQLInternalQuery);
+        reopen:=false;
+        for j:=0 to SQuery.Params.Count-1 do
+        begin
+         afield:=Dataset.FindField(SQuery.Params.Items[j].Name);
+         if Assigned(afield) then
+         begin
+          if afield.Value<>SQuery.Params.Items[j].Value then
+          begin
+           reopen:=true;
+           break;
+          end;
+         end;
+        end;
+       end
+      end
+      else
+      begin
+       ditem.Connect(FDBInfoList,FParamsList);
+      end;
+      if reopen then
+      begin
+       if Not ditem.Dataset.Active then
+        ditem.Connect(FDBInfoList,FParamsList);
+       ditem.Disconnect;
+       SQuery:=TSQLQuery(ditem.FSQLInternalQuery);
+       for j:=0 to SQuery.Params.Count-1 do
+       begin
+        afield:=Dataset.FindField(SQuery.Params.Items[j].Name);
+        if Assigned(afield) then
+        begin
+         SQuery.Params.Items[j].Clear;
+         SQuery.Params.Items[j].DataType:=afield.DataType;
+         if Not afield.IsNull then
+          SQuery.Params.Items[j].Value:=afield.Value;
+        end;
+       end;
+       ditem.Connect(FDBInfoList,FParamsList);
+      end;
+     end;
     end;
+    {$ENDIF}
    end;
   end;
 {$ENDIF}

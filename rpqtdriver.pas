@@ -31,7 +31,7 @@ uses
   mmsystem,windows,winspool,
 {$ENDIF}
  Classes,sysutils,rpmetafile,rpmdconsts,QForms,
- rpmunits,QPrinters,QDialogs,rpgraphutils,rpinfoprovclx,
+ rpmunits,QPrinters,QDialogs,rpgraphutils,
  QStdCtrls,QExtCtrls,types,DateUtils,rptypes,Qt,rppdffile,
 {$IFDEF VCLANDCLX}
  rpvgraphutils,

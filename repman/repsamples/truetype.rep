@@ -54,13 +54,13 @@ object TRpReport
     Stream = {0000000000000000}
   end
   object TRpLabel0: TRpLabel
-    Width = 7480
-    Height = 693
-    PosX = 573
-    PosY = 800
+    Width = 9555
+    Height = 870
+    PosX = 570
+    PosY = 810
     Type1Font = poEmbedded
     FontSize = 24
-    FontStyle = 1
+    FontStyle = 3
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''

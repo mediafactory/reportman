@@ -23,7 +23,7 @@ interface
 
 {$I rpconf.inc}
 
-uses Classes,Sysutils,rpinfoprovid,
+uses Classes,Sysutils,
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
@@ -75,29 +75,27 @@ type
 
 
 procedure SaveMetafileToPDF(metafile:TRpMetafileReport;
- filename:string;compressed:boolean;
- infoprov:IRpInfoProvider);
+ filename:string;compressed:boolean);
 procedure SaveMetafileRangeToPDF(metafile:TRpMetafileReport;
  allpages:boolean;frompage,topage,copies:integer;filename:string;
-  compressed:boolean;infoprov:IRpInfoProvider);
+  compressed:boolean);
 
  procedure SaveMetafileToPDFStream(metafile:TRpMetafileReport;
- Stream:TStream;compressed:boolean;infoprov:IRpInfoProvider);
+ Stream:TStream;compressed:boolean);
 {$IFNDEF FORWEBAX}
 function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
      filename:string;compressed:boolean;
-      collate:boolean;infoprov:IRpInfoProvider):Boolean;
+      collate:boolean):Boolean;
 function PrintReportPDFStream(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
-     Stream:TStream;compressed:boolean;collate:boolean;
-     infoprov:IRpInfoProvider):Boolean;
+     Stream:TStream;compressed:boolean;collate:boolean):Boolean;
 function PrintReportMetafileStream(report:TRpReport;
  Caption:string;progress:boolean;allpages:boolean;frompage,topage,copies:integer;
- Stream:TStream;compressed:boolean;collate:boolean;infoprov:IRpInfoProvider):Boolean;
+ Stream:TStream;compressed:boolean;collate:boolean):Boolean;
 function PrintReportToMetafile(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
-     filename:string;collate:boolean;infoprov:IRpInfoProvider):Boolean;
+     filename:string;collate:boolean):Boolean;
 procedure DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
  aposx,aposy:integer;achart:TObject);
 {$ENDIF}
@@ -185,18 +183,13 @@ end;
 
 procedure TRpPDFDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
    hardwarecollate:boolean);
-var
- infoprov:IRpInfoProvider;
 begin
- infoprov:=nil;
  if Assigned(FPDFFile) then
  begin
-  infoprov:=PDFFile.Canvas.InfoProvider;
   FPDFFile.Free;
   FPDFFile:=nil;
  end;
  FPDFFile:=TRpPDFFile.Create(nil);
- FPDFFile.Canvas.InfoProvider:=infoprov;
  FPDFFile.FileName:=filename;
  if Assigned(DestStream) then
  begin
@@ -498,7 +491,7 @@ end;
 
 procedure SaveMetafileRangeToPDF(metafile:TRpMetafileReport;
  allpages:boolean;frompage,topage,copies:integer;filename:string;
- compressed:boolean;infoprov:IRpInfoProvider);
+ compressed:boolean);
 var
  adriver:TRpPDFDriver;
  i:integer;
@@ -519,7 +512,6 @@ begin
  if copies<0 then
   copies:=1;
  adriver:=TRpPDFDriver.Create;
- adriver.PDFFile.Canvas.InfoProvider:=infoprov;
  adriver.filename:=filename;
  adriver.compressed:=compressed;
  adriver.NewDocument(metafile,1,false);
@@ -544,19 +536,18 @@ end;
 
 
 procedure SaveMetafileToPDF(metafile:TRpMetafileReport;
- filename:string;compressed:boolean;infoprov:IRpInfoProvider);
+ filename:string;compressed:boolean);
 begin
- SaveMetafileRangeToPDF(metafile,false,1,99999,1,filename,compressed,infoprov);
+ SaveMetafileRangeToPDF(metafile,false,1,99999,1,filename,compressed);
 end;
 
 procedure SaveMetafileToPDFStream(metafile:TRpMetafileReport;
- Stream:TStream;compressed:boolean;infoprov:IRpInfoProvider);
+ Stream:TStream;compressed:boolean);
 var
  adriver:TRpPDFDriver;
  i:integer;
 begin
  adriver:=TRpPDFDriver.Create;
- adriver.PDFFile.Canvas.InfoProvider:=infoprov;
  adriver.compressed:=compressed;
  adriver.NewDocument(metafile,1,false);
  try
@@ -581,14 +572,13 @@ end;
 function PrintReportPDFStream(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
      Stream:TStream;compressed:boolean;
-     collate:boolean;infoprov:IRpInfoProvider):Boolean;
+     collate:boolean):Boolean;
 var
  pdfdriver:TRpPDFDriver;
  apdfdriver:IRpPrintDriver;
  oldprogres:TRpProgressEvent;
 begin
  pdfdriver:=TRpPDFDriver.Create;
- pdfdriver.PDFFile.Canvas.InfoProvider:=infoprov;
  pdfdriver.compressed:=compressed;
  pdfdriver.DestStream:=Stream;
  apdfdriver:=pdfdriver;
@@ -609,7 +599,7 @@ end;
 function PrintReportMetafileStream(report:TRpReport;
  Caption:string;progress:boolean;allpages:boolean;frompage,topage,copies:integer;
  Stream:TStream;compressed:boolean;
- collate:boolean;infoprov:IRpInfoProvider):Boolean;
+ collate:boolean):Boolean;
 var
  pdfdriver:TRpPDFDriver;
  apdfdriver:IRpPrintDriver;
@@ -617,7 +607,6 @@ var
  astream:TMemoryStream;
 begin
  pdfdriver:=TRpPDFDriver.Create;
- pdfdriver.PDFFile.Canvas.InfoProvider:=infoprov;
  pdfdriver.compressed:=compressed;
  astream:=TMemoryStream.Create;
  try
@@ -662,7 +651,7 @@ end;
 function PrintReportToMetafile(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
      filename:string;
-     collate:boolean;infoprov:IRpInfoProvider):Boolean;
+     collate:boolean):Boolean;
 var
  pdfdriver:TRpPDFDriver;
  apdfdriver:IRpPrintDriver;
@@ -671,7 +660,6 @@ begin
  if Length(Trim(filename))<0 then
   Raise Exception.Create(SRpNoFileNameProvided+':Metafile');
  pdfdriver:=TRpPDFDriver.Create;
- pdfdriver.PDFFile.Canvas.InfoProvider:=infoprov;
  pdfdriver.compressed:=false;
  apdfdriver:=pdfdriver;
  report.TwoPass:=true;
@@ -695,7 +683,7 @@ end;
 function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
      filename:string;compressed:boolean;
-     collate:boolean;infoprov:IRpInfoProvider):Boolean;
+     collate:boolean):Boolean;
 var
  pdfdriver:TRpPDFDriver;
  apdfdriver:IRpPrintDriver;
@@ -704,7 +692,6 @@ begin
  if Length(Trim(filename))<0 then
   Raise Exception.Create(SRpNoFileNameProvided+':PDF');
  pdfdriver:=TRpPDFDriver.Create;
- pdfdriver.PDFFile.Canvas.InfoProvider:=infoprov;
  pdfdriver.filename:=filename;
  pdfdriver.compressed:=compressed;
  apdfdriver:=pdfdriver;

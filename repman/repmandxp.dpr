@@ -105,7 +105,7 @@ uses
   rpmdftreevcl in '..\rpmdftreevcl.pas' {FRpDBTreeVCL: TFrame},
   rpmdfopenlibvcl in '..\rpmdfopenlibvcl.pas' {FRpOpenLibVCL},
   rpsvgdriver in '..\rpsvgdriver.pas',
-  rpinfoprovvcl in '..\rpinfoprovvcl.pas',
+  rpinfoprovgdi in '..\rpinfoprovgdi.pas',
   rpinfoprovid in '..\rpinfoprovid.pas';
 
 {$R *.res}

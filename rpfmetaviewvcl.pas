@@ -578,9 +578,9 @@ begin
     2,3:
      begin
       if SaveDialog1.FilterIndex=2 then
-       SaveMetafileToPDF(metafile,SaveDialog1.filename,true,nil)
+       SaveMetafileToPDF(metafile,SaveDialog1.filename,true)
       else
-       SaveMetafileToPDF(metafile,SaveDialog1.filename,false,nil);
+       SaveMetafileToPDF(metafile,SaveDialog1.filename,false);
      end;
     4:
      begin
@@ -1083,7 +1083,7 @@ var
  afilename:String;
 begin
  afilename:=ChangeFileExt(RpTempFileName,'.pdf');
- SaveMetafileToPDF(Metafile,afilename,true,nil);
+ SaveMetafileToPDF(Metafile,afilename,true);
  try
   rptypes.SendMail('',ExtractFileName(afilename),'',afilename);
  finally

@@ -114,12 +114,12 @@ begin
   begin
    if FAsMetafile then
    begin
-    Result:=PrintReportToMetafile(report,Title,ShowProgress,false,ffrompage,ftopage,fcopies,filename,false,infoprovider);
+    Result:=PrintReportToMetafile(report,Title,ShowProgress,false,ffrompage,ftopage,fcopies,filename,false);
    end
    else
    begin
     Result:=PrintReportPDF(report,Title,Showprogress,false,ffrompage,
-     ftopage,fcopies,FPDFFilename,FCompressed,false,infoprovider);
+     ftopage,fcopies,FPDFFilename,FCompressed,false);
    end;
   end;
  end;
@@ -130,7 +130,7 @@ function TPDFReport.PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;
 begin
  Result:=rppdfdriver.PrintReportPDF(Report,Title,ShowProgress,false,
-  frompage,topage,copies,fpdffilename,compressed,collate,infoprovider);
+  frompage,topage,copies,fpdffilename,compressed,collate);
 end;
 
 procedure TPDFReport.InternalExecuteRemote(metafile:TRpMetafileReport);
@@ -143,7 +143,7 @@ begin
  else
  begin
   SaveMetafileRangeToPDF(metafile,false,ffrompage,
-    ftopage,fcopies,FPDFFilename,FCompressed,infoprovider);
+    ftopage,fcopies,FPDFFilename,FCompressed);
  end;
 end;
 
