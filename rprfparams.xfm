@@ -11,7 +11,7 @@ object FRpRunTimeParams: TFRpRunTimeParams
   Scaled = False
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  PixelsPerInch = 96
+  PixelsPerInch = 100
   object PModalButtons: TPanel
     Left = 0
     Top = 230

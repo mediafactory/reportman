@@ -29,6 +29,9 @@ uses Classes,SysUtils,
 {$IFDEF MSWINDOWS}
  registry,windows,
 {$ENDIF}
+{$IFDEF LINUX}
+ Libc,
+{$ENDIF}
 {$IFDEF USESQLEXPRESS}
  SqlExpr,DBXpress,SqlConst,
 {$ENDIF}
@@ -1184,13 +1187,13 @@ end;
 
 
 function GetRegistryFile(Setting, Default: string; DesignMode: Boolean): string;
-var
 {$IFDEF MSWINDOWS}
+var
   Reg: TRegistry;
 {$ENDIF}
-{$IFDEF LINUX}
-  GlobalFile: string;
-{$ENDIF}
+//{$IFDEF LINUX}
+//  GlobalFile: string;
+//{$ENDIF}
 begin
   {$IFDEF MSWINDOWS}
   Result := '';
@@ -1205,26 +1208,26 @@ begin
   if Result = '' then
     Result := ExtractFileDir(ParamStr(0)) + '\' + Default;
   {$ENDIF}
-  {$IFDEF LINUX}
-  Result := getenv('HOME') + SDBEXPRESSREG_USERPATH + Default;    { do not localize }
-  if not FileExists(Result) then
-  begin
-    GlobalFile := SDBEXPRESSREG_GLOBALPATH + Default + SConfExtension;
-    if FileExists(GlobalFile) then
-    begin
-      if DesignMode then
-      begin
-        if not CopyConfFile(GlobalFile, Result) then
-          DatabaseErrorFmt(SConfFileMoveError, [GlobalFile, Result])
-      end else
-        Result := GlobalFile;
-    end else
-      DatabaseErrorFmt(SMissingConfFile, [GlobalFile]);
-  end;
-  {$ENDIF}
+//  {$IFDEF LINUX}
+//  Result := getenv('HOME') + SDBEXPRESSREG_USERPATH + Default;    { do not localize }
+//  if not FileExists(Result) then
+//  begin
+//    GlobalFile := SDBEXPRESSREG_GLOBALPATH + Default + SConfExtension;
+//    if FileExists(GlobalFile) then
+//    begin
+//      if DesignMode then
+//      begin
+//        if not CopyConfFile(GlobalFile, Result) then
+//          DatabaseErrorFmt(SConfFileMoveError, [GlobalFile, Result])
+//      end else
+//        Result := GlobalFile;
+//    end else
+//      DatabaseErrorFmt(SMissingConfFile, [GlobalFile]);
+//  end;
+//  {$ENDIF}
 end;
 
-
+{$IFDEF MSWINDOWS}
 function ObtainDriverRegistryFile(DesignMode: Boolean = False): string;
 begin
   Result := GetRegistryFile(SDRIVERREG_SETTING, sDriverConfigFile, DesignMode);
@@ -1234,6 +1237,7 @@ function ObtainConnectionRegistryFile(DesignMode: Boolean = False): string;
 begin
   Result := GetRegistryFile(SCONNECTIONREG_SETTING, sConnectionConfigFile, DesignMode);
 end;
+{$ENDIF}
 
 
 

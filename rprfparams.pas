@@ -196,7 +196,7 @@ begin
       end
       else
       begin
-       TEdit(acontrol).Text:=VarToStr(aparam.Value);
+       TEdit(acontrol).Text:=DateToStr(aparam.Value);
       end;
      end;
    rpParamTime:
@@ -211,7 +211,7 @@ begin
       end
       else
       begin
-       TEdit(acontrol).Text:=VarToStr(aparam.Value);
+       TEdit(acontrol).Text:=TimeToStr(aparam.Value);
       end;
      end;
    rpParamDateTime:
@@ -226,7 +226,7 @@ begin
       end
       else
       begin
-       TEdit(acontrol).Text:=VarToStr(aparam.Value);
+       TEdit(acontrol).Text:=DateTimeToStr(aparam.Value);
       end;
      end;
    rpParamBool:

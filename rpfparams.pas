@@ -382,6 +382,8 @@ var
  reftemp:TRpParamList;
  aname:string;
 begin
+ if LParams.ItemIndex<0 then
+  exit;
  if LParams.Items.count<2 then
   exit;
  index:=LParams.itemindex;
@@ -414,6 +416,8 @@ var
  reftemp:TRpParamList;
  aname:string;
 begin
+ if LParams.ItemIndex<0 then
+  exit;
  if LParams.Items.count<2 then
   exit;
  index:=LParams.itemindex;
