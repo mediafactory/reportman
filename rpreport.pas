@@ -24,9 +24,15 @@ unit rpreport;
 
 interface
 
+{$I rpconf.inc}
+
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpconsts,
  rpdatainfo,rpparams,rplabelitem,rpdrawitem,rpeval,rptypeval,
- rpmetafile,types,rpalias,db,dateutils,rpzlib,rpdataset,
+ rpmetafile,
+{$IFDEF USEVARIANTS}
+ types,dateutils,
+{$ENDIF}
+ rpalias,db,rpzlib,rpdataset,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}

@@ -21,8 +21,18 @@ unit rpprintitem;
 
 interface
 
-uses Sysutils,Classes,rptypes,rpconsts,types,
- rpeval,rpmetafile;
+{$I rpconf.inc}
+
+uses Sysutils,Classes,rptypes,rpconsts,
+ rpeval,
+{$IFDEF MSWINDOWS}
+ Windows,
+{$ENDIF}
+{$IFDEF USEVARIANTS}
+ types,
+{$ENDIF}
+ rpmetafile;
+
 
 type
 

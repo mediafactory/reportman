@@ -19,10 +19,15 @@ unit rpeval;
 
 interface
 
+{$I rpconf.inc}
 
 uses
   SysUtils, Classes,DB,rptypeval,rpevalfunc,
-  rpconsts,sysconst,rpparser,variants,rpalias;
+  rpconsts,sysconst,rpparser,
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
+  rpalias;
   
 type
  TRpCustomEvaluator=class(TComponent)

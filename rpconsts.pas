@@ -49,7 +49,11 @@ resourcestring
   SRpLastPageReached='Last page already reached';
   SRPAliasNotExists='Data alias does not exists: ';
   SRpCopyStreamError='Error copying stream in metafile image object';
-  SRpDriverNotSupported='Database driver not supported';
+  SRpDriverNotSupported='Database driver not supported ';
+  SrpDriverIBX='Interbase Express';
+  SrpDriverADO='ADO Express (dbGo)';
+  SrpDriverBDE='Borland Database Engine (BDE)';
+  SrpDriverDBX='SQL Express (DBX)';
   SRpDriverAliasIsNotInterbase='The dbx driver alias is not Interbase';
   SRpNoDatabase='No Interbase Database specified';
   SRpSubreportAliasNotFound='Subreport alias not found:';

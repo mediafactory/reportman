@@ -18,10 +18,15 @@ unit rpevalfunc;
 
 interface
 
+{$I rpconf.inc}
 
 uses
   SysUtils, Classes,
-  Rpconsts,DB,RpTypeval,Math,variants;
+  Rpconsts,DB,Math,
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
+  rptypeval;
 
 type
 

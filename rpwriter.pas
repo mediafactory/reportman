@@ -1,6 +1,6 @@
 {*******************************************************}
 {                                                       }
-{       Rpwrite                                         }
+{       Rpwriter                                         }
 {       Utilities to write, read convert reports        }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }

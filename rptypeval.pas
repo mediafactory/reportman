@@ -15,11 +15,17 @@
 
 unit rptypeval;
 
+{$I rpconf.inc}
+
 interface
 
 uses
- SysUtils,Classes,DB,rpconsts,variants;
- 
+ SysUtils,Classes,rpconsts,
+{$IFDEF USEVARIANTS}
+ Variants,
+{$ENDIF}
+ DB;
+
 const
      // Parser datatypes for constants
      toEOF         =      Char(0);

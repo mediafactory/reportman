@@ -21,16 +21,40 @@ unit rptypes;
 
 interface
 
+{$I rpconf.inc}
+
+
 uses Sysutils,
 {$IFDEF MSWINDOWS}
-windows,
+ Windows,
 {$ENDIF}
-Classes,rpconsts,Variants,FMTBcd;
+ Classes,
+{$IFDEF USEVARIANTS}
+ Variants,
+{$ENDIF}
+{$IFDEF USEBCD}
+ FMTBcd,
+{$ENDIF}
+
+ rpconsts;
+
 
 const
  MAX_LANGUAGES=3;
+{$IFNDEF USEVARIANTS}
+ varWord     = $0012;
+ varLongWord = $0013;
+ varInt64    = $0014;
+ varShortInt = $0010;
+{$ENDIF}
 
 type
+{$IFNDEF USEVARIANTS}
+ TVarType=integer;
+{$ENDIF}
+
+
+
  TRpTwips=integer;
  TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull,rpDrawTile);
  TRpAggregate=(rpAgNone,rpAgGroup,rpAgPage,rpAgGeneral);
@@ -65,8 +89,51 @@ var
  rplangids:array [0..MAX_LANGUAGES-1] of string=('EN','ES','CAT');
  rplangdesc:array [0..MAX_LANGUAGES-1] of string=(SRpEnglish,SRpSpanish,SRpCatalan);
 
+{$IFNDEF USEVARIANTS}
+function BoolToStr(B: Boolean; UseBoolStrs: Boolean = False): string;
+var
+  TrueBoolStrs: array of String;
+  FalseBoolStrs: array of String;
+
+const
+  DefaultTrueBoolStr = 'True';   // DO NOT LOCALIZE
+  DefaultFalseBoolStr = 'False'; // DO NOT LOCALIZE
+{$ENDIF}
 
 implementation
+
+{$IFNDEF USEVARIANTS}
+procedure VerifyBoolStrArray;
+begin
+  if Length(TrueBoolStrs) = 0 then
+  begin
+    SetLength(TrueBoolStrs, 1);
+    TrueBoolStrs[0] := DefaultTrueBoolStr;
+  end;
+  if Length(FalseBoolStrs) = 0 then
+  begin
+    SetLength(FalseBoolStrs, 1);
+    FalseBoolStrs[0] := DefaultFalseBoolStr;
+  end;
+end;
+
+
+function BoolToStr(B: Boolean; UseBoolStrs: Boolean = False): string;
+const
+  cSimpleBoolStrs: array [boolean] of String = ('0', '-1');
+begin
+  if UseBoolStrs then
+  begin
+    VerifyBoolStrArray;
+    if B then
+      Result := TrueBoolStrs[0]
+    else
+      Result := FalseBoolStrs[0];
+  end
+  else
+    Result := cSimpleBoolStrs[B];
+end;
+{$ENDIF}
 
 
 constructor TRpReportException.Create(AMessage:String;compo:TComponent);
@@ -159,8 +226,8 @@ begin
  case atype of
   varEmpty,varNull:
    Result:='';
-  varSmallint,varInteger,varSingle,varWord,varDouble,
-   varInt64,varLongWord,varShortInt,varByte:   Result:=FormatFloat(displayformat,Value);  varCurrency:   Result:=FormatCurr(displayformat,Value);  varDate:   Result:=FormatDateTime(displayformat,Value);  varString:   Result:=Format(displayformat,[Value]);  varBoolean:   Result:=Format(displayformat,[BoolToStr(Value,true)]);  else  begin   if atype=varFmtBCD then    Result:=FormatBCD(displayformat,VarToBcd(Value))   else    Result:=SRpUnknownType;  end; end;{  varOleStr   = $0008;  varDispatch = $0009;  varError    = $000A;  varVariant  = $000C;  varUnknown  = $000D;  varStrArg   = $0048;  varAny      = $0101;  varTypeMask = $0FFF;  varArray    = $2000;  varByRef    = $4000;
+  varSmallint,varInteger,varSingle,varDouble,varByte:
+   Result:=FormatFloat(displayformat,Value);  varWord,varInt64,varLongWord,varShortInt:   Result:=FormatFloat(displayformat,Value);  varCurrency:   Result:=FormatCurr(displayformat,Value);  varDate:   Result:=FormatDateTime(displayformat,Value);  varString:   Result:=Format(displayformat,[Value]);  varBoolean:   Result:=Format(displayformat,[BoolToStr(Value,true)]);  else  begin{$IFDEF USEBCD}   if atype=varFmtBCD then    Result:=FormatBCD(displayformat,VarToBcd(Value))   else{$ENDIF}    Result:=SRpUnknownType;  end; end;{  varOleStr   = $0008;  varDispatch = $0009;  varError    = $000A;  varVariant  = $000C;  varUnknown  = $000D;  varStrArg   = $0048;  varAny      = $0101;  varTypeMask = $0FFF;  varArray    = $2000;  varByRef    = $4000;
 }
 end;
 

@@ -39,6 +39,8 @@ unit rpmetafile;
 
 interface
 
+{$I rpconf.inc}
+
 uses Classes,
 {$IFDEF LINUX}
   Libc,DateUtils,
@@ -46,7 +48,10 @@ uses Classes,
 {$IFDEF MSWINDOWS}
   mmsystem,windows,
 {$ENDIF}
-Sysutils,rpconsts,rpzlib,types;
+{$IFDEF USEVARIANTS}
+ types,
+{$ENDIF}
+ Sysutils,rpconsts,rpzlib;
 
 const
  MILIS_PROGRESS=500;

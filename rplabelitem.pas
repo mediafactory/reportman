@@ -21,8 +21,14 @@ unit rplabelitem;
 
 interface
 
+{$I rpconf.inc}
+
 uses Sysutils,Classes,rptypes,rpprintitem,rpconsts,
- rpmetafile,rpeval,variants,rptypeval,math;
+ rpmetafile,rpeval,
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
+ rptypeval,math;
 
 type
  TRpLabel=class(TRpGenTextComponent)

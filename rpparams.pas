@@ -21,7 +21,13 @@ unit rpparams;
 
 interface
 
-uses Classes, SysUtils,rpconsts,Variants,DB;
+{$I rpconf.inc}
+
+uses Classes, SysUtils,rpconsts,
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
+ DB;
 
 type
   TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,

@@ -55,7 +55,9 @@ begin
 
  FHistoryCount:=5;
  FLastUsed:=TStringList.Create;
+{$IFDEF USEVARIANTS}
  TStringList(FLastUsed).CaseSensitive:=false;
+{$ENDIF}
 end;
 
 destructor TRpLastUsedStrings.Destroy;
@@ -67,7 +69,9 @@ end;
 procedure TRpLastUsedStrings.SetCaseSensitive(NewCase:boolean);
 begin
  FCaseSensitive:=NewCase;
+{$IFDEF USEVARIANTS}
  TStringList(FLastUsed).CaseSensitive:=NewCase;
+{$ENDIF}
 end;
 
 procedure TRpLastUsedStrings.SetLastUsed(Newlist:TStrings);

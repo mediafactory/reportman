@@ -22,13 +22,25 @@ unit rpdatainfo;
 
 interface
 
-uses Classes,SysUtils,SqlExpr,rpconsts, DBXpress,
- DB,rpparams,Inifiles,rptypes,DBClient,
- IBQuery,IBDatabase,rpdataset,
-{$IFDEF MSWINDOWS}
-  dbtables,adodb,
+{$I rpconf.inc}
+
+
+uses Classes,SysUtils,
+{$IFDEF USESQLEXPRESS}
+ SqlExpr,DBXpress,SqlConst,
 {$ENDIF}
- SqlConst;
+ rpconsts,
+ DB,rpparams,Inifiles,rptypes,DBClient,
+{$IFDEF USEIBX}
+ IBQuery,IBDatabase,
+{$ENDIF}
+{$IFDEF USEBDE}
+  dbtables,
+{$ENDIF}
+{$IFDEF USEADO}
+  adodb,
+{$ENDIF}
+ rpdataset;
 
 {$IFDEF LINUX}
 const
@@ -40,6 +52,7 @@ type
   rpdatabde,rpdataado);
 
 
+{$IFDEF USESQLEXPRESS}
  TRpConnAdmin=class(TObject)
   public
    driverfilename:string;
@@ -52,21 +65,29 @@ type
    procedure GetConnectionParams(conname:string;params:TStrings);
    procedure GetDriverLibNames(const drivername:string;var LibraryName,VendorLib:string);
  end;
+{$ENDIF}
+
 
  TRpDatabaseInfoItem=class(TCollectionItem)
   private
    FAlias:string;
+{$IFDEF USESQLEXPRESS}
    FSQLConnection:TSQLConnection;
    FSQLInternalConnection:TSQLConnection;
+{$ENDIF}
    FConfigFile:string;
    FLoadParams:boolean;
    FLoadDriverParams:boolean;
    FLoginPrompt:boolean;
    FADOConnectionString:widestring;
-   FIBDatabase:TIBDatabase;
-{$IFDEF MSWINDOWS}
-   FADOConnection:TADOConnection;
    FBDEAlias:string;
+{$IFDEF USEIBX}
+   FIBDatabase:TIBDatabase;
+{$ENDIF}
+{$IFDEF USEADO}
+   FADOConnection:TADOConnection;
+{$ENDIF}
+{$IFDEF USEBDE}
    FBDEDatabase:TDatabase;
 {$ENDIF}
    FDriver:TRpDbDriver;
@@ -81,7 +102,9 @@ type
    procedure Connect;
    procedure DisConnect;
    constructor Create(Collection:TCollection);override;
+{$IFDEF USESQLEXPRESS}
    property SQLConnection:TSQLConnection read FSQLConnection write FSQLConnection;
+{$ENDIF}
   published
    property Alias:string read FAlias write SetAlias;
    property ConfigFile:string read FConfigFile write SetConfigFile;
@@ -153,12 +176,14 @@ type
    constructor Create(rep:TComponent);
   end;
 
+{$IFDEF USESQLEXPRESS}
 procedure UpdateConAdmin;
+{$ENDIF}
 
 implementation
 
 
-
+{$IFDEF USESQLEXPRESS}
 var
  ConAdmin:TRpConnAdmin;
 
@@ -217,6 +242,7 @@ begin
   params.Delete(index);
  end;
 end;
+{$ENDIF}
 
 
 procedure TRpDataInfoItem.SetDatabaseAlias(Value:string);
@@ -323,14 +349,20 @@ end;
 
 destructor TRpDatabaseInfoItem.Destroy;
 begin
+{$IFDEF USESQLEXPRESS}
  FSQLInternalConnection.free;
+{$ENDIF}
+{$IFDEF USEIBX}
  if Assigned(FIBDatabase) then
  begin
   FIBDatabase.DefaultTransaction.Free;
   FIBDatabase.Free;
  end;
-{$IFDEF MSWINDOWS}
+{$ENDIF}
+{$IFDEF USEBDE}
  FBDEDatabase.free;
+{$ENDIF}
+{$IFDEF USEADO}
  FADOConnection.free;
 {$ENDIF}
  inherited Destroy;
@@ -430,7 +462,7 @@ begin
  FDriver:=rpdatadbexpress;
 end;
 
-
+{$IFDEF USESQLEXPRESS}
 procedure UpdateConAdmin;
 begin
  if Assigned(ConAdmin) then
@@ -445,20 +477,19 @@ procedure CreateConAdmin;
 begin
  ConAdmin:=TRpConnAdmin.Create;
 end;
+{$ENDIF}
 
 procedure TRpDatabaseinfoitem.Connect;
+{$IFDEF USESQLEXPRESS}
 var
  conname:string;
  funcname,drivername,vendorlib,libraryname:string;
-begin
-{$IFDEF LINUX}
- if (FDriver in [rpdatabde..rpdataado]) then
-  Raise Exception.Create(SRpDriverNotSupported);
 {$ENDIF}
-
+begin
  case Fdriver of
   rpdatadbexpress:
    begin
+{$IFDEF USESQLEXPRESS}
      if Not Assigned(FSQLConnection) then
      begin
       if Not Assigned(FSQLInternalConnection) then
@@ -498,9 +529,13 @@ begin
       FSQLConnection.GetDriverFunc:=funcname;
       FSQLConnection.Connected:=true;
      end;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverDBX);
+{$ENDIF}
    end;
   rpdataibx:
    begin
+{$IFDEF USESQLEXPRESS}
      if Not Assigned(FIBDatabase) then
      begin
       FIBDatabase:=TIBDatabase.Create(nil);
@@ -522,6 +557,9 @@ begin
      end;
      ConvertParamsFromDBXToIBX(FIBDatabase);
      FIBDatabase.Connected:=true;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+{$ENDIF}
    end;
   rpdatamybase:
    begin
@@ -529,7 +567,7 @@ begin
    end;
   rpdatabde:
    begin
-{$IFDEF MSWINDOWS}
+{$IFDEF USEBDE}
     FBDEAlias:=Alias;
     if Not Assigned(FBDEDatabase) then
     begin
@@ -550,11 +588,13 @@ begin
      Session.GetAliasParams(FBDEAlias,FBDEDatabase.Params);
     FBDEDatabase.LoginPrompt:=LoginPrompt;
     FBDEDatabase.Connected:=true;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverBDE);
 {$ENDIF}
    end;
   rpdataado:
    begin
-{$IFDEF MSWINDOWS}
+{$IFDEF USEADO}
     if Not Assigned(FADOConnection) then
      FADOConnection:=TADOConnection.Create(nil);
     if FADOConnection.ConnectionString=ADOConnectionString then
@@ -570,6 +610,8 @@ begin
     FADOConnection.ConnectionString:=ADOConnectionString;
     FADOConnection.LoginPrompt:=LoginPrompt;
     FADOConnection.Connected:=true;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverADO);
 {$ENDIF}
    end;
  end;
@@ -577,6 +619,7 @@ end;
 
 procedure TRpDatabaseinfoitem.DisConnect;
 begin
+{$IFDEF USESQLEXPRESS}
  if Assigned(FSQLConnection) then
  begin
   if FSQLCOnnection=FSQLInternalConnection then
@@ -584,13 +627,18 @@ begin
    FSQLConnection.Connected:=False;
   end;
  end;
+{$ENDIF}
+{$IFDEF USEIBX}
  if Assigned(FIBDatabase) then
  begin
   FIBDatabase.Connected:=False;
  end;
-{$IFDEF MSWINDOWS}
+{$ENDIF}
+{$IFDEF USEBDE}
  if Assigned(FBDEDatabase) then
   FBDEDatabase.Connected:=false;
+{$ENDIF}
+{$IFDEF USEADO}
  if Assigned(FADOConnection) then
   FADOConnection.Connected:=false;
 {$ENDIF}
@@ -659,11 +707,19 @@ begin
     case databaseinfo.items[index].FDriver of
      rpdatadbexpress:
       begin
+{$IFDEF USESQLEXPRESS}
        FSQLInternalQuery:=TSQLQuery.Create(nil);
+{$ELSE}
+       Raise Exception.Create(SRpDriverNotSupported+SrpDriverDBX);
+{$ENDIF}
       end;
      rpdataibx:
       begin
+{$IFDEF USESIBX}
        FSQLInternalQuery:=TIBQuery.Create(nil);
+{$ELSE}
+       Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+{$ENDIF}
       end;
      rpdatamybase:
       begin
@@ -671,14 +727,18 @@ begin
       end;
      rpdatabde:
       begin
-{$IFDEF MSWINDOWS}
+{$IFDEF USEBDE}
        FSQLInternalQuery:=TQuery.Create(nil);
+{$ELSE}
+       Raise Exception.Create(SRpDriverNotSupported+SrpDriverBDE);
 {$ENDIF}
       end;
      rpdataado:
       begin
-{$IFDEF MSWINDOWS}
+{$IFDEF USEADO}
        FSQLInternalQuery:=TADOQuery.Create(nil);
+{$ELSE}
+       Raise Exception.Create(SRpDriverNotSupported+SrpDriverADO);
 {$ENDIF}
       end;
     end;
@@ -688,25 +748,29 @@ begin
     case databaseinfo.items[index].FDriver of
      rpdatadbexpress:
       begin
+{$IFDEF USESQLEXPRESS}
        if Not (FSQLInternalQuery is TSQLQuery) then
        begin
         FSQLInternalQuery.Free;
         FSQLInternalQuery:=nil;
         FSQLInternalQuery:=TSQLQuery.Create(nil);
        end;
+{$ENDIF}
       end;
      rpdataibx:
       begin
+{$IFDEF USEIBX}
        if Not (FSQLInternalQuery is TIBQuery) then
        begin
         FSQLInternalQuery.Free;
         FSQLInternalQuery:=nil;
         FSQLInternalQuery:=TIBQuery.Create(nil);
        end;
+{$ENDIF}
       end;
      rpdatabde:
       begin
-{$IFDEF MSWINDOWS}
+{$IFDEF USEBDE}
        if Not (FSQLInternalQuery is TQuery) then
        begin
         FSQLInternalQuery.Free;
@@ -717,7 +781,7 @@ begin
       end;
      rpdataado:
       begin
-{$IFDEF MSWINDOWS}
+{$IFDEF USEADO}
        if Not (FSQLInternalQuery is TADOQuery) then
        begin
         FSQLInternalQuery.Free;
@@ -735,12 +799,15 @@ begin
    case databaseinfo.items[index].Driver of
     rpdatadbexpress:
      begin
+{$IFDEF USESQLEXPRESS}
       TSQLQuery(FSQLInternalQuery).SQLConnection:=
        databaseinfo.items[index].SQLConnection;
       TSQLQuery(FSQLInternalQuery).SQL.Text:=SQL;
+{$ENDIF}
      end;
     rpdataibx:
      begin
+{$IFDEF USEIBX}
       TIBQuery(FSQLInternalQuery).Database:=
        databaseinfo.items[index].FIBDatabase;
       TIBQuery(FSQLInternalQuery).SQL.Text:=SQL;
@@ -750,6 +817,7 @@ begin
         TIBQuery(FSQLInternalQuery).Database.DefaultTransaction;
       end;
       TIBQuery(FSQLInternalQuery).UniDirectional:=true;
+{$ENDIF}
      end;
     rpdatamybase:
      begin
@@ -765,7 +833,7 @@ begin
      end;
     rpdatabde:
      begin
-{$IFDEF MSWINDOWS}
+{$IFDEF USEBDE}
       TQuery(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEAlias;
       TQuery(FSQLInternalQuery).SQL.Text:=SQL;
       TQuery(FSQLInternalQUery).UniDirectional:=True;
@@ -773,7 +841,7 @@ begin
      end;
     rpdataado:
      begin
-{$IFDEF MSWINDOWS}
+{$IFDEF USEADO}
       TADOQuery(FSQLInternalQuery).Connection:=databaseinfo[index].FADOConnection;
       TADOQuery(FSQLInternalQuery).SQL.Text:=SQL;
       TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
@@ -787,25 +855,29 @@ begin
     case databaseinfo.items[index].Driver of
      rpdatadbexpress:
       begin
+{$IFDEF USESQLEXPRESS}
        if Not Assigned(TSQLQuery(FSQLInternalQuery).DataSource) then
         TSQLQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
        if datainfosource.cached then
         TSQLQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
        else
         TSQLQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+{$ENDIF}
       end;
      rpdataibx:
       begin
+{$IFDEF USEIBX}
        if Not Assigned(TIBQuery(FSQLInternalQuery).DataSource) then
         TIBQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
        if datainfosource.cached then
         TIBQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
        else
         TIBQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+{$ENDIF}
       end;
      rpdatabde:
       begin
-{$IFDEF MSWINDOWS}
+{$IFDEF USEBDE}
        if Not Assigned(TQuery(FSQLInternalQuery).DataSource) then
         TQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
        if datainfosource.cached then
@@ -816,7 +888,7 @@ begin
       end;
      rpdataado:
       begin
-{$IFDEF MSWINDOWS}
+{$IFDEF USEADO}
        if Not Assigned(TADOQuery(FSQLInternalQuery).DataSource) then
         TADOQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
        if datainfosource.cached then
@@ -837,19 +909,23 @@ begin
      case databaseinfo.items[index].Driver of
       rpdatadbexpress:
        begin
+{$IFDEF USESQLEXPRESS}
         TSQLQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
          ParamTypeToDataType(param.ParamType);
         TSQLQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
+{$ENDIF}
        end;
       rpdataibx:
        begin
+{$IFDEF USEIBX}
         TIBQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
          ParamTypeToDataType(param.ParamType);
         TIBQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
+{$ENDIF}
        end;
       rpdatabde:
        begin
-{$IFDEF MSWINDOWS}
+{$IFDEF USEBDE}
         TQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
          ParamTypeToDataType(param.ParamType);
         TQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
@@ -857,7 +933,7 @@ begin
        end;
       rpdataado:
        begin
-{$IFDEF MSWINDOWS}
+{$IFDEF USEADO}
         TADOQuery(FSQLInternalQuery).Parameters.ParamByName(param.Name).DataType:=
          ParamTypeToDataType(param.ParamType);
         TADOQuery(FSQLInternalQuery).Parameters.ParamByName(param.Name).Value:=param.Value;
@@ -913,6 +989,7 @@ begin
  end;
 end;
 
+{$IFDEF USESQLEXPRESS}
 constructor TRpConnAdmin.Create;
 begin
  LoadConfig;
@@ -932,6 +1009,7 @@ begin
  end;
  inherited Destroy;
 end;
+
 
 procedure TRpConnAdmin.LoadConfig;
 {$IFDEF LINUX}
@@ -1018,16 +1096,25 @@ begin
  VendorLib:=drivers.ReadString(DriverName,VENDORLIB_KEY,'');
 end;
 
+{$ENDIF}
+
 initialization
 
+{$IFDEF USESQLEXPRESS}
 ConAdmin:=nil;
+{$ENDIF}
 
 finalization
 
+{$IFDEF USESQLEXPRESS}
 if Assigned(ConAdmin) then
 begin
  ConAdmin.free;
  ConAdmin:=nil;
 end;
+{$ENDIF}
 
 end.
+
+
+
