@@ -711,7 +711,7 @@ end;
 
 procedure TRpSizePosInterface.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
- NewLeft,NewTop:integer;
+ NewLeft,NewTop,difx,dify,i:integer;
  insp:TFRpObjInsp;
  aitem:TRpCommonPosComponent;
  afitem:TRpSizePosInterface;
@@ -777,7 +777,7 @@ begin
    TRpCOmmonPosComponent(printitem).PosY:=pixelstotwips(NewTop);
    UpdatePos;
    if Assigned(fobjinsp) then
-    TFRpObjInspVCL(fobjinsp).AddCompItem(Self,Not (ssShift in Shift));
+    TFRpObjInsp(fobjinsp).AddCompItem(Self,Not (ssShift in Shift));
   end;
  end;
 end;

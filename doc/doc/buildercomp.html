@@ -39,6 +39,9 @@
   </tr>
 </table>
 <p>You must install the packages in the correct order.</p>
+<p>C++Builder 6 does not allow sharing VCL and CLX forms in the same project as 
+  Delphi allow, so you must include antivcl.hpp unit in your project to disable 
+  VCL support in Report Manager engine.</p>
 <p>Note: C++Builder have known problems using qt library wrappers, and QPrinter, 
   to fix QPrinter you must install a updated qtintf.dll library, installed after 
   Delphi 6 Update Pack #2, but to fix problems with Qt library wrappers you should 
@@ -53,6 +56,8 @@
 <p>To compile your projetcs you must add the report manager components directory 
   to the library path, and for CLX application you may need add antivcl.hpp file 
   to avoid the use of VCL components in a CLX application.</p>
+<p>Thanks to Cristian A. Bugeiro (cbugeiro@fibertel.com.ar) for the antivcl.hpp 
+  and the help for building the C++Builder 6 packages.</p>
 <p>If you compile with runtime packages you must include the .bpl files generated 
   with your application (just like other Borland packages)</p>
 </body>

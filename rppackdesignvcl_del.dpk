@@ -48,7 +48,8 @@ contains
   rpmdfaboutvcl in 'rpmdfaboutvcl.pas' {FRpAboutBoxVCL},
   rpmdfbarcodeintvcl in 'rpmdfbarcodeintvcl.pas',
   rpmdfchartintvcl in 'rpmdfchartintvcl.pas',
-  rpmdfdatainfovcl in 'rpmdfdatainfovcl.pas' {FRpDatainfoconfigVCL},
+  rpmdfdinfovcl in 'rpmdfdinfovcl.pas' {FRpDatainfoconfigVCL},
+  rpmdfdatasetsvcl in 'rpmdfdatasetsvcl.pas' {FRpDatasetsVCL},
   rpmdfdesignvcl in 'rpmdfdesignvcl.pas' {FRpDesignFrameVCL: TFrame},
   rpmdfdrawintvcl in 'rpmdfdrawintvcl.pas',
   rpmdfgridvcl in 'rpmdfgridvcl.pas' {FRpGridOptionsVCL},
@@ -64,3 +65,4 @@ contains
   rpmdfwizardvcl in 'rpmdfwizardvcl.pas' {FRpWizardVCL};
 
 end.
+a

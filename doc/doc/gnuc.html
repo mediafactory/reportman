@@ -1,0 +1,73 @@
+<html>
+<head>
+<title>Using Report Manager from GNU C</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Basic report design</h2>
+<h3><b>Using Report Manager from GNU C</b></h3>
+<p>This is a guide for using Report Manager from GNU C, this guide can be used 
+  also for any other language capable of using dynamic link libraries.</p>
+<p>In Microsoft Windows the functions are inside Reportman.ocx library, you can 
+  see delphi pascal definitions in rpreportmanapi.pas file. The C definitions 
+  are in rpreportmanapi.h file, you must link to libreportmanapi.so. It supports 
+  C and C++.</p>
+<p>The libraries are:</p>
+<table width="100%" border="1">
+  <tr> 
+    <td bgcolor="#FFFFCC"><strong>Microsoft Windows</strong></td>
+    <td bgcolor="#FFFFCC"><strong>Linux</strong></td>
+  </tr>
+  <tr> 
+    <td>Reportman.ocx</td>
+    <td>libreportmanapi.so (no qt dependence no X-Server need)</td>
+  </tr>
+  <tr> 
+    <td>Reportman.lib (impor library)</td>
+    <td>libreportmanapiqt.so (qt dependence, X-Server need)</td>
+  </tr>
+</table>
+<p>The calling convention of exported funtions is stdcall. </p>
+<p>It you want preview functionallity you must use reportmanapiqt.h, and link 
+  to libreportmanapiqt.so library, this library needs a X-Server running and needs 
+  also libborqt provided libraries.</p>
+<p>Note the libraries that ususally uses the designer and the database libraries 
+  must be in library path, or you must use the same launch procedure (repmand.sh) 
+  to start your compiled applications.</p>
+<p>Functionality is about returning a handle to a report and process this report 
+  passing the handle to next report engine function calls:</p>
+<p>int rp_open(char *filename);<br>
+  int rp_execute(int hreport,char *outputfilename,int metafile,int compressed);<br>
+  int rp_close(int hreport);<br>
+  char *rp_lasterror(void);<br>
+</p>
+<p>All the functions returns 0 if fail, the rp_lasterror function returns the 
+  error message. The call of a report engine function clears the rp_lasterror 
+  returned value, so you should call rp_lasterror after checking if the function 
+  is successfull:</p>
+<p> int hreport;</p>
+<p> char reportmanfile[]=&quot;/home/toni/cvsroot/reportman/repman/repsamples/sample4.rep&quot;;</p>
+<p> hreport=rp_open(reportmanfile);<br>
+  if (hreport==0)<br>
+  { <br>
+  printf(&quot;Error loading: &quot;);<br>
+  printf(rp_lasterror());<br>
+  printf(&quot;\n&quot;);<br>
+  }</p>
+<p>To compile the program you use:</p>
+<p> g++ -o test test.cc -L. libreportmanapi.so</p>
+<p>The -L. is used to search for the library in current directory, you can remove 
+  the switch and copy the library to the correct library directory.</p>
+<p><strong>In GNU C Microsoft Windows</strong></p>
+<p>g++ -o test test.cc -L. Reportman.lib</p>
+<p>Where Reportman.lib is the import library for Reportman.ocx.</p>
+<p>You can create the import library:</p>
+<p>implib Reportman.lib Reportman.ocx</p>
+<p><strong>With C++Builder</strong></p>
+<p>You can create the import library:</p>
+<p>implib Reportman.lib Reportman.ocx</p>
+<p>Then add to your project so the compiler includes it in the link stage.</p>
+<p></p>
+</body>
+</html>

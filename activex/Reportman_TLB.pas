@@ -12,7 +12,7 @@ unit Reportman_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 01/04/2003 20:34:53 from Type Library described below.
+// File generated on 20/05/2003 12:32:25 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
@@ -21,27 +21,15 @@ unit Reportman_TLB;
 // Helpfile: 
 // HelpString: Report Manager ActiveX Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINDOWS\System32\stdole2.tlb)
+//   (1) v2.0 stdole, (C:\WINNT\System32\stdole2.tlb)
 // ************************************************************************ //
-
-{$I rpconf.inc}
-
-{$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers.
-
-{$IFDEF USEVARIANTS}
- {$WARN SYMBOL_PLATFORM OFF}
- {$VARPROPSETTER ON}
-{$ENDIF}
-
+{$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
+{$WARN SYMBOL_PLATFORM OFF}
 {$WRITEABLECONST ON}
+{$VARPROPSETTER ON}
 interface
 
-
-uses Windows, ActiveX, Classes, Graphics, OleCtrls,
-{$IFDEF USEVARIANT}
- Variants,
-{$ENDIF}
- StdVCL;
+uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL, Variants;
   
 
 // *********************************************************************//

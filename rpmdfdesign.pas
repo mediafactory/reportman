@@ -32,6 +32,8 @@ uses
 
 const
  CONS_RULER_LEFT=20;
+ CONS_RIGHTPWIDTH=6;
+
 type
 
   // A ScrollBox that not scrolls in view focused controls
@@ -45,7 +47,7 @@ type
 
   TRpPanelRight=Class(TPanel)
    private
-    FFrame:TFRpDesignFrameVCL;
+    FFrame:TFRpDesignFrame;
     FRectangle:TRpRectangle;
     FRectangle2:TRpRectangle;
     FRectangle3:TRpRectangle;
@@ -71,14 +73,16 @@ type
     FXOrigin,FYOrigin:integer;
     FBlocked:boolean;
     allowselect:Boolean;
+    FRectangle:TRpRectangle;
+    FRectangle2:TRpRectangle;
+    FRectangle3:TRpRectangle;
+    FRectangle4:TRpRectangle;
    protected
     procedure Paint;override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer);override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
-    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
-      X, Y: Integer); override;
    public
     CaptionText:WideString;
     section:TRpSection;
@@ -596,13 +600,13 @@ end;
 procedure TRpPaintEventPanel.MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
 var
- dframe:TFRpDesignFrameVCL;
+ dframe:TFRpDesignFrame;
 begin
  inherited MouseDown(Button,Shift,X,Y);
 
  if allowselect then
  begin
-  dframe:=TFRpDesignFrameVCL(Owner);
+  dframe:=TFRpDesignFrame(Owner);
   dframe.freportstructure.SelectDataItem(section);
  end;
 

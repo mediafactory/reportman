@@ -3,6 +3,7 @@ DELPHIPATH=c:\prog\Delphi7
 REPORTMANPATH=c:\prog\toni\cvsroot\reportman\reportman;$(DELPHIPATH)\OCX\Servers
 PACKAGESPATH="$(DELPHIPATH)\Projects\Bpl"
 COMPILE="$(DELPHIPATH)\bin\dcc32" -LN$(PACKAGESPATH) -LE$(PACKAGESPATH) -U"$(REPORTMANPATH);$(DELPHIPATH)\projects\bpl" -I"$(REPORTMANPATH)"
+IMPLIB="c:\prog\cbuilder6\bin\implib" 
 all: clean packages reportman
 
 reportman: reportmanutils reportmanserver reportmanutilsxp reportmanserverxp
@@ -90,6 +91,7 @@ reportmanutilsxp: designerxp
 
         cd activex
         $(COMPILE) Reportman.dpr
+        $(IMPLIB) Reportman.lib Reportman.ocx
         cd ..
 
 reportmanserverxp:
@@ -143,7 +145,7 @@ clean:
         -del /s *.ocx
         -del *.bpl
         -del *.bpi
-        -del *.lib
+        -del activex\*.lib
 
 
 

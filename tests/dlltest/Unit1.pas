@@ -29,7 +29,7 @@ var
  aresult:integer;
 begin
  // Gets
- index:=rp_open('c:\prog\toni\reportman\repman\repsamples\sample2.rep');
+ index:=rp_open('c:\prog\toni\cvsroot\reportman\reportman\repman\repsamples\sample2.rep');
  if index=0 then
   Raise Exception.Create(rp_lasterror);
  showmessage(intToStr(index));
