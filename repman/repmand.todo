@@ -25,7 +25,7 @@
 {TODO 1  -oToni -cEngine : Saving and loading from database tables}
 
 
-{TODO 1 -oToni -cDesign Interface : Drop Fields directly from a floating window when click in expression}
+{DONE 1 -oToni -cDesign Interface : Drop Fields directly from a floating window when click in expression}
 
 
 
