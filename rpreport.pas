@@ -948,9 +948,9 @@ begin
 
 
  if PageOrientation=rpOrientationLandscape then
-  freespace:=PageWidth
+  freespace:=FInternalPageWidth
  else
-  freespace:=Pageheight;
+  freespace:=FInternalPageheight;
  freespace:=freespace-FTopMargin-FBottomMargin;
 
  pagefooters:=TStringList.Create;

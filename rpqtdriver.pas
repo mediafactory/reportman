@@ -31,7 +31,7 @@ uses
 {$ENDIF}
 Classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
  rpmunits,QPrinters,QDialogs,rpgraphutils, QControls,
- QStdCtrls,QExtCtrls,types,DateUtils,rptypes,
+ QStdCtrls,QExtCtrls,types,DateUtils,rptypes,Qt,
  rpreport;
 
 

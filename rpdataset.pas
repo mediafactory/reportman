@@ -173,8 +173,6 @@ end;
 
 
 procedure TRpDataSet.DoAfterOpen;
-var
- i:integer;
 begin
  inherited DoAfterOpen;
  LogChanges:=false;
