@@ -167,7 +167,8 @@ end;
 procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer);
 var
  posx,posy:integer;
- rec,recsrc:TRect;
+ rec:TRect;
+// recsrc:TRect;
  X, Y, W, H, S: Integer;
  Width,Height:integer;
  stream:TMemoryStream;
@@ -262,11 +263,13 @@ begin
        Canvas.StretchDraw(rec,bitmap);
       rpDrawCrop:
        begin
-        recsrc.Top:=0;
-        recsrc.Left:=0;
-        recsrc.Bottom:=Height-1;
-        recsrc.Right:=Width-1;
-        Canvas.CopyRect(rec,bitmap.canvas,recsrc);
+//      Crop Should cut graphic but it don't work
+//        recsrc.Top:=0;
+//        recsrc.Left:=0;
+//        recsrc.Bottom:=Height-1;
+//        recsrc.Right:=Width-1;
+//        Canvas.CopyRect(rec,bitmap.canvas,recsrc);
+        Canvas.Draw(PosX,PosY,bitmap);
        end;
       rpDrawTile:
        begin
