@@ -104,7 +104,7 @@ type
    procedure SetIniNumPage(Value:Boolean);
    function GetIsExternal:Boolean;
   protected
-   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
    procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
@@ -399,7 +399,7 @@ begin
  end;
 end;
 
-procedure TRpSection.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpSection.DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  i:integer;
@@ -408,7 +408,7 @@ var
  intPartialPrint:Boolean;
  DoPartialPrint:BOolean;
 begin
- inherited DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
+ inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
 
  DoPartialPrint:=False;
  // Look for a partial print
@@ -426,36 +426,64 @@ begin
  for i:=0 to FReportComponents.Count-1 do
  begin
   compo:=TRpCommonPosComponent(FReportComponents.Items[i].Component);
+  newwidth:=-1;
+  newheight:=-1;
+  // Component alignment
+  case compo.align of
+   rpalnone:
+    begin
+     newposx:=aposx+compo.PosX;
+     newposy:=aposy+compo.PosY;
+    end;
+   rpalbottom:
+    begin
+     newposx:=aposx+compo.PosX;
+     newposy:=aposy+lastextent.Y-compo.lastextent.Y;
+    end;
+   rpalright:
+    begin
+     newposx:=aposx+lastextent.X-compo.lastextent.X;
+     newposy:=aposy+compo.PosY;
+    end;
+   rpalbotright:
+    begin
+     newposx:=aposx+compo.PosX;
+     newposy:=aposy+lastextent.Y-compo.lastextent.Y;
+    end;
+   rpalleftright:
+    begin
+     newposx:=aposx;
+     newposy:=aposy+compo.PosY;
+     newwidth:=lastextent.X;
+    end;
+   rpaltopbottom:
+    begin
+     newposx:=aposx+compo.PosX;
+     newposy:=aposy+compo.PosY;
+     newheight:=lastextent.Y;
+    end;
+   rpalclient:
+    begin
+     newposx:=aposx;
+     newposy:=aposy;
+     newwidth:=lastextent.X;
+     newheight:=lastextent.Y;
+    end;
+   else
+    begin
+     newposx:=aposx+compo.PosX;
+     newposy:=aposy+compo.PosY;
+    end;
+  end;
+
   if DoPartialPrint then
   begin
    if (compo is TRpExpression) then
     if TRpExpression(Compo).IsPartial then
     begin
-    // Alignbottom will change the component position
-     if (compo.Align<>rpalnone) then
-     begin
-      if (compo.Align in [rpalbottom,rpalbotright]) then
-      begin
-       newposy:=aposy+lastextent.Y-compo.lastextent.Y;
-      end
-      else
-       newposy:=aposy+compo.PosY;
-      // Alignbottom will change the component position
-      if (compo.Align in [rpalright,rpalbotright]) then
-      begin
-       newposx:=aposx+lastextent.X-compo.lastextent.X;
-      end
-      else
-       newposx:=aposx+compo.PosX;
-     end
-     else
-     begin
-      newposx:=aposx+compo.PosX;
-      newposy:=aposy+compo.PosY;
-     end;
      IntPartialPrint:=false;
-     FReportComponents.Items[i].Component.Print(adriver,newposx,newposy,metafile,
-      MaxExtent,IntPartialPrint);
+     FReportComponents.Items[i].Component.Print(adriver,newposx,newposy,
+      newwidth,newheight,metafile,MaxExtent,IntPartialPrint);
      if IntPartialPrint then
       PartialPrint:=True;
     end;
@@ -465,30 +493,9 @@ begin
    // Evaluates print condition of each comonent
    if compo.EvaluatePrintCondition then
    begin
-    // Alignbottom will change the component position
-    if (compo.Align<>rpalnone) then
-    begin
-     if (compo.Align in [rpalbottom,rpalbotright]) then
-     begin
-      newposy:=aposy+lastextent.Y-compo.lastextent.Y;
-     end
-     else
-      newposy:=aposy+compo.PosY;
-     // Alignbottom will change the component position
-     if (compo.Align in [rpalright,rpalbotright]) then
-     begin
-      newposx:=aposx+lastextent.X-compo.lastextent.X;
-     end
-     else
-      newposx:=aposx+compo.PosX;
-    end
-    else
-    begin
-     newposx:=aposx+compo.PosX;
-     newposy:=aposy+compo.PosY;
-    end;
     IntPartialPrint:=false;
-    FReportComponents.Items[i].Component.Print(adriver,newposx,newposy,metafile,
+    FReportComponents.Items[i].Component.Print(adriver,newposx,newposy,
+     newwidth,newheight,metafile,
      MaxExtent,IntPartialPrint);
     if IntPartialPrint then
      PartialPrint:=True;

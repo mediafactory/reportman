@@ -69,6 +69,9 @@ type
 
 
 
+ TRpPosAlign=(rpalnone,rpalbottom,rpalright,rpalbotright,
+  rpalleftright,rpaltopbottom,rpalclient);
+
  TRpSelectFontStep=(rpselectsize,rpselectcpi20,rpselectcpi17,rpselectcpi15,rpselectcpi12,
   rpselectcpi10,rpselectcpi6,rpselectcpi5);
 
@@ -197,6 +200,8 @@ type
 
 
 
+function StrToAlign(value:string):TRpPosAlign;
+function AlignToStr(value:TRpPosAlign):string;
 function VarIsString(avar:Variant):Boolean;
 function IsRedColor(Color:Integer):Boolean;
 // Compares 2 streams and returns true if they are equal
@@ -1868,9 +1873,11 @@ If (i<>0) and (centavos>0) then begin
    1: Result:=Unidades(Centavos);
    2: Result:=Decenas(Centavos);
  end;
- Result:=Result+s+' con '+Result;
+ Result:=s+' con '+Result;
 end else
- Result:=Result+s;
+ Result:=s;
+ If Length(Result)>0 then
+  Result[1]:=WideString(UpperCase(Result))[1];
 end;
 
 
@@ -2647,6 +2654,60 @@ end;
 {$ENDIF}
 {$ENDIF}
 
+function AlignToStr(value:TRpPosAlign):string;
+begin
+ case value of
+  rpalnone:
+   REsult:=SRpNone;
+  rpalbottom:
+   Result:=SRPBottom;
+  rpalright:
+   Result:=SRPSRight;
+  rpalbotright:
+   Result:=SRPBottom+'/'+SRpSRight;
+  rpalleftright:
+   Result:=SRpLeftRight;
+  rpaltopbottom:
+   Result:=SRpTopBottom;
+  rpalclient:
+   Result:=SRpAllClient;
+ end;
+end;
+
+function StrToAlign(value:string):TRpPosAlign;
+begin
+ Result:=rpalnone;
+ if value=SRPBottom then
+ begin
+  Result:=rpalbottom;
+  exit;
+ end;
+ if value=SRPSRight then
+ begin
+  Result:=rpalright;
+  exit;
+ end;
+ if value=SRPBottom+'/'+SRpSRight then
+ begin
+  Result:=rpalbotright;
+  exit;
+ end;
+ if value=SRpLeftRight then
+ begin
+  Result:=rpalleftright;
+  exit;
+ end;
+ if value=SRpTopBottom then
+ begin
+  Result:=rpaltopbottom;
+  exit;
+ end;
+ if value=SRpAllClient then
+ begin
+  Result:=rpalclient;
+  exit;
+ end;
+end;
 
 initialization
 
