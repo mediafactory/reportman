@@ -25,7 +25,7 @@ uses
 {$IFDEF USEVARIANTS}
  Variants,
 {$ENDIF}
- Db,
+ DB,
  rptypes;
 
 const

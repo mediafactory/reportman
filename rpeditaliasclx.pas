@@ -30,7 +30,7 @@ uses
   Designintf,DesignEditors,
   TypInfo,DB,rpdatainfo,
   rpeditconn,
-  ImgList, StdCtrls;
+  ImgList, StdCtrls, QImgList, QStdCtrls;
 
 type
   TFRpEditAlias = class(TForm)
@@ -60,6 +60,7 @@ type
     procedure ADeleteExecute(Sender: TObject);
     procedure ComboDatasetClick(Sender: TObject);
     procedure ARenameExecute(Sender: TObject);
+    procedure BOKClick(Sender: TObject);
   private
     { Private declarations }
     rpalias1:TRpAlias;
@@ -69,6 +70,7 @@ type
 {$IFDEF USEVARIANTS}
     Designer:IDesigner;
 {$ENDIF}
+    dook:Boolean;
     procedure UpdateList;
     procedure FillComboDataset;
     procedure AddDatasetName(const aname:string);
@@ -117,7 +119,7 @@ begin
     break;
    end;
   end;
-  if (dia.ShowModal=mrOK) then
+  if (dia.dook) then
   begin
    for i:=0 to PropCount-1 do
    begin
@@ -354,5 +356,11 @@ begin
  LAliasesClick(Self);
 end;
 
+
+procedure TFRpEditAlias.BOKClick(Sender: TObject);
+begin
+ dook:=true;
+ Close;
+end;
 
 end.

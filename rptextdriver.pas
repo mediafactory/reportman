@@ -1561,8 +1561,10 @@ var
  i:integer;
  atposition:integer;
  atindex:integer;
-{$IFNDEF DOTNETD}
- res:PChar;
+{$IFDEF MSWINDOWS}
+ {$IFNDEF DOTNETD}
+  res:PChar;
+ {$ENDIF}
 {$ENDIF}
  wasunderline:boolean;
  currentcount:integer;
