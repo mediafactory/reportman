@@ -64,7 +64,6 @@ type
   rpdatabde,rpdataado,rpdataibo);
 
 
-{$IFDEF USECONADMIN}
  TRpConnAdmin=class(TObject)
   public
    driverfilename:string;
@@ -74,10 +73,13 @@ type
    constructor Create;
    destructor destroy;override;
    procedure LoadConfig;
+   procedure GetDriverNames(alist:TStrings);
    procedure GetConnectionParams(conname:string;params:TStrings);
    procedure GetDriverLibNames(const drivername:string;var LibraryName,VendorLib:string);
+   procedure GetConnectionNames(alist:TStrings;drivername:String);
+   procedure AddConnection(newname:string;drivername:string);
+   procedure DeleteConnection(conname:string);
  end;
-{$ENDIF}
 
 
  TRpDatabaseInfoItem=class(TCollectionItem)
@@ -240,9 +242,7 @@ type
    constructor Create(rep:TComponent);
   end;
 
-{$IFDEF USECONADMIN}
 procedure UpdateConAdmin;
-{$ENDIF}
 procedure GetRpDatabaseDrivers(alist:TStrings);
 
 implementation
@@ -268,10 +268,8 @@ const
   SConfExtension = '.conf';                       { Do not localize }
 {$ENDIF}
 
-{$IFDEF USECONADMIN}
 var
  ConAdmin:TRpConnAdmin;
-{$ENDIF}
 
 {$IFDEF USEBDE}
 procedure AddParamsFromDBXToBDE(paramssource,params:TStrings);
@@ -639,7 +637,6 @@ begin
  FDriver:=rpdatadbexpress;
 end;
 
-{$IFDEF USECONADMIN}
 procedure UpdateConAdmin;
 begin
  if Assigned(ConAdmin) then
@@ -654,7 +651,6 @@ procedure CreateConAdmin;
 begin
  ConAdmin:=TRpConnAdmin.Create;
 end;
-{$ENDIF}
 
 
 {$IFDEF USEADO}
@@ -1463,10 +1459,79 @@ begin
  end;
 end;
 
-{$IFDEF USECONADMIN}
 constructor TRpConnAdmin.Create;
 begin
  LoadConfig;
+end;
+
+procedure TRpConnAdmin.DeleteConnection(conname:string);
+begin
+ config.EraseSection(conname);
+end;
+
+procedure TRpConnAdmin.AddConnection(newname:string;drivername:string);
+var
+ alist:TStringList;
+ i:integer;
+begin
+ config.EraseSection(newname);
+ alist:=TStringList.Create;
+ try
+  drivers.ReadSectionValues(drivername,alist);
+  config.WriteString(newname,'DriverName',drivername);
+  for i:=0 to alist.count-1 do
+  begin
+   if Uppercase(alist.Names[i])<>'GETDRIVERFUNC' then
+    if Uppercase(alist.Names[i])<>'VENDORLIB' then
+     if Uppercase(alist.Names[i])<>'LIBRARYNAME' then
+     begin
+      config.WriteString(newname,alist.Names[i],alist.Values[alist.Names[i]]);
+     end;
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
+procedure TRpConnAdmin.GetConnectionNames(alist:TStrings;drivername:String);
+var
+ alist2:TStringList;
+ i:integer;
+begin
+ alist.clear;
+ alist2:=TStringList.Create;
+ try
+  config.ReadSections(alist2);
+  for i:=0 to alist2.Count-1 do
+  begin
+   if Length(drivername)>0 then
+   begin
+    if UpperCase(config.ReadString(alist2.Strings[i],'DriverName',''))=
+     UpperCase(drivername) then
+     alist.Add(alist2.Strings[i]);
+   end
+   else
+    alist.Add(alist2.Strings[i]);
+  end;
+ finally
+  alist2.free;
+ end;
+end;
+
+procedure TRpConnAdmin.GetDriverNames(alist:TStrings);
+var
+ alist2:TStringList;
+ i:integer;
+begin
+ alist.clear;
+ alist2:=TStringList.Create;
+ try
+  drivers.ReadSection('Installed Drivers',alist2);
+  for i:=0 to alist2.count-1 do
+   alist.add(alist2.Strings[i]);
+ finally
+  alist2.free;
+ end;
 end;
 
 destructor TRpConnAdmin.Destroy;
@@ -1671,7 +1736,6 @@ begin
  LibraryName:=drivers.ReadString(DriverName,DLLLIB_KEY,'');
  VendorLib:=drivers.ReadString(DriverName,VENDORLIB_KEY,'');
 end;
-{$ENDIF}
 
 function TRpDatabaseInfoItem.GetStreamFromSQL(sqlsentence:String;params:TStringList):TStream;
 var
@@ -2094,19 +2158,15 @@ end;
 
 initialization
 
-{$IFDEF USECONADMIN}
 ConAdmin:=nil;
-{$ENDIF}
 
 finalization
 
-{$IFDEF USECONADMIN}
 if Assigned(ConAdmin) then
 begin
  ConAdmin.free;
  ConAdmin:=nil;
 end;
-{$ENDIF}
 
 
 end.

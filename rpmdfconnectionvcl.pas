@@ -23,7 +23,11 @@ interface
 {$I rpconf.inc}
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Windows, Messages, SysUtils,
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
+  Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ExtCtrls, ComCtrls, ToolWin, ActnList, ImgList,
 {$IFDEF USEBDE}
   dbtables,
@@ -31,7 +35,9 @@ uses
 {$IFDEF USEADO}
   adodb,
 {$ENDIF}
-  rpdatainfo,rpmdconsts, DBConnAdmin,rpgraphutilsvcl,rpdbxconfigvcl,
+  rpdatainfo,rpmdconsts,
+//  DBConnAdmin,
+  rpgraphutilsvcl,rpdbxconfigvcl,
   Menus;
 
 type
@@ -84,7 +90,7 @@ type
     procedure EConnectionStringChange(Sender: TObject);
   private
     { Private declarations }
-    conadmin:IConnectionAdmin;
+    conadmin:TRpCOnnAdmin;
     FDatabaseInfo:TRpDatabaseInfoList;
     procedure SetDatabaseInfo(Value:TRpDatabaseInfoList);
     procedure MenuAddClick(Sender:TObject);
@@ -92,6 +98,7 @@ type
   public
     { Public declarations }
     constructor Create(AOwner:TComponent);override;
+    destructor Destroy;override;
     property Databaseinfo:TRpDatabaseInfoList read FDatabaseinfo
      write SetDatabaseInfo;
   end;
@@ -113,23 +120,18 @@ begin
  GetRpDatabaseDrivers(GDriver.Items);
  GetRpDatabaseDrivers(ComboDriver.Items);
 
-{$IFDEF USECONADMIN}
- UpdateConAdmin;
-{$ENDIF}
 
- try
-  ConAdmin:=GetConnectionAdmin;
- except
-  on e:Exception do
-  begin
-   ShowMessage(E.message);
-  end;
- end;
+ ConAdmin:=TRpConnAdmin.Create;
 
  GDriver.ItemIndex:=0;
  GDriverClick(Self);
 end;
 
+destructor TFRpConnectionVCL.Destroy;
+begin
+ conadmin.free;
+ inherited destroy;
+end;
 
 procedure TFRpConnectionVCL.SetDatabaseInfo(Value:TRpDatabaseInfoList);
 var
@@ -276,24 +278,10 @@ end;
 
 procedure TFRpConnectionVCL.BConfigClick(Sender: TObject);
 begin
-{$IFDEF USECONADMIN}
-    ConAdmin:=nil;
-    ShowDBXConfig(TRpDbDriver(GDriver.ItemIndex) in [rpdataibx,rpdataibo]);
-    UpdateConAdmin;
-//    if Assigned(ConAdmin) then
-//    begin
-//     ConAdmin:=nil;
-     try
-      ConAdmin:=GetConnectionAdmin;
-     except
-      on e:Exception do
-      begin
-       ShowMessage(E.message);
-      end;
-     end;
-     conadmin.GetConnectionNames(ComboAvailable.Items,'');
-//    end;
-{$ENDIF}
+ ShowDBXConfig(TRpDbDriver(GDriver.ItemIndex) in [rpdataibx,rpdataibo]);
+ conadmin.free;
+ conadmin:=TRPCOnnAdmin.Create;
+ conadmin.GetConnectionNames(ComboAvailable.Items,'');
 end;
 
 procedure TFRpConnectionVCL.BBuildClick(Sender: TObject);

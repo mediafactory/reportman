@@ -30,7 +30,11 @@ uses SysUtils, Classes, Graphics, Forms,
 {$IFDEF USEADO}
   adodb,
 {$ENDIF}
-  rpreport,rpmdconsts,rpdatainfo,DBConnAdmin,Dialogs,
+  rpreport,rpmdconsts,rpdatainfo,
+//{$IFDEF USEVARIANTS}
+//  DBConnAdmin,
+//{$ENDIF}
+  Dialogs,
   rpparams,rpfparamsvcl, db,ComCtrls,rpgraphutilsvcl;
 
 type
@@ -127,7 +131,7 @@ type
     databaseinfo:TRpDatabaseInfoList;
     datainfo:TRpDataInfoList;
     params:TRpParamList;
-    conadmin:IConnectionAdmin;
+    conadmin:TRpConnAdmin;
     docancel:boolean;
     procedure DoSave;
     procedure  Removedependences(oldalias:string);
@@ -152,9 +156,8 @@ procedure ShowDataConfig(report:TRpReport);
 var
  dia:TFRpDataInfoConfigVCL;
 begin
-{$IFDEF USECONADMIN}
  UpdateConAdmin;
-{$ENDIF}
+
  dia:=TFRpDataInfoConfigVCL.Create(Application);
  try
   dia.report:=report;
@@ -211,10 +214,10 @@ begin
  params:=TRpParamList.Create(Self);
  datainfo:=TRpDataInfoList.Create(Self);
  try
-  ConAdmin:=GetConnectionAdmin;
+ ConAdmin:=TRpConnAdmin.Create;
  except
   on e:Exception do
-  begin        
+  begin
    ShowMessage(E.message);
   end;
  end;
@@ -224,6 +227,7 @@ procedure TFRpDatainfoconfigVCL.FormDestroy(Sender: TObject);
 begin
  datainfo.free;
  databaseinfo.Free;
+ conadmin.free;
 end;
 
 procedure TFRpDatainfoconfigVCL.FormShow(Sender: TObject);
@@ -244,24 +248,11 @@ begin
  case TRpDBDriver(GDriver.ItemIndex) of
   rpdatadbexpress,rpdataibx,rpdataibo:
    begin
-{$IFDEF USECONADMIN}
-    ConAdmin:=nil;
     ShowDBXConfig(TRpDbDriver(GDriver.ItemIndex) in [rpdataibx,rpdataibo]);
-    UpdateConAdmin;
-//    if Assigned(ConAdmin) then
-//    begin
-//     ConAdmin:=nil;
-     try
-      ConAdmin:=GetConnectionAdmin;
-     except
-      on e:Exception do
-      begin
-       ShowMessage(E.message);
-      end;
-     end;
-     conadmin.GetConnectionNames(ComboAvailable.Items,'');
-//    end;
-{$ENDIF}
+    ConAdmin.free;
+    ConAdmin:=nil;
+    ConAdmin:=TRpCOnnAdmin.Create;
+    conadmin.GetConnectionNames(ComboAvailable.Items,'');
    end;
   rpdatamybase:
    begin

@@ -21,7 +21,10 @@ interface
 {$I rpconf.inc}
 
 uses
-  Types,Classes,SysUtils,
+{$IFDEF USEVARIANTS}
+  Types,
+{$ENDIF}
+  Classes,SysUtils,
   Windows,Graphics, Controls,
   Forms,rpmunits,
  rpmdconsts;

@@ -141,6 +141,7 @@ type
    Fidenfreespacecms:TIdenReportVar;
    Fidenfreespaceinch:TIdenReportVar;
    Fidencurrentgroup:TIdenReportVar;
+   FIdenfirstsection:TIdenReportVar;
    FCopies:integer;
    FCollateCopies:boolean;
    FTwoPass:boolean;
@@ -157,6 +158,7 @@ type
    milifirst,mililast:TDatetime;
 {$ENDIF}
    difmilis:int64;
+   printedsomething:Boolean;
    FPendingSections:TStringList;
    FPrinterSelect:TRpPrinterSelect;
    FPrintOnlyIfDataAvailable:Boolean;
@@ -312,6 +314,11 @@ begin
        Result:=subrep.GroupCount
       else
        Result:=subrep.CurrentGroupIndex;
+     end
+     else
+     if varname='FIRSTSECTION' then
+     begin
+      Result:=not freport.printedsomething;
      end;
 end;
 
@@ -371,6 +378,9 @@ begin
  FIdencurrentgroup:=TIdenReportVar.Create(nil);
  Fidencurrentgroup.varname:='CURRENTGROUP';
  Fidencurrentgroup.FReport:=self;
+ FIdenfirstsection:=TIdenReportVar.Create(nil);
+ Fidenfirstsection.varname:='FIRSTSECTION';
+ FidenFirstSection.FReport:=self;
  FIdeneof:=TIdenEOF.Create(nil);
  Fideneof.FReport:=self;
  // Metafile
@@ -434,6 +444,7 @@ begin
  FIdenPagenum.free;
  Fidenfreespace.free;
  FIdenCurrentGroup.free;
+ FIdenFirstSection.free;
  Fidenfreespacecms.free;
  Fidenfreespaceinch.free;
  FIdenEof.free;
@@ -1375,6 +1386,7 @@ begin
  eval.AddVariable('PAGE',fidenpagenum);
  eval.AddVariable('FREE_SPACE',fidenfreespace);
  eval.AddVariable('CURRENTGROUP',fidencurrentgroup);
+ eval.AddVariable('FIRSTSECTION',fidenfirstsection);
  eval.AddVariable('FREE_SPACE_CMS',fidenfreespacecms);
  eval.AddVariable('FREE_SPACE_INCH',fidenfreespaceinch);
  eval.AddIden('EOF',fideneof);
@@ -1569,7 +1581,6 @@ end;
 // Resturns true if is the last pabe
 function TRpReport.PrintNextPage:boolean;
 var
- printedsomething:boolean;
  pageposy,pageposx:integer;
  sectionext:TPoint;
  pagefooters:TStringList;
@@ -1710,6 +1721,7 @@ end;
 
 
 begin
+ printedsomething:=false;
  if Not Assigned(Section) then
   Raise Exception.Create(SRpLastPageReached);
  if assigned(subreport) then
@@ -1719,7 +1731,6 @@ begin
  pageposy:=FTopMargin;
  pageposx:=FLeftMargin;
  oldprintedsection:=nil;
- printedsomething:=false;
  inc(Pagenum);
  if not printingonepass then
  begin

@@ -25,7 +25,10 @@ interface
 uses SysUtils, Classes,Windows,
   Graphics, Forms,
   Buttons, ExtCtrls, Controls, StdCtrls,rpvgraphutils,
-  types,jpeg,rppdffile,
+{$IFDEF USEVARIANTS}
+  types,
+{$ENDIF}
+  jpeg,rppdffile,
   rpprintitem,rpdrawitem,rpmdobinsintvcl,rpmdconsts,
   rpgraphutilsvcl,rpmunits,rptypes;
 

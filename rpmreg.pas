@@ -25,6 +25,9 @@ uses
 {$IFDEF USEVCL}
   rpvclreport,
 {$ENDIF}
+{$IFNDEF USEVARIANTS}
+  rprulervcl,rpmdesignervcl,
+{$ENDIF}
   rpevalfunc,rpalias,rptypeval,rplastsav;
 
 procedure Register;
@@ -40,6 +43,10 @@ begin
   RegisterComponents('Reportman', [TPDFReport]);
 {$IFDEF USEVCL}
   RegisterComponents('Reportman', [TVCLReport]);
+{$ENDIF}
+{$IFNDEF USEVARIANTS}
+  RegisterComponents('Reportman', [TRpRulerVCL]);
+  RegisterComponents('Reportman', [TRpDesignerVCL]);
 {$ENDIF}
 end;
 

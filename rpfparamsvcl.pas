@@ -25,7 +25,11 @@ interface
 uses SysUtils, Classes,
   Graphics, Forms,Dialogs, ActnList, ImgList, ComCtrls,
   Buttons, ExtCtrls, Controls, StdCtrls,Mask,
-  rpdatainfo,Variants,DB,rpmdconsts,rpparams,
+  rpdatainfo,
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
+  DB,rpmdconsts,rpparams,
   rpgraphutilsvcl, ToolWin,rptypes;
 
 type

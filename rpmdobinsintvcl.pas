@@ -25,7 +25,10 @@ interface
 
 {$I rpconf.inc}
 
-uses Types,
+uses
+{$IFDEF USEVARIANTS}
+ Types,
+{$ENDIF}
   Graphics,Forms,Controls,Dialogs,
  rpmdconsts,classes,sysutils,rpmunits,
  rpprintitem,rpvgraphutils,rpgraphutilsvcl,rpsection,

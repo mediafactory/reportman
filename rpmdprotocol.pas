@@ -22,12 +22,17 @@ unit rpmdprotocol;
 
 interface
 
+{$I rpconf.inc}
+
 uses SysUtils,Classes,rpmdconsts,IdTCPConnection;
 
 const
   REPSERBUFSIZE=4096;
 
 type
+{$IFNDEF USEVARIANTS}
+ PByte=^Byte;
+{$ENDIF}
   TRepCommand=(repauth,repopenalias,repopenreport,repexecutereportmeta,
    repexecutereportpdf,reperror,replog,repgetusers,repgetaliases,repaddalias,
    repdeletealias,repadduser,repdeleteuser,repgettree,repgetparams,repsetparams);

@@ -23,7 +23,10 @@ interface
 
 uses
   SysUtils,
-  Types, Classes,
+{$IFDEF USEVARIANTS}
+  Types,
+{$ENDIF}
+  Classes,
   rpgdidriver,rpvpreview,rprfvparams,windows,
   Controls, Forms,
   StdCtrls, ComCtrls, ActnList, ImgList, Menus,ExtCtrls,

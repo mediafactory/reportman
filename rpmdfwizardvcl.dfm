@@ -18,7 +18,7 @@ object FRpWizardVCL: TFRpWizardVCL
     Left = 0
     Top = 0
     Width = 603
-    Height = 431
+    Height = 438
     ActivePage = TabReportType
     Align = alClient
     TabOrder = 0
@@ -77,9 +77,6 @@ object FRpWizardVCL: TFRpWizardVCL
         Height = 43
         BevelOuter = bvNone
         TabOrder = 0
-        DesignSize = (
-          595
-          43)
         object BCancel: TButton
           Left = 331
           Top = 9
@@ -113,9 +110,6 @@ object FRpWizardVCL: TFRpWizardVCL
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 0
-        DesignSize = (
-          595
-          37)
         object Button1: TButton
           Left = 347
           Top = 4
@@ -141,9 +135,6 @@ object FRpWizardVCL: TFRpWizardVCL
     object TabDatasets: TTabSheet
       Caption = 'Datasets'
       ImageIndex = 2
-      DesignSize = (
-        595
-        403)
       object BNExt3: TButton
         Left = 491
         Top = 365
@@ -168,9 +159,6 @@ object FRpWizardVCL: TFRpWizardVCL
     object TabFields: TTabSheet
       Caption = 'Fields'
       ImageIndex = 3
-      DesignSize = (
-        595
-        403)
       object BNext4: TButton
         Left = 491
         Top = 365
@@ -195,9 +183,6 @@ object FRpWizardVCL: TFRpWizardVCL
     object TabReportType: TTabSheet
       Caption = 'Report type'
       ImageIndex = 4
-      DesignSize = (
-        595
-        403)
       object BFinish: TButton
         Left = 491
         Top = 365

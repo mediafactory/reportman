@@ -14,9 +14,6 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    DesignSize = (
-      216
-      153)
     object GUser: TGroupBox
       Left = 4
       Top = 4
@@ -25,9 +22,6 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
       Anchors = [akLeft, akTop, akRight]
       Caption = 'User information'
       TabOrder = 0
-      DesignSize = (
-        209
-        145)
       object LUserName: TLabel
         Left = 8
         Top = 40
@@ -196,7 +190,6 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
         Align = alClient
         Images = imalist
         Indent = 22
-        MultiSelectStyle = []
         ReadOnly = True
         TabOrder = 1
         OnChange = LTreeChange
@@ -209,9 +202,6 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
         Align = alTop
         TabOrder = 2
         Visible = False
-        DesignSize = (
-          216
-          31)
         object Label1: TLabel
           Left = 8
           Top = 8

@@ -127,7 +127,7 @@ type
     databaseinfo:TRpDatabaseInfoList;
     datainfo:TRpDataInfoList;
     params:TRpParamList;
-    conadmin:IConnectionAdmin;
+    conadmin:TRpConnAdmin;
     docancel:boolean;
     procedure DoSave;
     procedure  Removedependences(oldalias:string);
@@ -152,9 +152,7 @@ procedure ShowDataConfig(report:TRpReport);
 var
  dia:TFRpDataInfoConfig;
 begin
-{$IFDEF USECONADMIN}
  UpdateConAdmin;
-{$ENDIF}
  dia:=TFRpDataInfoConfig.Create(Application);
  try
   dia.report:=report;
@@ -211,10 +209,10 @@ begin
  params:=TRpParamList.Create(Self);
  datainfo:=TRpDataInfoList.Create(Self);
  try
-  ConAdmin:=GetConnectionAdmin;
+  ConAdmin:=TRpConnAdmin.Create;
  except
   on e:Exception do
-  begin        
+  begin
    ShowMessage(E.message);
   end;
  end;
@@ -225,6 +223,7 @@ procedure TFRpDatainfoconfig.FormDestroy(Sender: TObject);
 begin
  datainfo.free;
  databaseinfo.Free;
+ conadmin.free;
 end;
 
 procedure TFRpDatainfoconfig.FormShow(Sender: TObject);
@@ -245,24 +244,11 @@ begin
  case TRpDBDriver(GDriver.ItemIndex) of
   rpdatadbexpress,rpdataibx,rpdataibo:
    begin
-{$IFDEF USECONADMIN}
+    ConAdmin.free;
     ConAdmin:=nil;
+    ConAdmin:=TRpCOnnAdmin.Create;
     ShowDBXConfig(TRpDbDriver(GDriver.ItemIndex) in [rpdataibx,rpdataibo]);
-    UpdateConAdmin;
-//    if Assigned(ConAdmin) then
-//    begin
-//     ConAdmin:=nil;
-     try
-      ConAdmin:=GetConnectionAdmin;
-     except
-      on e:Exception do
-      begin
-       ShowMessage(E.message);
-      end;
-     end;
-     conadmin.GetConnectionNames(ComboAvailable.Items,'');
-//    end;
-{$ENDIF}
+    conadmin.GetConnectionNames(ComboAvailable.Items,'');
    end;
   rpdatamybase:
    begin

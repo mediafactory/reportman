@@ -26,8 +26,12 @@ interface
 uses SysUtils, Classes,
   Graphics, Forms,ComCtrls, ImgList,
   Buttons, ExtCtrls, Controls, StdCtrls,Dialogs,
-  rpgraphutilsvcl,
-  SQLExpr,DBConnAdmin, DBXpress, DB,rpmdconsts, ToolWin;
+  rpgraphutilsvcl,rpdatainfo,
+{$IFDEF USESQLEXPRESS}
+  SQLExpr,
+  DBXpress,
+{$ENDIF}
+  DB,rpmdconsts, ToolWin;
 
 const
  CONTROL_DISTANCEY=5;
@@ -42,7 +46,6 @@ type
     LConnsFile: TLabel;
     EDriversFile: TEdit;
     EConnectionsFile: TEdit;
-    SQLConnection1: TSQLConnection;
     ImageList1: TImageList;
     PanelParent: TPanel;
     PanelLeft: TPanel;
@@ -73,11 +76,13 @@ type
   private
     { Private declarations }
     DriversFile:string;
-    ConAdmin:IConnectionAdmin;
-    ConAdminObj:TConnectionAdmin;
     params:TStringList;
     connectionname:string;
     onlyibx:boolean;
+{$IFDEF USESQLEXPRESS}
+    SQLConnection1: TSQLConnection;
+{$ENDIF}
+    conadmin:TRpConnAdmin;
     procedure FreeParamsControls;
     procedure CreateParamsControls;
     procedure Edit1Change(Sender:TObject);
@@ -111,6 +116,13 @@ end;
 
 procedure TFRpDBXConfigVCL.FormCreate(Sender: TObject);
 begin
+ ConAdmin:=TRpConnAdmin.Create;
+{$IFDEF USESQLEXPRESS}
+ SQLConnection1:=TSQLConnection.Create(Self);
+{$ENDIF}
+{$IFNDEF USESQLEXPRESS}
+ BConnect.Enabled:=false;
+{$ENDIF}
  LDriversFile.Caption:=TranslateStr(169,LDriversFile.Caption);
  LConnsFile.Caption:=TranslateStr(170,LConnsFile.Caption);
  LShowDriver.Caption:=TranslateStr(171,LShowDriver.Caption);
@@ -123,17 +135,15 @@ begin
 
  params:=TStringList.Create;
  // Read the drivers file
- DriversFile:=GetDriverRegistryFile;
+ DriversFile:=COnAdmin.driverfilename;
  EDriversFile.Text:=DriversFile;
  // Read the connections file
  if Length(ConnectionsFile)<1 then
-  EConnectionsFile.Text:=GetConnectionRegistryFile
- else
-  EConnectionsFile.Text:=ConnectionsFile;
+ begin
+  Connectionsfile:=ConAdmin.configfilename;
+ end;
+ EConnectionsFile.Text:=ConnectionsFile;
  // Read the database connections
- ConAdmin:=GetConnectionAdmin;
- ConAdminObj:=TConnectionAdmin.Create;
- ConAdmin:=ConAdminObj;
  ConAdmin.GetDriverNames(ComboDrivers.Items);
  ComboDrivers.Items.Insert(0,SRpAllDriver);
  ComboDrivers.ItemIndex:=0;
@@ -183,7 +193,7 @@ begin
   exit;
  alist:=TStringList.create;
  try
-  ConAdminObj.DriverConfig.ReadSections(alist);
+  ConAdmin.Drivers.ReadSections(alist);
   top:=CONTROL_DISTANCEY;
   ConAdmin.GetConnectionParams(connectionname,params);
   for i:=0 to params.Count-1 do
@@ -213,7 +223,7 @@ begin
     TComboBox(Edit1).Style:=csDropDownList;
     TComboBox(Edit1).Visible:=False;
     TComboBox(Edit1).Parent:=ScrollParams;
-    ConAdminObj.DriverConfig.ReadSection(alist.strings[index],TComboBox(Edit1).Items);
+    ConAdmin.Drivers.ReadSection(alist.strings[index],TComboBox(Edit1).Items);
     TComboBox(Edit1).Text:=params.Values[params.Names[i]];
     TComboBox(Edit1).ItemIndex:=TComboBox(Edit1).Items.IndexOf(params.Values[params.Names[i]]);
     TComboBox(Edit1).OnChange:=Edit1Change;
@@ -251,18 +261,21 @@ end;
 procedure TFRpDBXConfigVCL.FormDestroy(Sender: TObject);
 begin
  params.Free;
+ ConAdmin.free;
 end;
 
 procedure TFRpDBXConfigVCL.Edit1Change(Sender:TObject);
 var
  paramvalue:string;
  paramname:string;
+ conname:string;
  index:integer;
 begin
  if Not Assigned(ConAdmin) then
   exit;
+ conname:=LConnections.Items.Strings[LConnections.ItemIndex];
  paramname:=params.Names[TEdit(Sender).Tag];
- paramvalue:=TEdit(Sender).Text; 
+ paramvalue:=TEdit(Sender).Text;
  if Length(paramvalue)=0 then
  begin
   index:=params.IndexOfName(paramname);
@@ -273,7 +286,8 @@ begin
  end
  else
   params.Values[paramname]:=paramvalue;
- ConAdmin.ModifyConnection(connectionname,params);
+ ConAdmin.config.WriteString(conname,paramname,paramvalue);
+ ConAdmin.config.UpdateFile;
 end;
 
 procedure TFRpDBXConfigVCL.BAddClick(Sender: TObject);
@@ -288,7 +302,7 @@ begin
  if Length(newname)<1 then
   exit;
  ConAdmin.AddConnection(newname,ComboDrivers.Text);
- ConAdminObj.ConnectionConfig.UpdateFile;
+ ConAdmin.config.UpdateFile;
  ComboDriversClick(Self);
 end;
 
@@ -304,7 +318,7 @@ begin
  if smbOk=RpMessageBox(SRpSureDropConnection+conname,SRpDropConnection,[smbok,smbCancel],smsWarning,smbCancel) then
  begin
   ConAdmin.DeleteConnection(conname);
-  ConAdminObj.ConnectionConfig.UpdateFile;
+  ConAdmin.Config.UpdateFile;
   ComboDriversCLick(Self);
  end;
 end;
@@ -326,6 +340,7 @@ var
  conname:string;
  funcname,drivername,vendorlib,libraryname:string;
 begin
+{$IFDEF USESQLEXPRESS}
  if Not Assigned(ConAdmin) then
   exit;
  if LConnections.ItemIndex<0 then
@@ -335,7 +350,7 @@ begin
  SQLConnection1.ConnectionName:=conname;
  ConAdmin.GetConnectionParams(conname,SQLConnection1.params);
  drivername:=SQLConnection1.params.Values['DriverName'];
- funcname:=ConAdminObj.DriverConfig.ReadString(drivername,'GetDriverFunc','');
+ funcname:=ConAdmin.Drivers.ReadString(drivername,'GetDriverFunc','');
  ConAdmin.GetDriverLibNames(drivername,LibraryName,VendorLib);
  SQLConnection1.DriverName:=drivername;
  SQLConnection1.VendorLib:=vendorlib;
@@ -344,12 +359,14 @@ begin
  SQLConnection1.Connected:=true;
  ShowMessage(SRpConnectionOk);
  SQLConnection1.Connected:=false;
+{$ENDIF}
 end;
 
 procedure TFRpDBXConfigVCL.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
- if Assigned(ConAdminObj) then
-  ConAdminObj.ConnectionConfig.UpdateFile;
+ if Assigned(ConAdmin) then
+  ConAdmin.Config.UpdateFile;
+ UpdateConAdmin;
 end;
 
 

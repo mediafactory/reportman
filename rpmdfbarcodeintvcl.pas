@@ -23,7 +23,10 @@ interface
 
 {$I rpconf.inc}
 
-uses SysUtils, Classes,rpmunits,types,
+uses SysUtils, Classes,rpmunits,Windows,
+{$IFDEF USEVARIANTS}
+ types,
+{$ENDIF}
  Graphics, Forms,
  Buttons, ExtCtrls, Controls, StdCtrls,
  rpprintitem,rpmdbarcode,rpmdobinsintvcl,rpmdconsts,

@@ -21,7 +21,11 @@ unit rpmdfwizardvcl;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Windows, Messages, SysUtils,
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
+  Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ComCtrls,
   rpmdconsts,rpreport,rpmdfconnectionvcl, ExtCtrls;
 
@@ -88,7 +92,7 @@ end;
 
 procedure TFRpWizardVCL.BNext1Click(Sender: TObject);
 begin
- PControl.TabIndex:=PControl.TabIndex+1;
+ PControl.ActivePageIndex:=PControl.ActivePageIndex+1;
 end;
 
 procedure TFRpWizardVCL.BCancelClick(Sender: TObject);

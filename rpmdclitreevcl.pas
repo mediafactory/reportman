@@ -23,7 +23,12 @@ unit rpmdclitreevcl;
 interface
 
 uses
-  SysUtils, Types, Classes, Variants, Graphics, Controls, Forms,
+  SysUtils,
+{$IFDEF USEVARIANTS}
+  Types,
+  Variants, 
+{$ENDIF}
+  Classes, Graphics, Controls, Forms,
   Dialogs, rptranslator, StdCtrls, ExtCtrls,rpmdrepclient,
   rpmdconsts, ActnList, ImgList, ComCtrls,rpparams,rpvgraphutils,
   rpgraphutilsvcl,
