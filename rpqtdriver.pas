@@ -32,7 +32,10 @@ uses
 {$ENDIF}
  Classes,sysutils,rpmetafile,rpmdconsts,QGraphics,QForms,
  rpmunits,QPrinters,QDialogs,rpgraphutils, QControls,
- QStdCtrls,QExtCtrls,types,DateUtils,rptypes,Qt,
+ QStdCtrls,QExtCtrls,types,DateUtils,rptypes,Qt,rppdffile,
+{$IFDEF MSWINDOWS}
+ rpvgraphutils,
+{$ENDIF}
  rpreport,rppdfdriver;
 
 const
@@ -416,6 +419,9 @@ var
  bitmap:TBitmap;
  aalign:Integer;
  arec,R:TRect;
+{$IFDEF MSWINDOWS}
+ bitmapwidth,bitmapheight:integer;
+{$ENDIF}
 begin
  // Switch to device points
  posx:=round((obj.Left+offset.X)*dpix*scale/TWIPS_PER_INCHESS);
@@ -567,7 +573,14 @@ begin
     stream:=page.GetStream(obj);
     bitmap:=TBitmap.Create;
     try
-     bitmap.LoadFromStream(stream);
+// Windows does not have support for jpeg in CLX
+{$IFDEF MSWINDOWS}
+     if GetJPegInfo(stream,bitmapwidth,bitmapheight) then
+     begin
+      rpvgraphutils.JPegStreamToBitmapStream(stream);
+     end;
+{$ENDIF}
+      bitmap.LoadFromStream(stream);
 //     Copy mode does not work for Stretchdraw
 //     Canvas.CopyMode:=TCopyMode(obj.CopyMode);
 
@@ -978,19 +991,21 @@ var
 begin
  Application.Onidle:=nil;
  done:=false;
-
- pdfdriver:=TRpPDFDriver.Create;
- pdfdriver.filename:=filename;
- pdfdriver.compressed:=pdfcompressed;
- apdfdriver:=pdfdriver;
- oldprogres:=RepProgress;
  try
-  report.OnProgress:=RepProgress;
-  report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
+  pdfdriver:=TRpPDFDriver.Create;
+  pdfdriver.filename:=filename;
+  pdfdriver.compressed:=pdfcompressed;
+  apdfdriver:=pdfdriver;
+  oldprogres:=RepProgress;
+  try
+   report.OnProgress:=RepProgress;
+   report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
+  finally
+   report.OnProgress:=oldprogres;
+  end;
  finally
-  report.OnProgress:=oldprogres;
+  Close;
  end;
- Close;
 end;
 
 
@@ -1212,11 +1227,21 @@ end;
 procedure TRpQtDriver.GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
 var
  graphic:TBitmap;
+{$IFDEF MSWINDOWS}
+ bitmapwidth,bitmapheight:integer;
+{$ENDIF}
 begin
  if dpi<=0 then
   exit;
  graphic:=TBitmap.Create;
  try
+// CLX Graphics in Windows does not support jpeg
+{$IFDEF MSWINDOWS}
+  if GetJPegInfo(Stream,bitmapwidth,bitmapheight) then
+  begin
+   rpvgraphutils.JPegStreamToBitmapStream(Stream);
+  end;
+{$ENDIF}
   Graphic.LoadFromStream(Stream);
   extent.X:=Round(graphic.width/dpi*TWIPS_PER_INCHESS);
   extent.Y:=Round(graphic.height/dpi*TWIPS_PER_INCHESS);

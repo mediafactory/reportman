@@ -248,7 +248,6 @@ end;
 
 function VariantTypeToDataType(avariant:Variant):TFieldType;
 begin
- Result:=ftUnknown;
  case VarType(avariant) of
   varEmpty,varNull:
    Result:=ftUnknown;

@@ -1279,6 +1279,7 @@ begin
     break;
 //   subrep.SubReportChanged(rpDataChange);
    CurrentSectionIndex:=-1;
+   subrep.CurrentGroupIndex:=-subrep.GroupCount;
    subrep.LastRecord:=false;
   end
   else

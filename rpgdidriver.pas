@@ -27,11 +27,11 @@ uses
  mmsystem,windows,
  Classes,sysutils,rpmetafile,rpmdconsts,Graphics,Forms,
  rpmunits,Printers,Dialogs, Controls,rpgdifonts,
- StdCtrls,ExtCtrls,
+ StdCtrls,ExtCtrls,rppdffile,
 {$IFDEF USEVARIANTS}
  types,
 {$ENDIF}
- rptypes,rpvgraphutils,
+ rptypes,rpvgraphutils,jpeg,
  rpreport,rppdfdriver;
 
 
@@ -596,6 +596,8 @@ var
  oldrgn:HRGN;
  newrgn:HRGN;
  aresult:integer;
+ jpegimage:TJPegImage;
+ bitmapwidth,bitmapheight:integer;
 begin
  // Switch to device points
  if toprinter then
@@ -762,7 +764,19 @@ begin
     stream:=page.GetStream(obj);
     bitmap:=TBitmap.Create;
     try
-     bitmap.LoadFromStream(stream);
+     if GetJPegInfo(stream,bitmapwidth,bitmapheight) then
+     begin
+      jpegimage:=TJPegImage.Create;
+      try
+       jpegimage.LoadFromStream(stream);
+       bitmap.Assign(jpegimage);
+      finally
+       jpegimage.free;
+      end;
+     end
+     else
+     // Looks if it's a jpeg image
+      bitmap.LoadFromStream(stream);
 //     Copy mode does not work for StretDIBBits
 //     Canvas.CopyMode:=CLXCopyModeToCopyMode(obj.CopyMode);
 
@@ -1213,18 +1227,21 @@ begin
  Application.Onidle:=nil;
  done:=false;
 
- pdfdriver:=TRpPDFDriver.Create;
- pdfdriver.filename:=filename;
- pdfdriver.compressed:=pdfcompressed;
- apdfdriver:=pdfdriver;
- oldprogres:=RepProgress;
  try
-  report.OnProgress:=RepProgress;
-  report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
+  pdfdriver:=TRpPDFDriver.Create;
+  pdfdriver.filename:=filename;
+  pdfdriver.compressed:=pdfcompressed;
+  apdfdriver:=pdfdriver;
+  oldprogres:=RepProgress;
+  try
+   report.OnProgress:=RepProgress;
+   report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
+  finally
+   report.OnProgress:=oldprogres;
+  end;
  finally
-  report.OnProgress:=oldprogres;
+  Close;
  end;
- Close;
 end;
 
 
@@ -1400,12 +1417,25 @@ end;
 procedure TRpGDIDriver.GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
 var
  graphic:TBitmap;
+ jpegimage:TJpegImage;
+ bitmapwidth,bitmapheight:integer;
 begin
  if dpi<=0 then
   exit;
  graphic:=TBitmap.Create;
  try
-  Graphic.LoadFromStream(Stream);
+  if GetJPegInfo(Stream,bitmapwidth,bitmapheight) then
+  begin
+   jpegimage:=TJpegImage.Create;
+   try
+    jpegimage.LoadFromStream(Stream);
+    graphic.Assign(jpegimage);
+   finally
+    jpegimage.free;
+   end;
+  end
+  else
+   Graphic.LoadFromStream(Stream);
   extent.X:=Round(graphic.width/dpi*TWIPS_PER_INCHESS);
   extent.Y:=Round(graphic.height/dpi*TWIPS_PER_INCHESS);
  finally

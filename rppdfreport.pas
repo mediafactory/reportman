@@ -43,8 +43,6 @@ type
    constructor Create(AOwner:TComponent);override;
   published
    property Filename;
-//   property Preview;
-//   property ShowProgress;
    property Title;
    property ShowPrintDialog;
    property AliasList;
@@ -105,13 +103,6 @@ begin
    // No implemented may be implement asking the parameters
    // in consolemode with Readln
    Raise Exception.Create(SRpSNotYetImplemented+':TPDFReport.ShowPrintDialog');
-//   if DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-//   begin
-//    Result:=PrintReport(report,Title,Showprogress,allpages,frompage,
-//     topage,copies,collate);
-//   end
-//   else
-//    Result:=false;
   end
   else
   begin
@@ -128,12 +119,5 @@ begin
  Result:=rppdfdriver.PrintReportPDF(Report,Title,ShowProgress,false,
   frompage,topage,copies,fpdffilename,compressed);
 end;
-
-//procedure TVCLReport.SaveToPDF(filename:string);
-//begin
-// CheckLoaded;
-// rpgdidriver.ExportReportToPDF(report,filename,true,true,1,999999,
-//  false,filename,true)
-//end;
 
 end.

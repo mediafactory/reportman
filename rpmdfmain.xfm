@@ -330,7 +330,7 @@ object FRpMainF: TFRpMainF
     Top = 56
     Width = 541
     Height = 286
-    HorzScrollBar.Range = 189
+    HorzScrollBar.Range = 257
     Align = alClient
     BorderStyle = bsNone
     TabOrder = 1

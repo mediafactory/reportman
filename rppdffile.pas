@@ -228,6 +228,7 @@ function PDFCompatibleText(astring:string):string;
 function NumberToText(Value:double):string;
 
 procedure GetBitmapInfo(stream:TStream;var width,height,imagesize:integer;FMemBits:TMemoryStream);
+function GetJPegInfo(astream:TStream;var width,height:integer):boolean;
 
 implementation
 
@@ -244,6 +245,8 @@ const
 // Font sizes (point 10)
 
 var
+  cajpeg:array [0..10] of char=(chr($FF),chr($D8),chr($FF),chr($E0),chr($0),chr($10),'J','F','I','F',chr(0));
+
   Helvetica_Widths: TWinAnsiWidthsArray = (
     278,278,355,556,556,889,667,191,333,333,389,584,278,333,
     278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,
@@ -1306,35 +1309,30 @@ var
   aheight,awidth:integer;
  // pb: PByteArray;
   arect:TRect;
+  isjpeg:Boolean;
 begin
  arect:=rec;
  FFile.CheckPrinting;
  FImageStream:=TMemoryStream.Create;
  try
-{  tmpBitmap:=TBitmap.Create;
-  try
-   tmpBitmap.LoadFromStream(abitmap);
-   GetDIBSizes(tmpBitmap.Handle, InfoSize, ImageSize);
-   tmpBitmap.PixelFormat := pf24Bit;
-   for y := 0 to tmpBitmap.Height-1 do
-   begin
-     pb := tmpBitmap.ScanLine[y];
-     FImageStream.Write(pb^, tmpBitmap.Width*3);
-   end;
-   GetDIBSizes(tmpBitmap.Handle, InfoSize, ImageSize);
-   bitmapwidth:=tmpBitmap.Width;
-   bitmapheight:=tmpBitmap.height;
-  finally
-   tmpBitmap.Free;
+  isjpeg:=GetJPegInfo(abitmap,bitmapwidth,bitmapheight);
+  if isjpeg then
+  begin
+   // Read image dimensions
+   fimagestream.SetSize(abitmap.size);
+   abitmap.Read(fimagestream.memory^,fimagestream.size);
+   fimagestream.Seek(0,soFromBeginning);
+  end
+  else
+  begin
+   abitmap.Seek(0,soFromBeginning);
+   GetBitmapInfo(abitmap,bitmapwidth,bitmapheight,imagesize,FImageStream);
   end;
-}
-  GetBitmapInfo(abitmap,bitmapwidth,bitmapheight,imagesize,FImageStream);
   if dpires<>0 then
   begin
    rec.Right:=rec.Left+Round(bitmapwidth/dpires*FResolution);
    rec.Bottom:=rec.Top+Round(bitmapheight/dpires*FResolution);
   end;
-
   FFile.FImageCount:=FFile.FImageCount+1;
   SWriteLine(FFile.FsTempStream,'q');
   if clip then
@@ -1370,12 +1368,12 @@ begin
      break;
     rec.Left:=rec.Left+awidth;
     rec.Right:=rec.Left+awidth;
-   until (Rec.Right>ARect.Right);
+   until (Rec.Right>ARect.Right+awidth);
    if not tile then
     break;
    rec.Top:=rec.Top+aheight;
    rec.Bottom:=rec.Top+aheight;
-  until (Rec.Bottom>ARect.Bottom);
+  until (Rec.Bottom>ARect.Bottom+aheight);
   SWriteLine(FFile.FsTempStream,'Q');
   // Saves the bitmap to temp bitmaps
   astream:=TMemoryStream.Create;
@@ -1388,12 +1386,19 @@ begin
   SWriteLine(astream,'/BitsPerComponent 8');
   SWriteLine(astream,'/Length '+IntToStr(imagesize));
   SWriteLine(astream,'/Name /Im'+IntToStr(FFile.FImageCount));
-  if FFile.FCompressed then
-   SWriteLine(astream,'/Filter [/FlateDecode]');
+  if isjpeg then
+  begin
+   SWriteLine(astream,'/Filter [/DCTDecode]');
+  end
+  else
+  begin
+   if FFile.FCompressed then
+    SWriteLine(astream,'/Filter [/FlateDecode]');
+  end;
   SWriteLine(astream,'>>');
   SWriteLine(astream,'stream');
   FImageStream.Seek(0,soFrombeginning);
-  if FFile.FCompressed then
+  if ((FFile.FCompressed) and (not isjpeg)) then
   begin
    FCompressionStream := TCompressionStream.Create(clDefault,astream);
    try
@@ -1931,6 +1936,212 @@ begin
   end;
  end;
 end;
+
+const
+  M_SOF0  = $C0;        { Start Of Frame N }
+  M_SOF1  = $C1;        { N indicates which compression process }
+  M_SOF2  = $C2;        { Only SOF0-SOF2 are now in common use }
+  M_SOF3  = $C3;
+  M_SOF5  = $C5;        { NB: codes C4 and CC are NOT SOF markers }
+  M_SOF6  = $C6;
+  M_SOF7  = $C7;
+  M_SOF9  = $C9;
+  M_SOF10 = $CA;
+  M_SOF11 = $CB;
+  M_SOF13 = $CD;
+  M_SOF14 = $CE;
+  M_SOF15 = $CF;
+  M_SOI   = $D8;        { Start Of Image (beginning of datastream) }
+  M_EOI   = $D9;        { End Of Image (end of datastream) }
+  M_SOS   = $DA;        { Start Of Scan (begins compressed data) }
+  M_COM   = $FE;        { COMment }
+
+
+
+// Returns false if it's not a jpeg
+function GetJPegInfo(astream:TStream;var width,height:integer):boolean;
+var
+ c1, c2 : Byte;
+ i1,i2:integer;
+ readed:integer;
+ marker:integer;
+
+ function NextMarker:integer;
+ var
+   c:integer;
+ begin
+  { Find 0xFF byte; count and skip any non-FFs. }
+  readed:=astream.Read(c1,1);
+  if readed<1 then
+   Raise Exception.Create(SRpSInvalidJPEG);
+  c:=c1;
+  while (c <> $FF) do
+  begin
+   readed:=astream.Read(c1,1);
+   if readed<1 then
+    Raise Exception.Create(SRpSInvalidJPEG);
+   c := c1;
+  end;
+  { Get marker code byte, swallowing any duplicate FF bytes.  Extra FFs
+    are legal as pad bytes, so don't count them in discarded_bytes. }
+  repeat
+   readed:=astream.Read(c1,1);
+   if readed<1 then
+    Raise Exception.Create(SRpSInvalidJPEG);
+   c:=c1;
+  until (c <> $FF);
+  Result := c;
+ end;
+
+ procedure skip_variable;
+ { Skip over an unknown or uninteresting variable-length marker }
+ var
+  alength:Integer;
+  w:Word;
+ begin
+  { Get the marker parameter length count }
+  readed:=astream.Read(w,2);
+  if readed<2 then
+   Raise Exception.Create(SRpSInvalidJPEG);
+  alength:=Hi(w)+(Lo(w) shl 8);
+  { Length includes itself, so must be at least 2 }
+  if (alength < 2) then
+   Raise Exception.Create(SRpSInvalidJPEG);
+  Dec(alength, 2);
+  { Skip over the remaining bytes }
+  while (alength > 0) do
+  begin
+   readed:=astream.Read(c1,1);
+   if readed<1 then
+    Raise Exception.Create(SRpSInvalidJPEG);
+   Dec(alength);
+  end;
+ end;
+
+ procedure process_COM;
+ var
+  alength:Integer;
+  comment:string;
+  w:Word;
+ begin
+  { Get the marker parameter length count }
+  readed:=astream.Read(w,2);
+  if readed<2 then
+   Raise Exception.Create(SRpSInvalidJPEG);
+  alength:=Hi(w)+(Lo(w) shl 8);
+
+   { Length includes itself, so must be at least 2 }
+  if (alength < 2) then
+   Raise Exception.Create(SRpSInvalidJPEG);
+  Dec(alength, 2);
+  comment := '';
+  while (alength > 0) do
+  begin
+   readed:=astream.Read(c1,1);
+   if readed<1 then
+    Raise Exception.Create(SRpSInvalidJPEG);
+   comment := comment + char(c1);
+   Dec(alength);
+  end;
+ end;
+
+ procedure process_SOFn;
+ var
+  alength:Integer;
+  w:Word;
+ begin
+  readed:=astream.Read(w,2);
+  if readed<2 then
+   Raise Exception.Create(SRpSInvalidJPEG);
+  // Skip length
+ // alength:=Hi(w)+(Lo(w) shl 8);
+
+  // data_precission skiped
+  readed:=astream.Read(c1,1);
+  if readed<1 then
+   Raise Exception.Create(SRpSInvalidJPEG);
+  // Height
+  readed:=astream.Read(w,2);
+  if readed<2 then
+   Raise Exception.Create(SRpSInvalidJPEG);
+  alength:=Hi(w)+(Lo(w) shl 8);
+  Height:=alength;
+  // Width
+  readed:=astream.Read(w,2);
+  if readed<2 then
+   Raise Exception.Create(SRpSInvalidJPEG);
+  alength:=Hi(w)+(Lo(w) shl 8);
+  Width:=alength;
+ end;
+
+
+begin
+ Result:=false;
+ // Checks it's a jpeg image
+ readed:=astream.Read(c1,1);
+ if readed<1 then
+ begin
+  astream.seek(0,soFromBeginning);
+  exit;
+ end;
+ i1:=c1;
+ if i1<>$FF then
+ begin
+  astream.seek(0,soFromBeginning);
+  exit;
+ end;
+ readed:=astream.Read(c2,1);
+ if readed<1 then
+ begin
+  astream.seek(0,soFromBeginning);
+  exit;
+ end;
+ i2:=c2;
+ if i2<>M_SOI then
+ begin
+  astream.seek(0,soFromBeginning);
+  exit;
+ end;
+ Result:=true;
+ width:=0;
+ height:=0;
+ // Read segments until M_SOS
+ repeat
+  marker := NextMarker;
+  case marker of
+   M_SOF0,		{ Baseline }
+   M_SOF1,		{ Extended sequential, Huffman }
+   M_SOF2,		{ Progressive, Huffman }
+   M_SOF3,		{ Lossless, Huffman }
+   M_SOF5,		{ Differential sequential, Huffman }
+   M_SOF6,		{ Differential progressive, Huffman }
+   M_SOF7,		{ Differential lossless, Huffman }
+   M_SOF9,		{ Extended sequential, arithmetic }
+   M_SOF10,		{ Progressive, arithmetic }
+   M_SOF11,		{ Lossless, arithmetic }
+   M_SOF13,		{ Differential sequential, arithmetic }
+   M_SOF14,		{ Differential progressive, arithmetic }
+   M_SOF15:		{ Differential lossless, arithmetic }
+    begin
+     process_SOFn;
+     // Exit, no more info need
+     marker:=M_SOS;
+    end;
+   M_SOS:			{ stop before hitting compressed data }
+    begin
+    end;
+   M_EOI:			{ in case it's a tables-only JPEG stream }
+    begin
+    end;
+   M_COM:
+    process_COM;
+   else			{ Anything else just gets skipped }
+     skip_variable;		{ we assume it has a parameter count... }
+  end;
+ until ((marker=M_SOS) or (marker=M_EOI));
+ astream.seek(0,soFromBeginning);
+end;
+
 
 
 end.

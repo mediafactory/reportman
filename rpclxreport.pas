@@ -200,12 +200,12 @@ begin
 {$IFDEF MSWINDOWS}
  if FDriver=rpDriverGDI then
  begin
-  rpgdidriver.ExportReportToPDF(report,filename,true,true,1,999999,
+  rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,true,1,999999,
    false,filename,compressed);
   exit;
  end;
 {$ENDIF}
- rpqtdriver.ExportReportToPDF(report,filename,true,true,1,999999,
+ rpqtdriver.ExportReportToPDF(report,filename,ShowProgress,true,1,999999,
   false,filename,compressed)
 end;
 

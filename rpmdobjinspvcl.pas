@@ -28,7 +28,7 @@ uses
   rpmdobinsintvcl,rpmdconsts,rpprintitem,
   rpgraphutilsvcl,rpsection,rpmunits, rpexpredlgvcl,rpmdfextsecvcl,
   rpalias,rpreport,rpsubreport,rpmdflabelintvcl,rplabelitem,
-  rpmdfdrawintvcl,rpmdfbarcodeintvcl,rpmdfchartintvcl, Menus;
+  rpmdfdrawintvcl,rpmdfbarcodeintvcl,rpmdfchartintvcl, Menus, ExtDlgs;
 
 const
   CONS_LEFTGAP=3;
@@ -83,10 +83,10 @@ type
     FontDialog1: TFontDialog;
     RpAlias1: TRpAlias;
     RpExpreDialog1: TRpExpreDialogVCL;
-    OpenDialog1: TOpenDialog;
     PopUpSection: TPopupMenu;
     MLoadExternal: TMenuItem;
     MSaveExternal: TMenuItem;
+    OpenDialog1: TOpenPictureDialog;
     procedure MLoadExternalClick(Sender: TObject);
   private
     { Private declarations }
@@ -137,7 +137,7 @@ constructor TrpPanelObj.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
- TFRpObjInspVCL(Owner).OpenDialog1.Filter:=SrpBitmapImages+'|*.bmp';
+// TFRpObjInspVCL(Owner).OpenDialog1.Filter:=SrpBitmapImages+'|*.bmp';
 
  Align:=alClient;
 

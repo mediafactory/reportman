@@ -547,6 +547,7 @@ var
   SRpExternalSectionNotFound:WideString='Error reading external section';
   SRpRecordnotExists:WideString='The record does not exist, do you want to create it?';
   SRpLoadSection:WideString='Do you want to load the section?';
+  SRpSInvalidJPEG:WideString='Invalid JPEG stream';
 
 implementation
 
@@ -1084,6 +1085,7 @@ begin
  TranslateVar(866,SRpExternalSectionNotFound);
  TranslateVar(867,SRpRecordnotExists);
  TranslateVar(868,SRpLoadSection);
+ TranslateVar(869,SRpSInvalidJPEG);
 
 end;
 

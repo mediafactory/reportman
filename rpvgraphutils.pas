@@ -23,7 +23,7 @@ unit rpvgraphutils;
 interface
 
 uses Classes,SysUtils,Windows,Graphics,rpmunits,Printers,WinSpool,
- rpmdconsts,rptypes,Forms,ComCtrls;
+ rpmdconsts,rptypes,Forms,ComCtrls,jpeg;
 
 type
  TGDIPageSize=record
@@ -65,6 +65,7 @@ function AlignToGrid(Value:integer;scale:integer):integer;
 function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
 procedure FillTreeView(ATree:TTreeView;alist:TStringList);
 function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
+procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
 
 var
  formslist:TStringlist;
@@ -75,6 +76,28 @@ implementation
 var
  FPrinters:TStringList;
 
+procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
+var
+ jpegimage:TJPegImage;
+ bitmap:TBitmap;
+begin
+ bitmap:=TBitmap.Create;
+ try
+  AStream.Seek(0,soFromBeginning);
+  jpegimage:=TJPegImage.Create;
+  try
+   jpegimage.LoadFromStream(AStream);
+   bitmap.Assign(jpegimage);
+   AStream.Clear;
+   bitmap.SaveToStream(AStream);
+   AStream.Seek(0,soFromBeginning);
+  finally
+   jpegimage.Free;
+  end;
+ finally
+  bitmap.Free;
+ end;
+end;
 
 function twipstopixels(ATwips:integer):integer;
 begin

@@ -180,9 +180,10 @@
         <li>The image can be <b>loaded from a file path containe in a string field</b></li>
         <li>The image can be <b>loaded from a file by writting the filename inside 
           single quotes</b></li>
-        <li> The image can be stretched, or adapt to pixels per inch defined resolution</li>
+        <li> The image can be stretched, or adapt to pixels per inch defined resolution, 
+          you can also do a tile effect</li>
         <li><b>Images are supported in PDF format</b> without the need of a XServer 
-          running (Linux).</li>
+          running (Linux), see table bellow</li>
       </ul>
     </td>
   </tr>
@@ -194,7 +195,7 @@
       <ul>
         <li>Multiple barcode types support</li>
         <li>The barcode is readed from a expression or database field</li>
-        <li>You can set the size of the barcode</li>
+        <li>You can set the size of the barcode, the ratio, checksum...</li>
       </ul>
     </td>
   </tr>
@@ -207,6 +208,7 @@
         <li>Value expression</li>
         <li>Get value condition</li>
         <li>Serie change expression (bool or groupexpression)</li>
+        <li>You can insert values while processing the report.</li>
       </ul>
     </td>
   </tr>
@@ -223,5 +225,58 @@
     </td>
   </tr>
 </table>
+<p><b>Supported Image file formats</b></p>
+<table width="95%" border="1">
+  <tr> 
+    <td bgcolor="#66FFFF" bordercolor="#000000"><b>Image type</b></td>
+    <td bgcolor="#66FFFF" bordercolor="#000000"><b>Windows QT</b></td>
+    <td bgcolor="#66FFFF" bordercolor="#000000"><b>Linux QT</b></td>
+    <td bgcolor="#66FFFF" bordercolor="#000000"><b>Windows GDI</b></td>
+    <td bgcolor="#66FFFF" bordercolor="#000000"><b>PDF</b></td>
+  </tr>
+  <tr>
+    <td bgcolor="#FFFFCC">&nbsp;</td>
+    <td bgcolor="#FFFFCC">TCLXReport</td>
+    <td bgcolor="#FFFFCC">TCLXReport</td>
+    <td bgcolor="#FFFFCC">TVCLReport</td>
+    <td bgcolor="#FFFFCC">TPDFReport</td>
+  </tr>
+  <tr> 
+    <td>Windows Bitmap, regular</td>
+    <td>Yes</td>
+    <td>Yes</td>
+    <td>Yes</td>
+    <td>Yes</td>
+  </tr>
+  <tr> 
+    <td>Windows Bitmap, RLE</td>
+    <td>Yes</td>
+    <td>Yes</td>
+    <td>Yes</td>
+    <td>No</td>
+  </tr>
+  <tr> 
+    <td>Windows Bitmap, Monochrome</td>
+    <td>Yes</td>
+    <td>Yes</td>
+    <td>Yes</td>
+    <td>No</td>
+  </tr>
+  <tr> 
+    <td>JPeg Image (any method)</td>
+    <td>Yes</td>
+    <td>Yes</td>
+    <td>Yes</td>
+    <td>Yes</td>
+  </tr>
+  <tr> 
+    <td>PNG Image</td>
+    <td>Yes</td>
+    <td>Yes</td>
+    <td>No</td>
+    <td>No</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
 </body>
 </html>

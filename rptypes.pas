@@ -152,7 +152,6 @@ var
  rplangids:array [0..MAX_LANGUAGES-1] of string=('EN','ES','CAT');
 
 
-
 {$IFNDEF USEVARIANTS}
 function BoolToStr(B: Boolean; UseBoolStrs: Boolean = False): string;
 function StrToBool(const S: string): Boolean;
@@ -176,6 +175,9 @@ var
 
 
 implementation
+
+var
+  cajpeg:array [0..10] of char=(chr($FF),chr($D8),chr($FF),chr($E0),chr($0),chr($10),'J','F','I','F',chr(0));
 
 {$IFDEF MSWINDOWS}
 var
@@ -1165,6 +1167,7 @@ begin
    Result:=NumberToTextCatalan(FNumero,female);
  end;
 end;
+
 
 
 

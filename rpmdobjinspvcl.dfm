@@ -19,10 +19,6 @@ object FRpObjInspVCL: TFRpObjInspVCL
     Left = 156
     Top = 88
   end
-  object OpenDialog1: TOpenDialog
-    Left = 80
-    Top = 84
-  end
   object FontDialog1: TFontDialog
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -43,5 +39,9 @@ object FRpObjInspVCL: TFRpObjInspVCL
       Caption = 'Save section'
       OnClick = MLoadExternalClick
     end
+  end
+  object OpenDialog1: TOpenPictureDialog
+    Left = 60
+    Top = 124
   end
 end
