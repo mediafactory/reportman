@@ -133,6 +133,9 @@ type
     Measurement2: TMenuItem;
     Cms1: TMenuItem;
     Inchess1: TMenuItem;
+    AUserParams: TAction;
+    N4: TMenuItem;
+    Userparameters1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -167,6 +170,7 @@ type
     procedure AUnitCmsExecute(Sender: TObject);
     procedure AUnitsinchessExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure AUserParamsExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFDesignFrame;
@@ -207,7 +211,7 @@ var
 implementation
 
 uses rppagesetup, rpshfolder,  fdatainfo, frpgrid, rppreview, fabout,
-  rpprintdia;
+  rpprintdia, rprfparams;
 
 {$R *.xfm}
 
@@ -516,6 +520,7 @@ end;
 
 procedure TFMainf.FormCreate(Sender: TObject);
 begin
+ Application.Title:=SRpRepman;
  configfile:=Obtainininameuserconfig('','','repmand');
 {$IFDEF MSWINDOWS}
   LastUsedFiles.CaseSensitive:=False;
@@ -987,6 +992,11 @@ begin
   fdesignframe.UpdateInterface;
   CorrectScrollBoxes;
  end;
+end;
+
+procedure TFMainf.AUserParamsExecute(Sender: TObject);
+begin
+ ShowUserParams(report);
 end;
 
 initialization

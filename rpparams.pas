@@ -36,7 +36,7 @@ type
   TRpParam=class(TCollectionitem)
    private
     FName:string;
-    FDescription:string;
+    FDescription:widestring;
     FVisible:boolean;
     FValue:variant;
     FParamType:TRpParamType;
@@ -44,7 +44,7 @@ type
     procedure SetVisible(AVisible:boolean);
     procedure SetName(AName:String);
     procedure SetValue(AValue:variant);
-    procedure SetDescription(ADescription:string);
+    procedure SetDescription(ADescription:widestring);
     procedure SetParamType(AParamType:TRpParamType);
    public
     Constructor Create(Collection:TCollection);override;
@@ -53,7 +53,7 @@ type
     procedure SetDatasets(AList:TStrings);
    published
     property Name:string read FName write SetName;
-    property Description:string read FDescription write SetDescription;
+    property Description:widestring read FDescription write SetDescription;
     property Visible:Boolean read FVisible write SetVisible default True;
     property Value:Variant read FValue write SetValue;
     property ParamType:TRpParamType read FParamtype write SetParamType
@@ -133,9 +133,9 @@ begin
  Changed(False);
 end;
 
-procedure TRpParam.SetDescription(ADescription:String);
+procedure TRpParam.SetDescription(ADescription:wideString);
 begin
- FDescription:=AnsiUpperCase(ADescription);
+ FDescription:=ADescription;
  Changed(false);
 end;
 

@@ -61,6 +61,9 @@ type
     AExit: TAction;
     BSeparator: TToolButton;
     ToolButton9: TToolButton;
+    ToolButton8: TToolButton;
+    AParams: TAction;
+    ToolButton10: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -77,10 +80,12 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure AExitExecute(Sender: TObject);
+    procedure AParamsExecute(Sender: TObject);
   private
     { Private declarations }
     cancelled:boolean;
     printed:boolean;
+    enableparams:boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure RepProgress(Sender:TRpReport;var docancel:boolean);
     procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
@@ -101,7 +106,7 @@ function ShowPreview(report:TRpReport;caption:string):boolean;
 
 implementation
 
-uses rpprintdia;
+uses rpprintdia, rprfparams;
 
 {$R *.xfm}
 
@@ -109,6 +114,8 @@ function ShowPreview(report:TRpReport;caption:string):boolean;
 var
  dia:TFRpPreview;
  oldprogres:TRpProgressEvent;
+ hasparams:boolean;
+ i:integer;
 begin
  dia:=TFRpPreview.Create(Application);
  try
@@ -116,6 +123,17 @@ begin
   oldprogres:=report.OnProgress;
   try
    dia.report:=report;
+   hasparams:=false;
+   for i:=0 to report.params.count-1 do
+   begin
+    if report.params.items[i].Visible then
+    begin
+     hasparams:=true;
+     break;
+    end;
+   end;
+   dia.AParams.Enabled:=hasparams;
+   dia.enableparams:=hasparams;
    report.OnProgress:=dia.RepProgress;
    Application.OnIdle:=dia.AppIdle;
    dia.ShowModal;
@@ -207,7 +225,6 @@ begin
  ALast.ShortCut:=Key_End;
  qtdriver:=TRpQtDriver.Create;
  aqtdriver:=qtdriver;
-// qtdriver.toprinter:=true;
  bitmap:=TBitmap.Create;
  bitmap.PixelFormat:=pf32bit;
  AImage.Picture.Bitmap:=bitmap;
@@ -376,6 +393,7 @@ begin
  APrevious.Enabled:=false;
  EPageNum.Enabled:=false;
  ASave.Enabled:=false;
+ AParams.Enabled:=false;
  PBar.Position:=0;
  PBar.Visible:=enablebar;
 end;
@@ -390,6 +408,7 @@ begin
  APrevious.Enabled:=true;
  EPageNum.Enabled:=true;
  ASave.Enabled:=true;
+ AParams.Enabled:=enableparams;
  PBar.Visible:=false;
 end;
 
@@ -421,6 +440,17 @@ end;
 procedure TFRpPreview.AExitExecute(Sender: TObject);
 begin
  Close;
+end;
+
+procedure TFRpPreview.AParamsExecute(Sender: TObject);
+var
+ adone:boolean;
+begin
+ if ShowUserParams(report) then
+ begin
+  // Reexecutes the report
+  AppIdle(Self,adone);
+ end;
 end;
 
 end.

@@ -202,7 +202,7 @@ resourcestring
   SRpNow='Returns today and time in datetime data type';
   SRpTime='Returns the time in datetime datatype';
 
-  SRpNull='The NULL value';
+  SRpNull='Null';
 
   SRpMonthName='The name of the month in string';
   SRpPMonthName='d es de date to be decoded';

@@ -36,6 +36,8 @@ requires
   Vclbde50,
   VCLIB50;
 
+{%File 'rpconf.inc'}
+
 contains
   rptypeval in 'rptypeval.pas',
   rpconsts in 'rpconsts.pas',

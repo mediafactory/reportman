@@ -74,6 +74,7 @@ uses
   rpdrawitem in '..\rpdrawitem.pas',
   rpzlib in '..\rpzlib.pas',
   rppreview in '..\rppreview.pas' {FRpPreview},
+  rprfparams in '..\rprfparams.pas' {FRpRunTimeParams},
   rpzlibadler in '..\rpzlibadler.pas',
   rpzlibinfblock in '..\rpzlibinfblock.pas',
   rpzlibinfcodes in '..\rpzlibinfcodes.pas',
@@ -120,6 +121,7 @@ uses
   rpdrawitem in '../rpdrawitem.pas',
   rpzlib in '../rpzlib.pas',
   rppreview in '../rppreview.pas' {FRpPreview},
+  rprfparams in '../rprfparams.pas' {FRpRunTimeParams},
   rpzlibadler in '../rpzlibadler.pas',
   rpzlibinfblock in '../rpzlibinfblock.pas',
   rpzlibinfcodes in '../rpzlibinfcodes.pas',
@@ -140,7 +142,6 @@ uses
 
 begin
   Application.Initialize;
-  Application.Title := 'Report manager designer';
   Application.CreateForm(TFMainf, FMainf);
   Application.Run;
 end.

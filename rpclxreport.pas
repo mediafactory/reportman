@@ -21,7 +21,7 @@ unit rpclxreport;
 interface
 
 uses Classes,Sysutils,rpreport,rpconsts,
- QPrinters,rpqtdriver,rppreview,rpalias;
+ QPrinters,rpqtdriver,rppreview,rpalias,rprfparams;
 
 type
  TCLXReport=class(TComponent)
@@ -34,16 +34,17 @@ type
    FAliasList:TRpAlias;
    FShowPrintDialog:boolean;
    FLanguage:integer;
+   function GetReport:TRpReport;
   protected
    procedure Notification(AComponent: TComponent; Operation: TOperation);override;
   public
    function Execute:boolean;
    procedure PrinterSetup;
-   function GetReport:TRpReport;
    constructor Create(AOwner:TComponent);override;
    procedure CheckLoaded;
    procedure SetFileName(Value:TFilename);
    property Report:TRpReport read GetReport;
+   function ShowParams:boolean;
   published
    property Filename:TFilename read FFilename write SetFilename;
    property Preview:Boolean read FPreview write FPreview default true;
@@ -128,6 +129,12 @@ begin
   FReport:=nil;
   raise;
  end;
+end;
+
+function TCLXReport.ShowParams:boolean;
+begin
+ CheckLoaded;
+ Result:=ShowUserParams(report);
 end;
 
 
