@@ -1,5 +1,4 @@
-{*******************************************************}
-{                                                       }
+{*******************************************************}{                                                       }
 {       Interface to zlib libraries                     }
 {                                                       }
 {                                                       }
@@ -286,11 +285,10 @@ begin
   end;
 end;
 
-
 // TCustomZlibStream
 
-constructor TCustomZLibStream.Create(Strm: TStream);
-begin
+
+constructor TCustomZLibStream.Create(Strm: TStream);begin
   inherited Create;
   FStrm := Strm;
   FStrmPos := Strm.Position;
@@ -495,3 +493,4 @@ end;
 
 
 end.
+

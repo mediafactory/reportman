@@ -1,3 +1,10 @@
+{TODO 1 -oToni -cEngine : Conversion program for gestor.exe}
+{TODO 1 -oToni -cEngine : Saving and loading from database tables}
+{TODO -oToni -cEngine : Program a component to easily execute reports from delphi and kylix}
+{TODO -oToni -cEngine :
+Implementation in Linux of the printing with calling metaprint command 
+because sigpipe after connecting to a dataset}
+{TODO -oToni -cEngine : Drop Fields directly from a floating window when click in expression}
 {TODO -oToni -cEngine : Implementation for printing page headers and footers}
 {TODO -oToni -cEngine : Image from a field implementation}
 {TODO -oToni -cEngine : Format expresion implementation}
