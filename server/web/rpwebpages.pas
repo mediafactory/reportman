@@ -192,6 +192,7 @@ begin
       astring:=astring+'<p>'+LogFileErrorMessage+'</p>';
      end;
      // Configuration
+     astring:=astring+'<p>[CONFIG]PAGESDIR='+FPagesDirectory+'</p>';
      astring:=astring+'<p>Decimal separator:'+DecimalSeparator+'</p>';
      astring:=astring+'<p>Thousand separator:'+ThousandSeparator+'</p>';
      // Environment variables
@@ -630,7 +631,7 @@ end;
 procedure TRpWebPageLoader.ExecuteReport(Request: TWebRequest;Response:TWebResponse);
 var
  pdfreport:TRpReport;
- dirpath,reportname:string;
+ username,dirpath,reportname:string;
  aliasname:string;
  astream:TMemoryStream;
  paramname,paramvalue:string;
@@ -639,6 +640,7 @@ var
  paramisnull:boolean;
 begin
  dometafile:=false;
+ username:=UpperCase(Request.QueryFields.Values['username']);
  reportname:='';
  try
   aliasname:=Request.QueryFields.Values['aliasname'];
@@ -676,6 +678,11 @@ begin
      if Uppercase(Request.QueryFields.Names[i])='METAFILE' then
       dometafile:=Request.QueryFields.Values['METAFILE']='1';
     end;
+    // Assigns pusername param if exists
+    index:=pdfreport.Params.IndexOf('PUSERNAME');
+    if index>=0 then
+     pdfreport.Params.ParamByName('PUSERNAME').Value:=username;
+
     astream:=TMemoryStream.Create;
     astream.Clear;
     if dometafile then
