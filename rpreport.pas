@@ -1129,6 +1129,7 @@ begin
     CheckProgress;
    end;
    Metafile.CurrentPage:=newpage;
+   PageNum:=Metafile.CurrentPage;
   end;
  except
   on E:Exception do

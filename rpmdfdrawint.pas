@@ -338,7 +338,7 @@ begin
   rpsRectangle, rpsSquare:
    Canvas.Rectangle(X, Y, X + W, Y + H);
   rpsRoundRect, rpsRoundSquare:
-   Canvas.RoundRect(X, Y, X + W, Y + H, S div 4, S div 4);
+   Canvas.RoundRect(X, Y, X + W, Y + H, Round(22*Screen.PixelsPerInch/96), Round(22*Screen.PixelsPerInch/96));
   rpsCircle, rpsEllipse:
    Canvas.Ellipse(X, Y, X + W, Y + H);
   rpsHorzLine:

@@ -74,12 +74,35 @@ object FMain: TFMain
       Top = 0
       Action = ASearch
     end
+    object POrderBy: TPanel
+      Left = 172
+      Top = 0
+      Width = 209
+      Height = 26
+      Alignment = taLeftJustify
+      BevelOuter = bvNone
+      Caption = 'Order by'
+      TabOrder = 0
+      object ComboOrder: TComboBox
+        Left = 68
+        Top = 4
+        Width = 133
+        Height = 21
+        Style = csDropDownList
+        ItemHeight = 13
+        TabOrder = 0
+        OnClick = ComboOrderClick
+        Items.Strings = (
+          'Position'
+          'Description')
+      end
+    end
   end
   object PParent: TPanel
     Left = 0
     Top = 28
     Width = 681
-    Height = 393
+    Height = 401
     Align = alClient
     BevelOuter = bvNone
     Caption = 'PParent'
@@ -88,7 +111,7 @@ object FMain: TFMain
     Visible = False
     object Splitter1: TSplitter
       Left = 0
-      Top = 266
+      Top = 274
       Width = 681
       Height = 8
       Cursor = crVSplit
@@ -99,7 +122,7 @@ object FMain: TFMain
     end
     object DBMemo1: TDBMemo
       Left = 0
-      Top = 274
+      Top = 282
       Width = 681
       Height = 119
       Align = alBottom
@@ -113,7 +136,7 @@ object FMain: TFMain
       Left = 0
       Top = 0
       Width = 681
-      Height = 266
+      Height = 274
       Align = alClient
       DataSource = STexts
       Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
@@ -147,13 +170,14 @@ object FMain: TFMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 421
+    Top = 429
     Width = 681
     Height = 21
     Panels = <
       item
         Width = 50
       end>
+    SimplePanel = False
   end
   object DTexts: TClientDataSet
     Aggregates = <>
@@ -162,6 +186,10 @@ object FMain: TFMain
       item
         Name = 'IPOSITION'
         Fields = 'POSITION'
+      end
+      item
+        Name = 'ITEXT'
+        Fields = 'TEXT'
       end>
     IndexFieldNames = 'POSITION'
     Params = <>
@@ -942,12 +970,6 @@ object FMain: TFMain
     Left = 292
     Top = 136
   end
-  object FindDialog1: TFindDialog
-    Options = [frFindNext, frHideUpDown]
-    OnFind = FindDialog1Find
-    Left = 188
-    Top = 148
-  end
   object DDescriptions: TClientDataSet
     Aggregates = <>
     FieldDefs = <>
@@ -980,5 +1002,12 @@ object FMain: TFMain
     Filter = 'Description files|*.xml'
     Left = 376
     Top = 84
+  end
+  object FindDialog1: TReplaceDialog
+    Options = [frDown, frFindNext, frHideMatchCase, frHideUpDown, frMatchCase, frReplace]
+    OnFind = FindDialog1Find
+    OnReplace = FindDialog1Replace
+    Left = 164
+    Top = 148
   end
 end

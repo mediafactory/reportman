@@ -77,7 +77,6 @@ type
     Paste1: TMenuItem;
     Proces1: TMenuItem;
     ASearch: TAction;
-    FindDialog1: TFindDialog;
     ToolButton8: TToolButton;
     Search1: TMenuItem;
     DTextsDESCRIPTION: TStringField;
@@ -91,6 +90,9 @@ type
     Savedescriptions1: TMenuItem;
     OpenDialogDesc: TOpenDialog;
     SaveDialogDesc: TSaveDialog;
+    POrderBy: TPanel;
+    ComboOrder: TComboBox;
+    FindDialog1: TReplaceDialog;
     procedure AOpenExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ASaveasExecute(Sender: TObject);
@@ -113,6 +115,8 @@ type
     procedure FindDialog1Find(Sender: TObject);
     procedure AOpenDescExecute(Sender: TObject);
     procedure ASaveDescExecute(Sender: TObject);
+    procedure ComboOrderClick(Sender: TObject);
+    procedure FindDialog1Replace(Sender: TObject);
   private
     { Private declarations }
     atrans:TRpTransLator;
@@ -151,6 +155,8 @@ begin
   atrans.Filename:=OpenDialog1.FileName;
   atrans.AutoLocale:=false;
   atrans.Active:=true;
+  ComboOrder.ItemIndex:=0;
+  ComboOrderClick(Self);
   DTexts.DisableControls;
   try
    // Gets the strings
@@ -232,6 +238,8 @@ var
  astring:WideString;
  deststring:WideString;
 begin
+ ComboOrder.ItemIndex:=0;
+ ComboOrderClick(Self);
  // Saves the strings to the resource file
  memstream:=TMemoryStream.Create;
  try
@@ -508,7 +516,10 @@ end;
 
 procedure TFMain.ASearchExecute(Sender: TObject);
 begin
+ ComboOrder.ItemIndex:=0;
+ ComboOrderClick(Self);
  // Ask the texts
+ FindDialog1.Options:=FindDialog1.Options-[frReplace];
  FindDialog1.Execute;
 end;
 
@@ -603,6 +614,54 @@ begin
   DTexts.EnableControls;
  end;
 end;
+
+procedure TFMain.ComboOrderClick(Sender: TObject);
+begin
+ if ComboOrder.ItemIndex=0 then
+  DTexts.IndexFieldNames:='POSITION'
+ else
+  DTexts.IndexFieldNames:='TEXT';
+end;
+
+procedure TFMain.FindDialog1Replace(Sender: TObject);
+var
+ iseof:boolean;
+ index:integer;
+begin
+ DTexts.CheckBrowseMode;
+ iseof:=true;
+ DTexts.DisableControls;
+ try
+  if Not DTexts.Bof then
+   DTexts.Next;
+  While Not DTexts.Eof do
+  begin
+   index:=Pos(UpperCase(FindDialog1.FindText),UpperCase(DTextsTEXT.AsString));
+   if index>0 then
+   begin
+    iseof:=false;
+    GridEdit.SelectedField:=DTextsTEXT;
+    DTexts.Edit;
+    try
+     DTextsTEXT.Value:=StringReplace(DTextsTEXT.Value,FindDialog1.FindText,
+      FindDialog1.ReplaceText,[rfReplaceAll, rfIgnoreCase]);
+     DTexts.Post;
+    except
+     DTexts.Cancel;
+     raise;
+    end;
+   end;
+   if (Not (frReplaceAll in FindDialog1.Options)) then
+    break;
+   DTexts.Next;
+  end;
+  if iseof then
+   Raise Exception.Create(SRpNotFound);
+ finally
+  DTexts.EnableControls;
+ end;
+end;
+
 
 initialization
 
