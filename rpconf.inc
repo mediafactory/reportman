@@ -19,10 +19,6 @@
  {$DEFINE HORZPAPERBUG}
 {$ENDIF}
 
-// A bug in toolbar size makes a nightmare crossplatform
-// Setting autosize to false, and then true solves problem
-{$DEFINE TOOLBARSIZEBUG}
-
 // Vcl File Filters is a missing feature of CLX Dialogs
 //{$DEFINE VCLFILEFILTERS}
 

@@ -547,6 +547,7 @@ resourcestring
   SRpPDFFileUn='PDF File - uncompressed';
   SRpRepMetafile='Report Metafile';
   SRpRepFile='Report File';
+  SRpAnyFile='Any File';
 
 
 implementation

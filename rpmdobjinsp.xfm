@@ -32,7 +32,7 @@ object FRpObjInsp: TFRpObjInsp
     Top = 92
   end
   object OpenDialog1: TOpenDialog
-    Height = 0
+    Height = 432
     DefaultExt = 'bmp'
     FileName = '*.bmp'
     Filter = 'Bitmap images (*.*)'

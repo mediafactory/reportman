@@ -568,14 +568,11 @@ end;
 
 procedure TFRpMainF.FormCreate(Sender: TObject);
 begin
-{$IFDEF TOOLBARSIZEBUG}
- ToolBar1.AutoSize:=false;
- ToolBar1.Height:=100;
- ToolBar1.Autosize:=true;
-{$ENDIF}
-
 {$IFDEF VCLFILEFILTERS}
  OpenDialog1.Filter := SRpRepFile+'|*.rep';
+{$ENDIF}
+{$IFDEF VCLFILEFILTERS}
+ SabeDialog1.Filter := SRpRepFile+'|*.rep'+SRpAnyFile+'|*.*';
 {$ENDIF}
  // Sets on exception event
 {$IFDEF MSWINDOWS}

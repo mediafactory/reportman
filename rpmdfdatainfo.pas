@@ -89,6 +89,8 @@ type
     BDelete: TButton;
     BRename: TButton;
     Label3: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
