@@ -10,8 +10,8 @@ object FRpDatasets: TFRpDatasets
     Left = 0
     Top = 0
     Width = 451
-    Height = 54
-    Align = alClient
+    Height = 105
+    Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     object ToolBar1: TToolBar
@@ -177,7 +177,7 @@ object FRpDatasets: TFRpDatasets
     Top = 54
     Width = 451
     Height = 250
-    Align = alBottom
+    Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PControl: TPageControl

@@ -106,7 +106,6 @@ contains
   rpmdfbarcodeintvcl in 'rpmdfbarcodeintvcl.pas',
   rpmdfchartintvcl in 'rpmdfchartintvcl.pas',
   rpmdfconnectionvcl in 'rpmdfconnectionvcl.pas' {FRpConnectionVCL: TFrame},
-  rpmdfdatainfovcl in 'rpmdfdatainfovcl.pas' {FRpDatainfoconfigVCL},
   rpmdfdesignvcl in 'rpmdfdesignvcl.pas' {FRpDesignFrameVCL: TFrame},
   rpmdfdrawintvcl in 'rpmdfdrawintvcl.pas',
   rpmdfextsecvcl in 'rpmdfextsecvcl.pas' {FRpExtSectionVCL},

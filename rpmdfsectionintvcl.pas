@@ -802,12 +802,14 @@ var
  aitem:TRpSizePosInterface;
  rec1,rec2:TRect;
  arec:Trect;
+ fselitems:TStringList;
 begin
  Result:=false;
  rec1.Left:=NewLeft;
  rec1.Top:=NewTop;
  rec1.Bottom:=NewTop+NewHeight;
  rec1.Right:=NewLeft+NewWidth;
+ fselitems:=TFRpObjInspVCL(fobjinsp).SelectedItems;
  for i:=0 to childlist.Count-1 do
  begin
   aitem:=TRpSizePosInterface(childlist.Items[i]);
@@ -819,10 +821,25 @@ begin
    rec2.Right:=aitem.Left+aitem.Width;
    if IntersectRect(arec,Rec1,Rec2) then
    begin
-    TFRpObjInspVCL(fobjinsp).AddCompItem(aitem,false);
+    if not Result then
+    begin
+     if fselitems.count>0 then
+      if (Not (fselitems.Objects[0] is TRpSizePosInterface)) then
+       fselitems.Clear;
+    end;
+    if fselitems.IndexOfObject(aitem)<0 then
+    begin
+     fselitems.AddObject(aitem.classname,aitem);
+    end;
     Result:=True;
    end;
   end;
+ end;
+ if Result then
+ begin
+  aitem:=TRpSizePosInterface(fselitems.Objects[0]);
+  fselitems.Delete(0);
+  TFRpObjInspVCL(fobjinsp).AddCompItem(aitem,false);
  end;
 end;
 

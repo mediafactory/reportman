@@ -24,9 +24,8 @@ interface
 
 uses
  mmsystem,windows,
- excel97,
  Classes,sysutils,rpmetafile,rpmdconsts,Graphics,Forms,
- rpmunits,Dialogs, Controls,
+ rpmunits,Dialogs, Controls,Comobj,
  StdCtrls,ExtCtrls,rppdffile,rpgraphutilsvcl,
 {$IFDEF USEVARIANTS}
  types,Variants,
@@ -36,6 +35,22 @@ uses
 
 const
  XLS_PRECISION=100;
+
+const
+  xlHAlignCenter = $FFFFEFF4;
+  xlHAlignCenterAcrossSelection = $00000007;
+  xlHAlignDistributed = $FFFFEFEB;
+  xlHAlignFill = $00000005;
+  xlHAlignGeneral = $00000001;
+  xlHAlignJustify = $FFFFEFDE;
+  xlHAlignLeft = $FFFFEFDD;
+  xlHAlignRight = $FFFFEFC8;
+  xlExclusive = $00000003;
+  xlNoChange = $00000001;
+  xlShared = $00000002;
+
+
+
 type
   TFRpExcelProgress = class(TForm)
     BCancel: TButton;
@@ -128,7 +143,7 @@ begin
  end;
 end;
 
-procedure PrintObject(sh:ExcelWorkSheet;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;
+procedure PrintObject(sh:Variant;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;
  rows,columns:TStringList;FontName:String;FontSize:integer);
 var
  aansitext:string;
@@ -346,9 +361,9 @@ var
  dpix,dpiy:integer;
  mmfirst,mmlast:DWORD;
  difmilis:int64;
- wb:ExcelWorkBook;
- sh:ExcelWorkSheet;
- Excel:TExcelApplication;
+ wb:Variant;
+ sh:Variant;
+ Excel:Variant;
  columns:TStringList;
  rows:TStringList;
  index:integer;
@@ -380,11 +395,11 @@ begin
    rows.sorted:=true;
    columns.sorted:=true;
    // Creates the excel file
-   Excel:=TExcelApplication.Create(Application);
-   Excel.Visible[1]:=Visible;
-   wb:=Excel.Workbooks.add(null,1);
+   Excel:=CreateOleObject('excel.application');
+   Excel.Visible:=Visible;
+   wb:=Excel.Workbooks.Add;
    shcount:=1;
-   sh:=wb.Worksheets.item[shcount] As ExcelWorkSheet;
+   sh:=wb.Worksheets.item[shcount];
    FontName:=sh.Cells.Font.Name;
    FontSize:=sh.Cells.Font.Size;
 
@@ -392,7 +407,7 @@ begin
    begin
     if wb.Worksheets.Count<shcount then
      wb.Worksheets.Add(NULL,wb.Worksheets.Item[wb.Worksheets.Count],1,NULL,1);
-    sh:=wb.Worksheets.item[shcount] As ExcelWorkSheet;
+    sh:=wb.Worksheets.item[shcount];
     inc(shcount);
     apage:=metafile.Pages[i];
     rows.clear;
@@ -438,11 +453,11 @@ begin
  end;
  if Length(Filename)>0 then
  begin
-  wb.SaveAs(Filename, Null, Null, Null, False, False, xlNoChange, Null, True, Null, Null,0);
-  wb.Close(True,Filename,False,0);
+  wb.SaveAs(Filename);
+  wb.Close;
  end;
  if not visible then
-  Excel.Disconnect;
+  Excel.Quit;
  if assigned(aform) then
   aform.close;
 end;

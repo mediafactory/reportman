@@ -27,12 +27,12 @@ uses
 {$IFDEF MSWINDOWS}
  Windows,
 {$ENDIF}
- Sysutils,IniFiles,rpmdshfolder,Classes,Consts,
+ Sysutils,IniFiles,rpmdshfolder,Classes,
 {$IFDEF USEVARIANTS}
  Variants,Types,rtlconsts,
 {$ENDIF}
 {$IFNDEF USEVARIANTS}
-  Consts,
+  consts,
 {$ENDIF}
 {$IFDEF USEBCD}
  FMTBcd,

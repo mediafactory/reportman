@@ -1727,8 +1727,7 @@ begin
   end
   else
   begin
-   metafile.PageSize:=-1;
-   apagesize:=Driver.GetPageSize;
+   apagesize:=Driver.GetPageSize(metafile.PageSize);
   end;
   FInternalPageWidth:=apagesize.X;
   FInternalPageHeight:=apagesize.Y;

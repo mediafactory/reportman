@@ -52,6 +52,7 @@ function GetPhysicPageSizeTwips:TPoint;
 function GetPageSizeTwips:TPoint;
 function GetPageMarginsTWIPS:TRect;
 function QtPageSizeToGDIPageSize (qtsize:TPageSizeQt):TGDIPageSize;
+function GDIPageSizeToQtPageSize (gdisize:TGDIPageSize):TPageSizeQt;
 function FindIndexPaperName (device, name:string):integer;
 procedure SetCurrentPaper (apapersize:TGDIPageSize);
 procedure SetPrinterCopies(copies:integer);
@@ -380,6 +381,60 @@ end;
       (Width: -1; Height: -1)        // psNPageSize
     );
 }
+
+function GDIPageSizeToQtPageSize (gdisize:TGDIPageSize):TPageSizeQt;
+begin
+ case gdisize.PageIndex of
+  DMPAPER_A4:
+   Result.Indexqt:=0;
+  DMPAPER_B5:
+   Result.Indexqt:=1;
+  DMPAPER_LETTER:
+   Result.Indexqt:=2;
+  DMPAPER_LEGAL:
+   Result.Indexqt:=3;
+  DMPAPER_EXECUTIVE:
+   Result.Indexqt:=4;
+  DMPAPER_A2:
+   Result.Indexqt:=7;
+  DMPAPER_A3:
+   Result.Indexqt:=8;
+  DMPAPER_A5:
+   Result.Indexqt:=9;
+  DMPAPER_A6:
+   Result.Indexqt:=10;
+  DMPAPER_B4:
+   Result.Indexqt:=19;
+  DMPAPER_ENV_C5:
+   Result.Indexqt:=24;
+  DMPAPER_ENV_10:
+   Result.Indexqt:=25;
+  DMPAPER_ENV_DL:
+   Result.Indexqt:=26;
+  DMPAPER_FOLIO:
+   Result.Indexqt:=27;
+  DMPAPER_LEDGER:
+   Result.Indexqt:=28;
+  DMPAPER_TABLOID:
+   Result.Indexqt:=29;
+  else
+  begin
+   if gdisize.PageIndex>=0 then
+   begin
+    Result.Custom:=True;
+    // Converts to twips
+    Result.Indexqt:=-1;
+    Result.CustomWidth:=Round(gdisize.Width/100/CMS_PER_INCHESS*TWIPS_PER_INCHESS);
+    Result.CustomHeight:=Round(gdisize.Height/100/CMS_PER_INCHESS*TWIPS_PER_INCHESS);
+   end
+   else
+   begin
+    Result.indexqt:=0;
+    Result.Custom:=False;
+   end;
+  end;
+ end;
+end;
 
 function QtPageSizeToGDIPageSize(qtsize:TPageSizeQt):TGDIPageSize;
 begin

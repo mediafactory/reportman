@@ -107,7 +107,7 @@ type
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
    function AllowCopies:boolean;stdcall;
    procedure SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
-   function GetPageSize:TPoint;stdcall;
+   function GetPageSize(var PageSizeQt:Integer):TPoint;stdcall;
    function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
    function SupportsCopies(maxcopies:integer):boolean;stdcall;
@@ -210,6 +210,7 @@ var
  rec:TRect;
  asize:TPoint;
  scale2:double;
+ sizeqt:integer;
 begin
  if ToPrinter then
  begin
@@ -219,7 +220,7 @@ begin
   // Sets pagesize, only supports default and qt index
   if report.PageSize<0 then
   begin
-   asize:=GetPageSize;
+   asize:=GetPageSize(sizeqt);
   end
   else
   begin
@@ -257,7 +258,7 @@ begin
   // Sets pagesize
   if report.PageSize<0 then
   begin
-   asize:=GetPageSize;
+   asize:=GetPageSize(sizeqt);
   end
   else
   begin
@@ -674,7 +675,7 @@ begin
 end;
 
 
-function TrpQtDriver.GetPageSize:TPoint;
+function TrpQtDriver.GetPageSize(var PageSizeQt:Integer):TPoint;stdcall;
 begin
  // If no printer installed get A4 pagesize
  if Printer.printers.count<1 then
@@ -685,11 +686,13 @@ begin
  end;
  if FIntPageSize.Custom then
  begin
+  PageSizeQt:=-1;
   Result.X:=FIntPageSize.CustomWidth;
   Result.Y:=FIntPageSize.CustomHeight;
  end
  else
  begin
+  PageSizeQt:=Printer.PageNumber;
   Result.x:=Round((Printer.PageWidth/Printer.XDPI)*TWIPS_PER_INCHESS);
   Result.y:=Round((Printer.PageHeight/Printer.YDPI)*TWIPS_PER_INCHESS);
  end;
@@ -709,6 +712,8 @@ begin
 end;
 
 function TRpQTDriver.InternalSetPagesize(PagesizeQt:integer):TPoint;
+var
+ sizeqt:integer;
 begin
  Printer.PrintAdapter.PageSize:=TPageSize(PagesizeQT);
  if FOrientation<>rpOrientationDefault then
@@ -718,7 +723,7 @@ begin
   else
    Printer.Orientation:=poLandscape;
  end;
- Result:=GetPageSize;
+ Result:=GetPageSize(sizeqt);
 end;
 
 procedure TRpQTDriver.SetOrientation(Orientation:TRpOrientation);

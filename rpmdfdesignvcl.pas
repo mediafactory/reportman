@@ -7,7 +7,7 @@
 {       Used by a subreport                             }
 {                                                       }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -31,12 +31,13 @@ uses
   Classes,
   Graphics, Controls, Forms, Dialogs, Menus,
   ExtCtrls,Windows,Messages,
-  rpmdfstrucvcl,rpmdobinsintvcl,
+  rpmdfstrucvcl,rpmdobinsintvcl,rpgraphutilsvcl,
   rpmdfsectionintvcl,rpmdobjinspvcl,rprulervcl,
   rpsubreport,rpsection,rpreport,rpmunits;
 
 const
  CONS_RULER_LEFT=20;
+ CONS_RIGHTPWIDTH=6;
 type
 
   // A ScrollBox that not scrolls in view focused controls
@@ -47,16 +48,45 @@ type
 
   TFRpDesignFrameVCL=class;
 
+  TRpPanelRight=Class(TPanel)
+   private
+    FFrame:TFRpDesignFrameVCL;
+    FRectangle:TRpRectangle;
+    FRectangle2:TRpRectangle;
+    FRectangle3:TRpRectangle;
+    FRectangle4:TRpRectangle;
+    FXOrigin,FYOrigin:integer;
+    FBlocked:boolean;
+   protected
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer);override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
+    procedure Paint;override;
+   public
+    Section:TRpSection;
+    constructor Create(AOwner:TComponent);override;
+   end;
+
   TRpPaintEventPanel=Class(TPanel)
    private
     FOnPaint:TNotifyEvent;
     Updating:boolean;
     FOnPosChange:TNotifyEvent;
     FFrame:TFRpDesignFrameVCL;
+    FRectangle:TRpRectangle;
+    FRectangle2:TRpRectangle;
+    FRectangle3:TRpRectangle;
+    FRectangle4:TRpRectangle;
+    FXOrigin,FYOrigin:integer;
+    FBlocked:boolean;
+    allowselect:Boolean;
    protected
     procedure Paint;override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
+    procedure MouseMove(Shift: TShiftState; X, Y: Integer);override;
+    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
     procedure DoPosChange(var Msg:TMessage);message WM_MOVE;
    public
     CaptionText:WideString;
@@ -78,6 +108,7 @@ type
     leftrulers:Tlist;
     FSubReport:TRpSubreport;
     toptitles:Tlist;
+    righttitles:Tlist;
     procedure SetReport(Value:TRpReport);
     procedure SecPosChange(Sender:TObject);
   public
@@ -111,22 +142,22 @@ end;
 
 
 constructor TrpPaintEventPanel.Create(AOwner:TComponent);
+var
+ opts:TControlStyle;
 begin
  Inherited Create(AOwner);
 
  BevelInner:=bvNone;
  BevelOuter:=bvNone;
  BorderStyle:=bsNone;
+ allowselect:=true;
+
+ opts:=ControlStyle;
+ include(opts,csCaptureMouse);
+ ControlStyle:=opts;
+
 end;
 
-procedure TrpPaintEventPanel.MouseDown(Button: TMouseButton; Shift: TShiftState;
-      X, Y: Integer);
-var
- dframe:TFRpDesignFrameVCL;
-begin
- dframe:=TFRpDesignFrameVCL(Owner);
- dframe.freportstructure.SelectDataItem(section);
-end;
 
 
 procedure TRpPaintEventPanel.DoPosChange(var Msg:TMessage);
@@ -166,6 +197,7 @@ begin
  if assigned(Section) then
   if assigned(secint) then
    if section=secint.printitem then
+    if allowselect then
      Canvas.Brush.Color:=clAppWorkSpace;
  Canvas.Rectangle(rec);
  if (parent.parent is TScrollBox) then
@@ -201,9 +233,11 @@ begin
 
  leftrulers:=Tlist.Create;
  toptitles:=Tlist.Create;
+ righttitles:=Tlist.Create;
  secinterfaces:=TList.Create;
 
  PSection:=TRpPaintEventPanel.Create(Self);
+ PSection.allowselect:=False;
  PSection.FFrame:=Self;
  PSection.Color:=clAppWorkSpace;
  PSection.Parent:=SectionSCrollBox;
@@ -214,6 +248,7 @@ destructor TFRpDesignFrameVCL.Destroy;
 begin
  leftrulers.free;
  toptitles.free;
+ righttitles.free;
  secinterfaces.free;
 
  inherited Destroy;
@@ -317,7 +352,8 @@ begin
  for i:=0 to toptitles.count-1 do
  begin
   apanel:=TRpPaintEventpanel(toptitles.Items[i]);
-  apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption(false);
+  if i<FSubReport.Sections.Count then
+   apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption(false);
   apanel.Invalidate;
  end;
 end;
@@ -328,13 +364,16 @@ var
  i:integer;
  asecint:TRpSectionInterface;
  apanel:TRpPaintEventpanel;
+ rpanel:TRpPanelRight;
  aruler:TRpRulerVCL;
  posx:integer;
  maxwidth:integer;
+ oldsection:TRpSection;
 begin
  // If subreport is not the same frees
  if Fsubreport=subreport then
   exit;
+ oldsection:=nil;
  if assigned(fsubreport) then
  begin
   fobjinsp.ClearMultiselect;
@@ -342,10 +381,14 @@ begin
   begin
    TRpSectionInterface(secinterfaces.Items[i]).Free;
    TPanel(TopTitles.Items[i]).Free;
+   TPanel(RightTitles.Items[i]).Free;
    TRpRulerVCL(LeftRulers.Items[i]).Free;
   end;
+  TPanel(TopTitles.Items[secinterfaces.Count]).Free;
+
   secinterfaces.clear;
   toptitles.clear;
+  righttitles.clear;
   leftrulers.Clear;
  end;
  Fsubreport:=subreport;
@@ -361,6 +404,10 @@ begin
   begin
    apanel:=TRpPaintEventPanel.Create(self);
    apanel.FFrame:=Self;
+   if i=0 then
+    apanel.Cursor:=crArrow
+   else
+    apanel.Cursor:=crSizeNS;
    apanel.OnPaint:=SecPosChange;
    apanel.Height:=panelheight;
    apanel.Caption:='';
@@ -371,9 +418,12 @@ begin
    apanel.BevelOuter:=bvNone;
    apanel.Top:=posx;
    apanel.section:=FSubReport.Sections.Items[i].Section;
+   oldsection:=apanel.section;
    posx:=posx+apanel.Height;
    apanel.parent:=PSection;
    toptitles.Add(apanel);
+
+
 
    asecint:=TRpSectionInterface.Create(Self,fsubreport.Sections.Items[i].Section);
    asecint.OnPosChange:=SecPosChange;
@@ -388,6 +438,18 @@ begin
    secinterfaces.Add(asecint);
 
    apanel.Width:=asecint.Width;
+
+
+   rpanel:=TRpPanelRight.Create(self);
+   rpanel.FFrame:=Self;
+   rpanel.Height:=asecint.Height;
+   rpanel.Left:=asecint.Width;
+   rpanel.Caption:='';
+   rpanel.Top:=posx;
+   rpanel.Width:=CONS_RIGHTPWIDTH;
+   rpanel.section:=oldsection;
+   rpanel.parent:=PSection;
+   righttitles.Add(rpanel);
 
 
    aruler:=TRpRulerVCL.Create(Self);
@@ -408,18 +470,40 @@ begin
    posx:=posx+asecint.Height;
 
   end;
+  // Last panel for resizing only
+  apanel:=TRpPaintEventPanel.Create(self);
+  apanel.allowselect:=false;
+  apanel.FFrame:=Self;
+  apanel.Cursor:=crSizeNS;
+  apanel.OnPaint:=SecPosChange;
+  apanel.Height:=panelheight div 3;
+  apanel.Caption:='';
+  apanel.CaptionText:='';
+  apanel.Alignment:=taLeftJustify;
+  apanel.BorderStyle:=bsNone;
+  apanel.BevelInner:=bvNone;
+  apanel.BevelOuter:=bvNone;
+  apanel.Top:=posx;
+  apanel.width:=oldsection.width;
+  apanel.section:=oldsection;
+  posx:=posx+apanel.Height;
+  apanel.parent:=PSection;
+  toptitles.Add(apanel);
+
+
+
   for i:=0 to secinterfaces.Count-1 do
   begin
    asecint:=TRpSectionInterface(secinterfaces.items[i]);
    asecint.SendToBack;
   end;
-  TopRuler.Width:=maxwidth;
+  TopRuler.Width:=maxwidth*2+CONS_RIGHTPWIDTH;
   if rpmunits.defaultunit=rpUnitCms then
    TopRuler.Metrics:=rCms
   else
    TopRuler.Metrics:=rInchess;
   PSection.Height:=posx+Height;
-  PSection.Width:=maxwidth;
+  PSection.Width:=maxwidth*2+CONS_RIGHTPWIDTH;
  finally
   SectionScrollBox.Visible:=true;
  end;
@@ -433,23 +517,32 @@ var
  i,j:integer;
  asecint:TRpSectionInterface;
  apanel:TRpPaintEventpanel;
+ rpanel:TRpPanelRight;
  aruler:TRpRulerVCL;
  posx:integer;
  maxwidth:integer;
+ oldxposition,oldyposition:integer;
 begin
  if not Assigned(FSubreport) then
   exit;
+ oldxposition:=SectionScrollBox.HorzScrollBar.Position;
+ if oldxposition<0 then
+  oldxposition:=0;
+ oldyposition:=SectionScrollBox.VertScrollBar.Position;
+ if oldyposition<0 then
+  oldyposition:=0;
  SectionScrollBox.Visible:=false;
  try
   SectionScrollBox.HorzScrollBar.Position:=0;
   SectionScrollBox.VertScrollBar.Position:=0;
   maxwidth:=0;
   posx:=0;
+  asecint:=nil;
   for i:=0 to secinterfaces.Count-1 do
   begin
    apanel:=TRpPaintEventpanel(toptitles.Items[i]);
    asecint:=TRpSectionInterface(secinterfaces.items[i]);
-
+   rpanel:=TRpPanelRight(Righttitles.Items[i]);
    apanel.Color:=clBtnFace;
 
    apanel.Width:=asecint.Width;
@@ -458,6 +551,7 @@ begin
    apanel.Top:=posx;
    posx:=posx+apanel.Height;
 
+
    asecint.Top:=posx;
    asecint.UpdatePos;
    for j:=0 to asecint.childlist.Count-1 do
@@ -465,6 +559,9 @@ begin
     TRpSizePosInterface(asecint.childlist.Items[j]).UpdatePos;
    end;
    apanel.Width:=asecint.Width;
+   rpanel.Top:=posx;
+   rpanel.Height:=asecint.Height;
+   rpanel.Left:=asecint.Width;
 
    aruler:=TRpRulerVCL(leftrulers.items[i]);
    aruler.Top:=posx;
@@ -478,8 +575,16 @@ begin
     maxwidth:=asecint.width;
    posx:=posx+asecint.Height;
    asecint.SendToBack;
+   if ObjInsp.CompItem=asecint then
+    ObjInsp.AddCompItem(asecint,true);
   end;
-  TopRuler.Width:=maxwidth;
+  apanel:=TRpPaintEventpanel(toptitles.Items[secinterfaces.Count]);
+  apanel.Width:=asecint.Width;
+  apanel.Caption:='';
+  apanel.Top:=posx;
+  posx:=posx+apanel.Height;
+
+  TopRuler.Width:=maxwidth*2+CONS_RIGHTPWIDTH;
   if rpmunits.defaultunit=rpUnitCms then
    TopRuler.Metrics:=rCms
   else
@@ -487,10 +592,10 @@ begin
  finally
   SectionScrollBox.Visible:=true;
  end;
- SectionScrollBox.HorzScrollBar.Position:=0;
- SectionScrollBox.VertScrollBar.Position:=0;
  PSection.Height:=posx+Height;
- PSection.Width:=maxwidth;
+ PSection.Width:=maxwidth*2+CONS_RIGHTPWIDTH;
+ SectionScrollBox.HorzScrollBar.Position:=oldxposition;
+ SectionScrollBox.VertScrollBar.Position:=oldyposition;
 end;
 
 procedure TFRpDesignFrameVCL.ShowAllHiden;
@@ -508,6 +613,264 @@ begin
    aposint.Visible:=true;
    aposint.PrintItem.Visible:=true;
   end;
+ end;
+end;
+
+
+procedure TRpPaintEventPanel.MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
+var
+ dframe:TFRpDesignFrameVCL;
+begin
+ inherited MouseDown(Button,Shift,X,Y);
+
+ if allowselect then
+ begin
+  dframe:=TFRpDesignFrameVCL(Owner);
+  dframe.freportstructure.SelectDataItem(section);
+ end;
+
+ if cursor<>crSizeNS then
+  exit;
+ if Not Assigned(FRectangle) then
+ begin
+  FRectangle:=TRpRectangle.Create(Self);
+  FRectangle2:=TRpRectangle.Create(Self);
+  FRectangle3:=TRpRectangle.Create(Self);
+  FRectangle4:=TRpRectangle.Create(Self);
+
+  FRectangle.SetBounds(Left,Top,Width,1);
+  FRectangle2.SetBounds(Left,Top+Height,Width,1);
+  FRectangle3.SetBounds(Left,Top,1,Height);
+  FRectangle4.SetBounds(Left+Width,Top,1,Height);
+
+  FRectangle.Parent:=Parent;
+  FRectangle2.Parent:=Parent;
+  FRectangle3.Parent:=Parent;
+  FRectangle4.Parent:=Parent;
+ end;
+
+
+ FXOrigin:=X;
+ FYOrigin:=Y;
+ FBlocked:=True;
+end;
+
+procedure TRpPaintEventPanel.MouseMove(Shift: TShiftState; X, Y: Integer);
+var
+ NewLeft,NewTop:integer;
+ i,MaxY:integer;
+begin
+ inherited MouseMove(Shift,X,Y);
+
+ if MouseCapture then
+ begin
+  if ((Abs(X-FXOrigin)>CONS_MINIMUMMOVE) OR
+    (Abs(Y-FYOrigin)>CONS_MINIMUMMOVE)) then
+     FBlocked:=False;
+
+  if Assigned(FRectangle) AND (Not FBlocked) then
+  begin
+   // Look the last panel
+   i:=0;
+   while i<FFrame.toptitles.count do
+   begin
+    if FFrame.toptitles.Items[i]=Self then
+    begin
+     dec(i);
+     break;
+    end;
+    inc(i);
+   end;
+   MaxY:=TRpPaintEventPanel(FFrame.toptitles.Items[i]).Top+
+    TRpPaintEventPanel(FFrame.toptitles.Items[i]).Height;
+
+   NewLeft:=0;
+   NewTop:=Top-FYOrigin+Y;
+   if NewTop<0 then
+    NewTop:=0;
+   if NewTop+Height>Parent.Height then
+    NewTop:=Parent.Height-Height;
+   if NewTop<0 then
+    NewTop:=0;
+   if NewTop<MaxY then
+    NewTop:=MaxY;
+   FRectangle.SetBounds(Newleft,NewTop,Parent.Width,1);
+   FRectangle2.SetBounds(Newleft,NewTop+Height,Parent.Width,1);
+   FRectangle3.SetBounds(Newleft,NewTop,1,Height);
+   FRectangle4.SetBounds(Newleft+Parent.Width,NewTop,1,Height);
+   FRectangle.Parent.Update;
+  end;
+ end;
+end;
+
+procedure TRpPaintEventPanel.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+ NewTop:integer;
+ i,MaxY:integer;
+ asection:TRpSection;
+begin
+ inherited MouseUp(Button,Shift,X,Y);
+
+ if Assigned(FRectangle) then
+ begin
+  FRectangle.Free;
+  FRectangle:=nil;
+  FRectangle2.Free;
+  FRectangle:=nil;
+  FRectangle3.Free;
+  FRectangle:=nil;
+  FRectangle4.Free;
+  FRectangle:=nil;
+
+
+  // Look the last panel
+  i:=0;
+  while i<FFrame.toptitles.count do
+  begin
+   if FFrame.toptitles.Items[i]=Self then
+   begin
+    dec(i);
+    break;
+   end;
+   inc(i);
+  end;
+  MaxY:=TRpPaintEventPanel(FFrame.toptitles.Items[i]).Top+
+   TRpPaintEventPanel(FFrame.toptitles.Items[i]).Height;
+  asection:=TRpPaintEventPanel(FFrame.toptitles.Items[i]).Section;
+  // New position
+  NewTop:=Top-FYOrigin+Y;
+  if NewTop<0 then
+   NewTop:=0;
+  if NewTop+Height>Parent.Height then
+   NewTop:=Parent.Height-Height;
+  if NewTop<MaxY then
+   NewTop:=MaxY;
+  // Resize with the diference
+  if NewTop<>Top then
+  begin
+   asection.Height:=pixelstotwips(NewTop-MaxY);
+   if asection.Height=0 then
+    asection.Height:=0;
+   FFrame.UpdateInterface;
+  end;
+ end;
+end;
+
+constructor TRpPanelRight.Create(AOwner:TComponent);
+var
+ opts:TControlStyle;
+begin
+ inherited Create(AOwner);
+
+ BevelInner:=bvNone;
+ BevelOuter:=bvNone;
+ BorderStyle:=bsNone;
+ Cursor:=crSizeWE;
+
+ opts:=ControlStyle;
+ include(opts,csCaptureMouse);
+ ControlStyle:=opts;
+end;
+
+procedure TRpPanelRight.Paint;
+var
+ rec:TRect;
+begin
+ inherited Paint;
+
+ if not assigned(parent) then
+  exit;
+
+ rec:=ClientRect;
+ Canvas.Brush.Color:=Color;
+
+ Canvas.Rectangle(rec);
+end;
+
+
+procedure TRpPanelRight.MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
+begin
+ if Not Assigned(FRectangle) then
+ begin
+  FRectangle:=TRpRectangle.Create(Self);
+  FRectangle2:=TRpRectangle.Create(Self);
+  FRectangle3:=TRpRectangle.Create(Self);
+  FRectangle4:=TRpRectangle.Create(Self);
+
+  FRectangle.SetBounds(Left,Top,Width,1);
+  FRectangle2.SetBounds(Left,Top+Height,Width,1);
+  FRectangle3.SetBounds(Left,Top,1,Height);
+  FRectangle4.SetBounds(Left+Width,Top,1,Height);
+
+  FRectangle.Parent:=Parent;
+  FRectangle2.Parent:=Parent;
+  FRectangle3.Parent:=Parent;
+  FRectangle4.Parent:=Parent;
+ end;
+
+
+ FXOrigin:=X;
+ FYOrigin:=Y;
+ FBlocked:=True;
+end;
+
+procedure TRpPanelRight.MouseMove(Shift: TShiftState; X, Y: Integer);
+var
+ NewLeft,NewTop:integer;
+begin
+ inherited MouseMove(Shift,X,Y);
+
+ if MouseCapture then
+ begin
+  if ((Abs(X-FXOrigin)>CONS_MINIMUMMOVE) OR
+    (Abs(Y-FYOrigin)>CONS_MINIMUMMOVE)) then
+     FBlocked:=False;
+
+  if Assigned(FRectangle) AND (Not FBlocked) then
+  begin
+   NewLeft:=Left-FXOrigin+X;
+   NewTop:=Top;
+   if NewLeft<0 then
+    NewLeft:=0;
+   FRectangle.SetBounds(Newleft,NewTop,Width,1);
+   FRectangle2.SetBounds(Newleft,NewTop+Height,Width,1);
+   FRectangle3.SetBounds(Newleft,NewTop,1,Height);
+   FRectangle4.SetBounds(Newleft+Width,NewTop,1,Height);
+   FRectangle.Parent.Update;
+  end;
+ end;
+end;
+
+procedure TRpPanelRight.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+ NewLeft:integer;
+begin
+ inherited MouseUp(Button,Shift,X,Y);
+
+ if Assigned(FRectangle) then
+ begin
+  FRectangle.Free;
+  FRectangle:=nil;
+  FRectangle2.Free;
+  FRectangle:=nil;
+  FRectangle3.Free;
+  FRectangle:=nil;
+  FRectangle4.Free;
+  FRectangle:=nil;
+  // New position
+  NewLeft:=Left-FXOrigin+X;
+  if NewLeft<0 then
+   NewLeft:=0;
+  if NewLeft+Width>Parent.Width then
+   NewLeft:=Parent.Width-Width;
+  if NewLeft<0 then
+   NewLeft:=0;
+
+  section.Width:=pixelstotwips(NewLeft);
+
+  FFrame.UpdateInterface;
  end;
 end;
 

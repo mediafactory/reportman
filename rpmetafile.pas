@@ -153,7 +153,7 @@ type
   procedure AbortDocument;stdcall;
   procedure NewPage;stdcall;
   procedure EndPage;stdcall;
-  function GetPageSize:TPoint;stdcall;
+  function GetPageSize(var PageSizeQt:Integer):TPoint;stdcall;
   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
   procedure SetOrientation(Orientation:TRpOrientation);stdcall;
   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;

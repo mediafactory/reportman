@@ -121,7 +121,7 @@ type
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
    procedure DrawPage(apage:TRpMetaFilePage);stdcall;
    function AllowCopies:boolean;stdcall;
-   function GetPageSize:TPoint;stdcall;
+   function GetPageSize(var PageSizeQt:Integer):TPoint;stdcall;
    function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
    procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
@@ -321,6 +321,7 @@ var
  asize:TPoint;
  aregion:HRGN;
  scale2:double;
+ qtsize:integer;
 begin
  if devicefonts then
  begin
@@ -331,7 +332,7 @@ begin
   printer.Title:='Untitled';
   SetOrientation(report.Orientation);
   // Gets pagesize
-  asize:=GetPageSize;
+  asize:=GetPageSize(qtsize);
   pagemargins:=GetPageMarginsTWIPS;
   if Length(printer.Title)<1 then
    printer.Title:=SRpUntitled;
@@ -364,7 +365,7 @@ begin
   end
   else
   begin
-   asize:=GetPageSize;
+   asize:=GetPageSize(qtsize);
    pagemargins:=GetPageMarginsTWIPS;
    CurrentPageSize:=asize;
   end;
@@ -945,18 +946,26 @@ begin
  Result:=false;
 end;
 
-function TrpGDIDriver.GetPageSize:TPoint;
+function TRpGDIDriver.GetPageSize(var PageSizeQt:Integer):TPoint;
+var
+ gdisize:TGDIPageSize;
+ qtsize:TPageSizeQt;
 begin
+ gdisize:=GetCurrentPaper;
+ qtsize:=GDIPageSizeToQtPageSize(gdisize);
+ PageSizeQt:=qtsize.Indexqt;
  Result:=GetPhysicPageSizeTwips;
 end;
 
 function TRpGDIDriver.SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
+var
+ qtsize:integer;
 begin
  pagesize:=QtPageSizeToGDIPageSize(PagesizeQT);
  oldpagesize:=GetCurrentPaper;
  SetCurrentPaper(pagesize);
 
- Result:=GetPageSize;
+ Result:=GetPageSize(qtsize);
 end;
 
 procedure TRpGDIDriver.SetOrientation(Orientation:TRpOrientation);

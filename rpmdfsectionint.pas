@@ -6,7 +6,7 @@
 {       Implementation of section designer              }
 {                                                       }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -792,19 +792,20 @@ begin
  FRectangle4.SetBounds(Newleft+NewWidth,NewTop,1,NewHeight);
 end;
 
-
 function TRpSectionInterface.DoSelectControls(NewLeft,NewTop,NewWidth,NewHeight:integer):boolean;
 var
  i:integer;
  aitem:TRpSizePosInterface;
  rec1,rec2:TRect;
  arec:Trect;
+ fselitems:TStringList;
 begin
  Result:=false;
  rec1.Left:=NewLeft;
  rec1.Top:=NewTop;
  rec1.Bottom:=NewTop+NewHeight;
  rec1.Right:=NewLeft+NewWidth;
+ fselitems:=TFRpObjInsp(fobjinsp).SelectedItems;
  for i:=0 to childlist.Count-1 do
  begin
   aitem:=TRpSizePosInterface(childlist.Items[i]);
@@ -816,10 +817,25 @@ begin
    rec2.Right:=aitem.Left+aitem.Width;
    if IntersectRect(arec,Rec1,Rec2) then
    begin
-    TFRpObjInsp(fobjinsp).AddCompItem(aitem,false);
+    if not Result then
+    begin
+     if fselitems.count>0 then
+      if (Not (fselitems.Objects[0] is TRpSizePosInterface)) then
+       fselitems.Clear;
+    end;
+    if fselitems.IndexOfObject(aitem)<0 then
+    begin
+     fselitems.AddObject(aitem.classname,aitem);
+    end;
     Result:=True;
    end;
   end;
+ end;
+ if Result then
+ begin
+  aitem:=TRpSizePosInterface(fselitems.Objects[0]);
+  fselitems.Delete(0);
+  TFRpObjInsp(fobjinsp).AddCompItem(aitem,false);
  end;
 end;
 

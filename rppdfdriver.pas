@@ -39,6 +39,7 @@ type
    FPDFFIle:TRpPDFFile;
    FOrientation:TRpOrientation;
    FPageWidth,FPageHeight:integer;
+   PageQt:Integer;
    procedure RepProgress(Sender:TRpReport;var docancel:boolean);
   public
    filename:string;
@@ -55,7 +56,7 @@ type
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
    procedure DrawPage(apage:TRpMetaFilePage);stdcall;
    function AllowCopies:boolean;stdcall;
-   function GetPageSize:TPoint;stdcall;
+   function GetPageSize(var PageSizeQt:Integer):TPoint;stdcall;
    function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
    procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
@@ -136,6 +137,7 @@ const
 
 constructor TRpPDFDriver.Create;
 begin
+ PageQt:=0;
  FPageWidth:= 12048;
  FPageHeight:= 17039;
  FPDFFile:=TRpPDFFile.Create(nil);
@@ -379,8 +381,9 @@ begin
  Result:=false;
 end;
 
-function TRpPDFDriver.GetPageSize:TPoint;
+function TRpPDFDriver.GetPageSize(var PageSizeQt:Integer):TPoint;
 begin
+ PageSizeQt:=PageQt;
  Result.X:=FPageWidth;
  Result.Y:=FPageHeight;
 end;
@@ -390,8 +393,10 @@ var
  newwidth,newheight:integer;
 begin
  // Sets the page size for the pdf file, first if it's a qt page
+ PageQt:=PageSizeQt.indexqt;
  if PagesizeQt.Custom then
  begin
+  PageQt:=-1;
   newwidth:=PagesizeQt.CustomWidth;
   newheight:=PagesizeQt.CustomHeight;
  end

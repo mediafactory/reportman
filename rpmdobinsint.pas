@@ -80,6 +80,14 @@ type
    constructor Create(AOwner:TComponent);override;
  end;
 
+ TRpRectanglew=class(TCustomControl)
+  protected
+   procedure Paint;override;
+  public
+   Solid:boolean;
+   constructor Create(AOwner:TComponent);override;
+ end;
+
  // The implementation for and size and position
  TRpSizePosInterface=class(TRpSizeInterface)
   private
@@ -754,7 +762,30 @@ begin
  Canvas.Rectangle(0,0,Width,Height);
 end;
 
+procedure TRpRectanglew.Paint;
+begin
+ Canvas.Pen.Color:=clBlack;
+ Canvas.Pen.Style:=psSolid;
+ Canvas.Brush.Color:=clWhite;
+ if Solid then
+  Canvas.Brush.Style:=bsSolid
+ else
+  Canvas.Brush.Style:=bsClear;
+ Canvas.Rectangle(0,0,Width,Height);
+end;
+
 constructor TRpRectangle.Create(AOwner:TComponent);
+var
+ opts:TControlStyle;
+begin
+ inherited Create(AOwner);
+
+ opts:=ControlStyle;
+ include(opts,csOpaque);
+ ControlStyle:=opts;
+end;
+
+constructor TRpRectanglew.Create(AOwner:TComponent);
 var
  opts:TControlStyle;
 begin
