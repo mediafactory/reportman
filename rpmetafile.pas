@@ -51,7 +51,11 @@ uses Classes,
 {$IFDEF USEVARIANTS}
  types,
 {$ENDIF}
- Sysutils,rpmdconsts,rpmzlib,rptypes;
+ Sysutils,rpmdconsts,
+{$IFDEF USEZLIB}
+ rpmzlib,
+{$ENDIF}
+ rptypes;
 
 const
  MILIS_PROGRESS=500;
@@ -548,8 +552,10 @@ end;
 
 
 procedure TRpMetafileReport.SaveToStream(Stream:TStream);
+{$IFDEF USEZLIB}
 var
  zstream:TCompressionStream;
+{$ENDIF}
 begin
  // Get the time
 {$IFDEF MSWINDOWS}
@@ -558,12 +564,17 @@ begin
 {$IFDEF LINUX}
  milifirst:=now;
 {$ENDIF}
+{$IFDEF USEZLIB}
  zstream:=TCompressionStream.Create(clDefault,Stream);
  try
   IntSaveToStream(zstream,Stream);
  finally
   zstream.free;
  end;
+{$ENDIF}
+{$IFNDEF USEZLIB}
+  IntSaveToStream(Stream,Stream);
+{$ENDIF}
 end;
 
 procedure TRpMetafileReport.IntSaveToStream(Stream:TStream;SaveStream:TStream);
@@ -620,8 +631,10 @@ begin
 end;
 
 procedure TRpMetafileReport.LoadFromStream(Stream:TStream;clearfirst:boolean=true);
+{$IFDEF USEZLIB}
 var
  zStream:TDeCompressionStream;
+{$ENDIF}
 begin
  if clearfirst then
   Clear;
@@ -632,12 +645,20 @@ begin
 {$IFDEF LINUX}
  milifirst:=now;
 {$ENDIF}
+{$IFDEF USEZLIB}
+ // Issue, should look if the stream is
+ // really a compressed stream or it
+ // comes from a non capable compression writer
  zStream:=TDeCompressionStream.Create(Stream);
  try
   IntLoadFromStream(zStream,Stream);
  finally
   zStream.free;
  end;
+{$ENDIF}
+{$IFNDEF USEZLIB}
+ IntLoadFromStream(Stream,Stream);
+{$ENDIF}
 end;
 
 procedure TRpMetafileReport.IntLoadFromStream(Stream:TStream;LoadStream:TStream;clearfirst:boolean=true);

@@ -85,6 +85,9 @@ type
     LPreview: TLabel;
     ComboPreview: TComboBox;
     ComboStyle: TComboBox;
+    TabOptions: TTabSheet;
+    LPreferedFormat: TLabel;
+    ComboFormat: TComboBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -199,6 +202,7 @@ var
  awidth:integer;
  aheight:integer;
 begin
+ PControl.ActivePage:=TabPage;
  LMetrics3.Caption:=rpunitlabels[defaultunit];
  LMetrics4.Caption:=LMetrics3.Caption;
  LMetrics5.Caption:=LMetrics3.Caption;
@@ -277,6 +281,11 @@ begin
  ComboStyle.Items.Strings[2]:=TranslateStr(845,ComboStyle.Items.Strings[2]);
  TabPage.Caption:=TranslateStr(857,TabPage.Caption);
  TabPrint.Caption:=TranslateStr(858,TabPrint.Caption);
+ TabOptions.Caption:=SRpSOptions;
+ LPreferedFormat.Caption:=SRpPreferedFormat;
+ ComboFormat.Items.Add(SRpStreamZLib);
+ ComboFormat.Items.Add(SRpStreamText);
+ ComboFormat.Items.Add(SRpStreamBinary);
 end;
 
 procedure TFRpPageSetupVCL.BOKClick(Sender: TObject);
@@ -331,6 +340,7 @@ begin
  report.PrinterFonts:=TRpPrinterFontsOption(ComboPrinterFonts.ItemIndex);
  report.PreviewStyle:=TRpPreviewStyle(ComboStyle.ItemIndex);
  report.PreviewWindow:=TRpPreviewWindowStyle(ComboPreview.ItemIndex);
+ report.StreamFormat:=TRpStreamFormat(ComboFormat.ItemIndex);
 
  dook:=true;
 end;
@@ -385,6 +395,7 @@ begin
   ComboLanguage.ItemIndex:=report.Language+1;
  ComboStyle.ItemIndex:=integer(report.PreviewStyle);
  ComboPreview.ItemIndex:=integer(report.PreviewWindow);
+ ComboFormat.ItemIndex:=integer(report.StreamFormat);
 end;
 
 procedure TFRpPageSetupVCL.SColorMouseDown(Sender: TObject;

@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.5b';
+ RM_VERSION='1.6pre1';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
 
@@ -622,7 +622,13 @@ var
   SRpParseParamsH:WideString='         -paramPARAMNAME=paramvalue  Assign a value to a parameter';
   SrpSClearExpChart:WideString='Clear expression';
   SrpSBoolClearExp:WideString='Bool C.expression';
-
+  SRpStreamFormat:WideString='Invalid Stream format';
+  SRpZLibNotSupported:WideString='ZLib Streams not supported';
+  SRpPreferedFormat:WideString='Prefered save format';
+  SRpStreamZLib:WideString='ZLib compressed - binary';
+  SRpStreamBinary:WideString='Binary stream';
+  SRpStreamText:WideString='Text stream';
+  SRpSOptions:WideString='Options';
 implementation
 
 uses rptranslator;

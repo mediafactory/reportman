@@ -19,7 +19,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     Top = 0
     Width = 446
     Height = 334
-    ActivePage = TabPage
+    ActivePage = TabOptions
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -283,7 +283,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 201
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
       end
       object BConfigure: TButton
@@ -345,7 +345,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 201
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 7
       end
       object ComboPreview: TComboBox
@@ -372,6 +372,26 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           'Wide'
           'Normal'
           'Page')
+      end
+    end
+    object TabOptions: TTabSheet
+      Caption = 'Options'
+      ImageIndex = 2
+      object LPreferedFormat: TLabel
+        Left = 8
+        Top = 12
+        Width = 98
+        Height = 13
+        Caption = 'Prefered save format'
+      end
+      object ComboFormat: TComboBox
+        Left = 124
+        Top = 8
+        Width = 181
+        Height = 21
+        Style = csDropDownList
+        ItemHeight = 13
+        TabOrder = 0
       end
     end
   end

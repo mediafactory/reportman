@@ -17,7 +17,13 @@ unit rpwriter;
 
 interface
 
-uses Classes,SysUtils,rpmzlib;
+{$I rpconf.inc}
+
+uses Classes,
+{$IFDEF USEZLIB}
+rpmzlib,
+{$ENDIF}
+SysUtils;
 
 
 procedure FileReportToPlainText (reportfile,plainfile:string);
@@ -29,40 +35,83 @@ procedure FileReportToPlainText(reportfile,plainfile:string);
 var
  deststream:TFileStream;
  stream:TMemoryStream;
+{$IFDEF USEZLIB}
  memstream:TMemoryStream;
  zlibs:TDeCompressionStream;
  buf:pointer;
  readed:LongInt;
+{$ENDIF}
+ theformat:integer;
+ firstchar:char;
 begin
  stream:=TMemoryStream.Create;
  try
   stream.LoadFromFile(reportfile);
   stream.Seek(0,soFromBeginning);
-  memstream:=TMemoryStream.Create;
-  try
-   zlibs:=TDeCompressionStream.Create(Stream);
+  // Looks stream type
+  if (stream.size<1) then
+   Raise Exception.Create('Invalid stream format');
+  firstchar:=PChar(stream.memory)^;
+  if firstchar='x' then
+   theformat:=0
+  else
+   if firstchar='o' then
+    theformat:=1
+   else
+    theformat:=2;
+{$IFNDEF USEZLIB}
+  if theformat=0 then
+   Raise Exception.Create('ZLib not supported');
+{$ENDIF}
+{$IFDEF USEZLIB}
+  if theformat=0 then
+  begin
+   memstream:=TMemoryStream.Create;
    try
-    buf:=AllocMem(120000);
+    zlibs:=TDeCompressionStream.Create(Stream);
     try
-     repeat
-      readed:=zlibs.Read(buf^,120000);
-      memstream.Write(buf^,readed);
-     until readed<120000;
+     buf:=AllocMem(120000);
+     try
+      repeat
+       readed:=zlibs.Read(buf^,120000);
+       memstream.Write(buf^,readed);
+      until readed<120000;
+     finally
+      freemem(buf);
+     end;
+     memstream.Seek(0,soFrombeginning);
+     deststream:=TFileStream.Create(plainfile,fmCreate);
+     try
+      ObjectBinaryToText(memstream,deststream);
+     finally
+      deststream.Free;
+     end;
     finally
-     freemem(buf);
-    end;
-    memstream.Seek(0,soFrombeginning);
-    deststream:=TFileStream.Create(plainfile,fmCreate);
-    try
-     ObjectBinaryToText(memstream,deststream);
-    finally
-     deststream.Free;
+     zlibs.free;
     end;
    finally
-    zlibs.free;
+    memstream.free;
    end;
-  finally
-   memstream.free;
+  end
+  else
+{$ENDIF}
+  if theformat=1 then
+  begin
+   deststream:=TFileStream.Create(plainfile,fmCreate);
+   try
+    stream.SaveToStream(deststream);
+   finally
+    deststream.Free;
+   end;
+  end
+  else
+  begin
+   deststream:=TFileStream.Create(plainfile,fmCreate);
+   try
+    ObjectBinaryToText(stream,deststream);
+   finally
+    deststream.Free;
+   end;
   end;
  finally
   stream.free;
@@ -72,18 +121,25 @@ end;
 procedure PlainTextToFileReport(plainfile,reportfile:string);
 var
  sourcestream,deststream:TFileStream;
+{$IFDEF USEZLIB}
  zstream:TCompressionStream;
+{$ENDIF}
 begin
  sourcestream:=TFileStream.Create(plainfile,fmOpenRead or fmShareDenyWrite);
  try
   deststream:=TFileStream.Create(reportfile,fmCreate);
   try
+{$IFDEF USEZLIB}
    zstream:=TCompressionStream.Create(clDefault,deststream);
    try
     ObjectTextToBinary(sourcestream,zstream);
    finally
     zstream.free;
    end;
+{$ENDIF}
+{$IFNDEF USEZLIB}
+   ObjectTextToBinary(sourcestream,deststream);
+{$ENDIF}
   finally
    deststream.Free;
   end;

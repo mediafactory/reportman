@@ -53,6 +53,8 @@ type
 
  TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
 
+ TRpStreamFormat=(rpStreamzlib,rpStreamText,rpStreambinary);
+
  TRpBidiMode=(rpBidiNo,rpBidiPartial,rpBidiFull);
 
  TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,

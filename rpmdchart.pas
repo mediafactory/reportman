@@ -585,7 +585,9 @@ begin
   achart.Legend.Visible:=false;
   achart.View3D:=FView3d;
   achart.View3DOptions.Rotation:=FRotation;
+{$IFNDEF BUILDER4}
   achart.View3DOptions.Perspective:=FPerspective;
+{$ENDIF}
   achart.View3DOptions.Elevation:=FElevation;
   achart.View3DOptions.Orthogonal:=FOrthogonal;
   achart.View3DOptions.Zoom:=FZoom;
@@ -674,7 +676,7 @@ begin
       intSerie.ValueCaptions[j],SeriesColors[aColor])
     else
     aserie.Add(intserie.Values[j],
-     intSerie.ValueCaptions[j]);
+     intSerie.ValueCaptions[j],clTeeColor);
     if series.count<2 then
     begin
      if ChartType=rpchartpie then

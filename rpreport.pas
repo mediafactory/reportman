@@ -31,7 +31,11 @@ uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpmdconsts,
 {$IFDEF USEVARIANTS}
  types,dateutils,Variants,
 {$ENDIF}
- rpalias,db,rpmzlib,rpdataset,
+ rpalias,db,
+{$IFDEF USEZLIB}
+ rpmzlib,
+{$ENDIF}
+ rpdataset,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
@@ -166,6 +170,7 @@ type
    FPrinterSelect:TRpPrinterSelect;
    FPrintOnlyIfDataAvailable:Boolean;
    gheaders,gfooters:TList;
+   FStreamFormat:TRpStreamFormat;
    procedure  FillGlobalHeaders;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
@@ -291,6 +296,8 @@ type
     write FPrinterFonts default rppfontsdefault;
    property PrintOnlyIfDataAvailable:Boolean read FPrintOnlyIfDataAvailable
     write FPrintOnlyIfDataAvailable default false;
+   property StreamFormat:TRpStreamFormat read FStreamFormat
+    write FStreamFormat default rpStreamzlib;
  end;
 
 implementation
@@ -339,6 +346,7 @@ constructor TRpReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FStreamFormat:=rpStreamzlib;
  gheaders:=TList.Create;
  gfooters:=TList.Create;
  FailIfLoadExternalError:=True;
@@ -661,13 +669,43 @@ end;
 
 procedure TRpReport.SaveToStream(Stream:TStream);
 var
+{$IFDEF USEZLIB}
  zstream:TCompressionStream;
+{$ENDIF}
+ theformat:TRpStreamFormat;
+ memstream:TMemoryStream;
 begin
- zstream:=TCompressionStream.Create(clDefault,Stream);
- try
-   zstream.WriteComponent(Self);
- finally
-  zstream.free;
+ theformat:=FStreamFormat;
+{$IFNDEF USEZLIB}
+ if theformat=rpStreamZLib then
+  theformat:=rpStreambinary;
+{$ENDIF}
+{$IFDEF USEZLIB}
+ if theformat=rpStreamZLib then
+ begin
+  zstream:=TCompressionStream.Create(clDefault,Stream);
+  try
+    zstream.WriteComponent(Self);
+  finally
+   zstream.free;
+  end;
+ end
+ else
+{$ENDIF}
+ if theformat=rpStreamBinary then
+ begin
+  Stream.WriteComponent(Self);
+ end
+ else
+ begin
+  memstream:=TMemoryStream.Create;
+  try
+   memstream.WriteComponent(Self);
+   memstream.Seek(0,soFromBeginning);
+   ObjectBinaryToText(memstream,Stream);
+  finally
+   memstream.free;
+  end;
  end;
 end;
 
@@ -733,27 +771,81 @@ end;
 procedure TRpReport.LoadFromStream(Stream:TStream);
 var
  reader:TReader;
- memstream:TMemoryStream;
+ memstream,amemstream:TMemoryStream;
  readed:integer;
  buf:pointer;
+{$IFDEF USEZLIB}
  zlibs:TDeCompressionStream;
+{$ENDIF}
+ theformat:TRpStreamFormat;
+ firstchar:char;
 begin
  // FreeSubrepots
  FreeSubreports;
  MemStream:=TMemoryStream.Create;
  try
-  zlibs:=TDeCompressionStream.Create(Stream);
+  // Copy to memory stream
+  buf:=AllocMem(120000);
   try
-   buf:=AllocMem(120000);
+   repeat
+    readed:=Stream.Read(buf^,120000);
+    memstream.Write(buf^,readed);
+   until readed<120000;
+  finally
+   freemem(buf);
+  end;
+  memstream.Seek(0,soFrombeginning);
+  // Looks stream type
+  if (memstream.size<1) then
+   Raise Exception.Create(SRpStreamFormat);
+  firstchar:=PChar(memstream.memory)^;
+  if firstchar='x' then
+   theformat:=rpStreamzlib
+  else
+   if firstchar='o' then
+    theformat:=rpStreamText
+   else
+    theformat:=rpStreambinary;
+{$IFNDEF USEZLIB}
+  if theformat=rpStreamzlib then
+   Raise Exception.Create(SRpZLibNotSupported);
+{$ENDIF}
+{$IFDEF USEZLIB}
+  if theformat=rpStreamzlib then
+  begin
+   amemstream:=TMemoryStream.Create;
    try
-    repeat
-     readed:=zlibs.Read(buf^,120000);
-     memstream.Write(buf^,readed);
-    until readed<120000;
+    zlibs:=TDeCompressionStream.Create(MemStream);
+    try
+     // Decompress
+     buf:=AllocMem(120000);
+     try
+      repeat
+       readed:=zlibs.Read(buf^,120000);
+       amemstream.Write(buf^,readed);
+      until readed<120000;
+     finally
+      freemem(buf);
+     end;
+     amemstream.Seek(0,soFromBeginning);
+     reader:=TReader.Create(amemstream,1000);
+     try
+      reader.OnError:=FInternalOnReadError;
+      reader.ReadRootComponent(Self);
+     finally
+      reader.free;
+     end;
+    finally
+     zlibs.Free;
+    end;
    finally
-    freemem(buf);
+    amemstream.free;
    end;
-   memstream.Seek(0,soFrombeginning);
+  end
+  else
+{$ENDIF}
+  if theformat=rpStreambinary then
+  begin
    reader:=TReader.Create(memstream,1000);
    try
     reader.OnError:=FInternalOnReadError;
@@ -761,8 +853,23 @@ begin
    finally
     reader.free;
    end;
-  finally
-   zlibs.Free;
+  end
+  else
+  begin
+   amemstream:=TMemoryStream.Create;
+   try
+    ObjectTextToBinary(memstream,amemstream);
+    amemstream.Seek(0,soFromBeginning);
+    reader:=TReader.Create(amemstream,1000);
+    try
+     reader.OnError:=FInternalOnReadError;
+     reader.ReadRootComponent(Self);
+    finally
+     reader.free;
+    end;
+   finally
+    amemstream.free;
+   end;
   end;
  finally
   MemStream.free;

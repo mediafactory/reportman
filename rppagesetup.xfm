@@ -20,7 +20,7 @@ object FRpPageSetup: TFRpPageSetup
     Top = 0
     Width = 440
     Height = 329
-    ActivePage = TabPage
+    ActivePage = TabOptions
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -373,6 +373,26 @@ object FRpPageSetup: TFRpPageSetup
           'Normal'
           'Page')
         TabOrder = 14
+      end
+    end
+    object TabOptions: TTabSheet
+      Caption = 'Options'
+      ImageIndex = 2
+      object ComboFormat: TComboBox
+        Left = 124
+        Top = 8
+        Width = 193
+        Height = 21
+        Style = csDropDownList
+        ItemHeight = 15
+        TabOrder = 0
+      end
+      object LPreferedFormat: TLabel
+        Left = 8
+        Top = 12
+        Width = 98
+        Height = 13
+        Caption = 'Prefered save format'
       end
     end
   end

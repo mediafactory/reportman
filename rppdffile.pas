@@ -64,7 +64,10 @@ uses Classes,Sysutils,
 {$IFNDEF USEVARIANTS}
  Windows,
 {$ENDIF}
- rpmzlib,rpmdconsts,rptypes,rpmunits;
+{$IFDEF USEZLIB}
+ rpmzlib,
+{$ENDIF}
+ rpmdconsts,rptypes,rpmunits;
 
 
 const
@@ -171,7 +174,9 @@ type
    FImageCount:integer;
    FResourceNum,FCatalogNum:integer;
    FCurrentSetPageObject:integer;
+{$IFDEF USEZLIB}
    FCompressionStream:TCompressionStream;
+{$ENDIF}
    FResolution:integer;
    FBitmapStreams:TList;
    // Minimum page size in 72 dpi 18x18
@@ -524,8 +529,10 @@ begin
  FTempStream.Clear;
  SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
  SWriteLine(FTempStream,'<< /Length '+IntToStr(FObjectCount+1)+' 0 R');
+{$IFDEF USEZLIB}
  if FCompressed then
   SWriteLine(FTempStream,'/Filter [/FlateDecode]');
+{$ENDIF}
  SWriteLine(FTempStream,' >>');
  FStreamSize1:=FTempStream.Size;
  SWriteLine(FTempStream,'stream');
@@ -535,6 +542,7 @@ end;
 procedure TRpPDFFile.EndStream;
 var TempSize: LongInt;
 begin
+{$IFDEF USEZLIB}
  if FCompressed then
  begin
   FCompressionStream := TCompressionStream.Create(clDefault,FTempStream);
@@ -545,6 +553,7 @@ begin
   end;
  end
  else
+{$ENDIF}
   FsTempStream.SaveToStream(FTempStream);
 
  FsTempStream.Clear;
@@ -581,6 +590,7 @@ begin
 
  FPage:=FPage+1;
 
+{$IFDEF USEZLIB}
  if FCompressed then
  begin
   FCompressionStream := TCompressionStream.Create(clDefault,FTempStream);
@@ -591,6 +601,7 @@ begin
   end;
  end
  else
+{$ENDIF}
   FsTempStream.SaveToStream(FTempStream);
 
  FsTempStream.Clear;
@@ -612,9 +623,10 @@ begin
  FTempStream.Clear;
  SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
  SWriteLine(FTempStream,'<< /Length '+IntToStr(FObjectCount+1)+' 0 R');
+{$IFDEF USEZLIB}
  if Compressed then
   SWriteLine(FTempStream,'/Filter [/FlateDecode]');
-
+{$ENDIF}
  SWriteLine(FTempStream,' >>');
 
  FStreamSize1:=FTempStream.Size;
@@ -1311,7 +1323,9 @@ var
  // imagesize,infosize:DWORD;
  imagesize:integer;
  bitmapwidth,bitmapheight:integer;
+{$IFDEF USEZLIB}
  FCompressionStream:TCOmpressionStream;
+{$ENDIF}
  fimagestream:TMemoryStream;
  // tmpBitmap:TBitmap;
  // y: integer;
@@ -1405,12 +1419,15 @@ begin
   end
   else
   begin
+{$IFDEF USEZLIB}
    if FFile.FCompressed then
     SWriteLine(astream,'/Filter [/FlateDecode]');
+{$ENDIF}
   end;
   SWriteLine(astream,'>>');
   SWriteLine(astream,'stream');
   FImageStream.Seek(0,soFrombeginning);
+{$IFDEF USEZLIB}
   if ((FFile.FCompressed) and (not isjpeg)) then
   begin
    FCompressionStream := TCompressionStream.Create(clDefault,astream);
@@ -1421,6 +1438,7 @@ begin
    end;
   end
   else
+{$ENDIF}
    FImageStream.SaveToStream(astream);
  finally
   FImageStream.Free;

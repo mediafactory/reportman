@@ -1,4 +1,9 @@
+// This is enabled by the make webx command
+// to make the plugin
 //{$DEFINE FORWEBAX}
+
+// ZLIB Support by default enabled
+{$DEFINE USEZLIB}
 
 // Database drivers to be used
 {$DEFINE USESQLEXPRESS}

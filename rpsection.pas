@@ -24,7 +24,10 @@ interface
 
 {$I rpconf.inc}
 
-uses Classes,rpmzlib,
+uses Classes,
+{$IFDEF USEZLIB}
+rpmzlib,
+{$ENDIF}
 {$IFDEF MSWINDOWS}
  windows,
 {$ENDIF}
@@ -594,7 +597,9 @@ procedure TRpSection.SaveToStream(stream:TStream);
 var
  i:integer;
  acompo:TComponent;
+{$IFDEF USEZLIB}
  zstream:TCompressionStream;
+{$ENDIF}
  writer:TWriter;
 begin
  // Looks if it's not external
@@ -610,6 +615,7 @@ begin
    end;
   end;
  end;
+{$IFDEF USEZLIB}
  zstream:=TCompressionStream.Create(clDefault,stream);
  try
   writer:=TWriter.Create(zStream,4096);
@@ -621,6 +627,15 @@ begin
  finally
   zstream.free;
  end;
+{$ENDIF}
+{$IFNDEF USEZLIB}
+ writer:=TWriter.Create(Stream,4096);
+ try
+  writer.WriteRootComponent(Self);
+ finally
+  writer.free;
+ end;
+{$ENDIF}
 end;
 
 
@@ -695,10 +710,13 @@ procedure TRpSection.LoadFromStream(stream:TStream);
 var
  i:integer;
  reader:TReader;
+{$IFDEF USEZLIB}
  buf:pointer;
  zlibs:TDeCompressionStream;
  readed:integer;
- memstream:TMemoryStream;
+{$ENDIF}
+ memstream,amemstream:TMemoryStream;
+ compressed:boolean;
  tempsec:TRpSection;
 begin
  // Free all components
@@ -709,39 +727,84 @@ begin
  end;
  Components.Clear;
  FReadError:=false;
- MemStream:=TMemoryStream.Create;
+ aMemStream:=TMemoryStream.Create;
  try
-  zlibs:=TDeCompressionStream.Create(stream);
-  try
-   buf:=AllocMem(120000);
+  compressed:=false;
+  aMemStream.LoadFromStream(stream);
+  amemstream.Seek(0,soFromBeginning);
+  if amemstream.Size<1 then
+   Raise Exception.Create(SRpStreamFormat);
+  if (PChar(amemstream.Memory)^='x') then
+   compressed:=true;
+{$IFNDEF USEZLIB}
+  if compressed then
+   Raise Exception.Create(SRpZLibNotSupported);
+{$ENDIF}
+{$IFDEF USEZLIB}
+  if compressed then
+  begin
+   MemStream:=TMemoryStream.Create;
    try
-    repeat
-     readed:=zlibs.Read(buf^,120000);
-     memstream.Write(buf^,readed);
-    until readed<120000;
-   finally
-    freemem(buf);
-   end;
-   memstream.Seek(0,soFrombeginning);
-   reader:=TReader.Create(memstream,1000);
-   try
-    reader.OnError:=OnReadError;
-    tempsec:=TRpSection.Create(nil);
+    zlibs:=TDeCompressionStream.Create(amemstream);
     try
-     reader.ReadRootComponent(tempsec);
-     AssignSection(tempsec);
+     buf:=AllocMem(120000);
+     try
+      repeat
+       readed:=zlibs.Read(buf^,120000);
+       memstream.Write(buf^,readed);
+      until readed<120000;
+     finally
+      freemem(buf);
+     end;
+     memstream.Seek(0,soFrombeginning);
+     reader:=TReader.Create(memstream,1000);
+     try
+      reader.OnError:=OnReadError;
+      tempsec:=TRpSection.Create(nil);
+      try
+       reader.ReadRootComponent(tempsec);
+       AssignSection(tempsec);
+      finally
+       tempsec.free;
+      end;
+     finally
+      reader.free;
+     end;
     finally
-     tempsec.free;
+     zlibs.Free;
     end;
    finally
-    reader.free;
+    MemStream.free;
    end;
-  finally
-   zlibs.Free;
+  end
+  else
+{$ENDIF}
+  begin
+   MemStream:=TMemoryStream.Create;
+   try
+    MemStream.LoadFromStream(amemstream);
+    memstream.Seek(0,soFrombeginning);
+    reader:=TReader.Create(memstream,1000);
+    try
+     reader.OnError:=OnReadError;
+     tempsec:=TRpSection.Create(nil);
+     try
+      reader.ReadRootComponent(tempsec);
+      AssignSection(tempsec);
+     finally
+      tempsec.free;
+     end;
+    finally
+     reader.free;
+    end;
+   finally
+    MemStream.Free;
+   end;
   end;
  finally
-  MemStream.free;
+  aMemStream.free;
  end;
+
  if FReadError then
  begin
   for i:=0 to ComponentCount-1 do
