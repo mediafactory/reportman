@@ -64,6 +64,7 @@ type
     copies:integer;collate:boolean):boolean;
    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer);override;
    constructor Create(AOwner:TComponent);override;
+   function GetReport:TRpReport;
    { Public declarations }
   published
     { Published declarations }
@@ -117,6 +118,11 @@ end;
 function TRpActiveXReport.Execute:boolean;
 begin
  Result:=FVCLReport.Execute;
+end;
+
+function TRpActiveXReport.GetReport:TRpReport;
+begin
+ Result:=FVCLReport.Report;
 end;
 
 procedure TRpActiveXReport.SetShowProgress(Value:Boolean);

@@ -5,15 +5,56 @@ unit rpaxreportimp;
 interface
 
 uses
-  Windows, ActiveX, Classes, Controls, Graphics, Menus, Forms, StdCtrls,
-  ComServ, StdVCL, AXCtrls, ReportMan_TLB, rpactivexreport;
+  Windows, ActiveX, SysUtils,Classes, Controls, Graphics, Menus, Forms, StdCtrls,
+  ComServ, StdVCL, AXCtrls, Reportman_TLB, rpactivexreport,rpreport,
+  rpparams,rptypes;
 
 type
+  TIReportParam=class(TInterfacedObject,IReportParam)
+   private
+    FReport:TRpReport;
+    ParamName:String;
+    FParam:TRpParam;
+   protected
+    function  Get_Description: PWideChar; safecall;
+    procedure Set_Description(Value: PWideChar); safecall;
+    function  Get_Name: PChar; safecall;
+    procedure Set_Name(Value: PChar); safecall;
+    function  Get_Visible: WordBool; safecall;
+    procedure Set_Visible(Value: WordBool); safecall;
+    function  Get_Value: OleVariant; safecall;
+    procedure Set_Value(Value: OleVariant); safecall;
+    function  Get_ParamType: TxParamType; safecall;
+    procedure Set_ParamType(Value: TxParamType); safecall;
+  end;
+
+  TIReportParameters=class(TInterfacedObject,IReportParameters)
+   private
+    FReport:TRpReport;
+    FReportParam:TIReportParam;
+   protected
+    function  Get_Count: Integer; safecall;
+    procedure Set_Count(Value: Integer); safecall;
+    function  Get_Items(index: Integer): IReportParam; safecall;
+    procedure Set_Items(index: Integer; const Value: IReportParam); safecall;
+  end;
+
+  TIReportReport=class(TInterfacedObject,IReportReport)
+   private
+    FReport:TRpReport;
+    FReportParameters:TIReportParameters;
+   protected
+    function  Get_Params: IReportParameters; safecall;
+    procedure Set_Params(const Value: IReportParameters); safecall;
+  end;
+
+
   TReportManX = class(TActiveXControl, IReportManX)
   private
     { Private declarations }
     FDelphiControl: TRpActiveXReport;
     FEvents: IReportManXEvents;
+    FReportI:TIReportReport;
   protected
     { Protected declarations }
     procedure DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage); override;
@@ -70,6 +111,8 @@ type
     procedure SetParamValue(const paramname: WideString;
       paramvalue: OleVariant); safecall;
     procedure SetSubComponent(IsSubComponent: WordBool); safecall;
+    function Get_Report: IReportReport; safecall;
+    procedure Set_Report(const Value: IReportReport); safecall;
   end;
 
 implementation
@@ -322,6 +365,120 @@ procedure TReportManX.SetSubComponent(IsSubComponent: WordBool);
 begin
   FDelphiControl.SetSubComponent(IsSubComponent);
 end;
+
+function TReportManX.Get_Report: IReportReport;
+begin
+ if Not Assigned(FReportI) then
+ begin
+  FReportI:=TIReportReport.Create;
+ end;
+ FReportI.FReport:=FDelphiControl.GetReport;
+ FReportI._AddRef;
+ Result:=FReportI;
+end;
+
+procedure TReportManX.Set_Report(const Value: IReportReport);
+begin
+ Raise Exception.Create('Report property can''t be assigned');
+end;
+
+
+function  TIReportReport.Get_Params: IReportParameters;
+begin
+ if Not Assigned(FReportParameters) then
+ begin
+  FReportParameters:=TIReportParameters.Create;
+ end;
+ FReportParameters.FReport:=FReport;
+ FReportParameters._AddRef;
+ Result:=FReportParameters;
+end;
+
+procedure TIReportReport.Set_Params(const Value: IReportParameters);
+begin
+ Raise Exception.Create('You can''t assign Params property');
+end;
+
+
+function  TIReportParameters.Get_Count: Integer; safecall;
+begin
+ Result:=FReport.Params.Count;
+end;
+
+procedure TIReportParameters.Set_Count(Value: Integer); safecall;
+begin
+ Raise Exception.Create('You can''t set count Params property');
+end;
+
+function  TIReportParameters.Get_Items(index: Integer): IReportParam; safecall;
+begin
+ if Not Assigned(FReportParam) then
+ begin
+  FReportParam:=TIReportParam.Create;
+ end;
+ FReportParam.FReport:=FReport;
+ FReportParam.ParamName:=FReport.Params.items[index].Name;
+ FReportParam.FParam:=FReport.Params.ParamByName(FReportParam.ParamName);
+ FReportParam._AddRef;
+ Result:=FReportParam;
+end;
+
+procedure TIReportParameters.Set_Items(index: Integer; const Value: IReportParam); safecall;
+begin
+ Raise Exception.Create('You can''t set items Params property');
+end;
+
+
+function  TIReportParam.Get_Description: PWideChar;
+begin
+ Result:=PWideChar(FParam.Description);
+end;
+
+procedure TIReportParam.Set_Description(Value: PWideChar);
+begin
+ FParam.Description:=Value;
+end;
+
+function  TIReportParam.Get_Name: PChar;
+begin
+ Result:=PChar(FParam.Name);
+end;
+
+procedure TIReportParam.Set_Name(Value: PChar);
+begin
+ FParam.Name:=StrPas(Value);
+end;
+
+function  TIReportParam.Get_Visible: WordBool;
+begin
+ Result:=FParam.Visible;
+end;
+
+procedure TIReportParam.Set_Visible(Value: WordBool);
+begin
+ FParam.Visible:=Value;
+end;
+
+function  TIReportParam.Get_Value: OleVariant;
+begin
+ Result:=FParam.Value;
+end;
+
+procedure TIReportParam.Set_Value(Value: OleVariant);
+begin
+ FParam.Value:=Value;
+end;
+
+function  TIReportParam.Get_ParamType: TxParamType;
+begin
+ Result:=TxParamType(FParam.ParamType);
+end;
+
+procedure TIReportParam.Set_ParamType(Value: TxParamType);
+begin
+ FParam.ParamType:=TRpParamtype(Value);
+end;
+
 
 initialization
   TActiveXControlFactory.Create(

@@ -107,7 +107,7 @@ UseLauncher=0
 DebugCWD=
 [Language]
 ActiveLang=
-ProjectLang=
+ProjectLang=$00000C0A
 RootDir=C:\prog\Delphi6\Bin\
 [Deployment]
 DeployDir=
@@ -130,8 +130,8 @@ TimestampServer=
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
-MinorVer=1
-Release=0
+MinorVer=5
+Release=2
 Build=0
 Debug=0
 PreRelease=0
@@ -143,22 +143,12 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Active X control
-FileVersion=1.1.0.0
+FileVersion=1.5.2.0
 InternalName=ReportManX
 LegalCopyright=MPL License
 LegalTrademarks=
 OriginalFilename=Reportman.ocx
 ProductName=Report Manager ActiveX
-ProductVersion=1.1.0.0
+ProductVersion=1.5.0.0
 Comments=
 OleSelfRegister=1
-[Excluded Packages]
-c:\archivos de programa\borland\delphi7\Bin\dclsoap70.bpl=Borland SOAP Components
-c:\archivos de programa\borland\delphi7\Bin\dcl31w70.bpl=Delphi 1.0 Compatibility Components
-c:\archivos de programa\borland\delphi7\Bin\dclwebsnap70.bpl=Borland WebSnap Components
-c:\archivos de programa\borland\delphi7\bin\dclRave70.bpl=Rave Reports BE 5.0 Package
-c:\archivos de programa\borland\delphi7\Bin\dclofficexp70.bpl=Microsoft Office XP Sample Automation Server Wrapper Components
-c:\archivos de programa\borland\delphi7\Bin\dclIntraweb_50_70.bpl=Intraweb 5.0 Design Package for Delphi 7
-c:\archivos de programa\borland\delphi7\Bin\dcltee70.bpl=TeeChart Components
-c:\archivos de programa\borland\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
-c:\archivos de programa\borland\delphi7\Bin\dclado70.bpl=Borland ADO DB Components

@@ -1,4 +1,4 @@
-unit ReportMan_TLB;
+unit Reportman_TLB;
 
 // ************************************************************************ //
 // WARNING                                                                    
@@ -12,14 +12,14 @@ unit ReportMan_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 09/12/2002 14:55:36 from Type Library described below.
+// File generated on 01/04/2003 20:34:53 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
 // LIBID: {D4D26F6B-6564-44F4-A913-03C91CE37740}
 // LCID: 0
 // Helpfile: 
-// HelpString: ReportMan Library
+// HelpString: Report Manager ActiveX Library
 // DepndLst: 
 //   (1) v2.0 stdole, (C:\WINDOWS\System32\stdole2.tlb)
 // ************************************************************************ //
@@ -41,14 +41,17 @@ uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL, Variants;
 // *********************************************************************//
 const
   // TypeLibrary Major and minor versions
-  ReportManMajorVersion = 1;
-  ReportManMinorVersion = 0;
+  ReportmanMajorVersion = 1;
+  ReportmanMinorVersion = 5;
 
-  LIBID_ReportMan: TGUID = '{D4D26F6B-6564-44F4-A913-03C91CE37740}';
+  LIBID_Reportman: TGUID = '{D4D26F6B-6564-44F4-A913-03C91CE37740}';
 
   IID_IReportManX: TGUID = '{B3AE1470-158D-4855-83DB-BC3A2746C26E}';
   DIID_IReportManXEvents: TGUID = '{50909EA4-8F4F-4865-877D-287FC7072177}';
   CLASS_ReportManX: TGUID = '{DC30E149-4129-450F-BDFE-BD9E6F31147E}';
+  IID_IReportParameters: TGUID = '{CBFA9AE3-1390-4EC6-8156-FB446D9A547B}';
+  IID_IReportParam: TGUID = '{7B47C9F9-0746-4110-BB3D-5997C38810FA}';
+  IID_IReportReport: TGUID = '{3468D0A7-7616-4E17-95B4-16A59E7BF064}';
 
 // *********************************************************************//
 // Declaration of Enumerations defined in Type Library                    
@@ -60,6 +63,24 @@ const
   htKeyword = $00000000;
   htContext = $00000001;
 
+// Constants for enum TxParamType
+type
+  TxParamType = TOleEnum;
+const
+  rpParamString = $00000000;
+  rpParamInteger = $00000001;
+  rpParamDouble = $00000002;
+  rpParamDate = $00000003;
+  rpParamTime = $00000004;
+  rpParamDateTime = $00000005;
+  rpParamCurrency = $00000006;
+  rpParamBool = $00000007;
+  rpParamExpreB = $00000008;
+  rpParamExpreA = $00000009;
+  rpParamSubst = $0000000A;
+  rpParamList = $0000000B;
+  rpParamUnknown = $0000000C;
+
 type
 
 // *********************************************************************//
@@ -68,6 +89,12 @@ type
   IReportManX = interface;
   IReportManXDisp = dispinterface;
   IReportManXEvents = dispinterface;
+  IReportParameters = interface;
+  IReportParametersDisp = dispinterface;
+  IReportParam = interface;
+  IReportParamDisp = dispinterface;
+  IReportReport = interface;
+  IReportReportDisp = dispinterface;
 
 // *********************************************************************//
 // Declaration of CoClasses defined in Type Library                       
@@ -128,6 +155,8 @@ type
     procedure Set_HelpKeyword(const Value: WideString); safecall;
     procedure SetSubComponent(IsSubComponent: WordBool); safecall;
     procedure AboutBox; safecall;
+    function Get_Report: IReportReport; safecall;
+    procedure Set_Report(const Value: IReportReport); safecall;
     property filename: WideString read Get_filename write Set_filename;
     property Preview: WordBool read Get_Preview write Set_Preview;
     property ShowProgress: WordBool read Get_ShowProgress write Set_ShowProgress;
@@ -142,6 +171,7 @@ type
     property Cursor: Smallint read Get_Cursor write Set_Cursor;
     property HelpType: TxHelpType read Get_HelpType write Set_HelpType;
     property HelpKeyword: WideString read Get_HelpKeyword write Set_HelpKeyword;
+    property Report: IReportReport read Get_Report write Set_Report;
   end;
 
 // *********************************************************************//
@@ -184,6 +214,7 @@ type
     property HelpKeyword: WideString dispid 32;
     procedure SetSubComponent(IsSubComponent: WordBool); dispid 34;
     procedure AboutBox; dispid -552;
+    property Report: IReportReport dispid 38;
   end;
 
 // *********************************************************************//
@@ -193,6 +224,92 @@ type
 // *********************************************************************//
   IReportManXEvents = dispinterface
     ['{50909EA4-8F4F-4865-877D-287FC7072177}']
+  end;
+
+// *********************************************************************//
+// Interface: IReportParameters
+// Flags:     (320) Dual OleAutomation
+// GUID:      {CBFA9AE3-1390-4EC6-8156-FB446D9A547B}
+// *********************************************************************//
+  IReportParameters = interface(IUnknown)
+    ['{CBFA9AE3-1390-4EC6-8156-FB446D9A547B}']
+    function Get_Count: Integer; safecall;
+    procedure Set_Count(Value: Integer); safecall;
+    function Get_Items(index: Integer): IReportParam; safecall;
+    procedure Set_Items(index: Integer; const Value: IReportParam); safecall;
+    property Count: Integer read Get_Count write Set_Count;
+    property Items[index: Integer]: IReportParam read Get_Items write Set_Items;
+  end;
+
+// *********************************************************************//
+// DispIntf:  IReportParametersDisp
+// Flags:     (320) Dual OleAutomation
+// GUID:      {CBFA9AE3-1390-4EC6-8156-FB446D9A547B}
+// *********************************************************************//
+  IReportParametersDisp = dispinterface
+    ['{CBFA9AE3-1390-4EC6-8156-FB446D9A547B}']
+    property Count: Integer dispid 5;
+    property Items[index: Integer]: IReportParam dispid 7;
+  end;
+
+// *********************************************************************//
+// Interface: IReportParam
+// Flags:     (320) Dual OleAutomation
+// GUID:      {7B47C9F9-0746-4110-BB3D-5997C38810FA}
+// *********************************************************************//
+  IReportParam = interface(IUnknown)
+    ['{7B47C9F9-0746-4110-BB3D-5997C38810FA}']
+    function Get_Description: PWideChar; safecall;
+    procedure Set_Description(Value: PWideChar); safecall;
+    function Get_Name: PChar; safecall;
+    procedure Set_Name(Value: PChar); safecall;
+    function Get_Visible: WordBool; safecall;
+    procedure Set_Visible(Value: WordBool); safecall;
+    function Get_Value: OleVariant; safecall;
+    procedure Set_Value(Value: OleVariant); safecall;
+    function Get_ParamType: TxParamType; safecall;
+    procedure Set_ParamType(Value: TxParamType); safecall;
+    property Description: PWideChar read Get_Description write Set_Description;
+    property Name: PChar read Get_Name write Set_Name;
+    property Visible: WordBool read Get_Visible write Set_Visible;
+    property Value: OleVariant read Get_Value write Set_Value;
+    property ParamType: TxParamType read Get_ParamType write Set_ParamType;
+  end;
+
+// *********************************************************************//
+// DispIntf:  IReportParamDisp
+// Flags:     (320) Dual OleAutomation
+// GUID:      {7B47C9F9-0746-4110-BB3D-5997C38810FA}
+// *********************************************************************//
+  IReportParamDisp = dispinterface
+    ['{7B47C9F9-0746-4110-BB3D-5997C38810FA}']
+    property Description: {??PWideChar}OleVariant dispid 1;
+    property Name: {??PChar}OleVariant dispid 2;
+    property Visible: WordBool dispid 4;
+    property Value: OleVariant dispid 6;
+    property ParamType: TxParamType dispid 7;
+  end;
+
+// *********************************************************************//
+// Interface: IReportReport
+// Flags:     (320) Dual OleAutomation
+// GUID:      {3468D0A7-7616-4E17-95B4-16A59E7BF064}
+// *********************************************************************//
+  IReportReport = interface(IUnknown)
+    ['{3468D0A7-7616-4E17-95B4-16A59E7BF064}']
+    function Get_Params: IReportParameters; safecall;
+    procedure Set_Params(const Value: IReportParameters); safecall;
+    property Params: IReportParameters read Get_Params write Set_Params;
+  end;
+
+// *********************************************************************//
+// DispIntf:  IReportReportDisp
+// Flags:     (320) Dual OleAutomation
+// GUID:      {3468D0A7-7616-4E17-95B4-16A59E7BF064}
+// *********************************************************************//
+  IReportReportDisp = dispinterface
+    ['{3468D0A7-7616-4E17-95B4-16A59E7BF064}']
+    property Params: IReportParameters dispid 2;
   end;
 
 
@@ -212,6 +329,8 @@ type
   protected
     procedure CreateControl;
     procedure InitControlData; override;
+    function Get_Report: IReportReport;
+    procedure Set_Report(const Value: IReportReport);
   public
     procedure SetDatasetSQL(const datasetname: WideString; const sqlsentence: WideString);
     procedure SetDatabaseConnectionString(const databasename: WideString; 
@@ -250,6 +369,7 @@ type
     property Cursor: Smallint index 30 read GetSmallintProp write SetSmallintProp stored False;
     property HelpType: TOleEnum index 31 read GetTOleEnumProp write SetTOleEnumProp stored False;
     property HelpKeyword: WideString index 32 read GetWideStringProp write SetWideStringProp stored False;
+    property Report: IReportReport read Get_Report write Set_Report stored False;
   end;
 
 procedure Register;
@@ -292,6 +412,16 @@ function TReportManX.GetControlInterface: IReportManX;
 begin
   CreateControl;
   Result := FIntf;
+end;
+
+function TReportManX.Get_Report: IReportReport;
+begin
+    Result := DefaultInterface.Report;
+end;
+
+procedure TReportManX.Set_Report(const Value: IReportReport);
+begin
+  DefaultInterface.Set_Report(Value);
 end;
 
 procedure TReportManX.SetDatasetSQL(const datasetname: WideString; const sqlsentence: WideString);

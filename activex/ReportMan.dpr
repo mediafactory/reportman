@@ -1,10 +1,16 @@
 library ReportMan;
 
+{$I rpconf.inc}
+
 uses
-  ComServ,MidasLib,
-  ReportMan_TLB in 'ReportMan_TLB.pas',
+  ComServ,
+{$IFDEF USEVARIANTS}
+  MidasLib,
+{$ENDIF}
+  Reportman_TLB in 'Reportman_TLB.pas',
   rpaxreportimp in 'rpaxreportimp.pas' {ReportManX: CoClass},
-  aboutrpax in 'aboutrpax.pas' {ReportManXAbout};
+  aboutrpax in 'aboutrpax.pas' {ReportManXAbout},
+  rpactivexreport in '..\rpactivexreport.pas';
 
 {$E ocx}
 

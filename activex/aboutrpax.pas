@@ -1,6 +1,6 @@
 unit aboutrpax;
 
-{$WARN SYMBOL_PLATFORM OFF}
+//{$WARN SYMBOL_PLATFORM OFF}
 
 interface
 
