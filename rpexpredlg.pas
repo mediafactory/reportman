@@ -4,7 +4,7 @@
 {       A Helper for building expresions with help      }
 {       Report Manager                                  }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -85,8 +85,12 @@ type
     procedure BShowResultClick(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
     procedure LItemsDblClick(Sender: TObject);
+    procedure BOKClick(Sender: TObject);
   private
     { Private declarations }
+    validate:Boolean;
+    dook:boolean;
+    AResult:Variant;
     Fevaluator:TRpCustomEvaluator;
     llistes:array[0..FMaxlisthelp-1] of TStringlist;
     procedure Setevaluator(aval:TRpCustomEvaluator);
@@ -96,6 +100,8 @@ type
   end;
 
 function ChangeExpression(formul:string;aval:TRpCustomEvaluator):string;
+function ChangeExpressionW(formul:Widestring;aval:TRpCustomEvaluator):Widestring;
+function ExpressionCalculateW(formul:Widestring;aval:TRpCustomEvaluator):Variant;
 
 
 
@@ -148,6 +154,7 @@ var
 begin
  inherited;
 
+ ActiveControl:=MemoExpre;
  for i:=0 to FMaxlisthelp-1 do
  begin
   llistes[i]:=TStringList.create;
@@ -407,11 +414,58 @@ var
 begin
   dia:=TFRpExpredialog.create(Application);
   try
-   dia.evaluator:=aval;
+   if not assigned(aval) then
+    dia.evaluator:=TRpEvaluator.Create(dia)
+   else
+    dia.evaluator:=aval;
    dia.MemoExpre.text:=formul;
    result:=formul;
-   if dia.showmodal=mrok then
+   dia.ShowModal;
+   if dia.dook then
     result:=dia.MemoExpre.text;
+  finally
+   dia.freE;
+  end;
+end;
+
+function ChangeExpressionW(formul:Widestring;aval:TRpCustomEvaluator):Widestring;
+var
+ dia:TFRpExpredialog;
+begin
+  dia:=TFRpExpredialog.create(Application);
+  try
+   if not assigned(aval) then
+    dia.evaluator:=TRpEvaluator.Create(dia)
+   else
+    dia.evaluator:=aval;
+   dia.MemoExpre.text:=formul;
+   result:=formul;
+   dia.showmodal;
+   if dia.dook then
+    result:=dia.MemoExpre.text;
+  finally
+   dia.freE;
+  end;
+end;
+
+function ExpressionCalculateW(formul:Widestring;aval:TRpCustomEvaluator):Variant;
+var
+ dia:TFRpExpredialog;
+begin
+  Result:=Null;
+  dia:=TFRpExpredialog.create(Application);
+  try
+   dia.validate:=true;
+   dia.MemoExpre.WantReturns:=false;
+   if not assigned(aval) then
+    dia.evaluator:=TRpEvaluator.Create(dia)
+   else
+    dia.evaluator:=aval;
+   dia.MemoExpre.text:=formul;
+   result:=dia.AResult;
+   dia.showmodal;
+   if dia.dook then
+    result:=dia.AResult;
   finally
    dia.freE;
   end;
@@ -426,12 +480,33 @@ begin
   try
    dia.evaluator:=Fevaluator;
    dia.MemoExpre.text:=Expresion.text;
-   result:=dia.showmodal=mrok;
+   dia.ShowModal;
+   result:=dia.dook;
    if result then
     Expresion.text:=dia.MemoExpre.text;
   finally
    dia.freE;
   end;
 end;
+
+procedure TFRpExpredialog.BOKClick(Sender: TObject);
+begin
+ if validate then
+ begin
+  evaluator.Expression:=Memoexpre.text;
+  try
+   evaluator.evaluate;
+   AResult:=evaluator.EvalResult;
+  except
+   MemoExpre.SetFocus;
+   MemoExpre.SelStart:=evaluator.PosError;
+   MemoExpre.SelLength:=0;
+   Raise;
+  end;
+ end;
+ dook:=true;
+ Close;
+end;
+
 
 end.

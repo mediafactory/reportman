@@ -26,7 +26,7 @@ Interbase TransIsolation=ReadCommited
 
 [MySQL]
 GetDriverFunc=getSQLDriverMYSQL
-LibraryName=libsqlmy.so
+LibraryName=libsqlmy.so.1
 VendorLib=libmysqlclient.so
 HostName=ServerName
 Database=DBNAME
@@ -35,6 +35,20 @@ Password=password
 BlobSize=-1
 ErrorResourceFile=./DbxMySqlErr.msg
 LocaleCode=0000
+
+[MySQL23]
+GetDriverFunc=getSQLDriverMYSQL
+LibraryName=libsqlmy23.so
+VendorLib=libmysqlclient.so
+HostName=ServerName
+Database=DBNAME
+User_Name=user
+Password=password
+BlobSize=-1
+ErrorResourceFile=./DbxMySqlErr.msg
+LocaleCode=0000
+
+
 
 [PostgreSQL]
 GetDriverFunc=getSQLDriverPGSQL

@@ -65,6 +65,7 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
     Lines.Strings = (
       'MemoExpre')
     TabOrder = 0
+    WordWrap = False
   end
   object LItems: TListBox
     Left = 120
@@ -112,8 +113,8 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
     Height = 25
     Caption = '&OK'
     Default = True
-    ModalResult = 1
     TabOrder = 5
+    OnClick = BOKClick
   end
   object BAdd: TButton
     Left = 4

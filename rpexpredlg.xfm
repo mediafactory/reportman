@@ -127,7 +127,7 @@ object FRpExpredialog: TFRpExpredialog
     Height = 25
     Caption = '&OK'
     Default = True
-    ModalResult = 1
+    OnClick = BOKClick
     TabOrder = 6
   end
   object BAdd: TButton
