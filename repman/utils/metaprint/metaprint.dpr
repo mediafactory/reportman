@@ -23,9 +23,11 @@ program metaprint;
 uses
   Classes,SysUtils,
 {$IFDEF MSWINDOWS}
+  QThemed in '..\..\QThemed.pas',
+  QThemeSrv in '..\..\QThemeSrv.pas',
+  TmSchema in '..\..\TmSchema.pas',
   rpqtdriver in '..\..\..\rpqtdriver.pas',
   rpmetafile in '..\..\..\rpmetafile.pas',
-  rpreport in '..\..\..\rpreport.pas',
   rpfmainmetaview in '..\..\..\rpfmainmetaview.pas',
   rptypes in '..\..\..\rptypes.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas';

@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       The report base component, it contains    }
+{       The report base component, it contains          }
 {       subreports, pagesetup, printer selection...     }
 {                                                       }
 {                                                       }
@@ -305,7 +305,7 @@ type
    property PrintOnlyIfDataAvailable:Boolean read FPrintOnlyIfDataAvailable
     write FPrintOnlyIfDataAvailable default false;
    property StreamFormat:TRpStreamFormat read FStreamFormat
-    write FStreamFormat default rpStreamzlib;
+    write FStreamFormat;
    property ReportAction:TRpReportActions read FReportAction write FReportAction;
  end;
 
@@ -366,7 +366,7 @@ constructor TRpBaseReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
- FStreamFormat:=rpStreamzlib;
+ FStreamFormat:=rpStreamtext;
  gheaders:=TList.Create;
  gfooters:=TList.Create;
  FailIfLoadExternalError:=True;
@@ -459,7 +459,7 @@ begin
   for k:=0 to subrep.PageHeaderCount-1 do
   begin
    if subrep.Sections[j+k].Section.Global then
-    gheaders.Insert(0,subrep.Sections[j+k].Section);
+    gheaders.Add(subrep.Sections[j+k].Section);
   end;
   j:=subrep.FirstPageFooter;
   for k:=0 to subrep.PageFooterCount-1 do

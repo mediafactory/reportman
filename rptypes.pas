@@ -254,6 +254,7 @@ procedure ReadFileLines(filename:String;dest:TStrings);
 {$ENDIF}
 
 function RpTempFileName:String;
+procedure WriteStringToStream(astring:String;deststream:TStream);
 
 {$IFNDEF USEVARIANTS}
 procedure RaiseLastOSError;
@@ -270,7 +271,6 @@ function BoolToStr(B: Boolean; UseBoolStrs: Boolean = False): string;
 function StrToBool(const S: string): Boolean;
 function StrToBoolDef(const S: string; const Default: Boolean): Boolean;
 function TryStrToBool(const S: string; out Value: Boolean): Boolean;
-
 var
   TrueBoolStrs: array of String;
   FalseBoolStrs: array of String;
@@ -2469,6 +2469,29 @@ begin
   Result := True;
 end;
 {$ENDIF}
+
+
+procedure WriteStringToStream(astring:String;deststream:TStream);
+{$IFDEF DOTNETD}
+var
+ i:integer;
+ buf:array of Byte;
+{$ENDIF}
+begin
+ if Length(astring)<1 then
+  exit;
+{$IFDEF DOTNETD}
+ SetLength(buf,Length(astring));
+ for i:=0 to Length(astring)-1 do
+ begin
+  buf[i]:=Byte(astring[i+1]);
+ end;
+ deststream.Write(buf,Length(astring));
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ deststream.Write(astring[1],Length(astring));
+{$ENDIF}
+end;
 
 
 initialization

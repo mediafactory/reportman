@@ -24,7 +24,6 @@ uses
   Classes,SysUtils,
   rpgdidriver in '..\..\..\rpgdidriver.pas',
   rpmetafile in '..\..\..\rpmetafile.pas',
-  rpreport in '..\..\..\rpreport.pas',
   rpfmainmetaviewvcl in '..\..\..\rpfmainmetaviewvcl.pas',
   rptypes in '..\..\..\rptypes.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas';

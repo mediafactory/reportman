@@ -320,11 +320,9 @@ begin
  FPageHeight:=report.CustomY;
  selectedprinter:=report.PrinterSelect;
  UpdatePrinterConfig;
- if Length(escapecodes[rpescapeinitprinter])>0 then
-  MemStream.Write(escapecodes[rpescapeinitprinter][1],Length(escapecodes[rpescapeinitprinter]));
+ WriteStringToStream(escapecodes[rpescapeinitprinter],MemStream);
  if DrawerBefore then
-  if Length(escapecodes[rpescapepulse])>0 then
-   MemStream.Write(escapecodes[rpescapepulse][1],Length(escapecodes[rpescapepulse]));
+  WriteStringToStream(escapecodes[rpescapepulse],MemStream);
  // Set page size
  if report.PageSize<0 then
  begin
@@ -356,15 +354,12 @@ begin
   cutclearlines:=true;
  WriteCurrentPage(cutclearlines);
 
- if Length(escapecodes[rpescapeendprint])>0 then
-  MemStream.Write(escapecodes[rpescapeendprint][1],Length(escapecodes[rpescapeendprint]));
+ WriteStringToStream(escapecodes[rpescapeendprint],MemStream);
  // Tear off
- if Length(escapecodes[rpescapetearoff])>0 then
-  MemStream.Write(escapecodes[rpescapetearoff][1],Length(escapecodes[rpescapetearoff]));
+ WriteStringToStream(escapecodes[rpescapetearoff],MemStream);
  // MemStream.Write;
  if DrawerAfter then
-  if Length(escapecodes[rpescapepulse])>0 then
-   MemStream.Write(escapecodes[rpescapepulse][1],Length(escapecodes[rpescapepulse]));
+  WriteStringToStream(escapecodes[rpescapepulse],MemStream);
  MemStream.Seek(0,soFromBeginning);
 end;
 
@@ -650,10 +645,7 @@ begin
  begin
   s:=#27+#38+#108+Chr(High(FLines)+1)+#80;
  end;
- if Length(s)>0 then
- begin
-  Memstream.Write(s[1],Length(s));
- end;
+ WriteStringToStream(s,MemStream);
 end;
 
 procedure TRpTextDriver.FillEspcapes(FPrinterDriverName:String);
@@ -1687,8 +1679,7 @@ begin
  for i:=0 to lastline do
  begin
   codedstring:=EnCodeLine(FLines[i],i);
-  if Length(codedstring)>0 then
-   MemStream.Write(codedstring[1],Length(codedstring));
+  WriteStringToStream(codedstring,MemStream);
  end;
 end;
 

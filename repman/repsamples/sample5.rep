@@ -271,6 +271,7 @@ object TRpReport
     DoBeforePrint = ''
     DoAfterPrint = ''
     Expression = 'FISH.Graphic'
+    Stream = {0000000000000000}
   end
   object TRpExpression0: TRpExpression
     Width = 3915

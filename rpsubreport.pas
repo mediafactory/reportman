@@ -76,7 +76,7 @@ type
    property GroupCount:integer read GetGroupCount;
    function GroupChanged:integer;
    procedure InitGroups(groupindex:integer);
-   function GetDisplayName:string;
+   function GetDisplayName(includedataset:Boolean):string;
    function IsDataAvailable:boolean;
   published
    property Sections:TRpSectionList read FSections write SetSections;
@@ -717,7 +717,7 @@ begin
  end;
 end;
 
-function TRpSubReport.GetDisplayName:string;
+function TRpSubReport.GetDisplayName(includedataset:Boolean):string;
 var
  index:integer;
 begin
@@ -731,6 +731,13 @@ begin
  end;
  if index<=(Length(Name)) then
   Result:=SRpSubReport+'-'+Copy(Name,index,Length(Name));
+ if IncludeDataset then
+ begin
+  if Length(FAlias)>0 then
+   Result:=Result+'('+FAlias+')'
+  else
+   Result:=Result+'('+SRpNoDataset+')';
+ end;
 end;
 
 function TRpSubReport.IsDataAvailable:boolean;

@@ -27,6 +27,9 @@ uses
   unewalias in 'unewalias.pas' {FNewAlias},
 {$IFDEF MSWINDOWS}
   midaslib,
+  QThemed in '..\..\repman\QThemed.pas',
+  QThemeSrv in '..\..\repman\QThemeSrv.pas',
+  TmSchema in '..\..\repman\TmSchema.pas',
   rpmdrepclient in '..\..\rpmdrepclient.pas' {modclient: TDataModule},
 {$ENDIF}
 {$IFDEF LINUX}

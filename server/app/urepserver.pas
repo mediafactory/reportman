@@ -469,7 +469,7 @@ var
  CB,ACB:PRpComBlock;
  astream:TMemoryStream;
  alist:TStringList;
- username,password:string;
+ username,groupname,password:string;
  aliasname,apath:string;
  correct:boolean;
  index:integer;
@@ -743,7 +743,7 @@ begin
           index:=LGroups.IndexOfName(groupname);
           if index>=0 then
           begin
-           Groups.Delete(index);
+           LGroups.Delete(index);
            WriteConfig;
            InitConfig;
            // Break user connections?

@@ -265,7 +265,7 @@ begin
  begin
   if Assigned(ChildSubreport) then
   begin
-   Result:=Result+'('+TRpSubReport(ChildSubReport).GetDisplayName+')';
+   Result:=Result+'('+TRpSubReport(ChildSubReport).GetDisplayName(false)+')';
   end;
  end;
 end;
@@ -953,7 +953,7 @@ begin
  lvalues.Add(' ');
  for i:=0 to rep.Subreports.count-1 do
  begin
-  lvalues.Add(rep.Subreports.items[i].SubReport.GetDisplayName);
+  lvalues.Add(rep.Subreports.items[i].SubReport.GetDisplayName(false));
  end;
 end;
 
@@ -961,7 +961,7 @@ function TRpSection.GetChildSubReportName:string;
 begin
  Result:=' ';
  if Assigned(ChildSubReport) then
-  Result:=TRpSubReport(ChildSubReport).GetDisplayName;
+  Result:=TRpSubReport(ChildSubReport).GetDisplayName(false);
 end;
 
 procedure TRpSection.SetChildSubReportByName(avalue:String);
@@ -978,7 +978,7 @@ begin
    rep.Subreports.items[i].SubReport.ParentSection:=nil;
    rep.Subreports.items[i].SubReport.ParentSubReport:=nil;
   end;
-  if rep.Subreports.items[i].SubReport.GetDisplayName=avalue then
+  if rep.Subreports.items[i].SubReport.GetDisplayName(false)=avalue then
   begin
    rep.Subreports.items[i].SubReport.ParentSection:=Self;
    rep.Subreports.items[i].SubReport.ParentSubReport:=TRpSubReport(SubReport);

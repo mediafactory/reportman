@@ -96,7 +96,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=vcl;rtl;vclx;indy;inet;vclie;dbrtl;dsnap;vcldb;dbexpress;inetdb;bdertl;vcldbx;adortl;ibxpress;visualclx;visualdbclx;vclshlctrls;rppack_del;rppackv_del;rppackvcl_del;rppackdesign_del
-Conditionals=
+Conditionals=FORWEBAX
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
@@ -134,6 +134,9 @@ OriginalFilename=repserverconfigxp.exe
 ProductName=Report Manager
 ProductVersion=1.6.0.0
 Comments=
+[HistoryLists\hlConditionals]
+Count=1
+Item0=FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

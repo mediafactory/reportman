@@ -1,8 +1,8 @@
 object FRpOpenLib: TFRpOpenLib
   Left = 245
   Top = 108
-  Width = 391
-  Height = 344
+  Width = 496
+  Height = 372
   VertScrollBar.Range = 69
   ActiveControl = BOK
   Caption = 'Library reports'
@@ -15,8 +15,8 @@ object FRpOpenLib: TFRpOpenLib
   TextWidth = 6
   object Panel1: TPanel
     Left = 0
-    Top = 308
-    Width = 391
+    Top = 336
+    Width = 496
     Height = 36
     Align = alBottom
     BevelOuter = bvNone
@@ -45,7 +45,7 @@ object FRpOpenLib: TFRpOpenLib
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 391
+    Width = 496
     Height = 33
     Align = alTop
     TabOrder = 1
@@ -59,7 +59,7 @@ object FRpOpenLib: TFRpOpenLib
     object ComboLibrary: TComboBox
       Left = 180
       Top = 4
-      Width = 165
+      Width = 305
       Height = 21
       Style = csDropDownList
       ItemHeight = 15

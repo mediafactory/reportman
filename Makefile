@@ -10,6 +10,26 @@ reportman: reportmanutils reportmanserver reportmanutilsxp reportmanserverxp
 
 webplugin:   
         make clean_noexe
+        cd repman
+        cd utils
+        cd metaview
+        $(COMPILE) -DFORWEBAX metaview.dpr
+        $(COMPILE) -DFORWEBAX metaviewxp.dpr
+        cd ..
+        cd metaprint
+        $(COMPILE) -DFORWEBAX metaprint.dpr
+        $(COMPILE) -DFORWEBAX metaprintxp.dpr
+        cd ..
+        cd ..
+        cd ..
+        
+        cd server
+        cd config
+        $(COMPILE) -DFORWEBAX repserverconfig.dpr
+        $(COMPILE) -DFORWEBAX repserverconfigxp.dpr
+        cd ..
+        cd ..
+
         cd webactivex
         $(COMPILE)  -DFORWEBAX WebReportManX.dpr
         generatecab
@@ -28,13 +48,16 @@ prerelease:
         copy repman\repsamples\biolife.cds ..\prerelease
         copy drivers\win32\*.* ..\prerelease
         copy repman\utils\printrep\printrep.exe ..\prerelease
+        copy repman\utils\printrep\printrep.exe.manifest ..\prerelease
         copy repman\utils\printrep\printrepxp.exe ..\prerelease
         copy repman\utils\printrep\printrepxp.exe.manifest ..\prerelease
         copy repman\utils\metaview\metaviewxp.exe ..\prerelease
         copy repman\utils\metaview\metaviewxp.exe.manifest ..\prerelease
         copy repman\utils\metaview\metaview.exe ..\prerelease
+        copy repman\utils\metaview\metaview.exe.manifest ..\prerelease
         copy repman\utils\printreptopdf\printreptopdf.exe ..\prerelease
         copy repman\utils\metaprint\metaprint.exe ..\prerelease
+        copy repman\utils\metaprint\metaprint.exe.manifest ..\prerelease
         copy repman\utils\metaprint\metaprintxp.exe ..\prerelease
         copy repman\utils\metaprint\metaprintxp.exe.manifest ..\prerelease
         copy repman\utils\txttorep\txttorep.exe ..\prerelease
@@ -43,10 +66,12 @@ prerelease:
         copy repman\utils\rptranslator\rptranslate.exe.manifest ..\prerelease
         copy repman\utils\unixtodos\unixtodos.exe ..\prerelease
         copy server\app\reportserverapp.exe ..\prerelease
+        copy server\app\reportserverapp.exe.manifest ..\prerelease
         copy server\app\reportserverappxp.exe ..\prerelease
         copy server\app\reportserverappxp.exe.manifest ..\prerelease
         copy server\app\reportservercon.exe ..\prerelease
         copy server\config\repserverconfig.exe ..\prerelease
+        copy server\config\repserverconfig.exe.manifest ..\prerelease
         copy server\config\repserverconfigxp.exe ..\prerelease
         copy server\config\repserverconfigxp.exe.manifest ..\prerelease
         copy server\service\repserverservice.exe ..\prerelease
@@ -77,12 +102,6 @@ reportmanutils:
         cd printrep
         $(COMPILE) printrep.dpr
         cd ..
-        cd metaview
-        $(COMPILE) metaview.dpr
-        cd ..
-        cd metaprint
-        $(COMPILE) metaprint.dpr
-        cd ..
         cd startup
         $(COMPILE) startup.dpr
         cd ..
@@ -98,9 +117,6 @@ reportmanserver:
         cd app
         $(COMPILE) reportserverapp.dpr
         $(COMPILE) reportservercon.dpr
-        cd ..
-        cd config
-        $(COMPILE) repserverconfig.dpr
         cd ..
         cd web
         $(COMPILE) repwebexe.dpr
@@ -121,12 +137,6 @@ reportmanutilsxp: designerxp
         cd printrep
         $(COMPILE) printrepxp.dpr
         cd ..
-        cd metaview
-        $(COMPILE) metaviewxp.dpr
-        cd ..
-        cd metaprint
-        $(COMPILE) metaprintxp.dpr
-        cd ..
         cd rptranslator
         $(COMPILE) rptranslate.dpr
         cd ..
@@ -144,9 +154,6 @@ reportmanserverxp:
         cd server
         cd app
         $(COMPILE) reportserverappxp.dpr
-        cd ..
-        cd config
-        $(COMPILE) repserverconfigxp.dpr
         cd ..
         cd service
         $(COMPILE) repserverservice.dpr
@@ -194,7 +201,7 @@ clean:  clean_noexe
         -del /s *.exe
         -del /s repman\*.bin
         -del /s server\*.bin
-        -del /s *.dll
+        -del *.dll
         -del /s *.ocx
 
 

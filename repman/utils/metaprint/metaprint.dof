@@ -123,8 +123,6 @@ Private=0
 DLL=0
 Locale=3082
 CodePage=1252
-[Excluded Packages]
-C:\WINDOWS\System32\ibevnt70.bpl=Borland Interbase Event Alerter Component
 [HistoryLists\hlConditionals]
 Count=1
 Item0=FORWEBAX

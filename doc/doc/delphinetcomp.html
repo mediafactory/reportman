@@ -1,0 +1,52 @@
+<html>
+<head>
+<title>Compiling in Delphi for .Net</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Installation</h2>
+<h3><b>Compiling and using Report Manager from Delphi for .Net</b></h3>
+<p>Download the .net components from sourceforge and unpack it to a directory:</p>
+<p><a href="http://sourceforge.net/projects/reportman" target="_blank">http://sourceforge.net/projects/reportman</a></p>
+<table border="1">
+  <tr> 
+    <td bgcolor="#00FFFF"><b>Version</b></td>
+    <td bgcolor="#00FFFF"><b>Packages</b></td>
+    <td bgcolor="#00FFFF"><b>Description</b></td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFCC">Delphi 8</td>
+    <td>reportman.bdsproj</td>
+    <td>Unique complete package</td>
+  </tr>
+</table>
+<p>Use Open option in File menu to open the project. It the package window is 
+  not visible then use Project Manager option in View menu.</p>
+<p><img src="images/delphidotnet.jpg" width="399" height="266"></p>
+<p>Then <strong>right click in ReportMan.dll</strong> item and select <strong>Install</strong> 
+  option.</p>
+<p>Now you can use in your VCL projects the VCLReport component in the component 
+  palette, this component is fully compatible with previous versions of Report 
+  Manager.</p>
+<p>A sample (directory sample) is provided so you can test the functionality of 
+  the component after installation. Remember to place the path of report manager 
+  component library in your library path.</p>
+<p>You can activate or deactivate any compilation features using rpconf.inc file 
+  (IBX and Indy are disabled by default). See <a href="compileropts.html">compiling 
+  options</a>.</p>
+<p><strong>Current limitations</strong></p>
+<ul>
+  <li>You must use Report Manager Designer 1.6, but select prefered save format 
+    as plain text, because de dot net components does not support zlib compression. 
+    In a future, may be a 100% dot net build designer will be provided.</li>
+  <li> ADO connections are not supported, Dot Net providers connections will be 
+    supported in later versions, you can use Borland Database Engine, MyBase and 
+    SQLExpress.</li>
+  <li>Report Maanger 2.0 is the first dot net enabled version, provided with the 
+    first Delphi for .Net provided by Borland, so the reporting engine can contain 
+    bugs related to the new technology change, if you find any problem report 
+    bugs (or send bugfixes) to sourceforge project (http://sourceforge.net/projects/reportman).</li>
+</ul>
+</body>
+</html>

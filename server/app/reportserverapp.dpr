@@ -27,6 +27,9 @@ uses
   urepserver in 'urepserver.pas' {modserver: TDataModule},
 {$IFDEF MSWINDOWS}
   midaslib,
+  QThemed in '..\..\repman\QThemed.pas',
+  QThemeSrv in '..\..\repman\QThemeSrv.pas',
+  TmSchema in '..\..\repman\TmSchema.pas',
   rpmdprotocol in '..\..\rpmdprotocol.pas';
 {$ENDIF}
 {$IFDEF LINUX}

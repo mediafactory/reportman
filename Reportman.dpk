@@ -38,7 +38,8 @@ requires
   Borland.VclDbExpress,
   Borland.VclDSnap,
   Borland.Delphi,
-  Borland.VclRtl;
+  Borland.VclRtl,
+  Borland.VclIBXpress;
 
 contains
   rpmregnet in 'rpmregnet.pas',

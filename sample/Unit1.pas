@@ -12,8 +12,10 @@ type
     Button1: TButton;
     Button2: TButton;
     VCLReport1: TVCLReport;
+    Button3: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -39,6 +41,12 @@ begin
  VCLReport1.Filename:='samplenet.rep';
  VCLReport1.Preview:=False;
  VCLReport1.Execute;
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+ VCLReport1.Filename:='samplenet.rep';
+ VCLReport1.SaveToPDF('test.pdf',false) ;
 end;
 
 end.

@@ -84,9 +84,6 @@ object TRpReport
         Component = TRpExpression4
       end
       item
-        Component = TRpImage2
-      end
-      item
         Component = TRpExpression0
       end
       item
@@ -254,17 +251,6 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'FISH.Notes'
     AgIniValue = '0'
-  end
-  object TRpImage2: TRpImage
-    Width = 1725
-    Height = 690
-    PosX = 7710
-    PosY = 465
-    DrawStyle = rpDrawFull
-    PrintCondition = ''
-    DoBeforePrint = ''
-    DoAfterPrint = ''
-    Expression = 'FISH.Graphic'
   end
   object TRpExpression0: TRpExpression
     Width = 3915

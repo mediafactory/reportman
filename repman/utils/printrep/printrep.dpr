@@ -25,6 +25,9 @@ uses
   SysUtils,Classes,
 {$IFDEF MSWINDOWS}
   midaslib,ActiveX,
+  QThemed in '..\..\QThemed.pas',
+  QThemeSrv in '..\..\QThemeSrv.pas',
+  TmSchema in '..\..\TmSchema.pas',
   rpreport in '..\..\..\rpreport.pas',
   rpparams in '..\..\..\rpparams.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas',

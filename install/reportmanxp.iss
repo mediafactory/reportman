@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 1.6b
+AppVerName=Report Manager 2.0pre2
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -68,9 +68,9 @@ Source: "..\drivers\win32\dbexpora.dll"; DestDir: "{sys}";  Flags: uninsneveruni
 Source: "..\drivers\win32\dbexpdb2.dll"; DestDir: "{sys}";  Flags: uninsneveruninstall onlyifdoesntexist
 Source: "..\drivers\win32\dbxoodbc.dll"; DestDir: "{sys}"; Flags: uninsneveruninstall onlyifdoesntexist
 ; Api libraries
-Source: "rpreportman.h"; DestDir: "{app}\api"; Flags: ignoreversion
-Source: "rpreportmanapi.bas"; DestDir: "{app}\api"; Flags: ignoreversion
-Source: "tests\gcctest\Reportman.def"; DestDir: "{app}\api"; Flags: ignoreversion
+Source: "..\rpreportman.h"; DestDir: "{app}\api"; Flags: ignoreversion
+Source: "..\rpreportmanapi.bas"; DestDir: "{app}\api"; Flags: ignoreversion
+Source: "..\tests\gcctest\Reportman.def"; DestDir: "{app}\api"; Flags: ignoreversion
 ; Documentation
 Source: "..\doc\doc\*.*"; DestDir: "{app}\doc"; Flags: ignoreversion
 Source: "..\doc\doc\images\*.*"; DestDir: "{app}\doc\images"; Flags: ignoreversion

@@ -5,6 +5,9 @@ program metaview;
 uses
   QForms,
 {$IFDEF MSWINDOWS}
+  QThemed in '..\..\QThemed.pas',
+  QThemeSrv in '..\..\QThemeSrv.pas',
+  TmSchema in '..\..\TmSchema.pas',
   rpfmainmetaview in '..\..\..\rpfmainmetaview.pas' {FRpMainMeta},
   rpmetafile in '..\..\..\rpmetafile.pas',
   rpprintdia in '..\..\..\rpprintdia.pas' {FRpPrintDialog},
