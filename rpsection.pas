@@ -163,7 +163,8 @@ begin
   if Components.Items[i].Component=Com then
   begin
    com.Free;
-   Components.Delete(i);
+   Components.Items[i].Free;
+//   Components.Delete(i);
    break;
   end;
   inc(i);

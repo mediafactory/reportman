@@ -10,6 +10,7 @@ unit rpzlibzutil;
 interface
 
 {$I zconf.inc}
+{$I rpconf.inc}
 
 { Type declarations }
 
@@ -19,12 +20,12 @@ type
   charf  = byte;
 
 {$IFDEF FPC}
-  int    = longint;
+  inti    = longint;
 {$ELSE}
-  int    = integer;
+  inti    = integer;
 {$ENDIF}
 
-  intf   = int;
+  intf   = inti;
 {$IFDEF MSDOS}
   uInt   = Word;
 {$ELSE}
@@ -38,7 +39,7 @@ type
   uIntf  = uInt;
 
   Long   = longint;
-{$ifdef Delphi5}  
+{$ifdef Delphi5}
   uLong  = Cardinal;
 {$else}
   uLong  = LongInt;      { 32 bits or more }
@@ -83,7 +84,7 @@ type
   ushf = ush;
   ulg  = LongInt;
 
-  unsigned = uInt;
+  unsignedi = uInt;
 
   pcharf = ^charf;
   puchf = ^uchf;
@@ -97,7 +98,7 @@ type
   pushfArray = ^zushfArray;
 
 procedure zmemcpy(destp : pBytef; sourcep : pBytef; len : uInt);
-function zmemcmp(s1p, s2p : pBytef; len : uInt) : int;
+function zmemcmp(s1p, s2p : pBytef; len : uInt) : inti;
 procedure zmemzero(destp : pBytef; len : uInt);
 procedure zcfree(opaque : voidpf; ptr : voidpf);
 function zcalloc (opaque : voidpf; items : uInt; size : uInt) : voidpf;
@@ -387,7 +388,7 @@ begin
   Move(sourcep^, destp^, len);
 end;
 
-function zmemcmp(s1p, s2p : pBytef; len : uInt) : int;
+function zmemcmp(s1p, s2p : pBytef; len : uInt) : inti;
 var
   j : uInt;
   source,

@@ -25,6 +25,9 @@ uses
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
+{$IFDEF MSWINDOWS}
+  Dialogs,rpgdidriver,rpvpreview,
+{$ENDIF}
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
   rpconsts,rptypes, QExtCtrls,frpstruc, rplastsav,rpsubreport,
@@ -129,12 +132,17 @@ type
     Printersetup1: TMenuItem;
     AUnitCms: TAction;
     AUnitsinchess: TAction;
-    Measurement1: TMenuItem;
+    MPreferences: TMenuItem;
     Measurement2: TMenuItem;
     Cms1: TMenuItem;
     Inchess1: TMenuItem;
     AUserParams: TAction;
     Userparameters1: TMenuItem;
+    MDriverSelect: TMenuItem;
+    MQtDriver: TMenuItem;
+    MGDIDriver: TMenuItem;
+    ADriverQT: TAction;
+    ADriverGDI: TAction;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -170,6 +178,8 @@ type
     procedure AUnitsinchessExecute(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure AUserParamsExecute(Sender: TObject);
+    procedure ADriverQTExecute(Sender: TObject);
+    procedure ADriverGDIExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFDesignFrame;
@@ -525,6 +535,8 @@ begin
  configfile:=Obtainininameuserconfig('','','repmand');
 {$IFDEF MSWINDOWS}
   LastUsedFiles.CaseSensitive:=False;
+  // Visible driver selection
+  MDriverSelect.Visible:=true;
 {$ENDIF}
 {$IFDEF LINUX}
   LastUsedFiles.CaseSensitive:=True;
@@ -654,9 +666,11 @@ begin
  // Deletes section
  Assert(report<>nil,'Called ADeleteSection a report unassigned');
 
- freportstructure.DeleteSelectedNode;
-
- RefreshInterface(Self);
+ if MessageDlg(SRpSureDeleteSection,mtWarning,[mbok,mbcancel],0)=mrOk then
+ begin
+  freportstructure.DeleteSelectedNode;
+  RefreshInterface(Self);
+ end;
 end;
 
 procedure TFMainf.ANewDetailExecute(Sender: TObject);
@@ -772,7 +786,14 @@ end;
 procedure TFMainf.APreviewExecute(Sender: TObject);
 begin
  // Previews the report
- ShowPreview(report,caption);
+{$IFDEF MSWINDOWS}
+ if ADriverGDI.Checked then
+ begin
+  rpvpreview.ShowPreview(report,caption);
+  exit;
+ end;
+{$ENDIF MSWINDOWS}
+ rppreview.ShowPreview(report,caption);
 end;
 
 procedure TFMainf.AAboutExecute(Sender: TObject);
@@ -785,12 +806,24 @@ var
  allpages,collate:boolean;
  frompage,topage,copies:integer;
 begin
+{$IFDEF MSWINDOWS}
+ if ADriverGDI.Checked then
+ begin
+  allpages:=true;
+  collate:=report.CollateCopies;
+  frompage:=1; topage:=999999;
+  copies:=report.Copies;
+  if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+   rpgdidriver.PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
+  exit;
+ end;
+{$ENDIF}
  allpages:=true;
  collate:=report.CollateCopies;
  frompage:=1; topage:=999999;
  copies:=report.Copies;
- if DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-  PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
+ if rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+  rpqtdriver.PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
 end;
 
 
@@ -920,7 +953,23 @@ begin
 end;
 
 procedure TFMainf.APrintSetupExecute(Sender: TObject);
+{$IFDEF MSWINDOWS}
+var
+ psetup:TPrinterSetupDialog;
+{$ENDIF}
 begin
+{$IFDEF MSWINDOWS}
+ if ADriverGDI.Checked then
+ begin
+  psetup:=TPrinterSetupDialog.Create(nil);
+  try
+   psetup.execute;
+  finally
+   psetup.free;
+  end;
+  exit;
+ end;
+{$ENDIF}
  printer.ExecuteSetup;
 end;
 
@@ -931,6 +980,8 @@ begin
  inif:=TIniFile.Create(configfile);
  try
   AUnitCms.Checked:=inif.ReadBool('Preferences','UnitCms',true);
+  ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',true);
+  ADriverGDI.Checked:=Not ADriverQT.Checked;
   AUnitsinchess.Checked:=Not AUnitCms.Checked;
   UpdateUnits;
  finally
@@ -945,6 +996,7 @@ begin
  inif:=TIniFile.Create(configfile);
  try
   inif.WriteBool('Preferences','UnitCms',AUnitCms.Checked);
+  inif.WriteBool('Preferences','DriverQT',ADriverQT.Checked);
   inif.UpdateFile;
  finally
   inif.free;
@@ -1011,6 +1063,18 @@ end;
 procedure TFMainf.AUserParamsExecute(Sender: TObject);
 begin
  ShowUserParams(report);
+end;
+
+procedure TFMainf.ADriverQTExecute(Sender: TObject);
+begin
+ ADriverQT.Checked:=true;
+ ADriverGDI.Checked:=false;
+end;
+
+procedure TFMainf.ADriverGDIExecute(Sender: TObject);
+begin
+ ADriverGDI.Checked:=true;
+ ADriverQT.Checked:=false;
 end;
 
 initialization

@@ -75,6 +75,7 @@ resourcestring
   SRPHorzDesp='Horz.Desp.';
   SRpInvalidBoolean='Invalid boolean: ';
 
+  SRpSureDeleteSection='Delete selected section?';
   SRpNoDatasets='No datasets defined';
   SRpSampleTextToLabels='Text';
   SRpSampleExpression='2+2';

@@ -48,6 +48,11 @@ uses
   ShLwApi in 'ShLwApi.pas',
   ShFolder in 'ShFolder.pas',
   midaslib,Crtl,
+  rpvgraphutils in '..\rpvgraphutils.pas',
+  rpgdidriver in '..\rpgdidriver.pas',
+  rpvpreview in '..\rpvpreview.pas',
+  rprfvparams in '..\rprfvparams.pas',
+
   rpreport in '..\rpreport.pas',
   rpsubreport in '..\rpsubreport.pas',
   rpconsts in '..\rpconsts.pas',

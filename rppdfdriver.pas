@@ -187,7 +187,7 @@ var
  Width,Height,posx,posy:integer;
  rec:TRect;
  aalign:integer;
- stream:TStream;
+// stream:TStream;
 // bitmap:TBitmap;
 begin
  posx:=obj.Left;
@@ -283,7 +283,7 @@ begin
     rec.Left:=PosX;
     rec.Bottom:=rec.Top+Height-1;
     rec.Right:=rec.Left+Width-1;
-    stream:=page.GetStream(obj);
+//    stream:=page.GetStream(obj);
 //     Canvas.CopyMode:=TCopyMode(obj.CopyMode);
 {    bitmap:=TBitmap.Create;
     try

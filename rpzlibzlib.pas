@@ -302,7 +302,7 @@ type
     zfree : free_func;    { used to free the internal state }
     opaque : voidpf;      { private data object passed to zalloc and zfree }
 
-    data_type : int;      { best guess about the data type: ascii or binary }
+    data_type : inti;      { best guess about the data type: ascii or binary }
     adler : uLong;        { adler32 value of the uncompressed data }
     reserved : uLong;     { reserved for future use }
   end;
@@ -419,7 +419,7 @@ function zlibVersion : string;
   not compatible with the zlib.h header file used by the application.
   This check is automatically made by deflateInit and inflateInit. }
 
-function zError(err : int) : string;
+function zError(err : inti) : string;
 
 function ZALLOC (var strm : z_stream; items : uInt; size : uInt) : voidpf;
 
@@ -444,7 +444,7 @@ const
             'incompatible version',{ Z_VERSION_ERROR (-6) }
             '');
 const
-  z_verbose : int = 1;
+  z_verbose : inti = 1;
 
 {$IFDEF DEBUG}
 procedure z_error (m : string);
@@ -452,7 +452,7 @@ procedure z_error (m : string);
 
 implementation
 
-function zError(err : int) : string;
+function zError(err : inti) : string;
 begin
   zError := z_errmsg[Z_NEED_DICT-err];
 end;

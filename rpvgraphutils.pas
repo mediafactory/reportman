@@ -2,13 +2,16 @@ unit rpvgraphutils;
 
 interface
 
-uses Classes,SysUtils,Windows,Graphics;
+uses Classes,SysUtils,Windows,Graphics,rpmunits,Printers;
 
 procedure DrawBitmap (Destination:TCanvas;Bitmap:TBitmap;Rec,RecSrc:TRect);
 procedure DrawBitmapMosaic(canvas:TCanvas;rec:TRect;bitmap:TBitmap);
 function CLXColorToVCLColor(CLXColor:integer):integer;
 function CLXIntegerToFontStyle(intfontstyle:integer):TFontStyles;
 procedure DrawBitmapMosaicSlow(canvas:TCanvas;rec:Trect;bitmap:TBitmap);
+function GetPhysicPageSizeTwips:TPoint;
+function GetPageSizeTwips:TPoint;
+function GetPageMarginsTWIPS:TRect;
 
 implementation
 
@@ -139,5 +142,101 @@ begin
   y:=y+bitmap.Height;
  end;
 end;
+
+function GetPageMarginsTWIPS:TRect;
+var rec:TRect;
+    DC:HDC;
+    pagesize:TPoint;
+    physical:TPoint;
+    offset:TPoint;
+    dpix,dpiy:integer;
+    apagewidth,apageheight:integer;
+begin
+ if Printer.printers.count<1 then
+ begin
+  result.Left:=0;
+  result.Top:=0;
+  result.Bottom:=16637;
+  result.Right:=12047;
+  exit;
+ end;
+ DC:=Printer.handle;
+
+ dpix:=GetDeviceCaps(DC,LOGPIXELSX); //  printer.XDPI;
+ dpiy:=GetDeviceCaps(DC,LOGPIXELSY);  // printer.YDPI;
+
+ apagewidth:=GetDeviceCaps(DC,HORZRES);
+ apageheight:=GetDeviceCaps(DC,VERTRES);
+ pagesize.x:=Round(apagewidth/dpix*TWIPS_PER_INCHESS);
+ pagesize.y:=Round(apageheight/dpix*TWIPS_PER_INCHESS);
+
+ physical.x:=GetDeviceCaps(DC,PHYSICALWIDTH);
+ physical.y:=GetDeviceCaps(DC,PHYSICALHEIGHT);
+ // Transform to twips
+ physical.X:=Round(physical.X/dpix*TWIPS_PER_INCHESS);
+ physical.Y:=Round(physical.Y/dpiy*TWIPS_PER_INCHESS);
+
+ // Gets top/left offser
+ offset.x:=GetDeviceCaps(DC,PHYSICALOFFSETX);
+ offset.y:=GetDeviceCaps(DC,PHYSICALOFFSETY);
+ // Transform to twips
+ offset.X:=Round(offset.X/dpix*TWIPS_PER_INCHESS);
+ offset.Y:=Round(offset.Y/dpiy*TWIPS_PER_INCHESS);
+
+ rec.Left:=offset.X;
+ rec.Top:=offset.Y;
+ rec.Right:=physical.X-(physical.X-pagesize.X-offset.X);
+ rec.Bottom:=physical.Y-(physical.Y-pagesize.Y-offset.Y);
+
+ Result:=rec;
+end;
+
+
+function GetPageSizeTwips:TPoint;
+var
+ DC:HDC;
+ dpix,dpiy:integer;
+ apagewidth,apageheight:integer;
+begin
+ if Printer.printers.count<1 then
+ begin
+  result.y:=16637;
+  result.x:=12047;
+  exit;
+ end;
+ DC:=Printer.handle;
+ // Get the device units of
+ dpix:=GetDeviceCaps(DC,LOGPIXELSX); //  printer.XDPI;
+ dpiy:=GetDeviceCaps(DC,LOGPIXELSY);  // printer.YDPI;
+
+ apagewidth:=GetDeviceCaps(DC,HORZRES);
+ apageheight:=GetDeviceCaps(DC,VERTRES);
+ Result.x:=Round(apagewidth/dpix*TWIPS_PER_INCHESS);
+ Result.y:=Round(apageheight/dpiy*TWIPS_PER_INCHESS);
+end;
+
+function GetPhysicPageSizeTwips:TPoint;
+var
+ DC:HDC;
+ dpix,dpiy:integer;
+begin
+ if Printer.printers.count<1 then
+ begin
+  result.y:=16637;
+  result.x:=12047;
+  exit;
+ end;
+ DC:=Printer.handle;
+ // Get the device units of
+ dpix:=GetDeviceCaps(DC,LOGPIXELSX); //  printer.XDPI;
+ dpiy:=GetDeviceCaps(DC,LOGPIXELSY);  // printer.YDPI;
+
+ Result.x:=GetDeviceCaps(DC,PHYSICALWIDTH);
+ Result.y:=GetDeviceCaps(DC,PHYSICALHEIGHT);
+ // Transform to twips
+ Result.X:=Round(Result.X/dpix*TWIPS_PER_INCHESS);
+ Result.Y:=Round(Result.Y/dpiy*TWIPS_PER_INCHESS);
+end;
+
 
 end.

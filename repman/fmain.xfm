@@ -351,7 +351,7 @@ object FMainf: TFMainf
         Action = AGridOptions
       end
     end
-    object Measurement1: TMenuItem
+    object MPreferences: TMenuItem
       Caption = 'Preferences'
       object Measurement2: TMenuItem
         Caption = 'Measurement'
@@ -360,6 +360,16 @@ object FMainf: TFMainf
         end
         object Inchess1: TMenuItem
           Action = AUnitsinchess
+        end
+      end
+      object MDriverSelect: TMenuItem
+        Caption = 'Driver'
+        Visible = False
+        object MQtDriver: TMenuItem
+          Action = ADriverQT
+        end
+        object MGDIDriver: TMenuItem
+          Action = ADriverGDI
         end
       end
     end
@@ -571,6 +581,18 @@ object FMainf: TFMainf
       Hint = 'Shows user parameter window'
       ImageIndex = 18
       OnExecute = AUserParamsExecute
+    end
+    object ADriverQT: TAction
+      Category = 'Preferences'
+      Caption = 'Qt driver (CLX)'
+      Checked = True
+      OnExecute = ADriverQTExecute
+    end
+    object ADriverGDI: TAction
+      Category = 'Preferences'
+      Caption = 'GDI Driver (VCL)'
+      Hint = 'Activates the GDI32 direct rendering driver (VCL)'
+      OnExecute = ADriverGDIExecute
     end
   end
   object iconlist: TImageList

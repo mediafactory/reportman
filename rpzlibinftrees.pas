@@ -34,7 +34,7 @@ function inflate_trees_bits(
   var tb : pinflate_huft;  { bits tree result }
   var hp : array of Inflate_huft;      { space for trees }
   var z : z_stream         { for messages }
-    ) : int;
+    ) : inti;
 
 function inflate_trees_dynamic(
     nl : uInt;                    { number of literal/length codes }
@@ -46,7 +46,7 @@ var tl : pInflate_huft;           { literal/length tree result }
 var td : pInflate_huft;           { distance tree result }
 var hp : array of Inflate_huft;   { space for trees }
 var z : z_stream                  { for messages }
-     ) : int;
+     ) : inti;
 
 function inflate_trees_fixed (
     var bl : uInt;                { literal desired/actual bit depth }
@@ -54,7 +54,7 @@ function inflate_trees_fixed (
     var tl : pInflate_huft;       { literal/length tree result }
     var td : pInflate_huft;       { distance tree result }
     var z : z_stream              { for memory allocation }
-     ) : int;
+     ) : inti;
 
 
 implementation
@@ -143,7 +143,7 @@ var m : uIntf;             { maximum lookup bits, returns actual }
 var hp : array of inflate_huft;  { space for trees }
 var hn : uInt;             { hufts used in space }
 var v : array of uIntf     { working area: values in order of bit length }
-   ) : int;
+   ) : inti;
 { Given a list of code lengths and a maximum table size, make a set of
   tables to decode that set of codes.  Return Z_OK on success, Z_BUF_ERROR
   if the given code set is incomplete (the tables are still built in this
@@ -153,25 +153,25 @@ Var
   a : uInt;                     { counter for codes of length k }
   c : Array [0..BMAX] Of uInt;  { bit length count table }
   f : uInt;                     { i repeats in table every f entries }
-  g : int;                      { maximum code length }
-  h : int;                      { table level }
+  g : inti;                      { maximum code length }
+  h : inti;                      { table level }
   i : uInt;  {register}         { counter, current code }
   j : uInt;  {register}         { counter }
-  k : Int;   {register}         { number of bits in current code }
-  l : int;			{ bits per table (returned in m) }
+  k : inti;   {register}         { number of bits in current code }
+  l : inti;			{ bits per table (returned in m) }
   mask : uInt;                  { (1 shl w) - 1, to avoid cc -O bug on HP }
   p : ^uIntf; {register}        { pointer into c[], b[], or v[] }
   q : pInflate_huft;            { points to current table }
   r : inflate_huft;             { table entry for structure assignment }
   u : Array [0..BMAX-1] Of pInflate_huft; { table stack }
-  w : int;   {register}         { bits before this table = (l*h) }
+  w : inti;   {register}         { bits before this table = (l*h) }
   x : Array [0..BMAX] Of uInt;  { bit offsets, then code stack }
   {$IFDEF USE_PTR}
   xp : puIntf;                  { pointer into x }
   {$ELSE}
   xp : uInt;
   {$ENDIF}
-  y : int;                      { number of dummy codes added }
+  y : inti;                      { number of dummy codes added }
   z : uInt;                     { number of entries in current table }
 Begin
   { Generate counts for each bit length }
@@ -436,9 +436,9 @@ function inflate_trees_bits(
   var tb : pinflate_huft;  { bits tree result }
   var hp : array of Inflate_huft;      { space for trees }
   var z : z_stream         { for messages }
-    ) : int;
+    ) : inti;
 var
-  r : int;
+  r : inti;
   hn : uInt;          { hufts used in space }
   v : PuIntArray;     { work area for huft_build }
 begin
@@ -476,9 +476,9 @@ var tl : pInflate_huft;           { literal/length tree result }
 var td : pInflate_huft;           { distance tree result }
 var hp : array of Inflate_huft;   { space for trees }
 var z : z_stream                  { for messages }
-     ) : int;
+     ) : inti;
 var
-  r : int;
+  r : inti;
   hn : uInt;          { hufts used in space }
   v : PuIntArray;     { work area for huft_build }
 begin
@@ -574,7 +574,7 @@ const
     Exop,             { number of extra bits or operation }
     bits : Byte;      { number of bits in this code or subcode }
     {pad : uInt;}       { pad structure to a power of 2 (4 bytes for }
-                      {  16-bit, 8 bytes for 32-bit int's) }
+                      {  16-bit, 8 bytes for 32-bit inti's) }
     base : uInt;      { literal, length base, or distance base }
                       { or table offset }
 
@@ -706,12 +706,12 @@ var bd : uInt;               { distance desired/actual bit depth }
 var tl : pInflate_huft;      { literal/length tree result }
 var td : pInflate_huft;      { distance tree result }
 var  z : z_stream            { for memory allocation }
-      ) : int;
+      ) : inti;
 type
   pFixed_table = ^fixed_table;
   fixed_table = array[0..288-1] of uIntf;
 var
-  k : int;                   { temporary variable }
+  k : inti;                   { temporary variable }
   c : pFixed_table;          { length list for huft_build }
   v : PuIntArray;            { work area for huft_build }
 var

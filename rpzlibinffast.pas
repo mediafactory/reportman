@@ -22,7 +22,7 @@ function inflate_fast( bl : uInt;
                        tl : pInflate_huft;
                        td : pInflate_huft;
                       var s : inflate_blocks_state;
-                      var z : z_stream) : int;
+                      var z : z_stream) : inti;
 
 
 implementation
@@ -41,7 +41,7 @@ function inflate_fast( bl : uInt;
                        tl : pInflate_huft;
                        td : pInflate_huft;
                       var s : inflate_blocks_state;
-                      var z : z_stream) : int;
+                      var z : z_stream) : inti;
 
 var
   t : pInflate_huft;      { temporary pointer }

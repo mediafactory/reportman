@@ -445,6 +445,37 @@ begin
    end
    else
    begin
+    if asection.SectionType=rpsecgheader then
+    begin
+     if subrep.GroupCount<2 then
+      exit;
+     index:=-1;
+     lastdetail:=subrep.LastDetail;
+     firstdetail:=subrep.FirstDetail;
+     for i:=1 to subrep.GroupCount do
+     begin
+      asec:=subrep.Sections.Items[firstdetail-i].Section;
+      if asec=asection then
+      begin
+       index:=i;
+       break;
+      end;
+     end;
+     if index<=1 then
+      exit;
+     // Group footer
+     asec:=subrep.Sections.Items[lastdetail+index-1].Section;
+     subrep.Sections.Items[lastdetail+index-1].Section:=subrep.Sections.Items[lastdetail+index].Section;
+     subrep.Sections.Items[lastdetail+index].Section:=asec;
+     // Group Header
+     asec:=subrep.Sections.Items[firstdetail-index+1].Section;
+     subrep.Sections.Items[firstdetail-index+1].Section:=subrep.Sections.Items[firstdetail-index].Section;
+     subrep.Sections.Items[firstdetail-index].Section:=asec;
+     // Update
+     SetReport(FReport);
+     SelectDataItem(asection);
+    end
+    else
     if asection.SectionType=rpsecgfooter then
     begin
      if subrep.GroupCount<2 then
@@ -476,7 +507,7 @@ begin
      // Update
      SetReport(FReport);
      SelectDataItem(asection);
-    end;
+    end
    end;
   end;
  end;

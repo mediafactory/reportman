@@ -145,7 +145,8 @@ function TryStrToBool(const S: string; out Value: Boolean): Boolean;
   begin
     Result := False;
     for I := Low(aArray) to High(aArray) do
-      if AnsiSameText(S, aArray[I]) then
+//      if AnsiSameText(S, aArray[I]) then
+      if UpperCase(S)=UpperCase(aArray[I]) then
       begin
         Result := True;
         Break;

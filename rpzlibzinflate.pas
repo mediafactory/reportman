@@ -14,7 +14,7 @@ interface
 uses
   rpzlibzutil, rpzlibzlib, rpzlibinfblock, rpzlibinfutil;
 
-function inflateInit(var z : z_stream) : int;
+function inflateInit(var z : z_stream) : inti;
 
 {    Initializes the internal stream state for decompression. The fields
    zalloc, zfree and opaque must be initialized before by the caller.  If
@@ -31,16 +31,16 @@ function inflateInit(var z : z_stream) : int;
 
 function inflateInit_(z : z_streamp;
                       const version : string;
-                      stream_size : int) : int;
+                      stream_size : inti) : inti;
 
 
 function inflateInit2_(var z: z_stream;
-                       w : int;
+                       w : inti;
                        const version : string;
-                       stream_size : int) : int;
+                       stream_size : inti) : inti;
 
 function inflateInit2(var z: z_stream;
-                       windowBits : int) : int;
+                       windowBits : inti) : inti;
 
 {
      This is another version of inflateInit with an extra parameter. The
@@ -64,7 +64,7 @@ function inflateInit2(var z: z_stream;
 
 
 
-function inflateEnd(var z : z_stream) : int;
+function inflateEnd(var z : z_stream) : inti;
 
 {
    All dynamically allocated data structures for this stream are freed.
@@ -76,7 +76,7 @@ function inflateEnd(var z : z_stream) : int;
    static string (which must not be deallocated).
 }
 
-function inflateReset(var z : z_stream) : int;
+function inflateReset(var z : z_stream) : inti;
 
 {
    This function is equivalent to inflateEnd followed by inflateInit,
@@ -89,7 +89,7 @@ function inflateReset(var z : z_stream) : int;
 
 
 function inflate(var z : z_stream;
-                 f : int) : int;
+                 f : inti) : inti;
 {
   inflate decompresses as much data as possible, and stops when the input
   buffer becomes empty or the output buffer becomes full. It may introduce
@@ -160,7 +160,7 @@ function inflate(var z : z_stream;
 
 function inflateSetDictionary(var z : z_stream;
                               dictionary : pBytef; {const array of byte}
-                              dictLength : uInt) : int;
+                              dictLength : uInt) : inti;
 
 {
      Initializes the decompression dictionary from the given uncompressed byte
@@ -178,7 +178,7 @@ function inflateSetDictionary(var z : z_stream;
    inflate().
 }
 
-function inflateSync(var z : z_stream) : int;
+function inflateSync(var z : z_stream) : inti;
 
 {
   Skips invalid compressed data until a full flush point (see above the
@@ -195,7 +195,7 @@ function inflateSync(var z : z_stream) : int;
 }
 
 
-function inflateSyncPoint(var z : z_stream) : int;
+function inflateSyncPoint(var z : z_stream) : inti;
 
 
 implementation
@@ -203,7 +203,7 @@ implementation
 uses
   rpzlibadler;
 
-function inflateReset(var z : z_stream) : int;
+function inflateReset(var z : z_stream) : inti;
 begin
   if (z.state = Z_NULL) then
   begin
@@ -225,7 +225,7 @@ begin
 end;
 
 
-function inflateEnd(var z : z_stream) : int;
+function inflateEnd(var z : z_stream) : inti;
 begin
   if (z.state = Z_NULL) or not Assigned(z.zfree) then
   begin
@@ -244,9 +244,9 @@ end;
 
 
 function inflateInit2_(var z: z_stream;
-                       w : int;
+                       w : inti;
                        const version : string;
-                       stream_size : int) : int;
+                       stream_size : inti) : inti;
 begin
   if (version = '') or (version[1] <> ZLIB_VERSION[1]) or
       (stream_size <> sizeof(z_stream)) then
@@ -318,13 +318,13 @@ begin
   inflateInit2_ :=  Z_OK;
 end;
 
-function inflateInit2(var z: z_stream; windowBits : int) : int;
+function inflateInit2(var z: z_stream; windowBits : inti) : inti;
 begin
   inflateInit2 := inflateInit2_(z, windowBits, ZLIB_VERSION, sizeof(z_stream));
 end;
 
 
-function inflateInit(var z : z_stream) : int;
+function inflateInit(var z : z_stream) : inti;
 { inflateInit is a macro to allow checking the zlib version
   and the compiler's view of z_stream:  }
 begin
@@ -333,7 +333,7 @@ end;
 
 function inflateInit_(z : z_streamp;
                       const version : string;
-                      stream_size : int) : int;
+                      stream_size : inti) : inti;
 begin
   { initialize state }
   if (z = Z_NULL) then
@@ -343,9 +343,9 @@ begin
 end;
 
 function inflate(var z : z_stream;
-                 f : int) : int;
+                 f : inti) : inti;
 var
-  r : int;
+  r : inti;
   b : uInt;
 begin
   if (z.state = Z_NULL) or (z.next_in = Z_NULL) then
@@ -632,7 +632,7 @@ end;
 
 function inflateSetDictionary(var z : z_stream;
                               dictionary : pBytef; {const array of byte}
-                              dictLength : uInt) : int;
+                              dictLength : uInt) : inti;
 var
   length : uInt;
 begin
@@ -661,7 +661,7 @@ begin
 end;
 
 
-function inflateSync(var z : z_stream) : int;
+function inflateSync(var z : z_stream) : inti;
 const
   mark : packed array[0..3] of byte = (0, 0, $ff, $ff);
 var
@@ -736,7 +736,7 @@ end;
   waiting for these length bytes.
 }
 
-function inflateSyncPoint(var z : z_stream) : int;
+function inflateSyncPoint(var z : z_stream) : inti;
 begin
   if (z.state = Z_NULL) or (z.state^.blocks = Z_NULL) then
   begin

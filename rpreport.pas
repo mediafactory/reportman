@@ -702,7 +702,8 @@ begin
  end;
  FSubReports.Items[i].FSubReport.FreeSections;
  FSubReports.Items[i].FSubReport.Free;
- FSubReports.Delete(i);
+// FSubReports.Delete(i);
+ FSubReports.Items[i].Free;
 end;
 
 procedure TRpReport.SetParams(Value:TRpParamList);
@@ -836,7 +837,6 @@ begin
      if not initiated then
      begin
       Driver.NewDocument(metafile);
-      initiated:=true;
      end;
      if ((PageNum>=frompage) and  (PageNum<=topage)) then
      begin

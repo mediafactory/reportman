@@ -17,7 +17,7 @@ uses
 { copy as much as possible from the sliding window to the output area }
 function inflate_flush(var s : inflate_blocks_state;
                        var z : z_stream;
-                       r : int) : int;
+                       r : inti) : inti;
 
 { And'ing with mask[n] masks the lower n bits }
 const
@@ -26,14 +26,14 @@ const
     $0001, $0003, $0007, $000f, $001f, $003f, $007f, $00ff,
     $01ff, $03ff, $07ff, $0fff, $1fff, $3fff, $7fff, $ffff);
 
-{procedure GRABBITS(j : int);}
-{procedure DUMPBITS(j : int);}
-{procedure NEEDBITS(j : int);}
+{procedure GRABBITS(j : inti);}
+{procedure DUMPBITS(j : inti);}
+{procedure NEEDBITS(j : inti);}
 
 implementation
 
 { macros for bit input with no checking and for returning unused bytes }
-procedure GRABBITS(j : int);
+procedure GRABBITS(j : inti);
 begin
   {while (k < j) do
   begin
@@ -45,13 +45,13 @@ begin
   end;}
 end;
 
-procedure DUMPBITS(j : int);
+procedure DUMPBITS(j : inti);
 begin
   {b := b shr j;
   Dec(k, j);}
 end;
 
-procedure NEEDBITS(j : int);
+procedure NEEDBITS(j : inti);
 begin
  (*
           while (k < j) do
@@ -136,7 +136,7 @@ end;
 { copy as much as possible from the sliding window to the output area }
 function inflate_flush(var s : inflate_blocks_state;
                        var z : z_stream;
-                       r : int) : int;
+                       r : inti) : inti;
 var
   n : uInt;
   p : pBytef;

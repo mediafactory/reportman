@@ -49,6 +49,9 @@ interface
 {$I rpconf.inc}
 
 uses Classes,Sysutils,
+{$IFDEF MSWINDOWS}
+ Windows,
+{$ENDIF}
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}

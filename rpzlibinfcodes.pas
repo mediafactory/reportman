@@ -25,7 +25,7 @@ function inflate_codes_new (bl : uInt;
 
 function inflate_codes(var s : inflate_blocks_state;
                        var z : z_stream;
-                       r : int) : int;
+                       r : inti) : inti;
 
 procedure inflate_codes_free(c : pInflate_codes_state;
                              var z : z_stream);
@@ -62,7 +62,7 @@ end;
 
 function inflate_codes(var s : inflate_blocks_state;
                        var z : z_stream;
-                       r : int) : int;
+                       r : inti) : inti;
 var
   j : uInt;               { temporary storage }
   t : pInflate_huft;      { temporary pointer }

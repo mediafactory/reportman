@@ -42,7 +42,7 @@ unit rpzlibzdeflate;
        Fiala,E.R., and Greene,D.H.
           Data Compression with Finite Windows, Comm.ACM, 32,4 (1989) 490-595}
 
-{ $Id: rpzlibzdeflate.pas,v 1.2 2002/04/29 18:30:22 toni Exp $ }
+{ $Id: rpzlibzdeflate.pas,v 1.3 2002/05/25 11:37:27 toni Exp $ }
 
 interface
 
@@ -53,12 +53,12 @@ uses
 
 
 function deflateInit_(strm : z_streamp;
-                      level : int;
+                      level : inti;
                       const version : string;
-                      stream_size : int) : int;
+                      stream_size : inti) : inti;
 
 
-function deflateInit (var strm : z_stream; level : int) : int;
+function deflateInit (var strm : z_stream; level : inti) : inti;
 
 {  Initializes the internal stream state for compression. The fields
    zalloc, zfree and opaque must be initialized before by the caller.
@@ -80,7 +80,7 @@ function deflateInit (var strm : z_stream; level : int) : int;
 
 
 {EXPORT}
-function deflate (var strm : z_stream; flush : int) : int;
+function deflate (var strm : z_stream; flush : inti) : inti;
 
 { Performs one or both of the following actions:
 
@@ -148,7 +148,7 @@ function deflate (var strm : z_stream; flush : int) : int;
   if next_in or next_out was NULL), Z_BUF_ERROR if no progress is possible. }
 
 
-function deflateEnd (var strm : z_stream) : int;
+function deflateEnd (var strm : z_stream) : inti;
 
 {     All dynamically allocated data structures for this stream are freed.
    This function discards any unprocessed input and does not flush any
@@ -170,11 +170,11 @@ function deflateEnd (var strm : z_stream) : int;
 
 {EXPORT}
 function deflateInit2 (var strm : z_stream;
-                       level : int;
-                       method : int;
-                       windowBits : int;
-                       memLevel : int;
-                       strategy : int) : int;
+                       level : inti;
+                       method : inti;
+                       windowBits : inti;
+                       memLevel : inti;
+                       strategy : inti) : inti;
 
 {  This is another version of deflateInit with more compression options. The
    fields next_in, zalloc, zfree and opaque must be initialized before by
@@ -230,7 +230,7 @@ function deflateInit2 (var strm : z_stream;
 {EXPORT}
 function deflateSetDictionary (var strm : z_stream;
                                dictionary : pBytef; {const bytes}
-			       dictLength : uint) : int;
+			       dictLength : uint) : inti;
 
 {    Initializes the compression dictionary (history buffer) from the given
    byte sequence without producing any compressed output. This function must
@@ -258,7 +258,7 @@ function deflateSetDictionary (var strm : z_stream;
 
 {EXPORT}
 function deflateCopy (dest : z_streamp;
-                      source : z_streamp) : int;
+                      source : z_streamp) : inti;
 
 {  Sets the destination stream as a complete copy of the source stream.  If
    the source stream is using an application-supplied history buffer, a new
@@ -280,7 +280,7 @@ function deflateCopy (dest : z_streamp;
    destination. }
 
 {EXPORT}
-function deflateReset (var strm : z_stream) : int;
+function deflateReset (var strm : z_stream) : inti;
 
 {   This function is equivalent to deflateEnd followed by deflateInit,
    but does not free and reallocate all the internal compression state.
@@ -292,7 +292,7 @@ function deflateReset (var strm : z_stream) : int;
 
 
 {EXPORT}
-function deflateParams (var strm : z_stream; level : int; strategy : int) : int;
+function deflateParams (var strm : z_stream; level : inti; strategy : inti) : inti;
 
 {    Dynamically update the compression level and compression strategy.
    This can be used to switch between compression and straight copy of
@@ -335,16 +335,16 @@ type
 
 { Compression function. Returns the block state after the call. }
 type
-  compress_func = function(var s : deflate_state; flush : int) : block_state;
+  compress_func = function(var s : deflate_state; flush : inti) : block_state;
 
 {local}
 procedure fill_window(var s : deflate_state); forward;
 {local}
-function deflate_stored(var s : deflate_state; flush : int) : block_state; far; forward;
+function deflate_stored(var s : deflate_state; flush : inti) : block_state; far; forward;
 {local}
-function deflate_fast(var s : deflate_state; flush : int) : block_state; far; forward;
+function deflate_fast(var s : deflate_state; flush : inti) : block_state; far; forward;
 {local}
-function deflate_slow(var s : deflate_state; flush : int) : block_state; far; forward;
+function deflate_slow(var s : deflate_state; flush : inti) : block_state; far; forward;
 {local}
 procedure lm_init(var s : deflate_state); forward;
 
@@ -355,7 +355,7 @@ procedure  flush_pending (var strm : z_stream); forward;
 {local}
 function read_buf(strm : z_streamp;
                   buf : pBytef;
-                  size : unsigned) : int; forward;
+                  size : unsignedi) : inti; forward;
 {$ifdef ASMV}
 procedure match_init; { asm code initialization }
 function longest_match(var deflate_state; cur_match : IPos) : uInt; forward;
@@ -369,7 +369,7 @@ function longest_match(var s : deflate_state; cur_match : IPos) : uInt;
 {local}
 procedure check_match(var s : deflate_state;
                       start, match : IPos;
-                      length : int); forward;
+                      length : inti); forward;
 {$endif}
 
 {  ==========================================================================
@@ -481,22 +481,22 @@ end;
 
 macro CLEAR_HASH(s)
     s^.head[s^.hash_size-1] := ZNIL;
-    zmemzero(pBytef(s^.head), unsigned(s^.hash_size-1)*sizeof(s^.head^[0]));
+    zmemzero(pBytef(s^.head), unsignedi(s^.hash_size-1)*sizeof(s^.head^[0]));
 }
 
 {  ======================================================================== }
 
 function deflateInit2_(var strm : z_stream;
-                       level : int;
-                       method : int;
-                       windowBits : int;
-                       memLevel : int;
-                       strategy : int;
+                       level : inti;
+                       method : inti;
+                       windowBits : inti;
+                       memLevel : inti;
+                       strategy : inti;
                        const version : string;
-                       stream_size : int) : int;
+                       stream_size : inti) : inti;
 var
   s : deflate_state_ptr;
-  noheader : int;
+  noheader : inti;
 
   overlay : pushfArray;
   { We overlay pending_buf and d_buf+l_buf. This works since the average
@@ -600,11 +600,11 @@ end;
 {  ========================================================================= }
 
 function deflateInit2(var strm : z_stream;
-                      level : int;
-                      method : int;
-                      windowBits : int;
-                      memLevel : int;
-                      strategy : int) : int;
+                      level : inti;
+                      method : inti;
+                      windowBits : inti;
+                      memLevel : inti;
+                      strategy : inti) : inti;
 { a macro }
 begin
   deflateInit2 := deflateInit2_(strm, level, method, windowBits,
@@ -614,9 +614,9 @@ end;
 {  ========================================================================= }
 
 function deflateInit_(strm : z_streamp;
-                      level : int;
+                      level : inti;
                       const version : string;
-                      stream_size : int) : int;
+                      stream_size : inti) : inti;
 begin
   if (strm = Z_NULL) then
     deflateInit_ := Z_STREAM_ERROR
@@ -628,7 +628,7 @@ end;
 
 {  ========================================================================= }
 
-function deflateInit(var strm : z_stream; level : int) : int;
+function deflateInit(var strm : z_stream; level : inti) : inti;
 { deflateInit is a macro to allow checking the zlib version
   and the compiler's view of z_stream: }
 begin
@@ -639,7 +639,7 @@ end;
 {  ======================================================================== }
 function deflateSetDictionary (var strm : z_stream;
                                dictionary : pBytef;
-                               dictLength : uInt) : int;
+                               dictLength : uInt) : inti;
 var
   s : deflate_state_ptr;
   length : uInt;
@@ -699,7 +699,7 @@ begin
 end;
 
 {  ======================================================================== }
-function deflateReset (var strm : z_stream) : int;
+function deflateReset (var strm : z_stream) : inti;
 var
   s : deflate_state_ptr;
 begin
@@ -739,12 +739,12 @@ end;
 
 {  ======================================================================== }
 function deflateParams(var strm : z_stream;
-                       level : int;
-                       strategy : int) : int;
+                       level : inti;
+                       strategy : inti) : inti;
 var
   s : deflate_state_ptr;
   func : compress_func;
-  err : int;
+  err : inti;
 begin
   err := Z_OK;
   if {(@strm  =  Z_NULL) or} (strm.state  =  Z_NULL) then
@@ -808,7 +808,7 @@ end;
 {local}
 procedure flush_pending(var strm : z_stream);
 var
-  len : unsigned;
+  len : unsignedi;
   s : deflate_state_ptr;
 begin
   s := deflate_state_ptr(strm.state);
@@ -832,9 +832,9 @@ begin
 end;
 
 { ========================================================================= }
-function deflate (var strm : z_stream; flush : int) : int;
+function deflate (var strm : z_stream; flush : inti) : inti;
 var
-  old_flush : int; { value of flush param for previous deflate call }
+  old_flush : inti; { value of flush param for previous deflate call }
   s : deflate_state_ptr;
 var
   header : uInt;
@@ -975,7 +975,7 @@ begin
         begin
           {macro CLEAR_HASH(s);}             { forget history }
           s^.head^[s^.hash_size-1] := ZNIL;
-          zmemzero(pBytef(s^.head), unsigned(s^.hash_size-1)*sizeof(s^.head^[0]));
+          zmemzero(pBytef(s^.head), unsignedi(s^.hash_size-1)*sizeof(s^.head^[0]));
         end;
       end;
 
@@ -1019,9 +1019,9 @@ begin
 end;
 
 { ========================================================================= }
-function deflateEnd (var strm : z_stream) : int;
+function deflateEnd (var strm : z_stream) : inti;
 var
-  status : int;
+  status : inti;
   s : deflate_state_ptr;
 begin
   if {(@strm = Z_NULL) or} (strm.state = Z_NULL) then
@@ -1061,7 +1061,7 @@ end;
 
 
 { ========================================================================= }
-function deflateCopy (dest, source : z_streamp) : int;
+function deflateCopy (dest, source : z_streamp) : inti;
 {$ifndef MAXSEG_64K}
 var
   ds : deflate_state_ptr;
@@ -1132,9 +1132,9 @@ end;
   (See also flush_pending()). }
 
 {local}
-function read_buf(strm : z_streamp; buf : pBytef; size : unsigned) : int;
+function read_buf(strm : z_streamp; buf : pBytef; size : unsignedi) : inti;
 var
-  len : unsigned;
+  len : unsignedi;
 begin
   len := strm^.avail_in;
 
@@ -1156,7 +1156,7 @@ begin
   Inc(strm^.next_in, len);
   Inc(strm^.total_in, len);
 
-  read_buf := int(len);
+  read_buf := inti(len);
 end;
 
 { ===========================================================================
@@ -1169,7 +1169,7 @@ begin
 
   {macro CLEAR_HASH(s);}
   s.head^[s.hash_size-1] := ZNIL;
-  zmemzero(pBytef(s.head), unsigned(s.hash_size-1)*sizeof(s.head^[0]));
+  zmemzero(pBytef(s.head), unsignedi(s.hash_size-1)*sizeof(s.head^[0]));
 
   { Set the default configuration parameters: }
 
@@ -1213,12 +1213,12 @@ function longest_match(var s : deflate_state;
 label
   nextstep;
 var
-  chain_length : unsigned;    { max hash chain length }
+  chain_length : unsignedi;    { max hash chain length }
   {register} scan : pBytef;   { current string }
   {register} match : pBytef;  { matched string }
-  {register} len : int;       { length of current match }
-  best_len : int;             { best match length so far }
-  nice_match : int;           { stop if match long enough }
+  {register} len : inti;       { length of current match }
+  best_len : inti;             { best match length so far }
+  nice_match : inti;           { stop if match long enough }
   limit : IPos;
 
   prev : pzPosfArray;
@@ -1306,7 +1306,7 @@ distances are limited to MAX_DIST instead of WSIZE. }
 {$endif}
 
 {$ifdef DO_UNALIGNED_OK}
-        { This code assumes sizeof(unsigned short) = 2. Do not use
+        { This code assumes sizeof(unsignedi short) = 2. Do not use
           UNALIGNED_OK if your compiler uses a different size. }
   {$IFOPT R+} {$R-} {$DEFINE NoRangeCheck} {$ENDIF}
         if (pushfArray(match)^[best_len-1] <> scan_end) or
@@ -1340,14 +1340,14 @@ distances are limited to MAX_DIST instead of WSIZE. }
         {$IFDEF DEBUG}
         {$ifopt R+} {$define RangeCheck} {$endif} {$R-}
         Assert(ptr2int(scan) <=
-               ptr2int(@(s.window^[unsigned(s.window_size-1)])),
+               ptr2int(@(s.window^[unsignedi(s.window_size-1)])),
                'wild scan');
         {$ifdef RangeCheck} {$R+} {$undef RangeCheck} {$endif}
         {$ENDIF}
         if (scan^ = match^) then
           Inc(scan);
 
-        len := (MAX_MATCH - 1) - int(ptr2int(strend)) + int(ptr2int(scan));
+        len := (MAX_MATCH - 1) - inti(ptr2int(strend)) + inti(ptr2int(scan));
         scan := strend;
         Dec(scan, (MAX_MATCH-1));
 
@@ -1390,11 +1390,11 @@ distances are limited to MAX_DIST instead of WSIZE. }
 
         {$IFDEF DEBUG}
         Assert(ptr2int(scan) <=
-               ptr2int(@(s.window^[unsigned(s.window_size-1)])),
+               ptr2int(@(s.window^[unsignedi(s.window_size-1)])),
                'wild scan');
         {$ENDIF}
 
-        len := MAX_MATCH - int(ptr2int(strend) - ptr2int(scan));
+        len := MAX_MATCH - inti(ptr2int(strend) - ptr2int(scan));
         scan := strend;
         Dec(scan, MAX_MATCH);
 
@@ -1438,7 +1438,7 @@ function longest_match(var s : deflate_state;
 var
   {register} scan : pBytef;   { current string }
   {register} match : pBytef;  { matched string }
-  {register} len : int;       { length of current match }
+  {register} len : inti;       { length of current match }
   {register} strend : pBytef;
 begin
   scan := @s.window^[s.strstart];
@@ -1487,9 +1487,9 @@ begin
       Inc(scan); Inc(match); if scan^<>match^ then break;
     until (ptr2int(scan) >= ptr2int(strend));
 
-    Assert(scan <= s.window+unsigned(s.window_size-1), 'wild scan');
+    Assert(scan <= s.window+unsignedi(s.window_size-1), 'wild scan');
 
-    len := MAX_MATCH - int(strend - scan);
+    len := MAX_MATCH - inti(strend - scan);
 
     if (len < MIN_MATCH) then
     begin
@@ -1512,7 +1512,7 @@ end;
 {local}
 procedure check_match(var s : deflate_state;
                       start, match : IPos;
-                      length : int);
+                      length : inti);
 begin
   exit;
   { check that the match is indeed a match }
@@ -1553,20 +1553,20 @@ end;
 {local}
 procedure fill_window(var s : deflate_state);
 var
-  {register} n, m : unsigned;
+  {register} n, m : unsignedi;
   {register} p : pPosf;
-  more : unsigned;    { Amount of free space at the end of the window. }
+  more : unsignedi;    { Amount of free space at the end of the window. }
   wsize : uInt;
 begin
    wsize := s.w_size;
    repeat
-     more := unsigned(s.window_size -ulg(s.lookahead) -ulg(s.strstart));
+     more := unsignedi(s.window_size -ulg(s.lookahead) -ulg(s.strstart));
 
      { Deal with !@#$% 64K limit: }
      if (more = 0) and (s.strstart = 0) and (s.lookahead = 0) then
        more := wsize
      else
-     if (more = unsigned(-1)) then
+     if (more = unsignedi(-1)) then
      begin
        { Very unlikely, but possible on 16 bit machine if strstart = 0
          and lookahead = 1 (input done one byte at time) }
@@ -1579,7 +1579,7 @@ begin
        if (s.strstart >= wsize+ {MAX_DIST}(wsize-MIN_LOOKAHEAD)) then
        begin
          zmemcpy( pBytef(s.window), pBytef(@(s.window^[wsize])),
-                 unsigned(wsize));
+                 unsignedi(wsize));
          Dec(s.match_start, wsize);
          Dec(s.strstart, wsize); { we now have strstart >= MAX_DIST }
          Dec(s.block_start, long(wsize));
@@ -1665,7 +1665,7 @@ end;
 procedure FLUSH_BLOCK_ONLY(var s : deflate_state; eof : boolean); {macro}
 begin
   if (s.block_start >= Long(0)) then
-    _tr_flush_block(s, pcharf(@s.window^[unsigned(s.block_start)]),
+    _tr_flush_block(s, pcharf(@s.window^[unsignedi(s.block_start)]),
                     ulg(long(s.strstart) - s.block_start), eof)
   else
     _tr_flush_block(s, pcharf(Z_NULL),
@@ -1706,7 +1706,7 @@ end;
 
 
 {local}
-function deflate_stored(var s : deflate_state; flush : int) : block_state;
+function deflate_stored(var s : deflate_state; flush : inti) : block_state;
 { Stored blocks are limited to 0xffff bytes, pending_buf is limited
   to pending_buf_size, and each stored block has a 5 byte header: }
 var
@@ -1800,7 +1800,7 @@ end;
   matches. It is used only for the fast compression options. }
 
 {local}
-function deflate_fast(var s : deflate_state; flush : int) : block_state;
+function deflate_fast(var s : deflate_state; flush : inti) : block_state;
 var
   hash_head : IPos;     { head of the hash chain }
   bflush : boolean;     { set if current block must be flushed }
@@ -1944,7 +1944,7 @@ end;
   no better match at the next window position. }
 
 {local}
-function deflate_slow(var s : deflate_state; flush : int) : block_state;
+function deflate_slow(var s : deflate_state; flush : inti) : block_state;
 var
   hash_head : IPos;       { head of hash chain }
   bflush : boolean;       { set if current block must be flushed }

@@ -52,7 +52,7 @@ const
 function adler32(adler : uLong; buf : pBytef; len : uInt) : uLong;
 var
   s1, s2 : uLong;
-  k : int;
+  k : inti;
 begin
   s1 := adler and $ffff;
   s2 := (adler shr 16) and $ffff;

@@ -27,6 +27,9 @@ clean:
         -del /s *.ow
         -del /s *.ppw
         -del /s *.rst
+        -del /s *.hpp
+        -del /s *.obj
+        -del /s *.tds
 
         -del tests\eval\project1
         -del tests\metafiles\metafile

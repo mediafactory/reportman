@@ -91,6 +91,8 @@ type
    bitmap:TBitmap;
    dpi:integer;
    toprinter:boolean;
+   pagemargins:TRect;
+   drawclippingregion:boolean;
    procedure NewDocument(report:TrpMetafileReport);stdcall;
    procedure EndDocument;stdcall;
    procedure AbortDocument;stdcall;
@@ -119,6 +121,10 @@ function DoShowPrintDialog(var allpages:boolean;
 
 implementation
 
+
+
+{$R *.dfm}
+
 const
  AlignmentFlags_SingleLine=64;
  AlignmentFlags_AlignHCenter = 4 { $4 };
@@ -128,8 +134,58 @@ const
  AlignmentFlags_AlignLeft = 1 { $1 };
  AlignmentFlags_AlignRight = 2 { $2 };
 
-{$R *.dfm}
+ // Qt Page sizes
+type
+  TPageSize = (psA4, psB5, psLetter, psLegal, psExecutive, psA0, psA1, psA2,
+    psA3, psA5, psA6, psA7, psA8, psA9, psB0, psB1, psB10, psB2, psB3, psB4, psB6,
+    psB7, psB8, psB9, psC5E, psComm10E, psDLE, psFolio, psLedger, psTabloid, psNPageSize);
+  TPageWidthHeight = record
+    Width: Integer;
+    Height: Integer;
+  end;
 
+
+const PageSizeNames: array [psA4..psNPageSize] of widestring =
+('A4', 'B5','Letter','Legal','Executive','A0', 'A1', 'A2',
+    'A3', 'A5', 'A6', 'A7', 'A8', 'A9', 'B0', 'B1', 'B10', 'B2',
+     'B3', 'B4', 'B6','B7', 'B8', 'B9', 'C5E', 'Comm10E',
+     'DLE', 'Folio', 'Ledger', 'Tabloid', 'psNPageSize');
+
+const
+  PageSizeArray: array[0..30] of TPageWidthHeight =
+    (
+      (Width: 8268; Height: 11693),  // psA4
+      (Width: 7165; Height: 10118),  // psB5
+      (Width: 8500; Height: 11000),  // psLetter
+      (Width: 8500; Height: 14000),  // psLegal
+      (Width: 7500; Height: 10000),  // psExecutive
+      (Width: 33110; Height: 46811), // psA0
+      (Width: 23386; Height: 33110), // psA1
+      (Width: 16535; Height: 23386), // psA2
+      (Width: 11693; Height: 16535), // psA3
+      (Width: 5827; Height: 8268),   // psA5
+      (Width: 4134; Height: 5827),   // psA6
+      (Width: 2913; Height: 4134),   // psA7
+      (Width: 2047; Height: 2913),   // psA8
+      (Width: 1457; Height: 2047),   // psA9
+      (Width: 40551; Height: 57323), // psB0
+      (Width: 28661; Height: 40551), // psB1
+      (Width: 1260; Height: 1772),   // psB10
+      (Width: 20276; Height: 28661), // psB2
+      (Width: 14331; Height: 20276), // psB3
+      (Width: 10118; Height: 14331), // psB4
+      (Width: 5039; Height: 7165),   // psB6
+      (Width: 3583; Height: 5039),   // psB7
+      (Width: 2520; Height: 3583),   // psB8
+      (Width: 1772; Height: 2520),   // psB9
+      (Width: 6417; Height: 9016),   // psC5E
+      (Width: 4125; Height: 9500),   // psComm10E
+      (Width: 4331; Height: 8661),   // psDLE
+      (Width: 8250; Height: 13000),  // psFolio
+      (Width: 17000; Height: 11000), // psLedger
+      (Width: 11000; Height: 17000), // psTabloid
+      (Width: -1; Height: -1)        // psNPageSize
+    );
 
 function DoShowPrintDialog(var allpages:boolean;
  var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
@@ -191,6 +247,7 @@ constructor TRpGDIDriver.Create;
 begin
  // By default 1:1 scale
  dpi:=Screen.PixelsPerInch;
+ drawclippingregion:=true;
 end;
 
 procedure TRpGDIDriver.NewDocument(report:TrpMetafileReport);
@@ -198,7 +255,9 @@ var
  awidth,aheight:integer;
  rec:TRect;
  asize:TPoint;
+ aregion:HRGN;
 begin
+ pagemargins:=GetPageMarginsTWIPS;
  if ToPrinter then
  begin
   printer.Title:='Untitled';
@@ -213,8 +272,8 @@ begin
    asize:=SetPageSize(report.PageSize);
   end;
   printer.BeginDoc;
-  intdpix:=Round(GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX)*2.51); //  printer.XDPI;
-  intdpiy:=Round(GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY)*2.51)  // printer.YDPI;
+  intdpix:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX); //  printer.XDPI;
+  intdpiy:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY);  // printer.YDPI;
  end
  else
  begin
@@ -249,6 +308,24 @@ begin
   rec.Right:=Bitmap.Width-1;
   rec.Bottom:=Bitmap.Height-1;
   bitmap.Canvas.FillRect(rec);
+  // Define clipping region
+  rec.Left:=Round((pagemargins.Left/TWIPS_PER_INCHESS)*dpi);
+  rec.Top:=Round((pagemargins.Top/TWIPS_PER_INCHESS)*dpi);
+  rec.Right:=Round((pagemargins.Right/TWIPS_PER_INCHESS)*dpi);
+  rec.Bottom:=Round((pagemargins.Bottom/TWIPS_PER_INCHESS)*dpi);
+  // If drawclippingregion then
+  if drawclippingregion then
+  begin
+   bitmap.Canvas.Pen.Style:=psSolid;
+   bitmap.Canvas.Pen.Color:=clBlack;
+   bitmap.Canvas.Brush.Style:=bsclear;
+   bitmap.Canvas.rectangle(rec.Left,rec.Top,rec.Right,rec.Bottom);
+  end
+  else
+  begin
+   aregion:=CreateRectRgn(rec.Left,rec.Top,rec.Right,rec.Bottom);
+   SelectClipRgn(bitmap.Canvas.handle,aregion);
+  end;
  end;
 end;
 
@@ -298,11 +375,10 @@ begin
  // Does nothing
 end;
 
-procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer);
+procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;pagemargins:TRect);
 var
  posx,posy:integer;
  rec,recsrc:TRect;
-// recsrc:TRect;
  X, Y, W, H, S: Integer;
  Width,Height:integer;
  stream:TMemoryStream;
@@ -313,8 +389,17 @@ var
  arec:TRect;
 begin
  // Switch to device points
- posx:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
- posy:=round(obj.Top*dpiy/TWIPS_PER_INCHESS);
+ if toprinter then
+ begin
+  // If printer then must be displaced
+  posx:=round((obj.Left-pagemargins.Left)*dpix/TWIPS_PER_INCHESS);
+  posy:=round((obj.Top-pagemargins.Top)*dpiy/TWIPS_PER_INCHESS);
+ end
+ else
+ begin
+  posx:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
+  posy:=round(obj.Top*dpiy/TWIPS_PER_INCHESS);
+ end;
  case obj.Metatype of
   rpMetaText:
    begin
@@ -374,10 +459,10 @@ begin
     abrushstyle:=obj.BrushStyle;
     if obj.BrushStyle>integer(bsDiagCross) then
      abrushstyle:=integer(bsDiagCross);
-    Canvas.Brush.Style:=TBrushStyle(abrushstyle);
-    Canvas.Pen.Style:=TPenStyle(obj.PenStyle);
     Canvas.Pen.Color:=CLXColorToVCLColor(obj.Pencolor);
+    Canvas.Pen.Style:=TPenStyle(obj.PenStyle);
     Canvas.Brush.Color:=CLXColorToVCLColor(obj.BrushColor);
+    Canvas.Brush.Style:=TBrushStyle(abrushstyle);
     Canvas.Pen.Width:=Round(dpix*obj.PenWidth/TWIPS_PER_INCHESS);
     X := Canvas.Pen.Width div 2;
     Y := X;
@@ -431,7 +516,7 @@ begin
     bitmap:=TBitmap.Create;
     try
      bitmap.LoadFromStream(stream);
-//     Copy mode does not work for Stretchdraw
+//     Copy mode does not work for StretDIBBits
 //     Canvas.CopyMode:=CLXCopyModeToCopyMode(obj.CopyMode);
 
      case TRpImageDrawStyle(obj.DrawImageStyle) of
@@ -504,7 +589,7 @@ begin
   dpix:=dpi;
   dpiy:=dpi;
  end;
- PrintObject(Canvas,page,obj,dpix,dpiy);
+ PrintObject(Canvas,page,obj,dpix,dpiy,toprinter,pagemargins);
 end;
 
 function TRpGDIDriver.AllowCopies:boolean;
@@ -514,16 +599,7 @@ end;
 
 function TrpGDIDriver.GetPageSize:TPoint;
 begin
- if Printer.Printing then
- begin
-  Result.x:=Round((Printer.PageWidth/Round(GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX)*2.51))*TWIPS_PER_INCHESS);
-  Result.y:=Round((Printer.PageHeight/Round(GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY)*2.51))*TWIPS_PER_INCHESS);
- end
- else
- begin
-  Result.X:=11760;
-  Result.Y:=17049;
- end;
+ Result:=GetPhysicPageSizeTwips;
 end;
 
 function TRpGDIDriver.SetPagesize(PagesizeQt:integer):TPoint;
@@ -557,7 +633,9 @@ var
  mmfirst,mmlast:DWORD;
  difmilis:int64;
  totalcount:integer;
+ pagemargins:TRect;
 begin
+ pagemargins:=GetPageMarginsTWIPS;
  // Get the time
  mmfirst:=TimeGetTime;
  printer.Title:=tittle;
@@ -596,8 +674,8 @@ begin
  end;
  printer.Begindoc;
  try
-  dpix:=Round(GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX)*2.51);
-  dpiy:=Round(GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY)*2.51);
+  dpix:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX);
+  dpiy:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY);
   totalcount:=0;
   for count1:=0 to reportcopies-1 do
   begin
@@ -611,7 +689,7 @@ begin
      apage:=metafile.Pages[i];
      for j:=0 to apage.ObjectCount-1 do
      begin
-      PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy);
+      PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,true,pagemargins);
       if assigned(aform) then
       begin
        mmlast:=TimeGetTime;

@@ -125,15 +125,15 @@ type
          record
     {const} static_tree : tree_ptr;     { static tree or NIL }
     {const} extra_bits : pzIntfArray;   { extra bits for each code or NIL }
-            extra_base : int;           { base index for extra_bits }
-            elems : int;                { max number of elements in the tree }
-            max_length : int;           { max bit length for the codes }
+            extra_base : inti;           { base index for extra_bits }
+            elems : inti;                { max number of elements in the tree }
+            max_length : inti;           { max bit length for the codes }
           end;
 
   tree_desc_ptr = ^tree_desc;
   tree_desc = record
     dyn_tree : tree_ptr;    { the dynamic tree }
-    max_code : int;            { largest code with non zero frequency }
+    max_code : inti;            { largest code with non zero frequency }
     stat_desc : static_tree_desc_ptr; { the corresponding static tree }
   end;
 
@@ -147,22 +147,22 @@ type
   zPosfArray = array[0..(MaxMemBlock div SizeOf(Posf))-1] of Posf;
   pzPosfArray = ^zPosfArray;
 
-{ A Pos is an index in the character window. We use short instead of int to
+{ A Pos is an index in the character window. We use short instead of inti to
   save space in the various tables. IPos is used only for parameter passing.}
 
 type
   deflate_state_ptr = ^deflate_state;
   deflate_state = record
     strm : z_streamp;          { pointer back to this zlib stream }
-    status : int;              { as the name implies }
+    status : inti;              { as the name implies }
     pending_buf : pzByteArray; { output still pending }
     pending_buf_size : ulg;    { size of pending_buf }
     pending_out : pBytef;      { next pending byte to output to the stream }
-    pending : int;             { nb of bytes in the pending buffer }
-    noheader : int;            { suppress zlib header and adler32 }
+    pending : inti;             { nb of bytes in the pending buffer }
+    noheader : inti;            { suppress zlib header and adler32 }
     data_type : Byte;          { UNKNOWN, BINARY or ASCII }
     method : Byte;             { STORED (for zip only) or DEFLATED }
-    last_flush : int;          { value of flush param for previous deflate call }
+    last_flush : inti;          { value of flush param for previous deflate call }
 
                 { used by deflate.pas: }
 
@@ -226,13 +226,13 @@ type
     max_insert_length : uInt absolute max_lazy_match;
     }
 
-    level : int;    { compression level (1..9) }
-    strategy : int; { favor or force Huffman coding}
+    level : inti;    { compression level (1..9) }
+    strategy : inti; { favor or force Huffman coding}
 
     good_match : uInt;
     { Use a faster search when the previous match is longer than this }
 
-    nice_match : int; { Stop searching when current match exceeds this }
+    nice_match : inti; { Stop searching when current match exceeds this }
 
                 { used by trees.pas: }
     { Didn't use ct_data typedef below to supress compiler warning }
@@ -247,9 +247,9 @@ type
     bl_count : array[0..MAX_BITS+1-1] of ush;
     { number of codes at each bit length for an optimal tree }
 
-    heap : array[0..2*L_CODES+1-1] of int; { heap used to build the Huffman trees }
-    heap_len : int;                   { number of elements in the heap }
-    heap_max : int;                   { element of largest frequency }
+    heap : array[0..2*L_CODES+1-1] of inti; { heap used to build the Huffman trees }
+    heap_len : inti;                   { number of elements in the heap }
+    heap_max : inti;                   { element of largest frequency }
     { The sons of heap[n] are heap[2*n] and heap[2*n+1]. heap[0] is not used.
       The same heap array is used to build all trees. }
 
@@ -290,7 +290,7 @@ type
     static_len : ulg;     { bit length of current block with static trees }
     compressed_len : ulg; { total bit length of compressed file }
     matches : uInt;       { number of string matches in current block }
-    last_eob_len : int;   { bit length of EOB code for last block }
+    last_eob_len : inti;   { bit length of EOB code for last block }
 
 {$ifdef DEBUG}
     bits_sent : ulg;    { bit length of the compressed data }
@@ -300,7 +300,7 @@ type
     { Output buffer. bits are inserted starting at the bottom (least
       significant bits). }
 
-    bi_valid : int;
+    bi_valid : inti;
     { Number of valid bits in bi_buf.  All bits above the last valid bit
       are always zero. }
 
@@ -319,8 +319,8 @@ type
 procedure _tr_init (var s : deflate_state);
 
 function _tr_tally (var s : deflate_state;
-                    dist : unsigned;
-                    lc : unsigned) : boolean;
+                    dist : unsignedi;
+                    lc : unsignedi) : boolean;
 
 function _tr_flush_block (var s : deflate_state;
                           buf : pcharf;
@@ -516,14 +516,14 @@ var
 
   
 { First normalized length for each code (0 = MIN_MATCH) }
-  base_length : array[0..LENGTH_CODES-1] of int = (
+  base_length : array[0..LENGTH_CODES-1] of inti = (
 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 14, 16, 20, 24, 28, 32, 40, 48, 56,
 64, 80, 96, 112, 128, 160, 192, 224, 0
 );
 
 
 { First normalized distance for each code (0 = distance of 1) }
-  base_dist : array[0..D_CODES-1] of int = (
+  base_dist : array[0..D_CODES-1] of inti = (
     0,     1,     2,     3,     4,     6,     8,    12,    16,    24,
    32,    48,    64,    96,   128,   192,   256,   384,   512,   768,
  1024,  1536,  2048,  3072,  4096,  6144,  8192, 12288, 16384, 24576
@@ -619,19 +619,19 @@ const
 
 {local}
 const
-  extra_lbits : array[0..LENGTH_CODES-1] of int
+  extra_lbits : array[0..LENGTH_CODES-1] of inti
     { extra bits for each length code }
    = (0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0);
 
 {local}
 const
-  extra_dbits : array[0..D_CODES-1] of int
+  extra_dbits : array[0..D_CODES-1] of inti
     { extra bits for each distance code }
    = (0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13);
 
 {local}
 const
-  extra_blbits : array[0..BL_CODES-1] of int { extra bits for each bit length code }
+  extra_blbits : array[0..BL_CODES-1] of inti { extra bits for each bit length code }
    = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,7);
 
 {local}
@@ -679,11 +679,11 @@ var
 { length code for each normalized match length (0 == MIN_MATCH) }
 
 {local}
-  base_length : array[0..LENGTH_CODES-1] of int;
+  base_length : array[0..LENGTH_CODES-1] of inti;
 { First normalized length for each code (0 = MIN_MATCH) }
 
 {local}
-  base_dist : array[0..D_CODES-1] of int;
+  base_dist : array[0..D_CODES-1] of inti;
 { First normalized distance for each code (0 = distance of 1) }
 
 {$endif} { GEN_TREES_H }
@@ -692,7 +692,7 @@ var
 const
   static_l_desc :  static_tree_desc  =
       (static_tree: {tree_ptr}(@(static_ltree));  { pointer to array of ct_data }
-       extra_bits: {pzIntfArray}(@(extra_lbits)); { pointer to array of int }
+       extra_bits: {pzIntfArray}(@(extra_lbits)); { pointer to array of inti }
        extra_base: LITERALS+1;
        elems: L_CODES;
        max_length: MAX_BITS);
@@ -722,37 +722,37 @@ procedure tr_static_init;
 procedure init_block(var deflate_state);
 procedure pqdownheap(var s : deflate_state;
                      var tree : ct_data;
-                     k : int);
+                     k : inti);
 procedure gen_bitlen(var s : deflate_state;
                      var desc : tree_desc);
 procedure gen_codes(var tree : ct_data;
-                    max_code : int;
+                    max_code : inti;
                     bl_count : pushf);
 procedure build_tree(var s : deflate_state;
                      var desc : tree_desc);
 procedure scan_tree(var s : deflate_state;
                     var tree : ct_data;
-                    max_code : int);
+                    max_code : inti);
 procedure send_tree(var s : deflate_state;
                     var tree : ct_data;
-                    max_code : int);
-function build_bl_tree(var deflate_state) : int;
+                    max_code : inti);
+function build_bl_tree(var deflate_state) : inti;
 procedure send_all_trees(var deflate_state;
-                         lcodes : int;
-                         dcodes : int;
-                         blcodes : int);
+                         lcodes : inti;
+                         dcodes : inti;
+                         blcodes : inti);
 procedure compress_block(var s : deflate_state;
                          var ltree : ct_data;
                          var dtree : ct_data);
 procedure set_data_type(var s : deflate_state);
-function bi_reverse(value : unsigned;
-                    length : int) : unsigned;
+function bi_reverse(value : unsignedi;
+                    length : inti) : unsignedi;
 procedure bi_windup(var deflate_state);
 procedure bi_flush(var deflate_state);
 procedure copy_block(var deflate_state;
                      buf : pcharf;
-                     len : unsigned;
-                     header : int);
+                     len : unsignedi;
+                     header : inti);
 *)
 
 {$ifdef GEN_TREES_H}
@@ -785,8 +785,8 @@ end
 
 {local}
 procedure send_bits(var s : deflate_state;
-                    value : int;   { value to send }
-                    length : int); { number of bits }
+                    value : inti;   { value to send }
+                    length : inti); { number of bits }
 begin
   {$ifdef DEBUG}
   Tracevv(' l '+IntToStr(length)+ ' v '+IntToStr(value));
@@ -799,9 +799,9 @@ begin
     unused bits in value. }
   {$IFOPT Q+} {$Q-} {$DEFINE NoOverflowCheck} {$ENDIF}
   {$IFOPT R+} {$R-} {$DEFINE NoRangeCheck} {$ENDIF}
-  if (s.bi_valid > int(Buf_size) - length) then
+  if (s.bi_valid > inti(Buf_size) - length) then
   begin
-    s.bi_buf := s.bi_buf or int(value shl s.bi_valid);
+    s.bi_buf := s.bi_buf or inti(value shl s.bi_valid);
     {put_short(s, s.bi_buf);}
     s.pending_buf^[s.pending] := uch(s.bi_buf and $ff);
     Inc(s.pending);
@@ -813,7 +813,7 @@ begin
   end
   else
   begin
-    s.bi_buf := s.bi_buf or int(value shl s.bi_valid);
+    s.bi_buf := s.bi_buf or inti(value shl s.bi_valid);
     Inc(s.bi_valid, length);
   end;
   {$IFDEF NoOverflowCheck} {$Q+} {$UNDEF NoOverflowCheck} {$ENDIF}
@@ -830,9 +830,9 @@ begin
 end
 
 macro send_bits(s, value, length) \
-begin int len := length;\
-  if (s^.bi_valid > (int)Buf_size - len) begin\
-    int val := value;\
+begin inti len := length;\
+  if (s^.bi_valid > (inti)Buf_size - len) begin\
+    inti val := value;\
     s^.bi_buf |= (val << s^.bi_valid);\
     {put_short(s, s.bi_buf);}
     s.pending_buf^[s.pending] := uch(s.bi_buf and $ff);
@@ -855,11 +855,11 @@ end;
   IN assertion: 1 <= len <= 15 }
 
 {local}
-function bi_reverse(code : unsigned;         { the value to invert }
-                    len : int) : unsigned;   { its bit length }
+function bi_reverse(code : unsignedi;         { the value to invert }
+                    len : inti) : unsignedi;   { its bit length }
 
 var
-  res : unsigned; {register}
+  res : unsignedi; {register}
 begin
   res := 0;
   repeat
@@ -881,16 +881,16 @@ end;
 
 {local}
 procedure gen_codes(tree : tree_ptr;  { the tree to decorate }
-                    max_code : int;   { largest code with non zero frequency }
+                    max_code : inti;   { largest code with non zero frequency }
                     var bl_count : array of ushf);  { number of codes at each bit length }
 
 var
   next_code : array[0..MAX_BITS+1-1] of ush; { next code value for each bit length }
   code : ush;              { running code value }
-  bits : int;                  { bit index }
-  n : int;                     { code index }
+  bits : inti;                  { bit index }
+  n : inti;                     { code index }
 var
-  len : int;
+  len : inti;
 begin
   code := 0;
 
@@ -948,7 +948,7 @@ macro SEPARATOR(i, last, width)
 procedure gen_trees_header;
 var
   header : system.text;
-  i : int;
+  i : inti;
 begin
   system.assign(header, 'trees.inc');
   {$I-}
@@ -986,14 +986,14 @@ begin
 		SEPARATOR(i, MAX_MATCH-MIN_MATCH, 20));
   end;
 
-  WriteLn(header, 'local const int base_length[LENGTH_CODES] := (');
+  WriteLn(header, 'local const inti base_length[LENGTH_CODES] := (');
   for i := 0 to LENGTH_CODES-1 do
   begin
     WriteLn(header, '%1u%s', base_length[i],
 		SEPARATOR(i, LENGTH_CODES-1, 20));
   end;
 
-  WriteLn(header, 'local const int base_dist[D_CODES] := (');
+  WriteLn(header, 'local const inti base_dist[D_CODES] := (');
   for i := 0 to D_CODES-1 do
   begin
     WriteLn(header, '%5u%s', base_dist[i],
@@ -1015,11 +1015,11 @@ procedure tr_static_init;
 const
   static_init_done : boolean = FALSE;
 var
-  n : int;        { iterates over tree elements }
-  bits : int;     { bit counter }
-  length : int;   { length value }
-  code : int;     { code value }
-  dist : int;     { distance index }
+  n : inti;        { iterates over tree elements }
+  bits : inti;     { bit counter }
+  length : inti;   { length value }
+  code : inti;     { code value }
+  dist : inti;     { distance index }
   bl_count : array[0..MAX_BITS+1-1] of ush;
     { number of codes at each bit length for an optimal tree }
 begin
@@ -1107,7 +1107,7 @@ begin
     for n := 0 to D_CODES-1 do
     begin
       static_dtree[n].dl.Len := 5;
-      static_dtree[n].fc.Code := bi_reverse(unsigned(n), 5);
+      static_dtree[n].fc.Code := bi_reverse(unsignedi(n), 5);
     end;
     static_init_done := TRUE;
 
@@ -1123,7 +1123,7 @@ end;
 
 procedure init_block(var s : deflate_state);
 var
-  n : int; { iterates over tree elements }
+  n : inti; { iterates over tree elements }
 begin
   { Initialize the trees. }
   for n := 0 to L_CODES-1 do
@@ -1203,10 +1203,10 @@ macro smaller(tree, n, m, depth)
 
 procedure pqdownheap(var s : deflate_state;
                      var tree : tree_type;   { the tree to restore }
-                     k : int);          { node to move down }
+                     k : inti);          { node to move down }
 var
-  v : int;
-  j : int;
+  v : inti;
+  j : inti;
 begin
   v := s.heap[k];
   j := k shl 1;  { left son of k }
@@ -1252,17 +1252,17 @@ procedure gen_bitlen(var s : deflate_state;
                      var desc : tree_desc);   { the tree descriptor }
 var
   tree : tree_ptr;
-  max_code : int;
+  max_code : inti;
   stree : tree_ptr; {const}
   extra : pzIntfArray; {const}
-  base : int;
-  max_length : int;
-  h : int;              { heap index }
-  n, m : int;           { iterate over the tree elements }
-  bits : int;           { bit length }
-  xbits : int;          { extra bits }
+  base : inti;
+  max_length : inti;
+  h : inti;              { heap index }
+  n, m : inti;           { iterate over the tree elements }
+  bits : inti;           { bit length }
+  xbits : inti;          { extra bits }
   f : ush;              { frequency }
-  overflow : int;   { number of elements with bit length too large }
+  overflow : inti;   { number of elements with bit length too large }
 begin
   tree := desc.dyn_tree;
   max_code := desc.max_code;
@@ -1339,7 +1339,7 @@ begin
       m := s.heap[h];
       if (m > max_code) then
         continue;
-      if (tree^[m].dl.Len <> unsigned(bits)) then
+      if (tree^[m].dl.Len <> unsignedi(bits)) then
       begin
         {$ifdef DEBUG}
         Trace('code '+IntToStr(m)+' bits '+IntToStr(tree^[m].dl.Len)
@@ -1369,10 +1369,10 @@ procedure build_tree(var s : deflate_state;
 var
   tree : tree_ptr;
   stree : tree_ptr; {const}
-  elems : int;
-  n, m : int;          { iterate over heap elements }
-  max_code : int;      { largest code with non zero frequency }
-  node : int;          { new node being created }
+  elems : inti;
+  n, m : inti;          { iterate over heap elements }
+  max_code : inti;      { largest code with non zero frequency }
+  node : inti;          { new node being created }
 begin
   tree := desc.dyn_tree;
   stree := desc.stat_desc^.static_tree;
@@ -1495,15 +1495,15 @@ end;
 {local}
 procedure scan_tree(var s : deflate_state;
                     var tree : array of ct_data;    { the tree to be scanned }
-                    max_code : int);    { and its largest code of non zero frequency }
+                    max_code : inti);    { and its largest code of non zero frequency }
 var
-  n : int;                 { iterates over all tree elements }
-  prevlen : int;           { last emitted length }
-  curlen : int;            { length of current code }
-  nextlen : int;           { length of next code }
-  count : int;             { repeat count of the current code }
-  max_count : int;         { max repeat count }
-  min_count : int;         { min repeat count }
+  n : inti;                 { iterates over all tree elements }
+  prevlen : inti;           { last emitted length }
+  curlen : inti;            { length of current code }
+  nextlen : inti;           { length of next code }
+  count : inti;             { repeat count of the current code }
+  max_count : inti;         { max repeat count }
+  min_count : inti;         { min repeat count }
 begin
   prevlen := -1;
   nextlen := tree[0].dl.Len;
@@ -1569,16 +1569,16 @@ end;
 {local}
 procedure send_tree(var s : deflate_state;
                     var tree : array of ct_data;    { the tree to be scanned }
-                    max_code : int);    { and its largest code of non zero frequency }
+                    max_code : inti);    { and its largest code of non zero frequency }
 
 var
-  n : int;                { iterates over all tree elements }
-  prevlen : int;          { last emitted length }
-  curlen : int;           { length of current code }
-  nextlen : int;          { length of next code }
-  count : int;            { repeat count of the current code }
-  max_count : int;        { max repeat count }
-  min_count : int;        { min repeat count }
+  n : inti;                { iterates over all tree elements }
+  prevlen : inti;          { last emitted length }
+  curlen : inti;           { length of current code }
+  nextlen : inti;          { length of next code }
+  count : inti;            { repeat count of the current code }
+  max_count : inti;        { max repeat count }
+  min_count : inti;        { min repeat count }
 begin
   prevlen := -1;
   nextlen := tree[0].dl.Len;
@@ -1674,9 +1674,9 @@ end;
   bl_order of the last bit length code to send. }
 
 {local}
-function build_bl_tree(var s : deflate_state) : int;
+function build_bl_tree(var s : deflate_state) : inti;
 var
-  max_blindex : int;  { index of last bit length code of non zero freq }
+  max_blindex : inti;  { index of last bit length code of non zero freq }
 begin
   { Determine the bit length frequencies for literal and distance trees }
   scan_tree(s, s.dyn_ltree, s.l_desc.max_code);
@@ -1712,11 +1712,11 @@ end;
 
 {local}
 procedure send_all_trees(var s : deflate_state;
-                         lcodes : int;
-                         dcodes : int;
-                         blcodes : int); { number of codes for each tree }
+                         lcodes : inti;
+                         dcodes : inti;
+                         blcodes : inti); { number of codes for each tree }
 var
-  rank : int;                    { index in bl_order }
+  rank : inti;                    { index in bl_order }
 begin
   {$IFDEF DEBUG}
   Assert ((lcodes >= 257) and (dcodes >= 1) and (blcodes >= 4),
@@ -1785,7 +1785,7 @@ end;
 {local}
 procedure copy_block(var s : deflate_state;
                      buf : pcharf;      { the input data }
-                     len : unsigned;    { its length }
+                     len : unsignedi;    { its length }
                      header : boolean); { true if block header must be written }
 begin
   bi_windup(s);        { align on byte boundary }
@@ -1835,7 +1835,7 @@ begin
   s.compressed_len := (s.compressed_len + 3 + 7) and ulg(not Long(7));
   Inc(s.compressed_len, (stored_len + 4) shl 3);
 
-  copy_block(s, buf, unsigned(stored_len), TRUE); { with header }
+  copy_block(s, buf, unsignedi(stored_len), TRUE); { with header }
 end;
 
 { ===========================================================================
@@ -1909,14 +1909,14 @@ end;
   Set the data type to ASCII or BINARY, using a crude approximation:
   binary if more than 20% of the bytes are <= 6 or >= 128, ascii otherwise.
   IN assertion: the fields freq of dyn_ltree are set and the total of all
-  frequencies does not exceed 64K (to fit in an int on 16 bit machines). }
+  frequencies does not exceed 64K (to fit in an inti on 16 bit machines). }
 
 {local}
 procedure set_data_type(var s : deflate_state);
 var
-  n : int;
-  ascii_freq : unsigned;
-  bin_freq : unsigned;
+  n : inti;
+  ascii_freq : unsignedi;
+  bin_freq : unsignedi;
 begin
   n := 0;
   ascii_freq := 0;
@@ -1951,11 +1951,11 @@ procedure compress_block(var s : deflate_state;
                          var ltree : array of ct_data;   { literal tree }
                          var dtree : array of ct_data);  { distance tree }
 var
-  dist : unsigned;      { distance of matched string }
-  lc : int;             { match length or unmatched char (if dist == 0) }
-  lx : unsigned;        { running index in l_buf }
-  code : unsigned;      { the code to send }
-  extra : int;          { number of extra bits to send }
+  dist : unsignedi;      { distance of matched string }
+  lc : inti;             { match length or unmatched char (if dist == 0) }
+  lx : unsignedi;        { running index in l_buf }
+  code : unsignedi;      { the code to send }
+  extra : inti;          { number of extra bits to send }
 begin
   lx := 0;
   if (s.last_lit <> 0) then
@@ -2036,7 +2036,7 @@ function _tr_flush_block (var s : deflate_state;
          eof : boolean) : ulg; { true if this is the last block for a file }
 var
   opt_lenb, static_lenb : ulg; { opt_len and static_len in bytes }
-  max_blindex : int;  { index of last bit length code of non zero freq }
+  max_blindex : inti;  { index of last bit length code of non zero freq }
 begin
   max_blindex := 0;
 
@@ -2104,7 +2104,7 @@ begin
     if (buf = pcharf(0)) then
       error ('block vanished');
 
-    copy_block(buf, unsigned(stored_len), 0); { without header }
+    copy_block(buf, unsignedi(stored_len), 0); { without header }
     s.compressed_len := stored_len shl 3;
     s.method := STORED;
   end
@@ -2174,8 +2174,8 @@ end;
   the current block must be flushed. }
 
 function _tr_tally (var s : deflate_state;
-   dist : unsigned;          { distance of matched string }
-   lc : unsigned) : boolean; { match length-MIN_MATCH or unmatched char (if dist=0) }
+   dist : unsignedi;          { distance of matched string }
+   lc : unsignedi) : boolean; { match length-MIN_MATCH or unmatched char (if dist=0) }
 var
   {$IFDEF DEBUG}
   MAX_DIST : ush;
@@ -2185,7 +2185,7 @@ var
 var
   out_length : ulg;
   in_length : ulg;
-  dcode : int;
+  dcode : inti;
 {$endif}
 begin
   s.d_buf^[s.last_lit] := ush(dist);

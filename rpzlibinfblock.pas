@@ -24,8 +24,8 @@ function inflate_blocks_new(var z : z_stream;
 
 function inflate_blocks (var s : inflate_blocks_state;
                          var z : z_stream;
-                         r : int             { initial return code }
-                         ) : int;
+                         r : inti             { initial return code }
+                         ) : inti;
 
 procedure inflate_blocks_reset (var s : inflate_blocks_state;
                                 var z : z_stream;
@@ -33,13 +33,13 @@ procedure inflate_blocks_reset (var s : inflate_blocks_state;
 
 
 function inflate_blocks_free(s : pInflate_blocks_state;
-                             var z : z_stream) : int;
+                             var z : z_stream) : inti;
 
 procedure inflate_set_dictionary(var s : inflate_blocks_state;
                                  const d : array of byte;  { dictionary }
                                  n : uInt);         { dictionary length }
 
-function inflate_blocks_sync_point(var s : inflate_blocks_state) : int;
+function inflate_blocks_sync_point(var s : inflate_blocks_state) : inti;
 
 implementation
 
@@ -167,7 +167,7 @@ end;
 
 function inflate_blocks (var s : inflate_blocks_state;
                          var z : z_stream;
-                         r : int) : int;           { initial return code }
+                         r : inti) : inti;           { initial return code }
 label
   start_btree, start_dtree,
   start_blkdone, start_dry,
@@ -913,7 +913,7 @@ end;
 
 
 function inflate_blocks_free(s : pInflate_blocks_state;
-                             var z : z_stream) : int;
+                             var z : z_stream) : inti;
 begin
   inflate_blocks_reset(s^, z, Z_NULL);
   ZFREE(z, s^.window);
@@ -941,9 +941,9 @@ end;
   by Z_SYNC_FLUSH or Z_FULL_FLUSH.
   IN assertion: s <> Z_NULL }
 
-function inflate_blocks_sync_point(var s : inflate_blocks_state) : int;
+function inflate_blocks_sync_point(var s : inflate_blocks_state) : inti;
 begin
-  inflate_blocks_sync_point := int(s.mode = LENS);
+  inflate_blocks_sync_point := inti(s.mode = LENS);
 end;
 
 end.

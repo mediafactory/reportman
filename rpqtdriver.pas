@@ -277,10 +277,10 @@ begin
    begin
     Width:=round(obj.Width*dpix/TWIPS_PER_INCHESS);
     Height:=round(obj.Height*dpiy/TWIPS_PER_INCHESS);
-    Canvas.Brush.Style:=TBrushStyle(obj.BrushStyle);
-    Canvas.Pen.Style:=TPenStyle(obj.PenStyle);
     Canvas.Pen.Color:=obj.Pencolor;
+    Canvas.Pen.Style:=TPenStyle(obj.PenStyle);
     Canvas.Brush.Color:=obj.BrushColor;
+    Canvas.Brush.Style:=TBrushStyle(obj.BrushStyle);
     Canvas.Pen.Width:=Round(dpix*obj.PenWidth/TWIPS_PER_INCHESS);
     X := Canvas.Pen.Width div 2;
     Y := X;

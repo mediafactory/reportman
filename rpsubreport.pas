@@ -338,7 +338,8 @@ begin
    Raise Exception.Create(SRpSectionNotFound);
   Sections.Items[i].Section.FreeComponents;
   Sections.Items[i].Section.Free;
-  Sections.Delete(i);
+////  Sections.Delete(i);
+  Sections.Items[i].Free;
 
     i:=0;
   while i<Sections.Count do
@@ -354,7 +355,8 @@ begin
    Raise Exception.Create(SRpSectionNotFound);
   Sections.Items[i].Section.FreeComponents;
   Sections.Items[i].Section.Free;
-  Sections.Delete(i);
+  Sections.Items[i].Free;
+//  Sections.Delete(i);
  end
  else
  begin
@@ -367,7 +369,8 @@ begin
   end;
   Sections.Items[i].Section.FreeComponents;
   Sections.Items[i].Section.Free;
-  Sections.Delete(i);
+  Sections.Items[i].Free;
+//  Sections.Delete(i);
  end;
 end;
 
