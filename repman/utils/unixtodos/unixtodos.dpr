@@ -32,7 +32,7 @@ end;
 
 var
  asource,adestination:string;
- converted,crignored,i,asize:integer;
+ crconverted,crignored,i,asize:integer;
  crformatdos:integer;
  astream:TFileStream;
  ifile:integer;
@@ -48,6 +48,7 @@ var
 procedure UnixToDosFile(afilename:String);
 var
  haschanged:boolean;
+ isformatdos:boolean;
 begin
  astream:=TFileStream.Create(afilename,fmOpenRead or fmShareDenyWrite);
  try
@@ -56,7 +57,7 @@ begin
  finally
   astream.Free;
  end;
- converted:=0;
+ crconverted:=0;
  crignored:=0;
  crformatdos:=0;
  adestination:='';
@@ -65,34 +66,36 @@ begin
  while i<=asize do
  begin
   // Ignores the #13
-  if asource[i]=#13 then
+  isformatdos:=false;
+  while asource[i]=#13 do
   begin
-   if (i+1)<=asize then
+   inc(i);
+   if i>asize then
+    break;
+   if asource[i]=#10 then
    begin
-    if asource[i+1]=#10 then
-    begin
-     adestination:=adestination+#13+#10;
-     inc(crformatdos);
-     inc(i);
-    end
-    else
-     inc(crignored)
+    inc(crformatdos);
+    isformatdos:=true;
    end
    else
-    inc(crignored)
+    inc(crignored);
+  end;
+  if i>asize then
+   break;
+  if asource[i]=#10 then
+  begin
+   adestination:=adestination+#13+#10;
+   if Not isformatdos then
+    inc(crconverted);
+   inc(i);
   end
   else
   begin
-   if asource[i]=#10 then
-   begin
-    adestination:=adestination+#13+#10;
-   end
-   else
-    adestination:=adestination+asource[i];
+   adestination:=adestination+asource[i];
+   inc(i);
   end;
-  inc(i);
  end;
- haschanged:=((crignored>0) or (converted>0));
+ haschanged:=((crignored>0) or (crconverted>0));
  if haschanged then
  begin
   // Finally write
@@ -106,7 +109,7 @@ begin
   Writeln(SRpmOriginSize+':'+FormatFloat('####,####0',Length(adestination))+' '+SRpmBytes);
   WriteLn(SRpmBytesWrite+':'+FormatFloat('####,###0',Length(adestination)));
   Writeln(SRpmCRIgnored+':'+FormatFloat('####,####0',crignored));
-  Writeln(SRpmConverted+':'+FormatFloat('####,####0',converted));
+  Writeln(SRpmConverted+':'+FormatFloat('####,####0',crconverted));
   Writeln(SRpmCRDFormatdos+':'+FormatFloat('####,####0',crformatdos));
   inc(changed);
  end;
