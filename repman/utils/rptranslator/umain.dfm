@@ -1,10 +1,10 @@
 object FMain: TFMain
-  Left = 1
-  Top = 8
+  Left = 217
+  Top = 126
   Width = 689
   Height = 496
   Caption = 'Translation utility'
-  Color = clAppWorkSpace
+  Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -26,10 +26,8 @@ object FMain: TFMain
     ButtonHeight = 26
     ButtonWidth = 26
     Caption = 'ToolBar1'
-    Color = clBtnFace
     Flat = True
     Images = ImageList1
-    ParentColor = False
     TabOrder = 0
     object ToolButton1: TToolButton
       Left = 0
@@ -85,7 +83,7 @@ object FMain: TFMain
     Left = 0
     Top = 28
     Width = 681
-    Height = 401
+    Height = 393
     Align = alClient
     BevelOuter = bvNone
     Caption = 'PParent'
@@ -94,7 +92,7 @@ object FMain: TFMain
     Visible = False
     object Splitter1: TSplitter
       Left = 0
-      Top = 274
+      Top = 266
       Width = 681
       Height = 8
       Cursor = crVSplit
@@ -105,7 +103,7 @@ object FMain: TFMain
     end
     object DBMemo1: TDBMemo
       Left = 0
-      Top = 282
+      Top = 274
       Width = 681
       Height = 119
       Align = alBottom
@@ -119,7 +117,7 @@ object FMain: TFMain
       Left = 0
       Top = 0
       Width = 681
-      Height = 274
+      Height = 266
       Align = alClient
       DataSource = STexts
       Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
@@ -147,14 +145,13 @@ object FMain: TFMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 429
+    Top = 421
     Width = 681
     Height = 21
     Panels = <
       item
         Width = 50
       end>
-    SimplePanel = False
   end
   object DTexts: TClientDataSet
     Aggregates = <>

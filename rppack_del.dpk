@@ -33,7 +33,10 @@ package rppack_del;
 requires
   rtl,
   dsnap,
-  dbrtl;
+  dbrtl,
+  bdertl,
+  dbexpress,
+  adortl;
 
 contains
   rptypeval in 'rptypeval.pas',

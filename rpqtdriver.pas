@@ -639,6 +639,13 @@ end;
 
 function TrpQtDriver.GetPageSize:TPoint;
 begin
+ // If no printer installed get A4 pagesize
+ if Printer.printers.count<1 then
+ begin
+  result.y:=16637;
+  result.x:=12047;
+  exit;
+ end;
  Result.x:=Round((Printer.PageWidth/Printer.XDPI)*TWIPS_PER_INCHESS);
  Result.y:=Round((Printer.PageHeight/Printer.YDPI)*TWIPS_PER_INCHESS);
 end;

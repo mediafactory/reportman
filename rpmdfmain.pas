@@ -37,7 +37,7 @@ uses
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
   rpmdconsts,rptypes, QExtCtrls,rpmdfstruc, rplastsav,rpsubreport,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
-  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver,
+  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver,rprfvparams,
   DB,rpmdfhelpform,rpmunits,QConsts, QDialogs,rpgraphutils;
 const
   // File name in menu width
@@ -1413,6 +1413,13 @@ end;
 
 procedure TFRpMainF.AUserParamsExecute(Sender: TObject);
 begin
+{$IFDEF MSWINDOWS}
+ if ADriverGDI.Checked then
+ begin
+  rprfvparams.ShowUserParams(report);
+  exit;
+ end;
+{$ENDIF}
  ShowUserParams(report);
 end;
 

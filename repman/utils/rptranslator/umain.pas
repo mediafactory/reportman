@@ -19,7 +19,7 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls,rptranslator, DBCtrls, Grids, DBGrids, Db, DBClient, Menus,
   ActnList, ExtCtrls, ToolWin, ComCtrls,Consts, ImgList, rpeval,
-  clipbrd,rpmdconsts;
+  clipbrd,rpmdconsts, XPMan, ActnMan, ActnColorMaps;
 
 
 resourcestring

@@ -14,8 +14,8 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 15
-  TextWidth = 7
+  TextHeight = 13
+  TextWidth = 6
   object GConnections: TGroupBox
     Left = 0
     Top = 0
@@ -53,17 +53,17 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
     object Label1: TLabel
       Left = 8
       Top = 16
-      Width = 53
-      Height = 15
+      Width = 43
+      Height = 13
       Caption = 'Available'
     end
     object ComboAvailable: TComboBox
       Left = 8
       Top = 32
       Width = 117
-      Height = 23
+      Height = 21
       Style = csDropDownList
-      ItemHeight = 17
+      ItemHeight = 15
       TabOrder = 4
     end
     object BConfig: TButton
@@ -123,8 +123,8 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
     object LConnectionString: TLabel
       Left = 8
       Top = 16
-      Width = 100
-      Height = 15
+      Width = 84
+      Height = 13
       Caption = 'Connection String'
       Visible = False
     end
@@ -132,7 +132,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
       Left = 8
       Top = 32
       Width = 117
-      Height = 23
+      Height = 21
       TabOrder = 11
       Visible = False
       OnChange = EConnectionStringChange
@@ -256,23 +256,23 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
           object LBDEIndexFields: TLabel
             Left = 5
             Top = 58
-            Width = 68
-            Height = 15
+            Width = 56
+            Height = 13
             Caption = 'Index Fields'
           end
           object LIndexName: TLabel
             Left = 4
             Top = 32
-            Width = 66
-            Height = 15
+            Width = 57
+            Height = 13
             Caption = 'Index Name'
           end
           object EBDEIndexFields: TComboBox
             Left = 116
             Top = 54
             Width = 137
-            Height = 23
-            ItemHeight = 17
+            Height = 21
+            ItemHeight = 15
             Items.Strings = (
               '')
             TabOrder = 2
@@ -283,8 +283,8 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
             Left = 116
             Top = 28
             Width = 137
-            Height = 23
-            ItemHeight = 17
+            Height = 21
+            ItemHeight = 15
             Items.Strings = (
               '')
             TabOrder = 3
@@ -295,8 +295,8 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
             Left = 116
             Top = 2
             Width = 137
-            Height = 23
-            ItemHeight = 17
+            Height = 21
+            ItemHeight = 15
             Items.Strings = (
               '')
             TabOrder = 4
@@ -306,22 +306,22 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
           object LTable: TLabel
             Left = 4
             Top = 10
-            Width = 31
-            Height = 15
+            Width = 27
+            Height = 13
             Caption = 'Table'
           end
           object LMasterFields: TLabel
             Left = 4
             Top = 82
-            Width = 71
-            Height = 15
+            Width = 59
+            Height = 13
             Caption = 'Master fields'
           end
           object EBDEMasterFields: TEdit
             Left = 116
             Top = 78
             Width = 137
-            Height = 23
+            Height = 21
             TabOrder = 7
             Text = 'EBDEMasterFields'
             OnChange = MSQLChange
@@ -329,8 +329,8 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
           object LNote: TLabel
             Left = 4
             Top = 104
-            Width = 235
-            Height = 15
+            Width = 199
+            Height = 13
             Caption = 'Note: Write fields separated by ; character'
           end
         end
@@ -341,7 +341,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
             Left = 0
             Top = 22
             Width = 485
-            Height = 23
+            Height = 21
             TabOrder = 0
             OnChange = MSQLChange
           end
@@ -349,22 +349,22 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
             Left = 0
             Top = 82
             Width = 185
-            Height = 23
+            Height = 21
             TabOrder = 1
             OnChange = MSQLChange
           end
           object LIndexFields: TLabel
             Left = 0
             Top = 70
-            Width = 63
-            Height = 15
+            Width = 53
+            Height = 13
             Caption = 'Index fields'
           end
           object LMyBase: TLabel
             Left = 0
             Top = 6
-            Width = 101
-            Height = 15
+            Width = 83
+            Height = 13
             Caption = 'MyBase Filename'
           end
           object BMyBase: TButton
@@ -398,41 +398,41 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
           Left = 308
           Top = 20
           Width = 117
-          Height = 23
+          Height = 21
           Style = csDropDownList
-          ItemHeight = 17
+          ItemHeight = 15
           TabOrder = 1
           OnChange = MSQLChange
         end
         object LMasterDataset: TLabel
           Left = 204
           Top = 24
-          Width = 82
-          Height = 15
+          Width = 70
+          Height = 13
           Caption = 'Master dataset'
         end
         object ComboConnection: TComboBox
           Left = 88
           Top = 20
           Width = 113
-          Height = 23
+          Height = 21
           Style = csDropDownList
-          ItemHeight = 17
+          ItemHeight = 15
           TabOrder = 3
           OnChange = MSQLChange
         end
         object LConnection: TLabel
           Left = 4
           Top = 24
-          Width = 64
-          Height = 15
+          Width = 54
+          Height = 13
           Caption = 'Connection'
         end
         object LDataprops: TLabel
           Left = 4
           Top = 4
-          Width = 102
-          Height = 15
+          Width = 87
+          Height = 13
           Caption = 'Dataset Properties'
         end
       end
@@ -492,8 +492,8 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
       object LRDataset: TLabel
         Left = 4
         Top = 4
-        Width = 88
-        Height = 15
+        Width = 77
+        Height = 13
         Caption = 'Report Datasets'
       end
     end

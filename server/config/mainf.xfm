@@ -1,0 +1,218 @@
+object FMain: TFMain
+  Left = 134
+  Top = 83
+  Width = 490
+  Height = 426
+  VertScrollBar.Range = 161
+  HorzScrollBar.Range = 481
+  BorderStyle = fbsDialog
+  Caption = 'Report Manager Server configuration'
+  Color = clBackground
+  ShowHint = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  TextWidth = 6
+  object LHost: TLabel
+    Left = 8
+    Top = 12
+    Width = 22
+    Height = 13
+    Caption = 'Host'
+  end
+  object ComboHost: TComboBox
+    Left = 92
+    Top = 8
+    Width = 213
+    Height = 21
+    ItemHeight = 15
+    TabOrder = 1
+  end
+  object BCheckRunning: TButton
+    Left = 332
+    Top = 8
+    Width = 149
+    Height = 25
+    Hint = 'Check if the server is running in the selected host'
+    Caption = 'Check connection'
+    TabOrder = 2
+  end
+  object GUser: TGroupBox
+    Left = 8
+    Top = 44
+    Width = 381
+    Height = 117
+    Caption = 'User information'
+    TabOrder = 3
+    object LUserName: TLabel
+      Left = 8
+      Top = 24
+      Width = 51
+      Height = 13
+      Caption = 'User name'
+    end
+    object EUserName: TEdit
+      Left = 112
+      Top = 20
+      Width = 205
+      Height = 21
+      TabOrder = 1
+      Text = 'Admin'
+    end
+    object EPassword: TEdit
+      Left = 112
+      Top = 48
+      Width = 205
+      Height = 21
+      EchoMode = emPassword
+      TabOrder = 2
+    end
+    object LPassword: TLabel
+      Left = 8
+      Top = 52
+      Width = 46
+      Height = 13
+      Caption = 'Password'
+    end
+    object BConnect: TButton
+      Left = 8
+      Top = 84
+      Width = 113
+      Height = 25
+      Caption = 'Connect'
+      TabOrder = 4
+    end
+  end
+  object GServerinfo: TGroupBox
+    Left = 8
+    Top = 44
+    Width = 469
+    Height = 373
+    Caption = 'Server information'
+    TabOrder = 4
+    Visible = False
+    object GUsers: TGroupBox
+      Left = 8
+      Top = 16
+      Width = 461
+      Height = 129
+      Caption = 'Users'
+      TabOrder = 0
+      object LUsers: TListBox
+        Left = 4
+        Top = 16
+        Width = 305
+        Height = 105
+        TabOrder = 0
+      end
+      object BDeleteUser: TButton
+        Left = 316
+        Top = 88
+        Width = 133
+        Height = 33
+        Caption = 'Delete'
+        TabOrder = 1
+      end
+      object BAddUser: TButton
+        Left = 316
+        Top = 17
+        Width = 133
+        Height = 33
+        Caption = 'Add'
+        TabOrder = 2
+      end
+      object BChangePassword: TButton
+        Left = 316
+        Top = 53
+        Width = 133
+        Height = 33
+        Caption = 'Change Password'
+        TabOrder = 3
+      end
+    end
+    object GReportDirectories: TGroupBox
+      Left = 8
+      Top = 148
+      Width = 461
+      Height = 185
+      Caption = 'Report server directories'
+      TabOrder = 1
+      object DBGrid1: TDBGrid
+        Left = 4
+        Top = 16
+        Width = 445
+        Height = 133
+        DataSource = SDirectories
+        ReadOnly = True
+        TabOrder = 0
+        TitleFont.Color = clBlack
+        TitleFont.Height = 11
+        TitleFont.Name = 'MS Shell Dlg'
+        TitleFont.Pitch = fpVariable
+        TitleFont.Style = []
+        TitleFont.Weight = 40
+      end
+      object BAddAlias: TButton
+        Left = 4
+        Top = 149
+        Width = 133
+        Height = 33
+        Caption = 'Add'
+        TabOrder = 1
+      end
+      object BDeleteAlias: TButton
+        Left = 140
+        Top = 149
+        Width = 133
+        Height = 33
+        Caption = 'Delete'
+        TabOrder = 2
+      end
+      object BPreviewTree: TButton
+        Left = 276
+        Top = 149
+        Width = 173
+        Height = 33
+        Caption = 'Preview Report Tree'
+        TabOrder = 3
+      end
+    end
+    object BCloseConnection: TButton
+      Left = 8
+      Top = 337
+      Width = 173
+      Height = 33
+      Caption = 'Close connection'
+      TabOrder = 2
+    end
+  end
+  object Trans: TRpTranslator
+    Active = False
+    Filename = 'reportmanres'
+    Left = 408
+    Top = 8
+  end
+  object DDirectories: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 276
+    Top = 236
+    object DDirectoriesAlias: TStringField
+      DisplayLabel = 'Server alias'
+      DisplayWidth = 15
+      FieldName = 'Alias'
+      Size = 30
+    end
+    object DDirectoriesServerPath: TStringField
+      DisplayLabel = 'Server Path'
+      DisplayWidth = 50
+      FieldName = 'ServerPath'
+      Size = 250
+    end
+  end
+  object SDirectories: TDataSource
+    DataSet = DDirectories
+    Left = 232
+    Top = 240
+  end
+end

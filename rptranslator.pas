@@ -106,7 +106,7 @@ end;
 
 procedure TRpTranslator.SetActive(Value:boolean);
 begin
- if csLoading in componentState then
+ if csReading in componentState then
  begin
   FInternalActive:=Value;
   exit;
