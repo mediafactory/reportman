@@ -123,7 +123,6 @@ begin
  paramscomp:=TRpParamComp.Create(Self);
  AExecute.Hint:=TranslateStr(780,AExecute.Hint);
  LPort.Caption:=TranslateStr(829,LPort.Caption);
-
  InitialWidth:=Width;
 end;
 

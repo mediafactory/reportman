@@ -1142,7 +1142,7 @@ begin
   if ADriverPDFGDI.Checked then
   begin
    rpgdidriver.CalcReportWidthProgress(report);
-   rpfmainmetaviewvcl.PreviewMetafile(report.metafile);
+   rpfmainmetaviewvcl.PreviewMetafile(report.metafile,nil);
    exit;
   end
  end;
@@ -1154,7 +1154,7 @@ begin
  else
  begin
   rpqtdriver.CalcReportWidthProgress(report);
-  rpfmainmetaview.PreviewMetafile(report.metafile);
+  rpfmainmetaview.PreviewMetafile(report.metafile,nil);
   exit;
  end
 end;

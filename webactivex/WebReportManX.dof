@@ -76,9 +76,9 @@ LocaleToUnicode=1
 ImagebaseMultiple=1
 SuspiciousTypecast=1
 PrivatePropAccessor=1
-UnsafeType=0
-UnsafeCode=0
-UnsafeCast=0
+UnsafeType=1
+UnsafeCode=1
+UnsafeCast=1
 [Linker]
 MapFile=0
 OutputObjs=0
@@ -88,15 +88,15 @@ RemoteSymbols=0
 MinStackSize=16384
 MaxStackSize=1048576
 ImageBase=4194304
-ExeDescription=Report Manager Designer VCL Components
+ExeDescription=
 [Directories]
 OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
-Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;dsnapcon;vcldb;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;adortl;ibxpress;visualclx;visualdbclx;vclactnband;vclshlctrls;rppack_del;rppackv_del;rppackvcl_del;rppackdesign_del
-Conditionals=
+Packages=vcl;rtl;vclx;dbrtl;dsnap;rppack_del;ibxpress;adortl;dbexpress;bdertl;vcldb;vcldbx;CLXIB;VCLIB;visualclx;visualdbclx;inet;xmlrtl;vclie;inetdbbde;inetdbxpress
+Conditionals=FORWEBAX
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
@@ -109,24 +109,41 @@ DebugCWD=
 ActiveLang=
 ProjectLang=
 RootDir=C:\Archivos de programa\Borland\Delphi7\Bin\
+[Deployment]
+DeployDir="c:\inetpub\wwwroot\"
+DeployURL=http://localhost/
+HTMLDir="c:\inetpub\wwwroot\"
+CABCompress=1
+CodeSign=0
+IncludeVerInfo=1
+AutoIncRelease=1
+DeployPackages=0
+DeployFiles=0
+CompanyURL=
+Description=
+CredFile=
+PrivKey=
+CryptoType=0
+Timestamping=0
+TimestampServer=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
-MinorVer=0
-Release=0
+MinorVer=4
+Release=4
 Build=0
 Debug=0
 PreRelease=0
 Special=0
 Private=0
-DLL=0
+DLL=1
 Locale=3082
 CodePage=1252
 [Version Info Keys]
 CompanyName=
 FileDescription=
-FileVersion=1.0.0.0
+FileVersion=1.4.4.0
 InternalName=
 LegalCopyright=
 LegalTrademarks=
@@ -134,6 +151,12 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
+OleSelfRegister=1
 [Excluded Packages]
-c:\archivos de programa\borland\delphi7\Projects\Bpl\rppackdesign_del.bpl=Report Manager Designer Component Package
 c:\archivos de programa\borland\delphi7\Projects\Bpl\Gestor.bpl=Componentes del gestor de Informes
+[HistoryLists\hlConditionals]
+Count=1
+Item0=FORWEBAX
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

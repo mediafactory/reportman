@@ -55,4 +55,5 @@ contains
   rpgdifonts in 'rpgdifonts.pas',
   rpmdprintconfigvcl in 'rpmdprintconfigvcl.pas' {FRpPrinterConfig},
   rprulervcl in 'rprulervcl.pas';
+
 end.

@@ -47,7 +47,7 @@ type
 var
  FRpMainMeta:TFRpMainMeta;
 
-procedure PreviewMetafile(metafile:TRpMetafileReport);
+procedure PreviewMetafile(metafile:TRpMetafileReport;aform:TForm);
 
 implementation
 
@@ -55,56 +55,74 @@ uses rpprintdia,rppdfdriver;
 
 {$R *.xfm}
 
-procedure PreviewMetafile(metafile:TRpMetafileReport);
+procedure PreviewMetafile(metafile:TRpMetafileReport;aform:TForm);
 var
  dia:TFRpMainMeta;
  memstream:TMemoryStream;
+ MFrame:TFRpMeta;
+ FForm:TForm;
 begin
- dia:=TFRpMainMeta.Create(Application);
+ if not assigned(aform) then
+ begin
+  dia:=TFRpMainMeta.Create(Application);
+  MFrame:=dia.MFrame;
+  FForm:=dia;
+ end
+ else
+ begin
+  dia:=nil;
+  MFrame:=TFRpMeta.Create(aform);
+  MFrame.SetMenu:=false;
+  MFrame.AForm:=aform;
+  MFrame.Parent:=aform;
+  FForm:=aform;
+ end;
  try
   memstream:=TMemoryStream.Create;
   try
    metafile.SaveToStream(memstream);
    memstream.Seek(0,soFromBeginning);
-   dia.MFrame.metafile.LoadFromStream(memstream);
-   dia.MFrame.ASave.Enabled:=True;
-   dia.MFrame.APrint.Enabled:=True;
-   dia.MFrame.AFirst.Enabled:=True;
-   dia.MFrame.APrevious.Enabled:=True;
-   dia.MFrame.ANext.Enabled:=True;
-   dia.MFrame.ALast.Enabled:=True;
-   dia.MFrame.pagenum:=1;
-   dia.MFrame.AViewConnect.Checked:=false;
-   dia.MFrame.AViewConnect.Enabled:=false;
-   dia.MFrame.Splitter1.Visible:=false;
-   dia.MFrame.clitree.visible:=false;
+   MFrame.metafile.LoadFromStream(memstream);
+   MFrame.ASave.Enabled:=True;
+   MFrame.APrint.Enabled:=True;
+   MFrame.AFirst.Enabled:=True;
+   MFrame.APrevious.Enabled:=True;
+   MFrame.ANext.Enabled:=True;
+   MFrame.ALast.Enabled:=True;
+   MFrame.pagenum:=1;
+   MFrame.AViewConnect.Checked:=false;
+   MFrame.AViewConnect.Enabled:=false;
+   MFrame.Splitter1.Visible:=false;
+   MFrame.clitree.visible:=false;
    if metafile.PreviewWindow=spwMaximized then
-    dia.WindowState:=wsMaximized;
-   dia.MFrame.AScale100.Checked:=False;
-   dia.MFrame.AScaleFull.Checked:=False;
-   dia.MFrame.AScaleWide.Checked:=False;
+    FForm.WindowState:=wsMaximized;
+   MFrame.AScale100.Checked:=False;
+   MFrame.AScaleFull.Checked:=False;
+   MFrame.AScaleWide.Checked:=False;
    case metafile.PreviewStyle of
     spNormal:
      begin
-      dia.MFrame.AScale100.Checked:=True;
-      dia.MFrame.qtdriver.PreviewStyle:=spNormal;
+      MFrame.AScale100.Checked:=True;
+      MFrame.qtdriver.PreviewStyle:=spNormal;
      end;
     spEntirePage:
      begin
-      dia.MFrame.AScaleFull.Checked:=True;
-      dia.MFrame.qtdriver.PreviewStyle:=spEntirePage;
+      MFrame.AScaleFull.Checked:=True;
+      MFrame.qtdriver.PreviewStyle:=spEntirePage;
      end
     else
-      dia.MFrame.AScaleWide.Checked:=True;
+      MFrame.AScaleWide.Checked:=True;
    end;
-   dia.MFrame.PrintPage;
-   dia.MFrame.FormResize(dia);
-   dia.ShowModal;
+   MFrame.PrintPage;
+   MFrame.FormResize(dia);
+   if Not Assigned(aform) then
+    dia.ShowModal;
   finally
    memstream.free;
   end;
  finally
-  dia.free;
+  if not assigned(aform) then
+   dia.free;
  end;
 end;
 

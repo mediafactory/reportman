@@ -98,14 +98,13 @@ uses
   rpmdfwizardvcl in '..\rpmdfwizardvcl.pas' {FRpWizardVCL},
   rpmdfextsecvcl in '..\rpmdfextsecvcl.pas' {FRpExtSectionVCL},
   rpmdfdatasetsvcl in '..\rpmdfdatasetsvcl.pas' {FRpDatasetsVCL: TFrame},
-  rpfmetaviewvcl in '..\rpfmetaviewvcl.pas' {FRpMetaVCL};
-  rpfmetaviewvcl in '..\rpfmainmetaviewvcl.pas' {FRpMainMetaVCL};
+  rpfmetaviewvcl in '..\rpfmetaviewvcl.pas' {FRpMetaVCL},
+  rpfmainmetaviewvcl in '..\rpfmainmetaviewvcl.pas' {FRpMainMetaVCL};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TFRpMainFVCL, FRpMainFVCL);
-  Application.CreateForm(TFRpMetaVCL, FRpMetaVCL);
   Application.Run;
 end.

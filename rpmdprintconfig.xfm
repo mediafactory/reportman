@@ -6,13 +6,16 @@ object FRpPrinterConfig: TFRpPrinterConfig
   VertScrollBar.Range = 409
   HorzScrollBar.Range = 501
   ActiveControl = BOK
+  AutoScroll = False
   Caption = 'Printers configuration'
   Color = clButton
   Position = poScreenCenter
-  AutoScroll = False
   OnClose = FormClose
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
+  TextHeight = 13
+  TextWidth = 6
   object BOK: TButton
     Left = 8
     Top = 380

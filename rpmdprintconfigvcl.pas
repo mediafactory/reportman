@@ -65,9 +65,17 @@ type
     procedure ELeftMarginChange(Sender: TObject);
     procedure ECutPaperChange(Sender: TObject);
     procedure CheckCutPaperClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
+    configfilename:string;
+    userconfigfilename:string;
+    systemconfigfilename:string;
+    configinifile:TMemInifile;
+    printernames:TStringList;
+    userconfig:boolean;
     procedure DoSave;
+    procedure ReadPrintersConfig;
   public
     { Public declarations }
   end;
@@ -78,13 +86,6 @@ implementation
 
 {$R *.dfm}
 
-var
- configfilename:string;
- userconfigfilename:string;
- systemconfigfilename:string;
- configinifile:TMemInifile;
- printernames:TStringList;
- userconfig:boolean;
 
 procedure ShowPrintersConfiguration;
 var
@@ -100,6 +101,10 @@ end;
 
 procedure TFRpPrinterConfigVCL.FormCreate(Sender: TObject);
 begin
+ printernames:=TStringList.Create;
+ ReadPrintersConfig;
+ printernames.Assign(Printer.Printers);
+
  BOK.Caption:=TranslateStr(93,BOK.Caption);
  BCancel.Caption:=TranslateStr(94,BCancel.Caption);
  CheckPrinterFonts.Caption:=TranslateStr(113,CheckPrinterFonts.Caption);
@@ -178,7 +183,7 @@ begin
  EOpenDrawer.Text:=configinifile.ReadString('OpenDrawer','Printer'+IntToStr(LSelPrinter.ItemIndex),'');
 end;
 
-procedure ReadPrintersConfig;
+procedure TFRpPrinterConfigVCL.ReadPrintersConfig;
 begin
  userconfig:=true;
  systemconfigfilename:=Obtainininamecommonconfig('','','reportman');
@@ -297,19 +302,15 @@ begin
  configinifile.WriteBool(Operation+'On','Printer'+IntToStr(LSelPrinter.ItemIndex),(Sender As TCheckBox).Checked);
 end;
 
-initialization
-printernames:=TStringList.Create;
-ReadPrintersConfig;
-printernames.Assign(Printer.Printers);
-
-finalization
-
-if assigned(configinifile) then
+procedure TFRpPrinterConfigVCL.FormDestroy(Sender: TObject);
 begin
- configinifile.free;
- configinifile:=nil;
+ if assigned(configinifile) then
+ begin
+  configinifile.free;
+  configinifile:=nil;
+ end;
+ printernames.free;
+ printernames:=nil;
 end;
-printernames.free;
-printernames:=nil;
 
 end.

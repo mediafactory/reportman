@@ -1,8 +1,8 @@
 object FRpMeta: TFRpMeta
   Left = 0
   Top = 0
-  Width = 603
-  Height = 460
+  Width = 693
+  Height = 352
   VertScrollBar.Range = 338
   HorzScrollBar.Range = 561
   Align = alClient
@@ -14,13 +14,13 @@ object FRpMeta: TFRpMeta
     Left = 0
     Top = 30
     Width = 7
-    Height = 409
+    Height = 301
     Beveled = True
   end
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 603
+    Width = 693
     Height = 30
     AutoSize = True
     ButtonHeight = 26
@@ -30,7 +30,7 @@ object FRpMeta: TFRpMeta
     Images = ImageList1
     TabOrder = 0
     object PBar: TProgressBar
-      Left = 523
+      Left = 549
       Top = 4
       Width = 64
       Height = 25
@@ -104,7 +104,7 @@ object FRpMeta: TFRpMeta
     end
     object BCancel: TButton
       HelpType = htContext
-      Left = 383
+      Left = 409
       Top = 4
       Width = 140
       Height = 26
@@ -115,7 +115,7 @@ object FRpMeta: TFRpMeta
     end
     object BExit: TToolButton
       HelpType = htContext
-      Left = 357
+      Left = 383
       Top = 4
       Height = 26
       Action = AExit
@@ -161,6 +161,14 @@ object FRpMeta: TFRpMeta
       Action = AScaleMore
       Caption = 'Zoom+'
     end
+    object ToolButton10: TToolButton
+      HelpType = htContext
+      Left = 357
+      Top = 4
+      Height = 26
+      Action = APrintSetup
+      Caption = 'Printer Setup...'
+    end
   end
   object ImageContainer: TScrollBox
     Left = 48
@@ -185,8 +193,8 @@ object FRpMeta: TFRpMeta
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 439
-    Width = 603
+    Top = 331
+    Width = 693
     Height = 21
     Panels = <
       item

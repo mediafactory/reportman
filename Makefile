@@ -84,6 +84,10 @@ reportmanutilsxp: designerxp
         $(COMPILE) Reportman.dpr
         cd ..
 
+        cd webactivex
+        $(COMPILE) WebReportManX.dpr
+        cd ..
+
 reportmanserverxp:
         cd server
         cd app

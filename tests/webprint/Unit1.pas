@@ -4,10 +4,10 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs,rpwebmetaclient, StdCtrls;
+  Dialogs,rpwebmetaclient, StdCtrls,ActiveX,Axctrls;
 
 const
- TestString='http://localhost/cgi-bin/repwebexe.exe/execute?reportname=%5Csample6&aliasname=TEST2&username=Admin&password=&ParamDETAIL=True&ParamFIRSTORDER=1000&ParamLASTORDER=1010&METAFILE=1';
+ TestString='http://plutonio/cgi-bin/repwebexe.exe/execute?reportname=%5Csample6&aliasname=TEST2&username=Admin&password=&ParamDETAIL=True&ParamFIRSTORDER=1000&ParamLASTORDER=1010&METAFILE=1';
 
 type
   TForm1 = class(TForm)
@@ -26,12 +26,18 @@ var
 
 implementation
 
+uses rpwebreportx;
+
 {$R *.dfm}
 
 procedure TForm1.Button1Click(Sender: TObject);
 var
  acontrol:TrpWebMetaPrint;
+ thecontrol:TWebReportman;
 begin
+ thecontrol:=TWebReportman.Create(Self);
+ thecontrol.Align:=alclient;
+ thecontrol.Parent:=Self;
 // rpwebmetaclient.PrintHttpReport(Edit1.Text);
  acontrol:=TrpWebMetaPrint.Create(Self);
  acontrol.parent:=Self;
@@ -41,6 +47,10 @@ begin
  acontrol.Top:=200;
  acontrol.caption:='Hello';
  acontrol.preview:=true;
+ acontrol.aForm:=acontrol;
+ acontrol.align:=alclient;
+ acontrol.visible:=false;
+ thecontrol.BringToFront;
  acontrol.PrinterConfig:=false;
  acontrol.MetaUrl:=Edit1.Text;
  acontrol.Execute;

@@ -140,6 +140,7 @@ type
     PrintersConfiguration1: TMenuItem;
     AAsyncExec: TAction;
     Asynchronousexecution1: TMenuItem;
+    ToolButton10: TToolButton;
     procedure AFirstExecute(Sender: TObject);
     procedure ANextExecute(Sender: TObject);
     procedure APreviousExecute(Sender: TObject);
@@ -199,6 +200,7 @@ type
     printerindex:TRpPrinterSelect;
     aqtdriver:IRpPrintDriver;
     bitmap:TBitmap;
+    setmenu:boolean;
     property aform:TForm read faform write SetForm;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
@@ -225,9 +227,11 @@ begin
  if assigned(faform) then
  begin
   faform.OnKeyDown:=FormKeyDown;
-  faform.Menu:=MainMenu1;
+  if setmenu then
+   faform.Menu:=MainMenu1;
  end;
- BExit.Visible:=Assigned(faform);
+ BExit.Visible:=Not Assigned(faform);
+ Exit1.Visible:=BExit.Visible;
 end;
 
 procedure TFRpMeta.PrintPage;
@@ -267,6 +271,7 @@ end;
 constructor TFRpMeta.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+ setmenu:=true;
  MSelectPrinter.Caption:=TranslateStr(741,MSelectPrinter.Caption);
  MSelPrinter0.Caption:=SRpDefaultPrinter;
  MSelPrinter1.Caption:=SRpReportPrinter;

@@ -1,8 +1,8 @@
 object FRpMetaVCL: TFRpMetaVCL
   Left = 0
   Top = 0
-  Width = 627
-  Height = 458
+  Width = 682
+  Height = 280
   HorzScrollBar.Range = 561
   VertScrollBar.Range = 338
   Align = alClient
@@ -15,13 +15,14 @@ object FRpMetaVCL: TFRpMetaVCL
     Left = 0
     Top = 27
     Width = 7
-    Height = 410
+    Height = 290
+    Cursor = crHSplit
     Beveled = True
   end
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 627
+    Width = 666
     Height = 27
     AutoSize = True
     ButtonHeight = 25
@@ -99,13 +100,18 @@ object FRpMetaVCL: TFRpMetaVCL
       Top = 0
       Action = AScaleMore
     end
-    object BExit: TToolButton
+    object ToolButton10: TToolButton
       Left = 356
+      Top = 0
+      Action = APrintersConfiguration
+    end
+    object BExit: TToolButton
+      Left = 382
       Top = 0
       Action = AExit
     end
     object BCancel: TButton
-      Left = 382
+      Left = 408
       Top = 0
       Width = 140
       Height = 25
@@ -114,11 +120,13 @@ object FRpMetaVCL: TFRpMetaVCL
       Visible = False
     end
     object PBar: TProgressBar
-      Left = 522
+      Left = 548
       Top = 0
       Width = 64
       Height = 25
       Align = alCustom
+      Min = 0
+      Max = 100
       TabOrder = 0
       Visible = False
     end
@@ -146,13 +154,14 @@ object FRpMetaVCL: TFRpMetaVCL
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 437
-    Width = 627
+    Top = 317
+    Width = 666
     Height = 21
     Panels = <
       item
         Width = 50
       end>
+    SimplePanel = False
   end
   object ActionList1: TActionList
     Images = ImageList1
@@ -295,6 +304,7 @@ object FRpMetaVCL: TFRpMetaVCL
     object APrintersConfiguration: TAction
       Category = 'Preferences'
       Caption = 'Printers Configuration'
+      ImageIndex = 14
       OnExecute = APrintersConfigurationExecute
     end
     object AAsyncExec: TAction

@@ -27,7 +27,10 @@ uses
   SysUtils,Inifiles,
   Windows,Dialogs,rpgdidriver,ShellApi,rpgraphutilsvcl,
   Types, Classes, Graphics, Controls, Forms,
-  StdCtrls,rpmetafile, ComCtrls,ExtCtrls,rpmdclitreevcl,
+  StdCtrls,rpmetafile, ComCtrls,ExtCtrls,
+{$IFNDEF FORWEBAX}
+  rpmdclitreevcl,
+{$ENDIF}
   ActnList, ImgList,Printers,rpmdconsts,rptypes, Menus,
   rpmdfaboutvcl,rpmdshfolder,rpmdprintconfigvcl,
   ToolWin;
@@ -123,6 +126,7 @@ type
     AAsyncExec: TAction;
     Asynchronousexecution1: TMenuItem;
     ImageList1: TImageList;
+    ToolButton10: TToolButton;
     procedure AFirstExecute(Sender: TObject);
     procedure ANextExecute(Sender: TObject);
     procedure APreviousExecute(Sender: TObject);
@@ -154,8 +158,8 @@ type
     cancelled:boolean;
     oldonHint:TNotifyEvent;
     configfile:string;
-    faform:TForm;
-    procedure SetForm(Value:TForm);
+    faform:TWinControl;
+    procedure SetForm(Value:TWinControl);
     procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
     procedure EnableButtons;
     procedure DisableButtons;
@@ -168,14 +172,17 @@ type
     procedure UpdatePrintSel;
   public
     { Public declarations }
+{$IFNDEF FORWEBAX}
     clitree:TFRpCliTreeVCL;
+{$ENDIF}
     pagenum:integer;
     metafile:TRpMetafileReport;
     gdidriver:TRpGDIDriver;
     printerindex:TRpPrinterSelect;
     agdidriver:IRpPrintDriver;
     bitmap:TBitmap;
-    property aform:TForm read faform write SetForm;
+    setmenu:boolean;
+    property aform:TWinControl read faform write SetForm;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     constructor Create(AOwner:TComponent);override;
@@ -192,15 +199,19 @@ uses rppdfdriver;
 
 {$R *.dfm}
 
-procedure TFRpMetaVCL.SetForm(Value:TForm);
+procedure TFRpMetaVCL.SetForm(Value:TWinControl);
 begin
  faform:=Value;
- BExit.Visible:=Assigned(faform);
  if assigned(faform) then
  begin
-  faform.OnKeyDown:=FormKeyDown;
-  faform.Menu:=MainMenu1;
+  if (faform is TForm) then
+  begin
+   TForm(faform).Menu:=MainMenu1;
+   TForm(faform).OnKeyDown:=FormKeyDown;
+  end;
  end;
+ BExit.Visible:=Not Assigned(faform);
+ Exit1.Visible:=BExit.Visible;
 end;
 
 procedure TFRpMetaVCL.PrintPage;
@@ -247,6 +258,7 @@ end;
 constructor TFRpMetaVCL.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+ setmenu:=true;
  MSelectPrinter.Caption:=TranslateStr(741,MSelectPrinter.Caption);
  MSelPrinter0.Caption:=SRpDefaultPrinter;
  MSelPrinter1.Caption:=SRpReportPrinter;
@@ -278,10 +290,12 @@ begin
    SRpPDFFileUn+' (*.pdf)';
  OpenDialog1.Filter:=SRpRepMetafile+' (*.rpmf)';
 {$ENDIF}
+{$IFNDEF FORWEBAX}
  clitree:=TFRpCliTreeVCL.Create(Self);
  clitree.Align:=alLeft;
  clitree.Parent:=Self;
  clitree.OnExecuteServer:=ExecuteServer;
+{$ENDIF}
  MHelp.Caption:=TranslateStr(6,MHelp.Caption);
  AAbout.Caption:=TranslateStr(58,AAbout.Caption);
  AAbout.Hint:=TranslateStr(59,AABout.Hint);
@@ -587,7 +601,10 @@ end;
 procedure TFRpMetaVCL.AExitExecute(Sender: TObject);
 begin
  if assigned(aform) then
-  aform.Close;
+ begin
+  if (aform is TForm) then
+   TForm(aform).Close;
+ end;
 end;
 
 
@@ -707,6 +724,7 @@ end;
 
 procedure TFRpMetaVCL.ExecuteServer(Sender:TObject);
 begin
+{$IFNDEF FORWEBAX}
  metafile.LoadFromStream(clitree.Stream);
  ASave.Enabled:=True;
  APrint.Enabled:=True;
@@ -717,6 +735,7 @@ begin
  pagenum:=1;
  PrintPage;
  FormResize(Self);
+{$ENDIF}
 end;
 
 procedure TFRpMetaVCL.AAboutExecute(Sender: TObject);
@@ -727,8 +746,10 @@ end;
 procedure TFRpMetaVCL.AViewConnectExecute(Sender: TObject);
 begin
  AViewConnect.Checked:=Not AViewConnect.Checked;
+{$IFNDEF FORWEBAX}
  clitree.Width:=clitree.Initialwidth;
  clitree.Visible:=AViewConnect.Checked;
+{$ENDIF}
  FormResize(Self);
 end;
 
@@ -750,11 +771,13 @@ begin
   BStatus.Visible:=inif.ReadBool('Preferences','StatusBar',True);
   AStatusBar.Checked:=BStatus.Visible;
   AViewConnect.Checked:=inif.ReadBool('Preferences','DiagConnect',True);
+{$IFNDEF FORWEBAX}
   clitree.Visible:=AViewConnect.Checked;
   clitree.ComboHost.Text:=inif.ReadString('Preferences','Host','localhost');
   clitree.EUserName.Text:=inif.ReadString('Preferences','UserName','Admin');
-  AAsyncExec.Checked:=inif.ReadBool('Preferences','AsyncExec',False);;
   clitree.asynchrohous:=AAsyncexec.Checked;
+{$ENDIF}
+  AAsyncExec.Checked:=inif.ReadBool('Preferences','AsyncExec',False);;
   printerindex:=TRpPrinterSelect(inif.ReadInteger('Preferences','PrinterIndex',Integer(pRpDefaultPrinter)));
   UpdatePrintSel;
  finally
@@ -770,8 +793,10 @@ begin
  try
   inif.WriteBool('Preferences','StatusBar',BStatus.Visible);
   inif.WriteInteger('Preferences','PrinterIndex',Integer(printerindex));
+{$IFNDEF FORWEBAX}
   inif.WriteString('Preferences','Host',clitree.ComboHost.Text);
   inif.WriteString('Preferences','UserName',clitree.EUserName.Text);
+{$ENDIF}
   inif.WriteBool('Preferences','AsyncExec',AAsyncExec.Checked);;
   inif.WriteBool('Preferences','DiagConnect',AViewConnect.Checked);
   inif.UpdateFile;
@@ -832,7 +857,9 @@ end;
 procedure TFRpMetaVCL.AAsyncExecExecute(Sender: TObject);
 begin
  AAsyncExec.Checked:=Not AAsyncExec.checked;
+{$IFNDEF FORWEBAX}
  clitree.asynchrohous:=AAsyncexec.Checked;
+{$ENDIF}
 end;
 
 end.

@@ -27,12 +27,13 @@ interface
 
 {$I rpconf.inc}
 
-uses classes,SysUtils,Windows,graphics,controls,rptypes,
+uses classes,SysUtils,Windows,graphics,controls,forms,
+ rptypes,
 {$IFNDEF USEVARIANTS}
  Types
 {$ENDIF}
- rpmetafile,rpreport,rpfmetaviewvcl,rpmdconsts,
- IdHttp,rpgdidriver,rpmdprintconfig,rpmdshfolder;
+ rpmetafile,rpreport,rpfmainmetaviewvcl,rpmdconsts,
+ IdHttp,rpgdidriver,rpmdprintconfigvcl,rpmdshfolder;
 
 
 type
@@ -51,9 +52,14 @@ type
   protected
    procedure Paint;override;
   public
+   aForm:TWinControl;
    constructor Create(AOwner:TComponent);override;
    procedure Execute;
   published
+   property Left;
+   property Top;
+   property Width;
+   property Height;
    property Install:Boolean read FInstall write FInstall;
    property PrinterConfig:Boolean read FPrinterConfig write FPrinterConfig;
    property Caption:WideString read FCaption write SetCaption;
@@ -100,7 +106,9 @@ begin
     astream.Seek(0,soFromBeginning);
     metafile.LoadFromStream(astream);
     if preview then
-     PreviewMetafile(metafile)
+    begin
+     PreviewMetafile(metafile,aform);
+    end
     else
      rpgdidriver.PrintMetafile(metafile,'Printing',true,true,0,1,1,true,false);
    finally
