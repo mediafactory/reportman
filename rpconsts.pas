@@ -524,6 +524,8 @@ resourcestring
   SRpSNotYetImplemented='Feature not yet implemented';
   SRpNoFileNameProvided='No filename provided';
   SRpRecordCount='Record count';
+
+  SRpNoStreamToSaveReport='No Stream to save Report (TRpDesigner)';
 implementation
 
 

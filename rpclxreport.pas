@@ -20,7 +20,13 @@ unit rpclxreport;
 
 interface
 
-uses Classes,Sysutils,rpreport,rpconsts,rpcompobase,
+{$I rpconf.inc}
+
+uses Classes,Sysutils,rpreport,
+ rpconsts,rpcompobase,
+{$IFDEF HORZPAPERBUG}
+ rpmetafile,
+{$ENDIF}
  QPrinters,rpqtdriver,rppreview,rpalias,rprfparams;
 
 type
@@ -88,6 +94,19 @@ begin
   collate:=report.CollateCopies;
   frompage:=1; topage:=999999;
   copies:=report.Copies;
+{$IFDEF HORZPAPERBUG}
+  if report.PageOrientation=rpOrientationPortrait then
+  begin
+   printer.Orientation:=poPortrait;
+  end
+  else
+   if report.PageOrientation=rpOrientationLandscape then
+   begin
+    printer.Orientation:=poLandscape;
+   end;
+{$ENDIF}
+
+
   if ShowPrintDialog then
   begin
    if FUseSystemPrintDialog then

@@ -12,6 +12,13 @@
  {$UNDEF USEIBO}
 {$ENDIF}
 
+// Windows qtintf.dll has a bug about selecting horz paper
+// If horz paper is set and print setup is called seems
+// to work ok
+{$IFDEF MSWINDOWS}
+ {$DEFINE HORZPAPERBUG}
+{$ENDIF}
+
 {$IFDEF USEIBX}
  {$DEFINE USECONADMIN}
 {$ENDIF}

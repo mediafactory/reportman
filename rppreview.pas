@@ -211,7 +211,7 @@ begin
    report.BeginPrint(qtdriver);
   end;
   pagenum:=1;
-//  PrintPage;
+  PrintPage;
   printed:=true;
  except
   on E:Exception do

@@ -1,19 +1,20 @@
-{TODO 2  -oToni -cEngine : Export PDF implement images and text alignment, and text rotation}
-{TODO 2  -oToni -cEngine : Finish the pdf driver images, underline, textalign}
+{TODO 1 -oToni -cEngine : Add barcode component}
+{TODO 4  -oToni -cEngine : Export PDF implement images and text alignment, and text rotation}
+{TODO 4  -oToni -cEngine : Finish the pdf driver images, underline, textalign}
 {TODO 1 -oToni -cEngine : Allow Memos autoexpand across multiple pages}
 {TODO 1 -oToni -cEngine : Add a report server via sockets or the web, sending pdfs or html or jpgs.}
 
 {TODO 1 -oToni -cEngine : Implementation of external sections}
-{TODO 1 -oToni -cDesign Interface : Add multiselect option and show common properties in object inspector}
+{TODO 2 -oToni -cDesign Interface : Add multiselect option and show common properties in object inspector}
 
 
 {DONE 1 -oToni -cEngine : Qt Driver text rotation implementation}
 {DONE 5 -oToni -cEngine : Implementation for Delphi 5 vcl driver}
 
-{TODO 2 -oToni -cDesign Interface : Select the object that produces a error}
-{TODO 1 -oToni -cDesign Interface : Add a alignment window for elements}
+{TODO 1 -oToni -cDesign Interface : Select the object that produces a error}
+{TODO 2 -oToni -cDesign Interface : Add a alignment window for elements}
 {TODO 1 -oToni -cEngine : Implementation of vertical labels as subreport column width}
-{TODO 1 -oToni -cDesign Interface : Enhace object inspector speed}
+{TODO 2 -oToni -cDesign Interface : Enhace object inspector speed}
 
 
 
@@ -29,7 +30,7 @@
 
 
 {TODO 1  -oToni -cEngine : Implement autoexpand and autocontract for sections}
-{TODO 1 -oToni -cEngine : Program a simple chart component at least with poly lines and dots}
+{TODO 2 -oToni -cEngine : Program a simple chart component at least with poly lines and dots}
 
 {TODO 1 -oToni -cOthers : Conversion program for gestor.exe}
 {TODO 1   -oToni -cEngine : Saving and loading reportms from database tables using the designer}

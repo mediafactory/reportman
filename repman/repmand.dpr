@@ -20,14 +20,7 @@
 program repmand;
 
 {%ToDo 'repmand.todo'}
-
-{$IFDEF MSWINDOWS}
 {%File '..\rpconf.inc'}
-{$ENDIF}
-
-{$IFDEF LINUX}
-{%File '../rpconf.inc'}
-{$ENDIF}
 
 uses
   QForms,
@@ -47,7 +40,8 @@ uses
 {$IFDEF MSWINDOWS}
   ShLwApi in 'ShLwApi.pas',
   ShFolder in 'ShFolder.pas',
-  midaslib,Crtl,
+  midaslib,
+  Crtl,
   rppdfreport in '..\rppdfreport.pas',
   rpvclreport in '..\rpvclreport.pas',
   rpvgraphutils in '..\rpvgraphutils.pas',
@@ -55,7 +49,6 @@ uses
   rpvpreview in '..\rpvpreview.pas',
   rprfvparams in '..\rprfvparams.pas',
   rpgdifonts in '..\rpgdifonts.pas',
-
   rpreport in '..\rpreport.pas',
   rpsubreport in '..\rpsubreport.pas',
   rpconsts in '..\rpconsts.pas',
@@ -100,9 +93,12 @@ uses
   rpzlibzinflate in '..\rpzlibzinflate.pas',
   rpzlibzlib in '..\rpzlibzlib.pas',
   rpzlibzutil in '..\rpzlibzutil.pas',
+  rpcompobase in '..\rpcompobase.pas',
   rpclxreport in '..\rpclxreport.pas',
   rppdffile in '..\rppdffile.pas',
-  rppdfdriver in '..\rppdfdriver.pas';
+  rppdfdriver in '..\rppdfdriver.pas',
+  rpmdesigner in '..\rpmdesigner.pas';
+
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -149,9 +145,11 @@ uses
   rpzlibzinflate in '../rpzlibzinflate.pas',
   rpzlibzlib in '../rpzlibzlib.pas',
   rpzlibzutil in '../rpzlibzutil.pas',
+  rpcompobase in '../rpcompobase.pas',
   rpclxreport in '../rpclxreport.pas',
   rppdfdriver in '../rppdfdriver.pas',
-  rppdffile in '../rppdffile.pas';
+  rppdffile in '../rppdffile.pas',
+  rpmdesigner in '../rpmdesigner.pas';
 {$ENDIF}
 
 

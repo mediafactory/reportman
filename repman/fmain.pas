@@ -20,6 +20,8 @@ unit fmain;
 
 interface
 
+{$I rpconf.inc}
+
 uses
   SysUtils,
 {$IFDEF LINUX}
@@ -27,6 +29,9 @@ uses
 {$ENDIF}
 {$IFDEF MSWINDOWS}
   Dialogs,rpgdidriver,rpvpreview,
+{$ENDIF}
+{$IFDEF HORZPAPERBUG}
+ rpmetafile,
 {$ENDIF}
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
@@ -830,6 +835,20 @@ begin
  allpages:=true;
  collate:=report.CollateCopies;
  frompage:=1; topage:=999999;
+
+
+{$IFDEF HORZPAPERBUG}
+ if report.PageOrientation=rpOrientationPortrait then
+ begin
+  printer.Orientation:=poPortrait;
+ end
+ else
+  if report.PageOrientation=rpOrientationLandscape then
+  begin
+   printer.Orientation:=poLandscape;
+  end;
+{$ENDIF}
+
  copies:=report.Copies;
  if ASystemPrintDialog.Checked then
   dook:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate)

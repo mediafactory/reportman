@@ -46,6 +46,8 @@ type
    function ShowParams:boolean;virtual;abstract;
   // Defined as public but will be published in descendants
   public
+   procedure LoadFromFile(AFilename:string);
+   procedure LoadFromStream(stream:TStream);
    property Filename:TFilename read FFilename write SetFilename;
    property Preview:Boolean read FPreview write FPreview default true;
    property ShowProgress:boolean read FShowProgress write FShowProgress
@@ -56,6 +58,7 @@ type
    property AliasList:TRpAlias read FAliasList write FAliasList;
    property Language:integer read FLanguage write FLanguage default -1;
   end;
+
 
 implementation
 
@@ -112,18 +115,11 @@ end;
 procedure TCBaseReport.CheckLoaded;
 begin
  // Loads the report
- if Length(FFilename)<1 then
-  Raise Exception.Create(SRpNoFilename);
  if Assigned(FReport) then
   exit;
- FReport:=TRpReport.Create(Self);
- try
-  FReport.LoadFromFile(FFilename);
- except
-  FReport.Free;
-  FReport:=nil;
-  raise;
- end;
+ if Length(FFilename)<1 then
+  Raise Exception.Create(SRpNoFilename);
+ LoadFromFile(FFilename);
 end;
 
 
@@ -136,6 +132,42 @@ begin
   report.Language:=FLanguage;
  Result:=false;
 end;
+
+procedure TCBaseReport.LoadFromFile(AFilename:string);
+begin
+ if Assigned(FReport) then
+ begin
+  FReport.Free;
+  FReport:=nil;
+ end;
+ FReport:=TRpReport.Create(Self);
+ try
+  FReport.LoadFromFile(FFilename);
+ except
+  FReport.Free;
+  FReport:=nil;
+  raise;
+ end;
+end;
+
+
+procedure TCBaseReport.LoadFromStream(stream:TStream);
+begin
+ if Assigned(FReport) then
+ begin
+  FReport.Free;
+  FReport:=nil;
+ end;
+ FReport:=TRpReport.Create(Self);
+ try
+  FReport.LoadFromStream(Stream);
+ except
+  FReport.Free;
+  FReport:=nil;
+  raise;
+ end;
+end;
+
 
 
 end.
