@@ -311,7 +311,9 @@ function FormatCurrAdv(mask:String;number:Currency):String;
 // always the upper value if in the middle
 function Roundfloat(num:double;redondeo:double):double;
 
+{$IFDEF MSWINDOWS}
 function RpCharToOem(source:String):String;
+{$ENDIF}
 
 {$IFNDEF USEVARIANTS}
 procedure RaiseLastOSError;
@@ -3947,6 +3949,8 @@ begin
  alist.Add(SRpDuplexHor);
 end;
 
+
+{$IFDEF MSWINDOWS}
 function RpCharToOem(source:String):String;
 var
  abuf:Pchar;
@@ -3969,6 +3973,7 @@ begin
   FreeMem(abuf);
  end;
 end;
+{$ENDIF}
 
 initialization
 

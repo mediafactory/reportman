@@ -235,6 +235,25 @@ begin
     SysUtils.FindClose(F);
    end;
   end;
+{$IFDEF LINUX}
+  retvalue:=SysUtils.FindFirst(fontpaths.strings[i]+C_DIRSEPARATOR+'*.TTF',faAnyFile,F);
+  if 0=retvalue then
+  begin
+   try
+    while retvalue=0 do
+    begin
+     if ((F.Name<>'.') AND (F.Name<>'..')) then
+     begin
+      if (f.Attr AND faDirectory)=0 then
+       fontfiles.Add(fontpaths.strings[i]+C_DIRSEPARATOR+F.Name);
+     end;
+     retvalue:=SysUtils.FindNext(F);
+    end;
+   finally
+    SysUtils.FindClose(F);
+   end;
+  end;
+{$ENDIF}
  end;
  defaultfont:=nil;
  defaultfontb:=nil;
