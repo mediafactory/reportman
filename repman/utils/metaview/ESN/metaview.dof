@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=
+OutputDir=..\..\metaview
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -105,17 +105,9 @@ HostApplication=
 Launcher=
 UseLauncher=0
 DebugCWD=
-[Resource DLL Projects]
-Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
-[RDP Source Files]
-Item0=fmetaview.xfm
-Item1=..\..\..\rpprintdia.xfm
-Item2=..\..\..\rpmdrepclient.xfm
-Item3=..\..\..\rpmdclitree.xfm
-Item4=metaview.drc
 [Language]
 ActiveLang=
-ProjectLang=$00000409
+ProjectLang=
 RootDir=
 [Version Info]
 IncludeVerInfo=1
@@ -129,7 +121,7 @@ PreRelease=0
 Special=0
 Private=0
 DLL=0
-Locale=1033
+Locale=3082
 CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir

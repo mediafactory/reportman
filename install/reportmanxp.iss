@@ -24,6 +24,7 @@ Source: "..\repman\repmandxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysov
 Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\transwin\repmandxp.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\transwin\metaviewxp.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaview\metaviewxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaview\metaviewxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaprint\metaprintxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite

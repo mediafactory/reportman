@@ -105,9 +105,16 @@ HostApplication=
 Launcher=
 UseLauncher=0
 DebugCWD=
+[Resource DLL Projects]
+Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
+[RDP Source Files]
+Item0=fmetaviewvcl.dfm
+Item1=..\..\..\rpmdrepclient.xfm
+Item2=..\..\..\rpmdclitreevcl.dfm
+Item3=metaviewxp.drc
 [Language]
 ActiveLang=
-ProjectLang=
+ProjectLang=$00000409
 RootDir=
 [Version Info]
 IncludeVerInfo=1

@@ -115,6 +115,7 @@ procedure TFMain.BConnectClick(Sender: TObject);
 begin
  repclient:=Connect(ComboHost.Text,EUsername.Text,EPassword.Text,StrToInt(ComboPort.Text));
  ComboHost.Enabled:=False;
+ ComboPort.Enabled:=False;
  GUser.Visible:=False;
  GServerInfo.Visible:=True;
  repclient.OnGetUsers:=OnGetUsers;
@@ -133,6 +134,7 @@ begin
  Disconnect(repclient);
  repclient:=nil;
  ComboHost.Enabled:=True;
+ ComboPort.Enabled:=True;
  GServerInfo.Visible:=False;
  GUser.Visible:=True;
 end;

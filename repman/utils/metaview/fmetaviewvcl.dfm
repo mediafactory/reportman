@@ -1,8 +1,8 @@
 object FMetaVCL: TFMetaVCL
-  Left = 86
-  Top = 48
-  Width = 736
-  Height = 484
+  Left = 24
+  Top = 29
+  Width = 627
+  Height = 458
   HorzScrollBar.Range = 561
   VertScrollBar.Range = 338
   ActiveControl = EPageNum
@@ -29,13 +29,13 @@ object FMetaVCL: TFMetaVCL
     Left = 0
     Top = 27
     Width = 7
-    Height = 390
+    Height = 364
     Beveled = True
   end
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 728
+    Width = 619
     Height = 27
     AutoSize = True
     ButtonHeight = 25
@@ -160,8 +160,8 @@ object FMetaVCL: TFMetaVCL
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 417
-    Width = 728
+    Top = 391
+    Width = 619
     Height = 21
     Panels = <
       item

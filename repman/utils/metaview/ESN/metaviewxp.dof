@@ -90,7 +90,7 @@ MaxStackSize=1048576
 ImageBase=4194304
 ExeDescription=
 [Directories]
-OutputDir=
+OutputDir=..\..\metaview
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
@@ -105,17 +105,9 @@ HostApplication=
 Launcher=
 UseLauncher=0
 DebugCWD=
-[Resource DLL Projects]
-Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
-[RDP Source Files]
-Item0=fmetaview.xfm
-Item1=..\..\..\rpprintdia.xfm
-Item2=..\..\..\rpmdrepclient.xfm
-Item3=..\..\..\rpmdclitree.xfm
-Item4=metaview.drc
 [Language]
 ActiveLang=
-ProjectLang=$00000409
+ProjectLang=
 RootDir=
 [Version Info]
 IncludeVerInfo=1
@@ -129,7 +121,7 @@ PreRelease=0
 Special=0
 Private=0
 DLL=0
-Locale=1033
+Locale=3082
 CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
@@ -144,22 +136,22 @@ ProductVersion=1.1.0.0
 [Excluded Packages]
 C:\Archivos de programa\Borland\Delphi7\Bin\dclmid70.bpl=Borland MyBase DataAccess Components
 c:\archivos de programa\borland\delphi7\Bin\DCLIB70.bpl=InterBase Data Access Components
-c:\archivos de programa\borland\delphi7\Bin\dcldbxcds70.bpl=Borland SimpleDataset Component (DBX)
+c:\archivos de programa\borland\delphi7\Bin\dclmcn70.bpl=Borland DataSnap Connection Components
 c:\archivos de programa\borland\delphi7\Bin\DBWEBXPRT.BPL=Borland Web Wizard Package
+c:\archivos de programa\borland\delphi7\Bin\dclie70.bpl=Internet Explorer Components
+c:\archivos de programa\borland\delphi7\Bin\dclshlctrls70.bpl=Shell Control Property and Component Editors
+c:\archivos de programa\borland\delphi7\Bin\applet70.bpl=Borland Control Panel Applet Package
 c:\archivos de programa\borland\delphi7\Bin\dclemacsedit70.bpl=Borland Editor Emacs Enhancements
 c:\archivos de programa\borland\delphi7\Bin\dclsmpedit70.bpl=Borland Editor Script Enhancements
 C:\WINDOWS\System32\ibevnt70.bpl=Borland Interbase Event Alerter Component
-c:\archivos de programa\borland\delphi7\Bin\dclie70.bpl=Internet Explorer Components
+c:\archivos de programa\borland\delphi7\Bin\dcldbxcds70.bpl=Borland SimpleDataset Component (DBX)
 c:\archivos de programa\borland\delphi7\Bin\dclmlwiz70.bpl=Borland Markup Language Wizards
 c:\archivos de programa\borland\delphi7\Bin\dclnet70.bpl=Borland Internet Components
 c:\archivos de programa\borland\delphi7\Bin\dclwbm70.bpl=Borland InternetExpress Components
-c:\archivos de programa\borland\delphi7\Bin\dclshlctrls70.bpl=Shell Control Property and Component Editors
 c:\archivos de programa\borland\delphi7\Bin\dclsmp70.bpl=Borland Sample Components
 C:\Archivos de programa\Borland\Delphi7\Bin\dclocx70.bpl=Borland Sample Imported ActiveX Controls
-c:\archivos de programa\borland\delphi7\Bin\dclsoap70.bpl=Borland SOAP Components
-c:\archivos de programa\borland\delphi7\Bin\dclmcn70.bpl=Borland DataSnap Connection Components
-c:\archivos de programa\borland\delphi7\Bin\applet70.bpl=Borland Control Panel Applet Package
 c:\archivos de programa\borland\delphi7\Bin\dclact70.bpl=Borland ActionBar Components
+c:\archivos de programa\borland\delphi7\Bin\dclsoap70.bpl=Borland SOAP Components
 c:\archivos de programa\borland\delphi7\Bin\dcl31w70.bpl=Delphi 1.0 Compatibility Components
 c:\archivos de programa\borland\delphi7\Bin\dclwebsnap70.bpl=Borland WebSnap Components
 c:\archivos de programa\borland\delphi7\bin\dclRave70.bpl=Rave Reports BE 5.0 Package

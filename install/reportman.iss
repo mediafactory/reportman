@@ -27,6 +27,8 @@ Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\transwin\repmand.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\transwin\repmandxp.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\transwin\metaview.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\transwin\metaviewxp.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\qttranslation\windows\qt_*.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaview\metaview.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaview\metaview.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
