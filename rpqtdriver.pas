@@ -632,7 +632,7 @@ begin
 
  qtdriver:=TRpQtDriver.Create;
  aqtdriver:=qtdriver;
- oldprogres:=RepProgress;
+ oldprogres:=report.OnProgress;
  try
   report.OnProgress:=RepProgress;
   report.PrintAll(qtdriver);

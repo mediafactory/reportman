@@ -4,6 +4,7 @@ package rppack_del;
 {$R 'rpeval.dcr'}
 {$R 'rpalias.dcr'}
 {$R 'rplastsav.dcr'}
+{$R 'rppdfreport.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -29,12 +30,9 @@ package rppack_del;
 {$IMPLICITBUILD OFF}
 
 requires
-  vcl,
   rtl,
   dsnap,
   dbrtl,
-  IBO40CRT,
-  IBO40XRT,
   dbexpress,
   ibxpress,
   bdertl,
@@ -74,6 +72,10 @@ contains
   rpzlibzlib in 'rpzlibzlib.pas',
   rpzlibtrees in 'rpzlibtrees.pas',
   rpwriter in 'rpwriter.pas',
-  rpdataset in 'rpdataset.pas';
+  rpdataset in 'rpdataset.pas',
+  rppdfdriver in 'rppdfdriver.pas',
+  rppdffile in 'rppdffile.pas',
+  rppdfreport in 'rppdfreport.pas',
+  rpcompobase in 'rpcompobase.pas';
 
 end.

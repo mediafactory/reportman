@@ -26,7 +26,7 @@ interface
 uses SysUtils, Classes, Graphics, Forms,
   Buttons, ExtCtrls, Controls, StdCtrls,
   rpconsts,rptypes,
-{$IFDEF USE_VARIANTS}
+{$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
   rpreport,rpparams;

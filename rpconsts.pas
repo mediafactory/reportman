@@ -508,7 +508,9 @@ resourcestring
   SRpNoDriverName='No drivername assigned to connection: ';
 
   SRpIncorrectCalltoDeawGrid='Incorrect call to DrawBitmapGrid';
-
+  SRpSNotYetImplemented='Feature not yet implemented';
+  SRpNoFileNameProvided='No filename provided';
+  SRpRecordCount='Record count';
 implementation
 
 

@@ -1,16 +1,16 @@
 object Form1: TForm1
-  Left = 200
-  Top = 147
+  Left = 188
+  Top = 117
   Width = 543
   Height = 375
-  HorzScrollBar.Range = 521
   VertScrollBar.Range = 221
+  HorzScrollBar.Range = 521
   ActiveControl = Button1
   Caption = 'Form1'
   Color = clBackground
   PixelsPerInch = 96
-  TextHeight = 15
-  TextWidth = 7
+  TextHeight = 13
+  TextWidth = 6
   object Button1: TButton
     Left = 224
     Top = 80
@@ -32,15 +32,15 @@ object Form1: TForm1
   object Label1: TLabel
     Left = 340
     Top = 160
-    Width = 80
-    Height = 15
+    Width = 66
+    Height = 13
     Caption = 'PDF Filename'
   end
   object ETest: TEdit
     Left = 340
     Top = 180
     Width = 181
-    Height = 25
+    Height = 21
     TabOrder = 3
     Text = 'test.pdf'
   end

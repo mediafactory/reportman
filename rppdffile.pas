@@ -52,11 +52,6 @@ uses Classes,Sysutils,
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
-{$IFDEF USEVCL}
- graphics,windows,
-{$ELSE}
- QGraphics,
-{$ENDIF}
  rpzlib;
 
 resourcestring
@@ -97,7 +92,7 @@ type
    procedure TextRect(ARect: TRect; Text: string;
                        Alignment: integer; Clipping: boolean);
    procedure Rectangle(x1,y1,x2,y2:Integer);
-   procedure StretchDraw(rec:TRect;abitmap:TBitmap);
+//   procedure StretchDraw(rec:TRect;abitmap:TBitmap);
    procedure Ellipse(X1, Y1, X2, Y2: Integer);
    constructor Create(AFile:TRpPDFFile);
    destructor Destroy;override;
@@ -904,7 +899,7 @@ begin
  SWriteLine(FFile.FsTempStream,'ET');
 end;
 
-procedure TRpPDFCanvas.StretchDraw(rec:TRect;abitmap:TBitmap);
+{procedure TRpPDFCanvas.StretchDraw(rec:TRect;abitmap:TBitmap);
 var
  tempsx,tempsy:double;
 begin
@@ -918,7 +913,7 @@ begin
 //  tempsy:=((PageHeight)/(WinProcs.GetDeviceCaps(GetDC(0), LOGPIXELSY)*8));
 //end;
 
-{ FFile.FImageCount:=FFile.FImageCount+1;
+ FFile.FImageCount:=FFile.FImageCount+1;
  SWriteLine(FFile.FsTempStream,'q');
  SWriteLine(FFile.FsTempStream,UnitsToTextX(rec.Right-rec.Left)+
 ' 0 0 '+UnitsToTextX(rec.Bottom-rec.Top)+
@@ -926,7 +921,7 @@ begin
  +' cm');
  SWriteLine(FFile.FsTempStream,'/Im'+IntToStr(FFile.FImageCount)+' Do');
  SWriteLine(FFile.FsTempStream,'Q');
-}// SetBitmap(ABitmap);
+// SetBitmap(ABitmap);
 end;
-
+}
 end.

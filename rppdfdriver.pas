@@ -31,7 +31,7 @@ uses Classes,Sysutils,
  Windows,
 {$ENDIF}
  rptypes,rpmetafile,rppdffile,
- rpmunits;
+ rpmunits,rpreport,rpconsts;
 
 type
  TRpPdfDriver=class(TInterfacedObject,IRpPrintDriver)
@@ -39,6 +39,7 @@ type
    FPDFFIle:TRpPDFFile;
    FOrientation:TRpOrientation;
    FPageWidth,FPageHeight:integer;
+   procedure RepProgress(Sender:TRpReport;var docancel:boolean);
   public
    filename:string;
    Compressed:boolean;
@@ -60,8 +61,14 @@ type
 
 procedure SaveMetafileToPDF(metafile:TRpMetafileReport;
  filename:string;compressed:boolean);
+function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
+     allpages:boolean;frompage,topage,copies:integer;
+     filename:string;compressed:boolean):Boolean;
+
+
 
 implementation
+
 
 type
   TPageWidthHeight = record
@@ -357,6 +364,40 @@ begin
  FOrientation:=Orientation;
 end;
 
+
+procedure TRpPDFDriver.RepProgress(Sender:TRpReport;var docancel:boolean);
+begin
+ WriteLn(SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
+  +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
+  FormatFloat('#########,####',Sender.RecordCount));
+end;
+
+
+function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
+     allpages:boolean;frompage,topage,copies:integer;
+     filename:string;compressed:boolean):Boolean;
+var
+ pdfdriver:TRpPDFDriver;
+ apdfdriver:IRpPrintDriver;
+ oldprogres:TRpProgressEvent;
+begin
+ if Length(Trim(filename))<0 then
+  Raise Exception.Create(SRpNoFileNameProvided+':PDF');
+ pdfdriver:=TRpPDFDriver.Create;
+ pdfdriver.filename:=filename;
+ pdfdriver.compressed:=compressed;
+ apdfdriver:=pdfdriver;
+ // If report progress must print progress
+ oldprogres:=report.OnProgress;
+ try
+  if progress then
+   report.OnProgress:=pdfdriver.RepProgress;
+  report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
+ finally
+  report.OnProgress:=oldprogres;
+ end;
+ Result:=True;
+end;
 
 
 

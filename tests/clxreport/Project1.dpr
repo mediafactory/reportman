@@ -9,14 +9,18 @@ uses
   rpalias in '..\..\rpalias.pas',
   rpreport in '..\..\rpreport.pas',
   rpdatainfo in '..\..\rpdatainfo.pas',
-  rpqtdriver in '..\..\rpqtdriver.pas' {FRpQtProgress};
+  rpqtdriver in '..\..\rpqtdriver.pas' {FRpQtProgress},
+  rpcompobase in '..\..\rpcompobase.pas',
+  rppdfreport in '..\..\rppdfreport.pas';
 {$ENDIF}
 
 {$IFDEF LINUX}
   rpclxreport in '../../rpclxreport.pas',
   rpalias in '../../rpalias.pas',
   rpreport in '../../rpreport.pas',
-  rpdatainfo in '../../rpdatainfo.pas';
+  rpdatainfo in '../../rpdatainfo.pas',
+  rpcompobase in '../../rpcompobase.pas';
+  rppdfreport in '../../rppdfreport.pas';
 {$ENDIF}
 
 
