@@ -84,7 +84,9 @@ type
     procedure SetProperty(pname:string;value:Widestring);override;
     function GetProperty(pname:string):Widestring;override;
     procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
+    function CreateChild(compo:TRpCommonPosComponent):TRpSizePosInterface;
     procedure CreateChilds;
+    procedure DeleteChild(achild:TRpSizePosInterface);
     procedure InvalidateAll;
     property OnPosChange:TNotifyEvent read FOnPosChange write SetOnPosChange;
     procedure DoDeleteComponent(aitem:TComponent);
@@ -877,6 +879,58 @@ begin
  end;
 
 
+end;
+
+function TRpSectionInterface.CreateChild(compo:TRpCommonPosComponent):TRpSizePosInterface;
+var
+ labelint:TRpSizePosInterface;
+begin
+ labelint:=nil;
+ if compo is TRpLabel then
+ begin
+  labelint:=TRpLabelInterface.Create(Self,compo);
+ end;
+ if compo is TRpExpression then
+ begin
+  labelint:=TRpExpressionInterface.Create(Self,compo);
+ end;
+ if compo is TRpBarcode then
+ begin
+  labelint:=TRpBarcodeInterface.Create(Self,compo);
+ end;
+ if compo is TRpChart then
+ begin
+  labelint:=TRpChartInterface.Create(Self,compo);
+ end;
+ if compo is TRpShape then
+ begin
+  labelint:=TRpDrawInterface.Create(Self,compo);
+ end;
+ if compo is TRpImage then
+ begin
+  labelint:=TRpImageInterface.Create(Self,compo);
+ end;
+ if Assigned(labelint) then
+ begin
+  labelint.Parent:=FInterface;
+  labelint.sectionint:=self;
+  labelint.Visible:=compo.visible;
+  labelint.UpdatePos;
+  labelint.fobjinsp:=fobjinsp;
+  childlist.Add(labelint)
+ end;
+ Result:=labelint;
+end;
+
+procedure TRpSectionInterface.DeleteChild(achild:TRpSizePosInterface);
+var
+ index:integer;
+begin
+ index:=childlist.IndexOf(achild);
+ if index<0 then
+  Raise Exception.Create(SRpNotFound);
+ TObject(childlist.Items[index]).free;
+ childlist.Delete(index);
 end;
 
 procedure TRpSectionInterface.CreateChilds;

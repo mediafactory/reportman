@@ -102,6 +102,7 @@ function ChangeExpression(formul:string;aval:TRpCustomEvaluator):string;
 implementation
 
 {$R *.dfm}
+uses rplabelitem;
 
 constructor TRpExpreDialogVCL.create(AOwner:TComponent);
 begin
@@ -195,19 +196,26 @@ begin
  for i:=0 to aval.identifiers.Count -1 do
  begin
   iden:=aval.identifiers.objects[i] as TRpIdentifier;
-  case iden.RType of
-   RTypeidenfunction:
-    begin
-    lista1:=llistes[1];
-    end;
-   RTypeidenvariable:
-    begin
-     lista1:=llistes[2];
-    end;
-   RTypeidenconstant:
-    begin
-     lista1:=llistes[3];
-    end;
+  if iden is TIdenRpExpression then
+  begin
+   lista1:=llistes[2];
+  end
+  else
+  begin
+   case iden.RType of
+    RTypeidenfunction:
+     begin
+     lista1:=llistes[1];
+     end;
+    RTypeidenvariable:
+     begin
+      lista1:=llistes[2];
+     end;
+    RTypeidenconstant:
+     begin
+      lista1:=llistes[3];
+     end;
+   end;
   end;
   rec:=TRpRecHelp.Create;
   rec.rfunction:=iden.Idenname;

@@ -557,6 +557,32 @@ begin
     FAliasList:=nil;
   end;
  end;
+ if operation=Opinsert then
+ begin
+  if (AComponent is TRpExpression) then
+  begin
+   if Length(TRpExpression(AComponent).Identifier)>0 then
+   begin
+    index:=FIdentifiers.IndexOf(TRpExpression(AComponent).Identifier);
+    if index>=0 then
+     TRpExpression(AComponent).Identifier:=''
+    else
+     FIdentifiers.AddObject(TRpExpression(AComponent).Identifier,AComponent);
+   end;
+  end
+  else
+  if (AComponent is TRpChart) then
+  begin
+   if Length(TRpChart(AComponent).Identifier)>0 then
+   begin
+    index:=FIdentifiers.IndexOf(TRpChart(AComponent).Identifier);
+    if index>=0 then
+     TRpChart(AComponent).Identifier:=''
+    else
+     FIdentifiers.Add(TRpChart(AComponent).Identifier);
+   end;
+  end;
+ end;
 end;
 
 

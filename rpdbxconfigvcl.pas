@@ -336,9 +336,11 @@ begin
 end;
 
 procedure TFRpDBXConfigVCL.BConnectClick(Sender: TObject);
+{$IFDEF USESQLEXPRESS}
 var
  conname:string;
  funcname,drivername,vendorlib,libraryname:string;
+{$ENDIF}
 begin
 {$IFDEF USESQLEXPRESS}
  if Not Assigned(ConAdmin) then

@@ -948,6 +948,7 @@ begin
  ACopy.Execute;
  alist:=TStringList.Create;
  try
+  sectionintf:=nil;
   alist.Assign(fobjinsp.SelectedItems);
   fobjinsp.ClearMultiSelect;
   for i:=0 to alist.count-1 do
@@ -955,11 +956,14 @@ begin
    aitem:=TRpSizePosInterface(alist.Objects[i]);
    sectionintf:=TRpSectionInterface(aitem.SectionInt);
    TRpSection(sectionintf.printitem).DeleteComponent(aitem.printitem);
+   sectionintf.DeleteChild(aitem);
   end;
+  if assigned(sectionintf) then
+   fobjinsp.AddCompItem(sectionintf,true);
  finally
   alist.free;
  end;
- fdesignframe.UpdateSelection(true);
+// fdesignframe.UpdateSelection(true);
 end;
 
 procedure TFRpMainFVCL.ACopyExecute(Sender: TObject);
@@ -1037,8 +1041,10 @@ begin
     (section.Components.Add).Component:=pitem;
     report.InsertComponent(pitem);
     Generatenewname(pitem);
+    TFRpObjInspVCL(fobjinsp).AddCompItem(secint.CreateChild(pitem),false);
    end;
-   fdesignframe.UpdateSelection(true);
+//   fdesignframe.UpdateSelection(true);
+   // Select the items
   finally
    alist.Free;
   end;

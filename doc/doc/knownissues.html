@@ -149,7 +149,7 @@
     <td>Access violation passing runtime linked querys to the engine using Delphi 
       7 </td>
   </tr>
-  <tr>
+  <tr> 
     <td>Delphi 7 introduces a bug when linking a query (datasource) that is linked 
       to another query, (three linked querys), this situation usually raises an 
       Access Violation in some memory address when the first dataset moves, the 
@@ -157,6 +157,15 @@
       datasources in correct order, move main dataset and then reenable the datasources 
       in correct order. Delphi 5 and 6 does not have this bug, this bug seems 
       to be reproduced only with ADO and BDE drivers.</td>
+  </tr>
+  <tr bgcolor="#00FFFF"> 
+    <td>Connecting to Oracle 9i databases</td>
+  </tr>
+  <tr>
+    <td>There seems to be a problem with Oracle 9i library. Use libclntsh.so from 
+      an 8.1.7 Oracle version (for example copied to /usr/lib). Connecting to 
+      a 9i database with an 8i driver works as long as you do not use 9i features 
+      inside your queries</td>
   </tr>
 </table>
 <p>&nbsp;</p>

@@ -1002,7 +1002,10 @@ begin
    aitem:=TRpSizePosInterface(alist.Objects[i]);
    sectionintf:=TRpSectionInterface(aitem.SectionInt);
    TRpSection(sectionintf.printitem).DeleteComponent(aitem.printitem);
+   sectionintf.DeleteChild(aitem);
   end;
+  if assigned(sectionintf) then
+   fobjinsp.AddCompItem(sectionintf,true);
  finally
   alist.free;
  end;
@@ -1085,7 +1088,8 @@ begin
     report.InsertComponent(pitem);
     Generatenewname(pitem);
    end;
-   fdesignframe.UpdateSelection(true);
+   TFRpObjInspVCL(fobjinsp).AddCompItem(secint.CreateChild(pitem),false);
+//   fdesignframe.UpdateSelection(true);
   finally
    alist.Free;
   end;
