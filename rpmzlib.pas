@@ -189,21 +189,21 @@ function zlibCheck(code: Integer): Integer;
 begin
   Result := code;
   if code < 0 then
-    raise EZlibError.Create('error');    //!!
+    raise EZlibError.Create('error zlib zlibcheck');    //!!
 end;
 
 function CCheck(code: Integer): Integer;
 begin
   Result := code;
   if code < 0 then
-    raise ECompressionError.Create('error'); //!!
+    raise ECompressionError.Create('error CCheck ZlibCompression'); //!!
 end;
 
 function DCheck(code: Integer): Integer;
 begin
   Result := code;
   if code < 0 then
-    raise EDecompressionError.Create('error');  //!!
+    raise EDecompressionError.Create('error Zlib DCheck Decompression');  //!!
 end;
 
 procedure CompressBuf(const InBuf: Pointer; InBytes: Integer;
