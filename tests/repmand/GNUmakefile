@@ -92,4 +92,4 @@ clean:
 	-rm -f *.bin
 	-rm -f .htaccess
 	-rm -Rf apilib
-	-rm libborunwind.so.6.0
+	-rm -f libborunwind.so.6.0

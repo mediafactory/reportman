@@ -89,8 +89,9 @@ object FRpEditCon: TFRpEditCon
       Height = 25
       Caption = 'OK'
       Default = True
-      ModalResult = 1
+      ModalResult = 0
       TabOrder = 0
+      OnClick = BOKClick
     end
     object BCancel: TButton
       Left = 132

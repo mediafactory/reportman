@@ -2363,15 +2363,6 @@ end;
 
 {$ENDIF}
 
-{$IFDEF LINUX}
-function RpTempFileName:String;
-var
- abuffer:array [0..L_tmpnam] of char;
-begin
- tmpnam(abuffer);
- Result:=StrPas(abuffer);
-end;
-{$ENDIF}
 
 {$IFNDEF DOTNETD}
 function RpTempFileName:String;

@@ -86,9 +86,11 @@ type
     procedure BTestClick(Sender: TObject);
     procedure BCreateLibClick(Sender: TObject);
     procedure BBrowseClick(Sender: TObject);
+    procedure BOKClick(Sender: TObject);
   private
     { Private declarations }
     rpalias1:TRpAlias;
+    dook:Boolean;
     procedure UpdateConList;
   public
     { Public declarations }
@@ -112,7 +114,8 @@ begin
  dia:=TFRpEditCon.Create(Application);
  try
   dia.rpalias1.Connections.Assign(Connections);
-  if (dia.ShowModal=mrOK) then
+  dia.showmodal;
+  if (dia.dook) then
   begin
    Result:=True;
    Connections.Assign(dia.rpalias1.Connections);
@@ -375,6 +378,12 @@ begin
   exit;
  alibrary:=LConnections.Items.Strings[LConnections.ItemIndex];
  SelectReportFromLibrary(rpalias1.Connections,alibrary);
+end;
+
+procedure TFRpEditCon.BOKClick(Sender: TObject);
+begin
+ dook:=true;
+ Close;
 end;
 
 end.

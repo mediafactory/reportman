@@ -28,7 +28,7 @@ exports
  rp_lasterror,
  rp_executeremote,
  rp_setparamvalue,
- rp_getparamname
+ rp_getparamname,
  rp_getparamcount;
 
 begin

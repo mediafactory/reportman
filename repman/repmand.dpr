@@ -116,6 +116,9 @@ uses
   rppdffile in '..\rppdffile.pas',
   rpmdesigner in '..\rpmdesigner.pas',
   rpmdsysinfoqt in '..\rpmdsysinfoqt.pas' {FRpSysInfo},
+  rpeditconn in '..\rpeditconn.pas' {FRpEditCon},
+  rpmdfopenlib in '..\rpmdfopenlib.pas' {FRpOpenLib},
+  rpmdprintconfig in '..\rpmdprintconfig.pas' {FRpPrinterConfig};
   rppdfdriver in '..\rppdfdriver.pas';
 {$ENDIF}
 
@@ -197,6 +200,9 @@ uses
   rppdfdriver in '../rppdfdriver.pas',
   rpmdesigner in '../rpmdesigner.pas',
   rpmdsysinfoqt in '../rpmdsysinfoqt.pas' {FRpSysInfo},
+  rpeditconn in '../rpeditconn.pas' {FRpEditCon},
+  rpmdftree in '../rpmdftree.pas' {FRpDBTree},
+  rpmdfopenlib in '../rpmdfopenlib.pas' {FRpOpenLib},
   rpmdprintconfig in '../rpmdprintconfig.pas' {FRpPrinterConfig};
 {$ENDIF}
 
