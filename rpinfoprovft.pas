@@ -638,7 +638,7 @@ begin
       if wr>0 then
       begin
        CheckFreeType(FT_Get_Kerning(currentfont.ftface,wl,wr,FT_KERNING_UNSCALED,akerning));
-       kervalue:=Round(currentfont.widthmult*akerning.x);
+       kervalue:=Round(currentfont.widthmult*-akerning.x);
       end;
      end;
      currentfont.loadedkernings.AddObject(searchname,TObject(kervalue));

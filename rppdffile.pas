@@ -1615,9 +1615,7 @@ var
  aarray:PWinAnsiWidthsArray;
  isdefault:boolean;
  afontname:string;
-{$IFDEF VCLANDCLX}
  index:integer;
-{$ENDIF}
 begin
 {$IFDEF MSWINDOWS}
   afontname:=StringReplace(Font.WFontName,' ','',[rfReplaceAll]);
@@ -1633,7 +1631,6 @@ begin
    Result:=0;
    exit;
   end;
-{$IFDEF VCLANDCLX}
   if (FFont.Name in [poLinked,poEmbedded]) then
   begin
    // Ask for font size
@@ -1646,7 +1643,6 @@ begin
    end;
   end
   else
-{$ENDIF}
   if (FFont.Name=poHelvetica) then
   begin
    aarray:=@Helvetica_Widths;
