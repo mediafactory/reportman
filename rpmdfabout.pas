@@ -26,7 +26,7 @@ uses SysUtils, Classes,
   Libc,
 {$ENDIF}
 {$IFDEF MSWINDOWS}
-  ShellApi,
+  Windows,ShellApi,
 {$ENDIF}
   QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,QDialogs,
