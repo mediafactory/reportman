@@ -26,6 +26,7 @@ uses
 {$IFDEF MSWINDOWS}
   midaslib,
   rpreport in '..\..\..\rpreport.pas',
+  rpparams in '..\..\..\rpparams.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas',
   rptypes in '..\..\..\rptypes.pas',
   rpsubreport in '..\..\..\rpsubreport.pas',
@@ -36,6 +37,7 @@ uses
 
 {$IFDEF LINUX}
   rpreport in '../../../rpreport.pas',
+  rpparams in '../../../rpparams.pas',
   rpmdconsts in '../../../rpmdconsts.pas',
   rptypes in '../../../rptypes.pas',
   rpsubreport in '../../../rpsubreport.pas',
@@ -65,6 +67,7 @@ begin
  Writeln(SRpPrintRep6);
  Writeln(SRpPrintRep7);
  Writeln(SRpPrintRep8);
+ Writeln(SRpParseParamsH);
 end;
 
 begin
@@ -145,6 +148,7 @@ begin
       copies:=report.Copies
      else
       copies:=acopies;
+     ParseCommandLineParams(report.Params);
      PrintReport(report,filename,showprogress,allpages,
       frompage,topage,copies,collate);
     finally

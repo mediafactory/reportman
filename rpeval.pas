@@ -240,6 +240,9 @@ begin
  Rpfunctions.AddObject('EVALTEXT',iden);
  iden:=TIdenNumToText.Create(nil);
  Rpfunctions.AddObject('NUMTOTEXT',iden);
+ //added FRB 20030204
+ iden:=TIdenReplaceStr.Create(nil);
+ Rpfunctions.AddObject('REPLACESTR',iden);
 
  // Graphic functions
  iden:=TIdenGraphicClear.Create(nil);

@@ -52,7 +52,7 @@ type
    FShape:TRpShapeType;
    FPenWidth:integer;
   protected
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
   public
    constructor Create(AOwner:TComponent);override;
@@ -85,7 +85,7 @@ type
    destructor Destroy;override;
   protected
    procedure DefineProperties(Filer: TFiler);override;
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
   public
    function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
@@ -128,10 +128,10 @@ begin
  inherited destroy;
 end;
 
-procedure TRpShape.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpShape.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 begin
- inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
+ inherited DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
  metafile.Pages[metafile.CurrentPage].NewDrawObject(aposy,aposx,Width,Height,
   integer(Shape),BrushStyle,BrushColor,PenStyle,PenWidth,PenColor);
 end;
@@ -313,12 +313,12 @@ end;
 
 
 
-procedure TRpImage.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpImage.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  FMStream:TMemoryStream;
 begin
- inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
+ inherited DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
  if Not Assigned(FStream) then
   exit;
  FMStream:=GetStream;

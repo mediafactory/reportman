@@ -100,7 +100,7 @@ type
    procedure LoadExternalFromDatabase;
    procedure SetIniNumPage(Value:Boolean);
   protected
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
    procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
@@ -385,50 +385,100 @@ begin
  end;
 end;
 
-procedure TRpSection.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpSection.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  i:integer;
  compo:TRpCommonPosComponent;
  newposx,newposy:integer;
  intPartialPrint:Boolean;
+ DoPartialPrint:BOolean;
 begin
- inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
+ inherited DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
 
+ DoPartialPrint:=False;
+ // Look for a partial print
+ for i:=0 to Components.Count-1 do
+ begin
+  compo:=TRpCommonPosComponent(Components.Items[i].Component);
+  if (compo is TRpExpression) then
+   if TRpExpression(compo).IsPartial then
+   begin
+    DoPartialPrint:=true;
+    break;
+   end;
+ end;
  PartialPrint:=false;
  for i:=0 to Components.Count-1 do
  begin
   compo:=TRpCommonPosComponent(Components.Items[i].Component);
-  // Evaluates print condition of each comonent
-  if compo.EvaluatePrintCondition then
+  if DoPartialPrint then
   begin
-   // Alignbottom will change the component position
-   if (compo.Align<>rpalnone) then
-   begin
-    if (compo.Align in [rpalbottom,rpalbotright]) then
+   if (compo is TRpExpression) then
+    if TRpExpression(Compo).IsPartial then
     begin
-     newposy:=aposy+lastextent.Y-compo.lastextent.Y;
-    end
-    else
-     newposy:=aposy+compo.PosY;
     // Alignbottom will change the component position
-    if (compo.Align in [rpalright,rpalbotright]) then
+     if (compo.Align<>rpalnone) then
+     begin
+      if (compo.Align in [rpalbottom,rpalbotright]) then
+      begin
+       newposy:=aposy+lastextent.Y-compo.lastextent.Y;
+      end
+      else
+       newposy:=aposy+compo.PosY;
+      // Alignbottom will change the component position
+      if (compo.Align in [rpalright,rpalbotright]) then
+      begin
+       newposx:=aposx+lastextent.X-compo.lastextent.X;
+      end
+      else
+       newposx:=aposx+compo.PosX;
+     end
+     else
+     begin
+      newposx:=aposx+compo.PosX;
+      newposy:=aposy+compo.PosY;
+     end;
+     IntPartialPrint:=false;
+     Components.Items[i].Component.Print(adriver,newposx,newposy,metafile,
+      MaxExtent,IntPartialPrint);
+     if IntPartialPrint then
+      PartialPrint:=True;
+    end;
+  end
+  else
+  begin
+   // Evaluates print condition of each comonent
+   if compo.EvaluatePrintCondition then
+   begin
+    // Alignbottom will change the component position
+    if (compo.Align<>rpalnone) then
     begin
-     newposx:=aposx+lastextent.X-compo.lastextent.X;
+     if (compo.Align in [rpalbottom,rpalbotright]) then
+     begin
+      newposy:=aposy+lastextent.Y-compo.lastextent.Y;
+     end
+     else
+      newposy:=aposy+compo.PosY;
+     // Alignbottom will change the component position
+     if (compo.Align in [rpalright,rpalbotright]) then
+     begin
+      newposx:=aposx+lastextent.X-compo.lastextent.X;
+     end
+     else
+      newposx:=aposx+compo.PosX;
     end
     else
+    begin
      newposx:=aposx+compo.PosX;
-   end
-   else
-   begin
-    newposx:=aposx+compo.PosX;
-    newposy:=aposy+compo.PosY;
+     newposy:=aposy+compo.PosY;
+    end;
+    IntPartialPrint:=false;
+    Components.Items[i].Component.Print(adriver,newposx,newposy,metafile,
+     MaxExtent,IntPartialPrint);
+    if IntPartialPrint then
+     PartialPrint:=True;
    end;
-   IntPartialPrint:=false;
-   Components.Items[i].Component.Print(newposx,newposy,metafile,
-    MaxExtent,IntPartialPrint);
-   if IntPartialPrint then
-    PartialPrint:=True;
   end;
  end;
 end;

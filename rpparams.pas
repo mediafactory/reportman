@@ -108,6 +108,7 @@ function VariantTypeToDataType(avariant:Variant):TFieldType;
 function ParamTypeToString(paramtype:TRpParamType):String;
 function StringToParamType(Value:String):TRpParamType;
 procedure GetPossibleDataTypes(alist:TStrings);
+procedure ParseCommandLineParams(params:TRpParamList);
 
 implementation
 
@@ -528,5 +529,30 @@ begin
  alist.Add(SRpSParamSubs);
  alist.Add(SRpSParamList);
 end;
+
+// Command line params are in form of:
+// -paramPARAMNAME=paramvalueinstringformat
+procedure ParseCommandLineParams(params:TRpParamList);
+var
+ i:integer;
+ aparam:String;
+ paramname:String;
+ paramvalue:String;
+ index:integer;
+begin
+ for i:=1 to ParamCount do
+ begin
+  aparam:=ParamStr(i);
+  if Pos('-param',aparam)=1 then
+  begin
+   aparam:=copy(aparam,7,Length(aparam));
+   index:=Pos('=',aparam);
+   paramname:=copy(aparam,1,index-1);
+   paramvalue:=copy(aparam,index+1,Length(aparam));
+   params.ParamByName(paramname).AsString:=paramvalue;
+  end;
+ end;
+end;
+
 
 end.

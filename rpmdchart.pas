@@ -22,7 +22,7 @@ interface
 
 {$I rpconf.inc}
 
-uses Classes,SysUtils,Math,rpprintitem,rpmdconsts,rpeval,
+uses Classes,SysUtils,rpprintitem,rpmdconsts,rpeval,
  rptypeval,rptypes,rpevalfunc,rpmunits,
 {$IFNDEF USEVARIANTS}
  windows,
@@ -145,7 +145,7 @@ type
    procedure DoPrintTeeChart(aposx,aposy:integer;metafile:TRpMetafileReport);
 {$ENDIF}
   protected
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
   public
@@ -243,8 +243,8 @@ begin
  FMaxAllocated:=DEFAULT_ALLOCATION;
  Fpool:='';
  FPoolPos:=1;
- FMaxValue:=-Power(10,300);
- FMinValue:=+Power(10,300);
+ FMaxValue:=-10e300;
+ FMinValue:=+10e300;
 end;
 
 procedure TRpSeriesItem.Assign(Source:TPersistent);
@@ -286,8 +286,8 @@ begin
  FValueCount:=0;
  FPoolPos:=1;
  FPool:='';
- FMaxValue:=-Power(10,300);
- FMinValue:=+Power(10,300);
+ FMaxValue:=-10e300;
+ FMinValue:=+10e300;
 end;
 
 
@@ -683,7 +683,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TRpChart.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpChart.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 {var
  aText:WideString;
@@ -708,8 +708,9 @@ var
  acolor:integer;
  pencolor:integer;
  MaxValueCount:integer;
+ aTextObj:TRpTextObject;
 begin
- inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
+ inherited DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
  if FSeries.Count<1 then
   exit;
  // Draws a TeeChart
@@ -720,12 +721,9 @@ begin
   exit;
  end;
 {$ENDIF}
- aalign:=PrintAlignment or VAlignment;
- if SingleLine then
-  aalign:=aalign or AlignmentFlags_SingleLine;
  // To draw for each serie find macvalue and minvalue
- MaxValue:=-Power(10,300);
- MinValue:=+Power(10,300);
+ MaxValue:=-10e300;
+ MinValue:=+10e300;
  MaxValueCount:=0;
  for i:=0 to FSeries.Count-1 do
  begin
@@ -760,9 +758,23 @@ begin
    integer(rpsHorzLine),0,0,1,0,0);
   // Draw the caption
   aText:=FormatFloat('########0.00',avalue);
+  aTextObj.Text:=aText;
+  aTextObj.LFontName:=LFontName;
+  aTextObj.WFontName:=WFontName;
+  aTextObj.FontSize:=FontSize;
+  aTextObj.FontRotation:=FontRotation;
+  aTextObj.FontStyle:=FontStyle;
+  aTextObj.FontColor:=FontColor;
+  aTextObj.Type1Font:=integer(Type1Font);
+  aTextObj.CutText:=CutText;
+  aTextObj.WordWrap:=WordWrap;
+  aTextObj.RightToLeft:=RightToLeft;
+  aalign:=PrintAlignment or VAlignment;
+  if SingleLine then
+   aalign:=aalign or AlignmentFlags_SingleLine;
+  aTextObj.Alignment:=aalign;
   metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+posy-(gridvsep div 4),
-   aposx,horzgap,gridvsep,aText,WFontName,LFontName,FontSize,FontRotation,
-   FontStyle,smallint(Type1Font),FOntColor,BackColor,Transparent,CutText,aalign,WordWrap,RightToLeft);
+   aposx,horzgap,gridvsep,aTextobj,BackColor,Transparent);
   avalue:=avalue+valueinc;
  end;
  // Draws the lines

@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.5pre10';
+ RM_VERSION='1.5pre15';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
 
@@ -616,7 +616,11 @@ var
   SRpDataUnionNotFound:WideString='Data Union not found in Mybase';
   SRpCannotCombine:WideString='Cannot combine-union a dataset to other dataset with fewer field number';
   SRpSParamList:WideString='Value list';
-  SRpSParamListDesc:WideString='Strings to show (left) and strings to assign (right)'; 
+  SRpSParamListDesc:WideString='Strings to show (left) and strings to assign (right)';
+  SRpReplaceStr:WideString='Replace a string within a string';
+  SRpPReplaceStr:WideString='x Replace a string within a string';
+  SRpParseParamsH:WideString='         -paramPARAMNAME=paramvalue  Assign a value to a parameter';
+
 implementation
 
 uses rptranslator;

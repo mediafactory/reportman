@@ -1,3 +1,4 @@
+
 {*******************************************************}
 {                                                       }
 {       Rpevalfunc                                      }
@@ -22,7 +23,7 @@ interface
 
 uses
   SysUtils, Classes,
-  rpmdconsts,DB,Math,
+  rpmdconsts,DB,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
@@ -268,6 +269,15 @@ type
    property OnNewValue:TRpNewValue read FOnNewValue write FOnNewValue;
   end;
 
+ //added FRB 20030204
+ TIdenReplaceStr=class(TIdenFunction)
+ protected
+   function GeTRpValue:TRpValue;override;
+  public
+   constructor Create(AOWner:TComponent);override;
+  end;
+
+
  function Roundfloat(num:double;redondeo:double):double;
 
 
@@ -275,7 +285,7 @@ type
 
 implementation
 
-uses rpeval;
+uses rpeval,Math;
 
 {**************************************************************************}
 
@@ -1242,6 +1252,31 @@ begin
 end;
 
 
+
+//added FRB 20030204
+{ TIdenReplaceStr }
+
+constructor TIdenReplaceStr.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=3;
+ IdenName:='ReplaceStr';
+ Help:=SRpReplaceStr;
+ model:='function '+'ReplaceStr'+'(const S, OldPattern, NewPattern:string;): string;';
+ aParams:=SRpPReplaceStr;
+end;
+
+{**************************************************************************}
+
+function TIdenReplaceStr.GeTRpValue:TRpValue;
+begin
+ if (Vartype(Params[0])<>varstring)
+  or (Vartype(Params[1])<>varstring)
+  or (Vartype(Params[2])<>varstring) then
+   Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ Result:=StringReplace(String(Params[0]),String(Params[1]),String(Params[2]),
+  [rfReplaceAll, rfIgnoreCase]);
+end;
 
 
 end.

@@ -736,6 +736,7 @@ var
   DeviceMode: THandle;
   Device, Driver, Port: array[0..1023] of char;
   printererror:boolean;
+  aresult:DWord;
 begin
  Result:=falsE;
  if printer.Printers.count<1 then
@@ -750,10 +751,68 @@ begin
  if printererror then
   exit;
  try
-  Result:=DeviceCapabilities(Device,Port,DC_COLLATE,nil,nil)<>0;
+  aresult:=DeviceCapabilities(Device,Port,DC_COLLATE,nil,nil);
+  // Function fail =-1
+  if aresult>0 then
+    Result:=true;
  except
  end;
 end;
+
+// PrinterSupportsCopies function not working ok
+// In W2K for EpsonFX880 returns true
+{function PrinterSupportsCopies(copies:integer):Boolean;
+var
+  DeviceMode: THandle;
+  Device, Driver, Port: array[0..1023] of char;
+  printererror:boolean;
+  maxcopies:integer;
+  FPrinterHandle:THandle;
+  cadenaimp:String;
+  buf:PChar;
+  asize:integer;
+  pdevmode:^DEVMODE;
+begin
+ Result:=False;
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+ if Printer.Printers.Count<1 then
+  exit;
+ cadenaimp:=GetPrinters[Printer.PrinterIndex];
+ buf:=Pchar(cadenaimp);
+ if Not OpenPrinter(buf,fprinterhandle,nil) then
+  exit;
+ try
+  pdevmode:=AllocMem(sizeof(devmode));
+  try
+   asize:=DocumentProperties(0,fprinterhandle,Device,pdevmode^,pdevmode^,0);
+   if asize>0 then
+   begin
+    FreeMem(pdevmode);
+    pdevmode:=AllocMem(asize);
+    if IDOK=DocumentProperties(0,fprinterhandle,Device,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
+    begin
+     // The printer supports copies?
+     if (pdevmode^.dmFields AND DM_COPIES)>0 then
+     begin
+      Result:=true;
+     end;
+    end;
+   end;
+  finally
+   FreeMem(pdevmode);
+  end;
+ finally
+  ClosePrinter(fprinterhandle);
+ end;
+end;
+}
 
 function PrinterSupportsCopies(copies:integer):Boolean;
 var
@@ -777,12 +836,16 @@ begin
   exit;
  try
    maxcopies:=DeviceCapabilities(Device,Port,DC_COPIES,nil,nil);
+   // Function fail
+   if maxcopies<0 then
+    maxcopies:=0;
 //   Result:=copies<=maxcopies;
  except
  end;
  // DeviceCapabilities is not working well, returns 9999 in
  // max number of copies for Epson FX series or Oki Elite series
  // It should return false because no printer copies capability
+// Result:=maxcopies<copies;
  Result:=maxcopies<0;
 end;
 

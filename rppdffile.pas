@@ -1204,7 +1204,6 @@ var
  rotstring:string;
  PosLine,PosLineX1,PosLineY1,PosLineX2,PosLineY2:integer;
  astring:String;
- i:integer;
 begin
  FFile.CheckPrinting;
  if (Rotation<>0) then
@@ -1238,11 +1237,7 @@ begin
   astring:=Text;
   if RightToLeft then
   begin
-   astring:='';
-   for i:=1 to Length(text) do
-   begin
-    astring:=text[i]+astring;
-   end;
+   astring:=DoReverseString(astring);
   end;
   SWriteLine(FFile.FsTempStream,'('+PDFCompatibleText(astring)+') Tj');
   SWriteLine(FFile.FsTempStream,'ET');

@@ -225,6 +225,11 @@ begin
  ltypes.Add(SRpSString);
  if Assigned(lvalues) then
   lvalues.Add(TRpExpression(printitem).DisplayFormat);
+ // Multipage
+ lnames.Add(SRpMultiPage);
+ ltypes.Add(SRpSBool);
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpExpression(printitem).MultiPage,true));
  lnames.Add(SRpPrintNulls);
  ltypes.Add(SRpSBool);
  if Assigned(lvalues) then
@@ -286,6 +291,11 @@ begin
   TRpExpression(fprintitem).DisplayFormat:=value;
   exit;
  end;
+ if pname=SRpMultiPage then
+ begin
+  TRpExpression(fprintitem).MultiPage:=StrToBool(Value);
+  exit;
+ end;
  if pname=SRpPrintNulls then
  begin
   TRpExpression(fprintitem).PrintNulls:=StrToBool(Value);
@@ -340,6 +350,11 @@ begin
  if pname=SrpSDisplayFormat then
  begin
   Result:=TRpExpression(printitem).DisplayFormat;
+  exit;
+ end;
+ if pname=SRpMultiPage then
+ begin
+  Result:=BoolToStr(TRpExpression(printitem).MultiPage,true);
   exit;
  end;
  if pname=SrpPrintNulls then

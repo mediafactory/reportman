@@ -460,6 +460,8 @@ begin
     end;
     Canvas.Brush.Style:=bsClear;
     atext:=page.GetText(Obj);
+    if obj.RightToLeft then
+     atext:=DoReverseStringW(atext);
     if obj.FontRotation<>0 then
     begin
      Canvas.Start;

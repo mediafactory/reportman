@@ -96,7 +96,7 @@ type
    procedure WriteExpression(Writer:TWriter);
    procedure ReadExpression(Reader:TReader);
   protected
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
   public
@@ -1581,13 +1581,13 @@ begin
  Result:=data;
 end;
 
-procedure TRpBarCode.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpBarCode.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  aText:string;
  data:string;
 begin
- inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
+ inherited DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
  aText:=GetText;
  try
   data:=Calculatebarcode;

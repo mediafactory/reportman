@@ -295,7 +295,7 @@ type
 
 implementation
 
-uses rpprintitem, rpsecutil, Math;
+uses rpprintitem, rpsecutil;
 
 function TIdenReportVar.GeTRpValue:TRpValue;
 var
@@ -1863,6 +1863,11 @@ function CheckSpace:boolean;
 var
  MaxExtent:TPoint;
 begin
+ if freespace=0 then
+ begin
+  Result:=false;
+  exit;
+ end;
  MaxExtent.x:=pagespacex;
  MaxExtent.y:=freespace;
  if not sectionextevaluated then
@@ -1889,7 +1894,7 @@ begin
  sectionextevaluated:=false;
 end;
 
-procedure PrintSection(datasection:boolean;PartialPrint:Boolean);
+procedure PrintSection(adriver:IRpPrintDriver;datasection:boolean;var PartialPrint:Boolean);
 var
  MaxExtent:TPoint;
 begin
@@ -1906,7 +1911,7 @@ begin
  // If the section is not aligned at bottom of the page then
  if Not asection.AlignBottom then
  begin
-  asection.Print(pageposx,pageposy,metafile,MaxExtent,PartialPrint);
+  asection.Print(adriver,pageposx,pageposy,metafile,MaxExtent,PartialPrint);
   freespace:=freespace-sectionext.Y;
   pageposy:=pageposy+sectionext.Y;
  end
@@ -1914,14 +1919,14 @@ begin
  // Align to bottom
  begin
   pageposy:=pageposy+freespace-sectionext.Y;
-  asection.Print(pageposx,pageposy,metafile,MaxExtent,PartialPrint);
+  asection.Print(adriver,pageposx,pageposy,metafile,MaxExtent,PartialPrint);
   freespace:=0;
  end;
  if asection.SkipType=secskipafter then
   SkipToPageAndPosition;
 end;
 
-procedure PrintFixedSections(headers:boolean);
+procedure PrintFixedSections(adriver:IRpPrintDriver;headers:boolean);
 var
  pheader,pfooter:integer;
  pheadercount,pfootercount:integer;
@@ -1945,7 +1950,7 @@ begin
    begin
     asection:=psection;
     CheckSpace;
-    PrintSection(false,PartialPrint);
+    PrintSection(adriver,false,PartialPrint);
    end;
   end;
 
@@ -1961,7 +1966,7 @@ begin
     begin
      asection:=psection;
      CheckSpace;
-     PrintSection(false,PartialPrint);
+     PrintSection(adriver,false,PartialPrint);
     end;
    end;
   end;
@@ -1978,7 +1983,7 @@ begin
      begin
       asection:=psection;
       CheckSpace;
-      PrintSection(false,PartialPrint);
+      PrintSection(adriver,false,PartialPrint);
      end;
     end;
    end;
@@ -2035,7 +2040,7 @@ begin
      sectionext:=asection.GetExtension(FDriver,MaxExtent);
      if printit then
       if asection.EvaluatePrintCondition then
-       PrintSection(false,PartialPrint);
+       PrintSection(adriver,false,PartialPrint);
     end;
    end;
    // Global page footers
@@ -2051,7 +2056,7 @@ begin
     sectionext:=asection.GetExtension(FDriver,MaxExtent);
     if printit then
      if asection.EvaluatePrintCondition then
-      PrintSection(false,PartialPrint);
+      PrintSection(adriver,false,PartialPrint);
    end;
   end;
  end;
@@ -2116,7 +2121,7 @@ begin
  pagefooters:=TStringList.Create;
  try
   // Fills the page with fixed sections
-  PrintFixedSections(true);
+  PrintFixedSections(FDriver,true);
   oldsubreport:=subreport;
   while Assigned(section)  do
   begin
@@ -2157,21 +2162,21 @@ begin
    if Not CheckSpace then
     break;
    PartialPrint:=False;
-   PrintSection(true,PartialPrint);
+   PrintSection(FDriver,true,PartialPrint);
    if Not PartialPrint then
     NextSection(true);
    if printedsomething then
    begin
     if asection.SkipPage then
      break;
-   end;      
+   end;
    // if Subreport changed and has have pagefooter
    if ((oldsubreport<>subreport) and (havepagefooters)) then
     break;
    oldsubreport:=subreport;
   end;
   // Fills the page with fixed sections
-  PrintFixedSections(false);
+  PrintFixedSections(FDriver,false);
  finally
   pagefooters.Free;
  end;

@@ -154,6 +154,8 @@ procedure GetLanguageDescriptions(alist:TStrings);
 procedure GetBidiDescriptions(alist:TStrings);
 function RpBidiModeToString(BidiMode:TRpBidiMode):String;
 function StringToRpBidiMode(Value:String):TRpBidiMode;
+function DoReverseString(Value:String):String;
+function DoReverseStringW(Value:WideString):WideString;
 
 {$IFNDEF USEVARIANTS}
 procedure RaiseLastOSError;
@@ -1330,6 +1332,29 @@ begin
   if Value=SRpSBidiFull then
    Result:=rpBidiFull;
 end;
+
+function DoReverseString(Value:String):String;
+var
+ i:integer;
+begin
+ Result:='';
+ for i:=1 to Length(Value) do
+ begin
+  Result:=Value[i]+Result;
+ end;
+end;
+
+function DoReverseStringW(Value:WideString):WideString;
+var
+ i:integer;
+begin
+ Result:='';
+ for i:=1 to Length(Value) do
+ begin
+  Result:=Value[i]+Result;
+ end;
+end;
+
 
 initialization
 

@@ -61,7 +61,7 @@ const
 {$ENDIF}
 type
  TRpDbDriver=(rpdatadbexpress,rpdatamybase,rpdataibx,
-  rpdatabde,rpdataado,rpdataibo);
+  rpdatabde,rpdataado,rpdataibo,rpdatadriver);
 
 
  TRpConnAdmin=class(TObject)
@@ -81,6 +81,21 @@ type
    procedure DeleteConnection(conname:string);
  end;
 
+ IRpDatabaseDriver=interface
+  ['{B3BA37D5-5401-4B9E-8804-698C214F8B0C}']
+  procedure Connect;stdcall;
+  procedure AssignParams(params:TStrings);stdcall;
+  procedure GetParams(params:TStrings);stdcall;
+ end;
+
+ IRpDataDriver=interface
+  ['{5094336F-C953-4108-94E3-1EC0E3D3D94C}']
+  function Open:TDataset;stdcall;
+  procedure Close;stdcall;
+  procedure SetDatabase(IDatabase:IRpDatabaseDriver);stdcall;
+  procedure AssignParams(params:TStrings);stdcall;
+  procedure GetParams(params:TStrings);stdcall;
+ end;
 
  TRpDatabaseInfoItem=class(TCollectionItem)
   private
@@ -2338,7 +2353,6 @@ begin
   groupfieldindex.free;
  end;
 end;
-
 
 initialization
 

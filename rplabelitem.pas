@@ -32,7 +32,7 @@ uses Sysutils,Classes,rptypes,rpprintitem,rpmdconsts,
 {$IFDEF USEVARIANTS}
   Variants,Types,
 {$ENDIF}
- rptypeval,math;
+ rptypeval;
 
 const
  AlignmentFlags_SingleLine=64;
@@ -51,7 +51,7 @@ type
    procedure ReadWideText(Reader:TReader);
   protected
    procedure DefineProperties(Filer:TFiler);override;
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure Loaded;override;
   public
@@ -89,6 +89,8 @@ type
    FIdenExpression:TIdenRpExpression;
    FOldString:widestring;
    FPrintNulls:boolean;
+   FIsPartial:Boolean;
+   FPartialPos:Integer;
    procedure SetIdentifier(Value:string);
    procedure Evaluate;
    procedure WriteExpression(Writer:TWriter);
@@ -97,16 +99,18 @@ type
    procedure ReadAgIniValue(Reader:TReader);
   protected
    procedure DefineProperties(Filer:TFiler);override;
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
   public
    constructor Create(AOwner:TComponent);override;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
+   function GetTextObject:TRpTextObject;
    function GetText:widestring;
    property IdenExpression:TIdenRpExpression read FIdenExpression;
    function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
    property Expression:widestring read FExpression write FExpression;
    property AgIniValue:widestring read FAgIniValue write FAgIniValue;
+   property IsPartial:Boolean read FIsPartial;
   published
    property DataType:TRpParamType read FDataType write FDataType default rpParamUnknown;
    property DisplayFormat:string read FDisplayformat write FDisplayFormat;
@@ -135,7 +139,7 @@ type
 implementation
 
 
-uses rpreport;
+uses rpreport,Math;
 
 function TIdenRpExpression.GeTRpValue:TRpValue;
 begin
@@ -289,19 +293,32 @@ begin
  FDataType:=rpParamUnknown;
 end;
 
-procedure TRpLabel.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpLabel.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  aalign:integer;
+ aTextObj:TRpTextObject;
 begin
- inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
+ inherited DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
+ aTextObj.Text:=Text;
+ aTextObj.LFontName:=LFontName;
+ aTextObj.WFontName:=WFontName;
+ aTextObj.FontSize:=FontSize;
+ aTextObj.FontRotation:=FontRotation;
+ aTextObj.FontStyle:=FontStyle;
+ aTextObj.FontColor:=FontColor;
+ aTextObj.Type1Font:=integer(Type1Font);
+ aTextObj.CutText:=CutText;
+ aTextObj.WordWrap:=WordWrap;
+ aTextObj.RightToLeft:=RightToLeft;
  aalign:=PrintAlignment or VAlignment;
  if SingleLine then
   aalign:=aalign or AlignmentFlags_SingleLine;
+ aTextObj.Alignment:=aalign;
+
+
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy,
-  aposx,width,height,Text,WFontName,LFontName,FontSize,FontRotation,
-  FontStyle,smallint(Type1Font),FOntColor,BackColor,Transparent,CutText,aalign,
-   WordWrap,RightToLeft);
+  aposx,width,height,aTextObj,BackColor,Transparent);
 end;
 
 
@@ -375,32 +392,45 @@ begin
  begin
   Evaluate;
   Result:=FormatVariant(displayformat,FValue,FDataType,FPrintNulls);
+  if FIsPartial then
+   Result:=Copy(Result,FPartialPos,Length(Result));
  end;
 end;
 
-procedure TRpExpression.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpExpression.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
- aText:WideString;
  expre:WideString;
- aalign:integer;
+ Textobj:TRpTextObject;
+ newposition:Integer;
 begin
- inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
+ inherited DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
  expre:=Trim(Expression);
- aText:=GetText;
+ Textobj:=GetTextObject;
  if PrintOnlyOne then
  begin
-  if FOldString=aText then
+  if FOldString=Textobj.Text then
    exit;
-  FOldString:=aText;
+  FOldString:=Textobj.Text;
  end;
- aalign:=PrintAlignment or VAlignment;
- if SingleLine then
-  aalign:=aalign or AlignmentFlags_SingleLine;
+ if MultiPage then
+ begin
+  maxextent.X:=Width;
+  newposition:=CalcTextExtent(adriver,maxextent,Textobj);
+  if newposition<Length(TextObj.Text) then
+  begin
+   if Not FIsPartial then
+    FPartialPos:=0;
+   FIsPartial:=true;
+   PartialPrint:=true;
+   FPartialPos:=FPartialPos+newposition+1;
+   TextObj.Text:=Copy(TextObj.Text,1,newposition);
+  end
+  else
+   FIsPartial:=false;
+ end;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy,
-   aposx,width,height,aText,WFontName,LFontName,FontSize,FontRotation,
-   FontStyle,smallint(Type1Font),FOntColor,BackColor,Transparent,CutText,
-    aalign,WordWrap,RightToLeft);
+   aposx,width,height,Textobj,BackColor,Transparent);
  // Is Total pages variable?
  if (UpperCase(expre)='PAGECOUNT') then
  begin
@@ -416,6 +446,7 @@ begin
  case newstate of
   rpReportStart:
    begin
+    FIsPartial:=false;
     FOldString:='';
     FUpdated:=false;
     FDataCount:=0;
@@ -439,6 +470,7 @@ begin
    end;
   rpSubReportStart:
    begin
+    FIsPartial:=false;
     FOldString:='';
     FUpdated:=false;
     FDataCount:=0;
@@ -462,6 +494,7 @@ begin
    end;
   rpDataChange:
    begin
+    FIsPartial:=false;
     FUpdated:=false;
     inc(FDataCount);
     if (FAggregate<>rpAgNone) then
@@ -524,6 +557,7 @@ begin
    end;
   rpGroupChange:
    begin
+    FIsPartial:=false;
     FUpdated:=false;
     FOldString:='';
     if (FAggregate=rpAgGroup) then
@@ -559,29 +593,56 @@ begin
    end;
   rpInvalidateValue:
    begin
+    FIsPartial:=false;
     FOldString:='';
     FUpdated:=false;
    end;
  end;
 end;
 
+function TRpExpression.GetTextObject:TRpTextObject;
+var
+ aalign:Integer;
+begin
+ Result.Text:=GetText;
+ Result.LFontName:=LFontName;
+ Result.WFontName:=WFontName;
+ Result.FontSize:=FontSize;
+ Result.FontRotation:=FontRotation;
+ Result.FontStyle:=FontStyle;
+ Result.Type1Font:=integer(Type1Font);
+ Result.FontColor:=FontColor;
+ Result.CutText:=CutText;
+ aalign:=PrintAlignment or VAlignment;
+ if SingleLine then
+  aalign:=aalign or AlignmentFlags_SingleLine;
+ Result.Alignment:=aalign;
+ Result.WordWrap:=WordWrap;
+ Result.RightToLeft:=RightToLeft;
+end;
+
 function TRpExpression.GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;
 var
  aText:TRpTextObject;
+ aposition:integer;
+ IsPartial:Boolean;
 begin
+ IsPartial:=False;
  Result:=inherited GetExtension(adriver,MaxExtent);
- aText.Text:=GetText;
- aText.LFontName:=LFontName;
- aText.WFontName:=WFontName;
- aText.FontSize:=FontSize;
- aText.FontRotation:=FontRotation;
- aText.FontStyle:=FontStyle;
- aText.Type1Font:=integer(Type1Font);
- aText.CutText:=CutText;
- aText.Alignment:=Alignment;
- aText.WordWrap:=WordWrap;
-
- adriver.TextExtent(aText,Result);
+ aText:=GetTextObject;
+ if MultiPage then
+ begin
+  maxextent.X:=Result.X;
+  aposition:=CalcTextExtent(adriver,maxextent,aText);
+  if aposition<Length(aText.Text) then
+   ispartial:=true;
+  aText.Text:=Copy(aText.Text,1,aposition);
+  adriver.TextExtent(aText,Result);
+  if ispartial then
+   Result.Y:=MaxExtent.Y;
+ end
+ else
+  adriver.TextExtent(aText,Result);
  LastExtent:=Result;
 end;
 

@@ -93,6 +93,7 @@ type
   FontSize:smallint;
   FontRotation:smallint;
   FontStyle:smallint;
+  FontColor:Integer;
   Type1Font:smallint;
   CutText:boolean;
   Alignment:integer;
@@ -169,10 +170,7 @@ type
    destructor Destroy;override;
    procedure Clear;
    procedure NewTextObject(Top,Left,Width,Height:integer;
-    Text:widestring;WFontName:widestring;LFontName:widestring;
-    FontSize:smallint;FontRotation:smallint;FontStyle:smallint;
-    Type1Font:smallint;FontColor:integer;BackColor:integer;transparent:boolean;
-    cuttext:boolean;Alignment:integer;WordWrap:boolean;RightToLeft:Boolean);
+    aText:TRpTextObject;BackColor:integer;transparent:boolean);
    procedure NewDrawObject(Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenStyle:integer;PenWidth:integer; PenColor:integer);
@@ -236,6 +234,8 @@ type
    property OnProgress:TRpMetafileStreamProgres read FOnProgress write FOnProgress;
   published
   end;
+
+  function CalcTextExtent(adriver:IRpPrintDriver;maxextent:TPoint;obj:TRpTextObject):integer;
 
 implementation
 
@@ -372,10 +372,7 @@ end;
 
 
 procedure TrpMetafilePage.NewTextObject(Top,Left,Width,Height:integer;
-    Text:widestring;WFontName:widestring;LFontName:widestring;
-    FontSize:smallint;FontRotation:smallint;FontStyle:smallint;
-    Type1Font:smallint;FontColor:integer;BackColor:integer;transparent:boolean;
-    cuttext:boolean;Alignment:integer;WordWrap:boolean;RightToLeft:boolean);
+    aText:TRpTextObject;BackColor:integer;transparent:boolean);
 begin
  if FObjectCount>=High(FObjects)-1 then
  begin
@@ -388,22 +385,22 @@ begin
  FObjects[FObjectCount].Width:=Width;
  FObjects[FObjectCount].Metatype:=rpMetaText;
 
- NewWideString(FObjects[FObjectCount].TextP,FObjects[FObjectCount].TextS,Text);
+ NewWideString(FObjects[FObjectCount].TextP,FObjects[FObjectCount].TextS,aText.Text);
  NewWideString(FObjects[FObjectCount].WFontNameP,
-  FObjects[FObjectCount].WFontNameS,WFontName);
+  FObjects[FObjectCount].WFontNameS,aText.WFontName);
  NewWideString(FObjects[FObjectCount].LFontNameP,
-  FObjects[FObjectCount].LFontNameS,LFontName);
- FObjects[FObjectCount].FontSize:=FontSize;
- FObjects[FObjectCount].FontRotation:=FontRotation;
- FObjects[FObjectCount].FontStyle:=FontStyle;
- FObjects[FObjectCount].Type1Font:=Type1Font;
- FObjects[FObjectCount].FontColor:=FontColor;
+  FObjects[FObjectCount].LFontNameS,aText.LFontName);
+ FObjects[FObjectCount].FontSize:=aText.FontSize;
+ FObjects[FObjectCount].FontRotation:=aText.FontRotation;
+ FObjects[FObjectCount].FontStyle:=aText.FontStyle;
+ FObjects[FObjectCount].Type1Font:=aText.Type1Font;
+ FObjects[FObjectCount].FontColor:=aText.FontColor;
  FObjects[FObjectCount].BackColor:=BackColor;
  FObjects[FObjectCount].Transparent:=Transparent;
- FObjects[FObjectCount].CutText:=CutText;
- FObjects[FObjectCount].Alignment:=Alignment;
- FObjects[FObjectCount].WordWrap:=WordWrap;
- FObjects[FObjectCount].RightToLeft:=RightToLeft;
+ FObjects[FObjectCount].CutText:=aText.CutText;
+ FObjects[FObjectCount].Alignment:=aText.Alignment;
+ FObjects[FObjectCount].WordWrap:=aText.WordWrap;
+ FObjects[FObjectCount].RightToLeft:=aText.RightToLeft;
 
  inc(FObjectCount);
 
@@ -920,6 +917,42 @@ begin
   LoadFromStream(memstream);
  finally
   memstream.free;
+ end;
+end;
+
+function CalcTextExtent(adriver:IRpPrintDriver;maxextent:TPoint;obj:TRpTextObject):integer;
+var
+ newextent:TPoint;
+ currentPos:Integer;
+ delimiters:string;
+ originalstring:WideString;
+begin
+ delimiters:=' '+'.'+','+'-'+'/'+'\'+'='+')'+'('+'*'+'+'+'-';
+ currentpos:=Length(obj.Text);
+ originalstring:=obj.Text;
+ obj.Text:=Copy(originalstring,1,currentpos);
+ newextent:=maxextent;
+ adriver.TextExtent(obj,newextent);
+ while newextent.Y>maxextent.Y do
+ begin
+  while currentpos>0 do
+  begin
+   Dec(currentpos);
+   if isdelimiter(delimiters,obj.Text,currentpos) then
+    break;
+  end;
+
+  if currentpos<1 then
+   break;
+  obj.Text:=Copy(originalstring,1,currentpos);
+  newextent:=maxextent;
+  adriver.TextExtent(obj,newextent);
+ end;
+ if currentpos<1 then
+  Result:=Length(obj.Text)
+ else
+ begin
+  Result:=CurrentPos;
  end;
 end;
 

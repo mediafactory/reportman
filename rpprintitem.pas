@@ -54,14 +54,14 @@ type
    procedure SetHeight(Value:TRpTwips);
   protected
    function GetReport:TComponent;
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);virtual;
   public
    lastextent:TPoint;
    constructor Create(AOwner:TComponent);override;
    function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;virtual;
    function EvaluatePrintCondition:boolean;
-   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport;
+   procedure Print(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');virtual;
    property Report:TComponent read GetReport;
@@ -237,7 +237,7 @@ begin
 end;
 
 
-procedure TRpCommonComponent.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpCommonComponent.DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 begin
  // Executes OnBeforePrint
@@ -249,7 +249,7 @@ begin
 end;
 
 
-procedure TRpCommonComponent.Print(aposx,aposy:integer;metafile:TRpMetafileReport;
+procedure TRpCommonComponent.Print(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  fevaluator:TRpEvaluator;
@@ -272,7 +272,7 @@ begin
   end;
  end;
 
- DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
+ DoPrint(adriver,aposx,aposy,metafile,MaxExtent,PartialPrint);
 
  if Length(FDoAfterPrint)>0 then
  begin
