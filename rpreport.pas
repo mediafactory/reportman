@@ -447,6 +447,10 @@ procedure TRpReport.ActivateDatasets;
 var
  i:integer;
 begin
+ if FDataInfo.Count<1 then
+ begin
+  Raise Exception.Create(SRpNoDatasets);
+ end;
  try
   for i:=0 to FDataInfo.Count-1 do
   begin

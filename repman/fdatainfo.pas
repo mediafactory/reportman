@@ -395,10 +395,24 @@ begin
 end;
 
 procedure TFDatainfoconfig.DoSave;
+var
+ i:integer;
+ index:integer;
 begin
  report.DatabaseInfo.Assign(databaseinfo);
  report.DataInfo.Assign(datainfo);
  report.Params:=Params;
+ // Updates subreport aliases
+ for i:=0 to report.SubReports.Count-1 do
+ begin
+  index:=report.DataInfo.IndexOf(report.SubReports.Items[i].SubReport.Alias);
+  if index<0 then
+  begin
+   report.SubReports.Items[i].SubReport.Alias:='';
+   if report.DataInfo.Count>0 then
+    report.SubReports.Items[i].SubReport.Alias:=report.datainfo.items[0].alias;
+  end;
+ end;
  saved:=true;
 end;
 

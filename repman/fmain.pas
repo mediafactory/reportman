@@ -110,6 +110,10 @@ type
     Cut1: TMenuItem;
     Copy1: TMenuItem;
     APaste1: TMenuItem;
+    ToolButton10: TToolButton;
+    ToolButton11: TToolButton;
+    ToolButton12: TToolButton;
+    ToolButton13: TToolButton;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -134,13 +138,14 @@ type
     procedure ACopyExecute(Sender: TObject);
     procedure APasteExecute(Sender: TObject);
     procedure Splitter1Moved(Sender: TObject);
+    procedure APreviewExecute(Sender: TObject);
+    procedure APrintExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFDesignFrame;
     fobjinsp:TFObjInsp;
     lastsaved:TMemoryStream;
     configfile:string;
-    freportstructure:TFRpStructure;
     function checkmodified:boolean;
     procedure FreeInterface;
     procedure CreateInterface;
@@ -157,6 +162,7 @@ type
     { Public declarations }
     report:TRpReport;
     filename:string;
+    freportstructure:TFRpStructure;
   end;
 
 var
@@ -164,7 +170,7 @@ var
 
 implementation
 
-uses rppagesetup, rpshfolder, freportgroup, fdatainfo, frpgrid;
+uses rppagesetup, rpshfolder, freportgroup, fdatainfo, frpgrid, rppreview;
 
 {$R *.xfm}
 
@@ -304,6 +310,8 @@ begin
  ADeleteSelection.Enabled:=false;
  AnewDetail.Enabled:=false;
  ADataConfig.Enabled:=false;
+ APreview.Enabled:=false;
+ APrint.Enabled:=false;
  AGridOptions.Enabled:=false;
  MDisplay.Visible:=false;
  MEdit.Visible:=false;
@@ -352,6 +360,8 @@ begin
  ADeleteSelection.Enabled:=true;
  AnewDetail.Enabled:=true;
  ADataConfig.Enabled:=true;
+ APreview.Enabled:=true;
+ APrint.Enabled:=true;
  AGridOptions.Enabled:=true;
  MDisplay.Visible:=true;
  MEdit.Visible:=true;
@@ -620,6 +630,7 @@ procedure TFMainf.ADataConfigExecute(Sender: TObject);
 begin
  // Data info configuration dialog
  ShowDataConfig(report);
+ fdesignframe.UpdateSelection(true);
 end;
 
 procedure TFMainf.AParamsExecute(Sender: TObject);
@@ -709,6 +720,17 @@ procedure TFMainf.OnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
 begin
  Handled:=MessageDlg(SRpErrorReadingReport,Message+#10+SRpIgnoreError,mtWarning,[mbYes,mbNo],0)=mrYes;
+end;
+
+procedure TFMainf.APreviewExecute(Sender: TObject);
+begin
+ // Previews the report
+ ShowPreview(report);
+end;
+
+procedure TFMainf.APrintExecute(Sender: TObject);
+begin
+ // Prints the report
 end;
 
 initialization

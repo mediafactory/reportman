@@ -24,7 +24,7 @@ uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   rpobinsint,QGrids,rpconsts,rpprintitem,QStdCtrls,
   QExtCtrls,rpgraphutils,rpsection,rpmunits, rpexpredlg,
-  rpalias,rpreport,Qt;
+  rpalias,rpreport,Qt,rpsubreport;
 
 const
   CONS_LEFTGAP=3;
@@ -48,6 +48,7 @@ type
     LNames:TStringList;
     LTypes:TStringList;
     LValues:TStringList;
+    subrep:TRpSubreport;
     fchangesize:TRpSizeModifier;
     procedure SetCompItem(Value:TRpSizeInterface);
     procedure ReleaseAllControls;
@@ -63,6 +64,8 @@ type
     procedure ImageKeyDown(Sender: TObject;
      var Key: Word; Shift: TShiftState);
     procedure ExpressionClick(Sender:TObject);
+    procedure  Subreportprops;
+    procedure ComboAliasChange(Sender:TObject);
   public
     { Public declarations }
     combo:TComboBox;
@@ -150,6 +153,8 @@ begin
   fmainf.ACut.Enabled:=false;
   fmainf.ACopy.Enabled:=false;
   fmainf.APaste.Enabled:=false;
+  // Addes subreport props
+  Subreportprops;
   exit;
  end;
  if CompItem is TRpSizePosInterface then
@@ -661,6 +666,46 @@ begin
    Stream.Free;
   end;
  end;
+end;
+
+procedure  TFObjInsp.Subreportprops;
+var
+ alabel:TLabel;
+ posy:integer;
+ comboalias:TComboBox;
+ i,totalwidth:integer;
+begin
+ totalwidth:=WIdth;
+ if totalwidth<CONS_MINWIDTH then
+  totalwidth:=CONS_MINWIDTH;
+ posy:=0;
+ subrep:=fmainf.freportstructure.FindSelectedSubreport;
+ ALabel:=TLabel.Create(Self);
+ LLabels.Add(ALabel);
+ ALabel.Caption:=SRpMainDataset;
+ ALabel.Left:=CONS_LEFTGAP;
+ ALabel.Top:=posy+CONS_LABELTOPGAP;
+ ALabel.parent:=self;
+
+ ComboAlias:=TComboBox.Create(Self);
+ for i:=0 to fmainf.report.DataInfo.Count-1 do
+ begin
+  ComboAlias.Items.Add(fmainf.report.DataInfo.items[i].Alias);
+ end;
+ ComboAlias.Itemindex:=ComboAlias.Items.IndexOf(subrep.Alias);
+ ComboAlias.OnChange:=ComboAliasChange;
+ ComboAlias.Top:=Posy;
+ ComboAlias.Left:=CONS_CONTROLPOS;
+ ComboAlias.Width:=TotalWidth-ComboAlias.Left-CONS_RIGHTBARGAP;
+ ComboAlias.parent:=self;
+
+ LControls.AddObject(subrep.name,ComboAlias);
+ LControlsToFree.Add(ComboAlias);
+end;
+
+procedure TFObjInsp.ComboAliasChange(Sender:TObject);
+begin
+ subrep.Alias:=TComboBox(Sender).Text;
 end;
 
 end.

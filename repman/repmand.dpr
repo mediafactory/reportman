@@ -65,8 +65,8 @@ uses
   rpgraphutils in '..\rpgraphutils.pas' {FRpGraphProgres},
   rplabelitem in '..\rplabelitem.pas',
   rpdrawitem in '..\rpdrawitem.pas',
-  rpprintrep in '..\rpprintrep.pas';
-
+  rpprintrep in '..\rpprintrep.pas',
+  rppreview in '..\rppreview.pas' {FRpPreview};
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -97,7 +97,8 @@ uses
   rpgraphutils in '../rpgraphutils.pas' {FRpGraphProgres},
   rplabelitem in '../rplabelitem.pas',
   rpdrawitem in '../rpdrawitem.pas',
-  rpprintrep in '../rpprintrep.pas';
+  rpprintrep in '../rpprintrep.pas',
+  rppreview in '..\rppreview.pas' {FRpPreview};
 {$ENDIF}
 
 

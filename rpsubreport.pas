@@ -28,6 +28,7 @@ type
  TRpSubReport=class(TComponent)
   private
    FSections:TRpSectionList;
+   FAlias:string;
    // Methots for writing internal indexes
    procedure SetSections(Value:TRpSectionList);
    function GetDetailCount:integer;
@@ -46,10 +47,11 @@ type
    procedure AddPageFooter;
    procedure AddGroup(groupname:string);
    procedure AddDetail;
-  published
-   property Sections:TRpSectionList read FSections write SetSections;
    property FirstDetail:integer read GetDetail;
    property DetailCount:integer read GetDetailCount;
+  published
+   property Sections:TRpSectionList read FSections write SetSections;
+   property Alias:String read FAlias write FAlias;
  end;
 
 implementation

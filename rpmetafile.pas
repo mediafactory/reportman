@@ -294,6 +294,10 @@ begin
  inherited Create(AOwner);
 
  FCurrentPage:=-1;
+ // Standard sizes
+ CustomX:=2100;
+ CustomY:=2970;
+
  FPages:=TList.Create;
 end;
 

@@ -1,6 +1,6 @@
 object FDatainfoconfig: TFDatainfoconfig
-  Left = 127
-  Top = 156
+  Left = 133
+  Top = 76
   Width = 470
   Height = 403
   VertScrollBar.Range = 401

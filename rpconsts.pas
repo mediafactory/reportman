@@ -31,7 +31,9 @@ resourcestring
   SRpInvalidClipboardFormat='Invalid clipboard format';
   SRpErrorReadingReport='Error reading report: ';
   SRpIgnoreError='Ignore?';
+  SRpMainDataset='Main Dataset';
 
+  SRpNoDatasets='No datasets defined';
   SRpSampleTextToLabels='Text';
   SRpSampleExpression='2+2';
   SRpOnlyAReportOwner='Only a report can be the owner of :';

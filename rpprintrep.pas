@@ -37,7 +37,8 @@ begin
  // DeActivates datasets
  report.ActivateDatasets;
  try
-
+  metafile.NewPage;
+  metafile.Pages[metafile.CurrentPage].NewTextObject(1440,1440,1440,1440,'Hola','Arial',32,0,0,$FFFF,False);
  finally
   report.DeActivateDatasets;
  end;

@@ -1,6 +1,6 @@
 object FMainf: TFMainf
-  Left = 47
-  Top = 99
+  Left = 20
+  Top = 47
   Width = 696
   Height = 428
   VertScrollBar.Range = 30
@@ -170,6 +170,39 @@ object FMainf: TFMainf
       Grouped = True
       ImageIndex = 13
       Visible = False
+    end
+    object ToolButton10: TToolButton
+      Left = 357
+      Top = 4
+      Width = 16
+      Height = 26
+      Style = tbsSeparator
+      Caption = 'ToolButton10'
+      ImageIndex = 14
+    end
+    object ToolButton11: TToolButton
+      HelpType = htContext
+      Left = 373
+      Top = 4
+      Height = 26
+      Action = ACut
+      Caption = 'Cut'
+    end
+    object ToolButton12: TToolButton
+      HelpType = htContext
+      Left = 399
+      Top = 4
+      Height = 26
+      Action = ACopy
+      Caption = 'Copy'
+    end
+    object ToolButton13: TToolButton
+      HelpType = htContext
+      Left = 425
+      Top = 4
+      Height = 26
+      Action = APaste
+      Caption = 'APaste'
     end
   end
   object mainscrollbox: TScrollBox
@@ -432,6 +465,7 @@ object FMainf: TFMainf
       Enabled = False
       Hint = 'Print the report, you can select pages to print'
       ImageIndex = 5
+      OnExecute = APrintExecute
     end
     object APreview: TAction
       Category = 'File'
@@ -439,6 +473,7 @@ object FMainf: TFMainf
       Enabled = False
       Hint = 'Preview the report in the screen'
       ImageIndex = 6
+      OnExecute = APreviewExecute
     end
     object AGridOptions: TAction
       Category = 'Display'
