@@ -39,7 +39,7 @@ unit rpmetafile;
 
 interface
 
-uses Classes,Sysutils,rpconsts;
+uses Classes,Sysutils,rpconsts,rpzlib;
 
 const
  RP_SIGNATURELENGTH=13;
@@ -86,7 +86,10 @@ type
     PenWidth:integer;
     PenColor:integer);
    rpMetaImage:
-    (StreamPos:int64;
+    (CopyMode:integer;
+     DrawImageStyle:integer;
+     DPIres:integer;
+     StreamPos:int64;
      StreamSize:int64);
  end;
 
@@ -110,6 +113,7 @@ type
    FPoolPos:integer;
    FStreamPos:int64;
    FMemStream:TMemoryStream;
+   FIntStream:TMemoryStream;
    function GetObject(index:integer):TRpMetaObject;
    procedure NewWideString(var position,size:integer;const text:widestring);
   public
@@ -126,10 +130,11 @@ type
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenStyle:integer;PenWidth:integer; PenColor:integer);
    procedure NewImageObject(Top,Left,Width,Height:integer;
-    stream:TStream);
+    CopyMode:integer;DrawImageStyle:integer;DPIres:integer;stream:TStream);
    function GetText(arecord:TRpMetaObject):widestring;
    function GetWFontName(arecord:TRpMetaObject):widestring;
    function GetLFontName(arecord:TRpMetaObject):widestring;
+   function GetStream(arecord:TRpMetaObject):TMemoryStream;
    property ObjectCount:integer read FObjectCount;
    property Objects[Index:integer]:TRpMetaObject read GetObject;
   end;
@@ -142,6 +147,8 @@ type
    procedure SetCurrentPage(index:integer);
    function GetPageCount:integer;
    function GetPage(Index:integer):TRpMetafilePage;
+   procedure IntSaveToStream(Stream:TStream);
+   procedure IntLoadFromStream(Stream:TStream);
   public
    PageSize:integer;
    CustomX:integer;
@@ -192,12 +199,18 @@ begin
  FMemStream.Free;
  FMemStream:=nil;
 
+ if Assigned(FIntStream) then
+ begin
+  FIntStream.Free;
+  FIntStream:=nil;
+ end;
+
  inherited Destroy;
 end;
 
 
 procedure TrpMetafilePage.NewImageObject(Top,Left,Width,Height:integer;
-    stream:TStream);
+ CopyMode:integer; DrawImageStyle:integer;DPIres:integer;stream:TStream);
 begin
  if FObjectCount>=High(FObjects)-1 then
  begin
@@ -208,6 +221,9 @@ begin
  FObjects[FObjectCount].Top:=Top;
  FObjects[FObjectCount].Height:=Height;
  FObjects[FObjectCount].Width:=Width;
+ FObjects[FObjectCount].CopyMode:=CopyMode;
+ FObjects[FObjectCount].DrawImageStyle:=DrawImageStyle;
+ FObjects[FObjectCount].DPIres:=DPIres;
  FObjects[FObjectCount].Metatype:=rpMetaImage;
  FObjects[FObjectCount].StreamPos:=FStreamPos;
  FObjects[FObjectCount].StreamSize:=stream.Size;
@@ -216,9 +232,29 @@ begin
  if (Stream.size<>FMemStream.CopyFrom(stream,stream.Size)) then
   Raise Exception.Create(SRpCopyStreamError);
  FStreamPos:=FMemStream.Position;
- LoadFromStream(Stream);
  inc(FObjectCount);
 end;
+
+
+function TrpMetafilePage.GetStream(arecord:TRpMetaObject):TMemoryStream;
+begin
+ if Assigned(FIntStream) then
+ begin
+  FIntStream.Free;
+  FIntStream:=nil;
+  FIntStream:=TMemoryStream.Create;
+  FIntStream.SetSize(arecord.StreamSize);
+ end
+ else
+ begin
+  FIntStream:=TMemoryStream.Create;
+ end;
+ FMemStream.Seek(soFromBeginning,arecord.StreamPos);
+ FIntStream.CopyFrom(FMemStream,arecord.StreamSize);
+ FIntStream.Seek(soFromBeginning,0);
+ Result:=FIntStream;
+end;
+
 
 procedure TrpMetafilePage.NewDrawObject(Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
@@ -420,8 +456,19 @@ end;
 
 
 
-
 procedure TRpMetafileReport.SaveToStream(Stream:TStream);
+var
+ zstream:TCompressionStream;
+begin
+ zstream:=TCompressionStream.Create(clDefault,Stream);
+ try
+  IntSaveToStream(zstream);
+ finally
+  zstream.free;
+ end;
+end;
+
+procedure TRpMetafileReport.IntSaveToStream(Stream:TStream);
 var
  separator:integer;
  i:integer;
@@ -449,8 +496,19 @@ begin
  end;
 end;
 
-
 procedure TRpMetafileReport.LoadFromStream(Stream:TStream);
+var
+ zStream:TDeCompressionStream;
+begin
+ zStream:=TDeCompressionStream.Create(Stream);
+ try
+  IntLoadFromStream(zStream);
+ finally
+  zStream.free;
+ end;
+end;
+
+procedure TRpMetafileReport.IntLoadFromStream(Stream:TStream);
 var
  separator:integer;
  buf:array[0..RP_SIGNATURELENGTH-1] of char;

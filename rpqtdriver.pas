@@ -31,7 +31,7 @@ uses
 {$ENDIF}
 Classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
  rpmunits,QPrinters,QDialogs,rpgraphutils, QControls,
- QStdCtrls,QExtCtrls,types,dateutils,
+ QStdCtrls,QExtCtrls,types,DateUtils,rptypes,
  rpreport;
 
 
@@ -167,9 +167,11 @@ end;
 procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer);
 var
  posx,posy:integer;
- rec:TRect;
+ rec,recsrc:TRect;
  X, Y, W, H, S: Integer;
  Width,Height:integer;
+ stream:TMemoryStream;
+ bitmap:TBitmap;
 begin
  // Switch to device points
  posx:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
@@ -236,7 +238,44 @@ begin
    end;
   rpMetaImage:
    begin
+    Width:=round(obj.Width*dpix/TWIPS_PER_INCHESS);
+    Height:=round(obj.Height*dpiy/TWIPS_PER_INCHESS);
+    rec.Top:=PosY;
+    rec.Left:=PosX;
+    rec.Bottom:=rec.Top+Height-1;
+    rec.Right:=rec.Left+Width-1;
 
+    stream:=page.GetStream(obj);
+    bitmap:=TBitmap.Create;
+    try
+     bitmap.LoadFromStream(stream);
+     Canvas.CopyMode:=TCopyMode(obj.CopyMode);
+
+     case TRpImageDrawStyle(obj.DrawImageStyle) of
+      rpDrawFull:
+       begin
+        rec.Bottom:=rec.Top+round(bitmap.height/obj.dpires)*dpiy-1;
+        rec.Right:=rec.Left+round(bitmap.width/obj.dpires)*dpix-1;
+        Canvas.StretchDraw(rec,bitmap);
+       end;
+      rpDrawStretch:
+       Canvas.StretchDraw(rec,bitmap);
+      rpDrawCrop:
+       begin
+        recsrc.Top:=0;
+        recsrc.Left:=0;
+        recsrc.Bottom:=Height-1;
+        recsrc.Right:=Width-1;
+        Canvas.CopyRect(rec,bitmap.canvas,recsrc);
+       end;
+      rpDrawTile:
+       begin
+        Canvas.TiledDraw(rec,bitmap);
+       end;
+     end;
+    finally
+     bitmap.Free;
+    end;
    end;
  end;
 end;

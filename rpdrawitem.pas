@@ -24,6 +24,14 @@ uses Sysutils,Classes,rptypes,rpprintitem,rpconsts,rpmetafile;
 
 const
  DEF_DRAWWIDTH=500;
+ DEFAULT_DPI=100;
+
+// TCopyMode = (cmBlackness, cmDstInvert, cmMergeCopy, cmMergePaint,
+// cmNotSrcCopy, cmNotSrcErase, cmPatCopy, cmPatInvert,
+// cmPatPaint, cmSrcAnd, cmSrcCopy, cmSrcErase,
+// cmSrcInvert, cmSrcPaint, cmWhiteness, cmCreateMask);
+ DEF_COPYMODE=10;
+
 type
  TRpShape=class(TRpCommonPosComponent)
   private
@@ -43,7 +51,7 @@ type
    property PenStyle:integer read FPenStyle write FPenStyle default 0;
    property PenColor:integer read FPenColor write FPenColor default 0;
    property Shape:integer read FShape write FShape default 0;
-   property PenWidth:integer read FPenWidth write FPenWidth default 0;
+   property PenWidth:integer read FPenWidth write FPenWidth default 10;
 
   end;
 
@@ -52,6 +60,8 @@ type
    FExpression:WideString;
    FStream:TMemoryStream;
    FDrawStyle:TRpImageDrawStyle;
+   Fdpires:integer;
+   FCopyMode:integer;
    procedure ReadStream(AStream:TStream);
    procedure WriteStream(AStream:TStream);
   public
@@ -60,14 +70,18 @@ type
    destructor Destroy;override;
   protected
    procedure DefineProperties(Filer: TFiler);override;
+   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   public
    property Stream:TMemoryStream read FStream write SetStream;
   published
    property Expression:WideString read FExpression write FExpression;
    property DrawStyle:TRpImageDrawStyle read FDrawStyle write FDrawStyle
     default rpDrawCrop;
+   property dpires:integer read   Fdpires write Fdpires default DEfAULT_DPI;
+   property CopyMode:integer read FCopyMode write FCopyMode default 10;
   end;
-implementation
+
+ implementation
 
 constructor TRpShape.Create(AOwner:TComponent);
 begin
@@ -99,6 +113,8 @@ begin
  Width:=DEF_DRAWWIDTH;
  Height:=DEF_DRAWWIDTH;
  FStream:=TMemoryStream.Create;
+ FCopyMode:=DEF_COPYMODE;
+ Fdpires:=DEFAULT_DPI;
 end;
 
 
@@ -140,5 +156,18 @@ begin
  FStream.Seek(soFromBeginning,0);
  AStream.Write(FStream.Memory^,ssize);
 end;
+
+procedure TRpImage.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+var
+ Text:string;
+begin
+ if Not Assigned(FStream) then
+  exit;
+ if FStream.Size=0 then
+  exit;
+ metafile.Pages[metafile.CurrentPage].NewImageObject(aposy+PosY,aposx+PosX,
+  Width,Height,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),FStream);
+end;
+
 
 end.

@@ -76,11 +76,21 @@ const
   SRpsSRoundSquare,SRpsSEllipse,SRpsSCircle);
  StringDrawStyles:array [rpDrawCrop..rpDrawTile] of string=(
   SRPSDrawCrop,SRPSDrawStretch,SRPSDrawFull,SRpDrawTile);
+ StringCopyModes:array [cmBlackness..cmCreateMask] of string=(
+  SRpBlackness, SRpDstInvert, SRpMergeCopy, SRpMergePaint,
+  SRpNotSrcCopy, SRpNotSrcErase, SRpPatCopy, SRpPatInvert,
+  SRpPatPaint, SRpSrcAnd, SRpSrcCopy, SRpSrcErase,
+  SRpSrcInvert, SRpSrcPaint, SRpWhiteness, SRpCreateMask);
+// TCopyMode = (cmBlackness, cmDstInvert, cmMergeCopy, cmMergePaint,
+// cmNotSrcCopy, cmNotSrcErase, cmPatCopy, cmPatInvert,
+// cmPatPaint, cmSrcAnd, cmSrcCopy, cmSrcErase,
+// cmSrcInvert, cmSrcPaint, cmWhiteness, cmCreateMask);
 
 function StringPenStyleToInt(Value:String):integer;
 function StringBrushStyleToInt(Value:String):integer;
 function StringShapeTypeToInt(Value:String):integer;
 function StringDrawStyleToDrawStyle(Value:string):TRpImageDrawStyle;
+function StringCopyModeToCopyMode(Value:string):TCopyMode;
 
 implementation
 
@@ -193,6 +203,20 @@ begin
  end;
 end;
 
+function StringCopyModeToCopyMode(Value:string):TCopyMode;
+var
+ i:TCopyMode;
+begin
+ Result:=cmSrcCopy;
+ for i:=cmBlackness to cmCreateMask do
+ begin
+  if Value=StringCopyModes[i] then
+  begin
+   Result:=i;
+   break;
+  end;
+ end;
+end;
 
 procedure TRpDrawInterface.SetProperty(pname:string;value:string);
 begin
@@ -394,6 +418,16 @@ begin
  ltypes.Add(SRpSImage);
  lvalues.Add('['+FormatFloat('###,###0.00',TRpImage(printitem).Stream.Size/1024)+
   SRpKbytes+']');
+
+ // DPI
+ lnames.Add(SRpDPIRes);
+ ltypes.Add(SRpSString);
+ lvalues.Add(IntToStr(TRpImage(printitem).DPIRes));
+
+ // CopyMode
+ lnames.Add(SRpCopyMode);
+ ltypes.Add(SRpSList);
+ lvalues.Add(StringCopyModes[TCopyMode(TRpImage(printitem).CopyMode)]);
 end;
 
 
@@ -414,6 +448,20 @@ begin
   invalidate;
   exit;
  end;
+ if pname=SRpCopyMode then
+ begin
+  TRpImage(fprintitem).CopyMode:=Integer(StringCopyModeToCopyMode(Value));
+  invalidate;
+  exit;
+ end;
+ if pname=SRpDPIRes then
+ begin
+  TRpImage(fprintitem).DPIRes:=StrToInt(Value);
+  if TRpImage(fprintitem).DPIRes<=0 then
+   TRpImage(fprintitem).DPIRes:=100;
+  invalidate;
+  exit;
+ end;
  inherited SetProperty(pname,value);
 end;
 
@@ -430,6 +478,16 @@ begin
   Result:=StringDrawStyles[TRpImage(printitem).DrawStyle];
   exit;
  end;
+ if pname=SrpCopyMode then
+ begin
+  Result:=StringCopyModes[TCopyMode(TRpImage(printitem).CopyMode)];
+  exit;
+ end;
+ if pname=SRpDPIRes then
+ begin
+  Result:=IntToStr(TRpImage(fprintitem).DPIRes);
+  exit;
+ end;
  Result:=inherited GetProperty(pname);
 end;
 
@@ -439,6 +497,7 @@ procedure TRpImageInterface.Paint;
 var
  aimage:TRpImage;
  rec:TRect;
+ dpix,dpiy:integer;
 begin
  aimage:=TRpImage(printitem);
  try
@@ -459,16 +518,31 @@ begin
      raise;
     end;
    end;
+   Canvas.CopyMode:=TCopyMode(aimage.CopyMode);
+   rec.Top:=0;rec.Left:=0;
+   rec.Bottom:=Height-1;rec.Right:=Width-1;
    // Draws it with the style
-   if aimage.DrawStyle=rpDrawStretch then
-   begin
-    rec.Top:=0;rec.Left:=0;
-    rec.Bottom:=Height-1;rec.Right:=Width-1;
-    Canvas.StretchDraw(rec,fbitmap);
-   end
-   else
-   begin
-    Canvas.Draw(0,0,fbitmap);
+   case aimage.DrawStyle of
+    rpDrawStretch:
+     begin
+      Canvas.StretchDraw(rec,fbitmap);
+     end;
+    rpDrawCrop:
+     begin
+      Canvas.Draw(0,0,fbitmap);
+     end;
+    rpDrawFull:
+     begin
+      dpix:=Screen.PixelsPerInch;
+      dpiy:=Screen.PixelsPerInch;
+      rec.Bottom:=round(fbitmap.height/aimage.dpires)*dpiy-1;
+      rec.Right:=round(fbitmap.width/aimage.dpires)*dpix-1;
+      Canvas.StretchDraw(rec,fbitmap);
+     end;
+    rpDrawTile:
+     begin
+      Canvas.TiledDraw(rec,fbitmap);
+     end;
    end;
   end;
   // Draws the expresion
@@ -509,6 +583,7 @@ end;
 procedure TRpImageInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
 var
  i:TRpImageDrawStyle;
+ k:TCopyMode;
 begin
  if pname=SrpDrawStyle then
  begin
@@ -516,6 +591,15 @@ begin
   for i:=rpDrawCrop to rpDrawTile do
   begin
    lpossiblevalues.Add(StringDrawStyles[i]);
+  end;
+  exit;
+ end;
+ if pname=SrpCopyMode then
+ begin
+  lpossiblevalues.clear;
+  for k:=cmBlackness to cmCreateMask do
+  begin
+   lpossiblevalues.Add(StringCopyModes[k]);
   end;
   exit;
  end;

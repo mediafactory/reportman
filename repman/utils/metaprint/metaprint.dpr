@@ -38,7 +38,7 @@ begin
    metafile:=TRpMetafileReport.Create(nil);
    try
     metafile.LoadFromFile(ParamStr(1));
-    PrintMetafile(metafile,ParamStr(1));
+    PrintMetafile(metafile,ParamStr(1),true);
    finally
     metafile.free;
    end;

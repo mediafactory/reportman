@@ -45,6 +45,8 @@ clean:
 	-rm tests/repmand/repmand
 	-rm tests/repmand/dbxdrivers
 	-rm tests/repmand/dbxconnections
+	-rm tests/repmand/metaview
+	-rm tests/repmand/metaprint
 real_clean: clean
 	-rm -Rf  *.bpl
 	-rm -Rf  *.so

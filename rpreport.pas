@@ -395,19 +395,44 @@ end;
 procedure TRpReport.LoadFromStream(Stream:TStream);
 var
  reader:TReader;
+ memstream:TMemoryStream;
+ readed:integer;
+ buf:pointer;
+ zlibs:TDeCompressionStream;
 begin
  // FreeSubrepots
  FreeSubreports;
 
- reader:=TReader.Create(stream,1000);
+ MemStream:=TMemoryStream.Create;
  try
-  if Assigned(FOnReadError) then
-   reader.OnError:=FOnReadError
-  else
-   reader.OnError:=FInternalOnReadError;
-  reader.ReadRootComponent(Self);
+  zlibs:=TDeCompressionStream.Create(Stream);
+  try
+   buf:=AllocMem(120000);
+   try
+    repeat
+     readed:=zlibs.read(buf^,120000);
+     memstream.Write(buf^,readed);
+    until readed<120000;
+   finally
+    freemem(buf);
+   end;
+   memstream.Seek(soFrombeginning,0);
+
+   reader:=TReader.Create(memstream,1000);
+   try
+    if Assigned(FOnReadError) then
+     reader.OnError:=FOnReadError
+    else
+     reader.OnError:=FInternalOnReadError;
+    reader.ReadRootComponent(Self);
+   finally
+    reader.free;
+   end;
+  finally
+   zlibs.free;
+  end;
  finally
-  reader.free;
+  MemStream.free;
  end;
 end;
 

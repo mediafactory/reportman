@@ -402,6 +402,28 @@ resourcestring
   SrpSPenColor='Pen Color';
   SrpSPenWIdth='Pen Width';
 
+
+  SRpBlackness='Blackness';
+  SRpDstInvert='DstInvert';
+  SRpMergeCopy='MergeCopy';
+  SRpMergePaint='MergePaint';
+  SRpNotSrcCopy='NotSrcCopy';
+  SRpNotSrcErase='NotSrcErase';
+  SRpPatCopy='PatCopy';
+  SRpPatInvert='PatInvert';
+  SRpPatPaint='PatPaint';
+  SRpSrcAnd='SrcAnd';
+  SRpSrcCopy='SrcCopy';
+  SRpSrcErase='SrcErase';
+  SRpSrcInvert='SrcInvert';
+  SRpSrcPaint='SrcPaint';
+  SRpWhiteness='SrcWhiteness';
+  SRpCreateMask='CreateMask';
+
+  SrpCopyMode='CopyMode';
+  SRpDPIRes='Resolution(dpi)';
+
+
   SRpDrawStyle='Draw Style';
   SRpDrawTile='Tile';
   SRpErrorWritingPage='Error writting metafile page';

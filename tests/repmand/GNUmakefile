@@ -9,9 +9,10 @@ install:
 	cp ../../repman/repmand .
 	cp ../../repman/dbxdrivers .
 	cp ../../repman/dbxconnections .
-	cp ../../repman/utils/metaprint/metaprint .
+	-cp ../../repman/utils/metaprint/metaprint .
+	-cp ../../repman/utils/metaview/metaview .
 clean:
 	-rm -f *.so *.so.1 *.so.2
 	-rm -f repmand
-	-rm -f dbxconnections dbxdrivers
+	-rm -f dbxconnections dbxdrivers metaprint metaview
 
