@@ -251,6 +251,7 @@ begin
  // By default 1:1 scale
  dpi:=Screen.PixelsPerInch;
  drawclippingregion:=true;
+ oldpagesize.PageIndex:=-1;
 end;
 
 procedure TRpGDIDriver.NewDocument(report:TrpMetafileReport);
@@ -335,7 +336,11 @@ begin
  begin
   // Does nothing because the last bitmap can be usefull
  end;
- SetCurrentPaper(oldpagesize);
+ if oldpagesize.PageIndex<>-1 then
+ begin
+  SetCurrentPaper(oldpagesize);
+  oldpagesize.PageIndex:=-1;
+ end;
 end;
 
 procedure TRpGDIDriver.AbortDocument;
@@ -350,7 +355,11 @@ begin
    bitmap.free;
   bitmap:=nil;
  end;
- SetCurrentPaper(oldpagesize);
+ if oldpagesize.PageIndex<>-1 then
+ begin
+  SetCurrentPaper(oldpagesize);
+  oldpagesize.PageIndex:=-1;
+ end;
 end;
 
 procedure TRpGDIDriver.NewPage;
@@ -384,6 +393,7 @@ var
  aalign:Cardinal;
  abrushstyle:integer;
  atext:widestring;
+ aansitext:string;
  arec:TRect;
 begin
  // Switch to device points
@@ -438,6 +448,7 @@ begin
     rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);
     rec.Bottom:=posy+round(obj.Height*dpiy/TWIPS_PER_INCHESS);
     atext:=page.GetText(Obj);
+    aansitext:=atext;
     if obj.FontRotation<>0 then
     begin
      // Find rotated font
@@ -453,13 +464,20 @@ begin
     begin
      // First calculates the text extent
      arec:=rec;
-     DrawTextW(Canvas.Handle,PWideChar(atext),Length(atext),arec,aalign or DT_CALCRECT);
+     // Win9x does not support drawing WideChars
+     if IsWindowsNT then
+      DrawTextW(Canvas.Handle,PWideChar(atext),Length(atext),arec,aalign or DT_CALCRECT)
+     else
+      DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),arec,aalign or DT_CALCRECT);
      Canvas.Brush.Style:=bsSolid;
      Canvas.Brush.Color:=obj.BackColor;
     end
     else
      Canvas.Brush.Style:=bsClear;
-    DrawTextW(Canvas.Handle,PWideChar(atext),Length(atext),rec,aalign);
+    if IsWindowsNT then
+     DrawTextW(Canvas.Handle,PWideChar(atext),Length(atext),rec,aalign)
+    else
+     DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),rec,aalign)
    end;
   rpMetaDraw:
    begin

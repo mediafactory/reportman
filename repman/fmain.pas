@@ -988,15 +988,17 @@ end;
 
 procedure TFMainf.LoadConfig;
 var
- inif:TIping nifile;
+ inif:TInifile;
 begin
  inif:=TIniFile.Create(configfile);
  try
   AUnitCms.Checked:=inif.ReadBool('Preferences','UnitCms',true);
   ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',true);
   AsystemPrintDialog.Checked:=inif.ReadBool('Preferences','SystemPrintDialog',True);
+{$IFDEF LINUX}
   AKylixPrintBug.Checked:=inif.ReadBool('Preferences','KylixPrintBug',True);
   rpqtdriver.kylixprintbug:=AKylixPrintBug.Checked;
+{$ENDIF}
   ADriverGDI.Checked:=Not ADriverQT.Checked;
   AUnitsinchess.Checked:=Not AUnitCms.Checked;
   UpdateUnits;

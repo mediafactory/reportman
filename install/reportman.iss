@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 0.97 beta
+AppVerName=Report Manager 0.99 beta
 AppPublisher=Toni Martir
-AppPublisherURL=http://sourceforge.net/projects/reportman
+AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
 AppUpdatesURL=http://sourceforge.net/projects/reportman
 DefaultDirName={pf}\Report Manager
