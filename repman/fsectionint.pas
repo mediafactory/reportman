@@ -41,6 +41,15 @@ var
  fcolor:TColor;
  flines:boolean;
 
+procedure FreeGridBitmap;
+begin
+ if Assigned(FBitmap) then
+ begin
+  fbitmap.free;
+  fbitmap:=nil;
+ end;
+end;
+
 function DrawBitmapGrid(width,height,xgrid,ygrid:integer;color:TColor;lines:boolean):TBitmap;
 var
  rec:TRect;
@@ -50,49 +59,54 @@ begin
   Result:=nil;
   exit;
  end;
- if ((width<0) or (height<0) or (xgrid<=0) or (ygrid<=0)) then
- begin
-  Raise Exception.Create(SRpIncorrectCalltoDeawGrid);
- end;
- if Assigned(fbitmap) then
- begin
-  if ((fbwidth>=width) and (fbheight>=height) and
-   (fcolor=color) and (fxgrid=xgrid) and
-   (fygrid=ygrid) and (flines=lines)) then
-  begin
+ try
+   if ((width<0) or (height<0) or (xgrid<=0) or (ygrid<=0)) then
+   begin
+    Raise Exception.Create(SRpIncorrectCalltoDeawGrid);
+   end;
+   if Assigned(fbitmap) then
+   begin
+    if ((fbwidth>=width) and (fbheight>=height) and
+     (fcolor=color) and (fxgrid=xgrid) and
+     (fygrid=ygrid) and (flines=lines)) then
+    begin
+     Result:=fbitmap;
+     exit;
+    end;
+   end;
+   FreeGridBitmap;
+   fbitmap:=TBitmap.Create;
+   if width<MIN_GRID_BITMAP_WITH then
+   begin
+    width:=MIN_GRID_BITMAP_WITH;
+   end;
+   if height<MIN_GRID_BITMAP_HEIGHT then
+   begin
+    height:=MIN_GRID_BITMAP_HEIGHT;
+   end;
+   fBitmap.PixelFormat:=pf32bit;
+   fbitmap.Width:=width;
+   fbitmap.Height:=height;
+   // Then draws the bitmap
+   fbitmap.Canvas.Brush.Style:=bsSolid;
+   rec.Top:=0;rec.Left:=0;
+   rec.Right:=fbitmap.Width;
+   rec.Bottom:=fbitmap.Height;
+   fbitmap.Canvas.FillRect(rec);
+
+   DrawGrid(fbitmap.Canvas,xgrid,ygrid,Width,Height,color,lines,0,0);
+   fbheight:=height;
+   fbwidth:=width;
+   fcolor:=color;
+   flines:=lines;
+   fygrid:=ygrid;
+   fxgrid:=xgrid;
+
    Result:=fbitmap;
-   exit;
-  end;
+ except
+  FreeGridBitmap;
+  Result:=nil;
  end;
- FreeGridBitmap;
- fbitmap:=TBitmap.Create;
- if width<MIN_GRID_BITMAP_WITH then
- begin
-  width:=MIN_GRID_BITMAP_WITH;
- end;
- if height<MIN_GRID_BITMAP_HEIGHT then
- begin
-  height:=MIN_GRID_BITMAP_HEIGHT;
- end;
- fBitmap.PixelFormat:=pf32bit;
- fbitmap.Width:=width;
- fbitmap.Height:=height;
- // Then draws the bitmap
- fbitmap.Canvas.Brush.Style:=bsSolid;
- rec.Top:=0;rec.Left:=0;
- rec.Right:=fbitmap.Width;
- rec.Bottom:=fbitmap.Height;
- fbitmap.Canvas.FillRect(rec);
-
- DrawGrid(fbitmap.Canvas,xgrid,ygrid,Width,Height,color,lines,0,0);
- fbheight:=height;
- fbwidth:=width;
- fcolor:=color;
- flines:=lines;
- fygrid:=ygrid;
- fxgrid:=xgrid;
-
- Result:=fbitmap;
 end;
 
 
@@ -126,7 +140,6 @@ begin
  if Not (fprintitem.Owner is TRpReport) then
   exit;
  report:=TRpReport(fprintitem.Owner);
- rec.Top:=0;rec.Left:=0;
 
  // Draws the grid bitmap
 
@@ -134,17 +147,17 @@ begin
  if assigned(bitmap) then
  begin
   Canvas.Draw(0,0,bitmap);
+ end
+ else
+ begin
+  rec.Top:=0;rec.Left:=0;
+  rec.Bottom:=Width;
+  rec.Right:=Height;
+  Canvas.Brush.Color:=clwhite;
+  Canvas.FillRect(rec);
  end;
 end;
 
-procedure FreeGridBitmap;
-begin
- if Assigned(FBitmap) then
- begin
-  fbitmap.free;
-  fbitmap:=nil;
- end;
-end;
 
 
 
