@@ -5,6 +5,7 @@ object FRpBrowser: TFRpBrowser
   Height = 304
   Align = alClient
   TabOrder = 0
+  ParentFont = True
   object ATree: TTreeView
     Left = 0
     Top = 0

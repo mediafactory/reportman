@@ -21,7 +21,9 @@ program repmandxp;
 {$I rpconf.inc}
 
 uses
+  Graphics,
   Forms,
+  Controls,
 {$IFDEF USEVARIANTS}
   midaslib,
 {$ENDIF}
@@ -105,8 +107,10 @@ uses
 {$R *.res}
 
 begin
+  Graphics.DefFontData.Name:=Screen.IconFont.Name;
   Application.Initialize;
   Application.CreateForm(TFRpMainFVCL, FRpMainFVCL);
+  FRpMainFVCL.Font.Assign(Screen.IconFont);
   FRpMainFVCL.BrowseCommandLine:=true;
   Application.Run;
 end.
