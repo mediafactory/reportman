@@ -19,8 +19,14 @@ unit rpmdsysinfoqt;
 
 interface
 
+{$I rpconf.inc}
+
 uses SysUtils, Classes, QGraphics, QForms, QControls, QStdCtrls,
-  QButtons, QExtCtrls,QPrinters,rpmdconsts,QDialogs,Qt;
+  QButtons, QExtCtrls,QPrinters,rpmdconsts,QDialogs,
+{$IFDEF MSWINDOWS}
+  Windows,
+{$ENDIF}
+  Qt;
 
 type
   TFRpSysInfo = class(TForm)
@@ -31,14 +37,8 @@ type
     EPrinterName: TEdit;
     Label2: TLabel;
     Label3: TLabel;
-    EDriver: TEdit;
-    Label4: TLabel;
-    Label5: TLabel;
-    EPort: TEdit;
     LCollation: TLabel;
-    Label8: TLabel;
     Label9: TLabel;
-    LColor: TLabel;
     LResolution: TLabel;
     GroupBox2: TGroupBox;
     Label10: TLabel;
@@ -51,10 +51,6 @@ type
     Label14: TLabel;
     Label12: TLabel;
     LVersion: TLabel;
-    Label15: TLabel;
-    LTechnology: TLabel;
-    Label16: TLabel;
-    ComboOutputType: TComboBox;
     EPrinterDevice: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -95,18 +91,20 @@ begin
  BOK.Caption:=SRpOk;
  Lresolution.Font.Style:=[fsBold];
  LCollation.Font.Style:=[fsBold];
- LColor.Font.Style:=[fsBold];
  LOemID.Font.Style:=[fsBold];
  LProcessors.Font.Style:=[fsBold];
  LDisplay.Font.Style:=[fsBold];
  LOS.Font.Style:=[fsBold];
  LVersion.Font.Style:=[fsBold];
- LTechnology.Font.Style:=[fsBold];
 end;
 
 procedure TFRpSysInfo.FormShow(Sender: TObject);
 var
  abuffer:widestring;
+{$IFDEF MSWINDOWS}
+ sysinfo:SYSTEM_INFO;
+ osinfo:TOsVersionInfo;
+{$ENDIF}
 begin
  if Printer.Printers.Count>0 then
  begin
@@ -124,21 +122,22 @@ begin
    end;
   end;
   EPrinterName.text:=EPrinterDevice.Text;
-  ComboOutputType.ItemIndex:=Integer(Printer.OutPutType);
   LResolution.Caption:=FormatFloat('###,###',Printer.XDPI)+
       ' x '+FormatFloat('###,###',Printer.YDPI);
-
   // Printer selected not valid error
-  EStatus.Text:=SRpSReady;
+  if Printer.XDPI=0 then
+   EStatus.Text:=SRpSNotAvail
+  else
+   EStatus.Text:=SRpSReady;
  end;
-
-{ GetSystemInfo(sysinfo);
- LOemID.Caption:=IntToStr(sysinfo.dwOemId);
- LProcessors.Caption:=IntToStr(sysinfo.dwNumberOfProcessors);
-} LDisplay.Caption:=FormatCurr('##,##',Screen.Width)+
+ LDisplay.Caption:=FormatCurr('##,##',Screen.Width)+
   ' x '+FormatCurr('##,##',Screen.Height)+' '+
    SRpDPIRes+':'+IntToStr(Screen.PixelsPerInch);
-{ osinfo.dwOSVersionInfoSize:=sizeof(osinfo);
+{$IFDEF MSWINDOWS}
+ GetSystemInfo(sysinfo);
+ LOemID.Caption:=IntToStr(sysinfo.dwOemId);
+ LProcessors.Caption:=IntToStr(sysinfo.dwNumberOfProcessors);
+ osinfo.dwOSVersionInfoSize:=sizeof(osinfo);
  if GetVersionEx(osinfo) then
  begin
   if osinfo.dwPlatformId=VER_PLATFORM_WIN32_NT then
@@ -148,8 +147,9 @@ begin
   LVersion.Caption:=IntToStr(osinfo.dwMajorVersion)+
    '.'+IntToStr(osinfo.dwMinorVersion)+' Build:'+IntToStr(osinfo.dwBuildNumber)+
    '-'+StrPas(osinfo.szCSDVersion);
- end;
-}
+  end;
+{$ENDIF}
+
 end;
 
 end.

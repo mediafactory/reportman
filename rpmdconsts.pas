@@ -692,6 +692,7 @@ var
   SRpFieldsFileNotDefined:WideString='Fields file not defined';
   SRpSMemo:WideString='Memo';
   SRpSInvReportHandle:WideString='Invalid report handle';
+  SRpSNotAvail:WideString='Not available';
 
 
 implementation

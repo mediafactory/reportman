@@ -386,6 +386,7 @@ begin
  fobjinsp.AddCompItem(nil,true);
  if not assigned(fsubreport) then
   exit;
+ asecint:=nil;
  SectionScrollBox.Visible:=true;
  try
   maxwidth:=0;
@@ -825,7 +826,7 @@ end;
 
 procedure TRpPanelRight.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
- NewLeft,NewTop:integer;
+ NewLeft:integer;
 begin
  inherited MouseUp(Button,Shift,X,Y);
 
@@ -843,7 +844,6 @@ begin
   NewLeft:=Left-FXOrigin+X;
   if NewLeft<0 then
    NewLeft:=0;
-  NewTop:=Top;
   if NewLeft+Width>Parent.Width then
    NewLeft:=Parent.Width-Width;
   if NewLeft<0 then
