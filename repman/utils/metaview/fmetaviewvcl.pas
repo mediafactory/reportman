@@ -431,7 +431,7 @@ begin
  rpgdidriver.OrientationSelection(metafile.orientation);
  if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
   rpgdidriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
-   frompage,topage,copies,collate,GetDeviceFontsOption(printerindex),printerindex);
+   frompage,topage,copies,collate,GetDeviceFontsOption(printerindex),pRpDefaultPrinter);
 end;
 
 procedure TFMetaVCL.ASaveExecute(Sender: TObject);

@@ -110,9 +110,15 @@ Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
 [RDP Source Files]
 Item0=fmetaview.xfm
 Item1=..\..\..\rpprintdia.xfm
-Item2=..\..\..\rpmdrepclient.xfm
-Item3=..\..\..\rpmdclitree.xfm
-Item4=metaview.drc
+Item2=..\..\..\rpqtdriver.xfm
+Item3=..\..\..\rpmdrepclient.xfm
+Item4=..\..\..\rpmdclitree.xfm
+Item5=..\..\..\rpgraphutils.xfm
+Item6=..\..\..\rpgdidriver.dfm
+Item7=..\..\..\rpmdfabout.xfm
+Item8=..\..\..\rprfparams.xfm
+Item9=..\..\..\rpmdprintconfig.xfm
+Item10=metaview.drc
 [Language]
 ActiveLang=
 ProjectLang=$00000409

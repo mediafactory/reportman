@@ -111,7 +111,11 @@ Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
 Item0=fmetaviewvcl.dfm
 Item1=..\..\..\rpmdrepclient.xfm
 Item2=..\..\..\rpmdclitreevcl.dfm
-Item3=metaviewxp.drc
+Item3=..\..\..\rpmdfaboutvcl.dfm
+Item4=..\..\..\rprfvparams.dfm
+Item5=..\..\..\rpgdidriver.dfm
+Item6=..\..\..\rpmdprintconfigvcl.dfm
+Item7=metaviewxp.drc
 [Language]
 ActiveLang=
 ProjectLang=$00000409

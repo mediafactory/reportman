@@ -1084,6 +1084,7 @@ begin
   frompage:=1; topage:=999999;
   copies:=report.Copies;
   rpgdidriver.PrinterSelection(report.PrinterSelect);
+  rpgdidriver.OrientationSelection(report.PageOrientation);
   if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
    rpgdidriver.PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
 end;

@@ -192,8 +192,6 @@ var
 begin
   Application.Initialize;
   Application.CreateForm(TFRpMainF, FRpMainF);
-  {$IFNDEF PUREVCL}
   LoadQtTranslator;
-{$ENDIF}
   Application.Run;
 end.

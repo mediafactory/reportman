@@ -14,13 +14,20 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
+    DesignSize = (
+      216
+      153)
     object GUser: TGroupBox
       Left = 4
       Top = 4
-      Width = 201
+      Width = 209
       Height = 145
+      Anchors = [akLeft, akTop, akRight]
       Caption = 'User information'
       TabOrder = 0
+      DesignSize = (
+        209
+        145)
       object LUserName: TLabel
         Left = 8
         Top = 40
@@ -52,16 +59,18 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
       object EUserName: TEdit
         Left = 104
         Top = 36
-        Width = 85
+        Width = 93
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         TabOrder = 1
         Text = 'Admin'
       end
       object EPassword: TEdit
         Left = 104
         Top = 60
-        Width = 85
+        Width = 93
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         PasswordChar = '*'
         TabOrder = 2
       end
@@ -76,8 +85,9 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
       object ComboHost: TComboBox
         Left = 104
         Top = 12
-        Width = 85
+        Width = 93
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
         TabOrder = 0
         Text = 'localhost'
@@ -85,7 +95,7 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
       object ComboPort: TComboBox
         Left = 104
         Top = 84
-        Width = 77
+        Width = 69
         Height = 21
         ItemHeight = 13
         TabOrder = 4
@@ -199,6 +209,9 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
         Align = alTop
         TabOrder = 2
         Visible = False
+        DesignSize = (
+          216
+          31)
         object Label1: TLabel
           Left = 8
           Top = 8
@@ -212,6 +225,7 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
           Width = 157
           Height = 21
           Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
           ItemHeight = 13
           TabOrder = 0
           OnClick = ComboAliasClick

@@ -6,12 +6,16 @@ uses
   Forms,
   fmetaviewvcl in 'fmetaviewvcl.pas' {FMetaVCL},
   rpmetafile in '..\..\..\rpmetafile.pas',
-  rpgdidriver in '..\..\..\rpgdidriver.pas',
   rppdfdriver in '..\..\..\rppdfdriver.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas',
   rpmdrepclient in '..\..\..\rpmdrepclient.pas' {modclient: TDataModule},
   rpmdprotocol in '..\..\..\rpmdprotocol.pas',
-  rpmdclitreevcl in '..\..\..\rpmdclitreevcl.pas' {FRpCliTreeVCL: TFrame};
+  rpmdclitreevcl in '..\..\..\rpmdclitreevcl.pas' {FRpCliTreeVCL: TFrame},
+  rpmdfaboutvcl in '..\..\..\rpmdfaboutvcl.pas' {FRpAboutBoxVCL},
+  rprfvparams in '..\..\..\rprfvparams.pas' {FRpRTParams},
+  rpvgraphutils in '..\..\..\rpvgraphutils.pas',
+  rpgdidriver in '..\..\..\rpgdidriver.pas' {FRpVCLProgress},
+  rpmdprintconfigvcl in '..\..\..\rpmdprintconfigvcl.pas' {FRpPrinterConfigVCL};
 
 {$R *.res}
 

@@ -4,16 +4,28 @@ library metaview;
 
 {$R *.RES}
 {ITE} {LCID:00000409:00000C0A} {}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpgdidriver.dfm}
 {ITE} {DFMFileType} {fmetaview.xfm}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpgraphutils.xfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdclitree.xfm}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdfabout.xfm}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdprintconfig.xfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdrepclient.xfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpprintdia.xfm}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpqtdriver.xfm}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rprfparams.xfm}
 {ITE} {RCFileType} {metaview_DRC.rc}
 
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rpgdidriver.dfm' FRpVCLProgress:TForm}
 {$R 'fmetaview.xfm' FMeta:TForm}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rpgraphutils.xfm' FRpMessageDlg:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdclitree.xfm' FRpCliTree:TFrame}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdfabout.xfm' FRpAboutBox:TForm}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdprintconfig.xfm' FRpPrinterConfig:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdrepclient.xfm' modclient:TDataModule}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpprintdia.xfm' FRpPrintDialog:TForm}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rpqtdriver.xfm' FRpQtProgress:TForm}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rprfparams.xfm' FRpRunTimeParams:TForm}
 {$R 'metaview_DRC.res' 'metaview_DRC.rc'}
 
 {$E ESN}
