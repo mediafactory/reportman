@@ -2277,8 +2277,9 @@ begin
   achart.LeftAxis.Inverted:=Series.Inverted;
   for i:=0 to Series.Count-1 do
   begin
+   intserie:=Series.Items[i];
    aserie:=nil;
-   case nchart.ChartType of
+   case intserie.ChartType of
     rpchartline:
      begin
       aserie:=TLineSeries.Create(nil);
@@ -2317,13 +2318,14 @@ begin
    end;
    if not assigned(aserie) then
     exit;
+   if Length(intserie.Caption)>0 then
+    aserie.Title:=intserie.Caption;
    aserie.Marks.Font.Name:=nchart.WFontName;
    aserie.Marks.Font.Size:=aFontSize;
    aserie.Marks.Font.Style:=CLXIntegerToFontStyle(nchart.FontStyle);
    aserie.Marks.Visible:=nchart.ShowHint;
    aserie.ParentChart:=achart;
    // Assigns the color for this serie
-   intserie:=Series.Items[i];
    for j:=0 to intserie.ValueCount-1 do
    begin
     if nchart.ChartType=rpchartpie then

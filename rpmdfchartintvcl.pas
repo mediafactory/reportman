@@ -151,6 +151,15 @@ begin
  if Assigned(lvalues) then
   lvalues.Add(TRpChart(printitem).CaptionExpression);
 
+ // Serie Caption Expression
+ lnames.Add(SrpSSerieCaptionExp);
+ ltypes.Add(SRpSExpression);
+ lhints.Add('refchart.html');
+ lcat.Add(SRpChartData);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpChart(printitem).SerieCaption);
+
+
  // Chart Driver
  lnames.Add(SrpSDriver);
  ltypes.Add(SRpSList);
@@ -320,6 +329,11 @@ begin
   TRpChart(fprintitem).CaptionExpression:=value;
   exit;
  end;
+ if pname=SrpSSerieCaptionExp then
+ begin
+  TRpChart(fprintitem).SerieCaption:=value;
+  exit;
+ end;
  if pname=SrpSDriver then
  begin
   TRpChart(fprintitem).Driver:=StringToRpChartDriver(Value);
@@ -444,6 +458,11 @@ begin
  if pname=SrpSCaptionExp then
  begin
   Result:=TRpChart(printitem).CaptionExpression;
+  exit;
+ end;
+ if pname=SrpSSerieCaptionExp then
+ begin
+  Result:=TRpChart(printitem).SerieCaption;
   exit;
  end;
  if pname=SrpSDriver then

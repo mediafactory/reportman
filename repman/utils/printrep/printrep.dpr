@@ -24,7 +24,7 @@ program printrep;
 {$APPTYPE CONSOLE}
 
 uses
-  SysUtils,Classes,QGraphics,
+  SysUtils,Classes,QGraphics,QPrinters,
 {$IFDEF MSWINDOWS}
   midaslib,ActiveX,
   QThemed in '..\..\QThemed.pas',
@@ -92,6 +92,7 @@ begin
  Writeln(SRpPrintRep19);
  Writeln(SRpPrintRep20);
  Writeln(SRpPrintRep24);
+ Writeln(SRpPrintRep25);
  Writeln(SRpParseParamsH);
  Writeln(SRpCommandLineStdIN);
 end;
@@ -104,7 +105,9 @@ var
  abitmap:TBitmap;
  topdf,tobmp,monobmp,tometafile,showparams:Boolean;
  outputfilename:String;
-
+ aprintername:string;
+ aindex:integer;
+ amessage:String;
 begin
  bmpresx:=100;
  bmpresy:=100;
@@ -202,6 +205,25 @@ begin
       acopies:=StrToInt(ParamStr(indexparam));
       if acopies<=0 then
        acopies:=1;
+     end
+     else
+     if ParamStr(indexparam)='-printer' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpIdentifierexpected);
+      aprintername:=ParamStr(indexparam);
+      aindex:=printer.printers.IndexOf(aprintername);
+      if aindex<0 then
+      begin
+       amessage:=SRpErrorOpenImp+':'+aprintername+#10;
+       for aindex:=0 to printer.Printers.Count-1 do
+       begin
+        amessage:=amessage+printer.printers.Strings[aindex]+#10;
+       end;
+       Raise Exception.Create(amessage);
+      end;
+      printer.SetPrinter(aprintername);
      end
      else
      if ParamStr(indexparam)='-bmpresx' then

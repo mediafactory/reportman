@@ -58,6 +58,7 @@ uses
   rplastsav in '..\rplastsav.pas',
   rpmaskedit in '..\rpmaskedit.pas',
   rpmdbarcode in '..\rpmdbarcode.pas',
+  rpbarcodecons in '..\rpbarcodecons.pas',
   rpmdchart in '..\rpmdchart.pas',
   rpmdcharttypes in '..\rpmdcharttypes.pas',
   rpmdconsts in '..\rpmdconsts.pas',

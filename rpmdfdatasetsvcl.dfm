@@ -2,7 +2,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
   Left = 0
   Top = 0
   Width = 443
-  Height = 345
+  Height = 270
   Align = alClient
   AutoScroll = False
   TabOrder = 0
@@ -88,7 +88,6 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         Top = 0
         Width = 8
         Height = 78
-        Cursor = crHSplit
         Beveled = True
       end
       object LDatasets: TListBox
@@ -159,7 +158,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     Left = 0
     Top = 105
     Width = 443
-    Height = 240
+    Height = 165
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -167,7 +166,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       Left = 0
       Top = 0
       Width = 443
-      Height = 240
+      Height = 165
       ActivePage = TabSQL
       Align = alClient
       TabOrder = 0
@@ -177,15 +176,14 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 173
           Top = 0
           Width = 8
-          Height = 212
-          Cursor = crHSplit
+          Height = 137
           Beveled = True
         end
         object MSQL: TMemo
           Left = 181
           Top = 0
           Width = 254
-          Height = 212
+          Height = 137
           Align = alClient
           TabOrder = 0
           WordWrap = False
@@ -195,7 +193,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 0
           Top = 0
           Width = 173
-          Height = 212
+          Height = 137
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
@@ -230,14 +228,14 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 0
           Top = 37
           Width = 435
-          Height = 175
+          Height = 100
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
           object PBDEFilter: TPanel
             Left = 0
             Top = 0
-            Width = 502
+            Width = 435
             Height = 17
             Align = alTop
             Alignment = taLeftJustify
@@ -248,8 +246,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           object MBDEFilter: TMemo
             Left = 0
             Top = 17
-            Width = 502
-            Height = 146
+            Width = 435
+            Height = 83
             Align = alClient
             ScrollBars = ssBoth
             TabOrder = 1
@@ -459,6 +457,9 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Height = 89
           Caption = 'Dataset client side unions'
           TabOrder = 6
+          DesignSize = (
+            449
+            89)
           object LabelUnions: TLabel
             Left = 4
             Top = 20
@@ -472,7 +473,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             Width = 181
             Height = 21
             Style = csDropDownList
-            ItemHeight = 0
+            ItemHeight = 13
             TabOrder = 0
           end
           object CheckGroupUnion: TCheckBox

@@ -130,6 +130,37 @@ begin
  lcat.Add(SRpBarcode);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpBarcode(printitem).BColor));
+
+ // ECC Check
+ lnames.Add(SRpECCLevel);
+ ltypes.Add(SRpSList);
+ lhints.Add('refbarcode.html');
+ lcat.Add(SRpBarcode);
+ if Assigned(lvalues) then
+  lvalues.Add(ECCToString(TRpBarcode(printitem).ECCLevel));
+ // Num rows
+ lnames.Add(SRpNumRows);
+ ltypes.Add(SRpInteger);
+ lhints.Add('refbarcode.html');
+ lcat.Add(SRpBarcode);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpBarcode(printitem).NumRows));
+
+ // Num cols
+ lnames.Add(SRpNumCols);
+ ltypes.Add(SRpInteger);
+ lhints.Add('refbarcode.html');
+ lcat.Add(SRpBarcode);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpBarcode(printitem).NumColumns));
+
+ // Truncated
+ lnames.Add(SRpTruncatedPDF417);
+ ltypes.Add(SRpSBool);
+ lhints.Add('refbarcode.html');
+ lcat.Add(SRpBarcode);
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpBarcode(printitem).Truncated,True));
 end;
 
 procedure TRpBarcodeInterface.SetProperty(pname:string;value:Widestring);
@@ -182,6 +213,30 @@ begin
   invalidate;
   exit;
  end;
+ if pname=SRpTruncatedPDF417 then
+ begin
+  TRpBarcode(fprintitem).Truncated:=StrToBool(value);
+  invalidate;
+  exit;
+ end;
+ if pname=SRpNumCols then
+ begin
+  TRpBarcode(fprintitem).NumColumns:=StrToInt(value);
+  invalidate;
+  exit;
+ end;
+ if pname=SRpNumRows then
+ begin
+  TRpBarcode(fprintitem).NumRows:=StrToInt(value);
+  invalidate;
+  exit;
+ end;
+ if pname=SRpECCLevel then
+ begin
+  TRpBarcode(fprintitem).ECCLevel:=StringECCToInteger(value);
+  invalidate;
+  exit;
+ end;
 
  inherited SetProperty(pname,value);
 end;
@@ -229,6 +284,26 @@ begin
   Result:=IntToStr(TRpBarcode(printitem).BColor);
   exit;
  end;
+ if pname=SRpTruncatedPDF417 then
+ begin
+  Result:=BoolToStr(TRpBarcode(printitem).Truncated,true);
+  exit;
+ end;
+ if pname=SRpNumRows then
+ begin
+  Result:=IntToStr(TRpBarcode(printitem).NumRows);
+  exit;
+ end;
+ if pname=SRpNumCols then
+ begin
+  Result:=IntToStr(TRpBarcode(printitem).NumColumns);
+  exit;
+ end;
+ if pname=SRpECCLevel then
+ begin
+  Result:=ECCToString(TRpBarcode(printitem).ECCLevel);
+  exit;
+ end;
  Result:=inherited GetProperty(pname);
 end;
 
@@ -239,7 +314,7 @@ var
 begin
  if pname=SRpSBarcodeType then
  begin
-  for it:=bcCode_2_5_interleaved to bcCodeEAN13 do
+  for it:=bcCode_2_5_interleaved to bcCodePDF417 do
   begin
    lpossiblevalues.Add(BarcodeTypeStrings[it]);
   end;
@@ -251,6 +326,11 @@ begin
   lpossiblevalues.Add(FormatCurr('##0.0',90));
   lpossiblevalues.Add(FormatCurr('##0.0',180));
   lpossiblevalues.Add(FormatCurr('##0.0',270));
+  exit;
+ end;
+ if pname=SRpECCLevel then
+ begin
+  FillEccValues(lpossiblevalues);
   exit;
  end;
  inherited GetPropertyValues(pname,lpossiblevalues);

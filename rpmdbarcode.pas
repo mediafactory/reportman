@@ -24,6 +24,8 @@
 {       It has been revised added properties and        }
 {       implementation for 128C optimized codebar       }
 {                                                       }
+{       September 2004 Added PDF417 2D barcode support  }
+{       based on Turbo Power Systools codebase          }
 {                                                       }
 {                                                       }
 {*******************************************************}
@@ -42,8 +44,10 @@ uses
 {$IFNDEF USEVARIANTS}
  Windows,
 {$ENDIF}
- rpprintitem;
+ rpprintitem,rpbarcodecons,math;
 
+const
+ MAX_DIGITS_NUM=2000;
 type
  TRpBarcodeType = (bcCode_2_5_interleaved,
 		bcCode_2_5_industrial,
@@ -60,10 +64,16 @@ type
 		bcCodePostNet,
 		bcCodeCodabar,
 		bcCodeEAN8,
-		bcCodeEAN13
+        	bcCodeEAN13,
+                bcCodePDF417
 				);
 
  TRpDigit='0'..'9';
+
+ TSPDF417CodewordList = array [0..2700] of Word;
+ TSPDF417ECCLevels = (ecAuto, ecLevel0, ecLevel1, ecLevel2, ecLevel3,
+                        ecLevel4, ecLevel5, ecLevel6, ecLevel7, ecLevel8);
+
 
  TRpBarcode = class(TRpCommonPosComponent)
   private
@@ -77,6 +87,17 @@ type
    FUpdated:boolean;
    FRotation:SmallInt;
    FBColor:integer;
+   FECCLevel,FNumRows,FNumColumns:Integer;
+   FTruncated:Boolean;
+   FCodewords:TSPDF417CodewordList;
+   FNumCodewords:Integer;
+   FUsedCodewords:Integer;
+   FUsedECCCodewords:Integer;
+   FFreeCodewords:Integer;
+   FTotalCodewords:Integer;
+   FNewTextCodeword : Boolean;
+   FPDFLeft,FPDFTop:Integer;
+   FPDFMeta:TRpMetafileReport;
    modules:array[0..3] of integer;
    function Code_2_5_interleaved:string;
    function Code_2_5_industrial:string;
@@ -96,10 +117,62 @@ type
    procedure Evaluate;
    procedure WriteExpression(Writer:TWriter);
    procedure ReadExpression(Reader:TReader);
+   function GetRealErrorLevel : Integer;
+   procedure GenerateCodewords;
+   procedure TextToCodewords;
+   procedure SetECCLevel(NValue:Integer);
+   procedure CalculateSize (var XSize : Integer;
+                            var YSize : Integer);
+   procedure CalculateECC (NumCodewords:Integer;ECCLen:Integer);
+   procedure EncodeBinary (var Position : Integer; CodeLen : Integer);
+   procedure EncodeNumeric (var Position : Integer; CodeLen : Integer);
+   procedure EncodeText (var Position : Integer; CodeLen : Integer);
+   procedure ConvertBytesToBase900 (const S : array of byte;
+                                       var A : array of integer);
+   procedure ConvertToBase900 (const S : string;
+                                  var A : array of integer;
+                                  var LenA : integer);
+   procedure GetNextCharacter (var NewChar  : Integer;
+                                             var Codeword : Boolean;
+                                             var Position : Integer;
+                                             CodeLen      : Integer);
+   function IsNumericString (const S : string) : boolean;
+   procedure Draw2DBarcode(FLeft,FTop:integer;meta:TRpMetaFileReport);
+   procedure DrawStartPattern (RowNumber     : Integer;
+                                             WorkBarHeight : Integer);
+   procedure DrawStopPattern (RowNumber     : Integer;
+                                            ColNumber     : Integer;
+                                            WorkBarHeight : Integer);
+   procedure DrawLeftRowIndicator (RowNumber     : Integer;
+                                                 WorkBarHeight : Integer;
+                                                 NumRows       : Integer;
+                                                 NumCols       : Integer);
+   procedure DrawRightRowIndicator (RowNumber     : Integer;
+                                                  ColNumber     : Integer;
+                                                  WorkBarHeight : Integer;
+                                                  NumRows       : Integer;
+                                                  NumCols       : Integer);
+   procedure DrawCodeword (RowNumber     : Integer;
+                                         ColNumber     : Integer;
+                                         WorkBarHeight : Integer;
+                                         Pattern       : string);
+   procedure DrawCodewordBitmask (RowNumber     : Integer;
+                                                ColNumber     : Integer;
+                                                WorkBarHeight : Integer;
+                                                Bitmask       : DWord);
+   function CodewordToBitmask (RowNumber : Integer;
+                                             Codeword  : Integer) : DWord;
   protected
    procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
+   function  GoodForNumericCompaction (Position : Integer;
+                                          CodeLen : Integer;
+                                          var Count : Integer) : Boolean;
+   function  GoodForTextCompaction (Position : Integer;
+                                       CodeLen : Integer;
+                                       var Count : Integer) : Boolean;
+   procedure AddCodeword (Value : Word);
   public
    CurrentText:String;
    function  CalculateBarcode:string;
@@ -120,16 +193,25 @@ type
    property DisplayFormat:string read FDisplayformat write FDisplayFormat;
    property Rotation:smallint read FRotation write FRotation default 0;
    property BColor:integer read FBColor write FBColor default $0;
+   // PDF417
+   property NumColumns:Integer read FNumColumns write FNumColumns default 0;
+   property NumRows:Integer read FNumRows write FNumRows default 0;
+   property ECCLevel : Integer read FECCLevel write SetECCLevel default -1;
+   property Truncated : Boolean read FTruncated write FTruncated
+           default False;
   end;
 
- const BarcodeTypeStrings:array[bcCode_2_5_interleaved..bcCodeEAN13] of string=
+ const BarcodeTypeStrings:array[bcCode_2_5_interleaved..bcCodePDF417] of string=
   ('2_5_interleaved','2_5_industrial',
    '2_5_matrix','Code39','Code39Extended',
    '128A','128B','128C','128',
    'Code93','Code93Ex','MSI',
-   'PostNet','Codabar','EAN8','EAN13');
+   'PostNet','Codabar','EAN8','EAN13','PDF417');
 
  function StringBarcodeToBarCodeType(value:string):TRpBarCodeType;
+ function StringECCToInteger(value:String):Integer;
+ function ECCToString(value:integer):String;
+ procedure FillECCValues(alist:TRpWideStrings);
 
 implementation
 
@@ -140,7 +222,7 @@ var
  i:TRpBarCodeType;
 begin
  Result:=bcCodeEAN13;
- for i:=bcCode_2_5_interleaved to bcCodeEAN13 do
+ for i:=bcCode_2_5_interleaved to bcCodePDF417 do
  begin
   if (value=BarcodeTypeStrings[i]) then
   begin
@@ -223,12 +305,16 @@ constructor TRpBarcode.Create(Owner:TComponent);
 begin
 	inherited Create(owner);
   FBColor:=0;
-	FRatio := 2.0;
-	FModul := 10;
-	FTyp   := bcCodeEAN13;
-	FCheckSum := false;
-        FRotation := 0;
-        FExpression:=QuotedStr(SRpSampleBarCode);
+  FRatio := 2.0;
+  FModul := 10;
+  FTyp   := bcCodeEAN13;
+  FCheckSum := false;
+  FRotation := 0;
+  FExpression:=QuotedStr(SRpSampleBarCode);
+  FECCLevel:=-1;
+  FNumRows:=0;
+  FNumColumns:=0;
+  FTruncated:=false;
 end;
 
 
@@ -1436,6 +1522,12 @@ var i:integer;
         PenColor:integer;
         BrushColor:integer;
 begin
+  if typ=bcCodePDF417 then
+  begin
+   Draw2DBarcode(FLeft,FTop,meta);
+   exit;
+  end;
+
 	xadd := 0;
 	orgin.x := FLeft;
 	orgin.y := FTop;
@@ -1573,6 +1665,12 @@ function TRpBarcode.CalculateBarcode:string;
 var
  data:string;
 begin
+ if typ=bcCodePDF417 then
+ begin
+  GenerateCodewords;
+  REsult:=CurrentText;
+  exit;
+ end;
  // calculate the with of the different lines (modules)
  MakeModules;
 
@@ -1599,6 +1697,897 @@ begin
  Result:=data;
 end;
 
+
+
+procedure TRpBarcode.WriteExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FExpression);
+end;
+
+procedure TRpBarcode.ReadExpression(Reader:TReader);
+begin
+ FExpression:=ReadWideString(Reader);
+end;
+
+procedure TRpBarcode.DefineProperties(Filer:TFiler);
+begin
+ inherited;
+
+ Filer.DefineProperty('Expression',ReadExpression,WriteExpression,True);
+end;
+
+
+function TRpBarcode.GetRealErrorLevel : Integer;
+begin
+  if (FECCLevel < 0) then begin
+    if FNumCodeWords < 41 then
+      Result := 2
+    else if FNumCodeWords < 161 then
+      Result := 3
+    else if FNumCodeWords < 321 then
+      Result := 4
+    else
+      Result := 5;
+  end else
+    Result := FECCLevel
+end;
+
+
+procedure TRpBarcode.GenerateCodewords;
+var
+  ErrorLevel        : Integer;
+  NumErrorCodewords : Integer;
+  XSize             : Integer;
+  YSize             : Integer;
+
+begin
+  TextToCodewords;
+
+  ErrorLevel := GetRealErrorLevel;
+
+  NumErrorCodewords := Trunc (Power (2, ErrorLevel + 1));
+
+  CalculateSize (XSize, YSize);
+
+  FUsedCodewords := FNumCodewords;
+  FUsedECCCodewords := NumErrorCodewords;
+  FFreeCodewords := FTotalCodewords - FUsedCodewords;
+
+  { The first codewords is always the length }
+  if FNumCodewords +
+     (XSize * YSize - FNumCodewords - NumErrorCodewords) < 0 then
+    raise Exception.Create (SRpBarcodeCodeTooLarge);
+  FCodewords[0] := FNumCodewords +
+                  (XSize * YSize - FNumCodewords - NumErrorCodewords);
+
+  if NumErrorCodeWords + FNumCodeWords <= XSize * YSize then
+    CalculateECC (XSize * YSize - NumErrorCodeWords, NumErrorCodewords)
+  else
+    raise Exception.Create (SRpBarcodeCodeTooLarge);
+end;
+
+procedure TRpBarcode.TextToCodewords;
+var
+  i                  : Integer;
+  CodeLen            : Integer;
+  CurrentMode        : TStDataMode;
+  Count              : Integer;
+  First              : Boolean;
+  Code:String;
+
+const
+  TextCompaction     = 900;
+  PadCodeword        = 900;
+begin
+  Code:=CurrentText;
+  First := True;
+  for i := 0 to 2700 do
+    FCodewords[i] := PadCodeword;
+  FNumCodewords := 1; { There will always be a length codeword }
+  i := 1;
+
+  CodeLen := Length (Code);
+  if CodeLen = 0 then
+    Exit;
+
+  if GoodForNumericCompaction (i, CodeLen, Count) then
+    CurrentMode := dmNumeric
+  else if GoodForTextCompaction (i, CodeLen, Count) then
+    CurrentMode := dmText
+  else
+    CurrentMode := dmBinary;
+
+  while i < CodeLen do begin
+    case CurrentMode of
+      dmBinary :
+        EncodeBinary (i, CodeLen);
+      dmText :
+        if First then
+          EncodeText (i, CodeLen);
+      dmNumeric :
+        EncodeNumeric (i, CodeLen);
+    end;
+
+    if GoodForNumericCompaction (i, CodeLen, Count) then
+      CurrentMode := dmNumeric
+    else if GoodForTextCompaction (i, CodeLen, Count) then begin
+      if not First then
+        AddCodeword (TextCompaction);
+      CurrentMode := dmText;
+      EncodeText (i, CodeLen);                                         {!!.01}
+    end else
+      CurrentMode := dmBinary;
+    First := False;
+  end;
+end;
+
+procedure TRpBarcode.CalculateSize (var XSize : Integer;
+                                          var YSize : Integer);
+var
+  i                 : Integer;
+  NumErrorCodewords : Integer;
+  ErrorLevel        : Integer;
+  j                 : Integer;
+                                            
+begin
+  { Set the error correction level automatically if needed }
+  ErrorLevel := GetRealErrorLevel;
+
+  NumErrorCodewords := Trunc (Power (2, ErrorLevel + 1));
+
+  XSize := NumColumns;
+  YSize := NumRows;
+
+  FTotalCodewords := XSize * YSize;
+
+  { Adjust the size if necessary }
+  if (NumRows <= 0) or (NumColumns <= 0) then begin
+    if NumRows > 0 then begin
+      i := 1;
+      while i <= 30 do begin
+        if i * NumRows - NumErrorCodewords > FNumCodewords then
+          Break;
+        Inc (i);
+      end;
+      FTotalCodewords := YSize * 30;
+      XSize := i;
+    end else if NumColumns > 0 then begin
+      i := 3;
+      while i <= 90 do begin
+        if i * NumColumns - NumErrorCodewords > FNumCodewords then
+          Break;
+        Inc (i);
+      end;
+      YSize := i;
+      FTotalCodewords := XSize * 90;
+    end else begin
+      i := 1;
+      j := 3;
+      while (i * j - NumErrorCodewords < FNumCodewords) do begin
+        if j < 90 then
+          Inc (j);
+        if (i < 30) and (i * j - NumErrorCodewords < FNumCodewords) then
+          Inc (i);
+        if (j >= 90) and (i >= 30) then
+          Break;
+      end;
+      XSize := i;
+      YSize := J;
+      FTotalCodewords := 900;
+    end;
+  end;
+end;
+
+procedure TRpBarcode.CalculateECC (NumCodewords:Integer;ECCLen:Integer);
+var
+  BaseReg  : array [0..800] of DWord;
+  CoeffReg : array [0..800] of DWord;
+  i        : Integer;
+  j        : Integer;
+  TInt     : Integer;
+  Temp     : DWord;
+  Wrap     : DWord;
+
+begin
+  if ECClen < 128 then
+    for i := 0 to ECCLen - 1 do
+      CoeffReg[i] := StMods[ECClen][i]
+  else begin
+    if ECClen = 128 then
+      for i := 0 to ECCLen - 1 do
+        CoeffReg[i] := StMods128[i]
+    else if ECClen = 256 then
+      for i := 0 to ECCLen - 1 do
+        CoeffReg[i] := StMods256[i]
+    else if ECClen = 512 then
+      for i := 0 to ECCLen - 1 do
+        CoeffReg[i] := StMods512[i];
+  end;
+
+  for i := 0 to ECCLen - 1 do
+    BaseReg[i] := 0;
+
+  for i := NumCodewords to NumCodewords + ECCLen - 1 do
+    FCodewords[i] := 0;
+
+  for i := 0 to NumCodewords - 1 do begin
+    wrap := (BaseReg[ECClen - 1] + FCodewords[i]) mod 929;
+    for j := ECCLen - 1 downto 1 do begin
+      temp := (CoeffReg[ECClen - 1 - j] * wrap) mod 929;
+      temp := (929 - temp) mod 929;
+      BaseReg[j] := (BaseReg[j - 1] + temp) mod 929;
+    end;
+    temp := (CoeffReg[ECClen - 1] * wrap) mod 929;      
+    temp := (929 - temp) mod 929;
+    BaseReg[0]:= temp;
+  end;
+
+  for j := 0 to ECCLen - 1 do
+    BaseReg[j] := (929 - BaseReg[j]) mod 929;
+
+  for j := 0 to ECCLen - 1 do begin
+    tint := BaseReg[ECClen - 1 - j];
+    FCodewords [NumCodewords + j] := tint;
+  end;
+end;
+
+
+function TRpBarcode.GoodForNumericCompaction (
+                                               Position  : Integer;
+                                               CodeLen   : Integer;
+                                               var Count : Integer) : Boolean;
+var
+ code:String;
+const
+  BytesNeeded = 13;
+
+begin
+  code:=CurrentText;
+  Result := False;
+  Count := 0;
+  while (Position + Count < CodeLen) and
+        (Code[Position + Count] >= '0') and
+        (Code[Position + Count] <= '9') do
+    Inc (Count);
+  if Count > BytesNeeded then
+    Result := True;
+end;
+
+function TRpBarcode.GoodForTextCompaction (
+                                             Position  : Integer;
+                                             CodeLen   : Integer;
+                                             var Count : Integer) : Boolean;
+
+var
+ code:String;
+  function IsGoodTextValue (const v : Char) : Boolean;                 {!!.01}
+  begin                                                                {!!.01}
+    if v > #127 then                                                   {!!.01}
+      Result := False                                                  {!!.01}
+    else if TSPDF417TextCompaction[Integer (v)].Value >= 0 then       {!!.01}
+      Result := True                                                   {!!.01}
+    else                                                               {!!.01}
+      Result := False;                                                 {!!.01}
+  end;                                                                 {!!.01}
+
+const
+  BytesNeeded = 5;
+
+begin
+  code:=CurrentText;
+  Result := False;
+  Count := 0;
+  while (Position + Count < CodeLen) and                               {!!.01}
+        (IsGoodTextValue (Code[Position + Count])) and                 {!!.01}
+        (Count <= BytesNeeded) do                                      {!!.01}
+    Inc (Count);
+  if (Count > BytesNeeded) or
+     ((Position + Count >= CodeLen) and (Count > 0)) then
+    Result := True;
+end;
+
+procedure TRpBarcode.EncodeBinary (var Position : Integer;
+                                         CodeLen      : Integer);
+
+  function CountBytes (Position : Integer; CodeLen : Integer) : Integer;
+  var
+    Done  : Boolean;
+    Dummy : Integer;
+
+  begin
+    Result := 0;
+    Done := False;
+    while not done do begin
+      if (Result < CodeLen) and 
+         (not GoodForNumericCompaction (Position + Result, CodeLen, Dummy)) and
+         (not GoodForTextCompaction (Position + Result, CodeLen, Dummy)) then
+        Inc (Result)
+      else
+        Done := True;
+    end;
+  end;
+
+var
+  MultipleOfSix  : Boolean;
+  BinaryDataSize : Integer;
+  i              : Integer;
+  j              : Integer;
+  A              : array [0..6] of Integer;
+  code:String;
+const
+  Even6Bytes = 924;
+  Odd6Bytes  = 901;
+
+begin
+  code:=CurrentText;
+  BinaryDataSize := CountBytes (Position, CodeLen);
+  if BinaryDataSize mod 6 = 0 then
+    MultipleOfSix := True
+  else
+    MultipleOfSix := False;
+  if MultipleOfSix then
+    AddCodeword (Even6Bytes)
+  else
+    AddCodeword (Odd6Bytes);
+
+  i := 0;
+  while i < BinaryDataSize do
+    if BinaryDataSize - i < 6 then begin
+      AddCodeword (Word (Code[Position + i]));
+      Inc (i);
+    end else begin
+      ConvertBytesToBase900 ([Byte (Code[Position + i]),
+                              Byte (Code[Position + i + 1]),
+                              Byte (Code[Position + i + 2]),
+                              Byte (Code[Position + i + 3]),
+                              Byte (Code[Position + i + 4]),
+                              Byte (Code[Position + i + 5])], A);
+      for j := 1 to 5 do
+        AddCodeword (A[j - 1]);                                        {!!.dg}
+      Inc (i, 6);
+    end;
+  Inc (Position, BinaryDataSize);                                      {!!.dg}
+end;
+
+procedure TRpBarcode.EncodeNumeric (var Position : Integer;
+                                          CodeLen      : Integer);
+
+var
+ code:String;
+  function CollectDigits (var Position : Integer;
+                          CodeLen      : Integer) : string;
+  var
+    StartPos : Integer;
+
+  const
+    MaxDigitChunk = 44;
+
+  begin
+    Result := '';
+    StartPos := Position;
+    while (Position <= CodeLen) and (Position - StartPos < MaxDigitChunk) and
+          (Code[Position] >= '0') and (Code[Position] <= '9') do begin
+      Inc (Position);
+    end;
+    if Position - StartPos > 0 then
+      Result := '1' + Copy (Code, StartPos, Position - StartPos);
+  end;
+
+var
+  NumericString : string;
+  A             : array [0..MAX_DIGITS_NUM] of Integer;
+  LenA          : Integer;
+  i             : Integer;
+
+const
+  NumericLatch = 902;
+
+begin
+  code:=CurrentTexT;
+  AddCodeword (NumericLatch);
+  repeat
+    NumericString := CollectDigits (Position, CodeLen);
+    if NumericString <> '' then begin
+      ConvertToBase900 (NumericString, A, LenA);
+      for i := 0 to LenA-1 do
+        AddCodeword (A[i]);
+    end;
+  until NumericString = '';
+end;
+
+procedure TRpBarcode.EncodeText (var Position : Integer;
+                                       CodeLen      : Integer);
+var
+ Code:String;
+  function SelectBestTextMode (
+        CurChar : TSPDF417TextCompactionData) : TSPDF417TextCompactionMode;
+  begin
+    if cmAlpha in CurChar.Mode then
+      Result := cmAlpha
+    else if cmLower in CurChar.Mode then
+      Result := cmLower
+    else if cmMixed in CurChar.Mode then
+      Result := cmMixed
+    else if cmPunctuation in CurChar.Mode then
+      Result := cmPunctuation
+    else
+      Result := cmNone;
+  end;
+
+  procedure AddTextCharacter (Value : Word);
+  begin
+    if FNewTextCodeword then
+      FCodewords[FNumCodewords] := 30 * Value
+    else begin
+      FCodewords[FNumCodewords] := FCodewords[FNumCodewords] + Value;
+      Inc (FNumCodewords);
+    end;
+    FNewTextCodeword := not FNewTextCodeword;
+  end;
+
+  function ChangeTextSubmode (CurrentMode : TSPDF417TextCompactionMode;
+                              NewMode : TSPDF417TextCompactionMode;
+                              UseShift : Boolean) : TSPDF417TextCompactionMode;
+  const
+    LatchAlphaToLower       = 27;
+    LatchAlphaToMixed       = 28;
+    ShiftAlphaToPunctuation = 29;
+    ShiftLowerToAlpha       = 27;
+    LatchLowerToMixed       = 28;
+    ShiftLowertoPunctuation = 29;
+    LatchMixedToPunctuation = 25;
+    LatchMixedToLower       = 27;
+    LatchMixedToAlpha       = 28;
+    ShiftMixedToPunctuation = 29;
+    LatchPunctuationToAlpha = 29;
+      
+  begin
+    if UseShift then
+      Result := CurrentMode
+    else
+      Result := NewMode;
+        
+    case CurrentMode of
+      cmAlpha :
+        case NewMode of
+          cmLower :
+            begin
+              { Alpha to Lower.  No shift }
+              AddTextCharacter (LatchAlphaToLower);
+              if UseShift then
+                Result := NewMode;
+             end;
+          cmMixed :
+            begin
+              { Alpha to Numeric.  No shift }
+              AddTextCharacter (LatchAlphaToMixed);
+              if UseShift then
+                Result := NewMode;
+            end;
+          cmPunctuation :
+            { Alpha to Punctuation }
+            if UseShift then
+              AddTextCharacter (ShiftAlphaToPunctuation)
+            else begin
+              AddTextCharacter (LatchAlphaToMixed);
+              AddTextCharacter (LatchMixedToPunctuation);
+            end;
+        end;
+
+      cmLower :
+        case NewMode of
+          cmAlpha :
+            { Lower to Alpha }
+            if UseShift then
+              AddTextCharacter (ShiftLowerToAlpha)
+            else begin
+              AddTextCharacter (LatchLowerToMixed);
+              AddTextCharacter (LatchMixedToAlpha);
+            end;
+          cmMixed :
+            begin
+              { Lower to Mixed.  No shift }
+              AddTextCharacter (LatchLowerToMixed);
+              if UseShift then
+                Result := NewMode;
+            end;
+          cmPunctuation :
+            { Lower to Punctuation }
+            if UseShift then
+              AddTextCharacter (ShiftLowerToPunctuation)
+            else begin
+              AddTextCharacter (LatchLowerToMixed);
+              AddTextCharacter (LatchMixedToPunctuation);
+            end;
+        end;
+          
+      cmMixed :
+        case NewMode of
+          cmAlpha :
+            begin
+              { Mixed to Alpha.  No shift }
+              AddTextCharacter (LatchMixedToAlpha);
+              if UseShift then
+                Result := NewMode;
+            end;
+          cmLower :
+            begin
+              { Mixed to Lower.  No shift }
+              AddTextCharacter (LatchMixedToLower);
+              if UseShift then
+                Result := NewMode;
+            end;
+          cmPunctuation :
+            { Mixed to Punctuation }
+            if UseShift then
+              AddTextCharacter (ShiftMixedToPunctuation)
+            else
+              AddTextCharacter (LatchMixedToPunctuation);
+        end;
+      cmPunctuation :
+        case NewMode of
+          cmAlpha :
+            begin
+              { Punctuation to Alpha.  No shift }
+              AddTextCharacter (LatchPunctuationToAlpha);
+              if UseShift then
+                Result := NewMode;
+            end;
+          cmLower :
+            begin
+              { Punctuation to Lower.  No shift }
+              AddTextCharacter (LatchPunctuationToAlpha);
+              AddTextCharacter (LatchAlphaToLower);
+              if UseShift then
+                Result := NewMode;
+            end;
+          cmMixed :
+            begin
+              { Punctuation to Mixed.  No shift }
+              AddTextCharacter (LatchPunctuationToAlpha);
+              AddTextCharacter (LatchAlphaToMixed);
+              if UseShift then
+                Result := NewMode;
+            end;
+        end;
+    end;
+  end;
+
+var
+  CurrentTextSubmode : TSPDF417TextCompactionMode;
+  CurChar            : TSPDF417TextCompactionData;
+  UseShift           : Boolean;
+  Done               : Boolean;
+  Dummy              : Integer;
+  NewChar            : Integer;
+  Codeword           : Boolean;
+
+const
+  EndingPadChar      = 29;
+
+begin
+  Code:=CurrentText;
+  { Initialize and get the first character }
+  FNewTextCodeword := True;
+  CurrentTextSubmode := cmAlpha;
+  Done := False;
+
+  { get characters until it is necessary to step out of text mode }
+  while (Position <= CodeLen) and (CurChar.Value >= 0) and
+        (not Done) do begin
+    if (Position <= CodeLen) then begin
+      GetNextCharacter (NewChar, Codeword, Position, CodeLen);
+      CurChar := TSPDF417TextCompaction[NewChar];
+    end;
+
+    if Codeword then begin
+      { If the text contains an odd number of letters, follow it with a
+        trailing 29 }
+      if not FNewTextCodeword then
+        AddTextCharacter (EndingPadChar);
+      FNewTextCodeword := True;
+      { Add the codeword }
+      AddCodeword (NewChar)
+    end else begin
+      { Check if the text submode for the current character is different than
+        the current text submode }
+      if not (CurrentTextSubmode in CurChar.Mode) then begin
+        { if the text submode is different, see if it remains different.  If
+          it does, use a latch, otherwise just shift }
+        if Position < CodeLen then begin
+          if not (CurrentTextSubmode in
+             TSPDF417TextCompaction[Integer (Code[Position + 1])].Mode) then
+            UseShift := False
+          else
+            UseShift := True;
+        end else
+          UseShift := True;
+
+        { Add the shift or latch to the text codewords }
+        CurrentTextSubmode := ChangeTextSubmode (CurrentTextSubmode,
+                                                 SelectBestTextMode (CurChar),
+                                                 UseShift);
+      end;
+
+      { Add the character to the codeword array }
+      AddTextCharacter (CurChar.Value);
+    end;
+    { If this is a digit and it looks like a good time to switch to
+      numeric mode, do so }
+    if GoodForNumericCompaction (Position, CodeLen, Dummy) then
+      Done := True;
+  end;
+
+  { If the text contains an odd number of letters, follow it with a
+    trailing 29 }
+  if not FNewTextCodeword then
+    AddTextCharacter (EndingPadChar);
+end;
+
+procedure TRpBarcode.AddCodeword (Value : Word);
+begin
+  FCodewords[FNumCodewords] := Value;
+  Inc (FNumCodewords);
+end;
+
+procedure TRpBarcode.ConvertBytesToBase900 (const S : array of Byte;
+                                                  var A   : array of Integer);
+var
+  i        : Integer;
+  D        : array [0..5] of Byte;
+  Dividend : Integer;
+  Digits   : array [0..4] of Integer;
+  SP       : Integer;
+
+begin
+//  Assert(length(S) = 6,
+//    'ConvertBytesToBase900: there should be 6 bytes in the input byte array');
+//  Assert(length(A) = 5,
+//    'ConvertBytesToBase900: there should be 5 elements in the output digit array');
+
+  {copy the array of bytes}
+  for i := 0 to 5 do
+    D[i] := S[i];
+
+  {loop until the entire base 256 value has been converted to an array
+   of base 900 digits (6 base 256 digits will convert to 5 base 900
+   digits)}
+  SP := 0;
+  while (SP < 5) do begin
+    Dividend := 0;
+    for i := 0 to 5 do begin
+     {notes: at the start of the loop, Dividend will always be in the
+               range 0..899--it starts out as zero and the final
+               statement in the loop forces it into that range
+             the first calculation sets Dividend to 0..230399
+             the second calc sets D[i] to 0..255 (with no possibility
+               of overflow)
+             the third calc sets Dividend to 0..899 again}
+      Dividend := (Dividend shl 8) + D[i];
+      D[i] := Dividend div 900;
+      Dividend := Dividend mod 900;
+    end;
+
+    Digits[SP] := Dividend;
+    inc(SP);
+  end;
+
+  {pop the base 900 digits and enter them into the array of integers}
+  i := 0;
+  while (SP > 0) do begin
+    dec(SP);
+    A[i] := Digits[SP];
+    inc(i);
+  end;
+end;
+
+procedure TRpBarcode.ConvertToBase900 (const S  : string;
+                                             var A    : array of Integer;
+                                             var LenA : Integer);
+var
+  D          : string;
+  i          : Integer;
+  LenD       : Integer;
+  Dividend   : Integer;
+  Rem        : Integer;
+  Done       : Boolean;
+  FirstDigit : Integer;
+  Digits     : array [0..MAX_DIGITS_NUM] of Integer;
+                             // 15 base 900 digits = 45 base 10 digits
+  SP         : Integer;
+  
+begin
+  {Assert: S must be non-empty
+           it must contain just the ASCII characters '0' to '9' (so no
+             leading/trailing spaces either)
+           it must have a maximum length of 45}
+  Assert(IsNumericString(S), 'ConvertToBase900: S should be a numeric string');
+
+  {grab the string and calculate its length}
+  D := S;
+  LenD := length(D);
+
+  {convert the string from ASCII characters into binary digits and in
+   the process calculate the first non-zero digit}
+  FirstDigit := 0;
+  for i := LenD downto 1 do begin
+    D[i] := char(ord(D[i]) - ord('0'));
+    if (D[i] <> #0) then
+      FirstDigit := i;
+  end;
+
+  {if the input string comprises just zero digits, return}
+  if (FirstDigit = 0) then begin
+    LenA := 0;
+    Exit;
+  end;
+
+  {prepare the stack of base 900 digits}
+  SP := 0;
+
+  {loop until the entire base 10 string has been converted to an array
+   of base 900 digits}
+  Done := false;
+  while not Done do begin
+
+    {if we can switch to using standard integer arithmetic, do so}
+    if ((LenD - FirstDigit) <= 8) then begin
+
+      {convert the remaining digits to a binary integer}
+      Dividend := 0;
+      for i := FirstDigit to LenD do
+        Dividend := (Dividend * 10) + ord(D[i]);
+
+      {calculate the remaining base 900 digits using the standard
+       radix conversion algorithm; push onto the digit stack}
+      while (Dividend <> 0) do begin
+        Digits[SP] := Dividend mod 900;
+        inc(SP);
+        Dividend := Dividend div 900;
+      end;
+
+      {we've finished}
+      Done := true;
+    end
+
+    {otherwise operate directly on the base 10 string}
+    else begin
+
+      {calculate the remainder base 100}
+      Rem := ord(D[LenD]);
+      dec(LenD);
+      Rem := Rem + (ord(D[LenD]) * 10);
+      dec(LenD);
+
+      {calculate the quotient and remainder of the remaining digits,
+       dividing by 9}
+      Dividend := 0;
+      for i := FirstDigit to LenD do begin
+        Dividend := (Dividend * 10) + ord(D[i]);
+        D[i] := char(Dividend div 9);
+        Dividend := Dividend mod 9;
+      end;
+
+      {push the base 900 digit onto the stack: it's the remainder base
+       9 multiplied by 100, plus the remainder base 100}
+      Digits[SP] := (Dividend * 100) + Rem;
+      inc(SP);
+
+      {if the first digit is now zero, advance the index to the first
+       non-zero digit}
+      if (D[FirstDigit] = '0') then
+        inc(FirstDigit);
+    end;
+  end;
+
+  {pop the base 900 digits and enter them into the array of integers}
+  i := 0;
+  while (SP > 0) do begin
+    dec(SP);
+    A[i] := Digits[SP];
+    inc(i);
+  end;
+  LenA := i;
+end;
+
+procedure TRpBarcode.GetNextCharacter (var NewChar  : Integer;
+                                             var Codeword : Boolean;
+                                             var Position : Integer;
+                                             CodeLen      : Integer);
+var
+  WorkNum : Integer;
+  FCode:String;
+
+begin
+  FCode:=CurrentText;
+  NewChar := 0;
+  Codeword := False;
+
+  if Position <= CodeLen then begin
+    if (FCode[Position] = '\') and
+       (Position < CodeLen) then begin 
+      case FCode[Position + 1] of
+        '0'..'9' : begin
+          try
+            NewChar := StrToInt (Copy (FCode, Position + 1, 3));
+            Inc (Position, 4);
+          except
+            NewChar := 0;
+            Inc (Position, 4);
+          end;
+        end;
+        'C', 'c' : begin
+          try
+            Codeword := True;
+            NewChar := StrToInt (Copy (FCode, Position + 2, 3));
+            Inc (Position, 5);
+          except
+            NewChar := 0;
+            Inc (Position, 5);
+          end;
+        end;
+        'G', 'g' : begin
+          WorkNum := StrToInt (Copy (FCode, Position + 1, 6));
+          Inc (Position, 8);
+          if (WorkNum >= 0) and (WorkNum <= 899) then begin
+            AddCodeword (927);
+            Codeword := True;
+            NewChar := WorkNum;
+          end else if (WorkNum >= 900) and (WorkNum < 810900) then begin
+            AddCodeword (926);
+            AddCodeword ((WorkNum div 900) - 1);
+            Codeword := True;
+            NewChar := WorkNum mod 900;
+          end else if (WorkNum >= 810900) and (WorkNum < 811800) then begin
+            AddCodeword (925);
+            Codeword := True;
+            NewChar := WorkNum;
+          end else
+            raise Exception.Create (SRpGLIOutOfRangeBarcode);
+        end;
+        'X', 'x' : begin
+          try
+            NewChar := StrToInt ('$' + Copy (FCode, Position + 2, 2));
+            Inc (Position, 4);
+          except
+            NewChar := 0;
+            Inc (Position, 4);
+          end;
+        end;
+        '\' : begin
+          NewChar := Byte (FCode[Position]);
+          Inc (Position, 2);
+        end;
+        else begin
+          NewChar := Byte (FCode[Position]);
+          Inc (Position);
+        end;
+      end;   
+    end else begin
+      NewChar := Byte (FCode[Position]);
+      Inc (Position);
+    end;
+  end;
+end;
+
+function TRpBarcode.IsNumericString (const S : string) : boolean;
+var
+  i      : integer;
+  LenS : integer;
+
+begin
+  {note: an assertion test for ConvertToBase900}
+  Result := false;
+  LenS := length(S);
+  if (LenS = 0) or (LenS > 45) then
+    Exit;
+  for i := 1 to LenS do
+    if not (('0' <= S[i]) and (S[i] <= '9')) then
+      Exit;
+  Result := true;
+end;
+
+
 procedure TRpBarCode.DoPrint(adriver:IRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
@@ -1621,22 +2610,346 @@ begin
 
 end;
 
-
-procedure TRpBarcode.WriteExpression(Writer:TWriter);
+procedure TRpBarcode.DrawStartPattern (RowNumber     : Integer;
+                                             WorkBarHeight : Integer);
 begin
- WriteWideString(Writer, FExpression);
+  DrawCodeword (RowNumber, 0, WorkBarHeight, '81111113');
 end;
 
-procedure TRpBarcode.ReadExpression(Reader:TReader);
+procedure TRpBarcode.DrawStopPattern (RowNumber     : Integer;
+                                            ColNumber     : Integer;
+                                            WorkBarHeight : Integer);
 begin
- FExpression:=ReadWideString(Reader);
+  if Truncated then
+    DrawCodeWord (RowNumber, ColNumber, WorkBarHeight, '1')
+  else
+    DrawCodeWord (RowNumber, ColNumber, WorkBarHeight, '711311121');
 end;
 
-procedure TRpBarcode.DefineProperties(Filer:TFiler);
-begin
- inherited;
+procedure TRpBarcode.DrawLeftRowIndicator (RowNumber     : Integer;
+                                                 WorkBarHeight : Integer;
+                                                 NumRows       : Integer;
+                                                 NumCols       : Integer);
+var
+  CodeWord   : Integer;
+  ErrorLevel : Integer;
 
- Filer.DefineProperty('Expression',ReadExpression,WriteExpression,True);
+begin
+  ErrorLevel := GetRealErrorLevel;
+  CodeWord := 0;
+  if RowNumber mod 3 = 0 then
+    CodeWord := ((RowNumber div 3) * 30) + ((NumRows - 1) div 3)
+  else if RowNumber mod 3 = 1 then
+    CodeWord := ((RowNumber div 3) * 30) + ((NumRows - 1) mod 3) +
+                 (3 * ErrorLevel)
+  else if RowNumber mod 3 = 2 then
+    CodeWord := (( RowNumber div 3) * 30) + (NumCols - 1);
+  DrawCodeWordBitmask (RowNumber, 1, WorkBarHeight,
+                       CodewordToBitmask (RowNumber, Codeword));
+end;
+
+procedure TRpBarcode.DrawRightRowIndicator (RowNumber     : Integer;
+                                                  ColNumber     : Integer;
+                                                  WorkBarHeight : Integer;
+                                                  NumRows       : Integer;
+                                                  NumCols       : Integer);
+var
+  Codeword   : Integer;
+  ErrorLevel : Integer;
+  
+begin
+  ErrorLevel := GetRealErrorLevel;
+  CodeWord := 0;
+  if RowNumber mod 3 = 0 then
+    Codeword := ((RowNumber div 3) * 30) + (NumCols - 1)
+  else if RowNumber mod 3 = 1 then
+    Codeword := ((RowNumber div 3) * 30) + ((NumRows - 1) div 3)
+  else if RowNumber mod 3 = 2 then
+    Codeword := ((RowNumber div 3) * 30) + ((NumRows - 1) mod 3) +
+                (3 * ErrorLevel);
+  DrawCodeWordBitmask (RowNumber, ColNumber, WorkBarHeight,
+                       CodewordToBitmask (RowNumber, Codeword));
+end;
+
+
+
+procedure TRpBarcode.Draw2DBarcode(FLeft,FTop:integer;meta:TRpMetaFileReport);
+var
+  XSize             : Integer;
+  YSize             : Integer;
+  i                 : Integer;
+  j                 : Integer;
+  WorkBarHeight     : Integer;
+  CodewordPos       : Integer;
+  ErrorLevel        : Integer;
+  NumErrorCodewords : Integer;
+
+const
+  SymbolPadding = 900;
+
+begin
+  FPDFLeft:=FLeft;
+  FPDFTop:=FTop;
+  FPDFMeta:=meta;
+  { Set the error correction level automatically if needed }
+  ErrorLevel := GetRealErrorLevel;
+
+  NumErrorCodewords := Trunc (Power (2, ErrorLevel + 1));
+
+  CalculateSize (XSize, YSize);
+
+  { The first codewords is always the length }
+  if FNumCodewords +
+     (XSize * YSize - FNumCodewords - NumErrorCodewords) < 0 then
+    raise Exception.Create (SRpBarcodeCodeTooLarge);
+  FCodewords[0] := FNumCodewords +
+                  (XSize * YSize - FNumCodewords - NumErrorCodewords);
+
+  CodewordPos := 1; { The first codeword is always the length }
+
+//  WorkBarHeight := (BarCodeRect.Bottom - BarCodeRect.Top) div YSize;
+  WorkBarHeight := (Height) div YSize;
+
+  for i := 0 to YSize - 1 do begin
+//    if FHighlight then
+//      FBitmap.Canvas.Brush.Color := $ffbbff;
+    DrawStartPattern (i, WorkBarHeight);
+//    if FHighlight then
+//      FBitmap.Canvas.Brush.Color := $ffffbb;
+    DrawLeftRowIndicator (i, WorkBarHeight, YSize, XSize);
+    for j := 0 to XSize - 1 do begin
+      if (i = 0) and (j = 0) then begin
+//        if FHighlight then
+//          FBitmap.Canvas.Brush.Color := $bbffff;
+        { Length }
+        DrawCodeWordBitmask (i, j + 2, WorkBarHeight,
+                             CodeWordToBitmask (i, FNumCodewords +
+                      (XSize * YSize - FNumCodewords - NumErrorCodewords)))
+      end else if CodewordPos < FNumCodewords then begin
+//        if FHighlight then
+//          FBitmap.Canvas.Brush.Color := $bbbbff;
+        { Data }
+        DrawCodeWordBitmask (i, j + 2, WorkBarHeight,
+                             CodewordToBitmask (i, FCodewords[CodewordPos]));
+        Inc (CodewordPos);
+      end else if CodewordPos >= XSize * YSize - NumErrorCodeWords then begin
+//        if FHighlight then
+//          FBitmap.Canvas.Brush.Color := $ffbbbb;
+        { Error Correction Codes }
+        DrawCodeWordBitmask (i, j + 2, WorkBarHeight,
+                             CodewordToBitmask (i, FCodewords[CodewordPos]));
+        Inc (CodewordPos);
+      end else begin
+//        if FHighlight then
+//          FBitmap.Canvas.Brush.Color := $bbffbb;
+        { Padding }
+        DrawCodewordBitmask (i, j + 2, WorkBarHeight,
+                             CodewordToBitmask (i, SymbolPadding));
+        Inc (CodewordPos);
+      end;
+    end;
+//    if FHighlight then
+//      FBitmap.Canvas.Brush.Color := $bbddff;
+    if Truncated then
+      DrawStopPattern (i, XSize + 2, WorkBarHeight)
+    else begin
+      DrawRightRowIndicator (i, XSize + 2, WorkBarHeight, YSize, XSize);
+//      if FHighlight then
+//        FBitmap.Canvas.Brush.Color := $ddaaff;
+      DrawStopPattern (i, XSize + 3, WorkBarHeight);
+    end;
+  end;
+end;
+
+procedure TRpBarcode.DrawCodeword (RowNumber     : Integer;
+                                         ColNumber     : Integer;
+                                         WorkBarHeight : Integer;
+                                         Pattern       : string);
+
+  function GetColumnPosition (ColNumber : Integer) : Integer;
+  begin
+    Result := ColNumber * SPDF417CellWidth * Modul;
+  end;
+
+var
+  i         : Integer;
+  CurPos    : Integer;
+  NewPos    : Integer;
+  DrawBlock : Boolean;
+  aleft,atop,awidth,aheight:integer;
+  a,b,c,d,orgin:TPoint;
+  alpha:double;
+begin
+//  if FHighlight then begin
+//    FBitmap.Canvas.FillRect (
+//        Rect (BarCodeRect.Left + (GetColumnPosition (ColNumber)),
+//              BarCodeRect.Top + RowNumber * WorkBarHeight,
+//              BarCodeRect.Left + 17 * BarWidth + GetColumnPosition (ColNumber),
+//              BarCodeRect.Top + (RowNumber + 1) * WorkBarHeight));
+//    FBitmap.Canvas.Brush.Color := Color;
+//  end;
+
+  orgin.x := FPDFLeft;
+  orgin.y := FPDFTop;
+  alpha := Rotation/10*pi / 180.0;
+
+  CurPos := 0;
+  DrawBlock := True;
+  for i := 1 to Length (Pattern) do begin
+    NewPos := StrToInt (Copy (Pattern, i, 1)) * Modul;
+    if DrawBlock then
+    begin
+     aleft:=CurPos + GetColumnPosition (ColNumber);
+     atop:=RowNumber * WorkBarHeight;
+//     awidth:=CurPos + NewPos + GetColumnPosition (ColNumber);
+     awidth:=NewPos;
+     aheight:=WorkBarHeight+1;
+
+     a.y:=atop;
+     a.x:=aleft;
+     c.x:=aleft+awidth;
+     c.y:=atop+aheight;
+     b.x:=aleft+awidth;
+     b.y:=atop;
+     d.x:=aleft;
+     d.y:=atop+aheight;
+
+     a := Translate2D(Rotate2D(a, alpha), orgin);
+     b := Translate2D(Rotate2D(b, alpha), orgin);
+     c := Translate2D(Rotate2D(c, alpha), orgin);
+     d := Translate2D(Rotate2D(d, alpha), orgin);
+
+     FPDFmeta.Pages[FPDFmeta.CurrentPage].NewDrawObject(a.y,a.x,c.x-a.x,c.y-a.y,
+       integer(rpsRectangle),0,BColor,0,0,BColor);
+
+
+//     FPDFmeta.Pages[FPDFMeta.CurrentPage].NewDrawObject(
+//     atop,aleft,awidth,aheight,
+//     integer(rpsRectangle),0,BColor,0,0,BColor);
+    end;
+//      FBitmap.Canvas.Rectangle (
+//          BarCodeRect.Left + CurPos + GetColumnPosition (ColNumber),
+//          BarCodeRect.Top + RowNumber * WorkBarHeight,
+//          BarCodeRect.Left + CurPos + NewPos + GetColumnPosition (ColNumber),
+//          BarCodeRect.Top + (RowNumber + 1) * WorkBarHeight);
+    CurPos := CurPos + NewPos;
+    DrawBlock := not DrawBlock;
+  end;
+end;
+
+procedure TRpBarcode.DrawCodewordBitmask (RowNumber     : Integer;
+                                                ColNumber     : Integer;
+                                                WorkBarHeight : Integer;
+                                                Bitmask       : DWord);
+
+  function GetColumnPosition (ColNumber : Integer) : Integer;
+  begin
+    Result := ColNumber * SPDF417CellWidth * Modul;
+  end;
+
+var
+  i : Integer;
+  aleft,atop,awidth,aheight:integer;
+  a,b,c,d,orgin:TPoint;
+  alpha:double;
+begin
+//  if FHighlight then begin
+//    FBitmap.Canvas.FillRect (
+//        Rect (BarCodeRect.Left + (GetColumnPosition (ColNumber)),
+//              BarCodeRect.Top + RowNumber * WorkBarHeight,
+//              BarCodeRect.Left + 17 * BarWidth + GetColumnPosition (ColNumber),
+//              BarCodeRect.Top + (RowNumber + 1) * WorkBarHeight));
+ //   FBitmap.Canvas.Brush.Color := Color;
+//  end;
+
+  orgin.x := FPDFLeft;
+  orgin.y := FPDFTop;
+  alpha := Rotation/10*pi / 180.0;
+
+			// draw the rectangle
+
+
+  for i := 16 downto 0 do
+    if ((BitMask shr i) and $00001) <> 0 then
+    begin
+     aleft:=(16 - i) * Modul + GetColumnPosition (ColNumber);
+     atop:=RowNumber * WorkBarHeight;
+//     awidth:=(17 - i) * Modul +GetColumnPosition (ColNumber);
+     awidth:=Modul;
+     aheight:=WorkBarHeight+1;
+//     FPDFmeta.Pages[FPDFMeta.CurrentPage].NewDrawObject(
+//      atop,aleft,awidth,aheight,
+//     integer(rpsRectangle),0,BColor,0,0,BColor);
+     a.y:=atop;
+     a.x:=aleft;
+     c.x:=aleft+awidth;
+     c.y:=atop+aheight;
+     b.x:=aleft+awidth;
+     b.y:=atop;
+     d.x:=aleft;
+     d.y:=atop+aheight;
+
+     a := Translate2D(Rotate2D(a, alpha), orgin);
+     b := Translate2D(Rotate2D(b, alpha), orgin);
+     c := Translate2D(Rotate2D(c, alpha), orgin);
+     d := Translate2D(Rotate2D(d, alpha), orgin);
+
+     FPDFmeta.Pages[FPDFmeta.CurrentPage].NewDrawObject(a.y,a.x,c.x-a.x,c.y-a.y,
+       integer(rpsRectangle),0,BColor,0,0,BColor);
+
+//      FBitmap.Canvas.Rectangle (
+//          BarCodeRect.Left + (16 - i) * BarWidth +
+//          GetColumnPosition (ColNumber),
+//          BarCodeRect.Top + RowNumber * WorkBarHeight,
+//          BarCodeRect.Left + (17 - i) * BarWidth +
+//          GetColumnPosition (ColNumber),
+//          BarCodeRect.Top + (RowNumber + 1) * WorkBarHeight);
+    end;
+end;
+
+function TRpBarcode.CodewordToBitmask (RowNumber : Integer;
+                                             Codeword  : Integer) : DWord;
+begin
+  if (Codeword < 0) or (CodeWord > 929) then
+    raise Exception.Create (SRpInvalidCodeword);
+  Result := SPDF417Codewords[RowNumber mod 3][Codeword];
+end;
+
+procedure TRpBarcode.SetECCLevel(NValue:Integer);
+begin
+ if NValue>8 then
+  NValue:=8;
+ if NValue<-1 then
+  NValue:=-1;
+ FECCLEvel:=NValue;
+end;
+
+
+function StringECCToInteger(value:String):Integer;
+begin
+ if value='Auto' then
+  Result:=-1
+ else
+  Result:=StrToInt(value[6]);
+end;
+
+function ECCToString(value:integer):String;
+begin
+ Result:='Auto';
+ if (value in [0..8]) then
+  Result:='Level'+IntToStr(value);
+end;
+
+procedure FillECCValues(alist:TRpWideStrings);
+var
+ i:integer;
+begin
+ alist.clear;
+ alist.Add('Auto');
+ for i:=0 to 8 do
+ begin
+  alist.Add('Level'+IntToStr(i));
+ end;
 end;
 
 end.

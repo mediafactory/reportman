@@ -33,7 +33,7 @@ uses
 {$IFDEF USEVARIANTS}
   MidasLib,
 {$ENDIF}
-  Graphics,rpfaxsend,
+  Graphics,rpfaxsend,Printers,
   rpreport in '..\..\..\rpreport.pas',
   rpparams in '..\..\..\rpparams.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas',
@@ -84,6 +84,8 @@ begin
  Writeln(AnsiString(SRpPrintRep21));
  Writeln(AnsiString(SRpPrintRep22));
  Writeln(AnsiString(SRpPrintRep23));
+ Writeln(AnsiString(SRpPrintRep24));
+ Writeln(AnsiString(SRpPrintRep25));
  Writeln(AnsiString(SRpParseParamsH));
  Writeln(AnsiString(SRpCommandLineStdIN));
 end;
@@ -97,7 +99,9 @@ var
  abitmap:TBitmap;
  sendfax,faxdevice,faxcoverstring:string;
  outputfilename:String;
-
+ aprintername:string;
+ aindex:integer;
+ amessage:String;
 begin
  faxdevice:='';
  faxcoverstring:='';
@@ -194,6 +198,25 @@ begin
       acopies:=StrToInt(ParamStr(indexparam));
       if acopies<=0 then
        acopies:=1;
+     end
+     else
+     if ParamStr(indexparam)='-printer' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpIdentifierexpected);
+      aprintername:=ParamStr(indexparam);
+      aindex:=printer.printers.IndexOf(aprintername);
+      if aindex<0 then
+      begin
+       amessage:=SRpErrorOpenImp+':'+aprintername+#10;
+       for aindex:=0 to printer.Printers.Count-1 do
+       begin
+        amessage:=amessage+printer.printers.Strings[aindex]+#10;
+       end;
+       Raise Exception.Create(amessage);
+      end;
+      printer.printerindex:=aindex;
      end
      else
      if ParamStr(indexparam)='-bmpresx' then

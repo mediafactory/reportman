@@ -65,13 +65,14 @@ type
    FShowHint:Boolean;
    FShowLegend:Boolean;
    procedure OnClear(Sender:TObject);
-   procedure OnNewValue(Y:Single;Cambio:Boolean;leyen,textleyen:string);
+   procedure OnNewValue(Y:Single;Cambio:Boolean;leyen,textleyen,textserie:string;newcharttype:TRpChartType);
    procedure OnBoundsValue(autol,autoh:boolean;lvalue,hvalue:double;
     logaritmic:boolean;logbase:double;inverted:boolean);
    procedure SetIdentifier(Value:string);
    procedure SetSeries(avalue:TRpSeries);
    function CheckValueCondition:boolean;
    function EvaluateSerieExpression:Variant;
+   function EvaluateSerieCaption:Variant;
    procedure EvaluateClearExpression;
    function EvaluateCaption:Variant;
    procedure WriteGetValueCondition(Writer:TWriter);
@@ -221,6 +222,9 @@ begin
  if FSeries.Count<1 then
  begin
   aserie:=FSeries.Add;
+  aserie.charttype:=ChartType;
+  if Length(FSerieCaption)>0 then
+   aserie.Caption:=EvaluateSerieCaption;
   newvalue:=EvaluateSerieExpression;
   aserie.ChangeValue:=newvalue;
  end
@@ -243,6 +247,9 @@ begin
   if changeserie then
   begin
    aserie:=FSeries.Add;
+   aserie.charttype:=ChartType;
+   if Length(FSerieCaption)>0 then
+    aserie.Caption:=EvaluateSerieCaption;
    aserie.ChangeValue:=newvalue;
   end;
  end;
@@ -356,6 +363,29 @@ begin
  end;
 end;
 
+function TRpChart.EvaluateSerieCaption:Variant;
+var
+ fevaluator:TRpEvaluator;
+begin
+ if Length(Trim(SerieCaption))<1 then
+ begin
+  Result:=WideString('');
+  exit;
+ end;
+ try
+  fevaluator:=TRpBaseReport(GetReport).Evaluator;
+  fevaluator.Expression:=SerieCaption;
+  fevaluator.Evaluate;
+  Result:=WideString(fevaluator.EvalResult);
+ except
+  on E:Exception do
+  begin
+   Raise TRpReportException.Create(E.Message+':'+SRpSChart+' '+Name,self,SrpSSerieCaptionExp);
+  end;
+ end;
+end;
+
+
 function TRpChart.CheckValueCondition:boolean;
 var
  fevaluator:TRpEvaluator;
@@ -402,13 +432,11 @@ end;
 
 
 
-
-
-
 procedure TRpChart.DoPrint(adriver:IRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 begin
+ FIdenChart.DefaultChartType:=chartType;
  inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
  if FSeries.Count<1 then
   exit;
@@ -416,13 +444,15 @@ begin
  adriver.DrawChart(FSeries,metafile,aposx,aposy,self);
 end;
 
-procedure TRpChart.OnNewValue(Y:Single;Cambio:Boolean;leyen,textleyen:string);
+procedure TRpChart.OnNewValue(Y:Single;Cambio:Boolean;leyen,textleyen,textserie:string;newcharttype:TRpChartType);
 var
  aserie:TRpSeriesItem;
 begin
  if FSeries.Count<1 then
  begin
   aserie:=FSeries.Add;
+  aserie.charttype:=newChartType;
+  aserie.Caption:=textserie;
  end
  else
  begin
@@ -432,6 +462,8 @@ begin
  if Cambio then
  begin
   aserie:=FSeries.Add;
+  aserie.charttype:=newChartType;
+  aserie.Caption:=textserie;
  end;
  aserie.AddValue(Y,leyen);
 end;

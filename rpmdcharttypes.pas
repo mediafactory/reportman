@@ -61,6 +61,8 @@ type
    ChangeValue:Variant;
    MinValue:double;
    MaxValue:double;
+   Caption:WideString;
+   charttype:TRpChartType;
    constructor Create(Collection: TCollection);override;
    property Values[index:integer]:double read GetValue write SetValue;
    property ValueCaptions[index:integer]:WideString read GetValueCaption;

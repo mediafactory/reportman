@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.2';
+ RM_VERSION='2.2d';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
@@ -942,8 +942,19 @@ var
   SRpCompareValue:WideString='Returns -1 if first number is lower, 1 if first number is greater or zero if equal.';
   SRpPCompareValue:WideString='num1 and num2 are numbers to compare, epsilon de diference tolerance';
   SRpDrawTiledpi:WideString='Tile proportional';
-
-
+  SRpConnecting:WideString='Connecting';
+  SRpGenerating:WideString='Generating';
+  SRpSending:WideString='Sending';
+  SRpTransmiting:WideString='Transmiting';
+  SrpSSerieCaptionExp:WideString='Serie Caption Ex.';
+  SRpBarcodeCodeTooLarge:WideString='Bar code too large';
+  SRpGLIOutOfRangeBarcode:WideString='GLI Out of range in PDF417 barcode';
+  SRpInvalidCodeword:WideString='Invalid codeword in PDF417 barcode';
+  SRpECCLevel:WideString='PDF417 ECC';
+  SRpNumRows:WideString='Num Rows';
+  SRpNumCols:WideString='Num Cols';
+  SRpTruncatedPDF417:WideString='Truncate PDF417';
+  SRpPrintRep25:WideString='         -printer printername  Select printer before print';
 implementation
 
 uses rptranslator;

@@ -2084,6 +2084,8 @@ begin
    if not assigned(aserie) then
     exit;
    aserie.Marks.Visible:=nchart.ShowHint;
+   if Length(intserie.Caption)>0 then
+    aserie.Title:=intserie.Caption;
 {$IFDEF MSWINDOWS}
    aserie.Marks.Font.Name:=nchart.WFontName;
    aserie.Marks.Font.Style:=CLXIntegerToFontStyle(nchart.FontStyle);

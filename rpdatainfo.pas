@@ -1482,6 +1482,9 @@ begin
       begin
 {$IFDEF USEADO}
        FSQLInternalQuery:=TADOQuery.Create(nil);
+{$IFDEF USEVARIANTS}
+       TADOQuery(FSQLInternalQuery).CommandTimeout:=0;
+{$ENDIF}
 {$ELSE}
        Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverADO);
 {$ENDIF}
@@ -1567,6 +1570,9 @@ begin
         FSQLInternalQuery.Free;
         FSQLInternalQuery:=nil;
         FSQLInternalQuery:=TADOQuery.Create(nil);
+{$IFDEF USEVARIANTS}
+        TADOQuery(FSQLInternalQuery).CommandTimeout:=0;
+{$ENDIF}
        end;
 {$ENDIF}
       end;

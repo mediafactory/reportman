@@ -29,7 +29,7 @@ uses
 {$IFNDEF USEVARIANTS}
   Mask,
 {$ENDIF}
-  rptypeval,rptypes;
+  rptypeval,rptypes,rpmdcharttypes;
 
 type
 
@@ -371,7 +371,7 @@ type
   end;
 
 
- TRpNewValue=procedure (Y:Single;Cambio:Boolean;leyen,textleyen:string) of object;
+ TRpNewValue=procedure (Y:Single;Cambio:Boolean;leyen,textleyen,textserie:string;ChartType:TRpChartType) of object;
  TRpBoundsValue=procedure (autol,autoh:boolean;lvalue,hvalue:double;
   logaritmic:boolean;logbase:double;inverted:boolean) of object;
 
@@ -383,8 +383,9 @@ type
    procedure SetRpValue(Value:TRpValue);override;
    function GetRpValue:TRpValue;override;
   public
+   DefaultChartType:TRpChartType;
    constructor Create(AOwner:TComponent);override;
-   procedure NewValue(Y:Single;Cambio:Boolean;leyen,textleyen:string);
+   procedure NewValue(Y:Single;Cambio:Boolean;leyen,textleyen,textserie:string;charttype:TRpChartType);
    procedure Clear;
    property OnClear:TNotifyEvent read FOnClear write FOnClear;
    property OnNewValue:TRpNewValue read FOnNewValue write FOnNewValue;
@@ -1021,7 +1022,7 @@ begin
          IdenName+'-'+Params[0]);
 
  Result:=True;
- (iden As TVariableGrap).NewValue(single(Params[1]),Boolean(Params[2]),string(Params[3]),string(Params[4]));
+ (iden As TVariableGrap).NewValue(single(Params[1]),Boolean(Params[2]),string(Params[3]),string(Params[4]),'',(iden As TVariableGrap).DefaultChartType);
 end;
 
 constructor TIdenGetValueFromSQL.Create(AOwner:TComponent);
@@ -1693,14 +1694,14 @@ end;
 procedure TVariableGrap.SetRpValue(Value:TRpValue);
 begin
  // Asignem i pasem
- NewValue(Value,False,string(Value),'');
+ NewValue(Value,False,string(Value),'','',DefaultChartType);
 end;
 
 
-procedure TVariableGrap.NewValue(Y:Single;Cambio:Boolean;leyen,textleyen:string);
+procedure TVariableGrap.NewValue(Y:Single;Cambio:Boolean;leyen,textleyen,textserie:string;charttype:TRpChartType);
 begin
  if Assigned(FOnNewValue) then
-  FOnNewValue(Y,Cambio,leyen,textleyen);
+  FOnNewValue(Y,Cambio,leyen,textleyen,textserie,DefaultChartType);
 end;
 
 procedure TVariableGrap.Clear;
