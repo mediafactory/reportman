@@ -26,7 +26,9 @@ uses
   rpvclreport,
 {$ENDIF}
 {$IFNDEF USEVARIANTS}
+{$IFNDEF BUILDER4}
   rprulervcl,rpmdesignervcl,
+{$ENDIF}
 {$ENDIF}
   rpevalfunc,rpalias,rptypeval,rplastsav;
 
@@ -45,8 +47,10 @@ begin
   RegisterComponents('Reportman', [TVCLReport]);
 {$ENDIF}
 {$IFNDEF USEVARIANTS}
+{$IFNDEF BUILDER4}
   RegisterComponents('Reportman', [TRpRulerVCL]);
   RegisterComponents('Reportman', [TRpDesignerVCL]);
+{$ENDIF}
 {$ENDIF}
 end;
 
