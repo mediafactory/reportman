@@ -227,7 +227,7 @@ begin
    end;
   end;
   rec:=TRpRecHelp.Create;
-  rec.rfunction:=iden.Idenname;
+  rec.rfunction:=aval.identifiers.Strings[i];
   rec.help:=iden.Help;
   rec.model:=iden.model;
   rec.params:=iden.aparams;

@@ -41,7 +41,13 @@ requires
   vcljpg,
   indy,
   bdertl,
-  vcl;
+  vcl,
+  ZPlain,
+  ZCore,
+  ZParseSql,
+  ZParse,
+  ZComponent,
+  ZDbc;
 
 contains
   rptypeval in 'rptypeval.pas',
