@@ -739,6 +739,10 @@ begin
    NewLeft:=Parent.Width-Width;
   if NewTop+Height>Parent.Height then
    NewTop:=Parent.Height-Height;
+  if NewLeft<0 then
+   NewLeft:=0;
+  if NewTop<0 then
+   NewTop:=0;
   // Align to grid
   if (TRpReport(printitem.Report).GridEnabled) then
   begin

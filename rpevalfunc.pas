@@ -1170,7 +1170,6 @@ begin
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
 
- // fem el case
  Value:=Params[1];
  if Value=NULL then
  begin
