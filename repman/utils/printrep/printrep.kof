@@ -50,7 +50,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=baseclx:visualclx:visualdbclx:dataclx:indy
-Conditionals=LINUXTEECHART
+Conditionals=
 DebugSourceDirs=
 UsePackages=0
 
@@ -61,7 +61,6 @@ Launcher=/usr/X11R6/bin/xterm -T KylixDebuggerOutput -e bash -i -c %debuggee%
 UseLauncher=0
 DebugCWD=
 
-[HistoryLists\hlConditionals]
-Count=1
-Item0=LINUXTEECHART
+[Excluded Packages]
+/home/toni/cvsroot/teechart/Sources/dclTee6K3.so=TeeChart 6 Components
 

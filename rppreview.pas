@@ -182,8 +182,6 @@ begin
     else
       dia.AScaleWide.Checked:=True;
    end;
-   if report.PreviewWindow=spwMaximized then
-    dia.WindowState:=wsMaximized;
    report.OnProgress:=dia.RepProgress;
    Application.OnIdle:=dia.AppIdle;
    dia.ShowModal;
@@ -247,6 +245,8 @@ begin
  done:=false;
  Application.OnIdle:=nil;
  try
+  if report.PreviewWindow=spwMaximized then
+   WindowState:=wsMaximized;
   report.OnProgress:=RepProgress;
   DisableControls(false);
   if report.TwoPass then
@@ -264,6 +264,7 @@ begin
   PlaceImagePosition;
   printed:=true;
   EnableControls;
+  ActiveControl:=EPageNum;
  except
   on E:Exception do
   begin

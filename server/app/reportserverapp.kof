@@ -50,7 +50,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=rtl:visualclx:dataclx:visualdbclx:indy
-Conditionals=LINUXTEECHART
+Conditionals=
 DebugSourceDirs=
 UsePackages=0
 
@@ -62,8 +62,5 @@ UseLauncher=0
 DebugCWD=
 
 [Excluded Packages]
-/opt/kylix3/bin/dclnet.so.6.9=Borland Internet Components
-/opt/kylix3/bin/dclwebdsnapclx.so.6.9=Borland InternetExpress Components
-/opt/kylix3/bin/dclwebsnapclx.so.6.9=Borland WebSnap Components
-/opt/kylix3/bin/dclsoap.so.6.9=Borland SOAP Components
+/home/toni/cvsroot/teechart/Sources/dclTee6K3.so=TeeChart 6 Components
 

@@ -6,6 +6,7 @@ DB2=1
 Oracle=1
 Informix=1
 OpenODBC=1
+ZeosLib=1
 
 [Interbase]
 GetDriverFunc=getSQLDriverINTERBASE
@@ -48,6 +49,26 @@ BlobSize=-1
 ErrorResourceFile=./DbxMySqlErr.msg
 LocaleCode=0000
 
+[ZeosLib]
+GetDriverFunc=getSQLDriverZEOS
+Database Protocol=firebird-1.0
+LibraryName=none.dll
+VendorLib=vendor_variable.dll
+HostName=
+Database=database.gdb
+User_Name=sysdba
+Password=masterkey
+Port=0
+Zeos TransIsolation=None
+Property1=
+Property2=
+Property3=
+Property4=
+Property5=
+Property6=
+Property7=
+Property8=
+Property9=
 
 
 [PostgreSQL]
@@ -142,6 +163,27 @@ True=1
 DirtyRead=0
 ReadCommited=1
 RepeatableRead=2
+
+[Database Protocol]
+mysql=0
+postgresql=1
+postgresql-7.2=2
+interbase-5=3
+interbase-6=4
+firebird-1.0=5
+firebird-1.5=6
+mssql=7
+sybase=8
+oracle=9
+db2=10
+
+[Zeos TransIsolation]
+None=0
+ReadCommited=1
+ReadUnCommited=2
+RepeatableRead=3
+Serializable=4
+
 
 [Interbase TransIsolation]
 ReadCommited=1
