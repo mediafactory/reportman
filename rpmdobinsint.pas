@@ -24,7 +24,7 @@ unit rpmdobinsint;
 interface
 
 uses Types,QGraphics,QForms,QControls,rpconsts,classes,sysutils,rpmunits,
-  rpprintitem,rpgraphutils,rpsection,rpreport,qt,QDialogs;
+  rpprintitem,rpgraphutils,rpsection,rpreport,qt,QDialogs,rptypes;
 
 const
  CONS_MODIWIDTH=5;
@@ -962,6 +962,50 @@ begin
  end;
 end;
 
+function Type1FontToText(value:TRpType1Font):string;
+begin
+ case value of
+  poHelvetica:
+   Result:='Helvetica';
+  poCourier:
+   Result:='Courier';
+  poTimesRoman:
+   Result:='Times Roman';
+  poSymbol:
+   Result:='Symbol';
+  poZapfDingbats:
+   Result:='ZapfDingbats';
+ end;
+end;
+
+function TextToType1Font(value:string):TRpType1Font;
+begin
+ Result:=poHelvetica;
+ if value='Helvetica' then
+ begin
+  Exit;
+ end;
+ if value='Courier' then
+ begin
+  Result:=poCourier;
+  Exit;
+ end;
+ if value='Times Roman' then
+ begin
+  Result:=poTimesRoman;
+  Exit;
+ end;
+ if value='Symbol' then
+ begin
+  Result:=poSymbol;
+  Exit;
+ end;
+ if value='ZapfDingbats' then
+ begin
+  Result:=poZapfDingbats;
+  Exit;
+ end;
+end;
 
 procedure TRpGenTextInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
@@ -987,6 +1031,12 @@ begin
  lnames.Add(SrpSLFontName);
  ltypes.Add(SRpSLFontName);
  lvalues.Add(TRpGenTextComponent(printitem).LFontName);
+
+ // Type1 Font Name
+ lnames.Add(SRpSType1Font);
+ ltypes.Add(SRpSList);
+ lvalues.Add(Type1FontToText(TRpGenTextComponent(printitem).Type1Font));
+
 
  // Font Size
  lnames.Add(SrpSFontSize);
@@ -1061,6 +1111,11 @@ begin
  begin
   TRpGenTextComponent(fprintitem).LFontName:=value;
   Invalidate;
+  exit;
+ end;
+ if pname=SRpSType1Font then
+ begin
+  TRpGenTextComponent(fprintitem).Type1Font:=TextToType1Font(value);
   exit;
  end;
  if pname=SRpSFontSize then
@@ -1143,6 +1198,11 @@ begin
   Result:=TRpGenTextComponent(printitem).LFontName;
   exit;
  end;
+ if pname=SRpSType1Font then
+ begin
+  Result:=Type1FontToText(TRpGenTextComponent(printitem).Type1FOnt);
+  exit;
+ end;
  if pname=SrpSFontSize then
  begin
   Result:=IntToStr(TRpGenTextComponent(printitem).FontSize);
@@ -1202,6 +1262,16 @@ begin
   lpossiblevalues.Add(SrpSAlignTop);
   lpossiblevalues.Add(SrpSAlignBottom);
   lpossiblevalues.Add(SrpSAlignCenter);
+  exit;
+ end;
+ if pname=SRpSType1Font then
+ begin
+  lpossiblevalues.clear;
+  lpossiblevalues.Add('Helvetica');
+  lpossiblevalues.Add('Courier');
+  lpossiblevalues.Add('Times Roman');
+  lpossiblevalues.Add('Symbol');
+  lpossiblevalues.Add('ZapfDingbats');
   exit;
  end;
  inherited GetPropertyValues(pname,lpossiblevalues);

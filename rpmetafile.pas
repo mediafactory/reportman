@@ -96,7 +96,8 @@ type
     WFontNameP,WFontNameS:integer;
     FontSize:smallint;
     FontRotation:smallint;
-    FontStyle:integer;
+    FontStyle:smallint;
+    Type1Font:smallint;
     FontColor:integer;
     BackColor:integer;
     Transparent:boolean;
@@ -152,8 +153,8 @@ type
    procedure Clear;
    procedure NewTextObject(Top,Left,Width,Height:integer;
     Text:widestring;WFontName:widestring;LFontName:widestring;
-    FontSize:smallint;FontRotation:smallint;FontStyle:integer;
-    FontColor:integer;BackColor:integer;transparent:boolean;
+    FontSize:smallint;FontRotation:smallint;FontStyle:smallint;
+    Type1Font:smallint;FontColor:integer;BackColor:integer;transparent:boolean;
     cuttext:boolean;Alignment:integer;WordWrap:boolean);
    procedure NewDrawObject(Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
@@ -351,8 +352,9 @@ end;
 
 procedure TrpMetafilePage.NewTextObject(Top,Left,Width,Height:integer;
     Text:widestring;WFontName:widestring;LFontName:widestring;
-    FontSize:smallint;FontRotation:smallint;FontStyle:integer;
-    FontColor:integer;BackColor:integer;transparent:boolean;cuttext:boolean;Alignment:integer;WordWrap:boolean);
+    FontSize:smallint;FontRotation:smallint;FontStyle:smallint;
+    Type1Font:smallint;FontColor:integer;BackColor:integer;transparent:boolean;
+    cuttext:boolean;Alignment:integer;WordWrap:boolean);
 begin
  if FObjectCount>=High(FObjects)-1 then
  begin
@@ -373,6 +375,7 @@ begin
  FObjects[FObjectCount].FontSize:=FontSize;
  FObjects[FObjectCount].FontRotation:=FontRotation;
  FObjects[FObjectCount].FontStyle:=FontStyle;
+ FObjects[FObjectCount].Type1Font:=Type1Font;
  FObjects[FObjectCount].FontColor:=FontColor;
  FObjects[FObjectCount].BackColor:=BackColor;
  FObjects[FObjectCount].Transparent:=Transparent;

@@ -54,6 +54,8 @@ type
 
 
 
+ TRpType1Font=(poHelvetica,poCourier,poTimesRoman,poSymbol,poZapfDingbats);
+
  TRpTwips=integer;
  TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull,rpDrawTile);
  TRpAggregate=(rpAgNone,rpAgGroup,rpAgPage,rpAgGeneral);

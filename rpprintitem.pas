@@ -105,11 +105,13 @@ type
    FAlignMent:integer;
    FVAlignMent:integer;
    FSingleLine:boolean;
+   FType1Font:TRpType1Font;
   public
    constructor Create(AOwner:TComponent);override;
   published
    property WFontName:widestring read FWFontName write FWFontName;
    property LFontName:widestring read FLFontName write FLFontName;
+   property Type1Font:TRpType1Font read FType1Font write FType1Font;
    property FontSize:smallint read FFontSize write FFontSize default 10;
    property FontRotation:smallint read FFontRotation write FFontRotation default 0;
    property FontStyle:integer read FFontStyle write FFontStyle default 0;

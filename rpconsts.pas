@@ -392,6 +392,7 @@ resourcestring
   SRpSInteger='Integer';
   SRpSWFontName='WFont Name';
   SRpSLFontName='LFont Name';
+  SRpSType1Font='PDF Font';
   SrpSFontSize='Font Size';
   SrpSFontColor='Font Color';
   SrpSBackColor='Back Color';
@@ -525,6 +526,10 @@ resourcestring
   SRpDocNotInstalled3='http://reportman.sourceforge.net';
 
   SRpSelectAddConnection='You must select first add/select connection';
+
+  SRpStreamNotValid='PDF Stream not valid';
+  SRpNotPrintingPDF='Not in pdf printing state';
+
 
 implementation
 

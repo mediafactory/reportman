@@ -25,14 +25,14 @@
 {               -Exact position for text...             }
 {               -Text clipping                          }
 {               -Ellipse, true Rectangle                }
+{               -Text alignment                         }
+{               -Multiline and wordbreak                }
+{               -Underline and strokeout                }
+{               -Type1 Font selection bold/italic       }
 {                                                       }
 {                                                       }
 {       Still Missing:                                  }
-{               -TEXT ALIGNMENT                         }
-{               -Underline, bold, italic                }
-{               -Font Selection                         }
 {               -Brush Patterns                         }
-{               -Multiline text                         }
 {               -Bitmaps                                }
 {                                                       }
 {       This file is under the MPL license              }
@@ -55,19 +55,21 @@ uses Classes,Sysutils,
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
- rpmzlib;
+ rpmzlib,rpconsts,rptypes;
 
-resourcestring
- SRpStreamNotValid='PDF Stream not valid';
- SRpNotPrintingPDF='Not in pdf printing state';
 
 const
  PDF_HEADER:string='%PDF-1.4';
  CONS_PDFRES=72;
+ CONS_MINLINEINFOITEMS=400;
+ CONS_UNDERLINEWIDTH=0.1;
+ CONS_SRIKEOUTWIDTH=0.05;
+ CONS_UNDERLINEPOS=1.1;
+ CONS_SRIKEOUTPOS=0.7;
 type
  TRpPDFFont=class(TObject)
   public
-   Name:integer;
+   Name:TRpType1Font;
    Size:integer;
    Color:integer;
    Italic:Boolean;
@@ -77,13 +79,28 @@ type
    constructor Create;
   end;
 
+ TWinAnsiWidthsArray=array [32..255] of integer;
+ PWinAnsiWidthsArray= ^TWinAnsiWidthsArray;
+
  TRpPDFFile=class;
+
+ TRpLineInfo=record
+  Position:integer;
+  Size:integer;
+  Width:integer;
+  height:integer;
+  TopPos:integer;
+ end;
 
  TRpPDFCanvas=class(TObject)
   private
    FFont:TRpPDFFont;
    FFile:TRpPDFFile;
    FResolution:integer;
+   FLineInfo:array of TRpLineInfo;
+   FLineInfoMaxItems:integer;
+   FLineInfoCount:integer;
+   procedure NewLineInfo(info:TRpLineInfo);
    procedure SetDash;
    procedure SaveGraph;
    procedure RestoreGraph;
@@ -100,12 +117,15 @@ type
    procedure TextOut(X, Y: Integer; const Text: string;Rotation:integer=0);
    procedure TextRect(ARect: TRect; Text: string;
                        Alignment: integer; Clipping: boolean;
-                       Rotation:integer=0);
+                       Wordbreak:boolean;Rotation:integer=0);
    procedure Rectangle(x1,y1,x2,y2:Integer);
 //   procedure StretchDraw(rec:TRect;abitmap:TBitmap);
    procedure Ellipse(X1, Y1, X2, Y2: Integer);
    constructor Create(AFile:TRpPDFFile);
    destructor Destroy;override;
+   procedure TextExtent(const Text:WideString;var Rect:TRect;wordbreak:boolean;
+    singleline:boolean);
+   function CalcCharWidth(charcode:char):double;
   public
 
    property Font:TRpPDFFont read FFOnt;
@@ -197,6 +217,157 @@ function NumberToText(Value:double):string;
 implementation
 
 
+const
+ AlignmentFlags_SingleLine=64;
+ AlignmentFlags_AlignHCenter = 4 { $4 };
+ AlignmentFlags_AlignTop = 8 { $8 };
+ AlignmentFlags_AlignBottom = 16 { $10 };
+ AlignmentFlags_AlignVCenter = 32 { $20 };
+ AlignmentFlags_AlignLeft = 1 { $1 };
+ AlignmentFlags_AlignRight = 2 { $2 };
+
+// Font sizes (point 10)
+
+var
+  Helvetica_Widths: TWinAnsiWidthsArray = (
+    278,278,355,556,556,889,667,191,333,333,389,584,278,333,
+    278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,
+    584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,
+    722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,
+    469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,
+    556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,
+    584,0,556,0,222,556,333,1000,556,556,333,1000,667,333,1000,0,
+    611,0,0,222,222,333,333,350,556,1000,333,1000,500,333,944,0,
+    500,667,0,333,556,556,556,556,260,556,333,737,370,556,584,0,
+    737,333,400,584,333,333,333,556,537,278,333,333,365,556,834,834,
+    834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,
+    278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,
+    667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,
+    278,278,556,556,556,556,556,556,556,584,611,556,556,556,556,500,
+    556,500);
+
+ Default_Font_Width:integer=600;
+
+ Helvetica_Bold_Widths: TWinAnsiWidthsArray = (
+    278,333,474,556,556,889,722,238,333,333,389,584,278,333,
+    278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,
+    584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,
+    722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,
+    584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,
+    611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,
+    584,0,556,0,278,556,500,1000,556,556,333,1000,667,333,1000,0,
+    611,0,0,278,278,500,500,350,556,1000,333,1000,556,333,944,0,
+    500,667,0,333,556,556,556,556,280,556,333,737,370,556,584,0,
+    737,333,400,584,333,333,333,611,556,278,333,333,365,556,834,834,
+    834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,
+    278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,
+    667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,
+    278,278,611,611,611,611,611,611,611,584,611,611,611,611,611,556,
+    611,556);
+
+ Helvetica_Italic_Widths: TWinAnsiWidthsArray = (
+    278,278,355,556,556,889,667,191,333,333,389,584,278,333,
+    278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,
+    584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,
+    722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,
+    469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,
+    556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,
+    584,0,556,0,222,556,333,1000,556,556,333,1000,667,333,1000,0,
+    611,0,0,222,222,333,333,350,556,1000,333,1000,500,333,944,0,
+    500,667,0,333,556,556,556,556,260,556,333,737,370,556,584,0,
+    737,333,400,584,333,333,333,556,537,278,333,333,365,556,834,834,
+    834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,
+    278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,
+    667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,
+    278,278,556,556,556,556,556,556,556,584,611,556,556,556,556,500,
+    556,500);
+
+  Helvetica_BoldItalic_Widths: TWinAnsiWidthsArray = (
+    278,333,474,556,556,889,722,238,333,333,389,584,278,333,
+    278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,
+    584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,
+    722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,
+    584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,
+    611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,
+    584,0,556,0,278,556,500,1000,556,556,333,1000,667,333,1000,0,
+    611,0,0,278,278,500,500,350,556,1000,333,1000,556,333,944,0,
+    500,667,0,333,556,556,556,556,280,556,333,737,370,556,584,0,
+    737,333,400,584,333,333,333,611,556,278,333,333,365,556,834,834,
+    834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,
+    278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,
+    667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,
+    278,278,611,611,611,611,611,611,611,584,611,611,611,611,611,556,
+    611,556);
+
+  TimesRoman_Widths: TWinAnsiWidthsArray = (
+    250,333,408,500,500,833,778,180,333,333,500,564,250,333,
+    250,278,500,500,500,500,500,500,500,500,500,500,278,278,564,564,
+    564,444,921,722,667,667,722,611,556,722,722,333,389,722,611,889,
+    722,722,556,722,667,556,611,722,722,944,722,722,611,333,278,333,
+    469,500,333,444,500,444,500,444,333,500,500,278,278,500,278,778,
+    500,500,500,500,333,389,278,500,500,722,500,500,444,480,200,480,
+    541,0,500,0,333,500,444,1000,500,500,333,1000,556,333,889,0,
+    611,0,0,333,333,444,444,350,500,1000,333,980,389,333,722,0,
+    444,722,0,333,500,500,500,500,200,500,333,760,276,500,564,0,
+    760,333,400,564,300,300,333,500,453,250,333,300,310,500,750,750,
+    750,444,722,722,722,722,722,722,889,667,611,611,611,611,333,333,
+    333,333,722,722,722,722,722,722,722,564,722,722,722,722,722,722,
+    556,500,444,444,444,444,444,444,667,444,444,444,444,444,278,278,
+    278,278,500,500,500,500,500,500,500,564,500,500,500,500,500,500,
+    500,500);
+
+  TimesRoman_Italic_Widths: TWinAnsiWidthsArray = (
+    250,333,420,500,500,833,778,214,333,333,500,675,250,333,
+    250,278,500,500,500,500,500,500,500,500,500,500,333,333,675,675,
+    675,500,920,611,611,667,722,611,611,722,722,333,444,667,556,833,
+    667,722,611,722,611,500,556,722,611,833,611,556,556,389,278,389,
+    422,500,333,500,500,444,500,444,278,500,500,278,278,444,278,722,
+    500,500,500,500,389,389,278,500,444,667,444,444,389,400,275,400,
+    541,0,500,0,333,500,556,889,500,500,333,1000,500,333,944,0,
+    556,0,0,333,333,556,556,350,500,889,333,980,389,333,667,0,
+    389,556,0,389,500,500,500,500,275,500,333,760,276,500,675,0,
+    760,333,400,675,300,300,333,500,523,250,333,300,310,500,750,750,
+    750,500,611,611,611,611,611,611,889,667,611,611,611,611,333,333,
+    333,333,722,667,722,722,722,722,722,675,722,722,722,722,722,556,
+    611,500,500,500,500,500,500,500,667,444,444,444,444,444,278,278,
+    278,278,500,500,500,500,500,500,500,675,500,500,500,500,500,444,
+    500,444);
+
+  TimesRoman_Bold_Widths: TWinAnsiWidthsArray = (
+    250,333,555,500,500,1000,833,278,333,333,500,570,250,333,
+    250,278,500,500,500,500,500,500,500,500,500,500,333,333,570,570,
+    570,500,930,722,667,722,722,667,611,778,778,389,500,778,667,944,
+    722,778,611,778,722,556,667,722,722,1000,722,722,667,333,278,333,
+    581,500,333,500,556,444,556,444,333,500,556,278,333,556,278,833,
+    556,500,556,556,444,389,333,556,500,722,500,500,444,394,220,394,
+    520,0,500,0,333,500,500,1000,500,500,333,1000,556,333,1000,0,
+    667,0,0,333,333,500,500,350,500,1000,333,1000,389,333,722,0,
+    444,722,0,333,500,500,500,500,220,500,333,747,300,500,570,0,
+    747,333,400,570,300,300,333,556,540,250,333,300,330,500,750,750,
+    750,500,722,722,722,722,722,722,1000,722,667,667,667,667,389,389,
+    389,389,722,722,778,778,778,778,778,570,778,722,722,722,722,722,
+    611,556,500,500,500,500,500,500,722,444,444,444,444,444,278,278,
+    278,278,500,556,500,500,500,500,500,570,500,556,556,556,556,500,
+    556,500);
+
+  TimesRoman_BoldItalic_Widths: TWinAnsiWidthsArray = (
+    250,389,555,500,500,833,778,278,333,333,500,570,250,333,
+    250,278,500,500,500,500,500,500,500,500,500,500,333,333,570,570,
+    570,500,832,667,667,667,722,667,667,722,778,389,500,667,611,889,
+    722,722,611,722,667,556,611,722,667,889,667,611,611,333,278,333,
+    570,500,333,500,500,444,500,444,333,500,556,278,278,500,278,778,
+    556,500,500,500,389,389,278,556,444,667,500,444,389,348,220,348,
+    570,0,500,0,333,500,500,1000,500,500,333,1000,556,333,944,0,
+    611,0,0,333,333,500,500,350,500,1000,333,1000,389,333,722,0,
+    389,611,0,389,500,500,500,500,220,500,333,747,266,500,606,0,
+    747,333,400,570,300,300,333,576,500,250,333,300,300,500,750,750,
+    750,500,667,667,667,667,667,667,944,667,667,667,667,667,389,389,
+    389,389,722,722,722,722,722,722,722,570,722,722,722,722,722,611,
+    611,500,500,500,500,500,500,500,722,444,444,444,444,444,278,278,
+    278,278,500,556,500,500,500,500,500,570,500,556,556,556,556,444,
+    500,444);
+
+
 function PDFCompatibleText(astring:string):string;
 var
  i:integer;
@@ -212,7 +383,7 @@ end;
 
 constructor TrpPdfFont.Create;
 begin
- Name:=4;
+ Name:=poCourier;
  Size:=10;
 end;
 
@@ -229,6 +400,8 @@ constructor TrpPDFCanvas.Create(AFile:TRpPDFFile);
 begin
  FFont:=TRpPDFFont.Create;
  FFile:=AFile;
+ SetLength(FLineInfo,CONS_MINLINEINFOITEMS);
+ FLineInfoMaxItems:=CONS_MINLINEINFOITEMS;
 end;
 
 
@@ -874,8 +1047,14 @@ begin
 end;
 
 procedure TRpPDFCanvas.TextRect(ARect: TRect; Text: string;
-                       Alignment: integer; Clipping: boolean;Rotation:integer=0);
-
+                       Alignment: integer; Clipping: boolean;Wordbreak:boolean;
+                       Rotation:integer=0);
+var
+ recsize:TRect;
+ i:integer;
+ posx,posY:integer;
+ singleline:boolean;
+ Posline:integer;
 begin
  FFile.CheckPrinting;
 
@@ -884,8 +1063,8 @@ begin
   SaveGraph;
  end;
  try
- if Clipping then
- begin
+  if Clipping then
+  begin
    // Clipping rectangle
    SWriteLine(FFile.FsTempStream,UnitsToTextX(ARect.Left)+' '+UnitsToTextY(ARect.Top)+
    ' '+UnitsToTextX(ARect.Right-ARect.Left)+' '+UnitsToTextX(-(ARect.Bottom-ARect.Top))+' re');
@@ -893,8 +1072,58 @@ begin
    SWriteLine(FFile.FsTempStream,'W'); // Clip
    SWriteLine(FFile.FsTempStream,'n'); // NewPath
   end;
-  // Rotation
-  TextOut(ARect.Left,ARect.Top,Text,Rotation);
+  singleline:=(Alignment AND AlignmentFlags_SingleLine)>0;
+  if singleline then
+   wordbreak:=false;
+  // Calculates text extent and apply alignment
+  recsize:=ARect;
+  TextExtent(Text,recsize,wordbreak,singleline);
+  // Align bottom or center
+  PosY:=ARect.Top;
+  if (AlignMent AND AlignmentFlags_AlignBottom)>0 then
+  begin
+   PosY:=ARect.Bottom-recsize.bottom;
+  end;
+  if (AlignMent AND AlignmentFlags_AlignVCenter)>0 then
+  begin
+   PosY:=ARect.Top+(((ARect.Bottom-ARect.Top)-recsize.Bottom) div 2);
+  end;
+
+  for i:=0 to FLineInfoCount-1 do
+  begin
+   posX:=ARect.Left;
+   // Aligns horz.
+   if  ((Alignment AND AlignmentFlags_AlignRight)>0) then
+   begin
+    // recsize.right contains the width of the full text
+    PosX:=ARect.Right-FLineInfo[i].Width;
+   end;
+   // Aligns horz.
+   if (Alignment AND AlignmentFlags_AlignHCenter)>0 then
+   begin
+    PosX:=ARect.Left+(((Arect.Right-Arect.Left)-FLineInfo[i].Width) div 2);
+   end;
+   TextOut(PosX,PosY+FLineInfo[i].TopPos,Copy(Text,FLineInfo[i].Position,FLineInfo[i].Size),Rotation);
+   // Underline and strikeout
+   // The line will be 1/10 of the
+   // font size and will  be at 7/10 of height size
+   if FFont.Underline then
+   begin
+    PenStyle:=0;
+    PenWidth:=Round((Font.Size/CONS_PDFRES*FResolution)*CONS_UNDERLINEWIDTH);
+    PenColor:=FFont.Color;
+    Posline:=Round(PosY+FLineInfo[i].TopPos+CONS_UNDERLINEPOS*(Font.Size/CONS_PDFRES*FResolution));
+    Line(PosX,Posline,PosX+FLineinfo[i].Width,Posline);
+   end;
+   if FFont.StrikeOut then
+   begin
+    PenStyle:=0;
+    PenWidth:=Round((Font.Size/CONS_PDFRES*FResolution)* CONS_SRIKEOUTWIDTH);
+    PenColor:=FFont.Color;
+    Posline:=Round(PosY+FLineInfo[i].TopPos+CONS_SRIKEOUTPOS*(Font.Size/CONS_PDFRES*FResolution));
+    Line(PosX,Posline,PosX+FLineinfo[i].Width,Posline);
+   end;
+  end;
  finally
   if (Clipping or (Rotation<>0)) then
   begin
@@ -904,6 +1133,39 @@ begin
 end;
 
 
+function Type1FontTopdfFontName(Type1Font:TRpType1Font;oblique,bold:boolean):integer;
+begin
+ Result:=0;
+ case Type1Font of
+  poHelvetica:
+   begin
+    Result:=0;
+   end;
+  poCourier:
+   begin
+    Result:=4;
+   end;
+  poTimesRoman:
+   begin
+    Result:=8;
+   end;
+  poSymbol:
+   begin
+    Result:=12;
+   end;
+  poZapfDingbats:
+   begin
+    Result:=13;
+   end;
+ end;
+ if (Type1Font in [poHelvetica..poTimesRoman]) then
+ begin
+  if bold then
+   Result:=Result+1;
+  if oblique then
+   Result:=Result+2;
+ end;
+end;
 
 procedure TRpPDFCanvas.TextOut(X, Y: Integer; const Text: string;Rotation:integer=0);
 var
@@ -919,7 +1181,8 @@ begin
   SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' RG');
   SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' rg');
   SWriteLine(FFile.FsTempStream,'BT');
-  SWriteLine(FFile.FsTempStream,'/F'+IntToStr((Integer(Font.Name)+1))+' '+
+  SWriteLine(FFile.FsTempStream,'/F'+
+  IntToStr(Type1FontTopdfFontName(Font.Name,Font.Italic,Font.Bold)+1)+' '+
    IntToStr(Font.Size)+ ' Tf');
 
   // Rotates
@@ -973,4 +1236,179 @@ begin
 // SetBitmap(ABitmap);
 end;
 }
+
+
+function TRpPDFCanvas.CalcCharWidth(charcode:char):double;
+var
+ intvalue:Byte;
+ defaultwidth:integer;
+ parray:PWinAnsiWidthsArray;
+begin
+ if charcode in [#0,#13,#10] then
+ begin
+  Result:=0;
+  exit;
+ end;
+ parray:=nil;
+ if (FFont.Name=poHelvetica) then
+ begin
+  parray:=@Helvetica_Widths;
+  if FFont.Bold then
+  begin
+   if FFont.Italic then
+    parray:=@Helvetica_BoldItalic_Widths;
+  end
+  else
+   if FFont.Italic then
+    parray:=@Helvetica_Italic_Widths;
+ end
+ else
+ if (FFont.Name=poTimesRoman) then
+ begin
+  parray:=@TimesRoman_Widths;
+  if FFont.Bold then
+  begin
+   if FFont.Italic then
+    parray:=@TimesRoman_BoldItalic_Widths;
+  end
+  else
+   if FFont.Italic then
+    parray:=@TimesRoman_Italic_Widths;
+ end;
+ defaultwidth:=Default_Font_Width;
+ intvalue:=Byte(charcode);
+ if assigned(parray) then
+ begin
+  if intvalue<32 then
+   Result:=defaultwidth
+  else
+   Result:=parray^[intvalue];
+ end
+ else
+  Result:=defaultwidth;
+ Result:=Result*FFont.Size/1000;
+end;
+
+procedure TRpPDFCanvas.TextExtent(const Text:WideString;var Rect:TRect;
+ wordbreak:boolean;singleline:boolean);
+var
+ astring:string;
+ i:integer;
+ asize:double;
+ arec:TRect;
+ position:integer;
+ info:TRpLineInfo;
+ maxwidth:double;
+ newsize:double;
+ recwidth:double;
+ linebreakpos:integer;
+ nextline:boolean;
+ alastsize:double;
+ lockspace:boolean;
+begin
+ // Text extent for the simpe strings, wide strings not supported
+ astring:=Text;
+ arec:=Rect;
+ arec.Left:=0;
+ arec.Top:=0;
+ arec.Bottom:=0;
+
+ asize:=0;
+
+ FLineInfoCount:=0;
+ position:=1;
+ linebreakpos:=0;
+ maxwidth:=0;
+ recwidth:=(rect.Right-rect.Left)/FResolution*CONS_PDFRES;
+ nextline:=false;
+ i:=1;
+ alastsize:=0;
+ lockspace:=false;
+ while i<=Length(astring) do
+ begin
+  newsize:=CalcCharWidth(astring[i]);
+  if (Not (astring[i] in [' ',#10,#13])) then
+   lockspace:=false;
+  if wordbreak then
+  begin
+   if asize+newsize>recwidth then
+   begin
+    if linebreakpos>0 then
+    begin
+     i:=linebreakpos;
+     nextline:=true;
+     asize:=alastsize;
+     linebreakpos:=0;
+    end;
+   end
+   else
+   begin
+    if astring[i] in ['.',',','-',' '] then
+    begin
+     linebreakpos:=i;
+     if astring[i]=' ' then
+     begin
+      if not lockspace then
+      begin
+       alastsize:=asize;
+       lockspace:=true;
+      end;
+     end
+     else
+     begin
+      alastsize:=asize+newsize;
+     end;
+    end;
+    asize:=asize+newsize;
+   end;
+  end
+  else
+  begin
+   asize:=asize+newsize;
+  end;
+  if not singleline then
+   if astring[i]=#10 then
+    nextline:=true;
+  if asize>maxwidth then
+   maxwidth:=asize;
+  if nextline then
+  begin
+   nextline:=false;
+   info.Position:=position;
+   info.Size:=i-position+1;
+   info.Width:=Round((asize)/CONS_PDFRES*FResolution);
+   info.height:=Round((Font.Size)/CONS_PDFRES*FResolution);
+   info.TopPos:=arec.Bottom;
+   arec.Bottom:=arec.Bottom+info.height;
+   asize:=0;
+   position:=i+1;
+   NewLineInfo(info);
+  end;
+  inc(i);
+ end;
+ arec.Right:=Round((maxwidth+1)/CONS_PDFRES*FResolution);
+ if Position<=Length(astring) then
+ begin
+  info.Position:=position;
+  info.Size:=Length(astring)-position+1;
+  info.Width:=Round((asize+1)/CONS_PDFRES*FResolution);
+  info.height:=Round((Font.Size)/CONS_PDFRES*FResolution);
+  info.TopPos:=arec.Bottom;
+  arec.Bottom:=arec.Bottom+info.height;
+  NewLineInfo(info);
+ end;
+ rect:=arec;
+end;
+
+procedure TRpPDFCanvas.NewLineInfo(info:TRpLineInfo);
+begin
+ if FLineInfoMaxItems<=FLineInfoCount-1 then
+ begin
+  SetLength(FLineInfo,FLineInfoMaxItems*2);
+  FLineInfoMaxItems:=FLineInfoMaxItems*2;
+ end;
+ FLineInfo[FLineInfoCount]:=info;
+ inc(FLineInfoCount);
+end;
+
 end.

@@ -203,6 +203,7 @@ begin
 {$ENDIF}
 //    Canvas.Font.Style:=IntegerToFontStyle(obj.FontStyle);
     // Transparent ?
+    FPDFFile.Canvas.Font.Name:=TrpType1Font(obj.Type1Font);
     FPDFFile.Canvas.Font.Size:=obj.FontSize;
     FPDFFile.Canvas.Font.Color:=obj.FontColor;
     FPDFFile.Canvas.Font.Bold:=(obj.Fontstyle and 1)>0;
@@ -210,17 +211,17 @@ begin
     FPDFFile.Canvas.Font.UnderLine:=(obj.Fontstyle  and (1 shl 2))>0;
     FPDFFile.Canvas.Font.StrikeOut:=(obj.Fontstyle and (1 shl 3))>0;
     aalign:=obj.Alignment;
-    if Not obj.Wordwrap then
-    begin
+//    if Not obj.Wordwrap then
+//    begin
      rec.Left:=posx;
      rec.TOp:=posy;
      rec.Right:=posx+round(obj.Width);
      rec.Bottom:=posy+round(obj.Height);
      FPDFFile.Canvas.TextRect(rec,page.GetText(Obj),aalign,obj.cuttext,
-      obj.FontRotation);
-    end
-    else
-     FPDFFile.Canvas.TextOut(obj.Left,obj.Top,page.GetText(obj),obj.FontRotation);
+      obj.WordWrap,obj.FontRotation);
+//    end
+//    else
+//     FPDFFile.Canvas.TextOut(obj.Left,obj.Top,page.GetText(obj),obj.FontRotation);
    end;
   rpMetaDraw:
    begin

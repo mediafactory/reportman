@@ -183,7 +183,7 @@ begin
   aalign:=aalign or AlignmentFlags_SingleLine;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
   aposx+PosX,width,height,Text,WFontName,LFontName,FontSize,FontRotation,
-  FontStyle,FOntColor,BackColor,Transparent,CutText,aalign,WordWrap);
+  FontStyle,smallint(Type1Font),FOntColor,BackColor,Transparent,CutText,aalign,WordWrap);
 end;
 
 
@@ -278,7 +278,7 @@ begin
   aalign:=aalign or AlignmentFlags_SingleLine;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
    aposx+PosX,width,height,aText,WFontName,LFontName,FontSize,FontRotation,
-   FontStyle,FOntColor,BackColor,Transparent,CutText,aalign,WordWrap);
+   FontStyle,smallint(Type1Font),FOntColor,BackColor,Transparent,CutText,aalign,WordWrap);
  // Is Total pages variable?
  if (UpperCase(expre)='PAGECOUNT') then
  begin
