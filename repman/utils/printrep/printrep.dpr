@@ -124,6 +124,7 @@ begin
       collate:=true;
      end
      else
+     if Pos('-param',ParamStr(indexparam))<>1 then
      begin
       filename:=ParamStr(indexparam);
       inc(indexparam);

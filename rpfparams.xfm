@@ -228,7 +228,7 @@ object FRpParams: TFRpParams
       Top = 0
       Width = 446
       Height = 30
-      AutoSize = True
+      AutoSize = False 
       ButtonHeight = 26
       ButtonWidth = 26
       Caption = 'ToolBar1'

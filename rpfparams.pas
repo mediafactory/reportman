@@ -120,6 +120,9 @@ end;
 
 procedure TFRpParams.FormCreate(Sender: TObject);
 begin
+ ToolBar1.ButtonHeight:=26;
+ ToolBar1.ButtonWidth:=26;
+ ToolBar1.Height:=30;
  params:=TRpParamList.Create(Self);
 
  BOK.Caption:=TranslateStr(93,BOK.Caption);

@@ -144,15 +144,18 @@ begin
      end
      else
      begin
-      if length(filename)>0 then
+      if Pos('-param',ParamStr(indexparam))<>1 then
       begin
-       pdffilename:=ParamStr(indexparam);
-       inc(indexparam);
-       break;
-      end
-      else
-      begin
-       filename:=ParamStr(indexparam);
+       if length(filename)>0 then
+       begin
+        pdffilename:=ParamStr(indexparam);
+        inc(indexparam);
+        break;
+       end
+       else
+       begin
+        filename:=ParamStr(indexparam);
+       end;
       end;
      end;
     inc(indexparam);

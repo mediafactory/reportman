@@ -156,6 +156,7 @@ begin
    end;
    dia.systemprintdialog:=systemprintdialog;
    dia.AParams.Enabled:=hasparams;
+   dia.enableparams:=hasparams;
    dia.AScale100.Checked:=False;
    dia.AScaleFull.Checked:=False;
    dia.AScaleWide.Checked:=False;
