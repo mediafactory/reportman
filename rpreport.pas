@@ -860,11 +860,16 @@ end;
 // of evaluate the totalpages expression
 procedure TRpReport.PrintAll(Driver:IRpPrintDriver);
 begin
- BeginPrint(Driver);
+ Driver.NewDocument(metafile);
  try
-  while Not PrintNextPage do;
+  BeginPrint(Driver);
+  try
+   while Not PrintNextPage do;
+  finally
+   EndPrint;
+  end;
  finally
-  EndPrint;
+  Driver.EndDocument;
  end;
 end;
 
