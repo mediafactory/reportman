@@ -864,8 +864,12 @@ var
   //
   SRpAbs:WideString='Returns absolute value of a number.';
   SRpPAbs:WideString='num is the number change sign';
-
-
+  SrpSBackExpression:WideString='Back.Expression';
+  SrpSInvBackImage:WideString='Invalid background image';
+  SRpSBackStyle:WideString='Back.Style';
+  SRpSBDesign:WideString='Design';
+  SRpSBPreview:WideString='Preview only';
+  SRpSBPrint:WideString='Print';
 
 implementation
 

@@ -387,7 +387,7 @@ begin
   exit;
  try
   metafile.Pages[metafile.CurrentPage].NewImageObject(aposy,aposx,
-   PrintWidth,PrintHeight,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),FMStream);
+   PrintWidth,PrintHeight,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),FMStream,false);
  finally
   if FMStream<>FStream then
    FMStream.free;

@@ -868,12 +868,14 @@ begin
    end;
   rpMetaImage:
    begin
+    if (Not (obj.PreviewOnly and toprinter)) then
+    begin
     Width:=round(obj.Width*dpix/TWIPS_PER_INCHESS);
     Height:=round(obj.Height*dpiy/TWIPS_PER_INCHESS);
     rec.Top:=PosY;
     rec.Left:=PosX;
     rec.Bottom:=rec.Top+Height-1;
-    rec.Right:=rec.Left+Width-1;
+    rec.Right:=rec.Left+Width-1;  
 
     stream:=page.GetStream(obj);
     bitmap:=TBitmap.Create;
@@ -947,6 +949,7 @@ begin
     finally
      bitmap.Free;
     end;
+   end;
    end;
  end;
 end;
@@ -2134,7 +2137,7 @@ begin
      abitmap.SaveToStream(FMStream);
      page.NewImageObject(aposy,aposx,
       nchart.PrintWidth,nchart.PrintHeight,DEF_COPYMODE,Integer(rpDrawStretch),
-      nchart.Resolution,FMStream);
+      nchart.Resolution,FMStream,false);
     finally
      FMStream.Free;
     end;

@@ -538,6 +538,7 @@ begin
   begin
    apanel:=TRpPaintEventpanel(toptitles.Items[i]);
    asecint:=TRpSectionInterface(secinterfaces.items[i]);
+   asecint.UpdateBack;
    rpanel:=TRpPanelRight(Righttitles.Items[i]);
    apanel.Color:=clBtnFace;
 

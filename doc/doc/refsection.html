@@ -18,7 +18,7 @@
     <td bgcolor="#FFFFCC">Type</td>
     <td bgcolor="#FFFFCC">Description</td>
   </tr>
-  <tr>
+  <tr> 
     <td>Horz.Desp</td>
     <td>HorzDesp</td>
     <td>Boolean</td>
@@ -202,6 +202,41 @@
     <td>Boolean</td>
     <td>Only for page footers, means the page footer must print at the end of 
       the subreport if no data is still available</td>
+  </tr>
+  <tr> 
+    <td>Image</td>
+    <td>Stream</td>
+    <td>TStream</td>
+    <td>Embedded image, stored with the report structure containing a image stream, 
+      will be drawn bellow the grid, using the resolution bellow. When embedding 
+      large images you should set prefered save format in page setup to binary/gzip 
+      to enhace performance.</td>
+  </tr>
+  <tr> 
+    <td>Resolution (dpi)</td>
+    <td>dpires</td>
+    <td>Integer</td>
+    <td>Resolution of the image in pixels per inch unit, the size of the bitmap 
+      and the resolution will determine the final size</td>
+  </tr>
+  <tr> 
+    <td>Background Style</td>
+    <td>BackStyle</td>
+    <td>TBackStyle</td>
+    <td>The background of the section can be used for multiple purposes, one is 
+      help in design time to fill a form for example, but no preview or print 
+      (preprinted forms). You can also select to draw the background image in 
+      preview or print the image on the paper also.</td>
+  </tr>
+  <tr>
+    <td>BackExpressoin</td>
+    <td>Expression</td>
+    <td>WideString</td>
+    <td>The image can be embedded (Image propery) or obtained throught this expression 
+      property, the expression is evaluated, if the expression result is a binary 
+      database field will try to read the image from there, see below the image 
+      formats supported. If the field is a string field or the result of evaluation 
+      is a string the engine will try to load the image as a file reference.</td>
   </tr>
 </table>
 <p><b>Developer info</b></p>

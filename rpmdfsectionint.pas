@@ -30,7 +30,10 @@ uses SysUtils, Classes,Types,
   rpmdobjinsp,rpmdfstruc,rpmdflabelint,rplabelitem,
   rpmdconsts,rpsection,rptypes,rpdrawitem,rpmdfdrawint,
   rpsubreport,rpmdbarcode,rpmdchart,rpdatainfo,
-  rpmdfbarcodeint,rpmdfchartint;
+{$IFDEF VCLANDCLX}
+ rpvgraphutils,
+{$ENDIF}
+  rpmdfbarcodeint,rpmdfchartint,rppdffile;
 
 const
  CONS_MINWIDTH=5;
@@ -77,8 +80,10 @@ type
     procedure MouseMove(Shift: TShiftState; X, Y: Integer);override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
    public
+    backbitmap:TBitmap;
     freportstructure:TFRpStructure;
     childlist:TList;
+    procedure UpdateBack;
     procedure DoDragDrop(Sender, Source: TObject; X, Y: Integer);
     procedure UpdatePos;override;
     property OnDestroy:TNotifyEvent read FOnDestroy write FOnDestroy;
@@ -87,6 +92,8 @@ type
     procedure GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);override;
     procedure SetProperty(pname:string;value:Widestring);override;
     function GetProperty(pname:string):Widestring;override;
+    procedure SetProperty(pname:string;stream:TMemoryStream);override;
+    procedure GetProperty(pname:string;var Stream:TMemoryStream);override;
     procedure GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);override;
     function CreateChild(compo:TRpCommonPosComponent):TRpSizePosInterface;
     procedure CreateChilds;
@@ -391,10 +398,41 @@ begin
  lcat.Add(SRpSection);
  if Assigned(lvalues) then
   lvalues.Add(TRpSection(printitem).GetExternalDataDescription);
+ // Expression
+ lnames.Add(SrpSBackExpression);
+ ltypes.Add(SRpSExpression);
+ lhints.Add('refimage.html');
+ lcat.Add(SRpSection);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpImage(printitem).Expression);
+ // Image
+ lnames.Add(SrpSImage);
+ ltypes.Add(SRpSImage);
+ lhints.Add('refimage.html');
+ lcat.Add(SRpSection);
+ if Assigned(lvalues) then
+  lvalues.Add('['+FormatFloat('###,###0.00',TRpImage(printitem).Stream.Size/1024)+
+  SRpKbytes+']');
+ // DPI
+ lnames.Add(SRpDPIRes);
+ ltypes.Add(SRpSString);
+ lhints.Add('refimage.html');
+ lcat.Add(SRpSection);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpImage(printitem).DPIRes));
+ // Back Style
+ lnames.Add(SRpSBackStyle);
+ ltypes.Add(SRpSList);
+ lhints.Add('refsection.html');
+ lcat.Add(SRpSection);
 end;
 
 procedure TRpSectionInterface.SetProperty(pname:string;value:Widestring);
 begin
+ if ((pname=SRpSWidth) or (pname=SRpSHeight)) then
+ begin
+  UpdateBack;
+ end;
  if pname=SRpGeneralPageHeader then
  begin
   TRpSection(fprintitem).Global:=StrToBool(Value);
@@ -518,7 +556,30 @@ begin
   TRpSection(fprintitem).ExternalFilename:=Trim(Value);
   exit;
  end;
-
+ if pname=SRpSBackExpression then
+ begin
+  TRpSection(fprintitem).BackExpression:=Value;
+  if Length(Trim(Value))>0 then
+  begin
+   TRpSection(fprintitem).Stream.SetSize(0);
+  end;
+  UpdateBack;
+  exit;
+ end; 
+ if pname=SRpDPIRes then
+ begin
+  TRpSection(fprintitem).DPIRes:=StrToInt(Value);
+  if TRpSection(fprintitem).DPIRes<=0 then
+   TRpSection(fprintitem).DPIRes:=100;
+  UpdateBack;
+  exit;
+ end;
+ if pname=SRpSBackStyle then
+ begin
+  TRpSection(fprintitem).BackStyle:=StrToBackStyle(Value);
+  exit;
+ end;
+ 
  inherited SetProperty(pname,value);
 end;
 
@@ -648,9 +709,56 @@ begin
   Result:=TRpSection(fprintitem).GetExternalDataDescription;
   exit;
  end;
+ if pname=SrpSBackExpression then
+ begin
+  Result:=TRpSection(printitem).BackExpression;
+  exit;
+ end;
+ if pname=SRpDPIRes then
+ begin
+  Result:=IntToStr(TRpSection(fprintitem).DPIRes);
+  exit;
+ end;
+ if pname=SrpSImage then
+ begin
+  Result:='['+FormatFloat('###,###0.00',TRpSection(printitem).Stream.Size/1024)+
+  SRpKbytes+']';
+  exit;
+ end;
+ if pname=SRpSBackStyle then
+ begin
+  Result:=BackStyleToStr(TRpSection(fprintitem).BackStyle);
+  exit;
+ end;
 
  Result:=inherited GetProperty(pname);
 end;
+
+
+procedure TRpSectionInterface.SetProperty(pname:string;stream:TMemoryStream);
+begin
+ if pname=SrpSImage then
+ begin
+  TRpSection(printitem).Stream:=stream;
+  if TRpSection(printitem).Stream.Size>0 then
+   TrpSection(printitem).BackExpression:='';
+  UpdateBack;
+  exit;
+ end;
+ inherited SetProperty(pname,stream);
+end;
+
+procedure TRpSectionInterface.GetProperty(pname:string;var Stream:TMemoryStream);
+begin
+ if pname=SrpSImage then
+ begin
+  Stream:=TRpSection(printitem).Stream;
+  exit;
+ end;
+ inherited GetProperty(pname,stream);
+end;
+
+
 
 procedure TRpSectionInterface.GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);
 begin
@@ -662,6 +770,11 @@ begin
  if pname=SRpChildSubRep then
  begin
   TRpSection(printitem).GetChildSubReportPossibleValues(lpossiblevalues);
+  exit;
+ end;
+ if pname=SRpSBackStyle then
+ begin
+  GetBackStyleDescriptions(lpossiblevalues);
   exit;
  end;
 
@@ -686,11 +799,25 @@ end;
 procedure TRpSectionIntf.Paint;
 var
  report:TRpReport;
+ asection:TRpSection;
  rec:TRect;
- bitmap:TBitmap;
+ abitmap:TBitmap;
+ astream:TMemoryStream;
+ dodrawgrid:boolean;
+ dpix,dpiy:Integer;
+ errormessage:String;
+{$IFDEF VCLANDCLX}
+ bitmapwidth,bitmapheight:integer;
+{$ENDIF}
 begin
  if not assigned(secint) then
   exit;
+ errormessage:='';
+ rec.Top:=0;rec.Left:=0;
+ rec.Bottom:=Height;
+ rec.Right:=Width;
+ Canvas.Brush.Color:=clwhite;
+ Canvas.FillRect(rec);
  // Bug in WINDOWS when changing the size of a section
  // Remove this when clx updated
  if not calledposchange then
@@ -708,21 +835,93 @@ begin
  if Not Assigned(secint.fprintitem.Report) then
   exit;
  report:=TRpReport(secint.fprintitem.Report);
- if report.GridVisible then
+ dodrawgrid:=report.GridVisible;
+ asection:=TRpSection(secint.printitem);
+
+ // Draw the image if possible
+ if not assigned(secint.BackBitmap) then
  begin
-  bitmap:=DrawBitmapGrid(width,height,report.GridWidth,report.GridHeight,report.GridColor,report.GridLines);
-  if assigned(bitmap) then
+  if ( (asection.Stream.Size>0) or (Length(Trim(asection.BackExpression))>0) ) then
   begin
-   Canvas.Draw(0,0,bitmap);
-   exit;
+   secint.backbitmap:=TBitmap.Create;
+   try
+    secint.backbitmap.PixelFormat:=pf32bit;
+    astream:=TMemoryStream.Create;
+    try
+     asection.GetStream.Seek(0,soFromBeginning);
+     astream.CopyFrom(asection.GetStream,asection.GetStream.Size);
+     astream.Seek(0,soFromBeginning);
+     secint.backbitmap.Height:=Height;
+     secint.backbitmap.Width:=Width;
+     secint.Canvas.Brush.Color:=clWhite;
+     rec.Top:=0;rec.Left:=0;
+     rec.Bottom:=Height;
+     rec.Right:=Width;
+     secint.backbitmap.Canvas.Brush.Color:=clwhite;
+     secint.backbitmap.Canvas.FillRect(rec);
+     abitmap:=TBitmap.Create;
+     try
+      abitmap.PixelFormat:=pf32bit;
+ // Windows does not have support for jpeg in CLX
+ {$IFDEF VCLANDCLX}
+      if GetJPegInfo(astream,bitmapwidth,bitmapheight) then
+      begin
+       rpvgraphutils.JPegStreamToBitmapStream(astream);
+      end;
+ {$ENDIF}
+      astream.Seek(0,soFromBeginning);
+      abitmap.LoadFromStream(astream);
+
+      rec.Top:=0;rec.Left:=0;
+      rec.Bottom:=Height-1;rec.Right:=Width-1;
+      // Draws it with the style
+      dpix:=Screen.PixelsPerInch;
+      dpiy:=Screen.PixelsPerInch;
+      rec.Bottom:=round(abitmap.height/asection.dpires)*dpiy-1;
+      rec.Right:=round(abitmap.width/asection.dpires)*dpix-1;
+      secint.BackBitmap.Canvas.StretchDraw(rec,abitmap);
+     finally
+      abitmap.free;
+     end;
+    finally
+     astream.free;
+    end;
+    if dodrawgrid then
+    begin
+     // Draw
+     DrawGrid(secint.backbitmap.Canvas,Report.GridWidth,Report.GridHeight,
+      secint.backbitmap.width,secint.backbitmap.height,Report.GridColor,Report.GridLines,
+       0,0);
+      dodrawgrid:=false;
+    end;
+   except
+    on E:Exception do
+    begin
+     secint.backbitmap.free;
+     secint.backbitmap:=nil;
+     errormessage:=SrpSInvBackImage+'-'+E.Message;
+    end;
+   end;
+  end;
+ end
+ else
+  dodrawgrid:=false;
+ if assigned(secint.backbitmap) then
+ begin
+  Canvas.Draw(0,0,secint.backbitmap);
+ end;
+ if dodrawgrid then
+ begin
+  abitmap:=DrawBitmapGrid(width,height,report.GridWidth,report.GridHeight,report.GridColor,report.GridLines);
+  if assigned(abitmap) then
+  begin
+   Canvas.Draw(0,0,abitmap);
   end;
  end;
-
- rec.Top:=0;rec.Left:=0;
- rec.Bottom:=Height;
- rec.Right:=Width;
- Canvas.Brush.Color:=clwhite;
- Canvas.FillRect(rec);
+ if Length(errormessage)>0 then
+ begin
+  Canvas.TextOut(0,0,errormessage);
+ end;
 end;
 
 procedure TRpSectionIntf.MouseMove(Shift: TShiftState; X, Y: Integer);
@@ -1253,6 +1452,16 @@ begin
  end;
 end;
 
+procedure TRpSectionInterface.UpdateBack;
+begin
+ if assigned(backbitmap) then
+ begin
+  backbitmap.Free;
+  backbitmap:=nil;
+ end;
+ if assigned(parent) then
+  FInterface.Invalidate;
+end;
 
 initialization
 fbitmap:=nil;

@@ -144,6 +144,7 @@ type
     (CopyMode:integer;
      DrawImageStyle:integer;
      DPIres:integer;
+     PreviewOnly:boolean;
      StreamPos:int64;
      StreamSize:int64);
    rpMetaPolygon:
@@ -186,6 +187,7 @@ type
     CopyMode:integer;
      DrawImageStyle:integer;
      DPIres:integer;
+     PreviewOnly:boolean;
      StreamPos:int64;
      StreamSize:int64;
 //   rpMetaPolygon:
@@ -255,7 +257,7 @@ type
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenStyle:integer;PenWidth:integer; PenColor:integer);
    procedure NewImageObject(Top,Left,Width,Height:integer;
-    CopyMode:integer;DrawImageStyle:integer;DPIres:integer;stream:TStream);
+    CopyMode:integer;DrawImageStyle:integer;DPIres:integer;stream:TStream;PreviewOnly:Boolean);
    function GetText(arecord:TRpMetaObject):widestring;
    function GetWFontName(arecord:TRpMetaObject):widestring;
    function GetLFontName(arecord:TRpMetaObject):widestring;
@@ -370,7 +372,7 @@ end;
 
 
 procedure TrpMetafilePage.NewImageObject(Top,Left,Width,Height:integer;
- CopyMode:integer; DrawImageStyle:integer;DPIres:integer;stream:TStream);
+ CopyMode:integer; DrawImageStyle:integer;DPIres:integer;stream:TStream;PreviewOnly:boolean);
 begin
  if FObjectCount>=High(FObjects)-1 then
  begin
@@ -387,6 +389,7 @@ begin
  FObjects[FObjectCount].Metatype:=rpMetaImage;
  FObjects[FObjectCount].StreamPos:=FStreamPos;
  FObjects[FObjectCount].StreamSize:=stream.Size;
+ FObjects[FObjectCount].PreviewOnly:=PreviewOnly;
  // Set the size of the stream
  if FMemStream.size=0 then
  begin

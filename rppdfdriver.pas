@@ -354,30 +354,33 @@ begin
    end;
   rpMetaImage:
    begin
-    Width:=round(obj.Width);
-    Height:=round(obj.Height);
-    rec.Top:=PosY;
-    rec.Left:=PosX;
-    rec.Bottom:=rec.Top+Height-1;
-    rec.Right:=rec.Left+Width-1;
-    stream:=page.GetStream(obj);
-    case TRpImageDrawStyle(obj.DrawImageStyle) of
-     rpDrawFull:
-      begin
-       FPDFFile.Canvas.DrawImage(rec,stream,obj.dpires,false,false);
-      end;
-     rpDrawStretch:
-      begin
-       FPDFFile.Canvas.DrawImage(rec,stream,0,false,false);
-      end;
-     rpDrawCrop:
+    if (not obj.PreviewOnly) then
+    begin
+     Width:=round(obj.Width);
+     Height:=round(obj.Height);
+     rec.Top:=PosY;
+     rec.Left:=PosX;
+     rec.Bottom:=rec.Top+Height-1;
+     rec.Right:=rec.Left+Width-1;
+     stream:=page.GetStream(obj);
+     case TRpImageDrawStyle(obj.DrawImageStyle) of
+      rpDrawFull:
        begin
-        FPDFFile.Canvas.DrawImage(rec,stream,CONS_PDFRES,false,true);
+        FPDFFile.Canvas.DrawImage(rec,stream,obj.dpires,false,false);
        end;
-     rpDrawTile:
-      begin
-       FPDFFile.Canvas.DrawImage(rec,stream,CONS_PDFRES,true,true);
-      end;
+      rpDrawStretch:
+       begin
+        FPDFFile.Canvas.DrawImage(rec,stream,0,false,false);
+       end;
+      rpDrawCrop:
+        begin
+         FPDFFile.Canvas.DrawImage(rec,stream,CONS_PDFRES,false,true);
+        end;
+      rpDrawTile:
+       begin
+        FPDFFile.Canvas.DrawImage(rec,stream,CONS_PDFRES,true,true);
+       end;
+     end;
     end;
    end;
  end;

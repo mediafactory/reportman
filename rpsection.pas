@@ -35,11 +35,12 @@ rpmzlib,
  Types,Variants,
 {$ENDIF}
  rptypes,rpmdconsts,rpmunits,rpprintitem,rplabelitem,db,
- sysutils,rpmetafile,rpeval;
+ sysutils,rpmetafile,rptypeval,rpeval;
 
 const
  C_DEFAULT_SECTION_WIDTH=19;
  C_DEFAULT_SECTION_HEIGHT=3;
+ DEFAULT_DPI_BACK=100;
 
 type
  TRpSectionType=(rpsecpheader,rpsecgheader,
@@ -50,6 +51,10 @@ type
 
  TRpSection=class(TRpCommonComponent)
   private
+   FStream:TMemoryStream;
+   FBackExpression:WideString;
+   Fdpires:integer;
+   FBackStyle:TrpBackStyle;
    FSubReport:TComponent;
    FChildSubReport:TComponent;
    FGroupName:String;           // [rpsecgheader,rpsecgfooter]
@@ -103,6 +108,10 @@ type
    procedure LoadExternalFromDatabase;
    procedure SetIniNumPage(Value:Boolean);
    function GetIsExternal:Boolean;
+   procedure WriteBackExpression(Writer:TWriter);
+   procedure ReadBackExpression(Reader:TReader);
+   procedure ReadStream(AStream:TStream);
+   procedure WriteStream(AStream:TStream);
   protected
    procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
@@ -112,13 +121,13 @@ type
     Operation: TOperation);override;
    function GetOwnedComponent(index:Integer):TComponent;
    procedure SetPageRepeat(Value:Boolean);
-  protected
    procedure Loaded;override;
   public
    GroupValue:Variant;
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    function SectionCaption(addchild:boolean):WideString;
+   function GetStream:TMemoryStream;
    procedure FreeComponents;
    procedure DeleteComponent(com:TRpCommonComponent);
    function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
@@ -133,6 +142,7 @@ type
    function AddComponent(componentclass:TRpCommonPosClass):TRpCommonPosComponent;
    function GetChildSubReportName:string;
    procedure SetChildSubReportByName(avalue:String);
+   procedure SetStream(Value:TMemoryStream);
    property ChangeExpression:widestring read FChangeExpression write SetChangeExpression;
    property BeginPageExpression:widestring read FBeginPageExpression
     write FBeginPageExpression;
@@ -143,6 +153,8 @@ type
    property ReportComponents:TRpCommonList read FReportComponents;
    property OwnedComponents[index:integer]:TComponent read GetOwnedComponent;
    property IsExternal:Boolean read GetIsExternal;
+   property BackExpression:WideString read FBackExpression write FBackExpression;
+   property Stream:TMemoryStream read FStream write SetStream;
   published
    property SubReport:TComponent read FSubReport write FSubReport;
    property GroupName:String read FGroupName write SetGroupName;
@@ -185,6 +197,8 @@ type
    property IniNumPage:Boolean read FIniNumPage write SetIniNumPage default false;
    // Global page headers and footers
    property Global:Boolean read FGlobal write FGlobal default false;
+   property dpires:integer read   Fdpires write Fdpires default DEfAULT_DPI_BACK;
+   property BackStyle:TrpBackStyle read FBackStyle write FBackStyle default baDesign;
  end;
 
 
@@ -196,6 +210,14 @@ implementation
 
 uses rpsubreport,rpbasereport, Math;
 
+type
+  TGraphicHeader = record
+    Count: Word;                { Fixed at 1 }
+    HType: Word;                { Fixed at $0100 }
+    Size: Longint;              { Size not including header }
+  end;
+
+
 constructor TRpSection.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
@@ -206,6 +228,8 @@ begin
  FExternalField:='REPORT';
  FExternalSearchField:='REPORT_NAME';
  FFooterAtReportEnd:=true;
+ FStream:=TMemoryStream.Create;
+ Fdpires:=DEFAULT_DPI_BACK;
 
  Width:=Round(C_DEFAULT_SECTION_WIDTH*TWIPS_PER_INCHESS/CMS_PER_INCHESS);
  Height:=Round(C_DEFAULT_SECTION_HEIGHT*TWIPS_PER_INCHESS/CMS_PER_INCHESS);
@@ -219,6 +243,7 @@ end;
 destructor TRpSection.Destroy;
 begin
  FReportComponents.Free;
+ FStream.free;
  inherited destroy;
 end;
 
@@ -407,9 +432,20 @@ var
  newposx,newposy:integer;
  intPartialPrint:Boolean;
  DoPartialPrint:BOolean;
+ astream:TMemoryStream;
 begin
  inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
 
+ // Draw the background if needed
+ if BackStyle<>baDesign then
+ begin
+  astream:=GetStream;
+  if astream.Size>0 then
+  begin
+   metafile.Pages[metafile.CurrentPage].NewImageObject(aposy,aposx,
+    Width,Height,10,Integer(rpDrawFull),Integer(dpires),aStream,BackStyle=baPreview);
+  end;
+ end;
  DoPartialPrint:=False;
  // Look for a partial print
  for i:=0 to FReportComponents.Count-1 do
@@ -1127,6 +1163,8 @@ begin
  Filer.DefineProperty('SkipExpreV',ReadSkipExpreV,WriteSkipExpreV,True);
  Filer.DefineProperty('SkipExpreH',ReadSkipExpreH,WriteSkipExpreH,True);
  Filer.DefineProperty('SkipToPageExpre',ReadSkipToPageExpre,WriteSkipToPageExpre,True);
+ Filer.DefineProperty('BackExpression',ReadBackExpression,WriteBackExpression,True);
+ Filer.DefineBinaryProperty('Stream', ReadStream, WriteStream, true);
 end;
 
 function TRpSection.GetExternalDataDescription:String;
@@ -1240,5 +1278,209 @@ begin
  end;
 end;
 
+procedure TRpSection.WriteBackExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FBackExpression);
+end;
+
+procedure TRpSection.ReadBackExpression(Reader:TReader);
+begin
+ FBackExpression:=ReadWideString(Reader);
+end;
+
+procedure TRpSection.SetStream(Value:TMemoryStream);
+begin
+ FStream.LoadFromStream(Value);
+end;
+
+procedure TRpSection.ReadStream(AStream:TStream);
+var
+ ssize:Int64;
+begin
+ if (sizeof(ssize)<>AStream.Read(ssize,sizeof(ssize))) then
+  Raise Exception.Create(SRpInvalidStreaminRpImage);
+ FStream.SetSize(ssize);
+ FStream.Seek(0,soFromBeginning);
+ if ssize=0 then
+  exit;
+{$IFDEF DOTNETD}
+ if ssize<>FStream.CopyFrom(AStream,ssize) then
+  Raise Exception.Create(SRpInvalidStreaminRpImage);
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ if ssize<>AStream.Read(FStream.memory^,ssize) then
+  Raise Exception.Create(SRpInvalidStreaminRpImage);
+{$ENDIF}
+end;
+
+procedure TRpSection.WriteStream(AStream:TStream);
+var
+ ssize:Int64;
+begin
+ ssize:=FStream.Size;
+ AStream.Write(ssize,sizeof(ssize));
+ FStream.Seek(0,soFromBeginning);
+ AStream.CopyFrom(FStream,ssize);
+// AStream.Write(FStream.Memory^,ssize);
+end;
+
+
+{$IFDEF DOTNETD}
+function BytesToGraphicHeader(const ABytes: TBytes): TGraphicHeader;
+begin
+  Result.Count := System.BitConverter.ToUInt16(ABytes, 0);
+  Result.HType := System.BitConverter.ToUInt16(ABytes, sizeof(Result.Count));
+  Result.Size := System.BitConverter.ToUInt32(ABytes, sizeof(Result.Count) +
+    sizeof(Result.HType));
+end;
+{$ENDIF}
+
+function TRpSection.GetStream:TMemoryStream;
+var
+ evaluator:TRpEvaluator;
+ iden:TRpIdentifier;
+ afield:TField;
+ AStream:TStream;
+ Size,readed: Longint;
+ Header: TGraphicHeader;
+ FMStream:TMemoryStream;
+ aValue:Variant;
+ afilename:TFilename;
+{$IFDEF DOTNETD}
+ Temp:TBytes;
+{$ENDIF}
+begin
+ try
+  Result:=nil;
+  if Length(Trim(BackExpression))>0 then
+  begin
+   // If the expression is a field
+   if Not Assigned(TRpBaseReport(GetReport).Evaluator) then
+    Exit;
+   evaluator:=TRpBaseReport(GetReport).evaluator;
+   iden:=evaluator.SearchIdentifier(BackExpression);
+   if Assigned(iden) then
+    if (Not (iden is TIdenField)) then
+     iden:=nil;
+   if Not Assigned(iden) then
+   begin
+    // Looks for a string (path to file)
+    aValue:=evaluator.EvaluateText(BackExpression);
+    if (not ((VarType(aValue)=varString) or (VarType(aValue)=varOleStr))) then
+     Raise Exception.Create(SRpFieldNotFound+FBackExpression);
+    afilename:=aValue;
+    FMStream:=TMemoryStream.Create;
+    try
+     AStream:=TFileStream.Create(afilename,fmOpenread or fmShareDenyWrite);
+     try
+      Size := AStream.Size;
+      FMStream.SetSize(Size);
+      if Size >= SizeOf(TGraphicHeader) then
+      begin
+{$IFDEF DOTNETD}
+      SetLength(Temp,SizeOf(Header));
+      AStream.Read(Temp, SizeOf(Header));
+      Header := BytesToGraphicHeader(Temp);
+      if (Header.Count <> 1) or (Header.HType <> $0100) or
+        (Header.Size <> Size - SizeOf(Header)) then
+        AStream.Position := 0
+      else
+        FMStream.SetSize(AStream.Size-SizeOf(Header));
+{$ENDIF}
+{$IFNDEF DOTNETD}
+        AStream.Read(Header, SizeOf(Header));
+        if (Header.Count <> 1) or (Header.HType <> $0100) or
+          (Header.Size <> Size - SizeOf(Header)) then
+          AStream.Position := 0
+        else
+         FMStream.SetSize(AStream.Size-SizeOf(Header));
+{$ENDIF}
+      end;
+      FMStream.Seek(0,soFromBeginning);
+{$IFNDEF DOTNETD}
+      readed:=AStream.Read(FMStream.Memory^,FMStream.Size);
+{$ENDIF}
+{$IFDEF DOTNETD}
+      readed:=FMStream.CopyFrom(AStream,FMStream.Size);
+{$ENDIF}
+      if readed<>FMStream.Size then
+       Raise Exception.Create(SRpErrorReadingFromFieldStream);
+      FMStream.Seek(0,soFromBeginning);
+     finally
+      AStream.free;
+     end;
+     Result:=FMStream;
+    except
+     FMStream.free;
+     Raise;
+    end;
+   end
+   else
+   begin
+    AField:=(iden As TIdenField).Field;
+    if (Not (AField is TBlobField)) then
+     Raise Exception.Create(SRpNotBinary+FBackExpression);
+    if AField.isnull then
+     exit;
+    FMStream:=TMemoryStream.Create;
+    try
+     AStream:=AField.DataSet.CreateBlobStream(AField,bmRead);
+     try
+      Size := AStream.Size;
+      FMStream.SetSize(Size);
+      if Size >= SizeOf(TGraphicHeader) then
+      begin
+{$IFDEF DOTNETD}
+       SetLength(Temp,SizeOf(Header));
+       AStream.Read(Temp, SizeOf(Header));
+       Header := BytesToGraphicHeader(Temp);
+       if (Header.Count <> 1) or (Header.HType <> $0100) or
+         (Header.Size <> Size - SizeOf(Header)) then
+         AStream.Position := 0
+       else
+        FMStream.SetSize(AStream.Size-SizeOf(Header));
+{$ENDIF}
+{$IFNDEF DOTNETD}
+        AStream.Read(Header, SizeOf(Header));
+        if (Header.Count <> 1) or (Header.HType <> $0100) or
+          (Header.Size <> Size - SizeOf(Header)) then
+          AStream.Position := 0
+        else
+         FMStream.SetSize(AStream.Size-SizeOf(Header));
+{$ENDIF}
+      end;
+      FMStream.Seek(0,soFromBeginning);
+{$IFNDEF DOTNETD}
+      readed:=AStream.Read(FMStream.Memory^,FMStream.Size);
+{$ENDIF}
+{$IFDEF DOTNETD}
+      readed:=FMStream.CopyFrom(AStream,FMStream.Size);
+{$ENDIF}
+      if readed<>FMStream.Size then
+       Raise Exception.Create(SRpErrorReadingFromFieldStream);
+      FMStream.Seek(0,soFromBeginning);
+     finally
+      AStream.free;
+     end;
+     Result:=FMStream;
+    except
+     FMStream.free;
+     Raise;
+    end;
+   end;
+  end
+  else
+  begin
+   if FStream.Size=0 then
+    exit;
+   Result:=FStream;
+  end;
+ except
+  on E:Exception do
+  begin
+   Raise TRpReportException.Create(E.Message+':'+SRpSExpression+' '+Name,self,SRpSImage);
+  end;
+ end;
+end;
 
 end.

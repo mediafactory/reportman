@@ -496,7 +496,7 @@ begin
 end;
 
 procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;
- dpix,dpiy:integer;scale:double;offset:TPoint);
+ dpix,dpiy:integer;scale:double;offset:TPoint;toprinter:boolean);
 var
  posx,posy:integer;
  rec:TRect;
@@ -654,6 +654,8 @@ begin
    end;
   rpMetaImage:
    begin
+    if (not (obj.previewonly and toprinter)) then
+    begin
     Width:=round(obj.Width*dpix*scale/TWIPS_PER_INCHESS);
     Height:=round(obj.Height*dpiy*scale/TWIPS_PER_INCHESS);
     rec.Top:=PosY;
@@ -702,6 +704,7 @@ begin
     finally
      bitmap.Free;
     end;
+    end;
    end;
  end;
 end;
@@ -737,7 +740,7 @@ begin
   dpix:=dpi;
   dpiy:=dpi;
  end;
- PrintObject(Canvas,page,obj,dpix,dpiy,scale,offset);
+ PrintObject(Canvas,page,obj,dpix,dpiy,scale,offset,toprinter);
 end;
 
 function TRpQtDriver.AllowCopies:boolean;
@@ -935,7 +938,7 @@ begin
       apage:=metafile.Pages[i];
       for j:=0 to apage.ObjectCount-1 do
       begin
-       PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,1,offset);
+       PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,1,offset,true);
        if assigned(aform) then
        begin
    {$IFDEF MSWINDOWS}
@@ -1086,7 +1089,7 @@ begin
     tempbitmap.Canvas.FillRect(arec);
     for j:=0 to apage.ObjectCount-1 do
     begin
-     PrintObject(tempbitmap.Canvas,apage,apage.Objects[j],resx,resy,1,offset);
+     PrintObject(tempbitmap.Canvas,apage,apage.Objects[j],resx,resy,1,offset,false);
      if assigned(aform) then
      begin
    {$IFDEF MSWINDOWS}
@@ -1965,7 +1968,7 @@ begin
      abitmap.SaveToStream(FMStream);
      page.NewImageObject(aposy,aposx,
       nchart.PrintWidth,nchart.PrintHeight,DEF_COPYMODE,Integer(rpDrawStretch),
-      nchart.Resolution,FMStream);
+      nchart.Resolution,FMStream,false);
     finally
      FMStream.Free;
     end;

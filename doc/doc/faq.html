@@ -131,9 +131,25 @@ if the following rules are followed</p>
 <li>All of the properties to suppress output and dialogs to the console must be
 suppressed </li>
 </ul>
-<p>Previewing the report will not work from within an ASP program. Printing the
-report may also fail based on the printing environment set up on the Web server
-running the ASP. </p>
+<p>Previewing the report will not work from within an ASP program. Printing the 
+  report may also fail based on the printing environment set up on the Web server 
+  running the ASP. </p>
+<p><b>Q. What is two pass report option? What is the use of this feature?</b></p>
+<p>The engine is capable of preview the first page before calculating all the 
+  pages (can be thousands), this is the default behaviour for speed and memory 
+  consumtion (when printing, pages printed are released from memory).</p>
+<p>The engine is also capable of printing the total pages in the first page,it's 
+  also capable of going back to the first page to process a new subreport (pararel 
+  subreports), so you can print in the first page as many subreports as you want.</p>
+<p>The printing of total pages (PAGECOUNT) requires the previous calculation of 
+  the report, then PAGECOUNT is replaced with the number.</p>
+<p>The go back to page n requires a precalcualtion of the report (calculate the 
+  full metafile) before printing.</p>
+<p>So two pass report must be used for both cases, PAGECOUNT and SkipToPage. I 
+  doubt other engines implement SkipToPage, it's a feature that needs a good reporting 
+  architechture. And I doubt other engines allow using PAGECOUNT in expressions, 
+  (for example in print condition of a section can it's a dead lock).</p>
+<p></p>
 </body>
 </html>
 

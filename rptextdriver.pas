@@ -419,7 +419,10 @@ begin
  if FPageheight<=0 then
   exit;
  aMax:=High(Flines);
- Result:=Round(posy/FPageheight*amax);
+ // Patch provided by Hadyatmo Ang (h4o80@yahoo.com)
+ Result:=Round(posy/FPageheight*(amax+1));
+ // Original line
+// Result:=Round(posy/FPageheight*(amax));
  if Result<0 then
   Result:=0;
  if Result>aMax then

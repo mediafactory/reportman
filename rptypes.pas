@@ -124,6 +124,7 @@ type
    Stream:TStream;
   end;
 
+ TrpBackStyle=(baDesign,baPreview,baPrint);
  TRpType1Font=(poHelvetica,poCourier,poTimesRoman,poSymbol,poZapfDingbats);
  TRpBrushStyle=(rpbsSolid, rpbsClear, rpbsHorizontal, rpbsVertical,
   rpbsFDiagonal, rpbsBDiagonal, rpbsCross, rpbsDiagCross, rpbsDense1,
@@ -209,7 +210,8 @@ type
   end;
 
 
-
+function StrToBackStyle(value:string):TrpBackStyle;
+function BackStyleToStr(value:TrpBackStyle):string;
 procedure SendMail(destination,subject,content,filename:String);
 function StrToAlign(value:string):TRpPosAlign;
 function AlignToStr(value:TRpPosAlign):string;
@@ -240,6 +242,8 @@ function DoReverseStringW(Value:WideString):WideString;
 function GetWheelInc(Shift:TShiftState):integer;
 procedure GetStepDescriptions(alist:TRpWideStrings);
 procedure GetStepDescriptionsA(alist:TStrings);
+procedure GetBackStyleDescriptions(alist:TRpWideStrings);
+procedure GetBackStyleDescriptionsA(alist:TStrings);
 function StringToFontStep(cad:string):TRpSelectFontStep;
 function FontStepToString(fstep:TRpSelectFontStep):Widestring;
 function FontSizeToStep (asize:integer;select:TRpSelectFontStep):TRpFontStep;
@@ -272,6 +276,7 @@ procedure ReadFileLines(filename:String;dest:TStrings);
 {$ENDIF}
 
 function RpTempFileName:String;
+function RpTempPath:String;
 procedure WriteStringToStream(astring:String;deststream:TStream);
 
 {$IFNDEF USEVARIANTS}
@@ -2545,6 +2550,36 @@ begin
 end;
 
 
+{$IFNDEF DOTNETD}
+function RpTempPath:String;
+{$IFDEF LINUX}
+var
+ abuffer:array [0..L_tmpnam] of char;
+begin
+ tmpnam(abuffer);
+ Result:=StrPas(abuffer);
+end;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+var
+ apath:Pchar;
+ alen:DWord;
+begin
+ alen:=GetTempPath(0,nil);
+ if alen=0 then
+  RaiseLastOsError;
+ apath:=AllocMem(alen+1);
+ try
+  if 0=GetTempPath(alen,apath) then
+   RaiseLastOsError;
+  Result:=StrPas(apath);
+ finally
+  FreeMem(apath);
+ end;
+end;
+{$ENDIF}
+{$ENDIF} // Endif dotnetd
+
 
 {$IFNDEF DOTNETD}
 function RpTempFileName:String;
@@ -2721,6 +2756,45 @@ begin
    Result:=SRpTopBottom;
   rpalclient:
    Result:=SRpAllClient;
+ end;
+end;
+
+procedure GetBackStyleDescriptions(alist:TRpWideStrings);
+begin
+ alist.clear;
+ alist.Add(SRpSBDesign);
+ alist.Add(SRpSBPreview);
+ alist.Add(SRpSBPrint);
+end;
+
+procedure GetBackStyleDescriptionsA(alist:TStrings);
+begin
+ alist.clear;
+ alist.Add(SRpSBDesign);
+ alist.Add(SRpSBPreview);
+ alist.Add(SRpSBPrint);
+end;
+
+function StrToBackStyle(value:string):TrpBackStyle;
+begin
+ if value=SRpSBDesign then
+  Result:=baDesign
+ else
+  if Value=SRpSBPreview then
+   Result:=baPreview
+  else
+   Result:=baPrint;
+end;
+
+function BackStyleToStr(value:TrpBackStyle):string;
+begin
+ case value of
+  baDesign:
+   Result:=SRpSBDesign;
+  baPreview:
+   Result:=SRpSBPreview;
+  baPrint:
+   Result:=SRpSBPrint;
  end;
 end;
 
