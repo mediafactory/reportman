@@ -552,6 +552,7 @@ begin
  Canvas.Font.Name:=atext.WFontName;
  Canvas.Font.Style:=CLXIntegerToFontStyle(atext.FontStyle);
  Canvas.Font.Size:=atext.FontSize;
+ Canvas.Font.Color:=CLXColorToVCLColor(atext.FontColor);
  // Find device font
  if devicefonts then
   FindDeviceFont(Canvas.Handle,Canvas.Font,FontSizeToStep(Canvas.Font.Size));

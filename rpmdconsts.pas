@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.5pre15';
+ RM_VERSION='1.5pre16';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
 
@@ -1220,7 +1220,17 @@ begin
  TranslateVar(943,SrpSExpressionA);
  TranslateVar(951,SRpSParamSubs);
  TranslateVar(954,SRpSRightToLeft);
-
+ TranslateVar(955,SRpSBidiNo);
+ TranslateVar(956,SRpSBidiPartial);
+ TranslateVar(957,SRpSBidiFull);
+ TranslateVar(958,SRpMultiPage);
+ TranslateVar(959,SRpDataUnionNotFound);
+ TranslateVar(960,SRpCannotCombine);
+ TranslateVar(961,SRpSParamList);
+ TranslateVar(962,SRpSParamListDesc);
+ TranslateVar(963,SRpReplaceStr);
+ TranslateVar(964,SRpPReplaceStr);
+ TranslateVar(965,SRpParseParamsH);
 end;
 
 {$IFDEF LINUX}

@@ -392,6 +392,7 @@ begin
 {$IFDEF LINUX}
  Canvas.Font.Name:=atext.LFontName;
 {$ENDIF}
+ Canvas.Font.Color:=atext.FontColor;
  Canvas.Font.Style:=IntegerToFontStyle(atext.FontStyle);
  Canvas.Font.Size:=atext.FontSize;
  aalign:=atext.Alignment;
