@@ -568,6 +568,8 @@ begin
   aalign:=aalign or DT_WORDBREAK;
  if Not atext.CutText then
   aalign:=aalign or DT_NOCLIP;
+ if atext.RightToLeft then
+  aalign:=aalign or DT_RTLREADING;
  aatext:=atext.text;
  aansitext:=aatext;
  arec.Left:=0;
@@ -657,6 +659,8 @@ begin
      aalign:=aalign or DT_WORDBREAK;
     if Not obj.CutText then
      aalign:=aalign or DT_NOCLIP;
+    if obj.RightToLeft then
+     aalign:=aalign or DT_RTLREADING;
     rec.Left:=posx;
     rec.Top:=posy;
     rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);

@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.5pre1';
+ RM_VERSION='1.5pre2';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
 
@@ -608,6 +608,7 @@ var
   SrpSExpressionB:WideString='Expres.Bef.Open';
   SrpSExpressionA:WideString='Expres.Aft.Open';
   SRpSParamSubs:WideString='String Substi.';
+  SRpSRightToLeft:WideString='BiDi';
 implementation
 
 uses rptranslator;
@@ -1206,6 +1207,8 @@ begin
  TranslateVar(942,SrpSExpressionB);
  TranslateVar(943,SrpSExpressionA);
  TranslateVar(951,SRpSParamSubs);
+ TranslateVar(954,SRpSRightToLeft);
+
 end;
 
 {$IFDEF LINUX}

@@ -193,6 +193,8 @@ begin
   aalign:=aalign or DT_WORDBREAK;
  if Not alabel.CutText then
   aalign:=aalign or DT_NOCLIP;
+ if alabel.RightToLeft then
+  aalign:=aalign or DT_RTLREADING;
  if alabel.Transparent then
   SetBkMode(Canvas.Handle,TRANSPARENT)
  else

@@ -30,7 +30,7 @@ interface
 uses classes,SysUtils,Windows,graphics,controls,forms,
  rptypes,
 {$IFDEF USEVARIANTS}
- Types
+ Types,
 {$ENDIF}
  rpmetafile,rpfmainmetaviewvcl,rpmdconsts,
  IdHttp,rpgdidriver,rpmdprintconfigvcl,rpmdshfolder,

@@ -252,7 +252,7 @@ begin
     rec.Bottom:=posy+round(obj.Height);
     astring:=page.GetText(Obj);
     FPDFFile.Canvas.TextRect(rec,astring,aalign,obj.cuttext,
-    obj.WordWrap,obj.FontRotation);
+    obj.WordWrap,obj.FontRotation,obj.RightToLeft);
    end;
   rpMetaDraw:
    begin

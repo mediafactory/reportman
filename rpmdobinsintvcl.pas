@@ -1205,6 +1205,11 @@ begin
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontStyle));
 
+ // Right To Left
+ lnames.Add(SrpSRightToLeft);
+ ltypes.Add(SRpSBool);
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).RightToLeft,true));
 
  // Back Color
  lnames.Add(SrpSBackColor);
@@ -1292,6 +1297,12 @@ begin
   Invalidate;
   exit;
  end;
+ if pname=SRpSRightToLeft then
+ begin
+  TRpGenTextComponent(fprintitem).RightToLeft:=StrToBool(value);
+  Invalidate;
+  exit;
+ end;
  if pname=SRpSBackColor then
  begin
   TRpGenTextComponent(fprintitem).BackColor:=StrToInt(value);
@@ -1372,6 +1383,11 @@ begin
  if pname=SrpSFontColor then
  begin
   Result:=IntToStr(TRpGenTextComponent(printitem).FontColor);
+  exit;
+ end;
+ if pname=SrpSRightToLeft then
+ begin
+  Result:=BoolToStr(TRpGenTextComponent(printitem).RightToLeft,true);
   exit;
  end;
  if pname=SrpSBackColor then

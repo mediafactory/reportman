@@ -760,7 +760,7 @@ begin
   aText:=FormatFloat('########0.00',avalue);
   metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+posy-(gridvsep div 4),
    aposx,horzgap,gridvsep,aText,WFontName,LFontName,FontSize,FontRotation,
-   FontStyle,smallint(Type1Font),FOntColor,BackColor,Transparent,CutText,aalign,WordWrap);
+   FontStyle,smallint(Type1Font),FOntColor,BackColor,Transparent,CutText,aalign,WordWrap,RightToLeft);
   avalue:=avalue+valueinc;
  end;
  // Draws the lines

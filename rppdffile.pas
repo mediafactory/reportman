@@ -123,10 +123,11 @@ type
    function UnitsToTextY(Value:integer):string;
    function UnitsToTextText(Value:integer;FontSize:integer):string;
    procedure Line(x1,y1,x2,y2:Integer);
-   procedure TextOut(X, Y: Integer; const Text: string;LineWidth,Rotation:integer);
+   procedure TextOut(X, Y: Integer; const Text: string;LineWidth,
+    Rotation:integer;RightToLeft:Boolean);
    procedure TextRect(ARect: TRect; Text: string;
                        Alignment: integer; Clipping: boolean;
-                       Wordbreak:boolean;Rotation:integer=0);
+                       Wordbreak:boolean;Rotation:integer;RightToLeft:Boolean);
    procedure Rectangle(x1,y1,x2,y2:Integer);
    procedure DrawImage(rec:TRect;abitmap:TStream;dpires:integer;
     tile:boolean;clip:boolean);
@@ -1094,12 +1095,13 @@ end;
 
 procedure TRpPDFCanvas.TextRect(ARect: TRect; Text: string;
                        Alignment: integer; Clipping: boolean;Wordbreak:boolean;
-                       Rotation:integer=0);
+                       Rotation:integer;RightToLeft:Boolean);
 var
  recsize:TRect;
  i:integer;
  posx,posY:integer;
  singleline:boolean;
+ astring:String;
 begin
  FFile.CheckPrinting;
 
@@ -1148,7 +1150,8 @@ begin
    begin
     PosX:=ARect.Left+(((Arect.Right-Arect.Left)-FLineInfo[i].Width) div 2);
    end;
-   TextOut(PosX,PosY+FLineInfo[i].TopPos,Copy(Text,FLineInfo[i].Position,FLineInfo[i].Size),FLineInfo[i].Width,Rotation);
+   astring:=Copy(Text,FLineInfo[i].Position,FLineInfo[i].Size);
+   TextOut(PosX,PosY+FLineInfo[i].TopPos,astring,FLineInfo[i].Width,Rotation,RightToLeft);
   end;
  finally
   if (Clipping or (Rotation<>0)) then
@@ -1194,11 +1197,14 @@ begin
 end;
 
 
-procedure TRpPDFCanvas.TextOut(X, Y: Integer; const Text: string;LineWidth,Rotation:integer);
+procedure TRpPDFCanvas.TextOut(X, Y: Integer; const Text: string;LineWidth,
+ Rotation:integer;RightToLeft:Boolean);
 var
  rotrad,fsize:double;
  rotstring:string;
  PosLine,PosLineX1,PosLineY1,PosLineX2,PosLineY2:integer;
+ astring:String;
+ i:integer;
 begin
  FFile.CheckPrinting;
  if (Rotation<>0) then
@@ -1229,7 +1235,16 @@ begin
   end
   else
    SWriteLine(FFile.FsTempStream,UnitsToTextX(X)+' '+UnitsToTextText(Y,Font.Size)+' Td');
-  SWriteLine(FFile.FsTempStream,'('+PDFCompatibleText(Text)+') Tj');
+  astring:=Text;
+  if RightToLeft then
+  begin
+   astring:='';
+   for i:=1 to Length(text) do
+   begin
+    astring:=text[i]+astring;
+   end;
+  end;
+  SWriteLine(FFile.FsTempStream,'('+PDFCompatibleText(astring)+') Tj');
   SWriteLine(FFile.FsTempStream,'ET');
  finally
   if (Rotation<>0) then

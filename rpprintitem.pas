@@ -125,6 +125,7 @@ type
    FVAlignMent:integer;
    FSingleLine:boolean;
    FType1Font:TRpType1Font;
+   FRightToLeft:Boolean;
    procedure ReadWFontName(Reader:TReader);
    procedure WriteWFontName(Writer:TWriter);
    procedure ReadLFontName(Reader:TReader);
@@ -148,6 +149,7 @@ type
    property VAlignment:integer read FVAlignment write FVAlignment default 0;
    property WordWrap:Boolean read FWordWrap write FWordWrap default false;
    property SingleLine:boolean read FSingleLine write FSingleLine default false;
+   property RightToLeft:Boolean read FRightToLeft write FRightToLeft default false;
   end;
 
 implementation

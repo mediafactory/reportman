@@ -22,7 +22,7 @@
  the info to print a complete report.
  File Format Binary
 
- Signature='RPMETAFILE02'
+ Signature='RPMETAFILE03'
  rpFHeader=integer(0);
  PageSize=integer;
  CustomX=integer;
@@ -58,7 +58,7 @@ const
  RP_SIGNATURELENGTH=13;
  // The metafile signature and version
  RpSignature:array[0..RP_SIGNATURELENGTH-1] of char=('R','P','M','E','T','A','F','I','L',
-  'E','0','2',#0);
+  'E','0','3',#0);
 const
  FIRST_ALLOCATION_OBJECTS=50;
  FIRST_ALLOCATED_WIDESTRING=1000;
@@ -99,6 +99,7 @@ type
   CutText:boolean;
   Alignment:integer;
   WordWrap:boolean;
+  RightToLeft:Boolean;
  end;
 
  TRpMetaObject=packed record
@@ -115,7 +116,8 @@ type
     FontColor:integer;
     BackColor:integer;
     Transparent:boolean;
-    CutText:boolean;Alignment:integer;WordWrap:boolean);
+    CutText:boolean;Alignment:integer;WordWrap:boolean;
+    RightToLeft:Boolean);
    rpMetaDraw:
     (DrawStyle:integer;
     BrushStyle:integer;
@@ -172,7 +174,7 @@ type
     Text:widestring;WFontName:widestring;LFontName:widestring;
     FontSize:smallint;FontRotation:smallint;FontStyle:smallint;
     Type1Font:smallint;FontColor:integer;BackColor:integer;transparent:boolean;
-    cuttext:boolean;Alignment:integer;WordWrap:boolean);
+    cuttext:boolean;Alignment:integer;WordWrap:boolean;RightToLeft:Boolean);
    procedure NewDrawObject(Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenStyle:integer;PenWidth:integer; PenColor:integer);
@@ -374,7 +376,7 @@ procedure TrpMetafilePage.NewTextObject(Top,Left,Width,Height:integer;
     Text:widestring;WFontName:widestring;LFontName:widestring;
     FontSize:smallint;FontRotation:smallint;FontStyle:smallint;
     Type1Font:smallint;FontColor:integer;BackColor:integer;transparent:boolean;
-    cuttext:boolean;Alignment:integer;WordWrap:boolean);
+    cuttext:boolean;Alignment:integer;WordWrap:boolean;RightToLeft:boolean);
 begin
  if FObjectCount>=High(FObjects)-1 then
  begin
@@ -402,6 +404,7 @@ begin
  FObjects[FObjectCount].CutText:=CutText;
  FObjects[FObjectCount].Alignment:=Alignment;
  FObjects[FObjectCount].WordWrap:=WordWrap;
+ FObjects[FObjectCount].RightToLeft:=RightToLeft;
 
  inc(FObjectCount);
 
