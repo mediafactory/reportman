@@ -135,6 +135,18 @@ implementation
 
 uses rpmdfdesign,rpmdfsectionint, rpmdfmain;
 
+function calcdefaultheight:integer;
+var
+ Edit:TEdit;
+begin
+ Edit:=TEDit.Create(nil);
+ try
+  Edit.Text:='MMg';
+  Result:=Edit.Height;
+ finally
+  Edit.free;
+ end;
+end;
 
 constructor TrpPanelObj.Create(AOwner:TComponent);
 begin
@@ -221,11 +233,13 @@ var
  totalwidth:integer;
  AScrollBox:TScrollBox;
  PParent:TPanel;
+ aheight:integer;
 begin
  totalwidth:=WIdth;
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
  posy:=0;
+ aheight:=calcdefaultheight;
 
  AScrollBox:=TScrollBox.Create(Self);
  AScrollBox.Align:=alClient;
@@ -257,12 +271,10 @@ begin
  ComboAlias.Top:=Posy;
  ComboAlias.Left:=CONS_CONTROLPOS;
  ComboAlias.Width:=TotalWidth-ComboAlias.Left-CONS_RIGHTBARGAP;
- // A item must be added so the control height is calculated
- ComboAlias.Items.Add('');
  ComboAlias.parent:=PParent;
  ComboAlias.Anchors:=[akleft,aktop,akright];
 
- posy:=posy+ComboAlias.Height;
+ posy:=posy+aheight;
  ALabel:=TLabel.Create(Self);
  LLabels.Add(ALabel);
  ALabel.Caption:=SRpSPOnlyData;
@@ -279,7 +291,7 @@ begin
  ComboPrintOnly.parent:=PParent;
  ComboPrintOnly.Anchors:=[akleft,aktop,akright];
 
- posy:=posy+ComboAlias.Height;
+ posy:=posy+aheight;
  PParent.Height:=posy;
 
  LControls.AddObject(SRpMainDataset,ComboAlias);
@@ -308,7 +320,7 @@ begin
  totalwidth:=WIdth;
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
- aheight:=0;
+ aheight:=calcdefaultheight;
 
  // Creates the labels and controls
  posy:=0;
@@ -324,7 +336,7 @@ begin
  Combo.Style:=csDropDownList;
  Combo.Name:='TopCombobox'+FCompItem.classname;
  combo.OnChange:=ComboObjectChange;
- APanelTop.Height:=Combo.height;
+ APanelTop.Height:=aheight;
  Combo.Parent:=APanelTop;
  Combo.Anchors:=[akleft,akright,aktop];
 
@@ -362,8 +374,6 @@ begin
    TComboBox(Control).Items.Add(TrueBoolStrs[0]);
    TComboBox(Control).Style:=csDropDownList;
    TCOmboBox(Control).OnChange:=EditChange;
-   if control.height=0 then
-    Control.Height:=Abs(TComboBox(Control).Font.height*2);
   end
   else
   if LTypes.Strings[i]=SRpSList then
@@ -428,10 +438,7 @@ begin
   Control.Left:=CONS_CONTROLPOS;
   Control.Width:=TotalWidth-Control.Left-CONS_RIGHTBARGAP;
   control.parent:=PParent;
-  Control.Anchors:=[akleft,aktop,akright];
 
-  if aheight=0 then
-   aheight:=Control.Height;
   Control.tag:=i;
   LControls.AddObject(LNames.Strings[i],Control);
   // Font button
@@ -458,7 +465,7 @@ begin
    Control2.Width:=CONS_BUTTONWIDTH;
    Control2.Top:=Control.Top;
    Control2.Left:=Control.Left+Control.Width-CONS_BUTTONWIDTH;
-   Control2.Height:=COntrol.Height;
+   Control2.Height:=aheight;
    Control2.Tag:=i;
    Control.Width:=Control.Width-CONS_BUTTONWIDTH;
    TButton(Control2).OnClick:=FontClick;
@@ -472,7 +479,7 @@ begin
    Control2.Width:=CONS_BUTTONWIDTH;
    Control2.Top:=Control.Top;
    Control2.Left:=Control.Left+Control.Width-CONS_BUTTONWIDTH;
-   Control2.Height:=COntrol.Height;
+   Control2.Height:=aheight;
    Control.Width:=Control.Width-CONS_BUTTONWIDTH;
    Control2.Tag:=i;
    TButton(Control2).OnClick:=ExpressionClick;
@@ -480,7 +487,8 @@ begin
    Control2.Parent:=PParent;
    Control2.Anchors:=[aktop,akright];
   end;
-  posy:=posy+control.height;
+  Control.Anchors:=[akleft,aktop,akright];
+  posy:=posy+aheight;
  end;
  PParent.Height:=posy;
  // Send to back and bring to front buttons
@@ -506,7 +514,7 @@ begin
   APanelBottom.Height:=aheight;
   Control2.Width:=(TotalWidth-CONS_RIGHTBARGAP) div 2;
   Control2.parent:=APanelBottom;
-  Control2.Anchors:=[akleft,aktop,akright];
+//  Control2.Anchors:=[akleft,aktop,akright];
   TButton(Control2).OnClick:=BringToFrontClick;
   TBUtton(Control2).Caption:=SRpBringToFront;
  end;
