@@ -146,7 +146,7 @@ RootDir=
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
-MinorVer=5
+MinorVer=6
 Release=0
 Build=0
 Debug=0
@@ -159,13 +159,11 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Designer
-FileVersion=1.5.0.0
+FileVersion=1.6.0.0
 InternalName=repmandxp
 LegalCopyright=MPL/GPL License
 LegalTrademarks=
 OriginalFilename=repmandxp
 ProductName=Report Manager Designer
-ProductVersion=1.5.0.0
+ProductVersion=1.6.0.0
 Comments=
-[Excluded Packages]
-c:\archivos de programa\borland\delphi7\Bin\dclofficexp70.bpl=Microsoft Office XP Sample Automation Server Wrapper Components

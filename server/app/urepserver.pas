@@ -257,10 +257,9 @@ var
  sysinfo:SYSTEM_INFO;
 begin
  smp:=false;
-{ GetSystemInfo(sysinfo);
+ GetSystemInfo(sysinfo);
  if sysinfo.dwNumberOfProcessors>0 then
   smp:=true;
-}
 end;
 {$ENDIF}
 {$IFDEF LINUX}

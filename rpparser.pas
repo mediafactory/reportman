@@ -435,7 +435,7 @@ begin
    // Brackets out
    if Result[1]='[' then
    begin
-    Result:=Copy(Result,2,Length(Result)-1);
+    Result:=Copy(Result,2,Length(Result)-2);
    end;
   end;
 end;
