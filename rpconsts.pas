@@ -75,6 +75,7 @@ resourcestring
   SRPHorzDesp='Horz.Desp.';
   SRpInvalidBoolean='Invalid boolean: ';
   SRpPaperNotFount='Paper name not found';
+  SRpErrorCreatingPaper='Error creating paper form (privileges?): ';
 
   SRpSureDeleteSection='Delete selected section?';
   SRpNoDatasets='No datasets defined';

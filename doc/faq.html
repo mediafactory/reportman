@@ -1,0 +1,45 @@
+<html>
+<head>
+<title>Frequently Asked Questions of Report Manager</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h3><b>Frequently Asked Questions</b></h3>
+<b>Q. How can I set report parameters at runtime?</b> 
+<p>A. <code>CLXReport1.Report.Params.ParamByName('CUSTOMERINI').Value:=2;</code></p>
+<p><b>Q. How can I show the parameters before executing?</b></p>
+<p>A. <code>if CLXReport1.ShowParams then CLXReport1.Execute</code>;</p>
+<p><b>Q. What about passing application opened datasets to the report?</b></p>
+<ul>
+  <li>Place a TRpAlias component beside the TCLXReport</li>
+  <li>Assign AliasList property or CLXReport to RPAlias compoenent.</li>
+  <li>In RpAlias, List property add items as alias and TDataset component to assign 
+    to the report. Note: In Delphi 5 automatic edition of collections seems to 
+    not work so you can do this at runtime.</li>
+  <li>At runtime:</li>
+</ul>
+<p><code>var aitem:TRpAliasListIte</code><code>m;</code></p>
+<code><p>begin</p>
+<p>aitem:=RPAliasItem.List.Add;</p>
+<p>aitem.alias:='AREPORTALIAS';</p>
+<p>aitem.dataset:=adataset;</p>
+<p>end</p></code>
+<p><b>Q. How can I alter the SQL sentence of a report dataset before executing 
+  it?</b></p>
+<p>A. CLXReport.Report.DataInfo.Items[0].SQL:='SELECT....'</p>
+<p><b>Q. How can I pass opened connections or path to databases to the report?</b></p>
+<p>A. Depend on the database driver used:</p>
+<ul>
+  <li>BDE should detect opened aliases</li>
+  <li>DBExpress: <code>CLXReport.Report.DabaseInfo.Items[0].SQLConnection:=..</code></li>
+  <li>ADO: <code>CLXReport.Report.DabaseInfo.Items[0].ConnectionString</code></li>
+  <li>Other still not implemented, but you can update dbxconnections.ini.</li>
+</ul>
+<p><b>Q. I'm designing a report that will be printed in any matrix printer or 
+  receipt printer, how can I use printer fonts to speed up the print process?</b></p>
+<p>A. At page setup option of Report Manager Designer you can set use allways 
+  device fonts option. Allways install the correct driver for the printer or a 
+  driver that printer is emulating.</p>
+</body>
+</html>

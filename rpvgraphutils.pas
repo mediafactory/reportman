@@ -269,6 +269,8 @@ begin
  Result.y:=Round(apageheight/dpiy*TWIPS_PER_INCHESS);
 end;
 
+
+
 function GetPhysicPageSizeTwips:TPoint;
 var
  DC:HDC;
@@ -453,8 +455,8 @@ begin
  if Result.PageIndex=0 then
  begin
   // Converts to decs of milimeter
-  Result.Width:=Round(Result.Width*1000/251);
-  Result.Height:=Round(Result.Height*1000/251);
+  Result.Width:=Round(Result.Width*1000/2510);
+  Result.Height:=Round(Result.Height*1000/2510);
  end
  else
  begin
@@ -499,7 +501,7 @@ begin
   Result.papername:=PDevmode.dmFormName;
  end;
  GlobalUnLock(DeviceMode);
-// Printer.SetPrinter(Device, Driver, Port, DeviceMode);
+ Printer.SetPrinter(Device, Driver, Port, DeviceMode);
 end;
 
 
@@ -725,12 +727,20 @@ begin
        pforminfo^.ImageableArea.left:=0;
        pforminfo^.ImageableArea.Right:=pforminfo^.Size.cx;
        pforminfo^.ImageableArea.Bottom:=pforminfo^.size.cy;
-       if not AddForm(fprinterhandle,1,pforminfo) then
+       try
+        if not AddForm(fprinterhandle,1,pforminfo) then
 {$IFDEF USEVARIANTS}
-        RaiseLastOSError;
+         RaiseLastOSError;
 {$ELSE}
-        RaiseLastWin32Error;
+         RaiseLastWin32Error;
 {$ENDIF}
+       except
+        on E:Exception do
+        begin
+         E.Message:=SRpErrorCreatingPaper+apapername+#10+E.Message;
+         Raise;
+        end;
+       end;
        // Updates the form list
        FillFormsList;
       end;
@@ -762,8 +772,10 @@ begin
   else
   begin
    PDevMode.dmPaperSize :=apapersize.PageIndex;
-   PDevMode.dmPaperlength := apapersize.Width;
-   PDevMode.dmPaperwidth  := apapersize.Height;
+   PDevMode.dmPaperlength := apapersize.Height;
+   PDevMode.dmPaperwidth  := apapersize.Width;
+//   PDevMode.dmPaperlength := apapersize.Width;
+//   PDevMode.dmPaperwidth  := apapersize.Height;
   end;
 {  PDevMode.dmPrintQuality:=SmallInt(DMRES_DRAFT);
   PDevMode.dmFields:=PDevMode.dmFields or dm_PrintQuality;

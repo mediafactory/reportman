@@ -95,6 +95,8 @@ type
    pagemargins:TRect;
    drawclippingregion:boolean;
    oldpagesize,pagesize:TGDIPageSize;
+   oldorientation:TPrinterOrientation;
+   orientationset:boolean;
    devicefonts:boolean;
    procedure NewDocument(report:TrpMetafileReport);stdcall;
    procedure EndDocument;stdcall;
@@ -336,6 +338,11 @@ begin
  begin
   // Does nothing because the last bitmap can be usefull
  end;
+ if orientationset then
+ begin
+  Printer.Orientation:=oldorientation;
+  orientationset:=false;
+ end;
  if oldpagesize.PageIndex<>-1 then
  begin
   SetCurrentPaper(oldpagesize);
@@ -354,6 +361,11 @@ begin
   if assigned(bitmap) then
    bitmap.free;
   bitmap:=nil;
+ end;
+ if orientationset then
+ begin
+  Printer.Orientation:=oldorientation;
+  orientationset:=false;
  end;
  if oldpagesize.PageIndex<>-1 then
  begin
@@ -642,11 +654,23 @@ procedure TRpGDIDriver.SetOrientation(Orientation:TRpOrientation);
 begin
  if Orientation=rpOrientationPortrait then
  begin
-  Printer.Orientation:=poPortrait;
+  if Printer.Orientation<>poPortrait then
+  begin
+   orientationset:=true;
+   oldorientation:=Printer.Orientation;
+   Printer.Orientation:=poPortrait;
+  end;
  end
  else
  if Orientation=rpOrientationLandscape then
-  Printer.Orientation:=poLandsCape;
+ begin
+  if Printer.Orientation<>poLandscape then
+  begin
+   orientationset:=true;
+   oldorientation:=Printer.Orientation;
+   Printer.Orientation:=poLandsCape;
+  end;
+ end;
 end;
 
 procedure DoPrintMetafile(metafile:TRpMetafileReport;tittle:string;
