@@ -413,7 +413,8 @@ begin
  LControls:=TStringList.Create;
  LCOntrolsToFree:=TList.Create;
 {$IFDEF LINUX}
- Font.Size:=10;
+// if Screen.PixelsPerInch>90 then
+//  Font.Size:=7;
 {$ENDIF}
 end;
 

@@ -145,10 +145,10 @@ begin
   begin
    fobjinsp.CompItem:=FSectionInterface;
   end;
-  Application.ProcessMessages;
+//  Application.ProcessMessages;
   SectionScrollBox.HorzScrollBar.Position:=0;
   SectionScrollBox.VertScrollBar.Position:=0;
-  FSectionInterface.InvalidateAll;
+//  FSectionInterface.InvalidateAll;
  end;
 end;
 

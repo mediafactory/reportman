@@ -12,14 +12,14 @@ repman:
 
 
 clean:
-	-rm -Rf *.dcu
-	-rm -Rf *.dpu
-	-rm -Rf *.~*
-	-rm -Rf *.exe
-	-rm -Rf *.o
-	-rm -Rf *.dcp
-	-rm -Rf *.ow
-	-rm -Rf *.rst
+	-rm -Rf *.dcu repman/*.dcu
+	-rm -Rf *.dpu repman/*.dpu
+	-rm -Rf *.~* repman/*.~*
+	-rm -Rf *.exe repman/*.exe
+	-rm -Rf *.o repman/*.o
+	-rm -Rf *.dcp repman/*.dcp
+	-rm -Rf *.ow repman/*.ow
+	-rm -Rf *.rst repman/*.rst
 
 	-rm tests/eval/project1
 	-rm tests/metafiles/metafile
