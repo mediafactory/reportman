@@ -96,6 +96,7 @@ type
    meta:TMetafile;
    pagecliprec:TRect;
    selectedprinter:TRpPrinterSelect;
+   DrawerBefore,DrawerAfter:Boolean;
    procedure SendAfterPrintOperations;
   public
    offset:TPoint;
@@ -326,6 +327,8 @@ var
  scale2:double;
  qtsize:integer;
 begin
+ DrawerBefore:=report.OpenDrawerBefore;
+ DrawerAfter:=report.OpenDrawerAfter;
  if devicefonts then
  begin
   UpdatePrinterFontList;
@@ -343,6 +346,8 @@ begin
   SetPrinterCopies(hardwarecopies);
   SetPrinterCollation(hardwarecollate);
 
+  if DrawerBefore then
+   SendControlCodeToPrinter(GetPrinterRawOp(selectedprinter,rawopopendrawer));
   printer.BeginDoc;
   intdpix:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX); //  printer.XDPI;
   intdpiy:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY);  // printer.YDPI;
@@ -444,6 +449,8 @@ begin
  if toprinter then
  begin
   printer.EndDoc;
+  if DrawerAfter then
+   SendControlCodeToPrinter(GetPrinterRawOp(selectedprinter,rawopopendrawer));
   // Send Especial operations
   SendAfterPrintOperations;
  end

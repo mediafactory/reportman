@@ -58,6 +58,7 @@ type
     allpages,collate:boolean;
     frompage,topage,copies:integer;
     printerindex:TRpPrinterSelect;
+    DrawerBefore,DrawerAfter:Boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure AppIdleReport(Sender:TObject;var done:boolean);
     procedure AppIdlePrintPDF(Sender:TObject;var done:boolean);
@@ -215,6 +216,8 @@ var
  scale2:double;
  sizeqt:integer;
 begin
+ DrawerBefore:=report.OpenDrawerBefore;
+ DrawerAfter:=report.OpenDrawerAfter;
  if ToPrinter then
  begin
   scale:=1.0;
@@ -236,6 +239,16 @@ begin
 //   QPrinter_setOrientation(QPrinterH(Printer.Handle),QPrinterOrientation_Portrait);
 //   QPrinter_setOrientation(QPrinterH(Printer.Handle),QPrinterOrientation_Landscape);
 //  end;
+  if Not Printer.Printing then
+   if DrawerBefore then
+   begin
+{$IFDEF MSWINDOWS}
+    SendControlCodeToPrinter(GetPrinterRawOp(selectedprinter,rawopopendrawer));
+{$ENDIF}
+{$IFDEF LINUX}
+    SendTextToPrinter(GetPrinterRawOp(selectedprinter,rawopopendrawer),selectedprinter,SRpOpenDrawerAfter);
+{$ENDIF}
+   end;
   if Not Printer.Printing then
    printer.BeginDoc;
   intdpix:=printer.XDPI;
@@ -335,6 +348,15 @@ begin
  if toprinter then
  begin
   printer.EndDoc;
+  if DrawerAfter then
+  begin
+{$IFDEF MSWINDOWS}
+   SendControlCodeToPrinter(GetPrinterRawOp(selectedprinter,rawopopendrawer));
+{$ENDIF}
+{$IFDEF LINUX}
+   SendTextToPrinter(GetPrinterRawOp(selectedprinter,rawopopendrawer),selectedprinter,SRpOpenDrawerAfter);
+{$ENDIF}
+  end;
  end
  else
  begin

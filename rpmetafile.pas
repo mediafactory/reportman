@@ -230,6 +230,8 @@ type
    PrinterSelect:TRpPrinterSelect;
    PreviewStyle:TRpPreviewStyle;
    PreviewWindow:TRpPreviewWindowStyle;
+   OpenDrawerBefore:Boolean;
+   OpenDrawerAfter:Boolean;
    procedure Clear;
    procedure LoadFromStream(Stream:TStream;clearfirst:boolean=true);
    procedure LoadFromFile(filename:string;clearfirst:boolean=true);
@@ -527,6 +529,8 @@ begin
  // Standard sizes
  CustomX:=12047;
  CustomY:=17039;
+ OpenDrawerBefore:=false;
+ OpenDrawerAfter:=false;
 
  FPages:=TList.Create;
 end;
@@ -601,6 +605,8 @@ begin
  Stream.Write(PrinterSelect,sizeof(PrinterSelect));
  Stream.Write(PreviewStyle,sizeof(TRpPreviewStyle));
  Stream.Write(PreviewWindow,sizeof(TRpPreviewWindowStyle));
+ Stream.Write(OpenDrawerBefore,sizeof(OpenDrawerBefore));
+ Stream.Write(OpenDrawerAfter,sizeof(OpenDrawerAfter));
  // Pages
  // Write pagecount
  acount:=FPages.Count;
@@ -705,6 +711,11 @@ begin
   Raise Exception.Create(SRpBadFileHeader);
  if (sizeof(PreviewWindow)<>Stream.Read(PreviewWindow,sizeof(TRpPreviewWindowStyle))) then
   Raise Exception.Create(SRpBadFileHeader);
+ if (sizeof(OpenDrawerBefore)<>Stream.Read(PreviewWindow,sizeof(OpenDrawerBefore))) then
+  Raise Exception.Create(SRpBadFileHeader);
+ if (sizeof(OpenDrawerAfter)<>Stream.Read(PreviewWindow,sizeof(OpenDrawerAfter))) then
+  Raise Exception.Create(SRpBadFileHeader);
+
  // If there is no pages then end of read
  // Read pagecount
  if (sizeof(acount)<>Stream.Read(acount,sizeof(acount))) then

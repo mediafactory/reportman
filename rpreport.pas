@@ -171,6 +171,7 @@ type
    FPrintOnlyIfDataAvailable:Boolean;
    gheaders,gfooters:TList;
    FStreamFormat:TRpStreamFormat;
+   FReportAction:TRpReportActions;
    procedure  FillGlobalHeaders;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
@@ -299,6 +300,7 @@ type
     write FPrintOnlyIfDataAvailable default false;
    property StreamFormat:TRpStreamFormat read FStreamFormat
     write FStreamFormat default rpStreamzlib;
+   property ReportAction:TRpReportActions read FReportAction write FReportAction;
  end;
 
 procedure RegisterRpReportClasses;
@@ -418,6 +420,7 @@ begin
  FTotalPagesList:=TList.Create;
  // Other
  FPrinterFonts:=rppfontsdefault;
+ FReportAction:=[];
 end;
 
 procedure  TRpReport.FillGlobalHeaders;
@@ -1743,6 +1746,8 @@ begin
  metafile.PrinterSelect:=PrinterSelect;
  metafile.PreviewStyle:=PreviewStyle;
  metafile.PreviewWindow:=PreviewWindow;
+ metafile.OpenDrawerBefore:=rpDrawerBefore in FReportAction;
+ metafile.OpenDrawerAfter:=rpDrawerAfter in FReportAction;
  for i:=0 to SubReports.Count-1 do
  begin
   Subreports.Items[i].Subreport.LastRecord:=false;

@@ -46,6 +46,7 @@ type
  TRpPrintLine=record
   FontStep:TRpFontStep;
   Attributes:TStringList;
+  red:boolean;
   Value:String;
  end;
 
@@ -74,7 +75,8 @@ type
    FPrinterDriver:TRpPrinterEscapeStyle;
    FPrinterDriverName:String;
    FForceDriverName:String;
-   masterselect:boolean;
+   masterselect,limitedmaster:boolean;
+   DrawerBefore,DrawerAfter:Boolean;
    master10,master12,mastercond,masterwide,masterbold,masteritalic,masterunderline:Byte;
    function GetLineIndex(posy:integer):integer;
    procedure RepProgress(Sender:TRpReport;var docancel:boolean);
@@ -84,14 +86,14 @@ type
    procedure NewLineInfo(info:TRpLineInfo);
    procedure TextRect(ARect: TRect; Text: string;
                        Alignment: integer; Clipping: boolean;
-                       Wordbreak:boolean;RightToLeft:Boolean;fontstep:TRpFontStep;fontstyle:integer);
+                       Wordbreak:boolean;RightToLeft:Boolean;fontstep:TRpFontStep;fontstyle:integer;red:Boolean);
    procedure DoTextOut(X, Y: Integer; const Text: string;LineWidth:Integer;
-    FontStep:TRpFontStep;RightToLeft:Boolean;fontstyle:integer);
+    FontStep:TRpFontStep;RightToLeft:Boolean;fontstyle:integer;red:Boolean);
    function GetColumnNumber(posx:integer;FontStep:TRpFontStep):integer;
    function GetBlankLine(FontStep:TRpFontStep):String;
    procedure WriteCurrentPage;
    function EnCodeLine(Line:TRpPrintLine;index:integer):String;
-   function FindEscapeStep(FontStep:TRpFontStep):String;
+   function FindEscapeStep(FontStep:TRpFontStep;red:Boolean):String;
    function FindEscapeStyle(fontstyle:integer;FontStep:TRpFontStep):String;
    function NearestFontStep(FontStep:TRpFontStep):TRpFontStep;
    procedure UpdatePrinterConfig;
@@ -298,6 +300,8 @@ end;
 procedure TRpTextDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
    hardwarecollate:boolean);stdcall;
 begin
+ DrawerBefore:=report.OpenDrawerBefore;
+ DrawerAfter:=report.OpenDrawerAfter;
  MemStream.free;
  MemStream:=TMemoryStream.Create;
  FPageWidth:=report.CustomX;
@@ -306,6 +310,9 @@ begin
  UpdatePrinterConfig;
  if Length(escapecodes[rpescapeinitprinter])>0 then
   MemStream.Write(escapecodes[rpescapeinitprinter][1],Length(escapecodes[rpescapeinitprinter]));
+ if DrawerBefore then
+  if Length(escapecodes[rpescapepulse])>0 then
+   MemStream.Write(escapecodes[rpescapepulse][1],Length(escapecodes[rpescapepulse]));
  // Set page size
  WritePageSize;
 end;
@@ -321,6 +328,9 @@ begin
  if Length(escapecodes[rpescapetearoff])>0 then
   MemStream.Write(escapecodes[rpescapetearoff][1],Length(escapecodes[rpescapetearoff]));
  // MemStream.Write;
+ if DrawerAfter then
+  if Length(escapecodes[rpescapepulse])>0 then
+   MemStream.Write(escapecodes[rpescapepulse][1],Length(escapecodes[rpescapepulse]));
  MemStream.Seek(0,soFromBeginning);
 end;
 
@@ -393,6 +403,7 @@ var
  aalign:integer;
  astring:String;
  fontstep:TrpFontStep;
+ red:Boolean;
 begin
  posx:=obj.Left;
  posy:=obj.Top;
@@ -407,8 +418,9 @@ begin
     rec.Bottom:=posy+round(obj.Height);
     astring:=page.GetText(Obj);
     fontstep:=FontSizeToStep(obj.FontSize,obj.PrintStep);
+    red:=IsRedColor(obj.FontColor);
     TextRect(rec,astring,aalign,obj.cuttext,
-    obj.WordWrap,obj.RightToLeft,fontstep,obj.FontStyle);
+    obj.WordWrap,obj.RightToLeft,fontstep,obj.FontStyle,red);
    end;
  end;
 end;
@@ -590,11 +602,16 @@ var
 begin
  FPrinterDriverName:=UpperCase(FPrinterDriverName);
  s:='';
- if ((FPrinterDriverName='EPSON') or (FPrinterDriverName='EPSON-IBMPRO')
-  or (FPrinterDriverName='EPSON-QUALITY')
+ if ((FPrinterDriverName='EPSON') or (FPrinterDriverName='EPSON-ESCPQ')
+  or (FPrinterDriverName='EPSON-ESCP') or (FPrinterDriverName='EPSON-MASTER')
   or (FPrinterDriverName='IBMPROPRINTER')) then
  begin
   s:=#27+'C'+Chr(High(FLines)+1);
+ end
+ else
+ if FPrinterDriverName='HP-PCL' then
+ begin
+  s:=#27+#38+#108+Chr(High(FLines)+1)+#80;
  end;
  if Length(s)>0 then
  begin
@@ -612,7 +629,40 @@ begin
  end;
  FPrinterDriverName:=UpperCase(FPrinterDriverName);
  masterselect:=false;
+ limitedmaster:=false;
+ // Epson old printers only share expanded and compressed
+ // character codes and underline.
  if FPrinterDriverName='EPSON' then
+ begin
+  // Init Printer-Line spacing to 1/6
+  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2';
+  escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rpescapecr]:=#13;
+  escapecodes[rpescapeformfeed]:=#12;
+//  escapecodes[rpescapebold]:=#27+'E';
+  escapecodes[rpescapeunderline]:=#27+#45+#1;
+//  escapecodes[rpescapeitalic]:=#27+'4';
+  // Underline off-Bold off-Italic off
+  escapecodes[rpescapenormal]:=#27+#45+#0;
+//  escapecodes[rpescapenormal]:=#27+#45+#0+
+//   #27+'F'+#27+'5';
+  // Set 10 or 12 cpi, enabled-disable double wide, enable-disable condensed
+  escapecodes[rpescape5cpi]:=#18+#14;
+//  escapecodes[rpescape6cpi]:=#27+'M'+#14+#18;
+  escapecodes[rpescape10cpi]:=#20+#18;
+//  escapecodes[rpescape12cpi]:=#27+'M'+#20+#18;
+//  escapecodes[rpescape15cpi]:=#27+'g'+#20;
+  escapecodes[rpescape17cpi]:=#20+#15;
+//  escapecodes[rpescape20cpi]:=#27+'M'+#20+#15;
+
+  escapecodes[rpescapeendprint]:=#27+#64;
+
+
+  // Open drawer
+  escapecodes[rpescapepulse]:=#27+#112+#0+#100+#100;
+ end
+ else
+ if FPrinterDriverName='EPSON-MASTER' then
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode
   escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2'+#27+'x'+#0;
@@ -620,7 +670,10 @@ begin
   escapecodes[rpescapecr]:=#13;
   escapecodes[rpescapeformfeed]:=#12;
   masterselect:=true;
+  limitedmaster:=false;
 
+  // Open drawer
+  escapecodes[rpescapepulse]:=#27+#112+#0+#100+#100;
   escapecodes[rpescapeendprint]:=#27+#64;
  end
  else
@@ -683,26 +736,6 @@ begin
   escapecodes[rpescapepulse]:=#27+#112+#0+#100+#100;
  end
  else
- if FPrinterDriverName='EPSON-IBMPRO' then
- begin
-  // Init Printer-Line spacing to 1/6
-  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2';
-  escapecodes[rpescapelinefeed]:=#10;
-  escapecodes[rpescapecr]:=#13;
-  escapecodes[rpescapeformfeed]:=#12;
-  escapecodes[rpescapebold]:=#27+'E';
-  escapecodes[rpescapeunderline]:=#27+#45+#1;
-  escapecodes[rpescapeitalic]:=#27+'4';
-  // Underline off-Bold off-Italic off
-  escapecodes[rpescapenormal]:=#27+#45+#0+
-   #27+'F'+#27+'5';
-  escapecodes[rpescape10cpi]:=#14+#18;
-  escapecodes[rpescape17cpi]:=#14+#15;
-  escapecodes[rpescape5cpi]:=#18+#20;
-
-  escapecodes[rpescapeendprint]:=#27+#64;
- end
- else
  if FPrinterDriverName='IBMPROPRINTER' then
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode
@@ -720,27 +753,102 @@ begin
   escapecodes[rpescape5cpi]:=#27+#18+#14+#18;
   escapecodes[rpescape6cpi]:=#27+':'+#14+#18;
   escapecodes[rpescape10cpi]:=#27+#18+#20+#18;
-  escapecodes[rpescape12cpi]:=#27+':'+#20+#0+#18;
-  escapecodes[rpescape17cpi]:=#27+#18+#20+#15;
-  escapecodes[rpescape20cpi]:=#27+':'+#20+#15;
+  escapecodes[rpescape12cpi]:=#20+#18+#27+':';
+  escapecodes[rpescape17cpi]:=#20+#27+#18+#15;
+  escapecodes[rpescape20cpi]:=#20+#27+':'+#15;
 
   escapecodes[rpescapeendprint]:=#20+#20+#27+#64;
  end
  else
- if FPrinterDriverName='EPSONTM88II' then
+ if FPrinterDriverName='EPSONTMU210' then
  begin
-  // Init Printer-Line spacing to 1/6
-  escapecodes[rpescapeinitprinter]:=#27+#64+#27+#50;
+  // Init Printer-Line spacing to 1/6 - Draft mode
+  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2';
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
-  // No form feeds, it's a receipt printer
-  //  escapecodes[rpescapeformfeed]:=#12;
-  escapecodes[rpescapebold]:=#27+#69+#1;
-  escapecodes[rpescapeunderline]:=#27+#45+#1;
-  // Underline off-Bold off-Italic off
-  escapecodes[rpescapenormal]:=#27+#45+#0+#27+#69+#0;
+  //escapecodes[rpescapeformfeed]:=#12;
+  masterselect:=true;
+  limitedmaster:=true;
+
+  // Can select red font
+  escapecodes[rpescaperedfont]:=#27+'r'+#1;
+  escapecodes[rpescapeblackfont]:=#27+'r'+#0;
+
+  escapecodes[rpescapeendprint]:=#27+#64;
   // Open drawer
-  escapecodes[rpescapepulse]:='#27#112#0#100#100';
+  escapecodes[rpescapepulse]:=#27+#112+#0+#100+#100;
+ end
+ else
+ if FPrinterDriverName='EPSONTMU210CUT' then
+ begin
+  // Init Printer-Line spacing to 1/6 - Draft mode
+  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2';
+  escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rpescapecr]:=#13;
+  //escapecodes[rpescapeformfeed]:=#12;
+  masterselect:=true;
+  limitedmaster:=true;
+  // Can select red font
+  escapecodes[rpescaperedfont]:=#27+'r'+#1;
+  escapecodes[rpescapeblackfont]:=#27+'r'+#0;
+  // Cut paper
+  escapecodes[rpescapeendprint]:=#27+'m'+#27+#64;
+  // Open drawer
+  escapecodes[rpescapepulse]:=#27+#112+#0+#100+#100;
+ end
+ else
+ if FPrinterDriverName='EPSONTM88II' then
+ begin
+  // Init Printer-Line spacing to 1/6 - Draft mode
+  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2';
+  escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rpescapecr]:=#13;
+  //escapecodes[rpescapeformfeed]:=#12;
+  masterselect:=true;
+  limitedmaster:=true;
+
+  escapecodes[rpescapeendprint]:=#27+#64;
+  // Open drawer
+  escapecodes[rpescapepulse]:=#27+#112+#0+#100+#100;
+ end
+ else
+ if FPrinterDriverName='EPSONTM88IICUT' then
+ begin
+  // Init Printer-Line spacing to 1/6 - Draft mode
+  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2';
+  escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rpescapecr]:=#13;
+  //escapecodes[rpescapeformfeed]:=#12;
+  masterselect:=true;
+  limitedmaster:=true;
+  // Cut paper
+  escapecodes[rpescapeendprint]:=#27+'m'+#27+#64;
+  // Open drawer
+  escapecodes[rpescapepulse]:=#27+#112+#0+#100+#100;
+ end
+ else
+ if FPrinterDriverName='HP-PCL' then
+ begin
+  // Init printer + 6 lines per inch
+  escapecodes[rpescapeinitprinter]:=#27+#64+
+   #27+#38+#108+#54+#68;
+  escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rpescapecr]:=#13;
+  escapecodes[rpescapeformfeed]:=#27+#38+#108+#48+#72; // Form feed and eject page
+  escapecodes[rpescapebold]:=#27+#40+#115+#51+#66;
+  escapecodes[rpescapeunderline]:=#27+#38+#100+#48+#68;
+  escapecodes[rpescapeitalic]:=#27+#40+#115+#49+#83;
+  // Underline off-Bold off-Italic off
+  escapecodes[rpescapenormal]:=#27+#38+#100+#64+
+    #27+#40+#115+#48+#66+
+    #27+#40+#115+#48+#83;
+  // Set 10 or 12 cpi, enabled-disable double wide, enable-disable condensed
+  escapecodes[rpescape5cpi]:=#27+#40+#115+#5+#72;
+  escapecodes[rpescape6cpi]:=#27+#40+#115+#6+#72;
+  escapecodes[rpescape10cpi]:=#27+#38+#107+#48+#83;
+  escapecodes[rpescape12cpi]:=#27+#38+#107+#52+#83;
+  escapecodes[rpescape17cpi]:=#27+#40+#115+#17+#72;
+  escapecodes[rpescape20cpi]:=#27+#40+#115+#20+#72;
  end
  else
  if FPrinterDriverName='PLAIN' then
@@ -811,6 +919,11 @@ begin
    allowedsizes[j]:=True;
   end;
   allowedsizes[rpcpi15]:=False;
+  if limitedmaster then
+  begin
+   allowedsizes[rpcpi17]:=False;
+   allowedsizes[rpcpi20]:=False;
+  end;
  end
  else
  begin
@@ -1074,7 +1187,7 @@ end;
 
 procedure TRpTextDriver.TextRect(ARect: TRect; Text: string;
                        Alignment: integer; Clipping: boolean;Wordbreak:boolean;
-                       RightToLeft:Boolean;fontstep:TRpFontStep;fontstyle:integer);
+                       RightToLeft:Boolean;fontstep:TRpFontStep;fontstyle:integer;red:Boolean);
 var
  recsize:TRect;
  i:integer;
@@ -1113,7 +1226,7 @@ begin
    PosX:=ARect.Left+(((Arect.Right-Arect.Left)-FLineInfo[i].Width) div 2);
   end;
   astring:=Copy(Text,FLineInfo[i].Position,FLineInfo[i].Size);
-  DoTextOut(PosX,PosY+FLineInfo[i].TopPos,astring,FLineInfo[i].Width,fontstep,RightToLeft,fontstyle);
+  DoTextOut(PosX,PosY+FLineInfo[i].TopPos,astring,FLineInfo[i].Width,fontstep,RightToLeft,fontstyle,red);
  end;
 end;
 
@@ -1137,7 +1250,7 @@ begin
 end;
 
 procedure TRpTextDriver.DoTextOut(X, Y: Integer; const Text: string;LineWidth:Integer;
-  FontStep:TRpFontStep;RightToLeft:Boolean;fontstyle:integer);
+  FontStep:TRpFontStep;RightToLeft:Boolean;fontstyle:integer;red:boolean);
 var
  astring,atpos:String;
  lineindex,index:integer;
@@ -1156,6 +1269,7 @@ begin
  begin
   FLines[lineindex].FontStep:=NearestFontStep(FontStep);
   FLines[lineindex].Value:=GetBlankLine(FLines[lineindex].FontStep);
+  FLines[lineindex].Red:=red;
  end;
  columnnumber:=GetColumnNumber(X,FLines[lineindex].FontStep);
  atpos:=FormatFloat('00000',columnnumber+1);
@@ -1184,9 +1298,10 @@ begin
 end;
 
 
-function TRpTextDriver.FindEscapeStep(FontStep:TRpFontStep):String;
+function TRpTextDriver.FindEscapeStep(FontStep:TRpFontStep;red:Boolean):String;
 var
  aselect:Byte;
+ condcode:Byte;
 begin
  if FPlainText then
  begin
@@ -1195,6 +1310,10 @@ begin
  end;
  if masterselect then
  begin
+  if limitedmaster then
+   condcode:=0
+  else
+   condcode:=mastercond;
   if FontStep=rpcpi15 then
   begin
    Result:='';
@@ -1202,9 +1321,9 @@ begin
   aselect:=0;
   case FontStep of
    rpcpi20:
-    aselect:=master12 or mastercond;
+    aselect:=master12 or condcode;
    rpcpi17:
-    aselect:=master10 or mastercond;
+    aselect:=master10 or condcode;
    rpcpi15:
     Result:='';
    rpcpi12:
@@ -1217,6 +1336,14 @@ begin
     aselect:=master10 or masterwide;
   end;
   Result:=#27+'!'+Chr(aselect);
+  // Red font
+  if Length(escapecodes[rpescaperedfont])>0 then
+  begin
+   if red then
+    Result:=Result+escapecodes[rpescaperedfont]
+   else
+    Result:=Result+escapecodes[rpescapeblackfont];
+  end;
   exit;
  end;
  Result:=escapecodes[rpescape10cpi];
@@ -1236,11 +1363,20 @@ begin
   rpcpi5:
    Result:=escapecodes[rpescape5cpi];
  end;
+ // Red font
+ if Length(escapecodes[rpescaperedfont])>0 then
+ begin
+  if red then
+   Result:=Result+escapecodes[rpescaperedfont]
+  else
+   Result:=Result+escapecodes[rpescapeblackfont];
+ end;
 end;
 
 function TRpTextDriver.FindEscapeStyle(fontstyle:integer;FontStep:TRpFontStep):String;
 var
  aselect:byte;
+ condcode:byte;
 begin
  Result:='';
  if FPlainText then
@@ -1251,12 +1387,16 @@ begin
   begin
    Result:='';
   end;
+  if limitedmaster then
+   condcode:=0
+  else
+   condcode:=mastercond;
   aselect:=0;
   case FontStep of
    rpcpi20:
-    aselect:=master12 or mastercond;
+    aselect:=master12 or condcode;
    rpcpi17:
-    aselect:=master10 or mastercond;
+    aselect:=master10 or condcode;
    rpcpi15:
     Result:='';
    rpcpi12:
@@ -1270,8 +1410,11 @@ begin
   end;
   if (fontstyle and 1)>0 then
    aselect:=aselect or masterbold;
-  if (fontstyle and (1 shl 1))>0 then
-   aselect:=aselect or masteritalic;
+  if not limitedmaster then
+  begin
+   if (fontstyle and (1 shl 1))>0 then
+    aselect:=aselect or masteritalic;
+  end;
   if (fontstyle and (1 shl 2))>0 then
    aselect:=aselect or masterunderline;
   Result:=#27+'!'+Chr(aselect);
@@ -1300,6 +1443,7 @@ var
  res:PChar;
  wasunderline:boolean;
  currentcount:integer;
+ trimed:boolean;
 begin
 {$IFDEF MSWINDOWS}
  if OemConvert then
@@ -1319,7 +1463,7 @@ begin
 //   encoded:=encoded+FindEscapeStep(Line.FontStep);
 // end
 // else
-  encoded:=encoded+FindEscapeStep(Line.FontStep);
+  encoded:=encoded+FindEscapeStep(Line.FontStep,Line.red);
  if Line.Attributes.Count<1 then
  begin
   Result:=encoded+escapecodes[rpescapelinefeed];
@@ -1364,13 +1508,19 @@ begin
    end;
   end;
  end;
+ trimed:=false;
  While Length(encoded)>0 do
  begin
   if encoded[Length(encoded)]<>' ' then
    break
   else
+  begin
    encoded:=Copy(encoded,1,Length(encoded)-1);
+   trimed:=true;
+  end;
  end;
+ if trimed then
+  encoded:=encoded+' ';
  encoded:=encoded+escapecodes[rpescapecr];
  if Length(escapecodes[rpescapeformfeed])>0 then
  begin

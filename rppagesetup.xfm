@@ -20,7 +20,7 @@ object FRpPageSetup: TFRpPageSetup
     Top = 0
     Width = 440
     Height = 329
-    ActivePage = TabOptions
+    ActivePage = TabPrint
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -373,6 +373,22 @@ object FRpPageSetup: TFRpPageSetup
           'Normal'
           'Page')
         TabOrder = 14
+      end
+      object CheckDrawerAfter: TCheckBox
+        Left = 4
+        Top = 264
+        Width = 373
+        Height = 21
+        Caption = 'Open drawer after printing'
+        TabOrder = 15
+      end
+      object CheckDrawerBefore: TCheckBox
+        Left = 4
+        Top = 240
+        Width = 405
+        Height = 21
+        Caption = 'Open drawer before printing'
+        TabOrder = 16
       end
     end
     object TabOptions: TTabSheet

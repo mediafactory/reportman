@@ -106,6 +106,9 @@ type
  TRpShapeType=(rpsRectangle, rpsSquare, rpsRoundRect, rpsRoundSquare,
   rpsEllipse, rpsCircle,rpsHorzLine,rpsVertLine,rpsOblique1,rpsOblique2);
 
+ TRpReportAction=(rpDrawerBefore,rpDrawerAfter);
+ TRpReportActions=set of TRpReportAction;
+
  TRpPrinterFontsOption=(rppfontsdefault,rppfontsalways,rppfontsnever);
 
  TRpPrinterEscapeStyle=(rpPrinterDefault,rpPrinterPlain,rpPrinterDatabase,rpPrinterCustom);
@@ -174,6 +177,7 @@ type
   end;
 
 
+function IsRedColor(Color:Integer):Boolean;
 // Compares 2 streams and returns true if they are equal
 function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
 procedure WriteWideString(Writer:TWriter;Value:WideString);
@@ -607,16 +611,21 @@ var
 begin
  CheckLoadedPrinterConfig;
  adefault:=0;
- if printerindex=pRpCharacterprinter then
+ if (printerindex in [pRpCharacterprinter,pRPTicketPrinter]) then
   adefault:=2;
  adefault:=printerconfigfile.ReadInteger('PrinterEscapeStyle','Printer'+IntToStr(integer(printerindex)),adefault);
  Result:=TRpPrinterEscapeStyle(adefault);
 end;
 
 function GetPrinterEscapeStyleDriver(printerindex:TRpPrinterSelect):String;
+var
+ def:String;
 begin
  CheckLoadedPrinterConfig;
- Result:=printerconfigfile.ReadString('PrinterDriver','Printer'+IntToStr(integer(printerindex)),'EPSON');
+ def:='EPSON';
+ if printerindex=prpTicketPrinter then
+  def:='EPSONTMU210';
+ Result:=printerconfigfile.ReadString('PrinterDriver','Printer'+IntToStr(integer(printerindex)),def);
 end;
 
 
@@ -766,6 +775,10 @@ begin
  if rawop=rpescapelinefeed then
  begin
   defaultvalue:='#10';
+ end;
+ if rawop=rawopopendrawer then
+ begin
+  defaultvalue:='#27#112#0#100#100';
  end;
  if rawop=rpescapecr then
  begin
@@ -1742,11 +1755,16 @@ begin
  drivernames.Add(' ');
  drivernames.Add('PLAIN');
  drivernames.Add('EPSON');
+ drivernames.Add('EPSON-MASTER');
 // drivernames.Add('EPSON-IBMPRO');
  drivernames.Add('EPSON-ESCP');
  drivernames.Add('EPSON-ESCPQ');
  drivernames.Add('IBMPROPRINTER');
+ drivernames.Add('EPSONTMU210');
+ drivernames.Add('EPSONTMU210CUT');
+ drivernames.Add('EPSONTM88IICUT');
  drivernames.Add('EPSONTM88II');
+ drivernames.Add('HP-PCL');
 end;
 
 procedure WriteStringToDevice(S,Device:String);
@@ -1814,6 +1832,21 @@ begin
  Result:=Copy(astring,1,index-1);
 end;
 
+function IsRedColor(Color:Integer):Boolean;
+var
+ R,G,B:Byte;
+begin
+ Color:=Color and $00FFFFFF;
+ R:=Byte(Color and $000000FF);
+ if R<$E0 then
+ begin
+  Result:=false;
+  exit;
+ end;
+ G:=Byte((Color shr 8) and $000000FF);
+ B:=Byte((Color shr 16) and $000000FF);
+ Result:=((R>(G*2)) and (R>(B*2)));
+end;
 
 {$IFDEF LINUX}
 procedure  ObtainPrinters(alist:TStrings);

@@ -19,7 +19,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     Top = 0
     Width = 446
     Height = 334
-    ActivePage = TabOptions
+    ActivePage = TabPrint
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -58,7 +58,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           Width = 225
           Height = 21
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 0
         end
       end
@@ -372,6 +372,22 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           'Wide'
           'Normal'
           'Page')
+      end
+      object CheckDrawerAfter: TCheckBox
+        Left = 8
+        Top = 268
+        Width = 373
+        Height = 21
+        Caption = 'Open drawer after printing'
+        TabOrder = 10
+      end
+      object CheckDrawerBefore: TCheckBox
+        Left = 8
+        Top = 244
+        Width = 405
+        Height = 21
+        Caption = 'Open drawer before printing'
+        TabOrder = 11
       end
     end
     object TabOptions: TTabSheet

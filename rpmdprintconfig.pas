@@ -190,11 +190,13 @@ begin
  CheckCutPaper.Checked:=configinifile.ReadBool('CutPaperOn','Printer'+IntToStr(LSelPrinter.ItemIndex),false);
  ECutPaper.Text:=configinifile.ReadString('CutPaper','Printer'+IntToStr(LSelPrinter.ItemIndex),'');
  CheckOpenDrawer.Checked:=configinifile.ReadBool('OpenDrawerOn','Printer'+IntToStr(LSelPrinter.ItemIndex),false);
- EOpenDrawer.Text:=configinifile.ReadString('OpenDrawer','Printer'+IntToStr(LSelPrinter.ItemIndex),'');
+ EOpenDrawer.Text:=configinifile.ReadString('OpenDrawer','Printer'+IntToStr(LSelPrinter.ItemIndex),'#27#112#0#100#100');
  ComboTextOnly.ItemIndex:=0;
  defdriver:=' ';
  if LSelPrinter.ItemIndex=Integer(pRpCharacterprinter) then
   defdriver:='EPSON';
+ if LSelPrinter.ItemIndex=Integer(pRpTicketprinter) then
+  defdriver:='EPSONTMU210';
  defdriver:=configinifile.ReadString('PrinterDriver','Printer'+IntToStr(LSelPrinter.ItemIndex),defdriver);
  if Length(defdriver)<1 then
   defdriver:=' ';
@@ -354,7 +356,7 @@ begin
  else
  begin
   configinifile.WriteInteger('PrinterEscapeStyle','Printer'+IntToStr(LSelPrinter.ItemIndex),Integer(rpPrinterDefault));
-  configinifile.WriteString('PrinterDriver','Printer'+IntToStr(LSelPrinter.ItemIndex),'');
+  configinifile.WriteString('PrinterDriver','Printer'+IntToStr(LSelPrinter.ItemIndex),' ');
  end;
 end;
 

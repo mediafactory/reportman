@@ -739,6 +739,8 @@ var
   SRpErrorForking:WideString='Error creating fork';
   SRpCreatingTempFile:WideString='Error creating temporary file';
   SRpPlainFile:WideString='Text file';
+  SRpOpenDrawerBefore:WideString='Open drawer before';
+  SRpOpenDrawerAfter:WideString='Open drawer after';
 
 implementation
 
@@ -1436,6 +1438,8 @@ begin
  TranslateVar(1049,SRpPlainFile);
  TranslateVar(1050,SRpPrintRep9);
  TranslateVar(1051,SRpPrintRep10);
+ TranslateVar(1052,SRpOpenDrawerBefore);
+ TranslateVar(1053,SRpOpenDrawerAfter);
 end;
 
 {$IFDEF LINUX}

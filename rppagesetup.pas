@@ -7,7 +7,7 @@
 {       avaliable in runtime and design time            }
 {                                                       }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -84,6 +84,8 @@ type
     TabOptions: TTabSheet;
     ComboFormat: TComboBox;
     LPreferedFormat: TLabel;
+    CheckDrawerAfter: TCheckBox;
+    CheckDrawerBefore: TCheckBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -279,6 +281,8 @@ begin
  ComboFormat.Items.Add(SRpStreamZLib);
  ComboFormat.Items.Add(SRpStreamText);
  ComboFormat.Items.Add(SRpStreamBinary);
+ CheckDrawerAfter.Caption:=SRpOpenDrawerAfter;
+ CheckDrawerBefore.Caption:=SRpOpenDrawerBefore;
 
  SetInitialBounds;
 end;
@@ -291,7 +295,8 @@ end;
 
 procedure TFRpPageSetup.SaveOptions;
 var
- acopies:integer;
+ acopies:integer;ç
+ FReportAction:TRpReportActions;
 begin
  acopies:=StrToInt(ECopies.Text);
  if acopies<=0 then
@@ -300,6 +305,12 @@ begin
  report.CollateCopies:=CheckCollate.Checked;
  report.TwoPass:=CheckTwoPass.Checked;
  report.PrintOnlyIfDataAvailable:=CheckPrintOnlyIfData.Checked;
+ FReportAction:=[];
+ if CheckDrawerAfter.Checked then
+  include(FreportAction,rpDrawerAfter);
+ if CheckDrawerBefore.Checked then
+  include(FreportAction,rpDrawerBefore);
+ report.ReportAction:=FReportAction;
 
  // Saves the options to report
  report.Pagesize:=TRpPageSize(RPageSize.ItemIndex);
@@ -345,6 +356,8 @@ begin
  CheckCollate.Checked:=report.CollateCopies;
  CheckTwoPass.Checked:=report.TwoPass;
  CheckPrintOnlyIfData.Checked:=report.PrintOnlyIfDataAvailable;
+ CheckDrawerBefore.Checked:=rpDrawerBefore in report.ReportAction;
+ CheckDrawerAfter.Checked:=rpDrawerAfter in report.ReportAction;
 
  // Size
  ComboPageSize.ItemIndex:=report.PagesizeQt;
