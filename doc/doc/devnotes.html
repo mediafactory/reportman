@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>Developer notes about Report Manager</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Developer</h2>
+<h3>Devoloper notes about Report Manager</h3>
+<p><b>What about accesing Report Manager with C API using non Borland compilers?</b></p>
+<p>Report Manager supports C++Builder and Kylix C++.</p>
+<p>To allow other compilers link directly to the engine (GCC) a shared library 
+  must be build/programmed (dll for windows, so for Linux), the interface function 
+  definitions and implementation are the key here,<br>
+  shared libraries does not allow sharing objects so it must be implemented via 
+  handles like:</p>
+<p>int OpenReport(char *filename);<br>
+  void PreviewReport(int report_handle);</p>
+<p>I estimate the implementation of the library could take about 20-30 hours of 
+  work.</p>
+<p>Anyway you can use command line tools like printreptopdf, printrep metaprint, 
+  metaview, but of course they have not the same integration as a call to a function 
+  in a dll, if you are using Windows may be <br>
+  ActiveX is the way to go...</p>
+<p><b>TClientDataset and BCD types, why Delphi 5 enterprise version at least need</b></p>
+<p>TRpDataset (rpdataset.pas) is a TClientDataset to buffer all the datasets passed 
+  to the engine that can feature grouping, so the main dataset go forward only 
+  (support for unidirectional datasets like SQLExpress), but the engine can remember 
+  at least two records to do grouping. Somebody said me last version of some reporting 
+  engines does not allow grouping if the dataset is unidirectional...</p>
+<p>The method to implement TRpDataset is duplicate fields of new Dataset to a 
+  newly created TClientDataset (rpdataset)<br>
+</p>
+<p>Then assign fields and post the record in memory...</p>
+<p>for i:=0 to fieldcount-1 do<br>
+  fields[i].Assign(fielddefs[i]);</p>
+<p>It's a bit more complex because needs freeing memory (garbage old records)</p>
+<p>This worked fine inclusive passing opened datasets to the engine until I updated 
+  to Delphi 7, where blob fields assignements are broken, I added the function 
+  AssignField(Source,Destination), and a compiler define, active for Delphi 7 
+  (BLOBSTREAMBUG) so assignement for blobfields are patched in this function.</p>
+<p>If you find an assignment fails using a particular type (like BCD) you can 
+  patch the assignment there, send me the bugfix so I will add a compiler define 
+  for the bug and add to the main tree.</p>
+<p>BCD is a problematic type, see for example FormatVariant function in rptypes.pas.</p>
+<p>&nbsp;</p>
+</body>
+</html>
