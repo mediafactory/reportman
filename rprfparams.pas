@@ -251,6 +251,24 @@ begin
         TComboBox(acontrol).ItemIndex:=0;
       end;
      end;
+   rpParamList:
+     begin
+      acontrol:=TComboBox.Create(Self);
+      TComboBox(acontrol).Style:=csDropDownList;
+      acontrol.tag:=i;
+      lcontrols.AddObject(aparam.Name,acontrol);
+      // Can't add items without a parent
+      acontrol.parent:=MainScrollBox;
+      TComboBox(acontrol).Items.Assign(aparam.Items);
+      if aparam.Value=Null then
+      begin
+       achecknull.Checked:=true;
+      end
+      else
+      begin
+       TComboBox(acontrol).ItemIndex:=aparam.Values.IndexOf(aparam.Value);
+      end;
+     end;
    end;
    acontrol.Top:=Posy;
    acontrol.Left:=CONS_CONTROLPOS;
@@ -293,7 +311,7 @@ end;
 
 procedure TFRpRunTimeParams.SaveParams;
 var
- i:integer;
+ i,index:integer;
 begin
  for i:=0 to fparams.Count-1 do
  begin
@@ -337,6 +355,14 @@ begin
      rpParamBool:
       begin
        fparams.items[i].Value:=StrtoBool(TComboBox(LControls.Objects[i]).Text);
+      end;
+     rpParamList:
+      begin
+       index:=TComboBox(LControls.Objects[i]).ItemIndex;
+       if index<fparams.items[i].Values.Count then
+        fparams.items[i].Value:=fparams.items[i].Values.Strings[index]
+       else
+        fparams.items[i].Value:='';
       end;
       else
       begin

@@ -614,7 +614,9 @@ var
   SRpSBidiFull:WideString='Full Bidi';
   SRpMultiPage:WideString='Multi Page';
   SRpDataUnionNotFound:WideString='Data Union not found in Mybase';
-  SRpCannotCombine:WideString='Cannot combine-union a dataset to other dataset with fewer field number'; 
+  SRpCannotCombine:WideString='Cannot combine-union a dataset to other dataset with fewer field number';
+  SRpSParamList:WideString='Value list';
+  SRpSParamListDesc:WideString='Strings to show (left) and strings to assign (right)'; 
 implementation
 
 uses rptranslator;

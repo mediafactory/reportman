@@ -57,7 +57,7 @@ type
 
  TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,
   rpParamTime,rpParamDateTime,rpParamCurrency,rpParamBool,
-  rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamUnknown);
+  rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamList,rpParamUnknown);
 
 
  TRpParamObject=class(TObject)

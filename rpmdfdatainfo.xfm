@@ -458,6 +458,15 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
             Height = 13
             Caption = 'Unions'
           end
+          object CheckGroupUnion: TCheckBox
+            Left = 200
+            Top = 112
+            Width = 117
+            Height = 17
+            Caption = 'Union grouping'
+            TabOrder = 10
+            OnClick = MSQLChange
+          end
         end
       end
       object Panel1: TPanel

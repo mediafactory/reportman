@@ -105,6 +105,7 @@ type
     BDelUnions: TButton;
     ComboUnions: TComboBox;
     LabelUnions: TLabel;
+    CheckGroupUnion: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -495,6 +496,7 @@ begin
  EMyBase.Text:=dinfo.MyBaseFilename;
  EIndexFields.Text:=dinfo.MyBaseIndexFields;
  LUnions.Items.Assign(dinfo.DataUnions);
+ CheckGroupUnion.Checked:=dinfo.GroupUnion;
  EBDEIndexFields.Text:=dinfo.BDEIndexFields;
  MBDEFilter.Text:=dinfo.BDEFilter;
  EBDEIndexName.Text:=dinfo.BDEIndexName;
@@ -548,6 +550,9 @@ begin
  end;
  if Sender=BAddUnions then
   dinfo.DataUnions:=LUnions.Items
+ else
+ if Sender=CheckGroupUnion then
+  dinfo.GroupUnion:=CheckGroupUnion.Checked
  else
  if Sender=MSQL then
  begin

@@ -127,11 +127,18 @@ procedure TCBaseReport.CheckLoaded;
 begin
  // Loads the report
  if Assigned(FReport) then
+ begin
+  FReport.AliasList:=AliasList;
   exit;
+ end;
  if Length(FFilename)<1 then
   Raise Exception.Create(SRpNoFilename);
  LoadFromFile(FFilename);
  InternalSetBeforePrint;
+ if Assigned(FReport) then
+ begin
+  FReport.AliasList:=AliasList;
+ end;
 end;
 
 procedure TCBaseReport.SetOnBeforePrint(NewValue:TNotifyEvent);
@@ -144,7 +151,6 @@ end;
 function TCBaseReport.Execute:boolean;
 begin
  CheckLoaded;
- report.AliasList:=AliasList;
  if FLanguage>=0 then
   report.Language:=FLanguage;
  Result:=false;

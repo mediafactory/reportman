@@ -459,6 +459,15 @@ object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
             ItemHeight = 13
             TabOrder = 6
           end
+          object CheckGroupUnion: TCheckBox
+            Left = 200
+            Top = 112
+            Width = 117
+            Height = 17
+            Caption = 'Union grouping'
+            TabOrder = 7
+            OnClick = MSQLChange
+          end
         end
       end
       object Panel1: TPanel

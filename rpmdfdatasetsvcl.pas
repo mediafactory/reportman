@@ -89,6 +89,7 @@ type
     ComboUnions: TComboBox;
     BAddUnions: TButton;
     BDelUnions: TButton;
+    CheckGroupUnion: TCheckBox;
     procedure BParamsClick(Sender: TObject);
     procedure LDatasetsClick(Sender: TObject);
     procedure MSQLChange(Sender: TObject);
@@ -216,6 +217,7 @@ begin
  EMyBase.Text:=dinfo.MyBaseFilename;
  EIndexFields.Text:=dinfo.MyBaseIndexFields;
  LUnions.Items.Assign(dinfo.DataUnions);
+ CheckGroupUnion.Checked:=dinfo.GroupUnion;
  EBDEIndexFields.Text:=dinfo.BDEIndexFields;
  MBDEFilter.Text:=dinfo.BDEFilter;
  EBDEIndexName.Text:=dinfo.BDEIndexName;
@@ -297,6 +299,9 @@ begin
  end;
  if Sender=BAddUnions then
   dinfo.DataUnions:=LUnions.Items
+ else
+ if Sender=CheckGroupUnion then
+  dinfo.GroupUnion:=CheckGroupUnion.Checked
  else
  if Sender=MSQL then
  begin

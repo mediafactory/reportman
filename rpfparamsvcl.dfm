@@ -1,10 +1,10 @@
 object FRpParamsVCL: TFRpParamsVCL
-  Left = 370
-  Top = 165
+  Left = 348
+  Top = 192
   BorderStyle = bsDialog
   Caption = 'Dialog'
-  ClientHeight = 398
-  ClientWidth = 453
+  ClientHeight = 404
+  ClientWidth = 452
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -16,22 +16,22 @@ object FRpParamsVCL: TFRpParamsVCL
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 168
-    Width = 453
-    Height = 230
+    Top = 136
+    Width = 452
+    Height = 268
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
     object GProperties: TGroupBox
       Left = 2
-      Top = 5
-      Width = 439
-      Height = 216
+      Top = 4
+      Width = 443
+      Height = 257
       TabOrder = 0
       Visible = False
       object LDescription: TLabel
         Left = 12
-        Top = 88
+        Top = 68
         Width = 53
         Height = 13
         Caption = 'Description'
@@ -52,26 +52,55 @@ object FRpParamsVCL: TFRpParamsVCL
       end
       object LAssign: TLabel
         Left = 12
-        Top = 108
+        Top = 197
         Width = 86
         Height = 13
         Caption = 'Assign to datasets'
       end
       object LSearch: TLabel
         Left = 12
-        Top = 64
+        Top = 92
         Width = 77
         Height = 13
         Caption = 'Search for string'
         Visible = False
       end
+      object GValues: TGroupBox
+        Left = 12
+        Top = 88
+        Width = 421
+        Height = 97
+        Caption = 'Strings to show (left) and strings to assign (right) '
+        TabOrder = 6
+        Visible = False
+        object MItems: TMemo
+          Left = 2
+          Top = 15
+          Width = 195
+          Height = 80
+          Align = alLeft
+          TabOrder = 0
+          WordWrap = False
+          OnChange = EDescriptionChange
+        end
+        object MValues: TMemo
+          Left = 197
+          Top = 15
+          Width = 222
+          Height = 80
+          Align = alClient
+          TabOrder = 1
+          WordWrap = False
+          OnChange = EDescriptionChange
+        end
+      end
       object EDescription: TEdit
         Left = 104
-        Top = 84
+        Top = 64
         Width = 321
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 0
+        TabOrder = 4
         Text = 'EDescription'
         OnChange = EDescriptionChange
       end
@@ -83,7 +112,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Hint = 'Data type for the parameter'
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 1
+        TabOrder = 0
         OnChange = EDescriptionChange
         Items.Strings = (
           'String'
@@ -102,7 +131,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Top = 8
         Width = 141
         Height = 21
-        TabOrder = 3
+        TabOrder = 1
         Text = 'EValue'
         OnExit = EValueExit
       end
@@ -113,7 +142,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Height = 17
         Hint = 'Sets if the parameter will be visible to the end user'
         Caption = 'Visible'
-        TabOrder = 5
+        TabOrder = 2
         OnClick = EDescriptionChange
       end
       object CheckNull: TCheckBox
@@ -123,52 +152,52 @@ object FRpParamsVCL: TFRpParamsVCL
         Height = 17
         Hint = 'Sets this parameter to null'
         Caption = 'Null value'
-        TabOrder = 7
+        TabOrder = 3
         OnClick = EDescriptionChange
       end
       object ComboDatasets: TComboBox
         Left = 12
-        Top = 128
+        Top = 217
         Width = 161
         Height = 21
         Hint = 'The parameters will be assigned not the selected datasets'
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 2
+        TabOrder = 7
       end
       object BAdddata: TButton
         Left = 184
-        Top = 116
+        Top = 197
         Width = 33
         Height = 25
         Caption = '>'
-        TabOrder = 4
+        TabOrder = 8
         OnClick = BAdddataClick
       end
       object BDeleteData: TButton
         Left = 184
-        Top = 144
+        Top = 225
         Width = 33
         Height = 25
         Caption = '<'
-        TabOrder = 6
+        TabOrder = 9
         OnClick = BDeleteDataClick
       end
       object LDatasets: TListBox
         Left = 232
-        Top = 112
+        Top = 196
         Width = 193
-        Height = 61
+        Height = 50
         ItemHeight = 13
-        TabOrder = 8
+        TabOrder = 10
       end
       object ESearch: TEdit
         Left = 104
-        Top = 60
+        Top = 88
         Width = 321
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 9
+        TabOrder = 5
         Visible = False
         OnChange = EDescriptionChange
       end
@@ -177,16 +206,16 @@ object FRpParamsVCL: TFRpParamsVCL
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 453
-    Height = 168
+    Width = 452
+    Height = 136
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object LParams: TListBox
       Left = 0
       Top = 28
-      Width = 357
-      Height = 140
+      Width = 356
+      Height = 108
       Align = alClient
       ItemHeight = 13
       TabOrder = 0
@@ -195,7 +224,7 @@ object FRpParamsVCL: TFRpParamsVCL
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 453
+      Width = 452
       Height = 28
       AutoSize = True
       ButtonHeight = 26
@@ -247,10 +276,10 @@ object FRpParamsVCL: TFRpParamsVCL
       end
     end
     object Panel3: TPanel
-      Left = 357
+      Left = 356
       Top = 28
       Width = 96
-      Height = 140
+      Height = 108
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2

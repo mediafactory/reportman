@@ -40,6 +40,8 @@ type
     FValue:variant;
     FParamType:TRpParamType;
     FDatasets:TStrings;
+    FItems:TStrings;
+    FValues:TStrings;
     procedure SetVisible(AVisible:boolean);
     procedure SetName(AName:String);
     procedure SetValue(AValue:variant);
@@ -59,6 +61,8 @@ type
     procedure Assign(Source:TPersistent);override;
     destructor Destroy;override;
     procedure SetDatasets(AList:TStrings);
+    procedure SetItems(AList:TStrings);
+    procedure SetValues(AList:TStrings);
     property Description:widestring read FDescription write SetDescription;
     property Search:widestring read FSearch write SetSearch;
     property AsString:String read GetAsString write SetAsString;
@@ -69,6 +73,8 @@ type
     property ParamType:TRpParamType read FParamtype write SetParamType
      default rpParamString;
     property Datasets:TStrings read FDatasets write SetDatasets;
+    property Items:TStrings read FItems write SetItems;
+    property Values:TStrings read FValues write SetValues;
   end;
 
   TRpParamList=class(TCollection)
@@ -122,6 +128,8 @@ begin
  FVisible:=true;
  FParamType:=rpParamString;
  FDatasets:=TStringList.Create;
+ FItems:=TStringList.Create;
+ FValues:=TStringList.Create;
 end;
 
 procedure TRpParam.Assign(Source:TPersistent);
@@ -135,6 +143,8 @@ begin
   FValue:=TRpParam(Source).FValue;
   FParamType:=TRpParam(Source).FParamType;
   FDatasets.Assign(TRpParam(Source).FDatasets);
+  FItems.Assign(TRpParam(Source).FItems);
+  FValues.Assign(TRpParam(Source).FValues);
  end
  else
   inherited Assign(Source);
@@ -143,6 +153,8 @@ end;
 destructor TRpParam.Destroy;
 begin
  FDatasets.Free;
+ FItems.Free;
+ FValues.Free;
  inherited Destroy;
 end;
 
@@ -155,6 +167,18 @@ end;
 procedure TRpParam.SetDatasets(AList:TStrings);
 begin
  FDatasets.Assign(Alist);
+ Changed(False);
+end;
+
+procedure TRpParam.SetItems(AList:TStrings);
+begin
+ FItems.Assign(Alist);
+ Changed(False);
+end;
+
+procedure TRpParam.SetValues(AList:TStrings);
+begin
+ FValues.Assign(Alist);
  Changed(False);
 end;
 
@@ -351,7 +375,7 @@ begin
  case ParamType of
   rpParamUnknown:
    Result:='';
-  rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst:
+  rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList:
    Result:=Value;
   rpParamInteger,rpParamDouble,rpParamCurrency:
    Result:=FloatToStr(Value);
@@ -414,6 +438,8 @@ begin
    Result:=SRpSDateTime;
   rpParamBool:
    Result:=SRpSBoolean;
+  rpParamList:
+   Result:=SRpSParamList;
   rpParamUnknown:
    Result:=SRpSUnknownType;
  end;
@@ -478,6 +504,11 @@ begin
   Result:=rpParamBool;
   exit;
  end;
+ if Value=SRpSParamList then
+ begin
+  Result:=rpParamList;
+  exit;
+ end;
 end;
 
 procedure GetPossibleDataTypes(alist:TStrings);
@@ -495,6 +526,7 @@ begin
  alist.Add(SrpSExpressionB);
  alist.Add(SrpSExpressionA);
  alist.Add(SRpSParamSubs);
+ alist.Add(SRpSParamList);
 end;
 
 end.

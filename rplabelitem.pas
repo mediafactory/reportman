@@ -422,12 +422,19 @@ begin
     if (FAggregate<>rpAgNone) then
     begin
      // Update with the initial value
-     eval:=TRpReport(GetReport).Evaluator;
-     eval.Expression:=FAgIniValue;
-     eval.Evaluate;
-     FValue:=eval.EvalResult;
-     FSumValue:=FValue;
-     FUpdated:=true;
+     try
+      eval:=TRpReport(GetReport).Evaluator;
+      eval.Expression:=FAgIniValue;
+      eval.Evaluate;
+      FValue:=eval.EvalResult;
+      FSumValue:=FValue;
+      FUpdated:=true;
+     except
+      on E:Exception do
+      begin
+       Raise TRpReportException.Create(E.Message+':'+SrpSIniValue+' '+Name,self,SrpSIniValue);
+      end;
+     end;
     end;
    end;
   rpSubReportStart:
@@ -438,12 +445,19 @@ begin
     if ((FAggregate<>rpAgNone) AND (FAggregate<>rpAgGeneral)) then
     begin
      // Update with the initial value
-     eval:=TRpReport(GetReport).Evaluator;
-     eval.Expression:=FAgIniValue;
-     eval.Evaluate;
-     FValue:=eval.EvalResult;
-     FSumValue:=FValue;
-     FUpdated:=true;
+     try
+      eval:=TRpReport(GetReport).Evaluator;
+      eval.Expression:=FAgIniValue;
+      eval.Evaluate;
+      FValue:=eval.EvalResult;
+      FSumValue:=FValue;
+      FUpdated:=true;
+     except
+      on E:Exception do
+      begin
+       Raise TRpReportException.Create(E.Message+':'+SrpSIniValue+' '+Name,self,SrpSIniValue);
+      end;
+     end;
     end;
    end;
   rpDataChange:
@@ -452,53 +466,60 @@ begin
     inc(FDataCount);
     if (FAggregate<>rpAgNone) then
     begin
-     // Update with the initial value
-     eval:=TRpReport(GetReport).Evaluator;
-     eval.Expression:=FExpression;
-     eval.Evaluate;
-     // Do the operation
-     case AgType of
-      rpagSum:
-       begin
-        if Not VarIsNull(eval.EvalResult) then
-         FValue:=FValue+eval.EvalResult;
-       end;
-      rpagMin:
-       begin
-        if FDataCount=1 then
-         FValue:=eval.EvalResult
-        else
+     try
+      // Update with the initial value
+      eval:=TRpReport(GetReport).Evaluator;
+      eval.Expression:=FExpression;
+      eval.Evaluate;
+      // Do the operation
+      case AgType of
+       rpagSum:
         begin
-         if FValue>eval.EvalResult then
-          FValue:=eval.EvalResult;
+         if Not VarIsNull(eval.EvalResult) then
+          FValue:=FValue+eval.EvalResult;
         end;
-       end;
-      rpagMax:
-       begin
-        if FDataCount=1 then
-         FValue:=eval.EvalResult
-        else
+       rpagMin:
         begin
-         if FValue<eval.EvalResult then
-          FValue:=eval.EvalResult;
+         if FDataCount=1 then
+          FValue:=eval.EvalResult
+         else
+         begin
+          if FValue>eval.EvalResult then
+           FValue:=eval.EvalResult;
+         end;
         end;
-       end;
-      rpagAvg:
-       begin
-        FSumValue:=FSumValue+eval.EvalResult;
-        FValue:=FSumValue/FDataCount;
-       end;
-      rpagStdDev:
-       begin
-        SetLength(FValues,FDataCount);
-        FValues[FDatacount-1]:=eval.EvalResult;
-        if High(FValues)=Low(FValues) then
-         FValue:=0
-        else
-         FValue:=StdDev(FValues);
-       end;
+       rpagMax:
+        begin
+         if FDataCount=1 then
+          FValue:=eval.EvalResult
+         else
+         begin
+          if FValue<eval.EvalResult then
+           FValue:=eval.EvalResult;
+         end;
+        end;
+       rpagAvg:
+        begin
+         FSumValue:=FSumValue+eval.EvalResult;
+         FValue:=FSumValue/FDataCount;
+        end;
+       rpagStdDev:
+        begin
+         SetLength(FValues,FDataCount);
+         FValues[FDatacount-1]:=eval.EvalResult;
+         if High(FValues)=Low(FValues) then
+          FValue:=0
+         else
+          FValue:=StdDev(FValues);
+        end;
+      end;
+      FUpdated:=true;
+     except
+      on E:Exception do
+      begin
+       Raise TRpReportException.Create(E.Message+':'+SrpSExpression+' '+Name,self,SrpSExpression);
+      end;
      end;
-     FUpdated:=true;
     end;
    end;
   rpGroupChange:
@@ -510,9 +531,16 @@ begin
      if Uppercase(GroupName)=UpperCase(newgroup) then
      begin
       // Update with the initial value
-      eval:=TRpReport(GetReport).Evaluator;
-      eval.Expression:=FAgIniValue;
-      eval.Evaluate;
+      try
+       eval:=TRpReport(GetReport).Evaluator;
+       eval.Expression:=FAgIniValue;
+       eval.Evaluate;
+      except
+       on E:Exception do
+       begin
+        Raise TRpReportException.Create(E.Message+':'+SrpSIniValue+' '+Name,self,SrpSIniValue);
+       end;
+      end;
       FValue:=eval.EvalResult;
       FSumValue:=FValue;
       FDataCount:=0;

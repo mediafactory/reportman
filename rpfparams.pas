@@ -67,6 +67,9 @@ type
     BOK: TButton;
     LSearch: TLabel;
     ESearch: TEdit;
+    GValues: TGroupBox;
+    MItems: TMemo;
+    MValues: TMemo;
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -145,6 +148,7 @@ begin
  BAddData.Hint:=TranslateStr(948,BAddData.Hint);
  BDeleteData.Hint:=TranslateStr(949,BDeleteData.Hint);
  LDatasets.Hint:=TranslateStr(950,LDatasets.Hint);
+ GValues.Caption:=SRpSParamListDesc;
 
  SetInitialBounds;
 end;
@@ -207,6 +211,8 @@ begin
    CheckNull.Checked:=param.Value=Null;
   EDescription.Text:=param.Description;
   ESearch.Text:=param.Search;
+  MValues.Lines.Assign(param.Values);
+  MItems.Lines.Assign(param.Items);
   LDatasets.Clear;
   LDatasets.items.Assign(param.Datasets);
   if LDatasets.items.count>0 then
@@ -218,7 +224,7 @@ begin
   if (param.Value<>Null) then
   begin
    case param.ParamType of
-    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamUnknown:
+    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamUnknown:
      EValue.Text:=param.AsString;
     rpParamInteger:
      EValue.Text:=IntToStr(param.Value);
@@ -256,11 +262,12 @@ end;
 procedure TFRpParams.UpdateValue(param:TRpParam);
 begin
  ESearch.Visible:=param.ParamType=rpParamSubst;
+ GValues.Visible:=param.ParamType=rpParamList;
  LSearch.Visible:=ESearch.Visible;
  if (EValue.Text='') then
  begin
   case param.ParamType of
-   rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamUnknown:
+   rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamUnknown:
     EValue.Text:='';
    rpParamInteger:
     EValue.Text:=IntToStr(0);
@@ -287,7 +294,7 @@ begin
  begin
    EValue.Visible:=true;
    case param.ParamType of
-    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamUnknown:
+    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamUnknown:
      param.Value:=EValue.Text;
     rpParamInteger:
      param.Value:=StrToInt(EValue.Text);
@@ -322,6 +329,12 @@ begin
  else
  if Sender=ESearch then
   param.Search:=ESearch.Text
+ else
+ if Sender=MItems then
+  param.Items:=MItems.Lines
+ else
+ if Sender=MValues then
+  param.Values:=MValues.Lines
  else
   if (Sender=CheckVisible) then
    param.Visible:=CheckVisible.Checked

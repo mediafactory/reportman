@@ -193,6 +193,7 @@ type
    FCached:Boolean;
    FMasterSource:TDataSource;
    FDataUnions:TStrings;
+   FGroupUnion:Boolean;
    procedure SetDataUnions(Value:TStrings);
    procedure SetDatabaseAlias(Value:string);
    procedure SetAlias(Value:string);
@@ -227,6 +228,7 @@ type
    property BDEFirstRange:string read FBDEFirstRange write FBDEFirstRange;
    property BDELastRange:string read FBDELastRange write FBDELastRange;
    property DataUnions:TStrings read FDataUnions write SetDataUnions;
+   property GroupUnion:Boolean read FGroupUnion write FGroupUnion default false;
   end;
 
  TRpDataInfoList=class(TCollection)
@@ -247,7 +249,7 @@ type
 
 procedure UpdateConAdmin;
 procedure GetRpDatabaseDrivers(alist:TStrings);
-procedure CombineAddDataset(client:TClientDataset;data:TDataset);
+procedure CombineAddDataset(client:TClientDataset;data:TDataset;group:boolean);
 
 implementation
 
@@ -461,6 +463,7 @@ begin
   FBDETable:=TRpDataInfoItem(Source).FBDETable;
   FBDEType:=TRpDataInfoItem(Source).FBDEType;
   FDataUnions.Assign(TRpDataInfoItem(Source).FDataUnions);
+  FGroupUnion:=TRpDataInfoItem(Source).FGroupUnion;
  end
  else
   inherited Assign(Source);
@@ -1264,7 +1267,7 @@ begin
         TClientDataSet(FSQLInternalQuery).IndexDefs.Clear;
         TClientDataSet(FSQLInternalQuery).FieldDefs.Clear;
         TClientDataSet(FSQLInternalQuery).IndexDefs.Add('IPRIM',FMyBaseIndexFields,[]);
-        TClientDataSet(FSQLInternalQuery).IndexName:='IPRIM';
+        TClientDataSet(FSQLInternalQuery).IndexFieldNames:=FMyBaseIndexFields;
        end;
        for i:=0 to FDataUnions.Count-1 do
        begin
@@ -1272,7 +1275,7 @@ begin
         if index<0 then
          Raise Exception.Create(SRpDataUnionNotFound+' - '+Alias+' - '+FDataUnions.Strings[i]);
         TRpDatainfolist(Collection).Items[index].Connect(databaseinfo,params);
-        CombineAddDataset(TClientDataSet(FSQLInternalQuery),TRpDatainfolist(Collection).Items[index].Dataset);
+        CombineAddDataset(TClientDataSet(FSQLInternalQuery),TRpDatainfolist(Collection).Items[index].Dataset,FGroupUnion);
        end;
       except
        FDataset:=nil;
@@ -2230,36 +2233,109 @@ begin
  end;
 end;
 
-
-procedure CombineAddDataset(client:TClientDataset;data:TDataset);
+procedure ParseFields(fields:String;list:TStrings);
 var
- i:integer;
+ fieldrest:string;
+ index:integer;
 begin
- // Combine the two datasets
- if client.FieldDefs.Count<1 then
- begin
-  client.Close;
-  client.FieldDefs.Assign(data.FieldDefs);
-  client.CreateDataSet;
- end;
- if data.fields.Count>client.Fields.Count then
- begin
-  Raise Exception.Create(SRpCannotCombine);
- end;
- while not data.eof do
- begin
-  client.Append;
-  try
-   for i:=0 to data.fieldcount-1 do
-   begin
-    client.Fields[i].AsVariant:=data.Fields[i].AsVariant;
-   end;
-   client.post;
-  except
-   client.cancel;
-   raise;
+ fieldrest:=fields;
+ list.clear;
+ repeat
+  index:=Pos(';',fieldrest);
+  if index>0 then
+  begin
+   list.add(Copy(fieldrest,1,index-1));
+   fieldrest:=Copy(fieldrest,index+1,Length(fieldrest));
   end;
-  data.Next;
+ until index<1;
+ list.add(fieldrest);
+end;
+
+procedure CombineAddDataset(client:TClientDataset;data:TDataset;group:boolean);
+var
+ i,index:integer;
+ groupfields:TStringList;
+ groupfieldindex:TStringList;
+ grouped:boolean;
+begin
+ groupfields:=TStringList.Create;
+ groupfieldindex:=TStringList.Create;
+ try
+  // Combine the two datasets
+  if client.FieldDefs.Count<1 then
+  begin
+   client.Close;
+   client.FieldDefs.Assign(data.FieldDefs);
+   client.CreateDataSet;
+  end;
+  if data.fields.Count>client.Fields.Count then
+  begin
+   Raise Exception.Create(SRpCannotCombine);
+  end;
+  if group then
+  begin
+   ParseFields(client.IndexFieldNames,groupfields);
+   for i:=0 to groupfields.count-1 do
+   begin
+    groupfieldindex.Add(IntToStr(client.FieldByName(groupfields.strings[i]).index));
+   end;
+  end;
+  while not data.eof do
+  begin
+   grouped:=false;
+   if Group then
+   begin
+    client.SetKey;
+    for i:=0 to groupfieldindex.count-1 do
+    begin
+     index:=StrToInt(groupfieldindex.Strings[i]);
+     client.Fields[index].AsVariant:=data.Fields[index].AsVariant;
+    end;
+    if client.GotoKey then
+    begin
+     grouped:=true;
+     client.edit;
+     try
+      for i:=0 to data.fieldcount-1 do
+      begin
+       index:=groupfieldindex.IndexOf(IntToStr(i));
+       if index<0 then
+       begin
+        if Not data.Fields[i].IsNull then
+        begin
+         if client.Fields[i].IsNull then
+          client.Fields[i].AsVariant:=data.Fields[i].AsVariant
+         else
+          client.Fields[i].AsVariant:=client.Fields[i].AsVariant+data.Fields[i].AsVariant;
+        end;
+       end;
+      end;
+      client.post;
+     except
+      client.cancel;
+      raise;
+     end;
+    end;
+   end;
+   if not grouped then
+   begin
+    client.Append;
+    try
+     for i:=0 to data.fieldcount-1 do
+     begin
+      client.Fields[i].AsVariant:=data.Fields[i].AsVariant;
+     end;
+     client.post;
+    except
+     client.cancel;
+     raise;
+    end;
+   end;
+   data.Next;
+  end;
+ finally
+  groupfields.free;
+  groupfieldindex.free;
  end;
 end;
 
