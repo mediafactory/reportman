@@ -30,6 +30,9 @@ clean:
 	-rm -Rf repman/utils/reptotxt/*.dcu
 	-rm -Rf repman/utils/reptotxt/*.dpu
 	-rm -Rf repman/utils/reptotxt/*.~*
+	-rm -Rf repman/utils/printrep/*.~*
+	-rm -Rf repman/utils/printrep/*.dcu
+	-rm -Rf repman/meta.rpmf
 
 
 	-rm tests/eval/project1
@@ -41,12 +44,16 @@ clean:
 	-rm repman/utils/reptotxt/reptotxt
 	-rm repman/utils/txttorep/txttorep
 	-rm repman/utils/printrep/printrep
+	-rm repman/utils/metaprint/metaprint
+	-rm repman/utils/metaview/metaview
 	-rm tests/repmand/*.so tests/repmand/*.so.1 tests/repmand/*.so.2
 	-rm tests/repmand/repmand
 	-rm tests/repmand/dbxdrivers
 	-rm tests/repmand/dbxconnections
 	-rm tests/repmand/metaview
 	-rm tests/repmand/metaprint
+	-rm tests/repmand/printrep
+	-rm tests/repmand/meta.rpmf
 real_clean: clean
 	-rm -Rf  *.bpl
 	-rm -Rf  *.so

@@ -46,7 +46,8 @@ unit ShFolder;
 
 interface
 
-uses Windows;
+{$IFNDEF PROFILE}uses Windows;{$ENDIF}
+{$IFDEF PROFILE}uses Windows ,Proftimx;{$ENDIF}
 
 type
   {$EXTERNALSYM SHGFP_TYPE}

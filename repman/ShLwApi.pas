@@ -45,7 +45,8 @@ interface
 {$HPPEMIT ''}
 
 uses
-  Windows, ActiveX, ShlObj;
+{$IFNDEF PROFILE}  Windows, ActiveX, ShlObj;{$ENDIF}
+{$IFDEF PROFILE}  Windows, ActiveX, ShlObj ,Proftimx;{$ENDIF}
 
 //{$INCLUDE SHLWAPI.INC}
 
@@ -1694,37 +1695,51 @@ function IntlStrEqWorker; external shlwapi32 name 'IntlStrEqWorkerA';
 
 function IntlStrEqNA(s1, s2: PAnsiChar; nChar: Integer): BOOL;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,192; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := IntlStrEqWorkerA(True, s1, s2, nChar)
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,192; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function IntlStrEqNW(s1, s2: PWideChar; nChar: Integer): BOOL;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,193; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := IntlStrEqWorkerW(True, s1, s2, nChar)
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,193; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function IntlStrEqN(s1, s2: PChar; nChar: Integer): BOOL;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,194; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := IntlStrEqWorker(True, s1, s2, nChar)
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,194; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function PathIsHTMLFileA(pszPath: PAnsiChar): BOOL;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,195; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := PathIsContentTypeA(pszPath, SZ_CONTENTTYPE_HTMLA)
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,195; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function PathIsHTMLFileW(pszPath: PWideChar): BOOL;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,196; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := PathIsContentTypeW(pszPath, SZ_CONTENTTYPE_HTMLW)
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,196; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function PathIsHTMLFile(pszPath: PChar): BOOL;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,197; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := PathIsContentType(pszPath, SZ_CONTENTTYPE_HTML)
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,197; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrCatA(psz1, psz2: PAnsiChar): PAnsiChar;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,198; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := lstrcat(psz1, psz2);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,198; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrCatW; external shlwapi32 name 'StrCatW';
@@ -1734,13 +1749,17 @@ function StrCat; external shlwapi32 name 'StrCatW';
 {$ELSE}
 function StrCat(psz1, psz2: PAnsiChar): PAnsiChar;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,199; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := lstrcat(psz1, psz2);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,199; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 {$ENDIF}
 
 function StrCmpA(psz1, psz2: PAnsiChar): Integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,200; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := lstrcmp(psz1, psz2);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,200; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrCmpW; external shlwapi32 name 'StrCmpW';
@@ -1750,13 +1769,17 @@ function StrCmp; external shlwapi32 name 'StrCmpW';
 {$ELSE}
 function StrCmp(psz1, psz2: PAnsiChar): Integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,201; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := lstrcmp(psz1, psz2);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,201; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 {$ENDIF}
 
 function StrCmpIA(psz1, psz2: PAnsiChar): Integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,202; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := lstrcmpi(psz1, psz2);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,202; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrCmpIW; external shlwapi32 name 'StrCmpW';
@@ -1765,13 +1788,17 @@ function StrCmpI; external shlwapi32 name 'StrCmpW';
 {$ELSE}
 function StrCmpI(psz1, psz2: PAnsiChar): Integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,203; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := lstrcmpi(psz1, psz2);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,203; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 {$ENDIF}
 
 function StrCpyA(psz1, psz2: PAnsiChar): PAnsiChar;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,204; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := lstrcpy(psz1, psz2);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,204; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 function StrCpyW; external shlwapi32 name 'StrCpyW';
 {$IFDEF UNICODE}
@@ -1779,13 +1806,17 @@ function StrCpy; external shlwapi32 name 'StrCpyW';
 {$ELSE}
 function StrCpy(psz1, psz2: PAnsiChar): PAnsiChar;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,205; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := lstrcpy(psz1, psz2);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,205; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 {$ENDIF}
 
 function StrCpyNA(psz1, psz2: PAnsiChar; cchMax: Integer): PAnsiChar;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,206; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := lstrcpyn(psz1, psz2, cchMax);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,206; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 function StrCpyNW; external shlwapi32 name 'StrCpyNW';
 {$IFDEF UNICODE}
@@ -1793,83 +1824,115 @@ function StrCpyN; external shlwapi32 name 'StrCpyNW';
 {$ELSE}
 function StrCpyN(psz1, psz2: PAnsiChar; cchMax: Integer): PAnsiChar;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,207; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := lstrcpyn(psz1, psz2, cchMax);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,207; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 {$ENDIF}
 
 function StrToLongA(lpSrch: PAnsiChar): Integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,208; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrToIntA(lpSrch);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,208; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrToLongW(lpSrch: PWideChar): Integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,209; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrToIntW(lpSrch);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,209; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrToLong(lpSrch: PChar): Integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,210; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrToInt(lpSrch);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,210; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrNCmpA(lpStr1, lpStr2: PAnsiChar; nChar: Integer): Integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,211; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrCmpNA(lpStr1, lpStr2, nChar);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,211; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrNCmpW(lpStr1, lpStr2: PWideChar; nChar: Integer): Integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,212; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrCmpNW(lpStr1, lpStr2, nChar);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,212; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrNCmp(lpStr1, lpStr2: PChar; nChar: Integer): Integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,213; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrCmpN(lpStr1, lpStr2, nChar);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,213; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrNCmpIA(lpStr1, lpStr2: PAnsiChar; nChar: Integer): Integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,214; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrCmpNIA(lpStr1, lpStr2, nChar);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,214; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrNCmpIW(lpStr1, lpStr2: PWideChar; nChar: Integer): Integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,215; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrCmpNIW(lpStr1, lpStr2, nChar);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,215; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrNCmpI(lpStr1, lpStr2: PChar; nChar: Integer): Integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,216; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrCmpNI(lpStr1, lpStr2, nChar);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,216; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrNCpyA(psz1, psz2: PAnsiChar; cchMax: Integer): PAnsiChar;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,217; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrCpyNA(psz1, psz2, cchMax);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,217; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrNCpyW(psz1, psz2: PWideChar; cchMax: Integer): PWideChar;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,218; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrCpyNW(psz1, psz2, cchMax);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,218; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrNCpy(psz1, psz2: PChar; cchMax: Integer): PChar;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,219; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrCpyN(psz1, psz2, cchMax);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,219; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrCatNA(psz1: PAnsiChar; psz2: PAnsiChar; cchMax: Integer): PAnsiChar;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,220; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrNCatA(psz1, psz2, cchMax);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,220; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrCatNW(psz1: PWideChar; psz2: PWideChar; cchMax: Integer): PWideChar;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,221; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrNCatW(psz1, psz2, cchMax);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,221; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StrCatN(psz1: PChar; psz2: PChar; cchMax: Integer): PChar;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,222; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := StrNCat(psz1, psz2, cchMax);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,222; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 {$ENDIF} // NO_SHLWAPI_STRFCNS
@@ -2057,15 +2120,21 @@ function UrlIsNoHistory; external shlwapi32 name 'UrlIsNoHistoryA';
 
 function UrlIsFileUrlA(pszURL: PAnsiChar): BOOL;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,223; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := UrlIsA(pszURL, URLIS_FILEURL)
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,223; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 function UrlIsFileUrlW(pszURL: PWideChar): BOOL;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,224; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := UrlIsW(pszURL, URLIS_FILEURL)
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,224; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 function UrlIsFileUrl(pszURL: PChar): BOOL;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,225; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := UrlIs(pszURL, URLIS_FILEURL)
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,225; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function UrlIsA; external shlwapi32 name 'UrlIsA';
@@ -2100,32 +2169,44 @@ function HashData; external shlwapi32 name 'HashData';
 
 function UrlEscapeSpacesA(pszUrl: PAnsiChar; pszEscaped: PAnsiChar; pcchEscaped: LPDWORD): HRESULT; stdcall;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,226; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := UrlCanonicalizeA(pszUrl, pszEscaped, pcchEscaped, URL_ESCAPE_SPACES_ONLY or URL_DONT_ESCAPE_EXTRA_INFO);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,226; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function UrlEscapeSpacesW(pszUrl: PWideChar; pszEscaped: PWideChar; pcchEscaped: LPDWORD): HRESULT; stdcall;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,227; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := UrlCanonicalizeW(pszUrl, pszEscaped, pcchEscaped, URL_ESCAPE_SPACES_ONLY or URL_DONT_ESCAPE_EXTRA_INFO);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,227; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function UrlEscapeSpaces(pszUrl: PChar; pszEscaped: PChar; pcchEscaped: LPDWORD): HRESULT; stdcall;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,228; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := UrlCanonicalize(pszUrl, pszEscaped, pcchEscaped, URL_ESCAPE_SPACES_ONLY or URL_DONT_ESCAPE_EXTRA_INFO);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,228; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function UrlUnescapeInPlaceA(pszUrl: PAnsiChar; dwFlags: DWORD): HRESULT;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,229; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := UrlUnescapeA(pszUrl, nil, nil, dwFlags or URL_UNESCAPE_INPLACE);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,229; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function UrlUnescapeInPlaceW(pszUrl: PWideChar; dwFlags: DWORD): HRESULT;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,230; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := UrlUnescapeW(pszUrl, nil, nil, dwFlags or URL_UNESCAPE_INPLACE);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,230; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function UrlUnescapeInPlace(pszUrl: PChar; dwFlags: DWORD): HRESULT;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,231; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   Result := UrlUnescape(pszUrl, nil, nil, dwFlags or URL_UNESCAPE_INPLACE);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,231; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 {$ENDIF} //  NO_SHLWAPI_PATH
 

@@ -11,8 +11,8 @@ install:
 	cp ../../repman/dbxconnections .
 	-cp ../../repman/utils/metaprint/metaprint .
 	-cp ../../repman/utils/metaview/metaview .
+	-cp ../../repman/utils/printrep/printrep .
 clean:
 	-rm -f *.so *.so.1 *.so.2
 	-rm -f repmand
-	-rm -f dbxconnections dbxdrivers metaprint metaview
-
+	-rm -f dbxconnections dbxdrivers metaprint metaview printrep

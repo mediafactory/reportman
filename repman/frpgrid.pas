@@ -22,7 +22,8 @@ interface
 
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,rpreport,
-  rpmunits,QDialogs;
+{$IFNDEF PROFILE}  rpmunits,QDialogs;{$ENDIF}
+{$IFDEF PROFILE}  rpmunits,QDialogs ,Proftimx;{$ENDIF}
 
 type
   TFRpGridOptions = class(TForm)
@@ -63,6 +64,7 @@ procedure ModifyGridProperties(report:TRpReport);
 var
  dia:TFRpGridOptions;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,100; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  dia:=TFRpGridOptions.Create(Application);
  try
   dia.report:=report;
@@ -70,10 +72,12 @@ begin
  finally
   dia.free;
  end;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,100; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFRpGridOptions.SetReport(Value:TRpreport);
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,101; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  freport:=Value;
  // Sets the values
  LUnits1.Caption:=getdefaultunitstring;
@@ -84,19 +88,23 @@ begin
  CheckVisible.Checked:=report.GridVisible;
  CheckLines.Checked:=report.GridLines;
  GridColor.Brush.Color:=report.GridColor;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,101; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFRpGridOptions.GridColorMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,102; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  // Shows color dialog
  ColorDialog1.Color:=GridColor.Brush.Color;
  if ColorDialog1.Execute then
   GridColor.Brush.Color:=ColorDialog1.Color;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,102; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFRpGridOptions.OKBtnClick(Sender: TObject);
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,103; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  // Save and close
  report.GridWidth:=rpmunits.gettwipsfromtext(EGridX.Text);
  report.GridHeight:=rpmunits.gettwipsfromtext(EGridY.Text);
@@ -106,6 +114,7 @@ begin
  report.GridColor:=GridColor.Brush.Color;
 
  Close;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,103; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 end.

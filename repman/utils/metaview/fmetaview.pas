@@ -250,8 +250,10 @@ begin
   PBar.Max:=Size;
  end;
  Application.ProcessMessages;
+{$IFDEF MSWINDOWS}
  if ((GetKeyState(VK_ESCAPE) AND $80)>0) then
   cancelled:=true;
+{$ENDIF}
  if cancelled then
   Raise Exception.Create(SRpOperationAborted);
 end;

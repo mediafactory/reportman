@@ -24,7 +24,8 @@ interface
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs, QMenus,
   QTypes, QExtCtrls,frpstruc,rpobinsint,rpreport,
-  fsectionint,rpsubreport,rpsection, rpruler,rpobjinsp;
+{$IFNDEF PROFILE}  fsectionint,rpsubreport,rpsection, rpruler,rpobjinsp;{$ENDIF}
+{$IFDEF PROFILE}  fsectionint,rpsubreport,rpsection, rpruler,rpobjinsp ,Proftimx;{$ENDIF}
 
 const
  CONS_RULER_LEFT=20;
@@ -64,33 +65,41 @@ uses fmain;
 
 constructor TFDesignFrame.Create(AOwner:TComponent);
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,27; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited Create(AOwner);
 
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,27; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 destructor TFDesignFrame.Destroy;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,28; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited Destroy;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,28; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 procedure TFDesignFrame.SetReport(Value:TRpReport);
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,29; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  FReport:=Value;
  if Not Assigned(FReport) then
   exit;
  UpdateSelection(false);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,29; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 procedure TFDesignFrame.UpdateInterface;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,30; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Assigned(FSectionInterface) then
  begin
   FSectionInterface.UpdatePos;
   TopRuler.Width:=FSectionInterface.Width;
   LeftRuler.Height:=FSectionInterface.Height;
  end;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,30; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDesignFrame.UpdateSelection(force:boolean);
@@ -98,6 +107,7 @@ var
  data:Pointer;
  dataobj:TOBject;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,31; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Assigned(FSectionInterface) then
  begin
   if assigned(fobjinsp) then
@@ -161,19 +171,24 @@ begin
    FSectionInterface.InvalidateAll;
 {$ENDIF}
  end;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,31; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDesignFrame.SecPosChange(Sender:TObject);
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,32; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  TopRuler.Left:=CONS_RULER_LEFT-SectionScrollBox.HorzScrollBar.Position;;
  LeftRuler.Top:=-SectionScrollBox.VertScrollBar.Position;;
  PSection.Height:=FSectionInterface.Height;
  PSection.Width:=FSectionInterface.Width;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,32; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDesignFrame.SectionDestroy(Sender:TObject);
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,33; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  FSectionInterface:=nil;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,33; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 end.

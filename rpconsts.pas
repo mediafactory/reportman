@@ -24,6 +24,7 @@ interface
 
 
 resourcestring
+  SRpErrorFork='Error forking';
   SRpEnglish='English';
   SRpSpanish='Spanish';
   SRpCatalan='Catalan';

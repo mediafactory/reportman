@@ -24,7 +24,8 @@ uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   rpobinsint,QGrids,rpconsts,rpprintitem,QStdCtrls,
   QExtCtrls,rpgraphutils,rpsection,rpmunits, rpexpredlg,
-  rpalias,rpreport,Qt,rpsubreport;
+{$IFNDEF PROFILE}  rpalias,rpreport,Qt,rpsubreport;{$ENDIF}
+{$IFDEF PROFILE}  rpalias,rpreport,Qt,rpsubreport ,Proftimx;{$ENDIF}
 
 const
   CONS_LEFTGAP=3;
@@ -91,6 +92,7 @@ procedure TFObjInsp.ReleaseAllControls;
 var
  i:integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,172; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  for i:=0 to LLabels.Count-1 do
  begin
   TObject(LLabels.items[i]).Free;
@@ -117,6 +119,7 @@ begin
  if dontfreecombo then
   if assigned(combo) then
    LControlsToFree.Add(Combo);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,172; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -135,6 +138,7 @@ var
  dontrelease:boolean;
  totalwidth:integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,173; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  totalwidth:=WIdth;
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
@@ -396,10 +400,12 @@ begin
  //  posy:=posy+control.height;
   end;
  end;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,173; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 constructor TFObjInsp.Create(AOwner:TComponent);
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,174; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited Create(AOwner);
 
  fchangesize:=TRpSizeModifier.Create(Self);
@@ -416,10 +422,12 @@ begin
  begin
   Font.Size:=7;
  end;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,174; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 destructor TFObjInsp.Destroy;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,175; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  LNames.free;
  LValues.free;
  LTypes.free;
@@ -427,6 +435,7 @@ begin
  LControls.free;
  LControlsToFree.Free;
  inherited Destroy;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,175; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFObjInsp.EditChange(Sender:TObject);
@@ -434,6 +443,7 @@ var
  index:integer;
  aname:string;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,176; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  index:=TControl(Sender).tag;
  aname:=Lnames.strings[index];
  FCompItem.SetProperty(aname,TEdit(Sender).Text);
@@ -448,6 +458,7 @@ begin
    fchangesize.UpdatePos;
   end;
  end;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,176; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFObjInsp.ShapeMouseUp(Sender: TObject; Button: TMouseButton;
@@ -455,6 +466,7 @@ procedure TFObjInsp.ShapeMouseUp(Sender: TObject; Button: TMouseButton;
 var
  AShape:TShape;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,177; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  AShape:=TShape(Sender);
  ColorDialog1.COlor:=StrToInt(LValues.Strings[AShape.Tag]);
  if ColorDialog1.Execute then
@@ -462,12 +474,14 @@ begin
   AShape.Brush.Color:=ColorDialog1.Color;
   FCompItem.SetProperty(Lnames.strings[AShape.Tag],IntToStr(ColorDialog1.Color));
  end;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,177; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFObjInsp.FontClick(Sender:TObject);
 var
  index:integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,178; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
 {$IFDEF MSWINDOWS}
  FontDialog1.Font.Name:= CompItem.GetProperty(SRpSWFontName);
 {$ENDIF}
@@ -502,24 +516,29 @@ begin
    CompItem.SetProperty(SRpSFontStyle,IntToStr(FontStyleToInteger(Fontdialog1.Font.Style)));
   end;
  end;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,178; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFObjInsp.ComboObjectChange(Sender:TObject);
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,179; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  dontfreecombo:=true;
  try
   CompItem:=TRpSizeInterface(TComboBox(Sender).Items.Objects[TComboBox(Sender).ItemIndex]);
  finally
   dontfreecombo:=false;
  end;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,179; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFObjInsp.ChangeSizeChange(Sender:TObject);
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,180; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  // Read bounds Values and assign
  if Not Assigned(fchangesize.Control) then
   exit;
  UpdatePosValues;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,180; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFObjInsp.SendToBackClick(Sender:TObject);
@@ -529,6 +548,7 @@ var
  pitem:TRpCommonComponent;
  index:integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,181; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  CompItem.SendToBack;
  TRpSizePosInterface(CompItem).SectionInt.SendToBack;
  pitem:=CompItem.printitem;
@@ -545,6 +565,7 @@ begin
  section.Components.Delete(index);
  item:=section.Components.Insert(0);
  item.Component:=pitem;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,181; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFObjInsp.BringToFrontClick(Sender:TObject);
@@ -554,6 +575,7 @@ var
  pitem:TRpCommonComponent;
  index:integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,182; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  CompItem.BringToFront;
  fchangesize.UpdatePos;
 
@@ -571,6 +593,7 @@ begin
  section.Components.Delete(index);
  item:=section.Components.Add;
  item.Component:=pitem;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,182; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -581,6 +604,7 @@ var
  i:integer;
  item:TRpAliaslistItem;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,183; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  report:=fmainf.report;
  try
   report.ActivateDatasets;
@@ -601,6 +625,7 @@ begin
  RpExpreDialog1.Expresion.Text:=TEdit(LControls.Objects[TButton(Sender).Tag]).Text;
  if RpExpreDialog1.Execute then
   TEdit(LControls.Objects[TButton(Sender).Tag]).Text:=Trim(RpExpreDialog1.Expresion.Text);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,183; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFObjInsp.UpdatePosValues;
@@ -609,6 +634,7 @@ var
  sizeposint:TRpSizePosInterface;
  NewLeft,NewTop,NewWidth,NewHeight:integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,184; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  sizeposint:=TRpSizePosInterface(fchangesize.control);
  NewLeft:=sizeposint.Left;
  NewTop:=sizeposint.Top;
@@ -634,12 +660,14 @@ begin
  begin
   sizeposint.SetProperty(SRpSHeight,gettextfromtwips(pixelstotwips(NewHeight)));
  end;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,184; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFObjInsp.ImageClick(Sender:TObject);
 var
  Stream:TMemoryStream;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,185; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if OpenDialog1.Execute then
  begin
   Stream:=TMemoryStream.Create;
@@ -651,6 +679,7 @@ begin
    Stream.Free;
   end;
  end;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,185; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFObjInsp.ImageKeyDown(Sender: TObject;
@@ -658,6 +687,7 @@ procedure TFObjInsp.ImageKeyDown(Sender: TObject;
 var
  Stream:TMemoryStream;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,186; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if ((Key=Key_BackTab) or (Key=Key_Delete)) then
  begin
   Stream:=TMemoryStream.Create;
@@ -667,6 +697,7 @@ begin
    Stream.Free;
   end;
  end;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,186; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure  TFObjInsp.Subreportprops;
@@ -676,6 +707,7 @@ var
  comboalias:TComboBox;
  i,totalwidth:integer;
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,187; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  totalwidth:=WIdth;
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
@@ -704,11 +736,14 @@ begin
 
  LControls.AddObject(subrep.name,ComboAlias);
  LControlsToFree.Add(ComboAlias);
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,187; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFObjInsp.ComboAliasChange(Sender:TObject);
 begin
+{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,188; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  subrep.Alias:=TComboBox(Sender).Text;
+{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,188; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 initialization

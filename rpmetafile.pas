@@ -41,7 +41,7 @@ interface
 
 uses Classes,
 {$IFDEF LINUX}
-  Libc,
+  Libc,DateUtils,
 {$ENDIF}
 {$IFDEF MSWINDOWS}
   mmsystem,windows,

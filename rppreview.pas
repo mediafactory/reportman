@@ -25,11 +25,14 @@ uses
 {$IFDEF MSWINDOWS}
   windows,
 {$ENDIF}
+{$IFDEF LINUX}
+  Libc,
+{$ENDIF}
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpreport,rpmetafile, QComCtrls,
   rpqtdriver, QExtCtrls,
   QActnList, QImgList,QPrinters,rpconsts,Qt;
-
+                       
 type
   TFRpPreview = class(TForm)
     BToolBar: TToolBar;
@@ -230,9 +233,40 @@ begin
 end;
 
 procedure TFRpPreview.APrintExecute(Sender: TObject);
+{$IFDEF LINUX}
+var
+ theparams:array [0..3] of pchar;
+ param1:string;
+ param2:string;
+ child:__pid_t;
+{$ENDIF}
 begin
+ // A bug in Kylix 2 does not allow printing
+ // when using dbexpress
+{$IFDEF MSWINDOWS}
  if CalcReportWidthProgress(report) then
-  PrintMetafile(report.Metafile,caption,true);
+  PrintMetafile(report.Metafile,Caption,true);
+{$ENDIF}
+{$IFDEF LINUX}
+ if CalcReportWidthProgress(report) then
+ begin
+  // Saves the metafile
+  report.Metafile.SaveToFile('meta.rpmf');
+  param1:='metaprint';
+  param2:='meta.rpmf';
+  theparams[0]:=Pchar(param1);
+  theparams[1]:=Pchar(param2);
+  theparams[2]:=nil;
+
+  child:=fork;
+  if child=-1 then
+   Raise Exception.Create(SRpErrorFork);
+  if child<>0 then
+  begin
+   execvp(theparams[0],PPChar(@theparams))
+  end
+ end;
+{$ENDIF}
 end;
 
 procedure TFRpPreview.ASaveExecute(Sender: TObject);
@@ -367,8 +401,10 @@ begin
   PBar.Max:=Size;
  end;
  Application.ProcessMessages;
+{$IFDEF MSWINDOWS}
  if ((GetKeyState(VK_ESCAPE) AND $80)>0) then
   cancelled:=true;
+{$ENDIF}
  if cancelled then
   Raise Exception.Create(SRpOperationAborted);
 end;
