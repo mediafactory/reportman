@@ -204,7 +204,7 @@ begin
  BCancel.Caption:=TranslateStr(94,BCancel.Caption);
  RPageSize.Items.Strings[0]:=TranslateStr(95,RPageSize.Items.Strings[0]);
  RPageSize.Items.Strings[1]:=TranslateStr(96,RPageSize.Items.Strings[1]);
- RPageSize.Items.Strings[2]:=TranslateStr(732,RPageSize.Items.Strings[1]);
+ RPageSize.Items.Strings[2]:=TranslateStr(732,RPageSize.Items.Strings[2]);
  RPageOrientation.Items.Strings[0]:=TranslateStr(95,RPageOrientation.Items.Strings[0]);
  RPageOrientation.Items.Strings[1]:=TranslateStr(96,RPageOrientation.Items.Strings[1]);
  RPageSize.Caption:=TranslateStr(97,RPageSize.Caption);

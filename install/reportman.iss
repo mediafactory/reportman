@@ -16,13 +16,13 @@ LicenseFile=license.txt
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"; MinVersion: 4,4
-Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; MinVersion: 4,4; Flags: unchecked
+;Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; MinVersion: 4,4; Flags: unchecked
 
 [Files]
 Source: "..\repman\repmand.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-; Source: "..\repman\transwin\repmand.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\transwin\repmand.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\qttranslation\windows\qt_*.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaview\metaview.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaprint\metaprint.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
@@ -51,12 +51,10 @@ Source: "..\doc\doc\images\*.*"; DestDir: "{app}\doc\images"; CopyMode: alwaysov
 [Icons]
 Name: "{group}\Report Manager Designer"; Filename: "{app}\repmand.exe"; WorkingDir: "{app}"
 Name: "{group}\Metafile Viewer"; Filename: "{app}\metaview.exe"; WorkingDir: "{app}"
+Name: "{group}\Translation Utility"; Filename: "{app}\rptranslate.exe"; WorkingDir: "{app}"
 Name: "{group}\Documentation"; Filename: "{app}\doc\index.html"; WorkingDir: "{app}\doc"
 Name: "{group}\License"; Filename: "{app}\license.txt";
 Name: "{userdesktop}\Report Manager"; Filename: "{app}\repmand.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Report Manager"; Filename: "{app}\repmand.exe"; MinVersion: 4,4; Tasks: quicklaunchicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Metafile Report Viewer"; Filename: "{app}\metaview.exe"; MinVersion: 4,4; Tasks: quicklaunchicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Translation utility"; Filename: "{app}\rptranslate.exe"; MinVersion: 4,4; Tasks: quicklaunchicon
 
 [Run]
 Filename: "{app}\repmand.exe"; Description: "Launch Report Manager"; Flags: nowait postinstall skipifsilent

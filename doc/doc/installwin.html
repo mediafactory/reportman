@@ -35,7 +35,7 @@
 <p>To <b>uninstall Report Manager use the standard procedure</b>, that is go to 
   <b>control panel and add/remove software</b>, clic Report Manager Designer and 
   uninstall button.</p>
-<h3>About database connections configuration files</h3>
+<b>About database connections configuration files</b> 
 <p>If you have installed Borland Delphi6 /C++Builder 6 product before, Report 
   Manager will use Borland database connection files (dbxdrivers.ini &amp; dbxconnections.ini) 
   from Borland Shared directory (this path information is stored in the registry), 
@@ -48,5 +48,10 @@
 <p>in key</p>
 <p>HKEY_LOCAL_MACHINE\SOFTWARE\Borland\DBExpress</p>
 <p>or HKEY_LOCAL_USER if the configuration is available only for the active user.</p>
+<p><b>Printer configuration file</b></p>
+<p>Report Manager Designer will use a Printer configuration file, only used in 
+  printer selection, this file will be searched as Documents &amp; Settings\Local 
+  Config\All Users\reporman.ini, if not found it will create or use Documents 
+  &amp; Settings\Local Config\YourUserName\reporman.ini</p>
 </body>
 </html>

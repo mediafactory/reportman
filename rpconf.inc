@@ -1,6 +1,6 @@
 // Database drivers to be used
 {$DEFINE USESQLEXPRESS}
-//{$DEFINE USEIBX}
+{$DEFINE USEIBX}
 {$DEFINE USEADO}
 {$DEFINE USEBDE}
 //{$DEFINE USEIBO}
@@ -58,12 +58,11 @@
  {$DEFINE KYLIX2}
 {$ENDIF}
 
-// Kylix 3 has no the LINUXPRINTBUG because new borland qt lib
+{$IFDEF LINUX}
 {$IFDEF VER140}
-// {$UNDEF LINUXPRINTBUG}
  {$UNDEF KYLIX2}
 // Vcl File Filters is a missing feature of CLX Dialogs
  {$DEFINE VCLFILEFILTERS}
 {$ENDIF}
-
+{$ENDIF}
 

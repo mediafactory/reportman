@@ -2,8 +2,9 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       rpclxreport                                    }
-{       Report component for clx applications           }
+{       rpclxreport                                     }
+{       Report component for clx and vcl applications   }
+{       supports drivers qt and gdi in Windows          }
 {                                                       }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
@@ -27,12 +28,20 @@ uses Classes,Sysutils,rpreport,
 {$IFDEF HORZPAPERBUG}
  rpmetafile,
 {$ENDIF}
- QPrinters,rpqtdriver,rppreview,rpalias,rprfparams;
+ QPrinters,rpqtdriver,rppreview,rpalias,
+{$IFDEF MSWINDOWS}
+ rpgdidriver,Printers,Dialogs,rprfvparams,rpvpreview,
+{$ENDIF}
+ rprfparams;
 
 type
+ // rpDriverGDI is ignored in Linux
+ TRpPrintDriver=(rpDriverQt,rpDriverGDI);
+
  TCLXReport=class(TCBaseReport)
   private
    FUseSystemPrintDialog:boolean;
+   FDriver:TRpPrintDriver;
   protected
   public
    function Execute:boolean;override;
@@ -52,6 +61,8 @@ type
    property Language;
    property UseSystemPrintDialog:Boolean read
     FUseSystemPrintDialog write FUseSystemPrintDialog default true;
+   property Driver:TRpPrintDriver read FDriver write FDriver
+    default rpDriverQt;
   end;
 
 implementation
@@ -64,18 +75,42 @@ begin
  inherited Create(AOwner);
 
  FUseSystemPrintDialog:=true;
+ FDriver:=rpDriverQt;
 end;
 
 procedure TCLXReport.PrinterSetup;
+{$IFDEF MSWINDOWS}
+var
+ dia:TPrinterSetupDialog;
+{$ENDIF}
 begin
- Printer.ExecuteSetup;
+{$IFDEF MSWINDOWS}
+ if FDriver=rpDriverGDI then
+ begin
+  dia:=TPrinterSetupDialog.Create(nil);
+  try
+   dia.Execute;
+  finally
+   dia.free;
+  end;
+  exit;
+ end;
+{$ENDIF}
+ QPrinters.Printer.ExecuteSetup;
 end;
 
 
 function TCLXReport.ShowParams:boolean;
 begin
  CheckLoaded;
- Result:=ShowUserParams(report);
+{$IFDEF MSWINDOWS}
+ if FDriver=rpDriverGDI then
+ begin
+  Result:=rprfvparams.ShowUserParams(report);
+  exit;
+ end;
+{$ENDIF}
+ Result:=rprfparams.ShowUserParams(report);
 end;
 
 
@@ -88,7 +123,14 @@ begin
  inherited Execute;
  if Preview then
  begin
-  Result:=ShowPreview(report,Title,FUseSystemPrintDialog);
+{$IFDEF MSWINDOWS}
+  if FDriver=rpDriverGDI then
+  begin
+   Result:=rpvpreview.ShowPreview(report,Title);
+   exit;
+  end;
+{$ENDIF}
+  Result:=rppreview.ShowPreview(report,Title,FUseSystemPrintDialog);
  end
  else
  begin
@@ -111,13 +153,26 @@ begin
 
   if ShowPrintDialog then
   begin
+{$IFDEF MSWINDOWS}
+   if FDriver=rpDriverGDI then
+   begin
+    if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+    begin
+     Result:=rpgdidriver.PrintReport(report,Title,Showprogress,allpages,frompage,
+      topage,copies,collate);
+    end
+    else
+     Result:=false;
+    exit;
+   end;
+{$ENDIF}
    if FUseSystemPrintDialog then
     dook:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate)
    else
     dook:=rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
    if dook then
    begin
-    Result:=PrintReport(report,Title,Showprogress,allpages,frompage,
+    Result:=rpqtdriver.PrintReport(report,Title,Showprogress,allpages,frompage,
      topage,copies,collate);
    end
    else
@@ -125,7 +180,15 @@ begin
   end
   else
   begin
-    Result:=PrintReport(report,Title,Showprogress,true,1,
+{$IFDEF MSWINDOWS}
+   if FDriver=rpDriverGDI then
+   begin
+    Result:=rpgdidriver.PrintReport(report,Title,Showprogress,true,1,
+     9999999,report.copies,report.collatecopies);
+    exit;
+   end;
+{$ENDIF}
+   Result:=rpqtdriver.PrintReport(report,Title,Showprogress,true,1,
      9999999,report.copies,report.collatecopies);
   end;
  end;
@@ -134,6 +197,14 @@ end;
 procedure TCLXReport.SaveToPDF(filename:string;compressed:boolean=false);
 begin
  CheckLoaded;
+{$IFDEF MSWINDOWS}
+ if FDriver=rpDriverGDI then
+ begin
+  rpgdidriver.ExportReportToPDF(report,filename,true,true,1,999999,
+   false,filename,compressed);
+  exit;
+ end;
+{$ENDIF}
  rpqtdriver.ExportReportToPDF(report,filename,true,true,1,999999,
   false,filename,compressed)
 end;
@@ -141,6 +212,14 @@ end;
 function TCLXReport.PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;
 begin
+{$IFDEF MSWINDOWS}
+ if FDriver=rpDriverGDI then
+ begin
+  Result:=rpgdidriver.PrintReport(Report,Title,ShowProgress,false,
+   frompage,topage,copies,collate);
+  exit;
+ end;
+{$ENDIF}
  Result:=rpqtdriver.PrintReport(Report,Title,ShowProgress,false,
   frompage,topage,copies,collate);
 end;

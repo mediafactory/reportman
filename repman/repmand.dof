@@ -80,7 +80,8 @@ Item17=..\rpgraphutils.xfm
 Item18=..\rpprintdia.xfm
 Item19=..\rppreview.xfm
 Item20=..\rprfparams.xfm
-Item21=repmand.drc
+Item21=..\rpmdprintconfig.xfm
+Item22=repmand.drc
 [Language]
 ActiveLang=
 ProjectLang=$00000409

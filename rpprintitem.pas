@@ -123,7 +123,7 @@ type
    property FontColor:integer read FFontColor write FFontColor default 0;
    property BackColor:integer read FBackColor write FBackColor default $FFFFFF;
    property Transparent:Boolean read FTransparent write FTransparent default true;
-   property CutText:Boolean read FCutText write FCutText default true;
+   property CutText:Boolean read FCutText write FCutText default false;
    property Alignment:integer read FAlignment write FAlignment default 0;
    property VAlignment:integer read FVAlignment write FVAlignment default 0;
    property WordWrap:Boolean read FWordWrap write FWordWrap default false;
@@ -294,7 +294,7 @@ begin
  FontColor:=0;
  FBackColor:=$FFFFFF;
  FTransparent:=true;
- FCutText:=true;
+ FCutText:=false;
 
 end;
 

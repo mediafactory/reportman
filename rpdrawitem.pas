@@ -187,58 +187,104 @@ var
  Size,readed: Longint;
  Header: TGraphicHeader;
  FMStream:TMemoryStream;
+ aValue:Variant;
+ afilename:TFilename;
 begin
- Result:=nil;
- if Length(Trim(Expression))>0 then
- begin
-  // Must be a field
-  if Not Assigned(TRpReport(Owner).Evaluator) then
-   Exit;
-  evaluator:=TRpReport(Owner).evaluator;
-  iden:=evaluator.SearchIdentifier(Expression);
-  if Not Assigned(iden) then
-   Raise Exception.Create(SRpFieldNotFound+FExpression);
-  if (Not (iden is TIdenField)) then
-   Raise Exception.Create(SRpNotAField+FExpression);
-  AField:=(iden As TIdenField).Field;
-  if (Not (AField is TBlobField)) then
-   Raise Exception.Create(SRpNotBinary+FExpression);
-  if AField.isnull then
-   exit;
-  FMStream:=TMemoryStream.Create;
-  try
-   AStream:=AField.DataSet.CreateBlobStream(AField,bmRead);
-   try
-    Size := AStream.Size;
-    FMStream.SetSize(Size);
-    if Size >= SizeOf(TGraphicHeader) then
-    begin
-      AStream.Read(Header, SizeOf(Header));
-      if (Header.Count <> 1) or (Header.HType <> $0100) or
-        (Header.Size <> Size - SizeOf(Header)) then
-        AStream.Position := 0
-      else
-       FMStream.SetSize(AStream.Size-SizeOf(Header));
+ try
+  Result:=nil;
+  if Length(Trim(Expression))>0 then
+  begin
+   // If the expression is a field
+   if Not Assigned(TRpReport(Owner).Evaluator) then
+    Exit;
+   evaluator:=TRpReport(Owner).evaluator;
+   iden:=evaluator.SearchIdentifier(Expression);
+   if Not Assigned(iden) then
+   begin
+    // Looks for a string (path to file)
+    aValue:=evaluator.EvaluateText(Expression);
+    if (VarType(aValue)<>varString) then
+     Raise Exception.Create(SRpFieldNotFound+FExpression);
+    afilename:=aValue;
+    FMStream:=TMemoryStream.Create;
+    try
+     AStream:=TFileStream.Create(afilename,fmOpenread or fmShareDenyWrite);
+     try
+      Size := AStream.Size;
+      FMStream.SetSize(Size);
+      if Size >= SizeOf(TGraphicHeader) then
+      begin
+        AStream.Read(Header, SizeOf(Header));
+        if (Header.Count <> 1) or (Header.HType <> $0100) or
+          (Header.Size <> Size - SizeOf(Header)) then
+          AStream.Position := 0
+        else
+         FMStream.SetSize(AStream.Size-SizeOf(Header));
+      end;
+      FMStream.Seek(0,soFromBeginning);
+      readed:=AStream.Read(FMStream.Memory^,FMStream.Size);
+      if readed<>FMStream.Size then
+       Raise Exception.Create(SRpErrorReadingFromFieldStream);
+      FMStream.Seek(0,soFromBeginning);
+     finally
+      AStream.free;
+     end;
+     Result:=FMStream;
+    except
+     FMStream.free;
+     Raise;
     end;
-    FMStream.Seek(0,soFromBeginning);
-    readed:=AStream.Read(FMStream.Memory^,FMStream.Size);
-    if readed<>FMStream.Size then
-     Raise Exception.Create(SRpErrorReadingFromFieldStream);
-    FMStream.Seek(0,soFromBeginning);
-   finally
-    AStream.free;
+   end
+   else
+   begin
+    if (Not (iden is TIdenField)) then
+     Raise Exception.Create(SRpNotAField+FExpression);
+    AField:=(iden As TIdenField).Field;
+    if (Not (AField is TBlobField)) then
+     Raise Exception.Create(SRpNotBinary+FExpression);
+    if AField.isnull then
+     exit;
+    FMStream:=TMemoryStream.Create;
+    try
+     AStream:=AField.DataSet.CreateBlobStream(AField,bmRead);
+     try
+      Size := AStream.Size;
+      FMStream.SetSize(Size);
+      if Size >= SizeOf(TGraphicHeader) then
+      begin
+        AStream.Read(Header, SizeOf(Header));
+        if (Header.Count <> 1) or (Header.HType <> $0100) or
+          (Header.Size <> Size - SizeOf(Header)) then
+          AStream.Position := 0
+        else
+         FMStream.SetSize(AStream.Size-SizeOf(Header));
+      end;
+      FMStream.Seek(0,soFromBeginning);
+      readed:=AStream.Read(FMStream.Memory^,FMStream.Size);
+      if readed<>FMStream.Size then
+       Raise Exception.Create(SRpErrorReadingFromFieldStream);
+      FMStream.Seek(0,soFromBeginning);
+     finally
+      AStream.free;
+     end;
+     Result:=FMStream;
+    except
+     FMStream.free;
+     Raise;
+    end;
    end;
-   Result:=FMStream;
-  except
-   FMStream.free;
-   Raise;
+  end
+  else
+  begin
+   if FStream.Size=0 then
+    exit;
+   Result:=FStream;
   end;
- end
- else
- begin
-  if FStream.Size=0 then
-   exit;
-  Result:=FStream;
+ except
+  on E:Exception do
+  begin
+   Raise TRpReportException.Create(E.Message+':'+SRpSExpression+' '+Name,self,SRpSImage);
+  end;
  end;
 end;
 

@@ -1,4 +1,4 @@
-{TODO 5 -oToni -cEngine : Add Printer selection}
+{DONE 5 -oToni -cEngine : Add Printer selection}
 {TODO 1 -oToni -cDesigner : Add Wizards to create reports}
 {TODO 2 -oToni -cEngine : Add draw points to TRpChart component}
 {TODO 2 -oToni -cEngine : Add Zeos Database native support}
