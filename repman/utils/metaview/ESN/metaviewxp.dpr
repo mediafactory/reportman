@@ -4,22 +4,24 @@ library metaviewxp;
 
 {$R *.RES}
 {ITE} {LCID:00000409:00000C0A} {}
-{ITE} {DFMFileType} {fmetaviewvcl.dfm}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpfmainmetaviewvcl.dfm}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpfmetaviewvcl.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpgdidriver.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdclitreevcl.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdfaboutvcl.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdprintconfigvcl.dfm}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdrepclient.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rprfvparams.dfm}
-{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdrepclient.xfm}
 {ITE} {RCFileType} {metaviewxp_DRC.rc}
 
-{$R 'fmetaviewvcl.dfm' FMetaVCL:TForm}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rpfmainmetaviewvcl.dfm' FRpMainMetaVCL:TForm}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rpfmetaviewvcl.dfm' FRpMetaVCL:TFrame}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpgdidriver.dfm' FRpVCLProgress:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdclitreevcl.dfm' FRpCliTreeVCL:TFrame}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdfaboutvcl.dfm' FRpAboutBoxVCL:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdprintconfigvcl.dfm' FRpPrinterConfigVCL:TForm}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdrepclient.dfm' modclient:TDataModule}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rprfvparams.dfm' FRpRTParams:TForm}
-{$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdrepclient.xfm' modclient:TDataModule}
 {$R 'metaviewxp_DRC.res' 'metaviewxp_DRC.rc'}
 
 {$E ESN}
