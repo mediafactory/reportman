@@ -1344,6 +1344,8 @@ begin
   while currentpos>0 do
   begin
    Dec(currentpos);
+   if currentpos<1 then
+    break;
    if isadelimiter(obj.Text[currentpos]) then
     break;
   end;
