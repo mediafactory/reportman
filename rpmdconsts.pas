@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.6c';
+ RM_VERSION='1.6e';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
@@ -752,6 +752,9 @@ var
   SrpDriverIBO:WideString='Interbase Objects';
   SRpBitmapFile:WideString='Bitmap File';
   SRpBitmapFileMono:WideString='Bitmap - monochrome';
+  // New strings
+  SRpPFormatMask:WideString='Format is the format string: ex.''99,99,99'''+#10+' and v is the value to convert to a formated string';
+  SrpSAlignJustify:WideString='Justified(PDF)';
 
 implementation
 

@@ -182,6 +182,7 @@ uses rpmdobjinspvcl;
 const
  AlignmentFlags_SingleLine=64;
  AlignmentFlags_AlignHCenter = 4 { $4 };
+ AlignmentFlags_AlignHJustify = 1024 { $400 };
  AlignmentFlags_AlignTop = 8 { $8 };
  AlignmentFlags_AlignBottom = 16 { $10 };
  AlignmentFlags_AlignVCenter = 32 { $20 };
@@ -1112,6 +1113,10 @@ begin
  begin
   Result:=SRpSAlignCenter;
  end;
+ if (value=integer(AlignmentFlags_AlignHJustify)) then
+ begin
+  Result:=SRpSAlignJustify;
+ end;
 end;
 
 function VAlignmentToText(value:integer):string;
@@ -1162,6 +1167,10 @@ begin
  if (value=SRpSAlignCenter) then
  begin
   Result:=integer(AlignmentFlags_AlignHCenter);
+ end;
+ if (value=SRpSAlignJustify) then
+ begin
+  Result:=integer(AlignmentFlags_AlignHJustify);
  end;
 end;
 
@@ -1528,6 +1537,7 @@ begin
   lpossiblevalues.Add(SrpSAlignLeft);
   lpossiblevalues.Add(SrpSAlignRight);
   lpossiblevalues.Add(SrpSAlignCenter);
+  lpossiblevalues.Add(SrpSAlignJustify);
   exit;
  end;
  if pname=SrpSVAlignment then

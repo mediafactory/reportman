@@ -94,6 +94,8 @@ type
     default rpalnone;
   end;
 
+ TRpCommonPosClass=class of TRpCommonPosComponent;
+
  TRpCommonListItem=class(TCollectionItem)
   private
    FComponent:TRpCommonComponent;

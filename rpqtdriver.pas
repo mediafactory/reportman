@@ -160,6 +160,8 @@ uses rpprintdia;
 
 {$R *.xfm}
 
+const
+ AlignmentFlags_AlignHJustify = 1024 { $400 };
 
 function DoShowPrintDialog(var allpages:boolean;
  var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;

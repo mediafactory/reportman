@@ -57,11 +57,11 @@ type
    procedure CreateNew;
    procedure FreeSections;
    procedure FreeSection(sec:TRpSection);
-   procedure AddPageHeader;
-   procedure AddPageFooter;
+   function AddPageHeader:TRpSection;
+   function AddPageFooter:TRpSection;
    procedure CheckGroupExists(groupname:string);
-   procedure AddGroup(groupname:string);
-   procedure AddDetail;
+   function AddGroup(groupname:string):TRpSection;
+   function AddDetail:TRpSection;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
    procedure GetGroupNames(alist:TStrings);
    function FirstSectionThatIs(atype:TRpSectionType):integer;
@@ -128,7 +128,7 @@ begin
  FAlias:=Trim(Value);
 end;
 
-procedure TRpSubReport.AddPageHeader;
+function TRpSubReport.AddPageHeader:TRpSection;
 var
  i:integer;
  index:integer;
@@ -147,6 +147,7 @@ begin
  sec.SectionType:=rpsecpheader;
  Sections.Items[index].Section:=sec;
  Generatenewname(sec);
+ Result:=sec;
 end;
 
 
@@ -164,7 +165,7 @@ begin
  end;
 end;
 
-procedure TRpSubReport.AddDetail;
+function TRpSubReport.AddDetail:TRpSection;
 var
  i:integer;
  index:integer;
@@ -190,10 +191,11 @@ begin
  sec.SectionType:=rpsecdetail;
  Sections.Items[index].Section:=sec;
  Generatenewname(sec);
+ Result:=sec;
 end;
 
 
-procedure TRpSubReport.AddPageFooter;
+function TRpSubReport.AddPageFooter:TRpSection;
 var
  i:integer;
  index:integer;
@@ -219,6 +221,7 @@ begin
  sec.SectionType:=rpsecpfooter;
  Sections.Items[index].Section:=sec;
  Generatenewname(sec);
+ Result:=sec;
 end;
 
 
@@ -236,7 +239,7 @@ begin
  end;
 end;
 
-procedure TRpSubReport.AddGroup(groupname:string);
+function TRpSubReport.AddGroup(groupname:string):TRpSection;
 var
  i:integer;
  index:integer;
@@ -271,6 +274,7 @@ begin
  sec.SectionType:=rpsecgheader;
  Sections.Items[index].Section:=sec;
  Generatenewname(sec);
+ Result:=sec;
  // Search the index to insert the group footer
  index:=0;
  while ((Sections.Items[index].Section.SectionType in [rpsecpheader..rpsecdetail])

@@ -129,6 +129,7 @@ type
    procedure SaveExternalToDatabase;
    function GetExternalDataDescription:String;
    procedure GetChildSubReportPossibleValues(lvalues:TRpWideStrings);
+   function AddComponent(componentclass:TRpCommonPosClass):TRpCommonPosComponent;
    function GetChildSubReportName:string;
    procedure SetChildSubReportByName(avalue:String);
    property ChangeExpression:widestring read FChangeExpression write SetChangeExpression;
@@ -1194,5 +1195,11 @@ begin
  FPageRepeat:=Value;
 end;
 
+function TRpSection.AddComponent(componentclass:TRpCommonPosClass):TRpCommonPosComponent;
+begin
+ Result:=componentclass.Create(Owner);
+ GenerateNewName(Result);
+ Components.Add.Component:=Result;
+end;
 
 end.

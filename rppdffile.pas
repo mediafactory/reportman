@@ -236,6 +236,7 @@ implementation
 const
  AlignmentFlags_SingleLine=64;
  AlignmentFlags_AlignHCenter = 4 { $4 };
+ AlignmentFlags_AlignHJustify = 1024 { $400 };
  AlignmentFlags_AlignTop = 8 { $8 };
  AlignmentFlags_AlignBottom = 16 { $10 };
  AlignmentFlags_AlignVCenter = 32 { $20 };
@@ -1103,10 +1104,15 @@ procedure TRpPDFCanvas.TextRect(ARect: TRect; Text: string;
                        Rotation:integer;RightToLeft:Boolean);
 var
  recsize:TRect;
- i:integer;
- posx,posY:integer;
+ i,index:integer;
+ posx,posY,currpos,alinedif:integer;
  singleline:boolean;
  astring:String;
+ alinesize:integer;
+ lwords:TStringList;
+ lwidths:TStringList;
+ arec:TRect;
+ aword:String;
 begin
  FFile.CheckPrinting;
 
@@ -1156,7 +1162,71 @@ begin
     PosX:=ARect.Left+(((Arect.Right-Arect.Left)-FLineInfo[i].Width) div 2);
    end;
    astring:=Copy(Text,FLineInfo[i].Position,FLineInfo[i].Size);
-   TextOut(PosX,PosY+FLineInfo[i].TopPos,astring,FLineInfo[i].Width,Rotation,RightToLeft);
+   if  (((Alignment AND AlignmentFlags_AlignHJustify)>0) AND (NOT FLineInfo[i].LastLine)) then
+   begin
+    // Calculate the sizes of the words, then
+    // share space between words
+    lwords:=TStringList.Create;
+    try
+     aword:='';
+     index:=1;
+     while index<=Length(astring) do
+     begin
+      if astring[index]<>' ' then
+      begin
+       aword:=aword+astring[index];
+      end
+      else
+      begin
+       if Length(aword)>0 then
+        lwords.Add(aword);
+       aword:='';
+      end;
+      inc(index);
+     end;
+     if Length(aword)>0 then
+       lwords.Add(aword);
+     // Calculate all words size
+     alinesize:=0;
+     lwidths:=TStringList.Create;
+     try
+      for index:=0 to lwords.Count-1 do
+      begin
+       arec:=ARect;
+       TextExtent(lwords.Strings[index],arec,false,true);
+       if RightToLeft then
+        lwidths.Add(IntToStr(-(arec.Right-arec.Left)))
+       else
+        lwidths.Add(IntToStr(arec.Right-arec.Left));
+       alinesize:=alinesize+arec.Right-arec.Left;
+      end;
+      alinedif:=ARect.Right-ARect.Left-alinesize;
+      if alinedif>0 then
+      begin
+       if lwords.count>1 then
+        alinedif:=alinedif div (lwords.count-1);
+       if RightToLeft then
+       begin
+        currpos:=ARect.Right;
+        alinedif:=-alinedif;
+       end
+       else
+        currpos:=PosX;
+       for index:=0 to lwords.Count-1 do
+       begin
+        TextOut(currpos,PosY+FLineInfo[i].TopPos,lwords.strings[index],FLineInfo[i].Width,Rotation,RightToLeft);
+        currpos:=currpos+StrToInt(lwidths.Strings[index])+alinedif;
+       end;
+      end;
+     finally
+      lwidths.Free;
+     end;
+    finally
+     lwords.free;
+    end;
+   end
+   else
+    TextOut(PosX,PosY+FLineInfo[i].TopPos,astring,FLineInfo[i].Width,Rotation,RightToLeft);
   end;
  finally
   if (Clipping or (Rotation<>0)) then
@@ -1507,8 +1577,10 @@ var
  nextline:boolean;
  alastsize:double;
  lockspace:boolean;
+ createsnewline:boolean;
 begin
  // Text extent for the simple strings, wide strings not supported
+ createsnewline:=false;
  astring:=Text;
  arec:=Rect;
  arec.Left:=0;
@@ -1570,7 +1642,10 @@ begin
   end;
   if not singleline then
    if astring[i]=#10 then
+   begin
     nextline:=true;
+    createsnewline:=true;
+   end;
   if asize>maxwidth then
    maxwidth:=asize;
   if nextline then
@@ -1581,10 +1656,12 @@ begin
    info.Width:=Round((asize)/CONS_PDFRES*FResolution);
    info.height:=Round((Font.Size)/CONS_PDFRES*FResolution);
    info.TopPos:=arec.Bottom;
+   info.lastline:=createsnewline;
    arec.Bottom:=arec.Bottom+info.height;
    asize:=0;
    position:=i+1;
    NewLineInfo(info);
+   createsnewline:=false;
   end;
   inc(i);
  end;
@@ -1597,6 +1674,7 @@ begin
   info.height:=Round((Font.Size)/CONS_PDFRES*FResolution);
   info.TopPos:=arec.Bottom;
   arec.Bottom:=arec.Bottom+info.height;
+  info.lastline:=true;
   NewLineInfo(info);
  end;
  rect:=arec;

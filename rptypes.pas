@@ -74,6 +74,7 @@ type
   height:integer;
   TopPos:integer;
   step:TRpFontStep;
+  lastline:Boolean;
  end;
 
  TRpGraphicOpProc=function (Top,Left,Width,Height:integer;

@@ -182,7 +182,9 @@ implementation
 
 uses rpmdobjinsp;
 
-
+const
+ AlignmentFlags_AlignHJustify = 1024 { $400 };
+ 
 constructor TRpSizeInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin
  inherited Create(AOwner);
@@ -1124,6 +1126,10 @@ begin
  begin
   Result:=SRpSAlignCenter;
  end;
+ if (value=integer(AlignmentFlags_AlignHJustify)) then
+ begin
+  Result:=SRpSAlignJustify;
+ end;
 end;
 
 function VAlignmentToText(value:integer):string;
@@ -1174,6 +1180,10 @@ begin
  if (value=SRpSAlignCenter) then
  begin
   Result:=integer(AlignmentFlags_AlignHCenter);
+ end;
+ if (value=SRpSAlignJustify) then
+ begin
+  Result:=integer(AlignmentFlags_AlignHJustify);
  end;
 end;
 
@@ -1540,6 +1550,7 @@ begin
   lpossiblevalues.Add(SrpSAlignLeft);
   lpossiblevalues.Add(SrpSAlignRight);
   lpossiblevalues.Add(SrpSAlignCenter);
+  lpossiblevalues.Add(SrpSAlignJustify);
   exit;
  end;
  if pname=SrpSVAlignment then

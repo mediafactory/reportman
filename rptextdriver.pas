@@ -1,4 +1,3 @@
-
 {*******************************************************}
 {                                                       }
 {       Report Manager                                  }
@@ -154,6 +153,7 @@ uses Math;
 const
  AlignmentFlags_SingleLine=64;
  AlignmentFlags_AlignHCenter = 4 { $4 };
+ AlignmentFlags_AlignHJustify = 1024 { $400 };
  AlignmentFlags_AlignTop = 8 { $8 };
  AlignmentFlags_AlignBottom = 16 { $10 };
  AlignmentFlags_AlignVCenter = 32 { $20 };

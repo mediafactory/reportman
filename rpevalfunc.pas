@@ -22,7 +22,7 @@ interface
 
 uses
   SysUtils, Classes,
-  rpmdconsts,DB,
+  rpmdconsts,DB,MaskUtils,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
@@ -252,6 +252,13 @@ type
   end;
 
  TIdenFormatStr=class(TIdenFunction)
+ protected
+   function GeTRpValue:TRpValue;override;
+  public
+   constructor Create(AOWner:TComponent);override;
+  end;
+
+ TIdenFormatMask=class(TIdenFunction)
  protected
    function GeTRpValue:TRpValue;override;
   public
@@ -1200,6 +1207,39 @@ begin
   end;
  end;
 end;
+
+{ TIdenFormatStr }
+
+constructor TIdenFormatMask.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=2;
+ IdenName:='FormatMask';
+ Help:=SRpFormatStr;
+ model:='function '+'FormatMask'+'(format:string,v:string):string';
+ aParams:=SRpPFormatMask;
+end;
+
+{**************************************************************************}
+
+function TIdenFormatMask.GeTRpValue:TRpValue;
+var
+ Value:variant;
+begin
+ if Vartype(Params[0])<>varstring then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ Value:=Params[1];
+ if Value=NULL then
+ begin
+  Value:='';
+ end;
+ if Vartype(Params[1])<>varstring then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ Result:=FormatMaskText(Params[0],Value);
+end;
+
 
 { TIdenNumToText }
 

@@ -237,6 +237,8 @@ begin
  Rpfunctions.AddObject('SUBSTR',iden);
  iden:=TIdenFormatstr.Create(nil);
  Rpfunctions.AddObject('FORMATSTR',iden);
+ iden:=TIdenFormatMask.Create(nil);
+ Rpfunctions.AddObject('FORMATMASK',iden);
  iden:=TIdenHourMinSec.Create(nil);
  Rpfunctions.AddObject('HOURMINSEC',iden);
  iden:=TIdenUppercase.Create(nil);
