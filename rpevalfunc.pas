@@ -167,6 +167,13 @@ type
    constructor Create(AOwner:TComponent);override;
   end;
 
+ TIdenGraphicBounds=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
  TIdenGraphicOperation=class(TIdenFunction)
   protected
    function GetRpValue:TRpValue;override;
@@ -321,11 +328,14 @@ type
 
 
  TRpNewValue=procedure (Y:Single;Cambio:Boolean;leyen,textleyen:string) of object;
+ TRpBoundsValue=procedure (autol,autoh:boolean;lvalue,hvalue:double;
+  logaritmic:boolean;logbase:double;inverted:boolean) of object;
 
  TVariableGrap=class(TIdenVariable)
   protected
    FOnNewValue:TRpNewValue;
    FOnClear:TNotifyEvent;
+   FOnBounds:TRpBoundsValue;
    procedure SetRpValue(Value:TRpValue);override;
    function GetRpValue:TRpValue;override;
   public
@@ -334,6 +344,7 @@ type
    procedure Clear;
    property OnClear:TNotifyEvent read FOnClear write FOnClear;
    property OnNewValue:TRpNewValue read FOnNewValue write FOnNewValue;
+   property OnBounds:TRpBoundsValue read FOnBounds write FOnBounds;
   end;
 
  //added FRB 20030204
@@ -794,6 +805,11 @@ end;
 
 function TIdenLength.GeTRpValue:TRpValue;
 begin
+ if VarIsNull(Params[0]) then
+ begin
+  Result:=0;
+  exit;
+ end;
  if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
@@ -870,7 +886,7 @@ begin
  FParamcount:=5;
  IdenName:='GraphicNew';
  Help:=SRpGraphicNew;
- model:='function '+'GraphicNew'+'(Gr:string,V:Single,C:Boolean,Etiq:string,Caption:string):Boolean';
+ model:='function '+'GraphicNew'+'(Gr:string, V:Single, C:Boolean,Etiq:string,Caption:string):Boolean';
  aParams:=SRPPgraphicnew;
 end;
 
@@ -909,6 +925,61 @@ begin
  (iden As TVariableGrap).NewValue(single(Params[1]),Boolean(Params[2]),string(Params[3]),string(Params[4]));
 end;
 
+
+constructor TIdenGraphicBounds.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=8;
+ IdenName:='GraphicBounds';
+ Help:=SRpGraphicBounds;
+ model:='function '+'GraphicBounds'+'(Gr:string; autol,autoh:boolean; low,high:double;log:boolean; logbase:double; inverted:boolean):Boolean';
+ aParams:=SRPPgraphicBounds;
+end;
+
+
+function TIdenGraphicBounds.GeTRpValue:TRpValue;
+var
+ iden:TRpIdentifier;
+begin
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Vartype(Params[1])<>varBoolean then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Vartype(Params[2])<>varBoolean then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Not (Vartype(Params[3]) in [varsmallint..varcurrency,varword,varbyte]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Not (Vartype(Params[4]) in [varsmallint..varcurrency,varword,varbyte]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Vartype(Params[5])<>varBoolean then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Not (Vartype(Params[6]) in [varsmallint..varcurrency,varword,varbyte]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Vartype(Params[7])<>varBoolean then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ // Buscamos el identificador
+ iden:=(evaluator As TRpEvaluator).SearchIdentifier(String(Params[0]));
+ if iden=nil then
+ begin
+   Raise TRpNamedException.Create(SRpIdentifierexpected,
+         IdenName+'-'+Params[0]);
+ end;
+ if Not (iden is TVariableGrap) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName+'-'+Params[0]);
+
+ Result:=True;
+ (iden As TVariableGrap).OnBounds(Boolean(Params[1]),Boolean(Params[2]),
+  double(Params[3]),double(Params[4]),Boolean(Params[5]),double(Params[6]),  Boolean(Params[7]));
+end;
 
 
 constructor TIdenSQRT.Create(AOwner:TComponent);

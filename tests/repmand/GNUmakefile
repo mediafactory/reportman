@@ -1,7 +1,7 @@
 kylix_bin=/opt/kylix3/bin
 #kylix_bin=/home/toni/kylix3/bin
 drivers_path=../../drivers/linux
-rpversion=2_2pre7
+rpversion=2_2pre12
 
 install:
 	make clean
@@ -50,6 +50,10 @@ install:
 	cp ../../repman/reportmanres.es .
 	cp ../../repman/reportmanres.fr .
 	cp ../../repman/reportmanres.en .
+	cp ../../repman/reportmanres.cat reportmanres.ca
+	cp ../../repman/reportmanres.pt .
+	cp ../../repman/reportmanres.it .
+	cp ../../repman/reportmanres.de .
 	cp ../../repman/qttranslation/linux/qt_* .
 	cp ../../LICENSE.TXT .
 #	cp ../../repman/repmand.es .
@@ -65,7 +69,7 @@ install:
 	cp ../../doc/doc/units/*.html doc/units
 	cp ../../doc/doc/images/*.jpg doc/images
 #	include repmand.es when linux translation done
-	tar c LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es reportmanres.fr repmand dbxdrivers dbxconnections repmand repmand.sh repmand.bin README *.so *.so.1 qt_* dbxres.en.1 libborunwind.so.6.0 > rpdesigner-$(rpversion).i386.tar
+	tar c LICENSE.TXT sample4.rep biolife.cds reportmanres.pt reportmanres.it reportmanres.de reportmanres.ca reportmanres.en reportmanres.es reportmanres.fr repmand dbxdrivers dbxconnections repmand repmand.sh repmand.bin README *.so *.so.1 qt_* dbxres.en.1 libborunwind.so.6.0 > rpdesigner-$(rpversion).i386.tar
 	gzip rpdesigner-$(rpversion).i386.tar
 	tar c LICENSE.TXT reportserverapp reportserverapp.sh reportserverapp.bin reportservercon reportservercon.sh reportservercon.bin repserverconfig repserverconfig.sh repserverconfig.bin metaprint metaprint.sh metaprint.bin metaview metaview.sh metaview.bin printrep printrep.sh printrep.bin printreptopdf printreptopdf.sh printreptopdf.bin reptotxt txttorep repwebexe repwebexe.bin repwebexex repwebexex.bin .htaccess > rpservercline-$(rpversion).i386.tar
 	gzip rpservercline-$(rpversion).i386.tar

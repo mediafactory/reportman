@@ -171,7 +171,13 @@ begin
 {$IFDEF USEBDE}
  if Assigned(ASession) then
  begin
-  ASession.Close;
+  try
+   if ASession.Active then
+   begin
+    ASession.Close;
+   end;
+  except
+  end;
  end;
 {$ENDIF}
 
@@ -1491,7 +1497,7 @@ begin
    sinfo.hStdOutput:=0;
    toexecute:='printreptopdf.exe';
    if metafile then
-    toexecute:=toexecute+' -m';
+    toexecute:=toexecute+' -m ';
    toexecute:=toexecute+' -q '+repname+' '+pdfname;
    memstream.SaveToFile(repname);
    try
@@ -1520,7 +1526,13 @@ begin
    atempname:=RpTempFileName;
    atempname2:=RpTempFileName;
    memstream.SaveToFile(atempname);
+{$IFDEF FORCECONSOLE}
    aparams.Add('printreptopdf');
+{$ENDIF}
+{$IFNDEF FORCECONSOLE}
+   aparams.Add('printrep');
+{$ENDIF}
+   aparams.Add('-pdf');
    aparams.Add('-m');
    aparams.Add('-q');
    aparams.Add(atempname);

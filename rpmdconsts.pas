@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.2pre7';
+ RM_VERSION='2.2pre12';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
@@ -893,6 +893,12 @@ var
   SRpNoTrueType:WideString='The font is not TrueType';
   SRpFontDataIndexNotFound:WideString='Font data index not found';
   SRpErrorProcessing:WideString='Can not continue processing report because a previous error';
+  //
+  SRpEvalDescIdenLeft:WideString='Left side can not be assigned';
+  SRpGraphicBounds:WideString='Adds bounds data to the graphic';
+  SRpPGraphicBounds:WideString='Gr is the graphic identifier,automatic, lower and higher bounds values';
+  SRpSetFontPropsAsDefault:WideString='Set font as default';
+  SRpSetFontPropsAsDefaultHint:WideString='Set this component font properties as default for new components';
 
 implementation
 

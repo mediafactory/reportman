@@ -281,6 +281,8 @@ begin
  Rpfunctions.AddObject('GRAPHICCLEAR',iden);
  iden:=TIdenGraphicNew.Create(nil);
  Rpfunctions.AddObject('GRAPHICNEW',iden);
+ iden:=TIdenGraphicBounds.Create(nil);
+ Rpfunctions.AddObject('GRAPHICBOUNDS',iden);
 end;
 
 // Adds the identifiers that are on cache
@@ -637,6 +639,13 @@ begin
     sum_dif(auxiliar);
     if (NOT FChecking) then
     Value:=EqualEqualTRpValue(auxiliar2,auxiliar);
+   end
+   else
+   if operation=':=' then
+   begin
+    Raise TRpEvalException.Create(SRpEvalDescIdenLeft+':'+
+          Rpparser.TokenString,Rpparser.TokenString,
+         Rpparser.SourceLine,Rpparser.SourcePos);
    end
    else
     Exit;

@@ -29,6 +29,14 @@ uses
 {$IFDEF USEVARIANTS}
   midaslib,
 {$ENDIF}
+{$IFDEF MSWINDOWS}
+ rpgdidriver,
+{$ENDIF}
+{$IFDEF LINUX}
+ {$IFNDEF FORCECONSOLE}
+   rpqtdriver,
+ {$ENDIF}
+{$ENDIF}
   ActiveX,
   rpreport in '..\..\..\rpreport.pas',
   rpparams in '..\..\..\rpparams.pas',

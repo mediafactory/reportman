@@ -58,6 +58,7 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
     Height = 65
     AutoSize = False
     Caption = 'Params'
+    WordWrap = True
   end
   object MemoExpre: TMemo
     Left = 4

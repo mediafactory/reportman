@@ -179,7 +179,6 @@ begin
       else
       begin
        filename:=ParamStr(indexparam);
-       Writeln('break');
        if ((not topdf) and (not tometafile)) then
        begin
         inc(indexparam);

@@ -29,7 +29,7 @@ uses
   Qt,QComctrls,rpmaskeditclx,rppdfdriver,
   rpmdobinsint,rpmdconsts,rpprintitem,rptypes,
   rpgraphutils,rpsection,rpmunits, rpexpredlg,rpmdfextsec,
-  rpalias,rpreport,rpsubreport,rpmdflabelint,rplabelitem,
+  rpalias,rpreport,rpsubreport,rpmdflabelint,rplabelitem,rpmetafile,
   rpmdfdrawint,rpmdfbarcodeint,rpmdfchartint, QMenus, QTypes;
 
 const
@@ -667,10 +667,13 @@ var
  item:TRpAliaslistItem;
  FRpMainF:TFRpMainF;
  expredia:TRpExpreDialog;
+ adriver:IRpPrintDriver;
 begin
  FRpMainF:=TFRpMainF(Owner.Owner);
  report:=FRpMainf.report;
  try
+  adriver:=fpdfdriver;
+  adriver._AddRef;
   report.BeginPrint(fpdfdriver);
  except
   on E:Exception do

@@ -111,12 +111,6 @@ type
 {$IFDEF VCLANDCLX}
    procedure SendAfterPrintOperations;
 {$ENDIF}
-{$IFNDEF FORWEBAX}
- {$IFDEF USECLXTEECHART}
-   procedure DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
-    aposx,aposy:integer;xchart:TObject);
- {$ENDIF}
-{$ENDIF}
   public
    bitmap:TBitmap;
    dpi:integer;
@@ -136,6 +130,12 @@ type
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
 {$IFNDEF FORWEBAX}
    procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
+{$ENDIF}
+{$IFNDEF FORWEBAX}
+ {$IFDEF USECLXTEECHART}
+   procedure DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
+    aposx,aposy:integer;xchart:TObject);
+ {$ENDIF}
 {$ENDIF}
    procedure DrawPage(apage:TRpMetaFilePage);
    procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
@@ -1870,6 +1870,15 @@ begin
 {$ENDIF}
   achart.Legend.Visible:=nchart.ShowLegend;
   acolor:=0;
+  // autorange and other ranges
+  achart.LeftAxis.Maximum:=Series.HighValue;
+  achart.LeftAxis.Minimum:=Series.LowValue;
+  achart.LeftAxis.Automatic:=false;
+  achart.LeftAxis.AutomaticMaximum:=Series.AutoRangeH;
+  achart.LeftAxis.AutomaticMinimum:=Series.AutoRangeL;
+  achart.LeftAxis.Logarithmic:=Series.Logaritmic;
+  achart.LeftAxis.LogarithmicBase:=Round(Series.LogBase);
+  achart.LeftAxis.Inverted:=Series.Inverted;
   for i:=0 to Series.Count-1 do
   begin
    aserie:=nil;

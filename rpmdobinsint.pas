@@ -124,7 +124,9 @@ type
 
  TRpGenTextInterface=class(TRpSizePosInterface)
   private
+   procedure SetFontDefaultClick(Sender:TObject);
   protected
+   procedure InitPopUpMenu;override;
   public
    class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
@@ -1592,6 +1594,25 @@ begin
   Raise Exception.Create(SRpAlreadyWithname);
  fprintitem.Name:=newname;
  TFRpObjInsp(fobjinsp).AddCompItem(self,true);
+end;
+
+procedure TRpGenTextInterface.InitPopUpMenu;
+var
+ aitem:TMenuItem;
+begin
+ inherited InitPopUpMenu;
+
+ // Set Font as Default
+ aitem:=TMenuItem.Create(FContextMenu);
+ aitem.Caption:=SRpSetFontPropsAsDefault;
+ aitem.Hint:=SRpSetFontPropsAsDefaultHint;
+ aitem.OnClick:=SetFontDefaultClick;
+ FContextMenu.Items.Add(aitem);
+end;
+
+procedure TRpGenTextInterface.SetFontDefaultClick(Sender:TObject);
+begin
+ TrpReport(printitem.Report).GetDefaultFontFrom(TRpGenTextComponent(printitem));
 end;
 
 initialization

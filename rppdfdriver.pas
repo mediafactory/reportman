@@ -43,6 +43,22 @@ type
    FOrientation:TRpOrientation;
    FPageWidth,FPageHeight:integer;
    PageQt:Integer;
+{$IFNDEF FORWEBAX}
+{$IFDEF USETEECHART}
+   gdidriver:TObject;
+{$ENDIF}
+{$ENDIF}
+{$IFDEF USECLXTEECHART}
+  qtdriver:TObject;
+{$ENDIF}
+
+{$IFDEF MSWINDOWS}
+{$ENDIF}
+{$IFDEF LINUX}
+ {$IFNDEF FORCECONSOLE}
+   qtdriver:=TRpqtdriver;
+ {$ENDIF}
+{$ENDIF}
   public
    filename:string;
    Compressed:boolean;
@@ -103,7 +119,16 @@ procedure DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePa
 
 implementation
 
-uses Math;
+uses
+{$IFNDEF FORWEBAX}
+{$IFDEF USETEECHART}
+  rpgdidriver,
+{$ENDIF}
+{$ENDIF}
+{$IFDEF USECLXTEECHART}
+  rpqtdriver,
+{$ENDIF}
+Math;
 
 const
  AlignmentFlags_SingleLine=64;
@@ -159,6 +184,14 @@ begin
  FPageWidth:= 11904;
  FPageHeight:= 16836;
  FPDFFile:=TRpPDFFile.Create(nil);
+{$IFNDEF FORWEBAX}
+{$IFDEF USETEECHART}
+  gdidriver:=TRpGDIDriver.Create;
+{$ENDIF}
+{$ENDIF}
+{$IFDEF USECLXTEECHART}
+  qtdriver:=TRpQtDriver.Create;
+{$ENDIF}
 end;
 
 destructor TRpPDFDriver.Destroy;
@@ -184,6 +217,16 @@ end;
 procedure TRpPDFDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
    hardwarecollate:boolean);
 begin
+{$IFNDEF FORWEBAX}
+{$IFDEF USETEECHART}
+  report.OnDrawChart:=TRpGDIDriver(gdidriver).DoDrawChart;
+{$ENDIF}
+{$ENDIF}
+{$IFDEF USECLXTEECHART}
+  report.OnDrawChart:=TRpQtDriver(qtdriver).DoDrawChart;
+{$ENDIF}
+
+
  if Assigned(FPDFFile) then
  begin
   FPDFFile.Free;
@@ -648,7 +691,7 @@ begin
  // If it's the last page prints additional info
  if Sender.LastPage then
  begin
-  astring:=Format('%-20.20s',[SRpPage])+FormatFloat('0000000000',Sender.PageNum);
+  astring:=Format('%-20.20s',[SRpPage])+FormatFloat('0000000000',Sender.PageNum+1);
 {$IFDEF USEVARIANTS}
   WriteLn(astring);
 {$ELSE}

@@ -110,14 +110,14 @@ ActiveLang=
 ProjectLang=
 RootDir=C:\Archivos de programa\Borland\Delphi7\Bin\
 [Deployment]
-DeployDir="c:\inetpub\wwwroot\"
-DeployURL=http://localhost/
-HTMLDir="c:\inetpub\wwwroot\"
-CABCompress=1
+DeployDir=
+DeployURL=
+HTMLDir=
+CABCompress=0
 CodeSign=0
 IncludeVerInfo=1
-AutoIncRelease=1
-DeployPackages=0
+AutoIncRelease=0
+DeployPackages=1
 DeployFiles=0
 CompanyURL=
 Description=
@@ -152,3 +152,19 @@ ProductName=Report Manager IE Plugin
 ProductVersion=2.1.0.0
 Comments=
 OleSelfRegister=1
+[Excluded Packages]
+c:\prog\delphi7\Bin\dclmcn70.bpl=Borland DataSnap Connection Components
+c:\prog\delphi7\Bin\dclwbm70.bpl=Borland InternetExpress Components
+c:\prog\delphi7\Bin\dclwebsnap70.bpl=Borland WebSnap Components
+c:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
+c:\prog\delphi7\Projects\Bpl\GESTORX.bpl=Interface Gestor DelphiX
+c:\prog\delphi7\Projects\Bpl\UtilsVariats.bpl=Utils Variats (Jordi Farràs)
+c:\prog\delphi7\Projects\Bpl\Mycompos_d6.bpl=Utils generales
+[HistoryLists\hlConditionals]
+Count=3
+Item0=FORWEBAX
+Item1=REPMANRELEASE
+Item2=NOLINUXPRINTBUG;FORWEBAX
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

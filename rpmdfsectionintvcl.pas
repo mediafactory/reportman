@@ -1266,6 +1266,8 @@ begin
 
  if Assigned(asizepos) then
  begin
+  if asizepos is TRpGenTextComponent then
+   FRpMainF.Report.AssignDefaultFontTo(TRpGenTextComponent(asizepos));
   asizepos.PosX:=pixelstotwips(NewLeft);
   asizepos.PosY:=pixelstotwips(NewTop);
   asizepos.Height:=pixelstotwips(NewHeight);
@@ -1439,6 +1441,8 @@ begin
    asizepos:=TRpExpression.Create(printitem)
   else
    asizepos:=TRpExpression.Create(printitem.Report);
+  TRpReport(printitem.Report).AssignDefaultFontTo(TRpGenTextComponent(asizepos));
+
   // Search if theres a selected field
   ExtractFieldNameAndSize(anode.Text,fieldname,size);
   TRpExpression(asizepos).Expression:=fieldname;

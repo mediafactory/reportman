@@ -27,13 +27,13 @@ uses
 {$IFDEF USEVARIANTS}
   Types,Variants,
 {$ENDIF}
-  Classes,rppdfdriver,
-  Windows,Graphics, Controls, Forms, Dialogs,StdCtrls,ExtCtrls,
+  Classes,rppdfdriver, Dialogs, ExtDlgs, Menus, rpalias,
+  Windows,Graphics, Controls, Forms,ExtCtrls,StdCtrls,
   rpmdobinsintvcl,rpmdconsts,rpprintitem,comctrls,
   rpgraphutilsvcl,rpsection,rpmunits, rpexpredlgvcl,rpmdfextsecvcl,
-  rpalias,rpreport,rpsubreport,rpmdflabelintvcl,rplabelitem,
-  rpmdfdrawintvcl,rpmdfbarcodeintvcl,rpmdfchartintvcl, Menus,
-  rpmaskedit, ExtDlgs;
+  rpreport,rpsubreport,rpmdflabelintvcl,rplabelitem,
+  rpmdfdrawintvcl,rpmdfbarcodeintvcl,rpmdfchartintvcl,
+  rpmaskedit,rpmetafile;
 
 const
   CONS_LEFTGAP=3;
@@ -620,10 +620,13 @@ var
  item:TRpAliaslistItem;
  FRpMainF:TFRpMainFVCL;
  expredia:TRpExpreDialogVCL;
+ adriver:IRpPrintDriver;
 begin
  FRpMainF:=TFRpMainFVCL(Owner.Owner);
  report:=FRpMainf.report;
  try
+  adriver:=fpdfdriver;
+  adriver._AddRef;
   report.BeginPrint(fpdfdriver);
  except
   on E:Exception do

@@ -49,6 +49,7 @@ type
    procedure UpdateAllStrings;
    procedure WriteWideText(Writer:TWriter);
    procedure ReadWideText(Reader:TReader);
+   function GetTextObject:TRpTextObject;
   protected
    procedure DefineProperties(Filer:TFiler);override;
    procedure DoPrint(adriver:IRpPrintDriver;
@@ -57,6 +58,7 @@ type
    procedure Loaded;override;
   public
    procedure UpdateWideText;
+   function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
    property AllStrings:TRpWideStrings read FAllStrings write FAllStrings;
    constructor Create(AOwner:TComponent);override;
    property Text:widestring read GetText write SetText;
@@ -785,6 +787,39 @@ begin
  inherited;
 
  Filer.DefineProperty('WideText',ReadWideText,WriteWideText,True);
+end;
+
+function TRpLabel.GetTextObject:TRpTextObject;
+var
+ aalign:Integer;
+begin
+ Result.Text:=GetText;
+ Result.LFontName:=LFontName;
+ Result.WFontName:=WFontName;
+ Result.FontSize:=FontSize;
+ Result.FontRotation:=FontRotation;
+ Result.FontStyle:=FontStyle;
+ Result.Type1Font:=integer(Type1Font);
+ Result.FontColor:=FontColor;
+ Result.CutText:=CutText;
+ aalign:=PrintAlignment or VAlignment;
+ if SingleLine then
+  aalign:=aalign or AlignmentFlags_SingleLine;
+ Result.Alignment:=aalign;
+ Result.WordWrap:=WordWrap;
+ Result.RightToLeft:=RightToLeft;
+ Result.PrintStep:=PrintStep;
+end;
+
+
+function TRpLabel.GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;
+var
+ aText:TRpTextObject;
+begin
+ Result:=inherited GetExtension(adriver,MaxExtent);
+ aText:=GetTextObject;
+ adriver.TextExtent(aText,Result);
+ LastExtent:=Result;
 end;
 
 

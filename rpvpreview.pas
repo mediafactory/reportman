@@ -418,7 +418,13 @@ begin
  copies:=report.Copies;
  if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
   exit;
- ALastExecute(Self);
+ if not allpages then
+ begin
+  pagenum:=topage+1;
+  PrintPage;
+ end
+ else
+  ALastExecute(Self);
  PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,
  collate,false,report.Metafile.PrinterSelect);
   // report.EndPrint;

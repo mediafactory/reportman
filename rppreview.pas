@@ -443,7 +443,13 @@ begin
  end;
 // report.EndPrint;
 // PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
- ALastExecute(Self);
+ if not allpages then
+ begin
+  pagenum:=topage+1;
+  PrintPage;
+ end
+ else
+  ALastExecute(Self);
  PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,
  collate,report.PrinterSelect);
  AppIdle(Self,adone);

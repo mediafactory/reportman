@@ -66,6 +66,8 @@ type
    FShowLegend:Boolean;
    procedure OnClear(Sender:TObject);
    procedure OnNewValue(Y:Single;Cambio:Boolean;leyen,textleyen:string);
+   procedure OnBoundsValue(autol,autoh:boolean;lvalue,hvalue:double;
+    logaritmic:boolean;logbase:double;inverted:boolean);
    procedure SetIdentifier(Value:string);
    procedure SetSeries(avalue:TRpSeries);
    function CheckValueCondition:boolean;
@@ -153,11 +155,15 @@ begin
  FShowHint:=true;
  FShowLegend:=False;
  FSeries:=TRpSeries.Create(TRpSeriesItem);
+ Fseries.AutoRangel:=true;
+ Fseries.AutoRangeh:=true;
+ Fseries.Logaritmic:=false;
  FChangeSerieBool:=false;
  FClearExpressionBool:=false;
  FIdenChart:=TVariableGrap.Create(Self);
  FIdenChart.OnClear:=OnClear;
  FIdenChart.OnNewValue:=OnNewValue;
+ FIdenChart.OnBounds:=OnBoundsValue;
  FView3d:=true;
  FPerspective:=15;
  FElevation:=345;
@@ -428,6 +434,18 @@ begin
   aserie:=FSeries.Add;
  end;
  aserie.AddValue(Y,leyen);
+end;
+
+procedure TRpChart.OnBoundsValue(autol,autoh:boolean;lvalue,hvalue:double;
+  logaritmic:boolean;logbase:double;inverted:boolean);
+begin
+ FSeries.AutorangeL:=autol;
+ FSeries.AutorangeH:=autoh;
+ FSeries.LowValue:=lvalue;
+ FSeries.HighValue:=hvalue;
+ FSeries.Logaritmic:=logaritmic;
+ FSeries.Logbase:=logbase;
+ FSeries.Inverted:=inverted;
 end;
 
 procedure TRpChart.OnClear(Sender:TObject);

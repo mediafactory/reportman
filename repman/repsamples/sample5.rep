@@ -50,6 +50,9 @@ object TRpReport
   TwoPass = True
   StreamFormat = rpStreamText
   ReportAction = []
+  Type1Font = poHelvetica
+  WFontName = 'Arial'
+  LFontName = 'Helvetica'
   object TRpSubReport0: TRpSubReport
     Sections = <
       item
@@ -439,7 +442,7 @@ object TRpReport
     Width = 10890
     Height = 3915
     PosX = 0
-    PosY = 576
+    PosY = 570
     Type1Font = poHelvetica
     Series = <
       item
@@ -447,6 +450,7 @@ object TRpReport
       end>
     Driver = rpchartdriverdefault
     View3dWalls = False
+    Resolution = 200
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''

@@ -633,6 +633,7 @@ begin
  for i:=0 to FReportComponents.Count-1 do
  begin
   acompo:=TRpCommonPosComponent(FReportComponents.Items[i].Component);
+  if acompo.EvaluatePrintCondition then
   if DoPartialPrint then
   begin
    if (acompo is TRpExpression) then

@@ -77,6 +77,13 @@ type
   function GetItem(Index:Integer):TRpSeriesItem;
   procedure SetItem(index:integer;Value:TRpSeriesItem);
  public
+  AutoRangeL:Boolean;
+  AutoRangeH:Boolean;
+  LowValue:double;
+  HighValue:double;
+  Logaritmic:Boolean;
+  LogBase:double;
+  Inverted:boolean;
   function Add:TRpSeriesItem;
   property Items[index:integer]:TRpSeriesItem read GetItem write SetItem;default;
  end;

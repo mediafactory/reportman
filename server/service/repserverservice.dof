@@ -113,9 +113,9 @@ RootDir=C:\Archivos de programa\Borland\Delphi7\Bin\
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=2
-MinorVer=1
+MinorVer=2
 Release=0
-Build=2
+Build=3
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Service
-FileVersion=2.1.0.2
+FileVersion=2.2.0.3
 InternalName=repserverservice
 LegalCopyright=
 LegalTrademarks=
@@ -134,6 +134,14 @@ OriginalFilename=repserverservice.exe
 ProductName=Report Manager
 ProductVersion=2.1.0.0
 Comments=
+[Excluded Packages]
+c:\prog\delphi7\Bin\dclmcn70.bpl=Borland DataSnap Connection Components
+c:\prog\delphi7\Bin\dclwbm70.bpl=Borland InternetExpress Components
+c:\prog\delphi7\Bin\dclwebsnap70.bpl=Borland WebSnap Components
+c:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
+c:\prog\delphi7\Projects\Bpl\GESTORX.bpl=Interface Gestor DelphiX
+c:\prog\delphi7\Projects\Bpl\UtilsVariats.bpl=Utils Variats (Jordi Farràs)
+c:\prog\delphi7\Projects\Bpl\Mycompos_d6.bpl=Utils generales
 [HistoryLists\hlConditionals]
 Count=3
 Item0=REPMANRELEASE

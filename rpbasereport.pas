@@ -27,7 +27,7 @@ interface
 {$I rpconf.inc}
 
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpmdconsts,
- rpdatainfo,rpparams,rpeval,rptypeval,
+ rpdatainfo,rpparams,rpeval,rptypeval,rpprintitem,
  rpmetafile,
 {$IFDEF USEVARIANTS}
  types,dateutils,Variants,
@@ -148,6 +148,24 @@ type
    FStreamFormat:TRpStreamFormat;
    FReportAction:TRpReportActions;
    FPreviewAbout:Boolean;
+   // Default font properties
+   FWFontName:widestring;
+   FLFontName:widestring;
+   FFontSize:smallint;
+   FFontRotation:smallint;
+   FFontStyle:integer;
+   FFontColor:integer;
+   FBackColor:integer;
+   FTransparent:Boolean;
+   FCutText:Boolean;
+   FWordWrap:Boolean;
+   FAlignMent:integer;
+   FVAlignMent:integer;
+   FSingleLine:boolean;
+   FType1Font:TRpType1Font;
+   FBidiModes:TStrings;
+   FMultiPage:Boolean;
+   FPrintStep:TRpSelectFontStep;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -156,6 +174,11 @@ type
    procedure SetParams(Value:TRpParamList);
    procedure SetGridWidth(Value:TRpTwips);
    procedure SetGridHeight(Value:TRpTwips);
+   procedure ReadWFontName(Reader:TReader);
+   procedure WriteWFontName(Writer:TWriter);
+   procedure ReadLFontName(Reader:TReader);
+   procedure WriteLFontName(Writer:TWriter);
+   procedure SetBidiModes(Value:TStrings);
   protected
     errorprocessing:Boolean;
     lasterrorprocessing:WideString;
@@ -210,6 +233,7 @@ type
      PrintStep,BackColor:integer;transparent:boolean):Boolean;
     procedure CheckIfDataAvailable;
     procedure UpdateParamsBeforeOpen(index:integer;doeval:boolean);
+    procedure DefineProperties(Filer:TFiler);override;
   public
    Ininumpage:boolean;
    FailIfLoadExternalError:Boolean;
@@ -259,7 +283,11 @@ type
     default MILIS_PROGRESS_DEFAULT;
    procedure AlignSectionsTo(linesperinch:integer);
    procedure PrepareParamsBeforeOpen;
-   // Grid options
+   procedure AssignDefaultFontTo(aitem:TRpGenTextComponent);
+   procedure GetDefaultFontFrom(aitem:TRpGenTextComponent);
+   // Default Font properties
+   property WFontName:widestring read FWFontName write FWFontName;
+   property LFontName:widestring read FLFontName write FLFontName;
   published
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
    property GridLines:Boolean read FGridLines write FGridLines default false;
@@ -319,6 +347,23 @@ type
    property ReportAction:TRpReportActions read FReportAction write FReportAction;
    property PreviewAbout:Boolean read FPreviewAbout write FPreviewAbout
     default true;
+   // Default font props
+   property Type1Font:TRpType1Font read FType1Font write FType1Font;
+   property FontSize:smallint read FFontSize write FFontSize default 10;
+   property FontRotation:smallint read FFontRotation write FFontRotation default 0;
+   property FontStyle:integer read FFontStyle write FFontStyle default 0;
+   property FontColor:integer read FFontColor write FFontColor default 0;
+   property BackColor:integer read FBackColor write FBackColor default $FFFFFF;
+   property Transparent:Boolean read FTransparent write FTransparent default true;
+   property CutText:Boolean read FCutText write FCutText default false;
+   property Alignment:integer read FAlignment write FAlignment default 0;
+   property VAlignment:integer read FVAlignment write FVAlignment default 0;
+   property WordWrap:Boolean read FWordWrap write FWordWrap default false;
+   property SingleLine:boolean read FSingleLine write FSingleLine default false;
+   property BidiModes:TStrings read FBidiModes write SetBidiModes;
+   property MultiPage:Boolean read FMultiPage write FMultiPage default false;
+   property PrintStep:TRpSelectFontStep read FPrintStep write FPrintStep
+    default rpselectsize;
  end;
 
 
@@ -457,6 +502,18 @@ begin
  // Other
  FPrinterFonts:=rppfontsdefault;
  FReportAction:=[];
+ // Default font
+ FLFontName:='Helvetica';
+ FWFontName:='Arial';
+ FontSize:=10;
+ FontRotation:=0;
+ FontStyle:=0;
+ FontColor:=0;
+ FBackColor:=$FFFFFF;
+ FTransparent:=true;
+ FCutText:=false;
+ FBidiModes:=TStringList.Create;
+
  //
  InitEvaluator;
 end;
@@ -1267,6 +1324,84 @@ begin
  FEvaluator.Language:=Language;
  FEvaluator.OnGraphicOp:=OnGraphicOp;
  FEvaluator.OnTextOp:=OnTextOp;
+end;
+
+procedure TRpBaseReport.SetBidiModes(Value:TStrings);
+begin
+ FBidiModes.Assign(Value);
+end;
+
+
+procedure TRpBaseReport.WriteWFontName(Writer:TWriter);
+begin
+ WriteWideString(Writer, FWFontName);
+end;
+
+procedure TRpBaseReport.WriteLFontName(Writer:TWriter);
+begin
+ WriteWideString(Writer, FLFontName);
+end;
+
+
+
+procedure TRpBaseReport.ReadLFontName(Reader:TReader);
+begin
+ FLFontName:=ReadWideString(Reader);
+end;
+
+procedure TRpBaseReport.ReadWFontName(Reader:TReader);
+begin
+ FWFontName:=ReadWideString(Reader);
+end;
+
+procedure TRpBaseReport.DefineProperties(Filer:TFiler);
+begin
+ inherited;
+
+ Filer.DefineProperty('WFontName',ReadWFontName,WriteWFontName,True);
+ Filer.DefineProperty('LFontName',ReadLFontName,WriteLFontName,True);
+end;
+
+procedure TRpBaseReport.AssignDefaultFontTo(aitem:TRpGenTextComponent);
+begin
+ aitem.Type1Font:=Type1Font;
+ aitem.FontSize:=FontSize;
+ aitem.FontStyle:=FontStyle;
+ aitem.FontRotation:=FontRotation;
+ aitem.FontColor:=FontColor;
+ aitem.BackColor:=BackColor;
+ aitem.Transparent:=Transparent;
+ aitem.CutText:=CutText;
+ aitem.Alignment:=Alignment;
+ aitem.VAlignment:=VAlignment;
+ aitem.Wordwrap:=Wordwrap;
+ aitem.SingleLine:=SingleLine;
+ aitem.BidiModes:=BidiModes;
+ aitem.Multipage:=Multipage;
+ aitem.PrintStep:=PrintStep;
+ aitem.LFontName:=LFontName;
+ aitem.WFontName:=WFontName;
+end;
+
+procedure TRpBaseReport.GetDefaultFontFrom(aitem:TRpGenTextComponent);
+begin
+ Type1Font:=aitem.Type1Font;
+ FontSize:=aitem.FontSize;
+ FontStyle:=aitem.FontStyle;
+ FontRotation:=aitem.FontRotation;
+ FontColor:=aitem.FontColor;
+ BackColor:=aitem.BackColor;
+ Transparent:=aitem.Transparent;
+ CutText:=aitem.CutText;
+ Alignment:=aitem.Alignment;
+ VAlignment:=aitem.VAlignment;
+ Wordwrap:=aitem.Wordwrap;
+ SingleLine:=aitem.SingleLine;
+ BidiModes:=aitem.BidiModes;
+ Multipage:=aitem.Multipage;
+ PrintStep:=aitem.PrintStep;
+ LFontName:=aitem.LFontName;
+ WFontName:=aitem.WFontName;
 end;
 
 end.

@@ -125,9 +125,9 @@ RootDir=
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=2
-MinorVer=1
+MinorVer=2
 Release=0
-Build=21
+Build=23
 Debug=0
 PreRelease=0
 Special=0
@@ -138,13 +138,21 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report client and metafile viewer
-FileVersion=2.1.0.21
+FileVersion=2.2.0.23
 InternalName=metaview
 LegalCopyright=MPL/GLP License
 LegalTrademarks=
 OriginalFilename=metaview
 ProductName=Report Manager Metafile viewer/client
 ProductVersion=2.1.0.0
+[Excluded Packages]
+c:\prog\delphi7\Bin\dclmcn70.bpl=Borland DataSnap Connection Components
+c:\prog\delphi7\Bin\dclwbm70.bpl=Borland InternetExpress Components
+c:\prog\delphi7\Bin\dclwebsnap70.bpl=Borland WebSnap Components
+c:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
+c:\prog\delphi7\Projects\Bpl\GESTORX.bpl=Interface Gestor DelphiX
+c:\prog\delphi7\Projects\Bpl\UtilsVariats.bpl=Utils Variats (Jordi Farràs)
+c:\prog\delphi7\Projects\Bpl\Mycompos_d6.bpl=Utils generales
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
