@@ -23,6 +23,13 @@ clean:
 	-rm -Rf repman/utils/metaview/*.dcu
 	-rm -Rf repman/utils/metaview/*.dpu
 	-rm -Rf repman/utils/metaview/*.~*
+	-rm -Rf repman/utils/metaprint/*.~*
+	-rm -Rf repman/utils/metaprint/*.dcu
+	-rm -Rf repman/utils/metaprint/*.dpu
+	-rm -Rf repman/utils/metaview/*.~*
+	-rm -Rf repman/utils/reptotxt/*.dcu
+	-rm -Rf repman/utils/reptotxt/*.dpu
+	-rm -Rf repman/utils/reptotxt/*.~*
 
 
 	-rm tests/eval/project1

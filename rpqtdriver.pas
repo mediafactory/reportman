@@ -21,7 +21,7 @@ unit rpqtdriver;
 
 interface
 
-uses classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
+uses Classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
  rpmunits,QPrinters,QDialogs,rpgraphutils;
 
 

@@ -52,6 +52,10 @@ resourcestring
   SRpRepToTxt2='Converts a report file from report manager (.rep) to a plain file';
   SRpRepToTxt3='Usage: reptotxt sourcefilename destinationfilename';
 
+  SRpMetaPrint1='metaprint v1.0';
+  SRpMetaPrint2='Prints a metafile report (.rpmf)';
+  SRpMetaPrint3='Usage: metaprint metafilename';
+
   SRpTxtToRep1='txttorep v1.0';
   SRpTxtToRep2='Converts a plain file containing object descriptions to a report manager (.rep) file';
   SRpTxtToRep3='Usage: txttorep sourcefilename destinationfilename';
