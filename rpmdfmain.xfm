@@ -6,8 +6,8 @@ object FRpMainF: TFRpMainF
   ActiveControl = ToolButton1
   AutoScroll = False
   Caption = 'Report Manager Designer'
-  ClientHeight = 407
-  ClientWidth = 632
+  ClientHeight = 405
+  ClientWidth = 626
   Color = clBackground
   Menu = MainMenu1
   ShowHint = True
@@ -16,13 +16,13 @@ object FRpMainF: TFRpMainF
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnResize = FormResize
-  PixelsPerInch = 96
+  PixelsPerInch = 100
   TextHeight = 13
   TextWidth = 6
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 632
+    Width = 626
     Height = 30
     AutoSize = True
     ButtonHeight = 26
@@ -220,8 +220,8 @@ object FRpMainF: TFRpMainF
   object mainscrollbox: TScrollBox
     Left = 0
     Top = 30
-    Width = 632
-    Height = 377
+    Width = 626
+    Height = 375
     HorzScrollBar.Range = 189
     Align = alClient
     BorderStyle = bsNone
@@ -231,7 +231,7 @@ object FRpMainF: TFRpMainF
       Left = 181
       Top = 0
       Width = 8
-      Height = 377
+      Height = 375
       Beveled = True
       OnMoved = Splitter1Moved
     end
@@ -239,7 +239,7 @@ object FRpMainF: TFRpMainF
       Left = 0
       Top = 0
       Width = 181
-      Height = 377
+      Height = 375
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0

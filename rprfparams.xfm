@@ -8,7 +8,6 @@ object FRpRunTimeParams: TFRpRunTimeParams
   Caption = 'Dialog'
   Color = clButton
   Position = poScreenCenter
-  Scaled = False
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 100

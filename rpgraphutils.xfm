@@ -10,7 +10,6 @@ object FRpGraphProgres: TFRpGraphProgres
   Caption = 'Dialog'
   Color = clButton
   Position = poScreenCenter
-  Scaled = False
   ShowHint = True
   PixelsPerInch = 100
   object CancelBtn: TButton

@@ -10,7 +10,6 @@ object FRpGridOptions: TFRpGridOptions
   Caption = 'Grid options'
   Color = clButton
   Position = poScreenCenter
-  Scaled = False
   ShowHint = True
   PixelsPerInch = 100
   object GridColor: TShape

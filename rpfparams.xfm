@@ -9,7 +9,6 @@ object FRpParams: TFRpParams
   Caption = 'Parameter definition'
   Color = clButton
   Position = poScreenCenter
-  Scaled = False
   ShowHint = True
   OnCreate = FormCreate
   OnShow = FormShow

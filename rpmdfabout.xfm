@@ -9,7 +9,6 @@ object FRpAboutBox: TFRpAboutBox
   Caption = 'About Report Manager '
   Color = clButton
   Position = poScreenCenter
-  Scaled = False
   OnCreate = FormCreate
   PixelsPerInch = 100
   object Image1: TImage

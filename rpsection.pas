@@ -259,8 +259,6 @@ var
 begin
  for i:=0 to Components.Count-1 do
  begin
-  newposx:=aposx;
-  newposy:=aposy;
   compo:=TRpCommonPosComponent(Components.Items[i].Component);
   // Evaluates print condition of each comonent
   if compo.EvaluatePrintCondition then

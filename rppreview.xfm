@@ -1,8 +1,8 @@
 object FRpPreview: TFRpPreview
-  Left = 121
-  Top = 111
-  Width = 637
-  Height = 473
+  Left = 60
+  Top = 57
+  Width = 633
+  Height = 471
   VertScrollBar.Range = 30
   ActiveControl = EPageNum
   Caption = 'Report Print Preview'
@@ -16,13 +16,13 @@ object FRpPreview: TFRpPreview
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnResize = FormResize
-  PixelsPerInch = 96
+  PixelsPerInch = 100
   TextHeight = 13
   TextWidth = 6
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 637
+    Width = 633
     Height = 30
     AutoSize = True
     ButtonHeight = 26
@@ -167,8 +167,8 @@ object FRpPreview: TFRpPreview
   object ImageContainer: TScrollBox
     Left = 0
     Top = 30
-    Width = 637
-    Height = 443
+    Width = 633
+    Height = 441
     VertScrollBar.Increment = 60
     VertScrollBar.Range = 81
     HorzScrollBar.Increment = 60

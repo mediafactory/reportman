@@ -9,7 +9,6 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
   Caption = 'Data access configuration'
   Color = clButton
   Position = poScreenCenter
-  Scaled = False
   ShowHint = True
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate

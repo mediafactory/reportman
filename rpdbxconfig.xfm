@@ -9,7 +9,6 @@ object FRpDBXConfig: TFRpDBXConfig
   Caption = 'Database connections configuration'
   Color = clButton
   Position = poScreenCenter
-  Scaled = False
   ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate

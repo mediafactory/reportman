@@ -7,7 +7,6 @@ object FRpShowSampledata: TFRpShowSampledata
   Caption = 'Data'
   Color = clButton
   Position = poScreenCenter
-  Scaled = False
   ShowHint = True
   PixelsPerInch = 100
   object ToolBar1: TToolBar

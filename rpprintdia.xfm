@@ -9,7 +9,6 @@ object FRpPrintDialog: TFRpPrintDialog
   Caption = 'Print'
   Color = clButton
   Position = poScreenCenter
-  Scaled = False
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 100
