@@ -1,20 +1,97 @@
 
-DELPHIPATH=c:\prog\delphi6
-COMPILE=dcc32 -U$(DELPHIPATH)\projects\bpl
+DELPHIPATH=c:\Archivos de programa\Borland\Delphi7
+REPORTMANPATH=c:\prog\toni\cvsroot\reportman\reportman
+COMPILE="$(DELPHIPATH)\bin\dcc32" -U"$(REPORTMANPATH);$(DELPHIPATH)\projects\bpl" -I"$(REPORTMANPATH)"
 
-all: packages repman
+all: packages reportman
 
-repman:
+reportman: reportmanutils reportmanserver reportmanutilsxp reportmanserverxp
+
+reportmanutils:
         cd repman
         $(COMPILE) repmand.dpr
+        cd utils\reptotxt
+        $(COMPILE) reptotxt.dpr
+        cd ..
+        cd txttorep
+        $(COMPILE) txttorep.dpr
+        cd ..
+        cd printreptopdf
+        $(COMPILE) printreptopdf.dpr
+        cd ..
+        cd printrep
+        $(COMPILE) printrep.dpr
+        cd ..
+        cd metaview
+        $(COMPILE) metaview.dpr
+        cd ..
+        cd metaprint
+        $(COMPILE) metaprint.dpr
+        cd ..
+        cd startup
+        $(COMPILE) startup.dpr
+        cd ..
+        cd unixtodos
+        $(COMPILE) unixtodos.dpr
+        cd ..
+        cd ..
         cd ..
 
-packages: clxpackages rtlpackages
+reportmanserver:
+        cd server
+        cd app
+        $(COMPILE) reportserverapp.dpr
+        $(COMPILE) reportservercon.dpr
+        cd ..
+        cd config
+        $(COMPILE) repserverconfig.dpr
+        cd ..
+        cd ..
+
+
+reportmanutilsxp:
+        cd repman
+        $(COMPILE) repmandxp.dpr
+
+        cd utils
+        cd printrep
+        $(COMPILE) printrepxp.dpr
+        cd ..
+        cd metaview
+        $(COMPILE) metaviewxp.dpr
+        cd ..
+        cd metaprint
+        $(COMPILE) metaprintxp.dpr
+        cd ..
+        cd ..
+        cd ..
+
+reportmanserverxp:
+        cd server
+        cd app
+        $(COMPILE) reportserverappxp.dpr
+        cd ..
+        cd config
+        $(COMPILE) repserverconfigxp.dpr
+        cd ..
+        cd service
+        $(COMPILE) repserverservice.dpr
+        $(COMPILE) repserviceinstall.dpr
+        cd ..
+        cd ..
+
+packages: rtlpackages vclpackages clxpackages vcldesignpackages designpackages
 
 rtlpackages:
         $(COMPILE) rppack_del.dpk
+vclpackages:
+        $(COMPILE) rppackvcl_del.dpk
 clxpackages:
         $(COMPILE) rppackv_del.dpk
+vcldesignpackages:
+        $(COMPILE) rppackdesignvcl_del.dpk
+designpackages:
+        $(COMPILE) rppackdesign_del.dpk
 
 
 clean:

@@ -40,6 +40,9 @@
       (Red Hat,Suse,Mandrake...)</td>
   </tr>
 </table>
+<p>The following steps are for building Report Manager from Delphi/Kylix IDE. 
+  You can also <a href="#commandline">build the packages from the command line</a>.</p>
+<h3>Building Report Manager from the IDE</h3>
 <p><b>1.Install Report Manager packages</b></p>
 <p>Install all Report Manager packages, follow instructions for <a href="delphicomp.html">Delphi</a> 
   and <a href="kylixcomp.html">Kylix</a>.</p>
@@ -116,6 +119,21 @@
 <p>This will delete any dcus, dpus innecessary files (warning also cleans the 
   executables)</p>
 <p>Zip all the files in one and it's done.</p>
-<p>&nbsp;</p>
+<h3><a name="commandline"></a>Building Report Manager from the command line</h3>
+<p>To build Report Manager from the command line in <b>Windows you must have Borland</b> 
+  make in the path (not GNU make), for Linux GNU make is used.</p>
+<p>Start a terminal window (command prompt in Windows) and cd to main reportman 
+  directory, that is the directory containing the .dpk files GNUmakefile(Linux) 
+  and Makefile (Windows).</p>
+<p>Edit <i>GNUmakefile</i> (Linux) or <i>Makefile</i> (Windows) and set Borland 
+  Delphi path or Kylix path enviroment variables to correct paths.</p>
+<p>Enter:</p>
+<p>make all</p>
+<p>All the packages and command line tools will be compiled.</p>
+<p>If you want to compile only packages you can write make packages or <i>make 
+  reportman</i> to compile only executables, see available options by opening 
+  the file <i>GNUmakefile</i> in Linux or <i>Makefile</i> in Windows.</p>
+<p>The command <i>make clean</i> will delete all generated executables and compiled 
+  files.</p>
 </body>
 </html>

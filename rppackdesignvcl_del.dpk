@@ -29,12 +29,8 @@ package rppackdesignvcl_del;
 requires
   rtl,
   rppack_del,
-  ibxpress,
   dsnap,
   dbrtl,
-  adortl,
-  dbexpress,
-  bdertl,
   vcl,
   vcldb,
   rppackvcl_del;
