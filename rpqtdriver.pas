@@ -218,7 +218,7 @@ begin
    apage:=metafile.Pages[i];
    for j:=0 to apage.ObjectCount-1 do
    begin
-    PrintObject(apage.Objects[i],dpix,dpiy);
+    PrintObject(apage.Objects[j],dpix,dpiy);
    end;
   end;
  finally
