@@ -28,6 +28,7 @@ uses
  QForms,
 {$IFDEF MSWINDOWS}
   midaslib,
+  QThemed in 'QThemed.pas',
   rpmdfmain in '..\rpmdfmain.pas' {FRpMainF},
   rpmdfstruc in '..\rpmdfstruc.pas' {FRpStructure: TFrame},
   rpmdfdesign in '..\rpmdfdesign.pas' {FRpDesignFrame: TFrame},
@@ -117,8 +118,8 @@ uses
   rpmdesigner in '..\rpmdesigner.pas',
   rpmdsysinfoqt in '..\rpmdsysinfoqt.pas' {FRpSysInfo},
   rpeditconn in '..\rpeditconn.pas' {FRpEditCon},
+  rpmdftree in '..\rpmdftree.pas' {FRpDBTree},
   rpmdfopenlib in '..\rpmdfopenlib.pas' {FRpOpenLib},
-  rpmdprintconfig in '..\rpmdprintconfig.pas' {FRpPrinterConfig};
   rppdfdriver in '..\rppdfdriver.pas';
 {$ENDIF}
 

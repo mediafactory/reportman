@@ -30,6 +30,7 @@ begin
   FReportParameters.FReport:=FReport;
  end;
  Result:=FReportParameters;
+ Result._Addref;
 end;
 
 

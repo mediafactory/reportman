@@ -34,6 +34,7 @@ begin
  end;
  FReportParam.FParam:=FReport.Params.Items[index];
  Result:=FReportParam;
+ Result._AddRef;
 end;
 
 initialization

@@ -31,7 +31,7 @@ uses
   Types,
 {$ENDIF}
   Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls,rpreport,rpmetafile, ComCtrls,
+  StdCtrls,rpbasereport,rpreport,rpmetafile, ComCtrls,
   rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,rptextdriver,
   ActnList, ImgList,Printers,rpmdconsts, ToolWin;
 
@@ -108,7 +108,7 @@ type
     printed:boolean;
     enableparams:boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
-    procedure RepProgress(Sender:TRpReport;var docancel:boolean);
+    procedure RepProgress(Sender:TRpBaseReport;var docancel:boolean);
     procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
     procedure DisableControls(enablebar:boolean);
     procedure EnableControls;
@@ -452,7 +452,7 @@ begin
  end;
 end;
 
-procedure TFRpVPreview.RepProgress(Sender:TRpReport;var docancel:boolean);
+procedure TFRpVPreview.RepProgress(Sender:TRpBaseReport;var docancel:boolean);
 begin
  BCancel.Caption:=IntToStr(Sender.CurrentSubReportIndex)+' '+SRpPage+':'+
   FormatFloat('####,####',report.PageNum)+':'

@@ -3,8 +3,8 @@ object FRpEditCon: TFRpEditCon
   Top = 110
   Width = 635
   Height = 430
-  VertScrollBar.Range = 365
-  HorzScrollBar.Range = 553
+  VertScrollBar.Range = 417
+  HorzScrollBar.Range = 569
   ActiveControl = BOK
   Caption = 'Edit connections'
   Color = clButton
@@ -89,7 +89,6 @@ object FRpEditCon: TFRpEditCon
       Height = 25
       Caption = 'OK'
       Default = True
-      ModalResult = 0
       TabOrder = 0
       OnClick = BOKClick
     end
@@ -106,22 +105,22 @@ object FRpEditCon: TFRpEditCon
   object PConnections: TPanel
     Left = 4
     Top = 32
-    Width = 549
-    Height = 301
+    Width = 565
+    Height = 353
     BevelOuter = bvNone
     TabOrder = 2
     object Splitter2: TSplitter
       Left = 153
       Top = 0
       Width = 8
-      Height = 301
+      Height = 353
       Beveled = True
     end
     object LConnections: TListBox
       Left = 0
       Top = 0
       Width = 153
-      Height = 301
+      Height = 353
       Align = alLeft
       ItemHeight = 13
       TabOrder = 0
@@ -130,8 +129,8 @@ object FRpEditCon: TFRpEditCon
     object PCon2: TPanel
       Left = 161
       Top = 0
-      Width = 388
-      Height = 301
+      Width = 404
+      Height = 353
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
@@ -181,82 +180,82 @@ object FRpEditCon: TFRpEditCon
       object EReportGroupsTable: TEdit
         Left = 116
         Top = 169
-        Width = 265
+        Width = 281
         Height = 21
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 0
+        TabOrder = 7
         Text = 'EReportTable'
         OnClick = EReportTableChange
       end
       object EReportSearchfield: TEdit
         Left = 116
         Top = 145
-        Width = 265
+        Width = 281
         Height = 21
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 1
+        TabOrder = 6
         Text = 'EReportTable'
         OnClick = EReportTableChange
       end
       object EReportField: TEdit
         Left = 116
         Top = 121
-        Width = 265
+        Width = 281
         Height = 21
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 2
+        TabOrder = 5
         Text = 'EReportTable'
         OnClick = EReportTableChange
       end
       object EReportTable: TEdit
         Left = 116
         Top = 98
-        Width = 265
+        Width = 281
         Height = 21
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 3
+        TabOrder = 4
         Text = 'EReportTable'
         OnChange = EReportTableChange
       end
       object ComboDriver: TComboBox
         Left = 116
         Top = 73
-        Width = 265
+        Width = 281
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         ItemHeight = 15
-        TabOrder = 4
+        TabOrder = 3
         Text = 'ComboDriver'
         OnClick = EReportTableChange
       end
       object CheckLoginPrompt: TCheckBox
         Left = 19
         Top = 49
-        Width = 369
+        Width = 385
         Height = 25
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Login prompt'
-        TabOrder = 5
+        TabOrder = 2
         OnClick = EReportTableChange
       end
       object CheckLoadDriverParams: TCheckBox
         Left = 19
         Top = 25
-        Width = 369
+        Width = 385
         Height = 25
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Load driver parameters'
-        TabOrder = 6
+        TabOrder = 1
         OnClick = EReportTableChange
       end
       object CheckLoadParams: TCheckBox
         Left = 19
         Top = 5
-        Width = 369
+        Width = 385
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Load parameters'
-        TabOrder = 7
+        TabOrder = 0
         OnClick = EReportTableChange
       end
       object BConfig: TButton
@@ -265,27 +264,27 @@ object FRpEditCon: TFRpEditCon
         Width = 153
         Height = 33
         Caption = 'Configuration'
-        TabOrder = 8
+        TabOrder = 10
         OnClick = BConfigClick
       end
       object EAdoConnection: TEdit
         Left = 116
         Top = 193
-        Width = 205
+        Width = 221
         Height = 21
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 9
+        TabOrder = 8
         Text = 'EReportTable'
         OnClick = EReportTableChange
       end
       object BADOCOnf: TButton
         Left = 308
         Top = 192
-        Width = 73
+        Width = 89
         Height = 25
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Build...'
-        TabOrder = 10
+        TabOrder = 9
         OnClick = BADOCOnfClick
       end
       object BTest: TButton
@@ -294,7 +293,7 @@ object FRpEditCon: TFRpEditCon
         Width = 153
         Height = 29
         Caption = 'Connect'
-        TabOrder = 11
+        TabOrder = 12
         OnClick = BTestClick
       end
       object BCreateLib: TButton
@@ -303,7 +302,7 @@ object FRpEditCon: TFRpEditCon
         Width = 161
         Height = 33
         Caption = 'Create report library'
-        TabOrder = 12
+        TabOrder = 11
         OnClick = BCreateLibClick
       end
       object BBrowse: TButton
@@ -531,11 +530,11 @@ object FRpEditCon: TFRpEditCon
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF000000000000000000020000FF0000007E0200007F
-      00000CFF8200007F00018FFFC200007F06000FFFE200007F0F030FC1F000007F
-      0F060F80F1B7DDFF078E0FC0F3FE67FF03DC0FE0037FFFFF01F8000003FDFFFF
-      00F00001FBFFDFFF01F80F03F803FEFF03D80F01F800007F0F8E0783FBFFFFFF
-      1F0707FFFBFDFFFF1C0383FFFBFFFFFF000001FF93FFFFFF0000007E03FFFFFF
+      0200000002000000FFFFFF00000000000000000003FFFFFF0000007E03FFFFFF
+      00000CFF83FFFFFF00010FFFC3FFFFFF04000FFFE3FFFFFF0E020FC1F3FFFFFF
+      0E040F80F3FFFFFF070C0FC0F3FFFFFF03980FE003FFFFFF01F0000003FFFFFF
+      00E00001FBFFFFFF01F00F03FBFFFFFF03900F01FBFFFFFF0F0C0783FBFFFFFF
+      1E0607FFFBFFFFFF180303FFFBFFFFFF000001FF93FFFFFF0000007E03FFFFFF
       0000000003FFFFFF000000000000007F000000000000007F01C000080000007F
       01C0000800FFF07F01C0001C00FFF07F01C0001C0080107F01C0003E00B6D07F
       01C0003E0080107F0FF8007F02B6F87F0FF8007F0080387F07F000FF80FFF87F

@@ -317,7 +317,7 @@ begin
  BTest.Caption:=TranslateStr(748,BTest.Caption);
  BBrowse.Caption:=TranslateStr(1121,BBrowse.Caption);
  BADOConf.Caption:=TranslateStr(143,BADOConf.Caption);
-
+ Caption:=TranslateStr(1122,Caption);
 
 end;
 

@@ -401,6 +401,7 @@ begin
   FReportReport.FReport:=FDelphiControl.GetReport;
  end;
  Result:=FReportReport;
+ Result._AddRef;
 end;
 
 

@@ -91,7 +91,7 @@ type
 
 implementation
 
-uses rpreport;
+uses rpbasereport;
 
 
 procedure TRpSubReport.Notification(AComponent: TComponent;
@@ -532,7 +532,7 @@ begin
  CurrentGroupIndex:=0;
  i:=0;
  indexdetail:=GetFirstDetail;
- eval:=TRpReport(Owner).Evaluator;
+ eval:=TRpBaseReport(Owner).Evaluator;
  while i<indexdetail do
  begin
   sec:=Sections.Items[i].Section;
@@ -566,7 +566,7 @@ begin
  acount:=agroupcount;
  afirstdetail:=FirstDetail;
  i:=afirstdetail-agroupcount;
- eval:=TRpReport(Owner).Evaluator;
+ eval:=TRpBaseReport(Owner).Evaluator;
  while i<afirstdetail do
  begin
   sec:=sections.items[i].Section;
@@ -579,7 +579,7 @@ begin
     Result:=acount;
     FillGroupValues;
     if sec.IniNumPage then
-     TRpReport(Owner).Ininumpage:=true;
+     TRpBaseReport(Owner).Ininumpage:=true;
     break;
    end;
   end
@@ -590,7 +590,7 @@ begin
     Result:=acount;
     FillGroupValues;
     if sec.IniNumPage then
-     TRpReport(Owner).Ininumpage:=true;
+     TRpBaseReport(Owner).Ininumpage:=true;
     break;
    end;
   end;
@@ -750,7 +750,7 @@ begin
   else
   begin
    Result:=false;
-   datainfo:=TRpReport(Owner).datainfo;
+   datainfo:=TRpBaseReport(Owner).datainfo;
    index:=datainfo.IndexOf(Alias);
    if index>=0 then
    begin

@@ -57,9 +57,9 @@ object FRpOpenLib: TFRpOpenLib
       Caption = 'Library selection'
     end
     object ComboLibrary: TComboBox
-      Left = 112
+      Left = 180
       Top = 4
-      Width = 233
+      Width = 165
       Height = 21
       Style = csDropDownList
       ItemHeight = 15

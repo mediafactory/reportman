@@ -64,7 +64,6 @@ type
    FAutoContract:Boolean;
    FHorzDesp:Boolean;
    FVertDesp:Boolean;
-//   FIsExternal:boolean;
    FExternalFilename:string;
    FExternalConnection:String;
    FExternalTable:String;
@@ -103,6 +102,7 @@ type
    procedure ReadSkipToPageExpre(Reader:TReader);
    procedure LoadExternalFromDatabase;
    procedure SetIniNumPage(Value:Boolean);
+   function GetIsExternal:Boolean;
   protected
    procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
@@ -142,6 +142,7 @@ type
    property SkipExpreV:Widestring read FSkipExpreV write FSkipExpreV;
    property ReportComponents:TRpCommonList read FReportComponents;
    property OwnedComponents[index:integer]:TComponent read GetOwnedComponent;
+   property IsExternal:Boolean read GetIsExternal;
   published
    property SubReport:TComponent read FSubReport write FSubReport;
    property GroupName:String read FGroupName write SetGroupName;
@@ -193,7 +194,7 @@ procedure GetSkipTypePossibleValues(alist:TRpWideStrings);
 
 implementation
 
-uses rpsubreport,rpreport, Math;
+uses rpsubreport,rpbasereport, Math;
 
 constructor TRpSection.Create(AOwner:TComponent);
 begin
@@ -497,14 +498,14 @@ end;
 
 function TRpSection.EvaluateBeginPage:boolean;
 var
- report:TRpReport;
+ report:TRpBaseReport;
  eval:TRpEvaluator;
 begin
  Result:=false;
 
  if Length(FBeginPageExpression)<1 then
   exit;
- report:=TRpReport(Owner);
+ report:=TRpBaseReport(Owner);
  eval:=report.Evaluator;
  eval.Expression:=FBeginPageExpression;
  eval.Evaluate;
@@ -678,7 +679,7 @@ end;
 
 procedure TRpSection.SaveExternalToDatabase;
 var
- report:TRpReport;
+ report:TRpBaseReport;
  astream:TStream;
  index:integer;
  sqlsentence:string;
@@ -686,7 +687,7 @@ var
  aparam:TRpParamObject;
  aparam2:TRpParamObject;
 begin
- report:=TRpReport(Owner);
+ report:=TRpBaseReport(Owner);
  index:=report.DatabaseInfo.IndexOf(ExternalCOnnection);
  if index<0 then
   Exit;
@@ -837,9 +838,9 @@ end;
 procedure TRpSection.LoadExternal;
 var
  AStream:TStream;
- report:TRpReport;
+ report:TRpBaseReport;
 begin
- report:=TRpReport(Owner);
+ report:=TRpBaseReport(Owner);
  try
   // Try to load the section as an external section
   if Length(FExternalFilename)>0 then
@@ -869,7 +870,7 @@ end;
 
 procedure TRpSection.LoadExternalFromDatabase;
 var
- report:TRpReport;
+ report:TRpBaseReport;
  astream:TStream;
  index:integer;
  sqlsentence:string;
@@ -877,7 +878,7 @@ var
  alist:TStringList;
  aparam:TRpParamObject;
 begin
- report:=TRpReport(Owner);
+ report:=TRpBaseReport(Owner);
  index:=report.DatabaseInfo.IndexOf(ExternalCOnnection);
  if index<0 then
   Exit;
@@ -944,10 +945,10 @@ end;
 
 procedure TRpSection.GetChildSubReportPossibleValues(lvalues:TRpWideStrings);
 var
- rep:TRpReport;
+ rep:TRpBaseReport;
  i:integer;
 begin
- rep:=TRpReport(Subreport.Owner);
+ rep:=TRpBaseReport(Subreport.Owner);
  lvalues.clear;
  lvalues.Add(' ');
  for i:=0 to rep.Subreports.count-1 do
@@ -965,10 +966,10 @@ end;
 
 procedure TRpSection.SetChildSubReportByName(avalue:String);
 var
- rep:TRpReport;
+ rep:TRpBaseReport;
  i:integer;
 begin
- rep:=TRpReport(Subreport.Owner);
+ rep:=TRpBaseReport(Subreport.Owner);
  ChildSubReport:=nil;
  for i:=0 to rep.Subreports.count-1 do
  begin
@@ -1215,5 +1216,21 @@ begin
  GenerateNewName(Result);
  Components.Add.Component:=Result;
 end;
+
+function TRpSection.GetIsExternal:Boolean;
+begin
+ Result:=false;
+ if Length(FExternalFilename)>0 then
+ begin
+  Result:=true;
+  exit;
+ end;
+ if Length(GetExternalDataDescription)>0 then
+ begin
+  Result:=true;
+  exit;
+ end;
+end;
+
 
 end.

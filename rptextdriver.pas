@@ -38,7 +38,7 @@ uses Classes,Sysutils,
  Windows,
 {$ENDIF}
  rptypes,rpmetafile,
- rpmunits,rpreport,rpmdconsts;
+ rpmunits,rpbasereport,rpreport,rpmdconsts;
 
 const
  DEFAULT_LINESPERINCH=6;
@@ -79,7 +79,7 @@ type
    DrawerBefore,DrawerAfter:Boolean;
    master10,master12,mastercond,masterwide,masterbold,masteritalic,masterunderline:Byte;
    function GetLineIndex(posy:integer):integer;
-   procedure RepProgress(Sender:TRpReport;var docancel:boolean);
+   procedure RepProgress(Sender:TRpBaseReport;var docancel:boolean);
    procedure RecalcSize;
    procedure CalculateTextExtent(text:WideString;var Rect:TRect;
     WordBreak:Boolean;singleline:Boolean;fontstep:TRpFontStep);
@@ -553,7 +553,7 @@ begin
 end;
 
 
-procedure TRpTextDriver.RepProgress(Sender:TRpReport;var docancel:boolean);
+procedure TRpTextDriver.RepProgress(Sender:TRpBaseReport;var docancel:boolean);
 begin
 {$IFDEF USEVARIANTS}
  WriteLn(SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
