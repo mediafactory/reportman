@@ -14,7 +14,7 @@ object FRpQtProgress: TFRpQtProgress
   ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 75
+  PixelsPerInch = 100
   object CancelBtn: TButton
     Left = 207
     Top = 84
@@ -29,8 +29,8 @@ object FRpQtProgress: TFRpQtProgress
   object Label1: TLabel
     Left = 8
     Top = 40
-    Width = 62
-    Height = 15
+    Width = 73
+    Height = 17
     Caption = 'Processing'
   end
   object LRecordCount: TLabel
@@ -43,8 +43,8 @@ object FRpQtProgress: TFRpQtProgress
   object Label2: TLabel
     Left = 8
     Top = 4
-    Width = 26
-    Height = 15
+    Width = 31
+    Height = 17
     Caption = 'Tittle'
     Visible = False
   end

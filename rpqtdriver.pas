@@ -930,7 +930,18 @@ begin
     Raise Exception.Create(SRpErrorFork);
    if child<>0 then
    begin
-    execvp(theparams[0],PPChar(@theparams))
+    if (-1=execve(theparams[0],PPChar(@theparams),nil)) then
+    begin
+     try
+      RaiseLastOsError;
+     except
+      on E:Exception do
+      begin
+       E.Message:=SRpErrorFork+':execve:'+IntToStr(errno)+'-'+E.Message;
+       Raise;
+      end;
+     end;
+    end;
    end
  end;
 {$ENDIF}
