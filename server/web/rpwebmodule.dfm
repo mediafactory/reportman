@@ -33,8 +33,8 @@ object repwebmod: Trepwebmod
       PathInfo = '/execute.pdf'
       OnAction = repwebmodaexecuteAction
     end>
-  Left = 192
-  Top = 114
+  Left = 196
+  Top = 134
   Height = 150
   Width = 215
 end

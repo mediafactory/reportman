@@ -400,32 +400,30 @@ begin
    end;
    if lusers.IndexOfName('ADMIN')<0 then
     lusers.Add('ADMIN=');
+   // Gets the log file and try to create it
+   logfileerror:=false;
+   LogFileErrorMessage:='';
+   FLogFilename:=inif.Readstring('CONFIG','LOGFILE','');
+   if Length(FLogFilename)>0 then
+   begin
+    if Not (FileExists(FLogFileName)) then
+    begin
+     try
+      FLogFile:=TFileStream.Create(FLogFilename,fmOpenReadWrite or fmCreate);
+      FLogFile.Free;
+     except
+      On E:Exception do
+      begin
+       logfileerror:=true;
+      LogFileErrorMessage:=E.Message;
+      end;
+     end;
+    end;
+   end;
   finally
   inif.free;
   end;
   initreaded:=true;
-  // Gets the log file and try to create it
-  logfileerror:=false;
-  LogFileErrorMessage:='';
-  FLogFilename:=inif.Readstring('CONFIG','LOGFILE','');
-  if Length(FLogFilename)>0 then
-  begin
-   if Not (FileExists(FLogFileName)) then
-   begin
-    try
-     FLogFile:=TFileStream.Create(FLogFilename,fmOpenReadWrite or fmCreate);
-     FLogFile.Free;
-    except
-     On E:Exception do
-     begin
-      logfileerror:=true;
-      LogFileErrorMessage:=E.Message;
-     end;
-    end;
-   end;
-  end;
-
-
  except
   on E:Exception do
   begin

@@ -49,7 +49,7 @@ UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
-Packages=rtl:visualclx:dataclx:visualdbclx:indy
+Packages=rtl:visualclx:dataclx:visualdbclx:indy:webdsnapclx:xmlrtl
 Conditionals=
 DebugSourceDirs=
 UsePackages=0
@@ -62,8 +62,6 @@ UseLauncher=0
 DebugCWD=
 
 [Excluded Packages]
-/opt/kylix3/bin/dclnet.so.6.9=Borland Internet Components
-/opt/kylix3/bin/dclwebdsnapclx.so.6.9=Borland InternetExpress Components
 /opt/kylix3/bin/dclwebsnapclx.so.6.9=Borland WebSnap Components
 /opt/kylix3/bin/dclsoap.so.6.9=Borland SOAP Components
 

@@ -1,6 +1,6 @@
 object FRpAboutBox: TFRpAboutBox
-  Left = 235
-  Top = 134
+  Left = 239
+  Top = 154
   ActiveControl = BOK
   AutoScroll = False
   Caption = 'About Report Manager '
@@ -893,10 +893,10 @@ object FRpAboutBox: TFRpAboutBox
   object Label5: TLabel
     Left = 172
     Top = 244
-    Width = 224
+    Width = 175
     Height = 15
     Cursor = crHandPoint
-    Caption = 'http://sourceforge.net/projects/reportman'
+    Caption = 'http://reportman.sourceforge.net'
     OnMouseDown = Label5MouseDown
   end
   object Memo1: TMemo
