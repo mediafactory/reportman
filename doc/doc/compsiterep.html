@@ -1,0 +1,29 @@
+<html>
+<head>
+<title>Composite reports</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Advanced Report Design</h2>
+<h3><b>Composite reports</b></h3>
+<p>Composite reports means concatenation of full processed reports, the union 
+  is serial but the free space for the last page of the previous report can be 
+  used by the next report.</p>
+<p>To compose reports you must set <b>two pass report option</b> in all the reports 
+  implied.</p>
+<p>You must have two TRpReport objects available, you can place two TVCLReport 
+  components in a form for example, the TVCLReport.Report property contains the 
+  TRpReport object if you assigned a filename, or used LoadFromStream method of 
+  TVCLReport.</p>
+<p>Lets name ReportOne and ReportTwo as the two TVCLReport components, the code 
+  to preview or print the composite report is:</p>
+<p>//</p>
+<p>uses rpreport,rpgdidriver...</p>
+<p>rpgdidriver.CalcReportWithProgress(ReportOne.Report);</p>
+<p>ReportTwo.Report.Compose(ReportOne.Report,false,nil);</p>
+<p>ReportTwo.Execute;</p>
+<p>//</p>
+<p>&nbsp;</p>
+</body>
+</html>
