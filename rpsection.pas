@@ -42,6 +42,8 @@ type
  TRpSectionType=(rpsecpheader,rpsecgheader,
   rpsecdetail,rpsecgfooter,rpsecpfooter);
 
+ TRpSkipType=(secskipdefault,secskipbefore,secskipafter);
+
 
  TRpSection=class(TRpCommonComponent)
   private
@@ -67,9 +69,14 @@ type
    FExternalSearchValue:String;
    FBeginPageExpression:widestring;
    FFooterAtReportEnd:boolean;
+   FSkipRelativeV:Boolean;
+   FSkipRelativeH:Boolean;
+   FSkipExpreH:WideString;
+   FSkipExpreV:WideString;
    // deprecated
    FBeginPage:boolean;
    FReadError:Boolean;
+   FSkipType:TRpSkipType;
    procedure SetComponents(Value:TRpCommonList);
    procedure SetGroupName(Value:string);
    procedure SetChangeExpression(Value:widestring);
@@ -80,6 +87,10 @@ type
    procedure ReadChangeExpression(Reader:TReader);
    procedure WriteBeginPageExpression(Writer:TWriter);
    procedure ReadBeginPageExpression(Reader:TReader);
+   procedure WriteSkipExpreV(Writer:TWriter);
+   procedure WriteSkipExpreH(Writer:TWriter);
+   procedure ReadSkipExpreH(Reader:TReader);
+   procedure ReadSkipExpreV(Reader:TReader);
    procedure LoadExternalFromDatabase;
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
@@ -108,6 +119,8 @@ type
    property ChangeExpression:widestring read FChangeExpression write SetChangeExpression;
    property BeginPageExpression:widestring read FBeginPageExpression
     write FBeginPageExpression;
+   property SkipExpreH:Widestring read FSkipExpreH write FSkipExpreH;
+   property SkipExpreV:Widestring read FSkipExpreV write FSkipExpreV;
   published
    property SubReport:TComponent read FSubReport write FSubReport;
    property GroupName:String read FGroupName write SetGroupName;
@@ -142,7 +155,16 @@ type
    property BeginPage:boolean read FBeginpage write FBeginPage default false;
    property FooterAtReportEnd:boolean read FFooterAtReportEnd write
     FFooterAtReportEnd default true;
+   // Skip inside page before print
+   property SkipRelativeH:boolean Read FSkipRelativeH write FSkipRelativeH default false;
+   property SkipRelativeV:boolean Read FSkipRelativeV write FSkipRelativeV default false;
+   property SkipType:TRpSkipType read FSkipType write FSkipType default secskipdefault;
  end;
+
+
+function RpSkipTypeToText(value:TRpSkipType):String;
+function StringToRpSkipType(value:String):TRpSkipType;
+procedure GetSkipTypePossibleValues(alist:TStrings);
 
 implementation
 
@@ -152,6 +174,7 @@ constructor TRpSection.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FSkipType:=secskipdefault;
  FComponents:=TRpCommonList.Create(Self);
  FExternalTable:='REPMAN_REPORTS';
  FExternalField:='REPORT';
@@ -774,6 +797,10 @@ begin
  FAutoExpand:=sec.FAutoExpand;
  FAutoContract:=sec.FAutoContract;
  FBeginPageExpression:=sec.FBeginPageExpression;
+ FSkipRelativeH:=sec.FSkipRelativeH;
+ FSkipRelativeV:=sec.FSkipRelativeV;
+ FSkipExpreH:=sec.FSkipExpreH;
+ FSkipExpreV:=sec.FSkipExpreV;
  FBeginPage:=sec.FBeginPage;
  PrintCondition:=sec.PrintCondition;
  DoBeforePrint:=sec.DoBeforePrint;
@@ -813,12 +840,35 @@ begin
  FBeginPageExpression:=ReadWideString(Reader);
 end;
 
+procedure TRpSection.WriteSkipExpreV(Writer:TWriter);
+begin
+ WriteWideString(Writer, FSkipExpreV);
+end;
+
+procedure TRpSection.ReadSkipExpreH(Reader:TReader);
+begin
+ FSkipExpreH:=ReadWideString(Reader);
+end;
+
+procedure TRpSection.WriteSkipExpreH(Writer:TWriter);
+begin
+ WriteWideString(Writer, FSkipExpreH);
+end;
+
+procedure TRpSection.ReadSkipExpreV(Reader:TReader);
+begin
+ FSkipExpreV:=ReadWideString(Reader);
+end;
+
 procedure TRpSection.DefineProperties(Filer:TFiler);
 begin
  inherited;
 
  Filer.DefineProperty('ChangeExpression',ReadChangeExpression,WriteChangeExpression,True);
  Filer.DefineProperty('BeginPageExpression',ReadBeginPageExpression,WriteBeginPageExpression,True);
+ Filer.DefineProperty('ChangeExpression',ReadChangeExpression,WriteChangeExpression,True);
+ Filer.DefineProperty('SkipExpreV',ReadSkipExpreV,WriteSkipExpreV,True);
+ Filer.DefineProperty('SkipExpreH',ReadSkipExpreH,WriteSkipExpreH,True);
 end;
 
 function TRpSection.GetExternalDataDescription:String;
@@ -837,6 +887,47 @@ begin
  Result:=ExternalConnection+'-'+
   ExternalTable+'-'+ExternalField+'-'+
   ExternalSearchField+'-'+ExternalSearchValue;
+end;
+
+function RpSkipTypeToText(value:TRpSkipType):String;
+begin
+ case value of
+  secskipdefault:
+   begin
+    Result:=SRpSDefault;
+   end;
+  secskipbefore:
+   begin
+    Result:=SRpSSkipBefore;
+   end;
+  secskipafter:
+   begin
+    Result:=SRpSSkipAfter;
+   end;
+ end;
+end;
+
+function StringToRpSkipType(value:String):TRpSkipType;
+begin
+ Result:=secskipdefault;
+ if SRpSSkipBefore=value then
+ begin
+  Result:=secskipbefore;
+  exit
+ end;
+ if SRpSSkipAfter=value then
+ begin
+  Result:=secskipafter;
+  exit;
+ end;
+end;
+
+procedure GetSkipTypePossibleValues(alist:TStrings);
+begin
+ alist.clear;
+ alist.Add(SRpSDefault);
+ alist.Add(SRpSSkipBefore);
+ alist.Add(SRpSSkipAfter);
 end;
 
 end.

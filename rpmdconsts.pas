@@ -590,6 +590,14 @@ var
   SRpSStacked:WideString='Stacked';
   SRpSStacked100:WideString='Stacked100';
   SRpSForcePrint:WideString='Force print';
+  SRpSHSkipExpre:WideString='H.Skip.Expre.';
+  SRpSVSkipExpre:WideString='V.Skip.Expre.';
+  SRpSHRelativeSkip:WideString='H.Relative Skip';
+  SRpSVRelativeSkip:WideString='V.Relative Skip';
+  SRpSSkipType:WideString='Skip Type';
+  SRpSSkipBefore:WideString='Skip Before';
+  SRpSSkipAfter:WideString='Skip After';
+
 implementation
 
 uses rptranslator;
@@ -1170,6 +1178,13 @@ begin
  TranslateVar(917,SRpSStacked);
  TranslateVar(918,SRpSStacked100);
  TranslateVar(919,SRpSForcePrint);
+ TranslateVar(920,SRpSHRelativeSkip);
+ TranslateVar(921,SRpSVRelativeSkip);
+ TranslateVar(922,SRpSHSkipExpre);
+ TranslateVar(923,SRpSVSkipExpre);
+ TranslateVar(924,SRpSSkipBefore);
+ TranslateVar(925,SRpSSkipAfter);
+ TranslateVar(926,SRpSSkipType);
 end;
 
 {$IFDEF LINUX}

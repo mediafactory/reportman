@@ -277,6 +277,27 @@ begin
   ltypes.Add(SRpSBool);
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).HorzDesp,true));
+  // Skip page expression
+  lnames.Add(SRpSSkipType);
+  ltypes.Add(SRpSList);
+  if Assigned(lvalues) then
+   lvalues.Add(RpSkipTypeToText(TRpSection(printitem).SkipType));
+  lnames.Add(SRpSHSkipExpre);
+  ltypes.Add(SRpSExpression);
+  if Assigned(lvalues) then
+   lvalues.Add(TRpSection(printitem).SkipExpreH);
+  lnames.Add(SRpSHRelativeSkip);
+  ltypes.Add(SRpSBool);
+  if Assigned(lvalues) then
+   lvalues.Add(BoolToStr(TRpSection(printitem).SkipRelativeH,true));
+  lnames.Add(SRpSVSkipExpre);
+  ltypes.Add(SRpSExpression);
+  if Assigned(lvalues) then
+   lvalues.Add(TRpSection(printitem).SkipExpreV);
+  lnames.Add(SRpSVRelativeSkip);
+  ltypes.Add(SRpSBool);
+  if Assigned(lvalues) then
+   lvalues.Add(BoolToStr(TRpSection(printitem).SkipRelativeV,true));
  end;
  if (TrpSection(printitem).SectionType=rpsecpfooter) then
  begin
@@ -362,6 +383,31 @@ begin
    TRpSection(fprintitem).HorzDesp:=StrToBool(Value);
    exit;
   end;
+  if pname=SRpSSkipType then
+  begin
+   TRpSection(fprintitem).SkipType:=StringToRpSkipType(Value);
+   exit;
+  end;
+  if pname=SRpSHSkipExpre then
+  begin
+   TRpSection(fprintitem).SkipExpreH:=Value;
+   exit;
+  end;
+  if pname=SRpSHRelativeSkip then
+  begin
+   TRpSection(fprintitem).SkipRelativeH:=StrToBool(Value);
+   exit;
+  end;
+  if pname=SRpSVSkipExpre then
+  begin
+   TRpSection(fprintitem).SkipExpreV:=Value;
+   exit;
+  end;
+  if pname=SRpSVRelativeSkip then
+  begin
+   TRpSection(fprintitem).SkipRelativeV:=StrToBool(Value);
+   exit;
+  end;
  end;
  if (TrpSection(printitem).SectionType=rpsecpfooter) then
  begin
@@ -442,6 +488,31 @@ begin
    Result:=BoolToStr(TRpSection(fprintitem).HorzDesp,true);
    exit;
   end;
+  if pname=SRpSSkipType then
+  begin
+   Result:=RpSkipTypeToText(TRpSection(fprintitem).SkipType);
+   exit;
+  end;
+  if pname=SRpSHSkipExpre then
+  begin
+   Result:=TRpSection(fprintitem).SkipExpreH;
+   exit;
+  end;
+  if pname=SRpSHRelativeSkip then
+  begin
+   Result:=BoolToStr(TRpSection(fprintitem).SkipRelativeH,true);
+   exit;
+  end;
+  if pname=SRpSVSkipExpre then
+  begin
+   Result:=TRpSection(fprintitem).SkipExpreV;
+   exit;
+  end;
+  if pname=SRpSVRelativeSkip then
+  begin
+   Result:=BoolToStr(TRpSection(fprintitem).SkipRelativeV,true);
+   exit;
+  end;
  end;
  if (TrpSection(printitem).SectionType=rpsecpfooter) then
  begin
@@ -471,6 +542,11 @@ end;
 
 procedure TRpSectionInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
 begin
+ if pname=SRpSSkipType then
+ begin
+  GetSkipTypePossibleValues(lpossiblevalues);
+  exit;
+ end;
  if pname=SRpChildSubRep then
  begin
   TRpSection(printitem).GetChildSubReportPossibleValues(lpossiblevalues);
