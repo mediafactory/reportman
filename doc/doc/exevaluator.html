@@ -395,11 +395,17 @@
   </tr>
   <tr> 
     <td>PAGECOUNT</td>
-    <td>This is a special expression, can not be combined or included inside another 
-      expression, when two pass report option is enabled, the engine will sustitute 
-      any PAGECOUNT expression with the integer page count value of the report, 
-      but you can still use the display format property to customize the final 
-      output </td>
+    <td><p>This is a special expression, can not be combined or included inside 
+        another expression, when two pass report option is enabled, the engine 
+        will sustitute any PAGECOUNT expression with the integer page count value 
+        of the report, but you can still use the display format property to customize 
+        the final output. PAGECOUNT can not be used inside expressions because:</p>
+      <ul>
+        <li>Before the report processing is ended, the engine does not know total 
+          number of pages.</li>
+        <li>ANY expression can change section sizes or any other components conditioning 
+          the length (in pages) of a report.</li>
+      </ul></td>
   </tr>
   <tr> 
     <td>FREE_SPACE_TWIPS, FREE_SPACE_INCH, FREE_SPACE_CMS</td>
