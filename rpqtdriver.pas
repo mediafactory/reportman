@@ -533,7 +533,7 @@ begin
     else
     begin
      posx:=round((obj.Left+offset.X)*dpix/TWIPS_PER_INCHESS);
-     posy:=round((obj.Top+offset.X)*dpiy/TWIPS_PER_INCHESS);
+     posy:=round((obj.Top+offset.Y)*dpiy/TWIPS_PER_INCHESS);
      rec.Left:=posx;
      rec.Top:=posy;
      rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);

@@ -656,7 +656,8 @@ begin
   try
    if progress then
     report.OnProgress:=pdfdriver.RepProgress;
-   report.PrintAll(apdfdriver);
+//   report.PrintAll(apdfdriver);
+   report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
 
    report.Metafile.SaveToStream(Stream);
    Stream.Seek(0,soFromBeginning);
