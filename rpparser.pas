@@ -48,6 +48,7 @@ type
     procedure SetExpression(Value:String);
   public
     constructor Create;
+    destructor Destroy;override;
     procedure CheckToken(T: Char);
     procedure CheckTokenSymbol(const S: string);
     procedure Error(MessageID:WideString);
@@ -599,5 +600,12 @@ begin
   NextToken;
 end;
 
+destructor TRpParser.Destroy;
+begin
+  if Assigned(FStream) then
+   FStream.free;
+
+ inherited destroy;
+end;
 
 end.

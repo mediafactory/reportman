@@ -1,6 +1,6 @@
 object FRpMainFVCL: TFRpMainFVCL
-  Left = 13
-  Top = 13
+  Left = 109
+  Top = 55
   Width = 575
   Height = 478
   Caption = 'Report Manager Designer'
