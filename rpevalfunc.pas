@@ -89,6 +89,14 @@ type
    constructor Create(AOwner:TComponent);override;
   end;
 
+ { Function Round }
+ TIdenRoundToInteger=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
  { Function Abs }
  TIdenAbs=class(TIdenFunction)
   protected
@@ -182,6 +190,20 @@ type
   end;
 
  TIdenGraphicOperation=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+ TIdenImageOperation=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+ TIdenReOpenOp=class(TIdenFunction)
   protected
    function GetRpValue:TRpValue;override;
   public
@@ -492,29 +514,27 @@ begin
  if (not VarIsString(Params[3])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- case Vartype(Params[0]) of
-  varSmallInt..varCurrency:
-   begin
-    racional:=Double(Params[0]);
-    //calculations in racional
-    hores:=Round(Int(racional));
-    minuts:=Round(Int(Frac(racional)*60));
-    segons:=Round(Frac(Frac(racional)*60)*60);
-    if segons<10 then
-     segonsstr:='0'+IntToStr(segons)
-    else
-     segonsstr:=IntToStr(segons);
-    if minuts<10 then
-     minutsstr:='0'+IntToStr(minuts)
-    else
-     minutsstr:=IntToStr(minuts);
-    Result:=IntToStr(hores)+Params[1]+minutsstr+Params[2]
-     +segonsstr+Params[3];
-   end;
+ if VarIsNumber(Params[0]) then
+ begin
+  racional:=Double(Params[0]);
+  //calculations in racional
+  hores:=Round(Int(racional));
+  minuts:=Round(Int(Frac(racional)*60));
+  segons:=Round(Frac(Frac(racional)*60)*60);
+  if segons<10 then
+   segonsstr:='0'+IntToStr(segons)
   else
-   Raise TRpNamedException.Create(SRpEvalType,
+   segonsstr:=IntToStr(segons);
+  if minuts<10 then
+   minutsstr:='0'+IntToStr(minuts)
+  else
+   minutsstr:=IntToStr(minuts);
+  Result:=IntToStr(hores)+Params[1]+minutsstr+Params[2]
+   +segonsstr+Params[3];
+ end
+ else
+  Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
-  end;
 end;
 
 {**************************************************************************}
@@ -535,21 +555,19 @@ end;
 
 function TIdenFloatToDateTime.GeTRpValue:TRpValue;
 begin
- case Vartype(Params[0]) of
-  varSmallInt,varInteger,varSingle,varDouble,varWord,varByte,varCurrency:
-   begin
-    Result:=TDateTime(Params[0]);
-   end;
-  vardate:
-    Result:=TDateTime(Params[0]);
-  varNull:
-   begin
-    Result:=Null;
-   end;
+ if VarIsNumber(Params[0]) then
+  Result:=TDateTime(Params[0])
+ else
+  if Vartype(Params[0])=vardate then
+    Result:=TDateTime(Params[0])
+  else
+  if VarIsNull(Params[0]) then
+  begin
+   Result:=Null;
+  end
   else
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
-  end;
 end;
 
 
@@ -571,15 +589,11 @@ end;
 
 function TIdenSinus.GeTRpValue:TRpValue;
 begin
- case Vartype(Params[0]) of
-  varSmallInt..varCurrency:
-   begin
-    Result:=Sin(Double(Params[0]));
-   end;
-  else
+ if  VarIsNumber(Params[0]) then
+  Result:=Sin(Double(Params[0]))
+ else
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
-  end;
 end;
 
 
@@ -604,13 +618,44 @@ end;
 
 function TIdenRound.GeTRpValue:TRpValue;
 begin
- if (not (VarType(Params[0]) in [varSmallInt..varCurrency])) then
+ if (not VarIsNumber(Params[0])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if (not (VarType(Params[1]) in [varSmallInt..varCurrency])) then
+ if (not VarIsNumber(Params[1])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  Result:=Roundfloat(Double(Params[0]),Double(Params[1]));
+end;
+
+
+{ TIdenRound }
+
+constructor TIdenRoundToInteger.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='RoundToInteger';
+ Help:=SRpRound;
+ model:='function '+'RoundToInteger'+'(num:double):integer';
+ aParams:='';
+end;
+
+{**************************************************************************}
+
+
+{**************************************************************************}
+
+function TIdenRoundToInteger.GeTRpValue:TRpValue;
+begin
+ if (not VarIsNumber(Params[0])) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+{$IFNDEF USEVARIANTS}
+ Result:=Integer(Round(Double(Params[0])));
+{$ENDIF}
+{$IFDEF USEVARIANTS}
+ Result:=Round(Double(Params[0]));
+{$ENDIF}
 end;
 
 {**************************************************************************}
@@ -632,7 +677,7 @@ end;
 
 function TIdenAbs.GeTRpValue:TRpValue;
 begin
- if (not (VarType(Params[0]) in [varSmallInt..varCurrency])) then
+ if (not VarIsNumber(Params[0])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  Result:=Abs(Double(Params[0]));
@@ -790,7 +835,7 @@ begin
  if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if ( Not (VarType(Params[1]) in [varSmallInt..varInteger,varWord,varByte])) then
+ if  Not (VarIsInteger(Params[1])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  Result:=Copy(String(Params[0]),1,Integer(Params[1]));
@@ -905,7 +950,7 @@ begin
  if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if Not (Vartype(Params[1]) in [varsmallint..varcurrency,varword,varbyte]) then
+ if Not VarIsNumber(Params[1]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  if Vartype(Params[2])<>varBoolean then
@@ -982,16 +1027,16 @@ begin
  if Vartype(Params[2])<>varBoolean then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if Not (Vartype(Params[3]) in [varsmallint..varcurrency,varword,varbyte]) then
+ if Not VarIsNumber(Params[3]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if Not (Vartype(Params[4]) in [varsmallint..varcurrency,varword,varbyte]) then
+ if Not VarIsNumber(Params[4]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  if Vartype(Params[5])<>varBoolean then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if Not (Vartype(Params[6]) in [varsmallint..varcurrency,varword,varbyte]) then
+ if Not (VarIsNumber(Params[6])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  if Vartype(Params[7])<>varBoolean then
@@ -1028,13 +1073,11 @@ end;
 
 function TIdenSQRT.GeTRpValue:TRpValue;
 begin
- case varType(Params[0]) of
-  varSmallInt..VarCurrency:
-    Result:=SQRT(Double(Params[0]));
-  else
-   Raise TRpNamedException.Create(SRpEvalType,
+ if varIsNumber(Params[0]) then
+  Result:=SQRT(Double(Params[0]))
+ else
+  Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- end;
 end;
 
 
@@ -1149,21 +1192,13 @@ end;
 
 function TIdenModul.GeTRpValue:TRpValue;
 begin
- case Vartype(Params[0]) of
-  varSmallInt..VarCurrency:
-   begin
-    if Integer(Params[0])<>Params[0] then
-    Raise TRpNamedException.Create(SRpEvalType,
-          IdenName);
-    if Integer(Params[1])<>Params[1] then
-    Raise TRpNamedException.Create(SRpEvalType,
-          IdenName);
-    ReSult:=Integer(Params[0]) mod Integer(Params[1]);
-   end;
-  else
-   Raise TRpNamedException.Create(SRpEvalType,
-         IdenName);
- end;
+ if Not VarIsInteger(Params[0]) then
+  Raise TRpNamedException.Create(SRpEvalType,
+       IdenName);
+ if Not VarIsInteger(Params[1]) then
+  Raise TRpNamedException.Create(SRpEvalType,
+       IdenName);
+ Result:=Integer(Params[0]) mod Integer(Params[1]);
 end;
 
 { TIdenToday }
@@ -1247,24 +1282,23 @@ end;
 function TIdenMonthname.GeTRpValue:TRpValue;
 var any,mes,dia:Word;
 begin
- case varType(Params[0]) of
-  varDate:
-   begin
-    DecodeDate(TDateTime(Params[0]),Any,Mes,Dia);
-    Result:=LongMonthNames[Mes];
-   end;
-  varInteger:
-   begin
-    Mes:=integer(Params[0]);
-    if (not (mes in [1..12])) then
-     Result:=''
-    else
-     Result:=LongMonthNames[mes];
-   end;
+ if varIsInteger(Params[0]) then
+ begin
+  Mes:=integer(Params[0]);
+  if (not (mes in [1..12])) then
+   Result:=''
   else
-   Raise TRpNamedException.Create(SRpEvalType,
+   Result:=LongMonthNames[mes];
+ end
+ else
+ if varType(Params[0])=varDate then
+ begin
+  DecodeDate(TDateTime(Params[0]),Any,Mes,Dia);
+  Result:=LongMonthNames[Mes];
+ end
+ else
+  Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- end;
 end;
 
 // TIdenEvalText
@@ -1368,16 +1402,14 @@ end;
 function TIdenDay.GeTRpValue:TRpValue;
 var any,mes,dia:Word;
 begin
- case varType(Params[0]) of
-  varDate:
-   begin
-    DecodeDate(TDateTime(Params[0]),Any,Mes,Dia);
-    Result:=integer(Dia);
-   end;
-  else
-   Raise TRpNamedException.Create(SRpEvalType,
+ if ((VarType(Params[0])=varDate) or (VarIsNumber(Params[0]))) then
+ begin
+  DecodeDate(TDateTime(Params[0]),Any,Mes,Dia);
+  Result:=integer(Dia);
+ end
+ else
+  Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- end;
 end;
 
 { TIdenRight }
@@ -1399,12 +1431,13 @@ begin
  if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if ( Not (VarType(Params[1]) in [varSmallInt..varInteger,varWord,varByte])) or
-    ( Integer(Params[1])<1 ) then
+ if ( Not (VarIsInteger(Params[1]))) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
-
- Result:=Copy(String(Params[0]),
+ if  (Integer(Params[1])<1) then
+  Result:=''
+ else
+  Result:=Copy(String(Params[0]),
               Length(String(Params[0]))+1-Integer(Params[1]),
               Integer(Params[1]));
 end;
@@ -1429,13 +1462,22 @@ begin
  if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if ( Not (VarType(Params[1]) in [varSmallInt..varInteger,varWord,varByte])) or
-    ( Integer(Params[1])<1 ) or
-    ( Not (VarType(Params[2]) in [varSmallInt..varInteger,varWord,varByte])) or
-    ( Integer(Params[2])<1 )  then
+ if ( Not (VarIsInteger(Params[1]))) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
-
+ if Integer(Params[1])<1 then
+ begin
+  Result:='';
+  exit;
+ end;
+ if ( Not (VarIsInteger(Params[2]))) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Integer(Params[2])<1 then
+ begin
+  Result:='';
+  exit;
+ end;
  Result:=Copy(String(Params[0]),
               Integer(Params[1]),
               Integer(Params[2]));
@@ -1518,7 +1560,7 @@ function TIdenFormatNum.GeTRpValue:TRpValue;
 begin
  if VarIsnull(Params[1]) then
   Params[1]:=0.0;
- if Not (Vartype(Params[1]) in  [varSmallInt,varInteger,varSingle,varDouble,varWord,varByte,varCurrency])then
+ if Not (VarIsNumber(Params[1]))then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  if ( Not (VarIsString(Params[0]))) then
@@ -1581,7 +1623,7 @@ begin
  if Vartype(Params[1])<>varboolean then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- if NOt (Vartype(Params[0]) in [varsmallint..varcurrency,varShortInt,varInt64,varWord,varLongWord,varByte]) then
+ if NOt (VarIsNumber(Params[0])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
 
@@ -1675,12 +1717,12 @@ var
 begin
  for i:=0 to 3 do
  begin
-  if (Not Vartype(Params[i]) in [varSmallInt..varCurrency,varShortInt..varInt64]) then
+  if (Not VarIsNumber(Params[i])) then
    Raise TRpNamedException.Create(SRpEvalType,IdenName);
  end;
  for i:=4 to ParamCount-1 do
  begin
-  if (Not Vartype(Params[i]) in [varSmallInt..varInteger,varShortInt..varInt64]) then
+  if (Not VarIsInteger(Params[i])) then
    Raise TRpNamedException.Create(SRpEvalType,IdenName);
  end;
  if Assigned((evaluator As TRpEvaluator).OnGraphicOp) then
@@ -1689,6 +1731,79 @@ begin
  else
   Result:=false;
 end;
+
+{ TIdenImageOperation }
+
+constructor TIdenImageOperation.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=8;
+ IdenName:='ImageOp';
+ Help:='';
+ model:='function '+'ImageOp'+'(Top,Left,Width,Height:integer;'+#10+
+    'DrawStyle:integer;PreviewOnly:Boolean;Image:String):Boolean';
+ aParams:='';
+end;
+
+{**************************************************************************}
+
+function TIdenImageOperation.GeTRpValue:TRpValue;
+var
+ i:integer;
+begin
+ for i:=0 to 3 do
+ begin
+  if (Not VarIsNumber(Params[i])) then
+   Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ end;
+ if (Not VarIsInteger(Params[4])) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not VarIsInteger(Params[5])) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if Vartype(Params[6])<>varBoolean then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if (Not VarIsString(Params[7])) then
+   Raise TRpNamedException.Create(SRpEvalType,IdenName);
+
+ if Assigned((evaluator As TRpEvaluator).OnImageOp) then
+  Result:=(evaluator As TRpEvaluator).OnImageOp(Round(Params[0]),Round(Params[1]),Round(Params[2]),Round(Params[3]),Params[4],
+   Params[5],Params[6],Params[7])
+ else
+  Result:=false;
+end;
+
+
+{ TIdenImageOperation }
+
+constructor TIdenReOpenOp.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=2;
+ IdenName:='ReOpen';
+ Help:='';
+ model:='function '+'ReOpen'+'(dataset, sql:string):Boolean';
+ aParams:='';
+end;
+
+{**************************************************************************}
+
+function TIdenReOpenOp.GeTRpValue:TRpValue;
+var
+ i:integer;
+begin
+ for i:=0 to 1 do
+ begin
+  if (Not VarIsString(Params[i])) then
+   Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ end;
+ if Assigned((evaluator As TRpEvaluator).OnReOpenOp) then
+  Result:=(evaluator As TRpEvaluator).OnReOpenOp(Params[0],
+   Params[1])
+ else
+  Result:=false;
+end;
+
 
 { TIdenTextOperation }
 
@@ -1715,10 +1830,10 @@ begin
  for i:=0 to ParamCount-1 do
  begin
   if (i in [0..3]) then
-   if (Not (Vartype(Params[i]) in [varSmallInt..varCurrency,varShortInt..varInt64,varWord,varByte])) then
+   if Not (VarIsNumber(Params[i])) then
     Raise TRpNamedException.Create(SRpEvalType,IdenName);
   if (i in [7..11,13,16,17]) then
-   if (Not (Vartype(Params[i]) in [varSmallInt..varInteger,varShortInt..varInt64,varWord,varByte])) then
+   if (Not (VarIsInteger(Params[i]))) then
     Raise TRpNamedException.Create(SRpEvalType,IdenName);
   if (i in [12,14,15,18]) then
    if (Not (Vartype(Params[i])=varBoolean)) then

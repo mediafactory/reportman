@@ -3,8 +3,8 @@ object FRpSysInfo: TFRpSysInfo
   Top = 221
   BorderStyle = bsDialog
   Caption = 'System information'
-  ClientHeight = 358
-  ClientWidth = 556
+  ClientHeight = 420
+  ClientWidth = 552
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -14,8 +14,8 @@ object FRpSysInfo: TFRpSysInfo
   PixelsPerInch = 96
   TextHeight = 13
   object BOK: TButton
-    Left = 239
-    Top = 320
+    Left = 243
+    Top = 392
     Width = 75
     Height = 25
     Caption = 'OK'
@@ -27,7 +27,7 @@ object FRpSysInfo: TFRpSysInfo
     Left = 8
     Top = 8
     Width = 541
-    Height = 205
+    Height = 277
     Caption = 'Selected Printer'
     TabOrder = 1
     object Label1: TLabel
@@ -117,58 +117,116 @@ object FRpSysInfo: TFRpSysInfo
     object LResolution: TLabel
       Left = 176
       Top = 108
-      Width = 137
+      Width = 89
       Height = 17
       AutoSize = False
     end
     object Label15: TLabel
       Left = 8
-      Top = 128
+      Top = 208
       Width = 56
       Height = 13
       Caption = 'Technology'
     end
     object LTechnology: TLabel
-      Left = 116
-      Top = 128
+      Left = 108
+      Top = 208
       Width = 153
       Height = 17
       AutoSize = False
     end
     object Label16: TLabel
       Left = 272
-      Top = 128
+      Top = 208
       Width = 75
       Height = 13
       Caption = 'Line capabilities'
     end
     object Label17: TLabel
       Left = 8
-      Top = 152
+      Top = 232
       Width = 86
       Height = 13
       Caption = 'Raster capabilities'
     end
     object Label18: TLabel
       Left = 272
-      Top = 152
+      Top = 232
       Width = 72
       Height = 13
       Caption = 'Polygonal caps'
     end
     object Label19: TLabel
       Left = 8
-      Top = 176
+      Top = 256
       Width = 76
       Height = 13
       Caption = 'Text capabilities'
     end
     object Label20: TLabel
       Left = 272
-      Top = 176
+      Top = 256
       Width = 54
       Height = 13
       Caption = 'Curve caps'
+    end
+    object LFormNameL: TLabel
+      Left = 8
+      Top = 128
+      Width = 54
+      Height = 13
+      Caption = 'Form Name'
+    end
+    object LFormName: TLabel
+      Left = 172
+      Top = 128
+      Width = 78
+      Height = 13
+      Caption = '                          '
+    end
+    object LFormpageSize: TLabel
+      Left = 108
+      Top = 168
+      Width = 425
+      Height = 37
+      AutoSize = False
+      Caption = '                          '
+      WordWrap = True
+    end
+    object LFormPageSizeL: TLabel
+      Left = 8
+      Top = 168
+      Width = 72
+      Height = 13
+      Caption = 'Form Page size'
+    end
+    object LPageSizeL: TLabel
+      Left = 8
+      Top = 148
+      Width = 46
+      Height = 13
+      Caption = 'Page size'
+    end
+    object LPageSize: TLabel
+      Left = 116
+      Top = 148
+      Width = 78
+      Height = 13
+      Caption = '                          '
+    end
+    object LOrientation: TLabel
+      Left = 384
+      Top = 148
+      Width = 78
+      Height = 13
+      Caption = '                          '
+    end
+    object LOrientationL: TLabel
+      Left = 272
+      Top = 148
+      Width = 46
+      Height = 13
+      Caption = 'Page size'
     end
     object EStatus: TEdit
       Left = 380
@@ -217,7 +275,7 @@ object FRpSysInfo: TFRpSysInfo
     end
     object CLineCaps: TComboBox
       Left = 380
-      Top = 124
+      Top = 204
       Width = 153
       Height = 21
       Style = csDropDownList
@@ -227,7 +285,7 @@ object FRpSysInfo: TFRpSysInfo
     end
     object CRasterCaps: TComboBox
       Left = 108
-      Top = 148
+      Top = 228
       Width = 153
       Height = 21
       Style = csDropDownList
@@ -237,7 +295,7 @@ object FRpSysInfo: TFRpSysInfo
     end
     object CPolyCaps: TComboBox
       Left = 380
-      Top = 148
+      Top = 228
       Width = 153
       Height = 21
       Style = csDropDownList
@@ -247,7 +305,7 @@ object FRpSysInfo: TFRpSysInfo
     end
     object CTextCaps: TComboBox
       Left = 108
-      Top = 172
+      Top = 252
       Width = 153
       Height = 21
       Style = csDropDownList
@@ -257,7 +315,7 @@ object FRpSysInfo: TFRpSysInfo
     end
     object CCurveCaps: TComboBox
       Left = 380
-      Top = 172
+      Top = 252
       Width = 153
       Height = 21
       Style = csDropDownList
@@ -268,7 +326,7 @@ object FRpSysInfo: TFRpSysInfo
   end
   object GroupBox2: TGroupBox
     Left = 8
-    Top = 216
+    Top = 288
     Width = 541
     Height = 101
     Caption = 'System information'

@@ -307,7 +307,6 @@ begin
    SRpPDFFileUn+'|*.pdf|'+
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
-   SRpBitmapFileMono+'|*.bmp|'+
    SRpHtmlFile+'|*.html|'+
    SRpSVGFile+'|*.svg|'+
    SRpCSVFile+'|*.csv|'+
@@ -322,7 +321,6 @@ begin
    SRpPDFFileUn+' (*.pdf)|'+
    SRpPlainFile+' (*.txt)|'+
    SRpBitmapFile+' (*.bmp)|'+
-   SRpBitmapFileMono+' (*.bmp)|'+
    SRpHtmlFile+' (*.html)|'+
    SRpSVGFile+' (*.svg)|'+
    SRpCSVFile+' (*.csv)|'+
@@ -458,7 +456,8 @@ end;
 procedure TFRpPreview.ASaveExecute(Sender: TObject);
 var
  oldonprogress:TRpMetafileStreamProgres;
- adone:boolean;
+ adone,mono:boolean;
+ horzres,vertres:integer;
  abitmap:TBitmap;
 begin
  // Saves the metafile
@@ -484,39 +483,45 @@ begin
  //       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
        AppIdle(Self,adone);
       end;
-     5,6:
+     5:
       begin
-       ALastExecute(Self);
-       abitmap:=MetafileToBitmap(report.Metafile,true,SaveDialog1.FilterIndex=6);
-       try
-        if assigned(abitmap) then
-         abitmap.SaveToFile(SaveDialog1.FileName);
-       finally
-        abitmap.free;
+       horzres:=100;
+       vertres:=100;
+       mono:=true;
+       if AskBitmapProps(horzres,vertres,mono) then
+       begin
+        ALastExecute(Self);
+        abitmap:=MetafileToBitmap(report.Metafile,true,mono,horzres,vertres);
+        try
+         if assigned(abitmap) then
+          abitmap.SaveToFile(SaveDialog1.FileName);
+        finally
+         abitmap.free;
+        end;
        end;
       end;
-     7:
+     6:
       begin
        ALastExecute(Self);
        ExportMetafileToHtml(report.Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
        AppIdle(Self,adone);
       end;
-     8:
+     7:
       begin
        ALastExecute(Self);
        ExportMetafileToSVG(report.Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
        AppIdle(Self,adone);
       end;
-     9:
+     8:
       begin
        ALastExecute(Self);
        ExportMetafileToCSV(report.metafile,SaveDialog1.Filename,true,true,
         1,9999);
        AppIdle(Self,adone);
       end;
-     10:
+     9:
       begin
        ALastExecute(Self);
        ExportMetafileToTextPro(report.metafile,SaveDialog1.Filename,true,true,
@@ -524,7 +529,7 @@ begin
        AppIdle(Self,adone);
       end;
 {$IFDEF MSWINDOWS}
-     11:
+     10:
       begin
        ALastExecute(Self);
        MetafileToExe(report.metafile,SaveDialog1.Filename);

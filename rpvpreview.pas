@@ -299,7 +299,6 @@ begin
    SRpExcelFile+'|*.xls|'+
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
-   SRpBitmapFileMono+'|*.bmp|'+
    SRpHtmlFile+'|*.html|'+
    SRpSVGFile+'|*.svg|'+
    SRpCSVFile+'|*.csv|'+
@@ -437,6 +436,8 @@ var
  oldonprogress:TRpMetafileStreamProgres;
  adone:boolean;
  abitmap:TBitmap;
+ mono:boolean;
+ horzres,vertres:integer;
 begin
  // Saves the metafile
  if SaveDialog1.Execute then
@@ -468,39 +469,45 @@ begin
         true,false,true,1,9999);
        AppIdle(Self,adone);
       end;
-     6,7:
+     6:
       begin
-       ALastExecute(Self);
-       abitmap:=MetafileToBitmap(report.Metafile,true,SaveDialog1.FilterIndex=7);
-       try
-        if assigned(abitmap) then
-         abitmap.SaveToFile(SaveDialog1.FileName);
-       finally
-        abitmap.free;
+       horzres:=100;
+       vertres:=100;
+       mono:=true;
+       if AskBitmapProps(horzres,vertres,mono) then
+       begin
+        ALastExecute(Self);
+        abitmap:=MetafileToBitmap(report.Metafile,true,mono,horzres,vertres);
+        try
+         if assigned(abitmap) then
+          abitmap.SaveToFile(SaveDialog1.FileName);
+        finally
+         abitmap.free;
+        end;
        end;
       end;
-     8:
+     7:
       begin
        ALastExecute(Self);
        ExportMetafileToHtml(report.Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
        AppIdle(Self,adone);
       end;
-     9:
+     8:
       begin
        ALastExecute(Self);
        ExportMetafileToSVG(report.Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
        AppIdle(Self,adone);
       end;
-     10:
+     9:
       begin
        ALastExecute(Self);
        ExportMetafileToCSV(report.metafile,SaveDialog1.Filename,true,true,
         1,9999);
        AppIdle(Self,adone);
       end;
-     11:
+     10:
       begin
        ALastExecute(Self);
        ExportMetafileToTextPro(report.metafile,SaveDialog1.Filename,true,true,
@@ -508,7 +515,7 @@ begin
        AppIdle(Self,adone);
       end;
 {$IFNDEF DOTNETD}
-     12:
+     11:
       begin
        ALastExecute(Self);
        MetafileToExe(report.metafile,SaveDialog1.Filename);

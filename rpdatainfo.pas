@@ -276,6 +276,7 @@ type
    procedure SetRangeForTable(lastrange:boolean);
 {$ENDIF}
   public
+   SQLOverride:widestring;
    procedure Assign(Source:TPersistent);override;
    procedure Connect(databaseinfo:TRpDatabaseInfoList;params:TRpParamList);
    procedure Disconnect;
@@ -1377,7 +1378,10 @@ begin
   if (not doexit) then
   begin
    // Substitute text in parameters
-   sqlsentence:=FSQL;
+   if (Length(SQLOverride)>0) then
+    sqlsentence:=SQLOverride
+   else
+    sqlsentence:=FSQL;
    for i:=0 to params.Count-1 do
    begin
     param:=params.items[i];
@@ -1837,12 +1841,12 @@ begin
    begin
     param:=params.items[i];
     atype:=rpparams.ParamTypeToDataType(param.ParamType);
-    if param.ParamType=rpParamExpreB then
-    begin
+//    if param.ParamType=rpParamExpreB then
+//    begin
      avalue:=param.LastValue;
-    end
-    else
-     avalue:=param.ListValue;
+//    end
+//    else
+//     avalue:=param.ListValue;
     if ((atype=ftUnknown) or (param.ParamType=rpParamExpreB)) then
      atype:=VarTypeToDataType(Vartype(avalue));
     if param.ParamType=rpParamSubst then

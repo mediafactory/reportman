@@ -369,7 +369,6 @@ begin
    SRpExcelFile+'|*.xls|'+
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
-   SRpBitmapFileMono+'|*.bmp|'+
    SRpHtmlFile+'|*.html|'+
    SRpSVGFile+'|*.svg|'+
    SRpCSVFile+'|*.csv|'+
@@ -566,6 +565,8 @@ end;
 procedure TFRpMetaVCL.ASaveExecute(Sender: TObject);
 var
  abitmap:TBitmap;
+ mono:Boolean;
+ horzres,vertres:Integer;
 begin
  cancelled:=false;
  // Saves the metafile
@@ -588,50 +589,53 @@ begin
      end;
     4:
      begin
-      ALastExecute(Self);
       ExportMetafileToExcel(Metafile,SaveDialog1.FileName,
        true,false,true,1,9999);
      end;
-    6,7:
+    6:
      begin
-      ALastExecute(Self);
-      abitmap:=MetafileToBitmap(Metafile,true,SaveDialog1.FilterIndex=7);
-      try
-       if assigned(abitmap) then
-        abitmap.SaveToFile(SaveDialog1.FileName);
-      finally
-       abitmap.free;
+      horzres:=100;
+      vertres:=100;
+      mono:=true;
+      if AskBitmapProps(horzres,vertres,mono) then
+      begin
+       abitmap:=MetafileToBitmap(Metafile,true,mono,horzres,vertres);
+       try
+        if assigned(abitmap) then
+         abitmap.SaveToFile(SaveDialog1.FileName);
+       finally
+        abitmap.free;
+       end;
       end;
      end;
-     8:
+     7:
       begin
        ExportMetafileToHtml(Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
       end;
-     9:
+     8:
       begin
        ExportMetafileToSVG(Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
       end;
-     10:
+     9:
       begin
        ExportMetafileToCSV(metafile,SaveDialog1.Filename,true,true,
         1,9999);
       end;
-     11:
+     10:
       begin
        ExportMetafileToTextPro(metafile,SaveDialog1.Filename,true,true,
         1,9999);
       end;
 {$IFNDEF DOTNETD}
-     12:
+     11:
       begin
        MetafileToExe(metafile,SaveDialog1.Filename);
       end;
 {$ENDIF}
     else
     begin
-     ALastExecute(Self);
      SaveMetafileToTextFile(Metafile,SaveDialog1.FileName);
     end;
    end;

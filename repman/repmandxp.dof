@@ -117,7 +117,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=2
 Release=0
-Build=55
+Build=57
 Debug=0
 PreRelease=0
 Special=0
@@ -128,7 +128,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Designer
-FileVersion=2.2.0.55
+FileVersion=2.2.0.57
 InternalName=repmandxp
 LegalCopyright=MPL/GPL License
 LegalTrademarks=
@@ -137,6 +137,9 @@ ProductName=Report Manager Designer
 ProductVersion=2.2.0.0
 Comments=
 [Excluded Packages]
+c:\prog\delphi7\Projects\Bpl\rppackdesignvcl_del.bpl=Report Manager Designer VCL Components
+c:\prog\delphi7\Projects\Bpl\rppackdesigntime_del.bpl=Report Manager Design Time Package
+c:\prog\delphi7\Projects\Bpl\rppackdesign_del.bpl=Report Manager Designer Component Package
 c:\prog\delphi7\Bin\dclmcn70.bpl=Borland DataSnap Connection Components
 c:\prog\delphi7\Bin\dclwbm70.bpl=Borland InternetExpress Components
 c:\prog\delphi7\Bin\dclwebsnap70.bpl=Borland WebSnap Components

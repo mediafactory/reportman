@@ -49,7 +49,7 @@ uses
  teEngine,ArrowCha,BubbleCh,GanttCh,
 {$ENDIF}
 {$ENDIF}
- rppdfdriver,rptextdriver;
+ rppdfdriver,rptextdriver, Mask, rpmaskedit;
 
 
 const
@@ -64,12 +64,18 @@ type
     LTittle: TLabel;
     BOK: TButton;
     GPrintRange: TGroupBox;
-    EFrom: TEdit;
-    ETo: TEdit;
+    EFrom: TRpMaskEdit;
+    ETo: TRpMaskEdit;
     LTo: TLabel;
     LFrom: TLabel;
     RadioAll: TRadioButton;
     RadioRange: TRadioButton;
+    GBitmap: TGroupBox;
+    LHorzRes: TLabel;
+    LVertRes: TLabel;
+    EHorzRes: TRpMaskEdit;
+    EVertRes: TRpMaskEdit;
+    CheckMono: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure BCancelClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -179,6 +185,7 @@ function PrintMetafile (metafile:TRpMetafileReport; tittle:string;
   collate:boolean; devicefonts:boolean; printerindex:TRpPrinterSelect=pRpDefaultPrinter):boolean;
 function MetafileToBitmap(metafile:TRpMetafileReport;ShowProgress:Boolean;
  Mono:Boolean;resx:integer=200;resy:integer=100):TBitmap;
+function AskBitmapProps(var HorzRes,VertRes:Integer;var Mono:Boolean):Boolean;
 
 {$IFNDEF FORWEBAX}
 function CalcReportWidthProgress (report:TRpReport):boolean;
@@ -1056,11 +1063,29 @@ function TRpGDIDriver.GetPageSize(var PageSizeQt:Integer):TPoint;
 var
  gdisize:TGDIPageSize;
  qtsize:TPageSizeQt;
+ asize:TPoint;
 begin
  gdisize:=GetCurrentPaper;
  qtsize:=GDIPageSizeToQtPageSize(gdisize);
  PageSizeQt:=qtsize.Indexqt;
- Result:=GetPhysicPageSizeTwips;
+ asize:=GetPhysicPageSizeTwips;
+{ if ((asize.x<1) or (asize.y<1)) then
+ begin
+  gdisize.Width:=Round(gdisize.Width/100/CMS_PER_INCHESS*TWIPS_PER_INCHESS);
+  gdisize.Height:=Round(gdisize.Height/100/CMS_PER_INCHESS*TWIPS_PER_INCHESS);
+
+  if Printer.Orientation=poLandscape then
+  begin
+   asize.x:=gdisize.Height;
+   asize.y:=gdisize.Width;
+  end
+  else
+  begin
+   asize.x:=gdisize.Width;
+   asize.y:=gdisize.Height;
+  end;
+ end;
+} Result:=asize;
 end;
 
 function TRpGDIDriver.SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
@@ -1306,6 +1331,8 @@ type
    dummy:Array[0..5] of TPaletteEntry;
   end;
 
+const
+ MAX_RES_BITMAP=5760;
 
 function DoMetafileToBitmap(metafile:TRpMetafileReport;aform:TFRpVCLProgress;
  Mono:Boolean;resx:integer=200;resy:integer=100):TBitmap;
@@ -1325,6 +1352,15 @@ var
  ameta:TMetaFile;
  ametacanvas:TMetafileCanvas;
 begin
+ // Maximum resolution
+ if resx>MAX_RES_BITMAP then
+  resx:=MAX_RES_BITMAP;
+ if resy>MAX_RES_BITMAP then
+  resy:=MAX_RES_BITMAP;
+ if resx<1 then
+  resx:=1;
+ if resy<1 then
+  resy:=1;
  offset.X:=0;
  offset.Y:=0;
  mmfirst:=TimeGetTime;
@@ -1471,6 +1507,9 @@ begin
  RadioRange.Caption:=TranslateStr(258,RadioRange.Caption);
  Caption:=TranslateStr(259,Caption);
 
+ LHorzRes.Caption:=SRpHorzRes;
+ LVertRes.Caption:=SRpVertRes;
+ CheckMono.Caption:=SRpMonochrome;
 end;
 
 procedure TFRpVCLProgress.AppIdle(Sender:TObject;var done:boolean);
@@ -2304,6 +2343,40 @@ begin
 {$ENDIF}
 end;
 {$ENDIF}
+
+function AskBitmapProps(var HorzRes,VertRes:Integer;var Mono:Boolean):Boolean;
+var
+ diarange:TFRpVCLProgress;
+begin
+ Result:=false;
+ diarange:=TFRpVCLProgress.Create(Application);
+ try
+  diarange.Caption:=SRpBitmapProps;
+  diarange.BOK.Visible:=true;
+  diarange.GBitmap.Visible:=true;
+  diarange.EHorzRes.Text:=IntToStr(HorzRes);
+  diarange.EVertRes.Text:=IntToStr(HorzRes);
+  diarange.CheckMono.Checked:=Mono;
+  diarange.ActiveControl:=diarange.BOK;
+  diarange.showmodal;
+  if diarange.dook then
+  begin
+   try
+    HorzRes:=StrToInt(diarange.EHorzRes.Text);
+    VertRes:=StrToInt(diarange.EVertRes.Text);
+   except
+   end;
+   if HorzRes<1 then
+    HorzREs:=1;
+   if VertRes<1 then
+    VertRes:=1;
+   Mono:=diarange.CheckMono.Checked;
+   Result:=true;
+  end
+ finally
+  diarange.free;
+ end;
+end;
 
 end.
 

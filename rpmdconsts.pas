@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.2pre16';
+ RM_VERSION='2.2pre18';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
@@ -929,6 +929,15 @@ var
   SRpPhoneNum:WideString='Phone number';
   SRpStatus:WideString='Status';
   SRpConversion:WideString='Conversion';
+  SRpWrongREsult:Widestring='Wrong result from function:';
+  SRpBitmapProps:WideString='Bitmap properties';
+  SRpMonochrome:WideString='Monochrome';
+  SRpHorzRes:WideString='Horizontal resolution in dots per inches';
+  SRpVertRes:WideString='Vertical resolution in dots per inches';
+  SRpForceForm:WideString='Force form name';
+  SRpFormName:WideString='Form name';
+  SRpFormPageSize:WideString='Form page size';
+  SRpPageSize:WideString='Page size';
 implementation
 
 uses rptranslator;
@@ -1096,7 +1105,6 @@ begin
  TranslateVar(394,SRpPLeft);
  TranslateVar(395,SRpPos);
  TranslateVar(396,SRpPPos);
-
  TranslateVar(397,SRpAllDriver);
  TranslateVar(398,SRpSelectDriver);
  TranslateVar(399,SRpNewConnection);
@@ -1483,7 +1491,6 @@ begin
  TranslateVar(893,SRpSChartDriverEngine);
  TranslateVar(894,SRpSChartDriverTeeChart);
  TranslateVar(67,SRpSDriver);
-
  TranslateVar(895,SRpChartLine);
  TranslateVar(897,SRpChartBar);
  TranslateVar(896,SRpChartPoint);
@@ -1750,7 +1757,6 @@ begin
  TranslateVar(1247,SRpPAbs);
  TranslateVar(1248,SrpSBackExpression);
  TranslateVar(1249,SrpSInvBackImage);
-
  TranslateVar(1250,SRpSBackStyle);
  TranslateVar(1252,SRpSBDesign);
  TranslateVar(1252,SRpSBPreview);
@@ -1779,6 +1785,52 @@ begin
  TranslateVar(1276,SRpNoTrueType);
  TranslateVar(1277,SRpFontDataIndexNotFound);
  TranslateVar(1278,SRpErrorProcessing);
+ TranslateVar(1279,SRpEvalDescIdenLeft);
+ TranslateVar(1280,SRpGraphicBounds);
+ TranslateVar(1281,SRpPGraphicBounds);
+ TranslateVar(1282,SRpSetFontPropsAsDefault);
+ TranslateVar(1283,SRpSetFontPropsAsDefaultHint);
+ TranslateVar(1284,SRpGetValueFromSQL);
+ TranslateVar(1285,SRpGetValueFromSQLP);
+ TranslateVar(1286,SRpPaperSource);
+ TranslateVar(1287,SRpBinFirst);
+ TranslateVar(1288,SRpBinLower);
+ TranslateVar(1289,SRpBinMiddle);
+ TranslateVar(1290,SRpBinManual);
+ TranslateVar(1291,SRpBinEnvelope);
+ TranslateVar(1292,SRpBinEnvelopeManual);
+ TranslateVar(1293,SRpBinAuto);
+ TranslateVar(1294,SRpBinTractor);
+ TranslateVar(1295,SRpBinSmallFMT);
+ TranslateVar(1296,SRpBinLargeFMT);
+ TranslateVar(1297,SRpBinLargeCapacity);
+ TranslateVar(1298,SRpBinCassette);
+ TranslateVar(1299,SRpFormSource);
+ TranslateVar(1300,SRpDuplex);
+ TranslateVar(1301,SRpDuplexS);
+ TranslateVar(1302,SRpDuplexHor);
+ TranslateVar(1303,SRpDuplexVer);
+ TranslateVar(1304,SRpPrintRep18);
+ TranslateVar(1305,SRpPrintRep19);
+ TranslateVar(1306,SRpPrintRep20);
+ TranslateVar(1307,SRpPrintRep21);
+ TranslateVar(1308,SRpPrintRep22);
+ TranslateVar(1309,SRpPrintRep23);
+ TranslateVar(1310,SRpPrintRep24);
+ TranslateVar(1311,SRpPhoneNum);
+ TranslateVar(1312,SRpStatus);
+ TranslateVar(1313,SRpConversion);
+ TranslateVar(1314,SRpWrongREsult);
+ TranslateVar(1315,SRpBitmapProps);
+ TranslateVar(1316,SRpMonochrome);
+ TranslateVar(1317,SRpHorzRes);
+ TranslateVar(1318,SRpVertRes);
+ TranslateVar(1319,SRpForceForm);
+ TranslateVar(1320,SRpFormName);
+ TranslateVar(1321,SRpFormPageSize);
+ TranslateVar(1322,SRpPageSize);
+ TranslateVar(1320,SRpForceForm);
+ TranslateVar(1320,SRpForceForm);
 end;
 
 

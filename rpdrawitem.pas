@@ -106,14 +106,6 @@ implementation
 
 uses rpbasereport;
 
-{ Paradox graphic BLOB header }
-
-type
-  TGraphicHeader = record
-    Count: Word;                { Fixed at 1 }
-    HType: Word;                { Fixed at $0100 }
-    Size: Longint;              { Size not including header }
-  end;
 
 constructor TRpShape.Create(AOwner:TComponent);
 begin
@@ -237,20 +229,12 @@ begin
 end;
 {$ENDIF}
 
+
+
+
 function TRpImage.GetStream:TMemoryStream;
 var
  evaluator:TRpEvaluator;
- iden:TRpIdentifier;
- afield:TField;
- AStream:TStream;
- Size,readed: Longint;
- Header: TGraphicHeader;
- FMStream:TMemoryStream;
- aValue:Variant;
- afilename:TFilename;
-{$IFDEF DOTNETD}
- Temp:TBytes;
-{$ENDIF}
 begin
  try
   Result:=nil;
@@ -260,116 +244,7 @@ begin
    if Not Assigned(TRpBaseReport(GetReport).Evaluator) then
     Exit;
    evaluator:=TRpBaseReport(GetReport).evaluator;
-   iden:=evaluator.SearchIdentifier(Expression);
-   if Assigned(iden) then
-    if (Not (iden is TIdenField)) then
-     iden:=nil;
-   if Not Assigned(iden) then
-   begin
-    // Looks for a string (path to file)
-    aValue:=evaluator.EvaluateText(Expression);
-    if (not ((VarType(aValue)=varString) or (VarType(aValue)=varOleStr))) then
-     Raise Exception.Create(SRpFieldNotFound+FExpression);
-    afilename:=aValue;
-    FMStream:=TMemoryStream.Create;
-    try
-     AStream:=TFileStream.Create(afilename,fmOpenread or fmShareDenyWrite);
-     try
-      Size := AStream.Size;
-      FMStream.SetSize(Size);
-      if Size >= SizeOf(TGraphicHeader) then
-      begin
-{$IFDEF DOTNETD}
-      SetLength(Temp,SizeOf(Header));
-      AStream.Read(Temp, SizeOf(Header));
-      Header := BytesToGraphicHeader(Temp);
-      if (Header.Count <> 1) or (Header.HType <> $0100) or
-        (Header.Size <> Size - SizeOf(Header)) then
-        AStream.Position := 0
-      else
-        FMStream.SetSize(AStream.Size-SizeOf(Header));
-{$ENDIF}
-{$IFNDEF DOTNETD}
-        AStream.Read(Header, SizeOf(Header));
-        if (Header.Count <> 1) or (Header.HType <> $0100) or
-          (Header.Size <> Size - SizeOf(Header)) then
-          AStream.Position := 0
-        else
-         FMStream.SetSize(AStream.Size-SizeOf(Header));
-{$ENDIF}
-      end;
-      FMStream.Seek(0,soFromBeginning);
-{$IFNDEF DOTNETD}
-      readed:=AStream.Read(FMStream.Memory^,FMStream.Size);
-{$ENDIF}
-{$IFDEF DOTNETD}
-      readed:=FMStream.CopyFrom(AStream,FMStream.Size);
-{$ENDIF}
-      if readed<>FMStream.Size then
-       Raise Exception.Create(SRpErrorReadingFromFieldStream);
-      FMStream.Seek(0,soFromBeginning);
-     finally
-      AStream.free;
-     end;
-     Result:=FMStream;
-    except
-     FMStream.free;
-     Raise;
-    end;
-   end
-   else
-   begin
-    AField:=(iden As TIdenField).Field;
-    if (Not (AField is TBlobField)) then
-     Raise Exception.Create(SRpNotBinary+FExpression);
-    if AField.isnull then
-     exit;
-    FMStream:=TMemoryStream.Create;
-    try
-     AStream:=AField.DataSet.CreateBlobStream(AField,bmRead);
-     try
-      Size := AStream.Size;
-      FMStream.SetSize(Size);
-      if Size >= SizeOf(TGraphicHeader) then
-      begin
-{$IFDEF DOTNETD}
-       SetLength(Temp,SizeOf(Header));
-       AStream.Read(Temp, SizeOf(Header));
-       Header := BytesToGraphicHeader(Temp);
-       if (Header.Count <> 1) or (Header.HType <> $0100) or
-         (Header.Size <> Size - SizeOf(Header)) then
-         AStream.Position := 0
-       else
-        FMStream.SetSize(AStream.Size-SizeOf(Header));
-{$ENDIF}
-{$IFNDEF DOTNETD}
-        AStream.Read(Header, SizeOf(Header));
-        if (Header.Count <> 1) or (Header.HType <> $0100) or
-          (Header.Size <> Size - SizeOf(Header)) then
-          AStream.Position := 0
-        else
-         FMStream.SetSize(AStream.Size-SizeOf(Header));
-{$ENDIF}
-      end;
-      FMStream.Seek(0,soFromBeginning);
-{$IFNDEF DOTNETD}
-      readed:=AStream.Read(FMStream.Memory^,FMStream.Size);
-{$ENDIF}
-{$IFDEF DOTNETD}
-      readed:=FMStream.CopyFrom(AStream,FMStream.Size);
-{$ENDIF}
-      if readed<>FMStream.Size then
-       Raise Exception.Create(SRpErrorReadingFromFieldStream);
-      FMStream.Seek(0,soFromBeginning);
-     finally
-      AStream.free;
-     end;
-     Result:=FMStream;
-    except
-     FMStream.free;
-     Raise;
-    end;
-   end;
+   Result:=evaluator.GetStreamFromExpression(Expression);
   end
   else
   begin

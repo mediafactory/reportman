@@ -363,7 +363,6 @@ begin
    SRpPDFFileUn+'|*.pdf|'+
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
-   SRpBitmapFileMono+'|*.bmp|'+
    SRpHtmlFile+'|*.html|'+
    SRpSVGFile+'|*.svg|'+
    SRpCSVFile+'|*.csv|'+
@@ -379,7 +378,6 @@ begin
    SRpPDFFileUn+' (*.pdf)|'+
    SRpPlainFile+' (*.txt)|'+
    SRpBitmapFile+' (*.bmp)|'+
-   SRpBitmapFileMono+' (*.bmp)|'+
    SRpHtmlFile+' (*.html)|'+
    SRpSVGFile+' (*.svg)|'+
    SRpCSVFile+' (*.csv)|'+
@@ -624,6 +622,8 @@ end;
 procedure TFRpMeta.ASaveExecute(Sender: TObject);
 var
  abitmap:TBitmap;
+ mono:Boolean;
+ horzres,vertres:Integer;
 begin
  cancelled:=false;
  // Saves the metafile
@@ -644,39 +644,45 @@ begin
       else
        SaveMetafileToPDF(metafile,SaveDialog1.filename,false);
      end;
-    5,6:
+    5:
      begin
-      ALastExecute(Self);
-      abitmap:=MetafileToBitmap(Metafile,true,SaveDialog1.FilterIndex=6);
-      try
-       if assigned(abitmap) then
-        abitmap.SaveToFile(SaveDialog1.FileName);
-      finally
-       abitmap.free;
+      horzres:=100;
+      vertres:=100;
+      mono:=true;
+      if AskBitmapProps(horzres,vertres,mono) then
+      begin
+       ALastExecute(Self);
+       abitmap:=MetafileToBitmap(Metafile,true,mono,horzres,vertres);
+       try
+        if assigned(abitmap) then
+         abitmap.SaveToFile(SaveDialog1.FileName);
+       finally
+        abitmap.free;
+       end;
       end;
      end;
-    7:
+    6:
      begin
       ExportMetafileToHtml(Metafile,Caption,SaveDialog1.FileName,
        true,true,1,9999);
      end;
-    8:
+    7:
      begin
       ExportMetafileToSVG(Metafile,Caption,SaveDialog1.FileName,
        true,true,1,9999);
      end;
-    9:
+    8:
      begin
       ExportMetafileToCSV(metafile,SaveDialog1.Filename,true,true,
        1,9999);
      end;
-    10:
+    9:
      begin
       ExportMetafileToTextPro(metafile,SaveDialog1.Filename,true,true,
        1,9999);
      end;
 {$IFDEF MSWINDOWS}
-    11:
+    10:
      begin
       MetafileToExe(metafile,SaveDialog1.Filename);
      end;

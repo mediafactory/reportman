@@ -103,12 +103,14 @@ type
  TRpGraphicOpProc=function (Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean of object;
-
+ TRpImageOpProc=function (Top,Left,Width,Height:integer;
+    DrawStyle,DPIRes:integer;PreviewOnly:Boolean;Image:WideString):Boolean of object;
  TRpTextOpProc=function (Top,Left,Width,Height:integer;
   Text,LFontName,WFontName:WideString;
   FontSize,FontRotation,FontStyle,FontColor,Type1Font:integer;
   CutText:boolean;Alignment:integer;WordWrap,RightToLeft:Boolean;
   PrintStep,BackColor:integer;transparent:boolean):Boolean of Object;
+ TRpReOpenOp=function (datasetname:String;sql:Widestring):Boolean of object;
 
  TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
 
@@ -149,12 +151,14 @@ type
  TRpPrinterEscapeStyle=(rpPrinterDefault,rpPrinterPlain,rpPrinterDatabase,rpPrinterCustom);
 
  TRpPageSize=(rpPageSizeDefault,rpPageSizeCustom,rpPageSizeUser);
+
  TPageSizeQt=record
   Indexqt:integer;
   Custom:boolean;
   CustomWidth:integer;
   CustomHeight:integer;
   PaperSource:integer;
+  ForcePaperName:String;
   Duplex:integer;
  end;
 
@@ -225,6 +229,8 @@ procedure SendMail(destination,subject,content,filename:String);
 function StrToAlign(value:string):TRpPosAlign;
 function AlignToStr(value:TRpPosAlign):string;
 function VarIsString(avar:Variant):Boolean;
+function VarIsNumber(avar:Variant):Boolean;
+function VarIsInteger(avar:Variant):Boolean;
 function IsRedColor(Color:Integer):Boolean;
 // Compares 2 streams and returns true if they are equal
 function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
@@ -477,6 +483,16 @@ begin
  Result:=false;
  if ((VarType(avar)=varstring) or (VarType(avar)=varOleStr)) then
   Result:=true;
+end;
+
+function VarIsNumber(avar:Variant):Boolean;
+begin
+ Result:=(Vartype(avar) in [varSmallInt..VarCurrency,varWord,varByte]);
+end;
+
+function VarIsInteger(avar:Variant):Boolean;
+begin
+ Result:=(Vartype(avar) in [varSmallInt..varInteger,varShortInt..varInt64]);
 end;
 
 

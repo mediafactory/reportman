@@ -56,6 +56,8 @@ type
   FChecking:Boolean;
   FLanguage:Integer;
   FOnGraphicOp:TRpGraphicOpProc;
+  FOnImageOp:TRpImageOpProc;
+  FOnReOpenOp:TRpReOpenOp;
   FOnTextOp:TRpTextOpProc;
   FOnGetSQLValue:TRpOnGetSQLValue;
   procedure SetExpression(Value:string);
@@ -99,6 +101,8 @@ type
   procedure Evaluate;
   // The evaluation procedure without Expression property
   function EvaluateText(text:string):TRpValue;
+  function GetStreamFromExpression(atext:WideString):TMemoryStream;
+
   // Checking Syntax
   procedure CheckSyntax;
   property Expression:string Read FExpression write SetExpression;
@@ -118,7 +122,9 @@ type
 {$ENDIF}
   property Language:Integer read FLanguage write FLanguage;
   property OnGraphicOp:TRpGraphicOpProc read FOnGraphicOp write FOnGraphicOp;
+  property OnImageOp:TRpImageOpProc read FOnImageOp write FOnImageOp;
   property OnTextOp:TRpTextOpProc read FOnTextOp write FOnTextOp;
+  property OnReOpenOp:TRpReOpenOp read FOnReOpenOp write FOnReOpenOp;
   property OnGetSQLValue:TRpOnGetSQLValue read FOnGetSQLValue write FOnGetSQLValue;
  end;
 
@@ -143,6 +149,15 @@ function EvaluateExpression(aexpression:WideString):Variant;
 implementation
 
 uses rpevalfunc;
+
+{ Paradox graphic BLOB header }
+
+type
+  TGraphicHeader = record
+    Count: Word;                { Fixed at 1 }
+    HType: Word;                { Fixed at $0100 }
+    Size: Longint;              { Size not including header }
+  end;
 
 // TRpCustomEvaluator
 
@@ -211,6 +226,8 @@ begin
  Rpfunctions.AddObject('FLOATTODATETIME',iden);
  iden:=TIdenRound.Create(nil);
  Rpfunctions.AddObject('ROUND',iden);
+ iden:=TIdenRoundToInteger.Create(nil);
+ Rpfunctions.AddObject('ROUNDTOINTEGER',iden);
  iden:=TIdenInt.Create(nil);
  Rpfunctions.AddObject('INT',iden);
  iden:=TIdenAbs.Create(nil);
@@ -277,6 +294,9 @@ begin
  Rpfunctions.AddObject('GRAPHICOP',iden);
  iden:=TIdenTextOperation.Create(nil);
  Rpfunctions.AddObject('TEXTOP',iden);
+ iden:=TIdenImageOperation.Create(nil);
+ Rpfunctions.AddObject('IMAGEOP',iden);
+ // Other
 
  // Graphic functions
  iden:=TIdenGraphicClear.Create(nil);
@@ -288,6 +308,9 @@ begin
  // SQl functions
  iden:=TIdenGetValueFromSQL.Create(nil);
  Rpfunctions.AddObject('GETVALUEFROMSQL',iden);
+ // 
+ iden:=TIdenReOpenOp.Create(nil);
+ Rpfunctions.AddObject('REOPEN',iden);
 
 end;
 
@@ -1132,6 +1155,132 @@ begin
  end;
 end;
 
+function TRpCustomEvaluator.GetStreamFromExpression(atext:WideString):TMemoryStream;
+var
+ iden:TRpIdentifier;
+ afield:TField;
+ aValue:Variant;
+ afilename:TFilename;
+ AStream:TStream;
+ FMStream:TMemoryStream;
+ Size,readed: Longint;
+ Header: TGraphicHeader;
+{$IFDEF DOTNETD}
+ Temp:TBytes;
+{$ENDIF}
+begin
+   Result:=nil;
+   iden:=SearchIdentifier(Expression);
+   if Assigned(iden) then
+    if (Not (iden is TIdenField)) then
+     iden:=nil;
+   if Not Assigned(iden) then
+   begin
+    // Looks for a string (path to file)
+    aValue:=EvaluateText(Expression);
+    if (not ((VarType(aValue)=varString) or (VarType(aValue)=varOleStr))) then
+     Raise Exception.Create(SRpFieldNotFound+FExpression);
+    afilename:=aValue;
+    FMStream:=TMemoryStream.Create;
+    try
+     AStream:=TFileStream.Create(afilename,fmOpenread or fmShareDenyWrite);
+     try
+      Size := AStream.Size;
+      FMStream.SetSize(Size);
+      if Size >= SizeOf(TGraphicHeader) then
+      begin
+{$IFDEF DOTNETD}
+      SetLength(Temp,SizeOf(Header));
+      AStream.Read(Temp, SizeOf(Header));
+      Header := BytesToGraphicHeader(Temp);
+      if (Header.Count <> 1) or (Header.HType <> $0100) or
+        (Header.Size <> Size - SizeOf(Header)) then
+        AStream.Position := 0
+      else
+        FMStream.SetSize(AStream.Size-SizeOf(Header));
+{$ENDIF}
+{$IFNDEF DOTNETD}
+        AStream.Read(Header, SizeOf(Header));
+        if (Header.Count <> 1) or (Header.HType <> $0100) or
+          (Header.Size <> Size - SizeOf(Header)) then
+          AStream.Position := 0
+        else
+         FMStream.SetSize(AStream.Size-SizeOf(Header));
+{$ENDIF}
+      end;
+      FMStream.Seek(0,soFromBeginning);
+{$IFNDEF DOTNETD}
+      readed:=AStream.Read(FMStream.Memory^,FMStream.Size);
+{$ENDIF}
+{$IFDEF DOTNETD}
+      readed:=FMStream.CopyFrom(AStream,FMStream.Size);
+{$ENDIF}
+      if readed<>FMStream.Size then
+       Raise Exception.Create(SRpErrorReadingFromFieldStream);
+      FMStream.Seek(0,soFromBeginning);
+     finally
+      AStream.free;
+     end;
+     Result:=FMStream;
+    except
+     FMStream.free;
+     Raise;
+    end;
+   end
+   else
+   begin
+    AField:=(iden As TIdenField).Field;
+    if (Not (AField is TBlobField)) then
+     Raise Exception.Create(SRpNotBinary+FExpression);
+    if AField.isnull then
+     exit;
+    FMStream:=TMemoryStream.Create;
+    try
+     AStream:=AField.DataSet.CreateBlobStream(AField,bmRead);
+     try
+      Size := AStream.Size;
+      FMStream.SetSize(Size);
+      if Size >= SizeOf(TGraphicHeader) then
+      begin
+{$IFDEF DOTNETD}
+       SetLength(Temp,SizeOf(Header));
+       AStream.Read(Temp, SizeOf(Header));
+       Header := BytesToGraphicHeader(Temp);
+       if (Header.Count <> 1) or (Header.HType <> $0100) or
+         (Header.Size <> Size - SizeOf(Header)) then
+         AStream.Position := 0
+       else
+        FMStream.SetSize(AStream.Size-SizeOf(Header));
+{$ENDIF}
+{$IFNDEF DOTNETD}
+        AStream.Read(Header, SizeOf(Header));
+        if (Header.Count <> 1) or (Header.HType <> $0100) or
+          (Header.Size <> Size - SizeOf(Header)) then
+          AStream.Position := 0
+        else
+         FMStream.SetSize(AStream.Size-SizeOf(Header));
+{$ENDIF}
+      end;
+      FMStream.Seek(0,soFromBeginning);
+{$IFNDEF DOTNETD}
+      readed:=AStream.Read(FMStream.Memory^,FMStream.Size);
+{$ENDIF}
+{$IFDEF DOTNETD}
+      readed:=FMStream.CopyFrom(AStream,FMStream.Size);
+{$ENDIF}
+      if readed<>FMStream.Size then
+       Raise Exception.Create(SRpErrorReadingFromFieldStream);
+      FMStream.Seek(0,soFromBeginning);
+     finally
+      AStream.free;
+     end;
+     Result:=FMStream;
+    except
+     FMStream.free;
+     Raise;
+    end;
+   end;
+end;
 
 
 initialization

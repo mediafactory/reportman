@@ -46,7 +46,7 @@ uses
   teEngine,ArrowCha,BubbleCh,GanttCh,
  {$ENDIF}
 {$ENDIF}
- rptextdriver,rppdfdriver,QGraphics, QControls;
+ rptextdriver,rppdfdriver,QGraphics, QControls,rpmaskeditclx, QMask;
 
 const
  METAPRINTPROGRESS_INTERVAL=20;
@@ -55,17 +55,26 @@ const
 type
   TRpQtDriver=class;
   TFRpQtProgress = class(TForm)
+    BOk: TButton;
     BCancel: TButton;
     LProcessing: TLabel;
     LRecordCount: TLabel;
     LTitle: TLabel;
     LTittle: TLabel;
+    GBitmap: TGroupBox;
+    LHorzRes: TLabel;
+    LVertRes: TLabel;
+    EHorzRes: TRpCLXMaskEdit;
+    EVertRes: TRpCLXMaskEdit;
+    CheckMono: TCheckBox;    
     procedure FormCreate(Sender: TObject);
     procedure BCancelClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure BOKClick(Sender: TObject);
   private
     { Private declarations }
     allpages,collate:boolean;
+    dook:boolean;
     frompage,topage,copies:integer;
     printerindex:TRpPrinterSelect;
     MetaBitmap:TBitmap;
@@ -159,6 +168,8 @@ function PrintMetafile (metafile:TRpMetafileReport; tittle:string;
   collate:boolean; printerindex:TRpPrinterSelect):boolean;
 function MetafileToBitmap(metafile:TRpMetafileReport;ShowProgress:Boolean;
  Mono:Boolean;resx:integer=200;resy:integer=100):TBitmap;
+function AskBitmapProps(var HorzRes,VertRes:Integer;var Mono:Boolean):Boolean;
+
 {$IFNDEF FORWEBAX}
 function CalcReportWidthProgress (report:TRpReport):boolean;
 function PrintReport (report:TRpReport; Caption:string; progress:boolean;
@@ -1027,6 +1038,9 @@ begin
  end;
 end;
 
+const
+ MAX_RES_BITMAP=5760;
+
 function DoMetafileToBitmap(metafile:TRpMetafileReport;aform:TFRpQtProgress;
  Mono:Boolean;resx:integer=200;resy:integer=100):TBitmap;
 var
@@ -1053,6 +1067,16 @@ var
  scale:integer;
  maxdpi:integer;
 begin
+ // Maximum resolution
+ if resx>MAX_RES_BITMAP then
+  resx:=MAX_RES_BITMAP;
+ if resy>MAX_RES_BITMAP then
+  resy:=MAX_RES_BITMAP;
+ if resx<1 then
+  resx:=1;
+ if resy<1 then
+  resy:=1;
+
  realdpix:=Screen.PixelsPerInch;
  realdpiy:=Screen.PixelsPerInch;
  scale:=1;
@@ -1225,6 +1249,10 @@ begin
  BCancel.Caption:=TranslateStr(94,BCancel.Caption);
  LTitle.Caption:=TranslateStr(252,LTitle.Caption);
  LProcessing.Caption:=TranslateStr(253,LProcessing.Caption);
+
+ LHorzRes.Caption:=SRpHorzRes;
+ LVertRes.Caption:=SRpVertRes;
+ CheckMono.Caption:=SRpMonochrome;
 
  SetInitialBounds;
 end;
@@ -2134,7 +2162,47 @@ begin
  {$ENDIF}
 end;
 {$ENDIF}
+
+
+function AskBitmapProps(var HorzRes,VertRes:Integer;var Mono:Boolean):Boolean;
+var
+ diarange:TFRpQtProgress;
+begin
+ Result:=false;
+ diarange:=TFRpQtProgress.Create(Application);
+ try
+  diarange.Caption:=SRpBitmapProps;
+  diarange.BOK.Visible:=true;
+  diarange.GBitmap.Visible:=true;
+  diarange.EHorzRes.Text:=IntToStr(HorzRes);
+  diarange.EVertRes.Text:=IntToStr(HorzRes);
+  diarange.CheckMono.Checked:=Mono;
+  diarange.ActiveControl:=diarange.BOK;
+  diarange.showmodal;
+  if diarange.dook then
+  begin
+   try
+    HorzRes:=StrToInt(diarange.EHorzRes.Text);
+    VertRes:=StrToInt(diarange.EVertRes.Text);
+   except
+   end;
+   if HorzRes<1 then
+    HorzREs:=1;
+   if VertRes<1 then
+    VertRes:=1;
+   Mono:=diarange.CheckMono.Checked;
+   Result:=true;
+  end
+ finally
+  diarange.free;
+ end;
+end;
+
+procedure TFRpQtProgress.BOKClick(Sender: TObject);
+begin
+ dook:=true;
+ Close;
+end;
+
 end.
-
-
 

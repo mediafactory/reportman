@@ -3,7 +3,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   Top = 108
   BorderStyle = bsDialog
   Caption = 'Dialog'
-  ClientHeight = 436
+  ClientHeight = 433
   ClientWidth = 458
   Color = clBtnFace
   ParentFont = True
@@ -18,12 +18,15 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     Left = 0
     Top = 0
     Width = 458
-    Height = 395
-    ActivePage = TabPrint
+    Height = 392
+    ActivePage = TabPage
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
       Caption = 'Page setup'
+      DesignSize = (
+        450
+        364)
       object SColor: TShape
         Left = 164
         Top = 248
@@ -77,8 +80,9 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
       object RCustomOrientation: TRadioGroup
         Left = 188
         Top = 104
-        Width = 177
+        Width = 257
         Height = 67
+        Anchors = [akLeft, akTop, akRight]
         Caption = 'Custom page orientation'
         Items.Strings = (
           'Portrait'
@@ -100,8 +104,12 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Top = 172
         Width = 441
         Height = 69
+        Anchors = [akLeft, akTop, akRight]
         Caption = 'Page Margins'
         TabOrder = 5
+        DesignSize = (
+          441
+          69)
         object LLeft: TLabel
           Left = 16
           Top = 16
@@ -135,6 +143,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           Top = 16
           Width = 23
           Height = 13
+          Anchors = [akTop, akRight]
           Caption = 'inch.'
         end
         object LRight: TLabel
@@ -156,6 +165,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           Top = 44
           Width = 23
           Height = 13
+          Anchors = [akTop, akRight]
           Caption = 'inch.'
         end
         object ELeftMargin: TRpMaskEdit
@@ -179,6 +189,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           Top = 12
           Width = 77
           Height = 21
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 1
           EditType = tecurrency
         end
@@ -187,6 +198,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           Top = 40
           Width = 77
           Height = 21
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 3
           EditType = tecurrency
         end
@@ -195,15 +207,20 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Left = 184
         Top = 8
         Width = 261
-        Height = 73
+        Height = 93
+        Anchors = [akLeft, akTop, akRight]
         Caption = 'Custom page size (Windows only)'
         TabOrder = 1
         Visible = False
+        DesignSize = (
+          261
+          93)
         object LMetrics7: TLabel
           Left = 218
           Top = 24
           Width = 23
           Height = 13
+          Anchors = [akTop, akRight]
           Caption = 'inch.'
         end
         object LMetrics8: TLabel
@@ -211,6 +228,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           Top = 48
           Width = 23
           Height = 13
+          Anchors = [akTop, akRight]
           Caption = 'inch.'
         end
         object LWidth: TLabel
@@ -227,11 +245,19 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           Height = 13
           Caption = 'Height'
         end
+        object LForceFormName: TLabel
+          Left = 12
+          Top = 72
+          Width = 79
+          Height = 13
+          Caption = 'Force form name'
+        end
         object EPageheight: TRpMaskEdit
           Left = 128
           Top = 44
           Width = 77
           Height = 21
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 1
           EditType = tecurrency
         end
@@ -240,14 +266,26 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           Top = 20
           Width = 77
           Height = 21
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 0
           EditType = tecurrency
+        end
+        object EForceFormName: TRpMaskEdit
+          Left = 128
+          Top = 68
+          Width = 77
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 2
         end
       end
     end
     object TabPrint: TTabSheet
       Caption = 'Print setup'
       ImageIndex = 1
+      DesignSize = (
+        450
+        364)
       object LSelectPrinter: TLabel
         Left = 8
         Top = 92
@@ -303,6 +341,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 193
         Height = 21
         Style = csDropDownList
+        Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
         TabOrder = 3
       end
@@ -353,6 +392,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 193
         Height = 21
         Style = csDropDownList
+        Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
         TabOrder = 0
         Items.Strings = (
@@ -366,6 +406,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 193
         Height = 21
         Style = csDropDownList
+        Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
         TabOrder = 1
       end
@@ -387,6 +428,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 93
         Height = 21
         Style = csDropDownList
+        Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
         TabOrder = 4
         Items.Strings = (
@@ -415,6 +457,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Top = 232
         Width = 233
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         Caption = 'About box in preview'
         TabOrder = 12
       end
@@ -423,6 +466,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Top = 256
         Width = 233
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         Caption = 'Printable margins in preview'
         TabOrder = 13
       end
@@ -432,6 +476,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 193
         Height = 21
         Style = csDropDownList
+        Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
         TabOrder = 14
       end
@@ -441,6 +486,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 193
         Height = 21
         Style = csDropDownList
+        Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
         TabOrder = 15
       end
@@ -448,6 +494,9 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     object TabOptions: TTabSheet
       Caption = 'Options'
       ImageIndex = 2
+      DesignSize = (
+        450
+        364)
       object LPreferedFormat: TLabel
         Left = 8
         Top = 12
@@ -456,19 +505,20 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Caption = 'Prefered save format'
       end
       object ComboFormat: TComboBox
-        Left = 124
+        Left = 184
         Top = 8
-        Width = 181
+        Width = 257
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
+        Anchors = [akLeft, akTop, akRight]
+        ItemHeight = 13
         TabOrder = 0
       end
     end
   end
   object Panel1: TPanel
     Left = 0
-    Top = 395
+    Top = 392
     Width = 458
     Height = 41
     Align = alBottom
@@ -493,7 +543,6 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     end
   end
   object ColorDialog1: TColorDialog
-    Ctl3D = True
     Left = 336
     Top = 288
   end

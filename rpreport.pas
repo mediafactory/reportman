@@ -854,6 +854,7 @@ begin
   end;
   rPageSizeQt.papersource:=papersource;
   rPageSizeQt.duplex:=duplex;
+  rPageSizeQt.ForcePaperName:=ForcePapername;
   if PageSize<>rpPageSizeDefault then
   begin
    if PageSize=rpPageSizeUser then
@@ -941,6 +942,10 @@ begin
 {$ENDIF}
     end;
    end;
+  end
+  else
+  begin
+   params.Items[i].LastValue:=params.Items[i].ListValue;
   end;
  end;
 

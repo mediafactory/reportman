@@ -168,6 +168,7 @@ type
    FPrintStep:TRpSelectFontStep;
    FPaperSource:Integer;
    FDuplex:Integer;
+   FForcePaperName:String;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -228,11 +229,14 @@ type
     function OnGraphicOp(Top,Left,Width,Height:integer;
      DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
      PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean;
+    function OnImageOp(Top,Left,Width,Height:integer;
+     DrawStyle,DPIRes:integer;PreviewOnly:Boolean;Image:WideString):Boolean;
     function OnTextOp(Top,Left,Width,Height:integer;
      Text,LFontName,WFontName:WideString;
      FontSize,FontRotation,FontStyle,FontColor,Type1Font:integer;
      CutText:boolean;Alignment:integer;WordWrap,RightToLeft:Boolean;
      PrintStep,BackColor:integer;transparent:boolean):Boolean;
+    function ReOpenOp(datasetname:String;sql:Widestring):BOolean;
     procedure CheckIfDataAvailable;
     procedure UpdateParamsBeforeOpen(index:integer;doeval:boolean);
     procedure DefineProperties(Filer:TFiler);override;
@@ -371,6 +375,7 @@ type
    // Paper source
    property PaperSource:Integer read FPaperSource write FPaperSource default 0;
    property Duplex:Integer read FDuplex write FDuplex default 0;
+   property ForcePaperName:String read FForcePaperName write FForcePaperName;
 
  end;
 
@@ -986,6 +991,7 @@ begin
   for i:=0 to FDataInfo.Count-1 do
   begin
    FDataInfo.Items[i].Cached:=false;
+   FDataInfo.Items[i].SQLOverride:='';
   end;
   // The main datasets must be cached
   for i:=0 to SubReports.Count-1 do
@@ -1232,6 +1238,27 @@ begin
   DrawStyle,BrushStyle,BrushColor,PenStyle,PenWidth,PenColor);
 end;
 
+function TRpBaseReport.OnImageOp(Top,Left,Width,Height:integer;
+     DrawStyle,DPIRes:integer;PreviewOnly:Boolean;Image:WideString):Boolean;
+var
+ astream:TMemoryStream;
+begin
+ // Search for the image
+ Result:=false;
+ astream:=Evaluator.GetStreamFromExpression(image);
+ if assigned(astream) then
+ begin
+  try
+   Result:=True;
+   metafile.Pages[metafile.CurrentPage].NewImageObject(Top,Left,Width,Height,0,
+    DrawStyle,DPIRes,astream,previewonly);
+  finally
+   astream.free;
+  end;
+ end;
+end;
+
+
 function TRpBaseReport.OnTextOp(Top,Left,Width,Height:integer;
     Text,LFontName,WFontName:WideString;
     FontSize,FontRotation,FontStyle,FontColor,Type1Font:integer;
@@ -1334,7 +1361,9 @@ begin
  FEvaluator:=TRpEvaluator.Create(nil);
  FEvaluator.Language:=Language;
  FEvaluator.OnGraphicOp:=OnGraphicOp;
+ FEvaluator.OnImageOp:=OnImageOp;
  FEvaluator.OnTextOp:=OnTextOp;
+ FEvaluator.OnReOpenOp:=ReOpenOp;
  FEvaluator.OnGetSQLValue:=GetSQLValue;
 end;
 
@@ -1426,6 +1455,26 @@ begin
  begin
   Result:=adataset.Fields[0].AsVariant;
  end;
+end;
+
+function TRpBaseReport.ReOpenOp(datasetname:String;sql:Widestring):BOolean;
+var
+ adata:TRpDatainfoItem;
+ index,i:integer;
+begin
+ Result:=false;
+ index:=datainfo.IndexOf(datasetname);
+ if index<0 then
+  exit;
+ adata:=datainfo.Items[index];
+ adata.Disconnect;
+ // Evaluates from evaluator all parameters
+ for i:=0 to params.Count-1 do
+ begin
+  params.Items[i].LastValue:=evaluator.EvaluateText('M.'+params.Items[i].Name);
+ end;
+ adata.SQLOverride:=sql;
+ adata.Connect(DatabaseInfo,Params);
 end;
 
 end.

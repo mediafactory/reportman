@@ -8,6 +8,7 @@
   resources were bound to the produced executable.
 */
 
+#define rpversion_SRPError 64624
 #define IdResourceStrings_RSStackENETRESET 64640
 #define IdResourceStrings_RSStackECONNABORTED 64641
 #define IdResourceStrings_RSStackECONNRESET 64642
@@ -906,6 +907,7 @@
 #define SysConst_SAccessDenied 65535
 STRINGTABLE
 BEGIN
+	rpversion_SRPError,	"Error"
 	IdResourceStrings_RSStackENETRESET,	"Net dropped connection or reset."
 	IdResourceStrings_RSStackECONNABORTED,	"Software caused connection abort."
 	IdResourceStrings_RSStackECONNRESET,	"Connection reset by peer."

@@ -96,6 +96,8 @@ type
     LPaperSource: TLabel;
     ComboDuplex: TComboBox;
     LDuplex: TLabel;
+    EForceFormName: TRpMaskEdit;
+    LForceFormName: TLabel;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -282,6 +284,7 @@ begin
  end;
  LSelectPrinter.Caption:=TranslateStr(741,LSelectPrinter.Caption);
  LPaperSOurce.Caption:=SRpPaperSource;
+ LForceFormName.Caption:=SRpForceForm;
  LDuplex.Caption:=SRpDuplex;
  BConfigure.Caption:=TranslateStr(143,BConfigure.Caption);
  LPreview.Caption:=TranslateStr(840,LPreview.Caption);
@@ -367,6 +370,7 @@ begin
  report.StreamFormat:=TRpStreamFormat(ComboFormat.ItemIndex);
  report.PaperSOurce:=ComboPaperSource.ItemIndex;
  report.Duplex:=ComboDuplex.ItemIndex;
+ report.ForcePaperName:=EForceFormName.Text;
 
  dook:=true;
 end;
@@ -428,6 +432,7 @@ begin
  CheckMargins.Checked:=report.PreviewMargins;
  ComboPaperSource.ItemIndex:=report.PaperSource;
  ComboDuplex.ItemIndex:=report.Duplex;
+ EForceFormName.Text:=report.ForcePaperName;
 end;
 
 procedure TFRpPageSetupVCL.SColorMouseDown(Sender: TObject;

@@ -22,7 +22,8 @@ interface
 {$I rpconf.inc}
 
 uses Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls,
-  Buttons, ExtCtrls,Printers,rpmdconsts,WinSpool,Dialogs;
+  Buttons, ExtCtrls,Printers,rpmdconsts,WinSpool,Dialogs,rpversion,rptypes,
+  rpmunits;
 
 type
   TFRpSysInfo = class(TForm)
@@ -69,6 +70,14 @@ type
     CTextCaps: TComboBox;
     Label20: TLabel;
     CCurveCaps: TComboBox;
+    LFormNameL: TLabel;
+    LFormName: TLabel;
+    LFormpageSize: TLabel;
+    LFormPageSizeL: TLabel;
+    LPageSizeL: TLabel;
+    LPageSize: TLabel;
+    LOrientation: TLabel;
+    LOrientationL: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
@@ -106,6 +115,10 @@ begin
  BOK.Caption:=SRpOk;
  LMaxCopies.Font.Style:=[fsBold];
  Lresolution.Font.Style:=[fsBold];
+ LFormName.Font.Style:=[fsBold];
+ LPageSize.Font.Style:=[fsBold];
+ LOrientation.Font.Style:=[fsBold];
+ LFormPageSize.Font.Style:=[fsBold];
  LCollation.Font.Style:=[fsBold];
  LColor.Font.Style:=[fsBold];
  LOemID.Font.Style:=[fsBold];
@@ -136,6 +149,10 @@ begin
  Label12.Caption:=TranslateStr(91,Label12.Caption);
  Label11.Caption:=TranslateStr(1078,Label11.Caption);
  Label13.Caption:=TranslateStr(1079,Label13.Caption);
+ LPageSizeL.Caption:=SRpPageSize;
+ LOrientationL.Caption:=TranslateStr(98,LOrientation.Caption);
+ LFormPageSizeL.Caption:=SRpFormPageSize;
+ LFormNameL.Caption:=SRpFormName;
 
 end;
 
@@ -161,9 +178,15 @@ var
  sysinfo:SYSTEM_INFO;
  osinfo:TOsVersionInfo;
  caps:integer;
+ needed:DWord;
  dc:HDC;
+ pforminfo:^Form_info_1;
+ pagesize:TPoint;
+ laste:integer;
 begin
  dc:=0;
+ pagesize.x:=0;
+ pagesize.y:=0;
  if Printer.Printers.Count>0 then
  begin
   EPrinterName.text:=Printer.Printers.Strings[Printer.PrinterIndex];
@@ -217,6 +240,15 @@ begin
        pdevmode:=AllocMem(asize);
        if IDOK=DocumentProperties(0,fprinterhandle,Device,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
        begin
+        // Orientation
+        if (pdevmode^.dmFields AND DM_ORIENTATION)>0 then
+        begin
+         if pdevmode^.dmOrientation=1 then
+          LOrientation.Caption:=TranslateStr(106,'Portrait')
+         else
+         if pdevmode^.dmOrientation=2 then
+          LOrientation.Caption:=TranslateStr(107,'Landscape');
+        end;
         // Dev mode properties
         if (pdevmode^.dmFields AND DM_COLOR)>0 then
         begin
@@ -227,6 +259,68 @@ begin
          else
          begin
           LColor.Caption:=SRpSMonoPrinting;
+         end;
+        end;
+        pagesize:=GetPhysicPageSizeTwips;
+        if pagesize.x>0 then
+        begin
+         LPageSize.Caption:=gettextfromtwips(pagesize.x)+
+          ' x '+gettextfromtwips(pagesize.y)+
+           ' '+rpunitlabels[defaultunit];
+        end;
+        pagesize.x:=0;
+        pagesize.y:=0;
+        try
+         if IsWindowsNT then
+         begin
+          if (pdevmode^.dmFields AND DM_FORMNAME)>0 then
+          begin
+           LFormName.Caption:=StrPas(pdevmode^.dmFormName);
+           pforminfo:=allocmem(sizeof(form_info_1));
+           try
+            if Not GetForm(handle,Pchar(LFormName.Caption),1,pforminfo,sizeof(Form_info_1),needed) then
+            begin
+             laste:=GetLasterror;
+             if ((laste<>122) AND (Laste<>123) AND (laste<>1902)) then
+              RaiseLastOSError
+             else
+             begin
+              if laste<>1902 then
+              begin
+               if needed>0 then
+               begin
+                freemem(pforminfo);
+                pforminfo:=AllocMem(needed);
+                if Not GetForm(handle,Pchar(LFormName.Caption),1,pforminfo,needed,needed) then
+                 RaiseLastOSError;
+                Pagesize.x:=pforminfo.Size.cy div 100;
+                Pagesize.y:=pforminfo.Size.cx div 100;
+               end;
+              end;
+             end;
+            end
+            else
+            begin
+             Pagesize.x:=pforminfo.Size.cy div 100;
+             PageSize.y:=pforminfo.Size.cx div 100;
+            end;
+           finally
+            freemem(pforminfo);
+           end;
+          end;
+          if pagesize.x>0 then
+          begin
+           pagesize.x:=Round(pagesize.x/100/CMS_PER_INCHESS*TWIPS_PER_INCHESS);
+           pagesize.y:=Round(pagesize.y/100/CMS_PER_INCHESS*TWIPS_PER_INCHESS);
+           LFormPageSize.Caption:=gettextfromtwips(pagesize.x)+
+            ' x '+gettextfromtwips(pagesize.y)+
+             ' '+rpunitlabels[defaultunit];
+          end;
+         end;
+        except
+         On E:Exception do
+         begin
+           LFormpageSize.Caption:=SRpError+'-'+E.Message;
          end;
         end;
         if (pdevmode^.dmFields AND DM_YRESOLUTION)>0 then
