@@ -205,6 +205,10 @@ begin
     // Transparent ?
     FPDFFile.Canvas.Font.Size:=obj.FontSize;
     FPDFFile.Canvas.Font.Color:=obj.FontColor;
+    FPDFFile.Canvas.Font.Bold:=(obj.Fontstyle and 1)>0;
+    FPDFFile.Canvas.Font.Italic:=(obj.Fontstyle and (1 shl 1))>0;
+    FPDFFile.Canvas.Font.UnderLine:=(obj.Fontstyle  and (1 shl 2))>0;
+    FPDFFile.Canvas.Font.StrikeOut:=(obj.Fontstyle and (1 shl 3))>0;
     aalign:=obj.Alignment;
     if Not obj.Wordwrap then
     begin
@@ -212,10 +216,11 @@ begin
      rec.TOp:=posy;
      rec.Right:=posx+round(obj.Width);
      rec.Bottom:=posy+round(obj.Height);
-     FPDFFile.Canvas.TextRect(rec,page.GetText(Obj),aalign,obj.cuttext);
+     FPDFFile.Canvas.TextRect(rec,page.GetText(Obj),aalign,obj.cuttext,
+      obj.FontRotation);
     end
     else
-     FPDFFile.Canvas.TextOut(obj.Left,obj.Top,page.GetText(obj));
+     FPDFFile.Canvas.TextOut(obj.Left,obj.Top,page.GetText(obj),obj.FontRotation);
    end;
   rpMetaDraw:
    begin

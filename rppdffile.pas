@@ -70,6 +70,10 @@ type
    Name:integer;
    Size:integer;
    Color:integer;
+   Italic:Boolean;
+   Underline:boolean;
+   Bold:boolean;
+   StrikeOut:boolean;
    constructor Create;
   end;
 
@@ -81,6 +85,8 @@ type
    FFile:TRpPDFFile;
    FResolution:integer;
    procedure SetDash;
+   procedure SaveGraph;
+   procedure RestoreGraph;
   public
    PenColor:integer;
    PenStyle:integer;
@@ -91,9 +97,10 @@ type
    function UnitsToTextY(Value:integer):string;
    function UnitsToTextText(Value:integer;FontSize:integer):string;
    procedure Line(x1,y1,x2,y2:Integer);
-   procedure TextOut(X, Y: Integer; const Text: string);
+   procedure TextOut(X, Y: Integer; const Text: string;Rotation:integer=0);
    procedure TextRect(ARect: TRect; Text: string;
-                       Alignment: integer; Clipping: boolean);
+                       Alignment: integer; Clipping: boolean;
+                       Rotation:integer=0);
    procedure Rectangle(x1,y1,x2,y2:Integer);
 //   procedure StretchDraw(rec:TRect;abitmap:TBitmap);
    procedure Ellipse(X1, Y1, X2, Y2: Integer);
@@ -184,6 +191,7 @@ type
 
 
 function PDFCompatibleText(astring:string):string;
+function NumberToText(Value:double):string;
 
 
 implementation
@@ -559,6 +567,19 @@ begin
  end;
 end;
 
+function NumberToText(Value:double):string;
+var
+ olddecimalseparator:char;
+begin
+ olddecimalseparator:=decimalseparator;
+ decimalseparator:='.';
+ try
+  Result:=FormatCurr('######0.00',Value);
+ finally
+  decimalseparator:=olddecimalseparator;
+ end;
+end;
+
 function TRpPDFCanvas.UnitsToTextX(Value:integer):string;
 var
  olddecimalseparator:char;
@@ -842,24 +863,23 @@ begin
 end;
 
 
-procedure TRpPDFCanvas.TextRect(ARect: TRect; Text: string;
-                       Alignment: integer; Clipping: boolean);
-
-procedure SaveGraph;
+procedure TRpPDFCanvas.SaveGraph;
 begin
  SWriteLine(FFile.FsTempStream,'q');
 end;
 
-procedure RestoreGraph;
+procedure TRpPDFCanvas.RestoreGraph;
 begin
  SWriteLine(FFile.FsTempStream,'Q');
 end;
 
+procedure TRpPDFCanvas.TextRect(ARect: TRect; Text: string;
+                       Alignment: integer; Clipping: boolean;Rotation:integer=0);
 
 begin
  FFile.CheckPrinting;
 
- if Clipping then
+ if (Clipping or (Rotation<>0)) then
  begin
   SaveGraph;
  end;
@@ -873,10 +893,10 @@ begin
    SWriteLine(FFile.FsTempStream,'W'); // Clip
    SWriteLine(FFile.FsTempStream,'n'); // NewPath
   end;
-  // Underline
-  TextOut(ARect.Left,ARect.Top,Text);
+  // Rotation
+  TextOut(ARect.Left,ARect.Top,Text,Rotation);
  finally
-  if Clipping then
+  if (Clipping or (Rotation<>0)) then
   begin
    RestoreGraph;
   end;
@@ -885,21 +905,47 @@ end;
 
 
 
-procedure TRpPDFCanvas.TextOut(X, Y: Integer; const Text: string);
+procedure TRpPDFCanvas.TextOut(X, Y: Integer; const Text: string;Rotation:integer=0);
+var
+ rotrad:double;
+ rotstring:string;
 begin
  FFile.CheckPrinting;
- SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' RG');
- SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' rg');
- SWriteLine(FFile.FsTempStream,'BT');
+ if (Rotation<>0) then
+ begin
+  SaveGraph;
+ end;
+ try
+  SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' RG');
+  SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' rg');
+  SWriteLine(FFile.FsTempStream,'BT');
+  SWriteLine(FFile.FsTempStream,'/F'+IntToStr((Integer(Font.Name)+1))+' '+
+   IntToStr(Font.Size)+ ' Tf');
 
-
- SWriteLine(FFile.FsTempStream,'/F'+IntToStr((Integer(Font.Name)+1))+' '+
-  IntToStr(Font.Size)+ ' Tf');
-
- SWriteLine(FFile.FsTempStream,UnitsToTextX(X)+' '+UnitsToTextText(Y,Font.Size)+' Td');
- SWriteLine(FFile.FsTempStream,'('+PDFCompatibleText(Text)+') Tj');
-
- SWriteLine(FFile.FsTempStream,'ET');
+  // Rotates
+  if Rotation<>0 then
+  begin
+   rotstring:='1 0 0 1 '+
+    UnitsToTextX(X)+' '+
+    UnitsToTextText(Y,Font.Size);
+   SWriteLine(FFile.FsTempStream,rotstring+' cm');
+   rotrad:=Rotation/10*(2*PI/360);
+   rotstring:=NumberToText(cos(rotrad))+' '+
+    NumberToText(sin(rotrad))+' '+
+    NumberToText(-sin(rotrad))+' '+
+    NumberToText(cos(rotrad))+' 0 0';
+   SWriteLine(FFile.FsTempStream,rotstring+' cm');
+  end
+  else
+   SWriteLine(FFile.FsTempStream,UnitsToTextX(X)+' '+UnitsToTextText(Y,Font.Size)+' Td');
+  SWriteLine(FFile.FsTempStream,'('+PDFCompatibleText(Text)+') Tj');
+  SWriteLine(FFile.FsTempStream,'ET');
+ finally
+  if (Rotation<>0) then
+  begin
+   RestoreGraph;
+  end;
+ end;
 end;
 
 {procedure TRpPDFCanvas.StretchDraw(rec:TRect;abitmap:TBitmap);

@@ -73,6 +73,9 @@ clean:
 	-rm tests/clxreport/*.dcu
 	-rm tests/clxreport/*.~*
 	-rm tests/clxreport/Project2
+	-rm tests/printbug/*.~*
+	-rm tests/printbug/Project1
+	-rm tests/printbug/*.dcu
 	-rm tests/pdf/pdftest
 	-rm tests/pdf/*.dcu
 	-rm tests/pdf/*.~*

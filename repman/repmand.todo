@@ -1,6 +1,6 @@
 {TODO 1 -oToni -cEngine : Add barcode component}
-{TODO 4  -oToni -cEngine : Export PDF implement images and text alignment, and text rotation}
-{TODO 4  -oToni -cEngine : Finish the pdf driver images, underline, textalign}
+
+{TODO 2   -oToni -cEngine : Finish the pdf driver images, underline, textalign}
 {TODO 1 -oToni -cEngine : Allow Memos autoexpand across multiple pages}
 {TODO 1 -oToni -cEngine : Add a report server via sockets or the web, sending pdfs or html or jpgs.}
 
@@ -14,7 +14,7 @@
 {TODO 1 -oToni -cDesign Interface : Select the object that produces a error}
 {TODO 2 -oToni -cDesign Interface : Add a alignment window for elements}
 {TODO 1 -oToni -cEngine : Implementation of vertical labels as subreport column width}
-{TODO 2 -oToni -cDesign Interface : Enhace object inspector speed}
+{DONE 2 -oToni -cDesign Interface : Enhace object inspector speed}
 
 
 

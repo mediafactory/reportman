@@ -161,6 +161,7 @@ var
  awidth,aheight:integer;
  rec:TRect;
  asize:TPoint;
+ p2:QWMatrixH;
 // amargins:TSize;
 begin
  if ToPrinter then
@@ -225,6 +226,7 @@ begin
   rec.Bottom:=Bitmap.Height-1;
   bitmap.Canvas.FillRect(rec);
 
+//  QPainter_setWorldMatrix(QPainterH(bitmap.canvas.handle),p2,true);
   // Draw Page Margins none for qt driver because they
   // are very innacurate
 {  QPrinter_margins(QPrinterH(Printer.Handle),@amargins);
@@ -930,14 +932,14 @@ begin
     Raise Exception.Create(SRpErrorFork);
    if child<>0 then
    begin
-    if (-1=execve(theparams[0],PPChar(@theparams),nil)) then
+    if (-1=execv(theparams[0],PPChar(@theparams))) then
     begin
      try
       RaiseLastOsError;
      except
       on E:Exception do
       begin
-       E.Message:=SRpErrorFork+':execve:'+IntToStr(errno)+'-'+E.Message;
+       E.Message:=SRpErrorFork+':execv:'+IntToStr(errno)+'-'+E.Message;
        Raise;
       end;
      end;
