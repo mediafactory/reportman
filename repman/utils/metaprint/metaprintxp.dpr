@@ -184,7 +184,7 @@ begin
       end;
       if preview then
       begin
-       rpfmainmetaviewvcl.PreviewMetafile(metafile,nil,true);
+       rpfmainmetaviewvcl.PreviewMetafile(metafile,nil,true,true);
       end
       else
       begin

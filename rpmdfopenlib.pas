@@ -27,12 +27,13 @@ uses SysUtils, Classes, QGraphics, QForms, QControls, QStdCtrls,
 
 type
   TFRpOpenLib = class(TForm)
-    Panel1: TPanel;
-    BOK: TButton;
-    BCancel: TButton;
     Panel2: TPanel;
     LLibrary: TLabel;
     ComboLibrary: TComboBox;
+    PAlClient: TPanel;
+    Panel1: TPanel;
+    BOK: TButton;
+    BCancel: TButton;
     procedure BOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ComboLibraryClick(Sender: TObject);
@@ -113,7 +114,7 @@ begin
 // atree.OnLoadReport:=Self.OnLoadReport;
  atree.Top:=0;
  atree.Left:=0;
- atree.Parent:=Self;
+ atree.Parent:=PAlClient;
  BOK.Caption:=SRpOk;
  BCancel.Caption:=SRpCancel;
  LLibrary.Caption:=SRpLibSelection;

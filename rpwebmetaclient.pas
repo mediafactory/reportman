@@ -125,7 +125,7 @@ begin
       metafile.LoadFromStream(astream);
       if preview then
       begin
-       Meta:=PreviewMetafile(metafile,aform,ShowPrintDialog);
+       Meta:=PreviewMetafile(metafile,aform,ShowPrintDialog,false);
       end
       else
       begin

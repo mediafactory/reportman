@@ -146,6 +146,7 @@ type
    FPrintOnlyIfDataAvailable:Boolean;
    FStreamFormat:TRpStreamFormat;
    FReportAction:TRpReportActions;
+   FPreviewAbout:Boolean;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -307,6 +308,8 @@ type
    property StreamFormat:TRpStreamFormat read FStreamFormat
     write FStreamFormat;
    property ReportAction:TRpReportActions read FReportAction write FReportAction;
+   property PreviewAbout:Boolean read FPreviewAbout write FPreviewAbout
+    default true;
  end;
 
 
@@ -366,6 +369,7 @@ constructor TRpBaseReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FPreviewAbout:=true;
  FStreamFormat:=rpStreamtext;
  gheaders:=TList.Create;
  gfooters:=TList.Create;

@@ -1,8 +1,8 @@
 object FRpEditCon: TFRpEditCon
   Left = 271
   Top = 110
-  Width = 635
-  Height = 430
+  Width = 629
+  Height = 481
   VertScrollBar.Range = 417
   HorzScrollBar.Range = 569
   ActiveControl = BOK
@@ -25,7 +25,7 @@ object FRpEditCon: TFRpEditCon
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 635
+    Width = 629
     Height = 30
     AutoSize = True
     ButtonHeight = 26
@@ -76,8 +76,8 @@ object FRpEditCon: TFRpEditCon
   end
   object PBottom: TPanel
     Left = 0
-    Top = 398
-    Width = 635
+    Top = 449
+    Width = 629
     Height = 32
     Align = alBottom
     BevelOuter = bvNone

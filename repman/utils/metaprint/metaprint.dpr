@@ -200,7 +200,7 @@ begin
       end;
       if preview then
       begin
-       rpfmainmetaview.PreviewMetafile(metafile,nil,true);
+       rpfmainmetaview.PreviewMetafile(metafile,nil,true,true);
       end
       else
       begin

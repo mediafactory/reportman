@@ -164,18 +164,18 @@ reportmanserverxp:
         cd ..
         cd ..
 
-packages: rtlpackages vclpackages clxpackages vcldesignpackages designpackages
+packages: rtlpackages designtimepackages clxpackages vcldesignpackages designpackages
 
 rtlpackages:
         $(COMPILE) rppack_del.dpk
-vclpackages:
-        $(COMPILE) rppackvcl_del.dpk
+designpackages:
+        $(COMPILE) rppackdesigntime_del.dpk
 clxpackages:
         $(COMPILE) rppackv_del.dpk
 vcldesignpackages:
         $(COMPILE) rppackdesignvcl_del.dpk
-designpackages:
-        $(COMPILE) rppackdesign_del.dpk
+designtimepackages:
+        $(COMPILE) rppackdesigntime_del.dpk
 
 
 clean_noexe:

@@ -27,8 +27,6 @@ package ReportMan;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$RUNONLY}
-{$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
@@ -83,7 +81,8 @@ contains
   rprfvparams in 'rprfvparams.pas',
   rpvpreview in 'rpvpreview.pas',
   rpmdfopenlibvcl in 'rpmdfopenlibvcl.pas',
-  rpmdftreevcl in 'rpmdftreevcl.pas';
+  rpmdftreevcl in 'rpmdftreevcl.pas',
+  rpmreg in 'rpmreg.pas';
 
 [assembly: AssemblyTitle('Report Manager Components')]
 [assembly: AssemblyDescription('Report Manager engine components, to access Report Manager reports')]
