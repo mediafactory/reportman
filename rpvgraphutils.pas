@@ -658,6 +658,13 @@ begin
  except
   printererror:=true;
  end;
+{$IFNDEF DOTNETD}
+ if DeviceMode=0 then
+{$ENDIF}
+{$IFDEF DOTNETD}
+ if Not Assigned(DeviceMode) then
+{$ENDIF}
+  printererror:=true;
  if printererror then
  begin
   Result.PageIndex:=DMPAPER_A4;
@@ -864,6 +871,8 @@ begin
  except
   printererror:=true;
  end;
+ if DeviceMode=0 then
+  printererror:=true;
  if printererror then
   exit;
  PDevMode := GlobalLock(DeviceMode);
@@ -1049,6 +1058,13 @@ begin
  except
   printererror:=true;
  end;
+{$IFNDEF DOTNETD}
+ if DeviceMode=0 then
+{$ENDIF}
+{$IFDEF DOTNETD}
+ if Not Assigned(DeviceMode) then
+{$ENDIF}
+  printererror:=true;
  if printererror then
   exit;
  PDevMode := TDeviceMode(Marshal.PtrToStructure(GlobalLock(Integer(DeviceMode)),TypeOf(TDeviceMode)));
@@ -1269,6 +1285,13 @@ begin
  except
   printererror:=true;
  end;
+{$IFNDEF DOTNETD}
+ if DeviceMode=0 then
+{$ENDIF}
+{$IFDEF DOTNETD}
+ if Not Assigned(DeviceMode) then
+{$ENDIF}
+  printererror:=true;
  if printererror then
   exit;
  try
@@ -1305,6 +1328,13 @@ begin
  except
   printererror:=true;
  end;
+{$IFNDEF DOTNETD}
+ if DeviceMode=0 then
+{$ENDIF}
+{$IFDEF DOTNETD}
+ if Not Assigned(DeviceMode) then
+{$ENDIF}
+  printererror:=true;
  if printererror then
   exit;
  try
@@ -1347,6 +1377,13 @@ begin
  except
   printererror:=true;
  end;
+{$IFNDEF DOTNETD}
+ if DeviceMode=0 then
+{$ENDIF}
+{$IFDEF DOTNETD}
+ if Not Assigned(DeviceMode) then
+{$ENDIF}
+  printererror:=true;
  if printererror then
   exit;
 {$IFDEF DOTNETD}
@@ -1392,6 +1429,13 @@ begin
  except
   printererror:=true;
  end;
+{$IFNDEF DOTNETD}
+ if DeviceMode=0 then
+{$ENDIF}
+{$IFDEF DOTNETD}
+ if Not Assigned(DeviceMode) then
+{$ENDIF}
+  printererror:=true;
  if printererror then
   exit;
 {$IFDEF DOTNETD}
@@ -1436,6 +1480,13 @@ begin
  except
   printererror:=true;
  end;
+{$IFNDEF DOTNETD}
+ if DeviceMode=0 then
+{$ENDIF}
+{$IFDEF DOTNETD}
+ if Not Assigned(DeviceMode) then
+{$ENDIF}
+  printererror:=true;
  if printererror then
   exit;
 {$IFDEF DOTNETD}
@@ -1484,6 +1535,13 @@ begin
  except
   printererror:=true;
  end;
+{$IFNDEF DOTNETD}
+ if DeviceMode=0 then
+{$ENDIF}
+{$IFDEF DOTNETD}
+ if Not Assigned(DeviceMode) then
+{$ENDIF}
+  printererror:=true;
  if printererror then
   exit;
 {$IFDEF DOTNETD}

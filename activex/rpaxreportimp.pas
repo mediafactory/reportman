@@ -12,7 +12,7 @@ uses
   Windows, ActiveX, SysUtils,Classes, Controls, Graphics, Menus, Forms, StdCtrls,
   ComServ, StdVCL, AXCtrls, Reportman_TLB, rpactivexreport,rpreport,
   rpparams,rptypes,rpgdidriver,rpmetafile,comobj,rpaxreportparameters,
-  rpaxreportreport,rpexceldriver;
+  rpaxreportreport,rpexceldriver,rphtmldriver;
 
 type
   TReportManX = class(TActiveXControl, IReportManX)
@@ -86,6 +86,7 @@ type
       Execute: WordBool); safecall;
     function Get_Report: ReportReport; safecall;
     procedure SaveToExcel(const filename: WideString); safecall;
+    procedure SaveToHTML(const filename: WideString); safecall;
   end;
 
 implementation
@@ -407,11 +408,17 @@ end;
 
 procedure TReportManX.SaveToExcel(const filename: WideString);
 begin
+ FDelphiControl.GetReport.TwoPass:=true;
  rpgdidriver.CalcReportWidthProgress(FDelphiControl.GetReport);
  ExportMetafileToExcel (FDelphiControl.GetReport.metafile,filename,
   true,false,true,1,9999999);
 end;
 
+
+procedure TReportManX.SaveToHTML(const filename: WideString);
+begin
+ rphtmldriver.ExportReportToHtml(FDelphiControl.GetReport,filename,Get_ShowProgress);
+end;
 
 initialization
   TActiveXControlFactory.Create(

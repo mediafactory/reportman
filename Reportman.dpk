@@ -95,7 +95,8 @@ contains
   rpmdprintconfigvcl in 'rpmdprintconfigvcl.pas',
   rpmdclitreevcl in 'rpmdclitreevcl.pas',
   rpmdfaboutvcl in 'rpmdfaboutvcl.pas',
-  rpregvcl in 'rpregvcl.pas';
+  rpregvcl in 'rpregvcl.pas',
+  rphtmldriver in 'rphtmldriver.pas';
 
 [assembly: AssemblyTitle('Report Manager Components')]
 [assembly: AssemblyDescription('Report Manager engine components, to access Report Manager reports')]

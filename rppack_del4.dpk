@@ -92,6 +92,12 @@ contains
   rpeditalias in 'rpeditalias.pas' {FRpEditAlias},
   rpexceldriver in 'rpexceldriver.pas' {FRpExcelProgress},
   rpdatatext in 'rpdatatext.pas',
-  rpeditconnvcl in 'rpeditconnvcl.pas' {FRpEditConVCL};
+  rpeditconnvcl in 'rpeditconnvcl.pas' {FRpEditConVCL},
+  rpmdcharttypes in 'rpmdcharttypes.pas',
+  rphtmldriver in 'rphtmldriver.pas',
+  rptextdriver in 'rptextdriver.pas',
+  rpbasereport in 'rpbasereport.pas',
+  rpcompilerep in 'rpcompilerep.pas',
+  rpmdprintconfigvcl in 'rpmdprintconfigvcl.pas' {FRpPrinterConfigVCL};
 
 end.

@@ -31,7 +31,7 @@ uses
   Types,
 {$ENDIF}
   Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls,rpbasereport,rpreport,rpmetafile, ComCtrls,
+  StdCtrls,rpbasereport,rpreport,rpmetafile, ComCtrls,rphtmldriver,
   rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,rptextdriver,
   ActnList, ImgList,Printers,rpmdconsts, ToolWin;
 
@@ -279,7 +279,8 @@ begin
    SRpExcelFile+'|*.xls|'+
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
-   SRpBitmapFileMono+'|*.bmp';
+   SRpBitmapFileMono+'|*.bmp|'+
+   SRpHtmlFile+'|*.html';
 {$IFNDEF DOTNETD}
   SaveDialog1.Filter:=SaveDialog1.Filter+
     '|'+SRpExeMetafile+'|*.exe';
@@ -446,8 +447,15 @@ begin
         abitmap.free;
        end;
       end;
-{$IFNDEF DOTNETD}
      8:
+      begin
+       ALastExecute(Self);
+       ExportMetafileToHtml(report.Metafile,SaveDialog1.FileName,Caption,
+        true,true,1,9999);
+       AppIdle(Self,adone);
+      end;
+{$IFNDEF DOTNETD}
+     9:
       begin
        ALastExecute(Self);
        MetafileToExe(report.metafile,SaveDialog1.Filename);
