@@ -24,8 +24,7 @@ interface
 
 uses
   SysUtils, Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
-  QDialogs, QStdCtrls, rptranslator,urepserver,rpmdrepclient,rpmdconsts,
-  QExtCtrls;
+  QDialogs, QStdCtrls, rptranslator,urepserver,rpmdconsts,  QExtCtrls;
 
 type
   TFSerMain = class(TForm)

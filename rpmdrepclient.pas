@@ -63,7 +63,7 @@ type
   TRpClientHandleThread = class(TThread)
   private
    amod:TModClient;
-   CB:TRpComBlock;
+   CB:PRpComBlock;
    data:TMemoryStream;
    FEndreport:TEvent;
    syncexec:boolean;
@@ -85,7 +85,7 @@ implementation
 procedure TRpClientHandleThread.LogReceive;
 begin
  if Assigned(amod.FOnLog) then
-  amod.FOnLog(amod,SRpReceivedPacket+IntToStr(CB.PacketNum));
+  amod.FOnLog(amod,SRpReceivedPacket);
 end;
 
 procedure TRpClientHandleThread.HandleInput;
@@ -97,15 +97,15 @@ begin
   reperror:
    if Assigned(amod.OnError) then
    begin
-    SetLength(amessage,CB.Datasize div 2);
-    move(CB.Data,amessage[1],CB.Datasize);
+    SetLength(amessage,CB^.Datasize div 2);
+    move(CB^.Data^,amessage[1],CB^.Datasize);
     amod.OnError(amod,amessage);
    end;
   replog:
    if Assigned(amod.OnLog) then
    begin
-    SetLength(amessage,CB.Datasize div 2);
-    move(CB.Data,amessage[1],CB.Datasize);
+    SetLength(amessage,CB^.Datasize div 2);
+    move(CB^.Data^,amessage[1],CB^.Datasize);
     amod.OnLog(amod,amessage);
    end;
   repauth:
@@ -117,7 +117,6 @@ begin
    end;
   repexecutereportmeta:
    begin
-    data.seek(0,soFromBeginning);
     amod.Stream.Clear;
     amod.Stream.SetSize(data.Size);
     amod.Stream.Write(data.Memory^,data.Size);
@@ -146,25 +145,30 @@ begin
    else
    begin
     try
-     repeat
-      amod.RepClient.ReadBuffer(CB, SizeOf (CB));
-      data.Write(CB.Data,CB.Datasize);
-      if ((CB.PacketNum<>0) and (not syncexec)) then
-       Synchronize(LogReceive);
-     until CB.PacketNum=0;
+     amod.RepClient.ReadStream(data);
      data.Seek(0,soFromBeginning);
-     if syncexec then
-     begin
-      if CB.Command in [repexecutereportmeta,repexecutereportpdf] then
+     CB:=AllocMem(data.Size);
+     try
+      data.Read(CB^,data.size);
+      data.Clear;
+      data.SetSize(CB^.Datasize);
+      data.Write((@CB^.Data)^,data.Size);
+      data.Seek(0,soFromBeginning);
+      if syncexec then
       begin
-       FEndReport.SetEvent;
+       if CB.Command in [repexecutereportmeta,repexecutereportpdf] then
+       begin
+        FEndReport.SetEvent;
+        Synchronize(HandleInput);
+        syncexec:=false;
+       end;
+      end
+      else
        Synchronize(HandleInput);
-       syncexec:=false;
-      end;
-     end
-     else
-      Synchronize(HandleInput);
-     data.Clear;
+      data.Clear;
+     finally
+      FreeMem(CB);
+     end;
     except
     end;
    end;
@@ -178,7 +182,7 @@ end;
 function Connect(hostname:string;user:string;password:string):TModClient;
 var
  amod:TModClient;
- arec:TRpComBlock;
+ arec:PRpComBlock;
 begin
  amod:=TModClient.Create(nil);
  try
@@ -193,7 +197,12 @@ begin
   amod.ClientHandleThread.Resume;
 
   arec:=GenerateUserNameData(user,password);
-  amod.RepClient.WriteBuffer(arec,sizeof(arec));
+  try
+   SendBlock(amod.RepClient,arec);
+  finally
+   FreeBlock(arec);
+  end;
+//  amod.RepClient.WriteBuffer(arec,sizeof(arec));
  except
   amod.free;
   raise;
@@ -219,7 +228,7 @@ end;
 
 procedure Tmodclient.DataModuleDestroy(Sender: TObject);
 begin
- FEndReport.ResetEvent;
+ FEndReport.SetEvent;
  FEndReport.Free;
  FStream.Free;
  FAliases.Free;
@@ -230,22 +239,32 @@ end;
 
 procedure TModClient.Execute;
 var
- arec:TRpComBlock;
+ arec:PRpComBlock;
+ alist:TStringList;
 begin
- arec.PacketNum:=0;
- arec.Command:=repexecutereportmeta;
- arec.Datasize:=0;
- RepClient.WriteBuffer(arec,sizeof(arec));
- if asynchronous then
- begin
-  RepClient.WriteBuffer(arec,sizeof(arec));
-  exit;
+ alist:=TStringList.Create;
+ try
+  alist.add('areport');
+  arec:=GenerateBlock(repexecutereportmeta,alist);
+  try
+   if asynchronous then
+   begin
+    SendBlock(RepClient,arec);
+   end
+   else
+   begin
+    ClientHandleThread.syncexec:=true;
+    FEndReport.ReSetEvent;
+    // Sets an event and waits for its signal
+    SendBlock(RepClient,arec);
+    FEndReport.WaitFor($FFFFFFFF);
+   end;
+  finally
+   FreeBlock(arec);
+  end;
+ finally
+  alist.free;
  end;
- ClientHandleThread.syncexec:=true;
- FEndReport.ResetEvent;
- // Sets an event and waits for its signal
- RepClient.WriteBuffer(arec,sizeof(arec));
- FEndReport.WaitFor($FFFFFFFF);
 end;
 
 procedure Tmodclient.RepClientDisconnected(Sender: TObject);

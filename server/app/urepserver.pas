@@ -128,14 +128,18 @@ end;
 procedure TRpClient.OnProgress(Sender:TRpReport;var docancel:boolean);
 var
  astring:WideString;
- CB:TRpComBLock;
+ CB:PRpComBLock;
 begin
  // Sends the message progress to the thread
  astring:=IntToStr(Sender.CurrentSubReportIndex)+' '+SRpPage+':'+
  FormatFloat('####,####',Currentreport.PageNum)+':'
  +FormatFloat('####,####',Currentreport.RecordCount);
  CB:=GenerateCBErrorMessage(astring);
- Thread.Connection.WriteBuffer(CB,Sizeof(CB));
+ try
+  SendBlock(Thread.Connection,CB);
+ finally
+  FreeBlock(CB);
+ end;
  docancel:=cancelled;
 end;
 
@@ -261,14 +265,13 @@ end;
 
 procedure Tmodserver.RepServerExecute(AThread: TIdPeerThread);
 var
- CB:TRpComBlock;
+ CB,ACB:PRpComBlock;
  astream:TMemoryStream;
  alist:TStringList;
  username,password:string;
  correct:boolean;
  index:integer;
  ActClient:TRpClient;
- aarray:TDynamicRpComBlock;
  i:integer;
 begin
  // Execution of commands
@@ -276,97 +279,105 @@ begin
   exit;
  astream:=TMemoryStream.Create;
  try
-  repeat
-   AThread.Connection.ReadBuffer (CB, SizeOf (TRpComBlock));
-   astream.Write(CB.Data,CB.Datasize);
-  until CB.PacketNum=0;
-  astream.Seek(0,soFromBeginning);
-  ActClient := TRpClient(AThread.Data);
-  ActClient.LastAction := Now;  // update the time of last action
-  // if is a auth message return the key
-  case CB.Command of
-   repauth:
-    begin
-     alist:=TStringList.Create;
-     try
-      alist.LoadFromStream(astream);
-      username:='Admin';
-      password:='';
-      if alist.count>0 then
-      begin
-       username:=Alist.Names[0];
-       password:=Alist.Values[Alist.Names[0]];
+  AThread.Connection.ReadStream(astream);
+  ACB:=AllocMem(astream.Size);
+  try
+   astream.Seek(0,soFromBeginning);
+   astream.Read(ACB^,astream.size);
+   ActClient := TRpClient(AThread.Data);
+   ActClient.LastAction := Now;  // update the time of last action
+   // if is a auth message return the key
+   case ACB^.Command of
+    repauth:
+     begin
+      alist:=TStringList.Create;
+      try
+       alist.LoadFromStream(astream);
+       username:='Admin';
+       password:='';
+       if alist.count>0 then
+       begin
+        username:=Alist.Names[0];
+        password:=Alist.Values[Alist.Names[0]];
+       end;
+      finally
+       alist.free;
       end;
-     finally
-      alist.free;
-     end;
-     // Looks if the user exists
-     correct:=false;
-     index:=LUsers.IndexOfName(username);
-     if index>=0 then
-     begin
-      If LUsers.ValueFromIndex[index]=password then
-       correct:=true;
-     end;
-     if correct then
-     begin
-      ActClient.UserName:=username;
-      ActClient.Password:=password;
-      ActClient.Auth:=True;
-      // Sends the authorization message with a list of the aliases
-      GenerateCBArray(repauth,LAliases,@aarray);
-      for i:=0 to High(aarray) do
+      // Looks if the user exists
+      correct:=false;
+      index:=LUsers.IndexOfName(username);
+      if index>=0 then
       begin
-       AThread.Connection.WriteBuffer(aarray[i],Sizeof(CB));
+       If LUsers.ValueFromIndex[index]=password then
+        correct:=true;
       end;
-     end
-     else
-     begin
-      // Sends a error message
-      ActClient.Auth:=False;
-      CB:=GenerateCBErrorMessage(SRpAuthFailed);
-      AThread.Connection.WriteBuffer(CB,Sizeof(CB));
+      if correct then
+      begin
+       ActClient.UserName:=username;
+       ActClient.Password:=password;
+       ActClient.Auth:=True;
+       // Sends the authorization message with a list of the aliases
+       CB:=GenerateBlock(repauth,LAliases);
+       try
+        SendBlock(AThread.Connection,CB);
+       finally
+        FreeBlock(CB);
+       end;
+      end
+      else
+      begin
+       // Sends a error message
+       ActClient.Auth:=False;
+       CB:=GenerateCBErrorMessage(SRpAuthFailed);
+       AThread.Connection.WriteBuffer(CB,Sizeof(CB));
+      end;
      end;
-    end;
-   repgetusers:
-    begin
-     GenerateCBArray(repgetusers,lusers,@aarray);
-     for i:=0 to High(aarray) do
+    repgetusers:
      begin
-      AThread.Connection.WriteBuffer(aarray[i],Sizeof(CB));
+      CB:=GenerateBlock(repgetusers,LUsers);
+      try
+       SendBlock(AThread.COnnection,CB);
+      finally
+       FreeBlock(CB);
+      end;
      end;
-    end;
-   repgetaliases:
-    begin
-     GenerateCBArray(repgetaliases,laliases,@aarray);
-     for i:=0 to High(aarray) do
+    repgetaliases:
      begin
-      AThread.Connection.WriteBuffer(aarray[i],Sizeof(CB));
+      CB:=GenerateBlock(repgetaliases,LAliases);
+      try
+       SendBlock(AThread.COnnection,CB);
+      finally
+       FreeBlock(CB);
+      end;
      end;
-    end;
-   repexecutereportmeta:
-    begin
-     ActClient.cancelled:=false;
-     ActClient.CurrentReport.PrintAll(ActClient.APDFDriver);
-     astream.Clear;
-     ActClient.CurrentReport.Metafile.SaveToStream(astream);
-     astream.Seek(0,soFromBeginning);
-     GenerateCBArray(repexecutereportmeta,astream,@aarray);
-     for i:=0 to High(aarray) do
+    repexecutereportmeta:
      begin
-      AThread.Connection.WriteBuffer(aarray[i],Sizeof(CB));
+      ActClient.cancelled:=false;
+      ActClient.CurrentReport.PrintAll(ActClient.APDFDriver);
+      astream.Clear;
+      ActClient.CurrentReport.Metafile.SaveToStream(astream);
+      astream.Seek(0,soFromBeginning);
+      CB:=GenerateBlock(repexecutereportmeta,astream);
+      try
+       SendBlock(AThread.COnnection,CB);
+      finally
+       FreeBlock(CB);
+      end;
      end;
-    end;
-   repexecutereportpdf:
-    begin
-     ActClient.cancelled:=false;
-     ActClient.CurrentReport.PrintRange(ActClient.apdfdriver,false,ActClient.FromPage,ActClient.ToPage,ActClient.Copies);
-     GenerateCBArray(repauth,ActClient.APDFDriver.PDFFile.MainPDF,@aarray);
-     for i:=0 to High(aarray) do
+    repexecutereportpdf:
      begin
-      AThread.Connection.WriteBuffer(aarray[i],Sizeof(CB));
+      ActClient.cancelled:=false;
+      ActClient.CurrentReport.PrintRange(ActClient.apdfdriver,false,ActClient.FromPage,ActClient.ToPage,ActClient.Copies);
+      CB:=GenerateBlock(repexecutereportpdf,ActClient.APDFDriver.PDFFile.MainPDF);
+      try
+       SendBlock(AThread.COnnection,CB);
+      finally
+       FreeBlock(CB);
+      end;
      end;
-    end;
+   end;
+  finally
+   FreeMem(ACB);
   end;
  finally
   astream.free;
