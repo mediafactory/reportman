@@ -678,7 +678,7 @@ begin
  if docancel then
   exit;
  res:=MessageDlg(SRpSaveChanges,mtWarning,[mbYes,mbNo,mbCancel],0);
- if res=mrCancel then
+ if ((res=mrCancel) or (res=0)) then
   Raise EAbort.Create(SRpSaveAborted);
  if res=mrYes then
   DoSave;

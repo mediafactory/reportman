@@ -53,6 +53,8 @@ contains
   rplabelitem in 'rplabelitem.pas',
   rpdrawitem in 'rpdrawitem.pas',
   rpprintitem in 'rpprintitem.pas',
+  rpmdchart in 'rpmdchart.pas',
+  rpmdbarcode in 'rpmdbarcode.pas',
   rpmunits in 'rpmunits.pas',
   rpsecutil in 'rpsecutil.pas',
   rpmzlib in 'rpmzlib.pas',

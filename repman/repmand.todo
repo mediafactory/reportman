@@ -1,6 +1,6 @@
 {DONE 4 -oToni -cEngine : Add TTable support for BDE driver}
-{TODO 1 -oToni -cOthers : Add funtions to access SQLconnection and SQLsentence to ActiveX}
-{TODO 1 -oToni -cEngine : Add barcode component}
+{DONE 1 -oToni -cOthers : Add funtions to access SQLconnection and SQLsentence to ActiveX}
+{DONE 1 -oToni -cEngine : Add barcode component}
 
 {DONE 2   -oToni -cEngine : Finish the pdf driver images, underline, textalign}
 {TODO 1 -oToni -cEngine : Allow Memos autoexpand across multiple pages}
@@ -14,7 +14,7 @@
 {DONE 5 -oToni -cEngine : Implementation for Delphi 5 vcl driver}
 
 {DONE 1 -oToni -cDesign Interface : Select the object that produces a error}
-{TODO 2 -oToni -cDesign Interface : Add a alignment window for elements}
+{DONE 2 -oToni -cDesign Interface : Add a alignment window for elements}
 {TODO 1 -oToni -cEngine : Implementation of vertical labels as subreport column width}
 {DONE 2 -oToni -cDesign Interface : Enhace object inspector speed}
 
@@ -32,7 +32,7 @@
 
 
 {DONE 2  -oToni -cEngine : Implement autoexpand and autocontract for sections}
-{TODO 2 -oToni -cEngine : Program a simple chart component at least with poly lines and dots}
+{TODO 1 -oToni -cEngine : Enhace charting}
 
 {TODO 1 -oToni -cOthers : Conversion program for gestor.exe}
 {TODO 1   -oToni -cEngine : Saving and loading reports from database tables using the designer}
@@ -43,7 +43,7 @@
 
 
 
-{TODO 1 -oToni -cEngine : Write more documentation}
+{TODO 3 -oToni -cEngine : Write more documentation}
 {TODO 1 -oToni -cEngine : Free pages in metafile while 
 previewing...}
 

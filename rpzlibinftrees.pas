@@ -267,7 +267,7 @@ Begin
   { Generate the Huffman codes and for each, make the table entries }
   i := 0 ;
   x[0] := 0 ;                   { first Huffman code is zero }
-  p := Addr(v) ;                { grab values in bit order }
+  p := @v ;                { grab values in bit order }
   h := -1 ;                     { no tables yet--level -1 }
   w := -l ;                     { bits decoded = (l*h) }
 
@@ -304,7 +304,7 @@ Begin
         begin
           Dec(f, a+1);           { deduct codes from patterns left }
           {$IFDEF USE_PTR}
-          xp := Addr(c[k]);
+          xp := @(c[k]);
 
           if (j < z) then
           begin
@@ -427,6 +427,7 @@ Begin
     huft_build := Z_BUF_ERROR
   else
     huft_build := Z_OK;
+
 end; { huft_build}
 
 

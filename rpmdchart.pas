@@ -470,6 +470,7 @@ var
  shape:TRpShapeType;
  acolor:integer;
  pencolor:integer;
+ MaxValueCount:integer;
 begin
 {
 
@@ -487,6 +488,7 @@ begin
  // To draw for each serie find macvalue and minvalue
  MaxValue:=-Power(10,300);
  MinValue:=+Power(10,300);
+ MaxValueCount:=0;
  for i:=0 to FSeries.Count-1 do
  begin
   aserie:=FSeries.Items[i];
@@ -494,6 +496,8 @@ begin
    MaxValue:=aserie.FMaxValue;
   if aserie.FMinValue<MinValue then
    MinValue:=aserie.FMinValue;
+  if aserie.FValueCount>MaxValueCount then
+   MaxValueCount:=aserie.FValueCount;
  end;
  // The number of grid rows depends on font height
  gridvsep:=Round(FontSize/72*1440*2);
@@ -525,22 +529,22 @@ begin
  end;
  // Draws the lines
  acolor:=0;
+ xdesp:=Round((Width-horzgap)/(MaxValueCount));
  for i:=0 to Series.Count-1 do
  begin
   aserie:=Series.Items[i];
   pencolor:=SeriesColors[acolor];
   if ASerie.FMinValue<>ASerie.FMaxValue then
   begin
-   xdesp:=Round((Width-horzgap)/(aserie.FValueCount));
    for j:=0 to aserie.FValueCount-1 do
    begin
     if j=0 then
     begin
      origin.X:=horzgap;
-     origin.Y:=Height-vertgap-Round((aserie.Values[j]-aserie.FMinValue)/(aserie.FMaxValue-aserie.FMinValue)*(Height-vertgap));
+     origin.Y:=Height-vertgap-Round((aserie.Values[j]-MinValue)/(MaxValue-MinValue)*(Height-vertgap));
     end;
     destination.X:=origin.X+xdesp;
-    destination.Y:=Height-vertgap-Round((aserie.Values[j]-aserie.FMinValue)/(aserie.FMaxValue-aserie.FMinValue)*(Height-vertgap));
+    destination.Y:=Height-vertgap-Round((aserie.Values[j]-MinValue)/(MaxValue-MinValue)*(Height-vertgap));
     if destination.Y>origin.Y then
     begin
      shape:=rpsOblique1;

@@ -991,24 +991,35 @@ var
  section:TRpSection;
  item:TRpCommonListItem;
  pitem:TRpCommonComponent;
+ aitem:TRpSizePosInterface;
  index:integer;
+ i:integer;
 begin
- FCompItem.SendToBack;
- TRpSizePosInterface(FCompItem).SectionInt.SendToBack;
- pitem:=FCompItem.printitem;
- section:=TRpSection(TRpSizePosInterface(FCompItem).SectionInt.printitem);
- index:=0;
- while index<section.Components.Count do
- begin
-  if (section.Components.Items[index].Component=pitem) then
-   break;
-  inc(index);
- end;
- if index>=section.Components.Count then
+ if FSelectedItems.Count<1 then
   exit;
- section.Components.Delete(index);
- item:=section.Components.Insert(0);
- item.Component:=pitem;
+ if (Not (FSelectedItems.Objects[0] is TRpSizePosInterface)) then
+ for i:=0 to FSelectedItems.Count-1 do
+ begin
+  aitem:=TRpSizePosInterface(FSelectedItems.Objects[i]);
+  aitem.SendToBack;
+  aitem.SectionInt.SendToBack;
+  pitem:=aitem.printitem;
+  section:=TRpSection(aitem.SectionInt.printitem);
+  index:=0;
+  while index<section.Components.Count do
+  begin
+   if (section.Components.Items[index].Component=pitem) then
+    break;
+   inc(index);
+  end;
+  if index>=section.Components.Count then
+   exit;
+  section.Components.Delete(index);
+  item:=section.Components.Insert(0);
+  item.Component:=pitem;
+ end;
+ if assigned(TFRpObjInsp(Owner).fchangesize) then
+  TFRpObjInsp(Owner).fchangesize.UpdatePos;
 end;
 
 procedure TRpPanelObj.BringToFrontClick(Sender:TObject);
@@ -1017,24 +1028,34 @@ var
  item:TRpCommonListItem;
  pitem:TRpCommonComponent;
  index:integer;
+ aitem:TRpSizePosInterface;
+ i:integer;
 begin
- FCompItem.BringToFront;
- TFRpObjInsp(Owner).fchangesize.UpdatePos;
-
- pitem:=FCompItem.printitem;
- section:=TRpSection(TRpSizePosInterface(FCompItem).SectionInt.printitem);
- index:=0;
- while index<section.Components.Count do
- begin
-  if (section.Components.Items[index].Component=pitem) then
-   break;
-  inc(index);
- end;
- if index>=section.Components.Count then
+ if FSelectedItems.Count<1 then
   exit;
- section.Components.Delete(index);
- item:=section.Components.Add;
- item.Component:=pitem;
+ if (Not (FSelectedItems.Objects[0] is TRpSizePosInterface)) then
+  exit;
+ for i:=0 to FSelectedItems.Count-1 do
+ begin
+  aitem:=TRpSizePosInterface(FSelectedItems.Objects[i]);
+  aitem.BringToFront;
+  pitem:=aitem.printitem;
+  section:=TRpSection(aitem.SectionInt.printitem);
+  index:=0;
+  while index<section.Components.Count do
+  begin
+   if (section.Components.Items[index].Component=pitem) then
+    break;
+   inc(index);
+  end;
+  if index>=section.Components.Count then
+   exit;
+  section.Components.Delete(index);
+  item:=section.Components.Add;
+  item.Component:=pitem;
+ end;
+ if assigned(TFRpObjInsp(Owner).fchangesize) then
+  TFRpObjInsp(Owner).fchangesize.UpdatePos;
 end;
 
 

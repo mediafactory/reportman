@@ -235,6 +235,8 @@ begin
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
       TComboBox(acontrol).Style:=csDropDownList;
+      // Can't add items without a parent
+      acontrol.parent:=MainScrollBox;
       TComboBox(acontrol).Items.Add(BoolToStr(false,true));
       TComboBox(acontrol).Items.Add(BoolToStr(true,true));
       TComboBox(acontrol).ItemIndex:=0;

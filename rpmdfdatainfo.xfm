@@ -1,11 +1,11 @@
 object FRpDatainfoconfig: TFRpDatainfoconfig
   Left = 127
   Top = 44
-  Width = 539
-  Height = 463
-  AutoScroll = False
   ActiveControl = LConnections
+  AutoScroll = False
   Caption = 'Data access configuration'
+  ClientHeight = 463
+  ClientWidth = 539
   Color = clButton
   Position = poScreenCenter
   ShowHint = True

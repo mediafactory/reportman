@@ -322,7 +322,7 @@ begin
   if Not CheckModified then
    exit;
   res:=MessageDlg(SRpReportChanged,mtWarning,[mbYes,mbNo,mbCancel],0);
-  if res=mrCancel then
+  if ((res=mrCancel) or (res=0)) then
    Raise EAbort.Create(SRpSaveAborted);
   if res=mrNo then
    exit;
@@ -621,7 +621,7 @@ end;
 
 procedure TFRpMainF.FormCreate(Sender: TObject);
 begin
- // Inits Bools Arraya
+ // Inits Bools Arrays
  BoolToStr(True,True);
  ALeft.ShortCut:=ShortCut(Key_Left,[ssCtrl]);
  ARight.ShortCut:=ShortCut(Key_Right,[ssCtrl]);
