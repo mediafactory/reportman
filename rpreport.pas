@@ -984,6 +984,9 @@ var
  index:integeR;
  data:TRpDataset;
 begin
+{$IFDEF QUERYLINKBUG}
+ datainfo.DisableLinks;
+{$ENDIF}
  data:=nil;
  Result:=false;
  subrep:=Subreports.Items[CurrentSubreportIndex].SubReport;
@@ -1035,6 +1038,9 @@ begin
 
   CheckProgress;
  end;
+{$IFDEF QUERYLINKBUG}
+ datainfo.EnableLinks;
+{$ENDIF}
 end;
 
 

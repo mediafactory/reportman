@@ -204,7 +204,7 @@ type
    function GetPageCount:integer;
    function GetPage(Index:integer):TRpMetafilePage;
    procedure IntSaveToStream(Stream:TStream;SaveStream:TStream);
-   procedure IntLoadFromStream(Stream:TStream;LoadStream:TStream);
+   procedure IntLoadFromStream(Stream:TStream;LoadStream:TStream;clearfirst:boolean=true);
   public
    PageSize:integer;
    CustomX:integer;
@@ -212,8 +212,8 @@ type
    Orientation:TRpOrientation;
    BackColor:integer;
    procedure Clear;
-   procedure LoadFromStream(Stream:TStream);
-   procedure LoadFromFile(filename:string);
+   procedure LoadFromStream(Stream:TStream;clearfirst:boolean=true);
+   procedure LoadFromFile(filename:string;clearfirst:boolean=true);
    procedure SaveToStream(Stream:TStream);
    procedure SaveToFile(filename:string);
    constructor Create(AOwner:TComponent);override;
@@ -604,11 +604,12 @@ begin
  end;
 end;
 
-procedure TRpMetafileReport.LoadFromStream(Stream:TStream);
+procedure TRpMetafileReport.LoadFromStream(Stream:TStream;clearfirst:boolean=true);
 var
  zStream:TDeCompressionStream;
 begin
- Clear;
+ if clearfirst then
+  Clear;
  // Get the time
 {$IFDEF MSWINDOWS}
  mmfirst:=TimeGetTime;
@@ -624,7 +625,7 @@ begin
  end;
 end;
 
-procedure TRpMetafileReport.IntLoadFromStream(Stream:TStream;LoadStream:TStream);
+procedure TRpMetafileReport.IntLoadFromStream(Stream:TStream;LoadStream:TStream;clearfirst:boolean=true);
 var
  separator:integer;
  buf:array[0..RP_SIGNATURELENGTH-1] of char;
@@ -633,7 +634,8 @@ var
  acount:integer;
 begin
  // Clears the report metafile
- Clear;
+ if clearfirst then
+  Clear;
 
  bytesread:=Stream.Read(buf,RP_SIGNATURELENGTH);
  if (bytesread<RP_SIGNATURELENGTH) then
@@ -799,13 +801,13 @@ begin
  end
 end;
 
-procedure TRpMetafileReport.LoadFromFile(filename:string);
+procedure TRpMetafileReport.LoadFromFile(filename:string;clearfirst:boolean=true);
 var
  fstream:TFileStream;
 begin
  fstream:=TFileStream.Create(filename,fmOpenRead);
  try
-  LoadFromStream(fstream);
+  LoadFromStream(fstream,clearfirst);
  finally
   fstream.free;
  end

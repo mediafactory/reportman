@@ -23,7 +23,11 @@ interface
 
 uses
   windows,
-  SysUtils,Classes,Types,rptranslator,
+  SysUtils,Classes,
+{$IFDEF USEVARIANTS}
+  Types,
+{$ENDIF}
+  rptranslator,
   Graphics, Forms,Buttons, ExtCtrls,
   Controls, StdCtrls,ImgList,ComCtrls,
   rpmdconsts,rpmunits;

@@ -496,7 +496,7 @@ begin
     FOldString:='';
     if (FAggregate=rpAgGroup) then
     begin
-     if GroupName=newgroup then
+     if Uppercase(GroupName)=UpperCase(newgroup) then
      begin
       // Update with the initial value
       eval:=TRpReport(GetReport).Evaluator;

@@ -189,6 +189,7 @@ type
    FBDEFirstRange,FBDELastRange:string;
    connecting:boolean;
    FCached:Boolean;
+   FMasterSource:TDataSource;
    procedure SetDatabaseAlias(Value:string);
    procedure SetAlias(Value:string);
    procedure SetDataSource(Value:string);
@@ -228,7 +229,11 @@ type
    FReport:TComponent;
    function GetItem(Index:Integer):TRpDataInfoItem;
    procedure SetItem(index:integer;Value:TRpDataInfoItem);
+   procedure IntEnableLink(alist:TStringList;i:integer);
+   procedure IntDisableLink(alist:TStringList;i:integer);
   public
+   procedure DisableLinks;
+   procedure EnableLinks;
    function Add(alias:string):TRpDataInfoItem;
    function IndexOf(Value:string):integer;
    property Items[index:integer]:TRpDataInfoItem read GetItem write SetItem;default;
@@ -1023,6 +1028,11 @@ begin
   end;
   if (not doexit) then
   begin
+   if Assigned(FMasterSource) then
+   begin
+    FMasterSource.Free;
+    FMasterSource:=nil;
+   end;
    // Connect first the parent datasource
    if Length(DataSource)>0 then
    begin
@@ -1187,6 +1197,7 @@ begin
       TSQLQuery(FSQLInternalQuery).SQLConnection:=
        baseinfo.SQLConnection;
       TSQLQuery(FSQLInternalQuery).SQL.Text:=SQL;
+      TSQLQuery(FSQLInternalQuery).DataSource:=nil;
 {$ENDIF}
      end;
     rpdataibx:
@@ -1201,6 +1212,7 @@ begin
         TIBQuery(FSQLInternalQuery).Database.DefaultTransaction;
       end;
       TIBQuery(FSQLInternalQuery).UniDirectional:=true;
+      TIBQuery(FSQLInternalQuery).DataSource:=nil;
 {$ENDIF}
      end;
     rpdatamybase:
@@ -1233,9 +1245,11 @@ begin
       begin
        TQuery(FSQLInternalQuery).SQL.Text:=SQL;
        TQuery(FSQLInternalQUery).UniDirectional:=True;
+       TQuery(FSQLInternalQuery).DataSource:=nil;
       end
       else
       begin
+       TTable(FSQLInternalQuery).MasterSource:=nil;
        TTable(FSQLInternalQuery).Tablename:=FBDETable;
        TTable(FSQLInternalQUery).IndexFieldNames:='';
        TTable(FSQLInternalQUery).IndexName:='';
@@ -1261,6 +1275,7 @@ begin
       TADOQuery(FSQLInternalQuery).Connection:=baseinfo.ADOConnection;
       TADOQuery(FSQLInternalQuery).SQL.Text:=SQL;
       TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
+      TADOQuery(FSQLInternalQuery).DataSource:=nil;
 //      Activating this switches break linked querys
 //      TADOQuery(FSQLInternalQuery).CursorLocation:=clUseServer;
 {$ENDIF}
@@ -1271,33 +1286,33 @@ begin
       TIBOQuery(FSQLInternalQuery).IB_Connection:=baseinfo.FIBODatabase;
       TIBOQuery(FSQLInternalQuery).SQL.Text:=SQL;
       TIBOQuery(FSQLInternalQuery).UniDirectional:=true;
+      TIBOQuery(FSQLInternalQuery).DataSource:=nil;
 {$ENDIF}
      end;
    end;
    // Use the datasource
    if Assigned(datainfosource) then
    begin
+    FMasterSource:=TDataSource.Create(nil);
     case baseinfo.Driver of
      rpdatadbexpress:
       begin
 {$IFDEF USESQLEXPRESS}
-       if Not Assigned(TSQLQuery(FSQLInternalQuery).DataSource) then
-        TSQLQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
+       TSQLQuery(FSQLInternalQuery).DataSource:=FMasterSource;
        if datainfosource.cached then
-        TSQLQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+        FMasterSource.DataSet:=datainfosource.CachedDataset
        else
-        TSQLQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+        FMasterSource.DataSet:=datainfosource.Dataset;
 {$ENDIF}
       end;
      rpdataibx:
       begin
 {$IFDEF USEIBX}
-       if Not Assigned(TIBQuery(FSQLInternalQuery).DataSource) then
-        TIBQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
+       TIBQuery(FSQLInternalQuery).DataSource:=FMasterSource;
        if datainfosource.cached then
-        TIBQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+        FMasterSource.DataSet:=datainfosource.CachedDataset
        else
-        TIBQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+        FMasterSource.DataSet:=datainfosource.Dataset;
 {$ENDIF}
       end;
      rpdatabde:
@@ -1305,45 +1320,41 @@ begin
 {$IFDEF USEBDE}
        if FBDEType=rpdquery then
        begin
-        if Not Assigned(TQuery(FSQLInternalQuery).DataSource) then
-         TQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
+        TQuery(FSQLInternalQuery).DataSource:=FMasterSource;
         if datainfosource.cached then
-         TQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+         FMasterSource.DataSet:=datainfosource.CachedDataset
         else
-         TQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+         FMasterSource.DataSet:=datainfosource.Dataset;
        end
        else
        begin
         TTable(FSQLInternalQuery).MasterFields:=BDEMasterFields;
-        if Not Assigned(TTable(FSQLInternalQuery).DataSource) then
-         TTable(FSQLInternalQuery).MasterSource:=TDataSource.Create(nil);
+        TTable(FSQLInternalQuery).MasterSource:=FMasterSource;
         if datainfosource.cached then
-         TTable(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+         FMasterSource.DataSet:=datainfosource.CachedDataset
         else
-         TTable(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+         FMasterSource.DataSet:=datainfosource.Dataset;
        end;
 {$ENDIF}
       end;
      rpdataado:
       begin
 {$IFDEF USEADO}
-       if Not Assigned(TADOQuery(FSQLInternalQuery).DataSource) then
-        TADOQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
+       TADOQuery(FSQLInternalQuery).DataSource:=FMasterSource;
        if datainfosource.cached then
-        TADOQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+        FMasterSource.DataSet:=datainfosource.CachedDataset
        else
-        TADOQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+        FMasterSource.DataSet:=datainfosource.Dataset;
 {$ENDIF}
       end;
      rpdataibo:
       begin
 {$IFDEF USEIBO}
-       if Not Assigned(TIBOQuery(FSQLInternalQuery).DataSource) then
-        TIBOQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
+       TIBOQuery(FSQLInternalQuery).DataSource:=FMasterSource;
        if datainfosource.cached then
-        TIBOQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.CachedDataset
+        FMasterSource.DataSet:=datainfosource.CachedDataset
        else
-        TIBOQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+        FMasterSource.DataSet:=datainfosource.Dataset;
 {$ENDIF}
       end;
     end;
@@ -1984,6 +1995,102 @@ begin
  alist.Add('Microsoft Data Objects');
  alist.Add('Interbase Objects');
 end;
+
+
+procedure TRpDataInfoList.IntDisableLink(alist:TStringList;i:integer);
+var
+ index:integer;
+ j:integer;
+begin
+ for j:=0 to Count-1 do
+ begin
+  index:=alist.IndexOf(IntToStr(i));
+  if index>=0 then
+  begin
+   if i<>j then
+   begin
+    if assigned(items[j].FMasterSource) then
+    begin
+     if items[j].FDataSource=items[i].Alias then
+     begin
+      IntDisableLink(alist,j);
+     end;
+    end;
+   end;
+  end;
+ end;
+ if Assigned(Items[i].FMasterSource) then
+ begin
+  index:=alist.IndexOf(IntToStr(i));
+  if index>=0 then
+  begin
+   Items[i].FMasterSource.Enabled:=false;
+   alist.Delete(index);
+  end;
+ end;
+end;
+
+procedure TRpDataInfoList.DisableLinks;
+var
+ alist:TStringList;
+ i:integer;
+begin
+ alist:=TStringList.Create;
+ try
+  for i:=0 to Count-1 do
+  begin
+   alist.Add(IntToStr(i));
+  end;
+  for i:=0 to Count-1 do
+  begin
+   IntDisableLink(alist,i);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
+procedure TRpDataInfoList.IntEnableLink(alist:TStringList;i:integer);
+var
+ index:integer;
+ sindex:integer;
+begin
+ index:=alist.IndexOf(IntToStr(i));
+ if index<0 then
+  exit;
+ // Enables first the master source
+ if Assigned(Items[i].FMasterSource) then
+ begin
+  sindex:=IndexOf(Items[i].FDataSource);
+  if sindex>=0 then
+  begin
+   IntEnableLink(alist,sindex);
+  end;
+  Items[i].FMasterSource.Enabled:=True;
+ end;
+ alist.Delete(index);
+end;
+
+procedure TRpDataInfoList.EnableLinks;
+var
+ alist:TStringList;
+ i:integer;
+begin
+ alist:=TStringList.Create;
+ try
+  for i:=0 to Count-1 do
+  begin
+   alist.Add(IntToStr(i));
+  end;
+  for i:=0 to Count-1 do
+  begin
+   IntEnableLink(alist,i);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
 
 initialization
 
