@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.3j';
+ RM_VERSION='1.4pre3';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
 
