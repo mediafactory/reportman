@@ -201,12 +201,12 @@ begin
 {$IFDEF VCLANDCLX}
  if FDriver=rpDriverGDI then
  begin
-  rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,true,1,999999,
+  rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,true,1,999999,1,
    false,filename,compressed,false);
   exit;
  end;
 {$ENDIF}
- rpqtdriver.ExportReportToPDF(report,filename,ShowProgress,true,1,999999,
+ rpqtdriver.ExportReportToPDF(report,filename,ShowProgress,true,1,999999,1,
   false,filename,compressed,false)
 end;
 

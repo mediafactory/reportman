@@ -185,10 +185,10 @@ function CalcReportWidthProgress (report:TRpReport):boolean;
 function PrintReport (report:TRpReport; Caption:string; progress:boolean;
   allpages:boolean; frompage,topage,copies:integer; collate:boolean):Boolean;
 function ExportReportToPDF (report:TRpReport; Caption:string; progress:boolean;
-  allpages:boolean; frompage,topage:integer;
+  allpages:boolean; frompage,topage,copies:integer;
   showprintdialog:boolean; filename:string; compressed:boolean;collate:boolean):Boolean;
 function ExportReportToPDFMetaStream (report:TRpReport; Caption:string; progress:boolean;
-  allpages:boolean; frompage,topage:integer;
+  allpages:boolean; frompage,topage,copies:integer;
   showprintdialog:boolean; stream:TStream; compressed:boolean;collate:boolean;metafile:Boolean):Boolean;
 {$ENDIF}
 function DoShowPrintDialog (var allpages:boolean;
@@ -1522,10 +1522,9 @@ end;
 
 {$IFNDEF FORWEBAX}
 function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
-  allpages:boolean;frompage,topage:integer;
+  allpages:boolean;frompage,topage,copies:integer;
   showprintdialog:boolean;filename:string;compressed:boolean;collate:Boolean):Boolean;
 var
- copies:integer;
  dia:TFRpVCLProgress;
  oldonidle:TIdleEvent;
  pdfdriver:TRpPDFDriver;
@@ -1535,7 +1534,6 @@ begin
  Result:=false;
  allpages:=true;
  collate:=false;
- copies:=1;
  if showprintdialog then
  begin
   if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate,true) then
@@ -1583,8 +1581,8 @@ begin
 end;
 
 function ExportReportToPDFMetaStream (report:TRpReport; Caption:string; progress:boolean;
-  allpages:boolean; frompage,topage:integer;
-  showprintdialog:boolean; stream:TStream; compressed:boolean;collate:boolean;metafile:Boolean):Boolean;
+  allpages:boolean; frompage,topage,copies:integer;
+  showprintdialog:boolean; stream:TStream;compressed:boolean;collate:boolean;metafile:Boolean):Boolean;
 var
  pdfdriver:TRpPDFDriver;
  gdidriver:TRpGDIDriver;
@@ -1613,10 +1611,10 @@ begin
   begin
    agdidriver:=gdidriver;
    gdidriver.onlycalc:=true;
-   report.PrintRange(agdidriver,allpages,frompage,topage,1,collate);
+   report.PrintRange(agdidriver,allpages,frompage,topage,copies,collate);
   end
   else
-   report.PrintRange(apdfdriver,allpages,frompage,topage,1,collate);
+   report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
   if metafile then
    report.Metafile.SaveToStream(stream);
  finally

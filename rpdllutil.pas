@@ -25,7 +25,8 @@ uses SysUtils,Classes,rpreport,rpmdconsts,rppdfdriver,
 {$IFDEF USEVARIANTS}
  Variants,
 {$ENDIF}
- rptypes,rpeval,rptypeval,rpdatainfo,rppdfreport,rpparams;
+ rptypes,rpeval,rptypeval,rpdatainfo,rppdfreport,
+ rpparams;
 
 var
  lreports:TStringList;

@@ -41,6 +41,7 @@ uses
   rphtmldriver in '..\..\..\rphtmldriver.pas',
   rpexceldriver in '..\..\..\rpexceldriver.pas',
   rpsvgdriver in '..\..\..\rpsvgdriver.pas',
+  rpgdidriver in '..\..\..\rpgdidriver.pas',
   rpcsvdriver in '..\..\..\rpcsvdriver.pas',
   rppdffile in '..\..\..\rppdffile.pas',
   rppdfdriver in '..\..\..\rppdfdriver.pas';
@@ -355,8 +356,14 @@ begin
       try
        if doprintmetafile then
        begin
+{$IFDEF MSWINDOWS}
+        rpgdidriver.ExportReportToPDFMetaStream(report,filename,showprogress,
+              allpages,frompage,topage,copies,false,memstream,compress,collate,true);
+{$ENDIF}
+{$IFDEF LINUX}
         PrintReportMetafileStream(report,'',showprogress,allpages,frompage,topage,
          copies,memstream,compress,collate);
+{$ENDIF}
        end
        else
        if doprintastext then
@@ -366,9 +373,15 @@ begin
        end
        else
        begin
+{$IFDEF MSWINDOWS}
+         rpgdidriver.ExportReportToPDFMetaStream(report,filename,showprogress,
+               allpages,frompage,topage,copies,false,memstream,compress,collate,false);
+{$ENDIF}
+{$IFDEF LINUX}
         PrintReportPDFStream(report,filename,showprogress,
           allpages,frompage,topage,copies,
            memstream,compress,collate);
+{$ENDIF}
        end;
        memstream.Seek(0,soFromBeginning);
        if Length(PDFFilename)<1 then

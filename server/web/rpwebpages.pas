@@ -845,11 +845,11 @@ begin
 {$IFNDEF FORCECONSOLE}
  {$IFDEF MSWINDOWS}
     rpgdidriver.ExportReportToPDFMetaStream(pdfreport,'',
-     false,true,1,9999,false,astream,true,false,true);
+     false,true,1,9999,1,false,astream,true,false,true);
  {$ENDIF}
  {$IFDEF LINUX}
     rpqtdriver.ExportReportToPDFMetaStream(pdfreport,'',
-     false,true,1,9999,false,astream,true,false,true);
+     false,true,1,9999,1,false,astream,true,false,true);
  {$ENDIF}
 {$ENDIF}
     Response.Content:='Executed, size:'+IntToStr(astream.size);
@@ -867,11 +867,11 @@ begin
 {$IFNDEF FORCECONSOLE}
  {$IFDEF MSWINDOWS}
     rpgdidriver.ExportReportToPDFMetaStream(pdfreport,'',
-     false,true,1,9999,false,astream,true,false,false);
+     false,true,1,9999,1,false,astream,true,false,false);
  {$ENDIF}
  {$IFDEF LINUX}
     rpqtdriver.ExportReportToPDFMetaStream(pdfreport,'',
-     false,true,1,9999,false,astream,true,false,false);
+     false,true,1,9999,1,false,astream,true,false,false);
  {$ENDIF}
 {$ENDIF}
     astream.Seek(0,soFromBeginning);

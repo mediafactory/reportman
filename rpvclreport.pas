@@ -124,7 +124,7 @@ end;
 procedure TVCLReport.SaveToPDF(filename:string;compressed:boolean=false);
 begin
  CheckLoaded;
- rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,True,1,999999,
+ rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,True,1,999999,1,
   false,filename,compressed,false)
 end;
 

@@ -334,7 +334,7 @@ begin
        memstream:=TMemoryStream.Create;
        try
         rpgdidriver.ExportReportToPDFMetaStream(report,filename,showprogress,
-         allpages,frompage,topage,pdialog,memstream,compress,collate,tometafile);
+         allpages,frompage,topage,copies,pdialog,memstream,compress,collate,tometafile);
         memstream.Seek(0,soFromBeginning);
         if Length(outputfilename)>0 then
          memstream.SaveToFile(outputfilename)
@@ -350,7 +350,7 @@ begin
        memstream:=TMemoryStream.Create;
        try
         rpgdidriver.ExportReportToPDFMetaStream(report,filename,showprogress,
-         allpages,frompage,topage,pdialog,memstream,compress,collate,true);
+         allpages,frompage,topage,copies,pdialog,memstream,compress,collate,true);
         memstream.Seek(0,soFromBeginning);
         meta:=TRpMetafileReport.Create(nil);
         try

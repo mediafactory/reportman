@@ -164,10 +164,10 @@ function CalcReportWidthProgress (report:TRpReport):boolean;
 function PrintReport (report:TRpReport; Caption:string; progress:boolean;
   allpages:boolean; frompage,topage,copies:integer; collate:boolean):Boolean;
 function ExportReportToPDF (report:TRpReport; Caption:string; progress:boolean;
-  allpages:boolean; frompage,topage:integer;
+  allpages:boolean; frompage,topage,copies:integer;
   showprintdialog:boolean; filename:string;compressed:boolean;collate:boolean):Boolean;
 function ExportReportToPDFMetaStream (report:TRpReport; Caption:string; progress:boolean;
-  allpages:boolean; frompage,topage:integer;
+  allpages:boolean; frompage,topage,copies:integer;
   showprintdialog:boolean; stream:TStream; compressed:boolean;collate:boolean;metafile:Boolean):Boolean;
 {$ENDIF}
 
@@ -1702,10 +1702,9 @@ end;
 
 
 function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
-  allpages:boolean;frompage,topage:integer;
+  allpages:boolean;frompage,topage,copies:integer;
   showprintdialog:boolean;filename:string;compressed:boolean;collate:boolean):Boolean;
 var
- copies:integer;
  dia:TFRpQtProgress;
  oldonidle:TIdleEvent;
  pdfdriver:TRpPDFDriver;
@@ -1714,7 +1713,6 @@ var
 begin
  Result:=false;
  allpages:=true;
- copies:=1;
  if showprintdialog then
  begin
   if Not rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate,true) then
@@ -1762,7 +1760,7 @@ begin
 end;
 
 function ExportReportToPDFMetaStream (report:TRpReport; Caption:string; progress:boolean;
-  allpages:boolean; frompage,topage:integer;
+  allpages:boolean; frompage,topage,copies:integer;
   showprintdialog:boolean; stream:TStream; compressed:boolean;collate:boolean;metafile:Boolean):Boolean;
 var
  pdfdriver:TRpPDFDriver;
@@ -1792,10 +1790,10 @@ begin
   begin
    qtdriver.calconly:=true;
    aqtdriver:=qtDriver;
-   report.PrintRange(aqtdriver,allpages,frompage,topage,1,collate)
+   report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate)
   end
   else
-   report.PrintRange(apdfdriver,allpages,frompage,topage,1,collate);
+   report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
   if metafile then
    report.Metafile.SaveToStream(stream);
  finally
