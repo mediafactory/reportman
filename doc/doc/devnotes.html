@@ -7,7 +7,7 @@
 <body>
 <h2>Developer</h2>
 <h3>Devoloper notes about Report Manager</h3>
-<p><b>What about accesing Report Manager with C API using non Borland compilers?</b></p>
+<h4>What about accesing Report Manager with C API using non Borland compilers?</h4>
 <p>Report Manager supports C++Builder and Kylix C++.</p>
 <p>To allow other compilers link directly to the engine (GCC) a shared library 
   must be build/programmed (dll for windows, so for Linux), the interface function 
@@ -22,7 +22,7 @@
   metaview, but of course they have not the same integration as a call to a function 
   in a dll, if you are using Windows may be <br>
   ActiveX is the way to go...</p>
-<p><b>TClientDataset and BCD types, why Delphi 5 enterprise version at least need</b></p>
+<h4>TClientDataset and BCD types, why Delphi 5 enterprise version at least need</h4>
 <p>TRpDataset (rpdataset.pas) is a TClientDataset to buffer all the datasets passed 
   to the engine that can feature grouping, so the main dataset go forward only 
   (support for unidirectional datasets like SQLExpress), but the engine can remember 
@@ -43,6 +43,52 @@
   patch the assignment there, send me the bugfix so I will add a compiler define 
   for the bug and add to the main tree.</p>
 <p>BCD is a problematic type, see for example FormatVariant function in rptypes.pas.</p>
-<p>&nbsp;</p>
+<h4>Borland changes in TFiler in Delphi 6 and up</h4>
+<p>Borland have changed the way it stores WideStrings to disk <br>
+  (TFiler,TWriter,TReader) since Delphi 6, so because the engine can be compiled 
+  with any version of Delphi/Builder/Kylix, WideStrings properties are written 
+  in a custom way, really they are written in the Delphi 4/5 way.<br>
+  WideString properties are TRpLabel text, Font names, etc.</p>
+<p>The great idea from Borland technicians is: if we can save a few <br>
+  bytes storing the data in Utf8 format why spend the valuable and <br>
+  scarce hard disk space?</p>
+<p>From classes.pas</p>
+<p>procedure TWriter.WriteWideString(const Value: WideString);<br>
+  var<br>
+  L: Integer;<br>
+  Utf8Str: UTF8String;<br>
+  begin<br>
+  Utf8Str := Utf8Encode(Value);<br>
+  if Length(Utf8Str) &lt; (Length(Value) * SizeOf(WideChar)) then<br>
+  WriteMinStr(Value, Utf8Str)<br>
+  else<br>
+  begin<br>
+  WriteValue(vaWString);<br>
+  L := Length(Value);<br>
+  Write(L, SizeOf(Integer));<br>
+  Write(Pointer(Value)^, L * 2);<br>
+  end;<br>
+  end;</p>
+<p>This causes a incompatibility with earlier versions of Delphi.</p>
+<p>The workaround is a to store all the widestring properties as <br>
+  special properties defined in DefineProperties of each report <br>
+  streamable component, and write and read the widestrings using the <br>
+  old Delphi 5 method.</p>
+<p>This problem was fixed in 1.2 version.</p>
+<h4>The horrible bug in Delphi 7 about TComboBox (VCL) empty items</h4>
+<p>Delphi 7 has a horrible bug, when you place a TCombobox in a form, with a empty 
+  selectable item (csDropDownList), at run time, selecting this item the application 
+  will crash (Win9x), or raise an exception in ntdll (WinNT) or work correctly 
+  (WinXP).</p>
+<p>A patch for this issue is expected in a service pack, but for now all the empty 
+  selectable items of comboboxes are replaced with a a space (' ') to solve this 
+  issue. </p>
+<p><b>The Open/Save dialog Windows CLX bug since Delphi 7</b></p>
+<p>Delphi 7 has another horrible bug in CLX Open/Save Dialogs, a 'Drive C: not 
+  found' exception is raised if you try to select a file that is not in the root 
+  dir, but only in Win9x systems, in WinNT/XP works ok. Because for windows a 
+  pure VCL version is provided (repmandxp.exe) I don't worry about this issue 
+  but if you find a workaround feel free to send me it. You can reproduce it compiling 
+  repmand.exe for Windows and saving files in Windows 9x OS.</p>
 </body>
 </html>
