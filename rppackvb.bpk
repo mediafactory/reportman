@@ -10,7 +10,7 @@
     <RESDEPEN value="$(RESFILES)"/>
     <LIBFILES value=""/>
     <LIBRARIES value=""/>
-    <SPARELIBS value="rtl.a"/>
+    <SPARELIBS value="rtl.a visualclx.a"/>
     <PACKAGES value="rtl.bpi dataclx.bpi visualclx.bpi"/>
     <PATHCPP value=".;"/>
     <PATHPAS value=".;"/>
@@ -28,8 +28,8 @@
     <OTHERFILES value=""/>
   </MACROS>
   <OPTIONS>
-    <CFLAG1 value="-tP -VP -Od -H=$(HOME)/.borland/clx69.csm -Hc -Vx -Ve -X- -r- -a8 -b- -k 
-      -y -v -vi- -c"/>
+    <CFLAG1 value="-tP -VP -Od -H=$(HOME)/.borland/clx69.csm -Hc -Vx -Ve -X- -r- -a8 -5 -b- 
+      -k -y -v -vi- -c"/>
     <PFLAGS value="-P -$YD -$W -$R -$Q -$O- -$A8 -v -JPHNE -M"/>
     <RFLAGS value=""/>
     <AFLAGS value="/mx /w2 /zd"/>
@@ -40,7 +40,8 @@
     <ALLOBJ value="borinitpkg.o $(PACKAGES) $(OBJFILES)"/>
     <ALLRES value="$(RESFILES)"/>
     <ALLLIB value="rtle_pic.a $(LIBFILES) $(LIBRARIES) libborcrtl.so libborstl.so 
-      libborunwind.so libpthread.so libX11.so libc.so libm.so libdl.so"/>
+      libborqt-6.9-qt2.3.so libborunwind.so libpthread.so libX11.so libc.so 
+      libm.so libdl.so"/>
   </LINKER>
   <FILELIST>
       <FILE FILENAME="rppackvb.res" FORMNAME="" UNITNAME="rppackvb.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
@@ -55,12 +56,14 @@
 
   <IDEOPTIONS>
 [HistoryLists\hlIncludePath]
-Count=1
-Item0=$(BCB)/include/stlport:$(BCB)/include:$(BCB)/include/vcl:/usr/include
+Count=2
+Item0=../..:$(BCB)/include/stlport:$(BCB)/include:$(BCB)/include/vcl:/usr/include
+Item1=$(BCB)/include/stlport:$(BCB)/include:$(BCB)/include/vcl:/usr/include
 
 [HistoryLists\hlLibraryPath]
-Count=1
-Item0=$(BCB)/lib/obj:$(BCB)/lib:/usr/lib:/lib:/usr/X11R6/lib:$(BCB)/bin
+Count=2
+Item0=../..:$(BCB)/lib/obj:$(BCB)/lib:/usr/lib:/lib:/usr/X11R6/lib:$(BCB)/bin
+Item1=$(BCB)/lib/obj:$(BCB)/lib:/usr/lib:/lib:/usr/X11R6/lib:$(BCB)/bin
 
 [HistoryLists\hlConditionals]
 Count=1

@@ -39,7 +39,7 @@
     <ALLOBJ value="borinitpkg.o $(PACKAGES) $(OBJFILES)"/>
     <ALLRES value="$(RESFILES)"/>
     <ALLLIB value="rtle_pic.a $(LIBFILES) $(LIBRARIES) libborcrtl.so libborstl.so 
-      libborunwind.so libpthread.so libX11.so libc.so libm.so libdl.so "/>
+      libborunwind.so libpthread.so libX11.so libc.so libm.so libdl.so"/>
   </LINKER>
   <FILELIST>
       <FILE FILENAME="rppackb.res" FORMNAME="" UNITNAME="rppackb.res" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>

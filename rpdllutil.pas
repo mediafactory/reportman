@@ -96,8 +96,7 @@ begin
   report:=TRpReport.Create(nil);
   try
    report.LoadFromFile(filename);
-   Result:=0;
-   rplasterror:='Error';
+    rplasterror:='Error';
    inc(lasthandle);
    Result:=lasthandle;
    lreports.AddObject(IntToStr(lasthandle),report);

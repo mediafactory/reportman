@@ -15,6 +15,7 @@ library reportmanapiqt;
 uses
   SysUtils,
   Classes,
+  rpnotlibrary in 'rpnotlibrary.pas',
   rpdllutil in '../rpdllutil.pas',
   rpmdconsts in '../rpmdconsts.pas',
   rppdfdriver in '../rppdfdriver.pas',

@@ -46,15 +46,6 @@ function rp_print(hreport:integer;Title:PChar;
 
 function rp_preview(hreport:integer;Title:PChar):integer;stdcall;
 
-{$IFDEF LINUX}
-exports
- rp_open,
- rp_execute,
- rp_close,
- rp_lasterror,
- rp_print,
- rp_preview;
-{$ENDIF}
 
 implementation
 
