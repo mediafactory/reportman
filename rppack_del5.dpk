@@ -42,7 +42,8 @@ requires
   vclado50,
   Vclbde50,
   VCLIB50,
-  vcljpg50;
+  vcljpg50,
+  Indy50;
 
 contains
   rptypeval in 'rptypeval.pas',

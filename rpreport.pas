@@ -103,6 +103,8 @@ type
 
  TRpReport=class(TComponent)
   private
+   pageposy,pageposx:integer;
+   FCompose:Boolean;
    FSubReports:TRpSubReportList;
    FPageOrientation:TRpOrientation;
    FPagesize:TRpPagesize;
@@ -222,6 +224,7 @@ type
    procedure BeginPrint(Driver:IRpPrintDriver);
    procedure EndPrint;
    function PrintNextPage:boolean;
+   procedure Compose(PrevReport:TRpReport;execute:Boolean;ADriver:IRpPrintDriver);
    procedure PrintAll(Driver:IRpPrintDriver);
    procedure PrintRange(Driver:IRpPrintDriver;allpages:boolean;
     frompage,topage,copies:integer;collate:boolean);
@@ -901,7 +904,7 @@ begin
      Raise Exception.Create(SRpSubreportAliasNotFound+':'+alias);
     dbinfo:=DatabaseInfo.Items[index];
     index:=DataInfo.IndexOf(alias);
-    if dbinfo.Driver<>rpdataibx then
+    if (Not (dbinfo.Driver in [rpdataibx,rpdatamybase])) then
     begin
      FDataInfo.Items[index].Cached:=true;
     end;
@@ -938,7 +941,7 @@ var
 begin
  for i:=0 to FDataInfo.Count-1 do
  begin
-  FDataInfo.Items[i].Disconnect;
+  FDataInfo.Items[i].DisConnect;
  end;
  for i:=0 to FDatabaseInfo.Count-1 do
  begin
@@ -1429,7 +1432,11 @@ begin
     if subrep.ParentSubreport=nil then
     begin
      if subrep.IsDataAvailable then
+     begin
+      subrep.SubReportChanged(rpSubReportStart);
+      subrep.SubReportChanged(rpDataChange);
       break;
+     end;
     end;
    until false;
    if CurrentSubReportIndex>=Subreports.count then
@@ -1545,47 +1552,62 @@ begin
  if Not Assigned(FDriver) then
   Raise Exception.Create(SRpNoDriverPassedToPrint);
  Driver.SelectPrinter(PrinterSelect);
- metafile.Clear;
+ if FCompose then
+ begin
+  printingonepass:=false;
+  FInternalPageWidth:=metafile.CustomX;
+  FInternalPageHeight:=metafile.CustomY;
+  PageNum:=metafile.PageCount-1;
+ end
+ else
+ begin
+  metafile.Clear;
+  ClearTotalPagesList;
+  // Sets page orientation
+  if PageOrientation<>rpOrientationDefault then
+  begin
+   FDriver.SetOrientation(PageOrientation);
+  end;
+  if PageSize<>rpPageSizeDefault then
+  begin
+   if PageSize=rpPageSizeUser then
+   begin
+     metafile.PageSize:=-1;
+    rPageSizeQt.Indexqt:=PageSizeQt;
+    rPageSizeQt.Custom:=true;
+    rPageSizeQt.CustomWidth:=FCustomPageWidth;
+    rPageSizeQt.Customheight:=FCustomPageHeight;
+   end
+   else
+   begin
+    metafile.PageSize:=PageSizeQt;
+    rPageSizeQt.Indexqt:=PageSizeQt;
+    rPageSizeQt.Custom:=false;
+    rPageSizeQt.CustomWidth:=FCustomPageWidth;
+    rPageSizeQt.Customheight:=FCustomPageHeight;
+   end;
+   apagesize:=Driver.SetPagesize(rPageSizeQt);
+  end
+  else
+  begin
+   metafile.PageSize:=-1;
+   apagesize:=Driver.GetPageSize;
+  end;
+  FInternalPageWidth:=apagesize.X;
+  FInternalPageHeight:=apagesize.Y;
+  metafile.Orientation:=FPageOrientation;
+  metafile.BackColor:=FPageBackColor;
+  metafile.CustomX:=FInternalPageWidth;
+  metafile.CustomY:=FInternalPageHeight;
+  PageNum:=-1;
+ end;
  metafile.PrinterSelect:=PrinterSelect;
  metafile.PreviewStyle:=PreviewStyle;
  metafile.PreviewWindow:=PreviewWindow;
- ClearTotalPagesList;
  for i:=0 to SubReports.Count-1 do
  begin
   Subreports.Items[i].Subreport.LastRecord:=false;
  end;
- // Sets page orientation
- if PageOrientation<>rpOrientationDefault then
- begin
-  FDriver.SetOrientation(PageOrientation);
- end;
- if PageSize<>rpPageSizeDefault then
- begin
-  if PageSize=rpPageSizeUser then
-  begin
-   metafile.PageSize:=-1;
-   rPageSizeQt.Indexqt:=PageSizeQt;
-   rPageSizeQt.Custom:=true;
-   rPageSizeQt.CustomWidth:=FCustomPageWidth;
-   rPageSizeQt.Customheight:=FCustomPageHeight;
-  end
-  else
-  begin
-   metafile.PageSize:=PageSizeQt;
-   rPageSizeQt.Indexqt:=PageSizeQt;
-   rPageSizeQt.Custom:=false;
-   rPageSizeQt.CustomWidth:=FCustomPageWidth;
-   rPageSizeQt.Customheight:=FCustomPageHeight;
-  end;
-  apagesize:=Driver.SetPagesize(rPageSizeQt);
- end
- else
- begin
-  metafile.PageSize:=-1;
-  apagesize:=Driver.GetPageSize;
- end;
- FInternalPageWidth:=apagesize.X;
- FInternalPageHeight:=apagesize.Y;
  // Get the time
 {$IFDEF MSWINDOWS}
  mmfirst:=TimeGetTime;
@@ -1593,10 +1615,6 @@ begin
 {$IFDEF LINUX}
  milifirst:=now;
 {$ENDIF}
- metafile.CustomX:=FInternalPageWidth;
- metafile.CustomY:=FInternalPageHeight;
- metafile.Orientation:=FPageOrientation;
- metafile.BackColor:=FPageBackColor;
  LastPage:=false;
  EndPrint;
  // Evaluator
@@ -1607,7 +1625,6 @@ begin
  end;
  FEvaluator:=TRpEvaluator.Create(nil);
  FEvaluator.Language:=Language;
- PageNum:=-1;
  PageNumGroup:=-1;
  FRecordCount:=0;
 
@@ -1749,7 +1766,6 @@ end;
 // Resturns true if is the last pabe
 function TRpReport.PrintNextPage:boolean;
 var
- pageposy,pageposx:integer;
  sectionext:TPoint;
  pagefooters:TStringList;
  asection:TrpSection;
@@ -1761,6 +1777,8 @@ var
  oldhorzdespposition:integer;
  pagespacex:integer;
  sectionextevaluated:boolean;
+ PartialPrint:Boolean;
+ MaxExtent:TPoint;
 
 
 procedure SkipToPageAndPosition;
@@ -1842,13 +1860,17 @@ begin
 end;
 
 function CheckSpace:boolean;
+var
+ MaxExtent:TPoint;
 begin
+ MaxExtent.x:=pagespacex;
+ MaxExtent.y:=freespace;
  if not sectionextevaluated then
  begin
   // Skip to page and position
   if asection.SkipType=secskipbefore then
    SkipToPageAndPosition;
-  sectionext:=asection.GetExtension(FDriver);
+  sectionext:=asection.GetExtension(FDriver,MaxExtent);
  end;
  Result:=true;
  if sectionext.Y>freespace then
@@ -1867,8 +1889,14 @@ begin
  sectionextevaluated:=false;
 end;
 
-procedure PrintSection(datasection:boolean);
+procedure PrintSection(datasection:boolean;PartialPrint:Boolean);
+var
+ MaxExtent:TPoint;
 begin
+ PartialPrint:=False;
+ MaxExtent.x:=pagespacex;
+ MaxExtent.y:=freespace;
+
  if datasection then
  begin
   printedsomething:=true;
@@ -1878,7 +1906,7 @@ begin
  // If the section is not aligned at bottom of the page then
  if Not asection.AlignBottom then
  begin
-  asection.Print(pageposx,pageposy,metafile);
+  asection.Print(pageposx,pageposy,metafile,MaxExtent,PartialPrint);
   freespace:=freespace-sectionext.Y;
   pageposy:=pageposy+sectionext.Y;
  end
@@ -1886,7 +1914,7 @@ begin
  // Align to bottom
  begin
   pageposy:=pageposy+freespace-sectionext.Y;
-  asection.Print(pageposx,pageposy,metafile);
+  asection.Print(pageposx,pageposy,metafile,MaxExtent,PartialPrint);
   freespace:=0;
  end;
  if asection.SkipType=secskipafter then
@@ -1901,7 +1929,12 @@ var
  psection:TRpSection;
  afirstdetail:integer;
  printit:boolean;
+ MaxExtent:TPoint;
+ PartialPrint:Boolean;
 begin
+ PartialPrint:=false;
+ MaxExtent.x:=pagespacex;
+ MaxExtent.y:=freespace;
  if Headers then
  begin
   // First the global headers
@@ -1912,7 +1945,7 @@ begin
    begin
     asection:=psection;
     CheckSpace;
-    PrintSection(false);
+    PrintSection(false,PartialPrint);
    end;
   end;
 
@@ -1928,7 +1961,7 @@ begin
     begin
      asection:=psection;
      CheckSpace;
-     PrintSection(false);
+     PrintSection(false,PartialPrint);
     end;
    end;
   end;
@@ -1945,7 +1978,7 @@ begin
      begin
       asection:=psection;
       CheckSpace;
-      PrintSection(false);
+      PrintSection(false,PartialPrint);
      end;
     end;
    end;
@@ -1985,38 +2018,41 @@ begin
  else
  begin
   // Print page footers
-  pageposy:=pagefooterpos;
-  for i:=0 to pagefooters.Count-1 do
+  if ((gfooters.Count>0) or (pagefooters.Count>0)) then
   begin
-   asection:=oldsubreport.Sections.Items[StrToInt(pagefooters.Strings[i])].Section;
-   if not asection.global then
+   pageposy:=pagefooterpos;
+   for i:=0 to pagefooters.Count-1 do
    begin
+    asection:=oldsubreport.Sections.Items[StrToInt(pagefooters.Strings[i])].Section;
+    if not asection.global then
+    begin
+     printit:=true;
+     if Not asection.FooterAtReportEnd then
+     begin
+      if Not Assigned(Section) then
+       printit:=false;
+     end;
+     sectionext:=asection.GetExtension(FDriver,MaxExtent);
+     if printit then
+      if asection.EvaluatePrintCondition then
+       PrintSection(false,PartialPrint);
+    end;
+   end;
+   // Global page footers
+   for i:=0 to gfooters.count-1 do
+   begin
+    asection:=TRpSection(gfooters.Items[i]);
     printit:=true;
     if Not asection.FooterAtReportEnd then
     begin
      if Not Assigned(Section) then
       printit:=false;
     end;
-    sectionext:=asection.GetExtension(FDriver);
+    sectionext:=asection.GetExtension(FDriver,MaxExtent);
     if printit then
      if asection.EvaluatePrintCondition then
-      PrintSection(false);
+      PrintSection(false,PartialPrint);
    end;
-  end;
-  // Global page footers
-  for i:=0 to gfooters.count-1 do
-  begin
-   asection:=TRpSection(gfooters.Items[i]);
-   printit:=true;
-   if Not asection.FooterAtReportEnd then
-   begin
-    if Not Assigned(Section) then
-     printit:=false;
-   end;
-   sectionext:=asection.GetExtension(FDriver);
-   if printit then
-    if asection.EvaluatePrintCondition then
-     PrintSection(false);
   end;
  end;
 end;
@@ -2030,8 +2066,6 @@ begin
   subreport.SubReportChanged(rpPageChange);
  havepagefooters:=false;
  sectionextevaluated:=false;
- pageposy:=FTopMargin;
- pageposx:=FLeftMargin;
  oldprintedsection:=nil;
  inc(Pagenum);
  if ininumpage then
@@ -2040,6 +2074,30 @@ begin
   ininumpage:=false;
  end;
  inc(Pagenumgroup);
+ if Not FCompose then
+ begin
+  freespace:=FInternalPageheight;
+  freespace:=freespace-FTopMargin-FBottomMargin;
+  pageposy:=FTopMargin;
+  pageposx:=FLeftMargin;
+ end
+ else
+ begin
+  if (gheaders.count>0) or (subreport.PageHeaderCount>0) then
+  begin
+   freespace:=FInternalPageheight;
+   freespace:=freespace-FTopMargin-FBottomMargin;
+   pageposy:=FTopMargin;
+   pageposx:=FLeftMargin;
+  end
+  else
+  begin
+   printedsomething:=true;
+   dec(Pagenum);
+  end;
+  FCompose:=false;
+ end;
+
  if not printingonepass then
  begin
   if fmetafile.PageCount<=PageNum then
@@ -2051,12 +2109,9 @@ begin
  else
   fmetafile.NewPage;
 
-
- freespace:=FInternalPageheight;
  pagespacex:=FInternalPageWidth;
  oldhorzdespposition:=FLeftMargin;
 
- freespace:=freespace-FTopMargin-FBottomMargin;
 
  pagefooters:=TStringList.Create;
  try
@@ -2078,7 +2133,9 @@ begin
     begin
      if section.HorzDesp then
      begin
-      sectionext:=section.GetExtension(FDriver);
+      MaxExtent.x:=pagespacex;
+      MaxExtent.y:=freespace;
+      sectionext:=section.GetExtension(FDriver,MaxExtent);
       sectionextevaluated:=true;
       if (pageposx+oldprintedsectionext.X+sectionext.X)<=pagespacex then
       begin
@@ -2099,8 +2156,10 @@ begin
    end;
    if Not CheckSpace then
     break;
-   PrintSection(true);
-   NextSection(true);
+   PartialPrint:=False;
+   PrintSection(true,PartialPrint);
+   if Not PartialPrint then
+    NextSection(true);
    if printedsomething then
    begin
     if asection.SkipPage then
@@ -2152,6 +2211,30 @@ begin
  if Not dataset.Active then
   exit;
  Result:=dataset.Eof;
+end;
+
+procedure TRpReport.Compose(PrevReport:TRpReport;execute:Boolean;ADriver:IRpPrintDriver);
+var
+ i:integer;
+ aobject:TTotalPagesObject;
+begin
+ if PrevReport.Metafile.PageCount<1 then
+  exit;
+ ClearTotalPagesList;
+ metafile.Assign(PrevReport.Metafile);
+ for i:=0 to PrevReport.FTotalPagesList.Count-1 do
+ begin
+  aobject:=TTotalPagesObject(PrevReport.FTotalPagesList.Items[i]);
+  AddTotalPagesItem(aobject.PageIndex,aobject.ObjectIndex,aobject.DisplayFormat);
+ end;
+ freespace:=PrevReport.freespace;
+ pageposy:=PrevReport.pageposy;
+ pageposx:=FLeftMargin;
+ FCompose:=True;
+ if execute then
+ begin
+  PrintAll(ADriver);
+ end;
 end;
 
 

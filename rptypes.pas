@@ -51,6 +51,9 @@ type
  TVarType=integer;
 {$ENDIF}
 
+ TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
+
+ TRpBidiMode=(rpBidiNo,rpBidiPartial,rpBidiFull);
 
  TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,
   rpParamTime,rpParamDateTime,rpParamCurrency,rpParamBool,
@@ -148,6 +151,10 @@ procedure FillTreeDir(adirectory:String;alist:TStringList);
 function WideStringToDOS(astring:WideString):WideString;
 function NumberToText(FNumero:currency;female:boolean;idiom:integer):String;
 procedure GetLanguageDescriptions(alist:TStrings);
+procedure GetBidiDescriptions(alist:TStrings);
+function RpBidiModeToString(BidiMode:TRpBidiMode):String;
+function StringToRpBidiMode(Value:String):TRpBidiMode;
+
 {$IFNDEF USEVARIANTS}
 procedure RaiseLastOSError;
 {$ENDIF}
@@ -1293,6 +1300,35 @@ begin
  alist.Add(SRpSpanish);
  alist.Add(SRpCatalan);
  alist.Add(SRpFrench);
+end;
+
+
+procedure GetBidiDescriptions(alist:TStrings);
+begin
+ alist.Clear;
+ alist.Add(SRpSBidiNo);
+ alist.Add(SRpSBidiPartial);
+ alist.Add(SRpSBidiFull);
+end;
+
+function RpBidiModeToString(BidiMode:TRpBidiMode):String;
+begin
+ Result:=SRpSBidiNo;
+ if BidiMode=rpBidiPartial then
+  Result:=SRpSBidiPartial
+ else
+  if BidiMode=rpBidiFull then
+   Result:=SRpSBidiFull;
+end;
+
+function StringToRpBidiMode(Value:String):TRpBidiMode;
+begin
+ Result:=rpBidiNo;
+ if Value=SRpSBidiPartial then
+  Result:=rpBidiPartial
+ else
+  if Value=SRpSBidiFull then
+   Result:=rpBidiFull;
 end;
 
 initialization

@@ -409,10 +409,17 @@ begin
   exit;
  if Orientation=rpOrientationDefault then
   exit;
- atemp:=FPageWidth;
- FPageWidth:=FPageHeight;
- FPageHeight:=atemp;
- FOrientation:=Orientation;
+ if Orientation=rpOrientationPortrait then
+ begin
+  FOrientation:=Orientation;
+ end
+ else
+ begin
+  atemp:=FPageWidth;
+  FPageWidth:=FPageHeight;
+  FPageHeight:=atemp;
+  FOrientation:=Orientation;
+ end;
 end;
 
 

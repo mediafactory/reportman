@@ -610,12 +610,18 @@ begin
  if ADriverGDI.Checked then
  begin
   if rppagesetupvcl.ExecutePageSetup(report) then
+  begin
    fdesignframe.UpdateInterface;
+   fdesignframe.UpdateSelection(false);
+  end;
   exit;
  end;
 {$ENDIF}
  if rppagesetup.ExecutePageSetup(report) then
+ begin
   fdesignframe.UpdateInterface;
+  fdesignframe.UpdateSelection(false);
+ end;
 end;
 
 

@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 1.4
+AppVerName=Report Manager 1.5
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -11,6 +11,7 @@ AppUpdatesURL=http://sourceforge.net/projects/reportman
 DefaultDirName={pf}\Report Manager
 DefaultGroupName=Report Manager
 LicenseFile=license.txt
+AdminPrivilegesRequired=yes
 ; uncomment the following line if you want your installation to run on NT 3.51 too.
 ; MinVersion=4,3.51
 
@@ -38,9 +39,11 @@ Source: "..\repman\utils\rptranslator\rptranslate.exe"; DestDir: "{app}"; CopyMo
 Source: "..\repman\utils\rptranslator\rptranslate.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\rptranslator\rptranslateres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\printreptopdf\printreptopdf.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\activex\ReportMan.ocx"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+;Source: "..\activex\ReportMan.ocx"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\activex\ReportMan.ocx"; DestDir: "{sys}"; CopyMode: alwaysskipifsameorolder; Flags: restartreplace sharedfile regserver
 Source: "..\activex\ReportMan.ocx.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\webactivex\WebReportManX.cab"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+;Source: "..\webactivex\WebReportManX.cab"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\webactivex\WebReportManX.cab"; DestDir: "{sys}"; CopyMode: alwaysskipifsameorolder; Flags: restartreplace sharedfile regserver
 Source: "..\server\service\repserverservice.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\server\app\reportserverappxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\server\app\reportserverappxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
@@ -64,6 +67,18 @@ Source: "..\drivers\win32\dbexpmss.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesn
 Source: "..\drivers\win32\dbexpora.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 Source: "..\drivers\win32\dbexpdb2.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 Source: "..\drivers\win32\dbxoodbc.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
+
+
+[Registry]
+Root: HKCR; Subkey: ".rep"; ValueType: string; ValueName: ""; ValueData: "Report Manager Designer"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "Report Manager Designer"; ValueType: string; ValueName: ""; ValueData: "Report Manager Designer File"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Report Manager Designer\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\repmandxp.exe,0"
+Root: HKCR; Subkey: "Report Manager Designer\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\repmandxp.exe"" ""%1"""
+
+Root: HKCR; Subkey: ".rpmf"; ValueType: string; ValueName: ""; ValueData: "Report Manager Client"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "Report Manager Client"; ValueType: string; ValueName: ""; ValueData: "Report Manager Metafile"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Report Manager Client\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\metaviewxp.exe,0"
+Root: HKCR; Subkey: "Report Manager Client\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\metaviewxp.exe"" ""%1"""
 
 [Icons]
 Name: "{group}\Designer XP"; Filename: "{app}\repmandxp.exe"; WorkingDir: "{app}"

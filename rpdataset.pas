@@ -124,6 +124,11 @@ begin
    adef.Name:=FDataset.Fields[i].FieldName;
    adef.DataType:=FDataset.Fields[i].DataType;
    adef.Size:=FDataset.Fields[i].Size;
+{$IFNDEF USEVARIANTS}
+   // A bug in Dephi 5 about WideString and TClientDataset
+   if FDataset.Fields[i].DataType=ftWideString then
+    adef.Size:=adef.Size*2;
+{$ENDIF}
 {$IFDEF USEBCD}
    if (FDataset.Fields[i] is TBCDField) then
     adef.Precision:=TBCDField(FDataset.Fields[i]).Precision;

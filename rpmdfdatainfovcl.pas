@@ -100,6 +100,11 @@ type
     EBDELastRange: TMemo;
     LLastRange: TLabel;
     LRange: TLabel;
+    LUnions: TListBox;
+    BAddUnions: TButton;
+    BDelUnions: TButton;
+    ComboUnions: TComboBox;
+    LabelUnions: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -124,6 +129,8 @@ type
     procedure EBDETableDropDown(Sender: TObject);
     procedure EBDEIndexNameDropDown(Sender: TObject);
     procedure EBDEIndexFieldsDropDown(Sender: TObject);
+    procedure BAddUnionsClick(Sender: TObject);
+    procedure BDelUnionsClick(Sender: TObject);
   private
     { Private declarations }
     report:TRpReport;
@@ -487,6 +494,7 @@ begin
  MSQL.Text:=WideStringToDOS(dinfo.SQL);
  EMyBase.Text:=dinfo.MyBaseFilename;
  EIndexFields.Text:=dinfo.MyBaseIndexFields;
+ LUnions.Items.Assign(dinfo.DataUnions);
  EBDEIndexFields.Text:=dinfo.BDEIndexFields;
  MBDEFilter.Text:=dinfo.BDEFilter;
  EBDEIndexName.Text:=dinfo.BDEIndexName;
@@ -513,6 +521,12 @@ begin
  ComboDataSource.Items.Insert(0,' ');
  inc(index);
  ComboDatasource.ItemIndex:=Index;
+ ComboUnions.Items.Assign(LDatasets.Items);
+ ComboUnions.Items.Delete(LDatasets.ItemIndex);
+ if ComboUnions.Items.Count<1 then
+  ComboUnions.ItemIndex:=-1
+ else
+  ComboUnions.ItemIndex:=0;
  MSQLChange(ComboConnection);
 end;
 
@@ -532,6 +546,9 @@ begin
   TabBDEType.TabVisible:=false;
   exit;
  end;
+ if Sender=BAddUnions then
+  dinfo.DataUnions:=LUnions.Items
+ else
  if Sender=MSQL then
  begin
   dinfo.SQL:=TMemo(Sender).Text;
@@ -949,6 +966,32 @@ begin
   EBDEIndexFields.Items.Insert(0,' ');
  end;
 {$ENDIF}
+end;
+
+procedure TFRpDatainfoconfigVCL.BAddUnionsClick(Sender: TObject);
+var
+ index:integer;
+begin
+ if ComboUnions.Items.Count<1 then
+  exit;
+ if ComboUnions.ItemIndex<0 then
+  exit;
+ index:=LUnions.Items.IndexOf(ComboUnions.Text);
+ if index<0 then
+ begin
+  LUnions.Items.Add(ComboUnions.Text);
+  MSQLChange(BAddUnions);
+ end;
+end;
+
+procedure TFRpDatainfoconfigVCL.BDelUnionsClick(Sender: TObject);
+begin
+ if LUnions.Items.Count<1 then
+  exit;
+ if LUnions.ItemIndex<0 then
+  exit;
+ LUnions.Items.Delete(LUnions.ItemIndex);
+ MSQLChange(BAddUnions);
 end;
 
 end.

@@ -192,6 +192,8 @@ type
    connecting:boolean;
    FCached:Boolean;
    FMasterSource:TDataSource;
+   FDataUnions:TStrings;
+   procedure SetDataUnions(Value:TStrings);
    procedure SetDatabaseAlias(Value:string);
    procedure SetAlias(Value:string);
    procedure SetDataSource(Value:string);
@@ -224,6 +226,7 @@ type
    property BDEMasterFields:string read FBDEMasterFields write FBDEMasterFields;
    property BDEFirstRange:string read FBDEFirstRange write FBDEFirstRange;
    property BDELastRange:string read FBDELastRange write FBDELastRange;
+   property DataUnions:TStrings read FDataUnions write SetDataUnions;
   end;
 
  TRpDataInfoList=class(TCollection)
@@ -244,6 +247,7 @@ type
 
 procedure UpdateConAdmin;
 procedure GetRpDatabaseDrivers(alist:TStrings);
+procedure CombineAddDataset(client:TClientDataset;data:TDataset);
 
 implementation
 
@@ -407,6 +411,13 @@ begin
 end;
 {$ENDIF}
 
+procedure TRpDataInfoItem.SetDataUnions(Value:TStrings);
+begin
+ FDataUnions.Assign(Value);
+ Changed(False);
+end;
+
+
 procedure TRpDataInfoItem.SetDatabaseAlias(Value:string);
 begin
  FDatabaseAlias:=AnsiUpperCase(Value);
@@ -449,6 +460,7 @@ begin
   FBDEFilter:=TRpDataInfoItem(Source).FBDEFilter;
   FBDETable:=TRpDataInfoItem(Source).FBDETable;
   FBDEType:=TRpDataInfoItem(Source).FBDEType;
+  FDataUnions.Assign(TRpDataInfoItem(Source).FDataUnions);
  end
  else
   inherited Assign(Source);
@@ -669,6 +681,7 @@ begin
   begin
     FADOConnection:=TADOConnection.Create(nil);
     FADOConnection.KeepConnection:=false;
+    FADOConnection.Mode:=cmRead;
   end;
   Result:=FADOConnection;
  end;
@@ -1240,8 +1253,27 @@ begin
     rpdatamybase:
      begin
       try
-       TClientDataSet(FSQLInternalQuery).IndexFieldNames:=FMyBaseIndexFields;
-       TClientDataSet(FSQLInternalQuery).LoadFromFile(FMyBaseFilename);
+       TClientDataSet(FSQLInternalQuery).IndexName:='''';
+       if Length(FMyBaseFileName)>0 then
+       begin
+        TClientDataSet(FSQLInternalQuery).IndexFieldNames:=FMyBaseIndexFields;
+        TClientDataSet(FSQLInternalQuery).LoadFromFile(FMyBaseFilename)
+       end
+       else
+       begin
+        TClientDataSet(FSQLInternalQuery).IndexDefs.Clear;
+        TClientDataSet(FSQLInternalQuery).FieldDefs.Clear;
+        TClientDataSet(FSQLInternalQuery).IndexDefs.Add('IPRIM',FMyBaseIndexFields,[]);
+        TClientDataSet(FSQLInternalQuery).IndexName:='IPRIM';
+       end;
+       for i:=0 to FDataUnions.Count-1 do
+       begin
+        index:=TRpDatainfolist(Collection).IndexOf(FDataUnions.Strings[i]);
+        if index<0 then
+         Raise Exception.Create(SRpDataUnionNotFound+' - '+Alias+' - '+FDataUnions.Strings[i]);
+        TRpDatainfolist(Collection).Items[index].Connect(databaseinfo,params);
+        CombineAddDataset(TClientDataSet(FSQLInternalQuery),TRpDatainfolist(Collection).Items[index].Dataset);
+       end;
       except
        FDataset:=nil;
        FSQLInternalQuery.free;
@@ -1457,6 +1489,7 @@ begin
  except
   on E:Exception do
   begin
+   connecting:=false;
    Raise Exception.Create(Alias+':'+E.Message);
   end;
  end;
@@ -1477,6 +1510,7 @@ constructor TRpDatainfoitem.Create(Collection:TCollection);
 begin
  inherited Create(Collection);
 
+ FDataUnions:=TStringList.Create;
  FBDEType:=rpdquery;
  FCachedDataset:=TRpDataset.Create(nil);
 end;
@@ -1484,6 +1518,7 @@ end;
 destructor TRpDataInfoItem.Destroy;
 begin
  try
+  FDataUnions.free;
   FCachedDataset.free;
   FCachedDataset:=nil;
   if assigned(FSQLInternalQuery) then
@@ -2132,6 +2167,8 @@ begin
  end;
 end;
 
+
+
 procedure TRpDataInfoList.DisableLinks;
 var
  alist:TStringList;
@@ -2190,6 +2227,39 @@ begin
   end;
  finally
   alist.free;
+ end;
+end;
+
+
+procedure CombineAddDataset(client:TClientDataset;data:TDataset);
+var
+ i:integer;
+begin
+ // Combine the two datasets
+ if client.FieldDefs.Count<1 then
+ begin
+  client.Close;
+  client.FieldDefs.Assign(data.FieldDefs);
+  client.CreateDataSet;
+ end;
+ if data.fields.Count>client.Fields.Count then
+ begin
+  Raise Exception.Create(SRpCannotCombine);
+ end;
+ while not data.eof do
+ begin
+  client.Append;
+  try
+   for i:=0 to data.fieldcount-1 do
+   begin
+    client.Fields[i].AsVariant:=data.Fields[i].AsVariant;
+   end;
+   client.post;
+  except
+   client.cancel;
+   raise;
+  end;
+  data.Next;
  end;
 end;
 

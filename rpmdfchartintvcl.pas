@@ -425,6 +425,7 @@ var
  rec:TRect;
  aansitext:String;
  aalign:integer;
+ eAlignMent:Integer;
 begin
  aexp:=TRpChart(printitem);
  if csDestroying in aexp.ComponentState then
@@ -451,13 +452,14 @@ begin
   Canvas.Brush.Color:=aexp.BackColor;
  end;
  aalign:=DT_NOPREFIX;
- if (aexp.AlignMent AND AlignmentFlags_AlignHCenter)>0 then
+ eAlignMent:=aexp.PrintAlignMent;
+ if (eAlignMent AND AlignmentFlags_AlignHCenter)>0 then
   aalign:=aalign or DT_CENTER;
- if (aexp.AlignMent AND AlignmentFlags_SingleLine)>0 then
+ if (eAlignMent AND AlignmentFlags_SingleLine)>0 then
   aalign:=aalign or DT_SINGLELINE;
- if (aexp.AlignMent AND AlignmentFlags_AlignLEFT)>0 then
+ if (eAlignMent AND AlignmentFlags_AlignLEFT)>0 then
   aalign:=aalign or DT_LEFT;
- if (aexp.AlignMent AND AlignmentFlags_AlignRight)>0 then
+ if (eAlignMent AND AlignmentFlags_AlignRight)>0 then
   aalign:=aalign or DT_RIGHT;
  if aexp.WordWrap then
   aalign:=aalign or DT_WORDBREAK;

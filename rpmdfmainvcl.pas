@@ -603,7 +603,10 @@ begin
  Assert(report<>nil,'Called Page setup without a report assigned');
 
  if ExecutePageSetup(report) then
+ begin
   fdesignframe.UpdateInterface;
+  fdesignframe.UpdateSelection(false);
+ end;
 end;
 
 

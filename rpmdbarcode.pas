@@ -96,7 +96,8 @@ type
    procedure WriteExpression(Writer:TWriter);
    procedure ReadExpression(Reader:TReader);
   protected
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
   public
    function GetText:widestring;
@@ -943,7 +944,11 @@ begin
        idx := Find_Code128C(cadc);
        if idx < 0 then
 	idx := Find_Code128C('00');
-       Inc(checksum, (idx*i));
+// Fix by Chris Gradussen
+// first pair of 2 digits multiply by 1 instead of 2
+// second pair of 2 digits multiply by 2 instead of 4...
+//       Inc(checksum, (idx*i)); Original line
+       Inc(checksum,(idx*(i div 2)));
        result := result + Convert(tabelle_128[idx].data);
        cadc:='';
       end;
@@ -1576,12 +1581,13 @@ begin
  Result:=data;
 end;
 
-procedure TRpBarcode.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpBarCode.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  aText:string;
  data:string;
 begin
- inherited DoPrint(aposx,aposy,metafile);
+ inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
  aText:=GetText;
  try
   data:=Calculatebarcode;

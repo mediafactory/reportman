@@ -52,7 +52,8 @@ type
    FShape:TRpShapeType;
    FPenWidth:integer;
   protected
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);override;
   public
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
@@ -84,9 +85,10 @@ type
    destructor Destroy;override;
   protected
    procedure DefineProperties(Filer: TFiler);override;
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);override;
   public
-   function GetExtension(adriver:IRpPrintDriver):TPoint;override;
+   function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
    property Stream:TMemoryStream read FStream write SetStream;
    property Expression:WideString read FExpression write FExpression;
   published
@@ -126,9 +128,10 @@ begin
  inherited destroy;
 end;
 
-procedure TRpShape.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpShape.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);
 begin
- inherited DoPrint(aposx,aposy,metafile);
+ inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
  metafile.Pages[metafile.CurrentPage].NewDrawObject(aposy,aposx,Width,Height,
   integer(Shape),BrushStyle,BrushColor,PenStyle,PenWidth,PenColor);
 end;
@@ -310,11 +313,12 @@ end;
 
 
 
-procedure TRpImage.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpImage.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  FMStream:TMemoryStream;
 begin
- inherited DoPrint(aposx,aposy,metafile);
+ inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
  if Not Assigned(FStream) then
   exit;
  FMStream:=GetStream;
@@ -329,11 +333,11 @@ begin
  end;
 end;
 
-function TRpImage.GetExtension(adriver:IRpPrintDriver):TPoint;
+function TRpImage.GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;
 var
  FMStream:TMemoryStream;
 begin
- Result:=inherited GetExtension(adriver);
+ Result:=inherited GetExtension(adriver,MaxExtent);
 
  if (DrawStyle in [rpDrawCrop,rpDrawStretch,rpDrawTile]) then
   exit;

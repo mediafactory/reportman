@@ -170,7 +170,7 @@ begin
  rec.Right:=Width-1;
  rec.Bottom:=Height-1;
  // Adds word wrap and single line
- aalign:=alabel.Alignment or alabel.VAlignment;
+ aalign:=alabel.PrintAlignment or alabel.VAlignment;
  if alabel.SingleLine then
   aalign:=aalign or Integer(AlignmentFlags_SingleLine);
  if alabel.Wordwrap then
@@ -437,7 +437,7 @@ begin
  rec.Left:=0;
  rec.Right:=Width-1;
  rec.Bottom:=Height-1;
- aalign:=aexp.Alignment or aexp.VAlignment;
+ aalign:=aexp.PrintAlignment or aexp.VAlignment;
  if aexp.SingleLine then
   aalign:=aalign or Integer(AlignmentFlags_SingleLine);
  if aexp.Wordwrap then

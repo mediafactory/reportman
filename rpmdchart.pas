@@ -145,7 +145,8 @@ type
    procedure DoPrintTeeChart(aposx,aposy:integer;metafile:TRpMetafileReport);
 {$ENDIF}
   protected
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
   public
    procedure GetNewValue;
@@ -682,7 +683,8 @@ begin
 end;
 {$ENDIF}
 
-procedure TRpChart.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpChart.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);
 {var
  aText:WideString;
  expre:WideString;
@@ -707,7 +709,7 @@ var
  pencolor:integer;
  MaxValueCount:integer;
 begin
- inherited DoPrint(aposx,aposy,metafile);
+ inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
  if FSeries.Count<1 then
   exit;
  // Draws a TeeChart
@@ -718,7 +720,7 @@ begin
   exit;
  end;
 {$ENDIF}
- aalign:=Alignment or VAlignment;
+ aalign:=PrintAlignment or VAlignment;
  if SingleLine then
   aalign:=aalign or AlignmentFlags_SingleLine;
  // To draw for each serie find macvalue and minvalue

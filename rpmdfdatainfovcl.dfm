@@ -197,8 +197,6 @@ object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
             Width = 541
             Height = 147
             Align = alClient
-            Lines.Strings = (
-              'MSQL')
             TabOrder = 0
             WordWrap = False
             OnChange = MSQLChange
@@ -394,6 +392,13 @@ object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
             Height = 13
             Caption = 'MyBase Filename'
           end
+          object LabelUnions: TLabel
+            Left = 200
+            Top = 68
+            Width = 33
+            Height = 13
+            Caption = 'Unions'
+          end
           object EMyBase: TEdit
             Left = 0
             Top = 22
@@ -418,6 +423,41 @@ object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
             Caption = 'Search...'
             TabOrder = 2
             OnClick = BMyBaseClick
+          end
+          object LUnions: TListBox
+            Left = 380
+            Top = 70
+            Width = 153
+            Height = 77
+            ItemHeight = 13
+            TabOrder = 3
+          end
+          object BAddUnions: TButton
+            Left = 340
+            Top = 72
+            Width = 33
+            Height = 29
+            Caption = '>'
+            TabOrder = 4
+            OnClick = BAddUnionsClick
+          end
+          object BDelUnions: TButton
+            Left = 340
+            Top = 114
+            Width = 33
+            Height = 29
+            Caption = '<'
+            TabOrder = 5
+            OnClick = BDelUnionsClick
+          end
+          object ComboUnions: TComboBox
+            Left = 200
+            Top = 82
+            Width = 105
+            Height = 21
+            Style = csDropDownList
+            ItemHeight = 13
+            TabOrder = 6
           end
         end
       end

@@ -51,7 +51,8 @@ type
    procedure ReadWideText(Reader:TReader);
   protected
    procedure DefineProperties(Filer:TFiler);override;
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure Loaded;override;
   public
    procedure UpdateWideText;
@@ -96,13 +97,14 @@ type
    procedure ReadAgIniValue(Reader:TReader);
   protected
    procedure DefineProperties(Filer:TFiler);override;
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);override;
   public
    constructor Create(AOwner:TComponent);override;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    function GetText:widestring;
    property IdenExpression:TIdenRpExpression read FIdenExpression;
-   function GetExtension(adriver:IRpPrintDriver):TPoint;override;
+   function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
    property Expression:widestring read FExpression write FExpression;
    property AgIniValue:widestring read FAgIniValue write FAgIniValue;
   published
@@ -131,6 +133,7 @@ type
 
 
 implementation
+
 
 uses rpreport;
 
@@ -286,12 +289,13 @@ begin
  FDataType:=rpParamUnknown;
 end;
 
-procedure TRpLabel.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpLabel.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  aalign:integer;
 begin
- inherited DoPrint(aposx,aposy,metafile);
- aalign:=Alignment or VAlignment;
+ inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
+ aalign:=PrintAlignment or VAlignment;
  if SingleLine then
   aalign:=aalign or AlignmentFlags_SingleLine;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy,
@@ -374,13 +378,14 @@ begin
  end;
 end;
 
-procedure TRpExpression.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpExpression.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  aText:WideString;
  expre:WideString;
  aalign:integer;
 begin
- inherited DoPrint(aposx,aposy,metafile);
+ inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
  expre:=Trim(Expression);
  aText:=GetText;
  if PrintOnlyOne then
@@ -389,7 +394,7 @@ begin
    exit;
   FOldString:=aText;
  end;
- aalign:=Alignment or VAlignment;
+ aalign:=PrintAlignment or VAlignment;
  if SingleLine then
   aalign:=aalign or AlignmentFlags_SingleLine;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy,
@@ -532,11 +537,11 @@ begin
  end;
 end;
 
-function TRpExpression.GetExtension(adriver:IRpPrintDriver):TPoint;
+function TRpExpression.GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;
 var
  aText:TRpTextObject;
 begin
- Result:=inherited GetExtension(adriver);
+ Result:=inherited GetExtension(adriver,MaxExtent);
  aText.Text:=GetText;
  aText.LFontName:=LFontName;
  aText.WFontName:=WFontName;

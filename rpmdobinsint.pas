@@ -1190,10 +1190,9 @@ begin
 
  // Right To Left
  lnames.Add(SrpSRightToLeft);
- ltypes.Add(SRpSBool);
+ ltypes.Add(SRpSList);
  if Assigned(lvalues) then
-  lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).RightToLeft,true));
-
+  lvalues.Add(RpBidiModeToString(TRpGenTextComponent(printitem).BidiMode));
  // Back Color
  lnames.Add(SrpSBackColor);
  ltypes.Add(SRpSColor);
@@ -1282,7 +1281,7 @@ begin
  end;
  if pname=SRpSRightToLeft then
  begin
-  TRpGenTextComponent(fprintitem).RightToLeft:=StrToBool(value);
+  TRpGenTextComponent(fprintitem).BidiMode:=StringToRpBidiMode(value);
   Invalidate;
   exit;
  end;
@@ -1370,7 +1369,7 @@ begin
  end;
  if pname=SrpSRightToLeft then
  begin
-  Result:=BoolToStr(TRpGenTextComponent(printitem).RightToLeft,true);
+  Result:=RpBidiModeToString(TRpGenTextComponent(printitem).BidiMode);
   exit;
  end;
  if pname=SrpSBackColor then
@@ -1409,6 +1408,11 @@ end;
 
 procedure TRpGenTextInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
 begin
+ if pname=SrpSRightToLeft then
+ begin
+  GetBidiDescriptions(lpossiblevalues);
+  exit;
+ end;
  if pname=SrpSAlignment then
  begin
   lpossiblevalues.clear;

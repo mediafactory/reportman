@@ -432,7 +432,7 @@ begin
  rec.Left:=0;
  rec.Right:=Width-1;
  rec.Bottom:=Height-1;
- aalign:=aexp.Alignment or aexp.VAlignment;
+ aalign:=aexp.PrintAlignment or aexp.VAlignment;
  if aexp.SingleLine then
   aalign:=aalign or Integer(AlignmentFlags_SingleLine);
  if aexp.Wordwrap then

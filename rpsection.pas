@@ -100,7 +100,8 @@ type
    procedure LoadExternalFromDatabase;
    procedure SetIniNumPage(Value:Boolean);
   protected
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
    procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
    procedure Notification(AComponent: TComponent;
@@ -112,7 +113,7 @@ type
    function SectionCaption(addchild:boolean):String;
    procedure FreeComponents;
    procedure DeleteComponent(com:TRpCommonComponent);
-   function GetExtension(adriver:IRpPrintDriver):TPoint;override;
+   function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
    function EvaluateBeginPage:boolean;
    procedure LoadFromStream(stream:TStream);
    procedure SaveToStream(stream:TStream);
@@ -384,14 +385,17 @@ begin
  end;
 end;
 
-procedure TRpSection.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpSection.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  i:integer;
  compo:TRpCommonPosComponent;
  newposx,newposy:integer;
+ intPartialPrint:Boolean;
 begin
- inherited DoPrint(aposx,aposy,metafile);
+ inherited DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
 
+ PartialPrint:=false;
  for i:=0 to Components.Count-1 do
  begin
   compo:=TRpCommonPosComponent(Components.Items[i].Component);
@@ -420,7 +424,11 @@ begin
     newposx:=aposx+compo.PosX;
     newposy:=aposy+compo.PosY;
    end;
-   Components.Items[i].Component.Print(newposx,newposy,metafile);
+   IntPartialPrint:=false;
+   Components.Items[i].Component.Print(newposx,newposy,metafile,
+    MaxExtent,IntPartialPrint);
+   if IntPartialPrint then
+    PartialPrint:=True;
   end;
  end;
 end;
@@ -442,7 +450,7 @@ begin
 end;
 
 
-function TRpSection.GetExtension(adriver:IRpPrintDriver):TPoint;
+function TRpSection.GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;
 var
  minsize,maxsize,currentsize:integer;
  compsize:TPoint;
@@ -450,7 +458,7 @@ var
  i:integer;
  acompo:TRpCommonPosComponent;
 begin
- Result:=inherited GetExtension(adriver);
+ Result:=inherited GetExtension(adriver,MaxExtent);
  if FAutoContract then
  begin
   minsize:=0;
@@ -474,7 +482,7 @@ begin
  for i:=0 to Components.Count-1 do
  begin
   acompo:=TRpCommonPosComponent(Components.Items[i].Component);
-  compsize:=acompo.GetExtension(adriver);
+  compsize:=acompo.GetExtension(adriver,MaxExtent);
   if compsize.Y>0 then
   begin
    if acompo.Align in [rpalbottom,rpalbotright] then

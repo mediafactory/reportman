@@ -54,13 +54,15 @@ type
    procedure SetHeight(Value:TRpTwips);
   protected
    function GetReport:TComponent;
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);virtual;
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);virtual;
   public
    lastextent:TPoint;
    constructor Create(AOwner:TComponent);override;
-   function GetExtension(adriver:IRpPrintDriver):TPoint;virtual;
+   function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;virtual;
    function EvaluatePrintCondition:boolean;
-   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');virtual;
    property Report:TComponent read GetReport;
    property OnBeforePrint:TNotifyEvent read FOnBeforePrint write FOnBeforePrint;
@@ -125,17 +127,27 @@ type
    FVAlignMent:integer;
    FSingleLine:boolean;
    FType1Font:TRpType1Font;
-   FRightToLeft:Boolean;
+   FBidiModes:TStrings;
+   FMultiPage:Boolean;
    procedure ReadWFontName(Reader:TReader);
    procedure WriteWFontName(Writer:TWriter);
    procedure ReadLFontName(Reader:TReader);
    procedure WriteLFontName(Writer:TWriter);
+   procedure SetBidiModes(Value:TStrings);
+   function GetBidiMode:TRpBidiMode;
+   procedure SetBidiMode(Value:TRpBidiMode);
+   function GetRightToLeft:Boolean;
+   function GetPrintAlignMent:integer;
   protected
    procedure DefineProperties(Filer:TFiler);override;
   public
    constructor Create(AOwner:TComponent);override;
+   destructor Destroy;override;
    property WFontName:widestring read FWFontName write FWFontName;
    property LFontName:widestring read FLFontName write FLFontName;
+   property BidiMode:TRpBidiMode read GetBidiMode write SetBidiMode;
+   property RightToLeft:Boolean read GetRightToLeft;
+   property PrintAlignMent:Integer read GetPrintAlignMent;
   published
    property Type1Font:TRpType1Font read FType1Font write FType1Font;
    property FontSize:smallint read FFontSize write FFontSize default 10;
@@ -149,12 +161,17 @@ type
    property VAlignment:integer read FVAlignment write FVAlignment default 0;
    property WordWrap:Boolean read FWordWrap write FWordWrap default false;
    property SingleLine:boolean read FSingleLine write FSingleLine default false;
-   property RightToLeft:Boolean read FRightToLeft write FRightToLeft default false;
+   property BidiModes:TStrings read FBidiModes write SetBidiModes;
+   property MultiPage:Boolean read FMultiPage write FMultiPage default false;
   end;
 
 implementation
 
 uses rpreport,rpsection;
+
+const
+ AlignmentFlags_AlignLeft = 1 { $1 };
+ AlignmentFlags_AlignRight = 2 { $2 };
 
 constructor TRpCommonComponent.Create(AOwner:TComponent);
 begin
@@ -190,7 +207,7 @@ begin
  FHeight:=Value;
 end;
 
-function TRpCommonComponent.GetExtension(adriver:IRpPrintDriver):TPoint;
+function TRpCommonComponent.GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;
 begin
  Result.X:=Width;
  Result.Y:=Height;
@@ -220,17 +237,20 @@ begin
 end;
 
 
-procedure TRpCommonComponent.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpCommonComponent.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);
 begin
  // Executes OnBeforePrint
  if Assigned(FOnBeforePrint) then
  begin
   OnBeforePrint(Self);
  end;
+ PartialPrint:=False;
 end;
 
 
-procedure TRpCommonComponent.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+procedure TRpCommonComponent.Print(aposx,aposy:integer;metafile:TRpMetafileReport;
+    MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  fevaluator:TRpEvaluator;
 begin
@@ -252,7 +272,7 @@ begin
   end;
  end;
 
- DoPrint(aposx,aposy,metafile);
+ DoPrint(aposx,aposy,metafile,MaxExtent,PartialPrint);
 
  if Length(FDoAfterPrint)>0 then
  begin
@@ -343,7 +363,78 @@ begin
  FBackColor:=$FFFFFF;
  FTransparent:=true;
  FCutText:=false;
+ FBidiModes:=TStringList.Create;
+end;
 
+destructor TRpGenTextComponent.Destroy;
+begin
+ FBidiModes.free;
+
+ inherited Destroy;
+end;
+
+function TRpGenTextComponent.GetPrintAlignMent:integer;
+begin
+ // Inverse the alignment for BidiMode Full
+ Result:=FAlignMent;
+ if BidiMode=rpBidiFull then
+ begin
+  if (((FAlignMent AND AlignmentFlags_AlignLEFT)>0) or (FAlignMent=0)) then
+   Result:=(Result AND (NOT (AlignmentFlags_AlignLEFT)) OR AlignmentFlags_AlignRight)
+  else
+   if (FAlignMent AND AlignmentFlags_AlignRight)>0 then
+    Result:=(Result AND (NOT (AlignmentFlags_AlignRIGHT)) OR AlignmentFlags_AlignLEFT);
+ end;
+end;
+
+
+function TRpGenTextComponent.GetRightToLeft:Boolean;
+begin
+ Result:=BidiMode<>rpBidiNo;
+end;
+
+function TRpGenTextComponent.GetBidiMode:TRpBidiMode;
+var
+ langindex:integer;
+begin
+ Result:=rpBidiNo;
+ langindex:=TRpReport(GetReport).Language+1;
+ if langindex<0 then
+  langindex:=0;
+ if BidiModes.Count>langindex then
+ begin
+  if BidiModes.Strings[langindex]='BidiPartial' then
+   Result:=rpBidiPartial
+  else
+   if BidiModes.Strings[langindex]='BidiFull' then
+    Result:=rpBidiFull;
+ end;
+end;
+
+procedure TRpGenTextComponent.SetBidiMode(Value:TRpBidiMode);
+var
+ langindex:integer;
+begin
+ langindex:=TRpReport(GetReport).Language+1;
+ if langindex<0 then
+  langindex:=0;
+ while (BidiModes.Count<=langindex) do
+ begin
+  BidiModes.Add('BidiNo');
+ end;
+ case Value of
+  rpBidiNo:
+   BidiModes.Strings[langindex]:='BidiNo';
+  rpBidiPartial:
+   BidiModes.Strings[langindex]:='BidiPartial';
+  rpBidiFull:
+   BidiModes.Strings[langindex]:='BidiFull';
+ end;
+end;
+
+procedure TRpGenTextComponent.SetBidiModes(Value:TStrings);
+begin
+ FBidiModes.Assign(Value);
 end;
 
 function TRpCommonComponent.GetReport:TComponent;

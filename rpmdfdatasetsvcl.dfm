@@ -1,16 +1,16 @@
 object FRpDatasetsVCL: TFRpDatasetsVCL
   Left = 0
   Top = 0
-  Width = 497
-  Height = 457
+  Width = 537
+  Height = 398
   Align = alClient
   AutoScroll = False
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 497
-    Height = 172
+    Width = 537
+    Height = 113
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -18,14 +18,14 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       Left = 161
       Top = 27
       Width = 8
-      Height = 145
+      Height = 86
       Cursor = crHSplit
       Beveled = True
     end
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 497
+      Width = 537
       Height = 27
       AutoSize = True
       ButtonHeight = 25
@@ -79,7 +79,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       Left = 0
       Top = 27
       Width = 161
-      Height = 145
+      Height = 86
       Align = alLeft
       ItemHeight = 13
       TabOrder = 1
@@ -88,15 +88,15 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object Panel1: TPanel
       Left = 169
       Top = 27
-      Width = 328
-      Height = 145
+      Width = 368
+      Height = 86
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 2
       object Panel2: TPanel
         Left = 0
         Top = 0
-        Width = 328
+        Width = 368
         Height = 33
         Align = alTop
         BevelOuter = bvNone
@@ -114,8 +114,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object MHelp: TMemo
         Left = 0
         Top = 33
-        Width = 328
-        Height = 112
+        Width = 368
+        Height = 53
         Align = alClient
         Color = clInfoBk
         ReadOnly = True
@@ -125,8 +125,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
   end
   object PBottom: TPanel
     Left = 0
-    Top = 172
-    Width = 497
+    Top = 113
+    Width = 537
     Height = 285
     Align = alBottom
     BevelOuter = bvNone
@@ -134,7 +134,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object GDatasets: TPanel
       Left = 0
       Top = 0
-      Width = 497
+      Width = 537
       Height = 285
       Align = alClient
       BevelOuter = bvNone
@@ -142,7 +142,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object Panel3: TPanel
         Left = 0
         Top = 0
-        Width = 497
+        Width = 537
         Height = 61
         Align = alTop
         BevelOuter = bvNone
@@ -162,9 +162,9 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Caption = 'Connection'
         end
         object BShowData: TButton
-          Left = 368
-          Top = 4
-          Width = 121
+          Left = 444
+          Top = 0
+          Width = 87
           Height = 29
           Anchors = [akTop, akRight]
           Caption = 'Show data'
@@ -174,7 +174,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object ComboDataSource: TComboBox
           Left = 92
           Top = 32
-          Width = 261
+          Width = 341
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
@@ -185,7 +185,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object ComboConnection: TComboBox
           Left = 92
           Top = 4
-          Width = 261
+          Width = 341
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
@@ -197,9 +197,9 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object PControl: TPageControl
         Left = 0
         Top = 61
-        Width = 497
+        Width = 537
         Height = 224
-        ActivePage = TabMySQL
+        ActivePage = TabBDETable
         Align = alClient
         TabOrder = 1
         object TabSQL: TTabSheet
@@ -221,7 +221,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           object RBDEType: TRadioGroup
             Left = 0
             Top = 0
-            Width = 489
+            Width = 529
             Height = 37
             Align = alTop
             Columns = 2
@@ -234,7 +234,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           object Panel4: TPanel
             Left = 0
             Top = 37
-            Width = 489
+            Width = 529
             Height = 159
             Align = alClient
             BevelOuter = bvNone
@@ -242,7 +242,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             object PBDEFilter: TPanel
               Left = 0
               Top = 0
-              Width = 487
+              Width = 529
               Height = 17
               Align = alTop
               Alignment = taLeftJustify
@@ -253,7 +253,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             object MBDEFilter: TMemo
               Left = 0
               Top = 17
-              Width = 487
+              Width = 529
               Height = 142
               Align = alClient
               ScrollBars = ssBoth
@@ -387,8 +387,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             OnChange = MSQLChange
           end
         end
-        object TabMySQL: TTabSheet
-          Caption = 'MySQL'
+        object TabMyBase: TTabSheet
+          Caption = 'MyBase'
           ImageIndex = 3
           object LIndexFields: TLabel
             Left = 0
@@ -403,6 +403,13 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             Width = 83
             Height = 13
             Caption = 'MyBase Filename'
+          end
+          object LabelUnions: TLabel
+            Left = 0
+            Top = 112
+            Width = 33
+            Height = 13
+            Caption = 'Unions'
           end
           object EMyBase: TEdit
             Left = 0
@@ -428,6 +435,41 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             Caption = 'Search...'
             TabOrder = 2
             OnClick = BMyBaseClick
+          end
+          object LUnions: TListBox
+            Left = 232
+            Top = 108
+            Width = 265
+            Height = 77
+            ItemHeight = 13
+            TabOrder = 3
+          end
+          object ComboUnions: TComboBox
+            Left = 0
+            Top = 128
+            Width = 165
+            Height = 21
+            Style = csDropDownList
+            ItemHeight = 13
+            TabOrder = 4
+          end
+          object BAddUnions: TButton
+            Left = 184
+            Top = 108
+            Width = 33
+            Height = 29
+            Caption = '>'
+            TabOrder = 5
+            OnClick = BAddUnionsClick
+          end
+          object BDelUnions: TButton
+            Left = 184
+            Top = 152
+            Width = 33
+            Height = 29
+            Caption = '<'
+            TabOrder = 6
+            OnClick = BDelUnionsClick
           end
         end
       end

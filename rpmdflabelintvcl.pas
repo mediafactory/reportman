@@ -160,6 +160,7 @@ var
  rec:TRect;
  aalign:Cardinal;
  aansitext:String;
+ lalignment:integer;
 begin
  alabel:=TRpLabel(printitem);
  if csDestroying in alabel.ComponentState then
@@ -180,14 +181,15 @@ begin
  begin
   Canvas.Brush.Color:=alabel.BackColor;
  end;
+ lAlignment:=alabel.PrintAlignment;
  aalign:=DT_NOPREFIX;
- if (alabel.AlignMent AND AlignmentFlags_AlignHCenter)>0 then
+ if (lAlignMent AND AlignmentFlags_AlignHCenter)>0 then
   aalign:=aalign or DT_CENTER;
- if (alabel.AlignMent AND AlignmentFlags_SingleLine)>0 then
+ if (lAlignMent AND AlignmentFlags_SingleLine)>0 then
   aalign:=aalign or DT_SINGLELINE;
- if (alabel.AlignMent AND AlignmentFlags_AlignLEFT)>0 then
+ if (lAlignMent AND AlignmentFlags_AlignLEFT)>0 then
   aalign:=aalign or DT_LEFT;
- if (alabel.AlignMent AND AlignmentFlags_AlignRight)>0 then
+ if (lAlignMent AND AlignmentFlags_AlignRight)>0 then
   aalign:=aalign or DT_RIGHT;
  if alabel.WordWrap then
   aalign:=aalign or DT_WORDBREAK;
@@ -438,6 +440,7 @@ var
  rec:TRect;
  aalign:Cardinal;
  aansitext:String;
+ eAlignMent:integer;
 begin
  aexp:=TRpExpression(printitem);
  if csDestroying in aexp.ComponentState then
@@ -458,13 +461,14 @@ begin
   Canvas.Brush.Color:=aexp.BackColor;
  end;
  aalign:=DT_NOPREFIX;
- if (aexp.AlignMent AND AlignmentFlags_AlignHCenter)>0 then
+ eAlignMent:=aexp.PrintAlignMent;
+ if (eAlignMent AND AlignmentFlags_AlignHCenter)>0 then
   aalign:=aalign or DT_CENTER;
- if (aexp.AlignMent AND AlignmentFlags_SingleLine)>0 then
+ if (eAlignMent AND AlignmentFlags_SingleLine)>0 then
   aalign:=aalign or DT_SINGLELINE;
- if (aexp.AlignMent AND AlignmentFlags_AlignLEFT)>0 then
+ if (eAlignMent AND AlignmentFlags_AlignLEFT)>0 then
   aalign:=aalign or DT_LEFT;
- if (aexp.AlignMent AND AlignmentFlags_AlignRight)>0 then
+ if (eAlignMent AND AlignmentFlags_AlignRight)>0 then
   aalign:=aalign or DT_RIGHT;
  if aexp.WordWrap then
   aalign:=aalign or DT_WORDBREAK;

@@ -72,7 +72,7 @@ type
     EBDEMasterFields: TEdit;
     EBDEFirstRange: TMemo;
     EBDELastRange: TMemo;
-    TabMySQL: TTabSheet;
+    TabMyBase: TTabSheet;
     LIndexFields: TLabel;
     LMyBase: TLabel;
     EMyBase: TEdit;
@@ -84,6 +84,11 @@ type
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
     ToolButton6: TToolButton;
+    LabelUnions: TLabel;
+    LUnions: TListBox;
+    ComboUnions: TComboBox;
+    BAddUnions: TButton;
+    BDelUnions: TButton;
     procedure BParamsClick(Sender: TObject);
     procedure LDatasetsClick(Sender: TObject);
     procedure MSQLChange(Sender: TObject);
@@ -92,6 +97,8 @@ type
     procedure ANewExecute(Sender: TObject);
     procedure ADeleteExecute(Sender: TObject);
     procedure ARenameExecute(Sender: TObject);
+    procedure BAddUnionsClick(Sender: TObject);
+    procedure BDelUnionsClick(Sender: TObject);
   private
     { Private declarations }
     Report:TRpReport;
@@ -208,6 +215,7 @@ begin
  MSQL.Text:=WideStringToDOS(dinfo.SQL);
  EMyBase.Text:=dinfo.MyBaseFilename;
  EIndexFields.Text:=dinfo.MyBaseIndexFields;
+ LUnions.Items.Assign(dinfo.DataUnions);
  EBDEIndexFields.Text:=dinfo.BDEIndexFields;
  MBDEFilter.Text:=dinfo.BDEFilter;
  EBDEIndexName.Text:=dinfo.BDEIndexName;
@@ -234,6 +242,12 @@ begin
  ComboDataSource.Items.Insert(0,' ');
  inc(index);
  ComboDatasource.ItemIndex:=Index;
+ ComboUnions.Items.Assign(LDatasets.Items);
+ ComboUnions.Items.Delete(LDatasets.ItemIndex);
+ if ComboUnions.Items.Count<1 then
+  ComboUnions.ItemIndex:=-1
+ else
+  ComboUnions.ItemIndex:=0;
  MSQLChange(ComboConnection);
 end;
 
@@ -277,10 +291,13 @@ begin
  begin
   TabSQL.TabVisible:=false;
   TabBDETable.TabVisible:=false;
-  TabMySQL.TabVisible:=false;
+  TabMyBase.TabVisible:=false;
   TabBDEType.TabVisible:=false;
   exit;
  end;
+ if Sender=BAddUnions then
+  dinfo.DataUnions:=LUnions.Items
+ else
  if Sender=MSQL then
  begin
   dinfo.SQL:=TMemo(Sender).Text;
@@ -295,7 +312,7 @@ begin
   begin
    TabSQL.TabVisible:=false;
    TabBDETable.TabVisible:=false;
-   TabMySQL.TabVisible:=false;
+   TabMyBase.TabVisible:=false;
    TabBDEType.TabVisible:=false;
    exit;
   end;
@@ -303,7 +320,7 @@ begin
   begin
    TabSQL.TabVisible:=false;
    TabBDETable.TabVisible:=false;
-   TabMySQL.TabVisible:=True;
+   TabMyBase.TabVisible:=True;
    TabBDEType.TabVisible:=false;
   end
   else
@@ -315,20 +332,20 @@ begin
     begin
      TabSQL.TabVisible:=False;
      TabBDETable.TabVisible:=True;
-     TabMySQL.TabVisible:=False;
+     TabMyBase.TabVisible:=False;
     end
     else
     begin
      TabSQL.TabVisible:=True;
      TabBDETable.TabVisible:=False;
-     TabMySQL.TabVisible:=False;
+     TabMyBase.TabVisible:=False;
     end;
    end
    else
    begin
     TabSQL.TabVisible:=True;
     TabBDETable.TabVisible:=false;
-    TabMySQL.TabVisible:=False;
+    TabMyBase.TabVisible:=False;
     TabBDEType.TabVisible:=false;
    end;
   end;
@@ -496,6 +513,32 @@ begin
   if AnsiUpperCase(oldalias)=AnsiUpperCase(datainfo.items[i].datasource) then
    datainfo.items[i].datasource:='';
  end;
+end;
+
+procedure TFRpDatasetsVCL.BAddUnionsClick(Sender: TObject);
+var
+ index:integer;
+begin
+ if ComboUnions.Items.Count<1 then
+  exit;
+ if ComboUnions.ItemIndex<0 then
+  exit;
+ index:=LUnions.Items.IndexOf(ComboUnions.Text);
+ if index<0 then
+ begin
+  LUnions.Items.Add(ComboUnions.Text);
+  MSQLChange(BAddUnions);
+ end;
+end;
+
+procedure TFRpDatasetsVCL.BDelUnionsClick(Sender: TObject);
+begin
+ if LUnions.Items.Count<1 then
+  exit;
+ if LUnions.ItemIndex<0 then
+  exit;
+ LUnions.Items.Delete(LUnions.ItemIndex);
+ MSQLChange(BAddUnions);
 end;
 
 end.

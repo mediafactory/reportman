@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.5pre2';
+ RM_VERSION='1.5pre6';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
 
@@ -608,7 +608,13 @@ var
   SrpSExpressionB:WideString='Expres.Bef.Open';
   SrpSExpressionA:WideString='Expres.Aft.Open';
   SRpSParamSubs:WideString='String Substi.';
-  SRpSRightToLeft:WideString='BiDi';
+  SRpSRightToLeft:WideString='BiDi Mode';
+  SRpSBidiNo:WideString='No Bidi';
+  SRpSBidiPartial:WideString='Partial Bidi';
+  SRpSBidiFull:WideString='Full Bidi';
+  SRpMultiPage:WideString='Multi Page';
+  SRpDataUnionNotFound:WideString='Data Union not found in Mybase';
+  SRpCannotCombine:WideString='Cannot combine-union a dataset to other dataset with fewer field number'; 
 implementation
 
 uses rptranslator;

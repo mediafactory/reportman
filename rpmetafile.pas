@@ -64,8 +64,6 @@ const
  FIRST_ALLOCATED_WIDESTRING=1000;
 type
 
- TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
-
 
  ERpBadFileFormat=class(Exception)
   private
@@ -222,6 +220,7 @@ type
    procedure LoadFromFile(filename:string;clearfirst:boolean=true);
    procedure SaveToStream(Stream:TStream);
    procedure SaveToFile(filename:string);
+   procedure Assign(Source:TPersistent);override;
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    procedure NewPage;
@@ -779,6 +778,7 @@ begin
  SetLength(FPool,wsize div 2);
  if (wsize<>Stream.Read(FPool[1],wsize)) then
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+ FPoolPos:=(wsize div 2)+1;
  // The Stream
  if (sizeof(asize)<>Stream.Read(asize,sizeof(asize))) then
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
@@ -903,5 +903,25 @@ begin
   apage.FPool:=tempstring;
  end;
 end;
+
+procedure TRpMetafileReport.Assign(Source:TPersistent);
+var
+ memstream:TMemoryStream;
+begin
+ if Not (Source is TRpMetafileReport) then
+ begin
+  inherited Assign(Source);
+  exit;
+ end;
+ memstream:=TMemoryStream.Create;
+ try
+  TRpMetafileReport(Source).SaveToStream(memstream);
+  memstream.Seek(0,soFromBeginning);
+  LoadFromStream(memstream);
+ finally
+  memstream.free;
+ end;
+end;
+
 
 end.

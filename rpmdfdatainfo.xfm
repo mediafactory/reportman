@@ -182,7 +182,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
         Top = 51
         Width = 539
         Height = 208
-        ActivePage = TabBDETable
+        ActivePage = TabMySQL
         Align = alClient
         TabOrder = 0
         object TabSQL: TTabSheet
@@ -376,7 +376,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
           end
         end
         object TabMySQL: TTabSheet
-          Caption = 'MySQL'
+          Caption = 'MyBase'
           ImageIndex = 3
           object EMyBase: TEdit
             Left = 0
@@ -416,6 +416,47 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
             Caption = 'Search...'
             TabOrder = 4
             OnClick = BMyBaseClick
+          end
+          object LUnions: TListBox
+            Left = 362
+            Top = 70
+            Width = 153
+            Height = 77
+            TabOrder = 5
+          end
+          object BAddUnions: TButton
+            Left = 324
+            Top = 72
+            Width = 33
+            Height = 29
+            Caption = '>'
+            TabOrder = 6
+            OnClick = BAddUnionsClick
+          end
+          object BDelUnions: TButton
+            Left = 324
+            Top = 114
+            Width = 33
+            Height = 29
+            Caption = '<'
+            TabOrder = 7
+            OnClick = BDelUnionsClick
+          end
+          object ComboUnions: TComboBox
+            Left = 200
+            Top = 82
+            Width = 105
+            Height = 21
+            Style = csDropDownList
+            ItemHeight = 15
+            TabOrder = 8
+          end
+          object LabelUnions: TLabel
+            Left = 200
+            Top = 68
+            Width = 33
+            Height = 13
+            Caption = 'Unions'
           end
         end
       end
