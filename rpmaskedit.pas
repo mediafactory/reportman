@@ -79,6 +79,7 @@ type
     property Value:variant read GetValue write SetValue;
   published
     { Published declarations }
+    property Anchors;
     property AutoSelect;
     property AutoSize;
     property BorderStyle;

@@ -1,10 +1,9 @@
 object FRpParamsVCL: TFRpParamsVCL
   Left = 348
   Top = 192
-  BorderStyle = bsDialog
+  Width = 462
+  Height = 500
   Caption = 'Dialog'
-  ClientHeight = 404
-  ClientWidth = 452
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -16,22 +15,29 @@ object FRpParamsVCL: TFRpParamsVCL
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 136
-    Width = 452
-    Height = 268
+    Top = 124
+    Width = 454
+    Height = 342
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
+    DesignSize = (
+      454
+      342)
     object GProperties: TGroupBox
       Left = 2
       Top = 4
       Width = 443
-      Height = 257
+      Height = 333
+      Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       Visible = False
+      DesignSize = (
+        443
+        333)
       object LDescription: TLabel
         Left = 12
-        Top = 68
+        Top = 92
         Width = 53
         Height = 13
         Caption = 'Description'
@@ -51,27 +57,35 @@ object FRpParamsVCL: TFRpParamsVCL
         Caption = 'Value'
       end
       object LAssign: TLabel
-        Left = 12
-        Top = 197
+        Left = 16
+        Top = 273
         Width = 86
         Height = 13
         Caption = 'Assign to datasets'
       end
       object LSearch: TLabel
         Left = 12
-        Top = 92
+        Top = 140
         Width = 77
         Height = 13
         Caption = 'Search for string'
         Visible = False
       end
+      object LHint: TLabel
+        Left = 12
+        Top = 116
+        Width = 19
+        Height = 13
+        Caption = 'Hint'
+      end
       object GValues: TGroupBox
         Left = 12
-        Top = 88
+        Top = 168
         Width = 421
         Height = 97
+        Anchors = [akLeft, akTop, akRight]
         Caption = 'Strings to show (left) and strings to assign (right) '
-        TabOrder = 7
+        TabOrder = 10
         Visible = False
         object MItems: TMemo
           Left = 2
@@ -95,12 +109,13 @@ object FRpParamsVCL: TFRpParamsVCL
         end
       end
       object EDescription: TEdit
-        Left = 104
-        Top = 64
-        Width = 321
+        Left = 116
+        Top = 88
+        Width = 309
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 5
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 7
         Text = 'EDescription'
         OnChange = EDescriptionChange
       end
@@ -131,6 +146,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Top = 8
         Width = 141
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         TabOrder = 1
         OnExit = EValueExit
         Text = 'EValue'
@@ -146,69 +162,102 @@ object FRpParamsVCL: TFRpParamsVCL
         OnClick = EDescriptionChange
       end
       object CheckNull: TCheckBox
-        Left = 208
+        Left = 284
         Top = 40
         Width = 85
         Height = 17
         Hint = 'Sets this parameter to null'
         Caption = 'Null value'
-        TabOrder = 3
+        TabOrder = 4
         OnClick = EDescriptionChange
       end
       object ComboDatasets: TComboBox
-        Left = 12
-        Top = 217
+        Left = 16
+        Top = 293
         Width = 161
         Height = 21
         Hint = 'The parameters will be assigned not the selected datasets'
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 8
+        TabOrder = 11
       end
       object BAdddata: TButton
-        Left = 184
-        Top = 197
+        Left = 188
+        Top = 273
         Width = 33
         Height = 25
         Caption = '>'
-        TabOrder = 9
+        TabOrder = 12
         OnClick = BAdddataClick
       end
       object BDeleteData: TButton
-        Left = 184
-        Top = 225
+        Left = 188
+        Top = 301
         Width = 33
         Height = 25
         Caption = '<'
-        TabOrder = 10
+        TabOrder = 13
         OnClick = BDeleteDataClick
       end
       object LDatasets: TListBox
-        Left = 232
-        Top = 196
+        Left = 236
+        Top = 272
         Width = 193
         Height = 50
+        Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
-        TabOrder = 11
+        TabOrder = 14
       end
       object ESearch: TEdit
-        Left = 104
-        Top = 88
-        Width = 321
+        Left = 116
+        Top = 136
+        Width = 309
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 6
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 9
         Visible = False
         OnChange = EDescriptionChange
       end
       object CheckAllowNulls: TCheckBox
-        Left = 304
-        Top = 40
+        Left = 284
+        Top = 64
         Width = 117
         Height = 17
         Hint = 'Sets if the parameter will be visible to the end user'
         Caption = 'Allow Nulls'
-        TabOrder = 4
+        TabOrder = 6
+        OnClick = EDescriptionChange
+      end
+      object EHint: TEdit
+        Left = 116
+        Top = 112
+        Width = 309
+        Height = 21
+        Hint = 'Description to be show on the end user dialog'
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 8
+        Text = 'EDescription'
+        OnChange = EDescriptionChange
+      end
+      object CheckNeverVisible: TCheckBox
+        Left = 12
+        Top = 64
+        Width = 125
+        Height = 17
+        Hint = 'Sets if the parameter will be visible to the end user'
+        Caption = 'Never visible'
+        TabOrder = 5
+        OnClick = EDescriptionChange
+      end
+      object CheckReadOnly: TCheckBox
+        Left = 120
+        Top = 40
+        Width = 125
+        Height = 17
+        Hint = 'Sets if the parameter will be visible to the end user'
+        Caption = 'Read only'
+        TabOrder = 3
         OnClick = EDescriptionChange
       end
     end
@@ -216,16 +265,16 @@ object FRpParamsVCL: TFRpParamsVCL
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 452
-    Height = 136
+    Width = 454
+    Height = 124
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object LParams: TListBox
       Left = 0
       Top = 28
-      Width = 356
-      Height = 108
+      Width = 358
+      Height = 96
       Align = alClient
       ItemHeight = 13
       TabOrder = 0
@@ -234,7 +283,7 @@ object FRpParamsVCL: TFRpParamsVCL
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 452
+      Width = 454
       Height = 28
       AutoSize = True
       ButtonHeight = 26
@@ -286,10 +335,10 @@ object FRpParamsVCL: TFRpParamsVCL
       end
     end
     object Panel3: TPanel
-      Left = 356
+      Left = 358
       Top = 28
       Width = 96
-      Height = 108
+      Height = 96
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2

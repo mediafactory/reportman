@@ -1478,13 +1478,12 @@ begin
 {$ENDIF}
 {$IFDEF VCLANDCLX}
   ADriverPDFQt.Checked:=inif.ReadBool('Preferences','DriverPDFQt',false);
-  if Not ADriverPDFQt.Checked then
+  ADriverQt.Checked:=inif.ReadBool('Preferences','DriverQt',false);
+  ADriverGDI.Checked:=inif.ReadBool('Preferences','DriverGDI',false);
+  ADriverPDFGDI.Checked:=inif.ReadBool('Preferences','DriverPDFGDI',false);
+  if Not (ADriverPDFQt.Checked or ADriverQt.Checked or ADriverPDFGDI.Checked) then
   begin
-   ADriverGDI.Checked:=inif.ReadBool('Preferences','DriverGDI',false);
-   if Not ADriverGDI.Checked then
-   begin
-    ADriverPDFGDi.Checked:=true;
-   end;
+   ADriverPDFGDi.Checked:=true;
   end;
 {$ENDIF}
   AsystemPrintDialog.Checked:=True;
@@ -1882,8 +1881,9 @@ begin
  // tool bar and menu
  Width:=Width+1;
  FormResize(Self);
- // Bugfix
- WindowState:=wsMaximized;
+ // Bugfix but removed because kylix unofficial bugfixes
+ // loops for about 5 seconds waiting an event
+// WindowState:=wsMaximized;
 end;
 
 procedure TFRpMainF.ASysInfoExecute(Sender: TObject);

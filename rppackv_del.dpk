@@ -37,7 +37,11 @@ requires
   indy,
   dsnap,
   vcljpg,
-  tee;
+  tee,
+  ibxpress,
+  adortl,
+  bdertl,
+  dbexpress;
 
 contains
   rpregv in 'rpregv.pas',
@@ -55,6 +59,8 @@ contains
   rpmdfabout in 'rpmdfabout.pas' {FRpAboutBox},
   rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig},
   rpmdfhelpform in 'rpmdfhelpform.pas' {FRpHelpForm},
-  rpmaskeditclx in 'rpmaskeditclx.pas';
+  rpmaskeditclx in 'rpmaskeditclx.pas',
+  rppagesetup in 'rppagesetup.pas' {FRpPageSetup},
+  rpinfoprovclx in 'rpinfoprovclx.pas';
 
 end.

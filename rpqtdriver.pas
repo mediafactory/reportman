@@ -31,7 +31,7 @@ uses
   mmsystem,windows,winspool,
 {$ENDIF}
  Classes,sysutils,rpmetafile,rpmdconsts,QForms,
- rpmunits,QPrinters,QDialogs,rpgraphutils,
+ rpmunits,QPrinters,QDialogs,rpgraphutils,rpinfoprovclx,
  QStdCtrls,QExtCtrls,types,DateUtils,rptypes,Qt,rppdffile,
 {$IFDEF VCLANDCLX}
  rpvgraphutils,
@@ -102,6 +102,7 @@ type
 
  TRpQtDriver=class(TInterfacedObject,IRpPrintDriver)
   private
+   FInfoProvider:TRpCLXInfoProvider;
    intdpix,intdpiy:integer;
    FOrientation:TRpOrientation;
    FIntPageSize:TPageSizeQt;
@@ -149,6 +150,7 @@ type
    function SupportsCollation:boolean;
    constructor Create;
    destructor Destroy;override;
+   property InfoProvider:TRpCLXInfoProvider read FInfoProvider;
   end;
 
 function PrintMetafile (metafile:TRpMetafileReport; tittle:string;
@@ -224,6 +226,7 @@ begin
  FIntPageSize.Custom:=false;
  dpi:=Screen.PixelsPerInch;
  scale:=1;
+ FInfoProvider:=TRpCLXInfoProvider.Create;
 end;
 
 destructor TRpQtDriver.Destroy;
@@ -1340,9 +1343,7 @@ end;
 procedure TFRpQtProgress.AppIdlePrintPDF(Sender:TObject;var done:boolean);
 var
  oldprogres:TRpProgressEvent;
-{$IFDEF USECLXTEECHART}
  qtdriver:TRpQtDriver;
-{$ENDIF}
 begin
  Application.Onidle:=nil;
  done:=false;
@@ -1350,8 +1351,9 @@ begin
   pdfdriver:=TRpPDFDriver.Create;
   pdfdriver.filename:=filename;
   pdfdriver.compressed:=pdfcompressed;
-{$IFDEF USECLXTEECHART}
   qtdriver:=TRpQtDriver.Create;
+  pdfdriver.PDFFile.Canvas.InfoProvider:=qtdriver.InfoProvider;
+{$IFDEF USECLXTEECHART}
   report.metafile.OnDrawChart:=qtdriver.DoDrawChart;
 {$ENDIF}
   apdfdriver:=pdfdriver;
@@ -1586,9 +1588,7 @@ var
  dia:TFRpQtProgress;
  oldonidle:TIdleEvent;
  pdfdriver:TRpPDFDriver;
-{$IFDEF USECLXTEECHART}
  qtdriver:TRpQtDriver;
-{$ENDIF}
  apdfdriver:IRpPrintDriver;
 begin
  Result:=false;
@@ -1629,8 +1629,9 @@ begin
   pdfdriver.filename:=filename;
   pdfdriver.compressed:=compressed;
   apdfdriver:=pdfdriver;
-{$IFDEF USECLXTEECHART}
   qtdriver:=TRpQtDriver.Create;
+  pdfdriver.PDFFile.Canvas.InfoProvider:=qtdriver.InfoProvider;
+{$IFDEF USECLXTEECHART}
   report.Metafile.OnDrawChart:=qtdriver.DoDrawChart;
 {$ENDIF}
   report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
@@ -1655,6 +1656,7 @@ begin
    report.TwoPass:=true;
   qtdriver:=TRpQtDriver.create;
   pdfdriver:=TRpPDFDriver.Create;
+  pdfdriver.PDFFile.Canvas.InfoProvider:=qtdriver.InfoProvider;
   if not metafile then
    pdfdriver.DestStream:=stream;
   pdfdriver.compressed:=compressed;

@@ -38,7 +38,11 @@ requires
   dsnap,
   indy,
   tee,
-  vcldb;
+  vcldb,
+  ibxpress,
+  adortl,
+  bdertl,
+  dbexpress;
 
 {%File 'rpconf.inc'}
 
@@ -58,8 +62,9 @@ contains
   rpmdclitreevcl in 'rpmdclitreevcl.pas' {FRpCliTreeVCL: TFrame},
   rpexceldriver in 'rpexceldriver.pas' {FRpExcelProgress},
   rpmdfaboutvcl in 'rpmdfaboutvcl.pas' {FRpAboutBoxVCL},
-  rpgraphutilsvcl in 'rpgraphutilsvcl.pas' {FRpMessageDlgVCL},
   rpvgraphutils in 'rpvgraphutils.pas',
-  rpmaskedit in 'rpmaskedit.pas';
+  rpmaskedit in 'rpmaskedit.pas',
+  rpgraphutilsvcl in 'rpgraphutilsvcl.pas' {FRpMessageDlgVCL},
+  rpinfoprovvcl in 'rpinfoprovvcl.pas';
 
 end.

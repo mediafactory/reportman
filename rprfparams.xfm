@@ -8,6 +8,7 @@ object FRpRunTimeParams: TFRpRunTimeParams
   ClientWidth = 583
   Color = clButton
   Position = poScreenCenter
+  ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96

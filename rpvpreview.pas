@@ -449,7 +449,7 @@ begin
      2,3:
       begin
        ALastExecute(Self);
-       SaveMetafileToPDF(report.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
+       SaveMetafileToPDF(report.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2,gdidriver.infoprovider);
 //    report.endprint
 //      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,9999999,
 //       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
@@ -830,7 +830,7 @@ var
 begin
  ALastExecute(Self);
  afilename:=ChangeFileExt(RpTempFileName,'.pdf');
- SaveMetafileToPDF(report.Metafile,afilename,true);
+ SaveMetafileToPDF(report.Metafile,afilename,true,gdidriver.InfoProvider);
  try
   rptypes.SendMail('',ExtractFileName(afilename),'',afilename);
  finally

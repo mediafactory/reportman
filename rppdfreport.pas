@@ -24,7 +24,7 @@ unit rppdfreport;
 interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
- rppdfdriver,rpalias,rpmetafile,rptextdriver;
+ rppdfdriver,rpalias,rpmetafile,rptextdriver,rpinfoprovid;
 
 type
  TPDFReport=class(TCBaseReport)
@@ -37,6 +37,7 @@ type
   protected
    procedure InternalExecuteRemote(metafile:TRpMetafileReport);override;
   public
+   InfoProvider:IRpInfoProvider;
    function Execute:boolean;override;
    procedure PrinterSetup;override;
    function ShowParams:boolean;override;
@@ -113,12 +114,12 @@ begin
   begin
    if FAsMetafile then
    begin
-    Result:=PrintReportToMetafile(report,Title,ShowProgress,false,ffrompage,ftopage,fcopies,filename,false);
+    Result:=PrintReportToMetafile(report,Title,ShowProgress,false,ffrompage,ftopage,fcopies,filename,false,infoprovider);
    end
    else
    begin
     Result:=PrintReportPDF(report,Title,Showprogress,false,ffrompage,
-     ftopage,fcopies,FPDFFilename,FCompressed,false);
+     ftopage,fcopies,FPDFFilename,FCompressed,false,infoprovider);
    end;
   end;
  end;
@@ -129,7 +130,7 @@ function TPDFReport.PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;
 begin
  Result:=rppdfdriver.PrintReportPDF(Report,Title,ShowProgress,false,
-  frompage,topage,copies,fpdffilename,compressed,collate);
+  frompage,topage,copies,fpdffilename,compressed,collate,infoprovider);
 end;
 
 procedure TPDFReport.InternalExecuteRemote(metafile:TRpMetafileReport);
@@ -142,7 +143,7 @@ begin
  else
  begin
   SaveMetafileRangeToPDF(metafile,false,ffrompage,
-    ftopage,fcopies,FPDFFilename,FCompressed);
+    ftopage,fcopies,FPDFFilename,FCompressed,infoprovider);
  end;
 end;
 

@@ -3,10 +3,9 @@ object FRpParams: TFRpParams
   Top = 169
   ActiveControl = LParams
   AutoScroll = False
-  BorderStyle = fbsDialog
   Caption = 'Parameter definition'
-  ClientHeight = 408
-  ClientWidth = 446
+  ClientHeight = 471
+  ClientWidth = 449
   Color = clButton
   Position = poScreenCenter
   ShowHint = True
@@ -17,9 +16,9 @@ object FRpParams: TFRpParams
   TextWidth = 6
   object Panel1: TPanel
     Left = 0
-    Top = 136
-    Width = 446
-    Height = 272
+    Top = 128
+    Width = 449
+    Height = 343
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
@@ -27,16 +26,18 @@ object FRpParams: TFRpParams
       Left = 2
       Top = 5
       Width = 439
-      Height = 256
+      Height = 332
+      Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       Visible = False
       object GValues: TGroupBox
-        Left = 10
-        Top = 84
+        Left = 6
+        Top = 164
         Width = 421
         Height = 97
+        Anchors = [akLeft, akTop, akRight]
         Caption = 'Strings to show (left) and strings to assign (right) '
-        TabOrder = 11
+        TabOrder = 15
         Visible = False
         object MItems: TMemo
           Left = 2
@@ -61,18 +62,19 @@ object FRpParams: TFRpParams
       end
       object LDescription: TLabel
         Left = 12
-        Top = 64
+        Top = 84
         Width = 53
         Height = 13
         Caption = 'Description'
       end
       object EDescription: TEdit
-        Left = 104
-        Top = 60
-        Width = 321
+        Left = 116
+        Top = 80
+        Width = 309
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 5
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 7
         Text = 'EDescription'
         OnChange = EDescriptionChange
       end
@@ -117,14 +119,15 @@ object FRpParams: TFRpParams
         Top = 8
         Width = 141
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         TabOrder = 1
         OnExit = EValueExit
         Text = 'EValue'
       end
       object CheckVisible: TCheckBox
         Left = 12
-        Top = 40
-        Width = 197
+        Top = 36
+        Width = 125
         Height = 17
         Hint = 'Sets if the parameter will be visible to the end user'
         Caption = 'Visible'
@@ -132,86 +135,126 @@ object FRpParams: TFRpParams
         OnClick = EDescriptionChange
       end
       object CheckNull: TCheckBox
-        Left = 216
-        Top = 40
+        Left = 280
+        Top = 36
         Width = 93
         Height = 17
         Hint = 'Sets this parameter to null'
         Caption = 'Null value'
-        TabOrder = 3
+        TabOrder = 4
         OnClick = EDescriptionChange
       end
       object LAssign: TLabel
-        Left = 4
-        Top = 192
+        Left = 8
+        Top = 276
         Width = 86
         Height = 13
         Caption = 'Assign to datasets'
       end
       object ComboDatasets: TComboBox
-        Left = 4
-        Top = 216
+        Left = 8
+        Top = 300
         Width = 161
         Height = 21
         Hint = 'The parameters will be assigned not the selected datasets'
         Style = csDropDownList
         ItemHeight = 15
-        TabOrder = 12
+        TabOrder = 16
       end
       object BAdddata: TButton
-        Left = 176
-        Top = 188
+        Left = 180
+        Top = 272
         Width = 33
         Height = 25
         Hint = 'Include the dataset in the list'
         Caption = '>'
-        TabOrder = 13
+        TabOrder = 17
         OnClick = BAdddataClick
       end
       object BDeleteData: TButton
-        Left = 176
-        Top = 216
+        Left = 180
+        Top = 300
         Width = 33
         Height = 25
         Hint = 'Exclude dataset from the list'
         Caption = '<'
-        TabOrder = 14
+        TabOrder = 18
         OnClick = BDeleteDataClick
       end
       object LDatasets: TListBox
         Left = 224
-        Top = 188
-        Width = 193
+        Top = 272
+        Width = 201
         Height = 53
         Hint = 'The parameter will be assigned to this datasets'
-        TabOrder = 16
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 20
       end
       object LSearch: TLabel
         Left = 12
-        Top = 88
+        Top = 140
         Width = 77
         Height = 13
         Caption = 'Search for string'
         Visible = False
       end
       object ESearch: TEdit
-        Left = 104
-        Top = 84
-        Width = 321
+        Left = 116
+        Top = 136
+        Width = 309
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 6
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 9
         Visible = False
         OnChange = EDescriptionChange
       end
       object CheckAllowNulls: TCheckBox
-        Left = 304
-        Top = 40
+        Left = 280
+        Top = 60
         Width = 129
         Height = 17
         Hint = 'Sets if the parameter will be visible to the end user'
         Caption = 'Allow Nulls'
-        TabOrder = 4
+        TabOrder = 6
+        OnClick = EDescriptionChange
+      end
+      object EHint: TEdit
+        Left = 116
+        Top = 108
+        Width = 309
+        Height = 21
+        Hint = 'Description to be show on the end user dialog'
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 8
+        Text = 'EDescription'
+        OnChange = EDescriptionChange
+      end
+      object LHint: TLabel
+        Left = 12
+        Top = 112
+        Width = 19
+        Height = 13
+        Caption = 'Hint'
+      end
+      object CheckNeverVisible: TCheckBox
+        Left = 12
+        Top = 56
+        Width = 125
+        Height = 17
+        Hint = 'Sets if the parameter will be visible to the end user'
+        Caption = 'Never visible'
+        TabOrder = 5
+        OnClick = EDescriptionChange
+      end
+      object CheckReadOnly: TCheckBox
+        Left = 116
+        Top = 36
+        Width = 125
+        Height = 17
+        Hint = 'Sets if the parameter will be visible to the end user'
+        Caption = 'Read only'
+        TabOrder = 3
         OnClick = EDescriptionChange
       end
     end
@@ -219,16 +262,16 @@ object FRpParams: TFRpParams
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 446
-    Height = 136
+    Width = 449
+    Height = 128
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object LParams: TListBox
       Left = 0
       Top = 30
-      Width = 350
-      Height = 106
+      Width = 353
+      Height = 98
       Align = alClient
       TabOrder = 0
       OnClick = LParamsClick
@@ -236,7 +279,7 @@ object FRpParams: TFRpParams
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 446
+      Width = 449
       Height = 30
       ButtonHeight = 26
       ButtonWidth = 26
@@ -304,10 +347,10 @@ object FRpParams: TFRpParams
       end
     end
     object Panel3: TPanel
-      Left = 350
+      Left = 353
       Top = 30
       Width = 96
-      Height = 106
+      Height = 98
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2
@@ -548,12 +591,12 @@ object FRpParams: TFRpParams
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF00000000000000000003FFFFFF0000007E03FFFFFF
-      00000CFF83FFFFFF00010FFFC3FFFFFF04000FFFE3FFFFFF0E020FC1F3FFFFFF
-      0E040F80F3FFFFFF070C0FC0F3FFFFFF03980FE003FFFFFF01F0000003FFFFFF
-      00E00001FBFFFFFF01F00F03FBFFFFFF03900F01FBFFFFFF0F0C0783FBFFFFFF
-      1E0607FFFBFFFFFF180303FFFBFFFFFF000001FF93FFFFFF0000007E03FFFFFF
-      0000000003FFFFFF000000000000007F000000000000007F01C000080000007F
+      0200000002000000FFFFFF0000000000000000000049D07F0000007E0000007F
+      00000CFF8391B07F00010FFFC00000FF04000FFFE021F07F0E020FC1F3FF00FF
+      0E040F80F320F07F070C0FC0F35580FF03980FE000A1E0FF01F000000388C0FF
+      00E00001F8A340FF01F00F03F8D160FF03900F01F947E0FF0F0C0783F8EAB0FF
+      1E0607FFFB8F80FF180303FFF83FF8FF000001FF901E80FF0000007E008900FF
+      00000000033C807F000000000000007F000000000000007F01C000080000007F
       01C0000800FFF07F01C0001C00FFF07F01C0001C0080107F01C0003E00B6D07F
       01C0003E0080107F0FF8007F02B6F87F0FF8007F0080387F07F000FF80FFF87F
       07F000FF80B7FF7F03E0001C00FFFF7F03E0001C0001FF7F01C0001C0000387F

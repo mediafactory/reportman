@@ -1165,50 +1165,6 @@ begin
  end;
 end;
 
-function Type1FontToText(value:TRpType1Font):string;
-begin
- case value of
-  poHelvetica:
-   Result:='Helvetica';
-  poCourier:
-   Result:='Courier';
-  poTimesRoman:
-   Result:='Times Roman';
-  poSymbol:
-   Result:='Symbol';
-  poZapfDingbats:
-   Result:='ZapfDingbats';
- end;
-end;
-
-function TextToType1Font(value:string):TRpType1Font;
-begin
- Result:=poHelvetica;
- if value='Helvetica' then
- begin
-  Exit;
- end;
- if value='Courier' then
- begin
-  Result:=poCourier;
-  Exit;
- end;
- if value='Times Roman' then
- begin
-  Result:=poTimesRoman;
-  Exit;
- end;
- if value='Symbol' then
- begin
-  Result:=poSymbol;
-  Exit;
- end;
- if value='ZapfDingbats' then
- begin
-  Result:=poZapfDingbats;
-  Exit;
- end;
-end;
 
 procedure TRpGenTextInterface.GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);
 begin
@@ -1564,6 +1520,8 @@ begin
   lpossiblevalues.Add('Times Roman');
   lpossiblevalues.Add('Symbol');
   lpossiblevalues.Add('ZapfDingbats');
+  lpossiblevalues.Add('TrueType link');
+  lpossiblevalues.Add('TrueType Embedded');
   exit;
  end;
  if pname=SRpSFontStep then

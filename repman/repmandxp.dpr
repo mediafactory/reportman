@@ -24,9 +24,7 @@ uses
   Graphics,
   Forms,
   Controls,
-{$IFDEF USEVARIANTS}
   midaslib,
-{$ENDIF}
   rpmdfmainvcl in '..\rpmdfmainvcl.pas' {FRpMainFVCL},
   rpmdfdesignvcl in '..\rpmdfdesignvcl.pas' {FRpDesignFrameVCL: TFrame},
   rpmdfaboutvcl in '..\rpmdfaboutvcl.pas' {FRpAboutBoxVCL},
@@ -106,7 +104,9 @@ uses
   rpeditconnvcl in '..\rpeditconnvcl.pas' {FRpEditConVCL},
   rpmdftreevcl in '..\rpmdftreevcl.pas' {FRpDBTreeVCL: TFrame},
   rpmdfopenlibvcl in '..\rpmdfopenlibvcl.pas' {FRpOpenLibVCL},
-  rpsvgdriver in '..\rpsvgdriver.pas';
+  rpsvgdriver in '..\rpsvgdriver.pas',
+  rpinfoprovvcl in '..\rpinfoprovvcl.pas',
+  rpinfoprovid in '..\rpinfoprovid.pas';
 
 {$R *.res}
 

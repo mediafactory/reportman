@@ -636,9 +636,9 @@ begin
     2,3:
      begin
       if SaveDialog1.FilterIndex=2 then
-       SaveMetafileToPDF(metafile,SaveDialog1.filename,true)
+       SaveMetafileToPDF(metafile,SaveDialog1.filename,true,qtdriver.InfoProvider)
       else
-       SaveMetafileToPDF(metafile,SaveDialog1.filename,false);
+       SaveMetafileToPDF(metafile,SaveDialog1.filename,false,qtdriver.InfoProvider);
      end;
     5,6:
      begin
@@ -1161,7 +1161,7 @@ var
  afilename:String;
 begin
  afilename:=ChangeFileExt(RpTempFileName,'.pdf');
- SaveMetafileToPDF(Metafile,afilename,true);
+ SaveMetafileToPDF(Metafile,afilename,true,qtdriver.InfoProvider);
  try
   rptypes.SendMail('',ExtractFileName(afilename),'',afilename);
  finally

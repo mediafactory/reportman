@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.1e;
+ RM_VERSION='2.1e';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
@@ -861,7 +861,6 @@ var
   SRpPrintRep14:WideString='         -pdf      Generate PDF output';
   SRpChartHint:WideString='Hint';
   SRpChartLegend:WideString='Legend';
-  //
   SRpAbs:WideString='Returns absolute value of a number.';
   SRpPAbs:WideString='num is the number change sign';
   SrpSBackExpression:WideString='Back.Expression';
@@ -891,7 +890,9 @@ var
   SRpSFeaturenotsup:WideString='Feature not supported';
   SRpFormatNum:WideString='Formats a number with some options';
   SRpPFormatNum:WideString='intd integer digits, decd decimal digits, and other options';
-
+  //
+  SRpNoTrueType:WideString='The font is not TrueType';
+  SRpFontDataIndexNotFound:WideString='Font data index not found';
 
 implementation
 

@@ -32,14 +32,15 @@
 {               -Underline and strokeout                }
 {               -Type1 Font selection bold/italic       }
 {               -BMP and JPEG Image support             }
+{               -Embedding True Type fonts              }
 {                                                       }
 {                                                       }
 {       Still Missing:                                  }
 {               -Brush Patterns                         }
 {               -RLE and monocrhome Bitmaps             }
 {               -RoundRect                              }
-{               -Embedding True Type fonts              }
 {               -Widechar Fonts                         }
+{               -Composite Fonts                        }
 {                                                       }
 {       This file is under the MPL license              }
 {       If you enhace the functionality of this file    }
@@ -54,10 +55,7 @@ interface
 
 {$I rpconf.inc}
 
-uses Classes,Sysutils,
-{$IFDEF MSWINDOWS}
- Windows,
-{$ENDIF}
+uses Classes,Sysutils,rpinfoprovid,
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
@@ -78,43 +76,36 @@ const
  CONS_UNDERLINEPOS=1.1;
  CONS_STRIKEOUTPOS=0.7;
 type
- TRpPDFFont=class(TObject)
-  public
-   Name:TRpType1Font;
-   Size:integer;
-   Color:integer;
-   Italic:Boolean;
-   Underline:boolean;
-   Bold:boolean;
-   StrikeOut:boolean;
-   constructor Create;
-  end;
 
- TWinAnsiWidthsArray=array [32..255] of integer;
- PWinAnsiWidthsArray= ^TWinAnsiWidthsArray;
 
  TRpPDFFile=class;
 
 
 
+
  TRpPDFCanvas=class(TObject)
   private
+   FInfoProvider:IRpInfoProvider;
    FFont:TRpPDFFont;
    FFile:TRpPDFFile;
    FResolution:integer;
    FLineInfo:array of TRpLineInfo;
    FLineInfoMaxItems:integer;
    FLineInfoCount:integer;
+   FFontTTList:TStringList;
+   FFontTTData:TStringList;
    procedure NewLineInfo(info:TRpLineInfo);
    procedure SetDash;
    procedure SaveGraph;
    procedure RestoreGraph;
+   procedure SetInfoProvider(aprov:IRpInfoProvider);
   public
    PenColor:integer;
    PenStyle:integer;
    PenWidth:integer;
    BrushColor:integer;
    BrushStyle:integer;
+   property InfoProvider:IRpInfoProvider read FInfoProvider write SetInfoProvider;
    function UnitsToTextX(Value:integer):string;
    function UnitsToTextY(Value:integer):string;
    function UnitsToTextText(Value:integer;FontSize:integer):string;
@@ -131,6 +122,8 @@ type
    constructor Create(AFile:TRpPDFFile);
    destructor Destroy;override;
    function CalcCharWidth(charcode:Widechar):double;
+   procedure UpdateFonts;
+   procedure FreeFonts;
   public
    procedure TextExtent(const Text:WideString;var Rect:TRect;wordbreak:boolean;
     singleline:boolean);
@@ -398,13 +391,6 @@ begin
  end;
 end;
 
-constructor TrpPdfFont.Create;
-begin
- inherited Create;
-
- Name:=poCourier;
- Size:=10;
-end;
 
 // Writes a line into a Stream that is add #13+#10
 procedure SWriteLine(Stream:TStream;astring:string);
@@ -421,6 +407,8 @@ begin
 
  FFont:=TRpPDFFont.Create;
  FFile:=AFile;
+ FFontTTList:=TStringList.Create;
+ FFontTTData:=TStringList.Create;
  SetLength(FLineInfo,CONS_MINLINEINFOITEMS);
  FLineInfoMaxItems:=CONS_MINLINEINFOITEMS;
 end;
@@ -428,7 +416,10 @@ end;
 
 destructor TrpPDFCanvas.Destroy;
 begin
+ FreeFonts;
  FFont.free;
+ FFontTTList.free;
+ FFontTTData.free;
  FFont:=nil;
  inherited Destroy;
 end;
@@ -671,23 +662,6 @@ begin
 end;
 
 
-procedure TRpPDFFile.SetFontType;
-begin
- CreateFont('Type1','Helvetica','WinAnsiEncoding');
- CreateFont('Type1','Helvetica-Bold','WinAnsiEncoding');
- CreateFont('Type1','Helvetica-Oblique','WinAnsiEncoding');
- CreateFont('Type1','Helvetica-BoldOblique','WinAnsiEncoding');
- CreateFont('Type1','Courier','WinAnsiEncoding');
- CreateFont('Type1','Courier-Bold','WinAnsiEncoding');
- CreateFont('Type1','Courier-Oblique','WinAnsiEncoding');
- CreateFont('Type1','Courier-BoldOblique','WinAnsiEncoding');
- CreateFont('Type1','Times-Roman','WinAnsiEncoding');
- CreateFont('Type1','Times-Bold','WinAnsiEncoding');
- CreateFont('Type1','Times-Italic','WinAnsiEncoding');
- CreateFont('Type1','Times-BoldItalic','WinAnsiEncoding');
- CreateFont('Type1','Symbol','WinAnsiEncoding');
- CreateFont('Type1','ZapfDingbats','WinAnsiEncoding');
-end;
 
 procedure TrpPDFFile.SetPages;
 var
@@ -719,6 +693,7 @@ end;
 procedure TrpPDFFile.SetArray;
 var
  i:Integer;
+ ainfo:TRpTTFontInfo;
 begin
  FObjectCount:=FObjectCount+1;
  FResourceNum:=FObjectCount;
@@ -733,7 +708,12 @@ begin
 
  for i:=1 to FFontCount do
   SWriteLine(FTempStream,'/F'+IntToStr(i)+' '+FFontList.Strings[i-1]+' 0 R ');
-
+ for i:=0 to Canvas.FFontTTList.Count-1 do
+ begin
+  ainfo:=TRpTTFontInfo(Canvas.FFontTTList.Objects[i]);
+  SWriteLine(FTempStream,'/F'+ainfo.ttname+
+   ' '+IntToStr(ainfo.ObjectIndex)+' 0 R ');
+ end;
  SWriteLine(FTempStream,'>>');
  SWriteLine(FTempStream,'>>');
  SWriteLine(FTempStream,'endobj');
@@ -1266,37 +1246,49 @@ begin
 end;
 
 
-function Type1FontTopdfFontName(Type1Font:TRpType1Font;oblique,bold:boolean):integer;
+function Type1FontTopdfFontName(Type1Font:TRpType1Font;oblique,bold:boolean;WFontName:WideString;FontStyle:integer):String;
+var
+ avalue:Integer;
+ searchname:String;
 begin
- Result:=0;
- case Type1Font of
+ if (Type1Font in [poLinked,poEmbedded]) then
+ begin
+  searchname:=WFontName+IntToStr(FontStyle);
+  Result:=searchname;
+ end
+ else
+ begin
+  avalue:=0;
+  case Type1Font of
   poHelvetica:
    begin
-    Result:=0;
+    avalue:=0;
    end;
   poCourier:
    begin
-    Result:=4;
+    avalue:=4;
    end;
   poTimesRoman:
    begin
-    Result:=8;
+    avalue:=8;
    end;
   poSymbol:
    begin
-    Result:=12;
+    avalue:=12;
    end;
   poZapfDingbats:
    begin
-    Result:=13;
+    avalue:=13;
    end;
- end;
- if (Type1Font in [poHelvetica..poTimesRoman]) then
- begin
+  end;
+  if (Type1Font in [poHelvetica..poTimesRoman]) then
+  begin
   if bold then
-   Result:=Result+1;
+   avalue:=avalue+1;
   if oblique then
-   Result:=Result+2;
+   avalue:=avalue+2;
+  end;
+  Result:=IntToStr(avalue+1);
  end;
 end;
 
@@ -1319,7 +1311,7 @@ begin
   SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' rg');
   SWriteLine(FFile.FsTempStream,'BT');
   SWriteLine(FFile.FsTempStream,'/F'+
-  IntToStr(Type1FontTopdfFontName(Font.Name,Font.Italic,Font.Bold)+1)+' '+
+  Type1FontTopdfFontName(Font.Name,Font.Italic,Font.Bold,Font.WFontName,Font.Style)+' '+
    IntToStr(Font.Size)+ ' Tf');
 
   // Rotates
@@ -1600,48 +1592,64 @@ var
  defaultwidth:integer;
  aarray:PWinAnsiWidthsArray;
  isdefault:boolean;
+{$IFDEF VCLANDCLX}
+ index:integer;
+{$ENDIF}
 begin
- aarray:=nil;
- defaultwidth:=Default_Font_Width;
- isdefault:=true;
- if charcode in [WideChar(#0),WideChar(#13),WideChar(#10)] then
- begin
-  Result:=0;
-  exit;
- end;
- if (FFont.Name=poHelvetica) then
- begin
-  aarray:=@Helvetica_Widths;
-  isdefault:=false;
-  if FFont.Bold then
+  aarray:=nil;
+  defaultwidth:=Default_Font_Width;
+  isdefault:=true;
+  if charcode in [WideChar(#0),WideChar(#13),WideChar(#10)] then
   begin
-   if FFont.Italic then
-    aarray:=@Helvetica_BoldItalic_Widths;
+   Result:=0;
+   exit;
+  end;
+{$IFDEF VCLANDCLX}
+  if (FFont.Name in [poLinked,poEmbedded]) then
+  begin
+   // Ask for font size
+   index:=FFontTTList.IndexOf(Font.WFontName+IntToStr(Font.Style));
+   if index>=0 then
+   begin
+    aarray:=@(TRpTTFontInfo(FFontTTList.Objects[index]).charwidths);
+    isdefault:=false;
+   end;
   end
   else
-   if FFont.Italic then
-    aarray:=@Helvetica_Italic_Widths;
- end
- else
- if (FFont.Name=poTimesRoman) then
- begin
-  aarray:=@TimesRoman_Widths;
-  isdefault:=false;
-  if FFont.Bold then
+{$ENDIF}
+  if (FFont.Name=poHelvetica) then
   begin
-   if FFont.Italic then
-    aarray:=@TimesRoman_BoldItalic_Widths;
+   aarray:=@Helvetica_Widths;
+   isdefault:=false;
+   if FFont.Bold then
+   begin
+    if FFont.Italic then
+     aarray:=@Helvetica_BoldItalic_Widths;
+   end
+   else
+    if FFont.Italic then
+     aarray:=@Helvetica_Italic_Widths;
   end
   else
-   if FFont.Italic then
-    aarray:=@TimesRoman_Italic_Widths;
- end;
- intvalue:=Byte(charcode);
- if (isdefault or (intvalue<32)) then
-  Result:=defaultwidth
- else
-  Result:=aarray^[intvalue];
- Result:=Result*FFont.Size/1000;
+  if (FFont.Name=poTimesRoman) then
+  begin
+   aarray:=@TimesRoman_Widths;
+   isdefault:=false;
+   if FFont.Bold then
+   begin
+    if FFont.Italic then
+     aarray:=@TimesRoman_BoldItalic_Widths;
+   end
+   else
+    if FFont.Italic then
+     aarray:=@TimesRoman_Italic_Widths;
+  end;
+  intvalue:=Byte(charcode);
+  if (isdefault or (intvalue<32)) then
+   Result:=defaultwidth
+  else
+   Result:=aarray^[intvalue];
+  Result:=Result*FFont.Size/1000;
 end;
 {$ENDIF}
 
@@ -2533,5 +2541,209 @@ begin
 end;
 
 
+procedure TRpPDFCanvas.FreeFonts;
+var
+ i:integer;
+begin
+ for i:=0 to FFontTTList.Count-1 do
+ begin
+  FFontTTList.Objects[i].Free;
+ end;
+ FFontTTList.Clear;
+ for i:=0 to FFontTTData.Count-1 do
+ begin
+  TRpTTFontData(FFontTTData.Objects[i]).fontdata.free;
+  FFontTTData.Objects[i].Free;
+ end;
+ FFontTTData.Clear;
+end;
+
+procedure TRpPDFCanvas.UpdateFonts;
+var
+ uniquename:String;
+ searchname:string;
+ aobj:TRpTTFontInfo;
+ adata:TRpTTFontData;
+ index:integer;
+begin
+ if Not (Font.Name in [poLinked,poEmbedded]) then
+  exit;
+ if Not Assigned(InfoProvider) then
+  exit;
+ searchname:=Font.WFontName+IntToStr(Font.Style);
+ index:=FFontTTList.IndexOf(searchname);
+ if index<0 then
+ begin
+  index:=FFontTTData.Indexof(searchname);
+  if index<0 then
+  begin
+   uniquename:=searchname;
+   adata:=TRpTTFontData.Create;
+   adata.fontdata:=TMemoryStream.Create;
+   adata.embedded:=false;
+   FFontTTData.AddObject(uniquename,adata);
+   InfoProvider.FillFontData(Font,adata);
+   if adata.fontdata.size>0 then
+    adata.embedded:=Font.Name=poEmbedded;
+  end
+  else
+  begin
+   adata:=TRpTTFontData(FFontTTData.Objects[index]);
+   uniquename:=FFontTTData.Strings[index];
+   if Font.Name=poEmbedded then
+    if adata.Fontdata.Size>0 then
+     adata.embedded:=true;
+  end;
+  aobj:=TRpTTFontInfo.Create;
+  aobj.ttname:=uniquename;
+  FFontTTList.AddObject(searchname,aobj);
+  aobj.objectname:=searchname;
+  InfoProvider.FillFontInfo(Font,aobj);
+ end;
+end;
+
+procedure TRpPDFFile.SetFontType;
+var
+ i:integer;
+ adata:TRpTTFontData;
+ ainfo:TRpTTFontInfo;
+ index:integer;
+ awidths:string;
+ j:integer;
+begin
+ CreateFont('Type1','Helvetica','WinAnsiEncoding');
+ CreateFont('Type1','Helvetica-Bold','WinAnsiEncoding');
+ CreateFont('Type1','Helvetica-Oblique','WinAnsiEncoding');
+ CreateFont('Type1','Helvetica-BoldOblique','WinAnsiEncoding');
+ CreateFont('Type1','Courier','WinAnsiEncoding');
+ CreateFont('Type1','Courier-Bold','WinAnsiEncoding');
+ CreateFont('Type1','Courier-Oblique','WinAnsiEncoding');
+ CreateFont('Type1','Courier-BoldOblique','WinAnsiEncoding');
+ CreateFont('Type1','Times-Roman','WinAnsiEncoding');
+ CreateFont('Type1','Times-Bold','WinAnsiEncoding');
+ CreateFont('Type1','Times-Italic','WinAnsiEncoding');
+ CreateFont('Type1','Times-BoldItalic','WinAnsiEncoding');
+ CreateFont('Type1','Symbol','WinAnsiEncoding');
+ CreateFont('Type1','ZapfDingbats','WinAnsiEncoding');
+ // Writes font files
+ for i:=0 to Canvas.FFontTTData.Count-1 do
+ begin
+  adata:=TRpTTFontData(Canvas.FFontTTData.Objects[i]);
+  if adata.embedded then
+  begin
+   // Writes font resource data
+   FObjectCount:=FObjectCount+1;
+   FTempStream.Clear;
+   SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
+   SWriteLine(FTempStream,'<< /Length '+IntToStr(adata.fontdata.size));
+   SWriteLine(FTempStream,'/Length1 '+IntToStr(adata.fontdata.size));
+   adata.ObjectIndex:=FObjectCount;
+{$IFDEF USEZLIB}
+   if FCompressed then
+   begin
+    SWriteLine(FTempStream,'/Filter [/FlateDecode]');
+   end;
+{$ENDIF}
+   SWriteLine(FTempStream,'>>');
+   SWriteLine(FTempStream,'stream');
+   adata.fontdata.Seek(0,soFromBeginning);
+{$IFDEF USEZLIB}
+   if FCompressed then
+   begin
+    FCompressionStream := TCompressionStream.Create(clDefault,FTempStream);
+    try
+     FCompressionStream.CopyFrom(adata.fontdata,adata.fontdata.Size);
+    finally
+     FCompressionStream.Free;
+    end;
+   end
+   else
+{$ENDIF}
+    adata.FontData.SaveToStream(FTempStream);
+   SWriteLine(FTempStream,'endstream');
+   SWriteLine(FTempStream,'endobj');
+   AddToOffset(FTempStream.Size);
+   FTempStream.SaveToStream(FMainPDF);
+  end
+  else
+  begin
+   adata.ObjectIndex:=0;
+  end;
+  // Writes font descriptor
+  FObjectCount:=FObjectCount+1;
+  FTempStream.Clear;
+  SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
+  adata.DescriptorIndex:=FObjectCount;
+  SWriteLine(FTempStream,'<< /Type /FontDescriptor');
+  SWriteLine(FTempStream,'/FontName /'+adata.postcriptname);
+  SWriteLine(FTempStream,'/Flags '+IntToStr(adata.Flags));
+  SWriteLine(FTempStream,'/FontBBox ['+
+   IntToStr(adata.FontBBox.Left)+' '+
+   IntToStr(adata.FontBBox.Bottom)+' '+
+   IntToStr(adata.FontBBox.Right)+' '+
+   IntToStr(adata.FontBBox.Top)+']'
+   );
+  SWriteLine(FTempStream,'/ItalicAngle '+IntToStr(Round(adata.ItalicAngle)));
+  SWriteLine(FTempStream,'/Ascent '+IntToStr(adata.Ascent));
+  SWriteLine(FTempStream,'/Descent '+IntToStr(adata.Descent));
+  SWriteLine(FTempStream,'/Leading '+IntToStr(adata.Leading));
+  SWriteLine(FTempStream,'/CapHeight '+IntToStr(adata.CapHeight));
+  SWriteLine(FTempStream,'/StemV '+IntToStr(Round(adata.StemV)));
+  SWriteLine(FTempStream,'/AvgWidth '+IntToStr(adata.AvgWidth));
+  SWriteLine(FTempStream,'/MaxWidth '+IntToStr(adata.MaxWidth));
+  SWriteLine(FTempStream,'/FontStretch /Normal');
+  SWriteLine(FTempStream,'/FontWeight '+IntToStr(adata.FontWeight));
+  if adata.embedded then
+  begin
+   SWriteLine(FTempStream,'/FontFile2 '+
+    IntToStr(adata.ObjectIndex)+' 0 R');
+  end;
+  SWriteLine(FTempStream,'>>');
+  SWriteLine(FTempStream,'endobj');
+  AddToOffset(FTempStream.Size);
+  FTempStream.SaveToStream(FMainPDF);
+ end;
+ // Creates the fonts of the font list
+ for i:=0 to Canvas.FFontTTList.Count-1 do
+ begin
+  ainfo:=TRpTTFontInfo(Canvas.FFontTTList.Objects[i]);
+  index:=Canvas.FFontTTData.IndexOf(ainfo.ObjectName);
+  if index<0 then
+   Raise Exception.Create(SRpFontDataIndexNotFound);
+  adata:=TRpTTFontData(Canvas.FFontTTData.Objects[i]);
+  FObjectCount:=FObjectCount+1;
+  FTempStream.Clear;
+  ainfo.ObjectIndex:=FObjectCount;
+  SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
+  SWriteLine(FTempStream,'<< /Type /Font');
+  SWriteLine(FTempStream,'/Subtype /TrueType');
+  SWriteLine(FTempStream,'/Name /F'+ainfo.ObjectName);
+  SWriteLine(FTempStream,'/BaseFont /'+adata.postcriptname);
+  SWriteLine(FTempStream,'/FirstChar 32');
+  SWriteLine(FTempStream,'/LastChar 255');
+  awidths:='[';
+  for j:=32 to 255 do
+  begin
+   awidths:=awidths+IntToStr(ainfo.charwidths[j])+' ';
+  end;
+  awidths:=awidths+']';
+  SWriteLine(FTempStream,'/Widths '+awidths);
+  SWriteLine(FTempStream,'/FontDescriptor '+
+   IntToStr(adata.DescriptorIndex)+' 0 R');
+  SWriteLine(FTempStream,'/Encoding /'+adata.Encoding);
+  SWriteLine(FTempStream,'>>');
+  SWriteLine(FTempStream,'endobj');
+  AddToOffset(FTempStream.Size);
+  FTempStream.SaveToStream(FMainPDF);
+ end;
+
+end;
+
+procedure TRpPDFCanvas.SetInfoProvider(aprov:IRpInfoProvider);
+begin
+ FInfoProvider:=aprov;
+ if Assigned(FInfoProvider) then
+  FInfoprovider._AddRef;
+end;
 
 end.

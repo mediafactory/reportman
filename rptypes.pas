@@ -127,7 +127,7 @@ type
   end;
 
  TrpBackStyle=(baDesign,baPreview,baPrint);
- TRpType1Font=(poHelvetica,poCourier,poTimesRoman,poSymbol,poZapfDingbats);
+ TRpType1Font=(poHelvetica,poCourier,poTimesRoman,poSymbol,poZapfDingbats,poLinked,poEmbedded);
  TRpBrushStyle=(rpbsSolid, rpbsClear, rpbsHorizontal, rpbsVertical,
   rpbsFDiagonal, rpbsBDiagonal, rpbsCross, rpbsDiagCross, rpbsDense1,
   rpbsDense2, rpbsDense3, rpbsDense4, rpbsDense5, rpbsDense6, rpbsDense7);
@@ -265,6 +265,8 @@ procedure WriteStringToDevice(S,Device:String);
 function GetLastname(astring:string):string;
 function GetPathName(astring:string):string;
 function GetFirstName(astring:string):string;
+function TextToType1Font(value:string):TRpType1Font;
+function Type1FontToText(value:TRpType1Font):string;
 {$IFNDEF DOTNETD}
 procedure WriteToStdError(astring:String);
 procedure WriteStreamToStdOutput(astream:TStream);
@@ -1498,7 +1500,8 @@ end;
 
 {$IFNDEF DOTNETD}
 function NumberToTextPortuguese(FNumero:currency):WideString;
-    function ReplaceSubstring( StringAntiga, StringNova, s : string ) : string;
+    function ReplaceSubstring( StringAntiga, StringNova, s : string ) :
+string;
       var p : word;
     begin
        repeat
@@ -1512,18 +1515,19 @@ function NumberToTextPortuguese(FNumero:currency):WideString;
     end;
 
 
-    { Esta é a função que gera os blocos de extenso que depois serão montados }
+    { Esta é a função que gera os blocos de extenso que depois serão
+montados }
     function Extenso3em3( Numero : Word ) : string;
-      const Valores : array[1..36] of word = ( 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
-                           13, 14, 15, 16, 17, 18, 19, 20, 30, 40, 50, 60, 70, 80, 90,
-                           100, 200, 300, 400, 500, 600, 700, 800, 900 );
-            Nomes : array[0..36] of string[12] = ( '', 'um', 'dois', 'três', 'quatro',
-                      'cinco', 'seis', 'sete', 'oito', 'nove', 'dez', 'onze',
-                           'doze', 'treze', 'quatorze', 'quinze', 'dezesseis',
-                           'dezessete', 'dezoito', 'dezenove', 'vinte', 'trinta',
-                           'quarenta', 'cinquenta', 'sessenta', 'setenta', 'oitenta',
-                           'noventa', 'cento', 'duzentos', 'trezentos', 'quatrocentos',
-                           'quinhentos', 'seiscentos', 'setecentos', 'oitocentos',
+      const Valores : array[1..36] of word = ( 1, 2, 3, 4, 5, 6, 7, 8, 9,
+              10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 30, 40, 50, 60,
+              70, 80, 90,100, 200, 300, 400, 500, 600, 700, 800, 900 );
+            Nomes : array[0..36] of string[12] = ( '', 'um', 'dois', 'três',
+  'quatro','cinco', 'seis', 'sete', 'oito', 'nove', 'dez',
+  'onze','doze', 'treze', 'quatorze', 'quinze','dezesseis',
+  'dezessete', 'dezoito', 'dezenove', 'vinte','trinta',
+  'quarenta', 'cinquenta', 'sessenta', 'setenta','oitenta',
+  'noventa', 'cento', 'duzentos', 'trezentos','quatrocentos',
+  'quinhentos', 'seiscentos', 'setecentos','oitocentos',
                            'novecentos' );
       var i         : byte;
           Resposta  : string;
@@ -1536,7 +1540,7 @@ function NumberToTextPortuguese(FNumero:currency):WideString;
       for i := 36 downto 1 do begin
           Resto := ( Inteiro div valores[i] ) * valores[i];
           if ( Resto = valores[i] ) and ( Inteiro >= Resto ) then begin
-             Resposta := Resposta + Nomes[i] + ' E ';
+             Resposta := Resposta + Nomes[i] + ' e ';
              Inteiro  := Inteiro - Valores[i];
           end;
       end;
@@ -1552,15 +1556,18 @@ function NumberToTextPortuguese(FNumero:currency):WideString;
       Resposta.
     }
     function Extenso( Numero : extended ) : string;
-      const NoSingular : array[1..6] of string = ( 'trilhão', 'bilhão', 'milhão', 'mil', '', '');
+      const NoSingular : array[1..6] of string = ( 'trilhão', 'bilhão',
+'milhão', 'mil', '', '');
                                                   // 'REAL', 'CENTAVO' );
             NoPlural   : array[1..6] of string = ( 'trilhões', 'bilhões',
 'milhões', 'mil', '', '');
                                                   // 'REAIS', 'CENTAVOS' );
             {
               Estas constantes facilitam o entendimento do código.
-              Como os valores de singular e plural são armazenados em um vetor,
-              cada posicao indica a grandeza do número armazenado (leia-se sempre
+              Como os valores de singular e plural são armazenados em um
+vetor,
+              cada posicao indica a grandeza do número armazenado (leia-se
+sempre
               da esquerda para a direita).
             }
             CasaDosTrilhoes = 1;
@@ -1612,7 +1619,8 @@ sexta)
       TrioAtual    := 1;
       Inteiro      := Int( Inteiro / 100 ); { remove os centavos }
 
-      { Preenche os espaços vazios com zeros para evitar erros de conversão }
+      { Preenche os espaços vazios com zeros para evitar erros de conversão
+}
       while NumStr[TrioAtual] = ' ' do begin
          NumStr[TrioAtual] := '0';
          Inc( TrioAtual );
@@ -1644,7 +1652,8 @@ centavos) }
       NumStr := '';
 
       {
-        Este trecho obriga que o nome da moeda seja sempre impresso no caso de
+        Este trecho obriga que o nome da moeda seja sempre impresso no caso
+de
         haver uma parte inteira, qualquer que seja o valor.
       }
       if (Resposta[CasaDasCentenas]='') and ( Inteiro > 0 ) then begin
@@ -1654,7 +1663,8 @@ centavos) }
       end;
 
 
-      { Basta ser maior que um para que a palavra "real" seja escrita no plural }
+      { Basta ser maior que um para que a palavra "real" seja escrita no
+plural }
       if Inteiro > 1 then
          Plural[CasaDasCentenas] := True;
 
@@ -1666,7 +1676,8 @@ centavos) }
       TrioAtual     := TrioPosterior;
       TrioPosterior := ProximoTrio( TrioAtual );
 
-      { Este loop vai percorrer apenas os trios preenchidos e saltar os vazios. }
+      { Este loop vai percorrer apenas os trios preenchidos e saltar os
+vazios. }
       while TrioAtual <= CasaDosCentavos do begin
          { se for apenas cem, não escrever 'cento' }
          if Resposta[TrioAtual] = 'cento' then
@@ -1681,11 +1692,14 @@ centavos) }
                NumStr := NumStr + NoSingular[TrioAtual] + ' ';
 
             { Verifica a necessidade da particula 'e' para os números }
-            if ( TrioAtual < CasaDosCentavos ) and ( Resposta[TrioPosterior] <> '' )
+            if ( TrioAtual < CasaDosCentavos ) and ( Resposta[TrioPosterior]
+<> '' )
                and ( Resposta[TrioPosterior] <> ' ' ) then begin
                {
-                 Este trecho analisa diversos fatores e decide entre usar uma
-                 vírgula ou um "E", em função de uma peculiaridade da língua. Veja
+                 Este trecho analisa diversos fatores e decide entre usar
+uma
+                 vírgula ou um "E", em função de uma peculiaridade da
+língua. Veja
                  os exemplos para compreender:
                  - DOIS MIL, QUINHENTOS E CINQÜENTA REAIS
                  - DOIS MIL E QUINHENTOS REAIS
@@ -1695,31 +1709,38 @@ centavos) }
                  - UM MILHÃO E DUZENTOS MIL REAIS
                  - UM MILHÃO, DUZENTOS MIL E UM REAIS
                  - UM MILHÃO, OITOCENTOS E NOVENTA REAIS
-                 Obs.: Fiz o máximo esforço pra que o extenso soasse o mais natural
-                       possível em relação à lingua falada, mas se aparecer alguma
-                       situação em que algo soe esquisito, peço a gentileza de me
+                 Obs.: Fiz o máximo esforço pra que o extenso soasse o mais
+natural
+                       possível em relação à lingua falada, mas se aparecer
+alguma
+                       situação em que algo soe esquisito, peço a gentileza
+de me
                        avisar.
                }
                if ( TrioAtual < CasaDosCentavos ) and
-                  ( ( NumTriosInt = 2 ) or ( TrioAtual = CasaDosMilhares ) ) and
+                  ( ( NumTriosInt = 2 ) or ( TrioAtual = CasaDosMilhares ) )
+and
                   ( ( RespostaN[TrioPosterior] <= 100 ) or
                     ( RespostaN[TrioPosterior] mod 100 = 0 ) ) then
-                  NumStr := NumStr + 'E '
+                  NumStr := NumStr + 'e '
                else
                   NumStr := NumStr + ', ';
             end;
          end;
 
          { se for apenas trilhões, bilhões ou milhões, acrescenta o 'de' }
-         if ( NumTriosInt = 1 ) and ( Inteiro > 0 ) and ( TrioAtual <= CasaDosMilhoes ) then begin
-            NumStr := NumStr + ' DE ';
+         if ( NumTriosInt = 1 ) and ( Inteiro > 0 ) and ( TrioAtual <=
+CasaDosMilhoes ) then begin
+            NumStr := NumStr + ' de ';
          end;
 
-         { se tiver centavos, acrescenta a partícula 'e', mas somente se houver
+         { se tiver centavos, acrescenta a partícula 'e', mas somente se
+houver
            qualquer valor na parte inteira }
-         if ( TrioAtual = CasaDasCentenas ) and ( Resposta[CasaDosCentavos] <> '' )
+         if ( TrioAtual = CasaDasCentenas ) and ( Resposta[CasaDosCentavos]
+<> '' )
             and ( inteiro > 0 ) then begin
-            NumStr := Copy( NumStr, 1, Length( NumStr ) - 2 ) + ' E ';
+            NumStr := Copy( NumStr, 1, Length( NumStr ) - 2 ) + ' e ';
          end;
 
          TrioAtual     := ProximoTrio( TrioAtual );
@@ -3543,6 +3564,66 @@ begin
    Raise Exception.Create(SRpZLibNotSupported);
 {$ENDIF}
 end;
+
+function Type1FontToText(value:TRpType1Font):string;
+begin
+ case value of
+  poHelvetica:
+   Result:='Helvetica';
+  poCourier:
+   Result:='Courier';
+  poTimesRoman:
+   Result:='Times Roman';
+  poSymbol:
+   Result:='Symbol';
+  poZapfDingbats:
+   Result:='ZapfDingbats';
+  poLinked:
+   Result:='TrueType link';
+  poEmbedded:
+   Result:='TrueType Embedded';
+ end;
+end;
+
+function TextToType1Font(value:string):TRpType1Font;
+begin
+ Result:=poHelvetica;
+ if value='Helvetica' then
+ begin
+  Exit;
+ end;
+ if value='Courier' then
+ begin
+  Result:=poCourier;
+  Exit;
+ end;
+ if value='Times Roman' then
+ begin
+  Result:=poTimesRoman;
+  Exit;
+ end;
+ if value='Symbol' then
+ begin
+  Result:=poSymbol;
+  Exit;
+ end;
+ if value='ZapfDingbats' then
+ begin
+  Result:=poZapfDingbats;
+  Exit;
+ end;
+ if value='TrueType link' then
+ begin
+  Result:=poLinked;
+  exit;
+ end;
+ if value='TrueType Embedded' then
+ begin
+  Result:=poEmbedded;
+  exit;
+ end;
+end;
+
 
 
 initialization

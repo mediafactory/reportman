@@ -38,6 +38,9 @@ type
    private
     FName:string;
     FDescription:widestring;
+    FHint:widestring;
+    FIsReadOnly:Boolean;
+    FNeverVisible:Boolean;
     FSearch:WideString;
     FVisible:boolean;
     FAllowNulls:boolean;
@@ -47,16 +50,21 @@ type
     FItems:TStrings;
     FValues:TStrings;
     procedure SetVisible(AVisible:boolean);
+    procedure SetIsReadOnly(AReadOnly:boolean);
+    procedure SetNeverVisible(ANeverVisible:boolean);
     procedure SetAllowNulls(AAllowNulls:boolean);
     procedure SetName(AName:String);
     procedure SetValue(AValue:variant);
     procedure SetDescription(ADescription:widestring);
+    procedure SetHint(AHint:widestring);
     procedure SetSearch(ASearch:widestring);
     procedure SetParamType(AParamType:TRpParamType);
     procedure WriteDescription(Writer:TWriter);
+    procedure WriteHint(Writer:TWriter);
     procedure ReadSearch(Reader:TReader);
     procedure WriteSearch(Writer:TWriter);
     procedure ReadDescription(Reader:TReader);
+    procedure ReadHint(Reader:TReader);
     function GetAsString:WideString;
     procedure SetAsString(NewValue:WideString);
    protected
@@ -73,11 +81,14 @@ type
     function GetListValue:Variant;
 {$ENDIF}
     property Description:widestring read FDescription write SetDescription;
+    property Hint:widestring read FHint write SetHint;
     property Search:widestring read FSearch write SetSearch;
     property AsString:WideString read GetAsString write SetAsString;
    published
     property Name:string read FName write SetName;
     property Visible:Boolean read FVisible write SetVisible default True;
+    property IsReadOnly:Boolean read FIsReadOnly write SetIsReadOnly default false;
+    property NeverVisible:Boolean read FNeverVisible write SetNeverVisible default false;
     property AllowNulls:Boolean read FAllowNulls write SetAllowNulls default True;
     property Value:Variant read FValue write SetValue;
     property ParamType:TRpParamType read FParamtype write SetParamType
@@ -161,8 +172,11 @@ begin
  begin
   FName:=TRpParam(Source).FName;
   FVisible:=TRpParam(Source).FVisible;
+  FNeverVisible:=TRpParam(Source).FNeverVisible;
+  FIsReadOnly:=TRpParam(Source).FIsReadOnly;
   FAllowNulls:=TRpParam(Source).FAllowNulls;
   FDescription:=TRpParam(Source).FDescription;
+  FHint:=TRpParam(Source).FHint;
   FSearch:=TRpParam(Source).FSearch;
   FValue:=TRpParam(Source).FValue;
   FParamType:=TRpParam(Source).FParamType;
@@ -186,6 +200,19 @@ begin
  FItems.Free;
  FValues.Free;
  inherited Destroy;
+end;
+
+
+procedure TRpParam.SetIsReadOnly(AReadOnly:boolean);
+begin
+ FIsReadOnly:=AReadOnly;
+ Changed(false);
+end;
+
+procedure TRpParam.SetNeverVisible(ANeverVisible:boolean);
+begin
+ FNeverVisible:=ANeverVisible;
+ Changed(false);
 end;
 
 procedure TRpParam.SetVisible(AVisible:boolean);
@@ -286,6 +313,12 @@ end;
 procedure TRpParam.SetDescription(ADescription:wideString);
 begin
  FDescription:=ADescription;
+ Changed(false);
+end;
+
+procedure TRpParam.SetHint(AHint:widestring);
+begin
+ FHint:=AHint;
  Changed(false);
 end;
 
@@ -453,6 +486,16 @@ begin
  FDescription:=ReadWideString(Reader);
 end;
 
+procedure TRpParam.WriteHint(Writer:TWriter);
+begin
+ WriteWideString(Writer, FHint);
+end;
+
+procedure TRpParam.ReadHint(Reader:TReader);
+begin
+ FHint:=ReadWideString(Reader);
+end;
+
 procedure TRpParam.WriteSearch(Writer:TWriter);
 begin
  WriteWideString(Writer, FSearch);
@@ -468,6 +511,7 @@ begin
  inherited;
 
  Filer.DefineProperty('Description',ReadDescription,WriteDescription,True);
+ Filer.DefineProperty('Hint',ReadHint,WriteHint,True);
  Filer.DefineProperty('Search',ReadSearch,WriteSearch,True);
 end;
 

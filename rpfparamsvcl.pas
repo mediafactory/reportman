@@ -75,6 +75,10 @@ type
     MItems: TMemo;
     MValues: TMemo;
     CheckAllowNulls: TCheckBox;
+    EHint: TEdit;
+    LHint: TLabel;
+    CheckNeverVisible: TCheckBox;
+    CheckReadOnly: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -214,9 +218,12 @@ begin
   GProperties.Visible:=True;
   param:=params.ParamByName(LParams.Items.Strings[LParams.Itemindex]);
   CheckVisible.Checked:=param.Visible;
+  CheckNeverVisible.Checked:=param.NeverVisible;
+  CheckReadOnly.Checked:=param.IsReadOnly;
   CheckAllowNulls.Checked:=param.AllowNulls;
    CheckNull.Checked:=param.Value=Null;
   EDescription.Text:=param.Description;
+  EHint.Text:=param.Hint;
   ESearch.Text:=param.Search;
   MValues.Lines.Assign(param.Values);
   MItems.Lines.Assign(param.Items);
@@ -344,6 +351,9 @@ begin
  if Sender=EDescription then
   param.Description:=EDescription.Text
  else
+ if Sender=EHint then
+  param.Hint:=EHint.Text
+ else
  if Sender=ESearch then
   param.Search:=ESearch.Text
  else
@@ -355,6 +365,12 @@ begin
  else
   if (Sender=CheckVisible) then
    param.Visible:=CheckVisible.Checked
+  else
+  if (Sender=CheckNeverVisible) then
+   param.NeverVisible:=CheckneverVisible.Checked
+  else
+  if (Sender=CheckReadOnly) then
+   param.IsReadOnly:=CheckReadOnly.Checked
   else
   if (Sender=CheckAllowNulls) then
    param.AllowNulls:=CheckAllowNulls.Checked

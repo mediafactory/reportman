@@ -683,7 +683,8 @@ begin
    visibleparam:=false;
    for i:=0 to pdfreport.Params.Count-1 do
    begin
-    if pdfreport.Params.Items[i].Visible then
+    if ((pdfreport.Params.Items[i].Visible) and
+     (not pdfreport.Params.Items[i].NeverVisible)) then
     begin
      visibleparam:=true;
      break;
@@ -731,16 +732,20 @@ begin
     aparamstring:='<table width="90%" border="1">'+#10;
     for i:=0 to pdfreport.Params.Count-1 do
     begin
-     if pdfreport.Params.Items[i].Visible then
+     if ((pdfreport.Params.Items[i].Visible) and
+      (not pdfreport.Params.Items[i].NeverVisible))  then
      begin
       aparamstring:=aparamstring+'<tr>'+#10+
-       '<td>'+pdfreport.Params.Items[i].Description+'</td>'+#10+
+       '<td>'+HtmlEncode(pdfreport.Params.Items[i].Description)+'</td>'+#10+
        '<td>'+#10;
       aparamstring:=aparamstring+
        '<input type="text" name="Param'+
-       pdfreport.Params.Items[i].Name+'" value="'+
-       pdfreport.Params.Items[i].AsString+'">'+#10+
-       '</td>'+#10;
+       pdfreport.Params.Items[i].Name+
+       '" alt="'+HtmlEncode(pdfreport.Params.Items[i].Hint)+
+       '" value="'+HtmlEncode(pdfreport.Params.Items[i].AsString)+'"';
+      if pdfreport.Params.Items[i].IsReadOnly then
+       aparamstring:=aparamstring+' readonly ';
+      aparamstring:=aparamstring+'>'+#10+'</td>'+#10;
       if pdfreport.Params.Items[i].AllowNulls then
       begin
        aparamstring:=aparamstring+

@@ -79,7 +79,7 @@ begin
  oneparam:=false;
  for i:=0 to params.count-1 do
  begin
-  if params.items[i].Visible then
+  if (params.items[i].Visible and (not params.items[i].NeverVisible)) then
   begin
    oneparam:=true;
    break;
@@ -140,12 +140,13 @@ begin
  for i:=0 to fparams.Count-1 do
  begin
   aparam:=fparams.Items[i];
-  if aparam.Visible then
+  if ((aparam.Visible) and (not aparam.NeverVisible)) then
   begin
    alabel:=TLabel.Create(Self);
    alabel.Caption:=aparam.Description;
    aLabel.Left:=CONS_LEFTGAP;
    aLabel.Top:=posy+CONS_LABELTOPGAP;
+   aLabel.Hint:=aparam.Hint;
    alabel.Parent:=PLeft;
    achecknull:=TCheckBox.Create(Self);
    achecknull.Left:=TotalWidth-CONS_NULLWIDTH+3;
@@ -163,6 +164,10 @@ begin
     rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamUnknown:
      begin
       acontrol:=TEdit.Create(Self);
+      if aparam.IsReadOnly then
+      begin
+       TEdit(acontrol).Color:=Self.Color;
+      end;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
       TEdit(acontrol).Text:='';
@@ -178,6 +183,10 @@ begin
    rpParamInteger,rpParamDouble,rpParamCurrency:
      begin
       acontrol:=TRpCLXMaskEdit.Create(Self);
+      if aparam.IsReadOnly then
+      begin
+       TRpCLXMaskEdit(acontrol).Color:=Self.Color;
+      end;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
       TEdit(acontrol).Text:='0';
@@ -198,6 +207,10 @@ begin
    rpParamDate:
      begin
       acontrol:=TEdit.Create(Self);
+      if aparam.IsReadOnly then
+      begin
+       TEdit(acontrol).Color:=Self.Color;
+      end;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
       TEdit(acontrol).Text:=DateToStr(Date);
@@ -213,6 +226,10 @@ begin
    rpParamTime:
      begin
       acontrol:=TEdit.Create(Self);
+      if aparam.IsReadOnly then
+      begin
+       TEdit(acontrol).Color:=Self.Color;
+      end;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
       TEdit(acontrol).Text:=TimeToStr(Time);
@@ -228,6 +245,10 @@ begin
    rpParamDateTime:
      begin
       acontrol:=TEdit.Create(Self);
+      if aparam.IsReadOnly then
+      begin
+       TEdit(acontrol).Color:=Self.Color;
+      end;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
       TEdit(acontrol).Text:=DateTimeToStr(now);
@@ -243,6 +264,10 @@ begin
    rpParamBool:
      begin
       acontrol:=TComboBox.Create(Self);
+      if aparam.IsReadOnly then
+      begin
+       TComboBox(acontrol).Color:=Self.Color;
+      end;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
       TComboBox(acontrol).Style:=csDropDownList;
@@ -264,6 +289,10 @@ begin
    rpParamList:
      begin
       acontrol:=TComboBox.Create(Self);
+      if aparam.IsReadOnly then
+      begin
+       TComboBox(acontrol).Color:=Self.Color;
+      end;
       TComboBox(acontrol).Style:=csDropDownList;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
@@ -281,6 +310,12 @@ begin
      end;
    end;
    acontrol.Top:=Posy;
+   acontrol.Hint:=aparam.Hint;
+   if aparam.IsReadOnly then
+   begin
+    acontrol.Enabled:=false;
+   end;
+
    acontrol.Left:=CONS_LEFTGAP;
    acontrol.Width:=TotalWidth-acontrol.Left;
    acontrol.parent:=PRight;
