@@ -317,13 +317,13 @@ begin
   if varname='PAGENUM' then
    Result:=freport.PageNumGroup+1
   else
-  if varname='FREESPACETWIPS' then
+  if varname='FREE_SPACE_TWIPS' then
    Result:=freport.freespace
   else
-   if varname='FREESPACECMS' then
+   if varname='FREE_SPACE_CMS' then
     Result:=twipstocms(freport.freespace)
    else
-    if varname='FREESPACEINCH' then
+    if varname='FREE_SPACE_INCH' then
      Result:=twipstocms(freport.freespace)
     else
      if varname='CURRENTGROUP' then
@@ -396,13 +396,13 @@ begin
  Fidenpagenumgroup.FReport:=self;
  FidenPagenumgroup.varname:='PAGENUM';
  FIdenfreespace:=TIdenReportVar.Create(nil);
- Fidenfreespace.varname:='FREESPACE';
+ Fidenfreespace.varname:='FREE_SPACE_TWIPS';
  Fidenfreespace.FReport:=self;
  FIdenfreespacecms:=TIdenReportVar.Create(nil);
- Fidenfreespacecms.varname:='FREESPACECMS';
+ Fidenfreespacecms.varname:='FREE_SPACE_CMS';
  Fidenfreespacecms.FReport:=self;
  FIdenfreespaceinch:=TIdenReportVar.Create(nil);
- Fidenfreespaceinch.varname:='FREESPACEINCH';
+ Fidenfreespaceinch.varname:='FREE_SPACE_INCH';
  Fidenfreespaceinch.FReport:=self;
  FIdencurrentgroup:=TIdenReportVar.Create(nil);
  Fidencurrentgroup.varname:='CURRENTGROUP';
@@ -1667,7 +1667,7 @@ begin
  // Insert page number and other variables
  eval.AddVariable('PAGE',fidenpagenum);
  eval.AddVariable('PAGENUM',fidenpagenumgroup);
- eval.AddVariable('FREE_SPACE',fidenfreespace);
+ eval.AddVariable('FREE_SPACE_TWIPS',fidenfreespace);
  eval.AddVariable('CURRENTGROUP',fidencurrentgroup);
  eval.AddVariable('FIRSTSECTION',fidenfirstsection);
  eval.AddVariable('FREE_SPACE_CMS',fidenfreespacecms);
