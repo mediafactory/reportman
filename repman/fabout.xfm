@@ -1,17 +1,17 @@
 object FAboutBox: TFAboutBox
-  Left = 24
-  Top = 47
-  Width = 401
-  Height = 291
-  VertScrollBar.Range = 277
-  HorzScrollBar.Range = 381
+  Left = 28
+  Top = 67
+  Width = 489
+  Height = 314
+  HorzScrollBar.Range = 461
+  VertScrollBar.Range = 289
   ActiveControl = OKBtn
   Caption = 'About Report Manager '
   Color = clButton
   Position = poScreenCenter
   Scaled = False
   OnCreate = FormCreate
-  PixelsPerInch = 96
+  PixelsPerInch = 100
   object Image1: TImage
     Left = 8
     Top = 68
@@ -518,8 +518,8 @@ object FAboutBox: TFAboutBox
       FAFAF9F9F9F9F9F9F9F9F9FAFAFAFAFAFA00}
   end
   object OKBtn: TButton
-    Left = 155
-    Top = 252
+    Left = 195
+    Top = 264
     Width = 75
     Height = 25
     Caption = 'OK'
@@ -530,69 +530,69 @@ object FAboutBox: TFAboutBox
   object LReport: TLabel
     Left = 8
     Top = 8
-    Width = 76
-    Height = 13
+    Width = 102
+    Height = 17
     Caption = 'Report manager'
   end
   object Label1: TLabel
     Left = 12
     Top = 164
-    Width = 31
-    Height = 13
+    Width = 44
+    Height = 17
     Caption = 'Author'
   end
   object LName: TLabel
     Left = 56
     Top = 164
-    Width = 50
-    Height = 13
+    Width = 70
+    Height = 17
     Caption = 'Toni Martir'
   end
   object Label2: TLabel
     Left = 12
     Top = 184
-    Width = 28
-    Height = 13
+    Width = 39
+    Height = 17
     Caption = 'E-mail'
   end
   object LEmail: TLabel
     Left = 56
     Top = 184
-    Width = 71
-    Height = 13
+    Width = 93
+    Height = 17
     Caption = 'toni@pala.com'
   end
   object Label3: TLabel
     Left = 12
     Top = 208
-    Width = 113
-    Height = 13
+    Width = 154
+    Height = 17
     Caption = 'From Palafrugell, SPAIN'
   end
   object LVersion: TLabel
     Left = 8
     Top = 44
-    Width = 83
-    Height = 13
+    Width = 114
+    Height = 17
     Caption = 'Version 0.99 beta'
   end
   object Label4: TLabel
     Left = 12
     Top = 232
-    Width = 63
-    Height = 13
+    Width = 84
+    Height = 17
     Caption = 'Project page:'
   end
   object Label5: TLabel
     Left = 96
     Top = 232
-    Width = 199
-    Height = 13
+    Width = 260
+    Height = 17
     Caption = 'http://sourceforge.net/projects/reportman'
   end
   object Memo1: TMemo
-    Left = 152
-    Top = 84
+    Left = 232
+    Top = 92
     Width = 229
     Height = 137
     Lines.Strings = (
@@ -605,10 +605,10 @@ object FAboutBox: TFAboutBox
     WordWrap = False
   end
   object Label6: TLabel
-    Left = 152
+    Left = 232
     Top = 68
-    Width = 56
-    Height = 13
+    Width = 79
+    Height = 17
     Caption = 'Contributors'
   end
 end

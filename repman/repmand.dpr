@@ -106,7 +106,7 @@ uses
 {$ENDIF}
 
 {$IFDEF LINUX}
-  rpclxreport in '../rppdfreport.pas',
+  rppdfreport in '../rppdfreport.pas',
   rpreport in '../rpreport.pas',
   rpsubreport in '../rpsubreport.pas',
   rpconsts in '../rpconsts.pas',

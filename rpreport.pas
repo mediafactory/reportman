@@ -1132,12 +1132,12 @@ begin
  end;
  if PageSize<>rpPageSizeDefault then
  begin
-  metafile.PageSize:=-1;
+  metafile.PageSize:=PageSizeQt;
   apagesize:=Driver.SetPagesize(PageSizeQt);
  end
  else
  begin
-  metafile.PageSize:=PageSizeQt;
+  metafile.PageSize:=-1;
   apagesize:=Driver.GetPageSize;
  end;
  FInternalPageWidth:=apagesize.X;

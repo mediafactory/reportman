@@ -4,7 +4,11 @@ interface
 
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  QStdCtrls, rpclxreport,  DB,rpvclreport;
+  QStdCtrls, rpclxreport,  DB,
+{$IFDEF MSWINDOWS}
+  rpvclreport,
+{$ENDIF}
+  rpcompobase;
 
 
 type

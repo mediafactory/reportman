@@ -166,7 +166,7 @@ begin
   printer.SetPrinter(Printer.Printers.Strings[0]);
   SetOrientation(report.Orientation);
   // Sets pagesize
-  if report.PageSize>=0 then
+  if report.PageSize<0 then
   begin
    asize:=GetPageSize;
   end
@@ -193,7 +193,7 @@ begin
   // Sets Orientation
   SetOrientation(report.Orientation);
   // Sets pagesize
-  if report.PageSize>=0 then
+  if report.PageSize<0 then
   begin
    asize:=GetPageSize;
   end
@@ -762,10 +762,8 @@ var
  qtdriver:TRpQtDriver;
  aqtdriver:IRpPrintDriver;
  forcecalculation:boolean;
-{$IFDEF MSWINDOWS}
  dia:TFRpQtProgress;
  oldonidle:TIdleEvent;
-{$ENDIF}
 begin
  Result:=true;
  forcecalculation:=false;

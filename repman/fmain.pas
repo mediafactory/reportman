@@ -228,9 +228,7 @@ var
 implementation
 
 uses rppagesetup, rpshfolder,  fdatainfo, frpgrid, rppreview, fabout,
-{$IFDEF MSWINDOWS}
   rpprintdia,
-{$ENDIF}
   rprfparams;
 
 {$R *.xfm}
@@ -990,7 +988,7 @@ end;
 
 procedure TFMainf.LoadConfig;
 var
- inif:TInifile;
+ inif:TIping nifile;
 begin
  inif:=TIniFile.Create(configfile);
  try
@@ -998,6 +996,7 @@ begin
   ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',true);
   AsystemPrintDialog.Checked:=inif.ReadBool('Preferences','SystemPrintDialog',True);
   AKylixPrintBug.Checked:=inif.ReadBool('Preferences','KylixPrintBug',True);
+  rpqtdriver.kylixprintbug:=AKylixPrintBug.Checked;
   ADriverGDI.Checked:=Not ADriverQT.Checked;
   AUnitsinchess.Checked:=Not AUnitCms.Checked;
   UpdateUnits;

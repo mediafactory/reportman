@@ -19,7 +19,7 @@ uses
   rpalias in '../../rpalias.pas',
   rpreport in '../../rpreport.pas',
   rpdatainfo in '../../rpdatainfo.pas',
-  rpcompobase in '../../rpcompobase.pas';
+  rpcompobase in '../../rpcompobase.pas',
   rppdfreport in '../../rppdfreport.pas';
 {$ENDIF}
 

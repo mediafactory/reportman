@@ -108,9 +108,7 @@ function ShowPreview(report:TRpReport;caption:string;systemprintdialog:boolean):
 implementation
 
 uses rprfparams,
-{$IFDEF MSWINDOWS}
     rpprintdia,
-{$ENDIF}
     rppdfdriver;
 
 {$R *.xfm}

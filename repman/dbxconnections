@@ -11,7 +11,7 @@ LocaleCode=0000
 
 [IBConnection]
 DriverName=Interbase
-Database=localhost:/var/data/prima.gdb
+Database=localhost:/var/data/test.gdb
 User_Name=sysdba
 Password=SYSDBA
 ServerCharSet=
