@@ -1,15 +1,16 @@
 object Form1: TForm1
-  Left = 192
-  Top = 107
+  Left = 196
+  Top = 127
   Width = 543
   Height = 375
-  VertScrollBar.Range = 137
   HorzScrollBar.Range = 329
+  VertScrollBar.Range = 137
+  ActiveControl = Button1
   Caption = 'Form1'
   Color = clBackground
   PixelsPerInch = 96
-  TextHeight = 13
-  TextWidth = 6
+  TextHeight = 15
+  TextWidth = 7
   object Button1: TButton
     Left = 224
     Top = 80
@@ -20,10 +21,7 @@ object Form1: TForm1
     OnClick = Button1Click
   end
   object CLXReport1: TCLXReport
-    Filename = 
-      'C:\prog\toni\cvsroot\reportman\reportman\tests\clxreport\sample4' +
-      '.rep'
-    Preview = False
+    Filename = 'sample4.rep'
     Title = 'Untitled'
     Left = 96
     Top = 92

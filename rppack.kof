@@ -60,11 +60,12 @@ UseLauncher=0
 DebugCWD=
 
 [Excluded Packages]
+/home/toni/prog/cvsroot/reportman/bplrppack.so=Report manager designer (non visual)
+/home/toni/prog/cvsroot/reportman/bplrppackv.so=Report manager visual components
 $(DELPHI)/bin/dclemacsedit.so.6.5=Borland Editor Emacs Enhancements
 $(DELPHI)/bin/bplHelpViewers.so.6.5=Borland Sample Help Viewer Package
 $(DELPHI)/bin/dclnet.so.6.5=Borland Internet Components
-$(DELPHI)/bin/dclindy.so.6.5=Internet Direct "Indy" for Kylix Property and Component Editors
-$(DELPHI)/bin/dclib.so.6.5=InterBase Data Access Components
 /home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/ibpack/bplibpack.so=IBAccess components package
 /home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/synedit/bplsynedit_kylix.so=SynEdit package for Kylix
+$(DELPHI)/bin/dclindy.so.6.5=Internet Direct "Indy" for Kylix Property and Component Editors
 

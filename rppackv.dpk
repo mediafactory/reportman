@@ -3,6 +3,7 @@ package rppackv;
 {$R *.res}
 {$R 'rpexpredlg.dcr'}
 {$R 'rpruler.dcr'}
+{$R 'rpclxreport.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -37,6 +38,11 @@ contains
   rpregv in 'rpregv.pas',
   rpexpredlg in 'rpexpredlg.pas' {FrpExpredialog},
   rpruler in 'rpruler.pas',
-  rpdbxconfig in 'rpdbxconfig.pas' {FDBXConfig};
+  rpdbxconfig in 'rpdbxconfig.pas' {FDBXConfig},
+  rpclxreport in 'rpclxreport.pas',
+  rppagesetup in 'rppagesetup.pas' {FPageSetup},
+  rppreview in 'rppreview.pas' {FRpPreview},
+  rpgraphutils in 'rpgraphutils.pas' {FRpGraphProgres},
+  rpqtdriver in 'rpqtdriver.pas' {FRpQtProgress};
 
 end.

@@ -30,7 +30,8 @@ package rppack;
 
 requires
   baseclx,
-  dataclx;
+  dataclx,
+  ibxpress;
 
 contains
   rptypeval in 'rptypeval.pas',
@@ -55,7 +56,17 @@ contains
   zdeflate in 'zdeflate.pas',
   zinflate in 'zinflate.pas',
   zlib in 'zlib.pas',
-  zutil in 'zutil.pas';
+  zutil in 'zutil.pas',
+  rpmetafile in 'rpmetafile.pas',
+  rpmunits in 'rpmunits.pas',
+  rpdrawitem in 'rpdrawitem.pas',
+  rplabelitem in 'rplabelitem.pas',
+  rpprintitem in 'rpprintitem.pas',
+  rpreport in 'rpreport.pas',
+  rpsection in 'rpsection.pas',
+  rpsecutil in 'rpsecutil.pas',
+  rpsubreport in 'rpsubreport.pas',
+  rpwriter in 'rpwriter.pas';
 
 {%File 'zconf.inc'}
 
