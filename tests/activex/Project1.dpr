@@ -3,7 +3,9 @@ program Project1;
 uses
   Forms,
   Unit1 in 'Unit1.pas' {Form1},
-  rpvclreport in '..\..\rpvclreport.pas';
+  rpvclreport in '..\..\rpvclreport.pas',
+  rpactivexreport in '..\..\rpactivexreport.pas',
+  rpcompobase in '..\..\rpcompobase.pas';
 
 {$R *.res}
 

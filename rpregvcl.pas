@@ -30,6 +30,8 @@ implementation
 procedure Register;
 begin
   RegisterComponents('Reportman', [TVCLReport]);
+  // TRpActiveXReport is a Wrapper to generate the ActiveX version
+  // with Delphi 6 Active X Control Wizard
   RegisterComponents('Reportman', [TRpActiveXReport]);
 end;
 

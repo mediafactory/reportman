@@ -96,6 +96,8 @@ type
     procedure AScaleFullExecute(Sender: TObject);
     procedure AScaleLessExecute(Sender: TObject);
     procedure AScaleMoreExecute(Sender: TObject);
+    procedure AImageMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
     cancelled:boolean;
@@ -201,7 +203,6 @@ begin
    AImage.Picture.Bitmap.Assign(gdidriver.bitmap);
    AImage.Invalidate;
   end;
-  PlaceImagePosition;
   EPageNum.Text:=IntToStr(PageNum);
  except
   EPageNum.Text:='0';
@@ -229,6 +230,7 @@ begin
    gdidriver.devicefonts:=false;
   pagenum:=1;
   PrintPage;
+  PlaceImagePosition;
   printed:=true;
  except
   on E:Exception do
@@ -414,12 +416,22 @@ begin
  begin
   ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position-Increment;
  end;
+ if Key=VK_SPACE then
+ begin
+  AImageMouseDown(Self,mbLeft,[],0,0);
+  Key:=0;
+ end;
 end;
 
 procedure TFRpVPreview.DisableControls(enablebar:boolean);
 begin
  BCancel.Left:=BExit.Left+BExit.Width;
  BCancel.Visible:=true;
+ AScale100.Enabled:=false;
+ AScaleFull.Enabled:=false;
+ AScaleWide.Enabled:=false;
+ AScaleLess.Enabled:=False;
+ AScaleMore.Enabled:=False;
  AFirst.Enabled:=false;
  ALast.Enabled:=false;
  APrint.Enabled:=false;
@@ -435,6 +447,11 @@ end;
 procedure TFRpVPreview.EnableControls;
 begin
  BCancel.Visible:=false;
+ AScale100.Enabled:=true;
+ AScaleFull.Enabled:=true;
+ AScaleWide.Enabled:=true;
+ AScaleLess.Enabled:=true;
+ AScaleMore.Enabled:=true;
  AFirst.Enabled:=true;
  ALast.Enabled:=true;
  APrint.Enabled:=true;
@@ -561,6 +578,40 @@ begin
  gdidriver.PreviewStyle:=spCustom;
  gdidriver.Scale:=gdidriver.scale+0.10;
  FormResize(Self);
+end;
+
+procedure TFRpVPreview.AImageMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+ relx:Extended;
+ rely:Extended;
+ posx,migx:Extended;
+ posy,migy:Extended;
+ punt:Tpoint;
+begin
+ // When clic in image scale to 100% and scroll to the
+ // clicked section
+ if gdidriver.PreviewStyle=spEntirePage then
+ begin
+  punt.X:=X;
+  punt.y:=Y;
+  relx:=punt.X;
+  rely:=punt.Y;
+  relx:=relx/AImage.Width;
+  rely:=rely/AImage.Height;
+  AScale100.Execute;
+  // looks the limit
+  posx:=ImageContainer.HorzScrollBar.Range*relx;
+  posy:=ImageContainer.VertScrollBar.Range*rely;
+  // To the center
+  Migx:=PosX-(ImageContainer.ClientWidth div 2);
+  Migy:=PosY-(ImageContainer.ClientHeight div 2);
+
+  ImageContainer.HorzScrollBar.Position:=Trunc(migX);
+  ImageContainer.VertScrollBar.Position:=Trunc(MigY);
+ end
+ else
+  AScaleFull.Execute;
 end;
 
 end.

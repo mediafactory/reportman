@@ -6,20 +6,21 @@ interface
 
 uses
   Windows, ActiveX, Classes, Controls, Graphics, Menus, Forms, StdCtrls,
-  ComServ, StdVCL, AXCtrls, TAXReportXControl1_TLB, rpactivexreport;
+  ComServ, StdVCL, AXCtrls, ReportMan_TLB, rpactivexreport;
 
 type
-  TTAXReport = class(TActiveXControl, ITAXReport)
+  TReportManX = class(TActiveXControl, IReportManX)
   private
     { Private declarations }
     FDelphiControl: TRpActiveXReport;
-    FEvents: ITAXReportEvents;
+    FEvents: IReportManXEvents;
   protected
     { Protected declarations }
     procedure DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage); override;
     procedure EventSinkChanged(const EventSink: IUnknown); override;
     procedure InitializeControl; override;
     function DrawTextBiDiModeFlagsReadingOnly: Integer; safecall;
+    function Execute: WordBool; safecall;
     function Get_AlignDisabled: WordBool; safecall;
     function Get_Cursor: Smallint; safecall;
     function Get_DoubleBuffered: WordBool; safecall;
@@ -27,22 +28,34 @@ type
     function Get_Filename: WideString; safecall;
     function Get_HelpKeyword: WideString; safecall;
     function Get_HelpType: TxHelpType; safecall;
+    function Get_Language: Integer; safecall;
     function Get_Preview: WordBool; safecall;
+    function Get_ShowPrintDialog: WordBool; safecall;
+    function Get_ShowProgress: WordBool; safecall;
+    function Get_Title: WideString; safecall;
     function Get_Visible: WordBool; safecall;
     function Get_VisibleDockClientCount: Integer; safecall;
     function IsRightToLeft: WordBool; safecall;
+    function PrintRange(frompage, topage, copies: Integer;
+      collate: WordBool): WordBool; safecall;
+    function ShowParams: WordBool; safecall;
     function UseRightToLeftReading: WordBool; safecall;
     function UseRightToLeftScrollBar: WordBool; safecall;
     procedure AboutBox; safecall;
-    procedure Execute; safecall;
     procedure InitiateAction; safecall;
+    procedure PrinterSetup; safecall;
+    procedure SaveToPDF(const filename: WideString); safecall;
     procedure Set_Cursor(Value: Smallint); safecall;
     procedure Set_DoubleBuffered(Value: WordBool); safecall;
     procedure Set_Enabled(Value: WordBool); safecall;
     procedure Set_Filename(const Value: WideString); safecall;
     procedure Set_HelpKeyword(const Value: WideString); safecall;
     procedure Set_HelpType(Value: TxHelpType); safecall;
+    procedure Set_Language(Value: Integer); safecall;
     procedure Set_Preview(Value: WordBool); safecall;
+    procedure Set_ShowPrintDialog(Value: WordBool); safecall;
+    procedure Set_ShowProgress(Value: WordBool); safecall;
+    procedure Set_Title(const Value: WideString); safecall;
     procedure Set_Visible(Value: WordBool); safecall;
     procedure SetSubComponent(IsSubComponent: WordBool); safecall;
   end;
@@ -51,151 +64,212 @@ implementation
 
 uses ComObj, rpfaboutx;
 
-{ TTAXReport }
+{ TReportManX }
 
-procedure TTAXReport.DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage);
+procedure TReportManX.DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage);
 begin
   {TODO: Define property pages here.  Property pages are defined by calling
     DefinePropertyPage with the class id of the page.  For example,
-      DefinePropertyPage(Class_TAXReportPage); }
+      DefinePropertyPage(Class_ReportManXPage); }
 end;
 
-procedure TTAXReport.EventSinkChanged(const EventSink: IUnknown);
+procedure TReportManX.EventSinkChanged(const EventSink: IUnknown);
 begin
-  FEvents := EventSink as ITAXReportEvents;
+  FEvents := EventSink as IReportManXEvents;
 end;
 
-procedure TTAXReport.InitializeControl;
+procedure TReportManX.InitializeControl;
 begin
   FDelphiControl := Control as TRpActiveXReport;
 end;
 
-function TTAXReport.DrawTextBiDiModeFlagsReadingOnly: Integer;
+function TReportManX.DrawTextBiDiModeFlagsReadingOnly: Integer;
 begin
   Result := FDelphiControl.DrawTextBiDiModeFlagsReadingOnly;
 end;
 
-function TTAXReport.Get_AlignDisabled: WordBool;
+function TReportManX.Execute: WordBool;
+begin
+  Result := FDelphiControl.Execute;
+end;
+
+function TReportManX.Get_AlignDisabled: WordBool;
 begin
   Result := FDelphiControl.AlignDisabled;
 end;
 
-function TTAXReport.Get_Cursor: Smallint;
+function TReportManX.Get_Cursor: Smallint;
 begin
   Result := Smallint(FDelphiControl.Cursor);
 end;
 
-function TTAXReport.Get_DoubleBuffered: WordBool;
+function TReportManX.Get_DoubleBuffered: WordBool;
 begin
   Result := FDelphiControl.DoubleBuffered;
 end;
 
-function TTAXReport.Get_Enabled: WordBool;
+function TReportManX.Get_Enabled: WordBool;
 begin
   Result := FDelphiControl.Enabled;
 end;
 
-function TTAXReport.Get_Filename: WideString;
+function TReportManX.Get_Filename: WideString;
 begin
   Result := WideString(FDelphiControl.Filename);
 end;
 
-function TTAXReport.Get_HelpKeyword: WideString;
+function TReportManX.Get_HelpKeyword: WideString;
 begin
   Result := WideString(FDelphiControl.HelpKeyword);
 end;
 
-function TTAXReport.Get_HelpType: TxHelpType;
+function TReportManX.Get_HelpType: TxHelpType;
 begin
   Result := Ord(FDelphiControl.HelpType);
 end;
 
-function TTAXReport.Get_Preview: WordBool;
+function TReportManX.Get_Language: Integer;
+begin
+  Result := FDelphiControl.Language;
+end;
+
+function TReportManX.Get_Preview: WordBool;
 begin
   Result := FDelphiControl.Preview;
 end;
 
-function TTAXReport.Get_Visible: WordBool;
+function TReportManX.Get_ShowPrintDialog: WordBool;
+begin
+  Result := FDelphiControl.ShowPrintDialog;
+end;
+
+function TReportManX.Get_ShowProgress: WordBool;
+begin
+  Result := FDelphiControl.ShowProgress;
+end;
+
+function TReportManX.Get_Title: WideString;
+begin
+  Result := WideString(FDelphiControl.Title);
+end;
+
+function TReportManX.Get_Visible: WordBool;
 begin
   Result := FDelphiControl.Visible;
 end;
 
-function TTAXReport.Get_VisibleDockClientCount: Integer;
+function TReportManX.Get_VisibleDockClientCount: Integer;
 begin
   Result := FDelphiControl.VisibleDockClientCount;
 end;
 
-function TTAXReport.IsRightToLeft: WordBool;
+function TReportManX.IsRightToLeft: WordBool;
 begin
   Result := FDelphiControl.IsRightToLeft;
 end;
 
-function TTAXReport.UseRightToLeftReading: WordBool;
+function TReportManX.PrintRange(frompage, topage, copies: Integer;
+  collate: WordBool): WordBool;
+begin
+  Result := FDelphiControl.PrintRange(frompage, topage, copies, collate);
+end;
+
+function TReportManX.ShowParams: WordBool;
+begin
+  Result := FDelphiControl.ShowParams;
+end;
+
+function TReportManX.UseRightToLeftReading: WordBool;
 begin
   Result := FDelphiControl.UseRightToLeftReading;
 end;
 
-function TTAXReport.UseRightToLeftScrollBar: WordBool;
+function TReportManX.UseRightToLeftScrollBar: WordBool;
 begin
   Result := FDelphiControl.UseRightToLeftScrollBar;
 end;
 
-procedure TTAXReport.AboutBox;
+procedure TReportManX.AboutBox;
 begin
-  ShowTAXReportAbout;
+  ShowReportManXAbout;
 end;
 
-procedure TTAXReport.Execute;
-begin
-  FDelphiControl.Execute;
-end;
-
-procedure TTAXReport.InitiateAction;
+procedure TReportManX.InitiateAction;
 begin
   FDelphiControl.InitiateAction;
 end;
 
-procedure TTAXReport.Set_Cursor(Value: Smallint);
+procedure TReportManX.PrinterSetup;
+begin
+  FDelphiControl.PrinterSetup;
+end;
+
+procedure TReportManX.SaveToPDF(const filename: WideString);
+begin
+  FDelphiControl.SaveToPDF(filename);
+end;
+
+procedure TReportManX.Set_Cursor(Value: Smallint);
 begin
   FDelphiControl.Cursor := TCursor(Value);
 end;
 
-procedure TTAXReport.Set_DoubleBuffered(Value: WordBool);
+procedure TReportManX.Set_DoubleBuffered(Value: WordBool);
 begin
   FDelphiControl.DoubleBuffered := Value;
 end;
 
-procedure TTAXReport.Set_Enabled(Value: WordBool);
+procedure TReportManX.Set_Enabled(Value: WordBool);
 begin
   FDelphiControl.Enabled := Value;
 end;
 
-procedure TTAXReport.Set_Filename(const Value: WideString);
+procedure TReportManX.Set_Filename(const Value: WideString);
 begin
   FDelphiControl.Filename := String(Value);
 end;
 
-procedure TTAXReport.Set_HelpKeyword(const Value: WideString);
+procedure TReportManX.Set_HelpKeyword(const Value: WideString);
 begin
   FDelphiControl.HelpKeyword := String(Value);
 end;
 
-procedure TTAXReport.Set_HelpType(Value: TxHelpType);
+procedure TReportManX.Set_HelpType(Value: TxHelpType);
 begin
   FDelphiControl.HelpType := THelpType(Value);
 end;
 
-procedure TTAXReport.Set_Preview(Value: WordBool);
+procedure TReportManX.Set_Language(Value: Integer);
+begin
+  FDelphiControl.Language := Value;
+end;
+
+procedure TReportManX.Set_Preview(Value: WordBool);
 begin
   FDelphiControl.Preview := Value;
 end;
 
-procedure TTAXReport.Set_Visible(Value: WordBool);
+procedure TReportManX.Set_ShowPrintDialog(Value: WordBool);
+begin
+  FDelphiControl.ShowPrintDialog := Value;
+end;
+
+procedure TReportManX.Set_ShowProgress(Value: WordBool);
+begin
+  FDelphiControl.ShowProgress := Value;
+end;
+
+procedure TReportManX.Set_Title(const Value: WideString);
+begin
+  FDelphiControl.Title := String(Value);
+end;
+
+procedure TReportManX.Set_Visible(Value: WordBool);
 begin
   FDelphiControl.Visible := Value;
 end;
 
-procedure TTAXReport.SetSubComponent(IsSubComponent: WordBool);
+procedure TReportManX.SetSubComponent(IsSubComponent: WordBool);
 begin
   FDelphiControl.SetSubComponent(IsSubComponent);
 end;
@@ -203,9 +277,9 @@ end;
 initialization
   TActiveXControlFactory.Create(
     ComServer,
-    TTAXReport,
+    TReportManX,
     TRpActiveXReport,
-    Class_TAXReport,
+    Class_ReportManX,
     1,
     '',
     0,

@@ -1,4 +1,4 @@
-unit TAXReportXControl1_TLB;
+unit ReportMan_TLB;
 
 // ************************************************************************ //
 // WARNING                                                                    
@@ -11,12 +11,12 @@ unit TAXReportXControl1_TLB;
 // manual modifications will be lost.                                         
 // ************************************************************************ //
 
-// PASTLWTR : $Revision: 1.2 $
-// File generated on 13/06/2002 17:02:48 from Type Library described below.
+// PASTLWTR : $Revision: 1.1 $
+// File generated on 13/06/2002 17:57:33 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\TAXReportXControl1.tlb (1)
-// LIBID: {72BB2092-F770-4953-9243-2AD9BA5C95EE}
+// Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
+// LIBID: {ACDAC827-F948-44F1-989F-788A67B45A97}
 // LCID: 0
 // Helpfile: 
 // DepndLst: 
@@ -41,14 +41,14 @@ uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL, Variants;
 // *********************************************************************//
 const
   // TypeLibrary Major and minor versions
-  TAXReportXControl1MajorVersion = 1;
-  TAXReportXControl1MinorVersion = 0;
+  ReportManMajorVersion = 1;
+  ReportManMinorVersion = 0;
 
-  LIBID_TAXReportXControl1: TGUID = '{72BB2092-F770-4953-9243-2AD9BA5C95EE}';
+  LIBID_ReportMan: TGUID = '{ACDAC827-F948-44F1-989F-788A67B45A97}';
 
-  IID_ITAXReport: TGUID = '{CDCE32C4-AD5A-4586-BE9F-E854AED322BB}';
-  DIID_ITAXReportEvents: TGUID = '{91704395-5771-4C12-8B14-6343E62740D1}';
-  CLASS_TAXReport: TGUID = '{0A20EACF-4898-474E-9FE6-6DD1113BB4E2}';
+  IID_IReportManX: TGUID = '{08D4AA91-80AB-49DF-9E6B-62B4F4BED6D9}';
+  DIID_IReportManXEvents: TGUID = '{BF1380A3-DE22-4675-BE8F-6F877A9CE402}';
+  CLASS_ReportManX: TGUID = '{12B4E008-C646-4FB7-89F1-716BBD8EA06D}';
 
 // *********************************************************************//
 // Declaration of Enumerations defined in Type Library                    
@@ -65,24 +65,24 @@ type
 // *********************************************************************//
 // Forward declaration of types defined in TypeLibrary                    
 // *********************************************************************//
-  ITAXReport = interface;
-  ITAXReportDisp = dispinterface;
-  ITAXReportEvents = dispinterface;
+  IReportManX = interface;
+  IReportManXDisp = dispinterface;
+  IReportManXEvents = dispinterface;
 
 // *********************************************************************//
 // Declaration of CoClasses defined in Type Library                       
 // (NOTE: Here we map each CoClass to its Default Interface)              
 // *********************************************************************//
-  TAXReport = ITAXReport;
+  ReportManX = IReportManX;
 
 
 // *********************************************************************//
-// Interface: ITAXReport
+// Interface: IReportManX
 // Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {CDCE32C4-AD5A-4586-BE9F-E854AED322BB}
+// GUID:      {08D4AA91-80AB-49DF-9E6B-62B4F4BED6D9}
 // *********************************************************************//
-  ITAXReport = interface(IDispatch)
-    ['{CDCE32C4-AD5A-4586-BE9F-E854AED322BB}']
+  IReportManX = interface(IDispatch)
+    ['{08D4AA91-80AB-49DF-9E6B-62B4F4BED6D9}']
     function Execute: WordBool; safecall;
     procedure PrinterSetup; safecall;
     function ShowParams: WordBool; safecall;
@@ -138,12 +138,12 @@ type
   end;
 
 // *********************************************************************//
-// DispIntf:  ITAXReportDisp
+// DispIntf:  IReportManXDisp
 // Flags:     (4416) Dual OleAutomation Dispatchable
-// GUID:      {CDCE32C4-AD5A-4586-BE9F-E854AED322BB}
+// GUID:      {08D4AA91-80AB-49DF-9E6B-62B4F4BED6D9}
 // *********************************************************************//
-  ITAXReportDisp = dispinterface
-    ['{CDCE32C4-AD5A-4586-BE9F-E854AED322BB}']
+  IReportManXDisp = dispinterface
+    ['{08D4AA91-80AB-49DF-9E6B-62B4F4BED6D9}']
     function Execute: WordBool; dispid 1;
     procedure PrinterSetup; dispid 2;
     function ShowParams: WordBool; dispid 3;
@@ -173,28 +173,28 @@ type
   end;
 
 // *********************************************************************//
-// DispIntf:  ITAXReportEvents
+// DispIntf:  IReportManXEvents
 // Flags:     (0)
-// GUID:      {91704395-5771-4C12-8B14-6343E62740D1}
+// GUID:      {BF1380A3-DE22-4675-BE8F-6F877A9CE402}
 // *********************************************************************//
-  ITAXReportEvents = dispinterface
-    ['{91704395-5771-4C12-8B14-6343E62740D1}']
+  IReportManXEvents = dispinterface
+    ['{BF1380A3-DE22-4675-BE8F-6F877A9CE402}']
   end;
 
 
 // *********************************************************************//
 // OLE Control Proxy class declaration
-// Control Name     : TTAXReport
-// Help String      : TAXReport Control
-// Default Interface: ITAXReport
+// Control Name     : TReportManX
+// Help String      : ReportManX Control
+// Default Interface: IReportManX
 // Def. Intf. DISP? : No
-// Event   Interface: ITAXReportEvents
+// Event   Interface: IReportManXEvents
 // TypeFlags        : (34) CanCreate Control
 // *********************************************************************//
-  TTAXReport = class(TOleControl)
+  TReportManX = class(TOleControl)
   private
-    FIntf: ITAXReport;
-    function  GetControlInterface: ITAXReport;
+    FIntf: IReportManX;
+    function  GetControlInterface: IReportManX;
   protected
     procedure CreateControl;
     procedure InitControlData; override;
@@ -211,8 +211,8 @@ type
     function UseRightToLeftScrollBar: WordBool;
     procedure SetSubComponent(IsSubComponent: WordBool);
     procedure AboutBox;
-    property  ControlInterface: ITAXReport read GetControlInterface;
-    property  DefaultInterface: ITAXReport read GetControlInterface;
+    property  ControlInterface: IReportManX read GetControlInterface;
+    property  DefaultInterface: IReportManX read GetControlInterface;
     property DoubleBuffered: WordBool index 12 read GetWordBoolProp write SetWordBoolProp;
     property AlignDisabled: WordBool index 13 read GetWordBoolProp;
     property VisibleDockClientCount: Integer index 14 read GetIntegerProp;
@@ -239,10 +239,10 @@ implementation
 
 uses ComObj;
 
-procedure TTAXReport.InitControlData;
+procedure TReportManX.InitControlData;
 const
   CControlData: TControlData2 = (
-    ClassID: '{0A20EACF-4898-474E-9FE6-6DD1113BB4E2}';
+    ClassID: '{12B4E008-C646-4FB7-89F1-716BBD8EA06D}';
     EventIID: '';
     EventCount: 0;
     EventDispIDs: nil;
@@ -253,87 +253,87 @@ begin
   ControlData := @CControlData;
 end;
 
-procedure TTAXReport.CreateControl;
+procedure TReportManX.CreateControl;
 
   procedure DoCreate;
   begin
-    FIntf := IUnknown(OleObject) as ITAXReport;
+    FIntf := IUnknown(OleObject) as IReportManX;
   end;
 
 begin
   if FIntf = nil then DoCreate;
 end;
 
-function TTAXReport.GetControlInterface: ITAXReport;
+function TReportManX.GetControlInterface: IReportManX;
 begin
   CreateControl;
   Result := FIntf;
 end;
 
-function TTAXReport.Execute: WordBool;
+function TReportManX.Execute: WordBool;
 begin
   Result := DefaultInterface.Execute;
 end;
 
-procedure TTAXReport.PrinterSetup;
+procedure TReportManX.PrinterSetup;
 begin
   DefaultInterface.PrinterSetup;
 end;
 
-function TTAXReport.ShowParams: WordBool;
+function TReportManX.ShowParams: WordBool;
 begin
   Result := DefaultInterface.ShowParams;
 end;
 
-procedure TTAXReport.SaveToPDF(const filename: WideString);
+procedure TReportManX.SaveToPDF(const filename: WideString);
 begin
   DefaultInterface.SaveToPDF(filename);
 end;
 
-function TTAXReport.PrintRange(frompage: Integer; topage: Integer; copies: Integer; 
-                               collate: WordBool): WordBool;
+function TReportManX.PrintRange(frompage: Integer; topage: Integer; copies: Integer; 
+                                collate: WordBool): WordBool;
 begin
   Result := DefaultInterface.PrintRange(frompage, topage, copies, collate);
 end;
 
-function TTAXReport.DrawTextBiDiModeFlagsReadingOnly: Integer;
+function TReportManX.DrawTextBiDiModeFlagsReadingOnly: Integer;
 begin
   Result := DefaultInterface.DrawTextBiDiModeFlagsReadingOnly;
 end;
 
-procedure TTAXReport.InitiateAction;
+procedure TReportManX.InitiateAction;
 begin
   DefaultInterface.InitiateAction;
 end;
 
-function TTAXReport.IsRightToLeft: WordBool;
+function TReportManX.IsRightToLeft: WordBool;
 begin
   Result := DefaultInterface.IsRightToLeft;
 end;
 
-function TTAXReport.UseRightToLeftReading: WordBool;
+function TReportManX.UseRightToLeftReading: WordBool;
 begin
   Result := DefaultInterface.UseRightToLeftReading;
 end;
 
-function TTAXReport.UseRightToLeftScrollBar: WordBool;
+function TReportManX.UseRightToLeftScrollBar: WordBool;
 begin
   Result := DefaultInterface.UseRightToLeftScrollBar;
 end;
 
-procedure TTAXReport.SetSubComponent(IsSubComponent: WordBool);
+procedure TReportManX.SetSubComponent(IsSubComponent: WordBool);
 begin
   DefaultInterface.SetSubComponent(IsSubComponent);
 end;
 
-procedure TTAXReport.AboutBox;
+procedure TReportManX.AboutBox;
 begin
   DefaultInterface.AboutBox;
 end;
 
 procedure Register;
 begin
-  RegisterComponents('ActiveX',[TTAXReport]);
+  RegisterComponents('ActiveX',[TReportManX]);
 end;
 
 end.

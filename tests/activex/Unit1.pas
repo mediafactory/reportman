@@ -36,7 +36,8 @@ end;
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
- axreport.Filename:='c:\prog\toni\cvsroot\reportman\reportman\repman\repsamples\vfp.rep';
+ axreport.Filename:='c:\prog\toni\cvsroot\reportman\reportman\repman\repsamples\sample1.rep';
+ axreport.Title:='Test';
  axreport.Execute;
 end;
 

@@ -9,33 +9,34 @@ uses
   StdCtrls, ExtCtrls, Buttons;
 
 type
-  TTAXReportAbout = class(TForm)
+  TReportManXAbout = class(TForm)
+    CtlImage: TSpeedButton;
     NameLbl: TLabel;
-    OkBtn: TButton;
-    CopyrightLbl: TLabel;
-    DescLbl: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
     LVersion: TLabel;
     Image1: TImage;
-    Label1: TLabel;
-    LName: TLabel;
-    Label2: TLabel;
-    LEmail: TLabel;
-    Label3: TLabel;
     Label4: TLabel;
+    LName: TLabel;
     Label5: TLabel;
-    Memo1: TMemo;
+    LEmail: TLabel;
     Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Button1: TButton;
+    Memo1: TMemo;
   end;
 
-procedure ShowTAXReportAbout;
+procedure ShowReportManXAbout;
 
 implementation
 
 {$R *.DFM}
 
-procedure ShowTAXReportAbout;
+procedure ShowReportManXAbout;
 begin
-  with TTAXReportAbout.Create(nil) do
+  with TReportManXAbout.Create(nil) do
     try
       ShowModal;
     finally

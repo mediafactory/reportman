@@ -2,6 +2,7 @@ package rppackvcl_del;
 
 {$R *.res}
 {$R 'rpvclreport.dcr'}
+{$R 'rpactivexreport.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -46,6 +47,7 @@ contains
   rpvgraphutils in 'rpvgraphutils.pas',
   rprfvparams in 'rprfvparams.pas' {FRpRTParams},
   rpregvcl in 'rpregvcl.pas',
-  rpgdifonts in 'rpgdifonts.pas';
+  rpgdifonts in 'rpgdifonts.pas',
+  rpactivexreport in 'rpactivexreport.pas';
 
 end.
