@@ -26,7 +26,7 @@ interface
 uses SysUtils, Classes,
   Graphics, Forms,
   Buttons, ExtCtrls, Controls, StdCtrls,
-  rpmdconsts,rptypes,ComCtrls,
+  rpmdconsts,rptypes,ComCtrls,rpmaskedit,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
@@ -180,10 +180,15 @@ begin
      end;
    rpParamInteger,rpParamDouble,rpParamCurrency:
      begin
-      acontrol:=TEdit.Create(Self);
+      acontrol:=TRpMaskEdit.Create(Self);
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
       TEdit(acontrol).Text:='0';
+      TRpMaskEdit(acontrol).DisplayMask:='####,##0.##';
+      if aparam.ParamType=rpParamInteger then
+       TRpMaskEdit(acontrol).EditType:=teInteger
+      else
+       TRpMaskEdit(acontrol).EditType:=teCurrency;
       if aparam.Value=Null then
       begin
        achecknull.Checked:=true;

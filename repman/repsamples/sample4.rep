@@ -349,6 +349,7 @@ object TRpReport
     PosX = 0
     PosY = 570
     Type1Font = poHelvetica
+    FontSize = 6
     Series = <
       item
         Color = 0
@@ -356,6 +357,8 @@ object TRpReport
     ChartType = rpchartpie
     Driver = rpchartdriverdefault
     View3dWalls = False
+    Resolution = 200
+    ShowLegend = True
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
