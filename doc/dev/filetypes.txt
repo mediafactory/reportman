@@ -13,9 +13,10 @@ Ascii
 .txt    Text files like this
 
 Binary
-*.dcr   Component resource containing image to Delphi/Kylix palette
-*.res   Resource file (containing icon of the application)
-*.ddp   Diagram file of Delphi (to draw diagrams)
-*.rpmf  Report manager metafile
-*.rep   Reportmanager report
-
+.dcr   Component resource containing image to Delphi/Kylix palette
+.res   Resource file (containing icon of the application)
+.ddp   Diagram file of Delphi (to draw diagrams)
+.rpmf  Report manager metafile
+.rep   Reportmanager report
+.bmp   Bitmap files
+.ico   Icon windows file
