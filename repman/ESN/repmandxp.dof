@@ -113,7 +113,7 @@ RootDir=C:\Archivos de programa\Borland\Delphi7\Bin\
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
-MinorVer=1
+MinorVer=5
 Release=0
 Build=0
 Debug=0
@@ -126,7 +126,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Designer
-FileVersion=1.1.0.0
+FileVersion=1.5.0.0
 InternalName=repmandxp
 LegalCopyright=MPL/GPL License
 LegalTrademarks=

@@ -47,6 +47,23 @@ time
   property Title:string read FTitle write SetTitle;<br>
   property Language:integer read FLanguage write SetLanguage;<br>
 </p>
+<p><b>Since version 1.5 there are this interfaces available</b></p>
+<p>property Report:IReportReport;<br>
+  // Inside Report<br>
+  property Params:IReportParams;<br>
+  // Inside Params<br>
+  property Count:Integer;<br>
+  property Items[index:integer]:IReportParam<br>
+  // Inside param<br>
+  property Value:Variant<br>
+  property Name:String;<br>
+  property ParamType:TxParamType<br>
+  property Description:WideString;<br>
+  So to Access a parameter type or Name:<br>
+  activexcontrol.Report.Params.Items[0].ParamType<br>
+  activexcontrol.Report.Params.Items[0].Name<br>
+  Or to Get parameter count:<br>
+  activexcontrol.Report.Params.Count</p>
 <h3>Using the control with VB like languages</h3>
 <p>The ActiveX control may be used directly in VB, VBScript, ASP and WSH. In the
 VB environment you are generally recommended to &quot;Reference&quot; the
