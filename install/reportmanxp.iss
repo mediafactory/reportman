@@ -20,8 +20,26 @@ WizardSmallImageFile=SetupModernSmall02.bmp
 ; uncomment the following line if you want your installation to run on NT 3.51 too.
 ; MinVersion=4,3.51
 
+[Types]
+Name: "full"; Description: "{cm:Fullinstallation}"
+Name: "custom"; Description: "{cm:Custominstallation}"; Flags: iscustom
+
+[Components]
+Name: "designer"; Description: "{cm:ReportManagerDesigner}"; Types: full custom
+Name: "dbexpress"; Description: "{cm:DBExpressdatabasedrivers}"; Types: full custom
+Name: "commandline"; Description: "{cm:Commandlinetools}"; Types: full custom
+Name: "help"; Description: "{cm:Documentation}"; Types: full custom
+Name: "servertcp"; Description: "{cm:TCPserver}"; Types: full custom
+Name: "serverconf"; Description: "{cm:ServerconfigurationXP}"; Types: full custom
+Name: "clienttcp"; Description: "{cm:TCPclientandmetafileviewer}"; Types: full custom
+Name: "serverweb"; Description: "{cm:Webserver}"; Types: full custom
+Name: "activex"; Description: "{cm:ActiveXcomponent}"; Types: full custom
+Name: "ieplugin"; Description: "{cm:InternetExplorerplugin}"; Types: full custom
+Name: "translation"; Description: "{cm:TranslationUtility}"; Types: full custom
+Name: "repsample"; Description: "{cm:ReportSamples}"; Types: full custom
+
 [Languages]
-Name: "en"; MessagesFile: "compiler:Default.isl"
+Name: "en"; MessagesFile: "EnglishT.isl"
 Name: "de"; MessagesFile: "GermanT.isl"
 Name: "es"; MessagesFile: "SpanishT.isl"
 Name: "cat"; MessagesFile: "CatalanT.isl"
@@ -30,102 +48,103 @@ Name: "it"; MessagesFile: "ItalianT.isl"
 Name: "fr"; MessagesFile: "FrenchT.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"; MinVersion: 4,4
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "Additional icons:"; MinVersion: 4,4
 ;Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; MinVersion: 4,4; Flags: unchecked
 
 [Files]
-Source: "..\repman\repmandxp.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\repmandxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\reportmanres.*"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\transwin\repmandxp.*"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\transwin\metaviewxp.*"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\metaview\metaviewxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\metaview\metaviewxp.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\metaprint\metaprintxp.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\metaprint\metaprintxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\repmandxp.exe"; DestDir: "{app}"; Components: designer; Flags: ignoreversion
+Source: "..\repman\repmandxp.exe.manifest"; DestDir: "{app}"; Components: designer; Flags: ignoreversion
+Source: "..\repman\reportmanres.*"; DestDir: "{sys}"; Flags: restartreplace
+Source: "..\repman\transwin\repmandxp.*"; DestDir: "{app}"; Components: designer; Flags: ignoreversion
+Source: "..\repman\transwin\metaviewxp.*"; DestDir: "{app}"; Components: clienttcp; Flags: ignoreversion
+Source: "..\repman\utils\metaview\metaviewxp.exe.manifest"; DestDir: "{app}"; Components: clienttcp; Flags: ignoreversion
+Source: "..\repman\utils\metaview\metaviewxp.exe"; DestDir: "{app}"; Components: clienttcp; Flags: ignoreversion
+Source: "..\repman\utils\metaprint\metaprintxp.exe"; DestDir: "{app}"; Components: commandline; Flags: ignoreversion
+Source: "..\repman\utils\metaprint\metaprintxp.exe.manifest"; DestDir: "{app}"; Components: commandline; Flags: ignoreversion
 Source: "license.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\printrep\printrepxp.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\printrep\printrepxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\reptotxt\reptotxt.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\txttorep\txttorep.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\compilerep\compilerep.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\drivers\win32\upx.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\rptranslator\rptranslate.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\rptranslator\rptranslate.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\rptranslator\rptranslateres.*"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\compilerep\compilerep.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\utils\printreptopdf\printreptopdf.exe"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "..\activex\ReportMan.ocx"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\activex\ReportMan.ocx"; DestDir: "{sys}"; Flags: restartreplace sharedfile regserver
-Source: "..\activex\ReportMan.ocx.manifest"; DestDir: "{sys}"
-Source: "..\webactivex\WebReportManX.cab"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "..\webactivex\WebReportManX.cab"; DestDir: "{sys}"; CopyMode: alwaysskipifsameorolder; Flags: restartreplace sharedfile regserver
-Source: "..\server\service\repserverservice.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\server\app\reportserverappxp.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\server\app\reportserverappxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\server\app\reportservercon.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\server\config\repserverconfigxp.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\server\config\repserverconfigxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\server\service\repserviceinstall.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\server\service\repserviceinstall.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\server\web\repwebserver.dll"; DestDir: "{app}\webserver"; Flags: ignoreversion
-Source: "..\server\web\repwebexe.exe"; DestDir: "{app}\webserver"; Flags: ignoreversion
+Source: "..\repman\utils\printrep\printrepxp.exe"; DestDir: "{app}"; Components: commandline; Flags: ignoreversion
+Source: "..\repman\utils\printrep\printrepxp.exe.manifest"; DestDir: "{app}"; Components: commandline; Flags: ignoreversion
+Source: "..\repman\utils\reptotxt\reptotxt.exe"; DestDir: "{app}"; Components: commandline; Flags: ignoreversion
+Source: "..\repman\utils\txttorep\txttorep.exe"; DestDir: "{app}"; Components: commandline; Flags: ignoreversion
+Source: "..\drivers\win32\upx.exe"; DestDir: "{sys}"; Flags: restartreplace
+Source: "..\repman\utils\rptranslator\rptranslate.exe"; DestDir: "{app}"; Components: translation; Flags: ignoreversion
+Source: "..\repman\utils\rptranslator\rptranslate.exe.manifest"; DestDir: "{app}"; Components: translation; Flags: ignoreversion
+Source: "..\repman\utils\rptranslator\rptranslateres.*"; DestDir: "{app}"; Components: translation; Flags: ignoreversion
+Source: "..\repman\utils\compilerep\compilerep.exe"; DestDir: "{app}"; Components: commandline; Flags: ignoreversion
+Source: "..\repman\utils\printreptopdf\printreptopdf.exe"; DestDir: "{app}"; Components: commandline; Flags: ignoreversion
+Source: "..\activex\ReportMan.ocx"; DestDir: "{sys}"; Components: activex; Flags: restartreplace sharedfile regserver
+Source: "..\activex\ReportMan.ocx.manifest"; DestDir: "{sys}"; Components: activex
+Source: "..\webactivex\WebReportManX.cab"; DestDir: "{app}"; Components: ieplugin; Flags: ignoreversion
+Source: "..\webactivex\WebReportManX.ocx"; DestDir: "{sys}"; Components: ieplugin; Flags: restartreplace sharedfile regserver
+Source: "..\server\service\repserverservice.exe"; DestDir: "{app}"; Components: servertcp; Flags: ignoreversion
+Source: "..\server\app\reportserverappxp.exe"; DestDir: "{app}"; Components: servertcp; Flags: ignoreversion
+Source: "..\server\app\reportserverappxp.exe.manifest"; DestDir: "{app}"; Components: servertcp; Flags: ignoreversion
+Source: "..\server\app\reportservercon.exe"; DestDir: "{app}"; Components: servertcp; Flags: ignoreversion
+Source: "..\server\config\repserverconfigxp.exe"; DestDir: "{app}"; Components: serverconf; Flags: ignoreversion
+Source: "..\server\config\repserverconfigxp.exe.manifest"; DestDir: "{app}"; Components: serverconf; Flags: ignoreversion
+Source: "..\server\service\repserviceinstall.exe"; DestDir: "{app}"; Components: servertcp; Flags: ignoreversion
+Source: "..\server\service\repserviceinstall.exe.manifest"; DestDir: "{app}"; Components: servertcp; Flags: ignoreversion
+Source: "..\server\web\repwebserver.dll"; DestDir: "{app}\webserver"; Components: serverweb; Flags: ignoreversion
+Source: "..\server\web\repwebexe.exe"; DestDir: "{app}\webserver"; Components: serverweb; Flags: ignoreversion
 ; Report Server custom files
-Source: "..\server\web\*.html"; DestDir: "{app}\webserver"; Flags: ignoreversion
-Source: "..\webactivex\reportman.htm"; DestDir: "{app}\sampleplugin"; Flags: ignoreversion
+Source: "..\server\web\*.html"; DestDir: "{app}\webserver"; Components: serverweb; Flags: ignoreversion
+Source: "..\webactivex\reportman.htm"; DestDir: "{app}\sampleplugin"; Components: ieplugin; Flags: ignoreversion
 
-Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\dbxdrivers.ini"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\dbxconnections.ini"; DestDir: "{app}"; Flags: onlyifdoesntexist
-Source: "..\drivers\win32\dbexpint.dll"; DestDir: "{sys}"; Flags: uninsneveruninstall onlyifdoesntexist
-Source: "..\drivers\win32\dbexpmys.dll"; DestDir: "{sys}"; Flags: uninsneveruninstall onlyifdoesntexist
-Source: "..\drivers\win32\dbexpinf.dll"; DestDir: "{sys}"; Flags: uninsneveruninstall onlyifdoesntexist
-Source: "..\drivers\win32\dbexpmysql.dll"; DestDir: "{sys}"; Flags: uninsneveruninstall onlyifdoesntexist
-Source: "..\drivers\win32\dbexpmss.dll"; DestDir: "{sys}";  Flags: uninsneveruninstall onlyifdoesntexist
-Source: "..\drivers\win32\dbexpora.dll"; DestDir: "{sys}";  Flags: uninsneveruninstall onlyifdoesntexist
-Source: "..\drivers\win32\dbexpdb2.dll"; DestDir: "{sys}";  Flags: uninsneveruninstall onlyifdoesntexist
-Source: "..\drivers\win32\dbxoodbc.dll"; DestDir: "{sys}"; Flags: uninsneveruninstall onlyifdoesntexist
-Source: "..\drivers\win32\upx.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; Components: repsample; Flags: ignoreversion
+Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; Components: repsample; Flags: ignoreversion
+
+Source: "..\repman\dbxdrivers.ini"; DestDir: "{app}"; Components: dbexpress; Flags: ignoreversion
+Source: "..\repman\dbxconnections.ini"; DestDir: "{app}"; Components: dbexpress; Flags: onlyifdoesntexist
+Source: "..\drivers\win32\dbexpint.dll"; DestDir: "{sys}"; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbexpmys.dll"; DestDir: "{sys}"; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbexpinf.dll"; DestDir: "{sys}"; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbexpmysql.dll"; DestDir: "{sys}"; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbexpmss.dll"; DestDir: "{sys}";  Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbexpora.dll"; DestDir: "{sys}";  Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbexpdb2.dll"; DestDir: "{sys}";  Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbxoodbc.dll"; DestDir: "{sys}"; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+
 ; Api libraries
-Source: "..\rpreportman.h"; DestDir: "{app}\api"; Flags: ignoreversion
-Source: "..\rpreportmanapi.bas"; DestDir: "{app}\api"; Flags: ignoreversion
-Source: "..\tests\gcctest\Reportman.def"; DestDir: "{app}\api"; Flags: ignoreversion
+Source: "..\rpreportman.h"; DestDir: "{app}\api"; Components: activex; Flags: ignoreversion
+Source: "..\rpreportmanapi.bas"; DestDir: "{app}\api"; Components: activex; Flags: ignoreversion
+Source: "..\tests\gcctest\Reportman.def"; DestDir: "{app}\api"; Components: activex; Flags: ignoreversion
 ; Documentation
-Source: "..\doc\doc\*.*"; DestDir: "{app}\doc"; Flags: ignoreversion
-Source: "..\doc\doc\images\*.*"; DestDir: "{app}\doc\images"; Flags: ignoreversion
-Source: "..\doc\doc\units\*.*"; DestDir: "{app}\doc\units"; Flags: ignoreversion
+Source: "..\doc\doc\*.*"; DestDir: "{app}\doc"; Components: help; Flags: ignoreversion
+Source: "..\doc\doc\images\*.*"; DestDir: "{app}\doc\images"; Components: help; Flags: ignoreversion
+Source: "..\doc\doc\units\*.*"; DestDir: "{app}\doc\units"; Components: help; Flags: ignoreversion
 
 
 [Registry]
-Root: HKCR; Subkey: ".rep"; ValueType: string; ValueName: ""; ValueData: "Report Manager Designer"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "Report Manager Designer"; ValueType: string; ValueName: ""; ValueData: "Report Manager Designer File"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "Report Manager Designer\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\repmandxp.exe,0"
-Root: HKCR; Subkey: "Report Manager Designer\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\repmandxp.exe"" ""%1"""
+Root: HKCR; Subkey: ".rep"; Components: designer; ValueType: string; ValueName: ""; ValueData: "Report Manager Designer"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "Report Manager Designer"; Components: designer; ValueType: string; ValueName: ""; ValueData: "Report Manager Designer File"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Report Manager Designer\DefaultIcon"; Components: designer; ValueType: string; ValueName: ""; ValueData: "{app}\repmandxp.exe,0"
+Root: HKCR; Subkey: "Report Manager Designer\shell\open\command"; Components: designer; ValueType: string; ValueName: ""; ValueData: """{app}\repmandxp.exe"" ""%1"""
 
-Root: HKCR; Subkey: ".rpmf"; ValueType: string; ValueName: ""; ValueData: "Report Manager Client"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "Report Manager Client"; ValueType: string; ValueName: ""; ValueData: "Report Manager Metafile"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "Report Manager Client\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\metaviewxp.exe,0"
-Root: HKCR; Subkey: "Report Manager Client\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\metaviewxp.exe"" ""%1"""
+Root: HKCR; Subkey: ".rpmf"; Components: clienttcp; ValueType: string; ValueName: ""; ValueData: "Report Manager Client"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "Report Manager Client"; Components: clienttcp; ValueType: string; ValueName: ""; ValueData: "Report Manager Metafile"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Report Manager Client\DefaultIcon"; Components: clienttcp; ValueType: string; ValueName: ""; ValueData: "{app}\metaviewxp.exe,0"
+Root: HKCR; Subkey: "Report Manager Client\shell\open\command"; Components: clienttcp; ValueType: string; ValueName: ""; ValueData: """{app}\metaviewxp.exe"" ""%1"""
 
 ;DBExpress keys
-Root: HKLM; Subkey: "SOFTWARE\Borland\DBExpress"; ValueType: string; ValueName: "Driver Registry File"; ValueData: "{app}\dbxdrivers.ini"; Flags: createvalueifdoesntexist
-Root: HKLM; Subkey: "SOFTWARE\Borland\DBExpress"; ValueType: string; ValueName: "Connection Registry File"; ValueData: "{app}\dbxconnections.ini"; Flags: createvalueifdoesntexist
+Root: HKLM; Subkey: "SOFTWARE\Borland\DBExpress"; ValueType: string; Components: dbexpress; ValueName: "Driver Registry File"; ValueData: "{app}\dbxdrivers.ini"; Flags: createvalueifdoesntexist
+Root: HKLM; Subkey: "SOFTWARE\Borland\DBExpress"; ValueType: string; Components: dbexpress; ValueName: "Connection Registry File"; ValueData: "{app}\dbxconnections.ini"; Flags: createvalueifdoesntexist
+
 
 [Icons]
-Name: "{group}\Designer XP"; Filename: "{app}\repmandxp.exe"; WorkingDir: "{app}"
-Name: "{group}\Metafile Viewer and Report Client XP"; Filename: "{app}\metaviewxp.exe"; WorkingDir: "{app}"
-Name: "{group}\Translation Utility"; Filename: "{app}\rptranslate.exe"; WorkingDir: "{app}"
-Name: "{group}\License"; Filename: "{app}\license.txt";
-Name: "{group}\Server application XP"; Filename: "{app}\reportserverappxp.exe"; WorkingDir: "{app}"
-Name: "{group}\Server configuration XP"; Filename: "{app}\repserverconfigxp.exe"; WorkingDir: "{app}"
-Name: "{group}\Service Installation tool"; Filename: "{app}\repserviceinstall.exe"; WorkingDir: "{app}"
-Name: "{group}\Register ActiveX"; Filename: "{sys}\regsvr32"; Parameters: "Reportman.ocx"; WorkingDir: "{app}"
-Name: "{group}\UnRegister ActiveX"; Filename: "{sys}\regsvr32"; Parameters: "/u Reportman.ocx"; WorkingDir: "{app}"
-Name: "{userdesktop}\Report Manager Designer XP"; Filename: "{app}\repmandxp.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
-Name: "{userdesktop}\Report Manager Client"; Filename: "{app}\metaviewxp.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
+Name: "{group}\{cm:DesignerXP}"; Filename: "{app}\repmandxp.exe"; Components: designer; WorkingDir: "{app}"
+Name: "{group}\{cm:MetafileViewerandReportClientXP}"; Filename: "{app}\metaviewxp.exe"; Components: clienttcp; WorkingDir: "{app}"
+Name: "{group}\{cm:TranslationUtility}"; Filename: "{app}\rptranslate.exe"; Components: translation; WorkingDir: "{app}"
+Name: "{group}\{cm:SLicense}"; Filename: "{app}\license.txt";
+Name: "{group}\{cm:ServerapplicationXP}"; Filename: "{app}\reportserverappxp.exe"; Components: servertcp; WorkingDir: "{app}"
+Name: "{group}\{cm:ServerconfigurationXP}"; Filename: "{app}\repserverconfigxp.exe"; Components: serverconf; WorkingDir: "{app}"
+Name: "{group}\{cm:ServiceInstallationtool}"; Filename: "{app}\repserviceinstall.exe"; Components: servertcp; WorkingDir: "{app}"
+Name: "{group}\{cm:RegisterActiveX}"; Filename: "{sys}\regsvr32"; Parameters: "Reportman.ocx"; Components: activex; WorkingDir: "{app}"
+Name: "{group}\{cm:UnRegisterActiveX}"; Filename: "{sys}\regsvr32"; Parameters: "/u Reportman.ocx"; Components: activex; WorkingDir: "{app}"
+Name: "{group}\{cm:RegisterPlugin}"; Filename: "{sys}\regsvr32"; Parameters: "WebReportmanX.ocx"; Components: ieplugin; WorkingDir: "{app}"
+Name: "{group}\{cm:UnRegisterPlugin}"; Filename: "{sys}\regsvr32"; Parameters: "/u WebReportmanX.ocx"; Components: ieplugin; WorkingDir: "{app}"
+Name: "{userdesktop}\{cm:ReportManagerDesignerXP}"; Filename: "{app}\repmandxp.exe"; WorkingDir: "{app}"; Components: designer; MinVersion: 4,4; Tasks: desktopicon
+Name: "{userdesktop}\{cm:ReportManagerClient}"; Filename: "{app}\metaviewxp.exe"; WorkingDir: "{app}"; Components: clienttcp; MinVersion: 4,4; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\repmandxp.exe"; Description: "Launch Report Manager Designer XP"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\repmandxp.exe"; Description: "{cm:LaunchReportManagerDesignerXP}"; Components: designer; Flags: nowait postinstall skipifsilent
 

@@ -96,7 +96,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=rtl;dbrtl;dsnap;bdertl;dbexpress;ibxpress;rppack_del;adortl;vcl;vclx;vcldb;vcldbx
-Conditionals=
+Conditionals=NOLINUXPRINTBUG;FORWEBAX
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=1
 Release=0
-Build=1
+Build=2
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=RpTranslator
-FileVersion=2.1.0.1
+FileVersion=2.1.0.2
 InternalName=rptranslate
 LegalCopyright=MPL license
 LegalTrademarks=
@@ -136,9 +136,9 @@ ProductVersion=2.1.0.0
 Comments=
 [HistoryLists\hlConditionals]
 Count=3
-Item0=REPMANRELEASE
-Item1=FORWEBAX
-Item2=NOLINUXPRINTBUG;FORWEBAX
+Item0=NOLINUXPRINTBUG;FORWEBAX
+Item1=REPMANRELEASE
+Item2=FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

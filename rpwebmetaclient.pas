@@ -259,14 +259,45 @@ begin
    sysdir:=GetTheSystemDirectory;
    connect.Get(MetaUrl+'/reportmanres.es',astream);
    if astream.size=0 then
-    Raise Exception.Create(SRpNotFound+' - '+MetaUrl);
+    Raise Exception.Create(SRpNotFound+' - es '+MetaUrl);
    astream.Seek(0,soFromBeginning);
    astream.SaveToFile(sysdir+DIR_SEPARATOR+'reportmanres.es');
+   //
+   connect.Get(MetaUrl+'/reportmanres.cat',astream);
+   if astream.size=0 then
+    Raise Exception.Create(SRpNotFound+' - cat '+MetaUrl);
+   astream.Seek(0,soFromBeginning);
+   astream.SaveToFile(sysdir+DIR_SEPARATOR+'reportmanres.cat');
+   //
    connect.Get(MetaUrl+'/reportmanres.fr',astream);
    if astream.size=0 then
-    Raise Exception.Create(SRpNotFound+' - '+MetaUrl);
+    Raise Exception.Create(SRpNotFound+' - fr '+MetaUrl);
    astream.Seek(0,soFromBeginning);
    astream.SaveToFile(sysdir+DIR_SEPARATOR+'reportmanres.fr');
+   //
+   connect.Get(MetaUrl+'/reportmanres.pt',astream);
+   if astream.size=0 then
+    Raise Exception.Create(SRpNotFound+' - pt '+MetaUrl);
+   astream.Seek(0,soFromBeginning);
+   astream.SaveToFile(sysdir+DIR_SEPARATOR+'reportmanres.pt');
+   //
+   connect.Get(MetaUrl+'/reportmanres.de',astream);
+   if astream.size=0 then
+    Raise Exception.Create(SRpNotFound+' - de '+MetaUrl);
+   astream.Seek(0,soFromBeginning);
+   astream.SaveToFile(sysdir+DIR_SEPARATOR+'reportmanres.de');
+   //
+   connect.Get(MetaUrl+'/reportmanres.it',astream);
+   if astream.size=0 then
+    Raise Exception.Create(SRpNotFound+' - it '+MetaUrl);
+   astream.Seek(0,soFromBeginning);
+   astream.SaveToFile(sysdir+DIR_SEPARATOR+'reportmanres.it');
+   //
+   connect.Get(MetaUrl+'/reportmanres.en',astream);
+   if astream.size=0 then
+    Raise Exception.Create(SRpNotFound+' - en '+MetaUrl);
+   astream.Seek(0,soFromBeginning);
+   astream.SaveToFile(sysdir+DIR_SEPARATOR+'reportmanres.en');
 {   connect.Get(MetaUrl+'/WebReportManX.ocx.manifest',astream);
    if astream.size=0 then
     Raise Exception.Create(SRpNotFound+' - '+MetaUrl);

@@ -3,7 +3,8 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 1.3 (Lite)
+AppVerName=Report Manager 2.1
+AppVersion=2.1
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -11,39 +12,77 @@ AppUpdatesURL=http://sourceforge.net/projects/reportman
 DefaultDirName={pf}\Report Manager
 DefaultGroupName=Report Manager
 LicenseFile=license.txt
+PrivilegesRequired=admin
+LanguageDetectionMethod=uilanguage
+WizardImageFile=HardwareClassic05.bmp
+WizardImageStretch=False
+WizardSmallImageFile=SetupModernSmall02.bmp
 ; uncomment the following line if you want your installation to run on NT 3.51 too.
 ; MinVersion=4,3.51
 
+[Types]
+Name: "full"; Description: "{cm:Fullinstallation}"
+Name: "custom"; Description: "{cm:Custominstallation}"; Flags: iscustom
+
+[Components]
+Name: "designer"; Description: "{cm:ReportManagerDesigner}"; Types: full custom
+Name: "dbexpress"; Description: "{cm:DBExpressdatabasedrivers}"; Types: full custom
+Name: "repsample"; Description: "{cm:ReportSamples}"; Types: full custom
+
+[Languages]
+Name: "en"; MessagesFile: "EnglishT.isl"
+Name: "de"; MessagesFile: "GermanT.isl"
+Name: "es"; MessagesFile: "SpanishT.isl"
+Name: "cat"; MessagesFile: "CatalanT.isl"
+Name: "pt"; MessagesFile: "PortugueseT.isl"
+Name: "it"; MessagesFile: "ItalianT.isl"
+Name: "fr"; MessagesFile: "FrenchT.isl"
+
 [Tasks]
-Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"; MinVersion: 4,4
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "Additional icons:"; MinVersion: 4,4
 ;Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; MinVersion: 4,4; Flags: unchecked
 
 [Files]
-Source: "..\repman\repmandxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\repmandxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\transwin\repmandxp.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "license.txt"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\dbxdrivers.ini"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\dbxconnections.ini"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\drivers\win32\dbexpint.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbexpmys.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbexpinf.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbexpmysql.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbexpmss.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbexpora.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbexpdb2.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbxoodbc.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
+Source: "..\repman\repmandxp.exe"; DestDir: "{app}"; Components: designer; Flags: ignoreversion
+Source: "..\repman\repmandxp.exe.manifest"; DestDir: "{app}"; Components: designer; Flags: ignoreversion
+Source: "..\repman\transwin\repmandxp.*"; DestDir: "{app}"; Components: designer; Flags: ignoreversion
+Source: "..\repman\reportmanres.*"; DestDir: "{sys}"; Flags: ignoreversion
+Source: "..\repman\transwin\repmandxp.*"; DestDir: "{app}"; Components: designer; Flags: ignoreversion
+Source: "license.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\drivers\win32\upx.exe"; DestDir: "{sys}"; Flags: restartreplace
+Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; Components: repsample; Flags: ignoreversion
+Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; Components: repsample; Flags: ignoreversion
+
+Source: "..\repman\dbxdrivers.ini"; DestDir: "{app}"; Components: dbexpress; Flags: ignoreversion
+Source: "..\repman\dbxconnections.ini"; DestDir: "{app}"; Components: dbexpress; Flags: onlyifdoesntexist
+Source: "..\drivers\win32\dbexpint.dll"; DestDir: "{sys}"; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbexpmys.dll"; DestDir: "{sys}"; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbexpinf.dll"; DestDir: "{sys}"; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbexpmysql.dll"; DestDir: "{sys}"; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbexpmss.dll"; DestDir: "{sys}";  Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbexpora.dll"; DestDir: "{sys}";  Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbexpdb2.dll"; DestDir: "{sys}";  Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: "..\drivers\win32\dbxoodbc.dll"; DestDir: "{sys}"; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+
+
+
+[Registry]
+Root: HKCR; Subkey: ".rep"; Components: designer; ValueType: string; ValueName: ""; ValueData: "Report Manager Designer"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "Report Manager Designer"; Components: designer; ValueType: string; ValueName: ""; ValueData: "Report Manager Designer File"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Report Manager Designer\DefaultIcon"; Components: designer; ValueType: string; ValueName: ""; ValueData: "{app}\repmandxp.exe,0"
+Root: HKCR; Subkey: "Report Manager Designer\shell\open\command"; Components: designer; ValueType: string; ValueName: ""; ValueData: """{app}\repmandxp.exe"" ""%1"""
+
+
+;DBExpress keys
+Root: HKLM; Subkey: "SOFTWARE\Borland\DBExpress"; ValueType: string; Components: dbexpress; ValueName: "Driver Registry File"; ValueData: "{app}\dbxdrivers.ini"; Flags: createvalueifdoesntexist
+Root: HKLM; Subkey: "SOFTWARE\Borland\DBExpress"; ValueType: string; Components: dbexpress; ValueName: "Connection Registry File"; ValueData: "{app}\dbxconnections.ini"; Flags: createvalueifdoesntexist
+
 
 [Icons]
-Name: "{group}\Designer XP"; Filename: "{app}\repmandxp.exe"; WorkingDir: "{app}"
-Name: "{group}\License"; Filename: "{app}\license.txt";
-Name: "{userdesktop}\Report Manager Designer XP"; Filename: "{app}\repmandxp.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
+Name: "{group}\{cm:DesignerXP}"; Filename: "{app}\repmandxp.exe"; Components: designer; WorkingDir: "{app}"
+Name: "{group}\{cm:SLicense}"; Filename: "{app}\license.txt";
+Name: "{userdesktop}\{cm:ReportManagerDesignerXP}"; Filename: "{app}\repmandxp.exe"; WorkingDir: "{app}"; Components: designer; MinVersion: 4,4; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\repmandxp.exe"; Description: "Launch Report Manager Designer XP"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\repmandxp.exe"; Description: "{cm:LaunchReportManagerDesignerXP}"; Components: designer; Flags: nowait postinstall skipifsilent
 

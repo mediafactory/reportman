@@ -11,7 +11,7 @@
 ; Setup adds the periods automatically (appending a period would result in
 ; two periods being displayed).
 ;
-; $Id: SpanishT.isl,v 1.2 2004/04/28 13:31:04 tonim Exp $
+; $Id: SpanishT.isl,v 1.3 2004/05/01 12:52:09 tonim Exp $
 
 [LangOptions]
 LanguageName=Español
@@ -331,6 +331,8 @@ ServerapplicationXP=Servidor de informes TCP/IP
 ServerconfigurationXP=Utilidad de configuración del servidor TCP/IP
 RegisterActiveX=Instalar ActiveX en el registro
 UnRegisterActiveX=Eliminar ActiveX del registro
+RegisterPlugin=Registrar Plugin
+UnRegisterPlugin=Eliminar Plugin del registro
 ReportManagerDesignerXP=Diseñador Report Manager
 ReportManagerClient=Cliente Report Manager
 ReportSamples=Ejemplos de informes
@@ -338,3 +340,4 @@ ReportSamples=Ejemplos de informes
 Fullinstallation=Instalación completa
 Custominstallation=Instalación personalizada
 ServiceInstallationtool=Utilidad de instalación de servicio
+SLicense=Licencia

@@ -102,7 +102,14 @@ begin
  end;
  // CHeck for UPX
  if compress then
-  WinExec(PChar('"'+path+'\'+'upx" '+'"'+destinationexe+'"'),SW_HIDE);
+ begin
+  if FileExists(path+'\upx.exe') then
+  begin
+   WinExec(PChar('"'+path+'\'+'upx" '+'"'+destinationexe+'"'),SW_HIDE);
+  end
+  else
+   WinExec(PChar('"upx" '+'"'+destinationexe+'"'),SW_HIDE);
+ end;
 end;
 
 end.
