@@ -106,6 +106,13 @@ implementation
 
 uses rpbasereport;
 
+type
+  TGraphicHeader = record
+    Count: Word;                { Fixed at 1 }
+    HType: Word;                { Fixed at $0100 }
+    Size: Longint;              { Size not including header }
+  end;
+
 
 constructor TRpShape.Create(AOwner:TComponent);
 begin

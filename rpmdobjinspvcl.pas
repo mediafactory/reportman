@@ -626,7 +626,9 @@ begin
  report:=FRpMainf.report;
  try
   adriver:=fpdfdriver;
+{$IFNDEF DOTNETD}
   adriver._AddRef;
+{$ENDIF}
   report.BeginPrint(fpdfdriver);
  except
   on E:Exception do

@@ -71,7 +71,7 @@ type
 
 procedure DrawBitmap (Destination:TCanvas; Bitmap:TBitmap; Rec,RecSrc:TRect);
 procedure DrawBitmapMosaic (canvas:TCanvas; rec:TRect; bitmap:TBitmap);
-procedure DrawBitmapMosaicSlow (canvas:TCanvas; rec:Trect; bitmap:TBitmap);
+procedure DrawBitmapMosaicSlow(canvas:TCanvas;rec:Trect;bitmap:TBitmap;dpi:Integer);
 function GetPhysicPageSizeTwips:TPoint;
 function GetPageSizeTwips:TPoint;
 function GetPageMarginsTWIPS:TRect;
@@ -404,7 +404,7 @@ begin
  end;
 end;
 
-procedure DrawBitmapMosaicSlow(canvas:TCanvas;rec:Trect;bitmap:TBitmap);
+procedure DrawBitmapMosaicSlow(canvas:TCanvas;rec:Trect;bitmap:TBitmap;dpi:Integer);
 var
  arec,recsrc:TRect;
  abitmap:TBitmap;
@@ -413,66 +413,84 @@ var
  aresult:integer;
  abrush:HBrush;
  oldobj:THandle;
+ xdpi,ydpi:integer;
 begin
- dopatblt:=false;
- if IsWindowsNT then
- begin
-  dopatblt:=true;
-  aresult:=GetDevicecaps(Canvas.Handle,RASTERCAPS);
-  if ((aresult AND RC_BITBLT)=0) then
-   dopatblt:=false;
- end;
- if dopatblt then
- begin
-  abrush:=CreatePatternBrush(bitmap.handle);
-  if abrush=0 then
-   dopatblt:=false
+ abitmap:=TBitmap.Create;
+ try
+{$IFNDEF DOTNETD}
+   abitmap.PixelFormat:=pf32bit;
+   abitmap.HandleType:=bmDIB;
+{$ENDIF}
+  if dpi<=0 then
+  begin
+   abitmap.Assign(bitmap);
+  end
   else
   begin
-   try
-    oldobj:=SelectObject(Canvas.handle,abrush);
-    try
-     PatBlt(Canvas.Handle,rec.Left,rec.Top,rec.Right-rec.Left,rec.Bottom-rec.Top,PATCOPY);
-    finally
-     SelectObject(Canvas.Handle,oldobj);
-    end;
-   finally
-    DeleteObject(abrush);
-   end;
-  end;
- end;
- if not dopatblt then
- begin
-  abitmap:=TBitmap.Create;
-  try
-   arec.Left:=0;
+   // Redraw the bitmap to the new dpi
+   xdpi:=GetDeviceCaps(Canvas.Handle,LOGPIXELSX);
+   ydpi:=GetDeviceCaps(Canvas.Handle,LOGPIXELSY);
+   abitmap.Width:=bitmap.Width*xdpi div dpi;
+   abitmap.Height:=bitmap.Width*ydpi div dpi;
    arec.Top:=0;
-   arec.Bottom:=rec.Bottom-rec.Top;
-   arec.Right:=rec.Right-rec.Left;
- {$IFNDEF DOTNETD}
-   abitmap.PixelFormat:=pf32bit;
-   bitmap.HandleType:=bmDIB;
- {$ENDIF}
-   bitmapwidth:=rec.Right-rec.Left+1;
-   bitmapheight:=rec.Bottom-rec.Top+1;
-   // Must reduce te bitmap size to maximum bitmap size
-   while bitmapheight*bitmapwidth*4>MAX_BITMAP_SIZE do
-   begin
-    bitmapheight:=bitmapheight div 2;
-    bitmapwidth:=bitmapwidth div 2;
-   end;
-
-   abitmap.Width:=rec.Right-rec.Left+1;
-   abitmap.Height:=rec.Bottom-rec.Top+1;
-   DrawBitmapMosaic(abitmap.Canvas,arec,bitmap);
-   recsrc.Left:=0;
-   recsrc.Top:=0;
-   recsrc.Right:=aBitmap.Width-1;
-   recsrc.Bottom:=aBitmap.Height-1;
-   DrawBitmap(Canvas,aBitmap,rec,recsrc)
-  finally
-   abitmap.free;
+   arec.Left:=0;
+   arec.Bottom:=abitmap.Height;
+   arec.Right:=abitmap.Width;
+   abitmap.Canvas.StretchDraw(arec,bitmap);
   end;
+  dopatblt:=false;
+  if IsWindowsNT then
+  begin
+   dopatblt:=true;
+   aresult:=GetDevicecaps(Canvas.Handle,RASTERCAPS);
+   if ((aresult AND RC_BITBLT)=0) then
+    dopatblt:=false;
+  end;
+  if dopatblt then
+  begin
+   abrush:=CreatePatternBrush(abitmap.handle);
+   if abrush=0 then
+    dopatblt:=false
+   else
+   begin
+    try
+     oldobj:=SelectObject(Canvas.handle,abrush);
+     try
+      PatBlt(Canvas.Handle,rec.Left,rec.Top,rec.Right-rec.Left,rec.Bottom-rec.Top,PATCOPY);
+     finally
+      SelectObject(Canvas.Handle,oldobj);
+     end;
+    finally
+     DeleteObject(abrush);
+    end;
+   end;
+  end;
+  if not dopatblt then
+  begin
+    arec.Left:=0;
+    arec.Top:=0;
+    arec.Bottom:=rec.Bottom-rec.Top;
+    arec.Right:=rec.Right-rec.Left;
+    bitmapwidth:=rec.Right-rec.Left+1;
+    bitmapheight:=rec.Bottom-rec.Top+1;
+    // Must reduce te bitmap size to maximum bitmap size
+    while bitmapheight*bitmapwidth*4>MAX_BITMAP_SIZE do
+    begin
+     bitmapheight:=bitmapheight div 2;
+     bitmapwidth:=bitmapwidth div 2;
+    end;
+
+    abitmap.Width:=rec.Right-rec.Left+1;
+    abitmap.Height:=rec.Bottom-rec.Top+1;
+    DrawBitmapMosaic(abitmap.Canvas,arec,bitmap);
+    recsrc.Left:=0;
+    recsrc.Top:=0;
+    recsrc.Right:=aBitmap.Width-1;
+    recsrc.Bottom:=aBitmap.Height-1;
+    DrawBitmap(Canvas,aBitmap,rec,recsrc)
+  end;
+ finally
+  abitmap.free;
  end;
 end;
 
@@ -1075,16 +1093,18 @@ var
   DeviceMode: THandle;
   PDevMode :  ^TDeviceMode;
   Device, Driver, Port: array[0..1023] of char;
+  pforminfo:^Form_info_1;
 {$ENDIF}
 {$IFDEF DOTNETD}
   DeviceMode: IntPtr;
   PDevMode :  TDeviceMode;
   Device, Driver, Port:String;
+  pforminfo:Form_info_1;
+  apforminfo:IntPtr;
 {$ENDIF}
   printererror:boolean;
   Handle:THandle;
   printername:String;
-  pforminfo:^Form_info_1;
   laste:integer;
   needed:DWord;
 begin
@@ -1149,12 +1169,25 @@ begin
   end;
   if Length(Result.PaperName)>0 then
   begin
+{$IFDEF DOTNETD}
+   if not OpenPrinter(PrinterName, Handle, nil) then
+{$ENDIF}
+{$IFNDEF DOTNETD}
    if not OpenPrinter(PChar(PrinterName), Handle, nil) then
+{$ENDIF}
     RaiseLastOSError;
    try
+{$IFNDEF DOTNETD}
     pforminfo:=allocmem(sizeof(form_info_1));
     try
      if Not GetForm(handle,Pchar(Result.papername),1,pforminfo,sizeof(Form_info_1),needed) then
+{$ENDIF}
+{$IFDEF DOTNETD}
+    apforminfo:=Marshal.AllocHGlobal(needed);
+    pforminfo:=Form_info_1(Marshal.PtrToStructure(apforminfo,TypeOf(form_info_1)));
+    try
+     if Not GetForm(handle,Result.papername,1,pforminfo,needed,needed) then
+{$ENDIF}
      begin
       laste:=GetLasterror;
       if ((laste<>122) AND (Laste<>123) AND (laste<>1902)) then
@@ -1165,9 +1198,17 @@ begin
        begin
         if needed>0 then
         begin
+{$IFNDEF DOTNETD}
          freemem(pforminfo);
          pforminfo:=AllocMem(needed);
          if Not GetForm(handle,Pchar(Result.papername),1,pforminfo,needed,needed) then
+{$ENDIF}
+{$IFDEF DOTNETD}
+         Marshal.FreeHGlobal(apforminfo);
+         apforminfo:=Marshal.AllocHGlobal(needed);
+         pforminfo:=Form_info_1(Marshal.PtrToStructure(apforminfo,TypeOf(form_info_1)));
+         if Not GetForm(handle,Result.papername,1,pforminfo,needed,needed) then
+{$ENDIF}
           RaiseLastOSError;
          Result.Height:=pforminfo.Size.cy div 100;
          Result.Width:=pforminfo.Size.cx div 100;
@@ -1181,7 +1222,12 @@ begin
       Result.Width:=pforminfo.Size.cx div 100;
      end;
     finally
+{$IFNDEF DOTNETD}
      freemem(pforminfo);
+{$ENDIF}
+{$IFDEF DOTNETD}
+     Marshal.FreeHGlobal(apforminfo);
+{$ENDIF}
     end;
    finally
     ClosePrinter(Handle);
@@ -1670,7 +1716,12 @@ begin
       end;
      end;
      // Select by name
+{$IFDEF DOTNETD}
+     PDevMode.dmFormName:=Copy(apapername,1,32);
+{$ENDIF}
+{$IFNDEF DOTNETD}
      StrPCopy(PDevMode.dmFormName,Copy(apapername,1,32));
+{$ENDIF}
      PDevMode.dmFields:=PDevMode.dmFields or dm_formname;
      PDevMode.dmFields:=PDevMode.dmFields AND (NOT dm_papersize);
     finally

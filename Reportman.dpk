@@ -100,7 +100,9 @@ contains
   rpmdshfolder in 'rpmdshfolder.pas',
   rpcsvdriver in 'rpcsvdriver.pas',
   rpmreg in 'rpmreg.pas',
-  rppdfreport in 'rppdfreport.pas' {rppdfreport.TPDFReport: rpcompobase.TCBaseReport};
+  rppdfreport in 'rppdfreport.pas' {rppdfreport.TPDFReport: rpcompobase.TCBaseReport},
+  rpinfoprovgdi in 'rpinfoprovgdi.pas',
+  rpinfoprovid in 'rpinfoprovid.pas';
 
 [assembly: AssemblyDescription('')]
 [assembly: AssemblyConfiguration('')]

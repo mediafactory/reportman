@@ -88,6 +88,8 @@ implementation
 
 constructor TRpTTFontData.Create;
 begin
+ inherited Create;
+
  loadedwidths:=TStringList.Create;
  loadedwidths.sorted:=true;
  loadedkernings:=TStringList.Create;

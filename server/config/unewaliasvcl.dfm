@@ -1,8 +1,8 @@
 object FNewAliasVCL: TFNewAliasVCL
   Left = 304
   Top = 174
-  Width = 542
-  Height = 175
+  Width = 587
+  Height = 214
   HorzScrollBar.Range = 525
   VertScrollBar.Range = 109
   ActiveControl = BOk
@@ -19,8 +19,8 @@ object FNewAliasVCL: TFNewAliasVCL
   Scaled = False
   OnCreate = FormCreate
   DesignSize = (
-    534
-    141)
+    579
+    180)
   PixelsPerInch = 96
   TextHeight = 13
   object LAlias: TLabel
@@ -40,13 +40,16 @@ object FNewAliasVCL: TFNewAliasVCL
   object LAliasbase: TLabel
     Left = 120
     Top = 72
-    Width = 52
-    Height = 13
+    Width = 449
+    Height = 65
+    Anchors = [akLeft, akTop, akRight]
+    AutoSize = False
     Caption = 'LAliasBase'
+    WordWrap = True
   end
   object BOk: TButton
     Left = 11
-    Top = 108
+    Top = 148
     Width = 75
     Height = 25
     Caption = 'OK'
@@ -56,7 +59,7 @@ object FNewAliasVCL: TFNewAliasVCL
   end
   object BCancel: TButton
     Left = 107
-    Top = 108
+    Top = 148
     Width = 75
     Height = 25
     Cancel = True
@@ -67,7 +70,7 @@ object FNewAliasVCL: TFNewAliasVCL
   object EAliasName: TEdit
     Left = 120
     Top = 8
-    Width = 405
+    Width = 450
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
@@ -76,7 +79,7 @@ object FNewAliasVCL: TFNewAliasVCL
   object EPath: TEdit
     Left = 120
     Top = 44
-    Width = 405
+    Width = 450
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 1

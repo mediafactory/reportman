@@ -270,8 +270,11 @@ begin
  begin
   Fontimp:=TPrinterFont.Create;
   Fontimp.Font.Name:=fm[i].Name;
-  System.Drawing.Font.Create(fm[i].Name,0).Tologfont(Fontimp.LogFont);
-  printerfonts.Add(Fontimp);
+  if (fm[i].IsStyleAvailable(System.Drawing.FontStyle.Regular)) then
+  begin
+   System.Drawing.Font.Create(fm[i].Name,10.0).Tologfont(Fontimp.LogFont);
+   printerfonts.Add(Fontimp);
+  end;
  end;
 {$ENDIF}
  printerFonts.Sort(CompareFonts);

@@ -1161,6 +1161,18 @@ begin
  end;
 end;
 
+{$IFDEF DOTNETD}
+function BytesToGraphicHeader(const ABytes: TBytes): TGraphicHeader;
+begin
+  Result.Count := System.BitConverter.ToUInt16(ABytes, 0);
+  Result.HType := System.BitConverter.ToUInt16(ABytes, sizeof(Result.Count));
+  Result.Size := System.BitConverter.ToUInt32(ABytes, sizeof(Result.Count) +
+    sizeof(Result.HType));
+end;
+{$ENDIF}
+
+
+
 function TRpCustomEvaluator.GetStreamFromExpression(atext:WideString):TMemoryStream;
 var
  iden:TRpIdentifier;

@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=2
 Release=0
-Build=9
+Build=10
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Server config client
-FileVersion=2.2.0.9
+FileVersion=2.2.0.10
 InternalName=repserverconfig
 LegalCopyright=MPL License
 LegalTrademarks=

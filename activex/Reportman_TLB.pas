@@ -12,10 +12,10 @@ unit Reportman_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 23/08/2004 17:25:26 from Type Library described below.
+// File generated on 30/08/2004 18:01:51 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
+// Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\reportman.tlb (1)
 // LIBID: {D4D26F6B-6564-44F4-A913-03C91CE37740}
 // LCID: 0
 // Helpfile: 

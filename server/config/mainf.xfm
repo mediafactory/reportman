@@ -133,7 +133,7 @@ object FMain: TFMain
       Top = 12
       Width = 501
       Height = 273
-      ActivePage = TabConnections
+      ActivePage = TabUsers
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 1
       object TabUsers: TTabSheet

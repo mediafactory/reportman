@@ -16,8 +16,8 @@
 // Indy support , remote report execution for base components
 {$DEFINE USEINDY}
 
-// Kerning support, only experimental
-//{$DEFINE USEKERNING}
+// Kerning support
+{$DEFINE USEKERNING}
 
 // Database drivers to be used by default
 {$DEFINE USESQLEXPRESS}
@@ -71,6 +71,7 @@
  {$UNDEF USEIBX}
  {$UNDEF USEZEOS}
  {$DEFINE BUILDER4}
+ {$DEFINE DEPHI4}
  {$UNDEF USEDESIGNEDITORS}
  {$UNDEF USEEXCEL}
  {$UNDEF USEADO}

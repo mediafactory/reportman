@@ -119,8 +119,8 @@
 			<Directories Name="UnitOutputDir" Type="String"></Directories>
 			<Directories Name="PackageDLLOutputDir" Type="String"></Directories>
 			<Directories Name="PackageDCPOutputDir" Type="String"></Directories>
-			<Directories Name="SearchPath" Type="String"></Directories>
-			<Directories Name="Packages" Type="String">Borland.VclDbExpress;Borland.VclBdeRtl;Borland.VclRtl;Borland.VclDSnap;Borland.VclDbRtl;Borland.Vcl;ReportMan;Borland.Delphi</Directories>
+			<Directories Name="SearchPath" Type="String">h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0;c:\prog\toni\cvsroot\reportman\reportman</Directories>
+			<Directories Name="Packages" Type="String">Borland.VclRtl.dll;Borland.VclDbExpress.dll;Borland.VclBdeRtl.dll;Borland.VclDSnap.dll;Borland.VclDbRtl.dll;Borland.Vcl.dll;ReportMan;Borland.Delphi.dll</Directories>
 			<Directories Name="Conditionals" Type="String"></Directories>
 			<Directories Name="DebugSourceDirs" Type="String"></Directories>
 			<Directories Name="UsePackages" Type="Boolean">False</Directories>
@@ -156,17 +156,25 @@
 			<VersionInfo Name="DLL" Type="Boolean">False</VersionInfo>
 			<VersionInfo Name="Locale" Type="Integer">3082</VersionInfo>
 			<VersionInfo Name="CodePage" Type="Integer">1252</VersionInfo>
-		</VersionInfo>  <FileList>
-      <File FileName="Borland.Delphi.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.Delphi" AssemblyName="borland.delphi" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="ReportMan.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="ReportMan" AssemblyName="ReportMan" Version="1.0.1434.22521" LinkUnits="False"/>
-      <File FileName="Borland.Vcl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.Vcl" AssemblyName="Borland.Vcl" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="Borland.VclDbRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDbRtl" AssemblyName="Borland.VclDbRtl" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="Borland.VclDSnap.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDSnap" AssemblyName="Borland.VclDSnap" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="Borland.VclRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclRtl" AssemblyName="Borland.VclRtl" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="Borland.Vcl.Design.Standard.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclRtl" AssemblyName="Borland.VclRtl" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="Borland.VclBdeRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclBdeRtl" AssemblyName="Borland.VclBdeRtl" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="Borland.VclDbExpress.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDbExpress" AssemblyName="Borland.VclDbExpress" Version="7.1.1431.11699" LinkUnits="False"/>
-      <File FileName="rpmreg.pas" ContainerId="" ModuleName="rpmreg"/>
+		</VersionInfo>  
+    
+    
+    
+    <FileList>
+      <File FileName="Borland.Delphi.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.Delphi" AssemblyName="" LinkUnits="False"/>
+      <File FileName="ReportMan.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="ReportMan" AssemblyName="ReportMan" Version="1.0.1702.23274" LinkUnits="False"/>
+      <File FileName="Borland.Vcl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.Vcl" AssemblyName="" LinkUnits="False"/>
+      <File FileName="Borland.VclDbRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDbRtl" AssemblyName="" LinkUnits="False"/>
+      <File FileName="Borland.VclDSnap.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDSnap" AssemblyName="" LinkUnits="False"/>
+      <File FileName="Borland.VclBdeRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclBdeRtl" AssemblyName="" LinkUnits="False"/>
+      <File FileName="Borland.VclDbExpress.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDbExpress" AssemblyName="" LinkUnits="False"/>
+      <File FileName="Borland.VclRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclRtl" AssemblyName="" LinkUnits="False"/>
+      <File FileName="rpmregdesigntime.pas" ContainerId="" ModuleName="rpmregdesigntime"/>
+      <File FileName="rpeditalias.pas" ContainerId="" ModuleName="rpeditalias"/>
+      <File FileName="rpeditconnvcl.pas" ContainerId="" ModuleName="rpeditconnvcl"/>
+      <File FileName="rpdbxconfigvcl.pas" ContainerId="" ModuleName="rpdbxconfigvcl"/>
+      <File FileName="rpmdesigneditors.pas" ContainerId="" ModuleName="rpmdesigneditors"/>
+      <File FileName="rpwebmetaclient.pas" ContainerId="" ModuleName="rpwebmetaclient"/>
     </FileList>
   </DelphiDotNet.Personality>
 </BorlandProject>

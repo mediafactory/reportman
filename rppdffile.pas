@@ -2813,7 +2813,9 @@ begin
  else
  begin
   FInfoProvider:=aprov;
+{$IFNDEF DOTNETD}
   FInfoprovider._AddRef;
+{$ENDIF}
  end;
 end;
 

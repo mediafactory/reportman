@@ -14,6 +14,9 @@ object FMainVCL: TFMainVCL
   ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
+  DesignSize = (
+    548
+    436)
   PixelsPerInch = 96
   TextHeight = 13
   object LHost: TLabel
@@ -39,6 +42,9 @@ object FMainVCL: TFMainVCL
     Anchors = [akLeft, akTop, akRight]
     Caption = 'User information'
     TabOrder = 1
+    DesignSize = (
+      529
+      117)
     object LUserName: TLabel
       Left = 8
       Top = 24
@@ -90,6 +96,9 @@ object FMainVCL: TFMainVCL
     Caption = 'Server information'
     TabOrder = 2
     Visible = False
+    DesignSize = (
+      541
+      325)
     object BCloseConnection: TButton
       Left = 8
       Top = 285
@@ -104,11 +113,14 @@ object FMainVCL: TFMainVCL
       Top = 12
       Width = 525
       Height = 269
-      ActivePage = TabConnections
+      ActivePage = TabUsers
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 1
       object TabUsers: TTabSheet
         Caption = 'Users'
+        DesignSize = (
+          517
+          241)
         object GUsers: TGroupBox
           Left = 0
           Top = 0
@@ -117,6 +129,9 @@ object FMainVCL: TFMainVCL
           Anchors = [akLeft, akTop, akRight]
           Caption = 'Users'
           TabOrder = 0
+          DesignSize = (
+            513
+            105)
           object LUsers: TListBox
             Left = 4
             Top = 12
@@ -200,6 +215,9 @@ object FMainVCL: TFMainVCL
           Anchors = [akLeft, akTop, akRight]
           Caption = 'The user is member of this groups'
           TabOrder = 2
+          DesignSize = (
+            277
+            105)
           object LUserGroups: TListBox
             Left = 40
             Top = 20
@@ -308,6 +326,9 @@ object FMainVCL: TFMainVCL
       object TabAliases: TTabSheet
         Caption = 'Aliases'
         ImageIndex = 2
+        DesignSize = (
+          517
+          241)
         object GReportDirectories: TGroupBox
           Left = 0
           Top = 0
@@ -316,6 +337,9 @@ object FMainVCL: TFMainVCL
           Anchors = [akLeft, akTop, akRight]
           Caption = 'Report server directories'
           TabOrder = 0
+          DesignSize = (
+            517
+            133)
           object DBGrid1: TDBGrid
             Left = 4
             Top = 16
@@ -384,6 +408,9 @@ object FMainVCL: TFMainVCL
           Anchors = [akLeft, akTop, akRight]
           Caption = 'This alias is accessible by this user groups'
           TabOrder = 2
+          DesignSize = (
+            317
+            105)
           object LAliasGroups: TListBox
             Left = 40
             Top = 20

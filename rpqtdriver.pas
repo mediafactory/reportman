@@ -710,7 +710,7 @@ begin
 //        Canvas.CopyRect(rec,bitmap.canvas,recsrc);
         Canvas.Draw(PosX,PosY,bitmap);
        end;
-      rpDrawTile:
+      rpDrawTile,rpDrawTiledpi:
        begin
         Canvas.TiledDraw(rec,bitmap);
        end;

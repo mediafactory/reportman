@@ -943,14 +943,17 @@ begin
         recsrc.Bottom:=rec.Bottom-rec.Top;
         DrawBitmap(secint.BackBitmap.Canvas,abitmap,rec,recsrc);
        end;
-      rpDrawTile:
+      rpDrawTile,rpDrawTiledpi:
        begin
         // Set clip region
         oldrgn:=CreateRectRgn(0,0,2,2);
         aresult:=GetClipRgn(secint.BackBitmap.Canvas.Handle,oldrgn);
         newrgn:=CreateRectRgn(rec.Left,rec.Top,rec.Right,rec.Bottom);
         SelectClipRgn(secint.BackBitmap.Canvas.handle,newrgn);
-        DrawBitmapMosaicSlow(secint.BackBitmap.Canvas,rec,abitmap);
+        if asection.DrawStyle=rpDrawTile then
+         DrawBitmapMosaicSlow(secint.BackBitmap.Canvas,rec,abitmap,0)
+        else
+         DrawBitmapMosaicSlow(secint.BackBitmap.Canvas,rec,abitmap,asection.dpires);
         if aresult=0 then
          SelectClipRgn(secint.BackBitmap.Canvas.handle,0)
         else

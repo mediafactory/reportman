@@ -30,17 +30,17 @@ requires
   Borland.Vcl,
   Borland.VclDbRtl,
   Borland.VclDSnap,
-  Borland.VclRtl,
   Borland.VclBdeRtl,
   Borland.VclDbExpress,
-  Borland.Vcl.Design.Standard;
+  Borland.VclRtl;
 
 contains
   rpmregdesigntime in 'rpmregdesigntime.pas',
   rpeditalias in 'rpeditalias.pas',
   rpeditconnvcl in 'rpeditconnvcl.pas',
   rpdbxconfigvcl in 'rpdbxconfigvcl.pas',
-  rpmdesigneditors in 'rpmdesigneditors.pas';
+  rpmdesigneditors in 'rpmdesigneditors.pas',
+  rpwebmetaclient in 'rpwebmetaclient.pas';
 
 [assembly: AssemblyTitle('Report Manager Design Editors')]
 [assembly: AssemblyDescription('Report Manager Design Editors for Report Manager components')]

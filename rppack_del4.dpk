@@ -102,6 +102,8 @@ contains
   rpmdprintconfigvcl in 'rpmdprintconfigvcl.pas' {FRpPrinterConfigVCL},
   rpmaskedit in 'rpmaskedit.pas',
   rpsvgdriver in 'rpsvgdriver.pas',
-  rpcsvdriver in 'rpcsvdriver.pas';
+  rpcsvdriver in 'rpcsvdriver.pas',
+  rpinfoprovid in 'rpinfoprovid.pas',
+  rpinfoprovgdi in 'rpinfoprovgdi.pas';
 
 end.

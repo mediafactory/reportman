@@ -100,7 +100,7 @@ var
 
 begin
  faxdevice:='';
- faxcoverstring:=SRpReportHeader;
+ faxcoverstring:='';
  bmpresx:=100;
  bmpresy:=100;
  sendfax:='';
@@ -357,7 +357,7 @@ begin
          meta.LoadFromStream(memstream);
          if Length(sendfax)>0 then
          begin
-          SendFaxMetafile(sendfax,faxcovertext,faxdevice,meta);
+          SendFaxMetafile(sendfax,faxcovertext,faxdevice,meta,ShowProgress);
          end
          else
          begin

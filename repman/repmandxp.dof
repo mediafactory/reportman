@@ -149,7 +149,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=2
 Release=0
-Build=66
+Build=69
 Debug=0
 PreRelease=0
 Special=0
@@ -160,7 +160,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Designer
-FileVersion=2.2.0.66
+FileVersion=2.2.0.69
 InternalName=repmandxp
 LegalCopyright=MPL/GPL License
 LegalTrademarks=

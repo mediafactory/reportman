@@ -888,7 +888,7 @@ begin
     rec.Top:=PosY;
     rec.Left:=PosX;
     rec.Bottom:=rec.Top+Height-1;
-    rec.Right:=rec.Left+Width-1;  
+    rec.Right:=rec.Left+Width-1;
 
     stream:=page.GetStream(obj);
     bitmap:=TBitmap.Create;
@@ -945,14 +945,17 @@ begin
         recsrc.Bottom:=rec.Bottom-rec.Top;
         DrawBitmap(Canvas,bitmap,rec,recsrc);
        end;
-      rpDrawTile:
+      rpDrawTile,rpDrawTiledpi:
        begin
         // Set clip region
         oldrgn:=CreateRectRgn(0,0,2,2);
         aresult:=GetClipRgn(Canvas.Handle,oldrgn);
         newrgn:=CreateRectRgn(rec.Left,rec.Top,rec.Right,rec.Bottom);
         SelectClipRgn(Canvas.handle,newrgn);
-        DrawBitmapMosaicSlow(Canvas,rec,bitmap);
+        if TRpImageDrawStyle(obj.DrawImageStyle)=rpDrawTile then
+         DrawBitmapMosaicSlow(Canvas,rec,bitmap,0)
+        else
+         DrawBitmapMosaicSlow(Canvas,rec,bitmap,obj.DPIres);
         if aresult=0 then
          SelectClipRgn(Canvas.handle,0)
         else
@@ -1397,6 +1400,7 @@ begin
  Result:=TBitmap.Create;
  try
   Result.HandleType:=bmDIB;
+{$IFNDEF DOTNETD}
   if Mono then
   begin
    Result.PixelFormat:=pf1bit;
@@ -1411,6 +1415,7 @@ begin
    Result.Palette:=CreatePalette(syspal.lpal);
   end
   else
+{$ENDIF}
   begin
 {$IFNDEF DOTNETDBUGS}
    Result.PixelFormat:=pf32bit;
@@ -2265,8 +2270,10 @@ begin
   achart.LeftAxis.Automatic:=false;
   achart.LeftAxis.AutomaticMaximum:=Series.AutoRangeH;
   achart.LeftAxis.AutomaticMinimum:=Series.AutoRangeL;
+{$IFDEF USEVARIANTS}
   achart.LeftAxis.Logarithmic:=Series.Logaritmic;
   achart.LeftAxis.LogarithmicBase:=Round(Series.LogBase);
+{$ENDIF}
   achart.LeftAxis.Inverted:=Series.Inverted;
   for i:=0 to Series.Count-1 do
   begin

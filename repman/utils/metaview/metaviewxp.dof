@@ -127,7 +127,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=2
 Release=0
-Build=32
+Build=35
 Debug=0
 PreRelease=0
 Special=0
@@ -138,18 +138,13 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report client and metafile viewer
-FileVersion=2.2.0.32
+FileVersion=2.2.0.35
 InternalName=metaview
 LegalCopyright=MPL/GLP License
 LegalTrademarks=
 OriginalFilename=metaview
 ProductName=Report Manager Metafile viewer/client
 ProductVersion=2.1.0.0
-[HistoryLists\hlConditionals]
-Count=3
-Item0=REPMANRELEASE
-Item1=FORWEBAX
-Item2=NOLINUXPRINTBUG;FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

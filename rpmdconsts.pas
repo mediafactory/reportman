@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.2pre21';
+ RM_VERSION='2.2';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
@@ -941,6 +941,7 @@ var
   //
   SRpCompareValue:WideString='Returns -1 if first number is lower, 1 if first number is greater or zero if equal.';
   SRpPCompareValue:WideString='num1 and num2 are numbers to compare, epsilon de diference tolerance';
+  SRpDrawTiledpi:WideString='Tile proportional';
 
 
 implementation

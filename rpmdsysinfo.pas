@@ -167,11 +167,13 @@ var
  Device, Driver, Port: array[0..1023] of char;
  pdevmode:^DEVMODE;
  buf:PChar;
+ pforminfo:^Form_info_1;
 {$ENDIF}
 {$IFDEF DOTNETD}
  DeviceMode: IntPtr;
  PDevMode :  TDeviceMode;
  Device, Driver, Port:String;
+ pforminfo:Form_info_1;
 {$ENDIF}
  asize:integer;
  cadenaimp:String;
@@ -180,7 +182,6 @@ var
  caps:integer;
  needed:DWord;
  dc:HDC;
- pforminfo:^Form_info_1;
  pagesize:TPoint;
  laste:integer;
 begin

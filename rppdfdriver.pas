@@ -383,7 +383,7 @@ begin
         begin
          FPDFFile.Canvas.DrawImage(rec,stream,CONS_PDFRES,false,true);
         end;
-      rpDrawTile:
+      rpDrawTile,rpDrawTiledpi:
        begin
         FPDFFile.Canvas.DrawImage(rec,stream,CONS_PDFRES,true,true);
        end;

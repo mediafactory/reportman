@@ -1,8 +1,8 @@
 object FNewAlias: TFNewAlias
-  Left = 308
-  Top = 194
-  Width = 544
-  Height = 141
+  Left = 182
+  Top = 235
+  Width = 610
+  Height = 166
   VertScrollBar.Range = 121
   HorzScrollBar.Range = 525
   ActiveControl = BOk
@@ -16,7 +16,7 @@ object FNewAlias: TFNewAlias
   TextWidth = 6
   object BOk: TButton
     Left = 11
-    Top = 96
+    Top = 128
     Width = 75
     Height = 25
     Caption = 'OK'
@@ -26,7 +26,7 @@ object FNewAlias: TFNewAlias
   end
   object BCancel: TButton
     Left = 119
-    Top = 96
+    Top = 128
     Width = 75
     Height = 25
     Cancel = True
@@ -44,7 +44,7 @@ object FNewAlias: TFNewAlias
   object EAliasName: TEdit
     Left = 120
     Top = 8
-    Width = 405
+    Width = 471
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
@@ -53,7 +53,7 @@ object FNewAlias: TFNewAlias
   object EPath: TEdit
     Left = 120
     Top = 44
-    Width = 405
+    Width = 471
     Height = 21
     Anchors = [akLeft, akTop, akRight]
     TabOrder = 1
@@ -69,8 +69,11 @@ object FNewAlias: TFNewAlias
   object LAliasbase: TLabel
     Left = 120
     Top = 72
-    Width = 52
-    Height = 13
+    Width = 473
+    Height = 49
+    Anchors = [akLeft, akTop, akRight]
+    AutoSize = False
     Caption = 'LAliasBase'
+    WordWrap = True
   end
 end

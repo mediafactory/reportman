@@ -48,7 +48,7 @@ uses
  FMTBcd,
 {$ENDIF}
 {$IFDEF DOTNETD}
- System.IO,
+ System.IO,System.Text,
  System.Runtime.InteropServices,
 {$ENDIF}
 {$IFDEF BUILDER4}
@@ -139,7 +139,7 @@ type
   rpbsDense2, rpbsDense3, rpbsDense4, rpbsDense5, rpbsDense6, rpbsDense7);
 
  TRpTwips=integer;
- TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull,rpDrawTile);
+ TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull,rpDrawTile,rpDrawTiledpi);
  TRpAggregate=(rpAgNone,rpAgGroup,rpAgPage,rpAgGeneral);
  TRpAggregateType=(rpagSum,rpagMin,rpagMax,rpagAvg,rpagStdDev);
  TRpReportChanged=(rpReportStart,rpDataChange,rpGroupChange,rpPageChange,rpInvalidateValue,rpSubReportStart);
@@ -315,6 +315,14 @@ function Roundfloat(num:double;redondeo:double):double;
 function RpCharToOem(source:String):String;
 {$ENDIF}
 
+{$IFDEF DOTNETD}
+{$UNSAFECODE ON}
+ function StrPas(source:Pchar):String;unsafe;
+ function StrPCopy(destination:PChar;Source:String):PChar;unsafe;
+ function StrPWCopy(destination:PWideChar;Source:WideString):PWideChar;unsafe;
+{$UNSAFECODE OFF}
+{$ENDIF}
+
 {$IFNDEF USEVARIANTS}
 procedure RaiseLastOSError;
 {$ENDIF}
@@ -327,6 +335,12 @@ function IsWindowsNT:Boolean;
 {$ENDIF}
 
 
+{$IFNDEF USEVARIANTS}
+type
+ TValueRelationship = -1..1;
+
+function CompareValue(const A,B,Epsilon: Double): TValueRelationship;
+{$ENDIF}
 
 
 {$IFNDEF USEVARIANTS}
@@ -3542,7 +3556,10 @@ begin
    Result:=rpDrawFull
   else
   if Value=SRPDrawTile then
-   Result:=rpDrawTile;
+   Result:=rpDrawTile
+  else
+  if Value=SRPDrawTiledpi then
+   Result:=rpDrawTiledpi;
 end;
 
 function RpDrawStyleToString(Value:TRpImageDrawStyle):String;
@@ -3556,6 +3573,8 @@ begin
    Result:=SRPSDrawFull;
   rpDrawTile:
    Result:=SRPDrawTile;
+  rpDrawTiledpi:
+   Result:=SRPDrawTiledpi;
  end;
 end;
 
@@ -3566,6 +3585,7 @@ begin
  alist.Add(SRpSDrawStretch);
  alist.Add(SRpSDrawFull);
  alist.Add(SRpDrawTile);
+ alist.Add(SRpDrawTiledpi);
 end;
 
 procedure GetDrawStyleDescriptions(alist:TRpWideStrings);
@@ -3575,6 +3595,7 @@ begin
  alist.Add(SRpSDrawStretch);
  alist.Add(SRpSDrawFull);
  alist.Add(SRpDrawTile);
+ alist.Add(SRpDrawTiledpi);
 end;
 
 
@@ -3792,10 +3813,20 @@ begin
  leftfillchar:='0';
  rightmask:='';
  decimalplacesvariable:=true;
+{$IFDEF DOTNETD}
+ decchar:=decimalseparator[1];
+{$ENDIF}
+{$IFNDEF DOTNETD}
  decchar:=decimalseparator;
+{$ENDIF}
  if decchar=chr(0) then
   decchar:='.';
+{$IFNDEF DOTNETD}
  thchar:=thousandseparator;
+{$ENDIF}
+{$IFDEF DOTNETD}
+ thchar:=thousandseparator[1];
+{$ENDIF}
  // Decimal separator options
  index:=Pos('.',mask);
  if index<1 then
@@ -3951,6 +3982,7 @@ end;
 
 
 {$IFDEF MSWINDOWS}
+{$IFNDEF DOTNETD}
 function RpCharToOem(source:String):String;
 var
  abuf:Pchar;
@@ -3974,6 +4006,75 @@ begin
  end;
 end;
 {$ENDIF}
+{$IFDEF DOTNETD}
+function RpCharToOem(source:String):String;
+var
+ abuf:StringBuilder;
+ i:integer;
+begin
+ Result:='';
+ if Length(source)<1 then
+  exit;
+ CharToOem(source,abuf);
+ Result:=abuf.ToString;
+ for i:=1 to Length(Result) do
+ begin
+  // The Euro symbol
+  if Source[i]=chr(128) then
+   Result[i]:=chr($D5);
+ end;
+end;
+{$ENDIF}
+{$ENDIF}
+
+{$IFDEF DOTNETD}
+function StrPas(source:Pchar):String;
+var
+ i:integer;
+begin
+ Result:='';
+ i:=0;
+ while source[i]>chr(0) do
+  Result:=Result+Source[i];
+end;
+
+function StrPCopy(destination:PChar;Source:String):PChar;
+var
+ i:integer;
+begin
+ for i:=1 to Length(source) do
+  destination[i-1]:=Source[i];
+ destination[Length(source)]:=chr(0);
+ Result:=destination;
+end;
+
+function StrPWCopy(destination:PWideChar;Source:WideString):PWideChar;
+var
+ i:integer;
+begin
+ for i:=1 to Length(source) do
+  destination[i-1]:=Source[i];
+ destination[Length(source)]:=chr(0);
+ Result:=destination;
+end;
+
+{$ENDIF}
+
+
+{$IFNDEF USEVARIANTS}
+function CompareValue(const A,B,Epsilon: Double): TValueRelationship;
+begin
+ if Abs(Abs(A)-Abs(B))<=Epsilon then
+  Result:=0
+ else
+ begin
+  if A<B then
+   Result:=-1
+  else
+   Result:=1;
+ end;
+end;
+{$ENDIF}
 
 initialization
 
@@ -3983,6 +4084,7 @@ obtainedversion:=false;
 {$ENDIF}
 {$ENDIF}
 printerconfigfile:=nil;
+
 
 finalization
 

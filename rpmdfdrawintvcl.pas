@@ -638,7 +638,7 @@ begin
       rec.Right:=round(fbitmap.width/aimage.dpires)*dpix-1;
       Canvas.StretchDraw(rec,fbitmap);
      end;
-    rpDrawTile:
+    rpDrawTile,rpDrawTileDpi:
      begin
       // Set clip region
 //      oldrgn:=CreateRectRgn(0,0,2,2);
@@ -646,7 +646,10 @@ begin
 //      aresult:=GetClipRgn(Canvas.Handle,oldrgn);
 //      newrgn:=CreateRectRgn(rec.Left,rec.Top,rec.Right,rec.Bottom);
 //      SelectClipRgn(Canvas.handle,newrgn);
-      DrawBitmapMosaicSlow(Canvas,rec,fbitmap);
+      if aimage.DrawStyle=rpDrawTile then
+       DrawBitmapMosaicSlow(Canvas,rec,fbitmap,0)
+      else
+       DrawBitmapMosaicSlow(Canvas,rec,fbitmap,aimage.dpires);
 //      if aresult=0 then
 //       SelectClipRgn(Canvas.handle,0)
 //      else
