@@ -1,53 +1,46 @@
 object FRpDataText: TFRpDataText
-  Left = 217
-  Top = 119
+  Left = 225
+  Top = 159
   ActiveControl = EFileName
   AutoScroll = False
   Caption = 'Text file to database table configuration'
-  ClientHeight = 412
-  ClientWidth = 511
+  ClientHeight = 420
+  ClientWidth = 479
   Color = clButton
-  Font.Color = clText
-  Font.Height = 11
-  Font.Name = 'MS Sans Serif'
-  Font.Pitch = fpVariable
-  Font.Style = []
-  Font.Weight = 40
-  ParentFont = False
   Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 18
-  TextWidth = 5
+  TextHeight = 20
+  TextWidth = 8
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 511
-    Height = 53
+    Width = 479
+    Height = 65
     Align = alTop
     TabOrder = 0
     object Label1: TLabel
       Left = 8
       Top = 8
-      Width = 42
-      Height = 18
+      Width = 67
+      Height = 20
       Caption = 'Fields file'
     end
     object Label2: TLabel
       Left = 8
-      Top = 32
-      Width = 49
-      Height = 18
+      Top = 40
+      Width = 80
+      Height = 20
       Caption = 'Sample file'
     end
     object EFileName: TEdit
       Left = 108
       Top = 4
-      Width = 396
-      Height = 26
+      Width = 364
+      Height = 28
       Anchors = [akLeft, akTop, akRight]
       Color = clInfoBk
       ReadOnly = True
@@ -56,9 +49,9 @@ object FRpDataText: TFRpDataText
     end
     object ESampleFile: TEdit
       Left = 108
-      Top = 24
-      Width = 396
-      Height = 26
+      Top = 32
+      Width = 364
+      Height = 28
       Anchors = [akLeft, akTop, akRight]
       Color = clInfoBk
       ReadOnly = True
@@ -68,16 +61,16 @@ object FRpDataText: TFRpDataText
   end
   object PClient: TPanel
     Left = 0
-    Top = 53
-    Width = 511
-    Height = 359
+    Top = 65
+    Width = 479
+    Height = 355
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object Splitter1: TSplitter
       Left = 0
       Top = 156
-      Width = 511
+      Width = 479
       Height = 8
       Cursor = crVSplit
       Align = alTop
@@ -86,7 +79,7 @@ object FRpDataText: TFRpDataText
     object PList: TPanel
       Left = 0
       Top = 0
-      Width = 511
+      Width = 479
       Height = 156
       Align = alTop
       BevelOuter = bvNone
@@ -94,7 +87,7 @@ object FRpDataText: TFRpDataText
       object ToolBar1: TToolBar
         Left = 0
         Top = 0
-        Width = 511
+        Width = 479
         Height = 30
         AutoSize = True
         ButtonHeight = 26
@@ -139,31 +132,31 @@ object FRpDataText: TFRpDataText
       object GridFields: TDBGrid
         Left = 0
         Top = 30
-        Width = 511
+        Width = 479
         Height = 126
         Align = alClient
         DataSource = SFiedls
         TabOrder = 1
-        TitleFont.Color = clText
-        TitleFont.Height = 11
-        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Color = clBlack
+        TitleFont.Height = 16
+        TitleFont.Name = 'adobe-helvetica'
         TitleFont.Pitch = fpVariable
         TitleFont.Style = []
-        TitleFont.Weight = 40
+        TitleFont.Weight = 0
       end
     end
     object PBottom: TPanel
       Left = 0
       Top = 164
-      Width = 511
-      Height = 195
+      Width = 479
+      Height = 191
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
       object PFieldProps: TPanel
         Left = 0
         Top = 0
-        Width = 511
+        Width = 479
         Height = 85
         Align = alTop
         BevelOuter = bvNone
@@ -171,20 +164,20 @@ object FRpDataText: TFRpDataText
         object Label4: TLabel
           Left = 8
           Top = 28
-          Width = 199
-          Height = 18
+          Width = 305
+          Height = 20
           Caption = 'Ignore after record separator (ASCII code)'
         end
         object Label3: TLabel
           Left = 8
           Top = 4
-          Width = 144
-          Height = 18
+          Width = 224
+          Height = 20
           Caption = 'Record separator (ASCII code)'
         end
         object BTest: TButton
-          Left = 120
-          Top = 48
+          Left = 96
+          Top = 56
           Width = 81
           Height = 29
           Caption = 'Open'
@@ -192,24 +185,24 @@ object FRpDataText: TFRpDataText
           OnClick = BTestClick
         end
         object ERecordseparator: TEdit
-          Left = 248
+          Left = 321
           Top = 0
           Width = 61
-          Height = 26
+          Height = 28
           TabOrder = 1
           Text = 'ERecordseparator'
         end
         object EIgnoreAfterRecordseparator: TEdit
-          Left = 248
+          Left = 321
           Top = 24
           Width = 61
-          Height = 26
+          Height = 28
           TabOrder = 2
           Text = 'ERecordseparator'
         end
         object Button1: TButton
           Left = 8
-          Top = 48
+          Top = 56
           Width = 81
           Height = 29
           Caption = 'OK'
@@ -220,8 +213,8 @@ object FRpDataText: TFRpDataText
       object PControl: TPageControl
         Left = 0
         Top = 85
-        Width = 511
-        Height = 110
+        Width = 479
+        Height = 106
         ActivePage = TabSource
         Align = alClient
         TabOrder = 1
@@ -230,8 +223,8 @@ object FRpDataText: TFRpDataText
           object MSource: TMemo
             Left = 0
             Top = 0
-            Width = 503
-            Height = 80
+            Width = 471
+            Height = 75
             Align = alClient
             Color = clInfoBk
             ReadOnly = True
@@ -246,17 +239,17 @@ object FRpDataText: TFRpDataText
           object GridTest: TDBGrid
             Left = 0
             Top = 0
-            Width = 503
-            Height = 80
+            Width = 471
+            Height = 75
             Align = alClient
             DataSource = SData
             TabOrder = 0
-            TitleFont.Color = clText
-            TitleFont.Height = 11
-            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Color = clBlack
+            TitleFont.Height = 16
+            TitleFont.Name = 'adobe-helvetica'
             TitleFont.Pitch = fpVariable
             TitleFont.Style = []
-            TitleFont.Weight = 40
+            TitleFont.Weight = 0
           end
         end
       end

@@ -40,20 +40,25 @@ type
     LCollation: TLabel;
     Label9: TLabel;
     LResolution: TLabel;
-    GroupBox2: TGroupBox;
+    GWinInfo: TGroupBox;
     Label10: TLabel;
     Label11: TLabel;
     LProcessors: TLabel;
     LOEMID: TLabel;
-    LDisplay: TLabel;
-    Label13: TLabel;
     LOS: TLabel;
     Label14: TLabel;
     Label12: TLabel;
     LVersion: TLabel;
     EPrinterDevice: TEdit;
+    Label13: TLabel;
+    LDisplay: TLabel;
+    GLinINfo: TGroupBox;
+    LSysComp: TListBox;
+    ESysInfo: TMemo;
+    LFiles: TListBox;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure LSysCompClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -70,6 +75,39 @@ uses rpvgraphutils;
 {$ENDIF}
 
 {$R *.xfm}
+
+{$IFDEF LINUX}
+procedure ReadFileLines(filename:String;dest:TStrings);
+var
+ f:TextFile;
+ astring:String;
+begin
+ dest.clear;
+ if (FileExists(filename)) then
+ begin
+  try
+   AssignFile(f,filename);
+   try
+    Reset(f);
+    while not EOF(f) do
+    begin
+     ReadLn(f,astring);
+     dest.Add(Trim(astring));
+    end;
+   finally
+    CloseFile(f);
+   end;
+  except
+   on E:Exception do
+   begin
+    dest.Add(E.Message);
+   end;
+  end;
+ end
+ else
+  dest.Add(filename+' - '+SRpNotFound);
+end;
+{$ENDIF}
 
 procedure RpShowSystemInfoQt;
 var
@@ -96,6 +134,12 @@ begin
  LDisplay.Font.Style:=[fsBold];
  LOS.Font.Style:=[fsBold];
  LVersion.Font.Style:=[fsBold];
+{$IFDEF MSWINDOWS}
+ GLinInfo.Visible:=false;
+{$ENDIF}
+{$IFDEF LINUX}
+ GWinInfo.Visible:=false;
+{$ENDIF}
 end;
 
 procedure TFRpSysInfo.FormShow(Sender: TObject);
@@ -149,7 +193,19 @@ begin
    '-'+StrPas(osinfo.szCSDVersion);
   end;
 {$ENDIF}
+{$IFDEF LINUX}
+ LSysComp.ItemIndex:=0;
+ LSysCompClick(Self);
+{$ENDIF}
+end;
 
+procedure TFRpSysInfo.LSysCompClick(Sender: TObject);
+begin
+{$IFDEF LINUX}
+ if LSysComp.ItemIndex<0 then
+  exit;
+ ReadFileLines(LFiles.Items.Strings[LSysComp.ItemIndex],ESysInfo.Lines);
+{$ENDIF}
 end;
 
 end.

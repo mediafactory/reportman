@@ -1,23 +1,23 @@
 object FRpSysInfo: TFRpSysInfo
-  Left = 245
-  Top = 108
+  Left = 249
+  Top = 128
   ActiveControl = BOK
   AutoScroll = False
   Caption = 'System information'
-  ClientHeight = 278
-  ClientWidth = 565
+  ClientHeight = 427
+  ClientWidth = 554
   Color = clButton
   Position = poScreenCenter
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 13
-  TextWidth = 6
+  TextHeight = 20
+  TextWidth = 8
   object BOK: TButton
-    Left = 243
-    Top = 240
-    Width = 75
-    Height = 25
+    Left = 227
+    Top = 384
+    Width = 110
+    Height = 33
     Caption = 'OK'
     Default = True
     ModalResult = 1
@@ -27,28 +27,28 @@ object FRpSysInfo: TFRpSysInfo
     Left = 8
     Top = 8
     Width = 541
-    Height = 113
+    Height = 137
     Caption = 'Selected Printer'
     TabOrder = 1
     object Label1: TLabel
       Left = 8
-      Top = 68
-      Width = 63
-      Height = 13
+      Top = 78
+      Width = 99
+      Height = 20
       Caption = 'Printer Status'
     end
     object Label2: TLabel
       Left = 8
       Top = 20
-      Width = 61
-      Height = 13
+      Width = 96
+      Height = 20
       Caption = 'Printer Name'
     end
     object Label3: TLabel
       Left = 8
-      Top = 44
-      Width = 34
-      Height = 13
+      Top = 49
+      Width = 49
+      Height = 20
       Caption = 'Device'
     end
     object LCollation: TLabel
@@ -60,122 +60,178 @@ object FRpSysInfo: TFRpSysInfo
     end
     object Label9: TLabel
       Left = 8
-      Top = 91
-      Width = 150
-      Height = 13
+      Top = 107
+      Width = 249
+      Height = 23
       Caption = 'Printer resolution dpi (HorzxVert)'
     end
     object LResolution: TLabel
-      Left = 184
-      Top = 91
-      Width = 137
-      Height = 17
+      Left = 256
+      Top = 107
+      Width = 281
+      Height = 20
       AutoSize = False
     end
     object EStatus: TEdit
-      Left = 108
-      Top = 64
+      Left = 131
+      Top = 74
       Width = 300
-      Height = 21
+      Height = 28
       Color = clInfoBk
       ReadOnly = True
       TabOrder = 0
     end
     object EPrinterName: TEdit
-      Left = 108
+      Left = 131
       Top = 16
       Width = 300
-      Height = 21
+      Height = 28
       Color = clInfoBk
       ReadOnly = True
       TabOrder = 1
     end
     object EPrinterDevice: TEdit
-      Left = 108
-      Top = 40
+      Left = 131
+      Top = 45
       Width = 300
-      Height = 21
+      Height = 28
       Color = clInfoBk
       ReadOnly = True
       TabOrder = 8
     end
   end
-  object GroupBox2: TGroupBox
+  object GWinInfo: TGroupBox
     Left = 8
-    Top = 132
-    Width = 541
-    Height = 101
+    Top = 180
+    Width = 537
+    Height = 157
     Caption = 'System information'
     TabOrder = 2
     object Label10: TLabel
-      Left = 356
-      Top = 18
-      Width = 41
-      Height = 13
+      Left = 364
+      Top = 22
+      Width = 62
+      Height = 20
       Caption = 'OEM ID:'
     end
     object Label11: TLabel
       Left = 12
-      Top = 54
-      Width = 103
-      Height = 13
+      Top = 87
+      Width = 160
+      Height = 20
       Caption = 'Number of processors'
     end
     object LProcessors: TLabel
-      Left = 136
-      Top = 55
+      Left = 192
+      Top = 88
       Width = 117
       Height = 17
       AutoSize = False
     end
     object LOEMID: TLabel
-      Left = 416
-      Top = 18
-      Width = 113
+      Left = 432
+      Top = 26
+      Width = 97
       Height = 17
       AutoSize = False
-    end
-    object LDisplay: TLabel
-      Left = 136
-      Top = 74
-      Width = 197
-      Height = 17
-      AutoSize = False
-    end
-    object Label13: TLabel
-      Left = 12
-      Top = 74
-      Width = 107
-      Height = 13
-      Caption = 'Display (WidthxHeight)'
     end
     object LOS: TLabel
-      Left = 136
-      Top = 19
+      Left = 152
+      Top = 23
       Width = 209
       Height = 17
       AutoSize = False
     end
     object Label14: TLabel
       Left = 12
-      Top = 19
-      Width = 81
-      Height = 13
+      Top = 23
+      Width = 128
+      Height = 20
       Caption = 'Operating system'
     end
     object Label12: TLabel
       Left = 12
-      Top = 35
-      Width = 35
-      Height = 13
+      Top = 56
+      Width = 54
+      Height = 20
       Caption = 'Version'
     end
     object LVersion: TLabel
-      Left = 136
-      Top = 35
+      Left = 184
+      Top = 56
       Width = 329
       Height = 17
       AutoSize = False
     end
+  end
+  object Label13: TLabel
+    Left = 12
+    Top = 152
+    Width = 165
+    Height = 20
+    Caption = 'Display (WidthxHeight)'
+  end
+  object LDisplay: TLabel
+    Left = 200
+    Top = 152
+    Width = 345
+    Height = 25
+    AutoSize = False
+  end
+  object GLinINfo: TGroupBox
+    Left = 8
+    Top = 176
+    Width = 537
+    Height = 193
+    Caption = 'System information'
+    TabOrder = 5
+    object LSysComp: TListBox
+      Left = 8
+      Top = 24
+      Width = 201
+      Height = 161
+      Color = clInfoBk
+      Items.Strings = (
+        'Version'
+        'CPU'
+        'Memory'
+        'Swaps'
+        'Misc'
+        'Modules'
+        'Interrupts'
+        'PCI')
+      Rows = 8
+      TabOrder = 0
+      OnClick = LSysCompClick
+    end
+    object ESysInfo: TMemo
+      Left = 216
+      Top = 24
+      Width = 313
+      Height = 161
+      Color = clInfoBk
+      ReadOnly = True
+      ScrollBars = ssBoth
+      TabOrder = 1
+      WordWrap = False
+    end
+  end
+  object LFiles: TListBox
+    Left = 248
+    Top = 208
+    Width = 129
+    Height = 137
+    Items.Strings = (
+      '/proc/version'
+      '/proc/cpuinfo'
+      '/proc/meminfo'
+      '/proc/swaps'
+      '/proc/misc'
+      '/proc/modules'
+      '/proc/interrupts'
+      '/proc/pci')
+    Rows = 8
+    TabOrder = 6
+    Visible = False
   end
 end

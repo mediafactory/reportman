@@ -1333,28 +1333,35 @@ begin
  Directorysep:='/';
 {$ENDIF}
  aurl:=aurl+'doc'+Directorysep+document;
- ShowHelp(aurl);
+ if FileExists(aurl) then
+  ShowHelp(aurl)
+ else
+  ShowHelp(REPMAN_WEBSITE+'/doc/'+document);
 end;
 
 procedure TFRpMainF.ShowHelp(AURL:string);
 begin
- if Not Assigned(FHelp) then
-  FHelp:=TFRpHelpform.Create(Application);
- FHelp.TextBrowser1.FileName:=AURL;
- FHelp.Show;
- if Length(FHelp.TextBrowser1.Text)<1 then
+ if FileExists(AURL) then
  begin
-  FHelp.TextBrowser1.Text:=SRpDocNotInstalled+#10+
-   SRpDocNotInstalled2+#10+
+  if Not Assigned(FHelp) then
+   FHelp:=TFRpHelpform.Create(Application);
+  FHelp.TextBrowser1.FileName:=AURL;
+  if Length(FHelp.TextBrowser1.Text)<1 then
+  begin
+   FHelp.TextBrowser1.Text:=SRpDocNotInstalled+#10+
+    SRpDocNotInstalled2+#10+
    SRpDocNotInstalled3+#10;
+  end;
+  FHelp.Show;
+  exit;
+ end;
 {$IFDEF LINUX}
-  Libc.system(PChar('konqueror "'+'http://reportman.sourceforge.net'+'"&'))
+  Libc.system(PChar('konqueror "'+aurl+'"&'))
 {$ENDIF}
 {$IFDEF MSWINDOWS}
-  ShellExecute(0,Pchar('open'),Pchar('http://reportman.sourceforge.net'),
+  ShellExecute(0,Pchar('open'),Pchar('aurl'),
    nil,nil,SW_SHOWNORMAL);
 {$ENDIF}
- end;
 end;
 
 procedure TFRpMainF.ADocumentationExecute(Sender: TObject);
@@ -1371,7 +1378,10 @@ begin
 {$ENDIF}
  aurl:=aurl+'doc'+Directorysep+
   'left.html';
- ShowHelp(aurl);
+ if FileExists(aurl) then
+  ShowHelp(aurl)
+ else
+  ShowHelp(REPMAN_WEBSITE);
 end;
 
 procedure TFRpMainF.AFeaturesExecute(Sender: TObject);

@@ -1,24 +1,19 @@
 object FRpDInfo: TFRpDInfo
-  Left = 183
-  Top = 112
+  Left = 269
+  Top = 178
   Width = 565
   Height = 422
   VertScrollBar.Range = 39
   ActiveControl = BOk
+  AutoScroll = False
   Caption = 'Database connections and datasets'
   Color = clButton
-  Font.Color = clText
-  Font.Height = 11
-  Font.Name = 'MS Sans Serif'
-  Font.Pitch = fpVariable
-  Font.Style = []
-  Font.Weight = 40
-  ParentFont = False
   Position = poScreenCenter
-  Scaled = False
   ShowHint = True
   OnCreate = FormCreate
   PixelsPerInch = 96
+  TextHeight = 20
+  TextWidth = 8
   object PBottom: TPanel
     Left = 0
     Top = 383

@@ -615,16 +615,8 @@ end;
 
 procedure TRpPaintEventPanel.MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
-var
- dframe:TFRpDesignFrameVCL;
 begin
  inherited MouseDown(Button,Shift,X,Y);
-
- if allowselect then
- begin
-  dframe:=TFRpDesignFrameVCL(Owner);
-  dframe.freportstructure.SelectDataItem(section);
- end;
 
  if cursor<>crSizeNS then
   exit;
@@ -705,6 +697,7 @@ var
  NewTop:integer;
  i,MaxY:integer;
  asection:TRpSection;
+ dframe:TFRpDesignFrameVCL;
 begin
  inherited MouseUp(Button,Shift,X,Y);
 
@@ -750,6 +743,11 @@ begin
     asection.Height:=0;
    FFrame.UpdateInterface;
   end;
+ end;
+ if allowselect then
+ begin
+  dframe:=TFRpDesignFrameVCL(Owner);
+  dframe.freportstructure.SelectDataItem(section);
  end;
 end;
 

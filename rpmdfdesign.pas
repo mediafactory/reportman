@@ -48,10 +48,10 @@ type
   TRpPanelRight=Class(TPanel)
    private
     FFrame:TFRpDesignFrame;
-    FRectangle:TRpRectangle;
-    FRectangle2:TRpRectangle;
-    FRectangle3:TRpRectangle;
-    FRectangle4:TRpRectangle;
+    FRectangle:TRpRectanglew;
+    FRectangle2:TRpRectanglew;
+    FRectangle3:TRpRectanglew;
+    FRectangle4:TRpRectanglew;
     FXOrigin,FYOrigin:integer;
     FBlocked:boolean;
    protected
@@ -73,10 +73,10 @@ type
     FXOrigin,FYOrigin:integer;
     FBlocked:boolean;
     allowselect:Boolean;
-    FRectangle:TRpRectangle;
-    FRectangle2:TRpRectangle;
-    FRectangle3:TRpRectangle;
-    FRectangle4:TRpRectangle;
+    FRectangle:TRpRectanglew;
+    FRectangle2:TRpRectanglew;
+    FRectangle3:TRpRectanglew;
+    FRectangle4:TRpRectanglew;
    protected
     procedure Paint;override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -600,25 +600,17 @@ end;
 
 procedure TRpPaintEventPanel.MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
-var
- dframe:TFRpDesignFrame;
 begin
  inherited MouseDown(Button,Shift,X,Y);
-
- if allowselect then
- begin
-  dframe:=TFRpDesignFrame(Owner);
-  dframe.freportstructure.SelectDataItem(section);
- end;
 
  if cursor<>crSizeNS then
   exit;
  if Not Assigned(FRectangle) then
  begin
-  FRectangle:=TRpRectangle.Create(Self);
-  FRectangle2:=TRpRectangle.Create(Self);
-  FRectangle3:=TRpRectangle.Create(Self);
-  FRectangle4:=TRpRectangle.Create(Self);
+  FRectangle:=TRpRectanglew.Create(Self);
+  FRectangle2:=TRpRectanglew.Create(Self);
+  FRectangle3:=TRpRectanglew.Create(Self);
+  FRectangle4:=TRpRectanglew.Create(Self);
 
   FRectangle.SetBounds(Left,Top,Width,1);
   FRectangle2.SetBounds(Left,Top+Height,Width,1);
@@ -690,6 +682,7 @@ var
  NewTop:integer;
  i,MaxY:integer;
  asection:TRpSection;
+ dframe:TFRpDesignFrame;
 begin
  inherited MouseUp(Button,Shift,X,Y);
 
@@ -736,6 +729,11 @@ begin
    FFrame.UpdateInterface;
   end;
  end;
+ if allowselect then
+ begin
+  dframe:=TFRpDesignFrame(Owner);
+  dframe.freportstructure.SelectDataItem(section);
+ end;
 end;
 
 constructor TRpPanelRight.Create(AOwner:TComponent);
@@ -775,10 +773,10 @@ procedure TRpPanelRight.MouseDown(Button: TMouseButton; Shift: TShiftState;
 begin
  if Not Assigned(FRectangle) then
  begin
-  FRectangle:=TRpRectangle.Create(Self);
-  FRectangle2:=TRpRectangle.Create(Self);
-  FRectangle3:=TRpRectangle.Create(Self);
-  FRectangle4:=TRpRectangle.Create(Self);
+  FRectangle:=TRpRectanglew.Create(Self);
+  FRectangle2:=TRpRectanglew.Create(Self);
+  FRectangle3:=TRpRectanglew.Create(Self);
+  FRectangle4:=TRpRectanglew.Create(Self);
 
   FRectangle.SetBounds(Left,Top,Width,1);
   FRectangle2.SetBounds(Left,Top+Height,Width,1);
