@@ -26,7 +26,7 @@ uses
   Types, Classes,
 {$IFDEF MSWINDOWS}
   rpgdidriver,rpvpreview,rprfvparams,windows,Forms,Dialogs,rppagesetupvcl,
-  rpmdfgridvcl,rpfparamsvcl,
+  rpmdfgridvcl,rpfparamsvcl,ShellAPI,
 {$ENDIF}
   QGraphics,QStyle,Qt,QControls, QForms,
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,QExtCtrls,
@@ -1274,6 +1274,13 @@ begin
   FHelp.TextBrowser1.Text:=SRpDocNotInstalled+#10+
    SRpDocNotInstalled2+#10+
    SRpDocNotInstalled3+#10;
+{$IFDEF LINUX}
+  Libc.system(PChar('konqueror "'+'http://reportman.sourceforge.net'+'"&'))
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  ShellExecute(0,Pchar('open'),Pchar('http://reportman.sourceforge.net'),
+   nil,nil,SW_SHOWNORMAL);
+{$ENDIF}
  end;
 end;
 

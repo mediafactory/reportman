@@ -45,6 +45,7 @@ contains
   rpmdobjinsp in 'rpmdobjinsp.pas' {FRpObjInsp: TFrame},
   rpfparams in 'rpfparams.pas' {FRpParams},
   rpmdfbarcodeint in 'rpmdfbarcodeint.pas',
-  rpmdfchartint in 'rpmdfchartint.pas';
+  rpmdfchartint in 'rpmdfchartint.pas',
+  rpmdfextsec in 'rpmdfextsec.pas' {FRpExtSection};
 
 end.

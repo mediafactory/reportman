@@ -22,6 +22,12 @@ interface
 {$I rpconf.inc}
 
 uses SysUtils, Classes,
+{$IFDEF LINUX}
+  Libc,
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  ShellApi,
+{$ENDIF}
   QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,QDialogs,
   rpmdconsts;
@@ -43,6 +49,8 @@ type
     LContributors: TLabel;
     Image2: TImage;
     procedure FormCreate(Sender: TObject);
+    procedure Label5MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
@@ -81,7 +89,7 @@ begin
  LContributors.Caption:=TranslateStr(92,LContributors.Caption);
  LVersion.Caption:=TranslateStr(91,'Version')+' '+RM_VERSION;
  BOK.Caption:=TranslateStr(93,BOK.Caption);
-
+ Label5.Font.Color:=clBlue;
 
  LReport.Font.Size:=20;
  LReport.Font.Style:=[fsBold];
@@ -90,6 +98,18 @@ begin
  LEmail.Font.Style:=[fsBold];
 
  SetInitialBounds;
+end;
+
+procedure TFRpAboutBox.Label5MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+{$IFDEF LINUX}
+  Libc.system(PChar('konqueror "'+'http://reportman.sourceforge.net'+'"&'))
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  ShellExecute(0,Pchar('open'),Pchar('http://reportman.sourceforge.net'),
+   nil,nil,SW_SHOWNORMAL);
+{$ENDIF}
 end;
 
 end.
