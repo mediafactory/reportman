@@ -56,6 +56,10 @@ HostApplication=
 Launcher=
 UseLauncher=0
 DebugCWD=
+[Language]
+ActiveLang=
+ProjectLang=
+RootDir=
 [Version Info]
 IncludeVerInfo=0
 AutoIncBuild=0
@@ -82,17 +86,7 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 [Excluded Packages]
-c:\prog\delphi6\Bin\dclcds60.bpl=Borland Base Cached ClientDataset Component
-C:\prog\Delphi6\Bin\dclmid60.bpl=Borland MyBase DataAccess Components
-c:\prog\delphi6\Bin\dclsmp60.bpl=Borland Sample Components
-c:\prog\delphi6\Projects\Bpl\SynEdit_D6.bpl=SynEdit component suite
-c:\prog\delphi6\Bin\dcldbxcds60.bpl=Borland Local DBX ClientDataset Components
-c:\prog\delphi6\Bin\dclmcn60.bpl=Borland DataSnap Connection Components
-c:\prog\delphi6\Bin\dclite60.bpl=Borland Integrated Translation Environment
-c:\prog\delphi6\Bin\DCLIB60.bpl=InterBase Data Access Components
-c:\prog\delphi6\Bin\dclsmpedit60.bpl=Borland Editor Script Enhancements
-c:\prog\delphi6\Bin\dclemacsedit60.bpl=Borland Editor Emacs Enhancements
-c:\prog\delphi6\Bin\dclact60.bpl=Borland ActionBar Components
+C:\WINNT\System32\ibevnt60.bpl=Borland Interbase Event Alerter Component
 c:\prog\delphi6\Bin\dclnet60.bpl=Borland Internet Components
 c:\prog\delphi6\Bin\dclwbm60.bpl=Borland InternetExpress Components
 c:\prog\delphi6\Bin\dclindy60.bpl=Internet Direct (Indy) for D6 Property and Component Editors

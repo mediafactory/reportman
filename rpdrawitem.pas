@@ -142,7 +142,7 @@ begin
  if (sizeof(ssize)<>AStream.Read(ssize,sizeof(ssize))) then
   Raise Exception.Create(SRpInvalidStreaminRpImage);
  FStream.SetSize(ssize);
- FStream.Seek(soFromBeginning,0);
+ FStream.Seek(0,soFromBeginning);
  if ssize<>AStream.Read(FStream.memory^,ssize) then
   Raise Exception.Create(SRpInvalidStreaminRpImage);
 end;
@@ -153,7 +153,7 @@ var
 begin
  ssize:=FStream.Size;
  AStream.Write(ssize,sizeof(ssize));
- FStream.Seek(soFromBeginning,0);
+ FStream.Seek(0,soFromBeginning);
  AStream.Write(FStream.Memory^,ssize);
 end;
 

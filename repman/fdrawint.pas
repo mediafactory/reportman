@@ -509,7 +509,7 @@ begin
     FBitmap:=TBitmap.Create;
     FBitmap.PixelFormat:=pf32bit;
     // Try to load it
-    aimage.Stream.Seek(soFromBeginning,0);
+    aimage.Stream.Seek(0,soFromBeginning);
     try
      FBitmap.LoadFromStream(aimage.Stream);
     except

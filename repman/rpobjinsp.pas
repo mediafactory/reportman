@@ -645,7 +645,7 @@ begin
   Stream:=TMemoryStream.Create;
   try
    Stream.LoadFromFile(OpenDialog1.FileName);
-   Stream.Seek(soFromBeginning,0);
+   Stream.Seek(0,soFromBeginning);
    CompItem.SetProperty(LNames.Strings[TComponent(Sender).Tag],stream);
   finally
    Stream.Free;

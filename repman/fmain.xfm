@@ -333,6 +333,12 @@ object FMainf: TFMainf
         Action = AGridOptions
       end
     end
+    object About1: TMenuItem
+      Caption = 'Help'
+      object ReportManager1: TMenuItem
+        Action = AAbout
+      end
+    end
   end
   object ActionList1: TActionList
     Images = iconlist
@@ -485,6 +491,11 @@ object FMainf: TFMainf
       Hint = 'Paste from clipboard'
       ImageIndex = 16
       OnExecute = APasteExecute
+    end
+    object AAbout: TAction
+      Category = 'Help'
+      Caption = 'About Report Manager'
+      OnExecute = AAboutExecute
     end
   end
   object iconlist: TImageList

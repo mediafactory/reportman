@@ -34,6 +34,7 @@ uses
   rpobjinsp in 'rpobjinsp.pas' {FObjInsp: TFrame},
   frpgrid in 'frpgrid.pas' {FRpGridOptions},
   flabelint in 'flabelint.pas' {FLabelInterface},
+  fabout in 'fabout.pas' {FAboutBox},
 {$IFDEF MSWINDOWS}
   ShLwApi in 'ShLwApi.pas',
   ShFolder in 'ShFolder.pas',

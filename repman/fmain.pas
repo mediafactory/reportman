@@ -110,6 +110,9 @@ type
     ToolButton11: TToolButton;
     ToolButton12: TToolButton;
     ToolButton13: TToolButton;
+    AAbout: TAction;
+    About1: TMenuItem;
+    ReportManager1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -134,6 +137,7 @@ type
     procedure Splitter1Moved(Sender: TObject);
     procedure APreviewExecute(Sender: TObject);
     procedure APrintExecute(Sender: TObject);
+    procedure AAboutExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFDesignFrame;
@@ -164,7 +168,7 @@ var
 
 implementation
 
-uses rppagesetup, rpshfolder,  fdatainfo, frpgrid, rppreview;
+uses rppagesetup, rpshfolder,  fdatainfo, frpgrid, rppreview, fabout;
 
 {$R *.xfm}
 
@@ -712,6 +716,11 @@ procedure TFMainf.APrintExecute(Sender: TObject);
 begin
  if CalcReportWidthProgress(report) then
   PrintMetafile(report.Metafile,Caption,true);
+end;
+
+procedure TFMainf.AAboutExecute(Sender: TObject);
+begin
+ ShowAbout;
 end;
 
 initialization

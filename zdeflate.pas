@@ -42,7 +42,7 @@ unit zdeflate;
        Fiala,E.R., and Greene,D.H.
           Data Compression with Finite Windows, Comm.ACM, 32,4 (1989) 490-595}
 
-{ $Id: zdeflate.pas,v 1.2 2002/04/19 19:49:23 toni Exp $ }
+{ $Id: zdeflate.pas,v 1.3 2002/04/19 21:00:39 toni Exp $ }
 
 interface
 
@@ -1165,7 +1165,7 @@ end;
 {local}
 procedure lm_init (var s : deflate_state);
 begin
-  s.window_size := ulg( uLong(2)*s.w_size);
+  s.window_size := ulg( uLong(2)*uLong(s.w_size));
 
   {macro CLEAR_HASH(s);}
   s.head^[s.hash_size-1] := ZNIL;
@@ -1748,7 +1748,7 @@ begin
     if (s.strstart = 0) or (ulg(s.strstart) >= max_start) then
     begin
       { strstart = 0 is possible when wraparound on 16-bit machine }
-      s.lookahead := uInt(s.strstart - max_start);
+      s.lookahead := uInt(uInt(s.strstart) - uInt(max_start));
       s.strstart := uInt(max_start);
       {FLUSH_BLOCK(s, FALSE);}
       FLUSH_BLOCK_ONLY(s, FALSE);

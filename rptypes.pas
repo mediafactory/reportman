@@ -82,8 +82,8 @@ begin
   Exit;
  end;
  // If the same size then compare memory
- Stream1.Seek(soFromBeginning,0);
- Stream2.Seek(soFromBeginning,0);
+ Stream1.Seek(0,soFromBeginning);
+ Stream2.Seek(0,soFromBeginning);
  readcount:=Stream1.Read(buf1,SIZE_BUF);
  Stream2.Read(buf2,SIZE_BUF);
  while (readcount<>0) do

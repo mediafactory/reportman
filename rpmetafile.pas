@@ -193,8 +193,6 @@ begin
 end;
 
 destructor TRpMetafilePage.Destroy;
-var
- i:integer;
 begin
  FMemStream.Free;
  FMemStream:=nil;
@@ -227,8 +225,25 @@ begin
  FObjects[FObjectCount].Metatype:=rpMetaImage;
  FObjects[FObjectCount].StreamPos:=FStreamPos;
  FObjects[FObjectCount].StreamSize:=stream.Size;
- Stream.Seek(soFromBeginning,0);
- FMemStream.Seek(soFromBeginning,FStreamPos);
+ // Set the size of the stream
+ if FMemStream.size=0 then
+ begin
+  FMemStream.SetSize(stream.size*2);
+ end
+ else
+ begin
+  if FMemStream.Size-FStreamPos-1<stream.size then
+  begin
+   if FMemStream.size<stream.size then
+   begin
+    FMemStream.SetSize(stream.size*2);
+   end
+   else
+    FMemStream.SetSize(FMemStream.Size*2);
+  end;
+ end;
+ Stream.Seek(0,soFromBeginning);
+ FMemStream.Seek(FStreamPos,soFromBeginning);
  if (Stream.size<>FMemStream.CopyFrom(stream,stream.Size)) then
   Raise Exception.Create(SRpCopyStreamError);
  FStreamPos:=FMemStream.Position;
@@ -249,9 +264,9 @@ begin
  begin
   FIntStream:=TMemoryStream.Create;
  end;
- FMemStream.Seek(soFromBeginning,arecord.StreamPos);
+ FMemStream.Seek(arecord.StreamPos,soFromBeginning);
  FIntStream.CopyFrom(FMemStream,arecord.StreamSize);
- FIntStream.Seek(soFromBeginning,0);
+ FIntStream.Seek(0,soFromBeginning);
  Result:=FIntStream;
 end;
 
@@ -586,7 +601,7 @@ begin
  Stream.Write(wsize,sizeof(wsize));
  Stream.Write(FPool[1],wsize);
  asize:=FMemStream.Size;
- FMemStream.Seek(soFromBeginning,0);
+ FMemStream.Seek(0,soFromBeginning);
  Stream.Write(asize,sizeof(asize));
  Stream.Write(FMemStream.Memory^,FMemStream.Size);
 end;
@@ -637,141 +652,12 @@ begin
  end
  else
   FMemStream.SetSize(asize);
- FMemStream.Seek(soFromBeginning,0);
+ FMemStream.Seek(0,soFromBeginning);
  if (asize<>Stream.Read(FMemStream.Memory^,asize)) then
   Raise ERpBadFileFormat.Create(SrpStreamErrorPage,Stream.Position);
 
  FObjectCount:=objcount;
 end;
-
-
-{procedure TRpMetafileObject.LoadFromStream(stream:TStream);
-var
- ssize:Int64;
- numbytes:integer;
- bytesread:integer;
-begin
- // Writes the meta type and the info
- bytesread:=Stream.Read(MetaType,sizeof(metatype));
- if (bytesread<>sizeof(metatype)) then
-  Raise ERpBadFileFormat.Create(SrpObjectTypeError,Stream.Position);
-
- if (sizeof(Top)<>Stream.Read(Top,sizeof(Top))) then
-  Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
- if (sizeof(Left)<>Stream.Read(Left,sizeof(Left))) then
-  Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
- if (sizeof(Width)<>Stream.Read(Width,sizeof(Width))) then
-  Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
- if (sizeof(Height)<>Stream.Read(Height,sizeof(Height))) then
-  Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
- case metatype of
-  rpMetaText:
-   begin
-    // Wide string is 2 bytes per char.
-    if (sizeof(numbytes)<>Stream.Read(numbytes,sizeof(numbytes))) then
-     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-    SetLength(text,numbytes div 2);
-    Stream.Read(PWideString(Text)^,numbytes);
-    // Wide string is 2 bytes per char.
-    if (sizeof(numbytes)<>Stream.Read(numbytes,sizeof(numbytes))) then
-     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-    SetLength(FontName,numbytes div 2);
-    Stream.Read(PWideString(FontName)^,numbytes);
-    // Font Properties
-    if (sizeof(FontSize)<>Stream.Read(FontSize,sizeof(FontSize))) then
-     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-    if (sizeof(FontStyle)<>Stream.Read(FontStyle,sizeof(FontStyle))) then
-     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-    if (sizeof(FontColor)<>Stream.Read(FontColor,sizeof(FontColor))) then
-     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-    if (sizeof(BackColor)<>Stream.Read(BackColor,sizeof(BackColor))) then
-     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-    if (sizeof(Transparent)<>Stream.Read(Transparent,sizeof(Transparent))) then
-     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-   end;
-  rpMetaDraw:
-   begin
-    if (sizeof(PenWidth)<>Stream.Read(PenWidth,sizeof(PenWidth))) then
-     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-    if (sizeof(PenColor)<>Stream.Read(PenColor,sizeof(PenColor))) then
-     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-    if (sizeof(BrushColor)<>Stream.Read(BrushColor,sizeof(BrushColor))) then
-     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-    if (sizeof(BrushStyle)<>Stream.Read(BrushStyle,sizeof(BrushStyle))) then
-     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-    if (sizeof(DrawStyle)<>Stream.Read(DrawStyle,sizeof(DrawStyle))) then
-     Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-   end;
-  rpMetaImage:
-   begin
-     // Save the size of the stream and the stream
-     if (sizeof(ssize)<>Stream.Read(ssize,sizeof(ssize))) then
-      Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-     if Assigned(StreamedImage) then
-     begin
-      StreamedImage.free;
-      StreamedImage:=nil;
-     end;
-     StreamedImage:=TMemoryStream.Create;
-     StreamedImage.SetSize(ssize);
-     if (ssize<>Stream.Read(StreamedImage.Memory^,sizeof(ssize))) then
-      Raise ERpBadFileFormat.Create(SrpObjectDataError,Stream.Position);
-     StreamedImage.Seek(0,soFromBeginning);
-   end;
- end;
-
-end;
-}
-
-{procedure TRpMetafileObject.SaveToStream(stream:TStream);
-var
- ssize:Int64;
- numbytes:integer;
-begin
- // Writes the meta type and the info
- Stream.Write(MetaType,sizeof(metatype));
-
- Stream.Write(Top,sizeof(Top));
- Stream.Write(Left,sizeof(Left));
- Stream.Write(Width,sizeof(Width));
- Stream.Write(Height,sizeof(Height));
- case metatype of
-  rpMetaText:
-   begin
-    // Wide string is 2 bytes per char.
-    numbytes:=Length(Text)*2;
-    Stream.Write(numbytes,sizeof(numbytes));
-    Stream.Write(PWideString(Text)^,numbytes);
-    // Font Properties
-    numbytes:=Length(FontName)*2;
-    Stream.Write(numbytes,sizeof(numbytes));
-    Stream.Write(PWideString(FontName)^,numbytes);
-    Stream.Write(FontSize,sizeof(FontSize));
-    Stream.Write(FontStyle,sizeof(FontStyle));
-    Stream.Write(FontColor,sizeof(FontColor));
-    Stream.Write(BackColor,sizeof(BackColor));
-    Stream.Write(Transparent,sizeof(Transparent));
-   end;
-  rpMetaDraw:
-   begin
-    Stream.Write(PenWidth,sizeof(PenWidth));
-    Stream.Write(PenColor,sizeof(PenColor));
-    Stream.Write(BrushColor,sizeof(BrushColor));
-    Stream.Write(BrushStyle,sizeof(BrushStyle));
-    Stream.Write(DrawStyle,sizeof(DrawStyle));
-   end;
-  rpMetaImage:
-   begin
-     // Save the size of the stream and the stream
-     ssize:=StreamedImage.Size;
-     Stream.Write(ssize,sizeof(ssize));
-     StreamedImage.Seek(0,soFromBeginning);
-     Stream.Write(StreamedImage.memory^,ssize);
-   end;
- end;
-
-end;
-}
 constructor ErpBadFileFormat.Create(Msg:String;APosition:LongInt);
 begin
  FPosition:=Position;

@@ -404,11 +404,9 @@ begin
  FreeSubreports;
 
  MemStream:=TMemoryStream.Create;
- try
-  zlibs:=TDeCompressionStream.Create(Stream);
+ try  zlibs:=TDeCompressionStream.Create(Stream);
   try
-   buf:=AllocMem(120000);
-   try
+   buf:=AllocMem(120000);   try
     repeat
      readed:=zlibs.read(buf^,120000);
      memstream.Write(buf^,readed);
@@ -416,7 +414,7 @@ begin
    finally
     freemem(buf);
    end;
-   memstream.Seek(soFrombeginning,0);
+   memstream.Seek(0,soFrombeginning);
 
    reader:=TReader.Create(memstream,1000);
    try
@@ -431,8 +429,7 @@ begin
   finally
    zlibs.free;
   end;
- finally
-  MemStream.free;
+ finally  MemStream.free;
  end;
 end;
 

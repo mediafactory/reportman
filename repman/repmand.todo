@@ -1,3 +1,8 @@
+{TODO 1 -oToni -cEngine : Add TotalPages variable}
+{TODO 1 -oToni -cEngine : Add Printing ranges of pages}
+{TODO 1 -oToni -cEngine : Page margins}
+{TODO 1 -oToni -cEngine : Implementation of labels (horizontal movement)}
+{TODO 1 -oToni -cEngine : Add Barcode component}
 {TODO 1 -oToni -cEngine : Program a simple chart component at least with poly lines and dots}
 {TODO 1 -oToni -cEngine :
 Instaler for Windows do Innosetup setup and for linux a tar or something
