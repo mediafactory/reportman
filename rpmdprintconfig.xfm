@@ -1,11 +1,12 @@
 object FRpPrinterConfig: TFRpPrinterConfig
   Left = 212
   Top = 137
-  Width = 523
-  Height = 451
   ActiveControl = BOK
   AutoScroll = False
+  BorderStyle = fbsDialog
   Caption = 'Printers configuration'
+  ClientHeight = 451
+  ClientWidth = 523
   Color = clButton
   Position = poScreenCenter
   OnClose = FormClose

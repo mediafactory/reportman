@@ -581,12 +581,9 @@ var
 begin
  FPrinterDriverName:=UpperCase(FPrinterDriverName);
  s:='';
- if FPrinterDriverName='EPSON' then
- begin
-  s:=#27+'C'+Chr(High(FLines)+1);
- end
- else
- if FPrinterDriverName='EPSON-QUALITY' then
+ if ((FPrinterDriverName='EPSON') or (FPrinterDriverName='EPSON-IBMPRO')
+  or (FPrinterDriverName='EPSON-QUALITY')
+  or (FPrinterDriverName='IBMPROPRINTER')) then
  begin
   s:=#27+'C'+Chr(High(FLines)+1);
  end;
@@ -618,14 +615,15 @@ begin
   // Underline off-Bold off-Italic off
   escapecodes[rpescapenormal]:=#27+#45+#0+
    #27+'F'+#27+'5';
-  escapecodes[rpescape5cpi]:=#27+'P'+#27+'W'+#1+#18;
-  escapecodes[rpescape6cpi]:=#27+'M'+#27+'W'+#1+#18;
-  escapecodes[rpescape10cpi]:=#27+'P'+#27+'W'+#0+#18;
-  escapecodes[rpescape12cpi]:=#27+'M'+#27+'W'+#0+#18;
+  // Set 10 or 12 cpi, enabled-disable double wide, enable-disable condensed
+  escapecodes[rpescape5cpi]:=#27+'P'+#14+#18;
+  escapecodes[rpescape6cpi]:=#27+'M'+#14+#18;
+  escapecodes[rpescape10cpi]:=#27+'P'+#20+#18;
+  escapecodes[rpescape12cpi]:=#27+'M'+#20+#18;
   // 15 cpi not supported in LX models
-//  escapecodes[rpescape15cpi]:=#27+'g'+#27+'W'+#0;
-  escapecodes[rpescape17cpi]:=#27+'P'+#27+'W'+#0+#15;
-  escapecodes[rpescape20cpi]:=#27+'M'+#27+'W'+#0+#15;
+//  escapecodes[rpescape15cpi]:=#27+'g'+#20;
+  escapecodes[rpescape17cpi]:=#27+'P'+#20+#15;
+  escapecodes[rpescape20cpi]:=#27+'M'+#20+#15;
 
   escapecodes[rpescapeendprint]:=#27+#64;
 
@@ -637,7 +635,7 @@ begin
  if FPrinterDriverName='EPSON-QUALITY' then
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode
-  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2'+#27+'x'+#1;
+  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2'+#27+'x'+#0;
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
   escapecodes[rpescapeformfeed]:=#12;
@@ -647,18 +645,64 @@ begin
   // Underline off-Bold off-Italic off
   escapecodes[rpescapenormal]:=#27+#45+#0+
    #27+'F'+#27+'5';
-  escapecodes[rpescape5cpi]:=#27+'P'+#27+'W'+#1+#18;
-  escapecodes[rpescape6cpi]:=#27+'M'+#27+'W'+#1+#18;
-  escapecodes[rpescape10cpi]:=#27+'P'+#27+'W'+#0+#18;
-  escapecodes[rpescape12cpi]:=#27+'M'+#27+'W'+#0+#18;
+  // Set 10 or 12 cpi, enabled-disable double wide, enable-disable condensed
+  escapecodes[rpescape5cpi]:=#27+'P'+#14+#18;
+  escapecodes[rpescape6cpi]:=#27+'M'+#14+#18;
+  escapecodes[rpescape10cpi]:=#27+'P'+#20+#18;
+  escapecodes[rpescape12cpi]:=#27+'M'+#20+#18;
   // 15 cpi not supported in LX models
-//  escapecodes[rpescape15cpi]:=#27+'g'+#27+'W'+#0;
-  escapecodes[rpescape17cpi]:=#27+'P'+#27+'W'+#0+#15;
-  escapecodes[rpescape20cpi]:=#27+'M'+#27+'W'+#0+#15;
+//  escapecodes[rpescape15cpi]:=#27+'g'+#20;
+  escapecodes[rpescape17cpi]:=#27+'P'+#20+#15;
+  escapecodes[rpescape20cpi]:=#27+'M'+#20+#15;
 
   escapecodes[rpescapeendprint]:=#27+#64;
+
   // Open drawer
   escapecodes[rpescapepulse]:=#27+#112+#0+#100+#100;
+ end
+ else
+ if FPrinterDriverName='EPSON-IBMPRO' then
+ begin
+  // Init Printer-Line spacing to 1/6
+  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2';
+  escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rpescapecr]:=#13;
+  escapecodes[rpescapeformfeed]:=#12;
+  escapecodes[rpescapebold]:=#27+'E';
+  escapecodes[rpescapeunderline]:=#27+#45+#1;
+  escapecodes[rpescapeitalic]:=#27+'4';
+  // Underline off-Bold off-Italic off
+  escapecodes[rpescapenormal]:=#27+#45+#0+
+   #27+'F'+#27+'5';
+  escapecodes[rpescape10cpi]:=#14+#18;
+  escapecodes[rpescape17cpi]:=#14+#15;
+  escapecodes[rpescape5cpi]:=#18+#20;
+
+  escapecodes[rpescapeendprint]:=#27+#64;
+ end
+ else
+ if FPrinterDriverName='IBMPROPRINTER' then
+ begin
+  // Init Printer-Line spacing to 1/6 - Draft mode
+  escapecodes[rpescapeinitprinter]:=#20+#20+#27+#64+#27+'2';
+  escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rpescapecr]:=#13;
+  escapecodes[rpescapeformfeed]:=#12;
+  escapecodes[rpescapebold]:=#27+'E';
+  escapecodes[rpescapeunderline]:=#27+#45+#1;
+  escapecodes[rpescapeitalic]:=#27+'4';
+  // Underline off-Bold off-Italic off
+  escapecodes[rpescapenormal]:=#27+#45+#0+
+   #27+'F'+#27+'5';
+  // Set 10 or 12 cpi, enabled-disable double wide, enable-disable condensed
+  escapecodes[rpescape5cpi]:=#27+#18+#14+#18;
+  escapecodes[rpescape6cpi]:=#27+':'+#14+#18;
+  escapecodes[rpescape10cpi]:=#27+#18+#20+#18;
+  escapecodes[rpescape12cpi]:=#27+':'+#20+#0+#18;
+  escapecodes[rpescape17cpi]:=#27+#18+#20+#15;
+  escapecodes[rpescape20cpi]:=#27+':'+#20+#15;
+
+  escapecodes[rpescapeendprint]:=#20+#20+#27+#64;
  end
  else
  if FPrinterDriverName='EPSONTM88II' then
@@ -667,13 +711,24 @@ begin
   escapecodes[rpescapeinitprinter]:=#27+#64+#27+#50;
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
-//  escapecodes[rpescapeformfeed]:=#12;
+  // No form feeds, it's a receipt printer
+  //  escapecodes[rpescapeformfeed]:=#12;
   escapecodes[rpescapebold]:=#27+#69+#1;
   escapecodes[rpescapeunderline]:=#27+#45+#1;
   // Underline off-Bold off-Italic off
   escapecodes[rpescapenormal]:=#27+#45+#0+#27+#69+#0;
   // Open drawer
   escapecodes[rpescapepulse]:='#27#112#0#100#100';
+ end
+ else
+ if FPrinterDriverName='PLAIN' then
+ begin
+  for i:=Low(TPrinterRawOp) to High(TPrinterRawOp) do
+  begin
+   escapecodes[i]:='';
+  end;
+  escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rpescapecr]:=#13;
  end;
 end;
 
@@ -709,6 +764,8 @@ begin
   begin
    escapecodes[i]:='';
   end;
+  escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rpescapecr]:=#13;
  end
  else
  begin

@@ -1984,14 +1984,16 @@ begin
   if asection.SkipRelativeH then
    pageposx:=pageposx+newposx
   else
-   pageposx:=FLeftMargin+newposx;
+//   pageposx:=FLeftMargin+newposx;
+   pageposx:=newposx;
  end;
  if movev then
  begin
   if asection.SkipRelativeV then
    pageposy:=pageposy+newposy
   else
-   pageposy:=FTopMargin+newposy;
+//   pageposy:=FTopMargin+newposy;
+   pageposy:=newposy;
  end;
 // freespace:=FInternalPageheight-pageposy;
  freespace:=pagefooterpos-pageposy;

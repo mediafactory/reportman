@@ -1742,7 +1742,9 @@ begin
  drivernames.Add(' ');
  drivernames.Add('PLAIN');
  drivernames.Add('EPSON');
+// drivernames.Add('EPSON-IBMPRO');
  drivernames.Add('EPSON-QUALITY');
+ drivernames.Add('IBMPROPRINTER');
  drivernames.Add('EPSONTM88II');
 end;
 

@@ -398,7 +398,7 @@ begin
    Result.Indexqt:=0;
   DMPAPER_B5:
    Result.Indexqt:=1;
-  DMPAPER_LETTER:
+  DMPAPER_LETTER,2:
    Result.Indexqt:=2;
   DMPAPER_LEGAL:
    Result.Indexqt:=3;
@@ -432,7 +432,7 @@ begin
    begin
     Result.Custom:=True;
     // Converts to twips
-    Result.Indexqt:=-1;
+    Result.Indexqt:=0;
     Result.CustomWidth:=Round(gdisize.Width/100/CMS_PER_INCHESS*TWIPS_PER_INCHESS);
     Result.CustomHeight:=Round(gdisize.Height/100/CMS_PER_INCHESS*TWIPS_PER_INCHESS);
    end

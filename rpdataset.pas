@@ -9,7 +9,7 @@
 {       can obtain large amounts of recors without      }
 {       consuming memory                                }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -123,6 +123,9 @@ begin
    adef:=FieldDefs.AddFieldDef;
    adef.Name:=FDataset.Fields[i].FieldName;
    adef.DataType:=FDataset.Fields[i].DataType;
+   // A bug in Delphi 6- ADO Autoinc fields
+   if adef.DataType=ftAutoInc then
+    adef.DataType:=ftInteger;
    adef.Size:=FDataset.Fields[i].Size;
 {$IFNDEF USEVARIANTS}
    // A bug in Dephi 5 about WideString and TClientDataset
