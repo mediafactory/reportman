@@ -100,6 +100,7 @@ type
   // The identifiers including functions
   property Identifiers:TStringList read FIdentifiers
    write FIdentifiers;
+  property Checking:Boolean read FChecking;
   // Error information
   property Error:string read FError;
   property PosError:LongInt read FPosError;
@@ -753,9 +754,10 @@ begin
   if iden.paramcount=0 then
    Rpparser.NextToken;
 
- // If it's a funcion execute it
+ // If it's a funcion execute it (if not syntax check)
  if iden<>nil then
  begin
+  if Not FChecking then
    Value:=iden.Value;
  end
  else
@@ -1038,9 +1040,12 @@ procedure TRpCustomEvaluator.Freerprmfunctions;
 var
  i:integer;
 begin
- for i:=0 to Rpfunctions.count-1 do
+ if assigned(rpfunctions) then
  begin
-  Rpfunctions.objects[i].free;
+  for i:=0 to Rpfunctions.count-1 do
+  begin
+   Rpfunctions.objects[i].free;
+  end;
  end;
 end;
 
