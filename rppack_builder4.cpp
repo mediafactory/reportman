@@ -3,7 +3,7 @@
 #pragma hdrstop
 USERES("rppack_builder4.res");
 USEPACKAGE("vcl40.bpi");
-USEUNIT("rpreg.pas");
+USEUNIT("rpmreg.pas");
 USEUNIT("rppdfreport.pas");
 USERES("rppdfreport.dcr");
 USEUNIT("rpvclreport.pas");

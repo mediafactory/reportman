@@ -77,6 +77,8 @@ type
  TRpQtDriver=class(TInterfacedObject,IRpPrintDriver)
   private
    intdpix,intdpiy:integer;
+   FOrientation:TRpOrientation;
+   OldOrientation:TPrinterOrientation;
   public
    bitmap:TBitmap;
    dpi:integer;
@@ -159,6 +161,7 @@ var
  awidth,aheight:integer;
  rec:TRect;
  asize:TPoint;
+// amargins:TSize;
 begin
  if ToPrinter then
  begin
@@ -177,6 +180,10 @@ begin
   if Length(printer.Title)<1 then
    printer.Title:=SRpUntitled;
   QPrinter_setFullPage(QPrinterH(Printer.Handle),true);
+//  begin
+//   QPrinter_setOrientation(QPrinterH(Printer.Handle),QPrinterOrientation_Portrait);
+//   QPrinter_setOrientation(QPrinterH(Printer.Handle),QPrinterOrientation_Landscape);
+//  end;
   printer.BeginDoc;
   intdpix:=printer.XDPI;
   intdpiy:=printer.YDPI;
@@ -190,6 +197,9 @@ begin
   end;
   bitmap:=TBitmap.Create;
   bitmap.PixelFormat:=pf32bit;
+  // Set full page
+  QPrinter_setFullPage(QPrinterH(Printer.Handle),true);
+
   // Sets Orientation
   SetOrientation(report.Orientation);
   // Sets pagesize
@@ -214,6 +224,17 @@ begin
   rec.Right:=Bitmap.Width-1;
   rec.Bottom:=Bitmap.Height-1;
   bitmap.Canvas.FillRect(rec);
+
+  // Draw Page Margins none for qt driver because they
+  // are very innacurate
+{  QPrinter_margins(QPrinterH(Printer.Handle),@amargins);
+  bitmap.Canvas.Pen.Style:=psSolid;
+  bitmap.Canvas.Pen.Color:=clBlack;
+  bitmap.Canvas.Brush.Style:=bsclear;
+  bitmap.Canvas.rectangle(amargins.cx,amargins.cy,
+  rec.Right-amargins.cx,rec.Bottom-amargins.cy);
+}
+
  end;
 end;
 
@@ -476,11 +497,20 @@ end;
 function TRpQTDriver.SetPagesize(PagesizeQt:integer):TPoint;
 begin
  Printer.PrintAdapter.PageSize:=TPageSize(PagesizeQT);
+ if FOrientation<>rpOrientationDefault then
+ begin
+  if FOrientation=rpOrientationPortrait then
+   Printer.Orientation:=poPortrait
+  else
+   Printer.Orientation:=poLandscape;
+ end;
  Result:=GetPageSize;
 end;
 
 procedure TRpQTDriver.SetOrientation(Orientation:TRpOrientation);
 begin
+ FOrientation:=Orientation;
+ OldOrientation:=Printer.Orientation;
  if Orientation=rpOrientationPortrait then
  begin
   if Printer.Orientation<>poPortrait then

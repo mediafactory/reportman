@@ -4,7 +4,7 @@
   <MACROS>
     <VERSION value="BCB.06.00"/>
     <PROJECT value="rppack_builder6.bpl"/>
-    <OBJFILES value="rppack_builder6.obj rpreg.obj rppdfreport.obj rpalias.obj rpeval.obj 
+    <OBJFILES value="rppack_builder6.obj rpmreg.obj rppdfreport.obj rpalias.obj rpeval.obj 
       rplastsav.obj"/>
     <RESFILES value="rppack_builder6.res rppdfreport.dcr rpalias.dcr rpeval.dcr rplastsav.dcr"/>
     <IDLFILES value=""/>
@@ -51,7 +51,7 @@
   <FILELIST>
       <FILE FILENAME="rppack_builder6.cpp" FORMNAME="" UNITNAME="rppack_builder6" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rppack_builder6.res" FORMNAME="" UNITNAME="rppack_builder6" CONTAINERID="ResTool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="rpreg.pas" FORMNAME="" UNITNAME="rpreg" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="rpmreg.pas" FORMNAME="" UNITNAME="rpmreg" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rppdfreport.pas" FORMNAME="" UNITNAME="rppdfreport" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rppdfreport.dcr" FORMNAME="" UNITNAME="rppdfreport" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rpalias.pas" FORMNAME="" UNITNAME="rpalias" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>

@@ -32,7 +32,7 @@ uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpconsts,
 {$IFDEF USEVARIANTS}
  types,dateutils,
 {$ENDIF}
- rpalias,db,rpzlib,rpdataset,
+ rpalias,db,rpmzlib,rpdataset,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}

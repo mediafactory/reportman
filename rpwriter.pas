@@ -17,7 +17,7 @@ unit rpwriter;
 
 interface
 
-uses Classes,SysUtils,rpzlib;
+uses Classes,SysUtils,rpmzlib;
 
 
 procedure FileReportToPlainText(reportfile,plainfile:string);

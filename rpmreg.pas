@@ -1,6 +1,6 @@
 {*******************************************************}
 {                                                       }
-{       Rpreg                                           }
+{       Rpmreg                                          }
 {                                                       }
 {       Units that registers the reportmanager engine   }
 {       into the Delphi component palette               }
@@ -13,7 +13,7 @@
 {                                                       }
 {*******************************************************}
 
-unit rpreg;
+unit rpmreg;
 
 interface
 

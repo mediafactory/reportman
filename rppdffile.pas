@@ -55,7 +55,7 @@ uses Classes,Sysutils,
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
- rpzlib;
+ rpmzlib;
 
 resourcestring
  SRpStreamNotValid='PDF Stream not valid';

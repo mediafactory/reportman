@@ -14,7 +14,7 @@ BCB = $(MAKEDIR)\..
 VERSION = BCB.04.04
 # ---------------------------------------------------------------------------
 PROJECT = rppack_builder4.bpl
-OBJFILES = rpreg.obj rppdfreport.obj rpvclreport.obj rpalias.obj rpeval.obj rplastsav.obj \
+OBJFILES = rpmreg.obj rppdfreport.obj rpvclreport.obj rpalias.obj rpeval.obj rplastsav.obj \
   rppack_builder4.obj
 RESFILES = rppack_builder4.res rppdfreport.dcr rpvclreport.dcr rpalias.dcr rpeval.dcr \
   rplastsav.dcr
