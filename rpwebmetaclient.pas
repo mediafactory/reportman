@@ -17,6 +17,9 @@
 {                                                       }
 {*******************************************************}
 
+// Install lang boolean
+// Language install
+
 unit rpwebmetaclient;
 
 
@@ -24,24 +27,26 @@ interface
 
 {$I rpconf.inc}
 
-uses classes,Windows,graphics,controls,
+uses classes,SysUtils,Windows,graphics,controls,rptypes,
 {$IFNDEF USEVARIANTS}
  Types
 {$ENDIF}
- rptypes,rpmetafile,rpreport,fmetaviewvcl,
- IdHttp,rpgdidriver,rpmdprintconfig;
+ rpmetafile,rpreport,rpfmetaviewvcl,rpmdconsts,
+ IdHttp,rpgdidriver,rpmdprintconfig,rpmdshfolder;
 
 
 type
  TRpWebMetaPrint=class(TCustomControl)
   private
    FCaption:WideString;
-   FConfig:Boolean;
+   FPrinterConfig:Boolean;
    FFontName:String;
    FFontSize:integer;
    FMetaUrl:String;
    FPort:integer;
    FPreview:Boolean;
+   FInstall:Boolean;
+   procedure DoInstall;
    procedure SetCaption(Value:WideString);
   protected
    procedure Paint;override;
@@ -49,7 +54,8 @@ type
    constructor Create(AOwner:TComponent);override;
    procedure Execute;
   published
-   property Config:Boolean read FConfig write FConfig;
+   property Install:Boolean read FInstall write FInstall;
+   property PrinterConfig:Boolean read FPrinterConfig write FPrinterConfig;
    property Caption:WideString read FCaption write SetCaption;
    property MetaUrl:String read FMetaUrl write FMetaUrl;
    property Port:integer read FPort write FPort default 90;
@@ -64,19 +70,28 @@ procedure PrintHttpReport(httpstring:String);
 
 implementation
 
+
+
+
 procedure TRpWebMetaPrint.Execute;
 var
  connect:TIdHttp;
  astream:TMemoryStream;
  metafile:TrpMetafileReport;
 begin
- if config then
+ if FPrinterconfig then
  begin
   ShowPrintersConfiguration;
   exit;
  end;
+ if install then
+ begin
+  DoInstall;
+  exit;
+ end;
  connect:=TIdHttp.Create(nil);
  try
+  connect.Port:=FPort;
   astream:=TMemoryStream.Create;
   try
    connect.Get(MetaUrl,astream);
@@ -123,6 +138,9 @@ begin
  if Length(FFontName)>0 then
   Font.Name:=FontName;
  rec:=GetClientRect;
+ Canvas.Brush.Style:=bsClear;
+ Canvas.Pen.Color:=clWindowText;
+ Canvas.Rectangle(rec.Left,rec.Top,rec.Right,rec.Bottom);
  Canvas.Font.Color:=clWindowText;
  Canvas.Brush.Color:=clBtnFace;
  Canvas.TextRect(rec,0,1,Caption);
@@ -154,5 +172,32 @@ begin
   connect.free;
  end;
 end;
+
+procedure TRpWebMetaPrint.DoInstall;
+var
+ connect:TIdHttp;
+ sysdir:String;
+ astream:TMemoryStream;
+begin
+ // Install need the url to install languages from
+ connect:=TIdHttp.Create(nil);
+ try
+  connect.Port:=FPort;
+  astream:=TMemoryStream.Create;
+  try
+   sysdir:=GetTheSystemDirectory;
+   connect.Get(MetaUrl+'/reportmanres.es',astream);
+   if astream.size=0 then
+    Raise Exception.Create(SRpNotFound+' - '+MetaUrl);
+   astream.Seek(0,soFromBeginning);
+   astream.SaveToFile(sysdir+DIR_SEPARATOR+'reportmanres.es');
+  finally
+   astream.free;
+  end;
+ finally
+  connect.free;
+ end;
+end;
+
 
 end.

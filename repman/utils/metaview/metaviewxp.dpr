@@ -4,7 +4,7 @@ program metaviewxp;
 
 uses
   Forms,
-  fmetaviewvcl in '..\..\..\fmetaviewvcl.pas' {FRpMetaVCL},
+  rpfmetaviewvcl in '..\..\..\rpfmetaviewvcl.pas' {FRpMetaVCL},
   rpmetafile in '..\..\..\rpmetafile.pas',
   rppdfdriver in '..\..\..\rppdfdriver.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas',

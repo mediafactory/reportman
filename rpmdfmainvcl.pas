@@ -1031,7 +1031,6 @@ begin
   compo:=Clipboard.GetComponent(acompo,acompo);
   alist:=TList.Create;
   try
-   pitem:=nil;
    for i:=0 to compo.ComponentCount-1 do
    begin
     alist.Add(compo.Components[i]);

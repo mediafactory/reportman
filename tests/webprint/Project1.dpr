@@ -4,7 +4,7 @@ uses
   Forms,
   Unit1 in 'Unit1.pas' {Form1},
   rpwebmetaclient in '..\..\rpwebmetaclient.pas',
-  fmetaviewvcl in '..\..\fmetaviewvcl.pas' {FRpMetaVCL};
+  rpfmetaviewvcl in '..\..\rpfmetaviewvcl.pas' {FRpMetaVCL};
 
 {$R *.res}
 

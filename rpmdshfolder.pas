@@ -55,12 +55,18 @@ const
   shlwapi32 = 'shlwapi.dll';
   shfolder  = 'shfolder.dll';
 {$ENDIF}
+{$IFDEF LINUX}
+ DIR_SEPARATOR='/';
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+ DIR_SEPARATOR='\';
+{$ENDIF}
 
 
   function Obtainininameuserconfig (company, product, filename:string):string;
   function Obtainininamelocalconfig (company, product, filename:string):string;
   function Obtainininamecommonconfig (company, product, filename:string):string;
-
+  function GetTheSystemDirectory:String;
 {$IFDEF MSWINDOWS}
 {$EXTERNALSYM SHGetFolderPath}
 {$IFNDEF BUILDER4}
@@ -222,6 +228,37 @@ begin
  Result:=StrPas(szAppdata);
 {$ENDIF}
 end;
+
+function GetTheSystemDirectory:String;
+{$IFDEF MSWINDOWS}
+var
+ pbuf:PChar;
+ asize:Integer;
+{$ENDIF}
+begin
+{$IFDEF LINUX}
+ Result:='/lib';
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+ pbuf:=AllocMem(MAX_PATH+1);
+ try
+  asize:=GetSystemDirectory(pbuf,MAX_PATH);
+  if asize=0 then
+   RaiseLastOsError;
+  if asize>MAX_PATH then
+  begin
+   asize:=GetSystemDirectory(pbuf,MAX_PATH);
+   if asize=0 then
+    RaiseLastOsError;
+  end;
+  result:=StrPas(pbuf);
+ finally
+  FreeMem(pbuf);
+ end;
+{$ENDIF}
+end;
+
+
 
 {$IFDEF BUILDER4}
 initialization

@@ -20,7 +20,7 @@ unit rptranslator;
 interface
 
 uses
- SysUtils,rpmdconsts,
+ SysUtils,rpmdconsts,rpmdshfolder,
 {$IFDEF LINUX}
  Libc,
 {$ENDIF}
@@ -321,7 +321,17 @@ begin
  end;
  FCurrentResourceFileName:=afilename;
  if Not FileExists(afilename) then
-  exit;
+ begin
+  // Try with system directory
+  afilename:=FFilename;
+  if FAutoLocale then
+  begin
+   afilename:=GetTheSystemDirectory+DIR_SEPARATOR+FFilename;
+   afilename:=AddLocaleSufix(afilename);
+  end;
+  if Not FileExists(afilename) then
+   exit;
+ end;
  // Opens the file and loads the strings
  memstream:=TMemoryStream.Create;
  try

@@ -5,7 +5,7 @@ program metaview;
 uses
   QForms,
 {$IFDEF MSWINDOWS}
-  fmetaview in '..\..\..\fmetaview.pas' {FRpMeta},
+  rpfmetaview in '..\..\..\rpfmetaview.pas' {FRpMeta},
   rpmetafile in '..\..\..\rpmetafile.pas',
   rpprintdia in '..\..\..\rpprintdia.pas' {FRpPrintDialog},
   rpqtdriver in '..\..\..\rpqtdriver.pas' {TFRpQtProgress},
@@ -21,7 +21,7 @@ uses
   rpmdprintconfig in '..\..\..\rpmdprintconfig.pas' {FRpPrinterConfig};
 {$ENDIF}
 {$IFDEF LINUX}
-  fmetaview in '../../../fmetaview.pas' {FRpMeta},
+  rpfmetaview in '../../../rpfmetaview.pas' {FRpMeta},
   rpmetafile in '../../../rpmetafile.pas',
   rpprintdia in '../../../rpprintdia.pas' {FRpPrintDialog},
   rppdfdriver in '../../../rppdfdriver.pas',

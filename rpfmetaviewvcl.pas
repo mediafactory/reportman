@@ -2,8 +2,8 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       Metaview                                        }
-{       TFMetaView                                      }
+{       rpMetaviewvcl                                   }
+{       TFRpMetaVCL                                     }
 {       A form to view, print and export                }
 {        report metafiles                               }
 {                                                       }
@@ -17,7 +17,7 @@
 {                                                       }
 {*******************************************************}
 
-unit fmetaview;
+unit rpfmetaviewvcl;
 
 interface
 
@@ -25,21 +25,18 @@ interface
 
 uses
   SysUtils,Inifiles,
-{$IFDEF MSWINDOWS}
-  Windows,Dialogs,rpgdidriver,
-{$ENDIF}
-  Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  QStdCtrls,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,rpmdclitree,
-  QActnList, QImgList,QPrinters,Qt,rpmdconsts,rptypes, QMenus,
-  rpmdfabout,QTypes,QStyle,rpmdshfolder,rpmdprintconfig,
-  rpmdfhelpform;
+  Windows,Dialogs,rpgdidriver,ShellApi,rpgraphutilsvcl,
+  Types, Classes, Graphics, Controls, Forms,
+  StdCtrls,rpmetafile, ComCtrls,ExtCtrls,rpmdclitreevcl,
+  ActnList, ImgList,Printers,rpmdconsts,rptypes, Menus,
+  rpmdfaboutvcl,rpmdshfolder,rpmdprintconfigvcl,
+  ToolWin;
 
 type
-  TFRpMeta = class(TForm)
+  TFRpMetaVCL = class(TForm)
     BToolBar: TToolBar;
     ImageContainer: TScrollBox;
     AImage: TImage;
-    ImageList1: TImageList;
     ActionList1: TActionList;
     AFirst: TAction;
     APrevious: TAction;
@@ -97,25 +94,10 @@ type
     AViewConnect: TAction;
     ReportConnection1: TMenuItem;
     MPreferences: TMenuItem;
-    MQtStyle: TMenuItem;
     AStatusBar: TAction;
     BStatus: TStatusBar;
-    ASystemPrintDialog: TAction;
-    Windows1: TMenuItem;
-    Motif1: TMenuItem;
-    MotifPlus1: TMenuItem;
-    CDE1: TMenuItem;
-    QtSGI1: TMenuItem;
-    Platinum1: TMenuItem;
-    MQtDefault: TMenuItem;
-    ADriverQt: TAction;
-    ADriverGDI: TAction;
-    MDriverSelect: TMenuItem;
-    WindowsGDIDriver1: TMenuItem;
-    QtDriver1: TMenuItem;
     ADocumentation: TAction;
     StatusBar1: TMenuItem;
-    QtSystemPrintDialog1: TMenuItem;
     Documentation1: TMenuItem;
     APrintSetup: TAction;
     PrinterSetup1: TMenuItem;
@@ -140,6 +122,7 @@ type
     PrintersConfiguration1: TMenuItem;
     AAsyncExec: TAction;
     Asynchronousexecution1: TMenuItem;
+    ImageList1: TImageList;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -166,22 +149,16 @@ type
     procedure AAboutExecute(Sender: TObject);
     procedure AViewConnectExecute(Sender: TObject);
     procedure AStatusBarExecute(Sender: TObject);
-    procedure Windows1Click(Sender: TObject);
     procedure ADocumentationExecute(Sender: TObject);
-    procedure ASystemPrintDialogExecute(Sender: TObject);
-    procedure ADriverQtExecute(Sender: TObject);
-    procedure ADriverGDIExecute(Sender: TObject);
     procedure APrintSetupExecute(Sender: TObject);
     procedure APrintersConfigurationExecute(Sender: TObject);
     procedure MSelPrinter0Click(Sender: TObject);
     procedure AAsyncExecExecute(Sender: TObject);
   private
     { Private declarations }
-    fhelp:TFRpHelpform;
     cancelled:boolean;
-    clitree:TFRpCliTree;
+    clitree:TFRpCliTreeVCL;
     oldonHint:TNotifyEvent;
-    AppStyle:TDefaultStyle;
     configfile:string;
     procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
     procedure EnableButtons;
@@ -191,37 +168,36 @@ type
     procedure AppHint(Sender:TObject);
     procedure LoadConfig;
     procedure SaveConfig;
-    procedure UpdateStyle;
     procedure ShowHelp(AURL:string);
     procedure UpdatePrintSel;
   public
     { Public declarations }
     pagenum:integer;
     metafile:TRpMetafileReport;
-    qtdriver:TRpQtDriver;
+    gdidriver:TRpGDIDriver;
     printerindex:TRpPrinterSelect;
-    aqtdriver:IRpPrintDriver;
+    agdidriver:IRpPrintDriver;
     bitmap:TBitmap;
     procedure PrintPage;
   end;
 
 var
- FRpMeta:TFRpMeta;
+ FRpMetaVCL:TFRpMetaVCL;
 
 procedure PreviewMetafile(metafile:TRpMetafileReport);
 
 implementation
 
-uses rpprintdia,rppdfdriver;
+uses rppdfdriver;
 
-{$R *.xfm}
+{$R *.dfm}
 
 procedure PreviewMetafile(metafile:TRpMetafileReport);
 var
- dia:TFRpMeta;
+ dia:TFRpMetaVCL;
  memstream:TMemoryStream;
 begin
- dia:=TFRpMeta.Create(Application);
+ dia:=TFRpMetaVCL.Create(Application);
  try
   memstream:=TMemoryStream.Create;
   try
@@ -250,8 +226,7 @@ begin
  end;
 end;
 
-
-procedure TFRpMeta.PrintPage;
+procedure TFRpMetaVCL.PrintPage;
 var
  rPageSizeQt:TPageSizeQt;
 begin
@@ -271,21 +246,28 @@ begin
   rpagesizeqt.Indexqt:=metafile.PageSize;
   rpagesizeqt.Custom:=False;
  end;
- qtdriver.SetPagesize(rpagesizeqt);
+ try
+  gdidriver.SetPagesize(rpagesizeqt);
+ except
+  On E:Exception do
+  begin
+   rpgraphutilsvcl.RpMessageBox(E.Message);
+  end;
+ end;
  Metafile.CurrentPage:=pagenum-1;
- metafile.DrawPage(qtdriver);
- if Assigned(qtdriver.bitmap) then
+ metafile.DrawPage(gdidriver);
+ if Assigned(gdidriver.bitmap) then
  begin
-  AImage.Width:=qtdriver.bitmap.Width;
-  AImage.Height:=qtdriver.bitmap.Height;
-  AImage.Picture.Bitmap.Assign(qtdriver.bitmap);
+  AImage.Width:=gdidriver.bitmap.Width;
+  AImage.Height:=gdidriver.bitmap.Height;
+  AImage.Picture.Bitmap.Assign(gdidriver.bitmap);
   AImage.Invalidate;
  end;
  pagenum:=Metafile.CurrentPage+1;
  EPageNum.Text:=IntToStr(PageNum);
 end;
 
-procedure TFRpMeta.FormCreate(Sender: TObject);
+procedure TFRpMetaVCL.FormCreate(Sender: TObject);
 begin
  MSelectPrinter.Caption:=TranslateStr(741,MSelectPrinter.Caption);
  MSelPrinter0.Caption:=SRpDefaultPrinter;
@@ -305,10 +287,6 @@ begin
  MSelPrinter14.Caption:=SRpUserPrinter8;
  MSelPrinter15.Caption:=SRpUserPrinter9;
 
-{$IFDEF MSWINDOWS}
-  // Visible driver selection
-  MDriverSelect.Visible:=true;
-{$ENDIF}
  configfile:=Obtainininameuserconfig('','','repmand');
 {$IFDEF VCLFILEFILTERS}
  SaveDialog1.Filter:=SRpRepMetafile+'|*.rpmf|'+
@@ -322,8 +300,7 @@ begin
    SRpPDFFileUn+' (*.pdf)';
  OpenDialog1.Filter:=SRpRepMetafile+' (*.rpmf)';
 {$ENDIF}
- AppStyle:=dsSystemDefault;
- clitree:=TFRpCliTree.Create(Self);
+ clitree:=TFRpCliTreeVCL.Create(Self);
  clitree.Align:=alLeft;
  clitree.Parent:=Self;
  clitree.OnExecuteServer:=ExecuteServer;
@@ -366,11 +343,6 @@ begin
  APrintSetup.Hint:=TranslateStr(57,APrintSetup.Hint);
  ADocumentation.Caption:=TranslateStr(60,ADocumentation.Caption);
  ADocumentation.Hint:=TranslateStr(61,ADocumentation.Hint);
- MDriverSelect.Caption:=TranslateStr(67,MDriverSelect.Caption);
- ADriverQt.Caption:=TranslateStr(68,ADriverQt.Caption);
- ADriverQt.Hint:=TranslateStr(69,ADriverQt.Hint);
- ADriverGDI.Caption:=TranslateStr(70,ADriverGDI.Caption);
- ADriverGDI.Hint:=TranslateStr(71,ADriverGDI.Hint);
  AAsyncExec.Caption:=TranslateStr(783,AASyncExec.Caption);
  AAsyncExec.Hint:=TranslateStr(784,AAsyncExec.Hint);
 
@@ -386,19 +358,14 @@ begin
  AStatusBar.Caption:=TranslateStr(76,AStatusBar.Caption);
  AStatusBar.Hint:=TranslateStr(77,AStatusBar.Hint);
  MPreferences.Caption:=TranslateStr(5,MPreferences.Caption);
- ASystemPrintDialog.Caption:=TranslateStr(72,ASystemPrintDialog.Caption);
- ASystemPrintDialog.Hint:=TranslateStr(73,ASystemPrintDialog.Hint);
- MQtStyle.Caption:=TranslateStr(78,MQtStyle.Caption);
- MQtStyle.Hint:=TranslateStr(79,MQtStyle.Hint);
- MQtDefault.Caption:=TranslateStr(80,MQtDefault.Caption);
 
 
- APrevious.ShortCut:=Key_PageUp;
- ANext.ShortCut:=Key_PageDown;
- AFirst.ShortCut:=Key_Home;
- ALast.ShortCut:=Key_End;
- qtdriver:=TRpQtDriver.Create;
- aqtdriver:=qtdriver;
+ APrevious.ShortCut:=VK_PRIOR;
+ ANext.ShortCut:=VK_NEXT;
+ AFirst.ShortCut:=VK_HOME;
+ ALast.ShortCut:=VK_END;
+ gdidriver:=TRpGDIDriver.Create;
+ agdidriver:=gdidriver;
 // qtdriver.toprinter:=true;
  bitmap:=TBitmap.Create;
  bitmap.PixelFormat:=pf32bit;
@@ -414,56 +381,38 @@ begin
 end;
 
 
-procedure TFRpMeta.ShowHelp(AURL:string);
+procedure TFRpMetaVCL.ShowHelp(AURL:string);
 begin
- if Not Assigned(FHelp) then
-  FHelp:=TFRpHelpform.Create(Application);
- FHelp.TextBrowser1.FileName:=AURL;
- FHelp.Show;
- if Length(FHelp.TextBrowser1.Text)<1 then
- begin
-  FHelp.TextBrowser1.Text:=SRpDocNotInstalled+#10+
-   SRpDocNotInstalled2+#10+
-   SRpDocNotInstalled3+#10;
- end;
+ // Starts the default explorer
+ ShellExecute(Self.handle,Pchar('open'),Pchar(AURL),nil,nil,SW_SHOWNORMAL);
 end;
 
-procedure TFRpMeta.UpdateStyle;
-var
- i:integer;
- aitem:TMenuItem;
+
+procedure TFRpMetaVCL.AppHint(Sender:TObject);
 begin
- Application.Style.DefaultStyle:=AppStyle;
- for i:=0 to MQtStyle.Count-1 do
- begin
-  aitem:=MQtStyle.Items[i];
-  aitem.Checked:=(aitem.Tag=Integer(Application.Style.DefaultStyle));
- end;
+ if Not (csDestroying in ComponentState) then
+  BStatus.Panels.Items[0].Text:=Application.Hint;
 end;
 
-procedure TFRpMeta.AppHint(Sender:TObject);
+procedure TFRpMetaVCL.FormDestroy(Sender: TObject);
 begin
- BStatus.Panels.Items[0].Text:=Application.Hint;
-end;
-
-procedure TFRpMeta.FormDestroy(Sender: TObject);
-begin
+ Application.OnHint:=oldonhint;
  bitmap.free;
 end;
 
-procedure TFRpMeta.AFirstExecute(Sender: TObject);
+procedure TFRpMetaVCL.AFirstExecute(Sender: TObject);
 begin
  pagenum:=1;
  PrintPage;
 end;
 
-procedure TFRpMeta.ANextExecute(Sender: TObject);
+procedure TFRpMetaVCL.ANextExecute(Sender: TObject);
 begin
  inc(pagenum);
  PrintPage;
 end;
 
-procedure TFRpMeta.APreviousExecute(Sender: TObject);
+procedure TFRpMetaVCL.APreviousExecute(Sender: TObject);
 begin
  dec(pagenum);
  if pagenum<1 then
@@ -471,13 +420,13 @@ begin
  PrintPage;
 end;
 
-procedure TFRpMeta.ALastExecute(Sender: TObject);
+procedure TFRpMetaVCL.ALastExecute(Sender: TObject);
 begin
  pagenum:=MaxInt;
  PrintPage;
 end;
 
-procedure TFRpMeta.EPageNumKeyPress(Sender: TObject; var Key: Char);
+procedure TFRpMetaVCL.EPageNumKeyPress(Sender: TObject; var Key: Char);
 begin
  if Key=chr(13) then
  begin
@@ -486,14 +435,14 @@ begin
  end;
 end;
 
-procedure TFRpMeta.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TFRpMetaVCL.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
  cancelled:=true;
- qtdriver:=nil;
+ gdidriver:=nil;
  SaveConfig;
 end;
 
-procedure TFRpMeta.APrintExecute(Sender: TObject);
+procedure TFRpMetaVCL.APrintExecute(Sender: TObject);
 var
  frompage,topage,copies:integer;
  allpages,collate:boolean;
@@ -509,39 +458,19 @@ begin
  rpPageSize.Indexqt:=metafile.PageSize;
  rpPageSize.CustomWidth:=metafile.CustomX;
  rpPageSize.CustomHeight:=metafile.CustomY;
-{$IFDEF MSWINDOWS}
- if ADriverGDI.Checked then
- begin
-  allpages:=true;
-  frompage:=1; topage:=999999;
-  copies:=1;
-  rpgdidriver.PrinterSelection(printerindex);
-  rpgdidriver.PageSizeSelection(rpPageSize);
-  rpgdidriver.OrientationSelection(metafile.orientation);
-  if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-   rpgdidriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
-    frompage,topage,copies,collate,GetDeviceFontsOption(printerindex),printerindex);
-  exit;
- end;
-{$ENDIF}
- rpqtdriver.PrinterSelection(printerindex);
- rpqtdriver.PageSizeSelection(rpPageSize);
- rpqtdriver.OrientationSelection(metafile.orientation);
- if Not ASystemPrintDialog.Checked then
- begin
-  if rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-   rpqtdriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
-    frompage,topage,copies,collate,printerindex);
- end
- else
- begin
-  if rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-   rpqtdriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
-    frompage,topage,copies,collate,printerindex);
- end;
+
+ allpages:=true;
+ frompage:=1; topage:=999999;
+ copies:=1;
+ rpgdidriver.PrinterSelection(printerindex);
+ rpgdidriver.PageSizeSelection(rpPageSize);
+ rpgdidriver.OrientationSelection(metafile.orientation);
+ if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+  rpgdidriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
+   frompage,topage,copies,collate,GetDeviceFontsOption(printerindex),printerindex);
 end;
 
-procedure TFRpMeta.ASaveExecute(Sender: TObject);
+procedure TFRpMetaVCL.ASaveExecute(Sender: TObject);
 begin
  cancelled:=false;
  // Saves the metafile
@@ -568,7 +497,7 @@ begin
  end;
 end;
 
-procedure TFRpMeta.AOpenExecute(Sender: TObject);
+procedure TFRpMetaVCL.AOpenExecute(Sender: TObject);
 begin
  DisableButtons;
  try
@@ -591,7 +520,7 @@ begin
  end;
 end;
 
-procedure TFRpMeta.FormKeyDown(Sender: TObject; var Key: Word;
+procedure TFRpMetaVCL.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 var
  increment:integer;
@@ -600,31 +529,31 @@ begin
   increment:=1
  else
   increment:=ImageContainer.VertScrollBar.Increment;
- if Key=Key_Down then
+ if Key=VK_DOWN then
  begin
   if ImageContainer.VertScrollBar.Position+increment>ImageContainer.VertScrollBar.Range-ImageContainer.Height then
    ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Range-ImageContainer.Height+increment
   else
    ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position+Increment;
  end;
- if Key=Key_Up then
+ if Key=VK_UP then
  begin
   ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position-Increment;
  end;
- if Key=Key_Right then
+ if Key=VK_RIGHT then
  begin
   if ImageContainer.HorzScrollBar.Position+increment>ImageContainer.HorzScrollBar.Range-ImageContainer.Width then
    ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Range-ImageContainer.Width+increment
   else
    ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position+Increment;
  end;
- if Key=Key_Left then
+ if Key=VK_LEFT then
  begin
   ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position-Increment;
  end;
 end;
 
-procedure TFRpMeta.MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
+procedure TFRpMetaVCL.MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
 begin
  BCancel.Caption:=SRpPage+':'+FormatFloat('####,#####',page)+
   ' -'+FormatFloat('######,####',Position div 1024)+SRpKbytes+' '+SrpCancel;
@@ -649,7 +578,7 @@ end;
 
 
 
-procedure TFRpMeta.EnableButtons;
+procedure TFRpMetaVCL.EnableButtons;
 begin
  AFirst.Enabled:=true;
  ANext.Enabled:=true;
@@ -662,7 +591,7 @@ begin
  PBar.Visible:=false;
 end;
 
-procedure TFRpMeta.DisableButtons;
+procedure TFRpMetaVCL.DisableButtons;
 begin
  AFirst.Enabled:=false;
  ANext.Enabled:=false;
@@ -678,53 +607,41 @@ begin
 end;
 
 
-procedure TFRpMeta.AExitExecute(Sender: TObject);
+procedure TFRpMetaVCL.AExitExecute(Sender: TObject);
 begin
  Close;
 end;
 
 
-procedure TFRpMeta.PlaceImagePosition;
+procedure TFRpMetaVCL.PlaceImagePosition;
 var
  AWidth:integeR;
  Aheight:integer;
 begin
- ImageContainer.HorzScrollBar.Position:=0;
- ImageContainer.VertScrollBar.Position:=0;
- AImage.Left:=0;
- AImage.Top:=0;
- ImageContainer.HorzScrollBar.Position:=0;
- ImageContainer.VertScrollBar.Position:=0;
-
- AWidth:=ImageContainer.Width-SCROLLBAR_VX;
- AHeight:=ImageContainer.Height-SCROLLBAR_HX;
+ AWidth:=ImageContainer.Width-GetSystemMetrics(SM_CYHSCROLL);
+ AHeight:=ImageContainer.Height-GetSystemMetrics(SM_CXHSCROLL);
 
  if AImage.Width>AWidth then
-  AImage.Left:=0
+  AImage.Left:=-ImageContainer.HorzScrollBar.Position
  else
-  AImage.Left:=(AWidth-AImage.Width) div 2;
+  AImage.Left:=((AWidth-AImage.Width) div 2)-ImageContainer.HorzScrollBar.Position;
  if AImage.Height>AHeight then
-  AImage.Top:=0
+  AImage.Top:=-ImageContainer.VertScrollBar.Position
  else
-  AImage.Top:=(AHeight-AImage.Height) div 2;
- // A bug in the refresh in Windows
-{$IFDEF MSWINDOWS}
- ImageContainer.Visible:=False;
- ImageContainer.Visible:=True;
- {$ENDIF}
+  AImage.Top:=((AHeight-AImage.Height) div 2)-ImageContainer.VertScrollBar.Position;
 end;
 
-procedure TFRpMeta.FormResize(Sender: TObject);
+procedure TFRpMetaVCL.FormResize(Sender: TObject);
 begin
  // Sets the driver widths and redraw accordingly
  AScaleFull.Checked:=false;
  AScaleWide.Checked:=false;
  AScale100.Checked:=false;
- if Assigned(qtdriver) then
+ if Assigned(gdidriver) then
  begin
-  qtdriver.clientwidth:=ImageContainer.Width;
-  qtdriver.clientHeight:=ImageContainer.Height;
-  case qtdriver.PreviewStyle of
+  gdidriver.clientwidth:=ImageContainer.Width;
+  gdidriver.clientHeight:=ImageContainer.Height;
+  case gdidriver.PreviewStyle of
    spWide:
     AScaleWide.Checked:=True;
    spEntirePage:
@@ -739,39 +656,39 @@ begin
  end;
 end;
 
-procedure TFRpMeta.AScale100Execute(Sender: TObject);
+procedure TFRpMetaVCL.AScale100Execute(Sender: TObject);
 begin
- qtdriver.PreviewStyle:=spNormal;
+ gdidriver.PreviewStyle:=spNormal;
  FormResize(Self);
 end;
 
-procedure TFRpMeta.AScaleWideExecute(Sender: TObject);
+procedure TFRpMetaVCL.AScaleWideExecute(Sender: TObject);
 begin
- qtdriver.PreviewStyle:=spWide;
+ gdidriver.PreviewStyle:=spWide;
  FormResize(Self);
 end;
 
-procedure TFRpMeta.AScaleFullExecute(Sender: TObject);
+procedure TFRpMetaVCL.AScaleFullExecute(Sender: TObject);
 begin
- qtdriver.PreviewStyle:=spEntirePage;
+ gdidriver.PreviewStyle:=spEntirePage;
  FormResize(Self);
 end;
 
-procedure TFRpMeta.AScaleLessExecute(Sender: TObject);
+procedure TFRpMetaVCL.AScaleLessExecute(Sender: TObject);
 begin
- qtdriver.PreviewStyle:=spCustom;
- qtdriver.Scale:=qtdriver.scale-0.10;
+ gdidriver.PreviewStyle:=spCustom;
+ gdidriver.Scale:=gdidriver.scale-0.10;
  FormResize(Self);
 end;
 
-procedure TFRpMeta.AScaleMoreExecute(Sender: TObject);
+procedure TFRpMetaVCL.AScaleMoreExecute(Sender: TObject);
 begin
- qtdriver.PreviewStyle:=spCustom;
- qtdriver.Scale:=qtdriver.scale+0.10;
+ gdidriver.PreviewStyle:=spCustom;
+ gdidriver.Scale:=gdidriver.scale+0.10;
  FormResize(Self);
 end;
 
-procedure TFRpMeta.AImageMouseDown(Sender: TObject; Button: TMouseButton;
+procedure TFRpMetaVCL.AImageMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
  relx:Extended;
@@ -782,7 +699,7 @@ var
 begin
  // When clic in image scale to 100% and scroll to the
  // clicked section
- if qtdriver.PreviewStyle=spEntirePage then
+ if gdidriver.PreviewStyle=spEntirePage then
  begin
   punt.X:=X;
   punt.y:=Y;
@@ -805,12 +722,12 @@ begin
   AScaleFull.Execute;
 end;
 
-procedure TFRpMeta.ACancelExecute(Sender: TObject);
+procedure TFRpMetaVCL.ACancelExecute(Sender: TObject);
 begin
  cancelled:=true;
 end;
 
-procedure TFRpMeta.ExecuteServer(Sender:TObject);
+procedure TFRpMetaVCL.ExecuteServer(Sender:TObject);
 begin
  metafile.LoadFromStream(clitree.Stream);
  ASave.Enabled:=True;
@@ -824,12 +741,12 @@ begin
  FormResize(Self);
 end;
 
-procedure TFRpMeta.AAboutExecute(Sender: TObject);
+procedure TFRpMetaVCL.AAboutExecute(Sender: TObject);
 begin
  ShowAbout;
 end;
 
-procedure TFRpMeta.AViewConnectExecute(Sender: TObject);
+procedure TFRpMetaVCL.AViewConnectExecute(Sender: TObject);
 begin
  AViewConnect.Checked:=Not AViewConnect.Checked;
  clitree.Width:=clitree.Initialwidth;
@@ -837,7 +754,7 @@ begin
  FormResize(Self);
 end;
 
-procedure TFRpMeta.AStatusBarExecute(Sender: TObject);
+procedure TFRpMetaVCL.AStatusBarExecute(Sender: TObject);
 begin
  AStatusBar.Checked:=Not AStatusBar.Checked;
  BStatus.Visible:=AStatusBar.Checked;
@@ -845,57 +762,35 @@ begin
 end;
 
 
-procedure TFRpMeta.Windows1Click(Sender: TObject);
-begin
- // Sets the style
- AppStyle:=TDefaultStyle((Sender As TComponent).Tag);
- UpdateStyle;
-end;
 
-procedure TFRpMeta.LoadConfig;
+procedure TFRpMetaVCL.LoadConfig;
 var
  inif:TInifile;
 begin
  inif:=TIniFile.Create(configfile);
  try
-{$IFDEF MSWINDOWS}
-  ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',false);
-{$ENDIF}
-{$IFDEF LINUX}
-  ADriverQT.Checked:=true;
-{$ENDIF}
-  AsystemPrintDialog.Checked:=inif.ReadBool('Preferences','SystemPrintDialog',True);
   BStatus.Visible:=inif.ReadBool('Preferences','StatusBar',True);
   AStatusBar.Checked:=BStatus.Visible;
   AViewConnect.Checked:=inif.ReadBool('Preferences','DiagConnect',True);
   clitree.Visible:=AViewConnect.Checked;
-{$IFDEF LINUX}
-  rpqtdriver.kylixprintbug:=false;
-{$ENDIF}
   clitree.ComboHost.Text:=inif.ReadString('Preferences','Host','localhost');
   clitree.EUserName.Text:=inif.ReadString('Preferences','UserName','Admin');
-  ADriverGDI.Checked:=Not ADriverQT.Checked;
   AAsyncExec.Checked:=inif.ReadBool('Preferences','AsyncExec',False);;
   clitree.asynchrohous:=AAsyncexec.Checked;
-  AppStyle:=TDefaultStyle(inif.ReadInteger('Preferences','QtStyle',Integer(dsSystemDefault)));
   printerindex:=TRpPrinterSelect(inif.ReadInteger('Preferences','PrinterIndex',Integer(pRpDefaultPrinter)));
   UpdatePrintSel;
-  UpdateStyle;
  finally
   inif.free;
  end;
 end;
 
-procedure TFRpMeta.SaveConfig;
+procedure TFRpMetaVCL.SaveConfig;
 var
  inif:TInifile;
 begin
  inif:=TIniFile.Create(configfile);
  try
-  inif.WriteBool('Preferences','DriverQT',ADriverQT.Checked);
-  inif.WriteBool('Preferences','SystemPrintDialog',AsystemPrintDialog.Checked);
   inif.WriteBool('Preferences','StatusBar',BStatus.Visible);
-  inif.WriteInteger('Preferences','QtStyle',Integer(AppStyle));
   inif.WriteInteger('Preferences','PrinterIndex',Integer(printerindex));
   inif.WriteString('Preferences','Host',clitree.ComboHost.Text);
   inif.WriteString('Preferences','UserName',clitree.EUserName.Text);
@@ -907,62 +802,35 @@ begin
  end;
 end;
 
-procedure TFRpMeta.ADocumentationExecute(Sender: TObject);
+procedure TFRpMetaVCL.ADocumentationExecute(Sender: TObject);
 var
  aurl:string;
  Directorysep:string;
 begin
  aurl:=ExtractFilePath(Application.Exename);
-{$IFDEF MSWINDOWS}
  Directorysep:='\';
-{$ENDIF}
-{$IFDEF LINUX}
- Directorysep:='/';
-{$ENDIF}
  aurl:=aurl+'doc'+Directorysep+
-  Directorysep+'left.html';
- ShowHelp(aurl);
+  'index.html';
+ if FileExists(aurl) then
+  ShowHelp(aurl)
+ else
+  ShowHelp('http://reportman.sourceforge.net');
 end;
 
-procedure TFRpMeta.ASystemPrintDialogExecute(Sender: TObject);
-begin
- ASystemPrintDialog.Checked:=Not ASystemPrintDialog.Checked;
-end;
 
-procedure TFRpMeta.ADriverQtExecute(Sender: TObject);
-begin
- ADriverQT.Checked:=true;
- ADriverGDI.Checked:=false;
-end;
-
-procedure TFRpMeta.ADriverGDIExecute(Sender: TObject);
-begin
- ADriverQT.Checked:=false;
- ADriverGDI.Checked:=true;
-end;
-
-procedure TFRpMeta.APrintSetupExecute(Sender: TObject);
-{$IFDEF MSWINDOWS}
+procedure TFRpMetaVCL.APrintSetupExecute(Sender: TObject);
 var
  psetup:TPrinterSetupDialog;
-{$ENDIF}
 begin
-{$IFDEF MSWINDOWS}
- if ADriverGDI.Checked then
- begin
-  psetup:=TPrinterSetupDialog.Create(nil);
-  try
-   psetup.execute;
-  finally
-   psetup.free;
-  end;
-  exit;
+ psetup:=TPrinterSetupDialog.Create(nil);
+ try
+  psetup.execute;
+ finally
+  psetup.free;
  end;
-{$ENDIF}
- printer.ExecuteSetup;
 end;
 
-procedure TFRpMeta.UpdatePrintSel;
+procedure TFRpMetaVCL.UpdatePrintSel;
 var
  i:integer;
 begin
@@ -972,18 +840,18 @@ begin
  end;
 end;
 
-procedure TFRpMeta.APrintersConfigurationExecute(Sender: TObject);
+procedure TFRpMetaVCL.APrintersConfigurationExecute(Sender: TObject);
 begin
  ShowPrintersConfiguration;
 end;
 
-procedure TFRpMeta.MSelPrinter0Click(Sender: TObject);
+procedure TFRpMetaVCL.MSelPrinter0Click(Sender: TObject);
 begin
  printerindex:=TRpPRinterSelect((Sender as TComponent).Tag);
  UpdatePrintSel;
 end;
 
-procedure TFRpMeta.AAsyncExecExecute(Sender: TObject);
+procedure TFRpMetaVCL.AAsyncExecExecute(Sender: TObject);
 begin
  AAsyncExec.Checked:=Not AAsyncExec.checked;
  clitree.asynchrohous:=AAsyncexec.Checked;

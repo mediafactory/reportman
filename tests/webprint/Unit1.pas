@@ -41,6 +41,7 @@ begin
  acontrol.Top:=200;
  acontrol.caption:='Hello';
  acontrol.preview:=true;
+ acontrol.PrinterConfig:=false;
  acontrol.MetaUrl:=Edit1.Text;
  acontrol.Execute;
 end;
