@@ -1104,7 +1104,7 @@ begin
  Result:=escapecodes[rpescape10cpi];
  case FontStep of
   rpcpi20:
-   Result:=escapecodes[rpescape10cpi];
+   Result:=escapecodes[rpescape20cpi];
   rpcpi17:
    Result:=escapecodes[rpescape17cpi];
   rpcpi15:

@@ -636,10 +636,10 @@ begin
  CheckLoadedPrinterConfig;
  if printerindex=pRpDefaultPrinter then
  begin
-  Result:=printerconfigfile.ReadBool('OemConvert','Default',false);
+  Result:=printerconfigfile.ReadBool('OemConvert','Default',true);
   Exit;
  end;
- Result:=printerconfigfile.ReadBool('OemConvert','Printer'+IntToStr(integer(printerindex)),false);
+ Result:=printerconfigfile.ReadBool('OemConvert','Printer'+IntToStr(integer(printerindex)),true);
 end;
 
 

@@ -199,7 +199,7 @@ begin
  if Length(defdriver)<1 then
   defdriver:=' ';
  index:=ComboTextOnly.Items.IndexOf(defdriver);
- if index>0 then
+ if index>=0 then
   ComboTextOnly.ItemIndex:=index;
  CheckOem.Checked:=configinifile.ReadBool('PrinterEscapeOem','Printer'+IntToStr(LSelPrinter.ItemIndex),true);
 end;

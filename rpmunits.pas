@@ -7,7 +7,7 @@
 {       designment of reports                           }
 {                                                       }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -17,7 +17,7 @@
 {                                                       }
 {*******************************************************}
 
-// The report units are always in twips that is 1440 twips=1 inchess=2.51 cms
+// The report units are always in twips that is 1440 twips=1 inchess=2.54 cms
 
 unit rpmunits;
 
