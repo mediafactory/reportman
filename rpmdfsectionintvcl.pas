@@ -1466,7 +1466,7 @@ begin
   else
   begin
 //   apoint.y:=Canvas.TextHeight('Mg')*((size div MAX_DROP_SIZE)+1);
-   apoint.x:=Canvas.TextWidth(getmstring(size));
+   apoint.x:=Canvas.TextWidth(getmstring(MAX_DROP_SIZE));
   end;
   apoint.x:=pixelstotwips(apoint.x);
   apoint.y:=pixelstotwips(apoint.y);
