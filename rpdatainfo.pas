@@ -1513,7 +1513,8 @@ begin
 {$IFDEF USEADO}
       TADOQuery(FSQLInternalQuery).Connection:=baseinfo.ADOConnection;
       TADOQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
-      TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
+      TADOQuery(FSQLInternalQuery).CursorType:=ctUnspecified;
+//      TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
       TADOQuery(FSQLInternalQuery).DataSource:=nil;
 //      Activating this switches break linked querys
 //      TADOQuery(FSQLInternalQuery).CursorLocation:=clUseServer;
