@@ -1,5 +1,5 @@
 [Compiler]
-A=8
+A=1
 B=0
 C=1
 D=1
@@ -45,7 +45,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=vcl;rtl;vclx;indy;inet;vclie;dbrtl;dsnap;vcldb;dbexpress;inetdb;bdertl;vcldbx;adortl;ibxpress;visualclx;visualdbclx;rppack_del;rppackv_del;rppackvcl_del;rppackdesign_del;teeui;teedb;tee
-Conditionals=
+Conditionals=REPMANRELEASE
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
@@ -78,5 +78,11 @@ LegalCopyright=MPL/GPL License
 LegalTrademarks=
 OriginalFilename=repmandxp
 ProductName=Report Manager Designer
-ProductVersion=
+ProductVersion=1.0.0.0
 Comments=
+[HistoryLists\hlConditionals]
+Count=1
+Item0=REPMANRELEASE
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

@@ -15,28 +15,15 @@
     <td bgcolor="#FFFFCC"><b>Location/Option</b></td>
   </tr>
   <tr> 
-    <td>repmand.exe</td>
+    <td>repmandxp.exe</td>
     <td>repmand</td>
     <td>Report Manager Main executable</td>
     <td>AppDir/Required</td>
   </tr>
   <tr> 
-    <td>rpmandxp.exe</td>
-    <td>&nbsp;</td>
-    <td>Non Qt Report Manager Designer Version, it supports Windows XP Themes, 
-      that is looks good in XP.</td>
-    <td>AppDir/Optional</td>
-  </tr>
-  <tr> 
     <td>reportmanres.*</td>
     <td>reportmanres.*</td>
     <td>Engine resource strings for multiple languages</td>
-    <td>AppDir/Optional</td>
-  </tr>
-  <tr> 
-    <td>repmand.*</td>
-    <td>&nbsp;</td>
-    <td>Internal resource translations for repmand.exe</td>
     <td>AppDir/Optional</td>
   </tr>
   <tr> 
@@ -46,59 +33,39 @@
     <td>AppDir/Optional</td>
   </tr>
   <tr> 
-    <td>qt_*.qm</td>
-    <td>qt_*.qm</td>
-    <td>Resource strings for Qt library</td>
-    <td>AppDir/Optional</td>
-  </tr>
-  <tr> 
-    <td>metaprint.exe</td>
+    <td>metaprintxp.exe</td>
     <td>metaprint</td>
-    <td> 
-      <p>Metafile print command line tool.</p>
-    </td>
+    <td> <p>Metafile print command line tool.</p></td>
     <td>AppDir/Required</td>
   </tr>
   <tr> 
-    <td>metaprintxp.exe</td>
-    <td>&nbsp;</td>
-    <td>Same as metaprint but using GDI print driver (no QT)</td>
-    <td>AppDir/Optional</td>
-  </tr>
-  <tr> 
-    <td>reportserverapp.exe</td>
+    <td>reportserverappxp.exe</td>
     <td>reportserverapp</td>
-    <td>Report Server X/Win application</td>
+    <td>TCP Report Server X/Win application</td>
     <td>AppDir/Optional</td>
   </tr>
   <tr> 
     <td>reportservercon.exe</td>
     <td>reportservercon</td>
-    <td>Report Server console application</td>
-    <td>AppDir/Optional</td>
-  </tr>
-  <tr> 
-    <td>repserverconfig.exe</td>
-    <td>repserverconfig.exe</td>
-    <td>Report Server configuration client</td>
+    <td>TCP Report Server console application</td>
     <td>AppDir/Optional</td>
   </tr>
   <tr> 
     <td>repserverconfigxp.exe</td>
-    <td>&nbsp;</td>
-    <td>Report Server conf.client (no Qt)</td>
+    <td>repserverconfig.exe</td>
+    <td>TCP Report Server configuration client</td>
     <td>AppDir/Optional</td>
   </tr>
   <tr> 
     <td>repserverservice.exe</td>
     <td>&nbsp;</td>
-    <td>Service application for NT Systems</td>
+    <td>Service application for Windows NT Systems and upper</td>
     <td>AppDir/Optional</td>
   </tr>
   <tr> 
     <td>repserviceinstall.exe</td>
     <td>&nbsp;</td>
-    <td>Service installation utility</td>
+    <td>Service installation utility for Windows NT Systems and upper</td>
     <td>AppDir/Optional</td>
   </tr>
   <tr> 
@@ -108,7 +75,7 @@
     <td>SysDir/Required</td>
   </tr>
   <tr> 
-    <td>qtintf70.dll</td>
+    <td>&nbsp;</td>
     <td>libbqt.so.2,libqtintf.so.2</td>
     <td>QT Linux libs and Windows qt libs and interface to qtlibs (Kylix 2)</td>
     <td>SysDir/Required</td>
@@ -121,11 +88,9 @@
   </tr>
   <tr> 
     <td>&nbsp;</td>
-    <td> 
-      <p>repmand.sh, metaview.sh, reportservercon.sh, reportserverapp.sh, repserverconfig.sh</p>
-    </td>
+    <td> <p>*.sh *.bin</p></td>
     <td>If you place SysDir libraries in AppDir you must use this scripts to start 
-      Report Manager Designer</td>
+      Report Manager executables</td>
     <td>AppDir/Optional</td>
   </tr>
   <tr> 
@@ -141,29 +106,23 @@
     <td>AppDir/Optional</td>
   </tr>
   <tr> 
-    <td>metaview.exe</td>
+    <td>metaviewxp.exe</td>
     <td>metaview</td>
     <td>Displays and prints Report Metafiles</td>
     <td>AppDir/Optional</td>
   </tr>
   <tr> 
-    <td>printrep.exe</td>
+    <td>printrepxp.exe</td>
     <td>printrep</td>
     <td>Loads a report definition and executes it to printer</td>
-    <td>AppDir/Optional</td>
-  </tr>
-  <tr> 
-    <td>printrepxp.exe</td>
-    <td>&nbsp;</td>
-    <td>Same as printrep but without Qt deps</td>
     <td>AppDir/Optional</td>
   </tr>
   <tr> 
     <td>printreptopdf.exe</td>
     <td>printreptopdf</td>
     <td>Loads a report definition, proces it and generates pdf, this is a true 
-      console app</td>
-    <td>AppDir/Optional</td>
+      console app. Required for Simetric Multiprocessing</td>
+    <td>AppDir/Required*l</td>
   </tr>
   <tr> 
     <td>doc directory</td>
@@ -171,10 +130,10 @@
     <td>Documentation of Report Manager Designer</td>
     <td>AppDir/Optional</td>
   </tr>
-  <tr>
-    <td>&nbsp;</td>
-    <td>*.bin</td>
-    <td>Launchers for all applications</td>
+  <tr> 
+    <td>apilib directory</td>
+    <td>Shared Library</td>
+    <td>Required if your application uses this shared object libraries</td>
     <td>AppDir/Optional</td>
   </tr>
 </table>
@@ -346,17 +305,13 @@
     <td >Reportman.ocx</td>
   </tr>
   <tr> 
-    <td >You can distribute reportmanres.* to show the Preview and 
-      Print dialogs in the language locale of the user.</td>
+    <td >You can distribute reportmanres.* to show the Preview and Print dialogs 
+      in the language locale of the user.</td>
   </tr>
   <tr> 
-    <td >Note: You must register it with regsvr32 as any other ActiveX 
-      component, usually installation applications like Install Shield do it when 
-      you include the file in you installation project</td>
-  </tr>
-  <tr>
-    <td >Distribute the Reportman.ocx.manifest file if you want the 
-      report engine forms look with the XP theme</td>
+    <td >Note: You must register it with regsvr32 as any other ActiveX component, 
+      usually installation applications like Install Shield do it when you include 
+      the file in you installation project</td>
   </tr>
 </table>
 </body>

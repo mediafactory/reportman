@@ -96,7 +96,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=vcl;rtl;vclx;indy;dbrtl;dsnap;vcldb;dbexpress;bdertl;vcldbx;adortl;ibxpress;rppack_del
-Conditionals=
+Conditionals=REPMANRELEASE
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
@@ -135,10 +135,11 @@ ProductName=Report Manager
 ProductVersion=1.0.0.0
 Comments=
 [HistoryLists\hlConditionals]
-Count=3
-Item0=NOLINUXPRINTBUG
-Item1=NOLINUXMETABUG
-Item2=METAVIEW
+Count=4
+Item0=REPMANRELEASE
+Item1=NOLINUXPRINTBUG
+Item2=NOLINUXMETABUG
+Item3=METAVIEW
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

@@ -65,6 +65,8 @@ prerelease:
         copy repman\utils\reptotxt\reptotxt.exe ..\prerelease
         copy repman\utils\rptranslator\rptranslate.exe ..\prerelease
         copy repman\utils\rptranslator\rptranslate.exe.manifest ..\prerelease
+        copy repman\utils\compilerep\compilerep.exe ..\prerelease
+        copy drivers\win32\upx.exe ..\prerelease
         copy repman\utils\unixtodos\unixtodos.exe ..\prerelease
         copy server\app\reportserverapp.exe ..\prerelease
         copy server\app\reportserverapp.exe.manifest ..\prerelease
@@ -90,7 +92,7 @@ prerelease:
 
 reportmanutils:
         cd repman
-        $(COMPILE) repmand.dpr
+        $(COMPILE) -DREPMANRELEASE repmand.dpr
         cd utils\reptotxt
         $(COMPILE) reptotxt.dpr
         cd ..
@@ -98,10 +100,10 @@ reportmanutils:
         $(COMPILE) txttorep.dpr
         cd ..
         cd printreptopdf
-        $(COMPILE) printreptopdf.dpr
+        $(COMPILE) -DREPMANRELEASE printreptopdf.dpr
         cd ..
         cd printrep
-        $(COMPILE) printrep.dpr
+        $(COMPILE) -DREPMANRELEASE printrep.dpr
         cd ..
         cd startup
         $(COMPILE) startup.dpr
@@ -119,27 +121,26 @@ reportmanutils:
 reportmanserver:
         cd server
         cd app
-        $(COMPILE) reportserverapp.dpr
-        $(COMPILE) reportservercon.dpr
+        $(COMPILE) -DREPMANRELEASE reportserverapp.dpr
+        $(COMPILE) -DREPMANRELEASE reportservercon.dpr
         cd ..
         cd web
-        $(COMPILE) repwebexe.dpr
+        $(COMPILE) -DREPMANRELEASE repwebexe.dpr
         cd ..
         cd ..
 
 
 designerxp:
         cd repman
-        $(COMPILE) repmandxp.dpr
+        $(COMPILE) -DREPMANRELEASE repmandxp.dpr
         cd ..
 
 reportmanutilsxp: designerxp
         cd repman
-        $(COMPILE) repmandxp.dpr
 
         cd utils
         cd printrep
-        $(COMPILE) printrepxp.dpr
+        $(COMPILE) -DREPMANRELEASE printrepxp.dpr
         cd ..
         cd rptranslator
         $(COMPILE) rptranslate.dpr
@@ -150,37 +151,37 @@ reportmanutilsxp: designerxp
         cd ..
 
         cd activex
-        $(COMPILE) Reportman.dpr
+        $(COMPILE) -DREPMANRELEASE Reportman.dpr
         $(IMPLIB) Reportman.lib Reportman.ocx
         cd ..
 
 reportmanserverxp:
         cd server
         cd app
-        $(COMPILE) reportserverappxp.dpr
+        $(COMPILE) -DREPMANRELEASE reportserverappxp.dpr
         cd ..
         cd service
-        $(COMPILE) repserverservice.dpr
+        $(COMPILE) -DREPMANRELEASE repserverservice.dpr
         $(COMPILE) repserviceinstall.dpr
         cd ..
         cd web
-        $(COMPILE) repwebserver.dpr
+        $(COMPILE) -DREPMANRELEASE repwebserver.dpr
         cd ..
         cd ..
 
 packages: rtlpackages vcldesignpackages designtimepackages clxpackages designpackages
 
 rtlpackages:
-        $(COMPILE) rppack_del.dpk
-        $(COMPILE) rppackvcl_del.dpk
+        $(COMPILE) -DREPMANRELEASE rppack_del.dpk
+        $(COMPILE) -DREPMANRELEASE rppackvcl_del.dpk
 designpackages:
-        $(COMPILE) rppackdesigntime_del.dpk
+        $(COMPILE) -DREPMANRELEASE rppackdesigntime_del.dpk
 clxpackages:
-        $(COMPILE) rppackv_del.dpk
+        $(COMPILE) -DREPMANRELEASE rppackv_del.dpk
 vcldesignpackages:
-        $(COMPILE) rppackdesignvcl_del.dpk
+        $(COMPILE) -DREPMANRELEASE rppackdesignvcl_del.dpk
 designtimepackages:
-        $(COMPILE) rppackdesigntime_del.dpk
+        $(COMPILE) -DREPMANRELEASE rppackdesigntime_del.dpk
 
 
 clean_noexe:

@@ -96,7 +96,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=vcl;rtl;vclx;dbrtl;dsnap;bdertl;dbexpress;ibxpress;rppack_del;adortl;visualclx;rppackv_del;rppackvcl_del;indy;vcldb;vcldbx;visualdbclx;dsnapcon
-Conditionals=
+Conditionals=REPMANRELEASE
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
@@ -132,5 +132,11 @@ LegalCopyright=MPL License
 LegalTrademarks=
 OriginalFilename=reportserverappxp.exe
 ProductName=Report Manager
-ProductVersion=
+ProductVersion=1.0.0.0
 Comments=
+[HistoryLists\hlConditionals]
+Count=1
+Item0=REPMANRELEASE
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
