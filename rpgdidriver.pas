@@ -32,7 +32,7 @@ uses
  types,
 {$ENDIF}
  rptypes,rpvgraphutils,jpeg,
- rpreport,rppdfdriver;
+ rpreport,rppdfdriver, QStdCtrls, QControls;
 
 
 const
@@ -974,7 +974,13 @@ var
  pagemargins:TRect;
  offset:TPoint;
 begin
- offset:=PrinterSelection(printerindex);
+ if printerindex<>pRpDefaultPrinter then
+  offset:=PrinterSelection(printerindex)
+ else
+ begin
+  if metafile.PrinterSelect<>pRpDefaultPrinter then
+   offset:=PrinterSelection(metafile.PrinterSelect);
+ end;
  UpdatePrinterFontList;
  pagemargins:=GetPageMarginsTWIPS;
  // Get the time

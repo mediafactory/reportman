@@ -1501,6 +1501,7 @@ begin
   Raise Exception.Create(SRpNoDriverPassedToPrint);
  Driver.SelectPrinter(PrinterSelect);
  metafile.Clear;
+ metafile.PrinterSelect:=PrinterSelect;
  ClearTotalPagesList;
  for i:=0 to SubReports.Count-1 do
  begin

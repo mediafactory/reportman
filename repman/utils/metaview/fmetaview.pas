@@ -484,7 +484,7 @@ begin
   rpgdidriver.OrientationSelection(metafile.orientation);
   if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
    rpgdidriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
-    frompage,topage,copies,collate,GetDeviceFontsOption(printerindex),pRpDefaultPrinter);
+    frompage,topage,copies,collate,GetDeviceFontsOption(printerindex),printerindex);
   exit;
  end;
 {$ENDIF}
@@ -495,7 +495,7 @@ begin
  begin
   if rpprintdia.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
    rpqtdriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
-    frompage,topage,copies,collate,pRpDefaultPrinter);
+    frompage,topage,copies,collate,printerindex);
  end
  else
  begin

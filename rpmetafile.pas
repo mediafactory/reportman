@@ -22,7 +22,7 @@
  the info to print a complete report.
  File Format Binary
 
- Signature='RPMETAFILE01'
+ Signature='RPMETAFILE02'
  rpFHeader=integer(0);
  PageSize=integer;
  CustomX=integer;
@@ -56,8 +56,9 @@ uses Classes,
 const
  MILIS_PROGRESS=500;
  RP_SIGNATURELENGTH=13;
+ // The metafile signature and version
  RpSignature:array[0..RP_SIGNATURELENGTH-1] of char=('R','P','M','E','T','A','F','I','L',
-  'E','0','1',#0);
+  'E','0','2',#0);
 const
  FIRST_ALLOCATION_OBJECTS=50;
  FIRST_ALLOCATED_WIDESTRING=1000;
@@ -211,6 +212,7 @@ type
    CustomY:integer;
    Orientation:TRpOrientation;
    BackColor:integer;
+   PrinterSelect:TRpPrinterSelect;
    procedure Clear;
    procedure LoadFromStream(Stream:TStream;clearfirst:boolean=true);
    procedure LoadFromFile(filename:string;clearfirst:boolean=true);
@@ -569,6 +571,7 @@ begin
  Stream.Write(CustomY,sizeof(CustomY));
  Stream.Write(Orientation,sizeof(Orientation));
  Stream.Write(BackColor,sizeof(BackColor));
+ Stream.Write(PrinterSelect,sizeof(PrinterSelect));
  // Pages
  // Write pagecount
  acount:=FPages.Count;
@@ -656,6 +659,8 @@ begin
  if (sizeof(Orientation)<>Stream.Read(Orientation,sizeof(Orientation))) then
   Raise Exception.Create(SRpBadFileHeader);
  if (sizeof(BackColor)<>Stream.Read(BackColor,sizeof(BackColor))) then
+  Raise Exception.Create(SRpBadFileHeader);
+ if (sizeof(PrinterSelect)<>Stream.Read(PrinterSelect,sizeof(PrinterSelect))) then
   Raise Exception.Create(SRpBadFileHeader);
  // If there is no pages then end of read
  // Read pagecount

@@ -739,7 +739,13 @@ var
  totalcount:integer;
  offset:TPoint;
 begin
- offset:=PrinterSelection(printerindex);
+ if printerindex<>pRpDefaultPrinter then
+  offset:=PrinterSelection(printerindex)
+ else
+ begin
+  if metafile.PrinterSelect<>pRpDefaultPrinter then
+   offset:=PrinterSelection(metafile.PrinterSelect);
+ end;
  // Get the time
 {$IFDEF MSWINDOWS}
  mmfirst:=TimeGetTime;

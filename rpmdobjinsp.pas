@@ -507,7 +507,6 @@ begin
   Control.Left:=CONS_LEFTGAP;
   Control.Width:=TotalWidth-Control.Left-CONS_RIGHTBARGAP;
   control.parent:=PRight;
-  Control.Anchors:=[akleft,aktop,akright];
 
   Control.tag:=i;
   LControls.AddObject(LNames.Strings[i],Control);
