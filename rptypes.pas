@@ -227,11 +227,14 @@ function GetPathName(astring:string):string;
 function GetFirstName(astring:string):string;
 function ReadFromStdInputStream:TMemoryStream;
 procedure WriteStreamToStdOutput(astream:TStream);
+procedure WriteStreamToHandle(astream:TStream;handle:Integer);
+function ReadStreamFromHandle(handle:THandle):TMemoryStream;
 {$IFDEF LINUX}
 procedure  ObtainPrinters(alist:TStrings);
 procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title:String);
 {$ENDIF}
 
+function RpTempFileName:String;
 
 {$IFNDEF USEVARIANTS}
 procedure RaiseLastOSError;
@@ -2218,7 +2221,8 @@ begin
 end;
 {$ENDIF}
 
-function ReadFromStdInputStream:TMemoryStream;
+
+function ReadStreamFromHandle(handle:THandle):TMemoryStream;
 var
  memstream:TMemoryStream;
  astring:String;
@@ -2230,18 +2234,11 @@ var
 {$ENDIF}
 {$IFDEF MSWINDOWS}
  readed:DWORD;
- handle:THANDLE;
  lasterror:Integer;
 {$ENDIF}
 begin
  memstream:=TMemoryStream.Create;
  try
-{$IFDEF MSWINDOWS}
-  // In windows obtain sdtin
-  handle:=GetStdHandle(STD_INPUT_HANDLE);
-  if handle=INVALID_HANDLE_VALUE then
-   RaiseLastOsError;
-{$ENDIF}
   pbuf:=@buffer;
   astring:='';
   finish:=false;
@@ -2285,33 +2282,51 @@ begin
  end;
 end;
 
-procedure WriteStreamToStdOutput(astream:TStream);
-var
- memstream:TMemoryStream;
-{$IFDEF LINUX}
-// writed:Integer;
-{$ENDIF}
+function ReadFromStdInputStream:TMemoryStream;
 {$IFDEF MSWINDOWS}
+var
 // writed:DWORD;
  handle:THANDLE;
 {$ENDIF}
+{$IFDEF LINUX}
+var
+// writed:DWORD;
+ handle:integer;
+{$ENDIF}
 begin
 {$IFDEF MSWINDOWS}
- // In windows obtain sdtin
- handle:=GetStdHandle(STD_OUTPUT_HANDLE);
+  // In windows obtain sdtin
+ handle:=GetStdHandle(STD_INPUT_HANDLE);
  if handle=INVALID_HANDLE_VALUE then
   RaiseLastOsError;
 {$ENDIF}
+{$IFDEF LINUX}
+ handle:=0;
+{$ENDIF}
+ Result:=ReadStreamFromHandle(handle);
+end;
+
+procedure WriteStreamToHandle(astream:TStream;handle:Integer);
+var
+ memstream:TMemoryStream;
+ lasterror:Integer;
+ writed:DWord;
+begin
  memstream:=TMemoryStream.Create;
  try
   memstream.LoadFromStream(astream);
   memstream.Seek(0,soFromBeginning);
 {$IFDEF MSWINDOWS}
 //  writed:=FileWrite(handle,MemStream.Memory^,MemStream.Size);
-  FileWrite(handle,MemStream.Memory^,MemStream.Size);
+  if not WriteFile(handle,MemStream.Memory^,MemStream.Size,writed,nil) then
+  begin
+   lasterror:=GetLastError;
+   if ((lasterror<>ERROR_BROKEN_PIPE) AND (lasterror<>ERROR_HANDLE_EOF)) then
+    RaiseLastOSError;
+  end;
 {$ENDIF}
 {$IFDEF LINUX}
-  __write(1,MemStream.Memory^,MemStream.Size);
+  __write(handle,MemStream.Memory^,MemStream.Size);
 //  writed:=__write(1,MemStream.Memory^,MemStream.Size);
 {$ENDIF}
 // Estandard output interrupted is not a critical error
@@ -2321,6 +2336,55 @@ begin
   memstream.free;
  end;
 end;
+
+procedure WriteStreamToStdOutput(astream:TStream);
+{$IFDEF MSWINDOWS}
+var
+// writed:DWORD;
+ handle:THANDLE;
+{$ENDIF}
+{$IFDEF LINUX}
+var
+// writed:DWORD;
+ handle:integer;
+{$ENDIF}
+begin
+{$IFDEF MSWINDOWS}
+ // In windows obtain sdtin
+ handle:=Windows.GetStdHandle(STD_OUTPUT_HANDLE);
+ if handle=INVALID_HANDLE_VALUE then
+  RaiseLastOsError;
+{$ENDIF}
+{$IFDEF LINUX}
+ handle:=1;
+{$ENDIF}
+ WriteStreamToHandle(astream,handle);
+end;
+
+{$IFDEF MSWINDOWS}
+function RpTempFileName:String;
+var
+ apath:Pchar;
+ afilename:array [0..MAX_PATH] of char;
+ alen:DWord;
+begin
+ alen:=GetTempPath(0,nil);
+ if alen=0 then
+  RaiseLastOsError;
+ apath:=AllocMem(alen+1);
+ try
+  if 0=GetTempPath(alen,apath) then
+   RaiseLastOsError;
+ if 0=GetTempFileName(apath,'REP',0,afilename) then
+  RaiseLastOsError;
+ finally
+  FreeMem(apath);
+ end;
+ Result:=StrPas(afilename);
+end;
+{$ENDIF}
+
+
 
 initialization
 
@@ -2336,5 +2400,7 @@ begin
  printerconfigfile.free;
  printerconfigfile:=nil;
 end;
+
+
 
 end.

@@ -286,7 +286,7 @@ begin
 {$IFNDEF VCLFILEFILTERS}
  SaveDialog1.Filter:=SRpRepMetafile+' (*.rpmf)|'+
    SRpPDFFile+' (*.pdf)|'+
-   SRpPDFFileUn+' (*.pdf)|';
+   SRpPDFFileUn+' (*.pdf)|'+
    SRpPlainFile+' (*.txt)';
 {$ENDIF}
 

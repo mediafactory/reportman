@@ -6,12 +6,19 @@
 
 <body>
 <h2>Report Manager Server</h2>
-<h3>Multiprocessor support</h3>
+<h3>Multiprocessor support and hyperthreading</h3>
 <p>Report Manager engine have multiprocessor support feature, that is when you 
   execute it as a service or as a TCP server standalone application or a web server, 
   each petition works in a independent thread (or process) so a machine with <strong>more 
-  than one CPU</strong> can distribute threads and <strong>optimize performance</strong>.</p>
-<p>Multiprocessor support is certified since version 1.6 but, earlier versions 
-  also benefit from it.</p>
+  than one CPU</strong> can distribute threads and <strong>optimize performance</strong>. 
+  It <strong>also supports intel hyperthreading technology</strong>.</p>
+<p>Note, when using a machine with more than one processor use web server repwebexe.exe 
+  for better performance instead the ISAPI module (repwebserver.dll).</p>
+<p><strong>Installation</strong></p>
+<p>In a SMP machine you must copy the tool printreptopdf.exe in the same directory 
+  as the server application (repwebexe.exe, reportserverapp..)</p>
+<p><strong>How it works</strong></p>
+<p>The server application detects the multiprocessing capability, then for each 
+  report execution request it starts a new process calling printreptopdf.</p>
 </body>
 </html>

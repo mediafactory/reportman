@@ -525,7 +525,7 @@ begin
  list:=TRpWideStrings.Create;
  try
   GetPossibleDataTypes(list);
-  alist.Assign(list);
+  alist.Assign(TPersistent(list));
  finally
   list.free;
  end;

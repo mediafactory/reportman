@@ -39,6 +39,9 @@ uses
 {$IFDEF USEADO}
   ActiveX,
 {$ENDIF}
+{$IFDEF MSWINDOWS}
+  Windows,Forms,
+{$ENDIF}
   rptranslator,rpmdshfolder,IniFiles,rpmdprotocol,
   rpreport,rppdfdriver, IdThreadMgrPool,rptypes,rpparams;
 
@@ -94,9 +97,11 @@ type
     FLogFile:TFileStream;
     FFileNameConfig:String;
     fport:integer;
+    smp:Boolean;
     procedure InitConfig;
     procedure WriteConfig;
     procedure WriteLog(aMessage:WideString);
+    procedure GetIsSMP;
   public
     property LogFileName:TFileName read FLogFileName;
     property FileNameConfig:String read FFilenameconfig;
@@ -106,6 +111,7 @@ type
 
 function StartServer(OnLog:TRpLogMessageEvent):TModServer;
 procedure StopServer(modserver:TModServer);
+procedure SMPExecuteReport(report:TRpReport;astream:TMemoryStream;metafile:Boolean);
 
 implementation
 
@@ -240,8 +246,27 @@ begin
 end;
 
 
+procedure Tmodserver.GetIsSMP;
+{$IFDEF MSWINDOWS}
+var
+ sysinfo:SYSTEM_INFO;
+begin
+ smp:=false;
+{ GetSystemInfo(sysinfo);
+ if sysinfo.dwNumberOfProcessors>0 then
+  smp:=true;
+}
+end;
+{$ENDIF}
+{$IFDEF LINUX}
+begin
+ smp:=False;
+end;
+{$ENDIF}
+
 procedure Tmodserver.DataModuleCreate(Sender: TObject);
 begin
+ GetIsSMP;
  fport:=3060;
  Clients:=TTHreadList.Create;
  LAliases:=TStringList.Create;
@@ -766,12 +791,19 @@ begin
          end;
          if Assigned(ActClient.CurrentReport) then
          begin
-          ActClient.cancelled:=false;
-          APDFDriver:=TRpPdfDriver.Create;
-          ActClient.CurrentReport.PrintAll(APDFDriver);
-          astream.Clear;
-          ActClient.CurrentReport.Metafile.SaveToStream(astream);
-          astream.Seek(0,soFromBeginning);
+          if smp then
+          begin
+           SMPExecuteReport(ActClient.CurrentReport,astream,true);
+          end
+          else
+          begin
+           ActClient.cancelled:=false;
+           APDFDriver:=TRpPdfDriver.Create;
+           ActClient.CurrentReport.PrintAll(APDFDriver);
+           astream.Clear;
+           ActClient.CurrentReport.Metafile.SaveToStream(astream);
+           astream.Seek(0,soFromBeginning);
+          end;
           CB:=GenerateBlock(repexecutereportmeta,astream);
           try
            SendBlock(AThread.COnnection,CB);
@@ -814,12 +846,20 @@ begin
          end;
          if assigned(ActClient.CurrentReport) then
          begin
-          ActClient.cancelled:=false;
-          ActClient.CurrentReport.Metafile.SaveToStream(astream);
-          ActClient.cancelled:=false;
-          APDFDriver:=TRpPdfDriver.Create;
-          ActClient.CurrentReport.PrintRange(apdfdriver,false,ActClient.FromPage,ActClient.ToPage,ActClient.Copies,false);
-          CB:=GenerateBlock(repexecutereportpdf,APDFDriver.PDFFile.MainPDF);
+          if smp then
+          begin
+           SMPExecuteReport(ActClient.CurrentReport,astream,false);
+           CB:=GenerateBlock(repexecutereportpdf,astream);
+          end
+          else
+          begin
+           ActClient.cancelled:=false;
+           ActClient.CurrentReport.Metafile.SaveToStream(astream);
+           ActClient.cancelled:=false;
+           APDFDriver:=TRpPdfDriver.Create;
+           ActClient.CurrentReport.PrintRange(apdfdriver,false,ActClient.FromPage,ActClient.ToPage,ActClient.Copies,false);
+           CB:=GenerateBlock(repexecutereportpdf,APDFDriver.PDFFile.MainPDF);
+          end;
           try
            SendBlock(AThread.COnnection,CB);
           finally
@@ -930,5 +970,89 @@ begin
  ActClient.free;
  AThread.Data := nil;
 end;
+
+procedure SMPExecuteReport(report:TRpReport;astream:TMemoryStream;metafile:Boolean);
+var
+ memstream:TMemoryStream;
+ aparams:TStringList;
+ sinfo:TStartupInfo;
+ currentdir:String;
+ pinfo:TProcessInformation;
+ exefull:string;
+ toexecute:String;
+ secat:TSecurityAttributes;
+ repname,pdfname:string;
+begin
+ astream.Clear;
+ memstream:=TMemoryStream.Create;
+ try
+  report.SaveToStream(memstream);
+  memstream.Seek(0,soFromBeginning);
+  aparams:=TStringList.Create;
+  try
+{$IFDEF MSWINDOWS}
+   currentdir:=ExtractFilePath(Application.Exename);
+   repname:=RpTempFileName;
+   pdfname:=RpTempFilename;
+   exefull:=currentdir+'printreptopdf.exe';
+   aparams.Add(exefull);
+   aparams.Add(repname);
+   aparams.Add(pdfname);
+{$ENDIF}
+{$IFDEF LINUX}
+   currentdir:=ExtractFilePath(GetExename);
+   exefull:=ExtractFilePath(currentdir)+'/printreptopdf.bin';
+   aparams.Add(exefull);
+   aparams.Add('-stdin');
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+   sinfo.cb:=sizeof(sinfo);
+   sinfo.lpReserved:=nil;
+   sinfo.lpDesktop:=nil;
+   sinfo.lpTitle:=nil;
+   sinfo.dwX:=0;
+   sinfo.dwY:=0;
+   sinfo.dwXSize:=10;
+   sinfo.dwYSize:=10;
+   sinfo.dwFillAttribute:=0;
+   sinfo.wShowWindow:=SW_HIDE;
+   sinfo.cbReserved2:=0;
+   sinfo.lpReserved2:=nil;
+   sinfo.dwFlags:=0;
+   sinfo.hStdError:=0;
+   sinfo.hStdOutput:=0;
+   secat.nLength:=sizeof(secat);
+   secat.lpSecurityDescriptor:=nil;
+   secat.bInheritHandle:=False;
+   sinfo.hStdInput:=0;
+   sinfo.hStdOutput:=0;
+   toexecute:='printreptopdf.exe';
+   if metafile then
+    toexecute:=toexecute+' -m';
+   toexecute:=toexecute+' -q '+repname+' '+pdfname;
+   memstream.SaveToFile(repname);
+   try
+    if not CreateProcess(PChar('printreptopdf.exe'),Pchar(toexecute),nil,nil,false,
+      NORMAL_PRIORITY_CLASS or DETACHED_PROCESS,nil,PChar(Currentdir),sinfo,pinfo) then
+       RaiseLastOsError;
+    WaitForSingleObject(pinfo.hProcess,INFINITE);
+    try
+     astream.LoadFromFile(pdfname);
+     astream.Seek(0,soFromBeginning);
+    finally
+     DeleteFile(Pchar(pdfname));
+    end;
+   finally
+    DeleteFile(Pchar(repname));
+   end;
+{$ENDIF}
+  finally
+   aparams.Free;
+  end;
+ finally
+  memstream.free;
+ end;
+end;
+
 
 end.
