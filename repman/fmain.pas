@@ -144,9 +144,9 @@ type
     fobjinsp:TFObjInsp;
     lastsaved:TMemoryStream;
     configfile:string;
-    function checkmodified:boolean;
     procedure FreeInterface;
     procedure CreateInterface;
+    function checkmodified:boolean;
     procedure DoSave;
     procedure DoEnable;
     procedure DoDisable;
@@ -252,6 +252,7 @@ begin
  else
   OpenDialog1.Filename:=newfilename;
  FreeInterface;
+ filename:='';
  report.free;
  report:=nil;
  DoDisable;
@@ -331,7 +332,6 @@ begin
 
  AParams.Enabled:=False;
  APageSetup.Enabled:=false;
- filename:='';
  Caption:=SRpRepman;
 
  freportstructure.free;
@@ -395,8 +395,6 @@ begin
  fdesignframe.objinsp:=fobjinsp;
  freportstructure.objinsp:=fobjinsp;
  freportstructure.report:=report;
- freportstructure.RView.Selected:=freportstructure.RView.Items.Item[0];
- freportstructure.RView.FullExpand;
  fdesignframe.report:=report;
 
  mainscrollbox.Visible:=true;

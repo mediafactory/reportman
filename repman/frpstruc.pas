@@ -23,13 +23,22 @@ interface
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QComCtrls,rpreport,rpsubreport,rpconsts, QMenus, QTypes,
-  rpsection,rpobjinsp,rpprintitem;
+  rpsection,rpobjinsp,rpprintitem, QActnList, QImgList, QButtons, QExtCtrls;
 
 type
   TFRpStructure = class(TFrame)
     RView: TTreeView;
+    Panel1: TPanel;
+    BUp: TSpeedButton;
+    BDown: TSpeedButton;
+    ActionList1: TActionList;
+    ImageList1: TImageList;
+    AUp: TAction;
+    ADown: TAction;
     procedure Expand1Click(Sender: TObject);
     procedure RViewClick(Sender: TObject);
+    procedure AUpExecute(Sender: TObject);
+    procedure ADownExecute(Sender: TObject);
   private
     { Private declarations }
     FReport:TRpReport;
@@ -51,7 +60,7 @@ implementation
 
 {$R *.xfm}
 
-uses fdesign;
+uses fdesign, fmain;
 
 procedure TFRpStructure.SetReport(Value:TRpReport);
 begin
@@ -60,6 +69,8 @@ begin
   exit;
  // Creates the interface
  CreateInterface;
+ RView.Selected:=RView.Items.Item[0];
+ RView.FullExpand;
 end;
 
 function TFRpStructure.FindSelectedSubreport:TRpSubreport;
@@ -148,6 +159,16 @@ end;
 procedure TFRpStructure.RViewClick(Sender: TObject);
 begin
  TFDesignFrame(designframe).UpdateSelection(false);
+ if (FindSelectedObject is TRpSubReport) then
+ begin
+  AUp.Enabled:=True;
+  ADown.Enabled:=True;
+ end
+ else
+ begin
+  AUp.Enabled:=False;
+  ADown.Enabled:=False;
+ end;
 end;
 
 function FindDataInTree(nodes:TTreeNodes;data:TObject):TTreeNode;
@@ -179,5 +200,71 @@ begin
  end;
 end;
 
+
+procedure TFRpStructure.AUpExecute(Sender: TObject);
+var
+ subrep:TRpSubreport;
+ arep:TRpSubReport;
+ changesubrep:integer;
+ i:integer;
+begin
+ // Goes up
+ if (FindSelectedObject is TRpSubReport) then
+ begin
+  subrep:=TRpSubReport(FindSelectedObject);
+  i:=0;
+  changesubrep:=-1;
+  while i<report.SubReports.Count do
+  begin
+   if report.SubReports.Items[i].SubReport=subrep then
+   begin
+    if changesubrep<0 then
+     break;
+    arep:=report.SubReports.Items[changesubrep].SubReport;
+    report.SubReports.Items[changesubrep].SubReport:=subrep;
+    report.SubReports.Items[i].SubReport:=arep;
+    SetReport(FReport);
+    break;
+   end;
+   changesubrep:=i;
+   inc(i);
+  end;
+ end;
+end;
+
+procedure TFRpStructure.ADownExecute(Sender: TObject);
+var
+ subrep:TRpSubreport;
+ arep:TRpSubReport;
+ changesubrep:integer;
+ i:integer;
+begin
+ // Goes down
+ if (FindSelectedObject is TRpSubReport) then
+ begin
+  subrep:=TRpSubReport(FindSelectedObject);
+  i:=0;
+  changesubrep:=-1;
+  while i<report.SubReports.Count do
+  begin
+   if report.SubReports.Items[i].SubReport=subrep then
+   begin
+    changesubrep:=i;
+   end
+   else
+   begin
+    if changesubrep>=0 then
+    begin
+     arep:=report.SubReports.Items[i].SubReport;
+     report.SubReports.Items[i].SubReport:=subrep;
+     report.SubReports.Items[changesubrep].SubReport:=arep;
+     SetReport(FReport);
+     break;
+    end;
+   end;
+   inc(i);
+  end;
+ end;
+end;
 
 end.

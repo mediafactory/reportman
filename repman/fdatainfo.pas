@@ -428,8 +428,6 @@ begin
   if index<0 then
   begin
    report.SubReports.Items[i].SubReport.Alias:='';
-   if report.DataInfo.Count>0 then
-    report.SubReports.Items[i].SubReport.Alias:=report.datainfo.items[0].alias;
   end;
  end;
  saved:=true;

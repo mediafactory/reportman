@@ -118,6 +118,7 @@ type
    procedure SetParams(Value:TRpParamList);
   protected
     section:TRpSection;
+    subreport:TRpSubreport;
     procedure Notification(AComponent:TComponent;Operation:TOperation);override;
     procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
     procedure Loaded;override;
@@ -602,6 +603,8 @@ begin
  DeActivateDatasets;
  FEvaluator.Free;
  FEvaluator:=nil;
+ section:=nil;
+ subreport:=nil;
  printing:=false;
 end;
 
@@ -683,6 +686,7 @@ begin
       if sec.EvaluatePrintCondition then
       begin
        Section:=sec;
+       subreport:=subrep;
        break;
       end;
      end;
@@ -695,6 +699,7 @@ begin
       if sec.EvaluatePrintCondition then
       begin
        Section:=sec;
+       subreport:=subrep;
        break;
       end;
      end;
@@ -760,6 +765,7 @@ begin
  FEvaluator.Rpalias:=FDataAlias;
  CurrentSectionIndex:=-1;
  section:=nil;
+ subreport:=nil;
  if Not NextSection then
  begin
   EndPrint;
@@ -773,10 +779,13 @@ function TRpReport.PrintNextPage:boolean;
 var
  printedsomething:boolean;
  pageposy,pageposx:integer;
- subreport:TRpSubreport;
  sectionext:TPoint;
  freespace:integer;
+ pagefooters:TStringList;
  asection:TrpSection;
+ pagefooterpos:integer;
+ havepagefooters:boolean;
+ oldsubreport:TRpSubreport;
 
 function CheckSpace:boolean;
 begin
@@ -790,29 +799,30 @@ begin
   end
   else
   begin
-   Raise Exception.Create(SRpNoSpaceToPrint+
-    SRpSubReport+':'+IntToStr(CurrentSubReportIndex)+
+   Raise Exception.Create(SRpNoSpaceToPrint+' '+
+    SRpSubReport+':'+IntToStr(CurrentSubReportIndex)+' '+
     SRpSection+':'+IntToStr(CurrentSectionIndex));
   end;
  end;
 end;
 
-procedure PrintSection(header:boolean);
+procedure PrintSection(datasection:boolean);
 begin
- if not header then
+ if datasection then
   printedsomething:=true;
- asection.Print(pageposx,pageposy,metafile);
  // If the section is not aligned at bottom of the page then
  if Not asection.AlignBottom then
  begin
+  asection.Print(pageposx,pageposy,metafile);
   freespace:=freespace-sectionext.Y;
   pageposy:=pageposy+sectionext.Y;
  end
  else
  // Align to bottom
  begin
+  pageposy:=pageposy+freespace-sectionext.Y;
+  asection.Print(pageposx,pageposy,metafile);
   freespace:=0;
-  sdxfvvdsx
  end;
 end;
 
@@ -835,17 +845,39 @@ begin
    begin
     asection:=psection;
     CheckSpace;
-    PrinSection(true);
+    PrintSection(false);
    end;
   end;
-  // Reserve
+  pagefooterpos:=pageposy+freespace;
+  // Reserve space for page footers
   // Print conditions for footers are evaluated at the begining of
   // the page
-
+  pfooter:=subreport.FirstPageFooter;
+  pfootercount:=subreport.PageFooterCount;
+  for i:=0 to pfootercount-1 do
+  begin
+   psection:=subreport.Sections.Items[i+pfooter].Section;
+   if psection.EvaluatePrintCondition then
+   begin
+    asection:=psection;
+    havepagefooters:=true;
+    CheckSpace;
+    pagefooters.add(IntToStr(i+pfooter));
+    pagefooterpos:=pageposy+freespace-sectionext.Y;
+    freespace:=freespace-sectionext.Y;
+   end;
+  end;
  end
  else
  begin
-
+  // Print page footers
+  pageposy:=pagefooterpos;
+  for i:=0 to pagefooters.Count-1 do
+  begin
+   asection:=oldsubreport.Sections.Items[StrToInt(pagefooters.Strings[i])].Section;
+   sectionext:=asection.GetExtension;
+   PrintSection(false);
+  end;
  end;
 end;
 
@@ -853,6 +885,7 @@ end;
 begin
  if Not Assigned(Section) then
   Raise Exception.Create(SRpLastPageReached);
+ havepagefooters:=false;
  pageposy:=FTopMargin;
  pageposx:=FLeftMargin;
  printedsomething:=false;
@@ -870,16 +903,27 @@ begin
   freespace:=Pageheight;
  freespace:=freespace-FTopMargin-FBottomMargin;
 
- // Fills the page with fixed sections
- PrintFixedSections;
-
- while Assigned(section)  do
- begin
-  asection:=section;
-  if Not CheckSpace then
-   break;
-  PrintSection(false);
-  NextSection;
+ pagefooters:=TStringList.Create;
+ try
+  // Fills the page with fixed sections
+  PrintFixedSections(true);
+  oldsubreport:=subreport;
+  while Assigned(section)  do
+  begin
+   asection:=section;
+   if Not CheckSpace then
+    break;
+   PrintSection(true);
+   NextSection;
+   // if Subreport changed and has have pagefooter
+   if ((oldsubreport<>subreport) and (havepagefooters)) then
+    break;
+   oldsubreport:=subreport;
+  end;
+  // Fills the page with fixed sections
+  PrintFixedSections(false);
+ finally
+  pagefooters.Free;
  end;
  Result:=Not Assigned(Section);
  LastPage:=Result;

@@ -140,7 +140,7 @@ begin
  rec.Left:=0;
  rec.Right:=Width-1;
  rec.Bottom:=Height-1;
- Canvas.TextRect(rec,0,0,Text,alabel.Alignment or alabel.VAlignment);
+ Canvas.TextRect(rec,0,0,alabel.Text,alabel.Alignment or alabel.VAlignment);
 end;
 
 

@@ -111,6 +111,8 @@ begin
   TopRuler.Visible:=False;
   LeftRuler.Visible:=False;
   FObjInsp.CompItem:=nil;
+  SectionScrollBox.HorzScrollBar.Position:=0;
+  SectionScrollBox.VertScrollBar.Position:=0;
  end;
  if Not Assigned(freportstructure) then
   exit;
@@ -150,7 +152,7 @@ begin
    fobjinsp.CompItem:=FSectionInterface;
   end;
 {$IFDEF MSWINDOWS}
-//  Application.ProcessMessages;
+  Application.ProcessMessages;
 {$ENDIF}
   SectionScrollBox.HorzScrollBar.Position:=0;
   SectionScrollBox.VertScrollBar.Position:=0;

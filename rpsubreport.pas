@@ -37,6 +37,8 @@ type
    function GetLastDetail:integer;
    function GetFirstPageHeader:integer;
    function GetPageHeaderCount:integer;
+   function GetFirstPageFooter:integer;
+   function GetPageFooterCount:integer;
   protected
    procedure FillGroupValues;
    procedure CheckCurrentGroupChange;
@@ -59,6 +61,8 @@ type
    property DetailCount:integer read GetDetailCount;
    property FirstPageHeader:integer read GetFirstPageHeader;
    property PageHeaderCount:integer read GetPageHeaderCount;
+   property FirstPageFooter:integer read GetFirstPageFooter;
+   property PageFooterCount:integer read GetPageFooterCount;
   published
    property Sections:TRpSectionList read FSections write SetSections;
    property Alias:String read FAlias write FAlias;
@@ -437,26 +441,6 @@ begin
 end;
 
 
-function TRpSubreport.GetPageHeaderCount:integer;
-var
- i:integer;
- detailindex:integer;
-begin
- Result:=0;
- i:=0;
- detailindex:=FirstDetail;
- while i<detailindex do
- begin
-  if Sections.Items[i].Section.SectionType=rpsecpheader then
-  begin
-   Inc(Result);
-   break;
-  end;
- end;
-end;
-
-
-
 function TRpSubreport.GetFirstPageHeader:integer;
 var
  i:integer;
@@ -472,7 +456,65 @@ begin
    Result:=i;
    break;
   end;
+  inc(i);
  end;
 end;
+
+
+function TRpSubreport.GetPageHeaderCount:integer;
+var
+ i:integer;
+ detailindex:integer;
+begin
+ Result:=0;
+ i:=0;
+ detailindex:=FirstDetail;
+ while i<detailindex do
+ begin
+  if Sections.Items[i].Section.SectionType=rpsecpheader then
+  begin
+   Inc(Result);
+  end;
+  inc(i);
+ end;
+end;
+
+
+
+
+function TRpSubreport.GetPageFooterCount:integer;
+var
+ i:integer;
+begin
+ Result:=0;
+ i:=FirstDetail+Detailcount;
+ while i<Sections.Count do
+ begin
+  if Sections.Items[i].Section.SectionType=rpsecpfooter then
+  begin
+   Inc(Result);
+  end;
+  inc(i);
+ end;
+end;
+
+
+function TRpSubreport.GetFirstPageFooter:integer;
+var
+ i:integer;
+begin
+ Result:=-1;
+ i:=FirstDetail+DetailCount;
+ while i<Sections.Count do
+ begin
+  if Sections.Items[i].Section.SectionType=rpsecpfooter then
+  begin
+   Result:=i;
+   break;
+  end;
+  inc(i);
+ end;
+end;
+
 
 end.
