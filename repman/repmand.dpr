@@ -27,7 +27,7 @@ program repmand;
 uses
  QForms,
 {$IFDEF MSWINDOWS}
-  midaslib,
+  midaslib,ActiveX,
 // QThemed fails in dbgrid, combobox field, disabled
 //  QThemed in 'QThemed.pas',
   rpmdfmain in '..\rpmdfmain.pas' {FRpMainF},
@@ -236,6 +236,9 @@ begin
    Title:=TranslateStr(1,Title);
   end;
   Application.Initialize;
+{$IFDEF MSWINDOWS}
+  CoInitialize(nil);
+{$ENDIF}
   Application.CreateForm(TFRpMainF, FRpMainF);
   FRpMainF.BrowseCommandLine:=true;
   LoadQtTranslator;

@@ -1819,8 +1819,10 @@ begin
     if GoodForNumericCompaction (i, CodeLen, Count) then
     begin
      if CurrentMode<>dmNumeric then
-       AddCodeword (NumericCompaction);
-     CurrentMode := dmNumeric
+     begin
+      CurrentMode := dmNumeric;
+      AddCodeword (NumericCompaction);
+     end;
     end
     else
     if GoodForTextCompaction (i, CodeLen, Count) then
@@ -2019,7 +2021,9 @@ procedure TRpBarcode.EncodeBinary (var Position : Integer;
     Result := 0;
     Done := False;
     while not done do begin
-      if (Result < CodeLen) and
+//    Bugfix 29 Sept 2004
+      if (Result+Position <= CodeLen) and
+//      if (Result < CodeLen) and
          (not GoodForNumericCompaction (Position + Result, CodeLen, Dummy)) and
          (not GoodForTextCompaction (Position + Result, CodeLen, Dummy)) then
         Inc (Result)
@@ -2081,8 +2085,9 @@ var
     StartPos : Integer;
 
   const
-    MaxDigitChunk = 44;
-
+    // Bugfix 27 Sept 2004
+    MaxDigitChunk = 38;
+//    MaxDigitChunk = 44;
   begin
     Result := '';
     StartPos := Position;
@@ -2100,12 +2105,9 @@ var
   LenA          : Integer;
   i             : Integer;
 
-const
-  NumericLatch = 902;
 
 begin
   code:=CurrentTexT;
-  AddCodeword (NumericLatch);
   repeat
     NumericString := CollectDigits (Position, CodeLen);
     if NumericString <> '' then begin

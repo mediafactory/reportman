@@ -23,7 +23,7 @@ program repmandxp;
 uses
   Graphics,
   Forms,
-  Controls,
+  Controls,ActiveX,
 {$IFDEF USEVARIANTS}
   midaslib,
 {$ENDIF}
@@ -118,6 +118,7 @@ begin
   begin
    Title:=TranslateStr(1,Title);
   end;
+  CoInitialize(nil);
   Graphics.DefFontData.Name:=Screen.IconFont.Name;
   Application.Initialize;
   Application.CreateForm(TFRpMainFVCL, FRpMainFVCL);

@@ -286,7 +286,9 @@ begin
      begin
       index:=aitem.FFields.IndexOf(aname);
       if index>=0 then
-       Field:=TField(aitem.FFields.Objects[index]);
+       Field:=TField(aitem.FFields.Objects[index])
+      else
+       Field:=nil;
      end
      else
       Field:=Dataset.Findfield(aname);
@@ -322,7 +324,9 @@ begin
       begin
        index:=aitem.FFields.IndexOf(aname);
        if index>=0 then
-        Field:=TField(aitem.FFields.Objects[index]);
+        Field:=TField(aitem.FFields.Objects[index])
+       else
+        Field:=nil;
       end
       else
        Field:=Dataset.Findfield(aname);
