@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       frpgrid                                         }
+{       rpmdfgrid                                         }
 {       Grid options for the report                     }
 {                                                       }
 {                                                       }
@@ -16,7 +16,7 @@
 {                                                       }
 {*******************************************************}
 
-unit frpgrid;
+unit rpmdfgrid;
 
 interface
 

@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       fmain                                           }
+{       rpmdfmain                                       }
 {       Main form of report manager designer            }
 {       Used by a subreport                             }
 {                                                       }
@@ -16,7 +16,7 @@
 {                                                       }
 {*******************************************************}
 
-unit fmain;
+unit rpmdfmain;
 
 interface
 
@@ -35,15 +35,15 @@ uses
 {$ENDIF}
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
-  rpconsts,rptypes, QExtCtrls,frpstruc, rplastsav,rpsubreport,
-  rpobinsint,rpfparams,fdesign,rpobjinsp,fsectionint,IniFiles,
+  rpconsts,rptypes, QExtCtrls,rpmdfstruc, rplastsav,rpsubreport,
+  rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
   rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver, IBDatabase,
-  DB,fhelpform,rpmunits;
+  DB,rpmdfhelpform,rpmunits;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;
 type
-  TFMainf = class(TForm)
+  TFRpMainF = class(TForm)
     MainMenu1: TMainMenu;
     File1: TMenuItem;
     ActionList1: TActionList;
@@ -194,8 +194,8 @@ type
   private
     { Private declarations }
     fdesignframe:TFDesignFrame;
-    fhelp:TFHelpf;
-    fobjinsp:TFObjInsp;
+    fhelp:TFRpHelpform;
+    fobjinsp:TFRpObjInsp;
     lastsaved:TMemoryStream;
     configfile:string;
     updatedmfields:boolean;
@@ -227,19 +227,17 @@ type
     function GetExpressionText:string;
   end;
 
-var
-  FMainf: TFMainf;
 
 implementation
 
-uses rppagesetup, rpshfolder,  fdatainfo, frpgrid, rppreview, fabout,
+uses rppagesetup, rpmdshfolder,rpmdfdatainfo, rpmdfgrid, rppreview, rpmdfabout,
   rpprintdia,
   rprfparams;
 
 {$R *.xfm}
 
 // Check if it is saved and return true if all is ok
-function TFMainf.CheckSave:Boolean;
+function TFRpMainF.CheckSave:Boolean;
 var
  res:TmodalResult;
 begin
@@ -259,7 +257,7 @@ begin
  end;
 end;
 
-procedure TFMainf.ANewExecute(Sender: TObject);
+procedure TFRpMainF.ANewExecute(Sender: TObject);
 begin
  if Not checksave then
   exit;
@@ -274,7 +272,7 @@ begin
  FormResize(Self);
 end;
 
-procedure TFMainF.DoEnable;
+procedure TFRpMainF.DoEnable;
 begin
  // Save the report for seeing after if it's modified
  if Assigned(lastsaved) then
@@ -288,7 +286,7 @@ begin
  CreateInterface;
 end;
 
-procedure TFMainF.DoDisable;
+procedure TFRpMainF.DoDisable;
 begin
  FreeInterface;
  report.free;
@@ -301,12 +299,12 @@ begin
  end;
 end;
 
-procedure TFMainf.AExitExecute(Sender: TObject);
+procedure TFRpMainF.AExitExecute(Sender: TObject);
 begin
  Close;
 end;
 
-procedure TFMainf.DoOpen(newfilename:string;showopendialog:boolean);
+procedure TFRpMainF.DoOpen(newfilename:string;showopendialog:boolean);
 begin
  if Not checksave then
   exit;
@@ -341,13 +339,13 @@ begin
  end;
 end;
 
-procedure TFMainf.AOpenExecute(Sender: TObject);
+procedure TFRpMainF.AOpenExecute(Sender: TObject);
 begin
  DoOpen(filename,true);
  FormResize(Self);
 end;
 
-procedure TFMainf.ASaveExecute(Sender: TObject);
+procedure TFRpMainF.ASaveExecute(Sender: TObject);
 begin
  Assert(report<>nil,'Called Save without a report assigned');
  // Saves the current report
@@ -362,7 +360,7 @@ begin
 end;
 
 
-procedure TFMainF.FreeInterface;
+procedure TFRpMainF.FreeInterface;
 begin
  // Frees the interface for the report
  ASave.Enabled:=false;
@@ -412,7 +410,7 @@ begin
  updatedmfields:=false;
 end;
 
-procedure TFMainF.CreateInterface;
+procedure TFRpMainF.CreateInterface;
 begin
  // Creates an interface for the report
  ASave.Enabled:=true;
@@ -450,7 +448,7 @@ begin
  else
   Caption:=SRpRepman+'-'+filename;
  // Create the report structure frame
- fobjinsp:=TFObjInsp.Create(Self);
+ fobjinsp:=TFRpObjInsp.Create(Self);
  fobjinsp.Parent:=leftpanel;
  freportstructure:=TFRpStructure.Create(Self);
  freportstructure.Align:=alTop;
@@ -469,7 +467,7 @@ begin
  mainscrollbox.Visible:=true;
 end;
 
-procedure TFMainf.ASaveasExecute(Sender: TObject);
+procedure TFRpMainF.ASaveasExecute(Sender: TObject);
 begin
  Assert(report<>nil,'Called Save without a report assigned');
  // Saves the report
@@ -481,7 +479,7 @@ begin
   Raise EAbort.Create(SRpSaveAborted);
 end;
 
-procedure TFMainF.DoSave;
+procedure TFRpMainF.DoSave;
 begin
  Assert(report<>nil,'Called DoSave without a report assigned');
 
@@ -502,7 +500,7 @@ begin
  Caption:=SRpRepman+'-'+filename;
 end;
 
-procedure TFMainf.APageSetupExecute(Sender: TObject);
+procedure TFRpMainF.APageSetupExecute(Sender: TObject);
 begin
  Assert(report<>nil,'Called Page setup without a report assigned');
 
@@ -512,7 +510,7 @@ end;
 
 // A report is known is modified by comparing the saving of
 // the current report with the last saved report (lastsaved)
-function TFMainf.checkmodified:boolean;
+function TFRpMainF.checkmodified:boolean;
 var
  newsave:TMemoryStream;
 begin
@@ -532,7 +530,7 @@ begin
  end;
 end;
 
-procedure TFMainf.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+procedure TFRpMainF.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
  try
   canclose:=CheckSave;
@@ -541,7 +539,7 @@ begin
  end;
 end;
 
-procedure TFMainf.FormCreate(Sender: TObject);
+procedure TFRpMainF.FormCreate(Sender: TObject);
 begin
  Application.Title:=SRpRepman;
  configfile:=Obtainininameuserconfig('','','repmand');
@@ -559,13 +557,13 @@ begin
  LoadConfig;
 end;
 
-procedure TFMainf.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TFRpMainF.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
  LastUsedFiles.SaveToConfigFile(configfile);
  SaveConfig;
 end;
 
-procedure TFMainf.UpdateFileMenu;
+procedure TFRpMainF.UpdateFileMenu;
 var
  exitindex:integer;
  alist:TStringlist;
@@ -589,12 +587,12 @@ begin
  try
   Lastusedfiles.FillWidthShortNames(alist,C_FILENAME_WIDTH);
   // Creation of menu items
-  aItem:=TMenuItem.Create(FMainf);
+  aItem:=TMenuItem.Create(Self);
   File1.Add(aitem);
   aItem.Caption:='-';
   for i:=0 to alist.count-1 do
   begin
-   aItem:=TMenuItem.Create(FMainf);
+   aItem:=TMenuItem.Create(Self);
    File1.Add(aitem);
    aItem.Caption:=alist.strings[i];
    aItem.Tag:=i;
@@ -605,7 +603,7 @@ begin
  end;
 end;
 
-procedure TFMainf.OnFileClick(Sender:TObject);
+procedure TFRpMainF.OnFileClick(Sender:TObject);
 var
  newfilename:string;
 begin
@@ -614,7 +612,7 @@ begin
  DoOpen(newfilename,false);
 end;
 
-procedure TFMainf.AppIdleRefreshInterface(Sender:TObject;var done:boolean);
+procedure TFRpMainF.AppIdleRefreshInterface(Sender:TObject;var done:boolean);
 begin
  Application.OnIdle:=nil;
  done:=false;
@@ -623,12 +621,12 @@ begin
  FormResize(self);
 end;
 
-procedure TFMainf.RefreshInterface(Sender: TObject);
+procedure TFRpMainF.RefreshInterface(Sender: TObject);
 begin
  Application.OnIdle:=AppIdleRefreshInterface;
 end;
 
-procedure TFMainf.ANewPageHeaderExecute(Sender: TObject);
+procedure TFRpMainF.ANewPageHeaderExecute(Sender: TObject);
 begin
  // Inserts a new page header
  Assert(report<>nil,'Called AddNew PageHeader without a report assigned');
@@ -638,7 +636,7 @@ begin
  RefreshInterface(Self);
 end;
 
-procedure TFMainf.ANewPageFooterExecute(Sender: TObject);
+procedure TFRpMainF.ANewPageFooterExecute(Sender: TObject);
 begin
  // Inserts a new page footer
  Assert(report<>nil,'Called AddNewPageFooter without a report assigned');
@@ -648,7 +646,7 @@ begin
  RefreshInterface(Self);
 end;
 
-procedure TFMainf.ANewGroupExecute(Sender: TObject);
+procedure TFRpMainF.ANewGroupExecute(Sender: TObject);
 var
  newgroupname:string;
 begin
@@ -664,7 +662,7 @@ begin
  end;
 end;
 
-procedure TFMainf.ANewSubreportExecute(Sender: TObject);
+procedure TFRpMainF.ANewSubreportExecute(Sender: TObject);
 begin
  // Inserts a new group header and footer
  Assert(report<>nil,'Called AddSubReport a report unassigned');
@@ -674,7 +672,7 @@ begin
  RefreshInterface(Self);
 end;
 
-procedure TFMainf.ADeleteSelectionExecute(Sender: TObject);
+procedure TFRpMainF.ADeleteSelectionExecute(Sender: TObject);
 begin
  // Deletes section
  Assert(report<>nil,'Called ADeleteSection a report unassigned');
@@ -686,7 +684,7 @@ begin
  end;
 end;
 
-procedure TFMainf.ANewDetailExecute(Sender: TObject);
+procedure TFRpMainF.ANewDetailExecute(Sender: TObject);
 begin
  // Inserts a new group header and footer
  Assert(report<>nil,'Called ADeleteSection a report unassigned');
@@ -696,7 +694,7 @@ begin
  RefreshInterface(Self);
 end;
 
-procedure TFMainf.ADataConfigExecute(Sender: TObject);
+procedure TFRpMainF.ADataConfigExecute(Sender: TObject);
 begin
  // Data info configuration dialog
  ShowDataConfig(report);
@@ -704,18 +702,18 @@ begin
  updatedmfields:=false;
 end;
 
-procedure TFMainf.AParamsExecute(Sender: TObject);
+procedure TFRpMainF.AParamsExecute(Sender: TObject);
 begin
  ShowParamDef(report.Params,report.DataInfo);
 end;
 
-procedure TFMainf.AGridOptionsExecute(Sender: TObject);
+procedure TFRpMainF.AGridOptionsExecute(Sender: TObject);
 begin
  ModifyGridProperties(report);
  fdesignframe.UpdateSelection(true);
 end;
 
-procedure TFMainf.ACutExecute(Sender: TObject);
+procedure TFRpMainF.ACutExecute(Sender: TObject);
 var
  sectionintf:TRpSectionInterface;
  pitem:TRpCommonComponent;
@@ -731,7 +729,7 @@ begin
  fdesignframe.UpdateSelection(true);
 end;
 
-procedure TFMainf.ACopyExecute(Sender: TObject);
+procedure TFRpMainF.ACopyExecute(Sender: TObject);
 var
  pitem:TRpCommonComponent;
 begin
@@ -742,7 +740,7 @@ begin
  Clipboard.SetComponent(pitem);
 end;
 
-procedure TFMainf.APasteExecute(Sender: TObject);
+procedure TFRpMainF.APasteExecute(Sender: TObject);
 var
  section:TRpSection;
  secint:TRpSectionInterface;
@@ -777,7 +775,7 @@ begin
  end;
 end;
 
-procedure TFMainf.Splitter1Moved(Sender: TObject);
+procedure TFRpMainF.Splitter1Moved(Sender: TObject);
 var
  olditem:TRpSizeInterface;
 begin
@@ -790,13 +788,13 @@ begin
 
 end;
 
-procedure TFMainf.OnReadError(Reader: TReader; const Message: string;
+procedure TFRpMainF.OnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
 begin
  Handled:=MessageDlg(SRpErrorReadingReport,Message+#10+SRpIgnoreError,mtWarning,[mbYes,mbNo],0)=mrYes;
 end;
 
-procedure TFMainf.APreviewExecute(Sender: TObject);
+procedure TFRpMainF.APreviewExecute(Sender: TObject);
 begin
  // Previews the report
 {$IFDEF MSWINDOWS}
@@ -809,12 +807,12 @@ begin
  rppreview.ShowPreview(report,caption,AsystemPrintDialog.Checked);
 end;
 
-procedure TFMainf.AAboutExecute(Sender: TObject);
+procedure TFRpMainF.AAboutExecute(Sender: TObject);
 begin
  ShowAbout;
 end;
 
-procedure TFMainf.APrintExecute(Sender: TObject);
+procedure TFRpMainF.APrintExecute(Sender: TObject);
 var
  allpages,collate:boolean;
  frompage,topage,copies:integer;
@@ -859,7 +857,7 @@ begin
 end;
 
 
-procedure TFMainf.MFieldsItemClick(Sender:TObject);
+procedure TFRpMainF.MFieldsItemClick(Sender:TObject);
 var
  i:integer;
 begin
@@ -872,7 +870,7 @@ begin
  end;
 end;
 
-procedure TFMainf.UpdateMFields;
+procedure TFRpMainF.UpdateMFields;
 var
  i,j:integer;
  alist:TStringList;
@@ -908,7 +906,7 @@ begin
  end;
 end;
 
-procedure TFMainf.BExpressionMouseUp(Sender: TObject; Button: TMouseButton;
+procedure TFRpMainF.BExpressionMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
  apoint:TPoint;
@@ -926,7 +924,7 @@ begin
 end;
 
 
-function TFMainf.GetExpressionText:string;
+function TFRpMainF.GetExpressionText:string;
 var
  i:integer;
 begin
@@ -943,15 +941,15 @@ begin
  end;
 end;
 
-procedure TFMainf.ShowHelp(AURL:string);
+procedure TFRpMainF.ShowHelp(AURL:string);
 begin
  if Not Assigned(FHelp) then
-  FHelp:=TFHelpf.Create(Application);
+  FHelp:=TFRpHelpform.Create(Application);
  FHelp.TextBrowser1.FileName:=AURL;
  FHelp.Show;
 end;
 
-procedure TFMainf.ATutorialExecute(Sender: TObject);
+procedure TFRpMainF.ATutorialExecute(Sender: TObject);
 var
  aurl:string;
  Directorysep:string;
@@ -968,7 +966,7 @@ begin
  ShowHelp(aurl);
 end;
 
-procedure TFMainf.AFeaturesExecute(Sender: TObject);
+procedure TFRpMainF.AFeaturesExecute(Sender: TObject);
 var
  aurl:string;
  Directorysep:string;
@@ -984,7 +982,7 @@ begin
  ShowHelp(aurl);
 end;
 
-procedure TFMainf.APrintSetupExecute(Sender: TObject);
+procedure TFRpMainF.APrintSetupExecute(Sender: TObject);
 {$IFDEF MSWINDOWS}
 var
  psetup:TPrinterSetupDialog;
@@ -1005,7 +1003,7 @@ begin
  printer.ExecuteSetup;
 end;
 
-procedure TFMainf.LoadConfig;
+procedure TFRpMainF.LoadConfig;
 var
  inif:TInifile;
 begin
@@ -1026,7 +1024,7 @@ begin
  end;
 end;
 
-procedure TFMainf.SaveConfig;
+procedure TFRpMainF.SaveConfig;
 var
  inif:TInifile;
 begin
@@ -1043,7 +1041,7 @@ begin
 end;
 
 
-procedure TFMainf.UpdateUnits;
+procedure TFRpMainF.UpdateUnits;
 begin
  if AUnitCms.Checked then
   rpmunits.defaultunit:=rpUnitcms
@@ -1057,21 +1055,21 @@ begin
 end;
 
 
-procedure TFMainf.AUnitCmsExecute(Sender: TObject);
+procedure TFRpMainF.AUnitCmsExecute(Sender: TObject);
 begin
  AUnitCms.Checked:=true;
  AUnitsInchess.Checked:=false;
  UpdateUnits;
 end;
 
-procedure TFMainf.AUnitsinchessExecute(Sender: TObject);
+procedure TFRpMainF.AUnitsinchessExecute(Sender: TObject);
 begin
  AUnitCms.Checked:=false;
  AUnitsInchess.Checked:=true;
  UpdateUnits;
 end;
 
-procedure TFMainf.CorrectScrollBoxes;
+procedure TFRpMainF.CorrectScrollBoxes;
 begin
  if assigned(fdesignframe) then
  begin
@@ -1090,7 +1088,7 @@ begin
 end;
 
 
-procedure TFMainf.FormResize(Sender: TObject);
+procedure TFRpMainF.FormResize(Sender: TObject);
 begin
  if assigned(fdesignframe) then
  begin
@@ -1099,29 +1097,29 @@ begin
  end;
 end;
 
-procedure TFMainf.AUserParamsExecute(Sender: TObject);
+procedure TFRpMainF.AUserParamsExecute(Sender: TObject);
 begin
  ShowUserParams(report);
 end;
 
-procedure TFMainf.ADriverQTExecute(Sender: TObject);
+procedure TFRpMainF.ADriverQTExecute(Sender: TObject);
 begin
  ADriverQT.Checked:=true;
  ADriverGDI.Checked:=false;
 end;
 
-procedure TFMainf.ADriverGDIExecute(Sender: TObject);
+procedure TFRpMainF.ADriverGDIExecute(Sender: TObject);
 begin
  ADriverGDI.Checked:=true;
  ADriverQT.Checked:=false;
 end;
 
-procedure TFMainf.ASystemPrintDialogExecute(Sender: TObject);
+procedure TFRpMainF.ASystemPrintDialogExecute(Sender: TObject);
 begin
  ASystemPrintDialog.Checked:=Not ASystemPrintDialog.Checked;
 end;
 
-procedure TFMainf.AkylixPrintBugExecute(Sender: TObject);
+procedure TFRpMainF.AkylixPrintBugExecute(Sender: TObject);
 begin
  AKylixPrintBug.Checked:=Not AKylixPrintBug.Checked;
  rpqtdriver.kylixprintbug:=AKylixPrintBug.Checked;

@@ -1,17 +1,17 @@
-object FAboutBox: TFAboutBox
+object FRpAboutBox: TFRpAboutBox
   Left = 28
   Top = 67
   Width = 489
   Height = 314
-  HorzScrollBar.Range = 461
   VertScrollBar.Range = 289
+  HorzScrollBar.Range = 461
   ActiveControl = OKBtn
   Caption = 'About Report Manager '
   Color = clButton
   Position = poScreenCenter
   Scaled = False
   OnCreate = FormCreate
-  PixelsPerInch = 100
+  PixelsPerInch = 96
   object Image1: TImage
     Left = 8
     Top = 68
@@ -530,64 +530,64 @@ object FAboutBox: TFAboutBox
   object LReport: TLabel
     Left = 8
     Top = 8
-    Width = 102
-    Height = 17
+    Width = 76
+    Height = 13
     Caption = 'Report manager'
   end
   object Label1: TLabel
     Left = 12
     Top = 164
-    Width = 44
-    Height = 17
+    Width = 31
+    Height = 13
     Caption = 'Author'
   end
   object LName: TLabel
     Left = 56
     Top = 164
-    Width = 70
-    Height = 17
+    Width = 50
+    Height = 13
     Caption = 'Toni Martir'
   end
   object Label2: TLabel
     Left = 12
     Top = 184
-    Width = 39
-    Height = 17
+    Width = 28
+    Height = 13
     Caption = 'E-mail'
   end
   object LEmail: TLabel
     Left = 56
     Top = 184
-    Width = 93
-    Height = 17
+    Width = 71
+    Height = 13
     Caption = 'toni@pala.com'
   end
   object Label3: TLabel
     Left = 12
     Top = 208
-    Width = 154
-    Height = 17
+    Width = 113
+    Height = 13
     Caption = 'From Palafrugell, SPAIN'
   end
   object LVersion: TLabel
     Left = 8
     Top = 44
-    Width = 114
-    Height = 17
+    Width = 83
+    Height = 13
     Caption = 'Version 0.99 beta'
   end
   object Label4: TLabel
     Left = 12
     Top = 232
-    Width = 84
-    Height = 17
+    Width = 63
+    Height = 13
     Caption = 'Project page:'
   end
   object Label5: TLabel
     Left = 96
     Top = 232
-    Width = 260
-    Height = 17
+    Width = 199
+    Height = 13
     Caption = 'http://sourceforge.net/projects/reportman'
   end
   object Memo1: TMemo
@@ -607,8 +607,8 @@ object FAboutBox: TFAboutBox
   object Label6: TLabel
     Left = 232
     Top = 68
-    Width = 79
-    Height = 17
+    Width = 56
+    Height = 13
     Caption = 'Contributors'
   end
 end

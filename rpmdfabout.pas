@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       fabout                                          }
+{       rpmdfabout                                          }
 {       About box for report manager designer           }
 {                                                       }
 {                                                       }
@@ -15,7 +15,7 @@
 {                                                       }
 {                                                       }
 {*******************************************************}
-unit fabout;
+unit rpmdfabout;
 
 interface
 
@@ -23,7 +23,7 @@ uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls;
 
 type
-  TFAboutBox = class(TForm)
+  TFRpAboutBox = class(TForm)
     OKBtn: TButton;
     LReport: TLabel;
     Label1: TLabel;
@@ -50,9 +50,9 @@ procedure ShowAbout;
 implementation
 
 procedure ShowAbout;
-var dia:TFAboutBox;
+var dia:TFRpAboutBox;
 begin
- dia:=TFAboutBox.Create(Application);
+ dia:=TFRpAboutBox.Create(Application);
  try
   dia.ShowModal;
  finally
@@ -63,7 +63,7 @@ end;
 
 {$R *.xfm}
 
-procedure TFAboutBox.FormCreate(Sender: TObject);
+procedure TFRpAboutBox.FormCreate(Sender: TObject);
 begin
  LReport.Font.Size:=20;
  LReport.Font.Style:=[fsBold];

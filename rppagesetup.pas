@@ -27,7 +27,7 @@ uses
   rpmetafile,QPrinters;
 
 type
-  TFPageSetup = class(TForm)
+  TFRpPageSetup = class(TForm)
     BOK: TButton;
     BCancel: TButton;
     RPageSize: TRadioGroup;
@@ -140,9 +140,9 @@ const
 
 procedure ExecutePageSetup(report:TRpReport);
 var
- dia:TFPageSetup;
+ dia:TFRpPageSetup;
 begin
- dia:=TFPageSetup.Create(Application);
+ dia:=TFRpPageSetup.Create(Application);
  try
   dia.report:=report;
 
@@ -152,12 +152,12 @@ begin
  end;
 end;
 
-procedure TFPageSetup.BCancelClick(Sender: TObject);
+procedure TFRpPageSetup.BCancelClick(Sender: TObject);
 begin
  Close;
 end;
 
-procedure TFPageSetup.FormCreate(Sender: TObject);
+procedure TFRpPageSetup.FormCreate(Sender: TObject);
 var
  i:integer;
  psize:TPagesize;
@@ -184,13 +184,13 @@ begin
  end;
 end;
 
-procedure TFPageSetup.BOKClick(Sender: TObject);
+procedure TFRpPageSetup.BOKClick(Sender: TObject);
 begin
  SaveOptions;
  close;
 end;
 
-procedure TFPageSetup.SaveOptions;
+procedure TFRpPageSetup.SaveOptions;
 var
  acopies:integer;
 begin
@@ -238,7 +238,7 @@ begin
  report.PrinterFonts:=TRpPrinterFontsOption(ComboPrinterFonts.ItemIndex);
 end;
 
-procedure TFPageSetup.ReadOptions;
+procedure TFRpPageSetup.ReadOptions;
 begin
  // ReadOptions
  ECopies.Text:=IntToStr(report.Copies);
@@ -285,29 +285,29 @@ begin
   ComboLanguage.ItemIndex:=report.Language;
 end;
 
-procedure TFPageSetup.SColorMouseDown(Sender: TObject;
+procedure TFRpPageSetup.SColorMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
  BBackgroundClick(Self);
 end;
 
-procedure TFPageSetup.BBackgroundClick(Sender: TObject);
+procedure TFRpPageSetup.BBackgroundClick(Sender: TObject);
 begin
  if ColorDialog1.Execute then
   SColor.Brush.Color:=ColorDialog1.Color;
 end;
 
-procedure TFPageSetup.RPageSizeClick(Sender: TObject);
+procedure TFRpPageSetup.RPageSizeClick(Sender: TObject);
 begin
  GPageSize.Visible:=RPageSize.Itemindex=1;
 end;
 
-procedure TFPageSetup.RPageOrientationClick(Sender: TObject);
+procedure TFRpPageSetup.RPageOrientationClick(Sender: TObject);
 begin
  RCustomOrientation.Visible:=RPageOrientation.Itemindex=1;
 end;
 
-procedure TFPageSetup.FormShow(Sender: TObject);
+procedure TFRpPageSetup.FormShow(Sender: TObject);
 begin
  ReadOptions;
 end;

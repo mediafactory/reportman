@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       fdrawint                                        }
+{       rpmdfdrawint                                    }
 {       Implementation draw item and image interface    }
 {                                                       }
 {                                                       }
@@ -16,13 +16,13 @@
 {                                                       }
 {*******************************************************}
 
-unit fdrawint;
+unit rpmdfdrawint;
 
 interface
 
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,types,
-  rpprintitem,rpdrawitem,rpobinsint,rpconsts,
+  rpprintitem,rpdrawitem,rpmdobinsint,rpconsts,
   rpgraphutils,rpmunits,rptypes;
 
 type
@@ -53,15 +53,6 @@ type
    procedure SetProperty(pname:string;stream:TMemoryStream);override;
    procedure GetProperty(pname:string;var Stream:TMemoryStream);override;
  end;
-
-  TFDrawInterface = class(TForm)
-    OKBtn: TButton;
-    CancelBtn: TButton;
-  private
-    { Private declarations }
-  public
-    { Public declarations }
-  end;
 
 
 const
@@ -94,7 +85,6 @@ function StringCopyModeToCopyMode(Value:string):TCopyMode;
 
 implementation
 
-{$R *.xfm}
 
 
 constructor TRpDrawInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);

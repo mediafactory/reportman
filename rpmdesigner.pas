@@ -20,7 +20,7 @@ unit rpmdesigner;
 
 interface
 
-uses Classes,SysUtils,rpconsts,rpreport;
+uses Classes,SysUtils,rpconsts,rpreport,rpmdfmain;
 
 type
  // Stream: You can set the stream you want to write the report

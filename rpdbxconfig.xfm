@@ -1,4 +1,4 @@
-object FDBXConfig: TFDBXConfig
+object FRpDBXConfig: TFRpDBXConfig
   Left = 5
   Top = 16
   Width = 609

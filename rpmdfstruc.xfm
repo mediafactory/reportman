@@ -248,19 +248,19 @@ object FRpStructure: TFRpStructure
     Left = 140
     Top = 64
     object Pageheader1: TMenuItem
-      Action = FMainf.ANewPageHeader
+      Action = FRpMainF.ANewPageHeader
     end
     object Pagefooter1: TMenuItem
-      Action = FMainf.ANewPageFooter
+      Action = FRpMainF.ANewPageFooter
     end
     object Groupheaderandfooter1: TMenuItem
-      Action = FMainf.ANewGroup
+      Action = FRpMainF.ANewGroup
     end
     object Subreport1: TMenuItem
-      Action = FMainf.ANewSubreport
+      Action = FRpMainF.ANewSubreport
     end
     object Detail1: TMenuItem
-      Action = FMainf.ANewDetail
+      Action = FRpMainF.ANewDetail
     end
   end
 end

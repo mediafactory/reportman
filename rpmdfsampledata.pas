@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       FSampledata                                     }
+{       rpmdFSampledata                                 }
 {       Show data of a unidirectional query             }
 {                                                       }
 {                                                       }
@@ -16,7 +16,7 @@
 {                                                       }
 {*******************************************************}
 
-unit fsampledata;
+unit rpmdfsampledata;
 
 interface
 
@@ -32,7 +32,7 @@ const
  DLABEL_INCY=1;
 
 type
-  TFShowSampledata = class(TForm)
+  TFRpShowSampledata = class(TForm)
     DataSource1: TDataSource;
     ToolBar1: TToolBar;
     DBNavigator1: TDBNavigator;
@@ -55,9 +55,9 @@ implementation
 {$R *.xfm}
 procedure ShowDataset(Data:TDataset);
 var
- dia:TFShowSampledata;
+ dia:TFRpShowSampledata;
 begin
- dia:=TFShowSampledata.Create(Application);
+ dia:=TFRpShowSampledata.Create(Application);
  try
   dia.DataSource1.DataSet:=data;
   dia.CreateControls;
@@ -67,7 +67,7 @@ begin
  end;
 end;
 
-procedure TFShowSampledata.CreateControls;
+procedure TFRpShowSampledata.CreateControls;
 var
  i:integer;
  dataset:TDataset;
@@ -105,7 +105,7 @@ begin
 end;
 
 
-procedure TFShowSampledata.ToolButton1Click(Sender: TObject);
+procedure TFRpShowSampledata.ToolButton1Click(Sender: TObject);
 begin
  Close;
 end;

@@ -24,24 +24,22 @@ program repmand;
 
 uses
   QForms,
-  fmain in 'fmain.pas' {FMainf},
-  frpstruc in 'frpstruc.pas' {FRpStructure: TFrame},
-  fdesign in 'fdesign.pas' {FDesignFrame: TFrame},
-  rpshfolder in 'rpshfolder.pas',
-  fdatainfo in 'fdatainfo.pas' {FDatainfoconfig},
-  fsampledata in 'fsampledata.pas' {FShowSampledata},
-  rpobinsint in 'rpobinsint.pas',
-  fdrawint in 'fdrawint.pas' {FDrawInterface},
-  rpobjinsp in 'rpobjinsp.pas' {FObjInsp: TFrame},
-  frpgrid in 'frpgrid.pas' {FRpGridOptions},
-  flabelint in 'flabelint.pas' {FLabelInterface},
-  fabout in 'fabout.pas' {FAboutBox},
-  fhelpform in 'fhelpform.pas' {FHelpf},
-{$IFDEF MSWINDOWS}
-  ShLwApi in 'ShLwApi.pas',
-  ShFolder in 'ShFolder.pas',
   midaslib,
   Crtl,
+{$IFDEF MSWINDOWS}
+  rpmdfmain in '..\rpmdfmain.pas' {FRpMainF},
+  rpmdfstruc in '..\rpmdfstruc.pas' {FRpStructure: TFrame},
+  rpmdfdesign in '..\rpmdfdesign.pas' {FDesignFrame: TFrame},
+  rpmdshfolder in '..\rpmdshfolder.pas',
+  rpmdfdatainfo in '..\rpmdfdatainfo.pas' {FRpDatainfoconfig},
+  rpmdfsampledata in '..\rpmdfsampledata.pas' {FRpShowSampledata},
+  rpmdobinsint in '..\rpmdobinsint.pas',
+  rpmdfdrawint in '..\rpmdfdrawint.pas',
+  rpmdobjinsp in '..\rpmdobjinsp.pas' {FRpObjInsp: TFrame},
+  rpmdfgrid in '..\rpmdfgrid.pas' {FRpGridOptions},
+  rpmdflabelint in '..\rpmdflabelint.pas',
+  rpmdfabout in '..\rpmdfabout.pas' {FRpAboutBox},
+  rpmdfhelpform in '..\rpmdfhelpform.pas' {FRpHelpForm},
   rppdfreport in '..\rppdfreport.pas',
   rpvclreport in '..\rpvclreport.pas',
   rpvgraphutils in '..\rpvgraphutils.pas',
@@ -52,7 +50,7 @@ uses
   rpreport in '..\rpreport.pas',
   rpsubreport in '..\rpsubreport.pas',
   rpconsts in '..\rpconsts.pas',
-  rppagesetup in '..\rppagesetup.pas' {FPageSetup},
+  rppagesetup in '..\rppagesetup.pas' {FRpPageSetup},
   rpmunits in '..\rpmunits.pas',
   rptypes in '..\rptypes.pas',
   rpdataset in '..\rpdataset.pas',
@@ -72,9 +70,9 @@ uses
   rpwriter in '..\rpwriter.pas',
   rpdatainfo in '..\rpdatainfo.pas',
   rpparams in '..\rpparams.pas',
-  fsectionint in 'fsectionint.pas' {FSectionProps},
+  rpmdfsectionint in '..\rpmdfsectionint.pas',
   rpfparams in '..\rpfparams.pas' {FRpParams},
-  rpdbxconfig in '..\rpdbxconfig.pas' {FDBXConfig},
+  rpdbxconfig in '..\rpdbxconfig.pas' {FRpDBXConfig},
   rpgraphutils in '..\rpgraphutils.pas' {FRpGraphProgres},
   rpprintdia in '..\rpprintdia.pas' {FRpPrintDialog},
   rplabelitem in '..\rplabelitem.pas',
@@ -98,37 +96,52 @@ uses
   rppdffile in '..\rppdffile.pas',
   rppdfdriver in '..\rppdfdriver.pas',
   rpmdesigner in '..\rpmdesigner.pas';
-
 {$ENDIF}
 
+
 {$IFDEF LINUX}
+  rpmdfmain in '../rpmdfmain.pas' {FRpMainF},
+  rpmdfstruc in '../rpmdfstruc.pas' {FRpStructure: TFrame},
+  rpmdfdesign in '../rpmdfdesign.pas' {FDesignFrame: TFrame},
+  rpmdshfolder in '../rpmdshfolder.pas',
+  rpmdfdatainfo in '../rpmdfdatainfo.pas' {FRpDatainfoconfig},
+  rpmdfsampledata in '../rpmdfsampledata.pas' {FRpShowSampledata},
+  rpmdobinsint in '../rpmdobinsint.pas',
+  rpmdfdrawint in '../rpmdfdrawint.pas',
+  rpmdobjinsp in '../rpmdobjinsp.pas' {FRpObjInsp: TFrame},
+  rpmdfgrid in '../rpmdfgrid.pas' {FRpGridOptions},
+  rpmdflabelint in '../rpmdflabelint.pas',
+  rpmdfabout in '../rpmdfabout.pas' {FRpAboutBox},
+  rpmdfhelpform in '../rpmdfhelpform.pas' {FRpHelpForm},
   rppdfreport in '../rppdfreport.pas',
   rpreport in '../rpreport.pas',
   rpsubreport in '../rpsubreport.pas',
   rpconsts in '../rpconsts.pas',
-  rppagesetup in '../rppagesetup.pas' {FPageSetup},
+  rppagesetup in '../rppagesetup.pas' {FRpPageSetup},
   rpmunits in '../rpmunits.pas',
   rptypes in '../rptypes.pas',
+  rpdataset in '../rpdataset.pas',
   rpsection in '../rpsection.pas',
   rpsecutil in '../rpsecutil.pas',
   rplastsav in '../rplastsav.pas',
   rpprintitem in '../rpprintitem.pas',
-  rpdataset in '../rpdataset.pas',
   rpparser in '../rpparser.pas',
   rpevalfunc in '../rpevalfunc.pas',
   rpeval in '../rpeval.pas',
   rpalias in '../rpalias.pas',
   rpexpredlg in '../rpexpredlg.pas' {FrpExpredialog},
   rpmetafile in '../rpmetafile.pas',
-  rpqtdriver in '../rpqtdriver.pas' {FQtProgress},
+  rpqtdriver in '../rpqtdriver.pas' {FRpQtProgress},
   rpruler in '../rpruler.pas',
   rptypeval in '../rptypeval.pas',
   rpwriter in '../rpwriter.pas',
   rpdatainfo in '../rpdatainfo.pas',
   rpparams in '../rpparams.pas',
+  rpmdfsectionint in '../rpmdfsectionint.pas',
   rpfparams in '../rpfparams.pas' {FRpParams},
-  rpdbxconfig in '../rpdbxconfig.pas' {FDBXConfig},
+  rpdbxconfig in '../rpdbxconfig.pas' {FRpDBXConfig},
   rpgraphutils in '../rpgraphutils.pas' {FRpGraphProgres},
+  rpprintdia in '../rpprintdia.pas' {FRpPrintDialog},
   rplabelitem in '../rplabelitem.pas',
   rpdrawitem in '../rpdrawitem.pas',
   rpmzlib in '../rpmzlib.pas',
@@ -147,8 +160,8 @@ uses
   rpzlibzutil in '../rpzlibzutil.pas',
   rpcompobase in '../rpcompobase.pas',
   rpclxreport in '../rpclxreport.pas',
-  rppdfdriver in '../rppdfdriver.pas',
   rppdffile in '../rppdffile.pas',
+  rppdfdriver in '../rppdfdriver.pas',
   rpmdesigner in '../rpmdesigner.pas';
 {$ENDIF}
 
@@ -156,8 +169,12 @@ uses
 
 {$R *.res}
 
+
+var
+  FRpMainF: TFRpMainF;
+
 begin
   Application.Initialize;
-  Application.CreateForm(TFMainf, FMainf);
+  Application.CreateForm(TFRpMainF, FRpMainF);
   Application.Run;
 end.

@@ -1,9 +1,9 @@
-object FShowSampledata: TFShowSampledata
+object FRpShowSampledata: TFRpShowSampledata
   Left = 82
   Top = 100
   Width = 470
   Height = 357
-  VertScrollBar.Range = 41
+  VertScrollBar.Range = 37
   Caption = 'Data'
   Color = clButton
   Position = poScreenCenter

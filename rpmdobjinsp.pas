@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       Rpobjinsp                                       }
+{       Rpmdobjinsp                                     }
 {                                                       }
 {       Object inspector frame                          }
 {                                                       }
@@ -16,15 +16,15 @@
 {                                                       }
 {*******************************************************}
 
-unit rpobjinsp;
+unit rpmdobjinsp;
 
 interface
 
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  rpobinsint,QGrids,rpconsts,rpprintitem,QStdCtrls,
+  rpmdobinsint,QGrids,rpconsts,rpprintitem,QStdCtrls,
   QExtCtrls,rpgraphutils,rpsection,rpmunits, rpexpredlg,
-  rpalias,rpreport,Qt,rpsubreport,flabelint,rplabelitem;
+  rpalias,rpreport,Qt,rpsubreport,rpmdflabelint,rplabelitem;
 
 const
   CONS_LEFTGAP=3;
@@ -34,7 +34,7 @@ const
   CONS_BUTTONWIDTH=15;
   CONS_MINWIDTH=150;
 type
-  TFObjInsp = class(TFrame)
+  TFRpObjInsp = class(TFrame)
     ColorDialog1: TColorDialog;
     FontDialog1: TFontDialog;
     RpAlias1: TRpAlias;
@@ -86,9 +86,9 @@ implementation
 
 {$R *.xfm}
 
-uses fdesign,fsectionint, fmain;
+uses rpmdfdesign,rpmdfsectionint, rpmdfmain;
 
-procedure TFObjInsp.ReleaseAllControls;
+procedure TFRpObjInsp.ReleaseAllControls;
 var
  i:integer;
 begin
@@ -126,7 +126,7 @@ begin
 end;
 
 
-procedure TFObjInsp.SetCompItem(Value:TRpSizeInterface);
+procedure TFRpObjInsp.SetCompItem(Value:TRpSizeInterface);
 var
  i:integer;
  ALabel:TLabel;
@@ -140,7 +140,9 @@ var
  compo:TComponent;
  dontrelease:boolean;
  totalwidth:integer;
+ FRpMainF:TFRpMainF;
 begin
+ FRpMainF:=TFRpMainF(Owner);
  totalwidth:=WIdth;
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
@@ -167,25 +169,25 @@ begin
  if Not Assigned(Value) then
  begin
   fchangesize.Control:=nil;
-  fmainf.ACut.Enabled:=false;
-  fmainf.ACopy.Enabled:=false;
-  fmainf.APaste.Enabled:=false;
+  FRpMainf.ACut.Enabled:=false;
+  FRpMainf.ACopy.Enabled:=false;
+  FRpMainf.APaste.Enabled:=false;
   // Addes subreport props
   Subreportprops;
   exit;
  end;
  if CompItem is TRpSizePosInterface then
  begin
-  fchangesize.GridEnabled:=fmainf.report.GridEnabled;
-  fchangesize.GridX:=fmainf.report.GridWidth;
-  fchangesize.GridY:=fmainf.report.GridHeight;
+  fchangesize.GridEnabled:=FRpMainf.report.GridEnabled;
+  fchangesize.GridX:=FRpMainf.report.GridWidth;
+  fchangesize.GridY:=FRpMainf.report.GridHeight;
   fchangesize.Control:=CompItem;
-  fmainf.ACut.Enabled:=true;
-  fmainf.ACopy.Enabled:=true;
+  FRpMainf.ACut.Enabled:=true;
+  FRpMainf.ACopy.Enabled:=true;
  end
  else
   fchangesize.Control:=nil;
- fmainf.APaste.Enabled:=true;
+ FRpMainf.APaste.Enabled:=true;
  if not dontrelease then
  begin
   HorzScrollBar.Position:=0;
@@ -309,7 +311,7 @@ begin
    else
    begin
     Control:=TComboBox.Create(Self);
-    subrep:=fmainf.freportstructure.FindSelectedSubreport;
+    subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
     TComboBox(Control).Style:=csDropDownList;
     subrep.GetGroupNames(TComboBox(Control).Items);
     TComboBox(Control).Items.Insert(0,'');
@@ -437,9 +439,12 @@ begin
  end;
 end;
 
-constructor TFObjInsp.Create(AOwner:TComponent);
+constructor TFRpObjInsp.Create(AOwner:TComponent);
+var
+ FRpMainF:TFRpMainF;
 begin
  inherited Create(AOwner);
+ FRpMainF:=TFRpMainF(Owner);
 
  fchangesize:=TRpSizeModifier.Create(Self);
  fchangesize.OnSizeChange:=changesizechange;
@@ -456,14 +461,14 @@ begin
   Font.Size:=7;
  end;
 
- RpExpreDialog1.evaluator.AddVariable('Page',fmainf.report.idenpagenum);
- RpExpreDialog1.evaluator.AddVariable('FREE_SPACE',fmainf.report.idenfreespace);
- RpExpreDialog1.evaluator.AddVariable('CURRENTGROUP',fmainf.report.idencurrentgroup);
- RpExpreDialog1.evaluator.AddVariable('FREE_SPACE_CMS',fmainf.report.idenfreespacecms);
- RpExpreDialog1.evaluator.AddVariable('FREE_SPACE_INCH',fmainf.report.idenfreespaceinch);
+ RpExpreDialog1.evaluator.AddVariable('Page',FRpMainf.report.idenpagenum);
+ RpExpreDialog1.evaluator.AddVariable('FREE_SPACE',FRpMainf.report.idenfreespace);
+ RpExpreDialog1.evaluator.AddVariable('CURRENTGROUP',FRpMainf.report.idencurrentgroup);
+ RpExpreDialog1.evaluator.AddVariable('FREE_SPACE_CMS',FRpMainf.report.idenfreespacecms);
+ RpExpreDialog1.evaluator.AddVariable('FREE_SPACE_INCH',FRpMainf.report.idenfreespaceinch);
 end;
 
-destructor TFObjInsp.Destroy;
+destructor TFRpObjInsp.Destroy;
 begin
  LNames.free;
  LValues.free;
@@ -474,7 +479,7 @@ begin
  inherited Destroy;
 end;
 
-procedure TFObjInsp.EditChange(Sender:TObject);
+procedure TFRpObjInsp.EditChange(Sender:TObject);
 var
  index:integer;
  aname:string;
@@ -499,7 +504,7 @@ begin
  end;
 end;
 
-procedure TFObjInsp.ShapeMouseUp(Sender: TObject; Button: TMouseButton;
+procedure TFRpObjInsp.ShapeMouseUp(Sender: TObject; Button: TMouseButton;
      Shift: TShiftState; X, Y: Integer);
 var
  AShape:TShape;
@@ -513,7 +518,7 @@ begin
  end;
 end;
 
-procedure TFObjInsp.FontClick(Sender:TObject);
+procedure TFRpObjInsp.FontClick(Sender:TObject);
 var
  index:integer;
 begin
@@ -553,7 +558,7 @@ begin
  end;
 end;
 
-procedure TFObjInsp.ComboObjectChange(Sender:TObject);
+procedure TFRpObjInsp.ComboObjectChange(Sender:TObject);
 begin
  dontfreecombo:=true;
  try
@@ -563,7 +568,7 @@ begin
  end;
 end;
 
-procedure TFObjInsp.ChangeSizeChange(Sender:TObject);
+procedure TFRpObjInsp.ChangeSizeChange(Sender:TObject);
 begin
  // Read bounds Values and assign
  if Not Assigned(fchangesize.Control) then
@@ -571,7 +576,7 @@ begin
  UpdatePosValues;
 end;
 
-procedure TFObjInsp.SendToBackClick(Sender:TObject);
+procedure TFRpObjInsp.SendToBackClick(Sender:TObject);
 var
  section:TRpSection;
  item:TRpCommonListItem;
@@ -596,7 +601,7 @@ begin
  item.Component:=pitem;
 end;
 
-procedure TFObjInsp.BringToFrontClick(Sender:TObject);
+procedure TFRpObjInsp.BringToFrontClick(Sender:TObject);
 var
  section:TRpSection;
  item:TRpCommonListItem;
@@ -624,13 +629,15 @@ end;
 
 
 
-procedure TFObjInsp.ExpressionClick(Sender:TObject);
+procedure TFRpObjInsp.ExpressionClick(Sender:TObject);
 var
  report:TRpReport;
  i:integer;
  item:TRpAliaslistItem;
+ FRpMainF:TFRpMainF;
 begin
- report:=fmainf.report;
+ FRpMainF:=TFRpMainF(Owner);
+ report:=FRpMainf.report;
  try
   report.ActivateDatasets;
  except
@@ -652,7 +659,7 @@ begin
   TEdit(LControls.Objects[TButton(Sender).Tag]).Text:=Trim(RpExpreDialog1.Expresion.Text);
 end;
 
-procedure TFObjInsp.UpdatePosValues;
+procedure TFRpObjInsp.UpdatePosValues;
 var
  index:integer;
  sizeposint:TRpSizePosInterface;
@@ -685,7 +692,7 @@ begin
  end;
 end;
 
-procedure TFObjInsp.ImageClick(Sender:TObject);
+procedure TFRpObjInsp.ImageClick(Sender:TObject);
 var
  Stream:TMemoryStream;
 begin
@@ -702,7 +709,7 @@ begin
  end;
 end;
 
-procedure TFObjInsp.ImageKeyDown(Sender: TObject;
+procedure TFRpObjInsp.ImageKeyDown(Sender: TObject;
      var Key: Word; Shift: TShiftState);
 var
  Stream:TMemoryStream;
@@ -718,18 +725,20 @@ begin
  end;
 end;
 
-procedure  TFObjInsp.Subreportprops;
+procedure  TFRpObjInsp.Subreportprops;
 var
  alabel:TLabel;
  posy:integer;
  comboalias:TComboBox;
  i,totalwidth:integer;
+ FRpMainF:TFRpMainF;
 begin
+ FRpMainF:=TFRpMainF(Owner);
  totalwidth:=WIdth;
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
  posy:=0;
- subrep:=fmainf.freportstructure.FindSelectedSubreport;
+ subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
  ALabel:=TLabel.Create(Self);
  LLabels.Add(ALabel);
  ALabel.Caption:=SRpMainDataset;
@@ -740,9 +749,9 @@ begin
  ComboAlias:=TComboBox.Create(Self);
  ComboAlias.Style:=csDropDownList;
  ComboAlias.Items.Add('');
- for i:=0 to fmainf.report.DataInfo.Count-1 do
+ for i:=0 to FRpMainf.report.DataInfo.Count-1 do
  begin
-  ComboAlias.Items.Add(fmainf.report.DataInfo.items[i].Alias);
+  ComboAlias.Items.Add(FRpMainf.report.DataInfo.items[i].Alias);
  end;
  ComboAlias.Itemindex:=ComboAlias.Items.IndexOf(subrep.Alias);
  ComboAlias.OnChange:=ComboAliasChange;
@@ -755,12 +764,12 @@ begin
  LControlsToFree.Add(ComboAlias);
 end;
 
-procedure TFObjInsp.ComboAliasChange(Sender:TObject);
+procedure TFRpObjInsp.ComboAliasChange(Sender:TObject);
 begin
  subrep.Alias:=TComboBox(Sender).Text;
 end;
 
-procedure TFObjInsp.RecreateChangeSize;
+procedure TFRpObjInsp.RecreateChangeSize;
 begin
  fchangesize.free;
  fchangesize:=nil;

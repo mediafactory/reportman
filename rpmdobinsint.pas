@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       Rpobinsint                                      }
+{       Rpmdobinsint                                    }
 {                                                       }
 {       Basic properties editor, size, position         }
 {       Especial controls to modify basic properties    }
@@ -19,7 +19,7 @@
 {                                                       }
 {*******************************************************}
 
-unit rpobinsint;
+unit rpmdobinsint;
 
 interface
 
@@ -157,7 +157,7 @@ type
 
 implementation
 
-uses rpobjinsp;
+uses rpmdobjinsp;
 
 constructor TRpSizeInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin
@@ -596,7 +596,7 @@ begin
   TRpCOmmonPosComponent(printitem).PosY:=pixelstotwips(NewTop);
   UpdatePos;
   if Assigned(fobjinsp) then
-   TFObjInsp(fobjinsp).CompItem:=Self;
+   TFRpObjInsp(fobjinsp).CompItem:=Self;
  end;
 end;
 
@@ -857,7 +857,7 @@ begin
   if Control is TRpSizePosInterface then
   begin
    if Assigned(TRpSizePosInterface(Control).fobjinsp) then
-    TFObjInsp(TRpSizePosInterface(Control).fobjinsp).CompItem:=TRpSizePosInterface(Control);
+    TFRpObjInsp(TRpSizePosInterface(Control).fobjinsp).CompItem:=TRpSizePosInterface(Control);
   end;
  end;
 end;

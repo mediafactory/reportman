@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       fdesign                                         }
+{       rpmdfdesign                                     }
 {       Design frame of the Main form                   }
 {       Used by a subreport                             }
 {                                                       }
@@ -17,14 +17,14 @@
 {                                                       }
 {*******************************************************}
 
-unit fdesign;
+unit rpmdfdesign;
 
 interface
 
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs, QMenus,
-  QTypes, QExtCtrls,frpstruc,rpobinsint,rpreport,rpmunits,
-  fsectionint,rpsubreport,rpsection, rpruler,rpobjinsp;
+  QTypes, QExtCtrls,rpmdfstruc,rpmdobinsint,rpreport,rpmunits,
+  rpmdfsectionint,rpsubreport,rpsection, rpruler,rpmdobjinsp;
 
 const
  CONS_RULER_LEFT=20;
@@ -57,7 +57,7 @@ type
     { Private declarations }
     PSection: TRpPaintEventPanel;
     FReport:TRpReport;
-    FObjInsp:TFObjInsp;
+    FObjInsp:TFRpObjInsp;
     leftrulers:Tlist;
     FSubReport:TRpSubreport;
     toptitles:Tlist;
@@ -74,7 +74,7 @@ type
     procedure UpdateSelection(force:boolean);
     procedure SelectSubReport(subreport:TRpSubReport);
     property Report:TRpReport read FReport write SetReport;
-    property ObjInsp:TFObjInsp read FObjInsp write FObjInsp;
+    property ObjInsp:TFRpObjInsp read FObjInsp write FObjInsp;
   end;
 
 
@@ -82,7 +82,7 @@ implementation
 
 {$R *.xfm}
 
-uses fmain;
+uses rpmdfmain;
 
 procedure TrpScrollBox.AutoScrollInView(AControl: TControl);
 begin

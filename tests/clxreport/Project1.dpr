@@ -11,7 +11,9 @@ uses
   rpdatainfo in '..\..\rpdatainfo.pas',
   rpqtdriver in '..\..\rpqtdriver.pas' {FRpQtProgress},
   rpcompobase in '..\..\rpcompobase.pas',
-  rppdfreport in '..\..\rppdfreport.pas';
+  rppdfreport in '..\..\rppdfreport.pas',
+  rpmdesigner in '..\..\rpmdesigner.pas';
+
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -20,7 +22,8 @@ uses
   rpreport in '../../rpreport.pas',
   rpdatainfo in '../../rpdatainfo.pas',
   rpcompobase in '../../rpcompobase.pas',
-  rppdfreport in '../../rppdfreport.pas';
+  rppdfreport in '../../rppdfreport.pas',
+  rpmdesigner in '../../rpmdesigner.pas';
 {$ENDIF}
 
 

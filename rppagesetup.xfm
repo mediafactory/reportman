@@ -1,4 +1,4 @@
-object FPageSetup: TFPageSetup
+object FRpPageSetup: TFRpPageSetup
   Left = 42
   Top = 87
   Width = 457

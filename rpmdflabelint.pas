@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       flabelint                                       }
+{       rpmdflabelint                                   }
 {       Implementation label and expression designer    }
 {                                                       }
 {                                                       }
@@ -17,13 +17,13 @@
 {*******************************************************}
 
 
-unit flabelint;
+unit rpmdflabelint;
 
 interface
 
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,types,
-  rpprintitem,rplabelitem,rpobinsint,rpconsts,
+  rpprintitem,rplabelitem,rpmdobinsint,rpconsts,
   rpgraphutils,rptypes,Qt;
 
 type
@@ -51,17 +51,6 @@ type
  end;
 
 
-
-
-  TFLabelInterface = class(TForm)
-    OKBtn: TButton;
-    CancelBtn: TButton;
-    Bevel1: TBevel;
-  private
-    { Private declarations }
-  public
-    { Public declarations }
-  end;
 
 
 implementation
@@ -103,7 +92,6 @@ begin
  end;
 end;
 
-{$R *.xfm}
 
 constructor TRpLabelInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin

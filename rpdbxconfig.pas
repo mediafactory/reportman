@@ -32,7 +32,7 @@ const
  CONTROL_WIDTHX=200;
  LABEL_INCY=4;
 type
-  TFDBXConfig = class(TForm)
+  TFRpDBXConfig = class(TForm)
     Panel1: TPanel;
     Label1: TLabel;
     Label2: TLabel;
@@ -87,9 +87,9 @@ implementation
 
 procedure ShowDBXConfig(ConnectionsFile:string);
 var
- dia:TFDBXCOnfig;
+ dia:TFRpDBXCOnfig;
 begin
- dia:=TFDBXConfig.Create(Application);
+ dia:=TFRpDBXConfig.Create(Application);
  try
   dia.showmodal;
   dia.ConnectionsFile:=Trim(ConnectionsFile);
@@ -98,7 +98,7 @@ begin
  end;
 end;
 
-procedure TFDBXConfig.FormCreate(Sender: TObject);
+procedure TFRpDBXConfig.FormCreate(Sender: TObject);
 begin
  params:=TStringList.Create;
  // Read the drivers file
@@ -119,7 +119,7 @@ begin
  ComboDriversClick(Self);
 end;
 
-procedure TFDBXConfig.ComboDriversClick(Sender: TObject);
+procedure TFRpDBXConfig.ComboDriversClick(Sender: TObject);
 var
  drivername:string;
 begin
@@ -138,7 +138,7 @@ begin
 end;
 
 
-procedure TFDBXConfig.FreeParamsControls;
+procedure TFRpDBXConfig.FreeParamsControls;
 var
  i:integer;
 begin
@@ -149,7 +149,7 @@ begin
  end;
 end;
 
-procedure TFDBXConfig.CreateParamsControls;
+procedure TFRpDBXConfig.CreateParamsControls;
 var
  i:integer;
  index:integer;
@@ -210,7 +210,7 @@ begin
  end;
 end;
 
-procedure TFDBXConfig.LConnectionsClick(Sender: TObject);
+procedure TFRpDBXConfig.LConnectionsClick(Sender: TObject);
 begin
  if LConnections.ItemIndex<0 then
  begin
@@ -224,12 +224,12 @@ begin
 end;
 
 
-procedure TFDBXConfig.FormDestroy(Sender: TObject);
+procedure TFRpDBXConfig.FormDestroy(Sender: TObject);
 begin
  params.Free;
 end;
 
-procedure TFDBXConfig.Edit1Change(Sender:TObject);
+procedure TFRpDBXConfig.Edit1Change(Sender:TObject);
 var
  paramvalue:string;
  paramname:string;
@@ -252,7 +252,7 @@ begin
  ConAdmin.ModifyConnection(connectionname,params);
 end;
 
-procedure TFDBXConfig.BAddClick(Sender: TObject);
+procedure TFRpDBXConfig.BAddClick(Sender: TObject);
 var
  newname:string;
 begin
@@ -268,7 +268,7 @@ begin
  ComboDriversClick(Self);
 end;
 
-procedure TFDBXConfig.BDeleteClick(Sender: TObject);
+procedure TFRpDBXConfig.BDeleteClick(Sender: TObject);
 var
  conname:string;
 begin
@@ -285,7 +285,7 @@ begin
  end;
 end;
 
-procedure TFDBXConfig.BShowPropsClick(Sender: TObject);
+procedure TFRpDBXConfig.BShowPropsClick(Sender: TObject);
 var
  VendorLib,LibraryName:string;
 begin
@@ -297,7 +297,7 @@ begin
  ShowMessage(SRpVendorLib+':'+VendorLib+#10+SRpLibraryName+':'+LibraryName);
 end;
 
-procedure TFDBXConfig.BConnectClick(Sender: TObject);
+procedure TFRpDBXConfig.BConnectClick(Sender: TObject);
 var
  conname:string;
  funcname,drivername,vendorlib,libraryname:string;
@@ -322,7 +322,7 @@ begin
  SQLConnection1.Connected:=false;
 end;
 
-procedure TFDBXConfig.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TFRpDBXConfig.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
  if Assigned(ConAdminObj) then
   ConAdminObj.ConnectionConfig.UpdateFile;
@@ -330,7 +330,7 @@ begin
 end;
 
 
-procedure TFDBXConfig.ToolButton4Click(Sender: TObject);
+procedure TFRpDBXConfig.ToolButton4Click(Sender: TObject);
 begin
  Close;
 end;

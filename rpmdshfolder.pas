@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       rpshfolder                                      }
+{       rpmdshfolder                                    }
 {                                                       }
 {                                                       }
 {       An interface to user and system config files    }
@@ -20,7 +20,7 @@
 {                                                       }
 {*******************************************************}
 
-unit rpshfolder;
+unit rpmdshfolder;
 
 interface
 
@@ -31,14 +31,34 @@ uses
   Libc,
 {$ENDIF}
 {$IFDEF MSWINDOWS}
-  Windows,shfolder,shLWApi,
+  Windows,
 {$ENDIF}
   rpconsts;
+
+const
+  {$EXTERNALSYM CSIDL_APPDATA}
+  CSIDL_APPDATA              = $001A;  // Application Data, new for NT4
+  {$EXTERNALSYM CSIDL_FLAG_CREATE}
+  CSIDL_FLAG_CREATE          = $8000;  // new for Win2K, or this in to force
+  {$EXTERNALSYM CSIDL_LOCAL_APPDATA}
+  CSIDL_LOCAL_APPDATA        = $001C;  // non roaming,
+  {$EXTERNALSYM CSIDL_COMMON_APPDATA}
+  CSIDL_COMMON_APPDATA       = $0023;  // All Users\Application Data
+
+  shlwapi32 = 'shlwapi.dll';
+  shfolder  = 'shfolder.dll';
 
 
   function Obtainininameuserconfig(company,product,filename:string):string;
   function Obtainininamelocalconfig(company,product,filename:string):string;
   function Obtainininamecommonconfig(company,product,filename:string):string;
+
+{$EXTERNALSYM SHGetFolderPath}
+function SHGetFolderPath(hwnd: HWND; csidl: Integer; hToken: THandle; dwFlags: DWORD; pszPath: PChar): HResult; stdcall;
+function SHGetFolderPath; external shfolder name 'SHGetFolderPathA';
+{$EXTERNALSYM PathAppend}
+function PathAppend(pszPath: PChar; pMore: PChar): BOOL; stdcall;
+function PathAppend; external shlwapi32 name 'PathAppendA';
 
 implementation
 

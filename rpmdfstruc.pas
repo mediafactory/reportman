@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       fRpstruc                                        }
+{       rpmdfstruc                                      }
 {       Shows the report structure and allow to alter it}
 {                                                       }
 {                                                       }
@@ -16,14 +16,14 @@
 {                                                       }
 {*******************************************************}
 
-unit frpstruc;
+unit rpmdfstruc;
 
 interface
 
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QComCtrls,rpreport,rpsubreport,rpconsts, QMenus, QTypes,
-  rpsection,rpobjinsp,rpprintitem, QActnList, QImgList, QButtons, QExtCtrls;
+  rpsection,rpmdobjinsp,rpprintitem, QActnList, QImgList, QButtons, QExtCtrls;
 
 type
   TFRpStructure = class(TFrame)
@@ -53,7 +53,7 @@ type
   private
     { Private declarations }
     FReport:TRpReport;
-    FObjInsp:TFObjInsp;
+    FObjInsp:TFRpObjInsp;
     procedure SetReport(Value:TRpReport);
     procedure CreateInterface;
   public
@@ -63,7 +63,7 @@ type
     function FindSelectedObject:TObject;
     procedure DeleteSelectedNode;
     property Report:TRpReport read FReport write SetReport;
-    property ObjInsp:TFObjInsp read FObjInsp write FObjInsp;
+    property ObjInsp:TFRpObjInsp read FObjInsp write FObjInsp;
     procedure SelectDataItem(data:TObject);
   end;
 
@@ -71,7 +71,7 @@ implementation
 
 {$R *.xfm}
 
-uses fdesign, fmain;
+uses rpmdfdesign, rpmdfmain;
 
 procedure TFRpStructure.SetReport(Value:TRpReport);
 begin
@@ -514,8 +514,11 @@ begin
 end;
 
 procedure TFRpStructure.ADeleteExecute(Sender: TObject);
+var
+ FRpMainF:TFRpMainF;
 begin
- fmainf.ADeleteSelection.Execute;
+ FRpMainF:=TFRpMainF(Owner);
+ FRpMainf.ADeleteSelection.Execute;
 end;
 
 procedure TFRpStructure.BNewClick(Sender: TObject);

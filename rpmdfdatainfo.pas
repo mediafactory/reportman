@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       fdatainfo                                       }
+{       rpmdfdatainfo                                   }
 {       Form for configuration of report datasets       }
 {                                                       }
 {                                                       }
@@ -16,7 +16,7 @@
 {                                                       }
 {*******************************************************}
 
-unit fdatainfo;
+unit rpmdfdatainfo;
 
 interface
 
@@ -34,7 +34,7 @@ uses SysUtils, Classes, QGraphics, QForms,
   rpparams,rpfparams;
 
 type
-  TFDatainfoconfig = class(TForm)
+  TFRpDatainfoconfig = class(TForm)
     OKBtn: TButton;
     CancelBtn: TButton;
     GroupBox1: TGroupBox;
@@ -115,18 +115,18 @@ procedure ShowDataConfig(report:TRpReport);
 
 implementation
 
-uses rpdbxconfig, fsampledata;
+uses rpdbxconfig, rpmdfsampledata;
 
 {$R *.xfm}
 
 procedure ShowDataConfig(report:TRpReport);
 var
- dia:TFDataInfoConfig;
+ dia:TFRpDataInfoConfig;
 begin
 {$IFDEF USECONADMIN}
  UpdateConAdmin;
 {$ENDIF}
- dia:=TFDataInfoConfig.Create(Application);
+ dia:=TFRpDataInfoConfig.Create(Application);
  try
   dia.report:=report;
   dia.databaseinfo.Assign(report.DatabaseInfo);
@@ -138,7 +138,7 @@ begin
  end;
 end;
 
-procedure TFDatainfoconfig.FormCreate(Sender: TObject);
+procedure TFRpDatainfoconfig.FormCreate(Sender: TObject);
 begin
  GDriver.ItemIndex:=0;
  GDriver.Columns:=GDriver.Items.Count;
@@ -155,13 +155,13 @@ begin
  end;
 end;
 
-procedure TFDatainfoconfig.FormDestroy(Sender: TObject);
+procedure TFRpDatainfoconfig.FormDestroy(Sender: TObject);
 begin
  datainfo.free;
  databaseinfo.Free;
 end;
 
-procedure TFDatainfoconfig.FormShow(Sender: TObject);
+procedure TFRpDatainfoconfig.FormShow(Sender: TObject);
 begin
  // Fills the info
  if Assigned(ConAdmin) then
@@ -174,7 +174,7 @@ begin
  FillDatasets;
 end;
 
-procedure TFDatainfoconfig.BConfigClick(Sender: TObject);
+procedure TFRpDatainfoconfig.BConfigClick(Sender: TObject);
 begin
  case TRpDBDriver(GDriver.ItemIndex) of
   rpdatadbexpress:
@@ -212,7 +212,7 @@ begin
  FillCurrentConnections;
 end;
 
-procedure TFDatainfoconfig.BAddConClick(Sender: TObject);
+procedure TFRpDatainfoconfig.BAddConClick(Sender: TObject);
 var
  conname:string;
  item:TRpDatabaseInfoItem;
@@ -238,7 +238,7 @@ begin
  end;
 end;
 
-procedure TFDatainfoconfig.FillCurrentConnections;
+procedure TFRpDatainfoconfig.FillCurrentConnections;
 var
  i:integer;
  oldtext:string;
@@ -257,7 +257,7 @@ begin
 end;
 
 
-procedure TFDatainfoconfig.LConnectionsClick(Sender: TObject);
+procedure TFRpDatainfoconfig.LConnectionsClick(Sender: TObject);
 var
  dinfoitem:TRpDatabaseinfoitem;
 begin
@@ -282,7 +282,7 @@ begin
  GDriverClick(Self);
 end;
 
-function TFDatainfoconfig.FindDatabaseInfoItem:TRpDatabaseInfoItem;
+function TFRpDatainfoconfig.FindDatabaseInfoItem:TRpDatabaseInfoItem;
 var
  index:integer;
 begin
@@ -294,7 +294,7 @@ begin
   Result:=databaseinfo.items[index];
 end;
 
-function TFDatainfoconfig.FindDataInfoItem:TRpDataInfoItem;
+function TFRpDatainfoconfig.FindDataInfoItem:TRpDataInfoItem;
 var
  index:integer;
 begin
@@ -306,7 +306,7 @@ begin
   Result:=datainfo.items[index];
 end;
 
-procedure TFDatainfoconfig.CheckLoginPromptClick(Sender: TObject);
+procedure TFRpDatainfoconfig.CheckLoginPromptClick(Sender: TObject);
 var
  dinfoitem:TRpDatabaseinfoitem;
 begin
@@ -329,7 +329,7 @@ begin
 end;
 
 
-procedure TFDatainfoconfig.FillDatasets;
+procedure TFRpDatainfoconfig.FillDatasets;
 var
  i:integer;
 begin
@@ -344,7 +344,7 @@ begin
 end;
 
 
-procedure TFDatainfoconfig.BAddClick(Sender: TObject);
+procedure TFRpDatainfoconfig.BAddClick(Sender: TObject);
 var
  aliasname:string;
  aitem:TRpDataInfoItem;
@@ -365,7 +365,7 @@ begin
  end;
 end;
 
-procedure  TFDatainfoconfig.Removedependences(oldalias:string);
+procedure  TFRpDatainfoconfig.Removedependences(oldalias:string);
 var
  i:integer;
 begin
@@ -376,7 +376,7 @@ begin
  end;
 end;
 
-procedure TFDatainfoconfig.BDeleteClick(Sender: TObject);
+procedure TFRpDatainfoconfig.BDeleteClick(Sender: TObject);
 var
  index:integer;
  oldalias:string;
@@ -393,7 +393,7 @@ begin
  FillDatasets;
 end;
 
-procedure TFDatainfoconfig.BRenameClick(Sender: TObject);
+procedure TFRpDatainfoconfig.BRenameClick(Sender: TObject);
 var
  dinfo:TRpDatainfoitem;
  aliasname:string;
@@ -412,7 +412,7 @@ begin
  FillDatasets;
 end;
 
-procedure TFDatainfoconfig.LDatasetsClick(Sender: TObject);
+procedure TFRpDatainfoconfig.LDatasetsClick(Sender: TObject);
 var
  dinfo:TRpDatainfoItem;
  index:integer;
@@ -451,7 +451,7 @@ begin
 end;
 
 
-procedure TFDatainfoconfig.MSQLChange(Sender: TObject);
+procedure TFRpDatainfoconfig.MSQLChange(Sender: TObject);
 var
  dinfo:TRpDatainfoItem;
  index:integer;
@@ -536,7 +536,7 @@ begin
  end;
 end;
 
-procedure TFDatainfoconfig.DoSave;
+procedure TFRpDatainfoconfig.DoSave;
 var
  i:integer;
  index:integer;
@@ -556,13 +556,13 @@ begin
  saved:=true;
 end;
 
-procedure TFDatainfoconfig.OKBtnClick(Sender: TObject);
+procedure TFRpDatainfoconfig.OKBtnClick(Sender: TObject);
 begin
  DoSave;
  Close;
 end;
 
-procedure TFDatainfoconfig.BDeleteconClick(Sender: TObject);
+procedure TFRpDatainfoconfig.BDeleteconClick(Sender: TObject);
 var
  index:integer;
 begin
@@ -576,7 +576,7 @@ begin
  end;
 end;
 
-procedure TFDatainfoconfig.BShowDataClick(Sender: TObject);
+procedure TFRpDatainfoconfig.BShowDataClick(Sender: TObject);
 var
  dinfo:TRpDatainfoitem;
 begin
@@ -594,7 +594,7 @@ begin
  end;
 end;
 
-procedure TFDatainfoconfig.FormCloseQuery(Sender: TObject;
+procedure TFRpDatainfoconfig.FormCloseQuery(Sender: TObject;
   var CanClose: Boolean);
 var
  res:TModalResult;
@@ -610,12 +610,12 @@ begin
   DoSave;
 end;
 
-procedure TFDatainfoconfig.BParamsClick(Sender: TObject);
+procedure TFRpDatainfoconfig.BParamsClick(Sender: TObject);
 begin
  ShowParamDef(params,datainfo);
 end;
 
-procedure TFDatainfoconfig.CancelBtnClick(Sender: TObject);
+procedure TFRpDatainfoconfig.CancelBtnClick(Sender: TObject);
 begin
  docancel:=true;
  Close;
@@ -623,7 +623,7 @@ end;
 
 
 
-procedure TFDatainfoconfig.GDriverClick(Sender: TObject);
+procedure TFRpDatainfoconfig.GDriverClick(Sender: TObject);
 var
  index:integeR;
 begin
@@ -703,7 +703,7 @@ begin
  MSQLChange(ComboConnection);
 end;
 
-procedure TFDatainfoconfig.BMyBaseClick(Sender: TObject);
+procedure TFRpDatainfoconfig.BMyBaseClick(Sender: TObject);
 begin
  if OpenDialog1.Execute then
  begin
@@ -711,7 +711,7 @@ begin
  end;
 end;
 
-procedure TFDatainfoconfig.EConnectionStringChange(Sender: TObject);
+procedure TFRpDatainfoconfig.EConnectionStringChange(Sender: TObject);
 var
  index:integer;
 begin

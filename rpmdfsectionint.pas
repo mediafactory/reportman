@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       Rpsectionint                                    }
+{       Rpmdsectionint                                  }
 {       Implementation of section designer              }
 {                                                       }
 {                                                       }
@@ -16,29 +16,19 @@
 {                                                       }
 {*******************************************************}
 
-unit fsectionint;
+unit rpmdfsectionint;
 
 interface
 
 uses SysUtils, Classes, QGraphics, QForms,Types,
   QButtons, QExtCtrls, QControls, QStdCtrls,
-  rpobinsint,rpreport,rpprintitem,rpgraphutils,
-  rpobjinsp,frpstruc,flabelint,rplabelitem,
-  rpconsts,rpsection,rptypes,rpdrawitem,fdrawint,
+  rpmdobinsint,rpreport,rpprintitem,rpgraphutils,
+  rpmdobjinsp,rpmdfstruc,rpmdflabelint,rplabelitem,
+  rpconsts,rpsection,rptypes,rpdrawitem,rpmdfdrawint,
   rpsubreport;
 
 
 type
-
-
-  TFSectionProps = class(TForm)
-    OKBtn: TButton;
-    CancelBtn: TButton;
-  private
-    { Private declarations }
-  public
-    { Public declarations }
-  end;
 
   TRpSectionInterface=class;
 
@@ -88,9 +78,8 @@ procedure FreeGridBitmap;
 
 implementation
 
-uses fmain, fdesign;
+uses rpmdfmain, rpmdfdesign;
 
-{$R *.xfm}
 
 const
  MIN_GRID_BITMAP_WITH=800;
@@ -449,38 +438,40 @@ var
  asizeposint:TRpSizePosInterface;
  asizepos:TRpCommonPosComponent;
  aitem:TRpCommonListItem;
+ FRpMainf:TFRpMainF;
 begin
  inherited MouseDown(Button,Shift,X,Y);
 
+ FRpMainf:=TFRpMainF(Owner);
  // There's a selected item insert it
- if fmainf.BArrow.Down then
+ if FRpMainf.BArrow.Down then
  begin
   // Selects object inspector section properties
   freportstructure.SelectDataItem(printitem);
-  TFObjInsp(fobjinsp).CompItem:=self;
+  TFRpObjInsp(fobjinsp).CompItem:=self;
   exit;
  end;
  asizepos:=nil;
  asizeposint:=nil;
- if fmainf.BLabel.Down then
+ if FRpMainf.BLabel.Down then
  begin
   asizepos:=TRpLabel.Create(printitem.Owner);
   TRpLabel(asizepos).Text:=SRpSampleTextToLabels;
   asizeposint:=TRpLabelInterface.Create(Self,asizepos);
  end;
- if fmainf.BExpression.Down then
+ if FRpMainf.BExpression.Down then
  begin
   asizepos:=TRpExpression.Create(printitem.Owner);
   // Search if theres a selected field
-  TRpExpression(asizepos).Expression:=fmainf.GetExpressionText;
+  TRpExpression(asizepos).Expression:=FRpMainf.GetExpressionText;
   asizeposint:=TRpExpressionInterface.Create(Self,asizepos);
  end;
- if fmainf.BShape.Down then
+ if FRpMainf.BShape.Down then
  begin
   asizepos:=TRpShape.Create(printitem.Owner);
   asizeposint:=TRpDrawInterface.Create(Self,asizepos);
  end;
- if fmainf.BImage.Down then
+ if FRpMainf.BImage.Down then
  begin
   asizepos:=TRpImage.Create(printitem.Owner);
   asizeposint:=TRpImageInterface.Create(Self,asizepos);
@@ -507,14 +498,14 @@ begin
   asizeposint.UpdatePos;
   asizeposint.fobjinsp:=fobjinsp;
   childlist.Add(asizeposint);
-  if assigned(TFObjInsp(fobjinsp).Combo) then
+  if assigned(TFRpObjInsp(fobjinsp).Combo) then
   begin
-   TFObjInsp(fobjinsp).Combo.Items.AddObject(asizepos.Name,asizeposint);
-   TFObjInsp(fobjinsp).Combo.ItemIndex:=TFObjInsp(fobjinsp).Combo.Items.IndexOfObject(asizeposint);
+   TFRpObjInsp(fobjinsp).Combo.Items.AddObject(asizepos.Name,asizeposint);
+   TFRpObjInsp(fobjinsp).Combo.ItemIndex:=TFRpObjInsp(fobjinsp).Combo.Items.IndexOfObject(asizeposint);
   end;
-  TFObjInsp(fobjinsp).CompItem:=asizeposint;
+  TFRpObjInsp(fobjinsp).CompItem:=asizeposint;
   if (Not (SSShift in Shift)) then
-   fmainf.BArrow.Down:=true;
+   FRpMainf.BArrow.Down:=true;
  end;
 
 

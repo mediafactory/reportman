@@ -8,7 +8,7 @@ uses
 {$IFDEF MSWINDOWS}
   rpvclreport,
 {$ENDIF}
-  rpcompobase;
+  rpcompobase, rpmdesigner;
 
 
 type
@@ -18,8 +18,11 @@ type
     Button2: TButton;
     Label1: TLabel;
     ETest: TEdit;
+    RpDesigner1: TRpDesigner;
+    Button3: TButton;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -42,6 +45,11 @@ end;
 procedure TForm1.Button2Click(Sender: TObject);
 begin
  CLXReport1.SaveToPDF(ETest.text);
+end;
+
+procedure TForm1.Button3Click(Sender: TObject);
+begin
+ RpDesigner1.Execute;
 end;
 
 end.

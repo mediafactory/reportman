@@ -1,4 +1,4 @@
-object FObjInsp: TFObjInsp
+object FRpObjInsp: TFRpObjInsp
   Left = 0
   Top = 0
   Width = 451
