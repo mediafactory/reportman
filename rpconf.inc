@@ -4,15 +4,22 @@
 {$DEFINE USEADO}
 {$DEFINE USEBDE}
 //{$DEFINE USEIBO}
-//{$DEFINE USETEECHART}
+
+// May be you want to enablwe TEECHART under Kylix
+// but take care it needs an X server running
+{$IFDEF MSWINDOWS}
+ {$DEFINE USETEECHART}
+{$ENDIF}
 
 // Unsupported database drivers in Linux
+// To enable IBX under Kylix remove the related UNDEF
+// By default is not defined becuase Borland don't provide
+// it in default installation
 {$IFDEF LINUX}
+ {$UNDEF USEIBX}
  {$UNDEF USEADO}
  {$UNDEF USEBDE}
  {$UNDEF USEIBO}
- // For now teechart is not supported in Linux
- {$UNDEF USETEECHART}
 {$ENDIF}
 
 // Windows qtintf.dll has a bug about selecting horz paper

@@ -50,12 +50,9 @@ contains
   rpexpredlgvcl in 'rpexpredlgvcl.pas' {FrpExpredialogVCL},
   rppagesetupvcl in 'rppagesetupvcl.pas' {FRpPageSetupVCL},
   rprfvparams in 'rprfvparams.pas' {FRpRTParams},
-  rpvgraphutils in 'rpvgraphutils.pas',
   rpvpreview in 'rpvpreview.pas' {FRpVPreview},
   rpgdidriver in 'rpgdidriver.pas' {FRpVCLProgress},
   rpgdifonts in 'rpgdifonts.pas',
   rpmdprintconfigvcl in 'rpmdprintconfigvcl.pas' {FRpPrinterConfig},
-  rprulervcl in 'rprulervcl.pas',
-  rpgraphutilsvcl in 'rpgraphutilsvcl.pas' {FRpMessageDlgVCL};
-
+  rprulervcl in 'rprulervcl.pas';
 end.

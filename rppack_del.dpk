@@ -37,6 +37,8 @@ requires
   ibxpress,
   adortl,
   dbexpress,
+  tee,
+  vcljpg,
   bdertl;
 
 contains
