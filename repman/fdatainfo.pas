@@ -186,13 +186,15 @@ end;
 procedure TFDatainfoconfig.BAddConClick(Sender: TObject);
 var
  conname:string;
+ item:TRpDatabaseInfoItem;
 begin
  if ComboAvailable.itemindex<0 then
   exit;
  conname:=AnsiUpperCase(ComboAvailable.Items.strings[ComboAvailable.itemindex]);
  if databaseinfo.IndexOf(conname)<0 then
  begin
-  databaseinfo.Add(conname);
+  item:=databaseinfo.Add(conname);
+  item.Driver:=TRpDbDriver(GDriver.ItemIndex);
   FillCurrentConnections;
  end;
 end;

@@ -439,6 +439,10 @@ begin
  if pname=SRpSExpression then
  begin
   TRpImage(fprintitem).Expression:=Value;
+  if Length(Trim(Value))>0 then
+  begin
+   TRpImage(fprintitem).Stream.SetSize(0);
+  end;
   invalidate;
   exit;
  end;
@@ -560,6 +564,8 @@ begin
  if pname=SrpSImage then
  begin
   TRpImage(printitem).Stream:=stream;
+  if TRpImage(printitem).Stream.Size>0 then
+   TrpImage(printitem).Expression:='';
   FBitmap.Free;
   FBitmap:=nil;
   Invalidate;

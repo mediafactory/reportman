@@ -91,32 +91,37 @@ procedure TFObjInsp.ReleaseAllControls;
 var
  i:integer;
 begin
- for i:=0 to LLabels.Count-1 do
- begin
-  TObject(LLabels.items[i]).Free;
-  LLabels.items[i]:=nil;
- end;
- Combo:=nil;
- LLabels.Clear;
- for i:=0 to LControlsToFree.Count-1 do
- begin
-  if dontfreecombo then
+ Visible:=false;
+ try
+  for i:=0 to LLabels.Count-1 do
   begin
-   if TComponent(LControlsToFree.Items[i]).Name='TopCombobox' then
+   TObject(LLabels.items[i]).Free;
+   LLabels.items[i]:=nil;
+  end;
+  Combo:=nil;
+  LLabels.Clear;
+  for i:=0 to LControlsToFree.Count-1 do
+  begin
+   if dontfreecombo then
    begin
-    Combo:=TCombobox(LControlsToFree.Items[i]);
+    if TComponent(LControlsToFree.Items[i]).Name='TopCombobox' then
+    begin
+     Combo:=TCombobox(LControlsToFree.Items[i]);
+    end
+    else
+     TObject(LControlsToFree.Items[i]).Free;
    end
    else
     TObject(LControlsToFree.Items[i]).Free;
-  end
-  else
-   TObject(LControlsToFree.Items[i]).Free;
+  end;
+  LCOntrols.Clear;
+  LCOntrolsToFree.Clear;
+  if dontfreecombo then
+   if assigned(combo) then
+    LControlsToFree.Add(Combo);
+ finally
+  Visible:=true;
  end;
- LCOntrols.Clear;
- LCOntrolsToFree.Clear;
- if dontfreecombo then
-  if assigned(combo) then
-   LControlsToFree.Add(Combo);
 end;
 
 

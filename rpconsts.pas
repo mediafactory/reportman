@@ -138,6 +138,10 @@ resourcestring
   SRpLibraryName='Library name';
   SRpSelectConnectionFirst='You must select a connection first';
   SRpConnectionOk='Test connection passed';
+  SRpFieldNotFound='Field not found: ';
+  SRpNotAField='Not a field: ';
+  SRpNotBinary='Not a binary field: ';
+  SRpErrorReadingFromFieldStream='Error reading from field stream';
 //  SRpGraphicClear='Elimina toda la información acumulada en una variable de tipo gráfico';
 //  SRpPGraphicClear='Gr es el nombre de la variable de tipo gráfico, devuelve cierto';
 

@@ -107,10 +107,7 @@ type
    FDataSource:string;
    FAlias:string;
    FDataset:TDataset;
-   FSQLInternalQuery:TSQLQuery;
-{$IFDEF MSWINDOWS}
-   FBDEInternalQuery:TQuery;
-{$ENDIF}
+   FSQLInternalQuery:TDataset;
    connecting:boolean;
    procedure SetDatabaseAlias(Value:string);
    procedure SetAlias(Value:string);
@@ -254,6 +251,7 @@ end;
 destructor TRpDatabaseInfoItem.Destroy;
 begin
  FSQLInternalConnection.free;
+ FBDEDatabase.free;
  inherited Destroy;
 end;
 
@@ -444,7 +442,9 @@ begin
  if Assigned(FSQLConnection) then
  begin
   if FSQLCOnnection=FSQLInternalConnection then
+  begin
    FSQLConnection.Connected:=False;
+  end;
  end;
 {$IFDEF MSWINDOWS}
  if Assigned(FBDEDatabase) then
@@ -487,23 +487,83 @@ begin
     datainfosource:=TRpDatainfolist(Collection).Items[index];
     datainfosource.connect(databaseinfo,params);
    end;
-   if not assigned(FSQLInternalQuery) then
-    FSQLInternalQuery:=TSQLQuery.Create(nil);
-   FDataset:=FSQLInternalQuery;
    // Opens the connection
    index:=databaseinfo.IndexOf(Databasealias);
    if index<0 then
     Raise Exception.Create(SRPDabaseAliasNotFound+' : '+FDatabaseAlias);
    databaseinfo.items[index].Connect;
 
-   FSQLInternalQuery.SQLConnection:=databaseinfo.items[index].SQLConnection;
-   FSQLInternalQuery.SQL.Text:=SQL;
+
+   if not assigned(FSQLInternalQuery) then
+   begin
+    case databaseinfo.items[index].FDriver of
+     rpdatadbexpress:
+      begin
+       FSQLInternalQuery:=TSQLQuery.Create(nil);
+      end;
+     rpdatabde:
+      begin
+       FSQLInternalQuery:=TQuery.Create(nil);
+      end;
+    end;
+   end
+   else
+   begin
+    case databaseinfo.items[index].FDriver of
+     rpdatadbexpress:
+      begin
+       if Not (FSQLInternalQuery is TSQLQuery) then
+       begin
+        FSQLInternalQuery.Free;
+        FSQLInternalQuery:=nil;
+       end;
+       FSQLInternalQuery:=TSQLQuery.Create(nil);
+      end;
+     rpdatabde:
+      begin
+       if Not (FSQLInternalQuery is TQuery) then
+       begin
+        FSQLInternalQuery.Free;
+        FSQLInternalQuery:=nil;
+       end;
+       FSQLInternalQuery:=TQuery.Create(nil);
+      end;
+    end;
+   end;
+
+   FDataset:=FSQLInternalQuery;
+
+   // Assigns the connectoin
+   case databaseinfo.items[index].Driver of
+    rpdatadbexpress:
+     begin
+      TSQLQuery(FSQLInternalQuery).SQLConnection:=
+       databaseinfo.items[index].SQLConnection;
+      TSQLQuery(FSQLInternalQuery).SQL.Text:=SQL;
+     end;
+    rpdatabde:
+     begin
+      TQuery(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEAlias;
+      TQuery(FSQLInternalQuery).SQL.Text:=SQL;
+     end;
+   end;
    // Use the datasource
    if Assigned(datainfosource) then
    begin
-    if Not Assigned(FSQLInternalQuery.DataSource) then
-     FSQLInternalQuery.DataSource:=TDataSource.Create(nil);
-    FSQLInternalQuery.DataSource.DataSet:=datainfosource.Dataset;
+    case databaseinfo.items[index].Driver of
+     rpdatadbexpress:
+      begin
+       if Not Assigned(TSQLQuery(FSQLInternalQuery).DataSource) then
+        TSQLQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
+       TSQLQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+      end;
+     rpdatabde:
+      begin
+       if Not Assigned(TQuery(FSQLInternalQuery).DataSource) then
+        TQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
+       TQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+      end;
+    end;
    end;
    // Assigns parameters
    for i:=0 to params.count-1 do
@@ -512,9 +572,20 @@ begin
     index:=param.Datasets.IndexOf(Alias);
     if index>=0 then
     begin
-     FSQLInternalQuery.ParamByName(param.Name).DataType:=
-      ParamTypeToDataType(param.ParamType);
-     FSQLInternalQuery.ParamByName(param.Name).Value:=param.Value;
+     case databaseinfo.items[index].Driver of
+      rpdatadbexpress:
+       begin
+        TSQLQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
+         ParamTypeToDataType(param.ParamType);
+        TSQLQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
+       end;
+      rpdatabde:
+       begin
+        TQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
+         ParamTypeToDataType(param.ParamType);
+        TQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
+       end;
+     end;
     end;
    end;
    FSQLInternalQuery.Active:=true;

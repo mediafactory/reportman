@@ -20,7 +20,8 @@ unit rpdrawitem;
 
 interface
 
-uses Sysutils,Classes,rptypes,rpprintitem,rpconsts,rpmetafile;
+uses Sysutils,Classes,rptypes,rpprintitem,rpconsts,rpmetafile,rpeval,
+ rptypeval,db;
 
 const
  DEF_DRAWWIDTH=500;
@@ -81,7 +82,9 @@ type
    property CopyMode:integer read FCopyMode write FCopyMode default 10;
   end;
 
- implementation
+implementation
+
+uses rpreport;
 
 constructor TRpShape.Create(AOwner:TComponent);
 begin
@@ -156,13 +159,56 @@ begin
 end;
 
 procedure TRpImage.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+var
+ evaluator:TRpEvaluator;
+ iden:TIdentifier;
+ afield:TField;
+ AStream:TStream;
+ FMStream:TMemoryStream;
 begin
  if Not Assigned(FStream) then
   exit;
- if FStream.Size=0 then
-  exit;
- metafile.Pages[metafile.CurrentPage].NewImageObject(aposy+PosY,aposx+PosX,
-  Width,Height,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),FStream);
+ if Length(Trim(Expression))>0 then
+ begin
+  // Must be a field
+  if Not Assigned(TRpReport(Owner).Evaluator) then
+   Exit;
+  evaluator:=TRpReport(Owner).evaluator;
+  iden:=evaluator.SearchIdentifier(Expression);
+  if Not Assigned(iden) then
+   Raise Exception.Create(SRpFieldNotFound+FExpression);
+  if (Not (iden is TIdenField)) then
+   Raise Exception.Create(SRpNotAField+FExpression);
+  AField:=(iden As TIdenField).Field;
+  if (Not (AField is TBlobField)) then
+   Raise Exception.Create(SRpNotBinary+FExpression);
+  if AField.isnull then
+   exit;
+  FMStream:=TMemoryStream.Create;
+  try
+   AStream:=AField.DataSet.CreateBlobStream(AField,bmRead);
+   try
+    FMStream.SetSize(AStream.Size);
+    if AStream.Size<>AStream.Read(FMStream.Memory^,AStream.Size) then
+     Raise Exception.Create(SRpErrorReadingFromFieldStream);
+    FMStream.Seek(0,soFromBeginning);
+    if FMStream.Size>0 then
+     metafile.Pages[metafile.CurrentPage].NewImageObject(aposy+PosY,aposx+PosX,
+      Width,Height,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),FMStream);
+   finally
+    AStream.free;
+   end;
+  finally
+   FMStream.free;
+  end;
+ end
+ else
+ begin
+  if FStream.Size=0 then
+   exit;
+  metafile.Pages[metafile.CurrentPage].NewImageObject(aposy+PosY,aposx+PosX,
+   Width,Height,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),FStream);
+ end;
 end;
 
 
