@@ -44,14 +44,11 @@
   for the bug and add to the main tree.</p>
 <p>BCD is a problematic type, see for example FormatVariant function in rptypes.pas.</p>
 <h4>Borland changes in TFiler in Delphi 6 and up</h4>
-<p>Borland have changed the way it stores WideStrings to disk <br>
+<p>Borland have changed the way it stores WideStrings because Utf8 support.<br>
   (TFiler,TWriter,TReader) since Delphi 6, so because the engine can be compiled 
   with any version of Delphi/Builder/Kylix, WideStrings properties are written 
   in a custom way, really they are written in the Delphi 4/5 way.<br>
   WideString properties are TRpLabel text, Font names, etc.</p>
-<p>The great idea from Borland technicians is: if we can save a few <br>
-  bytes storing the data in Utf8 format why spend the valuable and <br>
-  scarce hard disk space?</p>
 <p>From classes.pas</p>
 <p>procedure TWriter.WriteWideString(const Value: WideString);<br>
   var<br>
