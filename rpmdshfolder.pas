@@ -35,6 +35,7 @@ uses
 {$ENDIF}
   rpconsts;
 
+{$IFDEF MSWINDOWS}
 const
   {$EXTERNALSYM CSIDL_APPDATA}
   CSIDL_APPDATA              = $001A;  // Application Data, new for NT4
@@ -47,18 +48,21 @@ const
 
   shlwapi32 = 'shlwapi.dll';
   shfolder  = 'shfolder.dll';
+{$ENDIF}
 
 
   function Obtainininameuserconfig(company,product,filename:string):string;
   function Obtainininamelocalconfig(company,product,filename:string):string;
   function Obtainininamecommonconfig(company,product,filename:string):string;
 
+{$IFDEF MSWINDOWS}
 {$EXTERNALSYM SHGetFolderPath}
 function SHGetFolderPath(hwnd: HWND; csidl: Integer; hToken: THandle; dwFlags: DWORD; pszPath: PChar): HResult; stdcall;
 function SHGetFolderPath; external shfolder name 'SHGetFolderPathA';
 {$EXTERNALSYM PathAppend}
 function PathAppend(pszPath: PChar; pMore: PChar): BOOL; stdcall;
 function PathAppend; external shlwapi32 name 'PathAppendA';
+{$ENDIF}
 
 implementation
 
