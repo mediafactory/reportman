@@ -26,7 +26,7 @@ interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
  rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview,
- rpexceldriver,
+ rpexceldriver,rptextdriver,rppdfdriver,
 {$IFNDEF BUILDER4}
  rpfmainmetaviewvcl,
 {$ENDIF}
@@ -42,6 +42,7 @@ type
    procedure PrinterSetup;override;
    function ShowParams:boolean;override;
    procedure SaveToPDF(filename:string;compressed:boolean=false);
+   procedure SaveToText(filename:string;textdriver:String='');override;
    procedure SaveToExcel(filename:string);
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;override;
@@ -165,5 +166,12 @@ begin
  end;
 {$ENDIF}
 end;
+
+procedure TVCLReport.SaveToText(filename:string;textdriver:String='');
+begin
+ rptextdriver.PrintReportToText(report,'',false,true,1,999,
+   1,filename,true,true,textdriver);
+end;
+
 
 end.

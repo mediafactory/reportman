@@ -359,7 +359,7 @@
     <td>Page </td>
     <td>Returns the physical page number</td>
   </tr>
-  <tr>
+  <tr> 
     <td>PageNum</td>
     <td>Returns the logical page number, you can alter this variable or initialize 
       it setting Init.PageNum property in a group section</td>
@@ -370,12 +370,16 @@
       inches or centimeters</td>
   </tr>
   <tr> 
-    <td>funciton Eof (alias:string):Boolean</td>
+    <td>function Eof (alias:string):Boolean</td>
     <td>Returns true if the alias is at the end of the recordset</td>
   </tr>
   <tr> 
     <td>Parameters</td>
     <td>All the report parameters are available in the expression evaluator</td>
+  </tr>
+  <tr>
+    <td><a href="drawfunctions.html">Draw functions</a></td>
+    <td>See draw functions page for details</td>
   </tr>
   <tr> 
     <td>PAGECOUNT</td>
@@ -403,6 +407,10 @@
     <td>Returns true if evaluated inside the first <b>non repeatable data section</b> 
       printed in the current page, that is if a page header or a group header 
       with page repeat is printed they don't count for the first section printed.</td>
+  </tr>
+  <tr> 
+    <td><p>PAGEHEIGHT, PAGEWIDTH</p></td>
+    <td>Returns the page witdh and page height in twips ((1440 twips = 1 inches)</td>
   </tr>
 </table>
 <p><b>Building expressions</b></p>

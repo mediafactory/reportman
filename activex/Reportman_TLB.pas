@@ -12,7 +12,7 @@ unit Reportman_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 02/07/2003 10:52:18 from Type Library described below.
+// File generated on 26/07/2003 19:17:21 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
@@ -162,6 +162,7 @@ type
                             const reportname: WideString); safecall;
     procedure CalcReport(ShowProgress: WordBool); safecall;
     procedure Compose(const Report: IReportReport; Execute: WordBool); safecall;
+    procedure SaveToText(const filename: WideString; const textdriver: WideString); safecall;
     property filename: WideString read Get_filename write Set_filename;
     property Preview: WordBool read Get_Preview write Set_Preview;
     property ShowProgress: WordBool read Get_ShowProgress write Set_ShowProgress;
@@ -225,6 +226,7 @@ type
                             const reportname: WideString); dispid 201;
     procedure CalcReport(ShowProgress: WordBool); dispid 202;
     procedure Compose(const Report: IReportReport; Execute: WordBool); dispid 203;
+    procedure SaveToText(const filename: WideString; const textdriver: WideString); dispid 204;
   end;
 
 // *********************************************************************//
@@ -369,6 +371,7 @@ type
                             const reportname: WideString);
     procedure CalcReport(ShowProgress: WordBool);
     procedure Compose(const Report: IReportReport; Execute: WordBool);
+    procedure SaveToText(const filename: WideString; const textdriver: WideString);
     property  ControlInterface: IReportManX read GetControlInterface;
     property  DefaultInterface: IReportManX read GetControlInterface;
     property DoubleBuffered: WordBool index 18 read GetWordBoolProp write SetWordBoolProp;
@@ -378,6 +381,20 @@ type
     property Visible: WordBool index 29 read GetWordBoolProp write SetWordBoolProp;
   published
     property Anchors;
+    property  TabStop;
+    property  Align;
+    property  DragCursor;
+    property  DragMode;
+    property  ParentShowHint;
+    property  PopupMenu;
+    property  ShowHint;
+    property  TabOrder;
+    property  OnDragDrop;
+    property  OnDragOver;
+    property  OnEndDrag;
+    property  OnEnter;
+    property  OnExit;
+    property  OnStartDrag;
     property filename: WideString index 12 read GetWideStringProp write SetWideStringProp stored False;
     property Preview: WordBool index 13 read GetWordBoolProp write SetWordBoolProp stored False;
     property ShowProgress: WordBool index 14 read GetWordBoolProp write SetWordBoolProp stored False;
@@ -408,7 +425,7 @@ const
     EventIID: '';
     EventCount: 0;
     EventDispIDs: nil;
-    LicenseKey: nil (*HR:$80040154*);
+    LicenseKey: nil (*HR:$00000000*);
     Flags: $00000008;
     Version: 401);
 begin
@@ -549,6 +566,11 @@ end;
 procedure TReportManX.Compose(const Report: IReportReport; Execute: WordBool);
 begin
   DefaultInterface.Compose(Report, Execute);
+end;
+
+procedure TReportManX.SaveToText(const filename: WideString; const textdriver: WideString);
+begin
+  DefaultInterface.SaveToText(filename, textdriver);
 end;
 
 procedure Register;

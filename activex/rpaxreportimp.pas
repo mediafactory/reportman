@@ -123,6 +123,7 @@ type
     procedure CalcReport(ShowProgress: WordBool); safecall;
     procedure Compose(const Report: IReportReport; Execute: WordBool);
       safecall;
+    procedure SaveToText(const filename, textdriver: WideString); safecall;
   end;
 
 implementation
@@ -539,6 +540,11 @@ begin
  FDelphiControl.GetReport.Compose(TRpReport(Report.VCLReport),false,aGDIDriver);
  if Execute then
   FDelphiControl.Execute;
+end;
+
+procedure TReportManX.SaveToText(const filename, textdriver: WideString);
+begin
+  FDelphiControl.SaveToText(filename, textdriver);
 end;
 
 initialization

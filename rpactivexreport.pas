@@ -60,6 +60,7 @@ type
    procedure PrinterSetup;
    function ShowParams:boolean;
    procedure SaveToPDF(filename:string;compressed:boolean=false);
+   procedure SaveToText(filename:string;textdriver:String);
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;
    procedure ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
@@ -168,6 +169,11 @@ end;
 procedure TRpActiveXReport.SaveToPDF(filename:string;compressed:boolean=false);
 begin
  FVCLReport.SaveToPDF(filename,compressed);
+end;
+
+procedure TRpActiveXReport.SaveToText(filename:string;textdriver:String);
+begin
+ FVCLReport.SaveToText(filename,textdriver);
 end;
 
 function TRpActiveXReport.PrintRange(frompage:integer;topage:integer;

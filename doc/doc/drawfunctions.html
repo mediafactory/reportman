@@ -1,0 +1,335 @@
+<html>
+<head>
+<title>Draw Functions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Advanced report design</h2>
+<h3>Draw functions</h3>
+
+<p>With draw functions you can draw text and graphic elements anywhere in the 
+  page. They are available for use in any expression, for example before print 
+  or after print. You can use the ; operator to perform more than one operation 
+  for each expression.</p>
+<p><strong>Draw text funtion</strong></p>
+<p>function TextOp(Top,Left,Width,Height:integer; Text,LFontName,WFontName:WideString; 
+  <br>
+  FontSize,FontRotation,FontStyle,FontColor,Type1Font:integer; <br>
+  CutText:boolean;Alignment:integer;WordWrap,RightToLeft:Boolean; <br>
+  PrintStep,BackColor:integer;transparent:boolean):Boolean<br>
+</p>
+<p><strong>Graphic operation functoin</strong></p>
+<p>function GraphicOp'+'(Top,Left,Width,Height:integer; <br>
+  DrawStyle:integer;BrushStyle:integer; BrushColor:integer;<br>
+  PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean<br>
+</p>
+<p><strong>Parameters</strong></p>
+<table border="1">
+  <tr>
+    <td bgcolor="#FFFFCC"><strong>Name</strong></td>
+    <td bgcolor="#FFFFCC"><strong>Meaning</strong></td>
+  </tr>
+  <tr>
+    <td>Top, Left, Width, Height</td>
+    <td>Position and size of the element in twips (1440 twips=1 inch)</td>
+  </tr>
+  <tr>
+    <td> Text</td>
+    <td>Text to print, can be also a expression</td>
+  </tr>
+  <tr>
+    <td>LFontName, WFontName</td>
+    <td>Font names for Linux and Windows</td>
+  </tr>
+  <tr>
+    <td>FontSize</td>
+    <td>Font size</td>
+  </tr>
+  <tr>
+    <td>FontRotation</td>
+    <td>Rotation in 1/10 degrees unit</td>
+  </tr>
+  <tr>
+    <td>FontStyle</td>
+    <td><p>A integer 0 value=no style, to add styles sum this values:</p>
+      <table border="1">
+        <tr> 
+          <td>1</td>
+          <td>Bold</td>
+        </tr>
+        <tr> 
+          <td>2</td>
+          <td>Italic</td>
+        </tr>
+        <tr> 
+          <td>4</td>
+          <td>Underline</td>
+        </tr>
+        <tr> 
+          <td>8</td>
+          <td>Strikeout</td>
+        </tr>
+      </table>
+      <p>So a font italic bold font will be 3</p></td>
+  </tr>
+  <tr>
+    <td>FontColor, PenColor, BrushColor, BackColor</td>
+    <td><p>An integer value representing the color you can use hexadecimal notation 
+        with the syntax $BBGGRR</p>
+      <p>That is white is $FFFFFF, red is $RR, blue is $BB0000</p></td>
+  </tr>
+  <tr>
+    <td>FontSize</td>
+    <td>Size in standard point units (1 point=1/72 inch)</td>
+  </tr>
+  <tr>
+    <td>Type1Font</td>
+    <td><p>Font for Adobe PDF export, this is an integer with the following table:</p>
+      <table border="1">
+        <tr>
+          <td>0</td>
+          <td>Helvetica</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Courier</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Times Roman</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Symbol</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>ZapfDingbats</td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td>CutText</td>
+    <td>Cuts the text when does not fit the rectangle size</td>
+  </tr>
+  <tr>
+    <td>Alignment</td>
+    <td><p>Alignment information, 0 for default alignment or a combination (sum) 
+        of the folowing values, note you can only combine horizontal and vertical 
+        alignments:</p>
+      <table border="1">
+        <tr>
+          <td>1</td>
+          <td>Align left</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Align right</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Align center horizontally</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>Align top</td>
+        </tr>
+        <tr>
+          <td>16</td>
+          <td>Align bottom</td>
+        </tr>
+        <tr>
+          <td>32</td>
+          <td>Align center vertically</td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td>Wordwrap</td>
+    <td>Break sentences into lines if the text does not fit horizontally</td>
+  </tr>
+  <tr>
+    <td>RightToLeft</td>
+    <td>If True draw the text in right to left mode</td>
+  </tr>
+  <tr>
+    <td>Transparent</td>
+    <td>If true does the background of the text is transparent and BackColor is 
+      ignored </td>
+  </tr>
+  <tr>
+    <td>PrintStep</td>
+    <td><p>Selects the font for dot matrix print drivers and text output to dot 
+        matrix printers:</p>
+      <table border="1">
+        <tr>
+          <td>0</td>
+          <td>By size</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>20 cpi</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>17 cpi</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>15 cpi</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>12 cpi</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>10 cpi</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>6 cpi</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>5 cpi</td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td>DrawStyle</td>
+    <td><p>Draw type for graphic operation:</p>
+      <table border="1">
+        <tr>
+          <td>0</td>
+          <td>Rectangle</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Square</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Round rectangl</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Round square</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Ellipse</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Circle</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Horzontal line</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Vertical line</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>Oblique line 1</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Oblique line 2</td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+  <tr>
+    <td>PenWidth</td>
+    <td>Pen width in twips (0=minimum device width)</td>
+  </tr>
+  <tr>
+    <td>BrushStyle</td>
+    <td>
+<table border="1">
+        <tr> 
+          <td>0</td>
+          <td>Solid</td>
+        </tr>
+        <tr> 
+          <td>1</td>
+          <td>Clear/Transparent</td>
+        </tr>
+        <tr> 
+          <td>2</td>
+          <td>Horizontal pattern</td>
+        </tr>
+        <tr> 
+          <td>3</td>
+          <td>Vertical pattern</td>
+        </tr>
+        <tr> 
+          <td>4</td>
+          <td>Diagonal pattern 1</td>
+        </tr>
+        <tr> 
+          <td>5</td>
+          <td>Diagonal pattern 2</td>
+        </tr>
+        <tr> 
+          <td>6</td>
+          <td>Cross pattern</td>
+        </tr>
+        <tr> 
+          <td>7</td>
+          <td>Diagonal cross pattern</td>
+        </tr>
+        <tr> 
+          <td>8..15</td>
+          <td>Dense 1..7</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr>
+    <td>PenStyle</td>
+    <td><table border="1">
+        <tr>
+          <td>0</td>
+          <td>Solid</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Dash</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Dot</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Dash-Dot</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Dash-Dot-Dot</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Clear/Transparent</td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+</body>
+</html>

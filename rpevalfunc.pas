@@ -1343,7 +1343,7 @@ begin
   'Text,LFontName,WFontName:WideString;'+#10+
   'FontSize,FontRotation,FontStyle,FontColor,Type1Font:integer;'+#10+
   'CutText:boolean;Alignment:integer;WordWrap,RightToLeft:Boolean;'+#10+
-  'PrintStep,BackColor:integer;transparent:boolean) of Object;';
+  'PrintStep,BackColor:integer;transparent:boolean)';
  aParams:='';
 end;
 

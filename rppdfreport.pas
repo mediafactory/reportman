@@ -24,7 +24,7 @@ unit rppdfreport;
 interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
- rppdfdriver,rpalias,rpmetafile;
+ rppdfdriver,rpalias,rpmetafile,rptextdriver;
 
 type
  TPDFReport=class(TCBaseReport)
@@ -43,6 +43,7 @@ type
    function PrintRange(frompage:integer;topage:integer;
      copies:integer;collate:boolean):boolean;override;
    constructor Create(AOwner:TComponent);override;
+   procedure SaveToText(filename:string;textdriver:String='');override;
   published
    property Filename;
    property Title;
@@ -142,6 +143,12 @@ begin
   SaveMetafileRangeToPDF(metafile,false,ffrompage,
     ftopage,fcopies,FPDFFilename,FCompressed);
  end;
+end;
+
+procedure TPDFReport.SaveToText(filename:string;textdriver:String='');
+begin
+ rptextdriver.PrintReportToText(report,'',false,true,1,999,
+   1,filename,true,true,textdriver);
 end;
 
 end.

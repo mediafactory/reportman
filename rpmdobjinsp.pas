@@ -678,6 +678,7 @@ var
  asecitem:TRpSizeInterface;
  aitem:TRpSizeInterface;
  selecteditems:TStringList;
+ currvalue:Currency;
 begin
  FRpMainF:=TFRpMainF(Owner.Owner);
  selecteditems:=TFRpObjInsp(Owner).FSelectedItems;
@@ -924,6 +925,47 @@ begin
     begin
      if TEdit(Control).Text<>IntegerFontStyleToString(StrToInt(LValues.Strings[i])) then
       TEdit(Control).Text:='';
+    end;
+   end
+   else
+   if LTypes.Strings[i]=SRpSCurrency then
+   begin
+    Control:=TControl(LControls.Objects[i]);
+    if k=0 then
+    begin
+     currvalue:=0;
+     if Length(TEdit(Control).Text)>0 then
+     begin
+      try
+       currvalue:=StrToCurr(TEdit(Control).Text);
+      except
+       currvalue:=-9999999.9898;
+      end;
+     end;
+     if currvalue<>StrToCurr(LValues.Strings[i]) then
+     begin
+      TEdit(Control).OnChange:=nil;
+      TEdit(Control).Text:=LValues.Strings[i];
+      TEdit(Control).OnChange:=EditChange;
+     end;
+    end
+    else
+    begin
+     currvalue:=0;
+     if Length(TEdit(Control).Text)>0 then
+     begin
+      try
+       currvalue:=StrToCurr(TEdit(Control).Text);
+      except
+       currvalue:=-9999999.9898;
+      end;
+     end;
+     if currvalue<>StrToCurr(LValues.Strings[i]) then
+     begin
+      TEdit(Control).OnChange:=nil;
+      TEdit(Control).Text:='';
+      TEdit(Control).OnChange:=EditChange;
+     end;
     end;
    end
    else

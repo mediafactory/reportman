@@ -25,6 +25,20 @@
   and add aliases and users. You can see the generated file location in reportserverapp 
   form, this configuration file will be used by the web report server.</p>
 <p><a href="http://localhost/cgi-bin/repwebserver.dll/login">http://localhost/cgi-bin/repwebserver.dll/login</a></p>
+<p>Some tricks will help you otsetup the web server:</p>
+<ul>
+  <li> Make sure the user executing Internet Information Services have read privileges 
+    for the directories containing reports</li>
+  <li>After changing some configuration make sure to restart Internet Information 
+    Services or else use repwebexe.exe instead of repwebserver.dll</li>
+  <li>If an error about dbxdrivers appear copy dbxdrivers.ini and dbxconnections.ini 
+    files to the path the error<br>
+    indicates. </li>
+  <li>Check the permissions of the above files for the user executing IIS.</li>
+  <li>If your machine is a multiprocessor machine or a hyperthreading technology 
+    machine may be rebwebexe.exe will give you the better performance (instead 
+    the ISAPI repwebserver.dll)</li>
+</ul>
 <p><b>Installing Report Manager web server in Linux Apache</b></p>
 <p>Usually you copy the application (rpwebexe.bin and repwebexe) into a directory 
   with execution privileges, in Suse 7.3, is /usr/local/httpd/cgi-bin.</p>

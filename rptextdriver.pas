@@ -700,8 +700,8 @@ begin
  else
  if FPrinterDriverName='EPSON-ESCP' then
  begin
-  // Init Printer-Line spacing to 1/6 - Draft mode
-  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2'+#27+'x'+#0;
+  // Init Printer-Line spacing to 1/6 - Draft mode - Bidirectional print
+  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2'+#27+'x'+#0+#27+'U'+#0;
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
   escapecodes[rpescapeformfeed]:=#12;
@@ -730,8 +730,8 @@ begin
  else
  if FPrinterDriverName='EPSON-ESCPQ' then
  begin
-  // Init Printer-Line spacing to 1/6 - Draft mode
-  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2'+#27+'x'+#0;
+  // Init Printer-Line spacing to 1/6 - Draft mode - Bidirectional print
+  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2'+#27+'x'+#1+#27+'U'+#0;
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
   escapecodes[rpescapeformfeed]:=#12;

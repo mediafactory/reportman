@@ -8,6 +8,7 @@ object FRpObjInspVCL: TFRpObjInspVCL
   TabOrder = 0
   object RpAlias1: TRpAlias
     List = <>
+    Connections = <>
     Left = 296
     Top = 92
   end

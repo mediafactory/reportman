@@ -65,6 +65,7 @@ type
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;virtual;abstract;
   // Defined as public but will be published in descendants
+   procedure SaveToText(filename:string;textdriver:String='');virtual;abstract;
    procedure LoadFromFile(AFilename:string);
    procedure LoadFromStream(stream:TStream);
    procedure ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);

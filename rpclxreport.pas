@@ -24,7 +24,7 @@ interface
 {$I rpconf.inc}
 
 uses Classes,Sysutils,rpreport,
- rpmdconsts,rpcompobase,rptypes,rpmetafile,
+ rpmdconsts,rpcompobase,rptypes,rpmetafile,rptextdriver,
  QPrinters,rpqtdriver,rppreview,rprfparams,rpgraphutils,
 {$IFDEF MSWINDOWS}
  rpgdidriver,Printers,Dialogs,rprfvparams,rpvpreview,rpfmainmetaviewvcl,
@@ -46,6 +46,7 @@ type
    procedure PrinterSetup;override;
    function ShowParams:boolean;override;
    procedure SaveToPDF(filename:string;compressed:boolean=false);
+   procedure SaveToText(filename:string;textdriver:String='');override;
    constructor Create(AOwner:TComponent);override;
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;override;
@@ -296,5 +297,10 @@ begin
  end;
 end;
 
+procedure TCLXReport.SaveToText(filename:string;textdriver:String='');
+begin
+ rptextdriver.PrintReportToText(report,'',false,true,1,999,
+   1,filename,true,true,textdriver);
+end;
 
 end.

@@ -14,28 +14,40 @@
 <p>IRpPrintDriver=interface</p>
 <p>The drivers availabe now are:</p>
 <table border="1">
-  <tr>
+  <tr> 
     <td bgcolor="#FFFFCC"><b>Class</b></td>
     <td bgcolor="#FFFFCC"><b>Unit</b></td>
     <td bgcolor="#FFFFCC"><b>Component</b></td>
     <td bgcolor="#FFFFCC"><b>Platform</b></td>
   </tr>
-  <tr>
+  <tr> 
     <td>TRpGDIDriver</td>
     <td>rpgdidriver</td>
     <td>TVCLReport</td>
     <td>Windows</td>
   </tr>
-  <tr>
+  <tr> 
     <td>TRpQtDriver</td>
     <td>rpqtdriver</td>
     <td>TCLXReport</td>
     <td>Linux/Windows</td>
   </tr>
-  <tr>
+  <tr> 
     <td>TRpPDFDriver</td>
     <td>rppdffriver</td>
     <td>TPDFReport</td>
+    <td>Linux/Windows</td>
+  </tr>
+  <tr> 
+    <td>TRpExcelDriver</td>
+    <td>rpexceldriver</td>
+    <td>--</td>
+    <td>Windows</td>
+  </tr>
+  <tr>
+    <td>TRpTextDriver</td>
+    <td>rptextdriver</td>
+    <td>--</td>
     <td>Linux/Windows</td>
   </tr>
 </table>
@@ -85,7 +97,8 @@
   <li> If the printer is offline (in a network) Windows Systems does not allow 
     opening it, but an error is raised, this situation must be controlled.</li>
   <li> Texts on the screen may appear incorrectly.</li>
-  <li> Implementation requires a little more low level access to printer.</li>
+  <li> Implementation requires a little more low level access to printer and forget 
+    to get it to work in Linux at least until Borland upgrades to Qt 3..</li>
 </ul>
 </body>
 </html>

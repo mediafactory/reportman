@@ -23,6 +23,7 @@ object FRpObjInsp: TFRpObjInsp
   end
   object RpAlias1: TRpAlias
     List = <>
+    Connections = <>
     Left = 296
     Top = 92
   end
