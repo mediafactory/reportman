@@ -23,7 +23,7 @@ interface
 
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs, QMenus,
-  QTypes, QExtCtrls,frpstruc,rpobinsint,rpreport,
+  QTypes, QExtCtrls,frpstruc,rpobinsint,rpreport,rpmunits,
   fsectionint,rpsubreport,rpsection, rpruler,rpobjinsp;
 
 const
@@ -90,6 +90,16 @@ begin
   FSectionInterface.UpdatePos;
   TopRuler.Width:=FSectionInterface.Width;
   LeftRuler.Height:=FSectionInterface.Height;
+  if rpmunits.defaultunit=rpUnitCms then
+  begin
+   LeftRuler.Metrics:=rCms;
+   TopRuler.Metrics:=rCms;
+  end
+  else
+  begin
+   LeftRuler.Metrics:=rInchess;
+   TopRuler.Metrics:=rInchess;
+  end;
  end;
 end;
 
@@ -144,6 +154,16 @@ begin
   FSectionInterface.Left:=0;
   TopRuler.Width:=FSectionInterface.Width;
   LeftRuler.Height:=FSectionInterface.Height;
+  if rpmunits.defaultunit=rpUnitCms then
+  begin
+   LeftRuler.Metrics:=rCms;
+   TopRuler.Metrics:=rCms;
+  end
+  else
+  begin
+   LeftRuler.Metrics:=rInchess;
+   TopRuler.Metrics:=rInchess;
+  end;
   TopRuler.Visible:=true;
   LeftRuler.Visible:=true;
   FSectionInterface.CreateChilds;

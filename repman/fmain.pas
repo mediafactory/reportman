@@ -28,9 +28,9 @@ uses
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
   rpconsts,rptypes, QExtCtrls,frpstruc, rplastsav,rpsubreport,
-  rpobinsint,rpfparams,fdesign,rpobjinsp,fsectionint,
+  rpobinsint,rpfparams,fdesign,rpobjinsp,fsectionint,IniFiles,
   rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver, IBDatabase,
-  DB,fhelpform;
+  DB,fhelpform,rpmunits;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;
@@ -127,6 +127,12 @@ type
     utorial1: TMenuItem;
     APrintSetup: TAction;
     Printersetup1: TMenuItem;
+    AUnitCms: TAction;
+    AUnitsinchess: TAction;
+    Measurement1: TMenuItem;
+    Measurement2: TMenuItem;
+    Cms1: TMenuItem;
+    Inchess1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -158,6 +164,8 @@ type
     procedure ATutorialExecute(Sender: TObject);
     procedure AFeaturesExecute(Sender: TObject);
     procedure APrintSetupExecute(Sender: TObject);
+    procedure AUnitCmsExecute(Sender: TObject);
+    procedure AUnitsinchessExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFDesignFrame;
@@ -180,6 +188,9 @@ type
      var Handled: Boolean);
     procedure UpdateMFields;
     procedure MFieldsItemClick(Sender:TObject);
+    procedure LoadConfig;
+    procedure SaveConfig;
+    procedure UpdateUnits;
   public
     { Public declarations }
     report:TRpReport;
@@ -510,11 +521,13 @@ begin
 {$ENDIF}
  LastUsedFiles.LoadFromConfigFile(configfile);
  UpdateFileMenu;
+ LoadConfig;
 end;
 
 procedure TFMainf.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
  LastUsedFiles.SaveToConfigFile(configfile);
+ SaveConfig;
 end;
 
 procedure TFMainf.UpdateFileMenu;
@@ -882,6 +895,62 @@ end;
 procedure TFMainf.APrintSetupExecute(Sender: TObject);
 begin
  printer.ExecuteSetup;
+end;
+
+procedure TFMainf.LoadConfig;
+var
+ inif:TInifile;
+begin
+ inif:=TIniFile.Create(configfile);
+ try
+  AUnitCms.Checked:=inif.ReadBool('Preferences','UnitCms',true);
+  AUnitsinchess.Checked:=Not AUnitCms.Checked;
+  UpdateUnits;
+ finally
+  inif.free;
+ end;
+end;
+
+procedure TFMainf.SaveConfig;
+var
+ inif:TInifile;
+begin
+ inif:=TIniFile.Create(configfile);
+ try
+  inif.WriteBool('Preferences','UnitCms',AUnitCms.Checked);
+  inif.UpdateFile;
+ finally
+  inif.free;
+ end;
+end;
+
+
+procedure TFMainf.UpdateUnits;
+begin
+ if AUnitCms.Checked then
+  rpmunits.defaultunit:=rpUnitcms
+ else
+  rpmunits.defaultunit:=rpUnitinchess;
+ if assigned(fdesignframe) then
+ begin
+  fdesignframe.UpdateInterface;
+  fdesignframe.UpdateSelection(true);
+ end;
+end;
+
+
+procedure TFMainf.AUnitCmsExecute(Sender: TObject);
+begin
+ AUnitCms.Checked:=true;
+ AUnitsInchess.Checked:=false;
+ UpdateUnits;
+end;
+
+procedure TFMainf.AUnitsinchessExecute(Sender: TObject);
+begin
+ AUnitCms.Checked:=false;
+ AUnitsInchess.Checked:=true;
+ UpdateUnits;
 end;
 
 initialization

@@ -51,7 +51,7 @@ Conditionals=
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=
+RunParams=sample4.rep prova.txt
 HostApplication=
 Launcher=
 UseLauncher=0

@@ -17,7 +17,7 @@ unit rpwriter;
 
 interface
 
-uses Classes,SysUtils;
+uses Classes,SysUtils,rpzlib;
 
 
 procedure FileReportToPlainText(reportfile,plainfile:string);
@@ -27,30 +27,63 @@ implementation
 
 procedure FileReportToPlainText(reportfile,plainfile:string);
 var
- sourcestream,deststream:TFileStream;
+ deststream:TFileStream;
+ stream:TMemoryStream;
+ memstream:TMemoryStream;
+ zlibs:TDeCompressionStream;
+ buf:pointer;
+ readed:LongInt;
 begin
- sourcestream:=TFileStream.Create(reportfile,fmOpenRead or fmShareDenyWrite);
+ stream:=TMemoryStream.Create;
  try
-  deststream:=TFileStream.Create(plainfile,fmCreate);
+  stream.LoadFromFile(reportfile);
+  stream.Seek(0,soFromBeginning);
+  memstream:=TMemoryStream.Create;
   try
-   ObjectBinaryToText(sourcestream,deststream);
+   zlibs:=TDeCompressionStream.Create(Stream);
+   try
+    buf:=AllocMem(120000);
+    try
+     repeat
+      readed:=zlibs.Read(buf^,120000);
+      memstream.Write(buf^,readed);
+     until readed<120000;
+    finally
+     freemem(buf);
+    end;
+    memstream.Seek(0,soFrombeginning);
+    deststream:=TFileStream.Create(plainfile,fmCreate);
+    try
+     ObjectBinaryToText(memstream,deststream);
+    finally
+     deststream.Free;
+    end;
+   finally
+    zlibs.free;
+   end;
   finally
-   deststream.Free;
+   memstream.free;
   end;
  finally
-  sourcestream.free;
+  stream.free;
  end;
 end;
 
 procedure PlainTextToFileReport(plainfile,reportfile:string);
 var
  sourcestream,deststream:TFileStream;
+ zstream:TCompressionStream;
 begin
  sourcestream:=TFileStream.Create(plainfile,fmOpenRead or fmShareDenyWrite);
  try
   deststream:=TFileStream.Create(reportfile,fmCreate);
   try
-   ObjectTextToBinary(sourcestream,deststream);
+   zstream:=TCompressionStream.Create(clDefault,deststream);
+   try
+    ObjectTextToBinary(sourcestream,zstream);
+   finally
+    zstream.free;
+   end;
   finally
    deststream.Free;
   end;

@@ -1,12 +1,14 @@
+{TODO 2 -oToni -cEngine : Conditional define to build reportman package without db drivers}
+{TODO 4 -oToni -cDesign Interface : Select inchess or cms in preferences menu}
 {TODO 1 -oToni -cEngine : Add text rotation to text controls}
 {TODO 1 -oToni -cEngine : Implementation for Delphi 5 (ADO-NOADO) and C++Builder 4}
-{TODO 1 -oToni -cEngine : Add aliaslist to the report component to use application opened querys}
+{TODO 2 -oToni -cEngine : Add aliaslist to the report component to use application opened querys}
 {TODO 1 -oToni -cDesign Interface : Select the object that produces a error}
 {TODO 1 -oToni -cEngine : Add barcode component}
 {TODO 1 -oToni -cEngine : Implementation of vertical labels as subreport column width}
 {TODO 1 -oToni -cDesign Interface : Enhace object inspector speed}
-{TODO 1 -oToni -cEngine : Implement pagerepeat for group headers}
-{TODO 2 -oToni -cEngine : Finish TRpGDIDriver and program a TGDIReport to support VCL}
+{TODO 2 -oToni -cEngine : Implement pagerepeat for group headers}
+{TODO 3 -oToni -cEngine : Finish TRpGDIDriver and program a TGDIReport to support VCL}
 
 
 {TODO 1 -oToni -cEngine : Image component filename property to load a file on the fly}
@@ -15,7 +17,7 @@
 {TODO 1 -oToni -cEngine : Detect existing BDE Databases in rpdatainfo}
 
 
-{TODO 2 -oToni -cEngine : Add TotalPages variable}
+{DONE 2 -oToni -cEngine : Add TotalPages variable}
 {DONE 3  -oToni -cEngine : Add Printing ranges of pages}
 
 

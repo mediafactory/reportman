@@ -1,3 +1,21 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager Designer                         }
+{                                                       }
+{       rpprintdia                                      }
+{       Form for selecting ranges of pages to print     }
+{       number of copies and collate                    }
+{                                                       }
+{                                                       }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{                                                       }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
+{                                                       }
+{*******************************************************}
+
 unit rpprintdia;
 
 interface

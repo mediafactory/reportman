@@ -343,6 +343,18 @@ object FMainf: TFMainf
         Action = AGridOptions
       end
     end
+    object Measurement1: TMenuItem
+      Caption = 'Preferences'
+      object Measurement2: TMenuItem
+        Caption = 'Measurement'
+        object Cms1: TMenuItem
+          Action = AUnitCms
+        end
+        object Inchess1: TMenuItem
+          Action = AUnitsinchess
+        end
+      end
+    end
     object About1: TMenuItem
       Caption = 'Help'
       object Features1: TMenuItem
@@ -531,6 +543,18 @@ object FMainf: TFMainf
       Hint = 'Displays printer setup dialog'
       ImageIndex = 17
       OnExecute = APrintSetupExecute
+    end
+    object AUnitCms: TAction
+      Category = 'Preferences'
+      Caption = '&Cms'
+      Hint = 'Change measurement units to cms'
+      OnExecute = AUnitCmsExecute
+    end
+    object AUnitsinchess: TAction
+      Category = 'Preferences'
+      Caption = 'Inchess'
+      Hint = 'Changes measurement units to inchess'
+      OnExecute = AUnitsinchessExecute
     end
   end
   object iconlist: TImageList
