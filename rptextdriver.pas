@@ -134,6 +134,8 @@ procedure SaveMetafileToText(metafile:TRpMetafileReport;
  Stream:TStream);
 procedure SaveMetafileRangeToText(metafile:TRpMetafileReport;
  allpages:boolean;frompage,topage,copies:integer;Stream:TStream);
+procedure SaveMetafileRangeToFile(metafile:TRpMetafileReport;
+ allpages:boolean;frompage,topage,copies:integer;filename:String);
 
 function PrintReportToText(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
@@ -316,9 +318,16 @@ begin
   if Length(escapecodes[rpescapepulse])>0 then
    MemStream.Write(escapecodes[rpescapepulse][1],Length(escapecodes[rpescapepulse]));
  // Set page size
- sizeqt.Custom:=True;
- sizeqt.CustomWidth:=report.CustomX;
- sizeqt.CustomHeight:=report.CustomX;
+ if report.PageSize<0 then
+ begin
+  sizeqt.Custom:=True;
+  sizeqt.CustomWidth:=report.CustomX;
+  sizeqt.CustomHeight:=report.CustomY;
+ end
+ else
+ begin
+  sizeqt.Indexqt:=report.PageSize;
+ end;
  SetPagesize(sizeqt);
 
  WritePageSize;
@@ -1569,4 +1578,18 @@ begin
  end;
 end;
 
+procedure SaveMetafileRangeToFile(metafile:TRpMetafileReport;
+ allpages:boolean;frompage,topage,copies:integer;filename:String);
+var
+ memstream:TMemoryStream;
+begin
+ memstream:=TMemoryStream.Create;
+ try
+  SaveMetafileRangeToText(metafile,allpages,frompage,topage,copies,memstream);
+  memstream.Seek(0,soFromBeginning);
+  memstream.SaveToFile(filename);
+ finally
+  memstream.free;
+ end;
+end;
 end.
