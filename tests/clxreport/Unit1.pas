@@ -31,6 +31,7 @@ type
     procedure BDesignClick(Sender: TObject);
     procedure BPrintClick(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -79,6 +80,11 @@ begin
  finally
   CLXReport1.AliasList:=nil;
  end;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+// EReportName.Text:='c:\prog\toni\cvsroot\reportman\reportman\repman\repsamples\sample5.rep';
 end;
 
 end.

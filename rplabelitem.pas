@@ -407,6 +407,22 @@ begin
      FUpdated:=true;
     end;
    end;
+  rpSubReportStart:
+   begin
+    FOldString:='';
+    FUpdated:=false;
+    FDataCount:=0;
+    if ((FAggregate<>rpAgNone) AND (FAggregate<>rpAgGeneral)) then
+    begin
+     // Update with the initial value
+     eval:=TRpReport(Owner).Evaluator;
+     eval.Expression:=FAgIniValue;
+     eval.Evaluate;
+     FValue:=eval.EvalResult;
+     FSumValue:=FValue;
+     FUpdated:=true;
+    end;
+   end;
   rpDataChange:
    begin
     FUpdated:=false;
@@ -482,6 +498,11 @@ begin
   rpPageChange:
    begin
     FOldString:='';
+   end;
+  rpInvalidateValue:
+   begin
+    FOldString:='';
+    FUpdated:=false;
    end;
  end;
 end;

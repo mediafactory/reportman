@@ -46,6 +46,7 @@ type
  TRpSection=class(TRpCommonComponent)
   private
    FSubReport:TComponent;
+   FChildSubReport:TComponent;
    FGroupName:String;           // [rpsecgheader,rpsecgfooter]
    FChangeExpression:WideString;// [rpsecgheader,rpsecgfooter]
    FChangeBool:boolean;         // [rpsecgheader,rpsecgfooter]
@@ -63,25 +64,32 @@ type
    // deprecated
    FBeginPage:boolean;
    FReadError:Boolean;
-   function GetSectionCaption:String;
    procedure SetComponents(Value:TRpCommonList);
    procedure SetGroupName(Value:string);
    procedure SetChangeExpression(Value:widestring);
    procedure OnReadError(Reader: TReader; const Message: string; var Handled: Boolean);
+   procedure SetChildSubReport(Value:TComponent);
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
    procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
+   procedure Notification(AComponent: TComponent;
+    Operation: TOperation);override;
   public
    GroupValue:Variant;
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
+   function SectionCaption(addchild:boolean):String;
    procedure FreeComponents;
    procedure DeleteComponent(com:TRpCommonComponent);
-   property SectionCaption:String read GetSectionCaption;
    function GetExtension(adriver:IRpPrintDriver):TPoint;override;
    function EvaluateBeginPage:boolean;
+   procedure LoadFromStream(stream:TStream);
+   procedure SaveToStream(stream:TStream);
    procedure LoadExternal;
    procedure SaveExternal;
+   procedure GetChildSubReportPossibleValues(lvalues:TStrings);
+   function GetChildSubReportName:string;
+   procedure SetChildSubReportByName(avalue:String);
   published
    property SubReport:TComponent read FSubReport write FSubReport;
    property GroupName:String read FGroupName write SetGroupName;
@@ -104,6 +112,7 @@ type
    // External filename is a alias.field or if not exists a filename
    // If it's lenght is 0 it's not external
    property ExternalFilename:string read FExternalFilename write FExternalFilename;
+   property ChildSubReport:TComponent read FChildSubReport write SetChildSubReport;
    // Deprecated properties for compatibility only
    property BeginPage:boolean read FBeginpage write FBeginPage default false;
  end;
@@ -133,7 +142,22 @@ begin
  inherited destroy;
 end;
 
-function TRpSection.GetSectionCaption:String;
+procedure TRpSection.Notification(AComponent: TComponent;
+ Operation: TOperation);
+begin
+ inherited Notification(AComponent,Operation);
+
+ if Operation=opRemove then
+ begin
+  if (AComponent is TRpSubReport) then
+  begin
+   if AComponent=FChildSubReport then
+    FChildSubReport:=nil;
+  end;
+ end;
+end;
+
+function TRpSection.SectionCaption(addchild:boolean):String;
 begin
  case FSectionType of
   rpsecdetail:
@@ -156,6 +180,13 @@ begin
    begin
     Result:=SRpFooter+' - '+FGroupName;
    end;
+ end;
+ if addchild then
+ begin
+  if Assigned(ChildSubreport) then
+  begin
+   Result:=Result+'('+TRpSubReport(ChildSubReport).GetDisplayName+')';
+  end;
  end;
 end;
 
@@ -363,17 +394,13 @@ begin
 end;
 
 
-procedure TRpSection.SaveExternal;
+procedure TRpSection.SaveToStream(stream:TStream);
 var
  i:integer;
  acompo:TComponent;
- AStream:TStream;
  zstream:TCompressionStream;
  writer:TWriter;
 begin
- // Saves the components as a external section
- if Length(FExternalFilename)<1 then
-  exit;
  // Looks if it's not external
  for i:=0 to Components.Count-1 do
  begin
@@ -387,37 +414,44 @@ begin
    end;
   end;
  end;
+ zstream:=TCompressionStream.Create(clDefault,stream);
+ try
+  writer:=TWriter.Create(zStream,4096);
+  try
+   writer.WriteRootComponent(Self);
+  finally
+   writer.free;
+  end;
+ finally
+  zstream.free;
+ end;
+end;
+
+
+procedure TRpSection.SaveExternal;
+var
+ AStream:TStream;
+begin
+ // Saves the components as a external section
+ if Length(FExternalFilename)<1 then
+  exit;
  AStream:=TFileStream.Create(FExternalFilename,fmCreate);
  try
-  zstream:=TCompressionStream.Create(clDefault,AStream);
-  try
-   writer:=TWriter.Create(zStream,4096);
-   try
-    writer.WriteRootComponent(Self);
-   finally
-    writer.free;
-   end;
-  finally
-   zstream.free;
-  end;
+  SaveToStream(AStream);
  finally
   AStream.free;
  end;
 end;
 
-procedure TRpSection.LoadExternal;
+procedure TRpSection.LoadFromStream(stream:TStream);
 var
  i:integer;
  reader:TReader;
- AStream:TStream;
  buf:pointer;
  zlibs:TDeCompressionStream;
  readed:integer;
  memstream:TMemoryStream;
 begin
- // Try to load the section as an external section
- if Length(FExternalFilename)<1 then
-  exit;
  // Free all components
  for i:=0 to Components.Count-1 do
  begin
@@ -426,37 +460,32 @@ begin
  end;
  Components.Clear;
  FReadError:=false;
- AStream:=TFileStream.Create(FExternalFilename,fmOpenRead or fmShareDenyWrite);
+ MemStream:=TMemoryStream.Create;
  try
-  MemStream:=TMemoryStream.Create;
+  zlibs:=TDeCompressionStream.Create(stream);
   try
-   zlibs:=TDeCompressionStream.Create(AStream);
+   buf:=AllocMem(120000);
    try
-    buf:=AllocMem(120000);
-    try
-     repeat
-      readed:=zlibs.Read(buf^,120000);
-      memstream.Write(buf^,readed);
-     until readed<120000;
-    finally
-     freemem(buf);
-    end;
-    memstream.Seek(0,soFrombeginning);
-    reader:=TReader.Create(memstream,1000);
-    try
-     reader.OnError:=OnReadError;
-     reader.ReadRootComponent(Self);
-    finally
-     reader.free;
-    end;
+    repeat
+     readed:=zlibs.Read(buf^,120000);
+     memstream.Write(buf^,readed);
+    until readed<120000;
    finally
-    zlibs.Free;
+    freemem(buf);
+   end;
+   memstream.Seek(0,soFrombeginning);
+   reader:=TReader.Create(memstream,1000);
+   try
+    reader.OnError:=OnReadError;
+    reader.ReadRootComponent(Self);
+   finally
+    reader.free;
    end;
   finally
-   MemStream.free;
+   zlibs.Free;
   end;
  finally
-  AStream.free;
+  MemStream.free;
  end;
  if FReadError then
  begin
@@ -470,6 +499,22 @@ begin
  for i:=0 to ComponentCount-1 do
  begin
   Components.Add.Component:=((inherited Components[i]) As TRpCommonComponent);
+ end;
+end;
+
+
+procedure TRpSection.LoadExternal;
+var
+ AStream:TStream;
+begin
+ // Try to load the section as an external section
+ if Length(FExternalFilename)<1 then
+  exit;
+ AStream:=TFileStream.Create(FExternalFilename,fmOpenRead or fmShareDenyWrite);
+ try
+  LoadFromStream(AStream);
+ finally
+  AStream.free;
  end;
 end;
 
@@ -501,5 +546,84 @@ begin
 //   end;
   end;
 end;
+
+procedure TRpSection.GetChildSubReportPossibleValues(lvalues:TStrings);
+var
+ rep:TRpReport;
+ i:integer;
+begin
+ rep:=TRpReport(Subreport.Owner);
+ lvalues.clear;
+ lvalues.Add('');
+ for i:=0 to rep.Subreports.count-1 do
+ begin
+  if rep.Subreports.items[i].SubReport<>SubReport then
+  begin
+   lvalues.Add(rep.Subreports.items[i].SubReport.GetDisplayName);
+  end;
+ end;
+end;
+
+function TRpSection.GetChildSubReportName:string;
+begin
+ Result:='';
+ if Assigned(ChildSubReport) then
+  Result:=TRpSubReport(ChildSubReport).GetDisplayName;
+end;
+
+procedure TRpSection.SetChildSubReportByName(avalue:String);
+var
+ rep:TRpReport;
+ i:integer;
+begin
+ rep:=TRpReport(Subreport.Owner);
+ ChildSubReport:=nil;
+ for i:=0 to rep.Subreports.count-1 do
+ begin
+  if rep.Subreports.items[i].SubReport.ParentSection=Self then
+  begin
+   rep.Subreports.items[i].SubReport.ParentSection:=nil;
+   rep.Subreports.items[i].SubReport.ParentSubReport:=nil;
+  end;
+  if rep.Subreports.items[i].SubReport.GetDisplayName=avalue then
+  begin
+   rep.Subreports.items[i].SubReport.ParentSection:=Self;
+   rep.Subreports.items[i].SubReport.ParentSubReport:=TRpSubReport(SubReport);
+   ChildSubReport:=rep.Subreports.items[i].SubReport;
+  end;
+ end;
+end;
+
+procedure TRpSection.SetChildSubReport(Value:TComponent);
+var
+ i:integer;
+ rep:TRpSubReport;
+begin
+ if (csReading in ComponentState) then
+ begin
+  FChildSubReport:=Value;
+  exit;
+ end;
+ if (csLoading in ComponentState) then
+ begin
+  FChildSubReport:=Value;
+  exit;
+ end;
+ if Not Assigned(Value) then
+ begin
+  FChildSubReport:=Value;
+  exit;
+ end;
+ if Value=SubReport then
+  Raise Exception.Create(SRpCircularDatalink);
+ rep:=TRpSubReport(Value);
+ for i:=0 to rep.Sections.Count-1 do
+ begin
+  if rep.Sections.Items[i].Section.ChildSubReport=SubReport then
+   Raise Exception.Create(SRpCircularDatalink);
+ end;
+ FChildSubReport:=Value;
+end;
+
 
 end.

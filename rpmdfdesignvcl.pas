@@ -329,7 +329,7 @@ begin
    apanel.OnPaint:=SecPosChange;
    apanel.Height:=panelheight;
    apanel.Caption:='';
-   apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption;
+   apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption(false);
    apanel.Alignment:=taLeftJustify;
    apanel.BorderStyle:=bsNone;
    apanel.BevelInner:=bvNone;
@@ -419,7 +419,7 @@ begin
 
    apanel.Width:=asecint.Width;
    apanel.Caption:='';
-   apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption;
+   apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption(false);
    apanel.Top:=posx;
    posx:=posx+apanel.Height;
 

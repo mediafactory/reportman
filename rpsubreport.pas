@@ -30,6 +30,8 @@ type
   private
    FSections:TRpSectionList;
    FAlias:string;
+   FParentSubReport:TRpSubReport;
+   FParentSection:TRpSection;
    // Methots for writing internal indexes
    procedure SetSections(Value:TRpSectionList);
    function GetDetailCount:integer;
@@ -42,6 +44,7 @@ type
    function GetGroupCount:integer;
   protected
    procedure FillGroupValues;
+   procedure Notification(AComponent: TComponent; Operation: TOperation);override;
   public
    // Creation and destruction
    CurrentGroupName:string;
@@ -71,14 +74,49 @@ type
    property GroupCount:integer read GetGroupCount;
    function GroupChanged:integer;
    procedure InitGroups(groupindex:integer);
+   function GetDisplayName:string;
   published
    property Sections:TRpSectionList read FSections write SetSections;
    property Alias:String read FAlias write FAlias;
+   property ParentSubReport:TRpSubReport read FParentSubReport
+    write FParentSubReport;
+   property ParentSection:TRpSection read FParentSection
+    write FParentSection;
  end;
 
 implementation
 
 uses rpreport;
+
+
+procedure TRpSubReport.Notification(AComponent: TComponent;
+ Operation: TOperation);
+var
+ removeparent:boolean;
+begin
+ inherited Notification(AComponent,Operation);
+
+ if Operation=opRemove then
+ begin
+  removeparent:=false;
+  if (AComponent is TRpSubReport) then
+  begin
+   if AComponent=FParentSubReport then
+    removeparent:=true;
+  end
+  else
+  if (AComponent is TRpSection) then
+  begin
+   if AComponent=FParentSection then
+    removeparent:=true;
+  end;
+  if removeparent then
+  begin
+   FParentSubReport:=nil;
+   FParentSection:=nil;
+  end;
+ end;
+end;
 
 procedure TRpSubReport.AddPageHeader;
 var
@@ -624,7 +662,7 @@ var
  compo:TRpCommonComponent;
 begin
  // Updates group values
- if newstate=rpReportStart then
+ if (newstate in [rpReportStart,rpSubReportStart]) then
  begin
   FillGroupValues;
  end;
@@ -653,5 +691,20 @@ begin
  end;
 end;
 
+function TRpSubReport.GetDisplayName:string;
+var
+ index:integer;
+begin
+ Result:=Name;
+ index:=0;
+ while index<(Length(Name)) do
+ begin
+  inc(index);
+  if (Name[index] in ['0'..'9']) then
+   break;
+ end;
+ if index<=(Length(Name)) then
+  Result:=SRpSubReport+'-'+Copy(Name,index,Length(Name));
+end;
 
 end.

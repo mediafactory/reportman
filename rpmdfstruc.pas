@@ -182,7 +182,7 @@ begin
   anew.data:=Report.SubReports.Items[i].SubReport;
   for j:=0 to subr.Sections.Count-1 do
   begin
-   child:=RView.Items.AddChild(anew,subr.Sections.Items[j].Section.SectionCaption);
+   child:=RView.Items.AddChild(anew,subr.Sections.Items[j].Section.SectionCaption(true));
    child.data:=subr.Sections.Items[j].Section;
   end;
  end;

@@ -11,8 +11,16 @@ object Form1: TForm1
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
+  object Label1: TLabel
+    Left = 80
+    Top = 16
+    Width = 35
+    Height = 13
+    Caption = 'Report '
+  end
   object Button1: TButton
     Left = 176
     Top = 88
@@ -22,10 +30,25 @@ object Form1: TForm1
     TabOrder = 0
     OnClick = Button1Click
   end
+  object EReportname: TEdit
+    Left = 80
+    Top = 36
+    Width = 441
+    Height = 21
+    TabOrder = 1
+    Text = 'sample4.rep'
+  end
   object VCLReport1: TVCLReport
     Filename = 'sample4.rep'
     Title = 'Untitled'
     Left = 32
     Top = 60
+  end
+  object Table1: TTable
+    Active = True
+    DatabaseName = 'DBDEMOS'
+    TableName = 'animals.dbf'
+    Left = 168
+    Top = 164
   end
 end

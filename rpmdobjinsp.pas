@@ -842,6 +842,7 @@ begin
  RpExpreDialog1.evaluator.AddVariable('CURRENTGROUP',FRpMainf.report.idencurrentgroup);
  RpExpreDialog1.evaluator.AddVariable('FREE_SPACE_CMS',FRpMainf.report.idenfreespacecms);
  RpExpreDialog1.evaluator.AddVariable('FREE_SPACE_INCH',FRpMainf.report.idenfreespaceinch);
+ RpExpreDialog1.evaluator.AddVariable('EOF',FRpMainf.report.ideneof);
 
  FClasses.AddObject('TRpExpressionInterface',TRpExpressionInterface.Create(Self));
  FClasses.AddObject('TRpBarcodeInterface',TRpBarcodeInterface.Create(Self));
@@ -895,6 +896,7 @@ procedure TRpPanelObj.EditChange(Sender:TObject);
 var
  index:integer;
  aname:string;
+ FRpMainf:TFRpMainF;
 begin
  index:=TControl(Sender).tag;
  aname:=Lnames.strings[index];
@@ -920,6 +922,11 @@ begin
  else
  begin
   SetPropertyFull(aname,TEdit(Sender).Text);
+ end;
+ if aname=SRpChildSubRep then
+ begin
+  FRpMainf:=TFRpMainF(Owner.Owner);
+  FRpMainf.freportstructure.RView.Selected.Text:=TRpSection(FRpMainf.freportstructure.RView.Selected.Data).SectionCaption(true);
  end;
 end;
 

@@ -170,6 +170,7 @@ var
 begin
  if Assigned(FDataset) then
  begin
+  FDataset.Next;
     // Copy the record to the copy
   if Not FDataset.Eof then
   begin
@@ -213,7 +214,6 @@ begin
     Cancel;
     Raise;
    end;
-   FDataset.Next;
   end
   else
   begin

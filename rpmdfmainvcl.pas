@@ -1,6 +1,6 @@
 {*******************************************************}
 {                                                       }
-{       Report Mabnager Designer                         }
+{       Report Manager Designer                         }
 {                                                       }
 {       rpmdfmainvcl                                    }
 {       Main form of report manager designer            }

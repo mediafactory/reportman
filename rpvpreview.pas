@@ -215,6 +215,7 @@ begin
  Application.OnIdle:=nil;
  done:=false;
  try
+  DisableControls(false);
   report.OnProgress:=RepProgress;
   gdidriver.lockedpagesize:=false;
   if report.TwoPass then
@@ -235,6 +236,7 @@ begin
   PrintPage;
   PlaceImagePosition;
   printed:=true;
+  EnableControls;
  except
   on E:Exception do
   begin
@@ -486,6 +488,7 @@ begin
  AParams.Enabled:=false;
  PBar.Position:=0;
  PBar.Visible:=enablebar;
+ AExit.Enabled:=false;
 end;
 
 procedure TFRpVPreview.EnableControls;
@@ -505,6 +508,7 @@ begin
  ASave.Enabled:=true;
  AParams.Enabled:=enableparams;
  PBar.Visible:=false;
+ AExit.Enabled:=true;
 end;
 
 

@@ -85,14 +85,22 @@ type
  end;
 
  TIdenReportVar=class(TIdenFunction)
-   FReport:TRpReport;
   private
+   FReport:TRpReport;
   protected
    function GeTRpValue:TRpValue;override;
   public
    varname:string;
   end;
 
+ TIdenEOF=class(TIdenFunction)
+  private
+   FReport:TRpReport;
+  protected
+   function GeTRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
 
  TRpReport=class(TComponent)
   private
@@ -128,6 +136,7 @@ type
    FDriver:IRpPrintDriver;
    FLeftMargin,FTopMargin,FRightMargin,FBottomMargin:TRpTwips;
    Fidenpagenum:TIdenReportVar;
+   FidenEof:TIdenEof;
    Fidenfreespace:TIdenReportVar;
    Fidenfreespacecms:TIdenReportVar;
    Fidenfreespaceinch:TIdenReportVar;
@@ -148,6 +157,7 @@ type
    milifirst,mililast:TDatetime;
 {$ENDIF}
    difmilis:int64;
+   FPendingSections:TStringList;
    FPrinterSelect:TRpPrinterSelect;
    FPrintOnlyIfDataAvailable:Boolean;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
@@ -160,13 +170,15 @@ type
    procedure SetGridWidth(Value:TRpTwips);
    procedure SetGridHeight(Value:TRpTwips);
    procedure CheckIfDataAvailable;
+   procedure UpdateCachedSources(alias:string);
+   procedure CheckProgress;
   protected
     section:TRpSection;
     subreport:TRpSubreport;
     procedure Notification(AComponent:TComponent;Operation:TOperation);override;
     procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
     procedure Loaded;override;
-    function NextSection:boolean;
+    function NextSection(child:boolean):boolean;
     // Skip to next record returns true if a group has
     // changed and sets internally CurrentGroup
     function NextRecord(grouprestore:boolean):boolean;
@@ -207,6 +219,7 @@ type
    property OnProgress:TRpProgressEvent read FOnProgress write FOnProgress;
    property AliasList:TRpAlias read FAliasList write FAliasList;
    property idenpagenum:TIdenReportVar read fidenpagenum;
+   property ideneof:TIdenEof read fideneof;
    property idenfreespace:TIdenReportVar read fidenfreespace;
    property idenfreespacecms:TIdenReportVar read fidenfreespacecms;
    property idenfreespaceinch:TIdenReportVar read fidenfreespaceinch;
@@ -268,7 +281,7 @@ type
 
 implementation
 
-uses rpprintitem, rpsecutil;
+uses rpprintitem, rpsecutil, Math;
 
 function TIdenReportVar.GeTRpValue:TRpValue;
 begin
@@ -319,6 +332,7 @@ begin
  FGridLines:=False;
  FGridWidth:=CONS_DEFAULT_GRIDWIDTH;
  FGridHeight:=CONS_DEFAULT_GRIDWIDTH;
+ FPendingSections:=TStringList.Create;
  // Subreports
  FSubReports:=TRpSubReportList.Create(Self);
  // Data Info
@@ -345,6 +359,8 @@ begin
  FIdencurrentgroup:=TIdenReportVar.Create(nil);
  Fidencurrentgroup.varname:='CURRENTGROUP';
  Fidencurrentgroup.FReport:=self;
+ FIdeneof:=TIdenEOF.Create(nil);
+ Fideneof.FReport:=self;
  // Metafile
  FMetafile:=TRpMetafileReport.Create(nil);
  FDataAlias:=TRpAlias.Create(nil);
@@ -395,6 +411,7 @@ end;
 
 destructor TRpReport.Destroy;
 begin
+ FPendingSections.Free;
  FSubReports.free;
  FDataInfo.free;
  FDatabaseInfo.free;
@@ -407,6 +424,7 @@ begin
  FIdenCurrentGroup.free;
  Fidenfreespacecms.free;
  Fidenfreespaceinch.free;
+ FIdenEof.free;
  FTotalPagesList.free;
  if Assigned(FEvaluator) then
  begin
@@ -765,7 +783,6 @@ end;
 procedure TRpReport.ActivateDatasets;
 var
  i,index:integer;
- docancel:boolean;
  alias:string;
  dbinfo:TRpDatabaseInfoItem;
  dbalias:string;
@@ -811,13 +828,7 @@ begin
     end;
    end;
    FDataInfo.Items[i].Connect(DatabaseInfo,Params);
-   if Assigned(FOnProgress) then
-   begin
-    docancel:=false;
-    FOnProgress(Self,docancel);
-    if docancel then
-    Raise Exception.Create(SRpOperationAborted);
-   end;
+   CheckProgress;
   end;
  except
   for i:=0 to FDataInfo.Count-1 do
@@ -947,13 +958,29 @@ begin
  metafile.UpdateTotalPages(FTotalPagesList);
 end;
 
+procedure TRpReport.UpdateCachedSources(alias:string);
+var
+ i:integer;
+begin
+ for i:=0 to datainfo.Count-1 do
+ begin
+  if datainfo.Items[i].DataSource=alias then
+  begin
+   if datainfo.Items[i].Cached then
+   begin
+    datainfo.Items[i].CachedDataset.DoClose;
+    datainfo.Items[i].CachedDataset.DoOpen;
+   end;
+   UpdateCachedSources(datainfo.items[i].alias);
+  end;
+ end;
+end;
 
 function TRpReport.NextRecord(grouprestore:boolean):boolean;
 var
  subrep:TRpSubreport;
  index:integeR;
  data:TRpDataset;
- docancel:boolean;
 begin
  data:=nil;
  Result:=false;
@@ -972,6 +999,8 @@ begin
   end
   else
    DataInfo.Items[index].Dataset.Next;
+  UpdateCachedSources(subrep.Alias);
+  // Update all dependent cached datasets
   // If its the last record no group change
   if not grouprestore then
   begin
@@ -997,10 +1026,20 @@ begin
      subrep.SubReportChanged(rpDataChange);
    end
    else
-     subrep.SubReportChanged(rpDataChange);
+    subrep.SubReportChanged(rpDataChange);
   end;
 
   inc(FRecordCount);
+
+  CheckProgress;
+ end;
+end;
+
+
+procedure TRpReport.CheckProgress;
+var
+ docancel:boolean;
+begin
   if Assigned(FOnProgress) then
   begin
 {$IFDEF MSWINDOWS}
@@ -1026,28 +1065,86 @@ begin
      Raise Exception.Create(SRpOperationAborted);
    end;
   end;
- end;
 end;
 
-function TRpReport.NextSection:boolean;
+function TRpReport.NextSection(child:boolean):boolean;
 var
  subrep:TRpSubreport;
  sec:TRpSection;
- oldsectionindex:integer;
+ oldsection:TRpSection;
+// oldsectionindex:integer;
  lastdetail,firstdetail:integer;
+ dataavail:boolean;
+ index:integer;
 begin
+ oldsection:=section;
  section:=nil;
- oldsectionindex:=currentsectionindex;
-
+// oldsectionindex:=currentsectionindex;
+ // If the old selected section has a child subreport then execute first
+ if (Assigned(oldsection) AND child) then
+ begin
+  if Assigned(oldsection.ChildSubReport) then
+  begin
+   dataavail:=false;
+   subrep:=TRpSubReport(oldsection.ChildSubReport);
+   if (Length(subrep.Alias)<1) then
+    dataavail:=true
+   else
+   begin
+    index:=DataInfo.IndexOf(subrep.Alias);
+    if Datainfo.Items[index].Cached then
+    begin
+     if Datainfo.Items[index].Dataset.Bof then
+     begin
+      Datainfo.Items[index].CachedDataset.DoClose;
+      Datainfo.Items[index].CachedDataset.DoOpen;
+     end;
+     if (Not Datainfo.Items[index].Dataset.Eof) then
+     begin
+      dataavail:=true;
+     end;
+    end
+    else
+    begin
+     if (Not Datainfo.Items[index].Dataset.Eof) then
+     begin
+      dataavail:=true;
+     end;
+    end;
+   end;
+   subrep.LastRecord:=Not dataavail;
+   if dataavail then
+   begin
+    subrep.SubReportChanged(rpSubReportStart);
+    subrep.SubReportChanged(rpDataChange);
+    subreport:=subrep;
+    section:=nil;
+//    oldsectionindex:=-1;
+    CurrentSectionIndex:=-1;
+    FPendingSections.AddObject(IntToStr(CurrentSubReportIndex),oldsection);
+    CurrentSubReportIndex:=Subreports.IndexOf(subreport);
+    subreport.SubReportChanged(rpDataChange);
+    Subreport.CurrentGroupIndex:=-Subreport.GroupCount;
+    if SubReport.CurrentGroupIndex<0 then
+    begin
+     CurrentSectionIndex:=Subreport.FirstDetail+SubReport.CurrentGroupIndex-1;
+    end;
+   end;
+  end;
+ end;
 
  // Check the condition
  while CurrentSubReportIndex<Subreports.count do
  begin
+  CheckProgress;
+
   subrep:=Subreports.Items[CurrentSubReportIndex].SubReport;
   // The first section are the group footers until
   // CurrentGropup
   while subrep.CurrentGroupIndex<>0 do
   begin
+   CheckProgress;
+
    lastdetail:=subrep.LastDetail;
    firstdetail:=subrep.FirstDetail;
    inc(CurrentSectionIndex);
@@ -1115,6 +1212,7 @@ begin
    break;
   while CurrentSectionIndex<subrep.Sections.Count do
   begin
+   CheckProgress;
    if CurrentSectionIndex<0 then
     CurrentSectionIndex:=subrep.FirstDetail
    else
@@ -1123,7 +1221,7 @@ begin
    begin
     if CurrentSectionIndex>subrep.LastDetail then
     begin
-     if oldsectionindex>=0 then
+//     if oldsectionindex>=0 then
       if NextRecord(false) then
       begin
        CurrentSectionIndex:=subrep.LastDetail;
@@ -1164,10 +1262,18 @@ begin
   end;
   if ((Not assigned(Section)) AND (subrep.CurrentGroupIndex=0)) then
   begin
-   inc(CurrentSubReportIndex);
+   // If it's a child subreport
+   // Returns null section so pending will print
+   if Assigned(subrep.ParentSubReport) then
+    break;
+   repeat
+    inc(CurrentSubReportIndex);
+    if CurrentSubReportIndex>=Subreports.count then
+     break;
+    subrep:=Subreports.Items[CurrentSubReportIndex].SubReport;
+   until subrep.ParentSubReport=nil;
    if CurrentSubReportIndex>=Subreports.count then
     break;
-   subrep:=Subreports.Items[CurrentSubReportIndex].SubReport;
 //   subrep.SubReportChanged(rpDataChange);
    CurrentSectionIndex:=-1;
    subrep.LastRecord:=false;
@@ -1176,7 +1282,21 @@ begin
    if subrep.CurrentGroupIndex=0 then
      break;
  end;
+
  Result:=Assigned(Section);
+ // If there are still pending sections
+ if not Assigned(Section) then
+ begin
+  if FPendingSections.Count>0 then
+  begin
+   Section:=TRpSection(FPendingSections.Objects[FPendingSections.Count-1]);
+   CurrentSubReportIndex:=StrToInt(FPendingSections.Strings[FPendingSections.Count-1]);
+   FPendingSections.Delete(FPendingSections.Count-1);
+   Subreport:=TRpSubReport(Section.SubReport);
+   Currentsectionindex:=Subreport.Sections.IndexOf(Section);
+   NextSection(false);
+  end;
+ end;
 end;
 
 
@@ -1221,8 +1341,12 @@ var
  apagesize:TPoint;
  paramname:string;
  rPageSizeQt:TPageSizeQt;
+ subrep:TRpSubReport;
+ dataavail:Boolean;
+ index:integer;
 begin
  FDriver:=Driver;
+ FPendingSections.Clear;
  if Not Assigned(FDriver) then
   Raise Exception.Create(SRpNoDriverPassedToPrint);
  Driver.SelectPrinter(PrinterSelect);
@@ -1282,7 +1406,6 @@ begin
  FEvaluator:=TRpEvaluator.Create(nil);
  PageNum:=-1;
  FRecordCount:=0;
- CurrentSubReportIndex:=0;
  // Insert params into rpEvaluator
  for i:=0 to Params.Count-1 do
  begin
@@ -1314,12 +1437,14 @@ begin
   DeActivateDatasets;
   Raise;
  end;
+
  // Insert page numeber
  FEvaluator.AddVariable('Page',fidenpagenum);
  FEvaluator.AddVariable('FREE_SPACE',fidenfreespace);
  FEvaluator.AddVariable('CURRENTGROUP',fidencurrentgroup);
  FEvaluator.AddVariable('FREE_SPACE_CMS',fidenfreespacecms);
  FEvaluator.AddVariable('FREE_SPACE_INCH',fidenfreespaceinch);
+ FEvaluator.AddIden('EOF',fideneof);
 
 
 
@@ -1356,25 +1481,64 @@ begin
  end;
 
  // Sends the message report header to all components
+
  for i:=0 to SubReports.Count-1 do
  begin
   Subreports.Items[i].Subreport.SubReportChanged(rpReportStart);
  end;
- Subreports.Items[0].SubReport.SubReportChanged(rpDataChange);
 
- CurrentSectionIndex:=-1;
- Subreports.Items[0].SubReport.CurrentGroupIndex:=-SubReports.Items[0].Subreport.GroupCount;
- if Subreports.Items[0].SubReport.CurrentGroupIndex<0 then
- begin
-  CurrentSectionIndex:=SubReports.Items[0].Subreport.FirstDetail+Subreports.Items[0].SubReport.CurrentGroupIndex-1;
- end;
- section:=nil;
- subreport:=nil;
- if Not NextSection then
+ CurrentSubReportIndex:=-1;
+ dataavail:=False;
+ repeat
+  inc(CurrentSubReportIndex);
+  if CurrentSubReportIndex>=Subreports.count then
+   break;
+  subrep:=subreports.Items[CurrentSubReportIndex].SubReport;
+  if Not Assigned(subrep.ParentSubReport) then
+  begin
+   if (Length(subrep.Alias)<1) then
+    dataavail:=true
+   else
+   begin
+    index:=DataInfo.IndexOf(subrep.Alias);
+    if Datainfo.Items[index].Cached then
+    begin
+     if (Not Datainfo.Items[index].CachedDataset.Eof) then
+     begin
+      dataavail:=true;
+     end;
+    end
+    else
+    begin
+     if (Not Datainfo.Items[index].Dataset.Eof) then
+     begin
+      dataavail:=true;
+     end;
+    end;
+   end;
+  end;
+  if dataavail then
+  begin
+   subrep.SubReportChanged(rpSubReportStart);
+   subrep.SubReportChanged(rpDataChange);
+   CurrentSectionIndex:=-1;
+   Subrep.CurrentGroupIndex:=-subrep.GroupCount;
+   if subrep.CurrentGroupIndex<0 then
+   begin
+    CurrentSectionIndex:=subrep.FirstDetail+subrep.CurrentGroupIndex-1;
+   end;
+   section:=nil;
+   subreport:=nil;
+   if Not NextSection(true) then
+    dataavail:=false;
+  end;
+ until dataavail;
+ if not dataavail then
  begin
   EndPrint;
-  Raise Exception.Create(SRpNothingToPrint);
+  Raise Exception.Create(SRpNoDataAvailableToPrint);
  end;
+
  printing:=True;
 end;
 
@@ -1588,7 +1752,7 @@ begin
    if Not CheckSpace then
     break;
    PrintSection(true);
-   NextSection;
+   NextSection(true);
    if printedsomething then
    begin
     if asection.SkipPage then
@@ -1609,6 +1773,38 @@ begin
 end;
 
 
+constructor TIdenEOF.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='Eof';
+// Help:=SRpInt;
+ model:='function '+'Eof'+'(alias:string):Boolean';
+// aParams:=SRpEof;
+end;
+
+function TIdenEof.GeTRpValue:TRpValue;
+var
+ aliasname:string;
+ index:integer;
+ dataset:TDataset;
+begin
+ if (not (VarType(Params[0])=varString)) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ Result:=true;
+ aliasname:=String(Params[0]);
+ index:=FReport.DataInfo.IndexOf(aliasname);
+ if index<0 then
+  exit;
+ if FReport.DataInfo.Items[index].Cached then
+  dataset:=FReport.DataInfo.Items[index].CachedDataset
+ else
+  dataset:=FReport.DataInfo.Items[index].Dataset;
+ if Not dataset.Active then
+  exit;
+ Result:=dataset.Eof;
+end;
 
 
 initialization

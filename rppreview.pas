@@ -221,6 +221,7 @@ begin
  Application.OnIdle:=nil;
  try
   report.OnProgress:=RepProgress;
+  DisableControls(false);
   if report.TwoPass then
   begin
    CalcReportWidthProgress(report);
@@ -234,6 +235,7 @@ begin
   PrintPage;
   PlaceImagePosition;
   printed:=true;
+  EnableControls;
  except
   on E:Exception do
   begin
@@ -502,6 +504,7 @@ begin
  AParams.Enabled:=false;
  PBar.Position:=0;
  PBar.Visible:=enablebar;
+ AExit.Enabled:=false;
 end;
 
 procedure TFRpPreview.EnableControls;
@@ -521,6 +524,7 @@ begin
  ASave.Enabled:=true;
  AParams.Enabled:=enableparams;
  PBar.Visible:=false;
+ AExit.Enabled:=true;
 end;
 
 

@@ -669,7 +669,7 @@ begin
  operador:='';
  if Rpparser.Token=toOperator then
  begin
-  operador:=Rpparser.TokenString;
+  operador:=UpperCase(Rpparser.TokenString);
   if ((operador='+') or (operador='-')
        or (operador='NOT') or (operador='IIF')) then
    Rpparser.NextToken;

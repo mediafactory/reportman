@@ -1,14 +1,14 @@
 {TODO 1 -oToni -cEngine : Add alter params as parameters to printrep and printreptopdf}
-{TODO 4 -oToni -cEngine : Add a text only driver and addons for Epson/Proprinter/TM drivers}
-{TODO 3 -oToni -cEngine : Check WideString support for TRpLabel component (rplabelitem)}
-{DONE 5 -oToni -cEngine : Add Printer selection}
+{TODO 2 -oToni -cEngine : Add a text only driver and addons for Epson/Proprinter/TM drivers}
+
+
 {TODO 1 -oToni -cDesigner : Add Wizards to create reports}
-{TODO 2 -oToni -cEngine : Add draw points to TRpChart component}
+{TODO 1 -oToni -cEngine : Add draw points to TRpChart component}
 {TODO 2 -oToni -cEngine : Add Zeos Database native support}
-{TODO 2 -oToni -cEngine : Add HTML CSS driver}
-{DONE 2 -oToni -cEngine : Add Windows custom page sizes}
+{TODO 1 -oToni -cEngine : Add HTML CSS driver}
+
 {TODO 2 -oToni -cEngine : Add OnFunction to evaluator}
-{DONE 5 -oToni -cEngine : Translate all constants and multilanguage Designer}
+
 
 
 
@@ -32,7 +32,7 @@
 
 
 
-{DONE 1 -oToni -cEngine : Image component filename property to load a file on the fly}
+
 
 
 
@@ -46,7 +46,7 @@
 {TODO 1 -oToni -cEngine : Enhace charting adding poliline to metafiles}
 
 {TODO 1 -oToni -cOthers : Conversion program for gestor.exe}
-{TODO 1   -oToni -cEngine : Saving and loading reports from database tables using the designer}
+{TODO 2   -oToni -cEngine : Saving and loading reports from database tables using the designer}
 
 
 
@@ -55,8 +55,7 @@
 
 
 {TODO 3 -oToni -cEngine : Write more documentation}
-{TODO 1 -oToni -cEngine : Free pages in metafile while 
-previewing...}
+
 
 
 

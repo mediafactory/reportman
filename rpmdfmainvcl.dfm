@@ -1375,7 +1375,7 @@ object FRpMainFVCL: TFRpMainFVCL
     end
     object AUnitsinchess: TAction
       Category = 'Preferences'
-      Caption = 'Inchess'
+      Caption = 'Inches'
       Hint = 'Changes measurement units to inchess'
       OnExecute = AUnitsinchessExecute
     end
@@ -1706,7 +1706,6 @@ object FRpMainFVCL: TFRpMainFVCL
         end
         object Inchess1: TMenuItem
           Action = AUnitsinchess
-          Caption = 'Inches'
         end
       end
       object MDriverSelect: TMenuItem

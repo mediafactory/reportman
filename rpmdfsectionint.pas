@@ -83,6 +83,7 @@ type
     procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
     procedure SetProperty(pname:string;value:Widestring);override;
     function GetProperty(pname:string):Widestring;override;
+    procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
     procedure CreateChilds;
     procedure InvalidateAll;
     property OnPosChange:TNotifyEvent read FOnPosChange write SetOnPosChange;
@@ -275,17 +276,20 @@ begin
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).HorzDesp,true));
  end;
+ // Child Subreport
+ lnames.Add(SRpChildSubRep);
+ ltypes.Add(SRpSList);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpSection(printitem).GetChildSubReportName);
  // External section
-// lnames.Add(SRpSExternalPath);
-// ltypes.Add(SRpSString);
-// if Assigned(lvalues) then
-//  lvalues.Add(TRpSection(printitem).ExternalFilename);
+ lnames.Add(SRpSExternalPath);
+ ltypes.Add(SRpSString);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpSection(printitem).ExternalFilename);
 end;
 
 procedure TRpSectionInterface.SetProperty(pname:string;value:Widestring);
 begin
- if length(value)<1 then
-  exit;
  if pname=SRpSAutoExpand then
  begin
   TRpSection(fprintitem).Autoexpand:=StrToBool(Value);
@@ -341,6 +345,11 @@ begin
    TRpSection(fprintitem).HorzDesp:=StrToBool(Value);
    exit;
   end;
+ end;
+ if pname=SRpChildSubRep then
+ begin
+  TRpSection(fprintitem).SetChildSubReportByName(Value);
+  exit;
  end;
  if pname=SRpSExternalPath then
  begin
@@ -409,6 +418,11 @@ begin
    exit;
   end;
  end;
+ if pname=SRpChildSubRep then
+ begin
+  Result:=TRpSection(fprintitem).GetChildSubReportName;
+  exit;
+ end;
  if pname=SRpSExternalPath then
  begin
   Result:=TRpSection(fprintitem).ExternalFileName;
@@ -416,6 +430,17 @@ begin
  end;
 
  Result:=inherited GetProperty(pname);
+end;
+
+procedure TRpSectionInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
+begin
+ if pname=SRpChildSubRep then
+ begin
+  TRpSection(printitem).GetChildSubReportPossibleValues(lpossiblevalues);
+  exit;
+ end;
+
+ inherited GetPropertyValues(pname,lpossiblevalues);
 end;
 
 

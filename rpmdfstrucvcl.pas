@@ -178,11 +178,11 @@ begin
  for i:=0 to Report.SubReports.Count-1 do
  begin
   subr:=Report.SubReports.Items[i].SubReport;
-  anew:=RView.Items.Add(nil,SRpSubReport);
+  anew:=RView.Items.Add(nil,subr.GetDisplayName);
   anew.data:=Report.SubReports.Items[i].SubReport;
   for j:=0 to subr.Sections.Count-1 do
   begin
-   child:=RView.Items.AddChild(anew,subr.Sections.Items[j].Section.SectionCaption);
+   child:=RView.Items.AddChild(anew,subr.Sections.Items[j].Section.SectionCaption(true));
    child.data:=subr.Sections.Items[j].Section;
   end;
  end;

@@ -33,7 +33,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.2';
+ RM_VERSION='1.2pre4';
 
 function TranslateStr(index:integer;defvalue:Widestring):WideString;
 
@@ -539,6 +539,7 @@ var
   SRpSExternalpath:WideString='External path';
   SRpGetFieldValue:WideString='Executes a query and returns the first field value';
   SRpPGetFieldValue:WideString='connname is the connection name, query is the sql query to execute';
+  SRpChildSubRep:WideString='Child Subreport';
 
 implementation
 
@@ -1070,6 +1071,7 @@ begin
  TranslateVar(830,SRpSExternalpath);
  TranslateVar(831,SRpGetFieldValue);
  TranslateVar(832,SRpPGetFieldValue);
+ TranslateVar(834,SRpChildSubRep);
 end;
 
 
