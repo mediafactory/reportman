@@ -23,13 +23,15 @@ interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
  rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview,
- rpexceldriver,rpfmainmetaviewvcl,rpmetafile,rptypes;
+ rpexceldriver,rpfmainmetaviewvcl,rpmetafile,rptypes,
+ rpgraphutilsvcl;
 
 type
  TVCLReport=class(TCBaseReport)
   private
   protected
    procedure InternalExecuteRemote(metafile:TRpMetafileReport);override;
+   procedure RemoteServerError(aMessage:WideString);override;
   public
    function Execute:boolean;override;
    procedure PrinterSetup;override;
@@ -154,5 +156,11 @@ begin
   end;
  end;
 end;
+
+procedure TVCLReport.RemoteServerError(aMessage:WideString);
+begin
+ RpMessageBox(aMessage);
+end;
+
 
 end.

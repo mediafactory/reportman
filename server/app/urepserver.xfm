@@ -22,13 +22,6 @@ object modserver: Tmodserver
     Left = 32
     Top = 12
   end
-  object UsMan: TIdUserManager
-    Accounts = <>
-    CaseSensitiveUsernames = False
-    CaseSensitivePasswords = True
-    Left = 220
-    Top = 12
-  end
   object ThreadMan: TIdThreadMgrPool
     PoolSize = 1
     Left = 112

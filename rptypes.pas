@@ -164,6 +164,10 @@ function RpBidiModeToString(BidiMode:TRpBidiMode):String;
 function StringToRpBidiMode(Value:String):TRpBidiMode;
 function DoReverseString(Value:String):String;
 function DoReverseStringW(Value:WideString):WideString;
+function GetLastname(astring:string):string;
+function GetPathName(astring:string):string;
+function GetFirstName(astring:string):string;
+
 
 {$IFNDEF USEVARIANTS}
 procedure RaiseLastOSError;
@@ -1448,6 +1452,59 @@ begin
   Result:=Value[i]+Result;
  end;
 end;
+
+function GetLastname(astring:string):string;
+var
+ j,index:integer;
+begin
+ j:=1;
+ index:=1;
+ while j<=Length(astring) do
+ begin
+  if astring[j]=C_DIRSEPARATOR then
+  begin
+   index:=j;
+  end;
+  inc(j);
+ end;
+ Result:=Copy(astring,index+1,Length(astring));
+end;
+
+function GetPathName(astring:string):string;
+var
+ j,index:integer;
+begin
+ j:=1;
+ index:=1;
+ while j<=Length(astring) do
+ begin
+  if astring[j]=C_DIRSEPARATOR then
+  begin
+   index:=j;
+  end;
+  inc(j);
+ end;
+ Result:=Copy(astring,1,index-1);
+end;
+
+function GetFirstName(astring:string):string;
+var
+ j,index:integer;
+begin
+ j:=1;
+ index:=Length(astring)+1;
+ while j<=Length(astring) do
+ begin
+  if astring[j]=C_DIRSEPARATOR then
+  begin
+   index:=j;
+   break;
+  end;
+  inc(j);
+ end;
+ Result:=Copy(astring,1,index-1);
+end;
+
 
 
 initialization

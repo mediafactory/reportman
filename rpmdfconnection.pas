@@ -205,6 +205,20 @@ procedure TFRpConnection.GDriverClick(Sender: TObject);
 begin
  if Not Assigned(FDatabaseInfo) then
   exit;
+ case GDriver.ItemIndex of
+  0:
+   MHelp.Lines.Text:=SRpDBExpressDesc;
+  1:
+   MHelp.Lines.Text:=SRpMyBaseDesc;
+  2:
+   MHelp.Lines.Text:=SRpIBXDesc;
+  3:
+   MHelp.Lines.Text:=SRpBDEDesc;
+  4:
+   MHelp.Lines.Text:=SRpADODesc;
+  5:
+   MHelp.Lines.Text:=SRpIBODesc;
+ end;
  // Loads the alias config
  case TrpDbDriver(GDriver.ItemIndex) of
   // DBExpress
@@ -228,7 +242,7 @@ begin
   // My Base
   rpdatamybase:
    begin
-    BConfig.Visible:=false;
+    BConfig.Visible:=True;
     ComboAvailable.Items.Clear;
    end;
   // BDE
@@ -288,7 +302,7 @@ end;
 
 procedure TFRpConnection.BConfigClick(Sender: TObject);
 begin
- ShowDBXConfig(TRpDbDriver(GDriver.ItemIndex) in [rpdataibx,rpdataibo]);
+ ShowDBXConfig(TRpDbDriver(GDriver.ItemIndex) in [rpdataibx,rpdataibo,rpdatamybase]);
  conadmin.free;
  conadmin:=TRPCOnnAdmin.Create;
  conadmin.GetConnectionNames(ComboAvailable.Items,'');

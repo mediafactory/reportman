@@ -70,6 +70,8 @@ type
     Label1: TLabel;
     Button1: TButton;
     BTest: TButton;
+    BCreateLib: TButton;
+    BBrowse: TButton;
     procedure FormCreate(Sender: TObject);
     procedure ANewParamExecute(Sender: TObject);
     procedure LAliasesClick(Sender: TObject);
@@ -80,6 +82,8 @@ type
     procedure BConfigClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure BTestClick(Sender: TObject);
+    procedure BCreateLibClick(Sender: TObject);
+    procedure BBrowseClick(Sender: TObject);
   private
     { Private declarations }
     rpalias1:TRpAlias;
@@ -93,6 +97,8 @@ function ShowModifyConnections(Connections:TRpDatabaseInfoList):Boolean;
 
 
 implementation
+
+uses rpmdfopenlibvcl;
 
 {$R *.DFM}
 
@@ -285,7 +291,7 @@ end;
 
 procedure TFRpEditConVCL.BConfigClick(Sender: TObject);
 begin
- ShowDBXConfig(TRpDbDriver(ComboDriver.ItemIndex) in [rpdataibx,rpdataibo]);
+ ShowDBXConfig(TRpDbDriver(ComboDriver.ItemIndex) in [rpdataibx,rpdataibo,rpdatamybase]);
  conadmin.free;
  conadmin:=TRPCOnnAdmin.Create;
 // conadmin.GetConnectionNames(ComboAvailable.Items,'');
@@ -311,6 +317,32 @@ begin
  finally
   dbinfo.DisConnect;
  end;
+end;
+
+procedure TFRpEditConVCL.BCreateLibClick(Sender: TObject);
+var
+ dbitem:TRpDatabaseinfoItem;
+begin
+ // Change any data
+ if LConnections.Items.Count<1 then
+  exit;
+ if LConnections.ItemIndex<0 then
+  exit;
+ dbitem:=rpalias1.Connections.Items[LConnections.ItemIndex];
+ dbitem.CreateLibrary(dbitem.ReportTable,dbitem.ReportField,dbitem.ReportSearchField,dbitem.ReportGroupsTable);
+end;
+
+procedure TFRpEditConVCL.BBrowseClick(Sender: TObject);
+var
+ dbitem:TRpDatabaseinfoItem;
+begin
+ // Change any data
+ if LConnections.Items.Count<1 then
+  exit;
+ if LConnections.ItemIndex<0 then
+  exit;
+ dbitem:=rpalias1.Connections.Items[LConnections.ItemIndex];
+ SelectReportFromLibrary(dbitem);
 end;
 
 end.

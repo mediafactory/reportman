@@ -5,4 +5,6 @@ rp_lasterror
 rp_execute
 rp_close
 rp_open
-
+rp_executeremote
+rp_printremote
+rp_previewremote

@@ -26,7 +26,11 @@ interface
 {$I rpconf.inc}
 
 uses
-  SysUtils, Classes, IdUserAccounts, IdThreadMgr, IdThreadMgrDefault,
+  SysUtils, Classes,
+{$IFNDEF USEVARIANS}
+ Forms,FileCtrl,
+{$ENDIF}
+  IdThreadMgr, IdThreadMgrDefault,
   IdBaseComponent, IdComponent,rpmdconsts,SyncObjs,
   IdTCPServer,
 {$IFDEF USEBDE}
@@ -70,7 +74,6 @@ type
 
   Tmodserver = class(TDataModule)
     RepServer: TIdTCPServer;
-    UsMan: TIdUserManager;
     ThreadMan: TIdThreadMgrPool;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
@@ -105,7 +108,12 @@ procedure StopServer(modserver:TModServer);
 
 implementation
 
+{$IFNDEF USEVARIANS}
+{$R *.dfm}
+{$ENDIF}
+{$IFDEF USEVARIANS}
 {$R *.xfm}
+{$ENDIF}
 
 procedure TRpClient.CreateReport;
 begin
@@ -236,9 +244,11 @@ begin
  fport:=3060;
  Clients:=TTHreadList.Create;
  LAliases:=TStringList.Create;
- LAliases.CaseSensitive:=false;
  LUsers:=TStringList.Create;
+{$IFDEF USEVARIANS}
+ LAliases.CaseSensitive:=false;
  LUsers.CaseSensitive:=false;
+{$ENDIF}
  // Creates the event
  eventname:='REPORTMANRUNNINGEVENT';
  FInitEvent:=TEvent.Create(nil,false,true,eventname);
@@ -287,7 +297,9 @@ begin
  try
   laliases.clear;
   lusers.clear;
+{$IFDEF USEVARIANS}
   inif.CaseSensitive:=false;
+{$ENDIF}
   fport:=inif.ReadInteger('CONFIG','TCPPORT',3060);
   inif.ReadSectionValues('USERS',lusers);
   inif.ReadSectionValues('ALIASES',laliases);
@@ -342,7 +354,9 @@ begin
   try
    if lusers.IndexOfName('ADMIN')<0 then
     lusers.Add('ADMIN=');
+{$IFDEF USEVARIANTS}
    inif.CaseSensitive:=false;
+{$ENDIF}
    inif.EraseSection('USERS');
    adups.clear;
    for i:=0 to lusers.Count-1 do
@@ -449,7 +463,7 @@ begin
         index:=LUsers.IndexOfName(username);
         if index>=0 then
         begin
-         If LUsers.ValueFromIndex[index]=password then
+         If LUsers.Values[LUsers.Names[index]]=password then
          begin
           correct:=true;
          end;
@@ -491,6 +505,8 @@ begin
       end;
      repgetusers:
       begin
+       if Not ActClient.Auth then
+        Raise Exception.Create(SRpAuthFailed);
        if ActClient.IsAdmin then
        begin
         alist:=TStringList.Create;
@@ -519,6 +535,8 @@ begin
       end;
      repaddalias:
       begin
+       if Not ActClient.Auth then
+        Raise Exception.Create(SRpAuthFailed);
        // Add a alias (only admin)
        if ActClient.IsAdmin then
        begin
@@ -570,6 +588,8 @@ begin
       end;
      repadduser:
       begin
+       if Not ActClient.Auth then
+        Raise Exception.Create(SRpAuthFailed);
        // Add a alias (only admin)
        if ActClient.IsAdmin then
        begin
@@ -594,6 +614,8 @@ begin
       end;
      repdeleteuser:
       begin
+       if Not ActClient.Auth then
+        Raise Exception.Create(SRpAuthFailed);
        // Add a alias (only admin)
        if ActClient.IsAdmin then
        begin
@@ -649,6 +671,8 @@ begin
       end;
      repgetparams:
       begin
+       if Not ActClient.Auth then
+        Raise Exception.Create(SRpAuthFailed);
        if Assigned(ActClient.CurrentReport) then
        begin
         astream.clear;
@@ -675,6 +699,8 @@ begin
       end;
      repsetparams:
       begin
+       if Not ActClient.Auth then
+        Raise Exception.Create(SRpAuthFailed);
        if Assigned(ActClient.CurrentReport) then
        begin
         acompo:=TRpParamcomp.Create(nil);
@@ -705,6 +731,8 @@ begin
       end;
      repexecutereportmeta:
       begin
+       if Not ActClient.Auth then
+        Raise Exception.Create(SRpAuthFailed);
        alist:=TStringList.Create;
        try
         alist.LoadFromStream(astream);
@@ -740,6 +768,8 @@ begin
       end;
      repexecutereportpdf:
       begin
+       if Not ActClient.Auth then
+        Raise Exception.Create(SRpAuthFailed);
        alist:=TStringList.Create;
        try
         alist.LoadFromStream(astream);
@@ -774,6 +804,8 @@ begin
       end;
      repgettree:
       begin
+       if Not ActClient.Auth then
+        Raise Exception.Create(SRpAuthFailed);
        alist:=TStringList.Create;
        try
         alist.LoadFromStream(astream);

@@ -115,6 +115,7 @@ end;
 
 procedure TFRpDInfo.BOkClick(Sender: TObject);
 begin
+ fdatasets.Databaseinfo:=fconnections.Databaseinfo;
  freport.DatabaseInfo.Assign(fdatasets.Databaseinfo);
  freport.DataInfo.Assign(fdatasets.Datainfo);
  freport.Params.Assign(fdatasets.Params);

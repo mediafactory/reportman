@@ -41,19 +41,19 @@ requires
   adortl,
   ibxpress,
   vcljpg,
-  vcl;
+  vcl,
+  indy,
+  tee;
 
 contains
   rpmregdesign in 'rpmregdesign.pas',
   rpmdesigner in 'rpmdesigner.pas',
-  rpmdfabout in 'rpmdfabout.pas' {FRpAboutBox},
   rpmdfdinfo in 'rpmdfdinfo.pas' {FRpDInfoconfig},
   rpmdfdatasets in 'rpmdfdatasets.pas' {FRpDatasets},
   rpmdfconnection in 'rpmdfconnection.pas' {FRpConnection},
   rpmdfdesign in 'rpmdfdesign.pas' {FRpDesignFrame: TFrame},
   rpmdfdrawint in 'rpmdfdrawint.pas',
   rpmdfgrid in 'rpmdfgrid.pas' {FRpGridOptions},
-  rpmdfhelpform in 'rpmdfhelpform.pas' {FRpHelpForm},
   rpmdflabelint in 'rpmdflabelint.pas',
   rpmdfmain in 'rpmdfmain.pas' {FRpMainF},
   rpmdfsampledata in 'rpmdfsampledata.pas' {FRpShowSampledata},
@@ -63,8 +63,9 @@ contains
   rpmdobjinsp in 'rpmdobjinsp.pas' {FRpObjInsp: TFrame},
   rpmdfbarcodeint in 'rpmdfbarcodeint.pas',
   rpmdfchartint in 'rpmdfchartint.pas',
-  rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig},
   rppagesetup in 'rppagesetup.pas' {FRpPageSetup},
-  rpmdfextsec in 'rpmdfextsec.pas' {FRpExtSection};
+  rpmdfextsec in 'rpmdfextsec.pas' {FRpExtSection},
+  rpmdsysinfoqt in 'rpmdsysinfoqt.pas' {FRpSysInfo},
+  rpmdfdatatext in 'rpmdfdatatext.pas' {FRpDataText};
 
 end.

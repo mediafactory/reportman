@@ -36,6 +36,7 @@ type
    FAsMetafile:Boolean;
   protected
    procedure InternalExecuteRemote(metafile:TRpMetafileReport);override;
+   procedure RemoteServerError(aMessage:WideString);override;
   public
    function Execute:boolean;override;
    procedure PrinterSetup;override;
@@ -143,5 +144,14 @@ begin
   metafile.SaveToFile(FPDFFilename);
  end;
 end;
+
+procedure TPDFReport.RemoteServerError(aMessage:WideString);
+var
+ astring:String;
+begin
+ astring:=aMessage;
+ Writeln(astring);
+end;
+
 
 end.

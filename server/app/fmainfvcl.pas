@@ -22,8 +22,14 @@ unit fmainfvcl;
 
 interface
 
+{$I rpconf.inc}
+
 uses
-  SysUtils, Types, Classes, Variants,  Graphics, Controls, Forms,
+  SysUtils,
+{$IFDEF USEVARIANTS}
+  Types,Variants,
+{$ENDIF}
+   Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, rptranslator,urepserver,rpmdconsts,  ExtCtrls;
 
 type

@@ -41,7 +41,7 @@ uses
   rpmdconsts,rptypes, rpsubreport,
   IniFiles,
   rpsection,rpprintitem,
-  DB,rpmunits,rpgraphutilsvcl,rpmdfwizardvcl;
+  DB,rpmunits,rpgraphutilsvcl,rpmdfwizardvcl, rpalias;
 
 const
   // File name in menu width
@@ -215,6 +215,10 @@ type
     Nativedriver1: TMenuItem;
     ASysInfo: TAction;
     Systeminformation1: TMenuItem;
+    RpAlias1: TRpAlias;
+    ALibraries: TAction;
+    N6: TMenuItem;
+    Libraries1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -274,12 +278,13 @@ type
     procedure ADriverPDFExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ASysInfoExecute(Sender: TObject);
+    procedure ALibrariesExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrameVCL;
     fobjinsp:TFRpObjInspVCL;
     lastsaved:TMemoryStream;
-    configfile:string;
+    configfile,configfilelib:string;
     updatedmfields:boolean;
     oldonException:TExceptionEvent;
     oldonhint:TNotifyEvent;
@@ -319,7 +324,7 @@ var
 
 implementation
 
-uses rpfmainmetaviewvcl, rpmdsysinfo;
+uses rpfmainmetaviewvcl, rpmdsysinfo, rpeditconnvcl;
 
 
 {$R *.dfm}
@@ -674,6 +679,7 @@ begin
 
  Application.Title:=SRpRepman;
  configfile:=Obtainininameuserconfig('','','repmand');
+ configfilelib:=Obtainininameuserconfig('','','repmandlib');
   LastUsedFiles.CaseSensitive:=False;
   // Visible driver selection
  LastUsedFiles.LoadFromConfigFile(configfile);
@@ -1305,6 +1311,8 @@ begin
   AUnitsinchess.Checked:=Not AUnitCms.Checked;
   UpdateStyle;
   UpdateUnits;
+  // Read library configuration
+  RpAlias1.Connections.LoadFromFile(configfilelib);
  finally
   inif.free;
  end;
@@ -1326,6 +1334,7 @@ begin
  finally
   inif.free;
  end;
+ RpAlias1.Connections.SaveToFile(configfilelib);
 end;
 
 
@@ -1643,5 +1652,11 @@ begin
  RpShowSystemInfo;
 end;
 
+
+procedure TFRpMainFVCL.ALibrariesExecute(Sender: TObject);
+begin
+ ShowModifyConnections(RPalias1.Connections);
+ SaveConfig;
+end;
 
 end.

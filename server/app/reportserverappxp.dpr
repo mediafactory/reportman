@@ -21,9 +21,13 @@ program reportserverappxp;
 
 {%ToDo 'reportserverappxp.todo'}
 
+{$I rpconf.inc}
+
 uses
   Forms,
+{$IFDEF USEVARIANTS}
   midaslib,
+{$ENDIF}
   fmainfvcl in 'fmainfvcl.pas' {FSerMainVCL},
   urepserver in 'urepserver.pas' {modserver: TDataModule},
   rpmdprotocol in '..\..\rpmdprotocol.pas';

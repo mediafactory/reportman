@@ -22,7 +22,7 @@ program repmandxp;
 
 uses
   Forms,
-{$IFDEF USEVARIANTS}
+{$IFDEF USEVARIANS}
   midaslib,
 {$ENDIF}
   rpmdfmainvcl in '..\rpmdfmainvcl.pas' {FRpMainFVCL},
@@ -93,7 +93,10 @@ uses
   rpmdfdatasetsvcl in '..\rpmdfdatasetsvcl.pas' {FRpDatasetsVCL: TFrame},
   rpfmetaviewvcl in '..\rpfmetaviewvcl.pas' {FRpMetaVCL},
   rpfmainmetaviewvcl in '..\rpfmainmetaviewvcl.pas' {FRpMainMetaVCL},
-  rpmdsysinfo in '..\rpmdsysinfo.pas' {FRpSysInfo};
+  rpmdsysinfo in '..\rpmdsysinfo.pas' {FRpSysInfo},
+  rpeditconnvcl in '..\rpeditconnvcl.pas' {FRpEditConVCL},
+  rpmdftreevcl in '..\rpmdftreevcl.pas' {FRpDBTreeVCL: TFrame},
+  rpmdfopenlibvcl in '..\rpmdfopenlibvcl.pas' {FRpOpenLibVCL};
 
 {$R *.res}
 

@@ -8,7 +8,7 @@
 {       Routines and main interface to implement        }
 {       the report client                               }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -100,8 +100,10 @@ type
    FEndreport:TEvent;
    syncexec:boolean;
    errormessage:widestring;
+   freemod:boolean;
    procedure HandleInput;
    procedure DoErrorMessage;
+   procedure DoFreeMod;
   protected
    procedure Execute; override;
   end;
@@ -214,6 +216,12 @@ begin
  end;
 end;
 
+procedure TRpClientHandleThread.DoFreeMod;
+begin
+ amod.free;
+ amod:=nil;
+end;
+
 procedure TRpClientHandleThread.Execute;
 begin
  data:=TMemoryStream.Create;
@@ -266,6 +274,11 @@ begin
  finally
   data.free;
  end;
+ if FreeMod then
+  if assigned(amod) then
+  begin
+   Synchronize(Dofreemod);
+  end;
 end;
 
 
@@ -305,7 +318,7 @@ procedure Disconnect(amod:TModClient);
 begin
  if amod.RepClient.Connected then
   amod.RepClient.Disconnect;
- amod.free;
+ amod.ClientHandleThread.FreeMod:=true;
 end;
 
 

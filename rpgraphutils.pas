@@ -595,59 +595,6 @@ end;
 
 
 
-function getfirstname(astring:string):string;
-var
- j,index:integer;
-begin
- j:=1;
- index:=Length(astring)+1;
- while j<=Length(astring) do
- begin
-  if astring[j]=C_DIRSEPARATOR then
-  begin
-   index:=j;
-   break;
-  end;
-  inc(j);
- end;
- Result:=Copy(astring,1,index-1);
-end;
-
-function getpathname(astring:string):string;
-var
- j,index:integer;
-begin
- j:=1;
- index:=1;
- while j<=Length(astring) do
- begin
-  if astring[j]=C_DIRSEPARATOR then
-  begin
-   index:=j;
-  end;
-  inc(j);
- end;
- Result:=Copy(astring,1,index-1);
-end;
-
-function getlastname(astring:string):string;
-var
- j,index:integer;
-begin
- j:=1;
- index:=1;
- while j<=Length(astring) do
- begin
-  if astring[j]=C_DIRSEPARATOR then
-  begin
-   index:=j;
-  end;
-  inc(j);
- end;
- Result:=Copy(astring,index+1,Length(astring));
-end;
-
-
 function SearchnodeInt(ATree:TTreeView;astring:String;anode:TTreeNode):TTreeNode;
 var
  i:integer;

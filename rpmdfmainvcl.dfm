@@ -4,7 +4,7 @@ object FRpMainFVCL: TFRpMainFVCL
   Width = 541
   Height = 451
   Caption = 'Report Manager Designer'
-  Color = clAppWorkSpace
+  Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -2351,6 +2351,12 @@ object FRpMainFVCL: TFRpMainFVCL
       Hint = 'Shows system and printer information'
       OnExecute = ASysInfoExecute
     end
+    object ALibraries: TAction
+      Category = 'File'
+      Caption = 'Libraries...'
+      Hint = 'Open report libraries dialog'
+      OnExecute = ALibrariesExecute
+    end
   end
   object Lastusedfiles: TRpLastUsedStrings
     HistoryCount = 7
@@ -2380,6 +2386,12 @@ object FRpMainFVCL: TFRpMainFVCL
       end
       object Open1: TMenuItem
         Action = AOpen
+      end
+      object N6: TMenuItem
+        Caption = '-'
+      end
+      object Libraries1: TMenuItem
+        Action = ALibraries
       end
       object N1: TMenuItem
         Caption = '-'
@@ -2610,5 +2622,11 @@ object FRpMainFVCL: TFRpMainFVCL
     DefaultExt = 'rep'
     Left = 292
     Top = 140
+  end
+  object RpAlias1: TRpAlias
+    List = <>
+    Connections = <>
+    Left = 136
+    Top = 142
   end
 end

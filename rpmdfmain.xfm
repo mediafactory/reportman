@@ -2267,6 +2267,12 @@ object FRpMainF: TFRpMainF
     Left = 240
     Top = 144
   end
+  object RpAlias1: TRpAlias
+    List = <>
+    Connections = <>
+    Left = 136
+    Top = 142
+  end
   object OpenDialog1: TOpenDialog
     DefaultExt = 'rep'
     FileName = '*.rep'

@@ -23,7 +23,7 @@ object FSerMainVCL: TFSerMainVCL
     Left = 0
     Top = 149
     Width = 536
-    Height = 171
+    Height = 178
     Align = alClient
     ReadOnly = True
     ScrollBars = ssBoth
@@ -37,9 +37,6 @@ object FSerMainVCL: TFSerMainVCL
     Height = 149
     Align = alTop
     TabOrder = 1
-    DesignSize = (
-      536
-      149)
     object LLog: TLabel
       Left = 8
       Top = 72

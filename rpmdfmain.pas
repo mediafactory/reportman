@@ -217,6 +217,7 @@ type
     MPDFGDIDriver: TMenuItem;
     ASysInfo: TAction;
     Systeminformation1: TMenuItem;
+    RpAlias1: TRpAlias;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -284,7 +285,7 @@ type
     fhelp:TFRpHelpform;
     fobjinsp:TFRpObjInsp;
     lastsaved:TMemoryStream;
-    configfile:string;
+    configfile,configfilelib:string;
     updatedmfields:boolean;
     AppStyle:TDefaultStyle;
     oldappidle:TIdleEvent;
@@ -700,6 +701,7 @@ begin
 
  Application.Title:=SRpRepman;
  configfile:=Obtainininameuserconfig('','','repmand');
+ configfilelib:=Obtainininameuserconfig('','','repmandlib');
 {$IFDEF MSWINDOWS}
   LastUsedFiles.CaseSensitive:=False;
   // Visible driver selection
@@ -1503,6 +1505,8 @@ begin
   AppStyle:=TDefaultStyle(inif.ReadInteger('Preferences','QtStyle',Integer(dsSystemDefault)));
   UpdateStyle;
   UpdateUnits;
+  // Read library configuration
+  RpAlias1.Connections.LoadFromFile(configfilelib);
  finally
   inif.free;
  end;

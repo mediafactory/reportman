@@ -7,7 +7,7 @@
 {       supports drivers qt and gdi in Windows          }
 {                                                       }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -28,7 +28,7 @@ uses Classes,Sysutils,rpreport,
 {$IFDEF HORZPAPERBUG}
  rpmetafile,
 {$ENDIF}
- QPrinters,rpqtdriver,rppreview,rprfparams,
+ QPrinters,rpqtdriver,rppreview,rprfparams,rpgraphutils,
 {$IFDEF MSWINDOWS}
  rpgdidriver,Printers,Dialogs,rprfvparams,rpvpreview,rpfmainmetaviewvcl,
 {$ENDIF}
@@ -44,6 +44,7 @@ type
    FDriver:TRpPrintDriver;
   protected
    procedure InternalExecuteRemote(metafile:TRpMetafileReport);override;
+   procedure RemoteServerError(aMessage:WideString);override;
   public
    function Execute:boolean;override;
    procedure PrinterSetup;override;
@@ -300,7 +301,9 @@ begin
 end;
 
 
-
-
+procedure TCLXReport.RemoteServerError(aMessage:WideString);
+begin
+ RpMessageBox(aMessage);
+end;
 
 end.

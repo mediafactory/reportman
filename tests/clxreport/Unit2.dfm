@@ -47,11 +47,21 @@ object Form1: TForm1
     TabOrder = 2
     OnClick = Button2Click
   end
+  object Button3: TButton
+    Left = 320
+    Top = 164
+    Width = 77
+    Height = 49
+    Caption = 'Button3'
+    TabOrder = 3
+    OnClick = Button3Click
+  end
   object VCLReport1: TVCLReport
     Filename = 'sample4.rep'
     Title = 'Untitled'
     Left = 32
     Top = 60
+    ReportName = ''
   end
   object Table1: TTable
     Active = True
@@ -67,5 +77,6 @@ object Form1: TForm1
     Copies = 1
     Left = 256
     Top = 164
+    ReportName = ''
   end
 end

@@ -157,6 +157,7 @@ type
    function GetStreamFromSQL(sqlsentence:String;params:TStringList):TStream;
    procedure GetTableNames(Alist:TStrings);
    function OpenDatasetFromSQL(sqlsentence:String;params:TStringList;onlyexec:Boolean):TDataset;
+   procedure CreateLibrary(reporttable,reportfield,reportsearchfield,groupstable:String);
 {$IFDEF USEADO}
    property ADOConnection:TADOConnection read GetADOConnection write SetADOConnection;
 {$ENDIF}
@@ -2494,6 +2495,20 @@ begin
  finally
   inif.free;
  end;
+end;
+
+procedure TRpDatabaseInfoItem.CreateLibrary(reporttable,reportfield,reportsearchfield,groupstable:String);
+var
+ astring:String;
+begin
+ // Creates the library
+ astring:='CREATE TABLE '+reporttable+' ('+reportsearchfield+' VARCHAR(50) NOT NULL,'+
+  reportfield+' BLOB,REPORT_GROUP INTEGER,USER_FLAG INTEGER,PRIMARY KEY ('+reportsearchfield+'))';
+ OpenDatasetFromSQL(astring,nil,true);
+ astring:='CREATE TABLE REPMAN_GROUPS (GROUP_CODE INTEGER NOT NULL,'+
+  'GROUP_NAME VARCHAR(50),PARENT_GROUP INTEGER NOT NULL,'+
+  'PRIMARY KEY (GROUP_CODE))';
+ OpenDatasetFromSQL(astring,nil,true);
 end;
 
 

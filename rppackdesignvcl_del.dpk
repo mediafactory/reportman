@@ -38,14 +38,15 @@ requires
   dbexpress,
   adortl,
   ibxpress,
-  vcljpg;
+  vcljpg,
+  indy,
+  tee;
 
 contains
   rpmdesignervcl in 'rpmdesignervcl.pas',
   rpmregdesignvcl in 'rpmregdesignvcl.pas',
   rpmdobjinspvcl in 'rpmdobjinspvcl.pas' {FRpObjInspVCL: TFrame},
   rpdbxconfigvcl in 'rpdbxconfigvcl.pas' {FRpDBXConfigVCL},
-  rpmdfaboutvcl in 'rpmdfaboutvcl.pas' {FRpAboutBoxVCL},
   rpmdfbarcodeintvcl in 'rpmdfbarcodeintvcl.pas',
   rpmdfchartintvcl in 'rpmdfchartintvcl.pas',
   rpmdfdinfovcl in 'rpmdfdinfovcl.pas' {FRpDatainfoconfigVCL},
@@ -62,7 +63,9 @@ contains
   rpfparamsvcl in 'rpfparamsvcl.pas' {FRpParamsVCL},
   rpmdfextsecvcl in 'rpmdfextsecvcl.pas' {FRpExtSectionVCL},
   rpmdfconnectionvcl in 'rpmdfconnectionvcl.pas' {FRpConnectionVCL: TFrame},
-  rpmdfwizardvcl in 'rpmdfwizardvcl.pas' {FRpWizardVCL};
+  rpmdfwizardvcl in 'rpmdfwizardvcl.pas' {FRpWizardVCL},
+  rpmdsysinfo in 'rpmdsysinfo.pas' {FRpSysInfo},
+  rpmdfdatatextvcl in 'rpmdfdatatextvcl.pas' {FRpDataTextVCL},
+  rpwebmetaclient in 'rpwebmetaclient.pas';
 
 end.
-a

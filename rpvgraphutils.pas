@@ -26,6 +26,15 @@ uses Classes,SysUtils,Windows,Graphics,rpmunits,Printers,WinSpool,
  rpmdconsts,rptypes,Forms,ComCtrls,jpeg;
 
 type
+ TRpNodeInfo=class(TObject)
+  public
+   Node:TTreeNode;
+   ReportName:String;
+   Group_Code:Integer;
+   Parent_Group:integer;
+   Path:String;
+  end;
+
  TGDIPageSize=record
   // -1 default, 0 user defined, 1 A4...
   PageIndex:integer;
@@ -53,7 +62,7 @@ function GetPageSizeTwips:TPoint;
 function GetPageMarginsTWIPS:TRect;
 function QtPageSizeToGDIPageSize (qtsize:TPageSizeQt):TGDIPageSize;
 function GDIPageSizeToQtPageSize (gdisize:TGDIPageSize):TPageSizeQt;
-function FindIndexPaperName (device, name:string):integer;
+//function FindIndexPaperName (device, name:string):integer;
 procedure SetCurrentPaper (apapersize:TGDIPageSize);
 procedure SetPrinterCopies(copies:integer);
 procedure SetPrinterCollation(collation:boolean);
@@ -66,9 +75,8 @@ procedure SendControlCodeToPrinter (S: string);
 procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
 function FindFormNameFromSize(width,height:integer):String;
 function PrinterMaxCopiesSupport:Integer;
-
-var
- formslist:TStringlist;
+procedure FillTreeView (ATree:TTreeView;alist:TStringList);
+function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
 
 
 implementation
@@ -738,7 +746,7 @@ begin
  end;
 end;
 
-procedure FillFormsList;
+{procedure FillFormsList(FormsList:TStringList);
 var
  pforms,p:^Form_info_1;
  buf:Pchar;
@@ -787,7 +795,7 @@ begin
   end;
  end;
 end;
-
+}
 function PrinterSupportsCollation:Boolean;
 var
   DeviceMode: THandle;
@@ -1032,7 +1040,6 @@ var
   pforminfo:^Form_info_1;
   foundpaper:boolean;
   needed:DWord;
-  indexpaper:integer;
   printererror:boolean;
   Device, Driver, Port: array[0..1023] of char;
   laste:integer;
@@ -1126,29 +1133,14 @@ begin
          Raise;
         end;
        end;
-       // Updates the form list
-       FillFormsList;
       end;
      finally
       freemem(pforminfo);
      end;
-     FillFormsList;
-     indexpaper:=FindIndexPaperName(printername,apapername);
-     if indexpaper=0 then
-     begin
-      FillFormsList;
-      indexpaper:=FindIndexPaperName(printername,apapername);
-      if indexpaper=0 then
-       Raise Exception.Create(SRpPaperNotFount+':'+apapername);
-     end;
-     // Seleccionem per fi
-     PDevMode.dmPaperSize :=indexpaper;
-     PDevMode.dmPaperlength := apapersize.height;
-     PDevMode.dmPaperwidth  := apapersize.Width;
-      // It can also selected by name
- //      StrPCopy(PDevMode.dmFormName,apapername);
-//      PDevMode.dmFields:=PDevMode.dmFields or dm_formname;
-//      PDevMode.dmFields:=PDevMode.dmFields AND (NOT dm_papersize);
+     // Select by name
+     StrPCopy(PDevMode.dmFormName,apapername);
+     PDevMode.dmFields:=PDevMode.dmFields or dm_formname;
+     PDevMode.dmFields:=PDevMode.dmFields AND (NOT dm_papersize);
     finally
      ClosePrinter(FPrinterhandle);
     end;
@@ -1176,7 +1168,7 @@ begin
 end;
 
 
-function FindIndexPaperName(device,name:string):integer;
+{function FindIndexPaperName(device,name:string):integer;
 var
  index:integer;
  llista:TStringList;
@@ -1191,10 +1183,10 @@ begin
   exit;
  result:=index+1;
 end;
+}
 
 
-
-procedure FreeFormsList;
+{procedure FreeFormsList;
 var
  i:integer;
  j:integer;
@@ -1211,7 +1203,7 @@ begin
  end;
  FormsList.clear;
 end;
-
+}
 procedure SendControlCodeToPrinter(S: string);
 var
  Handle, hDeviceMode: THandle;
@@ -1254,21 +1246,103 @@ begin
  end;
 end;
 
+function SearchnodeInt(ATree:TTreeView;astring:String;anode:TTreeNode):TTreeNode;
+var
+ i:integer;
+ firstname:string;
+begin
+ firstname:=GetFirstName(astring);
+ Result:=nil;
+ for i:=0 to anode.Count-1 do
+ begin
+  if firstname=anode.Item[i].Text then
+  begin
+   if firstname=astring then
+   begin
+    Result:=anode.Item[i];
+   end
+   else
+    Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),anode.Item[i]);
+  end;
+ end;
+ if Not Assigned(Result) then
+ begin
+  Result:=ATree.Items.AddChild(anode,firstname);
+  Result.ImageIndex:=2;
+  if firstname<>astring then
+  begin
+   Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),Result);
+  end;
+ end;
+end;
+
+function Searchnode(FTopItems:TStringList;ATree:TTreeView;astring:String):TTreeNode;
+var
+ i:integer;
+ firstname:string;
+begin
+ firstname:=GetFirstName(astring);
+ Result:=nil;
+ for i:=0 to FTopItems.Count-1 do
+ begin
+  if firstname=FTopItems.Strings[i] then
+  begin
+   if firstname=astring then
+   begin
+    Result:=TTreeNode(FTopItems.Objects[i]);
+   end
+   else
+    Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),TTreeNode(FTopItems.Objects[i]));
+  end;
+ end;
+ if Not Assigned(Result) then
+ begin
+  Result:=ATree.Items.AddChild(nil,firstname);
+  Result.ImageIndex:=2;
+  FTopItems.AddObject(firstname,Result);
+  if firstname<>astring then
+  begin
+   Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),Result);
+  end;
+ end;
+end;
 
 
-initialization
 
-formslist:=TStringList.Create;
-if IsWindowsNT then
- FillFormsList;
-FPrinters:=nil;
+procedure FillTreeView(ATree:TTreeView;alist:TStringList);
+var
+ newitem,anode:TTreeNode;
+ astring:string;
+ repname,dirname:String;
+ i:integer;
+ FTopItems:TStringList;
+begin
+ FTopitems:=TStringList.Create;
+ try
+  for i:=0 to alist.count-1 do
+  begin
+   if Length(alist.Strings[i])<1 then
+    continue;
+   astring:=alist.Strings[i];
+   repname:=GetLastName(astring);
+   dirname:=GetPathName(astring);
+   anode:=SearchNode(FTopItems,ATree,dirname);
+   newitem:=ATree.Items.AddChild(anode,repname);
+   newitem.ImageIndex:=3;
+  end;
+ finally
+  FTopItems.Free;
+ end;
+end;
 
-finalization
 
-if IsWindowsNT then
- FreeFormsList;
-FormsList.Free;
-
+function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
+begin
+ if Assigned(ANode.Parent) then
+  Result:=GetFullFileName(ANode.Parent,dirseparator)+dirseparator+ANode.Text
+ else
+  Result:=ANode.Text;
+end;
 
 
 end.
