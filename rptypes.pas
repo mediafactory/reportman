@@ -510,7 +510,7 @@ end;
 
 function VarIsNumber(avar:Variant):Boolean;
 begin
- Result:=(Vartype(avar) in [varSmallInt..VarCurrency,varWord,varByte]);
+ Result:=(Vartype(avar) in [varSmallInt..VarCurrency,varWord,varByte,varShortInt..varInt64]);
 end;
 
 function VarIsInteger(avar:Variant):Boolean;

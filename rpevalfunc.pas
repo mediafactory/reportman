@@ -763,11 +763,11 @@ begin
  case Vartype(Params[0]) of
   varSmallInt..varDate:
    begin
-    Result:=Int(Double(Params[0]))
+    Result:=Trunc(Int(Double(Params[0])));
    end;
   varVariant:
    begin
-    Result:=Int(Double(Params[0]))
+    Result:=Trunc(Int(Double(Params[0])));
    end;
   else
    Raise TRpNamedException.Create(SRpEvalType,
@@ -1337,7 +1337,7 @@ end;
 function TIdenMonthname.GeTRpValue:TRpValue;
 var any,mes,dia:Word;
 begin
- if varIsInteger(Params[0]) then
+ if varIsNumber(Params[0]) then
  begin
   Mes:=integer(Params[0]);
   if (not (mes in [1..12])) then

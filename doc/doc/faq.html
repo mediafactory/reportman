@@ -8,10 +8,10 @@
 <h3><b>Report Manager Frequently Asked Questions</b></h3>
 <p><b>Q. Why does my report show only one record?</b></p>
 <p>You must assign main dataset property of your subreport to a dataset. Because 
-  you can open as many datasets as you want you must say the engine wich is the 
+  you can open as many datasets as you want you must say the engine which is the 
   dataset for the subreport printing procedure.</p>
-<p><strong>Q. I have some problem where can I find a user group for this tool?</strong></p>
-<p>You should use the reportman group at yahoo groups, there you will find other 
+<p><strong>Q. I have some problem, where can I find a user group for this tool?</strong></p>
+<p>You should use the reportman group at yahoo groups, there, you will find other 
   Report Manager users. Do not e-mail directly to the author unless you want to 
   contract paid support.</p>
 <p><strong>Q. Can I contribute to Report Manager project?</strong></p>
@@ -19,21 +19,22 @@
   bugs, bufixes ideas etc, use reportman group at yahoo groups for this tasks. 
   You can also contract the author services and pay for new features.</p>
 <p><b>Q. Wich development environments supports the engine?</b> </p>
-<p>A. <code>In <b>native mode</b> (linked inside the executable or as a borland 
+<p>A.
+<p>a) <code>In <b>native mode</b> (linked inside the executable or as a Borland 
   package):<br>
   - Delphi 4,5 Enterprise. Delphi 6 Professional, Delphi 6 Enterprise. Delphi 
   7 Desktop, Delphi 7 Enterprise, Delphi 7 Architech.<br>
   - C++Builder 4,5 Enterprise. C++Builder 6 Professional, C++Builder6 Enterprise.<br>
   - Kylix 1,2,3 Desktop and Enterprise. Kylix 1,2,3 Open Edition-FreeCLX.<br>
-  In <b>ActiveX mode</b> (distribution of Reportman.ocx-Windows only needed):<br>
+  b) . In <b>ActiveX mode</b> (distribution of Reportman.ocx-Windows only needed):<br>
   - Any Delphi/C++Builder version accepting ActiveX controls (Borland personal 
   editions)<br>
   - Any development environment accepting ActiveX controls, Visual C++, Visual 
   Basic, Visual Foxpro...<br>
-  In <b>command line tools mode</b> (executing command line tools):<br>
+  c) In <b>command line tools mode</b> (executing command line tools):<br>
   - Any language capable of executing command line tools, PHP, bourne shell, python..., 
   command line tools are available for Linux and Windows<br>
-  In <b>shared library mode</b>:<br>
+  d) In <b>shared library mode</b>:<br>
   - Any compiler or development enviroment capable of using standard C shared 
   library functions, that is GCC compiler, FreePascal compiler..., distribution 
   of reportmanapiqt.so/reportmanapi.so (Linux) and Reportman.ocx needed.</code> 
@@ -87,11 +88,12 @@ Note: When assigning text or expression properties declare the variables
   you assign as WideString.<br>
 <p><b>Q. I'm designing a report that will be printed in any matrix printer or 
   receipt printer, how can I use printer fonts to speed up the print process?</b></p>
-<p>A. At page setup option of Report Manager Designer you can set use allways 
-  device fonts option. Allways install the correct driver for the printer or a 
-  driver that printer is emulating.</p>
+<p>A. In Windows platform, at page setup option of Report Manager Designer you 
+  can set use allways device fonts option. Allways install the correct driver 
+  for the printer or a driver that printer is emulating. For other methods see 
+  answer bellow.</p>
 
-<p><b>Q. Why Report Manager needs TClientDataset?</b></p>
+<p><b>Q. Why Report Manager needs TClientDataset class?</b></p>
 <p> The engine must be capable of go back one record for the main dataset (Prior 
   procedure) because grouping feature, but some datasets only support unidirectional 
   datasets, I use a patched version of TClientDataset (TRpDataset), that no eats 
