@@ -39,6 +39,7 @@ prerelease:
         -del /S /Q ..\prerelease
         -mkdir ..\prerelease
         copy repman\repmandxp.exe ..\prerelease
+        copy repman\utils\rptranslator\rptranslateres.* ..\prerelease
         copy repman\reportmanres.* ..\prerelease
         copy repman\repmandxp.exe.manifest ..\prerelease
         copy repman\repmand.exe ..\prerelease
