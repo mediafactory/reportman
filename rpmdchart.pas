@@ -811,6 +811,7 @@ begin
   aTextObj.CutText:=CutText;
   aTextObj.WordWrap:=WordWrap;
   aTextObj.RightToLeft:=RightToLeft;
+  aTextObj.PrintStep:=PrintStep;
   aalign:=PrintAlignment or VAlignment;
   if SingleLine then
    aalign:=aalign or AlignmentFlags_SingleLine;

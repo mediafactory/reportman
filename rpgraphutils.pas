@@ -23,15 +23,15 @@ interface
 
 uses
 {$IFDEF MSWINDOWS}
-  windows,
+  windows,rpvgraphutils,
 {$ENDIF}
   SysUtils,Classes,Types,rptranslator,
-  QGraphics, QForms,QButtons, QExtCtrls,
+  QGraphics, QForms,QButtons, QExtCtrls,QPrinters,
   QControls, QStdCtrls,Qt,QImgList,QComCtrls,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
-  rpmdconsts,rpmunits;
+  rpmdconsts,rpmunits,rptypes;
 
 
 type
@@ -81,6 +81,7 @@ function RpMessageBox (const Text: WideString; const Caption: WideString = '';
 function RpInputBox (const ACaption, APrompt, ADefault:WideString ):WideString;
 procedure FillTreeView (ATree:TTreeView;alist:TStringList);
 function GetFullFileName (ANode:TTreeNode;dirseparator:char):String;
+procedure SendControlCodeToQtPrinter(S:String);
 
 implementation
 
@@ -691,6 +692,27 @@ begin
   Result:=ANode.Text;
 end;
 
+procedure SendControlCodeToQtPrinter(S:String);
+{$IFDEF LINUX}
+var
+ device:string;
+{$ENDIF}
+begin
+{$IFDEF MSWINDOWS}
+ SendControlCodeToPrinter(S);
+{$ENDIF}
+{$IFDEF LINUX}
+ if Printer.Printers.Count>0 then
+ begin
+  Device:=Printer.PrintAdapter.OutputDevice;
+  WriteStringToDevice(S,Device);
+ end
+ else
+ begin
+  Raise Exception.Create(SRpMustInstall);
+ end;
+{$ENDIF}
+end;
 
 initialization
  if ChangeFileExt(ExtractFileName(UpperCase(Application.ExeName)),'')='REPMAND' then

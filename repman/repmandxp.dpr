@@ -8,7 +8,7 @@
 {                                                       }
 {                                                       }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {                                                       }
 {       This file is under the MPL license              }
 {       If you enhace this file you must provide        }
@@ -36,6 +36,7 @@ uses
   rpexpredlgvcl in '..\rpexpredlgvcl.pas' {FRpExpredialogVCL},
   rprfvparams in '..\rprfvparams.pas' {FRpRTParams},
   rpmdfsectionintvcl in '..\rpmdfsectionintvcl.pas',
+  rptextdriver in '..\rptextdriver.pas',
   rpactivexreport in '..\rpactivexreport.pas',
   rpalias in '..\rpalias.pas',
   rpdatatext in '..\rpdatatext.pas',

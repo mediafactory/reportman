@@ -217,6 +217,9 @@ type
     MPDFGDIDriver: TMenuItem;
     ASysInfo: TAction;
     Systeminformation1: TMenuItem;
+    AAlign1_6: TAction;
+    N6: TMenuItem;
+    Alignheightto161: TMenuItem;
     RpAlias1: TRpAlias;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
@@ -279,6 +282,7 @@ type
     procedure ADriverPDFQtExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure ASysInfoExecute(Sender: TObject);
+    procedure AAlign1_6Execute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrame;
@@ -1895,5 +1899,11 @@ begin
 end;
 
 
+
+procedure TFRpMainF.AAlign1_6Execute(Sender: TObject);
+begin
+ report.AlignSectionsTo1_6inchess;
+ RefreshInterface(Self);
+end;
 
 end.

@@ -7,7 +7,7 @@
 {       common components of Report manager             }
 {                                                       }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -41,8 +41,12 @@ uses
 
 
 const
+ REP_C_WHEELINC=5;
+ REP_C_WHEELSCALE=4;
  MAX_LANGUAGES=3;
-{$IFNDEF USEVARIANTS}
+ CONS_MINLINEINFOITEMS=400;
+
+ {$IFNDEF USEVARIANTS}
  varWord     = $0012;
  varLongWord = $0013;
  varInt64    = $0014;
@@ -53,6 +57,21 @@ type
 {$IFNDEF USEVARIANTS}
  TVarType=integer;
 {$ENDIF}
+
+
+  TRpSelectFontStep=(rpselectsize,rpselectcpi20,rpselectcpi17,rpselectcpi15,rpselectcpi12,
+  rpselectcpi10,rpselectcpi6,rpselectcpi5);
+
+ TRpFontStep=(rpcpi20,rpcpi17,rpcpi15,rpcpi12,rpcpi10,rpcpi6,rpcpi5);
+
+ TRpLineInfo=record
+  Position:integer;
+  Size:integer;
+  Width:integer;
+  height:integer;
+  TopPos:integer;
+  step:TRpFontStep;
+ end;
 
  TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
 
@@ -84,7 +103,10 @@ type
  TRpShapeType=(rpsRectangle, rpsSquare, rpsRoundRect, rpsRoundSquare,
   rpsEllipse, rpsCircle,rpsHorzLine,rpsVertLine,rpsOblique1,rpsOblique2);
 
- TRpPrinterFontsOption=(rppfontsdefault,rppfontsalways,rppfontsnever); 
+ TRpPrinterFontsOption=(rppfontsdefault,rppfontsalways,rppfontsnever);
+
+ TRpPrinterEscapeStyle=(rpPrinterDefault,rpPrinterPlain,rpPrinterDatabase,rpPrinterCustom);
+
  TRpPageSize=(rpPageSizeDefault,rpPageSizeCustom,rpPageSizeUser);
  TPageSizeQt=record
   Indexqt:integer;
@@ -107,7 +129,13 @@ type
  TRpPreviewStyle = (spWide,spNormal,spEntirePage,spCustom);
  TRpPreviewWindowStyle=(spwNormal,spwMaximized);
 
- TPrinterRawOp=(rawopcutpaper,rawopopendrawer);
+ TPrinterRawOp=(rawopcutpaper,rawopopendrawer,rpescapelinefeed,
+  rpescapeformfeed,rpescapetearoff,rpescapeinitprinter,rpescapepulse,
+  rpescaperedfont,rpescapeblackfont,
+  rpescapeNormal, rpescapeBold,rpescapeUnderline,rpescapeItalic,
+  rpescapeStrikeOut,
+  rpescape20cpi,rpescape17cpi,rpescape15cpi,rpescape12cpi,rpescape10cpi,
+  rpescape6cpi,rpescape5cpi);
 
  TBitmapResizeEvent=procedure (awidth,aheight:integer;var scale:double) of object;
 
@@ -153,6 +181,7 @@ function CopyFileTo(const Source, Destination: string): Boolean;
 function GetPrinterConfigName(printerindex:TRpPrinterSelect):string;
 function GetPrinterOffset(printerindex:TRpPrinterSelect):TPoint;
 function GetDeviceFontsOption(printerindex:TRpPrinterSelect):boolean;
+function GetPrinterOemConvertOption(printerindex:TRpPrinterSelect):boolean;
 function GetPrinterRawOp(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):string;
 procedure FillTreeDir(adirectory:String;alist:TStringList);
 function WideStringToDOS(astring:WideString):WideString;
@@ -164,10 +193,22 @@ function RpBidiModeToString(BidiMode:TRpBidiMode):String;
 function StringToRpBidiMode(Value:String):TRpBidiMode;
 function DoReverseString(Value:String):String;
 function DoReverseStringW(Value:WideString):WideString;
+<<<<<<< rptypes.pas
+function GetWheelInc(Shift:TShiftState):integer;
+procedure GetStepDescriptions(alist:TRpWideStrings);
+procedure GetStepDescriptionsA(alist:TStrings);
+function StringToFontStep(cad:string):TRpSelectFontStep;
+function FontStepToString(fstep:TRpSelectFontStep):Widestring;
+function FontSizeToStep (asize:integer;select:TRpSelectFontStep):TRpFontStep;
+function GetPrinterEscapeStyleDriver(printerindex:TRpPrinterSelect):String;
+function GetPrinterEscapeOem(printerindex:TRpPrinterSelect):Boolean;
+function GetPrinterEscapeStyleOption(printerindex:TRpPrinterSelect):TRpPrinterEscapeStyle;
+procedure GetTextOnlyPrintDrivers(drivernames:TStrings);
+procedure ReloadPrinterConfig;
+procedure WriteStringToDevice(S,Device:String);
 function GetLastname(astring:string):string;
 function GetPathName(astring:string):string;
 function GetFirstName(astring:string):string;
-
 
 {$IFNDEF USEVARIANTS}
 procedure RaiseLastOSError;
@@ -194,9 +235,8 @@ const
   DefaultFalseBoolStr = 'False'; // DO NOT LOCALIZE
 {$ENDIF}
 
-var
- printerconfigfile:TMemInifile;
 {$IFDEF MSWINDOWS}
+var
  osinfo:TOsVersionInfo;
 {$ENDIF}
 
@@ -205,6 +245,7 @@ implementation
 
 var
   cajpeg:array [0..10] of char=(chr($FF),chr($D8),chr($FF),chr($E0),chr($0),chr($10),'J','F','I','F',chr(0));
+ printerconfigfile:TMemInifile;
 
 {$IFDEF MSWINDOWS}
 var
@@ -547,6 +588,25 @@ begin
  end;
 end;
 
+function GetPrinterEscapeOem(printerindex:TRpPrinterSelect):Boolean;
+begin
+ CheckLoadedPrinterConfig;
+ Result:=printerconfigfile.ReadBool('PrinterEscapeOem','Printer'+IntToStr(integer(printerindex)),false);
+end;
+
+function GetPrinterEscapeStyleOption(printerindex:TRpPrinterSelect):TRpPrinterEscapeStyle;
+begin
+ CheckLoadedPrinterConfig;
+ Result:=TRpPrinterEscapeStyle(printerconfigfile.ReadInteger('PrinterEscapeStyle','Printer'+IntToStr(integer(printerindex)),0));
+end;
+
+function GetPrinterEscapeStyleDriver(printerindex:TRpPrinterSelect):String;
+begin
+ CheckLoadedPrinterConfig;
+ Result:=printerconfigfile.ReadString('PrinterDriver','Printer'+IntToStr(integer(printerindex)),'EpsonFX');
+end;
+
+
 function GetDeviceFontsOption(printerindex:TRpPrinterSelect):boolean;
 begin
  CheckLoadedPrinterConfig;
@@ -558,6 +618,18 @@ begin
  Result:=printerconfigfile.ReadBool('PrinterFonts','Printer'+IntToStr(integer(printerindex)),false);
 end;
 
+function GetPrinterOemConvertOption(printerindex:TRpPrinterSelect):boolean;
+begin
+ CheckLoadedPrinterConfig;
+ if printerindex=pRpDefaultPrinter then
+ begin
+  Result:=printerconfigfile.ReadBool('OemConvert','Default',false);
+  Exit;
+ end;
+ Result:=printerconfigfile.ReadBool('OemConvert','Printer'+IntToStr(integer(printerindex)),false);
+end;
+
+
 function GetPrinterConfigName(printerindex:TRpPrinterSelect):string;
 begin
  CheckLoadedPrinterConfig;
@@ -567,6 +639,13 @@ begin
   Exit;
  end;
  Result:=printerconfigfile.ReadString('PrinterNames','Printer'+IntToStr(integer(printerindex)),'');
+end;
+
+procedure ReloadPrinterConfig;
+begin
+ printerconfigfile.free;
+ printerconfigfile:=nil;
+ CHeckLoadedPrinterConfig;
 end;
 
 function GetPrinterOffset(printerindex:TRpPrinterSelect):TPoint;
@@ -617,6 +696,7 @@ end;
 function GetPrinterRawOp(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):string;
 var
  operation:String;
+ defaultvalue:string;
 begin
  CheckLoadedPrinterConfig;
  Result:='';
@@ -625,12 +705,57 @@ begin
    Operation:='CutPaper';
   rawopopendrawer:
    Operation:='OpenDrawer';
+  rpescapelinefeed:
+   Operation:='LineFeed';
+  rpescapeformfeed:
+   Operation:='FormFeed';
+  rpescapetearoff:
+   Operation:='TearOff';
+  rpescapeinitprinter:
+   Operation:='InitPrinter';
+  rpescapepulse:
+   Operation:='PulseDrawer';
+  rpescaperedfont:
+   Operation:='RedFont';
+  rpescapeblackfont:
+   Operation:='BlackFont';
+  rpescapeNormal:
+   Operation:='NormalFont';
+  rpescapeBold:
+   Operation:='BoldFont';
+  rpescapeUnderline:
+   Operation:='UnderlineFont';
+  rpescapeItalic:
+   Operation:='ItalicFont';
+  rpescapeStrikeOut:
+   Operation:='StrikeOutFont';
+  rpescape20cpi:
+   Operation:='Font20cpi';
+  rpescape17cpi:
+   Operation:='Font17cpi';
+  rpescape15cpi:
+   Operation:='Font15cpi';
+  rpescape12cpi:
+   Operation:='Font12cpi';
+  rpescape10cpi:
+   Operation:='Font10cpi';
+  rpescape6cpi:
+   Operation:='Font6cpi';
+  rpescape5cpi:
+   Operation:='Font5cpi';
  end;
- // Check if active
- if Not printerconfigfile.ReadBool(Operation+'On','Printer'+IntToStr(integer(printerindex)),false) then
-  exit;
  // If active decode and return result
- Result:=printerconfigfile.ReadString(Operation,'Printer'+IntToStr(integer(printerindex)),'');
+ defaultvalue:='';
+ if rawop=rpescapelinefeed then
+ begin
+{$IFDEF MSWINDOWS}
+  defaultvalue:='#13#10';
+{$ENDIF}
+{$IFDEF LINUX}
+  defaultvalue:='#10';
+{$ENDIF}
+ end;
+ Result:=printerconfigfile.ReadString(Operation,'Printer'+IntToStr(integer(printerindex)),defaultvalue);
  // Transform the string to a real string
  Result:=EscapeCodedToString(Result);
 end;
@@ -1453,6 +1578,166 @@ begin
  end;
 end;
 
+<<<<<<< rptypes.pas
+function GetWheelInc(Shift:TShiftState):integer;
+var
+ multiplier:integer;
+begin
+ multiplier:=REP_C_WHEELSCALE;
+ if (ssCtrl in Shift) then
+  multiplier:=multiplier*REP_C_WHEELSCALE;
+ if (ssShift in Shift) then
+  multiplier:=multiplier div REP_C_WHEELSCALE;
+ Result:=multiplier*REP_C_WHEELINC;
+end;
+
+
+function FontStepToString(fstep:TRpSelectFontStep):Widestring;
+begin
+ case fstep of
+  rpselectsize:
+   Result:=SRpStepBySize;
+  rpselectcpi20:
+   Result:=SRpStep20;
+  rpselectcpi17:
+   Result:=SRpStep17;
+  rpselectcpi15:
+   Result:=SRpStep15;
+  rpselectcpi12:
+   Result:=SRpStep12;
+  rpselectcpi10:
+   Result:=SRpStep10;
+  rpselectcpi6:
+   Result:=SRpStep6;
+  rpselectcpi5:
+   Result:=SRpStep5;
+ end;
+end;
+
+function StringToFontStep(cad:string):TRpSelectFontStep;
+begin
+ Result:=rpselectsize;
+ if cad=SRpStepBySize then
+ begin
+  result:=rpselectsize;
+  exit;
+ end;
+ if cad=SRpStep20 then
+ begin
+  result:=rpselectcpi20;
+  exit;
+ end;
+ if cad=SRpStep17 then
+ begin
+  result:=rpselectcpi17;
+  exit;
+ end;
+ if cad=SRpStep15 then
+ begin
+  result:=rpselectcpi15;
+  exit;
+ end;
+ if cad=SRpStep12 then
+ begin
+  result:=rpselectcpi12;
+  exit;
+ end;
+ if cad=SRpStep10 then
+ begin
+  result:=rpselectcpi10;
+  exit;
+ end;
+ if cad=SRpStep6 then
+ begin
+  result:=rpselectcpi6;
+  exit;
+ end;
+ if cad=SRpStep5 then
+ begin
+  result:=rpselectcpi5;
+  exit;
+ end;
+end;
+
+procedure GetStepDescriptionsA(alist:TStrings);
+var
+ list:TRpWideStrings;
+begin
+ list:=TRpWideStrings.create;
+ try
+  GetStepDescriptions(list);
+  alist.Assign(list);
+ finally
+  list.free;
+ end;
+end;
+
+procedure GetStepDescriptions(alist:TRpWideStrings);
+begin
+ alist.Clear;
+ alist.Add(SRpStepBySize);
+ alist.Add(SRpStep20);
+ alist.Add(SRpStep17);
+ alist.Add(SRpStep15);
+ alist.Add(SRpStep12);
+ alist.Add(SRpStep10);
+ alist.Add(SRpStep6);
+ alist.Add(SRpStep5);
+end;
+
+function FontSizeToStep(asize:integer;select:TRpSelectFontStep):TRpFontStep;
+begin
+ if select=rpselectsize then
+ begin
+  case asize of
+   8:
+    Result:=rpcpi17;
+   9:
+    Result:=rpcpi15;
+   10:
+    Result:=rpcpi12;
+   11..12:
+    Result:=rpcpi10;
+   13..15:
+     Result:=rpcpi6;
+   else
+    begin
+     if asize>15 then
+      Result:=rpcpi5
+     else
+      REsult:=rpcpi20;
+    end;
+  end;
+ end
+ else
+ begin
+  Result:=TRpFontStep(Integer(select)-1);
+ end;
+end;
+
+procedure GetTextOnlyPrintDrivers(drivernames:TStrings);
+begin
+ drivernames.Clear;
+ drivernames.Add(' ');
+ drivernames.Add('PLAIN');
+ drivernames.Add('EPSON');
+ drivernames.Add('EPSON-QUALITY');
+ drivernames.Add('EPSONTM88II');
+end;
+
+procedure WriteStringToDevice(S,Device:String);
+var
+ fstream:TFileStream;
+begin
+ fstream:=TFileStream.Create(Device,fmOpenWrite);
+ try
+  fstream.Write(S[1],Length(S));
+ finally
+  fstream.free;
+ end;
+end;
+
+
 function GetLastname(astring:string):string;
 var
  j,index:integer;
@@ -1504,7 +1789,6 @@ begin
  end;
  Result:=Copy(astring,1,index-1);
 end;
-
 
 
 initialization

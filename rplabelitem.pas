@@ -311,6 +311,7 @@ begin
  aTextObj.CutText:=CutText;
  aTextObj.WordWrap:=WordWrap;
  aTextObj.RightToLeft:=RightToLeft;
+ aTextObj.PrintStep:=PrintStep;
  aalign:=PrintAlignment or VAlignment;
  if SingleLine then
   aalign:=aalign or AlignmentFlags_SingleLine;
@@ -619,6 +620,7 @@ begin
  Result.Alignment:=aalign;
  Result.WordWrap:=WordWrap;
  Result.RightToLeft:=RightToLeft;
+ Result.PrintStep:=PrintStep;
 end;
 
 function TRpExpression.GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;

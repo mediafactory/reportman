@@ -136,6 +136,7 @@ type
    FType1Font:TRpType1Font;
    FBidiModes:TStrings;
    FMultiPage:Boolean;
+   FPrintStep:TRpSelectFontStep;
    procedure ReadWFontName(Reader:TReader);
    procedure WriteWFontName(Writer:TWriter);
    procedure ReadLFontName(Reader:TReader);
@@ -170,6 +171,8 @@ type
    property SingleLine:boolean read FSingleLine write FSingleLine default false;
    property BidiModes:TStrings read FBidiModes write SetBidiModes;
    property MultiPage:Boolean read FMultiPage write FMultiPage default false;
+   property PrintStep:TRpSelectFontStep read FPrintStep write FPrintStep
+    default rpselectsize;
   end;
 
 implementation

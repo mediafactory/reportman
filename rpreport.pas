@@ -243,6 +243,7 @@ type
    property idencurrentgroup:TIdenReportVar read fidencurrentgroup;
    property MilisProgres:integer read FMilisProgres write FMilisProgres
     default MILIS_PROGRESS_DEFAULT;
+   procedure AlignSectionsTo1_6inchess;
   published
    // Grid options
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
@@ -2394,6 +2395,25 @@ begin
  Classes.RegisterClass(TRpBarcode);
  Classes.RegisterClass(TRpChart);
 end;
+
+
+procedure TRpReport.AlignSectionsTo1_6inchess;
+var
+ subrep:TRpSubreport;
+ sec:TRpSection;
+ i,j:integer;
+begin
+ for i:=0 to SubReports.Count-1 do
+ begin
+  subrep:=Subreports.Items[i].Subreport;
+  for j:=0 to subrep.Sections.Count-1 do
+  begin
+   sec:=subrep.Sections.Items[j].Section;
+   sec.Height:=Round((TWIPS_PER_INCHESS/6)*Round(sec.Height/(TWIPS_PER_INCHESS/6)));
+  end;
+ end;
+end;
+
 
 initialization
  // Need clas registration to be streamable

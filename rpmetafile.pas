@@ -7,7 +7,7 @@
 {       is a collection of pages that can be printed    }
 {       using a printer driver interface                }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -22,7 +22,7 @@
  the info to print a complete report.
  File Format Binary
 
- Signature='RPMETAFILE03'
+ Signature='RPMETAFILE04'
  rpFHeader=integer(0);
  PageSize=integer;
  CustomX=integer;
@@ -62,7 +62,7 @@ const
  RP_SIGNATURELENGTH=13;
  // The metafile signature and version
  RpSignature:array[0..RP_SIGNATURELENGTH-1] of char=('R','P','M','E','T','A','F','I','L',
-  'E','0','3',#0);
+  'E','0','4',#0);
 const
  FIRST_ALLOCATION_OBJECTS=50;
  FIRST_ALLOCATED_WIDESTRING=1000;
@@ -103,6 +103,7 @@ type
   Alignment:integer;
   WordWrap:boolean;
   RightToLeft:Boolean;
+  PrintStep:TRpSelectFontStep;
  end;
 
  TRpMetaObject=packed record
@@ -120,7 +121,7 @@ type
     BackColor:integer;
     Transparent:boolean;
     CutText:boolean;Alignment:integer;WordWrap:boolean;
-    RightToLeft:Boolean);
+    RightToLeft:Boolean;PrintStep:TRpSelectFontStep);
    rpMetaDraw:
     (DrawStyle:integer;
     BrushStyle:integer;
@@ -417,6 +418,8 @@ begin
  FObjects[FObjectCount].Alignment:=aText.Alignment;
  FObjects[FObjectCount].WordWrap:=aText.WordWrap;
  FObjects[FObjectCount].RightToLeft:=aText.RightToLeft;
+ FObjects[FObjectCount].PrintStep:=aText.PrintStep;
+
 
  inc(FObjectCount);
 

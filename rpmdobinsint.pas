@@ -1258,6 +1258,13 @@ begin
  if Assigned(lvalues) then
   lvalues.Add(Type1FontToText(TRpGenTextComponent(printitem).Type1Font));
 
+ // Step
+ lnames.Add(SRpSFontStep);
+ ltypes.Add(SRpSList);
+ lhints.Add('refcommontext.html');
+ if Assigned(lvalues) then
+  lvalues.Add(FontStepToString(TRpGenTextComponent(printitem).PrintStep));
+
 
  // Font Size
  lnames.Add(SrpSFontSize);
@@ -1360,6 +1367,11 @@ begin
   TRpGenTextComponent(fprintitem).Type1Font:=TextToType1Font(value);
   exit;
  end;
+ if pname=SRpSFontStep then
+ begin
+  TRpGenTextComponent(fprintitem).PrintStep:=StringToFontStep(value);
+  exit;
+ end;
  if pname=SRpSFontSize then
  begin
   TRpGenTextComponent(fprintitem).FontSize:=StrToInt(value);
@@ -1451,6 +1463,11 @@ begin
   Result:=Type1FontToText(TRpGenTextComponent(printitem).Type1FOnt);
   exit;
  end;
+ if pname=SRpSFontStep then
+ begin
+  Result:=FontStepToString(TRpGenTextComponent(printitem).PrintStep);
+  exit;
+ end;
  if pname=SrpSFontSize then
  begin
   Result:=IntToStr(TRpGenTextComponent(printitem).FontSize);
@@ -1538,6 +1555,11 @@ begin
   lpossiblevalues.Add('Times Roman');
   lpossiblevalues.Add('Symbol');
   lpossiblevalues.Add('ZapfDingbats');
+  exit;
+ end;
+ if pname=SRpSFontStep then
+ begin
+  GetStepDescriptions(lpossiblevalues);
   exit;
  end;
  inherited GetPropertyValues(pname,lpossiblevalues);

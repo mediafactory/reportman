@@ -6,7 +6,7 @@
 {       VCL Preview the report                          }
 {                                                       }
 {                                                       }
-{       Copyright (c) 1994-2002 Toni Martir             }
+{       Copyright (c) 1994-2003 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -98,6 +98,10 @@ type
     procedure AScaleMoreExecute(Sender: TObject);
     procedure AImageMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure FormMouseWheelDown(Sender: TObject; Shift: TShiftState;
+      MousePos: TPoint; var Handled: Boolean);
+    procedure FormMouseWheelUp(Sender: TObject; Shift: TShiftState;
+      MousePos: TPoint; var Handled: Boolean);
   private
     { Private declarations }
     cancelled:boolean;
@@ -691,6 +695,18 @@ begin
  end
  else
   AScaleFull.Execute;
+end;
+
+procedure TFRpVPreview.FormMouseWheelDown(Sender: TObject;
+  Shift: TShiftState; MousePos: TPoint; var Handled: Boolean);
+begin
+ ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position+GetWheelInc(Shift);
+end;
+
+procedure TFRpVPreview.FormMouseWheelUp(Sender: TObject;
+  Shift: TShiftState; MousePos: TPoint; var Handled: Boolean);
+begin
+ ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position-GetWheelInc(Shift);
 end;
 
 end.

@@ -36,7 +36,7 @@ uses
 {$IFDEF MSWINDOWS}
  rpvgraphutils,
 {$ENDIF}
- rpreport,rppdfdriver;
+ rpreport,rptextdriver,rppdfdriver;
 
 const
  METAPRINTPROGRESS_INTERVAL=20;
@@ -62,6 +62,7 @@ type
     procedure AppIdleReport(Sender:TObject;var done:boolean);
     procedure AppIdlePrintPDF(Sender:TObject;var done:boolean);
     procedure AppIdlePrintRange(Sender:TObject;var done:boolean);
+    procedure AppIdlePrintRangeText(Sender:TObject;var done:boolean);
     procedure RepProgress(Sender:TRpReport;var docancel:boolean);
   public
     { Public declarations }
@@ -74,6 +75,8 @@ type
     report:TRpReport;
     qtdriver:TRpQtDriver;
     aqtdriver:IRpPrintDriver;
+    TextDriver:TRpTextDriver;
+    aTextDriver:IRpPrintDriver;
     pdfdriver:TRpPDFDriver;
     apdfdriver:IRpPrintDriver;
   end;
@@ -762,115 +765,139 @@ var
     difmilis:int64;
  totalcount:integer;
  offset:TPoint;
+ istextonly:boolean;
+ drivername,S:String;
+ memstream:TMemoryStream;
 begin
- if printerindex<>pRpDefaultPrinter then
-  offset:=PrinterSelection(printerindex)
- else
+ drivername:=Trim(GetPrinterEscapeStyleDriver(printerindex));
+ istextonly:=Length(drivername)>0;
+ if istextonly then
  begin
-  offset:=PrinterSelection(metafile.PrinterSelect);
- end;
- // Get the time
-{$IFDEF MSWINDOWS}
- mmfirst:=TimeGetTime;
-{$ENDIF}
-{$IFDEF LINUX}
- milifirst:=now;
-{$ENDIF}
- printer.Title:=tittle;
- // Sets page size and orientation
- if metafile.Orientation<>rpOrientationDefault then
- begin
-  if metafile.Orientation=rpOrientationPortrait then
-   printer.Orientation:=poPortrait
-  else
-   printer.Orientation:=poLandscape;
- end;
- // Sets pagesize
- if metafile.PageSize>=0 then
-  Printer.PrintAdapter.PageSize:=TPageSize(metafile.PageSize);
-
- pagecopies:=1;
- reportcopies:=1;
- if copies>1 then
- begin
-  if collate then
-   reportcopies:=copies
-  else
-   pagecopies:=copies;
- end;
- if allpages then
- begin
-  frompage:=0;
-  topage:=metafile.PageCount-1;
+  memstream:=TMemoryStream.Create;
+  try
+   rptextdriver.SaveMetafileRangeToText(metafile,allpages,frompage,topage,
+    copies,memstream);
+   memstream.Seek(soFromBeginning,0);
+   SetLength(S,MemStream.Size);
+   MemStream.Read(S[1],MemStream.Size);
+  finally
+   memstream.free;
+  end;
+  // Now Prints to selected printer the stream
+  PrinterSelection(metafile.PrinterSelect);
+  SendControlCodeToQtPrinter(S);
  end
  else
  begin
-  frompage:=frompage-1;
-  topage:=topage-1;
-  if topage>metafile.PageCount-1 then
-   topage:=metafile.PageCount-1;
- end;
- printer.Begindoc;
- try
-  dpix:=printer.XDPI;
-  dpiy:=printer.YDPI;
-  totalcount:=0;
-  for count1:=0 to reportcopies-1 do
+  if printerindex<>pRpDefaultPrinter then
+   offset:=PrinterSelection(printerindex)
+  else
   begin
-   for i:=frompage to topage do
+   offset:=PrinterSelection(metafile.PrinterSelect);
+  end;
+  // Get the time
+ {$IFDEF MSWINDOWS}
+  mmfirst:=TimeGetTime;
+ {$ENDIF}
+ {$IFDEF LINUX}
+  milifirst:=now;
+ {$ENDIF}
+  printer.Title:=tittle;
+  // Sets page size and orientation
+  if metafile.Orientation<>rpOrientationDefault then
+  begin
+   if metafile.Orientation=rpOrientationPortrait then
+    printer.Orientation:=poPortrait
+   else
+    printer.Orientation:=poLandscape;
+  end;
+  // Sets pagesize
+  if metafile.PageSize>=0 then
+   Printer.PrintAdapter.PageSize:=TPageSize(metafile.PageSize);
+
+  pagecopies:=1;
+  reportcopies:=1;
+  if copies>1 then
+  begin
+   if collate then
+    reportcopies:=copies
+   else
+    pagecopies:=copies;
+  end;
+  if allpages then
+  begin
+   frompage:=0;
+   topage:=metafile.PageCount-1;
+  end
+  else
+  begin
+   frompage:=frompage-1;
+   topage:=topage-1;
+   if topage>metafile.PageCount-1 then
+    topage:=metafile.PageCount-1;
+  end;
+  printer.Begindoc;
+  try
+   dpix:=printer.XDPI;
+   dpiy:=printer.YDPI;
+   totalcount:=0;
+   for count1:=0 to reportcopies-1 do
    begin
-    for count2:=0 to pagecopies-1 do
+    for i:=frompage to topage do
     begin
-     if totalcount>0 then
-      printer.NewPage;
-     inc(totalcount);
-     apage:=metafile.Pages[i];
-     for j:=0 to apage.ObjectCount-1 do
+     for count2:=0 to pagecopies-1 do
      begin
-      PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,1,offset);
+      if totalcount>0 then
+       printer.NewPage;
+      inc(totalcount);
+      apage:=metafile.Pages[i];
+      for j:=0 to apage.ObjectCount-1 do
+      begin
+       PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,1,offset);
+       if assigned(aform) then
+       begin
+   {$IFDEF MSWINDOWS}
+        mmlast:=TimeGetTime;
+        difmilis:=(mmlast-mmfirst);
+   {$ENDIF}
+   {$IFDEF LINUX}
+        mililast:=now;
+        difmilis:=MillisecondsBetween(mililast,milifirst);
+   {$ENDIF}
+        if difmilis>MILIS_PROGRESS then
+        begin
+         // Get the time
+   {$IFDEF MSWINDOWS}
+         mmfirst:=TimeGetTime;
+   {$ENDIF}
+   {$IFDEF LINUX}
+         milifirst:=now;
+   {$ENDIF}
+         aform.LRecordCount.Caption:=SRpPage+':'+ IntToStr(i+1)+
+           ' - '+SRpItem+':'+ IntToStr(j+1);
+         Application.ProcessMessages;
+         if aform.cancelled then
+          Raise Exception.Create(SRpOperationAborted);
+        end;
+       end;
+      end;
       if assigned(aform) then
       begin
-  {$IFDEF MSWINDOWS}
-       mmlast:=TimeGetTime;
-       difmilis:=(mmlast-mmfirst);
-  {$ENDIF}
-  {$IFDEF LINUX}
-       mililast:=now;
-       difmilis:=MillisecondsBetween(mililast,milifirst);
-  {$ENDIF}
-       if difmilis>MILIS_PROGRESS then
-       begin
-        // Get the time
-  {$IFDEF MSWINDOWS}
-        mmfirst:=TimeGetTime;
-  {$ENDIF}
-  {$IFDEF LINUX}
-        milifirst:=now;
-  {$ENDIF}
-        aform.LRecordCount.Caption:=SRpPage+':'+ IntToStr(i+1)+
-          ' - '+SRpItem+':'+ IntToStr(j+1);
         Application.ProcessMessages;
         if aform.cancelled then
          Raise Exception.Create(SRpOperationAborted);
-       end;
       end;
-     end;
-     if assigned(aform) then
-     begin
-       Application.ProcessMessages;
-       if aform.cancelled then
-        Raise Exception.Create(SRpOperationAborted);
      end;
     end;
    end;
+   Printer.EndDoc;
+  except
+   printer.Abort;
+   raise;
   end;
-  Printer.EndDoc;
- except
-  printer.Abort;
-  raise;
+  if assigned(aform) then
+   aform.close;
  end;
- if assigned(aform) then
-  aform.close;
 end;
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
@@ -1014,6 +1041,33 @@ begin
  Close;
 end;
 
+procedure TFRpQtProgress.AppIdlePrintRangeText(Sender:TObject;var done:boolean);
+var
+ oldprogres:TRpProgressEvent;
+ S:String;
+begin
+ Application.Onidle:=nil;
+ done:=false;
+
+ TextDriver:=TRpTextDriver.Create;
+ aTextDriver:=TextDriver;
+ oldprogres:=RepProgress;
+ try
+  TextDriver.SelectPrinter(report.PrinterSelect);
+  report.OnProgress:=RepProgress;
+  report.PrintRange(aTextDriver,allpages,frompage,topage,copies,collate);
+  // Now Prints to selected printer the stream
+  SetLength(S,TextDriver.MemStream.Size);
+  TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
+  PrinterSelection(report.PrinterSelect);
+  SendControlCodeToQtPrinter(S);
+ finally
+  report.OnProgress:=oldprogres;
+ end;
+ Close;
+end;
+
+
 procedure TFRpQtProgress.AppIdlePrintPDF(Sender:TObject;var done:boolean);
 var
  oldprogres:TRpProgressEvent;
@@ -1053,10 +1107,17 @@ var
 {$ENDIF}
  qtdriver:TRpQtDriver;
  aqtdriver:IRpPrintDriver;
+ Textdriver:TRpTextDriver;
+ aTextdriver:IRpPrintDriver;
  forcecalculation:boolean;
  dia:TFRpQtProgress;
  oldonidle:TIdleEvent;
+ istextonly:boolean;
+ drivername:String;
+ S:String;
 begin
+ drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
+ istextonly:=Length(drivername)>0;
  Result:=true;
  forcecalculation:=false;
  if kylixprintbug then
@@ -1079,9 +1140,20 @@ begin
   end
   else
   begin
-   qtdriver:=TRpQtDriver.Create;
-   aqtdriver:=qtdriver;
-   report.PrintAll(qtdriver);
+   if istextonly then
+   begin
+    TextDriver:=TRpTextDriver.Create;
+    aTextDriver:=TextDriver;
+    TextDriver.SelectPrinter(report.PrinterSelect);
+    report.PrintAll(TextDriver);
+    SendControlCodeToQtPrinter(S);
+   end
+   else
+   begin
+    qtdriver:=TRpQtDriver.Create;
+    aqtdriver:=qtdriver;
+    report.PrintAll(qtdriver);
+   end;
   end;
  end;
  // A bug in Kylix 2 does not allow printing
@@ -1105,7 +1177,10 @@ begin
       dia.collate:=collate;
       oldonidle:=Application.Onidle;
       try
-       Application.OnIdle:=dia.AppIdlePrintRange;
+       if istextonly then
+        Application.OnIdle:=dia.AppIdlePrintRangeText
+       else
+        Application.OnIdle:=dia.AppIdlePrintRange;
        dia.ShowModal;
       finally
        Application.OnIdle:=oldonidle;
@@ -1116,10 +1191,24 @@ begin
     end
     else
     begin
-     qtdriver:=TRpQtDriver.Create;
-     aqtdriver:=qtdriver;
-     qtdriver.toprinter:=true;
-     report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate);
+     if istextonly then
+     begin
+      TextDriver:=TRpTextDriver.Create;
+      aTextDriver:=TextDriver;
+      TextDriver.SelectPrinter(report.PrinterSelect);
+      report.PrintRange(aTextDriver,allpages,frompage,topage,copies,collate);
+      SetLength(S,TextDriver.MemStream.Size);
+      TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
+      PrinterSelection(report.PrinterSelect);
+      SendControlCodeToQtPrinter(S);
+     end
+     else
+     begin
+      qtdriver:=TRpQtDriver.Create;
+      aqtdriver:=qtdriver;
+      qtdriver.toprinter:=true;
+      report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate);
+     end;
     end;
    end;
  end

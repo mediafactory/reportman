@@ -32,7 +32,7 @@ uses
  types,
 {$ENDIF}
  rptypes,rpvgraphutils,jpeg,
- rppdfdriver,rpreport;
+ rppdfdriver,rptextdriver,rpreport;
 
 
 const
@@ -69,6 +69,7 @@ type
     procedure AppIdleReport(Sender:TObject;var done:boolean);
     procedure AppIdlePrintPDF(Sender:TObject;var done:boolean);
     procedure AppIdlePrintRange(Sender:TObject;var done:boolean);
+    procedure AppIdlePrintRangeText(Sender:TObject;var done:boolean);
     procedure RepProgress(Sender:TRpReport;var docancel:boolean);
   public
     { Public declarations }
@@ -81,6 +82,8 @@ type
     report:TRpReport;
     GDIDriver:TRpGDIDriver;
     aGDIDriver:IRpPrintDriver;
+    TextDriver:TRpTextDriver;
+    aTextDriver:IRpPrintDriver;
     pdfdriver:TRpPDFDriver;
     apdfdriver:IRpPrintDriver;
   end;
@@ -568,7 +571,7 @@ begin
  Canvas.Font.Color:=CLXColorToVCLColor(atext.FontColor);
  // Find device font
  if devicefonts then
-  FindDeviceFont(Canvas.Handle,Canvas.Font,FontSizeToStep(Canvas.Font.Size));
+  FindDeviceFont(Canvas.Handle,Canvas.Font,FontSizeToStep(Canvas.Font.Size,atext.PrintStep));
  aalign:=DT_NOPREFIX;
  if (atext.AlignMent AND AlignmentFlags_AlignHCenter)>0 then
   aalign:=aalign or DT_CENTER;
@@ -656,7 +659,7 @@ begin
     begin
      // Find device font
      if devicefonts then
-      FindDeviceFont(Canvas.Handle,Canvas.Font,FontSizeToStep(Canvas.Font.Size));
+      FindDeviceFont(Canvas.Handle,Canvas.Font,FontSizeToStep(Canvas.Font.Size,obj.PrintStep));
     end;
 
 
@@ -1007,124 +1010,148 @@ var
  totalcount:integer;
  pagemargins:TRect;
  offset:TPoint;
+ istextonly:boolean;
+ drivername,S:String;
+ memstream:TMemoryStream;
 begin
- if printerindex<>pRpDefaultPrinter then
-  offset:=PrinterSelection(printerindex)
+ drivername:=Trim(GetPrinterEscapeStyleDriver(printerindex));
+ istextonly:=Length(drivername)>0;
+ if istextonly then
+ begin
+  memstream:=TMemoryStream.Create;
+  try
+   rptextdriver.SaveMetafileRangeToText(metafile,allpages,frompage,topage,
+    copies,memstream);
+   memstream.Seek(soFromBeginning,0);
+   SetLength(S,MemStream.Size);
+   MemStream.Read(S[1],MemStream.Size);
+  finally
+   memstream.free;
+  end;
+  // Now Prints to selected printer the stream
+  PrinterSelection(metafile.PrinterSelect);
+  SendControlCodeToPrinter(S);
+ end
  else
-  offset:=PrinterSelection(metafile.PrinterSelect);
- UpdatePrinterFontList;
- pagemargins:=GetPageMarginsTWIPS;
- // Get the time
- mmfirst:=TimeGetTime;
- printer.Title:=tittle;
- // Sets page size and orientation
- if metafile.Orientation<>rpOrientationDefault then
  begin
-  if metafile.Orientation=rpOrientationPortrait then
-   printer.Orientation:=poPortrait
+  if printerindex<>pRpDefaultPrinter then
+   offset:=PrinterSelection(printerindex)
   else
-   printer.Orientation:=poLandscape;
- end;
- // Sets pagesize
- pagecopies:=1;
- reportcopies:=1;
-
- if copies>1 then
- begin
-  if (PrinterSupportsCopies(copies)) then
+   offset:=PrinterSelection(metafile.PrinterSelect);
+  UpdatePrinterFontList;
+  pagemargins:=GetPageMarginsTWIPS;
+  // Get the time
+  mmfirst:=TimeGetTime;
+  printer.Title:=tittle;
+  // Sets page size and orientation
+  if metafile.Orientation<>rpOrientationDefault then
   begin
-   if collate then
+   if metafile.Orientation=rpOrientationPortrait then
+    printer.Orientation:=poPortrait
+   else
+    printer.Orientation:=poLandscape;
+  end;
+  // Sets pagesize
+  pagecopies:=1;
+  reportcopies:=1;
+
+  if copies>1 then
+  begin
+   if (PrinterSupportsCopies(copies)) then
    begin
-    if PrinterSupportsCollation then
+    if collate then
     begin
-     SetPrinterCopies(copies);
-     SetPrinterCollation(true);
+     if PrinterSupportsCollation then
+     begin
+      SetPrinterCopies(copies);
+      SetPrinterCollation(true);
+     end
+     else
+     begin
+      SetPrinterCopies(1);
+      SetPrinterCollation(false);
+      reportcopies:=copies;
+     end;
     end
     else
     begin
-     SetPrinterCopies(1);
+     SetPrinterCopies(copies);
      SetPrinterCollation(false);
-     reportcopies:=copies;
     end;
    end
    else
    begin
-    SetPrinterCopies(copies);
+    SetPrinterCopies(1);
     SetPrinterCollation(false);
+    if collate then
+     reportcopies:=copies
+    else
+     pagecopies:=copies;
    end;
+  end;
+  if allpages then
+  begin
+   frompage:=0;
+   topage:=metafile.PageCount-1;
   end
   else
   begin
-   SetPrinterCopies(1);
-   SetPrinterCollation(false);
-   if collate then
-    reportcopies:=copies
-   else
-    pagecopies:=copies;
+   frompage:=frompage-1;
+   topage:=topage-1;
+   if topage>metafile.PageCount-1 then
+    topage:=metafile.PageCount-1;
   end;
- end;
- if allpages then
- begin
-  frompage:=0;
-  topage:=metafile.PageCount-1;
- end
- else
- begin
-  frompage:=frompage-1;
-  topage:=topage-1;
-  if topage>metafile.PageCount-1 then
-   topage:=metafile.PageCount-1;
- end;
- printer.Begindoc;
- try
-  dpix:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX);
-  dpiy:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY);
-  totalcount:=0;
-  for count1:=0 to reportcopies-1 do
-  begin
-   for i:=frompage to topage do
+  printer.Begindoc;
+  try
+   dpix:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX);
+   dpiy:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY);
+   totalcount:=0;
+   for count1:=0 to reportcopies-1 do
    begin
-    for count2:=0 to pagecopies-1 do
+    for i:=frompage to topage do
     begin
-     if totalcount>0 then
-      printer.NewPage;
-     inc(totalcount);
-     apage:=metafile.Pages[i];
-     for j:=0 to apage.ObjectCount-1 do
+     for count2:=0 to pagecopies-1 do
      begin
-      PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,true,pagemargins,devicefonts,offset);
+      if totalcount>0 then
+       printer.NewPage;
+      inc(totalcount);
+      apage:=metafile.Pages[i];
+      for j:=0 to apage.ObjectCount-1 do
+      begin
+       PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,true,pagemargins,devicefonts,offset);
+       if assigned(aform) then
+       begin
+        mmlast:=TimeGetTime;
+        difmilis:=(mmlast-mmfirst);
+        if difmilis>MILIS_PROGRESS then
+        begin
+         // Get the time
+         mmfirst:=TimeGetTime;
+         aform.LRecordCount.Caption:=SRpPage+':'+ IntToStr(i+1)+
+           ' - '+SRpItem+':'+ IntToStr(j+1);
+         Application.ProcessMessages;
+         if aform.cancelled then
+          Raise Exception.Create(SRpOperationAborted);
+        end;
+       end;
+      end;
       if assigned(aform) then
       begin
-       mmlast:=TimeGetTime;
-       difmilis:=(mmlast-mmfirst);
-       if difmilis>MILIS_PROGRESS then
-       begin
-        // Get the time
-        mmfirst:=TimeGetTime;
-        aform.LRecordCount.Caption:=SRpPage+':'+ IntToStr(i+1)+
-          ' - '+SRpItem+':'+ IntToStr(j+1);
         Application.ProcessMessages;
         if aform.cancelled then
          Raise Exception.Create(SRpOperationAborted);
-       end;
       end;
-     end;
-     if assigned(aform) then
-     begin
-       Application.ProcessMessages;
-       if aform.cancelled then
-        Raise Exception.Create(SRpOperationAborted);
      end;
     end;
    end;
+   Printer.EndDoc;
+  except
+   printer.Abort;
+   raise;
   end;
-  Printer.EndDoc;
- except
-  printer.Abort;
-  raise;
+  if assigned(aform) then
+   aform.close;
  end;
- if assigned(aform) then
-  aform.close;
 end;
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
@@ -1287,6 +1314,34 @@ begin
  Close;
 end;
 
+procedure TFRpVCLProgress.AppIdlePrintRangeText(Sender:TObject;var done:boolean);
+var
+ oldprogres:TRpProgressEvent;
+ S:String;
+begin
+ Application.Onidle:=nil;
+ done:=false;
+
+ TextDriver:=TRpTextDriver.Create;
+ aTextDriver:=TextDriver;
+ oldprogres:=RepProgress;
+ try
+  TextDriver.SelectPrinter(report.PrinterSelect);
+  report.OnProgress:=RepProgress;
+  report.PrintRange(aTextDriver,allpages,frompage,topage,copies,collate);
+  // Now Prints to selected printer the stream
+  SetLength(S,TextDriver.MemStream.Size);
+  TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
+  PrinterSelection(report.PrinterSelect);
+  SendControlCodeToPrinter(S);
+ finally
+  report.OnProgress:=oldprogres;
+ end;
+ Close;
+end;
+
+
+
 procedure TFRpVCLProgress.AppIdlePrintPDF(Sender:TObject;var done:boolean);
 var
  oldprogres:TRpProgressEvent;
@@ -1318,11 +1373,18 @@ function PrintReport(report:TRpReport;Caption:string;progress:boolean;
 var
  GDIDriver:TRpGDIDriver;
  aGDIDriver:IRpPrintDriver;
+ TextDriver:TRpTextDriver;
+ aTextDriver:IRpPrintDriver;
  forcecalculation:boolean;
  dia:TFRpVCLProgress;
  oldonidle:TIdleEvent;
  devicefonts:boolean;
+ istextonly:boolean;
+ drivername:String;
+ S:String;
 begin
+ drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
+ istextonly:=Length(drivername)>0;
  if report.PrinterFonts=rppfontsalways then
   devicefonts:=true
  else
@@ -1347,14 +1409,24 @@ begin
   end
   else
   begin
-   GDIDriver:=TRpGDIDriver.Create;
-   aGDIDriver:=GDIDriver;
-   if report.PrinterFonts=rppfontsalways then
-    gdidriver.devicefonts:=true
+   if istextonly then
+   begin
+    TextDriver:=TRpTextDriver.Create;
+    aTextDriver:=TextDriver;
+    TextDriver.SelectPrinter(report.PrinterSelect);
+    report.PrintAll(TextDriver);
+   end
    else
-    gdidriver.devicefonts:=false;
-   gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
-   report.PrintAll(GDIDriver);
+   begin
+    GDIDriver:=TRpGDIDriver.Create;
+    aGDIDriver:=GDIDriver;
+    if report.PrinterFonts=rppfontsalways then
+     gdidriver.devicefonts:=true
+    else
+     gdidriver.devicefonts:=false;
+    gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
+    report.PrintAll(GDIDriver);
+   end;
   end;
  end;
  if forcecalculation then
@@ -1374,7 +1446,10 @@ begin
     dia.collate:=collate;
     oldonidle:=Application.Onidle;
     try
-     Application.OnIdle:=dia.AppIdlePrintRange;
+     if istextonly then
+      Application.OnIdle:=dia.AppIdlePrintRangeText
+     else
+      Application.OnIdle:=dia.AppIdlePrintRange;
      dia.ShowModal;
     finally
      Application.OnIdle:=oldonidle;
@@ -1385,15 +1460,29 @@ begin
   end
   else
   begin
-   GDIDriver:=TRpGDIDriver.Create;
-   aGDIDriver:=GDIDriver;
-   GDIDriver.toprinter:=true;
-   if report.PrinterFonts=rppfontsalways then
-    gdidriver.devicefonts:=true
+   if istextonly then
+   begin
+    TextDriver:=TRpTextDriver.Create;
+    aTextDriver:=TextDriver;
+    TextDriver.SelectPrinter(report.PrinterSelect);
+    report.PrintRange(aTextDriver,allpages,frompage,topage,copies,collate);
+    SetLength(S,TextDriver.MemStream.Size);
+    TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
+    PrinterSelection(report.PrinterSelect);
+    SendControlCodeToPrinter(S);
+   end
    else
-    gdidriver.devicefonts:=false;
-   gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
-   report.PrintRange(aGDIDriver,allpages,frompage,topage,copies,collate);
+   begin
+    GDIDriver:=TRpGDIDriver.Create;
+    aGDIDriver:=GDIDriver;
+    GDIDriver.toprinter:=true;
+    if report.PrinterFonts=rppfontsalways then
+     gdidriver.devicefonts:=true
+    else
+     gdidriver.devicefonts:=false;
+    gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
+    report.PrintRange(aGDIDriver,allpages,frompage,topage,copies,collate);
+   end;
   end;
  end;
 end;

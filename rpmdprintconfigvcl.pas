@@ -55,6 +55,9 @@ type
     CheckOpenDrawer: TCheckBox;
     EOpenDrawer: TEdit;
     LExample2: TLabel;
+    ComboTextOnly: TComboBox;
+    Label1: TLabel;
+    CheckOem: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure LSelPrinterClick(Sender: TObject);
     procedure RadioUserClick(Sender: TObject);
@@ -66,6 +69,8 @@ type
     procedure ECutPaperChange(Sender: TObject);
     procedure CheckCutPaperClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure ComboTextOnlyChange(Sender: TObject);
+    procedure CheckOemClick(Sender: TObject);
   private
     { Private declarations }
     configfilename:string;
@@ -105,6 +110,7 @@ begin
  ReadPrintersConfig;
  printernames.Assign(Printer.Printers);
 
+ GetTextOnlyPrintDrivers(ComboTextOnly.Items);
  BOK.Caption:=TranslateStr(93,BOK.Caption);
  BCancel.Caption:=TranslateStr(94,BCancel.Caption);
  CheckPrinterFonts.Caption:=TranslateStr(113,CheckPrinterFonts.Caption);
@@ -153,6 +159,8 @@ begin
 end;
 
 procedure TFRpPrinterConfigVCL.LSelPrinterClick(Sender: TObject);
+var
+ index:integer;
 begin
  if LSelPrinter.ItemIndex=0 then
  begin
@@ -181,6 +189,10 @@ begin
  ECutPaper.Text:=configinifile.ReadString('CutPaper','Printer'+IntToStr(LSelPrinter.ItemIndex),'');
  CheckOpenDrawer.Checked:=configinifile.ReadBool('OpenDrawerOn','Printer'+IntToStr(LSelPrinter.ItemIndex),false);
  EOpenDrawer.Text:=configinifile.ReadString('OpenDrawer','Printer'+IntToStr(LSelPrinter.ItemIndex),'');
+ index:=ComboTextOnly.Items.IndexOf(configinifile.ReadString('PrinterDriver','Printer'+IntToStr(LSelPrinter.ItemIndex),' '));
+ if index>0 then
+  ComboTextOnly.ItemIndex:=index;
+ CheckOem.Checked:=configinifile.ReadBool('PrinterEscapeOem','Printer'+IntToStr(LSelPrinter.ItemIndex),False);
 end;
 
 procedure TFRpPrinterConfigVCL.ReadPrintersConfig;
@@ -251,8 +263,7 @@ procedure TFRpPrinterConfigVCL.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
  ReadPrintersConfig;
- printerconfigfile.free;
- printerconfigfile:=nil;
+ ReloadPrinterConfig;
 end;
 
 
@@ -312,5 +323,29 @@ begin
  printernames.free;
  printernames:=nil;
 end;
+
+procedure TFRpPrinterConfigVCL.ComboTextOnlyChange(Sender: TObject);
+var
+ drivername:String;
+begin
+ if LSelPrinter.ItemIndex<0 then
+  exit;
+ drivername:=Uppercase(Trim(ComboTextOnly.Text));
+ if Length(DriverName)>0 then
+ begin
+  configinifile.WriteInteger('PrinterEscapeStyle','Printer'+IntToStr(LSelPrinter.ItemIndex),Integer(rpPrinterDatabase));
+  configinifile.WriteString('PrinterDriver','Printer'+IntToStr(LSelPrinter.ItemIndex),drivername);
+ end
+ else
+ begin
+  configinifile.WriteInteger('PrinterEscapeStyle','Printer'+IntToStr(LSelPrinter.ItemIndex),Integer(rpPrinterDefault));
+ end;
+end;
+
+procedure TFRpPrinterConfigVCL.CheckOemClick(Sender: TObject);
+begin
+ configinifile.WriteBool('PrinterEscapeOem','Printer'+IntToStr(LSelPrinter.ItemIndex),CheckOem.Checked);
+end;
+
 
 end.

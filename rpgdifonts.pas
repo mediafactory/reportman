@@ -22,17 +22,15 @@ unit rpgdifonts;
 interface
 
 uses windows, Messages, SysUtils, Classes, Graphics, Controls,printers,
- rpmunits,Forms;
+ rpmunits,Forms,rptypes;
 
 type
-  TFontStep=(cpi20,cpi17,cpi15,cpi12,cpi10,cpi6,cpi5);
-
   TPrinterFont=class(TObject)
    private
     FFont:TFont;
     procedure SetFont(Valor:TFont);
    public
-    fstep:TFontStep;
+    fstep:TRpFontStep;
     LogFont:TLogFont;
     isred:boolean;
     constructor Create;virtual;
@@ -46,7 +44,7 @@ type
      name:string;
      sizes:TStringlist;
      ftype:TGDIFontType;
-     fstep:TFontStep;
+     fstep:TRpFontStep;
      fixed:boolean;
      constructor Create;
      destructor destroy;override;
@@ -54,48 +52,21 @@ type
 
 function UpdatePrinterFontList:boolean;
 
-procedure FindDeviceFont (DC:HDC; Font:Tfont; fstep:TFontStep);
+procedure FindDeviceFont (DC:HDC; Font:Tfont; fstep:TRpFontStep);
 function FindRotatedFont (Desti:HDC; Font:TFont; rotation:integer):HFont;
-function FontStepToString (fstep:TFontStep):string;
-function StringToPasFont (cad:string):TFontStep;
 function FindFontStep (Font:TFont):integer;
-function FontSizeToStep (asize:integer):TFontStep;
 
 var
  PrinterFonts:TList;
  PrinterSorted:TStringList;
  caracfonts:TStringlist;
  ScreenSorted:TStringList;
- valorsCPITWIPS:array [cpi20..cpi5] of integer=(76,84,96,120,144,240,288);
- valorsCPICPI:array [cpi20..cpi5] of integer=(20,17,15,12,10,6,5);
 implementation
 
 var
  currentprinter:integer;
  sizestruetype:Tstringlist;
 
-function FontSizeToStep(asize:integer):TFontStep;
-begin
- case asize of
-  8:
-   Result:=cpi17;
-  9:
-   Result:=cpi15;
-  10:
-   Result:=cpi12;
-  11..12:
-   Result:=cpi10;
-  13..15:
-    Result:=cpi6;
-  else
-   begin
-    if asize>15 then
-     Result:=cpi5
-    else
-     REsult:=cpi20;
-   end;
- end;
-end;
 
 procedure lliberacaracfonts;
 var
@@ -171,15 +142,15 @@ begin
  begin
   FontImp:=TPrinterFont.Create;
   case LogFont.lfWidth of
-   40..80: FOntImp.fstep:=cpi20;
-   81..90: FOntImp.fstep:=cpi17;
-   91..110: FOntImp.fstep:=cpi15;
-   111..135: FOntImp.fstep:=cpi12;
-   136..180: FOntImp.fstep:=cpi10;
-   181..240: FOntImp.fstep:=cpi6;
-   241..400: FOntImp.fstep:=cpi5;
+   40..80: FOntImp.fstep:=rpcpi20;
+   81..90: FOntImp.fstep:=rpcpi17;
+   91..110: FOntImp.fstep:=rpcpi15;
+   111..135: FOntImp.fstep:=rpcpi12;
+   136..180: FOntImp.fstep:=rpcpi10;
+   181..240: FOntImp.fstep:=rpcpi6;
+   241..400: FOntImp.fstep:=rpcpi5;
   else
-    FontImp.fstep:=cpi10;
+    FontImp.fstep:=rpcpi10;
   end;
   FontImp.LogFont:=LogFont;
   FontImp.Font.Name:=LogFont.lfFaceName;
@@ -272,7 +243,11 @@ begin
  printerSorted.Assign(Printer.Fonts);
 end;
 
-procedure FindScreenDeviceFont(FOnt:TFont;fstep:TFontStep);
+procedure FindScreenDeviceFont(FOnt:TFont;fstep:TRpFontStep);
+const
+ valorsCPITWIPS:array [rpcpi20..rpcpi5] of integer=(76,84,96,120,144,240,288);
+ valorsCPICPI:array [rpcpi20..rpcpi5] of integer=(20,17,15,12,10,6,5);
+
 var LogFont:TLogFont;
 begin
  // To skip device font simulation ignore this function
@@ -316,15 +291,15 @@ begin
   Font.Color:=clBlack;
 end;
 
-procedure FindPrinterDeviceFont(FOnt:TFont;fstep:TFontStep);
+procedure FindPrinterDeviceFont(FOnt:TFont;fstep:TRpFontStep);
 var
  i,fontsize:integer;
  fontname:string;
  font1:TPrinterFont;
- fontstep:TFontStep;
+ fontstep:TRpFontStep;
 begin
  fontsize:=10;
- fontstep:=cpi10;
+ fontstep:=rpcpi10;
  if printerFonts.Count<1 then
   Exit;
  i:=0;
@@ -389,7 +364,7 @@ begin
  end;
 end;
 
-procedure FindDeviceFont(DC:HDC;Font:Tfont;fstep:TFontStep);
+procedure FindDeviceFont(DC:HDC;Font:Tfont;fstep:TRpFontStep);
 begin
  if Printer.Printers.count<1 then
  begin
@@ -474,65 +449,6 @@ begin
   Result:=CreateFontIndirect(LOGFONT);
 end;
 
-function FontStepToString(fstep:TFontStep):string;
-begin
- case fstep of
-  cpi20:
-   Result:='20 cpi';
-  cpi17:
-   Result:='17 cpi';
-  cpi15:
-   Result:='15 cpi';
-  cpi12:
-   Result:='12 cpi';
-  cpi10:
-   Result:='10 cpi';
-  cpi6:
-   Result:='6 cpi';
-  cpi5:
-   Result:='5 cpi';
- end;
-end;
-
-function StringToPasFont(cad:string):TFontStep;
-begin
- result:=cpi10;
- if cad='10 cpi' then
- begin
-  result:=cpi10;
-  exit;
- end;
- if cad='12 cpi' then
- begin
-  result:=cpi12;
-  exit;
- end;
- if cad='15 cpi' then
- begin
-  result:=cpi15;
-  exit;
- end;
- if cad='5 cpi' then
- begin
-  result:=cpi5;
-  exit;
- end;
- if cad='6 cpi' then
- begin
-  result:=cpi6;
-  exit;
- end;
- if cad='20 cpi' then
- begin
-  result:=cpi20;
-  exit;
- end;
- if cad='17 cpi' then
- begin
-  result:=cpi17;
-  exit;
- end;
-end;
 
 constructor TCaracfont.Create;
 begin

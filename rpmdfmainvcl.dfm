@@ -30,7 +30,6 @@ object FRpMainFVCL: TFRpMainFVCL
       item
         Width = 50
       end>
-    SimplePanel = False
   end
   object ToolBar1: TToolBar
     Left = 0
@@ -284,7 +283,6 @@ object FRpMainFVCL: TFRpMainFVCL
       Top = 0
       Width = 8
       Height = 314
-      Cursor = crHSplit
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
@@ -2351,6 +2349,14 @@ object FRpMainFVCL: TFRpMainFVCL
       Hint = 'Shows system and printer information'
       OnExecute = ASysInfoExecute
     end
+    object AAlign1_6: TAction
+      Category = 'Edit'
+      Caption = 'Align height 1/6'
+      Hint = 
+        'Aligns all sections height to 1/6 inchess for dot matrix compati' +
+        'bility'
+      OnExecute = AAlign1_6Execute
+    end
     object ALibraries: TAction
       Category = 'File'
       Caption = 'Libraries...'
@@ -2527,6 +2533,12 @@ object FRpMainFVCL: TFRpMainFVCL
       end
       object Showall1: TMenuItem
         Action = AShowAll
+      end
+      object AboutReportManager1: TMenuItem
+        Caption = '-'
+      end
+      object Alignheight161: TMenuItem
+        Action = AAlign1_6
       end
     end
     object MDisplay: TMenuItem

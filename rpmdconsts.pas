@@ -696,6 +696,16 @@ var
   SRpSMemo:WideString='Memo';
   SRpSInvReportHandle:WideString='Invalid report handle';
   SRpSNotAvail:WideString='Not available';
+  SRpLinesPerInchIncorrect:WideString='Incorrect lines per inch';
+  SRpStepBySize:WideString='By size';
+  SRpStep20:WideString='20 cpi';
+  SRpStep17:WideString='17 cpi';
+  SRpStep15:WideString='15 cpi';
+  SRpStep12:WideString='12 cpi';
+  SRpStep10:WideString='10 cpi';
+  SRpStep6:WideString='6 cpi';
+  SRpStep5:WideString='5 cpi';
+  SRpSFontStep:WideString='Font Step';
   SRpDBExpressDesc:WideString='Borland DBExpress is a new multi-database, server-based, '+
    'database driver technology, it''s simple  and thin,so database drivers are usually small '+
    'and efficient. Each database driver needs a  diferent shared object library, you '+

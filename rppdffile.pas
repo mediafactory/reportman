@@ -73,7 +73,6 @@ uses Classes,Sysutils,
 const
  PDF_HEADER:string='%PDF-1.4';
  CONS_PDFRES=POINTS_PER_INCHESS;
- CONS_MINLINEINFOITEMS=400;
  CONS_UNDERLINEWIDTH=0.1;
  CONS_SRIKEOUTWIDTH=0.05;
  CONS_UNDERLINEPOS=1.1;
@@ -96,13 +95,7 @@ type
 
  TRpPDFFile=class;
 
- TRpLineInfo=record
-  Position:integer;
-  Size:integer;
-  Width:integer;
-  height:integer;
-  TopPos:integer;
- end;
+
 
  TRpPDFCanvas=class(TObject)
   private
@@ -1515,7 +1508,7 @@ var
  alastsize:double;
  lockspace:boolean;
 begin
- // Text extent for the simpe strings, wide strings not supported
+ // Text extent for the simple strings, wide strings not supported
  astring:=Text;
  arec:=Rect;
  arec.Left:=0;

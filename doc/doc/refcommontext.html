@@ -63,6 +63,13 @@
     <td>Integer</td>
     <td>Font size in standard points unit, that is 72 points=1 inchess</td>
   </tr>
+  <tr>
+    <td>Font step</td>
+    <td>FontStep</td>
+    <td>TRpSelectFontStep</td>
+    <td>Font step for dot matrix output and text output with a printer driver 
+      selected, the engine will select the nearest size</td>
+  </tr>
   <tr> 
     <td>Font Color</td>
     <td>FontColor</td>
@@ -80,8 +87,7 @@
     <td>Bidi</td>
     <td>BidiModes</td>
     <td>BidiMode</td>
-    <td> 
-      <p>Left to right reading language support (bidirectional). The Bidi property 
+    <td> <p>Left to right reading language support (bidirectional). The Bidi property 
         is stored for each language in the report page setup. Internally stored 
         as a string list containing the value for each language. </p>
       <table border="1">
@@ -106,8 +112,7 @@
       </table>
       <p>Bidi support is fully implemented in Windows bug Qt library does not 
         implement RightToLeft so in Linux is partially supported, also in PDF 
-        export is only partially supported.</p>
-    </td>
+        export is only partially supported.</p></td>
   </tr>
   <tr> 
     <td>Back Color</td>
@@ -144,7 +149,7 @@
     <td>Will force printing of text in a single line even if it contains line 
       feeds. </td>
   </tr>
-  <tr>
+  <tr> 
     <td>F.Rotation</td>
     <td>FontRotation</td>
     <td>Angle</td>

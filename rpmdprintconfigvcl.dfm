@@ -3,8 +3,8 @@ object FRpPrinterConfigVCL: TFRpPrinterConfigVCL
   Top = 108
   BorderStyle = bsDialog
   Caption = 'Dialog'
-  ClientHeight = 425
-  ClientWidth = 521
+  ClientHeight = 475
+  ClientWidth = 519
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -24,28 +24,35 @@ object FRpPrinterConfigVCL: TFRpPrinterConfigVCL
   end
   object LOperations: TLabel
     Left = 220
-    Top = 152
+    Top = 199
     Width = 98
     Height = 13
     Caption = 'Operations after print'
   end
   object LExample: TLabel
     Left = 220
-    Top = 172
+    Top = 219
     Width = 278
     Height = 13
     Caption = 'Example, TM200 Open Drawer: #27#112#48#160#160#4'
   end
   object LExample2: TLabel
     Left = 220
-    Top = 188
+    Top = 235
     Width = 266
     Height = 13
     Caption = 'Example, TM88 Open Drawer: #27#112#48#40#200#4'
   end
+  object Label1: TLabel
+    Left = 216
+    Top = 80
+    Width = 72
+    Height = 13
+    Caption = 'Text only driver'
+  end
   object BOK: TButton
     Left = 8
-    Top = 380
+    Top = 431
     Width = 81
     Height = 29
     Caption = 'OK'
@@ -55,7 +62,7 @@ object FRpPrinterConfigVCL: TFRpPrinterConfigVCL
   end
   object BCancel: TButton
     Left = 128
-    Top = 380
+    Top = 431
     Width = 81
     Height = 29
     Cancel = True
@@ -67,7 +74,7 @@ object FRpPrinterConfigVCL: TFRpPrinterConfigVCL
     Left = 4
     Top = 4
     Width = 205
-    Height = 253
+    Height = 301
     ItemHeight = 13
     TabOrder = 2
     OnClick = LSelPrinterClick
@@ -93,7 +100,7 @@ object FRpPrinterConfigVCL: TFRpPrinterConfigVCL
   end
   object GConfigFile: TGroupBox
     Left = 4
-    Top = 268
+    Top = 315
     Width = 493
     Height = 101
     Caption = 'Configuraiton file'
@@ -128,7 +135,7 @@ object FRpPrinterConfigVCL: TFRpPrinterConfigVCL
   end
   object GPageMargins: TGroupBox
     Left = 216
-    Top = 72
+    Top = 119
     Width = 285
     Height = 73
     Caption = 'Position adjustment'
@@ -180,7 +187,7 @@ object FRpPrinterConfigVCL: TFRpPrinterConfigVCL
   end
   object CheckCutPaper: TCheckBox
     Left = 216
-    Top = 208
+    Top = 255
     Width = 145
     Height = 21
     Caption = 'Cut paper'
@@ -189,7 +196,7 @@ object FRpPrinterConfigVCL: TFRpPrinterConfigVCL
   end
   object ECutPaper: TEdit
     Left = 368
-    Top = 208
+    Top = 255
     Width = 129
     Height = 21
     TabOrder = 8
@@ -197,7 +204,7 @@ object FRpPrinterConfigVCL: TFRpPrinterConfigVCL
   end
   object CheckOpenDrawer: TCheckBox
     Left = 216
-    Top = 232
+    Top = 279
     Width = 145
     Height = 21
     Caption = 'Open drawer'
@@ -206,10 +213,29 @@ object FRpPrinterConfigVCL: TFRpPrinterConfigVCL
   end
   object EOpenDrawer: TEdit
     Left = 368
-    Top = 232
+    Top = 279
     Width = 129
     Height = 21
     TabOrder = 10
     OnChange = ECutPaperChange
+  end
+  object ComboTextOnly: TComboBox
+    Left = 308
+    Top = 76
+    Width = 129
+    Height = 21
+    Style = csDropDownList
+    ItemHeight = 13
+    TabOrder = 11
+    OnChange = ComboTextOnlyChange
+  end
+  object CheckOem: TCheckBox
+    Left = 440
+    Top = 75
+    Width = 77
+    Height = 21
+    Caption = 'Oem'
+    TabOrder = 12
+    OnClick = CheckOemClick
   end
 end
