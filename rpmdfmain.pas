@@ -658,8 +658,8 @@ end;
 
 procedure TFRpMainF.FormCreate(Sender: TObject);
 begin
- ToolBar1.ButtonHeight:=26*75 div Screen.PixelsPerInch;
- ToolBar1.ButtonWidth:=26*75 div Screen.PixelsPerInch;
+ ToolBar1.ButtonHeight:=26;
+ ToolBar1.ButtonWidth:=26;
  // Inits Bools Arrays
  BoolToStr(True,True);
  ALeft.ShortCut:=ShortCut(Key_Left,[ssCtrl]);
@@ -899,6 +899,7 @@ begin
  newfilename:=LastusedFiles.LastUsed.Strings[TComponent(Sender).tag];
  // Try to open the file
  DoOpen(newfilename,false);
+ FormResize(Self);
 end;
 
 
@@ -981,6 +982,9 @@ procedure TFRpMainF.ADataConfigExecute(Sender: TObject);
 begin
  // Data info configuration dialog
  rpmdfdatainfo.ShowDataConfig(report);
+ fobjinsp.ClearMultiSelect;
+ fdesignframe.UpdateSelection(true);
+ updatedmfields:=false;
 end;
 
 procedure TFRpMainF.AParamsExecute(Sender: TObject);

@@ -266,6 +266,7 @@ end;
 
 procedure TFRpPreview.FormCreate(Sender: TObject);
 begin
+ BToolBar.ButtonHeight:=EPageNum.Height;
  APrevious.ShortCut:=Key_PageUp;
  ANext.ShortCut:=Key_PageDown;
  AFirst.ShortCut:=Key_Home;
