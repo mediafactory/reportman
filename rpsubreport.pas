@@ -207,7 +207,7 @@ begin
   if (Sections.Items[index].Section.SectionType=rpsecgheader) then
   begin
    if (groupname=Sections.Items[index].Section.GroupName) then
-    Raise Exception.Create(SRpGroupNameExists);
+    Raise Exception.Create(SRpGroupAlreadyExists);
   end;
   inc(index);
  end;

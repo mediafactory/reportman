@@ -40,23 +40,23 @@ const
 type
   TRpGDIDriver=class;
   TFRpVCLProgress = class(TForm)
-    CancelBtn: TButton;
-    Label1: TLabel;
+    BCancel: TButton;
+    LProcessing: TLabel;
     LRecordCount: TLabel;
-    Label2: TLabel;
+    LTitle: TLabel;
     LTittle: TLabel;
-    OKBtn: TButton;
-    GroupBox1: TGroupBox;
+    BOK: TButton;
+    GPrintRange: TGroupBox;
     EFrom: TEdit;
     ETo: TEdit;
-    Label5: TLabel;
-    Label4: TLabel;
+    LTo: TLabel;
+    LFrom: TLabel;
     RadioAll: TRadioButton;
     RadioRange: TRadioButton;
     procedure FormCreate(Sender: TObject);
-    procedure CancelBtnClick(Sender: TObject);
+    procedure BCancelClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure OKBtnClick(Sender: TObject);
+    procedure BOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
     { Private declarations }
@@ -213,11 +213,11 @@ begin
  begin
   diarange:=TFRpVCLProgress.Create(Application);
   try
-   diarange.OKBtn.Visible:=true;
-   diarange.GroupBox1.Visible:=true;
+   diarange.BOK.Visible:=true;
+   diarange.GPrintRange.Visible:=true;
    diarange.RadioAll.Checked:=allpages;
    diarange.RadioRange.Checked:=not allpages;
-   diarange.ActiveControl:=diarange.OKBtn;
+   diarange.ActiveControl:=diarange.BOK;
    diarange.Frompage:=frompage;
    diarange.ToPage:=topage;
    diarange.showmodal;
@@ -1057,6 +1057,18 @@ procedure TFRpVCLProgress.FormCreate(Sender: TObject);
 begin
  LRecordCount.Font.Style:=[fsBold];
  LTittle.Font.Style:=[fsBold];
+
+ BOK.Caption:=TranslateStr(93,BOK.Caption);
+ BCancel.Caption:=TranslateStr(94,BCancel.Caption);
+ LTitle.Caption:=TranslateStr(252,LTitle.Caption);
+ LProcessing.Caption:=TranslateStr(253,LProcessing.Caption);
+ GPrintRange.Caption:=TranslateStr(254,GPrintRange.Caption);
+ LFrom.Caption:=TranslateStr(255,LFrom.Caption);
+ LTo.Caption:=TranslateStr(256,LTo.Caption);
+ RadioAll.Caption:=TranslateStr(257,RadioAll.Caption);
+ RadioRange.Caption:=TranslateStr(258,RadioRange.Caption);
+ Caption:=TranslateStr(259,Caption);
+
 end;
 
 procedure TFRpVCLProgress.AppIdle(Sender:TObject;var done:boolean);
@@ -1065,12 +1077,12 @@ begin
  Application.OnIdle:=nil;
  done:=false;
  LTittle.Caption:=tittle;
- Label2.Visible:=true;
+ LProcessing.Visible:=true;
  DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate,devicefonts);
 end;
 
 
-procedure TFRpVCLProgress.CancelBtnClick(Sender: TObject);
+procedure TFRpVCLProgress.BCancelClick(Sender: TObject);
 begin
  cancelled:=true;
 end;
@@ -1323,7 +1335,7 @@ begin
  end;
 end;
 
-procedure TFRpVCLProgress.OKBtnClick(Sender: TObject);
+procedure TFRpVCLProgress.BOKClick(Sender: TObject);
 begin
  FromPage:=StrToInt(EFrom.Text);
  ToPage:=StrToInt(ETo.Text);
@@ -1337,7 +1349,7 @@ end;
 
 procedure TFRpVCLProgress.FormShow(Sender: TObject);
 begin
- if OKBtn.Visible then
+ if BOK.Visible then
  begin
   EFrom.Text:=IntToStr(FromPage);
   ETo.Text:=IntToStr(ToPage);

@@ -1,7 +1,7 @@
 object FRpQtProgress: TFRpQtProgress
   Left = 184
   Top = 324
-  ActiveControl = CancelBtn
+  ActiveControl = BCancel
   AutoScroll = False
   BorderStyle = fbsDialog
   Caption = 'Print progress'
@@ -15,7 +15,7 @@ object FRpQtProgress: TFRpQtProgress
   PixelsPerInch = 96
   TextHeight = 13
   TextWidth = 6
-  object CancelBtn: TButton
+  object BCancel: TButton
     Left = 207
     Top = 84
     Width = 75
@@ -24,9 +24,9 @@ object FRpQtProgress: TFRpQtProgress
     Caption = 'Cancel'
     ModalResult = 4
     TabOrder = 0
-    OnClick = CancelBtnClick
+    OnClick = BCancelClick
   end
-  object Label1: TLabel
+  object LProcessing: TLabel
     Left = 8
     Top = 40
     Width = 52
@@ -40,7 +40,7 @@ object FRpQtProgress: TFRpQtProgress
     Height = 25
     AutoSize = False
   end
-  object Label2: TLabel
+  object LTitle: TLabel
     Left = 8
     Top = 4
     Width = 23

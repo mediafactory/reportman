@@ -790,7 +790,8 @@ begin
  AUserParams.Caption:=TranslateStr(135,AUserparams.Caption);
  AUserParams.Hint:=TranslateStr(136,AUserparams.Hint);
  MAdd.Caption:=TranslateStr(149,MAdd.Caption);
-
+ SaveDialog1.Title:=TranslateStr(213,SaveDialog1.Title);
+ OpenDialog1.Title:=TranslateStr(214,OpenDialog1.Title);
 
  // Activates OnHint
  oldonhint:=Application.OnHint;
@@ -1217,7 +1218,7 @@ function TFRpMainF.GetExpressionText:string;
 var
  i:integer;
 begin
- Result:=SRpSampleExpression;
+ Result:='2+2';
  for i:=0 to MFields.Items.Count-1 do
  begin
   if MFields.Items[i].Checked then

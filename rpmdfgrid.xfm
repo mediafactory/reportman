@@ -80,15 +80,15 @@ object FRpGridOptions: TFRpGridOptions
   object CheckEnabled: TCheckBox
     Left = 8
     Top = 56
-    Width = 89
+    Width = 217
     Height = 21
     Caption = 'Enabled'
     TabOrder = 7
   end
   object CheckVisible: TCheckBox
-    Left = 8
+    Left = 16
     Top = 80
-    Width = 89
+    Width = 209
     Height = 21
     Caption = 'Visible'
     TabOrder = 8
@@ -110,7 +110,7 @@ object FRpGridOptions: TFRpGridOptions
   object CheckLines: TCheckBox
     Left = 8
     Top = 104
-    Width = 89
+    Width = 225
     Height = 21
     Caption = 'Draw lines'
     TabOrder = 11

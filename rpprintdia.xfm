@@ -1,7 +1,7 @@
 object FRpPrintDialog: TFRpPrintDialog
   Left = 93
   Top = 96
-  ActiveControl = OKBtn
+  ActiveControl = BOK
   AutoScroll = False
   Caption = 'Print'
   ClientHeight = 276
@@ -27,19 +27,19 @@ object FRpPrintDialog: TFRpPrintDialog
     Height = 13
     Caption = 'Program'
   end
-  object OKBtn: TButton
+  object BOK: TButton
     Left = 12
-    Top = 212
+    Top = 224
     Width = 77
     Height = 29
     Caption = 'OK'
     Default = True
     TabOrder = 0
-    OnClick = OKBtnClick
+    OnClick = BOKClick
   end
-  object CancelBtn: TButton
+  object BCancel: TButton
     Left = 100
-    Top = 212
+    Top = 224
     Width = 77
     Height = 29
     Cancel = True
@@ -47,7 +47,7 @@ object FRpPrintDialog: TFRpPrintDialog
     ModalResult = 2
     TabOrder = 1
   end
-  object Label1: TLabel
+  object LPrinter: TLabel
     Left = 8
     Top = 8
     Width = 30
@@ -64,7 +64,7 @@ object FRpPrintDialog: TFRpPrintDialog
     TabOrder = 5
     OnChange = ComboPrintersChange
   end
-  object Label2: TLabel
+  object LOutput: TLabel
     Left = 8
     Top = 36
     Width = 67
@@ -143,7 +143,7 @@ object FRpPrintDialog: TFRpPrintDialog
     TabOrder = 14
     OnClick = RPagesClick
   end
-  object Label4: TLabel
+  object LFrom: TLabel
     Left = 100
     Top = 140
     Width = 23
@@ -157,7 +157,7 @@ object FRpPrintDialog: TFRpPrintDialog
     Height = 21
     TabOrder = 16
   end
-  object Label5: TLabel
+  object LTo: TLabel
     Left = 100
     Top = 172
     Width = 13
@@ -183,7 +183,7 @@ object FRpPrintDialog: TFRpPrintDialog
       Width = 110
       Height = 45
     end
-    object Label6: TLabel
+    object LCopies: TLabel
       Left = 8
       Top = 12
       Width = 32
@@ -191,16 +191,16 @@ object FRpPrintDialog: TFRpPrintDialog
       Caption = 'Copies'
     end
     object ECopies: TEdit
-      Left = 56
+      Left = 88
       Top = 8
       Width = 53
       Height = 21
       TabOrder = 1
     end
     object CheckCollate: TCheckBox
-      Left = 8
+      Left = 12
       Top = 32
-      Width = 117
+      Width = 189
       Height = 17
       Caption = 'Collate'
       TabOrder = 2

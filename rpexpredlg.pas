@@ -60,12 +60,12 @@ type
   end;
 
   TFrpExpredialog = class(TForm)
-    Label1: TLabel;
+    LExpression: TLabel;
     MemoExpre: TMemo;
     LCategory: TListBox;
-    Label2: TLabel;
+    LabelCategory: TLabel;
     LItems: TListBox;
-    Label3: TLabel;
+    LOperation: TLabel;
     LModel: TLabel;
     LHelp: TLabel;
     BCheckSyn: TButton;
@@ -73,7 +73,7 @@ type
     LParams: TLabel;
     BCancel: TButton;
     BOK: TButton;
-    Button1: TButton;
+    BAdd: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure LCategoryClick(Sender: TObject);
@@ -148,6 +148,22 @@ begin
  begin
   llistes[i]:=TStringList.create;
  end;
+
+ BOK.Caption:=TranslateStr(93,BOK.Caption);
+ BCancel.Caption:=TranslateStr(94,BCancel.Caption);
+ LExpression.Caption:=TranslateStr(239,LExpression.Caption);
+ Caption:=TranslateStr(240,Caption);
+ LabelCategory.Caption:=TranslateStr(241,LabelCategory.Caption);
+ LOperation.Caption:=TranslateStr(242,LOperation.Caption);
+ BAdd.Caption:=TranslateStr(243,BAdd.Caption);
+ BCheckSyn.Caption:=TranslateStr(244,BCheckSyn.Caption);
+ BShowResult.Caption:=TranslateStr(246,BShowResult.Caption);
+ LCategory.Items.Strings[0]:=TranslateStr(247,LCategory.Items.Strings[0]);
+ LCategory.Items.Strings[1]:=TranslateStr(248,LCategory.Items.Strings[1]);
+ LCategory.Items.Strings[2]:=TranslateStr(249,LCategory.Items.Strings[2]);
+ LCategory.Items.Strings[3]:=TranslateStr(250,LCategory.Items.Strings[3]);
+ LCategory.Items.Strings[4]:=TranslateStr(251,LCategory.Items.Strings[4]);
+ 
  SetInitialBounds;
 end;
 

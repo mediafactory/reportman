@@ -57,6 +57,8 @@ contains
   rpmdfsectionint in 'rpmdfsectionint.pas',
   rpmdfstruc in 'rpmdfstruc.pas' {FRpStructure: TFrame},
   rpmdobinsint in 'rpmdobinsint.pas',
-  rpmdobjinsp in 'rpmdobjinsp.pas' {FRpObjInsp: TFrame};
+  rpmdobjinsp in 'rpmdobjinsp.pas' {FRpObjInsp: TFrame},
+  rpmdfbarcodeint in 'rpmdfbarcodeint.pas',
+  rpmdfchartint in 'rpmdfchartint.pas';
 
 end.

@@ -3,7 +3,7 @@ unit uflanginfo;
 interface
 
 uses Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls,
-  Buttons, ExtCtrls, Db, DBClient, Grids, DBGrids,registry,Math;
+  Buttons, ExtCtrls, Db, DBClient, Grids, DBGrids,registry,Math, ComCtrls;
 
 type
   TFLangInfo = class(TForm)

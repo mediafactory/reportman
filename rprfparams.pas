@@ -40,10 +40,10 @@ const
 type
   TFRpRunTimeParams = class(TForm)
     PModalButtons: TPanel;
-    OKBtn: TButton;
-    CancelBtn: TButton;
+    BOK: TButton;
+    BCancel: TButton;
     MainScrollBox: TScrollBox;
-    procedure OKBtnClick(Sender: TObject);
+    procedure BOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
@@ -101,7 +101,7 @@ begin
  end;
 end;
 
-procedure TFRpRunTimeParams.OKBtnClick(Sender: TObject);
+procedure TFRpRunTimeParams.BOKClick(Sender: TObject);
 begin
  SaveParams;
  dook:=true;
@@ -113,7 +113,9 @@ begin
  fparams:=TRpParamList.Create(Self);
  lcontrols:=TStringList.Create;
  lnulls:=TStringList.Create;
- SetInitialBounds;
+ Caption:=TranslateStr(238,Caption);
+ BOK.Caption:=TranslateStr(93,BOK.Caption);
+ BCancel.Caption:=TranslateStr(94,BCancel.Caption);
 end;
 
 procedure TFRpRunTimeParams.SetParams(avalue:TRpParamList);
@@ -267,6 +269,7 @@ begin
  if  NewClientHeight>CONS_MAXCLIENTHEIGHT then
   NewClientHeight:=CONS_MAXCLIENTHEIGHT;
  ClientHeight:=NewClientHeight;
+
  SetInitialBounds;
 end;
 

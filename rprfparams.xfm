@@ -1,9 +1,9 @@
 object FRpRunTimeParams: TFRpRunTimeParams
   Left = 21
   Top = 50
-  ActiveControl = OKBtn
+  ActiveControl = BOK
   AutoScroll = False
-  Caption = 'Dialog'
+  Caption = 'Report parameters'
   ClientHeight = 276
   ClientWidth = 583
   Color = clButton
@@ -20,7 +20,7 @@ object FRpRunTimeParams: TFRpRunTimeParams
     Height = 41
     Align = alBottom
     TabOrder = 0
-    object OKBtn: TButton
+    object BOK: TButton
       Left = 59
       Top = 8
       Width = 75
@@ -28,9 +28,9 @@ object FRpRunTimeParams: TFRpRunTimeParams
       Caption = 'OK'
       Default = True
       TabOrder = 0
-      OnClick = OKBtnClick
+      OnClick = BOKClick
     end
-    object CancelBtn: TButton
+    object BCancel: TButton
       Left = 203
       Top = 8
       Width = 75

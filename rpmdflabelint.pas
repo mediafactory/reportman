@@ -57,14 +57,13 @@ type
 
 implementation
 
-const
- AggregatesString:array [rpAgNone..rpAgGeneral] of string=
-  (SRpNone,SRpGroup,SRpPage,SRpGeneral);
+var
+ AggregatesString:array [rpAgNone..rpAgGeneral] of widestring;
  AggretypeString:array [rpagSum..rpagStdDev] of string=
   (SrpSum,SRpMin,SRpMax,SRpAvg,SRpStdDev);
 
 
-function StringToAgeType(value:string):TRpAggregateType;
+function StringToAgeType(value:widestring):TRpAggregateType;
 var
  i:TRpAggregateType;
 begin
@@ -79,7 +78,7 @@ begin
  end;
 end;
 
-function StringToAggregate(value:string):TRpAggregate;
+function StringToAggregate(value:widestring):TRpAggregate;
 var
  i:TRpAggregate;
 begin
@@ -425,5 +424,9 @@ begin
  DrawSelected;
 end;
 
-
+initialization
+ AggregatesString[rpAgNone]:=SRpNone;
+ AggregatesString[rpAgGroup]:=SRpGroup;
+ AggregatesString[rpAgPage]:=SRpPage;
+ AggregatesString[rpAgGeneral]:=SRpGeneral;
 end.

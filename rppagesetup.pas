@@ -85,6 +85,10 @@ implementation
 
 {$R *.xfm}
 
+var
+ rplangdesc:array [0..MAX_LANGUAGES-1] of widestring;
+
+
 type
   TPageWidthHeight = record
     Width: Integer;
@@ -340,5 +344,11 @@ procedure TFRpPageSetup.FormShow(Sender: TObject);
 begin
  ReadOptions;
 end;
+
+initialization
+
+ rplangdesc[0]:=SRpEnglish;
+ rplangdesc[1]:=SRpSpanish;
+ rplangdesc[2]:=SRpCatalan;
 
 end.

@@ -1,22 +1,24 @@
-{DONE 4 -oToni -cEngine : Add TTable support for BDE driver}
-{DONE 1 -oToni -cOthers : Add funtions to access SQLconnection and SQLsentence to ActiveX}
-{DONE 1 -oToni -cEngine : Add barcode component}
+{TODO 2 -oToni -cEngine : Add OnFunction to evaluator}
+{TODO 5 -oToni -cEngine : Translate all constants and multilanguage Designer}
 
-{DONE 2   -oToni -cEngine : Finish the pdf driver images, underline, textalign}
+
+
+
+
 {TODO 1 -oToni -cEngine : Allow Memos autoexpand across multiple pages}
 {TODO 1 -oToni -cEngine : Add a report server via sockets or the web, sending pdfs or html or jpgs.}
 
 {TODO 1 -oToni -cEngine : Implementation of external sections}
-{DONE 3 -oToni -cDesign Interface : Add multiselect option and show common properties in object inspector}
 
 
-{DONE 1 -oToni -cEngine : Qt Driver text rotation implementation}
-{DONE 5 -oToni -cEngine : Implementation for Delphi 5 vcl driver}
 
-{DONE 1 -oToni -cDesign Interface : Select the object that produces a error}
-{DONE 2 -oToni -cDesign Interface : Add a alignment window for elements}
+
+
+
+
+
 {TODO 1 -oToni -cEngine : Implementation of vertical labels as subreport column width}
-{DONE 2 -oToni -cDesign Interface : Enhace object inspector speed}
+
 
 
 
@@ -24,15 +26,15 @@
 {TODO 1 -oToni -cEngine : Image component filename property to load a file on the fly}
 
 
-{DONE 1 -oToni -cEngine : Detect existing BDE Databases in rpdatainfo}
 
 
 
 
 
 
-{DONE 2  -oToni -cEngine : Implement autoexpand and autocontract for sections}
-{TODO 1 -oToni -cEngine : Enhace charting}
+
+
+{TODO 1 -oToni -cEngine : Enhace charting adding poliline to metafiles}
 
 {TODO 1 -oToni -cOthers : Conversion program for gestor.exe}
 {TODO 1   -oToni -cEngine : Saving and loading reports from database tables using the designer}

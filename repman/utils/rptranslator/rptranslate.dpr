@@ -16,7 +16,7 @@
 program rptranslate;
 
 uses
-  Forms,
+  Forms,midaslib,
   umain in 'umain.pas' {FMain},
   rptranslator in '..\..\..\rptranslator.pas',
   uflanginfo in 'uflanginfo.pas' {FLangInfo};

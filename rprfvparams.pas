@@ -42,10 +42,10 @@ const
 type
   TFRpRTParams = class(TForm)
     PModalButtons: TPanel;
-    OKBtn: TButton;
-    CancelBtn: TButton;
+    BOK: TButton;
+    BCancel: TButton;
     MainScrollBox: TScrollBox;
-    procedure OKBtnClick(Sender: TObject);
+    procedure BOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
@@ -103,7 +103,7 @@ begin
  end;
 end;
 
-procedure TFRpRTParams.OKBtnClick(Sender: TObject);
+procedure TFRpRTParams.BOKClick(Sender: TObject);
 begin
  SaveParams;
  dook:=true;
@@ -115,6 +115,9 @@ begin
  fparams:=TRpParamList.Create(Self);
  lcontrols:=TStringList.Create;
  lnulls:=TStringList.Create;
+ BOK.Caption:=TranslateStr(93,BOK.Caption);
+ BCancel.Caption:=TranslateStr(94,BCancel.Caption);
+ Caption:=TranslateStr(238,Caption);
 end;
 
 procedure TFRpRTParams.SetParams(avalue:TRpParamList);

@@ -43,13 +43,13 @@ const
 type
   TRpQtDriver=class;
   TFRpQtProgress = class(TForm)
-    CancelBtn: TButton;
-    Label1: TLabel;
+    BCancel: TButton;
+    LProcessing: TLabel;
     LRecordCount: TLabel;
-    Label2: TLabel;
+    LTitle: TLabel;
     LTittle: TLabel;
     procedure FormCreate(Sender: TObject);
-    procedure CancelBtnClick(Sender: TObject);
+    procedure BCancelClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
@@ -470,7 +470,7 @@ begin
      rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);
      rec.Bottom:=posy+round(obj.Height*dpiy/TWIPS_PER_INCHESS);
      Canvas.Start;
-     try      R.Left := posx;
+     try      R.Left := posx;
       R.Top := posy;
       R.Right := rec.Right;
       R.Bottom := rec.Bottom;
@@ -478,7 +478,7 @@ begin
       QPainter_setPen(Canvas.Handle, Canvas.Font.FontPen);
       QPainter_save(Canvas.Handle);
       try
-       QPainter_scale(Canvas.Handle,scale,scale);       QPainter_drawText(Canvas.Handle, @R, aalign, PWideString(@atext), -1,        @Rec, nil);      finally       QPainter_restore(Canvas.Handle);
+       QPainter_scale(Canvas.Handle,scale,scale);       QPainter_drawText(Canvas.Handle, @R, aalign, PWideString(@atext), -1,        @Rec, nil);      finally       QPainter_restore(Canvas.Handle);
       end;
      finally
        Canvas.Stop;
@@ -823,11 +823,15 @@ begin
  end;
 end;
 
-
 procedure TFRpQtProgress.FormCreate(Sender: TObject);
 begin
  LRecordCount.Font.Style:=[fsBold];
  LTittle.Font.Style:=[fsBold];
+
+ BCancel.Caption:=TranslateStr(94,BCancel.Caption);
+ LTitle.Caption:=TranslateStr(252,LTitle.Caption);
+ LProcessing.Caption:=TranslateStr(253,LProcessing.Caption);
+
  SetInitialBounds;
 end;
 
@@ -837,12 +841,12 @@ begin
  Application.OnIdle:=nil;
  done:=false;
  LTittle.Caption:=tittle;
- Label2.Visible:=true;
+ Lprocessing.Visible:=true;
  DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate);
 end;
 
 
-procedure TFRpQtProgress.CancelBtnClick(Sender: TObject);
+procedure TFRpQtProgress.BCancelClick(Sender: TObject);
 begin
  cancelled:=true;
 end;

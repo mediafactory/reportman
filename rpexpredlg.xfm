@@ -15,21 +15,21 @@ object FrpExpredialog: TFrpExpredialog
   PixelsPerInch = 96
   TextHeight = 13
   TextWidth = 6
-  object Label1: TLabel
+  object LExpression: TLabel
     Left = 8
     Top = 8
     Width = 51
     Height = 13
     Caption = 'Expression'
   end
-  object Label2: TLabel
+  object LabelCategory: TLabel
     Left = 4
     Top = 108
     Width = 42
     Height = 13
     Caption = 'Category'
   end
-  object Label3: TLabel
+  object LOperation: TLabel
     Left = 124
     Top = 108
     Width = 46
@@ -92,9 +92,9 @@ object FrpExpredialog: TFrpExpredialog
     OnDblClick = LItemsDblClick
   end
   object BCheckSyn: TButton
-    Left = 232
+    Left = 148
     Top = 80
-    Width = 113
+    Width = 145
     Height = 25
     Hint = 'Syntax check the expresion'
     Caption = 'Syntax check'
@@ -102,9 +102,9 @@ object FrpExpredialog: TFrpExpredialog
     OnClick = BCheckSynClick
   end
   object BShowResult: TButton
-    Left = 344
+    Left = 312
     Top = 80
-    Width = 113
+    Width = 149
     Height = 25
     Hint = 'Evaluates the expresion and shows the result'
     Caption = 'Show Result'
@@ -130,10 +130,10 @@ object FrpExpredialog: TFrpExpredialog
     ModalResult = 1
     TabOrder = 6
   end
-  object Button1: TButton
-    Left = 116
+  object BAdd: TButton
+    Left = 4
     Top = 80
-    Width = 109
+    Width = 129
     Height = 25
     Caption = 'Add selection'
     TabOrder = 13

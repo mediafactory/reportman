@@ -669,7 +669,7 @@ begin
   asizepos:=TRpBarcode.Create(printitem.Owner);
   // Search if theres a selected field
   TRpBarcode(asizepos).Expression:=FRpMainf.GetExpressionText;
-  if (TRpBarcode(asizepos).Expression=SRpSampleExpression) then
+  if (TRpBarcode(asizepos).Expression='2+2') then
    TRpBarcode(asizepos).Expression:=QuotedStr(SRpSampleBarCode);
   asizeposint:=TRpBarcodeInterface.Create(Self,asizepos);
  end;

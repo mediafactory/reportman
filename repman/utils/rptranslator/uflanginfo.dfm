@@ -65,7 +65,7 @@ object FLangInfo: TFLangInfo
     Left = 0
     Top = 53
     Width = 622
-    Height = 351
+    Height = 344
     Align = alClient
     ReadOnly = True
     TabOrder = 1

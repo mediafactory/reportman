@@ -21,15 +21,15 @@ unit rpprintdia;
 interface
 
 uses SysUtils, Classes, QGraphics, QForms, QControls, QStdCtrls,
-  QButtons, QExtCtrls,QPrinters,Qt, QImgList,Types;
+  QButtons, QExtCtrls,QPrinters,Qt, QImgList,Types,rpmdconsts;
 
 type
   TFRpPrintDialog = class(TForm)
-    OKBtn: TButton;
-    CancelBtn: TButton;
-    Label1: TLabel;
+    BOK: TButton;
+    BCancel: TButton;
+    LPrinter: TLabel;
     ComboPrinters: TComboBox;
-    Label2: TLabel;
+    LOutput: TLabel;
     LPrinterDevice: TLabel;
     Label3: TLabel;
     ComboOutputType: TComboBox;
@@ -40,18 +40,18 @@ type
     EProgram: TEdit;
     EFilename: TEdit;
     RPages: TRadioGroup;
-    Label4: TLabel;
+    LFrom: TLabel;
     EFrom: TEdit;
-    Label5: TLabel;
+    LTo: TLabel;
     ETo: TEdit;
     GCopies: TGroupBox;
-    Label6: TLabel;
+    LCopies: TLabel;
     ECopies: TEdit;
     CheckCollate: TCheckBox;
     ImageList1: TImageList;
     Image1: TImage;
     procedure FormCreate(Sender: TObject);
-    procedure OKBtnClick(Sender: TObject);
+    procedure BOKClick(Sender: TObject);
     procedure ComboPrintersChange(Sender: TObject);
     procedure ComboOutputTypeChange(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -92,8 +92,8 @@ begin
    dia.GCopies.Visible:=false;
    dia.LFilename.Visible:=false;
    dia.ComboPrinters.Visible:=false;
-   dia.Label1.Visible:=false;
-   dia.Label2.Visible:=false;
+   dia.LFrom.Visible:=false;
+   dia.LTo.Visible:=false;
    dia.LPrinterDevice.Visible:=false;
   end;
   dia.ShowModal;
@@ -131,10 +131,25 @@ begin
  Bitmap.Height:=Image1.height;
 
  Image1.Picture.Bitmap:=bitmap;
+
+ BOK.Caption:=TranslateStr(93,BOK.Caption);
+ BCancel.Caption:=TranslateStr(94,BCancel.Caption);
+ RPages.Caption:=TranslateStr(254,RPages.Caption);
+ LFrom.Caption:=TranslateStr(255,LFrom.Caption);
+ LTo.Caption:=TranslateStr(256,LTo.Caption);
+ RPages.Items.Strings[0]:=TranslateStr(257,RPages.Items.Strings[0]);
+ RPages.Items.Strings[1]:=TranslateStr(258,RPages.Items.Strings[1]);
+ Caption:=TranslateStr(259,Caption);
+ LPrinter.Caption:=TranslateStr(260,LPrinter.Caption);
+ LOutput.Caption:=TranslateStr(261,LOutput.Caption);
+ LCopies.Caption:=TranslateStr(108,LCopies.Caption);
+ CheckCollate.Caption:=TranslateStr(109,CheckCollate.Caption);
+
+
  SetInitialBounds;
 end;
 
-procedure TFRpPrintDialog.OKBtnClick(Sender: TObject);
+procedure TFRpPrintDialog.BOKClick(Sender: TObject);
 var
  astring:WideString;
  acopies:integer;
