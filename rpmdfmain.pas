@@ -1392,14 +1392,13 @@ end;
 function TFRpMainF.GetExpressionText:string;
 var
  anode:TTreeNode;
- asize:Integer;
 begin
  Result:='2+2';
  if Assigned(freportstructure) then
  begin
   anode:=freportstructure.browser.ATree.Selected;
   if assigned(anode) then
-   ExtractFieldNameAndSize(anode.Text,Result,asize);
+   Result:=ExtractFieldNameEx(anode.Text);
  end;
 end;
 
@@ -1583,11 +1582,8 @@ begin
   ADriverPDFQt.Checked:=inif.ReadBool('Preferences','DriverPDFQt',false);
   ADriverQt.Checked:=inif.ReadBool('Preferences','DriverQt',false);
   ADriverGDI.Checked:=inif.ReadBool('Preferences','DriverGDI',false);
-  ADriverPDFGDI.Checked:=inif.ReadBool('Preferences','DriverPDFGDI',false);
-  if Not (ADriverPDFQt.Checked or ADriverQt.Checked or ADriverPDFGDI.Checked) then
-  begin
-   ADriverPDFGDi.Checked:=true;
-  end;
+//  ADriverPDFGDI.Checked:=inif.ReadBool('Preferences','DriverPDFGDI',false);
+  ADriverPDFGDI.Checked:=Not (ADriverPDFQt.Checked or ADriverQt.Checked or ADriverGDI.Checked);
 {$ENDIF}
   AsystemPrintDialog.Checked:=True;
   AsystemPrintDialog.Checked:=inif.ReadBool('Preferences','SystemPrintDialog',True);

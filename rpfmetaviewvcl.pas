@@ -456,7 +456,7 @@ begin
  bitmap.PixelFormat:=pf32bit;
  bitmap.HandleType:=bmDIB;
  AImage.Picture.Bitmap:=bitmap;
- metafile:=TrpMetafileReport.Create(Self);
+ metafile:=TrpMetafileReport.Create(self);
  metafile.OnProgress:=MetProgress;
 
 {$IFDEF DOTNETD}
@@ -799,6 +799,7 @@ begin
   AImage.Top:=-ImageContainer.VertScrollBar.Position
  else
   AImage.Top:=((AHeight-AImage.Height) div 2)-ImageContainer.VertScrollBar.Position;
+
 end;
 
 procedure TFRpMetaVCL.FormResize(Sender: TObject);

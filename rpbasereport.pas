@@ -1266,7 +1266,7 @@ begin
  rPageSizeQt.CustomHeight:=customheight;
  rPageSizeQt.CustomWidth:=customwidth;
  rPageSizeQt.papersource:=papersource;
- rPageSizeQt.ForcePaperName:=forcepapername;
+ SetForcePaperName(rpagesizeqt,forcepapername);
  Result:=true;
  FUpdatePageSize:=true;
 end;

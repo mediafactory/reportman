@@ -882,7 +882,7 @@ function GDIPageSizeToQtPageSize (gdisize:TGDIPageSize):TPageSizeQt;
 begin
  Result.papersource:=gdisize.papersource;
  Result.duplex:=gdisize.duplex;
- Result.ForcePaperName:=gdisize.ForcePaperName;
+ SetForcePaperName(REsult,gdisize.forcepapername);
  Result.Custom:=False;
  case gdisize.PageIndex of
   DMPAPER_LETTERSMALL,// = 2;  { Letter Small 8 12 x 11 in         }

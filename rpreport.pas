@@ -888,7 +888,7 @@ begin
   end;
   rPageSizeQt.papersource:=papersource;
   rPageSizeQt.duplex:=duplex;
-  rPageSizeQt.ForcePaperName:=ForcePapername;
+  SetForcePaperName(rpagesizeqt,forcepapername);
   if PageSize<>rpPageSizeDefault then
   begin
    if PageSize=rpPageSizeUser then

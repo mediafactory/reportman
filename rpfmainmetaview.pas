@@ -123,7 +123,6 @@ begin
     else
       MFrame.AScaleWide.Checked:=True;
    end;
-   MFrame.PrintPage;
    MFrame.FormResize(dia);
    if Not Assigned(aform) then
     dia.ShowModal;

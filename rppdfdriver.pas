@@ -165,6 +165,8 @@ begin
  FPDFFile.Compressed:=Compressed;
  FPDFFile.PageWidth:=report.CustomX;
  FPDFFile.PageHeight:=report.CustomY;
+ FPageWidth:=FPDFFile.PageWidth;
+ FPageHeight:=FPDFFile.PageHeight;
  FPDFFile.BeginDoc;
 end;
 
@@ -222,7 +224,7 @@ begin
  Rect.Bottom:=0;
  Rect.Right:=extent.X;
  // Unicode not supported
- FPDFFile.Canvas.TextExtent(String(atext.Text),Rect,atext.WordWrap,singleline);
+ FPDFFile.Canvas.TextExtent(atext.Text,Rect,atext.WordWrap,singleline);
  extent.X:=Rect.Right;
  extent.Y:=Rect.Bottom;
 end;
@@ -271,7 +273,7 @@ begin
     rec.Right:=posx+round(obj.Width);
     rec.Bottom:=posy+round(obj.Height);
     // Unicode not supported
-    astring:=String(page.GetText(Obj));
+    astring:=page.GetText(Obj);
     FPDFFile.Canvas.TextRect(rec,astring,aalign,obj.cuttext,
     obj.WordWrap,obj.FontRotation,obj.RightToLeft);
    end;

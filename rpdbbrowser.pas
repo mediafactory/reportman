@@ -250,12 +250,15 @@ begin
        aname:=alist.Strings[i];
        if i<fieldtypes.Count then
         aname:=aname+'-'+fieldtypes.Strings[i];
-       if i<fieldsizes.Count then
+       if ((i<fieldtypes.Count) and (FShowDataTypes)) then
        begin
         if Length(fieldsizes.Strings[i])>0 then
          aname:=aname+'('+fieldsizes.Strings[i]+')';
        end;
        achild:=ATree.Items.AddChild(Node,aname);
+       achild.Data:=Pointer(10);
+       if Length(fieldsizes.Strings[i])>0 then
+        achild.Data:=Pointer(StrToInt(fieldsizes.strings[i]));
        achild.ImageIndex:=2;
        achild.SelectedIndex:=2;
       end;
@@ -307,7 +310,9 @@ begin
          aname:=aname+'('+fieldsizes.Strings[i]+')';
        end;
        achild:=ATree.Items.AddChild(Node,aname);
-       achild.Data:=ditem;
+       achild.Data:=Pointer(10);
+       if Length(fieldsizes.Strings[i])>0 then
+        achild.Data:=Pointer(StrToInt(fieldsizes.strings[i]));
        achild.ImageIndex:=2;
        achild.SelectedIndex:=2;
       end;

@@ -67,7 +67,7 @@ const
  MILIS_PROGRESS=500;
  RP_SIGNATURELENGTH=13;
  // The metafile signature and version
- RpSignature:string='RPMETAFILE08'+chr(0);
+ RpSignature:string='RPMETAFILE09'+chr(0);
  RpSignature2_2:string='RPMETAFILE07'+chr(0);
 const
  FIRST_ALLOCATION_OBJECTS=50;
@@ -988,8 +988,8 @@ begin
  separator:=integer(rpFObject);
  Stream.Write(separator,sizeof(separator));
  Stream.Write(FMark,sizeof(FMark));
- Stream.Write(orientation,sizeof(orientation));
- Stream.Write(pagesizeqt,sizeof(pagesizeqt));
+ Stream.Write(forientation,sizeof(forientation));
+ Stream.Write(fpagesizeqt,sizeof(fpagesizeqt));
  Stream.Write(FUpdatedPageSize,sizeof(FUpdatedPageSize));
  Stream.Write(FObjectCount,sizeof(FObjectCount));
  byteswrite:=sizeof(TRpMetaObject)*FObjectCount;
@@ -1034,6 +1034,7 @@ var
 {$ENDIF}
  abytes:array of Byte;
 begin
+ SetLength(abytes,200);
  // read the object separator
  bytesread:=Stream.Read(separator,sizeof(separator));
  if (bytesread<>sizeof(separator)) then
@@ -1045,7 +1046,7 @@ begin
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
  if Not FVersion2_2 then
  begin
-  bytesread:=Stream.Read(Forientation,sizeof(Forientation));
+  bytesread:=Stream.Read(FOrientation,sizeof(Forientation));
   if (bytesread<>sizeof(Forientation)) then
    Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
   bytesread:=Stream.Read(Fpagesizeqt,sizeof(Fpagesizeqt));
@@ -1115,21 +1116,23 @@ begin
  end
  else
   FMemStream.SetSize(asize);
+ if asize>0 then
+ begin
 {$IFDEF DOTNETD}
- if (asize<>Stream.Read(FMemStream.Memory[0],asize)) then
+  if (asize<>Stream.Read(FMemStream.Memory[0],asize)) then
 {$ENDIF}
 {$IFNDEF DOTNETD}
- if (asize<>Stream.Read(FMemStream.Memory^,asize)) then
+  if (asize<>Stream.Read(FMemStream.Memory^,asize)) then
 {$ENDIF}
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
-
+ end;
  FObjectCount:=objcount;
 end;
 
 constructor ErpBadFileFormat.CreatePos(Msg:String;APosition,Pos2:LongInt);
 begin
- inherited Create(Msg);
  FPosition:=Position;
+ inherited Create(Msg);
 end;
 
 

@@ -82,6 +82,7 @@ const
  CONS_SRIKEOUTWIDTH=0.05;
  CONS_UNDERLINEPOS=1.1;
  CONS_STRIKEOUTPOS=0.7;
+ CONS_UNICODEPREDIX='';
 type
 
 
@@ -231,7 +232,7 @@ type
 
 
 
-function PDFCompatibleText (astring:Widestring):String;
+function PDFCompatibleText (astring:Widestring;adata:TRpTTFontData;pdffont:TRpPDFFont):String;
 function NumberToText (Value:double):string;
 
 procedure GetBitmapInfo (stream:TStream; var width, height, imagesize:integer;FMemBits:TMemoryStream);
@@ -1154,7 +1155,7 @@ var
  lwords:TStringList;
  lwidths:TStringList;
  arec:TRect;
- aword:String;
+ aword:WideString;
 begin
  FFile.CheckPrinting;
 
@@ -1378,12 +1379,13 @@ begin
    if adata.havekerning then
     havekerning:=true;
   end;
+
   if havekerning then
   begin
    SWriteLine(FFile.FsTempStream,PDFCompatibleTextWidthKerning(astring,adata,Font)+' TJ');
   end
   else
-   SWriteLine(FFile.FsTempStream,PDFCompatibleText(astring)+' Tj');
+   SWriteLine(FFile.FsTempStream,PDFCompatibleText(astring,adata,Font)+' Tj');
   SWriteLine(FFile.FsTempStream,'ET');
  finally
   if (Rotation<>0) then
@@ -2642,6 +2644,7 @@ begin
    adata:=TRpTTFontData.Create;
    adata.fontdata:=TMemoryStream.Create;
    adata.embedded:=false;
+   adata.Objectname:=searchname;
    FFontTTData.AddObject(searchname,adata);
    InfoProvider.FillFontData(Font,adata);
    if adata.fontdata.size>0 then
@@ -2657,7 +2660,7 @@ procedure TRpPDFFile.SetFontType;
 var
  i:integer;
  adata:TRpTTFontData;
- index:integer;
+ index,acount:integer;
  awidths:string;
 begin
  CreateFont('Type1','Helvetica','WinAnsiEncoding');
@@ -2724,7 +2727,13 @@ begin
   SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
   adata.DescriptorIndex:=FObjectCount;
   SWriteLine(FTempStream,'<< /Type /FontDescriptor');
-  SWriteLine(FTempStream,'/FontName /'+adata.postcriptname);
+  if adata.isunicode then
+  begin
+   SWriteLine(FTempStream,'/FontName /'+adata.postcriptname);
+   SWriteLine(FTempStream,'/FontFamily('+adata.familyname+')');
+  end
+  else
+   SWriteLine(FTempStream,'/FontName /'+adata.postcriptname);
   SWriteLine(FTempStream,'/Flags '+IntToStr(adata.Flags));
   SWriteLine(FTempStream,'/FontBBox ['+
    IntToStr(adata.FontBBox.Left)+' '+
@@ -2762,40 +2771,103 @@ begin
  for i:=0 to Canvas.FFontTTData.Count-1 do
  begin
   adata:=TRpTTFontData(Canvas.FFontTTData.Objects[i]);
-  FObjectCount:=FObjectCount+1;
-  FTempStream.Clear;
-  adata.ObjectIndexParent:=FObjectCount;
-  SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
-  SWriteLine(FTempStream,'<< /Type /Font');
-  if adata.Type1 then
+  if adata.isunicode then
   begin
-   SWriteLine(FTempStream,'/Subtype /Type1');
+   FObjectCount:=FObjectCount+1;
+   FTempStream.Clear;
+   adata.ObjectIndexParent:=FObjectCount;
+   SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
+   SWriteLine(FTempStream,'<< /Type /Font');
+   SWriteLine(FTempStream,'/Subtype /Type0');
+   SWriteLine(FTempStream,'/Name /F'+adata.ObjectName);
+   SWriteLine(FTempStream,'/BaseFont /'+CONS_UNICODEPREDIX+adata.postcriptname);
+   SWriteLine(FTempStream,'/Encoding /Identity-H');
+   SWriteLine(FTempStream,'/DescendantFonts [ '+IntToStr(FObjectCount+1)+' 0 R ]');
+
+   SWriteLine(FTempStream,'>>');
+   SWriteLine(FTempStream,'endobj');
+   AddToOffset(FTempStream.Size);
+   FTempStream.SaveToStream(FMainPDF);
+
+   FObjectCount:=FObjectCount+1;
+   FTempStream.Clear;
+   SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
+   SWriteLine(FTempStream,'<< /Type /Font');
+   if adata.Type1 then
+   begin
+    SWriteLine(FTempStream,'/Subtype /CIDFontType1');
+   end
+   else
+   begin
+    SWriteLine(FTempStream,'/Subtype /CIDFontType2');
+   end;
+   SWriteLine(FTempStream,'/BaseFont /'+CONS_UNICODEPREDIX+adata.postcriptname);
+
+   SWriteLine(FTempStream,'/FontDescriptor '+
+    IntToStr(adata.DescriptorIndex)+' 0 R');
+   SWriteLine(FTempStream,'/FontFamily('+adata.familyname+')');
+   SWriteLine(FTempStream,'/CIDSystemInfo<</Ordering(Identity)/Registry(Adobe)/Supplement 0>>');
+   SWriteLine(FTempStream,'/DW 1000');
+   SWriteLine(FTempStream,'/W [');
+   awidths:='';
+   index:=adata.firstloaded;
+   acount:=0;
+   repeat
+    if adata.loaded[index] then
+    begin
+     awidths:=awidths+IntToStr(Integer(adata.loadedglyphs[index]))+'['+IntToStr(adata.loadedwidths[index])+'] ';
+     acount:=acount+1;
+     if (acount mod 8)=7 then
+      awidths:=awidths+LINE_FEED;
+    end;
+    inc(index);
+   until index>adata.lastloaded;
+   SWriteLine(FTempStream,awidths);
+   SWriteLine(FTempStream,']');
+   SWriteLine(FTempStream,'/CDIToGDIMap /Identity');
+
+   SWriteLine(FTempStream,'>>');
+   SWriteLine(FTempStream,'endobj');
+   AddToOffset(FTempStream.Size);
+   FTempStream.SaveToStream(FMainPDF);
   end
   else
   begin
-   SWriteLine(FTempStream,'/Subtype /TrueType');
-  end;
+   FObjectCount:=FObjectCount+1;
+   FTempStream.Clear;
+   adata.ObjectIndexParent:=FObjectCount;
+   SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
+   SWriteLine(FTempStream,'<< /Type /Font');
+   if adata.Type1 then
+   begin
+    SWriteLine(FTempStream,'/Subtype /Type1');
+   end
+   else
+   begin
+    SWriteLine(FTempStream,'/Subtype /TrueType');
+   end;
    SWriteLine(FTempStream,'/Name /F'+adata.ObjectName);
-  SWriteLine(FTempStream,'/BaseFont /'+adata.postcriptname);
-  SWriteLine(FTempStream,'/FirstChar '+IntToStr(adata.firstloaded));
-  SWriteLine(FTempStream,'/LastChar '+IntToStr(adata.lastloaded));
-  awidths:='[';
-  index:=adata.firstloaded;
-  repeat
-   awidths:=awidths+IntToStr(adata.loadedwidths[index])+' ';
-   inc(index);
-   if (index mod 8)=7 then
-    awidths:=awidths+LINE_FEED;
-  until index>adata.lastloaded;
-  awidths:=awidths+']';
-  SWriteLine(FTempStream,'/Widths '+awidths);
-  SWriteLine(FTempStream,'/FontDescriptor '+
-   IntToStr(adata.DescriptorIndex)+' 0 R');
-  SWriteLine(FTempStream,'/Encoding /'+adata.Encoding);
-  SWriteLine(FTempStream,'>>');
-  SWriteLine(FTempStream,'endobj');
-  AddToOffset(FTempStream.Size);
-  FTempStream.SaveToStream(FMainPDF);
+   SWriteLine(FTempStream,'/BaseFont /'+adata.postcriptname);
+   SWriteLine(FTempStream,'/FirstChar '+IntToStr(adata.firstloaded));
+   SWriteLine(FTempStream,'/LastChar '+IntToStr(adata.lastloaded));
+   awidths:='[';
+   index:=adata.firstloaded;
+   repeat
+    awidths:=awidths+IntToStr(adata.loadedwidths[index])+' ';
+    inc(index);
+    if (index mod 8)=7 then
+     awidths:=awidths+LINE_FEED;
+   until index>adata.lastloaded;
+   awidths:=awidths+']';
+   SWriteLine(FTempStream,'/Widths '+awidths);
+   SWriteLine(FTempStream,'/FontDescriptor '+
+    IntToStr(adata.DescriptorIndex)+' 0 R');
+   SWriteLine(FTempStream,'/Encoding /'+adata.Encoding);
+   SWriteLine(FTempStream,'>>');
+   SWriteLine(FTempStream,'endobj');
+   AddToOffset(FTempStream.Size);
+   FTempStream.SaveToStream(FMainPDF);
+  end;
  end;
 end;
 
@@ -2835,41 +2907,19 @@ function TRpPDFCanvas.PDFCompatibleTextWidthKerning(astring:WideString;adata:TRp
 var
  i:integer;
  kerningvalue:integer;
- iswidestring:boolean;
 begin
- iswidestring:=false;
  if Length(astring)<1 then
  begin
   Result:='[]';
   exit;
  end;
- Result:='[(';
- for i:=1 to Length(astring) do
- begin
-  if Ord(astring[i])>255 then
-  begin
-   iswidestring:=true;
-   break;
-  end;
-  if astring[i] in [WideChar('('),WideChar(')'),WideChar('\')] then
-   Result:=Result+'\';
-  Result:=Result+astring[i];
-  if (i<Length(astring)) then
-  begin
-   kerningvalue:=infoprovider.GetKerning(pdffont,adata,WideChar(astring[i]),WideChar(astring[i+1]));
-   if kerningvalue<>0 then
-   begin
-    Result:=Result+')'+' '+IntToStr(kerningvalue);
-    Result:=Result+' (';
-   end;
-  end;
- end;
- if iswidestring then
+ if adata.isunicode then
  begin
   Result:='[<';
   for i:=1 to Length(astring) do
   begin
-   Result:=Result+WideCharToHex(astring[i]);
+//   Result:=Result+WideCharToHex(astring[i]);
+   Result:=Result+WideCharToHex(adata.loadedglyphs[Integer(astring[i])]);
    if (i<Length(astring)) then
    begin
     kerningvalue:=infoprovider.GetKerning(pdffont,adata,WideChar(astring[i]),WideChar(astring[i+1]));
@@ -2884,39 +2934,58 @@ begin
  end
  else
  begin
+  Result:='[(';
+  for i:=1 to Length(astring) do
+  begin
+   if astring[i] in [WideChar('('),WideChar(')'),WideChar('\')] then
+    Result:=Result+'\';
+   Result:=Result+astring[i];
+   if (i<Length(astring)) then
+   begin
+    kerningvalue:=infoprovider.GetKerning(pdffont,adata,WideChar(astring[i]),WideChar(astring[i+1]));
+    if kerningvalue<>0 then
+    begin
+     Result:=Result+')'+' '+IntToStr(kerningvalue);
+     Result:=Result+' (';
+    end;
+   end;
+  end;
   Result:=Result+')]';
  end;
 end;
 
-function PDFCompatibleText(astring:Widestring):String;
+function PDFCompatibleText(astring:Widestring;adata:TRpTTFontData;pdffont:TRpPDFFont):String;
 var
  i:integer;
- iswidestring:boolean;
+ isunicode:boolean;
 begin
- Result:='(';
- iswidestring:=false;
- for i:=1 to Length(astring) do
+ isunicode:=false;
+ if Assigned(adata) then
  begin
-  if Ord(astring[i])>255 then
-  begin
-   iswidestring:=true;
-   break;
-  end;
-  if astring[i] in [WideChar('('),WideChar(')'),WideChar('\')] then
-   Result:=Result+'\';
-  Result:=Result+astring[i];
+  isunicode:=adata.isunicode;
  end;
- if iswidestring then
+ if isunicode then
  begin
   Result:='<';
   for i:=1 to Length(astring) do
   begin
-   Result:=Result+WideCharToHex(astring[i]);
+//   Result:=Result+WideCharToHex(astring[i]);
+
+   Result:=Result+WideCharToHex(adata.loadedglyphs[Integer(astring[i])]);
   end;
   Result:=Result+'>';
  end
  else
+ begin
+  Result:='(';
+  for i:=1 to Length(astring) do
+  begin
+   if astring[i] in [WideChar('('),WideChar(')'),WideChar('\')] then
+    Result:=Result+'\';
+   Result:=Result+astring[i];
+  end;
   Result:=Result+')';
+ end;
 end;
 
 procedure TRpPDFFile.FreePageInfos;

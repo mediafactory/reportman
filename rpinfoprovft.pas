@@ -584,6 +584,8 @@ var
  cfont:TRpLogFont;
 begin
  aint:=Ord(charcode);
+ if aint>255 then
+  data.isunicode:=true;
  if data.loaded[aint] then
  begin
   Result:=data.loadedwidths[aint];
@@ -607,6 +609,9 @@ begin
   if data.lastloaded<aint then
    data.lastloaded:=aint;
   Result:=awidth;
+  // Get glyph index
+  data.loadedglyphs[aint]:=FT_Get_Char_Index(currentfont.ftface,Cardinal(charcode));
+  data.loadedg[aint]:=true;
  end;
 end;
 

@@ -1455,7 +1455,8 @@ begin
   TRpReport(printitem.Report).AssignDefaultFontTo(TRpGenTextComponent(asizepos));
   // Search if theres a selected field
   // Search if theres a selected field
-  ExtractFieldNameAndSize(anode.Text,fieldname,size);
+  size:=Integer(anode.Data);
+  fieldname:=ExtractFieldNameEx(anode.Text);
   TRpExpression(asizepos).Expression:=fieldname;
 {$IFDEF MSWINDOWS}
   Canvas.Font.Name:=TRpExpression(asizepos).WFontName;
@@ -1470,20 +1471,22 @@ begin
   asizepos.PosX:=pixelstotwips(X);
   asizepos.PosY:=pixelstotwips(Y);
 
+  apoint.y:=Canvas.TextHeight('Mg');
   if size<=MAX_DROP_SIZE then
   begin
-   apoint.y:=Canvas.TextHeight('Mg');
    apoint.x:=Canvas.TextWidth(getmstring(size));
   end
   else
   begin
    apoint.y:=Canvas.TextHeight('Mg')*((size div MAX_DROP_SIZE)+1);
-   apoint.x:=Canvas.TextWidth(getmstring(size));
+//   apoint.x:=Canvas.TextWidth(getmstring(size));
   end;
   apoint.x:=pixelstotwips(apoint.x);
   apoint.y:=pixelstotwips(apoint.y);
   if asizepos.PosX+apoint.x>printitem.Width then
    apoint.x:=printitem.Width-asizepos.PosX;
+//  if asizepos.PosY+apoint.y>printitem.Height then
+//   apoint.y:=printitem.Height-asizepos.PosY;
   asizepos.Height:=Round(apoint.y*1.1);
   asizepos.Width:=apoint.x;
 

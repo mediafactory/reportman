@@ -1210,7 +1210,6 @@ end;
 function TFRpMainFVCL.GetExpressionText:string;
 var
  anode:TTreeNode;
- asize:Integer;
 begin
  Result:='2+2';
  if Assigned(freportstructure) then
@@ -1218,7 +1217,7 @@ begin
   anode:=freportstructure.browser.ATree.Selected;
   if assigned(anode) then
   begin
-   ExtractFieldNameAndSize(anode.Text,Result,asize);
+   Result:=ExtractFieldNameEx(anode.Text);
   end;
  end;
 end;

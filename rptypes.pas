@@ -172,9 +172,10 @@ type
   PhysicWidth:integer;
   PhysicHeight:integer;
   PaperSource:integer;
-  ForcePaperName:String;
+  ForcePaperName:array [0..60] of char;
   Duplex:integer;
  end;
+
 
  TRpPrinterSelect=(pRpDefaultPrinter,pRpReportPrinter,
   pRpTicketPrinter,pRpGraphicprinter,
@@ -233,6 +234,7 @@ type
   end;
 
 
+procedure SetForcePaperName(apagesize:TPageSizeQt;source:string);
 function StringDrawStyleToDrawStyle(Value:widestring):TRpImageDrawStyle;
 function RpDrawStyleToString(Value:TRpImageDrawStyle):String;
 procedure GetDrawStyleDescriptionsA(alist:TStrings);
@@ -380,6 +382,26 @@ var
 
 
 implementation
+
+procedure SetForcePaperName(apagesize:TPageSizeQt;source:string);
+var
+ i:integer;
+begin
+ if Length(source)>60 then
+  source:=Copy(source,1,60);
+ i:=1;
+ while i<=Length(source) do
+ begin
+  apagesize.ForcePaperName[i-1]:=source[i];
+  inc(i);
+ end;
+ while i<=61 do
+ begin
+  apagesize.ForcePaperName[i-1]:=chr(0);
+  inc(i);
+ end;
+end;
+
 
 var
 //  cajpeg:array [0..10] of char=(chr($FF),chr($D8),chr($FF),chr($E0),chr($0),chr($10),'J','F','I','F',chr(0));

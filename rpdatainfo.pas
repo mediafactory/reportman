@@ -356,7 +356,7 @@ procedure GetRpDatabaseDrivers(alist:TStrings);
 procedure CombineAddDataset(client:TClientDataset;data:TDataset;group:boolean);
 {$ENDIF}
 procedure FillFieldsInfo(adata:TDataset;fieldnames,fieldtypes,fieldsizes:TStrings);
-procedure ExtractFieldNameAndSize(astring:String;var fieldname:String;var size:Integer);
+function ExtractFieldNameEx(astring:String):string;
 
 implementation
 
@@ -3537,13 +3537,13 @@ begin
  end;
 end;
 
-procedure ExtractFieldNameAndSize(astring:String;var fieldname:String;var size:Integer);
+function ExtractFieldNameEx(astring:String):string;
 var
  index:integer;
  newstring:string;
+ fieldname:string;
 begin
  fieldname:='';
- size:=10;
  if Length(astring)<1 then
   exit;
  if astring[1]='[' then
@@ -3554,19 +3554,10 @@ begin
  begin
   fieldname:=Copy(astring,1,index-1);
   newstring:=Copy(astring,index+1,Length(astring));
-  index:=Pos('(',newstring);
-  if index>=0 then
-  begin
-   newstring:=Copy(newstring,index+1,Length(astring));
-   index:=Pos(')',newstring);
-   if index>0 then
-   begin
-    size:=StrToInt(Copy(newstring,1,index-1));
-   end;
-  end
  end
  else
   fieldname:=astring;
+ Result:=fieldname;
 end;
 
 procedure FillFieldsInfo(adata:TDataset;fieldnames,fieldtypes,fieldsizes:TStrings);

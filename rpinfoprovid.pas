@@ -73,12 +73,15 @@ type
   ObjectIndexParent:integer;
   DescriptorIndex:Integer;
   loadedkernings:array [0..65535] of TStringList;
+  loadedglyphs:array [0..65535] of WideChar;
+  loadedg:array [0..65535] of boolean;
   loadedk:array [0..65535] of boolean;
   loadedwidths:array [0..65535] of integer;
   loaded:array [0..65535] of boolean;
   fdata:TObject;
   firstloaded,lastloaded:integer;
   kerningsadded:TStringList;
+  IsUnicode:boolean;
   constructor Create;
   destructor Destroy;override;
  end;

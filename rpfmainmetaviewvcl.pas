@@ -131,7 +131,6 @@ begin
     else
       MFrame.AScaleWide.Checked:=True;
    end;
-   MFrame.PrintPage;
    MFrame.FormResize(dia);
    if not assigned(aform) then
     dia.ShowModal;
@@ -168,7 +167,6 @@ begin
     MFrame.DoOpen(ParamStr(1));
   end;
  end;
- WindowState:=wsMaximized;
 end;
 
 end.

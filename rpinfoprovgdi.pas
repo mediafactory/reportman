@@ -33,6 +33,7 @@ type
   fonthandle:THandle;
   currentname:String;
   currentstyle:integer;
+  isnt:Boolean;
   procedure SelectFont(pdffont:TRpPDFFOnt);
   procedure FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
   function GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;
@@ -51,6 +52,7 @@ constructor TRpGDIInfoProvider.Create;
 begin
  inherited Create;
 
+ isnt:=IsWindowsNt;
  currentname:='';
  currentstyle:=0;
  fonthandle:=0;
@@ -444,9 +446,18 @@ function TRpGDIInfoProvider.GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;c
 var
  logx:integer;
  aabc:array [1..1] of ABC;
- aint:integer;
+ aint:Word;
+ glyphindex:UInt;
+ gcp:windows.tagGCP_RESULTSA;
+ astring:WideString;
 begin
+ glyphindex:=0;
  aint:=Ord(charcode);
+ if isnt then
+ begin
+  if aint>255 then
+   data.isunicode:=true;
+ end;
  if data.loaded[aint] then
  begin
   Result:=data.loadedwidths[aint];
@@ -454,15 +465,30 @@ begin
  end;
  SelectFont(pdffont);
  logx:=GetDeviceCaps(adc,LOGPIXELSX);
- if IsWindowsNT then
+ if isnt then
  begin
   if not GetCharABCWidthsW(adc,aint,aint,aabc[1]) then
    RaiseLastOSError;
+  gcp.lStructSize:=sizeof(gcp);
+  gcp.lpOutString:=nil;
+  gcp.lpOrder:=nil;
+  gcp.lpDx:=nil;
+  gcp.lpCaretPos:=nil;
+  gcp.lpClass:=nil;
+  gcp.lpGlyphs:=@glyphindex;
+  gcp.nGlyphs:=1;
+  gcp.nMaxFit:=1;
+  astring:='';
+  astring:=astring+charcode+Widechar(0);
+  if GetCharacterPlacementW(adc,PWideChar(astring),1,0,gcp,GCP_DIACRITIC)=0 then
+   RaiseLastOSError;
+  data.loadedglyphs[aint]:=WideChar(glyphindex);
+  data.loadedg[aint]:=true;
  end
  else
  begin
- if not GetCharABCWidths(adc,Cardinal(chr(aint)),Cardinal(chr(aint)),aabc[1]) then
-   RaiseLastOSError;
+  if not GetCharABCWidths(adc,Cardinal(chr(aint)),Cardinal(chr(aint)),aabc[1]) then
+    RaiseLastOSError;
  end;
  Result:=Round(
    (Integer(aabc[1].abcA)+Integer(aabc[1].abcB)+Integer(aabc[1].abcC))/logx*72000/TTF_PRECISION
