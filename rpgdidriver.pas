@@ -92,6 +92,8 @@ type
    meta:TMetafile;
    pagecliprec:TRect;
   public
+   lockedpagesize:boolean;
+   CurrentPageSize:Tpoint;
    bitmap:TBitmap;
    dpi:integer;
    toprinter:boolean;
@@ -114,9 +116,9 @@ type
    procedure DrawPage(apage:TRpMetaFilePage);stdcall;
    function AllowCopies:boolean;stdcall;
    function GetPageSize:TPoint;stdcall;
+   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
    procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
-   function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
    constructor Create;
    destructor Destroy;override;
@@ -325,7 +327,15 @@ begin
   SetOrientation(report.Orientation);
   pagemargins:=GetPageMarginsTWIPS;
   // Gets pagesize
-  asize:=GetPageSize;
+  if lockedpagesize then
+  begin
+   asize:=CurrentPageSize;
+  end
+  else
+  begin
+   asize:=GetPageSize;
+   CurrentPageSize:=asize;
+  end;
   bitmapwidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
   bitmapheight:=Round((asize.y/TWIPS_PER_INCHESS)*dpi);
 
@@ -883,7 +893,7 @@ begin
  Result:=GetPhysicPageSizeTwips;
 end;
 
-function TRpGDIDriver.SetPagesize(PagesizeQt:integer):TPoint;
+function TRpGDIDriver.SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
 begin
  pagesize:=QtPageSizeToGDIPageSize(PagesizeQT);
  oldpagesize:=GetCurrentPaper;

@@ -102,6 +102,8 @@ type
    FPageSizeQt:integer;
    FPageWidth:TRpTwips;
    FPageHeight:TRpTwips;
+   FCustomPageWidth:TRpTwips;
+   FCustomPageHeight:TRpTwips;
    FInternalPageWidth:TRpTwips;
    FInternalPageHeight:TRpTwips;
    FPageBackColor:TRpColor;
@@ -224,6 +226,10 @@ type
     default DEFAULT_PAGEHEIGHT;
    property PageWidth:TRpTwips read FPageWidth write FPageWidth
     default DEFAULT_PAGEWIDTH;
+   property CustomPageHeight:TRpTwips read FCustomPageHeight write FCustomPageHeight
+    default DEFAULT_PAGEHEIGHT;
+   property CustomPageWidth:TRpTwips read FCustomPageWidth write FCustomPageWidth
+    default DEFAULT_PAGEWIDTH;
    property PageBackColor:TRpColor read FPageBackColor write FPageBackColor;
    property PreviewStyle:TRpPreviewStyle read FPreviewStyle
     write FPreviewStyle default spWide;
@@ -292,6 +298,8 @@ begin
  FPageBackColor:=High(FPageBackColor);
  FPageWidth:=DEFAULT_PAGEWIDTH;
  FPageheight:=DEFAULT_PAGEHEIGHT;
+ FCustomPageWidth:=DEFAULT_PAGEWIDTH;
+ FCustomPageheight:=DEFAULT_PAGEHEIGHT;
  FPreviewStyle:=spWide;
  // Def values of grid
  FGridVisible:=True;
@@ -829,9 +837,9 @@ begin
  end;
  printingonepass:=true;
  try
-  Driver.NewDocument(metafile);
+  BeginPrint(Driver);
   try
-   BeginPrint(Driver);
+   Driver.NewDocument(metafile);
    try
     finished:=false;
     while Not PrintNextPage do
@@ -867,13 +875,13 @@ begin
       end;
      end;
     end;
-   finally
-    EndPrint;
+    Driver.EndDocument;
+   except
+    Driver.AbortDocument;
+    Raise;
    end;
-   Driver.EndDocument;
-  except
-   Driver.AbortDocument;
-   Raise;
+  finally
+   EndPrint;
   end;
  finally
   printingonepass:=false;
@@ -1140,6 +1148,7 @@ var
  item:TRpAliaslistItem;
  apagesize:TPoint;
  paramname:string;
+ rPageSizeQt:TPageSizeQt;
 begin
  FDriver:=Driver;
  if Not Assigned(FDriver) then
@@ -1154,7 +1163,11 @@ begin
  if PageSize<>rpPageSizeDefault then
  begin
   metafile.PageSize:=PageSizeQt;
-  apagesize:=Driver.SetPagesize(PageSizeQt);
+  rPageSizeQt.Indexqt:=PageSizeQt;
+  rPageSizeQt.Custom:=Pagesize=rpPageSizeUser;
+  rPageSizeQt.CustomWidth:=FCustomPageWidth;
+  rPageSizeQt.Customheight:=FCustomPageHeight;
+  apagesize:=Driver.SetPagesize(rPageSizeQt);
  end
  else
  begin

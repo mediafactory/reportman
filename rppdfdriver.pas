@@ -54,9 +54,9 @@ type
    procedure DrawPage(apage:TRpMetaFilePage);stdcall;
    function AllowCopies:boolean;stdcall;
    function GetPageSize:TPoint;stdcall;
+   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
    procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
-   function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
    property PDFFile:TRpPDFFile read FPDFFile;
   end;
@@ -377,18 +377,30 @@ begin
  Result.Y:=FPageHeight;
 end;
 
-function TRpPDFDriver.SetPagesize(PagesizeQt:integer):TPoint;
+function TRpPDFDriver.SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
+var
+ newwidth,newheight:integer;
 begin
- // Sets the page size for the pdf file
- if FOrientation=rpOrientationLandscape then
+ // Sets the page size for the pdf file, first if it's a qt page
+ if PagesizeQt.Custom then
  begin
-  FPageWidth:=Round(PageSizeArray[PagesizeQt].Height/1000*TWIPS_PER_INCHESS);
-  FPageheight:=Round(PageSizeArray[PagesizeQt].Width/1000*TWIPS_PER_INCHESS);
+  newwidth:=PagesizeQt.CustomWidth;
+  newheight:=PagesizeQt.CustomHeight;
  end
  else
  begin
-  FPageWidth:=Round(PageSizeArray[PagesizeQt].Width/1000*TWIPS_PER_INCHESS);
-  FPageheight:=Round(PageSizeArray[PagesizeQt].Height/1000*TWIPS_PER_INCHESS);
+  newWidth:=Round(PageSizeArray[PagesizeQt.Indexqt].Width/1000*TWIPS_PER_INCHESS);
+  newheight:=Round(PageSizeArray[PagesizeQt.Indexqt].Height/1000*TWIPS_PER_INCHESS);
+ end;
+ if FOrientation=rpOrientationLandscape then
+ begin
+  FPageWidth:=NewHeight;
+  FPageHeight:=NewWidth;
+ end
+ else
+ begin
+  FPageWidth:=NewWidth;
+  FPageHeight:=NewHeight;
  end;
  Result.X:=FPageWidth;
  Result.Y:=FPageHeight;

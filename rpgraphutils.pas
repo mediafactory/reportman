@@ -42,6 +42,7 @@ type
     BAbort: TButton;
     BRetry: TButton;
     BIgnore: TButton;
+    EInput: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure BYesClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
@@ -65,6 +66,8 @@ procedure LoadQtTranslator;
 function RpMessageBox(const Text: WideString; const Caption: WideString = '';
   Buttons: TMessageButtons = [smbOK]; Style: TMessageStyle = smsInformation;
   Default: TMessageButton = smbOK; Escape: TMessageButton = smbCancel): TMessageButton;
+function RpInputBox(const ACaption, APrompt, ADefault:WideString ):WideString;
+
 
 implementation
 
@@ -528,7 +531,7 @@ begin
  BIgnore.Tag:=integer(smbIgnore);
  BYes.Caption:=SRpYes;
  BNo.Caption:=SRpNo;
- BOk.Caption:=SRpCancel;
+ BOk.Caption:=SRpOk;
  BCancel.Caption:=SRpCancel;
  BIgnore.Caption:=SRpIgnore;
  BAbort.Caption:=SRpAbort;
@@ -550,6 +553,32 @@ begin
   Close;
  end;
 end;
+
+function RpInputBox(const ACaption, APrompt, ADefault:WideString ):WideString;
+var
+ dia:TFRpMessageDlg;
+begin
+ dia:=TFRpMessageDlg.Create(Application);
+ try
+  dia.LMessage.Caption:=APrompt;
+  dia.EInput.Visible:=true;
+  dia.EInput.Text:=ADefault;
+  dia.ActiveControl:=dia.EInput;
+  dia.LMessage.Alignment:=taLeftJustify;
+  dia.Caption:=ACaption;
+  dia.BOk.Visible:=True;
+  dia.BOk.Default:=True;
+  dia.BCancel.Visible:=True;
+  dia.showmodal;
+  if dia.Buttonpressed=smbOK then
+   Result:=dia.EInput.Text
+  else
+   Result:='';
+ finally
+  dia.free;
+ end;
+end;
+
 
 initialization
  if ChangeFileExt(ExtractFileName(UpperCase(Application.ExeName)),'')='REPMAND' then

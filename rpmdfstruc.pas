@@ -100,7 +100,7 @@ begin
 
  AUp.Hint:=TranslateStr(139,AUp.Hint);
  ADown.Hint:=TranslateStr(140,ADown.Hint);
-
+ BNew.Hint:=TranslateStr(734,BNew.Hint);
 end;
 
 procedure TFRpStructure.SetReport(Value:TRpReport);

@@ -4,8 +4,8 @@ object FRpMessageDlg: TFRpMessageDlg
   AutoScroll = False
   BorderStyle = fbsDialog
   Caption = 'MessageDlg Caption'
-  ClientHeight = 163
-  ClientWidth = 587
+  ClientHeight = 125
+  ClientWidth = 589
   Color = clButton
   Position = poScreenCenter
   ShowHint = True
@@ -16,14 +16,14 @@ object FRpMessageDlg: TFRpMessageDlg
   TextWidth = 6
   object Panel1: TPanel
     Left = 0
-    Top = 127
-    Width = 587
+    Top = 89
+    Width = 589
     Height = 36
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
     object BCancel: TButton
-      Left = 339
+      Left = 255
       Top = 7
       Width = 80
       Height = 25
@@ -56,7 +56,7 @@ object FRpMessageDlg: TFRpMessageDlg
       OnClick = BYesClick
     end
     object BNo: TButton
-      Left = 255
+      Left = 87
       Top = 7
       Width = 80
       Height = 25
@@ -67,7 +67,7 @@ object FRpMessageDlg: TFRpMessageDlg
       OnClick = BYesClick
     end
     object BAbort: TButton
-      Left = 87
+      Left = 339
       Top = 7
       Width = 80
       Height = 25
@@ -102,12 +102,20 @@ object FRpMessageDlg: TFRpMessageDlg
   end
   object LMessage: TLabel
     Left = 4
-    Top = 20
-    Width = 577
-    Height = 101
+    Top = 4
+    Width = 565
+    Height = 77
     Alignment = taCenter
     AutoSize = False
     Caption = 'LMessage'
     WordWrap = True
+  end
+  object EInput: TEdit
+    Left = 0
+    Top = 24
+    Width = 453
+    Height = 21
+    TabOrder = 2
+    Visible = False
   end
 end

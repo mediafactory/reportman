@@ -81,6 +81,7 @@ type
    intdpix,intdpiy:integer;
    FOrientation:TRpOrientation;
    OldOrientation:TPrinterOrientation;
+   function InternalSetPagesize(PagesizeQt:integer):TPoint;
   public
    bitmap:TBitmap;
    dpi:integer;
@@ -100,7 +101,7 @@ type
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
    function AllowCopies:boolean;stdcall;
    function GetPageSize:TPoint;stdcall;
-   function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
+   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
    constructor Create;
    destructor Destroy;override;
@@ -190,14 +191,14 @@ begin
   printer.Title:='Untitled';
   printer.SetPrinter(Printer.Printers.Strings[0]);
   SetOrientation(report.Orientation);
-  // Sets pagesize
+  // Sets pagesize, only supports default and qt index
   if report.PageSize<0 then
   begin
    asize:=GetPageSize;
   end
   else
   begin
-   asize:=SetPageSize(report.PageSize);
+   asize:=InternalSetPageSize(report.PageSize);
   end;
   if Length(printer.Title)<1 then
    printer.Title:=SRpUntitled;
@@ -232,7 +233,7 @@ begin
   end
   else
   begin
-   asize:=SetPageSize(report.PageSize);
+   asize:=InternalSetPageSize(report.PageSize);
   end;
   bitmapwidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
   bitmapheight:=Round((asize.y/TWIPS_PER_INCHESS)*dpi);
@@ -637,7 +638,13 @@ begin
  Result.y:=Round((Printer.PageHeight/Printer.YDPI)*TWIPS_PER_INCHESS);
 end;
 
-function TRpQTDriver.SetPagesize(PagesizeQt:integer):TPoint;
+
+function TRpQTDriver.SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
+begin
+ Result:=InternalSetPageSize(PagesizeQT.Indexqt);
+end;
+
+function TRpQTDriver.InternalSetPagesize(PagesizeQt:integer):TPoint;
 begin
  Printer.PrintAdapter.PageSize:=TPageSize(PagesizeQT);
  if FOrientation<>rpOrientationDefault then

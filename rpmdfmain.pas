@@ -890,7 +890,7 @@ begin
  // Inserts a new group header and footer
  Assert(report<>nil,'Called AddNewGroupout a report unassigned');
 
- newgroupname:=Uppercase(Trim(InputBox(SRpNewGroup,SRpSGroupName,'')));
+ newgroupname:=Uppercase(Trim(RpInputBox(SRpNewGroup,SRpSGroupName,'')));
  if length(newgroupname)>0 then
  begin
   freportstructure.FindSelectedSubreport.AddGroup(newgroupname);

@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 1.0 RC1
+AppVerName=Report Manager 1.0 RC2
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -22,7 +22,7 @@ Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescri
 Source: "..\repman\repmand.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\transwin\repmand.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+; Source: "..\repman\transwin\repmand.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\qttranslation\windows\qt_*.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaview\metaview.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaprint\metaprint.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
@@ -30,6 +30,8 @@ Source: "license.txt"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\printrep\printrep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\reptotxt\reptotxt.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\txttorep\txttorep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\rptranslator\rptranslate.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\rptranslator\rptranslateres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\printreptopdf\printreptopdf.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; CopyMode: alwaysoverwrite
@@ -51,9 +53,10 @@ Name: "{group}\Report Manager Designer"; Filename: "{app}\repmand.exe"; WorkingD
 Name: "{group}\Metafile Viewer"; Filename: "{app}\metaview.exe"; WorkingDir: "{app}"
 Name: "{group}\Documentation"; Filename: "{app}\doc\index.html"; WorkingDir: "{app}\doc"
 Name: "{group}\License"; Filename: "{app}\license.txt";
-Name: "{userdesktop}\Report Manager"; Filename: "{app}\repmand.exe"; MinVersion: 4,4; Tasks: desktopicon
+Name: "{userdesktop}\Report Manager"; Filename: "{app}\repmand.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Report Manager"; Filename: "{app}\repmand.exe"; MinVersion: 4,4; Tasks: quicklaunchicon
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Metafile Report Viewer"; Filename: "{app}\metaview.exe"; MinVersion: 4,4; Tasks: quicklaunchicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\Translation utility"; Filename: "{app}\rptranslate.exe"; MinVersion: 4,4; Tasks: quicklaunchicon
 
 [Run]
 Filename: "{app}\repmand.exe"; Description: "Launch Report Manager"; Flags: nowait postinstall skipifsilent

@@ -6,21 +6,26 @@
 
 <body>
 <h2>Release Notes</h2>
-<h3>Known issues</h3>
+<h3>Known issues and workarounds</h3>
 <p></p>
 <table width="95%" border="1">
   <tr> 
     <td bgcolor="#00FFFF"><b>Setting a page size other than default fails</b></td>
   </tr>
   <tr> 
-    <td>Not all printer drivers supports custom page sizes, some drivers are reported 
-      to not work when selecting a predefined pagesize (A2), especially in Windows 
-      NT/2000/XP. Some drivers provided by manufactures allow only change page 
-      size from page setup dialog and not in runtime. Dot matrix printers are 
-      more flexible with page sizes. If you use WinGDI (VCL) driver you will see 
-      in the preview exactly the page size supported by the driver using Qt driver 
-      (CLX) the preview can show a page size and the final result may differ (printer 
-      driver processed).</td>
+    <td>
+      <p>Not all printer drivers supports custom page sizes, some drivers are 
+        reported to not work when selecting a predefined pagesize (A2), especially 
+        in Windows NT/2000/XP. Some drivers provided by manufactures allow only 
+        change page size from page setup dialog and not in runtime. Dot matrix 
+        printers are more flexible with page sizes. If you use WinGDI (VCL) driver 
+        you will see in the preview exactly the page size supported by the driver 
+        using Qt driver (CLX) the preview can show a page size and the final result 
+        may differ (printer driver processed).</p>
+      <p>Note: You must have Administrator rights to create custom page sizes 
+        in Windows NT/2000/XP, once created by the administrator (preview or print 
+        once), the custom page is available for all users using this printer.</p>
+    </td>
   </tr>
   <tr> 
     <td bgcolor="#00FFFF"><b>Previewing a large page size raises a extranges exceptions 

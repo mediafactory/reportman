@@ -34,13 +34,13 @@ object FRpShowSampledata: TFRpShowSampledata
       Align = alCustom
       TabOrder = 0
     end
-    object ToolButton1: TToolButton
+    object BExit: TToolButton
       Left = 247
       Top = 4
       Height = 33
-      Caption = 'ToolButton1'
+      Caption = 'BExit'
       ImageIndex = 0
-      OnClick = ToolButton1Click
+      OnClick = BExitClick
     end
     object ToolButton2: TToolButton
       Left = 183

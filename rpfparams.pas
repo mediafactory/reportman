@@ -22,7 +22,8 @@ interface
 
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,rpmdconsts,rpparams, QMask,
-  rpdatainfo,Variants,DB,QDialogs, QActnList, QImgList, QComCtrls;
+  rpdatainfo,Variants,DB,QDialogs, QActnList, QImgList, QComCtrls,
+  rpgraphutils;
 
 type
   TFRpParams = class(TForm)
@@ -363,7 +364,7 @@ procedure TFRpParams.BAddClick(Sender: TObject);
 var
  paramname:string;
 begin
- paramname:=InputBox(SRpNewParam,SRpParamName,'');
+ paramname:=RpInputBox(SRpNewParam,SRpParamName,'');
  paramname:=AnsiUpperCase(Trim(paramname));
  if Length(paramname)<1 then
   exit;
@@ -394,7 +395,7 @@ var
 begin
  if LParams.itemindex<0 then
   exit;
- paramname:=InputBox(SRpRenameParam,SRpParamName,'');
+ paramname:=RpInputBox(SRpRenameParam,SRpParamName,'');
  paramname:=AnsiUpperCase(Trim(paramname));
 
  param:=params.ParamByName(LParams.Items.strings[LParams.Itemindex]);

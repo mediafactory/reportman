@@ -38,9 +38,9 @@ type
     DBNavigator1: TDBNavigator;
     ScrollBox1: TScrollBox;
     ImageList1: TImageList;
-    ToolButton1: TToolButton;
+    BExit: TToolButton;
     ToolButton2: TToolButton;
-    procedure ToolButton1Click(Sender: TObject);
+    procedure BExitClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
@@ -106,15 +106,19 @@ begin
 end;
 
 
-procedure TFRpShowSampledata.ToolButton1Click(Sender: TObject);
+procedure TFRpShowSampledata.BExitClick(Sender: TObject);
 begin
  Close;
 end;
 
 procedure TFRpShowSampledata.FormCreate(Sender: TObject);
 begin
- Caption:=TranslateStr(41,Caption);
-
+ Caption:=TranslateStr(735,Caption);
+ BExit.Hint:=TranslateStr(212,BExit.Caption);
+ DBNavigator1.Hints.Clear;
+ DBNavigator1.Hints.Add(TranslateStr(738,''));
+ DBNavigator1.Hints.Add(TranslateStr(736,''));
+ DBNavigator1.Hints.Add(TranslateStr(737,''));
  SetInitialBounds;
 end;
 

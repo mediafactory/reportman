@@ -59,6 +59,13 @@ type
     CheckTwoPass: TCheckBox;
     LPrinterFonts: TLabel;
     ComboPrinterFonts: TComboBox;
+    GUserDefined: TGroupBox;
+    LMetrics7: TLabel;
+    LMetrics8: TLabel;
+    EPageheight: TEdit;
+    EPageWidth: TEdit;
+    LWidth: TLabel;
+    LHeight: TLabel;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -72,6 +79,7 @@ type
     { Private declarations }
     report:TRpReport;
     oldleftmargin,oldtopmargin,oldrightmargin,oldbottommargin:string;
+    oldcustompagewidth,oldcustompageheight:string;
     procedure SaveOptions;
     procedure ReadOptions;
   public
@@ -172,6 +180,8 @@ begin
  LMetrics4.Caption:=LMetrics3.Caption;
  LMetrics5.Caption:=LMetrics3.Caption;
  LMetrics6.Caption:=LMetrics3.Caption;
+ LMetrics7.Caption:=LMetrics3.Caption;
+ LMetrics8.Caption:=LMetrics3.Caption;
  ComboLanguage.Items.Add(TranslateStr(95,'Default'));
  for i:=0 to MAX_LANGUAGES-1 do
  begin
@@ -190,10 +200,14 @@ begin
  BCancel.Caption:=TranslateStr(94,BCancel.Caption);
  RPageSize.Items.Strings[0]:=TranslateStr(95,RPageSize.Items.Strings[0]);
  RPageSize.Items.Strings[1]:=TranslateStr(96,RPageSize.Items.Strings[1]);
+ RPageSize.Items.Strings[2]:=TranslateStr(732,RPageSize.Items.Strings[1]);
  RPageOrientation.Items.Strings[0]:=TranslateStr(95,RPageOrientation.Items.Strings[0]);
  RPageOrientation.Items.Strings[1]:=TranslateStr(96,RPageOrientation.Items.Strings[1]);
  RPageSize.Caption:=TranslateStr(97,RPageSize.Caption);
  GPageSize.Caption:=TranslateStr(104,GPageSize.Caption);
+ GUserDefined.Caption:=TranslateStr(733,GPageSize.Caption);
+ LWidth.Caption:=SRpSWidth;
+ LHeight.Caption:=SRpSHeight;
  RPageOrientation.Caption:=TranslateStr(98,RPageOrientation.Caption);
  GPageMargins.Caption:=TranslateStr(99,GPagemargins.Caption);
  LLeft.Caption:=TranslateStr(100,LLeft.Caption);
@@ -235,19 +249,15 @@ begin
  report.TwoPass:=CheckTwoPass.Checked;
 
  // Saves the options to report
- if RPageSize.itemindex=0 then
- begin
-  report.Pagesize:=rpPageSizeDefault;
- end
- else
- begin
-  report.Pagesize:=rpPageSizeCustom;
+ report.Pagesize:=TRpPageSize(RPageSize.ItemIndex);
   // Assigns the with and height in twips
-  report.PagesizeQt:=ComboPageSize.ItemIndex;
-  report.PageHeight:=Round(PageSizeArray[report.PageSizeQt].Height*1000/TWIPS_PER_INCHESS);
-  report.PageWidth:=Round(PageSizeArray[report.PageSizeQt].Width*1000/TWIPS_PER_INCHESS);
- end;
  report.PagesizeQt:=ComboPageSize.ItemIndex;
+ report.PageHeight:=Round(PageSizeArray[report.PageSizeQt].Height*1000/TWIPS_PER_INCHESS);
+ report.PageWidth:=Round(PageSizeArray[report.PageSizeQt].Width*1000/TWIPS_PER_INCHESS);
+ if EPageWidth.Text<>oldcustompagewidth then
+  report.CustomPageWidth:=gettwipsfromtext(EPageWidth.Text);
+ if EPageHeight.Text<>oldcustompageheight then
+  report.CustomPageHeight:=gettwipsfromtext(EPageHeight.Text);
  if ELeftMargin.Text<>oldleftmargin then
   report.LeftMargin:=gettwipsfromtext(ELeftMargin.Text);
  if ERightMargin.Text<>oldrightmargin then
@@ -286,16 +296,17 @@ begin
  ERightMargin.Text:=gettextfromtwips(report.RightMargin);
  ETopMargin.Text:=gettextfromtwips(report.TopMargin);
  EBottomMargin.Text:=gettextfromtwips(report.BottomMargin);
+ EPageWidth.Text:=gettextfromtwips(report.CustomPageWidth);
+ EPageHeight.Text:=gettextfromtwips(report.CustomPageheight);
+ oldcustompagewidth:=EPageWidth.Text;
+ oldcustompageheight:=EPageheight.Text;
  oldleftmargin:=ELeftMargin.Text;
  oldrightmargin:=ERightMargin.Text;
  oldTopmargin:=ETopMargin.Text;
  oldBottommargin:=EBottomMargin.Text;
 
- if report.Pagesize=RpPageSizeCustom then
- begin
-  GPageSize.visible:=true;
-  RPageSize.ItemIndex:=1;
- end;
+ RPageSize.ItemIndex:=integer(report.Pagesize);
+ RPageSizeClick(Self);
  // Orientation
  RPageOrientation.Itemindex:=0;
  RCustomOrientation.Itemindex:=0;
@@ -333,6 +344,7 @@ end;
 procedure TFRpPageSetup.RPageSizeClick(Sender: TObject);
 begin
  GPageSize.Visible:=RPageSize.Itemindex=1;
+ GUserDefined.Visible:=RPageSize.Itemindex=2;
 end;
 
 procedure TFRpPageSetup.RPageOrientationClick(Sender: TObject);

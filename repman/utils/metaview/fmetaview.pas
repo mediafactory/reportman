@@ -187,6 +187,14 @@ begin
  AScaleMore.Caption:=TranslateStr(236,AScaleMore.Caption);
  AScaleMore.Hint:=TranslateStr(237,AScaleMore.Hint);
 
+ File1.Caption:=TranslateStr(0,File1.Caption);
+ Page1.Caption:=TranslateStr(269,Page1.Caption);
+ View1.Caption:=TranslateStr(740,View1.Caption);
+ OpenDialog1.Title:=File1.Caption;
+
+ AOpen.Caption:=TranslateStr(42,AOpen.Caption);
+ AOpen.Hint:=TranslateStr(739,AOpen.Hint);
+
 
  APrevious.ShortCut:=Key_PageUp;
  ANext.ShortCut:=Key_PageDown;

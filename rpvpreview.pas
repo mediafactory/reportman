@@ -216,6 +216,7 @@ begin
  done:=false;
  try
   report.OnProgress:=RepProgress;
+  gdidriver.lockedpagesize:=false;
   if report.TwoPass then
   begin
    CalcReportWidthProgress(report);
@@ -230,6 +231,7 @@ begin
    gdidriver.devicefonts:=false;
   pagenum:=1;
   gdidriver.NewDocument(report.Metafile);
+  gdidriver.lockedpagesize:=true;
   PrintPage;
   PlaceImagePosition;
   printed:=true;

@@ -23,7 +23,7 @@ unit rpvgraphutils;
 interface
 
 uses Classes,SysUtils,Windows,Graphics,rpmunits,Printers,WinSpool,
- rpmdconsts;
+ rpmdconsts,rptypes;
 
 type
  TGDIPageSize=record
@@ -52,7 +52,7 @@ procedure DrawBitmapMosaicSlow(canvas:TCanvas;rec:Trect;bitmap:TBitmap);
 function GetPhysicPageSizeTwips:TPoint;
 function GetPageSizeTwips:TPoint;
 function GetPageMarginsTWIPS:TRect;
-function QtPageSizeToGDIPageSize(qtsize:integer):TGDIPageSize;
+function QtPageSizeToGDIPageSize(qtsize:TPageSizeQt):TGDIPageSize;
 function IsWindowsNT:Boolean;
 function FindIndexPaperName(device,name:string):integer;
 procedure SetCurrentPaper(apapersize:TGDIPageSize);
@@ -330,138 +330,148 @@ end;
     );
 }
 
-function QtPageSizeToGDIPageSize(qtsize:integer):TGDIPageSize;
+function QtPageSizeToGDIPageSize(qtsize:TPageSizeQt):TGDIPageSize;
 begin
- case qtsize of
-  0:
-   Result.PageIndex:=DMPAPER_A4;
-  1:
-   Result.PageIndex:=DMPAPER_B5;
-  2:
-   Result.PageIndex:=DMPAPER_LETTER;
-  3:
-   Result.PageIndex:=DMPAPER_LEGAL;
-  4:
-   Result.PageIndex:=DMPAPER_EXECUTIVE;
-  5: // A0
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 33110;
-    Result.Height:= 46811;
-   end;
-  6: // A1
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 23386;
-    Result.Height:= 33110;
-   end;
-  7:
-   Result.PageIndex:=DMPAPER_A2;
-  8:
-   Result.PageIndex:=DMPAPER_A3;
-  9:
-   Result.PageIndex:=DMPAPER_A5;
-  10:
-   Result.PageIndex:=DMPAPER_A6;
-  11: // A7
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 2913;
-    Result.Height:= 4134;
-   end;
-  12: // A8
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 2047;
-    Result.Height:= 2913;
-   end;
-  13: // A9
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 1457;
-    Result.Height:= 2047;
-   end;
-  14: // B0
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 40551;
-    Result.Height:= 57323;
-   end;
-  15: // B1
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 28661;
-    Result.Height:= 40551;
-   end;
-  16: // B10
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 1260;
-    Result.Height:= 1772;
-   end;
-  17: // B2
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 20276;
-    Result.Height:= 28661;
-   end;
-  18: // B3
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 14331;
-    Result.Height:= 20276;
-   end;
-  19:
-   Result.PageIndex:=DMPAPER_B4;
-  20: // B6
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 5039;
-    Result.Height:= 7165;
-   end;
-  21: // B7
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 3583;
-    Result.Height:= 5039;
-   end;
-  22: // B8
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 2520;
-    Result.Height:= 3583;
-   end;
-  23: // B9
-   begin
-    Result.PageIndex:=0;
-    Result.Width:= 1772;
-    Result.Height:= 2520;
-   end;
-  24:
-   Result.PageIndex:=DMPAPER_ENV_C5;
-  25:
-   Result.PageIndex:=DMPAPER_ENV_10;
-  26:
-   Result.PageIndex:=DMPAPER_ENV_DL;
-  27:
-   Result.PageIndex:=DMPAPER_FOLIO;
-  28:
-   Result.PageIndex:=DMPAPER_LEDGER;
-  29:
-   Result.PageIndex:=DMPAPER_TABLOID;
-  else
-   Result.PageIndex:=DMPAPER_A4;
- end;
- if Result.PageIndex=0 then
+ if qtsize.Custom then
  begin
+  Result.PageIndex:=0;
   // Converts to decs of milimeter
-  Result.Width:=Round(Result.Width*1000/2510);
-  Result.Height:=Round(Result.Height*1000/2510);
+  Result.Width:=Round(qtsize.CustomWidth/1440*2.51*100);
+  Result.Height:=Round(qtsize.CustomHeight/1440*2.51*100);
  end
  else
  begin
-  Result.Width:=0;
-  Result.Height:=0;
+  case qtsize.indexqt of
+   0:
+    Result.PageIndex:=DMPAPER_A4;
+   1:
+    Result.PageIndex:=DMPAPER_B5;
+   2:
+    Result.PageIndex:=DMPAPER_LETTER;
+   3:
+    Result.PageIndex:=DMPAPER_LEGAL;
+   4:
+    Result.PageIndex:=DMPAPER_EXECUTIVE;
+   5: // A0
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 33110;
+     Result.Height:= 46811;
+    end;
+   6: // A1
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 23386;
+     Result.Height:= 33110;
+    end;
+   7:
+    Result.PageIndex:=DMPAPER_A2;
+   8:
+    Result.PageIndex:=DMPAPER_A3;
+   9:
+    Result.PageIndex:=DMPAPER_A5;
+   10:
+    Result.PageIndex:=DMPAPER_A6;
+   11: // A7
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 2913;
+     Result.Height:= 4134;
+    end;
+   12: // A8
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 2047;
+     Result.Height:= 2913;
+    end;
+   13: // A9
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 1457;
+     Result.Height:= 2047;
+    end;
+   14: // B0
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 40551;
+     Result.Height:= 57323;
+    end;
+   15: // B1
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 28661;
+     Result.Height:= 40551;
+    end;
+   16: // B10
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 1260;
+     Result.Height:= 1772;
+    end;
+   17: // B2
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 20276;
+     Result.Height:= 28661;
+    end;
+   18: // B3
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 14331;
+     Result.Height:= 20276;
+    end;
+   19:
+    Result.PageIndex:=DMPAPER_B4;
+   20: // B6
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 5039;
+     Result.Height:= 7165;
+    end;
+   21: // B7
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 3583;
+     Result.Height:= 5039;
+    end;
+   22: // B8
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 2520;
+     Result.Height:= 3583;
+    end;
+   23: // B9
+    begin
+     Result.PageIndex:=0;
+     Result.Width:= 1772;
+     Result.Height:= 2520;
+    end;
+   24:
+    Result.PageIndex:=DMPAPER_ENV_C5;
+   25:
+    Result.PageIndex:=DMPAPER_ENV_10;
+   26:
+    Result.PageIndex:=DMPAPER_ENV_DL;
+   27:
+    Result.PageIndex:=DMPAPER_FOLIO;
+   28:
+    Result.PageIndex:=DMPAPER_LEDGER;
+   29:
+    Result.PageIndex:=DMPAPER_TABLOID;
+   else
+    Result.PageIndex:=DMPAPER_A4;
+  end;
+  if Result.PageIndex=0 then
+  begin
+   // Converts to decs of milimeter
+   Result.Width:=Round(Result.Width*1000/2510);
+   Result.Height:=Round(Result.Height*1000/2510);
+  end
+  else
+  begin
+   Result.Width:=0;
+   Result.Height:=0;
+  end;
  end;
 end;
 
@@ -777,9 +787,9 @@ begin
 //   PDevMode.dmPaperlength := apapersize.Width;
 //   PDevMode.dmPaperwidth  := apapersize.Height;
   end;
-{  PDevMode.dmPrintQuality:=SmallInt(DMRES_DRAFT);
-  PDevMode.dmFields:=PDevMode.dmFields or dm_PrintQuality;
-  if (PDevMode.dmFields AND dm_PrintQuality)>0 then
+//  PDevMode.dmPrintQuality:=SmallInt(DMRES_DRAFT);
+//  PDevMode.dmFields:=PDevMode.dmFields or dm_PrintQuality;
+{  if (PDevMode.dmFields AND dm_PrintQuality)>0 then
    ShowMessage('CorrectPrint');
   PDevMode.dmFields:=PDevMode.dmFields AND (Not dm_YResolution);
   if (PDevMode.dmFields AND dm_YResolution)>0 then

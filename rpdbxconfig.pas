@@ -73,29 +73,33 @@ type
     ConAdminObj:TConnectionAdmin;
     params:TStringList;
     connectionname:string;
+    onlyibx:boolean;
     procedure FreeParamsControls;
     procedure CreateParamsControls;
     procedure Edit1Change(Sender:TObject);
+    procedure UpdateIBX;
   public
     { Public declarations }
     ConnectionsFile:string;
   end;
 
-procedure ShowDBXConfig(ConnectionsFile:string='');
+procedure ShowDBXConfig(onlyibx:boolean;ConnectionsFile:string='');
 
 implementation
 
 {$R *.xfm}
 
 
-procedure ShowDBXConfig(ConnectionsFile:string);
+procedure ShowDBXConfig(onlyibx:boolean;ConnectionsFile:string);
 var
  dia:TFRpDBXCOnfig;
 begin
  dia:=TFRpDBXConfig.Create(Application);
  try
-  dia.showmodal;
+  dia.onlyibx:=onlyibx;
   dia.ConnectionsFile:=Trim(ConnectionsFile);
+  dia.UpdateIBX;
+  dia.showmodal;
  finally
   dia.free;
  end;
@@ -274,7 +278,7 @@ begin
   exit;
  if ComboDrivers.ItemIndex=0 then
   Raise Exception.Create(SRpSelectDriver);
- newname:=Trim(InputBox(SRpNewConnection,SRpConnectionName,''));
+ newname:=Trim(RpInputBox(SRpNewConnection,SRpConnectionName,''));
  if Length(newname)<1 then
   exit;
  ConAdmin.AddConnection(newname,ComboDrivers.Text);
@@ -347,6 +351,19 @@ end;
 procedure TFRpDBXConfig.BCloseClick(Sender: TObject);
 begin
  Close;
+end;
+
+procedure TFRpDBXConfig.UpdateIBX;
+begin
+ if OnlyIBX then
+ begin
+  ComboDrivers.ItemIndex:=ComboDrivers.Items.IndexOf('Interbase');
+  if ComboDrivers.ItemIndex>=0 then
+   ComboDrivers.Enabled:=False;
+ end;
+ if ComboDrivers.ItemIndex<0 then
+  ComboDrivers.ItemIndex:=0;
+ ComboDriversClick(Self);
 end;
 
 end.

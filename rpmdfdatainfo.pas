@@ -235,10 +235,10 @@ end;
 procedure TFRpDatainfoconfig.BConfigClick(Sender: TObject);
 begin
  case TRpDBDriver(GDriver.ItemIndex) of
-  rpdatadbexpress:
+  rpdatadbexpress,rpdataibx,rpdataibo:
    begin
 {$IFDEF USECONADMIN}
-    ShowDBXConfig;
+    ShowDBXConfig(TRpDbDriver(GDriver.ItemIndex) in [rpdataibx,rpdataibo]);
     UpdateConAdmin;
     if Assigned(ConAdmin) then
     begin
@@ -279,7 +279,7 @@ var
 begin
  if Not ComboAvailable.Visible then
  begin
-  conname:=UpperCase(Trim(InputBox(SRpNewConnection,SRpConnectionName,'')));
+  conname:=UpperCase(Trim(RpInputBox(SRpNewConnection,SRpConnectionName,'')));
   if Length(conname)<1 then
    exit;
   item:=databaseinfo.Add(conname);
@@ -410,7 +410,7 @@ var
  aitem:TRpDataInfoItem;
  index:integer;
 begin
- aliasname:=Trim(InputBox(SrpNewDataset,SRpAliasName,''));
+ aliasname:=Trim(RpInputBox(SrpNewDataset,SRpAliasName,''));
  if Length(aliasname)<1 then
   exit;
  aitem:=datainfo.Add(aliasname);
@@ -459,7 +459,7 @@ var
  aliasname:string;
  index:integer;
 begin
- aliasname:=Trim(InputBox(SrpRenameDataset,SRpAliasName,''));
+ aliasname:=Trim(RpInputBox(SrpRenameDataset,SRpAliasName,''));
  if Length(aliasname)<1 then
   exit;
  index:=datainfo.IndexOf(aliasname);

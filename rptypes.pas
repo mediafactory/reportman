@@ -64,7 +64,13 @@ type
   rpsEllipse, rpsCircle,rpsHorzLine,rpsVertLine,rpsOblique1,rpsOblique2);
 
  TRpPrinterFontsOption=(rppfontsdefault,rppfontsalways,rppfontsnever); 
- TRpPageSize=(rpPageSizeDefault,rpPageSizeCustom);
+ TRpPageSize=(rpPageSizeDefault,rpPageSizeCustom,rpPageSizeUser);
+ TPageSizeQt=record
+  Indexqt:integer;
+  Custom:boolean;
+  CustomWidth:integer;
+  CustomHeight:integer;
+ end;
 
  TRpColor=integer;
 
