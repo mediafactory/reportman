@@ -16,5 +16,6 @@ and distribute it you must also distribute the source code.
 - You can use it in commercial applications.
 
 http://sourceforge.net/projects/reportman
+http://reportman.sourceforge.net
 
 Thanks

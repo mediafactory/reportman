@@ -1,6 +1,6 @@
 object FRpPreview: TFRpPreview
-  Left = 205
-  Top = 125
+  Left = 109
+  Top = 51
   Width = 630
   Height = 470
   VertScrollBar.Range = 30

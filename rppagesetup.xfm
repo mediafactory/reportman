@@ -1,9 +1,9 @@
 object FRpPageSetup: TFRpPageSetup
   Left = 42
   Top = 87
-  Width = 457
-  Height = 411
-  VertScrollBar.Range = 393
+  Width = 464
+  Height = 419
+  VertScrollBar.Range = 381
   HorzScrollBar.Range = 421
   ActiveControl = RPageSize
   BorderStyle = fbsDialog
@@ -25,19 +25,19 @@ object FRpPageSetup: TFRpPageSetup
     OnMouseUp = SColorMouseDown
   end
   object BOK: TButton
-    Left = 8
-    Top = 360
-    Width = 97
-    Height = 33
+    Left = 96
+    Top = 356
+    Width = 101
+    Height = 25
     Caption = 'OK'
     TabOrder = 0
     OnClick = BOKClick
   end
   object BCancel: TButton
-    Left = 112
-    Top = 360
+    Left = 204
+    Top = 356
     Width = 97
-    Height = 32
+    Height = 25
     Caption = 'Cancel'
     TabOrder = 1
     OnClick = BCancelClick

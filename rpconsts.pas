@@ -199,12 +199,6 @@ resourcestring
   SRpNotAField='Not a field: ';
   SRpNotBinary='Not a binary field: ';
   SRpErrorReadingFromFieldStream='Error reading from field stream';
-//  SRpGraphicClear='Elimina toda la información acumulada en una variable de tipo gráfico';
-//  SRpPGraphicClear='Gr es el nombre de la variable de tipo gráfico, devuelve cierto';
-
-//  SRpGraphicNew='Añade un punto de información en una variable de tipo gráfico, pudiendo cambiar de serie';
-//  SRpPGraphicNew='Gr es el nombre de la variable de tipo gráfico, '+
-//    ' V es el punto, C es si debemos cambiar de serie, etiq es la etiqueta del punto y caption es la leyenda de la serie';
 
   SRpSQrt='The square of a number';
   SRpPSQRt='num is the number to square';
@@ -529,6 +523,8 @@ resourcestring
   SRpDocNotInstalled='Documentation not installed.';
   SRpDocNotInstalled2='Download it and install in the application directory.';
   SRpDocNotInstalled3='http://reportman.sourceforge.net';
+
+  SRpSelectAddConnection='You must select first add/select connection';
 
 implementation
 

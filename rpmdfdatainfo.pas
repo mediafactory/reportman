@@ -205,6 +205,8 @@ begin
    begin
      // Gets connection string
 {$IFDEF USEADO}
+     if LConnections.ItemIndex<0 then
+      Raise Exception.Create(SRpSelectAddConnection);
      EConnectionString.Text:=PromptDataSource(0,EConnectionString.Text);
 {$ENDIF}
    end;

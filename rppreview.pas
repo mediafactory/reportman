@@ -512,8 +512,6 @@ begin
 end;
 
 
-// A bug in TScrollBox Refresh background does not
-// allow to center the image
 procedure TFRpPreview.PlaceImagePosition;
 var
  AWidth:integeR;
@@ -537,7 +535,7 @@ begin
   AImage.Top:=0
  else
   AImage.Top:=(AHeight-AImage.Height) div 2;
- // A bug in the refresh
+ // A bug in the refresh in Windows
 {$IFDEF MSWINDOWS}
  ImageContainer.Visible:=False;
  ImageContainer.Visible:=True;

@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 0.99 beta
+AppVerName=Report Manager 0.99c beta
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -27,8 +27,6 @@ Source: "..\repman\utils\printrep\printrep.exe"; DestDir: "{app}"; CopyMode: alw
 Source: "..\repman\utils\reptotxt\reptotxt.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\txttorep\txttorep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\printreptopdf\printreptopdf.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\doc\features.html"; DestDir: "{app}\doc"; CopyMode: alwaysoverwrite
-Source: "..\doc\tutorial\*.*"; DestDir: "{app}\doc\tutorial"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; CopyMode: alwaysoverwrite

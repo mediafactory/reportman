@@ -28,7 +28,7 @@ uses
 {$ENDIF}
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,
-  QActnList, QImgList,QPrinters,Qt,rpconsts;
+  QActnList, QImgList,QPrinters,Qt,rpconsts,rptypes, QMenus, QTypes;
 
 type
   TFMeta = class(TForm)
@@ -46,7 +46,6 @@ type
     EPageNum: TEdit;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
     APrint: TAction;
     ToolButton6: TToolButton;
     ASave: TAction;
@@ -55,11 +54,37 @@ type
     AOpen: TAction;
     ToolButton8: TToolButton;
     BCancel: TButton;
-    ToolButton9: TToolButton;
     PBar: TProgressBar;
     AExit: TAction;
+    AScale100: TAction;
+    AScaleWide: TAction;
+    AScaleFull: TAction;
+    AScaleLess: TAction;
+    AScaleMore: TAction;
     ToolButton10: TToolButton;
     SaveDialog1: TSaveDialog;
+    ToolButton5: TToolButton;
+    ToolButton9: TToolButton;
+    ToolButton11: TToolButton;
+    ToolButton12: TToolButton;
+    ToolButton13: TToolButton;
+    MainMenu1: TMainMenu;
+    File1: TMenuItem;
+    Open1: TMenuItem;
+    Save1: TMenuItem;
+    N1: TMenuItem;
+    Exit1: TMenuItem;
+    Page1: TMenuItem;
+    Firstpage1: TMenuItem;
+    Print1: TMenuItem;
+    Nextpage1: TMenuItem;
+    Lastpage1: TMenuItem;
+    View1: TMenuItem;
+    Normalscale1: TMenuItem;
+    Normalscale2: TMenuItem;
+    Scaletowindow1: TMenuItem;
+    N2: TMenuItem;
+    Print2: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -75,12 +100,21 @@ type
       Shift: TShiftState);
     procedure BCancelClick(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure AImageMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure AScale100Execute(Sender: TObject);
+    procedure AScaleWideExecute(Sender: TObject);
+    procedure AScaleFullExecute(Sender: TObject);
+    procedure AScaleMoreExecute(Sender: TObject);
+    procedure AScaleLessExecute(Sender: TObject);
   private
     { Private declarations }
     cancelled:boolean;
     procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
     procedure EnableButtons;
     procedure DisableButtons;
+    procedure PlaceImagePosition;
   public
     { Public declarations }
     pagenum:integer;
@@ -242,6 +276,7 @@ begin
    ALast.Enabled:=True;
    pagenum:=1;
    PrintPage;
+   FormResize(Self);
   end;
  finally
   EnableButtons;
@@ -341,6 +376,128 @@ end;
 procedure TFMeta.AExitExecute(Sender: TObject);
 begin
  Close;
+end;
+
+
+procedure TFMeta.PlaceImagePosition;
+var
+ AWidth:integeR;
+ Aheight:integer;
+begin
+ ImageContainer.HorzScrollBar.Position:=0;
+ ImageContainer.VertScrollBar.Position:=0;
+ AImage.Left:=0;
+ AImage.Top:=0;
+ ImageContainer.HorzScrollBar.Position:=0;
+ ImageContainer.VertScrollBar.Position:=0;
+
+ AWidth:=ImageContainer.Width-SCROLLBAR_VX;
+ AHeight:=ImageContainer.Height-SCROLLBAR_HX;
+
+ if AImage.Width>AWidth then
+  AImage.Left:=0
+ else
+  AImage.Left:=(AWidth-AImage.Width) div 2;
+ if AImage.Height>AHeight then
+  AImage.Top:=0
+ else
+  AImage.Top:=(AHeight-AImage.Height) div 2;
+ // A bug in the refresh in Windows
+{$IFDEF MSWINDOWS}
+ ImageContainer.Visible:=False;
+ ImageContainer.Visible:=True;
+ {$ENDIF}
+end;
+
+procedure TFMeta.FormResize(Sender: TObject);
+begin
+ // Sets the driver widths and redraw accordingly
+ AScaleFull.Checked:=false;
+ AScaleWide.Checked:=false;
+ AScale100.Checked:=false;
+ if Assigned(qtdriver) then
+ begin
+  qtdriver.clientwidth:=ImageContainer.Width;
+  qtdriver.clientHeight:=ImageContainer.Height;
+  case qtdriver.PreviewStyle of
+   spWide:
+    AScaleWide.Checked:=True;
+   spEntirePage:
+    AScaleFull.Checked:=True;
+   spNormal:
+    AScale100.Checked:=True;
+  end;
+  if pagenum>=1 then
+   PrintPage;
+  if pagenum>=1 then
+   PlaceImagePosition;
+ end;
+end;
+
+procedure TFMeta.AScale100Execute(Sender: TObject);
+begin
+ qtdriver.PreviewStyle:=spNormal;
+ FormResize(Self);
+end;
+
+procedure TFMeta.AScaleWideExecute(Sender: TObject);
+begin
+ qtdriver.PreviewStyle:=spWide;
+ FormResize(Self);
+end;
+
+procedure TFMeta.AScaleFullExecute(Sender: TObject);
+begin
+ qtdriver.PreviewStyle:=spEntirePage;
+ FormResize(Self);
+end;
+
+procedure TFMeta.AScaleLessExecute(Sender: TObject);
+begin
+ qtdriver.PreviewStyle:=spCustom;
+ qtdriver.Scale:=qtdriver.scale-0.10;
+ FormResize(Self);
+end;
+
+procedure TFMeta.AScaleMoreExecute(Sender: TObject);
+begin
+ qtdriver.PreviewStyle:=spCustom;
+ qtdriver.Scale:=qtdriver.scale+0.10;
+ FormResize(Self);
+end;
+
+procedure TFMeta.AImageMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+var
+ relx:Extended;
+ rely:Extended;
+ posx,migx:Extended;
+ posy,migy:Extended;
+ punt:Tpoint;
+begin
+ // When clic in image scale to 100% and scroll to the
+ // clicked section
+ if qtdriver.PreviewStyle=spEntirePage then
+ begin
+  punt.X:=X;
+  punt.y:=Y;
+  relx:=punt.X;
+  rely:=punt.Y;
+  relx:=relx/AImage.Width;
+  rely:=rely/AImage.Height;
+  AScale100.Execute;
+  // looks the limit
+  posx:=ImageContainer.HorzScrollBar.Range*relx;
+  posy:=ImageContainer.VertScrollBar.Range*rely;
+  // To the center
+  Migx:=PosX-(ImageContainer.ClientWidth div 2);
+  Migy:=PosY-(ImageContainer.ClientHeight div 2);
+
+  ImageContainer.HorzScrollBar.Position:=Trunc(migX);
+  ImageContainer.VertScrollBar.Position:=Trunc(MigY);
+ end
+ else
+  AScaleFull.Execute;
 end;
 
 end.

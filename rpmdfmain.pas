@@ -584,6 +584,17 @@ begin
  LastUsedFiles.LoadFromConfigFile(configfile);
  UpdateFileMenu;
  LoadConfig;
+ // A bug in Kylix loading decimal sep, and thousand sep
+{$IFDEF LINUX}
+ if thousandseparator=chr(0) then
+ begin
+  if decimalseparator='.' then
+   thousandseparator:=','
+  else
+   if decimalseparator=',' then
+    thousandseparator:='.'
+ end;
+{$ENDIF}
 end;
 
 procedure TFRpMainF.FormClose(Sender: TObject; var Action: TCloseAction);

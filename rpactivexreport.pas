@@ -26,7 +26,7 @@ uses
 
 
 const
- AX_CONSWIDTH=50;
+ AX_CONSWIDTH=75;
  AX_CONSHEIGHT=20;
 
 type
@@ -58,7 +58,6 @@ type
     copies:integer;collate:boolean):boolean;
    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer);override;
    constructor Create(AOwner:TComponent);override;
-   function GetReport:TRpReport;
    { Public declarations }
   published
     { Published declarations }
@@ -68,7 +67,6 @@ type
     property ShowPrintDialog:boolean read FShowPrintDialog write SetShowPrintDialog;
     property Title:string read FTitle write SetTitle;
     property Language:integer read FLanguage write SetLanguage;
-    property Report:TRpReport read GetReport;
   end;
 
 
@@ -79,7 +77,7 @@ begin
  Canvas.Brush.Color:=clWhite;
  Canvas.Pen.Color:=clBlack;
  Canvas.Rectangle(ClientRect);
- Canvas.TextOut(2,2,'AXReport');
+ Canvas.TextOut(2,2,'ReportManX');
 end;
 
 procedure TRpActiveXReport.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
@@ -160,10 +158,6 @@ begin
  Result:=FVCLReport.PrintRange(frompage,topage,copies,collate);
 end;
 
-function TRpActiveXReport.GetReport:TRpReport;
-begin
- Result:=FVCLReport.Report;
-end;
 
 end.
 
