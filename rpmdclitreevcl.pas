@@ -218,6 +218,7 @@ begin
  amod.OnGetAliases:=OnGetAliases;
  amod.OnGetTree:=OnGetTree;
  amod.OnGetParams:=OnGetParams;
+ amod.GetAliases;
  PTop.Visible:=False;
  LTree.Visible:=True;
  BToolBar.Visible:=True;

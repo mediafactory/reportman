@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager Lite
-AppVerName=Report Manager Lite  2.2
-AppVersion=2.2
-OutputBaseFilename=reportmanlite2_2
+AppVerName=Report Manager Lite  2.3a
+AppVersion=2.3a
+OutputBaseFilename=reportmanlite2_3a
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman

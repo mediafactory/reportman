@@ -847,6 +847,7 @@ var
  fpage:TRpMetafilePage;
  acount:integer;
  i,ainteger:integer;
+ apagesizeqt:TPageSizeQt;
 begin
  // Clears the report metafile
  if clearfirst then
@@ -930,6 +931,19 @@ begin
   fpage:=TRpMetafilePage.Create;
   FPages.Add(fpage);
   FPage.Fversion2_2:=Fversion2_2;
+  FPage.FUpdatedPageSize:=false;
+  FPage.FOrientation:=Orientation;
+  aPageSizeqt.Indexqt:=PageSize;
+  aPageSizeqt.Custom:=true;
+  aPageSizeqt.CustomWidth:=CustomX;
+  aPageSizeqt.Customheight:=CustomY;
+  aPageSizeqt.PhysicWidth:=CustomX;
+  aPageSizeqt.PhysicHeight:=CustomY;
+  aPageSizeqt.PaperSource:=0;
+  aPageSizeqt.ForcePaperName:='';
+  aPageSizeqt.Duplex:=0;
+
+  FPage.PageSizeqt:=apagesizeqt;
   fpage.LoadFromStream(Stream);
 
   if Assigned(FOnProgress) then
@@ -1029,7 +1043,7 @@ begin
  bytesread:=Stream.Read(FMark,sizeof(FMark));
  if (bytesread<>sizeof(FMark)) then
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
- if FVersion2_2 then
+ if Not FVersion2_2 then
  begin
   bytesread:=Stream.Read(Forientation,sizeof(Forientation));
   if (bytesread<>sizeof(Forientation)) then
