@@ -6,13 +6,15 @@
 
 <body>
 <h2>Basic report design</h2>
-<h3><b>Using Report Manager from GNU C</b></h3>
+<h3><b>Using Report Manager from GNU C and others with the dynamic link library</b></h3>
 <p>This is a guide for using Report Manager from GNU C, this guide can be used 
-  also for any other language capable of using dynamic link libraries.</p>
+  also for <b>any other language capable of using dynamic link libraries</b>, that is 
+  for example Borland C++ command line compiler, Borland Delphi....</p>
 <p>In Microsoft Windows the functions are inside Reportman.ocx library, you can 
-  see delphi pascal definitions in rpreportmanapi.pas file. The C definitions 
-  are in rpreportmanapi.h file, you must link to libreportmanapi.so. It supports 
-  C and C++.</p>
+  see delphi pascal definitions in rpreportmanapi.pas file, so for use the shared 
+  library with Delphi (is much better to use the native components) you can add 
+  the file to your project and use the functions. The C definitions are in rpreportmanapi.h 
+  file, you must link to libreportmanapi.so. It supports C and C++.</p>
 <p>The libraries are:</p>
 <table width="100%" border="1">
   <tr> 
@@ -24,16 +26,26 @@
     <td>libreportmanapi.so (no qt dependence no X-Server need)</td>
   </tr>
   <tr> 
-    <td>Reportman.lib (impor library)</td>
+    <td>Reportman.lib (import library for Borland C++)</td>
     <td>libreportmanapiqt.so (qt dependence, X-Server need)</td>
   </tr>
+  <tr> 
+    <td>Reportman.a (import library for GCC)</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td>Reportman.def (function definition file for dlltool)</td>
+    <td>&nbsp;</td>
+  </tr>
 </table>
-<p>The calling convention of exported funtions is stdcall. </p>
+<p>The <b>calling convention of all exported funtions is stdcall</b> because it's safer 
+  than the standard cdecl.</p>
 <p>It you want preview functionallity you must use reportmanapiqt.h, and link 
   to libreportmanapiqt.so library, this library needs a X-Server running and needs 
-  also libborqt provided libraries.</p>
+  also all the other libraries used by Report Manager designer, see <a href="deploy.html">deploy 
+  documentation</a> for more information.</p>
 <p>Note the libraries that ususally uses the designer and the database libraries 
-  must be in library path, or you must use the same launch procedure (repmand.sh) 
+  must be in library path, and you should use the same launch script (repmand.sh) 
   to start your compiled applications.</p>
 <p>Functionality is about returning a handle to a report and process this report 
   passing the handle to next report engine function calls:</p>
@@ -41,14 +53,17 @@
   int rp_execute(int hreport,char *outputfilename,int metafile,int compressed);<br>
   int rp_close(int hreport);<br>
   char *rp_lasterror(void);<br>
-</p>
+  int rp_print(int hreport,char *title,int showprogress,int showprintdialog);<br>
+  int rp_preview(int hreport,char *title);</p>
 <p>All the functions returns 0 if fail, the rp_lasterror function returns the 
-  error message. The call of a report engine function clears the rp_lasterror 
-  returned value, so you should call rp_lasterror after checking if the function 
-  is successfull:</p>
-<p> int hreport;</p>
-<p> char reportmanfile[]=&quot;/home/toni/cvsroot/reportman/repman/repsamples/sample4.rep&quot;;</p>
-<p> hreport=rp_open(reportmanfile);<br>
+  error message for the last library call so the call of a report engine function 
+  clears the rp_lasterror returned value, you should call rp_lasterror after checking 
+  if the function is successfull, for example:</p>
+<p>
+#include "rpreportmanapi.h"<br>
+int hreport;<br>
+char reportmanfile[]=&quot;sample4.rep&quot;;<br>
+hreport=rp_open(reportmanfile);<br>
   if (hreport==0)<br>
   { <br>
   printf(&quot;Error loading: &quot;);<br>
@@ -56,18 +71,28 @@
   printf(&quot;\n&quot;);<br>
   }</p>
 <p>To compile the program you use:</p>
-<p> g++ -o test test.cc -L. libreportmanapi.so</p>
-<p>The -L. is used to search for the library in current directory, you can remove 
-  the switch and copy the library to the correct library directory.</p>
-<p><strong>In GNU C Microsoft Windows</strong></p>
-<p>g++ -o test test.cc -L. Reportman.lib</p>
+<p><b>GNU C for Linux</b></p>
+<p> g++ -o test test.cc libreportmanapi.so</p>
+<p>or if you want preview and print functionallity and you have X Server running:</p>
+<p>Change the include file for rpreportmanapiqt.h and execute</p>
+<p>g++ -o test test.cc libreportmanapiqt.so</p>
+<p><b> GNU C for Microsoft Windows</b></p>
+<p>g++ -o test test.cc Reportman.a</p>
+<p>Where Reportman.a is the import library for Reportman.ocx.</p>
+<p>You can create the import library with GNU dlltool:</p>
+<p>dlltool --dllname Reportman.ocx --def Reportman.def --output-lib Reportman.a 
+  -k</p>
+<p><strong>In Borland C++ for Microsoft Windows</strong></p>
+<p>bcpp test.cc Reportman.lib</p>
 <p>Where Reportman.lib is the import library for Reportman.ocx.</p>
 <p>You can create the import library:</p>
 <p>implib Reportman.lib Reportman.ocx</p>
-<p><strong>With C++Builder</strong></p>
-<p>You can create the import library:</p>
-<p>implib Reportman.lib Reportman.ocx</p>
-<p>Then add to your project so the compiler includes it in the link stage.</p>
-<p></p>
+<p><strong>With a Visual C++Builder project</strong></p>
+<p>You can create the import library as above then add to your project the Reportman.lib 
+  file so the compiler includes it in the link stage.</p>
+<p><b>Known problems</b></p>
+<p>In some linux distros you must define the CLX_USE_LIBQT=true enviroment variable 
+  to use the libreportmanapiqt.so library. Make sure all the libraries Report 
+  Manager engine needs are in the library path.</p>
 </body>
 </html>
