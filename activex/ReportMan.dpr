@@ -4,7 +4,7 @@ uses
   ComServ,
   ReportMan_TLB in 'ReportMan_TLB.pas',
   rpaxreportimp in 'rpaxreportimp.pas' {ReportManX: CoClass},
-  rpfaboutx in 'rpfaboutx.pas' {ReportManXAbout};
+  aboutrpax in 'aboutrpax.pas' {ReportManXAbout};
 
 {$E ocx}
 

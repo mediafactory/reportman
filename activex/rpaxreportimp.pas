@@ -35,6 +35,11 @@ type
     function Get_Title: WideString; safecall;
     function Get_Visible: WordBool; safecall;
     function Get_VisibleDockClientCount: Integer; safecall;
+    function GetDatabaseConnectionString(
+      const databasename: WideString): WideString; safecall;
+    function GetDatasetSQL(const datasetname: WideString): WideString;
+      safecall;
+    function GetParamValue(const paramname: WideString): OleVariant; safecall;
     function IsRightToLeft: WordBool; safecall;
     function PrintRange(frompage, topage, copies: Integer;
       collate: WordBool): WordBool; safecall;
@@ -44,7 +49,8 @@ type
     procedure AboutBox; safecall;
     procedure InitiateAction; safecall;
     procedure PrinterSetup; safecall;
-    procedure SaveToPDF(const filename: WideString); safecall;
+    procedure SaveToPDF(const filename: WideString; compressed: WordBool);
+      safecall;
     procedure Set_Cursor(Value: Smallint); safecall;
     procedure Set_DoubleBuffered(Value: WordBool); safecall;
     procedure Set_Enabled(Value: WordBool); safecall;
@@ -57,12 +63,18 @@ type
     procedure Set_ShowProgress(Value: WordBool); safecall;
     procedure Set_Title(const Value: WideString); safecall;
     procedure Set_Visible(Value: WordBool); safecall;
+    procedure SetDatabaseConnectionString(const databasename,
+      connectionstring: WideString); safecall;
+    procedure SetDatasetSQL(const datasetname, sqlsentence: WideString);
+      safecall;
+    procedure SetParamValue(const paramname: WideString;
+      paramvalue: OleVariant); safecall;
     procedure SetSubComponent(IsSubComponent: WordBool); safecall;
   end;
 
 implementation
 
-uses ComObj, rpfaboutx;
+uses ComObj, aboutrpax;
 
 { TReportManX }
 
@@ -163,6 +175,24 @@ begin
   Result := FDelphiControl.VisibleDockClientCount;
 end;
 
+function TReportManX.GetDatabaseConnectionString(
+  const databasename: WideString): WideString;
+begin
+  Result := FDelphiControl.GetDatabaseConnectionString(databasename);
+end;
+
+function TReportManX.GetDatasetSQL(
+  const datasetname: WideString): WideString;
+begin
+  Result := FDelphiControl.GetDatasetSQL(datasetname);
+end;
+
+function TReportManX.GetParamValue(
+  const paramname: WideString): OleVariant;
+begin
+  Result := FDelphiControl.GetParamValue(paramname);
+end;
+
 function TReportManX.IsRightToLeft: WordBool;
 begin
   Result := FDelphiControl.IsRightToLeft;
@@ -204,9 +234,10 @@ begin
   FDelphiControl.PrinterSetup;
 end;
 
-procedure TReportManX.SaveToPDF(const filename: WideString);
+procedure TReportManX.SaveToPDF(const filename: WideString;
+  compressed: WordBool);
 begin
-  FDelphiControl.SaveToPDF(filename);
+  FDelphiControl.SaveToPDF(filename, compressed);
 end;
 
 procedure TReportManX.Set_Cursor(Value: Smallint);
@@ -267,6 +298,24 @@ end;
 procedure TReportManX.Set_Visible(Value: WordBool);
 begin
   FDelphiControl.Visible := Value;
+end;
+
+procedure TReportManX.SetDatabaseConnectionString(const databasename,
+  connectionstring: WideString);
+begin
+  FDelphiControl.SetDatabaseConnectionString(databasename, connectionstring);
+end;
+
+procedure TReportManX.SetDatasetSQL(const datasetname,
+  sqlsentence: WideString);
+begin
+  FDelphiControl.SetDatasetSQL(datasetname, sqlsentence);
+end;
+
+procedure TReportManX.SetParamValue(const paramname: WideString;
+  paramvalue: OleVariant);
+begin
+  FDelphiControl.SetParamValue(paramname, paramvalue);
 end;
 
 procedure TReportManX.SetSubComponent(IsSubComponent: WordBool);
