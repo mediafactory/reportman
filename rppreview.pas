@@ -80,6 +80,7 @@ type
   private
     { Private declarations }
     cancelled:boolean;
+    printed:boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure RepProgress(Sender:TRpReport;var docancel:boolean);
     procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
@@ -96,13 +97,13 @@ type
   end;
 
 
-procedure ShowPreview(report:TRpReport;caption:string);
+function ShowPreview(report:TRpReport;caption:string):boolean;
 
 implementation
 
 {$R *.xfm}
 
-procedure ShowPreview(report:TRpReport;caption:string);
+function ShowPreview(report:TRpReport;caption:string):boolean;
 var
  dia:TFRpPreview;
  oldprogres:TRpProgressEvent;
@@ -116,6 +117,7 @@ begin
    report.OnProgress:=dia.RepProgress;
    Application.OnIdle:=dia.AppIdle;
    dia.ShowModal;
+   Result:=dia.printed;
   finally
    report.OnProgress:=oldprogres;
   end;
@@ -171,9 +173,18 @@ procedure TFRpPreview.AppIdle(Sender:TObject;var done:boolean);
 begin
  Application.OnIdle:=nil;
  done:=false;
- report.BeginPrint;
- pagenum:=1;
- PrintPage;
+ try
+  report.BeginPrint;
+  pagenum:=1;
+  PrintPage;
+  printed:=true;
+ except
+  on E:Exception do
+  begin
+   Close;
+   Raise;
+  end;
+ end;
 end;
 
 procedure TFRpPreview.FormCreate(Sender: TObject);

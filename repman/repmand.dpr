@@ -23,6 +23,7 @@ program repmand;
 
 uses
   QForms,
+  midaslib,
   fmain in 'fmain.pas' {FMainf},
   frpstruc in 'frpstruc.pas' {FRpStructure: TFrame},
   fdesign in 'fdesign.pas' {FDesignFrame: TFrame},
@@ -80,7 +81,8 @@ uses
   zdeflate in '..\zdeflate.pas',
   zinflate in '..\zinflate.pas',
   zlib in '..\zlib.pas',
-  zutil in '..\zutil.pas';
+  zutil in '..\zutil.pas',
+  rpclxreport in '..\rpclxreport.pas';
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -123,7 +125,8 @@ uses
   zdeflate in '../zdeflate.pas',
   zinflate in '../zinflate.pas',
   zlib in '../zlib.pas',
-  zutil in '../zutil.pas';
+  zutil in '../zutil.pas',
+  rpclxreport in '../rpclxreport.pas';
 {$ENDIF}
 
 

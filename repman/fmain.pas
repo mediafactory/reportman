@@ -140,8 +140,8 @@ type
     procedure APasteExecute(Sender: TObject);
     procedure Splitter1Moved(Sender: TObject);
     procedure APreviewExecute(Sender: TObject);
-    procedure APrintExecute(Sender: TObject);
     procedure AAboutExecute(Sender: TObject);
+    procedure APrintExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFDesignFrame;
@@ -714,46 +714,14 @@ begin
  ShowPreview(report,caption);
 end;
 
-procedure TFMainf.APrintExecute(Sender: TObject);
-{$IFDEF LINUX}
-var
- theparams:array [0..3] of pchar;
- param1:string;
- param2:string;
- child:__pid_t;
-{$ENDIF}
-begin
- // A bug in Kylix 2 does not allow printing
- // when using dbexpress
-{$IFDEF MSWINDOWS}
- if CalcReportWidthProgress(report) then
-  PrintMetafile(report.Metafile,Caption,true);
-{$ENDIF}
-{$IFDEF LINUX}
- if CalcReportWidthProgress(report) then
- begin
-  // Saves the metafile
-  report.Metafile.SaveToFile('meta.rpmf');
-  param1:='metaprint';
-  param2:='meta.rpmf';
-  theparams[0]:=Pchar(param1);
-  theparams[1]:=Pchar(param2);
-  theparams[2]:=nil;
-
-  child:=fork;
-  if child=-1 then
-   Raise Exception.Create(SRpErrorFork);
-  if child<>0 then
-  begin
-   execvp(theparams[0],PPChar(@theparams))
-  end
- end;
-{$ENDIF}
-end;
-
 procedure TFMainf.AAboutExecute(Sender: TObject);
 begin
  ShowAbout;
+end;
+
+procedure TFMainf.APrintExecute(Sender: TObject);
+begin
+ PrintReport(report,Caption,true);
 end;
 
 initialization

@@ -24,6 +24,9 @@ interface
 
 
 resourcestring
+
+  SRpNoFilename='No filename assigned';
+
   SRpErrorFork='Error forking';
   SRpEnglish='English';
   SRpSpanish='Spanish';

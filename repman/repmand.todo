@@ -1,5 +1,7 @@
+{TODO -oToni -cEngine : In PrintReport use a temp filename and a temp directory}
+{TODO -oToni -cEngine : Image component filename property to load a file on the fly}
 {TODO -oToni -cEngine : User parameters form}
-{TODO -oToni -cEngine : Implementation of ADO/IBX Dataaccess}
+{DONE -oToni -cEngine : Implementation of ADO/IBX Dataaccess}
 {TODO -oToni -cEngine : Detect existing BDE Databases in rpdatainfo}
 {TODO -oToni -cEngine : Execute after print and before print}
 {TODO -oToni -cEngine : Page size implementation}
@@ -9,7 +11,7 @@
 {TODO 1 -oToni -cEngine : Implementation of labels (horizontal movement)}
 {TODO 1 -oToni -cEngine : Add Barcode component}
 {TODO 1 -oToni -cEngine : Program a simple chart component at least with poly lines and dots}
-{TODO 1 -oToni -cEngine :
+{DONE 1 -oToni -cEngine :
 Instaler for Windows do Innosetup setup and for linux a tar or something
 with the GNUmakefile}
 {TODO 1 -oToni -cEngine : Conversion program for gestor.exe}
@@ -22,7 +24,7 @@ because sigpipe after connecting to a dataset}
 {DONE -oToni -cEngine : Implementation for printing page headers and footers}
 {DONE -oToni -cEngine : Image from a field implementation}
 {DONE -oToni -cEngine : Format expresion implementation}
-{TODO -oToni -cEngine : About box}
+{DONE -oToni -cEngine : About box}
 {TODO -oToni -cEngine : Write some documentation}
 {TODO -oToni -cEngine : Free pages in metafile while printing, previewing...}
 {TODO -oToni -cEngine : Implementation of one pass and two pas report instead of whole pas}
