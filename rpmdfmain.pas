@@ -1028,7 +1028,7 @@ begin
   ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',true);
   AsystemPrintDialog.Checked:=inif.ReadBool('Preferences','SystemPrintDialog',True);
 {$IFDEF LINUX}
-  AKylixPrintBug.Checked:=inif.ReadBool('Preferences','KylixPrintBug',True);
+  AKylixPrintBug.Checked:=inif.ReadBool('Preferences','KylixPrintBug',False);
   rpqtdriver.kylixprintbug:=AKylixPrintBug.Checked;
 {$ENDIF}
   ADriverGDI.Checked:=Not ADriverQT.Checked;

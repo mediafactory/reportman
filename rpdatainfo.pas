@@ -1302,7 +1302,16 @@ begin
    CopyFileTo(DBXDRIVERFILENAME,driverfilename);
   end
   else
-   Raise Exception.Create(SRpConfigFileNotExists+DBXDRIVERFILENAME);
+  begin
+   // Check int /usr/local/etc
+   if FileExists('/usr/local/etc/'+DBXDRIVERFILENAME+'.conf') then
+   begin
+    CopyFileTo('/usr/local/etc/'+DBXDRIVERFILENAME+'.conf',driverfilename);
+    drivers:=TMemIniFile.Create(driverfilename);
+   end
+   else
+    Raise Exception.Create(SRpConfigFileNotExists+DBXDRIVERFILENAME);
+  end;
 {$ENDIF}
  end;
  if FileExists(configfilename) then
@@ -1322,7 +1331,16 @@ begin
    CopyFileTo(DBXCONFIGFILENAME,configfilename);
   end
   else
-   Raise Exception.Create(SRpConfigFileNotExists+DBXCONFIGFILENAME);
+  begin
+   // Check int /usr/local/etc
+   if FileExists('/usr/local/etc/'+DBXCONFIGFILENAME+'.conf') then
+   begin
+    CopyFileTo('/usr/local/etc/'+DBXCONFIGFILENAME+'.conf',configfilename);
+    config:=TMemIniFile.Create(configfilename);
+   end
+   else
+    Raise Exception.Create(SRpConfigFileNotExists+DBXCONFIGFILENAME);
+  end
 {$ENDIF}
  end;
 end;
