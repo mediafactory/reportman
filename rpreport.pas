@@ -317,6 +317,20 @@ begin
       end;
      end;
     end;
+    // The report metafile must contain only the selected range
+    if ((frompage>0) or (topage<metafile.pagecount-1)) then
+    begin
+     while frompage>0 do
+     begin
+      metafile.DeletePage(0);
+      dec(frompage);
+      dec(topage);
+     end;
+     while (metafile.pagecount-1)>topage do
+     begin
+      metafile.DeletePage(metafile.PageCount-1);
+     end;
+    end;
     Driver.EndDocument;
    except
     Driver.AbortDocument;

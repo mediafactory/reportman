@@ -218,6 +218,11 @@ begin
       doprintmetafile:=true;
      end
      else
+     if ParamStr(indexparam)='-pdf' then
+     begin
+      // Compatibility with printrep command line tool
+     end
+     else
      if ParamStr(indexparam)='-html' then
      begin
       htmloutput:=true;
