@@ -39,6 +39,7 @@ requires
   dbexpress,
   tee,
   vcljpg,
+  indy,
   bdertl;
 
 contains

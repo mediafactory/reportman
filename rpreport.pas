@@ -1502,6 +1502,8 @@ begin
  Driver.SelectPrinter(PrinterSelect);
  metafile.Clear;
  metafile.PrinterSelect:=PrinterSelect;
+ metafile.PreviewStyle:=PreviewStyle;
+ metafile.PreviewWindow:=PreviewWindow;
  ClearTotalPagesList;
  for i:=0 to SubReports.Count-1 do
  begin

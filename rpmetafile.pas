@@ -213,6 +213,8 @@ type
    Orientation:TRpOrientation;
    BackColor:integer;
    PrinterSelect:TRpPrinterSelect;
+   PreviewStyle:TRpPreviewStyle;
+   PreviewWindow:TRpPreviewWindowStyle;
    procedure Clear;
    procedure LoadFromStream(Stream:TStream;clearfirst:boolean=true);
    procedure LoadFromFile(filename:string;clearfirst:boolean=true);
@@ -572,6 +574,8 @@ begin
  Stream.Write(Orientation,sizeof(Orientation));
  Stream.Write(BackColor,sizeof(BackColor));
  Stream.Write(PrinterSelect,sizeof(PrinterSelect));
+ Stream.Write(PreviewStyle,sizeof(TRpPreviewStyle));
+ Stream.Write(PreviewWindow,sizeof(TRpPreviewWindowStyle));
  // Pages
  // Write pagecount
  acount:=FPages.Count;
@@ -661,6 +665,10 @@ begin
  if (sizeof(BackColor)<>Stream.Read(BackColor,sizeof(BackColor))) then
   Raise Exception.Create(SRpBadFileHeader);
  if (sizeof(PrinterSelect)<>Stream.Read(PrinterSelect,sizeof(PrinterSelect))) then
+  Raise Exception.Create(SRpBadFileHeader);
+ if (sizeof(PreviewStyle)<>Stream.Read(PreviewStyle,sizeof(TRpPreviewStyle))) then
+  Raise Exception.Create(SRpBadFileHeader);
+ if (sizeof(PreviewWindow)<>Stream.Read(PreviewWindow,sizeof(TRpPreviewWindowStyle))) then
   Raise Exception.Create(SRpBadFileHeader);
  // If there is no pages then end of read
  // Read pagecount

@@ -208,6 +208,8 @@ type
     BStatus: TStatusBar;
     AStatusBar: TAction;
     Statusbar1: TMenuItem;
+    ADriverPDF: TAction;
+    Nativedriver1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -263,6 +265,7 @@ type
     procedure AAlignHorzExecute(Sender: TObject);
     procedure AAlignVertExecute(Sender: TObject);
     procedure AStatusBarExecute(Sender: TObject);
+    procedure ADriverPDFExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrameVCL;
@@ -306,6 +309,8 @@ var
  FRpMainFVCL:TFRpMainFVCL;
 
 implementation
+
+uses rpfmetaviewvcl;
 
 
 {$R *.dfm}
@@ -742,6 +747,8 @@ begin
  ADriverQt.Hint:=TranslateStr(69,ADriverQt.Hint);
  ADriverGDI.Caption:=TranslateStr(70,ADriverGDI.Caption);
  ADriverGDI.Hint:=TranslateStr(71,ADriverGDI.Hint);
+ ADriverPDF.Caption:=TranslateStr(936,ADriverPDF.Caption);
+ ADriverPDF.Hint:=TranslateStr(939,ADriverPDF.Hint);
  AKylixPrintBug.Caption:=TranslateStr(74,AKylixPrintBug.Caption);
  AKylixPrintBug.Hint:=TranslateStr(75,AKylixPrintBug.Hint);
  AStatusBar.Caption:=TranslateStr(76,AStatusBar.Caption);
@@ -1081,7 +1088,15 @@ end;
 procedure TFRpMainFVCL.APreviewExecute(Sender: TObject);
 begin
  // Previews the report
- rpvpreview.ShowPreview(report,caption);
+ if ADriverPDF.Checked then
+ begin
+  rpgdidriver.CalcReportWidthProgress(report);
+  rpfmetaviewvcl.PreviewMetafile(report.metafile);
+ end
+ else
+ begin
+  rpvpreview.ShowPreview(report,caption);
+ end;
 end;
 
 procedure TFRpMainFVCL.AAboutExecute(Sender: TObject);
@@ -1101,7 +1116,15 @@ begin
   rpgdidriver.PrinterSelection(report.PrinterSelect);
   rpgdidriver.OrientationSelection(report.PageOrientation);
   if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
-   rpgdidriver.PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
+  begin
+   if ADriverPDF.Checked then
+   begin
+    rpgdidriver.CalcReportWidthProgress(report);
+    rpgdidriver.PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,collate,false);
+   end
+   else
+    rpgdidriver.PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
+  end;
 end;
 
 
@@ -1240,12 +1263,12 @@ begin
  inif:=TIniFile.Create(configfile);
  try
   AUnitCms.Checked:=inif.ReadBool('Preferences','UnitCms',true);
+  ADriverPDF.Checked:=inif.ReadBool('Preferences','DriverPDF',false);
   ADriverQt.Checked:=False;
-  ADriverGDI.Checked:=True;
+  ADriverGDI.Checked:=Not ADriverPDF.Checked;
   AsystemPrintDialog.Checked:=True;
   BStatus.Visible:=inif.ReadBool('Preferences','StatusBar',True);
   AStatusBar.Checked:=BStatus.Visible;
-  ADriverGDI.Checked:=Not ADriverQT.Checked;
   AUnitsinchess.Checked:=Not AUnitCms.Checked;
   UpdateStyle;
   UpdateUnits;
@@ -1262,6 +1285,7 @@ begin
  try
   inif.WriteBool('Preferences','UnitCms',AUnitCms.Checked);
   inif.WriteBool('Preferences','DriverQT',ADriverQT.Checked);
+  inif.WriteBool('Preferences','DriverPDF',ADriverPDF.Checked);
   inif.WriteBool('Preferences','SystemPrintDialog',AsystemPrintDialog.Checked);
   inif.WriteBool('Preferences','StatusBar',BStatus.Visible);
   inif.WriteBool('Preferences','KylixPrintBug',AKylixPrintBug.Checked);
@@ -1347,12 +1371,14 @@ procedure TFRpMainFVCL.ADriverQTExecute(Sender: TObject);
 begin
  ADriverQT.Checked:=true;
  ADriverGDI.Checked:=false;
+ ADriverPDF.Checked:=false;
 end;
 
 procedure TFRpMainFVCL.ADriverGDIExecute(Sender: TObject);
 begin
  ADriverGDI.Checked:=true;
  ADriverQT.Checked:=false;
+ ADriverPDF.Checked:=false;
 end;
 
 procedure TFRpMainFVCL.ASystemPrintDialogExecute(Sender: TObject);
@@ -1557,6 +1583,13 @@ procedure TFRpMainFVCL.AStatusBarExecute(Sender: TObject);
 begin
  AStatusBar.Checked:=Not AStatusBar.Checked;
  BStatus.Visible:=ASTatusBar.Checked;
+end;
+
+procedure TFRpMainFVCL.ADriverPDFExecute(Sender: TObject);
+begin
+ ADriverQT.Checked:=false;
+ ADriverGDI.Checked:=false;
+ ADriverPDF.Checked:=true;
 end;
 
 initialization

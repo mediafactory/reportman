@@ -1,6 +1,6 @@
 object FRpMainFVCL: TFRpMainFVCL
-  Left = 99
-  Top = 74
+  Left = 130
+  Top = 71
   Width = 541
   Height = 451
   Caption = 'Report Manager Designer'
@@ -1195,7 +1195,7 @@ object FRpMainFVCL: TFRpMainFVCL
   end
   object ActionList1: TActionList
     Images = iconlist
-    Left = 472
+    Left = 476
     Top = 172
     object ANew: TAction
       Category = 'File'
@@ -1522,6 +1522,12 @@ object FRpMainFVCL: TFRpMainFVCL
       Hint = 'Shows or hides the status bar'
       OnExecute = AStatusBarExecute
     end
+    object ADriverPDF: TAction
+      Category = 'Preferences'
+      Caption = 'Native driver'
+      Hint = 'Activates the Native driver, no graphics dependent'
+      OnExecute = ADriverPDFExecute
+    end
   end
   object Lastusedfiles: TRpLastUsedStrings
     HistoryCount = 7
@@ -1708,12 +1714,15 @@ object FRpMainFVCL: TFRpMainFVCL
       end
       object MDriverSelect: TMenuItem
         Caption = 'Driver'
-        Visible = False
         object MQtDriver: TMenuItem
           Action = ADriverQT
+          Visible = False
         end
         object MGDIDriver: TMenuItem
           Action = ADriverGDI
+        end
+        object Nativedriver1: TMenuItem
+          Action = ADriverPDF
         end
       end
       object MSystemPrint: TMenuItem

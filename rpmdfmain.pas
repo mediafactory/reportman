@@ -26,7 +26,7 @@ uses
   Types, Classes,
 {$IFDEF MSWINDOWS}
   rpgdidriver,rpvpreview,rprfvparams,windows,Forms,Dialogs,rppagesetupvcl,
-  rpmdfgridvcl,rpfparamsvcl,ShellAPI,
+  rpmdfgridvcl,rpfparamsvcl,ShellAPI,rpfmetaviewvcl,
 {$ENDIF}
   QGraphics,QStyle,Qt,QControls, QForms,
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,QExtCtrls,
@@ -35,7 +35,7 @@ uses
   rpmdfgrid,rppreview,rpprintdia,
   rpmdconsts,rptypes, rpmdfstruc, rplastsav,rpsubreport,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
-  rpsection,rpprintitem,rprfparams,
+  rpsection,rpprintitem,rprfparams,rpfmetaview,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
@@ -211,6 +211,10 @@ type
     BStatus: TStatusBar;
     AStatusBar: TAction;
     Statusbar1: TMenuItem;
+    ADriverPDFGDI: TAction;
+    ADriverPDFQt: TAction;
+    MPDFQtDriver: TMenuItem;
+    MPDFGDIDriver: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -267,6 +271,8 @@ type
     procedure AAlignHorzExecute(Sender: TObject);
     procedure AAlignVertExecute(Sender: TObject);
     procedure AStatusBarExecute(Sender: TObject);
+    procedure ADriverPDFGDIExecute(Sender: TObject);
+    procedure ADriverPDFQtExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrame;
@@ -675,7 +681,8 @@ begin
 {$IFDEF MSWINDOWS}
   LastUsedFiles.CaseSensitive:=False;
   // Visible driver selection
-  MDriverSelect.Visible:=true;
+  MPDFGDIDriver.Visible:=true;
+  MGDIDriver.Visible:=true;
 {$ENDIF}
 {$IFDEF LINUX}
   LastUsedFiles.CaseSensitive:=True;
@@ -775,6 +782,10 @@ begin
  MDriverSelect.Caption:=TranslateStr(67,MDriverSelect.Caption);
  ADriverQt.Caption:=TranslateStr(68,ADriverQt.Caption);
  ADriverQt.Hint:=TranslateStr(69,ADriverQt.Hint);
+ ADriverPDFQt.Caption:=TranslateStr(938,ADriverPDfQt.Caption);
+ ADriverPDFGDI.Caption:=TranslateStr(937,ADriverPDfGDI.Caption);
+ ADriverPDFQt.Hint:=TranslateStr(939,ADriverPDFQt.Hint);
+ ADriverPDFGDI.Hint:=TranslateStr(939,ADriverPDFGDI.Hint);
  ADriverGDI.Caption:=TranslateStr(70,ADriverGDI.Caption);
  ADriverGDI.Hint:=TranslateStr(71,ADriverGDI.Hint);
  AKylixPrintBug.Caption:=TranslateStr(74,AKylixPrintBug.Caption);
@@ -1125,9 +1136,27 @@ begin
  begin
   rpvpreview.ShowPreview(report,caption);
   exit;
+ end
+ else
+ begin
+  if ADriverPDFGDI.Checked then
+  begin
+   rpgdidriver.CalcReportWidthProgress(report);
+   rpfmetaviewvcl.PreviewMetafile(report.metafile);
+   exit;
+  end
  end;
 {$ENDIF}
- rppreview.ShowPreview(report,caption,AsystemPrintDialog.Checked);
+ if ADriverQt.Checked then
+ begin
+  rppreview.ShowPreview(report,caption,AsystemPrintDialog.Checked);
+ end
+ else
+ begin
+  rpqtdriver.CalcReportWidthProgress(report);
+  rpfmetaview.PreviewMetafile(report.metafile);
+  exit;
+ end
 end;
 
 procedure TFRpMainF.AAboutExecute(Sender: TObject);
@@ -1348,13 +1377,24 @@ begin
  inif:=TIniFile.Create(configfile);
  try
   AUnitCms.Checked:=inif.ReadBool('Preferences','UnitCms',true);
-{$IFDEF MSWINDOWS}
-  ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',false);
-  ADriverGDI.Checked:=Not ADriverQt.Checked;
-{$ENDIF}
+  ADriverQt.Checked:=false;
+  ADriverGDI.Checked:=false;
+  ADriverPDFQt.Checked:=false;
+  ADriverPDFGDI.Checked:=false;
 {$IFDEF LINUX}
-  ADriverGDI.Checked:=False;
-  ADriverQT.Checked:=true;
+  ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',false);
+  ADriverPDFQT.Checked:=Not ADriverQt.Checked;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  ADriverPDFQt.Checked:=inif.ReadBool('Preferences','DriverPDFQt',false);
+  if Not ADriverPDFQt.Checked then
+  begin
+   ADriverGDI.Checked:=inif.ReadBool('Preferences','DriverGDI',false);
+   if Not ADriverGDI.Checked then
+   begin
+    ADriverPDFGDi.Checked:=true;
+   end;
+  end;
 {$ENDIF}
   AsystemPrintDialog.Checked:=True;
   AsystemPrintDialog.Checked:=inif.ReadBool('Preferences','SystemPrintDialog',True);
@@ -1381,6 +1421,9 @@ begin
  try
   inif.WriteBool('Preferences','UnitCms',AUnitCms.Checked);
   inif.WriteBool('Preferences','DriverQT',ADriverQT.Checked);
+  inif.WriteBool('Preferences','DriverGDI',ADriverGDI.Checked);
+  inif.WriteBool('Preferences','DriverPDFGDI',ADriverPDFGDI.Checked);
+  inif.WriteBool('Preferences','DriverPDFQt',ADriverPDFQt.Checked);
   inif.WriteBool('Preferences','SystemPrintDialog',AsystemPrintDialog.Checked);
   inif.WriteBool('Preferences','StatusBar',BStatus.Visible);
   inif.WriteBool('Preferences','KylixPrintBug',AKylixPrintBug.Checked);
@@ -1473,12 +1516,16 @@ procedure TFRpMainF.ADriverQTExecute(Sender: TObject);
 begin
  ADriverQT.Checked:=true;
  ADriverGDI.Checked:=false;
+ ADriverPDFGDI.Checked:=false;
+ ADriverPDFQT.Checked:=false;
 end;
 
 procedure TFRpMainF.ADriverGDIExecute(Sender: TObject);
 begin
  ADriverGDI.Checked:=true;
  ADriverQT.Checked:=false;
+ ADriverPDFGDI.Checked:=false;
+ ADriverPDFQT.Checked:=false;
 end;
 
 procedure TFRpMainF.ASystemPrintDialogExecute(Sender: TObject);
@@ -1700,6 +1747,23 @@ procedure TFRpMainF.AStatusBarExecute(Sender: TObject);
 begin
  AStatusBar.Checked:=Not AStatusBar.Checked;
  BStatus.Visible:=ASTatusBar.Checked;
+end;
+
+
+procedure TFRpMainF.ADriverPDFGDIExecute(Sender: TObject);
+begin
+ ADriverGDI.Checked:=false;
+ ADriverQT.Checked:=false;
+ ADriverPDFGDI.Checked:=true;
+ ADriverPDFQT.Checked:=false;
+end;
+
+procedure TFRpMainF.ADriverPDFQtExecute(Sender: TObject);
+begin
+ ADriverGDI.Checked:=false;
+ ADriverQT.Checked:=false;
+ ADriverPDFGDI.Checked:=false;
+ ADriverPDFQT.Checked:=true;
 end;
 
 initialization

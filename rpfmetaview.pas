@@ -239,6 +239,25 @@ begin
    dia.AViewConnect.Enabled:=false;
    dia.Splitter1.Visible:=false;
    dia.clitree.visible:=false;
+   if metafile.PreviewWindow=spwMaximized then
+    dia.WindowState:=wsMaximized;
+   dia.AScale100.Checked:=False;
+   dia.AScaleFull.Checked:=False;
+   dia.AScaleWide.Checked:=False;
+   case metafile.PreviewStyle of
+    spNormal:
+     begin
+      dia.AScale100.Checked:=True;
+      dia.qtdriver.PreviewStyle:=spNormal;
+     end;
+    spEntirePage:
+     begin
+      dia.AScaleFull.Checked:=True;
+      dia.qtdriver.PreviewStyle:=spEntirePage;
+     end
+    else
+      dia.AScaleWide.Checked:=True;
+   end;
    dia.PrintPage;
    dia.FormResize(dia);
    dia.ShowModal;

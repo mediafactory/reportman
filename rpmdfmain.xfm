@@ -541,12 +541,17 @@ object FRpMainF: TFRpMainF
       end
       object MDriverSelect: TMenuItem
         Caption = 'Driver'
-        Visible = False
         object MQtDriver: TMenuItem
           Action = ADriverQT
         end
         object MGDIDriver: TMenuItem
           Action = ADriverGDI
+        end
+        object MPDFQtDriver: TMenuItem
+          Action = ADriverPDFQt
+        end
+        object MPDFGDIDriver: TMenuItem
+          Action = ADriverPDFGDI
         end
       end
       object MSystemPrint: TMenuItem
@@ -934,6 +939,18 @@ object FRpMainF: TFRpMainF
       Checked = True
       Hint = 'Shows or hides the status bar'
       OnExecute = AStatusBarExecute
+    end
+    object ADriverPDFGDI: TAction
+      Category = 'Preferences'
+      Caption = 'Native driver (GDI)'
+      Hint = 'Activates the Native driver, no graphics dependent'
+      OnExecute = ADriverPDFGDIExecute
+    end
+    object ADriverPDFQt: TAction
+      Category = 'Preferences'
+      Caption = 'Native driver (Qt)'
+      Hint = 'Activates the Native driver, no graphics dependent'
+      OnExecute = ADriverPDFQtExecute
     end
   end
   object iconlist: TImageList

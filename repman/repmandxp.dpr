@@ -22,9 +22,7 @@ program repmandxp;
 
 uses
   Forms,
-{$IFDEF USEVARIANTS}
   midaslib,
-{$ENDIF}
   rpmdfmainvcl in '..\rpmdfmainvcl.pas' {FRpMainFVCL},
   rpmdfdesignvcl in '..\rpmdfdesignvcl.pas' {FRpDesignFrameVCL: TFrame},
   rpmdfaboutvcl in '..\rpmdfaboutvcl.pas' {FRpAboutBoxVCL},
@@ -99,12 +97,14 @@ uses
   rpmdfconnectionvcl in '..\rpmdfconnectionvcl.pas' {FRpConnectionVCL: TFrame},
   rpmdfwizardvcl in '..\rpmdfwizardvcl.pas' {FRpWizardVCL},
   rpmdfextsecvcl in '..\rpmdfextsecvcl.pas' {FRpExtSectionVCL},
-  rpmdfdatasetsvcl in '..\rpmdfdatasetsvcl.pas' {FRpDatasetsVCL: TFrame};
+  rpmdfdatasetsvcl in '..\rpmdfdatasetsvcl.pas' {FRpDatasetsVCL: TFrame},
+  rpfmetaviewvcl in '..\rpfmetaviewvcl.pas' {FRpMetaVCL};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.CreateForm(TFRpMainFVCL, FRpMainFVCL);
+  Application.CreateForm(TFRpMetaVCL, FRpMetaVCL);
   Application.Run;
 end.
