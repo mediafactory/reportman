@@ -29,7 +29,8 @@ uses
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
   rpconsts,rptypes, QExtCtrls,frpstruc, rplastsav,rpsubreport,
   rpobinsint,rpfparams,fdesign,rpobjinsp,fsectionint,
-  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver, IBDatabase, DB;
+  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver, IBDatabase,
+  DB;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;
@@ -120,6 +121,7 @@ type
     MFields: TPopupMenu;
     est1: TMenuItem;
     ext21: TMenuItem;
+    AHelpIndex: TAction;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);

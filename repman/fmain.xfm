@@ -504,6 +504,11 @@ object FMainf: TFMainf
       Caption = 'About Report Manager'
       OnExecute = AAboutExecute
     end
+    object AHelpIndex: TAction
+      Category = 'Help'
+      Caption = 'Index'
+      Hint = 'Show help index'
+    end
   end
   object iconlist: TImageList
     Height = 19
