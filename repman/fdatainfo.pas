@@ -22,6 +22,9 @@ interface
 
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,
+{$IFDEF MSWINDOWS}
+  dbtables,
+{$ENDIF}
   rpreport,rpconsts,rpdatainfo,DBConnAdmin,QDialogs,
   rpparams,rpfparams;
 
@@ -53,6 +56,7 @@ type
     MSQL: TMemo;
     BShowData: TBitBtn;
     BParams: TButton;
+    GDriver: TRadioGroup;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -71,6 +75,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure BParamsClick(Sender: TObject);
     procedure CancelBtnClick(Sender: TObject);
+    procedure GDriverClick(Sender: TObject);
   private
     { Private declarations }
     report:TRpReport;
@@ -118,6 +123,13 @@ end;
 
 procedure TFDatainfoconfig.FormCreate(Sender: TObject);
 begin
+ GDriver.ItemIndex:=0;
+{$IFDEF MSWINDOWS}
+ GDriver.Items.Add('BDE');
+ GDriver.Items.Add('ADO');
+ GDriver.Items.Add('IBX');
+ GDriver.Columns:=GDriver.Items.Count;
+{$ENDIF}
  databaseinfo:=TRpDatabaseInfoList.Create(Self);
  params:=TRpParamList.Create(Self);
  datainfo:=TRpDataInfoList.Create(Self);
@@ -224,6 +236,8 @@ begin
  CheckLoginPrompt.Checked:=dinfoitem.LoginPrompt;
  CheckLoadParams.Checked:=dinfoitem.LoadParams;
  CheckLoadDriverParams.Checked:=dinfoitem.LoadDriverParams;
+ GDriver.ItemIndex:=integer(dinfoitem.Driver);
+ GDriverClick(Self);
 end;
 
 function TFDatainfoconfig.FindDatabaseInfoItem:TRpDatabaseInfoItem;
@@ -499,5 +513,42 @@ begin
 end;
 
 
+
+procedure TFDatainfoconfig.GDriverClick(Sender: TObject);
+var
+ index:integeR;
+begin
+ // Loads the alias config
+ case GDriver.ItemIndex of
+  // DBExpress
+  0:
+   begin
+    BConfig.Visible:=true;
+    if Assigned(ConAdmin) then
+    begin
+     conadmin.GetConnectionNames(ComboAvailable.Items,'');
+    end;
+   end;
+  // BDE
+  1:
+   begin
+    BConfig.Visible:=false;
+    Session.GetAliasNames(ComboAvailable.Items);
+   end;
+ end;
+ if ComboAvailable.Items.count>0 then
+ begin
+  ComboAvailable.Itemindex:=0;
+  ComboAvailable.Invalidate;
+ end;
+ if LConnections.ItemIndex>=0 then
+ begin
+  index:=databaseinfo.IndexOf(Lconnections.Items.Strings[LConnections.ItemIndex]);
+  if index>=0 then
+  begin
+   databaseinfo.items[index].Driver:=TRpDbDriver(GDriver.ItemIndex);
+  end;
+ end;
+end;
 
 end.

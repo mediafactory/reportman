@@ -21,7 +21,11 @@ unit rptypes;
 
 interface
 
-uses Sysutils,Classes,rpconsts,Variants;
+uses Sysutils,
+{$IFDEF MSWINDOWS}
+windows,
+{$ENDIF}
+Classes,rpconsts,Variants;
 
 const
  MAX_LANGUAGES=3;

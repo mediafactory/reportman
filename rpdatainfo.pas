@@ -24,6 +24,9 @@ interface
 
 uses Classes,SysUtils,SqlExpr,rpconsts, DBXpress,
  DB,rpparams,Inifiles,rptypes,
+{$IFDEF MSWINDOWS}
+  dbtables,
+{$ENDIF}
  SqlConst;
 
 {$IFDEF LINUX}
@@ -32,6 +35,9 @@ const
  DBXCONFIGFILENAME='dbxconnections';
 {$ENDIF}
 type
+ TRpDbDriver=(rpdatadbexpress,rpdatabde,rpdataado,rpdataibx);
+
+
  TRpConnAdmin=class(TObject)
   public
    driverfilename:string;
@@ -54,6 +60,11 @@ type
    FLoadParams:boolean;
    FLoadDriverParams:boolean;
    FLoginPrompt:boolean;
+{$IFDEF MSWINDOWS}
+   FBDEAlias:string;
+   FBDEDatabase:TDatabase;
+{$ENDIF}
+   FDriver:TRpDbDriver;
    procedure SetAlias(Value:string);
    procedure SetConfigFile(Value:string);
    procedure SetLoadParams(Value:boolean);
@@ -72,6 +83,7 @@ type
    property LoadParams:boolean read FLoadParams write SetLoadParams;
    property LoadDriverParams:boolean read FLoadDriverParams write SetLoadDriverParams;
    property LoginPrompt:boolean read FLoginPrompt write SetLoginPrompt;
+   property Driver:TRpDbDriver read FDriver write FDriver default rpdatadbexpress;
   end;
 
   TRpDatabaseInfoList=class(TCollection)
@@ -96,6 +108,9 @@ type
    FAlias:string;
    FDataset:TDataset;
    FSQLInternalQuery:TSQLQuery;
+{$IFDEF MSWINDOWS}
+   FBDEInternalQuery:TQuery;
+{$ENDIF}
    connecting:boolean;
    procedure SetDatabaseAlias(Value:string);
    procedure SetAlias(Value:string);
@@ -276,6 +291,7 @@ begin
   FLoginPrompt:=TRpDatabaseInfoItem(Source).FLoginPrompt;
   FLoadDriverParams:=TRpDatabaseInfoItem(Source).FLoadDriverParams;
   FConfigFile:=TRpDatabaseInfoItem(Source).FConfigFile;
+  FDriver:=TRpDatabaseInfoItem(Source).FDriver;
  end
  else
   inherited Assign(Source);
@@ -331,6 +347,7 @@ begin
 
  FLoadParams:=true;
  FLoadDriverParams:=true;
+ FDriver:=rpdatadbexpress;
 end;
 
 
@@ -354,47 +371,72 @@ var
  conname:string;
  funcname,drivername,vendorlib,libraryname:string;
 begin
- if Not Assigned(FSQLConnection) then
- begin
-  if Not Assigned(FSQLInternalConnection) then
-   FSQLInternalConnection:=TSQLConnection.Create(nil);
-  FSQLConnection:=FSQLInternalConnection;
+ case Fdriver of
+  rpdatadbexpress:
+   begin
+     if Not Assigned(FSQLConnection) then
+     begin
+      if Not Assigned(FSQLInternalConnection) then
+       FSQLInternalConnection:=TSQLConnection.Create(nil);
+      FSQLConnection:=FSQLInternalConnection;
+     end;
+     if FSQLCOnnection.Connected then
+      exit;
+     FSQLConnection.LoginPrompt:=FLoginPrompt;
+     conname:=alias;
+     FSQLConnection.ConnectionName:=alias;
+     // Load Connection parameters
+     if (FLoadParams) then
+     begin
+      if Not Assigned(ConAdmin) then
+       CreateConAdmin;
+      ConAdmin.GetConnectionParams(conname,FSQLConnection.params);
+     end;
+     // Load vendor lib, library name...
+     if (FLoadDriverParams) then
+     begin
+      if Not Assigned(ConAdmin) then
+       CreateConAdmin;
+      drivername:=FSQLCOnnection.DriverName;
+      if Length(drivername)<1 then
+       drivername:=FSQLConnection.params.Values['DriverName'];
+      if Length(drivername)<1 then
+       drivername:=FSQLConnection.params.Values['Drivername'];
+      if Length(drivername)<1 then
+       Raise Exception.Create(SRpNoDriverName+conname);
+      funcname:=ConAdmin.drivers.ReadString(drivername,'GetDriverFunc','');
+      ConAdmin.GetDriverLibNames(drivername,LibraryName,VendorLib);
+      // Assigns all
+      FSQLConnection.DriverName:=drivername;
+      FSQLConnection.VendorLib:=vendorlib;
+      FSQLConnection.LibraryName:=libraryname;
+      FSQLConnection.GetDriverFunc:=funcname;
+      FSQLConnection.Connected:=true;
+     end;
+   end;
+  rpdatabde:
+   begin
+{$IFDEF MSWINDOWS}
+    FBDEAlias:=Alias;
+    if Not Assigned(FBDEDatabase) then
+     FBDEDatabase:=TDatabase.Create(nil);
+    if FBDEDatabase.DatabaseName=FBDEAlias then
+    begin
+     if FBDEDatabase.Connected then
+      exit;
+    end
+    else
+    begin
+     FBDEDatabase.Connected:=false;
+    end;
+    FBDEDatabase.DatabaseName:=FBDEAlias;
+    if FLoadParams then
+     Session.GetAliasParams(FBDEAlias,FBDEDatabase.Params);
+    FBDEDatabase.LoginPrompt:=LoginPrompt;
+    FBDEDatabase.Connected:=true;
+{$ENDIF}
+   end;
  end;
- if FSQLCOnnection.Connected then
-  exit;
- FSQLConnection.LoginPrompt:=FLoginPrompt;
- conname:=alias;
- FSQLConnection.ConnectionName:=alias;
- // Load Connection parameters
- if (FLoadParams) then
- begin
-  if Not Assigned(ConAdmin) then
-   CreateConAdmin;
-  ConAdmin.GetConnectionParams(conname,FSQLConnection.params);
- end;
- // Load vendor lib, library name...
- if (FLoadDriverParams) then
- begin
-  if Not Assigned(ConAdmin) then
-   CreateConAdmin;
-  drivername:=FSQLCOnnection.DriverName;
-  if Length(drivername)<1 then
-   drivername:=FSQLConnection.params.Values['DriverName'];
-  if Length(drivername)<1 then
-   drivername:=FSQLConnection.params.Values['Drivername'];
-  if Length(drivername)<1 then
-   Raise Exception.Create(SRpNoDriverName+conname);
-  funcname:=ConAdmin.drivers.ReadString(drivername,'GetDriverFunc','');
-  ConAdmin.GetDriverLibNames(drivername,LibraryName,VendorLib);
-  // Assigns all
-  FSQLConnection.DriverName:=drivername;
-  FSQLConnection.VendorLib:=vendorlib;
-  FSQLConnection.LibraryName:=libraryname;
-  FSQLConnection.GetDriverFunc:=funcname;
-
- end;
-
-// FSQLConnection.Connected:=true;
 end;
 
 procedure TRpDatabaseinfoitem.DisConnect;
@@ -404,6 +446,10 @@ begin
   if FSQLCOnnection=FSQLInternalConnection then
    FSQLConnection.Connected:=False;
  end;
+{$IFDEF MSWINDOWS}
+ if Assigned(FBDEDatabase) then
+  FBDEDatabase.Connected:=false;
+{$ENDIF}
 end;
 
 procedure TRpDataInfoItem.Connect(databaseinfo:TRpDatabaseInfoList;params:TRpParamList);
