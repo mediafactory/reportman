@@ -55,7 +55,6 @@ begin
    avalue:=varvalue;
   varvalue:=avalue;
  end;
-ls
  setenv(PChar(varname),PChar(varvalue),1);
 end;
 

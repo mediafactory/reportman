@@ -3,6 +3,8 @@ Report Manager Designer Version 1.3
 Author:	Toni Martir
 	toni@pala.com (no free support)
 
+http://reportman.sourceforge.net
+
 Open Source under the MPL and GPL License
 
 See LICENSE.TXT for detailed information
@@ -13,30 +15,22 @@ http://reportman.sourceforge.net
 
 To install:
 
-tar zxvf repmand-1_333333333333333333333333333333333.i386.tar.gz
+tar zxvf repmand-1_3.i386.tar.gz
 
 To execute the application:
 
 
-Then execute:
-
 ./repmand.sh
+
+or
+
+./repmand.bin
 
 To execute the report server or report client use
 ./reportserverapp.sh
 ./metaview.sh
 
 To execute other commandline tools  set first the library path (see repmand.sh script)
-
-Notes:
-
-This is the 1.1 version.
-
-What's new:
-
-- Report server and report client
-- Updated Documentation
-- Few bugfixes
 
 Linux version:
 
@@ -54,20 +48,9 @@ ALL DBEXPRESS DRIVERS
 - Informix
 - ODBC throught UNIXodbc (tested) you must get the driver from sourceforge
 
-MICROSOFT ADO (Windows Only version)
-- All ADO datasources
-
-BDE (Windows version only)
-
-IBX (Interbase Express, you must download IBX and activate it)
-IBO (Interbase Objects, Windows only, see documentation)
-
 Bugs:
 - Please submit bugs to sourceforge project.
 
-Tech Support:
-- Submit support questions and other to egroups.
-egroups.yahoo.com group reportman
-- You can also use source forge Report Manager Forums
+http://reportman.sourceforge.net
 
 Thanks
