@@ -656,10 +656,11 @@ begin
  ARight.ShortCut:=ShortCut(Key_Right,[ssCtrl]);
  AUp.ShortCut:=ShortCut(Key_Up,[ssCtrl]);
  ADown.ShortCut:=ShortCut(Key_Down,[ssCtrl]);
- ACut.ShortCut:=ShortCut(Ord('X'),[ssCtrl]);
- ACopy.ShortCut:=ShortCut(Ord('C'),[ssCtrl]);
- APaste.ShortCut:=ShortCut(Ord('V'),[ssCtrl]);
- ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssCtrl]);
+// Shortcuts disabled must checkn if TEdit active
+// ACut.ShortCut:=ShortCut(Ord('X'),[ssCtrl]);
+// ACopy.ShortCut:=ShortCut(Ord('C'),[ssCtrl]);
+// APaste.ShortCut:=ShortCut(Ord('V'),[ssCtrl]);
+// ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssCtrl]);
 
 {$IFDEF VCLFILEFILTERS}
  OpenDialog1.Filter := SRpRepFile+'|*.rep';
@@ -689,6 +690,8 @@ begin
 {$ENDIF}
 {$IFDEF LINUXPRINTBUG}
  MKylixPrintBug.Visible:=True;
+ MPDFGDIDriver.Visible:=false;
+ MGDIDriver.Visible:=false;
 {$ENDIF}
  LastUsedFiles.LoadFromConfigFile(configfile);
  UpdateFileMenu;
