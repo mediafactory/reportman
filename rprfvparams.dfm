@@ -5,17 +5,25 @@ object FRpRunTimeParams: TFRpRunTimeParams
   Height = 271
   VertScrollBar.Range = 41
   ActiveControl = OKBtn
+  AutoScroll = False
   Caption = 'Dialog'
-  Color = clButton
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = True
   Position = poScreenCenter
   Scaled = False
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
+  TextHeight = 13
   object PModalButtons: TPanel
     Left = 0
-    Top = 230
-    Width = 579
+    Top = 203
+    Width = 571
     Height = 41
     Align = alBottom
     TabOrder = 0
@@ -43,8 +51,8 @@ object FRpRunTimeParams: TFRpRunTimeParams
   object MainScrollBox: TScrollBox
     Left = 0
     Top = 0
-    Width = 579
-    Height = 230
+    Width = 571
+    Height = 203
     Align = alClient
     BorderStyle = bsNone
     TabOrder = 1

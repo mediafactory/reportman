@@ -64,7 +64,6 @@ uses
   rpeval in '..\rpeval.pas',
   rpalias in '..\rpalias.pas',
   rpexpredlg in '..\rpexpredlg.pas' {FrpExpredialog},
-  rpgdidriver in '..\rpgdidriver.pas',
   rpmetafile in '..\rpmetafile.pas',
   rpqtdriver in '..\rpqtdriver.pas' {FRpQtProgress},
   rpruler in '..\rpruler.pas',

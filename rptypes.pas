@@ -90,6 +90,10 @@ var
 
 {$IFNDEF USEVARIANTS}
 function BoolToStr(B: Boolean; UseBoolStrs: Boolean = False): string;
+function StrToBool(const S: string): Boolean;
+function StrToBoolDef(const S: string; const Default: Boolean): Boolean;
+function TryStrToBool(const S: string; out Value: Boolean): Boolean;
+
 var
   TrueBoolStrs: array of String;
   FalseBoolStrs: array of String;
@@ -102,6 +106,12 @@ const
 implementation
 
 {$IFNDEF USEVARIANTS}
+
+function TryStrToFloat(const S: string; out Value: Extended): Boolean;
+begin
+  Result := TextToFloat(PChar(S), Value, fvExtended);
+end;
+
 procedure VerifyBoolStrArray;
 begin
   if Length(TrueBoolStrs) = 0 then
@@ -116,6 +126,51 @@ begin
   end;
 end;
 
+function StrToBool(const S: string): Boolean;
+begin
+  if not TryStrToBool(S, Result) then
+    Raise Exception.Create(SRpInvalidBoolean+S);
+end;
+
+function StrToBoolDef(const S: string; const Default: Boolean): Boolean;
+begin
+  if not TryStrToBool(S, Result) then
+    Result := Default;
+end;
+
+function TryStrToBool(const S: string; out Value: Boolean): Boolean;
+  function CompareWith(const aArray: array of string): Boolean;
+  var
+    I: Integer;
+  begin
+    Result := False;
+    for I := Low(aArray) to High(aArray) do
+      if AnsiSameText(S, aArray[I]) then
+      begin
+        Result := True;
+        Break;
+      end;
+  end;
+var
+  LResult: Extended;
+begin
+  Result := TryStrToFloat(S, LResult);
+  if Result then
+    Value := LResult <> 0
+  else
+  begin
+    VerifyBoolStrArray;
+    Result := CompareWith(TrueBoolStrs);
+    if Result then
+      Value := True
+    else
+    begin
+      Result := CompareWith(FalseBoolStrs);
+      if Result then
+        Value := False;
+    end;
+  end;
+end;
 
 function BoolToStr(B: Boolean; UseBoolStrs: Boolean = False): string;
 const

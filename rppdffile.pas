@@ -49,12 +49,15 @@ interface
 {$I rpconf.inc}
 
 uses Classes,Sysutils,
+{$IFDEF USEVARIANTS}
+ Types,
+{$ENDIF}
 {$IFDEF USEVCL}
- graphics,
+ graphics,windows,
 {$ELSE}
  QGraphics,
 {$ENDIF}
- rpzlib,types;
+ rpzlib;
 
 resourcestring
  SRpStreamNotValid='PDF Stream not valid';

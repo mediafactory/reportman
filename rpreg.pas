@@ -17,9 +17,14 @@ unit rpreg;
 
 interface
 
+{$I rpconf.inc}
+
 uses
   Classes,
   rpparser,rpeval,rpreport,
+{$IFDEF USEVCL}
+  rpvclreport,
+{$ENDIF}
   rpevalfunc,rpalias,rptypeval,rplastsav;
 
 procedure Register;
@@ -31,6 +36,9 @@ begin
   RegisterComponents('Reportman', [TRpEvaluator]);
   RegisterComponents('Reportman', [TRpAlias]);
   RegisterComponents('Reportman', [TRpLastUsedStrings]);
+{$IFDEF USEVCL}
+  RegisterComponents('Reportman', [TVCLReport]);
+{$ENDIF}
 end;
 
 end.

@@ -23,12 +23,14 @@ interface
 
 {$I rpconf.inc}
 
-uses Classes,Sysutils,Types,rptypes,rpmetafile,rppdffile,
-{$IFDEF USEVCL}
- graphics,
-{$ELSE}
- QGraphics,
+uses Classes,Sysutils,
+{$IFDEF VARIANTS}
+ Types,
 {$ENDIF}
+{$IFDEF MSWINDOWS}
+ Windows,
+{$ENDIF}
+ rptypes,rpmetafile,rppdffile,
  rpmunits;
 
 type
@@ -193,6 +195,7 @@ begin
 //    Canvas.Font.Name:=page.GetLFontName(Obj);
 {$ENDIF}
 //    Canvas.Font.Style:=IntegerToFontStyle(obj.FontStyle);
+    // Transparent ?
     FPDFFile.Canvas.Font.Size:=obj.FontSize;
     FPDFFile.Canvas.Font.Color:=obj.FontColor;
     aalign:=obj.Alignment;
@@ -275,7 +278,7 @@ begin
     rec.Right:=rec.Left+Width-1;
     stream:=page.GetStream(obj);
 //     Canvas.CopyMode:=TCopyMode(obj.CopyMode);
-    bitmap:=TBitmap.Create;
+{    bitmap:=TBitmap.Create;
     try
      bitmap.LoadFromStream(stream);
      case TRpImageDrawStyle(obj.DrawImageStyle) of
@@ -307,7 +310,7 @@ begin
     finally
      bitmap.Free;
     end;
-   end;
+}   end;
  end;
 end;
 

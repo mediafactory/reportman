@@ -155,16 +155,6 @@ begin
  alabel:=TRpLabel(printitem);
  if csDestroying in alabel.ComponentState then
   exit;
- Canvas.Pen.Color:=clBlack;
- Canvas.Pen.Style:=psSolid;
- if alabel.transparent then
-  Canvas.Brush.Style:=bsClear
- else
- begin
-  Canvas.Brush.Style:=bsSolid;
-  Canvas.Brush.Color:=alabel.BackColor;
- end;
- Canvas.Rectangle(0,0,Width,Height);
 
  // Draws the text
 {$IFDEF MSWINDOWS}
@@ -187,8 +177,19 @@ begin
   aalign:=aalign or Integer(AlignmentFlags_SingleLine);
  if alabel.Wordwrap then
   aalign:=aalign or Integer(AlignmentFlags_WordBreak);
-
+ if Not alabel.Transparent then
+ begin
+  Canvas.TextExtent(alabel.Text,rec,aalign);
+  Canvas.Brush.Style:=bsSolid;
+  Canvas.Brush.Color:=alabel.BackColor;
+  Canvas.FillRect(rec);
+ end;
+ Canvas.Brush.Style:=bsClear;
  Canvas.TextRect(rec,0,0,alabel.Text,aalign);
+ Canvas.Pen.Color:=clBlack;
+ Canvas.Pen.Style:=psSolid;
+ Canvas.Brush.Style:=bsClear;
+ Canvas.Rectangle(0,0,Width,Height);
 end;
 
 
@@ -377,16 +378,6 @@ begin
  aexp:=TRpExpression(printitem);
  if csDestroying in aexp.ComponentState then
   exit;
- Canvas.Pen.Color:=clBlack;
- Canvas.Pen.Style:=psDashDot;
- if aexp.transparent then
-  Canvas.Brush.Style:=bsClear
- else
- begin
-  Canvas.Brush.Style:=bsSolid;
-  Canvas.Brush.Color:=aexp.BackColor;
- end;
- Canvas.Rectangle(0,0,Width,Height);
 
  // Draws the text
 {$IFDEF MSWINDOWS}
@@ -408,8 +399,19 @@ begin
   aalign:=aalign or Integer(AlignmentFlags_SingleLine);
  if aexp.Wordwrap then
   aalign:=aalign or Integer(AlignmentFlags_WordBreak);
-
+ if Not aexp.Transparent then
+ begin
+  Canvas.TextExtent(aexp.Expression,rec,aalign);
+  Canvas.Brush.Style:=bsSolid;
+  Canvas.Brush.Color:=aexp.BackColor;
+  Canvas.FillRect(rec);
+ end;
+ Canvas.Brush.Style:=bsClear;
  Canvas.TextRect(rec,0,0,aexp.Expression,aalign);
+ Canvas.Pen.Color:=clBlack;
+ Canvas.Pen.Style:=psDashDot;
+ Canvas.Brush.Style:=bsClear;
+ Canvas.Rectangle(0,0,Width,Height);
 end;
 
 

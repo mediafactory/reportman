@@ -4,6 +4,7 @@ package rppack_del5;
 {$R 'rpeval.dcr'}
 {$R 'rpalias.dcr'}
 {$R 'rplastsav.dcr'}
+{$R 'rpvclreport.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -72,6 +73,12 @@ contains
   rpzlibzlib in 'rpzlibzlib.pas',
   rpzlibtrees in 'rpzlibtrees.pas',
   rpwriter in 'rpwriter.pas',
-  rpdataset in 'rpdataset.pas';
+  rpdataset in 'rpdataset.pas',
+  rpvclreport in 'rpvclreport.pas',
+  rpvpreview in 'rpvpreview.pas' {FRpPreview},
+  rprfvparams in 'rprfvparams.pas' {FRpRunTimeParams},
+  rppdffile in 'rppdffile.pas',
+  rppdfdriver in 'rppdfdriver.pas',
+  rpgdidriver in 'rpgdidriver.pas' {FRpQtProgress};
 
 end.

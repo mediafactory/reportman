@@ -73,6 +73,7 @@ resourcestring
   SRpSHorzLine='Horz.Line';
   SRpSVertLine='Vert.Line';
   SRPHorzDesp='Horz.Desp.';
+  SRpInvalidBoolean='Invalid boolean: ';
 
   SRpNoDatasets='No datasets defined';
   SRpSampleTextToLabels='Text';
@@ -347,6 +348,7 @@ resourcestring
   SRpPrintDriverIncorrect='Incorrect print driver';
   SRpWinGDINotInit='Report metafile wingdi driver not initialized';
   SRpQtDriverNotInit='Report metafile qt driver not initialized';
+  SRpGDIDriverNotInit='Report metafile GDI driver not initialized';
 
 
   SRPNoSelectedSubreport='No selected subreport';

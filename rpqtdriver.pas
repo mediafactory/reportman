@@ -256,16 +256,20 @@ begin
      aalign:=aalign or Integer(AlignmentFlags_DontClip);
     if obj.Wordwrap then
      aalign:=aalign or Integer(AlignmentFlags_WordBreak);
-//    if obj.CutText then
+    rec.Left:=posx;
+    rec.Top:=posy;
+    rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);
+    rec.Bottom:=posy+round(obj.Height*dpiy/TWIPS_PER_INCHESS);
+    // Not Transparent
+    if Not obj.Transparent then
     begin
-     rec.Left:=posx;
-     rec.Top:=posy;
-     rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);
-     rec.Bottom:=posy+round(obj.Height*dpiy/TWIPS_PER_INCHESS);
-     Canvas.TextRect(rec,posx,posy,page.GetText(Obj),aalign);
-    end
-//    else
-//     Canvas.TextOut(posx,posy,page.GetText(Obj));
+     Canvas.TextExtent(page.GetText(obj),rec,aalign);
+     Canvas.Brush.Style:=bsSolid;
+     Canvas.Brush.Color:=obj.BackColor;
+     Canvas.FillRect(rec);
+    end;
+    Canvas.Brush.Style:=bsClear;
+    Canvas.TextRect(rec,posx,posy,page.GetText(Obj),aalign);
    end;
   rpMetaDraw:
    begin
@@ -725,7 +729,7 @@ begin
 {$IFDEF MSWINDOWS}
  forcecalculation:=false;
 {$ENDIF}
-{$IFDEF LINUX}
+{$IFNDEF NOLINUXPRINTBUG}
  forcecalculation:=true;
 {$ENDIF}
  if ((report.copies>1) and (report.CollateCopies)) then

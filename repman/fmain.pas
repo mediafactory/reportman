@@ -871,6 +871,9 @@ begin
   if MFields.Items[i].Checked then
   begin
    Result:=MFields.Items[i].Caption;
+   if Pos(' ',Trim(Result))>0 then
+    Result:='['+Trim(Result)+']';
+   break;
   end;
  end;
 end;

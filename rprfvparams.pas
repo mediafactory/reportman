@@ -17,16 +17,18 @@
 {                                                       }
 {*******************************************************}
 
-unit rprfparams;
+unit rprfvparams;
 
 interface
 
 {$I rpconf.inc}
 
-uses SysUtils, Classes, QGraphics, QForms,
-  QButtons, QExtCtrls, QControls, QStdCtrls,
-  rpconsts,
+uses SysUtils, Classes, Graphics, Forms,
+  Buttons, ExtCtrls, Controls, StdCtrls,
+  rpconsts,rptypes,
+{$IFDEF USE_VARIANTS}
   Variants,
+{$ENDIF}
   rpreport,rpparams;
 
 const
@@ -64,7 +66,7 @@ function ShowUserParams(report:TRpReport):boolean;
 
 implementation
 
-{$R *.xfm}
+{$R *.dfm}
 
 function ShowUserParams(report:TRpReport):boolean;
 var
@@ -266,7 +268,6 @@ begin
  if  NewClientHeight>CONS_MAXCLIENTHEIGHT then
   NewClientHeight:=CONS_MAXCLIENTHEIGHT;
  ClientHeight:=NewClientHeight;
- SetInitialBounds;
 end;
 
 procedure TFRpRunTimeParams.FormDestroy(Sender: TObject);
