@@ -1001,6 +1001,7 @@ begin
  ACopy.Execute;
  alist:=TStringList.Create;
  try
+  sectionintf:=nil;
   alist.Assign(fobjinsp.SelectedItems);
   fobjinsp.ClearMultiSelect;
   for i:=0 to alist.count-1 do
@@ -1077,6 +1078,7 @@ begin
   compo:=Clipboard.GetComponent(acompo,acompo);
   alist:=TList.Create;
   try
+   pitem:=nil;
    for i:=0 to compo.ComponentCount-1 do
    begin
     alist.Add(compo.Components[i]);

@@ -38,7 +38,7 @@ const
   CONS_LEFTGAP=3;
   CONS_CONTROLPOS=90;
   CONS_LABELTOPGAP=2;
-  CONS_RIGHTBARGAP=25;
+  CONS_RIGHTBARGAP=1;
   CONS_BUTTONWIDTH=15;
   CONS_MINWIDTH=160;
 type
@@ -215,11 +215,10 @@ var
  totalwidth:integer;
  AScrollBox:TScrollBox;
  PParent:TPanel;
+ PLeft:TPanel;
+ PRight:TPanel;
+ Psplit:TSplitter;
 begin
- totalwidth:=WIdth;
- if totalwidth<CONS_MINWIDTH then
-  totalwidth:=CONS_MINWIDTH;
-
  AScrollBox:=TScrollBox.Create(Self);
  AScrollBox.Align:=alClient;
  AScrollBox.HorzScrollBar.Tracking:=True;
@@ -237,20 +236,48 @@ begin
  PParent.Align:=AlTop;
  PParent.Parent:=AScrollBox;
 
+ PLeft:=TPanel.Create(Self);
+ PLeft.Width:=CONS_CONTROLPOS;
+ PLeft.BorderStyle:=bsNone;
+ PLeft.BevelInner:=bvNone;
+ PLeft.BevelOuter:=bvNone;
+ PLeft.Align:=AlLeft;
+ PLeft.Parent:=PParent;
+
+ Psplit:=TSplitter.Create(Self);
+ Psplit.ResizeStyle:=rsUpdate;
+ Psplit.Cursor:=crHSplit;
+ PSplit.MinSize:=10;
+ PSplit.Beveled:=True;
+ PSplit.Width:=4;
+ PSplit.Left:=PLeft.Width+10;
+ Psplit.Align:=Alleft;
+ PSplit.Parent:=PParent;
+
+ PRight:=TPanel.Create(Self);
+ PRight.Width:=CONS_CONTROLPOS;
+ PRight.BorderStyle:=bsNone;
+ PRight.BevelInner:=bvNone;
+ PRight.BevelOuter:=bvNone;
+ PRight.Align:=AlClient;
+ PRight.Parent:=PParent;
+
+ totalwidth:=PRight.Width;
+
  posy:=0;
  ALabel:=TLabel.Create(Self);
  LLabels.Add(ALabel);
  ALabel.Caption:=SRpMainDataset;
  ALabel.Left:=CONS_LEFTGAP;
  ALabel.Top:=posy+CONS_LABELTOPGAP;
- ALabel.parent:=PParent;
+ ALabel.parent:=PLeft;
 
  ComboAlias:=TComboBox.Create(Self);
  ComboAlias.Style:=csDropDownList;
  ComboAlias.Top:=Posy;
- ComboAlias.Left:=CONS_CONTROLPOS;
+ ComboAlias.Left:=CONS_LEFTGAP;
  ComboAlias.Width:=TotalWidth-ComboAlias.Left-CONS_RIGHTBARGAP;
- ComboAlias.parent:=PParent;
+ ComboAlias.parent:=PRight;
  ComboAlias.Anchors:=[akleft,aktop,akright];
 
  posy:=posy+ComboAlias.Height;
@@ -259,12 +286,12 @@ begin
  ALabel.Caption:=SRpSPOnlyData;
  ALabel.Left:=CONS_LEFTGAP;
  ALabel.Top:=posy+CONS_LABELTOPGAP;
- ALabel.parent:=Pparent;
+ ALabel.parent:=PLeft;
  ComboPrintOnly:=TComboBox.Create(Self);
  ComboPrintOnly.Style:=csDropDownList;
  ComboPrintOnly.Top:=Posy;
- ComboPrintOnly.Left:=CONS_CONTROLPOS;
- ComboPrintOnly.parent:=PPArent;
+ ComboPrintOnly.Left:=CONS_LEFTGAP;
+ ComboPrintOnly.parent:=PRight;
  ComboPrintOnly.Items.Add(FalseBoolStrs[0]);
  ComboPrintOnly.Items.Add(TrueBoolStrs[0]);
  ComboPrintOnly.Width:=TotalWidth-ComboPrintOnly.Left-CONS_RIGHTBARGAP;
@@ -293,13 +320,17 @@ var
  APanelTop:TPanel;
  APanelBottom:TPanel;
  PPArent:TPanel;
+ PLeft:TPanel;
+ PRight:TPanel;
+ Psplit:TSplitter;
 begin
  FRpMainf:=TFRpMainFVCL(Owner.Owner);
  FCompItem:=acompo;
+ aheight:=0;
+
  totalwidth:=WIdth;
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
- aheight:=0;
 
  // Creates the labels and controls
  posy:=0;
@@ -325,6 +356,8 @@ begin
  AScrollBox.VertScrollBar.Tracking:=True;
  AScrollBox.BorderStyle:=bsNone;
  AScrollBox.Parent:=Self;
+ AScrollBox.HorzScrollBar.Visible:=false;
+ AScrollBox.VertScrollBar.Visible:=false;
 
  PParent:=TPanel.Create(Self);
  PParent.Left:=0;
@@ -336,6 +369,34 @@ begin
  PParent.Align:=AlTop;
  PParent.Parent:=AScrollBox;
 
+ PLeft:=TPanel.Create(Self);
+ PLeft.Width:=CONS_CONTROLPOS;
+ PLeft.BorderStyle:=bsNone;
+ PLeft.BevelInner:=bvNone;
+ PLeft.BevelOuter:=bvNone;
+ PLeft.Align:=AlLeft;
+ PLeft.Parent:=PParent;
+
+ Psplit:=TSplitter.Create(Self);
+ Psplit.ResizeStyle:=rsUpdate;
+ Psplit.Cursor:=crHSplit;
+ PSplit.MinSize:=10;
+ PSplit.Beveled:=True;
+ PSplit.Width:=4;
+ PSplit.Left:=PLeft.Width+10;
+ Psplit.Align:=Alleft;
+ PSplit.Parent:=PParent;
+
+ PRight:=TPanel.Create(Self);
+ PRight.Width:=CONS_CONTROLPOS;
+ PRight.BorderStyle:=bsNone;
+ PRight.BevelInner:=bvNone;
+ PRight.BevelOuter:=bvNone;
+ PRight.Align:=AlClient;
+ PRight.Parent:=PParent;
+
+ totalwidth:=PRight.Width;
+
  FCompItem.GetProperties(LNames,LTypes,nil);
  for i:=0 to LNames.Count-1 do
  begin
@@ -344,14 +405,14 @@ begin
   ALabel.Caption:=LNames.Strings[i];
   ALabel.Left:=CONS_LEFTGAP;
   ALabel.Top:=posy+CONS_LABELTOPGAP;
-  ALabel.parent:=PParent;
+  ALabel.parent:=PLeft;
   typename:=LTypes.Strings[i];
   if LTypes.Strings[i]=SRpSBool then
   begin
    Control:=TComboBox.Create(Self);
    TComboBox(Control).Style:=csDropDownList;
    Control.Visible:=false;
-   Control.Parent:=PParent;
+   Control.Parent:=PRight;
    TComboBox(Control).Items.Add(FalseBoolStrs[0]);
    TComboBox(Control).Items.Add(TrueBoolStrs[0]);
    TCOmboBox(Control).OnChange:=EditChange;
@@ -362,7 +423,7 @@ begin
    Control:=TComboBox.Create(Self);
    TComboBox(Control).Style:=csDropDownList;
    Control.Visible:=false;
-   Control.Parent:=PParent;
+   Control.Parent:=PRight;
    FCompItem.GetPropertyValues(LNames.Strings[i],TComboBox(Control).Items);
    TCOmboBox(Control).OnChange:=EditChange;
   end
@@ -389,7 +450,7 @@ begin
    Control:=TComboBox.Create(Self);
    TComboBox(Control).Style:=csDropDownList;
    Control.Visible:=false;
-   Control.Parent:=PParent;
+   Control.Parent:=PRight;
    subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
    subrep.GetGroupNames(TComboBox(Control).Items);
    TComboBox(Control).Items.Insert(0,' ');
@@ -420,11 +481,10 @@ begin
     TEdit(Control).PopupMenu:=TFRpObjInspVCL(Owner).PopUpSection;
   end;
   Control.Top:=Posy;
-  Control.Left:=CONS_CONTROLPOS;
+  Control.Left:=CONS_LEFTGAP;
   Control.Width:=TotalWidth-Control.Left-CONS_RIGHTBARGAP;
-  control.parent:=PParent;
+  control.parent:=PRight;
   Control.Visible:=true;
-  Control.Anchors:=[akleft,aktop,akright];
 
   if aheight=0 then
    aheight:=Control.Height;
@@ -459,7 +519,7 @@ begin
    Control.Width:=Control.Width-CONS_BUTTONWIDTH;
    TButton(Control2).OnClick:=FontClick;
    TButton(Control2).Caption:='...';
-   Control2.Parent:=PParent;
+   Control2.Parent:=PRight;
    Control2.Anchors:=[aktop,akright];
   end;
   if (LTypes.Strings[i]=SRpSExpression) then
@@ -473,12 +533,16 @@ begin
    Control2.Tag:=i;
    TButton(Control2).OnClick:=ExpressionClick;
    TButton(Control2).Caption:='...';
-   Control2.Parent:=PParent;
+   Control2.Parent:=PRight;
    Control2.Anchors:=[aktop,akright];
   end;
 
+  Control.Anchors:=[akleft,aktop,akright];
   posy:=posy+control.height;
  end;
+
+ AScrollBox.HorzScrollBar.Visible:=true;
+ AScrollBox.VertScrollBar.Visible:=true;
 
  PParent.Height:=posy;
  // Send to back and bring to front buttons
@@ -1005,6 +1069,12 @@ begin
    begin
     TFRpObjInspVCL(Owner).fchangesize.UpdatePos;
    end;
+  end;
+  // If is a group, invalidate captions
+  if aname=SRpSGroupName then
+  begin
+   TFRpDesignFrameVCL(TFRpObjInspVCL(Owner).FDesignframe).InvalidateCaptions;
+   TFRpDesignFrameVCL(TFRpObjInspVCL(Owner).FDesignframe).freportstructure.UpdateCaptions;
   end;
  end
  else

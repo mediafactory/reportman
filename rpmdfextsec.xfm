@@ -1,13 +1,12 @@
 object FRpExtSection: TFRpExtSection
   Left = 245
   Top = 108
-  Width = 390
-  Height = 208
-  VertScrollBar.Range = 193
-  HorzScrollBar.Range = 341
   ActiveControl = BOk
+  AutoScroll = False
   BorderStyle = fbsDialog
   Caption = 'External section properties'
+  ClientHeight = 208
+  ClientWidth = 390
   Color = clButton
   Position = poScreenCenter
   OnCreate = FormCreate

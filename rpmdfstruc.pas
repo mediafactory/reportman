@@ -68,6 +68,7 @@ type
   public
     { Public declarations }
     designframe:TControl;
+    procedure UpdateCaptions;
     function FindSelectedSubreport:TRpSubreport;
     function FindSelectedObject:TObject;
     constructor Create(AOwner:TComponent);override;
@@ -171,6 +172,24 @@ begin
  Assert(selectednode.data<>nil,'Node without data assertion error');
  Assert(selectednode.data<>nil,'Expected data with a value');
  Result:=TObject(selectednode.data);
+end;
+
+procedure TFRpStructure.UpdateCaptions;
+var
+ i:integer;
+ aobj:TObject;
+begin
+ for i:=0 to RView.Items.Count-1 do
+ begin
+  if assigned(RView.Items[i].Data) then
+  begin
+   aobj:=TObject(RView.Items[i].Data);
+   if aobj is TRpSection then
+   begin
+    RView.Items[i].Text:=TRpSection(RView.Items[i].Data).SectionCaption(true);
+   end;
+  end;
+ end;
 end;
 
 procedure TFRpStructure.CreateInterface;

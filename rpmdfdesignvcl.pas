@@ -83,6 +83,7 @@ type
     SectionScrollBox: TScrollBox;
     secinterfaces:TList;
     TopRuler:TRpRulerVCL;
+    procedure InvalidateCaptions;
     procedure UpdateInterface;
     procedure ShowAllHiden;
     constructor Create(AOwner:TComponent);override;
@@ -291,6 +292,18 @@ begin
  end;
 end;
 
+procedure TFRpDesignFrameVCL.InvalidateCaptions;
+var
+ apanel:TRpPaintEventpanel;
+ i:integer;
+begin
+ for i:=0 to toptitles.count-1 do
+ begin
+  apanel:=TRpPaintEventpanel(toptitles.Items[i]);
+  apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption(false);
+  apanel.Invalidate;
+ end;
+end;
 
 
 procedure TFRpDesignFrameVCL.SelectSubReport(subreport:TRpSubReport);

@@ -36,7 +36,7 @@ const
   CONS_LEFTGAP=3;
   CONS_CONTROLPOS=90;
   CONS_LABELTOPGAP=2;
-  CONS_RIGHTBARGAP=25;
+  CONS_RIGHTBARGAP=1;
   CONS_BUTTONWIDTH=15;
   CONS_MINWIDTH=160;
 type
@@ -233,11 +233,11 @@ var
  totalwidth:integer;
  AScrollBox:TScrollBox;
  PParent:TPanel;
+ PLeft:TPanel;
+ PRight:TPanel;
+ Psplit:TSplitter;
  aheight:integer;
 begin
- totalwidth:=WIdth;
- if totalwidth<CONS_MINWIDTH then
-  totalwidth:=CONS_MINWIDTH;
  posy:=0;
  aheight:=calcdefaultheight;
 
@@ -252,26 +252,53 @@ begin
  PParent.Left:=0;
  PParent.Width:=0;
  PParent.Height:=500;
- PParent.Parent:=AScrollBox;
  PPArent.BorderStyle:=bsNone;
  PParent.BevelInner:=bvNone;
  PParent.BevelOuter:=bvNone;
  PParent.Align:=AlTop;
  PParent.Parent:=AScrollBox;
 
+ PLeft:=TPanel.Create(Self);
+ PLeft.Width:=CONS_CONTROLPOS;
+ PLeft.BorderStyle:=bsNone;
+ PLeft.BevelInner:=bvNone;
+ PLeft.BevelOuter:=bvNone;
+ PLeft.Align:=AlLeft;
+ PLeft.Parent:=PParent;
+
+ Psplit:=TSplitter.Create(Self);
+ Psplit.ResizeStyle:=rsUpdate;
+ Psplit.Cursor:=crHSplit;
+ PSplit.MinSize:=10;
+ PSplit.Beveled:=True;
+ PSplit.Width:=4;
+ PSplit.Left:=PLeft.Width+10;
+ Psplit.Align:=Alleft;
+ PSplit.Parent:=PParent;
+
+ PRight:=TPanel.Create(Self);
+ PRight.Width:=CONS_CONTROLPOS;
+ PRight.BorderStyle:=bsNone;
+ PRight.BevelInner:=bvNone;
+ PRight.BevelOuter:=bvNone;
+ PRight.Align:=AlClient;
+ PRight.Parent:=PParent;
+
  ALabel:=TLabel.Create(Self);
  LLabels.Add(ALabel);
  ALabel.Caption:=SRpMainDataset;
  ALabel.Left:=CONS_LEFTGAP;
  ALabel.Top:=posy+CONS_LABELTOPGAP;
- ALabel.parent:=PParent;
+ ALabel.parent:=PLeft;
+
+ totalwidth:=PRight.Width;
 
  ComboAlias:=TComboBox.Create(Self);
  ComboAlias.Style:=csDropDownList;
  ComboAlias.Top:=Posy;
- ComboAlias.Left:=CONS_CONTROLPOS;
+ ComboAlias.Left:=CONS_LEFTGAP;
  ComboAlias.Width:=TotalWidth-ComboAlias.Left-CONS_RIGHTBARGAP;
- ComboAlias.parent:=PParent;
+ ComboAlias.parent:=PRight;
  ComboAlias.Anchors:=[akleft,aktop,akright];
 
  posy:=posy+aheight;
@@ -280,15 +307,15 @@ begin
  ALabel.Caption:=SRpSPOnlyData;
  ALabel.Left:=CONS_LEFTGAP;
  ALabel.Top:=posy+CONS_LABELTOPGAP;
- ALabel.parent:=PPArent;
+ ALabel.parent:=PLeft;
  ComboPrintOnly:=TComboBox.Create(Self);
  ComboPrintOnly.Style:=csDropDownList;
  ComboPrintOnly.Top:=Posy;
- ComboPrintOnly.Left:=CONS_CONTROLPOS;
+ ComboPrintOnly.Left:=CONS_LEFTGAP;
  ComboPrintOnly.Items.Add(FalseBoolStrs[0]);
  ComboPrintOnly.Items.Add(TrueBoolStrs[0]);
  ComboPrintOnly.Width:=TotalWidth-ComboPrintOnly.Left-CONS_RIGHTBARGAP;
- ComboPrintOnly.parent:=PParent;
+ ComboPrintOnly.parent:=PRight;
  ComboPrintOnly.Anchors:=[akleft,aktop,akright];
 
  posy:=posy+aheight;
@@ -312,6 +339,9 @@ var
  FRpMainf:TFRpMainF;
  AScrollBox:TScrollBox;
  PParent:TPanel;
+ PLeft:TPanel;
+ PRight:TPanel;
+ Psplit:TSplitter;
  APanelTop:TPanel;
  APanelBottom:TPanel;
 begin
@@ -321,6 +351,9 @@ begin
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
  aheight:=calcdefaultheight;
+
+ if totalwidth<CONS_MINWIDTH then
+  totalwidth:=CONS_MINWIDTH;
 
  // Creates the labels and controls
  posy:=0;
@@ -357,6 +390,42 @@ begin
  PParent.Align:=AlTop;
  PParent.Parent:=AScrollBox;
 
+ PLeft:=TPanel.Create(Self);
+ PLeft.Width:=CONS_CONTROLPOS;
+ PLeft.BorderStyle:=bsNone;
+ PLeft.BevelInner:=bvNone;
+ PLeft.BevelOuter:=bvNone;
+ PLeft.Align:=AlLeft;
+ PLeft.Parent:=PParent;
+
+ Psplit:=TSplitter.Create(Self);
+ Psplit.ResizeStyle:=rsUpdate;
+ Psplit.Cursor:=crHSplit;
+ PSplit.MinSize:=10;
+ PSplit.Beveled:=True;
+ PSplit.Width:=4;
+ PSplit.Left:=PLeft.Width+10;
+ Psplit.Align:=Alleft;
+ PSplit.Parent:=PParent;
+
+ PRight:=TPanel.Create(Self);
+ PRight.Width:=CONS_CONTROLPOS;
+ PRight.BorderStyle:=bsNone;
+ PRight.BevelInner:=bvNone;
+ PRight.BevelOuter:=bvNone;
+ PRight.Align:=AlClient;
+ PRight.Parent:=PParent;
+
+ PRight:=TPanel.Create(Self);
+ PRight.Width:=CONS_CONTROLPOS;
+ PRight.BorderStyle:=bsNone;
+ PRight.BevelInner:=bvNone;
+ PRight.BevelOuter:=bvNone;
+ PRight.Align:=AlClient;
+ PRight.Parent:=PParent;
+
+ totalwidth:=PRight.Width;
+
  FCompItem.GetProperties(LNames,LTypes,nil);
  for i:=0 to LNames.Count-1 do
  begin
@@ -365,7 +434,7 @@ begin
   ALabel.Caption:=LNames.Strings[i];
   ALabel.Left:=CONS_LEFTGAP;
   ALabel.Top:=posy+CONS_LABELTOPGAP;
-  ALabel.parent:=PParent;
+  ALabel.parent:=Pleft;
   typename:=LTypes.Strings[i];
   if LTypes.Strings[i]=SRpSBool then
   begin
@@ -435,9 +504,10 @@ begin
     TEdit(Control).PopupMenu:=TFRpObjInsp(Owner).PopUpSection;
   end;
   Control.Top:=Posy;
-  Control.Left:=CONS_CONTROLPOS;
+  Control.Left:=CONS_LEFTGAP;
   Control.Width:=TotalWidth-Control.Left-CONS_RIGHTBARGAP;
-  control.parent:=PParent;
+  control.parent:=PRight;
+  Control.Anchors:=[akleft,aktop,akright];
 
   Control.tag:=i;
   LControls.AddObject(LNames.Strings[i],Control);
@@ -470,7 +540,7 @@ begin
    Control.Width:=Control.Width-CONS_BUTTONWIDTH;
    TButton(Control2).OnClick:=FontClick;
    TButton(Control2).Caption:='...';
-   Control2.Parent:=PParent;
+   Control2.Parent:=PRight;
    Control2.Anchors:=[aktop,akright];
   end;
   if (LTypes.Strings[i]=SRpSExpression) then
@@ -484,7 +554,7 @@ begin
    Control2.Tag:=i;
    TButton(Control2).OnClick:=ExpressionClick;
    TButton(Control2).Caption:='...';
-   Control2.Parent:=PParent;
+   Control2.Parent:=PRight;
    Control2.Anchors:=[aktop,akright];
   end;
   Control.Anchors:=[akleft,aktop,akright];
@@ -1015,6 +1085,12 @@ begin
    begin
     TFRpObjInsp(Owner).fchangesize.UpdatePos;
    end;
+  end;
+  // If is a group, invalidate captions
+  if aname=SRpSGroupName then
+  begin
+   TFRpDesignFrame(TFRpObjInsp(Owner).FDesignframe).InvalidateCaptions;
+   TFRpDesignFrame(TFRpObjInsp(Owner).FDesignframe).freportstructure.UpdateCaptions;
   end;
  end
  else

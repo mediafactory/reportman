@@ -9,7 +9,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
   Caption = 'Printers configuration'
   Color = clButton
   Position = poScreenCenter
-  Scaled = False
+  AutoScroll = False
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
