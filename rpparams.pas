@@ -63,6 +63,7 @@ type
     procedure SetDatasets(AList:TStrings);
     procedure SetItems(AList:TStrings);
     procedure SetValues(AList:TStrings);
+    function GetListValue:Variant;
     property Description:widestring read FDescription write SetDescription;
     property Search:widestring read FSearch write SetSearch;
     property AsString:WideString read GetAsString write SetAsString;
@@ -75,6 +76,7 @@ type
     property Datasets:TStrings read FDatasets write SetDatasets;
     property Items:TStrings read FItems write SetItems;
     property Values:TStrings read FValues write SetValues;
+    property ListValue:Variant read GetListValue;
   end;
 
   TRpParamList=class(TCollection)
@@ -112,6 +114,8 @@ procedure GetPossibleDataTypesA(alist:TStrings);
 procedure ParseCommandLineParams(params:TRpParamList);
 
 implementation
+
+uses rpeval;
 
 procedure TRpParamComp.SetParams(avalue:TRpParamList);
 begin
@@ -183,6 +187,53 @@ begin
  FValues.Assign(Alist);
  Changed(False);
 end;
+
+function TRpParam.GetListValue:Variant;
+var
+ aexpression:String;
+ aoption:integer;
+begin
+ if ParamType<>rpParamList then
+  Result:=FValue
+ else
+ begin
+  aoption:=0;
+  if (VarType(FValue) in [varInteger,varSmallint,varShortint,varByte,varWord,varLongWord,
+    varInt64]) then
+  begin
+   aoption:=FValue;
+   if aoption<0 then
+    aoption:=0;
+  end
+  else
+  begin
+   if VarType(FValue)=varString then
+   begin
+    aoption:=fvalues.IndexOf(FValue);
+    if aoption<0 then
+     aoption:=0;
+   end;
+  end;
+  if aoption>=fvalues.Count then
+  begin
+   Result:=Null;
+  end
+  else
+  begin
+   aexpression:=fvalues.strings[aoption];
+   try
+    Result:=rpeval.EvaluateExpression(aexpression);
+   except
+    on E:Exception do
+    begin
+     E.Message:=E.Message+' - '+SRpParameter+':'+Name;
+     raise;
+    end;
+   end;
+  end;
+ end;
+end;
+
 
 procedure TRpParam.SetName(AName:String);
 begin
@@ -331,7 +382,7 @@ begin
    rpParamTime:
     Result:=ftDateTime;
    rpParamDateTime:
-    Result:=ftTime;
+    Result:=ftDateTime;
    rpParamBool:
     Result:=ftBoolean;
    rpParamExpreB:
@@ -383,7 +434,7 @@ begin
   rpParamUnknown:
    Result:='';
   rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList:
-   Result:=Value;
+   Result:=String(Value);
   rpParamInteger,rpParamDouble,rpParamCurrency:
    Result:=FloatToStr(Value);
   rpParamDate:

@@ -127,6 +127,8 @@ type
   end;
 
 
+function EvaluateExpression(aexpression:WideString):Variant;
+
 implementation
 
 uses rpevalfunc;
@@ -1061,6 +1063,20 @@ begin
  Rpfunctions:=TStringList.create;
  Rpfunctions.Sorted:=True;
  Rpfunctions.Duplicates:=dupError;
+end;
+
+function EvaluateExpression(aexpression:WideString):Variant;
+var
+ aeval:TRpEvaluator;
+begin
+ aeval:=TRpEvaluator.Create(nil);
+ try
+  aeval.Expression:=aexpression;
+  aeval.Evaluate;
+  Result:=aeval.EvalResult;
+ finally
+  aeval.free;
+ end;
 end;
 
 

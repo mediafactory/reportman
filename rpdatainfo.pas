@@ -1147,6 +1147,8 @@ var
  baseinfo:TRpDatabaseInfoItem;
  doexit:boolean;
  param:TRpParam;
+ atype:TDataType;
+ avalue:Variant;
  sqlsentence:widestring;
 {$IFDEF USEADO}
   j:integer;
@@ -1614,6 +1616,10 @@ begin
    for i:=0 to params.count-1 do
    begin
     param:=params.items[i];
+    atype:=ParamTypeToDataType(param.ParamType);
+    avalue:=param.ListValue;
+    if atype=ftUnknown then
+     atype:=VarTypeToDataType(Vartype(avalue));
     if param.ParamType=rpParamSubst then
      continue;
     index:=param.Datasets.IndexOf(Alias);
@@ -1623,25 +1629,22 @@ begin
       rpdatadbexpress:
        begin
 {$IFDEF USESQLEXPRESS}
-        TSQLQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
-         ParamTypeToDataType(param.ParamType);
-        TSQLQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
+        TSQLQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=atype;
+        TSQLQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=avalue;
 {$ENDIF}
        end;
       rpdataibx:
        begin
 {$IFDEF USEIBX}
-        TIBQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
-         ParamTypeToDataType(param.ParamType);
-        TIBQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
+        TIBQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=atype;
+        TIBQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=avalue;
 {$ENDIF}
        end;
       rpdatazeos:
        begin
 {$IFDEF USEZEOS}
-        TZReadOnlyQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
-         ParamTypeToDataType(param.ParamType);
-        TZReadOnlyQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
+        TZReadOnlyQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=atype;
+        TZReadOnlyQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=avalue;
 {$ENDIF}
        end;
       rpdatabde:
@@ -1649,9 +1652,8 @@ begin
 {$IFDEF USEBDE}
         if FBDEType=rpdquery then
         begin
-         TQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
-          ParamTypeToDataType(param.ParamType);
-         TQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
+         TQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=atype;
+         TQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=avalue;
         end
         else
          Raise Exception.Create(SrpParamBDENotSupported);
@@ -1666,19 +1668,19 @@ begin
          adoParam := TADOQuery(FSQLInternalQuery).Parameters.Items[j];
          if (adoParam.Name = param.Name) then
          begin
-          adoParam.DataType := ParamTypeToDataType(param.ParamType);
-          adoParam.Value := param.Value
+          adoParam.DataType := atype;
+          adoParam.Value := avalue;
          end;
         end;
 //        TADOQuery(FSQLInternalQuery).Parameters.ParamByName(param.Name).DataType:=
 //         ParamTypeToDataType(param.ParamType);
-//        TADOQuery(FSQLInternalQuery).Parameters.ParamByName(param.Name).Value:=param.Value;
+//        TADOQuery(FSQLInternalQuery).Parameters.ParamByName(param.Name).Value:=param.ListValue;
 {$ENDIF}
        end;
       rpdataibo:
        begin
 {$IFDEF USEIBO}
-        TIBOQuery(FSQLInternalQuery).ParamByName(param.Name).AsVariant:=param.Value;
+        TIBOQuery(FSQLInternalQuery).ParamByName(param.Name).AsVariant:=avalue;
 {$ENDIF}
        end;
      end;
