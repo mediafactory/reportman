@@ -38,6 +38,8 @@ Source: "..\repman\utils\rptranslator\rptranslate.exe"; DestDir: "{app}"; CopyMo
 Source: "..\repman\utils\rptranslator\rptranslate.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\rptranslator\rptranslateres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\printreptopdf\printreptopdf.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\activex\ReportMan.ocx"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\activex\ReportMan.ocx.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\server\service\repserverservice.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\server\app\reportserverappxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\server\app\reportserverappxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
@@ -68,6 +70,8 @@ Name: "{group}\License"; Filename: "{app}\license.txt";
 Name: "{group}\Server application XP"; Filename: "{app}\reportserverappxp.exe"; WorkingDir: "{app}"
 Name: "{group}\Server configuration XP"; Filename: "{app}\repserverconfigxp.exe"; WorkingDir: "{app}"
 Name: "{group}\Service Installation tool"; Filename: "{app}\repserviceinstall.exe"; WorkingDir: "{app}"
+Name: "{group}\Register ActiveX"; Filename: "{sys}\regsvr32"; Parameters: "Reportman.ocx"; WorkingDir: "{app}"
+Name: "{group}\UnRegister ActiveX"; Filename: "{sys}\regsvr32"; Parameters: "/u Reportman.ocx"; WorkingDir: "{app}"
 Name: "{userdesktop}\Report Manager Designer XP"; Filename: "{app}\repmandxp.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
 Name: "{userdesktop}\Report Manager Client"; Filename: "{app}\metaviewxp.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
 

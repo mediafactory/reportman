@@ -21,9 +21,9 @@ object FSerMainVCL: TFSerMainVCL
   TextHeight = 13
   object LMEssages: TMemo
     Left = 0
-    Top = 117
+    Top = 149
     Width = 536
-    Height = 203
+    Height = 178
     Align = alClient
     ReadOnly = True
     ScrollBars = ssBoth
@@ -34,12 +34,12 @@ object FSerMainVCL: TFSerMainVCL
     Left = 0
     Top = 0
     Width = 536
-    Height = 117
+    Height = 149
     Align = alTop
     TabOrder = 1
     DesignSize = (
       536
-      117)
+      149)
     object LLog: TLabel
       Left = 8
       Top = 72
@@ -67,6 +67,20 @@ object FSerMainVCL: TFSerMainVCL
       Width = 78
       Height = 13
       Caption = 'Configuration file'
+    end
+    object LPort: TLabel
+      Left = 12
+      Top = 124
+      Width = 19
+      Height = 13
+      Caption = 'Port'
+    end
+    object LPortNumber: TLabel
+      Left = 176
+      Top = 120
+      Width = 145
+      Height = 21
+      AutoSize = False
     end
     object BStartServer: TButton
       Left = 8

@@ -38,6 +38,8 @@ type
     ELogFIle: TEdit;
     EConfigFile: TEdit;
     LConfigFile: TLabel;
+    LPort: TLabel;
+    LPortNumber: TLabel;
     procedure BStartServerClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -65,6 +67,7 @@ begin
  begin
   StopServer(mserver);
   LHostName.Caption:='';
+  LPortNumber.Caption:='';
   mserver:=nil;
  end;
  mserver:=StartServer(onlog);
@@ -73,6 +76,7 @@ begin
  LHostName.Caption:=mserver.HostName;
  ELogFile.Text:=mserver.LogFileName;
  EConfigFile.Text:=mserver.FileNameConfig;
+ LPortNumber.Caption:=IntToStr(mserver.RepServer.DefaultPort);
 end;
 
 procedure TFSerMain.AppException(Sender: TObject; E: Exception);
@@ -101,6 +105,8 @@ begin
  LLog.Caption:=TranslateStr(786,LLog.Caption);
  LConfigFile.Caption:=TranslateStr(743,LConfigFile.Caption);
  BStopServer.Caption:=TranslateStr(785,BStopServer.Caption);
+ LPort.Caption:=TranslateStr(829,LPort.Caption);
+ LPortNumber.Font.Style:=[fsbold];
  LHostName.Font.Style:=[fsbold];
  BStartServerClick(Self);
 
@@ -129,6 +135,7 @@ begin
  begin
   StopServer(mserver);
   LHostName.Caption:='';
+  LPortNumber.Caption:='';
   mserver:=nil;
   BStopServer.Enabled:=False;
   BStartServer.Enabled:=True;

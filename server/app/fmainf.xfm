@@ -3,7 +3,7 @@ object FSerMain: TFSerMain
   Top = 82
   Width = 595
   Height = 319
-  VertScrollBar.Range = 117
+  VertScrollBar.Range = 145
   ActiveControl = LMEssages
   Caption = 'Report Manager Server application'
   Color = clBackground
@@ -15,9 +15,9 @@ object FSerMain: TFSerMain
   TextWidth = 6
   object LMEssages: TMemo
     Left = 0
-    Top = 117
+    Top = 145
     Width = 595
-    Height = 202
+    Height = 174
     Align = alClient
     ReadOnly = True
     ScrollBars = ssBoth
@@ -28,7 +28,7 @@ object FSerMain: TFSerMain
     Left = 0
     Top = 0
     Width = 595
-    Height = 117
+    Height = 145
     Align = alTop
     TabOrder = 1
     object BStartServer: TButton
@@ -97,6 +97,20 @@ object FSerMain: TFSerMain
       Width = 78
       Height = 13
       Caption = 'Configuration file'
+    end
+    object LPort: TLabel
+      Left = 12
+      Top = 124
+      Width = 19
+      Height = 13
+      Caption = 'Port'
+    end
+    object LPortNumber: TLabel
+      Left = 176
+      Top = 120
+      Width = 145
+      Height = 21
+      AutoSize = False
     end
   end
 end
