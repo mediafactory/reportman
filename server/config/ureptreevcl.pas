@@ -20,8 +20,14 @@ unit ureptreevcl;
 
 interface
 
+{$I rpconf.inc}
+
 uses
-  SysUtils, Types, Classes, Variants, Graphics, Controls, Forms,
+  SysUtils,
+{$IFDEF USEVARIANTS}
+  Types,Variants,
+{$ENDIF}
+  Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, ComCtrls, ImgList,rpmdconsts,rpgraphutilsvcl;
 
 type

@@ -29,8 +29,8 @@ uses
 {$IFDEF USEVARIANTS}
   Types,Variants,
 {$ENDIF}
-   Classes, Graphics, Controls, Forms,rpeditconnvcl,
-  Dialogs, StdCtrls, rptranslator,urepserver,rpmdconsts,  ExtCtrls;
+  Classes, Graphics, Controls, Forms,rpeditconnvcl,Windows,Messages,
+  Dialogs, StdCtrls, rptranslator,urepserver,rpmdconsts,  rpalias,ExtCtrls;
 
 type
   TFSerMainVCL = class(TForm)
@@ -98,8 +98,11 @@ begin
  if assigned(mserver) then
  begin
   StopServer(mserver);
-  mserver:=nil;
   LHostName.Caption:='';
+  mserver:=nil;
+  BStopServer.Enabled:=False;
+  BStartServer.Enabled:=True;
+  LPortNumber.Caption:='';
  end;
  Application.OnException:=nil;
 end;
@@ -154,9 +157,19 @@ end;
 
 
 procedure TFSerMainVCL.BConfigLibsClick(Sender: TObject);
+var
+ librarycompo:TRpAlias;
 begin
- ShowModifyConnections(mserver.RpAliasLibs.Connections);
- mserver.WriteConfig;
+ librarycompo:=TRpAlias.Create(Self);
+ try
+  librarycompo.Connections.LoadFromFile(mserver.filenameconfig);
+  ShowModifyConnections(librarycompo.Connections);
+ finally
+  // Write library configuration
+  librarycompo.Connections.SaveToFile(mserver.filenameconfig);
+ end;
 end;
+
+
 
 end.

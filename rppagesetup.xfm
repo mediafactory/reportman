@@ -20,7 +20,7 @@ object FRpPageSetup: TFRpPageSetup
     Top = 0
     Width = 472
     Height = 334
-    ActivePage = TabPage
+    ActivePage = TabOptions
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -280,7 +280,7 @@ object FRpPageSetup: TFRpPageSetup
         Width = 213
         Height = 21
         Caption = 'Two pass report'
-        TabOrder = 12
+        TabOrder = 11
       end
       object CheckPrintOnlyIfData: TCheckBox
         Left = 4
@@ -295,7 +295,7 @@ object FRpPageSetup: TFRpPageSetup
         Top = 144
         Width = 69
         Height = 21
-        TabOrder = 8
+        TabOrder = 7
         EditType = teinteger
       end
       object LCopies: TLabel
@@ -311,7 +311,7 @@ object FRpPageSetup: TFRpPageSetup
         Width = 205
         Height = 21
         Caption = 'Collate copies'
-        TabOrder = 10
+        TabOrder = 8
       end
       object LPrinterFonts: TLabel
         Left = 4

@@ -79,6 +79,93 @@
       list, and will assign the corresponding value from list of values.</td>
   </tr>
 </table>
+<p><strong>About parameters and database drivers</strong></p>
+<p>When you place a parameter inside a query:</p>
+<p>SELECT MYDATA FROM MYTABLE WHERE MYCODE=:CODE</p>
+<p>This is called a parametrized query, the query is send throught the database 
+  driver, and translated by the driver to a similar syntax, the parameters must 
+  be reconized by the database driver and the database engine (usually a sql server).Depending 
+  on the SQL server the query will translate by the database driver natively with 
+  different syntax:</p>
+<p>SELECT MYDATA FROM MYTABLE WHERE MYCODE=?<br>
+SELECT MYDATA FROM MYTABLE WHERE MYCODE=@CODE</p>
+<p>This query is &quot;compiled&quot; by the database engine, usually this process 
+  parse the query, translating to a native (and fast) format, selects a optimization 
+  method (query plan) including indexes used by the engine, the query can be compiled 
+  once (also called prepare procedure), and execute multiple times, the successive 
+  executions will be lot faster because the database engine can bypass the parse 
+  of the query and analizing index statistics to select the best path to execute 
+  the query.</p>
+<p>So passing parameters to a database involves the database driver and database 
+  server, some database drivers, does not support large parameters or does not 
+  implement some parameter types (date,time), others are a bit tricky about detecting 
+  them, for example:</p>
+<p>.. WHERE :CODE=MYCODE can generate a syntax error, but WHERE MYCODE=:CODE works 
+  ok, this is because database driver parse the query to translate it to database 
+  server intermediate format, and the database driver parser can be not accurately 
+  programmed.</p>
+<p>Also because the query is compiled by the database server and a optimization 
+  plan must be selected, the parameters can not be placed in any part of the SELECT 
+  sentence.</p>
+<p>SELECT .... ORDER BY :MYORDER1,:MYORDER2</p>
+<p>The above sentence is not valid because a parameter inside the order by clause 
+  is usually not valid, think that changing the order of a query can change the 
+  way the query is optimized by the database server, for example if the where 
+  clause and the order by clause references same field, only one index is needed, 
+  if they differ, a diferent query plan (index path) is needed to execute the 
+  query, so a recompilation of the query is needed.</p>
+<p>Some database drivers and servers allow parameters inside the select fields 
+  part but others not:</p>
+<p>SELECT :MYPARAM,MYFIELD FROM ....</p>
+<p>This is also applicable to linked querys, but linked querys takes the parameters 
+  from the master query fields by name.</p>
+<p>Note: When you missplace a parameter, the database driver can ignore not returning 
+  you any error.</p>
+<p><strong>Workarounds</strong></p>
+<p>Using query parameters is efficient and the prefered way, but when database 
+  drivers have some problem, or it's not possible to do it you must find alternative 
+  methods. For example, if the database driver does not accept Date parameter 
+  type, you can define the parameter as string, the syntax of the date will be 
+  defined, then by dabase server, for example '31-JAN-2004' or '01/31/2004'.</p>
+<p>So a query can not be compiled/prepared if the order by clause change between 
+  executions, or the where clause syntax changes, to allow the use of parameters 
+  in this querys, there is the String Substitution parameter type, it's not a 
+  real parametrized query, it's a query that will be changed before sending it 
+  to the database driver. The use of the :PARAM syntax is not needed.</p>
+<p>For example:</p>
+<p>SELECT .... ORDER BY 1,2,3</p>
+<p>You can create a string substitution parameter assigned to one or more datasets 
+  with properties:</p>
+<table border="1">
+  <tr>
+    <td bgcolor="#FFFFCC">Property</td>
+    <td bgcolor="#FFFFCC">Value</td>
+  </tr>
+  <tr>
+    <td>Name</td>
+    <td>ORDERBYCLAUSE</td>
+  </tr>
+  <tr>
+    <td>Value</td>
+    <td>ORDER BY 1,2,3</td>
+  </tr>
+  <tr>
+    <td>Search For</td>
+    <td>ORDER BY 1,2,3</td>
+  </tr>
+  <tr>
+    <td>Description</td>
+    <td>Order by clause</td>
+  </tr>
+</table>
+<p>Changing the value of the parameter to:</p>
+<p>ORDER BY 2,1,3</p>
+<p>Will search for the string ORDER BY 1,2,3 inside the sql sentence, if found, 
+  it will be replaced by ORDER BY 2,1,3 then , the new generated sql sentence 
+  is executed.</p>
+<p>This is also usefull to change some part of the where clause (or the entire 
+  clause) or also to change the entire sql sentence at runtime.</p>
+<p></p>
 <p><b>How to modify parameter values at runtime</b></p>
 <p>Report parameters are added to the evaluator as variables when the report begin, 
   so if you want to modify the values while the report is executing you must alter 

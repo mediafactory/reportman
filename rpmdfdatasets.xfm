@@ -1,15 +1,15 @@
 object FRpDatasets: TFRpDatasets
   Left = 0
   Top = 0
-  Width = 522
-  Height = 361
+  Width = 535
+  Height = 305
   VertScrollBar.Range = 113
   Align = alClient
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 522
+    Width = 535
     Height = 113
     Align = alTop
     BevelOuter = bvNone
@@ -17,7 +17,7 @@ object FRpDatasets: TFRpDatasets
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 522
+      Width = 535
       Height = 30
       AutoSize = True
       ButtonHeight = 26
@@ -88,7 +88,7 @@ object FRpDatasets: TFRpDatasets
     object PTop1: TPanel
       Left = 0
       Top = 30
-      Width = 522
+      Width = 535
       Height = 83
       Align = alClient
       BevelOuter = bvNone
@@ -112,7 +112,7 @@ object FRpDatasets: TFRpDatasets
       object PanelBasic: TPanel
         Left = 169
         Top = 0
-        Width = 353
+        Width = 366
         Height = 83
         Align = alClient
         BevelOuter = bvNone
@@ -166,16 +166,16 @@ object FRpDatasets: TFRpDatasets
   object PBottom: TPanel
     Left = 0
     Top = 113
-    Width = 522
-    Height = 248
+    Width = 535
+    Height = 192
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 522
-      Height = 248
+      Width = 535
+      Height = 192
       ActivePage = TabMyBase
       Align = alClient
       TabOrder = 0
@@ -185,14 +185,14 @@ object FRpDatasets: TFRpDatasets
           Left = 161
           Top = 0
           Width = 8
-          Height = 218
+          Height = 162
           Beveled = True
         end
         object MSQL: TMemo
           Left = 169
           Top = 0
-          Width = 345
-          Height = 218
+          Width = 358
+          Height = 162
           Align = alClient
           TabOrder = 0
           WordWrap = False
@@ -202,7 +202,7 @@ object FRpDatasets: TFRpDatasets
           Left = 0
           Top = 0
           Width = 161
-          Height = 218
+          Height = 162
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
@@ -223,7 +223,7 @@ object FRpDatasets: TFRpDatasets
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 514
+          Width = 527
           Height = 37
           Items.Strings = (
             'Query'
@@ -236,15 +236,15 @@ object FRpDatasets: TFRpDatasets
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 514
-          Height = 181
+          Width = 527
+          Height = 125
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
           object PBDEFilter: TPanel
             Left = 0
             Top = 0
-            Width = 514
+            Width = 527
             Height = 17
             Align = alTop
             Alignment = taLeftJustify
@@ -255,8 +255,8 @@ object FRpDatasets: TFRpDatasets
           object MBDEFilter: TMemo
             Left = 0
             Top = 17
-            Width = 514
-            Height = 164
+            Width = 527
+            Height = 108
             Align = alClient
             ScrollBars = ssBoth
             TabOrder = 1
@@ -428,13 +428,13 @@ object FRpDatasets: TFRpDatasets
         object EIndexFields: TEdit
           Left = 144
           Top = 61
-          Width = 149
+          Width = 205
           Height = 21
           TabOrder = 8
           OnChange = MSQLChange
         end
         object BMyBase: TButton
-          Left = 420
+          Left = 424
           Top = 2
           Width = 77
           Height = 27
@@ -443,7 +443,7 @@ object FRpDatasets: TFRpDatasets
           OnClick = BMyBaseClick
         end
         object BSearchFieldsFile: TButton
-          Left = 420
+          Left = 424
           Top = 32
           Width = 77
           Height = 27
@@ -518,7 +518,7 @@ object FRpDatasets: TFRpDatasets
           OnChange = MSQLChange
         end
         object BModify: TButton
-          Left = 352
+          Left = 356
           Top = 32
           Width = 65
           Height = 27
@@ -773,12 +773,12 @@ object FRpDatasets: TFRpDatasets
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF00000000000000000003FFFFFF0000007E01DFFFFF
-      00000CFF8000807F00010FFFC001407F04000FFFE007D07F0E020FC1F00F787F
-      0E040F80F001C07F070C0FC0F001C07F03980FE003FFFFFF01F00000037DFFFF
-      00E00001FBFFFFFF01F00F03FBFFFFFF03900F01F800007F0F0C0783F807007F
-      1E0607FFF805007F180303FFF82EA07F000001FF900B807F0000007E0005007F
-      0000000003FFFFFF000000000000007F000000000000007F01C000080000007F
+      0200000002000000FFFFFF0000000000000000000011027F0000007E0200407F
+      00000CFF8080087F00010FFFC008017F04000FFFE202437F0E020FC1F020007F
+      0E040F80F000097F070C0FC0F004807F03980FE00080007F01F000000020207F
+      00E00001F802047F01F00F03F900017F03900F01F808807F0F0C0783F840107F
+      1E0607FFF800047F180303FFF802007F000001FF9110807F0000007E0000127F
+      000000000000007F000000000000007F000000000000007F01C000080000007F
       01C0000800FFF07F01C0001C00FFF07F01C0001C0080107F01C0003E00B6D07F
       01C0003E0080107F0FF8007F02B6F87F0FF8007F0080387F07F000FF80FFF87F
       07F000FF80B7FF7F03E0001C00FFFF7F03E0001C0001FF7F01C0001C0000387F

@@ -40,7 +40,8 @@ type
    repdeletealias,repadduser,repdeleteuser,repgettree,
    repgetparams,repsetparams,repgetgroups,repaddgroup,repdeletegroup,
    repgetusergroups,repuserdeletegroup,repuseraddgroup,
-   repgetaliasgroups,repaliasdeletegroup,repaliasaddgroup);
+   repgetaliasgroups,repaliasdeletegroup,repaliasaddgroup,
+   repgetconnections,repdeleteconnection);
 
   TRpLogMessageEvent=procedure (Sender:TObject;aMessage:WideString) of object;
 
@@ -234,6 +235,8 @@ var
 {$ENDIF}
  memstream:TMemoryStream;
 begin
+ if Not AConnection.Connected then
+  exit;
  memstream:=TMemoryStream.Create;
  try
   WriteRpComBlockToStream(CB,memstream);

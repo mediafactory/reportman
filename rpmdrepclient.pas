@@ -62,6 +62,7 @@ type
     FOnGetAliasGroups:TGetStringList;
     FOnAuthorization:TNotifyEvent;
     FOnGetParams:TGetStream;
+    FOnGetTasks:TGetStream;
     FPDF:Boolean;
     ClientHandleThread:TRpClientHandleThread;
     procedure RepClientDisconnected(Sender: TObject);
@@ -74,6 +75,8 @@ type
     destructor Destroy;override;
     property PDF:Boolean read FPDF write FPDF default false;
     procedure GetUsers;
+    procedure GetTasks;
+    procedure CloseTask(taskid:integer);
     procedure GetGroups;
     procedure GetUserGroups(username:String);
     procedure GetParams;
@@ -105,6 +108,7 @@ type
     property OnGetGroups:TGetStringList read FOnGetGroups write FOnGetGroups;
     property OnGetTree:TGetStringList read FOnGetTree write FOnGetTree;
     property OnGetParams:TGetStream read FOnGetparams write FOnGetParams;
+    property OnGetTasks:TGetStream read FOnGetTasks write FOnGetTasks;
     property OnGetAliases:TGetStringList read FOnGetAliases write FOnGetAliases;
     property OnGetAliasGroups:TGetStringList read FOnGetAliasGroups write FOnGetAliasGroups;
     property Authorized:boolean read FAuthorized;
@@ -190,6 +194,11 @@ begin
    begin
     if assigned(amod.FOnGetParams) then
      amod.FOnGetParams(data);
+   end;
+  repgetconnections:
+   begin
+    if assigned(amod.FOnGetTasks) then
+     amod.FOnGetTasks(data);
    end;
   repgettree:
    begin
@@ -516,6 +525,25 @@ begin
  alist:=TStringList.Create;
  try
   arec:=GenerateBlock(repgetusers,alist);
+  try
+   SendBlock(RepClient,arec);
+  finally
+   FreeBlock(arec);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
+procedure Tmodclient.GetTasks;
+var
+ arec:TRpComBlock;
+ alist:TStringList;
+begin
+ // Get the users
+ alist:=TStringList.Create;
+ try
+  arec:=GenerateBlock(repgetconnections,alist);
   try
    SendBlock(RepClient,arec);
   finally
@@ -867,5 +895,25 @@ begin
   astream.Free;
  end;
 end;
+
+procedure Tmodclient.CloseTask(taskid:integer);
+var
+ alist:TStringList;
+ arec:TRpComBlock;
+begin
+ alist:=TStringList.Create;
+ try
+  alist.Add(IntToStr(taskid));
+  arec:=GenerateBlock(repdeleteconnection,alist);
+  try
+   SendBlock(RepClient,arec);
+  finally
+   FreeBlock(arec);
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
 
 end.

@@ -76,6 +76,7 @@ type
    FExternalField:String;
    FExternalSearchField:String;
    FExternalSearchValue:String;
+   FStreamFormat:TRpStreamFormat;
    FBeginPageExpression:widestring;
    FFooterAtReportEnd:boolean;
    FSkipRelativeV:Boolean;
@@ -185,6 +186,8 @@ type
     write FExternalSearchField;
    property ExternalSearchValue:string read FExternalSearchValue
     write FExternalSearchValue;
+   property StreamFormat:TRpStreamFormat read FStreamFormat
+    write FStreamFormat;
 
    property ChildSubReport:TComponent read FChildSubReport write SetChildSubReport;
    // Deprecated properties for compatibility only
@@ -235,6 +238,7 @@ begin
  FDecompStream:=TMemoryStream.Create;
  Fdpires:=DEFAULT_DPI_BACK;
  FDrawStyle:=rpDrawFull;
+ FStreamFormat:=rpStreamtext;
 
  Width:=Round(C_DEFAULT_SECTION_WIDTH*TWIPS_PER_INCHESS/CMS_PER_INCHESS);
  Height:=Round(C_DEFAULT_SECTION_HEIGHT*TWIPS_PER_INCHESS/CMS_PER_INCHESS);
@@ -666,6 +670,8 @@ var
  zstream:TCompressionStream;
 {$ENDIF}
  writer:TWriter;
+ theformat:TRpStreamFormat;
+ memstream:TMemoryStream;
 begin
  // Looks if it's not external
  for i:=0 to FReportComponents.Count-1 do
@@ -680,27 +686,55 @@ begin
    end;
   end;
  end;
+
+
+ theformat:=FStreamFormat;
+{$IFNDEF USEZLIB}
+ if theformat=rpStreamZLib then
+  theformat:=rpStreambinary;
+{$ENDIF}
 {$IFDEF USEZLIB}
- zstream:=TCompressionStream.Create(clDefault,stream);
- try
-  writer:=TWriter.Create(zStream,4096);
+ if theformat=rpStreamZLib then
+ begin
+  zstream:=TCompressionStream.Create(clDefault,Stream);
+  try
+   writer:=TWriter.Create(zStream,4096);
+   try
+    writer.WriteRootComponent(Self);
+   finally
+    writer.free;
+   end;
+  finally
+   zstream.free;
+  end;
+ end
+ else
+{$ENDIF}
+ if theformat=rpStreamBinary then
+ begin
+  writer:=TWriter.Create(Stream,4096);
   try
    writer.WriteRootComponent(Self);
   finally
    writer.free;
   end;
- finally
-  zstream.free;
+ end
+ else
+ begin
+  memstream:=TMemoryStream.Create;
+  try
+   writer:=TWriter.Create(memStream,4096);
+   try
+    writer.WriteRootComponent(Self);
+   finally
+    writer.free;
+   end;
+   memstream.Seek(0,soFromBeginning);
+   ObjectBinaryToText(memstream,Stream);
+  finally
+   memstream.free;
+  end;
  end;
-{$ENDIF}
-{$IFNDEF USEZLIB}
- writer:=TWriter.Create(Stream,4096);
- try
-  writer.WriteRootComponent(Self);
- finally
-  writer.free;
- end;
-{$ENDIF}
 end;
 
 
@@ -782,8 +816,8 @@ var
  readed:integer;
 {$ENDIF}
  memstream,amemstream:TMemoryStream;
- compressed:boolean;
  tempsec:TRpSection;
+ theformat:TRpStreamFormat;
 begin
  // Free all components
  for i:=0 to FReportComponents.Count-1 do
@@ -795,21 +829,25 @@ begin
  FReadError:=false;
  aMemStream:=TMemoryStream.Create;
  try
-  compressed:=false;
   aMemStream.LoadFromStream(stream);
   amemstream.Seek(0,soFromBeginning);
   if amemstream.Size<1 then
    Raise Exception.Create(SRpStreamFormat);
   amemstream.Read(abyte,1);
   amemstream.Seek(0,soFromBeginning);
-  if (Char(abyte)='x') then
-   compressed:=true;
+  if Char(abyte)='x' then
+   theformat:=rpStreamzlib
+  else
+   if Char(abyte)='o' then
+    theformat:=rpStreamText
+   else
+    theformat:=rpStreambinary;
 {$IFNDEF USEZLIB}
-  if compressed then
+  if theformat=rpStreamzlib then
    Raise Exception.Create(SRpZLibNotSupported);
 {$ENDIF}
 {$IFDEF USEZLIB}
-  if compressed then
+  if theformat=rpStreamzlib then
   begin
    MemStream:=TMemoryStream.Create;
    try
@@ -848,6 +886,19 @@ begin
   else
 {$ENDIF}
   begin
+   if theformat=rpStreamtext then
+   begin
+    // Converts to binary
+    memstream:=TMemoryStream.Create;
+    try
+     memstream.LoadFromStream(amemstream);
+     amemstream.clear;
+     ObjectTextToBinary(memstream,amemstream);
+     amemstream.Seek(0,soFromBeginning);
+    finally
+     memstream.free;
+    end;
+   end;
    MemStream:=TMemoryStream.Create;
    try
     MemStream.LoadFromStream(amemstream);
@@ -868,7 +919,7 @@ begin
    finally
     MemStream.Free;
    end;
-  end;
+  end
  finally
   aMemStream.free;
  end;

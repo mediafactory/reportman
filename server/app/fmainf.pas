@@ -25,7 +25,7 @@ interface
 uses
   SysUtils, Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QDialogs, QStdCtrls, rptranslator,urepserver,rpmdconsts,  QExtCtrls,
-  rpeditconn;
+  rpeditconn,rpalias;
 
 type
   TFSerMain = class(TForm)
@@ -151,10 +151,17 @@ end;
 
 
 procedure TFSerMain.BConfigLibsClick(Sender: TObject);
+var
+ librarycompo:TRpAlias;
 begin
- // Configure libraries
- ShowModifyConnections(mserver.RpAliasLibs.Connections);
- mserver.WriteConfig;
+ librarycompo:=TRpAlias.Create(Self);
+ try
+  librarycompo.Connections.LoadFromFile(mserver.filenameconfig);
+  ShowModifyConnections(librarycompo.Connections);
+ finally
+  // Write library configuration
+  librarycompo.Connections.SaveToFile(mserver.filenameconfig);
+ end;
 end;
 
 end.

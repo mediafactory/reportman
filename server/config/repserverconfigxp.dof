@@ -107,7 +107,7 @@ UseLauncher=0
 DebugCWD=
 [Language]
 ActiveLang=
-ProjectLang=
+ProjectLang=$00000C0A
 RootDir=C:\prog\Delphi7\Bin\
 [Version Info]
 IncludeVerInfo=1
@@ -136,8 +136,8 @@ ProductVersion=2.1.0.0
 Comments=
 [HistoryLists\hlConditionals]
 Count=3
-Item0=REPMANRELEASE
-Item1=FORWEBAX
+Item0=FORWEBAX
+Item1=REPMANRELEASE
 Item2=NOLINUXPRINTBUG;FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1

@@ -3,8 +3,8 @@ object FRpExtSectionVCL: TFRpExtSectionVCL
   Top = 108
   BorderStyle = bsDialog
   Caption = 'External section properties'
-  ClientHeight = 208
-  ClientWidth = 390
+  ClientHeight = 214
+  ClientWidth = 387
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -47,9 +47,16 @@ object FRpExtSectionVCL: TFRpExtSectionVCL
     Height = 13
     Caption = 'Search value'
   end
+  object LPreferedFormat: TLabel
+    Left = 12
+    Top = 156
+    Width = 98
+    Height = 13
+    Caption = 'Prefered save format'
+  end
   object BOk: TButton
     Left = 7
-    Top = 168
+    Top = 180
     Width = 86
     Height = 25
     Caption = 'OK'
@@ -60,7 +67,7 @@ object FRpExtSectionVCL: TFRpExtSectionVCL
   end
   object BCancel: TButton
     Left = 107
-    Top = 168
+    Top = 180
     Width = 86
     Height = 25
     Cancel = True
@@ -73,6 +80,7 @@ object FRpExtSectionVCL: TFRpExtSectionVCL
     Top = 12
     Width = 185
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     ItemHeight = 13
     TabOrder = 2
   end
@@ -81,6 +89,7 @@ object FRpExtSectionVCL: TFRpExtSectionVCL
     Top = 40
     Width = 185
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     ItemHeight = 13
     TabOrder = 3
     OnDropDown = ComboTableDropDown
@@ -90,6 +99,7 @@ object FRpExtSectionVCL: TFRpExtSectionVCL
     Top = 68
     Width = 185
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     ItemHeight = 13
     TabOrder = 4
     OnDropDown = ComboReportFieldDropDown
@@ -99,6 +109,7 @@ object FRpExtSectionVCL: TFRpExtSectionVCL
     Top = 96
     Width = 185
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     ItemHeight = 13
     TabOrder = 5
     OnDropDown = ComboReportFieldDropDown
@@ -108,8 +119,19 @@ object FRpExtSectionVCL: TFRpExtSectionVCL
     Top = 124
     Width = 185
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     ItemHeight = 13
     TabOrder = 6
     OnDropDown = ComboSearchValueDropDown
+  end
+  object ComboFormat: TComboBox
+    Left = 156
+    Top = 152
+    Width = 185
+    Height = 21
+    Style = csDropDownList
+    Anchors = [akLeft, akTop, akRight]
+    ItemHeight = 13
+    TabOrder = 7
   end
 end

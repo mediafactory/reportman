@@ -26,7 +26,9 @@ uses
   mainfvcl in 'mainfvcl.pas' {FMainVCL},
   unewuservcl in 'unewuservcl.pas' {FNewUserVCL},
   unewaliasvcl in 'unewaliasvcl.pas' {FNewAliasVCL},
+{$IFDEF USEVARIANTS}
   midaslib,
+{$ENDIF}
   rpmdrepclient in '..\..\rpmdrepclient.pas' {modclient: TDataModule},
   rpmdprotocol in '..\..\rpmdprotocol.pas',
   ureptreevcl in 'ureptreevcl.pas' {FReportTreeVCL};

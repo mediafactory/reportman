@@ -23,7 +23,7 @@ interface
 uses
   SysUtils, Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QDialogs, QStdCtrls, rptranslator, DB, DBClient, QGrids, QDBGrids,
-  rpmdrepclient,rpmdconsts, QButtons, QComCtrls,rpgraphutils;
+  rpmdrepclient,rpmdconsts, QButtons, QComCtrls,rpgraphutils, QExtCtrls;
 
 type
   TFMain = class(TForm)
@@ -72,6 +72,18 @@ type
     LAliasGroups: TListBox;
     BDeleteAliasGroup: TBitBtn;
     BAddAliasGroup: TBitBtn;
+    TabConnections: TTabSheet;
+    GTasks: TDBGrid;
+    PBotTasks: TPanel;
+    BRefresh: TButton;
+    BStop: TButton;
+    adata: TClientDataSet;
+    adataID: TIntegerField;
+    adataLASTOPERATION: TDateTimeField;
+    adataCONNECTIONDATE: TDateTimeField;
+    adataUSERNAME: TStringField;
+    adataRUNNING: TBooleanField;
+    SData: TDataSource;
     procedure FormCreate(Sender: TObject);
     procedure BConnectClick(Sender: TObject);
     procedure BCloseConnectionClick(Sender: TObject);
@@ -91,6 +103,8 @@ type
     procedure BAddAliasGroupClick(Sender: TObject);
     procedure BDeleteAliasGroupClick(Sender: TObject);
     procedure DDirectoriesAfterScroll(DataSet: TDataSet);
+    procedure BRefreshClick(Sender: TObject);
+    procedure BStopClick(Sender: TObject);
   private
     { Private declarations }
     repclient:TModClient;
@@ -100,6 +114,7 @@ type
     procedure OnGetGroups(alist:TStringList);
     procedure OnGetUserGroups(alist:TStringList);
     procedure OnGetAliasGroups(alist:TStringList);
+    procedure OnGetTasks(astream:TMemoryStream);
   public
     { Public declarations }
   end;
@@ -147,6 +162,10 @@ begin
  BAddGroup.Caption:=SrpAdd;
  BDeleteGroup.Caption:=SRpDelete;
 
+ TabConnections.Caption:=Trans.LoadString(1275,TabConnections.Caption);
+ BRefresh.Caption:=Trans.LoadString(1149,BRefresh.Caption);
+ BStop.Caption:=Trans.LoadString(762,BStop.Caption);
+
  SetInitialBounds;
 end;
 
@@ -161,6 +180,7 @@ begin
  ComboPort.Enabled:=True;
  GServerInfo.Visible:=False;
  GUser.Visible:=True;
+ GTasks.Visible:=false;
 end;
 
 procedure TFMain.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -331,6 +351,7 @@ begin
  GUser.Visible:=False;
  GServerInfo.Visible:=True;
  repclient.OnGetUsers:=OnGetUsers;
+ repclient.OnGetTasks:=OnGetTasks;
  repclient.OnGetAliases:=OnGetAliases;
  repclient.OnGetGroups:=OnGetGroups;
  repclient.OnGetAliasGroups:=OnGetAliasGroups;
@@ -434,6 +455,32 @@ begin
   exit;
  aliasname:=DDirectoriesAlias.AsString;
  repclient.GetAliasGroups(aliasname);
+end;
+
+
+procedure TFMain.OnGetTasks(astream:TMemoryStream);
+begin
+ astream.Seek(0,soFromBeginning);
+ adata.Close;
+ adata.CreateDataset;
+ adata.LoadFromStream(astream);
+ GTasks.Visible:=true;
+end;
+
+procedure TFMain.BRefreshClick(Sender: TObject);
+begin
+ repclient.GetTasks;
+end;
+
+procedure TFMain.BStopClick(Sender: TObject);
+begin
+ if not adata.Active then
+  exit;
+ if (Not (adata.Eof and adata.bof)) then
+ begin
+  repclient.CloseTask(adataID.Value);
+  BRefreshClick(Self);
+ end;
 end;
 
 end.

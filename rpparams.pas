@@ -166,6 +166,11 @@ begin
   FSearch:=TRpParam(Source).FSearch;
   FValue:=TRpParam(Source).FValue;
   FParamType:=TRpParam(Source).FParamType;
+  if ParamType in [rpParamDate,rpParamDateTime,rpParamTime] then
+  begin
+   if Not VarIsNull(FValue) then
+    FValue:=TDateTime(FValue);
+  end;
   FDatasets.Clear;
   FDatasets.Assign(TRpParam(Source).FDatasets);
   FItems.Assign(TRpParam(Source).FItems);
@@ -666,5 +671,7 @@ begin
   end;
  end;
 end;
+
+
 
 end.

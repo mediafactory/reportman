@@ -20,10 +20,16 @@ unit mainfvcl;
 
 interface
 
+{$I rpconf.inc}
+
 uses
-  SysUtils, Types, Classes, Variants, Graphics, Controls, Forms,
+  SysUtils,
+{$IFDEF USEVARIANS}
+  Types,Variants, 
+{$ENDIF}
+  Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, rptranslator, DB, DBClient, Grids, DBGrids,
-  rpmdrepclient,rpmdconsts, ComCtrls, Buttons,rpgraphutilsvcl;
+  rpmdrepclient,rpmdconsts, ComCtrls, Buttons,rpgraphutilsvcl, ExtCtrls;
 
 type
   TFMainVCL = class(TForm)
@@ -72,6 +78,18 @@ type
     BDeleteUserGroup: TBitBtn;
     BDeleteAliasGroup: TBitBtn;
     BAddAliasGroup: TBitBtn;
+    TabConnections: TTabSheet;
+    PBotTasks: TPanel;
+    GTasks: TDBGrid;
+    adata: TClientDataSet;
+    adataID: TIntegerField;
+    adataLASTOPERATION: TDateTimeField;
+    adataCONNECTIONDATE: TDateTimeField;
+    adataUSERNAME: TStringField;
+    adataRUNNING: TBooleanField;
+    BRefresh: TButton;
+    SData: TDataSource;
+    BStop: TButton;
     procedure FormCreate(Sender: TObject);
     procedure BConnectClick(Sender: TObject);
     procedure BCloseConnectionClick(Sender: TObject);
@@ -91,6 +109,8 @@ type
     procedure BAddAliasGroupClick(Sender: TObject);
     procedure BDeleteAliasGroupClick(Sender: TObject);
     procedure DDirectoriesAfterScroll(DataSet: TDataSet);
+    procedure BRefreshClick(Sender: TObject);
+    procedure BStopClick(Sender: TObject);
   private
     { Private declarations }
     repclient:TModClient;
@@ -100,6 +120,7 @@ type
     procedure OnGetGroups(alist:TStringList);
     procedure OnGetUserGroups(alist:TStringList);
     procedure OnGetAliasGroups(alist:TStringList);
+    procedure OnGetTasks(astream:TMemoryStream);
   public
     { Public declarations }
   end;
@@ -146,6 +167,10 @@ begin
  GUserGroups.Caption:=SRpUserGroupsHint;
  BAddGroup.Caption:=SrpAdd;
  BDeleteGroup.Caption:=SRpDelete;
+
+ TabConnections.Caption:=Trans.LoadString(1275,TabConnections.Caption);
+ BRefresh.Caption:=Trans.LoadString(1149,BRefresh.Caption);
+ BStop.Caption:=Trans.LoadString(762,BSTop.Caption);
 end;
 
 
@@ -159,6 +184,7 @@ begin
  ComboPort.Enabled:=True;
  GServerInfo.Visible:=False;
  GUser.Visible:=True;
+ GTasks.Visible:=false;
 end;
 
 procedure TFMainVCL.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -329,6 +355,7 @@ begin
  GUser.Visible:=False;
  GServerInfo.Visible:=True;
  repclient.OnGetUsers:=OnGetUsers;
+ repclient.OnGetTasks:=OnGetTasks;
  repclient.OnGetAliases:=OnGetAliases;
  repclient.OnGetGroups:=OnGetGroups;
  repclient.OnGetAliasGroups:=OnGetAliasGroups;
@@ -432,6 +459,31 @@ begin
   exit;
  aliasname:=DDirectoriesAlias.AsString;
  repclient.GetAliasGroups(aliasname);
+end;
+
+procedure TFMainVCL.OnGetTasks(astream:TMemoryStream);
+begin
+ astream.Seek(0,soFromBeginning);
+ adata.Close;
+ adata.CreateDataset;
+ adata.LoadFromStream(astream);
+ GTasks.Visible:=true;
+end;
+
+procedure TFMainVCL.BRefreshClick(Sender: TObject);
+begin
+ repclient.GetTasks;
+end;
+
+procedure TFMainVCL.BStopClick(Sender: TObject);
+begin
+ if not adata.Active then
+  exit;
+ if (Not (adata.Eof and adata.bof)) then
+ begin
+  repclient.CloseTask(adataID.Value);
+  BRefreshClick(Self);
+ end;
 end;
 
 end.

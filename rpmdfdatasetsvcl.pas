@@ -211,6 +211,11 @@ end;
 
 procedure TFRpDatasetsVCL.SetDatabaseInfo(Value:TRpDatabaseInfoList);
 begin
+ ComboConnection.Width:=PanelBasic.Width-ComboConnection.Left-10;
+ ComboDataSource.Width:=PanelBasic.Width-ComboDataSource.Left-10;
+ ComboConnection.Anchors:=[akLeft,akTop,akRight];
+ ComboDataSource.Anchors:=[akLeft,akTop,akRight];
+
  report.DatabaseInfo.Assign(Value);
  browser.Report:=report;
  FillDatasets;

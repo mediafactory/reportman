@@ -30,7 +30,7 @@ uses
   IdBaseComponent, IdComponent,rpmdconsts,SyncObjs,
   IdTCPServer,
 {$IFNDEF USEVARIANTS}
-  Forms,Windows,FileCtrl,
+  FileCtrl,
 {$ENDIF}
   IdResourceStrings,
 {$IFDEF USEBDE}
@@ -48,8 +48,8 @@ uses
 {$IFNDEF DOTNETD}
  IdThreadMgr, IdThreadMgrDefault,
 {$ENDIF}
-  rptranslator,rpmdshfolder,IniFiles,rpmdprotocol,rpalias,
-  rpreport,rpbasereport,rppdfdriver, IdThreadMgrPool,rptypes,rpparams;
+  rptranslator,rpmdshfolder,IniFiles,rpmdprotocol,rpalias,dbclient,
+  rpreport,rpbasereport,rppdfdriver, IdThreadMgrPool,rptypes,rpparams, Db;
 
 const
  DEFAULT_MILIS_PROGRESS=10000;
@@ -57,7 +57,7 @@ const
 type
   TRpClient=class(TObject)  // Object holding data of client (see events)
     DNS: String;
-    Connected,                           { Time of connect }
+    ConnectionDate,                           { Time of connect }
     LastAction  : TDateTime;             { Time of last transaction }
     Thread      : TIdPeerThread;               { Pointer to thread }
     Auth:boolean;
@@ -75,15 +75,25 @@ type
     ASession:TSession;
     SessionNumber:integer;
 {$ENDIF}
+    FRpAliasLibs:TRpAlias;
+    procedure DoInit(fconfig:string);
     procedure OnProgress(Sender:TRpBaseReport;var docancel:boolean);
     procedure CreateReport;
   public
+    constructor Create;
     destructor Destroy;override;
+    property RpAliasLibs:TRpAlias read  FRpAliasLibs;
   end;
 
 
   Tmodserver = class(TDataModule)
     RepServer: TIdTCPServer;
+    adata: TClientDataSet;
+    adataID: TIntegerField;
+    adataLASTOPERATION: TDateTimeField;
+    adataCONNECTIONDATE: TDateTimeField;
+    adataUSERNAME: TStringField;
+    adataRUNNING: TBooleanField;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
     procedure RepServerExecute(AThread: TIdPeerThread);
@@ -96,7 +106,6 @@ type
     ThreadMan: TIdThreadMgrPool;
 {$ENDIF}
     Clients:TThreadList;
-    FRpAliasLibs:TRpAlias;
     FInitEvent:TEvent;
     EventName:String;
     FHostName:String;
@@ -111,13 +120,12 @@ type
     procedure GetIsSMP;
     procedure LoadReport(alist:TStringList;ActClient:TRpClient);
     function CheckPrivileges(username,aliasname:String):boolean;
-    procedure DoFillTreeDir(apath:String;alist:TStringList);
+    procedure DoFillTreeDir(apath:String;alist:TStringList;actclient:TRpClient);
   public
     smp:Boolean;
     disablesmp:Boolean;
     procedure InitConfig;
     procedure WriteConfig;
-    property RpAliasLibs:TRpAlias read  FRpAliasLibs;
     property LogFileName:TFileName read FLogFileName;
     property FileNameConfig:String read FFilenameconfig;
     { Public declarations }
@@ -137,21 +145,6 @@ begin
 {$IFDEF USEADO}
  CoInitialize(nil);
 {$ENDIF}
-{$IFDEF USEBDE}
- if Not Assigned(ASession) then
- begin
-  // If can not create session omit it
-  try
-   ASession:=Sessions.OpenSession('Session'+IntToStr(SessionNumber));
-   inc(SessionNumber);
-//   ASession.AutoSessionName:=True;
-//   ASession.Open;
-  except
-   ASession.free;
-   ASession:=nil;
-  end;
- end;
-{$ENDIF}
  if Assigned(CurrentReport) then
  begin
   CurrentReport.free;
@@ -169,6 +162,7 @@ end;
 
 destructor TRpClient.Destroy;
 begin
+ FRpAliasLibs.free;
  if Assigned(CurrentReport) then
  begin
   CurrentReport.Free;
@@ -309,7 +303,6 @@ begin
  ThreadMan.PoolSize:=10;
  RepServer.ThreadMgr:=ThreadMan;
 {$ENDIF}
- FRpAliasLibs:=TRpAlias.Create(Self);
  GetIsSMP;
  fport:=3060;
  Clients:=TTHreadList.Create;
@@ -387,7 +380,9 @@ begin
  inif:=TMemInifile.Create(filenameconfig);
  try
   ClearLists;
+{$IFDEF USEVARIANTS}
   inif.CaseSensitive:=false;
+{$ENDIF}
   fport:=inif.ReadInteger('CONFIG','TCPPORT',3060);
   disablesmp:=inif.ReadBool('CONFIG','DISABLESMP',false);
   inif.ReadSectionValues('USERS',lusers);
@@ -449,7 +444,6 @@ begin
   inif.free;
  end;
  // Read library configuration
- FRpAliasLibs.Connections.LoadFromFile(FFilenameConfig);
 end;
 
 // Write users and passwords and aliases
@@ -542,8 +536,6 @@ begin
  finally
   inif.free;
  end;
- // Write library configuration
- FRpAliasLibs.Connections.SaveToFile(FFilenameConfig);
 end;
 
 
@@ -593,13 +585,13 @@ begin
  end;
 end;
 
-procedure TModServer.DoFillTreeDir(apath:String;alist:TStringList);
+procedure TModServer.DoFillTreeDir(apath:String;alist:TStringList;actclient:TRpClient);
 begin
  if Length(apath)<1 then
   Raise Exception.Create(SRpAuthFailed);
  alist.clear;
  if apath[1]=':' then
-  RpAliasLibs.Connections.FillTreeDir(Copy(apath,2,Length(apath)),alist)
+  actclient.RpAliasLibs.Connections.FillTreeDir(Copy(apath,2,Length(apath)),alist)
  else
   rptypes.FillTreeDir(apath,alist);
 end;
@@ -640,7 +632,7 @@ begin
   reportname:=alist.Values[alist.Names[0]];
   reportname:=ChangeFileExt(reportname,'');
   reportname:=ExtractFilename(reportname);
-  astream:=RpAliasLibs.Connections.GetReportStream(Copy(apath,2,Length(apath)),reportname);
+  astream:=ActClient.RpAliasLibs.Connections.GetReportStream(Copy(apath,2,Length(apath)),reportname);
   try
    ActClient.CurrentReport.LoadFromStream(astream);
   finally
@@ -656,7 +648,9 @@ var
  templist,alist:TStringList;
  username,groupname,password:string;
  aliasname,apath:string;
+ taskid:integer;
  correct:boolean;
+ aplist:Tlist;
  index:integer;
  ActClient:TRpClient;
  i:integer;
@@ -1044,6 +1038,80 @@ begin
         alist.free;
        end;
       end;
+     repgetconnections:
+      begin
+       // Return connections information
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       adata.Close;
+       adata.CreateDataSet;
+       try
+        aplist:=RepServer.Threads.LockList;
+        try
+         for i:=0 to aplist.Count-1 do
+         begin
+          actclient:=TRpClient(TIdPeerThread(aplist.Items[i]).Data);
+          adata.Append;
+          try
+           adataID.Value:=TIdPeerThread(aplist.Items[i]).ThreadID;
+           adataLASTOPERATION.Value:=actclient.LastAction;
+           adataCONNECTIONDATE.Value:=actclient.ConnectionDate;
+           adataUSERNAME.Value:=actclient.username;
+           adataRUNNING.Value:=Not TIdPeerThread(aplist.Items[i]).Suspended;
+           adata.Post;
+          except
+           adata.Cancel;
+           raise;
+          end;
+         end;
+        finally
+         RepServer.Threads.UnlockList;
+        end;
+        astream.Clear;
+        adata.SaveToStream(astream,dfBinary);
+        astream.Seek(0,soFromBeginning);
+        CB:=GenerateBlock(repgetconnections,astream);
+        try
+         SendBlock(AThread.COnnection,CB);
+        finally
+         FreeBlock(CB);
+        end;
+       finally
+        adata.Close;
+       end;
+      end;
+     repdeleteconnection:
+      begin       
+       // Delete a group from alias access list
+       if Not ActClient.IsAdmin then
+        Raise Exception.Create(SRpAuthFailed);
+       alist:=TStringList.Create;
+       try
+        alist.LoadFromStream(astream);
+        if alist.count>0 then
+        begin
+         taskid:=StrToInt(alist.Strings[0]);
+         i:=0;
+         aplist:=RepServer.Threads.LockList;
+         try
+          while i<aplist.Count do
+          begin
+           if Integer(TIdPeerThread(aplist.Items[i]).ThreadID)=taskid then
+           begin
+            TIdPeerThread(aplist.Items[i]).Terminate;
+            aplist.Remove(aplist.Items[i]);
+            break;
+           end;
+           inc(i);
+          end;
+         finally
+          RepServer.Threads.UnLockList;
+         end;
+        end;
+       finally
+        alist.free;
+       end;
+      end;
      repgetaliasgroups:
       begin
        // Return alias access for a user
@@ -1287,7 +1355,7 @@ begin
         if Not CheckPrivileges(username,aliasname) then
          Raise Exception.Create(SRpAuthFailed+' - '+username+' - '+aliasname);
         apath:=LAliases.Values[alist.Names[0]];
-        DoFillTreeDir(apath,alist);
+        DoFillTreeDir(apath,alist,actclient);
         CB:=GenerateBlock(repgettree,alist);
         try
          SendBlock(AThread.COnnection,CB);
@@ -1327,9 +1395,10 @@ var
  NewClient: TRpClient;
 begin
  NewClient:=TRpClient.Create;
+ NewClient.DoInit(FFileNameConfig);
  NewClient.DNS:= AThread.Connection.LocalName;
- NewClient.Connected:=Now;
- NewClient.LastAction:=NewClient.Connected;
+ NewClient.ConnectionDate:=Now;
+ NewClient.LastAction:=NewClient.ConnectionDate;
  NewClient.Thread:=AThread;
  NewClient.Auth:=False;
  NewClient.FromPage:=1;
@@ -1352,6 +1421,9 @@ var
 begin
  ActClient:= TRpClient(AThread.Data);
  try
+{$IFDEF USEBDE}
+  ActClient.ASession.Close;
+{$ENDIF}
   Clients.LockList.Remove(ActClient);
  finally
   Clients.UnlockList;
@@ -1487,5 +1559,30 @@ begin
  end;
 end;
 
+
+procedure TRpClient.DoInit(fconfig:string);
+begin
+ FRpAliasLibs.Connections.LoadFromFile(fconfig);
+{$IFDEF USEBDE}
+ FRpAliasLibs.Connections.BDESession:=ASession;
+{$ENDIF}
+end;
+
+constructor TRpClient.Create;
+begin
+ FRpAliasLibs:=TRpAlias.Create(nil);
+{$IFDEF USEBDE}
+ // If can not create session omit it
+ try
+  ASession:=Sessions.OpenSession('Session'+IntToStr(SessionNumber));
+  inc(SessionNumber);
+//   ASession.AutoSessionName:=True;
+//   ASession.Open;
+ except
+  ASession.free;
+  ASession:=nil;
+ end;
+{$ENDIF}
+end;
 
 end.

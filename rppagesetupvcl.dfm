@@ -3,8 +3,8 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   Top = 108
   BorderStyle = bsDialog
   Caption = 'Dialog'
-  ClientHeight = 375
-  ClientWidth = 446
+  ClientHeight = 376
+  ClientWidth = 442
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -17,9 +17,9 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   object PControl: TPageControl
     Left = 0
     Top = 0
-    Width = 446
-    Height = 334
-    ActivePage = TabPage
+    Width = 442
+    Height = 335
+    ActivePage = TabOptions
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -289,7 +289,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 201
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 3
       end
       object BConfigure: TButton
@@ -352,7 +352,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Width = 201
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 1
       end
       object ComboPreview: TComboBox
@@ -436,8 +436,8 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object Panel1: TPanel
     Left = 0
-    Top = 334
-    Width = 446
+    Top = 335
+    Width = 442
     Height = 41
     Align = alBottom
     TabOrder = 1

@@ -38,6 +38,8 @@ type
     ComboSearchField: TComboBox;
     ComboSearchValue: TComboBox;
     LSearchValue: TLabel;
+    ComboFormat: TComboBox;
+    LPreferedFormat: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure BOkClick(Sender: TObject);
     procedure ComboTableDropDown(Sender: TObject);
@@ -78,6 +80,7 @@ begin
    Section.ExternalField:=Trim(dia.ComboReportField.Text);
    Section.ExternalSearchField:=Trim(dia.ComboSearchField.Text);
    Section.ExternalSearchValue:=Trim(dia.ComboSearchValue.Text);
+   Section.StreamFormat:=TRpStreamFormat(dia.ComboFormat.ItemIndex);
    if Length(Section.GetExternalDataDescription)>0 then
    begin
     section.ExternalFilename:='';
@@ -102,7 +105,12 @@ begin
  LSearchField.Caption:=TranslateStr(864,LSearchField.Caption);
  LSearchValue.Caption:=TranslateStr(865,LSearchValue.Caption);
 
-// SetInitialBounds;
+ LPreferedFormat.Caption:=SRpPreferedFormat;
+ ComboFormat.Items.Add(SRpStreamZLib);
+ ComboFormat.Items.Add(SRpStreamText);
+ ComboFormat.Items.Add(SRpStreamBinary);
+
+ SetInitialBounds;
 end;
 
 procedure TFRpExtSection.BOkClick(Sender: TObject);
@@ -130,6 +138,7 @@ begin
  ComboReportField.Text:=FSection.ExternalField;
  ComboSearchField.Text:=FSection.ExternalSearchField;
  ComboSearchValue.Text:=FSection.ExternalSearchValue;
+ ComboFormat.ItemIndex:=integer(FSection.StreamFormat);
 end;
 
 procedure TFRpExtSection.ComboTableDropDown(Sender: TObject);

@@ -21,4 +21,26 @@ object modserver: Tmodserver
     Left = 32
     Top = 12
   end
+  object adata: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 108
+    Top = 32
+    object adataID: TIntegerField
+      FieldName = 'ID'
+    end
+    object adataLASTOPERATION: TDateTimeField
+      FieldName = 'LASTOPERATION'
+    end
+    object adataCONNECTIONDATE: TDateTimeField
+      FieldName = 'CONNECTIONDATE'
+    end
+    object adataUSERNAME: TStringField
+      FieldName = 'USERNAME'
+      Size = 40
+    end
+    object adataRUNNING: TBooleanField
+      FieldName = 'RUNNING'
+    end
+  end
 end

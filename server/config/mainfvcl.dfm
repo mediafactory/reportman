@@ -14,9 +14,6 @@ object FMainVCL: TFMainVCL
   ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
-  DesignSize = (
-    548
-    436)
   PixelsPerInch = 96
   TextHeight = 13
   object LHost: TLabel
@@ -42,9 +39,6 @@ object FMainVCL: TFMainVCL
     Anchors = [akLeft, akTop, akRight]
     Caption = 'User information'
     TabOrder = 1
-    DesignSize = (
-      529
-      117)
     object LUserName: TLabel
       Left = 8
       Top = 24
@@ -96,9 +90,6 @@ object FMainVCL: TFMainVCL
     Caption = 'Server information'
     TabOrder = 2
     Visible = False
-    DesignSize = (
-      541
-      325)
     object BCloseConnection: TButton
       Left = 8
       Top = 285
@@ -113,14 +104,11 @@ object FMainVCL: TFMainVCL
       Top = 12
       Width = 525
       Height = 269
-      ActivePage = TabUsers
+      ActivePage = TabConnections
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 1
       object TabUsers: TTabSheet
         Caption = 'Users'
-        DesignSize = (
-          517
-          241)
         object GUsers: TGroupBox
           Left = 0
           Top = 0
@@ -129,9 +117,6 @@ object FMainVCL: TFMainVCL
           Anchors = [akLeft, akTop, akRight]
           Caption = 'Users'
           TabOrder = 0
-          DesignSize = (
-            513
-            105)
           object LUsers: TListBox
             Left = 4
             Top = 12
@@ -215,9 +200,6 @@ object FMainVCL: TFMainVCL
           Anchors = [akLeft, akTop, akRight]
           Caption = 'The user is member of this groups'
           TabOrder = 2
-          DesignSize = (
-            277
-            105)
           object LUserGroups: TListBox
             Left = 40
             Top = 20
@@ -326,9 +308,6 @@ object FMainVCL: TFMainVCL
       object TabAliases: TTabSheet
         Caption = 'Aliases'
         ImageIndex = 2
-        DesignSize = (
-          517
-          241)
         object GReportDirectories: TGroupBox
           Left = 0
           Top = 0
@@ -337,9 +316,6 @@ object FMainVCL: TFMainVCL
           Anchors = [akLeft, akTop, akRight]
           Caption = 'Report server directories'
           TabOrder = 0
-          DesignSize = (
-            517
-            133)
           object DBGrid1: TDBGrid
             Left = 4
             Top = 16
@@ -408,9 +384,6 @@ object FMainVCL: TFMainVCL
           Anchors = [akLeft, akTop, akRight]
           Caption = 'This alias is accessible by this user groups'
           TabOrder = 2
-          DesignSize = (
-            317
-            105)
           object LAliasGroups: TListBox
             Left = 40
             Top = 20
@@ -516,6 +489,51 @@ object FMainVCL: TFMainVCL
           end
         end
       end
+      object TabConnections: TTabSheet
+        Caption = 'Connections'
+        ImageIndex = 2
+        object PBotTasks: TPanel
+          Left = 0
+          Top = 212
+          Width = 517
+          Height = 29
+          Align = alBottom
+          TabOrder = 0
+          object BRefresh: TButton
+            Left = 8
+            Top = 4
+            Width = 125
+            Height = 21
+            Caption = 'Refresh'
+            TabOrder = 0
+            OnClick = BRefreshClick
+          end
+          object BStop: TButton
+            Left = 144
+            Top = 4
+            Width = 113
+            Height = 21
+            Caption = 'Close connection'
+            TabOrder = 1
+            OnClick = BStopClick
+          end
+        end
+        object GTasks: TDBGrid
+          Left = 0
+          Top = 0
+          Width = 517
+          Height = 212
+          Align = alClient
+          DataSource = SData
+          TabOrder = 1
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -11
+          TitleFont.Name = 'MS Sans Serif'
+          TitleFont.Style = []
+          Visible = False
+        end
+      end
     end
   end
   object ComboHost: TComboBox
@@ -581,5 +599,32 @@ object FMainVCL: TFMainVCL
     DataSet = DDirectories
     Left = 312
     Top = 272
+  end
+  object adata: TClientDataSet
+    Aggregates = <>
+    Params = <>
+    Left = 116
+    Top = 120
+    object adataID: TIntegerField
+      FieldName = 'ID'
+    end
+    object adataLASTOPERATION: TDateTimeField
+      FieldName = 'LASTOPERATION'
+    end
+    object adataCONNECTIONDATE: TDateTimeField
+      FieldName = 'CONNECTIONDATE'
+    end
+    object adataUSERNAME: TStringField
+      FieldName = 'USERNAME'
+      Size = 40
+    end
+    object adataRUNNING: TBooleanField
+      FieldName = 'RUNNING'
+    end
+  end
+  object SData: TDataSource
+    DataSet = adata
+    Left = 172
+    Top = 124
   end
 end
