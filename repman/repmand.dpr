@@ -56,9 +56,10 @@ uses
   rpwriter in '..\rpwriter.pas',
   rpdatainfo in '..\rpdatainfo.pas',
   rpparams in '..\rpparams.pas',
+  fsectionint in 'fsectionint.pas' {FSectionProps},
   rpfparams in '..\rpfparams.pas' {FRpParams},
-  rpdbxconfig in '..\rpdbxconfig.pas' {FDBXConfig};
-
+  rpdbxconfig in '..\rpdbxconfig.pas' {FDBXConfig},
+  rpgraphutils in '..\rpgraphutils.pas' {FRpGraphProgres};
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -85,7 +86,8 @@ uses
   rpdatainfo in '../rpdatainfo.pas',
   rpparams in '../rpparams.pas',
   rpfparams in '../rpfparams.pas' {FRpParams},
-  rpdbxconfig in '../rpdbxconfig.pas' {FDBXConfig};
+  rpdbxconfig in '../rpdbxconfig.pas' {FDBXConfig},
+  rpgraphutils in '../rpgraphutils.pas' {FRpGraphProgres};
 {$ENDIF}
 
 

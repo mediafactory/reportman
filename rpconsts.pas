@@ -303,6 +303,7 @@ resourcestring
   SRpUndefinedPaintInterface='Undefined paint interface';
   SRpNoDriverName='No drivername assigned to connection: ';
 
+  SRpIncorrectCalltoDeawGrid='Incorrect call to DrawBitmapGrid';
    {  SIInformenotrobat = 'El informe no fue encontrado: ';
   SITitolInforme = 'Nuevo informe';
   SIObrirNovaLlibreria = 'Nueva biblioteca de informes';

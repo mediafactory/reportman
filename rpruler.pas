@@ -52,6 +52,7 @@ type
    property RType:TRprulertype read FRType Write SetRType default rVertical;
    property Align;
    property Metrics:TRprulermetric read FMetrics write SetMetrics default rCms;
+   property Visible;
   end;
 
 
@@ -303,7 +304,7 @@ begin
   begin
    i:=0;
    Clength:=windowwidth;
-   CHeight:=0;
+   CHeight:=windowheight;
    while (i<Clength) do
    begin
     value:=i Mod 1000;
@@ -316,17 +317,17 @@ begin
       QPainter_SetWindow(han,rect.left,rect.top,windowwidth
        ,windowheight);
       Canvas.MoveTo(i,CHeight);
-      Canvas.LineTo(i,CHeight+h1);
+      Canvas.LineTo(i,CHeight-h1);
      end;
     500:
      begin
       Canvas.MoveTo(i,CHeight);
-      Canvas.LineTo(i,CHeight+h2);
+      Canvas.LineTo(i,CHeight-h2);
      end;
     else
      begin
       Canvas.MoveTo(i,CHeight);
-      Canvas.LineTo(i,CHeight+h3);
+      Canvas.LineTo(i,CHeight-h3);
      end;
     end;
     i:=i+100;
@@ -336,7 +337,7 @@ begin
   begin
    i:=0;
    Clength:=windowheight;
-   CHeight:=0;
+   CHeight:=windowwidth;
    while (i<Clength) do
    begin
     value:=i Mod 1000;
@@ -349,17 +350,17 @@ begin
       QPainter_SetWindow(han,rect.left,rect.top,windowwidth
        ,windowheight);
       Canvas.MoveTo(CHeight,i);
-      Canvas.LineTo(CHeight+h1,i);
+      Canvas.LineTo(CHeight-h1,i);
      end;
     500:
      begin
       Canvas.MoveTo(CHeight,i);
-      Canvas.LineTo(CHeight+h2,i);
+      Canvas.LineTo(CHeight-h2,i);
      end;
     else
      begin
       Canvas.MoveTo(CHeight,i);
-      Canvas.LineTo(CHeight+h3,i);
+      Canvas.LineTo(CHeight-h3,i);
      end;
     end;
     i:=i+100;

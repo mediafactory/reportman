@@ -22,29 +22,35 @@ interface
 
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  QComCtrls,rpreport,rpsubreport,rpconsts, QMenus, QTypes,rpsection;
+  QComCtrls,rpreport,rpsubreport,rpconsts, QMenus, QTypes,
+  rpsection,rpobjinsp;
 
 type
   TFRpStructure = class(TFrame)
     RView: TTreeView;
     procedure Expand1Click(Sender: TObject);
+    procedure RViewClick(Sender: TObject);
   private
     { Private declarations }
     FReport:TRpReport;
+    FObjInsp:TFObjInsp;
     procedure SetReport(Value:TRpReport);
     procedure CreateInterface;
   public
     { Public declarations }
+    designframe:TControl;
     function FindSelectedSubreport:TRpSubreport;
     function FindSelectedObject:TObject;
     procedure DeleteSelectedNode;
     property Report:TRpReport read FReport write SetReport;
+    property ObjInsp:TFObjInsp read FObjInsp write FObjInsp;
   end;
 
 implementation
 
-
 {$R *.xfm}
+
+uses fdesign;
 
 procedure TFRpStructure.SetReport(Value:TRpReport);
 begin
@@ -136,6 +142,11 @@ begin
   selsubreport:=FindSelectedSubreport;
   selsubreport.FreeSection(TRpSection(secorsub));
  end;
+end;
+
+procedure TFRpStructure.RViewClick(Sender: TObject);
+begin
+ TFDesignFrame(designframe).UpdateSelection;
 end;
 
 end.

@@ -1,16 +1,32 @@
 object FDesignFrame: TFDesignFrame
   Left = 0
   Top = 0
-  Width = 389
-  Height = 283
+  Width = 451
+  Height = 304
+  Align = alClient
   TabOrder = 0
-  object ScrollBox1: TScrollBox
+  object SectionScrollBox: TScrollBox
     Left = 0
     Top = 0
-    Width = 389
-    Height = 283
+    Width = 451
+    Height = 304
     Align = alClient
     BorderStyle = bsNone
     TabOrder = 0
+    object TopRuler: TRpRuler
+      Left = 20
+      Top = 0
+      Width = 389
+      Height = 20
+      RType = rHorizontal
+      Visible = False
+    end
+    object LeftRuler: TRpRuler
+      Left = 0
+      Top = 20
+      Width = 20
+      Height = 283
+      Visible = False
+    end
   end
 end

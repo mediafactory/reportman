@@ -3,14 +3,6 @@ object FObjInsp: TFObjInsp
   Top = 0
   Width = 375
   Height = 297
-  VertScrollBar.Range = 229
-  HorzScrollBar.Range = 297
+  Align = alClient
   TabOrder = 0
-  object StringGrid1: TStringGrid
-    Left = 80
-    Top = 64
-    Width = 217
-    Height = 165
-    TabOrder = 0
-  end
 end

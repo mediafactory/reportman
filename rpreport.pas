@@ -30,7 +30,11 @@ interface
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpconsts,
  rpdatainfo,rpparams;
 
-
+const
+ // 1 cms=574
+ // 0.5 cms=287
+ CONS_DEFAULT_GRIDWIDTH=115;
+ CONS_DEFAULT_GRIDCOLOR=$FF0000;
 type
  TRpReport=class;
  TRpSubReportListItem=class;
@@ -71,6 +75,12 @@ type
    FDataInfo:TRpDataInfoList;
    FDatabaseInfo:TRpDatabaseInfoList;
    FParams:TRpParamList;
+   FGridVisible:Boolean;
+   FGridEnabled:Boolean;
+   FGridColor:integer;
+   FGridLines:Boolean;
+   FGridWidth:integer;
+   FGridHeight:integer;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -97,6 +107,13 @@ type
    // Print functions
    procedure PrintAll;
   published
+   // Grid options
+   property GridVisible:Boolean read FGridVisible write FGridVisible default true;
+   property GridLines:Boolean read FGridLines write FGridLines default false;
+   property GridEnabled:Boolean read FGridEnabled write FGridEnabled default true;
+   property GridColor:integer read FGridColor write FGridColor default CONS_DEFAULT_GRIDCOLOR;
+   property GridWidth:integer read FGridWidth write FGridWidth default CONS_DEFAULT_GRIDWIDTH;
+   property GridHeight:integer read FGridHeight write FGridHeight default CONS_DEFAULT_GRIDWIDTH;
    // PageSetup properties
    property PageOrientation:TRpOrientation read FPageOrientation
     write FPageOrientation default rpOrientationDefault;
@@ -134,6 +151,13 @@ begin
  FPageWidth:=0;
  FPageheight:=0;
  FPreviewStyle:=spWide;
+ // Def values of grid
+ FGridVisible:=True;
+ FGridEnabled:=True;
+ FGridColor:=CONS_DEFAULT_GRIDCOLOR;
+ FGridLines:=False;
+ FGridWidth:=CONS_DEFAULT_GRIDWIDTH;
+ FGridHeight:=CONS_DEFAULT_GRIDWIDTH;
  // Subreports
  FSubReports:=TRpSubReportList.Create(Self);
  // Data Info

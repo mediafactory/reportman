@@ -30,6 +30,8 @@ type
    FSections:TRpSectionList;
    // Methots for writing internal indexes
    procedure SetSections(Value:TRpSectionList);
+   function GetDetailCount:integer;
+   function GetDetail:integer;
   protected
   public
    // Creation and destruction
@@ -46,6 +48,8 @@ type
    procedure AddDetail;
   published
    property Sections:TRpSectionList read FSections write SetSections;
+   property FirstDetail:integer read GetDetail;
+   property DetailCount:integer read GetDetailCount;
  end;
 
 implementation
@@ -332,6 +336,26 @@ begin
  end;
 end;
 
+function TRpSubReport.GetDetailCount:integer;
+begin
+ Result:=0;
+end;
 
+function TRpSubReport.GetDetail:integer;
+var
+ i:integer;
+begin
+ Result:=-1;
+ i:=0;
+ while i<Sections.Count do
+ begin
+  if Sections.Items[i].Section.SectionType=rpsecdetail then
+  begin
+   Result:=i;
+   break;
+  end;
+  inc(i);
+ end;
+end;
 
 end.

@@ -23,8 +23,8 @@ interface
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
-  rpconsts,rptypes, QExtCtrls,frpstruc, rplastsav,rpsubreport,rpfparams;
-
+  rpconsts,rptypes, QExtCtrls,frpstruc, rplastsav,rpsubreport,
+  rpobinsint,rpfparams,fdesign,rpobjinsp;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;
@@ -104,6 +104,8 @@ type
   private
     { Private declarations }
     report:TRpReport;
+    fdesignframe:TFDesignFrame;
+    fobjinsp:TFObjInsp;
     lastsaved:TMemoryStream;
     configfile:string;
     freportstructure:TFRpStructure;
@@ -271,6 +273,10 @@ begin
  Caption:=SRpRepman;
 
  freportstructure.free;
+ fdesignframe.free;
+ fobjinsp.free;
+ fobjinsp:=nil;
+ fdesignframe:=nil;
  freportstructure:=nil;
  mainscrollbox.Visible:=false;
 end;
@@ -297,14 +303,25 @@ begin
  else
   Caption:=SRpRepman+'-'+filename;
  // Create the report structure frame
+ fobjinsp:=TFObjInsp.Create(Self);
+ fobjinsp.Parent:=leftpanel;
  freportstructure:=TFRpStructure.Create(Self);
  freportstructure.Align:=alTop;
- freportstructure.Report:=report;
+ freportstructure.Parent:=leftPanel;
+ fdesignframe:=TFDesignFrame.Create(Self);
+ fobjinsp.DesignFrame:=fdesignframe;
+ fdesignframe.Parent:=MainScrollBox;
+ fdesignframe.freportstructure:=freportstructure;
+ freportstructure.designframe:=fdesignframe;
+
+ fdesignframe.objinsp:=fobjinsp;
+ freportstructure.objinsp:=fobjinsp;
+ freportstructure.report:=report;
  freportstructure.RView.Selected:=freportstructure.RView.Items.Item[0];
  freportstructure.RView.FullExpand;
- freportstructure.Parent:=leftPanel;
- mainscrollbox.Visible:=true;
+ fdesignframe.report:=report;
 
+ mainscrollbox.Visible:=true;
 end;
 
 procedure TFMainf.ASaveasExecute(Sender: TObject);

@@ -39,11 +39,11 @@ type
  TRpSizeInterface=class(TGraphicControl)
   private
   protected
-   fprintitem:TRpCommonComponent;
    FSelected:boolean;
    procedure SetSelected(Value:boolean);
   protected
-   procedure Paint;override;                             
+   fprintitem:TRpCommonComponent;
+   procedure Paint;override;
    procedure DrawSelected;
    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
@@ -99,6 +99,7 @@ type
    FRectangle3:TRpRectangle;
    FRectangle4:TRpRectangle;
    FControl:TControl;
+   FAllowOverSize:boolean;
    procedure CalcNewCoords(var NewLeft,
     NewTop,NewWidth,NewHeight,X,Y:integer);
   protected
@@ -116,17 +117,22 @@ type
 
  TRpSizeModifier=class(TComponent)
   private
-   SizeOnly:boolean;
+   FAllowOverSize:boolean;
    FBlacks:array[0..3] of TRpBlackControl;
    FControl:TControl;
    FOnSizeChange:TNotifyEvent;
+   FOnlysize:boolean;
    procedure SetControl(Value:TControl);
+   procedure SetOnlySize(Value:Boolean);
+   procedure SetAllowOversize(Value:Boolean);
   public
    procedure UpdatePos;
    constructor Create(AOwner:TComponent);override;
   published
    property Control:TControl read FControl write SetControl;
    property OnSizeChange:TNotifyEvent read FOnSizeChange write FOnSizeChange;
+   property OnlySize:Boolean read FOnlySize write SetOnlySize default false;
+   property AllowOverSize:Boolean read FAllowOverSize write SetAllowOverSize default false;
   end;
 
  function twipstopixels(ATwips:integer):integer;
@@ -182,6 +188,8 @@ end;
 
 procedure TRpSizeInterface.SetProperty(pname:string;value:string);
 begin
+ if length(value)<1 then
+  exit;
  if pname=SRpSWidth then
  begin
   fprintitem.Width:=gettwipsfromtext(value);
@@ -190,6 +198,7 @@ begin
  if pname=SRpSHeight then
  begin
   fprintitem.Height:=gettwipsfromtext(value);
+  exit;
  end;
  Raise Exception.Create(SRpPropertyNotFound+pname);
 end;
@@ -204,6 +213,7 @@ begin
  if pname=SRpSHeight then
  begin
   value:=gettextfromtwips(printitem.Height);
+  exit;
  end;
  Raise Exception.Create(SRpPropertyNotFound+pname);
 end;
@@ -242,6 +252,8 @@ end;
 
 procedure TRpSizePosInterface.SetProperty(pname:string;value:string);
 begin
+ if length(value)<1 then
+  exit;
  if pname=SRpSTop then
  begin
   TRpCommonPosComponent(fprintitem).PosY:=gettwipsfromtext(value);
@@ -359,6 +371,10 @@ procedure TRpSizeModifier.UpdatePos;
 var
  i:integer;
 begin
+ if Not Assigned(FCOntrol) then
+  exit;
+ if Not Assigned(FCOntrol.Parent) then
+  exit;
  for i:=0 to 3 do
  begin
   FBlacks[i].Visible:=false;
@@ -376,9 +392,8 @@ begin
  FBlacks[2].Top:=FControl.Top+FControl.Height-CONS_MODIWIDTH div 2;
  FBlacks[3].Left:=FControl.Left+FControl.Width-CONS_MODIWIDTH div 2;
  FBlacks[3].Top:=FControl.Top+FControl.Height-CONS_MODIWIDTH div 2;
-
- if SizeOnly then
-  FBlacks[0].Visible:=true
+ if FOnlySize then
+  FBlacks[3].Visible:=true
  else
  begin
   for i:=0 to 3 do
@@ -665,10 +680,13 @@ begin
     NewLeft:=0;
   if NewTop<0 then
    NewTop:=0;
-  if NewLeft+NewWidth>Parent.Width then
-   NewWidth:=Parent.Width-NewLeft-1;
-  if NewTop+NewHeight>Parent.Height then
-   NewHeight:=Parent.Height-NewTop-1;
+  if Not FAllowOverSize then
+  begin
+   if NewLeft+NewWidth>Parent.Width then
+    NewWidth:=Parent.Width-NewLeft-1;
+   if NewTop+NewHeight>Parent.Height then
+    NewHeight:=Parent.Height-NewTop-1;
+  end;
 end;
 
 
@@ -725,5 +743,21 @@ begin
  end;
 end;
 
+procedure TRpSizeModifier.SetOnlySize(Value:Boolean);
+begin
+ FOnlySize:=Value;
+ Control:=FControl;
+end;
+
+procedure TRpSizeModifier.SetAllowOverSize(Value:Boolean);
+var
+ i:integer;
+begin
+ FAllowOverSize:=Value;
+ for i:=0 to 3 do
+ begin
+  FBlacks[i].FAllowOverSize:=Value;
+ end;
+end;
 
 end.
