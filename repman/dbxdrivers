@@ -90,7 +90,7 @@ LocaleCode=0000
 Informix TransIsolation=ReadCommited
 
 
-[OpenOdbc]
+[OpenODBC]
 GetDriverFunc=getSQLDriverODBC
 VendorLib=libodbc.so
 LibraryName=libdbxoodbc.so
