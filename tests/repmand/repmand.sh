@@ -17,7 +17,7 @@ export LC_NUMERIC=en_US
 #then run ldconfig (as root)
 
 # To enable kprinter dialog at preview
-export REPMANUSEKPRINTER=true
+#export REPMANUSEKPRINTER=true
 export LD_ASSUME_KERNEL=2.4.21
 export LD_LIBRARY_PATH=:$PWD:$LD_LIBRARY_PATH
 ./repmand $*

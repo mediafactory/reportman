@@ -34,9 +34,11 @@ uses
 {$ENDIF}
 
 {$IFDEF LINUX}
+  Libc,
   LibcExec in '../../LibcExec.pas',
   rpqtdriver in '../../../rpqtdriver.pas',
   rpmetafile in '../../../rpmetafile.pas',
+  rppdfdriver in '../../../rppdfdriver.pas',
   rptypes in '../../../rptypes.pas',
   rpfmainmetaview in '../../../rpfmainmetaview.pas',
   rpmdconsts in '../../../rpmdconsts.pas';
@@ -58,6 +60,9 @@ begin
  Writeln(SRpMetaPrint9);
  Writeln(SRpPrintRep9);
  Writeln(SRpPrintRep10);
+{$IFDEF LINUX}
+ Writeln(SRpUseKPrinter);
+{$ENDIF}
  Writeln(SRpCommandLineStdIN);
 end;
 
@@ -76,7 +81,13 @@ var
  printerindex:TRpPrinterSelect;
  preview,pdialog,doprint:boolean;
  memstream:TMemoryStream;
+{$IFDEF LINUX}
+ usekprinter:Boolean;
+{$ENDIF} 
 begin
+{$IFDEF LINUX}
+ usekprinter:=GetEnvironmentVariable('REPMANUSEKPRINTER')='true';
+{$ENDIF}
  try
   { TODO -oUser -cConsole Main : Insert code here }
   isstdin:=false;
@@ -116,6 +127,11 @@ begin
       if ParamStr(indexparam)='-stdin' then
        isstdin:=true
       else
+{$IFDEF LINUX}
+      if ParamStr(indexparam)='-kprinter' then
+       usekprinter:=true
+      else
+{$ENDIF}
       if ParamStr(indexparam)='-from' then
       begin
        inc(indexparam);
@@ -205,7 +221,16 @@ begin
       begin
        doprint:=true;
        if pdialog then
-        doprint:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+{$IFDEF LINUX}
+        if usekprinter then
+        begin
+         doprint:=False;
+         // Use kprinter to print the file
+         PrintMetafileUsingKPrinter(metafile);
+        end
+        else
+{$ENDIF}
+         doprint:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
        if doprint then
        begin
         if PrintMetafile(metafile,filename,ShowProgress,allpages,

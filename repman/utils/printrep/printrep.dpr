@@ -56,6 +56,7 @@ uses
   rpsecutil in '../../../rpsecutil.pas',
   rprfparams in '../../../rprfparams.pas',
   rpmetafile in '../../../rpmetafile.pas',
+  rppdfdriver in '../../../rppdfdriver.pas',
   rpqtdriver in '../../../rpqtdriver.pas';
 {$ENDIF}
 
@@ -94,12 +95,15 @@ begin
  Writeln(SRpPrintRep20);
  Writeln(SRpPrintRep24);
  Writeln(SRpPrintRep25);
+{$IFDEF LINUX}
+ Writeln(SRpUseKPrinter);
+{$ENDIF}
  Writeln(SRpParseParamsH);
  Writeln(SRpCommandLineStdIN);
 end;
 
 var
- metafile:TRpReportMetafile;
+ metafile:TRpMetafileReport;
  isstdin:Boolean;
  memstream:TMemoryStream;
  bmpresx,bmpresy:integer;
@@ -164,6 +168,11 @@ begin
     if ParamStr(indexparam)='-u' then
      compress:=false
     else
+{$IFDEF LINUX}
+    if ParamStr(indexparam)='-kprinter' then
+     usekprinter:=true
+    else
+{$ENDIF}
     if ParamStr(indexparam)='-stdin' then
      isstdin:=true
     else
@@ -315,7 +324,7 @@ begin
       doprint:=rprfparams.SHowUserParams(report.Params);
      if not preview then
       if pdialog then
-{$IDEF LINUX}
+{$IFDEF LINUX}
        if usekprinter then
        begin
         doprint:=False;

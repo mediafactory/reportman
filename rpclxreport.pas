@@ -33,7 +33,7 @@ uses Classes,Sysutils,rpreport,
 {$IFDEF LINUX}
  Libc,
 {$ENDIF}
- rpalias,rpfmainmetaview,rppagesetup;
+ rpalias,rpfmainmetaview,rppagesetup,rppdfdriver;
 
 type
  // rpDriverGDI is ignored in Linux

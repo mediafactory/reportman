@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.2i';
+ RM_VERSION='2.2j';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
@@ -956,6 +956,7 @@ var
   SRpTruncatedPDF417:WideString='Truncate PDF417';
   SRpPrintRep25:WideString='         -printer printername  Select printer before print';
   SRpSetLanguage:WideString='Sets the language for the report at runtime';
+  SRpUseKPrinter:WideString='         -kprinter  Use kprinter interface';
 implementation
 
 uses rptranslator;

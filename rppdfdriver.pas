@@ -879,7 +879,6 @@ procedure PrintMetafileUsingKPrinter(metafile:TRpMetafileReport);
 var
  afilename:String;
  destfilename:string;
- astring:String;
  alist:TStringList;
 begin
  // use a temp file
@@ -899,9 +898,9 @@ begin
    alist.Add('kprinter');
    alist.Add(destfilename);
    try
-    ExecuteSystemApp(alist,true);
+    ExecuteSystemApp(alist,false);
    finally
-    DeleteFile(destfilename);
+//    DeleteFile(destfilename);
    end;
   finally
    DeleteFile(afilename);
