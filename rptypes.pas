@@ -213,7 +213,7 @@ function GetPathName(astring:string):string;
 function GetFirstName(astring:string):string;
 {$IFDEF LINUX}
 procedure  ObtainPrinters(alist:TStrings);
-procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect);
+procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title:String);
 {$ENDIF}
 
 
@@ -607,16 +607,16 @@ var
 begin
  CheckLoadedPrinterConfig;
  adefault:=0;
- if printerindex=pRpCharacterprinter
+ if printerindex=pRpCharacterprinter then
   adefault:=2;
- adefault:=printerconfigfile.ReadInteger('PrinterEscapeStyle','Printer'+IntToStr(integer(printerindex)),adefault));
+ adefault:=printerconfigfile.ReadInteger('PrinterEscapeStyle','Printer'+IntToStr(integer(printerindex)),adefault);
  Result:=TRpPrinterEscapeStyle(adefault);
 end;
 
 function GetPrinterEscapeStyleDriver(printerindex:TRpPrinterSelect):String;
 begin
  CheckLoadedPrinterConfig;
- Result:=printerconfigfile.ReadString('PrinterDriver','Printer'+IntToStr(integer(printerindex)),'EpsonFX');
+ Result:=printerconfigfile.ReadString('PrinterDriver','Printer'+IntToStr(integer(printerindex)),'EPSON');
 end;
 
 
@@ -1845,7 +1845,7 @@ end;
 
 
 {$IFDEF LINUX}
-procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect);
+procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title:String);
 var
  printername:string;
  printernamecommand:string;
@@ -1886,7 +1886,15 @@ begin
    params.Add('-P');
    params.Add(printername);
   end;
+  // Remove after print
+  params.Add('-r');
   params.Add('-l');
+  Title:=Trim(Title);
+  if Length(Title)>0 then
+  begin
+   params.Add('-J');
+   params.Add(Title);
+  end;
   params.Add(afilename);
   // Creates a fork, and provides the input from standard
   // input to lpr command

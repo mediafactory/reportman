@@ -29,7 +29,9 @@ exports
  rp_close,
  rp_lasterror,
  rp_print,
- rp_preview;
+ rp_preview,
+ rp_previewremote,
+ rp_printremote;
 
 type
  Tobjexp=class(TObject)

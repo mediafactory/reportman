@@ -28,7 +28,11 @@ interface
 uses
   SysUtils, Classes, IdThreadMgr, IdThreadMgrDefault,
   IdBaseComponent, IdComponent,rpmdconsts,SyncObjs,
-  IdTCPServer,Forms,Windows,FileCtrl,IdResourceStrings,
+  IdTCPServer,
+{$IFNDEF USEVARIANTS}
+  Forms,Windows,FileCtrl,
+{$ENDIF}
+  IdResourceStrings,
 {$IFDEF USEBDE}
   dbtables,
 {$ENDIF}

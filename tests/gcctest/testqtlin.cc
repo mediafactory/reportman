@@ -34,6 +34,11 @@ int main(void)
   
   rp_close(hreport);
  }
+ if (0!=rp_previewremote("localhost",3060,"admin","","test","sample4.rep","Test"))
+ {
+  printf(rp_lasterror());
+  printf("\n");
+ }
  printf("\n");
 }
 

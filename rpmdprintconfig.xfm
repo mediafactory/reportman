@@ -3,8 +3,6 @@ object FRpPrinterConfig: TFRpPrinterConfig
   Top = 137
   Width = 523
   Height = 451
-  VertScrollBar.Range = 409
-  HorzScrollBar.Range = 501
   ActiveControl = BOK
   AutoScroll = False
   Caption = 'Printers configuration'

@@ -789,7 +789,7 @@ begin
   SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
-  SendTextToPrinter(S,metafile.PrinterSelect);
+  SendTextToPrinter(S,metafile.PrinterSelect,tittle);
 {$ENDIF}
  end
  else
@@ -1069,7 +1069,7 @@ begin
   SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
-  SendTextToPrinter(S,report.PrinterSelect);
+  SendTextToPrinter(S,report.PrinterSelect,tittle);
 {$ENDIF}
  finally
   report.OnProgress:=oldprogres;
@@ -1160,7 +1160,7 @@ begin
     SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
-    SendTextToPrinter(S,report.PrinterSelect);
+    SendTextToPrinter(S,report.PrinterSelect,Caption);
 {$ENDIF}
    end
    else
@@ -1219,7 +1219,7 @@ begin
       SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
-     SendTextToPrinter(S,report.PrinterSelect);
+     SendTextToPrinter(S,report.PrinterSelect,Caption);
 {$ENDIF}
      end
      else

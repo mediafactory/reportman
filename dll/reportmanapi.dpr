@@ -25,7 +25,8 @@ exports
  rp_open,
  rp_execute,
  rp_close,
- rp_lasterror;
+ rp_lasterror,
+ rp_executeremote;
 
 begin
  // We want to map Linux Signals to Kylix Exceptions, so
