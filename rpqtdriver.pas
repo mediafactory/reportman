@@ -756,7 +756,7 @@ begin
    Application.OnIdle:=dia.oldonidle;
   end;
  finally
-
+  dia.free;
  end;
 end;
 

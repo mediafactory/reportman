@@ -22,12 +22,10 @@ object Form1: TForm1
     TabOrder = 0
     OnClick = Button1Click
   end
-  object CLXReport1: TCLXReport
-    Filename = 
-      'C:\prog\toni\cvsroot\reportman\reportman\tests\clxreport\sample4' +
-      '.rep'
+  object VCLReport1: TVCLReport
+    Filename = 'sample4.rep'
     Title = 'Untitled'
-    Left = 124
-    Top = 76
+    Left = 32
+    Top = 60
   end
 end

@@ -258,6 +258,7 @@ procedure TFRpVPreview.FormDestroy(Sender: TObject);
 begin
  report.EndPrint;
  bitmap.free;
+ gdidriver.free;
 end;
 
 procedure TFRpVPreview.AFirstExecute(Sender: TObject);

@@ -257,6 +257,7 @@ procedure TFRpPreview.FormDestroy(Sender: TObject);
 begin
  report.EndPrint;
  bitmap.free;
+ qtdriver.free;
 end;
 
 procedure TFRpPreview.AFirstExecute(Sender: TObject);

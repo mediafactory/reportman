@@ -4,12 +4,12 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, rpclxreport, StdCtrls;
+  Dialogs, StdCtrls, rpcompobase, rpvclreport;
 
 type
   TForm1 = class(TForm)
-    CLXReport1: TCLXReport;
     Button1: TButton;
+    VCLReport1: TVCLReport;
     procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
@@ -26,7 +26,7 @@ implementation
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
- CLXReport1.Execute;
+ VCLReport1.Execute;
 end;
 
 end.
