@@ -354,6 +354,8 @@ begin
   if Length(drivername)<1 then
    drivername:=FSQLConnection.params.Values['DriverName'];
   if Length(drivername)<1 then
+   drivername:=FSQLConnection.params.Values['Drivername'];
+  if Length(drivername)<1 then
    Raise Exception.Create(SRpNoDriverName+conname);
   funcname:=ConAdminObj.DriverConfig.ReadString(drivername,'GetDriverFunc','');
   ConAdmin.GetDriverLibNames(drivername,LibraryName,VendorLib);

@@ -4,7 +4,7 @@ interface
 
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  QStdCtrls,rpreport,rpmetafile,rpprintrep, QComCtrls,rpqtdriver, QExtCtrls,
+  QStdCtrls,rpreport,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,
   QActnList, QImgList,QPrinters;
 
 type

@@ -22,7 +22,7 @@ unit rpqtdriver;
 interface
 
 uses classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
- rpmunits,QPrinters;
+ rpmunits,QPrinters,QDialogs;
 
 
 type
@@ -56,6 +56,8 @@ procedure TRpQtDriver.NewDocument(report:TrpMetafileReport);
 begin
  if ToPrinter then
  begin
+  printer.Title:='Untitled';
+  printer.SetPrinter(Printer.Printers.Strings[0]);
   printer.BeginDoc;
   intdpix:=printer.XDPI;
   intdpiy:=printer.YDPI;
@@ -151,7 +153,9 @@ begin
     // Switch to device points
     x:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
     y:=round(obj.Top*dpiy/TWIPS_PER_INCHESS);
-    Canvas.TextOut(x,y,obj.Text);
+    Canvas.Font.Name:=Obj.FontName;
+    Canvas.Font.Color:=Obj.FontColor;
+    Canvas.TextOut(x,y,obj.Text)
    end;
   rpMetaDraw:
    begin
