@@ -127,7 +127,9 @@ type
     procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
     procedure Loaded;override;
     function NextSection:boolean;
-    procedure NextRecord;
+    // Skip to next record returns true if a group has
+    // changed and sets internally CurrentGroup
+    function NextRecord(grouprestore:boolean):boolean;
   public
    printing:boolean;
    CurrentSubReportIndex:integer;
@@ -636,6 +638,8 @@ begin
 end;
 
 procedure TRpReport.EndPrint;
+var
+ i:integer;
 begin
  DeActivateDatasets;
  FEvaluator.Free;
@@ -643,16 +647,21 @@ begin
  section:=nil;
  subreport:=nil;
  printing:=false;
+ for i:=0 to SubReports.Count-1 do
+ begin
+  Subreports.Items[i].Subreport.LastRecord:=false;
+ end;
 end;
 
 
-procedure TRpReport.NextRecord;
+function TRpReport.NextRecord(grouprestore:boolean):boolean;
 var
  subrep:TRpSubreport;
  index:integeR;
  data:TRpDataset;
  docancel:boolean;
 begin
+ Result:=false;
  subrep:=Subreports.Items[CurrentSubreportIndex].SubReport;
  if Length(Trim(subrep.Alias))<1 then
   subrep.Lastrecord:=True
@@ -663,6 +672,28 @@ begin
    Raise TRpReportException.Create(SRPAliasNotExists+subrep.alias,subrep);
   data:=DataInfo.Items[index].CachedDataset;
   data.DoNext;
+  // If its the last record no group change
+  if not grouprestore then
+  begin
+   subrep.LastRecord:=data.Eof;
+  end;
+  if Not Subrep.LastRecord then
+  begin
+   if not grouprestore then
+   begin
+    CurrentGroup:=subrep.GroupChanged;
+    if CurrentGroup>0 then
+    begin
+     Result:=true;
+     data.DoPrior;
+    end
+    else
+     subrep.SubReportChanged(rpDataChange);
+   end
+   else
+     subrep.SubReportChanged(rpDataChange);
+  end;
+
   inc(FRecordCount);
   if Assigned(FOnProgress) then
   begin
@@ -689,9 +720,6 @@ begin
      Raise Exception.Create(SRpOperationAborted);
    end;
   end;
-  subrep.LastRecord:=data.Eof;
-  if not data.eof then
-   subrep.SubReportChanged(rpDataChange);
  end;
 end;
 
@@ -700,14 +728,85 @@ var
  subrep:TRpSubreport;
  sec:TRpSection;
  oldsectionindex:integer;
+ lastdetail,firstdetail:integer;
 begin
- Result:=True;
  section:=nil;
  oldsectionindex:=currentsectionindex;
+
+
  // Check the condition
  while CurrentSubReportIndex<Subreports.count do
  begin
   subrep:=Subreports.Items[CurrentSubReportIndex].SubReport;
+  // The first section are the group footers until
+  // CurrentGropup
+  while CurrentGroup<>0 do
+  begin
+   lastdetail:=subrep.LastDetail;
+   firstdetail:=subrep.FirstDetail;
+   inc(CurrentSectionIndex);
+   if CurrentGroup>0 then
+   begin
+    if CurrentGroup<(CurrentSectionIndex-lastdetail) then
+    begin
+     // Restore position
+     // And the next will be group headers
+     if subrep.LastRecord then
+     begin
+      CurrentSectionIndex:=subrep.Sections.Count;
+      CurrentGroup:=0;
+      break;
+     end
+     else
+     begin
+      // Send Messages for each group
+      subrep.InitGroups(CurrentGroup);
+      // Restores position
+      NextRecord(true);
+      CurrentSectionIndex:=subrep.FirstDetail-CurrentGroup;
+      CurrentGroup:=-CurrentGroup;
+      sec:=Subrep.Sections[CurrentSectionIndex].Section;
+      if Sec.EvaluatePrintCondition then
+      begin
+       Section:=sec;
+       Subreport:=subrep;
+       break;
+      end;
+     end;
+    end
+    else
+    begin
+     Sec:=subrep.Sections[CurrentSectionIndex].Section;
+     if Sec.EvaluatePrintCondition then
+     begin
+      Section:=sec;
+      Subreport:=subrep;
+      break;
+     end;
+    end;
+   end
+   else
+   begin
+    // Group headers
+    if CurrentSectionIndex<firstdetail then
+    begin
+     sec:=Subrep.Sections.Items[CurrentSectionIndex].Section;
+     if sec.EvaluatePrintCondition then
+     begin
+      Section:=sec;
+      Subreport:=subrep;
+      break;
+     end;
+    end
+    else
+    begin
+     CurrentGroup:=0;
+     CurrentSectionIndex:=-1;
+    end;
+   end;
+  end;
+  if Assigned(section) then
+   break;
   while CurrentSectionIndex<subrep.Sections.Count do
   begin
    if CurrentSectionIndex<0 then
@@ -719,7 +818,11 @@ begin
     if CurrentSectionIndex>subrep.LastDetail then
     begin
      if oldsectionindex>=0 then
-      NextRecord;
+      if NextRecord(false) then
+      begin
+       CurrentSectionIndex:=subrep.LastDetail;
+       break;
+      end;
      if Not subrep.LastRecord then
      begin
       CurrentSectionIndex:=subrep.FirstDetail;
@@ -730,6 +833,12 @@ begin
        subreport:=subrep;
        break;
       end;
+     end
+     else
+     begin
+      CurrentGroup:=subrep.GroupCount;
+      CurrentSectionIndex:=subrep.LastDetail;
+      break;
      end;
     end
     else
@@ -747,7 +856,7 @@ begin
     end;
    end;
   end;
-  if Not assigned(Section) then
+  if ((Not assigned(Section)) AND (CurrentGroup=0)) then
   begin
    inc(CurrentSubReportIndex);
    if CurrentSubReportIndex>=Subreports.count then
@@ -758,7 +867,8 @@ begin
    subrep.LastRecord:=false;
   end
   else
-   break;
+   if CurrentGroup=0 then
+     break;
  end;
  Result:=Assigned(Section);
 end;
@@ -814,7 +924,12 @@ begin
  begin
   FEvaluator.NewVariable(params.items[i].Name,params.items[i].Value);
  end;
- // Here identifiers should  be added
+ // Here identifiers are added to evaluator
+ for i:=0 to Identifiers.Count-1 do
+ begin
+  FEvaluator.AddVariable(FIdentifiers.Strings[i],
+   TRpExpression(FIdentifiers.Objects[i]).IdenExpression);
+ end;
 
 
 
@@ -839,6 +954,11 @@ begin
  Subreports.Items[0].SubReport.SubReportChanged(rpDataChange);
 
  CurrentSectionIndex:=-1;
+ CurrentGroup:=-SubReports.Items[0].Subreport.GroupCount;
+ if CurrentGroup<0 then
+ begin
+  CurrentSectionIndex:=SubReports.Items[0].Subreport.FirstDetail+CurrentGroup-1;
+ end;
  section:=nil;
  subreport:=nil;
  if Not NextSection then
@@ -978,9 +1098,6 @@ begin
   freespace:=FInternalPageheight;
  freespace:=freespace-FTopMargin-FBottomMargin;
 
- // New page
- subreport.SubReportChanged(rpPageStart);
-
  pagefooters:=TStringList.Create;
  try
   // Fills the page with fixed sections
@@ -988,11 +1105,21 @@ begin
   oldsubreport:=subreport;
   while Assigned(section)  do
   begin
+   if printedsomething then
+   begin
+    if section.BeginPage then
+     break;
+   end;
    asection:=section;
    if Not CheckSpace then
     break;
    PrintSection(true);
    NextSection;
+   if printedsomething then
+   begin
+    if asection.SkipPage then
+     break;
+   end;
    // if Subreport changed and has have pagefooter
    if ((oldsubreport<>subreport) and (havepagefooters)) then
     break;

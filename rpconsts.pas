@@ -59,10 +59,13 @@ resourcestring
   SrpSAgeGroup='Ag.Group';
   SrpSAgeType='Ag.Type';
   SrpSum='Sum';
+  SRpMin='Min';
+  SRpMax='Max';
   SRpAvg='Average';
   SRpStdDev='Std.Desv.';
   SrpSIniValue='Ag.I.Value';
   SrpSIdentifier='Identifier';
+  SRpErrorIdenExpression='Error expression item no assigned (idenexpression)';
 
   SRpNoDatasets='No datasets defined';
   SRpSampleTextToLabels='Text';

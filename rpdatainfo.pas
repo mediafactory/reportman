@@ -532,7 +532,10 @@ begin
 {$IFDEF MSWINDOWS}
     FBDEAlias:=Alias;
     if Not Assigned(FBDEDatabase) then
+    begin
      FBDEDatabase:=TDatabase.Create(nil);
+     FBDEDatabase.KeepConnection:=false;
+    end;
     if FBDEDatabase.DatabaseName=FBDEAlias then
     begin
      if FBDEDatabase.Connected then

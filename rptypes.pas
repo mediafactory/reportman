@@ -34,8 +34,8 @@ type
  TRpTwips=integer;
  TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull,rpDrawTile);
  TRpAggregate=(rpAgNone,rpAgGroup,rpAgPage,rpAgGeneral);
- TRpAggregateType=(rpagSum,rgagAvg,rpagStdDev);
- TRpReportChanged=(rpReportStart,rpPageStart,rpDataChange,rpGroupChange,rpEndData);
+ TRpAggregateType=(rpagSum,rpagMin,rpagMax,rgagAvg,rpagStdDev);
+ TRpReportChanged=(rpReportStart,rpDataChange,rpGroupChange);
 
  TRpPageSize=(rpPageSizeDefault,rpPageSizeCustom);
 

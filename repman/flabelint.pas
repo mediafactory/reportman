@@ -70,7 +70,7 @@ const
  AggregatesString:array [rpAgNone..rpAgGeneral] of string=
   (SRpNone,SRpGroup,SRpPage,SRpGeneral);
  AggretypeString:array [rpagSum..rpagStdDev] of string=
-  (SrpSum,SRpAvg,SRpStdDev);
+  (SrpSum,SRpMin,SRpMax,SRpAvg,SRpStdDev);
 
 
 function StringToAgeType(value:string):TRpAggregateType;

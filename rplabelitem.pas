@@ -22,7 +22,7 @@ unit rplabelitem;
 interface
 
 uses Sysutils,Classes,rptypes,rpprintitem,rpconsts,
- rpmetafile,rpeval,variants;
+ rpmetafile,rpeval,variants,rptypeval,math;
 
 type
  TRpLabel=class(TRpGenTextComponent)
@@ -41,6 +41,8 @@ type
    property AllText:TStrings read FAllText write SetAllText;
   end;
 
+ TIdenRpExpression=class;
+
  TRpExpression=class(TRpGenTextComponent)
   private
    FExpression:widestring;
@@ -52,8 +54,12 @@ type
    FAutoContract:Boolean;
    FDisplayFormat:string;
    FValue:Variant;
+   FSumValue:Variant;
+   FDataCount:integeR;
    FUpdated:boolean;
    FAgIniValue:widestring;
+   FValues:array of Double;
+   FIdenExpression:TIdenRpExpression;
    procedure SetIdentifier(Value:string);
    procedure Evaluate;
   protected
@@ -62,6 +68,7 @@ type
    constructor Create(AOwner:TComponent);override;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
    function GetText:widestring;
+   property IdenExpression:TIdenRpExpression read FIdenExpression;
   published
    property DisplayFormat:string read FDisplayformat write FDisplayFormat;
    property Expression:widestring read FExpression write FExpression;
@@ -76,9 +83,26 @@ type
    property AutoContract:Boolean read FAutoContract write FAutoContract;
   end;
 
+  TIdenRpExpression=class(TIdenFunction)
+  private
+   FExpreitem:TRpExpression;
+  protected
+   function GeTRpValue:TRpValue;override;
+  public
+  end;
+
+
 implementation
 
 uses rpreport;
+
+function TIdenRpExpression.GeTRpValue:TRpValue;
+begin
+ if Not Assigned(FExpreItem) then
+  Raise Exception.Create(SRpErrorIdenExpression);
+ FExpreitem.Evaluate;
+ Result:=FExpreitem.FValue;
+end;
 
 constructor TRpLabel.Create(AOwner:TComponent);
 begin
@@ -132,6 +156,8 @@ begin
  Height:=275;
  FAgIniValue:='0';
  Width:=1440;
+ FIdenExpression:=TIdenRpExpression.Create(Self);
+ FIdenExpression.FExpreitem:=Self;
 end;
 
 procedure TRpLabel.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
@@ -204,11 +230,11 @@ end;
 
 procedure TRpExpression.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 var
- Text:string;
+ aText:string;
 begin
- Text:=GetText;
+ aText:=GetText;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
-   aposx+PosX,width,height,Text,WFontName,LFontName,FontSize,
+   aposx+PosX,width,height,aText,WFontName,LFontName,FontSize,
    FontStyle,FOntColor,BackColor,Transparent,CutText,Alignment or VAlignment,WordWrap);
 end;
 
@@ -220,6 +246,7 @@ begin
   rpReportStart:
    begin
     FUpdated:=false;
+    FDataCount:=0;
     if (FAggregate<>rpAgNone) then
     begin
      // Update with the initial value
@@ -227,37 +254,66 @@ begin
      eval.Expression:=FAgIniValue;
      eval.Evaluate;
      FValue:=eval.EvalResult;
-     FUpdated:=true;
-    end;
-   end;
-  rpPageStart:
-   begin
-    if (FAggregate=rpAgPage) then
-    begin
-     // Update with the initial value plus the current
-     eval:=TRpReport(Owner).Evaluator;
-     eval.Expression:=FAgIniValue;
-     eval.Evaluate;
-     FValue:=eval.EvalResult;
+     FSumValue:=FValue;
      FUpdated:=true;
     end;
    end;
   rpDataChange:
    begin
     FUpdated:=false;
+    inc(FDataCount);
     if (FAggregate<>rpAgNone) then
     begin
      // Update with the initial value
      eval:=TRpReport(Owner).Evaluator;
      eval.Expression:=FExpression;
      eval.Evaluate;
-     FValue:=FValue+eval.EvalResult;
+     // Do the operation
+     case AgType of
+      rpagSum:
+       begin
+        FValue:=FValue+eval.EvalResult;
+       end;
+      rpagMin:
+       begin
+        if FDataCount=1 then
+         FValue:=eval.EvalResult
+        else
+        begin
+         if FValue>eval.EvalResult then
+          FValue:=eval.EvalResult;
+        end;
+       end;
+      rpagMax:
+       begin
+        if FDataCount=1 then
+         FValue:=eval.EvalResult
+        else
+        begin
+         if FValue<eval.EvalResult then
+          FValue:=eval.EvalResult;
+        end;
+       end;
+      rgagAvg:
+       begin
+        FSumValue:=FSumValue+eval.EvalResult;
+        FValue:=FSumValue/FDataCount;
+       end;
+      rpagStdDev:
+       begin
+        SetLength(FValues,FDataCount);
+        FValues[FDatacount-1]:=eval.EvalResult;
+        if High(FValues)=Low(FValues) then
+         FValue:=0
+        else
+         FValue:=StdDev(FValues);
+       end;
+     end;
      FUpdated:=true;
     end;
    end;
   rpGroupChange:
    begin
-    FUpdated:=false;
     if (FAggregate=rpAgGroup) then
     begin
      if GroupName=newgroup then
@@ -267,6 +323,8 @@ begin
       eval.Expression:=FAgIniValue;
       eval.Evaluate;
       FValue:=eval.EvalResult;
+      FSumValue:=FValue;
+      FDataCount:=0;
       FUpdated:=true;
      end;
     end;

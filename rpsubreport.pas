@@ -39,9 +39,9 @@ type
    function GetPageHeaderCount:integer;
    function GetFirstPageFooter:integer;
    function GetPageFooterCount:integer;
+   function GetGroupCount:integer;
   protected
    procedure FillGroupValues;
-   procedure CheckCurrentGroupChange;
   public
    // Creation and destruction
    CurrentGroup:string;
@@ -65,6 +65,9 @@ type
    property PageHeaderCount:integer read GetPageHeaderCount;
    property FirstPageFooter:integer read GetFirstPageFooter;
    property PageFooterCount:integer read GetPageFooterCount;
+   property GroupCount:integer read GetGroupCount;
+   function GroupChanged:integer;
+   procedure InitGroups(groupindex:integer);
   published
    property Sections:TRpSectionList read FSections write SetSections;
    property Alias:String read FAlias write FAlias;
@@ -366,8 +369,42 @@ begin
 end;
 
 function TRpSubReport.GetDetailCount:integer;
+var
+ i,counter:integer;
+ sec:TRpSection;
 begin
- Result:=0;
+ i:=0;
+ counter:=0;
+ while i<Sections.Count do
+ begin
+  sec:=Sections.Items[i].Section;
+  if Sec.SectionType=rpsecdetail then
+  begin
+   inc(counter);
+  end;
+  inc(i);
+ end;
+ Result:=counter;
+end;
+
+function TRpSubReport.GetGroupCount:integer;
+var
+ i,afirstdetail,counter:integer;
+ sec:TRpSection;
+begin
+ i:=0;
+ counter:=0;
+ afirstdetail:=GetFirstDetail;
+ while i<afirstdetail do
+ begin
+  sec:=Sections.Items[i].Section;
+  if Sec.SectionType=rpsecgheader then
+  begin
+   inc(counter);
+  end;
+  inc(i);
+ end;
+ Result:=counter;
 end;
 
 function TRpSubReport.GetFirstDetail:integer;
@@ -405,7 +442,6 @@ begin
  begin
   if Sections.Items[i].Section.SectionType<>rpsecdetail then
   begin
-   dec(i);
    break;
   end;
   inc(i);
@@ -439,41 +475,49 @@ begin
  end;
 end;
 
-procedure TRpSubReport.CheckCurrentGroupChange;
-begin
-
-end;
-
-
-procedure TRpSubReport.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
+function TRpSubReport.GroupChanged:integer;
 var
- i:integer;
- j:integer;
+ i,afirstdetail,agroupcount:integer;
  sec:TRpSection;
- compo:TRpCommonComponent;
+ eval:TRpEvaluator;
+ acount:integer;
 begin
- // Updates group values
- if newstate=rpReportStart then
+ Result:=0;
+ // Checks for group changes
+ agroupcount:=GroupCount;
+ acount:=agroupcount;
+ afirstdetail:=FirstDetail;
+ i:=afirstdetail-agroupcount;
+ eval:=TRpReport(Owner).Evaluator;
+ while i<afirstdetail do
  begin
-  FillGroupValues;
- end;
- if newstate=rpDataChange then
- begin
-  CheckCurrentGroupChange;
- end;
- for i:=0 to Sections.Count-1 do
- begin
-  sec:=Sections.Items[i].Section;
-  for j:=0 to sec.Components.Count-1 do
+  sec:=sections.items[i].Section;
+  eval.Expression:=sec.ChangeExpression;
+  eval.Evaluate;
+  if sec.ChangeBool then
   begin
-   compo:=sec.Components.Items[j].Component;
-   if (compo is TRpExpression) then
+   if eval.EvalResult then
    begin
-    TRpExpression(compo).SubReportChanged(newstate,newgroup);
+    Result:=acount;
+    FillGroupValues;
+    break;
+   end;
+  end
+  else
+  begin
+   if eval.EvalResult<>sec.GroupValue then
+   begin
+    Result:=acount;
+    FillGroupValues;
+    break;
    end;
   end;
+  inc(i);
+  dec(acount);
  end;
 end;
+
+
 
 
 function TRpSubreport.GetFirstPageHeader:integer;
@@ -547,6 +591,48 @@ begin
    Result:=i;
    break;
   end;
+  inc(i);
+ end;
+end;
+
+
+
+procedure TRpSubReport.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
+var
+ i:integer;
+ j:integer;
+ sec:TRpSection;
+ compo:TRpCommonComponent;
+begin
+ // Updates group values
+ if newstate=rpReportStart then
+ begin
+  FillGroupValues;
+ end;
+ for i:=0 to Sections.Count-1 do
+ begin
+  sec:=Sections.Items[i].Section;
+  for j:=0 to sec.Components.Count-1 do
+  begin
+   compo:=sec.Components.Items[j].Component;
+   if (compo is TRpExpression) then
+   begin
+    TRpExpression(compo).SubReportChanged(newstate,newgroup);
+   end;
+  end;
+ end;
+end;
+
+
+procedure TRpSubreport.InitGroups(groupindex:integer);
+var
+ i,afirstdetail:integer;
+begin
+ afirstdetail:=GetFirstDetail;
+ i:=afirstdetail-groupindex;
+ while i<afirstdetail do
+ begin
+  SubreportChanged(rpGroupChange,Sections.Items[i].Section.GroupName);
   inc(i);
  end;
 end;
