@@ -389,6 +389,8 @@ end;
 constructor TFRpMainF.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+ configfile:=Obtainininameuserconfig('','','repmand');
+ configfilelib:=Obtainininameuserconfig('','','repmandlib');
  LoadConfig;
 end;
 
@@ -759,8 +761,6 @@ begin
 
  AppStyle:=dsSystemDefault;
 
- configfile:=Obtainininameuserconfig('','','repmand');
- configfilelib:=Obtainininameuserconfig('','','repmandlib');
 {$IFDEF MSWINDOWS}
   LastUsedFiles.CaseSensitive:=False;
 {$ENDIF}

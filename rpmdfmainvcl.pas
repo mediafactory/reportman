@@ -375,6 +375,8 @@ end;
 constructor TFRpMainFVCL.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+ configfile:=Obtainininameuserconfig('','','repmand');
+ configfilelib:=Obtainininameuserconfig('','','repmandlib');
  LoadConfig;
 end;
 
@@ -690,8 +692,6 @@ begin
  Forms.Application.OnException:=MyExceptionHandler;
 
 
- configfile:=Obtainininameuserconfig('','','repmand');
- configfilelib:=Obtainininameuserconfig('','','repmandlib');
   LastUsedFiles.CaseSensitive:=False;
   // Visible driver selection
  LastUsedFiles.LoadFromConfigFile(configfile);
