@@ -278,7 +278,8 @@ begin
    SRpExcelFile+'|*.xls|'+
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
-   SRpBitmapFileMono+'|*.bmp';
+   SRpBitmapFileMono+'|*.bmp'+
+   '|'+SRpExeMetafile+'|*.exe';
 
  APrevious.ShortCut:=ShortCut(VK_PRIOR, []);
  ANext.ShortCut:=ShortCut(VK_NEXT, []);
@@ -441,6 +442,11 @@ begin
        finally
         abitmap.free;
        end;
+      end;
+     8:
+      begin
+       ALastExecute(Self);
+       MetafileToExe(report.metafile,SaveDialog1.Filename);
       end;
      else
      begin

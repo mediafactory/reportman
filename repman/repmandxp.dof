@@ -51,13 +51,17 @@ UsePackages=0
 [Parameters]
 RunParams=
 HostApplication=
+[Language]
+ActiveLang=
+ProjectLang=$00000C0A
+RootDir=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=2
 MinorVer=0
 Release=1
-Build=0
+Build=1
 Debug=0
 PreRelease=0
 Special=0
@@ -68,7 +72,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Designer
-FileVersion=2.0.1.0
+FileVersion=2.0.1.1
 InternalName=repmandxp
 LegalCopyright=MPL/GPL License
 LegalTrademarks=

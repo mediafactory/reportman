@@ -35,6 +35,8 @@ Source: "..\repman\utils\printrep\printrepxp.exe"; DestDir: "{app}"; Flags: igno
 Source: "..\repman\utils\printrep\printrepxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\utils\reptotxt\reptotxt.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\utils\txttorep\txttorep.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\compilerep\compilerep.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\drivers\win32\upx.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\utils\rptranslator\rptranslate.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\utils\rptranslator\rptranslate.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\utils\rptranslator\rptranslateres.*"; DestDir: "{app}"; Flags: ignoreversion

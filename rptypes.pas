@@ -268,6 +268,7 @@ function ExeResourceToStream (resId: Integer):TMemoryStream;
 
 
 
+
 {$IFNDEF USEVARIANTS}
 function BoolToStr(B: Boolean; UseBoolStrs: Boolean = False): string;
 function StrToBool(const S: string): Boolean;

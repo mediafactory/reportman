@@ -56,6 +56,7 @@ uses
   rpmdbarcode in '..\rpmdbarcode.pas',
   rpmdchart in '..\rpmdchart.pas',
   rpmdconsts in '..\rpmdconsts.pas',
+  rpcompilerep in '..\rpcompilerep.pas',
   rpmdfbarcodeintvcl in '..\rpmdfbarcodeintvcl.pas',
   rpmdfchartintvcl in '..\rpmdfchartintvcl.pas',
   rpmdfdatatextvcl in '..\rpmdfdatatextvcl.pas' {FRpDataTextVCL},

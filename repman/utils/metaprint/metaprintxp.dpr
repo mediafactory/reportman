@@ -34,18 +34,18 @@ var
 
 procedure PrintHelp;
 begin
- Writeln(SRpMetaPrint1+' XP '+RM_VERSION);
- Writeln(SRpMetaPrint2);
- Writeln(SRpMetaPrint3);
- Writeln(SRpMetaPrint4);
- Writeln(SRpMetaPrint5);
- Writeln(SRpMetaPrint6);
- Writeln(SRpMetaPrint7);
- Writeln(SRpMetaPrint8);
- Writeln(SRpMetaPrint9);
- Writeln(SRpPrintRep9);
- Writeln(SRpPrintRep10);
- Writeln(SRpCommandLineStdIN);
+ Writeln(String(SRpMetaPrint1+' XP '+RM_VERSION));
+ Writeln(String(SRpMetaPrint2));
+ Writeln(String(SRpMetaPrint3));
+ Writeln(String(SRpMetaPrint4));
+ Writeln(String(SRpMetaPrint5));
+ Writeln(String(SRpMetaPrint6));
+ Writeln(String(SRpMetaPrint7));
+ Writeln(String(SRpMetaPrint8));
+ Writeln(String(SRpMetaPrint9));
+ Writeln(String(SRpPrintRep9));
+ Writeln(String(SRpPrintRep10));
+ Writeln(String(SRpCommandLineStdIN));
 end;
 
 
@@ -194,7 +194,7 @@ begin
     try
      if ShowProgress then
      begin
-      WriteLn(SRpPrintingFile+':'+filename);
+      WriteLn(String(SRpPrintingFile+':'+filename));
      end;
      if preview then
      begin
@@ -211,7 +211,7 @@ begin
         frompage,topage,copies,collate,false,printerindex) then
        if ShowProgress then
        begin
-        WriteLn(SRpPrinted);
+        WriteLn(String(SRpPrinted));
        end;
       end;
      end;
@@ -220,7 +220,7 @@ begin
       if DeleteFile(filename) then
        if ShowProgress then
        begin
-        WriteLn(SRpPrintedFileDeleted);
+        WriteLn(String(SRpPrintedFileDeleted));
        end;
     end;
    end;
@@ -230,7 +230,7 @@ begin
  except
   On E:Exception do
   begin
-   Writeln(SRPError,E.Message);
+   Writeln(String(SRPError),String(E.Message));
   end;
  end;
 end.

@@ -108,6 +108,9 @@ reportmanutils:
         cd unixtodos
         $(COMPILE) unixtodos.dpr
         cd ..
+        cd compilerep
+        $(COMPILE) compilerep.dpr
+        cd ..
 
         cd ..
         cd ..
@@ -198,7 +201,9 @@ clean_noexe:
 
 
 clean:  clean_noexe
-        -del /s *.exe
+        -del /s repman\*.exe
+        -del /s server\*.exe
+        -del /s tests\*.exe
         -del /s repman\*.bin
         -del /s server\*.bin
         -del *.dll
