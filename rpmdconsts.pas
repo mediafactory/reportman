@@ -750,6 +750,8 @@ var
   SrpDriverZeos:WideString='Zeos Database Objects';
   SrpDriverZeosDesc:WideString='Zeos Database Objects is a Opensource database driver technology for Delphi/Kylix/Builder.';
   SrpDriverIBO:WideString='Interbase Objects';
+  SRpBitmapFile:WideString='Bitmap File';
+  SRpBitmapFileMono:WideString='Bitmap - monochrome';
 
 implementation
 
@@ -1457,6 +1459,7 @@ begin
  TranslateVar(1107,SrpDriverZeos);
  TranslateVar(1108,SrpDriverZeosDesc);
  TranslateVar(1109,SrpDriverIBO);
+// TranslateVar(1110,SRpBitmapFile);
 end;
 
 {$IFDEF LINUX}

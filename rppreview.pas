@@ -290,13 +290,17 @@ begin
  SaveDialog1.Filter:=SRpRepMetafile+'|*.rpmf|'+
    SRpPDFFile+'|*.pdf|'+
    SRpPDFFileUn+'|*.pdf|'+
-   SRpPlainFile+'|*.txt';
+   SRpPlainFile+'|*.txt|'+
+   SRpBitmapFile+'|*.bmp|'+
+   SRpBitmapFileMono+'|*.bmp';
 {$ENDIF}
 {$IFNDEF VCLFILEFILTERS}
  SaveDialog1.Filter:=SRpRepMetafile+' (*.rpmf)|'+
    SRpPDFFile+' (*.pdf)|'+
    SRpPDFFileUn+' (*.pdf)|'+
-   SRpPlainFile+' (*.txt)';
+   SRpPlainFile+' (*.txt)|'+
+   SRpBitmapFile+' (*.bmp)|'+
+   SRpBitmapFileMono+' (*.bmp)';
 {$ENDIF}
 
  Caption:=TranslateStr(215,Caption);
@@ -414,6 +418,7 @@ procedure TFRpPreview.ASaveExecute(Sender: TObject);
 var
  oldonprogress:TRpMetafileStreamProgres;
  adone:boolean;
+ abitmap:TBitmap;
 begin
  // Saves the metafile
  if SaveDialog1.Execute then
@@ -423,21 +428,32 @@ begin
    report.Metafile.OnProgress:=MetProgress;
    DisableControls(true);
    try
-    if SaveDialog1.FilterIndex=1 then
-    begin
-     ALastExecute(Self);
-     report.Metafile.SaveToFile(SaveDialog1.Filename)
-    end
-    else
-     if SaveDialog1.FilterIndex in [2,3] then
-     begin
-      ALastExecute(Self);
-      SaveMetafileToPDF(report.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
-//      report.EndPrint;
-//      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,32000,
-//       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
-      AppIdle(Self,adone);
-     end
+    case SaveDialog1.FilterIndex of
+     1:
+      begin
+       ALastExecute(Self);
+       report.Metafile.SaveToFile(SaveDialog1.Filename)
+      end;
+     2,3:
+      begin
+       ALastExecute(Self);
+       SaveMetafileToPDF(report.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
+ //      report.EndPrint;
+ //      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,32000,
+ //       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
+       AppIdle(Self,adone);
+      end;
+     5,6:
+      begin
+       ALastExecute(Self);
+       abitmap:=MetafileToBitmap(report.Metafile,true,SaveDialog1.FilterIndex=6);
+       try
+        if assigned(abitmap) then
+         abitmap.SaveToFile(SaveDialog1.FileName);
+       finally
+        abitmap.free;
+       end;
+      end;
      else
      begin
       // Plain text file
@@ -445,6 +461,7 @@ begin
       SaveMetafileToTextFile(report.Metafile,SaveDialog1.FileName);
       AppIdle(Self,adone);
      end;
+    end;
    finally
     EnableControls;
    end;

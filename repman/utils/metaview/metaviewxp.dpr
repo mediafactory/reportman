@@ -16,7 +16,8 @@ uses
   rpvgraphutils in '..\..\..\rpvgraphutils.pas',
   rpgdidriver in '..\..\..\rpgdidriver.pas' {FRpVCLProgress},
   rpmdprintconfigvcl in '..\..\..\rpmdprintconfigvcl.pas' {FRpPrinterConfigVCL},
-  rpfmetaviewvcl in '..\..\..\rpfmetaviewvcl.pas' {FRpMetaVCL: TFrame};
+  rpfmetaviewvcl in '..\..\..\rpfmetaviewvcl.pas' {FRpMetaVCL: TFrame},
+  rpexceldriver in '..\..\..\rpexceldriver.pas' {FRpExcelProgress};
 
 {$R *.res}
 

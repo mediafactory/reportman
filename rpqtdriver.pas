@@ -58,7 +58,11 @@ type
     allpages,collate:boolean;
     frompage,topage,copies:integer;
     printerindex:TRpPrinterSelect;
+    MetaBitmap:TBitmap;
+    bitresx,bitresy:Integer;
+    bitmono:Boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
+    procedure AppIdleBitmap(Sender:TObject;var done:boolean);
     procedure AppIdleReport(Sender:TObject;var done:boolean);
     procedure AppIdlePrintPDF(Sender:TObject;var done:boolean);
     procedure AppIdlePrintRange(Sender:TObject;var done:boolean);
@@ -124,6 +128,8 @@ type
 function PrintMetafile (metafile:TRpMetafileReport; tittle:string;
  showprogress,allpages:boolean; frompage,topage,copies:integer;
   collate:boolean; printerindex:TRpPrinterSelect):boolean;
+function MetafileToBitmap(metafile:TRpMetafileReport;ShowProgress:Boolean;
+ Mono:Boolean;resx:integer=200;resy:integer=100):TBitmap;
 function CalcReportWidthProgress (report:TRpReport):boolean;
 function PrintReport (report:TRpReport; Caption:string; progress:boolean;
   allpages:boolean; frompage,topage,copies:integer; collate:boolean):Boolean;
@@ -963,6 +969,129 @@ begin
  end;
 end;
 
+function DoMetafileToBitmap(metafile:TRpMetafileReport;aform:TFRpQtProgress;
+ Mono:Boolean;resx:integer=200;resy:integer=100):TBitmap;
+var
+ QtDriver:TRpQtDriver;
+ aqtDriver:IRpPrintDriver;
+ apage:TRpMetafilePage;
+ i,j:integer;
+ offset:TPoint;
+ pagemargins:TRect;
+ mmfirst,mmlast:DWORD;
+ difmilis:int64;
+ pageheight,pagewidth:integer;
+ tempbitmap:TBitmap;
+ arec:TRect;
+begin
+ offset.X:=0;
+ offset.Y:=0;
+ mmfirst:=TimeGetTime;
+ pagemargins.Left:=0;
+ pagemargins.Top:=0;
+ pagemargins.Bottom:=0;
+ pagemargins.Top:=0;
+ Result:=TBitmap.Create;
+ try
+  if Mono then
+   Result.PixelFormat:=pf1bit
+  else
+   Result.PixelFormat:=pf32bit;
+  pagewidth:=(metafile.CustomX*resx) div TWIPS_PER_INCHESS;
+  Result.Width:=pagewidth;
+  pageheight:=(metafile.CustomY*resy) div TWIPS_PER_INCHESS;
+  Result.Height:=pageheight*metafile.PageCount;
+  QtDriver:=TRpQtDriver.Create;
+  aqtDriver:=QtDriver;
+  for i:=0 to metafile.PageCount-1 do
+  begin
+   tempbitmap:=TBitmap.Create;
+   try
+    if Mono then
+{$IFDEF MSWINDOWS}
+     tempbitmap.PixelFormat:=pf32bit
+{$ENDIF}
+{$IFDEF LINUX}
+     tempbitmap.PixelFormat:=pf1bit
+{$ENDIF}
+    else
+     tempbitmap.PixelFormat:=pf32bit;
+    tempbitmap.Height:=pageheight;
+    tempbitmap.Width:=pagewidth;
+    arec.Top:=0;arec.Bottom:=0;
+    arec.Right:=tempbitmap.Width;
+    arec.Bottom:=tempbitmap.Height;
+
+    apage:=metafile.Pages[i];
+    tempbitmap.Canvas.Brush.Color:=clWhite;
+    tempbitmap.Canvas.Brush.Style:=bsSolid;
+    tempbitmap.Canvas.FillRect(arec);
+    for j:=0 to apage.ObjectCount-1 do
+    begin
+     PrintObject(tempbitmap.Canvas,apage,apage.Objects[j],resx,resy,1,offset);
+     if assigned(aform) then
+     begin
+      mmlast:=TimeGetTime;
+      difmilis:=(mmlast-mmfirst);
+      if difmilis>MILIS_PROGRESS then
+      begin
+       // Get the time
+       mmfirst:=TimeGetTime;
+       aform.LRecordCount.Caption:=SRpPage+':'+ IntToStr(i+1)+
+         ' - '+SRpItem+':'+ IntToStr(j+1);
+       Application.ProcessMessages;
+       if aform.cancelled then
+        Raise Exception.Create(SRpOperationAborted);
+      end;
+     end;
+    end;
+    Result.Canvas.Draw(0,pageheight*i,tempbitmap);
+    if assigned(aform) then
+    begin
+     Application.ProcessMessages;
+      if aform.cancelled then
+       Raise Exception.Create(SRpOperationAborted);
+    end;
+   finally
+    tempbitmap.free;
+   end;
+  end;
+ except
+  Result.free;
+  raise;
+ end;
+end;
+
+function MetafileToBitmap(metafile:TRpMetafileReport;ShowProgress:Boolean;
+ Mono:Boolean;resx:integer=200;resy:integer=100):TBitmap;
+var
+ dia:TFRpQtProgress;
+begin
+ if Not ShowProgress then
+ begin
+  Result:=DoMetafileToBitmap(metafile,nil,mono);
+  exit;
+ end;
+ dia:=TFRpQtProgress.Create(Application);
+ try
+  dia.oldonidle:=Application.OnIdle;
+  try
+   dia.metafile:=metafile;
+   dia.tittle:='Bitmap';
+   dia.bitresx:=resx;
+   dia.bitresy:=resy;
+   dia.bitmono:=Mono;
+   Application.OnIdle:=dia.AppIdleBitmap;
+   dia.ShowModal;
+   Result:=dia.MetaBitmap;
+  finally
+   Application.OnIdle:=dia.oldonidle;
+  end;
+ finally
+  dia.free;
+ end;
+end;
+
 procedure TFRpQtProgress.FormCreate(Sender: TObject);
 begin
  LRecordCount.Font.Style:=[fsBold];
@@ -986,6 +1115,16 @@ begin
  Close;
 end;
 
+procedure TFRpQtProgress.AppIdleBitmap(Sender:TObject;var done:boolean);
+begin
+ cancelled:=false;
+ Application.OnIdle:=nil;
+ done:=false;
+ LTittle.Caption:=tittle;
+ LProcessing.Visible:=true;
+ MetaBitmap:=DoMetafileToBitmap(metafile,self,bitmono,bitresx,bitresy);
+ Close;
+end;
 
 procedure TFRpQtProgress.BCancelClick(Sender: TObject);
 begin

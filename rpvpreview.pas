@@ -276,7 +276,9 @@ begin
    SRpPDFFile+'|*.pdf|'+
    SRpPDFFileUn+'|*.pdf|'+
    SRpExcelFile+'|*.xls|'+
-   SRpPlainFile+'|*.txt';
+   SRpPlainFile+'|*.txt|'+
+   SRpBitmapFile+'|*.bmp|'+
+   SRpBitmapFileMono+'|*.bmp';
 
  APrevious.ShortCut:=ShortCut(VK_PRIOR, []);
  ANext.ShortCut:=ShortCut(VK_NEXT, []);
@@ -391,6 +393,7 @@ procedure TFRpVPreview.ASaveExecute(Sender: TObject);
 var
  oldonprogress:TRpMetafileStreamProgres;
  adone:boolean;
+ abitmap:TBitmap;
 begin
  // Saves the metafile
  if SaveDialog1.Execute then
@@ -400,35 +403,46 @@ begin
    report.Metafile.OnProgress:=MetProgress;
    DisableControls(true);
    try
-    if SaveDialog1.FilterIndex=1 then
-    begin
-     ALastExecute(Self);
-     report.Metafile.SaveToFile(SaveDialog1.Filename)
-    end
-    else
-     if SaveDialog1.FilterIndex in [2,3] then
+    case SaveDialog1.FilterIndex of
+     1:
      begin
       ALastExecute(Self);
-      SaveMetafileToPDF(report.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
+      report.Metafile.SaveToFile(SaveDialog1.Filename)
+     end;
+     2,3:
+      begin
+       ALastExecute(Self);
+       SaveMetafileToPDF(report.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
 //    report.endprint
 //      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,9999999,
 //       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
-      AppIdle(Self,adone);
-     end
-     else
-     if SaveDialog1.FilterIndex=4 then
-     begin
-      ALastExecute(Self);
-      ExportMetafileToExcel(report.Metafile,SaveDialog1.FileName,
-       true,false,true,1,9999);
-      AppIdle(Self,adone);
-     end
+       AppIdle(Self,adone);
+      end;
+     4:
+      begin
+       ALastExecute(Self);
+       ExportMetafileToExcel(report.Metafile,SaveDialog1.FileName,
+        true,false,true,1,9999);
+       AppIdle(Self,adone);
+      end;
+     6,7:
+      begin
+       ALastExecute(Self);
+       abitmap:=MetafileToBitmap(report.Metafile,true,SaveDialog1.FilterIndex=7);
+       try
+        if assigned(abitmap) then
+         abitmap.SaveToFile(SaveDialog1.FileName);
+       finally
+        abitmap.free;
+       end;
+      end;
      else
      begin
       ALastExecute(Self);
       SaveMetafileToTextFile(report.Metafile,SaveDialog1.FileName);
       AppIdle(Self,adone);
      end;
+    end;
    finally
     EnableControls;
    end;

@@ -305,14 +305,18 @@ begin
  SaveDialog1.Filter:=SRpRepMetafile+'|*.rpmf|'+
    SRpPDFFile+'|*.pdf|'+
    SRpPDFFileUn+'|*.pdf|'+
-   SRpPlainFile+'|*.pdf';
+   SRpPlainFile+'|*.txt|'+
+   SRpBitmapFile+'|*.bmp|'+
+   SRpBitmapFileMono+'|*.bmp';
  OpenDialog1.Filter:=SRpRepMetafile+'|*.rpmf';
 {$ENDIF}
 {$IFNDEF VCLFILEFILTERS}
  SaveDialog1.Filter:=SRpRepMetafile+' (*.rpmf)|'+
    SRpPDFFile+' (*.pdf)|'+
-   SRpPDFFileUn+' (*.pdf)|';
-   SRpPlainFile+' (*.pdf)';
+   SRpPDFFileUn+' (*.pdf)|'+
+   SRpPlainFile+' (*.txt)|'+
+   SRpBitmapFile+' (*.bmp)|'+
+   SRpBitmapFileMono+' (*.bmp)';
  OpenDialog1.Filter:=SRpRepMetafile+' (*.rpmf)';
 {$ENDIF}
  AppStyle:=dsSystemDefault;
@@ -542,6 +546,8 @@ begin
 end;
 
 procedure TFRpMeta.ASaveExecute(Sender: TObject);
+var
+ abitmap:TBitmap;
 begin
  cancelled:=false;
  // Saves the metafile
@@ -550,24 +556,36 @@ begin
   DisableButtons;
   try
    Metafile.SaveToFile(SaveDialog1.Filename);
-   if SaveDialog1.FilterIndex=1 then
-   begin
-    Metafile.SaveToFile(SaveDialog1.Filename)
-   end
-   else
-    if SaveDialog1.FilterIndex in [2,3] then
-    begin
-     if SaveDialog1.FilterIndex=2 then
-      SaveMetafileToPDF(metafile,SaveDialog1.filename,true)
-     else
-      SaveMetafileToPDF(metafile,SaveDialog1.filename,false);
-    end
+   case SaveDialog1.FilterIndex of
+    1:
+     begin
+      Metafile.SaveToFile(SaveDialog1.Filename)
+     end;
+    2,3:
+     begin
+      if SaveDialog1.FilterIndex=2 then
+       SaveMetafileToPDF(metafile,SaveDialog1.filename,true)
+      else
+       SaveMetafileToPDF(metafile,SaveDialog1.filename,false);
+     end;
+    5,6:
+     begin
+      ALastExecute(Self);
+      abitmap:=MetafileToBitmap(Metafile,true,SaveDialog1.FilterIndex=6);
+      try
+       if assigned(abitmap) then
+        abitmap.SaveToFile(SaveDialog1.FileName);
+      finally
+       abitmap.free;
+      end;
+     end;
     else
     begin
      // Plain text file
      ALastExecute(Self);
      SaveMetafileToTextFile(Metafile,SaveDialog1.FileName);
     end;
+   end;
  finally
    EnableButtons;
   end;
