@@ -318,6 +318,7 @@ begin
  AScaleLess.Hint:=TranslateStr(235,AScaleLess.Hint);
  AScaleMore.Caption:=TranslateStr(236,AScaleMore.Caption);
  AScaleMore.Hint:=TranslateStr(237,AScaleMore.Hint);
+ ActiveControl:=EPageNum;
 
 
  SetInitialBounds;

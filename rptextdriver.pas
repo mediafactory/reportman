@@ -453,6 +453,7 @@ end;
 procedure TRpTextDriver.RecalcSize;
 var
  i:integer;
+ numberoflines:integer;
 begin
  for i:=0 to high(FLines) do
  begin
@@ -462,7 +463,8 @@ begin
  end;
  if LinesPerInch<0 then
   Raise Exception.Create(SRpLinesPerInchIncorrect);
- SetLength(FLines,Round(twipstoinchess(FPageHeight)*FLinesPerInch));
+ numberoflines:=Round(twipstoinchess(FPageHeight)*FLinesPerInch);
+ SetLength(FLines,numberoflines);
  for i:=0 to high(FLines) do
  begin
   FLines[i].FontStep:=rpcpi10;

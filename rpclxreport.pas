@@ -24,7 +24,7 @@ interface
 {$I rpconf.inc}
 
 uses Classes,Sysutils,rpreport,
- rpmdconsts,rpcompobase,rptypes,
+ rpmdconsts,rpcompobase,rptypes,rpmetafile,
 {$IFDEF HORZPAPERBUG}
  rpmetafile,
 {$ENDIF}

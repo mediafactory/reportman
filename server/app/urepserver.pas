@@ -27,7 +27,7 @@ interface
 
 uses
   SysUtils, Classes,
-{$IFNDEF USEVARIANS}
+{$IFNDEF USEVARIANTS}
  Forms,FileCtrl,
 {$ENDIF}
   IdThreadMgr, IdThreadMgrDefault,

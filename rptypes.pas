@@ -27,6 +27,9 @@ uses
 {$IFDEF MSWINDOWS}
  Windows,
 {$ENDIF}
+{$IFDEF LINUX}
+ Libc,
+{$ENDIF}
  Sysutils,IniFiles,rpmdshfolder,Classes,
 {$IFDEF USEVARIANTS}
  Variants,Types,rtlconsts,
@@ -208,6 +211,11 @@ procedure WriteStringToDevice(S,Device:String);
 function GetLastname(astring:string):string;
 function GetPathName(astring:string):string;
 function GetFirstName(astring:string):string;
+{$IFDEF LINUX}
+procedure  ObtainPrinters(alist:TStrings);
+procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect);
+{$ENDIF}
+
 
 {$IFNDEF USEVARIANTS}
 procedure RaiseLastOSError;
@@ -1787,6 +1795,145 @@ begin
  end;
  Result:=Copy(astring,1,index-1);
 end;
+
+
+{$IFDEF LINUX}
+procedure  ObtainPrinters(alist:TStrings);
+var
+ PrintCap: TStrings;
+ i: Integer;
+ ALine: string;
+begin
+ alist.Clear;
+ PrintCap := TStringList.Create;
+ try
+  PrintCap.LoadFromFile('/etc/printcap');
+  for i := 0 to PrintCap.Count - 1 do
+  begin
+   ALine := Trim(PrintCap.Strings[i]);
+   if (Length(ALine) > 0) and (ALine[1] <> ':') and (ALine[1] <> '|')
+     and (ALine[1] <> '#') then
+   begin
+    if (Pos('|', ALine) > 0) then
+      alist.Add(Copy(ALine, 1, Pos('|', ALine)-1))
+    else if (Pos(':', ALine) > 0) then
+      alist.Add(Copy(ALine, 1, Pos(':', Aline)-1))
+    else
+      alist.Add(ALine);
+   end;
+  end;
+ finally
+  PrintCap.Free;
+ end;
+end;
+{$ENDIF}
+
+
+{$IFDEF LINUX}
+procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect);
+var
+ printername:string;
+ printernamecommand:string;
+ child:__pid_t;
+ apipe:array [0..1] of integer;
+ pint:PInteger;
+ i:integer;
+ theparams:array [0..10] of pchar;
+ buffer:array [0..1] of char;
+ pbuf:Pchar;
+ readed:integer;
+ astring:string;
+ params:TStringList;
+ doerror:boolean;
+ template:String;
+ abuffer:array [0..L_tmpnam] of char;
+ afilename:String;
+ files:TFilestream;
+begin
+ template:='reportmanXXXXXX';
+ tmpnam(abuffer);
+ afilename:=StrPas(abuffer);
+ files:=TFileStream.Create(afilename,fmCreate or fmShareDenyWrite);
+ try
+  files.Write(S[1],Length(S));
+ finally
+  files.free;
+ end;
+ doerror:=true;
+ // Looks for the printer name
+ printernamecommand:='';
+ printername:=GetPrinterConfigName(printerindex);
+ params:=TStringList.Create;
+ try
+  params.Add('lpr');
+  if Length(printername)>0 then
+  begin
+   params.Add('-P');
+   params.Add(printername);
+  end;
+  params.Add('-l');
+  params.Add(afilename);
+  // Creates a fork, and provides the input from standard
+  // input to lpr command
+  if params.count>10 then
+   Raise exception.create(SRpTooManyParams);
+  pint:=@apipe;
+  pbuf:=@buffer;
+  for i:=0 to params.count-1 do
+  begin
+   theparams[i]:=Pchar(params[i]);
+  end;
+  theparams[params.count]:=nil;
+  if (-1=pipe(pint)) then
+   Raise Exception.create(SRpErrorCreatePipe);
+  child:=fork;
+  if child=-1 then
+   Raise Exception.Create(SRpErrorForking);
+  if child<>0 then
+  begin
+   __close(apipe[0]);
+   if doerror then
+   begin
+    dup2(apipe[1],2);
+   end
+   else
+   begin
+    dup2(apipe[1],2);
+    dup2(apipe[1],1);
+   end;
+   // The child executes the command
+   execvp(theparams[0],PPChar(@theparams))
+  end
+  else
+  begin
+   __close(apipe[1]);
+   try
+    astring:='';
+    buffer[1]:=chr(0);
+    repeat
+     readed:=__read(apipe[0],pbuf^,1);
+     if readed>0 then
+     begin
+      if pbuf[0]=chr(10) then
+      begin
+       WriteLn(astring);
+       astring:='';
+      end
+      else
+       astring:=astring+pbuf[0];
+     end;
+    until readed=0;
+    if length(astring)>0 then
+     WriteLn(astring);
+   finally
+    __close(apipe[0]);
+   end;
+  end;
+ finally
+  params.Free;
+ end;
+end;
+{$ENDIF}
 
 
 initialization

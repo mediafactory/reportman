@@ -12,7 +12,7 @@ object FRpMessageDlg: TFRpMessageDlg
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   PixelsPerInch = 96
-  TextHeight = 15
+  TextHeight = 22
   TextWidth = 7
   object Panel1: TPanel
     Left = 0
@@ -114,7 +114,7 @@ object FRpMessageDlg: TFRpMessageDlg
     Left = 0
     Top = 24
     Width = 453
-    Height = 23
+    Height = 30
     TabOrder = 2
     Visible = False
   end

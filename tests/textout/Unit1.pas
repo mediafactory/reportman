@@ -1,10 +1,10 @@
-unit Unit1;
+unit Unit2;
 
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  rpcompobase, rpvclreport, StdCtrls,rptextdriver;
+  SysUtils, Classes, QForms,QDialogs,
+  rpcompobase, rpvclreport,rptextdriver;
 
 type
   TForm1 = class(TForm)

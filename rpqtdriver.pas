@@ -785,7 +785,12 @@ begin
   end;
   // Now Prints to selected printer the stream
   PrinterSelection(metafile.PrinterSelect);
-  SendControlCodeToQtPrinter(S);
+{$IFDEF MSWINDOWS}
+  SendControlCodeToPrinter(S);
+{$ENDIF}
+{$IFDEF LINUX}
+  SendTextToPrinter(S,metafile.PrinterSelect);
+{$ENDIF}
  end
  else
  begin
@@ -1060,7 +1065,12 @@ begin
   SetLength(S,TextDriver.MemStream.Size);
   TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
   PrinterSelection(report.PrinterSelect);
-  SendControlCodeToQtPrinter(S);
+{$IFDEF MSWINDOWS}
+  SendControlCodeToPrinter(S);
+{$ENDIF}
+{$IFDEF LINUX}
+  SendTextToPrinter(S,report.PrinterSelect);
+{$ENDIF}
  finally
   report.OnProgress:=oldprogres;
  end;
@@ -1146,7 +1156,12 @@ begin
     aTextDriver:=TextDriver;
     TextDriver.SelectPrinter(report.PrinterSelect);
     report.PrintAll(TextDriver);
-    SendControlCodeToQtPrinter(S);
+{$IFDEF MSWINDOWS}
+    SendControlCodeToPrinter(S);
+{$ENDIF}
+{$IFDEF LINUX}
+    SendTextToPrinter(S,report.PrinterSelect);
+{$ENDIF}
    end
    else
    begin
@@ -1200,7 +1215,12 @@ begin
       SetLength(S,TextDriver.MemStream.Size);
       TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
       PrinterSelection(report.PrinterSelect);
-      SendControlCodeToQtPrinter(S);
+{$IFDEF MSWINDOWS}
+      SendControlCodeToPrinter(S);
+{$ENDIF}
+{$IFDEF LINUX}
+     SendTextToPrinter(S,report.PrinterSelect);
+{$ENDIF}
      end
      else
      begin

@@ -737,6 +737,9 @@ var
   SRpIBODesc:WideString='Interbase Objects -IBO is a Delphi native database driver '+
    '(and more) by Jason Wharton, this is a commercial product so it''s supported but '+
    'not distributed with Report Manager. It''s only available in Windows.';
+  SRpErrorCreatePipe:WideString='Error creating pipe';
+  SRpErrorForking:WideString='Error creating fork';
+  SRpCreatingTempFile:WideString='Error creating temporary file';
   //SRpPrintRep9,SRpPrintRep10:
 
 implementation
