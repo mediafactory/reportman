@@ -47,7 +47,7 @@ UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
-Packages=baseclx:visualclx:visualdbclx:dataclx:netdataclx:netclx:indy:synedit_kylix:ibxpress
+Packages=baseclx:visualclx:visualdbclx:dataclx
 Conditionals=
 DebugSourceDirs=
 UsePackages=0
@@ -58,4 +58,13 @@ HostApplication=
 Launcher=/usr/X11R6/bin/xterm -T KylixDebuggerOutput -e bash -i -c %debuggee%
 UseLauncher=0
 DebugCWD=
+
+[Excluded Packages]
+$(DELPHI)/bin/dclemacsedit.so.6.5=Borland Editor Emacs Enhancements
+$(DELPHI)/bin/bplHelpViewers.so.6.5=Borland Sample Help Viewer Package
+$(DELPHI)/bin/dclnet.so.6.5=Borland Internet Components
+$(DELPHI)/bin/dclindy.so.6.5=Internet Direct "Indy" for Kylix Property and Component Editors
+$(DELPHI)/bin/dclib.so.6.5=InterBase Data Access Components
+/home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/ibpack/bplibpack.so=IBAccess components package
+/home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/synedit/bplsynedit_kylix.so=SynEdit package for Kylix
 

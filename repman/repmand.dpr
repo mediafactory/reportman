@@ -90,7 +90,7 @@ uses
   rpparams in '../rpparams.pas',
   rpfparams in '../rpfparams.pas' {FRpParams},
   rpdbxconfig in '../rpdbxconfig.pas' {FDBXConfig},
-  rpgraphutils in '../rpgraphutils.pas' {FRpGraphProgres};
+  rpgraphutils in '../rpgraphutils.pas' {FRpGraphProgres},
   rplabelitem in '../rplabelitem.pas';
 {$ENDIF}
 

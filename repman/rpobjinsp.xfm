@@ -4,7 +4,6 @@ object FObjInsp: TFObjInsp
   Width = 451
   Height = 304
   Align = alClient
-  BorderStyle = bsDouble
   ParentShowHint = False
   ShowHint = True
   TabOrder = 0

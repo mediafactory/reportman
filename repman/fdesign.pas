@@ -149,8 +149,8 @@ end;
 
 procedure TFDesignFrame.SecPosChange(Sender:TObject);
 begin
- TopRuler.Left:=CONS_RULER_LEFT+FSectionInterface.Left;
- LeftRuler.Top:=FSectionInterface.Top;
+ TopRuler.Left:=CONS_RULER_LEFT-SectionScrollBox.HorzScrollBar.Position;;
+ LeftRuler.Top:=-SectionScrollBox.VertScrollBar.Position;;
  PSection.Height:=FSectionInterface.Height;
  PSection.Width:=FSectionInterface.Width;
 end;

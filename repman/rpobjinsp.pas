@@ -131,6 +131,7 @@ begin
 
  LLabels:=TList.Create;
  LControls:=TStringList.Create;
+ Font.Size:=10;
 end;
 
 destructor TFObjInsp.Destroy;

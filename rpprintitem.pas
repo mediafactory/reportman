@@ -167,7 +167,7 @@ constructor TRpGenTextComponent.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
- FontName:='Arial';
+ FontName:='Helvetica';
  FontSize:=10;
  FontStyle:=0;
  FontColor:=0;
