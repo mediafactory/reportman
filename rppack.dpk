@@ -72,7 +72,8 @@ contains
   rpcompobase in 'rpcompobase.pas',
   rpmdchart in 'rpmdchart.pas',
   rpmdbarcode in 'rpmdbarcode.pas',
-  rptranslator in 'rptranslator.pas';
+  rptranslator in 'rptranslator.pas',
+  rpmdshfolder in 'rpmdshfolder.pas';
 
 {%File 'zconf.inc'}
 

@@ -4,7 +4,7 @@
   <MACROS>
     <VERSION value="BCB.06.10"/>
     <PROJECT value="bplrppackvb.so"/>
-    <OBJFILES value="rpregv.o rpcppcomp.o"/>
+    <OBJFILES value="rpregv.o"/>
     <RESFILES value="rppackvb.res"/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES)"/>
@@ -49,7 +49,6 @@
       <FILE FILENAME="rpregv.pas" FORMNAME="" UNITNAME="rpregv" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="/opt/kylix3/lib/dataclx.bpi" FORMNAME="" UNITNAME="dataclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="/opt/kylix3/lib/visualclx.bpi" FORMNAME="" UNITNAME="visualclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="rpcppcomp.cpp" FORMNAME="" UNITNAME="rpcppcomp" CONTAINERID="CCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
   </FILELIST>
   <BUILDTOOLS>
   </BUILDTOOLS>

@@ -35,7 +35,6 @@ uses
  QStdCtrls,QExtCtrls,types,DateUtils,rptypes,Qt,
  rpreport,rppdfdriver;
 
-
 const
  METAPRINTPROGRESS_INTERVAL=20;
  SCROLLBAR_HX=20;
@@ -1230,4 +1229,6 @@ begin
 end;
 
 end.
+
+
 

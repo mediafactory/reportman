@@ -26,9 +26,6 @@ package rppackdesign;
 {$DESCRIPTION 'Report Manager Designer Component Package'}
 {$IMPLICITBUILD OFF}
 
-requires
-  rppack,
-  rppackv;
 
 contains
   rpmregdesign in 'rpmregdesign.pas',
@@ -46,7 +43,6 @@ contains
   rpmdfstruc in 'rpmdfstruc.pas' {FRpStructure: TFrame},
   rpmdobinsint in 'rpmdobinsint.pas',
   rpmdobjinsp in 'rpmdobjinsp.pas' {FRpObjInsp: TFrame},
-  rpmdshfolder in 'rpmdshfolder.pas',
   rpfparams in 'rpfparams.pas' {FRpParams},
   rpmdfbarcodeint in 'rpmdfbarcodeint.pas',
   rpmdfchartint in 'rpmdfchartint.pas';
