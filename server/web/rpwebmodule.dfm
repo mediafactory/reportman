@@ -19,14 +19,19 @@ object repwebmod: Trepwebmod
       OnAction = repwebmodaloginAction
     end
     item
-      Name = 'aconfig'
-      PathInfo = '/config'
-      OnAction = repwebmodaconfigAction
-    end
-    item
       Name = 'ashowalias'
       PathInfo = '/showalias'
       OnAction = repwebmodashowaliasAction
+    end
+    item
+      Name = 'ashowparams'
+      PathInfo = '/showparams'
+      OnAction = repwebmodashowparamsAction
+    end
+    item
+      Name = 'aexecute'
+      PathInfo = '/execute'
+      OnAction = repwebmodaexecuteAction
     end>
   Left = 192
   Top = 114

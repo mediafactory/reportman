@@ -1,9 +1,15 @@
 unit rpwebpages;
 
+{$I rpconf.inc}
+
 interface
 
 uses SysUtils,Classes,HTTPApp,rpmdconsts,Inifiles,
- rpmdshfolder,rptypes;
+ rpmdshfolder,rptypes,rpreport,rppdfdriver,Variants,
+{$IFDEF USEBDE}
+  dbtables,
+{$ENDIF}
+ rpmetafile;
 
 const
  REPMAN_LOGIN_LABEL='ReportManagerLoginLabel';
@@ -11,16 +17,20 @@ const
  REPMAN_PASSWORD_LABEL='PasswordLabel';
  REPMAN_INDEX_LABEL='ReportManagerIndexLabel';
  REPMAN_WEBSERVER='RepManWebServer';
- REPMAN_CONFIG_LABEL='ConfigIndexLabel';
  REPMAN_AVAILABLE_ALIASES='AvailableAliasesLabel';
- REPMAN_CONFIGUR_LABEL='RepManConfigLabel';
  REPMAN_REPORTS_LABEL='ReportManagerReportsLabel';
  REPMAN_REPORTSLOC_LABEL='ReportsLocationAlias';
+ REPMAN_PARAMSLABEL='ReportManagerParamsLabel';
+ REPMAN_PARAMSLOCATION='ReportsParamsTableLocation';
+ REPMAN_EXECUTELABEL='RepManExecuteLabel';
+ REPMAN_HIDDEN='ReportHiddenLocation';
+ REPMAN_REPORTTITLE='ReportTitleLocation';
 type
- TRpWebPage=(rpwLogin,rpwConfig,rpwIndex,rpwVersion,rpwShowAlias);
+ TRpWebPage=(rpwLogin,rpwIndex,rpwVersion,rpwShowParams,rpwShowAlias);
 
  TRpWebPageLoader=class(TObject)
   private
+   Owner:TComponent;
    Ffilenameconfig:string;
    fport:integer;
    laliases:TStringList;
@@ -31,20 +41,27 @@ type
    InitErrorMessage:string;
    loginpage:string;
    indexpage:string;
-   configpage:string;
    showaliaspage:string;
+   paramspage:string;
    isadmin:boolean;
+{$IFDEF USEBDE}
+   ASession:TSession;
+   BDESessionDir:String;
+   BDESessionDirOK:String;
+{$ENDIF}
+   function CreateReport:TRpReport;
    procedure InitConfig;
    procedure CheckInitReaded;
    function GenerateError(errmessage:String):string;
    function LoadLoginPage(Request: TWebRequest):string;
    function LoadIndexPage(Request: TWebRequest):string;
-   function LoadConfigPage(Request: TWebRequest):string;
    function LoadAliasPage(Request: TWebRequest):string;
+   function LoadParamsPage(Request: TWebRequest):string;
   public
+   procedure ExecuteReport(Request: TWebRequest;Response:TWebResponse);
    procedure CheckLogin(Request:TWebRequest);
-   function GetWebPage(Request: TWebRequest;apage:TRpWebPage):String;
-   constructor Create;
+   procedure GetWebPage(Request: TWebRequest;apage:TRpWebPage;Response:TWebResponse);
+   constructor Create(AOwner:TComponent);
    destructor Destroy;override;
   end;
 
@@ -83,6 +100,8 @@ begin
    '-'+InitErrorMessage+' - '+FFileNameConfig);
 end;
 
+
+
 function TRpWebPageLoader.LoadLoginPage(Request: TWebRequest):string;
 var
  astring:String;
@@ -113,7 +132,6 @@ function TRpWebPageLoader.LoadIndexPage(Request: TWebRequest):string;
 var
  astring:String;
  aliasesstring:String;
- adminstring:String;
  i:integer;
 begin
  if Length(FPagesDirectory)<1 then
@@ -125,17 +143,6 @@ begin
   aresult.LoadFromFile(FPagesDirectory+'rpindex.html');
   astring:=aresult.Text;
  end;
- // Substitute translations
- if isadmin then
-  adminstring:='<p><a href="./config">'+
-  TranslateStr(849,'Report Manager Configuration')+'</a></p>'
- else
-  adminstring:='';
- astring:=StringReplace(astring,REPMAN_CONFIG_LABEL,adminstring
-  ,[rfReplaceAll]);
- astring:=StringReplace(astring,'./config',
-  './config?'+Request.Query,[rfReplaceAll]);
-
  astring:=StringReplace(astring,REPMAN_WEBSERVER,
   TranslateStr(837,'Report Manager Web Server'),[rfReplaceAll]);
  astring:=StringReplace(astring,REPMAN_INDEX_LABEL,
@@ -154,28 +161,13 @@ begin
  Result:=astring;
 end;
 
-function TRpWebPageLoader.LoadConfigPage(Request: TWebRequest):string;
+
+
+
+procedure TRpWebPageLoader.GetWebPage(Request: TWebRequest;apage:TRpWebPage;
+ Response:TWebResponse);
 var
- astring:String;
-begin
- if Length(FPagesDirectory)<1 then
- begin
-  astring:=configpage;
- end
- else
- begin
-  aresult.LoadFromFile(FPagesDirectory+'rpconfig.html');
-  astring:=aresult.Text;
- end;
- // Substitute translations
- astring:=StringReplace(astring,REPMAN_WEBSERVER,
-  TranslateStr(837,'Report Manager Web Server'),[rfReplaceAll]);
-
- Result:=astring;
-end;
-
-
-function TRpWebPageLoader.GetWebPage(Request: TWebRequest;apage:TRpWebPage):String;
+ astring:string;
 begin
  try
   CheckInitReaded;
@@ -183,22 +175,41 @@ begin
    CheckLogin(Request);
   case apage of
    rpwVersion:
-    Result:='<html><body>'+TranslateStr(837,'Report Manager Web Server')+#10+
-     '<p></p>'+TranslateStr(91,'Version')+' '+RM_VERSION+#10+'<p></p>'+
-     TranslateStr(743,'Configuration File')+': '+Ffilenameconfig+'</body></html>';
+    begin
+     astring:='<html><body>'+TranslateStr(837,'Report Manager Web Server')+#10+
+      '<p></p>'+TranslateStr(91,'Version')+' '+RM_VERSION+#10+'<p></p>'+
+      TranslateStr(743,'Configuration File')+': '+Ffilenameconfig;
+     astring:=astring+'</body></html>';
+     Response.Content:=astring;
+    end;
    rpwLogin:
-    Result:=LoadLoginPage(Request);
+    begin
+     astring:=LoadLoginPage(Request);
+     Response.Content:=astring;
+    end;
    rpwIndex:
-    Result:=LoadIndexPage(Request);
-   rpwConfig:
-    Result:=LoadConfigPage(Request);
+    begin
+     astring:=LoadIndexPage(Request);
+     Response.Content:=astring;
+    end;
    rpwShowAlias:
-    Result:=LoadAliasPage(Request);
+    begin
+     astring:=LoadAliasPage(Request);
+     Response.Content:=astring;
+    end;
+   rpwShowParams:
+    begin
+     astring:=LoadParamsPage(Request);
+     if Length(astring)<1 then
+      ExecuteReport(Request,Response)
+     else
+      Response.Content:=astring;
+    end;
   end;
  except
   On E:Exception do
   begin
-   Result:=GenerateError(E.Message);
+   Response.Content:=GenerateError(E.Message);
   end;
  end;
 end;
@@ -208,8 +219,9 @@ begin
  Result:='Error: '+errmessage;
 end;
 
-constructor TRpWebPageLoader.Create;
+constructor TRpWebPageLoader.Create(AOwner:TComponent);
 begin
+ Owner:=AOwner;
  initreaded:=false;
  lusers:=TStringList.Create;
  laliases:=TStringList.Create;
@@ -256,24 +268,11 @@ begin
  aresult.Add('</head>');
  aresult.Add('<body bgcolor="#FFFFFF">');
  aresult.Add('<h3 align="center"> ReportManagerIndexLabel</h3>');
- aresult.Add('ConfigIndexLabel');
  aresult.Add('<p>AvailableAliasesLabel</p>');
  aresult.Add('</body>');
  aresult.Add('</html>');
  indexpage:=aresult.Text;
 
- aresult.clear;
- aresult.Add('<html>');
- aresult.Add('<head>');
- aresult.Add('<title>RepManebServer</title>');
- aresult.Add('<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">');
- aresult.Add('</head>');
- aresult.Add('<body bgcolor="#FFFFFF">');
- aresult.Add('<h3 align="center"> RepManConfigLabel</h3>');
- aresult.Add('<p></p>');
- aresult.Add('</body>');
- aresult.Add('</html>');
- configpage:=aresult.Text;
 
  aresult.clear;
  aresult.Add('<html>');
@@ -288,6 +287,26 @@ begin
  aresult.Add('</html>');
  showaliaspage:=aresult.text;
 
+ aresult.clear;
+ aresult.Add('<html>');
+ aresult.Add('<head>');
+ aresult.Add('<title>RepManWebServer</title>');
+ aresult.Add('<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">');
+ aresult.Add('</head>');
+ aresult.Add('<body bgcolor="#FFFFFF">');
+ aresult.Add('<h2>ReportTitleLocation<h2>');
+ aresult.Add('<p><h3 align="center">ReportManagerParamsLabel</h3></p>');
+ aresult.Add('<form method="get" action="./execute">');
+ aresult.Add('ReportHiddenLocation');
+ aresult.Add('<p>ReportsParamsTableLocation</p>');
+ aresult.Add('<p>');
+ aresult.Add('<input type="submit" value="RepManExecuteLabel">');
+ aresult.Add('</p>');
+
+ aresult.Add('</form>');
+ aresult.Add('</body>');
+ aresult.Add('</html>');
+ paramspage:=aresult.text;
 
  InitConfig;
 end;
@@ -300,6 +319,7 @@ begin
 
  inherited Destroy;
 end;
+
 
 procedure TRpWebPageLoader.InitConfig;
 var
@@ -395,5 +415,212 @@ begin
  Result:=astring;
 end;
 
+// returns emptystring
+function TRpWebPageLoader.LoadParamsPage(Request: TWebRequest):string;
+var
+ pdfreport:TRpReport;
+ dirpath,reportname:string;
+ aliasname:string;
+ visibleparam:Boolean;
+ i:integer;
+ astring,inputstring:String;
+ aparamstring:String;
+begin
+ Result:='';
+ // Load the report
+ pdfreport:=TRpReport.Create(Owner);
+ try
+  aliasname:=Request.QueryFields.Values['aliasname'];
+  if Length(aliasname)>0 then
+  begin
+   dirpath:=laliases.Values[aliasname];
+   reportname:=dirpath+C_DIRSEPARATOR+Request.QueryFields.Values['reportname'];
+   reportname:=ChangeFileExt(reportname,'.rep');
+   pdfreport.LoadFromFile(reportname);
+   // Count visible parameters
+   visibleparam:=false;
+   for i:=0 to pdfreport.Params.Count-1 do
+   begin
+    if pdfreport.Params.Items[i].Visible then
+    begin
+     visibleparam:=true;
+     break;
+    end;
+   end;
+   if visibleparam then
+   begin
+    // Creates the parameters form
+    astring:=paramspage;
+    astring:=StringReplace(astring,REPMAN_WEBSERVER,
+     TranslateStr(837,'Report Manager Web Server'),[rfReplaceAll]);
+    astring:=StringReplace(astring,REPMAN_PARAMSLABEL,
+     TranslateStr(135,'Parameter values'),[rfReplaceAll]);
+    astring:=StringReplace(astring,REPMAN_EXECUTELABEL,
+     TranslateStr(779,'Execute'),[rfReplaceAll]);
+    astring:=StringReplace(astring,REPMAN_REPORTTITLE,
+     Request.QueryFields.Values['reportname'],[rfReplaceAll]);
+
+    inputstring:='<input type="hidden" name="reportname" '+
+    'value="'+Request.QueryFields.Values['reportname']+'">';
+    inputstring:=inputstring+'<input type="hidden" name="aliasname" '+
+    'value="'+Request.QueryFields.Values['aliasname']+'">';
+    inputstring:=inputstring+'<input type="hidden" name="username" '+
+    'value="'+Request.QueryFields.Values['username']+'">';
+    inputstring:=inputstring+'<input type="hidden" name="password" '+
+    'value="'+Request.QueryFields.Values['password']+'">';
+    astring:=StringReplace(astring,REPMAN_HIDDEN,
+     inputstring,[rfReplaceAll]);
+
+    // Add previous parameters
+    aparamstring:='<table width="90%" border="1">'+#10;
+    for i:=0 to pdfreport.Params.Count-1 do
+    begin
+     if pdfreport.Params.Items[i].Visible then
+     begin
+      aparamstring:=aparamstring+'<tr>'+#10+
+       '<td>'+pdfreport.Params.Items[i].Description+'</td>'+#10+
+       '<td>'+#10;
+      aparamstring:=aparamstring+
+       '<input type="text" name="Param'+
+       pdfreport.Params.Items[i].Name+'" value="'+
+       pdfreport.Params.Items[i].AsString+'">'+#10+
+       '</td>'+#10;
+      aparamstring:=aparamstring+
+       '<td>'+#10+
+       '<input type="checkbox" name="NULLParam'+
+       pdfreport.Params.Items[i].Name+'" value="NULL"';
+      if pdfreport.Params.Items[i].Value=Null then
+       aparamstring:=aparamstring+' checked ';
+      aparamstring:=aparamstring+'>'+#10+
+       ' '+TranslateStr(196,'Null value')+'</td>'+#10+
+       '</tr>';
+{    <tr>
+      <td>LabelParam2</td>
+      <td>
+        <select name="Param2Value">
+          <option value="True">True</option>
+          <option value="False">False</option>
+        </select>
+      </td>
+      <td>
+        <input type="checkbox" name="Param1Null2" value="Null" checked>
+        Null </td>
+    </tr>
+}    end;
+    end;
+    aparamstring:=aparamstring+
+     '</table>'+#10;
+    // Insert the params table
+    astring:=StringReplace(astring,REPMAN_PARAMSLOCATION,
+     aparamstring,[rfReplaceAll]);
+    Result:=astring;
+   end;
+  end;
+ finally
+  pdfreport.Free;
+ end;
+end;
+
+procedure TRpWebPageLoader.ExecuteReport(Request: TWebRequest;Response:TWebResponse);
+var
+ pdfreport:TRpReport;
+ dirpath,reportname:string;
+ aliasname:string;
+ astream:TMemoryStream;
+ paramname,paramvalue:string;
+ i,index:integer;
+ paramisnull:boolean;
+begin
+ try
+  aliasname:=Request.QueryFields.Values['aliasname'];
+  if Length(aliasname)>0 then
+  begin
+   dirpath:=laliases.Values[aliasname];
+   reportname:=dirpath+C_DIRSEPARATOR+Request.QueryFields.Values['reportname'];
+//   Response.Content:=reportname;
+   pdfreport:=CreateReport;
+   try
+    reportname:=ChangeFileExt(reportname,'.rep');
+    pdfreport.LoadFromFile(reportname);
+    // Assigns parameters to the report
+    for i:=0 to Request.QueryFields.Count-1 do
+    begin
+     if Pos('Param',Request.QueryFields.Names[i])=1 then
+     begin
+      paramname:=Copy(Request.QueryFields.Names[i],6,Length(Request.QueryFields.Names[i]));
+      paramvalue:=Request.QueryFields.Values[Request.QueryFields.Names[i]];
+      paramisnull:=false;
+      index:=Request.QueryFields.IndexOfName('NULLParam'+paramname);
+      if index>=0 then
+      begin
+       if Request.QueryFields.Values[Request.QueryFields.Names[index]]='NULL' then
+        paramisnull:=True;
+      end;
+      if paramisnull then
+       pdfreport.Params.ParamByName(paramname).Value:=Null
+      else
+      begin
+       // Assign the parameter as a string
+       pdfreport.Params.ParamByName(paramname).AsString:=paramvalue;
+      end;
+     end;
+    end;
+    astream:=TMemoryStream.Create;
+    astream.Clear;
+    rppdfdriver.PrintReportPDFStream(pdfreport,'',false,true,1,9999,1,
+     astream,true);
+    astream.Seek(0,soFromBeginning);
+    Response.ContentType := 'application/pdf';
+    Response.ContentStream:=astream;
+   finally
+    pdfreport.Free;
+   end;
+  end;
+ except
+  On E:Exception do
+  begin
+   Response.Content:=GenerateError(E.Message);
+  end;
+ end;
+end;
+
+// Returns parameter page if no params available
+
+function TRpWebPageLoader.CreateReport:TRpReport;
+{$IFDEF USEBDE}
+var
+ sesname:string;
+{$ENDIF}
+begin
+{$IFDEF USEBDE}
+ if Not Assigned(ASession) then
+ begin
+  // If can not create session omit it
+  try
+   ASession:=TSession.Create(Owner);
+   ASession.AutoSessionName:=True;
+   ASession.Open;
+   sesname:=ASession.SessionName;
+   ASession.Close;
+   ASession.PrivateDir:=ChangeFileExt(Obtainininamecommonconfig('','BDESessions','Session'+ASession.SessionName),'');
+   BDESessionDir:=ASession.PrivateDir;
+   ForceDirectories(ASession.PrivateDir);
+   ASession.Open;
+   BDESessionDirOk:=ASession.PrivateDir;
+  except
+   ASession.free;
+   ASession:=nil;
+  end;
+ end;
+{$ENDIF}
+ Result:=TRpReport.Create(nil);
+{$IFDEF USEBDE}
+ if Assigned(ASession) then
+  Result.DatabaseInfo.BDESession:=ASession;
+{$ENDIF}
+end;
+
 
 end.
+
+

@@ -193,6 +193,7 @@ type
    procedure ClearBitmaps;
    procedure WriteBitmap(index:Integer);
  public
+   DestStream:TStream;
    procedure BeginDoc;
    procedure NewPage;
    procedure EndDoc;
@@ -896,6 +897,11 @@ begin
  if Length(Trim(FFilename))>0 then
  begin
   FMainPDF.SaveToFile(FFilename);
+  FMainPDF.Seek(0,soFromBeginning);
+ end;
+ if Assigned(DestStream) then
+ begin
+  FMainPDF.SaveToStream(DestStream);
   FMainPDF.Seek(0,soFromBeginning);
  end;
  ClearBitmaps;

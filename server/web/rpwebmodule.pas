@@ -2,9 +2,11 @@ unit rpwebmodule;
 
 interface
 
+
 uses
   SysUtils, Classes, HTTPApp,rptypes,rpmdconsts,inifiles,
-  rpmdshfolder,rpwebpages;
+  rpmdshfolder,
+  rpwebpages;
 
 type
   Trepwebmod = class(TWebModule)
@@ -16,9 +18,11 @@ type
       Response: TWebResponse; var Handled: Boolean);
     procedure repwebmodaloginAction(Sender: TObject; Request: TWebRequest;
       Response: TWebResponse; var Handled: Boolean);
-    procedure repwebmodaconfigAction(Sender: TObject; Request: TWebRequest;
-      Response: TWebResponse; var Handled: Boolean);
     procedure repwebmodashowaliasAction(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
+    procedure repwebmodashowparamsAction(Sender: TObject;
+      Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
+    procedure repwebmodaexecuteAction(Sender: TObject;
       Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
   private
     { Private declarations }
@@ -37,13 +41,13 @@ implementation
 procedure Trepwebmod.repwebmodaversionAction(Sender: TObject;
   Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
 begin
- Response.Content:=pageloader.GetWebPage(Request,rpwVersion);
+ pageloader.GetWebPage(Request,rpwVersion,Response);
 end;
 
 
 procedure Trepwebmod.WebModuleCreate(Sender: TObject);
 begin
- pageloader:=TRpWebPageLoader.Create;
+ pageloader:=TRpWebPageLoader.Create(Self);
 end;
 
 
@@ -57,25 +61,33 @@ end;
 procedure Trepwebmod.repwebmodaindexAction(Sender: TObject;
   Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
 begin
- Response.Content:=pageloader.GetWebPage(Request,rpwIndex);
+ pageloader.GetWebPage(Request,rpwIndex,Response);
 end;
 
 procedure Trepwebmod.repwebmodaloginAction(Sender: TObject;
   Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
 begin
- Response.Content:=pageloader.GetWebPage(Request,rpwLogin);
-end;
-
-procedure Trepwebmod.repwebmodaconfigAction(Sender: TObject;
-  Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
-begin
- Response.Content:=pageloader.GetWebPage(Request,rpwConfig);
+ pageloader.GetWebPage(Request,rpwLogin,Response);
 end;
 
 procedure Trepwebmod.repwebmodashowaliasAction(Sender: TObject;
   Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
 begin
- Response.Content:=pageloader.GetWebPage(Request,rpwShowAlias);
+ pageloader.GetWebPage(Request,rpwShowAlias,Response);
+end;
+
+procedure Trepwebmod.repwebmodashowparamsAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
+begin
+ pageloader.GetWebPage(Request,rpwShowParams,Response);
+end;
+
+
+procedure Trepwebmod.repwebmodaexecuteAction(Sender: TObject;
+  Request: TWebRequest; Response: TWebResponse; var Handled: Boolean);
+begin
+ pageloader.ExecuteReport(Request,Response);
 end;
 
 end.
+

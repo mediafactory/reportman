@@ -49,6 +49,8 @@ type
     procedure SetParamType(AParamType:TRpParamType);
     procedure WriteDescription(Writer:TWriter);
     procedure ReadDescription(Reader:TReader);
+    function GetAsString:String;
+    procedure SetAsString(NewValue:String);
    protected
     procedure DefineProperties(Filer:TFiler);override;
    public
@@ -57,6 +59,7 @@ type
     destructor Destroy;override;
     procedure SetDatasets(AList:TStrings);
     property Description:widestring read FDescription write SetDescription;
+    property AsString:String read GetAsString write SetAsString;
    published
     property Name:string read FName write SetName;
     property Visible:Boolean read FVisible write SetVisible default True;
@@ -285,5 +288,45 @@ begin
  Filer.DefineProperty('Description',ReadDescription,WriteDescription,True);
 end;
 
+function TRpParam.GetAsString:String;
+begin
+ if Value=Null then
+ begin
+  Result:='';
+  exit;
+ end;
+ case ParamType of
+  rpParamString,rpParamExpre:
+   Result:=Value;
+  rpParamInteger,rpParamDouble,rpParamCurrency:
+   Result:=FloatToStr(Value);
+  rpParamDate:
+   Result:=DateToStr(Value);
+  rpParamTime:
+   Result:=TimeToStr(Value);
+  rpParamDateTime:
+   Result:=DateTimeToStr(Value);
+  rpParamBool:
+   Result:=BoolToStr(Value,True);
+ end;
+end;
+
+procedure TRpParam.SetAsString(NewValue:String);
+begin
+ case ParamType of
+  rpParamString,rpParamExpre:
+   Value:=NewValue;
+  rpParamInteger,rpParamDouble,rpParamCurrency:
+   Value:=StrToFloat(NewValue);
+  rpParamDate:
+   Value:=StrToDate(NewValue);
+  rpParamTime:
+   Value:=StrToTime(NewValue);
+  rpParamDateTime:
+   Value:=StrToDateTime(NewValue);
+  rpParamBool:
+   Value:=StrToBool(NewValue);
+ end;
+end;
 
 end.

@@ -16,8 +16,14 @@
 <p><img src="images/webserverinstall2.jpg" width="461" height="465"></p>
 <p>You can test the installation by calling the application with /version command:</p>
 <p><a href="http://localhost/cgi-bin/repwebserver.dll/version">http://localhost/cgi-bin/repwebserver.dll/version</a></p>
-<p>After that, use config web server command to add users, and change the Admin 
-  password, you must login as Admin user to access configuration page.</p>
+<p>This will give you info about the configuration file the report web server 
+  is using.</p>
+<p>For security reasons you can't add/remove users or aliases from the web. To 
+  configure users and aliases you can use repserverapp(xp) and repserverconfig(xp), 
+  execute repserverapp as a privileged user (root or Admin) so it opens the system 
+  wide configuration file and have write permissions over it, then execute repserverconfig(xp) 
+  and add aliases and users. You can see the generated file location in reportserverapp 
+  form, this configuration file will be used by the web report server.</p>
 <p><a href="http://localhost/cgi-bin/repwebserver.dll/login">http://localhost/cgi-bin/repwebserver.dll/login</a></p>
 </body>
 </html>

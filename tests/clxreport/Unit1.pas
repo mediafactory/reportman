@@ -8,7 +8,7 @@ uses
 {$IFDEF MSWINDOWS}
   rpvclreport,
 {$ENDIF}
-  rpcompobase, rpmdesigner, DBClient, rpalias;
+  rpcompobase, rpmdesigner, DBClient, rpalias,rppdfdriver;
 
 
 type
@@ -53,8 +53,17 @@ begin
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
+var
+ fstream:TFileStream;
 begin
- CLXReport1.SaveToPDF(ETest.text,false);
+ CLXReport1.Filename:=EReportName.Text;
+ fstream:=TFileStream.Create(ETest.Text,fmCreate);
+ try
+  rppdfdriver.PrintReportPDFStream(CLXReport1.Report,'',false,true,1,9999,1,fstream,true);
+ finally
+  fstream.free;
+ end;
+// CLXReport1.SaveToPDF(ETest.text,false);
 end;
 
 procedure TForm1.BDesignClick(Sender: TObject);

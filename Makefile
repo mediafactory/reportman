@@ -23,6 +23,7 @@ clean:
         -del /s *.~*
         -del /s *.o
         -del /s *.exe
+        -del /s *.dll
         -del /s *.dcp
         -del /s *.ow
         -del /s *.ppw

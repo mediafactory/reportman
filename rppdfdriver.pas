@@ -43,6 +43,7 @@ type
   public
    filename:string;
    Compressed:boolean;
+   DestStream:TStream;
    constructor Create;
    destructor Destroy;override;
    procedure NewDocument(report:TrpMetafileReport);stdcall;
@@ -65,9 +66,14 @@ type
 
 procedure SaveMetafileToPDF(metafile:TRpMetafileReport;
  filename:string;compressed:boolean);
+procedure SaveMetafileToPDFStream(metafile:TRpMetafileReport;
+ Stream:TStream;compressed:boolean);
 function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
      filename:string;compressed:boolean):Boolean;
+function PrintReportPDFStream(report:TRpReport;Caption:string;progress:boolean;
+     allpages:boolean;frompage,topage,copies:integer;
+     Stream:TStream;compressed:boolean):Boolean;
 
 
 
@@ -119,29 +125,6 @@ const
     );
 
 
-procedure SaveMetafileToPDF(metafile:TRpMetafileReport;
- filename:string;compressed:boolean);
-var
- adriver:TRpPDFDriver;
- i:integer;
-begin
- adriver:=TRpPDFDriver.Create;
- adriver.filename:=filename;
- adriver.compressed:=compressed;
- adriver.NewDocument(metafile);
- try
-  for i:=0 to metafile.PageCount-1 do
-  begin
-   adriver.DrawPage(metafile.Pages[i]);
-   if i<metafile.PageCount-1 then
-    adriver.NewPage;
-  end;
-  adriver.EndDocument;
- except
-  adriver.AbortDocument;
-  raise;
- end;
-end;
 
 constructor TRpPDFDriver.Create;
 begin
@@ -169,6 +152,8 @@ begin
  end;
  FPDFFile:=TRpPDFFile.Create(nil);
  FPDFFile.FileName:=filename;
+ if Assigned(DestStream) then
+  FPDFFile.DestStream:=DestStream;
  FPDFFile.Compressed:=Compressed;
  FPDFFile.PageWidth:=report.CustomX;
  FPDFFile.PageHeight:=report.CustomY;
@@ -473,5 +458,79 @@ begin
  extent.Y:=Round(height/dpi*TWIPS_PER_INCHESS);
 end;
 
+
+procedure SaveMetafileToPDF(metafile:TRpMetafileReport;
+ filename:string;compressed:boolean);
+var
+ adriver:TRpPDFDriver;
+ i:integer;
+begin
+ adriver:=TRpPDFDriver.Create;
+ adriver.filename:=filename;
+ adriver.compressed:=compressed;
+ adriver.NewDocument(metafile);
+ try
+  for i:=0 to metafile.PageCount-1 do
+  begin
+   adriver.DrawPage(metafile.Pages[i]);
+   if i<metafile.PageCount-1 then
+    adriver.NewPage;
+  end;
+  adriver.EndDocument;
+ except
+  adriver.AbortDocument;
+  raise;
+ end;
+end;
+
+procedure SaveMetafileToPDFStream(metafile:TRpMetafileReport;
+ Stream:TStream;compressed:boolean);
+var
+ adriver:TRpPDFDriver;
+ i:integer;
+begin
+ adriver:=TRpPDFDriver.Create;
+ adriver.compressed:=compressed;
+ adriver.NewDocument(metafile);
+ try
+  for i:=0 to metafile.PageCount-1 do
+  begin
+   adriver.DrawPage(metafile.Pages[i]);
+   if i<metafile.PageCount-1 then
+    adriver.NewPage;
+  end;
+  adriver.EndDocument;
+  adriver.PDFFile.MainPDF.Seek(0,soFromBeginning);
+  Stream.Write(adriver.PDFFile.MainPDF.Memory^,adriver.PDFFile.MainPDF.Size);
+ except
+  adriver.AbortDocument;
+  raise;
+ end;
+end;
+
+function PrintReportPDFStream(report:TRpReport;Caption:string;progress:boolean;
+     allpages:boolean;frompage,topage,copies:integer;
+     Stream:TStream;compressed:boolean):Boolean;
+var
+ pdfdriver:TRpPDFDriver;
+ apdfdriver:IRpPrintDriver;
+ oldprogres:TRpProgressEvent;
+begin
+ pdfdriver:=TRpPDFDriver.Create;
+ pdfdriver.compressed:=compressed;
+ pdfdriver.DestStream:=Stream;
+ apdfdriver:=pdfdriver;
+ // If report progress must print progress
+ oldprogres:=report.OnProgress;
+ try
+  if progress then
+   report.OnProgress:=pdfdriver.RepProgress;
+  report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
+  Stream.Seek(0,soFromBeginning);
+ finally
+  report.OnProgress:=oldprogres;
+ end;
+ Result:=True;
+end;
 
 end.
