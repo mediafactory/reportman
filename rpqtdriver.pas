@@ -43,6 +43,7 @@ type
    constructor Create;
   end;
 
+procedure PrintMetafile(metafile:TRpMetafileReport;tittle:string);
 
 implementation
 
@@ -173,6 +174,61 @@ begin
  Result:=false;
 end;
 
+procedure PrintObject(obj:TRpMetafileObject;dpix,dpiy:integer);
+var
+ x,y:integer;
+begin
+ case obj.Metatype of
+  rpMetaText:
+   begin
+    // Switch to device points
+    x:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
+    y:=round(obj.Top*dpiy/TWIPS_PER_INCHESS);
+    Printer.Canvas.Font.Name:=Obj.FontName;
+    Printer.Canvas.Font.Color:=Obj.FontColor;
+    Printer.Canvas.TextOut(x,y,obj.Text)
+   end;
+  rpMetaDraw:
+   begin
+
+   end;
+  rpMetaImage:
+   begin
+
+   end;
+ end;
+end;
+
+procedure PrintMetafile(metafile:TRpMetafileReport;tittle:string);
+var
+ i:integer;
+ j:integer;
+ apage:TRpMetafilePage;
+ dpix,dpiy:integer;
+begin
+ printer.Title:=tittle;
+ printer.Begindoc;
+ try
+  dpix:=printer.XDPI;
+  dpiy:=printer.YDPI;
+  for i:=0 to metafile.PageCount-1 do
+  begin
+   if i>0 then
+    printer.NewPage;
+   apage:=metafile.Pages[i];
+   for j:=0 to apage.ObjectCount-1 do
+   begin
+    PrintObject(apage.Objects[i],dpix,dpiy);
+   end;
+  end;
+ finally
+  Printer.EndDoc;
+ end;
+// except
+//  printer.Abort;
+//  raise;
+// end;
+end;
 
 end.
 

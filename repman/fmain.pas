@@ -25,7 +25,7 @@ uses
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
   rpconsts,rptypes, QExtCtrls,frpstruc, rplastsav,rpsubreport,
   rpobinsint,rpfparams,fdesign,rpobjinsp,fsectionint,
-  rpsection,rpprintitem,QClipbrd,QPrinters;
+  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;
@@ -710,15 +710,8 @@ end;
 
 procedure TFMainf.APrintExecute(Sender: TObject);
 begin
- // Prints the report
-  ShowMessage(printer.OutputDevice);
- printer.begindoc;
- try
-  printer.Canvas.TextOut(72,72,'Hello World');
- finally
-  printer.enddoc;
- end;
-  ShowMessage(printer.OutputDevice);
+ report.PrintAll;
+ PrintMetafile(report.Metafile,Caption);
 end;
 
 initialization

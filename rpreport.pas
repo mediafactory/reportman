@@ -132,6 +132,7 @@ type
    procedure BeginPrint;
    procedure EndPrint;
    function PrintNextPage:boolean;
+   procedure PrintAll;
   published
    // Grid options
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
@@ -513,6 +514,16 @@ begin
  end;
 end;
 
+procedure TRpReport.PrintAll;
+begin
+ BeginPrint;
+ try
+  while Not PrintNextPage do;
+ finally
+  EndPrint;
+ end;
+end;
+
 
 
 procedure TRpReport.EndPrint;
@@ -651,6 +662,7 @@ begin
 end;
 
 
+// Resturns true if is the last pabe
 function TRpReport.PrintNextPage:boolean;
 var
  printedsomething:boolean;
@@ -720,6 +732,7 @@ begin
  Result:=Not Assigned(Section);
  LastPage:=Result;
 end;
+
 
 
 
