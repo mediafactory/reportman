@@ -24,7 +24,9 @@ program printrepxp;
 {$I rpconf.inc}
 
 uses
-  SysUtils,Classes,ActiveX,
+  SysUtils,
+  Classes,
+  ActiveX,
   midaslib,
   rpreport in '..\..\..\rpreport.pas',
   rpparams in '..\..\..\rpparams.pas',
@@ -34,7 +36,8 @@ uses
   rpsection in '..\..\..\rpsection.pas',
   rpsecutil in '..\..\..\rpsecutil.pas',
   rpvpreview in '..\..\..\rpvpreview.pas',
-  rpgdidriver in '..\..\..\rpgdidriver.pas';
+  rpgdidriver in '..\..\..\rpgdidriver.pas',
+  rprfvparams in '..\..\..\rprfvparams.pas' {FRpRTParams};
 
 var
  report:TRpReport;
@@ -62,6 +65,7 @@ begin
  Writeln(SRpPrintRep8);
  Writeln(SRpPrintRep9);
  Writeln(SRpPrintRep10);
+ Writeln(SRpPrintRep12);
  Writeln(SRpParseParamsH);
  Writeln(SRpCommandLineStdIN);
 end;
@@ -69,17 +73,16 @@ end;
 var
  isstdin:Boolean;
  memstream:TMemoryStream;
+ showparams:Boolean;
+
 begin
 {$IFDEF USEADO}
   CoInitialize(nil);
 {$ENDIF}
   isstdin:=false;
+  showparams:=false;
   { TODO -oUser -cConsole Main : Insert code here }
   try
-   if ParamCount<1 then
-    PrintHelp
-   else
-   begin
    preview:=false;
    pdialog:=false;
    showprogress:=true;
@@ -98,6 +101,9 @@ begin
     else
     if ParamStr(indexparam)='-preview' then
      preview:=true
+    else
+    if ParamStr(indexparam)='-showparams' then
+     showparams:=true
     else
     if ParamStr(indexparam)='-pdialog' then
      pdialog:=true
@@ -151,7 +157,8 @@ begin
     PrintHelp;
     Raise Exception.Create(SRpTooManyParams)
    end;
-   if ((Length(filename)<1) and (not isstdin)) then
+   memstream:=ExeResourceToStream(100);
+   if ((Length(filename)<1) and (not isstdin) and (Not Assigned(memstream))) then
    begin
     PrintHelp;
    end
@@ -159,6 +166,29 @@ begin
    begin
     report:=TRpReport.Create(nil);
     try
+     if assigned(memstream) then
+     begin
+      try
+       report.LoadFromStream(memstream);
+      finally
+       memstream.free;
+      end;
+      // Preview flag
+      memstream:=ExeResourceToStream(101);
+      if Assigned(memstream) then
+      begin
+       preview:=true;
+       memstream.free;
+      end;
+      // Showparams flag
+      memstream:=ExeResourceToStream(102);
+      if Assigned(memstream) then
+      begin
+       showparams:=true;
+       memstream.free;
+      end;
+     end
+     else
      if isstdin then
      begin
       memstream:=ReadFromStdInputStream;
@@ -176,22 +206,26 @@ begin
      else
       copies:=acopies;
      ParseCommandLineParams(report.Params);
-     if preview then
-      rpvpreview.ShowPreview(report,filename)
-     else
+     doprint:=true;
+     if showparams then
+      doprint:=ShowUserParams(report.params);
+     if doprint then
      begin
-      doprint:=true;
-      if pdialog then
-       doprint:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
-      if doprint then
-       PrintReport(report,filename,showprogress,allpages,
-        frompage,topage,copies,collate);
+      if preview then
+       rpvpreview.ShowPreview(report,filename)
+      else
+      begin
+       if pdialog then
+        doprint:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+       if doprint then
+        PrintReport(report,filename,showprogress,allpages,
+         frompage,topage,copies,collate);
+      end;
      end;
     finally
      report.free;
     end;
    end;
-  end;
  except
   On E:Exception do
   begin

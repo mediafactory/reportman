@@ -68,152 +68,164 @@ begin
   { TODO -oUser -cConsole Main : Insert code here }
   isstdin:=false;
   printerindex:=pRpDefaultPrinter;
-  if ParamCount<1 then
-   PrintHelp
-  else
-  begin
-   preview:=false;
-   pdialog:=false;
-   showprogress:=true;
-   collate:=false;
-   allpages:=true;
-   frompage:=1;
-   topage:=999999999;
-   copies:=1;
-   dodeletefile:=false;
-   metafile:=TRpMetafileReport.Create(nil);
-   try
-    indexparam:=1;
-    filename:='';
-    // Get the options
-    while indexparam<ParamCount+1 do
-    begin
-     if ParamStr(indexparam)='-q' then
-      showprogress:=false
-     else
-     if ParamStr(indexparam)='-preview' then
-      preview:=true
-     else
-     if ParamStr(indexparam)='-pdialog' then
-      pdialog:=true
-     else
-      if ParamStr(indexparam)='-d' then
-       dodeletefile:=true
-      else
-      if ParamStr(indexparam)='-stdin' then
-       isstdin:=true
-      else
-      if ParamStr(indexparam)='-from' then
-      begin
-       inc(indexparam);
-       if indexparam>=Paramcount+1 then
-        Raise Exception.Create(SRpNumberexpected);
-       frompage:=StrToInt(ParamStr(indexparam));
-       allpages:=false;
-      end
-      else
-      if ParamStr(indexparam)='-to' then
-      begin
-       inc(indexparam);
-       if indexparam>=Paramcount+1 then
-        Raise Exception.Create(SRpNumberexpected);
-       topage:=StrToInt(ParamStr(indexparam));
-       allpages:=false;
-      end
-      else
-      if ParamStr(indexparam)='-copies' then
-      begin
-       inc(indexparam);
-       if indexparam>=Paramcount+1 then
-        Raise Exception.Create(SRpNumberexpected);
-       copies:=StrToInt(ParamStr(indexparam));
-       if copies<=0 then
-        copies:=1;
-      end
-      else
-      // Printer selection
-      if ParamStr(indexparam)='-p' then
-      begin
-       inc(indexparam);
-       if indexparam>=Paramcount+1 then
-        Raise Exception.Create(SRpNumberexpected);
-       printerindex:=TRpPrinterSelect(StrToInt(ParamStr(indexparam)));
-      end
-      else
-      if ParamStr(indexparam)='-collate' then
-      begin
-       collate:=true;
-      end
-      else
-      begin
-       filename:=ParamStr(indexparam);
-       inc(indexparam);
-       break;
-      end;
-     inc(indexparam);
-    end;
-    if indexparam<ParamCount+1 then
-    begin
-     PrintHelp;
-     Raise Exception.Create(SRpTooManyParams)
-    end;
-    if ((Length(filename)<1) and (not isstdin)) then
-    begin
-     PrintHelp;
-    end
+  preview:=false;
+  pdialog:=false;
+  showprogress:=true;
+  collate:=false;
+  allpages:=true;
+  frompage:=1;
+  topage:=999999999;
+  copies:=1;
+  dodeletefile:=false;
+  metafile:=TRpMetafileReport.Create(nil);
+  try
+   indexparam:=1;
+   filename:='';
+   // Get the options
+   while indexparam<ParamCount+1 do
+   begin
+    if ParamStr(indexparam)='-q' then
+     showprogress:=false
     else
-    begin
-     if isstdin then
+    if ParamStr(indexparam)='-preview' then
+     preview:=true
+    else
+    if ParamStr(indexparam)='-pdialog' then
+     pdialog:=true
+    else
+     if ParamStr(indexparam)='-d' then
+      dodeletefile:=true
+     else
+     if ParamStr(indexparam)='-stdin' then
+      isstdin:=true
+     else
+     if ParamStr(indexparam)='-from' then
      begin
-      memstream:=ReadFromStdInputStream;
-      try
-       memstream.Seek(0,soFromBeginning);
-       metafile.LoadFromStream(memstream);
-      finally
-       memstream.free;
-      end;
-      dodeletefile:=false;
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpNumberexpected);
+      frompage:=StrToInt(ParamStr(indexparam));
+      allpages:=false;
+     end
+     else
+     if ParamStr(indexparam)='-to' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpNumberexpected);
+      topage:=StrToInt(ParamStr(indexparam));
+      allpages:=false;
+     end
+     else
+     if ParamStr(indexparam)='-copies' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpNumberexpected);
+      copies:=StrToInt(ParamStr(indexparam));
+      if copies<=0 then
+       copies:=1;
+     end
+     else
+     // Printer selection
+     if ParamStr(indexparam)='-p' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpNumberexpected);
+      printerindex:=TRpPrinterSelect(StrToInt(ParamStr(indexparam)));
+     end
+     else
+     if ParamStr(indexparam)='-collate' then
+     begin
+      collate:=true;
      end
      else
      begin
-      metafile.LoadFromFile(filename);
+      filename:=ParamStr(indexparam);
+      inc(indexparam);
+      break;
      end;
+    inc(indexparam);
+   end;
+   if indexparam<ParamCount+1 then
+   begin
+    PrintHelp;
+    Raise Exception.Create(SRpTooManyParams)
+   end;
+   memstream:=ExeResourceToStream(100);
+   if ((Length(filename)<1) and (not isstdin) and (not Assigned(memstream))) then
+   begin
+    PrintHelp;
+   end
+   else
+   begin
+    if assigned(memstream) then
+    begin
      try
-      if ShowProgress then
+      metafile.LoadFromStream(memstream);
+     finally
+      memstream.free;
+     end;
+     // Preview flag
+     memstream:=ExeResourceToStream(101);
+     if Assigned(memstream) then
+     begin
+      preview:=true;
+      memstream.free;
+     end;
+    end
+    else
+    if isstdin then
+    begin
+     memstream:=ReadFromStdInputStream;
+     try
+      memstream.Seek(0,soFromBeginning);
+      metafile.LoadFromStream(memstream);
+     finally
+      memstream.free;
+     end;
+     dodeletefile:=false;
+    end
+    else
+    begin
+     metafile.LoadFromFile(filename);
+    end;
+    try
+     if ShowProgress then
+     begin
+      WriteLn(SRpPrintingFile+':'+filename);
+     end;
+     if preview then
+     begin
+      rpfmainmetaviewvcl.PreviewMetafile(metafile,nil,true,true);
+     end
+     else
+     begin
+      doprint:=true;
+      if pdialog then
+       doprint:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+      if doprint then
       begin
-       WriteLn(SRpPrintingFile+':'+filename);
-      end;
-      if preview then
-      begin
-       rpfmainmetaviewvcl.PreviewMetafile(metafile,nil,true,true);
-      end
-      else
-      begin
-       doprint:=true;
-       if pdialog then
-        doprint:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
-       if doprint then
+       if PrintMetafile(metafile,filename,ShowProgress,allpages,
+        frompage,topage,copies,collate,false,printerindex) then
+       if ShowProgress then
        begin
-        if PrintMetafile(metafile,filename,ShowProgress,allpages,
-         frompage,topage,copies,collate,false,printerindex) then
-        if ShowProgress then
-        begin
-         WriteLn(SRpPrinted);
-        end;
+        WriteLn(SRpPrinted);
        end;
       end;
-     finally
-      if dodeletefile then
-       if DeleteFile(filename) then
-        if ShowProgress then
-        begin
-         WriteLn(SRpPrintedFileDeleted);
-        end;
      end;
+    finally
+     if dodeletefile then
+      if DeleteFile(filename) then
+       if ShowProgress then
+       begin
+        WriteLn(SRpPrintedFileDeleted);
+       end;
     end;
-   finally
-    metafile.free;
    end;
+  finally
+   metafile.free;
   end;
  except
   On E:Exception do

@@ -93,7 +93,7 @@ begin
  Writeln(AnsiString(SRpPrintPDFRep9));
  Writeln(AnsiString(SRpPrintRep8));
 {$IFDEF MSWINDOWS}
- Writeln(AnsiString(SRpPrintRep8));
+ Writeln(AnsiString(SRpPrintRep11));
 {$ENDIF}
  Writeln(AnsiString(SRpParseParamsH));
  Writeln(AnsiString(SRpCommandLineStdIN));

@@ -263,6 +263,7 @@ procedure RaiseLastOSError;
 
 {$IFDEF MSWINDOWS}
 function IsWindowsNT:Boolean;
+function ExeResourceToStream (resId: Integer):TMemoryStream;
 {$ENDIF}
 
 
@@ -2493,6 +2494,34 @@ begin
  deststream.Write(astring[1],Length(astring));
 {$ENDIF}
 end;
+
+{$IFDEF MSWINDOWS}
+function ExeResourceToStream (resId: Integer):TMemoryStream;
+var
+  Res: TResourceStream;
+  MRes: TMemoryStream;
+begin
+  if FindResource (hInstance,    PCHAR(resID), RT_RCDATA) = 0 then
+  begin
+   Result := nil;
+   Exit;
+  end;
+  Res := TResourceStream.CreateFromID(HInstance, resId, RT_RCDATA);
+  try
+   MRes := TMemoryStream.Create;
+   try
+    MRes.LoadFromStream(Res);
+    MRes.Seek(0,soFromBeginning);
+    Result := MRes;
+   except
+    MRes.Free;
+    Result:=nil;
+   end;
+  finally
+   Res.Free;
+  end;
+end;
+{$ENDIF}
 
 
 initialization

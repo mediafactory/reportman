@@ -51,12 +51,6 @@ UsePackages=0
 [Parameters]
 RunParams=
 HostApplication=
-[Resource DLL Projects]
-Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
-[Language]
-ActiveLang=
-ProjectLang=$00000409
-RootDir=C:\prog\toni\cvsroot\reportman\reportman\repman
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=1

@@ -36,6 +36,7 @@ uses
   rpsection in '..\..\..\rpsection.pas',
   rppreview in '..\..\..\rppreview.pas',
   rpsecutil in '..\..\..\rpsecutil.pas',
+  rprfparams in '..\..\..\rprfparams.pas',
   rpqtdriver in '..\..\..\rpqtdriver.pas';
 {$ENDIF}
 
@@ -49,6 +50,7 @@ uses
   rpsection in '../../../rpsection.pas',
   rppreview in '../../../rppreview.pas',
   rpsecutil in '../../../rpsecutil.pas',
+  rprfparams in '../../../rprfparams.pas',
   rpqtdriver in '../../../rpqtdriver.pas';
 {$ENDIF}
 
@@ -78,6 +80,7 @@ begin
  Writeln(SRpPrintRep8);
  Writeln(SRpPrintRep9);
  Writeln(SRpPrintRep10);
+ Writeln(SRpPrintRep12);
  Writeln(SRpParseParamsH);
  Writeln(SRpCommandLineStdIN);
 end;
@@ -85,12 +88,14 @@ end;
 var
  isstdin:Boolean;
  memstream:TMemoryStream;
+ showparams:Boolean;
 
 begin
 {$IFDEF USEADO}
   CoInitialize(nil);
 {$ENDIF}
   isstdin:=false;
+  showparams:=False;
   { TODO -oUser -cConsole Main : Insert code here }
   try
    if ParamCount<1 then
@@ -115,6 +120,9 @@ begin
     else
     if ParamStr(indexparam)='-preview' then
      preview:=true
+    else
+    if ParamStr(indexparam)='-showparams' then
+     showparams:=true
     else
     if ParamStr(indexparam)='-pdialog' then
      pdialog:=true
@@ -193,16 +201,21 @@ begin
      else
       copies:=acopies;
      ParseCommandLineParams(report.Params);
-     if preview then
-      rppreview.ShowPreview(report,filename,true)
-     else
+     doprint:=True;
+     if showparams then
+      doprint:=rprfparams.SHowUserParams(report.Params);
+     if doprint then
      begin
-      doprint:=true;
-      if pdialog then
-       doprint:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
-      if doprint then
-       PrintReport(report,filename,showprogress,allpages,
-        frompage,topage,copies,collate);
+      if preview then
+       rppreview.ShowPreview(report,filename,true)
+      else
+      begin
+       if pdialog then
+        doprint:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+       if doprint then
+        PrintReport(report,filename,showprogress,allpages,
+         frompage,topage,copies,collate);
+      end;
      end;
     finally
      report.free;

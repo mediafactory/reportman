@@ -335,6 +335,7 @@ var
 begin
  if (csLoading in ComponentState) then
  begin
+  FIniNumPage:=Value;
   exit;
  end;
  if not assigned(FSubreport) then
