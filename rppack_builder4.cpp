@@ -20,6 +20,7 @@ USEPACKAGE("Vclx40.bpi");
 USEUNIT("rptranslator.pas");
 USERES("rptranslator.dcr");
 USEUNIT("rpmdshfolder.pas");
+USEPACKAGE("vcljpg40.bpi");
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 //---------------------------------------------------------------------------

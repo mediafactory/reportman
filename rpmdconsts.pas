@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.3';
+ RM_VERSION='1.3b';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
 
@@ -589,7 +589,7 @@ var
   SRpSSide:WideString='Side';
   SRpSStacked:WideString='Stacked';
   SRpSStacked100:WideString='Stacked100';
-
+  SRpSForcePrint:WideString='Force print';
 implementation
 
 uses rptranslator;
@@ -1169,6 +1169,7 @@ begin
  TranslateVar(916,SRpSSide);
  TranslateVar(917,SRpSStacked);
  TranslateVar(918,SRpSStacked100);
+ TranslateVar(919,SRpSForcePrint);
 end;
 
 {$IFDEF LINUX}

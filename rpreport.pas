@@ -287,6 +287,8 @@ implementation
 uses rpprintitem, rpsecutil, Math;
 
 function TIdenReportVar.GeTRpValue:TRpValue;
+var
+ subrep:TRpSubReport;
 begin
  if varname='PAGE' then
   Result:=freport.PageNum+1
@@ -302,7 +304,14 @@ begin
     else
      if varname='CURRENTGROUP' then
      begin
-      Result:=freport.Subreports.Items[freport.CurrentSubreportIndex].SubReport.CurrentGroupIndex;
+      if freport.CurrentSubreportIndex>=freport.Subreports.Count then
+       subrep:=freport.Subreports.Items[freport.CurrentSubreportIndex-1].SubReport
+      else
+        subrep:=freport.Subreports.Items[freport.CurrentSubreportIndex].SubReport;
+      if subrep.LastRecord then
+       Result:=subrep.GroupCount
+      else
+       Result:=subrep.CurrentGroupIndex;
      end;
 end;
 
@@ -944,8 +953,6 @@ begin
 end;
 
 procedure TRpReport.EndPrint;
-var
- i:integer;
 begin
  DeActivateDatasets;
  FEvaluator.Free;
@@ -953,10 +960,6 @@ begin
  section:=nil;
  subreport:=nil;
  printing:=false;
- for i:=0 to SubReports.Count-1 do
- begin
-  Subreports.Items[i].Subreport.LastRecord:=false;
- end;
  metafile.UpdateTotalPages(FTotalPagesList);
 end;
 
@@ -1395,6 +1398,10 @@ begin
  Driver.SelectPrinter(PrinterSelect);
  metafile.Clear;
  ClearTotalPagesList;
+ for i:=0 to SubReports.Count-1 do
+ begin
+  Subreports.Items[i].Subreport.LastRecord:=false;
+ end;
  // Sets page orientation
  if PageOrientation<>rpOrientationDefault then
  begin
@@ -1627,6 +1634,7 @@ var
  i:integer;
  psection:TRpSection;
  afirstdetail:integer;
+ printit:boolean;
 begin
  if Headers then
  begin
@@ -1671,15 +1679,12 @@ begin
   for i:=0 to pfootercount-1 do
   begin
    psection:=subreport.Sections.Items[i+pfooter].Section;
-   if psection.EvaluatePrintCondition then
-   begin
-    asection:=psection;
-    havepagefooters:=true;
-    CheckSpace;
-    pagefooters.add(IntToStr(i+pfooter));
-    pagefooterpos:=pageposy+freespace-sectionext.Y;
-    freespace:=freespace-sectionext.Y;
-   end;
+   asection:=psection;
+   havepagefooters:=true;
+   CheckSpace;
+   pagefooters.add(IntToStr(i+pfooter));
+   pagefooterpos:=pageposy+freespace-sectionext.Y;
+   freespace:=freespace-sectionext.Y;
   end;
  end
  else
@@ -1689,8 +1694,16 @@ begin
   for i:=0 to pagefooters.Count-1 do
   begin
    asection:=oldsubreport.Sections.Items[StrToInt(pagefooters.Strings[i])].Section;
+   printit:=true;
+   if Not asection.FooterAtReportEnd then
+   begin
+    if Not Assigned(Section) then
+     printit:=false;
+   end;
    sectionext:=asection.GetExtension(FDriver);
-   PrintSection(false);
+   if printit then
+    if asection.EvaluatePrintCondition then
+     PrintSection(false);
   end;
  end;
 end;

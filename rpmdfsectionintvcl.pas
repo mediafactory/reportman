@@ -274,6 +274,13 @@ begin
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).HorzDesp,true));
  end;
+ if (TrpSection(printitem).SectionType=rpsecpfooter) then
+ begin
+  lnames.Add(SRpSForcePrint);
+  ltypes.Add(SRpSBool);
+  if Assigned(lvalues) then
+   lvalues.Add(BoolToStr(TRpSection(printitem).FooterAtReportEnd,true));
+ end;
  // Child Subreport
  lnames.Add(SRpChildSubRep);
  ltypes.Add(SRpSList);
@@ -352,6 +359,14 @@ begin
    exit;
   end;
  end;
+ if (TrpSection(printitem).SectionType=rpsecpfooter) then
+ begin
+  if pname=SRpSForcePrint then
+  begin
+   TRpSection(fprintitem).FooterAtReportEnd:=StrToBool(Value);
+   exit;
+  end;
+ end;
  if pname=SRpChildSubRep then
  begin
   TRpSection(fprintitem).SetChildSubReportByName(Value);
@@ -421,6 +436,14 @@ begin
   if pname=SRPHorzDesp then
   begin
    Result:=BoolToStr(TRpSection(fprintitem).HorzDesp,true);
+   exit;
+  end;
+ end;
+ if (TrpSection(printitem).SectionType=rpsecpfooter) then
+ begin
+  if pname=SRpSForcePrint then
+  begin
+   Result:=BoolToStr(TRpSection(fprintitem).FooterAtReportEnd,true);
    exit;
   end;
  end;

@@ -66,6 +66,7 @@ type
    FExternalSearchField:String;
    FExternalSearchValue:String;
    FBeginPageExpression:widestring;
+   FFooterAtReportEnd:boolean;
    // deprecated
    FBeginPage:boolean;
    FReadError:Boolean;
@@ -139,6 +140,8 @@ type
    property ChildSubReport:TComponent read FChildSubReport write SetChildSubReport;
    // Deprecated properties for compatibility only
    property BeginPage:boolean read FBeginpage write FBeginPage default false;
+   property FooterAtReportEnd:boolean read FFooterAtReportEnd write
+    FFooterAtReportEnd default true;
  end;
 
 implementation
@@ -153,6 +156,7 @@ begin
  FExternalTable:='REPMAN_REPORTS';
  FExternalField:='REPORT';
  FExternalSearchField:='REPORT_NAME';
+ FFooterAtReportEnd:=true;
 
  Width:=Round(C_DEFAULT_SECTION_WIDTH*TWIPS_PER_INCHESS/CMS_PER_INCHESS);
  Height:=Round(C_DEFAULT_SECTION_HEIGHT*TWIPS_PER_INCHESS/CMS_PER_INCHESS);

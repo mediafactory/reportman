@@ -24,12 +24,11 @@ LIBFILES =
 IDLFILES =
 IDLGENFILES =
 LIBRARIES = dclocx40.lib inet40.lib inetdb40.lib nmfast40.lib dss40.lib tee40.lib \
-  teedb40.lib teeui40.lib qrpt40.lib ibsmp40.lib bcbsmp40.lib vcldbx40.lib \
-  vcljpg40.lib
+  teedb40.lib teeui40.lib qrpt40.lib ibsmp40.lib bcbsmp40.lib vcldbx40.lib
 SPARELIBS = Vcl40.lib vclx40.lib vcljpg40.lib vclmid40.lib vcldb40.lib vcldbx40.lib \
   bcbsmp40.lib ibsmp40.lib qrpt40.lib teeui40.lib teedb40.lib tee40.lib dss40.lib \
   nmfast40.lib inetdb40.lib inet40.lib dclocx40.lib
-PACKAGES = vcl40.bpi Vclmid40.bpi Vcldb40.bpi Vclx40.bpi
+PACKAGES = vcl40.bpi Vclmid40.bpi Vcldb40.bpi Vclx40.bpi vcljpg40.bpi
 # ---------------------------------------------------------------------------
 PATHCPP = .;
 PATHASM = .;
