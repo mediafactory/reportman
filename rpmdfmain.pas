@@ -1373,7 +1373,6 @@ begin
  begin
   HighLightText:=HighlightedText;
   OldHelpFilename:=FHelp.TextBrowser1.Filename;
-  Writeln('Changed'+HighlightedText);
  end;
 end;
 
