@@ -25,11 +25,18 @@ package rppackv;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
+{$DESCRIPTION 'Report manager visual components'}
 {$IMPLICITBUILD OFF}
 
 requires
   rppack,
-  visualclx;
+  visualclx,
+  designide,
+  vcl,
+  rtl,
+  designhooks,
+  dataclx,
+  indy;
 
 contains
   rpclxreport in 'rpclxreport.pas',
@@ -51,6 +58,7 @@ contains
   rpqtdriver in 'rpqtdriver.pas' {FRpQtProgress},
   rpprintdia in 'rpprintdia.pas' {FRpPrintDialog},
   rprfparams in 'rprfparams.pas' {FRpRunTimeParams},
-  rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig};
+  rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig},
+  rpregv in 'rpregv.pas';
 
 end.

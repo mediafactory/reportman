@@ -30,6 +30,17 @@ package rppack;
 {$DESCRIPTION 'Report manager designer (non visual)'}
 {$IMPLICITBUILD OFF}
 
+requires
+  vcl,
+  rtl,
+  indy,
+  dataclx,
+  ibxpress,
+  ZCore,
+  ZParseSql,
+  ZPlain,
+  ZDbc,
+  ZComponent;
 
 contains
   rptypeval in 'rptypeval.pas',
@@ -82,7 +93,10 @@ contains
   rpbasereport in 'rpbasereport.pas',
   rpdatatext in 'rpdatatext.pas',
   rpmreg in 'rpmreg.pas',
-  rpmdcharttypes in 'rpmdcharttypes.pas';
+  rpmdcharttypes in 'rpmdcharttypes.pas',
+  rpinfoprovid in 'rpinfoprovid.pas',
+  rpinfoprovft in 'rpinfoprovft.pas',
+  rpfreetype2 in 'rpfreetype2.pas';
 
 {%File 'zconf.inc'}
 
