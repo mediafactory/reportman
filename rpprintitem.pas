@@ -33,8 +33,8 @@ uses Sysutils,Classes,rptypes,rpconsts,
 {$ENDIF}
  rpmetafile;
 
-
 type
+ TRpPosAlign=(rpalnone,rpalbottom,rpalright,rpalbotright);
 
  TRpCommonComponent=class(TComponent)
   private
@@ -45,6 +45,7 @@ type
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);virtual;
   public
+   lastextent:TPoint;
    constructor Create(AOwner:TComponent);override;
    function GetExtension(adriver:IRpPrintDriver):TPoint;virtual;
    function EvaluatePrintCondition:boolean;
@@ -61,9 +62,12 @@ type
   private
    FPosY:TRpTwips;
    FPosX:TRpTwips;
+   FAlign:TRpPosAlign;
   published
    property PosX:TRpTwips read FPosX write FPosX;
    property PosY:TRpTwips read FPosY write FPosY;
+   property Align:TRpPosAlign read FAlign write FAlign
+    default rpalnone;
   end;
 
  TRpCommonListItem=class(TCollectionItem)
@@ -145,6 +149,7 @@ function TRpCommonComponent.GetExtension(adriver:IRpPrintDriver):TPoint;
 begin
  Result.X:=Width;
  Result.Y:=Height;
+ LastExtent:=Result;
 end;
 
 function TRpCommonComponent.EvaluatePrintCondition:boolean;

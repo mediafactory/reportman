@@ -254,12 +254,41 @@ end;
 procedure TRpSection.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 var
  i:integer;
+ compo:TRpCommonPosComponent;
+ newposx,newposy:integer;
 begin
  for i:=0 to Components.Count-1 do
  begin
+  newposx:=aposx;
+  newposy:=aposy;
+  compo:=TRpCommonPosComponent(Components.Items[i].Component);
   // Evaluates print condition of each comonent
-  if Components.Items[i].Component.EvaluatePrintCondition then
-   Components.Items[i].Component.Print(aposx,aposy,metafile);
+  if compo.EvaluatePrintCondition then
+  begin
+   // Alignbottom will change the component position
+   if (compo.Align<>rpalnone) then
+   begin
+    if (compo.Align in [rpalbottom,rpalbotright]) then
+    begin
+     newposy:=aposy+lastextent.Y-compo.lastextent.Y;
+    end
+    else
+     newposy:=aposy+compo.PosY;
+    // Alignbottom will change the component position
+    if (compo.Align in [rpalright,rpalbotright]) then
+    begin
+     newposx:=aposx+lastextent.X-compo.lastextent.X;
+    end
+    else
+     newposx:=aposx+compo.PosX;
+   end
+   else
+   begin
+    newposx:=aposx+compo.PosX;
+    newposy:=aposy+compo.PosY;
+   end;
+   Components.Items[i].Component.Print(newposx,newposy,metafile);
+  end;
  end;
 end;
 
@@ -289,8 +318,6 @@ var
  acompo:TRpCommonPosComponent;
 begin
  Result:=inherited GetExtension(adriver);
- if ((Not FAutoExpand) AND (Not FAutoContract)) then
-  exit;
  if FAutoContract then
  begin
   minsize:=0;
@@ -301,17 +328,20 @@ begin
   minsize:=Result.Y;
   currentsize:=Result.Y;
  end;
- if Not FAutoExpand then
-  maxsize:=Result.Y
+ if FAutoExpand then
+  maxsize:=MaxInt
  else
-  maxsize:=MaxInt;
+  maxsize:=Result.X;
  for i:=0 to Components.Count-1 do
  begin
   acompo:=TRpCommonPosComponent(Components.Items[i].Component);
   compsize:=acompo.GetExtension(adriver);
   if compsize.Y>0 then
   begin
-   newsize:=acompo.PosY+compsize.Y;
+   if acompo.Align in [rpalbottom,rpalbotright] then
+    newsize:=compsize.Y
+   else
+    newsize:=acompo.PosY+compsize.Y;
    if newsize<maxsize then
    begin
     if newsize>currentsize then
@@ -322,6 +352,7 @@ begin
  if currentsize<minsize then
   currentsize:=minsize;
  Result.Y:=currentsize;
+ lastextent:=Result;
 end;
 
 end.

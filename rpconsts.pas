@@ -444,6 +444,9 @@ resourcestring
   SRPSBeginPage='Begin Page';
   SRPSkipPage='Skip Page';
   SRPAlignBottom='Align Bottom';
+  SRPBottom='Bottom';
+  SRpSRight='Right';
+  SRPAlign='Align';
   SRpIdentifierAlreadyExists='Identifier already exists';
   SrpSCutText='Cut Text';
   SrpSWordwrap='Word wrap';

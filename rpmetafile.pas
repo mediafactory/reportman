@@ -141,7 +141,8 @@ type
   function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
   procedure SetOrientation(Orientation:TRpOrientation);stdcall;
   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
-  procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
+  procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
+  procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
   procedure DrawPage(apage:TRpMetaFilePage);stdcall;
   function AllowCopies:boolean;stdcall;
  end;

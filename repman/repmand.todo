@@ -29,7 +29,7 @@
 
 
 
-{TODO 2  -oToni -cEngine : Implement autoexpand and autocontract for sections}
+{DONE 2  -oToni -cEngine : Implement autoexpand and autocontract for sections}
 {TODO 2 -oToni -cEngine : Program a simple chart component at least with poly lines and dots}
 
 {TODO 1 -oToni -cOthers : Conversion program for gestor.exe}

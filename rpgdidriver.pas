@@ -90,6 +90,7 @@ type
    intdpix,intdpiy:integer;
    metacanvas:TMetafilecanvas;
    meta:TMetafile;
+   pagecliprec:TRect;
   public
    bitmap:TBitmap;
    dpi:integer;
@@ -113,7 +114,8 @@ type
    procedure DrawPage(apage:TRpMetaFilePage);stdcall;
    function AllowCopies:boolean;stdcall;
    function GetPageSize:TPoint;stdcall;
-   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
+   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
+   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
    function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
    constructor Create;
@@ -332,22 +334,6 @@ begin
   aheight:=bitmapheight;
 
 
-  if assigned(metacanvas) then
-  begin
-   metacanvas.free;
-   metacanvas:=nil;
-  end;
-  if assigned(meta) then
-  begin
-   meta.free;
-   meta:=nil;
-   meta:=TMetafile.Create;
-  end;
-  meta:=TMetafile.Create;
-  meta.Enhanced:=true;
-  meta.Width:=bitmapwidth;
-  meta.Height:=bitmapheight;
-  metacanvas:=TMetafileCanvas.Create(meta,0);
 
   if clientwidth>0 then
   begin
@@ -396,15 +382,8 @@ begin
   rec.Top:=Round((pagemargins.Top/TWIPS_PER_INCHESS)*dpi*scale);
   rec.Right:=Round((pagemargins.Right/TWIPS_PER_INCHESS)*dpi*scale);
   rec.Bottom:=Round((pagemargins.Bottom/TWIPS_PER_INCHESS)*dpi*scale);
-  // If drawclippingregion then
-  if drawclippingregion then
-  begin
-   bitmap.Canvas.Pen.Style:=psSolid;
-   bitmap.Canvas.Pen.Color:=clBlack;
-   bitmap.Canvas.Brush.Style:=bsclear;
-   bitmap.Canvas.rectangle(rec.Left,rec.Top,rec.Right,rec.Bottom);
-  end
-  else
+  pagecliprec:=rec;
+  if (Not drawclippingregion) then 
   begin
    aregion:=CreateRectRgn(rec.Left,rec.Top,rec.Right,rec.Bottom);
    SelectClipRgn(bitmap.Canvas.handle,aregion);
@@ -474,8 +453,23 @@ begin
 end;
 
 procedure TRpGDIDriver.EndPage;
+var
+ rec:TREct;
 begin
- // Does nothing
+ // If drawclippingregion then
+ if not toprinter then
+ begin
+  if Not Assigned(bitmap) then
+   exit;
+  rec:=pagecliprec;
+  if drawclippingregion then
+  begin
+   bitmap.Canvas.Pen.Style:=psSolid;
+   bitmap.Canvas.Pen.Color:=clBlack;
+   bitmap.Canvas.Brush.Style:=bsclear;
+   bitmap.Canvas.rectangle(rec.Left,rec.Top,rec.Right,rec.Bottom);
+  end
+ end;
 end;
 
 
@@ -505,7 +499,18 @@ begin
   if not Assigned(bitmap) then
    Raise Exception.Create(SRpGDIDriverNotInit);
   if not Assigned(metacanvas) then
-   Raise Exception.Create(SRpGDIDriverNotInit);
+  begin
+   if assigned(meta) then
+   begin
+    meta.free;
+    meta:=nil;
+   end;
+   meta:=TMetafile.Create;
+   meta.Enhanced:=true;
+   meta.Width:=bitmapwidth;
+   meta.Height:=bitmapheight;
+   metacanvas:=TMetafileCanvas.Create(meta,0);
+  end;
   Canvas:=metacanvas;
   dpix:=Screen.PixelsPerInch;
   dpiy:=Screen.PixelsPerInch;
@@ -1329,6 +1334,21 @@ begin
  end;
 end;
 
+procedure TRpGDIDriver.GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
+var
+ graphic:TBitmap;
+begin
+ if dpi<=0 then
+  exit;
+ graphic:=TBitmap.Create;
+ try
+  Graphic.LoadFromStream(Stream);
+  extent.X:=Round(graphic.width/dpi*TWIPS_PER_INCHESS);
+  extent.Y:=Round(graphic.height/dpi*TWIPS_PER_INCHESS);
+ finally
+  graphic.Free;
+ end;
+end;
 
 
 end.

@@ -185,8 +185,8 @@ begin
  aalign:=Alignment or VAlignment;
  if SingleLine then
   aalign:=aalign or AlignmentFlags_SingleLine;
- metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
-  aposx+PosX,width,height,Text,WFontName,LFontName,FontSize,FontRotation,
+ metafile.Pages[metafile.CurrentPage].NewTextObject(aposy,
+  aposx,width,height,Text,WFontName,LFontName,FontSize,FontRotation,
   FontStyle,smallint(Type1Font),FOntColor,BackColor,Transparent,CutText,aalign,WordWrap);
 end;
 
@@ -280,8 +280,8 @@ begin
  aalign:=Alignment or VAlignment;
  if SingleLine then
   aalign:=aalign or AlignmentFlags_SingleLine;
- metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
-   aposx+PosX,width,height,aText,WFontName,LFontName,FontSize,FontRotation,
+ metafile.Pages[metafile.CurrentPage].NewTextObject(aposy,
+   aposx,width,height,aText,WFontName,LFontName,FontSize,FontRotation,
    FontStyle,smallint(Type1Font),FOntColor,BackColor,Transparent,CutText,aalign,WordWrap);
  // Is Total pages variable?
  if (UpperCase(expre)='PAGECOUNT') then
@@ -407,6 +407,7 @@ begin
  aText.WordWrap:=WordWrap;
 
  adriver.TextExtent(aText,Result);
+ LastExtent:=Result;
 end;
 
 end.

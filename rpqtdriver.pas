@@ -96,7 +96,8 @@ type
    procedure EndPage;stdcall;
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
    procedure DrawPage(apage:TRpMetaFilePage);stdcall;
-   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
+   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
+   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
    function AllowCopies:boolean;stdcall;
    function GetPageSize:TPoint;stdcall;
    function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
@@ -1136,6 +1137,22 @@ begin
   apdfdriver:=pdfdriver;
   report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
   Result:=True;
+ end;
+end;
+
+procedure TRpQtDriver.GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
+var
+ graphic:TBitmap;
+begin
+ if dpi<=0 then
+  exit;
+ graphic:=TBitmap.Create;
+ try
+  Graphic.LoadFromStream(Stream);
+  extent.X:=Round(graphic.width/dpi*TWIPS_PER_INCHESS);
+  extent.Y:=Round(graphic.height/dpi*TWIPS_PER_INCHESS);
+ finally
+  graphic.Free;
  end;
 end;
 

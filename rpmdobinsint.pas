@@ -91,6 +91,7 @@ type
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
    procedure SetProperty(pname:string;value:string);override;
    function GetProperty(pname:string):string;override;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
  end;
 
@@ -176,6 +177,7 @@ begin
  SetBounds(Left,Top,NewWidth,NewHeight);
 end;
 
+
 procedure TRpSizeInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
  lnames.clear;
@@ -193,6 +195,7 @@ begin
  lnames.Add(SrpSAfterPrint);
  ltypes.Add(SRpSExpression);
  lvalues.Add(printitem.DoAfterPrint);
+
 
  // Width
  lnames.Add(SrpSWidth);
@@ -296,6 +299,40 @@ begin
  MouseUp(mbLeft,[],0,0);
 end;
 
+function AlignToStr(value:TRpPosAlign):string;
+begin
+ case value of
+  rpalnone:
+   REsult:=SRpNone;
+  rpalbottom:
+   Result:=SRPBottom;
+  rpalright:
+   Result:=SRPSRight;
+  rpalbotright:
+   Result:=SRPBottom+'/'+SRpSRight;
+ end;
+end;
+
+function StrToAlign(value:string):TRpPosAlign;
+begin
+ Result:=rpalnone;
+ if value=SRPBottom then
+ begin
+  Result:=rpalbottom;
+  exit;
+ end;
+ if value=SRPSRight then
+ begin
+  Result:=rpalright;
+  exit;
+ end;
+ if value=SRPBottom+'/'+SRpSRight then
+ begin
+  Result:=rpalbotright;
+  exit;
+ end;
+end;
+
 procedure TRpSizePosInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
  inherited GetProperties(lnames,ltypes,lvalues);
@@ -308,7 +345,12 @@ begin
  lnames.Add(SrpSLeft);
  ltypes.Add(SRpSCurrency);
  lvalues.Add(gettextfromtwips(TRpCommonPosComponent(printitem).PosX));
+
+ lnames.Add(SRPAlign);
+ ltypes.Add(SRpSList);
+ lvalues.Add(AlignToStr(TRpCommonPosComponent(printitem).Align));
 end;
+
 
 
 procedure TRpSizePosInterface.SetProperty(pname:string;value:string);
@@ -327,7 +369,28 @@ begin
   UpdatePos;
   exit;
  end;
+ if pname=SRPAlign then
+ begin
+  TRpCommonPosComponent(fprintitem).Align:=StrToAlign(Value);
+  exit;
+ end;
  inherited SetProperty(pname,value);
+end;
+
+
+procedure TRpSizePosInterface.GetPropertyValues(pname:string;
+ lpossiblevalues:TStrings);
+begin
+ if pname=SRpAlign then
+ begin
+  lpossiblevalues.clear;
+  lpossiblevalues.Add(SRpNone);
+  lpossiblevalues.Add(SRpBottom);
+  lpossiblevalues.Add(SRpSRight);
+  lpossiblevalues.Add(SRPBottom+'/'+SRpSRight);
+  exit;
+ end;
+ inherited GetPropertyValues(pname,lpossiblevalues);
 end;
 
 function TRpSizePosInterface.GetProperty(pname:string):string;
@@ -341,6 +404,11 @@ begin
  if pname=SRpSLeft then
  begin
   Result:=gettextfromtwips(TRpCommonPosComponent(printitem).PosX);
+  exit;
+ end;
+ if pname=SRPAlign then
+ begin
+  Result:=AlignToStr(TRpCommonPosComponent(fprintitem).Align);
   exit;
  end;
  Result:=inherited GetProperty(pname);

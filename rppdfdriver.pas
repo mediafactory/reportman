@@ -44,6 +44,7 @@ type
    filename:string;
    Compressed:boolean;
    constructor Create;
+   destructor Destroy;override;
    procedure NewDocument(report:TrpMetafileReport);stdcall;
    procedure EndDocument;stdcall;
    procedure AbortDocument;stdcall;
@@ -53,7 +54,8 @@ type
    procedure DrawPage(apage:TRpMetaFilePage);stdcall;
    function AllowCopies:boolean;stdcall;
    function GetPageSize:TPoint;stdcall;
-   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
+   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
+   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
    function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
    property PDFFile:TRpPDFFile read FPDFFile;
@@ -144,7 +146,18 @@ constructor TRpPDFDriver.Create;
 begin
  FPageWidth:= 12048;
  FPageHeight:= 17039;
+ FPDFFile:=TRpPDFFile.Create(nil);
 end;
+
+destructor TRpPDFDriver.Destroy;
+begin
+ if Assigned(FPDFFile) then
+ begin
+  FPDFFile.free;
+  FPDFFile:=nil;
+ end;
+end;
+
 
 procedure TRpPDFDriver.NewDocument(report:TrpMetafileReport);
 begin
@@ -413,6 +426,19 @@ begin
  Result:=True;
 end;
 
+procedure TRpPDFDriver.GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
+var
+ imagesize:integer;
+ width,height:integer;
+begin
+ width:=0;
+ height:=0;
+ GetBitmapInfo(Stream,width,height,imagesize,nil);
+ if dpi<=0 then
+  exit;
+ extent.X:=Round(width/dpi*TWIPS_PER_INCHESS);
+ extent.Y:=Round(height/dpi*TWIPS_PER_INCHESS);
+end;
 
 
 end.
