@@ -46,6 +46,8 @@ type
     procedure DoEnter;override;
     procedure DoExit;override;
     procedure KeyDown(var Key: Word; Shift: TShiftState);override;
+    procedure KeyUp(var Key: Word; Shift: TShiftState);override;
+    procedure KeyPress(var Key: char);override;
     procedure CheckValidData;
     function GetDisplayText:string;
     function GetInteger:integer;
@@ -58,7 +60,6 @@ type
     procedure SetValue(NewValue:variant);
   protected
     { Protected declarations }
-   procedure KeyPress(var key:char);override;
    procedure Change;override;
   public
     { Public declarations }
@@ -224,6 +225,14 @@ procedure TRpCLXMaskEdit.KeyPress(var Key: Char);
 var
  curcontrol:TWincontrol;
 begin
+ if EditType in [teinteger,tefloat,tecurrency] then
+ begin
+  if (  ((Key=chr(44)) AND  (chr(44)<>DecimalSeparator))
+   or ((Key=chr(46)) AND  (chr(46)<>DecimalSeparator)) ) then
+  begin
+   Key:=decimalseparator;
+  end;
+ end;
   if EditType=teDate then
   begin
    if (Key<>#13) then
@@ -322,9 +331,13 @@ end;
 
 procedure TRpCLXMaskEdit.KeyDown(var Key: Word; Shift: TShiftState);
 begin
- if ((Key=KEY_COMMA) AND  (KEY_COMMA<>Ord(DecimalSeparator)) ) then
+ if EditType in [teinteger,tefloat,tecurrency] then
  begin
-  Key:=ord(decimalseparator);
+  if (  ((Key=KEY_COMMA) AND  (KEY_COMMA<>Ord(DecimalSeparator)))
+   or ((Key=KEY_PERIOD) AND  (KEY_PERIOD<>Ord(DecimalSeparator))) ) then
+  begin
+   Key:=ord(decimalseparator);
+  end;
  end;
  if (Not FDoValidate) then
   if (Key=KEY_RETURN) then
@@ -337,6 +350,18 @@ begin
  inherited KeyDown(Key,Shift);
 end;
 
+procedure TRpCLXMaskEdit.KeyUp(var Key: Word; Shift: TShiftState);
+begin
+ if EditType in [teinteger,tefloat,tecurrency] then
+ begin
+  if (  ((Key=KEY_COMMA) AND  (KEY_COMMA<>Ord(DecimalSeparator)))
+   or ((Key=KEY_PERIOD) AND  (KEY_PERIOD<>Ord(DecimalSeparator))) ) then
+  begin
+   Key:=ord(decimalseparator);
+  end;
+ end;
+ inherited KeyUp(Key,Shift);
+end;
 
 
 function TRpCLXMaskEdit.GetInteger:integer;

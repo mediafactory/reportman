@@ -5,6 +5,7 @@ object FSerMain: TFSerMain
   Height = 319
   VertScrollBar.Range = 145
   ActiveControl = LMEssages
+  AutoScroll = False
   Caption = 'Report Manager Server application'
   Color = clBackground
   Position = poScreenCenter
@@ -13,13 +14,13 @@ object FSerMain: TFSerMain
   PixelsPerInch = 96
   TextHeight = 13
   TextWidth = 6
-  AutoScroll = false
   object LMEssages: TMemo
     Left = 0
     Top = 145
     Width = 595
     Height = 174
     Align = alClient
+    Color = clBackground
     ReadOnly = True
     ScrollBars = ssBoth
     TabOrder = 0

@@ -21,6 +21,7 @@ object FSerMainVCL: TFSerMainVCL
     Width = 536
     Height = 171
     Align = alClient
+    Color = clInfoBk
     ReadOnly = True
     ScrollBars = ssBoth
     TabOrder = 0

@@ -1,8 +1,8 @@
 object FNewUserVCL: TFNewUserVCL
   Left = 309
   Top = 258
-  Width = 347
-  Height = 192
+  Width = 294
+  Height = 184
   HorzScrollBar.Range = 277
   VertScrollBar.Range = 141
   ActiveControl = BOK
@@ -18,6 +18,9 @@ object FNewUserVCL: TFNewUserVCL
   Position = poScreenCenter
   Scaled = False
   OnCreate = FormCreate
+  DesignSize = (
+    286
+    150)
   PixelsPerInch = 96
   TextHeight = 13
   object LUser: TLabel
@@ -66,6 +69,7 @@ object FNewUserVCL: TFNewUserVCL
     Top = 12
     Width = 121
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
   end
   object EPassword: TEdit
@@ -73,6 +77,7 @@ object FNewUserVCL: TFNewUserVCL
     Top = 40
     Width = 121
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     PasswordChar = '*'
     TabOrder = 1
   end
@@ -81,6 +86,7 @@ object FNewUserVCL: TFNewUserVCL
     Top = 68
     Width = 121
     Height = 21
+    Anchors = [akLeft, akTop, akRight]
     PasswordChar = '*'
     TabOrder = 2
   end

@@ -111,9 +111,9 @@ object FRpMessageDlg: TFRpMessageDlg
     WordWrap = True
   end
   object EInput: TEdit
-    Left = 0
+    Left = 4
     Top = 24
-    Width = 453
+    Width = 449
     Height = 21
     TabOrder = 2
     Visible = False
