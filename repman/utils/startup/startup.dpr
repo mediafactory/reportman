@@ -148,6 +148,7 @@ begin
 //  Writeln('If you experience problems change the mode by define/undefine environment variable CLX_USE_LIBQT=true');
 //  Writeln('Library path:');
 //  Writeln(GetEnvironmentVariable('LD_LIBRARY_PATH'));
+//  SetEnvValue('DISPLAY',':0',true);
 
   ExecuteApp(targetapp);
   // Not succefull
