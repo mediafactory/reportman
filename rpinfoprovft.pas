@@ -438,8 +438,10 @@ begin
  end;
  if match then
   exit;
- // Finally gets default font
+ // Finally gets default font, but applying styles
+ if style ...defaultfontitalic... else defaultfontbod...
  currentfont:=defaultfont;
+ 
  if not assigned(currentfont) then
   Raise Exception.Create('No active font');
  finally

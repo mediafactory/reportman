@@ -273,11 +273,30 @@ begin
 end;
 
 function TRpSection.SectionCaption(addchild:boolean):WideString;
+var
+ index:integer;
+ acount:integer;
+ subrep:TRpSubReport;
 begin
  case FSectionType of
   rpsecdetail:
    begin
-    Result:=SRpDetail;
+    subrep:=TRpSubReport(Subreport);
+    if subrep.DetailCount>1 then
+    begin
+     index:=subrep.FirstDetail;
+     acount:=1;
+     while self<>subrep.Sections.Items[index].Section do
+     begin
+      inc(index);
+      inc(acount);
+      if index>subrep.Sections.Count then
+       break;
+     end;
+     Result:=SRpDetail+'_'+IntToStr(acount);
+    end
+    else
+     Result:=SRpDetail;
    end;
   rpsecpheader:
    begin

@@ -373,6 +373,8 @@ begin
  // If subreport is not the same frees
  if Fsubreport=subreport then
   exit;
+ Visible:=false;
+ try
  oldsection:=nil;
  if assigned(fsubreport) then
  begin
@@ -509,6 +511,9 @@ begin
  end;
  SectionScrollBox.VertScrollBar.Position:=0;
  SectionScrollBox.HorzScrollBar.Position:=0;
+ finally
+  Visible:=true;
+ end;
 end;
 
 

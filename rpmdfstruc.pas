@@ -68,6 +68,8 @@ type
     procedure ActionIdle(Sender:TObject;var done:boolean);
     procedure SetReport(Value:TRpReport);
     procedure CreateInterface;
+    procedure DisableRView;
+    procedure EnableRView;
   public
     { Public declarations }
     designframe:TControl;
@@ -204,6 +206,20 @@ begin
  end;
 end;
 
+procedure TFRpStructure.DisableRView;
+begin
+ RView.Items.BeginUpdate;
+ RView.OnChange:=nil;
+ RView.OnClick:=nil;
+end;
+
+procedure TFRpStructure.EnableRView;
+begin
+ RView.OnChange:=RViewChange;
+ RView.OnClick:=RViewClick;
+ RView.Items.EndUpdate;
+end;
+
 procedure TFRpStructure.CreateInterface;
 var
  anew:TTreeNode;
@@ -211,22 +227,27 @@ var
  subr:TRpSubreport;
  child:TTreeNode;
 begin
- RView.Items.Clear;
+ DisableRView;
+ try
+  RView.Items.Clear;
 
- // Adds the items
- for i:=0 to Report.SubReports.Count-1 do
- begin
-  subr:=Report.SubReports.Items[i].SubReport;
-  anew:=RView.Items.Add(nil,subr.GetDisplayName(true));
-  anew.data:=Report.SubReports.Items[i].SubReport;
-  for j:=0 to subr.Sections.Count-1 do
+  // Adds the items
+  for i:=0 to Report.SubReports.Count-1 do
   begin
-   child:=RView.Items.AddChild(anew,subr.Sections.Items[j].Section.SectionCaption(true));
-   child.data:=subr.Sections.Items[j].Section;
+   subr:=Report.SubReports.Items[i].SubReport;
+   anew:=RView.Items.Add(nil,subr.GetDisplayName(true));
+   anew.data:=Report.SubReports.Items[i].SubReport;
+   for j:=0 to subr.Sections.Count-1 do
+   begin
+    child:=RView.Items.AddChild(anew,subr.Sections.Items[j].Section.SectionCaption(true));
+    child.data:=subr.Sections.Items[j].Section;
+   end;
   end;
+  if Not Assigned(RView.Selected) then
+   RView.Selected:=RView.TopItem
+ finally
+  EnableRView;
  end;
- if Not Assigned(RView.Selected) then
-  RView.Selected:=RView.TopItem
 end;
 
 
