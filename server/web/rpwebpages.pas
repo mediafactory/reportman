@@ -854,6 +854,7 @@ begin
 {$ENDIF}
     Response.Content:='Executed, size:'+IntToStr(astream.size);
     Response.ContentType := 'application/rpmf';
+    astream.Seek(0,soFromBeginning);
     Response.ContentStream:=astream;
     WriteLog(reportname+' Executed Metafile');
    end
