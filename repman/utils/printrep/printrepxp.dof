@@ -100,7 +100,7 @@ Conditionals=REPMANRELEASE
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=
+RunParams=-pdf sample4.rep sample4.pdf
 HostApplication=
 Launcher=
 UseLauncher=0

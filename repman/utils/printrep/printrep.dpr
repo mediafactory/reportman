@@ -66,7 +66,7 @@ var
  collate:boolean;
  preview:boolean;
  pdialog:boolean;
- doprint:boolean;
+ compress,doprint:boolean;
 
 procedure PrintHelp;
 begin
@@ -81,6 +81,9 @@ begin
  Writeln(SRpPrintRep9);
  Writeln(SRpPrintRep10);
  Writeln(SRpPrintRep12);
+ Writeln(SRpPrintPDFRep8);
+ Writeln(SRpPrintPDFRep9);
+ Writeln(SRpPrintRep14);
  Writeln(SRpParseParamsH);
  Writeln(SRpCommandLineStdIN);
 end;
@@ -88,9 +91,13 @@ end;
 var
  isstdin:Boolean;
  memstream:TMemoryStream;
- showparams:Boolean;
+ topdf,tometafile,showparams:Boolean;
+ outputfilename:String;
 
 begin
+ topdf:=false;
+ tometafile:=false;
+ outputfilename:='';
 {$IFDEF USEADO}
   CoInitialize(nil);
 {$ENDIF}
@@ -102,6 +109,7 @@ begin
     PrintHelp
    else
    begin
+   compress:=true;
    showprogress:=true;
    collate:=false;
    allpages:=true;
@@ -127,6 +135,9 @@ begin
     if ParamStr(indexparam)='-pdialog' then
      pdialog:=true
     else
+    if ParamStr(indexparam)='-u' then
+     compress:=false
+    else
     if ParamStr(indexparam)='-stdin' then
      isstdin:=true
     else
@@ -137,6 +148,16 @@ begin
       Raise Exception.Create(SRpNumberexpected);
      frompage:=StrToInt(ParamStr(indexparam));
      allpages:=false;
+    end
+    else
+    if ParamStr(indexparam)='-pdf' then
+    begin
+     topdf:=true;
+    end
+    else
+    if ParamStr(indexparam)='-m' then
+    begin
+     tometafile:=true;
     end
     else
      if ParamStr(indexparam)='-to' then
@@ -165,9 +186,21 @@ begin
      else
      if Pos('-param',ParamStr(indexparam))<>1 then
      begin
-      filename:=ParamStr(indexparam);
-      inc(indexparam);
-      break;
+      if (isstdin or (Length(filename)>0)) then
+      begin
+       outputfilename:=ParamStr(indexparam);
+       inc(indexparam);
+       break;
+      end
+      else
+      begin
+       filename:=ParamStr(indexparam);
+       if ((not topdf) and (not tometafile)) then
+       begin
+        inc(indexparam);
+        break;
+       end;
+      end;
      end;
     inc(indexparam);
    end;
@@ -204,8 +237,27 @@ begin
      doprint:=True;
      if showparams then
       doprint:=rprfparams.SHowUserParams(report.Params);
+     if not preview then
+      if pdialog then
+       doprint:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
      if doprint then
      begin
+      if topdf or tometafile then
+      begin
+       memstream:=TMemoryStream.Create;
+       try
+        rpqtdriver.ExportReportToPDFMetaStream(report,filename,showprogress,
+         allpages,frompage,topage,pdialog,memstream,compress,collate,tometafile);
+        memstream.Seek(0,soFromBeginning);
+        if Length(outputfilename)>0 then
+         memstream.SaveToFile(outputfilename)
+        else
+         WriteStreamToStdOutput(memstream);
+       finally
+        memstream.Free;
+       end;
+      end
+      else
       if preview then
        rppreview.ShowPreview(report,filename,true)
       else

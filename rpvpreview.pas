@@ -33,7 +33,7 @@ uses
   Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls,rpbasereport,rpreport,rpmetafile, ComCtrls,rphtmldriver,
   rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,rptextdriver,
-  ActnList, ImgList,Printers,rpmdconsts, ToolWin;
+  ActnList, ImgList,Printers,rpmdconsts, ToolWin, Mask, rpmaskedit;
 
 type
   TFRpVPreview = class(TForm)
@@ -48,7 +48,7 @@ type
     ALast: TAction;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
-    EPageNum: TEdit;
+    EPageNum: TRpMaskEdit;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
     APrint: TAction;
@@ -80,7 +80,6 @@ type
     procedure ANextExecute(Sender: TObject);
     procedure APreviousExecute(Sender: TObject);
     procedure ALastExecute(Sender: TObject);
-    procedure EPageNumKeyPress(Sender: TObject; var Key: Char);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure APrintExecute(Sender: TObject);
     procedure ASaveExecute(Sender: TObject);
@@ -103,6 +102,8 @@ type
       MousePos: TPoint; var Handled: Boolean);
     procedure FormMouseWheelUp(Sender: TObject; Shift: TShiftState;
       MousePos: TPoint; var Handled: Boolean);
+    procedure EPageNumKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     cancelled:boolean;
@@ -366,14 +367,6 @@ begin
  PrintPage;
 end;
 
-procedure TFRpVPreview.EPageNumKeyPress(Sender: TObject; var Key: Char);
-begin
- if Key=chr(13) then
- begin
-  pagenum:=StrToInt(EPageNum.Text);
-  PrintPage;
- end;
-end;
 
 procedure TFRpVPreview.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -761,6 +754,16 @@ begin
  else
   ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position-GetWheelInc(Shift);
  Handled:=true;
+end;
+
+procedure TFRpVPreview.EPageNumKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+ if Key=VK_RETURN then
+ begin
+  pagenum:=StrToInt(EPageNum.Text);
+  PrintPage;
+ end;
 end;
 
 end.
