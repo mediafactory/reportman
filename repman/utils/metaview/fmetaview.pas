@@ -31,7 +31,6 @@ type
     APrint: TAction;
     ToolButton6: TToolButton;
     ASave: TAction;
-    SaveDialog1: TSaveDialog;
     ToolButton7: TToolButton;
     OpenDialog1: TOpenDialog;
     AOpen: TAction;
@@ -41,6 +40,7 @@ type
     PBar: TProgressBar;
     AExit: TAction;
     ToolButton10: TToolButton;
+    SaveDialog1: TSaveDialog;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -77,7 +77,7 @@ var
 
 implementation
 
-uses rpprintdia;
+uses rpprintdia,rppdfdriver;
 
 {$R *.xfm}
 
@@ -189,7 +189,19 @@ begin
   DisableButtons;
   try
    Metafile.SaveToFile(SaveDialog1.Filename);
-  finally
+   if SaveDialog1.FilterIndex=1 then
+   begin
+    Metafile.SaveToFile(SaveDialog1.Filename)
+   end
+   else
+    if SaveDialog1.FilterIndex in [2,3] then
+    begin
+     if SaveDialog1.FilterIndex=2 then
+      SaveMetafileToPDF(metafile,SaveDialog1.filename,true)
+     else
+      SaveMetafileToPDF(metafile,SaveDialog1.filename,false);
+    end;
+ finally
    EnableButtons;
   end;
  end;

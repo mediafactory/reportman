@@ -309,7 +309,7 @@ begin
    try
     if SaveDialog1.FilterIndex=1 then
     begin
-     ALast.Execute;
+     ALastExecute(Self);
      report.Metafile.SaveToFile(SaveDialog1.Filename)
     end
     else

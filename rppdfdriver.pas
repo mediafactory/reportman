@@ -56,7 +56,8 @@ type
   end;
 
 
-procedure SaveMetafileToPDF(metafile:TRpMetafileReport;filename:string);
+procedure SaveMetafileToPDF(metafile:TRpMetafileReport;
+ filename:string;compressed:boolean);
 
 implementation
 
@@ -103,13 +104,15 @@ const
     );
 
 
-procedure SaveMetafileToPDF(metafile:TRpMetafileReport;filename:string);
+procedure SaveMetafileToPDF(metafile:TRpMetafileReport;
+ filename:string;compressed:boolean);
 var
  adriver:TRpPDFDriver;
  i:integer;
 begin
  adriver:=TRpPDFDriver.Create;
  adriver.filename:=filename;
+ adriver.compressed:=compressed;
  adriver.NewDocument(metafile);
  try
   for i:=0 to metafile.PageCount-1 do
