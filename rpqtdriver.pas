@@ -267,13 +267,14 @@ procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix
 var
  posx,posy:integer;
  rec:TRect;
+ atext:Widestring;
 // recsrc:TRect;
  X, Y, W, H, S: Integer;
  Width,Height:integer;
  stream:TMemoryStream;
  bitmap:TBitmap;
  aalign:Integer;
- arec:TRect;
+ arec,R:TRect;
 begin
  // Switch to device points
  posx:=round(obj.Left*dpix/TWIPS_PER_INCHESS);
@@ -309,7 +310,27 @@ begin
      Canvas.FillRect(arec);
     end;
     Canvas.Brush.Style:=bsClear;
-    Canvas.TextRect(rec,posx,posy,page.GetText(Obj),aalign);
+    atext:=page.GetText(Obj);
+    if obj.FontRotation<>0 then
+    begin
+     Canvas.Start;
+     try
+      QPainter_setFont(Canvas.Handle, Canvas.Font.Handle);
+      QPainter_setPen(Canvas.Handle, Canvas.Font.FontPen);
+      QPainter_save(Canvas.Handle);
+      try
+       QPainter_translate(Canvas.Handle,posx,posy);
+       QPainter_rotate(Canvas.Handle,-obj.FontRotation/10);
+       QPainter_drawText(Canvas.Handle,0,0,PWideString(@atext),Length(Atext));
+      finally
+       QPainter_restore(Canvas.Handle);
+      end;
+     finally
+      Canvas.Stop;
+     end;
+    end
+    else
+     Canvas.TextRect(rec,posx,posy,atext,aalign);
    end;
   rpMetaDraw:
    begin
