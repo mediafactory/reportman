@@ -207,6 +207,7 @@ type
     procedure Windows1Click(Sender: TObject);
     procedure AHideExecute(Sender: TObject);
     procedure AShowAllExecute(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrame;
@@ -216,6 +217,7 @@ type
     configfile:string;
     updatedmfields:boolean;
     AppStyle:TDefaultStyle;
+    oldonException:TExceptionEvent;
     procedure FreeInterface;
     procedure CreateInterface;
     function checkmodified:boolean;
@@ -235,7 +237,7 @@ type
     procedure UpdateUnits;
     procedure CorrectScrollBoxes;
     procedure UpdateStyle;
-
+    procedure MyExceptionHandler(Sender:TObject;E:Exception);
   public
     { Public declarations }
     report:TRpReport;
@@ -565,6 +567,10 @@ end;
 
 procedure TFRpMainF.FormCreate(Sender: TObject);
 begin
+ // Sets on exception event
+ oldonexception:=Application.OnException;
+ Application.OnException:=MyExceptionHandler;
+
  AppStyle:=dsSystemDefault;
  Application.Title:=SRpRepman;
  configfile:=Obtainininameuserconfig('','','repmand');
@@ -1191,6 +1197,96 @@ procedure TFRpMainF.AShowAllExecute(Sender: TObject);
 begin
  // Shows all components
  fdesignframe.ShowAllHiden;
+end;
+
+
+procedure TFRpMainf.MyExceptionHandler(Sender:TObject;E:Exception);
+var
+ compo:TComponent;
+ subrep:TRpSubreport;
+ sec,secsel:TRpSection;
+ secint:TRpSectionInterface;
+ printitem:TRpCommonComponent;
+ i,j,k:integer;
+ secintitem:TRpSizePosInterface;
+begin
+ // Looks the exception type
+ if ((E is TRpReportException) And Assigned(fdesignframe) )then
+ begin
+  compo:=TRpReportException(E).Component;
+  if compo is TRpSubReport then
+  begin
+   subrep:=TRpSubReport(compo);
+   freportstructure.SelectDataItem(subrep);
+  end
+  else
+  begin
+   // If is a section
+   if compo is TRpSection then
+   begin
+    sec:=TRpSection(compo);
+    freportstructure.SelectDataItem(sec);
+   end
+   else
+   begin
+    if (compo is TRpCommonComponent) then
+    begin
+     printitem:=TRpCommonComponent(compo);
+     secsel:=nil;
+     for i:=0 to report.SubReports.Count-1 do
+     begin
+      subrep:=report.SubReports.Items[i].SubReport;
+      for j:=0 to subrep.Sections.Count-1 do
+      begin
+       sec:=subrep.Sections.Items[j].Section;
+       for k:=0 to sec.components.Count-1 do
+       begin
+        if printitem=sec.Components.Items[k].Component then
+        begin
+         secsel:=sec;
+         break;
+        end;
+       end;
+       if Assigned(secsel) then
+        break;
+      end;
+      if Assigned(secsel) then
+      begin
+       freportstructure.SelectDataItem(secsel);
+       if Assigned(fobjinsp.CompItem) then
+        if (fobjinsp.CompItem is TRpSectionInterface) then
+        begin
+         secint:=TRpSectionInterface(fobjinsp.CompItem);
+         for j:=0 to secint.childlist.Count-1 do
+         begin
+          secintitem:=TRpSizePosInterface(secint.Childlist.Items[j]);
+          if secintitem.printitem=printitem then
+          begin
+           secintitem.DoSelect;
+           fobjinsp.SelectProperty(TRpReportException(E).PropertyName);
+           break;
+          end;
+         end;
+        end;
+      end;
+     end;
+    end;
+   end;
+  end;
+
+ end;
+ if assigned(oldonexception) then
+ begin
+  oldonexception(Sender,E);
+ end
+ else
+  Messagedlg(SRpError,E.Message,mtError,[mbok],0);
+end;
+
+
+procedure TFRpMainF.FormDestroy(Sender: TObject);
+begin
+ Application.OnException:=oldonexception;
 end;
 
 initialization

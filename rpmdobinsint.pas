@@ -86,6 +86,7 @@ type
    procedure Paint;override;
   public
    SectionInt:TRpSizeInterface;
+   procedure DoSelect;
    procedure UpdatePos;override;
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
    procedure SetProperty(pname:string;value:string);override;
@@ -289,6 +290,11 @@ begin
  ControlStyle:=opts;
 end;
 
+procedure TRpSizePosInterface.DoSelect;
+begin
+ MouseDown(mbLeft,[],0,0);
+ MouseUp(mbLeft,[],0,0);
+end;
 
 procedure TRpSizePosInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin

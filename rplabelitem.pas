@@ -231,7 +231,7 @@ begin
  except
   on E:Exception do
   begin
-   Raise TRpReportException.Create(E.Message+':'+SRpSExpression,self);
+   Raise TRpReportException.Create(E.Message+':'+SRpSExpression+' '+Name,self,SRpSExpression);
   end;
  end;
 end;

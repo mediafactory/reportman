@@ -62,6 +62,7 @@ type
     procedure ComboAliasChange(Sender:TObject);
     procedure UpdatePosValues;
     procedure CreateControlsSubReport;
+    procedure SelectProperty(propname:string);
    public
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
@@ -77,7 +78,6 @@ type
     OpenDialog1: TOpenDialog;
   private
     { Private declarations }
-    FCurrentPanel:TRpPanelObj;
     FProppanels:TStringList;
     FDesignFrame:TObject;
     procedure SetCompItem(Value:TRpSizeInterface);
@@ -86,10 +86,12 @@ type
     function GetComboBox:TComboBox;
     procedure ChangeSizeChange(Sender:TObject);
     function GetCompItem:TRpSizeInterface;
+    function GetCurrentPanel:TRpPanelObj;
   public
     { Public declarations }
     fchangesize:TRpSizeModifier;
     procedure InvalidatePanels;
+    procedure SelectProperty(propname:string);
     procedure RecreateChangeSize;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
@@ -176,7 +178,7 @@ var
  posy:integer;
  totalwidth:integer;
 begin
- totalwidth:=WIdth;
+ totalwidth:=parent.WIdth;
  if totalwidth<CONS_MINWIDTH then
   totalwidth:=CONS_MINWIDTH;
  posy:=0;
@@ -194,7 +196,7 @@ begin
  ComboAlias.Width:=TotalWidth-ComboAlias.Left-CONS_RIGHTBARGAP;
  ComboAlias.parent:=self;
 
- LControls.AddObject('ComboAlias',ComboAlias);
+ LControls.AddObject(SRpMainDataset,ComboAlias);
 end;
 
 
@@ -584,9 +586,47 @@ begin
  end;
 end;
 
+procedure TRpPanelObj.SelectProperty(propname:string);
+var
+ index:integer;
+ AControl:TWinControl;
+begin
+ index:=LControls.IndexOf(propname);
+ if index>=0  then
+ begin
+  AControl:=TWinControl(LControls.Objects[index]);
+  AControl.SetFocus;
+ end;
+end;
+
+function TFRpObjInsp.GetCurrentPanel:TRpPanelObj;
+var
+ i:integer;
+begin
+ Result:=nil;
+ for i:=0 to FPRopPanels.Count-1 do
+ begin
+  if TRpPanelObj(FPropPanels.Objects[i]).Visible then
+  begin
+   Result:=TRpPanelObj(FPropPanels.Objects[i]);
+   break;
+  end;
+ end;
+end;
+
+procedure TFRpObjInsp.SelectProperty(propname:string);
+var
+ FCurrentPanel:TRpPanelObj;
+begin
+ FCurrentPanel:=GetCurrentPanel;
+ if Assigned(FCurrentPanel) then
+  FCurrentPanel.SelectProperty(propname);
+end;
+
 procedure TFRpObjInsp.SetCompItem(Value:TRpSizeInterface);
 var
  FRpMainf:TFRpMainF;
+ FCurrentPanel:TRpPanelObj;
 begin
  FRpMainf:=TFRpMainF(Owner);
  FCurrentPanel:=FindPanelForClass(Value);
@@ -713,11 +753,15 @@ begin
 end;
 
 procedure TFRpObjInsp.ChangeSizeChange(Sender:TObject);
+var
+ FCurrentPanel:TRpPanelObj;
 begin
  // Read bounds Values and assign
  if Not Assigned(fchangesize.Control) then
   exit;
- FCurrentPanel.UpdatePosValues;
+ FCurrentPanel:=GetCurrentPanel;
+ if Assigned(FCurrentPanel) then
+  FCurrentPanel.UpdatePosValues;
 end;
 
 procedure TRpPanelObj.SendToBackClick(Sender:TObject);

@@ -910,7 +910,7 @@ begin
  begin
   index:=DataInfo.IndexOf(subrep.Alias);
   if index<0 then
-   Raise TRpReportException.Create(SRPAliasNotExists+subrep.alias,subrep);
+   Raise TRpReportException.Create(SRPAliasNotExists+subrep.alias,subrep,SRpMainDataset);
   data:=DataInfo.Items[index].CachedDataset;
   data.DoNext;
   // If its the last record no group change

@@ -73,9 +73,11 @@ type
  TRpReportException=class(Exception)
   private
    FComponent:TComponent;
+   FPropertyName:string;
   public
-   constructor Create(AMessage:String;compo:TComponent);
+   constructor Create(AMessage:String;compo:TComponent;apropname:string);
    property Component:TComponent read FComponent;
+   property PropertyName:string read FPropertyName;
   end;
 
 // Compares 2 streams and returns true if they are equal
@@ -192,9 +194,11 @@ end;
 {$ENDIF}
 
 
-constructor TRpReportException.Create(AMessage:String;compo:TComponent);
+constructor TRpReportException.Create(AMessage:String;compo:TComponent;
+ apropname:string);
 begin
  FComponent:=compo;
+ FPropertyName:=apropname;
  inherited Create(AMessage);
 end;
 

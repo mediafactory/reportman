@@ -162,7 +162,7 @@ begin
  except
   on E:Exception do
   begin
-   Raise TRpReportException.Create(E.Message+':'+SRpSPrintCondition,self);
+   Raise TRpReportException.Create(E.Message+':'+SRpSPrintCondition,self,SRpSPrintCondition);
   end;
  end;
 end;
@@ -188,7 +188,7 @@ begin
   except
    on E:Exception do
    begin
-    Raise TRpReportException.Create(E.Message+':'+SRpSExpression,self);
+    Raise TRpReportException.Create(E.Message+':'+SRpSBeforePrint+' '+Name,self,SRpSBeforePrint);
    end;
   end;
  end;
@@ -204,7 +204,7 @@ begin
   except
    on E:Exception do
    begin
-    Raise TRpReportException.Create(E.Message+':'+SRpSExpression,self);
+    Raise TRpReportException.Create(E.Message+':'+SRpSAfterPrint+' '+Name,self,SRpSAfterPrint);
    end;
   end;
  end;
