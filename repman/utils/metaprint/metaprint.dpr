@@ -38,7 +38,6 @@ uses
   rpqtdriver in '../../../rpqtdriver.pas',
   rpmetafile in '../../../rpmetafile.pas',
   rptypes in '../../../rptypes.pas',
-  rpreport in '../../../rpreport.pas',
   rpfmainmetaview in '../../../rpfmainmetaview.pas',
   rpmdconsts in '../../../rpmdconsts.pas';
 {$ENDIF}

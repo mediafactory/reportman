@@ -50,7 +50,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=rtl:visualclx:dataclx:visualdbclx:netclx:netdataclx:xmlrtl:indy:webdsnapclx
-Conditionals=
+Conditionals=FORWEBAX
 DebugSourceDirs=
 UsePackages=0
 
@@ -61,7 +61,9 @@ Launcher=/usr/X11R6/bin/xterm -T KylixDebuggerOutput -e bash -i -c %debuggee%
 UseLauncher=0
 DebugCWD=
 
-[Excluded Packages]
-/home/toni/kylix3/bin/dclwebsnapclx.so.6.9=Borland WebSnap Components
-/home/toni/kylix3/bin/dclsoap.so.6.9=Borland SOAP Components
+[HistoryLists\hlConditionals]
+Count=3
+Item0=LINUXTEECHART
+Item1=FORWEBAX
+Item2=FORWEBAX;LINUXTEECHART
 

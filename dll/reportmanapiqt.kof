@@ -50,7 +50,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=rtl:visualclx:dataclx:visualdbclx:indy:netclx:netdataclx:xmlrtl:rppack:rppackv:rppackdesign:webdsnapclx:websnapclx:soaprtl:ZCore:ZParse:ZPlain:ZParseSql:ZDbc:ZComponent
-Conditionals=
+Conditionals=LINUXTEECHART
 DebugSourceDirs=
 UsePackages=0
 
@@ -61,6 +61,9 @@ Launcher=/usr/X11R6/bin/xterm -T KylixDebuggerOutput -e bash -i -c %debuggee%
 UseLauncher=0
 DebugCWD=
 
-[Excluded Packages]
-/home/toni/cvsroot/teechart/Sources/dclTee6K3.so=TeeChart 6 Components
+[HistoryLists\hlConditionals]
+Count=3
+Item0=LINUXTEECHART
+Item1=FORWEBAX
+Item2=FORWEBAX;LINUXTEECHART
 

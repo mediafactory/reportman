@@ -8,13 +8,7 @@ object FRpEditCon: TFRpEditCon
   ActiveControl = BOK
   Caption = 'Edit connections'
   Color = clButton
-  Font.Color = clText
-  Font.Height = 11
-  Font.Name = 'MS Sans Serif'
-  Font.Pitch = fpVariable
-  Font.Style = []
-  Font.Weight = 40
-  ParentFont = False
+  ParentFont = True 
   Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
@@ -27,13 +21,14 @@ object FRpEditCon: TFRpEditCon
     Top = 0
     Width = 629
     Height = 30
-    AutoSize = True
+    AutoSize = False
     ButtonHeight = 26
     ButtonWidth = 26
     Caption = 'ToolBar1'
     Flat = True
     Images = ImageList1
     TabOrder = 0
+    Wrapable = False
     object ToolButton1: TToolButton
       Left = 1
       Top = 4

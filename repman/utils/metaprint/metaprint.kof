@@ -50,7 +50,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=baseclx:visualclx:visualdbclx:dataclx:rppack:rppackv
-Conditionals=
+Conditionals=FORWEBAX;LINUXTEECHART
 DebugSourceDirs=
 UsePackages=0
 
@@ -61,12 +61,9 @@ Launcher=/usr/X11R6/bin/xterm -T KylixDebuggerOutput -e bash -i -c %debuggee%
 UseLauncher=0
 DebugCWD=
 
-[Excluded Packages]
-/opt/kylix3/bin/dclemacsedit.so.6.5=Borland Editor Emacs Enhancements
-/opt/kylix3/bin/bplHelpViewers.so.6.5=Borland Sample Help Viewer Package
-/opt/kylix3/bin/dclnet.so.6.5=Borland Internet Components
-/opt/kylix3/bin/dclindy.so.6.5=Internet Direct "Indy" for Kylix Property and Component Editors
-/opt/kylix3/bin/dclib.so.6.5=InterBase Data Access Components
-/home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/ibpack/bplibpack.so=IBAccess components package
-/home/toni/prog/cvsroot/ibaccess/ibaccess/ibaccess/synedit/bplsynedit_kylix.so=SynEdit package for Kylix
+[HistoryLists\hlConditionals]
+Count=3
+Item0=LINUXTEECHART
+Item1=FORWEBAX
+Item2=FORWEBAX;LINUXTEECHART
 
