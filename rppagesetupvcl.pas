@@ -74,6 +74,9 @@ type
     ComboSelPrinter: TComboBox;
     BConfigure: TButton;
     CheckPrintOnlyIfData: TCheckBox;
+    LPreview: TLabel;
+    ComboPreview: TComboBox;
+    ComboStyle: TComboBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -264,7 +267,12 @@ begin
  end;
  LSelectPrinter.Caption:=TranslateStr(741,LSelectPrinter.Caption);
  BConfigure.Caption:=TranslateStr(143,BConfigure.Caption);
-
+ LPreview.Caption:=TranslateStr(840,LPreview.Caption);
+ ComboPreview.Items.Strings[0]:=TranslateStr(841,ComboPreview.Items.Strings[0]);
+ ComboPreview.Items.Strings[1]:=TranslateStr(842,ComboPreview.Items.Strings[1]);
+ ComboStyle.Items.Strings[0]:=TranslateStr(843,ComboStyle.Items.Strings[0]);
+ ComboStyle.Items.Strings[1]:=TranslateStr(844,ComboStyle.Items.Strings[1]);
+ ComboStyle.Items.Strings[2]:=TranslateStr(844,ComboStyle.Items.Strings[2]);
 end;
 
 procedure TFRpPageSetupVCL.BOKClick(Sender: TObject);
@@ -317,6 +325,8 @@ begin
  report.Language:=ComboLanguage.ItemIndex-1;
  // Other
  report.PrinterFonts:=TRpPrinterFontsOption(ComboPrinterFonts.ItemIndex);
+ report.PreviewStyle:=TRpPreviewStyle(ComboStyle.ItemIndex);
+ report.PreviewWindow:=TRpPreviewWindowStyle(ComboPreview.ItemIndex);
 
  dook:=true;
 end;
@@ -369,6 +379,8 @@ begin
  ComboPrinterFonts.ItemIndex:=integer(report.PrinterFonts);
  if (report.Language+1)<ComboLanguage.Items.Count then
   ComboLanguage.ItemIndex:=report.Language+1;
+ ComboStyle.ItemIndex:=integer(report.PreviewStyle);
+ ComboPreview.ItemIndex:=integer(report.PreviewWindow);
 end;
 
 procedure TFRpPageSetupVCL.SColorMouseDown(Sender: TObject;

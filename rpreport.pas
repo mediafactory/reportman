@@ -116,6 +116,7 @@ type
    FInternalPageHeight:TRpTwips;
    FPageBackColor:TRpColor;
    FPreviewStyle:TRpPreviewStyle;
+   FPreviewWindow:TRpPreviewWindowStyle;
    FOnReadError:TReaderError;
    FDataInfo:TRpDataInfoList;
    FDatabaseInfo:TRpDatabaseInfoList;
@@ -252,6 +253,8 @@ type
    property PageBackColor:TRpColor read FPageBackColor write FPageBackColor;
    property PreviewStyle:TRpPreviewStyle read FPreviewStyle
     write FPreviewStyle default spWide;
+   property PreviewWindow:TRpPreviewWindowStyle read FPreviewWindow
+    write FPreviewWindow default spwNormal;
    property LeftMargin:TRpTwips read FLeftMargin write FLeftMargin
     default DEFAULT_LEFTMARGIN;
    property TopMargin:TRpTwips read FTopMargin write FTopMargin

@@ -3,8 +3,8 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   Top = 108
   BorderStyle = bsDialog
   Caption = 'Dialog'
-  ClientHeight = 460
-  ClientWidth = 455
+  ClientHeight = 442
+  ClientWidth = 434
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -15,43 +15,50 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   PixelsPerInch = 96
   TextHeight = 13
   object SColor: TShape
-    Left = 388
-    Top = 320
+    Left = 384
+    Top = 288
     Width = 33
     Height = 33
     OnMouseDown = SColorMouseDown
   end
   object LRLang: TLabel
-    Left = 12
-    Top = 400
+    Left = 8
+    Top = 360
     Width = 79
     Height = 13
     Caption = 'Report language'
   end
   object LCopies: TLabel
     Left = 8
-    Top = 296
+    Top = 268
     Width = 32
     Height = 13
     Caption = 'Copies'
   end
   object LPrinterFonts: TLabel
-    Left = 12
-    Top = 372
+    Left = 8
+    Top = 336
     Width = 158
     Height = 13
     Caption = 'Printer Fonts (Windows GDI Only)'
   end
   object LSelectPrinter: TLabel
     Left = 8
-    Top = 12
+    Top = 8
     Width = 63
     Height = 13
     Caption = 'Select Printer'
   end
+  object LPreview: TLabel
+    Left = 8
+    Top = 380
+    Width = 126
+    Height = 13
+    Caption = 'Preview window and scale'
+  end
   object BOK: TButton
-    Left = 112
-    Top = 424
+    Left = 116
+    Top = 408
     Width = 101
     Height = 25
     Caption = 'OK'
@@ -59,8 +66,8 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     OnClick = BOKClick
   end
   object BCancel: TButton
-    Left = 220
-    Top = 424
+    Left = 224
+    Top = 408
     Width = 97
     Height = 25
     Caption = 'Cancel'
@@ -69,7 +76,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object RPageSize: TRadioGroup
     Left = 8
-    Top = 40
+    Top = 32
     Width = 177
     Height = 93
     Caption = 'Page size'
@@ -82,7 +89,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object GPageSize: TGroupBox
     Left = 192
-    Top = 40
+    Top = 36
     Width = 233
     Height = 65
     Caption = 'Custom size'
@@ -100,7 +107,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object RPageOrientation: TRadioGroup
     Left = 8
-    Top = 144
+    Top = 128
     Width = 177
     Height = 67
     Caption = 'Page orientation'
@@ -112,7 +119,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object RCustomOrientation: TRadioGroup
     Left = 192
-    Top = 144
+    Top = 128
     Width = 177
     Height = 67
     Caption = 'Custom page orientation'
@@ -123,8 +130,8 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     Visible = False
   end
   object BBackground: TButton
-    Left = 228
-    Top = 320
+    Left = 224
+    Top = 288
     Width = 149
     Height = 33
     Caption = 'Background color'
@@ -132,8 +139,8 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     OnClick = BBackgroundClick
   end
   object ComboLanguage: TComboBox
-    Left = 228
-    Top = 396
+    Left = 224
+    Top = 356
     Width = 201
     Height = 21
     Style = csDropDownList
@@ -142,7 +149,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object GPageMargins: TGroupBox
     Left = 8
-    Top = 216
+    Top = 196
     Width = 413
     Height = 69
     Caption = 'Page Margins'
@@ -234,30 +241,30 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object ECopies: TEdit
     Left = 88
-    Top = 292
+    Top = 264
     Width = 69
     Height = 21
     TabOrder = 9
   end
   object CheckCollate: TCheckBox
     Left = 176
-    Top = 292
+    Top = 264
     Width = 213
     Height = 21
     Caption = 'Collate copies'
     TabOrder = 10
   end
   object CheckTwoPass: TCheckBox
-    Left = 12
-    Top = 320
+    Left = 8
+    Top = 288
     Width = 209
     Height = 21
     Caption = 'Two pass report'
     TabOrder = 11
   end
   object ComboPrinterFonts: TComboBox
-    Left = 228
-    Top = 368
+    Left = 224
+    Top = 332
     Width = 201
     Height = 21
     Style = csDropDownList
@@ -270,7 +277,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object GUserDefined: TGroupBox
     Left = 188
-    Top = 40
+    Top = 32
     Width = 241
     Height = 73
     Caption = 'Custom page size (Windows only)'
@@ -321,7 +328,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object ComboSelPrinter: TComboBox
     Left = 132
-    Top = 8
+    Top = 4
     Width = 181
     Height = 21
     Style = csDropDownList
@@ -330,7 +337,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object BConfigure: TButton
     Left = 316
-    Top = 8
+    Top = 4
     Width = 113
     Height = 21
     Caption = 'Configure'
@@ -338,15 +345,40 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     OnClick = BConfigureClick
   end
   object CheckPrintOnlyIfData: TCheckBox
-    Left = 12
-    Top = 344
+    Left = 8
+    Top = 312
     Width = 209
     Height = 21
     Caption = 'Print only if data available'
     TabOrder = 16
   end
+  object ComboPreview: TComboBox
+    Left = 224
+    Top = 380
+    Width = 100
+    Height = 21
+    Style = csDropDownList
+    ItemHeight = 13
+    TabOrder = 17
+    Items.Strings = (
+      'Normal'
+      'Maxmized')
+  end
+  object ComboStyle: TComboBox
+    Left = 328
+    Top = 380
+    Width = 97
+    Height = 21
+    Style = csDropDownList
+    ItemHeight = 13
+    TabOrder = 18
+    Items.Strings = (
+      'Wide'
+      'Normal'
+      'Page')
+  end
   object ColorDialog1: TColorDialog
     Left = 360
-    Top = 320
+    Top = 324
   end
 end

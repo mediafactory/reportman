@@ -266,15 +266,13 @@ object FRpMainFVCL: TFRpMainFVCL
       Action = AAlignVert
     end
   end
-  object mainscrollbox: TScrollBox
+  object mainscrollbox: TPanel
     Left = 0
     Top = 70
     Width = 533
     Height = 306
-    HorzScrollBar.Range = 189
     Align = alClient
-    AutoScroll = False
-    BorderStyle = bsNone
+    BevelOuter = bvNone
     TabOrder = 2
     Visible = False
     object Splitter1: TSplitter

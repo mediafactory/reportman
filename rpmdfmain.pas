@@ -1341,12 +1341,12 @@ begin
   AUnitCms.Checked:=inif.ReadBool('Preferences','UnitCms',true);
 {$IFDEF MSWINDOWS}
   ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',false);
+  ADriverGDI.Checked:=Not ADriverQt.Checked;
 {$ENDIF}
 {$IFDEF LINUX}
+  ADriverGDI.Checked:=False;
   ADriverQT.Checked:=true;
 {$ENDIF}
-  ADriverQt.Checked:=False;
-  ADriverGDI.Checked:=True;
   AsystemPrintDialog.Checked:=True;
   AsystemPrintDialog.Checked:=inif.ReadBool('Preferences','SystemPrintDialog',True);
   BStatus.Visible:=inif.ReadBool('Preferences','StatusBar',True);
@@ -1355,7 +1355,6 @@ begin
   AKylixPrintBug.Checked:=inif.ReadBool('Preferences','KylixPrintBug',False);
   rpqtdriver.kylixprintbug:=AKylixPrintBug.Checked;
 {$ENDIF}
-  ADriverGDI.Checked:=Not ADriverQT.Checked;
   AUnitsinchess.Checked:=Not AUnitCms.Checked;
   AppStyle:=TDefaultStyle(inif.ReadInteger('Preferences','QtStyle',Integer(dsSystemDefault)));
   UpdateStyle;

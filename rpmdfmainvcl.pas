@@ -69,7 +69,7 @@ type
     Pagesetup1: TMenuItem;
     N3: TMenuItem;
     OpenDialog1: TOpenDialog;
-    mainscrollbox: TScrollBox;
+    mainscrollbox: TPanel;
     leftpanel: TPanel;
     Splitter1: TSplitter;
     Lastusedfiles: TRpLastUsedStrings;

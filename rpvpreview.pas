@@ -152,6 +152,25 @@ begin
    end;
    dia.AParams.Enabled:=hasparams;
    dia.enableparams:=hasparams;
+   dia.AScale100.Checked:=False;
+   dia.AScaleFull.Checked:=False;
+   dia.AScaleWide.Checked:=False;
+   case report.PreviewStyle of
+    spNormal:
+     begin
+      dia.AScale100.Checked:=True;
+      dia.gdidriver.PreviewStyle:=spNormal;
+     end;
+    spEntirePage:
+     begin
+      dia.AScaleFull.Checked:=True;
+      dia.gdidriver.PreviewStyle:=spEntirePage;
+     end
+    else
+      dia.AScaleWide.Checked:=True;
+   end;
+   if report.PreviewWindow=spwMaximized then
+    dia.WindowState:=wsMaximized;
    report.OnProgress:=dia.RepProgress;
    Application.OnIdle:=dia.AppIdle;
    dia.ShowModal;

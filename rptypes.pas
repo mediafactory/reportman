@@ -87,6 +87,7 @@ type
 
  // How to show preview
  TRpPreviewStyle = (spWide,spNormal,spEntirePage,spCustom);
+ TRpPreviewWindowStyle=(spwNormal,spwMaximized);
 
  TPrinterRawOp=(rawopcutpaper,rawopopendrawer);
 
