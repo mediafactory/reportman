@@ -49,6 +49,7 @@ object FRpStructureVCL: TFRpStructureVCL
     Width = 264
     Height = 138
     Align = alClient
+    HideSelection = False
     Indent = 19
     ReadOnly = True
     TabOrder = 1

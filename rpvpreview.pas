@@ -593,6 +593,8 @@ end;
 
 procedure TFRpVPreview.FormResize(Sender: TObject);
 begin
+ if BCancel.Enabled then
+  exit;
  // Sets the driver widths and redraw accordingly
  AScaleFull.Checked:=false;
  AScaleWide.Checked:=false;

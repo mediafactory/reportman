@@ -273,6 +273,7 @@ type
     procedure AStatusBarExecute(Sender: TObject);
     procedure ADriverPDFGDIExecute(Sender: TObject);
     procedure ADriverPDFQtExecute(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrame;
@@ -310,6 +311,7 @@ type
     report:TRpReport;
     filename:string;
     freportstructure:TFRpStructure;
+    browsecommandline:boolean;
     procedure RefreshInterface(Sender: TObject);
     function GetExpressionText:string;
   end;
@@ -1769,6 +1771,24 @@ begin
  ADriverQT.Checked:=false;
  ADriverPDFGDI.Checked:=false;
  ADriverPDFQT.Checked:=true;
+end;
+
+procedure TFRpMainF.FormShow(Sender: TObject);
+begin
+ if browsecommandline then
+ begin
+  if Length(ParamStr(1))>0 then
+  begin
+   try
+    DoOpen(ParamStr(1),false);
+   except
+    on E:Exception do
+    begin
+     RpMessageBox(E.Message);
+    end;
+   end;
+  end;
+ end;
 end;
 
 initialization

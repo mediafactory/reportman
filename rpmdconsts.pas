@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.4';
+ RM_VERSION='1.5pre1';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
 
@@ -269,7 +269,7 @@ var
   SRpREmoveElements:WideString='This sections has childs that will be removed.';
   SRpPageHeader:WideString='Page header';
   SRpReportHeader:WideString='Report header';
-  SRpGeneralPageHeader:WideString='General page header';
+  SRpGeneralPageHeader:WideString='Global scope';
   SRpGeneralReportHeader:WideString='General report header';
   SRpDetail:WideString='Detail';
   SRpHeader:WideString='Header';

@@ -45,11 +45,14 @@ type
     procedure AutoScrollInView(AControl: TControl); override;
    end;
 
+  TFRpDesignFrameVCL=class;
+
   TRpPaintEventPanel=Class(TPanel)
    private
     FOnPaint:TNotifyEvent;
     Updating:boolean;
     FOnPosChange:TNotifyEvent;
+    FFrame:TFRpDesignFrameVCL;
    protected
     procedure Paint;override;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -137,6 +140,7 @@ end;
 procedure TRpPaintEventPanel.Paint;
 var
  rec:TRect;
+ secint:TRpSectionInterface;
 begin
  inherited Paint;
 
@@ -151,6 +155,18 @@ begin
 
  rec:=ClientRect;
  Canvas.Brush.Color:=Color;
+
+ secint:=nil;
+ if FFrame.objinsp.SelectedItems.Count>0 then
+  if (FFrame.ObjInsp.SelectedItems.Objects[0] is TRpSectionInterface) then
+   secint:=TRpSectionInterface(FFrame.objinsp.CompItem)
+  else
+   secint:=TRpSectionInterface(TRpSizePosInterface(FFrame.objinsp.SelectedItems.Objects[0]).SectionInt);
+
+ if assigned(Section) then
+  if assigned(secint) then
+   if section=secint.printitem then
+     Canvas.Brush.Color:=clAppWorkSpace;
  Canvas.Rectangle(rec);
  if (parent.parent is TScrollBox) then
  begin
@@ -188,6 +204,7 @@ begin
  secinterfaces:=TList.Create;
 
  PSection:=TRpPaintEventPanel.Create(Self);
+ PSection.FFrame:=Self;
  PSection.Color:=clAppWorkSpace;
  PSection.Parent:=SectionSCrollBox;
  PSection.OnPosChange:=SecPosChange;
@@ -343,6 +360,7 @@ begin
   for i:=0 to fsubreport.Sections.Count-1 do
   begin
    apanel:=TRpPaintEventPanel.Create(self);
+   apanel.FFrame:=Self;
    apanel.OnPaint:=SecPosChange;
    apanel.Height:=panelheight;
    apanel.Caption:='';

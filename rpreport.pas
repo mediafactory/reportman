@@ -163,6 +163,8 @@ type
    FPendingSections:TStringList;
    FPrinterSelect:TRpPrinterSelect;
    FPrintOnlyIfDataAvailable:Boolean;
+   gheaders,gfooters:TList;
+   procedure  FillGlobalHeaders;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -334,6 +336,8 @@ constructor TRpReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ gheaders:=TList.Create;
+ gfooters:=TList.Create;
  FailIfLoadExternalError:=True;
  FMilisProgres:=MILIS_PROGRESS_DEFAULT;
  FLanguage:=-1;
@@ -402,6 +406,33 @@ begin
  FPrinterFonts:=rppfontsdefault;
 end;
 
+procedure  TRpReport.FillGlobalHeaders;
+var
+ subrep:TRpSubReport;
+ i,j:integer;
+ k:integer;
+begin
+ gheaders.clear;
+ gfooters.clear;
+ for i:=0 to Subreports.Count-1 do
+ begin
+  subrep:=SubReports.Items[i].SubReport;
+  j:=subrep.FirstPageHeader;
+  for k:=0 to subrep.PageHeaderCount-1 do
+  begin
+   if subrep.Sections[j+k].Section.Global then
+    gheaders.Insert(0,subrep.Sections[j+k].Section);
+  end;
+  j:=subrep.FirstPageFooter;
+  for k:=0 to subrep.PageFooterCount-1 do
+  begin
+   if subrep.Sections[j+k].Section.Global then
+    gfooters.Add(subrep.Sections[j+k].Section);
+  end;
+ end;
+end;
+
+
 procedure TRpReport.SetGridWidth(Value:TRpTwips);
 begin
  if Value<CONS_MIN_GRID_WIDTH then
@@ -444,6 +475,8 @@ end;
 
 destructor TRpReport.Destroy;
 begin
+ gheaders.free;
+ gfooters.free;
  FPendingSections.Free;
  FSubReports.free;
  FDataInfo.free;
@@ -1506,6 +1539,7 @@ var
  dataavail:Boolean;
  index:integer;
 begin
+ FillGlobalHeaders;
  FDriver:=Driver;
  FPendingSections.Clear;
  if Not Assigned(FDriver) then
@@ -1870,17 +1904,32 @@ var
 begin
  if Headers then
  begin
+  // First the global headers
+  for i:=0 to gheaders.count-1 do
+  begin
+   psection:=TRpSection(gheaders.Items[i]);
+   if psection.EvaluatePrintCondition then
+   begin
+    asection:=psection;
+    CheckSpace;
+    PrintSection(false);
+   end;
+  end;
+
   // Print the header fixed sections
   pheader:=subreport.FirstPageHeader;
   pheadercount:=subreport.PageHeaderCount;
   for i:=0 to pheadercount-1 do
   begin
    psection:=subreport.Sections.Items[i+pheader].Section;
-   if psection.EvaluatePrintCondition then
+   if Not psection.Global then
    begin
-    asection:=psection;
-    CheckSpace;
-    PrintSection(false);
+    if psection.EvaluatePrintCondition then
+    begin
+     asection:=psection;
+     CheckSpace;
+     PrintSection(false);
+    end;
    end;
   end;
   // Now prints repeated group headers
@@ -1906,17 +1955,31 @@ begin
   // Reserve space for page footers
   // Print conditions for footers are evaluated at the begining of
   // the page
+
+  // Global page footers
+  for i:=0 to gfooters.count-1 do
+  begin
+   psection:=TRpSection(gfooters.Items[i]);
+   asection:=psection;
+   CheckSpace;
+   pagefooterpos:=pageposy+freespace-sectionext.Y;
+   freespace:=freespace-sectionext.Y;
+  end;
+
   pfooter:=subreport.FirstPageFooter;
   pfootercount:=subreport.PageFooterCount;
   for i:=0 to pfootercount-1 do
   begin
    psection:=subreport.Sections.Items[i+pfooter].Section;
-   asection:=psection;
-   havepagefooters:=true;
-   CheckSpace;
-   pagefooters.add(IntToStr(i+pfooter));
-   pagefooterpos:=pageposy+freespace-sectionext.Y;
-   freespace:=freespace-sectionext.Y;
+   if Not psection.Global then
+   begin
+    asection:=psection;
+    havepagefooters:=true;
+    CheckSpace;
+    pagefooters.add(IntToStr(i+pfooter));
+    pagefooterpos:=pageposy+freespace-sectionext.Y;
+    freespace:=freespace-sectionext.Y;
+   end;
   end;
  end
  else
@@ -1926,6 +1989,24 @@ begin
   for i:=0 to pagefooters.Count-1 do
   begin
    asection:=oldsubreport.Sections.Items[StrToInt(pagefooters.Strings[i])].Section;
+   if not asection.global then
+   begin
+    printit:=true;
+    if Not asection.FooterAtReportEnd then
+    begin
+     if Not Assigned(Section) then
+      printit:=false;
+    end;
+    sectionext:=asection.GetExtension(FDriver);
+    if printit then
+     if asection.EvaluatePrintCondition then
+      PrintSection(false);
+   end;
+  end;
+  // Global page footers
+  for i:=0 to gfooters.count-1 do
+  begin
+   asection:=TRpSection(gfooters.Items[i]);
    printit:=true;
    if Not asection.FooterAtReportEnd then
    begin
@@ -2024,7 +2105,7 @@ begin
    begin
     if asection.SkipPage then
      break;
-   end;
+   end;      
    // if Subreport changed and has have pagefooter
    if ((oldsubreport<>subreport) and (havepagefooters)) then
     break;

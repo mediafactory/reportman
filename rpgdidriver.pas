@@ -257,8 +257,8 @@ begin
   if dia.execute then
   begin
    allpages:=false;
-   collate:=dia.collate;
-   copies:=dia.copies;
+   collate:=GetPrinterCollation;
+   copies:=GetPrinterCopies;
    frompage:=dia.frompage;
    topage:=dia.topage;
    Result:=True;
@@ -321,6 +321,12 @@ begin
   pagemargins:=GetPageMarginsTWIPS;
   if Length(printer.Title)<1 then
    printer.Title:=SRpUntitled;
+
+  // A bug in Getting Copies forces me to
+  // not use Copies and collation printer capabilities
+  SetPrinterCopies(1);
+  SetPrinterCollation(false);
+
   printer.BeginDoc;
   intdpix:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX); //  printer.XDPI;
   intdpiy:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY);  // printer.YDPI;
@@ -729,7 +735,7 @@ begin
      rpsRectangle, rpsSquare:
       Canvas.Rectangle(X+PosX, Y+PosY, X+PosX + W, Y +PosY+ H);
      rpsRoundRect, rpsRoundSquare:
-      Canvas.RoundRect(X, Y, X + W, Y + H, S div 4, S div 4);
+      Canvas.RoundRect(X+PosX, Y+PosY, X +PosX + W, Y + PosY+ H, S div 4, S div 4);
      rpsCircle, rpsEllipse:
       Canvas.Ellipse(X+PosX, Y+PosY, X+PosX + W, Y+PosY + H);
      rpsHorzLine:
@@ -996,12 +1002,40 @@ begin
  // Sets pagesize
  pagecopies:=1;
  reportcopies:=1;
+
  if copies>1 then
  begin
-  if collate then
-   reportcopies:=copies
+  if (PrinterSupportsCopies(copies)) then
+  begin
+   if collate then
+   begin
+    if PrinterSupportsCollation then
+    begin
+     SetPrinterCopies(copies);
+     SetPrinterCollation(true);
+    end
+    else
+    begin
+     SetPrinterCopies(1);
+     SetPrinterCollation(false);
+     reportcopies:=copies;
+    end;
+   end
+   else
+   begin
+    SetPrinterCopies(copies);
+    SetPrinterCollation(false);
+   end;
+  end
   else
-   pagecopies:=copies;
+  begin
+   SetPrinterCopies(1);
+   SetPrinterCollation(false);
+   if collate then
+    reportcopies:=copies
+   else
+    pagecopies:=copies;
+  end;
  end;
  if allpages then
  begin
@@ -1269,7 +1303,7 @@ begin
   devicefonts:=false;
  Result:=true;
  forcecalculation:=false;
- if ((report.copies>1) and (report.CollateCopies)) then
+ if ((report.copies>1) and (collate)) then
  begin
   forcecalculation:=true;
  end;

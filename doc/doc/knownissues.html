@@ -171,8 +171,12 @@
     <td><b>Web report server don't show international characters</b></td>
   </tr>
   <tr>
-    <td>This problem appear in Interbase dbexpress driver, use IBX driver instead 
-      or investigate the source of the problem.</td>
+    <td>
+      <p>This problem appear in Interbase dbexpress driver, use IBX driver instead 
+        or investigate the source of the problem, but it's reported to be fixed 
+        using the appropiate lang environment variables, that is place in area 
+        cgi of the apache (httpd.conf): SetEnv LANG pt_BR</p>
+      </td>
   </tr>
 </table>
 <p>&nbsp;</p>

@@ -79,6 +79,8 @@ type
    FBeginPage:boolean;
    FReadError:Boolean;
    FSkipType:TRpSkipType;
+   // Global headers
+   FGlobal:Boolean;
    procedure SetComponents(Value:TRpCommonList);
    procedure SetGroupName(Value:string);
    procedure SetChangeExpression(Value:widestring);
@@ -167,6 +169,8 @@ type
    property SkipRelativeV:boolean Read FSkipRelativeV write FSkipRelativeV default false;
    property SkipType:TRpSkipType read FSkipType write FSkipType default secskipdefault;
    property IniNumPage:Boolean read FIniNumPage write SetIniNumPage default false;
+   // Global page headers and footers
+   property Global:Boolean read FGlobal write FGlobal default false;
  end;
 
 

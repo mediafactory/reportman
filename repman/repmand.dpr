@@ -200,6 +200,7 @@ var
 begin
   Application.Initialize;
   Application.CreateForm(TFRpMainF, FRpMainF);
+  FRpMainF.BrowseCommandLine:=true;
   LoadQtTranslator;
   Application.Run;
 end.

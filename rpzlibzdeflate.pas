@@ -1,6 +1,6 @@
 unit rpzlibzdeflate;
 
-
+{$OVERFLOWCHECKS OFF}
 {  ALGORITHM
 
        The "deflation" process depends on being able to identify portions
@@ -42,7 +42,7 @@ unit rpzlibzdeflate;
        Fiala,E.R., and Greene,D.H.
           Data Compression with Finite Windows, Comm.ACM, 32,4 (1989) 490-595}
 
-{ $Id: rpzlibzdeflate.pas,v 1.3 2002/05/25 11:37:27 toni Exp $ }
+{ $Id: rpzlibzdeflate.pas,v 1.4 2003/02/18 14:49:05 tonim Exp $ }
 
 interface
 

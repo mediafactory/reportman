@@ -266,6 +266,7 @@ type
     procedure AAlignVertExecute(Sender: TObject);
     procedure AStatusBarExecute(Sender: TObject);
     procedure ADriverPDFExecute(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrameVCL;
@@ -301,6 +302,7 @@ type
     report:TRpReport;
     filename:string;
     freportstructure:TFRpStructureVCL;
+    browsecommandline:boolean;
     procedure RefreshInterface(Sender: TObject);
     function GetExpressionText:string;
   end;
@@ -1593,6 +1595,17 @@ begin
  ADriverQT.Checked:=false;
  ADriverGDI.Checked:=false;
  ADriverPDF.Checked:=true;
+end;
+
+procedure TFRpMainFVCL.FormShow(Sender: TObject);
+begin
+ if browsecommandline then
+ begin
+  if Length(ParamStr(1))>0 then
+  begin
+   DoOpen(ParamStr(1),false);
+  end;
+ end;
 end;
 
 initialization

@@ -54,6 +54,12 @@ function GetPageMarginsTWIPS:TRect;
 function QtPageSizeToGDIPageSize (qtsize:TPageSizeQt):TGDIPageSize;
 function FindIndexPaperName (device, name:string):integer;
 procedure SetCurrentPaper (apapersize:TGDIPageSize);
+procedure SetPrinterCopies(copies:integer);
+procedure SetPrinterCollation(collation:boolean);
+function GetPrinterCopies:Integer;
+function GetPrinterCollation:Boolean;
+function PrinterSupportsCollation:Boolean;
+function PrinterSupportsCopies(copies:integer):Boolean;
 function GetCurrentPaper:TGDIPageSize;
 procedure SendControlCodeToPrinter (S: string);
 procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
@@ -723,6 +729,174 @@ begin
    ClosePrinter(fprinterhandle);
   end;
  end;
+end;
+
+function PrinterSupportsCollation:Boolean;
+var
+  DeviceMode: THandle;
+  Device, Driver, Port: array[0..1023] of char;
+  printererror:boolean;
+begin
+ Result:=falsE;
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+ try
+  Result:=DeviceCapabilities(Device,Port,DC_COLLATE,nil,nil)<>0;
+ except
+ end;
+end;
+
+function PrinterSupportsCopies(copies:integer):Boolean;
+var
+  DeviceMode: THandle;
+  Device, Driver, Port: array[0..1023] of char;
+  printererror:boolean;
+  maxcopies:integer;
+begin
+ Result:=falsE;
+ if printer.Printers.count<1 then
+  exit;
+ maxcopies:=1;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+ try
+   maxcopies:=DeviceCapabilities(Device,Port,DC_COPIES,nil,nil);
+//   Result:=copies<=maxcopies;
+ except
+ end;
+ // DeviceCapabilities is not working well, returns 9999 in
+ // max number of copies for Epson FX series or Oki Elite series
+ // It should return false because no printer copies capability
+ Result:=maxcopies<0;
+end;
+
+procedure SetPrinterCopies(copies:integer);
+var
+  DeviceMode: THandle;
+  PDevMode :  ^TDeviceMode;
+  Device, Driver, Port: array[0..1023] of char;
+  printererror:boolean;
+begin
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+ PDevMode := GlobalLock(DeviceMode);
+ try
+  PDevMode.dmCopies:=copies;
+ finally
+  GlobalUnLock(DeviceMode);
+ end;
+ Printer.SetPrinter(Device, Driver, Port, DeviceMode);
+end;
+
+function GetPrinterCopies:Integer;
+var
+  DeviceMode: THandle;
+  PDevMode :  ^TDeviceMode;
+  Device, Driver, Port: array[0..1023] of char;
+  printererror:boolean;
+begin
+ Result:=1;
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+ PDevMode := GlobalLock(DeviceMode);
+ try
+  Result:=PDevMode.dmCopies;
+ finally
+  GlobalUnLock(DeviceMode);
+ end;
+ Printer.SetPrinter(Device, Driver, Port, DeviceMode);
+end;
+
+procedure SetPrinterCollation(collation:boolean);
+var
+  DeviceMode: THandle;
+  PDevMode :  ^TDeviceMode;
+  Device, Driver, Port: array[0..1023] of char;
+  printererror:boolean;
+begin
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+ PDevMode := GlobalLock(DeviceMode);
+ try
+  if collation then
+   PDevMode.dmCollate:=DMCOLLATE_TRUE
+  else
+   PDevMode.dmCollate:=DMCOLLATE_FALSE;
+ finally
+  GlobalUnLock(DeviceMode);
+ end;
+ Printer.SetPrinter(Device, Driver, Port, DeviceMode);
+end;
+
+function GetPrinterCollation:Boolean;
+var
+  DeviceMode: THandle;
+  PDevMode :  ^TDeviceMode;
+  Device, Driver, Port: array[0..1023] of char;
+  printererror:boolean;
+begin
+ Result:=false;
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+ PDevMode := GlobalLock(DeviceMode);
+ try
+  Result:=PDevMode.dmCollate=DMCOLLATE_TRUE;
+ finally
+  GlobalUnLock(DeviceMode);
+ end;
+ Printer.SetPrinter(Device, Driver, Port, DeviceMode);
 end;
 
 

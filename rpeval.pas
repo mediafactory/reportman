@@ -243,7 +243,7 @@ begin
 
  // Graphic functions
  iden:=TIdenGraphicClear.Create(nil);
- Rpfunctions.AddObject('GRAPHICLEAR',iden);
+ Rpfunctions.AddObject('GRAPHICCLEAR',iden);
  iden:=TIdenGraphicNew.Create(nil);
  Rpfunctions.AddObject('GRAPHICNEW',iden);
 end;

@@ -108,5 +108,6 @@ uses
 begin
   Application.Initialize;
   Application.CreateForm(TFRpMainFVCL, FRpMainFVCL);
+  FRpMainFVCL.BrowseCommandLine:=true;
   Application.Run;
 end.

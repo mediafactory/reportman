@@ -223,6 +223,13 @@ procedure TRpSectionInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
  inherited GetProperties(lnames,ltypes,lvalues);
 
+ if (TrpSection(printitem).SectionType in [rpsecpfooter,rpsecpheader]) then
+ begin
+  lnames.Add(SRpGeneralPageHeader);
+  ltypes.Add(SRpSBool);
+  if Assigned(lvalues) then
+   lvalues.Add(BoolToStr(TRpSection(printitem).Global,true));
+ end;
  if (TrpSection(printitem).SectionType<>rpsecpfooter) then
  begin
   lnames.Add(SRpSAutoExpand);
@@ -336,6 +343,11 @@ end;
 
 procedure TRpSectionInterface.SetProperty(pname:string;value:Widestring);
 begin
+ if pname=SRpGeneralPageHeader then
+ begin
+  TRpSection(fprintitem).Global:=StrToBool(Value);
+  exit;
+ end;
  if pname=SRpSExternalData then
  begin
   exit;
@@ -455,6 +467,11 @@ end;
 
 function TRpSectionInterface.GetProperty(pname:string):Widestring;
 begin
+ if pname=SRpGeneralPageHeader then
+ begin
+  Result:=BoolToStr(TRpSection(fprintitem).Global,true);
+  exit;
+ end;
  if pname=SRpSAutoContract then
  begin
   Result:=BoolToStr(TRpSection(fprintitem).AutoContract,true);

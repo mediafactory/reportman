@@ -966,6 +966,7 @@ begin
  FRpMainf:=TFRpMainFVCL(Owner);
  FCurrentPanel:=FindPanelForClass(Value);
  FCurrentPanel.FCompItem:=Value;
+ TFRpDesignFrameVCL(FDesignFrame).InvalidateCaptions;
  FCurrentPanel.Subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
  FCurrentPanel.AssignPropertyValues;
 end;

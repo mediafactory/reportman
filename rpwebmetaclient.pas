@@ -29,7 +29,7 @@ interface
 
 uses classes,SysUtils,Windows,graphics,controls,forms,
  rptypes,
-{$IFNDEF USEVARIANTS}
+{$IFDEF USEVARIANTS}
  Types
 {$ENDIF}
  rpmetafile,rpfmainmetaviewvcl,rpmdconsts,

@@ -488,6 +488,8 @@ begin
  end;
  // Original number
  signenum:=1;
+ if num<0 then
+  signenum:=-1;
  // Has decimal?
  provanum:=abs(num);
  provaredon:=abs(redondeo);
@@ -510,7 +512,7 @@ begin
  // Mod
  quocient:=intnum/intredon;
  reste:=Round(intnum-intredon*Int(quocient));
- if (reste<=(intredon/2)) then
+ if (reste<(intredon/2)) then
   intnum:=intnum-reste
  else
   intnum:=intnum-reste+intredon;

@@ -96,6 +96,9 @@ begin
    MFrame.pagenum:=1;
    MFrame.AViewConnect.Checked:=false;
    MFrame.AViewConnect.Enabled:=false;
+{$IFNDEF FORWEBAX}
+   MFrame.clitree.Visible:=false;
+{$ENDIF}
    MFrame.Splitter1.Visible:=false;
    MFrame.printerindex:=metafile.PrinterSelect;
    MFrame.UpdatePrintSel;
