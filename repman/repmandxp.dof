@@ -107,6 +107,37 @@ UseLauncher=0
 DebugCWD=
 [Resource DLL Projects]
 Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
+[RDP Source Files]
+Item0=..\rpmdfmainvcl.dfm
+Item1=..\rpmdfdesignvcl.dfm
+Item2=..\rpmdfaboutvcl.dfm
+Item3=..\rpmdfstrucvcl.dfm
+Item4=..\rpmdobjinspvcl.dfm
+Item5=..\rppagesetupvcl.dfm
+Item6=..\rpfparamsvcl.dfm
+Item7=..\rpgraphutilsvcl.dfm
+Item8=..\rpexpredlgvcl.dfm
+Item9=..\rprfvparams.dfm
+Item10=..\rpdbxconfigvcl.dfm
+Item11=..\rpgdidriver.dfm
+Item12=..\rpexceldriver.dfm
+Item13=..\rpmdfdatatextvcl.dfm
+Item14=..\rpmdfdinfovcl.dfm
+Item15=..\rpmdfgridvcl.dfm
+Item16=..\rpmdfsampledatavcl.dfm
+Item17=..\rpmdprintconfigvcl.dfm
+Item18=..\rpvpreview.dfm
+Item19=..\rpmdfconnectionvcl.dfm
+Item20=..\rpmdfwizardvcl.dfm
+Item21=..\rpmdfextsecvcl.dfm
+Item22=..\rpmdfdatasetsvcl.dfm
+Item23=..\rpfmetaviewvcl.dfm
+Item24=..\rpfmainmetaviewvcl.dfm
+Item25=..\rpmdsysinfo.dfm
+Item26=..\rpeditconnvcl.dfm
+Item27=..\rpmdftreevcl.dfm
+Item28=..\rpmdfopenlibvcl.dfm
+Item29=repmandxp.drc
 [Language]
 ActiveLang=
 ProjectLang=$00000409

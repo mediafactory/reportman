@@ -131,7 +131,7 @@ IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
 MinorVer=6
-Release=3
+Release=4
 Build=0
 Debug=0
 PreRelease=0
@@ -143,14 +143,14 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir (toni@pala.com)
 FileDescription=Report Manager Active X Control
-FileVersion=1.6.3.0
+FileVersion=1.6.4.0
 InternalName=WeReportManX.ocx
-LegalCopyright=Copyright 2002, Toni Martir
+LegalCopyright=Copyright 2003, Toni Martir (toni@pala.com)
 LegalTrademarks=
 OriginalFilename=
 ProductName=Report Manager IE Plugin
-ProductVersion=1.6.3.0pre22
-Comments=Prerelease
+ProductVersion=1.6.4.0
+Comments=
 OleSelfRegister=1
 [HistoryLists\hlConditionals]
 Count=1

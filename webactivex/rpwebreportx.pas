@@ -13,13 +13,13 @@ uses
 type
   TWebReportMan = class(TActiveForm, IWebReportMan)
     Timer1: TTimer;
-    webmetaprint: TRpWebMetaPrint;
     procedure ActiveFormCreate(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     procedure ActiveFormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
   private
     { Private declarations }
+    webmetaprint: TRpWebMetaPrint;
     FEvents: IWebReportManEvents;
     Preview:Integer;
     ShowProgress:Integer;
@@ -385,6 +385,14 @@ end;
 
 procedure TWebReportMan.ActiveFormCreate(Sender: TObject);
 begin
+ webmetaprint:=TRpWebMetaPrint(Self);
+ webmetaprint.Left := 8;
+ webmetaprint.Top := 148;
+ webmetaprint.Width := 389;
+ webmetaprint.Height := 77;
+ webmetaprint.PrinterConfig := False;
+ webmetaprint.Port := 80;
+ webmetaprint.Parent:=Self;
  Timer1.Enabled:=true;
  Port:=80;
 end;

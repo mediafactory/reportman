@@ -15,15 +15,6 @@ object WebReportMan: TWebReportMan
   OnKeyDown = ActiveFormKeyDown
   PixelsPerInch = 96
   TextHeight = 13
-  object webmetaprint: TRpWebMetaPrint
-    Left = 8
-    Top = 148
-    Width = 389
-    Height = 77
-    Install = False
-    PrinterConfig = False
-    Port = 80
-  end
   object Timer1: TTimer
     Enabled = False
     Interval = 100

@@ -11,7 +11,7 @@ AppUpdatesURL=http://sourceforge.net/projects/reportman
 DefaultDirName={pf}\Report Manager
 DefaultGroupName=Report Manager
 LicenseFile=license.txt
-AdminPrivilegesRequired=yes
+PrivilegesRequired=admin
 ; uncomment the following line if you want your installation to run on NT 3.51 too.
 ; MinVersion=4,3.51
 
@@ -20,53 +20,57 @@ Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "A
 ;Name: "quicklaunchicon"; Description: "Create a &Quick Launch icon"; GroupDescription: "Additional icons:"; MinVersion: 4,4; Flags: unchecked
 
 [Files]
-Source: "..\repman\repmandxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\repmandxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\transwin\repmandxp.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\transwin\metaviewxp.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\utils\metaview\metaviewxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\utils\metaview\metaviewxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\utils\metaprint\metaprintxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\utils\metaprint\metaprintxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "license.txt"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\utils\printrep\printrepxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\utils\printrep\printrepxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\utils\reptotxt\reptotxt.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\utils\txttorep\txttorep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\utils\rptranslator\rptranslate.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\utils\rptranslator\rptranslate.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\utils\rptranslator\rptranslateres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\utils\printreptopdf\printreptopdf.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-;Source: "..\activex\ReportMan.ocx"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\activex\ReportMan.ocx"; DestDir: "{sys}"; CopyMode: alwaysskipifsameorolder; Flags: restartreplace sharedfile regserver
-Source: "..\activex\ReportMan.ocx.manifest"; DestDir: "{sys}"; CopyMode: alwaysoverwrite
-Source: "..\webactivex\WebReportManX.cab"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\repmandxp.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\repmandxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\reportmanres.*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\reportmanres.*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\transwin\repmandxp.*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\transwin\metaviewxp.*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\metaview\metaviewxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\metaview\metaviewxp.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\metaprint\metaprintxp.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\metaprint\metaprintxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
+Source: "license.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\printrep\printrepxp.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\printrep\printrepxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\reptotxt\reptotxt.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\txttorep\txttorep.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\rptranslator\rptranslate.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\rptranslator\rptranslate.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\rptranslator\rptranslateres.*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\utils\printreptopdf\printreptopdf.exe"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "..\activex\ReportMan.ocx"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\activex\ReportMan.ocx"; DestDir: "{sys}"; Flags: restartreplace sharedfile regserver
+Source: "..\activex\ReportMan.ocx.manifest"; DestDir: "{sys}"; Flags: ignoreversion
+Source: "..\webactivex\WebReportManX.cab"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "..\webactivex\WebReportManX.cab"; DestDir: "{sys}"; CopyMode: alwaysskipifsameorolder; Flags: restartreplace sharedfile regserver
-Source: "..\server\service\repserverservice.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\server\app\reportserverappxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\server\app\reportserverappxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\server\app\reportservercon.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\server\config\repserverconfigxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\server\config\repserverconfigxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\server\service\repserviceinstall.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\server\service\repserviceinstall.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\server\web\repwebserver.dll"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\server\web\repwebexe.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\dbxdrivers.ini"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\repman\dbxconnections.ini"; DestDir: "{app}"; CopyMode: onlyifdoesntexist
-Source: "..\drivers\win32\dbexpint.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbexpmys.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbexpinf.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbexpmysql.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbexpmss.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbexpora.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbexpdb2.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "..\drivers\win32\dbxoodbc.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
+Source: "..\server\service\repserverservice.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\server\app\reportserverappxp.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\server\app\reportserverappxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\server\app\reportservercon.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\server\config\repserverconfigxp.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\server\config\repserverconfigxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\server\service\repserviceinstall.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\server\service\repserviceinstall.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\server\web\repwebserver.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\server\web\repwebexe.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\dbxdrivers.ini"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\repman\dbxconnections.ini"; DestDir: "{app}"; Flags: onlyifdoesntexist
+Source: "..\drivers\win32\dbexpint.dll"; DestDir: "{sys}"; Flags: uninsneveruninstall onlyifdoesntexist
+Source: "..\drivers\win32\dbexpmys.dll"; DestDir: "{sys}"; Flags: uninsneveruninstall onlyifdoesntexist
+Source: "..\drivers\win32\dbexpinf.dll"; DestDir: "{sys}"; Flags: uninsneveruninstall onlyifdoesntexist
+Source: "..\drivers\win32\dbexpmysql.dll"; DestDir: "{sys}"; Flags: uninsneveruninstall onlyifdoesntexist
+Source: "..\drivers\win32\dbexpmss.dll"; DestDir: "{sys}";  Flags: uninsneveruninstall onlyifdoesntexist
+Source: "..\drivers\win32\dbexpora.dll"; DestDir: "{sys}";  Flags: uninsneveruninstall onlyifdoesntexist
+Source: "..\drivers\win32\dbexpdb2.dll"; DestDir: "{sys}";  Flags: uninsneveruninstall onlyifdoesntexist
+Source: "..\drivers\win32\dbxoodbc.dll"; DestDir: "{sys}"; Flags: uninsneveruninstall onlyifdoesntexist
+; Documentation
+Source: "..\doc\doc\*.*"; DestDir: "{app}\doc"; Flags: ignoreversion
+Source: "..\doc\doc\images\*.*"; DestDir: "{app}\doc\images"; Flags: ignoreversion
+Source: "..\doc\doc\units\*.*"; DestDir: "{app}\doc\units"; Flags: ignoreversion
 
 
 [Registry]
@@ -79,6 +83,10 @@ Root: HKCR; Subkey: ".rpmf"; ValueType: string; ValueName: ""; ValueData: "Repor
 Root: HKCR; Subkey: "Report Manager Client"; ValueType: string; ValueName: ""; ValueData: "Report Manager Metafile"; Flags: uninsdeletekey
 Root: HKCR; Subkey: "Report Manager Client\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\metaviewxp.exe,0"
 Root: HKCR; Subkey: "Report Manager Client\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\metaviewxp.exe"" ""%1"""
+
+;DBExpress keys
+Root: HKLM; Subkey: "SOFTWARE\Borland\DBExpress"; ValueType: string; ValueName: "Driver Registry File"; ValueData: "{app}\dbxdrivers.ini"; Flags: createvalueifdoesntexist
+Root: HKLM; Subkey: "SOFTWARE\Borland\DBExpress"; ValueType: string; ValueName: "Connection Registry File"; ValueData: "{app}\dbxconnections.ini"; Flags: createvalueifdoesntexist
 
 [Icons]
 Name: "{group}\Designer XP"; Filename: "{app}\repmandxp.exe"; WorkingDir: "{app}"
