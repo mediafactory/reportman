@@ -92,6 +92,7 @@ Informix TransIsolation=ReadCommited
 [OpenOdbc]
 GetDriverFunc=getSQLDriverODBC
 VendorLib=libodbc.so
+LibraryName=libdbxoodbc.so
 Database=DSN=SAMPLE;UID=user;PWD=password;DB=master;LANG=chineses
 
 [AutoCommit]
