@@ -38,6 +38,8 @@ type
    function Execute:boolean;override;
    procedure PrinterSetup;override;
    function ShowParams:boolean;override;
+   function PrintRange(frompage:integer;topage:integer;
+     copies:integer;collate:boolean):boolean;override;
    constructor Create(AOwner:TComponent);override;
   published
    property Filename;
@@ -119,6 +121,13 @@ begin
  end;
 end;
 
+
+function TPDFReport.PrintRange(frompage:integer;topage:integer;
+    copies:integer;collate:boolean):boolean;
+begin
+ Result:=rppdfdriver.PrintReportPDF(Report,Title,ShowProgress,false,
+  frompage,topage,copies,fpdffilename,compressed);
+end;
 
 //procedure TVCLReport.SaveToPDF(filename:string);
 //begin

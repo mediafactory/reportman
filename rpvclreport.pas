@@ -33,6 +33,8 @@ type
    procedure PrinterSetup;override;
    function ShowParams:boolean;override;
    procedure SaveToPDF(filename:string);
+   function PrintRange(frompage:integer;topage:integer;
+    copies:integer;collate:boolean):boolean;override;
   published
    property Filename;
    property Preview;
@@ -96,6 +98,14 @@ begin
   end;
  end;
 end;
+
+function TVCLReport.PrintRange(frompage:integer;topage:integer;
+    copies:integer;collate:boolean):boolean;
+begin
+ Result:=rpgdidriver.PrintReport(Report,Title,ShowProgress,false,
+  frompage,topage,copies,collate);
+end;
+
 
 procedure TVCLReport.SaveToPDF(filename:string);
 begin

@@ -40,7 +40,9 @@ type
    function ShowParams:boolean;override;
    procedure SaveToPDF(filename:string);
    constructor Create(AOwner:TComponent);override;
-  published
+   function PrintRange(frompage:integer;topage:integer;
+    copies:integer;collate:boolean):boolean;override;
+ published
    property Filename;
    property Preview;
    property ShowProgress;
@@ -135,5 +137,13 @@ begin
  rpqtdriver.ExportReportToPDF(report,filename,true,true,1,999999,
   false,filename,true)
 end;
+
+function TCLXReport.PrintRange(frompage:integer;topage:integer;
+    copies:integer;collate:boolean):boolean;
+begin
+ Result:=rpqtdriver.PrintReport(Report,Title,ShowProgress,false,
+  frompage,topage,copies,collate);
+end;
+
 
 end.

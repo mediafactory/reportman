@@ -161,7 +161,6 @@ var
  awidth,aheight:integer;
  rec:TRect;
  asize:TPoint;
- p2:QWMatrixH;
 // amargins:TSize;
 begin
  if ToPrinter then
@@ -226,7 +225,6 @@ begin
   rec.Bottom:=Bitmap.Height-1;
   bitmap.Canvas.FillRect(rec);
 
-//  QPainter_setWorldMatrix(QPainterH(bitmap.canvas.handle),p2,true);
   // Draw Page Margins none for qt driver because they
   // are very innacurate
 {  QPrinter_margins(QPrinterH(Printer.Handle),@amargins);

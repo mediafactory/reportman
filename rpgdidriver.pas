@@ -979,8 +979,6 @@ begin
    report.PrintAll(GDIDriver);
   end;
  end;
- // A bug in Kylix 2 does not allow printing
- // when using dbexpress
  if forcecalculation then
   PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate,devicefonts)
  else

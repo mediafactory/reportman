@@ -34,6 +34,7 @@ type
    FShowPrintDialog:boolean;
    FLanguage:integer;
    function GetReport:TRpReport;
+   procedure SetFileName(Value:TFilename);
   protected
    procedure Notification(AComponent: TComponent; Operation: TOperation);override;
   public
@@ -41,9 +42,10 @@ type
    procedure PrinterSetup;virtual;abstract;
    constructor Create(AOwner:TComponent);override;
    procedure CheckLoaded;
-   procedure SetFileName(Value:TFilename);
    property Report:TRpReport read GetReport;
    function ShowParams:boolean;virtual;abstract;
+   function PrintRange(frompage:integer;topage:integer;
+    copies:integer;collate:boolean):boolean;virtual;abstract;
   // Defined as public but will be published in descendants
   public
    procedure LoadFromFile(AFilename:string);
