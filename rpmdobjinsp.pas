@@ -34,7 +34,7 @@ const
   CONS_BUTTONWIDTH=15;
   CONS_MINWIDTH=160;
 type
-  TRpPanelObj=class(TPanel)
+  TRpPanelObj=class(TScrollBox)
    private
     FCompItem:TRpSizeInterface;
     subrep:TRpSubreport;
@@ -65,7 +65,6 @@ type
    public
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
-    procedure ResizeComps;
     procedure CreateControls(acompo:TRpSizeInterface);
     procedure AssignPropertyValues;
   end;
@@ -112,6 +111,8 @@ constructor TrpPanelObj.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ Align:=alClient;
+
  LNames:=TStringList.Create;
  LTypes:=TStringList.Create;
  LValues:=TStringList.Create;
@@ -119,8 +120,7 @@ begin
  LControls:=TStringList.Create;
  AList:=TStringList.Create;
  BorderStyle:=bsNone;
- BevelInner:=bvNone;
- BevelOuter:=bvNone;
+
 end;
 
 destructor TrpPanelObj.Destroy;
@@ -193,11 +193,8 @@ begin
  ComboAlias.Left:=CONS_CONTROLPOS;
  ComboAlias.Width:=TotalWidth-ComboAlias.Left-CONS_RIGHTBARGAP;
  ComboAlias.parent:=self;
- PosY:=PosY+ComboAlias.Height;
 
  LControls.AddObject('ComboAlias',ComboAlias);
- Width:=TotalWidth-CONS_RIGHTBARGAP;
- Height:=PosY;
 end;
 
 
@@ -212,6 +209,9 @@ var
  typename:string;
  Control2:TControl;
  FRpMainf:TFRpMainF;
+ AScrollBox:TScrollBox;
+ APanelTop:TPanel;
+ APanelBottom:TPanel;
 begin
  FRpMainf:=TFRpMainF(Owner.Owner);
  FCompItem:=acompo;
@@ -223,13 +223,24 @@ begin
  // Creates the labels and controls
  posy:=0;
  // The combobox
+ APanelTop:=TPanel.Create(Self);
+ APanelTop.BevelInner:=bvNone;
+ APanelTop.BevelOuter:=bvNone;
+ APanelTop.Align:=alTop;
+ APanelTop.Parent:=Self;
+
  Combo:=TComboBox.Create(Self);
  Combo.Width:=TotalWidth-CONS_RIGHTBARGAP;
  Combo.Style:=csDropDownList;
  Combo.Name:='TopCombobox'+FCompItem.classname;
  combo.OnChange:=ComboObjectChange;
- Combo.Parent:=Self;
- posy:=posy+Combo.height;
+ APanelTop.Height:=Combo.height;
+ Combo.Parent:=APanelTop;
+
+ AScrollBox:=TScrollBox.Create(Self);
+ AScrollBox.Align:=alClient;
+ AScrollBox.BorderStyle:=bsNone;
+ AScrollBox.Parent:=Self;
 
  FCompItem.GetProperties(LNames,LTypes,LValues);
  for i:=0 to LNames.Count-1 do
@@ -239,7 +250,7 @@ begin
   ALabel.Caption:=LNames.Strings[i];
   ALabel.Left:=CONS_LEFTGAP;
   ALabel.Top:=posy+CONS_LABELTOPGAP;
-  ALabel.parent:=self;
+  ALabel.parent:=AScrollBox;
   typename:=LTypes.Strings[i];
   if LTypes.Strings[i]=SRpSBool then
   begin
@@ -300,7 +311,7 @@ begin
   Control.Top:=Posy;
   Control.Left:=CONS_CONTROLPOS;
   Control.Width:=TotalWidth-Control.Left-CONS_RIGHTBARGAP;
-  control.parent:=self;
+  control.parent:=AScrollBox;
   if aheight=0 then
    aheight:=Control.Height;
   Control.tag:=i;
@@ -334,7 +345,7 @@ begin
    Control.Width:=Control.Width-CONS_BUTTONWIDTH;
    TButton(Control2).OnClick:=FontClick;
    TButton(Control2).Caption:='...';
-   Control2.Parent:=Self;
+   Control2.Parent:=AScrollBox;
   end;
   if (LTypes.Strings[i]=SRpSExpression) then
   begin
@@ -347,34 +358,38 @@ begin
    Control2.Tag:=i;
    TButton(Control2).OnClick:=ExpressionClick;
    TButton(Control2).Caption:='...';
-   Control2.Parent:=Self;
+   Control2.Parent:=AScrollBox;
   end;
 
   posy:=posy+control.height;
  end;
+
  // Send to back and bring to front buttons
  if (FCompItem is TRpSizePosInterface) then
  begin
+  APanelBottom:=TPanel.Create(Self);
+  APanelBottom.BevelInner:=bvNone;
+  APanelBottom.BevelOuter:=bvNone;
+  APanelBottom.Align:=alBottom;
+  APanelBottom.Parent:=Self;
   Control:=TButton.Create(Self);
   Control.Left:=0;
-  Control.Top:=posy;
+  Control.Top:=0;
   Control.Height:=aheight;
   Control.Width:=(TotalWidth-CONS_RIGHTBARGAP) div 2;
   TBUtton(Control).Caption:=SRpSendToBack;
   TButton(Control).OnClick:=SendToBackClick;
-  Control.parent:=Self;
+  Control.parent:=APanelBottom;
   Control2:=TButton.Create(Self);
   Control2.Left:=Control.Width;
-  Control2.Top:=posy;
+  Control2.Top:=0;
   Control2.Height:=aheight;
+  APanelBottom.Height:=aheight;
   Control2.Width:=(TotalWidth-CONS_RIGHTBARGAP) div 2;
-  Control2.parent:=Self;
+  Control2.parent:=APanelBottom;
   TButton(Control2).OnClick:=BringToFrontClick;
   TBUtton(Control2).Caption:=SRpBringToFront;
-  PosY:=PosY+Control.Height;
  end;
- Width:=TotalWidth-CONS_RIGHTBARGAP;
- Height:=Posy;
 end;
 
 // Creates an object inspector panel for the component
@@ -416,7 +431,6 @@ begin
  // Invisible all other panels
  for i:=0 to FPropPanels.Count-1 do
  begin
-//  TRpPanelObj(FPropPanels.Objects[i]).ResizeComps;
   if FPropPanels.Objects[i]<>Result then
    TRpPanelObj(FPropPanels.Objects[i]).Visible:=False;
  end;
@@ -428,214 +442,6 @@ begin
  end;
  Result.Visible:=True;
 end;
-
-(*
-
-
- FCompItem.GetProperties(LNames,LTypes,LValues);
- for i:=0 to LNames.Count-1 do
- begin
-  if not dontrelease then
-  begin
-   ALabel:=TLabel.Create(Self);
-   LLabels.Add(ALabel);
-   ALabel.Caption:=LNames.Strings[i];
-   ALabel.Left:=CONS_LEFTGAP;
-   ALabel.Top:=posy+CONS_LABELTOPGAP;
-   ALabel.parent:=self;
-  end;
-  typename:=LTypes.Strings[i];
-  if LTypes.Strings[i]=SRpSBool then
-  begin
-   if dontrelease then
-    Control:=TControl(LControls.Objects[i])
-   else
-   begin
-    Control:=TComboBox.Create(Self);
-    TComboBox(Control).Items.Add(FalseBoolStrs[0]);
-    TComboBox(Control).Items.Add(TrueBoolStrs[0]);
-    TComboBox(Control).Style:=csDropDownList;
-    TCOmboBox(Control).OnChange:=EditChange;
-   end;
-   TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(LValues.Strings[i]);
-  end
-  else
-  if LTypes.Strings[i]=SRpSList then
-  begin
-   if dontrelease then
-    Control:=TControl(LControls.Objects[i])
-   else
-   begin
-    Control:=TComboBox.Create(Self);
-    CompItem.GetPropertyValues(LNames.Strings[i],TComboBox(Control).Items);
-    TComboBox(Control).Style:=csDropDownList;
-    TCOmboBox(Control).OnChange:=EditChange;
-   end;
-   TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(LValues.Strings[i]);
-  end
-  else
-  if LTypes.Strings[i]=SRpSColor then
-  begin
-   if dontrelease then
-    Control:=TControl(LControls.Objects[i])
-   else
-    Control:=TShape.Create(Self);
-   Control.Height:=aheight;
-   TShape(Control).Shape:=stRectangle;
-   TShape(Control).Brush.Color:=StrToInt(LValues.Strings[i]);
-   TShape(Control).OnMouseUp:=ShapeMouseUp;
-  end
-  else
-  if LTypes.Strings[i]=SRpSImage then
-  begin
-   if dontrelease then
-    Control:=TControl(LControls.Objects[i])
-   else
-    Control:=TEdit.Create(Self);
-   TEdit(Control).Text:=LValues.Strings[i];
-   TEdit(Control).ReadOnly:=True;
-   TEdit(Control).Color:=clInfoBk;
-   TEdit(Control).OnClick:=ImageClick;
-   TEdit(Control).OnKeyDown:=ImageKeyDown;
-  end
-  else
-  if LTypes.Strings[i]=SRpGroup then
-  begin
-   if dontrelease then
-   begin
-    Control:=TControl(LControls.Objects[i]);
-   end
-   else
-   begin
-    Control:=TComboBox.Create(Self);
-    subrep:=FRpMainf.freportstructure.FindSelectedSubreport;
-    TComboBox(Control).Style:=csDropDownList;
-    subrep.GetGroupNames(TComboBox(Control).Items);
-    TComboBox(Control).Items.Insert(0,'');
-    if CompItem is TRpExpressionInterface then
-     TComboBox(Control).ItemIndex:=TComboBox(Control).Items.IndexOf(
-      TRpExpression(TRpExpressionInterface(CompItem).printitem).GroupName);
-    TComboBox(Control).OnChange:=EditChange;
-   end;
-  end
-  else
-  if LTypes.Strings[i]=SRpSFontStyle then
-  begin
-   if dontrelease then
-    Control:=TControl(LControls.Objects[i])
-   else
-    Control:=TEdit.Create(Self);
-   TEdit(Control).Text:=IntegerFontStyleToString(StrToInt(LValues.Strings[i]));
-   TEdit(Control).ReadOnly:=True;
-   TEdit(Control).Color:=clInfoBk;
-   TEdit(Control).OnClick:=FontClick;
-  end
-  else
-  begin
-   if dontrelease then
-    Control:=TControl(LControls.Objects[i])
-   else
-    Control:=TEdit.Create(Self);
-   TEdit(Control).Text:=LValues.Strings[i];
-   TEdit(Control).OnChange:=EditChange;
-  end;
-
-  if not dontrelease then
-  begin
-   Control.Top:=Posy;
-   Control.Left:=CONS_CONTROLPOS;
-   Control.Width:=TotalWidth-Control.Left-CONS_RIGHTBARGAP;
-   control.parent:=self;
-  end;
-  if aheight=0 then
-   aheight:=Control.Height;
-  Control.tag:=i;
-  if not dontrelease then
-  begin
-   LControls.AddObject(LNames.Strings[i],Control);
-   LControlsToFree.Add(Control);
-  end;
-  // Font button
-  if not dontrelease then
-  begin
-{$IFDEF MSWINDOWS}
-   if LTypes.Strings[i]=SRpSWFontName then
-   begin
-    TEdit(Control).OnDblClick:=FontClick;
-   end;
-{$ENDIF}
-{$IFDEF LINUX}
-   if LTypes.Strings[i]=SRpSLFontName then
-   begin
-    TEdit(Control).OnDblClick:=FontClick;
-   end;
-{$ENDIF}
-{$IFDEF MSWINDOWS}
-   if LTypes.Strings[i]=SRpSWFontName then
-{$ENDIF}
-{$IFDEF LINUX}
-   if LTypes.Strings[i]=SRpSLFontName then
-{$ENDIF}
-   begin
-    Control2:=TButton.Create(Self);
-    Control2.Width:=CONS_BUTTONWIDTH;
-    Control2.Top:=Control.Top;
-    Control2.Left:=Control.Left+Control.Width-CONS_BUTTONWIDTH;
-    Control2.Height:=COntrol.Height;
-    Control2.Tag:=i;
-    Control.Width:=Control.Width-CONS_BUTTONWIDTH;
-    TButton(Control2).OnClick:=FontClick;
-    TButton(Control2).Caption:='...';
-    Control2.Parent:=Self;
-    LControlsToFree.Add(Control2);
-   end;
-   if (LTypes.Strings[i]=SRpSExpression) then
-   begin
-    Control2:=TButton.Create(Self);
-    Control2.Width:=CONS_BUTTONWIDTH;
-    Control2.Top:=Control.Top;
-    Control2.Left:=Control.Left+Control.Width-CONS_BUTTONWIDTH;
-    Control2.Height:=COntrol.Height;
-    Control.Width:=Control.Width-CONS_BUTTONWIDTH;
-    Control2.Tag:=i;
-    TButton(Control2).OnClick:=ExpressionClick;
-    TButton(Control2).Caption:='...';
-    Control2.Parent:=Self;
-    LControlsToFree.Add(Control2);
-   end;
-  end;
-
-  posy:=posy+control.height;
- end;
- // Send to back and bring to front buttons
- if not dontrelease then
- begin
-  if (CompItem is TRpSizePosInterface) then
-  begin
-   Control:=TButton.Create(Self);
-   Control.Left:=0;
-   Control.Top:=posy;
-   Control.Height:=aheight;
-   Control.Width:=(TotalWidth-CONS_RIGHTBARGAP) div 2;
-   TBUtton(Control).Caption:=SRpSendToBack;
-   TButton(Control).OnClick:=SendToBackClick;
-   Control.parent:=Self;
-   LControlsToFree.Add(Control);
-
-   Control2:=TButton.Create(Self);
-   Control2.Left:=Control.Width;
-   Control2.Top:=posy;
-   Control2.Height:=aheight;
-   Control2.Width:=(TotalWidth-CONS_RIGHTBARGAP) div 2;
-   Control2.parent:=Self;
-   TButton(Control2).OnClick:=BringToFrontClick;
-   TBUtton(Control2).Caption:=SRpBringToFront;
-   LControlsToFree.Add(Control2);
- //  posy:=posy+control.height;
-  end;
- end;
-*)
-
 
 procedure TRpPanelObj.AssignPropertyValues;
 var
@@ -1085,20 +891,11 @@ begin
  // Panels must be resized when show
  for i:=0 to FPropPanels.Count-1 do
  begin
-//  TPanel(FPropPanels.Objects[i]).Tag:=1;
   FPropPanels.Objects[i].Free;
  end;
  FPropPanels.Clear;
 end;
 
-procedure TrpPanelObj.ResizeComps;
-begin
- if Tag=1 then
- begin
-
-  Tag:=0;
- end;
-end;
 
 function TFRpObjInsp.GetComboBox:TComboBox;
 var
