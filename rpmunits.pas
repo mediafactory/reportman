@@ -55,7 +55,11 @@ end;
 
 function gettwipsfromtext(atext:string):TRptwips;
 begin
- Result:=Round(StrToFloat(atext)*rpunitconversions[defaultunit]);
+ atext:=Trim(atext);
+ if Length(atext)<1 then
+  Result:=0
+ else
+  Result:=Round(StrToFloat(atext)*rpunitconversions[defaultunit]);
 end;
 
 function getdefaultunitstring:string;

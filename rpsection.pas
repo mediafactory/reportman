@@ -74,6 +74,7 @@ type
    FSkipExpreH:WideString;
    FSkipExpreV:WideString;
    FSkipToPageExpre:WideString;
+   FIniNumPage:Boolean;
    // deprecated
    FBeginPage:boolean;
    FReadError:Boolean;
@@ -95,6 +96,7 @@ type
    procedure ReadSkipExpreV(Reader:TReader);
    procedure ReadSkipToPageExpre(Reader:TReader);
    procedure LoadExternalFromDatabase;
+   procedure SetIniNumPage(Value:Boolean);
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
    procedure DefineProperties(Filer:TFiler);override;
@@ -164,6 +166,7 @@ type
    property SkipRelativeH:boolean Read FSkipRelativeH write FSkipRelativeH default false;
    property SkipRelativeV:boolean Read FSkipRelativeV write FSkipRelativeV default false;
    property SkipType:TRpSkipType read FSkipType write FSkipType default secskipdefault;
+   property IniNumPage:Boolean read FIniNumPage write SetIniNumPage default false;
  end;
 
 
@@ -302,6 +305,33 @@ begin
   if (subrep.Sections.Items[i].Section.SectionType in [rpsecgheader,rpsecgfooter]) then
    if subrep.Sections.Items[i].Section.GroupName=FGroupName then
     subrep.Sections.Items[i].Section.FChangeExpression:=Value;
+ end;
+end;
+
+
+procedure TRpSection.SetIniNumPage(Value:Boolean);
+var
+ subrep:TRpSubreport;
+ i:integer;
+ AGroupName:String;
+begin
+ if (csLoading in ComponentState) then
+ begin
+  exit;
+ end;
+ if not assigned(FSubreport) then
+ begin
+  FIniNumPage:=Value;
+  exit;
+ end;
+ subrep:=TRpSubreport(FSubReport);
+ // Assign header and footer
+ AGroupName:=FGroupName;
+ for i:=0 to subrep.Sections.Count-1 do
+ begin
+  if (subrep.Sections.Items[i].Section.SectionType in [rpsecgheader,rpsecgfooter]) then
+   if subrep.Sections.Items[i].Section.FGroupName=AGroupName then
+    subrep.Sections.Items[i].Section.FIniNumPage:=Value;
  end;
 end;
 

@@ -561,6 +561,8 @@ begin
    begin
     Result:=acount;
     FillGroupValues;
+    if sec.IniNumPage then
+     TRpReport(Owner).Ininumpage:=true;
     break;
    end;
   end
@@ -570,6 +572,8 @@ begin
    begin
     Result:=acount;
     FillGroupValues;
+    if sec.IniNumPage then
+     TRpReport(Owner).Ininumpage:=true;
     break;
    end;
   end;

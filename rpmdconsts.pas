@@ -603,6 +603,7 @@ var
   SRpSSkipToPage:WideString='S.To Page';
   SRpSPOnlyData:WideString='P.Only data avail.';
   SRpSTwoPassReportNeeded:WideString='Two pass report needed';
+  SRpIniNumPage:WideString='Init.PageNum';
 
 implementation
 
@@ -1197,6 +1198,7 @@ begin
  TranslateVar(931,SRpNewDataInfo);
  TranslateVar(932,SRpPrintPDFRep9);
  TranslateVar(933,SRpFrench);
+ TranslateVar(940,SRpIniNumPage);
 end;
 
 {$IFDEF LINUX}

@@ -136,6 +136,7 @@ type
    FDriver:IRpPrintDriver;
    FLeftMargin,FTopMargin,FRightMargin,FBottomMargin:TRpTwips;
    Fidenpagenum:TIdenReportVar;
+   Fidenpagenumgroup:TIdenReportVar;
    FidenEof:TIdenEof;
    Fidenfreespace:TIdenReportVar;
    Fidenfreespacecms:TIdenReportVar;
@@ -185,11 +186,13 @@ type
     // changed and sets internally CurrentGroup
     function NextRecord(grouprestore:boolean):boolean;
   public
+   Ininumpage:boolean;
    FailIfLoadExternalError:Boolean;
    printing:boolean;
    CurrentSubReportIndex:integer;
    CurrentSectionIndex:integer;
    PageNum:integer;
+   PageNumGroup:integer;
    LastPage:Boolean;
    property RecordCount:integer read FRecordCount;
    property Metafile:TRpMetafileReport read FMetafile;
@@ -296,6 +299,9 @@ begin
  if varname='PAGE' then
   Result:=freport.PageNum+1
  else
+  if varname='PAGENUM' then
+   Result:=freport.PageNumGroup+1
+  else
   if varname='FREESPACETWIPS' then
    Result:=freport.freespace
   else
@@ -368,6 +374,9 @@ begin
  FIdenPagenum:=TIdenReportVar.Create(nil);
  Fidenpagenum.FReport:=self;
  FidenPagenum.varname:='PAGE';
+ FIdenPagenumgroup:=TIdenReportVar.Create(nil);
+ Fidenpagenumgroup.FReport:=self;
+ FidenPagenumgroup.varname:='PAGENUM';
  FIdenfreespace:=TIdenReportVar.Create(nil);
  Fidenfreespace.varname:='FREESPACE';
  Fidenfreespace.FReport:=self;
@@ -444,6 +453,7 @@ begin
  FMetafile.Free;
  FDataAlias.Free;
  FIdenPagenum.free;
+ FIdenPagenumgroup.free;
  Fidenfreespace.free;
  FIdenCurrentGroup.free;
  FIdenFirstSection.free;
@@ -1476,6 +1486,7 @@ begin
  end;
  // Insert page number and other variables
  eval.AddVariable('PAGE',fidenpagenum);
+ eval.AddVariable('PAGENUM',fidenpagenumgroup);
  eval.AddVariable('FREE_SPACE',fidenfreespace);
  eval.AddVariable('CURRENTGROUP',fidencurrentgroup);
  eval.AddVariable('FIRSTSECTION',fidenfirstsection);
@@ -1563,6 +1574,7 @@ begin
  FEvaluator:=TRpEvaluator.Create(nil);
  FEvaluator.Language:=Language;
  PageNum:=-1;
+ PageNumGroup:=-1;
  FRecordCount:=0;
 
  // Add the report items to the evaluator
@@ -1921,6 +1933,12 @@ begin
  pageposx:=FLeftMargin;
  oldprintedsection:=nil;
  inc(Pagenum);
+ if ininumpage then
+ begin
+  Pagenumgroup:=-1;
+  ininumpage:=false;
+ end;
+ inc(Pagenumgroup);
  if not printingonepass then
  begin
   if fmetafile.PageCount<=PageNum then

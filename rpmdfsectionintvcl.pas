@@ -236,6 +236,11 @@ begin
  end;
  if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter]) then
  begin
+  lnames.Add(SRpIniNumPage);
+  ltypes.Add(SRpSBool);
+  if Assigned(lvalues) then
+   lvalues.Add(BoolToStr(TRpSection(printitem).IniNumPage,true));
+
   lnames.Add(SRpSGroupName);
   ltypes.Add(SRpSString);
   if Assigned(lvalues) then
@@ -305,6 +310,11 @@ begin
   ltypes.Add(SRpSBool);
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).SkipRelativeV,true));
+  // Child Subreport
+  lnames.Add(SRpChildSubRep);
+  ltypes.Add(SRpSList);
+  if Assigned(lvalues) then
+   lvalues.Add(TRpSection(printitem).GetChildSubReportName);
  end;
  if (TrpSection(printitem).SectionType=rpsecpfooter) then
  begin
@@ -313,11 +323,6 @@ begin
   if Assigned(lvalues) then
    lvalues.Add(BoolToStr(TRpSection(printitem).FooterAtReportEnd,true));
  end;
- // Child Subreport
- lnames.Add(SRpChildSubRep);
- ltypes.Add(SRpSList);
- if Assigned(lvalues) then
-  lvalues.Add(TRpSection(printitem).GetChildSubReportName);
  // External section
  lnames.Add(SRpSExternalPath);
  ltypes.Add(SRpSExternalpath);
@@ -347,6 +352,11 @@ begin
  end;
  if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter]) then
  begin
+  if pname=SRpIniNumPage then
+  begin
+   TRpSection(fprintitem).IniNumPage:=StrToBool(Value);
+   exit;
+  end;
   if pname=SRpSGroupName then
   begin
    TRpSection(fprintitem).groupname:=Value;
@@ -457,6 +467,11 @@ begin
  end;
  if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter]) then
  begin
+  if pname=SRpIniNumPage then
+  begin
+   Result:=BoolToStr(TRpSection(printitem).IniNumPage,true);
+   exit;
+  end;
   if pname=SRpSGroupName then
   begin
    Result:=TRpSection(fprintitem).groupname;
