@@ -32,7 +32,7 @@ uses
  types,
 {$ENDIF}
  rptypes,rpvgraphutils,jpeg,
- rppdfdriver,rpreport, QStdCtrls, QControls;
+ rppdfdriver,rpreport;
 
 
 const
