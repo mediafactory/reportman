@@ -52,7 +52,7 @@ type
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
    public
-    CaptionText:string;
+    CaptionText:WideString;
     section:TRpSection;
     constructor Create(AOwner:TComponent);override;
     property OnPaint:TNotifyEvent read FOnPaint write FOnPaint;

@@ -78,9 +78,9 @@
 
 // May be you want to enablwe TEECHART under Kylix
 // but take care it needs an X server running
-//{$IFDEF MSWINDOWS}
+{$IFDEF MSWINDOWS}
  {$DEFINE USETEECHART}
-//{$ENDIF}
+{$ENDIF}
 
 
 {$DEFINE ISDELPHI}

@@ -110,7 +110,7 @@ type
    GroupValue:Variant;
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
-   function SectionCaption(addchild:boolean):String;
+   function SectionCaption(addchild:boolean):WideString;
    procedure FreeComponents;
    procedure DeleteComponent(com:TRpCommonComponent);
    function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
@@ -224,7 +224,7 @@ begin
  end;
 end;
 
-function TRpSection.SectionCaption(addchild:boolean):String;
+function TRpSection.SectionCaption(addchild:boolean):WideString;
 begin
  case FSectionType of
   rpsecdetail:

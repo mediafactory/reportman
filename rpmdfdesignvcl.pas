@@ -59,7 +59,7 @@ type
       X, Y: Integer); override;
     procedure DoPosChange(var Msg:TMessage);message WM_MOVE;
    public
-    CaptionText:string;
+    CaptionText:WideString;
     section:TRpSection;
     constructor Create(AOwner:TComponent);override;
     property OnPaint:TNotifyEvent read FOnPaint write FOnPaint;
