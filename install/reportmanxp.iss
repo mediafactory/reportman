@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 1.5pre10
+AppVerName=Report Manager 1.5b
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -41,9 +41,9 @@ Source: "..\repman\utils\rptranslator\rptranslateres.*"; DestDir: "{app}"; CopyM
 Source: "..\repman\utils\printreptopdf\printreptopdf.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 ;Source: "..\activex\ReportMan.ocx"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\activex\ReportMan.ocx"; DestDir: "{sys}"; CopyMode: alwaysskipifsameorolder; Flags: restartreplace sharedfile regserver
-Source: "..\activex\ReportMan.ocx.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-;Source: "..\webactivex\WebReportManX.cab"; DestDir: "{app}"; CopyMode: alwaysoverwrite
-Source: "..\webactivex\WebReportManX.cab"; DestDir: "{sys}"; CopyMode: alwaysskipifsameorolder; Flags: restartreplace sharedfile regserver
+Source: "..\activex\ReportMan.ocx.manifest"; DestDir: "{sys}"; CopyMode: alwaysoverwrite
+Source: "..\webactivex\WebReportManX.cab"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+;Source: "..\webactivex\WebReportManX.cab"; DestDir: "{sys}"; CopyMode: alwaysskipifsameorolder; Flags: restartreplace sharedfile regserver
 Source: "..\server\service\repserverservice.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\server\app\reportserverappxp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\server\app\reportserverappxp.exe.manifest"; DestDir: "{app}"; CopyMode: alwaysoverwrite

@@ -40,6 +40,45 @@
 <p>The user parameters window is called in preview window when user click the 
   parameters button:</p>
 <p><img src="images/paramdef3.jpg" width="591" height="163"></p>
+<p><b>Parameter types</b></p>
+<table width="100%" border="1">
+  <tr> 
+    <td bgcolor="#FFFFCC"><b>Type</b></td>
+    <td bgcolor="#FFFFCC"><b>Description</b></td>
+  </tr>
+  <tr> 
+    <td>String, Integer, Float, Date, Time, DateTime</td>
+    <td>Basic types, they contain fixed values</td>
+  </tr>
+  <tr> 
+    <td>Boolean</td>
+    <td>False or True values</td>
+  </tr>
+  <tr> 
+    <td>Expres.Bef.Open</td>
+    <td>Contains a expression evaluated before any dataset is open, so the result 
+      can be assigned to a parametrized query for example</td>
+  </tr>
+  <tr> 
+    <td>Expres.Aft.Open</td>
+    <td>Contains a expression evaluated after opening all datasets, so it can 
+      contain dataset fields</td>
+  </tr>
+  <tr> 
+    <td>String Substi.</td>
+    <td>You use this parameter type assigning it to at least one dataset, you 
+      must provide a search string, the engine will search in the sql sentence 
+      for that string and will replace it with the value of the parameter. This 
+      can be used to pass the entire sql sentence as a parameter or only the WHERE 
+      clause for example.</td>
+  </tr>
+  <tr> 
+    <td>Value list</td>
+    <td>You provide two list, one for value captions, and other for real values, 
+      the engine will show to the user a combo box to select from the caption 
+      list, and will assign the corresponding value from list of values.</td>
+  </tr>
+</table>
 <p><b>How to modify parameter values at runtime</b></p>
 <p>Report parameters are added to the evaluator as variables when the report begin, 
   so if you want to modify the values while the report is executing you must alter 
@@ -57,7 +96,9 @@
 <p>VCL/CLX Components:</p>
 <p><code>CLXReport1.Report.Params.ParamByName('CUSTOMERINI').Value:=2;</code></p>
 <p>ActiveX:</p>
-<p><code>ReportManX.ParamByName('CUSTOMERINI').Value=2;</code></p>
+<p><code>ReportManX.ParamByName('CUSTOMERINI').Value=2</code></p>
+<p><code>ReportManX.Report.Params.Items[0].Value=2;</code></p>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 </body>
 </html>
