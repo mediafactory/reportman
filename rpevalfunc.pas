@@ -1181,7 +1181,7 @@ begin
    begin
     Result:=FormatFloat(Params[0],extended(Value));
    end;
-  // Modify by TAHUL TAMRAKR 27/05/2003
+  // Modify by RAHUL TAMRAKR 27/05/2003
   // Bugfix for detecting DateTime datatypes (MySQL)
   varDate,272:
    begin
