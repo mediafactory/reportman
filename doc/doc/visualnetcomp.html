@@ -1,0 +1,31 @@
+<!-- saved from url=(0022)http://internet.e-mail -->
+<html>
+<head>
+<title>Using Report Manager .Net native controls</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Installation</h2>
+<h3><b>Using Report Manager .Net native controls</b></h3>
+<p>Report Manager since version 2.0 allow the use of component library from any 
+  .Net enabled environment like Visual Studio.Net or Borland C# Builder.Net. This 
+  environments also supports ActiveX so you can use the <a href="axtivexcomp.html">ActiveX 
+  component</a>.</p>
+<p>This are the steps to use Report Manager native components inside Visual Studio.Net.</p>
+<p>1.Download the .Net package from sourceforge, then uncompress the package to 
+  a directory in your computer.</p>
+<p>http://sourceforge.net/projects/reportman</p>
+<p>2.At your project select add reference, and select ReportMan.dll, and Borland.VCLRtl.dll</p>
+<p>3.At the unit you want to use a report, add rpvclreport to using list clause 
+  at the top of the source code:</p>
+<p>using rpvclreport;</p>
+<p>4. Write the following code to execute a report:</p>
+<p> TVCLReport areport=new TVCLReport(this);<br>
+  Environment.CurrentDirectory=&quot;c:\\Progam Files\\Report Manager\\&quot;;<br>
+  areport.Filename=&quot;sample4.rep&quot;;<br>
+  areport.Execute();</p>
+</body>
+</html>
+
+

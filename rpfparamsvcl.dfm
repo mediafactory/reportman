@@ -15,15 +15,12 @@ object FRpParamsVCL: TFRpParamsVCL
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 124
+    Top = 131
     Width = 454
     Height = 342
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    DesignSize = (
-      454
-      342)
     object GProperties: TGroupBox
       Left = 2
       Top = 4
@@ -32,9 +29,6 @@ object FRpParamsVCL: TFRpParamsVCL
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       Visible = False
-      DesignSize = (
-        443
-        333)
       object LDescription: TLabel
         Left = 12
         Top = 92
@@ -266,7 +260,7 @@ object FRpParamsVCL: TFRpParamsVCL
     Left = 0
     Top = 0
     Width = 454
-    Height = 124
+    Height = 131
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -274,7 +268,7 @@ object FRpParamsVCL: TFRpParamsVCL
       Left = 0
       Top = 28
       Width = 358
-      Height = 96
+      Height = 103
       Align = alClient
       ItemHeight = 13
       TabOrder = 0
@@ -338,7 +332,7 @@ object FRpParamsVCL: TFRpParamsVCL
       Left = 358
       Top = 28
       Width = 96
-      Height = 96
+      Height = 103
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2

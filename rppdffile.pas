@@ -55,7 +55,7 @@ interface
 
 {$I rpconf.inc}
 
-uses Classes,Sysutils,rpinfoprovid,
+uses Classes,Sysutils,rpinfoprovid,rpinfoprovft,
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
@@ -63,7 +63,7 @@ uses Classes,Sysutils,rpinfoprovid,
  rpmzlib,
 {$ENDIF}
 {$IFDEF MSWINDOWS}
- rpinfoprovgdi,
+ rpinfoprovgdi,Windows,
 {$ENDIF}
 {$IFDEF DOTNETD}
  Graphics,System.Runtime.InteropServices,
@@ -410,7 +410,8 @@ begin
  inherited Create;
 
 {$IFDEF MSWINDOWS}
- FInfoProvider:=TRpGDIInfoProvider.Create;
+// FInfoProvider:=TRpGDIInfoProvider.Create;
+ FInfoProvider:=TRpFtInfoProvider.Create;
  FDefInfoProvider:=FInfoProvider;
 {$ENDIF}
 {$IFDEF LINUX}
@@ -2724,7 +2725,8 @@ begin
   SWriteLine(FTempStream,'/AvgWidth '+IntToStr(adata.AvgWidth));
   SWriteLine(FTempStream,'/MaxWidth '+IntToStr(adata.MaxWidth));
   SWriteLine(FTempStream,'/FontStretch /Normal');
-  SWriteLine(FTempStream,'/FontWeight '+IntToStr(adata.FontWeight));
+  if adata.FontWeight>0 then
+   SWriteLine(FTempStream,'/FontWeight '+IntToStr(adata.FontWeight));
   if adata.embedded then
   begin
    SWriteLine(FTempStream,'/FontFile2 '+

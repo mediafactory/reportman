@@ -17,7 +17,7 @@ unit rpinfoprovgdi;
 interface
 
 uses Classes,SysUtils,Windows,rpinfoprovid,
-    rpgraphutilsvcl,rpmdconsts;
+    rpgraphutilsvcl,rpmdconsts,rptypes;
 
 
 type

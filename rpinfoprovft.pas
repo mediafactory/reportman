@@ -16,14 +16,43 @@ unit rpinfoprovft;
 
 interface
 
+{$I rpconf.inc}
+
 uses Classes,SysUtils,Windows,rpinfoprovid,
-    rpgraphutilsvcl,rpmdconsts;
+    rpmdconsts,rpfreetype2;
 
 
 type
+ TRpLogFont=class(TObject)
+  fixedpitch:boolean;
+  postcripname:string;
+  familyname:String;
+  stylename:string;
+  italic:Boolean;
+  bold:Boolean;
+  filename:String;
+  widths:array [32..255] of integer;
+  ascent:integer;
+  descent:integer;
+  weight:integer;
+  MaxWidth:integer;
+  avCharWidth:Integer;
+  Capheight:integer;
+  ItalicAngle:double;
+  BBox:TRect;
+  StemV:double;
+ end;
+
  TRpFTInfoProvider=class(TInterfacedObject,IRpInfoProvider)
   currentname:String;
+  defaultfont:TRpLogFont;
   currentstyle:integer;
+  alibrary:FT_Library;
+  fontlist:TStringList;
+  fontpaths:TStringList;
+  fontfiles:TStringList;
+  currentfont:TRpLogFont;
+  procedure InitLibrary;
   procedure SelectFont(pdffont:TRpPDFFOnt);
   procedure FillFontInfo(pdffont:TRpPDFFont;info:TRpTTFontInfo);
   procedure FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
@@ -36,180 +65,303 @@ implementation
 const
  TTF_PRECISION=1000;
 
+procedure GetFontsDirectories(alist:TStringList);
+begin
+ alist.Add('c:\winnt\fonts\*.ttf');
+end;
+
+procedure TRpFTInfoProvider.InitLibrary;
+var
+ i,j:integer;
+ f:TSearchRec;
+ retvalue:integer;
+ aobj:TRpLogFont;
+ alibrary:FT_Library;
+ aface:FT_Face;
+ w:FT_UInt;
+ validcmap:boolean;
+begin
+ if Assigned(fontlist) then
+  exit;
+ CheckFreeTypeLoaded;
+ // reads font directory
+ fontlist:=TStringList.Create;
+ GetFontsDirectories(fontpaths);
+ fontfiles.Clear;
+ for i:=0 to fontpaths.Count-1 do
+ begin
+  retvalue:=SysUtils.FindFirst(fontpaths.strings[i],faAnyFile,F);
+  if 0=retvalue then
+  begin
+   try
+    while retvalue=0 do
+    begin
+     fontfiles.Add(ExtractFilePath(fontpaths.strings[i])+C_DIRSEPARATOR+F.Name);
+     retvalue:=SysUtils.FindNext(F);
+    end;
+   finally
+    SysUtils.FindClose(F);
+   end;
+  end;
+ end;
+ defaultfont:=nil;
+ CheckFreeType(FT_Init_FreeType(alibrary));
+ try
+  // Now fill the font list with all font files
+  for i:=0 to fontfiles.Count-1 do
+  begin
+   CheckFreeType(FT_New_Face(alibrary,Pchar(fontfiles.strings[i]),0,aface));
+   try
+    // Add it only if it's a TrueType or OpenType font
+    if  (FT_FACE_FLAG_SFNT AND aface.face_flags)<>0 then
+    begin
+     aobj:=TRpLogFont.Create;
+     try
+      // Fill font properties
+      aobj.filename:=fontfiles.strings[i];
+      aobj.postcripname:=StrPas(aface.style_name);
+      aobj.familyname:=StrPas(aface.family_name);
+      aobj.fixedpitch:=(aface.face_flags AND FT_FACE_FLAG_FIXED_WIDTH)<>0;
+      aobj.BBox.Left:=aface.bbox.xMin;
+      aobj.BBox.Right:=aface.bbox.xMax;
+      aobj.BBox.Top:=aface.bbox.yMin;
+      aobj.BBox.Bottom:=aface.bbox.yMax;
+      aobj.ascent:=aface.ascender;
+      aobj.descent:=aface.descender;
+      aobj.MaxWidth:=aface.max_advance_width;
+      aobj.Capheight:=aface.ascender;
+      aobj.stylename:=StrPas(aface.style_name);
+      aobj.bold:=(aface.style_flags AND FT_STYLE_FLAG_BOLD)<>0;
+      aobj.italic:=(aface.style_flags AND FT_STYLE_FLAG_ITALIC)<>0;
+      validcmap:=false;
+      if FT_Select_Charmap(aface,FT_ENCODING_UNICODE)=0 then
+       validcmap:=true
+      else
+       if FT_Select_Charmap(aface,FT_ENCODING_ADOBE_LATIN_1)=0 then
+        validcmap:=true
+       else
+        if FT_Select_Charmap(aface,FT_ENCODING_ADOBE_STANDARD)=0 then
+         validcmap:=true
+        else
+         if FT_Select_Charmap(aface,FT_ENCODING_OLD_LATIN_2)=0 then
+          validcmap:=true;
+      for j:=32 to 255 do
+      begin
+       if validcmap then
+       begin
+        w:=FT_Get_Char_Index(aface,j);
+        if W>0 then
+        begin
+         CheckFreeType(FT_Load_Glyph(aface,w,FT_LOAD_NO_SCALE));
+         aobj.Widths[j]:=aface.glyph.metrics.width;
+        end
+        else
+         aobj.Widths[j]:=0;
+       end
+       else
+        aobj.Widths[j]:=0;
+      end;
+      if not assigned(defaultfont) then
+      begin
+       if ((not aobj.italic) and (not aobj.bold)) then
+        defaultfont:=aobj;
+      end
+      else
+      begin
+       if ((not aobj.italic) and (not aobj.bold)) then
+       begin
+        if ((aobj.familyname='Arial') or
+         (aobj.familyname='Helvetica')) then
+        begin
+         defaultfont:=aobj;
+        end;
+       end;
+      end;
+      fontlist.AddObject(UpperCase(aobj.familyname),aobj);
+     except
+      aobj.free;
+     end;
+    end;
+   finally
+    CheckFreeType(FT_Done_Face(aface));
+   end;
+  end;
+ finally
+  CheckFreeType(FT_Done_FreeType(alibrary));
+ end;
+end;
 
 constructor TRpFTInfoProvider.Create;
 begin
  currentname:='';
  currentstyle:=0;
+ fontlist:=nil;
+ fontfiles:=TStringList.Create;
+ fontpaths:=TStringList.Create;
 end;
 
 destructor TRpFTInfoProvider.destroy;
+var
+ i:integer;
 begin
+ if assigned(fontlist) then
+ begin
+  for i:=0 to fontlist.count-1 do
+  begin
+   fontlist.Objects[i].free;
+  end;
+  fontlist.clear;
+  fontlist.free;
+  fontlist:=nil;
+ end;
+ fontpaths.free;
+ fontfiles.free;
  inherited destroy;
 end;
 
 procedure TRpFtInfoProvider.SelectFont(pdffont:TRpPDFFOnt);
 var
- LogFont:TLogFont;
+ afontname:string;
+ isbold:boolean;
+ isitalic:boolean;
+ i:integer;
+ match:boolean;
+ afont:TRpLogFont;
 begin
- if ((currentname=pdffont.WFontName) and (currentstyle=pdffont.Style)) then
+ InitLibrary;
+{$IFDEF MSWINDOWS}
+ afontname:=UpperCase(pdffont.WFontName);
+{$ENDIF}
+{$IFDEF LINUX}
+ afontname:=UpperCase(pdffont.LFontName);
+{$ENDIF}
+ if ((currentname=afontname) and (currentstyle=pdffont.Style)) then
   exit;
- currentname:=pdffont.WFontName;
+ currentname:=afontname;
  currentstyle:=pdffont.Style;
- if fonthandle<>0 then
+ // Selects de font by font matching
+ // First exact coincidence of family and style
+ isbold:=(pdffont.style and 1)>0;
+ isitalic:=(pdffont.style and (1 shl 1))>0;
+ match:=false;
+ i:=0;
+ while i<fontlist.Count do
  begin
-  DeleteObject(fonthandle);
-  fonthandle:=0;
+  if fontlist.strings[i]=afontname then
+  begin
+   afont:=TRpLogFont(fontlist.Objects[i]);
+   if isitalic=afont.italic then
+    if isbold=afont.bold then
+    begin
+     match:=true;
+     currentfont:=afont;
+     break;
+    end;
+  end;
+  inc(i);
  end;
- LogFont.lfHeight:=Round(-TTF_PRECISION*GetDeviceCaps(adc,LOGPIXELSX)/72);
-
- LogFont.lfWidth:=0;
- LogFont.lfEscapement:=0;
- LogFont.lfOrientation:=0;
-
- if (pdffont.style and 1)>0 then
-  LogFont.lfWeight:=FW_BOLD
- else
-  LogFont.lfWeight:=FW_NORMAL;
- if (pdffont.style and (1 shl 1))>0 then
-  LogFont.lfItalic:=1
- else
-  LogFont.lfItalic:=0;
- if (pdffont.style and (1 shl 2))>0 then
-  LogFont.lfUnderline:=1
- else
-  Logfont.lfUnderline:=0;
- if (pdffont.style and (1 shl 3))>0 then
-  LogFont.lfStrikeOut:=1
- else
-  LogFont.lfStrikeOut:=0;
- LogFont.lfCharSet:=DEFAULT_CHARSET;
- lOGfONT.lfOutPrecision:=OUT_tt_onLy_PRECIS;
- LogFont.lfClipPrecision:=CLIP_DEFAULT_PRECIS;
- LogFont.lfEscapement:=0;
- LogFont.lfOrientation:=0;
- // Low Quality high measurement precision
- // LogFont.lfQuality:=Draft_QUALITY;
- // Improving quality
- LogFont.lfQuality:=PROOF_QUALITY;
- LogFont.lfPitchAndFamily:=FF_DONTCARE or DEFAULT_PITCH;
- StrPCopy(LogFont.lffACEnAME,Copy(pdffont.WFontName,1,LF_FACESIZE));
- Fonthandle:= CreateFontIndirect(LogFont);
- SelectObject(adc,fonthandle);
+ if match then
+  exit;
+ // If not matching search for similar font name
+ i:=0;
+ while i<fontlist.Count do
+ begin
+  if Pos(afontname,fontlist.strings[i])>0 then
+  begin
+   afont:=TRpLogFont(fontlist.Objects[i]);
+   if isitalic=afont.italic then
+    if isbold=afont.bold then
+    begin
+     match:=true;
+     currentfont:=afont;
+     break;
+    end;
+  end;
+  inc(i);
+ end;
+ if match then
+  exit;
+ // Ignoring styles
+ match:=false;
+ i:=0;
+ while i<fontlist.Count do
+ begin
+  if fontlist.strings[i]=afontname then
+  begin
+   afont:=TRpLogFont(fontlist.Objects[i]);
+   match:=true;
+   currentfont:=afont;
+   break;
+  end;
+  inc(i);
+ end;
+ if match then
+  exit;
+ // Ignoring styles partial match
+ match:=false;
+ i:=0;
+ while i<fontlist.Count do
+ begin
+  if Pos(afontname,fontlist.strings[i])>0 then
+  begin
+   afont:=TRpLogFont(fontlist.Objects[i]);
+   match:=true;
+   currentfont:=afont;
+   break;
+  end;
+  inc(i);
+ end;
+ if match then
+  exit;
+ // Finally gets default font
+ currentfont:=defaultfont;
+ if not assigned(currentfont) then
+  Raise Exception.Create('No active font');
 end;
 
 
 procedure TRpFTInfoProvider.FillFontInfo(pdffont:TRpPDFFont;info:TRpTTFontInfo);
 var
- logx,i:integer;
- aabc:array [32..255] of ABC;
+ i:integer;
 begin
+ InitLibrary;
  SelectFont(pdffont);
- logx:=GetDeviceCaps(adc,LOGPIXELSX);
- if not GetCharABCWidths(adc,32,255,aabc[32]) then
-  RaiseLastOSError;
  for i:=32 to 255 do
-  info.charwidths[i]:=Round(
-   (Integer(aabc[i].abcA)+Integer(aabc[i].abcB)+Integer(aabc[i].abcC))/logx*72000/TTF_PRECISION
-   );
+ begin
+  info.charwidths[i]:=currentfont.widths[i];
+ end;
 end;
 
 procedure TRpFTInfoProvider.FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
-var
- potm:POUTLINETEXTMETRIC;
- asize:integer;
- embeddable:boolean;
- logx:integer;
- multipli:double;
- apchar:PChar;
- alog:LOGFONT;
- acomp:byte;
 begin
-   // See if data can be embedded
-   embeddable:=false;
-   SelectFont(pdffont);
-   data.postcriptname:='';
-   data.Encoding:='WinAnsiEncoding';
-   asize:=GetOutlineTextMetrics(adc,0,nil);
-   if asize>0 then
-   begin
-    potm:=AllocMem(asize);
-    try
-     if 0<>GetOutlineTextMetrics(adc,asize,potm) then
-     begin
-      if (potm^.otmfsType AND $8000)=0 then
-       embeddable:=true;
-      logx:=GetDeviceCaps(adc,LOGPIXELSX);
-      multipli:=1/logx*72000/TTF_PRECISION;
-      data.Ascent:=Round(potm^.otmTextMetrics.tmAscent*multipli);
-      data.Descent:=-Round(potm^.otmTextMetrics.tmDescent*multipli);
-      data.FontWeight:=potm^.otmTextMetrics.tmWeight;
-      data.FontBBox:=potm^.otmrcFontBox;
-      data.FontBBox.Left:=Round(data.FontBBox.Left*multipli);
-      data.FontBBox.Right:=Round(data.FontBBox.Right*multipli);
-      data.FontBBox.Bottom:=Round(data.FontBBox.Bottom*multipli);
-      data.FontBBox.Top:=Round(data.FontBBox.Top*multipli);
-      // CapHeight is not really correct, where to get?
-      data.CapHeight:=Round(potm^.otmAscent*multipli);
-      data.StemV:=0;
-      data.MaxWidth:=Round(potm^.otmTextMetrics.tmMaxCharWidth*multipli);
-      data.AvgWidth:=Round(potm^.otmTextMetrics.tmAveCharWidth*multipli);
-
-      data.Leading:=Round(potm^.otmTextMetrics.tmExternalLeading*multipli);
-      apchar:=PChar(potm);
-      data.FamilyName:=StrPas(@apchar[Integer(potm^.otmpFamilyName)]);
-      data.FullName:=StrPas(@apchar[Integer(potm^.otmpFullName)]);
-      data.StyleName:=StrPas(@apchar[Integer(potm^.otmpStyleName)]);
-      data.FaceName:=StrPas(@apchar[Integer(potm^.otmpFaceName)]);
-      data.ItalicAngle:=potm^.otmItalicAngle/10;
-      if ((potm^.otmTextMetrics.tmPitchAndFamily AND TMPF_TRUETYPE)=0) then
-       Raise Exception.Create(SRpNoTrueType+'-'+data.FaceName);
-      data.postcriptname:=data.FamilyName;
-{      if (fsBold in FBitmap.Canvas.Font.Style) then
-      begin
-       data.postcriptname:=data.postcriptname+',Bold';
-       if (fsItalic in FBitmap.Canvas.Font.Style) then
-        data.postcriptname:=data.postcriptname+',Italic';
-      end
-      else
-      begin
-       if (fsItalic in FBitmap.Canvas.Font.Style) then
-        data.postcriptname:=data.postcriptname+',Italic';
-      end;
-}      data.postcriptname:=StringReplace(data.postcriptname,' ','',[rfReplaceAll]);
-      //
-      data.Flags:=32;
-      // Fixed pitch? Doc says inverse meaning
-      if ((potm^.otmTextMetrics.tmPitchAndFamily AND TMPF_FIXED_PITCH)=0) then
-       data.Flags:=data.Flags+1;
-      if GetObject(FontHandle,sizeof(alog),@alog)>0 then
-      begin
-       acomp:=(alog.lfPitchAndFamily AND $C0);
-       if ((acomp or FF_SCRIPT)=alog.lfPitchAndFamily) then
-        data.Flags:=data.Flags+8;
-       if ((acomp or FF_ROMAN)=alog.lfPitchAndFamily) then
-        data.Flags:=data.Flags+2;
-      end;
-      if potm^.otmTextMetrics.tmItalic<>0 then
-       data.Flags:=data.Flags+64;
-      data.FontStretch:='/Normal';
-     end;
-    finally
-     FreeMem(potm);
-    end;
-   end;
-   if embeddable then
-   begin
-    asize:=GetFontData(adc,0,0,nil,0);
-    if asize>0 then
-    begin
-     // Gets the raw data of the font
-     data.FontData.SetSize(asize);
-     if GDI_ERROR=GetFontData(adc,0,0,data.FontData.Memory,asize) then
-      RaiseLastOSError;
-     data.FontData.Seek(0,soFromBeginning);
-    end;
-   end;
+ InitLibrary;
+ // See if data can be embedded
+ SelectFont(pdffont);
+ data.fontdata.Clear;
+ data.fontdata.LoadFromFile(currentfont.filename);
+ data.postcriptname:=currentfont.postcripname;
+ data.FamilyName:=currentfont.familyname;
+ data.FaceName:=currentfont.familyname;
+ data.Ascent:=currentfont.ascent;
+ data.Descent:=currentfont.descent;
+ data.Leading:=0;
+ data.capHeight:=currentfont.Capheight;
+ data.FontWeight:=0;
+ data.MaxWidth:=currentfont.MaxWidth;
+ data.AvgWidth:=currentfont.avCharWidth;
+ data.StemV:=0;
+ data.FontStretch:='/Normal';
+ data.FontBBox:=currentfont.BBox;
+ if currentfont.italic then
+  data.ItalicAngle:=-15
+ else
+  data.ItalicAngle:=0;
+ data.StyleName:=currentfont.stylename;
+ data.Flags:=32;
+ if (currentfont.fixedpitch) then
+  data.Flags:=data.Flags+1;
+ if currentfont.italic then
+   data.Flags:=data.Flags+64;
 end;
 
 end.
