@@ -50,7 +50,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=baseclx:visualclx:visualdbclx:dataclx:indy
-Conditionals=LINUXTEECHART
+Conditionals=REPMANRELEASE
 DebugSourceDirs=
 UsePackages=0
 
@@ -62,8 +62,10 @@ UseLauncher=0
 DebugCWD=
 
 [HistoryLists\hlConditionals]
-Count=3
-Item0=LINUXTEECHART
-Item1=FORWEBAX
-Item2=FORWEBAX;LINUXTEECHART
+Count=5
+Item0=REPMANRELEASE
+Item1=REPMANRELEASE;FORCECONSOLE
+Item2=LINUXTEECHART
+Item3=FORWEBAX
+Item4=FORWEBAX;LINUXTEECHART
 

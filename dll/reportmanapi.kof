@@ -49,8 +49,8 @@ UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
-Packages=
-Conditionals=
+Packages=rtl:visualclx:dataclx:visualdbclx:netclx:netdataclx:xmlrtl:indy:webdsnapclx:websnapclx:soaprtl:ZCore:ZParse:ZParseSql:ZPlain:ZDbc:ZComponent:rppack:rppackv:rppackdesign
+Conditionals=REPMANRELEASE;FORCECONSOLE
 DebugSourceDirs=
 UsePackages=0
 
@@ -60,4 +60,12 @@ HostApplication=
 Launcher=/usr/X11R6/bin/xterm -T KylixDebuggerOutput -e bash -i -c %debuggee%
 UseLauncher=0
 DebugCWD=
+
+[HistoryLists\hlConditionals]
+Count=5
+Item0=REPMANRELEASE
+Item1=REPMANRELEASE;FORCECONSOLE
+Item2=LINUXTEECHART
+Item3=FORWEBAX
+Item4=FORWEBAX;LINUXTEECHART
 

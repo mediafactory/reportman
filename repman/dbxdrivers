@@ -1,6 +1,7 @@
 [Installed Drivers]
 Interbase=1
 MySQL=1
+MySQL23=1
 PostgreSQL=1
 DB2=1
 Oracle=1
@@ -129,7 +130,9 @@ Informix TransIsolation=ReadCommited
 GetDriverFunc=getSQLDriverODBC
 VendorLib=libodbc.so
 LibraryName=libdbxoodbc.so
-Database=DSN=SAMPLE;UID=user;PWD=password;DB=master;LANG=chineses
+Database=ODBC DSN name, or ODBC connection string (DSN=SAMPLE;LANG=chineses..) or ? for Driver Prompt
+User_Name=user name (can be ommited)
+Password=password (can be ommited)
 
 [AutoCommit]
 False=0

@@ -50,7 +50,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=rtl:visualclx:dataclx:visualdbclx:indy
-Conditionals=
+Conditionals=REPMANRELEASE;FORCECONSOLE
 DebugSourceDirs=
 UsePackages=0
 
@@ -61,9 +61,11 @@ Launcher=/usr/X11R6/bin/xterm -T KylixDebuggerOutput -e bash -i -c %debuggee%
 UseLauncher=0
 DebugCWD=
 
-[Excluded Packages]
-/opt/kylix3/bin/dclnet.so.6.9=Borland Internet Components
-/opt/kylix3/bin/dclwebdsnapclx.so.6.9=Borland InternetExpress Components
-/opt/kylix3/bin/dclwebsnapclx.so.6.9=Borland WebSnap Components
-/opt/kylix3/bin/dclsoap.so.6.9=Borland SOAP Components
+[HistoryLists\hlConditionals]
+Count=5
+Item0=REPMANRELEASE
+Item1=REPMANRELEASE;FORCECONSOLE
+Item2=LINUXTEECHART
+Item3=FORWEBAX
+Item4=FORWEBAX;LINUXTEECHART
 
