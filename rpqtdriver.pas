@@ -87,6 +87,7 @@ type
     oldonidle:TIdleEvent;
     tittle:string;
     filename:string;
+    errormessage:String;
     metafile:TRpMetafileReport;
 {$IFNDEF FORWEBAX}
     report:TRpReport;
@@ -107,6 +108,7 @@ type
    FIntPageSize:TPageSizeQt;
    OldOrientation:TPrinterOrientation;
    DrawerBefore,DrawerAfter:Boolean;
+   calconly:boolean;
    function InternalSetPagesize(PagesizeQt:integer):TPoint;
 {$IFDEF VCLANDCLX}
    procedure SendAfterPrintOperations;
@@ -724,6 +726,8 @@ var
  dpix,dpiy:integer;
  Canvas:TCanvas;
 begin
+ if calconly then
+  exit;
  if (toprinter) then
  begin
   if not printer.Printing then
@@ -1034,12 +1038,28 @@ var
 {$ENDIF}
 {$IFDEF LINUX}
     milifirst,mililast:TDatetime;
+ tmpfile1,tmpfile2:string;
+ alist:TStringList;
 {$ENDIF}
  difmilis:int64;
  pageheight,pagewidth:integer;
  tempbitmap:TBitmap;
  arec:TRect;
+ realdpix:integer;
+ realdpiy:integer;
+ scale:integer;
+ maxdpi:integer;
 begin
+ realdpix:=Screen.PixelsPerInch;
+ realdpiy:=Screen.PixelsPerInch;
+ scale:=1;
+ if resy>resx then
+  maxdpi:=resy
+ else
+  maxdpi:=resy;
+ while scale*realdpix<maxdpi do
+  scale:=scale*2;
+
  offset.X:=0;
  offset.Y:=0;
 {$IFDEF MSWINDOWS}
@@ -1054,39 +1074,30 @@ begin
  pagemargins.Top:=0;
  Result:=TBitmap.Create;
  try
-  if Mono then
-{$IFDEF MSWINDOWS}
-     tempbitmap.PixelFormat:=pf32bit
-{$ENDIF}
-{$IFDEF LINUX}
-     tempbitmap.PixelFormat:=pf1bit
-{$ENDIF}
-  else
-   Result.PixelFormat:=pf32bit;
+  Result.PixelFormat:=pf32bit;
   pagewidth:=(metafile.CustomX*resx) div TWIPS_PER_INCHESS;
   Result.Width:=pagewidth;
   pageheight:=(metafile.CustomY*resy) div TWIPS_PER_INCHESS;
   Result.Height:=pageheight*metafile.PageCount;
+  arec.Top:=0;
+  arec.Left:=0;
+  arec.Bottom:=Result.Height*2;
+  arec.Right:=Result.Width*2;
+  REsult.Canvas.Brush.Color:=metafile.BackColor;
+  REsult.Canvas.Brush.Style:=bsSolid;
+  Result.Canvas.FillRect(arec);
   QtDriver:=TRpQtDriver.Create;
   aqtDriver:=QtDriver;
   for i:=0 to metafile.PageCount-1 do
   begin
    tempbitmap:=TBitmap.Create;
    try
-    if Mono then
-{$IFDEF MSWINDOWS}
-     tempbitmap.PixelFormat:=pf32bit
-{$ENDIF}
-{$IFDEF LINUX}
-     tempbitmap.PixelFormat:=pf1bit
-{$ENDIF}
-    else
-     tempbitmap.PixelFormat:=pf32bit;
-    tempbitmap.Height:=pageheight;
-    tempbitmap.Width:=pagewidth;
+    tempbitmap.PixelFormat:=pf32bit;
+    tempbitmap.Height:=(metafile.CustomY*realdpiy*scale) div TWIPS_PER_INCHESS;
+    tempbitmap.Width:=(metafile.CustomX*realdpix*scale) div TWIPS_PER_INCHESS;
     arec.Top:=0;arec.Bottom:=0;
-    arec.Right:=tempbitmap.Width;
-    arec.Bottom:=tempbitmap.Height;
+    arec.Right:=tempbitmap.Width*2;
+    arec.Bottom:=tempbitmap.Height*2;
 
     apage:=metafile.Pages[i];
     tempbitmap.Canvas.Brush.Color:=clWhite;
@@ -1094,7 +1105,8 @@ begin
     tempbitmap.Canvas.FillRect(arec);
     for j:=0 to apage.ObjectCount-1 do
     begin
-     PrintObject(tempbitmap.Canvas,apage,apage.Objects[j],resx,resy,1,offset,false);
+     PrintObject(tempbitmap.Canvas,apage,apage.Objects[j],realdpix,
+      realdpiy,scale,offset,false);
      if assigned(aform) then
      begin
    {$IFDEF MSWINDOWS}
@@ -1122,7 +1134,11 @@ begin
       end;
      end;
     end;
-    Result.Canvas.Draw(0,pageheight*i,tempbitmap);
+    arec.Top:=pageheight*i;
+    arec.Bottom:=pageheight*i+pageheight;
+    arec.Left:=0;
+    arec.Right:=pagewidth;
+    Result.Canvas.StretchDraw(arec,tempbitmap);
     if assigned(aform) then
     begin
      Application.ProcessMessages;
@@ -1133,6 +1149,32 @@ begin
     tempbitmap.free;
    end;
   end;
+  // To obtain monocrhome bitmaps must use convert command line tool
+{$IFDEF LINUX}
+  if Mono then
+  begin
+   alist:=TStringList.Create;
+   try
+    tmpfile1:=RpTempFileName;
+    tmpfile2:=RpTempFileName;
+    Result.SaveToFile(tmpfile1);
+    try
+     alist.Add('convert');
+     alist.Add('-monochrome');
+     alist.Add(tmpfile1);
+     alist.Add(tmpfile2);
+     ExecuteSystemCommand(alist);
+     Result.LoadFromFile(tmpfile2);
+    finally
+     DeleteFile(tmpfile1);
+     DeleteFile(tmpfile2);
+    end;
+   finally
+    alist.free;
+   end;
+  end;
+{$ENDIF}
+
  except
   Result.free;
   raise;
@@ -1161,6 +1203,8 @@ begin
    Application.OnIdle:=dia.AppIdleBitmap;
    dia.ShowModal;
    Result:=dia.MetaBitmap;
+   if not Assigned(Result) then
+    Raise Exception.Create(dia.ErrorMessage);
   finally
    Application.OnIdle:=dia.oldonidle;
   end;
@@ -1194,12 +1238,19 @@ end;
 
 procedure TFRpQtProgress.AppIdleBitmap(Sender:TObject;var done:boolean);
 begin
- cancelled:=false;
- Application.OnIdle:=nil;
- done:=false;
- LTittle.Caption:=tittle;
- LProcessing.Visible:=true;
- MetaBitmap:=DoMetafileToBitmap(metafile,self,bitmono,bitresx,bitresy);
+ try
+  cancelled:=false;
+  Application.OnIdle:=nil;
+  done:=false;
+  LTittle.Caption:=tittle;
+  LProcessing.Visible:=true;
+  MetaBitmap:=DoMetafileToBitmap(metafile,self,bitmono,bitresx,bitresy);
+ except
+  on E:Exception do
+  begin
+   ErrorMessage:=E.Message;
+  end;
+ end;
  Close;
 end;
 
@@ -1673,6 +1724,7 @@ var
  oldtwopass:Boolean;
  apdfdriver:IRpPrintDriver;
  onprog:TRpProgressEvent;
+ aqtdriver:IRpPrintDriver;
 begin
  oldtwopass:=report.TwoPass;
  onprog:=report.OnPRogress;
@@ -1690,7 +1742,14 @@ begin
 {$IFDEF USECLXTEECHART}
   report.Metafile.OnDrawChart:=qtdriver.DoDrawChart;
 {$ENDIF}
-  report.PrintRange(apdfdriver,allpages,frompage,topage,1,collate);
+  if metafile then
+  begin
+   qtdriver.calconly:=true;
+   aqtdriver:=qtDriver;
+   report.PrintRange(aqtdriver,allpages,frompage,topage,1,collate)
+  end
+  else
+   report.PrintRange(apdfdriver,allpages,frompage,topage,1,collate);
   if metafile then
    report.Metafile.SaveToStream(stream);
  finally

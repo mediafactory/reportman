@@ -451,7 +451,8 @@ begin
  FBottomMargin:=DEFAULT_BOTTOMMARGIN;
  FTopMargin:=DEFAULT_TOPMARGIN;
   // Means white
- FPageBackColor:=High(FPageBackColor);
+ FPageBackColor:=$FFFFFF;
+
  FPageWidth:=DEFAULT_PAGEWIDTH;
  FPageheight:=DEFAULT_PAGEHEIGHT;
  FCustomPageWidth:=DEFAULT_PAGEWIDTH;

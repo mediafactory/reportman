@@ -101,6 +101,7 @@ type
     oldonidle:TIdleEvent;
     tittle:string;
     filename:string;
+    ErrorMessage:String;
     metafile:TRpMetafileReport;
 {$IFNDEF FORWEBAX}
     report:TRpReport;
@@ -120,6 +121,7 @@ type
    metacanvas:TMetafilecanvas;
    meta:TMetafile;
    pagecliprec:TRect;
+   onlycalc:Boolean;
    selectedprinter:TRpPrinterSelect;
    DrawerBefore,DrawerAfter:Boolean;
    procedure SendAfterPrintOperations;
@@ -1021,6 +1023,8 @@ var
  dpix,dpiy:integer;
  Canvas:TCanvas;
 begin
+ if onlycalc then
+  exit;
  if (toprinter) then
  begin
   if not printer.Printing then
@@ -1370,7 +1374,7 @@ begin
      arec.Top:=0;arec.Left:=0;
      arec.Right:=realx*metafile.CustomX div TWIPS_PER_INCHESS*2;
      arec.Bottom:=realy*metafile.CustomY div TWIPS_PER_INCHESS*2;
-     ametaCanvas.Brush.Color:=clWhite;
+     ametaCanvas.Brush.Color:=metafile.backcolor;
      ametaCanvas.Brush.Style:=bsSolid;
      ametaCanvas.FillRect(arec);
      for j:=0 to apage.ObjectCount-1 do
@@ -1438,6 +1442,8 @@ begin
    Application.OnIdle:=dia.AppIdleBitmap;
    dia.ShowModal;
    Result:=dia.MetaBitmap;
+   if Not Assigned(Result) then
+    Raise Exception.Create(dia.ErrorMessage);
   finally
    Application.OnIdle:=dia.oldonidle;
   end;
@@ -1477,12 +1483,19 @@ end;
 
 procedure TFRpVCLProgress.AppIdleBitmap(Sender:TObject;var done:boolean);
 begin
- cancelled:=false;
- Application.OnIdle:=nil;
- done:=false;
- LTittle.Caption:=tittle;
- LProcessing.Visible:=true;
- MetaBitmap:=DoMetafileToBitmap(metafile,self,bitmono,bitresx,bitresy);
+ try
+  cancelled:=false;
+  Application.OnIdle:=nil;
+  done:=false;
+  LTittle.Caption:=tittle;
+  LProcessing.Visible:=true;
+  MetaBitmap:=DoMetafileToBitmap(metafile,self,bitmono,bitresx,bitresy);
+ except
+  on E:Exception do
+  begin
+   ErrorMessage:=E.Message;
+  end;
+ end;
  Close;
 end;
 
@@ -1559,6 +1572,7 @@ function ExportReportToPDFMetaStream (report:TRpReport; Caption:string; progress
 var
  pdfdriver:TRpPDFDriver;
  gdidriver:TRpGDIDriver;
+ agdidriver:IRpPrintDriver;
  oldtwopass:Boolean;
  apdfdriver:IRpPrintDriver;
  onprog:TRpProgressEvent;
@@ -1579,7 +1593,14 @@ begin
 {$IFDEF USETEECHART}
   report.Metafile.OnDrawChart:=gdidriver.DoDrawChart;
 {$ENDIF}
-  report.PrintRange(apdfdriver,allpages,frompage,topage,1,collate);
+  if metafile then
+  begin
+   agdidriver:=gdidriver;
+   agdidriver.onlycalc:=true;
+   report.PrintRange(agdidriver,allpages,frompage,topage,1,collate);
+  end
+  else
+   report.PrintRange(apdfdriver,allpages,frompage,topage,1,collate);
   if metafile then
    report.Metafile.SaveToStream(stream);
  finally

@@ -287,6 +287,7 @@ function PrinterRawOpEnabled(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):
 procedure  ObtainPrinters(alist:TStrings);
 procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title:String);
 procedure ReadFileLines(filename:String;dest:TStrings);
+procedure ExecuteSystemCommand(params:TStrings);
 {$ENDIF}
 
 procedure GetPaperSourceDescriptions(alist:TStrings);
@@ -2735,6 +2736,35 @@ begin
 end;
 
 
+procedure ExecuteSystemCommand(params:TStrings);
+var
+ child:__pid_t;
+ i:integer;
+ theparams:array [0..100] of pchar;
+begin
+ // Creates a fork, and provides the input from standard
+ // input to lpr command
+ if params.count>100 then
+  Raise exception.create(SRpTooManyParams);
+ for i:=0 to params.count-1 do
+ begin
+  theparams[i]:=Pchar(params[i]);
+ end;
+ theparams[params.count]:=nil;
+ child:=fork;
+ if child=-1 then
+  Raise Exception.Create(SRpErrorForking);
+ if child=0 then
+ begin
+  // The child executes the command
+  execvp(theparams[0],PPChar(@theparams))
+ end
+ else
+ begin
+  // Waits to the end
+  wait(@child);
+ end;
+end;
 
 
 procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title:String);

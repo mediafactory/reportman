@@ -204,6 +204,26 @@ begin
        acopies:=1;
      end
      else
+     if ParamStr(indexparam)='-bmpresx' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpNumberexpected);
+      bmpresx:=StrToInt(ParamStr(indexparam));
+      if bmpresx<=0 then
+       bmpresx:=100;
+     end
+     else
+     if ParamStr(indexparam)='-bmpresy' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpNumberexpected);
+      bmpresy:=StrToInt(ParamStr(indexparam));
+      if bmpresy<=0 then
+       bmpresy:=100;
+     end
+     else
      if ParamStr(indexparam)='-collate' then
      begin
       collate:=true;

@@ -866,9 +866,9 @@ begin
  Orientation:=TRpOrientation(ainteger);
  if (sizeof(BackColor)<>Stream.Read(BackColor,sizeof(BackColor))) then
   Raise Exception.Create(SRpBadFileHeader);
- if (sizeof(PaperSource)<>Stream.Read(BackColor,sizeof(PaperSource))) then
+ if (sizeof(PaperSource)<>Stream.Read(PaperSource,sizeof(PaperSource))) then
   Raise Exception.Create(SRpBadFileHeader);
- if (sizeof(Duplex)<>Stream.Read(BackColor,sizeof(Duplex))) then
+ if (sizeof(Duplex)<>Stream.Read(Duplex,sizeof(Duplex))) then
   Raise Exception.Create(SRpBadFileHeader);
  if (sizeof(integer)<>Stream.Read(ainteger,sizeof(integer))) then
   Raise Exception.Create(SRpBadFileHeader);
