@@ -23,11 +23,11 @@ interface
 
 {$I rpconf.inc}
 
-uses Sysutils,IniFiles,rpmdshfolder,
+uses
 {$IFDEF MSWINDOWS}
  Windows,
 {$ENDIF}
- Classes,
+ Sysutils,IniFiles,rpmdshfolder,Classes,
 {$IFDEF USEVARIANTS}
  Variants,Types,
 {$ENDIF}
@@ -111,6 +111,7 @@ function GetPrinterConfigName(printerindex:TRpPrinterSelect):string;
 function GetPrinterOffset(printerindex:TRpPrinterSelect):TPoint;
 function GetDeviceFontsOption(printerindex:TRpPrinterSelect):boolean;
 function GetPrinterRawOp(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):string;
+procedure FillTreeDir(adirectory:String;alist:TStringList);
 
 // Language identifiers
 var
@@ -451,6 +452,50 @@ begin
  // Transform the string to a real string
  Result:=EscapeCodedToString(Result);
 end;
+
+procedure FillTreeDir(adirectory:string;alist:TStringList);
+var
+ adirlength:integer;
+
+procedure IntFillTreeDir(adir:string);
+var
+ srec:TSearchRec;
+ Attr:Integer;
+ ares:Integer;
+ sdir:string;
+begin
+ Attr:=faAnyfile;
+ sdir:=adir+'\*.*';
+ ares:=FindFirst(sdir,Attr,srec);
+ try
+  if ares=0 then
+  begin
+   repeat
+    if ((srec.Attr AND faDirectory)>0) then
+    begin
+     if ((srec.Name<>'.') AND (srec.Name<>'..')) then
+     begin
+//      alist.Add(Copy(adir,adirlength,Length(adir))+'\'+srec.Name);
+      IntFillTreeDir(adir+'\'+srec.Name);
+     end;
+    end
+    else
+    begin
+     alist.Add(Copy(adir,adirlength+1,Length(adir))+'\'+ChangeFileExt(srec.Name,''));
+    end;
+   until FindNext(srec)<>0;
+  end;
+ finally
+  if ares=0 then
+   FindClose(srec);
+ end;
+end;
+
+begin
+ adirlength:=Length(adirectory)+1;
+ IntFillTreeDir(adirectory);
+end;
+
 
 initialization
 

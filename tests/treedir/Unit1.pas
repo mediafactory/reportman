@@ -5,7 +5,7 @@ interface
 uses
   SysUtils, Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QDialogs, QStdCtrls,rpgraphutils, QComCtrls, DBXpress, DB, SqlExpr,
-  FMTBcd,rpmdftree,rpmdconsts,dbtables;
+  FMTBcd,rpmdftree,rpmdconsts,dbtables,rptypes;
 
 type
   TForm1 = class(TForm)
@@ -15,6 +15,7 @@ type
     QGroups: TSQLQuery;
     Button2: TButton;
     QReport: TSQLQuery;
+    Memo1: TMemo;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
@@ -66,8 +67,19 @@ begin
 end;
 
 procedure TForm1.Button2Click(Sender: TObject);
+var
+ alist:TStringList;
 begin
- atree.ATree.Items.Clear;
+// atree.FillTree('c:\prog\toni\cvsroot\reportman\reportman\tests\treedir\test');
+ alist:=TStringList.Create;
+ try
+  rptypes.FillTreeDir('c:\prog\toni\cvsroot\reportman\reportman\tests\treedir\test',alist);
+  Memo1.Lines.Assign(alist);
+  atree.rootfilename:='c:\prog\toni\cvsroot\reportman\reportman\tests\treedir\test';
+  atree.FillTree(alist);
+ finally
+  alist.free;
+ end;
 end;
 
 procedure TForm1.OnLoadReport(reportname:string;memstream:TMemoryStream);

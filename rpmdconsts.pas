@@ -83,10 +83,10 @@ var
   SRpSampleTextToLabels:WideString='Text';
   SRpOnlyAReportOwner:WideString='Only a report can be the owner of :';
   SrpErrorProcesingFileMenu:WideString='Error procesing the File Menu for last saved files';
-  SRpRepToTxt1:WideString='reptotxt v1.0';
+  SRpRepToTxt1:WideString='reptotxt v1.1';
   SRpRepToTxt2:WideString='Converts a report file from report manager (.rep) to a plain file';
   SRpRepToTxt3:WideString='Usage: reptotxt sourcefilename destinationfilename';
-  SRpMetaPrint1:WideString='metaprint v1.0';
+  SRpMetaPrint1:WideString='metaprint v1.1';
   SRpMetaPrint2:WideString='Prints a metafile report (.rpmf)';
   SRpMetaPrint3:WideString='Usage: metaprint [Options] metafilename';
   SRpMetaPrint4:WideString='Options: -d        Delete the file after printing it';
@@ -100,10 +100,10 @@ var
   SRpPrinted:WideString='Printed';
   SRpPrintedFileDeleted:WideString='Printed file deleted';
   SRpNoDriverPassedToPrint:WideString='No driver passed to beginprint of TrpReport';
-  SRpTxtToRep1:WideString='txttorep v1.0';
+  SRpTxtToRep1:WideString='txttorep v1.1';
   SRpTxtToRep2:WideString='Converts a plain file containing object descriptions to a report manager (.rep) file';
   SRpTxtToRep3:WideString='Usage: txttorep sourcefilename destinationfilename';
-  SRpPrintRep1:WideString='printrep v1.0';
+  SRpPrintRep1:WideString='printrep v1.1';
   SRpPrintRep2:WideString='Prints a report manager (.rep) file';
   SRpPrintRep3:WideString='Usage: printrep [Options] reportfilename';
   SRpPrintRep4:WideString='         -q        Quiet mode, don''t show progress';
@@ -111,7 +111,7 @@ var
   SRpPrintRep6:WideString='         -to     n Prints report to page pnum';
   SRpPrintRep7:WideString='         -copies n Prints pnum copies';
   SRpPrintRep8:WideString='         -collate  Collate the copies';
-  SRpPrintPDFRep1:WideString='printreptopdf v1.0';
+  SRpPrintPDFRep1:WideString='printreptopdf v1.1';
   SRpPrintPDFRep2:WideString='Prints a report manager (.rep) file to a Adobe PDF file';
   SRpPrintPDFRep3:WideString='Usage: printrep [Options] reportfilename pdffilename';
   SRpPrintPDFRep4:WideString='         -q        Quiet mode, don''t show progress';
@@ -514,6 +514,11 @@ var
   SRpPGraphicNew:WideString='Gr is the graphic identifier,V is the value, C indications serie change,etiq is the caption of value and caption the serie';
   SRpNoDataAvailableToPrint:WideString='No data available to print';
   SRpPrintOnlyIfDataAvailable:WideString='Print only if data available';
+  SRpPasswordConfirmationIncorrect:WideString='Password confirmation incorrect';
+  SRpAAliasnameBeAssigned:WideString='A alias name must be specified';
+  SRpAPathMustBeAssigned:WideString='A path must be specified';
+  SRpAUserNameMustbeAssigned:WideString='A user name must be specified';
+  SRpUserorPasswordIncorrect:WideString='User or password incorrect';
 implementation
 
 uses rptranslator;
@@ -1031,6 +1036,11 @@ begin
  TranslateVar(798,SRpPGraphicNew);
  TranslateVar(799,SRpNoDataAvailableToPrint);
  TranslateVar(800,SRpPrintOnlyIfDataAvailable);
+ TranslateVar(801,SRpPasswordConfirmationIncorrect);
+ TranslateVar(802,SRpAAliasnameBeAssigned);
+ TranslateVar(803,SRpAPathMustBeAssigned);
+ TranslateVar(804,SRpAUserNameMustbeAssigned);
+ TranslateVar(805,SRpUserorPasswordIncorrect);
 end;
 
 

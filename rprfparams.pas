@@ -27,7 +27,7 @@ uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,
   rpmdconsts,
   Variants,
-  rpreport,rpparams;
+  rpparams;
 
 const
   CONS_LEFTGAP=3;
@@ -60,13 +60,13 @@ type
   end;
 
 
-function ShowUserParams(report:TRpReport):boolean;
+function ShowUserParams(params:TRpParamList):boolean;
 
 implementation
 
 {$R *.xfm}
 
-function ShowUserParams(report:TRpReport):boolean;
+function ShowUserParams(params:TRpParamList):boolean;
 var
  dia:TFRpRunTimeParams;
  oneparam:boolean;
@@ -74,9 +74,9 @@ var
 begin
  Result:=false;
  oneparam:=false;
- for i:=0 to report.params.count-1 do
+ for i:=0 to params.count-1 do
  begin
-  if report.params.items[i].Visible then
+  if params.items[i].Visible then
   begin
    oneparam:=true;
    break;
@@ -89,11 +89,11 @@ begin
  end;
  dia:=TFRpRunTimeParams.Create(Application);
  try
-  dia.params:=report.Params;
+  dia.params:=Params;
   dia.showmodal;
   if dia.dook then
   begin
-   report.params.Assign(dia.Params);
+   params.Assign(dia.Params);
    Result:=true;
   end;
  finally

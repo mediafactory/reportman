@@ -441,7 +441,7 @@ begin
  // Frees the interface for the report
  ASave.Enabled:=false;
  ASaveas.Enabled:=false;
- MReport.Visible:=false;
+ MReport.Enabled:=false;
  ANewPageHeader.Enabled:=false;
  ANewPageFooter.Enabled:=false;
  ANewGroup.Enabled:=false;
@@ -457,8 +457,8 @@ begin
  AHide.Enabled:=False;
  APrint.Enabled:=false;
  AGridOptions.Enabled:=false;
- MDisplay.Visible:=false;
- MEdit.Visible:=false;
+ MDisplay.Enabled:=false;
+ MEdit.Enabled:=false;
 
  // Palette
  BArrow.Enabled:=false;
@@ -496,7 +496,7 @@ begin
  ASave.Enabled:=true;
  ASaveas.Enabled:=True;
  APageSetup.Enabled:=True;
- MReport.Visible:=True;
+ MReport.Enabled:=True;
  ANewPageHeader.Enabled:=True;
  ANewPageFooter.Enabled:=True;
  ANewGroup.Enabled:=true;
@@ -512,8 +512,8 @@ begin
  AShowAll.Enabled:=True;
  APrint.Enabled:=true;
  AGridOptions.Enabled:=true;
- MDisplay.Visible:=true;
- MEdit.Visible:=true;
+ MDisplay.Enabled:=true;
+ MEdit.Enabled:=true;
 
  // Palette
  BArrow.Enabled:=true;
@@ -1323,7 +1323,7 @@ end;
 
 procedure TFRpMainFVCL.AUserParamsExecute(Sender: TObject);
 begin
-  rprfvparams.ShowUserParams(report);
+  rprfvparams.ShowUserParams(report.params);
 end;
 
 procedure TFRpMainFVCL.ADriverQTExecute(Sender: TObject);

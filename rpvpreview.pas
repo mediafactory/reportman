@@ -536,7 +536,7 @@ procedure TFRpVPreview.AParamsExecute(Sender: TObject);
 var
  adone:boolean;
 begin
- if ShowUserParams(report) then
+ if ShowUserParams(report.params) then
  begin
   // Reexecutes the report
   AppIdle(Self,adone);

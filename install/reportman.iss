@@ -23,6 +23,7 @@ Source: "..\repman\repmand.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\reportmanres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\transwin\repmand.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\transwin\repmandxp.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\qttranslation\windows\qt_*.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaview\metaview.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\metaprint\metaprint.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
@@ -33,6 +34,10 @@ Source: "..\repman\utils\txttorep\txttorep.exe"; DestDir: "{app}"; CopyMode: alw
 Source: "..\repman\utils\rptranslator\rptranslate.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\rptranslator\rptranslateres.*"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\printreptopdf\printreptopdf.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\server\service\repserverservice.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\server\app\repserverapp.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\server\app\repservercon.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\server\config\repserverconfig.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; CopyMode: alwaysoverwrite
@@ -40,22 +45,30 @@ Source: "..\repman\dbxdrivers.ini"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\dbxconnections.ini"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\drivers\win32\dbexpint.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 Source: "..\drivers\win32\dbexpmys.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
+Source: "..\drivers\win32\dbexpinf.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 Source: "..\drivers\win32\dbexpmysql.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
+Source: "..\drivers\win32\dbexpmss.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 Source: "..\drivers\win32\dbexpora.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 Source: "..\drivers\win32\dbexpdb2.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 Source: "..\drivers\win32\dbxoodbc.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
-Source: "C:\winnt\system32\qtintf.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
+Source: "C:\winnt\system32\qtintf7.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 Source: "..\doc\doc\*.*"; DestDir: "{app}\doc"; CopyMode: alwaysoverwrite
 Source: "..\doc\doc\images\*.*"; DestDir: "{app}\doc\images"; CopyMode: alwaysoverwrite
 
 [Icons]
-Name: "{group}\Report Manager Designer"; Filename: "{app}\repmand.exe"; WorkingDir: "{app}"
-Name: "{group}\Metafile Viewer"; Filename: "{app}\metaview.exe"; WorkingDir: "{app}"
+Name: "{group}\Designer XP"; Filename: "{app}\repmandxp.exe"; WorkingDir: "{app}"
+Name: "{group}\Designer CP"; Filename: "{app}\repmand.exe"; WorkingDir: "{app}"
+Name: "{group}\Metafile Viewer/Report Client"; Filename: "{app}\metaview.exe"; WorkingDir: "{app}"
 Name: "{group}\Translation Utility"; Filename: "{app}\rptranslate.exe"; WorkingDir: "{app}"
 Name: "{group}\Documentation"; Filename: "{app}\doc\index.html"; WorkingDir: "{app}\doc"
 Name: "{group}\License"; Filename: "{app}\license.txt";
-Name: "{userdesktop}\Report Manager"; Filename: "{app}\repmand.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
+Name: "{group}\Server application"; Filename: "{app}\repserverapp.exe"; WorkingDir: "{app}"
+Name: "{group}\Server configuration"; Filename: "{app}\repserverconfig.exe"; WorkingDir: "{app}"
+Name: "{group}\Service Install"; Filename: "{app}\repserverservice.exe /INSTALL"; WorkingDir: "{app}"
+Name: "{group}\Service UnInstall"; Filename: "{app}\repserverservice.exe /UNINSTALL"; WorkingDir: "{app}"
+Name: "{userdesktop}\Report Manager Designer"; Filename: "{app}\repmand.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
+Name: "{userdesktop}\Report Manager Client"; Filename: "{app}\metaview.exe"; WorkingDir: "{app}"; MinVersion: 4,4; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\repmand.exe"; Description: "Launch Report Manager"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\repmandxp.exe"; Description: "Launch Report Manager Designer XP"; Flags: nowait postinstall skipifsilent
 

@@ -25,7 +25,8 @@ interface
 uses
   SysUtils, Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QDialogs, rptranslator, QStdCtrls, QExtCtrls,rpmdrepclient,
-  rpmdconsts, QActnList, QImgList, QComCtrls;
+  rpmdconsts, QActnList, QImgList, QComCtrls,rpgraphutils,rpparams,
+  rprfparams;
 
 type
   TFRpCliTree = class(TFrame)
@@ -57,19 +58,32 @@ type
     AExecute: TAction;
     ToolButton4: TToolButton;
     LTree: TTreeView;
+    PAlias: TPanel;
+    Label1: TLabel;
+    ComboAlias: TComboBox;
+    imalist: TImageList;
     procedure BExecuteClick(Sender: TObject);
     procedure BConnectClick(Sender: TObject);
     procedure BDisconnectClick(Sender: TObject);
+    procedure ComboAliasClick(Sender: TObject);
+    procedure LTreeChange(Sender: TObject; Node: TTreeNode);
+    procedure AParametersExecute(Sender: TObject);
   private
     { Private declarations }
     FStream:TMemoryStream;
     FOnExecuteServer:TNotifyEvent;
     amod:TModClient;
     loadedreport:Boolean;
+    paramscomp:TRpParamComp;
+    openedreport:boolean;
     procedure InsertMessage(aMessage:WideString);
     procedure OnError(Sender:TObject;aMessage:WideString);
+    procedure OnLog(Sender:TObject;aMessage:WideString);
     procedure OnAuthorization(Sender:TObject);
     procedure OnExecute(Sender:TObject);
+    procedure OnGetAliases(alist:TStringList);
+    procedure OnGetTree(alist:TStringList);
+    procedure OnGetParams(astream:TMemoryStream);
   public
     { Public declarations }
     initialwidth:integer;
@@ -101,6 +115,7 @@ begin
  AExecute.Hint:=TranslateStr(780,AExecute.Hint);
  AParameters.Caption:=TranslateStr(135,AParameters.Caption);
  AParameters.Hint:=TranslateStr(136,AParameters.Hint);
+ paramscomp:=TRpParamComp.Create(Self);
 
  InitialWidth:=Width;
 end;
@@ -126,9 +141,18 @@ begin
 end;
 
 
-procedure TFRpCliTree.OnError(Sender:TObject;aMessage:WideString);
+
+procedure TFRpCliTree.OnLog(Sender:TObject;aMessage:WideString);
 begin
  InsertMessage(aMessage);
+ if aMessage=SRpAuthFailed then
+  ADisconnect.Execute;
+end;
+
+procedure TFRpCliTree.OnError(Sender:TObject;aMessage:WideString);
+begin
+ OnLog(Sender,aMessage);
+ ShowMessage(aMessage);
 end;
 
 procedure TFRpCliTree.OnAuthorization(Sender:TObject);
@@ -149,11 +173,29 @@ begin
 end;
 
 procedure TFRpCliTree.BExecuteClick(Sender: TObject);
+var
+ afilename:string;
 begin
  if assigned(amod) then
  begin
-  amod.asynchronous:=asynchrohous;
-  amod.Execute;
+  if assigned(LTree.Selected) then
+  begin
+   if openedreport then
+   begin
+    amod.asynchronous:=asynchrohous;
+    amod.Execute;
+   end
+   else
+   begin
+    if LTree.Selected.ImageIndex=3 then
+    begin
+     amod.asynchronous:=asynchrohous;
+     // Execute with alias and report filename
+     afilename:=GetFullFileName(LTree.Selected)+'.rep';
+     amod.Execute(ComboAlias.Text,afilename);
+    end;
+   end;
+  end;
  end;
 end;
 
@@ -164,10 +206,14 @@ begin
  amod.OnExecute:=OnExecute;
  amod.asynchronous:=asynchrohous;
  amod.OnError:=OnError;
- amod.OnLog:=OnError;
+ amod.OnLog:=OnLog;
+ amod.OnGetAliases:=OnGetAliases;
+ amod.OnGetTree:=OnGetTree;
+ amod.OnGetParams:=OnGetParams;
  PTop.Visible:=False;
  LTree.Visible:=True;
  BToolBar.Visible:=True;
+ PAlias.Visible:=true;
 end;
 
 procedure TFRpCliTree.BDisconnectClick(Sender: TObject);
@@ -175,8 +221,103 @@ begin
  Disconnect(amod);
  amod:=nil;
  LTree.Visible:=false;
+ PAlias.Visible:=false;
  BToolBar.Visible:=False;
  PTop.Visible:=true;
+ LTree.Items.Clear;
+end;
+
+procedure TFRpCliTree.OnGetAliases(alist:TStringList);
+var
+ i:integer;
+begin
+ ComboAlias.Items.Clear;
+ for i:=0 to alist.count-1 do
+  Comboalias.Items.Add(alist.Names[i]);
+ ComboAlias.ItemIndex:=0;
+ ComboAliasClick(Self);
+end;
+
+procedure TFRpCliTree.OnGetTree(alist:TStringList);
+begin
+ rpgraphutils.FillTreeView(LTree,alist);
+end;
+
+procedure TFRpCliTree.ComboAliasClick(Sender: TObject);
+begin
+ amod.GetTree(ComboAlias.Text);
+end;
+
+procedure TFRpCliTree.LTreeChange(Sender: TObject; Node: TTreeNode);
+begin
+ openedreport:=false;
+ if Assigned(LTree.Selected) then
+ begin
+  if LTree.Selected.ImageIndex=3 then
+  begin
+   AExecute.Enabled:=true;
+   AParameters.Enabled:=true;
+  end
+  else
+  begin
+   AExecute.Enabled:=false;
+   AParameters.Enabled:=false;
+  end;
+ end
+ else
+ begin
+  AExecute.Enabled:=false;
+  AParameters.Enabled:=false;
+ end;
+end;
+
+procedure TFRpCliTree.AParametersExecute(Sender: TObject);
+var
+ afilename:string;
+begin
+ // Gets the parameters and assign them after execution
+ if assigned(amod) then
+ begin
+  if assigned(LTree.Selected) then
+  begin
+   if openedreport then
+   begin
+
+   end
+   else
+   begin
+    if LTree.Selected.ImageIndex=3 then
+    begin
+     amod.asynchronous:=asynchrohous;
+     // Execute with alias and report filename
+     afilename:=GetFullFileName(LTree.Selected)+'.rep';
+     amod.OpenReport(ComboAlias.Text,afilename);
+    end;
+   end;
+   amod.GetParams;
+  end;
+ end;
+end;
+
+procedure TFRpCliTree.OnGetParams(astream:TMemoryStream);
+var
+ acompo:TRpParamComp;
+ reader:TReader;
+begin
+ openedreport:=true;
+ acompo:=TRpParamComp.Create(nil);
+ try
+  reader:=TReader.Create(astream,4096);
+  try
+   reader.ReadRootComponent(acompo);
+   if ShowuserParams(acompo.params) then
+    amod.ModifyParams(acompo);
+  finally
+   reader.free;
+  end;
+ finally
+  acompo.free;
+ end;
 end;
 
 end.

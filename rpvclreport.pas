@@ -62,7 +62,7 @@ end;
 function TVCLReport.ShowParams:boolean;
 begin
  CheckLoaded;
- Result:=ShowUserParams(report);
+ Result:=ShowUserParams(report.params);
 end;
 
 function TVCLReport.Execute:boolean;

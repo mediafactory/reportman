@@ -1,3 +1,5 @@
+{TODO 1 -oToni -cEngine : Add alter params as parameters to printrep and printreptopdf}
+{TODO 4 -oToni -cEngine : Add a text only driver and addons for Epson/Proprinter/TM drivers}
 {TODO 3 -oToni -cEngine : Check WideString support for TRpLabel component (rplabelitem)}
 {DONE 5 -oToni -cEngine : Add Printer selection}
 {TODO 1 -oToni -cDesigner : Add Wizards to create reports}
@@ -13,9 +15,9 @@
 
 
 {TODO 1 -oToni -cEngine : Allow Memos autoexpand across multiple pages}
-{TODO 1 -oToni -cEngine : Add a report server via sockets or the web, sending pdfs or html or jpgs.}
+{TODO 3  -oToni -cEngine : Add a report web server}
 
-{TODO 1 -oToni -cEngine : Implementation of external sections}
+{TODO 4 -oToni -cEngine : Implementation of external sections}
 
 
 
@@ -30,7 +32,7 @@
 
 
 
-{TODO 1 -oToni -cEngine : Image component filename property to load a file on the fly}
+{DONE 1 -oToni -cEngine : Image component filename property to load a file on the fly}
 
 
 

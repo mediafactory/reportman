@@ -35,6 +35,14 @@ uses
 
 
 type
+  TRpNodeInfo=class(TObject)
+   public
+    Node:TTreeNode;
+    ReportName:String;
+    Group_Code:Integer;
+    Parent_Group:integer;
+    Path:String;
+   end;
 
   TFRpMessageDlg = class(TForm)
     Panel1: TPanel;
@@ -71,7 +79,8 @@ function RpMessageBox(const Text: WideString; const Caption: WideString = '';
   Buttons: TMessageButtons = [smbOK]; Style: TMessageStyle = smsInformation;
   Default: TMessageButton = smbOK; Escape: TMessageButton = smbCancel): TMessageButton;
 function RpInputBox(const ACaption, APrompt, ADefault:WideString ):WideString;
-procedure FillTreeView(path:String;Nodes:TTreeNodes;Node:TTreeNode;pattern:string);
+procedure FillTreeView(ATree:TTreeView;alist:TStringList);
+function GetFullFileName(ANode:TTreeNode):String;
 
 implementation
 
@@ -586,53 +595,157 @@ end;
 
 
 
-procedure FillTreeView(path:String;Nodes:TTreeNodes;Node:TTreeNode;pattern:string);
+function getfirstname(astring:string):string;
 var
- att:integer;
- han:integer;
- F:TSearchRec;
- apath:string;
- anode:TTreeNode;
+ j,index:integer;
 begin
- Nodes.Clear;
-
- att:=faReadOnly or faArchive;
- FillChar(F,sizeof(F),0);
- apath:=path+'\'+pattern;
- han:=FindFirst(aPath,Att,F);
- if han=0 then
+ j:=1;
+ index:=Length(astring)+1;
+ while j<=Length(astring) do
  begin
-  try
-   repeat
-    if (F.Attr and faDirectory)=0 then
-     Nodes.AddChild(Node,F.Name);
-   until FindNext(F)<>0;
-  finally
-   FindClose(F);
+  if astring[j]='\' then
+  begin
+   index:=j;
+   break;
+  end;
+  inc(j);
+ end;
+ Result:=Copy(astring,1,index-1);
+end;
+
+function getpathname(astring:string):string;
+var
+ j,index:integer;
+begin
+ j:=1;
+ index:=1;
+ while j<=Length(astring) do
+ begin
+  if astring[j]='\' then
+  begin
+   index:=j;
+  end;
+  inc(j);
+ end;
+ Result:=Copy(astring,1,index-1);
+end;
+
+function getlastname(astring:string):string;
+var
+ j,index:integer;
+begin
+ j:=1;
+ index:=1;
+ while j<=Length(astring) do
+ begin
+  if astring[j]='\' then
+  begin
+   index:=j;
+  end;
+  inc(j);
+ end;
+ Result:=Copy(astring,index+1,Length(astring));
+end;
+
+
+function SearchnodeInt(ATree:TTreeView;astring:String;anode:TTreeNode):TTreeNode;
+var
+ i:integer;
+ firstname:string;
+begin
+ firstname:=GetFirstName(astring);
+ Result:=nil;
+ for i:=0 to anode.Count-1 do
+ begin
+  if firstname=anode.Item[i].Text then
+  begin
+   if firstname=astring then
+   begin
+    Result:=anode.Item[i];
+   end
+   else
+    Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),anode.Item[i]);
   end;
  end;
-
- att:=faDirectory;
- FillChar(F,sizeof(F),0);
- apath:=path+'\*.*';
- han:=FindFirst(aPath,Att,F);
- if han=0 then
+ if Not Assigned(Result) then
  begin
-  try
-   repeat
-    if (F.Attr and faDirectory)>0 then
-    begin
-     if ((F.Name<>'.') AND (F.Name<>'..')) then
-     begin
-      anode:=Nodes.AddChild(Node,F.Name);
-      FillTreeView(path+'\'+F.Name,Nodes,aNode,pattern);
-     end;
-    end;
-   until FindNext(F)<>0;
-  finally
-   FindClose(F);
+  Result:=ATree.Items.AddChild(anode,firstname);
+  Result.ImageIndex:=2;
+  if firstname<>astring then
+  begin
+   Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),Result);
   end;
  end;
+end;
+
+function Searchnode(FTopItems:TStringList;ATree:TTreeView;astring:String):TTreeNode;
+var
+ i:integer;
+ firstname:string;
+begin
+ firstname:=GetFirstName(astring);
+ Result:=nil;
+ for i:=0 to FTopItems.Count-1 do
+ begin
+  if firstname=FTopItems.Strings[i] then
+  begin
+   if firstname=astring then
+   begin
+    Result:=TTreeNode(FTopItems.Objects[i]);
+   end
+   else
+    Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),TTreeNode(FTopItems.Objects[i]));
+  end;
+ end;
+ if Not Assigned(Result) then
+ begin
+  Result:=ATree.Items.AddChild(nil,firstname);
+  Result.ImageIndex:=2;
+  FTopItems.AddObject(firstname,Result);
+  if firstname<>astring then
+  begin
+   Result:=Searchnodeint(ATree,Copy(astring,length(firstname)+2,length(astring)),Result);
+  end;
+ end;
+end;
+
+procedure FillTreeView(ATree:TTreeView;alist:TStringList);
+var
+ newitem,anode:TTreeNode;
+ astring:string;
+ repname,dirname:String;
+ i:integer;
+ FTopItems:TStringList;
+begin
+ FTopitems:=TStringList.Create;
+ try
+  for i:=0 to alist.count-1 do
+  begin
+   if Length(alist.Strings[i])<1 then
+    continue;
+   astring:=alist.Strings[i];
+   repname:=GetLastName(astring);
+   dirname:=GetPathName(astring);
+   anode:=SearchNode(FTopItems,ATree,dirname);
+   newitem:=ATree.Items.AddChild(anode,repname);
+   newitem.ImageIndex:=3;
+  end;
+ finally
+  FTopItems.Free;
+ end;
+end;
+
+function IntGetFullFileName(ANode:TTreeNode;temp:string):String;
+begin
+// Result:=InGetFullFileName(ANode.Parent,ANode.Text);
+end;
+
+function GetFullFileName(ANode:TTreeNode):String;
+begin
+ if Assigned(ANode.Parent) then
+  Result:=GetFullFileName(ANode.Parent)+'\'+ANode.Text
+ else
+  Result:=ANode.Text;
 end;
 
 

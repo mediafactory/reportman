@@ -870,9 +870,9 @@ object FRpAboutBoxVCL: TFRpAboutBoxVCL
   object LVersion: TLabel
     Left = 72
     Top = 44
-    Width = 56
+    Width = 32
     Height = 13
-    Caption = '1.1 XP-pre1'
+    Caption = '1.1 XP'
   end
   object LProject: TLabel
     Left = 12
@@ -884,9 +884,17 @@ object FRpAboutBoxVCL: TFRpAboutBoxVCL
   object Label5: TLabel
     Left = 172
     Top = 244
-    Width = 199
+    Width = 155
     Height = 13
-    Caption = 'http://sourceforge.net/projects/reportman'
+    Cursor = crHandPoint
+    Caption = 'http://reportman.sourceforge.net'
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clHighlight
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ParentFont = False
+    OnMouseDown = Label5MouseDown
   end
   object LContributors: TLabel
     Left = 232

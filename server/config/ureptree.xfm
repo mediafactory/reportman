@@ -1,117 +1,24 @@
-object FRpDBTree: TFRpDBTree
-  Left = 0
-  Top = 0
-  Width = 353
-  Height = 277
-  VertScrollBar.Range = 30
-  TabOrder = 0
-  object BToolBar: TToolBar
+object FReportTree: TFReportTree
+  Left = 192
+  Top = 118
+  Width = 471
+  Height = 300
+  ActiveControl = TreeView1
+  Caption = 'Report Tree preview'
+  Color = clBackground
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  TextWidth = 6
+  object TreeView1: TTreeView
     Left = 0
     Top = 0
-    Width = 353
-    Height = 30
-    AutoSize = True
-    ButtonHeight = 26
-    ButtonWidth = 26
-    Caption = 'BToolBar'
-    Flat = True
-    Images = imalist
-    TabOrder = 0
-    object ToolButton1: TToolButton
-      HelpType = htContext
-      Left = 1
-      Top = 4
-      Height = 26
-      Action = ANew
-      Caption = 'New'
-    end
-    object ToolButton2: TToolButton
-      HelpType = htContext
-      Left = 27
-      Top = 4
-      Height = 26
-      Action = ADelete
-      Caption = 'Delete'
-    end
-    object BCancel: TButton
-      Left = 1
-      Top = 30
-      Width = 140
-      Height = 26
-      TabOrder = 2
-      Visible = False
-      OnClick = BCancelClick
-    end
-    object ToolButton3: TToolButton
-      Left = 53
-      Top = 4
-      Width = 24
-      Height = 26
-      Style = tbsSeparator
-      Caption = 'ToolButton3'
-      ImageIndex = 2
-    end
-    object ToolButton4: TToolButton
-      HelpType = htContext
-      Left = 77
-      Top = 4
-      Height = 26
-      Action = APreview
-      Caption = 'Preview'
-    end
-    object ToolButton5: TToolButton
-      HelpType = htContext
-      Left = 129
-      Top = 4
-      Height = 26
-      Action = AUserParams
-      Caption = 'Parameters'
-    end
-    object ToolButton6: TToolButton
-      HelpType = htContext
-      Left = 103
-      Top = 4
-      Height = 26
-      Action = APrint
-      Caption = 'Print'
-    end
-    object ToolButton7: TToolButton
-      Left = 155
-      Top = 4
-      Width = 22
-      Height = 26
-      Style = tbsSeparator
-      Caption = 'ToolButton7'
-      ImageIndex = 5
-    end
-    object ToolButton8: TToolButton
-      HelpType = htContext
-      Left = 177
-      Top = 4
-      Height = 26
-      Action = APrintSetup
-      Caption = 'Print Setup'
-    end
-    object ToolButton9: TToolButton
-      Left = 203
-      Top = 4
-      Height = 26
-      Caption = 'ToolButton9'
-      ImageIndex = 8
-      OnClick = ToolButton9Click
-    end
-  end
-  object ATree: TTreeView
-    Left = 0
-    Top = 30
-    Width = 353
-    Height = 247
+    Width = 471
+    Height = 300
     Align = alClient
     Columns = <>
     Images = imalist
-    ReadOnly = True
-    TabOrder = 1
-    OnItemClick = ATreeItemClick
+    TabOrder = 0
   end
   object imalist: TImageList
     Height = 19
@@ -429,12 +336,12 @@ object FRpDBTree: TFRpDBTree
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D0602000000000000
       3E0000002800000039000000390000000100010000000000C8010000120B0000
-      120B00000200000002000000FFFFFF00000000000000000003FFDDFF03F00700
-      396D6EFF67FC0FFFFFDBF7FF7FFE0BFFFD7F5D7F7FFF0FFFFFEDF7FF7E0F8BFF
-      FF7FDF7F7C078D5557AAF5FF7E078FFFFEFFAF7F7F0003FFF1DAFDFF000003FF
-      F36FDF7F000FC3FFF1DB75FF781FC000037EDFFF780FC000F9EBF57F3C1FC000
-      FBBF5FFF3FFFC3FFFAD6FF7F1FFFC3FFE1FFABFF0FFC83FFFBAAFEFF03F00000
-      FAFF77FF00000000FB6DDBFF000000000000007FFFFFC0000000007FFFFFCFFF
+      120B00000200000002000000FFFFFF00000000000000000003FFFFFF03F00700
+      3BFFFFFF67FC0FFFFFFFFFFF7FFE0BFFFFFFFFFF7FFF0FFFFFFFFFFF7E0F8BFF
+      FFFFFFFF7C078D5557FFFFFF7E078FFFFFFFFFFF7F0003FFF3FFFFFF000003FF
+      F3FFFFFF000FC3FFF3FFFFFF781FC00003FFFFFF780FC000FBFFFFFF3C1FC000
+      FBFFFFFF3FFFC3FFFBFFFFFF1FFFC3FFE3FFFFFF0FFC83FFFBFFFFFF03F00000
+      FBFFFFFF00000000FBFFFFFF000000000000007FFFFFC0000000007FFFFFCFFF
       3000007FFDFFC801703FF87FFCFFCAAFE040147FFFFFC819C0FFFA7FFFFFCAB3
       C081CE7FFFFFC8214081CA7FFFFFCAA940FFF97FFFFFC83DC080157FFFFFCAB9
       807FEB7FFFFFC80F0035557FFFFFCAAB001FFE7FFFFFC80F0015587FFFEFCAAA
@@ -444,136 +351,5 @@ object FRpDBTree: TFRpDBTree
       81FFFE7F0802007301FFFE7F0802003E01FFFE7F0802001C01C0167F0802003E
       01FFFC7F081E007201FC107F081401E1817BF07F081803C0C084007F0FF00300
       6078007F000000000000007F000000000000007F000000000000007F}
-  end
-  object ActionList1: TActionList
-    Images = imalist
-    Left = 212
-    Top = 76
-    object ANew: TAction
-      Caption = 'New'
-      Hint = 'Creates a new report'
-      ImageIndex = 0
-    end
-    object ADelete: TAction
-      Caption = 'Delete'
-      Hint = 'Delete the selected report'
-      ImageIndex = 1
-      OnExecute = ADeleteExecute
-    end
-    object APreview: TAction
-      Caption = 'Preview'
-      Enabled = False
-      Hint = 'Previews the report in the screen'
-      ImageIndex = 4
-      OnExecute = APreviewExecute
-    end
-    object APrint: TAction
-      Caption = 'Print'
-      Enabled = False
-      Hint = 'Prints the report'
-      ImageIndex = 5
-      OnExecute = APrintExecute
-    end
-    object AUserParams: TAction
-      Caption = 'Parameters'
-      Enabled = False
-      Hint = 'Show the report parametrs'
-      ImageIndex = 6
-      OnExecute = AUserParamsExecute
-    end
-    object APrintSetup: TAction
-      Caption = 'Print Setup'
-      Hint = 'Shows the printer setup dialog'
-      ImageIndex = 7
-      OnExecute = APrintSetupExecute
-    end
-  end
-  object DReports: TClientDataSet
-    Aggregates = <>
-    FieldDefs = <>
-    IndexDefs = <
-      item
-        Name = 'IREPORT_GROUP'
-        Fields = 'REPORT_GROUP;REPORT_NAME'
-      end>
-    IndexFieldNames = 'REPORT_GROUP;REPORT_NAME'
-    Params = <>
-    StoreDefs = True
-    Left = 120
-    Top = 80
-    object DReportsREPORT_NAME: TStringField
-      FieldName = 'REPORT_NAME'
-      Size = 50
-    end
-    object DReportsREPORT_GROUP: TIntegerField
-      FieldName = 'REPORT_GROUP'
-    end
-  end
-  object DReportGroups: TClientDataSet
-    Aggregates = <>
-    FieldDefs = <>
-    IndexDefs = <
-      item
-        Name = 'IPARENT_GROUP'
-        Fields = 'PARENT_GROUP'
-      end>
-    IndexFieldNames = 'PARENT_GROUP'
-    Params = <>
-    StoreDefs = True
-    Left = 116
-    Top = 128
-    object DReportGroupsGROUP_CODE: TIntegerField
-      FieldName = 'GROUP_CODE'
-    end
-    object DReportGroupsGROUP_NAME: TStringField
-      FieldName = 'GROUP_NAME'
-      Size = 50
-    end
-    object DReportGroupsPARENT_GROUP: TIntegerField
-      FieldName = 'PARENT_GROUP'
-    end
-    object DReportGroupsTREE_NODE: TIntegerField
-      FieldName = 'TREE_NODE'
-    end
-  end
-  object DReportGroups2: TClientDataSet
-    Aggregates = <>
-    FieldDefs = <>
-    IndexDefs = <
-      item
-        Name = 'IPARENT_GROUP'
-        Fields = 'PARENT_GROUP;GROUP_CODE'
-      end
-      item
-        Name = 'IGROUP_CODE'
-        Fields = 'GROUP_CODE'
-      end>
-    IndexFieldNames = 'PARENT_GROUP;GROUP_CODE'
-    Params = <>
-    StoreDefs = True
-    Left = 164
-    Top = 124
-    object DReportGroups2GROUP_CODE: TIntegerField
-      FieldName = 'GROUP_CODE'
-    end
-    object DReportGroups2GROUP_NAME: TStringField
-      FieldName = 'GROUP_NAME'
-      Size = 50
-    end
-    object DReportGroups2PARENT_GROUP: TIntegerField
-      FieldName = 'PARENT_GROUP'
-    end
-    object DReportGroups2TREE_NODE: TIntegerField
-      FieldName = 'TREE_NODE'
-    end
-  end
-  object SaveDialog1: TSaveDialog
-    FilterIndex = 0
-    Options = [ofPathMustExist, ofEnableSizing, ofHideReadOnly]
-    Height = 0
-    Title = 'Save'
-    Width = 0
-    Left = 232
-    Top = 144
   end
 end

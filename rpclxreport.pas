@@ -106,11 +106,11 @@ begin
 {$IFDEF MSWINDOWS}
  if FDriver=rpDriverGDI then
  begin
-  Result:=rprfvparams.ShowUserParams(report);
+  Result:=rprfvparams.ShowUserParams(report.params);
   exit;
  end;
 {$ENDIF}
- Result:=rprfparams.ShowUserParams(report);
+ Result:=rprfparams.ShowUserParams(report.params);
 end;
 
 

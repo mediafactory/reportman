@@ -45,5 +45,18 @@
   property Title:string read FTitle write SetTitle;<br>
   property Language:integer read FLanguage write SetLanguage;<br>
 </p>
+<p><b>Sample using Visual Basic Script</b></p>
+<p><code>(testit.vbs)<br>
+  ===========<br>
+  dim blah<br>
+  set blah = WScript.createobject(&quot;ReportMan.ReportManX&quot;)<br>
+  blah.Preview = false<br>
+  blah.ShowProgress = false<br>
+  blah.ShowPrintDialog = false<br>
+  blah.Filename = &quot;C:\sample4.rep&quot;<br>
+  blah.execute<br>
+  ============</code></p>
+<p>You sustitute execute with</p>
+<p><code>blah.SaveToPDF &quot;hello.pdf&quot;,true</code></p>
 </body>
 </html>

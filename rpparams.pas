@@ -33,6 +33,7 @@ type
   TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,
    rpParamTime,rpParamDateTime,rpParamCurrency,rpParamBool,rpParamExpre);
 
+
   TRpParam=class(TCollectionitem)
    private
     FName:string;
@@ -76,9 +77,31 @@ type
     property Items[index:integer]:TRpParam read GetItem write SetItem;default;
    end;
 
+  TRpParamComp=class(TComponent)
+   private
+    fparams:TRpParamList;
+    procedure SetParams(avalue:TRpParamList);
+   public
+    constructor Create(AOwner:TComponent);override;
+   published
+    property Params:TRpParamList read FParams write
+     SetParams;
+   end;
+
 function ParamTypeToDataType(paramtype:TRpParamType):TFieldType;
 
 implementation
+
+procedure TRpParamComp.SetParams(avalue:TRpParamList);
+begin
+ fparams.Assign(avalue);
+end;
+
+constructor TRpParamComp.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ fparams:=TRpParamList.Create(Self);
+end;
 
 Constructor TRpParam.Create(Collection:TCollection);
 begin

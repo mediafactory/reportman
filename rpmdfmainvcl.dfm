@@ -3,7 +3,7 @@ object FRpMainFVCL: TFRpMainFVCL
   Top = 74
   Width = 541
   Height = 451
-  Caption = 'FRpMainFVCL'
+  Caption = 'Report Manager Designer'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -311,7 +311,7 @@ object FRpMainFVCL: TFRpMainFVCL
     Left = 248
     Top = 196
     Bitmap = {
-      494C010120002200040013001300FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010120002200040013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000004C000000AB00000001001000000000008865
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1191,7 +1191,8 @@ object FRpMainFVCL: TFRpMainFVCL
       00700000F001F800FF001FE000700000F001F800FF001FE000700000F001F800
       FF001FE000700000F001FC7F8F001FE000700000F003FFFFCF001FE000700000
       F007FFFBAF001FE000700000F00FFFFC7F001FE000700000FFFFFFFFFF001FE0
-      00700000FFFFFFFFFF001FFFFFF00000FFFFFFFFFFFFFFFFFFF00000}
+      00700000FFFFFFFFFF001FFFFFF00000FFFFFFFFFFFFFFFFFFF0000000000000
+      000000000000000000000000000000000000}
   end
   object ActionList1: TActionList
     Images = iconlist
@@ -1585,7 +1586,7 @@ object FRpMainFVCL: TFRpMainFVCL
     end
     object MReport: TMenuItem
       Caption = 'Report'
-      Visible = False
+      Enabled = False
       object MAdd: TMenuItem
         Caption = 'Add'
         ImageIndex = 19
@@ -1620,7 +1621,7 @@ object FRpMainFVCL: TFRpMainFVCL
     end
     object MEdit: TMenuItem
       Caption = 'Edit'
-      Visible = False
+      Enabled = False
       object Cut1: TMenuItem
         Action = ACut
       end
@@ -1690,7 +1691,7 @@ object FRpMainFVCL: TFRpMainFVCL
     end
     object MDisplay: TMenuItem
       Caption = 'Display'
-      Visible = False
+      Enabled = False
       object Grid1: TMenuItem
         Action = AGridOptions
       end

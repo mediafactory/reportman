@@ -29,7 +29,8 @@ const
 
 type
   TRepCommand=(repauth,repopenalias,repopenreport,repexecutereportmeta,
-   repexecutereportpdf,reperror,replog,repgetusers,repgetaliases);
+   repexecutereportpdf,reperror,replog,repgetusers,repgetaliases,repaddalias,
+   repdeletealias,repadduser,repdeleteuser,repgettree,repgetparams,repsetparams);
 
   TRpLogMessageEvent=procedure (Sender:TObject;aMessage:WideString) of object;
 
@@ -40,7 +41,6 @@ type
    Datasize:integer;
    Data:PByte;
   end;
-//  Data:array [0..REPSERBUFSIZE-1] of Byte;
 
   // The real data of the command is stored at the end
   // of the communications block
@@ -72,6 +72,7 @@ type
 
 function GenerateUserNameData(user,password:string):PRpComBlock;
 function GenerateCBErrorMessage(amessage:WideString):PRpComBLock;
+function GenerateCBLogMessage(amessage:WideString):PRpComBLock;
 function GenerateBlock(command:TRepCommand;Stream:TMemoryStream):PRpComBlock;overload;
 function GenerateBlock(command:TRepCommand;alist:TStringList):PRpComBlock;overload;
 procedure FreeBlock(ablock:PRpComBlock);
@@ -118,6 +119,20 @@ begin
  arec:=AllocMem(asize);
  arec^.size:=asize;
  arec^.Command:=reperror;
+ arec^.Datasize:=Length(amessage)*2;
+ move(amessage[1],(@(arec^.Data))^,arec^.Datasize);
+ Result:=arec;
+end;
+
+function GenerateCBLogMessage(amessage:WideString):PRpComBLock;
+var
+ arec:PRpComBlock;
+ asize:integer;
+begin
+ asize:=sizeof(TRpComBlock)-sizeof(PByte)+Length(amessage)*2;
+ arec:=AllocMem(asize);
+ arec^.size:=asize;
+ arec^.Command:=replog;
  arec^.Datasize:=Length(amessage)*2;
  move(amessage[1],(@(arec^.Data))^,arec^.Datasize);
  Result:=arec;

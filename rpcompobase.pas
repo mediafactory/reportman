@@ -147,7 +147,7 @@ begin
  end;
  FReport:=TRpReport.Create(Self);
  try
-  FReport.LoadFromFile(FFilename);
+  FReport.LoadFromFile(AFilename);
  except
   FReport.Free;
   FReport:=nil;

@@ -1,8 +1,8 @@
 Report Manager Reporting Tool
 
-Version 0.99 beta
+Version 1.1
 
-Supports Delphi 6 and Kylix 2
+Supports Delphi 5-7,Kylix 2-3,Builder 4-6
 
 You need a designer to create reports.
 
@@ -17,10 +17,4 @@ http://reportman.sourceforge.net
 
 
 
-Basically you must install in Delphi 6
-
-rppack_del.dpk and rppackv_del.dpk
-
-And in Kylix 2
-
-rppack.dpk and rppackv.dpk
+See documentation for installation instructions

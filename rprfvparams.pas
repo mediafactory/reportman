@@ -30,7 +30,7 @@ uses SysUtils, Classes,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
-  rpreport,rpparams;
+  rpparams;
 
 const
   CONS_LEFTGAP=3;
@@ -63,13 +63,13 @@ type
   end;
 
 
-function ShowUserParams(report:TRpReport):boolean;
+function ShowUserParams(params:TRpParamList):boolean;
 
 implementation
 
 {$R *.dfm}
 
-function ShowUserParams(report:TRpReport):boolean;
+function ShowUserParams(params:TRpParamList):boolean;
 var
  dia:TFRpRTParams;
  oneparam:boolean;
@@ -77,9 +77,9 @@ var
 begin
  Result:=false;
  oneparam:=false;
- for i:=0 to report.params.count-1 do
+ for i:=0 to params.count-1 do
  begin
-  if report.params.items[i].Visible then
+  if params.items[i].Visible then
   begin
    oneparam:=true;
    break;
@@ -92,11 +92,11 @@ begin
  end;
  dia:=TFRpRTParams.Create(Application);
  try
-  dia.params:=report.Params;
+  dia.params:=Params;
   dia.showmodal;
   if dia.dook then
   begin
-   report.params.Assign(dia.Params);
+   params.Assign(dia.Params);
    Result:=true;
   end;
  finally

@@ -21,8 +21,8 @@ interface
 
 {$I rpconf.inc}
 
-uses SysUtils, Classes,
-  Graphics, Forms,
+uses Windows,SysUtils, Classes,
+  Graphics, Forms,ShellApi,
   Buttons, ExtCtrls, Controls, StdCtrls,Dialogs,
   rpmdconsts;
 
@@ -43,6 +43,8 @@ type
     LContributors: TLabel;
     Image2: TImage;
     procedure FormCreate(Sender: TObject);
+    procedure Label5MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
   public
@@ -89,6 +91,13 @@ begin
  LVersion.Font.Size:=16;
  LEmail.Font.Style:=[fsBold];
 
+end;
+
+procedure TFRpAboutBoxVCL.Label5MouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+ // Starts the explorer
+ ShellExecute(Self.handle,Pchar('open'),Pchar(TLabel(Sender).Caption),nil,nil,SW_SHOWNORMAL);
 end;
 
 end.
