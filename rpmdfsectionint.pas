@@ -442,7 +442,7 @@ var
 begin
  inherited MouseDown(Button,Shift,X,Y);
 
- FRpMainf:=TFRpMainF(Owner);
+ FRpMainf:=TFRpMainF(Owner.Owner);
  // There's a selected item insert it
  if FRpMainf.BArrow.Down then
  begin

@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       rpmdfabout                                          }
+{       rpmdfabout                                      }
 {       About box for report manager designer           }
 {                                                       }
 {                                                       }

@@ -1414,6 +1414,7 @@ begin
       begin
        pageposx:=pageposx+oldprintedsectionext.X;
        pageposy:=pageposy-oldprintedsectionext.Y;
+       freespace:=freespace+oldprintedsectionext.Y;
       end
       else
        pageposx:=FLeftMargin;
