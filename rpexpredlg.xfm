@@ -3,8 +3,8 @@ object FrpExpredialog: TFrpExpredialog
   Top = 144
   Width = 502
   Height = 369
-  HorzScrollBar.Range = 469
   VertScrollBar.Range = 349
+  HorzScrollBar.Range = 469
   ActiveControl = MemoExpre
   BorderStyle = fbsDialog
   Caption = 'Expression build'
@@ -14,41 +14,41 @@ object FrpExpredialog: TFrpExpredialog
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 100
-  TextHeight = 17
-  TextWidth = 7
+  TextHeight = 13
+  TextWidth = 6
   object Label1: TLabel
     Left = 8
     Top = 8
-    Width = 72
-    Height = 17
+    Width = 51
+    Height = 13
     Caption = 'Expression'
   end
   object Label2: TLabel
     Left = 4
     Top = 108
-    Width = 58
-    Height = 17
+    Width = 42
+    Height = 13
     Caption = 'Category'
   end
   object Label3: TLabel
     Left = 124
     Top = 108
-    Width = 63
-    Height = 17
+    Width = 46
+    Height = 13
     Caption = 'Operation'
   end
   object LModel: TLabel
     Left = 8
     Top = 248
-    Width = 48
-    Height = 17
+    Width = 35
+    Height = 13
     Caption = 'LModel'
   end
   object LHelp: TLabel
     Left = 8
     Top = 224
-    Width = 29
-    Height = 17
+    Width = 22
+    Height = 13
     Caption = 'Help'
   end
   object LParams: TLabel
