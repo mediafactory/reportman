@@ -11,7 +11,7 @@ interface
 {$I zconf.inc}
 
 uses
-  zutil, zlib;
+  rpzlibzutil, rpzlibzlib;
 
 
 { Maximum size of dynamic tree.  The maximum found in a long but non-

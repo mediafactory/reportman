@@ -13,7 +13,7 @@ interface
 {$I zconf.inc}
 
 uses
-  zutil;
+  rpzlibzutil;
 
 function adler32(adler : uLong; buf : pBytef; len : uInt) : uLong;
 

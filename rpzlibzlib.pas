@@ -49,7 +49,7 @@ interface
 {$I zconf.inc}
 
 uses
-  zutil;
+  rpzlibzutil;
 
 { zconf.h -- configuration of the zlib compression library }
 { zutil.c -- target dependent utility functions for the compression library }

@@ -15,7 +15,7 @@ uses
   {$IFDEF DEBUG}
   strutils,
   {$ENDIF}
-  zutil, zlib;
+  rpzlibzutil, rpzlibzlib;
 
 function inflate_codes_new (bl : uInt;
                             bd : uInt;
@@ -33,7 +33,7 @@ procedure inflate_codes_free(c : pInflate_codes_state;
 implementation
 
 uses
-  infutil, inffast;
+  rpzlibinfutil, rpzlibinffast;
 
 
 function inflate_codes_new (bl : uInt;

@@ -42,14 +42,14 @@ unit rpzlibzdeflate;
        Fiala,E.R., and Greene,D.H.
           Data Compression with Finite Windows, Comm.ACM, 32,4 (1989) 490-595}
 
-{ $Id: rpzlibzdeflate.pas,v 1.1 2002/04/29 17:51:45 toni Exp $ }
+{ $Id: rpzlibzdeflate.pas,v 1.2 2002/04/29 18:30:22 toni Exp $ }
 
 interface
 
 {$I zconf.inc}
 
 uses
-  zutil, zlib;
+  rpzlibzutil, rpzlibzlib;
 
 
 function deflateInit_(strm : z_streamp;
@@ -321,7 +321,7 @@ const
 implementation
 
 uses
-  trees, adler;
+  rpzlibtrees, rpzlibadler;
 
 {  ===========================================================================
    Function prototypes. }

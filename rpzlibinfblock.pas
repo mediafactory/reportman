@@ -15,7 +15,7 @@ uses
   {$IFDEF DEBUG}
   strutils,
   {$ENDIF}
-  zutil, zlib;
+  rpzlibzutil, rpzlibzlib;
 
 function inflate_blocks_new(var z : z_stream;
                             c : check_func;  { check function }
@@ -44,7 +44,7 @@ function inflate_blocks_sync_point(var s : inflate_blocks_state) : int;
 implementation
 
 uses
-  infcodes, inftrees, infutil;
+  rpzlibinfcodes, rpzlibinftrees, rpzlibinfutil;
 
 { Tables for deflate from PKZIP's appnote.txt. }
 Const

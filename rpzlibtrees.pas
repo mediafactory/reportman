@@ -51,7 +51,7 @@ uses
   {$ifdef DEBUG}
   strutils,
   {$ENDIF}
-  zutil, zlib;
+  rpzlibzutil, rpzlibzlib;
 
 { ===========================================================================
   Internal compression state. }

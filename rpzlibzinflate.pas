@@ -12,7 +12,7 @@ interface
 {$I zconf.inc}
 
 uses
-  zutil, zlib, infblock, infutil;
+  rpzlibzutil, rpzlibzlib, rpzlibinfblock, rpzlibinfutil;
 
 function inflateInit(var z : z_stream) : int;
 
@@ -201,7 +201,7 @@ function inflateSyncPoint(var z : z_stream) : int;
 implementation
 
 uses
-  adler;
+  rpzlibadler;
 
 function inflateReset(var z : z_stream) : int;
 begin

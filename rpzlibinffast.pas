@@ -15,7 +15,7 @@ uses
   {$ifdef DEBUG}
   strutils,
   {$ENDIF}
-  zutil, zlib;
+  rpzlibzutil, rpzlibzlib;
 
 function inflate_fast( bl : uInt;
                        bd : uInt;
@@ -28,7 +28,7 @@ function inflate_fast( bl : uInt;
 implementation
 
 uses
-  infutil;
+  rpzlibinfutil;
 
 
 { Called with number of bytes left to write in window at least 258

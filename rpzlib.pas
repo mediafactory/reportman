@@ -9,7 +9,7 @@ unit rpzlib;
 
 interface
 
-uses Sysutils, Classes,zdeflate,zinflate,zlib,zutil;
+uses Sysutils, Classes,rpzlibzdeflate,rpzlibzinflate,rpzlibzlib,rpzlibzutil;
 
 type
   TAlloc = function (AppData: Pointer; Items, Size: Integer): Pointer;

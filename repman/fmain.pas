@@ -356,7 +356,7 @@ begin
  MReport.Visible:=True;
  ANewPageHeader.Enabled:=True;
  ANewPageFooter.Enabled:=True;
-// ANewGroup.Enabled:=true;
+ ANewGroup.Enabled:=true;
  ANewSubReport.Enabled:=True;
  ADeleteSelection.Enabled:=true;
  AnewDetail.Enabled:=true;
