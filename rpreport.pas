@@ -788,7 +788,6 @@ end;
 procedure TRpReport.PrintRange(Driver:IRpPrintDriver;allpages:boolean;
     frompage,topage,copies:integer);
 var
- initiated:boolean;
  i:integer;
  finished:boolean;
  printedfirst:boolean;
@@ -806,18 +805,13 @@ begin
  end;
  printingonepass:=true;
  try
-  BeginPrint(Driver);
+  Driver.NewDocument(metafile);
   try
-   initiated:=false;
+   BeginPrint(Driver);
    try
     finished:=false;
     while Not PrintNextPage do
     begin
-     if not initiated then
-     begin
-      Driver.NewDocument(metafile);
-      initiated:=true;
-     end;
      if ((PageNum>=frompage) and  (PageNum<=topage)) then
      begin
       for i:=0 to copies-1 do
@@ -838,10 +832,6 @@ begin
     end;
     if not finished then
     begin
-     if not initiated then
-     begin
-      Driver.NewDocument(metafile);
-     end;
      if ((PageNum>=frompage) and  (PageNum<=topage)) then
      begin
       for i:=0 to copies-1 do
@@ -853,13 +843,13 @@ begin
       end;
      end;
     end;
-    Driver.EndDocument;
-   except
-    Driver.AbortDocument;
-    Raise;
+   finally
+    EndPrint;
    end;
-  finally
-   EndPrint;
+   Driver.EndDocument;
+  except
+   Driver.AbortDocument;
+   Raise;
   end;
  finally
   printingonepass:=false;

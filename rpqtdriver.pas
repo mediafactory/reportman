@@ -206,7 +206,8 @@ begin
 //   QPrinter_setOrientation(QPrinterH(Printer.Handle),QPrinterOrientation_Portrait);
 //   QPrinter_setOrientation(QPrinterH(Printer.Handle),QPrinterOrientation_Landscape);
 //  end;
-  printer.BeginDoc;
+  if Not Printer.Printing then
+   printer.BeginDoc;
   intdpix:=printer.XDPI;
   intdpiy:=printer.YDPI;
  end
@@ -354,6 +355,7 @@ begin
   exit;
  if (toprinter) then
  begin
+  // If to printer then begin doc
   if not printer.Printing then
    Raise Exception.Create(SRpQtDriverNotInit);
   dpix:=intdpix;

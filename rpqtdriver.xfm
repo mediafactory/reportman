@@ -3,8 +3,8 @@ object FRpQtProgress: TFRpQtProgress
   Top = 304
   Width = 514
   Height = 124
-  VertScrollBar.Range = 109
   HorzScrollBar.Range = 497
+  VertScrollBar.Range = 109
   ActiveControl = CancelBtn
   BorderStyle = fbsDialog
   Caption = 'Print progress'
@@ -14,6 +14,8 @@ object FRpQtProgress: TFRpQtProgress
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 100
+  TextHeight = 17
+  TextWidth = 7
   object CancelBtn: TButton
     Left = 207
     Top = 84
@@ -28,8 +30,8 @@ object FRpQtProgress: TFRpQtProgress
   object Label1: TLabel
     Left = 8
     Top = 40
-    Width = 52
-    Height = 13
+    Width = 73
+    Height = 17
     Caption = 'Processing'
   end
   object LRecordCount: TLabel
@@ -42,8 +44,8 @@ object FRpQtProgress: TFRpQtProgress
   object Label2: TLabel
     Left = 8
     Top = 4
-    Width = 23
-    Height = 13
+    Width = 31
+    Height = 17
     Caption = 'Tittle'
     Visible = False
   end

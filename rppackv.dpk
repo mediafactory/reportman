@@ -29,9 +29,9 @@ package rppackv;
 {$IMPLICITBUILD OFF}
 
 requires
-  baseclx,
-  dataclx,
+  rtl,
   visualclx,
+  dataclx,
   rppack;
 
 contains

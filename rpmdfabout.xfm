@@ -1,6 +1,6 @@
 object FRpAboutBox: TFRpAboutBox
-  Left = 40
-  Top = 127
+  Left = 44
+  Top = 147
   Width = 489
   Height = 314
   HorzScrollBar.Range = 461
@@ -11,6 +11,8 @@ object FRpAboutBox: TFRpAboutBox
   Position = poScreenCenter
   OnCreate = FormCreate
   PixelsPerInch = 100
+  TextHeight = 17
+  TextWidth = 7
   object Image1: TImage
     Left = 8
     Top = 68
@@ -529,64 +531,64 @@ object FRpAboutBox: TFRpAboutBox
   object LReport: TLabel
     Left = 8
     Top = 8
-    Width = 118
-    Height = 20
+    Width = 102
+    Height = 17
     Caption = 'Report manager'
   end
   object Label1: TLabel
     Left = 12
     Top = 164
-    Width = 48
-    Height = 20
+    Width = 44
+    Height = 17
     Caption = 'Author'
   end
   object LName: TLabel
     Left = 104
     Top = 164
-    Width = 76
-    Height = 20
+    Width = 70
+    Height = 17
     Caption = 'Toni Martir'
   end
   object Label2: TLabel
     Left = 12
     Top = 184
-    Width = 45
-    Height = 20
+    Width = 39
+    Height = 17
     Caption = 'E-mail'
   end
   object LEmail: TLabel
     Left = 104
     Top = 184
-    Width = 108
-    Height = 20
+    Width = 93
+    Height = 17
     Caption = 'toni@pala.com'
   end
   object Label3: TLabel
     Left = 12
     Top = 208
-    Width = 176
-    Height = 20
+    Width = 154
+    Height = 17
     Caption = 'From Palafrugell, SPAIN'
   end
   object LVersion: TLabel
     Left = 8
     Top = 44
-    Width = 99
-    Height = 20
-    Caption = 'Version 0.99g'
+    Width = 105
+    Height = 17
+    Caption = 'Version 1.0 RC1'
   end
   object Label4: TLabel
     Left = 12
     Top = 232
-    Width = 96
-    Height = 20
+    Width = 84
+    Height = 17
     Caption = 'Project page:'
   end
   object Label5: TLabel
     Left = 120
     Top = 232
-    Width = 295
-    Height = 20
+    Width = 260
+    Height = 17
     Caption = 'http://sourceforge.net/projects/reportman'
   end
   object Memo1: TMemo
@@ -606,8 +608,8 @@ object FRpAboutBox: TFRpAboutBox
   object Label6: TLabel
     Left = 232
     Top = 68
-    Width = 88
-    Height = 20
+    Width = 79
+    Height = 17
     Caption = 'Contributors'
   end
 end
