@@ -56,6 +56,7 @@ begin
  Result:=false;
  dia:=TFNewAlias.Create(Application);
  try
+  dia.SetInitialBounds;
   dia.ActiveControl:=dia.EAliasName;
   dia.EAliasName.Text:=aliasname;
   dia.EPath.Text:=path;

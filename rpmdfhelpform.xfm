@@ -20,6 +20,7 @@ object FRpHelpForm: TFRpHelpForm
     Height = 29
     ButtonHeight = 28
     ButtonWidth = 32
+    Flat = true
     Caption = 'ToolBar1'
     Images = ImageList1
     TabOrder = 0

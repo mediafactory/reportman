@@ -50,6 +50,7 @@ begin
   exit;
  dia:=TFReportTree.Create(Application);
  try
+  dia.SetInitialBounds;
   rpgraphutils.FillTreeView(dia.TreeView1,alist);
   dia.showmodal;
  finally

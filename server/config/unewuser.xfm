@@ -9,9 +9,9 @@ object FNewUser: TFNewUser
   Caption = 'Add User'
   Color = clButton
   Position = poScreenCenter
-  Scaled = False
   OnCreate = FormCreate
-  PixelsPerInch = 75
+  PixelsPerInch = 96 
+  AutoScroll = false
   object BOK: TButton
     Left = 71
     Top = 116

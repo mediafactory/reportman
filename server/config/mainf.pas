@@ -146,6 +146,8 @@ begin
  GUserGroups.Caption:=SRpUserGroupsHint;
  BAddGroup.Caption:=SrpAdd;
  BDeleteGroup.Caption:=SRpDelete;
+
+ SetInitialBounds;
 end;
 
 

@@ -9,9 +9,9 @@ object FNewAlias: TFNewAlias
   Caption = 'New server directory alias'
   Color = clButton
   Position = poScreenCenter
-  Scaled = False
   OnCreate = FormCreate
   PixelsPerInch = 96
+  AutoScroll = false
   object BOk: TButton
     Left = 11
     Top = 96

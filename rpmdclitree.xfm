@@ -1,63 +1,64 @@
 object FRpCliTree: TFRpCliTree
   Left = 0
   Top = 0
-  Width = 216
-  Height = 464
-  VertScrollBar.Range = 149
+  Width = 221
+  Height = 541
+  VertScrollBar.Range = 193
   TabOrder = 0
-  ParentFont = True
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 216
-    Height = 149
+    Width = 221
+    Height = 193
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
     object GUser: TGroupBox
       Left = 4
       Top = 4
-      Width = 209
-      Height = 141
+      Width = 214
+      Height = 185
       Anchors = [akLeft, akTop, akRight]
       Caption = 'User information'
       TabOrder = 0
       object LUserName: TLabel
         Left = 8
-        Top = 40
-        Width = 51
-        Height = 13
+        Top = 56
+        Width = 70
+        Height = 22
         Caption = 'User name'
       end
       object EUserName: TEdit
         Left = 104
-        Top = 36
-        Width = 97
-        Height = 21
+        Top = 56
+        Width = 102
+        Height = 30
+        Cursor = crIBeam
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 2
         Text = 'Admin'
       end
       object EPassword: TEdit
         Left = 104
-        Top = 60
-        Width = 97
-        Height = 21
+        Top = 88
+        Width = 102
+        Height = 30
+        Cursor = crIBeam
         Anchors = [akLeft, akTop, akRight]
         EchoMode = emPassword
         TabOrder = 3
       end
       object LPassword: TLabel
         Left = 8
-        Top = 64
-        Width = 46
-        Height = 13
+        Top = 92
+        Width = 64
+        Height = 22
         Caption = 'Password'
       end
       object BConnect: TButton
         HelpType = htContext
         Left = 8
-        Top = 112
+        Top = 156
         Width = 113
         Height = 25
         Action = AConnect
@@ -66,27 +67,27 @@ object FRpCliTree: TFRpCliTree
       end
       object LHost: TLabel
         Left = 8
-        Top = 16
-        Width = 22
-        Height = 13
+        Top = 28
+        Width = 30
+        Height = 22
         Caption = 'Host'
       end
       object ComboHost: TComboBox
         Left = 104
-        Top = 12
-        Width = 97
-        Height = 21
+        Top = 24
+        Width = 102
+        Height = 30
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 15
+        ItemHeight = 24
         TabOrder = 0
         Text = 'localhost'
       end
       object ComboPort: TComboBox
         Left = 104
-        Top = 84
+        Top = 120
         Width = 69
-        Height = 21
-        ItemHeight = 15
+        Height = 30
+        ItemHeight = 24
         Items.Strings = (
           '3060')
         TabOrder = 7
@@ -94,25 +95,25 @@ object FRpCliTree: TFRpCliTree
       end
       object LPort: TLabel
         Left = 10
-        Top = 88
-        Width = 19
-        Height = 13
+        Top = 124
+        Width = 26
+        Height = 22
         Caption = 'Port'
       end
     end
   end
   object PClient: TPanel
     Left = 0
-    Top = 149
-    Width = 216
-    Height = 315
+    Top = 193
+    Width = 221
+    Height = 348
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object Splitter1: TSplitter
       Left = 0
-      Top = 226
-      Width = 216
+      Top = 259
+      Width = 221
       Height = 7
       Cursor = crVSplit
       Align = alBottom
@@ -120,8 +121,8 @@ object FRpCliTree: TFRpCliTree
     end
     object PMessages: TPanel
       Left = 0
-      Top = 233
-      Width = 216
+      Top = 266
+      Width = 221
       Height = 82
       Align = alBottom
       BevelOuter = bvNone
@@ -129,7 +130,7 @@ object FRpCliTree: TFRpCliTree
       object LMessages: TMemo
         Left = 0
         Top = 0
-        Width = 216
+        Width = 221
         Height = 82
         Align = alClient
         ReadOnly = True
@@ -141,15 +142,15 @@ object FRpCliTree: TFRpCliTree
     object PTree: TPanel
       Left = 0
       Top = 0
-      Width = 216
-      Height = 226
+      Width = 221
+      Height = 259
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
       object BToolBar: TToolBar
         Left = 0
         Top = 0
-        Width = 216
+        Width = 221
         Height = 30
         AutoSize = True
         ButtonHeight = 26
@@ -195,9 +196,9 @@ object FRpCliTree: TFRpCliTree
       end
       object LTree: TTreeView
         Left = 0
-        Top = 61
-        Width = 216
-        Height = 165
+        Top = 69
+        Width = 221
+        Height = 190
         Align = alClient
         Columns = <>
         Images = imalist
@@ -208,25 +209,26 @@ object FRpCliTree: TFRpCliTree
       object PAlias: TPanel
         Left = 0
         Top = 30
-        Width = 216
-        Height = 31
+        Width = 221
+        Height = 39
         Align = alTop
         TabOrder = 2
         Visible = False
         object Label1: TLabel
           Left = 8
           Top = 8
-          Width = 22
-          Height = 13
+          Width = 33
+          Height = 22
           Caption = 'Alias'
         end
         object ComboAlias: TComboBox
           Left = 52
           Top = 4
-          Width = 157
-          Height = 21
+          Width = 163
+          Height = 30
           Style = csDropDownList
-          ItemHeight = 15
+          Anchors = [akLeft, akTop, akRight]
+          ItemHeight = 24
           TabOrder = 1
           OnClick = ComboAliasClick
         end
@@ -381,16 +383,16 @@ object FRpCliTree: TFRpCliTree
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       0000424D6E010000000000003E00000028000000260000002600000001000100
       0000000030010000120B0000120B00000200000002000000FFFFFF0000000000
-      00001FFFFFFFFFFF03F01FFFFFFFFFFF67FC1FFFFFFFFFFF7FFE1FFFFFFFFFFF
-      7FFF1FFFFFFFFFFF7E0F9FFFFFFFFFFF7C079FFFFFFFFFFF7E079FFFFFFFFFFF
-      7F001FFFFFFFFFFF00001FFFFFFFFFFF000FDFFFFFFFFFFF781FDFFFFFFFFFFF
-      780FDFFFFFFFFFFF3C1FDFFFFFFFFFFF3FFFDFFFFFFFFFFF1FFFDFFFFFFFFFFF
-      0FFC9FFFFFFFFFFF03F01FFFFFFFFFFF00001FFFFFFFFFFF7FC0000003FFFFFF
-      7FC8000003FFFFFF3F86000003FFFFFF7FC7000023FFFFFF7FCF808003FFFFFF
-      7FC701C043FFFFFF7FC081C083FFFFFF7FC000E183FFFFFF7FFFE07303FFFFFF
-      7FFFE03E03FFFFFF3F9FC01C03FFFFFF002FE03E03FFFFFF082FE07203FFFFFF
-      062FE1E183FFFFFF072FE3C0C3FFFFFF0FAFE30063FFFFFF072FE00003FFFFFF
-      009FC00003FFFFFF0000000003FFFFFF}
+      00000000000000000000000003FFFF000000000003FFFF000000000003FFFF00
+      0000000003FFFF000000000000E7D01000000000000000000000000003FFFF00
+      0000000003FFFF000000000003FFFF000000000003FFFF000000000003FFFF00
+      0000000003FFFF000000000003FFFF000000000003FFFF000000000003FFFF00
+      0000000003FFFF000000000003FFFF000000000003FFFF000000000003FFFF00
+      0000000003FFFF000000000003FFFF000000000003FFFF000000000003FFFF00
+      0000000003FFFF000000000003FFFF000000000003FFFF000000000003FFFF00
+      0000000003FFFF00000000000000000000000000000000000000000000000000
+      0000000000000000000000000100000000000000010000000000000003FFFF00
+      0000000003FFFF000000000003FFFF00}
   end
   object ActionList1: TActionList
     Images = ImageList1
@@ -739,20 +741,20 @@ object FRpCliTree: TFRpCliTree
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D0602000000000000
       3E0000002800000039000000390000000100010000000000C8010000120B0000
-      120B00000200000002000000FFFFFF0000000000000000000080017F03F00700
-      3880017F67FC0FFFFC39C07F7FFE0BFFFC7FE07F7FFF0FFFFC00007F7E0F8BFF
-      FC00007F7C078D555400007F7E078FFFFC00007F7F0003FFF000007F000003FF
-      F000007F000FC3FFF0C0207F781FC000003FF87F780FC000F8B4947F3C1FC000
-      F8AB687F3FFFC3FFF8F8207F1FFFC3FFE0814E7F0FFC83FFF89FF47F03F00000
-      F887FF7F00000000F8F8207F000000000000007FFFFFC0000000007FFFFFCFFF
-      3000007FFDFFC801703FF87FFCFFCAAFE040147FFFFFC819C0FFFA7FFFFFCAB3
-      C081CE7FFFFFC8214081CA7FFFFFCAA940FFF97FFFFFC83DC080157FFFFFCAB9
-      807FEB7FFFFFC80F0035557FFFFFCAAB001FFE7FFFFFC80F0015587FFFEFCAAA
-      000BE87FFFFEC80C000D547FFEFFCFF80007FC7FFFFFC0000000007FFFFFC000
-      0000007F000000000000007F000000000000007F000000000000007F0FFE0000
-      207FFC7F0802008000FFFE7F080201C041FFFE7F080201C081FFFE7F080200E1
-      81FFFE7F0802007301FFFE7F0802003E01FFFE7F0802001C01C0167F0802003E
-      01FFFC7F081E007201FC107F081401E1817BF07F081803C0C084007F0FF00300
-      6078007F000000000000007F000000000000007F000000000000007F}
+      120B00000200000002000000FFFFFF0000000000000000000000001000000000
+      0000000000000000000000000000000000000000000000000000001000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000007D00000000000000000000000000000000000000000000000000000000
+      00000000000000000000000000000000000000000000000000000000}
   end
 end

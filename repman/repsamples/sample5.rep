@@ -11,8 +11,8 @@ object TRpReport
       Alias = 'FISH'
       DatabaseAlias = 'BIOLIFE'
       SQL = 
-        'SELECT * FROM BIOLIFE '#13#10'WHERE CATEGORY>=:CATINI'#13#10'AND CATEGORY<=:' +
-        'CATEND'#13#10'ORDER BY CATEGORY'
+        'SELECT * FROM BIOLIFE '#10'WHERE CATEGORY>=:CATINI'#10'AND CATEGORY<=:CA' +
+        'TEND'#10'ORDER BY CATEGORY'
       MyBaseFilename = 'biolife.cds'
       MyBaseIndexFields = 'Category'
     end>
@@ -112,6 +112,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpSection1: TRpSection
     Width = 10900
@@ -147,6 +149,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpSection3: TRpSection
     Width = 10900
@@ -180,6 +184,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpSection4: TRpSection
     Width = 10900
@@ -210,6 +216,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpLabel2: TRpLabel
     Width = 1843
@@ -236,6 +244,9 @@ object TRpReport
     FontStyle = 3
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -243,6 +254,7 @@ object TRpReport
     LFontName = 'adobe-courier'
     Expression = 'FISH.Category'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpExpression4: TRpExpression
     Width = 7470
@@ -253,6 +265,9 @@ object TRpReport
     WordWrap = True
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -260,6 +275,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'FISH.Notes'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpImage2: TRpImage
     Width = 1725
@@ -282,6 +298,9 @@ object TRpReport
     FontStyle = 1
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -289,6 +308,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'FISH.Common_Name'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpLabel1: TRpLabel
     Width = 1500
@@ -327,6 +347,9 @@ object TRpReport
     FontStyle = 1
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -334,6 +357,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = '[FISH.Length__cm_]'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpShape0: TRpShape
     Width = 6437
@@ -368,6 +392,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpSection5: TRpSection
     Width = 10900
@@ -398,6 +424,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpChart0: TRpChart
     Width = 10890
@@ -450,6 +478,9 @@ object TRpReport
     GroupName = 'F'
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -457,6 +488,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = '1'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpLabel5: TRpLabel
     Width = 1613
@@ -492,6 +524,9 @@ object TRpReport
     Type1Font = poHelvetica
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -499,6 +534,7 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'PAGECOUNT'
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpLabel6: TRpLabel
     Width = 1440
@@ -521,6 +557,9 @@ object TRpReport
     Type1Font = poHelvetica
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -528,5 +567,6 @@ object TRpReport
     LFontName = 'Helvetica'
     Expression = 'Page'
     AgIniValue = '0'
+    ExportExpression = ''
   end
 end

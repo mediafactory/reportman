@@ -1,12 +1,9 @@
 object FMain: TFMain
   Left = 142
   Top = 123
-  Width = 518
-  Height = 447
-  VertScrollBar.Range = 433
-  HorzScrollBar.Range = 501
+  Width = 580 
+  Height = 750
   ActiveControl = ComboHost
-  BorderStyle = fbsDialog
   Caption = 'Report Manager Server configuration'
   Color = clBackground
   ShowHint = True
@@ -15,6 +12,7 @@ object FMain: TFMain
   PixelsPerInch = 96
   TextHeight = 13
   TextWidth = 6
+  AutoScroll = False
   object GUser: TGroupBox
     Left = 8
     Top = 44

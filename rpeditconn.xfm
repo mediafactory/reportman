@@ -18,14 +18,14 @@ object FRpEditCon: TFRpEditCon
     Left = 0
     Top = 0
     Width = 586
-    Height = 30
-    ButtonHeight = 26
+    Height = 29 
+    ButtonHeight = 28
     ButtonWidth = 26
     Caption = 'ToolBar1'
     Flat = True
     Images = ImageList1
     TabOrder = 0
-    Wrapable = False
+    Autosize = true
     object ToolButton1: TToolButton
       Left = 1
       Top = 4
