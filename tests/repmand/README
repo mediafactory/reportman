@@ -3,8 +3,10 @@ Report Manager Designer Version 0.99g
 Author:	Toni Martir
 	toni@pala.com (no free support)
 
-http://sourceforge.net/projects/reportman
+Open Source under the MPL License
 
+You will find last version at:
+http://sourceforge.net/projects/reportman
 http://reportman.sourceforge.net
 
 To install:
@@ -19,9 +21,8 @@ Then execute:
 
 ./repmand.sh
 
-If you have problems try removing the libqt.so.2 library from reportmanager directory so the libqt.so.2 library of your system will be used.
 
-To execute other utils set first the library path (see repmand.sh script)
+To execute other commandline tools  set first the library path (see repmand.sh script)
 
 Notes:
 
@@ -29,24 +30,31 @@ Linux version:
 
 Supported databases:
 
-DBEXPRESS:
-- Interbase/Firebird (tested & working)
+MYBASE
+- The sample4.rep sample report uses MyBase to access biolife.cds dataset.
+
+ALL DBEXPRESS DRIVERS
+- Interbase
 - PostgreSQL (untested)
 - MySQL & MySQL 3.23 (tested)
 - Oracle
 - DB2
-- ODBC throught UNIXodbc (tested)
+- ODBC throught UNIXodbc (tested) you must get the driver from sourceforge
 
-MICROSOFT ADO (Windows)
+MICROSOFT ADO (Windows Only version)
 - All ADO datasources
 
-IBX (Interbase Express an IBO (Interbase Objects)
+BDE (Windows version only)
+
+IBX (Interbase Express, you must download IBX and activate it)
+IBO (Interbase Objects, Windows only, see documentation)
 
 Bugs:
 - Please submit bugs to sourceforge project.
 
-Support:
+Tech Support:
 - Submit support questions and other to egroups.
 egroups.yahoo.com group reportman
+- You can also use source forge Report Manager Forums
 
 Thanks
