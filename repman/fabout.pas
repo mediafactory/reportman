@@ -1,3 +1,20 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager Designer                         }
+{                                                       }
+{       fabour                                          }
+{       About box for report manager designer           }
+{                                                       }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
+{                                                       }
+{                                                       }
+{*******************************************************}
 unit fabout;
 
 interface

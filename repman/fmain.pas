@@ -9,10 +9,10 @@
 {                                                       }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
-{       This file is under the GPL license              }
-{       A comercial license is also available           }
-{       See license.txt for licensing details           }
 {                                                       }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
 {                                                       }
 {*******************************************************}
 
@@ -352,7 +352,7 @@ begin
  MReport.Visible:=True;
  ANewPageHeader.Enabled:=True;
  ANewPageFooter.Enabled:=True;
- ANewGroup.Enabled:=True;
+// ANewGroup.Enabled:=true;
  ANewSubReport.Enabled:=True;
  ADeleteSelection.Enabled:=true;
  AnewDetail.Enabled:=true;

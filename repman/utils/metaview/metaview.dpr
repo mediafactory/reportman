@@ -18,6 +18,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.Title := 'Report manager metafile report viewer';
   Application.CreateForm(TFMeta, FMeta);
   Application.Run;
 end.

@@ -39,6 +39,7 @@ clean:
         -del repman\utils\printrep\printrep
         -del repman\utils\metaprint\metaprint
         -del repman\utils\metaview\metaview
+        -del /s /q "install/Output"
 real_clean:      clean
         -del /s *.bpl
         -del /s *.so

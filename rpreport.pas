@@ -10,19 +10,16 @@
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
-{       This file is under the GPL license              }
-{       A comercial license is also available           }
-{       See license.txt for licensing details           }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
 {                                                       }
 {                                                       }
 {*******************************************************}
-
-
 // One report is composed of subreports, the report has
 // page setup properties and a subreport list
 // The subreports are printed in order and can have
 // diferent datasources, grouping, sections etc
-
 unit rpreport;
 
 interface
@@ -38,6 +35,7 @@ uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpconsts,
 {$ENDIF}
  rpmunits;
 
+
 const
  MILIS_PROGRESS=500;
  // 1 cms=574
@@ -47,12 +45,11 @@ const
  // 29,7/2.51*1440
  DEFAULT_PAGEHEIGHT=17039;
  DEFAULT_PAGEWIDTH=12048;
+
 type
  TRpReport=class;
  TRpSubReportListItem=class;
-
  TRpProgressEvent=procedure (Sender:TRpReport;var docancel:boolean) of object;
-
  TRpSubReportList=class(TCollection)
   private
    FReport:TRpReport;
@@ -64,7 +61,6 @@ type
    function IndexOf(Value:TRpSubReport):integer;
    property Items[index:integer]:TRpSubReportListItem read GetItem write SetItem;default;
  end;
-
  TRpSubReportListItem=class(TCollectionItem)
   private
    FSubReport:TRpSubReport;
@@ -74,7 +70,6 @@ type
   published
    property SubReport:TRpSubReport read FSubReport write SetSubReport;
  end;
-
 
  TRpReport=class(TComponent)
   private
@@ -183,11 +178,9 @@ type
    property Language:integer read FLanguage write FLanguage default 0;
  end;
 
-
 implementation
 
 uses rpprintitem, rpsecutil;
-
 // Constructors and destructors
 constructor TRpReport.Create(AOwner:TComponent);
 begin
@@ -362,7 +355,6 @@ procedure TRpReport.CreateNew;
 begin
  // Creates a new default report
  FreeSubreports;
-
  AddSubReport;
 end;
 
@@ -402,20 +394,20 @@ var
 begin
  // FreeSubrepots
  FreeSubreports;
-
  MemStream:=TMemoryStream.Create;
- try  zlibs:=TDeCompressionStream.Create(Stream);
+ try
+  zlibs:=TDeCompressionStream.Create(Stream);
   try
-   buf:=AllocMem(120000);   try
+   buf:=AllocMem(120000);
+   try
     repeat
-     readed:=zlibs.read(buf^,120000);
+     readed:=zlibs.Read(buf^,120000);
      memstream.Write(buf^,readed);
     until readed<120000;
    finally
     freemem(buf);
    end;
    memstream.Seek(0,soFrombeginning);
-
    reader:=TReader.Create(memstream,1000);
    try
     if Assigned(FOnReadError) then
@@ -427,9 +419,10 @@ begin
     reader.free;
    end;
   finally
-   zlibs.free;
+   zlibs.Free;
   end;
- finally  MemStream.free;
+ finally
+  MemStream.free;
  end;
 end;
 
@@ -586,8 +579,6 @@ begin
  end;
 end;
 
-
-
 procedure TRpReport.EndPrint;
 begin
  DeActivateDatasets;
@@ -648,10 +639,9 @@ function TRpReport.NextSection:boolean;
 var
  subrep:TRpSubreport;
  sec:TRpSection;
- oldsection:TRpSection;
+// oldsection:TRpSection;
 begin
- Result:=true;
- oldsection:=section;
+ Result:=True;
  section:=nil;
  // Check the condition
  while CurrentSubReportIndex<Subreports.count do
@@ -698,7 +688,7 @@ begin
    inc(CurrentSubReportIndex);
    if CurrentSubReportIndex>=Subreports.count then
     break;
-   subrep:=Subreports.Items[CurrentSubReportIndex].SubReport;
+//   subrep:=Subreports.Items[CurrentSubReportIndex].SubReport;
    CurrentSectionIndex:=-1;
 //    subrep.UpdateGroupValues;
    LastRecord:=false;
@@ -724,6 +714,8 @@ begin
  metafile.Clear;
  metafile.CustomX:=Round((PageWidth/1440)*251);
  metafile.CustomY:=Round((PageHeight/1440)*251);
+ metafile.Orientation:=FPageOrientation;
+ metafile.BackColor:=FPageBackColor;
  LastPage:=false;
  LastRecord:=false;
  EndPrint;
@@ -758,7 +750,6 @@ begin
  printing:=True;
 end;
 
-
 // Resturns true if is the last pabe
 function TRpReport.PrintNextPage:boolean;
 var
@@ -767,7 +758,6 @@ var
  subreport:TRpSubreport;
  sectionext:TPoint;
  freespace:integer;
-
 
 function CheckSpace:boolean;
 begin
@@ -813,7 +803,7 @@ begin
  end;
  fmetafile.CurrentPage:=PageNum;
  // Tries to print at least a report header
- subreport:=FSubReports.Items[CurrentSubReportIndex].FSubReport;
+// subreport:=FSubReports.Items[CurrentSubReportIndex].FSubReport;
  freespace:=Pageheight;
 
  // Fills the page with fixed sections

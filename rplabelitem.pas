@@ -9,9 +9,9 @@
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
-{       This file is under the GPL license              }
-{       A comercial license is also available           }
-{       See license.txt for licensing details           }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
 {                                                       }
 {                                                       }
 {*******************************************************}
@@ -49,11 +49,12 @@ type
    FIdentifier:string;
    FAutoExpand:Boolean;
    FAutoContract:Boolean;
+   FDisplayFormat:string;
    procedure SetIdentifier(Value:string);
   public
    constructor Create(AOwner:TComponent);override;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
-   function GetText:string;
+   function GetText:widestring;
    procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   published
    property Expression:widestring read FExpression write FExpression;
@@ -65,6 +66,7 @@ type
     default rpAgSum;
    property AutoExpand:Boolean read FAutoExpand write FAutoExpand;
    property AutoContract:Boolean read FAutoContract write FAutoContract;
+   property DisplayFormat:string read FDisplayformat write FDisplayFormat;
   end;
 
 implementation
@@ -127,7 +129,7 @@ procedure TRpLabel.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
 begin
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
   aposx+PosX,width,height,Text,WFontName,LFontName,FontSize,
-  FontStyle,FOntColor,BackColor,Transparent,CutText,Alignment,WordWrap);
+  FontStyle,FOntColor,BackColor,Transparent,CutText,Alignment or VAlignment,WordWrap);
 end;
 
 
@@ -156,7 +158,7 @@ begin
  end;
 end;
 
-function TRpExpression.GetText:string;
+function TRpExpression.GetText:widestring;
 var
  fevaluator:TRpEvaluator;
 begin
@@ -169,10 +171,7 @@ begin
   fevaluator:=TRpREport(Owner).Evaluator;
   fevaluator.Expression:=Expression;
   fevaluator.Evaluate;
-  if VarIsNull(fevaluator.EvalResult) then
-   Result:=''
-  else
-   Result:=string(fevaluator.EvalResult);
+  Result:=FormatVariant(displayformat,fevaluator.EvalResult);
  except
   on E:Exception do
   begin
@@ -188,7 +187,7 @@ begin
  Text:=GetText;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
    aposx+PosX,width,height,Text,WFontName,LFontName,FontSize,
-   FontStyle,FOntColor,BackColor,Transparent,CutText,Alignment,WordWrap);
+   FontStyle,FOntColor,BackColor,Transparent,CutText,Alignment or VAlignment,WordWrap);
 end;
 
 procedure TRpExpression.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');

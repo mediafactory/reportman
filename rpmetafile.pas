@@ -10,9 +10,9 @@
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
-{       This file is under the GPL license              }
-{       A comercial license is also available           }
-{       See license.txt for licensing details           }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
 {                                                       }
 {                                                       }
 {*******************************************************}
@@ -49,6 +49,8 @@ const
  FIRST_ALLOCATION_OBJECTS=500;
  FIRST_ALLOCATED_WIDESTRING=1000;
 type
+
+ TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
 
  ERpBadFileFormat=class(Exception)
   private
@@ -153,7 +155,7 @@ type
    PageSize:integer;
    CustomX:integer;
    CustomY:integer;
-   Orientation:integer;
+   Orientation:TRpOrientation;
    BackColor:integer;
    procedure Clear;
    procedure LoadFromStream(Stream:TStream);
@@ -310,8 +312,6 @@ end;
 procedure TrpMetafilePage.NewTextObject(Top,Left,Width,Height:integer;
     Text:widestring;WFontName:widestring;LFontName:widestring;FontSize:integer;FontStyle:integer;
     FontColor:integer;BackColor:integer;transparent:boolean;cuttext:boolean;Alignment:integer;WordWrap:boolean);
-var
- position,size:integer;
 begin
  if FObjectCount>=High(FObjects)-1 then
  begin
@@ -583,7 +583,6 @@ end;
 
 procedure TRpMetafilePage.SaveToStream(Stream:TStream);
 var
- i:integer;
  separator:integer;
  asize:int64;
  wsize:integer;
@@ -613,7 +612,6 @@ var
  objcount:integer;
  asize:int64;
  wsize:integer;
- stringsize:integer;
 begin
  // read the object separator
  bytesread:=Stream.Read(separator,sizeof(separator));

@@ -1,0 +1,20 @@
+Report Manager is licensed under the opensource MPL License.
+
+The Main Author of this tool is
+
+Toni Martir
+toni@pala.com
+
+The plain explanation of the license is:
+
+- You can distribute it without any license fees.
+- The source code is avaliable.
+- If you enhace this tool or the reporting engine
+and distribute it you must also distribute the source code.
+- That it derived versions of this tool must be open source.
+- You can't missinterpret or omit the author/s of this tool.
+- You can use it in commercial applications.
+
+http://sourceforge.net/projects/reportman
+
+Thanks

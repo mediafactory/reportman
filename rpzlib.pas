@@ -446,7 +446,7 @@ begin
 //        FZRec.avail_in := FStrm.Read(FBuffer, FStrm.Size-FStrm.Position);
       if FZRec.avail_in = 0 then
         begin
-          Result := Count - FZRec.avail_out;
+          Result := uLong(Count) - uLong(FZRec.avail_out);
           Exit;
         end;
       FZRec.next_in := @FBuffer;

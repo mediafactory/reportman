@@ -9,9 +9,9 @@
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
-{       This file is under the GPL license              }
-{       A comercial license is also available           }
-{       See license.txt for licensing details           }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
 {                                                       }
 {                                                       }
 {*******************************************************}
@@ -111,6 +111,7 @@ end;
 procedure TRpLabelInterface.Paint;
 var
  alabel:TRpLabel;
+ rec:TRect;
 begin
  alabel:=TRpLabel(printitem);
  Canvas.Pen.Color:=clBlack;
@@ -135,8 +136,11 @@ begin
  Canvas.Font.Color:=alabel.FontColor;
  Canvas.Font.Size:=alabel.FontSize;
  Canvas.Font.Style:=IntegerToFontStyle(alabel.FontStyle);
-
- Canvas.TextOut(0,0,alabel.Text);
+ rec.Top:=0;
+ rec.Left:=0;
+ rec.Right:=Width-1;
+ rec.Bottom:=Height-1;
+ Canvas.TextRect(rec,0,0,Text,alabel.Alignment or alabel.VAlignment);
 end;
 
 
@@ -150,10 +154,15 @@ end;
 procedure TRpExpressionInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
  inherited GetProperties(lnames,ltypes,lvalues);
- // Text
+ // Expression
  lnames.Add(SrpSExpression);
  ltypes.Add(SRpSExpression);
  lvalues.Add(TRpExpression(printitem).Expression);
+
+ // Display format
+ lnames.Add(SrpSDisplayFOrmat);
+ ltypes.Add(SRpSString);
+ lvalues.Add(TRpExpression(printitem).DisplayFormat);
 end;
 
 procedure TRpExpressionInterface.SetProperty(pname:string;value:string);
@@ -163,6 +172,12 @@ begin
  if pname=SRpSExpression then
  begin
   TRpExpression(fprintitem).Expression:=value;
+  invalidate;
+  exit;
+ end;
+ if pname=SRpSDisplayFormat then
+ begin
+  TRpExpression(fprintitem).DisplayFormat:=value;
   invalidate;
   exit;
  end;
@@ -177,6 +192,11 @@ begin
   Result:=TRpExpression(printitem).Expression;
   exit;
  end;
+ if pname=SrpSDisplayFormat then
+ begin
+  Result:=TRpExpression(printitem).DisplayFormat;
+  exit;
+ end;
  Result:=inherited GetProperty(pname);
 end;
 
@@ -184,6 +204,7 @@ end;
 procedure TRpExpressionInterface.Paint;
 var
  aexp:TRpExpression;
+ rec:TRect;
 begin
  aexp:=TRpExpression(printitem);
  Canvas.Pen.Color:=clBlack;
@@ -208,7 +229,11 @@ begin
  Canvas.Font.Size:=aexp.FontSize;
  Canvas.Font.Style:=IntegerToFontStyle(aexp.FontStyle);
 
- Canvas.TextOut(0,0,aexp.Expression);
+ rec.Top:=0;
+ rec.Left:=0;
+ rec.Right:=Width-1;
+ rec.Bottom:=Height-1;
+ Canvas.TextRect(rec,0,0,aexp.Expression,aexp.Alignment or aexp.VAlignment);
 end;
 
 

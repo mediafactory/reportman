@@ -5,7 +5,7 @@ uses
   Classes,
 {$IFDEF MSWINDOWS}
   rpqtdriver in '..\..\..\rpqtdriver.pas',
-  rpqtdriver in '..\..\..\rpmetafile.pas',
+  rpmetafile in '..\..\..\rpmetafile.pas',
   rpreport in '..\..\..\rpreport.pas',
   rpconsts in '..\..\..\rpconsts.pas';
 {$ENDIF}

@@ -10,9 +10,9 @@
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
-{       This file is under the GPL license              }
-{       A comercial license is also available           }
-{       See license.txt for licensing details           }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
 {                                                       }
 {                                                       }
 {*******************************************************}
@@ -90,6 +90,7 @@ type
    FCutText:Boolean;
    FWordWrap:Boolean;
    FAlignMent:integer;
+   FVAlignMent:integer;
   public
    constructor Create(AOwner:TComponent);override;
   published
@@ -102,6 +103,7 @@ type
    property Transparent:Boolean read FTransparent write FTransparent default true;
    property CutText:Boolean read FCutText write FCutText default true;
    property Alignment:integer read FAlignment write FAlignment default 0;
+   property VAlignment:integer read FVAlignment write FVAlignment default 0;
    property WordWrap:Boolean read FWordWrap write FWordWrap default false;
   end;
 

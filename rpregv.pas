@@ -5,10 +5,11 @@
 {       Units that registers the reportmanager engine   }
 {       (visual controls into the component palette)    }
 {                                                       }
-{       Copyright (c) 1997-2001 Techni-Web              }
-{       This file is under the GPL license              }
-{       A comercial license is also available           }
-{       See license.txt for licensing details           }
+{       Copyright (c) 1994-2002 Toni Martir              }
+{                                                       }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
 {                                                       }
 {                                                       }
 {*******************************************************}

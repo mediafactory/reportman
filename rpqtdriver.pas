@@ -10,9 +10,9 @@
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
-{       This file is under the GPL license              }
-{       A comercial license is also available           }
-{       See license.txt for licensing details           }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
 {                                                       }
 {                                                       }
 {*******************************************************}
@@ -92,6 +92,9 @@ begin
 end;
 
 procedure TRpQtDriver.NewDocument(report:TrpMetafileReport);
+var
+ awidth,aheight:integer;
+ rec:TRect;
 begin
  if ToPrinter then
  begin
@@ -113,8 +116,26 @@ begin
   // milimeter
   bitmap:=TBitmap.Create;
   bitmap.PixelFormat:=pf32bit;
-  bitmap.Width:=Round(report.CustomX*dpi/(CMS_PER_INCHESS*100));
-  bitmap.Height:=Round(report.CustomY*dpi/(CMS_PER_INCHESS*100));
+  awidth:=Round(report.CustomX*dpi/(CMS_PER_INCHESS*100));
+  aheight:=Round(report.CustomY*dpi/(CMS_PER_INCHESS*100));
+  // Sets page size and orientation
+  if report.Orientation=rpOrientationLandscape then
+  begin
+   bitmap.Width:=awidth;
+   bitmap.Height:=aheight;
+  end
+  else
+  begin
+   bitmap.Width:=aheight;
+   bitmap.Height:=awidth;
+  end;
+  Bitmap.Canvas.Brush.Style:=bsSolid;
+  Bitmap.Canvas.Brush.Color:=report.BackColor;
+  rec.Top:=0;
+  rec.Left:=0;
+  rec.Right:=Bitmap.Width-1;
+  rec.Bottom:=Bitmap.Height-1;
+  bitmap.Canvas.FillRect(rec);
  end;
 end;
 
@@ -194,7 +215,7 @@ begin
      rec.Left:=posy;
      rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);
      rec.Bottom:=posy+round(obj.Height*dpiy/TWIPS_PER_INCHESS);
-     Canvas.TextRect(rec,posx,posy,page.GetText(Obj));
+     Canvas.TextRect(rec,posx,posy,page.GetText(Obj),obj.Alignment);
     end
     else
      Canvas.TextOut(posx,posy,page.GetText(Obj));
@@ -337,6 +358,14 @@ begin
  milifirst:=now;
 {$ENDIF}
  printer.Title:=tittle;
+ // Sets page size and orientation
+ if metafile.Orientation<rpOrientationDefault then
+ begin
+  if metafile.Orientation=rpOrientationPortrait then
+   printer.Orientation:=poPortrait
+  else
+   printer.Orientation:=poLandscape;
+ end;
  printer.Begindoc;
  try
   dpix:=printer.XDPI;

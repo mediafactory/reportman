@@ -9,9 +9,9 @@
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
-{       This file is under the GPL license              }
-{       A comercial license is also available           }
-{       See license.txt for licensing details           }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
 {                                                       }
 {                                                       }
 {*******************************************************}
@@ -70,8 +70,8 @@ type
    destructor Destroy;override;
   protected
    procedure DefineProperties(Filer: TFiler);override;
-   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   public
+   procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);override;
    property Stream:TMemoryStream read FStream write SetStream;
   published
    property Expression:WideString read FExpression write FExpression;
@@ -99,8 +99,6 @@ begin
 end;
 
 procedure TRpShape.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
-var
- Text:string;
 begin
  metafile.Pages[metafile.CurrentPage].NewDrawObject(aposy+PosY,aposx+PosX,Width,Height,
   Shape,BrushStyle,BrushColor,PenStyle,PenWidth,PenColor);
@@ -158,8 +156,6 @@ begin
 end;
 
 procedure TRpImage.Print(aposx,aposy:integer;metafile:TRpMetafileReport);
-var
- Text:string;
 begin
  if Not Assigned(FStream) then
   exit;

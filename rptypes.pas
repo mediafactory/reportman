@@ -10,9 +10,9 @@
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
-{       This file is under the GPL license              }
-{       A comercial license is also available           }
-{       See license.txt for licensing details           }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
 {                                                       }
 {                                                       }
 {*******************************************************}
@@ -21,14 +21,13 @@ unit rptypes;
 
 interface
 
-uses Sysutils,Classes,rpconsts;
+uses Sysutils,Classes,rpconsts,Variants;
 
 const
  MAX_LANGUAGES=3;
 
 type
  TRpTwips=integer;
- TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
  TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull,rpDrawTile);
  TRpAggregate=(rpAgNone,rpAgGroup,rpAgPage,rpAgGeneral);
  TRpAggregateType=(rpagSum,rgagAvg,rpagStdDev);
@@ -52,6 +51,7 @@ type
 // Compares 2 streams and returns true if they are equal
 function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
 procedure Generatenewname(Component:TComponent);
+function FormatVariant(displayformat:string;Value:Variant):widestring;
 
 // Language identifiers
 var
@@ -93,7 +93,6 @@ begin
    result:=False;
    break;
   end;
-
   readcount:=Stream1.Read(buf1,SIZE_BUF);
   Stream2.Read(buf2,SIZE_BUF);
  end;
@@ -109,5 +108,26 @@ begin
   inc(i);
  Component.Name:=name1+IntToStr(i);
 end;
+
+
+function FormatVariant(displayformat:string;Value:Variant):widestring;
+begin
+ if VarIsNull(Value) then
+ begin
+  Result:='';
+  exit;
+ end;
+ if Length(displayformat)<1 then
+ begin
+  Result:=widestring(Value);
+  exit;
+ end;
+ case VarType(Value) of
+  varEmpty,varNull:
+   Result:='';
+  varSmallint,varInteger,varSingle,varWord,  varDouble,varInt64,varLongWord,varShortInt,varByte:   Result:=FormatFloat(displayformat,Value);  varCurrency:   Result:=FormatCurr(displayformat,Value);  varDate:   Result:=FormatDateTime(displayformat,Value);  varString:   Result:=Format(displayformat,[Value]);  varBoolean:   Result:=Format(displayformat,[BoolToStr(Value,true)]);  else   Result:=SRpUnknownType; end;{  varOleStr   = $0008;  varDispatch = $0009;  varError    = $000A;  varVariant  = $000C;  varUnknown  = $000D;  varStrArg   = $0048;  varAny      = $0101;  varTypeMask = $0FFF;  varArray    = $2000;  varByRef    = $4000;
+}
+end;
+
 
 end.

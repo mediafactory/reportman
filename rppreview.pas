@@ -9,9 +9,9 @@
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
-{       This file is under the GPL license              }
-{       A comercial license is also available           }
-{       See license.txt for licensing details           }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
 {                                                       }
 {                                                       }
 {*******************************************************}
@@ -21,8 +21,13 @@ unit rppreview;
 interface
 
 uses
-  SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  QStdCtrls,rpreport,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,
+  SysUtils,
+{$IFDEF MSWINDOWS}
+  windows,
+{$ENDIF}
+  Types, Classes, QGraphics, QControls, QForms, QDialogs,
+  QStdCtrls,rpreport,rpmetafile, QComCtrls,
+  rpqtdriver, QExtCtrls,
   QActnList, QImgList,QPrinters,rpconsts,Qt;
 
 type
@@ -252,8 +257,13 @@ end;
 
 procedure TFRpPreview.RepProgress(Sender:TRpReport;var docancel:boolean);
 begin
- BCancel.Caption:=IntToStr(Sender.CurrentSubReportIndex)+':'
+ BCancel.Caption:=IntToStr(Sender.CurrentSubReportIndex)+' '+SRpPage+':'+
+  FormatFloat('####,####',report.PageNum)+':'
   +FormatFloat('####,####',report.RecordCount)+'-'+SRpCancel;
+{$IFDEF MSWINDOWS}
+ if ((GetKeyState(VK_ESCAPE) AND $80)>0) then
+  cancelled:=true;
+{$ENDIF}
  Application.ProcessMessages;
  if cancelled then
   docancel:=true;

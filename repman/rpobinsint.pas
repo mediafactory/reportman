@@ -12,9 +12,9 @@
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
-{       This file is under the GPL license              }
-{       A comercial license is also available           }
-{       See license.txt for licensing details           }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
 {                                                       }
 {                                                       }
 {*******************************************************}
@@ -24,7 +24,7 @@ unit rpobinsint;
 interface
 
 uses Types,QGraphics,QForms,QControls,rpconsts,classes,sysutils,rpmunits,
-  rpprintitem,rpgraphutils,rpsection,rpreport;
+  rpprintitem,rpgraphutils,rpsection,rpreport,qt,QDialogs;
 
 const
  CONS_MODIWIDTH=5;
@@ -102,6 +102,7 @@ type
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
    procedure SetProperty(pname:string;value:string);override;
    function GetProperty(pname:string):string;override;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
  end;
 
 
@@ -883,9 +884,90 @@ begin
 end;
 
 
+function HAlignmentToText(value:integer):string;
+begin
+ Result:=SRpSAlignNone;
+ if (value=integer(AlignmentFlags_AlignLeft)) then
+ begin
+  Result:=SRpSAlignLeft;
+ end;
+ if (value=integer(AlignmentFlags_AlignRight)) then
+ begin
+  Result:=SRpSAlignRight;
+ end;
+ if (value=integer(AlignmentFlags_AlignHCenter)) then
+ begin
+  Result:=SRpSAlignCenter;
+ end;
+end;
+
+function VAlignmentToText(value:integer):string;
+begin
+ Result:=SRpSAlignNone;
+ if (value=integer(AlignmentFlags_AlignTop)) then
+ begin
+  Result:=SRpSAlignTop;
+ end;
+ if (value=integer(AlignmentFlags_AlignBottom)) then
+ begin
+  Result:=SRpSAlignBottom;
+ end;
+ if (value=integer(AlignmentFlags_AlignVCenter)) then
+ begin
+  Result:=SRpSAlignCenter;
+ end;
+end;
+
+function StringVAlignmentToInt(value:string):integer;
+begin
+ Result:=0;
+ if (value=SRpSAlignTop) then
+ begin
+  Result:=integer(AlignmentFlags_AlignTop);
+ end;
+ if (value=SRpSAlignBottom) then
+ begin
+  Result:=integer(AlignmentFlags_AlignBottom);
+ end;
+ if (value=SRpSAlignCenter) then
+ begin
+  Result:=integer(AlignmentFlags_AlignVCenter);
+ end;
+end;
+
+function StringHAlignmentToInt(value:string):integer;
+begin
+ Result:=0;
+ if (value=SRpSAlignLeft) then
+ begin
+  Result:=integer(AlignmentFlags_AlignLeft);
+ end;
+ if (value=SRpSAlignRight) then
+ begin
+  Result:=integer(AlignmentFlags_AlignRight);
+ end;
+ if (value=SRpSAlignCenter) then
+ begin
+  Result:=integer(AlignmentFlags_AlignHCenter);
+ end;
+end;
+
+
 procedure TRpGenTextInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
  inherited GetProperties(lnames,ltypes,lvalues);
+
+
+ // Alignment
+ lnames.Add(SrpSAlignment);
+ ltypes.Add(SRpSList);
+ lvalues.Add(HAlignmentToText(TRpGenTextComponent(printitem).Alignment));
+
+ // VAlignment
+ lnames.Add(SrpSVAlignment);
+ ltypes.Add(SRpSList);
+ lvalues.Add(VAlignmentToText(TRpGenTextComponent(printitem).VAlignment));
+
  // Font Name
  lnames.Add(SrpSWFontName);
  ltypes.Add(SRpSWFontName);
@@ -933,6 +1015,18 @@ procedure TRpGenTextInterface.SetProperty(pname:string;value:string);
 begin
  if length(value)<1 then
   exit;
+ if pname=SRpSAlignment then
+ begin
+  TRpGenTextComponent(fprintitem).Alignment:=StringHAlignmentToInt(Value);
+  Invalidate;
+  exit;
+ end;
+ if pname=SRpSVAlignment then
+ begin
+  TRpGenTextComponent(fprintitem).VAlignment:=StringVAlignmentToInt(Value);
+  Invalidate;
+  exit;
+ end;
  if pname=SRpSWFontName then
  begin
   TRpGenTextComponent(fprintitem).WFontName:=value;
@@ -988,6 +1082,16 @@ end;
 function TRpGenTextInterface.GetProperty(pname:string):string;
 begin
  Result:='';
+ if pname=SrpSAlignMent then
+ begin
+  Result:=HAlignmentToText(TRpGenTextComponent(printitem).AlignMent);
+  exit;
+ end;
+ if pname=SrpSVAlignMent then
+ begin
+  Result:=VAlignmentToText(TRpGenTextComponent(printitem).VAlignMent);
+  exit;
+ end;
  if pname=SrpSWFontName then
  begin
   Result:=TRpGenTextComponent(printitem).WFontName;
@@ -1033,5 +1137,30 @@ begin
  Result:=inherited GetProperty(pname);
 end;
 
+
+procedure TRpGenTextInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
+begin
+ if pname=SrpSAlignment then
+ begin
+  lpossiblevalues.clear;
+  lpossiblevalues.Add(SrpSAlignNone);
+  lpossiblevalues.Add(SrpSAlignLeft);
+  lpossiblevalues.Add(SrpSAlignRight);
+  lpossiblevalues.Add(SrpSAlignCenter);
+  exit;
+ end;
+ if pname=SrpSVAlignment then
+ begin
+  lpossiblevalues.clear;
+  lpossiblevalues.Add(SrpSAlignNone);
+  lpossiblevalues.Add(SrpSAlignTop);
+  lpossiblevalues.Add(SrpSAlignBottom);
+  lpossiblevalues.Add(SrpSAlignCenter);
+  exit;
+ end;
+ inherited GetPropertyValues(pname,lpossiblevalues);
+end;
+
+initialization
 
 end.
