@@ -447,14 +447,14 @@ begin
      end;
     end;
     if Userdef then
-     Result:=sysutils.formatFloat(sformat,Extended(Value))
+     Result:=sysutils.formatFloat(sformat,Double(Value))
     else
     begin
      index:=Pos('d',sformat);
      if index<>0 then
       Result:=format(sformat,[Integer(Value)])
      else
-      Result:=format(sformat,[Extended(Value)]);
+      Result:=format(sformat,[Double(Value)]);
     end;
    end;
   varSingle,varDouble,VarCurrency:
@@ -489,19 +489,22 @@ begin
     end;
     try
      if Userdef then
-      Result:=sysutils.formatFloat(sformat,Extended(Value))
+      Result:=sysutils.formatFloat(sformat,Double(Value))
      else
-      Result:=format(sformat,[Extended(Value)]);
+      Result:=format(sformat,[Double(Value)]);
     except
-     if Extended(Value)<>Integer(Value) then
+     if Double(Value)<>Integer(Value) then
       Raise;
      if Userdef then
-      Result:=sysutils.formatFloat(sformat,Extended(Value))
+      Result:=sysutils.formatFloat(sformat,Double(Value))
      else
       Result:=format(sformat,[Integer(Value)]);
     end;
    end;
-  varString,varOleStr:
+{$IFNDEF DOTNETD}
+ varOleStr,
+{$ENDIF}
+  varString:
    if Value='' then Result:='' else
     Result:=format(sformat,[string(Value)]);
   varBoolean:
@@ -566,7 +569,10 @@ begin
  case VarType(Value) of
   varSmallInt..varDouble:
    Result:=(Double(Value)=0);
-  varString,varOleStr:
+{$IFNDEF DOTNETD}
+ varOleStr,
+{$ENDIF}
+  varString:
    Result:=(String(Value)='');
   varBoolean:
    Result:=Not Boolean(Value);

@@ -444,7 +444,7 @@ begin
     dbinfo.ReportSearchField+'=:REPNAME';
    aparam:=TRpParamObject.Create;
    try
-    aparam.Value:=ninfo.ReportName;
+    aparam.Value:=String(ninfo.ReportName);
     params.AddObject('REPNAME',aparam);
     dbinfo.OpenDatasetFromSQL(astring,params,true);
    finally
@@ -745,12 +745,12 @@ begin
  dbinfo.Connect;
  ATree.Items.Clear;
  sqltext:='SELECT '+dbinfo.ReportSearchField;
+ sqltext:=sqltext+','+dbinfo.ReportField;
  if length(dbinfo.ReportGroupsTable)>0 then
-  sqltext:=sqltext+','+dbinfo.ReportField;
+  sqltext:=sqltext+',REPORT_GROUP';
  sqltext:=sqltext+' FROM '+dbinfo.ReportTable;
  adatareports:=dbinfo.OpenDatasetFromSQL(sqltext,nil,false);
  try
-  adatagroups:=nil;
   if Length(dbinfo.ReportGroupsTable)>0 then
   begin
    adatagroups:=
@@ -832,7 +832,7 @@ begin
    dbinfo.ReportSearchField+'=:REPNAME';
   aparam:=TRpParamObject.Create;
   try
-   aparam.Value:=group_name;
+   aparam.Value:=String(group_name);
    params.AddObject('GROUPNAME',aparam);
    astring:='INSERT INTO '+dbinfo.ReportGroupsTable+
     ' (GROUP_CODE,GROUP_NAME,PARENT_GROUP)  VALUES ('+
@@ -885,7 +885,7 @@ begin
    if Length(dbinfo.ReportGroupsTable)>0 then
     astring:=astring+','+IntToStr(groupcode);
    astring:=astring+')';
-   aparam.Value:=reportname;
+   aparam.Value:=String(reportname);
    aparam2.Value:=Null;
    params.AddObject('REPNAME',aparam);
    params.AddObject('REPORT',aparam2);

@@ -2,7 +2,7 @@ object FRpDesignFrameVCL: TFRpDesignFrameVCL
   Left = 0
   Top = 0
   Width = 443
-  Height = 270
+  Height = 277
   HorzScrollBar.Tracking = True
   VertScrollBar.Tracking = True
   Align = alClient
@@ -24,7 +24,7 @@ object FRpDesignFrameVCL: TFRpDesignFrameVCL
     Left = 0
     Top = 20
     Width = 20
-    Height = 250
+    Height = 257
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1

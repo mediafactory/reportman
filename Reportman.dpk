@@ -1,14 +1,14 @@
 package ReportMan;
 
+
 {$R 'rplastsav.dcr'}
-{$R 'rptranslator.dcr'}
-{$R 'rpeval.dcr'}
-{$R 'rpalias.dcr'}
-{$R 'rppdfreport.dcr'}
-{$R 'rpvclreport.dcr'}
 {$R 'rpexpredlgvcl.dcr'}
+{$R 'rpeval.dcr'}
+{$R 'rptranslator.dcr'}
+{$R 'rpvclreport.dcr'}
+{$R 'rpalias.dcr'}
 {$R 'rpmaskedit.dcr'}
-{$ALIGN 0}
+{$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
 {$DEBUGINFO ON}
@@ -18,9 +18,9 @@ package ReportMan;
 {$LOCALSYMBOLS ON}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
-{$OPTIMIZATION ON}
-{$OVERFLOWCHECKS OFF}
-{$RANGECHECKS OFF}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
 {$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES OFF}
@@ -32,102 +32,106 @@ package ReportMan;
 {$IMPLICITBUILD OFF}
 
 requires
-  Borland.Vcl,
+  Borland.Delphi,
   System.Drawing,
-  Borland.VclDbRtl,
+  Borland.VclIBXpress,
+  Borland.VclRtl,
+  IndyNet,
+  IndyNetCore,
+  Borland.VclDSnap,
+  Borland.VclDSnapCon,
   Borland.VclBdeRtl,
   Borland.VclDbExpress,
-  Borland.VclDSnap,
-  Borland.Delphi,
-  Borland.VclRtl,
-  IndyNetCore,
-  IndyNet,
-  Borland.VclIBXpress;
+  Borland.VclAdoNet;
 
 contains
-  rplastsav in 'rplastsav.pas',
-  rpmdconsts in 'rpmdconsts.pas',
-  rptranslator in 'rptranslator.pas',
-  rpmdshfolder in 'rpmdshfolder.pas',
-  rptypes in 'rptypes.pas',
+  rpregvcl in 'rpregvcl.pas',
   rptypeval in 'rptypeval.pas',
-  rpmunits in 'rpmunits.pas',
-  rpmetafile in 'rpmetafile.pas',
-  rpparser in 'rpparser.pas',
-  rpparams in 'rpparams.pas',
+  rpvpreview in 'rpvpreview.pas',
+  rplastsav in 'rplastsav.pas',
+  rpexpredlgvcl in 'rpexpredlgvcl.pas',
+  rpcompobase in 'rpcompobase.pas',
+  rppdffile in 'rppdffile.pas',
+  rppdfdriver in 'rppdfdriver.pas',
   rpeval in 'rpeval.pas',
   rpevalfunc in 'rpevalfunc.pas',
-  rpalias in 'rpalias.pas',
-  rpdatatext in 'rpdatatext.pas',
-  rpdatainfo in 'rpdatainfo.pas',
-  rpdataset in 'rpdataset.pas',
-  rpsecutil in 'rpsecutil.pas',
-  rpsection in 'rpsection.pas',
-  rpsubreport in 'rpsubreport.pas',
-  rpbasereport in 'rpbasereport.pas',
-  rpprintitem in 'rpprintitem.pas',
-  rpdrawitem in 'rpdrawitem.pas',
-  rpmdchart in 'rpmdchart.pas',
-  rpmdbarcode in 'rpmdbarcode.pas',
-  rplabelitem in 'rplabelitem.pas',
-  rpreport in 'rpreport.pas',
-  rppdfreport in 'rppdfreport.pas',
-  rppdffile in 'rppdffile.pas',
-  rpcompobase in 'rpcompobase.pas',
+  rpmdconsts in 'rpmdconsts.pas',
+  rptranslator in 'rptranslator.pas',
   rpvclreport in 'rpvclreport.pas',
+  rppagesetupvcl in 'rppagesetupvcl.pas',
+  rpfmainmetaviewvcl in 'rpfmainmetaviewvcl.pas',
+  rpfmetaviewvcl in 'rpfmetaviewvcl.pas',
+  rpmdclitreevcl in 'rpmdclitreevcl.pas',
+  rpmdfaboutvcl in 'rpmdfaboutvcl.pas',
   rpgdidriver in 'rpgdidriver.pas',
+  rpexceldriver in 'rpexceldriver.pas',
+  rpsvgdriver in 'rpsvgdriver.pas',
+  rptextdriver in 'rptextdriver.pas',
+  rpmdprintconfigvcl in 'rpmdprintconfigvcl.pas',
+  rprfvparams in 'rprfvparams.pas',
+  rpparams in 'rpparams.pas',
+  rpalias in 'rpalias.pas',
+  rpdatainfo in 'rpdatainfo.pas',
+  rpreport in 'rpreport.pas',
+  rpbasereport in 'rpbasereport.pas',
+  rpsection in 'rpsection.pas',
+  rpprintitem in 'rpprintitem.pas',
+  rplabelitem in 'rplabelitem.pas',
+  rpmdbarcode in 'rpmdbarcode.pas',
+  rpdrawitem in 'rpdrawitem.pas',
+  rpmaskedit in 'rpmaskedit.pas',
   rpvgraphutils in 'rpvgraphutils.pas',
   rpgraphutilsvcl in 'rpgraphutilsvcl.pas',
   rpgdifonts in 'rpgdifonts.pas',
-  rppdfdriver in 'rppdfdriver.pas',
-  rptextdriver in 'rptextdriver.pas',
-  rpexceldriver in 'rpexceldriver.pas',
-  rprfvparams in 'rprfvparams.pas',
-  rpvpreview in 'rpvpreview.pas',
-  rpmdfopenlibvcl in 'rpmdfopenlibvcl.pas',
-  rpmdftreevcl in 'rpmdftreevcl.pas',
-  rpmreg in 'rpmreg.pas',
-  rpmdcharttypes in 'rpmdcharttypes.pas',
-  rpexpredlgvcl in 'rpexpredlgvcl.pas',
-  rpfmetaviewvcl in 'rpfmetaviewvcl.pas',
-  rpfmainmetaviewvcl in 'rpfmainmetaviewvcl.pas',
-  rpmdprotocol in 'rpmdprotocol.pas',
   rpmdrepclient in 'rpmdrepclient.pas',
-  rpmdprintconfigvcl in 'rpmdprintconfigvcl.pas',
-  rpmdclitreevcl in 'rpmdclitreevcl.pas',
-  rpmdfaboutvcl in 'rpmdfaboutvcl.pas',
-  rpregvcl in 'rpregvcl.pas',
+  rpmdprotocol in 'rpmdprotocol.pas',
   rphtmldriver in 'rphtmldriver.pas',
-  rpmaskedit in 'rpmaskedit.pas',
-  rppagesetupvcl in 'rppagesetupvcl.pas';
+  rpmdchart in 'rpmdchart.pas',
+  rpsubreport in 'rpsubreport.pas',
+  rpsecutil in 'rpsecutil.pas',
+  rpmetafile in 'rpmetafile.pas',
+  rpmdcharttypes in 'rpmdcharttypes.pas',
+  rpdatatext in 'rpdatatext.pas',
+  rpdataset in 'rpdataset.pas',
+  rpparser in 'rpparser.pas',
+  rpmunits in 'rpmunits.pas',
+  rptypes in 'rptypes.pas',
+  rpmdshfolder in 'rpmdshfolder.pas';
 
-[assembly: AssemblyTitle('Report Manager Components')]
-[assembly: AssemblyDescription('Report Manager engine components, to access Report Manager reports')]
+[assembly: AssemblyDescription('')]
 [assembly: AssemblyConfiguration('')]
-[assembly: AssemblyCompany('Toni Martir')]
-[assembly: AssemblyProduct('Report Manager')]
-[assembly: AssemblyCopyright('Copyright 2003 Toni Martir')]
+[assembly: AssemblyCompany('')]
+[assembly: AssemblyProduct('')]
+[assembly: AssemblyCopyright('')]
 [assembly: AssemblyTrademark('')]
 [assembly: AssemblyCulture('')]
+
+
+// The Delphi compiler controls the AssemblyTitleAttribute via the ExeDescription.
+// You can set this in the IDE via the Project Options.
+// Manually setting the AssemblyTitle attribute below will override the IDE
+// setting.
+// [assembly: AssemblyTitle('')]
+
 
 //
 // Version information for an assembly consists of the following four values:
 //
 //      Major Version
-//      Minor Version
+//      Minor Version 
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Revision and Build Numbers
+// You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
 [assembly: AssemblyVersion('1.0.*')]
 
 //
-// In order to sign your assembly you must specify a key to use. Refer to the
+// In order to sign your assembly you must specify a key to use. Refer to the 
 // Microsoft .NET Framework documentation for more information on assembly signing.
 //
-// Use the attributes below to control which key is used for signing.
+// Use the attributes below to control which key is used for signing. 
 //
 // Notes: 
 //   (*) If no key is specified, the assembly is not signed.

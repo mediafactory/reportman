@@ -229,6 +229,8 @@ begin
  Rpfunctions.AddObject('VAL',iden);
  iden:=TIdenLEFT.Create(nil);
  Rpfunctions.AddObject('LEFT',iden);
+ iden:=TIdenLENGTH.Create(nil);
+ Rpfunctions.AddObject('LENGTH',iden);
  iden:=TIdenTrim.Create(nil);
  Rpfunctions.AddObject('TRIM',iden);
  iden:=TIdenPos.Create(nil);
@@ -501,7 +503,7 @@ end;
 
 procedure TRpCustomEvaluator.logicalOR(var Value:TRpValue);
 var operador:string[3];
-    Auxiliar:TRpValue;
+    Auxiliar,Auxiliar2:TRpValue;
 begin
  // First precedes the AND operator
  logicalAND(Value);
@@ -511,11 +513,12 @@ begin
   operador:=UpperCase(Rpparser.TokenString);
   while (operador='OR') do
   begin
+   Auxiliar2:=Value;
    Rpparser.NextToken;
    logicalAND(Auxiliar);
    // Compatible types?
    if (Not FChecking) then
-    Value:=LogicalORTRpValue(Value,Auxiliar);
+    Value:=LogicalORTRpValue(Auxiliar2,Auxiliar);
    if Rpparser.Token<>toOperator then
     Exit
    else
@@ -526,7 +529,7 @@ end;
 
 procedure TRpCustomEvaluator.logicalAND(var Value:TRpValue);
 var operador:string[3];
-    Auxiliar:TRpValue;
+    Auxiliar,Auxiliar2:TRpValue;
 begin
  separator(Value);
 
@@ -536,10 +539,11 @@ begin
   while (operador='AND') do
   begin
    Rpparser.NextToken;
+   Auxiliar2:=Value;
    separator(Auxiliar);
    // Compatible types?
    if (Not FChecking) then
-    Value:=LogicalANDTRpValue(Value,Auxiliar);
+    Value:=LogicalANDTRpValue(Auxiliar2,Auxiliar);
    if Rpparser.Token<>toOperator then
     Exit
    else
@@ -564,7 +568,7 @@ end;
 procedure TRpCustomEvaluator.comparations(var Value:TRpValue);
 var
 operation:string[3];
-auxiliar:TRpValue;
+auxiliar,auxiliar2:TRpValue;
 begin
  sum_dif(Value);
  while Rpparser.Token=tooperator do
@@ -573,57 +577,64 @@ begin
   if operation='=' then
     begin
      Rpparser.NextToken;
+     auxiliar2:=Value;
      sum_dif(auxiliar);
      if (NOT FChecking) then
-      Value:=EqualTRpValue(Value,auxiliar);
+      Value:=EqualTRpValue(Auxiliar2,auxiliar);
     end
    else
    if ((operation='<>') OR (operation='><')) then
    begin
     Rpparser.NextToken;
+    auxiliar2:=Value;
     sum_dif(auxiliar);
     if (NOT FChecking) then
-    Value:=DiferentTRpValue(Value,auxiliar);
+    Value:=DiferentTRpValue(auxiliar2,auxiliar);
    end
    else
    if operation='>=' then
    begin
     Rpparser.NextToken;
+    auxiliar2:=Value;
     sum_dif(auxiliar);
     if (NOT FChecking) then
-    Value:=MoreThanEqualTRpValue(Value,auxiliar);
+    Value:=MoreThanEqualTRpValue(auxiliar2,auxiliar);
    end
    else
    if operation='<=' then
    begin
     Rpparser.NextToken;
+    auxiliar2:=Value;
     sum_dif(auxiliar);
     if (NOT FChecking) then
-    Value:=LessThanEqualTRpValue(Value,auxiliar);
+    Value:=LessThanEqualTRpValue(auxiliar2,auxiliar);
    end
    else
    if operation='>' then
    begin
     Rpparser.NextToken;
+    auxiliar2:=Value;
     sum_dif(auxiliar);
     if (NOT FChecking) then
-    Value:=MoreThanTRpValue(Value,auxiliar);
+    Value:=MoreThanTRpValue(auxiliar2,auxiliar);
    end
    else
    if operation='<' then
    begin
     Rpparser.NextToken;
+    auxiliar2:=Value;
     sum_dif(auxiliar);
     if (NOT FChecking) then
-    Value:=LessThanTRpValue(Value,auxiliar);
+    Value:=LessThanTRpValue(auxiliar2,auxiliar);
    end
    else
    if operation='==' then
    begin
     Rpparser.NextToken;
+    auxiliar2:=Value;
     sum_dif(auxiliar);
     if (NOT FChecking) then
-    Value:=EqualEqualTRpValue(Value,auxiliar);
+    Value:=EqualEqualTRpValue(auxiliar2,auxiliar);
    end
    else
     Exit;
@@ -632,7 +643,7 @@ end;
 
 procedure TRpCustomEvaluator.sum_dif(var Value:TRpValue);
 var operador:string[3];
-    Auxiliar:TRpValue;
+    Auxiliar,auxiliar2:TRpValue;
 begin
  mul_div(Value);
 
@@ -642,13 +653,14 @@ begin
   while ((operador='+') or (operador='-')) do
   begin
    Rpparser.NextToken;
+   auxiliar2:=Value;
    mul_div(Auxiliar);
 
    // Compatible types?
    if (Not FChecking) then
    case operador[1] of
-    '+':Value:=SumTRpValue(Value,Auxiliar);
-    '-':Value:=DifTRpValue(Value,Auxiliar);
+    '+':Value:=SumTRpValue(auxiliar2,Auxiliar);
+    '-':Value:=DifTRpValue(auxiliar2,Auxiliar);
    end;
    if Rpparser.Token<>toOperator then
     Exit
@@ -660,7 +672,7 @@ end;
 
 procedure TRpCustomEvaluator.mul_div(var Value:TRpValue);
 var operador:string[4];
-    Auxiliar:TRpValue;
+    Auxiliar,auxiliar2:TRpValue;
 begin
  dosign(Value);
 
@@ -670,11 +682,12 @@ begin
   while ((operador='*') or (operador='/')) do
   begin
    Rpparser.NextToken;
+   auxiliar2:=Value;
    dosign(Auxiliar);
    if (Not FChecking) then
    case operador[1] of
-    '*':Value:=MultTRpValue(Value,Auxiliar);
-    '/':Value:=DivTRpValue(Value,Auxiliar);
+    '*':Value:=MultTRpValue(auxiliar2,Auxiliar);
+    '/':Value:=DivTRpValue(auxiliar2,Auxiliar);
    end;
    if Rpparser.Token<>toOperator then
       Exit

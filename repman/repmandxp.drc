@@ -8,193 +8,268 @@
   resources were bound to the produced executable.
 */
 
-#define IdResourceStrings_RSStackENOTCONN 64720
-#define IdResourceStrings_RSStackESHUTDOWN 64721
-#define IdResourceStrings_RSStackETOOMANYREFS 64722
-#define IdResourceStrings_RSStackETIMEDOUT 64723
-#define IdResourceStrings_RSStackECONNREFUSED 64724
-#define IdResourceStrings_RSStackELOOP 64725
-#define IdResourceStrings_RSStackENAMETOOLONG 64726
-#define IdResourceStrings_RSStackEHOSTDOWN 64727
-#define IdResourceStrings_RSStackEHOSTUNREACH 64728
-#define IdResourceStrings_RSStackENOTEMPTY 64729
-#define IdResourceStrings_RSStackHOST_NOT_FOUND 64730
-#define IdResourceStrings_RSStackEPROTOTYPE 64736
-#define IdResourceStrings_RSStackENOPROTOOPT 64737
-#define IdResourceStrings_RSStackEPROTONOSUPPORT 64738
-#define IdResourceStrings_RSStackESOCKTNOSUPPORT 64739
-#define IdResourceStrings_RSStackEOPNOTSUPP 64740
-#define IdResourceStrings_RSStackEPFNOSUPPORT 64741
-#define IdResourceStrings_RSStackEAFNOSUPPORT 64742
-#define IdResourceStrings_RSStackEADDRINUSE 64743
-#define IdResourceStrings_RSStackEADDRNOTAVAIL 64744
-#define IdResourceStrings_RSStackENETDOWN 64745
-#define IdResourceStrings_RSStackENETUNREACH 64746
-#define IdResourceStrings_RSStackENETRESET 64747
-#define IdResourceStrings_RSStackECONNABORTED 64748
-#define IdResourceStrings_RSStackECONNRESET 64749
-#define IdResourceStrings_RSStackENOBUFS 64750
-#define IdResourceStrings_RSStackEISCONN 64751
-#define IdResourceStrings_RSStatusDisconnected 64752
-#define IdResourceStrings_RSStatusText 64753
-#define IdResourceStrings_RSInvalidServiceName 64754
-#define IdResourceStrings_RSStackError 64755
-#define IdResourceStrings_RSStackEINTR 64756
-#define IdResourceStrings_RSStackEBADF 64757
-#define IdResourceStrings_RSStackEACCES 64758
-#define IdResourceStrings_RSStackEFAULT 64759
-#define IdResourceStrings_RSStackEINVAL 64760
-#define IdResourceStrings_RSStackEMFILE 64761
-#define IdResourceStrings_RSStackEWOULDBLOCK 64762
-#define IdResourceStrings_RSStackEINPROGRESS 64763
-#define IdResourceStrings_RSStackEALREADY 64764
-#define IdResourceStrings_RSStackENOTSOCK 64765
-#define IdResourceStrings_RSStackEDESTADDRREQ 64766
-#define IdResourceStrings_RSStackEMSGSIZE 64767
-#define VDBConsts_SCancelEdit 64768
-#define VDBConsts_SRefreshRecord 64769
-#define VDBConsts_SDeleteRecordQuestion 64770
-#define VDBConsts_SDeleteMultipleRecordsQuestion 64771
-#define VDBConsts_SDataSourceFixed 64772
-#define VDBConsts_SPropDefByLookup 64773
-#define VDBConsts_STooManyColumns 64774
-#define VDBConsts_SRemoteLogin 64775
-#define IdResourceStrings_RSWinsockInitializationError 64776
-#define IdResourceStrings_RSSetSizeExceeded 64777
-#define IdResourceStrings_RSWS2CallError 64778
-#define IdResourceStrings_RSWS2LoadError 64779
-#define IdResourceStrings_RSStatusResolving 64780
-#define IdResourceStrings_RSStatusConnecting 64781
-#define IdResourceStrings_RSStatusConnected 64782
-#define IdResourceStrings_RSStatusDisconnecting 64783
-#define TeeConst_TeeMsg_ValuesBar 64784
-#define TeeConst_TeeMsg_ValuesAngle 64785
-#define TeeConst_TeeMsg_ValuesGanttStart 64786
-#define TeeConst_TeeMsg_ValuesGanttEnd 64787
-#define TeeConst_TeeMsg_ValuesGanttNextTask 64788
-#define TeeConst_TeeMsg_ValuesBubbleRadius 64789
-#define TeeConst_TeeMsg_ValuesArrowEndX 64790
-#define TeeConst_TeeMsg_ValuesArrowEndY 64791
-#define VDBConsts_SFirstRecord 64792
-#define VDBConsts_SPriorRecord 64793
-#define VDBConsts_SNextRecord 64794
-#define VDBConsts_SLastRecord 64795
-#define VDBConsts_SInsertRecord 64796
-#define VDBConsts_SDeleteRecord 64797
-#define VDBConsts_SEditRecord 64798
-#define VDBConsts_SPostEdit 64799
-#define TeeConst_TeeMsg_DefaultFontSize 64800
-#define TeeConst_TeeMsg_FunctionAdd 64801
-#define TeeConst_TeeMsg_FunctionSubtract 64802
-#define TeeConst_TeeMsg_FunctionMultiply 64803
-#define TeeConst_TeeMsg_FunctionDivide 64804
-#define TeeConst_TeeMsg_FunctionHigh 64805
-#define TeeConst_TeeMsg_FunctionLow 64806
-#define TeeConst_TeeMsg_FunctionAverage 64807
-#define TeeConst_TeeMsg_GalleryBubble 64808
-#define TeeConst_TeeMsg_DefaultFontName 64809
-#define TeeConst_TeeMsg_CheckPointerSize 64810
-#define TeeConst_TeeMsg_FunctionPeriod 64811
-#define TeeConst_TeeMsg_PieOther 64812
-#define TeeConst_TeeMsg_ValuesX 64813
-#define TeeConst_TeeMsg_ValuesY 64814
-#define TeeConst_TeeMsg_ValuesPie 64815
-#define TeeConst_TeeMsg_PieSample7 64816
-#define TeeConst_TeeMsg_PieSample8 64817
-#define TeeConst_TeeMsg_GalleryStandard 64818
-#define TeeConst_TeeMsg_GalleryFunctions 64819
-#define TeeConst_TeeMsg_GalleryArrow 64820
-#define TeeConst_TeeMsg_GalleryGantt 64821
-#define TeeConst_TeeMsg_GanttSample1 64822
-#define TeeConst_TeeMsg_GanttSample2 64823
-#define TeeConst_TeeMsg_GanttSample3 64824
-#define TeeConst_TeeMsg_GanttSample4 64825
-#define TeeConst_TeeMsg_GanttSample5 64826
-#define TeeConst_TeeMsg_GanttSample6 64827
-#define TeeConst_TeeMsg_GanttSample7 64828
-#define TeeConst_TeeMsg_GanttSample8 64829
-#define TeeConst_TeeMsg_GanttSample9 64830
-#define TeeConst_TeeMsg_GanttSample10 64831
-#define TeeConst_TeeMsg_AxisTitle 64832
-#define TeeConst_TeeMsg_AxisLabels 64833
-#define TeeConst_TeeMsg_GalleryLine 64834
-#define TeeConst_TeeMsg_GalleryPoint 64835
-#define TeeConst_TeeMsg_GalleryArea 64836
-#define TeeConst_TeeMsg_GalleryBar 64837
-#define TeeConst_TeeMsg_GalleryHorizBar 64838
-#define TeeConst_TeeMsg_GalleryPie 64839
-#define TeeConst_TeeMsg_GalleryFastLine 64840
-#define TeeConst_TeeMsg_Rotation 64841
-#define TeeConst_TeeMsg_PieSample1 64842
-#define TeeConst_TeeMsg_PieSample2 64843
-#define TeeConst_TeeMsg_PieSample3 64844
-#define TeeConst_TeeMsg_PieSample4 64845
-#define TeeConst_TeeMsg_PieSample5 64846
-#define TeeConst_TeeMsg_PieSample6 64847
-#define TeeConst_TeeMsg_Angle 64848
-#define TeeConst_TeeMsg_AxisLogDateTime 64849
-#define TeeConst_TeeMsg_AxisLogNotPositive 64850
-#define TeeConst_TeeMsg_AxisLabelSep 64851
-#define TeeConst_TeeMsg_AxisIncrementNeg 64852
-#define TeeConst_TeeMsg_AxisMinMax 64853
-#define TeeConst_TeeMsg_AxisMaxMin 64854
-#define TeeConst_TeeMsg_AxisLogBase 64855
-#define TeeConst_TeeMsg_MaxPointsPerPage 64856
-#define TeeConst_TeeMsg_3dPercent 64857
-#define TeeConst_TeeMsg_CircularSeries 64858
-#define TeeConst_TeeMsg_BarWidthPercent 64859
-#define TeeConst_TeeMsg_BarOffsetPercent 64860
-#define TeeConst_TeeMsg_DefaultPercentOf 64861
-#define TeeConst_TeeMsg_DefPercentFormat 64862
-#define TeeConst_TeeMsg_DefValueFormat 64863
-#define ADOConst_SCantRequery 64864
-#define ADOConst_SNoFilterOptions 64865
-#define ADOConst_SRecordsetNotOpen 64866
-#define ADOConst_sNameAttr 64867
-#define ADOConst_sValueAttr 64868
-#define rpdataset_SRpDatasetActive 64869
-#define rpdataset_SRpInvOpRpdata 64870
-#define JConsts_sChangeJPGSize 64871
-#define JConsts_sJPEGError 64872
-#define JConsts_sJPEGImageFile 64873
-#define TeeConst_TeeMsg_LegendTopPos 64874
-#define TeeConst_TeeMsg_LegendFirstValue 64875
-#define TeeConst_TeeMsg_LegendColorWidth 64876
-#define TeeConst_TeeMsg_SeriesSetDataSource 64877
-#define TeeConst_TeeMsg_SeriesInvDataSource 64878
-#define TeeConst_TeeMsg_FillSample 64879
-#define bdeconst_SNoDataSetField 64880
-#define bdeconst_SNoCachedUpdates 64881
-#define bdeconst_SInvalidAliasName 64882
-#define bdeconst_SNoFieldAccess 64883
-#define bdeconst_SUntitled 64884
-#define bdeconst_SLocalTransDirty 64885
-#define ADOConst_SInvalidEnumValue 64886
-#define ADOConst_SMissingConnection 64887
-#define ADOConst_SNoDetailFilter 64888
-#define ADOConst_SBookmarksRequired 64889
-#define ADOConst_SMissingCommandText 64890
-#define ADOConst_SNoResultSet 64891
-#define ADOConst_SADOCreateError 64892
-#define ADOConst_SEventsNotSupported 64893
-#define ADOConst_SUsupportedFieldType 64894
-#define ADOConst_SConnectionRequired 64895
-#define bdeconst_SDatabaseNameMissing 64896
-#define bdeconst_SSessionNameMissing 64897
-#define bdeconst_SDatabaseOpen 64898
-#define bdeconst_SDatabaseClosed 64899
-#define bdeconst_SDatabaseHandleSet 64900
-#define bdeconst_SSessionActive 64901
-#define bdeconst_SHandleError 64902
-#define bdeconst_SNoReferenceTableName 64903
-#define bdeconst_SEmptySQLStatement 64904
-#define bdeconst_SNoParameterValue 64905
-#define bdeconst_SLoginError 64906
-#define bdeconst_SInitError 64907
-#define bdeconst_SIDAPILangID 64908
-#define bdeconst_SBDEError 64909
-#define bdeconst_SIndexDoesNotExist 64910
-#define bdeconst_SNoTableName 64911
+#define IdResourceStrings_RSStackELOOP 64640
+#define IdResourceStrings_RSStackENAMETOOLONG 64641
+#define IdResourceStrings_RSStackEHOSTDOWN 64642
+#define IdResourceStrings_RSStackEHOSTUNREACH 64643
+#define IdResourceStrings_RSStackENOTEMPTY 64644
+#define IdResourceStrings_RSStackHOST_NOT_FOUND 64645
+#define IdResourceStrings_RSStackEPFNOSUPPORT 64656
+#define IdResourceStrings_RSStackEAFNOSUPPORT 64657
+#define IdResourceStrings_RSStackEADDRINUSE 64658
+#define IdResourceStrings_RSStackEADDRNOTAVAIL 64659
+#define IdResourceStrings_RSStackENETDOWN 64660
+#define IdResourceStrings_RSStackENETUNREACH 64661
+#define IdResourceStrings_RSStackENETRESET 64662
+#define IdResourceStrings_RSStackECONNABORTED 64663
+#define IdResourceStrings_RSStackECONNRESET 64664
+#define IdResourceStrings_RSStackENOBUFS 64665
+#define IdResourceStrings_RSStackEISCONN 64666
+#define IdResourceStrings_RSStackENOTCONN 64667
+#define IdResourceStrings_RSStackESHUTDOWN 64668
+#define IdResourceStrings_RSStackETOOMANYREFS 64669
+#define IdResourceStrings_RSStackETIMEDOUT 64670
+#define IdResourceStrings_RSStackECONNREFUSED 64671
+#define IdResourceStrings_RSStackEBADF 64672
+#define IdResourceStrings_RSStackEACCES 64673
+#define IdResourceStrings_RSStackEFAULT 64674
+#define IdResourceStrings_RSStackEINVAL 64675
+#define IdResourceStrings_RSStackEMFILE 64676
+#define IdResourceStrings_RSStackEWOULDBLOCK 64677
+#define IdResourceStrings_RSStackEINPROGRESS 64678
+#define IdResourceStrings_RSStackEALREADY 64679
+#define IdResourceStrings_RSStackENOTSOCK 64680
+#define IdResourceStrings_RSStackEDESTADDRREQ 64681
+#define IdResourceStrings_RSStackEMSGSIZE 64682
+#define IdResourceStrings_RSStackEPROTOTYPE 64683
+#define IdResourceStrings_RSStackENOPROTOOPT 64684
+#define IdResourceStrings_RSStackEPROTONOSUPPORT 64685
+#define IdResourceStrings_RSStackESOCKTNOSUPPORT 64686
+#define IdResourceStrings_RSStackEOPNOTSUPP 64687
+#define VDBConsts_SPropDefByLookup 64688
+#define VDBConsts_STooManyColumns 64689
+#define VDBConsts_SRemoteLogin 64690
+#define IdResourceStrings_RSWinsockInitializationError 64691
+#define IdResourceStrings_RSSetSizeExceeded 64692
+#define IdResourceStrings_RSWS2CallError 64693
+#define IdResourceStrings_RSWS2LoadError 64694
+#define IdResourceStrings_RSStatusResolving 64695
+#define IdResourceStrings_RSStatusConnecting 64696
+#define IdResourceStrings_RSStatusConnected 64697
+#define IdResourceStrings_RSStatusDisconnecting 64698
+#define IdResourceStrings_RSStatusDisconnected 64699
+#define IdResourceStrings_RSStatusText 64700
+#define IdResourceStrings_RSInvalidServiceName 64701
+#define IdResourceStrings_RSStackError 64702
+#define IdResourceStrings_RSStackEINTR 64703
+#define TeeConst_TeeMsg_ValuesBubbleRadius 64704
+#define TeeConst_TeeMsg_ValuesArrowEndX 64705
+#define TeeConst_TeeMsg_ValuesArrowEndY 64706
+#define VDBConsts_SFirstRecord 64707
+#define VDBConsts_SPriorRecord 64708
+#define VDBConsts_SNextRecord 64709
+#define VDBConsts_SLastRecord 64710
+#define VDBConsts_SInsertRecord 64711
+#define VDBConsts_SDeleteRecord 64712
+#define VDBConsts_SEditRecord 64713
+#define VDBConsts_SPostEdit 64714
+#define VDBConsts_SCancelEdit 64715
+#define VDBConsts_SRefreshRecord 64716
+#define VDBConsts_SDeleteRecordQuestion 64717
+#define VDBConsts_SDeleteMultipleRecordsQuestion 64718
+#define VDBConsts_SDataSourceFixed 64719
+#define TeeConst_TeeMsg_FunctionHigh 64720
+#define TeeConst_TeeMsg_FunctionLow 64721
+#define TeeConst_TeeMsg_FunctionAverage 64722
+#define TeeConst_TeeMsg_GalleryBubble 64723
+#define TeeConst_TeeMsg_DefaultFontName 64724
+#define TeeConst_TeeMsg_CheckPointerSize 64725
+#define TeeConst_TeeMsg_FunctionPeriod 64726
+#define TeeConst_TeeMsg_PieOther 64727
+#define TeeConst_TeeMsg_ValuesX 64728
+#define TeeConst_TeeMsg_ValuesY 64729
+#define TeeConst_TeeMsg_ValuesPie 64730
+#define TeeConst_TeeMsg_ValuesBar 64731
+#define TeeConst_TeeMsg_ValuesAngle 64732
+#define TeeConst_TeeMsg_ValuesGanttStart 64733
+#define TeeConst_TeeMsg_ValuesGanttEnd 64734
+#define TeeConst_TeeMsg_ValuesGanttNextTask 64735
+#define TeeConst_TeeMsg_GalleryGantt 64736
+#define TeeConst_TeeMsg_GanttSample1 64737
+#define TeeConst_TeeMsg_GanttSample2 64738
+#define TeeConst_TeeMsg_GanttSample3 64739
+#define TeeConst_TeeMsg_GanttSample4 64740
+#define TeeConst_TeeMsg_GanttSample5 64741
+#define TeeConst_TeeMsg_GanttSample6 64742
+#define TeeConst_TeeMsg_GanttSample7 64743
+#define TeeConst_TeeMsg_GanttSample8 64744
+#define TeeConst_TeeMsg_GanttSample9 64745
+#define TeeConst_TeeMsg_GanttSample10 64746
+#define TeeConst_TeeMsg_DefaultFontSize 64747
+#define TeeConst_TeeMsg_FunctionAdd 64748
+#define TeeConst_TeeMsg_FunctionSubtract 64749
+#define TeeConst_TeeMsg_FunctionMultiply 64750
+#define TeeConst_TeeMsg_FunctionDivide 64751
+#define TeeConst_TeeMsg_GalleryBar 64752
+#define TeeConst_TeeMsg_GalleryHorizBar 64753
+#define TeeConst_TeeMsg_GalleryPie 64754
+#define TeeConst_TeeMsg_GalleryFastLine 64755
+#define TeeConst_TeeMsg_Rotation 64756
+#define TeeConst_TeeMsg_PieSample1 64757
+#define TeeConst_TeeMsg_PieSample2 64758
+#define TeeConst_TeeMsg_PieSample3 64759
+#define TeeConst_TeeMsg_PieSample4 64760
+#define TeeConst_TeeMsg_PieSample5 64761
+#define TeeConst_TeeMsg_PieSample6 64762
+#define TeeConst_TeeMsg_PieSample7 64763
+#define TeeConst_TeeMsg_PieSample8 64764
+#define TeeConst_TeeMsg_GalleryStandard 64765
+#define TeeConst_TeeMsg_GalleryFunctions 64766
+#define TeeConst_TeeMsg_GalleryArrow 64767
+#define TeeConst_TeeMsg_AxisMinMax 64768
+#define TeeConst_TeeMsg_AxisMaxMin 64769
+#define TeeConst_TeeMsg_AxisLogBase 64770
+#define TeeConst_TeeMsg_MaxPointsPerPage 64771
+#define TeeConst_TeeMsg_3dPercent 64772
+#define TeeConst_TeeMsg_CircularSeries 64773
+#define TeeConst_TeeMsg_BarWidthPercent 64774
+#define TeeConst_TeeMsg_BarOffsetPercent 64775
+#define TeeConst_TeeMsg_DefaultPercentOf 64776
+#define TeeConst_TeeMsg_DefPercentFormat 64777
+#define TeeConst_TeeMsg_DefValueFormat 64778
+#define TeeConst_TeeMsg_AxisTitle 64779
+#define TeeConst_TeeMsg_AxisLabels 64780
+#define TeeConst_TeeMsg_GalleryLine 64781
+#define TeeConst_TeeMsg_GalleryPoint 64782
+#define TeeConst_TeeMsg_GalleryArea 64783
+#define rpdataset_SRpDatasetActive 64784
+#define rpdataset_SRpInvOpRpdata 64785
+#define JConsts_sChangeJPGSize 64786
+#define JConsts_sJPEGError 64787
+#define JConsts_sJPEGImageFile 64788
+#define TeeConst_TeeMsg_LegendTopPos 64789
+#define TeeConst_TeeMsg_LegendFirstValue 64790
+#define TeeConst_TeeMsg_LegendColorWidth 64791
+#define TeeConst_TeeMsg_SeriesSetDataSource 64792
+#define TeeConst_TeeMsg_SeriesInvDataSource 64793
+#define TeeConst_TeeMsg_FillSample 64794
+#define TeeConst_TeeMsg_Angle 64795
+#define TeeConst_TeeMsg_AxisLogDateTime 64796
+#define TeeConst_TeeMsg_AxisLogNotPositive 64797
+#define TeeConst_TeeMsg_AxisLabelSep 64798
+#define TeeConst_TeeMsg_AxisIncrementNeg 64799
+#define bdeconst_SLocalTransDirty 64800
+#define ADOConst_SInvalidEnumValue 64801
+#define ADOConst_SMissingConnection 64802
+#define ADOConst_SNoDetailFilter 64803
+#define ADOConst_SBookmarksRequired 64804
+#define ADOConst_SMissingCommandText 64805
+#define ADOConst_SNoResultSet 64806
+#define ADOConst_SADOCreateError 64807
+#define ADOConst_SEventsNotSupported 64808
+#define ADOConst_SUsupportedFieldType 64809
+#define ADOConst_SConnectionRequired 64810
+#define ADOConst_SCantRequery 64811
+#define ADOConst_SNoFilterOptions 64812
+#define ADOConst_SRecordsetNotOpen 64813
+#define ADOConst_sNameAttr 64814
+#define ADOConst_sValueAttr 64815
+#define bdeconst_SSessionActive 64816
+#define bdeconst_SHandleError 64817
+#define bdeconst_SNoReferenceTableName 64818
+#define bdeconst_SEmptySQLStatement 64819
+#define bdeconst_SNoParameterValue 64820
+#define bdeconst_SLoginError 64821
+#define bdeconst_SInitError 64822
+#define bdeconst_SIDAPILangID 64823
+#define bdeconst_SBDEError 64824
+#define bdeconst_SIndexDoesNotExist 64825
+#define bdeconst_SNoTableName 64826
+#define bdeconst_SNoDataSetField 64827
+#define bdeconst_SNoCachedUpdates 64828
+#define bdeconst_SInvalidAliasName 64829
+#define bdeconst_SNoFieldAccess 64830
+#define bdeconst_SUntitled 64831
+#define ZMessages_SUnsupportedParameterType 64832
+#define ZMessages_SUnsupportedDataType 64833
+#define ZMessages_SErrorConvertionField 64834
+#define ZMessages_SUnknownError 64835
+#define ZMessages_SFieldNotFound1 64836
+#define bdeconst_SAutoSessionExclusive 64837
+#define bdeconst_SAutoSessionExists 64838
+#define bdeconst_SAutoSessionActive 64839
+#define bdeconst_SDuplicateDatabaseName 64840
+#define bdeconst_SDuplicateSessionName 64841
+#define bdeconst_SInvalidSessionName 64842
+#define bdeconst_SDatabaseNameMissing 64843
+#define bdeconst_SSessionNameMissing 64844
+#define bdeconst_SDatabaseOpen 64845
+#define bdeconst_SDatabaseClosed 64846
+#define bdeconst_SDatabaseHandleSet 64847
+#define ZMessages_SCanNotExecuteMoreQueries 64848
+#define ZMessages_SOperationIsNotAllowed1 64849
+#define ZMessages_SOperationIsNotAllowed2 64850
+#define ZMessages_SOperationIsNotAllowed4 64851
+#define ZMessages_SNoMoreRecords 64852
+#define ZMessages_SCanNotOpenResultSet 64853
+#define ZMessages_SCircularLink 64854
+#define ZMessages_SBookmarkWasNotFound 64855
+#define ZMessages_SIncorrectSearchFieldsNumber 64856
+#define ZMessages_SInvalidOperationInTrans 64857
+#define ZMessages_SIncorrectSymbol 64858
+#define ZMessages_SIncorrectToken 64859
+#define ZMessages_SPattern2Long 64860
+#define ZMessages_SStatementIsNotAllowed 64861
+#define ZMessages_SInvalidState 64862
+#define ZMessages_SErrorConvertion 64863
+#define ZMessages_SCannotUseCommit 64864
+#define ZMessages_SCannotUseRollBack 64865
+#define ZMessages_SCanNotUpdateComplexQuery 64866
+#define ZMessages_SCanNotUpdateThisQueryType 64867
+#define ZMessages_SDriverWasNotFound 64868
+#define ZMessages_SCanNotConnectToServer 64869
+#define ZMessages_STableIsNotSpecified 64870
+#define ZMessages_SLiveResultSetsAreNotSupported 64871
+#define ZMessages_SInvalidInputParameterCount 64872
+#define ZMessages_SIsolationIsNotSupported 64873
+#define ZMessages_SColumnWasNotFound 64874
+#define ZMessages_SWrongTypeForBlobParameter 64875
+#define ZMessages_SIncorrectConnectionURL 64876
+#define ZMessages_SUnsupportedProtocol 64877
+#define ZMessages_SConnectionIsNotAssigned 64878
+#define ZMessages_SQueryIsEmpty 64879
+#define ZMessages_SEncodeTimeIsNotSupported 64880
+#define ZMessages_SEncodeTimestampIsNotSupported 64881
+#define ZMessages_SDecodeDateIsNotSupported 64882
+#define ZMessages_SDecodeTimeIsNotSupported 64883
+#define ZMessages_SDecodeTimestampIsNotSupported 64884
+#define ZMessages_SCanNotRetrieveResultSetData 64885
+#define ZMessages_SRowBufferIsNotAssigned 64886
+#define ZMessages_SColumnIsNotAccessable 64887
+#define ZMessages_SConvertionIsNotPossible 64888
+#define ZMessages_SCanNotAccessBlobRecord 64889
+#define ZMessages_SRowDataIsNotAvailable 64890
+#define ZMessages_SResolverIsNotSpecified 64891
+#define ZMessages_SResultsetIsAlreadyOpened 64892
+#define ZMessages_SCanNotUpdateEmptyRow 64893
+#define ZMessages_SCanNotUpdateDeletedRow 64894
+#define ZMessages_SCanNotDeleteEmptyRow 64895
+#define ZMessages_SVariableWasNotFound 64896
+#define ZMessages_SFunctionWasNotFound 64897
+#define ZMessages_SInternalError 64898
+#define ZMessages_SSyntaxErrorNear 64899
+#define ZMessages_SSyntaxError 64900
+#define ZMessages_SUnknownSymbol 64901
+#define ZMessages_SUnexpectedExprEnd 64902
+#define ZMessages_SRightBraceExpected 64903
+#define ZMessages_SParametersError 64904
+#define ZMessages_SExpectedMoreParams 64905
+#define ZMessages_SInvalidVarByteArray 64906
+#define ZMessages_SVariableAlreadyExists 64907
+#define ZMessages_STypesMismatch 64908
+#define ZMessages_SUnsupportedOperation 64909
+#define ZMessages_SLibraryNotFound 64910
+#define ZMessages_SEncodeDateIsNotSupported 64911
 #define IBXConst_SUnknownPlan 64912
 #define IBXConst_SFieldSizeMismatch 64913
 #define IBXConst_SEventAlreadyRegistered 64914
@@ -204,13 +279,13 @@
 #define IBXConst_SLoginPromptFailure 64918
 #define IBXConst_SIB70feature 64919
 #define IBXConst_SIB71feature 64920
-#define ZPlainLoader_SLibraryNotFound 64921
-#define bdeconst_SAutoSessionExclusive 64922
-#define bdeconst_SAutoSessionExists 64923
-#define bdeconst_SAutoSessionActive 64924
-#define bdeconst_SDuplicateDatabaseName 64925
-#define bdeconst_SDuplicateSessionName 64926
-#define bdeconst_SInvalidSessionName 64927
+#define ZMessages_SSQLError1 64921
+#define ZMessages_SListCapacityError 64922
+#define ZMessages_SListCountError 64923
+#define ZMessages_SListIndexError 64924
+#define ZMessages_SClonningIsNotSupported 64925
+#define ZMessages_SImmutableOpIsNotAllowed 64926
+#define ZMessages_SStackIsEmpty 64927
 #define IBXConst_SEOFInComment 64928
 #define IBXConst_SEOFInString 64929
 #define IBXConst_SParamNameExpected 64930
@@ -821,22 +896,12 @@
 #define SysConst_SAccessDenied 65535
 STRINGTABLE
 BEGIN
-	IdResourceStrings_RSStackENOTCONN,	"Socket is not connected."
-	IdResourceStrings_RSStackESHUTDOWN,	"Cannot send or receive after socket is closed."
-	IdResourceStrings_RSStackETOOMANYREFS,	"Too many references, cannot splice."
-	IdResourceStrings_RSStackETIMEDOUT,	"Connection timed out."
-	IdResourceStrings_RSStackECONNREFUSED,	"Connection refused."
 	IdResourceStrings_RSStackELOOP,	"Too many levels of symbolic links."
 	IdResourceStrings_RSStackENAMETOOLONG,	"File name too long."
 	IdResourceStrings_RSStackEHOSTDOWN,	"Host is down."
 	IdResourceStrings_RSStackEHOSTUNREACH,	"No route to host."
 	IdResourceStrings_RSStackENOTEMPTY,	"Directory not empty"
 	IdResourceStrings_RSStackHOST_NOT_FOUND,	"Host not found."
-	IdResourceStrings_RSStackEPROTOTYPE,	"Protocol wrong type for socket."
-	IdResourceStrings_RSStackENOPROTOOPT,	"Bad protocol option."
-	IdResourceStrings_RSStackEPROTONOSUPPORT,	"Protocol not supported."
-	IdResourceStrings_RSStackESOCKTNOSUPPORT,	"Socket type not supported."
-	IdResourceStrings_RSStackEOPNOTSUPP,	"Operation not supported on socket."
 	IdResourceStrings_RSStackEPFNOSUPPORT,	"Protocol family not supported."
 	IdResourceStrings_RSStackEAFNOSUPPORT,	"Address family not supported by protocol family."
 	IdResourceStrings_RSStackEADDRINUSE,	"Address already in use."
@@ -848,11 +913,11 @@ BEGIN
 	IdResourceStrings_RSStackECONNRESET,	"Connection reset by peer."
 	IdResourceStrings_RSStackENOBUFS,	"No buffer space available."
 	IdResourceStrings_RSStackEISCONN,	"Socket is already connected."
-	IdResourceStrings_RSStatusDisconnected,	"Disconnected."
-	IdResourceStrings_RSStatusText,	"%s"
-	IdResourceStrings_RSInvalidServiceName,	"%s is not a valid service."
-	IdResourceStrings_RSStackError,	"Socket Error # %d\r\n%s"
-	IdResourceStrings_RSStackEINTR,	"Interrupted system call."
+	IdResourceStrings_RSStackENOTCONN,	"Socket is not connected."
+	IdResourceStrings_RSStackESHUTDOWN,	"Cannot send or receive after socket is closed."
+	IdResourceStrings_RSStackETOOMANYREFS,	"Too many references, cannot splice."
+	IdResourceStrings_RSStackETIMEDOUT,	"Connection timed out."
+	IdResourceStrings_RSStackECONNREFUSED,	"Connection refused."
 	IdResourceStrings_RSStackEBADF,	"Bad file number."
 	IdResourceStrings_RSStackEACCES,	"Access denied."
 	IdResourceStrings_RSStackEFAULT,	"Bad address."
@@ -864,11 +929,11 @@ BEGIN
 	IdResourceStrings_RSStackENOTSOCK,	"Socket operation on non-socket."
 	IdResourceStrings_RSStackEDESTADDRREQ,	"Destination address required."
 	IdResourceStrings_RSStackEMSGSIZE,	"Message too long."
-	VDBConsts_SCancelEdit,	"Cancel edit"
-	VDBConsts_SRefreshRecord,	"Refresh data"
-	VDBConsts_SDeleteRecordQuestion,	"Delete record?"
-	VDBConsts_SDeleteMultipleRecordsQuestion,	"Delete all selected records?"
-	VDBConsts_SDataSourceFixed,	"Operation not allowed in a DBCtrlGrid"
+	IdResourceStrings_RSStackEPROTOTYPE,	"Protocol wrong type for socket."
+	IdResourceStrings_RSStackENOPROTOOPT,	"Bad protocol option."
+	IdResourceStrings_RSStackEPROTONOSUPPORT,	"Protocol not supported."
+	IdResourceStrings_RSStackESOCKTNOSUPPORT,	"Socket type not supported."
+	IdResourceStrings_RSStackEOPNOTSUPP,	"Operation not supported on socket."
 	VDBConsts_SPropDefByLookup,	"Property already defined by lookup field"
 	VDBConsts_STooManyColumns,	"Grid requested to display more than 256 columns"
 	VDBConsts_SRemoteLogin,	"Remote Login"
@@ -880,11 +945,11 @@ BEGIN
 	IdResourceStrings_RSStatusConnecting,	"Connecting to %s."
 	IdResourceStrings_RSStatusConnected,	"Connected."
 	IdResourceStrings_RSStatusDisconnecting,	"Disconnecting."
-	TeeConst_TeeMsg_ValuesBar,	"Bar"
-	TeeConst_TeeMsg_ValuesAngle,	"Angle"
-	TeeConst_TeeMsg_ValuesGanttStart,	"Start"
-	TeeConst_TeeMsg_ValuesGanttEnd,	"End"
-	TeeConst_TeeMsg_ValuesGanttNextTask,	"NextTask"
+	IdResourceStrings_RSStatusDisconnected,	"Disconnected."
+	IdResourceStrings_RSStatusText,	"%s"
+	IdResourceStrings_RSInvalidServiceName,	"%s is not a valid service."
+	IdResourceStrings_RSStackError,	"Socket Error # %d\r\n%s"
+	IdResourceStrings_RSStackEINTR,	"Interrupted system call."
 	TeeConst_TeeMsg_ValuesBubbleRadius,	"Radius"
 	TeeConst_TeeMsg_ValuesArrowEndX,	"EndX"
 	TeeConst_TeeMsg_ValuesArrowEndY,	"EndY"
@@ -896,11 +961,11 @@ BEGIN
 	VDBConsts_SDeleteRecord,	"Delete record"
 	VDBConsts_SEditRecord,	"Edit record"
 	VDBConsts_SPostEdit,	"Post edit"
-	TeeConst_TeeMsg_DefaultFontSize,	"8"
-	TeeConst_TeeMsg_FunctionAdd,	"Add"
-	TeeConst_TeeMsg_FunctionSubtract,	"Subtract"
-	TeeConst_TeeMsg_FunctionMultiply,	"Multiply"
-	TeeConst_TeeMsg_FunctionDivide,	"Divide"
+	VDBConsts_SCancelEdit,	"Cancel edit"
+	VDBConsts_SRefreshRecord,	"Refresh data"
+	VDBConsts_SDeleteRecordQuestion,	"Delete record?"
+	VDBConsts_SDeleteMultipleRecordsQuestion,	"Delete all selected records?"
+	VDBConsts_SDataSourceFixed,	"Operation not allowed in a DBCtrlGrid"
 	TeeConst_TeeMsg_FunctionHigh,	"High"
 	TeeConst_TeeMsg_FunctionLow,	"Low"
 	TeeConst_TeeMsg_FunctionAverage,	"Average"
@@ -912,11 +977,11 @@ BEGIN
 	TeeConst_TeeMsg_ValuesX,	"X"
 	TeeConst_TeeMsg_ValuesY,	"Y"
 	TeeConst_TeeMsg_ValuesPie,	"Pie"
-	TeeConst_TeeMsg_PieSample7,	"Bikes"
-	TeeConst_TeeMsg_PieSample8,	"Chairs"
-	TeeConst_TeeMsg_GalleryStandard,	"Standard"
-	TeeConst_TeeMsg_GalleryFunctions,	"Functions"
-	TeeConst_TeeMsg_GalleryArrow,	"Arrow"
+	TeeConst_TeeMsg_ValuesBar,	"Bar"
+	TeeConst_TeeMsg_ValuesAngle,	"Angle"
+	TeeConst_TeeMsg_ValuesGanttStart,	"Start"
+	TeeConst_TeeMsg_ValuesGanttEnd,	"End"
+	TeeConst_TeeMsg_ValuesGanttNextTask,	"NextTask"
 	TeeConst_TeeMsg_GalleryGantt,	"Gantt"
 	TeeConst_TeeMsg_GanttSample1,	"Design"
 	TeeConst_TeeMsg_GanttSample2,	"Prototyping"
@@ -928,11 +993,11 @@ BEGIN
 	TeeConst_TeeMsg_GanttSample8,	"Debugging"
 	TeeConst_TeeMsg_GanttSample9,	"New Version"
 	TeeConst_TeeMsg_GanttSample10,	"Banking"
-	TeeConst_TeeMsg_AxisTitle,	"Axis Title"
-	TeeConst_TeeMsg_AxisLabels,	"Axis Labels"
-	TeeConst_TeeMsg_GalleryLine,	"Line"
-	TeeConst_TeeMsg_GalleryPoint,	"Point"
-	TeeConst_TeeMsg_GalleryArea,	"Area"
+	TeeConst_TeeMsg_DefaultFontSize,	"8"
+	TeeConst_TeeMsg_FunctionAdd,	"Add"
+	TeeConst_TeeMsg_FunctionSubtract,	"Subtract"
+	TeeConst_TeeMsg_FunctionMultiply,	"Multiply"
+	TeeConst_TeeMsg_FunctionDivide,	"Divide"
 	TeeConst_TeeMsg_GalleryBar,	"Bar"
 	TeeConst_TeeMsg_GalleryHorizBar,	"Horiz. Bar"
 	TeeConst_TeeMsg_GalleryPie,	"Pie"
@@ -944,11 +1009,11 @@ BEGIN
 	TeeConst_TeeMsg_PieSample4,	"Monitors"
 	TeeConst_TeeMsg_PieSample5,	"Lamps"
 	TeeConst_TeeMsg_PieSample6,	"Keyboards"
-	TeeConst_TeeMsg_Angle,	"%s Angle must be between 0 and 359 degrees"
-	TeeConst_TeeMsg_AxisLogDateTime,	"DateTime Axis cannot be Logarithmic"
-	TeeConst_TeeMsg_AxisLogNotPositive,	"Logarithmic Axis Min and Max values should be >= 0"
-	TeeConst_TeeMsg_AxisLabelSep,	"Labels Separation % must be greater than 0"
-	TeeConst_TeeMsg_AxisIncrementNeg,	"Axis increment must be >= 0"
+	TeeConst_TeeMsg_PieSample7,	"Bikes"
+	TeeConst_TeeMsg_PieSample8,	"Chairs"
+	TeeConst_TeeMsg_GalleryStandard,	"Standard"
+	TeeConst_TeeMsg_GalleryFunctions,	"Functions"
+	TeeConst_TeeMsg_GalleryArrow,	"Arrow"
 	TeeConst_TeeMsg_AxisMinMax,	"Axis Minimum Value must be <= Maximum"
 	TeeConst_TeeMsg_AxisMaxMin,	"Axis Maximum Value must be >= Minimum"
 	TeeConst_TeeMsg_AxisLogBase,	"Axis Logarithmic Base should be >= 2"
@@ -960,11 +1025,11 @@ BEGIN
 	TeeConst_TeeMsg_DefaultPercentOf,	"%s of %s"
 	TeeConst_TeeMsg_DefPercentFormat,	"##0.## %"
 	TeeConst_TeeMsg_DefValueFormat,	"#,##0.###"
-	ADOConst_SCantRequery,	"Cannot perform a requery after connection has changed"
-	ADOConst_SNoFilterOptions,	"FilterOptions are not supported"
-	ADOConst_SRecordsetNotOpen,	"Recordset is not open"
-	ADOConst_sNameAttr,	"Name"
-	ADOConst_sValueAttr,	"Value"
+	TeeConst_TeeMsg_AxisTitle,	"Axis Title"
+	TeeConst_TeeMsg_AxisLabels,	"Axis Labels"
+	TeeConst_TeeMsg_GalleryLine,	"Line"
+	TeeConst_TeeMsg_GalleryPoint,	"Point"
+	TeeConst_TeeMsg_GalleryArea,	"Area"
 	rpdataset_SRpDatasetActive,	"Operation not allowed in a open dataset"
 	rpdataset_SRpInvOpRpdata,	"Invalid operation for TRpDataset"
 	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
@@ -976,11 +1041,11 @@ BEGIN
 	TeeConst_TeeMsg_SeriesSetDataSource,	"No ParentChart to validate DataSource"
 	TeeConst_TeeMsg_SeriesInvDataSource,	"No valid DataSource: %s"
 	TeeConst_TeeMsg_FillSample,	"FillSampleValues NumValues must be > 0"
-	bdeconst_SNoDataSetField,	"Missing DataSetField property"
-	bdeconst_SNoCachedUpdates,	"Not in cached update mode"
-	bdeconst_SInvalidAliasName,	"Invalid alias name %s"
-	bdeconst_SNoFieldAccess,	"Cannot access field '%s' in a filter"
-	bdeconst_SUntitled,	"Untitled Application"
+	TeeConst_TeeMsg_Angle,	"%s Angle must be between 0 and 359 degrees"
+	TeeConst_TeeMsg_AxisLogDateTime,	"DateTime Axis cannot be Logarithmic"
+	TeeConst_TeeMsg_AxisLogNotPositive,	"Logarithmic Axis Min and Max values should be >= 0"
+	TeeConst_TeeMsg_AxisLabelSep,	"Labels Separation % must be greater than 0"
+	TeeConst_TeeMsg_AxisIncrementNeg,	"Axis increment must be >= 0"
 	bdeconst_SLocalTransDirty,	"The transaction isolation level must be dirty read for local databases"
 	ADOConst_SInvalidEnumValue,	"Invalid Enum Value"
 	ADOConst_SMissingConnection,	"Missing Connection or ConnectionString"
@@ -992,11 +1057,11 @@ BEGIN
 	ADOConst_SEventsNotSupported,	"Events are not supported with server side TableDirect cursors"
 	ADOConst_SUsupportedFieldType,	"Unsupported field type (%s) in field %s"
 	ADOConst_SConnectionRequired,	"A connection component is required for async ExecuteOptions"
-	bdeconst_SDatabaseNameMissing,	"Database name missing"
-	bdeconst_SSessionNameMissing,	"Session name missing"
-	bdeconst_SDatabaseOpen,	"Cannot perform this operation on an open database"
-	bdeconst_SDatabaseClosed,	"Cannot perform this operation on a closed database"
-	bdeconst_SDatabaseHandleSet,	"Database handle owned by a different session"
+	ADOConst_SCantRequery,	"Cannot perform a requery after connection has changed"
+	ADOConst_SNoFilterOptions,	"FilterOptions are not supported"
+	ADOConst_SRecordsetNotOpen,	"Recordset is not open"
+	ADOConst_sNameAttr,	"Name"
+	ADOConst_sValueAttr,	"Value"
 	bdeconst_SSessionActive,	"Cannot perform this operation on an active session"
 	bdeconst_SHandleError,	"Error creating cursor handle"
 	bdeconst_SNoReferenceTableName,	"ReferenceTableName not specified for field '%s'"
@@ -1008,6 +1073,91 @@ BEGIN
 	bdeconst_SBDEError,	"BDE error $%.4x"
 	bdeconst_SIndexDoesNotExist,	"Index does not exist. Index: %s"
 	bdeconst_SNoTableName,	"Missing TableName property"
+	bdeconst_SNoDataSetField,	"Missing DataSetField property"
+	bdeconst_SNoCachedUpdates,	"Not in cached update mode"
+	bdeconst_SInvalidAliasName,	"Invalid alias name %s"
+	bdeconst_SNoFieldAccess,	"Cannot access field '%s' in a filter"
+	bdeconst_SUntitled,	"Untitled Application"
+	ZMessages_SUnsupportedParameterType,	"Unsupported parameter type"
+	ZMessages_SUnsupportedDataType,	"Unsupported data type"
+	ZMessages_SErrorConvertionField,	"Convertion error for field \"%s\" to SQLType \"%s\""
+	ZMessages_SUnknownError,	"Unknown error"
+	ZMessages_SFieldNotFound1,	"Field \"%s\" was not found"
+	bdeconst_SAutoSessionExclusive,	"Cannot enable AutoSessionName property with more than one session on a form or data-module"
+	bdeconst_SAutoSessionExists,	"Cannot add a session to the form or data-module while session '%s' has AutoSessionName enabled"
+	bdeconst_SAutoSessionActive,	"Cannot modify SessionName while AutoSessionName is enabled"
+	bdeconst_SDuplicateDatabaseName,	"Duplicate database name '%s'"
+	bdeconst_SDuplicateSessionName,	"Duplicate session name '%s'"
+	bdeconst_SInvalidSessionName,	"Invalid session name %s"
+	bdeconst_SDatabaseNameMissing,	"Database name missing"
+	bdeconst_SSessionNameMissing,	"Session name missing"
+	bdeconst_SDatabaseOpen,	"Cannot perform this operation on an open database"
+	bdeconst_SDatabaseClosed,	"Cannot perform this operation on a closed database"
+	bdeconst_SDatabaseHandleSet,	"Database handle owned by a different session"
+	ZMessages_SCanNotExecuteMoreQueries,	"Cannot execute more then one query"
+	ZMessages_SOperationIsNotAllowed1,	"Operation is not allowed in FORWARD ONLY mode"
+	ZMessages_SOperationIsNotAllowed2,	"Operation is not allowed in READ ONLY mode"
+	ZMessages_SOperationIsNotAllowed4,	"Operation is not allowed for closed dataset"
+	ZMessages_SNoMoreRecords,	"No more records in the ResultSet"
+	ZMessages_SCanNotOpenResultSet,	"Can not open a ResultSet"
+	ZMessages_SCircularLink,	"Datasource makes a circular link"
+	ZMessages_SBookmarkWasNotFound,	"Bookmark was not found"
+	ZMessages_SIncorrectSearchFieldsNumber,	"Incorrect number of search field values"
+	ZMessages_SInvalidOperationInTrans,	"Invalid operation in explicit transaction mode"
+	ZMessages_SIncorrectSymbol,	"Incorrect symbol in field list \"%s\"."
+	ZMessages_SIncorrectToken,	"Incorrect token followed by \":\""
+	ZMessages_SPattern2Long,	"Pattern is too long"
+	ZMessages_SStatementIsNotAllowed,	"Statement is not allowed"
+	ZMessages_SInvalidState,	"Invalid state"
+	ZMessages_SErrorConvertion,	"Convertion error"
+	ZMessages_SCannotUseCommit,	"You cannot use Commit in autocommit mode"
+	ZMessages_SCannotUseRollBack,	"You cannot use Rollback in autocommit mode"
+	ZMessages_SCanNotUpdateComplexQuery,	"Can not update a complex query with more then one table"
+	ZMessages_SCanNotUpdateThisQueryType,	"Can not update this query type"
+	ZMessages_SDriverWasNotFound,	"Requested database driver was not found"
+	ZMessages_SCanNotConnectToServer,	"Can not connect to SQL server"
+	ZMessages_STableIsNotSpecified,	"Table is not specified"
+	ZMessages_SLiveResultSetsAreNotSupported,	"Live query is not supported by this class"
+	ZMessages_SInvalidInputParameterCount,	"Input parameter count is less then expected"
+	ZMessages_SIsolationIsNotSupported,	"Transact isolation level is not supported"
+	ZMessages_SColumnWasNotFound,	"Column with name \"%s\" was not found"
+	ZMessages_SWrongTypeForBlobParameter,	"Wrong type for Blob parameter"
+	ZMessages_SIncorrectConnectionURL,	"Incorrect connection URL: %s"
+	ZMessages_SUnsupportedProtocol,	"Unsupported protocol: %s"
+	ZMessages_SConnectionIsNotAssigned,	"Database connection component is not assigned"
+	ZMessages_SQueryIsEmpty,	"SQL Query is empty"
+	ZMessages_SEncodeTimeIsNotSupported,	"This version is not is no supported isc_encode_sql_time"
+	ZMessages_SEncodeTimestampIsNotSupported,	"This version is not is no supported isc_encode_sql_timestamp"
+	ZMessages_SDecodeDateIsNotSupported,	"This version is not is no supported isc_decode_sql_date"
+	ZMessages_SDecodeTimeIsNotSupported,	"This version is not is no supported isc_decode_sql_time"
+	ZMessages_SDecodeTimestampIsNotSupported,	"This version is not is no supported isc_decode_sql_timestamp"
+	ZMessages_SCanNotRetrieveResultSetData,	"Can not retrieve ResultSet data"
+	ZMessages_SRowBufferIsNotAssigned,	"Row buffer is not assigned"
+	ZMessages_SColumnIsNotAccessable,	"Column with index %d is not accessable"
+	ZMessages_SConvertionIsNotPossible,	"Convertion is not possible for column %d from %s to %s"
+	ZMessages_SCanNotAccessBlobRecord,	"Can not access blob record in column %d with type %s"
+	ZMessages_SRowDataIsNotAvailable,	"Row data is not available"
+	ZMessages_SResolverIsNotSpecified,	"Resolver is not specified for this ResultSet"
+	ZMessages_SResultsetIsAlreadyOpened,	"ResultSet is already opened"
+	ZMessages_SCanNotUpdateEmptyRow,	"Can not update an empty row"
+	ZMessages_SCanNotUpdateDeletedRow,	"Can not update a deleted row"
+	ZMessages_SCanNotDeleteEmptyRow,	"Can not delete an empty row"
+	ZMessages_SVariableWasNotFound,	"Variable \"%s\" was not found"
+	ZMessages_SFunctionWasNotFound,	"Function \"%s\" was not found"
+	ZMessages_SInternalError,	"Internal error"
+	ZMessages_SSyntaxErrorNear,	"Syntax error near \"%s\""
+	ZMessages_SSyntaxError,	"Syntax error"
+	ZMessages_SUnknownSymbol,	"Unknown symbol \"%s\""
+	ZMessages_SUnexpectedExprEnd,	"Unexpected end of expression"
+	ZMessages_SRightBraceExpected,	") expected"
+	ZMessages_SParametersError,	"Expected %d parameters but was found %d"
+	ZMessages_SExpectedMoreParams,	"Expected more then 2 parameters"
+	ZMessages_SInvalidVarByteArray,	"Invalid VarByte array"
+	ZMessages_SVariableAlreadyExists,	"Variable \"%s\" already exists"
+	ZMessages_STypesMismatch,	"Types mismatch"
+	ZMessages_SUnsupportedOperation,	"Unsupported operation"
+	ZMessages_SLibraryNotFound,	"No dynamic library from the list %s found"
+	ZMessages_SEncodeDateIsNotSupported,	"This version is not is no supported isc_encode_sql_date"
 	IBXConst_SUnknownPlan,	"Unknown Error - Can't retrieve plan"
 	IBXConst_SFieldSizeMismatch,	"Size Mismatch - Field %s size is too small for data"
 	IBXConst_SEventAlreadyRegistered,	"Events already registered"
@@ -1017,13 +1167,13 @@ BEGIN
 	IBXConst_SLoginPromptFailure,	"Can not find default login prompt dialog.  Please add DBLogDlg to the uses section of your main file."
 	IBXConst_SIB70feature,	"%s is an InterBase 7.0 function. Please upgrade to InterBase 7.0 to use this functonality"
 	IBXConst_SIB71feature,	"%s is an InterBase 7.1 function. Please upgrade to InterBase 7.1 to use this functonality"
-	ZPlainLoader_SLibraryNotFound,	"Dynamic library %s not found"
-	bdeconst_SAutoSessionExclusive,	"Cannot enable AutoSessionName property with more than one session on a form or data-module"
-	bdeconst_SAutoSessionExists,	"Cannot add a session to the form or data-module while session '%s' has AutoSessionName enabled"
-	bdeconst_SAutoSessionActive,	"Cannot modify SessionName while AutoSessionName is enabled"
-	bdeconst_SDuplicateDatabaseName,	"Duplicate database name '%s'"
-	bdeconst_SDuplicateSessionName,	"Duplicate session name '%s'"
-	bdeconst_SInvalidSessionName,	"Invalid session name %s"
+	ZMessages_SSQLError1,	"SQL Error: %s"
+	ZMessages_SListCapacityError,	"List capacity out of bounds (%d)"
+	ZMessages_SListCountError,	"List count out of bounds (%d)"
+	ZMessages_SListIndexError,	"List index out of bounds (%d)"
+	ZMessages_SClonningIsNotSupported,	"Clonning is not supported by this class"
+	ZMessages_SImmutableOpIsNotAllowed,	"The operation is not allowed for immutable collection"
+	ZMessages_SStackIsEmpty,	"Stack is empty"
 	IBXConst_SEOFInComment,	"EOF in comment detected"
 	IBXConst_SEOFInString,	"EOF in string detected"
 	IBXConst_SParamNameExpected,	"Parameter name expected"

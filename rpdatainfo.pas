@@ -217,6 +217,7 @@ type
 {$ENDIF}
    function Add(alias:string):TRpDatabaseInfoItem;
    function IndexOf(Value:string):integer;
+   function ItemByName(AName:string):TRpDatabaseInfoItem;
    function GetReportStream(ConnectionName:String;ReportName:WideString):TStream;
    procedure SaveReportStream(ConnectionName:String;ReportName:WideString;astream:TStream);
    procedure SaveToFile(ainifile:String);
@@ -258,6 +259,9 @@ type
    FGroupUnion:Boolean;
    FDBInfoList:TRpDatabaseInfoList;
    FParamsList:TRpParamList;
+{$IFDEF USEADO}
+   FexternalDataSet: Pointer;
+{$ENDIF}
    procedure SetDataUnions(Value:TStrings);
    procedure SetDatabaseAlias(Value:string);
    procedure SetAlias(Value:string);
@@ -278,6 +282,9 @@ type
    property CachedDataset:TRpDataset read FCachedDataset;
 {$ENDIF}
    property Cached:Boolean read FCached write FCached;
+{$IFDEF USEADO}
+   property externalDataset: Pointer read FexternalDataSet write FexternalDataSet;
+{$ENDIF}
   published
    property Alias:string read FAlias write SetAlias;
    property DatabaseAlias:string read FDatabaseAlias write SetDatabaseAlias;
@@ -311,6 +318,7 @@ type
    procedure EnableLinks;
    function Add(alias:string):TRpDataInfoItem;
    function IndexOf(Value:string):integer;
+   function ItemByName(AName:string):TRpDataInfoItem;
    property Items[index:integer]:TRpDataInfoItem read GetItem write SetItem;default;
    constructor Create(rep:TComponent);
   end;
@@ -1570,13 +1578,20 @@ begin
     rpdataado:
      begin
 {$IFDEF USEADO}
-      TADOQuery(FSQLInternalQuery).Connection:=baseinfo.ADOConnection;
-      TADOQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
-      TADOQuery(FSQLInternalQuery).CursorType:=ctUnspecified;
-//      TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
-      TADOQuery(FSQLInternalQuery).DataSource:=nil;
-//      Activating this switches break linked querys
-//      TADOQuery(FSQLInternalQuery).CursorLocation:=clUseServer;
+      if Assigned(FexternalDataSet) then
+      begin
+         TADOQuery(FSQLInternalQuery).Recordset := _Recordset(FexternalDataSet);
+      end
+      else
+      begin
+         TADOQuery(FSQLInternalQuery).Connection:=baseinfo.ADOConnection;
+         TADOQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
+         TADOQuery(FSQLInternalQuery).CursorType:=ctUnspecified;
+   //      TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
+         TADOQuery(FSQLInternalQuery).DataSource:=nil;
+   //      Activating this switches break linked querys
+   //      TADOQuery(FSQLInternalQuery).CursorLocation:=clUseServer;
+      end;
 {$ENDIF}
      end;
     rpdataibo:
@@ -3009,7 +3024,8 @@ begin
  try
   aparam:=TRpParamObject.Create;
   try
-   aparam.Value:=reportname;
+   // WideStrings not supported by most dbdrivers
+   aparam.Value:=String(reportname);
    params.AddObject('REPNAME',aparam);
    adata:=OpenDatasetFromSQL(astring,params,false);
    try
@@ -3445,6 +3461,27 @@ begin
   fieldsizes.Add(sizestring);
  end;
 end;
+
+function TRpDataInfoList.ItemByName(AName:string):TRpDataInfoItem;
+var
+ index:Integer;
+begin
+ index:=IndexOf(AName);
+ if index<0 then
+  Raise Exception.Create(SRPDabaseAliasNotFound);
+ Result:=Items[index];
+end;
+
+function TRpDatabaseInfoList.ItemByName(AName:string):TRpDatabaseInfoItem;
+var
+ index:Integer;
+begin
+ index:=IndexOf(AName);
+ if index<0 then
+  Raise Exception.Create(SRPDabaseAliasNotFound);
+ Result:=Items[index];
+end;
+
 
 initialization
 

@@ -71,6 +71,7 @@ type
    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer);override;
    constructor Create(AOwner:TComponent);override;
    function GetReport:TRpReport;
+   procedure SetRecordset(datasetname:string; recordset: Pointer);
    { Public declarations }
   published
     { Published declarations }
@@ -235,6 +236,20 @@ function TRpActiveXReport.GetParamValue(paramname:string):Variant;
 begin
  Result:=FVCLReport.Report.Params.ParamByName(paramname).Value;
 end;
+
+procedure TRpActiveXReport.SetRecordset(datasetname:string; recordset: Pointer);
+var
+ index:integer;
+begin
+ index:=FVCLReport.Report.DataInfo.IndexOf(datasetname);
+ if index<0 then
+  Raise Exception.Create(SRpDatasetNotExists+':'+datasetname);
+
+ FVCLReport.Report.DataInfo.Items[index].externalDataset:=recordset;
+ // maybe reste params...
+ //FVCLReport.Report.DataInfo.Items[index].SQL := '';
+end;
+
 
 end.
 

@@ -28,8 +28,9 @@ uses Classes,Sysutils,rpreport,
  QPrinters,rpqtdriver,rppreview,rprfparams,rpgraphutils,
 {$IFDEF VCLANDCLX}
  rpgdidriver,Printers,Dialogs,rprfvparams,rpvpreview,rpfmainmetaviewvcl,
+ rppagesetupvcl,
 {$ENDIF}
- rpalias,rpfmainmetaview;
+ rpalias,rpfmainmetaview,rppagesetup;
 
 type
  // rpDriverGDI is ignored in Linux
@@ -50,6 +51,7 @@ type
    constructor Create(AOwner:TComponent);override;
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;override;
+   procedure PageSetup;
  published
    property Filename;
    property Preview;
@@ -303,5 +305,16 @@ begin
    1,filename,true,true,textdriver);
 end;
 
+procedure TCLXReport.PageSetup;
+begin
+{$IFDEF VCLANDCLX}
+  if FDriver=rpDriverGDI then
+  begin
+   rppagesetupvcl.ExecutePageSetup(Report);
+   exit;
+  end;
+{$ENDIF}
+ rppagesetup.ExecutePageSetup(Report);
+end;
 
 end.

@@ -1081,7 +1081,6 @@ begin
   EndPrint;
   Raise Exception.Create(SRpNoDataAvailableToPrint);
  end;
-
  printing:=True;
 end;
 
@@ -1232,9 +1231,12 @@ begin
 
  if datasection then
  begin
-  printedsomething:=true;
-  oldprintedsection:=section;
-  oldprintedsectionext:=sectionext;
+  if Not asection.PageRepeat then
+  begin
+   printedsomething:=true;
+   oldprintedsection:=section;
+   oldprintedsectionext:=sectionext;
+  end;
  end;
  // If the section is not aligned at bottom of the page then
  if Not asection.AlignBottom then

@@ -746,6 +746,7 @@ procedure TFRpDBTree.EditTree(adbinfo:TRpDatabaseInfoItem;readonly:boolean);
 var
  adatareports:TDataset;
  adatagroups:TDataset;
+ sqltext:String;
 begin
  doreadonly:=readonly;
  if readonly then
@@ -758,13 +759,28 @@ begin
  dbinfo:=adbinfo;
  dbinfo.Connect;
  ATree.Items.Clear;
+ sqltext:='SELECT '+dbinfo.ReportSearchField;
+ sqltext:=sqltext+','+dbinfo.ReportField;
+ if length(dbinfo.ReportGroupsTable)>0 then
+  sqltext:=sqltext+',REPORT_GROUP';
+ sqltext:=sqltext+' FROM '+dbinfo.ReportTable;
  adatareports:=
- dbinfo.OpenDatasetFromSQL('SELECT '+dbinfo.ReportSearchField+',REPORT_GROUP FROM '+
- dbinfo.reporttable,nil,false);
+ dbinfo.OpenDatasetFromSQL(sqltext,nil,false);
  try
-  adatagroups:=
-  dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
-    ' PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false);
+  if Length(dbinfo.ReportGroupsTable)>0 then
+  begin
+   adatagroups:=
+   dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
+     ' PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false);
+  end
+  else
+  begin
+   adatagroups:=TClientDataset.Create(nil);
+   adatagroups.FieldDefs.Add('GROUP_CODE',ftinteger);
+   adatagroups.FieldDefs.Add('GROUP_NAME',ftstring,50);
+   adatagroups.FieldDefs.Add('PARENT_GROUP',ftinteger);
+   TClientDataset(adatagroups).CreateDataSet;
+  end;
   try
    FReportstable:=dbinfo.reporttable;
    FGroupsTable:=dbinfo.Reportgroupstable;

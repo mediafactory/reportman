@@ -34,7 +34,8 @@ uses
   Types, Classes, QGraphics, QControls, QForms,
   QStdCtrls,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,rpmdclitree,
   QActnList, QImgList,QPrinters,Qt,rpmdconsts,rptypes, QMenus,
-  rpmdfabout,QTypes,QStyle,rpmdshfolder,rpmdprintconfig,rptextdriver,rphtmldriver,
+  rpmdfabout,QTypes,QStyle,rpmdshfolder,rpmdprintconfig,rptextdriver,
+  rphtmldriver,rpsvgdriver,rpcsvdriver,
   rpmdfhelpform, QDialogs,rpprintdia,rppdfdriver, QMask, rpmaskeditclx;
 
 type
@@ -361,7 +362,10 @@ begin
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
    SRpBitmapFileMono+'|*.bmp|'+
-   SRpHtmlFile+'|*.html';
+   SRpHtmlFile+'|*.html|'+
+   SRpSVGFile+'|*.svg|'+
+   SRpCSVFile+'|*.csv|'+
+   SRpTXTProFile+'|*.txt';
 {$IFDEF MSWINDOWS}
  SaveDialog1.Filter:=SaveDialog1.Filter+'|'+SRpExeMetafile+'|*.exe';
 {$ENDIF}
@@ -374,7 +378,10 @@ begin
    SRpPlainFile+' (*.txt)|'+
    SRpBitmapFile+' (*.bmp)|'+
    SRpBitmapFileMono+' (*.bmp)|'+
-   SRpHtmlFile+' (*.html)';
+   SRpHtmlFile+' (*.html)|'+
+   SRpSVGFile+' (*.svg)|';
+   SRpCSVFile+' (*.csv)|'+
+   SRpTXTProFile+' (*.txt)';
 {$IFDEF MSWINDOWS}
   SaveDialog1.Filter:=SaveDialog1.Filter+'|'+SRpExeMetafile+' (*.exe)';
 {$ENDIF}
@@ -649,8 +656,23 @@ begin
       ExportMetafileToHtml(Metafile,Caption,SaveDialog1.FileName,
        true,true,1,9999);
      end;
-{$IFDEF MSWINDOWS}
     8:
+     begin
+      ExportMetafileToSVG(Metafile,Caption,SaveDialog1.FileName,
+       true,true,1,9999);
+     end;
+    9:
+     begin
+      ExportMetafileToCSV(metafile,SaveDialog1.Filename,true,true,
+       1,9999);
+     end;
+    10:
+     begin
+      ExportMetafileToCSV(metafile,SaveDialog1.Filename,true,true,
+       1,9999);
+     end;
+{$IFDEF MSWINDOWS}
+    11:
      begin
       MetafileToExe(metafile,SaveDialog1.Filename);
      end;

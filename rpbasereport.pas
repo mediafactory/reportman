@@ -917,7 +917,7 @@ begin
     index:=DataInfo.IndexOf(alias);
     if index<0 then
       Raise Exception.Create(SRpSubreportAliasNotFound+':'+alias);
-    dbalias:=FDataInfo.Items[index].DatabaseAlias;
+    dbalias:=UpperCase(FDataInfo.Items[index].DatabaseAlias);
     index:=DatabaseInfo.IndexOf(dbalias);
     if index<0 then
      Raise Exception.Create(SRpSubreportAliasNotFound+':'+alias);
@@ -942,6 +942,10 @@ begin
       FDataInfo.Items[i].Dataset:=FAliasList.List.Items[index].dataset;
     end;
    end;
+   CheckProgress;
+  end;
+  for i:=0 to FDataInfo.Count-1 do
+  begin
    FDataInfo.Items[i].Connect(DatabaseInfo,Params);
    CheckProgress;
   end;

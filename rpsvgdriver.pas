@@ -250,12 +250,8 @@ end;
 
 procedure ExportPageToSVG(metafile:TRpMetafileReport;page:TrpMetafilePage;pageindex:integer;Stream:TStream;caption,filename:String);
 var
- astring,objectstring:String;
- pstyles:array of Integer;
- astyle:String;
- pstyledescriptions:TStringList;
- i,index:integer;
- singleline:Boolean;
+ astring:String;
+ i:integer;
 begin
  // encoding="windows-1252" is not supported by Adobe SVG
  astring:='<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>';

@@ -52,6 +52,7 @@ uses
   rpevalfunc in '..\rpevalfunc.pas',
   rpgdidriver in '..\rpgdidriver.pas' {FRpVCLProgress},
   rpexceldriver in '..\rpexceldriver.pas' {FRpExcelProgress},
+  rpcsvdriver in '..\rpcsvdriver.pas' {FRpExcelProgress},
   rpgdifonts in '..\rpgdifonts.pas',
   rplabelitem in '..\rplabelitem.pas',
   rplastsav in '..\rplastsav.pas',

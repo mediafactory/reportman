@@ -35,7 +35,7 @@ type
 
 var
  defaultunit:Trpmunits;
- rpunitconversions:array [Low(TrpmUnits)..High(TRpmUnits)] of extended;
+ rpunitconversions:array [Low(TrpmUnits)..High(TRpmUnits)] of double;
  rpunitlabels:array [Low(TrpmUnits)..High(TRpmUnits)] of string;
  rpunitformats:array [Low(TrpmUnits)..High(TRpmUnits)] of string;
 

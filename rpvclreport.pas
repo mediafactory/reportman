@@ -25,7 +25,7 @@ interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
  rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview,
- rpexceldriver,rptextdriver,rppdfdriver,
+ rpexceldriver,rptextdriver,rppdfdriver,rppagesetupvcl,
 {$IFDEF USEINDY}
  rpfmainmetaviewvcl,
 {$ENDIF}
@@ -39,6 +39,7 @@ type
   public
    function Execute:boolean;override;
    procedure PrinterSetup;override;
+   procedure PageSetup;
    function ShowParams:boolean;override;
    procedure SaveToPDF(filename:string;compressed:boolean=false);
    procedure SaveToText(filename:string;textdriver:String='');override;
@@ -172,5 +173,9 @@ begin
    1,filename,true,true,textdriver);
 end;
 
+procedure TVCLReport.PageSetup;
+begin
+ ExecutePageSetup(Report);
+end;
 
 end.

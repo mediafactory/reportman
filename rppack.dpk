@@ -77,6 +77,8 @@ contains
   rpmdrepclient in 'rpmdrepclient.pas' {modclient: TDataModule},
   rpmdprotocol in 'rpmdprotocol.pas',
   rptextdriver in 'rptextdriver.pas',
+  rpsvgdriver in 'rpsvgdriver.pas',
+  rpcsvdriver in 'rpcvsdriver.pas',
   rpbasereport in 'rpbasereport.pas',
   rpdatatext in 'rpdatatext.pas',
   rpmreg in 'rpmreg.pas',

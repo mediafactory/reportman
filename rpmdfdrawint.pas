@@ -646,9 +646,6 @@ end;
 
 
 procedure TRpImageInterface.GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);
-var
- i:TRpImageDrawStyle;
-// k:TCopyMode;
 begin
  if pname=SrpDrawStyle then
  begin

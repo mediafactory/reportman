@@ -60,7 +60,6 @@ uses
 const
  REP_C_WHEELINC=5;
  REP_C_WHEELSCALE=4;
- MAX_LANGUAGES=5;
  CONS_MINLINEINFOITEMS=400;
  LINE_FEED=#13+#10;
 
@@ -361,7 +360,7 @@ begin
 {$ENDIF}
 end;
 
-function TryStrToFloat(const S: string; out Value: Extended): Boolean;
+function TryStrToFloat(const S: string; out Value: Double): Boolean;
 begin
 {$IFNDEF FPC}
   Result := TextToFloat(PChar(S), Value, fvExtended);
@@ -417,7 +416,7 @@ function TryStrToBool(const S: string; out Value: Boolean): Boolean;
       end;
   end;
 var
-  LResult: Extended;
+  LResult: Double;
 begin
   Result := TryStrToFloat(S, LResult);
   if Result then
@@ -638,7 +637,10 @@ begin
    end;
   varDate:
    Result:=FormatDateTime(displayformat,Value);
-  varString,varOleStr:
+{$IFNDEF DOTNETD}
+  varOleStr,
+{$ENDIF}
+  varString:
    begin
     if Length(displayformat)>0 then
      Result:=Format(displayformat,[Value])
@@ -1437,6 +1439,76 @@ begin
    Result := Result + ' and '+IntToStr(Fracture) + '/1000';
 end;
 
+
+// Function cortesy of Argon Konay * 2004.03.11
+function NumberToTextTurkish(Amount:currency):WideString;
+const
+  NumberNames : array[0..3, 0..9] of WideString =(
+        (* 0  1     2        3        4         5           6
+7         8          9 *)
+(*   1x*)
+('','Bir','iki',   'Üç',    'Dört',   'Be?',      'Alt?',   'Yedi',
+'Sekiz',   'Dokuz'),
+(*  10x*)
+('','On', 'Yirmi', 'Otuz',  'K?rk',   'Elli',     'Altm??', 'Yetmi?',
+'Seksen',  'Doksan'),
+(* 100x*)
+('','Yüz','?kiYüz','ÜçYüz', 'DörtYüz','Be?Yüz',   'Alt?Yüz','YediYüz',
+'SekizYüz','DokuzYüz'),
+(*1000x*)
+('','Bin','Milyon','Milyar','Trilyon','Katrilyon','',       '',
+'',        ''));
+  NumberZero: WideString = 'S?f?r';
+  var
+    IntegerPart: String;
+    s: WideString;
+    pStart, pCurrent: PChar;
+    i, j: integer;
+  begin
+    Result := '';
+    Amount := Abs(Amount);
+    IntegerPart := CurrToStr(Int(Amount));
+
+    (* Prefix string with zeroes to make its length a multiple of
+three. *)
+    i := Length(IntegerPart) mod 3;
+    if i <> 0 then
+      IntegerPart := StringOfChar('0', 3 - i) + IntegerPart;
+    pStart := PChar(IntegerPart);
+    pCurrent := pStart + Length(IntegerPart) - 1;
+
+    i := 0;
+    while (pCurrent >= pStart) do
+    begin
+      s := '';
+      (* 0 - 999 *)
+      for j := 0 to 2 do
+      begin
+        s := NumberNames[j, Ord(pCurrent^) - Ord('0')] + s;
+        Dec(pCurrent);
+      end;
+
+      (* 1000x *)
+      if s <> '' then
+      begin
+        (* bir bin (one thousand) ==> bin (thousand) *)
+        if (i = 1) and (s = NumberNames[0, 1]) then
+          s := '';
+        Result := s + NumberNames[3, i] + Result
+      end;
+      inc(i);
+    end;
+
+    if Result = '' then
+      Result := NumberZero;
+
+    (* Only two digits are used for the decimal part *)
+    i := Round(100*Frac(Amount));
+    if i <> 0 then
+      Result := Result + '%' + IntToStr(i);
+end;
+
+
 function NumberToTextCatalan(Fnumero:currency;female:boolean):WideString;
 var s:String;
     centavos:Integer;
@@ -1914,6 +1986,8 @@ begin
    Result:=NumberToTextCastellano(FNumero,female);
   2:
    Result:=NumberToTextCatalan(FNumero,female);
+  7:
+   Result:=NumberToTextTurkish(FNumero);
  end;
 end;
 
@@ -1930,6 +2004,7 @@ begin
  alist.Add(SRpPortuguesse);
  alist.Add(SRpGerman);
  alist.Add(SRpItalian);
+ alist.Add(SRpTurkish);
 end;
 
 procedure GetBidiDescriptionsA(alist:TStrings);
@@ -2530,6 +2605,10 @@ end;
 
 {$ENDIF}
 
+
+
+{$IFNDEF DOTNETD}
+
 procedure WriteStreamToStdOutput(astream:TStream);
 {$IFDEF MSWINDOWS}
 var
@@ -2555,7 +2634,6 @@ begin
 end;
 
 
-{$IFNDEF DOTNETD}
 function RpTempPath:String;
 {$IFDEF LINUX}
 var
@@ -2618,10 +2696,17 @@ begin
 end;
 {$ENDIF}
 {$ENDIF} // Endif dotnetd
+
+
 {$IFDEF DOTNETD}
+function RpTempPath:String;
+begin
+ Result:=System.IO.Path.GetTempPath;
+end;
+
 function RpTempFileName:String;
 begin
- System.IO.Path.GetTempFileName;
+ Result:=System.IO.Path.GetTempFileName;
 end;
 {$ENDIF}
 

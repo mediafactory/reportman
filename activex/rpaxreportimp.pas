@@ -87,6 +87,8 @@ type
     function Get_Report: ReportReport; safecall;
     procedure SaveToExcel(const filename: WideString); safecall;
     procedure SaveToHTML(const filename: WideString); safecall;
+    procedure SetRecordSet(const DatasetName: WideString;
+      const Value: IDispatch); safecall;
   end;
 
 implementation
@@ -418,6 +420,12 @@ end;
 procedure TReportManX.SaveToHTML(const filename: WideString);
 begin
  rphtmldriver.ExportReportToHtml(FDelphiControl.GetReport,filename,Get_ShowProgress);
+end;
+
+procedure TReportManX.SetRecordSet(const DatasetName: WideString;
+  const Value: IDispatch);
+begin
+ FDelphiControl.SetRecordset(datasetname, Pointer(Value));
 end;
 
 initialization

@@ -166,6 +166,7 @@ begin
   FSearch:=TRpParam(Source).FSearch;
   FValue:=TRpParam(Source).FValue;
   FParamType:=TRpParam(Source).FParamType;
+  FDatasets.Clear;
   FDatasets.Assign(TRpParam(Source).FDatasets);
   FItems.Assign(TRpParam(Source).FItems);
   FValues.Assign(TRpParam(Source).FValues);
@@ -397,8 +398,10 @@ begin
    Result:=ftLargeint;
   varString:
    Result:=ftString;
+{$IFNDEF DOTNETD}
   varOleStr:
    Result:=ftWideString;
+{$ENDIF}
   else
    Result:=ftUnknown;
  end;
@@ -663,6 +666,5 @@ begin
   end;
  end;
 end;
-
 
 end.

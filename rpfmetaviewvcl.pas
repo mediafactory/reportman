@@ -34,7 +34,7 @@ uses
 {$IFDEF USEINDY}
   rpmdclitreevcl,
 {$ENDIF}
-  rpexceldriver,rptextdriver,
+  rpexceldriver,rptextdriver,rpsvgdriver,rpcsvdriver,
   ActnList, ImgList,Printers,rpmdconsts,rptypes, Menus,
   rpmdfaboutvcl,rpmdshfolder,rpmdprintconfigvcl,
   ToolWin, Mask, rpmaskedit;
@@ -367,7 +367,10 @@ begin
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
    SRpBitmapFileMono+'|*.bmp|'+
-   SRpHtmlFile+'|*.html';
+   SRpHtmlFile+'|*.html|'+
+   SRpSVGFile+'|*.svg|'+
+   SRpCSVFile+'|*.csv|'+
+   SRpTXTProFile+'|*.txt';
 {$IFNDEF DOTNETD}
    SaveDialog1.Filter:=SaveDialog1.Filter+
     '|'+SRpExeMetafile+'|*.exe';
@@ -600,8 +603,23 @@ begin
        ExportMetafileToHtml(Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
       end;
-{$IFNDEF DOTNETD}
      9:
+      begin
+       ExportMetafileToSVG(Metafile,Caption,SaveDialog1.FileName,
+        true,true,1,9999);
+      end;
+     10:
+      begin
+       ExportMetafileToCSV(metafile,SaveDialog1.Filename,true,true,
+        1,9999);
+      end;
+     11:
+      begin
+       ExportMetafileToCSV(metafile,SaveDialog1.Filename,true,true,
+        1,9999);
+      end;
+{$IFNDEF DOTNETD}
+     12:
       begin
        MetafileToExe(metafile,SaveDialog1.Filename);
       end;
@@ -824,10 +842,10 @@ end;
 procedure TFRpMetaVCL.AImageMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
- relx:Extended;
- rely:Extended;
- posx,migx:Extended;
- posy,migy:Extended;
+ relx:Double;
+ rely:Double;
+ posx,migx:Double;
+ posy,migy:Double;
  punt:Tpoint;
 begin
  // When clic in image scale to 100% and scroll to the

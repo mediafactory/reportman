@@ -1,8 +1,8 @@
 object FRpMetaVCL: TFRpMetaVCL
   Left = 0
   Top = 0
-  Width = 689
-  Height = 349
+  Width = 443
+  Height = 270
   HorzScrollBar.Range = 561
   VertScrollBar.Range = 338
   Align = alClient
@@ -17,13 +17,14 @@ object FRpMetaVCL: TFRpMetaVCL
     Left = 0
     Top = 27
     Width = 7
-    Height = 301
+    Height = 290
+    Cursor = crHSplit
     Beveled = True
   end
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 689
+    Width = 561
     Height = 27
     AutoSize = True
     ButtonHeight = 25
@@ -159,6 +160,8 @@ object FRpMetaVCL: TFRpMetaVCL
       Top = 0
       Width = 64
       Height = 25
+      Min = 0
+      Max = 100
       TabOrder = 0
       Visible = False
     end
@@ -186,13 +189,14 @@ object FRpMetaVCL: TFRpMetaVCL
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 328
-    Width = 689
+    Top = 317
+    Width = 561
     Height = 21
     Panels = <
       item
         Width = 50
       end>
+    SimplePanel = False
   end
   object ActionList1: TActionList
     Images = ImageList1

@@ -16,7 +16,6 @@
 #define QDBConsts_SPropDefByLookup 64581
 #define QDBConsts_STooManyColumns 64582
 #define QDBConsts_SRemoteLogin 64583
-#define ZPlainLoader_SLibraryNotFound 64584
 #define IdResourceStrings_RSSocksServerPermissionError 64592
 #define IdResourceStrings_RSSocksServerNetUnreachableError 64593
 #define IdResourceStrings_RSSocksServerHostUnreachableError 64594
@@ -971,7 +970,6 @@ BEGIN
 	QDBConsts_SPropDefByLookup,	"Property already defined by lookup field"
 	QDBConsts_STooManyColumns,	"Grid requested to display more than 256 columns"
 	QDBConsts_SRemoteLogin,	"Remote Login"
-	ZPlainLoader_SLibraryNotFound,	"Dynamic library %s not found"
 	IdResourceStrings_RSSocksServerPermissionError,	"Connection not allowed by ruleset."
 	IdResourceStrings_RSSocksServerNetUnreachableError,	"Network unreachable."
 	IdResourceStrings_RSSocksServerHostUnreachableError,	"Host unreachable."

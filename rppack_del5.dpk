@@ -145,6 +145,7 @@ contains
   rpmdcharttypes in 'rpmdcharttypes.pas',
   rphtmldriver in 'rphtmldriver.pas',
   rpmdrepclient in 'rpmdrepclient.pas',
-  rpmaskedit in 'rpmaskedit.pas';
+  rpmaskedit in 'rpmaskedit.pas',
+  rpsvgdriver in 'rpsvgdriver.pas';
 
 end.

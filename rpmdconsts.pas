@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.1pre15';
+ RM_VERSION='2.1pre17';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
@@ -871,7 +871,12 @@ var
   SRpSBPreview:WideString='Preview only';
   SRpSBPrint:WideString='Print';
   SRpAsc2:WideString='Convert special european chars to ASCII';
-
+  SRpLength:WideString='Returns the length, in characters, of a string';
+  SRpPLength:WideString='s is the source string';
+  SRpSVGFile:WideString='Scalable Vector Graphics file';
+  SRpTurkish:WideString='Turkish';
+  SRpCSVFile:WideString='Comma separated values file';
+  SRpTXTProFile:WideString='Text processed file';
 implementation
 
 uses rptranslator;

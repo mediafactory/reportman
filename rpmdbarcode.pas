@@ -198,7 +198,7 @@ end;
 }
 function Rotate2D(p:TPoint; alpha:double): TPoint;
 var
-	sinus, cosinus : Extended;
+	sinus, cosinus : Double;
 begin
 	sinus   := sin(alpha);
 	cosinus := cos(alpha);

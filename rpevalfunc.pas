@@ -137,6 +137,14 @@ type
    constructor Create(AOwner:TComponent);override;
   end;
 
+ { Function Length }
+ TIdenLength=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
  { Function Pos }
  TIdenPos=class(TIdenFunction)
   protected
@@ -467,7 +475,7 @@ begin
  case Vartype(Params[0]) of
   varSmallInt..varCurrency:
    begin
-    racional:=Extended(Params[0]);
+    racional:=Double(Params[0]);
     //calculations in racional
     hores:=Round(Int(racional));
     minuts:=Round(Int(Frac(racional)*60));
@@ -546,7 +554,7 @@ begin
  case Vartype(Params[0]) of
   varSmallInt..varCurrency:
    begin
-    Result:=Sin(Extended(Params[0]));
+    Result:=Sin(Double(Params[0]));
    end;
   else
    Raise TRpNamedException.Create(SRpEvalType,
@@ -628,7 +636,7 @@ begin
  if (not (VarType(Params[1]) in [varSmallInt..varCurrency])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- Result:=Roundfloat(Extended(Params[0]),Extended(Params[1]));
+ Result:=Roundfloat(Double(Params[0]),Double(Params[1]));
 end;
 
 {**************************************************************************}
@@ -653,7 +661,7 @@ begin
  if (not (VarType(Params[0]) in [varSmallInt..varCurrency])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- Result:=Abs(Extended(Params[0]));
+ Result:=Abs(Double(Params[0]));
 end;
 
 {**************************************************************************}
@@ -681,11 +689,11 @@ begin
  case Vartype(Params[0]) of
   varSmallInt..varDate:
    begin
-    Result:=Int(Extended(Params[0]))
+    Result:=Int(Double(Params[0]))
    end;
   varVariant:
    begin
-    Result:=Int(Extended(Params[0]))
+    Result:=Int(Double(Params[0]))
    end;
   else
    Raise TRpNamedException.Create(SRpEvalType,
@@ -749,7 +757,7 @@ begin
   end
   else
   begin
-   Result:=Extended(Params[0]);
+   Result:=Double(Params[0]);
   end;
   { To integer }
  except
@@ -812,6 +820,28 @@ begin
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  Result:=Copy(String(Params[0]),1,Integer(Params[1]));
+end;
+
+{ TIdenLength }
+
+constructor TIdenLength.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=2;
+ IdenName:='Length';
+ Help:=SRpLength;
+ model:='function '+'Length'+'(s:string):Integer';
+ aParams:=SRpPLength;
+end;
+
+{**************************************************************************}
+
+function TIdenLength.GeTRpValue:TRpValue;
+begin
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ Result:=Length(String(Params[0]));
 end;
 
 { TIdenPos }
@@ -941,7 +971,7 @@ function TIdenSQRT.GeTRpValue:TRpValue;
 begin
  case varType(Params[0]) of
   varSmallInt..VarCurrency:
-    Result:=SQRT(Extended(Params[0]));
+    Result:=SQRT(Double(Params[0]));
   else
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
@@ -1383,7 +1413,7 @@ begin
  case vartype(Value) of
   varSmallint,varInteger,varSingle,varDouble,varWord,varByte,VarCurrency:
    begin
-    Result:=FormatFloat(Params[0],extended(Value));
+    Result:=FormatFloat(Params[0],Double(Value));
    end;
   // Modify by RAHUL TAMRAKR 27/05/2003
   // Bugfix for detecting DateTime datatypes (MySQL)

@@ -56,7 +56,7 @@ type
     function NextToken: Char;
     function SourcePos: Longint;
     function TokenComponentIdent: string;
-    function TokenFloat: Extended;
+    function TokenFloat: Double;
 //    function TokenInt: Int64;
     function TokenInt: Integer;
     function TokenString: string;
@@ -476,7 +476,7 @@ begin
   Result := FOrigin + FTokenPtr;
 end;
 
-function TRpParser.TokenFloat: Extended;
+function TRpParser.TokenFloat: Double;
 begin
   if FFloatType <> #0 then
     Dec(FSourcePtr);

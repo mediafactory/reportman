@@ -32,7 +32,8 @@ uses
 {$ENDIF}
   Classes, Graphics, Controls, Forms, Dialogs,rppagesetupvcl,
   StdCtrls,rpbasereport,rpreport,rpmetafile, ComCtrls,rphtmldriver,
-  rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,rptextdriver,
+  rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,rptextdriver,rpsvgdriver,
+  rpcsvdriver,
   ActnList, ImgList,Printers,rpmdconsts, ToolWin, Mask, rpmaskedit;
 
 type
@@ -294,7 +295,10 @@ begin
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
    SRpBitmapFileMono+'|*.bmp|'+
-   SRpHtmlFile+'|*.html';
+   SRpHtmlFile+'|*.html|'+
+   SRpSVGFile+'|*.svg|'+
+   SRpCSVFile+'|*.csv|'+
+   SRpTXTProFile+'|*.txt';
 {$IFNDEF DOTNETD}
   SaveDialog1.Filter:=SaveDialog1.Filter+
     '|'+SRpExeMetafile+'|*.exe';
@@ -467,8 +471,29 @@ begin
         true,true,1,9999);
        AppIdle(Self,adone);
       end;
-{$IFNDEF DOTNETD}
      9:
+      begin
+       ALastExecute(Self);
+       ExportMetafileToSVG(report.Metafile,Caption,SaveDialog1.FileName,
+        true,true,1,9999);
+       AppIdle(Self,adone);
+      end;
+     10:
+      begin
+       ALastExecute(Self);
+       ExportMetafileToCSV(report.metafile,SaveDialog1.Filename,true,true,
+        1,9999);
+       AppIdle(Self,adone);
+      end;
+     11:
+      begin
+       ALastExecute(Self);
+       ExportMetafileToCSV(report.metafile,SaveDialog1.Filename,true,true,
+        1,9999);
+       AppIdle(Self,adone);
+      end;
+{$IFNDEF DOTNETD}
+     12:
       begin
        ALastExecute(Self);
        MetafileToExe(report.metafile,SaveDialog1.Filename);
@@ -727,10 +752,10 @@ end;
 procedure TFRpVPreview.AImageMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
- relx:Extended;
- rely:Extended;
- posx,migx:Extended;
- posy,migy:Extended;
+ relx:Double;
+ rely:Double;
+ posx,migx:Double;
+ posy,migy:Double;
  punt:Tpoint;
 begin
  // When clic in image scale to 100% and scroll to the

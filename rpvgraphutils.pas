@@ -117,7 +117,7 @@ begin
    try
     astream.SetSize(asize);
     if asize<>Windows.GetFontData(abit.Canvas.Handle,0,0,astream.Memory,asize) then
-     RaiseLastWin32Error;
+     RaiseLastOsError;
    except
     astream.free;
    end;
@@ -219,7 +219,7 @@ begin
   dc := GetDc(0);
   IsPaletteDevice := GetDeviceCaps(dc, RASTERCAPS) and RC_PALETTE = RC_PALETTE;
 
-  dc := ReleaseDc(0, dc);
+  ReleaseDc(0, dc);
 
   if IsPaletteDevice then
     BitmapInfoSize := sizeof(TBitmapInfo) + (sizeof(TRGBQUAD) * 255)
@@ -255,6 +255,7 @@ begin
     hBm := Bitmap.ReleaseHandle;
     hPal := Bitmap.ReleasePalette;
     dc := GetDc(0);
+    OldPal:=0;
     if IsPaletteDevice then
     begin
       OldPal := SelectPalette(dc, hPal, True);
@@ -269,8 +270,8 @@ begin
         TBitmapInfo(lpBitmapInfo^), DIB_RGB_COLORS);
       if IsPaletteDevice then
       begin
+        GetMem(lPPalEntriesArray, sizeof(TPaletteEntry) * 256);
         try
-         GetMem(lPPalEntriesArray, sizeof(TPaletteEntry) * 256);
          {$IFDEF VER100}
          NumPalEntries := GetPaletteEntries(hPal, 0, 256,   lPPalEntriesArray^);
          {$ELSE}
@@ -291,7 +292,7 @@ begin
         SelectPalette(dc, OldPal, True);
         RealizePalette(dc);
       end;
-      dc := ReleaseDc(0, dc);
+      ReleaseDc(0, dc);
 
       IsDestPaletteDevice := GetDeviceCaps(Destination.Handle, RASTERCAPS) and RC_PALETTE = RC_PALETTE;
       if IsPaletteDevice then

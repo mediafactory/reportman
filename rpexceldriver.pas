@@ -127,7 +127,7 @@ begin
   Result:=true;
 end;
 
-function VarTryStrToFloat(S: string; var Value: Extended): Boolean;
+function VarTryStrToFloat(S: string; var Value: Double): Boolean;
 var
  index,i:integer;
 begin
@@ -163,7 +163,7 @@ var
  aansitext:string;
  arow,acolumn:integer;
  leftstring,topstring:String;
- number:extended;
+ number:Double;
  isanumber:boolean;
  afontStyle:TFontStyles;
  acolor:TColor;
