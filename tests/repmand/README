@@ -15,7 +15,6 @@ tar zxvf repmand-0.99g.i386.tar.gz
 
 To execute the application:
 
-Edit repmand.sh and set correct path to kylix/bin directory
 
 Then execute:
 

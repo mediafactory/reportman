@@ -1,8 +1,8 @@
 object FRpObjInsp: TFRpObjInsp
   Left = 0
   Top = 0
-  Width = 452
-  Height = 311
+  Width = 451
+  Height = 304
   Align = alClient
   ParentShowHint = False
   ShowHint = True
@@ -32,13 +32,12 @@ object FRpObjInsp: TFRpObjInsp
     Top = 92
   end
   object OpenDialog1: TOpenDialog
+    Height = 0
     DefaultExt = 'bmp'
     FileName = '*.bmp'
     Filter = 'Bitmap images|*.*'
     FilterIndex = 0
-    Height = 0
     Title = 'Open bitmap'
-    Width = 0
     Left = 72
     Top = 120
   end
