@@ -29,7 +29,7 @@ uses Sysutils,IniFiles,rpmdshfolder,
 {$ENDIF}
  Classes,
 {$IFDEF USEVARIANTS}
- Variants,
+ Variants,Types,
 {$ENDIF}
 {$IFDEF USEBCD}
  FMTBcd,
@@ -103,6 +103,7 @@ procedure Generatenewname(Component:TComponent);
 function FormatVariant(displayformat:string;Value:Variant):widestring;
 function CopyFileTo(const Source, Destination: string): Boolean;
 function GetPrinterConfigName(printerindex:TRpPrinterSelect):string;
+function GetPrinterOffset(printerindex:TRpPrinterSelect):TPoint;
 function GetDeviceFontsOption(printerindex:TRpPrinterSelect):boolean;
 
 // Language identifiers
@@ -377,6 +378,13 @@ begin
   Exit;
  end;
  Result:=printerconfigfile.ReadString('PrinterNames','Printer'+IntToStr(integer(printerindex)),'');
+end;
+
+function GetPrinterOffset(printerindex:TRpPrinterSelect):TPoint;
+begin
+ CheckLoadedPrinterConfig;
+ Result.X:=printerconfigfile.ReadInteger('PrinterOffsetX','Printer'+IntToStr(integer(printerindex)),-1000);
+ Result.Y:=printerconfigfile.ReadInteger('PrinterOffsetY','Printer'+IntToStr(integer(printerindex)),1000);
 end;
 
 initialization

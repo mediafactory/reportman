@@ -88,6 +88,7 @@ type
    dpi:integer;
    toprinter:boolean;
    scale:double;
+   offset:TPoint;
    bitmapwidth,bitmapheight:integer;
    PreviewStyle:TRpPreviewStyle;
    clientwidth,clientheight:integer;
@@ -124,7 +125,7 @@ function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
 // use the ShowPrintdialog in rpprintdia
 function DoShowPrintDialog(var allpages:boolean;
  var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
-procedure PrinterSelection(printerindex:TRpPrinterSelect);
+function PrinterSelection(printerindex:TRpPrinterSelect):TPoint;
 
  var
 {$IFDEF MSWINDOWS}
@@ -139,6 +140,7 @@ implementation
 uses rpprintdia;
 
 {$R *.xfm}
+
 
 function DoShowPrintDialog(var allpages:boolean;
  var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
@@ -186,7 +188,6 @@ var
  rec:TRect;
  asize:TPoint;
  scale2:double;
-// amargins:TSize;
 begin
  if ToPrinter then
  begin
@@ -216,6 +217,9 @@ begin
  end
  else
  begin
+  // Offset is 0 in preview
+  offset.X:=0;
+  offset.Y:=0;
   if assigned(bitmap) then
   begin
    bitmap.free;
@@ -396,7 +400,7 @@ begin
 end;
 
 procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;
- dpix,dpiy:integer;scale:double);
+ dpix,dpiy:integer;scale:double;offset:TPoint);
 var
  posx,posy:integer;
  rec:TRect;
@@ -410,8 +414,8 @@ var
  arec,R:TRect;
 begin
  // Switch to device points
- posx:=round(obj.Left*dpix*scale/TWIPS_PER_INCHESS);
- posy:=round(obj.Top*dpiy*scale/TWIPS_PER_INCHESS);
+ posx:=round((obj.Left+offset.X)*dpix*scale/TWIPS_PER_INCHESS);
+ posy:=round((obj.Top+offset.Y)*dpiy*scale/TWIPS_PER_INCHESS);
  case obj.Metatype of
   rpMetaText:
    begin
@@ -625,7 +629,7 @@ begin
   dpix:=dpi;
   dpiy:=dpi;
  end;
- PrintObject(Canvas,page,obj,dpix,dpiy,scale);
+ PrintObject(Canvas,page,obj,dpix,dpiy,scale,offset);
 end;
 
 function TRpQtDriver.AllowCopies:boolean;
@@ -693,8 +697,9 @@ var
 {$ENDIF}
     difmilis:int64;
  totalcount:integer;
+ offset:TPoint;
 begin
- PrinterSelection(printerindex);
+ offset:=PrinterSelection(printerindex);
  // Get the time
 {$IFDEF MSWINDOWS}
  mmfirst:=TimeGetTime;
@@ -753,7 +758,7 @@ begin
      apage:=metafile.Pages[i];
      for j:=0 to apage.ObjectCount-1 do
      begin
-      PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,1);
+      PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,1,offset);
       if assigned(aform) then
       begin
   {$IFDEF MSWINDOWS}
@@ -1187,14 +1192,16 @@ begin
  end;
 end;
 
-procedure PrinterSelection(printerindex:TRpPrinterSelect);
+function PrinterSelection(printerindex:TRpPrinterSelect):TPoint;
 var
  printername:String;
  abuffer:widestring;
  index:integer;
  qtprintername:WideString;
+ offset:TPoint;
 begin
  printername:=GetPrinterConfigName(printerindex);
+ offset:=GetPrinterOffset(printerindex);
  if length(printername)>0 then
  begin
   index:=Printer.Printers.IndexOf(printername);
@@ -1218,7 +1225,7 @@ end;
 
 procedure TRpQtDriver.SelectPrinter(printerindex:TRpPrinterSelect);
 begin
- PrinterSelection(printerindex);
+ offset:=PrinterSelection(printerindex);
 end;
 
 end.
