@@ -83,10 +83,10 @@ type
     property OnDestroy:TNotifyEvent read FOnDestroy write FOnDestroy;
     constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
     destructor destroy;override;
-    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
+    procedure GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);override;
     procedure SetProperty(pname:string;value:Widestring);override;
     function GetProperty(pname:string):Widestring;override;
-    procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
+    procedure GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);override;
     function CreateChild(compo:TRpCommonPosComponent):TRpSizePosInterface;
     procedure CreateChilds;
     procedure DeleteChild(achild:TRpSizePosInterface);
@@ -219,9 +219,9 @@ begin
 end;
 
 
-procedure TRpSectionInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+procedure TRpSectionInterface.GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);
 begin
- inherited GetProperties(lnames,ltypes,lvalues);
+ inherited GetProperties(lnames,ltypes,lvalues,lhints,lcat);
 
  if (TrpSection(printitem).SectionType in [rpsecpfooter,rpsecpheader]) then
  begin
@@ -589,7 +589,7 @@ begin
  Result:=inherited GetProperty(pname);
 end;
 
-procedure TRpSectionInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
+procedure TRpSectionInterface.GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);
 begin
  if pname=SRpSSkipType then
  begin

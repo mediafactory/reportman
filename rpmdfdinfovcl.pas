@@ -1,0 +1,135 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager                                  }
+{                                                       }
+{       Rpmdfdinfovcl                                   }
+{       dialog for datasets and databases               }
+{       configuration                                   }
+{                                                       }
+{       Copyright (c) 1994-2003 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
+{                                                       }
+{                                                       }
+{*******************************************************}
+unit rpmdfdinfovcl;
+
+interface
+
+{$I rpconf.inc}
+
+uses
+ windows,Classes,sysutils,Dialogs,Controls,Graphics,Forms,rpmdconsts,
+{$IFDEF USEVARIANTS}
+ types,
+{$ENDIF}
+ rptypes,rpdatainfo,rpreport,
+ rpmdfdatasetsvcl,rpmdfconnectionvcl,
+ StdCtrls, ExtCtrls, ComCtrls;
+
+type
+  TFRpDInfoVCL = class(TForm)
+    PBottom: TPanel;
+    BOk: TButton;
+    BCancel: TButton;
+    PControl: TPageControl;
+    TabConnections: TTabSheet;
+    TabDatasets: TTabSheet;
+    procedure FormCreate(Sender: TObject);
+    procedure PControlChange(Sender: TObject);
+    procedure BOkClick(Sender: TObject);
+  private
+    { Private declarations }
+    freport:TRpReport;
+    fdatasets:TFRpDatasetsVCL;
+    fconnections:TFRpConnectionVCL;
+    procedure SetReport(value:TRpReport);
+  public
+    { Public declarations }
+    dook:boolean;
+    property report:TRpReport read FReport write SetReport;
+  end;
+
+
+function ShowDataConfig(report:TRpReport):Boolean;
+
+
+implementation
+
+uses rpdbxconfigvcl;
+
+
+{$R *.dfm}
+
+procedure TFRpDInfoVCL.SetReport(value:TRpReport);
+begin
+ freport:=value;
+ fconnections:=TFRpConnectionVCL.Create(Self);
+ fconnections.Parent:=TabConnections;
+ fdatasets:=TFRpDatasetsVCL.Create(Self);
+ fdatasets.Parent:=TabDatasets;
+ fdatasets.Datainfo:=report.DataInfo;
+ fdatasets.Databaseinfo:=report.DatabaseInfo;
+ fdatasets.params:=report.params;
+ if report.DatabaseInfo.Count>0 then
+  PControl.ActivePage:=TabDatasets
+ else
+  PControl.ActivePage:=TabConnections;
+ fconnections.Databaseinfo:=report.DatabaseInfo;
+end;
+
+function ShowDataConfig(report:TRpReport):boolean;
+var
+ dia:TFRpDInfoVCL;
+begin
+ UpdateConAdmin;
+ result:=false;
+
+ dia:=TFRpDInfoVCL.Create(Application);
+ try
+  dia.report:=report;
+  dia.showmodal;
+  if dia.dook then
+   result:=true;
+ finally
+  dia.free;
+ end;
+end;
+
+
+
+procedure TFRpDInfoVCL.FormCreate(Sender: TObject);
+begin
+ BOK.Caption:=TranslateStr(93,BOK.Caption);
+ BCancel.Caption:=TranslateStr(94,BCancel.Caption);
+// Caption:=TranslateStr(259,Caption);
+end;
+
+
+
+
+
+
+procedure TFRpDInfoVCL.PControlChange(Sender: TObject);
+begin
+ fdatasets.Databaseinfo:=fconnections.DatabaseInfo;
+ fdatasets.MSQLChange(fdatasets.ComboConnection);
+end;
+
+procedure TFRpDInfoVCL.BOkClick(Sender: TObject);
+begin
+ if Assigned(freport) then
+ begin
+  freport.DatabaseInfo.Assign(fconnections.Databaseinfo);
+  freport.DataInfo.Assign(fdatasets.Datainfo);
+  freport.Params.Assign(fdatasets.Params);
+ end;
+ dook:=true;
+ Close();
+end;
+
+end.
+

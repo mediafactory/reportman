@@ -26,12 +26,12 @@
     <td>Base package, non-visual, platform independent</td>
   </tr>
   <tr> 
-    <td>rppackv_builder6.bpk</td>
-    <td>Visual CLX package, for cross platform development</td>
-  </tr>
-  <tr> 
     <td>rppackvcl_builder6.bpk</td>
     <td>VCL package can be used only in Windows</td>
+  </tr>
+  <tr> 
+    <td>rppackv_builder6.bpk</td>
+    <td>Visual CLX package, for cross platform development</td>
   </tr>
   <tr> 
     <td>&nbsp;</td>
@@ -45,13 +45,14 @@
   read <a href="http://bdn.borland.com/article/0,1410,29631,00.html" target="_blank">this 
   article (http://bdn.borland.com/article/0,1410,29631,00.html)</a> and <a href="http://bdn.borland.com/article/0,1410,29638,00.html">this 
   article (http://bdn.borland.com/article/0,1410,29638,00.html)</a>.</p>
-<p>In Delphi IDE select Open option in file menu, then select .bpk package files, 
+<p>In Builder IDE select Open option in file menu, then select .bpk package files, 
   click the install button.</p>
 <p>If you alter rpconf.inc, you can remove the dependeces of the disabled options, 
   for example if you disable ADO support you can remove adortl dependence.</p>
 <p><img src="images/installpack.jpg" width="394" height="258"></p>
 <p>To compile your projetcs you must add the report manager components directory 
-  to the library path.</p>
+  to the library path, and for CLX application you may need add antivcl.hpp file 
+  to avoid the use of VCL components in a CLX application.</p>
 <p>If you compile with runtime packages you must include the .bpl files generated 
   with your application (just like other Borland packages)</p>
 </body>

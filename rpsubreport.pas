@@ -43,6 +43,7 @@ type
    function GetFirstPageFooter:integer;
    function GetPageFooterCount:integer;
    function GetGroupCount:integer;
+   procedure SetAlias(Value:String);
   protected
    procedure FillGroupValues;
    procedure Notification(AComponent: TComponent; Operation: TOperation);override;
@@ -79,7 +80,7 @@ type
    function IsDataAvailable:boolean;
   published
    property Sections:TRpSectionList read FSections write SetSections;
-   property Alias:String read FAlias write FAlias;
+   property Alias:String read FAlias write SetAlias;
    property ParentSubReport:TRpSubReport read FParentSubReport
     write FParentSubReport;
    property ParentSection:TRpSection read FParentSection
@@ -120,6 +121,11 @@ begin
    FParentSection:=nil;
   end;
  end;
+end;
+
+procedure TRpSubReport.SetAlias(Value:String);
+begin
+ FAlias:=Trim(Value);
 end;
 
 procedure TRpSubReport.AddPageHeader;

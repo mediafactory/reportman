@@ -10,18 +10,10 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     Left = 0
     Top = 0
     Width = 443
-    Height = 113
+    Height = 27
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    object Splitter1: TSplitter
-      Left = 161
-      Top = 27
-      Width = 8
-      Height = 86
-      Cursor = crHSplit
-      Beveled = True
-    end
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
@@ -53,16 +45,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         Caption = 'ToolButton3'
         ImageIndex = 3
       end
-      object ToolButton4: TToolButton
-        Left = 75
-        Top = 0
-        Width = 8
-        Caption = 'ToolButton4'
-        ImageIndex = 4
-        Style = tbsSeparator
-      end
       object ToolButton5: TToolButton
-        Left = 83
+        Left = 75
         Top = 0
         Width = 8
         Caption = 'ToolButton5'
@@ -70,99 +54,80 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         Style = tbsSeparator
       end
       object ToolButton6: TToolButton
-        Left = 91
+        Left = 83
         Top = 0
         Action = ARename
       end
-    end
-    object LDatasets: TListBox
-      Left = 0
-      Top = 27
-      Width = 161
-      Height = 86
-      Align = alLeft
-      ItemHeight = 13
-      TabOrder = 1
-      OnClick = LDatasetsClick
-    end
-    object Panel1: TPanel
-      Left = 169
-      Top = 27
-      Width = 274
-      Height = 86
-      Align = alClient
-      BevelOuter = bvNone
-      TabOrder = 2
-      object Panel2: TPanel
-        Left = 0
+      object ToolButton4: TToolButton
+        Left = 109
         Top = 0
-        Width = 274
-        Height = 33
-        Align = alTop
-        BevelOuter = bvNone
-        TabOrder = 0
-        object BParams: TButton
-          Left = 2
-          Top = 4
-          Width = 143
-          Height = 25
-          Caption = 'Parameters'
-          TabOrder = 0
-          OnClick = BParamsClick
-        end
+        Width = 8
+        Caption = 'ToolButton4'
+        ImageIndex = 4
+        Style = tbsSeparator
       end
-      object MHelp: TMemo
-        Left = 0
-        Top = 33
-        Width = 274
-        Height = 53
-        Align = alClient
-        Color = clInfoBk
-        ReadOnly = True
-        TabOrder = 1
+      object BParams: TButton
+        Left = 117
+        Top = 0
+        Width = 143
+        Height = 25
+        Caption = 'Parameters'
+        TabOrder = 0
+        OnClick = BParamsClick
       end
     end
-  end
-  object PBottom: TPanel
-    Left = 0
-    Top = -8
-    Width = 443
-    Height = 285
-    Align = alBottom
-    BevelOuter = bvNone
-    TabOrder = 1
-    object GDatasets: TPanel
+    object PTop1: TPanel
       Left = 0
-      Top = 0
+      Top = 27
       Width = 443
-      Height = 285
+      Height = 0
       Align = alClient
       BevelOuter = bvNone
-      TabOrder = 0
-      object Panel3: TPanel
+      TabOrder = 1
+      object Splitter1: TSplitter
+        Left = 161
+        Top = 0
+        Width = 8
+        Height = 0
+        Beveled = True
+      end
+      object LDatasets: TListBox
         Left = 0
         Top = 0
-        Width = 443
-        Height = 61
-        Align = alTop
-        BevelOuter = bvNone
+        Width = 161
+        Height = 0
+        Align = alLeft
+        ItemHeight = 13
         TabOrder = 0
+        OnClick = LDatasetsClick
+      end
+      object PanelBasic: TPanel
+        Left = 169
+        Top = 0
+        Width = 274
+        Height = 0
+        Align = alClient
+        BevelOuter = bvNone
+        TabOrder = 1
+        DesignSize = (
+          274
+          0)
         object LMasterDataset: TLabel
           Left = 4
-          Top = 36
+          Top = 28
           Width = 70
           Height = 13
           Caption = 'Master dataset'
         end
         object LConnection: TLabel
           Left = 4
-          Top = 8
+          Top = 4
           Width = 54
           Height = 13
           Caption = 'Connection'
         end
         object BShowData: TButton
-          Left = 444
+          Left = 808
           Top = 0
           Width = 87
           Height = 29
@@ -172,314 +137,365 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           OnClick = BShowDataClick
         end
         object ComboDataSource: TComboBox
-          Left = 92
-          Top = 32
-          Width = 341
+          Left = 112
+          Top = 24
+          Width = 161
           Height = 21
           Style = csDropDownList
-          Anchors = [akLeft, akTop, akRight]
           ItemHeight = 13
           TabOrder = 1
           OnChange = MSQLChange
         end
         object ComboConnection: TComboBox
-          Left = 92
-          Top = 4
-          Width = 341
+          Left = 112
+          Top = 0
+          Width = 161
           Height = 21
           Style = csDropDownList
-          Anchors = [akLeft, akTop, akRight]
           ItemHeight = 13
           TabOrder = 2
           OnChange = MSQLChange
         end
+        object Button1: TButton
+          Left = 5
+          Top = 48
+          Width = 132
+          Height = 25
+          Caption = 'Show data'
+          TabOrder = 3
+          OnClick = BShowDataClick
+        end
       end
-      object PControl: TPageControl
-        Left = 0
-        Top = 61
-        Width = 443
-        Height = 224
-        ActivePage = TabMyBase
-        Align = alClient
-        TabOrder = 1
-        object TabSQL: TTabSheet
-          Caption = 'SQL'
-          object MSQL: TMemo
-            Left = 0
-            Top = 0
-            Width = 489
-            Height = 196
-            Align = alClient
-            TabOrder = 0
-            WordWrap = False
-            OnChange = MSQLChange
-          end
+    end
+  end
+  object PBottom: TPanel
+    Left = 0
+    Top = 27
+    Width = 443
+    Height = 250
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 1
+    object PControl: TPageControl
+      Left = 0
+      Top = 0
+      Width = 443
+      Height = 250
+      ActivePage = TabMyBase
+      Align = alClient
+      TabOrder = 0
+      object TabSQL: TTabSheet
+        Caption = 'SQL'
+        object MSQL: TMemo
+          Left = 0
+          Top = 0
+          Width = 521
+          Height = 222
+          Align = alClient
+          TabOrder = 0
+          WordWrap = False
+          OnChange = MSQLChange
         end
-        object TabBDEType: TTabSheet
-          Caption = 'BDE Type'
-          ImageIndex = 2
-          object RBDEType: TRadioGroup
+      end
+      object TabBDEType: TTabSheet
+        Caption = 'BDE Type'
+        ImageIndex = 2
+        object RBDEType: TRadioGroup
+          Left = 0
+          Top = 0
+          Width = 435
+          Height = 37
+          Align = alTop
+          Columns = 2
+          Items.Strings = (
+            'Query'
+            'Table')
+          TabOrder = 0
+          OnClick = MSQLChange
+        end
+        object Panel4: TPanel
+          Left = 0
+          Top = 37
+          Width = 435
+          Height = 185
+          Align = alClient
+          BevelOuter = bvNone
+          TabOrder = 1
+          object PBDEFilter: TPanel
             Left = 0
             Top = 0
-            Width = 435
-            Height = 37
+            Width = 558
+            Height = 17
             Align = alTop
-            Columns = 2
-            Items.Strings = (
-              'Query'
-              'Table')
-            TabOrder = 0
-            OnClick = MSQLChange
-          end
-          object Panel4: TPanel
-            Left = 0
-            Top = 37
-            Width = 435
-            Height = 159
-            Align = alClient
+            Alignment = taLeftJustify
             BevelOuter = bvNone
-            TabOrder = 1
-            object PBDEFilter: TPanel
-              Left = 0
-              Top = 0
-              Width = 529
-              Height = 17
-              Align = alTop
-              Alignment = taLeftJustify
-              BevelOuter = bvNone
-              Caption = 'BDE Filter'
-              TabOrder = 0
-            end
-            object MBDEFilter: TMemo
-              Left = 0
-              Top = 17
-              Width = 529
-              Height = 142
-              Align = alClient
-              ScrollBars = ssBoth
-              TabOrder = 1
-              WordWrap = False
-              OnChange = MSQLChange
-            end
-          end
-        end
-        object TabBDETable: TTabSheet
-          Caption = 'Table and order'
-          ImageIndex = 1
-          object LBDEIndexFields: TLabel
-            Left = 5
-            Top = 58
-            Width = 56
-            Height = 13
-            Caption = 'Index Fields'
-          end
-          object LIndexName: TLabel
-            Left = 4
-            Top = 32
-            Width = 57
-            Height = 13
-            Caption = 'Index Name'
-          end
-          object LTable: TLabel
-            Left = 4
-            Top = 10
-            Width = 27
-            Height = 13
-            Caption = 'Table'
-          end
-          object LMasterFields: TLabel
-            Left = 4
-            Top = 82
-            Width = 59
-            Height = 13
-            Caption = 'Master fields'
-          end
-          object LNote: TLabel
-            Left = 4
-            Top = 104
-            Width = 199
-            Height = 13
-            Caption = 'Note: Write fields separated by ; character'
-          end
-          object LFirstRange: TLabel
-            Left = 260
-            Top = 0
-            Width = 49
-            Height = 13
-            Caption = 'First range'
-          end
-          object LLastRange: TLabel
-            Left = 388
-            Top = 0
-            Width = 50
-            Height = 13
-            Caption = 'Last range'
-          end
-          object LRange: TLabel
-            Left = 260
-            Top = 84
-            Width = 249
-            Height = 57
-            AutoSize = False
-            Caption = 
-              'Each line will be evaluated and assigned to each field as the st' +
-              'art of the filter and end of the filter'
-            WordWrap = True
-          end
-          object EBDEIndexFields: TComboBox
-            Left = 116
-            Top = 54
-            Width = 137
-            Height = 21
-            ItemHeight = 13
-            TabOrder = 1
-            OnChange = MSQLChange
-            Items.Strings = (
-              '')
-          end
-          object EBDEIndexName: TComboBox
-            Left = 116
-            Top = 28
-            Width = 137
-            Height = 21
-            ItemHeight = 13
-            TabOrder = 3
-            OnChange = MSQLChange
-            Items.Strings = (
-              '')
-          end
-          object EBDETable: TComboBox
-            Left = 116
-            Top = 2
-            Width = 137
-            Height = 21
-            ItemHeight = 13
+            Caption = 'BDE Filter'
             TabOrder = 0
-            OnChange = MSQLChange
-            Items.Strings = (
-              '')
           end
-          object EBDEMasterFields: TEdit
-            Left = 116
-            Top = 78
-            Width = 137
-            Height = 21
-            TabOrder = 2
-            Text = 'EBDEMasterFields'
-            OnChange = MSQLChange
-          end
-          object EBDEFirstRange: TMemo
-            Left = 260
-            Top = 16
-            Width = 121
-            Height = 65
-            TabOrder = 4
-            WordWrap = False
-            OnChange = MSQLChange
-          end
-          object EBDELastRange: TMemo
-            Left = 388
-            Top = 16
-            Width = 121
-            Height = 65
-            TabOrder = 5
+          object MBDEFilter: TMemo
+            Left = 0
+            Top = 17
+            Width = 558
+            Height = 111
+            Align = alClient
+            ScrollBars = ssBoth
+            TabOrder = 1
             WordWrap = False
             OnChange = MSQLChange
           end
         end
-        object TabMyBase: TTabSheet
-          Caption = 'MyBase'
-          ImageIndex = 3
-          object LIndexFields: TLabel
-            Left = 0
-            Top = 70
-            Width = 53
-            Height = 13
-            Caption = 'Index fields'
-          end
-          object LMyBase: TLabel
-            Left = 0
-            Top = 6
-            Width = 83
-            Height = 13
-            Caption = 'MyBase Filename'
-          end
+      end
+      object TabBDETable: TTabSheet
+        Caption = 'Table and order'
+        ImageIndex = 1
+        object LBDEIndexFields: TLabel
+          Left = 5
+          Top = 58
+          Width = 56
+          Height = 13
+          Caption = 'Index Fields'
+        end
+        object LIndexName: TLabel
+          Left = 4
+          Top = 32
+          Width = 57
+          Height = 13
+          Caption = 'Index Name'
+        end
+        object LTable: TLabel
+          Left = 4
+          Top = 10
+          Width = 27
+          Height = 13
+          Caption = 'Table'
+        end
+        object LMasterFields: TLabel
+          Left = 4
+          Top = 82
+          Width = 59
+          Height = 13
+          Caption = 'Master fields'
+        end
+        object LNote: TLabel
+          Left = 4
+          Top = 104
+          Width = 199
+          Height = 13
+          Caption = 'Note: Write fields separated by ; character'
+        end
+        object LFirstRange: TLabel
+          Left = 260
+          Top = 0
+          Width = 49
+          Height = 13
+          Caption = 'First range'
+        end
+        object LLastRange: TLabel
+          Left = 388
+          Top = 0
+          Width = 50
+          Height = 13
+          Caption = 'Last range'
+        end
+        object LRange: TLabel
+          Left = 260
+          Top = 84
+          Width = 249
+          Height = 57
+          AutoSize = False
+          Caption = 
+            'Each line will be evaluated and assigned to each field as the st' +
+            'art of the filter and end of the filter'
+          WordWrap = True
+        end
+        object EBDEIndexFields: TComboBox
+          Left = 116
+          Top = 54
+          Width = 137
+          Height = 21
+          ItemHeight = 13
+          TabOrder = 1
+          OnChange = MSQLChange
+          OnDropDown = EBDEIndexFieldsDropDown
+          Items.Strings = (
+            '')
+        end
+        object EBDEIndexName: TComboBox
+          Left = 116
+          Top = 28
+          Width = 137
+          Height = 21
+          ItemHeight = 13
+          TabOrder = 3
+          OnChange = MSQLChange
+          OnDropDown = EBDEIndexNameDropDown
+          Items.Strings = (
+            '')
+        end
+        object EBDETable: TComboBox
+          Left = 116
+          Top = 2
+          Width = 137
+          Height = 21
+          ItemHeight = 13
+          TabOrder = 0
+          OnChange = MSQLChange
+          OnDropDown = EBDETableDropDown
+          Items.Strings = (
+            '')
+        end
+        object EBDEMasterFields: TEdit
+          Left = 116
+          Top = 78
+          Width = 137
+          Height = 21
+          TabOrder = 2
+          Text = 'EBDEMasterFields'
+          OnChange = MSQLChange
+        end
+        object EBDEFirstRange: TMemo
+          Left = 260
+          Top = 16
+          Width = 121
+          Height = 65
+          TabOrder = 4
+          WordWrap = False
+          OnChange = MSQLChange
+        end
+        object EBDELastRange: TMemo
+          Left = 388
+          Top = 16
+          Width = 121
+          Height = 65
+          TabOrder = 5
+          WordWrap = False
+          OnChange = MSQLChange
+        end
+      end
+      object TabMyBase: TTabSheet
+        Caption = 'MyBase'
+        ImageIndex = 3
+        object LIndexFields: TLabel
+          Left = 0
+          Top = 53
+          Width = 53
+          Height = 13
+          Caption = 'Index fields'
+        end
+        object LMyBase: TLabel
+          Left = 0
+          Top = 6
+          Width = 83
+          Height = 13
+          Caption = 'MyBase Filename'
+        end
+        object Label1: TLabel
+          Left = 0
+          Top = 28
+          Width = 61
+          Height = 13
+          Caption = 'Field defs file'
+        end
+        object EMyBase: TEdit
+          Left = 96
+          Top = 2
+          Width = 277
+          Height = 21
+          TabOrder = 0
+          OnChange = MSQLChange
+        end
+        object EIndexFields: TEdit
+          Left = 96
+          Top = 49
+          Width = 149
+          Height = 21
+          TabOrder = 1
+          OnChange = MSQLChange
+        end
+        object BMyBase: TButton
+          Left = 372
+          Top = 2
+          Width = 77
+          Height = 23
+          Caption = 'Search...'
+          TabOrder = 2
+          OnClick = BMyBaseClick
+        end
+        object Button2: TButton
+          Left = 372
+          Top = 26
+          Width = 77
+          Height = 23
+          Caption = 'Search...'
+          TabOrder = 3
+          OnClick = BMyBaseClick
+        end
+        object GroupBox1: TGroupBox
+          Left = 0
+          Top = 76
+          Width = 449
+          Height = 89
+          Caption = 'Dataset client side unions'
+          TabOrder = 4
           object LabelUnions: TLabel
-            Left = 0
-            Top = 112
+            Left = 4
+            Top = 20
             Width = 33
             Height = 13
             Caption = 'Unions'
           end
-          object EMyBase: TEdit
-            Left = 0
-            Top = 22
-            Width = 485
-            Height = 21
-            TabOrder = 0
-            OnChange = MSQLChange
-          end
-          object EIndexFields: TEdit
-            Left = 0
-            Top = 82
-            Width = 185
-            Height = 21
-            TabOrder = 1
-            OnChange = MSQLChange
-          end
-          object BMyBase: TButton
-            Left = 0
-            Top = 42
-            Width = 109
-            Height = 25
-            Caption = 'Search...'
-            TabOrder = 2
-            OnClick = BMyBaseClick
-          end
-          object LUnions: TListBox
-            Left = 232
-            Top = 108
-            Width = 265
-            Height = 77
-            ItemHeight = 13
-            TabOrder = 3
-          end
           object ComboUnions: TComboBox
-            Left = 0
-            Top = 128
+            Left = 4
+            Top = 36
             Width = 165
             Height = 21
             Style = csDropDownList
             ItemHeight = 13
-            TabOrder = 4
-          end
-          object BAddUnions: TButton
-            Left = 184
-            Top = 108
-            Width = 33
-            Height = 29
-            Caption = '>'
-            TabOrder = 5
-            OnClick = BAddUnionsClick
-          end
-          object BDelUnions: TButton
-            Left = 184
-            Top = 152
-            Width = 33
-            Height = 29
-            Caption = '<'
-            TabOrder = 6
-            OnClick = BDelUnionsClick
+            TabOrder = 0
           end
           object CheckGroupUnion: TCheckBox
-            Left = 0
-            Top = 156
+            Left = 4
+            Top = 60
             Width = 117
             Height = 17
             Caption = 'Union grouping'
-            TabOrder = 7
+            TabOrder = 1
             OnClick = MSQLChange
           end
+          object BAddUnions: TButton
+            Left = 172
+            Top = 16
+            Width = 33
+            Height = 29
+            Caption = '>'
+            TabOrder = 2
+            OnClick = BAddUnionsClick
+          end
+          object BDelUnions: TButton
+            Left = 172
+            Top = 48
+            Width = 33
+            Height = 29
+            Caption = '<'
+            TabOrder = 3
+            OnClick = BDelUnionsClick
+          end
+          object LUnions: TListBox
+            Left = 212
+            Top = 16
+            Width = 229
+            Height = 65
+            ItemHeight = 13
+            TabOrder = 4
+          end
+        end
+        object EMybasedefs: TEdit
+          Left = 96
+          Top = 26
+          Width = 277
+          Height = 21
+          TabOrder = 5
+          OnChange = MSQLChange
         end
       end
     end
@@ -1062,7 +1078,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = 'cds'
-    Filter = 'Mybase files;*.cds'
+    Filter = 'Mybase files|*.cds|Text files|*.txt|All files|*.*|Inifiles|*.ini'
     FilterIndex = 0
     Title = 'Open'
     Left = 232

@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='1.6pre1';
+ RM_VERSION='1.6pre5';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
 
@@ -688,6 +688,7 @@ var
   SRpNobitBlockScroll:WideString='No bitblock scroll';
   SRpExcelFile:WideString='Excel file';
   SRpExcelNotSupported:WideString='Excel not supported';
+  SRpPrintConditionHint:WideString='Boolean expression, if evaluated to false this component/section will not print, this is a multiline hint it spans auto across some lines because it does not fit in screen, well may be if a high resolution is selected this hint will be visible in only ';
 
 
 implementation

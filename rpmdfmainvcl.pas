@@ -26,6 +26,9 @@ uses
 {$IFDEF USEVARIANTS}
   Types,
 {$ENDIF}
+{$IFDEF VER150}
+  D7ComboBoxStringsGetPatch,
+{$ENDIF}
   Classes,
   rpgdidriver,rpvpreview,rprfvparams,windows,
   Controls, Forms,
@@ -33,7 +36,7 @@ uses
   Clipbrd,Printers,Consts, Dialogs,ShellApi,
   rpreport,rpmdshfolder,
   rpmdfdesignvcl,rpmdfaboutvcl,rppagesetupvcl,
-  rpmdobjinspvcl, rplastsav, ToolWin,rpmdfdatainfovcl,rpmdfsectionintvcl,
+  rpmdobjinspvcl, rplastsav, ToolWin,rpmdfdinfovcl,rpmdfsectionintvcl,
   rpmdfgridvcl,rpmdfstrucvcl,rpmdobinsintvcl,rpfparamsvcl,
   rpmdconsts,rptypes, rpsubreport,
   IniFiles,

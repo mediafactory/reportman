@@ -122,16 +122,18 @@ type
     WString: WideString;
   end;
 
-  TRpWideStrings = class(TObject)
+  TRpWideStrings = class(TPersistent)
   private
     FWideList: TList;
     function GetString(Index: Integer): WideString;
     procedure PutString(Index: Integer; const S: WideString);
   public
     constructor Create;
+    procedure AssignTo(destination:TPersistent);override;
     destructor Destroy; override;
     procedure Clear;
     function  Count: Integer;
+    function IndexOf(name:WideString):integer;
     procedure Insert(Index: Integer; const S: WideString);
     function Add(const S: WideString): Integer;
     property Strings[Index: Integer]: WideString read GetString write PutString;
@@ -153,7 +155,8 @@ procedure FillTreeDir(adirectory:String;alist:TStringList);
 function WideStringToDOS(astring:WideString):WideString;
 function NumberToText(FNumero:currency;female:boolean;idiom:integer):String;
 procedure GetLanguageDescriptions(alist:TStrings);
-procedure GetBidiDescriptions(alist:TStrings);
+procedure GetBidiDescriptions(alist:TRpWideStrings);
+procedure GetBidiDescriptionsA(alist:TStrings);
 function RpBidiModeToString(BidiMode:TRpBidiMode):String;
 function StringToRpBidiMode(Value:String):TRpBidiMode;
 function DoReverseString(Value:String):String;
@@ -721,6 +724,52 @@ function TRpWideStrings.Count: Integer;
 begin
   Result := FWideList.Count;
 end;
+
+
+procedure TRpWideStrings.AssignTo(destination:TPersistent);
+var
+ alist:TStrings;
+ i:integer;
+ wlist:TRpWideStrings;
+begin
+ if destination is TStrings then
+ begin
+  alist:=TStrings(destination);
+  alist.clear;
+  for i:=0 to count-1 do
+  begin
+   alist.Add(Strings[i]);
+  end;
+ end
+ else
+ if destination is TRpWideStrings then
+ begin
+  wlist:=TRpWideStrings(destination);
+  wlist.clear;
+  for i:=0 to count-1 do
+  begin
+   wlist.Add(Strings[i]);
+  end;
+ end
+ else
+  inherited AssignTo(destination);
+end;
+
+function TRpWideStrings.IndexOf(name:WideString):integer;
+var
+ i:integer;
+begin
+ Result:=-1;
+ for i:=0 to Count-1 do
+ begin
+  if name=Strings[i] then
+  begin
+   Result:=i;
+   break;
+  end;
+ end;
+end;
+
 
 procedure TRpWideStrings.Clear;
 var
@@ -1306,8 +1355,20 @@ begin
  alist.Add(SRpFrench);
 end;
 
+procedure GetBidiDescriptionsA(alist:TStrings);
+var
+ list:TRpWideStrings;
+begin
+ list:=TRpWideStrings.create;
+ try
+  GetBidiDescriptions(list);
+  alist.Assign(list);
+ finally
+  list.free;
+ end;
+end;
 
-procedure GetBidiDescriptions(alist:TStrings);
+procedure GetBidiDescriptions(alist:TRpWideStrings);
 begin
  alist.Clear;
  alist.Add(SRpSBidiNo);

@@ -11,9 +11,9 @@
     <IDLGENFILES value=""/>
     <DEFFILE value=""/>
     <RESDEPEN value="$(RESFILES)"/>
-    <LIBFILES value="&quot;C:\Archivos de programa\Borland\CBuilder6\Lib\Psdk\shlwapi.lib&quot;"/>
-    <LIBRARIES value=""/>
-    <SPARELIBS value="dsnap.lib dbrtl.lib bdertl.lib ibxpress.lib adortl.lib rtl.lib"/>
+    <LIBFILES value=""/>
+    <LIBRARIES value="shlwapi.lib"/>
+    <SPARELIBS value="dsnap.lib dbrtl.lib bdertl.lib ibxpress.lib adortl.lib rtl.lib shlwapi.lib"/>
     <PACKAGES value="rtl.bpi dsnap.bpi dbrtl.bpi bdertl.bpi adortl.bpi ibxpress.bpi vclx.bpi 
       dbexpress.bpi tee.bpi vcljpg.bpi indy.bpi visualclx.bpi visualdbclx.bpi 
       vcl.bpi"/>
@@ -28,7 +28,7 @@
     <SYSDEFINES value="_RTLDLL;NO_STRICT;_VIS_NOLIB;USEPACKAGES"/>
     <MAINSOURCE value="rppack_builder6.cpp"/>
     <INCLUDEPATH value="$(BCB)\include;$(BCB)\include\vcl;$(BCL)\Source\vcl"/>
-    <LIBPATH value="$(BCB)\lib\obj;$(BCB)\lib"/>
+    <LIBPATH value="$(BCB)\lib\obj;$(BCB)\lib;$(BCB)\lib\Psdk"/>
     <WARNINGS value="-w-par -w-8027 -w-8026"/>
     <WARNOPTSTR value=""/>
     <OTHERFILES value=""/>
@@ -70,7 +70,6 @@
       <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\vcljpg.bpi" FORMNAME="" UNITNAME="vcljpg" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\indy.bpi" FORMNAME="" UNITNAME="indy" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\visualclx.bpi" FORMNAME="" UNITNAME="visualclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
-      <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Psdk\shlwapi.lib" FORMNAME="" UNITNAME="shlwapi" CONTAINERID="LibTool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rptranslator.dcr" FORMNAME="" UNITNAME="" CONTAINERID="DcrTool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\visualdbclx.bpi" FORMNAME="" UNITNAME="visualdbclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="C:\Archivos de programa\Borland\CBuilder6\Lib\Release\vcl.bpi" FORMNAME="" UNITNAME="vcl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
@@ -103,6 +102,7 @@ LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
 ProductName=
+
 ProductVersion=1.0.0.0
 Comments=
 

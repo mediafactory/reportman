@@ -107,7 +107,8 @@ function ParamTypeToDataType(paramtype:TRpParamType):TFieldType;
 function VariantTypeToDataType(avariant:Variant):TFieldType;
 function ParamTypeToString(paramtype:TRpParamType):String;
 function StringToParamType(Value:String):TRpParamType;
-procedure GetPossibleDataTypes(alist:TStrings);
+procedure GetPossibleDataTypes(alist:TRpWideStrings);
+procedure GetPossibleDataTypesA(alist:TStrings);
 procedure ParseCommandLineParams(params:TRpParamList);
 
 implementation
@@ -512,7 +513,20 @@ begin
  end;
 end;
 
-procedure GetPossibleDataTypes(alist:TStrings);
+procedure GetPossibleDataTypesA(alist:TStrings);
+var
+ list:TRpWideStrings;
+begin
+ list:=TRpWideStrings.Create;
+ try
+  GetPossibleDataTypes(list);
+  alist.Assign(list);
+ finally
+  list.free;
+ end;
+end;
+
+procedure GetPossibleDataTypes(alist:TRpWideStrings);
 begin
  alist.Clear;
  alist.Add(SRpSUnknownType);

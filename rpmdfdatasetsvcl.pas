@@ -23,32 +23,37 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls, ToolWin, ImgList,rpmdconsts,rpgraphutilsvcl,
-  rptypes,rpdatainfo,rpreport,rpfparamsvcl,rpmdfsampledatavcl, ActnList;
+  rptypes,rpdatainfo,rpreport,rpfparamsvcl,rpmdfsampledatavcl, ActnList,
+  rpparams;
 
 type
   TFRpDatasetsVCL = class(TFrame)
     ImageList1: TImageList;
     PTop: TPanel;
-    PBottom: TPanel;
     ToolBar1: TToolBar;
-    LDatasets: TListBox;
-    Splitter1: TSplitter;
-    Panel1: TPanel;
-    Panel2: TPanel;
-    MHelp: TMemo;
-    BParams: TButton;
     OpenDialog1: TOpenDialog;
     ActionList1: TActionList;
     ANew: TAction;
     ADelete: TAction;
     ARename: TAction;
-    GDatasets: TPanel;
-    Panel3: TPanel;
+    ToolButton1: TToolButton;
+    ToolButton2: TToolButton;
+    ToolButton3: TToolButton;
+    ToolButton4: TToolButton;
+    ToolButton5: TToolButton;
+    ToolButton6: TToolButton;
+    BParams: TButton;
+    PTop1: TPanel;
+    LDatasets: TListBox;
+    PanelBasic: TPanel;
     LMasterDataset: TLabel;
     LConnection: TLabel;
     BShowData: TButton;
     ComboDataSource: TComboBox;
     ComboConnection: TComboBox;
+    Button1: TButton;
+    Splitter1: TSplitter;
+    PBottom: TPanel;
     PControl: TPageControl;
     TabSQL: TTabSheet;
     MSQL: TMemo;
@@ -75,21 +80,19 @@ type
     TabMyBase: TTabSheet;
     LIndexFields: TLabel;
     LMyBase: TLabel;
+    Label1: TLabel;
     EMyBase: TEdit;
     EIndexFields: TEdit;
     BMyBase: TButton;
-    ToolButton1: TToolButton;
-    ToolButton2: TToolButton;
-    ToolButton3: TToolButton;
-    ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
-    ToolButton6: TToolButton;
+    Button2: TButton;
+    GroupBox1: TGroupBox;
     LabelUnions: TLabel;
-    LUnions: TListBox;
     ComboUnions: TComboBox;
+    CheckGroupUnion: TCheckBox;
     BAddUnions: TButton;
     BDelUnions: TButton;
-    CheckGroupUnion: TCheckBox;
+    LUnions: TListBox;
+    EMybasedefs: TEdit;
     procedure BParamsClick(Sender: TObject);
     procedure LDatasetsClick(Sender: TObject);
     procedure MSQLChange(Sender: TObject);
@@ -100,11 +103,16 @@ type
     procedure ARenameExecute(Sender: TObject);
     procedure BAddUnionsClick(Sender: TObject);
     procedure BDelUnionsClick(Sender: TObject);
+    procedure EBDETableDropDown(Sender: TObject);
+    procedure EBDEIndexNameDropDown(Sender: TObject);
+    procedure EBDEIndexFieldsDropDown(Sender: TObject);
   private
     { Private declarations }
     Report:TRpReport;
     procedure SetDataInfo(Value:TRpDataInfoList);
     procedure SetDatabaseInfo(Value:TRpDatabaseInfoList);
+    procedure SetParams(Value:TRpParamList);
+    function GetParams:TRpParamList;
     function GetDatabaseInfo:TRpDatabaseInfoList;
     function GetDataInfo:TRpDataInfoList;
 //    function FindDatabaseInfoItem:TRpDatabaseInfoItem;
@@ -118,6 +126,8 @@ type
      write SetDataInfo;
     property Databaseinfo:TRpDatabaseInfoList read GetDatabaseinfo
      write SetDatabaseInfo;
+    property Params:TRpParamList read GetParams
+     write SetParams;
   end;
 
 implementation
@@ -125,12 +135,21 @@ implementation
 {$R *.DFM}
 
 
+function TFRpDatasetsVCL.GetParams:TRpParamList;
+begin
+ result:=report.params;
+end;
+
+procedure TFRpDatasetsVCL.SetParams(Value:TRpParamList);
+begin
+ report.params.assign(value);
+end;
+
 constructor TFRpDatasetsVCL.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
  Report:=TRpReport.Create(Self);
- MHelp.Text:=SRpNewDataInfo;
  BParams.Caption:=TranslateStr(152,BParams.Caption);
  LConnection.Caption:=TranslateStr(154,LConnection.Caption);
  LMasterDataset.Caption:=TranslateStr(155,LMasterDataset.Caption);
@@ -152,6 +171,11 @@ begin
  LFirstRange.Caption:=TranslateStr(831,LFirstRange.Caption);
  LLastRange.Caption:=TranslateStr(832,LLastRange.Caption);
  LRange.Caption:=TranslateStr(833,LRange.Caption);
+ // ANew.Hint:=TranslateStr(833,ANew.Hint);
+// ADelete.Hint:=TranslateStr(833,ADelete.Hint);
+// ARename.Hint:=TranslateStr(833,ARename.Hint);
+// BParams.Hint:=TranslateStr(152,BParams.Hint);
+ PBottom.Height:=250;
 end;
 
 procedure TFRpDatasetsVCL.SetDatabaseInfo(Value:TRpDatabaseInfoList);
@@ -209,12 +233,15 @@ begin
  dinfo:=FindDataInfoItem;
  if dinfo=nil then
  begin
-  GDatasets.Visible:=false;
+  PControl.Visible:=false;
+  PanelBasic.Visible:=False;
   exit;
  end;
- GDatasets.Visible:=true;
+ PControl.Visible:=true;
+ PanelBasic.Visible:=true;
  MSQL.Text:=WideStringToDOS(dinfo.SQL);
  EMyBase.Text:=dinfo.MyBaseFilename;
+ EMyBaseDefs.Text:=dinfo.MyBaseFields;
  EIndexFields.Text:=dinfo.MyBaseIndexFields;
  LUnions.Items.Assign(dinfo.DataUnions);
  CheckGroupUnion.Checked:=dinfo.GroupUnion;
@@ -366,6 +393,11 @@ begin
   dinfo.MyBaseFilename:=EMyBase.Text;
  end
  else
+ if Sender=EMyBaseDefs then
+ begin
+  dinfo.MyBaseFields:=EMyBaseDefs.Text;
+ end
+ else
  if Sender=EIndexFields then
  begin
   dinfo.MyBaseIndexFields:=EIndexFields.Text;
@@ -428,9 +460,22 @@ end;
 
 procedure TFRpDatasetsVCL.BMyBaseClick(Sender: TObject);
 begin
+ if Sender=BMyBase then
+ begin
+  OpenDialog1.DefaultExt:='cds';
+  OpenDialog1.FilterIndex:=0;
+ end
+ else
+ begin
+  OpenDialog1.DefaultExt:='ini';
+  OpenDialog1.FilterIndex:=3;
+ end;
  if OpenDialog1.Execute then
  begin
-  EMyBase.Text:=OpenDialog1.FileName;
+  if Sender=BMyBase then
+   EMyBase.Text:=OpenDialog1.FileName
+  else
+   EMyBaseDefs.Text:=OpenDialog1.FileName
  end;
 end;
 
@@ -544,6 +589,83 @@ begin
   exit;
  LUnions.Items.Delete(LUnions.ItemIndex);
  MSQLChange(BAddUnions);
+end;
+
+procedure TFRpDatasetsVCL.EBDETableDropDown(Sender: TObject);
+{$IFDEF USEBDE}
+var
+ dinfo:TRpDatainfoItem;
+{$ENDIF}
+begin
+{$IFDEF USEBDE}
+ // Fils the info of the current dataset
+ dinfo:=FindDataInfoItem;
+ if dinfo=nil then
+  exit;
+ // Fills with tablenames, without extensions,
+ // no system tables
+ try
+  Session.GetTableNames(dinfo.DatabaseAlias,'',True,False,EBDETable.Items);
+ finally
+  EBDETable.Items.Insert(0,' ');
+ end;
+{$ENDIF}
+end;
+
+procedure TFRpDatasetsVCL.EBDEIndexNameDropDown(Sender: TObject);
+{$IFDEF USEBDE}
+var
+ dinfo:TRpDatainfoItem;
+ atable:TTable;
+ i:integer;
+{$ENDIF}
+begin
+{$IFDEF USEBDE}
+ // Fils the info of the current dataset
+ dinfo:=FindDataInfoItem;
+ if dinfo=nil then
+  exit;
+ atable:=TTable.Create(Self);
+ try
+  EBDEIndexName.Items.Clear;
+  atable.DatabaseName:=dinfo.DatabaseAlias;
+  atable.TableName:=dinfo.BDETable;
+  atable.IndexDefs.Update;
+  EBDEIndexName.Items.Clear;
+  for i:=0 to atable.IndexDefs.Count-1 do
+  begin
+   EBDEIndexName.Items.Add(atable.IndexDefs.Items[i].Name);
+  end;
+ finally
+  atable.free;
+  EBDEIndexName.Items.Insert(0,' ');
+ end;
+{$ENDIF}
+end;
+
+procedure TFRpDatasetsVCL.EBDEIndexFieldsDropDown(Sender: TObject);
+{$IFDEF USEBDE}
+var
+ dinfo:TRpDatainfoItem;
+ atable:TTable;
+{$ENDIF}
+begin
+{$IFDEF USEBDE}
+ // Fils the info of the current dataset
+ dinfo:=FindDataInfoItem;
+ if dinfo=nil then
+  exit;
+ atable:=TTable.Create(Self);
+ try
+  EBDEIndexFields.Items.Clear;
+  atable.DatabaseName:=dinfo.DatabaseAlias;
+  atable.TableName:=dinfo.BDETable;
+  GetIndexFieldNames(atable,EBDEIndexFields.Items);
+ finally
+  atable.free;
+  EBDEIndexFields.Items.Insert(0,' ');
+ end;
+{$ENDIF}
 end;
 
 end.

@@ -46,21 +46,11 @@ type
     ActionList1: TActionList;
     ANewConnection: TAction;
     ADelete: TAction;
-    ToolBar1: TToolBar;
-    BNew: TToolButton;
-    ToolButton5: TToolButton;
-    ToolButton4: TToolButton;
-    ToolButton6: TToolButton;
     PParent: TPanel;
     PanelProps: TPanel;
     PopAdd: TPopupMenu;
     MNew: TMenuItem;
     PTop: TPanel;
-    GDriver: TListBox;
-    PDriver: TPanel;
-    MHelp: TMemo;
-    Panel1: TPanel;
-    BConfig: TButton;
     GAvailable: TGroupBox;
     LConnections: TListBox;
     PConProps: TPanel;
@@ -75,6 +65,17 @@ type
     BBuild: TButton;
     ComboDriver: TComboBox;
     BTest: TButton;
+    ToolBar1: TToolBar;
+    BNew: TToolButton;
+    ToolButton5: TToolButton;
+    ToolButton4: TToolButton;
+    ToolButton6: TToolButton;
+    Groupaval: TGroupBox;
+    GDriver: TListBox;
+    PDriver: TPanel;
+    Panel1: TPanel;
+    BConfig: TButton;
+    MHelp: TMemo;
     procedure GDriverClick(Sender: TObject);
     procedure LConnectionsClick(Sender: TObject);
     procedure BNewClick(Sender: TObject);
@@ -95,6 +96,7 @@ type
     procedure SetDatabaseInfo(Value:TRpDatabaseInfoList);
     procedure MenuAddClick(Sender:TObject);
     function FindDatabaseInfoItem:TRpDatabaseInfoItem;
+    procedure UpdateConnections;
   public
     { Public declarations }
     constructor Create(AOwner:TComponent);override;
@@ -111,6 +113,8 @@ constructor TFRpConnectionVCL.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FDatabaseInfo:=TRpDatabaseInfoList.Create(self);
+ 
  // Translations
  BConfig.Caption:=TranslateStr(143,BConfig.Caption);
  CheckLoginPrompt.Caption:=TranslateStr(144,CheckLoginPrompt.Caption);
@@ -135,11 +139,18 @@ begin
  inherited destroy;
 end;
 
-procedure TFRpConnectionVCL.SetDatabaseInfo(Value:TRpDatabaseInfoList);
+
+procedure TFRpConnectionVCL.UpdateConnections;
 var
  i:integer;
 begin
- FDatabaseInfo:=Value;
+ ComboDriver.Width:=PConProps.Width-ComboDriver.Left-20;
+ EConnectionString.Width:=PConProps.Width-ECOnnectionString.Left-20;
+ ComboAvailable.Width:=PConProps.Width-ComboAvailable.Left-20;
+ ComboDriver.Anchors:=[akLeft,akTop,akRight];
+ ComboAvailable.Anchors:=[akLeft,akTop,akRight];
+ EConnectionString.Anchors:=[akLeft,akTop,akRight];
+
  LConnections.Clear;
  for i:=0 to FDatabaseinfo.Count-1 do
  begin
@@ -149,6 +160,12 @@ begin
   LConnections.ItemIndex:=0;
  LConnectionsClick(Self);
  GDriverClick(Self);
+end;
+
+procedure TFRpConnectionVCL.SetDatabaseInfo(Value:TRpDatabaseInfoList);
+begin
+ FDatabaseInfo.Assign(Value);
+ UpdateConnections;
 end;
 
 procedure TFRpConnectionVCL.LConnectionsClick(Sender: TObject);
@@ -220,7 +237,7 @@ begin
   // My Base
   rpdatamybase:
    begin
-    BConfig.Visible:=false;
+    BConfig.Visible:=True;
     ComboAvailable.Items.Clear;
    end;
   // BDE
@@ -269,7 +286,7 @@ begin
   exit;
  item:=Fdatabaseinfo.Add(conname);
  item.Driver:=TRpDbDriver(GDriver.ItemIndex);
- SetDatabaseInfo(Fdatabaseinfo);
+ UpdateConnections;
  index:=FDatabaseinfo.IndexOf(conname);
  if index>=0 then
  begin
@@ -335,7 +352,7 @@ begin
  if index>=0 then
  begin
   databaseinfo.Delete(index);
-  SetDatabaseInfo(databaseinfo);
+  UpdateConnections;
  end;
 end;
 
@@ -414,7 +431,7 @@ begin
   exit;
  item:=Fdatabaseinfo.Add(conname);
  item.Driver:=TRpDbDriver(GDriver.ItemIndex);
- SetDatabaseInfo(Fdatabaseinfo);
+ UpdateConnections;
  index:=FDatabaseinfo.IndexOf(conname);
  if index>=0 then
  begin

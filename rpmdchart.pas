@@ -198,15 +198,15 @@ type
 
 function RpChartTypeToString(charttype:TRpChartType):String;
 function StringToRpChartType(Value:String):TRpChartType;
-procedure GetRpChartTypePossibleValues(alist:TStrings);
+procedure GetRpChartTypePossibleValues(alist:TRpWideStrings);
 
 function RpChartDriverToString(driver:TRpChartDriver):String;
 function StringToRpChartDriver(Value:String):TRpChartDriver;
-procedure GetRpChartDriverPossibleValues(alist:TStrings);
+procedure GetRpChartDriverPossibleValues(alist:TRpWideStrings);
 
 function RpMultiBarToString(multibar:TRpMultibar):String;
 function StringToRpMultibar(Value:String):TRpMultiBar;
-procedure GetRpMultiBarPossibleValues(alist:TStrings);
+procedure GetRpMultiBarPossibleValues(alist:TRpWideStrings);
 
 
 implementation
@@ -978,7 +978,7 @@ begin
  end;
 end;
 
-procedure GetRpChartDriverPossibleValues(alist:TStrings);
+procedure GetRpChartDriverPossibleValues(alist:TRpWideStrings);
 begin
  alist.Clear;
  alist.Add(SRpSDefault);
@@ -1071,7 +1071,7 @@ begin
  end;
 end;
 
-procedure GetRpChartTypePossibleValues(alist:TStrings);
+procedure GetRpChartTypePossibleValues(alist:TRpWideStrings);
 begin
  alist.Clear;
  alist.add(SRpChartLine);
@@ -1121,7 +1121,7 @@ begin
  end;
 end;
 
-procedure GetRpMultiBarPossibleValues(alist:TStrings);
+procedure GetRpMultiBarPossibleValues(alist:TRpWideStrings);
 begin
  alist.Clear;
  alist.Add(SRpSNone);

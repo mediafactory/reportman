@@ -41,10 +41,10 @@ type
   public
    class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
-   procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
+   procedure GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);override;
    procedure SetProperty(pname:string;value:Widestring);override;
    function GetProperty(pname:string):Widestring;override;
-   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);override;
  end;
 
  TRpImageInterface=class(TRpSizePosInterface)
@@ -56,10 +56,10 @@ type
    class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
    destructor Destroy;override;
-   procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
+   procedure GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);override;
    procedure SetProperty(pname:string;value:Widestring);override;
    function GetProperty(pname:string):Widestring;override;
-   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);override;
    procedure SetProperty(pname:string;stream:TMemoryStream);override;
    procedure GetProperty(pname:string;var Stream:TMemoryStream);override;
  end;
@@ -99,9 +99,9 @@ begin
  alist.Add('TRpDrawInterface');
 end;
 
-procedure TRpDrawInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+procedure TRpDrawInterface.GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);
 begin
- inherited GetProperties(lnames,ltypes,lvalues);
+ inherited GetProperties(lnames,ltypes,lvalues,lhints,lcat);
 
 
  // Shape
@@ -373,7 +373,7 @@ end;
 
 
 
-procedure TRpDrawInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
+procedure TRpDrawInterface.GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);
 var
  pi:TPenStyle;
  bi:TRpBrushStyle;
@@ -431,9 +431,9 @@ begin
  inherited destroy;
 end;
 
-procedure TRpImageInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+procedure TRpImageInterface.GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);
 begin
- inherited GetProperties(lnames,ltypes,lvalues);
+ inherited GetProperties(lnames,ltypes,lvalues,lhints,lcat);
 
 
  // DrawStyle
@@ -643,7 +643,7 @@ end;
 
 
 
-procedure TRpImageInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
+procedure TRpImageInterface.GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);
 var
  i:TRpImageDrawStyle;
 // k:TCopyMode;

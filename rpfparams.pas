@@ -143,7 +143,7 @@ begin
  LDescription.Caption:=TranslateStr(197,LDescription.Caption);
  LAssign.Caption:=TranslateStr(198,LAssign.Caption);
  Caption:=TranslateStr(199,Caption);
- GetPossibleDataTypes(ComboDataType.Items);
+ GetPossibleDataTypesA(ComboDataType.Items);
  ComboDataType.Hint:=TranslateStr(944,ComboDataType.Hint);
  CheckNull.Hint:=TranslateStr(945,CheckNull.Hint);
  LSearch.Caption:=TranslateStr(946,CheckNull.Hint);

@@ -38,10 +38,10 @@ type
   public
    class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
-   procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
+   procedure GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);override;
    procedure SetProperty(pname:string;value:Widestring);override;
    function GetProperty(pname:string):Widestring;override;
-   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);override;
  end;
 
 
@@ -64,9 +64,9 @@ begin
  alist.Add('TRpChartInterface');
 end;
 
-procedure TRpChartInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+procedure TRpChartInterface.GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);
 begin
- inherited GetProperties(lnames,ltypes,lvalues);
+ inherited GetProperties(lnames,ltypes,lvalues,lhints,lcat);
 
  // Expression
  lnames.Add(SrpSExpression);
@@ -418,7 +418,7 @@ begin
 end;
 
 procedure TRpChartInterface.GetPropertyValues(pname:string;
- lpossiblevalues:TStrings);
+ lpossiblevalues:TRpWideStrings);
 begin
  if pname=SRpSChartType then
  begin

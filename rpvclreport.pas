@@ -124,7 +124,7 @@ end;
 procedure TVCLReport.SaveToExcel(filename:string);
 begin
 {$IFNDEF USEEXCEL}
-      Raise Exception.Create(SRpExcelNotSupported);
+ Raise Exception.Create(SRpExcelNotSupported);
 {$ENDIF}
 {$IFDEF USEEXCEL}
  rpgdidriver.CalcReportWidthProgress(report);

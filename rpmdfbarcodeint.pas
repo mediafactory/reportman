@@ -37,10 +37,10 @@ type
   public
    class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
-   procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
+   procedure GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);override;
    procedure SetProperty(pname:string;value:Widestring);override;
    function GetProperty(pname:string):Widestring;override;
-   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);override;
  end;
 
 
@@ -62,9 +62,9 @@ begin
  alist.Add('TRpBarcodeInterface');
 end;
 
-procedure TRpBarcodeInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+procedure TRpBarcodeInterface.GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);
 begin
- inherited GetProperties(lnames,ltypes,lvalues);
+ inherited GetProperties(lnames,ltypes,lvalues,lhints,lcat);
 
  // Barcode Type
  lnames.Add(SRpSBarcodeType);
@@ -194,7 +194,7 @@ begin
 end;
 
 procedure TRpBarcodeInterface.GetPropertyValues(pname:string;
- lpossiblevalues:TStrings);
+ lpossiblevalues:TRpWideStrings);
 var
  it:TRpBarCodeType;
 begin

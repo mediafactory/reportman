@@ -28,10 +28,10 @@ uses
  excel97,
 {$ENDIF}
 {$IFDEF USEEXCEL2000}
- excel97,
+ excel2000,
 {$ENDIF}
 {$IFDEF USEEXCELXP}
- excelXP,
+ excelxp,
 {$ENDIF}
  Classes,sysutils,rpmetafile,rpmdconsts,Graphics,Forms,
  rpmunits,Dialogs, Controls,
@@ -148,13 +148,7 @@ var
  acolor:TColor;
 begin
  topstring:=FormatCurr('0000000000',obj.Top/XLS_PRECISION);
- if (obj.AlignMent AND AlignmentFlags_AlignRight)>0 then
-  leftstring:=FormatCurr('0000000000',(obj.Left+obj.Width)/XLS_PRECISION)
- else
-  if (obj.AlignMent AND AlignmentFlags_AlignHCenter)>0 then
-   leftstring:=FormatCurr('0000000000',(obj.Left+(obj.Width/2))/XLS_PRECISION)
-  else
-   leftstring:=FormatCurr('0000000000',obj.Left/XLS_PRECISION);
+ leftstring:=FormatCurr('0000000000',obj.Left/XLS_PRECISION);
  arow:=rows.IndexOf(topstring)+1;
  acolumn:=columns.IndexOf(leftstring)+1;
  if acolumn<1 then
@@ -396,7 +390,7 @@ begin
    // Creates the excel file
    Excel:=TExcelApplication.Create(Application);
    Excel.Visible[1]:=Visible;
-   wb:=Excel.Workbooks.add(null,1);
+   wb:=Excel.Workbooks.add(Null,1);
    shcount:=1;
    sh:=wb.Worksheets.item[shcount] As ExcelWorkSheet;
    FontName:=sh.Cells.Font.Name;
@@ -416,13 +410,7 @@ begin
      if apage.Objects[j].Metatype in [rpMetaText,rpMetaImage] then
      begin
       topstring:=FormatCurr('0000000000',apage.Objects[j].Top/XLS_PRECISION);
-      if (apage.Objects[j].AlignMent AND AlignmentFlags_AlignRight)>0 then
-        leftstring:=FormatCurr('0000000000',(apage.Objects[j].Left+apage.Objects[j].Width)/XLS_PRECISION)
-      else
-       if (apage.Objects[j].AlignMent AND AlignmentFlags_AlignHCenter)>0 then
-        leftstring:=FormatCurr('0000000000',(apage.Objects[j].Left+apage.Objects[j].Width/2)/XLS_PRECISION)
-       else
-        leftstring:=FormatCurr('0000000000',apage.Objects[j].Left/XLS_PRECISION);
+      leftstring:=FormatCurr('0000000000',apage.Objects[j].Left/XLS_PRECISION);
       index:=rows.IndexOf(topstring);
       if index<0 then
        rows.Add(topstring);
@@ -458,12 +446,7 @@ begin
  end;
  if Length(Filename)>0 then
  begin
-{$IFDEF USEEXCELXP}
-  wb.SaveAs(Filename, Null, Null, Null, False, False, xlNoChange, Null, True, Null, Null,0,Null);
-{$ENDIF}
-{$IFNDEF USEEXCELXP}
   wb.SaveAs(Filename, Null, Null, Null, False, False, xlNoChange, Null, True, Null, Null,0);
-{$ENDIF}
   wb.Close(True,Filename,False,0);
  end;
  if not visible then

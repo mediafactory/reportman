@@ -40,7 +40,7 @@ type
   public
    class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
-   procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
+   procedure GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);override;
    procedure SetProperty(pname:string;value:Widestring);override;
    function GetProperty(pname:string):Widestring;override;
  end;
@@ -52,10 +52,10 @@ type
   public
    class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
-   procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
+   procedure GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);override;
    procedure SetProperty(pname:string;value:Widestring);override;
    function GetProperty(pname:string):Widestring;override;
-   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);override;
  end;
 
 
@@ -121,9 +121,9 @@ begin
  alist.Add('TRpLabelInterface');
 end;
 
-procedure TRpLabelInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+procedure TRpLabelInterface.GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);
 begin
- inherited GetProperties(lnames,ltypes,lvalues);
+ inherited GetProperties(lnames,ltypes,lvalues,lhints,lcat);
  // Text
  lnames.Add(SrpSText);
  ltypes.Add(SRpSString);
@@ -227,9 +227,9 @@ begin
  alist.Add('TRpExpressionInterface');
 end;
 
-procedure TRpExpressionInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+procedure TRpExpressionInterface.GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);
 begin
- inherited GetProperties(lnames,ltypes,lvalues);
+ inherited GetProperties(lnames,ltypes,lvalues,lhints,lcat);
  // Expression
  lnames.Add(SrpSExpression);
  ltypes.Add(SRpSExpression);
@@ -418,7 +418,7 @@ begin
 end;
 
 procedure TRpExpressionInterface.GetPropertyValues(pname:string;
- lpossiblevalues:TStrings);
+ lpossiblevalues:TRpWideStrings);
 var
  i:TRpAggregate;
  it:TRpAggregateType;

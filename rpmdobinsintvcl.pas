@@ -62,8 +62,9 @@ type
   public
    fobjinsp:TComponent;
    procedure UpdatePos;virtual;
-   procedure GetProperties(lnames,ltypes,lvalues:TStrings);virtual;
-   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);virtual;
+   procedure GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);virtual;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);overload;virtual;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);overload;
    procedure SetProperty(pname:string;value:Widestring);overload;virtual;
    procedure SetProperty(pname:string;stream:TMemoryStream);overload;virtual;
    procedure GetProperty(pname:string;var Stream:TMemoryStream);overload;virtual;
@@ -102,10 +103,10 @@ type
    SectionInt:TRpSizeInterface;
    procedure DoSelect;
    procedure UpdatePos;override;
-   procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
+   procedure GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);override;
    procedure SetProperty(pname:string;value:Widestring);override;
    function GetProperty(pname:string):Widestring;override;
-   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);override;
    class procedure FillAncestors(alist:TStrings);virtual;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
  end;
@@ -117,10 +118,10 @@ type
   public
    class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
-   procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
+   procedure GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);override;
    procedure SetProperty(pname:string;value:Widestring);override;
    function GetProperty(pname:string):Widestring;override;
-   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);override;
  end;
 
 
@@ -194,6 +195,19 @@ begin
  UpdatePos;
 end;
 
+procedure TRpSizeInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
+var
+ list:TRpWideStrings;
+begin
+ list:=TRpWideStrings.Create;
+ try
+  GetPropertyValues(pname,list);
+  lpossiblevalues.Assign(list);
+ finally
+  list.free;
+ end;
+end;
+
 procedure TRpSizeInterface.UpdatePos;
 var
  NewWidth,NewHeight:integer;
@@ -204,7 +218,7 @@ begin
 end;
 
 
-procedure TRpSizeInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+procedure TRpSizeInterface.GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);
 begin
  lnames.clear;
  ltypes.clear;
@@ -213,6 +227,7 @@ begin
  // PrintCondition
  lnames.Add(SrpSPrintCondition);
  ltypes.Add(SRpSExpression);
+ lcat.Add(SRpSExpression);
  if Assigned(lvalues) then
   lvalues.Add(printitem.PrintCondition);
  // Before Print
@@ -239,7 +254,7 @@ begin
   lvalues.Add(gettextfromtwips(printitem.Height));
 end;
 
-procedure TRpSizeInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
+procedure TRpSizeInterface.GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);
 begin
  Raise Exception.Create(SRpPropertyHaveNoListValues+pname);
 end;
@@ -387,9 +402,9 @@ begin
  end;
 end;
 
-procedure TRpSizePosInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+procedure TRpSizePosInterface.GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);
 begin
- inherited GetProperties(lnames,ltypes,lvalues);
+ inherited GetProperties(lnames,ltypes,lvalues,lhints,lcat);
 
  // Top
  lnames.Add(SrpSTop);
@@ -434,7 +449,7 @@ end;
 
 
 procedure TRpSizePosInterface.GetPropertyValues(pname:string;
- lpossiblevalues:TStrings);
+ lpossiblevalues:TRpWideStrings);
 begin
  if pname=SRpAlign then
  begin
@@ -1151,9 +1166,9 @@ begin
  end;
 end;
 
-procedure TRpGenTextInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+procedure TRpGenTextInterface.GetProperties(lnames,ltypes,lvalues,lhints,lcat:TRpWideStrings);
 begin
- inherited GetProperties(lnames,ltypes,lvalues);
+ inherited GetProperties(lnames,ltypes,lvalues,lhints,lcat);
 
 
  // Alignment
@@ -1424,7 +1439,7 @@ begin
 end;
 
 
-procedure TRpGenTextInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
+procedure TRpGenTextInterface.GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);
 begin
  if pname=SrpSRightToLeft then
  begin

@@ -1,4 +1,3 @@
-
 ;DELPHIPATH=c:\Archivos de programa\Borland\Delphi7
 DELPHIPATH=c:\prog\Delphi7
 REPORTMANPATH=c:\prog\toni\cvsroot\reportman\reportman;$(DELPHIPATH)\OCX\Servers
@@ -137,10 +136,17 @@ clean:
         -del /s *.ow
         -del /s *.ppw
         -del /s *.rst
-        -del /s *.hpp
+        -del *.hpp
+	  copy builderclx\antivcl.hpp .	
         -del /s *.obj
         -del /s *.tds
         -del /s *.ocx
+        -del *.bpl
+        -del *.bpi
+        -del *.lib
+
+
+
 
         -del tests\eval\project1
         -del tests\metafiles\metafile

@@ -1,129 +1,98 @@
 object FRpConnectionVCL: TFRpConnectionVCL
   Left = 0
   Top = 0
-  Width = 681
-  Height = 415
+  Width = 443
+  Height = 277
   Align = alClient
   AutoScroll = False
   TabOrder = 0
-  object ToolBar1: TToolBar
-    Left = 0
-    Top = 0
-    Width = 681
-    Height = 27
-    AutoSize = True
-    ButtonHeight = 25
-    ButtonWidth = 26
-    Caption = 'ToolBar1'
-    Flat = True
-    Images = ImageList1
-    TabOrder = 0
-    object BNew: TToolButton
-      Left = 0
-      Top = 0
-      Action = ANewConnection
-      DropdownMenu = PopAdd
-      Style = tbsDropDown
-    end
-    object ToolButton5: TToolButton
-      Left = 39
-      Top = 0
-      Width = 36
-      Caption = 'ToolButton5'
-      ImageIndex = 4
-      Style = tbsSeparator
-    end
-    object ToolButton4: TToolButton
-      Left = 75
-      Top = 0
-      Action = ADelete
-    end
-    object ToolButton6: TToolButton
-      Left = 101
-      Top = 0
-      Width = 40
-      Caption = 'ToolButton6'
-      ImageIndex = 4
-      Style = tbsSeparator
-    end
-  end
   object PParent: TPanel
     Left = 0
-    Top = 27
-    Width = 681
-    Height = 388
+    Top = 0
+    Width = 443
+    Height = 277
     Align = alClient
     BevelOuter = bvNone
-    TabOrder = 1
+    TabOrder = 0
     object PTop: TPanel
       Left = 0
       Top = 0
-      Width = 681
-      Height = 105
+      Width = 443
+      Height = 129
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 1
-      object GDriver: TListBox
+      object Groupaval: TGroupBox
         Left = 0
         Top = 0
-        Width = 169
-        Height = 105
-        Align = alLeft
-        ItemHeight = 13
-        TabOrder = 0
-        OnClick = GDriverClick
-      end
-      object PDriver: TPanel
-        Left = 169
-        Top = 0
-        Width = 512
-        Height = 105
+        Width = 443
+        Height = 129
         Align = alClient
-        BevelOuter = bvNone
-        TabOrder = 1
-        object MHelp: TMemo
-          Left = 0
-          Top = 33
-          Width = 512
-          Height = 72
-          Align = alClient
-          Color = clInfoBk
-          ReadOnly = True
+        Caption = 'Available database connection drivers'
+        TabOrder = 0
+        object GDriver: TListBox
+          Left = 2
+          Top = 15
+          Width = 169
+          Height = 112
+          Align = alLeft
+          ItemHeight = 13
           TabOrder = 0
+          OnClick = GDriverClick
         end
-        object Panel1: TPanel
-          Left = 0
-          Top = 0
-          Width = 512
-          Height = 33
-          Align = alTop
+        object PDriver: TPanel
+          Left = 171
+          Top = 15
+          Width = 270
+          Height = 112
+          Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
-          object BConfig: TButton
-            Left = 5
-            Top = 4
-            Width = 164
-            Height = 25
-            Caption = 'Configure'
+          object Panel1: TPanel
+            Left = 0
+            Top = 0
+            Width = 270
+            Height = 33
+            Align = alTop
+            BevelOuter = bvNone
             TabOrder = 0
-            OnClick = BConfigClick
+            object BConfig: TButton
+              Left = 5
+              Top = 4
+              Width = 164
+              Height = 25
+              Caption = 'Configure'
+              TabOrder = 0
+              OnClick = BConfigClick
+            end
+          end
+          object MHelp: TMemo
+            Left = 0
+            Top = 33
+            Width = 270
+            Height = 79
+            Align = alClient
+            Color = clInfoBk
+            ReadOnly = True
+            ScrollBars = ssVertical
+            TabOrder = 1
           end
         end
       end
     end
     object PanelProps: TPanel
       Left = 0
-      Top = 105
-      Width = 681
-      Height = 283
+      Top = 129
+      Width = 443
+      Height = 148
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
       object GAvailable: TGroupBox
         Left = 0
-        Top = 0
-        Width = 681
-        Height = 283
+        Top = 27
+        Width = 443
+        Height = 121
         Align = alClient
         Caption = 'Available connections'
         TabOrder = 0
@@ -131,7 +100,7 @@ object FRpConnectionVCL: TFRpConnectionVCL
           Left = 2
           Top = 15
           Width = 169
-          Height = 266
+          Height = 104
           Align = alLeft
           ItemHeight = 13
           TabOrder = 0
@@ -140,14 +109,14 @@ object FRpConnectionVCL: TFRpConnectionVCL
         object PConProps: TPanel
           Left = 171
           Top = 15
-          Width = 508
-          Height = 266
+          Width = 270
+          Height = 104
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
           object LConnectionString: TLabel
             Left = 4
-            Top = 96
+            Top = 92
             Width = 84
             Height = 13
             Caption = 'Connection String'
@@ -155,7 +124,7 @@ object FRpConnectionVCL: TFRpConnectionVCL
           end
           object LAvailable: TLabel
             Left = 7
-            Top = 152
+            Top = 144
             Width = 43
             Height = 13
             Caption = 'Available'
@@ -199,29 +168,27 @@ object FRpConnectionVCL: TFRpConnectionVCL
             OnClick = CheckLoginPromptClick
           end
           object EConnectionString: TEdit
-            Left = 124
-            Top = 92
-            Width = 350
+            Left = 136
+            Top = 88
+            Width = 365
             Height = 21
-            Anchors = [akLeft, akTop, akRight]
             TabOrder = 3
             Visible = False
             OnChange = EConnectionStringChange
           end
           object ComboAvailable: TComboBox
-            Left = 124
-            Top = 148
-            Width = 350
+            Left = 136
+            Top = 140
+            Width = 365
             Height = 21
             Style = csDropDownList
-            Anchors = [akLeft, akTop, akRight]
             ItemHeight = 13
             TabOrder = 4
             Visible = False
           end
           object BBuild: TButton
             Left = 124
-            Top = 116
+            Top = 112
             Width = 117
             Height = 25
             Caption = 'Build...'
@@ -230,25 +197,65 @@ object FRpConnectionVCL: TFRpConnectionVCL
             OnClick = BBuildClick
           end
           object ComboDriver: TComboBox
-            Left = 124
+            Left = 132
             Top = 4
-            Width = 350
+            Width = 369
             Height = 21
             Style = csDropDownList
-            Anchors = [akLeft, akTop, akRight]
             ItemHeight = 13
             TabOrder = 6
             OnClick = ComboDriverClick
           end
           object BTest: TButton
             Left = 4
-            Top = 116
+            Top = 112
             Width = 117
             Height = 25
             Caption = 'Connect'
             TabOrder = 7
             OnClick = BTestClick
           end
+        end
+      end
+      object ToolBar1: TToolBar
+        Left = 0
+        Top = 0
+        Width = 443
+        Height = 27
+        AutoSize = True
+        ButtonHeight = 25
+        ButtonWidth = 26
+        Caption = 'ToolBar1'
+        Flat = True
+        Images = ImageList1
+        TabOrder = 1
+        object BNew: TToolButton
+          Left = 0
+          Top = 0
+          Action = ANewConnection
+          DropdownMenu = PopAdd
+          Style = tbsDropDown
+        end
+        object ToolButton5: TToolButton
+          Left = 39
+          Top = 0
+          Width = 36
+          Caption = 'ToolButton5'
+          ImageIndex = 4
+          Style = tbsSeparator
+        end
+        object ToolButton4: TToolButton
+          Left = 75
+          Top = 0
+          Action = ADelete
+        end
+        object ToolButton6: TToolButton
+          Left = 101
+          Top = 0
+          Width = 40
+          Caption = 'ToolButton6'
+          ImageIndex = 4
+          Style = tbsSeparator
         end
       end
     end

@@ -1,6 +1,6 @@
 object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
-  Left = 286
-  Top = 83
+  Left = 244
+  Top = 236
   ActiveControl = LConnections
   AutoScroll = False
   Caption = 'Data access configuration'
@@ -29,6 +29,9 @@ object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
     Align = alTop
     Caption = 'Database connections'
     TabOrder = 0
+    DesignSize = (
+      557
+      129)
     object LAvailable: TLabel
       Left = 8
       Top = 16

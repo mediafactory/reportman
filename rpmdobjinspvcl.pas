@@ -47,9 +47,11 @@ type
     FCompItem:TRpSizeInterface;
     FSelectedItems:TStringList;
     subrep:TRpSubreport;
-    LNames:TStringList;
-    LTypes:TStringList;
-    LValues:TStringList;
+    LNames:TRpWideStrings;
+    LTypes:TRpWideStrings;
+    LValues:TRpWideStrings;
+    LHints:TRpWideStrings;
+    LCat:TRpWideStrings;
     combo:TComboBox;
     LLabels:TList;
     LControls:TStringList;
@@ -150,9 +152,11 @@ begin
 
  Align:=alClient;
 
- LNames:=TStringList.Create;
- LTypes:=TStringList.Create;
- LValues:=TStringList.Create;
+ LNames:=TRpWideStrings.Create;
+ LTypes:=TRpWideStrings.Create;
+ LValues:=TRpWideStrings.Create;
+ LHints:=TRpWideStrings.Create;
+ LCat:=TRpWideStrings.Create;
  LLabels:=TList.Create;
  LControls:=TStringList.Create;
  AList:=TStringList.Create;
@@ -397,12 +401,18 @@ begin
 
  totalwidth:=PRight.Width;
 
- FCompItem.GetProperties(LNames,LTypes,nil);
+ FCompItem.GetProperties(LNames,LTypes,nil,LHints,LCat);
  for i:=0 to LNames.Count-1 do
  begin
   ALabel:=TLabel.Create(Self);
   LLabels.Add(ALabel);
   ALabel.Caption:=LNames.Strings[i];
+  if LHints.Count>i then
+   if Length(LHints.Strings[i])>0 then
+   begin
+    ALabel.Hint:=LHints.Strings[i];
+    ALabel.Cursor:=crHelp;
+   end;
   ALabel.Left:=CONS_LEFTGAP;
   ALabel.Top:=posy+CONS_LABELTOPGAP;
   ALabel.parent:=PLeft;
@@ -763,7 +773,7 @@ begin
 
  // Get the property description for common component of
  // multiselect
- FCompItem.GetProperties(LNames,LTypes,nil);
+ FCompItem.GetProperties(LNames,LTypes,nil,LHints,LCat);
  LValues.Assign(LNames);
  for k:=0 to selecteditems.count-1 do
  begin

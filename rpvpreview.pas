@@ -275,9 +275,9 @@ begin
    SRpPDFFile+'|*.pdf|'+
    SRpPDFFileUn+'|*.pdf';
 {$IFDEF USEEXCEL}
- SaveDialog1.Filter:=SaveDialog1.Filter+'|'+
-   SRpExcelFile+'|*.xls';
+ SaveDialog1.Filter:=SaveDialog1.Filter+'|'+SRpExcelFile+'|*.xls';
 {$ENDIF}
+
  APrevious.ShortCut:=ShortCut(VK_PRIOR, []);
  ANext.ShortCut:=ShortCut(VK_NEXT, []);
  AFirst.ShortCut:=ShortCut(VK_HOME, []);
@@ -382,6 +382,8 @@ begin
  ALastExecute(Self);
  PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,
  collate,false);
+  // report.EndPrint;
+// PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
  AppIdle(Self,adone);
 end;
 
@@ -408,20 +410,22 @@ begin
      begin
       ALastExecute(Self);
       SaveMetafileToPDF(report.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
+//    report.endprint
+//      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,9999999,
+//       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
       AppIdle(Self,adone);
      end
      else
      begin
-{$IFNDEF USEEXCEL}
-      Raise Exception.Create(SRpExcelNotSupported);
-{$ENDIF}
-{$IFDEF USEEXCEL}
+ {$IFDEF USEEXCEL}
       if SaveDialog1.FilterIndex=4 then
-      ALastExecute(Self);
-      ExportMetafileToExcel(report.Metafile,SaveDialog1.FileName,
-       true,false,true,1,9999);
-      AppIdle(Self,adone);
-{$ENDIF}
+      begin
+       ALastExecute(Self);
+       ExportMetafileToExcel(report.Metafile,SaveDialog1.FileName,
+        true,false,true,1,9999);
+       AppIdle(Self,adone);
+      end;
+ {$ENDIF}
      end;
    finally
     EnableControls;

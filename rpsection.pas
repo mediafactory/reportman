@@ -124,7 +124,7 @@ type
    procedure SaveExternal;
    procedure SaveExternalToDatabase;
    function GetExternalDataDescription:String;
-   procedure GetChildSubReportPossibleValues(lvalues:TStrings);
+   procedure GetChildSubReportPossibleValues(lvalues:TRpWideStrings);
    function GetChildSubReportName:string;
    procedure SetChildSubReportByName(avalue:String);
    property ChangeExpression:widestring read FChangeExpression write SetChangeExpression;
@@ -180,7 +180,7 @@ type
 
 function RpSkipTypeToText(value:TRpSkipType):String;
 function StringToRpSkipType(value:String):TRpSkipType;
-procedure GetSkipTypePossibleValues(alist:TStrings);
+procedure GetSkipTypePossibleValues(alist:TRpWideStrings);
 
 implementation
 
@@ -925,7 +925,7 @@ begin
   end;
 end;
 
-procedure TRpSection.GetChildSubReportPossibleValues(lvalues:TStrings);
+procedure TRpSection.GetChildSubReportPossibleValues(lvalues:TRpWideStrings);
 var
  rep:TRpReport;
  i:integer;
@@ -1146,7 +1146,7 @@ begin
  end;
 end;
 
-procedure GetSkipTypePossibleValues(alist:TStrings);
+procedure GetSkipTypePossibleValues(alist:TRpWideStrings);
 begin
  alist.clear;
  alist.Add(SRpSDefault);

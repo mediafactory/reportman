@@ -336,8 +336,6 @@ begin
   if Length(printer.Title)<1 then
    printer.Title:=SRpUntitled;
 
-  // A bug in Getting Copies forces me to
-  // not use Copies and collation printer capabilities
   SetPrinterCopies(hardwarecopies);
   SetPrinterCollation(hardwarecollate);
 
