@@ -216,9 +216,6 @@ type
     updatedmfields:boolean;
     AppStyle:TDefaultStyle;
     oldonException:TExceptionEvent;
-{$IFDEF MSWINDOWS}
-    oldonExceptionvcl:TExceptionEvent;
-{$ENDIF}
     procedure FreeInterface;
     procedure CreateInterface;
     function checkmodified:boolean;

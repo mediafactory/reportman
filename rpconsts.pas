@@ -548,6 +548,7 @@ resourcestring
   SRpRepMetafile='Report Metafile';
   SRpRepFile='Report File';
   SRpAnyFile='Any File';
+  SRpBitmapImages='Bitmap images';
 
 
 implementation

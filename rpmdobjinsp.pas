@@ -115,7 +115,7 @@ begin
 
 
 {$IFDEF VCLFILEFILTERS}
- OpenDialog1.Filt
+ OpenDialog1.Filter:=SrpBitmapImages+'|*.bmp';
 {$ENDIF}
 
  Align:=alClient;

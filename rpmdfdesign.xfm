@@ -3,8 +3,8 @@ object FRpDesignFrame: TFRpDesignFrame
   Top = 0
   Width = 451
   Height = 304
-  HorzScrollBar.Range = 20
   VertScrollBar.Range = 20
+  HorzScrollBar.Range = 20
   Align = alClient
   ParentShowHint = False
   ShowHint = True

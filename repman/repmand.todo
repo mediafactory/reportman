@@ -1,4 +1,4 @@
-{TODO 4 -oToni -cEngine : Add TTable support for BDE driver}
+{DONE 4 -oToni -cEngine : Add TTable support for BDE driver}
 {TODO 1 -oToni -cOthers : Add funtions to access SQLconnection and SQLsentence to ActiveX}
 {TODO 1 -oToni -cEngine : Add barcode component}
 

@@ -173,7 +173,7 @@ begin
   ConAdmin:=GetConnectionAdmin;
  except
   on e:Exception do
-  begin
+  begin        
    ShowMessage(E.message);
   end;
  end;

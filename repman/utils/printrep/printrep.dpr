@@ -24,7 +24,6 @@ program printrep;
 uses
   SysUtils,
 {$IFDEF MSWINDOWS}
-  Ctrl,
   midaslib,
   rpreport in '..\..\..\rpreport.pas',
   rpconsts in '..\..\..\rpconsts.pas',
