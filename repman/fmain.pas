@@ -243,6 +243,7 @@ begin
  filename:='';
 
  DoEnable;
+ FormResize(Self);
 end;
 
 procedure TFMainF.DoEnable;
@@ -315,6 +316,7 @@ end;
 procedure TFMainf.AOpenExecute(Sender: TObject);
 begin
  DoOpen(filename,true);
+ FormResize(Self);
 end;
 
 procedure TFMainf.ASaveExecute(Sender: TObject);
@@ -653,7 +655,7 @@ procedure TFMainf.ADataConfigExecute(Sender: TObject);
 begin
  // Data info configuration dialog
  ShowDataConfig(report);
-// fdesignframe.UpdateSelection(true);
+ fdesignframe.UpdateSelection(true);
  updatedmfields:=false;
 end;
 
@@ -665,7 +667,7 @@ end;
 procedure TFMainf.AGridOptionsExecute(Sender: TObject);
 begin
  ModifyGridProperties(report);
-// fdesignframe.UpdateSelection(true);
+ fdesignframe.UpdateSelection(true);
 end;
 
 procedure TFMainf.ACutExecute(Sender: TObject);
@@ -722,7 +724,7 @@ begin
   Generatenewname(compo);
   (section.Components.Add).Component:=TRpCommonPosComponent(compo);
   fobjinsp.CompItem:=nil;
-//  fdesignframe.UpdateSelection(true);
+  fdesignframe.UpdateSelection(true);
  end
  else
  begin
@@ -935,7 +937,7 @@ begin
  if assigned(fdesignframe) then
  begin
   fdesignframe.UpdateInterface;
-//  fdesignframe.UpdateSelection(true);
+  fdesignframe.UpdateSelection(true);
  end;
 end;
 
@@ -956,8 +958,21 @@ end;
 
 procedure TFMainf.FormResize(Sender: TObject);
 begin
-// if assigned(fdesignframe) then
-//  fdesignframe.UpdateInterface;
+ if assigned(fdesignframe) then
+ begin
+  fdesignframe.UpdateInterface;
+  // A bug in aligments CLX Windows and Linux
+  // forced me to include this corrections
+   fdesignframe.HorzScrollBar.Position:=0;
+   fdesignframe.VertScrollBar.Position:=0;
+   HorzScrollBar.Position:=0;
+   VertScrollBar.Position:=0;
+   MainScrollBox.HorzScrollBar.Position:=0;
+   MainScrollBox.VertScrollBar.Position:=0;
+   LeftPanel.Left:=0;
+   Splitter1.Left:=20;
+   ToolBar1.Left:=0;
+ end;
 end;
 
 initialization

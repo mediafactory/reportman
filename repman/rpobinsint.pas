@@ -504,6 +504,10 @@ begin
   FRectangle2.Parent:=Parent;
   FRectangle3.Parent:=Parent;
   FRectangle4.Parent:=Parent;
+  // It seems a Bug forces me to invalidate section after
+  // a aselection
+  if assigned(parent) then
+   parent.invalidate;
  end;
 
 

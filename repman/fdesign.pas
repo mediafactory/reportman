@@ -33,9 +33,11 @@ type
   TRpPaintEventPanel=Class(TPanel)
    private
     FOnPaint:TNotifyEvent;
+    Updating:boolean;
    protected
     procedure Paint;override;
    public
+    CaptionText:string;
     constructor Create(AOwner:TComponent);override;
     property OnPaint:TNotifyEvent read FOnPaint write FOnPaint;
    end;
@@ -88,8 +90,17 @@ procedure TRpPaintEventPanel.Paint;
 begin
  inherited Paint;
 
- if Assigned(FOnPaint) then
-  FOnPaint(Self);
+ if not updating then
+ begin
+  if Assigned(FOnPaint) then
+   FOnPaint(Self);
+ end;
+
+ if not assigned(parent) then
+  exit;
+
+ if (parent.parent is TScrollBox) then
+  Canvas.TextOut(TScrollBox(parent.parent).HorzScrollBar.Position,0,CaptionText);
 end;
 
 
@@ -133,6 +144,7 @@ var
  dataobj:TOBject;
  FSectionInterface:TRpSectionInterface;
  i:integer;
+ asubreport:TRpSubReport;
 begin
  if Not Assigned(freportstructure) then
   exit;
@@ -141,7 +153,18 @@ begin
  data:=freportstructure.RView.Selected.Data;
  if Not Assigned(data) then
   exit;
+ if force then
+ begin
+  SelectSubReport(nil);
+ end;
+
  dataobj:=TObject(data);
+ // Looks if there is a subreport selected
+ asubreport:=freportstructure.FindSelectedSubreport;
+ if asubreport<>FSubReport then
+ begin
+  SelectSubReport(asubreport);
+ end;
  if (dataobj is TRpSubReport) then
  begin
   if assigned(fobjinsp) then
@@ -184,6 +207,7 @@ var
  i:integer;
  aruler:TRpRuler;
  despy:integer;
+ apanel:TRpPaintEventPanel;
 begin
  TopRuler.Left:=CONS_RULER_LEFT-SectionScrollBox.HorzScrollBar.Position;;
  for i:=0 to leftrulers.count-1 do
@@ -191,6 +215,14 @@ begin
   despy:=SectionScrollBox.VertScrollBar.Position;
   aruler:=TRpRuler(leftrulers.items[i]);
   aruler.Top:=TRpSectionInterface(secinterfaces.Items[i]).Top-despy;
+  apanel:=TRpPaintEventPanel(toptitles.Items[i]);
+  apanel.Updating:=true;
+  try
+   apanel.Invalidate;
+   apanel.Update;
+  finally
+   apanel.Updating:=false;
+  end;
  end;
 end;
 
@@ -232,7 +264,8 @@ begin
    apanel:=TRpPaintEventPanel.Create(self);
    apanel.OnPaint:=SecPosChange;
    apanel.Height:=CT_TITLE_HEIGHT;
-   apanel.Caption:=' '+FSubReport.Sections.Items[i].Section.SectionCaption;
+   apanel.Caption:='';
+   apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption;
    apanel.Alignment:=taLeftJustify;
    apanel.Color:=clAppWorkSpace;
    apanel.BorderStyle:=bsSingle;
@@ -291,6 +324,8 @@ begin
  finally
   SectionScrollBox.Visible:=true;
  end;
+ SectionScrollBox.VertScrollBar.Position:=0;
+ SectionScrollBox.HorzScrollBar.Position:=0;
 end;
 
 
@@ -298,7 +333,7 @@ procedure TFDesignFrame.UpdateInterface;
 var
  i,j:integer;
  asecint:TRpSectionInterface;
- apanel:Tpanel;
+ apanel:TRpPaintEventpanel;
  aruler:TRpRuler;
  posx:integer;
  maxwidth:integer;
@@ -313,10 +348,11 @@ begin
   posx:=0;
   for i:=0 to secinterfaces.Count-1 do
   begin
-   apanel:=TPanel(toptitles.Items[i]);
+   apanel:=TRpPaintEventpanel(toptitles.Items[i]);
    asecint:=TRpSectionInterface(secinterfaces.items[i]);
    apanel.Width:=asecint.Width;
-   apanel.Caption:=' '+FSubReport.Sections.Items[i].Section.SectionCaption;
+   apanel.Caption:='';
+   apanel.CaptionText:=' '+FSubReport.Sections.Items[i].Section.SectionCaption;
    apanel.Top:=posx;
    posx:=posx+apanel.Height;
 
@@ -324,7 +360,7 @@ begin
    asecint.UpdatePos;
    for j:=0 to asecint.childlist.Count-1 do
    begin
-    TRpSizePosInterface(asecint.childlist.Items[i]).UpdatePos;
+    TRpSizePosInterface(asecint.childlist.Items[j]).UpdatePos;
    end;
    apanel.Width:=asecint.Width;
 

@@ -475,8 +475,12 @@ begin
  index:=TControl(Sender).tag;
  aname:=Lnames.strings[index];
  FCompItem.SetProperty(aname,TEdit(Sender).Text);
- if Assigned(FDesignFrame) then
-  TFDesignFrame(FDesignFrame).UpdateInterface;
+ if (FCompItem is TRpSectionInterface) then
+ begin
+  if ((aname=SRpsWidth) or (aname=SRpsHeight)) then
+   if Assigned(FDesignFrame) then
+    TFDesignFrame(FDesignFrame).UpdateInterface;
+ end;
  // If the property es positional update position
  if Assigned(fchangesize) then
  begin

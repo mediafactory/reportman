@@ -71,6 +71,10 @@ begin
  CreateInterface;
  RView.Selected:=RView.Items.Item[0];
  RView.FullExpand;
+ if Assigned(designframe) then
+ begin
+  TFDesignFrame(designframe).UpdateInterface;
+ end;
 end;
 
 function TFRpStructure.FindSelectedSubreport:TRpSubreport;
