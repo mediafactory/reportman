@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.1c';
+ RM_VERSION='2.1d';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;

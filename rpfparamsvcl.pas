@@ -194,6 +194,7 @@ begin
  begin
   LParams.Items.Add(params.items[i].Name);
  end;
+ LParamsClick(Self);
 end;
 
 

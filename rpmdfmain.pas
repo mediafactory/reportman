@@ -1959,6 +1959,8 @@ var
  oldlibraryname:String;
  astream:TStream;
 begin
+ if Not checksave then
+  exit;
  oldfilename:=filename;
  oldreportname:=areportname;
  oldlibraryname:=alibrary;

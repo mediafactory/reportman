@@ -28,7 +28,7 @@ int rp_open(char *filename);
 int rp_execute(int hreport,char *outputfilename,int metafile,int compressed);
 int rp_setparamvalue(int hreport,char *paramname,int paramtype,
  void *paramvalue);
-int rp_getparamcount(int hreport:integer;int *paramcount);
+int rp_getparamcount(int hreport,int *paramcount);
 int rp_getparamname(int hreport,int index,char *abuffer);
 int rp_close(int hreport);
 char * rp_lasterror(void);
