@@ -287,9 +287,9 @@ begin
  rec.rfunction:='NOT';
  rec.help:=SRpOperatorLog;
  lista1.addobject(rec.rfunction,rec);
- // |
+ // ;
  rec:=TRpRecHelp.create;
- rec.rfunction:='|';
+ rec.rfunction:=';';
  rec.help:=SRpOperatorSep;
  rec.params:=SRpOperatorSepP;
  lista1.addobject(rec.rfunction,rec);

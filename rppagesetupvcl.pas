@@ -28,52 +28,56 @@ uses
   Graphics, Controls, Forms, Dialogs,
   StdCtrls,rpreport, ExtCtrls,Buttons,Printers,
   rptypes,
-  rpmetafile,rpmdconsts,rpmdprintconfigvcl;
+  rpmetafile,rpmdconsts,rpmdprintconfigvcl, ComCtrls;
 
 type
   TFRpPageSetupVCL = class(TForm)
+    PControl: TPageControl;
+    TabPage: TTabSheet;
+    TabPrint: TTabSheet;
+    Panel1: TPanel;
     BOK: TButton;
     BCancel: TButton;
+    SColor: TShape;
     RPageSize: TRadioGroup;
     GPageSize: TGroupBox;
+    ComboPageSize: TComboBox;
     RPageOrientation: TRadioGroup;
     RCustomOrientation: TRadioGroup;
-    ColorDialog1: TColorDialog;
-    SColor: TShape;
     BBackground: TButton;
-    LRLang: TLabel;
-    ComboLanguage: TComboBox;
     GPageMargins: TGroupBox;
     LLeft: TLabel;
-    ELeftMargin: TEdit;
-    ETopMargin: TEdit;
     LTop: TLabel;
     LMetrics3: TLabel;
     LMetrics4: TLabel;
     LMetrics5: TLabel;
-    ERightMargin: TEdit;
     LRight: TLabel;
     LBottom: TLabel;
-    EBottomMargin: TEdit;
     LMetrics6: TLabel;
-    ComboPageSize: TComboBox;
-    LCopies: TLabel;
-    ECopies: TEdit;
-    CheckCollate: TCheckBox;
-    CheckTwoPass: TCheckBox;
-    LPrinterFonts: TLabel;
-    ComboPrinterFonts: TComboBox;
+    ELeftMargin: TEdit;
+    ETopMargin: TEdit;
+    ERightMargin: TEdit;
+    EBottomMargin: TEdit;
     GUserDefined: TGroupBox;
     LMetrics7: TLabel;
     LMetrics8: TLabel;
-    EPageheight: TEdit;
-    EPageWidth: TEdit;
     LWidth: TLabel;
     LHeight: TLabel;
+    EPageheight: TEdit;
+    EPageWidth: TEdit;
+    ColorDialog1: TColorDialog;
     LSelectPrinter: TLabel;
     ComboSelPrinter: TComboBox;
     BConfigure: TButton;
     CheckPrintOnlyIfData: TCheckBox;
+    CheckTwoPass: TCheckBox;
+    LCopies: TLabel;
+    ECopies: TEdit;
+    CheckCollate: TCheckBox;
+    LPrinterFonts: TLabel;
+    ComboPrinterFonts: TComboBox;
+    LRLang: TLabel;
+    ComboLanguage: TComboBox;
     LPreview: TLabel;
     ComboPreview: TComboBox;
     ComboStyle: TComboBox;
@@ -272,7 +276,9 @@ begin
  ComboPreview.Items.Strings[1]:=TranslateStr(842,ComboPreview.Items.Strings[1]);
  ComboStyle.Items.Strings[0]:=TranslateStr(843,ComboStyle.Items.Strings[0]);
  ComboStyle.Items.Strings[1]:=TranslateStr(844,ComboStyle.Items.Strings[1]);
- ComboStyle.Items.Strings[2]:=TranslateStr(844,ComboStyle.Items.Strings[2]);
+ ComboStyle.Items.Strings[2]:=TranslateStr(845,ComboStyle.Items.Strings[2]);
+ TabPage.Caption:=TranslateStr(857,TabPage.Caption);
+ TabPrint.Caption:=TranslateStr(858,TabPrint.Caption);
 end;
 
 procedure TFRpPageSetupVCL.BOKClick(Sender: TObject);

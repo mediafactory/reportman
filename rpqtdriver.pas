@@ -913,14 +913,20 @@ begin
  Application.Onidle:=nil;
  done:=false;
 
- qtdriver:=TRpQtDriver.Create;
- aqtdriver:=qtdriver;
- oldprogres:=report.OnProgress;
  try
-  report.OnProgress:=RepProgress;
-  report.PrintAll(qtdriver);
- finally
-  report.OnProgress:=oldprogres;
+  qtdriver:=TRpQtDriver.Create;
+  aqtdriver:=qtdriver;
+  oldprogres:=report.OnProgress;
+  try
+   report.OnProgress:=RepProgress;
+   report.PrintAll(qtdriver);
+  finally
+   report.OnProgress:=oldprogres;
+  end;
+ except
+  cancelled:=True;
+  Close;
+  Raise;
  end;
  Close;
 end;

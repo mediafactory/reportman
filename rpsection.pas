@@ -566,10 +566,7 @@ begin
  lvalues.Add(' ');
  for i:=0 to rep.Subreports.count-1 do
  begin
-  if rep.Subreports.items[i].SubReport<>SubReport then
-  begin
-   lvalues.Add(rep.Subreports.items[i].SubReport.GetDisplayName);
-  end;
+  lvalues.Add(rep.Subreports.items[i].SubReport.GetDisplayName);
  end;
 end;
 

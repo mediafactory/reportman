@@ -424,7 +424,7 @@ end;
 
 function TDecompressionStream.Read(var Buffer; Count: Longint): Longint;
 begin
-  if EOF then
+  if IsEOF then
   begin
    result:=0;
    exit;

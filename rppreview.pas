@@ -242,7 +242,8 @@ begin
   DisableControls(false);
   if report.TwoPass then
   begin
-   CalcReportWidthProgress(report);
+   if Not CalcReportWidthProgress(report) then
+    Abort;
   end
   else
   begin

@@ -519,7 +519,7 @@ begin
  begin
   dinfo.DataSource:='';
  end;
- ComboDataSource.Items.Insert(0,'');
+ ComboDataSource.Items.Insert(0,' ');
  inc(index);
  ComboDatasource.ItemIndex:=Index;
  MSQLChange(ComboConnection);
@@ -872,7 +872,7 @@ begin
  try
   Session.GetTableNames(dinfo.DatabaseAlias,'',True,False,EBDETable.Items);
  finally
-  EBDETable.Items.Insert(0,'');
+  EBDETable.Items.Insert(0,' ');
  end;
 {$ENDIF}
 end;
@@ -903,7 +903,7 @@ begin
   end;
  finally
   atable.free;
-  EBDEIndexName.Items.Insert(0,'');
+  EBDEIndexName.Items.Insert(0,' ');
  end;
 {$ENDIF}
 end;
@@ -955,7 +955,7 @@ begin
   GetIndexFieldNames(atable,EBDEIndexFields.Items);
  finally
   atable.free;
-  EBDEIndexFields.Items.Insert(0,'');
+  EBDEIndexFields.Items.Insert(0,' ');
  end;
 {$ENDIF}
 end;

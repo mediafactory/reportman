@@ -28,21 +28,24 @@ uses
   QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpreport, QExtCtrls,QButtons,QPrinters,
   rptypes,
-  rpmetafile,rpmdconsts,rpmdprintconfig;
+  rpmetafile,rpmdconsts,rpmdprintconfig, QComCtrls;
 
 type
   TFRpPageSetup = class(TForm)
+    ColorDialog1: TColorDialog;
+    PControl: TPageControl;
+    TabPage: TTabSheet;
+    TabPrint: TTabSheet;
+    Panel1: TPanel;
     BOK: TButton;
     BCancel: TButton;
+    SColor: TShape;
     RPageSize: TRadioGroup;
     GPageSize: TGroupBox;
+    ComboPageSize: TComboBox;
     RPageOrientation: TRadioGroup;
     RCustomOrientation: TRadioGroup;
-    ColorDialog1: TColorDialog;
-    SColor: TShape;
     BBackground: TButton;
-    LRLang: TLabel;
-    ComboLanguage: TComboBox;
     GPageMargins: TGroupBox;
     LLeft: TLabel;
     ELeftMargin: TEdit;
@@ -56,13 +59,6 @@ type
     LBottom: TLabel;
     EBottomMargin: TEdit;
     LMetrics6: TLabel;
-    ComboPageSize: TComboBox;
-    LCopies: TLabel;
-    ECopies: TEdit;
-    CheckCollate: TCheckBox;
-    CheckTwoPass: TCheckBox;
-    LPrinterFonts: TLabel;
-    ComboPrinterFonts: TComboBox;
     GUserDefined: TGroupBox;
     LMetrics7: TLabel;
     LMetrics8: TLabel;
@@ -73,7 +69,15 @@ type
     LSelectPrinter: TLabel;
     ComboSelPrinter: TComboBox;
     BConfigure: TButton;
+    CheckTwoPass: TCheckBox;
     CheckPrintOnlyIfData: TCheckBox;
+    ECopies: TEdit;
+    LCopies: TLabel;
+    CheckCollate: TCheckBox;
+    LPrinterFonts: TLabel;
+    ComboPrinterFonts: TComboBox;
+    ComboLanguage: TComboBox;
+    LRLang: TLabel;
     LPreview: TLabel;
     ComboPreview: TComboBox;
     ComboStyle: TComboBox;
@@ -269,7 +273,9 @@ begin
  ComboPreview.Items.Strings[1]:=TranslateStr(842,ComboPreview.Items.Strings[1]);
  ComboStyle.Items.Strings[0]:=TranslateStr(843,ComboStyle.Items.Strings[0]);
  ComboStyle.Items.Strings[1]:=TranslateStr(844,ComboStyle.Items.Strings[1]);
- ComboStyle.Items.Strings[2]:=TranslateStr(844,ComboStyle.Items.Strings[2]);
+ ComboStyle.Items.Strings[2]:=TranslateStr(845,ComboStyle.Items.Strings[2]);
+ TabPage.Caption:=TranslateStr(857,TabPage.Caption);
+ TabPrint.Caption:=TranslateStr(858,TabPrint.Caption);
 
  SetInitialBounds;
 end;
