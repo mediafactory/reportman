@@ -171,7 +171,7 @@ object FRpPrintDialog: TFRpPrintDialog
     Height = 21
     TabOrder = 18
   end
-  object GroupBox1: TGroupBox
+  object GCopies: TGroupBox
     Left = 240
     Top = 96
     Width = 221

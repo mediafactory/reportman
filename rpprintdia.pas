@@ -44,7 +44,7 @@ type
     EFrom: TEdit;
     Label5: TLabel;
     ETo: TEdit;
-    GroupBox1: TGroupBox;
+    GCopies: TGroupBox;
     Label6: TLabel;
     ECopies: TEdit;
     CheckCollate: TCheckBox;
@@ -68,14 +68,14 @@ type
 
 
 function DoShowPrintDialog(var allpages:boolean;
- var frompage,topage,copies:integer;var collate:boolean):boolean;
+ var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
 
 implementation
 
 {$R *.xfm}
 
 function DoShowPrintDialog(var allpages:boolean;
- var frompage,topage,copies:integer;var collate:boolean):boolean;
+ var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
 var
  dia:TFRpPrintDialog;
 begin
@@ -87,6 +87,15 @@ begin
   dia.copies:=copies;
   dia.frompage:=frompage;
   dia.topage:=topage;
+  if disablecopies then
+  begin
+   dia.GCopies.Visible:=false;
+   dia.LFilename.Visible:=false;
+   dia.ComboPrinters.Visible:=false;
+   dia.Label1.Visible:=false;
+   dia.Label2.Visible:=false;
+   dia.LPrinterDevice.Visible:=false;
+  end;
   dia.ShowModal;
   if dia.dook then
   begin
@@ -265,7 +274,7 @@ begin
  rec.Right:=Image1.Width-1;
  rec.Bottom:=Image1.Height-1;
  bitmap.Canvas.Brush.Style:=bsSolid;
- bitmap.Canvas.Brush.Color:=GroupBox1.Color;
+ bitmap.Canvas.Brush.Color:=GCopies.Color;
  bitmap.Canvas.FillRect(rec);
  // Sets the image collation
  if CheckCollate.checked then

@@ -20,18 +20,19 @@
 {               -Font Color                             }
 {               -Text parsing                           }
 {               -Filled Regions, pen color and b.color  }
+{               -Pen Style                              }
 {               -Resolution 1440 p.p.i                  }
 {               -Exact position for text...             }
 {               -Text clipping                          }
-{               -Ellipse                                }
+{               -Ellipse, true Rectangle                }
 {                                                       }
 {                                                       }
 {       Still Missing:                                  }
+{               -TEXT ALIGNMENT                         }
 {               -Underline, bold, italic                }
 {               -Brush Patterns                         }
 {               -Multiline text                         }
 {               -Bitmaps                                }
-{               -Text alignment                         }
 {                                                       }
 {       This file is under the MPL license              }
 {       If you enhace this file you must provide        }
@@ -44,7 +45,15 @@ unit rppdffile;
 
 interface
 
-uses Classes,Sysutils,rpzlib,types;
+{$I rpconf.inc}
+
+uses Classes,Sysutils,
+{$IFDEF USEVCL}
+ graphics,
+{$ELSE}
+ QGraphics,
+{$ENDIF}
+ rpzlib,types;
 
 resourcestring
  SRpStreamNotValid='PDF Stream not valid';
@@ -69,6 +78,7 @@ type
    FFont:TRpPDFFont;
    FFile:TRpPDFFile;
    FResolution:integer;
+   procedure SetDash;
   public
    PenColor:integer;
    PenStyle:integer;
@@ -83,6 +93,7 @@ type
    procedure TextRect(ARect: TRect; Text: string;
                        Alignment: integer; Clipping: boolean);
    procedure Rectangle(x1,y1,x2,y2:Integer);
+   procedure StretchDraw(rec:TRect;abitmap:TBitmap);
    procedure Ellipse(X1, Y1, X2, Y2: Integer);
    constructor Create(AFile:TRpPDFFile);
    destructor Destroy;override;
@@ -686,6 +697,40 @@ begin
 end;
 
 
+procedure TRpPDFCanvas.SetDash;
+begin
+ case PenStyle of
+  // Dash
+  1:
+   begin
+    SWriteLine(FFile.FsTempStream,'[16 8] 0 d');
+   end;
+  // Dot
+  2:
+   begin
+    SWriteLine(FFile.FsTempStream,'[3] 0 d');
+   end;
+  // Dash dot
+  3:
+   begin
+    SWriteLine(FFile.FsTempStream,'[8 7 2 7] 0 d');
+   end;
+  // Dash dot dot
+  4:
+   begin
+    SWriteLine(FFile.FsTempStream,'[8 4 2 4 2 4] 0 d');
+   end;
+  // Clear
+  5:
+   begin
+   end;
+  else
+   begin
+    SWriteLine(FFile.FsTempStream,'[] 0 d');
+   end;
+ end;
+end;
+
 procedure TRpPDFCanvas.Line(x1,y1,x2,y2:Integer);
 var
  LineWidth:integer;
@@ -701,58 +746,25 @@ begin
 end;
 
 begin
+ if PenStyle=5 then
+  exit;
+ SetDash;
  LineWidth:=1;
  If (PenWidth>0) then
   LineWidth:=PenWidth;
  SWriteLine(FFile.FsTempStream,UnitsToTextX(LineWidth)+' w');
- case PenStyle of
-  // Dash
-  1:
-   begin
-    SWriteLine(FFile.FsTempStream,'[18 6] 0 d');
-    DoWriteLine;
-   end;
-  // Dot
-  2:
-   begin
-    SWriteLine(FFile.FsTempStream,'[3] 0 d');
-    DoWriteLine;
-   end;
-  // Separated dash 1
-  3:
-   begin
-    SWriteLine(FFile.FsTempStream,'[15 9] 0 d');
-    DoWriteLine;
-   end;
-  // Separated dash 2
-  4:
-   begin
-    SWriteLine(FFile.FsTempStream,'[9 15] 0 d');
-    DoWriteLine;
-   end;
-  // Clear
-  5:
-   begin
-   end;
-  // Desplaced dot-dot
-  6:
-   begin
-    SWriteLine(FFile.FsTempStream,'[3] 0 d');
-    DoWriteLine;
-   end;
-  else
-   begin
-    SWriteLine(FFile.FsTempStream,'[] 0 d');
-    DoWriteLine;
-   end;
- end;
+ DoWriteLine;
 end;
 
 procedure TRpPDFCanvas.Ellipse(X1, Y1, X2, Y2: Integer);
 var
  LineWidth:integer;
  W,H:integer;
+ opfill:string;
 begin
+ if ((PenStyle=5) and (BrushStyle=1)) then
+  exit;
+ SetDash;
  W:=X2-X1;
  H:=Y2-Y1;
  LineWidth:=1;
@@ -785,18 +797,27 @@ begin
   UnitsToTextX(X1)+' '+UnitsToTextY(y1+(H div 2))+
   ' c');
 
+ opfill:='B';
+ if PenStyle=5 then
+ begin
+  opfill:='f';
+ end;
  // Bsclear
  if BrushStyle=1 then
   SWriteLine(FFile.FsTempStream,'S')
  else
  // BsSolid
-  SWriteLine(FFile.FsTempStream,'B');
+  SWriteLine(FFile.FsTempStream,opfill);
 end;
 
 procedure TRpPDFCanvas.Rectangle(x1,y1,x2,y2:Integer);
 var
  LineWidth:integer;
+ opfill:string;
 begin
+ if ((PenStyle=5) and (BrushStyle=1)) then
+  exit;
+ SetDash;
  LineWidth:=1;
  If (PenWidth>0) then
   LineWidth:=PenWidth;
@@ -805,12 +826,17 @@ begin
  SWriteLine(FFile.FsTempStream,RGBToFloats(BrushColor)+' rg');
  SWriteLine(FFile.FsTempStream,UnitsToTextX(x1)+' '+UnitsToTextY(y1)+
   ' '+UnitsToTextX(x2-x1)+' '+UnitsToTextX(-(y2-y1))+' re');
+ opfill:='B';
+ if PenStyle=5 then
+ begin
+  opfill:='f';
+ end;
  // Bsclear
  if BrushStyle=1 then
   SWriteLine(FFile.FsTempStream,'S')
  else
  // BsSolid
-  SWriteLine(FFile.FsTempStream,'B');
+  SWriteLine(FFile.FsTempStream,opfill);
 end;
 
 
@@ -845,6 +871,7 @@ begin
    SWriteLine(FFile.FsTempStream,'W'); // Clip
    SWriteLine(FFile.FsTempStream,'n'); // NewPath
   end;
+  // Underline
   TextOut(ARect.Left,ARect.Top,Text);
  finally
   if Clipping then
@@ -859,15 +886,43 @@ end;
 procedure TRpPDFCanvas.TextOut(X, Y: Integer; const Text: string);
 begin
  FFile.CheckPrinting;
- SWriteLine(FFile.FsTempStream,'BT');
  SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' RG');
  SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' rg');
+ SWriteLine(FFile.FsTempStream,'BT');
+
+
  SWriteLine(FFile.FsTempStream,'/F'+IntToStr((Integer(Font.Name)+1))+' '+
   IntToStr(Font.Size)+ ' Tf');
+
  SWriteLine(FFile.FsTempStream,UnitsToTextX(X)+' '+UnitsToTextText(Y,Font.Size)+' Td');
  SWriteLine(FFile.FsTempStream,'('+PDFCompatibleText(Text)+') Tj');
+
  SWriteLine(FFile.FsTempStream,'ET');
 end;
 
+procedure TRpPDFCanvas.StretchDraw(rec:TRect;abitmap:TBitmap);
+var
+ tempsx,tempsy:double;
+begin
+ FFile.CheckPrinting;
+// if (PageHeight > PageWidth) then begin
+//  tempsx:=((PageWidth)/(WinProcs.GetDeviceCaps(GetDC(0), LOGPIXELSX)*10));
+//  tempsy:=((PageHeight)/(WinProcs.GetDeviceCaps(GetDC(0), LOGPIXELSY)*11.900));
+//end
+//else begin
+//  tempsx:=((PageWidth)/(WinProcs.GetDeviceCaps(GetDC(0), LOGPIXELSX)* 13));
+//  tempsy:=((PageHeight)/(WinProcs.GetDeviceCaps(GetDC(0), LOGPIXELSY)*8));
+//end;
+
+{ FFile.FImageCount:=FFile.FImageCount+1;
+ SWriteLine(FFile.FsTempStream,'q');
+ SWriteLine(FFile.FsTempStream,UnitsToTextX(rec.Right-rec.Left)+
+' 0 0 '+UnitsToTextX(rec.Bottom-rec.Top)+
+ ' '+UnitsToTextX(rec.Left)+' '+UnitsToTextY(rec.Bottom)
+ +' cm');
+ SWriteLine(FFile.FsTempStream,'/Im'+IntToStr(FFile.FImageCount)+' Do');
+ SWriteLine(FFile.FsTempStream,'Q');
+}// SetBitmap(ABitmap);
+end;
 
 end.

@@ -33,7 +33,7 @@ uses
  Classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
  rpmunits,QPrinters,QDialogs,rpgraphutils, QControls,
  QStdCtrls,QExtCtrls,types,DateUtils,rptypes,Qt,
- rpreport;
+ rpreport,rppdfdriver;
 
 
 const
@@ -55,19 +55,24 @@ type
     frompage,topage,copies:integer;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure AppIdleReport(Sender:TObject;var done:boolean);
-{$IFDEF MSWINDOWS}
+    procedure AppIdlePrintPDF(Sender:TObject;var done:boolean);
+{$IFDEF NOLINUXPRINTBUG}
     procedure AppIdlePrintRange(Sender:TObject;var done:boolean);
 {$ENDIF}
     procedure RepProgress(Sender:TRpReport;var docancel:boolean);
   public
     { Public declarations }
+    pdfcompressed:boolean;
     cancelled:boolean;
     oldonidle:TIdleEvent;
     tittle:string;
+    filename:string;
     metafile:TRpMetafileReport;
     report:TRpReport;
     qtdriver:TRpQtDriver;
     aqtdriver:IRpPrintDriver;
+    pdfdriver:TRpPDFDriver;
+    apdfdriver:IRpPrintDriver;
   end;
 
 
@@ -98,8 +103,13 @@ function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
 function CalcReportWidthProgress(report:TRpReport):boolean;
 function PrintReport(report:TRpReport;Caption:string;progress:boolean;
   allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
+function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
+  allpages:boolean;frompage,topage:integer;
+  showprintdialog:boolean;filename:string;compressed:boolean):Boolean;
 
 implementation
+
+uses rpprintdia;
 
 {$R *.xfm}
 
@@ -646,7 +656,7 @@ begin
 end;
 
 
-{$IFDEF MSWINDOWS}
+{$IFDEF NOLINUXPRINTBUG}
 procedure TFRpQtProgress.AppIdlePrintRange(Sender:TObject;var done:boolean);
 var
  oldprogres:TRpProgressEvent;
@@ -667,6 +677,29 @@ begin
  Close;
 end;
 {$ENDIF}
+
+procedure TFRpQtProgress.AppIdlePrintPDF(Sender:TObject;var done:boolean);
+var
+ oldprogres:TRpProgressEvent;
+begin
+ Application.Onidle:=nil;
+ done:=false;
+
+ pdfdriver:=TRpPDFDriver.Create;
+ pdfdriver.filename:=filename;
+ pdfdriver.compressed:=pdfcompressed;
+ apdfdriver:=pdfdriver;
+ oldprogres:=RepProgress;
+ try
+  report.OnProgress:=RepProgress;
+  report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
+ finally
+  report.OnProgress:=oldprogres;
+ end;
+ Close;
+end;
+
+
 
 function PrintReport(report:TRpReport;Caption:string;progress:boolean;
   allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
@@ -811,6 +844,61 @@ procedure TFRpQtProgress.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
  qtdriver:=nil;
+end;
+
+
+function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
+  allpages:boolean;frompage,topage:integer;
+  showprintdialog:boolean;filename:string;compressed:boolean):Boolean;
+var
+ copies:integer;
+ collate:boolean;
+ dia:TFRpQtProgress;
+ oldonidle:TIdleEvent;
+ pdfdriver:TRpPDFDriver;
+ apdfdriver:IRpPrintDriver;
+begin
+ Result:=false;
+ allpages:=true;
+ collate:=false;
+ copies:=1;
+ if showprintdialog then
+ begin
+  if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate,true) then
+   exit;
+ end;
+ if progress then
+ begin
+  // Assign appidle frompage to page...
+  dia:=TFRpQtProgress.Create(Application);
+  try
+   dia.allpages:=allpages;
+   dia.frompage:=frompage;
+   dia.topage:=topage;
+   dia.copies:=copies;
+   dia.report:=report;
+   dia.filename:=filename;
+   dia.pdfcompressed:=compressed;
+   oldonidle:=Application.Onidle;
+   try
+    Application.OnIdle:=dia.AppIdlePrintPdf;
+    dia.ShowModal;
+   finally
+    Application.OnIdle:=oldonidle;
+   end;
+  finally
+   dia.Free;
+  end;
+ end
+ else
+ begin
+  pdfdriver:=TRpPDFDriver.Create;
+  pdfdriver.filename:=filename;
+  pdfdriver.compressed:=compressed;
+  apdfdriver:=pdfdriver;
+  report.PrintRange(apdfdriver,allpages,frompage,topage,copies);
+  Result:=True;
+ end;
 end;
 
 end.

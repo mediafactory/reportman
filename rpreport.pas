@@ -786,7 +786,9 @@ var
  initiated:boolean;
  i:integer;
  finished:boolean;
+ printedfirst:boolean;
 begin
+ printedfirst:=false;
  if allpages then
  begin
   frompage:=0;
@@ -815,7 +817,9 @@ begin
      begin
       for i:=0 to copies-1 do
       begin
-       Driver.NewPage;
+       if printedfirst then
+        Driver.NewPage;
+       printedfirst:=true;
        Driver.DrawPage(metafile.pages[0]);
        Driver.EndPage;
       end;
@@ -831,11 +835,18 @@ begin
     begin
      if ((PageNum>=frompage) and  (PageNum<=topage)) then
      begin
-      Driver.DrawPage(metafile.pages[0]);
+      for i:=0 to copies-1 do
+      begin
+       if printedfirst then
+        Driver.NewPage;
+       printedfirst:=true;
+       Driver.DrawPage(metafile.pages[0]);
+      end;
      end;
     end;
-   finally
     Driver.EndDocument;
+   except
+    Driver.AbortDocument;
    end;
   finally
    EndPrint;
@@ -1363,16 +1374,9 @@ begin
   fmetafile.NewPage;
 
 
- if PageOrientation=rpOrientationLandscape then
- begin
-  freespace:=FInternalPageWidth;
-  pagespacex:=FInternalPageheight;
- end
- else
- begin
-  freespace:=FInternalPageheight;
-  pagespacex:=FInternalPageWidth;
- end;
+ freespace:=FInternalPageheight;
+ pagespacex:=FInternalPageWidth;
+
  freespace:=freespace-FTopMargin-FBottomMargin;
 
  pagefooters:=TStringList.Create;

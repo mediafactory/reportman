@@ -197,6 +197,7 @@ begin
  Application.OnIdle:=nil;
  done:=false;
  try
+  report.OnProgress:=RepProgress;
   if report.TwoPass then
   begin
    CalcReportWidthProgress(report);
@@ -296,21 +297,29 @@ end;
 procedure TFRpPreview.ASaveExecute(Sender: TObject);
 var
  oldonprogress:TRpMetafileStreamProgres;
+ adone:boolean;
 begin
  // Saves the metafile
  if SaveDialog1.Execute then
  begin
-  ALast.Execute;
   oldonprogress:=report.Metafile.OnProgress;
   try
    report.Metafile.OnProgress:=MetProgress;
    DisableControls(true);
    try
     if SaveDialog1.FilterIndex=1 then
+    begin
+     ALast.Execute;
      report.Metafile.SaveToFile(SaveDialog1.Filename)
+    end
     else
-     if SaveDialog1.FilterIndex=2 then
-      SaveMetafileToPDF(report.Metafile,SaveDialog1.filename);
+     if SaveDialog1.FilterIndex in [2,3] then
+     begin
+      report.EndPrint;
+      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,9999999,
+       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
+      AppIdle(Self,adone);
+     end;
    finally
     EnableControls;
    end;
