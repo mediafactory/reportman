@@ -1,6 +1,6 @@
 object FMainf: TFMainf
-  Left = 31
-  Top = 86
+  Left = 140
+  Top = 62
   VertScrollBar.Visible = False
   HorzScrollBar.Visible = False
   ActiveControl = ToolButton1
@@ -342,9 +342,6 @@ object FMainf: TFMainf
       end
       object APaste1: TMenuItem
         Action = APaste
-      end
-      object N4: TMenuItem
-        Caption = '-'
       end
     end
     object MDisplay: TMenuItem

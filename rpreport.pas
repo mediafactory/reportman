@@ -48,6 +48,7 @@ const
  // 0.5 cms=287
  CONS_DEFAULT_GRIDWIDTH=115;
  CONS_DEFAULT_GRIDCOLOR=$FF0000;
+ CONS_MIN_GRID_WIDTH=50;
  // 29,7/2.51*1440
  DEFAULT_PAGEHEIGHT=17039;
  DEFAULT_PAGEWIDTH=12048;
@@ -57,6 +58,7 @@ const
  DEFAULT_RIGHTMARGIN=574;
  DEFAULT_BOTTOMMARGIN=861;
  DEFAULT_TOPMARGIN=574;
+ // Minimum grid
 type
  TRpReport=class;
  TRpSubReportListItem=class;
@@ -148,6 +150,8 @@ type
    procedure SetDatabaseInfo(Value:TRpDatabaseInfoList);
    procedure SetParams(Value:TRpParamList);
    procedure ClearTotalPagesList;
+   procedure SetGridWidth(Value:TRpTwips);
+   procedure SetGridHeight(Value:TRpTwips);
   protected
     section:TRpSection;
     subreport:TRpSubreport;
@@ -204,8 +208,8 @@ type
    property GridLines:Boolean read FGridLines write FGridLines default false;
    property GridEnabled:Boolean read FGridEnabled write FGridEnabled default true;
    property GridColor:integer read FGridColor write FGridColor default CONS_DEFAULT_GRIDCOLOR;
-   property GridWidth:integer read FGridWidth write FGridWidth default CONS_DEFAULT_GRIDWIDTH;
-   property GridHeight:integer read FGridHeight write FGridHeight default CONS_DEFAULT_GRIDWIDTH;
+   property GridWidth:TRpTwips read FGridWidth write SetGridWidth default CONS_DEFAULT_GRIDWIDTH;
+   property GridHeight:TRpTwips read FGridHeight write SetGridHeight default CONS_DEFAULT_GRIDWIDTH;
    // PageSetup properties
    property PageOrientation:TRpOrientation read FPageOrientation
     write FPageOrientation default rpOrientationDefault;
@@ -315,6 +319,21 @@ begin
  FTotalPagesList:=TList.Create;
 
 end;
+
+procedure TRpReport.SetGridWidth(Value:TRpTwips);
+begin
+ if Value<CONS_MIN_GRID_WIDTH then
+  Value:=CONS_MIN_GRID_WIDTH;
+ FGridWidth:=Value;
+end;
+
+procedure TRpReport.SetGridHeight(Value:TRpTwips);
+begin
+ if Value<CONS_MIN_GRID_WIDTH then
+  Value:=CONS_MIN_GRID_WIDTH;
+ FGridHeight:=Value;
+end;
+
 
 procedure TRpReport.AddTotalPagesItem(apageindex,aobjectindex:integer;
  adisplayformat:widestring);

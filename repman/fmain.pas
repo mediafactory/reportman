@@ -134,7 +134,6 @@ type
     Cms1: TMenuItem;
     Inchess1: TMenuItem;
     AUserParams: TAction;
-    N4: TMenuItem;
     Userparameters1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
@@ -483,7 +482,7 @@ end;
 
 procedure TFMainf.APageSetupExecute(Sender: TObject);
 begin
- Assert(report<>nil,'Called Pagesetup without a report assigned');
+ Assert(report<>nil,'Called Page setup without a report assigned');
 
  ExecutePageSetup(report);
 end;
