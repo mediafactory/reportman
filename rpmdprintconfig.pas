@@ -129,6 +129,7 @@ begin
  LExample2.Caption:=TranslateStr(765,LExample2.Caption);
  CheckCutPaper.Caption:=TranslateStr(766,CheckCutPaper.Caption);
  CheckOpenDrawer.Caption:=TranslateStr(767,CheckOpenDrawer.Caption);
+ LTextDriver.Caption:=TranslateStr(1058,LtextDriver.Caption);
  with LSelPrinter.Items do
  begin
   Add(SRpDefaultPrinter);

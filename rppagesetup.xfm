@@ -20,7 +20,7 @@ object FRpPageSetup: TFRpPageSetup
     Top = 0
     Width = 472
     Height = 334
-    ActivePage = TabOptions
+    ActivePage = TabPrint
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -280,7 +280,7 @@ object FRpPageSetup: TFRpPageSetup
         Width = 213
         Height = 21
         Caption = 'Two pass report'
-        TabOrder = 11
+        TabOrder = 10
       end
       object CheckPrintOnlyIfData: TCheckBox
         Left = 4

@@ -606,19 +606,24 @@ object FMainVCL: TFMainVCL
     Left = 116
     Top = 120
     object adataID: TIntegerField
+      DisplayLabel = 'Id.'
       FieldName = 'ID'
     end
     object adataLASTOPERATION: TDateTimeField
+      DisplayLabel = 'Last Operation'
       FieldName = 'LASTOPERATION'
     end
     object adataCONNECTIONDATE: TDateTimeField
+      DisplayLabel = 'Conn.Date'
       FieldName = 'CONNECTIONDATE'
     end
     object adataUSERNAME: TStringField
+      DisplayLabel = 'User Name'
       FieldName = 'USERNAME'
       Size = 40
     end
     object adataRUNNING: TBooleanField
+      DisplayLabel = 'Running'
       FieldName = 'RUNNING'
     end
   end
