@@ -50,13 +50,13 @@
   </tr>
   <tr> 
     <td width="88">&nbsp;</td>
-    <td width="88">libqtintf-6.5-qt2.3.so</td>
+    <td width="88">libborqtintf-6.9-qt2.3.so</td>
     <td width="262">Linux interface to QT libs.</td>
     <td width="133">SysDir/Required</td>
   </tr>
   <tr> 
     <td width="88">qtintf.dll</td>
-    <td width="88">libqt.so.2</td>
+    <td width="88">libborqt.so.2</td>
     <td width="262">QT Linux libs and Windows qt libs and interface to qtlibs</td>
     <td width="133">SysDir/Required</td>
   </tr>
@@ -147,13 +147,18 @@
   </tr>
   <tr> 
     <td width="16%">dbexpdb2.dll</td>
-    <td width="16%">&nbsp;</td>
+    <td width="16%">libsqldb2.so</td>
     <td width="68%">DB2 DBExpress driver</td>
   </tr>
   <tr> 
     <td width="16%">dbexpora.dll</td>
-    <td width="16%">&nbsp;</td>
+    <td width="16%">libsqlora.so</td>
     <td width="68%">Oracle DBExpress driver</td>
+  </tr>
+  <tr>
+    <td width="16%">&nbsp;</td>
+    <td width="16%">libsqlinf.so</td>
+    <td width="68%">Informix DBExpress driver</td>
   </tr>
 </table>
 <table width="95%" border="1">
@@ -247,15 +252,14 @@
   </tr>
   <tr> 
     <td width="47%">qtintf.dll</td>
-    <td width="53%">libqtintf-6.5-qt2.3.so</td>
+    <td width="53%">libborqtintf-6.9-qt2.3.so</td>
   </tr>
   <tr> 
     <td width="47%">&nbsp;</td>
     <td width="53%"> 
-      <p>libqt.so.2</p>
-      <p>Most distributions have this file but may be not compatible, some problems 
-        has reported about this. If you have problems use the system libraries 
-        provided by your distro instead of the provided by Borland.</p>
+      <p>libborqt.so.2</p>
+      <p>This are qt runtime files provided by Borland since Kylix 3, if you use 
+        a earlier version of Kylix you should use the older ones.</p>
     </td>
   </tr>
 </table>

@@ -151,7 +151,7 @@ begin
   QPrinter_setPageOrder(QPrinterH(Printer.Handle),qt.QPrinterPageOrder_FirstPageFirst)
  else
   QPrinter_setPageOrder(QPrinterH(Printer.Handle),qt.QPrinterPageOrder_LastPageFirst);
- if QPrinter_setup(QPrinterH(Printer.handle),nil) then
+ if Integer(QPrinter_setup(QPrinterH(Printer.handle),nil))<>0 then
  begin
   frompage:=QPrinter_fromPage(QPrinterH(Printer.handle));
   topage:=QPrinter_toPage(QPrinterH(Printer.handle));
@@ -192,7 +192,6 @@ begin
  begin
   scale:=1.0;
   printer.Title:='Untitled';
-  printer.SetPrinter(Printer.Printers.Strings[0]);
   SetOrientation(report.Orientation);
   // Sets pagesize, only supports default and qt index
   if report.PageSize<0 then
@@ -1048,7 +1047,6 @@ begin
    // When compiling metaview the bug can be skiped
    // Saves the metafile
    // Selects the printer for that report
-//   PrinterSelection(report.PrinterSelect);
    tmpnam(abuffer);
    afilename:=StrPas(abuffer);
    report.Metafile.SaveToFile(afilename);
@@ -1201,7 +1199,9 @@ begin
  begin
   index:=Printer.Printers.IndexOf(printername);
   if index>=0 then
+  begin
    Printer.SetPrinter(printername);
+  end;
  end;
  // Gets the printer name if no printer selected select the first one
  if Printer.Printers.Count>0 then

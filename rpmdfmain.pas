@@ -1310,7 +1310,12 @@ begin
  inif:=TIniFile.Create(configfile);
  try
   AUnitCms.Checked:=inif.ReadBool('Preferences','UnitCms',true);
-  ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',true);
+{$IFDEF MSWINDOWS}
+  ADriverQT.Checked:=inif.ReadBool('Preferences','DriverQt',false);
+{$ENDIF}
+{$IFDEF LINUX}
+  ADriverQT.Checked:=true;
+{$ENDIF}
   AsystemPrintDialog.Checked:=inif.ReadBool('Preferences','SystemPrintDialog',True);
   BStatus.Visible:=inif.ReadBool('Preferences','StatusBar',True);
   AStatusBar.Checked:=BStatus.Visible;
