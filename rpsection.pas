@@ -31,7 +31,7 @@ uses Classes,rpmzlib,
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
- rptypes,rpmdconsts,rpmunits,rpprintitem,rplabelitem,
+ rptypes,rpmdconsts,rpmunits,rpprintitem,rplabelitem,db,
  sysutils,rpmetafile,rpeval;
 
 const
@@ -60,6 +60,11 @@ type
    FHorzDesp:Boolean;
 //   FIsExternal:boolean;
    FExternalFilename:string;
+   FExternalConnection:String;
+   FExternalTable:String;
+   FExternalField:String;
+   FExternalSearchField:String;
+   FExternalSearchValue:String;
    FBeginPageExpression:widestring;
    // deprecated
    FBeginPage:boolean;
@@ -74,6 +79,7 @@ type
    procedure ReadChangeExpression(Reader:TReader);
    procedure WriteBeginPageExpression(Writer:TWriter);
    procedure ReadBeginPageExpression(Reader:TReader);
+   procedure LoadExternalFromDatabase;
   protected
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
    procedure DefineProperties(Filer:TFiler);override;
@@ -93,6 +99,8 @@ type
    procedure SaveToStream(stream:TStream);
    procedure LoadExternal;
    procedure SaveExternal;
+   procedure SaveExternalToDatabase;
+   function GetExternalDataDescription:String;
    procedure GetChildSubReportPossibleValues(lvalues:TStrings);
    function GetChildSubReportName:string;
    procedure SetChildSubReportByName(avalue:String);
@@ -116,8 +124,18 @@ type
 //   property IsExternal:Boolean read FIsExternal
 //    write FIsExternal default false;
    // External filename is a alias.field or if not exists a filename
-   // If it's lenght is 0 it's not external
-   property ExternalFilename:string read FExternalFilename write FExternalFilename;
+   // If it's length is 0 it's not external
+   property ExternalFilename:string read FExternalFilename
+    write FExternalFilename;
+   property ExternalConnection:string read FExternalConnection
+    write FExternalConnection;
+   property ExternalTable:string read FExternalTable write FExternalTable;
+   property ExternalField:string read FExternalField write FExternalField;
+   property ExternalSearchField:string read FExternalSearchField
+    write FExternalSearchField;
+   property ExternalSearchValue:string read FExternalSearchValue
+    write FExternalSearchValue;
+
    property ChildSubReport:TComponent read FChildSubReport write SetChildSubReport;
    // Deprecated properties for compatibility only
    property BeginPage:boolean read FBeginpage write FBeginPage default false;
@@ -132,6 +150,9 @@ begin
  inherited Create(AOwner);
 
  FComponents:=TRpCommonList.Create(Self);
+ FExternalTable:='REPMAN_REPORTS';
+ FExternalField:='REPORT';
+ FExternalSearchField:='REPORT_NAME';
 
  Width:=Round(C_DEFAULT_SECTION_WIDTH*TWIPS_PER_INCHESS/CMS_PER_INCHESS);
  Height:=Round(C_DEFAULT_SECTION_HEIGHT*TWIPS_PER_INCHESS/CMS_PER_INCHESS);
@@ -439,15 +460,67 @@ var
  AStream:TStream;
 begin
  // Saves the components as a external section
- if Length(FExternalFilename)<1 then
-  exit;
- AStream:=TFileStream.Create(FExternalFilename,fmCreate);
- try
-  SaveToStream(AStream);
- finally
-  AStream.free;
+ if Length(FExternalFilename)>0 then
+ begin
+  AStream:=TFileStream.Create(FExternalFilename,fmCreate);
+  try
+   SaveToStream(AStream);
+  finally
+   AStream.free;
+  end;
+ end
+ else
+ begin
+  if Length(GetExternalDataDescription)>0 then
+  begin
+   SaveExternalToDatabase;
+  end;
  end;
 end;
+
+procedure TRpSection.SaveExternalToDatabase;
+var
+ report:TRpReport;
+ astream:TStream;
+ index:integer;
+ sqlsentence:string;
+ alist:TStringList;
+ aparam:TRpParamObject;
+ aparam2:TRpParamObject;
+begin
+ report:=TRpReport(Owner);
+ index:=report.DatabaseInfo.IndexOf(ExternalCOnnection);
+ if index<0 then
+  Exit;
+ sqlsentence:='UPDATE '+ExternalTable+' SET '+
+  ExternalField+'=:'+ExternalField+
+  ' WHERE '+ExternalSearchField+'=:'+ExternalSearchField;
+ alist:=TStringList.Create;
+ try
+  aparam:=TRpParamObject.Create;
+  aparam2:=TRpParamObject.Create;
+  try
+   aparam.Value:=ExternalSearchValue;
+   alist.AddObject(ExternalField,aparam2);
+   alist.AddObject(ExternalSearchField,aparam);
+   astream:=TMemoryStream.Create;
+   try
+    aparam2.Stream:=astream;
+    SaveToStream(AStream);
+    astream.Seek(0,soFromBeginning);
+    report.DatabaseInfo.Items[index].OpenDatasetFromSQL(sqlsentence,alist,true);
+   finally
+    astream.free;
+   end;
+  finally
+   aparam.free;
+   aparam2.free;
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
 
 procedure TRpSection.LoadFromStream(stream:TStream);
 var
@@ -517,15 +590,69 @@ var
  AStream:TStream;
 begin
  // Try to load the section as an external section
- if Length(FExternalFilename)<1 then
-  exit;
- AStream:=TFileStream.Create(FExternalFilename,fmOpenRead or fmShareDenyWrite);
- try
-  LoadFromStream(AStream);
- finally
-  AStream.free;
+ if Length(FExternalFilename)>0 then
+ begin
+  AStream:=TFileStream.Create(FExternalFilename,fmOpenRead or fmShareDenyWrite);
+  try
+   LoadFromStream(AStream);
+  finally
+   AStream.free;
+  end;
+ end
+ else
+ begin
+  if Length(GetExternalDataDescription)>0 then
+  begin
+   LoadExternalFromDatabase;
+  end;
  end;
 end;
+
+procedure TRpSection.LoadExternalFromDatabase;
+var
+ report:TRpReport;
+ astream:TStream;
+ index:integer;
+ sqlsentence:string;
+ errordata:boolean;
+ alist:TStringList;
+ aparam:TRpParamObject;
+begin
+ report:=TRpReport(Owner);
+ index:=report.DatabaseInfo.IndexOf(ExternalCOnnection);
+ if index<0 then
+  Exit;
+ astream:=nil;
+ sqlsentence:='SELECT '+ExternalField+' FROM '+ExternalTable+
+  ' WHERE '+ExternalSearchField+'=:'+ExternalSearchField;
+ alist:=TStringList.Create;
+ try
+  aparam:=TRpParamObject.Create;
+  try
+   aparam.Value:=ExternalSearchValue;
+   alist.AddObject(ExternalSearchField,aparam);
+   errordata:=false;
+   try
+    astream:=report.DatabaseInfo.Items[index].GetStreamFromSQL(sqlsentence,bmread,alist);
+   except
+    errordata:=True;
+   end;
+   if not errordata then
+   begin
+    try
+     LoadFromStream(astream);
+    finally
+     astream.Free;
+    end;
+   end;
+  finally
+   aparam.free;
+  end;
+ finally
+  alist.free;
+ end;
+end;
+
 
 procedure TRpSection.OnReadError(Reader: TReader;
  const Message: string; var Handled: Boolean);
@@ -688,5 +815,22 @@ begin
  Filer.DefineProperty('BeginPageExpression',ReadBeginPageExpression,WriteBeginPageExpression,True);
 end;
 
+function TRpSection.GetExternalDataDescription:String;
+begin
+ Result:='';
+ if Length(ExternalConnection)<1 then
+  exit;
+ if Length(ExternalTable)<1 then
+  exit;
+ if Length(ExternalField)<1 then
+  exit;
+ if Length(ExternalSearchField)<1 then
+  exit;
+ if Length(ExternalSearchValue)<1 then
+  exit;
+ Result:=ExternalConnection+'-'+
+  ExternalTable+'-'+ExternalField+'-'+
+  ExternalSearchField+'-'+ExternalSearchValue;
+end;
 
 end.

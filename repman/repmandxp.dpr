@@ -91,7 +91,10 @@ uses
   rpzlibtrees in '..\rpzlibtrees.pas',
   rpzlibzdeflate in '..\rpzlibzdeflate.pas',
   rpzlibzinflate in '..\rpzlibzinflate.pas',
-  rpzlibzlib in '..\rpzlibzlib.pas';
+  rpzlibzlib in '..\rpzlibzlib.pas',
+  rpmdfconnectionvcl in '..\rpmdfconnectionvcl.pas' {FRpConnectionVCL: TFrame},
+  rpmdfwizardvcl in '..\rpmdfwizardvcl.pas' {FRpWizardVCL},
+  rpmdfextsecvcl in '..\rpmdfextsecvcl.pas' {FRpExtSectionVCL};
 
 {$R *.res}
 

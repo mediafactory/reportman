@@ -286,7 +286,7 @@ begin
  Value:=UpperCase(Trim(Value));
  if Value=FIdentifier then
   exit;
- fidens:=TRpReport(Owner).Identifiers;
+ fidens:=TRpReport(GetReport).Identifiers;
  index:=fidens.IndexOf(Value);
  if index>=0 then
   Raise Exception.Create(SRpIdentifierAlreadyExists);
@@ -353,7 +353,7 @@ begin
  if FUpdated then
   exit;
  try
-  fevaluator:=TRpREport(Owner).Evaluator;
+  fevaluator:=TRpREport(GetReport).Evaluator;
   fevaluator.Expression:=FValueExpression;
   fevaluator.Evaluate;
   FValue:=fevaluator.EvalResult;
@@ -377,7 +377,7 @@ begin
   exit;
  end;
  try
-  fevaluator:=TRpREport(Owner).Evaluator;
+  fevaluator:=TRpREport(GetReport).Evaluator;
   fevaluator.Expression:=FCaptionExpression;
   fevaluator.Evaluate;
   Result:=fevaluator.EvalResult;
@@ -399,7 +399,7 @@ begin
   exit;
  end;
  try
-  fevaluator:=TRpREport(Owner).Evaluator;
+  fevaluator:=TRpREport(GetReport).Evaluator;
   fevaluator.Expression:=ChangeSerieExpression;
   fevaluator.Evaluate;
   Result:=fevaluator.EvalResult;
@@ -421,7 +421,7 @@ begin
   exit;
  end;
  try
-  fevaluator:=TRpREport(Owner).Evaluator;
+  fevaluator:=TRpREport(GetReport).Evaluator;
   fevaluator.Expression:=FGetValuecondition;
   fevaluator.Evaluate;
   Result:=fevaluator.EvalResult;

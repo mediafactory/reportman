@@ -243,7 +243,7 @@ begin
   if report.TwoPass then
   begin
    if Not CalcReportWidthProgress(report) then
-    Abort;
+    SysUtils.Abort;
   end
   else
   begin

@@ -26,7 +26,7 @@ uses
   SysUtils, Types, Classes,
   Windows,Graphics, Controls, Forms, Dialogs,StdCtrls,ExtCtrls,
   rpmdobinsintvcl,rpmdconsts,rpprintitem,
-  rpgraphutilsvcl,rpsection,rpmunits, rpexpredlgvcl,
+  rpgraphutilsvcl,rpsection,rpmunits, rpexpredlgvcl,rpmdfextsecvcl,
   rpalias,rpreport,rpsubreport,rpmdflabelintvcl,rplabelitem,
   rpmdfdrawintvcl,rpmdfbarcodeintvcl,rpmdfchartintvcl, Menus;
 
@@ -59,6 +59,7 @@ type
     procedure ShapeMouseUp(Sender: TObject; Button: TMouseButton;
      Shift: TShiftState; X, Y: Integer);
     procedure FontClick(Sender:TObject);
+    procedure ExtClick(Sender:TObject);
     procedure ImageClick(Sender:TObject);
     procedure ImageKeyDown(Sender: TObject;
      var Key: Word; Shift: TShiftState);
@@ -337,6 +338,15 @@ begin
    TEdit(Control).ReadOnly:=True;
    TEdit(Control).Color:=clInfoBk;
    TEdit(Control).OnClick:=FontClick;
+  end
+  else
+  if LTypes.Strings[i]=SRpSExternalData then
+  begin
+   Control:=TEdit.Create(Self);
+   TEdit(Control).ReadOnly:=True;
+   TEdit(Control).Color:=clInfoBk;
+   TEdit(Control).OnClick:=ExtClick;
+   TEdit(Control).PopupMenu:=TFRpObjInspVCL(Owner).PopUpSection;
   end
   else
   begin
@@ -991,6 +1001,20 @@ begin
   end;
  end;
 end;
+
+procedure TRpPanelObj.ExtClick(Sender:TObject);
+var
+ FRpMainf:TFRpMainFVCL;
+begin
+ FRpMainf:=TFRpMainFVCL(Owner.Owner);
+ if rpmdfextsecvcl.ChangeExternalSectionProps(FRpMainF.report,TRpSection(FCompItem.printitem)) then
+ begin
+  TEdit(Sender).Text:=TRpSection(FCompItem.printitem).GetExternalDataDescription;
+  // Now refresh interface
+  TFRpDesignFrameVCL(TFRpObjInspVCL(Owner).FDesignFrame).freportstructure.RefreshInterface;
+ end;
+end;
+
 
 procedure TRpPanelObj.ComboObjectChange(Sender:TObject);
 begin

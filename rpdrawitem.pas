@@ -214,9 +214,9 @@ begin
   if Length(Trim(Expression))>0 then
   begin
    // If the expression is a field
-   if Not Assigned(TRpReport(Owner).Evaluator) then
+   if Not Assigned(TRpReport(GetReport).Evaluator) then
     Exit;
-   evaluator:=TRpReport(Owner).evaluator;
+   evaluator:=TRpReport(GetReport).evaluator;
    iden:=evaluator.SearchIdentifier(Expression);
    if Not Assigned(iden) then
    begin

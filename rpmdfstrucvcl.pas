@@ -124,10 +124,18 @@ begin
 end;
 
 procedure TFRpStructureVCL.ActionIdle(Sender:TObject;var done:boolean);
+var
+ FRpMainF:TFRpMainFVCL;
 begin
+ FRpMainF:=TFRpMainFVCL(Owner);
  Application.OnIdle:=oldappidle;
  done:=false;
- AAction.Execute;
+ if Assigned(AAction) then
+  AAction.Execute
+ else
+ begin
+  FRpMainF.RefreshInterface(Self);
+ end;
 end;
 
 function TFRpStructureVCL.FindSelectedSubreport:TRpSubreport;
@@ -622,11 +630,8 @@ begin
 end;
 
 procedure TFRpStructureVCL.RefreshInterface;
-var
- FRpMainF:TFRpMainFVCL;
 begin
- FRpMainF:=TFRpMainFVCL(Owner);
- AAction:=FRpMainf.ANewDetail;
+ AAction:=nil;
  oldappidle:=Application.Onidle;
  Application.OnIdle:=ActionIdle;
 end;

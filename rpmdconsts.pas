@@ -542,7 +542,11 @@ var
   SRpGetFieldValue:WideString='Executes a query and returns the first field value';
   SRpPGetFieldValue:WideString='connname is the connection name, query is the sql query to execute';
   SRpChildSubRep:WideString='Child Subreport';
-
+  SRpNewDatabaseInfo:WideString='Select a driver and click add button';
+  SRpSExternalData:WideString='External database';
+  SRpExternalSectionNotFound:WideString='Error reading external section';
+  SRpRecordnotExists:WideString='The record does not exist, do you want to create it?';
+  SRpLoadSection:WideString='Do you want to load the section?';
 
 implementation
 
@@ -1075,6 +1079,12 @@ begin
  TranslateVar(831,SRpGetFieldValue);
  TranslateVar(832,SRpPGetFieldValue);
  TranslateVar(834,SRpChildSubRep);
+ TranslateVar(859,SRpNewDatabaseInfo);
+ TranslateVar(861,SRpSExternalData);
+ TranslateVar(866,SRpExternalSectionNotFound);
+ TranslateVar(867,SRpRecordnotExists);
+ TranslateVar(868,SRpLoadSection);
+
 end;
 
 {$IFDEF LINUX}

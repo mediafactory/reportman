@@ -3,7 +3,7 @@
 {$DEFINE USEIBX}
 {$DEFINE USEADO}
 {$DEFINE USEBDE}
-//{$DEFINE USEIBO}
+{$DEFINE USEIBO}
 
 // Unsupported database drivers in Linux
 {$IFDEF LINUX}

@@ -1502,7 +1502,7 @@ begin
  if FUpdated then
   exit;
  try
-  fevaluator:=TRpReport(Owner).Evaluator;
+  fevaluator:=TRpReport(GetReport).Evaluator;
   fevaluator.Expression:=FExpression;
   fevaluator.Evaluate;
   FValue:=fevaluator.EvalResult;

@@ -162,7 +162,7 @@ var
  langindex:integer;
  acopy:WideString;
 begin
- langindex:=TRpReport(Owner).Language+1;
+ langindex:=TRpReport(GetReport).Language+1;
  if langindex<0 then
   langindex:=0;
  acopy:='';
@@ -182,7 +182,7 @@ var
  langindex:integer;
  acopy:WideString;
 begin
- langindex:=TRpReport(Owner).Language+1;
+ langindex:=TRpReport(GetReport).Language+1;
  if langindex<0 then
   langindex:=0;
  acopy:='';
@@ -307,7 +307,7 @@ begin
  Value:=UpperCase(Trim(Value));
  if Value=FIdentifier then
   exit;
- fidens:=TRpReport(Owner).Identifiers;
+ fidens:=TRpReport(GetReport).Identifiers;
  index:=fidens.IndexOf(Value);
  if index>=0 then
   Raise Exception.Create(SRpIdentifierAlreadyExists);
@@ -329,7 +329,7 @@ begin
  if FUpdated then
   exit;
  try
-  fevaluator:=TRpREport(Owner).Evaluator;
+  fevaluator:=TRpREport(GetReport).Evaluator;
 //  fevaluator.Expression:=FExpression;
 //  fevaluator.Evaluate;
 //  FValue:=fevaluator.EvalResult;
@@ -389,7 +389,7 @@ begin
  // Is Total pages variable?
  if (UpperCase(expre)='PAGECOUNT') then
  begin
-  TRpReport(Owner).AddTotalPagesItem(metafile.currentpage,metafile.Pages[metafile.currentpage].ObjectCount-1,displayformat);
+  TRpReport(GetReport).AddTotalPagesItem(metafile.currentpage,metafile.Pages[metafile.currentpage].ObjectCount-1,displayformat);
  end;
 end;
 
@@ -407,7 +407,7 @@ begin
     if (FAggregate<>rpAgNone) then
     begin
      // Update with the initial value
-     eval:=TRpReport(Owner).Evaluator;
+     eval:=TRpReport(GetReport).Evaluator;
      eval.Expression:=FAgIniValue;
      eval.Evaluate;
      FValue:=eval.EvalResult;
@@ -423,7 +423,7 @@ begin
     if ((FAggregate<>rpAgNone) AND (FAggregate<>rpAgGeneral)) then
     begin
      // Update with the initial value
-     eval:=TRpReport(Owner).Evaluator;
+     eval:=TRpReport(GetReport).Evaluator;
      eval.Expression:=FAgIniValue;
      eval.Evaluate;
      FValue:=eval.EvalResult;
@@ -438,7 +438,7 @@ begin
     if (FAggregate<>rpAgNone) then
     begin
      // Update with the initial value
-     eval:=TRpReport(Owner).Evaluator;
+     eval:=TRpReport(GetReport).Evaluator;
      eval.Expression:=FExpression;
      eval.Evaluate;
      // Do the operation
@@ -493,7 +493,7 @@ begin
      if GroupName=newgroup then
      begin
       // Update with the initial value
-      eval:=TRpReport(Owner).Evaluator;
+      eval:=TRpReport(GetReport).Evaluator;
       eval.Expression:=FAgIniValue;
       eval.Evaluate;
       FValue:=eval.EvalResult;

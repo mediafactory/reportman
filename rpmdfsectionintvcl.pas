@@ -284,10 +284,18 @@ begin
  ltypes.Add(SRpSExternalpath);
  if Assigned(lvalues) then
   lvalues.Add(TRpSection(printitem).ExternalFilename);
+ lnames.Add(SRpSExternalData);
+ ltypes.Add(SRpSExternalData);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpSection(printitem).GetExternalDataDescription);
 end;
 
 procedure TRpSectionInterface.SetProperty(pname:string;value:Widestring);
 begin
+ if pname=SRpSExternalData then
+ begin
+  exit;
+ end;
  if pname=SRpSAutoExpand then
  begin
   TRpSection(fprintitem).Autoexpand:=StrToBool(Value);
@@ -424,6 +432,11 @@ begin
  if pname=SRpSExternalPath then
  begin
   Result:=TRpSection(fprintitem).ExternalFileName;
+  exit;
+ end;
+ if pname=SRpSExternalData then
+ begin
+  Result:=TRpSection(fprintitem).GetExternalDataDescription;
   exit;
  end;
  Result:=inherited GetProperty(pname);

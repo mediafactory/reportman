@@ -28,7 +28,7 @@ uses
   QGraphics, QControls, QForms, QDialogs,QStdCtrls,QExtCtrls,
   Qt,
   rpmdobinsint,rpmdconsts,rpprintitem,
-  rpgraphutils,rpsection,rpmunits, rpexpredlg,
+  rpgraphutils,rpsection,rpmunits, rpexpredlg,rpmdfextsec,
   rpalias,rpreport,rpsubreport,rpmdflabelint,rplabelitem,
   rpmdfdrawint,rpmdfbarcodeint,rpmdfchartint, QMenus, QTypes;
 
@@ -61,6 +61,7 @@ type
     procedure ShapeMouseUp(Sender: TObject; Button: TMouseButton;
      Shift: TShiftState; X, Y: Integer);
     procedure FontClick(Sender:TObject);
+    procedure ExtClick(Sender:TObject);
     procedure ImageClick(Sender:TObject);
     procedure ImageKeyDown(Sender: TObject;
      var Key: Word; Shift: TShiftState);
@@ -335,6 +336,15 @@ begin
    TEdit(Control).ReadOnly:=True;
    TEdit(Control).Color:=clInfoBk;
    TEdit(Control).OnClick:=FontClick;
+  end
+  else
+  if LTypes.Strings[i]=SRpSExternalData then
+  begin
+   Control:=TEdit.Create(Self);
+   TEdit(Control).ReadOnly:=True;
+   TEdit(Control).Color:=clInfoBk;
+   TEdit(Control).OnClick:=ExtClick;
+   TEdit(Control).PopupMenu:=TFRpObjInsp(Owner).PopUpSection;
   end
   else
   begin
@@ -993,6 +1003,20 @@ begin
   end;
  end;
 end;
+
+procedure TRpPanelObj.ExtClick(Sender:TObject);
+var
+ FRpMainf:TFRpMainF;
+begin
+ FRpMainf:=TFRpMainF(Owner.Owner);
+ if rpmdfextsec.ChangeExternalSectionProps(FRpMainF.report,TRpSection(FCompItem.printitem)) then
+ begin
+  TEdit(Sender).Text:=TRpSection(FCompItem.printitem).GetExternalDataDescription;
+  // Now refresh interface
+  TFRpDesignFrame(TFRpObjInsp(Owner).FDesignFrame).freportstructure.RefreshInterface;
+ end;
+end;
+
 
 procedure TRpPanelObj.ComboObjectChange(Sender:TObject);
 begin

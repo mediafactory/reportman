@@ -49,6 +49,9 @@ uses Classes,SysUtils,
 {$IFDEF USEIBO}
   IB_Components,IBODataset,
 {$ENDIF}
+{$IFDEF USEVARIANTS}
+  Variants,
+{$ENDIF}
  rpdataset;
 
 {$IFDEF LINUX}
@@ -123,6 +126,9 @@ type
    property IBDatabase:TIBDatabase read FIBDatabase
     write FIBDatabase;
 {$ENDIF}
+   function GetStreamFromSQL(sqlsentence:String;bsmode:TBlobStreamMode;params:TStringList):TStream;
+   procedure GetTableNames(Alist:TStrings);
+   function OpenDatasetFromSQL(sqlsentence:String;params:TStringList;onlyexec:Boolean):TDataset;
   published
    property Alias:string read FAlias write SetAlias;
    property ConfigFile:string read FConfigFile write SetConfigFile;
@@ -1606,7 +1612,301 @@ begin
 end;
 {$ENDIF}
 
+function TRpDatabaseInfoItem.GetStreamFromSQL(sqlsentence:String;bsmode:TBlobStreamMode;params:TStringList):TStream;
+var
+ data:TDataset;
+begin
+ Result:=nil;
+ data:=OpenDatasetFromSQL(sqlsentence,params,false);
+ try
+  if data.Eof then
+   Raise Exception.Create(SRpExternalSectionNotFound);
+  if data.FieldCount<1 then
+   Raise Exception.Create(SRpExternalSectionNotFound);
+  Result:=data.CreateBlobStream(data.fields[0],bsmode);
+ finally
+  data.free;
+ end;
+end;
 
+procedure TRpDatabaseInfoItem.GetTableNames(Alist:TStrings);
+begin
+ Connect;
+
+ case Driver of
+  rpdatadbexpress:
+   begin
+{$IFDEF USESQLEXPRESS}
+    SQLConnection.GetTableNames(alist);
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverDBX);
+{$ENDIF}
+   end;
+  rpdataibx:
+   begin
+{$IFDEF USEIBX}
+    FIBDatabase.GetTableNames(alist);
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+{$ENDIF}
+   end;
+  rpdatamybase:
+   begin
+    alist.Clear;
+   end;
+  rpdatabde:
+   begin
+{$IFDEF USEBDE}
+    FBDEDatabase.GetTableNames(alist);
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverBDE);
+{$ENDIF}
+   end;
+  rpdataado:
+   begin
+{$IFDEF USEADO}
+    FADOConnection.GetTableNames(alist);
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverADO);
+{$ENDIF}
+   end;
+  rpdataibo:
+   begin
+{$IFDEF USEIBO}
+    alist.clear;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+{$ENDIF}
+   end;
+ end;
+end;
+
+function TRpDatabaseInfoItem.OpenDatasetFromSQL(sqlsentence:String;params:TStringList;onlyexec:Boolean):TDataset;
+var
+ FSQLInternalQuery:TDataset;
+ i:integer;
+ astream:TStream;
+ param:TRpParamObject;
+ paramname:String;
+ avariant:Variant;
+begin
+ Result:=nil;
+ FSQLInternalQuery:=nil;
+ // Connects and opens the dataset
+ Connect;
+ case Driver of
+  rpdatadbexpress:
+   begin
+{$IFDEF USESQLEXPRESS}
+    FSQLInternalQuery:=TSQLQuery.Create(nil);
+    TSQLQuery(FSQLInternalQuery).SQLConnection:=SQLConnection;
+    TSQLQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverDBX);
+{$ENDIF}
+   end;
+  rpdataibx:
+   begin
+{$IFDEF USEIBX}
+    FSQLInternalQuery:=TIBQuery.Create(nil);
+    TIBQuery(FSQLInternalQuery).Database:=FIBDatabase;
+    TIBQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
+    if Assigned(TIBQuery(FSQLInternalQuery).Database) then
+    begin
+     TIBQuery(FSQLInternalQuery).Transaction:=
+      TIBQuery(FSQLInternalQuery).Database.DefaultTransaction;
+    end;
+    TIBQuery(FSQLInternalQuery).UniDirectional:=true;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+{$ENDIF}
+   end;
+  rpdatamybase:
+   begin
+    Raise Exception.Create(SRpDriverNotSupported);
+   end;
+  rpdatabde:
+   begin
+{$IFDEF USEBDE}
+    FSQLInternalQuery:=TQuery.Create(nil);
+    if Assigned(TRpDatabaseInfoList(Collection).FBDESession) then
+     TQuery(FSQLInternalQuery).SessionName:=TRpDatabaseInfoList(Collection).FBDESession.SessionName;
+    TQuery(FSQLInternalQuery).DatabaseName:=FBDEDatabase.DatabaseName;
+    TQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
+    TQuery(FSQLInternalQUery).UniDirectional:=True;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverBDE);
+{$ENDIF}
+   end;
+  rpdataado:
+   begin
+{$IFDEF USEADO}
+    FSQLInternalQuery:=TADOQuery.Create(nil);
+    TADOQuery(FSQLInternalQuery).Connection:=FADOConnection;
+    TADOQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
+    TADOQuery(FSQLInternalQuery).CursorType:=ctOpenForwardOnly;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverADO);
+{$ENDIF}
+   end;
+  rpdataibo:
+   begin
+{$IFDEF USEIBO}
+    FSQLInternalQuery:=TIBOQuery.Create(nil);
+    TIBOQuery(FSQLInternalQuery).IB_Connection:=FIBODatabase;
+    TIBOQuery(FSQLInternalQuery).SQL.Text:=SQLsentence;
+    TIBOQuery(FSQLInternalQuery).UniDirectional:=true;
+{$ELSE}
+    Raise Exception.Create(SRpDriverNotSupported+SrpDriverIBX);
+{$ENDIF}
+   end;
+ end;
+ // Assigns parameters
+ if assigned(params) then
+ begin
+  for i:=0 to params.count-1 do
+  begin
+   param:=TRpParamObject(params.Objects[i]);
+   if not assigned(param) then
+    continue;
+   paramname:=Trim(params.Strings[i]);
+   if Length(paramname)<1 then
+    continue;
+   astream:=nil;
+   avariant:=Null;
+   if Assigned(param.stream) then
+    astream:=param.stream
+   else
+    avariant:=param.Value;
+   case Driver of
+    rpdatadbexpress:
+     begin
+{$IFDEF USESQLEXPRESS}
+      if assigned(astream) then
+      begin
+       TSQLQuery(FSQLInternalQuery).ParamByName(paramName).DataType:=ftBlob;
+       TSQLQuery(FSQLInternalQuery).ParamByName(paramName).LoadFromStream(astream,ftBlob);
+      end
+      else
+      begin
+       TSQLQuery(FSQLInternalQuery).ParamByName(paramName).DataType:=
+          VariantTypeToDataType(avariant);
+       TSQLQuery(FSQLInternalQuery).ParamByName(paramName).Value:=avariant;
+      end;
+{$ENDIF}
+     end;
+    rpdataibx:
+     begin
+{$IFDEF USEIBX}
+      if assigned(astream) then
+      begin
+       TIBQuery(FSQLInternalQuery).ParamByName(paramName).DataType:=ftBlob;
+       TIBQuery(FSQLInternalQuery).ParamByName(paramName).LoadFromStream(astream,ftBlob);
+      end
+      else
+      begin
+       TIBQuery(FSQLInternalQuery).ParamByName(paramName).DataType:=
+        VariantTypeToDataType(avariant);
+       TIBQuery(FSQLInternalQuery).ParamByName(paramName).Value:=avariant;
+      end;
+{$ENDIF}
+     end;
+    rpdatabde:
+     begin
+{$IFDEF USEBDE}
+      if assigned(astream) then
+      begin
+       TQuery(FSQLInternalQuery).ParamByName(paramName).DataType:=ftBlob;
+       TQuery(FSQLInternalQuery).ParamByName(paramName).LoadFromStream(astream,ftBlob);
+      end
+      else
+      begin
+       TQuery(FSQLInternalQuery).ParamByName(paramName).DataType:=
+        VariantTypeToDataType(avariant);
+       TQuery(FSQLInternalQuery).ParamByName(paramName).Value:=avariant;
+      end;
+{$ENDIF}
+     end;
+    rpdataado:
+     begin
+{$IFDEF USEADO}
+      if assigned(astream) then
+      begin
+       TADOQuery(FSQLInternalQuery).Parameters.ParamByName(paramName).DataType:=ftBlob;
+       TADOQuery(FSQLInternalQuery).Parameters.ParamByName(paramName).LoadFromStream(astream,ftBlob);
+      end
+      else
+      begin
+       TADOQuery(FSQLInternalQuery).Parameters.ParamByName(paramName).DataType:=
+        VariantTypeToDataType(avariant);
+       TADOQuery(FSQLInternalQuery).Parameters.ParamByName(paramName).Value:=avariant;
+      end;
+{$ENDIF}
+     end;
+    rpdataibo:
+     begin
+{$IFDEF USEIBO}
+      if assigned(astream) then
+      begin
+       TIBOQuery(FSQLInternalQuery).ParamByName(paramName).Assign(astream);
+      end
+      else
+      begin
+       TIBOQuery(FSQLInternalQuery).ParamByName(paramName).AsVariant:=avariant;
+      end;
+{$ENDIF}
+     end;
+   end;
+  end;
+ end;
+ if onlyexec then
+ begin
+  // Executes
+  case Driver of
+   rpdatadbexpress:
+    begin
+ {$IFDEF USESQLEXPRESS}
+     TSQLQuery(FSQLInternalQuery).ExecSQL;
+ {$ENDIF}
+    end;
+   rpdataibx:
+    begin
+ {$IFDEF USEIBX}
+     TIBQuery(FSQLInternalQuery).ExecSQL;
+ {$ENDIF}
+    end;
+   rpdatamybase:
+    begin
+     Raise Exception.Create(SRpDriverNotSupported);
+    end;
+   rpdatabde:
+    begin
+ {$IFDEF USEBDE}
+     TQuery(FSQLInternalQuery).ExecSQL;
+ {$ENDIF}
+    end;
+   rpdataado:
+    begin
+ {$IFDEF USEADO}
+     TADOQuery(FSQLInternalQuery).ExecSQL;
+ {$ENDIF}
+    end;
+   rpdataibo:
+    begin
+ {$IFDEF USEIBO}
+     TIBOQuery(FSQLInternalQuery).ExecSQL;
+ {$ENDIF}
+    end;
+  end;
+ end
+ else
+  FSQLInternalQuery.Active:=True;
+
+ if onlyexec then
+  FSQLInternalQuery.Free
+ else
+  Result:=FSQLInternalQuery;
+end;
 
 initialization
 

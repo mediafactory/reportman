@@ -1,6 +1,6 @@
 object FRpDatainfoconfigVCL: TFRpDatainfoconfigVCL
-  Left = 131
-  Top = 64
+  Left = 286
+  Top = 83
   ActiveControl = LConnections
   AutoScroll = False
   Caption = 'Data access configuration'

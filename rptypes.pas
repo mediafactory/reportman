@@ -52,6 +52,11 @@ type
 {$ENDIF}
 
 
+ TRpParamObject=class(TObject)
+  public
+   Value:Variant;
+   Stream:TStream;
+  end;
 
  TRpType1Font=(poHelvetica,poCourier,poTimesRoman,poSymbol,poZapfDingbats);
  TRpBrushStyle=(rpbsSolid, rpbsClear, rpbsHorizontal, rpbsVertical,

@@ -36,7 +36,7 @@ uses
   rpmdconsts,rptypes, rpsubreport,
   IniFiles,
   rpsection,rpprintitem,
-  DB,rpmunits,rpgraphutilsvcl;
+  DB,rpmunits,rpgraphutilsvcl,rpmdfwizardvcl;
 
 const
   // File name in menu width
@@ -341,7 +341,8 @@ begin
  // Creates a new report
  report:=TRpReport.Create(Self);
  report.OnReadError:=OnReadError;
- report.CreateNew;
+ if Not NewReportWizard(report) then
+  report.CreateNew;
  filename:='';
 
  DoEnable;

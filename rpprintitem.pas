@@ -49,8 +49,8 @@ type
    FPrintCondition:string;
    procedure SetWidth(Value:TRpTwips);
    procedure SetHeight(Value:TRpTwips);
-   function GetReport:TComponent;
   protected
+   function GetReport:TComponent;
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);virtual;
   public
    lastextent:TPoint;
@@ -199,7 +199,7 @@ begin
   exit;
  end;
  try
-  fevaluator:=TRpREport(Owner).Evaluator;
+  fevaluator:=TRpREport(GetReport).Evaluator;
   fevaluator.Expression:=PrintCondition;
   fevaluator.Evaluate;
   Result:=fevaluator.EvalResult;
@@ -229,7 +229,7 @@ begin
  if Length(FDoBeforePrint)>0 then
  begin
   try
-   fevaluator:=TRpREport(Owner).Evaluator;
+   fevaluator:=TRpREport(GetReport).Evaluator;
    fevaluator.Expression:=FDoBeforePrint;
    fevaluator.Evaluate;
   except
@@ -245,7 +245,7 @@ begin
  if Length(FDoAfterPrint)>0 then
  begin
   try
-   fevaluator:=TRpREport(Owner).Evaluator;
+   fevaluator:=TRpREport(GetReport).Evaluator;
    fevaluator.Expression:=FDoAfterPrint;
    fevaluator.Evaluate;
   except

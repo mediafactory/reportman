@@ -96,6 +96,7 @@ type
    end;
 
 function ParamTypeToDataType(paramtype:TRpParamType):TFieldType;
+function VariantTypeToDataType(avariant:Variant):TFieldType;
 
 implementation
 
@@ -242,6 +243,32 @@ begin
  if index<0 then
   Raise Exception.Create(SRpParamNotFound+AName);
  Result:=items[index];
+end;
+
+
+function VariantTypeToDataType(avariant:Variant):TFieldType;
+begin
+ Result:=ftUnknown;
+ case VarType(avariant) of
+  varEmpty,varNull:
+   Result:=ftUnknown;
+  varSmallInt,varInteger,varShortInt,varWord,varLongWord:
+   Result:=ftInteger;
+  varSingle,varDouble:
+   Result:=ftFloat;
+  varCurrency:
+   Result:=ftCurrency;
+  varDate:
+   Result:=ftDate;
+  varBoolean:
+   Result:=ftBoolean;
+  varInt64:
+   Result:=ftLargeint;
+  varString:
+   Result:=ftString;
+  else
+   Result:=ftUnknown;
+ end;
 end;
 
 
