@@ -24,7 +24,7 @@ uses
   SysUtils, Classes,
   QGraphics,QControls, QForms, QDialogs,
   QStdCtrls, QExtCtrls,QButtons,
-  rpalias,rpeval, rptypeval,
+  rpalias,rpeval, rptypeval,rpstringhash,rphashtable,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
@@ -179,7 +179,7 @@ begin
  LCategory.Items.Strings[2]:=TranslateStr(249,LCategory.Items.Strings[2]);
  LCategory.Items.Strings[3]:=TranslateStr(250,LCategory.Items.Strings[3]);
  LCategory.Items.Strings[4]:=TranslateStr(251,LCategory.Items.Strings[4]);
- 
+
  SetInitialBounds;
 end;
 
@@ -189,6 +189,7 @@ var
  i:integer;
  iden:TRpIdentifier;
  rec:TRpRecHelp;
+ ait:TstrHashIterator;
 begin
  Fevaluator:=Aval;
  for i:=0 to FMaxlisthelp-1 do
@@ -206,9 +207,11 @@ begin
    lista1.Objects[i]:=rec;
   end;
  end;
- for i:=0 to aval.identifiers.Count -1 do
+ ait:=aval.identifiers.getiterator;
+ while ait.hasnext do
  begin
-  iden:=aval.identifiers.objects[i] as TRpIdentifier;
+  ait.next;
+  iden:=TRpIdentifier(ait.GetValue);
   if iden is TIdenRpExpression then
   begin
    lista1:=llistes[2];
@@ -231,7 +234,7 @@ begin
    end;
   end;
   rec:=TRpRecHelp.Create;
-  rec.rfunction:=aval.identifiers.Strings[i];
+  rec.rfunction:=ait.getKey;
   rec.help:=iden.Help;
   rec.model:=iden.model;
   rec.params:=iden.aparams;

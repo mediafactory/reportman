@@ -24,7 +24,7 @@ interface
 
 uses
   SysUtils, Classes, QGraphics, QControls, QForms,
-  rpdatainfo,rpmdconsts,rpreport,rptypeval,rpparser,
+  rpdatainfo,rpmdconsts,rpreport,rptypeval,rpparser,rpstringhash,rphashtable,
   QDialogs, QComCtrls, QImgList, QMenus, QTypes;
 
 type
@@ -57,6 +57,7 @@ type
 
 implementation
 
+
 {$R *.xfm}
 
 procedure TFRpBrowser.SetReport(Value:TRpReport);
@@ -80,6 +81,7 @@ var
  anode,nnode:TTreeNode;
  aiden:TRpIdentifier;
  alist:TStringList;
+ ait:TstrHashIterator;
 begin
  ATree.Items.Clear;
  if FShowDatabases then
@@ -118,9 +120,11 @@ begin
   alist:=TStringList.Create;
   try
    alist.Sorted:=true;
-   for i:=0 to FReport.Evaluator.Identifiers.Count-1 do
+   ait:=FReport.Evaluator.Identifiers.getIterator;
+   while ait.hasnext do
    begin
-    aiden:=TRpIdentifier(FReport.Evaluator.Identifiers.Objects[i]);
+    ait.next;
+    aiden:=TRpIdentifier(ait.getValue);
     if Length(aiden.Idenname)>0 then
     begin
      if alist.Indexof(aiden.IdenName)<0 then

@@ -23,7 +23,7 @@ interface
 
 uses
   SysUtils, Classes,DB,rptypeval,
-  rpmdconsts,sysconst,rpparser,
+  rpmdconsts,sysconst,rpparser,rpstringhash,
 {$IFDEF USEREPORTFUNC}
   rpalias,
 {$ENDIF}
@@ -31,7 +31,7 @@ uses
   Variants,
 {$ENDIF}
   rptypes;
-  
+
 type
  TRpCustomEvaluator=class(TComponent)
  private
@@ -50,7 +50,7 @@ type
   FExpression:string;
   // Result of the evaluation
   FEvalResult:TRpValue;
-  FIdentifiers:TStringList;
+  FIdentifiers:TStringHash;
   FPartial:TRpValue;
   // Variable that contains if we are doing syntax checking
   FChecking:Boolean;
@@ -110,7 +110,7 @@ type
   property Expression:string Read FExpression write SetExpression;
   property EvalResult:TRpValue Read FEvalResult;
   // The identifiers including functions
-  property Identifiers:TStringList read FIdentifiers
+  property Identifiers:TStringHash read FIdentifiers
    write FIdentifiers;
   property Checking:Boolean read FChecking;
   // Error information
@@ -173,9 +173,9 @@ begin
  // Creates de parser
  Rpparser:=TRpparser.Create;
  // The identifiers list
- FIdentifiers:=TStringList.Create;
- FIdentifiers.Sorted:=True;
- FIdentifiers.Duplicates:=dupError;
+ FIdentifiers:=TStringHash.Create;
+// FIdentifiers.Sorted:=True;
+// FIdentifiers.Duplicates:=dupError;
  if AddIdens then
   AddIdentifiers;
 end;
@@ -189,9 +189,9 @@ begin
  // The parser
  Rpparser:=TRpparser.Create;
  // The identifiers
- FIdentifiers:=TStringList.Create;
- FIdentifiers.Sorted:=True;
- FIdentifiers.Duplicates:=dupError;
+ FIdentifiers:=TStringHash.Create;
+// FIdentifiers.Sorted:=True;
+// FIdentifiers.Duplicates:=dupError;
  // Always add with this constructor
  AddIdentifiers;
 end;
@@ -327,9 +327,13 @@ end;
 
 // Adds the identifiers that are on cache
 procedure TRpCustomEvaluator.AddIdentifiers;
+var
+ i:integer;
 begin
  FillFunctions;
- Identifiers.Assign(Rpfunctions);
+ for i:=0 to Rpfunctions.Count-1 do
+  Fidentifiers.setValue(RpFunctions.Strings[i],RpFunctions.Objects[i]);
+// Identifiers.Assign(Rpfunctions);
 end;
 
 destructor TRpCustomEvaluator.Destroy;
@@ -351,7 +355,7 @@ end;
 // To evaluate a text we must create another evaluator
 function TRpCustomEvaluator.EvaluateText(text:string):TRpValue;
 var eval:TRpCustomEvaluator;
-    oldiden:TStringList;
+    oldiden:TStringHash;
 begin
  oldiden:=nil;
  if Evaluating then
@@ -1028,34 +1032,26 @@ end;
 procedure TRpCustomEvaluator.AddVariable(name1:string;objecte:TRpIdentifier);
 begin
  objecte.idenname:=name1;
- Identifiers.ADDObject('M.'+AnsiUpperCase(name1),objecte);
+ FIdentifiers.SetValue('M.'+AnsiUpperCase(name1),objecte);
 end;
 
 procedure TRpCustomEvaluator.AddIden(name1:string;objecte:TRpIdentifier);
 begin
- Identifiers.ADDObject(name1,objecte);
+ Identifiers.SetValue(name1,objecte);
 end;
 
 function TRpCustomEvaluator.Searchwithoutdot(name1:Shortstring):TRpIdentifier;
 var
- index:integer;
  Doble:Boolean;
 begin
   Doble:=False;
-  Result:=nil;
-  index:=Identifiers.Indexof(name1);
-  if index>-1 then
-  begin
-   Result:=Identifiers.Objects[index] As TRpIdentifier;
+  Result:=FIdentifiers.GetValue(name1) As TRpIdentifier;
+  if Assigned(Result) then
    Exit;
-  end;
   // Memory variable?
-  index:=Identifiers.Indexof('M.'+name1);
-  if index>-1 then
-  begin
-   Result:=Identifiers.Objects[index] As TRpIdentifier;
+  Result:=FIdentifiers.GetValue('M.'+name1) As TRpIdentifier;
+  if Assigned(Result) then
    Exit;
-  end;
   // May be a field ?
 {$IFDEF USEREPORTFUNC}
   if FRpalias<>nil then
@@ -1070,9 +1066,9 @@ function TRpCustomEvaluator.Searchidentifier(name1:Shortstring):TRpIdentifier;
 var
 pospunt:byte;
 primer,sensepunt:string;
-index:integer;
 doble:Boolean;
 begin
+ name1:=AnsiUpperCase(name1);
  Result:=nil;
  // Have a point ?
  pospunt:=Pos('.',name1);
@@ -1085,9 +1081,7 @@ begin
   // Memory variable ?
  if primer='M' then
  begin
-  index:=Identifiers.Indexof(name1);
-  if index>-1 then
-   Result:=Identifiers.Objects[index] As TRpIdentifier;
+  Result:=FIdentifiers.GetValue(name1) As TRpIdentifier;
   Exit;
  end;
  sensepunt:=copy(name1,pospunt+1,ord(name1[0])-pospunt);

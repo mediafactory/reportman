@@ -2083,6 +2083,7 @@ begin
    end;
    if not assigned(aserie) then
     exit;
+   intserie:=Series.Items[i];
    aserie.Marks.Visible:=nchart.ShowHint;
    if Length(intserie.Caption)>0 then
     aserie.Title:=intserie.Caption;
@@ -2097,7 +2098,6 @@ begin
    aserie.Marks.Font.Size:=aFontSize;
    aserie.ParentChart:=achart;
    // Assigns the color for this serie
-   intserie:=Series.Items[i];
    for j:=0 to intserie.ValueCount-1 do
    begin
     if nchart.ChartType=rpchartpie then

@@ -27,7 +27,7 @@ uses SysUtils,Classes,DB,TypInfo,
 {$IFDEF USEREPORTFUNC}
   rpdatainfo,
 {$ENDIF}
-  rptypeval;
+  rptypeval,rpstringhash;
 type
   // Forward definitions
   TRpAliaslist=class;
@@ -69,7 +69,8 @@ type
     FDataset:TDataSet;
     FAlias:string;
     FCachedFields:Boolean;
-    FFields:TStringList;
+//    FFields:TStringList;
+    FFields:TStringHash;
     procedure SetAlias(NewAlias:string);
     function GetDataset:TDataSet;
     procedure SetDataset(NewDataset:TDataSet);
@@ -108,8 +109,9 @@ begin
  FDataset:=nil;
  FAlias:=chr(0);
  FCachedFields:=false;
- FFields:=TStringList.Create;
- FFields.Sorted:=true;
+// FFields:=TStringList.Create;
+ FFields:=TStringHash.Create;
+// FFields.Sorted:=true;
 end;
 
 destructor TRpAliaslistItem.Destroy;
@@ -211,12 +213,14 @@ end;
 function TRpAliaslist.indexof(alias:string):integer;
 var
  i:integer;
+ aalias:String;
 begin
  Result:=-1;
  i:=0;
+ aalias:=AnsiUppercase(alias);
  While i<count do
  begin
-  if Uppercase(items[i].alias)=Uppercase(alias) then
+  if items[i].alias=aalias then
   begin
    Result:=i;
    break;
@@ -261,7 +265,7 @@ end;
 
 // Seartching a field in the List
 function TRpAlias.searchfield(aname,datasetname:ShortString;var duplicated:Boolean):TRpIdentifier;
-var i,index:integer;
+var i:integer;
     found:Boolean;
     Field:TField;
     Dataset:TDataset;
@@ -270,8 +274,6 @@ begin
  Result:=nil;
  duplicated:=False;
  found:=False;
- datasetname:=AnsiUpperCase(datasetname);
- aname:=AnsiUpperCase(aname);
  if Length(datasetname)=0 then
  begin
   with List do
@@ -284,11 +286,12 @@ begin
     begin
      if aitem.FCachedFields then
      begin
-      index:=aitem.FFields.IndexOf(aname);
-      if index>=0 then
-       Field:=TField(aitem.FFields.Objects[index])
-      else
-       Field:=nil;
+//      indes:=aitem.FFields.IndexOf(aname);
+//      if index>=0 then
+//       Field:=TField(aitem.FFields.Objects[index])
+//      else
+//       Field:=nil;
+      Field:=TField(aitem.FFields.getValue(aname));
      end
      else
       Field:=Dataset.Findfield(aname);
@@ -322,11 +325,12 @@ begin
      begin
       if aitem.FCachedFields then
       begin
-       index:=aitem.FFields.IndexOf(aname);
-       if index>=0 then
-        Field:=TField(aitem.FFields.Objects[index])
-       else
-        Field:=nil;
+      Field:=TField(aitem.FFields.getValue(aname));
+//       index:=aitem.FFields.IndexOf(aname);
+//       if index>=0 then
+//        Field:=TField(aitem.FFields.Objects[index])
+//       else
+//        Field:=nil;
       end
       else
        Field:=Dataset.Findfield(aname);
@@ -399,10 +403,16 @@ begin
  if Not Assigned(Dataset) then
   exit;
  FCachedFields:=true;
- FFields.Clear;
+// FFields.Clear;
+// FFields.Sorted:=true;
+// for i:=0 to Dataset.Fields.Count-1 do
+// begin
+//  FFields.AddObject(AnsiUpperCase(Dataset.Fields[i].FieldName),Dataset.Fields[i]);
+// end;
+ FFields.clear;
  for i:=0 to Dataset.Fields.Count-1 do
  begin
-  FFields.AddObject(AnsiUpperCase(Dataset.Fields[i].FieldName),Dataset.Fields[i]);
+  FFields.setValue(AnsiUpperCase(Dataset.Fields[i].FieldName),Dataset.Fields[i]);
  end;
 end;
 
