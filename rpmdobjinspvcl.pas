@@ -347,11 +347,27 @@ begin
   Result:=CreatePanel(acompo);
   FPropPanels.AddObject(newclassname,Result);
  end;
- // Invisible all other panels
- for i:=0 to FPropPanels.Count-1 do
+ // ResourceSaving for Win9x systems
+ // Free all panels
+ if not IsWindowsNT then
  begin
-  if FPropPanels.Objects[i]<>Result then
-   TRpPanelObj(FPropPanels.Objects[i]).Visible:=False;
+  // Free all other panels
+  for i:=0 to FPropPanels.Count-1 do
+  begin
+   if FPropPanels.Objects[i]<>Result then
+    TRpPanelObj(FPropPanels.Objects[i]).Free;
+  end;
+  FPropPanels.Clear;
+  FPropPanels.AddObject(newclassname,Result);
+ end
+ else
+ begin
+  // Invisible all other panels
+  for i:=0 to FPropPanels.Count-1 do
+  begin
+   if FPropPanels.Objects[i]<>Result then
+    TRpPanelObj(FPropPanels.Objects[i]).Visible:=False;
+  end;
  end;
  // Visible this panel
  if Not Result.Visible then
