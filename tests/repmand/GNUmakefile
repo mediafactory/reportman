@@ -1,7 +1,7 @@
 kylix_bin=/opt/kylix3/bin
 #kylix_bin=/home/toni/kylix3/bin
 drivers_path=../../drivers/linux
-rpversion=2_2e
+rpversion=2_2f
 
 install:
 	make clean

@@ -55,7 +55,7 @@ DebugSourceDirs=
 UsePackages=0
 
 [Parameters]
-RunParams=/home/toni/cvsroot/reportman/tests/repmand/testcintaembed.rep /home/toni/cvsroot/reportman/tests/repmand/test.pdf
+RunParams=-from 1 -to 1 /home/toni/cvsroot/reportman/tests/repmand/testcintaembed.rep /home/toni/cvsroot/reportman/tests/repmand/test.pdf
 HostApplication=
 Launcher=/usr/X11R6/bin/xterm -T KylixDebuggerOutput -e bash -i -c %debuggee%
 UseLauncher=0

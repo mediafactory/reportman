@@ -76,6 +76,7 @@ type
   loadedk:array [0..65535] of boolean;
   loadedwidths:array [0..65535] of integer;
   loaded:array [0..65535] of boolean;
+  fdata:TObject;
   firstloaded,lastloaded:integer;
   kerningsadded:TStringList;
   constructor Create;
