@@ -1371,7 +1371,7 @@ begin
 {$IFDEF USERPDATASET}
     if cached then
     begin
-     FCachedDataset.DoClose;
+//     FCachedDataset.DoClose;
      FCachedDataset.Dataset:=FDataset;
      FCachedDataset.DoOpen;
     end;
@@ -1931,8 +1931,16 @@ begin
    if Not Assigned(FSQLInternalQuery) then
     Raise Exception.Create(SRpDriverNotSupported);
 
-   FSQLInternalQuery.AfterOpen:=OnConnect;
-   FSQLInternalQuery.AfterClose:=OnDisConnect;
+   if Cached then
+   begin
+    FSQLInternalQuery.AfterOpen:=OnConnect;
+    FSQLInternalQuery.AfterClose:=OnDisConnect;
+   end
+   else
+   begin
+    FSQLInternalQuery.AfterOpen:=nil;
+    FSQLInternalQuery.AfterClose:=nil;
+   end;
    FSQLInternalQuery.Active:=true;
 {$IFDEF USEBDE}
    if (FSQLInternalQuery is TTable) then
@@ -1951,7 +1959,9 @@ begin
 {$IFDEF USERPDATASET}
    if cached then
    begin
-    FCachedDataset.DoClose;
+    FCachedDataset.AfterOpen:=OnConnect;
+    FCachedDataset.AfterClose:=OnDisConnect;
+//    FCachedDataset.DoClose;
     FCachedDataset.Dataset:=FDataset;
     FCachedDataset.DoOpen;
    end;
@@ -1974,8 +1984,8 @@ begin
   if FDataset=FSQLInternalQuery then
    FDataset.Active:=false;
 {$IFDEF USERPDATASET}
-  if Assigned(FCachedDataset) then
-   FCachedDataset.DoClose;
+//  if Assigned(FCachedDataset) then
+//   FCachedDataset.DoClose;
 {$ENDIF}
  end;
 end;

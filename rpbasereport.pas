@@ -1084,7 +1084,7 @@ begin
    if datainfo.Items[i].Cached then
    begin
 {$IFDEF USERPDATASET}
-    datainfo.Items[i].CachedDataset.DoClose;
+//    datainfo.Items[i].CachedDataset.DoClose;
     datainfo.Items[i].CachedDataset.DoOpen;
 {$ENDIF}
    end

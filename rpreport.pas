@@ -523,7 +523,7 @@ begin
     begin
      if Datainfo.Items[index].Dataset.Bof then
      begin
-      Datainfo.Items[index].CachedDataset.DoClose;
+//      Datainfo.Items[index].CachedDataset.DoClose;
       UpdateParamsBeforeOpen(index,true);
       Datainfo.Items[index].CachedDataset.DoOpen;
      end;
