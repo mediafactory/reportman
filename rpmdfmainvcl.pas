@@ -243,6 +243,7 @@ type
     procedure BExpressionMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure ShowHelp(AURL:string);
+    procedure ShowDoc(document:String);
     procedure ADocumentationExecute(Sender: TObject);
     procedure AFeaturesExecute(Sender: TObject);
     procedure APrintSetupExecute(Sender: TObject);
@@ -1233,6 +1234,21 @@ procedure TFRpMainFVCL.ShowHelp(AURL:string);
 begin
  // Starts the default explorer
  ShellExecute(Self.handle,Pchar('open'),Pchar(AURL),nil,nil,SW_SHOWNORMAL);
+end;
+
+
+procedure TFRpMainFVCL.ShowDoc(document:String);
+var
+ aurl:string;
+ Directorysep:string;
+begin
+ aurl:=ExtractFilePath(Application.Exename);
+ Directorysep:='\';
+ aurl:=aurl+'doc'+Directorysep+document;
+ if FileExists(aurl) then
+  ShowHelp(aurl)
+ else
+  ShowHelp('http://reportman.sourceforge.net/doc/'+document);
 end;
 
 procedure TFRpMainFVCL.ADocumentationExecute(Sender: TObject);

@@ -1,0 +1,175 @@
+<html>
+<head>
+<title>Section properties</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+
+<body>
+<h2>Component Reference</h2>
+<h3>Section properties</h3>
+<p><b>Sumary</b></p>
+<p>The sections are contained inside subreports, depending on the section type 
+  it will print after the detail (group header), before the detail (group header), 
+  or in special places (page headers and footers)</p>
+<table border="1">
+  <tr> 
+    <td bgcolor="#FFFFCC">Name</td>
+    <td bgcolor="#FFFFCC">Internal Name</td>
+    <td bgcolor="#FFFFCC">Type</td>
+    <td bgcolor="#FFFFCC">Description</td>
+  </tr>
+  <tr> 
+    <td>Auto expand</td>
+    <td>AutoExpand</td>
+    <td>Boolean</td>
+    <td>The section will expand vertically to keep space for any component inside 
+      it. This is useful when you want to print some variable text and you don't 
+      know how much page space you need</td>
+  </tr>
+  <tr> 
+    <td>Auto contract</td>
+    <td>AutoContract</td>
+    <td>Boolean</td>
+    <td>The section will contract vertically to avoid unused space. This is useful 
+      when you want to print some variable text and you don't know how much page 
+      space you need, of if some of the components are printed under certain conditions 
+      and you want to profit space</td>
+  </tr>
+  <tr> 
+    <td>Begin Page</td>
+    <td>BeginPageExpression</td>
+    <td>Expression</td>
+    <td>If this expression is evaluted to true, before printing the section a 
+      new page will begin (unless this is the first section to be printed)</td>
+  </tr>
+  <tr> 
+    <td>Skip Page</td>
+    <td>SkipPage</td>
+    <td>Boolean</td>
+    <td>If this property is true, after printing the section a new page will begin 
+      (unless there is nothing more to print)</td>
+  </tr>
+  <tr> 
+    <td>Align Bottom</td>
+    <td>AlignBottom</td>
+    <td>Boolean</td>
+    <td>If this property is true, the section will be aligned to the bottom of 
+      the page, and of course next section will be printed in the next page, the 
+      alignment is done after resizing (so it's compatible with Auto expand and 
+      Auto contract properties)</td>
+  </tr>
+  <tr> 
+    <td>Horz.Desp.</td>
+    <td>HorzDesp</td>
+    <td>Boolean</td>
+    <td>If this property is true, the displazement for the next printed section 
+      will be horizontal, not vertical unless the next section have this property 
+      false. </td>
+  </tr>
+  <tr> 
+    <td>Font Color</td>
+    <td>FontColor</td>
+    <td>Color</td>
+    <td>Font color, internally stored as a quad byte 0RGB integer</td>
+  </tr>
+  <tr> 
+    <td>Font Style</td>
+    <td>FontStyle</td>
+    <td>Integer</td>
+    <td>Combination of a set of possible effects for the font: bold, italic, underline 
+      and strikeout, all the styles are compatible. Internally stored as an Integer.</td>
+  </tr>
+  <tr> 
+    <td>Bidi</td>
+    <td>BidiModes</td>
+    <td>BidiMode</td>
+    <td> 
+      <p>Left to right reading language support (bidirectional). The Bidi property 
+        is stored for each language in the report page setup. Internally stored 
+        as a string list containing the value for each language. </p>
+      <table border="1">
+        <tr> 
+          <td bgcolor="#FFFFCC">Name</td>
+          <td bgcolor="#FFFFCC">Description</td>
+        </tr>
+        <tr> 
+          <td>Bidi No</td>
+          <td>No Bidi support enabled</td>
+        </tr>
+        <tr> 
+          <td>Bidi Partial</td>
+          <td>Bidi enabled, will print right to left text but no change in the 
+            H.Alignment property is done</td>
+        </tr>
+        <tr> 
+          <td>Bidi Full</td>
+          <td>Bidi enabled, will print right to left text and will reverse the 
+            H.Alignment property</td>
+        </tr>
+      </table>
+      <p>Bidi support is fully implemented in Windows bug Qt library does not 
+        implement RightToLeft so in Linux is partially supported, also in PDF 
+        export is only partially supported.</p>
+    </td>
+  </tr>
+  <tr> 
+    <td>Back Color</td>
+    <td>BackColor</td>
+    <td>Color</td>
+    <td>Background color for the printed text, if Transparent property is set 
+      to false</td>
+  </tr>
+  <tr> 
+    <td>Transparent</td>
+    <td>Transparent</td>
+    <td>Boolean</td>
+    <td>If false a background color (Back Color) will be used for the text</td>
+  </tr>
+  <tr> 
+    <td>Cut Text</td>
+    <td>CutText</td>
+    <td>Boolean</td>
+    <td>If true, the text will be clipped to the defined box, else the text will 
+      expand outside the box, if word wrap is true, the widh of the box will be 
+      preserved.</td>
+  </tr>
+  <tr> 
+    <td>Word wrap</td>
+    <td>Wordwrap</td>
+    <td>Boolean</td>
+    <td>Will break the sentences in more lines if the lines does not fit in current 
+      box with.</td>
+  </tr>
+  <tr> 
+    <td>Single line</td>
+    <td>SingleLine</td>
+    <td>Boolean</td>
+    <td>Will force printing of text in a single line even if it contains line 
+      feeds. </td>
+  </tr>
+  <tr>
+    <td>F.Rotation</td>
+    <td>FontRotation</td>
+    <td>Angle</td>
+    <td>Rotation angle in degrees for the text. Rotation in reverse clock wise, 
+      internally stored as an integer in degrees*10 scale.</td>
+  </tr>
+</table>
+<p><b>Developer info</b></p>
+<table border="1">
+  <tr> 
+    <td bgcolor="#FFFFCC">Internal component name</td>
+    <td>TRpSection</td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFCC">Parent class</td>
+    <td>TRpCommonComponent</td>
+  </tr>
+  <tr> 
+    <td bgcolor="#FFFFCC">Unit name</td>
+    <td>rpsection.pas</td>
+  </tr>
+</table>
+<p>See also <a href="refcommon.html">Report components common properties</a>.</p>
+</body>
+</html>

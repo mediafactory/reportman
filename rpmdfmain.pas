@@ -243,6 +243,7 @@ type
     procedure BExpressionMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure ShowHelp(AURL:string);
+    procedure ShowDoc(document:String);
     procedure ADocumentationExecute(Sender: TObject);
     procedure AFeaturesExecute(Sender: TObject);
     procedure APrintSetupExecute(Sender: TObject);
@@ -1314,6 +1315,22 @@ begin
    break;
   end;
  end;
+end;
+
+procedure TFRpMainF.ShowDoc(document:String);
+var
+ aurl:string;
+ Directorysep:string;
+begin
+ aurl:=ExtractFilePath(Application.Exename);
+{$IFDEF MSWINDOWS}
+ Directorysep:='\';
+{$ENDIF}
+{$IFDEF LINUX}
+ Directorysep:='/';
+{$ENDIF}
+ aurl:=aurl+'doc'+Directorysep+document;
+ ShowHelp(aurl);
 end;
 
 procedure TFRpMainF.ShowHelp(AURL:string);

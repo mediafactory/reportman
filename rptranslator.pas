@@ -336,7 +336,7 @@ begin
  memstream:=TMemoryStream.Create;
  try
   memstream.LoadFromFile(afilename);
-  memstream.Seek(soFromBeginning,0);
+  memstream.Seek(0,soFromBeginning);
   SetLength(astring,memstream.size div 2);
   memstream.Read(astring[0],memstream.Size);
  finally

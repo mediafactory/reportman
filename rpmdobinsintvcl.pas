@@ -227,17 +227,20 @@ begin
  // PrintCondition
  lnames.Add(SrpSPrintCondition);
  ltypes.Add(SRpSExpression);
+ lhints.Add('refcommon.html');
  lcat.Add(SRpSExpression);
  if Assigned(lvalues) then
   lvalues.Add(printitem.PrintCondition);
  // Before Print
  lnames.Add(SrpSBeforePrint);
  ltypes.Add(SRpSExpression);
+ lhints.Add('refcommon.html');
  if Assigned(lvalues) then
   lvalues.Add(printitem.DoBeforePrint);
  // After Print
  lnames.Add(SrpSAfterPrint);
  ltypes.Add(SRpSExpression);
+ lhints.Add('refcommon.html');
  if Assigned(lvalues) then
   lvalues.Add(printitem.DoAfterPrint);
 
@@ -245,11 +248,13 @@ begin
  // Width
  lnames.Add(SrpSWidth);
  ltypes.Add(SRpSCurrency);
+ lhints.Add('refcommon.html');
  if Assigned(lvalues) then
   lvalues.Add(gettextfromtwips(printitem.Width));
  // Height
  lnames.Add(SrpSHeight);
  ltypes.Add(SRpSCurrency);
+ lhints.Add('refcommon.html');
  if Assigned(lvalues) then
   lvalues.Add(gettextfromtwips(printitem.Height));
 end;
@@ -409,16 +414,19 @@ begin
  // Top
  lnames.Add(SrpSTop);
  ltypes.Add(SRpSCurrency);
+ lhints.Add('refcommon.html');
  if Assigned(lvalues) then
   lvalues.Add(gettextfromtwips(TRpCommonPosComponent(printitem).PosY));
  // Left
  lnames.Add(SrpSLeft);
  ltypes.Add(SRpSCurrency);
+ lhints.Add('refcommon.html');
  if Assigned(lvalues) then
   lvalues.Add(gettextfromtwips(TRpCommonPosComponent(printitem).PosX));
 
  lnames.Add(SRPAlign);
  ltypes.Add(SRpSList);
+ lhints.Add('refcommon.html');
  if Assigned(lvalues) then
   lvalues.Add(AlignToStr(TRpCommonPosComponent(printitem).Align));
 end;
@@ -1174,30 +1182,35 @@ begin
  // Alignment
  lnames.Add(SrpSAlignment);
  ltypes.Add(SRpSList);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(HAlignmentToText(TRpGenTextComponent(printitem).Alignment));
 
  // VAlignment
  lnames.Add(SrpSVAlignment);
  ltypes.Add(SRpSList);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(VAlignmentToText(TRpGenTextComponent(printitem).VAlignment));
 
  // Font Name
  lnames.Add(SrpSWFontName);
  ltypes.Add(SRpSWFontName);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpGenTextComponent(printitem).WFontName);
 
  // Linux Font Name
  lnames.Add(SrpSLFontName);
  ltypes.Add(SRpSLFontName);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(TRpGenTextComponent(printitem).LFontName);
 
  // Type1 Font Name
  lnames.Add(SRpSType1Font);
  ltypes.Add(SRpSList);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(Type1FontToText(TRpGenTextComponent(printitem).Type1Font));
 
@@ -1205,60 +1218,70 @@ begin
  // Font Size
  lnames.Add(SrpSFontSize);
  ltypes.Add(SRpSFontSize);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontSize));
 
  // Font Color
  lnames.Add(SrpSFontColor);
  ltypes.Add(SRpSColor);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontColor));
 
  // Font Style
  lnames.Add(SrpSFontStyle);
  ltypes.Add(SrpSFontStyle);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpGenTextComponent(printitem).FontStyle));
 
  // Right To Left
  lnames.Add(SrpSRightToLeft);
  ltypes.Add(SRpSList);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(RpBidiModeToString(TRpGenTextComponent(printitem).BidiMode));
 
  // Back Color
  lnames.Add(SrpSBackColor);
  ltypes.Add(SRpSColor);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpGenTextComponent(printitem).BackColor));
 
  // Transparent
  lnames.Add(SrpSTransparent);
  ltypes.Add(SRpSBool);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).Transparent,true));
 
  // Cut Text
  lnames.Add(SrpSCutText);
  ltypes.Add(SRpSBool);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).CutText,true));
 
  // Work wrap
  lnames.Add(SrpSWordwrap);
  ltypes.Add(SRpSBool);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).WordWrap,true));
 
  // Single line
  lnames.Add(SrpSSingleLine);
  ltypes.Add(SRpSBool);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).SingleLine,true));
 
  // Font Rotation in degrees
  lnames.Add(SRpSFontRotation);
  ltypes.Add(SrpSString);
+ lhints.Add('refcommontext.html');
  if Assigned(lvalues) then
   lvalues.Add(FormatCurr('#####0.0',TRpGenTextComponent(printitem).FontRotation/10));
 end;

@@ -83,6 +83,8 @@ type
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
     procedure CreateControls(acompo:TRpSizeInterface);
+    procedure LabelMouseDown(Sender:TObject;
+     Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure AssignPropertyValues;
   end;
 
@@ -210,6 +212,15 @@ begin
  end;
 end;
 
+
+procedure TrpPanelObj.LabelMouseDown(Sender:TObject;
+     Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+ FRpMainf:TFRpMainFVCL;
+begin
+ FRpMainf:=TFRpMainFVCL(Owner.Owner);
+ FRpMainf.ShowDoc(TLabel(Sender).Hint);
+end;
 
 // Creates an object inspector panel for the component
 procedure TrpPanelObj.CreateControlsSubReport;
@@ -411,7 +422,10 @@ begin
    if Length(LHints.Strings[i])>0 then
    begin
     ALabel.Hint:=LHints.Strings[i];
+    ALabel.ParentShowHint:=False;
+    ALabel.ShowHint:=False;
     ALabel.Cursor:=crHelp;
+    ALabel.OnMouseDown:=LabelMouseDown;
    end;
   ALabel.Left:=CONS_LEFTGAP;
   ALabel.Top:=posy+CONS_LABELTOPGAP;
