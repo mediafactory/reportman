@@ -271,7 +271,7 @@ var
 begin
  if not Assigned(FSubreport) then
   exit;
- SectionScrollBox.Visible:=false;
+ SectionScrollBox.Visible:=true;
  try
   SectionScrollBox.HorzScrollBar.Position:=0;
   SectionScrollBox.VertScrollBar.Position:=0;
@@ -312,11 +312,13 @@ begin
    TopRuler.Metrics:=rCms
   else
    TopRuler.Metrics:=rInchess;
-  PSection.Height:=posx+Height;
-  PSection.Width:=maxwidth;
  finally
   SectionScrollBox.Visible:=true;
  end;
+ PSection.Height:=posx+Height;
+ PSection.Width:=maxwidth;
+ SectionScrollBox.HorzScrollBar.Position:=0;
+ SectionScrollBox.VertScrollBar.Position:=0;
 end;
 
 
