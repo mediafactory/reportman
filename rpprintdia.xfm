@@ -84,6 +84,7 @@ object FRpPrintDialog: TFRpPrintDialog
     Width = 55
     Height = 13
     Caption = 'Output type'
+    Visible = False
   end
   object ComboOutputType: TComboBox
     Left = 100
@@ -99,6 +100,7 @@ object FRpPrintDialog: TFRpPrintDialog
       'Port'
       'Custom')
     TabOrder = 9
+    Visible = False
     OnChange = ComboOutputTypeChange
   end
   object LPort: TLabel

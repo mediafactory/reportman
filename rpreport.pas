@@ -699,7 +699,7 @@ begin
  if allpages then
  begin
   frompage:=0;
-  topage:=999999999;
+  topage:=99999999;
  end
  else
  begin
@@ -720,7 +720,7 @@ begin
       Driver.NewDocument(metafile);
       initiated:=true;
      end;
-     if PageNum in [frompage..topage] then
+     if ((PageNum>=frompage) and  (PageNum<=topage)) then
      begin
       for i:=0 to copies-1 do
       begin
@@ -738,7 +738,7 @@ begin
     end;
     if not finished then
     begin
-     if pagenum in [frompage..topage] then
+     if ((PageNum>=frompage) and  (PageNum<=topage)) then
      begin
       Driver.DrawPage(metafile.pages[0]);
      end;

@@ -1,5 +1,5 @@
 {TODO 2 -oToni -cEngine : Conditional define to build reportman package without db drivers}
-{TODO 4 -oToni -cDesign Interface : Select inchess or cms in preferences menu}
+{DONE 4 -oToni -cDesign Interface : Select inchess or cms in preferences menu}
 {TODO 1 -oToni -cEngine : Add text rotation to text controls}
 {TODO 1 -oToni -cEngine : Implementation for Delphi 5 (ADO-NOADO) and C++Builder 4}
 {TODO 2 -oToni -cEngine : Add aliaslist to the report component to use application opened querys}
@@ -25,7 +25,7 @@
 {TODO 1 -oToni -cEngine : Program a simple chart component at least with poly lines and dots}
 
 {TODO 1 -oToni -cOthers : Conversion program for gestor.exe}
-{TODO 1  -oToni -cEngine : Saving and loading from database tables}
+{TODO   -oToni -cEngine : Saving and loading reportms from database tables using the designer}
 
 
 {DONE 1 -oToni -cDesign Interface : Drop Fields directly from a floating window when click in expression}
