@@ -56,16 +56,15 @@ object TRpReport
   object TRpLabel0: TRpLabel
     Width = 9555
     Height = 870
-    PosX = 570
-    PosY = 810
+    PosX = 573
+    PosY = 800
     Type1Font = poEmbedded
-    FontSize = 24
-    FontStyle = 3
+    FontSize = 26
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
     WFontName = 'Comic Sans MS'
-    LFontName = 'Comic Sans MS'
+    LFontName = 'bullpen 3d'
     WideText = 'Testing truetype in pdf output'
   end
   object TRpLabel1: TRpLabel

@@ -229,7 +229,14 @@ begin
        if aobj.Type1 then
         convfactor:=1
        else
-        convfactor:=916/1868;
+       begin
+        // Sizes perfect in Suse 9.1
+        // Truetype should contain 2048 value but contains 1000
+        // In Suse 9.0 contains 2048
+        convfactor:=916/1880*2048/aface.units_per_EM;
+        // Note same text printed with OpenOffice, can be larger
+        // If exported to PDF from OpenOffice will be the same
+       end;
        aobj.filename:=fontfiles.strings[i];
        aobj.postcriptname:=StringReplace(StrPas(aface.family_name),' ','',[rfReplaceAll]);
        aobj.familyname:=StrPas(aface.family_name);
@@ -263,7 +270,7 @@ begin
         begin
          if 0=FT_Load_Char(aface,j,FT_LOAD_NO_SCALE) then
          begin
-          aobj.Widths[j]:=Round(convfactor*aface.glyph.metrics.horiAdvance);
+          aobj.Widths[j]:=Round(convfactor*aface.glyph.advance.x);
          end
          else
           aobj.Widths[j]:=0;

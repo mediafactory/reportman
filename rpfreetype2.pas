@@ -52,6 +52,8 @@ const
 
 type
 
+  FT_F26Dot6=integer;
+
   FT_Library     = record z : Pointer; end;
   FT_SubGlyph= record z:Pointer;end;
   FT_Slot_Internal=record z:Pointer;end;
@@ -311,6 +313,8 @@ type
 
   TFT_Load_Char=function (face:FT_Face;char_code:FT_ULong;
                            load_flags:FT_Int32):FT_Error;cdecl;
+  TFT_Set_Char_Size=function (face:FT_Face;char_width,char_height:FT_F26Dot6;
+                           horz_resolution,vert_resolution:FT_UInt):FT_Error;cdecl;
 
 
 procedure CheckFreeTypeLoaded;
@@ -328,6 +332,7 @@ var
   FT_Set_Charmap:TFT_Set_Charmap;
   FT_Select_Charmap:TFT_Select_Charmap;
   FT_Load_Char:TFT_Load_Char;
+  FT_Set_Char_Size:TFT_Set_Char_Size;
 var
 {$IFDEF MSWINDOWS}
  FreeTypeLib:HINST;
@@ -391,6 +396,7 @@ begin
  FT_Set_Charmap:=GetProcAddr('FT_Set_Charmap');
  FT_Select_Charmap:=GetProcAddr('FT_Select_Charmap');
  FT_Load_Char:=GetProcAddr('FT_Load_Char');
+ FT_Set_Char_Size:=GetProcAddr('FT_Set_Char_Size');
 end;
 
 procedure FreeFreeType;
