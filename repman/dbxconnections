@@ -1,3 +1,13 @@
+[DB2Connection]
+DriverName=DB2
+Database=Database Name
+User_Name=user
+Password=password
+BlobSize=-1
+ErrorResourceFile=./DbxDb2Err.msg
+LocaleCode=0000
+DB2 TransIsolation=ReadCommited
+
 [MySQLConnection]
 DriverName=MySQL
 HostName=ServerName
@@ -8,24 +18,58 @@ BlobSize=-1
 ErrorResourceFile=./DbxMySqlErr.msg
 LocaleCode=0000
 
+[PostgreSQLConnection]
+DriverName=PostgreSQL
+HostName=ServerName
+Database=DBNAME
+User_Name=user
+Password=password
+BlobSize=-1
+ErrorResourceFile=./DbxPGSQLErr.msg
+LocaleCode=0000
 
 [IBConnection]
 DriverName=Interbase
-Database=localhost:/var/data/test.gdb
+Database=database.gdb
+RoleName=RoleName
 User_Name=sysdba
-Password=SYSDBA
+Password=masterkey
 ServerCharSet=
-SQLDialect=WIN1252
+SQLDialect=1
 ErrorResourceFile=./DbxIbErr.msg
 LocaleCode=0000
 BlobSize=-1
 CommitRetain=False
 WaitOnLocks=True
-Interbase TransIsolation=RepeatableRead
+Interbase TransIsolation=ReadCommited
 
-[EMPLOYEE]
+[OracleConnection]
+DriverName=Oracle
+DataBase=Database Name
+User_Name=user
+Password=password
+RowsetSize=20
+BlobSize=-1
+ErrorResourceFile=./DbxOraErr.msg
+Oracle TransIsolation=ReadCommited
+OS Authentication=False
+Multiple Transaction=False
+Trim Char=False
+
+[InformixConnection]
+DriverName=Informix
+HostName=ServerName
+Database=Database Name
+User_Name=user
+Password=password
+BlobSize=-1
+ErrorResourceFile=./DbxInfSqlErr.msg
+LocaleCode=0000
+Informix TransIsolation=ReadCommited
+
+[biolife]
 DriverName=Interbase
-Database=localhost:/var/data/employee.gdb
+Database=localhost:/var/data/biolife.gdb
 RoleName=RoleName
 User_Name=sysdba
 Password=masterkey

@@ -1001,7 +1001,7 @@ begin
   end;
  end;
  // A bug in Kylix 2 does not allow printing
- // when using dbexpress
+ // when using dbexpress in some systems
  if not kylixprintbug then
  begin
    if forcecalculation then
@@ -1044,6 +1044,8 @@ begin
  begin
    // When compiling metaview the bug can be skiped
    // Saves the metafile
+   // Selects the printer for that report
+   PrinterSelection(report.PrinterSelect);
    tmpnam(abuffer);
    afilename:=StrPas(abuffer);
    report.Metafile.SaveToFile(afilename);

@@ -48,6 +48,7 @@ ALL DBEXPRESS DRIVERS
 - MySQL & MySQL 3.23 (tested)
 - Oracle
 - DB2
+- Informix
 - ODBC throught UNIXodbc (tested) you must get the driver from sourceforge
 
 MICROSOFT ADO (Windows Only version)

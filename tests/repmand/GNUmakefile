@@ -1,14 +1,17 @@
-kylix_bin=/opt/kylix2/bin
+kylix_bin=/opt/kylix3/bin
 drivers_path=../../drivers/linux
 
 install:
-	cp $(kylix_bin)/libqtintf-6.5-qt2.3.so .
-	cp $(kylix_bin)/libqt.so.2 .
+	cp $(kylix_bin)/libqtintf-6.9-qt2.3.so .
+	cp $(kylix_bin)/libborqt-6.9-qt2.3.so .
 	cp $(kylix_bin)/libmidas.so.1 .
-	cp $(drivers_path)/libsqlib.so.1 .
-	cp $(drivers_path)/libsqlmy.so.1 .
-	cp $(drivers_path)/libsqlmy23.so.1 .
-	cp $(drivers_path)/libsqlpg.so.1.0 .
+	cp $(drivers_path)/libsqldb2.so .
+	cp $(drivers_path)/libsqlib.so .
+	cp $(drivers_path)/libsqlinf.so .
+	cp $(drivers_path)/libsqlmy.so .
+	cp $(drivers_path)/libsqlmy23.so .
+	cp $(drivers_path)/libsqlpg.so .
+	cp $(drivers_path)/libsqlora.so .
 	cp $(drivers_path)/libdbxoodbc.so .
 	cp ../../repman/repmand .
 	cp ../../repman/dbxdrivers .
@@ -32,7 +35,7 @@ install:
 	mkdir doc/images
 	cp ../../doc/doc/images/*.jpg doc/images
 #	include repmand.es when linux translation done
-	tar c doc LICENSE.TXT sample4.rep biolife.cds repmand dbxdrivers dbxconnections metaprint metaview printrep printreptopdf reptotxt txttorep repmand repmand.sh README *.so *.so.1 *.so.2 *.so.1.0 qt_* > repmand-1RC2.i386.tar
+	tar c doc LICENSE.TXT sample4.rep biolife.cds repmand dbxdrivers dbxconnections metaprint metaview printrep printreptopdf reptotxt txttorep repmand repmand.sh README *.so *.so.1 qt_* > repmand-1RC2.i386.tar
 	gzip repmand-1RC2.i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0

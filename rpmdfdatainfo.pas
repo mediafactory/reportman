@@ -238,11 +238,12 @@ begin
   rpdatadbexpress,rpdataibx,rpdataibo:
    begin
 {$IFDEF USECONADMIN}
+    ConAdmin:=nil;
     ShowDBXConfig(TRpDbDriver(GDriver.ItemIndex) in [rpdataibx,rpdataibo]);
     UpdateConAdmin;
-    if Assigned(ConAdmin) then
-    begin
-     ConAdmin:=nil;
+//    if Assigned(ConAdmin) then
+//    begin
+//     ConAdmin:=nil;
      try
       ConAdmin:=GetConnectionAdmin;
      except
@@ -252,7 +253,7 @@ begin
       end;
      end;
      conadmin.GetConnectionNames(ComboAvailable.Items,'');
-    end;
+//    end;
 {$ENDIF}
    end;
   rpdatamybase:

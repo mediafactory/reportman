@@ -182,7 +182,7 @@ begin
  try
   ConAdminObj.DriverConfig.ReadSections(alist);
   top:=CONTROL_DISTANCEY;
-          ConAdmin.GetConnectionParams(connectionname,params);
+  ConAdmin.GetConnectionParams(connectionname,params);
   for i:=0 to params.Count-1 do
   begin
    label1:=TLabel.Create(Self);
@@ -344,7 +344,6 @@ procedure TFRpDBXConfig.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
  if Assigned(ConAdminObj) then
   ConAdminObj.ConnectionConfig.UpdateFile;
-
 end;
 
 

@@ -60,7 +60,7 @@
 
 // Kylix 3 has no the LINUXPRINTBUG because new borland qt lib
 {$IFDEF VER140}
- {$UNDEF LINUXPRINTBUG}
+// {$UNDEF LINUXPRINTBUG}
  {$UNDEF KYLIX2}
 // Vcl File Filters is a missing feature of CLX Dialogs
  {$DEFINE VCLFILEFILTERS}
