@@ -52,7 +52,7 @@ uses
 const
  REP_C_WHEELINC=5;
  REP_C_WHEELSCALE=4;
- MAX_LANGUAGES=3;
+ MAX_LANGUAGES=5;
  CONS_MINLINEINFOITEMS=400;
 
  {$IFNDEF USEVARIANTS}
@@ -213,7 +213,7 @@ function GetPrinterOemConvertOption(printerindex:TRpPrinterSelect):boolean;
 function GetPrinterRawOp(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):string;
 procedure FillTreeDir(adirectory:String;alist:TStringList);
 function WideStringToDOS(astring:WideString):WideString;
-function NumberToText(FNumero:currency;female:boolean;idiom:integer):String;
+function NumberToText(FNumero:currency;female:boolean;idiom:integer):WideString;
 procedure GetLanguageDescriptions(alist:TStrings);
 procedure GetBidiDescriptions(alist:TRpWideStrings);
 procedure GetBidiDescriptionsA(alist:TStrings);
@@ -1294,7 +1294,108 @@ begin
 end;
 
 
-function NumberToTextCatalan(Fnumero:currency;female:boolean):String;
+// Function cortesy of Hamza Al-Aradi (AradBox@hotmail.com)
+// Altered to support negative and not show fractionary
+// when there is not fractionary part
+function NumberToTextEnglish(Amount:currency):WideString;
+var
+ Num : LongInt;
+ Fracture : Integer;
+
+ function Num2Str(Num: LongInt): String;
+ Const hundred = 100;
+       thousand = 1000;
+       million = 1000000;
+       billion = 1000000000;
+  begin
+    if Num >= billion then
+      if (Num mod billion) = 0 then
+        Num2Str := Num2Str(Num div billion) + ' Billion'
+      else
+        Num2Str := Num2Str(Num div billion) + ' Billion ' +
+                   Num2Str(Num mod billion)
+    else
+      if Num >= million then
+        if (Num mod million) = 0 then
+          Num2Str := Num2Str(Num div million) + ' Million'
+        else
+          Num2Str := Num2Str(Num div million) + ' Million ' +
+                     Num2Str(Num mod million)
+      else
+        if Num >= thousand then
+          if (Num mod thousand) = 0 then
+            Num2Str := Num2Str(Num div thousand) + ' Thousand'
+          else
+            Num2Str := Num2Str(Num div thousand) + ' Thousand ' +
+                       Num2Str(Num mod thousand)
+        else
+          if Num >= hundred then
+            if (Num mod hundred) = 0 then
+              Num2Str := Num2Str(Num div hundred) + ' Hundred'
+            else
+              Num2Str := Num2Str(Num div  hundred) + ' Hundred ' +
+                         Num2Str(Num mod hundred)
+          else
+          case (Num div 10) of
+         6,7,9: if (Num mod 10) = 0 then
+                   Num2Str := Num2Str(Num div 10) + 'ty'
+                 else
+                   Num2Str := Num2Str(Num div 10) + 'ty-' +
+                              Num2Str(Num mod 10);
+              8: if Num = 80 then
+                   Num2Str := 'Eighty'
+                 else
+                   Num2Str := 'Eighty-' + Num2Str(Num mod 10);
+              5: if Num = 50 then
+                   Num2Str := 'Fifty'
+                 else
+                   Num2Str := 'Fifty-' + Num2Str(Num mod 10);
+              4: if Num = 40 then
+                   Num2Str := 'Forty'
+                 else
+                   Num2Str := 'Forty-' + Num2Str(Num mod 10);
+              3: if Num = 30 then
+                   Num2Str := 'Thirty'
+                 else
+                   Num2Str := 'Thirty-' + Num2Str(Num mod 10);
+              2: if Num = 20 then
+                   Num2Str := 'Twenty'
+                 else
+                   Num2Str := 'Twenty-' + Num2Str(Num mod 10);
+            0,1: case Num of
+                    0: Num2Str := 'Zero';
+                    1: Num2Str := 'One';
+                    2: Num2Str := 'Two';
+                    3: Num2Str := 'Three';
+                    4: Num2Str := 'Four';
+                    5: Num2Str := 'Five';
+                    6: Num2Str := 'Six';
+                    7: Num2Str := 'Seven';
+                    8: Num2Str := 'Eight';
+                    9: Num2Str := 'Nine';
+                   10: Num2Str := 'Ten';
+                   11: Num2Str := 'Eleven';
+                   12: Num2Str := 'Twelve';
+                   13: Num2Str := 'Thirteen';
+                   14: Num2Str := 'Fourteen';
+                   15: Num2Str := 'Fifteen';
+                   16: Num2Str := 'Sixteen';
+                   17: Num2Str := 'Seventeen';
+                   18: Num2Str := 'Eightteen';
+                   19: Num2Str := 'Nineteen'
+                 end
+          end
+ end {Num2Str};
+
+begin
+ Num:= Trunc(Abs(Amount));
+ Fracture:= Round(1000*Frac(Abs(Amount)));
+ Result := Num2Str(Num);
+ if Fracture > 0 then
+   Result := Result + ' and '+IntToStr(Fracture) + '/1000';
+end;
+
+function NumberToTextCatalan(Fnumero:currency;female:boolean):WideString;
 var s:String;
     centavos:Integer;
     i:Integer;
@@ -1536,12 +1637,12 @@ If (i<>0) and (centavos>0) then begin
    1: Result:=Unidades(Centavos);
    2: Result:=Decenas(Centavos);
  end;
- Result:=s+' con '+Result;
+ Result:=s+' amb '+Result;
 end else
  Result:=s;
 end;
 
-function NumberToTextCastellano(FNumero:currency;female:boolean):String;
+function NumberToTextCastellano(FNumero:currency;female:boolean):WideString;
 var s:String;
     centavos:Integer;
     i:Integer;
@@ -1726,6 +1827,7 @@ var s:String;
      end;
 
 begin
+Result:='';
 FNumero:=Abs(Fnumero);
 fseparador:=decimalseparator;
 s:=FormatFloat('##########0.00',Fnumero);
@@ -1752,16 +1854,18 @@ If (i<>0) and (centavos>0) then begin
    1: Result:=Unidades(Centavos);
    2: Result:=Decenas(Centavos);
  end;
- Result:=s+' con '+Result;
+ Result:=Result+s+' con '+Result;
 end else
- Result:=s;
+ Result:=Result+s;
 end;
 
 
-function NumberToText(FNumero:currency;female:boolean;idiom:integer):String;
+function NumberToText(FNumero:currency;female:boolean;idiom:integer):WideString;
 begin
  Result:='';
  case idiom of
+  0,-1:
+    Result:= NumberToTextEnglish(FNumero);
   1:
    Result:=NumberToTextCastellano(FNumero,female);
   2:
@@ -1772,13 +1876,16 @@ end;
 
 procedure GetLanguageDescriptions(alist:TStrings);
 //var
-// rplangids:array [0..MAX_LANGUAGES-1] of string=('EN','ES','CAT','FR');
+// rplangids:array [0..MAX_LANGUAGES-1] of string=('EN','ES','CAT','FR','PT');
 begin
  alist.Clear;
  alist.Add(SRpEnglish);
  alist.Add(SRpSpanish);
  alist.Add(SRpCatalan);
  alist.Add(SRpFrench);
+ alist.Add(SRpPortuguesse);
+ alist.Add(SRpGerman);
+ alist.Add(SRpItalian);
 end;
 
 procedure GetBidiDescriptionsA(alist:TStrings);
