@@ -260,8 +260,9 @@ end;
 // set Modul Width
 procedure TRpBarcode.SetModul(v:integer);
 begin
-	if (v >= 1) and (v < 50) then
-		FModul := v;
+ if (v<1) then
+  v:=1;
+ FModul := v;
 end;
 
 ////////////////////////////// EAN /////////////////////////////////////////
