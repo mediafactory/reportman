@@ -467,6 +467,9 @@ var
  calcrect:boolean;
  alvbottom,alvcenter:boolean;
  rotrad,fsize:double;
+ oldrgn:HRGN;
+ newrgn:HRGN;
+ aresult:integer;
 begin
  // Switch to device points
  if toprinter then
@@ -630,8 +633,8 @@ begin
      case TRpImageDrawStyle(obj.DrawImageStyle) of
       rpDrawFull:
        begin
-        rec.Bottom:=rec.Top+round(bitmap.height/obj.dpires)*dpiy-1;
-        rec.Right:=rec.Left+round(bitmap.width/obj.dpires)*dpix-1;
+        rec.Bottom:=rec.Top+round(bitmap.height/obj.dpires*dpiy)-1;
+        rec.Right:=rec.Left+round(bitmap.width/obj.dpires*dpix)-1;
         recsrc.Left:=0;
         recsrc.Top:=0;
         recsrc.Right:=bitmap.Width-1;
@@ -656,7 +659,15 @@ begin
        end;
       rpDrawTile:
        begin
+        // Set clip region
+        aresult:=GetClipRgn(Canvas.Handle,oldrgn);
+        newrgn:=CreateRectRgn(rec.Left,rec.Top,rec.Right,rec.Bottom);
+        SelectClipRgn(Canvas.handle,newrgn);
         DrawBitmapMosaicSlow(Canvas,rec,bitmap);
+        if aresult=0 then
+         SelectClipRgn(Canvas.handle,0)
+        else
+         SelectClipRgn(Canvas.handle,oldrgn);
        end;
      end;
     finally

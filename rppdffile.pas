@@ -11,7 +11,8 @@
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
-{       Converted to CLX and added lot functionality    }
+{       Converted to CLX (not Visual CLX)               }
+{       and added lot functionality                     }
 {       and bug fixes                                   }
 {       Changed names to borland coding style           }
 {       Added Canvas object                             }
@@ -27,13 +28,15 @@
 {               -Ellipse, true Rectangle                }
 {               -Text alignment                         }
 {               -Multiline and wordbreak                }
+{               -Multiline alignment                    }
 {               -Underline and strokeout                }
 {               -Type1 Font selection bold/italic       }
 {                                                       }
 {                                                       }
 {       Still Missing:                                  }
 {               -Brush Patterns                         }
-{               -Bitmaps                                }
+{               -RLE and monocrhome Bitmaps             }
+{               -RoundRect                              }
 {                                                       }
 {       This file is under the MPL license              }
 {       If you enhace this file you must provide        }
@@ -49,9 +52,9 @@ interface
 {$I rpconf.inc}
 
 uses Classes,Sysutils,
-{$IFDEF MSWINDOWS}
- Windows,
-{$ENDIF}
+//{$IFDEF MSWINDOWS}
+// Windows,
+//{$ENDIF}
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
@@ -119,7 +122,8 @@ type
                        Alignment: integer; Clipping: boolean;
                        Wordbreak:boolean;Rotation:integer=0);
    procedure Rectangle(x1,y1,x2,y2:Integer);
-//   procedure StretchDraw(rec:TRect;abitmap:TBitmap);
+   procedure DrawImage(rec:TRect;abitmap:TStream;dpires:integer;
+    tile:boolean;clip:boolean);
    procedure Ellipse(X1, Y1, X2, Y2: Integer);
    constructor Create(AFile:TRpPDFFile);
    destructor Destroy;override;
@@ -162,6 +166,7 @@ type
    FCurrentSetPageObject:integer;
    FCompressionStream:TCompressionStream;
    FResolution:integer;
+   FBitmapStreams:TList;
    // Minimum page size in 72 dpi 18x18
    // Maximum page size in 72 dpi 14.400x14.400
    FPageWidth,FPageHeight:integer;
@@ -180,6 +185,8 @@ type
    procedure SetXref;
    function GetOffsetNumber(offset:string):string;
    procedure SetResolution(Newres:integer);
+   procedure ClearBitmaps;
+   procedure WriteBitmap(index:Integer);
  public
    procedure BeginDoc;
    procedure NewPage;
@@ -213,6 +220,7 @@ type
 function PDFCompatibleText(astring:string):string;
 function NumberToText(Value:double):string;
 
+procedure GetBitmapInfo(stream:TStream;var width,height,imagesize:integer;FMemBits:TMemoryStream);
 
 implementation
 
@@ -430,6 +438,7 @@ begin
  FPageHeight:= 17039;
  FResolution:=1440;
  FCanvas.FResolution:=1440;
+ FBitmapStreams:=TList.Create;
 end;
 
 destructor TRpPDFFile.Destroy;
@@ -441,6 +450,7 @@ begin
  FObjectOffsets.free;
  FPages.Free;
  FFOntList.Free;
+ FBitmapStreams.Free;
 
  inherited Destroy;
 end;
@@ -461,6 +471,7 @@ end;
 
 procedure TRpPDFFile.BeginDoc;
 begin
+ ClearBitmaps;
  FPrinting:=true;
  FStreamValid:=false;
  FMainPDF.Clear;
@@ -829,6 +840,26 @@ begin
  FTempStream.SaveToStream(FmainPDF);
 end;
 
+procedure TRpPDFFile.ClearBitmaps;
+begin
+ while FBitmapStreams.Count>0 do
+ begin
+  TObject(FBitmapStreams.Items[0]).Free;
+  FBitmapStreams.Delete(0);
+ end;
+end;
+
+procedure TRpPDFFile.WriteBitmap(index:Integer);
+begin
+ FObjectCount:=FObjectCount+1;
+ FTempStream.Clear;
+ SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
+ TMemoryStream(FBitmapStreams.Items[index-1]).SaveToStream(FTempStream);
+ SWriteLine(FTempStream,#13#10+'endstream');
+ SWriteLine(FTempStream,'endobj');
+ AddToOffset(FTempStream.Size);
+ FTempStream.SaveToStream(FMainPDF);
+end;
 
 procedure TRpPDFFile.EndDoc;
 var
@@ -842,8 +873,8 @@ begin
  SetFontType;
  SetPages;
  SetArray;
-// for i:= 1 to FImageCount do
-//  WriteBitmap(i);
+ for i:= 1 to FImageCount do
+  WriteBitmap(i);
  for i:= 1 to FPage do
  begin
   SetPageObject;
@@ -861,6 +892,7 @@ begin
   FMainPDF.SaveToFile(FFilename);
   FMainPDF.Seek(0,soFromBeginning);
  end;
+ ClearBitmaps;
 end;
 
 procedure TRpPDFFile.AbortDoc;
@@ -1248,31 +1280,124 @@ begin
  end;
 end;
 
-{procedure TRpPDFCanvas.StretchDraw(rec:TRect;abitmap:TBitmap);
+procedure TRpPDFCanvas.DrawImage(rec:TRect;abitmap:TStream;dpires:integer;
+ tile:boolean;clip:boolean);
 var
- tempsx,tempsy:double;
+ astream:TMemoryStream;
+// imagesize,infosize:DWORD;
+imagesize:integer;
+ bitmapwidth,bitmapheight:integer;
+ FCompressionStream:TCOmpressionStream;
+ fimagestream:TMemoryStream;
+// tmpBitmap:TBitmap;
+// y: integer;
+ aheight,awidth:integer;
+// pb: PByteArray;
+ arect:TRect;
 begin
+ arect:=rec;
  FFile.CheckPrinting;
-// if (PageHeight > PageWidth) then begin
-//  tempsx:=((PageWidth)/(WinProcs.GetDeviceCaps(GetDC(0), LOGPIXELSX)*10));
-//  tempsy:=((PageHeight)/(WinProcs.GetDeviceCaps(GetDC(0), LOGPIXELSY)*11.900));
-//end
-//else begin
-//  tempsx:=((PageWidth)/(WinProcs.GetDeviceCaps(GetDC(0), LOGPIXELSX)* 13));
-//  tempsy:=((PageHeight)/(WinProcs.GetDeviceCaps(GetDC(0), LOGPIXELSY)*8));
-//end;
-
- FFile.FImageCount:=FFile.FImageCount+1;
- SWriteLine(FFile.FsTempStream,'q');
- SWriteLine(FFile.FsTempStream,UnitsToTextX(rec.Right-rec.Left)+
-' 0 0 '+UnitsToTextX(rec.Bottom-rec.Top)+
- ' '+UnitsToTextX(rec.Left)+' '+UnitsToTextY(rec.Bottom)
- +' cm');
- SWriteLine(FFile.FsTempStream,'/Im'+IntToStr(FFile.FImageCount)+' Do');
- SWriteLine(FFile.FsTempStream,'Q');
-// SetBitmap(ABitmap);
-end;
+ FImageStream:=TMemoryStream.Create;
+ try
+{  tmpBitmap:=TBitmap.Create;
+  try
+   tmpBitmap.LoadFromStream(abitmap);
+   GetDIBSizes(tmpBitmap.Handle, InfoSize, ImageSize);
+   tmpBitmap.PixelFormat := pf24Bit;
+   for y := 0 to tmpBitmap.Height-1 do
+   begin
+     pb := tmpBitmap.ScanLine[y];
+     FImageStream.Write(pb^, tmpBitmap.Width*3);
+   end;
+   GetDIBSizes(tmpBitmap.Handle, InfoSize, ImageSize);
+   bitmapwidth:=tmpBitmap.Width;
+   bitmapheight:=tmpBitmap.height;
+  finally
+   tmpBitmap.Free;
+  end;
 }
+  GetBitmapInfo(abitmap,bitmapwidth,bitmapheight,imagesize,FImageStream);
+  if dpires<>0 then
+  begin
+   rec.Right:=rec.Left+Round(bitmapwidth/dpires*FResolution);
+   rec.Bottom:=rec.Top+Round(bitmapheight/dpires*FResolution);
+  end;
+
+  FFile.FImageCount:=FFile.FImageCount+1;
+  SWriteLine(FFile.FsTempStream,'q');
+  if clip then
+  begin
+   // Clipping rectangle
+   SWriteLine(FFile.FsTempStream,UnitsToTextX(ARect.Left)+' '+UnitsToTextY(ARect.Top)+
+   ' '+UnitsToTextX(ARect.Right-ARect.Left)+' '+UnitsToTextX(-(ARect.Bottom-ARect.Top))+' re');
+   SWriteLine(FFile.FsTempStream,'h'); // ClosePath
+   SWriteLine(FFile.FsTempStream,'W'); // Clip
+   SWriteLine(FFile.FsTempStream,'n'); // NewPath
+  end;
+  awidth:=rec.Right-rec.Left;
+  aheight:=rec.Bottom-rec.Top;
+  if awidth<=0 then
+   tile:=false;
+  if aheight<=0 then
+   tile:=false;
+  repeat
+   rec.Left:=ARect.Left;
+   rec.Right:=ARect.Left+awidth;
+   repeat
+    SWriteLine(FFile.FsTempStream,'q');
+    // Translate
+    SWriteLine(FFile.FsTempStream,'1 0 0 1 '
+     +UnitsToTextX(rec.Left)+
+     ' '+UnitsToTextY(rec.Bottom)+' cm');
+    // Scale
+    SWriteLine(FFile.FsTempStream,UnitsToTextX(rec.Right-rec.Left)+
+     ' 0 0  '+UnitsToTextX(rec.Bottom-rec.Top)+' 0 0 cm');
+    SWriteLine(FFile.FsTempStream,'/Im'+IntToStr(FFile.FImageCount)+' Do');
+    SWriteLine(FFile.FsTempStream,'Q');
+    if not tile then
+     break;
+    rec.Left:=rec.Left+awidth;
+    rec.Right:=rec.Left+awidth;
+   until (Rec.Right>ARect.Right);
+   if not tile then
+    break;
+   rec.Top:=rec.Top+aheight;
+   rec.Bottom:=rec.Top+aheight;
+  until (Rec.Bottom>ARect.Bottom);
+  SWriteLine(FFile.FsTempStream,'Q');
+
+  // Saves the bitmap to temp bitmaps
+  astream:=TMemoryStream.Create;
+  FFile.FBitmapStreams.Add(astream);
+  SWriteLine(astream,'<< /Type /XObject');
+  SWriteLine(astream,'/Subtype /Image');
+  SWriteLine(astream,'/Width '+IntToStr(bitmapwidth));
+  SWriteLine(astream,'/Height '+IntToStr(bitmapheight));
+  SWriteLine(astream,'/ColorSpace /DeviceRGB');
+  SWriteLine(astream,'/BitsPerComponent 8');
+  SWriteLine(astream,'/Length '+IntToStr(imagesize));
+  SWriteLine(astream,'/Name /Im'+IntToStr(FFile.FImageCount));
+  if FFile.FCompressed then
+   SWriteLine(astream,'/Filter [/FlateDecode]');
+  SWriteLine(astream,'>>');
+  SWriteLine(astream,'stream');
+  FImageStream.Seek(0,soFrombeginning);
+  if FFile.FCompressed then
+  begin
+   FCompressionStream := TCompressionStream.Create(clDefault,astream);
+   try
+    FCompressionStream.CopyFrom(FImageStream, 0);
+   finally
+    FCompressionStream.Free;
+   end;
+  end
+  else
+   FImageStream.SaveToStream(astream);
+ finally
+  FImageStream.Free;
+ end;
+end;
+
 
 
 function TRpPDFCanvas.CalcCharWidth(charcode:char):double;
@@ -1447,5 +1572,354 @@ begin
  FLineInfo[FLineInfoCount]:=info;
  inc(FLineInfoCount);
 end;
+
+const
+  BI_RGB = 0;
+  BI_RLE8 = 1;
+  BI_RLE4 = 2;
+  BI_BITFIELDS = 3;
+
+  MAX_BITMAPHEADERSIZE=32000;
+
+
+
+type
+ TBitmapInfoHeader = packed record
+   biSize: DWORD;
+   biWidth: Longint;
+   biHeight: Longint;
+   biPlanes: Word;
+   biBitCount: Word;
+   biCompression: DWORD;
+   biSizeImage: DWORD;
+   biXPelsPerMeter: Longint;
+   biYPelsPerMeter: Longint;
+   biClrUsed: DWORD;
+   biClrImportant: DWORD;
+ end;
+ PBitmapInfoHeader = ^TBitmapInfoHeader;
+
+
+ TBitmapFileHeader = packed record
+  bfType: Word;
+  bfSize: DWORD;
+  bfReserved1: Word;
+  bfReserved2: Word;
+  bfOffBits: DWORD;
+ end;
+ PBitmapFileHeader = ^TBitmapFileHeader;
+
+ TRGBTriple = packed record
+  rgbtBlue: Byte;
+  rgbtGreen: Byte;
+  rgbtRed: Byte;
+ end;
+ PRGBTriple = ^TRGBTriple;
+ TRGBQuad = packed record
+  rgbBlue: Byte;
+  rgbGreen: Byte;
+  rgbRed: Byte;
+  rgbReserved: Byte;
+ end;
+ PRGBQuad = ^TRGBQuad;
+
+ TBitmapCoreHeader = packed record
+    bcSize: DWORD;
+    bcWidth: Word;
+    bcHeight: Word;
+    bcPlanes: Word;
+    bcBitCount: Word;
+  end;
+ PBitmapCoreHeader = ^TBitmapCoreHeader;
+
+procedure GetBitmapInfo(stream:TStream;var width,height,imagesize:integer;FMemBits:TMemoryStream);
+var
+ fileheader:TBitmapFileHeader;
+ pbitmapinfo:PBitmapInfoHeader;
+ pcoreheader:PBitmapCoreHeader;
+ bsize:DWORD;
+ readed:longint;
+ numcolors:integer;
+ bitcount:integer;
+ coreheader:boolean;
+ qcolors:array of TRGBQuad;
+ tcolors:array of TRGBTriple;
+ values:array of TRGBTriple;
+ qvalues:array of TRGBQuad;
+ indexvalues:array of Byte;
+// orgvalues:array of TRGBQuad;
+procedure GetDIBBits;
+var
+ y,x,scanwidth:integer;
+// dc:HDC;
+ toread,ainteger:integer;
+ buffer:array of Byte;
+ aqcolor:TRGBQuad;
+ atcolor:TRGBTriple;
+ index:Byte;
+begin
+ // Read color entries
+ case bitcount of
+  1:
+   numcolors:=2;
+  4:
+   numcolors:=16;
+  8:
+   numcolors:=256;
+  24:
+   numcolors:=0;
+  32:
+   numcolors:=0;
+  else
+   Raise Exception.Create(SRpBitMapInfoHeaderBitCount+
+    IntToStr(pbitmapinfo^.biBitCount));
+ end;
+ if numcolors>0 then
+ begin
+  if coreheader then
+  begin
+   SetLength(tcolors,numcolors);
+   readed:=stream.Read(tcolors[0],sizeof(TRGBTriple)*numcolors);
+   if readed<>sizeof(TRGBTriple)*numcolors then
+    Raise Exception.Create(SRpInvalidBitmapPalette);
+  end
+  else
+  begin
+   SetLength(qcolors,numcolors);
+   readed:=stream.Read(qcolors[0],sizeof(TRGBQuad)*numcolors);
+   if readed<>sizeof(TRGBQuad)*numcolors then
+    Raise Exception.Create(SRpInvalidBitmapPalette);
+  end;
+ end;
+ // Go to position bits
+ stream.Seek({sizeof(fileheader)+}fileheader.bfOffBits,soFromBeginning);
+ if numcolors=0 then
+ begin
+  // read the values
+  FMemBits.Clear;
+  FMemBits.SetSize(imagesize);
+  if bitcount=32 then
+  begin
+   SetLength(qvalues,imagesize);
+   scanwidth:=width*4;
+   toread:=0;
+  end
+  else
+  begin
+   SetLength(values,imagesize);
+   scanwidth:=width*3;
+   // Alignment to 32bit
+   // Align to 32bit
+   toread:=4-(scanwidth mod 4);
+   if toread=4 then
+    toread:=0;
+  end;
+  for y:=height-1 downto 0 do
+  begin
+   if bitcount=32 then
+   begin
+    readed:=stream.Read(qvalues[y*width],scanwidth);
+    if readed<>scanwidth then
+     Raise Exception.Create(SRpBadBitmapStream);
+   end
+   else
+   begin
+    readed:=stream.Read(values[y*width],scanwidth);
+    if readed<>scanwidth then
+     Raise Exception.Create(SRpBadBitmapStream);
+   end;
+   if (toread>0) then
+   begin
+    readed:=stream.Read(ainteger,toread);
+    if readed<>toread then
+     Raise Exception.Create(SRpBadBitmapStream);
+   end;
+  end;
+//  dc:=GetDC(0);
+  for y:=0 to height-1 do
+  begin
+   for x:=0 to width-1 do
+   begin
+    if bitcount=32 then
+    begin
+//     SetPixel(DC,x,y,qvalues[y*width+x].rgbRed shl 16+
+//       qvalues[y*width+x].rgbGreen shl 8 + qvalues[y*width+x].rgbBlue);
+     FMemBits.Write(qvalues[y*width+x].rgbRed,1);
+     FMemBits.Write(qvalues[y*width+x].rgbGreen,1);
+     FMemBits.Write(qvalues[y*width+x].rgbBlue,1);
+    end
+    else
+    begin
+//     SetPixel(DC,x,y,values[y*width+x].rgbtRed shl 16+
+//       values[y*width+x].rgbtGreen shl 8 + values[y*width+x].rgbtBlue);
+     FMemBits.Write(values[y*width+x].rgbtRed,1);
+     FMemBits.Write(values[y*width+x].rgbtGreen,1);
+     FMemBits.Write(values[y*width+x].rgbtBlue,1);
+    end;
+   end;
+  end;
+//  Releasedc(0,dc);
+  exit;
+ end;
+ if numcolors=16 then
+ begin
+  SetLength(indexvalues,width*height);
+  FillChar(indexvalues[0],width*height,0);
+  scanwidth:=width div 2;
+  if (width mod 2)=1 then
+   scanwidth:=scanwidth+1;
+  // Align to 32bit
+  toread:=4-(scanwidth mod 4);
+  if toread=4 then
+   toread:=0;
+
+  SetLength(buffer,scanwidth);
+  for y:=height-1 downto 0 do
+  begin
+   readed:=stream.Read(buffer[0],scanwidth);
+   if readed<>scanwidth then
+    Raise Exception.Create(SRpBadBitmapStream);
+   for x:=0 to scanwidth-2 do
+   begin
+    indexvalues[y*width+x*2]:=buffer[x] shr 4;
+    index:=Byte(buffer[x] shl 4);
+    indexvalues[y*width+x*2+1]:=index shr 4;
+   end;
+   if (width mod 2)=1 then
+   begin
+    indexvalues[y*width+(scanwidth-1)*2]:=buffer[scanwidth-1] shr 4;
+   end
+   else
+   begin
+    indexvalues[y*width+(scanwidth-1)*2]:=buffer[scanwidth-1] shr 4;
+    index:=Byte(buffer[scanwidth-1] shl 4);
+    indexvalues[y*width+(scanwidth-1)+1]:=index shr 4;
+   end;
+   readed:=stream.Read(ainteger,toread);
+   if readed<>toread then
+    Raise Exception.Create(SRpBadBitmapStream);
+  end;
+ end
+ else
+ if numcolors=256 then
+ begin
+  SetLength(indexvalues,width*height);
+  FillChar(indexvalues[0],width*height,0);
+  scanwidth:=width;
+  // Align to 32bit
+  toread:=4-(scanwidth mod 4);
+  if toread=4 then
+   toread:=0;
+
+  for y:=height-1 downto 0 do
+  begin
+   readed:=stream.Read(indexvalues[y*width],scanwidth);
+   if readed<>scanwidth then
+    Raise Exception.Create(SRpBadBitmapStream);
+   readed:=stream.Read(ainteger,toread);
+   if readed<>toread then
+    Raise Exception.Create(SRpBadBitmapStream);
+  end;
+ end;
+
+
+ // Draws paletted picture
+// dc:=GetDC(0);
+ for y:=0 to height-1 do
+ begin
+  for x:=0 to width-1 do
+  begin
+   if coreheader then
+   begin
+    index:=indexvalues[y*width+x];
+    if (index>(numcolors-1)) then
+     Raise Exception.Create(SRpBadColorIndex);
+    atcolor:=tcolors[indexvalues[y*width+x]];
+//    SetPixel(DC,x,y,atcolor.rgbtRed shl 16+
+//      atcolor.rgbtGreen shl 8 + atcolor.rgbtBlue);
+    FMemBits.Write(atcolor.rgbtRed,1);
+    FMemBits.Write(atcolor.rgbtGreen,1);
+    FMemBits.Write(atcolor.rgbtBlue,1);
+   end
+   else
+   begin
+    index:=indexvalues[y*width+x];
+    if (index>(numcolors-1)) then
+     Raise Exception.Create(SRpBadColorIndex);
+    aqcolor:=qcolors[indexvalues[y*width+x]];
+//    SetPixel(DC,x,y,aqcolor.rgbRed shl 16+
+//      aqcolor.rgbGreen shl 8 + aqcolor.rgbBlue);
+   end;
+   FMemBits.Write(aqcolor.rgbRed,1);
+   FMemBits.Write(aqcolor.rgbGreen,1);
+   FMemBits.Write(aqcolor.rgbBlue,1);
+  end;
+ end;
+// Releasedc(0,dc);
+end;
+
+begin
+ readed:=stream.Read(fileheader,sizeof(fileheader));
+ if readed<>sizeof(fileheader) then
+  Raise Exception.Create(SRpBadBitmapFileHeader);
+ // The header must contain 'BM'
+ if fileheader.bfType<>19778 then
+  Raise Exception.Create(SRpBadBitmapFileHeader);
+
+ // read de size of bitmapinfo
+ readed:=stream.Read(bsize,sizeof(bsize));
+ if readed<>sizeof(bsize) then
+  Raise Exception.Create(SRpBadBitmapFileHeader);
+ if ((bsize<2) or (bsize>MAX_BITMAPHEADERSIZE)) then
+  Raise Exception.Create(SRpInvalidBitmapHeaderSize);
+ coreheader:=false;
+ if bsize<15 then
+  coreheader:=true;
+ readed:=stream.Seek(sizeof(fileheader),soFromBeginning);
+ // Allocates memory
+ if coreheader then
+ begin
+  pcoreheader:=AllocMem(bsize);
+  try
+   FillChar(pcoreheader^,bsize,0);
+   // Reads the pbitmapinfo
+   readed:=stream.Read(pcoreheader^,bsize);
+   if DWORD(readed)<>bsize then
+    Raise Exception.Create(SRpBadBitmapStream);
+   width:=pcoreheader^.bcWidth;
+   height:=pcoreheader^.bcheight;
+   imagesize:=width*height*3;
+   bitcount:=pcoreheader.bcBitCount;
+   if Assigned(FMemBits) then
+    GetDIBBits;
+  finally
+   FreeMem(pcoreheader);
+  end;
+ end
+ else
+ begin
+  pbitmapinfo:=AllocMem(bsize);
+  try
+   FillChar(pbitmapinfo^,bsize,0);
+   // Reads the pbitmapinfo
+   readed:=stream.Read(pbitmapinfo^,bsize);
+   if DWORD(readed)<>bsize then
+    Raise Exception.Create(SRpBadBitmapStream);
+   if (Not (pbitmapinfo^.biCompression in [BI_BITFIELDS,BI_RGB])) then
+    Raise Exception.Create(SRpRLECompBitmapPDF);
+   width:=pbitmapinfo^.biWidth;
+   height:=pbitmapinfo^.biheight;
+   imagesize:=width*height*3;
+   bitcount:=pbitmapinfo^.biBitCount;
+   if (bitcount=1) then
+    Raise Exception.Create(SRpMonochromeBitmapPDF);
+   if Assigned(FMemBits) then
+    GetDIBBits;
+  finally
+   FreeMem(pbitmapinfo);
+  end;
+ end;
+end;
+
 
 end.

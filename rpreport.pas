@@ -856,6 +856,7 @@ begin
     Driver.EndDocument;
    except
     Driver.AbortDocument;
+    Raise;
    end;
   finally
    EndPrint;

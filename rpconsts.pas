@@ -530,7 +530,14 @@ resourcestring
   SRpStreamNotValid='PDF Stream not valid';
   SRpNotPrintingPDF='Not in pdf printing state';
 
-
+  SRpInvalidBitmapHeaderSize='Invalid Bitmap Header Size';
+  SRpBadBitmapFileHeader='Bad bitmap file header';
+  SRpBadBitmapStream='Bad bitmap stream';
+  SRpBitMapInfoHeaderBitCount='Invalid bit depth in bitmap';
+  SRpInvalidBitmapPalette='Invalid bitmap palette';
+  SRpBadColorIndex='Bad color index in bitmap';
+  SRpRLECompBitmapPDF='Compressed RLE bitmaps not supported in PDF Export';
+  SRpMonochromeBitmapPDF='Monochrome bitmaps not supported in PDF Export';
 implementation
 
 

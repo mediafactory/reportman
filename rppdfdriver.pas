@@ -187,7 +187,7 @@ var
  Width,Height,posx,posy:integer;
  rec:TRect;
  aalign:integer;
-// stream:TStream;
+ stream:TStream;
 // bitmap:TBitmap;
 begin
  posx:=obj.Left;
@@ -211,17 +211,12 @@ begin
     FPDFFile.Canvas.Font.UnderLine:=(obj.Fontstyle  and (1 shl 2))>0;
     FPDFFile.Canvas.Font.StrikeOut:=(obj.Fontstyle and (1 shl 3))>0;
     aalign:=obj.Alignment;
-//    if Not obj.Wordwrap then
-//    begin
-     rec.Left:=posx;
-     rec.TOp:=posy;
-     rec.Right:=posx+round(obj.Width);
-     rec.Bottom:=posy+round(obj.Height);
-     FPDFFile.Canvas.TextRect(rec,page.GetText(Obj),aalign,obj.cuttext,
-      obj.WordWrap,obj.FontRotation);
-//    end
-//    else
-//     FPDFFile.Canvas.TextOut(obj.Left,obj.Top,page.GetText(obj),obj.FontRotation);
+    rec.Left:=posx;
+    rec.Top:=posy;
+    rec.Right:=posx+round(obj.Width);
+    rec.Bottom:=posy+round(obj.Height);
+    FPDFFile.Canvas.TextRect(rec,page.GetText(Obj),aalign,obj.cuttext,
+    obj.WordWrap,obj.FontRotation);
    end;
   rpMetaDraw:
    begin
@@ -289,41 +284,26 @@ begin
     rec.Left:=PosX;
     rec.Bottom:=rec.Top+Height-1;
     rec.Right:=rec.Left+Width-1;
-//    stream:=page.GetStream(obj);
-//     Canvas.CopyMode:=TCopyMode(obj.CopyMode);
-{    bitmap:=TBitmap.Create;
-    try
-     bitmap.LoadFromStream(stream);
-     case TRpImageDrawStyle(obj.DrawImageStyle) of
-      rpDrawFull:
+    stream:=page.GetStream(obj);
+    case TRpImageDrawStyle(obj.DrawImageStyle) of
+     rpDrawFull:
+      begin
+       FPDFFile.Canvas.DrawImage(rec,stream,obj.dpires,false,false);
+      end;
+     rpDrawStretch:
+      begin
+       FPDFFile.Canvas.DrawImage(rec,stream,0,false,false);
+      end;
+     rpDrawCrop:
        begin
-        rec.Bottom:=rec.Top+round(bitmap.height/obj.dpires)*TWIPS_PER_INCHESS-1;
-        rec.Right:=rec.Left+round(bitmap.width/obj.dpires)*TWIPS_PER_INCHESS-1;
-        FPDFFile.Canvas.StretchDraw(rec,bitmap);
+        FPDFFile.Canvas.DrawImage(rec,stream,CONS_PDFRES,false,true);
        end;
-      rpDrawStretch:
-       begin
-        FPDFFile.Canvas.StretchDraw(rec,bitmap);
-       end;
-      rpDrawCrop:
-       begin
-  //      Crop Should cut graphic but it don't work
-  //        recsrc.Top:=0;
-  //        recsrc.Left:=0;
-  //        recsrc.Bottom:=Height-1;
-  //        recsrc.Right:=Width-1;
-  //        Canvas.CopyRect(rec,bitmap.canvas,recsrc);
-        //Canvas.Draw(PosX,PosY,bitmap);
-       end;
-      rpDrawTile:
-       begin
-//        Canvas.TiledDraw(rec,bitmap);
-       end;
-     end;
-    finally
-     bitmap.Free;
+     rpDrawTile:
+      begin
+       FPDFFile.Canvas.DrawImage(rec,stream,CONS_PDFRES,true,true);
+      end;
     end;
-}   end;
+   end;
  end;
 end;
 
