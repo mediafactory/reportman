@@ -34,8 +34,20 @@
   <li>BDE should detect opened aliases</li>
   <li>DBExpress: <code>CLXReport.Report.DabaseInfo.Items[0].SQLConnection:=..</code></li>
   <li>ADO: <code>CLXReport.Report.DabaseInfo.Items[0].ConnectionString</code></li>
-  <li>Other still not implemented, but you can update dbxconnections.ini.</li>
+  <li>Interbase Express: <code>CLXReport.Report.DabaseInfo.Items[0].IBConnection:=..</code></li>
+  <li>Other still not implemented, but you can update dbxconnections.ini, because 
+    them read the configuration from this file</li>
 </ul>
+<p><b>Q. How can I set properties of components at runtime in already loaded report?</b> 
+</p>
+<p>A.You must find the component you want to modify, Report property in TCLXReport 
+  is the owner of all report items:</p>
+<p><code>var acompo:TRpExpression;</code></p>
+<p><code>compo:=CLXReport1.Report.FindComponent('TRpExpression5');</code></p>
+<p><code>if Assigned(compo) then</code></p>
+<p><code>begin</code></p>
+<p> compo.DisplayFormat:='dd/mm/yyyy';</p>
+<p><code>end</code></p>
 <p><b>Q. I'm designing a report that will be printed in any matrix printer or 
   receipt printer, how can I use printer fonts to speed up the print process?</b></p>
 <p>A. At page setup option of Report Manager Designer you can set use allways 
