@@ -467,7 +467,7 @@ begin
   else
    ALastExecute(Self);
   PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,
-   collate,report.PrinterSelect);
+   collate,report.PrinterSelect,'');
  end;
  AppIdle(Self,adone);
 end;

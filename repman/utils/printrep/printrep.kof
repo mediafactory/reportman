@@ -55,7 +55,7 @@ DebugSourceDirs=
 UsePackages=0
 
 [Parameters]
-RunParams=-bmp  -from 1 -to 1 sample4.rep sample4.bmp
+RunParams=-copies 1 -printer epson880 /home/toni/cvsroot/reportman/tests/repmand/dotmatrix.rep
 HostApplication=
 Launcher=/usr/X11R6/bin/xterm -T KylixDebuggerOutput -e bash -i -c %debuggee%
 UseLauncher=0

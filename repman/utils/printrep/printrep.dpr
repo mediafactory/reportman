@@ -116,7 +116,7 @@ var
  amessage:String;
 {$IFDEF LINUX}
  usekprinter:Boolean;
-{$ENDIF} 
+{$ENDIF}
 begin
 {$IFDEF LINUX}
  usekprinter:=GetEnvironmentVariable('REPMANUSEKPRINTER')='true';
@@ -403,7 +403,7 @@ begin
         doprint:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
        if doprint then
         PrintReport(report,filename,showprogress,allpages,
-         frompage,topage,copies,collate);
+         frompage,topage,copies,collate,aprintername);
       end;
      end;
     finally

@@ -296,7 +296,7 @@ function PrinterRawOpEnabled(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):
 {$IFDEF LINUX}
 procedure ExecuteSystemApp(aparams:TStrings;waitend:Boolean);
 procedure  ObtainPrinters(alist:TStrings);
-procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title:String);
+procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title,forceprintername:String);
 procedure ReadFileLines(filename:String;dest:TStrings);
 procedure ExecuteSystemCommand(params:TStrings);
 {$ENDIF}
@@ -2838,9 +2838,9 @@ begin
 end;
 
 
-procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title:String);
+procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title,forceprintername:String);
 var
- printername:string;
+ printername:String;
  printernamecommand:string;
  child:__pid_t;
  i:integer;
@@ -2860,7 +2860,10 @@ begin
  end;
  // Looks for the printer name
  printernamecommand:='';
- printername:=GetPrinterConfigName(printerindex);
+ if Length(forceprintername)>0 then
+  printername:=forceprintername
+ else
+  printername:=GetPrinterConfigName(printerindex);
  params:=TStringList.Create;
  try
   if oemconvert then

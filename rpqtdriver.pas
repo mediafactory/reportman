@@ -91,6 +91,7 @@ type
 {$ENDIF}
   public
     { Public declarations }
+    forceprintername:string;
     pdfcompressed:boolean;
     cancelled:boolean;
     oldonidle:TIdleEvent;
@@ -124,6 +125,7 @@ type
    procedure SendAfterPrintOperations;
 {$ENDIF}
   public
+   forceprintername:string;
    bitmap:TBitmap;
    dpi:integer;
    toprinter:boolean;
@@ -165,7 +167,7 @@ type
 
 function PrintMetafile (metafile:TRpMetafileReport; tittle:string;
  showprogress,allpages:boolean; frompage,topage,copies:integer;
-  collate:boolean; printerindex:TRpPrinterSelect):boolean;
+  collate:boolean; printerindex:TRpPrinterSelect;forceprintername:String=''):boolean;
 function MetafileToBitmap(metafile:TRpMetafileReport;ShowProgress:Boolean;
  Mono:Boolean;resx:integer=200;resy:integer=100):TBitmap;
 function AskBitmapProps(var HorzRes,VertRes:Integer;var Mono:Boolean):Boolean;
@@ -173,7 +175,7 @@ function AskBitmapProps(var HorzRes,VertRes:Integer;var Mono:Boolean):Boolean;
 {$IFNDEF FORWEBAX}
 function CalcReportWidthProgress (report:TRpReport):boolean;
 function PrintReport (report:TRpReport; Caption:string; progress:boolean;
-  allpages:boolean; frompage,topage,copies:integer; collate:boolean):Boolean;
+  allpages:boolean; frompage,topage,copies:integer; collate:boolean;forceprintername:String=''):Boolean;
 function ExportReportToPDF (report:TRpReport; Caption:string; progress:boolean;
   allpages:boolean; frompage,topage,copies:integer;
   showprintdialog:boolean; filename:string;compressed:boolean;collate:boolean):Boolean;
@@ -312,7 +314,7 @@ begin
     SendControlCodeToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer));
 {$ENDIF}
 {$IFDEF LINUX}
-    SendTextToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer),printerindex,SRpOpenDrawerAfter);
+    SendTextToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer),printerindex,SRpOpenDrawerAfter,forceprintername);
 {$ENDIF}
    end;
   if Not Printer.Printing then
@@ -419,7 +421,7 @@ begin
    SendControlCodeToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer));
 {$ENDIF}
 {$IFDEF LINUX}
-   SendTextToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer),printerindex,SRpOpenDrawerAfter);
+   SendTextToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer),printerindex,SRpOpenDrawerAfter,forceprintername);
 {$ENDIF}
   end;
 {$IFDEF VCLANDCLX}
@@ -853,7 +855,7 @@ end;
 
 procedure DoPrintMetafile(metafile:TRpMetafileReport;tittle:string;
  aform:TFRpQtProgress;allpages:boolean;frompage,topage,copies:integer;
- collate:boolean;printerindex:TRpPrinterSelect);
+ collate:boolean;printerindex:TRpPrinterSelect;forceprintername:String='');
 var
  i:integer;
  j:integer;
@@ -896,7 +898,7 @@ begin
   SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
-  SendTextToPrinter(S,metafile.PrinterSelect,tittle);
+  SendTextToPrinter(S,metafile.PrinterSelect,tittle,forceprintername);
 {$ENDIF}
  end
  else
@@ -1014,14 +1016,14 @@ end;
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
  showprogress,allpages:boolean;frompage,topage,copies:integer;
-  collate:boolean;printerindex:TRpPrinterSelect):boolean;
+  collate:boolean;printerindex:TRpPrinterSelect;forceprintername:String=''):boolean;
 var
  dia:TFRpQtProgress;
 begin
  Result:=true;
  if Not ShowProgress then
  begin
-  DoPrintMetafile(metafile,tittle,nil,allpages,frompage,topage,copies,collate,printerindex);
+  DoPrintMetafile(metafile,tittle,nil,allpages,frompage,topage,copies,collate,printerindex,forceprintername);
   exit;
  end;
  dia:=TFRpQtProgress.Create(Application);
@@ -1277,7 +1279,7 @@ begin
  try
   LTittle.Caption:=tittle;
   Lprocessing.Visible:=true;
-  DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate,printerindex);
+  DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate,printerindex,forceprintername);
  except
   On E:Exception do
   begin
@@ -1383,6 +1385,7 @@ begin
   begin
    qtdriver:=TRpQtDriver.Create;
    aqtdriver:=qtdriver;
+   qtdriver.forceprintername:=forceprintername;
    oldprogres:=report.OnProgress;
    try
     report.OnProgress:=RepProgress;
@@ -1434,6 +1437,7 @@ begin
  errorproces:=false;
  try
   qtdriver:=TRpQtDriver.Create;
+  qtdriver.forceprintername:=forceprintername;
   qtdriver.toprinter:=true;
   aqtdriver:=qtdriver;
   oldprogres:=RepProgress;
@@ -1477,7 +1481,7 @@ begin
    SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
-   SendTextToPrinter(S,report.PrinterSelect,tittle);
+   SendTextToPrinter(S,report.PrinterSelect,tittle,forceprintername);
 {$ENDIF}
   finally
    report.OnProgress:=oldprogres;
@@ -1509,6 +1513,7 @@ begin
 {$IFDEF USECLXTEECHART}
   report.metafile.OnDrawChart:=qtdriver.DoDrawChart;
 {$ENDIF}
+  qtdriver.forceprintername:=forceprintername;
   apdfdriver:=pdfdriver;
   oldprogres:=RepProgress;
   try
@@ -1530,7 +1535,7 @@ end;
 
 
 function PrintReport(report:TRpReport;Caption:string;progress:boolean;
-  allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
+  allpages:boolean;frompage,topage,copies:integer;collate:boolean;forceprintername:String=''):Boolean;
 var
 {$IFDEF LINUXPRINTBUG}
  abuffer:array [0..L_tmpnam] of char;
@@ -1587,6 +1592,7 @@ begin
    else
    begin
     qtdriver:=TRpQtDriver.Create;
+    qtdriver.forceprintername:=forceprintername;
     aqtdriver:=qtdriver;
     report.PrintAll(qtdriver);
    end;
@@ -1606,12 +1612,12 @@ begin
      SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
-     SendTextToPrinter(S,report.PrinterSelect,Caption);
+     SendTextToPrinter(S,report.PrinterSelect,Caption,forceprintername);
 {$ENDIF}
     end
     else
     begin
-     PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate,report.PrinterSelect)
+     PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate,report.PrinterSelect,forceprintername)
     end;
    end
    else
@@ -1626,6 +1632,7 @@ begin
       dia.topage:=topage;
       dia.copies:=copies;
       dia.report:=report;
+      dia.forceprintername:=forceprintername;
       dia.collate:=collate;
       oldonidle:=Application.Onidle;
       try
@@ -1658,13 +1665,14 @@ begin
       SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
-     SendTextToPrinter(S,report.PrinterSelect,Caption);
+     SendTextToPrinter(S,report.PrinterSelect,Caption,forceprintername);
 {$ENDIF}
      end
      else
      begin
       qtdriver:=TRpQtDriver.Create;
       aqtdriver:=qtdriver;
+      qtdriver.forceprintername:=forceprintername;
       qtdriver.toprinter:=true;
       report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate);
      end;
@@ -1877,10 +1885,19 @@ begin
  end;
 end;
 
+
+function GetQtPrinterName:string;
+var
+ abuffer:widestring;
+begin
+  SetLength(abuffer,500);
+  QPrinter_printerName(QPrinterH(Printer.Handle),@abuffer);
+  Result:=abuffer;
+end;
+
 function PrinterSelection(printerindex:TRpPrinterSelect):TPoint;
 var
  printername:String;
- abuffer:widestring;
  index:integer;
  qtprintername:WideString;
  offset:TPoint;
@@ -1898,9 +1915,7 @@ begin
  // Gets the printer name if no printer selected select the first one
  if Printer.Printers.Count>0 then
  begin
-  SetLength(abuffer,500);
-  QPrinter_printerName(QPrinterH(Printer.Handle),@abuffer);
-  qtprintername:=abuffer;
+  qtprintername:=GetQtPrinterName;
   if Length(qtprintername)<1 then
   begin
    Printer.SetPrinter(Printer.Printers.Strings[0]);
