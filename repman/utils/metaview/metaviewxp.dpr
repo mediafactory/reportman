@@ -3,6 +3,7 @@ program metaviewxp;
 {%File '..\..\..\rpconf.inc'}
 
 uses
+  Graphics,
   Forms,
   rpfmainmetaviewvcl in '..\..\..\rpfmainmetaviewvcl.pas' {FRpMainMetaVCL},
   rpmetafile in '..\..\..\rpmetafile.pas',
@@ -22,9 +23,10 @@ uses
 {$R *.res}
 
 begin
+  Graphics.DefFontData.Name:=Screen.IconFont.Name;
   Application.Initialize;
-  Application.Title := 'Report manager metafile report viewer';
   Application.CreateForm(TFRpMainMetaVCL, FRpMainMetaVCL);
+  FRpMainMetaVCL.Font.Assign(Screen.IconFont);
   FRpMainMetaVCL.MFrame.CreateClitree;
   FRpMainMetaVCL.browsecommandline:=true;
   Application.Run;

@@ -24,6 +24,7 @@ program reportserverappxp;
 {$I rpconf.inc}
 
 uses
+  Graphics,
   Forms,
 {$IFDEF USEVARIANTS}
   midaslib,
@@ -35,8 +36,10 @@ uses
 {$R *.res}
 
 begin
+  Graphics.DefFontData.Name:=Screen.IconFont.Name;
   IsMultiThread:=True;
   Application.Initialize;
   Application.CreateForm(TFSerMainVCL, FSerMainVCL);
+  FSerMainVCL.Font.Assign(Screen.IconFont);
   Application.Run;
 end.

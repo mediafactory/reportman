@@ -19,6 +19,7 @@
 program repserviceinstall;
 
 uses
+  Graphics,
   Forms,
   uinstall in 'uinstall.pas' {FStartService},
   rpmdconsts in '..\..\rpmdconsts.pas';
@@ -26,8 +27,9 @@ uses
 {$R *.res}
 
 begin
+  Graphics.DefFontData.Name:=Screen.IconFont.Name;
   Application.Initialize;
-  Application.Title := 'Report Manager Service Install';
   Application.CreateForm(TFStartService, FStartService);
+  FStartService.Font.Assign(Screen.IconFont);
   Application.Run;
 end.

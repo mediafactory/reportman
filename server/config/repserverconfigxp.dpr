@@ -21,6 +21,7 @@ program repserverconfigxp;
 {$I rpconf.inc}
 
 uses
+  Graphics,
   Forms,
   mainfvcl in 'mainfvcl.pas' {FMainVCL},
   unewuservcl in 'unewuservcl.pas' {FNewUserVCL},
@@ -33,7 +34,10 @@ uses
 {$R *.res}
 
 begin
+  Graphics.DefFontData.Name:=Screen.IconFont.Name;
+  IsMultiThread:=True;
   Application.Initialize;
   Application.CreateForm(TFMainVCL, FMainVCL);
+  FMainVCL.Font.Assign(Screen.IconFont);
   Application.Run;
 end.

@@ -18,6 +18,7 @@ program rptranslate;
 {$I rpconf.inc}
 
 uses
+  Graphics,
   Forms,
 {$IFDEF USEVARIANTS}
   midaslib,
@@ -29,8 +30,9 @@ uses
 {$R *.RES}
 
 begin
+  Graphics.DefFontData.Name:=Screen.IconFont.Name;
   Application.Initialize;
-  Application.Title := 'Translation utility';
   Application.CreateForm(TFMain, FMain);
+  FMain.Font.Assign(Screen.IconFont);
   Application.Run;
 end.

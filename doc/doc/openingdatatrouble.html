@@ -88,7 +88,7 @@
 </table>
 <p>You can also purchase drivers to third party, usually for a fee, you can find 
   more DBExpress drivers, more ODBC drivers etc.</p>
-<p><strong>DBExpress troubleshooting</strong></p>
+<p><strong>DBExpress</strong></p>
 <p>DBExpress is a technology introduced by Borland since the release of Delphi 
   6, as a replacement for the Borland Database Engine SQL Links, see section about 
   BDE bellow for more information.</p>
@@ -183,8 +183,8 @@
   of the risk, especially when updating the database (working with report libraries).</p>
 <p>Check the dependences with a programming tool, for example in Linux:</p>
 <p>ldd libsqlpg.so</p>
-<p>It reports a link to libpq.so.2 so you should create a symbolink if this library 
-  does not exists:</p>
+<p>It reports a link to libpq.so.2 so you should create a symbolic link if this 
+  library does not exists:</p>
 <p>ln -s /usr/lib/libsqlpg.so.2 /usr/lib/libsqlpg.so.3</p>
 <p><strong>Borland Database Engine</strong></p>
 <p>Borland Database Engine was released by Borland since the first version of 
@@ -239,6 +239,21 @@
   to connect to any installed OLE DB provider or ODBC datasource. This is a common 
   system for database connection for Microsoft enabled development environments 
   like Visual Basic, Visual FoxPro...</p>
+<p><strong>ZeosLib</strong></p>
+<p><a href="http://zeoslib.sourceforge.net">Zeos library</a> is a component set 
+  to access some database engines, it's compiled inside all Report Manager binaries, 
+  so you can use it normally, but if you use Report Manager components and want 
+  to add the support in compilation (Kylix/Builder/Delphi) modify the rpconf.inc 
+  file to enable the Zeos Library compiling and linking.</p>
+<p>Usually you set the hostname, database, user name and password, but other parameters 
+  are available like the TCP/IP port and character set.</p>
+<p>To configure ZeosLib connections the same files as DBExpress drivers are used 
+  (dbxdrivers and dbxconnections).</p>
+<p>This driver is allows reading of TClientDataset files (.cds) in binary or XML 
+  format, also allows reading of text files as a database.</p>
+<p>The protocol property allow the selection of the database server. It supports 
+  Mysql,Ppostgresql, Interbase/Firebird, Microsoft SQL Server, Sybase, Oracle 
+  and IBM DB2.</p>
 <p><strong>Interbase Express</strong></p>
 <p>This driver is based on Interbase Express components provided by Borland in 
   Delphi/Kylix and C++Builder environments, the main advantage is that no external 

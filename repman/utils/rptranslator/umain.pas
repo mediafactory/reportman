@@ -187,6 +187,7 @@ begin
  AExit.Caption:=formtrans.LoadString(8,AExit.Caption);
  AExit.Hint:=formtrans.LoadString(9,AExit.Hint);
  Caption:=formtrans.LoadString(10,Caption);
+ Application.Title:=Caption;
  File1.Caption:=formtrans.LoadString(11,File1.Caption);
  Options1.Caption:=formtrans.LoadString(12,Options1.Caption);
  AAllowInsert.Caption:=formtrans.LoadString(13,AAllowInsert.Caption);
