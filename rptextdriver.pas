@@ -1,3 +1,4 @@
+
 {*******************************************************}
 {                                                       }
 {       Report Manager                                  }
@@ -91,7 +92,7 @@ type
     FontStep:TRpFontStep;RightToLeft:Boolean;fontstyle:integer;red:Boolean);
    function GetColumnNumber(posx:integer;FontStep:TRpFontStep):integer;
    function GetBlankLine(FontStep:TRpFontStep):String;
-   procedure WriteCurrentPage;
+   procedure WriteCurrentPage(cutclearlines:Boolean);
    function EnCodeLine(Line:TRpPrintLine;index:integer):String;
    function FindEscapeStep(FontStep:TRpFontStep;red:Boolean):String;
    function FindEscapeStyle(fontstyle:integer;FontStep:TRpFontStep):String;
@@ -336,9 +337,17 @@ begin
 end;
 
 procedure TRpTextDriver.EndDocument;
+var
+ cutclearlines:Boolean;
 begin
+ cutclearlines:=false;
  // Write the last page and the tear off
- WriteCurrentPage;
+ if ((FPrinterDriverName='EPSONTMU210') or
+   (FPrinterDriverName='EPSONTMU210CUT') or
+   (FPrinterDriverName='EPSONTM88II') or
+   (FPrinterDriverName='EPSONTM88IICUT')) then
+  cutclearlines:=true;
+ WriteCurrentPage(cutclearlines);
 
  if Length(escapecodes[rpescapeendprint])>0 then
   MemStream.Write(escapecodes[rpescapeendprint][1],Length(escapecodes[rpescapeendprint]));
@@ -361,7 +370,7 @@ end;
 procedure TRpTextDriver.NewPage;
 begin
  // Writes the page to the stream
- WriteCurrentPage;
+ WriteCurrentPage(false);
  // Reinitialize the page
  RecalcSize;
 end;
@@ -1638,12 +1647,24 @@ begin
  Result:=encoded;
 end;
 
-procedure TRpTextDriver.WriteCurrentPage;
+procedure TRpTextDriver.WriteCurrentPage(cutclearlines:Boolean);
 var
  i:integer;
  codedstring:String;
+ lastline:integer;
 begin
- for i:=0 to High(FLines) do
+ lastline:=High(FLines);
+ if cutclearlines then
+ begin
+  while lastline>0 do
+  begin
+   if FLines[lastline].Attributes.Count<1 then
+    Dec(lastline)
+   else
+    break;
+  end;
+ end;
+ for i:=0 to lastline do
  begin
   codedstring:=EnCodeLine(FLines[i],i);
   if Length(codedstring)>0 then

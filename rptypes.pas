@@ -229,6 +229,8 @@ function ReadFromStdInputStream:TMemoryStream;
 procedure WriteStreamToStdOutput(astream:TStream);
 procedure WriteStreamToHandle(astream:TStream;handle:Integer);
 function ReadStreamFromHandle(handle:THandle):TMemoryStream;
+function PrinterRawOpEnabled(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):Boolean;
+
 {$IFDEF LINUX}
 procedure  ObtainPrinters(alist:TStrings);
 procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title:String);
@@ -732,14 +734,11 @@ begin
  end;
 end;
 
-
-function GetPrinterRawOp(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):string;
+function RawOpToString(rawop:TPrinterRawOp):String;
 var
- operation:String;
- defaultvalue:string;
+ Operation:String;
 begin
- CheckLoadedPrinterConfig;
- Result:='';
+ Operation:='';
  case rawop of
   rawopcutpaper:
    Operation:='CutPaper';
@@ -788,6 +787,27 @@ begin
   rpescape5cpi:
    Operation:='Font5cpi';
  end;
+ Result:=Operation;
+end;
+
+function PrinterRawOpEnabled(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):Boolean;
+var
+ operation:String;
+begin
+ CheckLoadedPrinterConfig;
+ Operation:=RawOpToString(rawop);
+ Result:=printerconfigfile.ReadBool(Operation+'On','Printer'+IntToStr(integer(printerindex)),False);
+end;
+
+
+
+function GetPrinterRawOp(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):string;
+var
+ operation:String;
+ defaultvalue:string;
+begin
+ CheckLoadedPrinterConfig;
+ Result:='';
  // If active decode and return result
  defaultvalue:='';
  if rawop=rpescapelinefeed then
@@ -807,7 +827,7 @@ begin
   defaultvalue:='';
 {$ENDIF}
  end;
-
+ Operation:=RawOpToString(rawop);
  Result:=printerconfigfile.ReadString(Operation,'Printer'+IntToStr(integer(printerindex)),defaultvalue);
  // Transform the string to a real string
  Result:=EscapeCodedToString(Result);

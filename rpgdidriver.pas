@@ -1666,9 +1666,12 @@ var
 begin
  for i:=Low(TPrinterRawOp) to High(TPrinterRawOp) do
  begin
-  Operation:=GetPrinterRawOp(selectedprinter,i);
-  if Length(Operation)>0 then
-   SendControlCodeToPrinter(Operation);
+  if PrinterRawOpEnabled(selectedprinter,i) then
+  begin
+   Operation:=GetPrinterRawOp(selectedprinter,i);
+   if Length(Operation)>0 then
+    SendControlCodeToPrinter(Operation);
+  end;
  end;
 end;
 

@@ -1148,6 +1148,10 @@ var
  doexit:boolean;
  param:TRpParam;
  sqlsentence:widestring;
+{$IFDEF USEADO}
+  j:integer;
+  adoParam:TParameter;
+{$ENDIF}
 begin
  if connecting then
   Raise Exception.Create(SRpCircularDatalink+' - '+alias);
@@ -1655,9 +1659,19 @@ begin
       rpdataado:
        begin
 {$IFDEF USEADO}
-        TADOQuery(FSQLInternalQuery).Parameters.ParamByName(param.Name).DataType:=
-         ParamTypeToDataType(param.ParamType);
-        TADOQuery(FSQLInternalQuery).Parameters.ParamByName(param.Name).Value:=param.Value;
+        // Bugfix provided by Argon Konay
+        for j := 0 to TADOQuery(FSQLInternalQuery).Parameters.Count - 1 do
+        begin
+         adoParam := TADOQuery(FSQLInternalQuery).Parameters.Items[j];
+         if (adoParam.Name = param.Name) then
+         begin
+          adoParam.DataType := ParamTypeToDataType(param.ParamType);
+          adoParam.Value := param.Value
+         end;
+        end;
+//        TADOQuery(FSQLInternalQuery).Parameters.ParamByName(param.Name).DataType:=
+//         ParamTypeToDataType(param.ParamType);
+//        TADOQuery(FSQLInternalQuery).Parameters.ParamByName(param.Name).Value:=param.Value;
 {$ENDIF}
        end;
       rpdataibo:
@@ -2130,6 +2144,10 @@ var
  param:TRpParamObject;
  paramname:String;
  avariant:Variant;
+{$IFDEF USEADO}
+  j:integer;
+  adoParam:TParameter;
+{$ENDIF}
 begin
  Result:=nil;
  FSQLInternalQuery:=nil;
@@ -2300,14 +2318,27 @@ begin
 {$IFDEF USEADO}
       if assigned(astream) then
       begin
-       TADOQuery(FSQLInternalQuery).Parameters.ParamByName(paramName).DataType:=ftBlob;
-       TADOQuery(FSQLInternalQuery).Parameters.ParamByName(paramName).LoadFromStream(astream,ftBlob);
+       for j := 0 to TADOQuery(FSQLInternalQuery).Parameters.Count - 1 do
+       begin
+        adoParam := TADOQuery(FSQLInternalQuery).Parameters.Items[j];
+        if (adoParam.Name = paramName) then
+        begin
+         adoParam.DataType:=ftBlob;
+         adoParam.LoadFromStream(astream,ftBlob);
+        end;
+       end;
       end
       else
       begin
-       TADOQuery(FSQLInternalQuery).Parameters.ParamByName(paramName).DataType:=
-        VariantTypeToDataType(avariant);
-       TADOQuery(FSQLInternalQuery).Parameters.ParamByName(paramName).Value:=avariant;
+       for j := 0 to TADOQuery(FSQLInternalQuery).Parameters.Count - 1 do
+       begin
+        adoParam := TADOQuery(FSQLInternalQuery).Parameters.Items[j];
+        if (adoParam.Name = paramName) then
+        begin
+         adoParam.DataType := VariantTypeToDataType(avariant);
+         adoParam.Value := avariant;
+        end;
+       end;
       end;
 {$ENDIF}
      end;
