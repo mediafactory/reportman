@@ -1,6 +1,16 @@
 kylix_bin=/opt/kylix2/bin
 compile=$(kylix_bin)/dcc
 
+
+all: packages repman
+
+repman:
+	cd repman
+	$(comile) repmand.dpr
+	cd ..
+
+
+
 clean:
 	-rm -Rf *.dcu
 	-rm -Rf *.dpu
@@ -8,8 +18,10 @@ clean:
 	-rm -Rf *.exe
 	-rm -Rf *.o
 	-rm -Rf *.dcp
+	-rm -Rf *.ow
+	-rm -Rf *.rst
 
-	-rm eval/project1
+	-rm tests/eval/project1
 	-rm tests/metafiles/metafile
 	-rm tests/objinsp/project1
 	-rm tests/params/project1
@@ -22,4 +34,5 @@ real_clean: clean
 	-rm -Rf  *.bpl
 	-rm -Rf  *.so
 packages:
+	$(compile) rppack.dpk
 	$(compile) rppackv.dpk

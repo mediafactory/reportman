@@ -1,6 +1,6 @@
 object FrpExpredialog: TFrpExpredialog
-  Left = 197
-  Top = 104
+  Left = 201
+  Top = 124
   Width = 495
   Height = 368
   HorzScrollBar.Range = 469
@@ -92,7 +92,7 @@ object FrpExpredialog: TFrpExpredialog
   end
   object BitBtn1: TBitBtn
     Left = 200
-    Top = 84
+    Top = 80
     Width = 33
     Height = 33
     TabOrder = 2

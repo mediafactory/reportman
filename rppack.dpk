@@ -27,6 +27,7 @@ package rppack;
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'Report manager designer (non visual)'}
 {$IMPLICITBUILD OFF}
+
 requires
   baseclx,
   dataclx;
@@ -43,7 +44,5 @@ contains
   rptypes in 'rptypes.pas',
   rpdatainfo in 'rpdatainfo.pas',
   rpparams in 'rpparams.pas';
-
-
 
 end.
