@@ -713,7 +713,17 @@ begin
     end;
     FBDEDatabase.DatabaseName:=FBDEAlias;
     if FLoadParams then
-     Session.GetAliasParams(FBDEAlias,FBDEDatabase.Params);
+    begin
+     try
+      Session.GetAliasParams(FBDEAlias,FBDEDatabase.Params);
+     except
+      on E:Exception do
+      begin
+       E.Message:=E.Message+':BDE-ALIAS:'+FBDEAlias;
+       Raise;
+      end;
+     end;
+    end;
     FBDEDatabase.LoginPrompt:=LoginPrompt;
     FBDEDatabase.Connected:=true;
 {$ELSE}
@@ -1032,7 +1042,7 @@ begin
        TTable(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEAlias;
       TBDEDataset(FSQLInternalQuery).Filter:=FBDEFilter;
       if length(Trim(FBDEFilter))>0 then
-      TBDEDataset(FSQLInternalQuery).Filtered:=True;
+       TBDEDataset(FSQLInternalQuery).Filtered:=True;
       if FBDEType=rpdquery then
       begin
        TQuery(FSQLInternalQuery).SQL.Text:=SQL;
@@ -1041,8 +1051,12 @@ begin
       else
       begin
        TTable(FSQLInternalQuery).Tablename:=FBDETable;
-       TTable(FSQLInternalQUery).IndexFieldNames:=FBDEIndexFields;
-       TTable(FSQLInternalQUery).IndexName:=FBDEIndexName;
+       TTable(FSQLInternalQUery).IndexFieldNames:='';
+       TTable(FSQLInternalQUery).IndexName:='';
+       if Length(FBDEIndexFields)>0 then
+        TTable(FSQLInternalQUery).IndexFieldNames:=FBDEIndexFields;
+       if Length(FBDEIndexName)>0 then
+        TTable(FSQLInternalQUery).IndexName:=FBDEIndexName;
       end;
 {$ENDIF}
      end;
@@ -1104,6 +1118,7 @@ begin
        end
        else
        begin
+        TTable(FSQLInternalQuery).MasterFields:=BDEMasterFields;
         if Not Assigned(TTable(FSQLInternalQuery).DataSource) then
          TTable(FSQLInternalQuery).MasterSource:=TDataSource.Create(nil);
         if datainfosource.cached then

@@ -1,9 +1,10 @@
 object FRpDatainfoconfig: TFRpDatainfoconfig
   Left = 189
   Top = 112
-  Width = 526
-  Height = 434
+  Width = 530
+  Height = 420
   VertScrollBar.Range = 129
+  ActiveControl = LConnections
   Caption = 'Data access configuration'
   Color = clButton
   Position = poScreenCenter
@@ -18,7 +19,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
   object GConnections: TGroupBox
     Left = 0
     Top = 0
-    Width = 526
+    Width = 530
     Height = 129
     Align = alTop
     Caption = 'Database connections'
@@ -104,7 +105,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
     object GDriver: TRadioGroup
       Left = 2
       Top = 86
-      Width = 522
+      Width = 526
       Height = 41
       Items.Strings = (
         'DbExpress'
@@ -137,7 +138,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
       OnChange = EConnectionStringChange
     end
     object CancelBtn: TButton
-      Left = 441
+      Left = 445
       Top = 48
       Width = 75
       Height = 25
@@ -148,7 +149,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
       OnClick = CancelBtnClick
     end
     object OKBtn: TButton
-      Left = 441
+      Left = 445
       Top = 20
       Width = 75
       Height = 25
@@ -162,16 +163,16 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
   object GDatasets: TGroupBox
     Left = 0
     Top = 129
-    Width = 526
-    Height = 305
+    Width = 530
+    Height = 291
     Align = alClient
     Caption = 'Report datasets'
     TabOrder = 1
     object GDataProps: TGroupBox
       Left = 2
       Top = 89
-      Width = 522
-      Height = 214
+      Width = 526
+      Height = 200
       Align = alClient
       Caption = 'Dataset properties'
       TabOrder = 0
@@ -179,9 +180,9 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
       object PControl: TPageControl
         Left = 2
         Top = 45
-        Width = 518
-        Height = 167
-        ActivePage = TabBDEType
+        Width = 522
+        Height = 153
+        ActivePage = TabBDETable
         Align = alClient
         TabOrder = 0
         object TabSQL: TTabSheet
@@ -189,8 +190,8 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
           object MSQL: TMemo
             Left = 0
             Top = 0
-            Width = 510
-            Height = 137
+            Width = 514
+            Height = 123
             Align = alClient
             Lines.Strings = (
               'MSQL')
@@ -205,7 +206,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
           object RBDEType: TRadioGroup
             Left = 0
             Top = 0
-            Width = 510
+            Width = 514
             Height = 37
             Items.Strings = (
               'Query'
@@ -218,15 +219,15 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
           object Panel2: TPanel
             Left = 0
             Top = 37
-            Width = 510
-            Height = 100
+            Width = 514
+            Height = 86
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
             object Panel3: TPanel
               Left = 0
               Top = 0
-              Width = 510
+              Width = 514
               Height = 17
               Align = alTop
               Alignment = taLeftJustify
@@ -237,8 +238,8 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
             object MBDEFilter: TMemo
               Left = 0
               Top = 17
-              Width = 510
-              Height = 83
+              Width = 514
+              Height = 69
               Align = alClient
               Lines.Strings = (
                 'MBDEFilter')
@@ -272,8 +273,11 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
             Width = 140
             Height = 21
             ItemHeight = 15
+            Items.Strings = (
+              '')
             TabOrder = 2
             OnChange = MSQLChange
+            OnDropDown = EBDEIndexFieldsDropDown
           end
           object EBDEIndexName: TComboBox
             Left = 77
@@ -281,8 +285,11 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
             Width = 140
             Height = 21
             ItemHeight = 15
+            Items.Strings = (
+              '')
             TabOrder = 3
             OnChange = MSQLChange
+            OnDropDown = EBDEIndexNameDropDown
           end
           object EBDETable: TComboBox
             Left = 76
@@ -290,8 +297,11 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
             Width = 141
             Height = 21
             ItemHeight = 15
+            Items.Strings = (
+              '')
             TabOrder = 4
             OnChange = MSQLChange
+            OnDropDown = EBDETableDropDown
           end
           object LTable: TLabel
             Left = 4
@@ -301,20 +311,27 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
             Caption = 'Table'
           end
           object LMasterFields: TLabel
-            Left = 228
-            Top = 6
+            Left = 4
+            Top = 82
             Width = 59
             Height = 13
             Caption = 'Master fields'
           end
           object EBDEMasterFields: TEdit
-            Left = 308
-            Top = 2
-            Width = 145
+            Left = 76
+            Top = 78
+            Width = 141
             Height = 21
             TabOrder = 7
             Text = 'EBDEMasterFields'
             OnChange = MSQLChange
+          end
+          object Label3: TLabel
+            Left = 4
+            Top = 104
+            Width = 199
+            Height = 13
+            Caption = 'Note: Write fields separated by ; character'
           end
         end
         object TabMySQL: TTabSheet
@@ -364,7 +381,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
       object Panel1: TPanel
         Left = 2
         Top = 13
-        Width = 518
+        Width = 522
         Height = 32
         Align = alTop
         TabOrder = 1
@@ -401,7 +418,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
           Height = 21
           Style = csDropDownList
           ItemHeight = 15
-          TabOrder = 2
+          TabOrder = 3
           OnChange = MSQLChange
         end
         object Label2: TLabel
@@ -416,7 +433,7 @@ object FRpDatainfoconfig: TFRpDatainfoconfig
     object Panel4: TPanel
       Left = 2
       Top = 13
-      Width = 522
+      Width = 526
       Height = 76
       Align = alTop
       BevelOuter = bvNone

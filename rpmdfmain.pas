@@ -28,7 +28,7 @@ uses
   Libc,
 {$ENDIF}
 {$IFDEF MSWINDOWS}
-  Dialogs,rpgdidriver,rpvpreview,
+  Dialogs,rpgdidriver,rpvpreview,Forms,
 {$ENDIF}
 {$IFDEF HORZPAPERBUG}
  rpmetafile,
@@ -216,6 +216,9 @@ type
     updatedmfields:boolean;
     AppStyle:TDefaultStyle;
     oldonException:TExceptionEvent;
+{$IFDEF MSWINDOWS}
+    oldonExceptionvcl:TExceptionEvent;
+{$ENDIF}
     procedure FreeInterface;
     procedure CreateInterface;
     function checkmodified:boolean;
@@ -565,10 +568,20 @@ end;
 
 procedure TFRpMainF.FormCreate(Sender: TObject);
 begin
-{$IFDEF KYLIX2}
- OpenDialog1.Filter := 'Report Files (*.rep)|*.rep';
+{$IFDEF TOOLBARSIZEBUG}
+ ToolBar1.AutoSize:=false;
+ ToolBar1.Height:=100;
+ ToolBar1.Autosize:=true;
+{$ENDIF}
+
+{$IFDEF VCLFILEFILTERS}
+ OpenDialog1.Filter := SRpRepFile+'|*.rep';
 {$ENDIF}
  // Sets on exception event
+{$IFDEF MSWINDOWS}
+ Forms.Application.OnException:=MyExceptionHandler;
+ oldonexceptionvcl:=Forms.Application.OnException;
+{$ENDIF}
  oldonexception:=Application.OnException;
  Application.OnException:=MyExceptionHandler;
 
@@ -1300,6 +1313,13 @@ begin
  end
  else
   Messagedlg(SRpError,E.Message,mtError,[mbok],0);
+{$IFDEF MSWINDOWS}
+ if assigned(oldonexceptionvcl) then
+ begin
+  oldonexceptionvcl(Sender,E);
+ end;
+{$ENDIF}
+
 end;
 
 

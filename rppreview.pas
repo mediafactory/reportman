@@ -243,6 +243,11 @@ end;
 
 procedure TFRpPreview.FormCreate(Sender: TObject);
 begin
+{$IFDEF TOOLBARSIZEBUG}
+ ToolBar1.AutoSize:=false;
+ ToolBar1.Height:=100;
+ ToolBar1.Autosize:=true;
+{$ENDIF}
  APrevious.ShortCut:=Key_PageUp;
  ANext.ShortCut:=Key_PageDown;
  AFirst.ShortCut:=Key_Home;
@@ -252,10 +257,10 @@ begin
  bitmap:=TBitmap.Create;
  bitmap.PixelFormat:=pf32bit;
  AImage.Picture.Bitmap:=bitmap;
-{$IFDEF KYLIX2}
- SaveDialog1.Filter:='Report Metafile (*.rpmf)|'+
-   'PDF File (*.pdf)|'+
-   'PDF File Uncompressed (*.pdf)';
+{$IFDEF VCLFILEFILTERS}
+ SaveDialog1.Filter:=SRpRepMetafile+'|*.rpmf|'+
+   SRpPDFFile+'|*.pdf|'+
+   SRpPDFFileUn+'|*.pdf';
 {$ENDIF}
 end;
 

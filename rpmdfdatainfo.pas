@@ -31,7 +31,7 @@ uses SysUtils, Classes, QGraphics, QForms,
   adodb,
 {$ENDIF}
   rpreport,rpconsts,rpdatainfo,DBConnAdmin,QDialogs,
-  rpparams,rpfparams, QComCtrls;
+  rpparams,rpfparams, db,QComCtrls;
 
 type
   TFRpDatainfoconfig = class(TForm)
@@ -88,6 +88,7 @@ type
     LDatasets: TListBox;
     BDelete: TButton;
     BRename: TButton;
+    Label3: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -109,6 +110,9 @@ type
     procedure GDriverClick(Sender: TObject);
     procedure BMyBaseClick(Sender: TObject);
     procedure EConnectionStringChange(Sender: TObject);
+    procedure EBDETableDropDown(Sender: TObject);
+    procedure EBDEIndexNameDropDown(Sender: TObject);
+    procedure EBDEIndexFieldsDropDown(Sender: TObject);
   private
     { Private declarations }
     report:TRpReport;
@@ -564,13 +568,13 @@ begin
   dinfo.BDEType:=TRpDatasetType(RBDEType.ItemIndex);
   if dinfo.BDEType=rpdQuery then
   begin
-   TabSQL.Visible:=true;
-   TabBDETable.Visible:=false;
+   TabSQL.TabVisible:=true;
+   TabBDETable.TabVisible:=false;
   end
   else
   begin
-   TabSQL.Visible:=False;
-   TabBDETable.Visible:=True;
+   TabSQL.TabVisible:=False;
+   TabBDETable.TabVisible:=True;
   end;
  end
  else
@@ -789,6 +793,110 @@ begin
    databaseinfo.items[index].ADOConnectionString:=EConnectionString.Text;
   end;
  end;
+end;
+
+procedure TFRpDatainfoconfig.EBDETableDropDown(Sender: TObject);
+{$IFDEF USEBDE}
+var
+ dinfo:TRpDatainfoItem;
+{$ENDIF}
+begin
+{$IFDEF USEBDE}
+ // Fils the info of the current dataset
+ dinfo:=FindDataInfoItem;
+ if dinfo=nil then
+  exit;
+ // Fills with tablenames, without extensions,
+ // no system tables
+ try
+  Session.GetTableNames(dinfo.DatabaseAlias,'',True,False,EBDETable.Items);
+ finally
+  EBDETable.Items.Insert(0,'');
+ end;
+{$ENDIF}
+end;
+
+procedure TFRpDatainfoconfig.EBDEIndexNameDropDown(Sender: TObject);
+{$IFDEF USEBDE}
+var
+ dinfo:TRpDatainfoItem;
+ atable:TTable;
+ i:integer;
+{$ENDIF}
+begin
+{$IFDEF USEBDE}
+ // Fils the info of the current dataset
+ dinfo:=FindDataInfoItem;
+ if dinfo=nil then
+  exit;
+ atable:=TTable.Create(Self);
+ try
+  EBDEIndexName.Items.Clear;
+  atable.DatabaseName:=dinfo.DatabaseAlias;
+  atable.TableName:=dinfo.BDETable;
+  atable.IndexDefs.Update;
+  EBDEIndexName.Items.Clear;
+  for i:=0 to atable.IndexDefs.Count-1 do
+  begin
+   EBDEIndexName.Items.Add(atable.IndexDefs.Items[i].Name);
+  end;
+ finally
+  atable.free;
+  EBDEIndexName.Items.Insert(0,'');
+ end;
+{$ENDIF}
+end;
+
+{$IFDEF USEBDE}
+procedure GetIndexFieldNames(atable:TTable;alist:TStrings);
+var
+ i:integer;
+ aindexdef:TIndexDef;
+ afields:string;
+begin
+ atable.IndexDefs.Update;
+ alist.clear;
+ for i:=0 to atable.IndexDefs.Count-1 do
+ begin
+  aindexdef:=atable.IndexDefs.Items[i];
+  afields:='';
+  if Length(aindexdef.Fields)>0 then
+   afields:=aindexdef.Fields
+  else
+   if Length(aindexdef.DescFields)>0 then
+   begin
+    afields:=aindexdef.DescFields;
+   end;
+  if Length(afields)>0 then
+   alist.add(afields);
+ end;
+end;
+{$ENDIF}
+
+
+procedure TFRpDatainfoconfig.EBDEIndexFieldsDropDown(Sender: TObject);
+{$IFDEF USEBDE}
+var
+ dinfo:TRpDatainfoItem;
+ atable:TTable;
+{$ENDIF}
+begin
+{$IFDEF USEBDE}
+ // Fils the info of the current dataset
+ dinfo:=FindDataInfoItem;
+ if dinfo=nil then
+  exit;
+ atable:=TTable.Create(Self);
+ try
+  EBDEIndexFields.Items.Clear;
+  atable.DatabaseName:=dinfo.DatabaseAlias;
+  atable.TableName:=dinfo.BDETable;
+  GetIndexFieldNames(atable,EBDEIndexFields.Items);
+ finally
+  atable.free;
+  EBDEIndexFields.Items.Insert(0,'');
+ end;
+{$ENDIF}
 end;
 
 end.

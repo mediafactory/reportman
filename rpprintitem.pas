@@ -185,6 +185,9 @@ procedure TRpCommonComponent.Print(aposx,aposy:integer;metafile:TRpMetafileRepor
 var
  fevaluator:TRpEvaluator;
 begin
+ if Not EvaluatePrintCondition then
+  exit;
+
  // Do Before print and doafter print
  if Length(FDoBeforePrint)>0 then
  begin

@@ -113,6 +113,11 @@ constructor TrpPanelObj.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+
+{$IFDEF VCLFILEFILTERS}
+ OpenDialog1.Filt
+{$ENDIF}
+
  Align:=alClient;
 
  LNames:=TStringList.Create;

@@ -543,6 +543,11 @@ resourcestring
   SRpMonochromeBitmapPDF='Monochrome bitmaps not supported in PDF Export';
   SRpParamBDENotSupported='Parameters not supported in BDE Tables';
 
+  SRpPDFFile='PDF File - compressed';
+  SRpPDFFileUn='PDF File - uncompressed';
+  SRpRepMetafile='Report Metafile';
+  SRpRepFile='Report File';
+
 
 implementation
 

@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       Rpqtriver                                     }
+{       Rpqtriver                                       }
 {       TRpQTDriver: Printer driver for  QT Libs        }
 {       can be used for windows and linux               }
 {       it includes printer and bitmap support          }

@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager Designer                         }
 {                                                       }
-{       rpmdfgrid                                         }
+{       rpmdfgrid                                       }
 {       Grid options for the report                     }
 {                                                       }
 {                                                       }

@@ -17,7 +17,7 @@
           in commercial applications</li>
         <li> <b>Cross platform</b> supporting Windows and Linux (Kylix/Delphi) 
         </li>
-        <li>Small FootPrint (It <b>adds just 80Kbytes to your exe</b>)</li>
+        <li>Small footPrint (It <b>adds just 80Kbytes to your exe</b>)</li>
         <li><b>Band based</b> report designer, very easy similar to MSAccess, 
           Visual Foxpro....</li>
         <li>Report definition files are very small (most <b>reports fit in less 
@@ -25,10 +25,10 @@
         <li><b>Expression evaluator</b> with builtin functions and access to database 
           fields</li>
         <li><b>Report parameters</b>, define them, assign them to querys at run 
-          time or design time.</li>
+          time or design time, optionally the user can alter the parameters</li>
         <li><b>Linked or unlinked additional datasets</b>, link querys easily, 
           open datasets to obtain aditional information...</li>
-        <li>Exports to compressed <b>Adobe PDF</b> (scalable).</li>
+        <li>Exports to compressed/uncompressed <b>Adobe PDF</b> (scalable/native).</li>
         <li>Supports Delphi 6, Kylix 2, Delphi 5, C++Builder 4, it should work 
           also with C++ Builder 6,5,4 and Delphi 4</li>
         <li>If you are using Windows you can select between VCL (no Qt) graphic 
@@ -67,7 +67,7 @@
         <li> Each subreport can have a unlimited number of sections of each type 
           (page headers,page footers,<b>group header an footers</b>)</li>
         <li>Grouping allow <b>sum,min,max,avg and std.desv</b>. operations.</li>
-        <li> You can use groups as report headers and footers (<b>summary</b>)</li>
+        <li> You can use groups as subreport headers and footers (<b>summary</b>)</li>
         <li> All details are printed once for each record of the subreport's dataset</li>
         <li><b>Multilanguage</b> support, the labels of the report can be defined 
           in various languages.</li>
@@ -78,7 +78,11 @@
         <li>Driver selection when designing the report (Qt driver or Windows GDI 
           driver) </li>
         <li>You can <b>embed Report Manager Designer in your application</b>, 
-          just drop a TRpDesigner component and execute it.</li>
+          just drop a TRpDesigner, component and use it.</li>
+        <li>You can <b>open any querys or tables you need</b>, you usually link 
+          secondary datasets to the main dataset or to other dataset linked to 
+          the main dataset. </li>
+        <li>Parametrized linked querys allow you to obtain results from many querys.</li>
       </ul>
       </td>
   </tr>
@@ -111,6 +115,7 @@
         <li><b>Print condition</b></li>
         <li>Expression evaluation before print</li>
         <li>Expression evaluation after print</li>
+        <li>Align right, bottom or bottom-right.</li>
         <li><b>Z Order</b> (to back, to front)</li>
       </ul>
     </td>
@@ -121,11 +126,14 @@
   <tr> 
     <td> 
       <ul>
-        <li> Font Name (for each platform) </li>
+        <li> Font Name (for each platform and Type1 for PDF) </li>
         <li> Font Size, Bold, Italic, Color. </li>
         <li> <b>Background color</b> or transparent </li>
         <li> <b>Alignment</b>, vertical or horizontal</li>
         <li><b>Wordwrap</b>, cut text or not cut text, ignore CR...</li>
+        <li><b>Multiline</b> texts</li>
+        <li>If you select not cut text, the text control will expand to acomodate 
+          size, if parent section has autoexpand property it will expand also.</li>
         <li>Labels are <b>multilanguage</b></li>
         <li><b>Rotation</b></li>
       </ul>
@@ -153,7 +161,8 @@
         <li>The image can be <b>embedded</b> in the report </li>
         <li> The image can be <b>loaded</b> from a binary field </li>
         <li> The image can be stretched, or adapt to pixels per inch</li>
-        <li>Copy modes (Xor, And...)</li>
+        <li><b>Images are supported in PDF format</b> without the need of a XServer 
+          running (Linux).</li>
       </ul>
     </td>
   </tr>
