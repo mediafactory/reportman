@@ -18,7 +18,6 @@ object FRpMetaVCL: TFRpMetaVCL
     Top = 27
     Width = 7
     Height = 290
-    Cursor = crHSplit
     Beveled = True
   end
   object BToolBar: TToolBar
@@ -160,8 +159,6 @@ object FRpMetaVCL: TFRpMetaVCL
       Top = 0
       Width = 64
       Height = 25
-      Min = 0
-      Max = 100
       TabOrder = 0
       Visible = False
     end
@@ -196,7 +193,6 @@ object FRpMetaVCL: TFRpMetaVCL
       item
         Width = 50
       end>
-    SimplePanel = False
   end
   object ActionList1: TActionList
     Images = ImageList1

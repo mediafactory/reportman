@@ -13,6 +13,7 @@ object FRpObjInspVCL: TFRpObjInspVCL
     Top = 92
   end
   object ColorDialog1: TColorDialog
+    Ctl3D = True
     Left = 156
     Top = 88
   end
@@ -22,6 +23,8 @@ object FRpObjInspVCL: TFRpObjInspVCL
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
+    MinFontSize = 0
+    MaxFontSize = 0
     Left = 192
     Top = 60
   end
