@@ -11,49 +11,16 @@ interface
 uses
   Windows, ActiveX, SysUtils,Classes, Controls, Graphics, Menus, Forms, StdCtrls,
   ComServ, StdVCL, AXCtrls, Reportman_TLB, rpactivexreport,rpreport,
-  rpparams,rptypes,rpgdidriver,rpmetafile;
+  rpparams,rptypes,rpgdidriver,rpmetafile,comobj,rpaxreportparameters,
+  rpaxreportreport,rpexceldriver;
 
 type
-  TIReportParam=class(TInterfacedObject,IReportParam)
-   private
-    FReport:TRpReport;
-    ParamName:String;
-    FParam:TRpParam;
-   protected
-    function  Get_Description: OleVariant; safecall;
-    procedure Set_Description(Value: OleVariant); safecall;
-    function  Get_Name: OleVariant; safecall;
-    procedure Set_Name(Value: OleVariant); safecall;
-    function  Get_Visible: WordBool; safecall;
-    procedure Set_Visible(Value: WordBool); safecall;
-    function  Get_Value: OleVariant; safecall;
-    procedure Set_Value(Value: OleVariant); safecall;
-    function  Get_ParamType: TxParamType; safecall;
-    procedure Set_ParamType(Value: TxParamType); safecall;
-  end;
-
-  TIReportParameters=class(TInterfacedObject,IReportParameters)
-   private
-    FReport:TRpReport;
-   protected
-    function  Get_Count: Integer; safecall;
-    function Get_Items(index: Integer): IReportParam; safecall;
-  end;
-
-  TIReportReport=class(TInterfacedObject,IReportReport)
-   private
-    FReport:TRpReport;
-   protected
-    function  Get_Params: IReportParameters; safecall;
-    function Get_VCLReport: PChar; safecall;
-  end;
-
-
   TReportManX = class(TActiveXControl, IReportManX)
   private
     { Private declarations }
     FDelphiControl: TRpActiveXReport;
     FEvents: IReportManXEvents;
+    FReportReport:TReportReport;
   protected
     { Protected declarations }
     procedure DefinePropertyPages(DefinePropertyPage: TDefinePropertyPage); override;
@@ -110,19 +77,20 @@ type
     procedure SetParamValue(const paramname: WideString;
       paramvalue: OleVariant); safecall;
     procedure SetSubComponent(IsSubComponent: WordBool); safecall;
-    function Get_Report: IReportReport; safecall;
     procedure ExecuteRemote(const hostname: WideString; port: Integer;
       const user, password, aliasname, reportname: WideString); safecall;
     procedure CalcReport(ShowProgress: WordBool); safecall;
-    procedure Compose(const Report: IReportReport; Execute: WordBool);
-      safecall;
     procedure SaveToText(const filename, textdriver: WideString); safecall;
-    function Report: IReportReport; safecall;
+    procedure IReportManX.Compose = IReportManX_Compose;
+    procedure IReportManX_Compose(const Report: ReportReport;
+      Execute: WordBool); safecall;
+    function Get_Report: ReportReport; safecall;
+    procedure SaveToExcel(const filename: WideString); safecall;
   end;
 
 implementation
 
-uses ComObj, aboutrpax;
+uses aboutrpax;
 
 { TReportManX }
 
@@ -383,103 +351,6 @@ begin
 {$ENDIF}
 end;
 
-function TReportManX.Get_Report: IReportReport;
-var
- FReportI:TIReportReport;
-begin
- FReportI:=TIReportReport.Create;
- FReportI.FReport:=FDelphiControl.GetReport;
- Result:=FReportI;
-end;
-
-
-
-function TIReportReport.Get_VCLReport: PChar; safecall;
-begin
- Result:=Pchar(FReport);
-end;
-
-function  TIReportReport.Get_Params: IReportParameters;
-var
- FReportParameters:TIReportParameters;
-begin
- FReportParameters:=TIReportParameters.Create;
- FReportParameters.FReport:=FReport;
- Result:=FReportParameters;
-end;
-
-
-
-function  TIReportParameters.Get_Count: Integer; safecall;
-begin
- Result:=FReport.Params.Count;
-end;
-
-
-function  TIReportParameters.Get_Items(index: Integer): IReportParam; safecall;
-var
- FReportParam:TIReportParam;
-begin
- FReportParam:=TIReportParam.Create;
- FReportParam.FReport:=FReport;
- FReportParam.ParamName:=FReport.Params.items[index].Name;
- FReportParam.FParam:=FReport.Params.ParamByName(FReportParam.ParamName);
- Result:=FReportParam;
-end;
-
-
-
-function  TIReportParam.Get_Description: OleVariant;
-begin
- Result:=FParam.Description;
-end;
-
-procedure TIReportParam.Set_Description(Value: OleVariant);
-begin
- FParam.Description:=Value;
-end;
-
-function  TIReportParam.Get_Name: OleVariant;
-begin
- Result:=FParam.Name;
-end;
-
-procedure TIReportParam.Set_Name(Value: OleVariant);
-begin
- FParam.Name:=Value;
-end;
-
-function  TIReportParam.Get_Visible: WordBool;
-begin
- Result:=FParam.Visible;
-end;
-
-procedure TIReportParam.Set_Visible(Value: WordBool);
-begin
- FParam.Visible:=Value;
-end;
-
-function  TIReportParam.Get_Value: OleVariant;
-begin
- Result:=FParam.Value;
-end;
-
-procedure TIReportParam.Set_Value(Value: OleVariant);
-begin
- FParam.Value:=Value;
-end;
-
-function  TIReportParam.Get_ParamType: TxParamType;
-begin
- Result:=TxParamType(FParam.ParamType);
-end;
-
-procedure TIReportParam.Set_ParamType(Value: TxParamType);
-begin
- FParam.ParamType:=TRpParamtype(Value);
-end;
-
-
 procedure TReportManX.ExecuteRemote(const hostname: WideString;
   port: Integer; const user, password, aliasname, reportname: WideString);
 begin
@@ -501,7 +372,14 @@ begin
  end;
 end;
 
-procedure TReportManX.Compose(const Report: IReportReport;
+
+procedure TReportManX.SaveToText(const filename, textdriver: WideString);
+begin
+  FDelphiControl.SaveToText(filename, textdriver);
+end;
+
+
+procedure TReportManX.IReportManX_Compose(const Report: ReportReport;
   Execute: WordBool);
 var
  gdidriver:TRpGDIDriver;
@@ -514,14 +392,23 @@ begin
   FDelphiControl.Execute;
 end;
 
-procedure TReportManX.SaveToText(const filename, textdriver: WideString);
+
+function TReportManX.Get_Report: ReportReport;
 begin
-  FDelphiControl.SaveToText(filename, textdriver);
+ if Not Assigned(FReportReport) then
+ begin
+  FReportReport:=TReportReport.Create;
+  FReportReport.FReport:=FDelphiControl.GetReport;
+ end;
+ Result:=FReportReport;
 end;
 
-function TReportManX.Report: IReportReport;
-begin
 
+procedure TReportManX.SaveToExcel(const filename: WideString);
+begin
+ rpgdidriver.CalcReportWidthProgress(FDelphiControl.GetReport);
+ ExportMetafileToExcel (FDelphiControl.GetReport.metafile,filename,
+  true,false,true,1,9999999);
 end;
 
 initialization

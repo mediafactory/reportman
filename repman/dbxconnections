@@ -67,7 +67,7 @@ ErrorResourceFile=./DbxInfSqlErr.msg
 LocaleCode=0000
 Informix TransIsolation=ReadCommited
 
-[biolife]
+[REPSAMPLES]
 DriverName=Interbase
 Database=localhost:/var/data/biolife.gdb
 RoleName=RoleName

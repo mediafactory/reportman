@@ -105,22 +105,22 @@ type
    constructor Create;
    destructor Destroy;override;
    procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
-    hardwarecollate:boolean);stdcall;
-   procedure EndDocument;stdcall;
-   procedure AbortDocument;stdcall;
-   procedure NewPage;stdcall;
-   procedure EndPage;stdcall;
-   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
-   procedure DrawPage(apage:TRpMetaFilePage);stdcall;
-   function AllowCopies:boolean;stdcall;
-   function GetPageSize(var PageSizeQt:Integer):TPoint;stdcall;
-   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
-   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
-   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
-   procedure SetOrientation(Orientation:TRpOrientation);stdcall;
-   procedure SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
-   function SupportsCopies(maxcopies:integer):boolean;stdcall;
-   function SupportsCollation:boolean;stdcall;
+    hardwarecollate:boolean);
+   procedure EndDocument;
+   procedure AbortDocument;
+   procedure NewPage;
+   procedure EndPage;
+   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
+   procedure DrawPage(apage:TRpMetaFilePage);
+   function AllowCopies:boolean;
+   function GetPageSize(var PageSizeQt:Integer):TPoint;
+   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
+   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
+   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
+   procedure SetOrientation(Orientation:TRpOrientation);
+   procedure SelectPrinter(printerindex:TRpPrinterSelect);
+   function SupportsCopies(maxcopies:integer):boolean;
+   function SupportsCollation:boolean;
    property LinesPerInch:Currency read FLinesPerInch write FLinesPerInch;
    property PlainText:Boolean read FPlainText write FPlainText default false;
    property OemConvert:Boolean read FOemConvert write FOemConvert default false;
@@ -209,6 +209,7 @@ var
  i:TPrinterRawOp;
  j:TRpFontStep;
 begin
+ inherited Create;
  master10:=0;
  master12:=1;
  mastercond:=4;
@@ -301,7 +302,7 @@ begin
 end;
 
 procedure TRpTextDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
-   hardwarecollate:boolean);stdcall;
+   hardwarecollate:boolean);
 var
  sizeqt:TPageSizeQt;
 begin
@@ -474,7 +475,7 @@ begin
  Result.Y:=FPageHeight;
 end;
 
-function TRpTextDriver.SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
+function TRpTextDriver.SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
 var
  newwidth,newheight:integer;
 begin
@@ -589,7 +590,8 @@ begin
  finally
   report.OnProgress:=oldprogres;
  end;
- Stream.Write(TextDriver.MemStream.Memory^,TextDriver.MemStream.Size);
+ Stream.CopyFrom(TextDriver.MemStream,TextDriver.MemStream.Size);
+// Stream.Write(TextDriver.MemStream.Memory^,TextDriver.MemStream.Size);
  Result:=True;
 end;
 
@@ -992,7 +994,7 @@ begin
  end;
 end;
 
-procedure TRpTextDriver.SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
+procedure TRpTextDriver.SelectPrinter(printerindex:TRpPrinterSelect);
 var
  i:TPrinterRawOp;
 begin
@@ -1051,7 +1053,8 @@ begin
   adriver.AbortDocument;
   raise;
  end;
- Stream.Write(adriver.MemStream.Memory^,adriver.MemStream.Size);
+ Stream.CopyFrom(adriver.MemStream,adriver.MemStream.Size);
+// Stream.Write(adriver.MemStream.Memory^,adriver.MemStream.Size);
 end;
 
 
@@ -1078,7 +1081,8 @@ begin
   end;
   adriver.EndDocument;
   adriver.MemStream.Seek(0,soFromBeginning);
-  Stream.Write(adriver.MemStream.Memory^,adriver.MemStream.Size);
+  Stream.CopyFrom(adriver.MemStream,adriver.MemStream.Size);
+//  Stream.Write(adriver.MemStream.Memory^,adriver.MemStream.Size);
  except
   adriver.AbortDocument;
   raise;
@@ -1295,12 +1299,17 @@ end;
 function TRpTextDriver.GetBlankLine(FontStep:TRpFontStep):String;
 var
  charcount:integer;
+ i:integer;
 begin
  if FPlainText then
   FontStep:=rpcpi10;
  charcount:=Round(FPageWidth/steptotwips(fontstep));
  SetLength(Result,charcount);
- FillChar(Result[1],charcount,' ');
+ for i:=1 to charcount do
+ begin
+  Result[i]:=' ';
+ end;
+// FillChar(Result[1],charcount,' ');
 end;
 
 procedure TRpTextDriver.DoTextOut(X, Y: Integer; const Text: string;LineWidth:Integer;
@@ -1553,12 +1562,15 @@ var
  i:integer;
  atposition:integer;
  atindex:integer;
+{$IFNDEF DOTNETD}
  res:PChar;
+{$ENDIF}
  wasunderline:boolean;
  currentcount:integer;
  trimed:boolean;
 begin
 {$IFDEF MSWINDOWS}
+{$IFNDEF DOTNETD}
  if OemConvert then
  begin
   res:=AllocMem(Length(Line.Value)+1);
@@ -1567,6 +1579,7 @@ begin
   Line.Value:=StrPas(res);
   FreeMem(res);
  end;
+{$ENDIF}
 {$ENDIF}
  encoded:='';
  // Only set size if previos size is different

@@ -250,7 +250,7 @@ begin
       end
       else
       begin
-       if aparam.value then
+       if Boolean(aparam.value) then
         TComboBox(acontrol).ItemIndex:=1
        else
         TComboBox(acontrol).ItemIndex:=0;

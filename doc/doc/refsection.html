@@ -18,6 +18,34 @@
     <td bgcolor="#FFFFCC">Type</td>
     <td bgcolor="#FFFFCC">Description</td>
   </tr>
+  <tr>
+    <td>Horz.Desp</td>
+    <td>HorzDesp</td>
+    <td>Boolean</td>
+    <td>When horizzontal desplacement is set to true, after printing the section 
+      the print position will move to the left, in an amount equivalent to the 
+      section width. But this will happen only when the next section to print 
+      has also the horizontal desplacement set to true, else the horizontal print 
+      position will be restored. Set this property to true in the detail section 
+      for example to print labels left to right, adjust the section with so many 
+      details fit in the total page width. See also <a href="labels.html">labels 
+      documentation</a>.</td>
+  </tr>
+  <tr> 
+    <td>Vert.Desp.</td>
+    <td>VertDesp</td>
+    <td>Boolean</td>
+    <td>When vertical desplacement is set to true, the print is performed as usually 
+      (up to down), after reaching the bottom of the page, the print position 
+      will place at the top of the page (or group header) , and the left print 
+      position will move an amount equivalent to the section with (if fits in 
+      the page), then printing continue. But this will happen only when the next 
+      section to print has also the vertical desplacement set to true, else the 
+      engine will skip to next page. Set this property to true in the detail section 
+      for example to print labels up to down, adjust the section with so many 
+      details fit in the total page width. See also <a href="labels.html">labels 
+      documentation</a>.</td>
+  </tr>
   <tr> 
     <td>Auto expand</td>
     <td>AutoExpand</td>
@@ -168,7 +196,7 @@
     <td>For page header and footers only, if this property is true, the header/footer 
       will be processed globally just like if it was outside the subreport</td>
   </tr>
-  <tr>
+  <tr> 
     <td>Force Print</td>
     <td>ForcePrint</td>
     <td>Boolean</td>

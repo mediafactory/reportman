@@ -31,7 +31,7 @@ const
      // Parser datatypes for constants
      toEOF         =      Char(0);
      toSymbol      =      Char(1);
-     toString      =      Char(2);
+     tkString      =      Char(2);
      toInteger     =      Char(3);
      toFloat       =      Char(4);
      toOperator    =      Char(5);
@@ -193,11 +193,12 @@ end;
 // TRpEvalException
 constructor TRpEvalException.Create(Msg,Element:string;Line,Position:integer);
 begin
+ Inherited Create(Msg,Element);
+
  ErrorLine:=Line;
  ErrorPosition:=Position;
  ErrorMessage:=Msg;
  ElementError:=Element;
- inherited Create(ErrorMessage,ElementError);
 end;
 
 // TRpIdentifier
@@ -436,12 +437,12 @@ begin
     begin
      index:=Pos('d',sformat);
      if index<>0 then
-      Result:=sysutils.format(sformat,[Integer(Value)])
+      Result:=format(sformat,[Integer(Value)])
      else
-      Result:=sysutils.format(sformat,[Extended(Value)]);
+      Result:=format(sformat,[Extended(Value)]);
     end;
    end;
-  varSingle..VarCurrency:
+  varSingle,varDouble,VarCurrency:
    begin
     if Not Userdef then
     begin
@@ -475,25 +476,25 @@ begin
      if Userdef then
       Result:=sysutils.formatFloat(sformat,Extended(Value))
      else
-      Result:=sysutils.format(sformat,[Extended(Value)]);
+      Result:=format(sformat,[Extended(Value)]);
     except
      if Extended(Value)<>Integer(Value) then
       Raise;
      if Userdef then
       Result:=sysutils.formatFloat(sformat,Extended(Value))
      else
-      Result:=sysutils.format(sformat,[Integer(Value)]);
+      Result:=format(sformat,[Integer(Value)]);
     end;
    end;
   varString:
    if Value='' then Result:='' else
-    Result:=sysutils.format(sformat,[string(Value)]);
+    Result:=format(sformat,[string(Value)]);
   varBoolean:
    begin
     if Userdef then
      Result:=sformat
     else
-    if Value then
+    if Boolean(Value) then
      Result:='True'
     else
      Result:='False';

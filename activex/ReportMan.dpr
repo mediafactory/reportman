@@ -12,7 +12,10 @@ uses
   aboutrpax in 'aboutrpax.pas' {ReportManXAbout},
   rpdllutil in '..\rpdllutil.pas',
   rpdllutilqt in '..\rpdllutilqt.pas',
-  rpactivexreport in '..\rpactivexreport.pas';
+  rpactivexreport in '..\rpactivexreport.pas',
+  rpaxreportreport in 'rpaxreportreport.pas' {ReportReport: CoClass},
+  rpaxreportparameters in 'rpaxreportparameters.pas' {ReportParameters: CoClass},
+  rpaxreportparam in 'rpaxreportparam.pas' {ReportParam: CoClass};
 
 {$E ocx}
 

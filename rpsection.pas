@@ -32,7 +32,7 @@ rpmzlib,
  windows,
 {$ENDIF}
 {$IFDEF USEVARIANTS}
- Types,
+ Types,Variants,
 {$ENDIF}
  rptypes,rpmdconsts,rpmunits,rpprintitem,rplabelitem,db,
  sysutils,rpmetafile,rpeval;
@@ -63,6 +63,7 @@ type
    FAutoExpand:Boolean;
    FAutoContract:Boolean;
    FHorzDesp:Boolean;
+   FVertDesp:Boolean;
 //   FIsExternal:boolean;
    FExternalFilename:string;
    FExternalConnection:String;
@@ -155,6 +156,7 @@ type
    property AutoContract:Boolean read FAutoContract write FAutoContract
     default false;
    property HorzDesp:Boolean read FHorzDesp write FHorzDesp default false;
+   property VertDesp:Boolean read FVertDesp write FVertDesp default false;
 //   property IsExternal:Boolean read FIsExternal
 //    write FIsExternal default false;
    // External filename is a alias.field or if not exists a filename
@@ -516,6 +518,7 @@ var
  compsize:TPoint;
  newsize:integer;
  i:integer;
+ newextent:TPoint;
  acompo:TRpCommonPosComponent;
  DoPartialPrint:Boolean;
 begin
@@ -561,7 +564,9 @@ begin
    if (acompo is TRpExpression) then
     if TRpExpression(acompo).IsPartial then
     begin
-     compsize:=acompo.GetExtension(adriver,MaxExtent);
+     newextent:=MaxExtent;
+     newextent.Y:=newextent.Y-acompo.PosY;
+     compsize:=acompo.GetExtension(adriver,newExtent);
      if compsize.Y>0 then
      begin
       if acompo.Align in [rpalbottom,rpalbotright] then
@@ -578,7 +583,9 @@ begin
   end
   else
   begin
-   compsize:=acompo.GetExtension(adriver,MaxExtent);
+   newextent:=MaxExtent;
+   newextent.Y:=newextent.Y-acompo.PosY;
+   compsize:=acompo.GetExtension(adriver,newExtent);
    if compsize.Y>0 then
    begin
     if acompo.Align in [rpalbottom,rpalbotright] then
@@ -716,6 +723,7 @@ end;
 procedure TRpSection.LoadFromStream(stream:TStream);
 var
  i:integer;
+ abyte:Byte;
  reader:TReader;
 {$IFDEF USEZLIB}
  buf:pointer;
@@ -741,7 +749,9 @@ begin
   amemstream.Seek(0,soFromBeginning);
   if amemstream.Size<1 then
    Raise Exception.Create(SRpStreamFormat);
-  if (PChar(amemstream.Memory)^='x') then
+  amemstream.Read(abyte,1);
+  amemstream.Seek(0,soFromBeginning);
+  if (Char(abyte)='x') then
    compressed:=true;
 {$IFNDEF USEZLIB}
   if compressed then
@@ -1029,6 +1039,10 @@ begin
  PrintCondition:=sec.PrintCondition;
  DoBeforePrint:=sec.DoBeforePrint;
  DoAfterPrint:=sec.DoAfterPrint;
+ FVertDesp:=sec.FVertDesp;
+ FGlobal:=sec.FGlobal;
+ FFooterAtReportEnd:=sec.FFooterAtReportEnd;
+ FIniNumPage:=sec.FIniNumPage;
  for i:=0 to FReportComponents.Count-1 do
  begin
   if FReportComponents.Items[i].Component.Owner=Self then

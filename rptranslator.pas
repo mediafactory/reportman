@@ -24,6 +24,9 @@ uses
 {$IFDEF LINUX}
  Libc,
 {$ENDIF}
+{$IFDEF DOTNETD}
+ System.Globalization,
+{$ENDIF}
 {$IFDEF MSWINDOWS}
  Windows,
 {$ENDIF}
@@ -76,12 +79,12 @@ function AddLocaleSufix(afilename:string):string;
 
 implementation
 
+{$IFNDEF DOTNETD}
 {$IFDEF MSWINDOWS}
 const
   kernel = 'kernel32.dll';
   OldLocaleOverrideKey = 'Software\Borland\Delphi\Locales'; // do not localize
   NewLocaleOverrideKey = 'Software\Borland\Locales'; // do not localize
-
 
 function RegOpenKeyEx(hKey: LongWord; lpSubKey: PChar; ulOptions,
   samDesired: LongWord; var phkResult: LongWord): Longint;
@@ -96,7 +99,7 @@ function RegQueryValueEx(hKey: LongWord; lpValueName: PChar;
 {$ENDIF}
   external advapi32 name 'RegQueryValueExA';
 {$ENDIF}
-
+{$ENDIF}
 
 constructor TRpTranslator.Create(AOwner:TComponent);
 begin
@@ -138,6 +141,24 @@ begin
 end;
 
 
+{$IFDEF DOTNETD}
+function AddLocaleSufix(afilename:string):string;
+var
+ newname:String;
+begin
+ Result:=ChangeFileExt(afilename,'.exe');
+ newname:=ChangeFileExt(afilename,'.'+System.Globalization.RegionInfo.CurrentRegion.ThreeLetterISORegionName);
+ if (FileExists(newname)) then
+  Result:=newname
+ else
+ begin
+  newname:=ChangeFileExt(afilename,'.'+System.Globalization.RegionInfo.CurrentRegion.TwoLetterISORegionName);
+  if (FileExists(newname)) then
+   Result:=newname
+ end;
+end;
+{$ENDIF}
+{$IFNDEF DOTNETD}
 function AddLocaleSufix(afilename:string):string;
 {$IFDEF LINUX}
 var
@@ -300,7 +321,7 @@ begin
   end;
 {$ENDIF}
 end;
-
+{$ENDIF}
 
 procedure TRpTranslator.InternalOpen;
 var

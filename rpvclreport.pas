@@ -27,7 +27,7 @@ interface
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
  rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview,
  rpexceldriver,rptextdriver,rppdfdriver,
-{$IFNDEF BUILDER4}
+{$IFDEF USEINDY}
  rpfmainmetaviewvcl,
 {$ENDIF}
  rpmetafile,rptypes;
@@ -133,7 +133,7 @@ begin
 end;
 
 procedure TVCLReport.InternalExecuteRemote(metafile:TRpMetafileReport);
-{$IFNDEF BUILDER4}
+{$IFDEF USEINDY}
 var
  allpages,collate:boolean;
  frompage,topage,copies:integer;
@@ -142,7 +142,7 @@ var
 begin
  inherited InternalExecuteRemote(metafile);
 
-{$IFNDEF BUILDER4}
+{$IFDEF USEINDY}
  if Preview then
  begin
   rpfmainmetaviewvcl.PreviewMetafile(metafile,nil,true);

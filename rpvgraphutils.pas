@@ -23,7 +23,14 @@ unit rpvgraphutils;
 interface
 
 uses Classes,SysUtils,Windows,Graphics,rpmunits,Printers,WinSpool,
- rpmdconsts,rptypes,Forms,ComCtrls,jpeg;
+ rpmdconsts,rptypes,Forms,
+{$IFNDEF DOTNETD}
+ jpeg,
+{$ENDIF}
+{$IFDEF DOTNETD}
+ System.Runtime.InteropServices,
+{$ENDIF}
+ ComCtrls;
 
 type
  TRpNodeInfo=class(TObject)
@@ -72,7 +79,9 @@ function PrinterSupportsCollation:Boolean;
 function PrinterSupportsCopies(copies:integer):Boolean;
 function GetCurrentPaper:TGDIPageSize;
 procedure SendControlCodeToPrinter (S: string);
+{$IFNDEF DOTNETD}
 procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
+{$ENDIF}
 function FindFormNameFromSize(width,height:integer):String;
 function PrinterMaxCopiesSupport:Integer;
 procedure FillTreeView (ATree:TTreeView;alist:TStringList);
@@ -81,10 +90,13 @@ function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
 
 implementation
 
+
+
 var
  FPrinters:TStringList;
 
-procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
+ {$IFNDEF DOTNETD}
+ procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
 var
  jpegimage:TJPegImage;
  bitmap:TBitmap;
@@ -106,8 +118,10 @@ begin
   bitmap.Free;
  end;
 end;
+{$ENDIF}
 
 // Bitmap print routine
+{$IFNDEF DOTNETD}
 procedure DrawBitmap (Destination:TCanvas;Bitmap:TBitmap;Rec,RecSrc:TRect);
 var
   Info:PBitmapInfo;
@@ -140,6 +154,26 @@ begin
   end;
  end;
 end;
+{$ENDIF}
+
+// Bitmap print routine
+{$IFDEF DOTNETD}
+procedure DrawBitmap (Destination:TCanvas;Bitmap:TBitmap;Rec,RecSrc:TRect);
+var
+ abitmap:TBitmap;
+ arec:TRect;
+begin
+ abitmap:=TBitmap.Create;
+ abitmap.Width:=RecSrc.Right-RecSrc.Left;
+ abitmap.Height:=RecSrc.Bottom-RecSrc.Top;
+ arec.Top:=0;
+ arec.Left:=0;
+ arec.Bottom:=abitmap.Height-1;
+ arec.Right:=abitmap.Width-1;
+ abitmap.Canvas.CopyRect(arec,bitmap.canvas,recsrc);
+ Destination.StretchDraw(rec,abitmap);
+end;
+{$ENDIF}
 
 
 procedure DrawBitmapMosaic(canvas:TCanvas;rec:Trect;bitmap:TBitmap);
@@ -596,9 +630,16 @@ end;
 // Gets current paper page size
 function GetCurrentPaper:TGDIPageSize;
 var
+{$IFNDEF DOTNETD}
   DeviceMode: THandle;
   PDevMode :  ^TDeviceMode;
   Device, Driver, Port: array[0..1023] of char;
+{$ENDIF}
+{$IFDEF DOTNETD}
+  DeviceMode: IntPtr;
+  PDevMode :  TDeviceMode;
+  Device, Driver, Port:String;
+{$ENDIF}
   printererror:boolean;
 begin
  if printer.printers.count<1 then
@@ -622,7 +663,12 @@ begin
   Result.Height:=0;
   exit;
  end;
+{$IFNDEF DOTNETD}
  PDevMode := GlobalLock(DeviceMode);
+{$ENDIF}
+{$IFDEF DOTNETD}
+ PDevMode := TDeviceMode(Marshal.PtrToStructure(GlobalLock(Integer(DeviceMode)),TypeOf(TDeviceMode)));
+{$ENDIF}
  // Warning the custom page size does not work in all drivers
  // especially in Windows NT drivers
  if PDevMode.dmPapersize=256 then
@@ -639,11 +685,60 @@ begin
   Result.Width:=0;
   Result.papername:=PDevmode.dmFormName;
  end;
+{$IFNDEF DOTNETD}
  GlobalUnLock(DeviceMode);
+{$ENDIF}
+{$IFDEF DOTNETD}
+ GlobalUnLock(Integer(DeviceMode));
+{$ENDIF}
  Printer.SetPrinter(Device, Driver, Port, DeviceMode);
 end;
 
 
+
+
+{$IFNDEF DOTNETD}
+procedure SendControlCodeToPrinter(S: string);
+var
+ Handle, hDeviceMode: THandle;
+ N: DWORD;
+ DocInfo1: TDocInfo1;
+ Device, Driver, Port: array[0..255] of char;
+ PrinterName: string;
+ buf:pchar;
+ lbuf:integer;
+begin
+ Printer.GetPrinter(Device, Driver, Port, hDeviceMode);
+ PrinterName := Format('%s', [Device]);
+ if not OpenPrinter(PChar(PrinterName), Handle, nil) then
+   RaiseLastOSError;
+ try
+  with DocInfo1 do
+  begin
+   pDocName := 'Control';
+   pOutputFile := nil;
+   pDataType := 'RAW';
+  end;
+  StartDocPrinter(Handle, 1, @DocInfo1);
+  try
+//   StartPagePrinter(Handle);
+   lbuf:=length(s);
+   buf:=Allocmem(lbuf+2);
+   try
+    copymemory(buf,Pchar(s),lbuf);
+    if not WritePrinter(Handle, buf, lbuf, N) then
+     RaiseLastOSError;
+   finally
+    freemem(buf);
+   end;
+//   EndPagePrinter(Handle);
+  finally
+   EndDocPrinter(Handle);
+  end;
+ finally
+  ClosePrinter(Handle);
+ end;
+end;
 
 
 function GetPrinters: TStrings;
@@ -703,7 +798,6 @@ begin
   Result := FPrinters;
 end;
 
-
 function FindFormNameFromSize(width,height:integer):String;
 var
  pforms,p:^Form_info_1;
@@ -746,302 +840,17 @@ begin
  end;
 end;
 
-{procedure FillFormsList(FormsList:TStringList);
-var
- pforms,p:^Form_info_1;
- buf:Pchar;
- fprinterhandle:THandle;
- needed,received:dword;
- forminfo:Form_info_1;
- i:integer;
- indexprint:integer;
- llistaf:TStringList;
- cadenaimp:string;
- formobject:TPrinterForm;
-begin
- FormsList.clear;
- for indexprint:=0 to printer.Printers.count-1 do
- begin
-  cadenaimp:=GetPrinters[indexprint];
-  buf:=Pchar(cadenaimp);
-  if Not OpenPrinter(buf,fprinterhandle,nil) then
-    Raise Exception.create(SRpError+Strpas(buf));
-  try
-   // Creeem un objecte de llista de forms
-   llistaf:=TStringList.Create;
-   FormsList.AddObject(cadenaimp,llistaf);
-   pforms:=nil;
-   if Not EnumForms(fprinterhandle,1,pforms,0,needed,received) then
-    if GetLastError<>122 then
-     RaiseLastOSError;
-   pforms:=Allocmem(needed);
-   try
-    if NOt EnumForms(fprinterhandle,1,pforms,needed,needed,received) then
-     RaiseLastOSError;
-    for i:=0 to received-1 do
-    begin
-     p:=Pointer(integer(pforms)+sizeof(Form_info_1)*i);
-     forminfo:=p^;
-     formobject:=TPrinterForm.Create;
-     formobject.Forminfo:=forminfo;
-     formobject.name:=StrPas(forminfo.pName);
-     llistaf.AddObject(formobject.name,formobject);
-    end;
-   finally
-    Freemem(pforms);
-   end;
-  finally
-   ClosePrinter(fprinterhandle);
-  end;
- end;
-end;
-}
-function PrinterSupportsCollation:Boolean;
-var
-  DeviceMode: THandle;
-  Device, Driver, Port: array[0..1023] of char;
-  printererror:boolean;
-  aresult:DWord;
-begin
- Result:=false;
- if printer.Printers.count<1 then
-  exit;
- // Printer selected not valid error
- printererror:=false;
- try
-  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
- except
-  printererror:=true;
- end;
- if printererror then
-  exit;
- try
-  aresult:=DeviceCapabilities(Device,Port,DC_COLLATE,nil,nil);
-  // Function fail =-1
-  if aresult>0 then
-    Result:=true;
- except
- end;
-end;
-
-// PrinterSupportsCopies function not working ok
-// In W2K for EpsonFX880 returns true
-{function PrinterSupportsCopies(copies:integer):Boolean;
-var
-  DeviceMode: THandle;
-  Device, Driver, Port: array[0..1023] of char;
-  printererror:boolean;
-  maxcopies:integer;
-  FPrinterHandle:THandle;
-  cadenaimp:String;
-  buf:PChar;
-  asize:integer;
-  pdevmode:^DEVMODE;
-begin
- Result:=False;
- printererror:=false;
- try
-  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
- except
-  printererror:=true;
- end;
- if printererror then
-  exit;
- if Printer.Printers.Count<1 then
-  exit;
- cadenaimp:=GetPrinters[Printer.PrinterIndex];
- buf:=Pchar(cadenaimp);
- if Not OpenPrinter(buf,fprinterhandle,nil) then
-  exit;
- try
-  pdevmode:=AllocMem(sizeof(devmode));
-  try
-   asize:=DocumentProperties(0,fprinterhandle,Device,pdevmode^,pdevmode^,0);
-   if asize>0 then
-   begin
-    FreeMem(pdevmode);
-    pdevmode:=AllocMem(asize);
-    if IDOK=DocumentProperties(0,fprinterhandle,Device,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
-    begin
-     // The printer supports copies?
-     if (pdevmode^.dmFields AND DM_COPIES)>0 then
-     begin
-      Result:=true;
-     end;
-    end;
-   end;
-  finally
-   FreeMem(pdevmode);
-  end;
- finally
-  ClosePrinter(fprinterhandle);
- end;
-end;
-}
-
-
-function PrinterMaxCopiesSupport:Integer;
-var
-  DeviceMode: THandle;
-  Device, Driver, Port: array[0..1023] of char;
-  printererror:boolean;
-  maxcopies:integer;
-begin
- Result:=1;
- if printer.Printers.count<1 then
-  exit;
- maxcopies:=1;
- // Printer selected not valid error
- printererror:=false;
- try
-  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
- except
-  printererror:=true;
- end;
- if printererror then
-  exit;
- try
-   maxcopies:=DeviceCapabilities(Device,Port,DC_COPIES,nil,nil);
-   if maxcopies<0 then
-    maxcopies:=1;
- except
- end;
- Result:=maxcopies;
-end;
-
-function PrinterSupportsCopies(copies:integer):Boolean;
-var
- maxcopies:integer;
-begin
- maxcopies:=PrinterMaxCopiesSupport;
- Result:=maxcopies>copies;
-end;
-
-procedure SetPrinterCopies(copies:integer);
-var
-  DeviceMode: THandle;
-  PDevMode :  ^TDeviceMode;
-  Device, Driver, Port: array[0..1023] of char;
-  printererror:boolean;
-begin
- if printer.Printers.count<1 then
-  exit;
- // Printer selected not valid error
- printererror:=false;
- try
-  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
- except
-  printererror:=true;
- end;
- if printererror then
-  exit;
- PDevMode := GlobalLock(DeviceMode);
- try
-  PDevMode.dmCopies:=copies;
- finally
-  GlobalUnLock(DeviceMode);
- end;
- Printer.SetPrinter(Device, Driver, Port, DeviceMode);
-end;
-
-function GetPrinterCopies:Integer;
-var
-  DeviceMode: THandle;
-  PDevMode :  ^TDeviceMode;
-  Device, Driver, Port: array[0..1023] of char;
-  printererror:boolean;
-begin
- Result:=1;
- if printer.Printers.count<1 then
-  exit;
- // Printer selected not valid error
- printererror:=false;
- try
-  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
- except
-  printererror:=true;
- end;
- if printererror then
-  exit;
- PDevMode := GlobalLock(DeviceMode);
- try
-  Result:=PDevMode.dmCopies;
- finally
-  GlobalUnLock(DeviceMode);
- end;
- Printer.SetPrinter(Device, Driver, Port, DeviceMode);
-end;
-
-procedure SetPrinterCollation(collation:boolean);
-var
-  DeviceMode: THandle;
-  PDevMode :  ^TDeviceMode;
-  Device, Driver, Port: array[0..1023] of char;
-  printererror:boolean;
-begin
- if printer.Printers.count<1 then
-  exit;
- // Printer selected not valid error
- printererror:=false;
- try
-  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
- except
-  printererror:=true;
- end;
- if printererror then
-  exit;
- PDevMode := GlobalLock(DeviceMode);
- try
-  if collation then
-   PDevMode.dmCollate:=DMCOLLATE_TRUE
-  else
-   PDevMode.dmCollate:=DMCOLLATE_FALSE;
- finally
-  GlobalUnLock(DeviceMode);
- end;
- Printer.SetPrinter(Device, Driver, Port, DeviceMode);
-end;
-
-function GetPrinterCollation:Boolean;
-var
-  DeviceMode: THandle;
-  PDevMode :  ^TDeviceMode;
-  Device, Driver, Port: array[0..1023] of char;
-  printererror:boolean;
-begin
- Result:=false;
- if printer.Printers.count<1 then
-  exit;
- // Printer selected not valid error
- printererror:=false;
- try
-  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
- except
-  printererror:=true;
- end;
- if printererror then
-  exit;
- PDevMode := GlobalLock(DeviceMode);
- try
-  Result:=PDevMode.dmCollate=DMCOLLATE_TRUE;
- finally
-  GlobalUnLock(DeviceMode);
- end;
- Printer.SetPrinter(Device, Driver, Port, DeviceMode);
-end;
-
-
 procedure SetCurrentPaper(apapersize:TGDIPageSize);
 var
+  Device, Driver, Port: array[0..1023] of char;
   DeviceMode: THandle;
-  PDevMode :  ^TDeviceMode;
+  PDevmode:^TDevicemode;
+  pforminfo:^Form_info_1;
   printername,apapername:string;
   FPrinterHandle:THandle;
-  pforminfo:^Form_info_1;
   foundpaper:boolean;
   needed:DWord;
   printererror:boolean;
-  Device, Driver, Port: array[0..1023] of char;
   laste:integer;
 begin
  if printer.Printers.count<1 then
@@ -1151,72 +960,31 @@ begin
    PDevMode.dmPaperSize :=apapersize.PageIndex;
    PDevMode.dmPaperlength := apapersize.Height;
    PDevMode.dmPaperwidth  := apapersize.Width;
-//   PDevMode.dmPaperlength := apapersize.Width;
-//   PDevMode.dmPaperwidth  := apapersize.Height;
   end;
-//  PDevMode.dmPrintQuality:=SmallInt(DMRES_DRAFT);
-//  PDevMode.dmFields:=PDevMode.dmFields or dm_PrintQuality;
-{  if (PDevMode.dmFields AND dm_PrintQuality)>0 then
-   ShowMessage('CorrectPrint');
-  PDevMode.dmFields:=PDevMode.dmFields AND (Not dm_YResolution);
-  if (PDevMode.dmFields AND dm_YResolution)>0 then
-   ShowMessage('ErrorRes');
-} finally
+ finally
   GlobalUnLock(DeviceMode);
  end;
  Printer.SetPrinter(Device, Driver, Port, DeviceMode);
 end;
 
 
-{function FindIndexPaperName(device,name:string):integer;
-var
- index:integer;
- llista:TStringList;
-begin
- Result:=0;
- index:=formslist.indexof(device);
- if index<0 then
-  exit;
- llista:=TStringList(formslist.objects[index]);
- index:=llista.indexof(name);
- if index<0 then
-  exit;
- result:=index+1;
-end;
-}
-
-
-{procedure FreeFormsList;
-var
- i:integer;
- j:integer;
- llistaf:TStringlist;
-begin
- for i:=0 to FormsList.count-1 do
- begin
-  llistaf:=TStringList(FormsList.objects[i]);
-  for j:=0 to llistaf.count-1 do
-  begin
-   llistaf.objects[j].free;
-  end;
-  llistaf.free;
- end;
- FormsList.clear;
-end;
-}
+{$ENDIF}
+{$IFDEF DOTNETD}
 procedure SendControlCodeToPrinter(S: string);
 var
- Handle, hDeviceMode: THandle;
+ hDeviceMode: IntPtr;
+ Handle:THandle;
  N: DWORD;
  DocInfo1: TDocInfo1;
- Device, Driver, Port: array[0..255] of char;
+ pdocinfo: IntPtr;
+ Device, Driver, Port: String;
  PrinterName: string;
- buf:pchar;
  lbuf:integer;
+ buf:IntPtr;
 begin
  Printer.GetPrinter(Device, Driver, Port, hDeviceMode);
  PrinterName := Format('%s', [Device]);
- if not OpenPrinter(PChar(PrinterName), Handle, nil) then
+ if not OpenPrinter(PrinterName, Handle, nil) then
    RaiseLastOSError;
  try
   with DocInfo1 do
@@ -1225,18 +993,15 @@ begin
    pOutputFile := nil;
    pDataType := 'RAW';
   end;
-  StartDocPrinter(Handle, 1, @DocInfo1);
+  pdocinfo:=Marshal.AllocHGlobal(sizeof(TDocInfo1));
+  Marshal.StructureToPtr(DocInfo1,pdocinfo,true);
+  StartDocPrinter(Handle, 1, pdocinfo);
   try
 //   StartPagePrinter(Handle);
+   buf:=Marshal.StringToHGlobalAnsi(s);
    lbuf:=length(s);
-   buf:=Allocmem(lbuf+2);
-   try
-    copymemory(buf,Pchar(s),lbuf);
-    if not WritePrinter(Handle, buf, lbuf, N) then
-     RaiseLastOSError;
-   finally
-    freemem(buf);
-   end;
+   if not WritePrinter(Handle, buf, lbuf, N) then
+    RaiseLastOSError;
 //   EndPagePrinter(Handle);
   finally
    EndDocPrinter(Handle);
@@ -1245,6 +1010,500 @@ begin
   ClosePrinter(Handle);
  end;
 end;
+
+
+function GetPrinters: TStrings;
+var
+ i:integer;
+begin
+ if FPrinters = nil then
+ begin
+  FPrinters.Assign(Printer.Printers);
+ end;
+ Result:=FPrinters;
+end;
+
+
+procedure SetCurrentPaper(apapersize:TGDIPageSize);
+var
+  Device, Driver, Port: String;
+  DeviceMode: IntPtr;
+  PDevmode:TDevicemode;
+  pforms:IntPtr;
+  pforminfo:Form_info_1;
+  printername,apapername:string;
+  FPrinterHandle:THandle;
+  foundpaper:boolean;
+  needed:DWord;
+  printererror:boolean;
+  laste:integer;
+begin
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+ PDevMode := TDeviceMode(Marshal.PtrToStructure(GlobalLock(Integer(DeviceMode)),TypeOf(TDeviceMode)));
+ try
+  // Custom page size, warning not all drivers supports it
+  // especially Windows NT drivers
+  // In Windows NT only Administrator has rights to add a
+  // custom paper once added it's stored until the print driver
+  // is removed
+  if apapersize.PageIndex=0 then
+  begin
+   if Not IsWIndowsNT then
+   begin
+    // If is not Windows NT select custom paper
+    PDevMode.dmPaperSize := 256;
+    PDevMode.dmPaperlength := apapersize.Height;
+    PDevMode.dmPaperwidth  := apapersize.Width;
+   end
+   else
+   begin
+    foundpaper:=false;
+    // In Windows NT we must search or create a form
+    apapername:=FindFormNameFromSize(apapersize.Width,apapersize.Height);
+    if Length(apapername)>0 then
+     foundpaper:=true;
+    if not foundpaper then
+    begin
+     // Busquem un form que s'adapti
+     apapername:='User ('+
+     IntToStr(apapersize.Width)+'x'+
+     IntToStr(apapersize.Height)+')';
+    end;
+    PrinterName := Format('%s', [Device]);
+    if not OpenPrinter(PrinterName, FPrinterHandle, nil) then
+     RaiseLastOSError;
+    try
+     if Not GetForm(FPrinterhandle,apapername,1,pforminfo,sizeof(Form_info_1),needed) then
+     begin
+      laste:=GetLasterror;
+      if ((laste<>122) AND (Laste<>123) AND (laste<>1902)) then
+       RaiseLastOSError
+      else
+      begin
+       if laste<>1902 then
+       begin
+        if needed>0 then
+        begin
+         pforminfo:=Form_info_1(Marshal.PtrToStructure(Marshal.AllocHGlobal(needed),TypeOf(form_info_1)));
+         if Not GetForm(FPrinterhandle,apapername,1,pforminfo,needed,needed) then
+          RaiseLastOSError;
+        if pforminfo.pname<>nil then
+         foundpaper:=true;
+        // Si l'ha trobat trobem el seu index
+        end;
+       end;
+      end;
+     end;
+     if Not foundpaper then
+     begin
+      pforminfo.pname:=apapername;
+      pforminfo.Flags:=FORM_USER;
+      pforminfo.Size.cx:=apapersize.Width*100;
+      pforminfo.size.cy:=apapersize.Height*100;
+      pforminfo.ImageableArea.Top:=0;
+      pforminfo.ImageableArea.left:=0;
+      pforminfo.ImageableArea.Right:=pforminfo.Size.cx;
+      pforminfo.ImageableArea.Bottom:=pforminfo.size.cy;
+      try
+       if not AddForm(fprinterhandle,1,pforminfo) then
+        RaiseLastOSError;
+      except
+       on E:Exception do
+       begin
+        Raise Exception.Create(SRpErrorCreatingPaper+apapername+#10+E.Message);
+       end;
+      end;
+     end;
+     // Select by name
+     PDevMode.dmFormName:=apapername;
+     PDevMode.dmFields:=PDevMode.dmFields or dm_formname;
+     PDevMode.dmFields:=PDevMode.dmFields AND (NOT dm_papersize);
+    finally
+     ClosePrinter(FPrinterhandle);
+    end;
+   end;
+  end
+  else
+  begin
+   PDevMode.dmPaperSize :=apapersize.PageIndex;
+   PDevMode.dmPaperlength := apapersize.Height;
+   PDevMode.dmPaperwidth  := apapersize.Width;
+  end;
+ finally
+  GlobalUnLock(Integer(DeviceMode));
+ end;
+ Printer.SetPrinter(Device, Driver, Port, DeviceMode);
+end;
+
+
+function FindFormNameFromSize(width,height:integer):String;
+var
+// pforms,p:^Form_info_1;
+ pforms,p:IntPtr;
+ needed,received:dword;
+ fprinterhandle:THandle;
+ aprintername:String;
+ i:integer;
+ cadenaimp:String;
+ forminfo:Form_info_1;
+begin
+ aprintername:=GetPrinters[Printer.PrinterIndex];
+ Result:='';
+ if Not OpenPrinter(aprintername,fprinterhandle,nil) then
+   Raise Exception.create(SRpError+aprintername);
+ try
+  pforms:=nil;
+  if Not EnumForms(fprinterhandle,1,pforms,0,needed,received) then
+    if GetLastError<>122 then
+     RaiseLastOSError;
+  pforms:=Marshal.AllocHGlobal(needed);
+  try
+   if NOt EnumForms(fprinterhandle,1,pforms,needed,needed,received) then
+    RaiseLastOSError;
+   for i:=0 to received-1 do
+   begin
+    p:=IntPtr(Integer(pforms)+sizeof(Form_info_1)*i);
+//    forminfo:=p^;
+    forminfo:=Form_info_1(Marshal.PtrToStructure(p,TypeOf(form_info_1)));
+    if forminfo.Size.cx=width*100 then
+     if forminfo.Size.cy=height*100 then
+     begin
+      Result:=forminfo.pName;
+     end;
+   end;
+  finally
+   Marshal.FreeHGlobal(pforms);
+  end;
+ finally
+  ClosePrinter(fprinterhandle);
+ end;
+end;
+
+{$ENDIF}
+
+
+
+{procedure FillFormsList(FormsList:TStringList);
+var
+ pforms,p:^Form_info_1;
+ buf:Pchar;
+ fprinterhandle:THandle;
+ needed,received:dword;
+ forminfo:Form_info_1;
+ i:integer;
+ indexprint:integer;
+ llistaf:TStringList;
+ cadenaimp:string;
+ formobject:TPrinterForm;
+begin
+ FormsList.clear;
+ for indexprint:=0 to printer.Printers.count-1 do
+ begin
+  cadenaimp:=GetPrinters[indexprint];
+  buf:=Pchar(cadenaimp);
+  if Not OpenPrinter(buf,fprinterhandle,nil) then
+    Raise Exception.create(SRpError+Strpas(buf));
+  try
+   // Creeem un objecte de llista de forms
+   llistaf:=TStringList.Create;
+   FormsList.AddObject(cadenaimp,llistaf);
+   pforms:=nil;
+   if Not EnumForms(fprinterhandle,1,pforms,0,needed,received) then
+    if GetLastError<>122 then
+     RaiseLastOSError;
+   pforms:=Allocmem(needed);
+   try
+    if NOt EnumForms(fprinterhandle,1,pforms,needed,needed,received) then
+     RaiseLastOSError;
+    for i:=0 to received-1 do
+    begin
+     p:=Pointer(integer(pforms)+sizeof(Form_info_1)*i);
+     forminfo:=p^;
+     formobject:=TPrinterForm.Create;
+     formobject.Forminfo:=forminfo;
+     formobject.name:=StrPas(forminfo.pName);
+     llistaf.AddObject(formobject.name,formobject);
+    end;
+   finally
+    Freemem(pforms);
+   end;
+  finally
+   ClosePrinter(fprinterhandle);
+  end;
+ end;
+end;
+}
+
+function PrinterSupportsCollation:Boolean;
+var
+{$IFDEF DOTNETD}
+  Device, Driver, Port: String;
+  DeviceMode: IntPtr;
+{$ENDIF}
+{$IFNDEF DOTNETD}
+  Device, Driver, Port: array[0..1023] of char;
+  DeviceMode: THandle;
+{$ENDIF}
+  printererror:boolean;
+  aresult:DWord;
+begin
+ Result:=false;
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+ try
+  aresult:=DeviceCapabilities(Device,Port,DC_COLLATE,nil,nil);
+  // Function fail =-1
+  if aresult>0 then
+    Result:=true;
+ except
+ end;
+end;
+
+
+function PrinterMaxCopiesSupport:Integer;
+var
+{$IFDEF DOTNETD}
+  Device, Driver, Port: String;
+  DeviceMode: IntPtr;
+{$ENDIF}
+{$IFNDEF DOTNETD}
+  Device, Driver, Port: array[0..1023] of char;
+  DeviceMode: THandle;
+{$ENDIF}
+  printererror:boolean;
+  maxcopies:integer;
+begin
+ Result:=1;
+ if printer.Printers.count<1 then
+  exit;
+ maxcopies:=1;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+ try
+   maxcopies:=DeviceCapabilities(Device,Port,DC_COPIES,nil,nil);
+   if maxcopies<0 then
+    maxcopies:=1;
+ except
+ end;
+ Result:=maxcopies;
+end;
+
+function PrinterSupportsCopies(copies:integer):Boolean;
+var
+ maxcopies:integer;
+begin
+ maxcopies:=PrinterMaxCopiesSupport;
+ Result:=maxcopies>copies;
+end;
+
+procedure SetPrinterCopies(copies:integer);
+var
+{$IFDEF DOTNETD}
+  DeviceMode: IntPtr;
+  PDevMode :  TDeviceMode;
+  Device, Driver, Port: String;
+{$ENDIF}
+{$IFNDEF DOTNETD}
+  DeviceMode: THandle;
+  PDevMode :  ^TDeviceMode;
+  Device, Driver, Port: array[0..1023] of char;
+{$ENDIF}
+  printererror:boolean;
+begin
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+{$IFDEF DOTNETD}
+ PDevMode := TDeviceMode(Marshal.PtrToStructure(GlobalLock(Integer(DeviceMode)),TypeOf(TDeviceMode)));
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ PDevMode := GlobalLock(DeviceMode);
+{$ENDIF}
+ try
+  PDevMode.dmCopies:=copies;
+ finally
+{$IFNDEF DOTNETD}
+  GlobalUnLock(DeviceMode);
+{$ENDIF}
+{$IFDEF DOTNETD}
+  GlobalUnLock(Integer(DeviceMode));
+{$ENDIF}
+ end;
+ Printer.SetPrinter(Device, Driver, Port, DeviceMode);
+end;
+
+function GetPrinterCopies:Integer;
+var
+{$IFDEF DOTNETD}
+  Device, Driver, Port: String;
+  DeviceMode: IntPtr;
+  PDevmode:TDevicemode;
+{$ENDIF}
+{$IFNDEF DOTNETD}
+  Device, Driver, Port: array[0..1023] of char;
+  DeviceMode: THandle;
+  PDevmode:^TDevicemode;
+{$ENDIF}
+  printererror:boolean;
+begin
+ Result:=1;
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+{$IFDEF DOTNETD}
+ PDevMode := TDeviceMode(Marshal.PtrToStructure(GlobalLock(Integer(DeviceMode)),TypeOf(TDeviceMode)));
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ PDevMode := GlobalLock(DeviceMode);
+{$ENDIF}
+ try
+  Result:=PDevMode.dmCopies;
+ finally
+{$IFNDEF DOTNETD}
+  GlobalUnLock(DeviceMode);
+{$ENDIF}
+{$IFDEF DOTNETD}
+  GlobalUnLock(Integer(DeviceMode));
+{$ENDIF}
+ end;
+ Printer.SetPrinter(Device, Driver, Port, DeviceMode);
+end;
+
+procedure SetPrinterCollation(collation:boolean);
+var
+{$IFDEF DOTNETD}
+  Device, Driver, Port: String;
+  DeviceMode: IntPtr;
+  PDevmode:TDevicemode;
+{$ENDIF}
+{$IFNDEF DOTNETD}
+  Device, Driver, Port: array[0..1023] of char;
+  DeviceMode: THandle;
+  PDevmode:^TDevicemode;
+{$ENDIF}
+  printererror:boolean;
+begin
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+{$IFDEF DOTNETD}
+ PDevMode := TDeviceMode(Marshal.PtrToStructure(GlobalLock(Integer(DeviceMode)),TypeOf(TDeviceMode)));
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ PDevMode := GlobalLock(DeviceMode);
+{$ENDIF}
+ try
+  if collation then
+   PDevMode.dmCollate:=DMCOLLATE_TRUE
+  else
+   PDevMode.dmCollate:=DMCOLLATE_FALSE;
+ finally
+{$IFNDEF DOTNETD}
+  GlobalUnLock(DeviceMode);
+{$ENDIF}
+{$IFDEF DOTNETD}
+  GlobalUnLock(Integer(DeviceMode));
+{$ENDIF}
+ end;
+ Printer.SetPrinter(Device, Driver, Port, DeviceMode);
+end;
+
+function GetPrinterCollation:Boolean;
+var
+{$IFDEF DOTNETD}
+  Device, Driver, Port: String;
+  DeviceMode: IntPtr;
+  PDevmode:TDevicemode;
+{$ENDIF}
+{$IFNDEF DOTNETD}
+  Device, Driver, Port: array[0..1023] of char;
+  DeviceMode: THandle;
+  PDevmode:^TDevicemode;
+{$ENDIF}
+  printererror:boolean;
+begin
+ Result:=false;
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if printererror then
+  exit;
+{$IFDEF DOTNETD}
+ PDevMode := TDeviceMode(Marshal.PtrToStructure(GlobalLock(Integer(DeviceMode)),TypeOf(TDeviceMode)));
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ PDevMode := GlobalLock(DeviceMode);
+{$ENDIF}
+ try
+  Result:=PDevMode.dmCollate=DMCOLLATE_TRUE;
+ finally
+{$IFNDEF DOTNETD}
+  GlobalUnLock(DeviceMode);
+{$ENDIF}
+{$IFDEF DOTNETD}
+  GlobalUnLock(Integer(DeviceMode));
+{$ENDIF}
+ end;
+ Printer.SetPrinter(Device, Driver, Port, DeviceMode);
+end;
+
+
 
 function SearchnodeInt(ATree:TTreeView;astring:String;anode:TTreeNode):TTreeNode;
 var

@@ -40,6 +40,12 @@ uses
 {$IFDEF USEBCD}
  FMTBcd,
 {$ENDIF}
+{$IFDEF DOTNETD}
+ System.IO,
+{$ENDIF}
+{$IFDEF BUILDER4}
+ Db,
+{$ENDIF}
  rpmdconsts;
 
 
@@ -166,7 +172,7 @@ type
    property PropertyName:string read FPropertyName;
   end;
 
-  TRpWString = record
+  TRpWString = class(TObject)
     WString: WideString;
   end;
 
@@ -188,6 +194,8 @@ type
   end;
 
 
+
+function VarIsString(avar:Variant):Boolean;
 function IsRedColor(Color:Integer):Boolean;
 // Compares 2 streams and returns true if they are equal
 function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
@@ -226,10 +234,16 @@ procedure WriteStringToDevice(S,Device:String);
 function GetLastname(astring:string):string;
 function GetPathName(astring:string):string;
 function GetFirstName(astring:string):string;
-function ReadFromStdInputStream:TMemoryStream;
+{$IFNDEF DOTNETD}
 procedure WriteStreamToStdOutput(astream:TStream);
 procedure WriteStreamToHandle(astream:TStream;handle:Integer);
+function ReadFromStdInputStream:TMemoryStream;
 function ReadStreamFromHandle(handle:THandle):TMemoryStream;
+{$ENDIF}
+{$IFDEF DOTNETD}
+function CompareMem(const Mem1: array of Byte; const Mem2: array of Byte;
+    Count: Integer): Boolean;
+{$ENDIF}
 function PrinterRawOpEnabled(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):Boolean;
 
 {$IFDEF LINUX}
@@ -263,6 +277,10 @@ var
 const
   DefaultTrueBoolStr = 'True';   // DO NOT LOCALIZE
   DefaultFalseBoolStr = 'False'; // DO NOT LOCALIZE
+{$ENDIF}
+
+{$IFDEF BUILDER4}
+function VarTypeToDataType(VarType: Integer): TFieldType;
 {$ENDIF}
 
 {$IFDEF MSWINDOWS}
@@ -402,6 +420,13 @@ begin
 end;
 {$ENDIF}
 
+function VarIsString(avar:Variant):Boolean;
+begin
+ Result:=false;
+ if ((VarType(avar)=varstring) or (VarType(avar)=varOleStr)) then
+  Result:=true;
+end;
+
 
 constructor TRpReportException.Create(AMessage:String;compo:TComponent;
  apropname:string);
@@ -415,7 +440,7 @@ function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
 const
  SIZE_BUF=4096;
 var
- buf1,buf2:array [0..SIZE_BUF] of char;
+ buf1,buf2:array [0..SIZE_BUF] of Byte;
  readcount:integer;
 begin
  Result:=True;
@@ -427,42 +452,40 @@ begin
  // If the same size then compare memory
  Stream1.Seek(0,soFromBeginning);
  Stream2.Seek(0,soFromBeginning);
- readcount:=Stream1.Read(buf1,SIZE_BUF);
- Stream2.Read(buf2,SIZE_BUF);
+ readcount:=Stream1.Read(buf1[0],SIZE_BUF);
+ Stream2.Read(buf2[0],SIZE_BUF);
  while (readcount<>0) do
  begin
+{$IFDEF DOTNETD}
+  if Not CompareMem(buf1,buf2,readcount) then
+{$ENDIF}
+{$IFNDEF DOTNETD}
   if Not CompareMem(@buf1,@buf2,readcount) then
+{$ENDIF}
   begin
    result:=False;
    break;
   end;
-  readcount:=Stream1.Read(buf1,SIZE_BUF);
-  Stream2.Read(buf2,SIZE_BUF);
+  readcount:=Stream1.Read(buf1[0],SIZE_BUF);
+  Stream2.Read(buf2[0],SIZE_BUF);
  end;
 end;
 
-{$IFDEF LINUX}
 function CopyFileTo(const Source, Destination: string): Boolean;
 var
-  SourceStream: TFileStream;
+ Stream1:TMemoryStream;
 begin
-  result := false;
-  if not FileExists(Destination) then begin
-    SourceStream := TFileStream.Create(Source, fmOpenRead); try
-      with TFileStream.Create(Destination, fmCreate) do try
-        CopyFrom(SourceStream, 0);
-      finally free; end;
-    finally SourceStream.free; end;
-    result := true;
-  end;
+ Stream1:=TMemoryStream.Create;
+ try
+  Stream1.LoadFromFile(Source);
+  Stream1.Seek(0,soFromBeginning);
+  Stream1.SaveToFile(Destination);
+ finally
+  Stream1.free;
+ end;
+ Result:=True;
+//  Result := CopyFile(PChar(Source), PChar(Destination), true);
 end;
-{$ENDIF}
-{$IFDEF MSWINDOWS}
-function CopyFileTo(const Source, Destination: string): Boolean;
-begin
-  Result := CopyFile(PChar(Source), PChar(Destination), true);
-end;
-{$ENDIF}
 
 
 procedure Generatenewname(Component:TComponent);
@@ -881,19 +904,17 @@ end;
 
 constructor TRpWideStrings.Create;
 begin
+  inherited Create;
   FWideList := TList.Create;
 end;
 
 destructor TRpWideStrings.Destroy;
 var
   i: Integer;
-  PWStr: ^TRpWString;
 begin
   for i := 0 to FWideList.Count-1 do
   begin
-    PWStr := FWideList.Items[i];
-    if PWStr <> nil then
-      Dispose(PWStr);
+    TObject(FWideList.Items[i]).free;
   end;
   FWideList.Free;
   inherited Destroy;
@@ -901,14 +922,13 @@ end;
 
 function TRpWideStrings.GetString(Index: Integer): WideString;
 var
-  PWStr: ^TRpWString;
+  PWStr: TRpWString;
 begin
   Result := '';
   if ( (Index >= 0) and (Index < FWideList.Count) ) then
   begin
-    PWStr := FWideList.Items[Index];
-    if PWStr <> nil then
-      Result := PWStr^.WString;
+    PWStr := TRpWString(FWideList.Items[Index]);
+    Result := PWStr.WString;
   end;
 end;
 
@@ -919,10 +939,10 @@ end;
 
 function TRpWideStrings.Add(const S: WideString): Integer;
 var
-  PWStr: ^TRpWString;
+  PWStr:TRpWString;
 begin
-  New(PWStr);
-  PWStr^.WString := S;
+  PWStr:=TRpWString.Create;
+  PWStr.WString := S;
   Result := FWideList.Add(PWStr);
 end;
 
@@ -980,26 +1000,25 @@ end;
 procedure TRpWideStrings.Clear;
 var
   i: Integer;
-  PWStr: ^TRpWString;
+  PWStr: TRpWString;
 begin
   for i:=0 to FWideList.Count-1 do
   begin
-    PWStr := FWideList.Items[i];
-    if PWStr <> nil then
-      Dispose(PWStr);
+    PWStr := TRpWString(FWideList.Items[i]);
+    PWStr.free;
   end;
   FWideList.Clear;
 end;
 
 procedure TRpWideStrings.Insert(Index: Integer; const S: WideString);
 var
-  PWStr: ^TRpWString;
+  PWStr: TRpWString;
 begin
   if((Index < 0) or (Index > FWideList.Count)) then
     raise Exception.Create(SRpIndexOutOfBounds);
   if Index < FWideList.Count then
   begin
-    PWStr := FWideList.Items[Index];
+    PWStr := TRpWString(FWideList.Items[Index]);
     if PWStr <> nil then
       PWStr.WString := S;
   end
@@ -1023,6 +1042,35 @@ end;
 
 
 procedure WriteWideString(Writer:TWriter;Value:WideString);
+{$IFDEF DOTNETD}
+var
+  L: Integer;
+  aval:TValueType;
+  Utf8Bytes: TBytes;
+
+  function StringToWideBytes(const Value: string): TBytes;
+  var
+    I: Integer;
+  begin
+    SetLength(Result, Length(Value) * 2);
+    for I := 0 to Length(Value) - 1 do
+    begin
+      Result[I * 2] := Byte(Value[I]);
+      Result[I * 2 + 1] := Byte((Word(Value[I]) shr 8) and $FF);
+    end;
+  end;
+
+
+begin
+ aval:=vaWString;
+ Writer.Write(Byte(aval), SizeOf(aval));
+ Utf8Bytes := StringToWideBytes(Value);
+ L := Length(Utf8Bytes);
+ Writer.Write(L, SizeOf(Integer));
+ Writer.Write(Utf8Bytes, L);
+end;
+{$ENDIF}
+{$IFNDEF DOTNETD}
 var
   L: Integer;
   aval:TValueType;
@@ -1033,6 +1081,8 @@ begin
  Writer.Write(L, SizeOf(Integer));
  Writer.Write(Pointer(Value)^, L * 2);
 end;
+{$ENDIF}
+
 
 
 {$IFNDEF USEVARIANTS}
@@ -1130,6 +1180,12 @@ end;
 {$ENDIF}
 
 function ReadWideString(Reader:TReader):WideString;
+{$IFDEF DOTNETD}
+begin
+ Result:=Reader.ReadWideString;
+end;
+{$ENDIF}
+{$IFNDEF DOTNETD}
 var
   L: Integer;
   aResult:String;
@@ -1178,7 +1234,7 @@ begin
    Reader.Read(Pointer(Result)^, L * 2);
   end;
 end;
-
+{$ENDIF}
 
 
 function WideStringToDOS(astring:WideString):WideString;
@@ -1220,7 +1276,7 @@ var s:String;
     centavos:Integer;
     i:Integer;
     Numero:Int64;
-    fseparador:char;
+    fseparador:string;
 
      Function longitud(numero:LongInt):integer;
      {Esta funciÓn nos da la longitud del número que vamos a
@@ -1467,7 +1523,7 @@ var s:String;
     centavos:Integer;
     i:Integer;
     Numero:Int64;
-    fseparador:char;
+    fseparador:string;
 
      Function longitud(numero:LongInt):integer;
      {Esta funciÓn nos da la longitud del número que vamos a
@@ -2143,6 +2199,7 @@ end;
 {$ENDIF}
 
 
+{$IFNDEF DOTNETD}
 function ReadStreamFromHandle(handle:THandle):TMemoryStream;
 var
  memstream:TMemoryStream;
@@ -2202,7 +2259,9 @@ begin
   raise;
  end;
 end;
+{$ENDIF}
 
+{$IFNDEF DOTNETD}
 function ReadFromStdInputStream:TMemoryStream;
 {$IFDEF MSWINDOWS}
 var
@@ -2284,6 +2343,7 @@ begin
  WriteStreamToHandle(astream,handle);
 end;
 
+{$ENDIF}
 
 {$IFDEF LINUX}
 function RpTempFileName:String;
@@ -2295,8 +2355,17 @@ begin
 end;
 {$ENDIF}
 
-{$IFDEF MSWINDOWS}
+{$IFNDEF DOTNETD}
 function RpTempFileName:String;
+{$IFDEF LINUX}
+var
+ abuffer:array [0..L_tmpnam] of char;
+begin
+ tmpnam(abuffer);
+ Result:=StrPas(abuffer);
+end;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
 var
  apath:Pchar;
  afilename:array [0..MAX_PATH] of char;
@@ -2315,6 +2384,13 @@ begin
   FreeMem(apath);
  end;
  Result:=StrPas(afilename);
+end;
+{$ENDIF}
+{$ENDIF} // Endif dotnetd
+{$IFDEF DOTNETD}
+function RpTempFileName:String;
+begin
+ System.IO.Path.GetTempFileName;
 end;
 {$ENDIF}
 
@@ -2352,6 +2428,36 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF BUILDER4}
+function VarTypeToDataType(VarType: Integer): TFieldType;
+begin
+  case VarType of
+    varSmallint, varByte: Result := ftSmallInt;
+    varInteger: Result := ftInteger;
+    varCurrency: Result := ftBCD;
+    varSingle, varDouble: Result := ftFloat;
+    varDate: Result := ftDateTime;
+    varBoolean: Result := ftBoolean;
+    varString, varOleStr: Result := ftString;
+  else
+    Result := ftUnknown;
+  end;
+end;
+{$ENDIF}
+
+{$IFDEF DOTNETD}
+function CompareMem(const Mem1: array of Byte; const Mem2: array of Byte;
+  Count: Integer): Boolean;
+var
+  I: Integer;
+begin
+  Result := False;
+  for I := 0 to Count - 1 do
+    if Mem1[I] <> Mem2[I] then
+      Exit;
+  Result := True;
+end;
+{$ENDIF}
 
 
 initialization
@@ -2368,7 +2474,6 @@ begin
  printerconfigfile.free;
  printerconfigfile:=nil;
 end;
-
 
 
 end.

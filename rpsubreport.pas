@@ -574,7 +574,7 @@ begin
   eval.Evaluate;
   if sec.ChangeBool then
   begin
-   if eval.EvalResult then
+   if Boolean(eval.EvalResult) then
    begin
     Result:=acount;
     FillGroupValues;

@@ -501,7 +501,7 @@ begin
         index:=LUsers.IndexOfName(username);
         if index>=0 then
         begin
-         If LUsers.Values[LUsers.Strings[index]]=password then
+         If LUsers.Values[LUsers.Names[index]]=password then
          begin
           correct:=true;
          end;
