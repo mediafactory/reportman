@@ -18,14 +18,21 @@ interface
 
 {$I rpconf.inc}
 
-uses Classes,SysUtils,Windows,rpinfoprovid,
+uses Classes,SysUtils,
+{$IFDEF USEVARIANTS}
+    Types,
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+    Windows,
+{$ENDIF}
+    rpinfoprovid,SyncObjs,
     rpmdconsts,rpfreetype2;
 
 
 type
  TRpLogFont=class(TObject)
   fixedpitch:boolean;
-  postcripname:string;
+  postcriptname:string;
   familyname:String;
   stylename:string;
   italic:Boolean;
@@ -41,6 +48,7 @@ type
   ItalicAngle:double;
   BBox:TRect;
   StemV:double;
+  type1:boolean;
  end;
 
  TRpFTInfoProvider=class(TInterfacedObject,IRpInfoProvider)
@@ -48,10 +56,8 @@ type
   defaultfont:TRpLogFont;
   currentstyle:integer;
   alibrary:FT_Library;
-  fontlist:TStringList;
-  fontpaths:TStringList;
-  fontfiles:TStringList;
   currentfont:TRpLogFont;
+  crit:TCriticalSection;
   procedure InitLibrary;
   procedure SelectFont(pdffont:TRpPDFFOnt);
   procedure FillFontInfo(pdffont:TRpPDFFont;info:TRpTTFontInfo);
@@ -62,12 +68,82 @@ type
 
 implementation
 
+var
+  fontlist:TStringList;
+  fontpaths:TStringList;
+  fontfiles:TStringList;
+
+
 const
  TTF_PRECISION=1000;
 
-procedure GetFontsDirectories(alist:TStringList);
+
+// add self directory and subdirectories to the lis
+procedure Parsedir(alist:TStringList;adir:string);
+var
+ f:TSearchRec;
+ retvalue:integer;
 begin
- alist.Add('c:\winnt\fonts\*.ttf');
+ alist.Add(adir);
+ retvalue:=SysUtils.FindFirst(adir+C_DIRSEPARATOR+'*',faDirectory,F);
+ if 0=retvalue then
+ begin
+  try
+   while retvalue=0 do
+   begin
+    if ((F.Name<>'.') AND (F.Name<>'..')) then
+    begin
+     if (f.Attr AND faDirectory)<>0 then
+      Parsedir(alist,adir+C_DIRSEPARATOR+F.Name);
+    end;
+    retvalue:=SysUtils.FindNext(F);
+   end;
+  finally
+   SysUtils.FindClose(F);
+  end;
+ end;
+end;
+
+// Parses /etc/fonts/fonts.conf for font directories
+// also includes subdirectories
+procedure GetFontsDirectories(alist:TStringList);
+var
+ afile:TStringList;
+ astring:String;
+ diderror:Boolean;
+ apath:String;
+ index:integer;
+begin
+ diderror:=false;
+ alist.clear;
+ afile:=TStringList.create;
+ try
+  afile.LoadFromFile('/etc/fonts/fonts.conf');
+ except
+  afile.free;
+  diderror:=true;
+ end;
+ if diderror then
+ begin
+  // Default font directories
+  ParseDir(alist,'/usr/X11R6/lib/X11/fonts');
+  ParseDir(alist,'~/fonts');
+  exit;
+ end;
+ astring:=afile.Text;
+ index:=Pos('<dir>',astring);
+ while index>0 do
+ begin
+  astring:=Copy(astring,index+5,Length(astring));
+  index:=Pos('</dir>',astring);
+  if index>0 then
+  begin
+   apath:=Copy(astring,1,index-1);
+   ParseDir(alist,apath);
+   astring:=Copy(astring,index+6,Length(astring));
+  end;
+  index:=Pos('<dir>',astring);
+ end;
 end;
 
 procedure TRpFTInfoProvider.InitLibrary;
@@ -76,27 +152,55 @@ var
  f:TSearchRec;
  retvalue:integer;
  aobj:TRpLogFont;
+ afilename:string;
  alibrary:FT_Library;
  aface:FT_Face;
  w:FT_UInt;
  validcmap:boolean;
+ awide:WideString;
+ aucs:UCS4String;
+ convfactor:Double;
 begin
  if Assigned(fontlist) then
   exit;
  CheckFreeTypeLoaded;
  // reads font directory
  fontlist:=TStringList.Create;
+ fontfiles:=TStringList.Create;
+ fontpaths:=TStringList.Create;
+
  GetFontsDirectories(fontpaths);
  fontfiles.Clear;
  for i:=0 to fontpaths.Count-1 do
  begin
-  retvalue:=SysUtils.FindFirst(fontpaths.strings[i],faAnyFile,F);
+  retvalue:=SysUtils.FindFirst(fontpaths.strings[i]+C_DIRSEPARATOR+'*.pf*',faAnyFile,F);
   if 0=retvalue then
   begin
    try
     while retvalue=0 do
     begin
-     fontfiles.Add(ExtractFilePath(fontpaths.strings[i])+C_DIRSEPARATOR+F.Name);
+     if ((F.Name<>'.') AND (F.Name<>'..')) then
+     begin
+      if (f.Attr AND faDirectory)=0 then
+       fontfiles.Add(fontpaths.strings[i]+C_DIRSEPARATOR+F.Name);
+     end;
+     retvalue:=SysUtils.FindNext(F);
+    end;
+   finally
+    SysUtils.FindClose(F);
+   end;
+  end;
+  retvalue:=SysUtils.FindFirst(fontpaths.strings[i]+C_DIRSEPARATOR+'*.ttf',faAnyFile,F);
+  if 0=retvalue then
+  begin
+   try
+    while retvalue=0 do
+    begin
+     if ((F.Name<>'.') AND (F.Name<>'..')) then
+     begin
+      if (f.Attr AND faDirectory)=0 then
+       fontfiles.Add(fontpaths.strings[i]+C_DIRSEPARATOR+F.Name);
+     end;
      retvalue:=SysUtils.FindNext(F);
     end;
    finally
@@ -110,84 +214,91 @@ begin
   // Now fill the font list with all font files
   for i:=0 to fontfiles.Count-1 do
   begin
-   CheckFreeType(FT_New_Face(alibrary,Pchar(fontfiles.strings[i]),0,aface));
-   try
-    // Add it only if it's a TrueType or OpenType font
-    if  (FT_FACE_FLAG_SFNT AND aface.face_flags)<>0 then
-    begin
-     aobj:=TRpLogFont.Create;
-     try
-      // Fill font properties
-      aobj.filename:=fontfiles.strings[i];
-      aobj.postcripname:=StrPas(aface.style_name);
-      aobj.familyname:=StrPas(aface.family_name);
-      aobj.fixedpitch:=(aface.face_flags AND FT_FACE_FLAG_FIXED_WIDTH)<>0;
-      aobj.BBox.Left:=aface.bbox.xMin;
-      aobj.BBox.Right:=aface.bbox.xMax;
-      aobj.BBox.Top:=aface.bbox.yMin;
-      aobj.BBox.Bottom:=aface.bbox.yMax;
-      aobj.ascent:=aface.ascender;
-      aobj.descent:=aface.descender;
-      aobj.MaxWidth:=aface.max_advance_width;
-      aobj.Capheight:=aface.ascender;
-      aobj.stylename:=StrPas(aface.style_name);
-      aobj.bold:=(aface.style_flags AND FT_STYLE_FLAG_BOLD)<>0;
-      aobj.italic:=(aface.style_flags AND FT_STYLE_FLAG_ITALIC)<>0;
-      validcmap:=false;
-      if FT_Select_Charmap(aface,FT_ENCODING_UNICODE)=0 then
-       validcmap:=true
-      else
+   afilename:=fontfiles.strings[i];
+   if FT_New_Face(alibrary,Pchar(afilename),0,aface)=0 then
+   begin
+    try
+     // Add it only if it's a TrueType or OpenType font
+     // Type1 fonts also supported
+     if  (FT_FACE_FLAG_SCALABLE AND aface.face_flags)<>0 then
+     begin
+      aobj:=TRpLogFont.Create;
+      try
+       // Fill font properties
+       aobj.Type1:=(FT_FACE_FLAG_SFNT AND aface.face_flags)=0;
+       if aobj.Type1 then
+        convfactor:=1
+       else
+        convfactor:=916/1868;
+       aobj.filename:=fontfiles.strings[i];
+       aobj.postcriptname:=StringReplace(StrPas(aface.family_name),' ','',[rfReplaceAll]);
+       aobj.familyname:=StrPas(aface.family_name);
+       aobj.fixedpitch:=(aface.face_flags AND FT_FACE_FLAG_FIXED_WIDTH)<>0;
+       aobj.BBox.Left:=Round(convfactor*aface.bbox.xMin);
+       aobj.BBox.Right:=Round(convfactor*aface.bbox.xMax);
+       aobj.BBox.Top:=Round(convfactor*aface.bbox.yMax);
+       aobj.BBox.Bottom:=Round(convfactor*aface.bbox.yMin);
+       aobj.ascent:=Round(convfactor*aface.ascender);
+       aobj.descent:=Round(convfactor*aface.descender);
+       aobj.MaxWidth:=Round(convfactor*aface.max_advance_width);
+       aobj.Capheight:=Round(convfactor*aface.ascender);
+       aobj.stylename:=StrPas(aface.style_name);
+       aobj.bold:=(aface.style_flags AND FT_STYLE_FLAG_BOLD)<>0;
+       aobj.italic:=(aface.style_flags AND FT_STYLE_FLAG_ITALIC)<>0;
+       validcmap:=false;
        if FT_Select_Charmap(aface,FT_ENCODING_ADOBE_LATIN_1)=0 then
         validcmap:=true
        else
-        if FT_Select_Charmap(aface,FT_ENCODING_ADOBE_STANDARD)=0 then
-         validcmap:=true
-        else
-         if FT_Select_Charmap(aface,FT_ENCODING_OLD_LATIN_2)=0 then
-          validcmap:=true;
-      for j:=32 to 255 do
-      begin
-       if validcmap then
+       if FT_Select_Charmap(aface,FT_ENCODING_UNICODE)=0 then
+        validcmap:=true
+       else
+         if FT_Select_Charmap(aface,FT_ENCODING_ADOBE_STANDARD)=0 then
+          validcmap:=true
+         else
+          if FT_Select_Charmap(aface,FT_ENCODING_OLD_LATIN_2)=0 then
+           validcmap:=true;
+       for j:=32 to 255 do
        begin
-        w:=FT_Get_Char_Index(aface,j);
-        if W>0 then
+        if validcmap then
         begin
-         CheckFreeType(FT_Load_Glyph(aface,w,FT_LOAD_NO_SCALE));
-         aobj.Widths[j]:=aface.glyph.metrics.width;
+         if 0=FT_Load_Char(aface,j,FT_LOAD_NO_SCALE) then
+         begin
+          aobj.Widths[j]:=Round(convfactor*aface.glyph.metrics.horiAdvance);
+         end
+         else
+          aobj.Widths[j]:=0;
         end
         else
          aobj.Widths[j]:=0;
+       end;
+       if not assigned(defaultfont) then
+       begin
+        if ((not aobj.italic) and (not aobj.bold)) then
+         defaultfont:=aobj;
        end
        else
-        aobj.Widths[j]:=0;
-      end;
-      if not assigned(defaultfont) then
-      begin
-       if ((not aobj.italic) and (not aobj.bold)) then
-        defaultfont:=aobj;
-      end
-      else
-      begin
-       if ((not aobj.italic) and (not aobj.bold)) then
        begin
-        if ((aobj.familyname='Arial') or
-         (aobj.familyname='Helvetica')) then
+        if ((not aobj.italic) and (not aobj.bold)) then
         begin
-         defaultfont:=aobj;
+         if ((aobj.familyname='Arial') or
+          (aobj.familyname='Helvetica')) then
+         begin
+          defaultfont:=aobj;
+         end;
         end;
        end;
+       fontlist.AddObject(UpperCase(aobj.familyname),aobj);
+      except
+       aobj.free;
       end;
-      fontlist.AddObject(UpperCase(aobj.familyname),aobj);
-     except
-      aobj.free;
      end;
+    finally
+     FT_Done_Face(aface);
     end;
-   finally
-    CheckFreeType(FT_Done_Face(aface));
    end;
   end;
  finally
-  CheckFreeType(FT_Done_FreeType(alibrary));
+  FT_Done_FreeType(alibrary);
  end;
 end;
 
@@ -195,12 +306,11 @@ constructor TRpFTInfoProvider.Create;
 begin
  currentname:='';
  currentstyle:=0;
- fontlist:=nil;
- fontfiles:=TStringList.Create;
- fontpaths:=TStringList.Create;
+ crit:=TCriticalSection.Create;
 end;
 
-destructor TRpFTInfoProvider.destroy;
+
+procedure FreeFontList;
 var
  i:integer;
 begin
@@ -213,9 +323,15 @@ begin
   fontlist.clear;
   fontlist.free;
   fontlist:=nil;
+  fontpaths.free;
+  fontfiles.free;
  end;
- fontpaths.free;
- fontfiles.free;
+end;
+
+destructor TRpFTInfoProvider.destroy;
+begin
+ crit.free;
+
  inherited destroy;
 end;
 
@@ -228,7 +344,12 @@ var
  match:boolean;
  afont:TRpLogFont;
 begin
- InitLibrary;
+ crit.Enter;
+ try
+  InitLibrary;
+ finally
+  crit.Leave;
+ end;
 {$IFDEF MSWINDOWS}
  afontname:=UpperCase(pdffont.WFontName);
 {$ENDIF}
@@ -324,7 +445,12 @@ procedure TRpFTInfoProvider.FillFontInfo(pdffont:TRpPDFFont;info:TRpTTFontInfo);
 var
  i:integer;
 begin
- InitLibrary;
+ crit.Enter;
+ try
+  InitLibrary;
+ finally
+  crit.Leave;
+ end;
  SelectFont(pdffont);
  for i:=32 to 255 do
  begin
@@ -334,12 +460,18 @@ end;
 
 procedure TRpFTInfoProvider.FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
 begin
- InitLibrary;
+ crit.Enter;
+ try
+  InitLibrary;
+ finally
+  crit.Leave;
+ end;
  // See if data can be embedded
  SelectFont(pdffont);
  data.fontdata.Clear;
- data.fontdata.LoadFromFile(currentfont.filename);
- data.postcriptname:=currentfont.postcripname;
+ if not currentfont.type1 then
+  data.fontdata.LoadFromFile(currentfont.filename);
+ data.postcriptname:=currentfont.postcriptname;
  data.FamilyName:=currentfont.familyname;
  data.FaceName:=currentfont.familyname;
  data.Ascent:=currentfont.ascent;
@@ -360,8 +492,29 @@ begin
  data.Flags:=32;
  if (currentfont.fixedpitch) then
   data.Flags:=data.Flags+1;
+ if not currentfont.bold then
+ begin
+  if pdffont.Bold then
+   data.postcriptname:=data.postcriptname+',Bold';
+ end;
  if currentfont.italic then
-   data.Flags:=data.Flags+64;
+   data.Flags:=data.Flags+64
+ else
+ begin
+  if pdffont.Italic then
+  begin
+   if data.postcriptname<>currentfont.postcriptname then
+    data.postcriptname:=data.postcriptname+'Italic'
+   else
+    data.postcriptname:=data.postcriptname+',Italic';
+  end;
+ end;
+ data.Type1:=currentfont.Type1;
 end;
 
+
+initialization
+ fontlist:=nil;
+finalization
+ FreeFontList;
 end.

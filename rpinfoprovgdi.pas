@@ -164,6 +164,8 @@ begin
 
       data.Leading:=Round(potm^.otmTextMetrics.tmExternalLeading*multipli);
       apchar:=PChar(potm);
+      // Windows does not allow Type1 fonts
+      data.Type1:=false;
       data.FamilyName:=StrPas(@apchar[Integer(potm^.otmpFamilyName)]);
       data.FullName:=StrPas(@apchar[Integer(potm^.otmpFullName)]);
       data.StyleName:=StrPas(@apchar[Integer(potm^.otmpStyleName)]);

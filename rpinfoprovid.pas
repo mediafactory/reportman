@@ -70,6 +70,7 @@ type
   FullName:String;
   FaceName:String;
   StyleName:String;
+  type1:boolean;
   ObjectIndex:integer;
   DescriptorIndex:Integer;
  end;

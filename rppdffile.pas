@@ -410,13 +410,13 @@ begin
  inherited Create;
 
 {$IFDEF MSWINDOWS}
-// FInfoProvider:=TRpGDIInfoProvider.Create;
- FInfoProvider:=TRpFtInfoProvider.Create;
- FDefInfoProvider:=FInfoProvider;
+ FInfoProvider:=TRpGDIInfoProvider.Create;
+// FInfoProvider:=TRpFtInfoProvider.Create;
 {$ENDIF}
 {$IFDEF LINUX}
- FDefInfoProvider:=nil;
+ FInfoProvider:=TRpFtInfoProvider.Create;
 {$ENDIF}
+ FDefInfoProvider:=FInfoProvider;
  FFont:=TRpPDFFont.Create;
  FFile:=AFile;
  FFontTTList:=TStringList.Create;
@@ -1321,10 +1321,10 @@ begin
  end;
  try
 {$IFDEF MSWINDOWS}
-  afontname:=Font.WFontName;
+  afontname:=StringReplace(Font.WFontName,' ','',[rfReplaceAll]);
 {$ENDIF}
 {$IFDEF LINUX}
-  afontname:=Font.LFontName;
+  afontname:=StringReplace(Font.LFontName,' ','',[rfReplaceAll]);
 {$ENDIF}
   SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' RG');
   SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' rg');
@@ -1617,10 +1617,10 @@ var
 {$ENDIF}
 begin
 {$IFDEF MSWINDOWS}
-  afontname:=Font.WFontName;
+  afontname:=StringReplace(Font.WFontName,' ','',[rfReplaceAll]);
 {$ENDIF}
 {$IFDEF LINUX}
-  afontname:=Font.LFontName;
+  afontname:=StringReplace(Font.LFontName,' ','',[rfReplaceAll]);
 {$ENDIF}
   aarray:=nil;
   defaultwidth:=Default_Font_Width;
@@ -2598,10 +2598,10 @@ begin
  if Not Assigned(InfoProvider) then
   exit;
 {$IFDEF MSWINDOWS}
-  afontname:=Font.WFontName;
+  afontname:=StringReplace(Font.WFontName,' ','',[rfReplaceAll]);
 {$ENDIF}
 {$IFDEF LINUX}
-  afontname:=Font.LFontName;
+  afontname:=StringReplace(Font.LFontName,' ','',[rfReplaceAll]);
 {$ENDIF}
  searchname:=afontname+IntToStr(Font.Style);
  index:=FFontTTList.IndexOf(searchname);
@@ -2722,15 +2722,20 @@ begin
   SWriteLine(FTempStream,'/Leading '+IntToStr(adata.Leading));
   SWriteLine(FTempStream,'/CapHeight '+IntToStr(adata.CapHeight));
   SWriteLine(FTempStream,'/StemV '+IntToStr(Round(adata.StemV)));
-  SWriteLine(FTempStream,'/AvgWidth '+IntToStr(adata.AvgWidth));
+  if (adata.AvgWidth)<>0 then
+   SWriteLine(FTempStream,'/AvgWidth '+IntToStr(adata.AvgWidth));
   SWriteLine(FTempStream,'/MaxWidth '+IntToStr(adata.MaxWidth));
   SWriteLine(FTempStream,'/FontStretch /Normal');
   if adata.FontWeight>0 then
    SWriteLine(FTempStream,'/FontWeight '+IntToStr(adata.FontWeight));
   if adata.embedded then
   begin
-   SWriteLine(FTempStream,'/FontFile2 '+
-    IntToStr(adata.ObjectIndex)+' 0 R');
+   if adata.Type1 then
+    SWriteLine(FTempStream,'/FontFile '+
+     IntToStr(adata.ObjectIndex)+' 0 R')
+   else
+    SWriteLine(FTempStream,'/FontFile2 '+
+     IntToStr(adata.ObjectIndex)+' 0 R');
   end;
   SWriteLine(FTempStream,'>>');
   SWriteLine(FTempStream,'endobj');
@@ -2750,8 +2755,15 @@ begin
   ainfo.ObjectIndex:=FObjectCount;
   SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
   SWriteLine(FTempStream,'<< /Type /Font');
-  SWriteLine(FTempStream,'/Subtype /TrueType');
-  SWriteLine(FTempStream,'/Name /F'+ainfo.ObjectName);
+  if adata.Type1 then
+  begin
+   SWriteLine(FTempStream,'/Subtype /Type1');
+  end
+  else
+  begin
+   SWriteLine(FTempStream,'/Subtype /TrueType');
+  end;
+   SWriteLine(FTempStream,'/Name /F'+ainfo.ObjectName);
   SWriteLine(FTempStream,'/BaseFont /'+adata.postcriptname);
   SWriteLine(FTempStream,'/FirstChar 32');
   SWriteLine(FTempStream,'/LastChar 255');
@@ -2759,6 +2771,8 @@ begin
   for j:=32 to 255 do
   begin
    awidths:=awidths+IntToStr(ainfo.charwidths[j])+' ';
+   if (j mod 8)=7 then
+   awidths:=awidths+LINE_FEED;
   end;
   awidths:=awidths+']';
   SWriteLine(FTempStream,'/Widths '+awidths);

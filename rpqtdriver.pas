@@ -102,7 +102,6 @@ type
 
  TRpQtDriver=class(TInterfacedObject,IRpPrintDriver)
   private
-   FInfoProvider:TRpCLXInfoProvider;
    intdpix,intdpiy:integer;
    FOrientation:TRpOrientation;
    FIntPageSize:TPageSizeQt;
@@ -150,7 +149,6 @@ type
    function SupportsCollation:boolean;
    constructor Create;
    destructor Destroy;override;
-   property InfoProvider:TRpCLXInfoProvider read FInfoProvider;
   end;
 
 function PrintMetafile (metafile:TRpMetafileReport; tittle:string;
@@ -226,7 +224,6 @@ begin
  FIntPageSize.Custom:=false;
  dpi:=Screen.PixelsPerInch;
  scale:=1;
- FInfoProvider:=TRpCLXInfoProvider.Create;
 end;
 
 destructor TRpQtDriver.Destroy;
@@ -1352,7 +1349,6 @@ begin
   pdfdriver.filename:=filename;
   pdfdriver.compressed:=pdfcompressed;
   qtdriver:=TRpQtDriver.Create;
-  pdfdriver.PDFFile.Canvas.InfoProvider:=qtdriver.InfoProvider;
 {$IFDEF USECLXTEECHART}
   report.metafile.OnDrawChart:=qtdriver.DoDrawChart;
 {$ENDIF}
@@ -1630,7 +1626,6 @@ begin
   pdfdriver.compressed:=compressed;
   apdfdriver:=pdfdriver;
   qtdriver:=TRpQtDriver.Create;
-  pdfdriver.PDFFile.Canvas.InfoProvider:=qtdriver.InfoProvider;
 {$IFDEF USECLXTEECHART}
   report.Metafile.OnDrawChart:=qtdriver.DoDrawChart;
 {$ENDIF}
@@ -1656,7 +1651,6 @@ begin
    report.TwoPass:=true;
   qtdriver:=TRpQtDriver.create;
   pdfdriver:=TRpPDFDriver.Create;
-  pdfdriver.PDFFile.Canvas.InfoProvider:=qtdriver.InfoProvider;
   if not metafile then
    pdfdriver.DestStream:=stream;
   pdfdriver.compressed:=compressed;
