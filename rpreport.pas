@@ -1442,7 +1442,7 @@ begin
    if CurrentSubReportIndex>=Subreports.count then
     break;
 //   subrep.SubReportChanged(rpDataChange);
-   CurrentSectionIndex:=-1;
+   CurrentSectionIndex:=subrep.FirstDetail-subrep.GroupCount-1;
    subrep.CurrentGroupIndex:=-subrep.GroupCount;
    subrep.LastRecord:=false;
   end
@@ -1854,7 +1854,8 @@ begin
   else
    pageposy:=FTopMargin+newposy;
  end;
- freespace:=FInternalPageheight-pageposy;
+// freespace:=FInternalPageheight-pageposy;
+ freespace:=pagefooterpos-pageposy;
  if freespace<0 then
   freespace:=0;
 end;

@@ -738,8 +738,11 @@ var
   printererror:boolean;
   aresult:DWord;
 begin
- Result:=falsE;
+ Result:=false;
  if printer.Printers.count<1 then
+  exit;
+ // Not supported
+ if printer.Printers.count>=0 then
   exit;
  // Printer selected not valid error
  printererror:=false;
@@ -823,6 +826,9 @@ var
 begin
  Result:=falsE;
  if printer.Printers.count<1 then
+  exit;
+ // Not supported
+ if printer.Printers.count>=0 then
   exit;
  maxcopies:=1;
  // Printer selected not valid error

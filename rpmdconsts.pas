@@ -620,6 +620,8 @@ var
   SRpReplaceStr:WideString='Replace a string within a string';
   SRpPReplaceStr:WideString='x Replace a string within a string';
   SRpParseParamsH:WideString='         -paramPARAMNAME=paramvalue  Assign a value to a parameter';
+  SrpSClearExpChart:WideString='Clear expression';
+  SrpSBoolClearExp:WideString='Bool C.expression';
 
 implementation
 
@@ -1231,6 +1233,8 @@ begin
  TranslateVar(963,SRpReplaceStr);
  TranslateVar(964,SRpPReplaceStr);
  TranslateVar(965,SRpParseParamsH);
+ TranslateVar(966,SrpSClearExpChart);
+ TranslateVar(967,SrpSBoolClearExp);
 end;
 
 {$IFDEF LINUX}

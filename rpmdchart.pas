@@ -122,12 +122,14 @@ type
    FVertOffset:Integer;
    FTilt:Integer;
    FMultiBar:TRpMultiBar;
+   FClearValue:Variant;
    procedure OnClear(Sender:TObject);
    procedure OnNewValue(Y:Single;Cambio:Boolean;leyen,textleyen:string);
    procedure SetIdentifier(Value:string);
    procedure SetSeries(avalue:TRpSeries);
    function CheckValueCondition:boolean;
    function EvaluateSerieExpression:Variant;
+   procedure EvaluateClearExpression;
    function EvaluateCaption:Variant;
    procedure WriteGetValueCondition(Writer:TWriter);
    procedure ReadGetValueCondition(Reader:TReader);
@@ -156,6 +158,8 @@ type
    constructor Create(AOwner:TComponent);override;
    property ChangeSerieExpression:widestring read FChangeSerieExpression write
     FChangeSerieExpression;
+   property ClearExpression:widestring read FClearExpression write
+    FClearExpression;
    property GetValueCondition:widestring read FGetValueCondition
     write FGetValuecondition;
    property ValueExpression:widestring read FValueExpression
@@ -164,8 +168,6 @@ type
     write FCaptionExpression;
    property SerieCaption:widestring read FSerieCaption
     write FSerieCaption;
-   property ClearExpression:widestring read FClearExpression
-    write FClearExpression;
   published
    property Series:TRpSeries read FSeries write SetSeries;
    property ChangeSerieBool:boolean read FChangeSerieBool write FChangeSerieBool
@@ -329,6 +331,7 @@ begin
  inherited Create(AOwner);
  FSeries:=TRpSeries.Create(TRpSeriesItem);
  FChangeSerieBool:=false;
+ FClearExpressionBool:=false;
  FIdenChart:=TVariableGrap.Create(Self);
  FIdenChart.OnClear:=OnClear;
  FIdenChart.OnNewValue:=OnNewValue;
@@ -382,6 +385,7 @@ var
  changeserie:boolean;
  caption:widestring;
 begin
+ EvaluateClearExpression;
  if FSeries.Count<1 then
  begin
   aserie:=FSeries.Add;
@@ -463,6 +467,41 @@ begin
  end;
 end;
 
+procedure TRpChart.EvaluateClearExpression;
+var
+ fevaluator:TRpEvaluator;
+ newclearvalue:Variant;
+begin
+ if Length(Trim(ClearExpression))<1 then
+ begin
+  exit;
+ end;
+ try
+  fevaluator:=TRpREport(GetReport).Evaluator;
+  fevaluator.Expression:=ClearExpression;
+  fevaluator.Evaluate;
+  newclearvalue:=fevaluator.EvalResult;
+  if ClearExpressionBool then
+  begin
+   if newclearvalue then
+    Series.Clear;
+  end
+  else
+  begin
+   if FClearValue<>newclearvalue then
+   begin
+    Series.Clear;
+    FClearValue:=newclearvalue;
+   end;
+  end;
+ except
+  on E:Exception do
+  begin
+   Raise TRpReportException.Create(E.Message+':'+SRpSChart+' '+Name,self,SrpSChangeSerieExp);
+  end;
+ end;
+end;
+
 function TRpChart.EvaluateSerieExpression:Variant;
 var
  fevaluator:TRpEvaluator;
@@ -514,6 +553,7 @@ begin
  case newstate of
   rpReportStart:
    begin
+    FClearValue:=Null;
     FUpdated:=false;
     FSeries.Clear;
    end;
@@ -674,9 +714,9 @@ begin
    acolor:=((acolor+1) mod MAX_SERIECOLORS);
   end;
  finally
-  for i:=0 to achart.SeriesList.Count-1 do
+  while achart.SeriesList.Count>0 do
   begin
-   TObject(achart.SeriesList.Items[i]).free;
+   TObject(achart.SeriesList.Items[0]).free;
   end;
   achart.Free;
  end;
@@ -879,6 +919,18 @@ begin
  FChangeSerieExpression:=ReadWideString(Reader);
 end;
 
+procedure TRpChart.WriteClearExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FClearExpression);
+end;
+
+
+procedure TRpChart.ReadClearExpression(Reader:TReader);
+begin
+ FClearExpression:=ReadWideString(Reader);
+end;
+
+
 procedure TRpChart.WriteCaptionExpression(Writer:TWriter);
 begin
  WriteWideString(Writer, FCaptionExpression);
@@ -899,15 +951,6 @@ begin
  FSerieCaption:=ReadWideString(Reader);
 end;
 
-procedure TRpChart.WriteClearExpression(Writer:TWriter);
-begin
- WriteWideString(Writer, FClearExpression);
-end;
-
-procedure TRpChart.ReadClearExpression(Reader:TReader);
-begin
- FClearExpression:=ReadWideString(Reader);
-end;
 
 procedure TRpChart.DefineProperties(Filer:TFiler);
 begin

@@ -7,12 +7,6 @@
 {$DEFINE USEBDE}
 //{$DEFINE USEIBO}
 
-// May be you want to enablwe TEECHART under Kylix
-// but take care it needs an X server running
-{$IFDEF MSWINDOWS}
- {$DEFINE USETEECHART}
-{$ENDIF}
-
 // Unsupported database drivers in Linux
 // To enable IBX under Kylix remove the related UNDEF
 // By default is not defined becuase Borland don't provide
@@ -24,12 +18,6 @@
  {$UNDEF USEIBO}
 {$ENDIF}
 
-// Windows qtintf.dll has a bug about selecting horz paper
-// If horz paper is set and print setup is called seems
-// to work ok
-{$IFDEF MSWINDOWS}
- {$DEFINE HORZPAPERBUG}
-{$ENDIF}
 
 
 
@@ -78,6 +66,20 @@
   {$DEFINE BLOBSTREAMBUG}
 //  {$DEFINE QUERYLINKBUG}
  {$ENDIF}
+{$ENDIF}
+
+
+// Windows qtintf.dll has a bug about selecting horz paper
+// If horz paper is set and print setup is called seems
+// to work ok
+{$IFDEF MSWINDOWS}
+ {$DEFINE HORZPAPERBUG}
+{$ENDIF}
+
+// May be you want to enablwe TEECHART under Kylix
+// but take care it needs an X server running
+{$IFDEF MSWINDOWS}
+ {$DEFINE USETEECHART}
 {$ENDIF}
 
 

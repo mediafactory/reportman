@@ -99,6 +99,11 @@ begin
  ltypes.Add(SRpSString);
  if Assigned(lvalues) then
   lvalues.Add(TRpBarcode(printitem).DisplayFormat);
+ // Rotation in degrees
+ lnames.Add(SRpSRotation);
+ ltypes.Add(SrpSString);
+ if Assigned(lvalues) then
+  lvalues.Add(FormatCurr('#####0.0',TRpBarcode(printitem).Rotation/10));
 end;
 
 procedure TRpBarcodeInterface.SetProperty(pname:string;value:Widestring);
@@ -139,6 +144,11 @@ begin
   invalidate;
   exit;
  end;
+ if pname=SRpSRotation then
+ begin
+  TRpBarcode(fprintitem).Rotation:=Round(StrToCurr(Value)*10);
+  exit;
+ end;
  inherited SetProperty(pname,value);
 end;
 
@@ -173,6 +183,11 @@ begin
  if pname=SrpSDisplayFormat then
  begin
   Result:=TRpBarcode(printitem).DisplayFormat;
+  exit;
+ end;
+ if pname=SRpSRotation then
+ begin
+  Result:=FormatCurr('#####0.0',TRpBarcode(printitem).Rotation/10);
   exit;
  end;
  Result:=inherited GetProperty(pname);

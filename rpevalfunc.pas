@@ -1,9 +1,8 @@
-
 {*******************************************************}
 {                                                       }
 {       Rpevalfunc                                      }
 {       Functions for the TRpEvaluator for              }
-{        Manager                                  }
+{        Manager                                        }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }

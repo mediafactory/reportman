@@ -1247,6 +1247,10 @@ begin
   exit;
  updatedmfields:=true;
  MFields.Items.Clear;
+ aitem:=TMenuItem.Create(MFields);
+ aitem.Caption:='PAGECOUNT';
+ aitem.OnClick:=MFieldsItemClick;
+ MFields.Items.Add(aitem);
  alist:=TStringList.Create;
  try
   for i:=0 to report.DataInfo.Count-1 do

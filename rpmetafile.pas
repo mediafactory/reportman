@@ -82,7 +82,7 @@ type
    DisplayFormat:widestring;
   end;
 
- TRpMetaObjectType=(rpMetaText,rpMetaDraw,rpMetaImage);
+ TRpMetaObjectType=(rpMetaText,rpMetaDraw,rpMetaImage,rpMetaPolygon);
 
  TRpMetaSeparator=(rpFHeader,rpFPage,rpFObject);
 
@@ -130,6 +130,15 @@ type
      DPIres:integer;
      StreamPos:int64;
      StreamSize:int64);
+   rpMetaPolygon:
+    (PolyBrushStyle:integer;
+     PolyBrushColor:integer;
+     PolyPenStyle:integer;
+     PolyPenWidth:integer;
+     PolyPenColor:integer;
+     PolyPointCount:integer;
+     PolyStreamPos:int64;
+     PolyStreamSize:int64);
  end;
 
  IRpPrintDriver=interface

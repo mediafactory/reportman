@@ -114,6 +114,19 @@ begin
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpChart(printitem).ChangeSerieBool,True));
 
+ // Clear Expression
+ lnames.Add(SrpSClearExpChart);
+ ltypes.Add(SRpSExpression);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpChart(printitem).ClearExpression);
+
+ // Clear Expression Bool
+ lnames.Add(SrpSBoolClearExp);
+ ltypes.Add(SRpSBool);
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpChart(printitem).ClearExpressionBool,True));
+
+
  // Caption Expression
  lnames.Add(SrpSCaptionExp);
  ltypes.Add(SRpSExpression);
@@ -228,6 +241,16 @@ begin
   TRpChart(fprintitem).ChangeSerieBool:=StrToBool(value);
   exit;
  end;
+ if pname=SrpSClearExpChart then
+ begin
+  TRpChart(fprintitem).ClearExpression:=value;
+  exit;
+ end;
+ if pname=SrpSBoolClearExp then
+ begin
+  TRpChart(fprintitem).ClearExpressionBool:=StrToBool(value);
+  exit;
+ end;
  if pname=SrpSCaptionExp then
  begin
   TRpChart(fprintitem).CaptionExpression:=value;
@@ -327,6 +350,16 @@ begin
  if pname=SrpSChangeSerieBool then
  begin
   Result:=BoolToStr(TRpChart(printitem).ChangeSerieBool,True);
+  exit;
+ end;
+ if pname=SrpSClearExpChart then
+ begin
+  Result:=TRpChart(printitem).ClearExpression;
+  exit;
+ end;
+ if pname=SrpSBoolClearExp then
+ begin
+  Result:=BoolToStr(TRpChart(printitem).ClearExpressionBool,True);
   exit;
  end;
  if pname=SrpSCaptionExp then

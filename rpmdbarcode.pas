@@ -74,6 +74,7 @@ type
    FTyp:TRpBarcodeType;
    FCheckSum:boolean;
    FUpdated:boolean;
+   FRotation:SmallInt;
    modules:array[0..3] of integer;
    procedure DoLines(data:string;FLeft,FTop:integer;meta:TRpMetafileReport);
    function Code_2_5_interleaved:string;
@@ -114,6 +115,7 @@ type
    // build CheckSum ?
    property Checksum:boolean read FCheckSum write FCheckSum default false;
    property DisplayFormat:string read FDisplayformat write FDisplayFormat;
+   property Rotation:smallint read FRotation write FRotation default 0;
   end;
 
  const BarcodeTypeStrings:array[bcCode_2_5_interleaved..bcCodeEAN13] of string=
@@ -220,6 +222,7 @@ begin
 	FModul := 10;
 	FTyp   := bcCodeEAN13;
 	FCheckSum := false;
+        FRotation := 0;
         FExpression:=QuotedStr(SRpSampleBarCode);
 end;
 
@@ -1420,8 +1423,7 @@ begin
 	xadd := 0;
 	orgin.x := FLeft;
 	orgin.y := FTop;
-//	alpha := FOntRotation*pi / 180.0;
-	alpha := 0;
+	alpha := Rotation/10*pi / 180.0;
 
         PenWidth := 0;
         for i:=1 to Length(data) do  // examine the pattern string
