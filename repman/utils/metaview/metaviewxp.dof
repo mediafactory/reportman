@@ -76,9 +76,9 @@ LocaleToUnicode=1
 ImagebaseMultiple=1
 SuspiciousTypecast=1
 PrivatePropAccessor=1
-UnsafeType=1
-UnsafeCode=1
-UnsafeCast=1
+UnsafeType=0
+UnsafeCode=0
+UnsafeCast=0
 [Linker]
 MapFile=0
 OutputObjs=0
@@ -107,6 +107,16 @@ UseLauncher=0
 DebugCWD=
 [Resource DLL Projects]
 Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
+[RDP Source Files]
+Item0=..\..\..\rpfmainmetaviewvcl.dfm
+Item1=..\..\..\rpmdclitreevcl.dfm
+Item2=..\..\..\rpmdfaboutvcl.dfm
+Item3=..\..\..\rprfvparams.dfm
+Item4=..\..\..\rpgdidriver.dfm
+Item5=..\..\..\rpmdprintconfigvcl.dfm
+Item6=..\..\..\rpfmetaviewvcl.dfm
+Item7=..\..\..\rpexceldriver.dfm
+Item8=metaviewxp.drc
 [Language]
 ActiveLang=
 ProjectLang=$00000409
@@ -115,9 +125,9 @@ RootDir=
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=2
-MinorVer=0
-Release=1
-Build=10
+MinorVer=1
+Release=0
+Build=14
 Debug=0
 PreRelease=0
 Special=0
@@ -128,16 +138,13 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report client and metafile viewer
-FileVersion=2.0.1.10
+FileVersion=2.1.0.14
 InternalName=metaview
 LegalCopyright=MPL/GLP License
 LegalTrademarks=
 OriginalFilename=metaview
 ProductName=Report Manager Metafile viewer/client
-ProductVersion=1.6.0.0
-[HistoryLists\hlConditionals]
-Count=1
-Item0=NOLINUXPRINTBUG;FORWEBAX
+ProductVersion=2.1.0.0
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

@@ -116,24 +116,32 @@ RootDir=
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=2
-MinorVer=0
-Release=1
-Build=0
+MinorVer=1
+Release=0
+Build=2
 Debug=0
 PreRelease=0
 Special=0
 Private=0
 DLL=0
-Locale=3082
+Locale=1033
 CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Service installation tool for Report Manager
-FileVersion=2.0.1.0
+FileVersion=2.1.0.2
 InternalName=repserviceinstall
 LegalCopyright=Open Source MPL
 LegalTrademarks=
 OriginalFilename=repserviceinstall.exe
 ProductName=Report Manager
-ProductVersion=
+ProductVersion=2.1.0.0
 Comments=
+[HistoryLists\hlConditionals]
+Count=3
+Item0=REPMANRELEASE
+Item1=FORWEBAX
+Item2=NOLINUXPRINTBUG;FORWEBAX
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

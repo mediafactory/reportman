@@ -1642,6 +1642,8 @@ var
  alibname:String;
  arepname:WideString;
 begin
+ if Not checksave then
+  exit;
  arepname:=SelectReportFromLibrary(rpalias1.Connections,alibname);
  if Length(arepname)<1 then
   exit;

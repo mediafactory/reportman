@@ -111,9 +111,6 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 
-[Excluded Packages]
-c:\program files\borland\cbuilder6\bin\dclClxIBXtras60.bpl=Borland InterBase Express Extras (Clx)
-c:\program files\borland\cbuilder6\Bin\dclIBXtras60.bpl=Borland InterBase Express Extras
 
 [Debugging]
 DebugSourceDirs=$(BCB)\source\vcl

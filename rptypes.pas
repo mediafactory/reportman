@@ -584,7 +584,19 @@ begin
   begin
    if printnulls then
    begin
-    Result:=widestring(Value);
+    if (paramtype in [rpParamDate,rpParamTime,rpParamDateTime]) then
+    begin
+     if paramtype=rpParamDate then
+      displayformat:=ShortDateFormat
+     else
+      if paramtype=rpParamTime then
+       displayformat:=ShortTimeFormat
+      else
+       displayformat:=ShortDateFormat+' '+ShortTimeFormat;
+     Result:=FormatDateTime(displayformat,Value);
+    end
+    else
+     Result:=widestring(Value);
     exit;
    end;
   end;
@@ -611,10 +623,27 @@ begin
      Result:=''
     else
     begin
-     if length(displayformat)<1 then
-      Result:=widestring(Value)
+     if (paramtype in [rpParamDate,rpParamTime,rpParamDateTime]) then
+     begin
+      if Length(displayformat)<1 then
+      begin
+       if paramtype=rpParamDate then
+        displayformat:=ShortDateFormat
+       else
+        if paramtype=rpParamTime then
+         displayformat:=ShortTimeFormat
+        else
+         displayformat:=ShortDateFormat+' '+ShortTimeFormat;
+      end;
+      Result:=FormatDateTime(displayformat,Value);
+     end
      else
-      Result:=FormatFloat(displayformat,Value);
+     begin
+      if length(displayformat)<1 then
+       Result:=widestring(Value)
+      else
+       Result:=FormatFloat(displayformat,Value);
+      end;
      end;
    end;
   varSingle,varDouble:
@@ -623,11 +652,30 @@ begin
      Result:=''
     else
     begin
-     if length(displayformat)<1 then
-      Result:=widestring(Value)
+     if (paramtype in [rpParamDate,rpParamTime,rpParamDateTime]) then
+     begin
+      if Length(displayformat)<1 then
+      begin
+       if paramtype=rpParamDate then
+        displayformat:=ShortDateFormat
+       else
+        if paramtype=rpParamTime then
+         displayformat:=ShortTimeFormat
+        else
+         displayformat:=ShortDateFormat+' '+ShortTimeFormat;
+      end;
+      Result:=FormatDateTime(displayformat,Value);
+     end
      else
-      Result:=FormatFloat(displayformat,Value);
+     begin
+      if length(displayformat)<1 then
+       Result:=widestring(Value)
+      else
+      begin
+       Result:=FormatFloat(displayformat,Value);
+      end;
      end;
+    end;
    end;
   varCurrency:
    begin

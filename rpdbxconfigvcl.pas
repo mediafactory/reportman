@@ -342,12 +342,14 @@ begin
 end;
 
 procedure TFRpDBXConfigVCL.BConnectClick(Sender: TObject);
+{$IFDEF USESQLEXPRESS}
 var
  conname:string;
  funcname,drivername,vendorlib,libraryname:string;
 {$IFDEF USEZEOS}
  FZConnection:TZConnection;
  transiso:String;
+{$ENDIF}
 {$ENDIF}
 begin
 {$IFDEF USESQLEXPRESS}

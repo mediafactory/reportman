@@ -180,6 +180,9 @@
  // C++ Builder 6 does not allow VCL and CLX
  {$IFDEF BCB}
   {$UNDEF VCLANDCLX}
+  {$IFDEF VER140}
+   {$DEFINE USEVARIANTS}
+  {$ENDIF}
  {$ENDIF}
  {$IFNDEF BCB}
   {$IFNDEF FORWEBAX}

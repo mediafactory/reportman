@@ -3,7 +3,8 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 2.0a
+AppVerName=Report Manager 2.1
+AppVersion=2.1
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -12,8 +13,21 @@ DefaultDirName={pf}\Report Manager
 DefaultGroupName=Report Manager
 LicenseFile=license.txt
 PrivilegesRequired=admin
+LanguageDetectionMethod=uilanguage
+WizardImageFile=HardwareClassic05.bmp
+WizardImageStretch=False
+WizardSmallImageFile=SetupModernSmall02.bmp
 ; uncomment the following line if you want your installation to run on NT 3.51 too.
 ; MinVersion=4,3.51
+
+[Languages]
+Name: "en"; MessagesFile: "compiler:Default.isl"
+Name: "de"; MessagesFile: "GermanT.isl"
+Name: "es"; MessagesFile: "SpanishT.isl"
+Name: "cat"; MessagesFile: "CatalanT.isl"
+Name: "pt"; MessagesFile: "PortugueseT.isl"
+Name: "it"; MessagesFile: "ItalianT.isl"
+Name: "fr"; MessagesFile: "FrenchT.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "Additional icons:"; MinVersion: 4,4
@@ -22,7 +36,6 @@ Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "A
 [Files]
 Source: "..\repman\repmandxp.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\repmandxp.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\repman\reportmanres.*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\reportmanres.*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\transwin\repmandxp.*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\repman\transwin\metaviewxp.*"; DestDir: "{app}"; Flags: ignoreversion

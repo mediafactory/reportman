@@ -7,6 +7,7 @@ package rppack_del4;
 {$R 'rpvclreport.dcr'}
 {$R 'rppdfreport.dcr'}
 {$R 'rptranslator.dcr'}
+{$R 'rpmaskedit.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -98,6 +99,9 @@ contains
   rptextdriver in 'rptextdriver.pas',
   rpbasereport in 'rpbasereport.pas',
   rpcompilerep in 'rpcompilerep.pas',
-  rpmdprintconfigvcl in 'rpmdprintconfigvcl.pas' {FRpPrinterConfigVCL};
+  rpmdprintconfigvcl in 'rpmdprintconfigvcl.pas' {FRpPrinterConfigVCL},
+  rpmaskedit in 'rpmaskedit.pas',
+  rpsvgdriver in 'rpsvgdriver.pas',
+  rpcsvdriver in 'rpcsvdriver.pas';
 
 end.

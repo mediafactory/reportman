@@ -6,6 +6,10 @@
 
 <body>
 <h3><b>Frequently Asked Questions</b></h3>
+<p><b>Q. Why does my report show only one record?</b></p>
+<p>You must assign main dataset property of your subreport to a dataset. Because 
+  you can open as many datasets as you want you must say the engine wich is the 
+  dataset for the subreport printing procedure.</p>
 <p><b>Q. Wich development environments supports the engine?</b> </p>
 <p>A. <code>In <b>native mode</b> (linked inside the executable or as a borland 
   package):<br>
@@ -37,12 +41,12 @@
     with a visual property editor.</li>
   <li>At runtime:</li>
 </ul>
-<p><code>var aitem:TRpAliasListIte</code><code>m;</code></p>
-<code><p>begin</p>
-<p>aitem:=RPAliasItem.List.Add;</p>
-<p>aitem.alias:='AREPORTALIAS';</p>
-<p>aitem.dataset:=adataset;</p>
-<p>end</p></code>
+<code>var aitem:TRpAliasListIte</code><code>m;<br>
+begin<br>
+aitem:=RPAliasItem.List.Add;<br>
+aitem.alias:='AREPORTALIAS';<br>
+aitem.dataset:=adataset;<br>
+end</code>
 <p><b>Q. How can I alter the SQL sentence of a report dataset before executing 
   it?</b></p>
 <p>A. CLXReport.Report.DataInfo.Items[0].SQL:='SELECT....'</p>
@@ -53,28 +57,31 @@
   <li>DBExpress: <code>CLXReport.Report.DabaseInfo.Items[0].SQLConnection:=..</code></li>
   <li>ADO: <code>CLXReport.Report.DabaseInfo.Items[0].ConnectionString</code></li>
   <li>Interbase Express: <code>CLXReport.Report.DabaseInfo.Items[0].IBConnection:=..</code></li>
+  <li><code>Zeos: CLXReport.Report.DatabaseInfo.Items[0].ZConnection:=..</code></li>
   <li>Other still not implemented, but you can update dbxconnections.ini, because 
     them read the configuration from this file</li>
 </ul>
 <p><b>Q. How can I set properties of components at runtime in already loaded report?</b> 
 </p>
-<p>A.You must find the component you want to modify, Report property in TCLXReport 
-  is the owner of all report items:</p>
-<p><code>uses rplabelitem;</code></p>
-<p><code>...</code></p>
-<p><code>var acompo:TRpExpression;</code></p>
-<p><code>acompo:=TRpExpression(CLXReport1.Report.FindComponent('TRpExpression5'));</code></p>
-<p><code>if Assigned(compo) then</code></p>
-<p><code>begin</code></p>
-<p> acompo.DisplayFormat:='dd/mm/yyyy';</p>
-<p><code>end</code></p>
-<p><code>Note: When assigning text or expression properties declare the variables 
-  you assign as WideString.</code></p>
+<code>A.You must find the component you want to modify, Report property in TCLXReport 
+  is the owner of all report items:<br>
+uses rplabelitem;</cbr>
+...<br>
+var acompo:TRpExpression;<br>
+acompo:=TRpExpression(CLXReport1.Report.FindComponent('TRpExpression5'));<br>
+if Assigned(compo) then<br>
+begin<br>
+acompo.DisplayFormat:='dd/mm/yyyy';<br>
+end<br>
+</code>
+Note: When assigning text or expression properties declare the variables 
+  you assign as WideString.<br>
 <p><b>Q. I'm designing a report that will be printed in any matrix printer or 
   receipt printer, how can I use printer fonts to speed up the print process?</b></p>
 <p>A. At page setup option of Report Manager Designer you can set use allways 
   device fonts option. Allways install the correct driver for the printer or a 
   driver that printer is emulating.</p>
+
 <p><b>Q. Why Report Manager needs TClientDataset?</b></p>
 <p> The engine must be capable of go back one record for the main dataset (Prior 
   procedure) because grouping feature, but some datasets only support unidirectional 
@@ -104,19 +111,14 @@
   so the Windows GDI can merge graphics and texts, the printer driver does the 
   real hard work of printing, Report Manager only search for the best suited font 
   (a printer font) in Windows font list, select it and call Windows specific API 
-  to draw the text.</p>
+  to draw the text (this is the behaviour for use device fonts option)</p>
 <p>For Linux, Report Manager uses the Kylix graphic engine that uses the Qt graphic 
   engine, the Qt graphics engine writes output usually in postcript and then the 
   printer filter transform it to a understandable language to the printer (usually 
   this work is done by ghostcript).</p>
-<p>You must find a print filter or CUPS driver that converts a postcript input 
-  from Qt (or any Linux app) to textonly output (or better to graphics and text 
-  if exists), may be there is a generic text driver in CUPS or Ghostcript. That 
-  is installing a plain text printer driver if it's available.</p>
-<p>I don't know the Linux printing procedure in depth so I can be wrong.</p>
-<p>Other way to do this is write a driver for Report Manager (now Report<br>
-  Manager has three drivers:Qt,PDF,WinGDI), the output of this driver can be<br>
-  only text for example, or text with escape codes...</p>
+<p>So you can use a printer filter to convert postcript to text or better is the 
+  use of dot matrix and pos device feature, see documentation, the engine can 
+  generate text output with printer escape codes in Windows and Linux. See documentation.</p>
 <p><b>Q. Why does my report using Group Headers give strange results?</b></p>
 <p>For reports including group headers to work correctly the order of the data
 within the report must match the grouping structure of the report. Therefore the
@@ -132,24 +134,22 @@ if the following rules are followed</p>
 suppressed </li>
 </ul>
 <p>Previewing the report will not work from within an ASP program. Printing the 
-  report may also fail based on the printing environment set up on the Web server 
-  running the ASP. </p>
+  report may also fail based on the printing environment setup on the Web server 
+  running the ASP (privileges). </p>
 <p><b>Q. What is two pass report option? What is the use of this feature?</b></p>
 <p>The engine is capable of preview the first page before calculating all the 
   pages (can be thousands), this is the default behaviour for speed and memory 
   consumtion (when printing, pages printed are released from memory).</p>
 <p>The engine is also capable of printing the total pages in the first page,it's 
-  also capable of going back to the first page to process a new subreport (pararel 
+  also capable of going back to the first page to process a new subreport (paralel 
   subreports), so you can print in the first page as many subreports as you want.</p>
 <p>The printing of total pages (PAGECOUNT) requires the previous calculation of 
-  the report, then PAGECOUNT is replaced with the number.</p>
-<p>The go back to page n requires a precalcualtion of the report (calculate the 
-  full metafile) before printing.</p>
+  the report, then PAGECOUNT is replaced with the total number of pages, the page 
+  count special expression can't be used inside expressions..</p>
 <p>So two pass report must be used for both cases, PAGECOUNT and SkipToPage. I 
-  doubt other engines implement SkipToPage, it's a feature that needs a good reporting 
-  architechture. And I doubt other engines allow using PAGECOUNT in expressions, 
-  (for example in print condition of a section can it's a dead lock).</p>
-<p></p>
+  doubt other engines implement SkipToPage, and I doubt other engines allow using 
+  PAGECOUNT in expressions, (for example in print condition of a section because 
+  can produce a dead lock).</p>
 </body>
 </html>
 

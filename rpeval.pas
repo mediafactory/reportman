@@ -251,6 +251,8 @@ begin
  Rpfunctions.AddObject('SUBSTR',iden);
  iden:=TIdenFormatstr.Create(nil);
  Rpfunctions.AddObject('FORMATSTR',iden);
+ iden:=TIdenFormatNum.Create(nil);
+ Rpfunctions.AddObject('FORMATNUM',iden);
  iden:=TIdenFormatMask.Create(nil);
  Rpfunctions.AddObject('FORMATMASK',iden);
  iden:=TIdenHourMinSec.Create(nil);

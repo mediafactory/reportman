@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.1pre17';
+ RM_VERSION='2.1';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
@@ -889,6 +889,10 @@ var
   SRpSExportDoNewLine:WideString='Exp. New Line';
   SRpSExportFormat:WideString='Exp. Format';
   SRpSFeaturenotsup:WideString='Feature not supported';
+  SRpFormatNum:WideString='Formats a number with some options';
+  SRpPFormatNum:WideString='intd integer digits, decd decimal digits, and other options';
+
+
 implementation
 
 uses rptranslator;
@@ -1706,9 +1710,40 @@ begin
  TranslateVar(1227,SRpPrintRep14);
  TranslateVar(1228,SRpChartHint);
  TranslateVar(1229,SRpChartLegend);
- TranslateVar(1230,SRpAbs);
- TranslateVar(1231,SRpPAbs);
+ TranslateVar(1246,SRpAbs);
+ TranslateVar(1247,SRpPAbs);
+ TranslateVar(1248,SrpSBackExpression);
+ TranslateVar(1249,SrpSInvBackImage);
+
+ TranslateVar(1250,SRpSBackStyle);
+ TranslateVar(1252,SRpSBDesign);
+ TranslateVar(1252,SRpSBPreview);
+ TranslateVar(1253,SRpSBPrint);
+ TranslateVar(1254,SRpAsc2);
+ TranslateVar(1255,SRpLength);
+ TranslateVar(1256,SRpPLength);
+ TranslateVar(1257,SRpSVGFile);
+ TranslateVar(1258,SRpTurkish);
+ TranslateVar(1259,SRpCSVFile);
+ TranslateVar(1260,SRpTXTProFile);
+ TranslateVar(1261,SRpPrintRep15);
+ TranslateVar(1262,SRpPrintRep16);
+ TranslateVar(1263,SRpPrintRep17);
+ TranslateVar(1264,SRpPreviewMargins);
+ TranslateVar(1265,SRpSExportExpression);
+ TranslateVar(1266,SRpSExportLine);
+ TranslateVar(1267,SRpSExportPos);
+ TranslateVar(1268,SRpSExportSize);
+ TranslateVar(1269,SRpSExportAlign);
+ TranslateVar(1270,SRpSExportDoNewLine);
+ TranslateVar(1271,SRpSExportFormat);
+ TranslateVar(1272,SRpSFeaturenotsup);
+ TranslateVar(1273,SRpFormatNum);
+ TranslateVar(1274,SRpPFormatNum);
 end;
+
+
+
 
 {$IFDEF LINUX}
 procedure RestoreEnviromentLocale;

@@ -7,11 +7,40 @@ uses
   Windows,
   rpcompilerep in '..\..\..\rpcompilerep.pas';
 
-
+const
+ LINE_FEED=#13+#10;
+ 
 procedure WriteHelp;
 begin
  WriteLn('compilerep Compiles a report into a .exe file');
  WriteLn('Syntax: compilerep filename.rep [-preview] [-showparams] [-compress] [-metafile]');
+end;
+
+
+
+
+procedure WriteToStdError(astring:String);
+var
+// writed:DWORD;
+ handle:THANDLE;
+ writed:DWORD;
+ apchar:PChar;
+ lasterror:Integer;
+begin
+ // In windows obtain sdtin
+ handle:=Windows.GetStdHandle(STD_ERROR_HANDLE);
+ if handle=INVALID_HANDLE_VALUE then
+  RaiseLastOsError;
+ apchar:=PChar(astring);
+ if not WriteFile(handle,apchar,Length(astring),writed,nil) then
+ begin
+  lasterror:=GetLastError;
+  if ((lasterror<>ERROR_BROKEN_PIPE) AND (lasterror<>ERROR_HANDLE_EOF)) then
+   RaiseLastOSError;
+ end;
+// Estandard output interrupted is not a critical error
+//  if LongInt(writed)<>MemStream.Size then
+//   RaiseLastOSError;
 end;
 
 var

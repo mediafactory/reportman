@@ -298,6 +298,13 @@ type
    constructor Create(AOWner:TComponent);override;
   end;
 
+ TIdenFormatNum=class(TIdenFunction)
+ protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOWner:TComponent);override;
+  end;
+
  TIdenFormatMask=class(TIdenFunction)
  protected
    function GetRpValue:TRpValue;override;
@@ -827,7 +834,7 @@ end;
 constructor TIdenLength.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
- FParamcount:=2;
+ FParamcount:=1;
  IdenName:='Length';
  Help:=SRpLength;
  model:='function '+'Length'+'(s:string):Integer';
@@ -1440,7 +1447,125 @@ begin
  end;
 end;
 
-{ TIdenFormatStr }
+
+{ TIdenFormatNum }
+
+constructor TIdenFormatNum.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=6;
+ IdenName:='FormatNum';
+ Help:=SRpFormatNum;
+ model:='function '+'FormatNum'+'(number:double;intd,decd:integer;decseparator,thseparator:boolean;fill:char):string';
+ aParams:=SRpPFormatNum;
+end;
+
+{**************************************************************************}
+
+function TIdenFormatNum.GeTRpValue:TRpValue;
+var
+ Value:Currency;
+ fill:String;
+ aresult:string;
+ aint,adec:String;
+ negative:boolean;
+ aformat:string;
+ decimalplaces:integer;
+ integerplaces:integer;
+ avar:Variant;
+ i:integer;
+begin
+ if VarIsnull(Params[0]) then
+  Params[0]:=0.0;
+ if Not (Vartype(Params[0]) in  [varSmallInt,varInteger,varSingle,varDouble,varWord,varByte,varCurrency])then
+
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if ( Not (VarType(Params[1]) in [varSmallInt..varInteger,varWord,varByte])) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if ( Not (VarType(Params[2]) in [varSmallInt..varInteger,varWord,varByte])) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Vartype(Params[3])<>varBoolean then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Vartype(Params[4])<>varBoolean then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ avar:=Params[5];
+ if Not ((VarType(avar)=varstring) or (VarType(avar)=varOleStr)) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Length(String(avar))>0 then
+  fill:=''+String(avar)[1]
+ else
+  fill:='';
+ Value:=Params[0];
+ negative:=false;
+ if Value<0 then
+ begin
+  negative:=true;
+  Value:=-Value;
+ end;
+ decimalplaces:=Params[2];
+ if decimalplaces<0 then
+  decimalplaces:=0;
+ integerplaces:=Params[1];
+ if integerplaces<0 then
+  integerplaces:=0;
+ aformat:='####0.';
+ for i:=1 to decimalplaces do
+ begin
+  aformat:=aformat+'0';
+ end;
+ if Params[4] then
+  aformat:=','+aformat;
+ aresult:=FormatCurr(aformat,Value);
+ adec:='';
+ if decimalplaces>0 then
+  adec:=Copy(aresult,Length(aresult)-decimalplaces,decimalplaces);
+ aint:=Copy(aresult,1,Length(aresult)-decimalplaces-1);
+ aint:=Copy(aint,Length(aint)-integerplaces,integerplaces);
+ if Params[3] then
+ begin
+  if Length(adec)>0 then
+   adec:=DecimalSeparator+adec;
+ end;
+ if Length(fill)>0 then
+ begin
+  if fill='0' then
+  begin
+   if negative then
+   begin
+    while Length(aint)<integerplaces-1 do
+     aint:='0'+aint;
+    aint:='-'+aint;
+   end
+   else
+   begin
+    while Length(aint)<integerplaces do
+     aint:='0'+aint;
+   end;
+  end
+  else
+  begin
+   if negative then
+    aint:='-'+aint;
+   while Length(aint)<integerplaces do
+    aint:=fill+aint;
+  end;
+ end
+ else
+ begin
+  if negative then
+   aint:='-'+aint;
+ end;
+ aresult:=aint+adec;
+ Result:=aresult;
+end;
+
+{ TIdenFormatMask }
 
 constructor TIdenFormatMask.Create(AOwner:TComponent);
 begin

@@ -113,9 +113,9 @@ RootDir=C:\prog\Delphi7\Bin\
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=2
-MinorVer=0
-Release=1
-Build=3
+MinorVer=1
+Release=0
+Build=5
 Debug=0
 PreRelease=0
 Special=0
@@ -126,17 +126,19 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Server application
-FileVersion=2.0.1.3
+FileVersion=2.1.0.5
 InternalName=reportserverappxp
 LegalCopyright=MPL License
 LegalTrademarks=
 OriginalFilename=reportserverappxp.exe
 ProductName=Report Manager
-ProductVersion=1.0.0.0
+ProductVersion=2.1.0.0
 Comments=
 [HistoryLists\hlConditionals]
-Count=1
+Count=3
 Item0=REPMANRELEASE
+Item1=FORWEBAX
+Item2=NOLINUXPRINTBUG;FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
