@@ -27,7 +27,10 @@ uses SysUtils,Classes,DB,TypInfo,
 {$IFDEF USEREPORTFUNC}
   rpdatainfo,
 {$ENDIF}
-  rptypeval,rpstringhash;
+{$IFDEF USEEVALHASH}
+  rpstringhash,
+{$ENDIF}
+  rptypeval;
 type
   // Forward definitions
   TRpAliaslist=class;
@@ -70,7 +73,12 @@ type
     FAlias:string;
     FCachedFields:Boolean;
 //    FFields:TStringList;
+{$IFDEF USEEVALHASH}
     FFields:TStringHash;
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+    FFields:TStringList;
+{$ENDIF}
     procedure SetAlias(NewAlias:string);
     function GetDataset:TDataSet;
     procedure SetDataset(NewDataset:TDataSet);
@@ -110,9 +118,13 @@ begin
  FDataset:=nil;
  FAlias:=chr(0);
  FCachedFields:=false;
-// FFields:=TStringList.Create;
+{$IFDEF USEEVALHASH}
  FFields:=TStringHash.Create;
-// FFields.Sorted:=true;
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+ FFields:=TStringList.Create;
+ FFields.Sorted:=true;
+{$ENDIF}
 end;
 
 destructor TRpAliaslistItem.Destroy;
@@ -271,6 +283,9 @@ var i:integer;
     Field:TField;
     Dataset:TDataset;
     aitem:TRpAliasListItem;
+{$IFNDEF USEEVALHASH}
+   index:integer;
+{$ENDIF}
 begin
  Result:=nil;
  duplicated:=False;
@@ -287,12 +302,16 @@ begin
     begin
      if aitem.FCachedFields then
      begin
-//      indes:=aitem.FFields.IndexOf(aname);
-//      if index>=0 then
-//       Field:=TField(aitem.FFields.Objects[index])
-//      else
-//       Field:=nil;
+{$IFNDEF USEEVALHASH}
+      index:=aitem.FFields.IndexOf(aname);
+      if index>=0 then
+       Field:=TField(aitem.FFields.Objects[index])
+      else
+       Field:=nil;
+{$ENDIF}
+{$IFDEF USEEVALHASH}
       Field:=TField(aitem.FFields.getValue(aname));
+{$ENDIF}
      end
      else
       Field:=Dataset.Findfield(aname);
@@ -326,12 +345,16 @@ begin
      begin
       if aitem.FCachedFields then
       begin
+{$IFDEF USEEVALHASH}
       Field:=TField(aitem.FFields.getValue(aname));
-//       index:=aitem.FFields.IndexOf(aname);
-//       if index>=0 then
-//        Field:=TField(aitem.FFields.Objects[index])
-//       else
-//        Field:=nil;
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+       index:=aitem.FFields.IndexOf(aname);
+       if index>=0 then
+        Field:=TField(aitem.FFields.Objects[index])
+       else
+        Field:=nil;
+{$ENDIF}
       end
       else
        Field:=Dataset.Findfield(aname);
@@ -407,7 +430,12 @@ begin
  FFields.clear;
  for i:=0 to Sender.Fields.Count-1 do
  begin
+{$IFNDEF USEEVALHASH}
+  FFields.AddObject(AnsiUpperCase(Sender.Fields[i].FieldName),Sender.Fields[i]);
+{$ENDIF}
+{$IFDEF USEEVALHASH}
   FFields.setValue(AnsiUpperCase(Sender.Fields[i].FieldName),Sender.Fields[i]);
+{$ENDIF}
  end;
 end;
 

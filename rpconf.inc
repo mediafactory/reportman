@@ -37,6 +37,8 @@
  {$UNDEF USEADO}
  {$UNDEF USEBDE}
  {$UNDEF USEIBO}
+ // Fixes performance issues in Linux about TStringList
+ {$DEFINE USEEVALHASH}
 {$ENDIF}
 
 // Database drivers to be used when performing a release
@@ -129,9 +131,11 @@
 {$ENDIF}
 {$IFDEF CLR}
  {$DEFINE DOTNETD}
+ {$DEFINE INDY10}
 {$ENDIF}
 // DOT NET PREVIEW
 {$IFDEF DOTNETD}
+ {$UNDEF USEEVALHASH}
  {$DEFINE DOTNETDBUGS}
  {$DEFINE VCLFILEFILTERS}
  {$DEFINE MSWINDOWS}

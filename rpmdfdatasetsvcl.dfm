@@ -88,6 +88,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         Top = 0
         Width = 8
         Height = 78
+        Cursor = crHSplit
         Beveled = True
       end
       object LDatasets: TListBox
@@ -177,6 +178,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Top = 0
           Width = 8
           Height = 137
+          Cursor = crHSplit
           Beveled = True
         end
         object MSQL: TMemo
@@ -457,9 +459,6 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Height = 89
           Caption = 'Dataset client side unions'
           TabOrder = 6
-          DesignSize = (
-            449
-            89)
           object LabelUnions: TLabel
             Left = 4
             Top = 20
@@ -473,7 +472,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             Width = 181
             Height = 21
             Style = csDropDownList
-            ItemHeight = 13
+            ItemHeight = 0
             TabOrder = 0
           end
           object CheckGroupUnion: TCheckBox

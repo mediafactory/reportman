@@ -71,6 +71,9 @@ var
 {$IFDEF DOTNETD}
  i:integer;
 {$ENDIF}
+{$IFDEF DOTNETD}
+ afontname:string;
+{$ENDIF}
 begin
  if ((currentname=pdffont.WFontName) and (currentstyle=pdffont.Style)) then
   exit;
@@ -148,6 +151,8 @@ var
  numkernings:integer;
  langinfo:DWord;
  i:integer;
+ index:integer;
+ klist:TStringList;
 {$ENDIF}
 begin
    // See if data can be embedded
@@ -247,9 +252,18 @@ begin
     begin
      for i:=0 to numkernings-1 do
      begin
-      data.loadedkernings.AddObject(
-       FormatFloat('000000',akernings[i].wFirst)+
-       FormatFloat('000000',akernings[i].wSecond),
+      data.loadedk[akernings[i].wFirst]:=true;
+      index:=data.kerningsadded.IndexOf(FormatFloat('000000',akernings[i].wFirst));
+      if index>=0 then
+       klist:=data.loadedkernings[akernings[i].wFirst]
+      else
+      begin
+       klist:=TStringList.Create;
+       klist.sorted:=true;
+       data.loadedkernings[akernings[i].wFirst]:=klist;
+       data.kerningsadded.Add(FormatFloat('000000',akernings[i].wFirst));
+      end;
+      klist.AddObject(FormatFloat('000000',akernings[i].wSecond),
        TObject(Round(-akernings[i].iKernAmount/logx*72000/TTF_PRECISION)));
      end;
     end;

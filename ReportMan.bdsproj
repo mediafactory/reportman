@@ -119,8 +119,8 @@
 			<Directories Name="UnitOutputDir" Type="String"></Directories>
 			<Directories Name="PackageDLLOutputDir" Type="String"></Directories>
 			<Directories Name="PackageDCPOutputDir" Type="String"></Directories>
-			<Directories Name="SearchPath" Type="String">c:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0;c:\windows\microsoft.net\framework\v1.1.4322;c:\archivos de programa\borland\bds\2.0\bin;h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0;h:\windows\microsoft.net\framework\v1.1.4322;c:\prog\toni\cvsroot\reportman\reportman;k:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0;k:\windows\microsoft.net\framework\v1.1.4322;C:\prog\toni\cvsroot\reportman\reportman</Directories>
-			<Directories Name="Packages" Type="String">Borland.VclAdoNet;Borland.VclDbExpress;Borland.VclBdeRtl;Borland.VclDSnapCon;Borland.VclDSnap;C:\prog\toni\cvsroot\reportman\reportman\IndyNetCore.dll;C:\prog\toni\cvsroot\reportman\reportman\IndyNet.dll;Borland.VclRtl;Borland.VclIBXpress;k:\windows\microsoft.net\framework\v1.1.4322\System.Drawing.dll;Borland.Delphi</Directories>
+			<Directories Name="SearchPath" Type="String">c:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0;c:\windows\microsoft.net\framework\v1.1.4322;c:\archivos de programa\borland\bds\2.0\bin;h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0;h:\windows\microsoft.net\framework\v1.1.4322;c:\prog\toni\cvsroot\reportman\reportman;k:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0;k:\windows\microsoft.net\framework\v1.1.4322;C:\prog\toni\cvsroot\reportman\reportman;h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0;h:\archivos de programa\borland\bds\3.0\bin</Directories>
+			<Directories Name="Packages" Type="String">h:\archivos de programa\borland\bds\3.0\bin\IndySystem.dll;h:\archivos de programa\borland\bds\3.0\bin\IndyProtocols.dll;h:\archivos de programa\borland\bds\3.0\bin\IndyCore.dll;h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclAdoNet.dll;h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclDbExpress.dll;h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclBdeRtl.dll;h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclDSnapCon.dll;h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclDSnap.dll;h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclRtl.dll;h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclIBXpress.dll;h:\windows\microsoft.net\framework\v1.1.4322\System.Drawing.dll;h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.Delphi.dll</Directories>
 			<Directories Name="Conditionals" Type="String"></Directories>
 			<Directories Name="DebugSourceDirs" Type="String"></Directories>
 			<Directories Name="UsePackages" Type="Boolean">False</Directories>
@@ -156,26 +156,43 @@
 			<VersionInfo Name="DLL" Type="Boolean">False</VersionInfo>
 			<VersionInfo Name="Locale" Type="Integer">3082</VersionInfo>
 			<VersionInfo Name="CodePage" Type="Integer">1252</VersionInfo>
-		</VersionInfo>  <FileList>
-      <File FileName="rplastsav.dcr" ContainerId=""/>
-      <File FileName="rpexpredlgvcl.dcr" ContainerId=""/>
-      <File FileName="rpeval.dcr" ContainerId=""/>
-      <File FileName="rptranslator.dcr" ContainerId=""/>
-      <File FileName="rpvclreport.dcr" ContainerId=""/>
-      <File FileName="rpalias.dcr" ContainerId=""/>
-      <File FileName="rpmaskedit.dcr" ContainerId=""/>
-      <File FileName="rppdfreport.dcr" ContainerId=""/>
-      <File FileName="k:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0\Borland.Delphi.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.Delphi" AssemblyName="borland.delphi" Version="7.1.1523.17956" LinkUnits="False"/>
+		</VersionInfo>  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <FileList>
+      <File FileName="" ContainerId=""/>
+      <File FileName="" ContainerId=""/>
+      <File FileName="" ContainerId=""/>
+      <File FileName="" ContainerId=""/>
+      <File FileName="" ContainerId=""/>
+      <File FileName="" ContainerId=""/>
+      <File FileName="" ContainerId=""/>
+      <File FileName="" ContainerId=""/>
+      <File FileName="h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.Delphi.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.Delphi" AssemblyName="borland.delphi" Version="9.0.1740.26624" LinkUnits="False"/>
       <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.Drawing.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="System.Drawing" AssemblyName="System.Drawing" Version="1.0.5000.0" LinkUnits="False"/>
-      <File FileName="k:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0\Borland.VclIBXpress.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclIBXpress" AssemblyName="Borland.VclIBXpress" Version="7.1.1523.17956" LinkUnits="False"/>
-      <File FileName="k:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0\Borland.VclRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclRtl" AssemblyName="Borland.VclRtl" Version="7.1.1523.17956" LinkUnits="False"/>
-      <File FileName="IndyNet.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="IndyNet" AssemblyName="IndyNet" LinkUnits="False"/>
-      <File FileName="IndyNetCore.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="IndyNetCore" AssemblyName="IndyNetCore" LinkUnits="False"/>
-      <File FileName="k:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0\Borland.VclDSnap.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDSnap" AssemblyName="Borland.VclDSnap" Version="7.1.1523.17956" LinkUnits="False"/>
-      <File FileName="k:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0\Borland.VclDSnapCon.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDSnapCon" AssemblyName="Borland.VclDSnapCon" Version="7.1.1523.17956" LinkUnits="False"/>
-      <File FileName="k:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0\Borland.VclBdeRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclBdeRtl" AssemblyName="Borland.VclBdeRtl" Version="7.1.1523.17956" LinkUnits="False"/>
-      <File FileName="k:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0\Borland.VclDbExpress.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDbExpress" AssemblyName="Borland.VclDbExpress" Version="7.1.1523.17956" LinkUnits="False"/>
-      <File FileName="k:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0\Borland.VclAdoNet.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclAdoNet" AssemblyName="Borland.VclAdoNet" Version="7.1.1523.17956" LinkUnits="False"/>
+      <File FileName="h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclIBXpress.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclIBXpress" AssemblyName="Borland.VclIBXpress" Version="9.0.1740.26624" LinkUnits="False"/>
+      <File FileName="h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclRtl" AssemblyName="Borland.VclRtl" Version="9.0.1740.26624" LinkUnits="False"/>
+      <File FileName="h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclDSnap.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDSnap" AssemblyName="Borland.VclDSnap" Version="9.0.1740.26624" LinkUnits="False"/>
+      <File FileName="h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclDSnapCon.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDSnapCon" AssemblyName="Borland.VclDSnapCon" Version="9.0.1740.26624" LinkUnits="False"/>
+      <File FileName="h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclBdeRtl.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclBdeRtl" AssemblyName="Borland.VclBdeRtl" Version="9.0.1740.26624" LinkUnits="False"/>
+      <File FileName="h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclDbExpress.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclDbExpress" AssemblyName="Borland.VclDbExpress" Version="9.0.1740.26624" LinkUnits="False"/>
+      <File FileName="h:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\3.0\Borland.VclAdoNet.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclAdoNet" AssemblyName="Borland.VclAdoNet" Version="9.0.1740.26624" LinkUnits="False"/>
+      <File FileName="h:\archivos de programa\borland\bds\3.0\bin\IndyCore.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="IndyCore" AssemblyName="IndyCore" Version="0.0.0.0" LinkUnits="False"/>
+      <File FileName="h:\archivos de programa\borland\bds\3.0\bin\IndyProtocols.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="IndyProtocols" AssemblyName="IndyProtocols" Version="0.0.0.0" LinkUnits="False"/>
+      <File FileName="h:\archivos de programa\borland\bds\3.0\bin\IndySystem.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="IndySystem" AssemblyName="IndySystem" Version="0.0.0.0" LinkUnits="False"/>
       <File FileName="rpregvcl.pas" ContainerId="" ModuleName="rpregvcl"/>
       <File FileName="rptypeval.pas" ContainerId="" ModuleName="rptypeval"/>
       <File FileName="rpvpreview.pas" ContainerId="" ModuleName="rpvpreview"/>
@@ -233,6 +250,19 @@
       <File FileName="rppdfreport.pas" ContainerId="" ModuleName="rppdfreport"/>
       <File FileName="rpinfoprovgdi.pas" ContainerId="" ModuleName="rpinfoprovgdi"/>
       <File FileName="rpinfoprovid.pas" ContainerId="" ModuleName="rpinfoprovid"/>
+      <File FileName="rpbarcodecons.pas" ContainerId="" ModuleName="rpbarcodecons"/>
     </FileList>
+    <VersionInfoKeys>
+      <VersionInfoKeys Name="CompanyName"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileDescription"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="InternalName"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys>
+      <VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductName"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="Comments"></VersionInfoKeys>
+    </VersionInfoKeys>
   </DelphiDotNet.Personality>
 </BorlandProject>

@@ -189,13 +189,13 @@ const
 
 constructor TRpCommonComponent.Create(AOwner:TComponent);
 begin
+ inherited Create(AOwner);
  // The owner must be a report
  if Assigned(AOwner) then
   if (Not (AOwner is TRpBaseReport)) then
    if (Not (AOwner is TRpSection)) then
     Raise Exception.Create(SRpOnlyAReportOwner+classname);
 
- inherited Create(AOwner);
  FVisible:=True;
  FHeight:=0;
  FWidth:=0;

@@ -1,14 +1,6 @@
 package ReportMan;
 
 
-{$R 'rplastsav.dcr'}
-{$R 'rpexpredlgvcl.dcr'}
-{$R 'rpeval.dcr'}
-{$R 'rptranslator.dcr'}
-{$R 'rpvclreport.dcr'}
-{$R 'rpalias.dcr'}
-{$R 'rpmaskedit.dcr'}
-{$R 'rppdfreport.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -37,13 +29,14 @@ requires
   System.Drawing,
   Borland.VclIBXpress,
   Borland.VclRtl,
-  IndyNet,
-  IndyNetCore,
   Borland.VclDSnap,
   Borland.VclDSnapCon,
   Borland.VclBdeRtl,
   Borland.VclDbExpress,
-  Borland.VclAdoNet;
+  Borland.VclAdoNet,
+  IndyCore,
+  IndyProtocols,
+  IndySystem;
 
 contains
   rpregvcl in 'rpregvcl.pas',
@@ -102,7 +95,8 @@ contains
   rpmreg in 'rpmreg.pas',
   rppdfreport in 'rppdfreport.pas' {rppdfreport.TPDFReport: rpcompobase.TCBaseReport},
   rpinfoprovgdi in 'rpinfoprovgdi.pas',
-  rpinfoprovid in 'rpinfoprovid.pas';
+  rpinfoprovid in 'rpinfoprovid.pas',
+  rpbarcodecons in 'rpbarcodecons.pas';
 
 [assembly: AssemblyDescription('')]
 [assembly: AssemblyConfiguration('')]

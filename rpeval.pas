@@ -23,7 +23,10 @@ interface
 
 uses
   SysUtils, Classes,DB,rptypeval,
-  rpmdconsts,sysconst,rpparser,rpstringhash,
+  rpmdconsts,sysconst,rpparser,
+{$IFDEF USEEVALHASH}
+ rpstringhash,
+{$ENDIF}
 {$IFDEF USEREPORTFUNC}
   rpalias,
 {$ENDIF}
@@ -50,7 +53,12 @@ type
   FExpression:string;
   // Result of the evaluation
   FEvalResult:TRpValue;
+{$IFDEF USEEVALHASH}
   FIdentifiers:TStringHash;
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+  FIdentifiers:TStringList;
+{$ENDIF}
   FPartial:TRpValue;
   // Variable that contains if we are doing syntax checking
   FChecking:Boolean;
@@ -110,7 +118,12 @@ type
   property Expression:string Read FExpression write SetExpression;
   property EvalResult:TRpValue Read FEvalResult;
   // The identifiers including functions
+{$IFDEF USEEVALHASH}
   property Identifiers:TStringHash read FIdentifiers
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+  property Identifiers:TStringList read FIdentifiers
+{$ENDIF}
    write FIdentifiers;
   property Checking:Boolean read FChecking;
   // Error information
@@ -173,7 +186,12 @@ begin
  // Creates de parser
  Rpparser:=TRpparser.Create;
  // The identifiers list
+{$IFDEF USEEVALHASH}
  FIdentifiers:=TStringHash.Create;
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+ FIdentifiers:=TStringList.Create;
+{$ENDIF}
 // FIdentifiers.Sorted:=True;
 // FIdentifiers.Duplicates:=dupError;
  if AddIdens then
@@ -189,8 +207,13 @@ begin
  // The parser
  Rpparser:=TRpparser.Create;
  // The identifiers
+{$IFNDEF USEEVALHASH}
+ FIdentifiers:=TStringList.Create;
+{$ENDIF}
+{$IFDEF USEEVALHASH}
  FIdentifiers:=TStringHash.Create;
-// FIdentifiers.Sorted:=True;
+{$ENDIF}
+ // FIdentifiers.Sorted:=True;
 // FIdentifiers.Duplicates:=dupError;
  // Always add with this constructor
  AddIdentifiers;
@@ -332,7 +355,12 @@ var
 begin
  FillFunctions;
  for i:=0 to Rpfunctions.Count-1 do
+{$IFDEF USEEVALHASH}
   Fidentifiers.setValue(RpFunctions.Strings[i],RpFunctions.Objects[i]);
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+  Fidentifiers.AddObject(RpFunctions.Strings[i],RpFunctions.Objects[i]);
+{$ENDIF}
 // Identifiers.Assign(Rpfunctions);
 end;
 
@@ -355,7 +383,12 @@ end;
 // To evaluate a text we must create another evaluator
 function TRpCustomEvaluator.EvaluateText(text:string):TRpValue;
 var eval:TRpCustomEvaluator;
+{$IFDEF USEEVALHASH}
     oldiden:TStringHash;
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+    oldiden:TStringList;
+{$ENDIF}
 begin
  oldiden:=nil;
  if Evaluating then
@@ -1032,24 +1065,52 @@ end;
 procedure TRpCustomEvaluator.AddVariable(name1:string;objecte:TRpIdentifier);
 begin
  objecte.idenname:=name1;
+{$IFDEF USEEVALHASH}
  FIdentifiers.SetValue('M.'+AnsiUpperCase(name1),objecte);
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+ FIdentifiers.AddObject('M.'+AnsiUpperCase(name1),objecte);
+{$ENDIF}
 end;
 
 procedure TRpCustomEvaluator.AddIden(name1:string;objecte:TRpIdentifier);
 begin
+{$IFDEF USEEVALHASH}
  Identifiers.SetValue(name1,objecte);
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+ Identifiers.AddObject(name1,objecte);
+{$ENDIF}
 end;
 
 function TRpCustomEvaluator.Searchwithoutdot(name1:Shortstring):TRpIdentifier;
 var
  Doble:Boolean;
+{$IFNDEF USEEVALHASH}
+  index:integer;
+{$ENDIF}
 begin
   Doble:=False;
+{$IFDEF USEEVALHASH}
   Result:=FIdentifiers.GetValue(name1) As TRpIdentifier;
+{$ENDIF}
+{$IFNDEF USEEVALHASH}
+  Result:=nil;
+  index:=FIdentifiers.IndexOf(name1);
+  if index>=0 then
+   Result:=FIdentifiers.Objects[index] As TRpIdentifier;
+{$ENDIF}
   if Assigned(Result) then
    Exit;
   // Memory variable?
+{$IFNDEF USEEVALHASH}
+  index:=FIdentifiers.IndexOf('M.'+name1);
+  if index>=0 then
+   Result:=FIdentifiers.Objects[index] As TRpIdentifier;
+{$ENDIF}
+{$IFDEF USEEVALHASH}
   Result:=FIdentifiers.GetValue('M.'+name1) As TRpIdentifier;
+{$ENDIF}
   if Assigned(Result) then
    Exit;
   // May be a field ?
@@ -1067,6 +1128,9 @@ var
 pospunt:byte;
 primer,sensepunt:string;
 doble:Boolean;
+{$IFNDEF USEEVALHASH}
+ index:integer;
+{$ENDIF}
 begin
  name1:=AnsiUpperCase(name1);
  Result:=nil;
@@ -1081,7 +1145,14 @@ begin
   // Memory variable ?
  if primer='M' then
  begin
+{$IFNDEF USEEVALHASH}
+  index:=FIdentifiers.IndexOf(name1);
+  if index>=0 then
+   Result:=FIdentifiers.Objects[index] As TRpIdentifier;
+{$ENDIF}
+{$IFDEF USEEVALHASH}
   Result:=FIdentifiers.GetValue(name1) As TRpIdentifier;
+{$ENDIF}
   Exit;
  end;
  sensepunt:=copy(name1,pospunt+1,ord(name1[0])-pospunt);

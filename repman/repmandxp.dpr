@@ -39,9 +39,11 @@ uses
   rprfvparams in '..\rprfvparams.pas' {FRpRTParams},
   rpmdfsectionintvcl in '..\rpmdfsectionintvcl.pas',
   rptextdriver in '..\rptextdriver.pas',
+{$IFDEF USEEVALHASH}
   rpstringhash in '..\rpstringhash.pas',
   rpcomparable in '..\rpcomparable.pas',
   rphashtable in '..\rphashtable.pas',
+{$ENDIF}
   rpactivexreport in '..\rpactivexreport.pas',
   rpalias in '..\rpalias.pas',
   rpdatatext in '..\rpdatatext.pas',

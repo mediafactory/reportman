@@ -41,7 +41,7 @@ uses
 {$IFDEF USEVARIANTS}
  Types,Variants,
 {$ENDIF}
-{$IFNDEF USEVARIANTS}
+{$IFDEF MSWINDOWS}
  Windows,
 {$ENDIF}
  rpprintitem,rpbarcodecons,math;

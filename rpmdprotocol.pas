@@ -27,6 +27,9 @@ interface
 uses SysUtils,Classes,rpmdconsts,
 {$IFDEF DOTNETD}
  IdStream,
+{$IFDEF INDY10}
+ IdStreamVCL,
+{$ENDIF}
 {$ENDIF}
  IdTCPConnection;
 
@@ -91,6 +94,8 @@ function ReadRpComBlockFromStream(astream:TStream):TRpComBlock;
 function RPComBlockToWideString(CB:TRpComBlock):WideString;
 
 implementation
+
+
 
 
 procedure WriteRpComBlockToStream(CB:TRpComBlock;astream:TStream);
@@ -231,7 +236,12 @@ end;
 procedure SendBlock(AConnection:TIdTCPConnection;CB:TRpComBlock);
 var
 {$IFDEF DOTNETD}
+{$IFDEF INDY10}
+ astream:TIdStreamVCL;
+{$ENDIF}
+{$IFNDEF INDY10}
  astream:TIdStream;
+{$ENDIF}
 {$ENDIF}
  memstream:TMemoryStream;
 begin
@@ -242,12 +252,22 @@ begin
   WriteRpComBlockToStream(CB,memstream);
   memstream.Seek(0,soFromBeginning);
 {$IFDEF DOTNETD}
-  astream:=TIdStream.Create(memstream);
+{$IFDEF INDY10}
+  astream:=TIdStreamVCL.Create(memstream);
   try
-   AConnection.IOHandler.Write(AStream);
+   AConnection.IOHandler.Write(astream);
   finally
    astream.Free;
   end;
+{$ENDIF}
+{$IFNDEF INDY10}
+  astream:=TIdStream.Create(memstream);
+  try
+   AConnection.IOHandler.Write(astream);
+  finally
+   astream.Free;
+  end;
+{$ENDIF}
 {$ENDIF}
 {$IFNDEF DOTNETD}
   AConnection.WriteStream(memstream,true,true);

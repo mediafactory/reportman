@@ -185,7 +185,14 @@ begin
     if isanumber then
      sh.Cells.item[arow,acolumn].Value:=number
     else
+    begin
+     if Length(aansitext)>0 then
+     begin
+      if aansitext[1]='=' then
+       aansitext:=''''+aansitext;
+     end;
      sh.Cells.item[arow,acolumn].Value:=aansitext;
+    end;
     if FontName<>page.GetWFontName(Obj) then
      sh.Cells.item[arow,acolumn].Font.Name:=page.GetWFontName(Obj);
     if obj.FontSize<>FontSize then
@@ -221,8 +228,9 @@ begin
 //     aalign:=aalign or DT_NOCLIP;
 //    if obj.RightToLeft then
 //     aalign:=aalign or DT_RTLREADING;
-    if Not obj.Transparent then
-     sh.Cells.Item[arow,acolumn].Color:=CLXColorToVCLColor(obj.BackColor);
+    // In word 97, not supported
+//    if Not obj.Transparent then
+//     sh.Cells.Item[arow,acolumn].Color:=CLXColorToVCLColor(obj.BackColor);
    end;
   rpMetaDraw:
    begin

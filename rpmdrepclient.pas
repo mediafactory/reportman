@@ -33,6 +33,9 @@ uses
 {$ENDIF}
 {$IFDEF DOTNETD}
   IdStream,
+ {$IFDEF INDY10}
+  IdStreamVCL,
+ {$ENDIF}
 {$ENDIF}
   SyncObjs,rpparams;
 
@@ -274,7 +277,12 @@ end;
 procedure TRpClientHandleThread.Execute;
 {$IFDEF DOTNETD}
 var
+ {$IFNDEF INDY10}
  astream:TIdStream;
+ {$ENDIF}
+ {$IFDEF INDY10}
+ astream:TIdStreamVCL;
+ {$ENDIF}
 {$ENDIF}
 begin
  data:=TMemoryStream.Create;
@@ -292,12 +300,22 @@ begin
    begin
     try
 {$IFDEF DOTNETD}
+ {$IFDEF INDY10}
+     astream:=TIdStreamVCL.Create(data);
+     try
+      amod.RepClient.IOHandler.ReadStream(astream);
+     finally
+      astream.free;
+     end;
+ {$ENDIF}
+ {$IFNDEF INDY10}
      astream:=TIdStream.Create(data);
      try
       amod.RepClient.IOHandler.ReadStream(astream);
      finally
       astream.free;
      end;
+ {$ENDIF}
 {$ENDIF}
 {$IFNDEF DOTNETD}
      amod.RepClient.ReadStream(data);

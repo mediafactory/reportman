@@ -1550,7 +1550,7 @@ end;
 
 
 {$IFDEF DOTNETD}
-function TRpPDFCanvas.CalcCharWidth(charcode:char):double;
+function TRpPDFCanvas.CalcCharWidth(charcode:Widechar;fontdata:TRpTTFontData):double;
 var
  intvalue:Byte;
  defaultwidth:integer;
@@ -1564,6 +1564,14 @@ begin
   Result:=0;
   exit;
  end;
+ if (FFont.Name in [poLinked,poEmbedded]) then
+ begin
+  // Ask for font size
+  Result:=InfoProvider.GetCharWidth(Font,fontdata,charcode);
+  Result:=Result*FFont.Size/1000;
+  exit;
+ end
+ else
  if (FFont.Name=poHelvetica) then
  begin
   isdefault:=false;

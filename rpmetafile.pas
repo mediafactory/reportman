@@ -1081,8 +1081,8 @@ end;
 
 constructor ErpBadFileFormat.CreatePos(Msg:String;APosition,Pos2:LongInt);
 begin
- FPosition:=Position;
  inherited Create(Msg);
+ FPosition:=Position;
 end;
 
 
