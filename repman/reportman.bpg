@@ -1,0 +1,30 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.02.5
+#------------------------------------------------------------------------------
+MAKE = make -$(MAKEFLAGS) -f$**
+DCC =dcc $<
+#------------------------------------------------------------------------------
+PROJECTS = repmand metaprint metaview printrep reptotxt txttorep
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+repmand: repmand.dpr
+						$(DCC)
+
+metaprint: utils/metaprint/metaprint.dpr
+					$(DCC)
+
+metaview: utils/metaview/metaview.dpr
+				$(DCC)
+
+printrep: utils/printrep/printrep.dpr
+			$(DCC)
+
+reptotxt: utils/reptotxt/reptotxt.dpr
+		$(DCC)
+
+txttorep: utils/txttorep/txttorep.dpr
+	$(DCC)
+
+
