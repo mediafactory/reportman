@@ -25,7 +25,7 @@ package rppackv_del;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'Report manager visual clx package'}
+{$DESCRIPTION 'Report manager Visual CLX components'}
 {$IMPLICITBUILD OFF}
 
 requires

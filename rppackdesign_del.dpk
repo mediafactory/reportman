@@ -23,6 +23,7 @@ package rppackdesign_del;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
+{$DESCRIPTION 'Report Manager Designer Component Package'}
 {$IMPLICITBUILD OFF}
 
 requires
