@@ -20,6 +20,8 @@ unit rpdrawitem;
 
 interface
 
+{$I rpconf.inc}
+
 uses Sysutils,
 {$IFDEF MSWINDOWS}
  windows,

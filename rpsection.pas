@@ -22,6 +22,8 @@ unit rpsection;
 
 interface
 
+{$I rpconf.inc}
+
 uses Classes,
 {$IFDEF MSWINDOWS}
  windows,
