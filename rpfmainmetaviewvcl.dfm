@@ -17,6 +17,7 @@ object FRpMainMetaVCL: TFRpMainMetaVCL
   OldCreateOrder = True
   ShowHint = True
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
 end

@@ -11,21 +11,26 @@ unit Reportman_TLB;
 // manual modifications will be lost.                                         
 // ************************************************************************ //
 
-// PASTLWTR : $Revision: 1.18 $
-// File generated on 02/10/2003 18:27:17 from Type Library described below.
+// PASTLWTR : 1.2
+// File generated on 16/10/2003 12:03:55 from Type Library described below.
 
-// ************************************************************************ //
+// ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
-// IID\LCID: {D4D26F6B-6564-44F4-A913-03C91CE37740}\0
+// LIBID: {D4D26F6B-6564-44F4-A913-03C91CE37740}
+// LCID: 0
 // Helpfile: 
+// HelpString: Report Manager ActiveX Library
 // DepndLst: 
 //   (1) v2.0 stdole, (H:\WINDOWS\System32\stdole2.tlb)
-//   (2) v4.0 StdVCL, (H:\WINDOWS\system32\stdvcl40.dll)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
+{$WARN SYMBOL_PLATFORM OFF}
+{$WRITEABLECONST ON}
+{$VARPROPSETTER ON}
 interface
 
-uses Windows, ActiveX, Classes, Graphics, OleServer, OleCtrls, StdVCL;
+uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL, Variants;
+  
 
 // *********************************************************************//
 // GUIDS declared in the TypeLibrary. Following prefixes are used:        
@@ -108,45 +113,45 @@ type
     procedure SetDatasetSQL(const datasetname: WideString; const sqlsentence: WideString); safecall;
     procedure SetDatabaseConnectionString(const databasename: WideString; 
                                           const connectionstring: WideString); safecall;
-    function  GetDatasetSQL(const datasetname: WideString): WideString; safecall;
-    function  GetDatabaseConnectionString(const databasename: WideString): WideString; safecall;
+    function GetDatasetSQL(const datasetname: WideString): WideString; safecall;
+    function GetDatabaseConnectionString(const databasename: WideString): WideString; safecall;
     procedure SetParamValue(const paramname: WideString; paramvalue: OleVariant); safecall;
-    function  GetParamValue(const paramname: WideString): OleVariant; safecall;
-    function  Execute: WordBool; safecall;
+    function GetParamValue(const paramname: WideString): OleVariant; safecall;
+    function Execute: WordBool; safecall;
     procedure PrinterSetup; safecall;
-    function  ShowParams: WordBool; safecall;
+    function ShowParams: WordBool; safecall;
     procedure SaveToPDF(const filename: WideString; compressed: WordBool); safecall;
-    function  PrintRange(frompage: Integer; topage: Integer; copies: Integer; collate: WordBool): WordBool; safecall;
-    function  Get_filename: WideString; safecall;
+    function PrintRange(frompage: Integer; topage: Integer; copies: Integer; collate: WordBool): WordBool; safecall;
+    function Get_filename: WideString; safecall;
     procedure Set_filename(const Value: WideString); safecall;
-    function  Get_Preview: WordBool; safecall;
+    function Get_Preview: WordBool; safecall;
     procedure Set_Preview(Value: WordBool); safecall;
-    function  Get_ShowProgress: WordBool; safecall;
+    function Get_ShowProgress: WordBool; safecall;
     procedure Set_ShowProgress(Value: WordBool); safecall;
-    function  Get_ShowPrintDialog: WordBool; safecall;
+    function Get_ShowPrintDialog: WordBool; safecall;
     procedure Set_ShowPrintDialog(Value: WordBool); safecall;
-    function  Get_Title: WideString; safecall;
+    function Get_Title: WideString; safecall;
     procedure Set_Title(const Value: WideString); safecall;
-    function  Get_Language: Integer; safecall;
+    function Get_Language: Integer; safecall;
     procedure Set_Language(Value: Integer); safecall;
-    function  Get_DoubleBuffered: WordBool; safecall;
+    function Get_DoubleBuffered: WordBool; safecall;
     procedure Set_DoubleBuffered(Value: WordBool); safecall;
-    function  Get_AlignDisabled: WordBool; safecall;
-    function  Get_VisibleDockClientCount: Integer; safecall;
-    function  DrawTextBiDiModeFlagsReadingOnly: Integer; safecall;
-    function  Get_Enabled: WordBool; safecall;
+    function Get_AlignDisabled: WordBool; safecall;
+    function Get_VisibleDockClientCount: Integer; safecall;
+    function DrawTextBiDiModeFlagsReadingOnly: Integer; safecall;
+    function Get_Enabled: WordBool; safecall;
     procedure Set_Enabled(Value: WordBool); safecall;
     procedure InitiateAction; safecall;
-    function  IsRightToLeft: WordBool; safecall;
-    function  UseRightToLeftReading: WordBool; safecall;
-    function  UseRightToLeftScrollBar: WordBool; safecall;
-    function  Get_Visible: WordBool; safecall;
+    function IsRightToLeft: WordBool; safecall;
+    function UseRightToLeftReading: WordBool; safecall;
+    function UseRightToLeftScrollBar: WordBool; safecall;
+    function Get_Visible: WordBool; safecall;
     procedure Set_Visible(Value: WordBool); safecall;
-    function  Get_Cursor: Smallint; safecall;
+    function Get_Cursor: Smallint; safecall;
     procedure Set_Cursor(Value: Smallint); safecall;
-    function  Get_HelpType: TxHelpType; safecall;
+    function Get_HelpType: TxHelpType; safecall;
     procedure Set_HelpType(Value: TxHelpType); safecall;
-    function  Get_HelpKeyword: WideString; safecall;
+    function Get_HelpKeyword: WideString; safecall;
     procedure Set_HelpKeyword(const Value: WideString); safecall;
     procedure SetSubComponent(IsSubComponent: WordBool); safecall;
     procedure AboutBox; safecall;
@@ -156,7 +161,7 @@ type
     procedure CalcReport(ShowProgress: WordBool); safecall;
     procedure Compose(const Report: IReportReport; Execute: WordBool); safecall;
     procedure SaveToText(const filename: WideString; const textdriver: WideString); safecall;
-    function  Get_Report: IReportReport; safecall;
+    function Get_Report: IReportReport; safecall;
     property filename: WideString read Get_filename write Set_filename;
     property Preview: WordBool read Get_Preview write Set_Preview;
     property ShowProgress: WordBool read Get_ShowProgress write Set_ShowProgress;
@@ -184,15 +189,15 @@ type
     procedure SetDatasetSQL(const datasetname: WideString; const sqlsentence: WideString); dispid 1;
     procedure SetDatabaseConnectionString(const databasename: WideString; 
                                           const connectionstring: WideString); dispid 2;
-    function  GetDatasetSQL(const datasetname: WideString): WideString; dispid 3;
-    function  GetDatabaseConnectionString(const databasename: WideString): WideString; dispid 4;
+    function GetDatasetSQL(const datasetname: WideString): WideString; dispid 3;
+    function GetDatabaseConnectionString(const databasename: WideString): WideString; dispid 4;
     procedure SetParamValue(const paramname: WideString; paramvalue: OleVariant); dispid 5;
-    function  GetParamValue(const paramname: WideString): OleVariant; dispid 6;
-    function  Execute: WordBool; dispid 7;
+    function GetParamValue(const paramname: WideString): OleVariant; dispid 6;
+    function Execute: WordBool; dispid 7;
     procedure PrinterSetup; dispid 8;
-    function  ShowParams: WordBool; dispid 9;
+    function ShowParams: WordBool; dispid 9;
     procedure SaveToPDF(const filename: WideString; compressed: WordBool); dispid 10;
-    function  PrintRange(frompage: Integer; topage: Integer; copies: Integer; collate: WordBool): WordBool; dispid 11;
+    function PrintRange(frompage: Integer; topage: Integer; copies: Integer; collate: WordBool): WordBool; dispid 11;
     property filename: WideString dispid 12;
     property Preview: WordBool dispid 13;
     property ShowProgress: WordBool dispid 14;
@@ -202,12 +207,12 @@ type
     property DoubleBuffered: WordBool dispid 18;
     property AlignDisabled: WordBool readonly dispid 19;
     property VisibleDockClientCount: Integer readonly dispid 20;
-    function  DrawTextBiDiModeFlagsReadingOnly: Integer; dispid 22;
+    function DrawTextBiDiModeFlagsReadingOnly: Integer; dispid 22;
     property Enabled: WordBool dispid -514;
     procedure InitiateAction; dispid 23;
-    function  IsRightToLeft: WordBool; dispid 24;
-    function  UseRightToLeftReading: WordBool; dispid 27;
-    function  UseRightToLeftScrollBar: WordBool; dispid 28;
+    function IsRightToLeft: WordBool; dispid 24;
+    function UseRightToLeftReading: WordBool; dispid 27;
+    function UseRightToLeftScrollBar: WordBool; dispid 28;
     property Visible: WordBool dispid 29;
     property Cursor: Smallint dispid 30;
     property HelpType: TxHelpType dispid 31;
@@ -239,8 +244,8 @@ type
 // *********************************************************************//
   IReportParameters = interface(IUnknown)
     ['{CBFA9AE3-1390-4EC6-8156-FB446D9A547B}']
-    function  Get_Items(index: Integer): IReportParam; safecall;
-    function  Get_Count: Integer; safecall;
+    function Get_Items(index: Integer): IReportParam; safecall;
+    function Get_Count: Integer; safecall;
     property Items[index: Integer]: IReportParam read Get_Items;
     property Count: Integer read Get_Count;
   end;
@@ -263,15 +268,15 @@ type
 // *********************************************************************//
   IReportParam = interface(IUnknown)
     ['{7B47C9F9-0746-4110-BB3D-5997C38810FA}']
-    function  Get_Description: OleVariant; safecall;
+    function Get_Description: OleVariant; safecall;
     procedure Set_Description(Value: OleVariant); safecall;
-    function  Get_Name: OleVariant; safecall;
+    function Get_Name: OleVariant; safecall;
     procedure Set_Name(Value: OleVariant); safecall;
-    function  Get_Visible: WordBool; safecall;
+    function Get_Visible: WordBool; safecall;
     procedure Set_Visible(Value: WordBool); safecall;
-    function  Get_Value: OleVariant; safecall;
+    function Get_Value: OleVariant; safecall;
     procedure Set_Value(Value: OleVariant); safecall;
-    function  Get_ParamType: TxParamType; safecall;
+    function Get_ParamType: TxParamType; safecall;
     procedure Set_ParamType(Value: TxParamType); safecall;
     property Description: OleVariant read Get_Description write Set_Description;
     property Name: OleVariant read Get_Name write Set_Name;
@@ -301,8 +306,8 @@ type
 // *********************************************************************//
   IReportReport = interface(IUnknown)
     ['{3468D0A7-7616-4E17-95B4-16A59E7BF064}']
-    function  Get_Params: IReportParameters; safecall;
-    function  Get_VCLReport: PChar; safecall;
+    function Get_Params: IReportParameters; safecall;
+    function Get_VCLReport: PChar; safecall;
     property Params: IReportParameters read Get_Params;
     property VCLReport: PChar read Get_VCLReport;
   end;
@@ -315,7 +320,7 @@ type
   IReportReportDisp = dispinterface
     ['{3468D0A7-7616-4E17-95B4-16A59E7BF064}']
     property Params: IReportParameters readonly dispid 101;
-    property VCLReport: {??PChar} OleVariant readonly dispid 103;
+    property VCLReport: {??PChar}OleVariant readonly dispid 103;
   end;
 
 
@@ -335,25 +340,25 @@ type
   protected
     procedure CreateControl;
     procedure InitControlData; override;
-    function  Get_Report: IReportReport;
+    function Get_Report: IReportReport;
   public
     procedure SetDatasetSQL(const datasetname: WideString; const sqlsentence: WideString);
     procedure SetDatabaseConnectionString(const databasename: WideString; 
                                           const connectionstring: WideString);
-    function  GetDatasetSQL(const datasetname: WideString): WideString;
-    function  GetDatabaseConnectionString(const databasename: WideString): WideString;
+    function GetDatasetSQL(const datasetname: WideString): WideString;
+    function GetDatabaseConnectionString(const databasename: WideString): WideString;
     procedure SetParamValue(const paramname: WideString; paramvalue: OleVariant);
-    function  GetParamValue(const paramname: WideString): OleVariant;
-    function  Execute: WordBool;
+    function GetParamValue(const paramname: WideString): OleVariant;
+    function Execute: WordBool;
     procedure PrinterSetup;
-    function  ShowParams: WordBool;
+    function ShowParams: WordBool;
     procedure SaveToPDF(const filename: WideString; compressed: WordBool);
-    function  PrintRange(frompage: Integer; topage: Integer; copies: Integer; collate: WordBool): WordBool;
-    function  DrawTextBiDiModeFlagsReadingOnly: Integer;
+    function PrintRange(frompage: Integer; topage: Integer; copies: Integer; collate: WordBool): WordBool;
+    function DrawTextBiDiModeFlagsReadingOnly: Integer;
     procedure InitiateAction;
-    function  IsRightToLeft: WordBool;
-    function  UseRightToLeftReading: WordBool;
-    function  UseRightToLeftScrollBar: WordBool;
+    function IsRightToLeft: WordBool;
+    function UseRightToLeftReading: WordBool;
+    function UseRightToLeftScrollBar: WordBool;
     procedure SetSubComponent(IsSubComponent: WordBool);
     procedure AboutBox;
     procedure ExecuteRemote(const hostname: WideString; port: Integer; const user: WideString; 
@@ -371,6 +376,7 @@ type
     property Visible: WordBool index 29 read GetWordBoolProp write SetWordBoolProp;
     property Report: IReportReport read Get_Report;
   published
+    property Anchors;
     property  TabStop;
     property  Align;
     property  DragCursor;
@@ -397,6 +403,11 @@ type
   end;
 
 procedure Register;
+
+resourcestring
+  dtlServerPage = 'Servers';
+
+  dtlOcxPage = 'ActiveX';
 
 implementation
 
@@ -433,9 +444,9 @@ begin
   Result := FIntf;
 end;
 
-function  TReportManX.Get_Report: IReportReport;
+function TReportManX.Get_Report: IReportReport;
 begin
-  Result := DefaultInterface.Get_Report;
+    Result := DefaultInterface.Report;
 end;
 
 procedure TReportManX.SetDatasetSQL(const datasetname: WideString; const sqlsentence: WideString);
@@ -449,12 +460,12 @@ begin
   DefaultInterface.SetDatabaseConnectionString(databasename, connectionstring);
 end;
 
-function  TReportManX.GetDatasetSQL(const datasetname: WideString): WideString;
+function TReportManX.GetDatasetSQL(const datasetname: WideString): WideString;
 begin
   Result := DefaultInterface.GetDatasetSQL(datasetname);
 end;
 
-function  TReportManX.GetDatabaseConnectionString(const databasename: WideString): WideString;
+function TReportManX.GetDatabaseConnectionString(const databasename: WideString): WideString;
 begin
   Result := DefaultInterface.GetDatabaseConnectionString(databasename);
 end;
@@ -464,12 +475,12 @@ begin
   DefaultInterface.SetParamValue(paramname, paramvalue);
 end;
 
-function  TReportManX.GetParamValue(const paramname: WideString): OleVariant;
+function TReportManX.GetParamValue(const paramname: WideString): OleVariant;
 begin
   Result := DefaultInterface.GetParamValue(paramname);
 end;
 
-function  TReportManX.Execute: WordBool;
+function TReportManX.Execute: WordBool;
 begin
   Result := DefaultInterface.Execute;
 end;
@@ -479,7 +490,7 @@ begin
   DefaultInterface.PrinterSetup;
 end;
 
-function  TReportManX.ShowParams: WordBool;
+function TReportManX.ShowParams: WordBool;
 begin
   Result := DefaultInterface.ShowParams;
 end;
@@ -489,13 +500,13 @@ begin
   DefaultInterface.SaveToPDF(filename, compressed);
 end;
 
-function  TReportManX.PrintRange(frompage: Integer; topage: Integer; copies: Integer; 
-                                 collate: WordBool): WordBool;
+function TReportManX.PrintRange(frompage: Integer; topage: Integer; copies: Integer; 
+                                collate: WordBool): WordBool;
 begin
   Result := DefaultInterface.PrintRange(frompage, topage, copies, collate);
 end;
 
-function  TReportManX.DrawTextBiDiModeFlagsReadingOnly: Integer;
+function TReportManX.DrawTextBiDiModeFlagsReadingOnly: Integer;
 begin
   Result := DefaultInterface.DrawTextBiDiModeFlagsReadingOnly;
 end;
@@ -505,17 +516,17 @@ begin
   DefaultInterface.InitiateAction;
 end;
 
-function  TReportManX.IsRightToLeft: WordBool;
+function TReportManX.IsRightToLeft: WordBool;
 begin
   Result := DefaultInterface.IsRightToLeft;
 end;
 
-function  TReportManX.UseRightToLeftReading: WordBool;
+function TReportManX.UseRightToLeftReading: WordBool;
 begin
   Result := DefaultInterface.UseRightToLeftReading;
 end;
 
-function  TReportManX.UseRightToLeftScrollBar: WordBool;
+function TReportManX.UseRightToLeftScrollBar: WordBool;
 begin
   Result := DefaultInterface.UseRightToLeftScrollBar;
 end;
@@ -554,7 +565,7 @@ end;
 
 procedure Register;
 begin
-  RegisterComponents('ActiveX',[TReportManX]);
+  RegisterComponents(dtlOcxPage, [TReportManX]);
 end;
 
 end.

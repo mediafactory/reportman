@@ -28,6 +28,9 @@ exports
  rp_execute,
  rp_close,
  rp_lasterror,
+ rp_setparamvalue,
+ rp_getparamname
+ rp_getparamcount,
  rp_print,
  rp_preview,
  rp_previewremote,

@@ -42,5 +42,6 @@ begin
   Application.Initialize;
   Application.Title := 'Report manager metafile report viewer';
   Application.CreateForm(TFRpMainMeta, FRpMainMeta);
+  FRpMainMeta.Browsecommandline:=true;
   Application.Run;
 end.

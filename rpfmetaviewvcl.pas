@@ -185,6 +185,7 @@ type
     printerindex:TRpPrinterSelect;
     agdidriver:IRpPrintDriver;
     bitmap:TBitmap;
+    procedure DoOpen(afilename:String);
     procedure UpdatePrintSel;
     property aform:TWinControl read faform write SetForm;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
@@ -522,6 +523,20 @@ begin
  end;
 end;
 
+procedure TFRpMetaVCL.DoOpen(afilename:String);
+begin
+ metafile.LoadFromFile(afilename);
+ ASave.Enabled:=True;
+ APrint.Enabled:=True;
+ AFirst.Enabled:=True;
+ APrevious.Enabled:=True;
+ ANext.Enabled:=True;
+ ALast.Enabled:=True;
+ pagenum:=1;
+ PrintPage;
+ FormResize(Self);
+end;
+
 procedure TFRpMetaVCL.AOpenExecute(Sender: TObject);
 begin
  DisableButtons;
@@ -529,16 +544,7 @@ begin
   cancelled:=false;
   if OpenDialog1.Execute then
   begin
-   metafile.LoadFromFile(OpenDialog1.Filename);
-   ASave.Enabled:=True;
-   APrint.Enabled:=True;
-   AFirst.Enabled:=True;
-   APrevious.Enabled:=True;
-   ANext.Enabled:=True;
-   ALast.Enabled:=True;
-   pagenum:=1;
-   PrintPage;
-   FormResize(Self);
+   DoOpen(OpenDialog1.Filename);
   end;
  finally
   EnableButtons;

@@ -22,7 +22,10 @@ unit rpdllutil;
 interface
 
 uses SysUtils,Classes,rpreport,rpmdconsts,rppdfdriver,
- rptypes,rpeval,rptypeval,rpdatainfo,rppdfreport;
+{$IFDEF USEVARIANTS}
+ Variants,
+{$ENDIF}
+ rptypes,rpeval,rptypeval,rpdatainfo,rppdfreport,rpparams;
 
 var
  lreports:TStringList;
@@ -36,6 +39,18 @@ function rp_executeremote(hostname:PChar;port:integer;user,password,aliasname,re
  compressed:integer):integer;stdcall;
 function rp_close(hreport:integer):integer;stdcall;
 function rp_lasterror:PChar;stdcall;
+function rp_setparamvalue(hreport:integer;paramname:pchar;paramtype:integer;
+ paramvalue:Pointer):integer;stdcall;
+function rp_getparamcount(hreport:integer;var paramcount:Integer):integer;stdcall;
+function rp_getparamname(hreport:integer;index:integer;
+ abuffer:PChar):integer;stdcall;
+
+{$IFDEF MSWINDOWS}
+function rp_setparamvaluevar(hreport:integer;paramname:pchar;
+ paramvalue:OleVariant):integer;stdcall;
+function rp_setadoconnectionstring(hreport:integer;conname:pchar;
+ constring:PChar):integer;stdcall;
+{$ENDIF}
 
 function FindReportIndex(hreport:integer):integer;
 function FindReport(hreport:integer):TRpReport;
@@ -77,7 +92,7 @@ begin
  rplibdoinit;
  index:=lreports.IndexOf(IntToStr(hreport));
  if index<0 then
-  Raise Exception.Create(SRpSInvReportHandle);
+  Raise Exception.Create(SRpSInvReportHandle+' - '+IntTostr(hreport));
  Result:=index;
 end;
 
@@ -201,6 +216,143 @@ begin
   end;
  end;
 end;
+
+function rp_setparamvalue(hreport:integer;paramname:pchar;paramtype:integer;
+ paramvalue:Pointer):integer;
+var
+ report:TRpReport;
+ aparam:TRpParam;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ Result:=1;
+ try
+  report:=FindReport(hreport);
+  aparam:=report.params.ParamByName(Strpas(paramname));
+  case paramtype of
+   1:
+    aparam.Value:=Null;
+   3:
+    aparam.Value:=integer(paramvalue^);
+   5:
+    aparam.Value:=double(paramvalue^);
+   6:
+    aparam.Value:=Currency(paramvalue^);
+   7:
+    aparam.Value:=TDateTime(paramvalue^);
+   8:
+    aparam.Value:=WideCharToString(PWideChar(paramvalue));
+   11:
+    aparam.Value:=Boolean(paramvalue^);
+   14:
+    aparam.Value:=Int64(paramvalue^);
+   256:
+    aparam.Value:=StrPas(PChar(paramvalue));
+   else
+    Raise Exception.Create(SRpEvalType+' - '+IntToStr(paramtype));
+  end;
+ except
+  on E:Exception do
+  begin
+   rplasterror:=E.Message;
+   Result:=0;
+  end;
+ end;
+end;
+
+function rp_getparamname(hreport:integer;index:integer;abuffer:PChar):integer;
+var
+ report:TRpReport;
+ aparam:TRpParam;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ Result:=1;
+ try
+  report:=FindReport(hreport);
+  aparam:=report.params.items[index];
+  StrPCopy(abuffer,aparam.Name);
+ except
+  on E:Exception do
+  begin
+   rplasterror:=E.Message;
+   Result:=0;
+  end;
+ end;
+end;
+
+
+function rp_getparamcount(hreport:integer;var paramcount:Integer):integer;
+var
+ report:TRpReport;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ Result:=1;
+ try
+  report:=FindReport(hreport);
+  paramcount:=report.Params.Count;
+ except
+  on E:Exception do
+  begin
+   rplasterror:=E.Message;
+   Result:=0;
+  end;
+ end;
+end;
+
+
+{$IFDEF MSWINDOWS}
+function rp_setparamvaluevar(hreport:integer;paramname:pchar;
+ paramvalue:OleVariant):integer;
+var
+ report:TRpReport;
+ aparam:TRpParam;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ Result:=1;
+ try
+  report:=FindReport(hreport);
+  aparam:=report.params.ParamByName(Strpas(paramname));
+  aparam.Value:=paramvalue;
+ except
+  on E:Exception do
+  begin
+   rplasterror:=E.Message;
+   Result:=0;
+  end;
+ end;
+end;
+
+function rp_setadoconnectionstring(hreport:integer;conname:pchar;
+ constring:PChar):integer;
+var
+ report:TRpReport;
+ dbinfo:TRpDatabaseInfoItem;
+ index:Integer;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ Result:=1;
+ try
+  report:=FindReport(hreport);
+  index:=report.DatabaseInfo.IndexOf(StrPas(conname));
+  if index<0 then
+   Raise Exception.Create(SRPDabaseAliasNotFound+' - '+StrPas(conname));
+  dbinfo:=report.DatabaseInfo.Items[index];
+  dbinfo.ADOConnectionString:=StrPas(constring);
+ except
+  on E:Exception do
+  begin
+   rplasterror:=E.Message;
+   Result:=0;
+  end;
+ end;
+end;
+
+{$ENDIF}
+
 
 function rp_lasterror:PChar;
 begin

@@ -205,6 +205,7 @@ type
     bitmap:TBitmap;
     setmenu:boolean;
     ShowPrintDialog:Boolean;
+    procedure DoOpen(afilename:String);
     procedure UpdatePrintSel;
     property aform:TForm read faform write SetForm;
     constructor Create(AOwner:TComponent);override;
@@ -592,6 +593,20 @@ begin
  end;
 end;
 
+procedure TFRpMeta.DoOpen(afilename:String);
+begin
+ metafile.LoadFromFile(afilename);
+ ASave.Enabled:=True;
+ APrint.Enabled:=True;
+ AFirst.Enabled:=True;
+ APrevious.Enabled:=True;
+ ANext.Enabled:=True;
+ ALast.Enabled:=True;
+ pagenum:=1;
+ PrintPage;
+ FormResize(Self);
+end;
+
 procedure TFRpMeta.AOpenExecute(Sender: TObject);
 begin
  DisableButtons;
@@ -599,16 +614,7 @@ begin
   cancelled:=false;
   if OpenDialog1.Execute then
   begin
-   metafile.LoadFromFile(OpenDialog1.Filename);
-   ASave.Enabled:=True;
-   APrint.Enabled:=True;
-   AFirst.Enabled:=True;
-   APrevious.Enabled:=True;
-   ANext.Enabled:=True;
-   ALast.Enabled:=True;
-   pagenum:=1;
-   PrintPage;
-   FormResize(Self);
+   DoOpen(OpenDialog1.Filename);
   end;
  finally
   EnableButtons;

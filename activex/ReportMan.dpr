@@ -29,7 +29,12 @@ exports
   rp_preview,
   rp_executeremote,
   rp_printremote,
-  rp_previewremote;
+  rp_previewremote,
+  rp_setparamvalue,
+  rp_setparamvaluevar,
+  rp_getparamname,
+  rp_getparamcount,
+  rp_setadoconnectionstring;
 
 {$R *.TLB}
 

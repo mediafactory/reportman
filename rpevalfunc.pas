@@ -978,6 +978,14 @@ begin
     DecodeDate(TDateTime(Params[0]),Any,Mes,Dia);
     Result:=LongMonthNames[Mes];
    end;
+  varInteger:
+   begin
+    Mes:=integer(Params[0]);
+    if (not (mes in [1..12])) then
+     Result:=''
+    else
+     Result:=LongMonthNames[mes];
+   end;
   else
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);

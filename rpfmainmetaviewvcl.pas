@@ -39,11 +39,13 @@ uses
 type
   TFRpMainMetaVCL = class(TForm)
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
     MFrame:TFRpMetaVCL;
+    browsecommandline:boolean;
   end;
 
 var
@@ -149,5 +151,18 @@ begin
  MFrame.EPageNum.Left:=MFrame.EPageNum.Left+1;
 end;
 
+
+procedure TFRpMainMetaVCL.FormShow(Sender: TObject);
+begin
+ if browsecommandline then
+ begin
+  if Length(ParamStr(1))>0 then
+  begin
+   if Assigned(MFrame) then
+    MFrame.DoOpen(ParamStr(1));
+  end;
+ end;
+ WindowState:=wsMaximized;
+end;
 
 end.
