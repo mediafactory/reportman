@@ -26,6 +26,7 @@ uses
   rpqtdriver in '..\..\..\rpqtdriver.pas',
   rpmetafile in '..\..\..\rpmetafile.pas',
   rpreport in '..\..\..\rpreport.pas',
+  rpfmainmetaview in '..\..\..\rpfmainmetaview.pas',
   rptypes in '..\..\..\rptypes.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas';
 {$ENDIF}
@@ -35,6 +36,7 @@ uses
   rpmetafile in '../../../rpmetafile.pas',
   rptypes in '../../../rptypes.pas',
   rpreport in '../../../rpreport.pas',
+  rpfmainmetaview in '../../../rpfmainmetaview.pas',
   rpmdconsts in '../../../rpmdconsts.pas';
 {$ENDIF}
 
@@ -52,6 +54,8 @@ begin
  Writeln(SRpMetaPrint7);
  Writeln(SRpMetaPrint8);
  Writeln(SRpMetaPrint9);
+ Writeln(SRpPrintRep9);
+ Writeln(SRpPrintRep10);
 end;
 
 
@@ -66,6 +70,7 @@ var
  copies:integer;
  collate:boolean;
  printerindex:TRpPrinterSelect;
+ preview,pdialog,doprint:boolean;
 begin
  try
   { TODO -oUser -cConsole Main : Insert code here }
@@ -74,6 +79,8 @@ begin
    PrintHelp
   else
   begin
+   preview:=false;
+   pdialog:=false;
    showprogress:=true;
    collate:=false;
    allpages:=true;
@@ -90,6 +97,12 @@ begin
     begin
      if ParamStr(indexparam)='-q' then
       showprogress:=false
+     else
+     if ParamStr(indexparam)='-preview' then
+      preview:=true
+     else
+     if ParamStr(indexparam)='-pdialog' then
+      pdialog:=true
      else
       if ParamStr(indexparam)='-d' then
        dodeletefile:=true
@@ -159,12 +172,25 @@ begin
       begin
        WriteLn(SRpPrintingFile+':'+filename);
       end;
-      if PrintMetafile(metafile,filename,ShowProgress,allpages,
-       frompage,topage,copies,collate,printerindex) then
-       if ShowProgress then
+      if preview then
+      begin
+       rpfmainmetaview.PreviewMetafile(metafile,nil,true);
+      end
+      else
+      begin
+       doprint:=true;
+       if pdialog then
+        doprint:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+       if doprint then
        begin
-        WriteLn(SRpPrinted);
+        if PrintMetafile(metafile,filename,ShowProgress,allpages,
+         frompage,topage,copies,collate,printerindex) then
+        if ShowProgress then
+        begin
+         WriteLn(SRpPrinted);
+        end;
        end;
+      end;
      finally
       if dodeletefile then
        if DeleteFile(filename) then
@@ -182,7 +208,6 @@ begin
   On E:Exception do
   begin
    Writeln(SRPError,E.Message);
-   raise;
   end;
  end;
 end.

@@ -423,10 +423,10 @@ var
 begin
  if LParams.itemindex<0 then
   exit;
- paramname:=RpInputBox(SRpRenameParam,SRpParamName,'');
+ param:=params.ParamByName(LParams.Items.strings[LParams.Itemindex]);
+ paramname:=RpInputBox(SRpRenameParam,SRpParamName,param.Name);
  paramname:=AnsiUpperCase(Trim(paramname));
 
- param:=params.ParamByName(LParams.Items.strings[LParams.Itemindex]);
  index:=params.IndexOf(paramname);
  if index>=0 then
    Raise Exception.Create(SRpParamNameExists);

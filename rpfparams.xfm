@@ -72,7 +72,7 @@ object FRpParams: TFRpParams
         Width = 321
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 6
+        TabOrder = 5
         Text = 'EDescription'
         OnChange = EDescriptionChange
       end
@@ -117,7 +117,7 @@ object FRpParams: TFRpParams
         Top = 8
         Width = 141
         Height = 21
-        TabOrder = 2
+        TabOrder = 1
         Text = 'EValue'
         OnExit = EValueExit
       end
@@ -128,7 +128,7 @@ object FRpParams: TFRpParams
         Height = 17
         Hint = 'Sets if the parameter will be visible to the end user'
         Caption = 'Visible'
-        TabOrder = 3
+        TabOrder = 2
         OnClick = EDescriptionChange
       end
       object CheckNull: TCheckBox
@@ -138,7 +138,7 @@ object FRpParams: TFRpParams
         Height = 17
         Hint = 'Sets this parameter to null'
         Caption = 'Null value'
-        TabOrder = 4
+        TabOrder = 3
         OnClick = EDescriptionChange
       end
       object LAssign: TLabel
@@ -200,7 +200,7 @@ object FRpParams: TFRpParams
         Width = 321
         Height = 21
         Hint = 'Description to be show on the end user dialog'
-        TabOrder = 8
+        TabOrder = 7
         Visible = False
         OnChange = EDescriptionChange
       end
@@ -228,7 +228,6 @@ object FRpParams: TFRpParams
       Top = 0
       Width = 446
       Height = 30
-      AutoSize = False 
       ButtonHeight = 26
       ButtonWidth = 26
       Caption = 'ToolBar1'

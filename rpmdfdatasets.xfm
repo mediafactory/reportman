@@ -1,15 +1,15 @@
 object FRpDatasets: TFRpDatasets
   Left = 0
   Top = 0
-  Width = 451
-  Height = 304
+  Width = 516
+  Height = 346
   VertScrollBar.Range = 105
   Align = alClient
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 451
+    Width = 516
     Height = 105
     Align = alTop
     BevelOuter = bvNone
@@ -17,7 +17,7 @@ object FRpDatasets: TFRpDatasets
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 451
+      Width = 516
       Height = 30
       AutoSize = True
       ButtonHeight = 26
@@ -88,7 +88,7 @@ object FRpDatasets: TFRpDatasets
     object PTop1: TPanel
       Left = 0
       Top = 30
-      Width = 451
+      Width = 516
       Height = 75
       Align = alClient
       BevelOuter = bvNone
@@ -112,7 +112,7 @@ object FRpDatasets: TFRpDatasets
       object PanelBasic: TPanel
         Left = 169
         Top = 0
-        Width = 282
+        Width = 347
         Height = 75
         Align = alClient
         BevelOuter = bvNone
@@ -132,7 +132,7 @@ object FRpDatasets: TFRpDatasets
           Caption = 'Connection'
         end
         object BShowData: TButton
-          Left = 816
+          Left = 881
           Top = 0
           Width = 87
           Height = 29
@@ -176,17 +176,17 @@ object FRpDatasets: TFRpDatasets
   object PBottom: TPanel
     Left = 0
     Top = 105
-    Width = 451
-    Height = 199
+    Width = 516
+    Height = 241
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 451
-      Height = 199
-      ActivePage = TabSQL
+      Width = 516
+      Height = 241
+      ActivePage = TabMyBase
       Align = alClient
       TabOrder = 0
       object TabSQL: TTabSheet
@@ -194,8 +194,8 @@ object FRpDatasets: TFRpDatasets
         object MSQL: TMemo
           Left = 0
           Top = 0
-          Width = 443
-          Height = 169
+          Width = 508
+          Height = 211
           Align = alClient
           TabOrder = 0
           WordWrap = False
@@ -208,7 +208,7 @@ object FRpDatasets: TFRpDatasets
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 443
+          Width = 508
           Height = 37
           Items.Strings = (
             'Query'
@@ -221,15 +221,15 @@ object FRpDatasets: TFRpDatasets
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 443
-          Height = 132
+          Width = 508
+          Height = 174
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
           object PBDEFilter: TPanel
             Left = 0
             Top = 0
-            Width = 443
+            Width = 508
             Height = 17
             Align = alTop
             Alignment = taLeftJustify
@@ -240,8 +240,8 @@ object FRpDatasets: TFRpDatasets
           object MBDEFilter: TMemo
             Left = 0
             Top = 17
-            Width = 443
-            Height = 115
+            Width = 508
+            Height = 157
             Align = alClient
             ScrollBars = ssBoth
             TabOrder = 1
@@ -422,7 +422,7 @@ object FRpDatasets: TFRpDatasets
           Left = 420
           Top = 2
           Width = 77
-          Height = 31
+          Height = 27
           Caption = 'Search...'
           TabOrder = 2
           OnClick = BMyBaseClick

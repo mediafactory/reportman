@@ -545,13 +545,13 @@ var
  aliasname:string;
  index:integer;
 begin
- aliasname:=Trim(RpInputBox(SrpRenameDataset,SRpAliasName,''));
- if Length(aliasname)<1 then
-  exit;
+ dinfo:=FindDataInfoItem;
+ aliasname:=Trim(RpInputBox(SrpRenameDataset,SRpAliasName,dinfo.Alias));
  index:=datainfo.IndexOf(aliasname);
  if index>=0 then
   Raise Exception.Create(SRpAliasExists);
- dinfo:=FindDataInfoItem;
+ if Length(aliasname)<1 then
+  exit;
  if Not Assigned(dinfo) then
   exit;
  dinfo.Alias:=aliasname;

@@ -127,6 +127,8 @@ var
   SRpPrintRep6:WideString='         -to     n Prints report to page pnum';
   SRpPrintRep7:WideString='         -copies n Prints pnum copies';
   SRpPrintRep8:WideString='         -collate  Collate the copies';
+  SRpPrintRep9:WideString='         -preview  Show the preview window instead printing';
+  SRpPrintRep10:WideString='         -pdialog  Show the print dialog';
   SRpPrintPDFRep1:WideString='printreptopdf';
   SRpPrintPDFRep2:WideString='Prints a report manager (.rep) file to a Adobe PDF file';
   SRpPrintPDFRep3:WideString='Usage: printrep [Options] reportfilename pdffilename';
@@ -694,7 +696,7 @@ var
   SRpSMemo:WideString='Memo';
   SRpSInvReportHandle:WideString='Invalid report handle';
   SRpSNotAvail:WideString='Not available';
-
+  //SRpPrintRep9,SRpPrintRep10:
 
 implementation
 

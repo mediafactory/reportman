@@ -31,6 +31,7 @@ uses
   rpsubreport in '..\..\..\rpsubreport.pas',
   rpsection in '..\..\..\rpsection.pas',
   rpsecutil in '..\..\..\rpsecutil.pas',
+  rpvpreview in '..\..\..\rpvpreview.pas',
   rpgdidriver in '..\..\..\rpgdidriver.pas';
 
 var
@@ -43,6 +44,9 @@ var
  topage:integer;
  copies,acopies:integer;
  collate:boolean;
+ preview:boolean;
+ pdialog:boolean;
+ doprint:boolean;
 
 procedure PrintHelp;
 begin
@@ -54,6 +58,8 @@ begin
  Writeln(SRpPrintRep6);
  Writeln(SRpPrintRep7);
  Writeln(SRpPrintRep8);
+ Writeln(SRpPrintRep9);
+ Writeln(SRpPrintRep10);
  Writeln(SRpParseParamsH);
 end;
 
@@ -64,6 +70,8 @@ begin
     PrintHelp
    else
    begin
+   preview:=false;
+   pdialog:=false;
    showprogress:=true;
    collate:=false;
    allpages:=true;
@@ -77,6 +85,12 @@ begin
    begin
     if ParamStr(indexparam)='-q' then
      showprogress:=false
+    else
+    if ParamStr(indexparam)='-preview' then
+     preview:=true
+    else
+    if ParamStr(indexparam)='-pdialog' then
+     pdialog:=true
     else
     if ParamStr(indexparam)='-from' then
     begin
@@ -137,8 +151,17 @@ begin
      else
       copies:=acopies;
      ParseCommandLineParams(report.Params);
-     PrintReport(report,filename,showprogress,allpages,
-      frompage,topage,copies,collate);
+     if preview then
+      rpvpreview.ShowPreview(report,filename)
+     else
+     begin
+      doprint:=true;
+      if pdialog then
+       doprint:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+      if doprint then
+       PrintReport(report,filename,showprogress,allpages,
+        frompage,topage,copies,collate);
+     end;
     finally
      report.free;
     end;
@@ -148,7 +171,6 @@ begin
   On E:Exception do
   begin
    WriteLn(E.Message);
-   raise;
   end;
  end;
 end.

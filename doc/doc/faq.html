@@ -6,7 +6,25 @@
 
 <body>
 <h3><b>Frequently Asked Questions</b></h3>
-<b>Q. How can I set report parameters at runtime?</b> 
+<p><b>Q. Wich development environments supports the engine?</b> </p>
+<p>A. <code>In <b>native mode</b> (linked inside the executable or as a borland 
+  package):<br>
+  - Delphi 4,5 Enterprise. Delphi 6 Professional, Delphi 6 Enterprise. Delphi 
+  7 Desktop, Delphi 7 Enterprise, Delphi 7 Architech.<br>
+  - C++Builder 4,5 Enterprise. C++Builder 6 Professional, C++Builder6 Enterprise.<br>
+  - Kylix 1,2,3 Desktop and Enterprise. Kylix 1,2,3 Open Edition-FreeCLX.<br>
+  In <b>ActiveX mode</b> (distribution of Reportman.ocx-Windows only needed):<br>
+  - Any Delphi/C++Builder version accepting ActiveX controls (personal editions)<br>
+  - Any development environment accepting ActiveX controls, Visual C++, Visual 
+  Basic, Visual Foxpro...<br>
+  In <b>command line tools mode</b> (executing command line tools):<br>
+  - Any language capable of executing command line tools, PHP, bourne shell, python..., 
+  command line tools are available for Linux and Windows<br>
+  In <b>shared library mode</b>:<br>
+  - Any compiler or development enviroment capable of using standard C shared 
+  library functions, that is GCC compiler, FreePascal compiler..., distribution 
+  of reportmanapiqt.so/reportmanapi.so (Linux) and Reportman.ocx needed.</code> 
+<p><b>Q. How can I set report parameters at runtime?</b> </p>
 <p>A. <code>CLXReport1.Report.Params.ParamByName('CUSTOMERINI').Value:=2;</code></p>
 <p><b>Q. How can I show the parameters before executing?</b></p>
 <p>A. <code>if CLXReport1.ShowParams then CLXReport1.Execute</code>;</p>
@@ -15,8 +33,8 @@
   <li>Place a TRpAlias component beside the TCLXReport</li>
   <li>Assign AliasList property or CLXReport to RPAlias compoenent.</li>
   <li>In RpAlias, List property add items as alias and TDataset component to assign 
-    to the report. Note: In Delphi 5 automatic edition of collections seems to 
-    not work so you can do this at runtime.</li>
+    to the report. Note: In Delphi 5, in latest versions you can edit datasets 
+    with a visual property editor.</li>
   <li>At runtime:</li>
 </ul>
 <p><code>var aitem:TRpAliasListIte</code><code>m;</code></p>
@@ -64,7 +82,7 @@
   lots of memory like TClientDataset, it frees the records it does not need so 
   the engine can print/proces millions of records without memory problems but 
   a bit slower if you print only a few thousand records.</p>
-<p>Because this Delphi 5 Professional or lower can not be used as native components 
+<p>Because this, Delphi 5 Professional or lower can not be used as native components 
   but you can use the ActiveX control.</p>
 <p><b>Q. Is Report Manager Engine Thread Safe so it can be used in multithreaded 
   applications (servers)?</b></p>
