@@ -33,6 +33,8 @@ type
     Label3: TLabel;
     Image1: TImage;
     LVersion: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }

@@ -1,10 +1,10 @@
 object FAboutBox: TFAboutBox
-  Left = 211
-  Top = 158
+  Left = 18
+  Top = 33
   Width = 365
   Height = 293
   VertScrollBar.Range = 277
-  HorzScrollBar.Range = 230
+  HorzScrollBar.Range = 295
   ActiveControl = OKBtn
   Caption = 'About Report Manager '
   Color = clButton
@@ -575,5 +575,19 @@ object FAboutBox: TFAboutBox
     Width = 83
     Height = 13
     Caption = 'Version 0.97 beta'
+  end
+  object Label4: TLabel
+    Left = 12
+    Top = 232
+    Width = 63
+    Height = 13
+    Caption = 'Project page:'
+  end
+  object Label5: TLabel
+    Left = 96
+    Top = 232
+    Width = 199
+    Height = 13
+    Caption = 'http://sourceforge.net/projects/reportman'
   end
 end

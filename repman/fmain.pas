@@ -30,7 +30,7 @@ uses
   rpconsts,rptypes, QExtCtrls,frpstruc, rplastsav,rpsubreport,
   rpobinsint,rpfparams,fdesign,rpobjinsp,fsectionint,
   rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver, IBDatabase,
-  DB;
+  DB,fhelpform;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;
@@ -121,7 +121,10 @@ type
     MFields: TPopupMenu;
     est1: TMenuItem;
     ext21: TMenuItem;
-    AHelpIndex: TAction;
+    ATutorial: TAction;
+    AFeatures: TAction;
+    Features1: TMenuItem;
+    utorial1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -149,9 +152,13 @@ type
     procedure APrintExecute(Sender: TObject);
     procedure BExpressionMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure ShowHelp(AURL:string);
+    procedure ATutorialExecute(Sender: TObject);
+    procedure AFeaturesExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFDesignFrame;
+    fhelp:TFHelpf;
     fobjinsp:TFObjInsp;
     lastsaved:TMemoryStream;
     configfile:string;
@@ -819,6 +826,46 @@ begin
  end;
 end;
 
+procedure TFMainf.ShowHelp(AURL:string);
+begin
+ if Not Assigned(FHelp) then
+  FHelp:=TFHelpf.Create(Application);
+ FHelp.TextBrowser1.FileName:=AURL;
+ FHelp.Show;
+end;
+
+procedure TFMainf.ATutorialExecute(Sender: TObject);
+var
+ aurl:string;
+ Directorysep:string;
+begin
+ aurl:=ExtractFilePath(Application.Exename);
+{$IFDEF MSWINDOWS}
+ Directorysep:='\';
+{$ENDIF}
+{$IFDEF LINUX}
+ Directorysep:='/';
+{$ENDIF}
+ aurl:=aurl+'doc'+Directorysep+'tutorial'+
+  Directorysep+'left.html';
+ ShowHelp(aurl);
+end;
+
+procedure TFMainf.AFeaturesExecute(Sender: TObject);
+var
+ aurl:string;
+ Directorysep:string;
+begin
+ aurl:=ExtractFilePath(Application.Exename);
+{$IFDEF MSWINDOWS}
+ Directorysep:='\';
+{$ENDIF}
+{$IFDEF LINUX}
+ Directorysep:='/';
+{$ENDIF}
+ aurl:=aurl+'doc'+Directorysep+'features.html';
+ ShowHelp(aurl);
+end;
 
 initialization
 

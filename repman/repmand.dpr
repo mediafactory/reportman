@@ -35,6 +35,7 @@ uses
   frpgrid in 'frpgrid.pas' {FRpGridOptions},
   flabelint in 'flabelint.pas' {FLabelInterface},
   fabout in 'fabout.pas' {FAboutBox},
+  fhelpform in 'fhelpform.pas' {FHelpf},
 {$IFDEF MSWINDOWS}
   ShLwApi in 'ShLwApi.pas',
   ShFolder in 'ShFolder.pas',

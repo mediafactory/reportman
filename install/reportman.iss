@@ -3,14 +3,14 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 0.95 beta
+AppVerName=Report Manager 0.97 beta
 AppPublisher=Toni Martir
 AppPublisherURL=http://sourceforge.net/projects/reportman
 AppSupportURL=http://sourceforge.net/projects/reportman
 AppUpdatesURL=http://sourceforge.net/projects/reportman
 DefaultDirName={pf}\Report Manager
 DefaultGroupName=Report Manager
-LicenseFile=C:\prog\toni\cvsroot\reportman\reportman\install\license.txt
+LicenseFile=license.txt
 ; uncomment the following line if you want your installation to run on NT 3.51 too.
 ; MinVersion=4,3.51
 
@@ -26,6 +26,8 @@ Source: "license.txt"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\printrep\printrep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\reptotxt\reptotxt.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\txttorep\txttorep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\doc\features.html"; DestDir: "{app}\doc"; CopyMode: alwaysoverwrite
+Source: "..\doc\tutorial\*.*"; DestDir: "{app}\doc\tutorial"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\meta1.rpmf"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\biolife.cds"; DestDir: "{app}"; CopyMode: alwaysoverwrite

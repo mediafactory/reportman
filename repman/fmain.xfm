@@ -342,6 +342,12 @@ object FMainf: TFMainf
     end
     object About1: TMenuItem
       Caption = 'Help'
+      object Features1: TMenuItem
+        Action = AFeatures
+      end
+      object utorial1: TMenuItem
+        Action = ATutorial
+      end
       object ReportManager1: TMenuItem
         Action = AAbout
       end
@@ -504,10 +510,17 @@ object FMainf: TFMainf
       Caption = 'About Report Manager'
       OnExecute = AAboutExecute
     end
-    object AHelpIndex: TAction
+    object ATutorial: TAction
       Category = 'Help'
-      Caption = 'Index'
-      Hint = 'Show help index'
+      Caption = 'Tutorial'
+      Hint = 'Display Report Manager Designer Tutorial'
+      OnExecute = ATutorialExecute
+    end
+    object AFeatures: TAction
+      Category = 'Help'
+      Caption = 'Features'
+      Hint = 'Display Report Manager Features'
+      OnExecute = AFeaturesExecute
     end
   end
   object iconlist: TImageList
