@@ -30,9 +30,10 @@ uses
 {$ENDIF}
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpreport,rpmetafile, QComCtrls,
-  rpqtdriver, QExtCtrls,
+  rpqtdriver, QExtCtrls,rptypes,
   QActnList, QImgList,QPrinters,rpconsts,Qt;
-                       
+
+
 type
   TFRpPreview = class(TForm)
     BToolBar: TToolBar;
@@ -81,6 +82,7 @@ type
       Shift: TShiftState);
     procedure AExitExecute(Sender: TObject);
     procedure AParamsExecute(Sender: TObject);
+    procedure FormResize(Sender: TObject);
   private
     { Private declarations }
     cancelled:boolean;
@@ -91,6 +93,7 @@ type
     procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
     procedure DisableControls(enablebar:boolean);
     procedure EnableControls;
+    procedure PlaceImagePosition;
   public
     { Public declarations }
     systemprintdialog:boolean;
@@ -166,7 +169,7 @@ begin
     try
      while report.Metafile.PageCount<pagenum do
      begin
-      // Canbe canceled
+      // Can be canceled
       if report.PrintNextPage then
       begin
        report.EndPrint;
@@ -189,6 +192,7 @@ begin
    AImage.Picture.Bitmap.Assign(qtdriver.bitmap);
    AImage.Invalidate;
   end;
+  PlaceImagePosition;
   EPageNum.Text:=IntToStr(PageNum);
  except
   EPageNum.Text:='0';
@@ -198,8 +202,8 @@ end;
 
 procedure TFRpPreview.AppIdle(Sender:TObject;var done:boolean);
 begin
- Application.OnIdle:=nil;
  done:=false;
+ Application.OnIdle:=nil;
  try
   report.OnProgress:=RepProgress;
   if report.TwoPass then
@@ -475,6 +479,51 @@ begin
  begin
   // Reexecutes the report
   AppIdle(Self,adone);
+ end;
+end;
+
+
+// A bug in TScrollBox Refresh background does not
+// allow to center the image
+procedure TFRpPreview.PlaceImagePosition;
+//var
+// AWidth:integeR;
+// Aheight:integer;
+begin
+ ImageContainer.HorzScrollBar.Position:=0;
+ ImageContainer.VertScrollBar.Position:=0;
+ AImage.Left:=0;
+ AImage.Top:=0;
+{ ImageContainer.HorzScrollBar.Position:=0;
+ ImageContainer.VertScrollBar.Position:=0;
+
+ AWidth:=ImageContainer.Width-SCROLLBAR_VX;
+ AHeight:=ImageContainer.Height-SCROLLBAR_HX;
+
+ if AImage.Width>AWidth then
+  AImage.Left:=0
+ else
+  AImage.Left:=(AWidth-AImage.Width) div 2;
+ if AImage.Height>AHeight then
+  AImage.Top:=0
+ else
+  AImage.Top:=(AHeight-AImage.Height) div 2;
+}end;
+
+
+
+procedure TFRpPreview.FormResize(Sender: TObject);
+begin
+ // Sets the driver widths and redraw accordingly
+ if Assigned(qtdriver) then
+ begin
+  qtdriver.clientwidth:=ImageContainer.Width;
+  qtdriver.clientHeight:=ImageContainer.Height;
+  if (qtdriver.PreviewStyle in [spWide,spEntirePage]) then
+   if pagenum>=1 then
+    PrintPage;
+  if pagenum>=1 then
+   PlaceImagePosition;
  end;
 end;
 

@@ -38,6 +38,8 @@ uses
 
 const
  METAPRINTPROGRESS_INTERVAL=20;
+ SCROLLBAR_HX=20;
+ SCROLLBAR_VX=20;
 type
   TRpQtDriver=class;
   TFRpQtProgress = class(TForm)
@@ -84,6 +86,9 @@ type
    dpi:integer;
    toprinter:boolean;
    scale:double;
+   bitmapwidth,bitmapheight:integer;
+   PreviewStyle:TRpPreviewStyle;
+   clientwidth,clientheight:integer;
    procedure NewDocument(report:TrpMetafileReport);stdcall;
    procedure EndDocument;stdcall;
    procedure AbortDocument;stdcall;
@@ -163,6 +168,7 @@ var
  awidth,aheight:integer;
  rec:TRect;
  asize:TPoint;
+ scale2:double;
 // amargins:TSize;
 begin
  if ToPrinter then
@@ -214,11 +220,46 @@ begin
   begin
    asize:=SetPageSize(report.PageSize);
   end;
-  awidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
-  aheight:=Round((asize.y/TWIPS_PER_INCHESS)*dpi);
+  bitmapwidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
+  bitmapheight:=Round((asize.y/TWIPS_PER_INCHESS)*dpi);
+
+  awidth:=bitmapwidth;
+  aheight:=bitmapheight;
+
+  if clientwidth>0 then
+  begin
+   // Calculates the scale
+   case PreviewStyle of
+    spWide:
+     begin
+      // Adjust clientwidth to bitmap width
+      scale:=(clientwidth-SCROLLBAR_VX)/bitmapwidth;
+     end;
+    spNormal:
+     begin
+      scale:=1.0;
+     end;
+    spEntirePage:
+     begin
+      // Adjust client to bitmap with an height
+      scale:=(clientwidth-1)/bitmapwidth;
+      scale2:=(clientheight-1)/bitmapheight;
+      if scale2<scale then
+       scale:=scale2;
+     end;
+   end;
+  end;
+  if scale<0.01 then
+   scale:=0.01;
+  if scale>10 then
+   scale:=10;
   // Sets page size and orientation
   bitmap.Width:=Round(awidth*scale);
   bitmap.Height:=Round(aheight*scale);
+  if bitmap.Width<1 then
+   bitmap.Width:=1;
+  if bitmap.Height<1 then
+   bitmap.Height:=1;
 
   Bitmap.Canvas.Brush.Style:=bsSolid;
   Bitmap.Canvas.Brush.Color:=report.BackColor;

@@ -796,15 +796,11 @@ end;
 procedure TRpMetafileReport.DrawPageOnly(IDriver:IRpPrintDriver);
 var
  FPage:TRpMetafilePage;
- i:integer;
 begin
  if FCurrentPage<0 then
   exit;
  FPage:=TRpMetafilePage(FPages.items[FCurrentPage]);
- for i:=0 to FPage.ObjectCount-1 do
- begin
-  IDriver.DrawObject(FPage,FPage.Objects[i])
- end;
+ IDriver.DrawPage(FPage);
 end;
 
 

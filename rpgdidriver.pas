@@ -88,16 +88,22 @@ type
  TRpGDIDriver=class(TInterfacedObject,IRpPrintDriver)
   private
    intdpix,intdpiy:integer;
+   metacanvas:TMetafilecanvas;
+   meta:TMetafile;
   public
    bitmap:TBitmap;
    dpi:integer;
    toprinter:boolean;
+   scale:double;
    pagemargins:TRect;
    drawclippingregion:boolean;
    oldpagesize,pagesize:TGDIPageSize;
    oldorientation:TPrinterOrientation;
    orientationset:boolean;
    devicefonts:boolean;
+   bitmapwidth,bitmapheight:integer;
+   PreviewStyle:TRpPreviewStyle;
+   clientwidth,clientheight:integer;
    procedure NewDocument(report:TrpMetafileReport);stdcall;
    procedure EndDocument;stdcall;
    procedure AbortDocument;stdcall;
@@ -254,6 +260,7 @@ begin
  dpi:=Screen.PixelsPerInch;
  drawclippingregion:=true;
  oldpagesize.PageIndex:=-1;
+ scale:=0.5;
 end;
 
 procedure TRpGDIDriver.NewDocument(report:TrpMetafileReport);
@@ -262,6 +269,7 @@ var
  rec:TRect;
  asize:TPoint;
  aregion:HRGN;
+ scale2:double;
 begin
  if devicefonts then
  begin
@@ -294,11 +302,49 @@ begin
   pagemargins:=GetPageMarginsTWIPS;
   // Gets pagesize
   asize:=GetPageSize;
-  awidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
-  aheight:=Round((asize.y/TWIPS_PER_INCHESS)*dpi);
-  // Sets page size and orientation
-  bitmap.Width:=awidth;
-  bitmap.Height:=aheight;
+  bitmapwidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
+  bitmapheight:=Round((asize.y/TWIPS_PER_INCHESS)*dpi);
+
+
+  awidth:=bitmapwidth;
+  aheight:=bitmapheight;
+
+
+  if clientwidth>0 then
+  begin
+   // Calculates the scale
+   case PreviewStyle of
+    spWide:
+     begin
+      // Adjust clientwidth to bitmap width
+      scale:=(clientwidth-GetSystemMetrics(SM_CYHSCROLL))/bitmapwidth;
+     end;
+    spNormal:
+     begin
+      scale:=1.0;
+     end;
+    spEntirePage:
+     begin
+      // Adjust client to bitmap with an height
+      scale:=(clientwidth-1)/bitmapwidth;
+      scale2:=(clientheight-1)/bitmapheight;
+      if scale2<scale then
+       scale:=scale2;
+     end;
+   end;
+  end;
+  if scale<0.01 then
+   scale:=0.01;
+  if scale>10 then
+   scale:=10;
+
+  bitmap.Width:=Round(awidth*scale);
+  bitmap.Height:=Round(aheight*scale);
+  if bitmap.Width<1 then
+   bitmap.Width:=1;
+  if bitmap.Height<1 then
+   bitmap.Height:=1;
+
 
   Bitmap.Canvas.Brush.Style:=bsSolid;
   Bitmap.Canvas.Brush.Color:=CLXColorToVCLColor(report.BackColor);
@@ -308,10 +354,10 @@ begin
   rec.Bottom:=Bitmap.Height-1;
   bitmap.Canvas.FillRect(rec);
   // Define clipping region
-  rec.Left:=Round((pagemargins.Left/TWIPS_PER_INCHESS)*dpi);
-  rec.Top:=Round((pagemargins.Top/TWIPS_PER_INCHESS)*dpi);
-  rec.Right:=Round((pagemargins.Right/TWIPS_PER_INCHESS)*dpi);
-  rec.Bottom:=Round((pagemargins.Bottom/TWIPS_PER_INCHESS)*dpi);
+  rec.Left:=Round((pagemargins.Left/TWIPS_PER_INCHESS)*dpi*scale);
+  rec.Top:=Round((pagemargins.Top/TWIPS_PER_INCHESS)*dpi*scale);
+  rec.Right:=Round((pagemargins.Right/TWIPS_PER_INCHESS)*dpi*scale);
+  rec.Bottom:=Round((pagemargins.Bottom/TWIPS_PER_INCHESS)*dpi*scale);
   // If drawclippingregion then
   if drawclippingregion then
   begin
@@ -600,10 +646,48 @@ end;
 procedure TRpGDIDriver.DrawPage(apage:TRpMetaFilePage);
 var
  j:integer;
+ rec:TRect;
 begin
- for j:=0 to apage.ObjectCount-1 do
+ if toprinter then
  begin
-  DrawObject(apage,apage.Objects[j]);
+  for j:=0 to apage.ObjectCount-1 do
+  begin
+   DrawObject(apage,apage.Objects[j]);
+  end;
+ end
+ else
+ begin
+  meta:=TMetafile.Create;
+  try
+   meta.Enhanced:=true;
+   meta.Width:=bitmapwidth;
+   meta.Height:=bitmapheight;
+   metacanvas:=TMetafileCanvas.Create(meta,0);
+   try
+    for j:=0 to apage.ObjectCount-1 do
+    begin
+     DrawObject(apage,apage.Objects[j]);
+    end;
+   finally
+    metacanvas.free;
+    metacanvas:=nil;
+   end;
+   // Draws the metafile scaled
+   if Round(scale*1000)=1000 then
+   begin
+    Bitmap.Canvas.Draw(0,0,Meta);
+   end
+   else
+   begin
+    rec.Top:=0;
+    rec.Left:=0;
+    rec.Right:=bitmap.Width-1;
+    rec.Bottom:=bitmap.Height-1;
+    Bitmap.Canvas.StretchDraw(rec,Meta);
+   end;
+  finally
+   meta.free;
+  end;
  end;
 end;
 
@@ -624,9 +708,11 @@ begin
  begin
   if not Assigned(bitmap) then
    Raise Exception.Create(SRpGDIDriverNotInit);
-  Canvas:=bitmap.canvas;
-  dpix:=dpi;
-  dpiy:=dpi;
+  if not Assigned(metacanvas) then
+   Raise Exception.Create(SRpGDIDriverNotInit);
+  Canvas:=metacanvas;
+  dpix:=Screen.PixelsPerInch;
+  dpiy:=Screen.PixelsPerInch;
  end;
  PrintObject(Canvas,page,obj,dpix,dpiy,toprinter,pagemargins,devicefonts);
 end;

@@ -83,6 +83,7 @@ type
       Shift: TShiftState);
     procedure AExitExecute(Sender: TObject);
     procedure AParamsExecute(Sender: TObject);
+    procedure FormResize(Sender: TObject);
   private
     { Private declarations }
     cancelled:boolean;
@@ -93,6 +94,7 @@ type
     procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
     procedure DisableControls(enablebar:boolean);
     procedure EnableControls;
+    procedure PlaceImagePosition;
   public
     { Public declarations }
     pagenum:integer;
@@ -187,6 +189,7 @@ begin
    AImage.Picture.Bitmap.Assign(gdidriver.bitmap);
    AImage.Invalidate;
   end;
+  PlaceImagePosition;
   EPageNum.Text:=IntToStr(PageNum);
  except
   EPageNum.Text:='0';
@@ -469,6 +472,40 @@ begin
  begin
   // Reexecutes the report
   AppIdle(Self,adone);
+ end;
+end;
+
+procedure TFRpVPreview.PlaceImagePosition;
+var
+ AWidth:integeR;
+ Aheight:integer;
+begin
+ AWidth:=ImageContainer.Width-GetSystemMetrics(SM_CYHSCROLL);
+ AHeight:=ImageContainer.Height-GetSystemMetrics(SM_CXHSCROLL);
+
+ if AImage.Width>AWidth then
+  AImage.Left:=0
+ else
+  AImage.Left:=(AWidth-AImage.Width) div 2;
+ if AImage.Height>AHeight then
+  AImage.Top:=0
+ else
+  AImage.Top:=(AHeight-AImage.Height) div 2;
+end;
+
+
+procedure TFRpVPreview.FormResize(Sender: TObject);
+begin
+ // Sets the driver widths and redraw accordingly
+ if Assigned(gdidriver) then
+ begin
+  gdidriver.clientwidth:=ImageContainer.Width;
+  gdidriver.clientHeight:=ImageContainer.Height;
+  if (gdidriver.PreviewStyle in [spWide,spEntirePage]) then
+   if pagenum>=1 then
+    PrintPage;
+  if pagenum>=1 then
+   PlaceImagePosition;
  end;
 end;
 

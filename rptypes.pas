@@ -68,7 +68,9 @@ type
  TRpColor=integer;
 
  // How to show preview
- TRpPreviewStyle = (spWide,spNormal,spEntirePage);
+ TRpPreviewStyle = (spWide,spNormal,spEntirePage,spCustom);
+
+ TBitmapResizeEvent=procedure (awidth,aheight:integer;var scale:double) of object;
 
  TRpReportException=class(Exception)
   private
