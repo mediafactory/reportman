@@ -1407,6 +1407,7 @@ begin
   FEvaluator:=nil;
  end;
  FEvaluator:=TRpEvaluator.Create(nil);
+ FEvaluator.Language:=Language;
  PageNum:=-1;
  FRecordCount:=0;
  // Insert params into rpEvaluator

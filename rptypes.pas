@@ -136,6 +136,8 @@ function GetDeviceFontsOption(printerindex:TRpPrinterSelect):boolean;
 function GetPrinterRawOp(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):string;
 procedure FillTreeDir(adirectory:String;alist:TStringList);
 function WideStringToDOS(astring:WideString):WideString;
+function NumberToText(FNumero:currency;female:boolean;idiom:integer):String;
+
 {$IFDEF MSWINDOWS}
 function IsWindowsNT:Boolean;
 {$ENDIF}
@@ -682,6 +684,484 @@ begin
   inc(i);
  end;
 end;
+
+
+function NumberToTextCatalan(Fnumero:currency;female:boolean):String;
+var s:String;
+    centavos:Integer;
+    i:Integer;
+    Numero:Int64;
+    fseparador:char;
+
+     Function longitud(numero:LongInt):integer;
+     {Esta funciÓn nos da la longitud del número que vamos a
+     deletrear}
+     begin
+	  If numero div 10 =0 then
+	     longitud:=1
+	  else
+	     longitud:=1+longitud(numero div 10);
+     end;
+
+     Function Unidades(numero:Integer):String;
+     begin
+	  case numero of
+	  0: Unidades:='';
+	  1:
+	     If Not Female then
+	      Unidades:='un'
+	     else
+	      Unidades:='una';
+	  2: Unidades:='dos';
+	  3: Unidades:='tres';
+	  4: Unidades:='quatre';
+	  5: Unidades:='cinc';
+	  6: Unidades:='sis';
+	  7: Unidades:='set';
+	  8: Unidades:='vuit';
+	  9: Unidades:='nou';
+	  end;
+     end;
+
+     Function Decenas (numero:integer):String;
+     begin
+	  Case numero of
+	  0:Decenas:='';
+	  1..9:Decenas:=Unidades(numero);
+	  10: Decenas:='deu';
+	  11: Decenas:='onze';
+	  12: Decenas:='dotze';
+	  13: Decenas:='tretze';
+	  14: Decenas:='catorze';
+	  15: Decenas:='quinze';
+	  16: Decenas:='setze';
+	  17: Decenas:='diset';
+	  18: Decenas:='divuit';
+	  19: Decenas:='dinou';
+	  20: Decenas:='vint';
+	  21: If Not Female then
+	       Decenas:='veint-i-un'
+              else
+	       Decenas:='veint-i-una';
+	  22: Decenas:='vint-i-dos';
+	  23: Decenas:='vint-i-tres';
+	  24..29: Decenas:='vint-i-'+Unidades(numero mod 10);
+	  30: Decenas:='trenta';
+	  31: If Not Female then
+	       Decenas:='trenta-un'
+              else
+	       Decenas:='trenta-una';
+	  40: Decenas:='quaranta';
+	  41: If Not Female then
+	       Decenas:='quaranta-un'
+              else
+	       Decenas:='quaranta-una';
+	  50: Decenas:='cinquanta';
+	  51: If Not Female then
+	       Decenas:='cinquanta-un'
+              else
+	       Decenas:='cinquanta-una';
+	  60: Decenas:='seixanta';
+	  61: If Not Female then
+	       Decenas:='seixanta-un'
+              else
+	       Decenas:='seixanta-una';
+	  70: Decenas:='setenta';
+	  71: If Not Female then
+	       Decenas:='setanta-un'
+              else
+	       Decenas:='setanta-una';
+	  80: Decenas:='vuitanta';
+	  81: If Not Female then
+	       Decenas:='vuitanta-un'
+              else
+	       Decenas:='vuitanta-una';
+	  90: Decenas:='noranta';
+	  91: If Not Female then
+	       Decenas:='noranta-un'
+              else
+	       Decenas:='noranta-una';
+	  else
+	       Decenas:=Decenas(numero - numero mod 10)+'-'+ unidades(numero mod 10);
+	  end;
+     end;
+     Function centenas(numero:integer):String;
+     begin
+	  case numero of
+	  0: centenas:='';
+	  1..99:centenas:=decenas(numero);
+	  100: centenas:='cent';
+	  101..199: centenas:='cent '+decenas(numero mod 100);
+	  200: If Not Female then
+		centenas:='dos-cents'
+	       else
+		centenas:='dos-centes';
+	  500: If Not Female then
+		centenas:='cinc-cents'
+	       else
+		centenas:='cinc-centes';
+	  501..599:
+	       If Not Female then
+		centenas:='cinc-cents '+decenas(numero mod 100)
+	       else
+		centenas:='cinc-centes '+decenas(numero mod 100);
+
+	  700: If Not Female then
+		centenas:='set-cents'
+	       else
+		centenas:='set-centes';
+
+	  701..799:
+	       If Not Female then
+		centenas:='set-cents '+decenas(numero mod 100)
+	       else
+		centenas:='set-centes '+decenas(numero mod 100);
+	  900..999:
+	       If Not Female then
+		centenas:='nou-cents '+decenas(numero mod 100)
+	       else
+		centenas:='nou-centes '+decenas(numero mod 100);
+	  else
+	   If Not Female then
+	    centenas:=unidades(numero div 100)+'cents'+' '+decenas(numero mod 100)
+	   else
+	      centenas:=unidades(numero div 100)+'centes'+' '+decenas(numero mod 100);
+	  end;
+     end;
+
+     Function UnidadesDeMillar(numero:Integer):String;
+     begin
+     if numero > 999 then begin
+	  if numero > 1999 then
+	       UnidadesDeMillar:=Unidades(numero div 1000) +' mil '+ centenas(numero mod 1000)
+	  else
+	      UnidadesDeMillar:='mil '+ centenas(numero mod 1000);
+     end
+     else
+	 UnidadesDeMillar:=Centenas(numero);
+     end;
+
+     Function DecenasDeMillar(Numero:LongInt):String;
+     begin
+     If numero > 9999 then
+	 DecenasDeMillar:=Decenas(Numero div 1000) +' mil '+Centenas(Numero mod 1000)
+     else
+	 DecenasDeMillar:=UnidadesDeMillar(Numero);
+     end;
+
+     Function CentenasDeMillar(Numero:LongInt):String;
+     begin
+	  If Numero > 99999 then
+	       CentenasDeMillar:=Centenas(Numero div 1000) +' mil '+Centenas(numero mod 1000)
+	  else
+	       CentenasDeMillar:=DecenasDeMillar(numero);
+     end;
+
+     Function UnidadesDeMillon(Numero:LongInt):String;
+     begin
+	  if numero > 1999999 then
+	  UnidadesDeMillon:=Unidades(Numero div 1000000)+' milions '+CentenasDeMillar(Numero mod 1000000)
+	  else
+	  UnidadesDeMillon:= 'un milió '+CentenasDeMillar(Numero mod 1000000)
+     end;
+
+     Function DecenasDeMillon(Numero:LongInt):String;
+     var tmp,c:String;
+	 i:Byte;
+     begin
+	  tmp:= Decenas(Numero div 1000000);
+	  i:=Length(tmp);
+	  c:= tmp[i-1]+tmp[i];
+	  if c='na' then
+	     SetLength(tmp,i-1);
+	  DecenasDeMillon:=tmp+ ' milions '+CentenasDeMillar(Numero mod 1000000)
+     end;
+
+     Function CentenasDeMillon(Numero:LongInt):String;
+     var tmp:String;
+	 c:String;
+	 i:byte;
+     begin
+     {Pasamos del femenino al masculino en las centenas}
+       tmp:=Centenas(Numero div 1000000);
+       c:=tmp[1];
+       i:=1;
+       While ( (c<>' ') and (length(tmp)>=i) ) do
+       begin
+	    if (tmp[i]='a') and (tmp[i+1] ='s') then begin
+	       tmp[i]:='o';
+	       break;
+	    end;
+	    inc(i);
+       end;
+       i:=Length(tmp);
+       c:= tmp[i-1]+tmp[i];
+       if c='na' then
+	     SetLength(tmp,i-1);
+       CentenasDeMillon:=tmp+' milions '+CentenasDeMillar(Numero mod 1000000)
+     end;
+
+begin
+FNumero:=Abs(Fnumero);
+fseparador:=decimalseparator;
+s:=FormatFloat('##########0.00',Fnumero);
+i:=pos(Fseparador,s);
+numero:=StrToInt(copy(s,1,i-1));
+s:=copy(s,i+1,Length(s));
+centavos:=StrToInt(s);
+if Length(s)=1 then centavos:=centavos*10;
+Case Longitud(numero) of
+     1: s:=Unidades(numero);
+     2: s:=Decenas(numero);
+     3: s:=Centenas(numero);
+     4: s:=UnidadesDeMillar(numero);
+     5: s:=DecenasDeMillar(numero);
+     6: s:=CentenasDeMillar(numero);
+     7: s:=UnidadesDeMillon(numero);
+     8: s:=DecenasdeMillon(numero);
+     9: s:=CentenasDeMillon(numero);
+     else
+	 s:='Demasiado grande';
+     end;
+If (i<>0) and (centavos>0) then begin
+ case longitud(centavos) of
+   1: Result:=Unidades(Centavos);
+   2: Result:=Decenas(Centavos);
+ end;
+ Result:=s+' con '+Result;
+end else
+ Result:=s;
+end;
+
+function NumberToTextCastellano(FNumero:currency;female:boolean):String;
+var s:String;
+    centavos:Integer;
+    i:Integer;
+    Numero:Int64;
+    fseparador:char;
+
+     Function longitud(numero:LongInt):integer;
+     {Esta funciÓn nos da la longitud del número que vamos a
+     deletrear}
+     begin
+	  If numero div 10 =0 then
+	     longitud:=1
+	  else
+	     longitud:=1+longitud(numero div 10);
+     end;
+
+     Function Unidades(numero:Integer):String;
+     begin
+	  case numero of
+	  0: Unidades:='';
+	  1:
+	     If Not Female then
+	      Unidades:='un'
+	     else
+	      Unidades:='una';
+	  2: Unidades:='dos';
+	  3: Unidades:='tres';
+	  4: Unidades:='cuatro';
+	  5: Unidades:='cinco';
+	  6: Unidades:='seis';
+	  7: Unidades:='siete';
+	  8: Unidades:='ocho';
+	  9: Unidades:='nueve';
+	  end;
+     end;
+
+     Function Decenas (numero:integer):String;
+     begin
+	  Case numero of
+	  0:Decenas:='';
+	  1..9:Decenas:=Unidades(numero);
+	  10: Decenas:='diez';
+	  11: Decenas:='once';
+	  12: Decenas:='doce';
+	  13: Decenas:='trece';
+	  14: Decenas:='catorce';
+	  15: Decenas:='quince';
+	  16: Decenas:='dieciséis';
+	  17: Decenas:='diecisiete';
+	  18: Decenas:='dieciocho';
+	  19: Decenas:='diecinueve';
+	  20: Decenas:='veinte';
+	  21: Decenas:='veintiuna';
+	  22: Decenas:='veintidós';
+	  23: Decenas:='veintitrés';
+	  24..29: Decenas:='veinti'+Unidades(numero mod 10);
+	  30: Decenas:='treinta';
+	  40: Decenas:='cuarenta';
+	  50: Decenas:='cincuenta';
+	  60: Decenas:='sesenta';
+	  70: Decenas:='setenta';
+	  80: Decenas:='ochenta';
+	  90: Decenas:='noventa';
+	  else
+	       Decenas:=Decenas(numero - numero mod 10)+' y '+ unidades(numero mod 10);
+	  end;
+     end;
+     Function centenas(numero:integer):String;
+     begin
+	  case numero of
+	  0: centenas:='';
+	  1..99:centenas:=decenas(numero);
+	  100: centenas:='cien';
+	  101..199: centenas:='ciento '+decenas(numero mod 100);
+	  200: If Not Female then
+		centenas:='doscientos'
+	       else
+		centenas:='doscientas';
+	  500: If Not Female then
+		centenas:='quinientos'
+	       else
+		centenas:='quinientas';
+	  501..599:
+	       If Not Female then
+		centenas:='quinientos '+decenas(numero mod 100)
+	       else
+		centenas:='quinientas '+decenas(numero mod 100);
+
+	  700: If Not Female then
+		centenas:='setecientos'
+	       else
+		centenas:='setecientas';
+
+	  701..799:
+	       If Not Female then
+		centenas:='setecientos '+decenas(numero mod 100)
+	       else
+		centenas:='setecientas '+decenas(numero mod 100);
+	  900..999:
+	       If Not Female then
+		centenas:='novecientos '+decenas(numero mod 100)
+	       else
+		centenas:='novecientas '+decenas(numero mod 100);
+	  else
+	   If Not Female then
+	    centenas:=unidades(numero div 100)+'cientos'+' '+decenas(numero mod 100)
+	   else
+	      centenas:=unidades(numero div 100)+'cientas'+' '+decenas(numero mod 100);
+	  end;
+     end;
+
+     Function UnidadesDeMillar(numero:Integer):String;
+     begin
+     if numero > 999 then begin
+	  if numero > 1999 then
+	       UnidadesDeMillar:=Unidades(numero div 1000) +' mil '+ centenas(numero mod 1000)
+	  else
+	      UnidadesDeMillar:='mil '+ centenas(numero mod 1000);
+     end
+     else
+	 UnidadesDeMillar:=Centenas(numero);
+     end;
+
+     Function DecenasDeMillar(Numero:LongInt):String;
+     begin
+     If numero > 9999 then
+	 DecenasDeMillar:=Decenas(Numero div 1000) +' mil '+Centenas(Numero mod 1000)
+     else
+	 DecenasDeMillar:=UnidadesDeMillar(Numero);
+     end;
+
+     Function CentenasDeMillar(Numero:LongInt):String;
+     begin
+	  If Numero > 99999 then
+	       CentenasDeMillar:=Centenas(Numero div 1000) +' mil '+Centenas(numero mod 1000)
+	  else
+	       CentenasDeMillar:=DecenasDeMillar(numero);
+     end;
+
+     Function UnidadesDeMillon(Numero:LongInt):String;
+     begin
+	  if numero > 1999999 then
+	  UnidadesDeMillon:=Unidades(Numero div 1000000)+' millones '+CentenasDeMillar(Numero mod 1000000)
+	  else
+	  UnidadesDeMillon:= 'un millón '+CentenasDeMillar(Numero mod 1000000)
+     end;
+
+     Function DecenasDeMillon(Numero:LongInt):String;
+     var tmp,c:String;
+	 i:Byte;
+     begin
+	  tmp:= Decenas(Numero div 1000000);
+	  i:=Length(tmp);
+	  c:= tmp[i-1]+tmp[i];
+	  if c='na' then
+	     SetLength(tmp,i-1);
+	  DecenasDeMillon:=tmp+ ' millones '+CentenasDeMillar(Numero mod 1000000)
+     end;
+
+     Function CentenasDeMillon(Numero:LongInt):String;
+     var tmp:String;
+	 c:String;
+	 i:byte;
+     begin
+     {Pasamos del femenino al masculino en las centenas}
+       tmp:=Centenas(Numero div 1000000);
+       c:=tmp[1];
+       i:=1;
+       While ( (c<>' ') and (length(tmp)>=i) ) do
+       begin
+	    if (tmp[i]='a') and (tmp[i+1] ='s') then begin
+	       tmp[i]:='o';
+	       break;
+	    end;
+	    inc(i);
+       end;
+       i:=Length(tmp);
+       c:= tmp[i-1]+tmp[i];
+       if c='na' then
+	     SetLength(tmp,i-1);
+       CentenasDeMillon:=tmp+' millones '+CentenasDeMillar(Numero mod 1000000)
+     end;
+
+begin
+FNumero:=Abs(Fnumero);
+fseparador:=decimalseparator;
+s:=FormatFloat('##########0.00',Fnumero);
+i:=pos(Fseparador,s);
+numero:=StrToInt(copy(s,1,i-1));
+s:=copy(s,i+1,Length(s));
+centavos:=StrToInt(s);
+if Length(s)=1 then centavos:=centavos*10;
+Case Longitud(numero) of
+     1: s:=Unidades(numero);
+     2: s:=Decenas(numero);
+     3: s:=Centenas(numero);
+     4: s:=UnidadesDeMillar(numero);
+     5: s:=DecenasDeMillar(numero);
+     6: s:=CentenasDeMillar(numero);
+     7: s:=UnidadesDeMillon(numero);
+     8: s:=DecenasdeMillon(numero);
+     9: s:=CentenasDeMillon(numero);
+     else
+	 s:='Demasiado grande';
+     end;
+If (i<>0) and (centavos>0) then begin
+ case longitud(centavos) of
+   1: Result:=Unidades(Centavos);
+   2: Result:=Decenas(Centavos);
+ end;
+ Result:=s+' con '+Result;
+end else
+ Result:=s;
+end;
+
+
+function NumberToText(FNumero:currency;female:boolean;idiom:integer):String;
+begin
+ Result:='';
+ case idiom of
+  1:
+   Result:=NumberToTextCastellano(FNumero,female);
+  2:
+   Result:=NumberToTextCatalan(FNumero,female);
+ end;
+end;
+
+
 
 initialization
 

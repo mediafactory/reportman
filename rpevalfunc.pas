@@ -2,7 +2,7 @@
 {                                                       }
 {       Rpevalfunc                                      }
 {       Functions for the TRpEvaluator for              }
-{       Report Manager                                  }
+{        Manager                                  }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
@@ -26,7 +26,7 @@ uses
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
-  rptypeval;
+  rptypeval,rptypes;
 
 type
 
@@ -1206,7 +1206,7 @@ begin
   result:='';
   exiT;
  end;
-// Result:=NumeroATexto(Params[0],Params[1],0);
+ Result:=NumberToText(Params[0],Params[1],TRpEvaluator(evaluator).Language);
 end;
 
 

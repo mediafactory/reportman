@@ -263,6 +263,17 @@ var
  i:integer;
 begin
  Ffilenameconfig:=Obtainininamecommonconfig('','','reportmanserver');
+ inif:=TMemInifile.Create(ffilenameconfig);
+ try
+  try
+   inif.UpdateFile;
+  except
+   // If the file can't be updated, it's because
+   // readonly privileges
+  end;
+ finally
+  inif.free;
+ end;
  if Not FileExists(FFilenameConfig) then
   Ffilenameconfig:=Obtainininamelocalconfig('','','reportmanserver');
  ForceDirectories(ExtractFilePath(ffilenameconfig));

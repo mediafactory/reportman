@@ -48,6 +48,7 @@ type
   FPartial:TRpValue;
   // Variable that contains if we are doing syntax checking
   FChecking:Boolean;
+  FLanguage:Integer;
   procedure SetExpression(Value:string);
   // Recursive functions to evaluate the expresion
   procedure variables(var Value:TRpValue);
@@ -100,6 +101,7 @@ type
   property EvalResultString:string read GetEvalResultString;
   // Database access component link
   property Rpalias:TRpalias read FRpalias write FRpalias;
+  property Language:Integer read FLanguage write FLanguage;
  end;
 
  // The visual component
