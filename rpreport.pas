@@ -52,6 +52,7 @@ type
  TRpReport=class(TRpBaseReport)
   private
    printingonepass:boolean;
+   procedure UpdateParamsBeforeOpen(index:integer);
   protected
     procedure Notification(AComponent:TComponent;Operation:TOperation);override;
     procedure Loaded;override;
@@ -507,6 +508,7 @@ begin
     if Length(Datainfo.Items[index].DataSource)<1 then
     begin
      Datainfo.Items[index].Disconnect;
+     UpdateParamsBeforeOpen(index);
      Datainfo.Items[index].Connect(DatabaseInfo,params);
     end;
     if Datainfo.Items[index].Cached then
@@ -514,6 +516,7 @@ begin
      if Datainfo.Items[index].Dataset.Bof then
      begin
       Datainfo.Items[index].CachedDataset.DoClose;
+      UpdateParamsBeforeOpen(index);
       Datainfo.Items[index].CachedDataset.DoOpen;
      end;
      if (Not Datainfo.Items[index].Dataset.Eof) then
@@ -803,6 +806,40 @@ begin
  eval.AddIden('EOF',fideneof);
 end;
 
+procedure TRpReport.UpdateParamsBeforeOpen(index:integer);
+var
+ i:integer;
+ paramname:string;
+begin
+ for i:=0 to Params.Count-1 do
+ begin
+  if Params.Items[i].Datasets.IndexOf(datainfo.Items[index].Alias)>=0 then
+  if params.items[i].ParamType=rpParamExpreB then
+  begin
+   paramname:=params.items[i].Name;
+   try
+    if Not VarIsNull(params.items[i].Value) then
+    begin
+     FEvaluator.EvaluateText(paramname+':=('+String(params.items[i].Value)+')');
+     params.items[i].LastValue:=FEvaluator.EvaluateText(paramname);
+    end;
+   except
+    on E:Exception do
+    begin
+{$IFDEF DOTNETD}
+     Raise Exception.Create(E.Message+SRpParameter+'-'+paramname);
+{$ENDIF}
+{$IFNDEF DOTNETD}
+     E.Message:=E.Message+SRpParameter+'-'+paramname;
+     Raise;
+{$ENDIF}
+    end;
+   end;
+  end;
+end;
+end;
+
+
 procedure TRpReport.BeginPrint(Driver:IRpPrintDriver);
 var
  i:integer;
@@ -908,7 +945,10 @@ begin
    paramname:=params.items[i].Name;
    try
     if Not VarIsNull(params.items[i].Value) then
-    FEvaluator.EvaluateText(paramname+':=('+String(params.items[i].Value)+')')
+    begin
+     FEvaluator.EvaluateText(paramname+':=('+String(params.items[i].Value)+')');
+     params.items[i].LastValue:=FEvaluator.EvaluateText(paramname);
+    end;
    except
     on E:Exception do
     begin

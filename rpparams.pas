@@ -62,6 +62,7 @@ type
    protected
     procedure DefineProperties(Filer:TFiler);override;
    public
+    LastValue:Variant;
     Constructor Create(Collection:TCollection);override;
     procedure Assign(Source:TPersistent);override;
     destructor Destroy;override;

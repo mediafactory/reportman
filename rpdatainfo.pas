@@ -1674,7 +1674,12 @@ begin
    begin
     param:=params.items[i];
     atype:=rpparams.ParamTypeToDataType(param.ParamType);
-    avalue:=param.ListValue;
+    if param.ParamType=rpParamExpreB then
+    begin
+     avalue:=param.LastValue;
+    end
+    else
+     avalue:=param.ListValue;
     if atype=ftUnknown then
      atype:=VarTypeToDataType(Vartype(avalue));
     if param.ParamType=rpParamSubst then
