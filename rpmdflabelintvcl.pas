@@ -289,6 +289,7 @@ begin
   lvalues.Add(BoolToStr(TRpExpression(printitem).MultiPage,true));
  lnames.Add(SRpPrintNulls);
  ltypes.Add(SRpSBool);
+ lhints.Add('refexpression.html');
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpExpression(printitem).PrintNulls,true));
 
