@@ -147,6 +147,7 @@ type
    milifirst,mililast:TDatetime;
 {$ENDIF}
    difmilis:int64;
+   FPrinterSelect:TRpPrinterSelect;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -241,6 +242,8 @@ type
     default DEFAULT_RIGHTMARGIN;
    property BottomMargin:TRpTwips read FBottomMargin write FBottomMargin
     default DEFAULT_BOTTOMMARGIN;
+   property PrinterSelect:TRpPrinterSelect read FPrinterSelect write FPrinterSelect
+    default pRpDefaultPrinter;
    // Subreports
    property SubReports:TRpSubReportList read FSubReports write SetSubReports;
    property DataInfo:TRpDataInfoList read FDataInfo write SetDataInfo;
@@ -1153,6 +1156,7 @@ begin
  FDriver:=Driver;
  if Not Assigned(FDriver) then
   Raise Exception.Create(SRpNoDriverPassedToPrint);
+ Driver.SelectPrinter(PrinterSelect);
  metafile.Clear;
  ClearTotalPagesList;
  // Sets page orientation

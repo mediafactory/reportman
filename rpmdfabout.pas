@@ -37,6 +37,7 @@ type
     Label5: TLabel;
     Memo1: TMemo;
     LContributors: TLabel;
+    Image2: TImage;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }

@@ -25,6 +25,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.Title := 'Translation utility';
   Application.CreateForm(TFMain, FMain);
   Application.Run;
 end.

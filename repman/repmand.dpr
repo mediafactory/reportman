@@ -99,7 +99,8 @@ uses
   rpclxreport in '..\rpclxreport.pas',
   rppdffile in '..\rppdffile.pas',
   rppdfdriver in '..\rppdfdriver.pas',
-  rpmdesigner in '..\rpmdesigner.pas';
+  rpmdesigner in '..\rpmdesigner.pas',
+  rpmdprintconfig in '..\rpmdprintconfig.pas' {FRpPrinterConfig};
 {$ENDIF}
 
 
@@ -172,6 +173,7 @@ uses
   rppdffile in '../rppdffile.pas',
   rppdfdriver in '../rppdfdriver.pas',
   rpmdesigner in '../rpmdesigner.pas';
+  rpmdprintconfig in '../rpmdprintconfig.pas' {FRpPrinterConfig};
 {$ENDIF}
 
 

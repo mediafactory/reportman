@@ -104,6 +104,7 @@ type
    oldorientation:TPrinterOrientation;
    orientationset:boolean;
    devicefonts:boolean;
+   neverdevicefonts:boolean;
    bitmapwidth,bitmapheight:integer;
    PreviewStyle:TRpPreviewStyle;
    clientwidth,clientheight:integer;
@@ -120,6 +121,7 @@ type
    procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
+   procedure SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
    constructor Create;
    destructor Destroy;override;
   end;
@@ -135,6 +137,7 @@ function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
   showprintdialog:boolean;filename:string;compressed:boolean):Boolean;
 function DoShowPrintDialog(var allpages:boolean;
  var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
+procedure PrinterSelection(printerindex:TRpPrinterSelect);
 
 implementation
 
@@ -325,7 +328,6 @@ begin
   bitmap.PixelFormat:=pf32bit;
   // Sets Orientation
   SetOrientation(report.Orientation);
-  pagemargins:=GetPageMarginsTWIPS;
   // Gets pagesize
   if lockedpagesize then
   begin
@@ -334,6 +336,7 @@ begin
   else
   begin
    asize:=GetPageSize;
+   pagemargins:=GetPageMarginsTWIPS;
    CurrentPageSize:=asize;
   end;
   bitmapwidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
@@ -393,7 +396,7 @@ begin
   rec.Right:=Round((pagemargins.Right/TWIPS_PER_INCHESS)*dpi*scale);
   rec.Bottom:=Round((pagemargins.Bottom/TWIPS_PER_INCHESS)*dpi*scale);
   pagecliprec:=rec;
-  if (Not drawclippingregion) then 
+  if (Not drawclippingregion) then
   begin
    aregion:=CreateRectRgn(rec.Left,rec.Top,rec.Right,rec.Bottom);
    SelectClipRgn(bitmap.Canvas.handle,aregion);
@@ -1122,6 +1125,8 @@ begin
   gdidriver.devicefonts:=true
  else
   gdidriver.devicefonts:=false;
+ gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
+
  oldprogres:=RepProgress;
  try
   report.OnProgress:=RepProgress;
@@ -1167,6 +1172,7 @@ begin
   gdidriver.devicefonts:=true
  else
   gdidriver.devicefonts:=false;
+ gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
  oldprogres:=RepProgress;
  try
   report.OnProgress:=RepProgress;
@@ -1240,6 +1246,7 @@ begin
     gdidriver.devicefonts:=true
    else
     gdidriver.devicefonts:=false;
+   gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
    report.PrintAll(GDIDriver);
   end;
  end;
@@ -1278,6 +1285,7 @@ begin
     gdidriver.devicefonts:=true
    else
     gdidriver.devicefonts:=false;
+   gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
    report.PrintRange(aGDIDriver,allpages,frompage,topage,copies);
   end;
  end;
@@ -1382,6 +1390,29 @@ begin
  end;
 end;
 
+procedure PrinterSelection(printerindex:TRpPrinterSelect);
+var
+ printername:String;
+ index:integer;
+begin
+ printername:=GetPrinterConfigName(printerindex);
+ if length(printername)>0 then
+ begin
+  index:=Printer.Printers.IndexOf(printername);
+  if index>=0 then
+   Printer.PrinterIndex:=index;
+ end;
+end;
+
+procedure TRpGDIDriver.SelectPrinter(printerindex:TRpPrinterSelect);
+begin
+ PrinterSelection(printerindex);
+ if neverdevicefonts then
+  exit;
+ if devicefonts then
+  exit;
+ devicefonts:=GetDeviceFontsOption(printerindex);
+end;
 
 end.
 

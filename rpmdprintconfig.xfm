@@ -1,0 +1,105 @@
+object FRpPrinterConfig: TFRpPrinterConfig
+  Left = 37
+  Top = 41
+  Width = 530
+  Height = 342
+  VertScrollBar.Range = 329
+  HorzScrollBar.Range = 497
+  ActiveControl = BOK
+  Caption = 'Printers configuration'
+  Color = clButton
+  Position = poScreenCenter
+  Scaled = False
+  OnClose = FormClose
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  object BOK: TButton
+    Left = 8
+    Top = 300
+    Width = 81
+    Height = 29
+    Caption = 'OK'
+    Default = True
+    TabOrder = 0
+    OnClick = BOKClick
+  end
+  object BCancel: TButton
+    Left = 128
+    Top = 300
+    Width = 81
+    Height = 29
+    Cancel = True
+    Caption = 'Cancel'
+    ModalResult = 2
+    TabOrder = 1
+  end
+  object LSelPrinter: TListBox
+    Left = 4
+    Top = 4
+    Width = 205
+    Height = 177
+    TabOrder = 2
+    OnClick = LSelPrinterClick
+  end
+  object LSelectPrinter: TLabel
+    Left = 216
+    Top = 4
+    Width = 63
+    Height = 13
+    Caption = 'Select Printer'
+  end
+  object ComboPrinters: TComboBox
+    Left = 216
+    Top = 20
+    Width = 281
+    Height = 21
+    Style = csDropDownList
+    ItemHeight = 15
+    TabOrder = 4
+    OnChange = ComboPrintersChange
+  end
+  object CheckPrinterFonts: TCheckBox
+    Left = 216
+    Top = 48
+    Width = 281
+    Height = 21
+    Caption = 'Printer Fonts (Windows GDI Only)'
+    TabOrder = 5
+    OnClick = CheckPrinterFontsClick
+  end
+  object GConfigFile: TGroupBox
+    Left = 4
+    Top = 188
+    Width = 493
+    Height = 101
+    Caption = 'Configuraiton file'
+    TabOrder = 6
+    object EConfigFile: TEdit
+      Left = 4
+      Top = 72
+      Width = 477
+      Height = 21
+      Color = clButton
+      TabOrder = 0
+      Text = 'EConfigFile'
+    end
+    object RadioUser: TRadioButton
+      Left = 8
+      Top = 16
+      Width = 329
+      Height = 25
+      Caption = 'User configuration'
+      TabOrder = 1
+      OnClick = RadioUserClick
+    end
+    object RadioSystem: TRadioButton
+      Left = 8
+      Top = 40
+      Width = 329
+      Height = 25
+      Caption = 'System configuration'
+      TabOrder = 2
+      OnClick = RadioUserClick
+    end
+  end
+end

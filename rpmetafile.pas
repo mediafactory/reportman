@@ -145,6 +145,7 @@ type
   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
   procedure DrawPage(apage:TRpMetaFilePage);stdcall;
   function AllowCopies:boolean;stdcall;
+  procedure SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
  end;
 
 

@@ -1,8 +1,9 @@
+{TODO 5 -oToni -cEngine : Add Printer selection}
 {TODO 1 -oToni -cDesigner : Add Wizards to create reports}
 {TODO 2 -oToni -cEngine : Add draw points to TRpChart component}
 {TODO 2 -oToni -cEngine : Add Zeos Database native support}
 {TODO 2 -oToni -cEngine : Add HTML CSS driver}
-{TODO 2 -oToni -cEngine : Add Windows custom page sizes}
+{DONE 2 -oToni -cEngine : Add Windows custom page sizes}
 {TODO 2 -oToni -cEngine : Add OnFunction to evaluator}
 {DONE 5 -oToni -cEngine : Translate all constants and multilanguage Designer}
 

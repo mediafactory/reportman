@@ -109,6 +109,7 @@ type
     formcaption:Widestring;
     procedure Saveas(filename:String);
     procedure AppHint(Sender:TObject);
+    procedure CheckSaved;
   public
     { Public declarations }
    formtrans:TRpTransLator;
@@ -129,6 +130,7 @@ procedure TFMain.AOpenExecute(Sender: TObject);
 var
  i:integer;
 begin
+ CheckSaved;
  if OpenDialog1.Execute then
  begin
   atrans.Active:=false;
@@ -173,6 +175,7 @@ begin
  formtrans:=TRpTransLator.Create(Self);
  formtrans.filename:='rptranslateres';
  formtrans.Active:=true;
+ Application.Title:=formtrans.LoadString(10,Application.Title);
  ANew.Caption:=formtrans.LoadString(0,ANew.Caption);
  ANew.Hint:=formtrans.LoadString(1,ANew.Hint);
  AOpen.Caption:=formtrans.LoadString(2,AOpen.Caption);
@@ -261,6 +264,8 @@ end;
 
 procedure TFMain.ANewExecute(Sender: TObject);
 begin
+ CheckSaved;
+ DTexts.Close;
  CurrentFileName:='';
  Caption:=FormCaption;
  DTexts.CreateDataSet;
@@ -301,7 +306,7 @@ begin
  Close;
 end;
 
-procedure TFMain.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TFMain.CheckSaved;
 begin
  if Not DTexts.Active then
   exit;
@@ -311,6 +316,11 @@ begin
   if mrcancel=MessageDlg(formtrans.LoadString(19,SRptExitNoSave),mtWarning,[mbOk,mbCancel],0) then
    Abort;
  end;
+end;
+
+procedure TFMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+ CheckSaved;
 end;
 
 procedure TFMain.ASaveExecute(Sender: TObject);
@@ -514,5 +524,8 @@ begin
   DTexts.EnableControls;
  end;
 end;
+
+initialization
+
 
 end.

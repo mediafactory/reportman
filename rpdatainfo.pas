@@ -1435,7 +1435,9 @@ begin
  if FileExists(configfilename) then
  begin
   config:=TMemInifile.Create(configfilename);
+{$IFDEF USEVARIANTS}
   config.CaseSensitive:=false;
+{$ENDIF}
  end
  else
  begin

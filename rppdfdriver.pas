@@ -58,6 +58,7 @@ type
    procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
+   procedure SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
    property PDFFile:TRpPDFFile read FPDFFile;
   end;
 
@@ -414,9 +415,16 @@ end;
 
 procedure TRpPDFDriver.RepProgress(Sender:TRpReport;var docancel:boolean);
 begin
+{$IFDEF USEVARIANTS}
  WriteLn(SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
   +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
   FormatFloat('#########,####',Sender.RecordCount));
+{$ELSE}
+ WriteLn(String(SRpRecordCount+' '+IntToStr(Sender.CurrentSubReportIndex)
+  +':'+SRpPage+':'+FormatFloat('#########,####',Sender.PageNum)+'-'+
+  FormatFloat('#########,####',Sender.RecordCount)));
+{$ENDIF}
+
 end;
 
 
@@ -444,6 +452,11 @@ begin
   report.OnProgress:=oldprogres;
  end;
  Result:=True;
+end;
+
+procedure TRpPDFDriver.SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
+begin
+ // No printer to select
 end;
 
 procedure TRpPDFDriver.GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);

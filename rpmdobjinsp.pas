@@ -131,7 +131,6 @@ constructor TrpPanelObj.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
-
 {$IFDEF VCLFILEFILTERS}
  TFRpObjInsp(Owner).OpenDialog1.Filter:=SrpBitmapImages+'|*.bmp';
 {$ENDIF}
@@ -814,6 +813,10 @@ var
  alist:TStrings;
 begin
  inherited Create(AOwner);
+{$IFDEF MSWINDOWS}
+// Native flags not work as expected
+// FontDialog1.NativeFlags:=CF_PRINTERFONTS or CF_EFFECTS;
+{$ENDIF}
  FProppanels:=TStringList.Create;
  FSelectedItems:=TStringList.Create;
  FClasses:=TStringList.Create;

@@ -222,7 +222,7 @@ begin
  apagewidth:=GetDeviceCaps(DC,HORZRES);
  apageheight:=GetDeviceCaps(DC,VERTRES);
  pagesize.x:=Round(apagewidth/dpix*TWIPS_PER_INCHESS);
- pagesize.y:=Round(apageheight/dpix*TWIPS_PER_INCHESS);
+ pagesize.y:=Round(apageheight/dpiy*TWIPS_PER_INCHESS);
 
  physical.x:=GetDeviceCaps(DC,PHYSICALWIDTH);
  physical.y:=GetDeviceCaps(DC,PHYSICALHEIGHT);

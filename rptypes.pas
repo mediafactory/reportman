@@ -23,7 +23,7 @@ interface
 
 {$I rpconf.inc}
 
-uses Sysutils,
+uses Sysutils,IniFiles,rpmdshfolder,
 {$IFDEF MSWINDOWS}
  Windows,
 {$ENDIF}
@@ -72,6 +72,14 @@ type
   CustomHeight:integer;
  end;
 
+ TRpPrinterSelect=(pRpDefaultPrinter,pRpReportPrinter,
+  pRpTicketPrinter,pRpGraphicprinter,
+  pRpCharacterprinter,pRpReportPrinter2,
+  pRpTicketPrinter2,pRpUserPrinter1,pRpUserPrinter2,
+  pRpUserPrinter3,pRpUserPrinter4,pRpUserPrinter5,
+  pRpUserPrinter6,pRpUserPrinter7,pRpUserPrinter8,
+  pRpUserPrinter9);
+
  TRpColor=integer;
 
  // How to show preview
@@ -94,6 +102,8 @@ function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
 procedure Generatenewname(Component:TComponent);
 function FormatVariant(displayformat:string;Value:Variant):widestring;
 function CopyFileTo(const Source, Destination: string): Boolean;
+function GetPrinterConfigName(printerindex:TRpPrinterSelect):string;
+function GetDeviceFontsOption(printerindex:TRpPrinterSelect):boolean;
 
 // Language identifiers
 var
@@ -114,9 +124,15 @@ const
   DefaultFalseBoolStr = 'False'; // DO NOT LOCALIZE
 {$ENDIF}
 
+var
+ printerconfigfile:TMemInifile;
+
+
 implementation
 
+
 {$IFNDEF USEVARIANTS}
+
 
 function TryStrToFloat(const S: string; out Value: Extended): Boolean;
 begin
@@ -319,5 +335,59 @@ begin
  {  varOleStr   = $0008;  varDispatch = $0009;  varError    = $000A;  varVariant  = $000C;  varUnknown  = $000D;  varStrArg   = $0048;  varAny      = $0101;  varTypeMask = $0FFF;  varArray    = $2000;  varByRef    = $4000;}
 end;
 
+procedure CheckLoadedPrinterConfig;
+var
+ systemconfigfilename:string;
+ userconfigfilename:string;
+ configfilename:string;
+begin
+ if Not assigned(printerconfigfile) then
+ begin
+  systemconfigfilename:=Obtainininamecommonconfig('','','reportman');
+  userconfigfilename:=Obtainininameuserconfig('','','reportman');
+  if FileExists(systemconfigfilename) then
+  begin
+   configfilename:=systemconfigfilename;
+  end
+  else
+  begin
+   configfilename:=userconfigfilename;
+  end;
+  printerconfigfile:=TMemInifile.Create(configfilename);
+ end;
+end;
+
+function GetDeviceFontsOption(printerindex:TRpPrinterSelect):boolean;
+begin
+ CheckLoadedPrinterConfig;
+ if printerindex=pRpDefaultPrinter then
+ begin
+  Result:=printerconfigfile.ReadBool('PrinterFonts','Default',false);
+  Exit;
+ end;
+ Result:=printerconfigfile.ReadBool('PrinterFonts','Printer'+IntToStr(integer(printerindex)),false);
+end;
+
+function GetPrinterConfigName(printerindex:TRpPrinterSelect):string;
+begin
+ CheckLoadedPrinterConfig;
+ if printerindex=pRpDefaultPrinter then
+ begin
+  Result:='';
+  Exit;
+ end;
+ Result:=printerconfigfile.ReadString('PrinterNames','Printer'+IntToStr(integer(printerindex)),'');
+end;
+
+initialization
+
+printerconfigfile:=nil;
+finalization
+
+if assigned(printerconfigfile) then
+begin
+ printerconfigfile.free;
+ printerconfigfile:=nil;
+end;
 
 end.

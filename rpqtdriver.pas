@@ -100,6 +100,7 @@ type
    procedure TextExtent(atext:TRpTextObject;var extent:TPoint);stdcall;
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);stdcall;
    function AllowCopies:boolean;stdcall;
+   procedure SelectPrinter(printerindex:TRpPrinterSelect);stdcall;
    function GetPageSize:TPoint;stdcall;
    function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
@@ -122,6 +123,7 @@ function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
 // use the ShowPrintdialog in rpprintdia
 function DoShowPrintDialog(var allpages:boolean;
  var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
+procedure PrinterSelection(printerindex:TRpPrinterSelect);
 
  var
 {$IFDEF MSWINDOWS}
@@ -1178,6 +1180,25 @@ begin
  finally
   graphic.Free;
  end;
+end;
+
+procedure PrinterSelection(printerindex:TRpPrinterSelect);
+var
+ printername:String;
+ index:integer;
+begin
+ printername:=GetPrinterConfigName(printerindex);
+ if length(printername)>0 then
+ begin
+  index:=Printer.Printers.IndexOf(printername);
+  if index>=0 then
+   Printer.SetPrinter(printername);
+ end;
+end;
+
+procedure TRpQtDriver.SelectPrinter(printerindex:TRpPrinterSelect);
+begin
+ PrinterSelection(printerindex);
 end;
 
 end.

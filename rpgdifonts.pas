@@ -317,21 +317,23 @@ end;
 
 procedure FindPrinterDeviceFont(FOnt:TFont;fstep:TFontStep);
 var
- i,tamany:integer;
- nom:string;
+ i,fontsize:integer;
+ fontname:string;
  font1:TPrinterFont;
+ fontstep:TFontStep;
 begin
- tamany:=10;
+ fontsize:=10;
+ fontstep:=cpi10;
  if printerFonts.Count<1 then
   Exit;
  i:=0;
- nom:='';
+ fontname:='';
  while i<PrinterFonts.Count do
  begin
   font1:=TPrinterFont(printerfonts.Items[i]);
   if Font.Name=font1.font.name then
   begin
-   nom:='';
+   fontname:='';
    break;
   end;
   if fstep>=font1.fstep then
@@ -341,16 +343,18 @@ begin
    begin
     if font1.isred then
     begin
-     nom:=font1.Font.Name;
-     tamany:=font1.Font.Size;
+     fontname:=font1.Font.Name;
+     fontsize:=font1.Font.Size;
+     fontstep:=font1.fstep;
     end;
    end
    else
    begin
     if Not font1.isred then
     begin
-     nom:=font1.Font.Name;
-     tamany:=font1.Font.Size;
+     fontname:=font1.Font.Name;
+     fontsize:=font1.Font.Size;
+     fontstep:=font1.fstep;
     end;
    end;
   end
@@ -358,10 +362,29 @@ begin
    break;
   inc(i);
  end;
- if nom<>'' then
+ if fontname<>'' then
  begin
-  Font.Name:=nom;
-  Font.Size:=tamany;
+  // Looks for draft fonts in this size
+  i:=0;
+  while i<PrinterFonts.Count do
+  begin
+   font1:=TPrinterFont(printerfonts.Items[i]);
+   if font1.fstep=fontstep then
+   begin
+    if (Pos('SUPER DRAFT',UpperCase(font1.Font.Name))>0) then
+    begin
+     fontname:=font1.Font.Name;
+     break;
+    end;
+    if (Pos('DRAFT',UpperCase(font1.Font.Name))>0) then
+    begin
+     fontname:=font1.Font.Name;
+    end;
+   end;
+   inc(i);
+  end;
+  Font.Name:=fontname;
+  Font.Size:=fontsize;
  end;
 end;
 

@@ -24,7 +24,7 @@ interface
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpreport, QExtCtrls,rpmunits, QButtons,rptypes,
-  rpmetafile,QPrinters,rpmdconsts;
+  rpmetafile,QPrinters,rpmdconsts,rpmdprintconfig;
 
 type
   TFRpPageSetup = class(TForm)
@@ -66,6 +66,9 @@ type
     EPageWidth: TEdit;
     LWidth: TLabel;
     LHeight: TLabel;
+    LSelectPrinter: TLabel;
+    ComboSelPrinter: TComboBox;
+    BConfigure: TButton;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -75,6 +78,7 @@ type
     procedure RPageSizeClick(Sender: TObject);
     procedure RPageOrientationClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure BConfigureClick(Sender: TObject);
   private
     { Private declarations }
     report:TRpReport;
@@ -227,6 +231,27 @@ begin
  ComboPrinterFonts.Items.Strings[1]:=TranslateStr(114,ComboPrinterFonts.Items.Strings[1]);
  ComboPrinterFonts.Items.Strings[2]:=TranslateStr(115,ComboPrinterFonts.Items.Strings[2]);
  BBAckground.Caption:=TranslateStr(116,BBAckground.Caption);
+ with ComboSelPrinter.Items do
+ begin
+  Add(SRpDefaultPrinter);
+  Add(SRpReportPrinter);
+  Add(SRpTicketPrinter);
+  Add(SRpGraphicprinter);
+  Add(SRpCharacterprinter);
+  Add(SRpReportPrinter2);
+  Add(SRpTicketPrinter2);
+  Add(SRpUserPrinter1);
+  Add(SRpUserPrinter2);
+  Add(SRpUserPrinter3);
+  Add(SRpUserPrinter4);
+  Add(SRpUserPrinter5);
+  Add(SRpUserPrinter6);
+  Add(SRpUserPrinter7);
+  Add(SRpUserPrinter8);
+  Add(SRpUserPrinter9);
+ end;
+ LSelectPrinter.Caption:=TranslateStr(741,LSelectPrinter.Caption);
+ BConfigure.Caption:=TranslateStr(143,BConfigure.Caption);
 
  SetInitialBounds;
 end;
@@ -267,6 +292,7 @@ begin
  if EBottomMargin.Text<>oldbottommargin then
   report.BottomMargin:=gettwipsfromtext(EBottomMargin.Text);
  report.PageOrientation:=rpOrientationDefault;
+ report.PrinterSelect:=TRpPrinterSelect(ComboSelPrinter.ItemIndex);
  if RPageOrientation.itemindex=1 then
  begin
   if RCustomOrientation.itemindex=0 then
@@ -320,6 +346,7 @@ begin
   RCustomOrientation.Itemindex:=0;
  if report.PageOrientation=rpOrientationLandscape then
   RCustomOrientation.Itemindex:=1;
+ ComboSelPrinter.ItemIndex:=integer(report.PrinterSelect);
  // Color
  SColor.Brush.Color:=TColor(report.PageBackColor);
  // Language
@@ -355,6 +382,11 @@ end;
 procedure TFRpPageSetup.FormShow(Sender: TObject);
 begin
  ReadOptions;
+end;
+
+procedure TFRpPageSetup.BConfigureClick(Sender: TObject);
+begin
+ ShowPrintersConfiguration;
 end;
 
 initialization

@@ -1117,6 +1117,7 @@ begin
   collate:=report.CollateCopies;
   frompage:=1; topage:=999999;
   copies:=report.Copies;
+  rpgdidriver.PrinterSelection(report.PrinterSelect);
   if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
    rpgdidriver.PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
   exit;
@@ -1140,6 +1141,7 @@ begin
 {$ENDIF}
 
  copies:=report.Copies;
+ rpqtdriver.PrinterSelection(report.PrinterSelect);
  if ASystemPrintDialog.Checked then
   dook:=rpqtdriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate)
  else
