@@ -53,6 +53,17 @@
 <p>It will say you the version and the configuration file location, then you can 
   test the configured reports:</p>
 <p>http://localhost/cgi-bin/repwebexe.bin/login</p>
+<h4>Thousand separator and other locales</h4>
+<p>Most linux distros use a diferent locale for apache, you can check environment 
+  variables with the /version command and see the resulting decimal separator, 
+  thousand separator etc, you can override it by placing for example a .htaccess 
+  file in cgi-bin directory where repwebexe is placed, with this content:</p>
+<p>SetEnv LC_NUMERIC es_ES<br>
+  SetEnv KYLIX_DEFINEDENVLOCALES yes<br>
+  SetEnv KYLIX_THOUSAND_SEPARATOR .<br>
+  SetEnv KYLIX_DECIMAL_SEPARATOR ,<br>
+  SetEnv KYLIX_DATE_SEPARATOR /<br>
+  SetEnv KYLIX_TIME_SEPARATOR :</p>
 <h4>Using a log file to track web report server activity</h4>
 <p>You can specify a log file to write information about executed reports. To 
   enable the log file edit your configuration file and insert:</p>
