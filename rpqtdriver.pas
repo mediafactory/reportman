@@ -198,11 +198,20 @@ procedure OrientationSelection (neworientation:TRpOrientation);
   kylixprintbug:boolean=false;
 {$ENDIF}
 
+function GetQtPageSize(value:integer):integer;
+
 implementation
 
 uses rpprintdia;
 
 {$R *.xfm}
+
+function GetQtPageSize(value:integer):integer;
+begin
+ Result:=value;
+ if Result>1000 then
+  Result:=0;
+end;
 
 const
  AlignmentFlags_AlignHJustify = 1024 { $400 };
@@ -814,6 +823,7 @@ function TRpQTDriver.InternalSetPagesize(PagesizeQt:integer):TPoint;
 var
  sizeqt:integer;
 begin
+ PageSizeQt:=GetQtPageSize(PageSizeQt);
  Printer.PrintAdapter.PageSize:=TPageSize(PagesizeQT);
  if FOrientation<>rpOrientationDefault then
  begin

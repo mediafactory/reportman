@@ -31,6 +31,79 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Height = 33
         OnMouseDown = SColorMouseDown
       end
+      object GUserDefined: TGroupBox
+        Left = 184
+        Top = 8
+        Width = 261
+        Height = 93
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Custom page size (Windows only)'
+        TabOrder = 1
+        Visible = False
+        object LMetrics7: TLabel
+          Left = 218
+          Top = 24
+          Width = 23
+          Height = 13
+          Anchors = [akTop, akRight]
+          Caption = 'inch.'
+        end
+        object LMetrics8: TLabel
+          Left = 218
+          Top = 48
+          Width = 23
+          Height = 13
+          Anchors = [akTop, akRight]
+          Caption = 'inch.'
+        end
+        object LWidth: TLabel
+          Left = 12
+          Top = 24
+          Width = 28
+          Height = 13
+          Caption = 'Width'
+        end
+        object LHeight: TLabel
+          Left = 12
+          Top = 48
+          Width = 31
+          Height = 13
+          Caption = 'Height'
+        end
+        object LForceFormName: TLabel
+          Left = 12
+          Top = 72
+          Width = 79
+          Height = 13
+          Caption = 'Force form name'
+        end
+        object EPageheight: TRpMaskEdit
+          Left = 128
+          Top = 44
+          Width = 77
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 1
+          EditType = tecurrency
+        end
+        object EPageWidth: TRpMaskEdit
+          Left = 128
+          Top = 20
+          Width = 77
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 0
+          EditType = tecurrency
+        end
+        object EForceFormName: TRpMaskEdit
+          Left = 128
+          Top = 68
+          Width = 77
+          Height = 21
+          Anchors = [akLeft, akTop, akRight]
+          TabOrder = 2
+        end
+      end
       object RPageSize: TRadioGroup
         Left = 4
         Top = 8
@@ -47,7 +120,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
       object GPageSize: TGroupBox
         Left = 184
         Top = 12
-        Width = 233
+        Width = 261
         Height = 65
         Caption = 'Custom size'
         TabOrder = 2
@@ -55,7 +128,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         object ComboPageSize: TComboBox
           Left = 4
           Top = 32
-          Width = 225
+          Width = 253
           Height = 21
           Style = csDropDownList
           ItemHeight = 13
@@ -197,79 +270,6 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           EditType = tecurrency
         end
       end
-      object GUserDefined: TGroupBox
-        Left = 184
-        Top = 8
-        Width = 261
-        Height = 93
-        Anchors = [akLeft, akTop, akRight]
-        Caption = 'Custom page size (Windows only)'
-        TabOrder = 1
-        Visible = False
-        object LMetrics7: TLabel
-          Left = 218
-          Top = 24
-          Width = 23
-          Height = 13
-          Anchors = [akTop, akRight]
-          Caption = 'inch.'
-        end
-        object LMetrics8: TLabel
-          Left = 218
-          Top = 48
-          Width = 23
-          Height = 13
-          Anchors = [akTop, akRight]
-          Caption = 'inch.'
-        end
-        object LWidth: TLabel
-          Left = 12
-          Top = 24
-          Width = 28
-          Height = 13
-          Caption = 'Width'
-        end
-        object LHeight: TLabel
-          Left = 12
-          Top = 48
-          Width = 31
-          Height = 13
-          Caption = 'Height'
-        end
-        object LForceFormName: TLabel
-          Left = 12
-          Top = 72
-          Width = 79
-          Height = 13
-          Caption = 'Force form name'
-        end
-        object EPageheight: TRpMaskEdit
-          Left = 128
-          Top = 44
-          Width = 77
-          Height = 21
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 1
-          EditType = tecurrency
-        end
-        object EPageWidth: TRpMaskEdit
-          Left = 128
-          Top = 20
-          Width = 77
-          Height = 21
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 0
-          EditType = tecurrency
-        end
-        object EForceFormName: TRpMaskEdit
-          Left = 128
-          Top = 68
-          Width = 77
-          Height = 21
-          Anchors = [akLeft, akTop, akRight]
-          TabOrder = 2
-        end
-      end
     end
     object TabPrint: TTabSheet
       Caption = 'Print setup'
@@ -330,7 +330,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 3
       end
       object BConfigure: TButton
@@ -395,7 +395,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 1
       end
       object ComboPreview: TComboBox
@@ -465,7 +465,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 14
       end
       object ComboDuplex: TComboBox
@@ -475,7 +475,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 15
       end
     end
@@ -496,7 +496,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
       end
     end
@@ -528,6 +528,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     end
   end
   object ColorDialog1: TColorDialog
+    Ctl3D = True
     Left = 336
     Top = 288
   end

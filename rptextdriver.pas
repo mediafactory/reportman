@@ -167,48 +167,6 @@ const
  AlignmentFlags_AlignLeft = 1 { $1 };
  AlignmentFlags_AlignRight = 2 { $2 };
 
-type
-  TPageWidthHeight = record
-    Width: Integer;
-    Height: Integer;
-  end;
-
-const
-  PageSizeArray: array[0..30] of TPageWidthHeight =
-    (
-      (Width: 8268; Height: 11693),  // psA4
-      (Width: 7165; Height: 10118),  // psB5
-      (Width: 8500; Height: 11000),  // psLetter
-      (Width: 8500; Height: 14000),  // psLegal
-      (Width: 7500; Height: 10000),  // psExecutive
-      (Width: 33110; Height: 46811), // psA0
-      (Width: 23386; Height: 33110), // psA1
-      (Width: 16535; Height: 23386), // psA2
-      (Width: 11693; Height: 16535), // psA3
-      (Width: 5827; Height: 8268),   // psA5
-      (Width: 4134; Height: 5827),   // psA6
-      (Width: 2913; Height: 4134),   // psA7
-      (Width: 2047; Height: 2913),   // psA8
-      (Width: 1457; Height: 2047),   // psA9
-      (Width: 40551; Height: 57323), // psB0
-      (Width: 28661; Height: 40551), // psB1
-      (Width: 1260; Height: 1772),   // psB10
-      (Width: 20276; Height: 28661), // psB2
-      (Width: 14331; Height: 20276), // psB3
-      (Width: 10118; Height: 14331), // psB4
-      (Width: 5039; Height: 7165),   // psB6
-      (Width: 3583; Height: 5039),   // psB7
-      (Width: 2520; Height: 3583),   // psB8
-      (Width: 1772; Height: 2520),   // psB9
-      (Width: 6417; Height: 9016),   // psC5E
-      (Width: 4125; Height: 9500),   // psComm10E
-      (Width: 4331; Height: 8661),   // psDLE
-      (Width: 8250; Height: 13000),  // psFolio
-      (Width: 17000; Height: 11000), // psLedger
-      (Width: 11000; Height: 17000), // psTabloid
-      (Width: -1; Height: -1)        // psNPageSize
-    );
-
 
 
 constructor TRpTextDriver.Create;

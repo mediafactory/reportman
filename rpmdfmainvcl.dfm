@@ -1,6 +1,6 @@
 object FRpMainFVCL: TFRpMainFVCL
-  Left = 109
-  Top = 55
+  Left = 94
+  Top = 77
   Width = 575
   Height = 478
   Caption = 'Report Manager Designer'
@@ -19,7 +19,7 @@ object FRpMainFVCL: TFRpMainFVCL
   TextHeight = 13
   object BStatus: TStatusBar
     Left = 0
-    Top = 411
+    Top = 403
     Width = 567
     Height = 21
     Panels = <
@@ -266,7 +266,7 @@ object FRpMainFVCL: TFRpMainFVCL
     Left = 0
     Top = 70
     Width = 567
-    Height = 341
+    Height = 333
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
@@ -275,7 +275,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 181
       Top = 0
       Width = 8
-      Height = 341
+      Height = 333
       Cursor = crHSplit
       Beveled = True
       ResizeStyle = rsUpdate
@@ -285,7 +285,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 0
       Top = 0
       Width = 181
-      Height = 341
+      Height = 333
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0

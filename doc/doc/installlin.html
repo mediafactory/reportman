@@ -56,6 +56,22 @@
 <p>Report Manager Designer will use a Printer configuration file, only used in 
   printer selection, this file will be searched as /etc/reporman, if not found 
   it will create or use /home/yourusername/.reportman</p>
+<p><strong>Environment variables</strong></p>
+<p>You can define a special environment variable to enable, by default, the use 
+  of kprinter to print reports, this will allow to select the diferent options 
+  in the kprinter dialog.</p>
+<p>export REPMAN_USEKPRINTER=true</p>
+<p>Before showing print dialog, the report will be transformed to Adobe PDF, then 
+  converted to postcript using pdftops command line tool (so Xpdf package installation 
+  is required), the resulting postcript file will be sent to kprinter command 
+  line tool and the user will see the kprinter print dialog.</p>
+<p>The operations that the engine performs internally are:</p>
+<p>printerreptopdf -u yourreport.rep pdffile.pdf</p>
+<p>pdftops pdffile.pdf postcriptfile.ps</p>
+<p>kprinter postcriptfile.ps</p>
+<p>The main diference is when you use kprinter the report must be calculated entirely 
+  before showing the print dialog, and if the report is very long and you want 
+  to print only one page, a lot of processing time may be not really useful.</p>
 <p></p>
 <p>&nbsp;</p>
 </body>

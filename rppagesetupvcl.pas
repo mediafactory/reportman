@@ -127,65 +127,6 @@ implementation
 
 {$R *.dfm}
 
-
-
-type
-  TPageWidthHeight = record
-    Width: Integer;
-    Height: Integer;
-  end;
-
-
- // Qt Page sizes
-  TPageSize = (psA4, psB5, psLetter, psLegal, psExecutive, psA0, psA1, psA2,
-    psA3, psA5, psA6, psA7, psA8, psA9, psB0, psB1, psB10, psB2, psB3, psB4, psB6,
-    psB7, psB8, psB9, psC5E, psComm10E, psDLE, psFolio, psLedger, psTabloid, psNPageSize);
-
-const PageSizeNames: array [psA4..psNPageSize] of widestring =
-('A4', 'B5','Letter','Legal','Executive','A0', 'A1', 'A2',
-    'A3', 'A5', 'A6', 'A7', 'A8', 'A9', 'B0', 'B1', 'B10', 'B2',
-     'B3', 'B4', 'B6','B7', 'B8', 'B9', 'C5E', 'Comm10E',
-     'DLE', 'Folio', 'Ledger', 'Tabloid', 'psNPageSize');
-
-const
-  PageSizeArray: array[0..30] of TPageWidthHeight =
-    (
-      (Width: 8268; Height: 11693),  // psA4
-      (Width: 7165; Height: 10118),  // psB5
-      (Width: 8500; Height: 11000),  // psLetter
-      (Width: 8500; Height: 14000),  // psLegal
-      (Width: 7500; Height: 10000),  // psExecutive
-      (Width: 33110; Height: 46811), // psA0
-      (Width: 23386; Height: 33110), // psA1
-      (Width: 16535; Height: 23386), // psA2
-      (Width: 11693; Height: 16535), // psA3
-      (Width: 5827; Height: 8268),   // psA5
-      (Width: 4134; Height: 5827),   // psA6
-      (Width: 2913; Height: 4134),   // psA7
-      (Width: 2047; Height: 2913),   // psA8
-      (Width: 1457; Height: 2047),   // psA9
-      (Width: 40551; Height: 57323), // psB0
-      (Width: 28661; Height: 40551), // psB1
-      (Width: 1260; Height: 1772),   // psB10
-      (Width: 20276; Height: 28661), // psB2
-      (Width: 14331; Height: 20276), // psB3
-      (Width: 10118; Height: 14331), // psB4
-      (Width: 5039; Height: 7165),   // psB6
-      (Width: 3583; Height: 5039),   // psB7
-      (Width: 2520; Height: 3583),   // psB8
-      (Width: 1772; Height: 2520),   // psB9
-      (Width: 6417; Height: 9016),   // psC5E
-      (Width: 4125; Height: 9500),   // psComm10E
-      (Width: 4331; Height: 8661),   // psDLE
-      (Width: 8250; Height: 13000),  // psFolio
-      (Width: 17000; Height: 11000), // psLedger
-      (Width: 11000; Height: 17000), // psTabloid
-      (Width: -1; Height: -1)        // psNPageSize
-    );
-
-
-
-
 function ExecutePageSetup(report:TRpReport):boolean;
 var
  dia:TFRpPageSetupVCL;
@@ -207,10 +148,10 @@ end;
 
 procedure TFRpPageSetupVCL.FormCreate(Sender: TObject);
 var
- psize:TPagesize;
  astring:widestring;
  awidth:integer;
  aheight:integer;
+ i:integer;
 begin
  PControl.ActivePage:=TabPage;
  LMetrics3.Caption:=rpunitlabels[defaultunit];
@@ -221,11 +162,11 @@ begin
  LMetrics8.Caption:=LMetrics3.Caption;
  GetLanguageDescriptions(ComboLanguage.Items);
  ComboLanguage.Items.Insert(0,TranslateStr(95,'Default'));
- for psize:=Low(psize) to High(psize) do
+ for i:=0 to 148 do
  begin
-  astring:=PageSizeNames[psize];
-  awidth:=Round(PageSizeArray[Integer(psize)].Width/1000*TWIPS_PER_INCHESS);
-  aheight:=Round(PageSizeArray[Integer(psize)].Height/1000*TWIPS_PER_INCHESS);
+  astring:=PageSizeNames[i];
+  awidth:=Round(PageSizeArray[i].Width/1000*TWIPS_PER_INCHESS);
+  aheight:=Round(PageSizeArray[i].Height/1000*TWIPS_PER_INCHESS);
   astring:=astring+' ('+gettextfromtwips(awidth)+'x'+
    gettextfromtwips(aheight)+') '+rpunitlabels[defaultunit];
   ComboPageSize.Items.Add(astring);

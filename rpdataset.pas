@@ -298,8 +298,8 @@ end;
 
 procedure TRpDataset.SetDataset(Value:TDataset);
 begin
- if Active then
-  Raise Exception.Create(SRpDatasetActive);
+// if Active then
+//  Raise Exception.Create(SRpDatasetActive);
  FDataset:=Value;
  if Not Assigned(FDataset) then
   Active:=False;
