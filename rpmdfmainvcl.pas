@@ -1670,6 +1670,7 @@ begin
    DoOpen(ParamStr(1),false);
   end;
  end;
+ WindowState:=wsMaximized;
 end;
 
 procedure TFRpMainFVCL.ASysInfoExecute(Sender: TObject);

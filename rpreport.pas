@@ -1954,7 +1954,7 @@ var
  oldsubreport:TRpSubreport;
  oldprintedsection:TRpSection;
  oldprintedsectionext:TPoint;
- oldhorzdespposition:integer;
+ i,oldhorzdespposition:integer;
  pagespacex:integer;
  sectionextevaluated:boolean;
  PartialPrint:Boolean;
@@ -2251,7 +2251,12 @@ begin
  if Not Assigned(Section) then
   Raise Exception.Create(SRpLastPageReached);
  if assigned(subreport) then
-  subreport.SubReportChanged(rpPageChange);
+ begin
+  for i:=0 to SubReports.Count-1 do
+  begin
+   subreports.Items[i].Subreport.SubReportChanged(rpPageChange);
+  end;
+ end;
  havepagefooters:=false;
  sectionextevaluated:=false;
  oldprintedsection:=nil;

@@ -1,8 +1,8 @@
 object FRpMainFVCL: TFRpMainFVCL
   Left = 130
   Top = 71
-  Width = 567
-  Height = 479
+  Width = 508
+  Height = 452
   Caption = 'Report Manager Designer'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -13,7 +13,6 @@ object FRpMainFVCL: TFRpMainFVCL
   Menu = MainMenu1
   OldCreateOrder = False
   ShowHint = True
-  WindowState = wsMaximized
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
@@ -24,8 +23,8 @@ object FRpMainFVCL: TFRpMainFVCL
   TextHeight = 13
   object BStatus: TStatusBar
     Left = 0
-    Top = 412
-    Width = 559
+    Top = 385
+    Width = 500
     Height = 21
     Panels = <
       item
@@ -35,7 +34,7 @@ object FRpMainFVCL: TFRpMainFVCL
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 559
+    Width = 500
     Height = 70
     AutoSize = True
     ButtonHeight = 26
@@ -239,38 +238,38 @@ object FRpMainFVCL: TFRpMainFVCL
     object ToolButton19: TToolButton
       Left = 222
       Top = 42
-      Width = 12
+      Width = 17
       Caption = 'ToolButton19'
       ImageIndex = 25
       Style = tbsSeparator
     end
     object ToolButton20: TToolButton
-      Left = 234
+      Left = 239
       Top = 42
       Action = AAlignLeft
     end
     object ToolButton21: TToolButton
-      Left = 260
+      Left = 265
       Top = 42
       Action = AAlignRight
     end
     object ToolButton22: TToolButton
-      Left = 286
+      Left = 291
       Top = 42
       Action = AAlignUp
     end
     object ToolButton23: TToolButton
-      Left = 312
+      Left = 317
       Top = 42
       Action = AAlignDown
     end
     object ToolButton24: TToolButton
-      Left = 338
+      Left = 343
       Top = 42
       Action = AAlignHorz
     end
     object ToolButton25: TToolButton
-      Left = 364
+      Left = 369
       Top = 42
       Action = AAlignVert
     end
@@ -278,8 +277,8 @@ object FRpMainFVCL: TFRpMainFVCL
   object mainscrollbox: TPanel
     Left = 0
     Top = 70
-    Width = 559
-    Height = 342
+    Width = 500
+    Height = 315
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
@@ -288,7 +287,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 181
       Top = 0
       Width = 8
-      Height = 342
+      Height = 315
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
@@ -297,7 +296,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 0
       Top = 0
       Width = 181
-      Height = 342
+      Height = 315
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0

@@ -1173,6 +1173,7 @@ var
  drivername:String;
  S:String;
 begin
+ TextDriver:=nil;
  drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
  istextonly:=Length(drivername)>0;
  Result:=true;

@@ -10,7 +10,7 @@
 {$DEFINE USEIBX}
 {$DEFINE USEADO}
 {$DEFINE USEBDE}
-//{$DEFINE USEZEOS}
+{$DEFINE USEZEOS}
 //{$DEFINE USEIBO}
 
 // Unsupported database drivers in Linux

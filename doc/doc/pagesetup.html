@@ -32,11 +32,18 @@
   e-mail me so I can include it in documentation.</p>
 <p><b>Two Pass Report</b> property allow to know additional information about 
   the report before printing the first page, if you select this, you can use the 
-  <b>pagecount</b> function to obtain the total number of pager of the report.</p>
+  <b>pagecount</b> function to obtain the total number of pager of the report. 
+  If this option is set, the report will be calculated entirely, then printed. 
+  It can consume more system resources and the preview is slower because the entire 
+  report is calculated before the engine show the first page.</p>
 <p><b>Page margins</b> are used as the origin for printing sections, bottom margin 
   limits the space used in the bottom of the page, and right margin limits the 
   space used to the right of the page that is when printing horizontally (labels 
   for example).</p>
+<p><strong>Prefered save format</strong> change the way the report is stored to 
+  file, you can select plain text to save the report definition as text and track 
+  changes with some version control system, to obtain a smaller file but not human 
+  readable select zlib compressed.</p>
 <p><b>Printer selection</b></p>
 <p>You can force the report to select a specified printer. There are predefined 
   printer configuration names, and each printer configuration name can be linked 

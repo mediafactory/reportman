@@ -53,7 +53,7 @@ uses Classes,SysUtils,
   IB_Components,IBODataset,
 {$ENDIF}
 {$IFDEF USEVARIANTS}
-  Variants,
+  Variants,Types,
 {$ENDIF}
  rpdataset,rpdatatext;
 
@@ -2050,6 +2050,10 @@ begin
 end;
 
 procedure TRpDatabaseInfoItem.GetTableNames(Alist:TStrings);
+{$IFDEF USEZEOS}
+var
+ res:IZResultSet;
+{$ENDIF}
 begin
  Connect;
 
@@ -2073,8 +2077,12 @@ begin
   rpdatazeos:
    begin
 {$IFDEF USEZEOS}
-    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverZeos);
-//    FZConnection.GetTableNames(alist);
+    res:=FZConnection.DbcConnection.GetMetadata.GetTables('','','',nil);
+    alist.Clear;
+    if res.First then
+     alist.Add(res.GetStringByName('TABLE_NAME'));
+    while res.Next do
+     alist.Add(res.GetStringByName('TABLE_NAME'));
 {$ELSE}
     Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverZeos);
 {$ENDIF}

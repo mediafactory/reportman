@@ -1168,8 +1168,8 @@ begin
     (section.ReportComponents.Add).Component:=pitem;
     report.InsertComponent(pitem);
     Generatenewname(pitem);
+    TFRpObjInsp(fobjinsp).AddCompItem(secint.CreateChild(pitem),false);
    end;
-   TFRpObjInsp(fobjinsp).AddCompItem(secint.CreateChild(pitem),false);
 //   fdesignframe.UpdateSelection(true);
   finally
    alist.Free;
