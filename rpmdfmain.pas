@@ -580,7 +580,6 @@ begin
  // Sets on exception event
 {$IFDEF MSWINDOWS}
  Forms.Application.OnException:=MyExceptionHandler;
- oldonexceptionvcl:=Forms.Application.OnException;
 {$ENDIF}
  oldonexception:=Application.OnException;
  Application.OnException:=MyExceptionHandler;
@@ -1313,13 +1312,6 @@ begin
  end
  else
   Messagedlg(SRpError,E.Message,mtError,[mbok],0);
-{$IFDEF MSWINDOWS}
- if assigned(oldonexceptionvcl) then
- begin
-  oldonexceptionvcl(Sender,E);
- end;
-{$ENDIF}
-
 end;
 
 

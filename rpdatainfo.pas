@@ -612,6 +612,11 @@ var
 {$IFDEF USESQLEXPRESS}
  funcname,drivername,vendorlib,libraryname:string;
 {$ENDIF}
+{$IFDEF USEBDE}
+ i:integer;
+ AlreadyOpen:boolean;
+ OpenedName:string;
+{$ENDIF}
 begin
  case Fdriver of
   rpdatadbexpress:
@@ -711,21 +716,50 @@ begin
     begin
      FBDEDatabase.Connected:=false;
     end;
-    FBDEDatabase.DatabaseName:=FBDEAlias;
-    if FLoadParams then
+    // Find an opened database in this session that
+    // openend the alias
+    OpenedName:=FBDEAlias;
+    AlreadyOpen:=False;
+    for i:=0 to Session.DatabaseCount-1 do
     begin
-     try
-      Session.GetAliasParams(FBDEAlias,FBDEDatabase.Params);
-     except
-      on E:Exception do
+     if Session.Databases[i].DatabaseName=FBDEAlias then
+     begin
+      if Session.Databases[i].Connected then
       begin
-       E.Message:=E.Message+':BDE-ALIAS:'+FBDEAlias;
-       Raise;
+       AlreadyOpen:=True;
+       OpenedName:=Session.Databases[i].DatabaseName;
+       break;
+      end
+      else
+       Session.Databases[i].DatabaseName:='';
+     end;
+     if Session.Databases[i].AliasName=FBDEAlias then
+      if Session.Databases[i].Connected then
+      begin
+       AlreadyOpen:=True;
+       OpenedName:=Session.Databases[i].DatabaseName;
+       break;
+      end;
+    end;
+    FBDEDatabase.DatabaseName:=OpenedName;
+    if Not AlreadyOpen then
+    begin
+     if FLoadParams then
+     begin
+      try
+       FBDEDatabase.AliasName:=FBDEAlias;
+       Session.GetAliasParams(FBDEAlias,FBDEDatabase.Params);
+       FBDEDatabase.LoginPrompt:=LoginPrompt;
+       FBDEDatabase.Connected:=true;
+      except
+       on E:Exception do
+       begin
+        E.Message:=E.Message+':BDE-ALIAS:'+FBDEAlias;
+        Raise;
+       end;
       end;
      end;
     end;
-    FBDEDatabase.LoginPrompt:=LoginPrompt;
-    FBDEDatabase.Connected:=true;
 {$ELSE}
     Raise Exception.Create(SRpDriverNotSupported+SrpDriverBDE);
 {$ENDIF}
