@@ -80,7 +80,6 @@ type
    FLoadDriverParams:boolean;
    FLoginPrompt:boolean;
    FADOConnectionString:widestring;
-   FBDEAlias:string;
 {$IFDEF USEIBX}
    FIBDatabase:TIBDatabase;
 {$ENDIF}
@@ -89,6 +88,7 @@ type
 {$ENDIF}
 {$IFDEF USEBDE}
    FBDEDatabase:TDatabase;
+   FBDEAlias:string;
 {$ENDIF}
    FDriver:TRpDbDriver;
    procedure SetAlias(Value:string);
@@ -186,7 +186,9 @@ implementation
 {$IFDEF USESQLEXPRESS}
 var
  ConAdmin:TRpConnAdmin;
+{$ENDIF}
 
+{$IFDEF USEIBX}
 procedure ConvertParamsFromDBXToIBX(base:TIBDatabase);
 var
  index:integer;
@@ -535,7 +537,7 @@ begin
    end;
   rpdataibx:
    begin
-{$IFDEF USESQLEXPRESS}
+{$IFDEF USEIBX}
      if Not Assigned(FIBDatabase) then
      begin
       FIBDatabase:=TIBDatabase.Create(nil);

@@ -30,8 +30,7 @@ package rppack;
 
 requires
   baseclx,
-  dataclx,
-  ibxpress;
+  dataclx;
 
 contains
   rptypeval in 'rptypeval.pas',

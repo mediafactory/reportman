@@ -43,6 +43,7 @@ contains
   rppagesetup in 'rppagesetup.pas' {FPageSetup},
   rppreview in 'rppreview.pas' {FRpPreview},
   rpgraphutils in 'rpgraphutils.pas' {FRpGraphProgres},
-  rpqtdriver in 'rpqtdriver.pas' {FRpQtProgress};
+  rpqtdriver in 'rpqtdriver.pas' {FRpQtProgress},
+  rpprintdia in 'rpprintdia.pas' {FRpPrintDialog};
 
 end.
