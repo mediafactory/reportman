@@ -24,9 +24,9 @@ program repmand;
 
 uses
   QForms,
-  midaslib,
-  Crtl,
 {$IFDEF MSWINDOWS}
+  Crtl,
+  midaslib,
   rpmdfmain in '..\rpmdfmain.pas' {FRpMainF},
   rpmdfstruc in '..\rpmdfstruc.pas' {FRpStructure: TFrame},
   rpmdfdesign in '..\rpmdfdesign.pas' {FDesignFrame: TFrame},

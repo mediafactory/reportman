@@ -23,7 +23,7 @@ interface
 {$I rpconf.inc}
 
 uses
-  SysUtils,
+  SysUtils,QStyle,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
@@ -152,6 +152,14 @@ type
     Systemprintdialog1: TMenuItem;
     AkylixPrintBug: TAction;
     MKylixPrintBug: TMenuItem;
+    MQtStyle: TMenuItem;
+    Windows1: TMenuItem;
+    Motif1: TMenuItem;
+    MotifPlus1: TMenuItem;
+    CDE1: TMenuItem;
+    QtSGI1: TMenuItem;
+    Platinum1: TMenuItem;
+    Default1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -191,6 +199,7 @@ type
     procedure ADriverGDIExecute(Sender: TObject);
     procedure ASystemPrintDialogExecute(Sender: TObject);
     procedure AkylixPrintBugExecute(Sender: TObject);
+    procedure Windows1Click(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFDesignFrame;
@@ -199,6 +208,7 @@ type
     lastsaved:TMemoryStream;
     configfile:string;
     updatedmfields:boolean;
+    AppStyle:TDefaultStyle;
     procedure FreeInterface;
     procedure CreateInterface;
     function checkmodified:boolean;
@@ -217,6 +227,8 @@ type
     procedure SaveConfig;
     procedure UpdateUnits;
     procedure CorrectScrollBoxes;
+    procedure UpdateStyle;
+
   public
     { Public declarations }
     report:TRpReport;
@@ -543,6 +555,7 @@ end;
 
 procedure TFRpMainF.FormCreate(Sender: TObject);
 begin
+ AppStyle:=dsSystemDefault;
  Application.Title:=SRpRepman;
  configfile:=Obtainininameuserconfig('','','repmand');
 {$IFDEF MSWINDOWS}
@@ -1020,6 +1033,9 @@ begin
 {$ENDIF}
   ADriverGDI.Checked:=Not ADriverQT.Checked;
   AUnitsinchess.Checked:=Not AUnitCms.Checked;
+  AppStyle:=TDefaultStyle(inif.ReadInteger('Preferences','QtStyle',Integer(dsSystemDefault)));
+  UpdateStyle;
+
   UpdateUnits;
  finally
   inif.free;
@@ -1036,6 +1052,7 @@ begin
   inif.WriteBool('Preferences','DriverQT',ADriverQT.Checked);
   inif.WriteBool('Preferences','SystemPrintDialog',AsystemPrintDialog.Checked);
   inif.WriteBool('Preferences','KylixPrintBug',AKylixPrintBug.Checked);
+  inif.WriteInteger('Preferences','QtStyle',Integer(AppStyle));
   inif.UpdateFile;
  finally
   inif.free;
@@ -1125,6 +1142,29 @@ procedure TFRpMainF.AkylixPrintBugExecute(Sender: TObject);
 begin
  AKylixPrintBug.Checked:=Not AKylixPrintBug.Checked;
  rpqtdriver.kylixprintbug:=AKylixPrintBug.Checked;
+end;
+
+
+procedure TFRpMainF.UpdateStyle;
+var
+ i:integer;
+ aitem:TMenuItem;
+begin
+// RefreshChildren(True);
+ for i:=0 to MQtStyle.Count-1 do
+ begin
+  aitem:=MQtStyle.Items[i];
+  aitem.Checked:=(aitem.Tag=Integer(Application.Style.DefaultStyle));
+ end;
+end;
+
+
+procedure TFRpMainF.Windows1Click(Sender: TObject);
+begin
+ // Sets the style
+ AppStyle:=TDefaultStyle((Sender As TComponent).Tag);
+ Application.Style.DefaultStyle:=AppStyle;
+ UpdateStyle;
 end;
 
 initialization
