@@ -88,6 +88,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         Top = 0
         Width = 8
         Height = 78
+        Cursor = crHSplit
         Beveled = True
       end
       object LDatasets: TListBox
@@ -108,9 +109,6 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
-        DesignSize = (
-          274
-          78)
         object LMasterDataset: TLabel
           Left = 4
           Top = 28

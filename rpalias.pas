@@ -37,9 +37,9 @@ type
    private
     Iden:TIdenField;
     FList:TRpAliaslist;
-    FConnections:TRpDataInfoList;
+    FConnections:TRpDatabaseInfoList;
     procedure SetList(Newlist:TRpAliaslist);
-    procedure SetConnections(Newconn:TRpDataInfoList);
+    procedure SetConnections(Newconn:TRpDatabaseInfoList);
    protected
     procedure Notification(AComponent:TComponent;Operation:TOperation);override;
    public
@@ -50,7 +50,7 @@ type
     function IndexOf(Dataset:TDataSet):integer;
    published
     property List:TRpAliaslist read FList write SetList;
-    property Connections:TRpDataInfoList read FConnections write SetConnections;
+    property Connections:TRpDatabaseInfoList read FConnections write SetConnections;
    end;
 
 
@@ -211,7 +211,7 @@ begin
  inherited Create(AOWner);
  FList:=TRpAliaslist.Create(Self);
  Iden:=TIdenField.CreateField(Self,'');
- FConnections:=TRpDataInfoList.Create(Self);
+ FConnections:=TRpDatabaseInfoList.Create(Self);
 end;
 
 destructor TRpAlias.Destroy;
@@ -226,7 +226,7 @@ begin
  FList.Assign(Newlist);
 end;
 
-procedure TRpAlias.SetConnections(Newconn:TRpDataInfoList);
+procedure TRpAlias.SetConnections(Newconn:TRpDatabaseInfoList);
 begin
  FConnections.Assign(Newconn);
 end;

@@ -406,7 +406,8 @@ begin
    for i:=frompage to topage do
    begin
     if wb.Worksheets.Count<shcount then
-     wb.Worksheets.Add(NULL,wb.Worksheets.Item[wb.Worksheets.Count],1,NULL,1);
+//     wb.Worksheets.Add(NULL,wb.Worksheets.Item[wb.Worksheets.Count],1,NULL,1);
+     wb.Worksheets.Add(NULL,wb.Worksheets.Item[wb.Worksheets.Count],1,NULL);
     sh:=wb.Worksheets.item[shcount];
     inc(shcount);
     apage:=metafile.Pages[i];

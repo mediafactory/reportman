@@ -44,8 +44,7 @@ requires
   VCLIB50,
   vcljpg50,
   Indy50,
-  tee50,
-  dclaxserver50;
+  tee50;
 
 contains
   rptypeval in 'rptypeval.pas',
@@ -120,6 +119,20 @@ contains
   rpmregdesignvcl in 'rpmregdesignvcl.pas',
   rpdbxconfigvcl in 'rpdbxconfigvcl.pas' {FRpDBXConfigVCL},
   rppagesetupvcl in 'rppagesetupvcl.pas' {FRpPageSetupVCL},
-  rpmdfgridvcl in 'rpmdfgridvcl.pas' {FRpGridOptionsVCL};
+  rpmdfgridvcl in 'rpmdfgridvcl.pas' {FRpGridOptionsVCL},
+  rpeditalias in 'rpeditalias.pas' {FRpEditAlias},
+  rpmdfdatatextvcl in 'rpmdfdatatextvcl.pas' {FRpDataTextVCL},
+  rpfmainmetaviewvcl in 'rpfmainmetaviewvcl.pas' {FRpMainMetaVCL},
+  rpfmetaviewvcl in 'rpfmetaviewvcl.pas' {FRpMetaVCL: TFrame},
+  rpwebmetaclient in 'rpwebmetaclient.pas',
+  rpmdclitreevcl in 'rpmdclitreevcl.pas' {FRpCliTreeVCL: TFrame},
+  rpmdrepclient in 'rpmdrepclient.pas' {modclient: TDataModule},
+  rpmdprotocol in 'rpmdprotocol.pas',
+  rpmdsysinfo in 'rpmdsysinfo.pas' {FRpSysInfo},
+  rpexceldriver in 'rpexceldriver.pas' {FRpExcelProgress},
+  rpmdfdinfovcl in 'rpmdfdinfovcl.pas' {FRpDInfoVCL},
+  rpmdfdatasetsvcl in 'rpmdfdatasetsvcl.pas' {FRpDatasetsVCL: TFrame},
+  rpdatatext in 'rpdatatext.pas',
+  rpeditconnvcl in 'rpeditconnvcl.pas' {FRpEditConVCL};
 
 end.
