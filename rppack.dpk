@@ -43,6 +43,20 @@ contains
   rplastsav in 'rplastsav.pas',
   rptypes in 'rptypes.pas',
   rpdatainfo in 'rpdatainfo.pas',
-  rpparams in 'rpparams.pas';
+  rpparams in 'rpparams.pas',
+  adler in 'adler.pas',
+  infblock in 'infblock.pas',
+  infcodes in 'infcodes.pas',
+  inffast in 'inffast.pas',
+  inftrees in 'inftrees.pas',
+  infutil in 'infutil.pas',
+  rpzlib in 'rpzlib.pas',
+  trees in 'trees.pas',
+  zdeflate in 'zdeflate.pas',
+  zinflate in 'zinflate.pas',
+  zlib in 'zlib.pas',
+  zutil in 'zutil.pas';
+
+{%File 'zconf.inc'}
 
 end.

@@ -14,7 +14,10 @@ install:
 	-cp ../../repman/utils/metaprint/metaprint .
 	-cp ../../repman/utils/metaview/metaview .
 	-cp ../../repman/utils/printrep/printrep .
+	-cp ../../repman/utils/reptotxt/reptotxt .
+	-cp ../../repman/utils/txttorep/txttorep .
 clean:
 	-rm -f *.so *.so.1 *.so.2
 	-rm -f repmand
 	-rm -f dbxconnections dbxdrivers metaprint metaview printrep
+	-rm -f reptotxt txttorep

@@ -25,8 +25,7 @@ uses SysUtils, Classes, QGraphics, QForms,Types,
   rpobinsint,rpreport,rpprintitem,rpgraphutils,
   rpobjinsp,frpstruc,flabelint,rplabelitem,
   rpconsts,rpsection,rptypes,rpdrawitem,fdrawint,
-{$IFNDEF PROFILE}  rpsubreport;{$ENDIF}
-{$IFDEF PROFILE}  rpsubreport ,Proftimx;{$ENDIF}
+  rpsubreport;
 
 
 type
@@ -83,20 +82,17 @@ var
 
 procedure FreeGridBitmap;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,117; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Assigned(FBitmap) then
  begin
   fbitmap.free;
   fbitmap:=nil;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,117; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function DrawBitmapGrid(width,height,xgrid,ygrid:integer;color:TColor;lines:boolean):TBitmap;
 var
  rec:TRect;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,118; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if ((width=0) or (height=0)) then
  begin
   Result:=nil;
@@ -150,7 +146,6 @@ begin
   FreeGridBitmap;
   Result:=nil;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,118; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -158,7 +153,6 @@ constructor TRpSectionInterface.Create(AOwner:TComponent;pritem:TRpCommonCompone
 var
  opts:TControlStyle;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,119; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Not (pritem is TRpSection) then
   Raise Exception.Create(SRpIncorrectComponentForInterface);
  inherited Create(AOwner,pritem);
@@ -166,25 +160,21 @@ begin
  include(opts,csCaptureMouse);
  ControlStyle:=opts;
  ChildList:=TList.Create;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,119; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 destructor TRpSectionInterface.destroy;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,120; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Assigned(FOnDestroy) then
  begin
   FOnDestroy(Self);
  end;
  childlist.free;
  inherited destroy;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,120; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 procedure TRpSectionInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,121; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited GetProperties(lnames,ltypes,lvalues);
 
  lnames.Add(SRpSAutoExpand);
@@ -228,12 +218,10 @@ begin
   lvalues.Add(BoolToStr(TRpSection(printitem).AlignBottom,true));
 
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,121; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSectionInterface.SetProperty(pname:string;value:string);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,122; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if length(value)<1 then
   exit;
  if pname=SRpSAutoExpand then
@@ -288,12 +276,10 @@ begin
   end;
  end;
  inherited SetProperty(pname,value);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,122; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function TRpSectionInterface.GetProperty(pname:string):string;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,123; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if pname=SRpSAutoContract then
  begin
   Result:=BoolToStr(TRpSection(fprintitem).AutoContract,true);
@@ -346,7 +332,6 @@ begin
   end;
  end;
  Result:=inherited GetProperty(pname);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,123; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSectionInterface.Paint;
@@ -355,7 +340,6 @@ var
  rec:TRect;
  bitmap:TBitmap;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,124; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Assigned(OnPosChange) then
   OnPosChange(Self);
  if Not Assigned(fprintitem) then
@@ -380,7 +364,6 @@ begin
  rec.Right:=Width;
  Canvas.Brush.Color:=clwhite;
  Canvas.FillRect(rec);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,124; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSectionInterface.MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -390,7 +373,6 @@ var
  asizepos:TRpCommonPosComponent;
  aitem:TRpCommonListItem;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,125; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited MouseDown(Button,Shift,X,Y);
 
  // There's a selected item insert it
@@ -458,7 +440,6 @@ begin
  end;
 
 
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,125; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSectionInterface.CreateChilds;
@@ -468,7 +449,6 @@ var
  compo:TRpCommonPosComponent;
  labelint:TRpSizePosInterface;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,126; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  sec:=TRpSection(printitem);
  for i:=0 to sec.Components.Count-1 do
  begin
@@ -499,19 +479,16 @@ begin
    childlist.Add(labelint)
   end;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,126; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSectionInterface.InvalidateAll;
 var
  i:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,127; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  for i:=0 to childlist.count-1 do
  begin
   TRpSizeInterface(childlist.items[i]).Invalidate;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,127; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 

@@ -23,8 +23,8 @@ unit rpdatainfo;
 interface
 
 uses Classes,SysUtils,SqlExpr,rpconsts, DBXpress,
- DB,rpparams,Inifiles,
- IdGlobal,SqlConst;
+ DB,rpparams,Inifiles,rptypes,
+ SqlConst;
 
 {$IFDEF LINUX}
 const
@@ -129,6 +129,8 @@ type
 procedure UpdateConAdmin;
 
 implementation
+
+
 
 var
  ConAdmin:TRpConnAdmin;

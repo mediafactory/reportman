@@ -23,8 +23,7 @@ interface
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,
   rpreport,rpconsts,rpdatainfo,DBConnAdmin,QDialogs,
-{$IFNDEF PROFILE}  rpparams,rpfparams;{$ENDIF}
-{$IFDEF PROFILE}  rpparams,rpfparams ,Proftimx;{$ENDIF}
+  rpparams,rpfparams;
 
 type
   TFDatainfoconfig = class(TForm)
@@ -104,7 +103,6 @@ procedure ShowDataConfig(report:TRpReport);
 var
  dia:TFDataInfoConfig;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,2; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  UpdateConAdmin;
  dia:=TFDataInfoConfig.Create(Application);
  try
@@ -116,12 +114,10 @@ begin
  finally
   dia.free;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,2; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.FormCreate(Sender: TObject);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,3; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  databaseinfo:=TRpDatabaseInfoList.Create(Self);
  params:=TRpParamList.Create(Self);
  datainfo:=TRpDataInfoList.Create(Self);
@@ -133,20 +129,16 @@ begin
    ShowMessage(E.message);
   end;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,3; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.FormDestroy(Sender: TObject);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,4; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  datainfo.free;
  databaseinfo.Free;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,4; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.FormShow(Sender: TObject);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,5; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  // Fills the info
  if Assigned(ConAdmin) then
  begin
@@ -156,12 +148,10 @@ begin
   ComboAvailable.Itemindex:=0;
  FillCurrentConnections;
  FillDatasets;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,5; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.BConfigClick(Sender: TObject);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,6; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  ShowDBXConfig;
  UpdateConAdmin;
 
@@ -179,14 +169,12 @@ begin
   conadmin.GetConnectionNames(ComboAvailable.Items,'');
  end;
  FillCurrentConnections;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,6; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.BAddConClick(Sender: TObject);
 var
  conname:string;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,7; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if ComboAvailable.itemindex<0 then
   exit;
  conname:=AnsiUpperCase(ComboAvailable.Items.strings[ComboAvailable.itemindex]);
@@ -195,7 +183,6 @@ begin
   databaseinfo.Add(conname);
   FillCurrentConnections;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,7; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.FillCurrentConnections;
@@ -203,7 +190,6 @@ var
  i:integer;
  oldtext:string;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,8; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  LConnections.Clear;
  for i:=0 to databaseinfo.Count-1 do
  begin
@@ -215,7 +201,6 @@ begin
  ComboConnection.Items.Assign(LConnections.items);
  ComboConnection.ItemIndex:=ComboCOnnection.Items.IndexOf(oldtext);
  LConnectionsClick(Self);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,8; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -223,7 +208,6 @@ procedure TFDatainfoconfig.LConnectionsClick(Sender: TObject);
 var
  dinfoitem:TRpDatabaseinfoitem;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,9; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if LConnections.ItemIndex<0 then
  begin
   CheckLoginPrompt.Visible:=false;
@@ -240,42 +224,36 @@ begin
  CheckLoginPrompt.Checked:=dinfoitem.LoginPrompt;
  CheckLoadParams.Checked:=dinfoitem.LoadParams;
  CheckLoadDriverParams.Checked:=dinfoitem.LoadDriverParams;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,9; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function TFDatainfoconfig.FindDatabaseInfoItem:TRpDatabaseInfoItem;
 var
  index:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,10; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:=nil;
  if LConnections.ItemIndex<0 then
   exit;
  index:=databaseinfo.IndexOf(LConnections.Items.Strings[LConnections.itemindex]);
  if index>=0 then
   Result:=databaseinfo.items[index];
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,10; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function TFDatainfoconfig.FindDataInfoItem:TRpDataInfoItem;
 var
  index:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,11; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:=nil;
  if LDatasets.ItemIndex<0 then
   exit;
  index:=datainfo.IndexOf(LDatasets.Items.Strings[LDatasets.itemindex]);
  if index>=0 then
   Result:=datainfo.items[index];
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,11; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.CheckLoginPromptClick(Sender: TObject);
 var
  dinfoitem:TRpDatabaseinfoitem;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,12; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  dinfoitem:=FindDatabaseInfoItem;
  if Not Assigned(dinfoitem) then
   exit;
@@ -292,7 +270,6 @@ begin
  begin
   dinfoitem.LoadDriverParams:=CheckLoadDriverParams.Checked;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,12; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -300,7 +277,6 @@ procedure TFDatainfoconfig.FillDatasets;
 var
  i:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,13; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  LDatasets.Clear;
  for i:=0 to datainfo.Count-1 do
  begin
@@ -309,7 +285,6 @@ begin
  if LDatasets.items.Count>0 then
   LDatasets.ItemIndex:=0;
  LDatasetsClick(Self);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,13; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -319,7 +294,6 @@ var
  aitem:TRpDataInfoItem;
  index:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,14; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  aliasname:=Trim(InputBox(SrpNewDataset,SRpAliasName,''));
  if Length(aliasname)<1 then
   exit;
@@ -333,20 +307,17 @@ begin
   LDatasets.ItemIndex:=index;
   LDatasetsClick(Self);
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,14; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure  TFDatainfoconfig.Removedependences(oldalias:string);
 var
  i:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,15; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  for i:=0 to datainfo.count-1 do
  begin
   if AnsiUpperCase(oldalias)=AnsiUpperCase(datainfo.items[i].datasource) then
    datainfo.items[i].datasource:='';
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,15; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.BDeleteClick(Sender: TObject);
@@ -354,7 +325,6 @@ var
  index:integer;
  oldalias:string;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,16; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if LDatasets.itemindex<0 then
   exit;
  index:=datainfo.IndexOf(LDatasets.Items.strings[Ldatasets.itemindex]);
@@ -365,7 +335,6 @@ begin
   Removedependences(oldalias);
  end;
  FillDatasets;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,16; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.BRenameClick(Sender: TObject);
@@ -374,7 +343,6 @@ var
  aliasname:string;
  index:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,17; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  aliasname:=Trim(InputBox(SrpRenameDataset,SRpAliasName,''));
  if Length(aliasname)<1 then
   exit;
@@ -386,7 +354,6 @@ begin
   exit;
  dinfo.Alias:=aliasname;
  FillDatasets;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,17; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.LDatasetsClick(Sender: TObject);
@@ -394,7 +361,6 @@ var
  dinfo:TRpDatainfoItem;
  index:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,18; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  // Fils the info of the current dataset
  dinfo:=FindDataInfoItem;
  if dinfo=nil then
@@ -423,7 +389,6 @@ begin
  ComboDataSource.Items.Insert(0,'');
  inc(index);
  ComboDatasource.ItemIndex:=Index;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,18; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -431,7 +396,6 @@ procedure TFDatainfoconfig.MSQLChange(Sender: TObject);
 var
  dinfo:TRpDatainfoItem;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,19; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  // Fils the info of the current dataset
  dinfo:=FindDataInfoItem;
  if dinfo=nil then
@@ -447,7 +411,6 @@ begin
  end
  else
   dinfo.DataSource:=ComboDataSource.Text;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,19; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.DoSave;
@@ -455,7 +418,6 @@ var
  i:integer;
  index:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,20; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  report.DatabaseInfo.Assign(databaseinfo);
  report.DataInfo.Assign(datainfo);
  report.Params:=Params;
@@ -469,22 +431,18 @@ begin
   end;
  end;
  saved:=true;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,20; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.OKBtnClick(Sender: TObject);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,21; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  DoSave;
  Close;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,21; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.BDeleteconClick(Sender: TObject);
 var
  index:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,22; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if LConnections.Itemindex<0 then
   exit;
  index:=databaseinfo.IndexOf(LConnections.items.strings[LConnections.Itemindex]);
@@ -493,14 +451,12 @@ begin
   databaseinfo.Delete(index);
   FillCurrentConnections;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,22; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.BShowDataClick(Sender: TObject);
 var
  dinfo:TRpDatainfoitem;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,23; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  // Opens the dataset and show the data
  dinfo:=FindDataInfoItem;
  if dinfo=nil then
@@ -513,7 +469,6 @@ begin
   // Left the dataset open for testing relations ...
 //  dinfo.Disconnect;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,23; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.FormCloseQuery(Sender: TObject;
@@ -521,7 +476,6 @@ procedure TFDatainfoconfig.FormCloseQuery(Sender: TObject;
 var
  res:TModalResult;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,24; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if saved then
   exit;
  if docancel then
@@ -531,22 +485,17 @@ begin
   Raise EAbort.Create(SRpSaveAborted);
  if res=mrYes then
   DoSave;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,24; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.BParamsClick(Sender: TObject);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,25; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  ShowParamDef(params,datainfo);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,25; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFDatainfoconfig.CancelBtnClick(Sender: TObject);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,26; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  docancel:=true;
  Close;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,26; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 

@@ -23,8 +23,7 @@ interface
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,types,
   rpprintitem,rpdrawitem,rpobinsint,rpconsts,
-{$IFNDEF PROFILE}  rpgraphutils,rpmunits,rptypes;{$ENDIF}
-{$IFDEF PROFILE}  rpgraphutils,rpmunits,rptypes ,Proftimx;{$ENDIF}
+  rpgraphutils,rpmunits,rptypes;
 
 type
  TRpDrawInterface=class(TRpSizePosInterface)
@@ -100,16 +99,13 @@ implementation
 
 constructor TRpDrawInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,34; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Not (pritem is TRpShape) then
   Raise Exception.Create(SRpIncorrectComponentForInterface);
  inherited Create(AOwner,pritem);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,34; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpDrawInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,35; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited GetProperties(lnames,ltypes,lvalues);
 
 
@@ -144,14 +140,12 @@ begin
  ltypes.Add(SRpSColor);
  lvalues.Add(IntToStr(TRpShape(printitem).BrushColor));
 
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,35; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StringPenStyleToInt(Value:String):integer;
 var
  i:TPenStyle;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,36; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:=0;
  for i:=psSolid to psClear do
  begin
@@ -161,14 +155,12 @@ begin
    break;
   end;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,36; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StringShapeTypeToInt(Value:String):integer;
 var
  i:TShapetype;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,37; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:=0;
  for i:=stRectangle to stCircle do
  begin
@@ -178,7 +170,6 @@ begin
    break;
   end;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,37; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -186,7 +177,6 @@ function StringBrushStyleToInt(Value:String):integer;
 var
  i:TBrushStyle;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,38; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:=0;
  for i:=bsSolid to bsDense7 do
  begin
@@ -196,14 +186,12 @@ begin
    break;
   end;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,38; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StringDrawStyleToDrawStyle(Value:string):TRpImageDrawStyle;
 var
  i:TRpImageDrawStyle;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,39; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:=rpDrawCrop;
  for i:=rpDrawCrop to rpDrawTile do
  begin
@@ -213,14 +201,12 @@ begin
    break;
   end;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,39; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StringCopyModeToCopyMode(Value:string):TCopyMode;
 var
  i:TCopyMode;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,40; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:=cmSrcCopy;
  for i:=cmBlackness to cmCreateMask do
  begin
@@ -230,12 +216,10 @@ begin
    break;
   end;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,40; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpDrawInterface.SetProperty(pname:string;value:string);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,41; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if length(value)<1 then
   exit;
  if pname=SRpSShape then
@@ -276,12 +260,10 @@ begin
  end;
 
  inherited SetProperty(pname,value);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,41; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function TRpDrawInterface.GetProperty(pname:string):string;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,42; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:='';
  if pname=SrpSShape then
  begin
@@ -316,7 +298,6 @@ begin
  end;
 
  Result:=inherited GetProperty(pname);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,42; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -326,7 +307,6 @@ var
  ashape:TRpShape;
  X, Y, W, H, S: Integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,43; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  ashape:=TRpShape(printitem);
  Canvas.Brush.Style:=TBrushStyle(ashape.BrushStyle);
  Canvas.Pen.Style:=TPenStyle(ashape.PenStyle);
@@ -362,7 +342,6 @@ begin
   stCircle, stEllipse:
    Canvas.Ellipse(X, Y, X + W, Y + H);
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,43; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -373,7 +352,6 @@ var
  bi:TBrushStyle;
  shi:TShapeType;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,44; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if pname=SrpSShape then
  begin
   lpossiblevalues.clear;
@@ -402,32 +380,26 @@ begin
   exit;
  end;
  inherited GetPropertyValues(pname,lpossiblevalues);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,44; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 // Image Interface
 
 constructor TRpImageInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,45; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Not (pritem is TRpImage) then
   Raise Exception.Create(SRpIncorrectComponentForInterface);
  inherited Create(AOwner,pritem);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,45; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 destructor TRpImageInterface.Destroy;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,46; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Assigned(FBitmap) then
   FBitmap.free;
  inherited destroy;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,46; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpImageInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,47; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited GetProperties(lnames,ltypes,lvalues);
 
 
@@ -456,14 +428,12 @@ begin
  lnames.Add(SRpCopyMode);
  ltypes.Add(SRpSList);
  lvalues.Add(StringCopyModes[TCopyMode(TRpImage(printitem).CopyMode)]);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,47; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 
 procedure TRpImageInterface.SetProperty(pname:string;value:string);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,48; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if length(value)<1 then
   exit;
  if pname=SRpSExpression then
@@ -493,12 +463,10 @@ begin
   exit;
  end;
  inherited SetProperty(pname,value);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,48; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function TRpImageInterface.GetProperty(pname:string):string;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,49; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:='';
  if pname=SrpSExpression then
  begin
@@ -521,7 +489,6 @@ begin
   exit;
  end;
  Result:=inherited GetProperty(pname);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,49; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -532,7 +499,6 @@ var
  rec:TRect;
  dpix,dpiy:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,50; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  aimage:=TRpImage(printitem);
  try
   Canvas.Rectangle(0,0,Width,Height);
@@ -586,13 +552,11 @@ begin
  except
   Canvas.TextOut(0,0,SRpInvalidImageFormat);
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,50; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 procedure TRpImageInterface.SetProperty(pname:string;stream:TMemoryStream);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,51; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if pname=SrpSImage then
  begin
   TRpImage(printitem).Stream:=stream;
@@ -602,19 +566,16 @@ begin
   exit;
  end;
  inherited SetProperty(pname,stream);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,51; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpImageInterface.GetProperty(pname:string;var Stream:TMemoryStream);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,52; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if pname=SrpSImage then
  begin
   Stream:=TRpImage(printitem).Stream;
   exit;
  end;
  inherited GetProperty(pname,stream);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,52; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -624,7 +585,6 @@ var
  i:TRpImageDrawStyle;
  k:TCopyMode;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,53; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if pname=SrpDrawStyle then
  begin
   lpossiblevalues.clear;
@@ -644,7 +604,6 @@ begin
   exit;
  end;
  inherited GetPropertyValues(pname,lpossiblevalues);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,53; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 

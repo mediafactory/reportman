@@ -52,6 +52,7 @@ type
 function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
 procedure Generatenewname(Component:TComponent);
 function FormatVariant(displayformat:string;Value:Variant):widestring;
+function CopyFileTo(const Source, Destination: string): Boolean;
 
 // Language identifiers
 var
@@ -97,6 +98,30 @@ begin
   Stream2.Read(buf2,SIZE_BUF);
  end;
 end;
+
+{$IFDEF LINUX}
+function CopyFileTo(const Source, Destination: string): Boolean;
+var
+  SourceStream: TFileStream;
+begin
+  result := false;
+  if not FileExists(Destination) then begin
+    SourceStream := TFileStream.Create(Source, fmOpenRead); try
+      with TFileStream.Create(Destination, fmCreate) do try
+        CopyFrom(SourceStream, 0);
+      finally free; end;
+    finally SourceStream.free; end;
+    result := true;
+  end;
+end;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+function CopyFileTo(const Source, Destination: string): Boolean;
+begin
+  Result := CopyFile(PChar(Source), PChar(Destination), true);
+end;
+{$ENDIF}
+
 
 procedure Generatenewname(Component:TComponent);
 var i:integer;

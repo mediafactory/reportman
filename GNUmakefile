@@ -54,6 +54,8 @@ clean:
 	-rm tests/repmand/metaprint
 	-rm tests/repmand/printrep
 	-rm tests/repmand/meta.rpmf
+	-rm tests/repmand/reptotxt
+	-rm tests/repmand/txttorep
 real_clean: clean
 	-rm -Rf  *.bpl
 	-rm -Rf  *.so

@@ -23,8 +23,7 @@ interface
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QComCtrls,rpreport,rpsubreport,rpconsts, QMenus, QTypes,
-{$IFNDEF PROFILE}  rpsection,rpobjinsp,rpprintitem, QActnList, QImgList, QButtons, QExtCtrls;{$ENDIF}
-{$IFDEF PROFILE}  rpsection,rpobjinsp,rpprintitem, QActnList, QImgList, QButtons, QExtCtrls ,Proftimx;{$ENDIF}
+  rpsection,rpobjinsp,rpprintitem, QActnList, QImgList, QButtons, QExtCtrls;
 
 type
   TFRpStructure = class(TFrame)
@@ -65,7 +64,6 @@ uses fdesign, fmain;
 
 procedure TFRpStructure.SetReport(Value:TRpReport);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,104; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  FReport:=Value;
  if Not Assigned(FReport) then
   exit;
@@ -73,14 +71,12 @@ begin
  CreateInterface;
  RView.Selected:=RView.Items.Item[0];
  RView.FullExpand;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,104; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function TFRpStructure.FindSelectedSubreport:TRpSubreport;
 var
  selectednode:TTreeNode;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,105; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:=nil;
  selectednode:=RView.Selected;
  if Not Assigned(selectednode) then
@@ -99,7 +95,6 @@ begin
   exit;
  end;
  Assert(selectednode.data<>nil,'Expected subreport');
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,105; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -107,14 +102,12 @@ function TFRpStructure.FindSelectedObject:TObject;
 var
  selectednode:TTreeNode;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,106; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  selectednode:=RView.Selected;
  if Not Assigned(selectednode) then
   Raise Exception.Create(SRPNoSelectedSubreport);
  Assert(selectednode.data<>nil,'Node without data assertion error');
  Assert(selectednode.data<>nil,'Expected data with a value');
  Result:=TObject(selectednode.data);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,106; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFRpStructure.CreateInterface;
@@ -124,7 +117,6 @@ var
  subr:TRpSubreport;
  child:TTreeNode;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,107; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  RView.Items.Clear;
 
  // Adds the items
@@ -139,15 +131,12 @@ begin
    child.data:=subr.Sections.Items[j].Section;
   end;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,107; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 procedure TFRpStructure.Expand1Click(Sender: TObject);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,108; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  RView.FullExpand;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,108; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFRpStructure.DeleteSelectedNode;
@@ -155,7 +144,6 @@ var
  secorsub:TObject;
  selsubreport:TRpSubReport;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,109; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  secorsub:=FindSelectedObject;
  if (secorsub is TRpSubReport) then
   freport.DeleteSubreport(TRpSubReport(secorsub))
@@ -166,12 +154,10 @@ begin
   selsubreport:=FindSelectedSubreport;
   selsubreport.FreeSection(TRpSection(secorsub));
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,109; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFRpStructure.RViewClick(Sender: TObject);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,110; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  TFDesignFrame(designframe).UpdateSelection(false);
  if (FindSelectedObject is TRpSubReport) then
  begin
@@ -183,14 +169,12 @@ begin
   AUp.Enabled:=False;
   ADown.Enabled:=False;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,110; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function FindDataInTree(nodes:TTreeNodes;data:TObject):TTreeNode;
 var
  i:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,111; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:=nil;
  i:=0;
  while i<nodes.Count do
@@ -202,21 +186,18 @@ begin
   end;
   inc(i);
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,111; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFRpStructure.SelectDataItem(data:TObject);
 var
  anode:TTreeNode;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,112; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  anode:=FindDataInTree(RView.Items,data);
  if Assigned(anode) then
  begin
   RView.Selected:=anode;
   RViewClick(Self);
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,112; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -227,7 +208,6 @@ var
  changesubrep:integer;
  i:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,113; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  // Goes up
  if (FindSelectedObject is TRpSubReport) then
  begin
@@ -250,7 +230,6 @@ begin
    inc(i);
   end;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,113; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TFRpStructure.ADownExecute(Sender: TObject);
@@ -260,7 +239,6 @@ var
  changesubrep:integer;
  i:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,114; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  // Goes down
  if (FindSelectedObject is TRpSubReport) then
  begin
@@ -287,7 +265,6 @@ begin
    inc(i);
   end;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,114; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 end.

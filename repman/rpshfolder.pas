@@ -33,8 +33,7 @@ uses
 {$IFDEF MSWINDOWS}
   Windows,shfolder,shLWApi,
 {$ENDIF}
-{$IFNDEF PROFILE}  rpconsts;{$ENDIF}
-{$IFDEF PROFILE}  rpconsts ,Proftimx;{$ENDIF}
+  rpconsts;
 
 
   function Obtainininameuserconfig(company,product,filename:string):string;
@@ -52,7 +51,6 @@ var
  ap:PCHar;
 {$ENDIF}
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,189; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
 {$IFDEF LINUX}
  ap:=getenv(Pchar('HOME'));
  if assigned(ap) then
@@ -92,7 +90,6 @@ begin
   RaiseLastOSError;
  Result:=StrPas(szAppdata);
 {$ENDIF}
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,189; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -102,7 +99,6 @@ var
  szAppData:array [0..MAX_PATH] of char;
 {$ENDIF}
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,190; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
 {$IFDEF LINUX}
  Result:='/etc/'+company+product+filename;
 {$ENDIF}
@@ -131,7 +127,6 @@ begin
   RaiseLastOSError;
  Result:=StrPas(szAppdata);
 {$ENDIF}
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,190; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -141,7 +136,6 @@ var
  szAppData:array [0..MAX_PATH] of char;
 {$ENDIF}
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,191; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
 {$IFDEF LINUX}
  Result:='/etc/'+company+product+filename;
 {$ENDIF}
@@ -169,7 +163,6 @@ begin
   RaiseLastOSError;
  Result:=StrPas(szAppdata);
 {$ENDIF}
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,191; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 initialization

@@ -24,8 +24,7 @@ unit rpobinsint;
 interface
 
 uses Types,QGraphics,QForms,QControls,rpconsts,classes,sysutils,rpmunits,
-{$IFNDEF PROFILE}  rpprintitem,rpgraphutils,rpsection,rpreport,qt,QDialogs;{$ENDIF}
-{$IFDEF PROFILE}  rpprintitem,rpgraphutils,rpsection,rpreport,qt,QDialogs ,Proftimx;{$ENDIF}
+  rpprintitem,rpgraphutils,rpsection,rpreport,qt,QDialogs;
 
 const
  CONS_MODIWIDTH=5;
@@ -162,27 +161,22 @@ uses rpobjinsp;
 
 constructor TRpSizeInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,128; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited Create(AOwner);
  fprintitem:=pritem;
  UpdatePos;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,128; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeInterface.UpdatePos;
 var
  NewWidth,NewHeight:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,129; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  NewWidth:=twipstopixels(TRpCOmmonPosComponent(printitem).Width);
  NewHeight:=twipstopixels(TRpCOmmonPosComponent(printitem).Height);
  SetBounds(Left,Top,NewWidth,NewHeight);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,129; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,130; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  lnames.clear;
  ltypes.clear;
  lvalues.Clear;
@@ -207,33 +201,25 @@ begin
  lnames.Add(SrpSHeight);
  ltypes.Add(SRpSCurrency);
  lvalues.Add(gettextfromtwips(printitem.Height));
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,130; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,131; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Raise Exception.Create(SRpPropertyHaveNoListValues+pname);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,131; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeInterface.SetProperty(pname:string;stream:TMemoryStream);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,132; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Raise Exception.Create(SRpPropertyisnotstream+pname);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,132; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeInterface.GetProperty(pname:string;var Stream:TMemoryStream);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,133; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Raise Exception.Create(SRpPropertyisnotstream+pname);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,133; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeInterface.SetProperty(pname:string;value:string);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,134; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if length(value)<1 then
   exit;
  if pname=SRpSPrintCOndition then
@@ -264,12 +250,10 @@ begin
   exit;
  end;
  Raise Exception.Create(SRpPropertyNotFound+pname);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,134; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function TRpSizeInterface.GetProperty(pname:string):string;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,135; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:='';
  if pname=SRpSPrintCondition then
  begin
@@ -287,7 +271,6 @@ begin
   exit;
  end;
  Raise Exception.Create(SRpPropertyNotFound+pname);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,135; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -296,7 +279,6 @@ constructor TRpSizePosInterface.Create(AOwner:TComponent;pritem:TRpCommonCompone
 var
  opts:TControlStyle;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,136; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Not (pritem is TRpCommonPosComponent) then
   Raise Exception.Create(SRpIncorrectComponentForInterface);
  inherited Create(AOwner,pritem);
@@ -305,13 +287,11 @@ begin
  opts:=ControlStyle;
  include(opts,csCaptureMouse);
  ControlStyle:=opts;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,136; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 procedure TRpSizePosInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,137; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited GetProperties(lnames,ltypes,lvalues);
 
  // Top
@@ -322,13 +302,11 @@ begin
  lnames.Add(SrpSLeft);
  ltypes.Add(SRpSCurrency);
  lvalues.Add(gettextfromtwips(TRpCommonPosComponent(printitem).PosX));
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,137; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 procedure TRpSizePosInterface.SetProperty(pname:string;value:string);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,138; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if length(value)<1 then
   exit;
  if pname=SRpSTop then
@@ -344,12 +322,10 @@ begin
   exit;
  end;
  inherited SetProperty(pname,value);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,138; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function TRpSizePosInterface.GetProperty(pname:string):string;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,139; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:='';
  if pname=SRpSTop then
  begin
@@ -362,25 +338,21 @@ begin
   exit;
  end;
  Result:=inherited GetProperty(pname);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,139; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizePosInterface.UpdatePos;
 var
  NewLeft,NewTop,NewWidth,NewHeight:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,140; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  NewLeft:=twipstopixels(TRpCOmmonPosComponent(printitem).PosX);
  NewWidth:=twipstopixels(TRpCOmmonPosComponent(printitem).Width);
  NewTop:=twipstopixels(TRpCOmmonPosComponent(printitem).PosY);
  NewHeight:=twipstopixels(TRpCOmmonPosComponent(printitem).Height);
  SetBounds(NewLeft,NewTop,NewWidth,NewHeight);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,140; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeInterface.Paint;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,141; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Canvas.Brush.Style:=bsSolid;
  Canvas.Brush.Color:=clWhite;
  Canvas.Pen.Style:=psDashDot;
@@ -388,72 +360,58 @@ begin
  Canvas.TextOut(0,0,SRpUndefinedPaintInterface);
  Canvas.TextOut(0,Canvas.TextHeight('gW'),ClassName);
  DrawSelected;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,141; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeInterface.DrawSelected;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,142; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Not Selected then
   exit;
  Canvas.Brush.Style:=bsClear;
  Canvas.Pen.Style:=psSolid;
  Canvas.Rectangle(0,0,Width,Height);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,142; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeInterface.SetSelected(Value:boolean);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,143; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  FSelected:=Value;
  Invalidate;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,143; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeInterface.MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,144; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited MouseDown(Button,Shift,X,Y);
 
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,144; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeInterface.DblClick;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,145; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited DblClick;
 
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,145; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 constructor TRpBlackControl.Create(AOwner:TComponent);
 var
  opts:TControlStyle;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,146; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited Create(AOwner);
  Width:=CONS_MODIWIDTH;
  Height:=CONS_MODIWIDTH;
  opts:=ControlStyle;
  Include(opts,csCaptureMouse);
  ControlStyle:=opts;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,146; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpBlackControl.Paint;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,147; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Canvas.Brush.Color:=clBlack;
  Canvas.Rectangle(0,0,Width,Height);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,147; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 constructor TRpSizeModifier.Create(AOwner:TComponent);
 var
  i:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,148; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited Create(AOwner);
 
  for i:=0 to 3 do
@@ -466,14 +424,12 @@ begin
  FBlacks[1].Cursor:=crSizeNESW;
  FBlacks[2].Cursor:=crSizeNESW;
  FBlacks[3].Cursor:=crSizeNWSE;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,148; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeModifier.UpdatePos;
 var
  i:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,149; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Not Assigned(FCOntrol) then
  begin
   for i:=0 to 3 do
@@ -511,14 +467,12 @@ begin
    FBlacks[i].BringToFront;
   end;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,149; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeModifier.SetControl(Value:TControl);
 var
  i:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,150; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  FControl:=Value;
  for i:=0 to 3 do
  begin
@@ -526,14 +480,12 @@ begin
  end;
 
  UpdatePos;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,150; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 procedure TRpSizePosInterface.MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,151; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited MouseDown(Button,Shift,X,Y);
 
  if Not Assigned(FRectangle) then
@@ -558,14 +510,12 @@ begin
  FXOrigin:=X;
  FYOrigin:=Y;
  FBlocked:=True;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,151; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizePosInterface.MouseMove(Shift: TShiftState; X, Y: Integer);
 var
  NewLeft,NewTop:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,152; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited MouseMove(Shift,X,Y);
 
  if MouseCapture then
@@ -602,14 +552,12 @@ begin
    FRectangle4.SetBounds(Newleft+Width,NewTop,1,Height);
   end;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,152; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizePosInterface.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
  NewLeft,NewTop:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,153; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited MouseUp(Button,Shift,X,Y);
 
  if Assigned(FRectangle) then
@@ -646,43 +594,35 @@ begin
   if Assigned(fobjinsp) then
    TFObjInsp(fobjinsp).CompItem:=Self;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,153; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 
 procedure TRpSizePosInterface.Paint;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,154; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited Paint;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,154; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpRectangle.Paint;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,155; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Canvas.Rectangle(0,0,Width,Height);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,155; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 constructor TRpRectangle.Create(AOwner:TComponent);
 var
  opts:TControlStyle;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,156; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited Create(AOwner);
 
  opts:=ControlStyle;
  include(opts,csOpaque);
  ControlStyle:=opts;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,156; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 procedure TRpBlackControl.MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,157; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited MouseDown(Button,Shift,X,Y);
 
  if Not Assigned(FRectangle) then
@@ -706,14 +646,12 @@ begin
 
  FXOrigin:=X;
  FYOrigin:=Y;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,157; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 procedure TRpBlackControl.CalcNewCoords(var NewLeft,
  NewTop,NewWidth,NewHeight,X,Y:integer);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,158; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
   // Depending on tag must do different coordinates
   case Tag of
    0:
@@ -859,7 +797,6 @@ begin
    if NewTop+NewHeight>Parent.Height then
     NewHeight:=Parent.Height-NewTop-1;
   end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,158; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -867,7 +804,6 @@ procedure TRpBlackControl.MouseMove(Shift: TShiftState; X, Y: Integer);
 var NewLeft,
  NewTop,NewWidth,NewHeight:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,159; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited MouseMove(Shift,X,Y);
 
  if Not Assigned(FControl) then
@@ -883,14 +819,12 @@ begin
   FRectangle3.SetBounds(Newleft,NewTop,1,NewHeight);
   FRectangle4.SetBounds(Newleft+NewWidth,NewTop,1,NewHeight);
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,159; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpBlackControl.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 var
  NewLeft,NewTop,NewWidth,NewHeight:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,160; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited MouseUp(Button,Shift,X,Y);
 
  if Assigned(FRectangle) then
@@ -922,44 +856,36 @@ begin
     TFObjInsp(TRpSizePosInterface(Control).fobjinsp).CompItem:=TRpSizePosInterface(Control);
   end;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,160; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeModifier.SetOnlySize(Value:Boolean);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,161; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  FOnlySize:=Value;
  Control:=FControl;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,161; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpSizeModifier.SetAllowOverSize(Value:Boolean);
 var
  i:integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,162; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  FAllowOverSize:=Value;
  for i:=0 to 3 do
  begin
   FBlacks[i].FAllowOverSize:=Value;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,162; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 constructor TRpGenTextInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,163; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Not (pritem is TRpGenTextComponent) then
   Raise Exception.Create(SRpIncorrectComponentForInterface);
  inherited Create(AOwner,pritem);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,163; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 function HAlignmentToText(value:integer):string;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,164; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:=SRpSAlignNone;
  if (value=integer(AlignmentFlags_AlignLeft)) then
  begin
@@ -973,12 +899,10 @@ begin
  begin
   Result:=SRpSAlignCenter;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,164; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function VAlignmentToText(value:integer):string;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,165; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:=SRpSAlignNone;
  if (value=integer(AlignmentFlags_AlignTop)) then
  begin
@@ -992,12 +916,10 @@ begin
  begin
   Result:=SRpSAlignCenter;
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,165; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StringVAlignmentToInt(value:string):integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,166; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:=0;
  if (value=SRpSAlignTop) then
  begin
@@ -1011,12 +933,10 @@ begin
  begin
   Result:=integer(AlignmentFlags_AlignVCenter);
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,166; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function StringHAlignmentToInt(value:string):integer;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,167; xor eax,eax; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:=0;
  if (value=SRpSAlignLeft) then
  begin
@@ -1030,13 +950,11 @@ begin
  begin
   Result:=integer(AlignmentFlags_AlignHCenter);
  end;
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,167; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 procedure TRpGenTextInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,168; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited GetProperties(lnames,ltypes,lvalues);
 
 
@@ -1091,12 +1009,10 @@ begin
  lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).CutText,true));
 
 
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,168; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpGenTextInterface.SetProperty(pname:string;value:string);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,169; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if length(value)<1 then
   exit;
  if pname=SRpSAlignment then
@@ -1161,12 +1077,10 @@ begin
  end;
 
  inherited SetProperty(pname,value);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,169; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function TRpGenTextInterface.GetProperty(pname:string):string;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,170; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:='';
  if pname=SrpSAlignMent then
  begin
@@ -1221,13 +1135,11 @@ begin
 
 
  Result:=inherited GetProperty(pname);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,170; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 procedure TRpGenTextInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,171; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if pname=SrpSAlignment then
  begin
   lpossiblevalues.clear;
@@ -1247,7 +1159,6 @@ begin
   exit;
  end;
  inherited GetPropertyValues(pname,lpossiblevalues);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,171; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 initialization

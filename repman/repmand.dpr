@@ -122,9 +122,7 @@ uses
   zdeflate in '../zdeflate.pas',
   zinflate in '../zinflate.pas',
   zlib in '../zlib.pas',
-{$IFNDEF PROFILE}  zutil in '../zutil.pas';{$ENDIF}
-{$IFDEF PROFILE} { Do NOT Delete ProfOnli !!! } {$ENDIF}
-{$IFDEF PROFILE}  zutil in '../zutil.pas' ,Profonlx ,Proftimx;{$ENDIF}
+  zutil in '../zutil.pas';
 {$ENDIF}
 
 
@@ -135,6 +133,5 @@ begin
   Application.Initialize;
   Application.Title := 'Report manager designer';
   Application.CreateForm(TFMainf, FMainf);
-{$IFDEF PROFILE} Profonlx.ProfOnlineOperation; {$ENDIF}
   Application.Run;
 end.

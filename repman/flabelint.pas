@@ -24,8 +24,7 @@ interface
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,types,
   rpprintitem,rplabelitem,rpobinsint,rpconsts,
-{$IFNDEF PROFILE}  rpgraphutils;{$ENDIF}
-{$IFDEF PROFILE}  rpgraphutils ,Proftimx;{$ENDIF}
+  rpgraphutils;
 
 type
  TRpLabelInterface=class(TRpGenTextInterface)
@@ -70,27 +69,22 @@ implementation
 
 constructor TRpLabelInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,54; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Not (pritem is TRpLabel) then
   Raise Exception.Create(SRpIncorrectComponentForInterface);
  inherited Create(AOwner,pritem);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,54; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpLabelInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,55; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited GetProperties(lnames,ltypes,lvalues);
  // Text
  lnames.Add(SrpSText);
  ltypes.Add(SRpSString);
  lvalues.Add(TRpLabel(printitem).Text);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,55; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpLabelInterface.SetProperty(pname:string;value:string);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,56; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if length(value)<1 then
   exit;
  if pname=SRpSText then
@@ -100,12 +94,10 @@ begin
   exit;
  end;
  inherited SetProperty(pname,value);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,56; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function TRpLabelInterface.GetProperty(pname:string):string;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,57; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:='';
  if pname=SrpSText then
  begin
@@ -113,7 +105,6 @@ begin
   exit;
  end;
  Result:=inherited GetProperty(pname);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,57; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -122,7 +113,6 @@ var
  alabel:TRpLabel;
  rec:TRect;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,58; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  alabel:=TRpLabel(printitem);
  Canvas.Pen.Color:=clBlack;
  Canvas.Pen.Style:=psSolid;
@@ -151,22 +141,18 @@ begin
  rec.Right:=Width-1;
  rec.Bottom:=Height-1;
  Canvas.TextRect(rec,0,0,alabel.Text,alabel.Alignment or alabel.VAlignment);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,58; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
 constructor TRpExpressionInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,59; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if Not (pritem is TRpExpression) then
   Raise Exception.Create(SRpIncorrectComponentForInterface);
  inherited Create(AOwner,pritem);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,59; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpExpressionInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,60; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  inherited GetProperties(lnames,ltypes,lvalues);
  // Expression
  lnames.Add(SrpSExpression);
@@ -177,12 +163,10 @@ begin
  lnames.Add(SrpSDisplayFOrmat);
  ltypes.Add(SRpSString);
  lvalues.Add(TRpExpression(printitem).DisplayFormat);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,60; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 procedure TRpExpressionInterface.SetProperty(pname:string;value:string);
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,61; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  if length(value)<1 then
   exit;
  if pname=SRpSExpression then
@@ -198,12 +182,10 @@ begin
   exit;
  end;
  inherited SetProperty(pname,value);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,61; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 function TRpExpressionInterface.GetProperty(pname:string):string;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,62; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  Result:='';
  if pname=SrpSExpression then
  begin
@@ -216,7 +198,6 @@ begin
   exit;
  end;
  Result:=inherited GetProperty(pname);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,62; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
@@ -225,7 +206,6 @@ var
  aexp:TRpExpression;
  rec:TRect;
 begin
-{$IFDEF PROFILE}asm DW 310FH; call Proftimx.ProfStop; end; Try; asm mov edx,63; mov eax,self; call Proftimx.ProfEnter; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; {$ENDIF}
  aexp:=TRpExpression(printitem);
  Canvas.Pen.Color:=clBlack;
  Canvas.Pen.Style:=psDashDot;
@@ -254,7 +234,6 @@ begin
  rec.Right:=Width-1;
  rec.Bottom:=Height-1;
  Canvas.TextRect(rec,0,0,aexp.Expression,aexp.Alignment or aexp.VAlignment);
-{$IFDEF PROFILE}finally; asm DW 310FH; mov ecx,63; call Proftimx.ProfExit; mov ecx,eax; DW 310FH; add[ecx].0,eax; adc[ecx].4,edx; end; end; {$ENDIF}
 end;
 
 
