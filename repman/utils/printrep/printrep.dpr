@@ -24,7 +24,7 @@ program printrep;
 uses
   SysUtils,Classes,
 {$IFDEF MSWINDOWS}
-  midaslib,
+  midaslib,ActiveX,
   rpreport in '..\..\..\rpreport.pas',
   rpparams in '..\..\..\rpparams.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas',
@@ -83,6 +83,9 @@ var
  memstream:TMemoryStream;
 
 begin
+{$IFDEF USEADO}
+  CoInitialize(nil);
+{$ENDIF}
   isstdin:=false;
   { TODO -oUser -cConsole Main : Insert code here }
   try

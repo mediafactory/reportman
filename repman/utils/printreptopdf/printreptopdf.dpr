@@ -29,6 +29,7 @@ uses
 {$IFDEF USEVARIANTS}
   midaslib,
 {$ENDIF}
+  ActiveX,
   rpreport in '..\..\..\rpreport.pas',
   rpparams in '..\..\..\rpparams.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas',
@@ -107,6 +108,9 @@ begin
 end;
 
 begin
+{$IFDEF USEADO}
+  CoInitialize(nil);
+{$ENDIF}
   stdinput:=false;
   doprintmetafile:=false;
   doprintastext:=False;

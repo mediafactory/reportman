@@ -21,8 +21,10 @@ program printrepxp;
 
 {$APPTYPE CONSOLE}
 
+{$I rpconf.inc}
+
 uses
-  SysUtils,Classes,
+  SysUtils,Classes,ActiveX,
   midaslib,
   rpreport in '..\..\..\rpreport.pas',
   rpparams in '..\..\..\rpparams.pas',
@@ -68,6 +70,9 @@ var
  isstdin:Boolean;
  memstream:TMemoryStream;
 begin
+{$IFDEF USEADO}
+  CoInitialize(nil);
+{$ENDIF}
   isstdin:=false;
   { TODO -oUser -cConsole Main : Insert code here }
   try
