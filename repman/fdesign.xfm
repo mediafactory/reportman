@@ -3,8 +3,8 @@ object FDesignFrame: TFDesignFrame
   Top = 0
   Width = 451
   Height = 304
-  HorzScrollBar.Range = 20
   VertScrollBar.Range = 20
+  HorzScrollBar.Range = 20
   Align = alClient
   ParentShowHint = False
   ShowHint = True
@@ -33,14 +33,5 @@ object FDesignFrame: TFDesignFrame
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1
-  end
-  object SectionScrollBox: TScrollBox
-    Left = 20
-    Top = 20
-    Width = 431
-    Height = 284
-    Align = alClient
-    BorderStyle = bsNone
-    TabOrder = 2
   end
 end

@@ -35,7 +35,7 @@ type
  TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull,rpDrawTile);
  TRpAggregate=(rpAgNone,rpAgGroup,rpAgPage,rpAgGeneral);
  TRpAggregateType=(rpagSum,rpagMin,rpagMax,rgagAvg,rpagStdDev);
- TRpReportChanged=(rpReportStart,rpDataChange,rpGroupChange);
+ TRpReportChanged=(rpReportStart,rpDataChange,rpGroupChange,rpPageChange);
  TRpShapeType=(rpsRectangle, rpsSquare, rpsRoundRect, rpsRoundSquare,
   rpsEllipse, rpsCircle,rpsHorzLine,rpsVertLine);
 

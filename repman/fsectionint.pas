@@ -53,6 +53,7 @@ type
 
    public
     OnPosChange:TNotifyEvent;
+    constructor Create(AOwner:TComponent);override;
 
    end;
 
@@ -380,6 +381,13 @@ begin
   end;
  end;
  Result:=inherited GetProperty(pname);
+end;
+
+
+constructor TRpSectionIntf.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+
 end;
 
 

@@ -389,6 +389,7 @@ resourcestring
   SrpSExpression='Expression';
   SrpSDisplayFormat='Display format';
   SRpUnknownType='(Unknown type)';
+  SrpSOnlyOne='P.Only One';
 
   SRpSBSolid='Solid';
   SRpSBClear='Clear';

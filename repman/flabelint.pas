@@ -230,6 +230,10 @@ begin
  ltypes.Add(SRpSExpression);
  lvalues.Add(TRpExpression(printitem).AgIniValue);
 
+ // Print Only One
+ lnames.Add(SRpSOnlyOne);
+ ltypes.Add(SRpSBool);
+ lvalues.Add(BoolToStr(TRpExpression(printitem).PrintOnlyOne,true));
 end;
 
 procedure TRpExpressionInterface.SetProperty(pname:string;value:string);
@@ -274,6 +278,11 @@ begin
   TRpExpression(fprintitem).AgIniValue:=Value;
   exit;
  end;
+ if pname=SrpSOnlyOne then
+ begin
+  TRpExpression(fprintitem).PrintOnlyOne:=StrToBool(Value);
+  exit;
+ end;
  inherited SetProperty(pname,value);
 end;
 
@@ -315,7 +324,11 @@ begin
   Result:=TRpExpression(printitem).AgIniValue;
   exit;
  end;
-
+ if pname=SrpSOnlyOne then
+ begin
+  Result:=BoolToStr(TRpExpression(printitem).PrintOnlyOne,true);
+  exit;
+ end;
  Result:=inherited GetProperty(pname);
 end;
 

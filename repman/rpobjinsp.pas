@@ -49,7 +49,6 @@ type
     LTypes:TStringList;
     LValues:TStringList;
     subrep:TRpSubreport;
-    fchangesize:TRpSizeModifier;
     procedure SetCompItem(Value:TRpSizeInterface);
     procedure ReleaseAllControls;
     procedure EditChange(Sender:TObject);
@@ -69,10 +68,12 @@ type
   public
     { Public declarations }
     combo:TComboBox;
+    fchangesize:TRpSizeModifier;
     LLabels:TList;
     LControls:TStringList;
     LControlsToFree:TList;
     procedure UpdatePosValues;
+    procedure RecreateChangeSize;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
     property CompItem:TRpSizeInterface read FCompItem write SetCompItem;
@@ -752,6 +753,15 @@ procedure TFObjInsp.ComboAliasChange(Sender:TObject);
 begin
  subrep.Alias:=TComboBox(Sender).Text;
 end;
+
+procedure TFObjInsp.RecreateChangeSize;
+begin
+ fchangesize.free;
+ fchangesize:=nil;
+ fchangesize:=TRpSizeModifier.Create(Self);
+ fchangesize.OnSizeChange:=changesizechange;
+end;
+
 
 initialization
 

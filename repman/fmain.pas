@@ -192,6 +192,7 @@ type
     procedure LoadConfig;
     procedure SaveConfig;
     procedure UpdateUnits;
+    procedure CorrectScrollBoxes;
   public
     { Public declarations }
     report:TRpReport;
@@ -740,6 +741,9 @@ begin
  olditem:=fobjinsp.CompItem;
  fobjinsp.CompItem:=nil;
  fobjinsp.CompItem:=olditem;
+ // Correct scrollboxes
+ CorrectScrollBoxes;
+
 end;
 
 procedure TFMainf.OnReadError(Reader: TReader; const Message: string;
@@ -956,11 +960,10 @@ begin
  UpdateUnits;
 end;
 
-procedure TFMainf.FormResize(Sender: TObject);
+procedure TFMainf.CorrectScrollBoxes;
 begin
  if assigned(fdesignframe) then
  begin
-  fdesignframe.UpdateInterface;
   // A bug in aligments CLX Windows and Linux
   // forced me to include this corrections
    fdesignframe.HorzScrollBar.Position:=0;
@@ -972,6 +975,16 @@ begin
    LeftPanel.Left:=0;
    Splitter1.Left:=20;
    ToolBar1.Left:=0;
+ end;
+end;
+
+
+procedure TFMainf.FormResize(Sender: TObject);
+begin
+ if assigned(fdesignframe) then
+ begin
+  fdesignframe.UpdateInterface;
+  CorrectScrollBoxes;
  end;
 end;
 

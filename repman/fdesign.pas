@@ -30,6 +30,13 @@ const
  CONS_RULER_LEFT=20;
  CT_TITLE_HEIGHT=15;
 type
+
+  // A ScrollBox that not scrolls in view focused controls
+  TRpScrollBox=class(TScrollBox)
+   protected
+    procedure AutoScrollInView(AControl: TControl); override;
+   end;
+
   TRpPaintEventPanel=Class(TPanel)
    private
     FOnPaint:TNotifyEvent;
@@ -46,7 +53,6 @@ type
     PTop: TPanel;
     TopRuler: TRpRuler;
     PLeft: TPanel;
-    SectionScrollBox: TScrollBox;
   private
     { Private declarations }
     PSection: TRpPaintEventPanel;
@@ -61,6 +67,7 @@ type
   public
     { Public declarations }
     freportstructure:TFRpStructure;
+    SectionScrollBox: TScrollBox;
     procedure UpdateInterface;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
@@ -76,6 +83,12 @@ implementation
 {$R *.xfm}
 
 uses fmain;
+
+procedure TrpScrollBox.AutoScrollInView(AControl: TControl);
+begin
+
+end;
+
 
 constructor TrpPaintEventPanel.Create(AOwner:TComponent);
 begin
@@ -108,6 +121,12 @@ end;
 constructor TFDesignFrame.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+ SectionScrollBox:=TRpScrollBox.Create(Self);
+ SectionScrollBox.BorderStyle:=bsNone;
+ SectionScrollBox.Align:=Alclient;
+ SectionScrollBox.Parent:=Self;
+
+
  leftrulers:=Tlist.Create;
  toptitles:=Tlist.Create;
  secinterfaces:=TList.Create;
@@ -253,6 +272,8 @@ begin
   leftrulers.Clear;
  end;
  Fsubreport:=subreport;
+ FObjInsp.RecreateChangesize;
+ FObjInsp.CompItem:=nil;
  if not assigned(fsubreport) then
   exit;
  SectionScrollBox.Visible:=true;

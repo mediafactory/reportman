@@ -1228,6 +1228,8 @@ end;
 begin
  if Not Assigned(Section) then
   Raise Exception.Create(SRpLastPageReached);
+ if assigned(subreport) then
+  subreport.SubReportChanged(rpPageChange);
  havepagefooters:=false;
  sectionextevaluated:=false;
  pageposy:=FTopMargin;

@@ -59,7 +59,9 @@ type
    FUpdated:boolean;
    FAgIniValue:widestring;
    FValues:array of Double;
+   FPrintOnlyOne:boolean;
    FIdenExpression:TIdenRpExpression;
+   FOldString:widestring;
    procedure SetIdentifier(Value:string);
    procedure Evaluate;
   protected
@@ -81,6 +83,8 @@ type
    property AgIniValue:widestring read FAgIniValue write FAgIniValue;
    property AutoExpand:Boolean read FAutoExpand write FAutoExpand;
    property AutoContract:Boolean read FAutoContract write FAutoContract;
+   property PrintOnlyOne:Boolean read FPrintOnlyOne write FPrintOnlyOne
+    default false;
   end;
 
   TIdenRpExpression=class(TIdenFunction)
@@ -244,9 +248,16 @@ procedure TRpExpression.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 var
  aText:WideString;
  expre:WideString;
+
 begin
  expre:=Trim(Expression);
  aText:=GetText;
+ if PrintOnlyOne then
+ begin
+  if FOldString=aText then
+   exit;
+  FOldString:=aText;
+ end;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
    aposx+PosX,width,height,aText,WFontName,LFontName,FontSize,FontRotation,
    FontStyle,FOntColor,BackColor,Transparent,CutText,Alignment or VAlignment,WordWrap);
@@ -264,6 +275,7 @@ begin
  case newstate of
   rpReportStart:
    begin
+    FOldString:='';
     FUpdated:=false;
     FDataCount:=0;
     if (FAggregate<>rpAgNone) then
@@ -333,6 +345,7 @@ begin
    end;
   rpGroupChange:
    begin
+    FOldString:='';
     if (FAggregate=rpAgGroup) then
     begin
      if GroupName=newgroup then
@@ -347,6 +360,10 @@ begin
       FUpdated:=true;
      end;
     end;
+   end;
+  rpPageChange:
+   begin
+    FOldString:='';
    end;
  end;
 end;

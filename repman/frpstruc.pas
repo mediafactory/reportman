@@ -73,7 +73,7 @@ begin
  RView.FullExpand;
  if Assigned(designframe) then
  begin
-  TFDesignFrame(designframe).UpdateInterface;
+  TFDesignFrame(designframe).UpdateSelection(true);
  end;
 end;
 
