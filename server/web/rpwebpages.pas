@@ -9,6 +9,14 @@ uses SysUtils,Classes,HTTPApp,rpmdconsts,Inifiles,rpalias,
 {$IFDEF USEBDE}
   dbtables,
 {$ENDIF}
+{$IFNDEF FORCECONSOLE}
+ {$IFDEF MSWINDOWS}
+  rpgdidriver,
+ {$ENDIF}
+ {$IFDEF LINUX}
+  rpqtdriver,
+ {$ENDIF}
+{$ENDIF}
  rpmetafile;
 
 const
@@ -825,8 +833,20 @@ begin
    astream.Clear;
    if dometafile then
    begin
+{$IFDEF FORCECONSOLE}
     rppdfdriver.PrintReportMetafileStream(pdfreport,'',false,true,1,9999,1,
      astream,true,false);
+{$ENDIF}
+{$IFNDEF FORCECONSOLE}
+ {$IFDEF MSWINDOWS}
+    rpgdidriver.ExportReportToPDFMetaStream(pdfreport,'',
+     false,true,1,9999,false,astream,true,false,true);
+ {$ENDIF}
+ {$IFDEF LINUX}
+    rpqtdriver.ExportReportToPDFMetaStream(pdfreport,'',
+     false,true,1,9999,false,astream,true,false,true);
+ {$ENDIF}
+{$ENDIF}
     Response.Content:='Executed, size:'+IntToStr(astream.size);
     Response.ContentType := 'application/rpmf';
     Response.ContentStream:=astream;
@@ -834,8 +854,21 @@ begin
    end
    else
    begin
+{$IFDEF FORCECONSOLE}
     rppdfdriver.PrintReportPDFStream(pdfreport,'',false,true,1,9999,1,
      astream,true,false);
+{$ENDIF}
+{$IFNDEF FORCECONSOLE}
+ {$IFDEF MSWINDOWS}
+    rpgdidriver.ExportReportToPDFMetaStream(pdfreport,'',
+     false,true,1,9999,false,astream,true,false,false);
+ {$ENDIF}
+ {$IFDEF LINUX}
+    rpqtdriver.ExportReportToPDFMetaStream(pdfreport,'',
+     false,true,1,9999,false,astream,true,false,false);
+ {$ENDIF}
+{$ENDIF}
+    astream.Seek(0,soFromBeginning);
     Response.Content:='Executed, size:'+IntToStr(astream.size);
     Response.ContentType := 'application/pdf';
     Response.ContentStream:=astream;

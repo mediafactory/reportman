@@ -39,10 +39,12 @@ install:
 	cp printrep.bin repserverconfig.bin
 	cp printrep.bin metaprint.bin
 	cp printrep.bin repwebexe.bin
+	cp printrep.bin repwebexex.bin
 	cp ../../server/app/reportserverapp .
 	cp ../../server/app/reportservercon .
 	cp ../../server/config/repserverconfig .
 	cp ../../server/web/repwebexe .
+	cp ../../server/web/repwebexex .
 	cp ../../server/web/.htaccess .
 	cp ../../repman/utils/printreptopdf/printreptopdf .
 	cp ../../repman/reportmanres.es .
@@ -65,7 +67,7 @@ install:
 #	include repmand.es when linux translation done
 	tar c LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es reportmanres.fr repmand dbxdrivers dbxconnections repmand repmand.sh repmand.bin README *.so *.so.1 qt_* dbxres.en.1 libborunwind.so.6.0 > rpdesigner-$(rpversion).i386.tar
 	gzip rpdesigner-$(rpversion).i386.tar
-	tar c LICENSE.TXT reportserverapp reportserverapp.sh reportserverapp.bin reportservercon reportservercon.sh reportservercon.bin repserverconfig repserverconfig.sh repserverconfig.bin metaprint metaprint.sh metaprint.bin metaview metaview.sh metaview.bin printrep printrep.sh printrep.bin printreptopdf printreptopdf.sh printreptopdf.bin reptotxt txttorep repwebexe repwebexe.bin .htaccess > rpservercline-$(rpversion).i386.tar
+	tar c LICENSE.TXT reportserverapp reportserverapp.sh reportserverapp.bin reportservercon reportservercon.sh reportservercon.bin repserverconfig repserverconfig.sh repserverconfig.bin metaprint metaprint.sh metaprint.bin metaview metaview.sh metaview.bin printrep printrep.sh printrep.bin printreptopdf printreptopdf.sh printreptopdf.bin reptotxt txttorep repwebexe repwebexe.bin repwebexex repwebexex.bin .htaccess > rpservercline-$(rpversion).i386.tar
 	gzip rpservercline-$(rpversion).i386.tar
 	tar c LICENSE.TXT apilib > rplibapi-$(rpversion).i386.tar
 	gzip rplibapi-$(rpversion).i386.tar

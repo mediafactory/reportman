@@ -147,7 +147,7 @@
     <td>Integer</td>
     <td>Vertical displacement for Teechart</td>
   </tr>
-  <tr> 
+  <tr>
     <td>Tilt</td>
     <td>Tilt</td>
     <td>Integer</td>
@@ -160,20 +160,34 @@
     <td>Dots per inchess for drawing the chart (Teechart), choose a value from 
       100 for low quality (less size) to 400 for high quality (more size)</td>
   </tr>
-  <tr> 
+  <tr>
     <td>Multibar</td>
     <td>Multibar</td>
     <td>TRpMultibar</td>
     <td>Multibar value for Teechart</td>
   </tr>
-</table>
+  <tr>
+    <td>Show Hint</td>
+    <td>SHowHint</td>
+    <td>Boolean</td>
+    <td>Show a mark with the value inside the drawing</td>
+  </tr></table>
+  <tr>
+    <td>Show Legend</td>
+    <td>SHowLegend</td>
+    <td>Boolean</td>
+    <td>Show chart legend</td>
+  </tr></table>
 <p><strong>Aditional details about the implementation</strong></p>
-<p>Because Report Manager <a href="devdriver.html">driver architechture</a>, the 
-  chart output is processed diferently for each driver, the drivers not supporting 
-  charts are Excel and Plain Text driver</p>
+<p>Because Report Manager <a href="devdriver.html">driver architechture</a>, the
+  chart output is processed diferently for each driver, the drivers not supporting
+  charts are Excel and Plain Text driver. Printreptopdf command line tool does not
+  support Teechart (nice charts) because it does not requires an X-Server. To
+  generate pdf files or metafiles (with nice charts), from command line use printrep command line
+  instead</p>
 <p><b>Developer info</b></p>
 <table border="1">
-  <tr> 
+  <tr>
     <td bgcolor="#FFFFCC">Internal component name</td>
     <td>TRpChart</td>
   </tr>
