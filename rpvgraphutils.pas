@@ -384,6 +384,7 @@ end;
 
 function GDIPageSizeToQtPageSize (gdisize:TGDIPageSize):TPageSizeQt;
 begin
+ Result.Custom:=False;
  case gdisize.PageIndex of
   DMPAPER_A4:
    Result.Indexqt:=0;

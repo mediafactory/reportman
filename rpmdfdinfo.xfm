@@ -33,6 +33,7 @@ object FRpDInfo: TFRpDInfo
       Height = 25
       Caption = 'OK'
       TabOrder = 0
+      OnClick = BOkClick
     end
     object BCancel: TButton
       Left = 116
@@ -41,6 +42,7 @@ object FRpDInfo: TFRpDInfo
       Height = 25
       Caption = 'Cancel'
       TabOrder = 1
+      OnClick = BCancelClick
     end
   end
   object PControl: TPageControl

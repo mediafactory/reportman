@@ -26,6 +26,9 @@ uses
 {$IFDEF USEVARIANTS}
   Types,
 {$ENDIF}
+{$IFDEF EMPTYCOMBOBUG}
+  D7ComboBoxStringsGetPatch,
+{$ENDIF}
   Classes,
   rpgdidriver,rpvpreview,rprfvparams,windows,
   Controls, Forms,

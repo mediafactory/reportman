@@ -41,6 +41,8 @@ type
     TabDatasets: TTabSheet;
     procedure FormCreate(Sender: TObject);
     procedure PControlChange(Sender: TObject);
+    procedure BOkClick(Sender: TObject);
+    procedure BCancelClick(Sender: TObject);
   private
     { Private declarations }
     freport:TRpReport;
@@ -112,6 +114,19 @@ end;
 procedure TFRpDInfo.PControlChange(Sender: TObject);
 begin
  fdatasets.Databaseinfo:=report.DatabaseInfo;
+end;
+
+procedure TFRpDInfo.BOkClick(Sender: TObject);
+begin
+ freport.DatabaseInfo.Assign(fdatasets.Databaseinfo);
+ freport.DataInfo.Assign(fdatasets.Datainfo);
+ freport.Params.Assign(fdatasets.Params);
+ Close;
+end;
+
+procedure TFRpDInfo.BCancelClick(Sender: TObject);
+begin
+ Close;
 end;
 
 end.

@@ -20,7 +20,7 @@ object FRpDInfoVCL: TFRpDInfoVCL
   TextHeight = 13
   object PBottom: TPanel
     Left = 0
-    Top = 349
+    Top = 356
     Width = 557
     Height = 39
     Align = alBottom
@@ -32,6 +32,7 @@ object FRpDInfoVCL: TFRpDInfoVCL
       Height = 25
       Caption = 'OK'
       TabOrder = 0
+      OnClick = BOkClick
     end
     object BCancel: TButton
       Left = 116
@@ -40,13 +41,14 @@ object FRpDInfoVCL: TFRpDInfoVCL
       Height = 25
       Caption = 'Cancel'
       TabOrder = 1
+      OnClick = BCancelClick
     end
   end
   object PControl: TPageControl
     Left = 0
     Top = 0
     Width = 557
-    Height = 349
+    Height = 356
     ActivePage = TabConnections
     Align = alClient
     TabOrder = 1
