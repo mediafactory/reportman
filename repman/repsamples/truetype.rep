@@ -42,6 +42,9 @@ object TRpReport
       end
       item
         Component = TRpLabel4
+      end
+      item
+        Component = TRpLabel5
       end>
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
@@ -411,6 +414,20 @@ object TRpReport
     LFontName = 'bullpen 3d'
     WideText = 'Testing truetype in pdf output'
   end
+  object TRpLabel4: TRpLabel
+    Width = 9555
+    Height = 870
+    PosX = 573
+    PosY = 3680
+    Type1Font = poEmbedded
+    FontSize = 26
+    PrintCondition = ''
+    DoBeforePrint = ''
+    DoAfterPrint = ''
+    WFontName = 'Palatino Linotype'
+    LFontName = 'CASMIRA'
+    WideText = 'Casmira testing, BRAVO'
+  end
   object TRpLabel3: TRpLabel
     Width = 9555
     Height = 870
@@ -425,18 +442,18 @@ object TRpReport
     LFontName = 'luxi serif'
     WideText = 'BRAVO BRAVO AWAY HERE'
   end
-  object TRpLabel4: TRpLabel
+  object TRpLabel5: TRpLabel
     Width = 9555
     Height = 870
     PosX = 573
-    PosY = 3560
+    PosY = 2880
     Type1Font = poEmbedded
     FontSize = 26
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
     WFontName = 'Palatino Linotype'
-    LFontName = 'CASMIRA'
-    WideText = 'Casmira testing, BRAVO'
+    LFontName = 'luxi sans'
+    WideText = 'BRAVO BRAVO AWAY HERE LUXI SANS'
   end
 end

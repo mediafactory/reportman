@@ -3,7 +3,8 @@
 {       Report Manager                                  }
 {                                                       }
 {       TRpInfoProvider Fretype library                 }
-{       Provides information about fonts and bitmaps    }
+{       Provides information about fonts in Linux       }
+{       It uses freetype library version 2              }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
@@ -51,7 +52,6 @@ type
   StemV:double;
   ftface:FT_Face;
   faceinit:boolean;
-  // kerning is not implemented but here checked
   havekerning:Boolean;
   type1:boolean;
   convfactor,widthmult:Double;
@@ -63,7 +63,6 @@ type
 
  TRpFTInfoProvider=class(TInterfacedObject,IRpInfoProvider)
   currentname:String;
-  defaultfont:TRpLogFont;
   currentstyle:integer;
   currentfont:TRpLogFont;
   crit:TCriticalSection;
@@ -84,6 +83,10 @@ var
   fontfiles:TStringList;
   ftlibrary:FT_Library;
   initialized:boolean;
+  defaultfont:TRpLogFont;
+  defaultfontb:TRpLogFont;
+  defaultfontit:TRpLogFont;
+  defaultfontbit:TRpLogFont;
 
 const
  TTF_PRECISION=1000;
@@ -183,7 +186,6 @@ var
  aobj:TRpLogFont;
  afilename:string;
  errorface:FT_Error;
-// kerningfile:string;
  aface:FT_Face;
 begin
  if Assigned(fontlist) then
@@ -235,6 +237,9 @@ begin
   end;
  end;
  defaultfont:=nil;
+ defaultfontb:=nil;
+ defaultfontit:=nil;
+ defaultfontbit:=nil;
  CheckFreeType(FT_Init_FreeType(ftlibrary));
  initialized:=true;
 
@@ -281,22 +286,60 @@ begin
       aobj.stylename:=StrPas(aface.style_name);
       aobj.bold:=(aface.style_flags AND FT_STYLE_FLAG_BOLD)<>0;
       aobj.italic:=(aface.style_flags AND FT_STYLE_FLAG_ITALIC)<>0;
-      if not assigned(defaultfont) then
+
+      // Default font configuration, LUXI SANS is default
+      if ((not aobj.italic) and (not aobj.bold)) then
       begin
-       if ((not aobj.italic) and (not aobj.bold)) then
-        defaultfont:=aobj;
-      end
-      else
-      begin
-       if ((not aobj.italic) and (not aobj.bold)) then
+       if not assigned(defaultfont) then
+        defaultfont:=aobj
+       else
        begin
-        if ((aobj.familyname='Arial') or
-         (aobj.familyname='Helvetica')) then
+        if (UpperCase(aobj.familyname)='LUXI SANS') then
         begin
          defaultfont:=aobj;
         end;
        end;
+      end
+      else
+      if ((not aobj.italic) and (aobj.bold)) then
+      begin
+       if not assigned(defaultfontb) then
+        defaultfontb:=aobj
+       else
+       begin
+        if (UpperCase(aobj.familyname)='LUXI SANS') then
+        begin
+         defaultfontb:=aobj;
+        end;
+       end;
+      end
+      else
+      if ((aobj.italic) and (not aobj.bold)) then
+      begin
+       if not assigned(defaultfontit) then
+        defaultfontit:=aobj
+       else
+       begin
+        if (UpperCase(aobj.familyname)='LUXI SANS') then
+        begin
+         defaultfontit:=aobj;
+        end;
+       end;
+      end
+      else
+      if ((aobj.italic) and (aobj.bold)) then
+      begin
+       if not assigned(defaultfontbit) then
+        defaultfontbit:=aobj
+       else
+       begin
+        if (UpperCase(aobj.familyname)='LUXI SANS') then
+        begin
+         defaultfontbit:=aobj;
+        end;
+       end;
       end;
+
       fontlist.AddObject(UpperCase(aobj.familyname),aobj);
      except
       aobj.free;
@@ -439,9 +482,17 @@ begin
  if match then
   exit;
  // Finally gets default font, but applying styles
- if style ...defaultfontitalic... else defaultfontbod...
- currentfont:=defaultfont;
- 
+ if ((not isbold) and (not isitalic)) then
+  currentfont:=defaultfont
+ else
+ if ((isbold) and (not isitalic)) then
+  currentfont:=defaultfontb
+ else
+ if ((not isbold) and (isitalic)) then
+  currentfont:=defaultfontit
+ else
+  currentfont:=defaultfontbit;
+
  if not assigned(currentfont) then
   Raise Exception.Create('No active font');
  finally
@@ -559,6 +610,11 @@ var
  wl,wr:FT_UInt;
  akerning:FT_Vector;
 begin
+{$IFNDEF USEKERNING}
+  Result:=0;
+  exit;
+{$ENDIF}
+{$IFDEF USEVARIANTS}
  crit.Enter;
  try
   InitLibrary;
@@ -604,6 +660,7 @@ begin
  finally
   crit.Leave;
  end;
+{$ENDIF}
 end;
 
 constructor TRpLogFont.Create;

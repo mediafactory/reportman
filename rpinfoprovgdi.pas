@@ -3,7 +3,7 @@
 {       Report Manager                                  }
 {                                                       }
 {       TRpInfoProvider GDI                             }
-{       Provides information about fonts and bitmaps    }
+{       Provides information about fonts                }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }
@@ -15,7 +15,6 @@ unit rpinfoprovgdi;
 
 {$I rpconf.inc}
 
-{$DEFINE USEKERNINGS}
 
 interface
 
@@ -127,7 +126,7 @@ var
  apchar:PChar;
  alog:LOGFONT;
  acomp:byte;
-{$IFDEF USEKERNINGS}
+{$IFDEF USEKERNING}
  akernings:array [0..MAXKERNINGS]of KERNINGPAIR;
  numkernings:integer;
  langinfo:DWord;
@@ -203,11 +202,11 @@ begin
     finally
      FreeMem(potm);
     end;
-{$IFNDEF USEKERNINGS}
+{$IFNDEF USEKERNING}
     data.havekerning:=false;
     data.numkernings:=0;
 {$ENDIF}
-{$IFDEF USEKERNINGS}
+{$IFDEF USEKERNING}
     // Get kerning pairs feature
     langinfo:=GetFontLanguageInfo(adc);
     data.havekerning:=(langinfo AND GCP_USEKERNING)>0;
@@ -274,9 +273,16 @@ end;
 
 
 function TRpGDIInfoProvider.GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;
+{$IFDEF USEKERNING}
 var
  index:integer;
+{$ENDIF}
 begin
+{$IFNDEF USEKERNING}
+ Result:=0;
+ exit;
+{$ENDIF}
+{$IFDEF USEKERNING}
  // Looks for the cached kerning
  index:=data.loadedkernings.IndexOf(
        FormatFloat('000000',Integer(leftchar))+
@@ -285,6 +291,7 @@ begin
   Result:=Integer(data.loadedkernings.Objects[index])
  else
   Result:=0;
+{$ENDIF}
 end;
 
 
