@@ -1300,6 +1300,7 @@ var
  rotstring:string;
  PosLine,PosLineX1,PosLineY1,PosLineX2,PosLineY2:integer;
  astring:String;
+ afontname:string;
 begin
  FFile.CheckPrinting;
  if (Rotation<>0) then
@@ -1307,11 +1308,17 @@ begin
   SaveGraph;
  end;
  try
+{$IFDEF MSWINDOWS}
+  afontname:=Font.WFontName;
+{$ENDIF}
+{$IFDEF LINUX}
+  afontname:=Font.LFontName;
+{$ENDIF}
   SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' RG');
   SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' rg');
   SWriteLine(FFile.FsTempStream,'BT');
   SWriteLine(FFile.FsTempStream,'/F'+
-  Type1FontTopdfFontName(Font.Name,Font.Italic,Font.Bold,Font.WFontName,Font.Style)+' '+
+  Type1FontTopdfFontName(Font.Name,Font.Italic,Font.Bold,afontname,Font.Style)+' '+
    IntToStr(Font.Size)+ ' Tf');
 
   // Rotates
@@ -1592,10 +1599,17 @@ var
  defaultwidth:integer;
  aarray:PWinAnsiWidthsArray;
  isdefault:boolean;
+ afontname:string;
 {$IFDEF VCLANDCLX}
  index:integer;
 {$ENDIF}
 begin
+{$IFDEF MSWINDOWS}
+  afontname:=Font.WFontName;
+{$ENDIF}
+{$IFDEF LINUX}
+  afontname:=Font.LFontName;
+{$ENDIF}
   aarray:=nil;
   defaultwidth:=Default_Font_Width;
   isdefault:=true;
@@ -1608,7 +1622,7 @@ begin
   if (FFont.Name in [poLinked,poEmbedded]) then
   begin
    // Ask for font size
-   index:=FFontTTList.IndexOf(Font.WFontName+IntToStr(Font.Style));
+   index:=FFontTTList.IndexOf(afontname+IntToStr(Font.Style));
    if index>=0 then
    begin
     aarray:=@(TRpTTFontInfo(FFontTTList.Objects[index]).charwidths);
@@ -2565,12 +2579,19 @@ var
  aobj:TRpTTFontInfo;
  adata:TRpTTFontData;
  index:integer;
+ afontname:string;
 begin
  if Not (Font.Name in [poLinked,poEmbedded]) then
   exit;
  if Not Assigned(InfoProvider) then
   exit;
- searchname:=Font.WFontName+IntToStr(Font.Style);
+{$IFDEF MSWINDOWS}
+  afontname:=Font.WFontName;
+{$ENDIF}
+{$IFDEF LINUX}
+  afontname:=Font.LFontName;
+{$ENDIF}
+ searchname:=afontname+IntToStr(Font.Style);
  index:=FFontTTList.IndexOf(searchname);
  if index<0 then
  begin

@@ -55,10 +55,20 @@ var
  conversionfactor:double;
  fm:QFontMetricsH;
  wc:WideChar;
+ precision:integer;
 begin
+{$IFDEF MSWINDOWS}
  conversionfactor:=0.75;
  FBitmap.Canvas.Font.Name:=pdfFont.WFontName;
- FBitmap.Canvas.Font.Size:=1000;
+ precision:=1000;
+{$ENDIF}
+{$IFDEF LINUX}
+ conversionfactor:=7*108/Screen.PixelsPerInch;
+ FBitmap.Canvas.Font.Name:=pdfFont.LFontName;
+ precision:=100;
+{$ENDIF}
+
+ FBitmap.Canvas.Font.Size:=precision;
  FBitmap.Canvas.Font.Style:=IntegerToFontStyle(pdfFont.Style);
 
  fm:=QFontMetrics_create(FBitmap.Canvas.Font.Handle);
@@ -66,6 +76,7 @@ begin
   for i:=32 to 255 do
   begin
    wc:=Widechar(i);
+   info.charwidths[i]:=Round(conversionfactor*QFontMetrics_width(fm,@wc));
    info.charwidths[i]:=Round(conversionfactor*QFontMetrics_width(fm,@wc));
   end;
  finally
@@ -81,15 +92,25 @@ var
  i:integer;
  wc:WideChar;
  conversionfactor:double;
+ precision:integer;
 begin
+{$IFDEF MSWINDOWS}
  conversionfactor:=0.75;
- FBitmap.Canvas.Font.Name:=pdfFont.WFontName;
- FBitmap.Canvas.Font.Size:=1000;
- FBitmap.Canvas.Font.Style:=IntegerToFontStyle(pdfFont.Style);
  data.postcriptname:=pdfFont.WFontName;
- data.FullName:=pdfFont.WFontName;
- data.FaceName:=pdfFont.WFontName;
- data.StyleName:=pdfFont.WFontName;
+ FBitmap.Canvas.Font.Name:=pdfFont.WFontName;
+ precision:=1000;
+{$ENDIF}
+{$IFDEF LINUX}
+ conversionfactor:=7*108/Screen.PixelsPerInch;
+ data.postcriptname:=pdfFont.LFontName;
+ FBitmap.Canvas.Font.Name:=pdfFont.LFontName;
+ precision:=100;
+{$ENDIF}
+ FBitmap.Canvas.Font.Size:=precision;
+ FBitmap.Canvas.Font.Style:=IntegerToFontStyle(pdfFont.Style);
+ data.FullName:=data.postcriptname;
+ data.FaceName:=data.postcriptname;
+ data.StyleName:=data.postcriptname;
  data.Encoding:='WinAnsiEncoding';
  data.FontWeight:=QFont_weight(FBitmap.Canvas.Font.Handle)*10;
  fm:=QFontMetrics_create(FBitmap.Canvas.Font.Handle);
@@ -110,7 +131,12 @@ begin
    if rightb>maxright then
     maxright:=rightb;
   end;
+{$IFDEF MSWINDOWS}
   data.FontBBox.Left:=Round(0.705*maxleft);
+{$ENDIF}
+{$IFDEF LINUX}
+  data.FontBBox.Left:=Round(conversionfactor*maxleft);
+{$ENDIF}
   data.FontBBox.Top:=data.Ascent;
   data.FontBBox.Bottom:=data.Descent;
   data.FontBBox.Right:=data.MaxWidth+data.FontBBox.Left;
