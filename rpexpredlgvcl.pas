@@ -306,7 +306,7 @@ begin
  rec.rfunction:='IIF';
  rec.help:=SRpOperatorDec;
  rec.Model:=SRpOperatorDecM;
- rec.params:=SRpOperatorDecM;
+ rec.params:=SRpOperatorDecP;
  lista1.addobject(rec.rfunction,rec);
 
  LCategory.Itemindex:=0;

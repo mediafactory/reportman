@@ -648,6 +648,10 @@ begin
  ARight.ShortCut:=ShortCut(Key_Right,[ssCtrl]);
  AUp.ShortCut:=ShortCut(Key_Up,[ssCtrl]);
  ADown.ShortCut:=ShortCut(Key_Down,[ssCtrl]);
+ ACut.ShortCut:=ShortCut(Ord('X'),[ssCtrl]);
+ ACopy.ShortCut:=ShortCut(Ord('C'),[ssCtrl]);
+ APaste.ShortCut:=ShortCut(Ord('V'),[ssCtrl]);
+ ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssCtrl]);
 
 {$IFDEF VCLFILEFILTERS}
  OpenDialog1.Filter := SRpRepFile+'|*.rep';

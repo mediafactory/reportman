@@ -638,6 +638,10 @@ begin
  ARight.ShortCut:=ShortCut(VK_RIGHT,[ssCtrl]);
  AUp.ShortCut:=ShortCut(VK_UP,[ssCtrl]);
  ADown.ShortCut:=ShortCut(VK_DOWN,[ssCtrl]);
+ ACut.ShortCut:=ShortCut(Ord('X'),[ssCtrl]);
+ ACopy.ShortCut:=ShortCut(Ord('C'),[ssCtrl]);
+ APaste.ShortCut:=ShortCut(Ord('V'),[ssCtrl]);
+ ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssCtrl]);
  MQtStyle.Visible:=false;
  MSystemPrint.Visible:=false;
 
