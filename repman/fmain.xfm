@@ -1250,6 +1250,7 @@ object FMainf: TFMainf
     Top = 80
   end
   object MFields: TPopupMenu
+    AutoHotkeys = maManual
     Left = 412
     Top = 76
     object est1: TMenuItem
