@@ -763,11 +763,11 @@ begin
  case Vartype(Params[0]) of
   varSmallInt..varDate:
    begin
-    Result:=Trunc(Int(Double(Params[0])));
+    Result:=Integer(Trunc(Int(Double(Params[0]))));
    end;
   varVariant:
    begin
-    Result:=Trunc(Int(Double(Params[0])));
+    Result:=Integer(Trunc(Int(Double(Params[0]))));
    end;
   else
    Raise TRpNamedException.Create(SRpEvalType,

@@ -12,8 +12,8 @@ object FRpExpredialog: TFRpExpredialog
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
-  TextHeight = 20
-  TextWidth = 7
+  TextHeight = 13
+  TextWidth = 6
   object PBottom: TPanel
     Left = 0
     Top = 184
@@ -35,8 +35,8 @@ object FRpExpredialog: TFRpExpredialog
     object LHelp: TLabel
       Left = 4
       Top = 112
-      Width = 26
-      Height = 20
+      Width = 22
+      Height = 13
       Caption = 'Help'
     end
     object LParams: TLabel
@@ -95,15 +95,15 @@ object FRpExpredialog: TFRpExpredialog
     object LabelCategory: TLabel
       Left = 4
       Top = 0
-      Width = 51
-      Height = 20
+      Width = 42
+      Height = 13
       Caption = 'Category'
     end
     object LOperation: TLabel
       Left = 120
       Top = 0
-      Width = 55
-      Height = 20
+      Width = 46
+      Height = 13
       Caption = 'Operation'
     end
   end
