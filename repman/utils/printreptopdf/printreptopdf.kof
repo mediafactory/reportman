@@ -55,11 +55,14 @@ DebugSourceDirs=
 UsePackages=0
 
 [Parameters]
-RunParams=-m -from 3 -to 10 sample4.rep sample4.rpmf
+RunParams=/home/toni/cvsroot/reportman/tests/repmand/testcintaembed.rep /home/toni/cvsroot/reportman/tests/repmand/test.pdf
 HostApplication=
 Launcher=/usr/X11R6/bin/xterm -T KylixDebuggerOutput -e bash -i -c %debuggee%
 UseLauncher=0
 DebugCWD=
+
+[Excluded Packages]
+/home/toni/cvsroot/reportman/bplrppackdesign.so=Report Manager Designer Component Package
 
 [HistoryLists\hlConditionals]
 Count=5

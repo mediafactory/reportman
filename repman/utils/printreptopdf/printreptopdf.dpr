@@ -48,6 +48,7 @@ uses
 {$ENDIF}
 
 {$IFDEF LINUX}
+  DateUtils,
   rpreport in '../../../rpreport.pas',
   rpparams in '../../../rpparams.pas',
   rpmdconsts in '../../../rpmdconsts.pas',

@@ -55,7 +55,6 @@ type
   havekerning:Boolean;
   type1:boolean;
   convfactor,widthmult:Double;
-  loadedwidths,loadedkernings:TStringList;
   constructor Create;
   destructor Destroy;override;
   procedure OpenFont;
@@ -526,175 +525,130 @@ begin
  crit.Enter;
  try
   InitLibrary;
- // See if data can be embedded
- SelectFont(pdffont);
- data.fontdata.Clear;
- if not currentfont.type1 then
-  data.fontdata.LoadFromFile(currentfont.filename);
- data.postcriptname:=currentfont.postcriptname;
- data.FamilyName:=currentfont.familyname;
- data.FaceName:=currentfont.familyname;
- data.Ascent:=currentfont.ascent;
- data.Descent:=currentfont.descent;
- data.Leading:=0;
- data.capHeight:=currentfont.Capheight;
- data.FontWeight:=0;
- data.MaxWidth:=currentfont.MaxWidth;
- data.AvgWidth:=currentfont.avCharWidth;
- data.havekerning:=currentfont.havekerning;
- data.StemV:=0;
- data.FontStretch:='/Normal';
- data.FontBBox:=currentfont.BBox;
- if currentfont.italic then
-  data.ItalicAngle:=-15
- else
-  data.ItalicAngle:=0;
- data.StyleName:=currentfont.stylename;
- data.Flags:=32;
- if (currentfont.fixedpitch) then
-  data.Flags:=data.Flags+1;
- if not currentfont.bold then
- begin
-  if pdffont.Bold then
-   data.postcriptname:=data.postcriptname+',Bold';
- end;
- if currentfont.italic then
-   data.Flags:=data.Flags+64
- else
- begin
-  if pdffont.Italic then
+  // See if data can be embedded
+  SelectFont(pdffont);
+  data.fontdata.Clear;
+  if not currentfont.type1 then
+   data.fontdata.LoadFromFile(currentfont.filename);
+  data.postcriptname:=currentfont.postcriptname;
+  data.FamilyName:=currentfont.familyname;
+  data.FaceName:=currentfont.familyname;
+  data.Ascent:=currentfont.ascent;
+  data.Descent:=currentfont.descent;
+  data.Leading:=0;
+  data.capHeight:=currentfont.Capheight;
+  data.FontWeight:=0;
+  data.MaxWidth:=currentfont.MaxWidth;
+  data.AvgWidth:=currentfont.avCharWidth;
+  data.havekerning:=currentfont.havekerning;
+  data.StemV:=0;
+  data.FontStretch:='/Normal';
+  data.fdata:=currentfont;
+  data.FontBBox:=currentfont.BBox;
+  if currentfont.italic then
+   data.ItalicAngle:=-15
+  else
+   data.ItalicAngle:=0;
+  data.StyleName:=currentfont.stylename;
+  data.Flags:=32;
+  if (currentfont.fixedpitch) then
+   data.Flags:=data.Flags+1;
+  if not currentfont.bold then
   begin
-   if data.postcriptname<>currentfont.postcriptname then
-    data.postcriptname:=data.postcriptname+'Italic'
-   else
-    data.postcriptname:=data.postcriptname+',Italic';
+   if pdffont.Bold then
+    data.postcriptname:=data.postcriptname+',Bold';
   end;
- end;
- data.Type1:=currentfont.Type1;
+  if currentfont.italic then
+    data.Flags:=data.Flags+64
+  else
+  begin
+   if pdffont.Italic then
+   begin
+    if data.postcriptname<>currentfont.postcriptname then
+     data.postcriptname:=data.postcriptname+'Italic'
+    else
+     data.postcriptname:=data.postcriptname+',Italic';
+   end;
+  end;
+  data.Type1:=currentfont.Type1;
  finally
-  crit.Leave;
+   crit.Leave;
  end;
 end;
 
 
 function TRpFTInfoProvider.GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;
 var
- index,awidth:integer;
- searchname:string;
+ awidth:integer;
+ aint:integer;
+ cfont:TRpLogFont;
 begin
- crit.Enter;
- try
-  InitLibrary;
-  searchname:=FormatFloat('000000',integer(charcode));
-  index:=data.loadedwidths.IndexOf(searchname);
-  if index>=0 then
-  begin
-   Result:=Integer(data.loadedwidths.Objects[index]);
-  end
-  else
-  begin
-   SelectFont(pdffont);
-   index:=currentfont.loadedwidths.IndexOf(searchname);
-   if index>=0 then
-   begin
-    awidth:=Integer(currentfont.loadedwidths.Objects[index]);
-   end
-   else
-   begin
-    currentfont.OpenFont;
-
+ aint:=Ord(charcode);
+ if data.loaded[aint] then
+ begin
+  Result:=data.loadedwidths[aint];
+ end
+ else
+ begin
+  cfont:=TRpLogFont(data.fdata);
+  cfont.OpenFont;
     // Drawing glyph is actually no usefull
 //    if 0=FT_Load_Char(currentfont.ftface,Cardinal(charcode),FT_LOAD_NO_BITMAP) then
 //     awidth:=Round((1/64)*currentfont.ftface.glyph.advance.x)
     // It use no scale for better speed
-    if 0=FT_Load_Char(currentfont.ftface,Cardinal(charcode),FT_LOAD_NO_SCALE) then
-     awidth:=Round(currentfont.widthmult*currentfont.ftface.glyph.advance.x)
-    else
-     awidth:=0;
-    currentfont.loadedwidths.AddObject(searchname,TObject(awidth))
-   end;
-   data.loadedwidths.AddObject(searchname,TObject(awidth));
-   Result:=awidth;
-  end;
- finally
-  crit.Leave;
+  if 0=FT_Load_Char(currentfont.ftface,Cardinal(charcode),FT_LOAD_NO_SCALE) then
+   awidth:=Round(currentfont.widthmult*currentfont.ftface.glyph.advance.x)
+  else
+   awidth:=0;
+  data.loadedwidths[aint]:=awidth;
+  data.loaded[aint]:=true;
+  if data.firstloaded>aint then
+   data.firstloaded:=aint;
+  if data.lastloaded<aint then
+   data.lastloaded:=aint;
+  Result:=awidth;
  end;
 end;
 
 function TRpFTInfoProvider.GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;
+{$IFDEF USEKERNING}
 var
- index:integer;
- searchname:string;
- kervalue:integer;
  wl,wr:FT_UInt;
  akerning:FT_Vector;
+ cfont:TRpLogFont;
+{$ENDIF}
 begin
 {$IFNDEF USEKERNING}
   Result:=0;
   exit;
 {$ENDIF}
-{$IFDEF USEVARIANTS}
- crit.Enter;
- try
-  InitLibrary;
-  SelectFont(pdffont);
-  if not currentfont.havekerning then
-   Result:=0
-  else
+{$IFDEF USEKERNING}
+ REsult:=0;
+ cfont:=TRpLogFont(data.fdata);
+ if cfont.havekerning then
+ begin
+  cfont.OpenFont;
+  wl:=FT_Get_Char_Index(cfont.ftface,Cardinal(leftchar));
+  if wl>0 then
   begin
-   kervalue:=0;
-   searchname:=FormatFloat('000000',integer(leftchar))+
-    FormatFloat('000000',integer(rightchar));
-   index:=data.loadedkernings.IndexOf(searchname);
-   if index>=0 then
+   wr:=FT_Get_Char_Index(cfont.ftface,Cardinal(rightchar));
+   if wr>0 then
    begin
-    result:=Integer(data.loadedkernings.objects[index]);
-   end
-   else
-   begin
-    index:=currentfont.loadedkernings.IndexOf(searchname);
-    if index>=0 then
-    begin
-     result:=Integer(currentfont.loadedkernings.objects[index]);
-    end
-    else
-    begin
-     currentfont.OpenFont;
-     wl:=FT_Get_Char_Index(currentfont.ftface,Cardinal(leftchar));
-     if wl>0 then
-     begin
-      wr:=FT_Get_Char_Index(currentfont.ftface,Cardinal(rightchar));
-      if wr>0 then
-      begin
-       CheckFreeType(FT_Get_Kerning(currentfont.ftface,wl,wr,FT_KERNING_UNSCALED,akerning));
-       kervalue:=Round(currentfont.widthmult*-akerning.x);
-      end;
-     end;
-     currentfont.loadedkernings.AddObject(searchname,TObject(kervalue));
-     result:=kervalue;
-    end;
-    data.loadedkernings.AddObject(searchname,TObject(kervalue));
+    CheckFreeType(FT_Get_Kerning(cfont.ftface,wl,wr,FT_KERNING_UNSCALED,akerning));
+    result:=Round(cfont.widthmult*-akerning.x);
    end;
   end;
- finally
-  crit.Leave;
  end;
 {$ENDIF}
 end;
 
 constructor TRpLogFont.Create;
 begin
- loadedwidths:=TStringList.Create;
- loadedwidths.sorted:=true;
- loadedkernings:=TStringList.Create;
- loadedkernings.Sorted:=true;
  faceinit:=false;
 end;
 
 destructor TRpLogFont.Destroy;
 begin
- loadedwidths.free;
- loadedkernings.free;
  if faceinit then
   CheckFreeType(FT_Done_Face(ftface));
  inherited destroy;

@@ -93,8 +93,6 @@ type
 implementation
 
 constructor TRpTTFontData.Create;
-var
- i:integer;
 begin
  inherited Create;
 
