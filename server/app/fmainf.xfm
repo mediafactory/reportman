@@ -1,9 +1,8 @@
 object FSerMain: TFSerMain
   Left = 40
   Top = 102
-  Width = 595
+  Width = 595 
   Height = 319
-  VertScrollBar.Range = 145
   ActiveControl = LMEssages
   AutoScroll = False
   Caption = 'Report Manager Server application'
@@ -76,7 +75,7 @@ object FSerMain: TFSerMain
     object ELogFIle: TEdit
       Left = 176
       Top = 68
-      Width = 412
+      Width = 312
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       Color = clBackground
@@ -86,7 +85,7 @@ object FSerMain: TFSerMain
     object EConfigFile: TEdit
       Left = 176
       Top = 92
-      Width = 412
+      Width = 312
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       Color = clBackground

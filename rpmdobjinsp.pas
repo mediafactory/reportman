@@ -2156,7 +2156,7 @@ begin
   acontrol:=TControl(LControls2.Objects[Sender.Tag]);
  if acontrol=Sender then
   exit;
- if acontrol is TRpMaskEditCLX then
+ if acontrol is TRpCLXMaskEdit then
  begin
   oldonchange:=TEdit(acontrol).OnChange;
   TEdit(acontrol).OnChange:=nil;
