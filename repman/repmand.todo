@@ -1,5 +1,5 @@
-{TODO 1 -oToni -cEngine : Export PDF implement images and text alignment}
-{TODO  -oToni -cEngine : Finish the pdf driver images, underline, textalign}
+{TODO 2  -oToni -cEngine : Export PDF implement images and text alignment, and text rotation}
+{TODO 2  -oToni -cEngine : Finish the pdf driver images, underline, textalign}
 {TODO 1 -oToni -cEngine : Allow Memos autoexpand across multiple pages}
 {TODO 1 -oToni -cEngine : Add a report server via sockets or the web, sending pdfs or html or jpgs.}
 
@@ -7,8 +7,8 @@
 {TODO 1 -oToni -cDesign Interface : Add multiselect option and show common properties in object inspector}
 
 
-{TODO 1 -oToni -cEngine : Add text rotation to text controls}
-{TODO 5 -oToni -cEngine : Implementation for Delphi 5 vcl driver}
+{TODO 1 -oToni -cEngine : Qt Driver text rotation implementation}
+{DONE 5 -oToni -cEngine : Implementation for Delphi 5 vcl driver}
 
 {TODO 2 -oToni -cDesign Interface : Select the object that produces a error}
 {TODO 1 -oToni -cDesign Interface : Add a alignment window for elements}

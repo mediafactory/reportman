@@ -26,7 +26,7 @@ interface
 uses
  mmsystem,windows,
  Classes,sysutils,rpmetafile,rpconsts,Graphics,Forms,
- rpmunits,Printers,Dialogs, Controls,
+ rpmunits,Printers,Dialogs, Controls,rpgdifonts,
  StdCtrls,ExtCtrls,
 {$IFDEF USEVARIANTS}
  types,
@@ -62,6 +62,7 @@ type
     { Private declarations }
     allpages,collate:boolean;
     frompage,topage,copies:integer;
+    devicefonts:boolean;
     dook:boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure AppIdleReport(Sender:TObject;var done:boolean);
@@ -94,7 +95,7 @@ type
    pagemargins:TRect;
    drawclippingregion:boolean;
    oldpagesize,pagesize:TGDIPageSize;
-
+   devicefonts:boolean;
    procedure NewDocument(report:TrpMetafileReport);stdcall;
    procedure EndDocument;stdcall;
    procedure AbortDocument;stdcall;
@@ -111,7 +112,7 @@ type
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
  showprogress,allpages:boolean;frompage,topage,copies:integer;
-  collate:boolean):boolean;
+  collate:boolean;devicefonts:boolean):boolean;
 function CalcReportWidthProgress(report:TRpReport):boolean;
 function PrintReport(report:TRpReport;Caption:string;progress:boolean;
   allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
@@ -259,22 +260,20 @@ var
  asize:TPoint;
  aregion:HRGN;
 begin
- pagemargins:=GetPageMarginsTWIPS;
+ if devicefonts then
+ begin
+  UpdatePrinterFontList;
+ end;
  if ToPrinter then
  begin
   printer.Title:='Untitled';
   SetOrientation(report.Orientation);
-  // Sets pagesize
-  if report.PageSize>=0 then
-  begin
-   asize:=GetPageSize;
-  end
-  else
-  begin
-   asize:=SetPageSize(report.PageSize);
-  end;
+  // Gets pagesize
+  asize:=GetPageSize;
+  pagemargins:=GetPageMarginsTWIPS;
+  if Length(printer.Title)<1 then
+   printer.Title:=SRpUntitled;
   printer.BeginDoc;
-  SetCurrentPaper(pagesize);
   intdpix:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX); //  printer.XDPI;
   intdpiy:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY);  // printer.YDPI;
  end
@@ -289,15 +288,9 @@ begin
   bitmap.PixelFormat:=pf32bit;
   // Sets Orientation
   SetOrientation(report.Orientation);
-  // Sets pagesize
-  if report.PageSize>=0 then
-  begin
-   asize:=GetPageSize;
-  end
-  else
-  begin
-   asize:=SetPageSize(report.PageSize);
-  end;
+  pagemargins:=GetPageMarginsTWIPS;
+  // Gets pagesize
+  asize:=GetPageSize;
   awidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
   aheight:=Round((asize.y/TWIPS_PER_INCHESS)*dpi);
   // Sets page size and orientation
@@ -342,6 +335,7 @@ begin
  begin
   // Does nothing because the last bitmap can be usefull
  end;
+ SetCurrentPaper(oldpagesize);
 end;
 
 procedure TRpGDIDriver.AbortDocument;
@@ -356,6 +350,7 @@ begin
    bitmap.free;
   bitmap:=nil;
  end;
+ SetCurrentPaper(oldpagesize);
 end;
 
 procedure TRpGDIDriver.NewPage;
@@ -378,7 +373,7 @@ begin
  // Does nothing
 end;
 
-procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;pagemargins:TRect);
+procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;pagemargins:TRect;devicefonts:boolean);
 var
  posx,posy:integer;
  rec,recsrc:TRect;
@@ -443,6 +438,17 @@ begin
     rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);
     rec.Bottom:=posy+round(obj.Height*dpiy/TWIPS_PER_INCHESS);
     atext:=page.GetText(Obj);
+    if obj.FontRotation<>0 then
+    begin
+     // Find rotated font
+     Canvas.Font.Handle:=FindRotatedFont(Canvas.Handle,Canvas.Font,obj.FontRotation)
+    end
+    else
+    begin
+     // Find device font
+     if devicefonts then
+      FindDeviceFont(Canvas.Handle,Canvas.Font,FontSizeToStep(Canvas.Font.Size));
+    end;
     if Not obj.Transparent then
     begin
      // First calculates the text extent
@@ -592,7 +598,7 @@ begin
   dpix:=dpi;
   dpiy:=dpi;
  end;
- PrintObject(Canvas,page,obj,dpix,dpiy,toprinter,pagemargins);
+ PrintObject(Canvas,page,obj,dpix,dpiy,toprinter,pagemargins,devicefonts);
 end;
 
 function TRpGDIDriver.AllowCopies:boolean;
@@ -608,6 +614,7 @@ end;
 function TRpGDIDriver.SetPagesize(PagesizeQt:integer):TPoint;
 begin
  pagesize:=QtPageSizeToGDIPageSize(PagesizeQT);
+ oldpagesize:=GetCurrentPaper;
  SetCurrentPaper(pagesize);
 
  Result:=GetPageSize;
@@ -626,7 +633,7 @@ end;
 
 procedure DoPrintMetafile(metafile:TRpMetafileReport;tittle:string;
  aform:TFRpVCLProgress;allpages:boolean;frompage,topage,copies:integer;
- collate:boolean);
+ collate:boolean;devicefonts:boolean);
 var
  i:integer;
  j:integer;
@@ -653,9 +660,6 @@ begin
    printer.Orientation:=poLandscape;
  end;
  // Sets pagesize
-// if metafile.PageSize>=0 then
-//  Printer.PrintAdapter.PageSize:=TPageSize(metafile.PageSize);
-
  pagecopies:=1;
  reportcopies:=1;
  if copies>1 then
@@ -694,7 +698,7 @@ begin
      apage:=metafile.Pages[i];
      for j:=0 to apage.ObjectCount-1 do
      begin
-      PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,true,pagemargins);
+      PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,true,pagemargins,devicefonts);
       if assigned(aform) then
       begin
        mmlast:=TimeGetTime;
@@ -731,14 +735,14 @@ end;
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
  showprogress,allpages:boolean;frompage,topage,copies:integer;
-  collate:boolean):boolean;
+  collate:boolean;devicefonts:boolean):boolean;
 var
  dia:TFRpVCLProgress;
 begin
  Result:=true;
  if Not ShowProgress then
  begin
-  DoPrintMetafile(metafile,tittle,nil,allpages,frompage,topage,copies,collate);
+  DoPrintMetafile(metafile,tittle,nil,allpages,frompage,topage,copies,collate,devicefonts);
   exit;
  end;
  dia:=TFRpVCLProgress.Create(Application);
@@ -752,6 +756,7 @@ begin
    dia.topage:=topage;
    dia.copies:=copies;
    dia.collate:=collate;
+   dia.devicefonts:=devicefonts;
    Application.OnIdle:=dia.AppIdle;
    dia.ShowModal;
    Result:=Not dia.cancelled;
@@ -777,7 +782,7 @@ begin
  done:=false;
  LTittle.Caption:=tittle;
  Label2.Visible:=true;
- DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate);
+ DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate,devicefonts);
 end;
 
 
@@ -807,6 +812,10 @@ begin
 
  GDIDriver:=TRpGDIDriver.Create;
  aGDIDriver:=GDIDriver;
+ if report.PrinterFonts=rppfontsalways then
+  gdidriver.devicefonts:=true
+ else
+  gdidriver.devicefonts:=false;
  oldprogres:=RepProgress;
  try
   report.OnProgress:=RepProgress;
@@ -848,6 +857,10 @@ begin
  GDIDriver:=TRpGDIDriver.Create;
  GDIDriver.toprinter:=true;
  aGDIDriver:=GDIDriver;
+ if report.PrinterFonts=rppfontsalways then
+  gdidriver.devicefonts:=true
+ else
+  gdidriver.devicefonts:=false;
  oldprogres:=RepProgress;
  try
   report.OnProgress:=RepProgress;
@@ -889,7 +902,12 @@ var
  forcecalculation:boolean;
  dia:TFRpVCLProgress;
  oldonidle:TIdleEvent;
+ devicefonts:boolean;
 begin
+ if report.PrinterFonts=rppfontsalways then
+  devicefonts:=true
+ else
+  devicefonts:=false;
  Result:=true;
  forcecalculation:=false;
  if ((report.copies>1) and (report.CollateCopies)) then
@@ -912,13 +930,17 @@ begin
   begin
    GDIDriver:=TRpGDIDriver.Create;
    aGDIDriver:=GDIDriver;
+   if report.PrinterFonts=rppfontsalways then
+    gdidriver.devicefonts:=true
+   else
+    gdidriver.devicefonts:=false;
    report.PrintAll(GDIDriver);
   end;
  end;
  // A bug in Kylix 2 does not allow printing
  // when using dbexpress
  if forcecalculation then
-  PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate)
+  PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate,devicefonts)
  else
  begin
   if progress then
@@ -948,6 +970,10 @@ begin
    GDIDriver:=TRpGDIDriver.Create;
    aGDIDriver:=GDIDriver;
    GDIDriver.toprinter:=true;
+   if report.PrinterFonts=rppfontsalways then
+    gdidriver.devicefonts:=true
+   else
+    gdidriver.devicefonts:=false;
    report.PrintRange(aGDIDriver,allpages,frompage,topage,copies);
   end;
  end;

@@ -54,6 +54,7 @@ uses
   rpgdidriver in '..\rpgdidriver.pas',
   rpvpreview in '..\rpvpreview.pas',
   rprfvparams in '..\rprfvparams.pas',
+  rpgdifonts in '..\rpgdifonts.pas',
 
   rpreport in '..\rpreport.pas',
   rpsubreport in '..\rpsubreport.pas',

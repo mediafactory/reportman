@@ -1,3 +1,21 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager                                  }
+{                                                       }
+{       rpvgraphutils                                   }
+{       Utilities for Windows GDI printer driver        }
+{       can be used only for windows                    }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
+{                                                       }
+{                                                       }
+{*******************************************************}
+
 unit rpvgraphutils;
 
 interface
@@ -36,6 +54,7 @@ function QtPageSizeToGDIPageSize(qtsize:integer):TGDIPageSize;
 function IsWindowsNT:Boolean;
 function FindIndexPaperName(device,name:string):integer;
 procedure SetCurrentPaper(apapersize:TGDIPageSize);
+function GetCurrentPaper:TGDIPageSize;
 
 var
  osinfo:TOsVersionInfo;
@@ -47,6 +66,7 @@ implementation
 var
  obtainedversion:Boolean;
  FPrinters:TStringList;
+
 
 { Rutina que imprime un bitmap  }
 { Bitmap: el bitmap a imprimir }
@@ -433,6 +453,11 @@ begin
   // Converts to decs of milimeter
   Result.Width:=Round(Result.Width*1000/251);
   Result.Height:=Round(Result.Height*1000/251);
+ end
+ else
+ begin
+  Result.Width:=0;
+  Result.Height:=0;
  end;
 end;
 
@@ -444,7 +469,7 @@ function GetCurrentPaper:TGDIPageSize;
 var
   DeviceMode: THandle;
   PDevMode :  ^TDeviceMode;
-  Device, Driver, Port: array[0..79] of char;
+  Device, Driver, Port: array[0..1023] of char;
 begin
  if printer.printers.count<1 then
  begin
@@ -472,7 +497,7 @@ begin
   Result.papername:=PDevmode.dmFormName;
  end;
  GlobalUnLock(DeviceMode);
- Printer.SetPrinter(Device, Driver, Port, DeviceMode);
+// Printer.SetPrinter(Device, Driver, Port, DeviceMode);
 end;
 
 
@@ -574,11 +599,19 @@ begin
    pforms:=nil;
    if Not EnumForms(fprinterhandle,1,pforms,0,needed,received) then
     if GetLastError<>122 then
+{$IFDEF USEVARIANTS}
+     RaiseLastOSError;
+{$ELSE}
      RaiseLastWin32Error;
+{$ENDIF}
    pforms:=Allocmem(needed);
    try
     if NOt EnumForms(fprinterhandle,1,pforms,needed,needed,received) then
+{$IFDEF USEVARIANTS}
+     RaiseLastOSError;
+{$ELSE}
      RaiseLastWin32Error;
+{$ENDIF}
     for i:=0 to received-1 do
     begin
      p:=Pointer(integer(pforms)+sizeof(Form_info_1)*i);
@@ -609,7 +642,7 @@ var
   needed:DWord;
   indexpaper:integer;
 
-  Device, Driver, Port: array[0..79] of char;
+  Device, Driver, Port: array[0..1023] of char;
   laste:integer;
 begin
  if printer.Printers.count<1 then
@@ -642,7 +675,11 @@ begin
 
     PrinterName := Format('%s', [Device]);
     if not OpenPrinter(PChar(PrinterName), FPrinterHandle, nil) then
+{$IFDEF USEVARIANTS}
+     RaiseLastOSError;
+{$ELSE}
      RaiseLastWin32Error;
+{$ENDIF}
     try
      pforminfo:=allocmem(sizeof(form_info_1));
      try
@@ -650,7 +687,11 @@ begin
       begin
        laste:=GetLasterror;
        if ((laste<>122) AND (Laste<>123) AND (laste<>1902)) then
+{$IFDEF USEVARIANTS}
+        RaiseLastOSError
+{$ELSE}
         RaiseLastWin32Error
+{$ENDIF}
        else
        begin
         if laste<>1902 then
@@ -660,7 +701,11 @@ begin
           freemem(pforminfo);
           pforminfo:=AllocMem(needed);
           if Not GetForm(FPrinterhandle,Pchar(apapername),1,pforminfo,needed,needed) then
-            RaiseLastWin32Error;
+{$IFDEF USEVARIANTS}
+           RaiseLastOSError;
+{$ELSE}
+           RaiseLastWin32Error;
+{$ENDIF}
          if pforminfo^.pname<>nil then
           foundpaper:=true;
          // Si l'ha trobat trobem el seu index
@@ -679,7 +724,11 @@ begin
        pforminfo^.ImageableArea.Right:=pforminfo^.Size.cx;
        pforminfo^.ImageableArea.Bottom:=pforminfo^.size.cy;
        if not AddForm(fprinterhandle,1,pforminfo) then
+{$IFDEF USEVARIANTS}
+        RaiseLastOSError;
+{$ELSE}
         RaiseLastWin32Error;
+{$ENDIF}
        // Updates the form list
        FillFormsList;
       end;

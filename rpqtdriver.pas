@@ -28,7 +28,7 @@ uses
   Libc,
 {$ENDIF}
 {$IFDEF MSWINDOWS}
-  mmsystem,windows,
+  mmsystem,windows,winspool,
 {$ENDIF}
  Classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
  rpmunits,QPrinters,QDialogs,rpgraphutils, QControls,
@@ -174,6 +174,9 @@ begin
   begin
    asize:=SetPageSize(report.PageSize);
   end;
+  if Length(printer.Title)<1 then
+   printer.Title:=SRpUntitled;
+  QPrinter_setFullPage(QPrinterH(Printer.Handle),true);
   printer.BeginDoc;
   intdpix:=printer.XDPI;
   intdpiy:=printer.YDPI;
@@ -442,6 +445,7 @@ begin
  Result:=false;
 end;
 
+
 function TrpQtDriver.GetPageSize:TPoint;
 begin
  Result.x:=Round((Printer.PageWidth/Printer.XDPI)*TWIPS_PER_INCHESS);
@@ -458,11 +462,13 @@ procedure TRpQTDriver.SetOrientation(Orientation:TRpOrientation);
 begin
  if Orientation=rpOrientationPortrait then
  begin
-  Printer.Orientation:=poPortrait;
+  if Printer.Orientation<>poPortrait then
+   Printer.Orientation:=poPortrait;
  end
  else
  if Orientation=rpOrientationLandscape then
-  Printer.Orientation:=poLandsCape;
+  if Printer.Orientation<>poLandsCape then
+   Printer.Orientation:=poLandsCape;
 end;
 
 procedure DoPrintMetafile(metafile:TRpMetafileReport;tittle:string;

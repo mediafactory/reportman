@@ -26,6 +26,7 @@ Source: "license.txt"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\printrep\printrep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\reptotxt\reptotxt.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\repman\utils\txttorep\txttorep.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
+Source: "..\repman\utils\printreptopdf\printreptopdf.exe"; DestDir: "{app}"; CopyMode: alwaysoverwrite
 Source: "..\doc\features.html"; DestDir: "{app}\doc"; CopyMode: alwaysoverwrite
 Source: "..\doc\tutorial\*.*"; DestDir: "{app}\doc\tutorial"; CopyMode: alwaysoverwrite
 Source: "..\repman\repsamples\sample4.rep"; DestDir: "{app}"; CopyMode: alwaysoverwrite

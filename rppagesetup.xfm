@@ -3,7 +3,7 @@ object FPageSetup: TFPageSetup
   Top = 67
   Width = 457
   Height = 411
-  VertScrollBar.Range = 369
+  VertScrollBar.Range = 393
   HorzScrollBar.Range = 421
   ActiveControl = RPageSize
   BorderStyle = fbsDialog
@@ -26,7 +26,7 @@ object FPageSetup: TFPageSetup
   end
   object BOK: TButton
     Left = 8
-    Top = 336
+    Top = 360
     Width = 97
     Height = 33
     Caption = 'OK'
@@ -35,7 +35,7 @@ object FPageSetup: TFPageSetup
   end
   object BCancel: TButton
     Left = 112
-    Top = 336
+    Top = 360
     Width = 97
     Height = 32
     Caption = 'Cancel'
@@ -120,7 +120,7 @@ object FPageSetup: TFPageSetup
     Caption = 'Report language'
   end
   object ComboLanguage: TComboBox
-    Left = 112
+    Left = 184
     Top = 304
     Width = 137
     Height = 21
@@ -250,8 +250,28 @@ object FPageSetup: TFPageSetup
     Caption = 'Two pass report'
     TabOrder = 13
   end
+  object Label6: TLabel
+    Left = 12
+    Top = 336
+    Width = 158
+    Height = 13
+    Caption = 'Printer Fonts (Windows GDI Only)'
+  end
+  object ComboPrinterFonts: TComboBox
+    Left = 184
+    Top = 332
+    Width = 137
+    Height = 21
+    Style = csDropDownList
+    ItemHeight = 15
+    Items.Strings = (
+      'Default'
+      'Always use printer fonts'
+      'Never use printer fonts')
+    TabOrder = 15
+  end
   object ColorDialog1: TColorDialog
-    Left = 356
-    Top = 276
+    Left = 360
+    Top = 256
   end
 end

@@ -5,6 +5,7 @@ package rppack_del5;
 {$R 'rpalias.dcr'}
 {$R 'rplastsav.dcr'}
 {$R 'rpvclreport.dcr'}
+{$R 'rppdfreport.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -79,6 +80,10 @@ contains
   rprfvparams in 'rprfvparams.pas' {FRpRunTimeParams},
   rppdffile in 'rppdffile.pas',
   rppdfdriver in 'rppdfdriver.pas',
-  rpgdidriver in 'rpgdidriver.pas' {FRpQtProgress};
+  rpgdidriver in 'rpgdidriver.pas' {FRpQtProgress},
+  rpvgraphutils in 'rpvgraphutils.pas',
+  rpgdifonts in 'rpgdifonts.pas',
+  rppdfreport in 'rppdfreport.pas',
+  rpcompobase in 'rpcompobase.pas';
 
 end.

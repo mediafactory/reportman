@@ -137,6 +137,7 @@ type
    FAliasList:TRpAlias;
    printingonepass:boolean;
    freespace:integer;
+   FPrinterFonts:TRpPrinterFontsOption;
 {$IFDEF MSWINDOWS}
    mmfirst,mmlast:DWORD;
 {$ENDIF}
@@ -245,6 +246,8 @@ type
    property Copies:integer read FCopies write FCopies default 1;
    property CollateCopies:boolean read FCollateCopies write FCollateCopies default false;
    property TwoPass:boolean read FTwoPass write FTwoPass default false;
+   property PrinterFonts:TRpPrinterFontsOption read FPrinterFonts
+    write FPrinterFonts default rppfontsdefault;
  end;
 
 implementation
@@ -326,7 +329,8 @@ begin
  FMetafile:=TRpMetafileReport.Create(nil);
  FDataAlias:=TRpAlias.Create(nil);
  FTotalPagesList:=TList.Create;
-
+ // Other
+ FPrinterFonts:=rppfontsdefault;
 end;
 
 procedure TRpReport.SetGridWidth(Value:TRpTwips);

@@ -58,6 +58,8 @@ type
     ECopies: TEdit;
     CheckCollate: TCheckBox;
     CheckTwoPass: TCheckBox;
+    Label6: TLabel;
+    ComboPrinterFonts: TComboBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -232,6 +234,8 @@ begin
  report.PageBackColor:=SColor.Brush.Color;
  // Language
  report.Language:=ComboLanguage.ItemIndex;
+ // Other
+ report.PrinterFonts:=TRpPrinterFontsOption(ComboPrinterFonts.ItemIndex);
 end;
 
 procedure TFPageSetup.ReadOptions;
@@ -276,6 +280,7 @@ begin
  SColor.Brush.Color:=TColor(report.PageBackColor);
  // Language
  ComboLanguage.ItemIndex:=0;
+ ComboPrinterFonts.ItemIndex:=integer(report.PrinterFonts);
  if report.Language<ComboLanguage.Items.Count then
   ComboLanguage.ItemIndex:=report.Language;
 end;

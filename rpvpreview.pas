@@ -32,9 +32,9 @@ uses
 {$ENDIF}
   Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls,rpreport,rpmetafile, ComCtrls,
-  rpgdidriver, ExtCtrls,Menus,
+  rpgdidriver, ExtCtrls,Menus,rptypes,
   ActnList, ImgList,Printers,rpconsts, ToolWin;
-                       
+
 type
   TFRpVPreview = class(TForm)
     BToolBar: TToolBar;
@@ -208,6 +208,10 @@ begin
   begin
    report.BeginPrint(gdidriver);
   end;
+  if report.PrinterFonts=rppfontsalways then
+   gdidriver.devicefonts:=true
+  else
+   gdidriver.devicefonts:=false;
   pagenum:=1;
   PrintPage;
   printed:=true;

@@ -62,6 +62,7 @@ type
  TRpShapeType=(rpsRectangle, rpsSquare, rpsRoundRect, rpsRoundSquare,
   rpsEllipse, rpsCircle,rpsHorzLine,rpsVertLine);
 
+ TRpPrinterFontsOption=(rppfontsdefault,rppfontsalways,rppfontsnever); 
  TRpPageSize=(rpPageSizeDefault,rpPageSizeCustom);
 
  TRpColor=integer;

@@ -1,3 +1,21 @@
+{*******************************************************}
+{                                                       }
+{       Report Manager                                  }
+{                                                       }
+{       rpchart                                         }
+{       TRpChar printable component                     }
+{       Is a small chart drawing component              }
+{                                                       }
+{       Copyright (c) 1994-2002 Toni Martir             }
+{       toni@pala.com                                   }
+{                                                       }
+{       This file is under the MPL license              }
+{       If you enhace this file you must provide        }
+{       source code                                     }
+{                                                       }
+{                                                       }
+{*******************************************************}
+
 unit rpchart;
 
 interface

@@ -221,7 +221,7 @@ object FMainf: TFMainf
     Top = 30
     Width = 696
     Height = 374
-    HorzScrollBar.Range = 189
+    HorzScrollBar.Range = 205
     Align = alClient
     BorderStyle = bsNone
     TabOrder = 1

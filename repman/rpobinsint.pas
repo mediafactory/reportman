@@ -1026,7 +1026,7 @@ begin
  // Font Rotation in degrees
  lnames.Add(SRpSFontRotation);
  ltypes.Add(SrpSString);
- lvalues.Add(FormatCurr('#####0.0',TRpGenTextComponent(printitem).FontRotation));
+ lvalues.Add(FormatCurr('#####0.0',TRpGenTextComponent(printitem).FontRotation/10));
 end;
 
 procedure TRpGenTextInterface.SetProperty(pname:string;value:string);
@@ -1169,7 +1169,7 @@ begin
  end;
  if pname=SRpSFontRotation then
  begin
-  Result:=FormatCurr('#####0.0',TRpGenTextComponent(printitem).FontRotation);
+  Result:=FormatCurr('#####0.0',TRpGenTextComponent(printitem).FontRotation/10);
   exit;
  end;
 
