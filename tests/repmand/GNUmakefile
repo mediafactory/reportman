@@ -22,6 +22,7 @@ install:
 	cp ../../repman/utils/printrep/printrep .
 	cp ../../repman/utils/reptotxt/reptotxt .
 	cp ../../repman/utils/txttorep/txttorep .
+	cp ../../server/app/reportserverapp .
 	cp ../../repman/utils/printreptopdf/printreptopdf .
 	cp ../../repman/reportmanres.es .
 	cp ../../repman/reportmanres.en .
@@ -55,3 +56,4 @@ clean:
 	-rm -f reportmanres*
 	-rm -f LICENSE.TXT
 	-rm -f dbxres.en.*
+	-rm -f reportserverapp

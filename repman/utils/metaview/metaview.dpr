@@ -4,8 +4,8 @@ program metaview;
 
 uses
   QForms,
-{$IFDEF MSWINDOWS}
   fmetaview in 'fmetaview.pas' {FMeta},
+{$IFDEF MSWINDOWS}
   rpmetafile in '..\..\..\rpmetafile.pas',
   rpprintdia in '..\..\..\rpprintdia.pas' {FRpPrintDialog},
   rpqtdriver in '..\..\..\rpqtdriver.pas',
@@ -20,9 +20,9 @@ uses
   rpprintdia in '../../../rpprintdia.pas' {FRpPrintDialog},
   rppdfdriver in '../../../rppdfdriver.pas',
   rpqtdriver in '../../../rpqtdriver.pas',
-  rpmdconsts in '../../../rpmdconsts.pas';
+  rpmdconsts in '../../../rpmdconsts.pas',
   rpmdrepclient in '../../../rpmdrepclient.pas' {modclient: TDataModule},
-  rpmdprotocol in '../../../rpmdprotocol.pas';
+  rpmdprotocol in '../../../rpmdprotocol.pas',
   rpmdclitree in '../../../rpmdclitree.pas' {FRpCliTree: TFrame};
 {$ENDIF}
 

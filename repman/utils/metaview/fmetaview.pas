@@ -26,13 +26,13 @@ interface
 uses
   SysUtils,Inifiles,
 {$IFDEF MSWINDOWS}
-  Windows,Dialogs,
+  Windows,Dialogs,rpgdidriver,
 {$ENDIF}
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,rpmdclitree,
   QActnList, QImgList,QPrinters,Qt,rpmdconsts,rptypes, QMenus,
   rpmdfabout,QTypes,QStyle,rpmdshfolder,rpmdprintconfig,
-  rpmdfhelpform,rpgdidriver;
+  rpmdfhelpform;
 
 type
   TFMeta = class(TForm)

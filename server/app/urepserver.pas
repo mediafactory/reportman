@@ -110,7 +110,12 @@ begin
  CurrentReport.DatabaseInfo.BDESession.AutoSessionName:=True;
  CurrentReport.DatabaseInfo.BDESession.Active:=True;
 {$ENDIF}
+{$IFDEF MSWINDOWS}
  CurrentReport.LoadFromFile('c:\prog\toni\cvsroot\reportman\reportman\repman\repsamples\sample6.rep');
+{$ENDIF}
+{$IFDEF LINUX}
+ CurrentReport.LoadFromFile('/home/toni/cvsroot/reportman/repman/repsamples/sample6.rep');
+{$ENDIF}
 end;
 
 destructor TRpClient.Destroy;
@@ -143,9 +148,11 @@ begin
  try
   // Look for any other server running in this server
   // Check if the server is running
+{$IFDEF MSWINDOWS}
   wresult:=amod.FInitEvent.WaitFor(100);
   if wresult<>wrSignaled then
    Raise Exception.Create(SRpServerAlreadyRunning);
+{$ENDIF}
   amod.InitConfig;
   amod.RepServer.Active:=True;
   amod.FOnLog:=OnLog;

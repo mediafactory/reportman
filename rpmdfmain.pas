@@ -28,7 +28,7 @@ uses
   Libc,
 {$ENDIF}
 {$IFDEF MSWINDOWS}
-  Dialogs,rpgdidriver,rpvpreview,Forms,
+  Dialogs,rpgdidriver,rpvpreview,Forms,rprfvparams,
 {$ENDIF}
 {$IFDEF HORZPAPERBUG}
  rpmetafile,
@@ -37,7 +37,7 @@ uses
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
   rpmdconsts,rptypes, QExtCtrls,rpmdfstruc, rplastsav,rpsubreport,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
-  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver,rprfvparams,
+  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver,
   DB,rpmdfhelpform,rpmunits,QConsts, QDialogs,rpgraphutils;
 const
   // File name in menu width

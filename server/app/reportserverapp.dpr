@@ -25,8 +25,12 @@ uses
   QForms,
   fmainf in 'fmainf.pas' {FSerMain},
   urepserver in 'urepserver.pas' {modserver: TDataModule},
-  rpmdrepclient in '..\..\rpmdrepclient.pas' {modclient: TDataModule},
+{$IFDEF MSWINDOWS}
   rpmdprotocol in '..\..\rpmdprotocol.pas';
+{$ENDIF}
+{$IFDEF LINUX}
+  rpmdprotocol in '../../rpmdprotocol.pas';
+{$ENDIF}
 
 {$R *.res}
 

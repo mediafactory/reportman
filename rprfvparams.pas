@@ -23,13 +23,14 @@ interface
 
 {$I rpconf.inc}
 
-uses SysUtils, Classes, Graphics, Forms,
+uses SysUtils, Classes,
+  Graphics, Forms,
   Buttons, ExtCtrls, Controls, StdCtrls,
   rpmdconsts,rptypes,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
-  rpreport,rpparams;
+  rpreport,rpparams, QControls, QForms, QStdCtrls, QExtCtrls;
 
 const
   CONS_LEFTGAP=3;

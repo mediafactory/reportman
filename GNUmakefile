@@ -1,4 +1,4 @@
-kylix_bin=/opt/kylix2/bin
+kylix_bin=/opt/kylix3/bin
 compile=$(kylix_bin)/dcc
 
 
@@ -40,7 +40,12 @@ clean:
 	-rm -Rf repman/utils/printrep/*.dcu
 	-rm -Rf repman/utils/printreptopdf/*.dcu
 	-rm -Rf repman/meta.rpmf
-
+	-rm -Rf server/app/*.~*
+	-rm -Rf server/app/*.dcu
+	-rm -Rf server/app/*.dpu
+	-rm -Rf server/app/reportserverapp
+	-rm -Rf server/app/reportservercon
+	
 
 	-rm tests/eval/project1
 	-rm tests/metafiles/metafile
@@ -87,3 +92,4 @@ real_clean: clean
 packages:
 	$(compile) rppack.dpk
 	$(compile) rppackv.dpk
+	$(compile) rppackdesign.dpk

@@ -1,6 +1,6 @@
 object FSerMain: TFSerMain
-  Left = 32
-  Top = 62
+  Left = 36
+  Top = 82
   Width = 595
   Height = 319
   VertScrollBar.Range = 117
@@ -11,8 +11,8 @@ object FSerMain: TFSerMain
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
-  TextHeight = 13
-  TextWidth = 6
+  TextHeight = 15
+  TextWidth = 7
   object LMEssages: TMemo
     Left = 0
     Top = 117
@@ -53,39 +53,39 @@ object FSerMain: TFSerMain
     object LLog: TLabel
       Left = 8
       Top = 72
-      Width = 34
-      Height = 13
+      Width = 41
+      Height = 15
       Caption = 'Log file'
     end
     object LHost: TLabel
       Left = 8
       Top = 48
-      Width = 22
-      Height = 13
+      Width = 25
+      Height = 15
       Caption = 'Host'
     end
     object LHostName: TLabel
       Left = 132
       Top = 48
-      Width = 15
-      Height = 13
+      Width = 20
+      Height = 15
       Caption = '     '
     end
     object ELogFIle: TEdit
-      Left = 132
+      Left = 176
       Top = 68
-      Width = 456
-      Height = 21
+      Width = 412
+      Height = 23
       Anchors = [akLeft, akTop, akRight]
       Color = clBackground
       ReadOnly = True
       TabOrder = 5
     end
     object EConfigFile: TEdit
-      Left = 132
+      Left = 176
       Top = 92
-      Width = 456
-      Height = 21
+      Width = 412
+      Height = 23
       Anchors = [akLeft, akTop, akRight]
       Color = clBackground
       ReadOnly = True
@@ -94,8 +94,8 @@ object FSerMain: TFSerMain
     object LConfigFile: TLabel
       Left = 8
       Top = 96
-      Width = 78
-      Height = 13
+      Width = 94
+      Height = 15
       Caption = 'Configuration file'
     end
   end
