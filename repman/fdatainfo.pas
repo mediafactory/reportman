@@ -534,8 +534,10 @@ begin
   // BDE
   1:
    begin
+{$IFDEF MSWINDOWS}
     BConfig.Visible:=false;
     Session.GetAliasNames(ComboAvailable.Items);
+{$ENDIF}
    end;
  end;
  if ComboAvailable.Items.count>0 then

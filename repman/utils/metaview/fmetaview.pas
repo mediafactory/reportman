@@ -39,6 +39,8 @@ type
     BCancel: TButton;
     ToolButton9: TToolButton;
     PBar: TProgressBar;
+    AExit: TAction;
+    ToolButton10: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
@@ -53,6 +55,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure BCancelClick(Sender: TObject);
+    procedure AExitExecute(Sender: TObject);
   private
     { Private declarations }
     cancelled:boolean;
@@ -291,5 +294,10 @@ begin
  PBar.Visible:=true;
 end;
 
+
+procedure TFMeta.AExitExecute(Sender: TObject);
+begin
+ Close;
+end;
 
 end.

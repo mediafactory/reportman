@@ -251,7 +251,9 @@ end;
 destructor TRpDatabaseInfoItem.Destroy;
 begin
  FSQLInternalConnection.free;
+{$IFDEF MSWINDOWS}
  FBDEDatabase.free;
+{$ENDIF}
  inherited Destroy;
 end;
 
@@ -503,7 +505,9 @@ begin
       end;
      rpdatabde:
       begin
+{$IFDEF MSWINDOWS}
        FSQLInternalQuery:=TQuery.Create(nil);
+{$ENDIF}
       end;
     end;
    end
@@ -521,12 +525,14 @@ begin
       end;
      rpdatabde:
       begin
+{$IFDEF MSWINDOWS}
        if Not (FSQLInternalQuery is TQuery) then
        begin
         FSQLInternalQuery.Free;
         FSQLInternalQuery:=nil;
        end;
        FSQLInternalQuery:=TQuery.Create(nil);
+{$ENDIF}
       end;
     end;
    end;
@@ -543,8 +549,10 @@ begin
      end;
     rpdatabde:
      begin
+{$IFDEF MSWINDOWS}
       TQuery(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEAlias;
       TQuery(FSQLInternalQuery).SQL.Text:=SQL;
+{$ENDIF}
      end;
    end;
    // Use the datasource
@@ -559,9 +567,11 @@ begin
       end;
      rpdatabde:
       begin
+{$IFDEF MSWINDOWS}
        if Not Assigned(TQuery(FSQLInternalQuery).DataSource) then
         TQuery(FSQLInternalQuery).DataSource:=TDataSource.Create(nil);
        TQuery(FSQLInternalQuery).DataSource.DataSet:=datainfosource.Dataset;
+{$ENDIF}
       end;
     end;
    end;
@@ -581,9 +591,11 @@ begin
        end;
       rpdatabde:
        begin
+{$IFDEF MSWINDOWS}
         TQuery(FSQLInternalQuery).ParamByName(param.Name).DataType:=
          ParamTypeToDataType(param.ParamType);
         TQuery(FSQLInternalQuery).ParamByName(param.Name).Value:=param.Value;
+{$ENDIF}
        end;
      end;
     end;
