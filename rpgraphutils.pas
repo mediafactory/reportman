@@ -80,7 +80,7 @@ function RpMessageBox(const Text: WideString; const Caption: WideString = '';
   Default: TMessageButton = smbOK; Escape: TMessageButton = smbCancel): TMessageButton;
 function RpInputBox(const ACaption, APrompt, ADefault:WideString ):WideString;
 procedure FillTreeView(ATree:TTreeView;alist:TStringList);
-function GetFullFileName(ANode:TTreeNode):String;
+function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
 
 implementation
 
@@ -735,15 +735,11 @@ begin
  end;
 end;
 
-function IntGetFullFileName(ANode:TTreeNode;temp:string):String;
-begin
-// Result:=InGetFullFileName(ANode.Parent,ANode.Text);
-end;
 
-function GetFullFileName(ANode:TTreeNode):String;
+function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
 begin
  if Assigned(ANode.Parent) then
-  Result:=GetFullFileName(ANode.Parent)+C_DIRSEPARATOR+ANode.Text
+  Result:=GetFullFileName(ANode.Parent,dirseparator)+dirseparator+ANode.Text
  else
   Result:=ANode.Text;
 end;

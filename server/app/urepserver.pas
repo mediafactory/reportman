@@ -445,12 +445,19 @@ begin
         ActClient.Auth:=True;
         // Admin can administer aliases-users
         ActClient.IsAdmin:=UpperCase(username)='ADMIN';
-        // Sends the authorization message with a list of the aliases
-        CB:=GenerateBlock(repauth,LAliases);
+        // Sends the authorization message with the dirseparator
+        alist:=TStringList.Create;
         try
-         SendBlock(AThread.Connection,CB);
+         alist.Assign(LAliases);
+         alist.insert(0,C_DIRSEPARATOR);
+         CB:=GenerateBlock(repauth,alist);
+         try
+          SendBlock(AThread.Connection,CB);
+         finally
+          FreeBlock(CB);
+         end;
         finally
-         FreeBlock(CB);
+         alist.free;
         end;
        end
        else

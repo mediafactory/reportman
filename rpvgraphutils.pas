@@ -64,7 +64,7 @@ function pixelstotwips(apixels:integer):integer;
 function AlignToGrid(Value:integer;scale:integer):integer;
 function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
 procedure FillTreeView(ATree:TTreeView;alist:TStringList);
-function GetFullFileName(ANode:TTreeNode):String;
+function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
 
 var
  formslist:TStringlist;
@@ -1134,10 +1134,10 @@ begin
 end;
 
 
-function GetFullFileName(ANode:TTreeNode):String;
+function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
 begin
  if Assigned(ANode.Parent) then
-  Result:=GetFullFileName(ANode.Parent)+C_DIRSEPARATOR+ANode.Text
+  Result:=GetFullFileName(ANode.Parent)+dirseparator+ANode.Text
  else
   Result:=ANode.Text;
 end;

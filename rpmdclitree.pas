@@ -188,7 +188,7 @@ begin
     begin
      amod.asynchronous:=asynchrohous;
      // Execute with alias and report filename
-     afilename:=GetFullFileName(LTree.Selected)+'.rep';
+     afilename:=GetFullFileName(LTree.Selected,amod.dirseparator)+'.rep';
      amod.Execute(ComboAlias.Text,afilename);
     end;
    end;
@@ -288,7 +288,7 @@ begin
     begin
      amod.asynchronous:=asynchrohous;
      // Execute with alias and report filename
-     afilename:=GetFullFileName(LTree.Selected)+'.rep';
+     afilename:=GetFullFileName(LTree.Selected,amod.dirseparator)+'.rep';
      amod.OpenReport(ComboAlias.Text,afilename);
     end;
    end;

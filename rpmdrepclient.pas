@@ -56,6 +56,7 @@ type
   public
     { Public declarations }
     asynchronous:boolean;
+    dirseparator:char;
     procedure GetUsers;
     procedure GetParams;
     procedure ModifyParams(compo:TRpParamComp);
@@ -141,12 +142,20 @@ begin
   repauth:
    begin
     amod.FAuthorized:=true;
-    amod.FAliases.LoadFromStream(data);
-    if Assigned(amod.OnAuthorization) then
-    begin
-     amod.OnAuthorization(amod);
+    alist:=TStringList.Create;
+    try
+     if Assigned(amod.FOnAuthorization) then
+      amod.FOnAuthorization(amod);
+     alist.LoadFromStream(data);
+     if alist.count>0 then
+      if Length(alist.strings[0])>0 then
+       amod.dirseparator:=alist.strings[0][1];
+     alist.Delete(0);
+     amod.FAliases.Assign(alist);
      if assigned(amod.FOnGetAliases) then
       amod.FOnGetAliases(amod.FAliases);
+    finally
+     alist.free;
     end;
    end;
   repgetaliases:
@@ -288,6 +297,7 @@ end;
 
 procedure Tmodclient.DataModuleCreate(Sender: TObject);
 begin
+ dirseparator:=C_DIRSEPARATOR;
  FEndReport:=TEvent.Create(nil,false,false,'');
  FStream:=TMemoryStream.Create;
  FAliases:=TStringList.Create;
