@@ -119,6 +119,7 @@ begin
  BCancel.Caption:=SRpCancel;
  LLibrary.Caption:=SRpLibSelection;
  Caption:=TranslateStr(1123,Caption);
+ SetInitialBounds;
 end;
 
 procedure TFRpOpenLib.ComboLibraryClick(Sender: TObject);

@@ -319,6 +319,7 @@ begin
  BADOConf.Caption:=TranslateStr(143,BADOConf.Caption);
  Caption:=TranslateStr(1122,Caption);
 
+ SetInitialBounds;
 end;
 
 

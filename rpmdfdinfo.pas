@@ -103,6 +103,8 @@ begin
  Caption:=TranslateStr(1097,Caption);
  TabConnections.Caption:=TranslateStr(142,TabConnections.Caption);
  TabDatasets.Caption:=TranslateStr(148,TabDatasets.Caption);
+
+ SetInitialBounds;
 end;
 
 

@@ -38,10 +38,10 @@ uses
   rpmdfdesignvcl,rpmdfaboutvcl,rppagesetupvcl,
   rpmdobjinspvcl, rplastsav, ToolWin,rpmdfdinfovcl,rpmdfsectionintvcl,
   rpmdfgridvcl,rpmdfstrucvcl,rpmdobinsintvcl,rpfparamsvcl,
-  rpmdconsts,rptypes, rpsubreport,
+  rpmdconsts,rptypes, rpsubreport,rplabelitem,
   IniFiles,rpdatainfo,
 {$IFDEF USEINDY}
-  rpfmainmetaviewvcl, 
+  rpfmainmetaviewvcl,
 {$ENDIF}
 {$IFDEF USEVARIANTS}
   Variants,
@@ -1020,6 +1020,7 @@ var
  i:integer;
  alist:TList;
  pitem:TRpCommonPosComponent;
+ ident:String;
 begin
  if fobjinsp.SelectedItems.Count<1 then
   exit;
@@ -1042,6 +1043,15 @@ begin
    for i:=0 to compo.ComponentCount-1 do
    begin
     alist.Add(compo.Components[i]);
+    if compo.Components[i] is TRpExpression then
+    begin
+     ident:=TRpExpression(compo.Components[i]).Identifier;
+     if Length(ident)>0 then
+     begin
+      if report.Identifiers.IndexOf(ident)>=0 then
+       TRpExpression(compo.Components[i]).Identifier:='';
+     end;
+    end;
    end;
    for i:=0 to alist.Count-1 do
    begin

@@ -181,6 +181,8 @@ begin
  ADelete.Hint:=TranslateStr(1094,ADelete.Hint);
  TabData.Caption:=TranslateStr(1094,TabData.Caption);
  TabSource.Caption:=TranslateStr(1095,TabSource.Caption);
+
+ SetInitialBounds;
 end;
 
 

@@ -1,15 +1,15 @@
 object FRpConnection: TFRpConnection
   Left = 0
   Top = 0
-  Width = 695
-  Height = 437
+  Width = 506
+  Height = 375
   VertScrollBar.Range = 30
   Align = alClient
   TabOrder = 0
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 695
+    Width = 506
     Height = 30
     AutoSize = True
     ButtonHeight = 26
@@ -56,15 +56,15 @@ object FRpConnection: TFRpConnection
   object PParent: TPanel
     Left = 0
     Top = 30
-    Width = 695
-    Height = 407
+    Width = 506
+    Height = 345
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PTop: TPanel
       Left = 0
       Top = 0
-      Width = 695
+      Width = 506
       Height = 105
       Align = alTop
       BevelOuter = bvNone
@@ -81,7 +81,7 @@ object FRpConnection: TFRpConnection
       object PDriver: TPanel
         Left = 169
         Top = 0
-        Width = 526
+        Width = 337
         Height = 105
         Align = alClient
         BevelOuter = bvNone
@@ -89,7 +89,7 @@ object FRpConnection: TFRpConnection
         object MHelp: TMemo
           Left = 0
           Top = 33
-          Width = 526
+          Width = 337
           Height = 72
           Align = alClient
           Color = clInfoBk
@@ -99,7 +99,7 @@ object FRpConnection: TFRpConnection
         object Panel1: TPanel
           Left = 0
           Top = 0
-          Width = 526
+          Width = 337
           Height = 33
           Align = alTop
           BevelOuter = bvNone
@@ -119,16 +119,16 @@ object FRpConnection: TFRpConnection
     object PanelProps: TPanel
       Left = 0
       Top = 105
-      Width = 695
-      Height = 302
+      Width = 506
+      Height = 240
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
       object GAvailable: TGroupBox
         Left = 0
         Top = 0
-        Width = 695
-        Height = 302
+        Width = 506
+        Height = 240
         Align = alClient
         Caption = 'Available connections'
         TabOrder = 0
@@ -136,7 +136,7 @@ object FRpConnection: TFRpConnection
           Left = 2
           Top = 13
           Width = 169
-          Height = 287
+          Height = 225
           Align = alLeft
           TabOrder = 0
           OnClick = LConnectionsClick
@@ -144,22 +144,22 @@ object FRpConnection: TFRpConnection
         object PConProps: TPanel
           Left = 171
           Top = 13
-          Width = 522
-          Height = 287
+          Width = 333
+          Height = 225
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
           object LConnectionString: TLabel
             Left = 4
-            Top = 94
+            Top = 110
             Width = 84
             Height = 13
             Caption = 'Connection String'
             Visible = False
           end
           object LAvailable: TLabel
-            Left = 7
-            Top = 149
+            Left = 11
+            Top = 173
             Width = 43
             Height = 13
             Caption = 'Available'
@@ -167,14 +167,14 @@ object FRpConnection: TFRpConnection
           end
           object LDriver: TLabel
             Left = 7
-            Top = 3
+            Top = 7
             Width = 75
             Height = 13
             Caption = 'Database driver'
           end
           object CheckLoginPrompt: TCheckBox
             Left = 5
-            Top = 27
+            Top = 31
             Width = 184
             Height = 17
             Caption = 'Login prompt'
@@ -184,7 +184,7 @@ object FRpConnection: TFRpConnection
           end
           object CheckLoadParams: TCheckBox
             Left = 5
-            Top = 49
+            Top = 57
             Width = 192
             Height = 17
             Caption = 'Load params'
@@ -194,7 +194,7 @@ object FRpConnection: TFRpConnection
           end
           object CheckLoadDriverParams: TCheckBox
             Left = 5
-            Top = 69
+            Top = 81
             Width = 212
             Height = 19
             Caption = 'Load driver params'
@@ -204,26 +204,28 @@ object FRpConnection: TFRpConnection
           end
           object EConnectionString: TEdit
             Left = 168
-            Top = 90
-            Width = 333
+            Top = 106
+            Width = 156
             Height = 21
+            Anchors = [akLeft, akTop, akRight]
             TabOrder = 6
             Visible = False
             OnChange = EConnectionStringChange
           end
           object ComboAvailable: TComboBox
-            Left = 136
-            Top = 145
-            Width = 365
+            Left = 140
+            Top = 169
+            Width = 188
             Height = 21
             Style = csDropDownList
+            Anchors = [akLeft, akTop, akRight]
             ItemHeight = 15
             TabOrder = 10
             Visible = False
           end
           object BBuild: TButton
-            Left = 124
-            Top = 120
+            Left = 128
+            Top = 136
             Width = 117
             Height = 25
             Caption = 'Build...'
@@ -233,17 +235,18 @@ object FRpConnection: TFRpConnection
           end
           object ComboDriver: TComboBox
             Left = 168
-            Top = -1
-            Width = 333
+            Top = 3
+            Width = 156
             Height = 21
             Style = csDropDownList
+            Anchors = [akLeft, akTop, akRight]
             ItemHeight = 15
             TabOrder = 1
             OnClick = ComboDriverClick
           end
           object BTest: TButton
             Left = 4
-            Top = 120
+            Top = 136
             Width = 117
             Height = 25
             Caption = 'Connect'
@@ -495,12 +498,12 @@ object FRpConnection: TFRpConnection
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF00000000000000000003FFFFFF0000007E03FFFFFF
-      00000CFF83FFFFFF00010FFFC3FFFFFF04000FFFE3FFFFFF0E020FC1F3FFFFFF
-      0E040F80F3FFFFFF070C0FC0F3FFFFFF03980FE003FFFFFF01F0000003FFFFFF
-      00E00001FBFFFFFF01F00F03FBFFFFFF03900F01FBFFFFFF0F0C0783FBFFFFFF
-      1E0607FFFBFFFFFF180303FFFBFFFFFF000001FF93FFFFFF0000007E03FFFFFF
-      0000000003FFFFFF000000000000007F000000000000007F01C000080000007F
+      0200000002000000FFFFFF00000000000000000003EFFDFF0000007E01B5B7FF
+      00000CFF83FFFEFF00010FFFC1EF6FFF04000FFFE37DFDFF0E020FC1F3F7D7FF
+      0E040F80F15F7F7F070C0FC0F3FDEDFF03980FE003F7FFFF01F0000002BF5DFF
+      00E00001FBEDF7FF01F00F03FB7FDFFF03900F01FBEDFDFF0F0C0783FAFFB77F
+      1E0607FFFBD6FFFF180303FFF97FDDFF000001FF93F6F7FF0000007E037FBEFF
+      0000000003F6EDFF000000000000007F000000000000007F01C000080000007F
       01C0000800FFF07F01C0001C00FFF07F01C0001C0080107F01C0003E00B6D07F
       01C0003E0080107F0FF8007F02B6F87F0FF8007F0080387F07F000FF80FFF87F
       07F000FF80B7FF7F03E0001C00FFFF7F03E0001C0001FF7F01C0001C0000387F

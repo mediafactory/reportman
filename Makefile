@@ -213,7 +213,9 @@ clean:  clean_noexe
         -del /s repman\*.bin
         -del /s server\*.bin
         -del *.dll
+        -del /s server\*.dll
         -del /s *.ocx
+        -del /s *.rsp
 
 
 

@@ -35,7 +35,7 @@ uses
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,QExtCtrls,
   QClipbrd,QPrinters,QConsts, QDialogs,rpqtdriver,rpmdfhelpform,
   rpreport,rpmdfabout,rppagesetup,rpmdshfolder,rpmdfdinfo,
-  rpmdfgrid,rppreview,rpprintdia, rplastsav, rpalias,
+  rpmdfgrid,rppreview,rpprintdia, rplastsav, rpalias,rplabelitem,
   rpmdconsts,rptypes, rpmdfstruc, rpsubreport,rpeditconn,rpmdfopenlib,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
   rpsection,rpprintitem,rprfparams,rpfmainmetaview,rpmdsysinfoqt,
@@ -1145,6 +1145,7 @@ var
  i:integer;
  alist:TList;
  pitem:TRpCommonPosComponent;
+ ident:String;
 begin
  if fobjinsp.SelectedItems.Count<1 then
   exit;
@@ -1167,6 +1168,15 @@ begin
    for i:=0 to compo.ComponentCount-1 do
    begin
     alist.Add(compo.Components[i]);
+    if compo.Components[i] is TRpExpression then
+    begin
+     ident:=TRpExpression(compo.Components[i]).Identifier;
+     if Length(ident)>0 then
+     begin
+      if report.Identifiers.IndexOf(ident)>=0 then
+       TRpExpression(compo.Components[i]).Identifier:='';
+     end;
+    end;
    end;
    for i:=0 to alist.Count-1 do
    begin
