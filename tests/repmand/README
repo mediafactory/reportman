@@ -34,8 +34,12 @@ What's new:
 - Multiselect in the designer
 - Alignment palette in the designer
 - Full PDF implementation
+- Alignment for constrols (bottom/right)
+- Autoexpansion and autocontraction of sections
+- Autosize for bitmaps and texts (multiline)
+- BDE TTable access (optimized access to DBF using indexes)
+- New ActiveX methods and properties
 - Few bugfixes
-
 
 Linux version:
 

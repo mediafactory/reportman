@@ -3,7 +3,7 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 0.99c beta
+AppVerName=Report Manager 1.0 RC1
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -39,6 +39,8 @@ Source: "..\drivers\win32\dbexpora.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesn
 Source: "..\drivers\win32\dbexpdb2.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 Source: "..\drivers\win32\dbxoodbc.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
 Source: "C:\winnt\system32\qtintf.dll"; DestDir: "{sys}"; CopyMode: onlyifdoesntexist; Flags: uninsneveruninstall
+Source: "..\doc\doc\*.*"; DestDir: "{app}\doc"; CopyMode: alwaysoverwrite
+Source: "..\doc\doc\images\*.*"; DestDir: "{app}\doc\images"; CopyMode: alwaysoverwrite
 
 [Icons]
 Name: "{group}\Report Manager Designer"; Filename: "{app}\repmand.exe"; WorkingDir: "{app}"

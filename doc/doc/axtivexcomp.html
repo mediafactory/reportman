@@ -20,6 +20,30 @@
 <p></p>
 <p> Usually you use Filename, Preview property and Visible properties at designtime 
   and Execute method at runtime.</p>
-<p>&nbsp;</p>
+<p>Here is a list of properties and methods:</p>
+<p> procedure SetDatasetSQL(datasetname:string;sqlsentence:string);<br>
+  procedure SetDatabaseConnectionString(databasename:string;connectionstring:string);<br>
+  function GetDatasetSQL(datasetname:string):string;<br>
+  function GetDatabaseConnectionString(databasename:string):string;<br>
+  procedure SetParamValue(paramname:string;paramvalue:Variant);<br>
+  function GetParamValue(paramname:string):Variant;<br>
+  function Execute:Boolean;<br>
+  procedure PrinterSetup;<br>
+  function ShowParams:boolean;<br>
+  procedure SaveToPDF(filename:string;compressed:boolean=false);<br>
+  function PrintRange(frompage:integer;topage:integer;<br>
+  copies:integer;collate:boolean):boolean;<br>
+  procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer);override;<br>
+  constructor Create(AOwner:TComponent);override;<br>
+  { Public declarations }<br>
+  published<br>
+  { Published declarations }<br>
+  property Filename:string read FFilename write SetFilename;<br>
+  property Preview:boolean read FPreview write SetPreview default true;<br>
+  property ShowProgress:boolean read FShowProgress write SetShowProgress;<br>
+  property ShowPrintDialog:boolean read FShowPrintDialog write SetShowPrintDialog;<br>
+  property Title:string read FTitle write SetTitle;<br>
+  property Language:integer read FLanguage write SetLanguage;<br>
+</p>
 </body>
 </html>

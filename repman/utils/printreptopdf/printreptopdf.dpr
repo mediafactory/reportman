@@ -26,7 +26,7 @@ uses
 {$IFDEF MSWINDOWS}
   midaslib,
   rpreport in '..\..\..\rpreport.pas',
-  rpconsts in '..\..\..\rpconsts.pas',
+  rpmdconsts in '..\..\..\rpmdconsts.pas',
   rptypes in '..\..\..\rptypes.pas',
   rpsubreport in '..\..\..\rpsubreport.pas',
   rpsection in '..\..\..\rpsection.pas',
