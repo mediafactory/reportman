@@ -23,7 +23,7 @@ interface
 
 uses
   SysUtils, Classes,DB,rptypeval,rpevalfunc,
-  rpconsts,sysconst,rpparser,
+  rpmdconsts,sysconst,rpparser,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}

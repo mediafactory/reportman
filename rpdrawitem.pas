@@ -29,7 +29,7 @@ uses Sysutils,
 {$IFDEF USEVARIANTS}
   Variants,Types,
 {$ENDIF}
- Classes,rptypes,rpprintitem,rpconsts,rpmetafile,rpeval,
+ Classes,rptypes,rpprintitem,rpmdconsts,rpmetafile,rpeval,
  rptypeval,db;
 
 const

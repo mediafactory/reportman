@@ -34,8 +34,7 @@ uses Sysutils,
 {$IFDEF USEBCD}
  FMTBcd,
 {$ENDIF}
-
- rpconsts;
+ rpmdconsts;
 
 
 const

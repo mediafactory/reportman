@@ -20,7 +20,7 @@ interface
 
 uses
   Types,Classes,SysUtils,QGraphics, QControls,
-  rpconsts,Qt,QForms;
+  rpmdconsts,Qt,QForms;
 
 
 const

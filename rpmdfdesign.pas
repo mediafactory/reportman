@@ -42,8 +42,11 @@ type
     Updating:boolean;
    protected
     procedure Paint;override;
+    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer); override;
    public
     CaptionText:string;
+    section:TRpSection;
     constructor Create(AOwner:TComponent);override;
     property OnPaint:TNotifyEvent read FOnPaint write FOnPaint;
    end;
@@ -61,13 +64,13 @@ type
     leftrulers:Tlist;
     FSubReport:TRpSubreport;
     toptitles:Tlist;
-    secinterfaces:TList;
     procedure SetReport(Value:TRpReport);
     procedure SecPosChange(Sender:TObject);
   public
     { Public declarations }
     freportstructure:TFRpStructure;
     SectionScrollBox: TScrollBox;
+    secinterfaces:TList;
     procedure UpdateInterface;
     procedure ShowAllHiden;
     constructor Create(AOwner:TComponent);override;
@@ -99,6 +102,16 @@ begin
  BevelOuter:=bvNone;
  BorderStyle:=bsNone;
 end;
+
+procedure TrpPaintEventPanel.MouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
+var
+ dframe:TFRpDesignFrame;
+begin
+ dframe:=TFRpDesignFrame(Owner);
+ dframe.freportstructure.SelectDataItem(section);
+end;
+
 
 procedure TRpPaintEventPanel.Paint;
 begin
@@ -296,6 +309,7 @@ begin
    apanel.BevelInner:=bvNone;
    apanel.BevelOuter:=bvNone;
    apanel.Top:=posx;
+   apanel.section:=FSubReport.Sections.Items[i].Section;
    posx:=posx+apanel.Height;
    apanel.parent:=PSection;
    toptitles.Add(apanel);

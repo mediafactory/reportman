@@ -25,7 +25,7 @@ interface
 
 uses
  mmsystem,windows,
- Classes,sysutils,rpmetafile,rpconsts,Graphics,Forms,
+ Classes,sysutils,rpmetafile,rpmdconsts,Graphics,Forms,
  rpmunits,Printers,Dialogs, Controls,rpgdifonts,
  StdCtrls,ExtCtrls,
 {$IFDEF USEVARIANTS}

@@ -25,7 +25,6 @@ program repmand;
 uses
   QForms,
 {$IFDEF MSWINDOWS}
-  Crtl,
   midaslib,
   rpmdfmain in '..\rpmdfmain.pas' {FRpMainF},
   rpmdfstruc in '..\rpmdfstruc.pas' {FRpStructure: TFrame},
@@ -49,7 +48,7 @@ uses
   rpgdifonts in '..\rpgdifonts.pas',
   rpreport in '..\rpreport.pas',
   rpsubreport in '..\rpsubreport.pas',
-  rpconsts in '..\rpconsts.pas',
+  rpmdconsts in '..\rpmdconsts.pas',
   rppagesetup in '..\rppagesetup.pas' {FRpPageSetup},
   rpmunits in '..\rpmunits.pas',
   rptypes in '..\rptypes.pas',
@@ -116,7 +115,7 @@ uses
   rppdfreport in '../rppdfreport.pas',
   rpreport in '../rpreport.pas',
   rpsubreport in '../rpsubreport.pas',
-  rpconsts in '../rpconsts.pas',
+  rpmdconsts in '../rpmdconsts.pas',
   rppagesetup in '../rppagesetup.pas' {FRpPageSetup},
   rpmunits in '../rpmunits.pas',
   rptypes in '../rptypes.pas',

@@ -30,7 +30,7 @@ uses
 {$IFDEF MSWINDOWS}
   mmsystem,windows,winspool,
 {$ENDIF}
- Classes,sysutils,rpmetafile,rpconsts,QGraphics,QForms,
+ Classes,sysutils,rpmetafile,rpmdconsts,QGraphics,QForms,
  rpmunits,QPrinters,QDialogs,rpgraphutils, QControls,
  QStdCtrls,QExtCtrls,types,DateUtils,rptypes,Qt,
  rpreport,rppdfdriver;

@@ -20,7 +20,7 @@ unit rptypeval;
 interface
 
 uses
- SysUtils,Classes,rpconsts,
+ SysUtils,Classes,rpmdconsts,
 {$IFDEF USEVARIANTS}
  Variants,
 {$ENDIF}

@@ -23,7 +23,7 @@ interface
 {$I rpconf.inc}
 
 uses
-  SysUtils,QStyle,
+  SysUtils,QStyle,Qt,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
@@ -35,7 +35,7 @@ uses
 {$ENDIF}
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
-  rpconsts,rptypes, QExtCtrls,rpmdfstruc, rplastsav,rpsubreport,
+  rpmdconsts,rptypes, QExtCtrls,rpmdfstruc, rplastsav,rpsubreport,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
   rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver, 
   DB,rpmdfhelpform,rpmunits;
@@ -163,6 +163,47 @@ type
     Hide1: TMenuItem;
     AShowAll: TAction;
     Showall1: TMenuItem;
+    ASelectAll: TAction;
+    ASelectAllText: TAction;
+    N5: TMenuItem;
+    MSelect: TMenuItem;
+    ASelectAll1: TMenuItem;
+    ASelectAllText1: TMenuItem;
+    ToolButton14: TToolButton;
+    ALeft: TAction;
+    ToolButton15: TToolButton;
+    ARight: TAction;
+    AUp: TAction;
+    ADown: TAction;
+    ToolButton16: TToolButton;
+    ToolButton17: TToolButton;
+    ToolButton18: TToolButton;
+    Move1: TMenuItem;
+    Left1: TMenuItem;
+    Right1: TMenuItem;
+    Up1: TMenuItem;
+    Down1: TMenuItem;
+    ToolButton19: TToolButton;
+    AAlignLeft: TAction;
+    AAlignRight: TAction;
+    AAlignUp: TAction;
+    AAlignDown: TAction;
+    AAlignHorz: TAction;
+    AAlignVert: TAction;
+    Align1: TMenuItem;
+    Left2: TMenuItem;
+    Right2: TMenuItem;
+    Up2: TMenuItem;
+    Down2: TMenuItem;
+    Horizontalspace1: TMenuItem;
+    Verticalspace1: TMenuItem;
+    ToolButton20: TToolButton;
+    ToolButton21: TToolButton;
+    ToolButton22: TToolButton;
+    ToolButton23: TToolButton;
+    ToolButton24: TToolButton;
+    ToolButton25: TToolButton;
+    BBarcode: TToolButton;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -206,6 +247,18 @@ type
     procedure AHideExecute(Sender: TObject);
     procedure AShowAllExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure ASelectAllExecute(Sender: TObject);
+    procedure ASelectAllTextExecute(Sender: TObject);
+    procedure ALeftExecute(Sender: TObject);
+    procedure ARightExecute(Sender: TObject);
+    procedure AUpExecute(Sender: TObject);
+    procedure ADownExecute(Sender: TObject);
+    procedure AAlignLeftExecute(Sender: TObject);
+    procedure AAlignRightExecute(Sender: TObject);
+    procedure AAlignUpExecute(Sender: TObject);
+    procedure AAlignDownExecute(Sender: TObject);
+    procedure AAlignHorzExecute(Sender: TObject);
+    procedure AAlignVertExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrame;
@@ -410,12 +463,14 @@ begin
  BExpression.Enabled:=false;
  BShape.Enabled:=false;
  BImage.Enabled:=false;
+ BBarcode.Enabled:=false;
  BChart.Enabled:=false;
  BArrow.Down:=false;
  BLabel.Down:=false;
  BExpression.Down:=false;
  BShape.Down:=false;
  BImage.Down:=false;
+ BBarcode.Down:=false;
  BChart.Down:=false;
 
  AParams.Enabled:=False;
@@ -463,6 +518,7 @@ begin
  BExpression.Enabled:=true;
  BShape.Enabled:=true;
  BImage.Enabled:=true;
+ BBarcode.Enabled:=true;
  BChart.Enabled:=true;
  BArrow.Down:=true;
 
@@ -567,6 +623,10 @@ procedure TFRpMainF.FormCreate(Sender: TObject);
 begin
  // Inits Bools Arraya
  BoolToStr(True,True);
+ ALeft.ShortCut:=ShortCut(Key_Left,[ssCtrl]);
+ ARight.ShortCut:=ShortCut(Key_Right,[ssCtrl]);
+ AUp.ShortCut:=ShortCut(Key_Up,[ssCtrl]);
+ ADown.ShortCut:=ShortCut(Key_Down,[ssCtrl]);
 
 {$IFDEF VCLFILEFILTERS}
  OpenDialog1.Filter := SRpRepFile+'|*.rep';
@@ -1258,12 +1318,18 @@ begin
 end;
 
 procedure TFRpMainF.AHideExecute(Sender: TObject);
+var
+ i:integer;
 begin
- // Delete current selection
- if Not Assigned(fobjinsp.CompItem) then
+ if fobjinsp.SelectedItems.Count<1 then
   exit;
- if fobjinsp.CompItem is TRpSizePosInterface then
-  TRpSizePosInterface(fobjinsp.CompItem).Visible:=false;
+ if (Not (fobjinsp.SelectedItems.Objects[0] is TRpSizePosInterface)) then
+  exit;
+ for i:=0 to fobjinsp.SelectedItems.Count-1 do
+ begin
+  TRpSizePosInterface(fobjinsp.SelectedItems.Objects[i]).Visible:=false;
+ end;
+ fobjinsp.ClearMultiselect;
 end;
 
 procedure TFRpMainF.AShowAllExecute(Sender: TObject);
@@ -1360,6 +1426,69 @@ end;
 procedure TFRpMainF.FormDestroy(Sender: TObject);
 begin
  Application.OnException:=oldonexception;
+end;
+
+procedure TFRpMainF.ASelectAllExecute(Sender: TObject);
+begin
+ // Selects all objects of the report
+ fobjinsp.SelectAllClass('TRpSizePosInterface');
+end;
+
+
+procedure TFRpMainF.ASelectAllTextExecute(Sender: TObject);
+begin
+ // Selects all objects of the report
+ fobjinsp.SelectAllClass('TRpGenTextInterface');
+end;
+
+procedure TFRpMainF.ALeftExecute(Sender: TObject);
+begin
+ fobjinsp.MoveSelected(1,false);
+end;
+
+procedure TFRpMainF.ARightExecute(Sender: TObject);
+begin
+ fobjinsp.MoveSelected(2,false);
+end;
+
+procedure TFRpMainF.AUpExecute(Sender: TObject);
+begin
+ fobjinsp.MoveSelected(3,false);
+end;
+
+procedure TFRpMainF.ADownExecute(Sender: TObject);
+begin
+ fobjinsp.MoveSelected(4,false);
+end;
+
+procedure TFRpMainF.AAlignLeftExecute(Sender: TObject);
+begin
+ fobjinsp.AlignSelected(1);
+end;
+
+procedure TFRpMainF.AAlignRightExecute(Sender: TObject);
+begin
+ fobjinsp.AlignSelected(2);
+end;
+
+procedure TFRpMainF.AAlignUpExecute(Sender: TObject);
+begin
+ fobjinsp.AlignSelected(3);
+end;
+
+procedure TFRpMainF.AAlignDownExecute(Sender: TObject);
+begin
+ fobjinsp.AlignSelected(4);
+end;
+
+procedure TFRpMainF.AAlignHorzExecute(Sender: TObject);
+begin
+ fobjinsp.AlignSelected(5);
+end;
+
+procedure TFRpMainF.AAlignVertExecute(Sender: TObject);
+begin
+ fobjinsp.AlignSelected(6);
 end;
 
 initialization

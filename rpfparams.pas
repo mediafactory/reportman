@@ -21,7 +21,7 @@ unit rpfparams;
 interface
 
 uses SysUtils, Classes, QGraphics, QForms,
-  QButtons, QExtCtrls, QControls, QStdCtrls,rpconsts,rpparams, QMask,
+  QButtons, QExtCtrls, QControls, QStdCtrls,rpmdconsts,rpparams, QMask,
   rpdatainfo,Variants,DB,QDialogs, QActnList, QImgList, QComCtrls;
 
 type

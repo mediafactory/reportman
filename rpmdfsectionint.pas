@@ -25,7 +25,7 @@ uses SysUtils, Classes, QGraphics, QForms,Types,
   QButtons, QExtCtrls, QControls, QStdCtrls,
   rpmdobinsint,rpreport,rpprintitem,rpgraphutils,
   rpmdobjinsp,rpmdfstruc,rpmdflabelint,rplabelitem,
-  rpconsts,rpsection,rptypes,rpdrawitem,rpmdfdrawint,
+  rpmdconsts,rpsection,rptypes,rpdrawitem,rpmdfdrawint,
   rpsubreport;
 
 const

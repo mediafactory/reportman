@@ -22,7 +22,7 @@ uses
   SysUtils, Classes, QGraphics,QControls, QForms, QDialogs,
   QStdCtrls, QExtCtrls,
   rpalias,rpeval, QButtons,rptypeval,
-  rpconsts;
+  rpmdconsts;
 
 const
  FMaxlisthelp=5;

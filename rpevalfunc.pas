@@ -22,7 +22,7 @@ interface
 
 uses
   SysUtils, Classes,
-  Rpconsts,DB,Math,
+  rpmdconsts,DB,Math,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}

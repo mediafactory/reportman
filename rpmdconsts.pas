@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       Rpconsts                                        }
+{       Rpmdconsts                                        }
 {                                                       }
 {       Resource strings for reportmanager engine and   }
 {       designer                                        }
@@ -17,7 +17,7 @@
 {                                                       }
 {*******************************************************}
 
-unit rpconsts;
+unit rpmdconsts;
 
 interface
 

@@ -35,7 +35,7 @@ uses Classes,SysUtils,
 {$IFDEF USESQLEXPRESS}
  SqlExpr,DBXpress,SqlConst,//DBExpMYSQL,DbExpMyS,
 {$ENDIF}
- rpconsts,
+ rpmdconsts,
  DB,rpparams,Inifiles,rptypes,DBClient,
 {$IFDEF USEIBX}
  IBQuery,IBDatabase,

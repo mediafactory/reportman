@@ -60,7 +60,10 @@ uses Classes,Sysutils,
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
- rpmzlib,rpconsts,rptypes;
+{$IFNDEF USEVARIANTS}
+ Windows,
+{$ENDIF}
+ rpmzlib,rpmdconsts,rptypes;
 
 
 const
@@ -1286,16 +1289,16 @@ procedure TRpPDFCanvas.DrawImage(rec:TRect;abitmap:TStream;dpires:integer;
  tile:boolean;clip:boolean);
 var
  astream:TMemoryStream;
-// imagesize,infosize:DWORD;
-imagesize:integer;
+ // imagesize,infosize:DWORD;
+ imagesize:integer;
  bitmapwidth,bitmapheight:integer;
  FCompressionStream:TCOmpressionStream;
  fimagestream:TMemoryStream;
-// tmpBitmap:TBitmap;
-// y: integer;
- aheight,awidth:integer;
-// pb: PByteArray;
- arect:TRect;
+ // tmpBitmap:TBitmap;
+ // y: integer;
+  aheight,awidth:integer;
+ // pb: PByteArray;
+  arect:TRect;
 begin
  arect:=rec;
  FFile.CheckPrinting;
@@ -1367,7 +1370,6 @@ begin
    rec.Bottom:=rec.Top+aheight;
   until (Rec.Bottom>ARect.Bottom);
   SWriteLine(FFile.FsTempStream,'Q');
-
   // Saves the bitmap to temp bitmaps
   astream:=TMemoryStream.Create;
   FFile.FBitmapStreams.Add(astream);

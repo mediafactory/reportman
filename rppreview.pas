@@ -31,7 +31,7 @@ uses
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpreport,rpmetafile, QComCtrls,
   rpqtdriver, QExtCtrls,rptypes,
-  QActnList, QImgList,QPrinters,rpconsts,Qt;
+  QActnList, QImgList,QPrinters,rpmdconsts,Qt;
 
 
 type

@@ -31,7 +31,7 @@ uses Classes,Sysutils,
  Windows,
 {$ENDIF}
  rptypes,rpmetafile,rppdffile,
- rpmunits,rpreport,rpconsts;
+ rpmunits,rpreport,rpmdconsts;
 
 type
  TRpPdfDriver=class(TInterfacedObject,IRpPrintDriver)

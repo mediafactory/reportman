@@ -19,7 +19,7 @@ unit rpparser;
 interface
 
 uses Classes,sysutils,
- rpconsts,rptypeval;
+ rpmdconsts,rptypeval;
 type
  // A expresion can be divided in tokens, that is
  // numbers, identifiers, strings, operators

@@ -23,7 +23,7 @@ unit rpmdobinsint;
 
 interface
 
-uses Types,QGraphics,QForms,QControls,rpconsts,classes,sysutils,rpmunits,
+uses Types,QGraphics,QForms,QControls,rpmdconsts,classes,sysutils,rpmunits,
   rpprintitem,rpgraphutils,rpsection,rpreport,qt,QDialogs,rptypes;
 
 const

@@ -32,15 +32,11 @@ package rppack_del;
 requires
   rtl,
   dsnap,
-  dbrtl,
-  dbexpress,
-  ibxpress,
-  bdertl,
-  adortl;
+  dbrtl;
 
 contains
   rptypeval in 'rptypeval.pas',
-  rpconsts in 'rpconsts.pas',
+  rpmdconsts in 'rpmdconsts.pas',
   rpeval in 'rpeval.pas',
   rpevalfunc in 'rpevalfunc.pas',
   rpparser in 'rpparser.pas',

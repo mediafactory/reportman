@@ -22,7 +22,7 @@ interface
 
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  rpmdobinsint,QGrids,rpconsts,rpprintitem,QStdCtrls,
+  rpmdobinsint,QGrids,rpmdconsts,rpprintitem,QStdCtrls,
   QExtCtrls,rpgraphutils,rpsection,rpmunits, rpexpredlg,
   rpalias,rpreport,Qt,rpsubreport,rpmdflabelint,rplabelitem,
   rpmdfdrawint;
@@ -104,9 +104,12 @@ type
     procedure InvalidatePanels;
     procedure SelectProperty(propname:string);
     procedure RecreateChangeSize;
+    procedure SelectAllClass(classname:string);
     procedure AddCompItem(aitem:TRpSizeInterface;onlyone:boolean);
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
+    procedure AlignSelected(direction:integer);
+    procedure MoveSelected(direction:integer;fast:boolean);
     property CompItem:TRpSizeInterface read GetCompItem;
     property DesignFrame:TObject read FDesignFrame write FDesignFrame;
     property Combo:TComboBox read GetComboBox;
@@ -484,6 +487,17 @@ begin
   FRpMainf.ACopy.Enabled:=false;
   FRpMainf.AHide.Enabled:=false;
   FRpMainf.APaste.Enabled:=false;
+  FRpMainf.ALeft.Enabled:=false;
+  FRpMainf.ARight.Enabled:=false;
+  FRpMainf.AUp.Enabled:=false;
+  FRpMainf.ADown.Enabled:=false;
+  FRpMainf.AAlignLeft.Enabled:=false;
+  FRpMainf.AAlignRight.Enabled:=false;
+  FRpMainf.AAlignUp.Enabled:=false;
+  FRpMainf.AAlignDown.Enabled:=false;
+  FRpMainf.AAlignHorz.Enabled:=false;
+  FRpMainf.AAlignVert.Enabled:=false;
+
   // Assigns the datasets
   ComboAlias.OnChange:=nil;
   alist.clear;
@@ -506,15 +520,39 @@ begin
    TFRpObjInsp(Owner).fchangesize.GridY:=FRpMainf.report.GridHeight;
    TFRpObjInsp(Owner).fchangesize.Control:=FCompItem;
    secint:=TrpSectionInterface(TRpSizePosInterface(FCompItem).SectionInt);
+   FRpMainf.AAlignLeft.Enabled:=false;
+   FRpMainf.AAlignRight.Enabled:=false;
+   FRpMainf.AAlignUp.Enabled:=false;
+   FRpMainf.AAlignDown.Enabled:=false;
+   FRpMainf.AAlignHorz.Enabled:=false;
+   FRpMainf.AAlignVert.Enabled:=false;
   end
   else
   begin
    TFRpObjInsp(Owner).fchangesize.Control:=nil;
    secint:=TrpSectionInterface(TRpSizePosInterface(SelectedItems.Objects[0]).SectionInt);
+   FRpMainf.AAlignLeft.Enabled:=true;
+   FRpMainf.AAlignRight.Enabled:=true;
+   FRpMainf.AAlignUp.Enabled:=true;
+   FRpMainf.AAlignDown.Enabled:=true;
+   if selecteditems.count>2 then
+   begin
+    FRpMainf.AAlignHorz.Enabled:=true;
+    FRpMainf.AAlignVert.Enabled:=true;
+   end
+   else
+   begin
+    FRpMainf.AAlignHorz.Enabled:=false;
+    FRpMainf.AAlignVert.Enabled:=false;
+   end;
   end;
   FRpMainf.ACut.Enabled:=true;
   FRpMainf.ACopy.Enabled:=true;
   FRpMainf.AHide.Enabled:=true;
+  FRpMainf.ALeft.Enabled:=true;
+  FRpMainf.ARight.Enabled:=true;
+  FRpMainf.AUp.Enabled:=true;
+  FRpMainf.ADown.Enabled:=true;
  end
  else
  begin
@@ -523,6 +561,16 @@ begin
   FRpMainf.ACut.Enabled:=False;
   FRpMainf.ACopy.Enabled:=False;
   FRpMainf.AHide.Enabled:=False;
+  FRpMainf.ALeft.Enabled:=false;
+  FRpMainf.ARight.Enabled:=false;
+  FRpMainf.AUp.Enabled:=false;
+  FRpMainf.ADown.Enabled:=false;
+  FRpMainf.AAlignLeft.Enabled:=false;
+  FRpMainf.AAlignRight.Enabled:=false;
+  FRpMainf.AAlignUp.Enabled:=false;
+  FRpMainf.AAlignDown.Enabled:=false;
+  FRpMainf.AAlignHorz.Enabled:=false;
+  FRpMainf.AAlignVert.Enabled:=false;
  end;
  FRpMainf.APaste.Enabled:=true;
 
@@ -1314,6 +1362,221 @@ begin
  SetCompItem(FCommonObject);
 end;
 
+procedure TFRpObjInsp.SelectAllClass(classname:string);
+var
+ i,j:integer;
+ compo:TRpSizePosInterface;
+ sec:TRpSectionInterface;
+ desframe:TFRpDesignFrame;
+ index:integer;
+ alist:TStringList;
+begin
+ ClearMultiSelect;
+ desframe:=TFRpDesignFrame(FDesignFrame);
+ for i:=0 to desframe.secinterfaces.Count-1 do
+ begin
+  sec:=TrpSectionInterface(desframe.secinterfaces.Items[i]);
+  for j:=0 to sec.childlist.Count-1 do
+  begin
+   compo:=sec.childlist.items[j];
+   index:=FClassAncestors.IndexOf(compo.classname);
+   if index<0 then
+    Raise Exception.Create(SRpClassNotRegistered+':'+compo.classname);
+   alist:=TStringList(FClassAncestors.Objects[index]);
+   index:=alist.IndexOf(classname);
+   if index>=0 then
+    FSelectedItems.AddObject(compo.ClassName,compo);
+  end;
+ end;
+ if FSelectedItems.Count>0 then
+ begin
+  compo:=TRpSizePosInterface(FSelectedItems.Objects[FSelectedItems.Count-1]);
+  FSelectedItems.Delete(FSelectedItems.Count-1);
+  AddCOmpItem(compo,false);
+ end;
+end;
+
+
+procedure TFRpObjInsp.AlignSelected(direction:integer);
+var
+ i:integer;
+ aitem:TRpSizePosInterface;
+ pitem:TRpCommonPosComponent;
+ newpos:integer;
+ actualpos:integer;
+ minpos,maxpos,newminpos,newmaxpos,sumwidth:integer;
+ distance:integer;
+ fselitems:TStringList;
+begin
+ // Aligns selection
+ // 1-Left, 2-Right, 3-Up, 4-Down, 5-HorzSpacing,5-VertSpacing
+ if FSelectedItems.Count<2 then
+  exit;
+ newpos:=0;
+ if direction in [1..4] then
+ begin
+  if direction in [1,3] then
+   actualpos:=MaxInt
+  else
+   actualpos:=-Maxint;
+  for i:=0 to FSelectedItems.Count-1 do
+  begin
+   aitem:=TRpSizePosInterface(FSelectedItems.Objects[i]);
+   pitem:=TRpCommonPosComponent(aitem.printitem);
+   case direction of
+    1:
+     begin
+      newpos:=pitem.PosX;
+     end;
+    2:
+     begin
+      newpos:=pitem.PosX+pitem.Width;
+     end;
+    3:
+     begin
+      newpos:=pitem.PosY;
+     end;
+    4:
+     begin
+      newpos:=pitem.PosY+pitem.Height;
+     end;
+   end;
+   if direction in [1,3] then
+   begin
+    if newpos<actualpos then
+     actualpos:=newpos;
+   end
+   else
+   begin
+    if newpos>actualpos then
+     actualpos:=newpos;
+   end;
+  end;
+  for i:=0 to FSelectedItems.Count-1 do
+  begin
+   aitem:=TRpSizePosInterface(FSelectedItems.Objects[i]);
+   pitem:=TRpCommonPosComponent(aitem.printitem);
+   case direction of
+    1:
+     pitem.PosX:=actualpos;
+    2:
+     pitem.PosX:=actualpos-pitem.Width;
+    3:
+     pitem.PosY:=actualpos;
+    4:
+     pitem.PosY:=actualpos-pitem.Height;
+   end;
+   aitem.UpdatePos;
+  end;
+  exit;
+ end;
+ // Vertical distance and horz distance
+ minpos:=MaxInt;
+ maxpos:=-MaxInt;
+ sumwidth:=0;
+ for i:=0 to FSelectedItems.Count-1 do
+ begin
+  aitem:=TRpSizePosInterface(FSelectedItems.Objects[i]);
+  pitem:=TRpCommonPosComponent(aitem.printitem);
+  if direction=5 then
+  begin
+   newminpos:=pitem.PosX;
+   newmaxpos:=pitem.PosX+pitem.Width;
+   sumwidth:=sumwidth+pitem.Width;
+  end
+  else
+  begin
+   newminpos:=pitem.PosY;
+   newmaxpos:=pitem.PosY+pitem.Height;
+   sumwidth:=sumwidth+pitem.Height;
+  end;
+  if newminpos<minpos then
+   minpos:=newminpos;
+  if newmaxpos>maxpos then
+   maxpos:=newmaxpos;
+ end;
+ fselitems:=TStringList.Create;
+ try
+  fselitems.Sorted:=True;
+  for i:=0 to FSelectedItems.Count-1 do
+  begin
+   aitem:=TRpSizePosInterface(FSelectedItems.Objects[i]);
+   pitem:=TRpCommonPosComponent(aitem.printitem);
+   if direction=5 then
+    fselitems.AddObject(FormatFloat('00000000000',pitem.PosX),aitem)
+   else
+    fselitems.AddObject(FormatFloat('00000000000',pitem.PosY),aitem)
+  end;
+ // Calculates the distance between them
+  distance:=((maxpos-minpos)-sumwidth) div (FSelectedItems.Count-1);
+  for i:=0 to FSelItems.Count-2 do
+  begin
+   aitem:=TRpSizePosInterface(FSelItems.Objects[i]);
+   pitem:=TRpCommonPosComponent(aitem.printitem);
+   if direction=5 then
+   begin
+    pitem.PosX:=minpos;
+    minpos:=minpos+pitem.Width+distance;
+   end
+   else
+   begin
+    pitem.PosY:=minpos;
+    minpos:=minpos+pitem.Height+distance;
+   end;
+   aitem.Updatepos;
+  end;
+ finally
+  fselitems.free;
+ end;
+end;
+
+procedure TFRpObjInsp.MoveSelected(direction:integer;fast:boolean);
+var
+ i:integer;
+ aitem:TRpSizePosInterface;
+ pitem:TRpCommonPosComponent;
+ unitsize:integer;
+ FRpMainf:TFRpMainF;
+ FCurrentPanel:TRpPanelObj;
+begin
+ if FSelectedItems.Count<1 then
+  exit;
+ if (Not (FSelectedItems.Objects[0] is TRpSizePosInterface)) then
+  exit;
+ FRpMainf:=TFRpMainF(Owner);
+ if FRpMainf.report.GridEnabled then
+ begin
+  if (direction in [1,2]) then
+   unitsize:=FRpMainf.report.GridWidth
+  else
+   unitsize:=FRpMainf.report.GridHeight
+ end
+ else
+ begin
+  unitsize:=pixelstotwips(1);
+ end;
+ if direction in [1,3] then
+  unitsize:=-unitsize;
+ if fast then
+  unitsize:=unitsize*5;
+ for i:=0 to FSelectedItems.Count-1 do
+ begin
+  aitem:=TRpSizePosInterface(FSelectedItems.Objects[i]);
+  pitem:=TRpCommonPosComponent(aitem.printitem);
+  if direction in [1,2] then
+   pitem.PosX:=pitem.PosX+unitsize
+  else
+   pitem.PosY:=pitem.PosY+unitsize;
+  aitem.UpdatePos;
+ end;
+ if Assigned(fchangesize.Control) then
+ begin
+  fchangesize.UpdatePos;
+  FCurrentPanel:=GetCurrentPanel;
+  if Assigned(FCurrentPanel) then
+   FCurrentPanel.AssignPropertyValues;
+ end;
+end;
 
 initialization
 

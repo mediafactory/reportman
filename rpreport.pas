@@ -26,7 +26,7 @@ interface
 
 {$I rpconf.inc}
 
-uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpconsts,
+uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpmdconsts,
  rpdatainfo,rpparams,rplabelitem,rpdrawitem,rpeval,rptypeval,
  rpmetafile,
 {$IFDEF USEVARIANTS}

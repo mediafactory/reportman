@@ -22,7 +22,7 @@ unit rpsubreport;
 
 interface
 
-uses Classes,SysUtils,rpsecutil,rpsection,rptypes,rpconsts,
+uses Classes,SysUtils,rpsecutil,rpsection,rptypes,rpmdconsts,
  rplabelitem,rpprintitem,rpeval;
 
 type

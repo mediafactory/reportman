@@ -31,7 +31,7 @@ uses Classes,
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
- rptypes,rpconsts,rpmunits,rpprintitem,rplabelitem,
+ rptypes,rpmdconsts,rpmunits,rpprintitem,rplabelitem,
  sysutils,rpmetafile,rpeval;
 
 const

@@ -23,7 +23,7 @@ interface
 
 {$I rpconf.inc}
 
-uses Classes, SysUtils,rpconsts,
+uses Classes, SysUtils,rpmdconsts,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}

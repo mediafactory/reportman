@@ -23,7 +23,7 @@ interface
 
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,QDialogs,
-  SQLExpr,DBConnAdmin, DBXpress, DB,rpconsts, QComCtrls, QImgList;
+  SQLExpr,DBConnAdmin, DBXpress, DB,rpmdconsts, QComCtrls, QImgList;
 
 const
  CONTROL_DISTANCEY=5;

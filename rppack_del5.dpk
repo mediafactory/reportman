@@ -33,16 +33,13 @@ package rppack_del5;
 requires
   Vcl50,
   Vclmid50,
-  Vcldb50,
-  vclado50,
-  Vclbde50,
-  VCLIB50;
+  Vcldb50;
 
 {%File 'rpconf.inc'}
 
 contains
   rptypeval in 'rptypeval.pas',
-  rpconsts in 'rpconsts.pas',
+  rpmdconsts in 'rpmdconsts.pas',
   rpeval in 'rpeval.pas',
   rpevalfunc in 'rpevalfunc.pas',
   rpparser in 'rpparser.pas',

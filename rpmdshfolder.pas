@@ -33,7 +33,7 @@ uses
 {$IFDEF MSWINDOWS}
   Windows,
 {$ENDIF}
-  rpconsts;
+  rpmdconsts;
 
 {$IFDEF MSWINDOWS}
 const

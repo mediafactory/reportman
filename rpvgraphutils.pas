@@ -23,7 +23,7 @@ unit rpvgraphutils;
 interface
 
 uses Classes,SysUtils,Windows,Graphics,rpmunits,Printers,WinSpool,
- rpconsts;
+ rpmdconsts;
 
 type
  TGDIPageSize=record

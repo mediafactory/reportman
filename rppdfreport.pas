@@ -23,7 +23,7 @@ unit rppdfreport;
 
 interface
 
-uses Classes,Sysutils,rpreport,rpconsts,rpcompobase,
+uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
  rppdfdriver,rpalias;
 
 type

@@ -21,7 +21,7 @@ interface
 
 uses SysUtils, Classes, QGraphics, QForms,Types,
   QButtons, QExtCtrls, QControls, QStdCtrls,rpmunits,Qt,
-  rpconsts;
+  rpmdconsts;
 
 
 type

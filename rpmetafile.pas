@@ -51,7 +51,7 @@ uses Classes,
 {$IFDEF USEVARIANTS}
  types,
 {$ENDIF}
- Sysutils,rpconsts,rpmzlib;
+ Sysutils,rpmdconsts,rpmzlib;
 
 const
  MILIS_PROGRESS=500;

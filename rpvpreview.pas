@@ -33,7 +33,7 @@ uses
   Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls,rpreport,rpmetafile, ComCtrls,
   rpgdidriver, ExtCtrls,Menus,rptypes,
-  ActnList, ImgList,Printers,rpconsts, ToolWin;
+  ActnList, ImgList,Printers,rpmdconsts, ToolWin;
 
 type
   TFRpVPreview = class(TForm)

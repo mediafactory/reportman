@@ -21,7 +21,7 @@ unit rpvclreport;
 
 interface
 
-uses Classes,Sysutils,rpreport,rpconsts,rpcompobase,
+uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
  rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview;
 
 type

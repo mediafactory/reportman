@@ -30,7 +30,7 @@ uses SysUtils, Classes, QGraphics, QForms,
 {$IFDEF USEADO}
   adodb,
 {$ENDIF}
-  rpreport,rpconsts,rpdatainfo,DBConnAdmin,QDialogs,
+  rpreport,rpmdconsts,rpdatainfo,DBConnAdmin,QDialogs,
   rpparams,rpfparams, db,QComCtrls;
 
 type

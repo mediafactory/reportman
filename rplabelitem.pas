@@ -24,7 +24,7 @@ interface
 
 {$I rpconf.inc}
 
-uses Sysutils,Classes,rptypes,rpprintitem,rpconsts,
+uses Sysutils,Classes,rptypes,rpprintitem,rpmdconsts,
  rpmetafile,rpeval,
 {$IFDEF MSWINDOWS}
  windows,
