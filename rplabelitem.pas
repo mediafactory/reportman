@@ -398,7 +398,7 @@ begin
  begin
   try
    fevaluator:=TRpBaseReport(GetReport).Evaluator;
-   FExportValue:=fevaluator.EvaluateText(FExpression);
+   FExportValue:=fevaluator.EvaluateText(FExportExpression);
   except
    on E:Exception do
    begin

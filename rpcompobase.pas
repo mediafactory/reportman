@@ -24,7 +24,7 @@ interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,
  rpalias,rpsubreport,rpsection,rpprintitem,rptypes,rpdatainfo,
- rphtmldriver,
+ rphtmldriver,rpcsvdriver,rpsvgdriver,
 {$IFDEF USEINDY}
  rpmdrepclient,
 {$ENDIF}
@@ -69,6 +69,9 @@ type
   // Defined as public but will be published in descendants
    procedure SaveToText(filename:string;textdriver:String='');virtual;abstract;
    procedure SaveToHTML(filename:string);
+   procedure SaveToCustomText(filename:string);
+   procedure SaveToSVG(filename:string);
+   procedure SaveToCSV(filename:string);
    procedure LoadFromFile(AFilename:string);
    procedure LoadFromStream(stream:TStream);
    procedure ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
@@ -339,5 +342,19 @@ begin
  ExportReportToHtml(report,filename,showprogress);
 end;
 
+procedure TCBaseReport.SaveToCustomText(filename:string);
+begin
+ ExportReportToTextPro(report,filename,showprogress);
+end;
+
+procedure TCBaseReport.SaveToSVG(filename:string);
+begin
+ ExportReportToSVG(report,filename,showprogress);
+end;
+
+procedure TCBaseReport.SaveToCSV(filename:string);
+begin
+ ExportReportToCSV(report,filename,showprogress);
+end;
 
 end.

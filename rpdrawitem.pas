@@ -70,7 +70,7 @@ type
  TRpImage=class(TRpCommonPosComponent)
   private
    FExpression:WideString;
-   FStream:TMemoryStream;
+   FStream,FDecompStream:TMemoryStream;
    FDrawStyle:TRpImageDrawStyle;
    Fdpires:integer;
    FCopyMode:integer;
@@ -146,6 +146,7 @@ begin
  Width:=DEF_DRAWWIDTH;
  Height:=DEF_DRAWWIDTH;
  FStream:=TMemoryStream.Create;
+ FDecompStream:=TMemoryStream.Create;
  FCopyMode:=DEF_COPYMODE;
  Fdpires:=DEFAULT_DPI;
 end;
@@ -154,13 +155,26 @@ end;
 destructor TRpImage.Destroy;
 begin
  FStream.free;
+ FDecompStream.free;
 
  inherited Destroy;
 end;
 
 procedure TRpImage.SetStream(Value:TMemoryStream);
 begin
- FStream.LoadFromStream(Value);
+ if IsCompressed(Value) then
+ begin
+  FStream.LoadFromStream(Value);
+ end
+ else
+ begin
+  if TRpBaseReport(GetReport).StreamFormat=rpStreamzlib then
+  begin
+   CompressStream(Value,FStream);
+  end
+  else
+   FStream.LoadFromStream(Value);
+ end;
 end;
 
 procedure TRpImage.WriteExpression(Writer:TWriter);
@@ -361,7 +375,13 @@ begin
   begin
    if FStream.Size=0 then
     exit;
-   Result:=FStream;
+   if IsCompressed(FStream) then
+   begin
+    DecompressStream(FStream,FDecompStream);
+    Result:=FDecompStream;
+   end
+   else
+    Result:=FStream;
   end;
  except
   on E:Exception do

@@ -75,6 +75,12 @@ time
 <p>procedure SaveToHTML(const filename: String); </p>
 <p>Early binding (VTables) and late binding (OleAuto) is supported<br>
 </p>
+<p><b>Since version 2.1</b></p>
+<p>procedure SaveToCustomText(const filename: String);<br>
+procedure SaveToCSV(const filename: String);<br>
+procedure SaveToSVG(const filename: String);<br>
+procedure SetRecordSet(const datasetname: String,recordset: OleVariant);
+</p>
 <h3>Using the control with VB like languages</h3>
 <p>The ActiveX control may be used directly in VB, VBScript, ASP and WSH. In the 
   VB environment you are generally recommended to &quot;Reference&quot; the control 
@@ -151,6 +157,8 @@ to be used has been identified. For further information on parameters please see
   <br>
   When working in the IIS environment remember to place the reports in a directory 
   accessible (permissions) by the user executing IIS.</p>
+<p>Since 2.1 version the ReportmanXAServer also provides GetCustomText and GetText 
+  procedures (with only ReportObj.Report parameter)</p>
 </body>
 </html>
 

@@ -876,9 +876,10 @@ var
   SRpSVGFile:WideString='Scalable Vector Graphics file';
   SRpTurkish:WideString='Turkish';
   SRpCSVFile:WideString='Comma separated values file';
-  SRpTXTProFile:WideString='Text processed file';
+  SRpTXTProFile:WideString='Custom text file';
   SRpPrintRep15:WideString='         -cvs      Output to comma separated values';
   SRpPrintRep16:WideString='         -svg      Output to scalable vector graphics format';
+  SRpPrintRep17:WideString='         -ctxt     Output to custom text';
   SRpPreviewMargins:WideString='Printable margins in preview';
   SRpSExportExpression:WideString='Export Expression';
   SRpSExportLine:WideString='Exp. Line';
@@ -887,7 +888,7 @@ var
   SRpSExportAlign:WideString='Exp. Align';
   SRpSExportDoNewLine:WideString='Exp. New Line';
   SRpSExportFormat:WideString='Exp. Format';
-
+  SRpSFeaturenotsup:WideString='Feature not supported';
 implementation
 
 uses rptranslator;

@@ -1224,6 +1224,7 @@ end;
 procedure PrintSection(adriver:IRpPrintDriver;datasection:boolean;var PartialPrint:Boolean);
 var
  MaxExtent:TPoint;
+ ispagerepeat:boolean;
 begin
  pagefooterpos:=pageposy+freespace;
  PartialPrint:=False;
@@ -1232,7 +1233,10 @@ begin
 
  if datasection then
  begin
-  if Not asection.PageRepeat then
+  ispagerepeat:=false;
+  if asection.SectionType=rpsecgheader then
+   ispagerepeat:=asection.Pagerepeat;
+  if Not ispagerepeat then
   begin
    printedsomething:=true;
    oldprintedsection:=section;

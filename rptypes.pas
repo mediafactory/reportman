@@ -54,6 +54,9 @@ uses
 {$IFDEF BUILDER4}
  Db,
 {$ENDIF}
+{$IFDEF USEZLIB}
+ rpmzlib,
+{$ENDIF}
  rpmdconsts;
 
 
@@ -222,6 +225,9 @@ function VarIsString(avar:Variant):Boolean;
 function IsRedColor(Color:Integer):Boolean;
 // Compares 2 streams and returns true if they are equal
 function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
+function IsCompressed(astream:TMemoryStream):Boolean;
+procedure DecompressStream(astream,deststream:TMemoryStream);
+procedure CompressStream(astream,deststream:TMemoryStream);
 procedure WriteWideString(Writer:TWriter;Value:WideString);
 function  ReadWideString(Reader:TReader):WideString;
 procedure Generatenewname(Component:TComponent);
@@ -471,7 +477,7 @@ end;
 
 function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
 const
- SIZE_BUF=4096;
+ SIZE_BUF=131072;
 var
  buf1,buf2:array [0..SIZE_BUF] of Byte;
  readcount:integer;
@@ -3168,6 +3174,81 @@ begin
  alist.Add(SRpSDrawFull);
  alist.Add(SRpDrawTile);
 end;
+
+function IsCompressed(astream:TMemoryStream):Boolean;
+var
+ achar:Char;
+begin
+ Result:=false;
+ astream.Seek(0,soFromBeginning);
+ if 1=astream.Read(achar,1) then
+ begin
+  if achar='x' then
+   Result:=true;
+  astream.Seek(0,soFromBeginning);
+ end;
+end;
+
+procedure DecompressStream(astream,deststream:TMemoryStream);
+{$IFDEF USEZLIB}
+var
+ zStream:TDeCompressionStream;
+ abuf:array of Byte;
+ readed:Integer;
+{$ENDIF}
+begin
+{$IFDEF USEZLIB}
+ astream.Seek(0,sofromBeginning);
+ deststream.SetSize(0);
+ zStream:=TDeCompressionStream.Create(aStream);
+ try
+  setLength(abuf,131072);
+  readed:=zStream.Read(abuf[0],131072);
+  while readed>0 do
+  begin
+   deststream.Write(abuf[0],readed);
+   readed:=zStream.Read(abuf[0],131072);
+  end;
+ finally
+  zStream.free;
+ end;
+ deststream.Seek(0,soFromBeginning);
+{$ENDIF}
+{$IFNDEF USEZLIB}
+   Raise Exception.Create(SRpZLibNotSupported);
+{$ENDIF}
+end;
+
+procedure CompressStream(astream,deststream:TMemoryStream);
+{$IFDEF USEZLIB}
+var
+ zStream:TCompressionStream;
+ abuf:array of Byte;
+ readed:Integer;
+{$ENDIF}
+begin
+{$IFDEF USEZLIB}
+ deststream.SetSize(0);
+ astream.Seek(0,sofromBeginning);
+ zStream:=TCompressionStream.Create(clDefault,destStream) ;
+ try
+  setLength(abuf,131072);
+  readed:=aStream.Read(abuf[0],131072);
+  while readed>0 do
+  begin
+   zStream.Write(abuf[0],readed);
+   readed:=aStream.Read(abuf[0],131072);
+  end;
+ finally
+  zStream.free;
+ end;
+ deststream.Seek(0,soFromBeginning);
+{$ENDIF}
+{$IFNDEF USEZLIB}
+   Raise Exception.Create(SRpZLibNotSupported);
+{$ENDIF}
+end;
+
 
 initialization
 

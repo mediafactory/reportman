@@ -780,34 +780,46 @@ begin
 end;
 
 procedure TRpMetafileReport.LoadFromStream(Stream:TStream;clearfirst:boolean=true);
-{$IFDEF USEZLIB}
 var
+{$IFDEF USEZLIB}
  zStream:TDeCompressionStream;
 {$ENDIF}
+ memstream:TMemoryStream;
 begin
  if clearfirst then
   Clear;
- // Get the time
+ memstream:=TMemoryStream.Create;
+ try
+  memstream.CopyFrom(Stream,Stream.Size);
+  memstream.Seek(0,soFromBeginning);
+  // Get the time
 {$IFDEF MSWINDOWS}
- mmfirst:=TimeGetTime;
+  mmfirst:=TimeGetTime;
 {$ENDIF}
 {$IFDEF LINUX}
- milifirst:=now;
+  milifirst:=now;
 {$ENDIF}
+  if IsCompressed(memstream) then
+  begin
 {$IFDEF USEZLIB}
- // Issue, should look if the stream is
- // really a compressed stream or it
- // comes from a non capable compression writer
- zStream:=TDeCompressionStream.Create(Stream);
- try
-  IntLoadFromStream(zStream,Stream);
- finally
-  zStream.free;
- end;
+   zStream:=TDeCompressionStream.Create(memStream);
+   try
+    IntLoadFromStream(zStream,Stream);
+   finally
+    zStream.free;
+   end;
 {$ENDIF}
 {$IFNDEF USEZLIB}
- IntLoadFromStream(Stream,Stream);
+   Raise Exception.Create(SRpZLibNotSupported);
 {$ENDIF}
+  end
+  else
+  begin
+   IntLoadFromStream(memstream,memstream);
+  end;
+ finally
+  memstream.free;
+ end;
 end;
 
 procedure TRpMetafileReport.IntLoadFromStream(Stream:TStream;LoadStream:TStream;clearfirst:boolean=true);
@@ -939,14 +951,17 @@ begin
  Stream.Write(FObjectCount,sizeof(FObjectCount));
  byteswrite:=sizeof(TRpMetaObject)*FObjectCount;
  SetLength(abytes,byteswrite);
+ if byteswrite>0 then
+ begin
 {$IFDEF DOTNETD}
- System.Array.Copy(FObjects,abytes,byteswrite);
+  System.Array.Copy(FObjects,abytes,byteswrite);
 {$ENDIF}
 {$IFNDEF DOTNETD}
- Move(FObjects[0],abytes[0],byteswrite);
+  Move(FObjects[0],abytes[0],byteswrite);
 {$ENDIF}
- if byteswrite<>Stream.Write(abytes[0],byteswrite) then
-  Raise Exception.Create(SRpErrorWritingPage);
+  if byteswrite<>Stream.Write(abytes[0],byteswrite) then
+   Raise Exception.Create(SRpErrorWritingPage);
+ end;
  wsize:=Length(FPool)*2;
  Stream.Write(wsize,sizeof(wsize));
  if wsize>0 then
@@ -995,15 +1010,17 @@ begin
  // Read then whole array
  bytesread:=objcount*sizeof(TRpMetaObject);
  SetLength(abytes,bytesread);
- if (bytesread<>Stream.Read(abytes[0],bytesread)) then
-  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
-{$IFDEF DOTNETD}
- System.Array.Copy(abytes,FObjects,bytesread);
-{$ENDIF}
-{$IFNDEF DOTNETD}
- Move(abytes[0],FObjects[0],bytesread);
-{$ENDIF}
-
+ if bytesread>0 then
+ begin
+  if (bytesread<>Stream.Read(abytes[0],bytesread)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+ {$IFDEF DOTNETD}
+  System.Array.Copy(abytes,FObjects,bytesread);
+ {$ENDIF}
+ {$IFNDEF DOTNETD}
+  Move(abytes[0],FObjects[0],bytesread);
+ {$ENDIF}
+ end;
  // Read string pool
  if (sizeof(wsize)<>Stream.Read(wsize,sizeof(wsize))) then
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);

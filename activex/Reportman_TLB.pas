@@ -11,16 +11,16 @@ unit Reportman_TLB;
 // manual modifications will be lost.                                         
 // ************************************************************************ //
 
-// PASTLWTR : $Revision: 1.29 $
-// File generated on 29/03/2004 11:50:55 from Type Library described below.
+// PASTLWTR : $Revision: 1.30 $
+// File generated on 03/04/2004 17:17:28 from Type Library described below.
 
 // ************************************************************************ //
-// Type Lib: C:\prog\toni\reportman\activex\ReportMan.tlb (1)
+// Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
 // IID\LCID: {D4D26F6B-6564-44F4-A913-03C91CE37740}\0
 // Helpfile: 
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINNT\system32\stdole2.tlb)
-//   (2) v4.0 StdVCL, (C:\WINNT\System32\STDVCL40.DLL)
+//   (1) v2.0 stdole, (C:\WINDOWS\System32\stdole2.tlb)
+//   (2) v4.0 StdVCL, (C:\WINDOWS\System32\STDVCL40.DLL)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 interface
@@ -170,7 +170,10 @@ type
     function  Get_Report: ReportReport; safecall;
     procedure SaveToExcel(const filename: WideString); safecall;
     procedure SaveToHTML(const filename: WideString); safecall;
-    procedure SetRecordSet(const DatasetName: WideString; const Value: IDispatch); safecall;
+    procedure SetRecordSet(const datasetname: WideString; const Value: IDispatch); safecall;
+    procedure SaveToCustomText(const filename: WideString); safecall;
+    procedure SaveToCSV(const filename: WideString); safecall;
+    procedure SaveToSVG(const filename: WideString); safecall;
     property filename: WideString read Get_filename write Set_filename;
     property Preview: WordBool read Get_Preview write Set_Preview;
     property ShowProgress: WordBool read Get_ShowProgress write Set_ShowProgress;
@@ -237,7 +240,10 @@ type
     property Report: ReportReport readonly dispid 21;
     procedure SaveToExcel(const filename: WideString); dispid 25;
     procedure SaveToHTML(const filename: WideString); dispid 26;
-    procedure SetRecordSet(const DatasetName: WideString; const Value: IDispatch); dispid 33;
+    procedure SetRecordSet(const datasetname: WideString; const Value: IDispatch); dispid 33;
+    procedure SaveToCustomText(const filename: WideString); dispid 35;
+    procedure SaveToCSV(const filename: WideString); dispid 36;
+    procedure SaveToSVG(const filename: WideString); dispid 37;
   end;
 
 // *********************************************************************//
@@ -343,6 +349,8 @@ type
   IReportmanXAServer = interface(IDispatch)
     ['{F3A6B88C-D629-402E-BC62-BAB0E2EE39AF}']
     procedure GetPDF(const Report: IReportReport; compressed: WordBool); safecall;
+    procedure GetCustomText(const Report: IReportReport); safecall;
+    procedure GetText(const Report: IReportReport); safecall;
   end;
 
 // *********************************************************************//
@@ -353,6 +361,8 @@ type
   IReportmanXAServerDisp = dispinterface
     ['{F3A6B88C-D629-402E-BC62-BAB0E2EE39AF}']
     procedure GetPDF(const Report: IReportReport; compressed: WordBool); dispid 1;
+    procedure GetCustomText(const Report: IReportReport); dispid 2;
+    procedure GetText(const Report: IReportReport); dispid 3;
   end;
 
 
@@ -401,7 +411,10 @@ type
     procedure SaveToText(const filename: WideString; const textdriver: WideString);
     procedure SaveToExcel(const filename: WideString);
     procedure SaveToHTML(const filename: WideString);
-    procedure SetRecordSet(const DatasetName: WideString; const Value: IDispatch);
+    procedure SetRecordSet(const datasetname: WideString; const Value: IDispatch);
+    procedure SaveToCustomText(const filename: WideString);
+    procedure SaveToCSV(const filename: WideString);
+    procedure SaveToSVG(const filename: WideString);
     property  ControlInterface: IReportManX read GetControlInterface;
     property  DefaultInterface: IReportManX read GetControlInterface;
     property DoubleBuffered: WordBool index 18 read GetWordBoolProp write SetWordBoolProp;
@@ -650,9 +663,24 @@ begin
   DefaultInterface.SaveToHTML(filename);
 end;
 
-procedure TReportManX.SetRecordSet(const DatasetName: WideString; const Value: IDispatch);
+procedure TReportManX.SetRecordSet(const datasetname: WideString; const Value: IDispatch);
 begin
-  DefaultInterface.SetRecordSet(DatasetName, Value);
+  DefaultInterface.SetRecordSet(datasetname, Value);
+end;
+
+procedure TReportManX.SaveToCustomText(const filename: WideString);
+begin
+  DefaultInterface.SaveToCustomText(filename);
+end;
+
+procedure TReportManX.SaveToCSV(const filename: WideString);
+begin
+  DefaultInterface.SaveToCSV(filename);
+end;
+
+procedure TReportManX.SaveToSVG(const filename: WideString);
+begin
+  DefaultInterface.SaveToSVG(filename);
 end;
 
 class function CoReportReport.Create: IReportReport;

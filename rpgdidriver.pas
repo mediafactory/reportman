@@ -2124,8 +2124,10 @@ begin
    end;
    abitmap:=TBitmap.Create;
    try
+{$IFNDEF DOTNETDBUGS}
     abitmap.HandleType:=bmDIB;
     abitmap.PixelFormat:=pf32bit;
+{$ENDIF}
     // Chart resolution to default screen
     abitmap.Width:=Round(twipstoinchess(nchart.PrintWidth)*nchart.Resolution);
     abitmap.Height:=Round(twipstoinchess(nchart.PrintHeight)*nchart.Resolution);

@@ -8,6 +8,7 @@ package ReportMan;
 {$R 'rpvclreport.dcr'}
 {$R 'rpalias.dcr'}
 {$R 'rpmaskedit.dcr'}
+{$R 'rppdfreport.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -97,7 +98,9 @@ contains
   rpmunits in 'rpmunits.pas',
   rptypes in 'rptypes.pas',
   rpmdshfolder in 'rpmdshfolder.pas',
-  rpcsvdriver in 'rpcsvdriver.pas';
+  rpcsvdriver in 'rpcsvdriver.pas',
+  rpmreg in 'rpmreg.pas',
+  rppdfreport in 'rppdfreport.pas' {rppdfreport.TPDFReport: rpcompobase.TCBaseReport};
 
 [assembly: AssemblyDescription('')]
 [assembly: AssemblyConfiguration('')]

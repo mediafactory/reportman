@@ -30,9 +30,6 @@ uses
   {$ENDIF}
    DsgnIntf,
 {$ENDIF}
-{$IFDEF DOTNETD}
- rpvclreport,
-{$ENDIF}
   rplastsav;
 
 procedure Register;
@@ -53,9 +50,6 @@ begin
    RegisterComponents('Reportman', [TRpRulerVCL]);
    RegisterComponents('Reportman', [TRpDesignerVCL]);
   {$ENDIF}
-{$ENDIF}
-{$IFDEF DOTNETD}
- RegisterComponents('Reportman', [TVCLReport]);
 {$ENDIF}
 
 

@@ -1433,6 +1433,8 @@ begin
  if FPlainText then
   FontStep:=rpcpi10;
  Result:=Round(posx/steptotwips(fontstep));
+ if Result<0 then
+  Result:=0;
 end;
 
 function TRpTextDriver.GetBlankLine(FontStep:TRpFontStep):String;

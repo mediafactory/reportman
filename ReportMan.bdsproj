@@ -159,6 +159,14 @@
 		</VersionInfo>  
     
     
+    
+    
+    
+    
+    
+    
+    
+    
     <FileList>
       <File FileName="rplastsav.dcr" ContainerId=""/>
       <File FileName="rpexpredlgvcl.dcr" ContainerId=""/>
@@ -167,6 +175,7 @@
       <File FileName="rpvclreport.dcr" ContainerId=""/>
       <File FileName="rpalias.dcr" ContainerId=""/>
       <File FileName="rpmaskedit.dcr" ContainerId=""/>
+      <File FileName="rppdfreport.dcr" ContainerId=""/>
       <File FileName="c:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0\Borland.Delphi.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.Delphi" AssemblyName="borland.delphi" Version="7.1.1523.17956" LinkUnits="False"/>
       <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.Drawing.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="System.Drawing" AssemblyName="System.Drawing" Version="1.0.5000.0" LinkUnits="False"/>
       <File FileName="c:\archivos de programa\archivos comunes\borland shared\bds\shared assemblies\2.0\Borland.VclIBXpress.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="Borland.VclIBXpress" AssemblyName="Borland.VclIBXpress" Version="7.1.1523.17956" LinkUnits="False"/>
@@ -231,6 +240,8 @@
       <File FileName="rptypes.pas" ContainerId="" ModuleName="rptypes"/>
       <File FileName="rpmdshfolder.pas" ContainerId="" ModuleName="rpmdshfolder"/>
       <File FileName="rpcsvdriver.pas" ContainerId="" ModuleName="rpcsvdriver"/>
+      <File FileName="rpmreg.pas" ContainerId="" ModuleName="rpmreg"/>
+      <File FileName="rppdfreport.pas" ContainerId="" ModuleName="rppdfreport"/>
     </FileList>
   </DelphiDotNet.Personality>
 </BorlandProject>

@@ -33,7 +33,7 @@ uses
   rpgraphutilsvcl,rpsection,rpmunits, rpexpredlgvcl,rpmdfextsecvcl,
   rpalias,rpreport,rpsubreport,rpmdflabelintvcl,rplabelitem,
   rpmdfdrawintvcl,rpmdfbarcodeintvcl,rpmdfchartintvcl, Menus,
-  rpmaskedit,ExtDlgs;
+  rpmaskedit, ExtDlgs;
 
 const
   CONS_LEFTGAP=3;
@@ -496,7 +496,7 @@ begin
  FRpMainf:=TFRpMainFVCL(Owner.Owner);
  if rpmdfextsecvcl.ChangeExternalSectionProps(FRpMainF.report,TRpSection(FCompItem.printitem)) then
  begin
-  TEdit(Sender).Text:=TRpSection(FCompItem.printitem).GetExternalDataDescription;
+  TRpMaskEdit(Sender).Text:=TRpSection(FCompItem.printitem).GetExternalDataDescription;
   DupValue(TControl(Sender));
   // Now refresh interface
   TFRpDesignFrameVCL(TFRpObjInspVCL(Owner).FDesignFrame).freportstructure.RefreshInterface;
@@ -626,11 +626,11 @@ begin
  try
   expredia.Rpalias:=TFRpObjInspVCL(Owner).RpAlias1;
   report.AddReportItemsToEvaluator(expredia.evaluator);
-  expredia.Expresion.Text:=TEdit(LControls.Objects[TButton(Sender).Tag]).Text;
+  expredia.Expresion.Text:=TRpMaskEdit(LControls.Objects[TButton(Sender).Tag]).Text;
   if expredia.Execute then
   begin
-   TEdit(LControls.Objects[TButton(Sender).Tag]).Text:=Trim(expredia.Expresion.Text);
-   TEdit(LControls2.Objects[TButton(Sender).Tag]).Text:=Trim(expredia.Expresion.Text);
+   TRpMaskEdit(LControls.Objects[TButton(Sender).Tag]).Text:=Trim(expredia.Expresion.Text);
+   TRpMaskEdit(LControls2.Objects[TButton(Sender).Tag]).Text:=Trim(expredia.Expresion.Text);
   end;
  finally
   expredia.Free;
@@ -1455,17 +1455,17 @@ begin
   else
   if LTypes.Strings[i]=SRpSImage then
   begin
-   Control:=TEdit.Create(Self);
-   TEdit(Control).ReadOnly:=True;
-   TEdit(Control).Color:=clInfoBk;
-   TEdit(Control).OnClick:=ImageClick;
-   TEdit(Control).OnKeyDown:=ImageKeyDown;
+   Control:=TRpMaskEdit.Create(Self);
+   TRpMaskEdit(Control).ReadOnly:=True;
+   TRpMaskEdit(Control).Color:=clInfoBk;
+   TRpMaskEdit(Control).OnClick:=ImageClick;
+   TRpMaskEdit(Control).OnKeyDown:=ImageKeyDown;
 
-   NControl:=TEdit.Create(Self);
-   TEdit(NControl).ReadOnly:=True;
-   TEdit(NControl).Color:=clInfoBk;
-   TEdit(NControl).OnClick:=ImageClick;
-   TEdit(NControl).OnKeyDown:=ImageKeyDown;
+   NControl:=TRpMaskEdit.Create(Self);
+   TRpMaskEdit(NControl).ReadOnly:=True;
+   TRpMaskEdit(NControl).Color:=clInfoBk;
+   TRpMaskEdit(NControl).OnClick:=ImageClick;
+   TRpMaskEdit(NControl).OnKeyDown:=ImageKeyDown;
   end
   else
   if LTypes.Strings[i]=SRpGroup then
@@ -1491,41 +1491,53 @@ begin
   else
   if LTypes.Strings[i]=SRpSFontStyle then
   begin
-   Control:=TEdit.Create(Self);
-   TEdit(Control).ReadOnly:=True;
-   TEdit(Control).Color:=clInfoBk;
-   TEdit(Control).OnClick:=FontClick;
+   Control:=TRpMaskEdit.Create(Self);
+   TRpMaskEdit(Control).ReadOnly:=True;
+   TRpMaskEdit(Control).Color:=clInfoBk;
+   TRpMaskEdit(Control).OnClick:=FontClick;
 
-   NControl:=TEdit.Create(Self);
-   TEdit(NControl).ReadOnly:=True;
-   TEdit(NControl).Color:=clInfoBk;
-   TEdit(NControl).OnClick:=FontClick;
+   NControl:=TRpMaskEdit.Create(Self);
+   TRpMaskEdit(NControl).ReadOnly:=True;
+   TRpMaskEdit(NControl).Color:=clInfoBk;
+   TRpMaskEdit(NControl).OnClick:=FontClick;
   end
   else
   if LTypes.Strings[i]=SRpSExternalData then
   begin
-   Control:=TEdit.Create(Self);
-   TEdit(Control).ReadOnly:=True;
-   TEdit(Control).Color:=clInfoBk;
-   TEdit(Control).OnClick:=ExtClick;
-   TEdit(Control).PopupMenu:=TFRpObjInspVCL(Owner).PopUpSection;
+   Control:=TRpMaskEdit.Create(Self);
+{$IFDEF DOTNETDBUGS}
+   Control.Parent:=PRight;
+{$ENDIF}
+   TRpMaskEdit(Control).ReadOnly:=True;
+   TRpMaskEdit(Control).Color:=clInfoBk;
+   TRpMaskEdit(Control).OnClick:=ExtClick;
+   TRpMaskEdit(Control).PopupMenu:=TFRpObjInspVCL(Owner).PopUpSection;
 
-   NControl:=TEdit.Create(Self);
-   TEdit(NControl).ReadOnly:=True;
-   TEdit(NControl).Color:=clInfoBk;
-   TEdit(NControl).OnClick:=ExtClick;
-   TEdit(NControl).PopupMenu:=TFRpObjInspVCL(Owner).PopUpSection;
+   NControl:=TRpMaskEdit.Create(Self);
+{$IFDEF DOTNETDBUGS}
+   Control.Parent:=apage.PRight;
+{$ENDIF}
+   TRpMaskEdit(NControl).ReadOnly:=True;
+   TRpMaskEdit(NControl).Color:=clInfoBk;
+   TRpMaskEdit(NControl).OnClick:=ExtClick;
+   TRpMaskEdit(NControl).PopupMenu:=TFRpObjInspVCL(Owner).PopUpSection;
   end
   else
   if LTypes.Strings[i]=SRpSCurrency then
   begin
    Control:=TRpMaskEdit.Create(Self);
-   TEdit(Control).OnChange:=EditChange;
+{$IFDEF DOTNETDBUGS}
+   Control.Parent:=PRight;
+{$ENDIF}
+   TRpMaskEdit(Control).OnChange:=EditChange;
    TRpMaskEdit(Control).EditType:=tecurrency;
    TRpMaskEdit(Control).DisplayMask:='##,##0.###';
 
    NControl:=TRpMaskEdit.Create(Self);
-   TEdit(NControl).OnChange:=EditChange;
+{$IFDEF DOTNETDBUGS}
+   NControl.Parent:=apage.PRight;
+{$ENDIF}
+   TRpMaskEdit(NControl).OnChange:=EditChange;
    TRpMaskEdit(NControl).EditType:=tecurrency;
    TRpMaskEdit(NControl).DisplayMask:='##,##0.###';
   end
@@ -1533,26 +1545,26 @@ begin
   if ((LTypes.Strings[i]=SRpSInteger) or (LTypes.Strings[i]=SRpSFontSize)) then
   begin
    Control:=TRpMaskEdit.Create(Self);
-   TEdit(Control).OnChange:=EditChange;
+   TRpMaskEdit(Control).OnChange:=EditChange;
    TRpMaskEdit(Control).EditType:=teinteger;
    TRpMaskEdit(Control).DisplayMask:='##,##0';
 
    NControl:=TRpMaskEdit.Create(Self);
-   TEdit(NControl).OnChange:=EditChange;
+   TRpMaskEdit(NControl).OnChange:=EditChange;
    TRpMaskEdit(NControl).EditType:=teinteger;
    TRpMaskEdit(NControl).DisplayMask:='##,##0';
   end
   else
   begin
-   Control:=TEdit.Create(Self);
-   TEdit(Control).OnChange:=EditChange;
+   Control:=TRpMaskEdit.Create(Self);
+   TRpMaskEdit(Control).OnChange:=EditChange;
    if LTypes.Strings[i]=SRpSExternalpath then
-    TEdit(Control).PopupMenu:=TFRpObjInspVCL(Owner).PopUpSection;
+    TRpMaskEdit(Control).PopupMenu:=TFRpObjInspVCL(Owner).PopUpSection;
 
-   NControl:=TEdit.Create(Self);
-   TEdit(NControl).OnChange:=EditChange;
+   NControl:=TRpMaskEdit.Create(Self);
+   TRpMaskEdit(NControl).OnChange:=EditChange;
    if LTypes.Strings[i]=SRpSExternalpath then
-    TEdit(NControl).PopupMenu:=TFRpObjInspVCL(Owner).PopUpSection;
+    TRpMaskEdit(NControl).PopupMenu:=TFRpObjInspVCL(Owner).PopUpSection;
   end;
   Control.Top:=Posy;
   Control.Left:=CONS_LEFTGAP;
@@ -1579,13 +1591,13 @@ begin
 {$IFDEF MSWINDOWS}
   if LTypes.Strings[i]=SRpSWFontName then
   begin
-   TEdit(Control).OnDblClick:=FontClick;
+   TRpMaskEdit(Control).OnDblClick:=FontClick;
   end;
 {$ENDIF}
 {$IFDEF LINUX}
   if LTypes.Strings[i]=SRpSLFontName then
   begin
-   TEdit(Control).OnDblClick:=FontClick;
+   TRpMaskEdit(Control).OnDblClick:=FontClick;
   end;
 {$ENDIF}
 {$IFDEF MSWINDOWS}
@@ -1960,16 +1972,16 @@ begin
     Control2:=TControl(LControls2.Objects[i]);
     if k=0 then
     begin
-     TEdit(Control).Text:=LValues.Strings[i];
-     TEdit(Control2).Text:=LValues.Strings[i];
+     TRpMaskEdit(Control).Text:=LValues.Strings[i];
+     TRpMaskEdit(Control2).Text:=LValues.Strings[i];
     end
     else
     begin
-     if Length(TEdit(Control).Text)>0 then
-      if TEdit(Control).Text<>LValues.Strings[i] then
+     if Length(TRpMaskEdit(Control).Text)>0 then
+      if TRpMaskEdit(Control).Text<>LValues.Strings[i] then
       begin
-       TEdit(Control2).Text:='';
-       TEdit(Control2).Text:='';
+       TRpMaskEdit(Control2).Text:='';
+       TRpMaskEdit(Control2).Text:='';
       end;
     end;
    end
@@ -2021,15 +2033,15 @@ begin
     Control2:=TControl(LControls2.Objects[i]);
     if k=0 then
     begin
-     TEdit(Control).Text:=IntegerFontStyleToString(StrToInt(LValues.Strings[i]));
-     TEdit(Control2).Text:=IntegerFontStyleToString(StrToInt(LValues.Strings[i]));
+     TRpMaskEdit(Control).Text:=IntegerFontStyleToString(StrToInt(LValues.Strings[i]));
+     TRpMaskEdit(Control2).Text:=IntegerFontStyleToString(StrToInt(LValues.Strings[i]));
     end
     else
     begin
-     if TEdit(Control).Text<>IntegerFontStyleToString(StrToInt(LValues.Strings[i])) then
+     if TRpMaskEdit(Control).Text<>IntegerFontStyleToString(StrToInt(LValues.Strings[i])) then
      begin
-      TEdit(Control).Text:='';
-      TEdit(Control2).Text:='';
+      TRpMaskEdit(Control).Text:='';
+      TRpMaskEdit(Control2).Text:='';
      end;
     end;
    end
@@ -2042,10 +2054,10 @@ begin
     begin
      doassign:=false;
      currvalue:=0;
-     if Length(TEdit(Control).Text)>0 then
+     if Length(TRpMaskEdit(Control).Text)>0 then
      begin
       try
-       currvalue:=StrToCurr(TEdit(Control).Text);
+       currvalue:=StrToCurr(TRpMaskEdit(Control).Text);
       except
        doassign:=true;
       end;
@@ -2057,35 +2069,35 @@ begin
        doassign:=true;
      if doassign then
      begin
-      TEdit(Control).OnChange:=nil;
-      TEdit(Control).Text:=LValues.Strings[i];
-      TEdit(Control).OnChange:=EditChange;
+      TRpMaskEdit(Control).OnChange:=nil;
+      TRpMaskEdit(Control).Text:=LValues.Strings[i];
+      TRpMaskEdit(Control).OnChange:=EditChange;
 
-      TEdit(Control2).OnChange:=nil;
-      TEdit(Control2).Text:=LValues.Strings[i];
-      TEdit(Control2).OnChange:=EditChange;
+      TRpMaskEdit(Control2).OnChange:=nil;
+      TRpMaskEdit(Control2).Text:=LValues.Strings[i];
+      TRpMaskEdit(Control2).OnChange:=EditChange;
      end;
     end
     else
     begin
      currvalue:=0;
-     if Length(TEdit(Control).Text)>0 then
+     if Length(TRpMaskEdit(Control).Text)>0 then
      begin
       try
-       currvalue:=StrToCurr(TEdit(Control).Text);
+       currvalue:=StrToCurr(TRpMaskEdit(Control).Text);
       except
        currvalue:=-9999999.9898;
       end;
      end;
      if currvalue<>StrToCurr(LValues.Strings[i]) then
      begin
-      TEdit(Control).OnChange:=nil;
-      TEdit(Control).Text:='';
-      TEdit(Control).OnChange:=EditChange;
+      TRpMaskEdit(Control).OnChange:=nil;
+      TRpMaskEdit(Control).Text:='';
+      TRpMaskEdit(Control).OnChange:=EditChange;
 
-      TEdit(Control2).OnChange:=nil;
-      TEdit(Control2).Text:='';
-      TEdit(Control2).OnChange:=EditChange;
+      TRpMaskEdit(Control2).OnChange:=nil;
+      TRpMaskEdit(Control2).Text:='';
+      TRpMaskEdit(Control2).OnChange:=EditChange;
      end;
     end;
    end
@@ -2095,25 +2107,25 @@ begin
     Control2:=TControl(LControls2.Objects[i]);
     if k=0 then
     begin
-     TEdit(Control).OnChange:=nil;
-     TEdit(Control).Text:=LValues.Strings[i];
-     TEdit(Control).OnChange:=EditChange;
+     TRpMaskEdit(Control).OnChange:=nil;
+     TRpMaskEdit(Control).Text:=LValues.Strings[i];
+     TRpMaskEdit(Control).OnChange:=EditChange;
 
-     TEdit(Control2).OnChange:=nil;
-     TEdit(Control2).Text:=LValues.Strings[i];
-     TEdit(Control2).OnChange:=EditChange;
+     TRpMaskEdit(Control2).OnChange:=nil;
+     TRpMaskEdit(Control2).Text:=LValues.Strings[i];
+     TRpMaskEdit(Control2).OnChange:=EditChange;
     end
     else
     begin
-     if TEdit(Control).Text<>LValues.Strings[i] then
+     if TRpMaskEdit(Control).Text<>LValues.Strings[i] then
      begin
-      TEdit(Control).OnChange:=nil;
-      TEdit(Control).Text:='';
-      TEdit(Control).OnChange:=EditChange;
+      TRpMaskEdit(Control).OnChange:=nil;
+      TRpMaskEdit(Control).Text:='';
+      TRpMaskEdit(Control).OnChange:=EditChange;
 
-      TEdit(Control2).OnChange:=nil;
-      TEdit(Control2).Text:='';
-      TEdit(Control2).OnChange:=EditChange;
+      TRpMaskEdit(Control2).OnChange:=nil;
+      TRpMaskEdit(Control2).Text:='';
+      TRpMaskEdit(Control2).OnChange:=EditChange;
      end;
     end;
    end;
@@ -2148,10 +2160,10 @@ begin
   exit;
  if acontrol is TEdit then
  begin
-  oldonchange:=TEdit(acontrol).OnChange;
-  TEdit(acontrol).OnChange:=nil;
-  TEdit(acontrol).Text:=TEdit(Sender).Text;
-  TEdit(acontrol).OnChange:=OldOnChange;
+  oldonchange:=TRpMaskEdit(acontrol).OnChange;
+  TRpMaskEdit(acontrol).OnChange:=nil;
+  TRpMaskEdit(acontrol).Text:=TRpMaskEdit(Sender).Text;
+  TRpMaskEdit(acontrol).OnChange:=OldOnChange;
  end
  else
  if acontrol is TComboBox then
@@ -2188,7 +2200,7 @@ begin
    FCompItem.SetProperty(aname,String(TRpMaskEdit(Sender).Value));
   end
   else
-   FCompItem.SetProperty(aname,TEdit(Sender).Text);
+   FCompItem.SetProperty(aname,TRpMaskEdit(Sender).Text);
   if (FCompItem is TRpSectionInterface) then
   begin
    if ((aname=SRpsWidth) or (aname=SRpsHeight)) then
@@ -2218,7 +2230,7 @@ begin
    SetPropertyFull(aname,String(TRpMaskEdit(Sender).Value));
   end
   else
-   SetPropertyFull(aname,TEdit(Sender).Text);
+   SetPropertyFull(aname,TRpMaskEdit(Sender).Text);
  end;
  if aname=SRpChildSubRep then
  begin
@@ -2264,14 +2276,14 @@ begin
   index:=TComponent(Sender).Tag;
   if index>=0 then
   begin
-   TEdit(LControls.Objects[index]).Text:=TFRpObjInspVCL(Owner).FontDialog1.Font.Name;
-   TEdit(LControls2.Objects[index]).Text:=TFRpObjInspVCL(Owner).FontDialog1.Font.Name;
+   TRpMaskEdit(LControls.Objects[index]).Text:=TFRpObjInspVCL(Owner).FontDialog1.Font.Name;
+   TRpMaskEdit(LControls2.Objects[index]).Text:=TFRpObjInspVCL(Owner).FontDialog1.Font.Name;
   end;
   index:=LNames.IndexOf(SrpSFontSize);
   if index>=0 then
   begin
-   TEdit(LControls.Objects[index]).Text:=IntToStr(TFRpObjInspVCL(Owner).FontDialog1.Font.Size);
-   TEdit(LControls2.Objects[index]).Text:=IntToStr(TFRpObjInspVCL(Owner).FontDialog1.Font.Size);
+   TRpMaskEdit(LControls.Objects[index]).Text:=IntToStr(TFRpObjInspVCL(Owner).FontDialog1.Font.Size);
+   TRpMaskEdit(LControls2.Objects[index]).Text:=IntToStr(TFRpObjInspVCL(Owner).FontDialog1.Font.Size);
   end;
   index:=LNames.IndexOf(SrpSFontColor);
   if index>=0 then
@@ -2283,8 +2295,8 @@ begin
   index:=LNames.IndexOf(SrpSFontStyle);
   if index>=0 then
   begin
-   TEdit(LControls.Objects[index]).Text:=IntegerFontStyleToString(FontStyleToCLXInteger(TFRpObjInspVCL(Owner).Fontdialog1.Font.Style));
-   TEdit(LControls2.Objects[index]).Text:=IntegerFontStyleToString(FontStyleToCLXInteger(TFRpObjInspVCL(Owner).Fontdialog1.Font.Style));
+   TRpMaskEdit(LControls.Objects[index]).Text:=IntegerFontStyleToString(FontStyleToCLXInteger(TFRpObjInspVCL(Owner).Fontdialog1.Font.Style));
+   TRpMaskEdit(LControls2.Objects[index]).Text:=IntegerFontStyleToString(FontStyleToCLXInteger(TFRpObjInspVCL(Owner).Fontdialog1.Font.Style));
    SetPropertyFull(SRpSFontStyle,IntToStr(FontStyleToCLXInteger(TFRpObjInspVCL(Owner).Fontdialog1.Font.Style)));
   end;
  end;

@@ -23,10 +23,13 @@ interface
 
 uses
  Classes,sysutils,rpmetafile,rpmdconsts,
- rpmunits,Dialogs, 
+ rpmunits,
  rppdffile,
 {$IFDEF USEVARIANTS}
  types,Variants,
+{$ENDIF}
+{$IFNDEF FORWEBAX}
+ rpbasereport,rppdfdriver,
 {$ENDIF}
  rptypes;
 
@@ -36,6 +39,11 @@ const
 
 
 
+{$IFNDEF FORWEBAX}
+procedure ExportReportToCSV(report:TRpBaseReport;filename:String;progress:Boolean);
+procedure ExportReportToTextProStream(report:TRpBaseReport;stream:TStream;progress:Boolean);
+procedure ExportReportToTextPro(report:TRpBaseReport;filename:String;progress:Boolean);
+{$ENDIF}
 function ExportMetafileToCSV (metafile:TRpMetafileReport; filename:string;
  showprogress,allpages:boolean; frompage,topage:integer):boolean;
 function ExportMetafileToCSVStream (metafile:TRpMetafileReport; stream:TStream;
@@ -235,6 +243,8 @@ begin
     if aobj.Metatype in [rpMetaExport] then
     begin
      if aobj.Line<=0 then
+      aobj.Line:=alist.Count;
+     if aobj.Line<=0 then
       aobj.Line:=1;
      if aobj.Position<=0 then
       aobj.Position:=1;
@@ -245,28 +255,118 @@ begin
        atext:=atext+' ';
       atext:=Copy(atext,1,aobj.size);
       aline:=aobj.Line-1;
-      while alist.Count<aline do
+      while alist.Count<=aline do
        alist.Add('');
       originaltext:=alist.Strings[aline];
-      while Length(originaltext)<aobj.Position+aobj.Size do
+      while Length(originaltext)<aobj.Position+aobj.Size-1 do
        originaltext:=originaltext+' ';
       for z:=1 to Length(atext) do
       begin
        originaltext[aobj.Position+z-1]:=atext[z];
       end;
       alist.Strings[aline]:=originaltext;
+      if aobj.DoNewLine then
+       alist.Add('');
      end;
     end;
    end;
   end;
+//  originaltext:=alist.GetText;
   alist.SaveToStream(Stream);
+//  Stream.Write(originaltext[1],Length(originaltext)-2)
  finally
   alist.free;
  end;
  Result:=true;
 end;
 
+{$IFNDEF FORWEBAX}
+procedure ExportReportToCSV(report:TRpBaseReport;filename:String;progress:Boolean);
+var
+ pdfdriver:TRpPDFDriver;
+ apdfdriver:IRpPrintDriver;
+ oldprogres:TRpProgressEvent;
+ astream:TMemoryStream;
+ oldtwopass:boolean;
+begin
+ pdfdriver:=TRpPDFDriver.Create;
+ pdfdriver.compressed:=true;
+ astream:=TMemoryStream.Create;
+ try
+  pdfdriver.DestStream:=aStream;
+  apdfdriver:=pdfdriver;
+  // If report progress must print progress
+  oldprogres:=report.OnProgress;
+  try
+   if progress then
+    report.OnProgress:=pdfdriver.RepProgress;
+   oldtwopass:=report.TwoPass;
+   try
+    report.TwoPass:=true;
+    report.PrintAll(apdfdriver);
+    ExportMetafileToCSV(report.metafile,filename,progress,true,1,9999);
+   finally
+    report.TwoPass:=oldtwopass;
+   end;
+  finally
+   report.OnProgress:=oldprogres;
+  end;
+ finally
+  astream.free;
+ end;
+end;
 
+procedure ExportReportToTextPro(report:TRpBaseReport;filename:String;progress:Boolean);
+var
+ astream:TMemoryStream;
+begin
+ astream:=TMemoryStream.Create;
+ try
+  ExportReportToTextProStream(report,astream,progress);
+  astream.Seek(0,soFromBeginning);
+  astream.SaveToFile(filename);
+ finally
+  astream.free;
+ end;
+end;
+
+procedure ExportReportToTextProStream(report:TRpBaseReport;stream:TStream;progress:Boolean);
+var
+ pdfdriver:TRpPDFDriver;
+ apdfdriver:IRpPrintDriver;
+ oldprogres:TRpProgressEvent;
+ astream:TMemoryStream;
+ oldtwopass:boolean;
+begin
+ pdfdriver:=TRpPDFDriver.Create;
+ pdfdriver.compressed:=true;
+ astream:=TMemoryStream.Create;
+ try
+  pdfdriver.DestStream:=aStream;
+  apdfdriver:=pdfdriver;
+  // If report progress must print progress
+  oldprogres:=report.OnProgress;
+  try
+   if progress then
+    report.OnProgress:=pdfdriver.RepProgress;
+   oldtwopass:=report.TwoPass;
+   try
+    report.TwoPass:=true;
+    report.PrintAll(apdfdriver);
+    ExportMetafileToTextProStream(report.metafile,astream,progress,true,1,99999);
+    astream.Seek(0,soFromBeginning);
+    stream.CopyFrom(astream,stream.size);
+   finally
+    report.TwoPass:=oldtwopass;
+   end;
+  finally
+   report.OnProgress:=oldprogres;
+  end;
+ finally
+  astream.free;
+ end;
+end;
+{$ENDIF}
 
 
 

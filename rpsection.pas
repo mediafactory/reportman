@@ -51,7 +51,7 @@ type
 
  TRpSection=class(TRpCommonComponent)
   private
-   FStream:TMemoryStream;
+   FStream,FDecompStream:TMemoryStream;
    FBackExpression:WideString;
    Fdpires:integer;
    FBackStyle:TrpBackStyle;
@@ -232,6 +232,7 @@ begin
  FExternalSearchField:='REPORT_NAME';
  FFooterAtReportEnd:=true;
  FStream:=TMemoryStream.Create;
+ FDecompStream:=TMemoryStream.Create;
  Fdpires:=DEFAULT_DPI_BACK;
  FDrawStyle:=rpDrawFull;
 
@@ -248,6 +249,7 @@ destructor TRpSection.Destroy;
 begin
  FReportComponents.Free;
  FStream.free;
+ FDecompStream.free;
  inherited destroy;
 end;
 
@@ -1285,7 +1287,19 @@ end;
 
 procedure TRpSection.SetStream(Value:TMemoryStream);
 begin
- FStream.LoadFromStream(Value);
+ if IsCompressed(Value) then
+ begin
+  FStream.LoadFromStream(Value);
+ end
+ else
+ begin
+  if TRpBaseReport(GetReport).StreamFormat=rpStreamzlib then
+  begin
+   CompressStream(Value,FStream);
+  end
+  else
+   FStream.LoadFromStream(Value);
+ end;
 end;
 
 procedure TRpSection.ReadStream(AStream:TStream);
@@ -1468,7 +1482,13 @@ begin
   begin
    if FStream.Size=0 then
     exit;
-   Result:=FStream;
+   if IsCompressed(FStream) then
+   begin
+    DecompressStream(FStream,FDecompStream);
+    Result:=FDecompStream;
+   end
+   else
+    Result:=FStream;
   end;
  except
   on E:Exception do

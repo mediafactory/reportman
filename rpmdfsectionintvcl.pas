@@ -170,8 +170,10 @@ begin
    begin
     height:=MIN_GRID_BITMAP_HEIGHT;
    end;
+{$IFNDEF DOTNETDBUGS}
    fBitmap.PixelFormat:=pf32bit;
    fBitmap.HandleType:=bmDIB;
+{$ENDIF}
    fbitmap.Width:=width;
    fbitmap.Height:=height;
    // Then draws the bitmap
@@ -871,9 +873,11 @@ begin
   begin
    secint.backbitmap:=TBitmap.Create;
    try
+{$IFNDEF DOTNETDBUGS}
     secint.backbitmap.PixelFormat:=pf32bit;
-    astream:=asection.GetStream;
     secint.BackBitmap.HandleType:=bmDIB;
+{$ENDIF}
+    astream:=asection.GetStream;
     secint.backbitmap.Height:=Height;
     secint.backbitmap.Width:=Width;
     secint.Canvas.Brush.Color:=clWhite;
@@ -884,8 +888,10 @@ begin
     secint.backbitmap.Canvas.FillRect(rec);
     abitmap:=TBitmap.Create;
     try
+{$IFNDEF DOTNETDBUGS}
      abitmap.PixelFormat:=pf32bit;
      abitmap.HandleType:=bmDIB;
+{$ENDIF}
      astream.Seek(0,soFromBeginning);
      if GetJPegInfo(astream,bitmapwidth,bitmapheight) then
      begin

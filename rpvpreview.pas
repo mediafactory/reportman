@@ -31,7 +31,10 @@ uses
 {$IFDEF USEVARIANTS}
   Types,
 {$ENDIF}
-  Classes, Graphics, Controls, Forms, Dialogs,rppagesetupvcl,
+  Classes, Graphics, Controls, Forms, Dialogs,
+{$IFNDEF BUILDER4}
+  rppagesetupvcl,
+{$ENDIF}
   StdCtrls,rpbasereport,rpreport,rpmetafile, ComCtrls,rphtmldriver,
   rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,rptextdriver,rpsvgdriver,
   rpcsvdriver,
@@ -356,6 +359,10 @@ begin
  AScaleMore.Hint:=TranslateStr(237,AScaleMore.Hint);
  APageSetup.Caption:=TranslateStr(50,APageSetup.Caption);
  APageSetup.Hint:=TranslateStr(51,APageSetup.Hint);
+
+{$IFDEF BUILDER4}
+ APageSetup.Enabled:=false;
+{$ENDIF}
 
  SaveDialog1.FilterIndex:=2;
 end;
@@ -830,15 +837,19 @@ begin
 end;
 
 procedure TFRpVPreview.APageSetupExecute(Sender: TObject);
+{$IFNDEF BUILDER4}
 var
  adone:boolean;
+{$ENDIF}
 begin
+{$IFNDEF BUILDER4}
  if ExecutePageSetup(report) then
  begin
   fModified:=true;
   // Reexecutes the report
   AppIdle(Self,adone);
  end;
+{$ENDIF}
 end;
 
 end.

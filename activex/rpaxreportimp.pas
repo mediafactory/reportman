@@ -89,6 +89,9 @@ type
     procedure SaveToHTML(const filename: WideString); safecall;
     procedure SetRecordSet(const DatasetName: WideString;
       const Value: IDispatch); safecall;
+    procedure SaveToCSV(const filename: WideString); safecall;
+    procedure SaveToCustomText(const filename: WideString); safecall;
+    procedure SaveToSVG(const filename: WideString); safecall;
   end;
 
 implementation
@@ -426,6 +429,21 @@ procedure TReportManX.SetRecordSet(const DatasetName: WideString;
   const Value: IDispatch);
 begin
  FDelphiControl.SetRecordset(datasetname, Pointer(Value));
+end;
+
+procedure TReportManX.SaveToCSV(const filename: WideString);
+begin
+
+end;
+
+procedure TReportManX.SaveToCustomText(const filename: WideString);
+begin
+
+end;
+
+procedure TReportManX.SaveToSVG(const filename: WideString);
+begin
+
 end;
 
 initialization

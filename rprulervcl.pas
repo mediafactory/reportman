@@ -256,7 +256,10 @@ begin
    BitmapVin:=Bitmap;
   end;
  end;
+{$IFNDEF DOTNETDBUGS}
  Bitmap.PixelFormat:=pf32bit;
+ Bitmap.HandleType:=bmDIB;
+{$ENDIF}
  if RType=RHorizontal then
  begin
   Bitmap.Width:=bwidth;

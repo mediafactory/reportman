@@ -91,7 +91,7 @@
     <td>If true, the engine breaks the group when the Group Expression is true, 
       else will break the group when the group expression result changes</td>
   </tr>
-  <tr>
+  <tr> 
     <td>Page repeat</td>
     <td>PageRepeat</td>
     <td>Boolean</td>
@@ -236,7 +236,7 @@
       preview or print the image on the paper also.</td>
   </tr>
   <tr> 
-    <td>BackExpressoin</td>
+    <td>Back. Expression</td>
     <td>Expression</td>
     <td>WideString</td>
     <td>The image can be embedded (Image propery) or obtained throught this expression 
@@ -244,6 +244,47 @@
       database field will try to read the image from there, see below the image 
       formats supported. If the field is a string field or the result of evaluation 
       is a string the engine will try to load the image as a file reference.</td>
+  </tr>
+  <tr> 
+    <td>Export Expression</td>
+    <td>ExportExpression</td>
+    <td>WideString</td>
+    <td>A expression to obtain the value that will be uses in custom output text 
+      format </td>
+  </tr>
+  <tr> 
+    <td>Exp. Format</td>
+    <td>ExportDisplayFormat</td>
+    <td>String</td>
+    <td>The display format will be used if provided to format the export expression</td>
+  </tr>
+  <tr> 
+    <td>Exp. Line</td>
+    <td>ExportLine</td>
+    <td>Integer</td>
+    <td>The exact line of the text file where the export result will be placed, 
+      if you set this value to 0, the current (last) line will be used</td>
+  </tr>
+  <tr> 
+    <td>Exp. Position</td>
+    <td>ExportPosition</td>
+    <td>Integer</td>
+    <td>Postion inside the line (first position is 1), where the text will be 
+      placed in custom text output</td>
+  </tr>
+  <tr> 
+    <td>Exp. Size</td>
+    <td>ExportSize</td>
+    <td>Integer</td>
+    <td>Size of the output for custom text output, will be right padded with blank 
+      characters </td>
+  </tr>
+  <tr>
+    <td>Exp.New Line</td>
+    <td>ExportDoNewLine</td>
+    <td>Boolean</td>
+    <td>If this value is true, a new line will be added after exporting this item 
+      in custom text output</td>
   </tr>
 </table>
 <p><b>Developer info</b></p>

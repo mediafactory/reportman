@@ -4,13 +4,15 @@ interface
 
 uses
   Classes,ComObj, ActiveX, AspTlb, ReportMan_TLB, StdVcl,
-  rpreport,rppdfdriver;
+  rpreport,rppdfdriver,rpcsvdriver,rptextdriver;
 
 type
   TReportmanXAServer = class(TASPMTSObject, IReportmanXAServer)
   protected
     procedure GetPDF(const Report: IReportReport; Compressed: WordBool);
       safecall;
+    procedure GetCustomText(const Report: IReportReport); safecall;
+    procedure GetText(const Report: IReportReport); safecall;
   end;
 
 implementation
@@ -33,6 +35,53 @@ begin
 //  Response.Content:='Executed, size:'+IntToStr(astream.size);
   Response.Clear;
   Response.ContentType := 'application/pdf';
+  SetLength(astring,memstream.size);
+  memstream.Read(astring[1],memstream.size);
+//  Response.Write(astring);
+  Response.BinaryWrite(astring);
+ finally
+  memstream.free;
+ end;
+end;
+
+procedure TReportmanXAServer.GetCustomText(const Report: IReportReport);
+var
+ areport:TRpReport;
+ memstream:TMemoryStream;
+ astring:String;
+begin
+ areport:=TRpReport(Report.VCLReport);
+ memstream:=TMemoryStream.Create;
+ try
+  rpcsvdriver.ExportReportToTextProStream(areport,memstream,false);
+  memstream.Seek(0,soFromBeginning);
+//  Response.Content:='Executed, size:'+IntToStr(astream.size);
+  Response.Clear;
+  Response.ContentType := 'text/plain';
+  SetLength(astring,memstream.size);
+  memstream.Read(astring[1],memstream.size);
+//  Response.Write(astring);
+  Response.BinaryWrite(astring);
+ finally
+  memstream.free;
+ end;
+end;
+
+procedure TReportmanXAServer.GetText(const Report: IReportReport);
+var
+ areport:TRpReport;
+ memstream:TMemoryStream;
+ astring:String;
+begin
+ areport:=TRpReport(Report.VCLReport);
+ memstream:=TMemoryStream.Create;
+ try
+  rptextdriver.PrintReportToStream(areport,'',false,true,1,99999,1,memstream,
+   false,false,'PLAIN');
+  memstream.Seek(0,soFromBeginning);
+//  Response.Content:='Executed, size:'+IntToStr(astream.size);
+  Response.Clear;
+  Response.ContentType := 'text/plain';
   SetLength(astring,memstream.size);
   memstream.Read(astring[1],memstream.size);
 //  Response.Write(astring);

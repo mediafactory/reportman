@@ -25,7 +25,10 @@ interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
  rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview,
- rpexceldriver,rptextdriver,rppdfdriver,rppagesetupvcl,
+ rpexceldriver,rptextdriver,rppdfdriver,
+{$IFNDEF BUILDER4}
+  rppagesetupvcl,
+{$ENDIF}
 {$IFDEF USEINDY}
  rpfmainmetaviewvcl,
 {$ENDIF}
@@ -175,7 +178,12 @@ end;
 
 procedure TVCLReport.PageSetup;
 begin
+{$IFNDEF BUILDER4}
  ExecutePageSetup(Report);
+{$ENDIF}
+{$IFDEF BUILDER4}
+ Raise Exception.Create(SRpSFeaturenotsup);
+{$ENDIF}
 end;
 
 end.

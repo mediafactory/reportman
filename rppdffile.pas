@@ -2041,7 +2041,10 @@ var
  buffer:array of Byte;
  aqcolor:TRGBQuad;
  atcolor:TRGBTriple;
+ abytes:array of Byte;
+ abytessize:Integer;
  index:Byte;
+ position:integer;
 begin
  // Read color entries
  case bitcount of
@@ -2210,6 +2213,9 @@ begin
 
  // Draws paletted picture
 // dc:=GetDC(0);
+ abytessize:=height*width*3;
+ SetLength(abytes,abytessize);
+ position:=0;
  for y:=0 to height-1 do
  begin
   for x:=0 to width-1 do
@@ -2222,9 +2228,12 @@ begin
     atcolor:=tcolors[indexvalues[y*width+x]];
 //    SetPixel(DC,x,y,atcolor.rgbtRed shl 16+
 //      atcolor.rgbtGreen shl 8 + atcolor.rgbtBlue);
-    FMemBits.Write(atcolor.rgbtRed,1);
-    FMemBits.Write(atcolor.rgbtGreen,1);
-    FMemBits.Write(atcolor.rgbtBlue,1);
+    abytes[position]:=atcolor.rgbtRed;
+    inc(position);
+    abytes[position]:=atcolor.rgbtGreen;
+    inc(position);
+    abytes[position]:=atcolor.rgbtBlue;
+    inc(position);
    end
    else
    begin
@@ -2234,12 +2243,16 @@ begin
     aqcolor:=qcolors[indexvalues[y*width+x]];
 //    SetPixel(DC,x,y,aqcolor.rgbRed shl 16+
 //      aqcolor.rgbGreen shl 8 + aqcolor.rgbBlue);
+    abytes[position]:=aqcolor.rgbRed;
+    inc(position);
+    abytes[position]:=aqcolor.rgbGreen;
+    inc(position);
+    abytes[position]:=aqcolor.rgbBlue;
+    inc(position);
    end;
-   FMemBits.Write(aqcolor.rgbRed,1);
-   FMemBits.Write(aqcolor.rgbGreen,1);
-   FMemBits.Write(aqcolor.rgbBlue,1);
   end;
  end;
+ FMemBits.Write(abytes[0],abytessize);
 // Releasedc(0,dc);
 end;
 

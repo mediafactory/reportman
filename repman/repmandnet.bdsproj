@@ -111,15 +111,16 @@
 			<Linker Name="MinStackSize" Type="Integer">4096</Linker>
 			<Linker Name="MaxStackSize" Type="Integer">1048576</Linker>
 			<Linker Name="ImageBase" Type="Integer">4194304</Linker>
-			<Linker Name="ExeDescription" Type="String"></Linker>  <Linker Name="GenerateDRC" Type="Boolean">False</Linker>
-    </Linker>
+			<Linker Name="ExeDescription" Type="String"></Linker>
+			<Linker Name="GenerateDRC" Type="Boolean">False</Linker>
+		</Linker>
 		<Directories>
 			<Directories Name="OutputDir" Type="String"></Directories>
 			<Directories Name="UnitOutputDir" Type="String"></Directories>
 			<Directories Name="PackageDLLOutputDir" Type="String"></Directories>
 			<Directories Name="PackageDCPOutputDir" Type="String"></Directories>
-			<Directories Name="SearchPath" Type="String">h:\windows\microsoft.net\framework\v1.1.4322</Directories>
-			<Directories Name="Packages" Type="String">h:\windows\microsoft.net\framework\v1.1.4322\System.XML.dll;h:\windows\microsoft.net\framework\v1.1.4322\System.Drawing.dll;h:\windows\microsoft.net\framework\v1.1.4322\System.Data.dll;h:\windows\microsoft.net\framework\v1.1.4322\System.dll</Directories>
+			<Directories Name="SearchPath" Type="String">h:\windows\microsoft.net\framework\v1.1.4322;c:\windows\microsoft.net\framework\v1.1.4322</Directories>
+			<Directories Name="Packages" Type="String">c:\windows\microsoft.net\framework\v1.1.4322\System.XML.dll;c:\windows\microsoft.net\framework\v1.1.4322\System.Drawing.dll;c:\windows\microsoft.net\framework\v1.1.4322\System.Data.dll;c:\windows\microsoft.net\framework\v1.1.4322\System.dll</Directories>
 			<Directories Name="Conditionals" Type="String"></Directories>
 			<Directories Name="DebugSourceDirs" Type="String"></Directories>
 			<Directories Name="UsePackages" Type="Boolean">True</Directories>

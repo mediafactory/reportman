@@ -379,7 +379,7 @@ begin
    SRpBitmapFile+' (*.bmp)|'+
    SRpBitmapFileMono+' (*.bmp)|'+
    SRpHtmlFile+' (*.html)|'+
-   SRpSVGFile+' (*.svg)|';
+   SRpSVGFile+' (*.svg)|'+
    SRpCSVFile+' (*.csv)|'+
    SRpTXTProFile+' (*.txt)';
 {$IFDEF MSWINDOWS}

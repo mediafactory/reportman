@@ -82,7 +82,7 @@ var
  memstream:TMemoryStream;
  oemconvert:Boolean;
  htmloutput:Boolean;
- tocsv,tosvg:Boolean;
+ tocsv,tosvg,toctxt:Boolean;
 
 procedure PrintHelp;
 var
@@ -105,6 +105,7 @@ begin
 {$ENDIF}
  Writeln(AnsiString(SRpPrintRep15));
  Writeln(AnsiString(SRpPrintRep16));
+ Writeln(AnsiString(SRpPrintRep17));
  Writeln(AnsiString(SRpParseParamsH));
  Writeln(AnsiString(SRpCommandLineStdIN));
  Writeln(AnsiString(SRpPrintPDFRep10));
@@ -133,6 +134,7 @@ begin
   toexcel:=false;
 {$ENDIF}
   tocsv:=false;
+  toctxt:=false;
   tosvg:=false;
   htmloutput:=false;
   stdinput:=false;
@@ -168,6 +170,9 @@ begin
      tosvg:=true
     else
     if ParamStr(indexparam)='-csv' then
+     tocsv:=true
+    else
+    if ParamStr(indexparam)='-ctxt' then
      tocsv:=true
     else
     if ParamStr(indexparam)='-q' then
@@ -315,6 +320,14 @@ begin
       PrintReportToMetafile(report,'',showprogress,allpages,frompage,topage,
        copies,'',collate);
       ExportMetafileToCSV(report.Metafile,pdffilename,showprogress,
+       allpages,frompage,topage);
+     end
+     else
+     if toctxt then
+     begin
+      PrintReportToMetafile(report,'',showprogress,allpages,frompage,topage,
+       copies,'',collate);
+      ExportMetafileToTextPro(report.Metafile,pdffilename,showprogress,
        allpages,frompage,topage);
      end
      else

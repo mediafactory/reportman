@@ -71,7 +71,9 @@ type
    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer);override;
    constructor Create(AOwner:TComponent);override;
    function GetReport:TRpReport;
+{$IFNDEF DOTNETD}
    procedure SetRecordset(datasetname:string; recordset: Pointer);
+{$ENDIF}
    { Public declarations }
   published
     { Published declarations }
@@ -237,6 +239,7 @@ begin
  Result:=FVCLReport.Report.Params.ParamByName(paramname).Value;
 end;
 
+{$IFNDEF DOTNETD}
 procedure TRpActiveXReport.SetRecordset(datasetname:string; recordset: Pointer);
 var
  index:integer;
@@ -249,7 +252,7 @@ begin
  // maybe reste params...
  //FVCLReport.Report.DataInfo.Items[index].SQL := '';
 end;
-
+{$ENDIF}
 
 end.
 

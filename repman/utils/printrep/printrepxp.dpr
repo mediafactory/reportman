@@ -79,7 +79,7 @@ end;
 var
  isstdin:Boolean;
  memstream:TMemoryStream;
- topdf,tometafile,showparams:Boolean;
+ topdf,tometafile,showparams,modified:Boolean;
  outputfilename:String;
 
 begin
@@ -268,7 +268,9 @@ begin
       end
       else
       if preview then
-       rpvpreview.ShowPreview(report,filename)
+      begin
+       rpvpreview.ShowPreview(report,filename,modified);
+      end
       else
       begin
        if doprint then
