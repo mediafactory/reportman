@@ -63,12 +63,12 @@ uses Classes,Sysutils,
 {$IFNDEF USEVARIANTS}
  Windows,
 {$ENDIF}
- rpmzlib,rpmdconsts,rptypes;
+ rpmzlib,rpmdconsts,rptypes,rpmunits;
 
 
 const
  PDF_HEADER:string='%PDF-1.4';
- CONS_PDFRES=72;
+ CONS_PDFRES=POINTS_PER_INCHESS;
  CONS_MINLINEINFOITEMS=400;
  CONS_UNDERLINEWIDTH=0.1;
  CONS_SRIKEOUTWIDTH=0.05;
@@ -218,7 +218,7 @@ type
    // Document physic
    property PageWidth:integer read FPageWidth write FPageWidth;
    property PageHeight:integer read FPageHeight write FPageHeight;
-   property Resolution:integer read FResolution write SetResolution default 1440;
+   property Resolution:integer read FResolution write SetResolution default TWIPS_PER_INCHESS;
   end;
 
 
@@ -442,8 +442,8 @@ begin
  FPages:=TStringList.Create;
  FPageWidth:= 12048;
  FPageHeight:= 17039;
- FResolution:=1440;
- FCanvas.FResolution:=1440;
+ FResolution:=TWIPS_PER_INCHESS;
+ FCanvas.FResolution:=TWIPS_PER_INCHESS;
  FBitmapStreams:=TList.Create;
 end;
 

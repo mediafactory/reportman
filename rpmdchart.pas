@@ -23,7 +23,7 @@ interface
 {$I rpconf.inc}
 
 uses Classes,SysUtils,Math,rpprintitem,rpmdconsts,rpeval,
- rptypeval,rptypes,rpevalfunc,
+ rptypeval,rptypes,rpevalfunc,rpmunits,
 {$IFNDEF USEVARIANTS}
  windows,
 {$ENDIF}
@@ -507,8 +507,8 @@ begin
    MaxValueCount:=aserie.FValueCount;
  end;
  // The number of grid rows depends on font height
- gridvsep:=Round(FontSize/72*1440*2);
- vertgap:=Round(FontSize/72*1440*1.5);
+ gridvsep:=Round(FontSize/POINTS_PER_INCHESS*TWIPS_PER_INCHESS*2);
+ vertgap:=Round(FontSize/POINTS_PER_INCHESS*TWIPS_PER_INCHESS*1.5);
  horzgap:=CONS_HORZGAP;
  // Draws coordinate system
  metafile.Pages[metafile.CurrentPage].NewDrawObject(aposy,aposx+horzgap,1,Height-vertgap,

@@ -23,7 +23,7 @@ interface
 uses
   Types,Classes,SysUtils,
   Windows,Graphics, Controls,
-  Forms,
+  Forms,rpmunits,
  rpmdconsts;
 
 
@@ -282,7 +282,7 @@ begin
 
  if Metrics=rCms then
  begin
-  onecent:=Round(100/2.51);
+  onecent:=Round(100/CMS_PER_INCHESS);
   onethousand:=onecent*10;
   midthousand:=onecent*5;
  end

@@ -942,7 +942,7 @@ var
  index:integer;
  i:integer;
  datainfosource:TRpDatainfoItem;
- baseinfo:TRpDatabaseInfoIntem;
+ baseinfo:TRpDatabaseInfoItem;
  doexit:boolean;
  param:TRpParam;
 begin
@@ -1315,7 +1315,7 @@ begin
     index:=param.Datasets.IndexOf(Alias);
     if index>=0 then
     begin
-st     case baseinfo.Driver of
+     case baseinfo.Driver of
       rpdatadbexpress:
        begin
 {$IFDEF USESQLEXPRESS}

@@ -428,8 +428,8 @@ begin
  begin
   Result.PageIndex:=0;
   // Converts to decs of milimeter
-  Result.Width:=Round(qtsize.CustomWidth/1440*2.51*100);
-  Result.Height:=Round(qtsize.CustomHeight/1440*2.51*100);
+  Result.Width:=Round(qtsize.CustomWidth/TWIPS_PER_INCHESS*CMS_PER_INCHESS*100);
+  Result.Height:=Round(qtsize.CustomHeight/TWIPS_PER_INCHESS*CMS_PER_INCHESS*100);
  end
  else
  begin

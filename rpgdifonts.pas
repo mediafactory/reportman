@@ -21,7 +21,8 @@ unit rpgdifonts;
 
 interface
 
-uses windows, Messages, SysUtils, Classes, Graphics, Controls,printers,Forms;
+uses windows, Messages, SysUtils, Classes, Graphics, Controls,printers,
+ rpmunits,Forms;
 
 type
   TFontStep=(cpi20,cpi17,cpi15,cpi12,cpi10,cpi6,cpi5);
@@ -193,7 +194,7 @@ begin
    else
     fontimp.isred:=false;
   end;
-  FontImp.Font.Size:=LogFont.lfHeight*72 div 1440;
+  FontImp.Font.Size:=LogFont.lfHeight*POINTS_PER_INCHESS div TWIPS_PER_INCHESS;
 //  FontImp.Font.Height:=LogFont.lfHeight;
 //  FontImp.Font.:=LogFont.lfHeight;
   TList(Data).Add(FontImp);
@@ -281,7 +282,7 @@ begin
 
  LogFont.lfHeight:=Font.Height;
 
- LogFont.lfWidth:=Trunc(ValorsCPITWIPS[fstep]/1440*Screen.PixelsPerInch);
+ LogFont.lfWidth:=Trunc(ValorsCPITWIPS[fstep]/TWIPS_PER_INCHESS*Screen.PixelsPerInch);
  LogFont.lfEscapement:=0;
  LogFont.lfOrientation:=0;
 // if fsBold in Font.Style then
@@ -455,7 +456,7 @@ begin
  LogFont.lfQuality:=DEFAULT_QUALITY;
  LogFont.lfPitchAndFamily:=FF_DONTCARE {or FIXED_PITCH};
 
-  LOGFONT.lfheight:=-MulDiv(Font.size, GetDeviceCaps(desti, LOGPIXELSY), 72);
+  LOGFONT.lfheight:=-MulDiv(Font.size, GetDeviceCaps(desti, LOGPIXELSY), POINTS_PER_INCHESS);
   logfont.lfwidth:=0;
   logfont.lfWeight:=FW_DONTCARE;
   logfont.lfEscapement:=rotation;

@@ -27,8 +27,9 @@ uses rptypes,
 sysutils;
 
 const
- CMS_PER_INCHESS=2.51;
+ CMS_PER_INCHESS=2.54;
  TWIPS_PER_INCHESS=1440;
+ POINTS_PER_INCHESS=72;
 type
  Trpmunits=(rpUnitcms,rpUnitInchess);
 

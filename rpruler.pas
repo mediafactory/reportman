@@ -23,7 +23,7 @@ interface
 uses
   Types,Classes,SysUtils,
   QGraphics, QControls,
-  Qt,QForms,
+  Qt,QForms,rpmunits,
  rpmdconsts;
 
 
@@ -270,10 +270,10 @@ begin
 
  if Metrics=rCms then
  begin
-  onecent:=Round(100/2.51);
+  onecent:=Round(100/CMS_PER_INCHESS);
   onethousand:=onecent*10;
   midthousand:=onecent*5;
-  scale:=pixelsperinchx/2.51+0.15;
+  scale:=pixelsperinchx/CMS_PER_INCHESS+0.15;
  end
  else
  begin
