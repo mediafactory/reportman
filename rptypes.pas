@@ -2928,6 +2928,88 @@ var
  afilename:String;
  files:TFilestream;
  oemconvert:Boolean;
+{$IFDEF ALTLINUXTEXTPRINT}     //   
+ cmdtext:String;               // Need to use a temporary string
+{$ENDIF}                       //
+begin
+ oemconvert:=GetPrinterEscapeOem(printerindex);
+ afilename:=rpTempFileName;
+ files:=TFileStream.Create(afilename,fmCreate or fmShareDenyWrite);  try
+  files.Write(S[1],Length(S));
+ finally
+  files.free;
+ end;
+ // Looks for the printer name
+ printernamecommand:='';
+ if Length(forceprintername)>0 then
+  printername:=forceprintername
+ else
+  printername:=GetPrinterConfigName(printerindex);
+ params:=TStringList.Create;
+ try
+  if oemconvert then
+  begin
+   ExecuteRecode(afilename,'..850/');
+  end;
+{$IFDEF ALTLINUXTEXTPRINT}                           // Here I add my workaround
+  cmdtext := 'lpr ';                                 // 
+  if Length(printername) > 0 then                    // Building the lpr command and
+    cmdtext := cmdtext + '-P ' + printername + ' ';  // parameters into the temporary
+  cmdtext := cmdtext + '-r -l ';                     // string exactly as yours code.
+  if Length(Title) > 0 then                          //
+    cmdtext := cmdtext + 'J ''' + Title + ''' ';     //
+  cmdtext := cmdtext + afilename + ' &';             // But I execute it as
+  LibC.system(PChar(cmdtext));                       // a background process here.
+{$ELSE}                                              //
+  params.Add('lpr');
+  if Length(printername)>0 then
+  begin
+   params.Add('-P');
+   params.Add(printername);
+  end;
+  // Remove after print
+  params.Add('-r');
+  params.Add('-l');
+  Title:=Trim(Title);
+  if Length(Title)>0 then
+  begin
+   params.Add('-J');
+   params.Add(Title);
+  end;
+  params.Add(afilename);
+  // Creates a fork
+  if params.count>10 then
+   Raise exception.create(SRpTooManyParams);
+  for i:=0 to params.count-1 do
+  begin
+   theparams[i]:=Pchar(params[i]);
+  end;
+  theparams[params.count]:=nil;
+  child:=fork;
+  if child=-1 then
+   Raise Exception.Create(SRpErrorForking);
+  if child=0 then
+  begin
+   // The child executes the command
+   execvp(theparams[0],PPChar(@theparams))
+  end;
+{$ENDIF}
+ finally
+  params.Free;
+ end;
+end;
+
+procedure SendTextToPrinter(S:String;printerindex:TRpPrinterSelect;Title,forceprintername:String);
+var
+ printername:String;
+ printernamecommand:string;
+ child:__pid_t;
+ i:integer;
+ theparams:array [0..10] of pchar;
+ params:TStringList;
+ afilename:String;
+ files:TFilestream;
+ oemconvert:Boolean;
 begin
  oemconvert:=GetPrinterEscapeOem(printerindex);
  afilename:=rpTempFileName;

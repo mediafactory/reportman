@@ -42,6 +42,8 @@
  {$UNDEF USEIBO}
  // Fixes performance issues in Linux about TStringList
  {$DEFINE USEEVALHASH}
+ // Active this if zoombie proceses are created when executing lpr (text output)
+ //{$DEFINE ALTLINUXTEXTPRINT}
 {$ENDIF}
 
 // Database drivers to be used when performing a release
