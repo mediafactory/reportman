@@ -870,6 +870,7 @@ var
   SRpSBDesign:WideString='Design';
   SRpSBPreview:WideString='Preview only';
   SRpSBPrint:WideString='Print';
+  SRpAsc2:WideString='Convert special european chars to ASCII';
 
 implementation
 

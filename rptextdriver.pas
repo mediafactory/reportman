@@ -1139,6 +1139,142 @@ var
  nextline:boolean;
  alastsize:double;
  lockspace:boolean;
+ //Added by Luciano Enzweiler - 08 Feb, 2004 - Start
+ // When you have a field with wordwrap on and the text on it had a #10, the driver was
+ // sending this extra linefeed without considering it. So a page with 72 lines, for example
+ // jumped one extra line because of this.
+ DescPos:boolean;
+ //Added by Luciano Enzweiler - 08 Feb, 2004 - End
+begin
+ //Added by Luciano Enzweiler - 08 Feb, 2004 - Start
+ // Wordwrap issue
+ DescPos := False;
+ //Added by Luciano Enzweiler - 08 Feb, 2004 - End
+ // Text extent for the simple strings, wide strings not supported
+ fontstep:=NearestFontStep(fontstep);
+ astring:=Text;
+ arec:=Rect;
+ arec.Left:=0;
+ arec.Top:=0;
+ arec.Bottom:=0;
+
+ asize:=0;
+
+ FLineInfoCount:=0;
+ position:=1;
+ linebreakpos:=0;
+ maxwidth:=0;
+ recwidth:=(rect.Right-rect.Left);
+ nextline:=false;
+ i:=1;
+ alastsize:=0;
+ lockspace:=false;
+ while i<=Length(astring) do
+ begin
+  newsize:=CalcCharWidth(astring[i],fontstep);
+  if (Not (astring[i] in [' ',#10,#13])) then
+   lockspace:=false;
+  if wordbreak then
+  begin
+   if asize+newsize>recwidth then
+   begin
+    if linebreakpos>0 then
+    begin
+     i:=linebreakpos;
+     nextline:=true;
+     asize:=alastsize;
+     linebreakpos:=0;
+    end;
+   end
+   else
+   begin
+    if astring[i] in ['.',',','-',' '] then
+    begin
+     linebreakpos:=i;
+     if astring[i]=' ' then
+     begin
+      if not lockspace then
+      begin
+       alastsize:=asize;
+       lockspace:=true;
+      end;
+     end
+     else
+     begin
+      alastsize:=asize+newsize;
+     end;
+    end;
+    asize:=asize+newsize;
+   end;
+  end
+  else
+  begin
+   asize:=asize+newsize;
+  end;
+  if not singleline then
+ //Added by Luciano Enzweiler - 08 Feb, 2004 - Start
+ // Wordwrap issue
+{  if astring[i]=#10 then  //From this
+    nextline:=true;  }
+   if astring[i]=#10 then begin  //To this
+    nextline:=true;
+    DescPos:=True;
+   end;
+ //Added by Luciano Enzweiler - 08 Feb, 2004 - End
+  if asize>maxwidth then
+   maxwidth:=asize;
+  if nextline then
+  begin
+   nextline:=false;
+   info.Position:=position;
+   info.Size:=i-position+1;
+ //Added by Luciano Enzweiler - 08 Feb, 2004 - Start
+ // Wordwrap issue
+   if DescPos then begin
+    DescPos:=False;
+    Dec(info.Size);
+   end;
+ //Added by Luciano Enzweiler - 08 Feb, 2004 - End
+   info.Width:=Round((asize));
+   info.height:=Round((TWIPS_PER_INCHESS/FLinesPerInch));
+   info.TopPos:=arec.Bottom;
+   arec.Bottom:=arec.Bottom+info.height;
+   asize:=0;
+   position:=i+1;
+   NewLineInfo(info);
+  end;
+  inc(i);
+ end;
+ arec.Right:=Round((maxwidth+1));
+ if Position<=Length(astring) then
+ begin
+  info.Position:=position;
+  info.Size:=Length(astring)-position+1;
+  info.Width:=Round((asize+1));
+  info.height:=Round((TWIPS_PER_INCHESS/FLinesPerInch));
+  info.TopPos:=arec.Bottom;
+  arec.Bottom:=arec.Bottom+info.height;
+  NewLineInfo(info);
+ end;
+ rect:=arec;
+end;
+{
+procedure TRpTextDriver.CalculateTextExtent(text:WideString;var Rect:TRect;
+    WordBreak:Boolean;singleline:Boolean;fontstep:TRpFontStep);
+var
+ astring:string;
+ i:integer;
+ asize:double;
+ arec:TRect;
+ position:integer;
+ info:TRpLineInfo;
+ maxwidth:double;
+ newsize:double;
+ recwidth:double;
+ linebreakpos:integer;
+ nextline:boolean;
+ alastsize:double;
+ lockspace:boolean;
 begin
  // Text extent for the simple strings, wide strings not supported
  fontstep:=NearestFontStep(fontstep);
@@ -1234,7 +1370,7 @@ begin
  end;
  rect:=arec;
 end;
-
+}
 procedure TRpTextDriver.NewLineInfo(info:TRpLineInfo);
 begin
  if FLineInfoMaxItems<=FLineInfoCount-1 then

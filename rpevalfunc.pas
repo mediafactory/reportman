@@ -189,6 +189,19 @@ type
    constructor Create(AOWner:TComponent);override;
   end;
 
+//Added by Luciano Enzweiler - 17 Dec, 2003 - Start
+// On Brazilian Portuguese we use a lot á, ç, ú, etc. and it wasn't
+// printable on matrix printers.
+//This function is very useful to convert the text to printable chars.
+ { Function  }
+ TIdenASC2=class(TIdenFunction)
+ protected
+   function GeTRpValue:TRpValue;override;
+  public
+   constructor Create(AOWner:TComponent);override;
+  end;
+//Added by Luciano Enzweiler - 17 Dec, 2003 - End
+
  { Constant }
  TIdenToday=class(TIdenConstant)
   protected
@@ -935,6 +948,100 @@ begin
  end;
 end;
 
+
+{**************************************************************************}
+//Added by Luciano Enzweiler - 17 Dec, 2003 - Start
+constructor TIdenASC2.Create(AOwner:TComponent);
+begin
+ inherited Create(Aowner);
+ FParamcount:=1;
+ IdenName:='ASC2';
+ Help:=SRpAsc2;
+ model:='function '+'ASC2'+':string';
+ aParams:='';
+end;
+
+function TIdenASC2.GeTRpValue:TRpValue;
+var
+  StrTemp, StrRet: String;
+  i, NrChr: Integer;
+begin
+  StrRet := '';
+  StrTemp := VarToStr(Params[0]);
+  for i := 1 to Length(StrTemp) do begin
+    NrChr := Ord(StrTemp[i]);
+    if ((NrChr >= 192) and (NrChr <= 198)) then begin
+      StrRet := StrRet + 'A';
+      Continue;
+    end;
+    if ((NrChr >= 224) and (NrChr <= 230)) then begin
+      StrRet := StrRet + 'a';
+      Continue;
+    end;
+    if ((NrChr >= 200) and (NrChr <= 203)) then begin
+      StrRet := StrRet + 'E';
+      Continue;
+    end;
+    if ((NrChr >= 232) and (NrChr <= 235)) then begin
+      StrRet := StrRet + 'e';
+      Continue;
+    end;
+    if ((NrChr >= 204) and (NrChr <= 207)) then begin
+      StrRet := StrRet + 'I';
+      Continue;
+    end;
+    if ((NrChr >= 236) and (NrChr <= 239)) then begin
+      StrRet := StrRet + 'i';
+      Continue;
+    end;
+    if ((NrChr >= 210) and (NrChr <= 214)) then begin
+      StrRet := StrRet + 'O';
+      Continue;
+    end;
+    if ((NrChr >= 242) and (NrChr <= 246)) then begin
+      StrRet := StrRet + 'o';
+      Continue;
+    end;
+    if ((NrChr >= 217) and (NrChr <= 220)) then begin
+      StrRet := StrRet + 'U';
+      Continue;
+    end;
+    if ((NrChr >= 249) and (NrChr <= 252)) then begin
+      StrRet := StrRet + 'u';
+      Continue;
+    end;
+    if (NrChr = 199) then begin  //Ç
+      StrRet := StrRet + 'C';
+      Continue;
+    end;
+    if (NrChr = 231) then begin  //Ç
+      StrRet := StrRet + 'c';
+      Continue;
+    end;
+    if (NrChr = 209) then begin  //Ñ
+      StrRet := StrRet + 'N';
+      Continue;
+    end;
+    if (NrChr = 241) then begin  //ñ
+      StrRet := StrRet + 'n';
+      Continue;
+    end;
+    if ((NrChr = 176) or (NrChr = 186)) then begin  //° ou º
+      StrRet := StrRet + 'o';
+      Continue;
+    end;
+    if (NrChr = 170) then begin  //ª
+      StrRet := StrRet + 'a';
+      Continue;
+    end;
+    StrRet := StrRet + StrTemp[i];
+  end;
+  Result := StrRet;
+end;
+//Added by Luciano Enzweiler - 17 Dec, 2003 - End
+{**************************************************************************}
+
+
 {**************************************************************************}
 
 { TIdenModul }
@@ -1222,7 +1329,7 @@ begin
  FParamcount:=3;
  IdenName:='Substr';
  Help:=SRpSubStr;
- model:='function '+'Substr'+'(cadena:string,index:integer,count:integer):string';
+ model:='function '+'Substr'+'(s:string,index:integer,count:integer):string';
  aParams:=SRpPSubStr;
 end;
 

@@ -136,6 +136,12 @@ object FMain: TFMain
           FieldName = 'TEXT'
           Width = 500
           Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'DESCRIPTION'
+          Title.Caption = 'Description'
+          Visible = True
         end>
     end
   end
@@ -173,9 +179,14 @@ object FMain: TFMain
     end
     object DTextsTEXT: TWideStringField
       DisplayLabel = 'Text'
-      DisplayWidth = 100
+      DisplayWidth = 60
       FieldName = 'TEXT'
       Size = 500
+    end
+    object DTextsDESCRIPTION: TStringField
+      DisplayWidth = 60
+      FieldName = 'DESCRIPTION'
+      Size = 150
     end
   end
   object STexts: TDataSource
@@ -260,6 +271,18 @@ object FMain: TFMain
       ImageIndex = 7
       OnExecute = ASearchExecute
     end
+    object AOpenDesc: TAction
+      Category = 'File'
+      Caption = 'Open descriptions'
+      Hint = 'Open string language descriptions from a file'
+      OnExecute = AOpenDescExecute
+    end
+    object ASaveDesc: TAction
+      Category = 'File'
+      Caption = 'Save descriptions'
+      Hint = 'Save string descriptions to a file'
+      OnExecute = ASaveDescExecute
+    end
   end
   object MainMenu1: TMainMenu
     Images = ImageList1
@@ -273,11 +296,20 @@ object FMain: TFMain
       object Open1: TMenuItem
         Action = AOpen
       end
+      object Opendescriptions1: TMenuItem
+        Action = AOpenDesc
+      end
+      object N3: TMenuItem
+        Caption = '-'
+      end
       object Save1: TMenuItem
         Action = ASave
       end
       object Saveas1: TMenuItem
         Action = ASaveas
+      end
+      object Savedescriptions1: TMenuItem
+        Action = ASaveDesc
       end
       object N2: TMenuItem
         Caption = '-'
@@ -915,5 +947,38 @@ object FMain: TFMain
     OnFind = FindDialog1Find
     Left = 188
     Top = 148
+  end
+  object DDescriptions: TClientDataSet
+    Aggregates = <>
+    FieldDefs = <>
+    IndexDefs = <
+      item
+        Name = 'IPOSITION'
+        Fields = 'POSITION'
+      end>
+    IndexFieldNames = 'POSITION'
+    Params = <>
+    StoreDefs = True
+    Left = 120
+    Top = 180
+    object DDescriptionsPOSITION: TIntegerField
+      FieldName = 'POSITION'
+    end
+    object DDescriptionsDESCRIPTION: TStringField
+      FieldName = 'DESCRIPTION'
+      Size = 150
+    end
+  end
+  object OpenDialogDesc: TOpenDialog
+    DefaultExt = 'xml'
+    Filter = 'Description files|*.xml'
+    Left = 328
+    Top = 84
+  end
+  object SaveDialogDesc: TSaveDialog
+    DefaultExt = 'xml'
+    Filter = 'Description files|*.xml'
+    Left = 376
+    Top = 84
   end
 end

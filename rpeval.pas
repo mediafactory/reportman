@@ -215,6 +215,8 @@ begin
  Rpfunctions.AddObject('ABS',iden);
  iden:=TIdenSQRT.Create(nil);
  Rpfunctions.AddObject('SQRT',iden);
+ iden:=TIdenASC2.Create(nil);
+ Rpfunctions.AddObject('ASC2',iden);
 
  // Functions for compatibility with Gestor reports
  iden:=TIdenVariable.Create(nil);

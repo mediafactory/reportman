@@ -252,7 +252,7 @@ type
    property idencurrentgroup:TIdenReportVar read fidencurrentgroup;
    property MilisProgres:integer read FMilisProgres write FMilisProgres
     default MILIS_PROGRESS_DEFAULT;
-   procedure AlignSectionsTo1_6inchess;
+   procedure AlignSectionsTo(linesperinch:integer);
    // Grid options
   published
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
@@ -1122,7 +1122,7 @@ end;
 
 
 
-procedure TRpBaseReport.AlignSectionsTo1_6inchess;
+procedure TRpBaseReport.AlignSectionsTo(linesperinch:integer);
 var
  subrep:TRpSubreport;
  sec:TRpSection;
@@ -1134,7 +1134,7 @@ begin
   for j:=0 to subrep.Sections.Count-1 do
   begin
    sec:=subrep.Sections.Items[j].Section;
-   sec.Height:=Round((TWIPS_PER_INCHESS/6)*Round(sec.Height/(TWIPS_PER_INCHESS/6)));
+   sec.Height:=Round((TWIPS_PER_INCHESS/linesperinch)*Round(sec.Height/(TWIPS_PER_INCHESS/linesperinch)));
   end;
  end;
 end;

@@ -1885,7 +1885,7 @@ end;
 
 procedure TFRpMainF.AAlign1_6Execute(Sender: TObject);
 begin
- report.AlignSectionsTo1_6inchess;
+ report.AlignSectionsTo(6);
  RefreshInterface(Self);
 end;
 

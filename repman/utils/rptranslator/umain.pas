@@ -80,6 +80,17 @@ type
     FindDialog1: TFindDialog;
     ToolButton8: TToolButton;
     Search1: TMenuItem;
+    DTextsDESCRIPTION: TStringField;
+    AOpenDesc: TAction;
+    ASaveDesc: TAction;
+    DDescriptions: TClientDataSet;
+    DDescriptionsPOSITION: TIntegerField;
+    DDescriptionsDESCRIPTION: TStringField;
+    N3: TMenuItem;
+    Opendescriptions1: TMenuItem;
+    Savedescriptions1: TMenuItem;
+    OpenDialogDesc: TOpenDialog;
+    SaveDialogDesc: TSaveDialog;
     procedure AOpenExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ASaveasExecute(Sender: TObject);
@@ -100,6 +111,8 @@ type
     procedure Proces1Click(Sender: TObject);
     procedure ASearchExecute(Sender: TObject);
     procedure FindDialog1Find(Sender: TObject);
+    procedure AOpenDescExecute(Sender: TObject);
+    procedure ASaveDescExecute(Sender: TObject);
   private
     { Private declarations }
     atrans:TRpTransLator;
@@ -110,6 +123,7 @@ type
     procedure Saveas(filename:String);
     procedure AppHint(Sender:TObject);
     procedure CheckSaved;
+    procedure UpdateDescriptions;
   public
     { Public declarations }
    formtrans:TRpTransLator;
@@ -120,7 +134,7 @@ var
 
 implementation
 
-uses uflanginfo;
+uses uflanginfo, Math;
 
 
 
@@ -150,6 +164,7 @@ begin
      DTextsText.Value:=atrans.Strings[i];
      DTexts.Post;
     end;
+    UpdateDescriptions;
     PParent.Visible:=true;
     currentfilename:=OpenDialog1.Filename;
     Caption:=formcaption+'-'+currentfilename;
@@ -521,6 +536,69 @@ begin
   end;
   if iseof then
    Raise Exception.Create(SRpNotFound);
+ finally
+  DTexts.EnableControls;
+ end;
+end;
+
+procedure TFMain.AOpenDescExecute(Sender: TObject);
+begin
+ If OpenDialogDesc.Execute then
+ begin
+  DDescriptions.Close;
+  DDescriptions.LoadFromFile(OpenDialogDesc.Filename);
+  UpdateDescriptions;
+ end;
+end;
+
+procedure TFMain.UpdateDescriptions;
+begin
+ if Not DTexts.Active then
+  exit;
+ if Not DDescriptions.Active then
+  DDescriptions.CreateDataset;
+ DTexts.DisableControls;
+ try
+  DTexts.First;
+  while Not DTexts.Eof do
+  begin
+   if DDescriptions.FindKey([DTextsPOSITION.AsInteger]) then
+   begin
+    DTexts.Edit;
+    try
+     DTextsDESCRIPTION.Value:=DDescriptionsDESCRIPTION.AsString;
+     DTexts.Post;
+    except
+     DTexts.Cancel;
+     Raise;
+    end;
+   end;
+   DTexts.Next;
+  end;
+ finally
+  DTexts.EnableControls;
+ end;
+end;
+
+procedure TFMain.ASaveDescExecute(Sender: TObject);
+begin
+ if Not SaveDialogDesc.Execute then
+  exit;
+ // Saves de descriptions
+ DDescriptions.Close;
+ DDescriptions.CreateDataset;
+ DTexts.DisableControls;
+ try
+  DTexts.First;
+  while Not DTexts.Eof do
+  begin
+   if Length(Trim(DTextsDESCRIPTION.AsString))>0 then
+   begin
+    DDescriptions.AppendRecord([DTextsPOSITION.AsInteger,DTextsDESCRIPTION.AsString]);
+   end;
+   DTexts.Next;
+  end;
+  DDescriptions.SaveToFile(SaveDialogDesc.Filename,dfXML);
  finally
   DTexts.EnableControls;
  end;

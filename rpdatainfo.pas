@@ -3046,7 +3046,8 @@ begin
   aparam:=TRpParamObject.Create;
   aparam2:=TRpParamObject.Create;
   try
-   aparam.Value:=reportname;
+   // WideStrings not supported
+   aparam.Value:=String(reportname);
    aparam2.Stream:=astream;
    params.AddObject('REPNAME',aparam);
    // if the report does not exists raise an error
