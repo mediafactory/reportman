@@ -28,15 +28,15 @@ type
   TFRpParams = class(TForm)
     Panel1: TPanel;
     GProperties: TGroupBox;
-    Label1: TLabel;
+    LDescription: TLabel;
     EDescription: TEdit;
-    Label2: TLabel;
+    LDataType: TLabel;
     ComboDataType: TComboBox;
-    Label3: TLabel;
+    LValue: TLabel;
     EValue: TMaskEdit;
     CheckVisible: TCheckBox;
     CheckNull: TCheckBox;
-    Label4: TLabel;
+    LAssign: TLabel;
     ComboDatasets: TComboBox;
     BAdddata: TButton;
     BDeleteData: TButton;
@@ -59,10 +59,10 @@ type
     ToolButton6: TToolButton;
     ToolButton7: TToolButton;
     Panel3: TPanel;
-    CancelBtn: TButton;
-    OKBtn: TButton;
+    BCancel: TButton;
+    BOK: TButton;
     procedure FormCreate(Sender: TObject);
-    procedure OKBtnClick(Sender: TObject);
+    procedure BOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure LParamsClick(Sender: TObject);
     procedure EValueExit(Sender: TObject);
@@ -112,10 +112,38 @@ end;
 procedure TFRpParams.FormCreate(Sender: TObject);
 begin
  params:=TRpParamList.Create(Self);
+
+ BOK.Caption:=TranslateStr(93,BOK.Caption);
+ BCancel.Caption:=TranslateStr(94,BCancel.Caption);
+
+ ANewParam.Caption:=TranslateStr(186,ANewParam.Caption);
+ ANewParam.Hint:=TranslateStr(187,ANewParam.Hint);
+ ADelete.Caption:=TranslateStr(188,ADelete.Caption);
+ ADelete.Hint:=TranslateStr(189,ADelete.Hint);
+ AUp.Hint:=TranslateStr(190,AUp.Hint);
+ ADown.Hint:=TranslateStr(191,ADown.Hint);
+ ARename.Hint:=TranslateStr(192,ARename.Hint);
+ LDataType.Caption:=TranslateStr(193,LDatatype.Caption);
+ LValue.Caption:=TranslateStr(194,LValue.Caption);
+ CheckVisible.Caption:=TranslateStr(195,CheckVisible.Caption);
+ CheckNull.Caption:=TranslateStr(196,CheckNull.Caption);
+ LDescription.Caption:=TranslateStr(197,LDescription.Caption);
+ LAssign.Caption:=TranslateStr(198,LAssign.Caption);
+ Caption:=TranslateStr(199,Caption);
+ ComboDataType.Items.Strings[0]:=TranslateStr(200,ComboDataType.Items.Strings[0]);
+ ComboDataType.Items.Strings[1]:=TranslateStr(201,ComboDataType.Items.Strings[1]);
+ ComboDataType.Items.Strings[2]:=TranslateStr(202,ComboDataType.Items.Strings[2]);
+ ComboDataType.Items.Strings[3]:=TranslateStr(203,ComboDataType.Items.Strings[3]);
+ ComboDataType.Items.Strings[4]:=TranslateStr(204,ComboDataType.Items.Strings[4]);
+ ComboDataType.Items.Strings[5]:=TranslateStr(205,ComboDataType.Items.Strings[5]);
+ ComboDataType.Items.Strings[6]:=TranslateStr(206,ComboDataType.Items.Strings[6]);
+ ComboDataType.Items.Strings[7]:=TranslateStr(207,ComboDataType.Items.Strings[7]);
+ ComboDataType.Items.Strings[8]:=TranslateStr(208,ComboDataType.Items.Strings[8]);
+
  SetInitialBounds;
 end;
 
-procedure TFRpParams.OKBtnClick(Sender: TObject);
+procedure TFRpParams.BOKClick(Sender: TObject);
 begin
  if EValue.Visible then
  begin
@@ -182,7 +210,7 @@ begin
   if (param.Value<>Null) then
   begin
    case param.ParamType of
-    rpParamString:
+    rpParamString,rpParamExpre:
      EValue.Text:=param.Value;
     rpParamInteger:
      EValue.Text:=IntToStr(param.Value);
@@ -221,7 +249,7 @@ begin
  if (EValue.Text='') then
  begin
   case param.ParamType of
-   rpParamString:
+   rpParamString,rpParamExpre:
     EValue.Text:='';
    rpParamInteger:
     EValue.Text:=IntToStr(0);
@@ -248,7 +276,7 @@ begin
  begin
    EValue.Visible:=true;
    case param.ParamType of
-    rpParamString:
+    rpParamString,rpParamExpre:
      param.Value:=EValue.Text;
     rpParamInteger:
      param.Value:=StrToInt(EValue.Text);

@@ -1,7 +1,7 @@
 object FRpGridOptions: TFRpGridOptions
   Left = 309
   Top = 257
-  ActiveControl = OKBtn
+  ActiveControl = BOK
   AutoScroll = False
   BorderStyle = fbsDialog
   Caption = 'Grid options'
@@ -22,18 +22,18 @@ object FRpGridOptions: TFRpGridOptions
     Pen.Width = 0
     OnMouseUp = GridColorMouseDown
   end
-  object OKBtn: TButton
-    Left = 59
+  object BOK: TButton
+    Left = 19
     Top = 160
     Width = 75
     Height = 25
     Caption = 'OK'
     Default = True
     TabOrder = 0
-    OnClick = OKBtnClick
+    OnClick = BOKClick
   end
-  object CancelBtn: TButton
-    Left = 139
+  object BCancel: TButton
+    Left = 179
     Top = 160
     Width = 75
     Height = 25
@@ -42,7 +42,7 @@ object FRpGridOptions: TFRpGridOptions
     ModalResult = 2
     TabOrder = 1
   end
-  object Label1: TLabel
+  object Lhorizontal: TLabel
     Left = 8
     Top = 8
     Width = 87
@@ -56,7 +56,7 @@ object FRpGridOptions: TFRpGridOptions
     Height = 21
     TabOrder = 3
   end
-  object Label2: TLabel
+  object Lvertical: TLabel
     Left = 8
     Top = 32
     Width = 75
@@ -70,7 +70,7 @@ object FRpGridOptions: TFRpGridOptions
     Height = 21
     TabOrder = 5
   end
-  object Label3: TLabel
+  object LGridColor: TLabel
     Left = 8
     Top = 132
     Width = 46

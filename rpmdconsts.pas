@@ -572,7 +572,7 @@ resourcestring
   SRpSOblique2='Oblique2';
 
   SRpNoFilenameAssignedNotTRpTranslator='No Filename assigned to TRpTranslator';
-
+  SRpParameter='Parameter';
 
 function TranslateStr(index:integer;defvalue:Widestring):WideString;
 

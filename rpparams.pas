@@ -31,7 +31,7 @@ uses Classes, SysUtils,rpmdconsts,
 
 type
   TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,
-   rpParamTime,rpParamDateTime,rpParamCurrency,rpParamBool);
+   rpParamTime,rpParamDateTime,rpParamCurrency,rpParamBool,rpParamExpre);
 
   TRpParam=class(TCollectionitem)
    private
@@ -235,6 +235,8 @@ begin
     Result:=ftTime;
    rpParamBool:
     Result:=ftBoolean;
+   rpParamExpre:
+    Result:=ftString;
   end;
 end;
 

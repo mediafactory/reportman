@@ -30,7 +30,7 @@ object FRpParams: TFRpParams
       Height = 185
       TabOrder = 0
       Visible = False
-      object Label1: TLabel
+      object LDescription: TLabel
         Left = 12
         Top = 72
         Width = 53
@@ -47,7 +47,7 @@ object FRpParams: TFRpParams
         Text = 'EDescription'
         OnChange = EDescriptionChange
       end
-      object Label2: TLabel
+      object LDataType: TLabel
         Left = 8
         Top = 12
         Width = 46
@@ -70,11 +70,12 @@ object FRpParams: TFRpParams
           'Time'
           'DateTime'
           'Currency'
-          'Bool')
+          'Bool'
+          'Expression')
         TabOrder = 3
         OnChange = EDescriptionChange
       end
-      object Label3: TLabel
+      object LValue: TLabel
         Left = 216
         Top = 12
         Width = 27
@@ -110,7 +111,7 @@ object FRpParams: TFRpParams
         TabOrder = 7
         OnClick = EDescriptionChange
       end
-      object Label4: TLabel
+      object LAssign: TLabel
         Left = 12
         Top = 108
         Width = 86
@@ -250,7 +251,7 @@ object FRpParams: TFRpParams
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2
-      object CancelBtn: TButton
+      object BCancel: TButton
         Left = 10
         Top = 54
         Width = 75
@@ -260,7 +261,7 @@ object FRpParams: TFRpParams
         ModalResult = 2
         TabOrder = 0
       end
-      object OKBtn: TButton
+      object BOK: TButton
         Left = 10
         Top = 4
         Width = 75
@@ -269,7 +270,7 @@ object FRpParams: TFRpParams
         Default = True
         ModalResult = 4
         TabOrder = 1
-        OnClick = OKBtnClick
+        OnClick = BOKClick
       end
     end
   end
@@ -487,12 +488,12 @@ object FRpParams: TFRpParams
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF000000000000000000003FF87F0000007E0000007F
-      00000CFF8000007F00010FFFC000097F04000FFFE000007F0E020FC1F000007F
-      0E040F80F000007F070C0FC0F000007F03980FE00000007F01F000000000007F
-      00E00001F800007F01F00F03F800007F03900F01F840007F0F0C0783F800307F
-      1E0607FFFA40007F180303FFF8003E7F000001FF90C0007F0000007E00003A7F
-      000000000240007F000000000000007F000000000000007F01C000080000007F
+      0200000002000000FFFFFF00000000000000000003FFFFFF0000007E03FFFFFF
+      00000CFF83FFFFFF00010FFFC3FFFFFF04000FFFE3FFFFFF0E020FC1F3FFFFFF
+      0E040F80F3FFFFFF070C0FC0F3FFFFFF03980FE003FFFFFF01F0000003FFFFFF
+      00E00001FBFFFFFF01F00F03FBFFFFFF03900F01FBFFFFFF0F0C0783FBFFFFFF
+      1E0607FFFBFFFFFF180303FFFBFFFFFF000001FF93FFFFFF0000007E03FFFFFF
+      0000000003FFFFFF000000000000007F000000000000007F01C000080000007F
       01C0000800FFF07F01C0001C00FFF07F01C0001C0080107F01C0003E00B6D07F
       01C0003E0080107F0FF8007F02B6F87F0FF8007F0080387F07F000FF80FFF87F
       07F000FF80B7FF7F03E0001C00FFFF7F03E0001C0001FF7F01C0001C0000387F

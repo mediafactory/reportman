@@ -22,17 +22,17 @@ interface
 
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,rpreport,
-  rpmunits,QDialogs;
+  rpmdconsts,rpmunits,QDialogs;
 
 type
   TFRpGridOptions = class(TForm)
-    OKBtn: TButton;
-    CancelBtn: TButton;
-    Label1: TLabel;
+    BOK: TButton;
+    BCancel: TButton;
+    Lhorizontal: TLabel;
     EGridX: TEdit;
-    Label2: TLabel;
+    Lvertical: TLabel;
     EGridY: TEdit;
-    Label3: TLabel;
+    LGridColor: TLabel;
     ColorDialog1: TColorDialog;
     GridColor: TShape;
     CheckEnabled: TCheckBox;
@@ -42,7 +42,7 @@ type
     CheckLines: TCheckBox;
     procedure GridColorMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure OKBtnClick(Sender: TObject);
+    procedure BOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
@@ -96,7 +96,7 @@ begin
   GridColor.Brush.Color:=ColorDialog1.Color;
 end;
 
-procedure TFRpGridOptions.OKBtnClick(Sender: TObject);
+procedure TFRpGridOptions.BOKClick(Sender: TObject);
 begin
  // Save and close
  report.GridWidth:=rpmunits.gettwipsfromtext(EGridX.Text);
@@ -111,6 +111,17 @@ end;
 
 procedure TFRpGridOptions.FormCreate(Sender: TObject);
 begin
+ BOK.Caption:=TranslateStr(93,BOK.Caption);
+ BCancel.Caption:=TranslateStr(94,BCancel.Caption);
+ Caption:=TranslateStr(179,Caption);
+ LHorizontal.Caption:=TranslateStr(180,LHorizontal.Caption);
+ LVertical.Caption:=TranslateStr(181,LVertical.Caption);
+ LGridColor.Caption:=TranslateStr(185,LGridColor.Caption);
+ CheckEnabled.Caption:=TranslateStr(182,CheckEnabled.Caption);
+ CheckVisible.Caption:=TranslateStr(183,CheckVisible.Caption);
+ CheckLines.Caption:=TranslateStr(184,CheckLines.Caption);
+
+
  SetInitialBounds;
 end;
 

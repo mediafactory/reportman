@@ -20,7 +20,7 @@ interface
 
 uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
-  QStdCtrls, QActnList, QImgList, QComCtrls;
+  QStdCtrls, QActnList, QImgList, QComCtrls,rpmdconsts;
 
 type
   TFRpHelpForm = class(TForm)
@@ -30,7 +30,7 @@ type
     ABackward: TAction;
     AForward: TAction;
     AExit: TAction;
-    ToolButton1: TToolButton;
+    BBAckwar: TToolButton;
     ToolButton2: TToolButton;
     ToolButton3: TToolButton;
     ToolButton4: TToolButton;
@@ -67,6 +67,11 @@ end;
 
 procedure TFRpHelpForm.FormCreate(Sender: TObject);
 begin
+ Caption:=TranslateStr(209,Caption);
+ ABackward.Hint:=TranslateStr(210,ABackward.Hint);
+ AForward.Hint:=TranslateStr(211,AForward.Hint);
+ AExit.Hint:=TranslateStr(212,AExit.Hint);
+
  SetInitialBounds;
 end;
 
