@@ -50,6 +50,7 @@ type
    function GetExtension(adriver:IRpPrintDriver):TPoint;virtual;
    function EvaluatePrintCondition:boolean;
    procedure Print(aposx,aposy:integer;metafile:TRpMetafileReport);
+   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');virtual;
   published
    property PrintCondition:string read FPrintCondition write FPrintCondition;
    property DoBeforePrint:string read FDoBeforePrint write FDoBeforePrint;
@@ -295,6 +296,12 @@ begin
  FTransparent:=true;
  FCutText:=true;
 
+end;
+
+
+procedure TRpCommonComponent.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
+begin
+ // Base class does nothing
 end;
 
 end.

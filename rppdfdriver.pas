@@ -315,6 +315,14 @@ begin
       begin
        FPDFFile.Canvas.Line(X+PosX, Y+PosY,X+PosX, Y+PosY+H);
       end;
+     rpsOblique1:
+      begin
+       FPDFFile.Canvas.Line(X+PosX, Y+PosY,X+PosX+W, Y+PosY+H);
+      end;
+     rpsOblique2:
+      begin
+       FPDFFile.Canvas.Line(X+PosX, Y+PosY+H,X+PosX+W, Y+PosY);
+      end;
     end;
    end;
   rpMetaImage:

@@ -63,7 +63,6 @@ type
    property PenColor:integer read FPenColor write FPenColor default 0;
    property Shape:TRpShapeType read FShape write FShape default rpsRectangle;
    property PenWidth:integer read FPenWidth write FPenWidth default 10;
-
   end;
 
  TRpImage=class(TRpCommonPosComponent)

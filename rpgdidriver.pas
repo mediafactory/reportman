@@ -712,6 +712,16 @@ begin
        Canvas.MoveTo(X+PosX, Y+PosY);
        Canvas.LineTo(X+PosX, Y+PosY+H);
       end;
+     rpsOblique1:
+      begin
+       Canvas.MoveTo(X+PosX, Y+PosY);
+       Canvas.LineTo(X+PosX+W, Y+PosY+H);
+      end;
+     rpsOblique2:
+      begin
+       Canvas.MoveTo(X+PosX, Y+PosY+H);
+       Canvas.LineTo(X+PosX+W, Y+PosY);
+      end;
     end;
    end;
   rpMetaImage:

@@ -28,7 +28,7 @@ interface
 
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpmdconsts,
  rpdatainfo,rpparams,rplabelitem,rpdrawitem,rpeval,rptypeval,
- rpmetafile,rpmdbarcode,
+ rpmetafile,rpmdbarcode,rpmdchart,
 {$IFDEF USEVARIANTS}
  types,dateutils,
 {$ENDIF}
@@ -403,6 +403,7 @@ var
  sec:TRpSection;
  comp:TRpCommonComponent;
  rpexpre:TRpExpression;
+ rpchart:TRpChart;
 begin
  inherited Loaded;
 
@@ -424,6 +425,18 @@ begin
        FIdentifiers.AddObject(rpexpre.Identifier,comp);
       except
        rpexpre.Identifier:='';
+      end;
+     end;
+    end;
+    if (comp is TRpChart) then
+    begin
+     rpchart:=TRpChart(comp);
+     if Length(rpchart.Identifier)>0 then
+     begin
+      try
+       FIdentifiers.AddObject(rpchart.Identifier,comp);
+      except
+       rpchart.Identifier:='';
       end;
      end;
     end;
@@ -460,6 +473,16 @@ begin
    if Length(TRpExpression(AComponent).Identifier)>0 then
    begin
     index:=FIdentifiers.IndexOf(TRpExpression(AComponent).Identifier);
+    if index>=0 then
+     FIdentifiers.Delete(index);
+   end;
+  end
+  else
+  if (AComponent is TRpChart) then
+  begin
+   if Length(TRpChart(AComponent).Identifier)>0 then
+   begin
+    index:=FIdentifiers.IndexOf(TRpChart(AComponent).Identifier);
     if index>=0 then
      FIdentifiers.Delete(index);
    end;
@@ -1176,8 +1199,17 @@ begin
  // Here identifiers are added to evaluator
  for i:=0 to Identifiers.Count-1 do
  begin
-  FEvaluator.AddVariable(FIdentifiers.Strings[i],
-   TRpExpression(FIdentifiers.Objects[i]).IdenExpression);
+  if FIdentifiers.Objects[i] is TRpExpression then
+  begin
+   FEvaluator.AddVariable(FIdentifiers.Strings[i],
+    TRpExpression(FIdentifiers.Objects[i]).IdenExpression);
+  end
+  else
+  if FIdentifiers.Objects[i] is TRpChart then
+  begin
+   FEvaluator.AddVariable(FIdentifiers.Strings[i],
+    TRpChart(FIdentifiers.Objects[i]).IdenChart);
+  end
  end;
 
 
@@ -1461,5 +1493,5 @@ initialization
  Classes.RegisterClass(TRpLabel);
  Classes.RegisterClass(TRpExpression);
  Classes.RegisterClass(TRpBarcode);
-
+ Classes.RegisterClass(TRpChart);
 end.

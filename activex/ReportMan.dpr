@@ -1,7 +1,7 @@
 library ReportMan;
 
 uses
-  ComServ,
+  ComServ,MidasLib,
   ReportMan_TLB in 'ReportMan_TLB.pas',
   rpaxreportimp in 'rpaxreportimp.pas' {ReportManX: CoClass},
   aboutrpax in 'aboutrpax.pas' {ReportManXAbout};

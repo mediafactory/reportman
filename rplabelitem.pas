@@ -81,7 +81,7 @@ type
    procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   public
    constructor Create(AOwner:TComponent);override;
-   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
+   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    function GetText:widestring;
    property IdenExpression:TIdenRpExpression read FIdenExpression;
    function GetExtension(adriver:IRpPrintDriver):TPoint;override;
@@ -294,6 +294,7 @@ procedure TRpExpression.SubReportChanged(newstate:TRpReportChanged;newgroup:stri
 var
  eval:TRpEvaluator;
 begin
+ inherited SubReportChanged(newstate,newgroup);
  case newstate of
   rpReportStart:
    begin

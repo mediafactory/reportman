@@ -270,13 +270,11 @@ begin
  if pname=SRpSDisplayFormat then
  begin
   TRpExpression(fprintitem).DisplayFormat:=value;
-  invalidate;
   exit;
  end;
  if pname=SRpSIdentifier then
  begin
   TRpExpression(fprintitem).Identifier:=value;
-  invalidate;
   exit;
  end;
  if pname=SrpSAggregate then

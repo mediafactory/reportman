@@ -72,7 +72,7 @@ type
    FTyp:TRpBarcodeType;
    FCheckSum:boolean;
    FUpdated:boolean;
-   modules:array[0..3] of shortint;
+   modules:array[0..3] of integer;
    procedure DoLines(data:string;FLeft,FTop:integer;meta:TRpMetafileReport);
    function Code_2_5_interleaved:string;
    function Code_2_5_industrial:string;
@@ -92,11 +92,11 @@ type
    procedure Evaluate;
    function CalculateBarcode:string;
   protected
+   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
   public
    function GetText:widestring;
    function GetTypText:string;
-   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
-   procedure DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);override;
+   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    constructor Create(Owner:TComponent); override;
 //   procedure DrawText(Canvas:TCanvas);
   published
@@ -1527,6 +1527,7 @@ end;
 
 procedure TRpBarcode.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
 begin
+ inherited SubReportChanged(newstate,newgroup);
  case newstate of
   rpReportStart:
    begin

@@ -135,11 +135,10 @@ var rect,rectrefresh:TRect;
     i,value,Clength,CHeight:integer;
     bitmap:QGraphics.TBitmap;
     pixelsperinchx,pixelsperinchy:Integer;
-    pixelspercmsx:extended;
-    pixelspercmsy:extended;
     windowwidth:integer;
     windowheight:integer;
     h1,h2,h3:integer;
+    onethousand,onecent,midthousand:integer;
 //    adc:HDC;
     han:QPainterH;
     bwidth,bheight:integer;
@@ -265,26 +264,27 @@ begin
 
  Canvas.Rectangle(rect.Left,rect.Top,rect.Right,rect.Bottom);
 
+
  if Metrics=rCms then
  begin
-  pixelspercmsx:=pixelsperinchx/2.51;
-  pixelspercmsy:=pixelsperinchy/2.51;
-  windowwidth:=Round(1000*(rect.right/(pixelspercmsx)));
-  windowheight:=Round(1000*(rect.bottom/(pixelspercmsy)));
-  h1:=300;
-  h2:=150;
-  h3:=75;
-  scale:=pixelspercmsx;
+  onecent:=Round(100/2.51);
+  onethousand:=onecent*10;
+  midthousand:=onecent*5;
+  scale:=pixelsperinchx/2.51+0.15;
  end
  else
  begin
-  windowwidth:=Round(1000*rect.right/pixelsperinchx);
-  windowheight:=Round(1000*rect.bottom/pixelsperinchy);
-  h1:=120;
-  h2:=60;
-  h3:=30;
+  onethousand:=1000;
+  onecent:=100;
+  midthousand:=500;
   scale:=pixelsperinchx;
  end;
+ windowwidth:=Round(1000*rect.right/pixelsperinchx);
+ windowheight:=Round(1000*rect.bottom/pixelsperinchy);
+ h1:=120;
+ h2:=60;
+ h3:=30;
+
 
  han:=Canvas.Handle;
  // Painting of the ruler
@@ -303,30 +303,30 @@ begin
    CHeight:=windowheight;
    while (i<Clength) do
    begin
-    value:=i Mod 1000;
-    case value of
-    0:
-     // One number
-     begin
-      QPainter_setWindow(han,rect.left,rect.top,rect.right,rect.bottom);
-      Canvas.TextOut(Round((i div 1000)*scale),0,IntToStr(i div 1000));
-      QPainter_SetWindow(han,rect.left,rect.top,windowwidth
-       ,windowheight);
-      Canvas.MoveTo(i,CHeight);
-      Canvas.LineTo(i,CHeight-h1);
-     end;
-    500:
-     begin
-      Canvas.MoveTo(i,CHeight);
-      Canvas.LineTo(i,CHeight-h2);
-     end;
+    value:=i Mod onethousand;
+    if value=0 then
+    // One number
+    begin
+     QPainter_setWindow(han,rect.left,rect.top,rect.right,rect.bottom);
+     Canvas.TextOut(Round((i/onethousand)*scale),0,IntToStr(i div onethousand));
+     QPainter_SetWindow(han,rect.left,rect.top,windowwidth
+      ,windowheight);
+//     Canvas.TextOut(i,CHeight,IntToStr(i div onethousand));
+     Canvas.MoveTo(i,CHeight);
+     Canvas.LineTo(i,CHeight-h1);
+    end
     else
-     begin
-      Canvas.MoveTo(i,CHeight);
-      Canvas.LineTo(i,CHeight-h3);
-     end;
+    if value=midthousand then
+    begin
+     Canvas.MoveTo(i,CHeight);
+     Canvas.LineTo(i,CHeight-h2);
+    end
+    else
+    begin
+     Canvas.MoveTo(i,CHeight);
+     Canvas.LineTo(i,CHeight-h3);
     end;
-    i:=i+100;
+    i:=i+onecent;
    end;
   end
   else
@@ -336,30 +336,29 @@ begin
    CHeight:=windowwidth;
    while (i<Clength) do
    begin
-    value:=i Mod 1000;
-    case value of
-    0:
-     // One number
-     begin
-      QPainter_setWindow(han,rect.left,rect.top,rect.right,rect.bottom);
-      Canvas.TextOut(0,Round((i div 1000)*scale),IntToStr(i div 1000));
-      QPainter_SetWindow(han,rect.left,rect.top,windowwidth
-       ,windowheight);
-      Canvas.MoveTo(CHeight,i);
-      Canvas.LineTo(CHeight-h1,i);
-     end;
-    500:
-     begin
-      Canvas.MoveTo(CHeight,i);
-      Canvas.LineTo(CHeight-h2,i);
-     end;
+    value:=i Mod onethousand;
+    if value=0 then
+    // One number
+    begin
+     QPainter_setWindow(han,rect.left,rect.top,rect.right,rect.bottom);
+     Canvas.TextOut(0,Round((i div onethousand)*scale),IntToStr(i div onethousand));
+     QPainter_SetWindow(han,rect.left,rect.top,windowwidth
+      ,windowheight);
+     Canvas.MoveTo(CHeight,i);
+     Canvas.LineTo(CHeight-h1,i);
+    end
     else
-     begin
-      Canvas.MoveTo(CHeight,i);
-      Canvas.LineTo(CHeight-h3,i);
-     end;
+    if value=midthousand then
+    begin
+     Canvas.MoveTo(CHeight,i);
+     Canvas.LineTo(CHeight-h2,i);
+    end
+    else
+    begin
+     Canvas.MoveTo(CHeight,i);
+     Canvas.LineTo(CHeight-h3,i);
     end;
-    i:=i+100;
+    i:=i+onecent;
    end;
   end
  finally

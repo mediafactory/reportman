@@ -634,14 +634,7 @@ begin
   for j:=0 to sec.Components.Count-1 do
   begin
    compo:=sec.Components.Items[j].Component;
-   if (compo is TRpExpression) then
-   begin
-    TRpExpression(compo).SubReportChanged(newstate,newgroup);
-   end;
-   if (compo is TRpBarcode) then
-   begin
-    TRpBarcode(compo).SubReportChanged(newstate,newgroup);
-   end;
+   compo.SubReportChanged(newstate,newgroup);
   end;
  end;
 end;

@@ -56,7 +56,7 @@ end;
 class procedure TRpBarcodeInterface.FillAncestors(alist:TStrings);
 begin
  inherited FillAncestors(alist);
- alist.Add('TRpExpressionInterface');
+ alist.Add('TRpBarcodeInterface');
 end;
 
 procedure TRpBarcodeInterface.GetProperties(lnames,ltypes,lvalues:TStrings);

@@ -806,6 +806,7 @@ procedure TFRpMainF.ADataConfigExecute(Sender: TObject);
 begin
  // Data info configuration dialog
  ShowDataConfig(report);
+ fobjinsp.ClearMultiSelect;
  fdesignframe.UpdateSelection(true);
  updatedmfields:=false;
 end;
@@ -817,6 +818,7 @@ end;
 
 procedure TFRpMainF.AGridOptionsExecute(Sender: TObject);
 begin
+ fobjinsp.ClearMultiSelect;
  ModifyGridProperties(report);
  fdesignframe.UpdateSelection(true);
 end;

@@ -61,7 +61,7 @@ type
  TRpAggregateType=(rpagSum,rpagMin,rpagMax,rgagAvg,rpagStdDev);
  TRpReportChanged=(rpReportStart,rpDataChange,rpGroupChange,rpPageChange);
  TRpShapeType=(rpsRectangle, rpsSquare, rpsRoundRect, rpsRoundSquare,
-  rpsEllipse, rpsCircle,rpsHorzLine,rpsVertLine);
+  rpsEllipse, rpsCircle,rpsHorzLine,rpsVertLine,rpsOblique1,rpsOblique2);
 
  TRpPrinterFontsOption=(rppfontsdefault,rppfontsalways,rppfontsnever); 
  TRpPageSize=(rpPageSizeDefault,rpPageSizeCustom);

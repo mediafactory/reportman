@@ -562,6 +562,15 @@ resourcestring
   SRpSampleBarCode='5449000000996';
   SRpDatasetNotExists='Dataset not exists';
   SRpDatabaseNotExists='Database not exists';
+  SrpSChartType='Chart Type';
+  SrpSChart='TRpChart';
+  SrpSChangeSerieExp='Serie Change exp.';
+  SrpSChangeSerieBool='Bool S.Change';
+  SrpSCaptionExp='Caption Exp.';
+  SrpSGetValueCondition='Get V.Cond.';
+  SRpIndexOutOfBounds='Index out of bounds';
+  SRpSOblique1='Oblique1';
+  SRpSOblique2='Oblique2';
 implementation
 
 

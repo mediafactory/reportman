@@ -64,9 +64,10 @@ const
   (SRpSBSolid, SRpSBClear, SRpSBHorizontal, SRpSBVertical, SRpSBFDiagonal,
   SRpSBBDiagonal, SRpSBCross, SRpSBDiagCross, SRpSBDense1, SRpSBDense2,
   SRpSBDense3, SRpSBDense4, SRpSBDense5, SRpSBDense6,SRpSBDense7);
- StringShapeType:array [rpsRectangle..rpsVertLine] of String=(
+ StringShapeType:array [rpsRectangle..rpsOblique2] of String=(
   SRpsSRectangle,SRpsSSquare,SRpsSRoundRect,
-  SRpsSRoundSquare,SRpsSEllipse,SRpsSCircle,SRpSHorzLine,SRpSVertLine);
+  SRpsSRoundSquare,SRpsSEllipse,SRpsSCircle,SRpSHorzLine,SRpSVertLine,
+  SRpSOblique1,SRpSOblique2);
  StringDrawStyles:array [rpDrawCrop..rpDrawTile] of string=(
   SRPSDrawCrop,SRPSDrawStretch,SRPSDrawFull,SRpDrawTile);
  StringCopyModes:array [cmBlackness..cmCreateMask] of string=(
@@ -166,7 +167,7 @@ var
  i:TRpShapetype;
 begin
  Result:=rpsRectangle;
- for i:=rpsRectangle to rpsVertLine do
+ for i:=rpsRectangle to rpsOblique2 do
  begin
   if Value=StringShapeType[i] then
   begin
@@ -361,6 +362,16 @@ begin
     Canvas.MoveTo(0,0);
     Canvas.LineTo(0,Y+H);
    end;
+  rpsOblique1:
+   begin
+    Canvas.MoveTo(0,0);
+    Canvas.LineTo(X+W,Y+H);
+   end;
+  rpsOblique2:
+   begin
+    Canvas.MoveTo(0,Y+H);
+    Canvas.LineTo(X+W,0);
+   end;
  end;
  DrawSelected;
 end;
@@ -376,7 +387,7 @@ begin
  if pname=SrpSShape then
  begin
   lpossiblevalues.clear;
-  for shi:=rpsRectangle to rpsVertLine do
+  for shi:=rpsRectangle to rpsOblique2 do
   begin
    lpossiblevalues.Add(StringShapeType[shi]);
   end;
