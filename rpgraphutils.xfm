@@ -3,8 +3,8 @@ object FRpGraphProgres: TFRpGraphProgres
   Top = 195
   Width = 277
   Height = 127
-  VertScrollBar.Range = 117
-  HorzScrollBar.Range = 174
+  VertScrollBar.Range = 113
+  HorzScrollBar.Range = 182
   ActiveControl = CancelBtn
   Caption = 'Dialog'
   Color = clButton
@@ -12,8 +12,8 @@ object FRpGraphProgres: TFRpGraphProgres
   Scaled = False
   PixelsPerInch = 96
   object CancelBtn: TButton
-    Left = 99
-    Top = 92
+    Left = 107
+    Top = 88
     Width = 75
     Height = 25
     Cancel = True
