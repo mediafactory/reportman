@@ -100,7 +100,7 @@ Conditionals=REPMANRELEASE
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
-RunParams=c:\prog\toni\cvsroot\reportman\reportman\repman\repsamples\testcintaembed.rep prova.pdf
+RunParams=c:\prog\toni\cvsroot\reportman\reportman\repman\repsamples\testcinta.rep c:\prog\toni\cvsroot\reportman\reportman\repman\repsamples\testcinta.rpdf
 HostApplication=
 Launcher=
 UseLauncher=0

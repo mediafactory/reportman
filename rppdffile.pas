@@ -1610,7 +1610,6 @@ var
  defaultwidth:integer;
  aarray:PWinAnsiWidthsArray;
  isdefault:boolean;
- index:integer;
 begin
   aarray:=nil;
   defaultwidth:=Default_Font_Width;
@@ -2622,8 +2621,6 @@ var
  adata:TRpTTFontData;
  index:integer;
  awidths:string;
- j:integer;
- newchar:Integer;
 begin
  CreateFont('Type1','Helvetica','WinAnsiEncoding');
  CreateFont('Type1','Helvetica-Bold','WinAnsiEncoding');
@@ -2778,9 +2775,6 @@ begin
 end;
 
 function TRpPDFCanvas.GetTTFontData:TRpTTFontData;
-var
- searchname:String;
- index:integer;
 begin
  Result:=nil;
  if Not (Font.Name in [poLinked,poEmbedded]) then
