@@ -22,7 +22,7 @@ program repmand;
 {%ToDo 'repmand.todo'}
 
 uses
-  QForms,
+  QForms,midaslib,
   fmain in 'fmain.pas' {FMainf},
   frpstruc in 'frpstruc.pas' {FRpStructure: TFrame},
   fdesign in 'fdesign.pas' {FDesignFrame: TFrame},

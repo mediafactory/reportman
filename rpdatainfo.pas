@@ -23,7 +23,7 @@ unit rpdatainfo;
 interface
 
 uses Classes,SysUtils,SqlExpr,rpconsts, DBXpress,
- DB,rpparams,Inifiles,rptypes,
+ DB,rpparams,Inifiles,rptypes,dbclient,
 {$IFDEF MSWINDOWS}
   dbtables,
 {$ENDIF}
@@ -35,7 +35,7 @@ const
  DBXCONFIGFILENAME='dbxconnections';
 {$ENDIF}
 type
- TRpDbDriver=(rpdatadbexpress,rpdataibx,rpdatabde,rpdataado);
+ TRpDbDriver=(rpdatadbexpress,rpdatamybase,rpdataibx,rpdatabde,rpdataado);
 
 
  TRpConnAdmin=class(TObject)
@@ -108,6 +108,8 @@ type
    FAlias:string;
    FDataset:TDataset;
    FSQLInternalQuery:TDataset;
+   FMyBaseFilename:string;
+   FMyBaseIndexFields:string;
    connecting:boolean;
    procedure SetDatabaseAlias(Value:string);
    procedure SetAlias(Value:string);
@@ -124,6 +126,8 @@ type
    property DatabaseAlias:string read FDatabaseAlias write SetDatabaseAlias;
    property SQL:widestring read FSQL write SetSQL;
    property DataSource:string read FDatasource write SetDataSource;
+   property MyBaseFilename:string read FMyBaseFilename write FMyBaseFilename;
+   property MyBaseIndexFields:string read FMyBaseIndexFields write FMyBaseIndexFields;
   end;
 
  TRpDataInfoList=class(TCollection)
@@ -182,6 +186,8 @@ begin
   FDatabaseAlias:=TRpDataInfoItem(Source).FDatabaseAlias;
   FDataSource:=TRpDataInfoItem(Source).FDataSource;
   FSQL:=TRpDataInfoItem(Source).FSQL;
+  FMyBaseFilename:=TRpDataInfoItem(Source).FMyBaseFilename;
+  FMyBaseIndexFields:=TRpDataInfoItem(Source).FMyBaseIndexFields;
  end
  else
   inherited Assign(Source);
@@ -414,6 +420,10 @@ begin
       FSQLConnection.Connected:=true;
      end;
    end;
+  rpdatamybase:
+   begin
+    // Nothing to do
+   end;
   rpdatabde:
    begin
 {$IFDEF MSWINDOWS}
@@ -503,6 +513,10 @@ begin
       begin
        FSQLInternalQuery:=TSQLQuery.Create(nil);
       end;
+     rpdatamybase:
+      begin
+       FSQLInternalQuery:=TClientDataset.Create(nil);
+      end;
      rpdatabde:
       begin
 {$IFDEF MSWINDOWS}
@@ -518,6 +532,8 @@ begin
       begin
        if Not (FSQLInternalQuery is TSQLQuery) then
        begin
+        if Assigned(TSQLQuery(FSQLInternalQuery).DataSource) then
+         TSQLQuery(FSQLInternalQuery).DataSource.free;
         FSQLInternalQuery.Free;
         FSQLInternalQuery:=nil;
        end;
@@ -528,6 +544,8 @@ begin
 {$IFDEF MSWINDOWS}
        if Not (FSQLInternalQuery is TQuery) then
        begin
+        if Assigned(TQuery(FSQLInternalQuery).DataSource) then
+         TQuery(FSQLInternalQuery).DataSource.free;
         FSQLInternalQuery.Free;
         FSQLInternalQuery:=nil;
        end;
@@ -546,6 +564,17 @@ begin
       TSQLQuery(FSQLInternalQuery).SQLConnection:=
        databaseinfo.items[index].SQLConnection;
       TSQLQuery(FSQLInternalQuery).SQL.Text:=SQL;
+     end;
+    rpdatamybase:
+     begin
+      try
+       TClientDataSet(FSQLInternalQuery).IndexFieldNames:=FMyBaseIndexFields;
+       TClientDataSet(FSQLInternalQuery).LoadFromFile(FMyBaseFilename);
+      except
+       FSQLInternalQuery.free;
+       FSQLInternalQuery:=nil;
+       raise;
+      end;
      end;
     rpdatabde:
      begin

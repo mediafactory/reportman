@@ -50,13 +50,19 @@ type
     GDataProps: TGroupBox;
     Label2: TLabel;
     ComboConnection: TComboBox;
-    Label3: TLabel;
+    LMasterDataset: TLabel;
     ComboDataSource: TComboBox;
-    Label4: TLabel;
+    LSQL: TLabel;
     MSQL: TMemo;
     BShowData: TBitBtn;
     BParams: TButton;
     GDriver: TRadioGroup;
+    EMyBase: TEdit;
+    LMyBase: TLabel;
+    BMyBase: TButton;
+    OpenDialog1: TOpenDialog;
+    EIndexFields: TEdit;
+    LIndexFields: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -76,6 +82,7 @@ type
     procedure BParamsClick(Sender: TObject);
     procedure CancelBtnClick(Sender: TObject);
     procedure GDriverClick(Sender: TObject);
+    procedure BMyBaseClick(Sender: TObject);
   private
     { Private declarations }
     report:TRpReport;
@@ -125,11 +132,10 @@ procedure TFDatainfoconfig.FormCreate(Sender: TObject);
 begin
  GDriver.ItemIndex:=0;
 {$IFDEF MSWINDOWS}
- GDriver.Items.Add('IBX');
  GDriver.Items.Add('BDE');
  GDriver.Items.Add('ADO');
- GDriver.Columns:=GDriver.Items.Count;
 {$ENDIF}
+ GDriver.Columns:=GDriver.Items.Count;
  databaseinfo:=TRpDatabaseInfoList.Create(Self);
  params:=TRpParamList.Create(Self);
  datainfo:=TRpDataInfoList.Create(Self);
@@ -164,21 +170,30 @@ end;
 
 procedure TFDatainfoconfig.BConfigClick(Sender: TObject);
 begin
- ShowDBXConfig;
- UpdateConAdmin;
-
- if Assigned(ConAdmin) then
- begin
-  ConAdmin:=nil;
-  try
-   ConAdmin:=GetConnectionAdmin;
-  except
-   on e:Exception do
+ case TRpDBDriver(GDriver.ItemIndex) of
+  rpdatadbexpress:
    begin
-    ShowMessage(E.message);
+    ShowDBXConfig;
+    UpdateConAdmin;
+
+    if Assigned(ConAdmin) then
+    begin
+     ConAdmin:=nil;
+     try
+      ConAdmin:=GetConnectionAdmin;
+     except
+      on e:Exception do
+      begin
+       ShowMessage(E.message);
+      end;
+     end;
+     conadmin.GetConnectionNames(ComboAvailable.Items,'');
+    end;
    end;
-  end;
-  conadmin.GetConnectionNames(ComboAvailable.Items,'');
+  rpdatamybase:
+   begin
+    // Does nothing
+   end;
  end;
  FillCurrentConnections;
 end;
@@ -188,6 +203,16 @@ var
  conname:string;
  item:TRpDatabaseInfoItem;
 begin
+ if Not ComboAvailable.Visible then
+ begin
+  conname:=UpperCase(Trim(InputBox(SRpNewConnection,SRpConnectionName,'')));
+  if Length(conname)<1 then
+   exit;
+  item:=databaseinfo.Add(conname);
+  item.Driver:=TRpDbDriver(GDriver.ItemIndex);
+  FillCurrentConnections;
+  exit;
+ end;
  if ComboAvailable.itemindex<0 then
   exit;
  conname:=AnsiUpperCase(ComboAvailable.Items.strings[ComboAvailable.itemindex]);
@@ -386,6 +411,8 @@ begin
  end;
  GDataProps.Visible:=true;
  MSQL.Text:=dinfo.SQL;
+ EMyBase.Text:=dinfo.MyBaseFilename;
+ EIndexFields.Text:=dinfo.MyBaseIndexFields;
  index:=ComboConnection.Items.IndexOf(dinfo.DatabaseAlias);
  if index<0 then
   dinfo.DatabaseAlias:='';
@@ -411,11 +438,23 @@ end;
 procedure TFDatainfoconfig.MSQLChange(Sender: TObject);
 var
  dinfo:TRpDatainfoItem;
+ index:integer;
 begin
  // Fils the info of the current dataset
  dinfo:=FindDataInfoItem;
  if dinfo=nil then
+ begin
+  LSQL.Visible:=false;
+  MSQL.Visible:=false;
+  LMyBase.Visible:=false;
+  EMyBase.Visible:=false;
+  BMyBase.Visible:=false;
+  EIndexFields.Visible:=false;
+  LMasterDataset.Visible:=false;
+  LIndexFields.Visible:=false;
+  ComboDataSource.Visible:=false;
   exit;
+ end;
  if Sender=MSQL then
  begin
   dinfo.SQL:=TMemo(Sender).Text;
@@ -424,9 +463,61 @@ begin
  if Sender=ComboConnection then
  begin
   dinfo.DatabaseAlias:=COmboConnection.Text;
+  // Finds the driver
+  index:=databaseinfo.IndexOf(dinfo.DatabaseAlias);
+  if index<0 then
+  begin
+   LSQL.Visible:=false;
+   MSQL.Visible:=false;
+   LMyBase.Visible:=false;
+   EMyBase.Visible:=false;
+   BMyBase.Visible:=false;
+   EIndexFields.Visible:=false;
+   ComboDataSource.Visible:=false;
+   LIndexFields.Visible:=false;
+   LMasterDataset.Visible:=false;
+   exit;
+  end;
+  if databaseinfo.items[index].Driver=rpdatamybase then
+  begin
+   LMyBase.Visible:=true;
+   EMyBase.Visible:=true;
+   BMyBase.Visible:=true;
+   EIndexFields.Visible:=true;
+   LMasterDataset.Visible:=true;
+   LIndexFields.Visible:=true;
+   ComboDataSource.Visible:=true;
+   LSQL.Visible:=false;
+   MSQL.Visible:=false;
+  end
+  else
+  begin
+   LSQL.Visible:=true;
+   MSQL.Visible:=true;
+   LMyBase.Visible:=false;
+   EMyBase.Visible:=false;
+   BMyBase.Visible:=false;
+   EIndexFields.Visible:=false;
+   ComboDataSource.Visible:=false;
+   LIndexFields.Visible:=false;
+   LMasterDataset.Visible:=false;
+  end;
  end
  else
+ if Sender=ComboDataSource then
+ begin
   dinfo.DataSource:=ComboDataSource.Text;
+ end
+ else
+ if Sender=EMyBase then
+ begin
+  dinfo.MyBaseFilename:=EMyBase.Text;
+ end
+ else
+ if Sender=EIndexFields then
+ begin
+  dinfo.MyBaseIndexFields:=EIndexFields.Text;
+ end;
 end;
 
 procedure TFDatainfoconfig.DoSave;
@@ -521,22 +612,32 @@ var
  index:integeR;
 begin
  // Loads the alias config
- case GDriver.ItemIndex of
+ case TrpDbDriver(GDriver.ItemIndex) of
   // DBExpress
-  0:
+  rpdatadbexpress:
    begin
     BConfig.Visible:=true;
+    LSQL.Visible:=true;
+    ComboAvailable.Visible:=true;
     if Assigned(ConAdmin) then
     begin
      conadmin.GetConnectionNames(ComboAvailable.Items,'');
     end;
    end;
+  // My Base
+  rpdatamybase:
+   begin
+    BConfig.Visible:=false;
+    ComboAvailable.Visible:=false;
+    ComboAvailable.Items.Clear;
+   end;
   // BDE
-  1:
+  rpdatabde:
    begin
 {$IFDEF MSWINDOWS}
     BConfig.Visible:=false;
     Session.GetAliasNames(ComboAvailable.Items);
+    ComboAvailable.Visible:=true;
 {$ENDIF}
    end;
  end;
@@ -552,6 +653,15 @@ begin
   begin
    databaseinfo.items[index].Driver:=TRpDbDriver(GDriver.ItemIndex);
   end;
+ end;
+ MSQLChange(ComboConnection);
+end;
+
+procedure TFDatainfoconfig.BMyBaseClick(Sender: TObject);
+begin
+ if OpenDialog1.Execute then
+ begin
+  EMyBase.Text:=OpenDialog1.FileName;
  end;
 end;
 
