@@ -105,7 +105,7 @@ begin
 
  // Rotation in degrees
  lnames.Add(SRpSRotation);
- ltypes.Add(SrpSString);
+ ltypes.Add(SrpSList);
  if Assigned(lvalues) then
   lvalues.Add(FormatCurr('#####0.0',TRpBarcode(printitem).Rotation/10));
 end;
@@ -208,6 +208,14 @@ begin
   begin
    lpossiblevalues.Add(BarcodeTypeStrings[it]);
   end;
+  exit;
+ end;
+ if pname=SRpSRotation then
+ begin
+  lpossiblevalues.Add(FormatCurr('##0.0',0));
+  lpossiblevalues.Add(FormatCurr('##0.0',90));
+  lpossiblevalues.Add(FormatCurr('##0.0',180));
+  lpossiblevalues.Add(FormatCurr('##0.0',270));
   exit;
  end;
  inherited GetPropertyValues(pname,lpossiblevalues);

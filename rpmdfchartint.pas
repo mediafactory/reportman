@@ -153,7 +153,7 @@ begin
   lvalues.Add(IntToStr(TRpChart(printitem).Elevation));
 
  // Rotation
- lnames.Add(SRpSRotation);
+ lnames.Add(SRpSInteger);
  ltypes.Add(SRpSInteger);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpChart(printitem).Rotation));

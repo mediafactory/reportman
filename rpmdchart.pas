@@ -28,7 +28,7 @@ uses Classes,SysUtils,rpprintitem,rpmdconsts,rpeval,
  windows,
 {$ENDIF}
 {$IFDEF USEVARIANTS}
- Types,
+ Types,Variants,
 {$ENDIF}
 {$IFDEF USETEECHART}
  Chart,Series,rpdrawitem,
