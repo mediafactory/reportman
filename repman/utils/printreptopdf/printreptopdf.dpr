@@ -57,6 +57,8 @@ uses
   rpsecutil in '../../../rpsecutil.pas',
   rphtmldriver in '../../../rphtmldriver.pas',
   rppdffile in '../../../rppdffile.pas',
+  rpsvgdriver in '../../../rpsvgdriver.pas',
+  rpcsvdriver in '../../../rpcsvdriver.pas',
   rppdfdriver in '../../../rppdfdriver.pas';
 {$ENDIF}
 

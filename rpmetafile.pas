@@ -1305,7 +1305,7 @@ begin
   // The first test is performed
   CurrentPos:=(minpos+maxpos) div 2;
   // Word Break
-  while currentpos>0 do
+  while currentpos>1 do
   begin
    Dec(currentpos);
    if isadelimiter(originalstring[currentpos]) then

@@ -78,7 +78,7 @@ contains
   rpmdprotocol in 'rpmdprotocol.pas',
   rptextdriver in 'rptextdriver.pas',
   rpsvgdriver in 'rpsvgdriver.pas',
-  rpcsvdriver in 'rpcvsdriver.pas',
+  rpcsvdriver in 'rpcsvdriver.pas',
   rpbasereport in 'rpbasereport.pas',
   rpdatatext in 'rpdatatext.pas',
   rpmreg in 'rpmreg.pas',
