@@ -28,6 +28,9 @@ uses
   Classes,
   ActiveX,
   midaslib,
+{$IFDEF ISDELPHI7}
+  XpMan,
+{$ENDIF}
   rpreport in '..\..\..\rpreport.pas',
   rpparams in '..\..\..\rpparams.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas',

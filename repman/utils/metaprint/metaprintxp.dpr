@@ -19,10 +19,15 @@
 
 program metaprintxp;
 
+{$I rpconf.inc}
+
 {$APPTYPE CONSOLE}
 uses
   Classes,
   SysUtils,
+{$IFDEF ISDELPHI7}
+  XpMan,
+{$ENDIF}
   rpgdidriver in '..\..\..\rpgdidriver.pas',
   rpmetafile in '..\..\..\rpmetafile.pas',
   rptypes in '..\..\..\rptypes.pas',

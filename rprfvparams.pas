@@ -26,7 +26,7 @@ interface
 uses SysUtils, Classes,
   Graphics, Forms,
   Buttons, ExtCtrls, Controls, StdCtrls,
-  rpmdconsts,rptypes,
+  rpmdconsts,rptypes,ComCtrls,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
@@ -34,7 +34,6 @@ uses SysUtils, Classes,
 
 const
   CONS_LEFTGAP=3;
-  CONS_CONTROLPOS=360;
   CONS_LABELTOPGAP=2;
   CONS_CONTROLGAP=5;
   CONS_RIGHTBARGAP=25;
@@ -46,6 +45,10 @@ type
     BOK: TButton;
     BCancel: TButton;
     MainScrollBox: TScrollBox;
+    PParent: TPanel;
+    Splitter1: TSplitter;
+    PLeft: TPanel;
+    PRight: TPanel;
     procedure BOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -134,7 +137,7 @@ var
 begin
  acontrol:=nil;
  fparams.assign(avalue);
- TotalWidth:=MainScrollBox.Width-CONS_NULLWIDTH-CONS_RIGHTBARGAP;
+ TotalWidth:=PRight.Width-CONS_NULLWIDTH-CONS_RIGHTBARGAP;
  posy:=CONS_CONTROLGAP;
  // Creates all controls from params
  for i:=0 to fparams.Count-1 do
@@ -146,7 +149,7 @@ begin
    alabel.Caption:=aparam.Description;
    aLabel.Left:=CONS_LEFTGAP;
    aLabel.Top:=posy+CONS_LABELTOPGAP;
-   alabel.Parent:=MainScrollBox;
+   alabel.Parent:=PLeft;
    achecknull:=TCheckBox.Create(Self);
    achecknull.Left:=TotalWidth-CONS_NULLWIDTH;
    achecknull.Top:=posy;
@@ -154,8 +157,10 @@ begin
    achecknull.Width:=CONS_NULLWIDTH;
    achecknull.Left:=TotalWidth;
    achecknull.Caption:=SRpNull;
-   achecknull.Parent:=MainScrollBox;
+   achecknull.Parent:=PRight;
+   achecknull.Anchors:=[akTop,akRight];
    achecknull.OnClick:=CheckNullClick;
+   achecknull.Visible:=aparam.AllowNulls;
    lnulls.AddObject(aparam.Name,acheckNull);
    case aparam.ParamType of
     rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamUnknown:
@@ -190,32 +195,32 @@ begin
      end;
    rpParamDate:
      begin
-      acontrol:=TEdit.Create(Self);
+      acontrol:=TDateTimePicker.Create(Self);
+      TDateTimePicker(acontrol).Kind:=dtkDate;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
-      TEdit(acontrol).Text:=DateToStr(Date);
       if aparam.Value=Null then
       begin
        achecknull.Checked:=true;
       end
       else
       begin
-       TEdit(acontrol).Text:=DateToStr(aparam.Value);
+       TDateTimePicker(acontrol).Date:=TDateTime(aparam.Value);
       end;
      end;
    rpParamTime:
      begin
-      acontrol:=TEdit.Create(Self);
+      acontrol:=TDateTimePicker.Create(Self);
+      TDateTimePicker(acontrol).Kind:=dtkTime;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
-      TEdit(acontrol).Text:=TimeToStr(Time);
       if aparam.Value=Null then
       begin
        achecknull.Checked:=true;
       end
       else
       begin
-       TEdit(acontrol).Text:=TimeToStr(aparam.Value);
+       TDateTimePicker(acontrol).Time:=TDateTime(aparam.Value);
       end;
      end;
    rpParamDateTime:
@@ -276,9 +281,13 @@ begin
      end;
    end;
    acontrol.Top:=Posy;
-   acontrol.Left:=CONS_CONTROLPOS;
+   acontrol.Left:=CONS_LEFTGAP;
    acontrol.Width:=TotalWidth-acontrol.Left;
-   acontrol.parent:=MainScrollBox;
+   if aparam.allownulls then
+    if VarIsNull(aparam.Value) then
+     acontrol.Visible:=false;
+   acontrol.parent:=PRight;
+   acontrol.Anchors:=[akLeft,akTop,akRight];
    Posy:=PosY+acontrol.Height+CONS_CONTROLGAP;
   end
   else
@@ -287,6 +296,7 @@ begin
    lnulls.AddObject('',nil);
   end;
  end;
+ PParent.Height:=PosY;
  // Set the height of the form
  NewClientHeight:=PModalButtons.Height+PosY+CONS_CONTROLGAP;
  if  NewClientHeight>CONS_MAXCLIENTHEIGHT then
@@ -345,11 +355,11 @@ begin
       end;
      rpParamDate:
       begin
-       fparams.items[i].Value:=StrtoDate(TEdit(LControls.Objects[i]).Text);
+       fparams.items[i].Value:=TDateTimePicker(LControls.Objects[i]).Date;
       end;
      rpParamTime:
       begin
-       fparams.items[i].Value:=StrtoTime(TEdit(LControls.Objects[i]).Text);
+       fparams.items[i].Value:=TDateTimePicker(LControls.Objects[i]).Time;
       end;
      rpParamDateTime:
       begin

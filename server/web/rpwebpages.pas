@@ -733,15 +733,18 @@ begin
        pdfreport.Params.Items[i].Name+'" value="'+
        pdfreport.Params.Items[i].AsString+'">'+#10+
        '</td>'+#10;
-      aparamstring:=aparamstring+
-       '<td>'+#10+
-       '<input type="checkbox" name="NULLParam'+
-       pdfreport.Params.Items[i].Name+'" value="NULL"';
-      if pdfreport.Params.Items[i].Value=Null then
-       aparamstring:=aparamstring+' checked ';
-      aparamstring:=aparamstring+'>'+#10+
-       ' '+TranslateStr(196,'Null value')+'</td>'+#10+
-       '</tr>';
+      if pdfreport.Params.Items[i].AllowNulls then
+      begin
+       aparamstring:=aparamstring+
+        '<td>'+#10+
+        '<input type="checkbox" name="NULLParam'+
+        pdfreport.Params.Items[i].Name+'" value="NULL"';
+       if pdfreport.Params.Items[i].Value=Null then
+        aparamstring:=aparamstring+' checked ';
+       aparamstring:=aparamstring+'>'+#10+
+        ' '+TranslateStr(196,'Null value')+'</td>'+#10+
+        '</tr>';
+      end;
 {    <tr>
       <td>LabelParam2</td>
       <td>
