@@ -675,7 +675,7 @@ begin
  TFRpObjInsp(Owner).FontDialog1.Font.Name:=FCompItem.GetProperty(SRpSWFontName);
 {$ENDIF}
 {$IFDEF LINUX}
- FontDialog1.Font.Name:= CompItem.GetProperty(SRpSLFontName);
+ TFRpObjInsp(Owner).FontDialog1.Font.Name:= FCompItem.GetProperty(SRpSLFontName);
 {$ENDIF}
  TFRpObjInsp(Owner).FontDialog1.Font.Size:= StrToInt(FCompItem.GetProperty(SRpSFontSize));
  TFRpObjInsp(Owner).FontDialog1.Font.Color:= StrToInt(FCompItem.GetProperty(SRpSFontColor));
