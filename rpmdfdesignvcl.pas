@@ -145,9 +145,11 @@ begin
   exit;
 
  rec:=ClientRect;
+ Canvas.Brush.Color:=Color;
  Canvas.Rectangle(rec);
  if (parent.parent is TScrollBox) then
  begin
+  Canvas.Brush.Style:=bsClear;
   Canvas.TextOut(TScrollBox(parent.parent).HorzScrollBar.Position,0,CaptionText);
  end;
 end;
@@ -301,6 +303,7 @@ begin
   exit;
  if assigned(fsubreport) then
  begin
+  fobjinsp.ClearMultiselect;
   for i:=0 to secinterfaces.Count-1 do
   begin
    TRpSectionInterface(secinterfaces.Items[i]).Free;
@@ -412,7 +415,7 @@ begin
    apanel:=TRpPaintEventpanel(toptitles.Items[i]);
    asecint:=TRpSectionInterface(secinterfaces.items[i]);
 
-   apanel.Color:=clBtnShadow;
+   apanel.Color:=clBtnFace;
 
    apanel.Width:=asecint.Width;
    apanel.Caption:='';

@@ -23,7 +23,7 @@ interface
 {$I rpconf.inc}
 
 uses Classes,SysUtils,Math,rpprintitem,rpmdconsts,rpeval,
- rptypeval,rptypes,
+ rptypeval,rptypes,rpevalfunc,
 {$IFNDEF USEVARIANTS}
  windows,
 {$ENDIF}
@@ -76,7 +76,6 @@ type
   property Items[index:integer]:TRpSeriesItem read GetItem write SetItem;default;
  end;
 
- TIdenRpChart=class;
 
  TRpChart=class(TRpGenTextComponent)
   private
@@ -87,10 +86,12 @@ type
    FGetValuecondition:widestring;
    FValueExpression:widestring;
    FChangeSerieExpression:widestring;
-   FChangeSerieBool:boolean;
-   FCaptionExpression:widestring;
-   FIdenChart:TIdenRpChart;
+   FChangeSerieBool,FClearExpressionBool:Boolean;
+   FCaptionExpression,FSerieCaption,FClearExpression:widestring;
+   FIdenChart:TVariableGrap;
    FIdentifier:string;
+   procedure OnClear(Sender:TObject);
+   procedure OnNewValue(Y:Single;Cambio:Boolean;leyen,textleyen:string);
    procedure SetIdentifier(Value:string);
    procedure SetSeries(avalue:TRpSeries);
    function CheckValueCondition:boolean;
@@ -101,7 +102,7 @@ type
   public
    procedure GetNewValue;
    procedure Evaluate;
-   property IdenChart:TIdenRpChart read FIdenChart;
+   property IdenChart:TVariableGrap read FIdenChart;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    constructor Create(AOwner:TComponent);override;
   published
@@ -119,15 +120,14 @@ type
    property ChartType:TRpChartType read FChartType write FChartType
     default rpchartline;
    property Identifier:string read FIdentifier write SetIdentifier;
+   property SerieCaption:widestring read FSerieCaption
+    write FSerieCaption;
+   property ClearExpression:widestring read FClearExpression
+    write FClearExpression;
+   property ClearExpressionBool:boolean read FClearExpressionBool write FClearExpressionBool
+    default false;
   end;
 
-  TIdenRpChart=class(TIdenFunction)
-  private
-   FChartitem:TRpChart;
-  protected
-   function GeTRpValue:TRpValue;override;
-  public
-  end;
 
   const ChartTypeStrings:array[rpchartline..rpchartpoint] of string=
    ('Lines','Bars','Points');
@@ -142,13 +142,6 @@ uses rpreport;
 const
  AlignmentFlags_SingleLine=64;
 
-function TIdenRpChart.GeTRpValue:TRpValue;
-begin
- if Not Assigned(FChartItem) then
-  Raise Exception.Create(SRpErrorIdenExpression);
- FChartItem.Evaluate;
- Result:=FChartItem.FValue;
-end;
 
 function TRpSeries.Add:TRpSeriesItem;
 begin
@@ -256,8 +249,9 @@ begin
  inherited Create(AOwner);
  FSeries:=TRpSeries.Create(TRpSeriesItem);
  FChangeSerieBool:=false;
- FIdenChart:=TIdenRpChart.Create(Self);
- FIdenChart.FChartItem:=Self;
+ FIdenChart:=TVariableGrap.Create(Self);
+ FIdenChart.OnClear:=OnClear;
+ FIdenChart.OnNewValue:=OnNewValue;
 end;
 
 procedure TRpChart.SetSeries(avalue:TRpSeries);
@@ -574,6 +568,30 @@ begin
  end;
 end;
 
+procedure TRpChart.OnNewValue(Y:Single;Cambio:Boolean;leyen,textleyen:string);
+var
+ aserie:TRpSeriesItem;
+begin
+ if FSeries.Count<1 then
+ begin
+  aserie:=FSeries.Add;
+ end
+ else
+ begin
+  aserie:=FSeries.Items[FSeries.Count-1];
+ end;
+  // Looks if the serie has changed
+ if Cambio then
+ begin
+  aserie:=FSeries.Add;
+ end;
+ aserie.AddValue(Y,leyen);
+end;
+
+procedure TRpChart.OnClear(Sender:TObject);
+begin
+ Series.Clear;
+end;
 
 end.
 

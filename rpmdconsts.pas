@@ -508,7 +508,12 @@ var
   SRpClientConnected:WideString='Client connected';
   SRpServerStoped:WideString='Server stoped';
   SRpSureDeleteReport:WideString='The selected report will be deleted. Are you sure?';
-
+  SRpGraphicClear:WideString='Clears the graphic data';
+  SRpGraphicNew:WideString='Adds data to the graphic';
+  SRpPGraphicClear:WideString='Gr is the graphic identifier';
+  SRpPGraphicNew:WideString='Gr is the graphic identifier,V is the value, C indications serie change,etiq is the caption of value and caption the serie';
+  SRpNoDataAvailableToPrint:WideString='No data available to print';
+  SRpPrintOnlyIfDataAvailable:WideString='Print only if data available';
 implementation
 
 uses rptranslator;
@@ -1020,6 +1025,12 @@ begin
  TranslateVar(788,SRpClientConnected);
  TranslateVar(789,SRpServerStoped);
  TranslateVar(794,SRpSureDeleteReport);
+ TranslateVar(795,SRpGraphicClear);
+ TranslateVar(796,SRpGraphicNew);
+ TranslateVar(797,SRpPGraphicClear);
+ TranslateVar(798,SRpPGraphicNew);
+ TranslateVar(799,SRpNoDataAvailableToPrint);
+ TranslateVar(800,SRpPrintOnlyIfDataAvailable);
 end;
 
 

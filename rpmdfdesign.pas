@@ -296,6 +296,7 @@ begin
   exit;
  if assigned(fsubreport) then
  begin
+  fobjinsp.ClearMultiselect;
   for i:=0 to secinterfaces.Count-1 do
   begin
    TRpSectionInterface(secinterfaces.Items[i]).Free;

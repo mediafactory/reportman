@@ -658,8 +658,8 @@ begin
 {$IFDEF MSWINDOWS}
  Forms.Application.OnException:=MyExceptionHandler;
 {$ENDIF}
- oldonexception:=Application.OnException;
- Application.OnException:=MyExceptionHandler;
+ oldonexception:=QForms.Application.OnException;
+ QForms.Application.OnException:=MyExceptionHandler;
 
  AppStyle:=dsSystemDefault;
 
@@ -1416,10 +1416,17 @@ procedure TFRpMainF.CorrectScrollBoxes;
 begin
  if assigned(fdesignframe) then
  begin
-  // A bug in aligments CLX Windows and Linux
+  // A bug in aligments CLX Windows and Linux Still present in D7/K3
   // forced me to include this corrections
+  // To reproduce the bug
+  // Maximize, open a report, select text control and restore
+  // the top ruler will disapear
+   fdesignframe.SectionScrollBox.HorzScrollBar.Position:=0;
+   fdesignframe.SectionScrollBox.VertScrollBar.Position:=0;
+   fdesignframe.SectionScrollBox.Align:=alnone;
    fdesignframe.HorzScrollBar.Position:=0;
    fdesignframe.VertScrollBar.Position:=0;
+   fdesignframe.SectionScrollBox.Align:=alClient;
    HorzScrollBar.Position:=0;
    VertScrollBar.Position:=0;
    MainScrollBox.HorzScrollBar.Position:=0;

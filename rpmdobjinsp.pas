@@ -1362,23 +1362,24 @@ begin
  begin
   FSelectedItems.Clear;
  end;
- found:=false;
- i:=0;
- while i<FSelectedItems.Count do
- begin
-  if FSelectedItems.Objects[i]=aitem then
-  begin
-   found:=true;
-   break;
-  end;
-  inc(i);
- end;
+ i:=FSelectedItems.IndexOfObject(aitem);
+ found:=i>=0;
  if found then
-  exit;
- FSelectedItems.AddObject(aitem.classname,aitem);
+ begin
+  if onlyone then
+   exit;
+  if FSelectedItems.Count<2 then
+   exit;
+  FSelectedItems.Delete(i);
+  aitem.Selected:=false;
+  if FSelectedItems.Count=1 then
+   TRpSizePosInterface(FSelectedItems.Objects[0]).Selected:=false;
+ end
+ else
+  FSelectedItems.AddObject(aitem.classname,aitem);
  if FSelectedItems.Count=1 then
  begin
-  SetCompItem(aitem);
+  SetCompItem(TRpSizeInterface(FSelectedItems.Objects[0]));
   exit;
  end;
  // Looks for the most ancestor class of the list

@@ -27,7 +27,7 @@ uses
   QGraphics, QControls, QForms, QDialogs,
   QComCtrls,QMenus, QTypes,QActnList, QImgList, QButtons, QExtCtrls,
   rpreport,rpsubreport,rpmdconsts,
-  rpsection,rpmdobjinsp,rpprintitem;
+  rpsection,rpmdobjinsp,rpprintitem, QStdCtrls;
 
 type
   TFRpStructure = class(TFrame)
@@ -55,7 +55,6 @@ type
     procedure ADeleteExecute(Sender: TObject);
     procedure BNewClick(Sender: TObject);
     procedure MPHeaderClick(Sender: TObject);
-    procedure RViewChange(Sender: TObject; Node: TTreeNode);
   private
     { Private declarations }
     oldappidle:TIdleEvent;
@@ -620,9 +619,5 @@ begin
  end;
 end;
 
-procedure TFRpStructure.RViewChange(Sender: TObject; Node: TTreeNode);
-begin
- RViewClick(Sender);
-end;
 
 end.

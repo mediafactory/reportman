@@ -3,8 +3,8 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   Top = 108
   BorderStyle = bsDialog
   Caption = 'Dialog'
-  ClientHeight = 450
-  ClientWidth = 456
+  ClientHeight = 460
+  ClientWidth = 455
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -15,7 +15,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   PixelsPerInch = 96
   TextHeight = 13
   object SColor: TShape
-    Left = 340
+    Left = 388
     Top = 320
     Width = 33
     Height = 33
@@ -23,7 +23,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object LRLang: TLabel
     Left = 12
-    Top = 392
+    Top = 400
     Width = 79
     Height = 13
     Caption = 'Report language'
@@ -37,7 +37,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object LPrinterFonts: TLabel
     Left = 12
-    Top = 364
+    Top = 372
     Width = 158
     Height = 13
     Caption = 'Printer Fonts (Windows GDI Only)'
@@ -51,7 +51,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object BOK: TButton
     Left = 112
-    Top = 416
+    Top = 424
     Width = 101
     Height = 25
     Caption = 'OK'
@@ -60,7 +60,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object BCancel: TButton
     Left = 220
-    Top = 416
+    Top = 424
     Width = 97
     Height = 25
     Caption = 'Cancel'
@@ -123,9 +123,9 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     Visible = False
   end
   object BBackground: TButton
-    Left = 176
+    Left = 228
     Top = 320
-    Width = 153
+    Width = 149
     Height = 33
     Caption = 'Background color'
     TabOrder = 6
@@ -133,7 +133,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object ComboLanguage: TComboBox
     Left = 228
-    Top = 388
+    Top = 396
     Width = 201
     Height = 21
     Style = csDropDownList
@@ -249,15 +249,15 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
   end
   object CheckTwoPass: TCheckBox
     Left = 12
-    Top = 328
-    Width = 157
+    Top = 320
+    Width = 209
     Height = 21
     Caption = 'Two pass report'
     TabOrder = 11
   end
   object ComboPrinterFonts: TComboBox
     Left = 228
-    Top = 360
+    Top = 368
     Width = 201
     Height = 21
     Style = csDropDownList
@@ -336,6 +336,14 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     Caption = 'Configure'
     TabOrder = 15
     OnClick = BConfigureClick
+  end
+  object CheckPrintOnlyIfData: TCheckBox
+    Left = 12
+    Top = 344
+    Width = 209
+    Height = 21
+    Caption = 'Print only if data available'
+    TabOrder = 16
   end
   object ColorDialog1: TColorDialog
     Left = 360

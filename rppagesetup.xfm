@@ -5,7 +5,7 @@ object FRpPageSetup: TFRpPageSetup
   AutoScroll = False
   BorderStyle = fbsDialog
   Caption = 'Report page setup'
-  ClientHeight = 450
+  ClientHeight = 460
   ClientWidth = 455
   Color = clBackground
   Position = poScreenCenter
@@ -16,7 +16,7 @@ object FRpPageSetup: TFRpPageSetup
   TextHeight = 13
   TextWidth = 6
   object SColor: TShape
-    Left = 340
+    Left = 392
     Top = 320
     Width = 33
     Height = 33
@@ -24,7 +24,7 @@ object FRpPageSetup: TFRpPageSetup
   end
   object BOK: TButton
     Left = 112
-    Top = 416
+    Top = 424
     Width = 101
     Height = 25
     Caption = 'OK'
@@ -32,8 +32,8 @@ object FRpPageSetup: TFRpPageSetup
     OnClick = BOKClick
   end
   object BCancel: TButton
-    Left = 188
-    Top = 428
+    Left = 232
+    Top = 424
     Width = 97
     Height = 25
     Caption = 'Cancel'
@@ -96,7 +96,7 @@ object FRpPageSetup: TFRpPageSetup
     Visible = False
   end
   object BBackground: TButton
-    Left = 176
+    Left = 228
     Top = 320
     Width = 153
     Height = 33
@@ -113,7 +113,7 @@ object FRpPageSetup: TFRpPageSetup
   end
   object ComboLanguage: TComboBox
     Left = 228
-    Top = 388
+    Top = 396
     Width = 201
     Height = 21
     Style = csDropDownList
@@ -236,22 +236,22 @@ object FRpPageSetup: TFRpPageSetup
   end
   object CheckTwoPass: TCheckBox
     Left = 12
-    Top = 328
-    Width = 157
+    Top = 320
+    Width = 213
     Height = 21
     Caption = 'Two pass report'
     TabOrder = 10
   end
   object LPrinterFonts: TLabel
     Left = 12
-    Top = 364
+    Top = 372
     Width = 158
     Height = 13
     Caption = 'Printer Fonts (Windows GDI Only)'
   end
   object ComboPrinterFonts: TComboBox
     Left = 228
-    Top = 360
+    Top = 368
     Width = 201
     Height = 21
     Style = csDropDownList
@@ -338,8 +338,16 @@ object FRpPageSetup: TFRpPageSetup
     TabOrder = 1
     OnClick = BConfigureClick
   end
+  object CheckPrintOnlyIfData: TCheckBox
+    Left = 12
+    Top = 344
+    Width = 209
+    Height = 21
+    Caption = 'Print only if data available'
+    TabOrder = 20
+  end
   object ColorDialog1: TColorDialog
-    Left = 360
+    Left = 412
     Top = 320
   end
 end

@@ -75,6 +75,7 @@ type
    procedure SeTRpValue(Value:TRpValue);virtual;abstract;
    function GeTRpValue:TRpValue;virtual;abstract;
   public
+   evaluator:TComponent;
    // Identifier type
    RType:RTypeIdentificador;
    // Internal identifier

@@ -22,7 +22,7 @@ interface
 {$I rpconf.inc}
 
 uses
-  SysUtils, Classes,DB,rptypeval,rpevalfunc,
+  SysUtils, Classes,DB,rptypeval,
   rpmdconsts,sysconst,rpparser,
 {$IFDEF USEVARIANTS}
   Variants,
@@ -128,6 +128,7 @@ type
 }
 implementation
 
+uses rpevalfunc;
 
 var
  Rpfunctions:TStringList;
@@ -178,6 +179,10 @@ begin
   Rpfunctions.AddObject('TRUE',iden);
   iden:=TIdenFalse.Create(nil);
   Rpfunctions.AddObject('FALSE',iden);
+  iden:=TIdenTrue.Create(nil);
+  Rpfunctions.AddObject('CIERTO',iden);
+  iden:=TIdenFalse.Create(nil);
+  Rpfunctions.AddObject('FALSO',iden);
 
  // Datetime constants
  iden:=TIdenToday.Create(nil);
@@ -242,15 +247,14 @@ begin
  Rpfunctions.AddObject('LOWERCASE',iden);
  iden:=TIdenEvalText.Create(nil);
  Rpfunctions.AddObject('EVALTEXT',iden);
-
- // Graphic functions
-{ iden:=TIdenGraphicClear.Create(nil);
- Rpfunctions.AddObject('GRAPHICLEAR',iden);
- iden:=TIdenGraphicNew.Create(nil);
- Rpfunctions.AddObject('GraphicNew',iden);
  iden:=TIdenNumToText.Create(nil);
  Rpfunctions.AddObject('NUMTOTEXT',iden);
-}
+
+ // Graphic functions
+ iden:=TIdenGraphicClear.Create(nil);
+ Rpfunctions.AddObject('GRAPHICLEAR',iden);
+ iden:=TIdenGraphicNew.Create(nil);
+ Rpfunctions.AddObject('GRAPHICNEW',iden);
 end;
 
 // Adds the identifiers that are on cache
@@ -436,6 +440,7 @@ begin
   end
   else
   begin
+   iden.evaluator:=self;
    // Is a variable?
    if iden.RType=RTypeidenvariable then
    begin
@@ -680,6 +685,7 @@ begin
       Rpparser.SourceLine,Rpparser.SourcePos);
   if iden.RType=RTypeidenfunction then
   begin
+   iden.evaluator:=self;
    // Ok is a function assign params
    if iden.paramcount>0 then
    begin
@@ -776,6 +782,7 @@ begin
          Rpparser.TokenString,Rpparser.TokenString,
         Rpparser.SourceLine,Rpparser.SourcePos);
     end;
+    iden.evaluator:=self;
     Value:=iden.Value;
     Rpparser.NextToken;
    end;
@@ -1013,6 +1020,7 @@ begin
   iden.Value:=ValueIni;
   // The owner is the TRprmEvaluator to free the variable
   AddVariable(name1,iden);
+  iden.evaluator:=self;
   REsult:=Iden;
  end
  else

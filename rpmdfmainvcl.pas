@@ -639,9 +639,8 @@ begin
  OpenDialog1.Filter := SRpRepFile+'|*.rep';
  SaveDialog1.Filter := SRpRepFile+'|*.rep|'+SRpAnyFile+'|*.*';
  // Sets on exception event
- Forms.Application.OnException:=MyExceptionHandler;
  oldonexception:=Application.OnException;
- Application.OnException:=MyExceptionHandler;
+ Forms.Application.OnException:=MyExceptionHandler;
 
 
  Application.Title:=SRpRepman;
@@ -1188,7 +1187,10 @@ begin
  Directorysep:='\';
  aurl:=aurl+'doc'+Directorysep+
   'index.html';
- ShowHelp(aurl);
+ if FileExists(aurl) then
+  ShowHelp(aurl)
+ else
+  ShowHelp('http://reportman.sourceforge.net');
 end;
 
 procedure TFRpMainFVCL.AFeaturesExecute(Sender: TObject);
@@ -1287,28 +1289,36 @@ procedure TFRpMainFVCL.CorrectScrollBoxes;
 begin
  if assigned(fdesignframe) then
  begin
-  // A bug in aligments CLX Windows and Linux
+  // A bug in aligments CLX Windows and Linux Still present in D7/K3
   // forced me to include this corrections
-   fdesignframe.HorzScrollBar.Position:=0;
-   fdesignframe.VertScrollBar.Position:=0;
-   HorzScrollBar.Position:=0;
-   VertScrollBar.Position:=0;
-   MainScrollBox.HorzScrollBar.Position:=0;
-   MainScrollBox.VertScrollBar.Position:=0;
-   LeftPanel.Left:=0;
-   Splitter1.Left:=20;
-   ToolBar1.Left:=0;
+  // To reproduce the bug
+  // Maximize, open a report, select text control and restore
+  // the top ruler will disapear
+//   fdesignframe.SectionScrollBox.HorzScrollBar.Position:=0;
+//   fdesignframe.SectionScrollBox.VertScrollBar.Position:=0;
+//   fdesignframe.SectionScrollBox.Align:=alnone;
+//   fdesignframe.HorzScrollBar.Position:=0;
+//   fdesignframe.VertScrollBar.Position:=0;
+//   fdesignframe.SectionScrollBox.Align:=alClient;
+//   HorzScrollBar.Position:=0;
+//   VertScrollBar.Position:=0;
+//   MainScrollBox.HorzScrollBar.Position:=0;
+//   MainScrollBox.VertScrollBar.Position:=0;
+//   LeftPanel.Left:=0;
+//   Splitter1.Left:=20;
+//   ToolBar1.Left:=0;
  end;
 end;
 
 
 procedure TFRpMainFVCL.FormResize(Sender: TObject);
 begin
- if assigned(fdesignframe) then
- begin
-  fdesignframe.UpdateInterface;
-  CorrectScrollBoxes;
- end;
+// The bug in form resize is not present in VCL
+// if assigned(fdesignframe) then
+// begin
+//  fdesignframe.UpdateInterface;
+//  CorrectScrollBoxes;
+// end;
 end;
 
 procedure TFRpMainFVCL.AUserParamsExecute(Sender: TObject);

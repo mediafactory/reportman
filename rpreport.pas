@@ -149,6 +149,7 @@ type
 {$ENDIF}
    difmilis:int64;
    FPrinterSelect:TRpPrinterSelect;
+   FPrintOnlyIfDataAvailable:Boolean;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -158,6 +159,7 @@ type
    procedure ClearTotalPagesList;
    procedure SetGridWidth(Value:TRpTwips);
    procedure SetGridHeight(Value:TRpTwips);
+   procedure CheckIfDataAvailable;
   protected
     section:TRpSection;
     subreport:TRpSubreport;
@@ -260,6 +262,8 @@ type
    property TwoPass:boolean read FTwoPass write FTwoPass default false;
    property PrinterFonts:TRpPrinterFontsOption read FPrinterFonts
     write FPrinterFonts default rppfontsdefault;
+   property PrintOnlyIfDataAvailable:Boolean read FPrintOnlyIfDataAvailable
+    write FPrintOnlyIfDataAvailable default false;
  end;
 
 implementation
@@ -1172,6 +1176,39 @@ begin
  Result:=Assigned(Section);
 end;
 
+
+procedure TRpReport.CheckIfDataAvailable;
+var
+ dataavail:boolean;
+ dinfo:TRpDatainfoItem;
+ i,index:integer;
+begin
+ if Not FPrintOnlyIfDataAvailable then
+  exit;
+ dataavail:=false;
+ for i:=0 to SubReports.Count-1 do
+ begin
+  if Length(SubReports.Items[i].SubReport.Alias)>0 then
+  begin
+   index:=datainfo.IndexOf(SubReports.Items[i].SubReport.Alias);
+   if index>=0 then
+   begin
+    dinfo:=datainfo.Items[index];
+    if dinfo.Dataset.Active then
+    begin
+     if Not dinfo.Dataset.Eof then
+     begin
+      dataavail:=true;
+      break;
+     end;
+    end;
+   end;
+  end;
+ end;
+ if not dataavail then
+  Raise Exception.Create(SRpNoDataAvailableToPrint);
+end;
+
 procedure TRpReport.BeginPrint(Driver:IRpPrintDriver);
 var
  i:integer;
@@ -1235,6 +1272,14 @@ begin
  FRecordCount:=0;
  CurrentSubReportIndex:=0;
  ActivateDatasets;
+ try
+  // After activating dataset we must check wich subreport to activate
+  // if printonly if data avaliable report option is check
+  CheckIfDataAvailable;
+ except
+  DeActivateDatasets;
+  Raise;
+ end;
  // Evaluator
  if Assigned(FEvaluator) then
  begin

@@ -341,6 +341,7 @@ object FRpMainF: TFRpMainF
       Width = 8
       Height = 286
       Beveled = True
+      ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
     end
     object leftpanel: TPanel
@@ -359,6 +360,7 @@ object FRpMainF: TFRpMainF
         Cursor = crVSplit
         Align = alTop
         Beveled = True
+        ResizeStyle = rsUpdate
       end
     end
   end

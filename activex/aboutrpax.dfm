@@ -608,9 +608,9 @@ object ReportManXAbout: TReportManXAbout
   object LVersion: TLabel
     Left = 8
     Top = 100
-    Width = 105
+    Width = 142
     Height = 20
-    Caption = 'Version 1.1 XP'
+    Caption = 'Version 1.1 XP-pre1'
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -16

@@ -127,7 +127,7 @@ type
   end;
 
  { Function GraphicLear }
-{ TIdenGraphicClear=class(TIdenFunction)
+ TIdenGraphicClear=class(TIdenFunction)
   protected
    function GeTRpValue:TRpValue;override;
   public
@@ -139,7 +139,7 @@ type
   public
    constructor Create(AOwner:TComponent);override;
   end;
-}
+
  { Function Modul }
  TIdenModul=class(TIdenFunction)
   protected
@@ -251,7 +251,28 @@ type
    constructor Create(AOWner:TComponent);override;
   end;
 
+
+ TRpNewValue=procedure (Y:Single;Cambio:Boolean;leyen,textleyen:string) of object;
+
+ TVariableGrap=class(TIdenVariable)
+  protected
+   FOnNewValue:TRpNewValue;
+   FOnClear:TNotifyEvent;
+   procedure SetRpValue(Value:TRpValue);override;
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+   procedure NewValue(Y:Single;Cambio:Boolean;leyen,textleyen:string);
+   procedure Clear;
+   property OnClear:TNotifyEvent read FOnClear write FOnClear;
+   property OnNewValue:TRpNewValue read FOnNewValue write FOnNewValue;
+  end;
+
+
  function Roudfloat(num:double;redondeo:double):double;
+
+
+
 
 implementation
 
@@ -566,7 +587,10 @@ begin
  if VarType(Params[0])=varString then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- Result:=String(Params[0]);
+ if VarIsNull(Params[0]) then
+  Result:=''
+ else
+  Result:=String(Params[0]);
 end;
 
 {**************************************************************************}
@@ -694,7 +718,7 @@ begin
  Result:=Pos(String(Params[0]),string(Params[1]));
 end;
 
-{
+
 constructor TIdenGraphicClear.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
@@ -714,17 +738,17 @@ begin
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  // Buscamos el identificador
- iden:=(Owner As TRpEvaluator).BuscaIdentificador(Params[0]);
+ iden:=(evaluator As TRpEvaluator).Searchidentifier(Params[0]);
  if iden=nil then
  begin
-   Raise TRpNamedException.Create(SIAvalDesconegutIden,
+   Raise TRpNamedException.Create(SRpIdentifierexpected,
          IdenName+'-'+Params[0]);
  end;
- if Not (iden is TVariableGraf) then
+ if Not (iden is TVariableGrap) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName+'-'+Params[0]);
  Result:=True;
- (iden As TVariableGraf).Borra;
+ (iden As TVariableGrap).Clear;
 end;
 
 
@@ -733,9 +757,9 @@ begin
  inherited Create(AOwner);
  FParamcount:=5;
  IdenName:='GraphicNew';
- Help:=SAGraphicNew;
+ Help:=SRpGraphicNew;
  model:='function '+'GraphicNew'+'(Gr:string,V:Single,C:Boolean,Etiq:string,Caption:string):Boolean';
- aParams:=SAPgraphicnew;
+ aParams:=SRPPgraphicnew;
 end;
 
 
@@ -759,21 +783,21 @@ begin
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  // Buscamos el identificador
- iden:=(Owner As TRpEvaluator).BuscaIdentificador(Params[0]);
+ iden:=(evaluator As TRpEvaluator).SearchIdentifier(Params[0]);
  if iden=nil then
  begin
-   Raise TRpNamedException.Create(SIAvalDesconegutIden,
+   Raise TRpNamedException.Create(SRpIdentifierexpected,
          IdenName+'-'+Params[0]);
  end;
- if Not (iden is TVariableGraf) then
+ if Not (iden is TVariableGrap) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName+'-'+Params[0]);
 
  Result:=True;
- (iden As TVariableGraf).NouValue(single(Params[1]),Boolean(Params[2]),string(Params[3]),string(Params[4]));
+ (iden As TVariableGrap).NewValue(single(Params[1]),Boolean(Params[2]),string(Params[3]),string(Params[4]));
 end;
 
-}
+
 
 constructor TIdenSQRT.Create(AOwner:TComponent);
 begin
@@ -945,7 +969,7 @@ begin
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  // Evalue
- avaluador:=(Owner As TRpEvaluator);
+ avaluador:=(evaluator As TRpEvaluator);
  result:=avaluador.Evaluatetext(Params[0]);
 end;
 
@@ -1185,5 +1209,37 @@ begin
  end;
 // Result:=NumeroATexto(Params[0],Params[1],0);
 end;
+
+
+constructor TVariableGrap.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+end;
+
+procedure TVariableGrap.SetRpValue(Value:TRpValue);
+begin
+ // Asignem i pasem
+ NewValue(Value,False,string(Value),'');
+end;
+
+
+procedure TVariableGrap.NewValue(Y:Single;Cambio:Boolean;leyen,textleyen:string);
+begin
+ if Assigned(FOnNewValue) then
+  FOnNewValue(Y,Cambio,leyen,textleyen);
+end;
+
+procedure TVariableGrap.Clear;
+begin
+ if Assigned(FOnClear) then
+  FOnClear(Self);
+end;
+
+function TVariableGrap.GetRpValue:TRpValue;
+begin
+ Raise Exception.Create(SRpErrorIdenExpression);
+end;
+
+
 
 end.

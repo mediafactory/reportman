@@ -28,7 +28,7 @@ interface
 uses
   SysUtils, Types, Classes, Variants, QTypes, QGraphics, QControls, QForms,
   QDialogs,rpmdconsts, QActnList, QImgList, QComCtrls,rpgraphutils, DB,
-  DBClient, QStdCtrls,
+  DBClient, QStdCtrls,QPrinters,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
@@ -75,6 +75,8 @@ type
     ToolButton6: TToolButton;
     ToolButton7: TToolButton;
     ToolButton8: TToolButton;
+    ToolButton9: TToolButton;
+    SaveDialog1: TSaveDialog;
     procedure ADeleteExecute(Sender: TObject);
     procedure APreviewExecute(Sender: TObject);
     procedure ATreeItemClick(Sender: TObject; Button: TMouseButton;
@@ -82,6 +84,8 @@ type
     procedure AUserParamsExecute(Sender: TObject);
     procedure APrintExecute(Sender: TObject);
     procedure BCancelClick(Sender: TObject);
+    procedure APrintSetupExecute(Sender: TObject);
+    procedure ToolButton9Click(Sender: TObject);
   private
     { Private declarations }
     docancel:boolean;
@@ -89,6 +93,7 @@ type
     report:TCLXReport;
     CurrentLoaded:String;
     FOnLoadReport:TRpOnLoadReport;
+    counter:Integer;
 {$IFDEF MSWINDOWS}
     mmfirst,mmlast:DWORD;
 {$ENDIF}
@@ -96,6 +101,7 @@ type
     milifirst,mililast:TDatetime;
 {$ENDIF}
     difmilis:int64;
+    procedure SaveDir(adir:String;anode:TTreeNode);
     procedure CheckCancel(acount:integer);
     procedure GenerateTree;
     procedure FillTreeForCurrentRecord(ANode:TTreeNode);
@@ -491,6 +497,112 @@ end;
 procedure TFRpDBTree.BCancelClick(Sender: TObject);
 begin
  docancel:=true;
+end;
+
+procedure TFRpDBTree.APrintSetupExecute(Sender: TObject);
+begin
+ Printer.ExecuteSetup;
+end;
+
+procedure TFRpDBTree.SaveDir(adir:String;anode:TTreeNode);
+var
+ i:integer;
+ newnode:TTreeNode;
+ newdir:string;
+ ainfo:TRpNodeInfo;
+ memstream:TMemoryStream;
+begin
+ // Save folders of de node
+ for i:=0 to anode.Count-1 do
+ begin
+  newnode:=anode.Item[i];
+  ainfo:=TRpNodeInfo(newnode.data);
+  if Length(ainfo.ReportName)<1 then
+  begin
+   // Creates the dir
+   newdir:=adir+'\'+String(newnode.Text);
+   newdir:=StringReplace(newdir,'/','-',[rfReplaceAll]);
+   CreateDir(newdir);
+   SaveDir(newdir,newnode);
+  end
+  else
+  begin
+   if Not Assigned(FOnLoadReport) then
+    Raise Exception.Create(SRptReportnotfound);
+   memstream:=TMemoryStream.Create;
+   try
+    FOnLoadReport(ainfo.ReportName,memstream);
+    memstream.Seek(0,soFromBeginning);
+    memstream.SaveToFile(adir+'\'+ainfo.ReportName+'.rep');
+   finally
+    memstream.free;
+   end;
+  end;
+  inc(counter);
+  CheckCancel(counter);
+ end;
+end;
+
+procedure TFRpDBTree.ToolButton9Click(Sender: TObject);
+var
+ aDir:String;
+ newnode:TTreeNode;
+ i:integer;
+ newdir:string;
+ ainfo:TRpNodeInfo;
+ memstream:TMemoryStream;
+begin
+ // Exports database reports to filenames and directories
+ if Not SaveDialog1.Execute then
+  exit;
+ adir:=ExtractFilePath(SaveDialog1.Filename);
+ if Length(adir)<1 then
+  exit;
+ if adir[Length(adir)]='\' then
+  adir:=Copy(adir,1,Length(adir)-1);
+ // Get the time
+{$IFDEF MSWINDOWS}
+ mmfirst:=TimeGetTime;
+{$ENDIF}
+{$IFDEF LINUX}
+ milifirst:=now;
+{$ENDIF}
+ counter:=0;
+ BCancel.Visible:=True;
+ try
+  for i:=0 to ATree.Items.Count-1 do
+  begin
+   newnode:=Atree.Items.Item[i];
+   if Assigned(newnode.Parent) then
+    continue;
+   ainfo:=TRpNodeInfo(newnode.data);
+   if Length(ainfo.ReportName)<1 then
+   begin
+    // Creates the dir
+//    newdir:=adir+'\'+String(newnode.Text);
+//    newdir:=StringReplace(newdir,'/','-',[rfReplaceAll]);
+//    CreateDir(newdir);
+    SaveDir(adir,newnode);
+   end
+   else
+   begin
+    if Not Assigned(FOnLoadReport) then
+     Raise Exception.Create(SRptReportnotfound);
+    memstream:=TMemoryStream.Create;
+    try
+     FOnLoadReport(ainfo.ReportName,memstream);
+     memstream.Seek(0,soFromBeginning);
+     memstream.SaveToFile(adir+'\'+ainfo.ReportName+'.rep');
+    finally
+     memstream.free;
+    end;
+   end;
+   inc(counter);
+   CheckCancel(counter);
+  end;
+ finally
+  BCancel.Visible:=False;
+ end;
 end;
 
 end.

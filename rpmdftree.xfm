@@ -34,8 +34,8 @@ object FRpDBTree: TFRpDBTree
       Caption = 'Delete'
     end
     object BCancel: TButton
-      Left = 203
-      Top = 4
+      Left = 1
+      Top = 30
       Width = 140
       Height = 26
       TabOrder = 2
@@ -91,6 +91,14 @@ object FRpDBTree: TFRpDBTree
       Height = 26
       Action = APrintSetup
       Caption = 'Print Setup'
+    end
+    object ToolButton9: TToolButton
+      Left = 203
+      Top = 4
+      Height = 26
+      Caption = 'ToolButton9'
+      ImageIndex = 8
+      OnClick = ToolButton9Click
     end
   end
   object ATree: TTreeView
@@ -477,6 +485,7 @@ object FRpDBTree: TFRpDBTree
       Caption = 'Print Setup'
       Hint = 'Shows the printer setup dialog'
       ImageIndex = 7
+      OnExecute = APrintSetupExecute
     end
   end
   object DReports: TClientDataSet
@@ -557,5 +566,14 @@ object FRpDBTree: TFRpDBTree
     object DReportGroups2TREE_NODE: TIntegerField
       FieldName = 'TREE_NODE'
     end
+  end
+  object SaveDialog1: TSaveDialog
+    FilterIndex = 0
+    Options = [ofPathMustExist, ofEnableSizing, ofHideReadOnly]
+    Height = 0
+    Title = 'Save'
+    Width = 0
+    Left = 232
+    Top = 144
   end
 end

@@ -73,6 +73,7 @@ type
     LSelectPrinter: TLabel;
     ComboSelPrinter: TComboBox;
     BConfigure: TButton;
+    CheckPrintOnlyIfData: TCheckBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -234,6 +235,7 @@ begin
  CheckCollate.Caption:=TranslateStr(109,CheckCollate.Caption);
  Caption:=TranslateStr(110,Caption);
  CheckTwoPass.Caption:=TranslateStr(111,CheckTwoPass.Caption);
+ CheckPrintOnlyIfData.Caption:=TranslateStr(800,CheckPrintOnlyIfData.Caption);
  LRLang.Caption:=TranslateStr(112,LRLang.Caption);
  LPrinterFonts.Caption:=TranslateStr(113,LPrinterFonts.Caption);
  ComboPrinterFonts.Items.Strings[0]:=TranslateStr(95,ComboPrinterFonts.Items.Strings[0]);
@@ -280,6 +282,7 @@ begin
  report.Copies:=acopies;
  report.CollateCopies:=CheckCollate.Checked;
  report.TwoPass:=CheckTwoPass.Checked;
+ report.PrintOnlyIfDataAvailable:=CheckPrintOnlyIfData.Checked;
 
  // Saves the options to report
  report.Pagesize:=TRpPageSize(RPageSize.ItemIndex);
@@ -321,6 +324,7 @@ begin
  ECopies.Text:=IntToStr(report.Copies);
  CheckCollate.Checked:=report.CollateCopies;
  CheckTwoPass.Checked:=report.TwoPass;
+ CheckPrintOnlyIfData.Checked:=report.PrintOnlyIfDataAvailable;
 
  // Size
  ComboPageSize.ItemIndex:=report.PagesizeQt;

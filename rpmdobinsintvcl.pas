@@ -74,7 +74,6 @@ type
  TRpRectangle=class(TWinControl)
   protected
 //   procedure Paint;override;
-   procedure CreateParams(var Params:TCreateParams);override;
   public
    Solid:boolean;
    constructor Create(AOwner:TComponent);override;
@@ -1444,11 +1443,6 @@ begin
  inherited GetPropertyValues(pname,lpossiblevalues);
 end;
 
-
-procedure TRpRectangle.CreateParams(var Params:TCreateParams);
-begin
- inherited CreateParams(Params);
-end;
 
 initialization
 

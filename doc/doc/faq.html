@@ -77,6 +77,25 @@
   - Not all VisualCLX components are thread safe so you need to modify this VisualCLX 
   components in the main thread, so the designer package is, becasuse this issue, 
   not thread safe.</p>
-<p></p>
+<p><b>Q. Can Report Manager print in dot matrix printers in Linux as fast as in 
+  Windows?</b></p>
+<p>Windows provides drivers and those drivers provide printer specific fonts, 
+  so the Windows GDI can merge graphics and texts, the printer driver does the 
+  real hard work of printing, Report Manager only search for the best suited font 
+  (a printer font) in Windows font list, select it and call Windows specific API 
+  to draw the text.</p>
+<p>For Linux, Report Manager uses the Kylix graphic engine that uses the Qt graphic 
+  engine, the Qt graphics engine writes output usually in postcript and then the 
+  printer filter transform it to a understandable language to the printer (usually 
+  this work is done by ghostcript).</p>
+<p>You must find a print filter or CUPS driver that converts a postcript input 
+  from Qt (or any Linux app) to textonly output (or better to graphics and text 
+  if exists), may be there is a generic text driver in CUPS or Ghostcript. That 
+  is installing a plain text printer driver if it's available.</p>
+<p>I don't know the Linux printing procedure in depth so I can be wrong.</p>
+<p>Other way to do this is write a driver for Report Manager (now Report<br>
+  Manager has three drivers:Qt,PDF,WinGDI), the output of this driver can be<br>
+  only text for example, or text with escape codes...</p>
+<p>&nbsp; </p>
 </body>
 </html>
