@@ -65,7 +65,6 @@ begin
  begin
   rpreport.RegisterRpReportClasses;
   rptypeval.DefaultDecimals:=2;
-  rpeval.InitRpFunctions;
   rpdatainfo.ConAdmin:=nil;
  end;
 end;
