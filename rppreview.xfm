@@ -15,6 +15,8 @@ object FRpPreview: TFRpPreview
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
+  OnMouseWheelDown = FormMouseWheelDown
+  OnMouseWheelUp = FormMouseWheelUp
   OnResize = FormResize
   PixelsPerInch = 96
   TextHeight = 13

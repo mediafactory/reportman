@@ -4,9 +4,15 @@ REPORTMANPATH=c:\prog\toni\cvsroot\reportman\reportman;$(DELPHIPATH)\OCX\Servers
 PACKAGESPATH="$(DELPHIPATH)\Projects\Bpl"
 COMPILE="$(DELPHIPATH)\bin\dcc32" -LN$(PACKAGESPATH) -LE$(PACKAGESPATH) -U"$(REPORTMANPATH);$(DELPHIPATH)\projects\bpl" -I"$(REPORTMANPATH)"
 IMPLIB="c:\prog\cbuilder6\bin\implib" 
-all: clean packages reportman prerelease
+all: clean packages reportman webplugin prerelease
 
 reportman: reportmanutils reportmanserver reportmanutilsxp reportmanserverxp
+
+webplugin:   clean
+        cd webactivex
+        $(COMPILE)  WebReportManX.dpr
+        generatecab
+        cd ..
 
 prerelease:
         -del /S /Q ..\prerelease

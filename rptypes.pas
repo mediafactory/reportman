@@ -1749,10 +1749,8 @@ var
  multiplier:integer;
 begin
  multiplier:=REP_C_WHEELSCALE;
- if (ssCtrl in Shift) then
-  multiplier:=multiplier*REP_C_WHEELSCALE;
  if (ssShift in Shift) then
-  multiplier:=multiplier div REP_C_WHEELSCALE;
+  multiplier:=multiplier*REP_C_WHEELSCALE;
  Result:=multiplier*REP_C_WHEELINC;
 end;
 

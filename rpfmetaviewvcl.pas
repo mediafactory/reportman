@@ -155,6 +155,10 @@ type
     procedure APrintersConfigurationExecute(Sender: TObject);
     procedure MSelPrinter0Click(Sender: TObject);
     procedure AAsyncExecExecute(Sender: TObject);
+    procedure FrameMouseWheelDown(Sender: TObject; Shift: TShiftState;
+      MousePos: TPoint; var Handled: Boolean);
+    procedure FrameMouseWheelUp(Sender: TObject; Shift: TShiftState;
+      MousePos: TPoint; var Handled: Boolean);
   private
     { Private declarations }
     cancelled:boolean;
@@ -878,6 +882,26 @@ begin
  AAsyncExec.Checked:=Not AAsyncExec.checked;
  if assigned(clitree) then
   clitree.asynchrohous:=AAsyncexec.Checked;
+end;
+
+procedure TFRpMetaVCL.FrameMouseWheelDown(Sender: TObject;
+  Shift: TShiftState; MousePos: TPoint; var Handled: Boolean);
+begin
+ if (ssCtrl in Shift) then
+  ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position+GetWheelInc(Shift)
+ else
+  ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position+GetWheelInc(Shift);
+ Handled:=true;
+end;
+
+procedure TFRpMetaVCL.FrameMouseWheelUp(Sender: TObject;
+  Shift: TShiftState; MousePos: TPoint; var Handled: Boolean);
+begin
+ if (ssCtrl in Shift) then
+  ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position-GetWheelInc(Shift)
+ else
+  ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position-GetWheelInc(Shift);
+ Handled:=true;
 end;
 
 end.

@@ -51,6 +51,7 @@ type
    FInstall:Boolean;
    FShowProgress:Boolean;
    FShowPrintDialog:Boolean;
+   errormessage:String;
    procedure DoInstall;
    procedure SetCaption(Value:WideString);
   protected
@@ -98,63 +99,74 @@ var
  rpPageSize:TPageSizeQt;
  okselected:Boolean;
 begin
- if FPrinterconfig then
- begin
-  ShowPrintersConfiguration;
-  exit;
- end;
- if install then
- begin
-  DoInstall;
-  exit;
- end;
- connect:=TIdHttp.Create(nil);
+ errormessage:='';
  try
-  connect.Port:=FPort;
-//  connect.ReadTimeout:=READ_TIMEOUT;
-  astream:=TMemoryStream.Create;
-  try
-   connect.Get(MetaUrl,astream);
-   metafile:=TrpMetafileReport.Create(nil);
+  if FPrinterconfig then
+  begin
+   ShowPrintersConfiguration;
+  end
+  else
+  if install then
+  begin
+   DoInstall;
+  end
+  else
+  begin
+   connect:=TIdHttp.Create(nil);
    try
-    astream.Seek(0,soFromBeginning);
-    metafile.LoadFromStream(astream);
-    if preview then
-    begin
-     Meta:=PreviewMetafile(metafile,aform,ShowPrintDialog);
-    end
-    else
-    begin
-     // Prints the report
-     rpPageSize.Custom:=metafile.PageSize<0;
-     rpPageSize.Indexqt:=metafile.PageSize;
-     rpPageSize.CustomWidth:=metafile.CustomX;
-     rpPageSize.CustomHeight:=metafile.CustomY;
-     frompage:=1;
-     topage:=999999;
-     allpages:=true;
-     collate:=false;
-     copies:=1;
-     rpgdidriver.PrinterSelection(metafile.PrinterSelect);
-     rpgdidriver.PageSizeSelection(rpPageSize);
-     rpgdidriver.OrientationSelection(metafile.orientation);
+    connect.Port:=FPort;
+  //  connect.ReadTimeout:=READ_TIMEOUT;
+    astream:=TMemoryStream.Create;
+    try
+     connect.Get(MetaUrl,astream);
+     metafile:=TrpMetafileReport.Create(nil);
+     try
+      astream.Seek(0,soFromBeginning);
+      metafile.LoadFromStream(astream);
+      if preview then
+      begin
+       Meta:=PreviewMetafile(metafile,aform,ShowPrintDialog);
+      end
+      else
+      begin
+       // Prints the report
+       rpPageSize.Custom:=metafile.PageSize<0;
+       rpPageSize.Indexqt:=metafile.PageSize;
+       rpPageSize.CustomWidth:=metafile.CustomX;
+       rpPageSize.CustomHeight:=metafile.CustomY;
+       frompage:=1;
+       topage:=999999;
+       allpages:=true;
+       collate:=false;
+       copies:=1;
+       rpgdidriver.PrinterSelection(metafile.PrinterSelect);
+       rpgdidriver.PageSizeSelection(rpPageSize);
+       rpgdidriver.OrientationSelection(metafile.orientation);
 
-     okselected:=true;
-     if ShowPrintDialog then
-      okselected:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
-     if okselected then
-      rpgdidriver.PrintMetafile(metafile,SRpPrintingFile,FShowProgress,allpages,
-       frompage,topage,copies,collate,
-        GetDeviceFontsOption(metafile.PrinterSelect),metafile.PrinterSelect);
+       okselected:=true;
+       if ShowPrintDialog then
+        okselected:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+       if okselected then
+        rpgdidriver.PrintMetafile(metafile,SRpPrintingFile,FShowProgress,allpages,
+         frompage,topage,copies,collate,
+         GetDeviceFontsOption(metafile.PrinterSelect),metafile.PrinterSelect);
+      end;
+     finally
+      metafile.free;
+     end;
+    finally
+     astream.free;
     end;
    finally
-    metafile.free;
+    connect.free;
    end;
-  finally
-   astream.free;
   end;
- finally
-  connect.free;
+ except
+  On E:Exception do
+  begin
+   errormessage:=E.Message;
+   raise;
+  end;
  end;
 end;
 
@@ -189,6 +201,13 @@ begin
  Canvas.Font.Color:=clWindowText;
  Canvas.Brush.Color:=clBtnFace;
  Canvas.TextRect(rec,0,1,Caption);
+ if Length(errormessage)>0 then
+ begin
+  rec.Top:=rec.Top+30;
+  Canvas.TextRect(rec,0,1,RM_VERSION);
+  rec.Top:=rec.Top+30;
+  Canvas.TextRect(rec,0,1,errormessage);
+ end;
 end;
 
 procedure PrintHttpReport(httpstring:String);
