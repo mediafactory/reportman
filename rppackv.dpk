@@ -30,7 +30,11 @@ package rppackv;
 
 requires
   visualclx,
-  rppack;
+  rppack,
+  vcl,
+  rtl,
+  dataclx,
+  indy;
 
 contains
   rpregv in 'rpregv.pas',
@@ -44,6 +48,11 @@ contains
   rpqtdriver in 'rpqtdriver.pas' {FRpQtProgress},
   rpprintdia in 'rpprintdia.pas' {FRpPrintDialog},
   rprfparams in 'rprfparams.pas' {FRpRunTimeParams},
-  rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig};
+  rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig},
+  rpfmainmetaview in 'rpfmainmetaview.pas' {FRpMainMeta},
+  rpfmetaview in 'rpfmetaview.pas' {FRpMeta: TFrame},
+  rpmdclitree in 'rpmdclitree.pas' {FRpCliTree: TFrame},
+  rpmdfabout in 'rpmdfabout.pas' {FRpAboutBox},
+  rpmdfhelpform in 'rpmdfhelpform.pas' {FRpHelpForm};
 
 end.

@@ -26,16 +26,13 @@ package rppackdesign;
 {$DESCRIPTION 'Report Manager Designer Component Package'}
 {$IMPLICITBUILD OFF}
 
-
 contains
   rpmregdesign in 'rpmregdesign.pas',
   rpmdesigner in 'rpmdesigner.pas',
-  rpmdfabout in 'rpmdfabout.pas' {FRpAboutBox},
-  rpmdfdatainfo in 'rpmdfdatainfo.pas' {FRpDatainfoconfig},
+  rpmdfdinfo in 'rpmdfdinfo.pas' {FRpDatainfoconfig},
   rpmdfdesign in 'rpmdfdesign.pas' {FDesignFrame: TFrame},
   rpmdfdrawint in 'rpmdfdrawint.pas',
   rpmdfgrid in 'rpmdfgrid.pas' {FRpGridOptions},
-  rpmdfhelpform in 'rpmdfhelpform.pas' {FRpHelpForm},
   rpmdflabelint in 'rpmdflabelint.pas',
   rpmdfmain in 'rpmdfmain.pas' {FRpMainF},
   rpmdfsampledata in 'rpmdfsampledata.pas' {FRpShowSampledata},
@@ -46,6 +43,10 @@ contains
   rpfparams in 'rpfparams.pas' {FRpParams},
   rpmdfbarcodeint in 'rpmdfbarcodeint.pas',
   rpmdfchartint in 'rpmdfchartint.pas',
-  rpmdfextsec in 'rpmdfextsec.pas' {FRpExtSection};
+  rpmdfextsec in 'rpmdfextsec.pas' {FRpExtSection},
+  rpmdfconnection in 'rpmdfconnection.pas' {FRpConnection: TFrame},
+  rpmdfdatasets in 'rpmdfdatasets.pas' {FRpDatasets: TFrame},
+  rpmdfdatatext in 'rpmdfdatatext.pas' {FRpDataText},
+  rpmdsysinfoqt in 'rpmdsysinfoqt.pas' {FRpSysInfo};
 
 end.

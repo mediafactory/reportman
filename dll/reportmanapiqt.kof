@@ -50,7 +50,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=
-Conditionals=
+Conditionals=LINUXTEECHART
 DebugSourceDirs=
 UsePackages=0
 

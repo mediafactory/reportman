@@ -50,7 +50,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=baseclx:visualclx:visualdbclx:dataclx
-Conditionals=
+Conditionals=LINUXTEECHART
 DebugSourceDirs=
 UsePackages=0
 
