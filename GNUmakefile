@@ -39,6 +39,10 @@ clean:
 	-rm -Rf repman/utils/printreptopdf/*.~*
 	-rm -Rf repman/utils/printrep/*.dcu
 	-rm -Rf repman/utils/printreptopdf/*.dcu
+	-rm -Rf repman/utils/startup/startup.bin
+	-rm -Rf repman/utils/startup/*.dcu
+	-rm -Rf repman/utils/startup/*.~*
+	-rm -Rf repman/utils/startup/*.dpu
 	-rm -Rf repman/meta.rpmf
 	-rm -Rf server/app/*.~*
 	-rm -Rf server/app/*.dcu

@@ -23,6 +23,14 @@ install:
 	cp ../../repman/utils/printrep/printrep .
 	cp ../../repman/utils/reptotxt/reptotxt .
 	cp ../../repman/utils/txttorep/txttorep .
+	cp ../../repman/utils/startup/startup.bin repmand.bin
+	cp repmand.bin metaview.bin
+	cp repmand.bin printrep.bin
+	cp printrep.bin printreptopdf.bin
+	cp printrep.bin reportserverapp.bin
+	cp printrep.bin reportservercon.bin
+	cp printrep.bin repserverconfig.bin
+	cp printrep.bin metaprint.bin
 	cp ../../server/app/reportserverapp .
 	cp ../../server/app/reportservercon .
 	cp ../../server/config/repserverconfig .
@@ -40,8 +48,8 @@ install:
 	mkdir doc/images
 	cp ../../doc/doc/images/*.jpg doc/images
 #	include repmand.es when linux translation done
-	tar c doc LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es repmand reportserverapp reportserverapp.sh reportservercon reportservercon.sh repserverconfig repserverconfig.sh dbxdrivers dbxconnections metaprint metaview metaview.sh printrep printreptopdf printreptopdf.sh reptotxt txttorep repmand repmand.sh README *.so *.so.1 qt_* dbxres.en.1 > repmand-1_2.i386.tar
-	gzip repmand-1_2.i386.tar
+	tar c doc LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es repmand reportserverapp reportserverapp.sh reportservercon reportservercon.sh repserverconfig repserverconfig.sh dbxdrivers dbxconnections metaprint metaview metaview.sh printrep printreptopdf printreptopdf.sh reptotxt txttorep repmand repmand.sh repmand.bin metaview.bin printrep.bin printreptopdf.bin metaprint.bin reportserverapp.bin reportservercon.bin repserverconfig.bin README *.so *.so.1 qt_* dbxres.en.1 > repmand-1_3.i386.tar
+	gzip repmand-1_3.i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0
 	-rm -f repmand
@@ -60,3 +68,4 @@ clean:
 	-rm -f LICENSE.TXT
 	-rm -f dbxres.en.*
 	-rm -f reportserverapp
+	-rm -f *.bin

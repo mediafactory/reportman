@@ -23,6 +23,8 @@ interface
 
 {$I rpconf.inc}
 
+uses SysUtils;
+
 {$IFDEF MSWINDOWS}
 const
  C_DIRSEPARATOR='\';
@@ -1075,11 +1077,43 @@ begin
  TranslateVar(834,SRpChildSubRep);
 end;
 
+{$IFDEF LINUX}
+procedure RestoreEnviromentLocale;
+var
+ avalue:string;
+begin
+ avalue:=GetEnvironmentVariable('KYLIX_DEFINEDENVLOCALES');
+ if Length(avalue)<1 then
+  exit;
+ avalue:=GetEnvironmentVariable('KYLIX_DECIMAL_SEPARATOR');
+ if Length(avalue)>0 then
+  DecimalSeparator:=avalue[1]
+ else
+  DecimalSeparator:=chr(0);
+ avalue:=GetEnvironmentVariable('KYLIX_THOUSAND_SEPARATOR');
+ if Length(avalue)>0 then
+  ThousandSeparator:=avalue[1]
+ else
+  ThousandSeparator:=chr(0);
+ avalue:=GetEnvironmentVariable('KYLIX_DATE_SEPARATOR');
+ if Length(avalue)>0 then
+  DateSeparator:=avalue[1]
+ else
+  DateSeparator:=chr(0);
+ avalue:=GetEnvironmentVariable('KYLIX_TIME_SEPARATOR');
+ if Length(avalue)>0 then
+  TimeSeparator:=avalue[1]
+ else
+  TimeSeparator:=chr(0);
+end;
+{$ENDIF}
 
 initialization
 
 ConvertAllStrings;
-
+{$IFDEF LINUX}
+ RestoreEnviromentLocale;
+{$ENDIF}
 finalization
  if assigned(atrans) then
  begin
