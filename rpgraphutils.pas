@@ -20,7 +20,7 @@ unit rpgraphutils;
 interface
 
 uses
-  SysUtils,Classes, QGraphics, QForms,Types,
+  SysUtils,Classes, QGraphics, QForms,Types,rptranslator,
   QButtons, QExtCtrls, QControls, QStdCtrls,rpmunits,Qt,
 {$IFDEF MSWINDOWS}
   windows,
@@ -417,6 +417,6 @@ begin
 end;
 
 initialization
-
-
+ if ChangeFileExt(ExtractFileName(UpperCase(Application.ExeName)),'')='REPMAND' then
+  Application.Title:=TranslateStr(1,Application.Title);
 end.

@@ -183,10 +183,11 @@ var
   FRpMainF: TFRpMainF;
 
 begin
-//{$IFDEF MSWINDOWS}
   LoadQtTranslator;
-//{$ENDIF}
   Application.Initialize;
+  Application.Title := 'Report Manager Designer';
   Application.CreateForm(TFRpMainF, FRpMainF);
   Application.Run;
 end.
+
+
