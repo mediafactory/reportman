@@ -298,3 +298,30 @@ UninstallProgram=Desinstal.lar %1
 LaunchProgram=Executar %1
 AssocFileExtension=&Associar %1 amb l'extensió %2
 AssocingFileExtension=Associar %1 amb l'extensió %2...
+
+ReportManagerDesigner=Disenyador Report Manager
+DBExpressdatabasedrivers=Controladors DBExpress (Borland DBExpress)
+BorlandDatabaseEnginedatabasedrivers=Controladors BDE (Borland Database Engine)
+Commandlinetools=Utilitats de línia de comandes
+Documentation=Documentació
+TCPserver=Servidor d'informes TCP/IP
+TCPclientandmetafileviewer=Client TCP/IP i visor de metaarxius
+Webserver=Servidor web d'informes
+ActiveXcomponent=Component ActiveX per programadors
+InternetExplorerplugin=Plugin per a Internet Explorer
+
+LaunchReportManagerDesignerXP=Executar disenyador d'informes
+DesignerXP=Disenyador d'informes
+MetafileViewerandReportClientXP=Client d'informes i visor de metaarxius
+TranslationUtility=Utilitat de traducció
+ServerapplicationXP=Servidor d'informes TCP/IP
+ServerconfigurationXP=Utilitat de configuració del servidor TCP/IP
+RegisterActiveX=Instal.lar ActiveX al registro
+UnRegisterActiveX=Eliminar ActiveX del registre
+ReportManagerDesignerXP=Disenyador Report Manager
+ReportManagerClient=Client Report Manager
+ReportSamples=Exemples d'informes
+
+Fullinstallation=Instal.lació completa
+Custominstallation=Instal.lació personalitzada
+ServiceInstallationtool=Utilitat d'instal.lació de servei

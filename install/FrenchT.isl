@@ -317,3 +317,29 @@ LaunchProgram=Exécuter %1
 AssocFileExtension=&Associer %1 avec l'extension de fichier %2
 AssocingFileExtension=Associe %1 avec l'extension de fichier %2...
 
+ReportManagerDesigner=Report Manager Designer
+DBExpressdatabasedrivers=Borland DBExpress database drivers
+BorlandDatabaseEnginedatabasedrivers=Borland Database Engine database drivers
+Commandlinetools=Command line tools
+Documentation=Documentation
+TCPserver=TCP/IP Server
+TCPclientandmetafileviewer=TCP/IP client and metafile viewer
+Webserver=Web server
+ActiveXcomponent=ActiveX component for developers
+InternetExplorerplugin=Internet Explorer plugin
+
+LaunchReportManagerDesignerXP=Launch Report Manager Designer
+DesignerXP=Designer XP
+MetafileViewerandReportClientXP=Metafile Viewer and Report Client
+TranslationUtility=Translation Utility
+ServerapplicationXP=TCP/IP Server application
+ServerconfigurationXP=TCP/IP Server configuration utility
+RegisterActiveX=Register ActiveX
+UnRegisterActiveX=UnRegister ActiveX
+ReportManagerDesignerXP=Report Manager Designer
+ReportManagerClient=Report Manager client
+ReportSamples=Report Examples
+
+Fullinstallation=Full Installation
+Custominstallation=Custom installation
+ServiceInstallationtool=Service Installation tool

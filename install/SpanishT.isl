@@ -11,7 +11,7 @@
 ; Setup adds the periods automatically (appending a period would result in
 ; two periods being displayed).
 ;
-; $Id: SpanishT.isl,v 1.1 2004/04/24 09:21:42 tonim Exp $
+; $Id: SpanishT.isl,v 1.2 2004/04/28 13:31:04 tonim Exp $
 
 [LangOptions]
 LanguageName=Español
@@ -311,3 +311,30 @@ UninstallProgram=Desinstalar %1
 LaunchProgram=Ejecutar %1
 AssocFileExtension=&Asociar %1 con la extensión %2
 AssocingFileExtension=Asociando %1 con la extensión de archivo %2...
+
+ReportManagerDesigner=Diseñador Report Manager
+DBExpressdatabasedrivers=Controladores DBExpress (Borland DBExpress)
+BorlandDatabaseEnginedatabasedrivers=Controladores BDE (Borland Database Engine)
+Commandlinetools=Utilidades de línea de comandos
+Documentation=Documentación
+TCPserver=Servidor de informes TCP/IP
+TCPclientandmetafileviewer=Cliente TCP/IP y visor de metaarchivos
+Webserver=Servidor web de informes
+ActiveXcomponent=Componente ActiveX para desarrolladores
+InternetExplorerplugin=Plugin para Internet Explorer
+
+LaunchReportManagerDesignerXP=Ejecutar diseñador de informes
+DesignerXP=Diseñador de informes
+MetafileViewerandReportClientXP=Cliente de informes y visor de metaarchivos
+TranslationUtility=Utilidad de traducción
+ServerapplicationXP=Servidor de informes TCP/IP
+ServerconfigurationXP=Utilidad de configuración del servidor TCP/IP
+RegisterActiveX=Instalar ActiveX en el registro
+UnRegisterActiveX=Eliminar ActiveX del registro
+ReportManagerDesignerXP=Diseñador Report Manager
+ReportManagerClient=Cliente Report Manager
+ReportSamples=Ejemplos de informes
+
+Fullinstallation=Instalación completa
+Custominstallation=Instalación personalizada
+ServiceInstallationtool=Utilidad de instalación de servicio
