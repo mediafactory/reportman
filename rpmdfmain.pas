@@ -33,12 +33,12 @@ uses
 {$IFDEF HORZPAPERBUG}
  rpmetafile,
 {$ENDIF}
-  Types, Classes, QGraphics, QControls, QForms, QDialogs,
+  Types, Classes, QGraphics, QControls, QForms,
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,rpreport,
   rpmdconsts,rptypes, QExtCtrls,rpmdfstruc, rplastsav,rpsubreport,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
-  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver, 
-  DB,rpmdfhelpform,rpmunits,QConsts;
+  rpsection,rpprintitem,QClipbrd,QPrinters,rpqtdriver,
+  DB,rpmdfhelpform,rpmunits,QConsts, QDialogs;
 const
   // File name in menu width
   C_FILENAME_WIDTH=40;
