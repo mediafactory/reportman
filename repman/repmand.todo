@@ -1,3 +1,7 @@
+{TODO 1 -oToni -cEngine : Program a simple chart component at least with poly lines and dots}
+{TODO 1 -oToni -cEngine :
+Instaler for Windows do Innosetup setup and for linux a tar or something
+with the GNUmakefile}
 {TODO 1 -oToni -cEngine : Conversion program for gestor.exe}
 {TODO 1 -oToni -cEngine : Saving and loading from database tables}
 {TODO -oToni -cEngine : Program a component to easily execute reports from delphi and kylix}

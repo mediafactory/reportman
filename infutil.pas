@@ -1,16 +1,11 @@
-Unit infutil;
+{*******************************************************}
+{                                                       }
+{       Zlib compression library                        }
+{                                                       }
+{*******************************************************}
 
-{ types and macros common to blocks and codes
-  Copyright (C) 1995-1998 Mark Adler
+unit infutil;
 
-   WARNING: this file should *not* be used by applications. It is
-   part of the implementation of the compression library and is
-   subject to change.
-
-  Pascal tranlastion
-  Copyright (C) 1998 by Jacques Nomssi Nzali
-  For conditions of distribution and use, see copyright notice in readme.txt
-}
 
 interface
 

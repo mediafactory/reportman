@@ -1,12 +1,11 @@
-Unit  zinflate;
+{*******************************************************}
+{                                                       }
+{       Zlib compression library                        }
+{                                                       }
+{*******************************************************}
 
-{  inflate.c -- zlib interface to inflate modules
-   Copyright (C) 1995-1998 Mark Adler
+unit  zinflate;
 
-  Pascal tranlastion
-  Copyright (C) 1998 by Jacques Nomssi Nzali
-  For conditions of distribution and use, see copyright notice in readme.txt
-}
 
 interface
 

@@ -1,19 +1,12 @@
-Unit inftrees;
+{*******************************************************}
+{                                                       }
+{       Zlib compression library                        }
+{                                                       }
+{*******************************************************}
 
-{ inftrees.h -- header to use inftrees.c
-  inftrees.c -- generate Huffman trees for efficient decoding
-  Copyright (C) 1995-1998 Mark Adler
+unit inftrees;
 
-  WARNING: this file should *not* be used by applications. It is
-   part of the implementation of the compression library and is
-   subject to change.
-
-  Pascal tranlastion
-  Copyright (C) 1998 by Jacques Nomssi Nzali
-  For conditions of distribution and use, see copyright notice in readme.txt
-}
-
-Interface
+interface
 
 {$I zconf.inc}
 

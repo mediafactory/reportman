@@ -1,13 +1,4 @@
-Unit zdeflate;
-
-{ Orginal: deflate.h -- internal compression state
-           deflate.c -- compress data using the deflation algorithm
-  Copyright (C) 1995-1996 Jean-loup Gailly.
-
-  Pascal tranlastion
-  Copyright (C) 1998 by Jacques Nomssi Nzali
-  For conditions of distribution and use, see copyright notice in readme.txt
-}
+unit zdeflate;
 
 
 {  ALGORITHM
@@ -51,7 +42,7 @@ Unit zdeflate;
        Fiala,E.R., and Greene,D.H.
           Data Compression with Finite Windows, Comm.ACM, 32,4 (1989) 490-595}
 
-{ $Id: zdeflate.pas,v 1.1 2002/04/19 15:50:33 toni Exp $ }
+{ $Id: zdeflate.pas,v 1.2 2002/04/19 19:49:23 toni Exp $ }
 
 interface
 

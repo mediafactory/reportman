@@ -1,14 +1,10 @@
-Unit inffast;
+{*******************************************************}
+{                                                       }
+{       Zlib compression library                        }
+{                                                       }
+{*******************************************************}
 
-{
-  inffast.h and
-  inffast.c -- process literals and length/distance pairs fast
-  Copyright (C) 1995-1998 Mark Adler
-
-  Pascal tranlastion
-  Copyright (C) 1998 by Jacques Nomssi Nzali
-  For conditions of distribution and use, see copyright notice in readme.txt
-}
+unit inffast;
 
 
 interface

@@ -1,13 +1,12 @@
-Unit adler;
+{*******************************************************}
+{                                                       }
+{       Zlib compression library                        }
+{                                                       }
+{*******************************************************}
 
-{
-  adler32.c -- compute the Adler-32 checksum of a data stream
-  Copyright (C) 1995-1998 Mark Adler
 
-  Pascal tranlastion
-  Copyright (C) 1998 by Jacques Nomssi Nzali
-  For conditions of distribution and use, see copyright notice in readme.txt
-}
+unit adler;
+
 
 interface
 
@@ -71,21 +70,6 @@ begin
     else
       k := NMAX;
     Dec(len, k);
-    {
-    while (k >= 16) do
-    begin
-      DO16(buf);
-      Inc(buf, 16);
-      Dec(k, 16);
-    end;
-    if (k <> 0) then
-    repeat
-      Inc(s1, buf^);
-      Inc(puf);
-      Inc(s2, s1);
-      Dec(k);
-    until (k = 0);
-    }
     while (k > 0) do
     begin
       Inc(s1, buf^);
@@ -99,16 +83,5 @@ begin
   adler32 := (s2 shl 16) or s1;
 end;
 
-{
-#define DO1(buf,i)
-  begin
-    Inc(s1, buf[i]);
-    Inc(s2, s1);
-  end;
-#define DO2(buf,i)  DO1(buf,i); DO1(buf,i+1);
-#define DO4(buf,i)  DO2(buf,i); DO2(buf,i+2);
-#define DO8(buf,i)  DO4(buf,i); DO4(buf,i+4);
-#define DO16(buf)   DO8(buf,0); DO8(buf,8);
-}
 end.
 
