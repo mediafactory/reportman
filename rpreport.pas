@@ -972,7 +972,10 @@ begin
    begin
     datainfo.Items[i].CachedDataset.DoClose;
     datainfo.Items[i].CachedDataset.DoOpen;
-   end;
+   end
+   else
+    if Not datainfo.Items[i].Dataset.Active then
+     datainfo.Items[i].Connect(databaseinfo,params);
    UpdateCachedSources(datainfo.items[i].alias);
   end;
  end;

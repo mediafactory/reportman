@@ -142,7 +142,7 @@ var rect,rectrefresh:TRect;
     windowwidth:integer;
     windowheight:integer;
     h1,h2,h3,x:integer;
-    i,onethousand,onecent,midthousand:double;
+    i,onethousand,onecent:double;
   han:QPainterH;
     bwidth,bheight:integer;
 begin
@@ -272,14 +272,12 @@ begin
  begin
   onecent:=100/CMS_PER_INCHESS;
   onethousand:=100/CMS_PER_INCHESS*10;
-  midthousand:=100/CMS_PER_INCHESS*5;
   scale:=pixelsperinchx/CMS_PER_INCHESS;
  end
  else
  begin
   onethousand:=1000;
   onecent:=100;
-  midthousand:=500;
   scale:=pixelsperinchx;
  end;
  windowwidth:=Round(1000*rect.right/pixelsperinchx);
