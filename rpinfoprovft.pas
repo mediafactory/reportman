@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       TRpInfoProvider VCL                             }
+{       TRpInfoProvider Fretype library                 }
 {       Provides information about fonts and bitmaps    }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
@@ -11,18 +11,20 @@
 {                                                       }
 {*******************************************************}
 
-unit rpinfoprovvcl;
+unit rpinfoprovft;
 
 
 interface
 
-uses Classes,SysUtils,Windows,Graphics,rpinfoprovid,
+uses Classes,SysUtils,Windows,rpinfoprovid,
     rpgraphutilsvcl,rpmdconsts;
 
 
 type
- TRpVCLInfoProvider=class(TInterfacedObject,IRpInfoProvider)
-  FBitmap:TBitmap;
+ TRpFTInfoProvider=class(TInterfacedObject,IRpInfoProvider)
+  currentname:String;
+  currentstyle:integer;
+  procedure SelectFont(pdffont:TRpPDFFOnt);
   procedure FillFontInfo(pdffont:TRpPDFFont;info:TRpTTFontInfo);
   procedure FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
   constructor Create;
@@ -31,45 +33,91 @@ type
 
 implementation
 
-constructor TRpVCLInfoProvider.Create;
+const
+ TTF_PRECISION=1000;
+
+
+constructor TRpFTInfoProvider.Create;
 begin
- FBitmap:=TBitmap.Create;
- FBitmap.Width:=100;
- FBitmap.Height:=100;
+ currentname:='';
+ currentstyle:=0;
 end;
 
-destructor TRpVCLInfoProvider.destroy;
+destructor TRpFTInfoProvider.destroy;
 begin
- FBitmap.free;
-
  inherited destroy;
 end;
 
+procedure TRpFtInfoProvider.SelectFont(pdffont:TRpPDFFOnt);
+var
+ LogFont:TLogFont;
+begin
+ if ((currentname=pdffont.WFontName) and (currentstyle=pdffont.Style)) then
+  exit;
+ currentname:=pdffont.WFontName;
+ currentstyle:=pdffont.Style;
+ if fonthandle<>0 then
+ begin
+  DeleteObject(fonthandle);
+  fonthandle:=0;
+ end;
+ LogFont.lfHeight:=Round(-TTF_PRECISION*GetDeviceCaps(adc,LOGPIXELSX)/72);
 
-procedure TRpVCLInfoProvider.FillFontInfo(pdffont:TRpPDFFont;info:TRpTTFontInfo);
+ LogFont.lfWidth:=0;
+ LogFont.lfEscapement:=0;
+ LogFont.lfOrientation:=0;
+
+ if (pdffont.style and 1)>0 then
+  LogFont.lfWeight:=FW_BOLD
+ else
+  LogFont.lfWeight:=FW_NORMAL;
+ if (pdffont.style and (1 shl 1))>0 then
+  LogFont.lfItalic:=1
+ else
+  LogFont.lfItalic:=0;
+ if (pdffont.style and (1 shl 2))>0 then
+  LogFont.lfUnderline:=1
+ else
+  Logfont.lfUnderline:=0;
+ if (pdffont.style and (1 shl 3))>0 then
+  LogFont.lfStrikeOut:=1
+ else
+  LogFont.lfStrikeOut:=0;
+ LogFont.lfCharSet:=DEFAULT_CHARSET;
+ lOGfONT.lfOutPrecision:=OUT_tt_onLy_PRECIS;
+ LogFont.lfClipPrecision:=CLIP_DEFAULT_PRECIS;
+ LogFont.lfEscapement:=0;
+ LogFont.lfOrientation:=0;
+ // Low Quality high measurement precision
+ // LogFont.lfQuality:=Draft_QUALITY;
+ // Improving quality
+ LogFont.lfQuality:=PROOF_QUALITY;
+ LogFont.lfPitchAndFamily:=FF_DONTCARE or DEFAULT_PITCH;
+ StrPCopy(LogFont.lffACEnAME,Copy(pdffont.WFontName,1,LF_FACESIZE));
+ Fonthandle:= CreateFontIndirect(LogFont);
+ SelectObject(adc,fonthandle);
+end;
+
+
+procedure TRpFTInfoProvider.FillFontInfo(pdffont:TRpPDFFont;info:TRpTTFontInfo);
 var
  logx,i:integer;
- adc:hdc;
  aabc:array [32..255] of ABC;
 begin
- FBitmap.Canvas.Font.Name:=pdfFont.WFontName;
- FBitmap.Canvas.Font.Size:=1000;
- FBitmap.Canvas.Font.Style:=CLXIntegerToFontStyle(pdfFont.Style);
- adc:=FBitmap.Canvas.Handle;
+ SelectFont(pdffont);
  logx:=GetDeviceCaps(adc,LOGPIXELSX);
  if not GetCharABCWidths(adc,32,255,aabc[32]) then
   RaiseLastOSError;
  for i:=32 to 255 do
   info.charwidths[i]:=Round(
-   (Integer(aabc[i].abcA)+Integer(aabc[i].abcB)+Integer(aabc[i].abcC))/logx*72000/1000
+   (Integer(aabc[i].abcA)+Integer(aabc[i].abcB)+Integer(aabc[i].abcC))/logx*72000/TTF_PRECISION
    );
 end;
 
-procedure TRpVCLInfoProvider.FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
+procedure TRpFTInfoProvider.FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
 var
  potm:POUTLINETEXTMETRIC;
  asize:integer;
- adc:hdc;
  embeddable:boolean;
  logx:integer;
  multipli:double;
@@ -79,10 +127,7 @@ var
 begin
    // See if data can be embedded
    embeddable:=false;
-   FBitmap.Canvas.Font.Name:=pdfFont.WFontName;
-   FBitmap.Canvas.Font.Size:=1000;
-   FBitmap.Canvas.Font.Style:=CLXIntegerToFontStyle(pdfFont.Style);
-   adc:=FBitmap.Canvas.Handle;
+   SelectFont(pdffont);
    data.postcriptname:='';
    data.Encoding:='WinAnsiEncoding';
    asize:=GetOutlineTextMetrics(adc,0,nil);
@@ -95,7 +140,7 @@ begin
       if (potm^.otmfsType AND $8000)=0 then
        embeddable:=true;
       logx:=GetDeviceCaps(adc,LOGPIXELSX);
-      multipli:=1/logx*72000/1000;
+      multipli:=1/logx*72000/TTF_PRECISION;
       data.Ascent:=Round(potm^.otmTextMetrics.tmAscent*multipli);
       data.Descent:=-Round(potm^.otmTextMetrics.tmDescent*multipli);
       data.FontWeight:=potm^.otmTextMetrics.tmWeight;
@@ -137,7 +182,7 @@ begin
       // Fixed pitch? Doc says inverse meaning
       if ((potm^.otmTextMetrics.tmPitchAndFamily AND TMPF_FIXED_PITCH)=0) then
        data.Flags:=data.Flags+1;
-      if GetObject(FBitmap.Canvas.Font.Handle,sizeof(alog),@alog)>0 then
+      if GetObject(FontHandle,sizeof(alog),@alog)>0 then
       begin
        acomp:=(alog.lfPitchAndFamily AND $C0);
        if ((acomp or FF_SCRIPT)=alog.lfPitchAndFamily) then

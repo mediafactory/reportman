@@ -62,6 +62,9 @@ uses Classes,Sysutils,rpinfoprovid,
 {$IFDEF USEZLIB}
  rpmzlib,
 {$ENDIF}
+{$IFDEF MSWINDOWS}
+ rpinfoprovgdi,
+{$ENDIF}
 {$IFDEF DOTNETD}
  Graphics,System.Runtime.InteropServices,
 {$ENDIF}
@@ -86,6 +89,7 @@ type
  TRpPDFCanvas=class(TObject)
   private
    FInfoProvider:IRpInfoProvider;
+   FDefInfoProvider:IRpInfoProvider;
    FFont:TRpPDFFont;
    FFile:TRpPDFFile;
    FResolution:integer;
@@ -405,6 +409,13 @@ constructor TrpPDFCanvas.Create(AFile:TRpPDFFile);
 begin
  inherited Create;
 
+{$IFDEF MSWINDOWS}
+ FInfoProvider:=TRpGDIInfoProvider.Create;
+ FDefInfoProvider:=FInfoProvider;
+{$ENDIF}
+{$IFDEF LINUX}
+ FDefInfoProvider:=nil;
+{$ENDIF}
  FFont:=TRpPDFFont.Create;
  FFile:=AFile;
  FFontTTList:=TStringList.Create;
@@ -2762,9 +2773,13 @@ end;
 
 procedure TRpPDFCanvas.SetInfoProvider(aprov:IRpInfoProvider);
 begin
- FInfoProvider:=aprov;
- if Assigned(FInfoProvider) then
+ if Not assigned(aprov) then
+  FInfoProvider:=FDefInfoProvider
+ else
+ begin
+  FInfoProvider:=aprov;
   FInfoprovider._AddRef;
+ end;
 end;
 
 end.

@@ -93,6 +93,7 @@ contains
   rphtmldriver in 'rphtmldriver.pas',
   rpmreg in 'rpmreg.pas',
   rpmdcharttypes in 'rpmdcharttypes.pas',
+  rpinfoprovgdi in 'rpinfoprovgdi.pas',
   rpinfoprovid in 'rpinfoprovid.pas';
 
 end.

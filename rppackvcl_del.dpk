@@ -64,7 +64,6 @@ contains
   rpmdfaboutvcl in 'rpmdfaboutvcl.pas' {FRpAboutBoxVCL},
   rpvgraphutils in 'rpvgraphutils.pas',
   rpmaskedit in 'rpmaskedit.pas',
-  rpgraphutilsvcl in 'rpgraphutilsvcl.pas' {FRpMessageDlgVCL},
-  rpinfoprovvcl in 'rpinfoprovvcl.pas';
+  rpgraphutilsvcl in 'rpgraphutilsvcl.pas' {FRpMessageDlgVCL};
 
 end.

@@ -45,7 +45,7 @@ uses
   rpmdflabelint in '..\rpmdflabelint.pas',
   rpmdfbarcodeint in '..\rpmdfbarcodeint.pas',
   rpinfoprovid in '..\rpinfoprovid.pas',
-  rpinfoprovvcl in '..\rpinfoprovvcl.pas',
+  rpinfoprovgdi in '..\rpinfoprovgdi.pas',
   rpinfoprovclx in '..\rpinfoprovclx.pas',
   rpmdfchartint in '..\rpmdfchartint.pas',
   rpmdfabout in '..\rpmdfabout.pas' {FRpAboutBox},

@@ -28,7 +28,7 @@ uses
  mmsystem,windows,
  Classes,sysutils,rpmetafile,rpmdconsts,Graphics,Forms,
  rpmunits,Printers,Dialogs, Controls,rpgdifonts,
- StdCtrls,ExtCtrls,rppdffile,rpgraphutilsvcl,rpinfoprovvcl,
+ StdCtrls,ExtCtrls,rppdffile,rpgraphutilsvcl,
 {$IFNDEF FORWEBAX}
  rpmdcharttypes,rpmdchart,
 {$ENDIF}
@@ -116,7 +116,6 @@ type
 
  TRpGDIDriver=class(TInterfacedObject,IRpPrintDriver)
   private
-   FInfoProvider:TRpVCLInfoProvider;
    intdpix,intdpiy:integer;
    metacanvas:TMetafilecanvas;
    meta:TMetafile;
@@ -170,7 +169,6 @@ type
    function SupportsCollation:boolean;
    constructor Create;
    destructor Destroy;override;
-   property InfoProvider:TRpVCLInfoProvider read FInfoProvider;
   end;
 
 function PrintMetafile (metafile:TRpMetafileReport; tittle:string;
@@ -331,7 +329,6 @@ begin
  drawclippingregion:=true;
  oldpagesize.PageIndex:=-1;
  scale:=1;
- FInfoProvider:=TRpVCLInfoProvider.Create;
 end;
 
 destructor TRpGDIDriver.Destroy;
@@ -1524,7 +1521,6 @@ begin
  begin
   gdidriver:=TRpGDIDriver.create;
   pdfdriver:=TRpPDFDriver.Create;
-  pdfdriver.PDFFile.Canvas.InfoProvider:=gdidriver.InfoProvider;
   pdfdriver.filename:=filename;
   pdfdriver.compressed:=compressed;
   apdfdriver:=pdfdriver;
@@ -1553,7 +1549,6 @@ begin
    report.TwoPass:=true;
   gdidriver:=TRpGDIDriver.create;
   pdfdriver:=TRpPDFDriver.Create;
-  pdfdriver.PDFFile.Canvas.InfoProvider:=gdidriver.Infoprovider;
   if not metafile then
    pdfdriver.DestStream:=stream;
   pdfdriver.compressed:=compressed;
@@ -1732,7 +1727,6 @@ begin
   pdfdriver.compressed:=pdfcompressed;
   apdfdriver:=pdfdriver;
   gdidriver:=TRpGDIDriver.Create;
-  pdfdriver.PDFFile.Canvas.InfoProvider:=gdidriver.InfoProvider;
 {$IFDEF USETEECHART}
   report.Metafile.OnDrawChart:=gdidriver.DoDrawChart;
 {$ENDIF}
