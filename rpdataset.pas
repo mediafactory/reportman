@@ -168,45 +168,50 @@ begin
     // Copy the record to the copy
   if Not FDataset.Eof then
   begin
-   doappend:=true;
-   if recordcount>1 then
-   begin
-    if RecNo=1 then
-    begin
-     Next;
-     // Exit because a prior sentence has been done before
-     exit;
-    end;
-    doappend:=false;
-
-    FCopyDataset.Edit;
-    for i:=0 to FDataset.FieldCount-1 do
-    begin
-     AssignField(Fields[i],FCopyDataset.Fields[i]);
-    end;
-    FCopyDataset.Post;
-    First;
-    Edit;
-    for i:=0 to FDataset.FieldCount-1 do
-    begin
-     AssignField(FCopyDataset.Fields[i],Fields[i]);
-    end;
-    Post;
-    Last;
-   end;
-   if doappend then
-    Append
-   else
-    Edit;
+   disablecontrols;
    try
-    for i:=0 to FDataset.FieldCount-1 do
+    doappend:=true;
+    if recordcount>1 then
     begin
-     AssignField(FDataset.Fields[i],Fields[i]);
+     if RecNo=1 then
+     begin
+      Next;
+      // Exit because a prior sentence has been done before
+      exit;
+     end;
+     doappend:=false;
+
+     FCopyDataset.Edit;
+     for i:=0 to FDataset.FieldCount-1 do
+     begin
+      AssignField(Fields[i],FCopyDataset.Fields[i]);
+     end;
+     FCopyDataset.Post;
+     First;
+     Edit;
+     for i:=0 to FDataset.FieldCount-1 do
+     begin
+      AssignField(FCopyDataset.Fields[i],Fields[i]);
+     end;
+     Post;
+     Last;
     end;
-    Post;
-   except
-    Cancel;
-    Raise;
+    if doappend then
+     Append
+    else
+     Edit;
+    try
+     for i:=0 to FDataset.FieldCount-1 do
+     begin
+      AssignField(FDataset.Fields[i],Fields[i]);
+     end;
+     Post;
+    except
+     Cancel;
+     Raise;
+    end;
+   finally
+    enablecontrols;
    end;
   end
   else

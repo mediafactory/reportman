@@ -47,7 +47,8 @@ PFLAGS = -U$(BCB)\lib\obj;$(BCB)\lib;$(RELEASELIBPATH) \
   -I$(BCB)\include;$(BCB)\include\vcl -$YD -$W -$O- -v -JPHNE -M
 RFLAGS = -i$(BCB)\include;$(BCB)\include\vcl
 AFLAGS = /i$(BCB)\include /i$(BCB)\include\vcl /mx /w2 /zd
-LFLAGS = -L$(BCB)\lib\obj;$(BCB)\lib;$(RELEASELIBPATH) -aa -Tpp -x -Gn -Gl -Gi -v
+LFLAGS = -L$(BCB)\lib\obj;$(BCB)\lib;$(RELEASELIBPATH) -D"Report Manager components" -aa \
+  -Tpp -x -Gn -Gl -Gi -v
 # ---------------------------------------------------------------------------
 ALLOBJ = c0pkg32.obj Memmgr.Lib $(PACKAGES) sysinit.obj $(OBJFILES)
 ALLRES = $(RESFILES)

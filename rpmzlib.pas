@@ -96,7 +96,7 @@ type
     function Read(var Buffer; Count: Longint): Longint; override;
     function Write(const Buffer; Count: Longint): Longint; override;
     function Seek(Offset: Longint; Origin: Word): Longint; override;
-    function EOF:boolean;
+    function IsEOF:boolean;
     property OnProgress;
   end;
 
@@ -417,7 +417,7 @@ begin
   inherited Destroy;
 end;
 
-function TDecompressionStream.EOF:boolean;
+function TDecompressionStream.IsEOF:boolean;
 begin
  Result:=(FStrm.Position=FStrm.size) AND (FZRec.avail_in=0);
 end;

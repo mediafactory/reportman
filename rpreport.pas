@@ -1444,12 +1444,9 @@ begin
 
  // Insert page numeber
  FEvaluator.AddVariable('PAGE',fidenpagenum);
- FEvaluator.AddVariable('PAGINA',fidenpagenum);
  FEvaluator.AddVariable('FREE_SPACE',fidenfreespace);
  FEvaluator.AddVariable('CURRENTGROUP',fidencurrentgroup);
- FEvaluator.AddVariable('GRUPOACTUAL',fidencurrentgroup);
  FEvaluator.AddVariable('FREE_SPACE_CMS',fidenfreespacecms);
- FEvaluator.AddVariable('ESPACIOLIBRE',fidenfreespacecms);
  FEvaluator.AddVariable('FREE_SPACE_INCH',fidenfreespaceinch);
  FEvaluator.AddIden('EOF',fideneof);
 
