@@ -1,3 +1,4 @@
+{TODO 3 -oToni -cEngine : Implementation page repeat for groups}
 {TODO 1 -oToni -cEngine : Implementation of external sections}
 {TODO 1 -oToni -cDesign Interface : Add multilect option and show common properties in object inspector}
 {DONE 2 -oToni -cEngine : Conditional define to build reportman package without db drivers}
@@ -5,7 +6,7 @@
 {TODO 1 -oToni -cEngine : Add text rotation to text controls}
 {TODO 5 -oToni -cEngine : Implementation for Delphi 5 vcl driver}
 {DONE 2 -oToni -cEngine : Add aliaslist to the report component to use application opened querys}
-{TODO 1 -oToni -cDesign Interface : Select the object that produces a error}
+{TODO 2 -oToni -cDesign Interface : Select the object that produces a error}
 {TODO 1 -oToni -cDesign Interface : Add a alignment window for elements}
 {TODO 1 -oToni -cEngine : Implementation of vertical labels as subreport column width}
 {TODO 1 -oToni -cDesign Interface : Enhace object inspector speed}
@@ -14,7 +15,7 @@
 
 
 {TODO 1 -oToni -cEngine : Image component filename property to load a file on the fly}
-{TODO 1 -oToni -cEngine : User parameters form}
+{TODO 2 -oToni -cEngine : User parameters form}
 
 {TODO 1 -oToni -cEngine : Detect existing BDE Databases in rpdatainfo}
 
@@ -40,5 +41,5 @@
 previewing...}
 {DONE 1 -oToni -cEngine : Implementation of one pass and two pas report instead of whole pas}
 
-{TODO 1 -oToni -cEngine : Implementation of cut text,wordwrap...}
+{TODO 3 -oToni -cEngine : Implementation of cut text,wordwrap...}
 

@@ -188,7 +188,7 @@ begin
  if alabel.Wordwrap then
   aalign:=aalign or Integer(AlignmentFlags_WordBreak);
 
- Canvas.TextRect(rec,0,aalign,alabel.Text);
+ Canvas.TextRect(rec,0,0,alabel.Text,aalign);
 end;
 
 
