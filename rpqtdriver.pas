@@ -127,7 +127,7 @@ function DoShowPrintDialog(var allpages:boolean;
   kylixprintbug:boolean=false;
 {$ENDIF}
 {$IFDEF LINUX}
-  kylixprintbug:boolean=true;
+  kylixprintbug:boolean=false;
 {$ENDIF}
 
 implementation

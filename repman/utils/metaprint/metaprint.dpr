@@ -26,14 +26,14 @@ uses
   rpqtdriver in '..\..\..\rpqtdriver.pas',
   rpmetafile in '..\..\..\rpmetafile.pas',
   rpreport in '..\..\..\rpreport.pas',
-  rpconsts in '..\..\..\rpconsts.pas';
+  rpmdconsts in '..\..\..\rpmdconsts.pas';
 {$ENDIF}
 
 {$IFDEF LINUX}
   rpqtdriver in '../../../rpqtdriver.pas',
   rpmetafile in '../../../rpmetafile.pas',
   rpreport in '../../../rpreport.pas',
-  rpconsts in '../../../rpconsts.pas';
+  rpmdconsts in '../../../rpmdconsts.pas';
 {$ENDIF}
 
 var

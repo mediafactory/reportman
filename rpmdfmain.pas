@@ -903,6 +903,7 @@ begin
  begin
   secint:=TRpSectionInterface(TRpSizePosInterface(fobjinsp.SelectedItems.Objects[0]).SectionInt);
  end;
+ fobjinsp.ClearMultiSelect;
  section:=TrpSection(secint.printitem);
  acompo:=TRpReport.Create(nil);
  try
@@ -1215,6 +1216,8 @@ end;
 
 procedure TFRpMainF.UpdateUnits;
 begin
+ if assigned(fobjinsp) then
+  fobjinsp.ClearMultiSelect;
  if AUnitCms.Checked then
   rpmunits.defaultunit:=rpUnitcms
  else

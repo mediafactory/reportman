@@ -28,7 +28,7 @@ uses
 {$ENDIF}
   Types, Classes, QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,
-  QActnList, QImgList,QPrinters,Qt,rpconsts,rptypes, QMenus, QTypes;
+  QActnList, QImgList,QPrinters,Qt,rpmdconsts,rptypes, QMenus, QTypes;
 
 type
   TFMeta = class(TForm)

@@ -10,14 +10,14 @@ uses
   rpprintdia in '..\..\..\rpprintdia.pas' {FRpPrintDialog},
   rpqtdriver in '..\..\..\rpqtdriver.pas',
   rppdfdriver in '..\..\..\rppdfdriver.pas',
-  rpconsts in '..\..\..\rpconsts.pas';
+  rpmdconsts in '..\..\..\rpmdconsts.pas';
 {$ENDIF}
 {$IFDEF LINUX}
   rpmetafile in '../../../rpmetafile.pas',
   rpprintdia in '../../../rpprintdia.pas' {FRpPrintDialog},
   rppdfdriver in '../../../rppdfdriver.pas',
   rpqtdriver in '../../../rpqtdriver.pas',
-  rpconsts in '../../../rpconsts.pas';
+  rpmdconsts in '../../../rpmdconsts.pas';
 {$ENDIF}
 
 {$R *.res}

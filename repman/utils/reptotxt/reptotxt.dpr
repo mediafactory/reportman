@@ -25,12 +25,12 @@ uses
   Classes,
 {$IFDEF MSWINDOWS}
   rpwriter in '..\..\..\rpwriter.pas',
-  rpconsts in '..\..\..\rpconsts.pas';
+  rpmdconsts in '..\..\..\rpmdconsts.pas';
 {$ENDIF}
 
 {$IFDEF LINUX}
   rpwriter in '../../../rpwriter.pas',
-  rpconsts in '../../../rpconsts.pas';
+  rpmdconsts in '../../../rpmdconsts.pas';
 {$ENDIF}
 
 procedure PrintHelp;

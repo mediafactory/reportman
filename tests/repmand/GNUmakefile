@@ -26,8 +26,8 @@ install:
 	cp ../../doc/doc/*.html doc
 	mkdir doc/images
 	cp ../../doc/doc/images/*.jpg doc/images
-	tar c doc sample4.rep biolife.cds repmand dbxdrivers dbxconnections metaprint metaview printrep printreptopdf reptotxt txttorep repmand repmand.sh README *.so *.so.1 *.so.2 *.so.1.0 > repmand-99g.i386.tar
-	gzip repmand-99g.i386.tar
+	tar c doc sample4.rep biolife.cds repmand dbxdrivers dbxconnections metaprint metaview printrep printreptopdf reptotxt txttorep repmand repmand.sh README *.so *.so.1 *.so.2 *.so.1.0 > repmand-1RC1.i386.tar
+	gzip repmand-1RC1.i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0
 	-rm -f repmand

@@ -36,9 +36,7 @@ object FRpObjInsp: TFRpObjInsp
     FileName = '*.bmp'
     Filter = 'Bitmap images (*.*)'
     FilterIndex = 0
-    Height = 432
     Title = 'Open bitmap'
-    Width = 0
     Left = 72
     Top = 120
   end

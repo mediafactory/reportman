@@ -1,6 +1,6 @@
 object FRpRunTimeParams: TFRpRunTimeParams
-  Left = 17
-  Top = 30
+  Left = 21
+  Top = 50
   Width = 583
   Height = 276
   VertScrollBar.Range = 41
@@ -11,6 +11,8 @@ object FRpRunTimeParams: TFRpRunTimeParams
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 100
+  TextHeight = 17
+  TextWidth = 7
   object PModalButtons: TPanel
     Left = 0
     Top = 235

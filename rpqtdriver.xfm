@@ -1,6 +1,6 @@
 object FRpQtProgress: TFRpQtProgress
-  Left = 180
-  Top = 304
+  Left = 184
+  Top = 324
   Width = 514
   Height = 124
   HorzScrollBar.Range = 497
