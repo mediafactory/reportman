@@ -35,7 +35,7 @@ install:
 	mkdir doc/images
 	cp ../../doc/doc/images/*.jpg doc/images
 #	include repmand.es when linux translation done
-	tar c doc LICENSE.TXT sample4.rep biolife.cds repmand dbxdrivers dbxconnections metaprint metaview printrep printreptopdf reptotxt txttorep repmand repmand.sh README *.so *.so.1 qt_* > repmand-1RC2.i386.tar
+        tar c doc LICENSE.TXT sample4.rep biolife.cds reportmanres.en reportmanres.es repmand dbxdrivers dbxconnections metaprint metaview printrep printreptopdf reptotxt txttorep repmand repmand.sh README *.so *.so.1 qt_* > repmand-1RC2.i386.tar
 	gzip repmand-1RC2.i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0

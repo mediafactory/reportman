@@ -10,6 +10,41 @@
 <p></p>
 <table width="95%" border="1">
   <tr> 
+    <td bgcolor="#00FFFF"><b>Report Manager do not start in some Linux distro</b></td>
+  </tr>
+  <tr> 
+    <td> 
+      <p>This issue only affects some Linux distributions or XFree versions.</p>
+      <p>Has been reported that some generated Kylix generated applications don't 
+        work correctly in some Linux distros, errors like 'Error loading icons.Bitmap' 
+        or 'Bitmap not valid' appear in this cases.</p>
+      <p>The workaround for Report Manager version 1.0RC2 and later (Kylix 3):</p>
+      <p>- Add export CLX_USE_LIBQT=true to the repmand.sh file (startup script) 
+        so libqt.so (and libqtintf.so) system library is loaded instead of libborqt.so</p>
+      <p>The workaround for Report Manager version 1.0RC1 and previous versions 
+        (Kylix 2):</p>
+      <p>- Remove the libqt.so library provided in the package so the system provided 
+        libqt library will be used.</p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+      <p></p>
+    </td>
+  </tr>
+  <tr>
+    <td bgcolor="#00FFFF"><b>Error can not load library libsqlxx.so.x connecting 
+      to databases</b></td>
+  </tr>
+  <tr> 
+    <td>The database library names are in dbxdrivers file, if you are upgrading 
+      from an older version of Report Manager make sure to copy dbxdrivers (and 
+      recomended also dbxconnections) file to /home/yourusername/.borland directory. 
+      If you are installing for the first time Report Manager it will check in 
+      that directory and then copy the files in the current dir there.</td>
+  </tr>
+  <tr> 
     <td bgcolor="#00FFFF"><b>Setting a page size other than default fails</b></td>
   </tr>
   <tr> 
@@ -45,8 +80,8 @@
     <td bgcolor="#00FFFF"><b>Changing the printer device when selecting page ranges 
       results in nothing printed</b></td>
   </tr>
-  <tr>
-    <td>
+  <tr> 
+    <td> 
       <p>This issue only affects the Qt Driver (CLX) in Windows systems.</p>
       <p>The printer selection has no effect in Windows systems, the workaround 
         is to call PrinterSetup dialog before printing or use the GDI driver, 
@@ -56,8 +91,9 @@
         bug of Qt Libraries</a> , it's fixed in 3.0.5, </p>
     </td>
   </tr>
-  <tr bgcolor="#00FFFF"> 
-    <td><b>Setting paper orientation to landscape not works </b></td>
+  <tr> 
+    <td bgcolor="#00FFFF"><b>Setting paper orientation to landscape not works 
+      </b></td>
   </tr>
   <tr> 
     <td> 
@@ -73,9 +109,8 @@
   </tr>
   <tr> 
     <td> 
-      <p>This issue only affects some Linux systems compiling in Kylix or Kylix 
-        2, the source seems the printer queue, in Kylix2 the issue is related 
-        also to qt libs.</p>
+      <p>This issue only affects some Linux systems the source seems the printer 
+        queue, in Kylix2 the issue is related also to qt libs.</p>
       <p>The CLX print engine does not work well in some Linux systems/configurations, 
         you can test if your system works ok by writting a small program in kylix 
         and executing it:</p>
