@@ -450,7 +450,7 @@ begin
      8:
       begin
        ALastExecute(Self);
-       ExportMetafileToHtml(report.Metafile,SaveDialog1.FileName,Caption,
+       ExportMetafileToHtml(report.Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
        AppIdle(Self,adone);
       end;
