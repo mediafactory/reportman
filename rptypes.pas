@@ -2862,8 +2862,21 @@ begin
  end;
 end;
 
+
+{$IFDEF LINUX}
 procedure SendMail(destination,subject,content,filename:String);
+var
+ astring:String;
+begin
+ astring:='kmail -s "'+subject+'" --body "'+content+
+  '" -c "'+destination+'" --attach "'+filename+'"';
+ libc.system(PChar(astring));
+end;
+{$ENDIF LINUX}
+
+
 {$IFDEF MSWINDOWS}
+procedure SendMail(destination,subject,content,filename:String);
 procedure CheckMAPI(avalue:Cardinal);
 begin
  if avalue=SUCCESS_SUCCESS then
@@ -2925,9 +2938,7 @@ var
  recip:MAPIRecipDesc;
  filep:MapiFileDesc;
 {$ENDIF}
-{$ENDIF}
 begin
-{$IFDEF MSWINDOWS}
 {$IFNDEF DOTNETD}
  CheckMAPI(MapiLogOn(0,nil,nil,MAPI_LOGON_UI,0,@Sessionh));
 {$ENDIF}
@@ -3021,8 +3032,8 @@ begin
   CheckMAPI(MapiLogOff(sessionh,0,0,0));
  end;
 //  ShellExecute(0,PChar('start'),PChar('mailto:'+destination+'?Subject='+subject),nil,nil,SW_SHOWNORMAL);
-{$ENDIF}
 end;
+{$ENDIF}
 
 
 function StringDrawStyleToDrawStyle(Value:widestring):TRpImageDrawStyle;

@@ -66,7 +66,7 @@ var
  topage:integer;
  copies,acopies:integer;
  collate:boolean;
- preview:boolean;
+ preview,modified:boolean;
  pdialog:boolean;
  compress,doprint:boolean;
 
@@ -261,7 +261,7 @@ begin
       end
       else
       if preview then
-       rppreview.ShowPreview(report,filename,true)
+       rppreview.ShowPreview(report,filename,true,modified)
       else
       begin
        if pdialog then

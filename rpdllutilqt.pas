@@ -110,7 +110,7 @@ begin
   ShowPreview(report,Title,modified);
 {$ENDIF}
 {$IFDEF LINUX}
-  ShowPreview(report,Title,true);
+  ShowPreview(report,Title,true,modified);
 {$ENDIF}
  except
   on E:Exception do
