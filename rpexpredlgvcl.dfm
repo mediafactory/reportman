@@ -1,10 +1,10 @@
 object FRpExpredialogVCL: TFRpExpredialogVCL
-  Left = 245
-  Top = 108
+  Left = 447
+  Top = 111
   BorderStyle = bsDialog
   Caption = 'Dialog'
-  ClientHeight = 396
-  ClientWidth = 486
+  ClientHeight = 412
+  ClientWidth = 474
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -36,25 +36,25 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
     Caption = 'Operation'
   end
   object LModel: TLabel
-    Left = 8
-    Top = 248
+    Left = 4
+    Top = 240
     Width = 465
-    Height = 45
+    Height = 73
     AutoSize = False
     Caption = 'LModel'
     WordWrap = True
   end
   object LHelp: TLabel
-    Left = 8
-    Top = 224
+    Left = 4
+    Top = 220
     Width = 22
     Height = 13
     Caption = 'Help'
   end
   object LParams: TLabel
-    Left = 8
-    Top = 292
-    Width = 461
+    Left = 4
+    Top = 316
+    Width = 469
     Height = 65
     AutoSize = False
     Caption = 'Params'
@@ -101,7 +101,7 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
   end
   object BCancel: TButton
     Left = 96
-    Top = 360
+    Top = 384
     Width = 85
     Height = 25
     Caption = '&Cancel'
@@ -110,7 +110,7 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
   end
   object BOK: TButton
     Left = 4
-    Top = 360
+    Top = 384
     Width = 85
     Height = 25
     Caption = '&OK'

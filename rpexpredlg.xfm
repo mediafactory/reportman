@@ -1,12 +1,12 @@
 object FRpExpredialog: TFRpExpredialog
-  Left = 205
-  Top = 144
+  Left = 248
+  Top = 113
   ActiveControl = MemoExpre
   AutoScroll = False
   BorderStyle = fbsDialog
   Caption = 'Expression build'
-  ClientHeight = 369
-  ClientWidth = 502
+  ClientHeight = 408
+  ClientWidth = 480
   Color = clButton
   Position = poScreenCenter
   ShowHint = True
@@ -37,24 +37,26 @@ object FRpExpredialog: TFRpExpredialog
     Caption = 'Operation'
   end
   object LModel: TLabel
-    Left = 8
-    Top = 248
-    Width = 35
-    Height = 13
+    Left = 4
+    Top = 236
+    Width = 469
+    Height = 73
+    AutoSize = False
     Caption = 'LModel'
+    WordWrap = True
   end
   object LHelp: TLabel
-    Left = 8
-    Top = 224
+    Left = 4
+    Top = 216
     Width = 22
     Height = 13
     Caption = 'Help'
   end
   object LParams: TLabel
-    Left = 8
-    Top = 272
-    Width = 461
-    Height = 49
+    Left = 4
+    Top = 312
+    Width = 469
+    Height = 65
     AutoSize = False
     Caption = 'Params'
   end
@@ -113,7 +115,7 @@ object FRpExpredialog: TFRpExpredialog
   end
   object BCancel: TButton
     Left = 96
-    Top = 324
+    Top = 380
     Width = 85
     Height = 25
     Caption = '&Cancel'
@@ -122,7 +124,7 @@ object FRpExpredialog: TFRpExpredialog
   end
   object BOK: TButton
     Left = 4
-    Top = 324
+    Top = 380
     Width = 85
     Height = 25
     Caption = '&OK'

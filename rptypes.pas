@@ -80,6 +80,11 @@ type
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean of object;
 
+ TRpTextOpProc=function (Top,Left,Width,Height:integer;
+  Text,LFontName,WFontName:WideString;
+  FontSize,FontRotation,FontStyle,FontColor,Type1Font:integer;
+  CutText:boolean;Alignment:integer;WordWrap,RightToLeft:Boolean;
+  PrintStep,BackColor:integer;transparent:boolean):Boolean of Object;
 
  TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
 

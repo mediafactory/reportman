@@ -50,6 +50,7 @@ type
   FChecking:Boolean;
   FLanguage:Integer;
   FOnGraphicOp:TRpGraphicOpProc;
+  FOnTextOp:TRpTextOpProc;
   procedure SetExpression(Value:string);
   // Recursive functions to evaluate the expresion
   procedure variables(var Value:TRpValue);
@@ -104,6 +105,7 @@ type
   property Rpalias:TRpalias read FRpalias write FRpalias;
   property Language:Integer read FLanguage write FLanguage;
   property OnGraphicOp:TRpGraphicOpProc read FOnGraphicOp write FOnGraphicOp;
+  property OnTextOp:TRpTextOpProc read FOnTextOp write FOnTextOp;
  end;
 
  // The visual component
@@ -247,9 +249,11 @@ begin
  //added FRB 20030204
  iden:=TIdenReplaceStr.Create(nil);
  Rpfunctions.AddObject('REPLACESTR',iden);
- //
+ // Advanced reporting drawing operations
  iden:=TIdenGraphicOperation.Create(nil);
  Rpfunctions.AddObject('GRAPHICOP',iden);
+ iden:=TIdenTextOperation.Create(nil);
+ Rpfunctions.AddObject('TEXTOP',iden);
 
  // Graphic functions
  iden:=TIdenGraphicClear.Create(nil);

@@ -147,6 +147,12 @@ type
    constructor Create(AOwner:TComponent);override;
   end;
 
+ TIdenTextOperation=class(TIdenFunction)
+  protected
+   function GeTRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
 
  { Function Modul }
  TIdenModul=class(TIdenFunction)
@@ -1326,5 +1332,50 @@ begin
   Result:=false;
 end;
 
+{ TIdenTextOperation }
+
+constructor TIdenTextOperation.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=19;
+ IdenName:='TextOp';
+ Help:='';
+ model:='function TextOp(Top,Left,Width,Height:integer;'+#10+
+  'Text,LFontName,WFontName:WideString;'+#10+
+  'FontSize,FontRotation,FontStyle,FontColor,Type1Font:integer;'+#10+
+  'CutText:boolean;Alignment:integer;WordWrap,RightToLeft:Boolean;'+#10+
+  'PrintStep,BackColor:integer;transparent:boolean) of Object;';
+ aParams:='';
+end;
+
+{**************************************************************************}
+
+function TIdenTextOperation.GeTRpValue:TRpValue;
+var
+ i:integer;
+begin
+ for i:=0 to ParamCount-1 do
+ begin
+  if (i in [0..3]) then
+   if (Not (Vartype(Params[i]) in [varSmallInt..varCurrency,varShortInt..varInt64])) then
+    Raise TRpNamedException.Create(SRpEvalType,IdenName);
+  if (i in [7..11,13,16,17]) then
+   if (Not (Vartype(Params[i]) in [varSmallInt..varInteger,varShortInt..varInt64])) then
+    Raise TRpNamedException.Create(SRpEvalType,IdenName);
+  if (i in [12,14,15,18]) then
+   if (Not (Vartype(Params[i])=varBoolean)) then
+    Raise TRpNamedException.Create(SRpEvalType,IdenName);
+  if (i in [4..6]) then
+   if (Not (Vartype(Params[i])=varString)) then
+    Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ end;
+ if Assigned((evaluator As TRpEvaluator).OnTextOp) then
+  Result:=(evaluator As TRpEvaluator).OnTextOp(Round(Params[0]),Round(Params[1]),Round(Params[2]),Round(Params[3]),Params[4],
+   Params[5],Params[6],Params[7],Params[8],Params[9],
+   Params[10],Params[11],Params[12],Params[13],Params[14],
+   Params[15],Params[16],Params[17],Params[18])
+ else
+  Result:=false;
+end;
 
 end.

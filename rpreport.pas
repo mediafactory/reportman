@@ -190,6 +190,11 @@ type
    function OnGraphicOp(Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenStyle:integer;PenWidth:integer; PenColor:integer):Boolean;
+   function OnTextOp(Top,Left,Width,Height:integer;
+    Text,LFontName,WFontName:WideString;
+    FontSize,FontRotation,FontStyle,FontColor,Type1Font:integer;
+    CutText:boolean;Alignment:integer;WordWrap,RightToLeft:Boolean;
+    PrintStep,BackColor:integer;transparent:boolean):Boolean;
   protected
     section:TRpSection;
     subreport:TRpSubreport;
@@ -1799,6 +1804,7 @@ begin
  FEvaluator:=TRpEvaluator.Create(nil);
  FEvaluator.Language:=Language;
  FEvaluator.OnGraphicOp:=OnGraphicOp;
+ FEvaluator.OnTextOp:=OnTextOp;
  PageNumGroup:=-1;
  FRecordCount:=0;
 
@@ -2461,6 +2467,31 @@ begin
   DrawStyle,BrushStyle,BrushColor,PenStyle,PenWidth,PenColor);
 end;
 
+function TRpReport.OnTextOp(Top,Left,Width,Height:integer;
+    Text,LFontName,WFontName:WideString;
+    FontSize,FontRotation,FontStyle,FontColor,Type1Font:integer;
+    CutText:boolean;Alignment:integer;WordWrap,RightToLeft:Boolean;
+    PrintStep,BackColor:integer;transparent:boolean):Boolean;
+var
+ textr:TRpTextObject;
+begin
+ Result:=true;
+ textr.Text:=Text;
+ textr.LFontName:=LFontName;
+ textr.WFontName:=WFontName;
+ textr.FontSize:=FontSize;
+ textr.FontRotation:=FontRotation;
+ textr.FontStyle:=FontStyle;
+ textr.FontColor:=FontColor;
+ textr.Type1Font:=Type1Font;
+ textr.CutText:=CutText;
+ textr.Alignment:=Alignment;
+ textr.WordWrap:=WordWrap;
+ textr.RightToLeft:=RightToLeft;
+ textr.PrintStep:=TRpSelectFontStep(PrintStep);
+ metafile.Pages[metafile.CurrentPage].NewTextObject(Top,Left,Width,Height,
+  textr,BackColor,transparent);
+end;
 
 initialization
  // Need clas registration to be streamable
