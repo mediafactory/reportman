@@ -128,7 +128,10 @@ Item16=..\rpvpreview.dfm
 Item17=..\rpmdfconnectionvcl.dfm
 Item18=..\rpmdfwizardvcl.dfm
 Item19=..\rpmdfextsecvcl.dfm
-Item20=repmandxp.drc
+Item20=..\rpmdfdatasetsvcl.dfm
+Item21=..\rpfmetaviewvcl.dfm
+Item22=..\rpfmainmetaviewvcl.dfm
+Item23=repmandxp.drc
 [Language]
 ActiveLang=
 ProjectLang=$00000409
