@@ -41,10 +41,25 @@ type
  TRpExpression=class(TRpGenTextComponent)
   private
    FExpression:widestring;
+   FGroupName:string;
+   FAggregate:TRpAggregate;
+   FAgType:TRpAggregateType;
+   FIdentifier:string;
+   FAutoExpand:Boolean;
+   FAutoContract:Boolean;
+   procedure SetIdentifier(Value:string);
   public
    constructor Create(AOwner:TComponent);override;
   published
    property Expression:widestring read FExpression write FExpression;
+   property Identifier:string read FIdentifier write SetIdentifier;
+   property Aggregate:TRpAggregate read FAggregate write FAggregate
+    default rpagNone;
+   property GroupName:string read FGroupName write FGroupName;
+   property AgType:TRpAggregateType read FAgType write FAgType
+    default rpAgSum;
+   property AutoExpand:Boolean read FAutoExpand write FAutoExpand;
+   property AutoContract:Boolean read FAutoContract write FAutoContract;
   end;
 
 implementation
@@ -65,6 +80,8 @@ begin
  FAllText.free;
  inherited destroy;
 end;
+
+
 
 procedure TRpLabel.SetText(Value:WideString);
 var
@@ -100,5 +117,32 @@ begin
  Height:=275;
  Width:=1440;
 end;
+
+procedure TRpExpression.SetIdentifier(Value:string);
+var
+ fidens:TStringList;
+ index:integer;
+begin
+ if (csloading in componentstate) then
+ begin
+  FIdentifier:='';
+  exit;
+ end;
+ // Check if the identifier is used
+ Value:=UpperCase(Trim(Value));
+ if Value=FIdentifier then
+  exit;
+ fidens:=TRpReport(Owner).Identifiers;
+ index:=fidens.IndexOf(Value);
+ if index>=0 then
+  Raise Exception.Create(SRpIdentifierAlreadyExists);
+ FIdentifier:=Value;
+ if Length(FIdentifier)>0 then
+ begin
+  fidens.Add(FIdentifier);
+ end;
+end;
+
+
 
 end.

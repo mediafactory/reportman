@@ -179,6 +179,19 @@ begin
  lnames.clear;
  ltypes.clear;
  lvalues.Clear;
+ // PrintCondition
+ lnames.Add(SrpSPrintCondition);
+ ltypes.Add(SRpSExpression);
+ lvalues.Add(printitem.PrintCondition);
+ // Before Print
+ lnames.Add(SrpSBeforePrint);
+ ltypes.Add(SRpSExpression);
+ lvalues.Add(printitem.DoBeforePrint);
+ // After Print
+ lnames.Add(SrpSAfterPrint);
+ ltypes.Add(SRpSExpression);
+ lvalues.Add(printitem.DoAfterPrint);
+
  // Width
  lnames.Add(SrpSWidth);
  ltypes.Add(SRpSCurrency);
@@ -208,6 +221,21 @@ procedure TRpSizeInterface.SetProperty(pname:string;value:string);
 begin
  if length(value)<1 then
   exit;
+ if pname=SRpSPrintCOndition then
+ begin
+  fprintitem.PrintCondition:=Value;
+  exit;
+ end;
+ if pname=SRpSAfterPrint then
+ begin
+  fprintitem.DoAfterPrint:=Value;
+  exit;
+ end;
+ if pname=SRpSBeforePrint then
+ begin
+  fprintitem.DoBeforePrint:=Value;
+  exit;
+ end;
  if pname=SRpSWidth then
  begin
   fprintitem.Width:=gettwipsfromtext(value);
@@ -226,14 +254,19 @@ end;
 function TRpSizeInterface.GetProperty(pname:string):string;
 begin
  Result:='';
- if pname=SRpSWidth then
+ if pname=SRpSPrintCondition then
  begin
-  Result:=gettextfromtwips(printitem.Width);
+  Result:=printitem.PrintCondition;
   exit;
  end;
- if pname=SRpSHeight then
+ if pname=SRpSBeforePrint then
  begin
-  Result:=gettextfromtwips(printitem.Height);
+  Result:=printitem.DoBeforePrint;
+  exit;
+ end;
+ if pname=SRpSAfterPrint then
+ begin
+  Result:=printitem.DoAfterPrint;
   exit;
  end;
  Raise Exception.Create(SRpPropertyNotFound+pname);
@@ -888,6 +921,11 @@ begin
  ltypes.Add(SRpSBool);
  lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).Transparent,true));
 
+ // Cut Text
+ lnames.Add(SrpSCutText);
+ ltypes.Add(SRpSBool);
+ lvalues.Add(BoolToStr(TRpGenTextComponent(printitem).CutText,true));
+
 
 end;
 
@@ -937,6 +975,12 @@ begin
   Invalidate;
   exit;
  end;
+ if pname=SRpSCutText then
+ begin
+  TRpGenTextComponent(fprintitem).CutText:=StrToBool(value);
+  Invalidate;
+  exit;
+ end;
 
  inherited SetProperty(pname,value);
 end;
@@ -977,6 +1021,11 @@ begin
  if pname=SrpSTransparent then
  begin
   Result:=BoolToStr(TRpGenTextComponent(printitem).Transparent,true);
+  exit;
+ end;
+ if pname=SrpSCutText then
+ begin
+  Result:=BoolToStr(TRpGenTextComponent(printitem).CutText,true);
   exit;
  end;
 

@@ -30,6 +30,8 @@ type
  TRpTwips=integer;
  TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
  TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull);
+ TRpAggregate=(rpAgNone,rpAgGroup,rpAgPage,rpAgGeneral);
+ TRpAggregateType=(rpagSum,rgagAvg,rpagStdDev);
 
  TRpPageSize=(rpPageSizeDefault,rpPageSizeCustom);
 

@@ -24,7 +24,8 @@ uses SysUtils, Classes, QGraphics, QForms,Types,
   QButtons, QExtCtrls, QControls, QStdCtrls,
   rpobinsint,rpreport,rpprintitem,rpgraphutils,
   rpobjinsp,frpstruc,flabelint,rplabelitem,
-  rpconsts,rpsection,rptypes,rpdrawitem,fdrawint;
+  rpconsts,rpsection,rptypes,rpdrawitem,fdrawint,
+  rpsubreport;
 
 
 type
@@ -49,7 +50,11 @@ type
     childlist:TList;
     constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
     destructor destroy;override;
+    procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
+    procedure SetProperty(pname:string;value:string);override;
+    function GetProperty(pname:string):string;override;
     procedure CreateChilds;
+    procedure InvalidateAll;
   end;
 
 
@@ -162,7 +167,169 @@ begin
 end;
 
 
+procedure TRpSectionInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+begin
+ inherited GetProperties(lnames,ltypes,lvalues);
 
+ lnames.Add(SRpSAutoExpand);
+ ltypes.Add(SRpSBool);
+ lvalues.Add(BoolToStr(TRpSection(printitem).AutoExpand,true));
+
+ lnames.Add(SRpSAutoContract);
+ ltypes.Add(SRpSBool);
+ lvalues.Add(BoolToStr(TRpSection(printitem).AutoContract,true));
+
+ if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter]) then
+ begin
+  lnames.Add(SRpSGroupName);
+  ltypes.Add(SRpSString);
+  lvalues.Add(TRpSection(printitem).GroupName);
+
+  lnames.Add(SRpSGroupExpression);
+  ltypes.Add(SRpSExpression);
+  lvalues.Add(TRpSection(printitem).ChangeExpression);
+
+  lnames.Add(SRpSChangeBool);
+  ltypes.Add(SRpSBool);
+  lvalues.Add(BoolToStr(TRpSection(printitem).ChangeBool,true));
+
+  lnames.Add(SRpSPageRepeat);
+  ltypes.Add(SRpSBool);
+  lvalues.Add(BoolToStr(TRpSection(printitem).PageRepeat,true));
+ end;
+ if (TrpSection(printitem).SectionType in [rpsecrheader,rpsecrfooter,
+     rpsecgheader,rpsecgfooter,rpsecdetail]) then
+ begin
+  lnames.Add(SRpSBeginPage);
+  ltypes.Add(SRpSBool);
+  lvalues.Add(BoolToStr(TRpSection(printitem).BeginPage,true));
+
+  lnames.Add(SRpSkipPage);
+  ltypes.Add(SRpSBool);
+  lvalues.Add(BoolToStr(TRpSection(printitem).SkipPage,true));
+
+  lnames.Add(SRPAlignBottom);
+  ltypes.Add(SRpSBool);
+  lvalues.Add(BoolToStr(TRpSection(printitem).AlignBottom,true));
+
+ end;
+end;
+
+procedure TRpSectionInterface.SetProperty(pname:string;value:string);
+begin
+ if length(value)<1 then
+  exit;
+ if pname=SRpSAutoExpand then
+ begin
+  TRpSection(fprintitem).Autoexpand:=StrToBool(Value);
+  exit;
+ end;
+ if pname=SRpSAutoContract then
+ begin
+  TRpSection(fprintitem).AutoContract:=StrToBool(Value);
+  exit;
+ end;
+ if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter]) then
+ begin
+  if pname=SRpSGroupName then
+  begin
+   TRpSection(fprintitem).groupname:=Value;
+   exit;
+  end;
+  if pname=SRpSGroupExpression then
+  begin
+   TRpSection(fprintitem).ChangeExpression:=Value;
+   exit;
+  end;
+  if pname=SRpSChangeBool then
+  begin
+   TRpSection(fprintitem).ChangeBool:=StrToBool(Value);
+   exit;
+  end;
+  if pname=SRPSPageRepeat then
+  begin
+   TRpSection(fprintitem).PageRepeat:=StrToBool(Value);
+   exit;
+  end;
+ end;
+ if (TrpSection(printitem).SectionType in [rpsecrheader,rpsecrfooter,
+     rpsecgheader,rpsecgfooter,rpsecdetail]) then
+ begin
+  if pname=SRPSBeginPage then
+  begin
+   TRpSection(fprintitem).BeginPage:=StrToBool(Value);
+   exit;
+  end;
+  if pname=SRPSkipPage then
+  begin
+   TRpSection(fprintitem).SkipPage:=StrToBool(Value);
+   exit;
+  end;
+  if pname=SRPAlignBottom then
+  begin
+   TRpSection(fprintitem).AlignBottom:=StrToBool(Value);
+   exit;
+  end;
+ end;
+ inherited SetProperty(pname,value);
+end;
+
+function TRpSectionInterface.GetProperty(pname:string):string;
+begin
+ if pname=SRpSAutoContract then
+ begin
+  Result:=BoolToStr(TRpSection(fprintitem).AutoContract,true);
+  exit;
+ end;
+ if pname=SRpSAutoExpand then
+ begin
+  Result:=BoolToStr(TRpSection(fprintitem).AutoExpand,true);
+  exit;
+ end;
+ if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter]) then
+ begin
+  if pname=SRpSGroupName then
+  begin
+   Result:=TRpSection(fprintitem).groupname;
+   exit;
+  end;
+  if pname=SRpSGroupExpression then
+  begin
+   Result:=TRpSection(fprintitem).ChangeExpression;
+   exit;
+  end;
+  if pname=SRpSChangeBool then
+  begin
+   Result:=BoolToStr(TRpSection(fprintitem).ChangeBool,true);
+   exit;
+  end;
+  if pname=SRpSPageRepeat then
+  begin
+   Result:=BoolToStr(TRpSection(fprintitem).PageRepeat,true);
+   exit;
+  end;
+ end;
+ if (TrpSection(printitem).SectionType in [rpsecrheader,rpsecrfooter,
+     rpsecgheader,rpsecgfooter,rpsecdetail]) then
+ begin
+  if pname=SRPSBeginPage then
+  begin
+   Result:=BoolToStr(TRpSection(fprintitem).BeginPage,true);
+   exit;
+  end;
+  if pname=SRPSkipPage then
+  begin
+   Result:=BoolToStr(TRpSection(fprintitem).SkipPage,true);
+   exit;
+  end;
+  if pname=SRPAlignBottom then
+  begin
+   Result:=BoolToStr(TRpSection(fprintitem).AlignBottom,true);
+   exit;
+  end;
+ end;
+ Result:=inherited GetProperty(pname);
+end;
 
 procedure TRpSectionInterface.Paint;
 var
@@ -261,8 +428,8 @@ begin
   childlist.Add(asizeposint);
   if assigned(TFObjInsp(fobjinsp).Combo) then
   begin
-   TFObjInsp(fobjinsp).Combo.Items.AddObject(asizepos.Name,asizepos);
-   TFObjInsp(fobjinsp).Combo.ItemIndex:=TFObjInsp(fobjinsp).Combo.Items.IndexOfObject(asizepos);
+   TFObjInsp(fobjinsp).Combo.Items.AddObject(asizepos.Name,asizeposint);
+   TFObjInsp(fobjinsp).Combo.ItemIndex:=TFObjInsp(fobjinsp).Combo.Items.IndexOfObject(asizeposint);
   end;
   TFObjInsp(fobjinsp).CompItem:=asizeposint;
   if (Not (SSShift in Shift)) then
@@ -311,6 +478,15 @@ begin
  end;
 end;
 
+procedure TRpSectionInterface.InvalidateAll;
+var
+ i:integer;
+begin
+ for i:=0 to childlist.count-1 do
+ begin
+  TRpSizeInterface(childlist.items[i]).Invalidate;
+ end;
+end;
 
 
 initialization

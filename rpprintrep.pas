@@ -21,28 +21,62 @@ unit rpprintrep;
 
 interface
 
-uses rpreport,rpmetafile;
+uses rpreport,rpmetafile,rpsubreport,rpsection,rpmunits,rptypes,
+ rpeval;
 
-procedure PrintReport(report:TRpReport;metafile:TRpMetafileReport);
+procedure BeginPrint(report:TRpReport);
+procedure EndPrint(report:TRpReport);
+procedure PrintNextPage(report:TRpReport;metafile:TRpMetafileReport);
 
 implementation
 
-
-procedure PrintReport(report:TRpReport;metafile:TRpMetafileReport);
+procedure EndPrint(report:TRpReport);
 begin
- if Not Assigned(report) then
-  exit;
- if Not Assigned(metafile) then
-  exit;
- // DeActivates datasets
- report.ActivateDatasets;
- try
-  metafile.NewPage;
-  metafile.Pages[metafile.CurrentPage].NewTextObject(1440,1440,1440,1440,'Hola','Arial',32,0,0,$FFFF,False);
- finally
-  report.DeActivateDatasets;
- end;
+ report.DeActivateDatasets;
+ report.Evaluator.Free;
+ report.Evaluator:=nil;
+ report.printing:=false;
 end;
+
+
+procedure BeginPrint(report:TRpReport);
+var
+ i:integer;
+begin
+ EndPrint(report);
+ report.PageNum:=-1;
+ report.CurrentSubReportIndex:=0;
+ report.CurrentSectionIndex:=0;
+ report.ActivateDatasets;
+ // Evaluator
+ report.Evaluator:=TRpEvaluator.Create(report);
+ // Insert params into rpEvaluator
+ for i:=0 to report.Params.Count-1 do
+ begin
+  report.Evaluator.NewVariable(report.params.items[i].Name,report.params.items[i].Value);
+ end;
+ report.printing:=True;
+end;
+
+
+procedure PrintNextPage(report:TRpReport;metafile:TRpMetafileReport);
+var
+ printedsomething:boolean;
+ pageposy:integer;
+begin
+ pageposy:=0;
+ printedsomething:=false;
+ inc(report.Pagenum);
+ if metafile.PageCount<=report.PageNum then
+ begin
+  metafile.NewPage;
+ end;
+ metafile.CurrentPage:=report.PageNum;
+ // Tries to print at least a report header
+
+end;
+
+
 
 
 end.

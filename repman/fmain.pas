@@ -170,7 +170,7 @@ var
 
 implementation
 
-uses rppagesetup, rpshfolder, freportgroup, fdatainfo, frpgrid, rppreview;
+uses rppagesetup, rpshfolder,  fdatainfo, frpgrid, rppreview;
 
 {$R *.xfm}
 
@@ -311,6 +311,9 @@ begin
  AnewDetail.Enabled:=false;
  ADataConfig.Enabled:=false;
  APreview.Enabled:=false;
+ ACut.Enabled:=False;
+ ACopy.Enabled:=FalsE;
+ APaste.Enabled:=False;
  APrint.Enabled:=false;
  AGridOptions.Enabled:=false;
  MDisplay.Visible:=false;
@@ -361,6 +364,9 @@ begin
  AnewDetail.Enabled:=true;
  ADataConfig.Enabled:=true;
  APreview.Enabled:=true;
+ ACut.Enabled:=False;
+ ACopy.Enabled:=FalsE;
+ APaste.Enabled:=true;
  APrint.Enabled:=true;
  AGridOptions.Enabled:=true;
  MDisplay.Visible:=true;
@@ -582,12 +588,16 @@ begin
 end;
 
 procedure TFMainf.ANewGroupExecute(Sender: TObject);
+var
+ newgroupname:string;
 begin
  // Inserts a new group header and footer
  Assert(report<>nil,'Called AddNewGroupout a report unassigned');
 
- if AddGroup(freportstructure.FindSelectedSubreport) then
+ newgroupname:=Uppercase(Trim(InputBox(SRpNewGroup,SRpSGroupName,'')));
+ if length(newgroupname)>0 then
  begin
+  freportstructure.FindSelectedSubreport.AddGroup(newgroupname);
   FreeInterface;
   CreateInterface;
  end;

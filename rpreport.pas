@@ -28,7 +28,7 @@ unit rpreport;
 interface
 
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpconsts,
- rpdatainfo,rpparams,rplabelitem,rpdrawitem;
+ rpdatainfo,rpparams,rplabelitem,rpdrawitem,rpeval;
 
 const
  // 1 cms=574
@@ -82,6 +82,8 @@ type
    FGridWidth:integer;
    FGridHeight:integer;
    FLanguage:integer;
+   FEvaluator:TRpEvaluator;
+   FIdentifiers:TStringList;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -91,7 +93,14 @@ type
   protected
     procedure Notification(AComponent:TComponent;Operation:TOperation);override;
     procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
+    procedure Loaded;override;
   public
+   printing:boolean;
+   CurrentSubReportIndex:integer;
+   CurrentSectionIndex:integer;
+   PageNum:integer;
+   property Identifiers:TStringList read FIdentifiers;
+
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    procedure FreeSubreports;
@@ -106,9 +115,9 @@ type
    // Design functions
    procedure Createnew;
    // Print functions
-   procedure PrintAll;
    procedure ActivateDatasets;
    procedure DeActivateDatasets;
+   property Evaluator:TRpEvaluator read FEvaluator write FEvaluator;
   published
    // Grid options
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
@@ -136,8 +145,6 @@ type
    property Language:integer read FLanguage write FLanguage default 0;
  end;
 
- procedure PrintReportFile(filename:string);
- procedure PrintReportFromStream(Stream:TStream);
 
 implementation
 
@@ -169,6 +176,10 @@ begin
  FDataInfo:=TRpDataInfoList.Create(Self);
  FDatabaseInfo:=TRpDatabaseInfoList.Create(Self);
  FParams:=TRpParamList.Create(Self);
+ // Identifiers
+ FIdentifiers:=TStringList.Create;
+ FIdentifiers.Sorted:=true;
+ FIdentifiers.Duplicates:=dupError;
 end;
 
 destructor TRpReport.Destroy;
@@ -177,8 +188,42 @@ begin
  FDataInfo.free;
  FDatabaseInfo.free;
  FParams.free;
+ FIdentifiers.free;
  inherited destroy;
 end;
+
+procedure TRpReport.Loaded;
+var
+ i,j,k:integer;
+ subrep:TRpSubReport;
+ sec:TRpSection;
+ comp:TRpCommonComponent;
+ rpexpre:TRpExpression;
+begin
+ inherited Loaded;
+
+ for i:=0 to Subreports.Count-1 do
+ begin
+  subrep:=Subreports.items[i].SubReport;
+  for j:=0 to Subrep.Sections.Count-1 do
+  begin
+   sec:=SubRep.Sections.Items[j].Section;
+   for k:=0 to sec.Components.Count-1 do
+   begin
+    comp:=sec.Components.items[k].Component;
+    if (comp is TRpExpression) then
+    begin
+     rpexpre:=TRpExpression(comp);
+     if Length(rpexpre.Identifier)>0 then
+     begin
+      FIdentifiers.Add(rpexpre.Identifier);
+     end;
+    end;
+   end;
+  end;
+ end;
+end;
+
 
 procedure TRpReport.Notification(AComponent:TComponent;Operation:TOperation);
 var i:integer;
@@ -395,29 +440,7 @@ begin
 end;
 
 
-procedure PrintReportFile(filename:string);
-var
- stream:TFileStream;
-begin
- stream:=TFileStream.Create(filename,fmOpenRead or fmShareDenyWrite);
- try
-  PrintReportFromStream(stream);
- finally
-  stream.free;
- end;
-end;
 
-procedure PrintReportFromStream(Stream:TStream);
-var
- Report:TRpReport;
-begin
- Report:=TRpReport.Create(nil);
- try
-  Report.PrintAll;
- finally
-  Report.free;
- end;
-end;
 
 
 procedure TRpReport.DeleteSubReport(subr:TRpSubReport);
@@ -473,11 +496,6 @@ begin
  begin
   FDataInfo.Items[i].Disconnect;
  end;
-end;
-
-procedure TRpReport.PrintAll;
-begin
- // Prints the report with a console driver?
 end;
 
 

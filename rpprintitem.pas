@@ -33,10 +33,10 @@ type
    FPrintCondition:string;
   public
    constructor Create(AOwner:TComponent);override;
+  published
    property PrintCondition:string read FPrintCondition write FPrintCondition;
    property DoBeforePrint:string read FDoBeforePrint write FDoBeforePrint;
    property DoAfterPrint:string read FDoAfterPrint write FDoAfterPrint;
-  published
    property Width:TRpTwips read FWidth write FWidth;
    property Height:TRpTwips read FHeight write FHeight;
   end;
@@ -83,6 +83,7 @@ type
    FFontColor:integer;
    FBackColor:integer;
    FTransparent:Boolean;
+   FCutText:Boolean;
   public
    constructor Create(AOwner:TComponent);override;
   published
@@ -93,7 +94,7 @@ type
    property FontColor:integer read FFontColor write FFontColor default 0;
    property BackColor:integer read FBackColor write FBackColor default $FFFFFF;
    property Transparent:Boolean read FTransparent write FTransparent default true;
-
+   property CutText:Boolean read FCutText write FCutText default true;
   end;
 
 implementation
@@ -184,6 +185,7 @@ begin
  FontColor:=0;
  FBackColor:=$FFFFFF;
  FTransparent:=true;
+ FCutText:=true;
 
 end;
 

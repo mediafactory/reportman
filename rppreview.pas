@@ -49,7 +49,8 @@ procedure TFRpPreview.AppIdle(Sender:TObject;var done:boolean);
 begin
  Application.OnIdle:=nil;
  done:=false;
- PrintReport(report,metafile);
+ BeginPrint(report);
+ PrintNextPage(report,metafile);
  metafile.DrawPage(qtdriver);
  if Assigned(qtdriver.bitmap) then
  begin
@@ -72,6 +73,7 @@ end;
 
 procedure TFRpPreview.FormDestroy(Sender: TObject);
 begin
+ EndPrint(report);
  bitmap.free;
 end;
 

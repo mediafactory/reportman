@@ -32,6 +32,10 @@ resourcestring
   SRpErrorReadingReport='Error reading report: ';
   SRpIgnoreError='Ignore?';
   SRpMainDataset='Main Dataset';
+  SRpNewGroup='New Group';
+  SRpSGroupName='Group Name';
+  SRpGroupAlreadyExists='Group already exists:';
+
 
   SRpNoDatasets='No datasets defined';
   SRpSampleTextToLabels='Text';
@@ -353,6 +357,19 @@ resourcestring
   SRpsSRoundRect='Round Rect';
   SRpsSRoundSquare='Round Square';
   SRpsSSquare='Square';
+  SRpSAutoExpand='Auto Expand.';
+  SRpSAutoContract='Auto Contract';
+  SRpSAfterPrint='After print';
+  SRpSBeforePrint='Before print';
+  SRpSPrintCondition='Print condition';
+  SRpSGroupExpression='Group Expression';
+  SRPSChangeBool='Bool Expression';
+  SRPSPageRepeat='Page repeat';
+  SRPSBeginPage='Begin Page';
+  SRPSkipPage='Skip Page';
+  SRPAlignBottom='Align Bottom';
+  SRpIdentifierAlreadyExists='Identifier already exists';
+  SrpSCutText='Cut Text';
 
   SRPSDrawCrop='Crop';
   SRPSDrawStretch='Strecth';

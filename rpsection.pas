@@ -22,7 +22,8 @@ unit rpsection;
 
 interface
 
-uses Classes,rptypes,rpconsts,rpmunits,rpprintitem;
+uses Classes,rptypes,rpconsts,rpmunits,rpprintitem,rplabelitem,
+ sysutils;
 
 const
  C_DEFAULT_SECTION_WIDTH=19;
@@ -32,13 +33,24 @@ type
  TRpSectionType=(rpsecrheader,rpsecpheader,rpsecgheader,
   rpsecdetail,rpsecgfooter,rpsecpfooter,rpsecrfooter);
 
+
  TRpSection=class(TRpCommonComponent)
   private
-   FGroupName:String;
+   FSubReport:TComponent;
+   FGroupName:String;           // [rpsecgheader,rpsecgfooter]
+   FChangeExpression:WideString;// [rpsecgheader,rpsecgfooter]
+   FChangeBool:boolean;         // [rpsecgheader,rpsecgfooter]
+   FPageRepeat:boolean;         // [rpsecgheader,rpsecgfooter]
+   FBeginPage:boolean;          // [rpsecrheader,rpsecrfooter,rpsecgheader,rpsecgfooter,rpsecdetail]
+   FAlignBottom:boolean;        // [rpsecrheader,rpsecrfooter,rpsecgheader,rpsecgfooter,rpsecdetail]
+   FSkipPage:boolean;           // [rpsecrheader,rpsecrfooter,rpsecgheader,rpsecgfooter,rpsecdetail]
    FSectionType:TRpSectionType;
    FComponents:TRpCommonList;
+   FAutoExpand:Boolean;
+   FAutoContract:Boolean;
    function GetSectionCaption:String;
    procedure SetComponents(Value:TRpCommonList);
+   procedure SetGroupName(Value:string);
   public
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
@@ -46,12 +58,25 @@ type
    procedure DeleteComponent(com:TRpCommonComponent);
    property SectionCaption:String read GetSectionCaption;
   published
-   property GroupName:String read FGroupName write FGroupName;
+   property SubReport:TComponent read FSubReport write FSubReport;
+   property GroupName:String read FGroupName write SetGroupName;
+   property ChangeBool:boolean read FChangeBool write FChangeBool;
+   property ChangeExpression:widestring read FChangeExpression write FChangeExpression;
+   property PageRepeat:boolean read FPageRepeat write FPageRepeat;
+   property BeginPage:boolean read FBeginPage write FBeginPage;
+   property SkipPage:boolean read FSkipPage write FSkipPage;
+   property AlignBottom:boolean read FAlignBottom write FAlignBottom;
    property SectionType:TRpSectionType read FSectionType write FSectionType;
    property Components:TRpCommonList read FComponents write SetComponents;
+   property AutoExpand:Boolean read FAutoExpand write FAutoExpand
+    default false;
+   property AutoContract:Boolean read FAutoContract write FAutoContract
+    default false;
  end;
 
 implementation
+
+uses rpsubreport;
 
 constructor TRpSection.Create(AOwner:TComponent);
 begin
@@ -135,5 +160,51 @@ begin
   inc(i);
  end;
 end;
+
+procedure TRpSection.SetGroupName(Value:string);
+var
+ subrep:TRpSubreport;
+ i:integer;
+ j:integer;
+ sec:TRpSection;
+begin
+ if (csLoading in ComponentState) then
+ begin
+  FGroupName:=Value;
+  exit;
+ end;
+ Value:=UpperCase(Value);
+ if FGroupName=Value then
+  exit;
+ if not assigned(FSubreport) then
+ begin
+  FGroupName:=Value;
+  exit;
+ end;
+ subrep:=TRpSubreport(FSubReport);
+ subrep.CheckGroupExists(Value);
+ if Length(FGroupName)>0 then
+ begin
+  for i:=0 to subrep.Sections.Count-1 do
+  begin
+   sec:=TRpSection(subrep.Sections[i]);
+   for j:=0 to Components.Count-1 do
+   begin
+    if (sec.Components.Items[j].Component is TRpExpression) then
+    begin
+     TRpExpression(sec.Components.Items[j].Component).GroupName:=Value;
+    end;
+   end;
+  end;
+ end;
+ // Assign header and footer
+ for i:=0 to subrep.Sections.Count-1 do
+ begin
+  if (subrep.Sections.Items[i].Section.SectionType in [rpsecgheader,rpsecgfooter]) then
+   if subrep.Sections.Items[i].Section.GroupName=FGroupName then
+    subrep.Sections.Items[i].Section.GroupName:=Value;
+ end;
+end;
+
 
 end.

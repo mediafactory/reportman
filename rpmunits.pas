@@ -64,8 +64,8 @@ initialization
  defaultunit:=rpUnitcms;
  rpunitconversions[rpUnitcms]:=TWIPS_PER_INCHESS/CMS_PER_INCHESS;
  rpunitlabels[rpUnitcms]:='cms.';
- rpunitformats[rpUnitcms]:='#######0.##';
+ rpunitformats[rpUnitcms]:='#######0.###';
  rpunitconversions[rpUnitInchess]:=TWIPS_PER_INCHESS;
  rpunitlabels[rpUnitInchess]:='inch.';
- rpunitformats[rpUnitInchess]:='#######0.###';
+ rpunitformats[rpUnitInchess]:='#######0.####';
 end.

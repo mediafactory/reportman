@@ -45,6 +45,7 @@ type
    procedure AddPageHeader;
    procedure AddReportFooter;
    procedure AddPageFooter;
+   procedure CheckGroupExists(groupname:string);
    procedure AddGroup(groupname:string);
    procedure AddDetail;
    property FirstDetail:integer read GetDetail;
@@ -69,6 +70,7 @@ begin
  end;
  sec:=TRpSection.Create(Owner);
  sec.SectionType:=rpsecrheader;
+ sec.SubReport:=Self;
  Sections.Items[0].Section:=sec;
  Generatenewname(sec);
 end;
@@ -79,6 +81,7 @@ var
 begin
  Sections.Add;
  sec:=TRpSection.Create(Owner);
+ sec.SubReport:=Self;
  sec.SectionType:=rpsecrfooter;
  Sections.Items[Sections.Count-1].Section:=sec;
  Generatenewname(sec);
@@ -101,6 +104,7 @@ begin
   Sections.Items[i+1].Section:=Sections.Items[i].Section;
  end;
  sec:=TRpSection.Create(Owner);
+ sec.SubReport:=Self;
  sec.SectionType:=rpsecpheader;
  Sections.Items[index].Section:=sec;
  Generatenewname(sec);
@@ -129,6 +133,7 @@ begin
   Sections.Items[i+1].Section:=Sections.Items[i].Section;
  end;
  sec:=TRpSection.Create(Owner);
+ sec.SubReport:=Self;
  sec.SectionType:=rpsecdetail;
  Sections.Items[index].Section:=sec;
  Generatenewname(sec);
@@ -157,9 +162,25 @@ begin
   Sections.Items[i+1].Section:=Sections.Items[i].Section;
  end;
  sec:=TRpSection.Create(Owner);
+ sec.SubReport:=Self;
  sec.SectionType:=rpsecpfooter;
  Sections.Items[index].Section:=sec;
  Generatenewname(sec);
+end;
+
+
+procedure TRpSubReport.CheckGroupExists(groupname:string);
+var
+ i:integer;
+begin
+ for i:=0 to Sections.Count-1 do
+ begin
+  if (Sections[i].Section.SectionType in [rpsecgheader,rpsecgfooter]) then
+  begin
+   if Uppercase(Sections[i].Section.GroupName)=UpperCase(Groupname) then
+    Raise Exception.Create(SRpGroupAlreadyExists+GroupName);
+  end;
+ end;
 end;
 
 procedure TRpSubReport.AddGroup(groupname:string);
@@ -167,7 +188,10 @@ var
  i:integer;
  index:integer;
  sec:TRpSection;
+ sec1:TRpSection;
 begin
+ // Checks not exisss
+ groupname:=UpperCase(groupname);
  if Length(groupname)<1 then
   Raise Exception.Create(SRpGroupNameRequired);
  // Search the index to insert the group header
@@ -189,8 +213,9 @@ begin
   Sections.Items[i+1].Section:=Sections.Items[i].Section;
  end;
  sec:=TRpSection.Create(Owner);
- sec.SectionType:=rpsecgheader;
  sec.GroupName:=groupname;
+ sec1:=sec;
+ sec.SectionType:=rpsecgheader;
  Sections.Items[index].Section:=sec;
  Generatenewname(sec);
  // Search the index to insert the group footer
@@ -209,8 +234,10 @@ begin
   Sections.Items[i+1].Section:=Sections.Items[i].Section;
  end;
  sec:=TRpSection.Create(Owner);
- sec.SectionType:=rpsecgfooter;
  sec.GroupName:=groupname;
+ sec.SubReport:=Self;
+ sec1.SubReport:=Self;
+ sec.SectionType:=rpsecgfooter;
  Sections.Items[index].Section:=sec;
  Generatenewname(sec);
 end;
@@ -258,6 +285,7 @@ begin
  // Create a new section, the owner is the report
  it:=FSections.Add;
  it.Section:=TRpSection.Create(Owner);
+ it.Section.SubReport:=Self;
  it.Section.SectionType:=rpsecdetail;
  Generatenewname(it.Section);
 end;

@@ -28,11 +28,11 @@ uses
 
 const
   CONS_LEFTGAP=3;
-  CONS_CONTROLPOS=70;
+  CONS_CONTROLPOS=90;
   CONS_LABELTOPGAP=2;
   CONS_RIGHTBARGAP=25;
   CONS_BUTTONWIDTH=15;
-  CONS_MINWIDTH=130;
+  CONS_MINWIDTH=150;
 type
   TFObjInsp = class(TFrame)
     ColorDialog1: TColorDialog;
@@ -214,7 +214,7 @@ begin
  else
  begin
   posy:=posy+Combo.Height;
-  Combo.ItemIndex:=combo.Items.IndexOfObject(CompItem.printitem);
+  Combo.ItemIndex:=combo.Items.IndexOfObject(CompItem);
  end;
  FCompItem.GetProperties(LNames,LTypes,LValues);
  for i:=0 to LNames.Count-1 do
@@ -352,7 +352,7 @@ begin
     Control2.Parent:=Self;
     LControlsToFree.Add(Control2);
    end;
-   if (LNames.Strings[i]=SRpSExpression) then
+   if (LTypes.Strings[i]=SRpSExpression) then
    begin
     Control2:=TButton.Create(Self);
     Control2.Width:=CONS_BUTTONWIDTH;
@@ -688,6 +688,8 @@ begin
  ALabel.parent:=self;
 
  ComboAlias:=TComboBox.Create(Self);
+ ComboAlias.Style:=csDropDownList;
+ ComboAlias.Items.Add('');
  for i:=0 to fmainf.report.DataInfo.Count-1 do
  begin
   ComboAlias.Items.Add(fmainf.report.DataInfo.items[i].Alias);
@@ -707,5 +709,8 @@ procedure TFObjInsp.ComboAliasChange(Sender:TObject);
 begin
  subrep.Alias:=TComboBox(Sender).Text;
 end;
+
+initialization
+
 
 end.

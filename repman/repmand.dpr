@@ -25,7 +25,6 @@ uses
   frpstruc in 'frpstruc.pas' {FRpStructure: TFrame},
   fdesign in 'fdesign.pas' {FDesignFrame: TFrame},
   rpshfolder in 'rpshfolder.pas',
-  freportgroup in 'freportgroup.pas' {FGroup},
   fdatainfo in 'fdatainfo.pas' {FDatainfoconfig},
   fsampledata in 'fsampledata.pas' {FShowSampledata},
   rpobinsint in 'rpobinsint.pas',
