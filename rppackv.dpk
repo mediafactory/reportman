@@ -28,6 +28,12 @@ package rppackv;
 {$DESCRIPTION 'Report manager visual components'}
 {$IMPLICITBUILD OFF}
 
+requires
+  baseclx,
+  visualclx,
+  dataclx,
+  ibxpress,
+  rppack;
 
 contains
   rpregv in 'rpregv.pas',

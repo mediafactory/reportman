@@ -156,7 +156,9 @@ function TRpLabel.GetText:WideString;
 var
  langindex:integer;
 begin
- langindex:=TRpReport(Owner).Language;
+ langindex:=TRpReport(Owner).Language+1;
+ if langindex<0 then
+  langindex:=0;
  if FAlltext.Count>langindex then
   Result:=FAllText.Strings[langindex]
  else

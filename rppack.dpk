@@ -5,6 +5,7 @@ package rppack;
 {$R 'rpalias.dcr'}
 {$R 'rplastsav.dcr'}
 {$R 'rppdfreport.dcr'}
+{$R 'rptranslator.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -29,6 +30,10 @@ package rppack;
 {$DESCRIPTION 'Report manager designer (non visual)'}
 {$IMPLICITBUILD OFF}
 
+requires
+  baseclx,
+  dataclx,
+  ibxpress;
 
 contains
   rptypeval in 'rptypeval.pas',
@@ -70,7 +75,8 @@ contains
   rppdfreport in 'rppdfreport.pas',
   rpcompobase in 'rpcompobase.pas',
   rpmdchart in 'rpmdchart.pas',
-  rpmdbarcode in 'rpmdbarcode.pas';
+  rpmdbarcode in 'rpmdbarcode.pas',
+  rptranslator in 'rptranslator.pas';
 
 {%File 'zconf.inc'}
 
