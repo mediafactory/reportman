@@ -945,7 +945,6 @@ object FRpPreview: TFRpPreview
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = 'rpmf'
-    FileName = '*.rpmf'
     Filter = 
       'Report Metafile (*.rpmf)|PDF File - compressed (*.pdf)|PDF File ' +
       '- uncompressed (*.pdf)|'

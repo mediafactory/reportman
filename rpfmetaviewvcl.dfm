@@ -368,7 +368,6 @@ object FRpMetaVCL: TFRpMetaVCL
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = 'rpmf'
-    FileName = '*.rpmf'
     Filter = 
       'Report Metafile (*.rpmf)|PDF File (*.pdf)|PDF File Uncompressed ' +
       '(*.pdf)'
