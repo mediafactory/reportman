@@ -314,13 +314,13 @@
 #define IBXConst_SUpdateWrongDB 65037
 #define IBXConst_SUpdateWrongTR 65038
 #define IBXConst_SDatabaseNotAssigned 65039
-#define MidConst_SFieldConstFail 65040
-#define MidConst_SDefExprFail 65041
-#define MidConst_SNoEditsAllowed 65042
-#define MidConst_SNoDeletesAllowed 65043
-#define MidConst_SNoInsertsAllowed 65044
-#define MidConst_SConnectionMissing 65045
-#define MidConst_SNoCircularConnection 65046
+#define SqlConst_SDRIVERRESTRICTED 65040
+#define SqlConst_SLOCALTRANSACTIVE 65041
+#define SqlConst_SMULTIPLETRANSNOTENABLED 65042
+#define SqlConst_SMultiConnNotSupported 65043
+#define SqlConst_SDriverNotInConfigFile 65044
+#define SqlConst_SObjectTypenameRequired 65045
+#define SqlConst_SCannotCreateFile 65046
 #define IBXConst_SUnknownError 65047
 #define IBXConst_SInterBaseMissing 65048
 #define IBXConst_SInterBaseInstallMissing 65049
@@ -330,150 +330,150 @@
 #define IBXConst_SFileAccessError 65053
 #define IBXConst_SConnectionTimeout 65054
 #define IBXConst_SCannotSetDatabase 65055
-#define SqlConst_SMULTIPLETRANSNOTENABLED 65056
-#define SqlConst_SMultiConnNotSupported 65057
-#define SqlConst_SDriverNotInConfigFile 65058
-#define SqlConst_SObjectTypenameRequired 65059
-#define SqlConst_SCannotCreateFile 65060
-#define MidConst_SNoDataProvider 65061
-#define MidConst_SInvalidDataPacket 65062
-#define MidConst_SRefreshError 65063
-#define MidConst_SNoCircularReference 65064
-#define MidConst_SErrorLoadingMidas 65065
-#define MidConst_SCannotCreateDataSet 65066
-#define MidConst_SNoConnectToBroker 65067
-#define MidConst_SNoParentConnection 65068
-#define MidConst_SConstraintFailed 65069
-#define MidConst_SField 65070
-#define MidConst_SRecConstFail 65071
-#define SqlConst_SINVALIDHNDL 65072
-#define SqlConst_SINVALIDTIME 65073
-#define SqlConst_SNOTSUPPORTED 65074
-#define SqlConst_SINVALIDXLATION 65075
-#define SqlConst_SINVALIDPARAM 65076
-#define SqlConst_SOUTOFRANGE 65077
-#define SqlConst_SSQLPARAMNOTSET 65078
-#define SqlConst_SEOF 65079
-#define SqlConst_SINVALIDUSRPASS 65080
-#define SqlConst_SINVALIDPRECISION 65081
-#define SqlConst_SINVALIDLEN 65082
-#define SqlConst_SINVALIDXISOLEVEL 65083
-#define SqlConst_SINVALIDTXNID 65084
-#define SqlConst_SDUPLICATETXNID 65085
-#define SqlConst_SDRIVERRESTRICTED 65086
-#define SqlConst_SLOCALTRANSACTIVE 65087
-#define SqlConst_SPrepareError 65088
-#define SqlConst_SObjectNameError 65089
-#define SqlConst_SSQLDataSetOpen 65090
-#define SqlConst_SNoActiveTrans 65091
-#define SqlConst_SActiveTrans 65092
-#define SqlConst_SDllLoadError 65093
-#define SqlConst_SDllProcLoadError 65094
-#define SqlConst_SMissingDLLName 65095
-#define SqlConst_SMissingDriverRegFile 65096
-#define SqlConst_SNoCursor 65097
-#define SqlConst_SErrorMappingError 65098
-#define SqlConst_SStoredProcsNotSupported 65099
-#define SqlConst_SPackagesNotSupported 65100
-#define SqlConst_SDBXUNKNOWNERROR 65101
-#define SqlConst_SNOMEMORY 65102
-#define SqlConst_SINVALIDFLDTYPE 65103
-#define JConsts_sJPEGImageFile 65104
-#define ComConst_SOleError 65105
-#define ComConst_SNoMethod 65106
-#define ComConst_SVarNotObject 65107
-#define ComConst_STooManyParams 65108
-#define SqlConst_SLoginError 65109
-#define SqlConst_SMonitorActive 65110
-#define SqlConst_SDatabaseOpen 65111
-#define SqlConst_SDatabaseClosed 65112
-#define SqlConst_SMissingSQLConnection 65113
-#define SqlConst_SConnectionNameMissing 65114
-#define SqlConst_SEmptySQLStatement 65115
-#define SqlConst_SNoParameterValue 65116
-#define SqlConst_SNoSqlStatement 65117
-#define SqlConst_SMissingDataBaseName 65118
-#define SqlConst_SMissingDriverName 65119
-#define DBConsts_SAggActive 65120
-#define DBConsts_SProviderSQLNotSupported 65121
-#define DBConsts_SProviderExecuteNotSupported 65122
-#define DBConsts_SExprNoAggOnCalcs 65123
-#define DBConsts_SDataSetUnidirectional 65124
-#define DBConsts_SUnassignedVar 65125
-#define DBConsts_SRecordNotFound 65126
-#define DBConsts_SFileNameBlank 65127
-#define DBConsts_SFieldNameTooLarge 65128
-#define DBConsts_SBcdOverflow 65129
-#define DBConsts_SInvalidBcdValue 65130
-#define DBConsts_SInvalidFormatType 65131
-#define DBConsts_SCouldNotParseTimeStamp 65132
-#define DBConsts_SInvalidSqlTimeStamp 65133
-#define JConsts_sChangeJPGSize 65134
-#define JConsts_sJPEGError 65135
-#define DBConsts_SExprRangeError 65136
-#define DBConsts_SExprIncorrect 65137
-#define DBConsts_SExprNothing 65138
-#define DBConsts_SExprTypeMis 65139
-#define DBConsts_SExprBadScope 65140
-#define DBConsts_SExprNoArith 65141
-#define DBConsts_SExprNotAgg 65142
-#define DBConsts_SExprBadConst 65143
-#define DBConsts_SExprNoAggFilter 65144
-#define DBConsts_SExprEmptyInList 65145
-#define DBConsts_SInvalidKeywordUse 65146
-#define DBConsts_STextFalse 65147
-#define DBConsts_STextTrue 65148
-#define DBConsts_SParameterNotFound 65149
-#define DBConsts_SInvalidVersion 65150
-#define DBConsts_SBadFieldType 65151
-#define DBConsts_SDataSetOpen 65152
-#define DBConsts_SNotEditing 65153
-#define DBConsts_SDataSetClosed 65154
-#define DBConsts_SDataSetEmpty 65155
-#define DBConsts_SDataSetReadOnly 65156
-#define DBConsts_SNestedDataSetClass 65157
-#define DBConsts_SExprTermination 65158
-#define DBConsts_SExprNameError 65159
-#define DBConsts_SExprStringError 65160
-#define DBConsts_SExprInvalidChar 65161
-#define DBConsts_SExprNoLParen 65162
-#define DBConsts_SExprNoRParen 65163
-#define DBConsts_SExprNoRParenOrComma 65164
-#define DBConsts_SExprExpected 65165
-#define DBConsts_SExprBadField 65166
-#define DBConsts_SExprBadNullTest 65167
-#define DBConsts_SFieldOutOfRange 65168
-#define DBConsts_SFieldRequired 65169
-#define DBConsts_SDataSetMissing 65170
-#define DBConsts_SInvalidCalcType 65171
-#define DBConsts_SFieldReadOnly 65172
-#define DBConsts_SFieldIndexError 65173
-#define DBConsts_SNoFieldIndexes 65174
-#define DBConsts_SNotIndexField 65175
-#define DBConsts_SIndexFieldMissing 65176
-#define DBConsts_SDuplicateIndexName 65177
-#define DBConsts_SNoIndexForFields 65178
-#define DBConsts_SIndexNotFound 65179
-#define DBConsts_SCircularDataLink 65180
-#define DBConsts_SLookupInfoError 65181
-#define DBConsts_SDataSourceChange 65182
-#define DBConsts_SNoNestedMasterSource 65183
-#define DBConsts_SInvalidFieldSize 65184
-#define DBConsts_SInvalidFieldKind 65185
-#define DBConsts_SUnknownFieldType 65186
-#define DBConsts_SFieldNameMissing 65187
-#define DBConsts_SDuplicateFieldName 65188
-#define DBConsts_SFieldNotFound 65189
-#define DBConsts_SFieldAccessError 65190
-#define DBConsts_SFieldValueError 65191
-#define DBConsts_SFieldRangeError 65192
-#define DBConsts_SBcdFieldRangeError 65193
-#define DBConsts_SInvalidIntegerValue 65194
-#define DBConsts_SInvalidBoolValue 65195
-#define DBConsts_SInvalidFloatValue 65196
-#define DBConsts_SFieldTypeMismatch 65197
-#define DBConsts_SFieldSizeMismatch 65198
-#define DBConsts_SInvalidVarByteArray 65199
+#define SqlConst_SNOMEMORY 65056
+#define SqlConst_SINVALIDFLDTYPE 65057
+#define SqlConst_SINVALIDHNDL 65058
+#define SqlConst_SINVALIDTIME 65059
+#define SqlConst_SNOTSUPPORTED 65060
+#define SqlConst_SINVALIDXLATION 65061
+#define SqlConst_SINVALIDPARAM 65062
+#define SqlConst_SOUTOFRANGE 65063
+#define SqlConst_SSQLPARAMNOTSET 65064
+#define SqlConst_SEOF 65065
+#define SqlConst_SINVALIDUSRPASS 65066
+#define SqlConst_SINVALIDPRECISION 65067
+#define SqlConst_SINVALIDLEN 65068
+#define SqlConst_SINVALIDXISOLEVEL 65069
+#define SqlConst_SINVALIDTXNID 65070
+#define SqlConst_SDUPLICATETXNID 65071
+#define SqlConst_SMissingDataBaseName 65072
+#define SqlConst_SMissingDriverName 65073
+#define SqlConst_SPrepareError 65074
+#define SqlConst_SObjectNameError 65075
+#define SqlConst_SSQLDataSetOpen 65076
+#define SqlConst_SNoActiveTrans 65077
+#define SqlConst_SActiveTrans 65078
+#define SqlConst_SDllLoadError 65079
+#define SqlConst_SDllProcLoadError 65080
+#define SqlConst_SMissingDLLName 65081
+#define SqlConst_SMissingDriverRegFile 65082
+#define SqlConst_SNoCursor 65083
+#define SqlConst_SErrorMappingError 65084
+#define SqlConst_SStoredProcsNotSupported 65085
+#define SqlConst_SPackagesNotSupported 65086
+#define SqlConst_SDBXUNKNOWNERROR 65087
+#define MidConst_SNoInsertsAllowed 65088
+#define MidConst_SConnectionMissing 65089
+#define MidConst_SNoCircularConnection 65090
+#define D7ComboBoxStringsGetPatch_RsPatchingFailed 65091
+#define JConsts_sChangeJPGSize 65092
+#define JConsts_sJPEGError 65093
+#define JConsts_sJPEGImageFile 65094
+#define SqlConst_SLoginError 65095
+#define SqlConst_SMonitorActive 65096
+#define SqlConst_SDatabaseOpen 65097
+#define SqlConst_SDatabaseClosed 65098
+#define SqlConst_SMissingSQLConnection 65099
+#define SqlConst_SConnectionNameMissing 65100
+#define SqlConst_SEmptySQLStatement 65101
+#define SqlConst_SNoParameterValue 65102
+#define SqlConst_SNoSqlStatement 65103
+#define ComConst_STooManyParams 65104
+#define MidConst_SNoDataProvider 65105
+#define MidConst_SInvalidDataPacket 65106
+#define MidConst_SRefreshError 65107
+#define MidConst_SNoCircularReference 65108
+#define MidConst_SErrorLoadingMidas 65109
+#define MidConst_SCannotCreateDataSet 65110
+#define MidConst_SNoConnectToBroker 65111
+#define MidConst_SNoParentConnection 65112
+#define MidConst_SConstraintFailed 65113
+#define MidConst_SField 65114
+#define MidConst_SRecConstFail 65115
+#define MidConst_SFieldConstFail 65116
+#define MidConst_SDefExprFail 65117
+#define MidConst_SNoEditsAllowed 65118
+#define MidConst_SNoDeletesAllowed 65119
+#define DBConsts_SProviderSQLNotSupported 65120
+#define DBConsts_SProviderExecuteNotSupported 65121
+#define DBConsts_SExprNoAggOnCalcs 65122
+#define DBConsts_SDataSetUnidirectional 65123
+#define DBConsts_SUnassignedVar 65124
+#define DBConsts_SRecordNotFound 65125
+#define DBConsts_SFileNameBlank 65126
+#define DBConsts_SFieldNameTooLarge 65127
+#define DBConsts_SBcdOverflow 65128
+#define DBConsts_SInvalidBcdValue 65129
+#define DBConsts_SInvalidFormatType 65130
+#define DBConsts_SCouldNotParseTimeStamp 65131
+#define DBConsts_SInvalidSqlTimeStamp 65132
+#define ComConst_SOleError 65133
+#define ComConst_SNoMethod 65134
+#define ComConst_SVarNotObject 65135
+#define DBConsts_SExprIncorrect 65136
+#define DBConsts_SExprNothing 65137
+#define DBConsts_SExprTypeMis 65138
+#define DBConsts_SExprBadScope 65139
+#define DBConsts_SExprNoArith 65140
+#define DBConsts_SExprNotAgg 65141
+#define DBConsts_SExprBadConst 65142
+#define DBConsts_SExprNoAggFilter 65143
+#define DBConsts_SExprEmptyInList 65144
+#define DBConsts_SInvalidKeywordUse 65145
+#define DBConsts_STextFalse 65146
+#define DBConsts_STextTrue 65147
+#define DBConsts_SParameterNotFound 65148
+#define DBConsts_SInvalidVersion 65149
+#define DBConsts_SBadFieldType 65150
+#define DBConsts_SAggActive 65151
+#define DBConsts_SNotEditing 65152
+#define DBConsts_SDataSetClosed 65153
+#define DBConsts_SDataSetEmpty 65154
+#define DBConsts_SDataSetReadOnly 65155
+#define DBConsts_SNestedDataSetClass 65156
+#define DBConsts_SExprTermination 65157
+#define DBConsts_SExprNameError 65158
+#define DBConsts_SExprStringError 65159
+#define DBConsts_SExprInvalidChar 65160
+#define DBConsts_SExprNoLParen 65161
+#define DBConsts_SExprNoRParen 65162
+#define DBConsts_SExprNoRParenOrComma 65163
+#define DBConsts_SExprExpected 65164
+#define DBConsts_SExprBadField 65165
+#define DBConsts_SExprBadNullTest 65166
+#define DBConsts_SExprRangeError 65167
+#define DBConsts_SFieldRequired 65168
+#define DBConsts_SDataSetMissing 65169
+#define DBConsts_SInvalidCalcType 65170
+#define DBConsts_SFieldReadOnly 65171
+#define DBConsts_SFieldIndexError 65172
+#define DBConsts_SNoFieldIndexes 65173
+#define DBConsts_SNotIndexField 65174
+#define DBConsts_SIndexFieldMissing 65175
+#define DBConsts_SDuplicateIndexName 65176
+#define DBConsts_SNoIndexForFields 65177
+#define DBConsts_SIndexNotFound 65178
+#define DBConsts_SCircularDataLink 65179
+#define DBConsts_SLookupInfoError 65180
+#define DBConsts_SDataSourceChange 65181
+#define DBConsts_SNoNestedMasterSource 65182
+#define DBConsts_SDataSetOpen 65183
+#define DBConsts_SInvalidFieldKind 65184
+#define DBConsts_SUnknownFieldType 65185
+#define DBConsts_SFieldNameMissing 65186
+#define DBConsts_SDuplicateFieldName 65187
+#define DBConsts_SFieldNotFound 65188
+#define DBConsts_SFieldAccessError 65189
+#define DBConsts_SFieldValueError 65190
+#define DBConsts_SFieldRangeError 65191
+#define DBConsts_SBcdFieldRangeError 65192
+#define DBConsts_SInvalidIntegerValue 65193
+#define DBConsts_SInvalidBoolValue 65194
+#define DBConsts_SInvalidFloatValue 65195
+#define DBConsts_SFieldTypeMismatch 65196
+#define DBConsts_SFieldSizeMismatch 65197
+#define DBConsts_SInvalidVarByteArray 65198
+#define DBConsts_SFieldOutOfRange 65199
 #define ExtCtrls_clName3DLight 65200
 #define ExtCtrls_clNameWindow 65201
 #define ExtCtrls_clNameWindowFrame 65202
@@ -489,7 +489,7 @@
 #define ComStrs_sInsertError 65212
 #define ComStrs_sPageIndexError 65213
 #define WinHelpViewer_hNoKeyword 65214
-#define D7ComboBoxStringsGetPatch_RsPatchingFailed 65215
+#define DBConsts_SInvalidFieldSize 65215
 #define ExtCtrls_clNameBtnText 65216
 #define ExtCtrls_clNameCaptionText 65217
 #define ExtCtrls_clNameDefault 65218
@@ -1118,13 +1118,13 @@ BEGIN
 	IBXConst_SUpdateWrongDB,	"Updating wrong database"
 	IBXConst_SUpdateWrongTR,	"Updating wrong transaction. Unique transaction expected in set"
 	IBXConst_SDatabaseNotAssigned,	"Database not assigned"
-	MidConst_SFieldConstFail,	"Preparation of field constraint failed with error \"%s\""
-	MidConst_SDefExprFail,	"Preparation of default expression failed with error \"%s\""
-	MidConst_SNoEditsAllowed,	"Modifications are not allowed"
-	MidConst_SNoDeletesAllowed,	"Deletes are not allowed"
-	MidConst_SNoInsertsAllowed,	"Inserts are not allowed"
-	MidConst_SConnectionMissing,	"Requires Connection before opening"
-	MidConst_SNoCircularConnection,	"Circular reference to Connection not allowed"
+	SqlConst_SDRIVERRESTRICTED,	"dbExpress Error: Application is not licensed to use this feature"
+	SqlConst_SLOCALTRANSACTIVE,	"dbExpress Error: Local Transaction already active"
+	SqlConst_SMULTIPLETRANSNOTENABLED,	"dbExpress Error: Multiple Transactions not Enabled"
+	SqlConst_SMultiConnNotSupported,	"Multiple Connections not supported by %s driver"
+	SqlConst_SDriverNotInConfigFile,	"Driver (%s) not found in Cfg file (%s)"
+	SqlConst_SObjectTypenameRequired,	"Object type name required as parameter value"
+	SqlConst_SCannotCreateFile,	"Cannot create file %s"
 	IBXConst_SUnknownError,	"Unknown error"
 	IBXConst_SInterBaseMissing,	"InterBase library gds32.dll not found in the path. Please install InterBase to use this functionality"
 	IBXConst_SInterBaseInstallMissing,	"InterBase Install DLL ibinstall.dll not found in the path. Please install InterBase 6 to use this functionality"
@@ -1134,22 +1134,8 @@ BEGIN
 	IBXConst_SFileAccessError,	"Temporary file access error"
 	IBXConst_SConnectionTimeout,	"Database connection timed out"
 	IBXConst_SCannotSetDatabase,	"Cannot set database"
-	SqlConst_SMULTIPLETRANSNOTENABLED,	"dbExpress Error: Multiple Transactions not Enabled"
-	SqlConst_SMultiConnNotSupported,	"Multiple Connections not supported by %s driver"
-	SqlConst_SDriverNotInConfigFile,	"Driver (%s) not found in Cfg file (%s)"
-	SqlConst_SObjectTypenameRequired,	"Object type name required as parameter value"
-	SqlConst_SCannotCreateFile,	"Cannot create file %s"
-	MidConst_SNoDataProvider,	"Missing data provider or data packet"
-	MidConst_SInvalidDataPacket,	"Invalid data packet"
-	MidConst_SRefreshError,	"Must apply updates before refreshing data"
-	MidConst_SNoCircularReference,	"Circular provider references not allowed"
-	MidConst_SErrorLoadingMidas,	"Error loading MIDAS.DLL"
-	MidConst_SCannotCreateDataSet,	"No fields defined.  Cannot create dataset"
-	MidConst_SNoConnectToBroker,	"Connection not allowed to TConnectionBroker"
-	MidConst_SNoParentConnection,	"ParentConnection is not assigned"
-	MidConst_SConstraintFailed,	"Record or field constraint failed."
-	MidConst_SField,	"Field"
-	MidConst_SRecConstFail,	"Preparation of record constraint failed with error \"%s\""
+	SqlConst_SNOMEMORY,	"dbExpress Error: Insufficient Memory for Operation"
+	SqlConst_SINVALIDFLDTYPE,	"dbExpress Error: Invalid Field Type"
 	SqlConst_SINVALIDHNDL,	"dbExpress Error: Invalid Handle"
 	SqlConst_SINVALIDTIME,	"dbExpress Error: Invalid Time"
 	SqlConst_SNOTSUPPORTED,	"dbExpress Error: Operation Not Supported"
@@ -1164,8 +1150,8 @@ BEGIN
 	SqlConst_SINVALIDXISOLEVEL,	"dbExpress Error: Invalid Transaction Isolation Level"
 	SqlConst_SINVALIDTXNID,	"dbExpress Error: Invalid Transaction ID"
 	SqlConst_SDUPLICATETXNID,	"dbExpress Error: Duplicate Transaction ID"
-	SqlConst_SDRIVERRESTRICTED,	"dbExpress Error: Application is not licensed to use this feature"
-	SqlConst_SLOCALTRANSACTIVE,	"dbExpress Error: Local Transaction already active"
+	SqlConst_SMissingDataBaseName,	"Missing Database property"
+	SqlConst_SMissingDriverName,	"Missing DriverName property"
 	SqlConst_SPrepareError,	"Unable to execute Query"
 	SqlConst_SObjectNameError,	"Table/Procedure not found"
 	SqlConst_SSQLDataSetOpen,	"Unable to determine field names for %s"
@@ -1180,13 +1166,13 @@ BEGIN
 	SqlConst_SStoredProcsNotSupported,	"Stored Procedures not supported by '%s' Server"
 	SqlConst_SPackagesNotSupported,	"Packages are not supported by '%s' Server"
 	SqlConst_SDBXUNKNOWNERROR,	"DBX Error: No Mapping for Error Code Found"
-	SqlConst_SNOMEMORY,	"dbExpress Error: Insufficient Memory for Operation"
-	SqlConst_SINVALIDFLDTYPE,	"dbExpress Error: Invalid Field Type"
+	MidConst_SNoInsertsAllowed,	"Inserts are not allowed"
+	MidConst_SConnectionMissing,	"Requires Connection before opening"
+	MidConst_SNoCircularConnection,	"Circular reference to Connection not allowed"
+	D7ComboBoxStringsGetPatch_RsPatchingFailed,	"TCustomComboBoxStrings.Get patching failed."
+	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
+	JConsts_sJPEGError,	"JPEG error #%d"
 	JConsts_sJPEGImageFile,	"JPEG Image File"
-	ComConst_SOleError,	"OLE error %.8x"
-	ComConst_SNoMethod,	"Method '%s' not supported by automation object"
-	ComConst_SVarNotObject,	"Variant does not reference an automation object"
-	ComConst_STooManyParams,	"Dispatch methods do not support more than 64 parameters"
 	SqlConst_SLoginError,	"Cannot connect to database '%s'"
 	SqlConst_SMonitorActive,	"Cannot change connection on Active Monitor"
 	SqlConst_SDatabaseOpen,	"Cannot perform this operation on an open connection"
@@ -1196,9 +1182,22 @@ BEGIN
 	SqlConst_SEmptySQLStatement,	"No SQL statement available"
 	SqlConst_SNoParameterValue,	"No value for parameter '%s'"
 	SqlConst_SNoSqlStatement,	"Missing query, table name or procedure name"
-	SqlConst_SMissingDataBaseName,	"Missing Database property"
-	SqlConst_SMissingDriverName,	"Missing DriverName property"
-	DBConsts_SAggActive,	"Property may not be modified while aggregate is active"
+	ComConst_STooManyParams,	"Dispatch methods do not support more than 64 parameters"
+	MidConst_SNoDataProvider,	"Missing data provider or data packet"
+	MidConst_SInvalidDataPacket,	"Invalid data packet"
+	MidConst_SRefreshError,	"Must apply updates before refreshing data"
+	MidConst_SNoCircularReference,	"Circular provider references not allowed"
+	MidConst_SErrorLoadingMidas,	"Error loading MIDAS.DLL"
+	MidConst_SCannotCreateDataSet,	"No fields defined.  Cannot create dataset"
+	MidConst_SNoConnectToBroker,	"Connection not allowed to TConnectionBroker"
+	MidConst_SNoParentConnection,	"ParentConnection is not assigned"
+	MidConst_SConstraintFailed,	"Record or field constraint failed."
+	MidConst_SField,	"Field"
+	MidConst_SRecConstFail,	"Preparation of record constraint failed with error \"%s\""
+	MidConst_SFieldConstFail,	"Preparation of field constraint failed with error \"%s\""
+	MidConst_SDefExprFail,	"Preparation of default expression failed with error \"%s\""
+	MidConst_SNoEditsAllowed,	"Modifications are not allowed"
+	MidConst_SNoDeletesAllowed,	"Deletes are not allowed"
 	DBConsts_SProviderSQLNotSupported,	"SQL not supported: %s"
 	DBConsts_SProviderExecuteNotSupported,	"Execute not supported: %s"
 	DBConsts_SExprNoAggOnCalcs,	"Field '%s' is not the correct type of calculated field to be used in an aggregate, use an internalcalc"
@@ -1212,9 +1211,9 @@ BEGIN
 	DBConsts_SInvalidFormatType,	"Invalid format type for BCD"
 	DBConsts_SCouldNotParseTimeStamp,	"Could not parse SQL TimeStamp string"
 	DBConsts_SInvalidSqlTimeStamp,	"Invalid SQL date/time values"
-	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
-	JConsts_sJPEGError,	"JPEG error #%d"
-	DBConsts_SExprRangeError,	"Constant out of range"
+	ComConst_SOleError,	"OLE error %.8x"
+	ComConst_SNoMethod,	"Method '%s' not supported by automation object"
+	ComConst_SVarNotObject,	"Variant does not reference an automation object"
 	DBConsts_SExprIncorrect,	"Incorrectly formed filter expression"
 	DBConsts_SExprNothing,	"nothing"
 	DBConsts_SExprTypeMis,	"Type mismatch in expression"
@@ -1230,7 +1229,7 @@ BEGIN
 	DBConsts_SParameterNotFound,	"Parameter '%s' not found"
 	DBConsts_SInvalidVersion,	"Unable to load bind parameters"
 	DBConsts_SBadFieldType,	"Field '%s' is of an unsupported type"
-	DBConsts_SDataSetOpen,	"Cannot perform this operation on an open dataset"
+	DBConsts_SAggActive,	"Property may not be modified while aggregate is active"
 	DBConsts_SNotEditing,	"Dataset not in edit or insert mode"
 	DBConsts_SDataSetClosed,	"Cannot perform this operation on a closed dataset"
 	DBConsts_SDataSetEmpty,	"Cannot perform this operation on an empty dataset"
@@ -1246,7 +1245,7 @@ BEGIN
 	DBConsts_SExprExpected,	"Expression expected but %s found"
 	DBConsts_SExprBadField,	"Field '%s' cannot be used in a filter expression"
 	DBConsts_SExprBadNullTest,	"NULL only allowed with '=' and '<>'"
-	DBConsts_SFieldOutOfRange,	"Value of field '%s' is out of range"
+	DBConsts_SExprRangeError,	"Constant out of range"
 	DBConsts_SFieldRequired,	"Field '%s' must have a value"
 	DBConsts_SDataSetMissing,	"Field '%s' has no dataset"
 	DBConsts_SInvalidCalcType,	"Field '%s' cannot be a calculated or lookup field"
@@ -1262,7 +1261,7 @@ BEGIN
 	DBConsts_SLookupInfoError,	"Lookup information for field '%s' is incomplete"
 	DBConsts_SDataSourceChange,	"DataSource cannot be changed"
 	DBConsts_SNoNestedMasterSource,	"Nested datasets cannot have a MasterSource"
-	DBConsts_SInvalidFieldSize,	"Invalid field size"
+	DBConsts_SDataSetOpen,	"Cannot perform this operation on an open dataset"
 	DBConsts_SInvalidFieldKind,	"Invalid FieldKind"
 	DBConsts_SUnknownFieldType,	"Field '%s' is of an unknown type"
 	DBConsts_SFieldNameMissing,	"Field name missing"
@@ -1278,6 +1277,7 @@ BEGIN
 	DBConsts_SFieldTypeMismatch,	"Type mismatch for field '%s', expecting: %s actual: %s"
 	DBConsts_SFieldSizeMismatch,	"Size mismatch for field '%s', expecting: %d actual: %d"
 	DBConsts_SInvalidVarByteArray,	"Invalid variant type or size for field '%s'"
+	DBConsts_SFieldOutOfRange,	"Value of field '%s' is out of range"
 	ExtCtrls_clName3DLight,	"3D Light"
 	ExtCtrls_clNameWindow,	"Window Background"
 	ExtCtrls_clNameWindowFrame,	"Window Frame"
@@ -1293,7 +1293,7 @@ BEGIN
 	ComStrs_sInsertError,	"Unable to insert an item"
 	ComStrs_sPageIndexError,	"%d is an invalid PageIndex value.  PageIndex must be between 0 and %d"
 	WinHelpViewer_hNoKeyword,	"No help keyword specified."
-	D7ComboBoxStringsGetPatch_RsPatchingFailed,	"TCustomComboBoxStrings.Get patching failed."
+	DBConsts_SInvalidFieldSize,	"Invalid field size"
 	ExtCtrls_clNameBtnText,	"Button Text"
 	ExtCtrls_clNameCaptionText,	"Caption Text"
 	ExtCtrls_clNameDefault,	"Default"

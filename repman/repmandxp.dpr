@@ -22,7 +22,7 @@ program repmandxp;
 
 uses
   Forms,
-{$IFDEF USEVARIANS}
+{$IFDEF USEVARIANTS}
   midaslib,
 {$ENDIF}
   rpmdfmainvcl in '..\rpmdfmainvcl.pas' {FRpMainFVCL},

@@ -8,9 +8,10 @@ all: clean packages reportman webplugin prerelease
 
 reportman: reportmanutils reportmanserver reportmanutilsxp reportmanserverxp
 
-webplugin:   clean
+webplugin:   
+        make clean_noexe
         cd webactivex
-        $(COMPILE)  WebReportManX.dpr
+        $(COMPILE)  -DFORWEBAX WebReportManX.dpr
         generatecab
         cd ..
 
@@ -59,12 +60,6 @@ prerelease:
         -mkdir ..\prerelease\tutorial
         xcopy /s doc\tutorial ..\prerelease\tutorial
         xcopy /s doc\doc ..\prerelease\doc
-
-webx:   clean
-        cd webactivex
-        $(COMPILE)  -DFORWEBAX WebReportManX.dpr
-        generatecab
-        cd ..
 
 
 reportmanutils:
@@ -176,15 +171,11 @@ designpackages:
         $(COMPILE) rppackdesign_del.dpk
 
 
-clean:
+clean_noexe:
         -del /s *.dcu
         -del /s *.dpu
         -del /s *.~*
         -del /s *.o
-        -del /s *.exe
-        -del /s repman\*.dll
-        -del /s server\*.bin
-        -del /s server\*.dll
         -del /s *.dcp
         -del /s *.ow
         -del /s *.ppw
@@ -193,11 +184,17 @@ clean:
 	  copy builderclx\antivcl.hpp .	
         -del /s *.obj
         -del /s *.tds
-        -del /s *.ocx
         -del *.bpl
         -del *.bpi
         -del activex\*.lib
 
+
+clean:  clean_noexe
+        -del /s *.exe
+        -del /s server\*.bin
+        -del /s repman\*.dll
+        -del /s server\*.dll
+        -del /s *.ocx
 
 
 

@@ -96,7 +96,7 @@ PackageDLLOutputDir=
 PackageDCPOutputDir=
 SearchPath=
 Packages=vcl;rtl;vclx;dbrtl;dsnap;rppack_del;ibxpress;adortl;dbexpress;bdertl;vcldb;vcldbx;CLXIB;VCLIB;visualclx;visualdbclx;inet;xmlrtl;vclie;inetdbbde;inetdbxpress
-Conditionals=
+Conditionals=FORWEBAX
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
@@ -131,7 +131,7 @@ IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
 MinorVer=6
-Release=5
+Release=6
 Build=0
 Debug=0
 PreRelease=0
@@ -143,13 +143,13 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir (toni@pala.com)
 FileDescription=Report Manager Active X Control
-FileVersion=1.6.5.0
+FileVersion=1.6.6.0
 InternalName=WeReportManX.ocx
 LegalCopyright=Copyright 2003, Toni Martir (toni@pala.com)
 LegalTrademarks=
 OriginalFilename=
 ProductName=Report Manager IE Plugin
-ProductVersion=1.6.4.0
+ProductVersion=1.6.6.0
 Comments=
 OleSelfRegister=1
 [HistoryLists\hlConditionals]

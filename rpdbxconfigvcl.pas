@@ -31,6 +31,9 @@ uses SysUtils, Classes,
   SQLExpr,
   DBXpress,
 {$ENDIF}
+{$IFDEF USEZEOS}
+ ZDbcIntfs,ZConnection,
+{$ENDIF}
   DB,rpmdconsts, ToolWin;
 
 const
@@ -336,10 +339,12 @@ begin
 end;
 
 procedure TFRpDBXConfigVCL.BConnectClick(Sender: TObject);
-{$IFDEF USESQLEXPRESS}
 var
  conname:string;
  funcname,drivername,vendorlib,libraryname:string;
+{$IFDEF USEZEOS}
+ FZConnection:TZConnection;
+ transiso:String;
 {$ENDIF}
 begin
 {$IFDEF USESQLEXPRESS}
@@ -352,15 +357,53 @@ begin
  SQLConnection1.ConnectionName:=conname;
  ConAdmin.GetConnectionParams(conname,SQLConnection1.params);
  drivername:=SQLConnection1.params.Values['DriverName'];
- funcname:=ConAdmin.Drivers.ReadString(drivername,'GetDriverFunc','');
- ConAdmin.GetDriverLibNames(drivername,LibraryName,VendorLib);
- SQLConnection1.DriverName:=drivername;
- SQLConnection1.VendorLib:=vendorlib;
- SQLConnection1.LibraryName:=libraryname;
- SQLConnection1.GetDriverFunc:=funcname;
- SQLConnection1.Connected:=true;
- ShowMessage(SRpConnectionOk);
- SQLConnection1.Connected:=false;
+{$IFDEF USEZEOS}
+ if drivername='ZeosLib' then
+ begin
+  FZConnection:=TZConnection.Create(nil);
+  try
+   FZConnection.LoginPrompt:=False;
+   FZConnection.HostName:=SQLConnection1.params.Values['HostName'];
+   FZConnection.Protocol:=SQLConnection1.params.Values['Database Protocol'];
+   FZConnection.Database:=SQLConnection1.params.Values['Database'];
+   FZConnection.User:=SQLConnection1.params.Values['User_Name'];
+   FZConnection.Password:=SQLConnection1.params.Values['Password'];
+   if Length(Trim(SQLConnection1.params.Values['Port']))>0 then
+    FZConnection.Port:=StrToInt(SQLConnection1.params.Values['Port']);
+   transiso:=SQLConnection1.params.Values['Zeos TransIsolation'];
+   if (transiso='ReadCommited') then
+    FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiReadCommitted
+   else
+   if (transiso='ReadUnCommited') then
+    FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiReadUnCommitted
+   else
+   if (transiso='RepeatableRead') then
+    FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiRepeatableRead
+   else
+   if (transiso='Serializable') then
+    FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiSerializable
+   else
+    FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiNone;
+   FZConnection.Connected:=True;
+   ShowMessage(SRpConnectionOk);
+   FZConnection.Connected:=False;
+  finally
+   FZConnection.free;
+  end;
+ end
+ else
+{$ENDIF}
+ begin
+  funcname:=ConAdmin.Drivers.ReadString(drivername,'GetDriverFunc','');
+  ConAdmin.GetDriverLibNames(drivername,LibraryName,VendorLib);
+  SQLConnection1.DriverName:=drivername;
+  SQLConnection1.VendorLib:=vendorlib;
+  SQLConnection1.LibraryName:=libraryname;
+  SQLConnection1.GetDriverFunc:=funcname;
+  SQLConnection1.Connected:=true;
+  ShowMessage(SRpConnectionOk);
+  SQLConnection1.Connected:=false;
+ end;
 {$ENDIF}
 end;
 
