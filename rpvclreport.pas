@@ -19,11 +19,18 @@
 
 unit rpvclreport;
 
+{$I rpconf.inc}
+
 interface
+
 
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
  rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview,
- rpexceldriver,rpfmainmetaviewvcl,rpmetafile,rptypes;
+ rpexceldriver,
+{$IFNDEF BUILDER4}
+ rpfmainmetaviewvcl,
+{$ENDIF}
+ rpmetafile,rptypes;
 
 type
  TVCLReport=class(TCBaseReport)
@@ -125,13 +132,16 @@ begin
 end;
 
 procedure TVCLReport.InternalExecuteRemote(metafile:TRpMetafileReport);
+{$IFNDEF BUILDER4}
 var
  allpages,collate:boolean;
  frompage,topage,copies:integer;
  doprint:boolean;
+{$ENDIF}
 begin
  inherited InternalExecuteRemote(metafile);
 
+{$IFNDEF BUILDER4}
  if Preview then
  begin
   rpfmainmetaviewvcl.PreviewMetafile(metafile,nil,true);
@@ -153,6 +163,7 @@ begin
    rpgdidriver.PrintMetafile(metafile,Title,ShowProgress,allpages,frompage,topage,copies,collate,GetDeviceFontsOption(metafile.PrinterSelect),metafile.PrinterSelect)
   end;
  end;
+{$ENDIF}
 end;
 
 end.

@@ -126,7 +126,6 @@ contains
   rpfmetaviewvcl in 'rpfmetaviewvcl.pas' {FRpMetaVCL: TFrame},
   rpwebmetaclient in 'rpwebmetaclient.pas',
   rpmdclitreevcl in 'rpmdclitreevcl.pas' {FRpCliTreeVCL: TFrame},
-  rpmdrepclient in 'rpmdrepclient.pas' {modclient: TDataModule},
   rpmdprotocol in 'rpmdprotocol.pas',
   rpmdsysinfo in 'rpmdsysinfo.pas' {FRpSysInfo},
   rpexceldriver in 'rpexceldriver.pas' {FRpExcelProgress},

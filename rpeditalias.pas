@@ -27,7 +27,8 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ExtCtrls, ComCtrls, ToolWin, ActnList,rpalias,
-  Dsgnintf,TypInfo,DB,rpdatainfo,rpeditconnvcl,
+  Dsgnintf,TypInfo,DB,rpdatainfo,
+  rpeditconnvcl,
   ImgList, StdCtrls;
 
 type
@@ -268,7 +269,7 @@ begin
   exit;
  end;
  oldindex:=LAliases.ItemIndex;
- rpalias1.List.Delete(LAliases.ItemIndex);
+ rpalias1.List.items[LAliases.itemindex].free;
  UpdateList;
  dec(oldindex);
  if oldindex<0 then

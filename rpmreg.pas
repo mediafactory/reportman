@@ -47,12 +47,12 @@ begin
 {$IFDEF USEVCL}
   RegisterComponents('Reportman', [TVCLReport]);
   RegisterPropertyEditor(TypeInfo(TRpAliasList),TRpAlias,'',TRpAliasPropEditor);
-  RegisterPropertyEditor(TypeInfo(TRpDatabaseInfoList),TRpAlias,'',TRpConnectionPropEditor);
 {$ENDIF}
 {$IFNDEF USEVARIANTS}
 {$IFNDEF BUILDER4}
   RegisterComponents('Reportman', [TRpRulerVCL]);
   RegisterComponents('Reportman', [TRpDesignerVCL]);
+  RegisterPropertyEditor(TypeInfo(TRpDatabaseInfoList),TRpAlias,'',TRpConnectionPropEditor);
 {$ENDIF}
 {$ENDIF}
 end;

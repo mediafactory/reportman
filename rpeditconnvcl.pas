@@ -26,7 +26,11 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ExtCtrls, ComCtrls, ToolWin, ActnList,rpalias,
-  DB,rpdatainfo,rpdbxconfigvcl,rpmdconsts,
+  DB,rpdatainfo,
+{$IFNDEF BUILDER4}
+  rpdbxconfigvcl,rpmdfopenlibvcl,
+{$ENDIF}
+  rpmdconsts,
 {$IFDEF USEADO}
   adodb,
 {$ENDIF}
@@ -98,7 +102,6 @@ function ShowModifyConnections(Connections:TRpDatabaseInfoList):Boolean;
 
 implementation
 
-uses rpmdfopenlibvcl;
 
 {$R *.DFM}
 
@@ -183,7 +186,7 @@ begin
   exit;
  end;
  oldindex:=LConnections.ItemIndex;
- rpalias1.Connections.Delete(LConnections.ItemIndex);
+ rpalias1.Connections.Items[LConnections.ItemIndex].free;
  UpdateConList;
  dec(oldindex);
  if oldindex<0 then
@@ -286,12 +289,18 @@ end;
 procedure TFRpEditConVCL.FormCreate(Sender: TObject);
 begin
  rpalias1:=TRpAlias.Create(Self);
+{$IFDEF BUILDER4}
+ BConfig.Visible:=False;
+ BBrowse.Visible:=False;
+{$ENDIF}
 end;
 
 
 procedure TFRpEditConVCL.BConfigClick(Sender: TObject);
 begin
+{$IFNDEF BUILDER4}
  ShowDBXConfig(TRpDbDriver(ComboDriver.ItemIndex) in [rpdataibx,rpdataibo,rpdatamybase]);
+{$ENDIF}
  conadmin.free;
  conadmin:=TRPCOnnAdmin.Create;
 // conadmin.GetConnectionNames(ComboAvailable.Items,'');
@@ -341,8 +350,10 @@ begin
   exit;
  if LConnections.ItemIndex<0 then
   exit;
+{$IFNDEF BUILDER4}
  dbitem:=rpalias1.Connections.Items[LConnections.ItemIndex];
  SelectReportFromLibrary(dbitem);
+{$ENDIF}
 end;
 
 end.

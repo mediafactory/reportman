@@ -7,6 +7,8 @@ object modclient: Tmodclient
   Height = 176
   Width = 278
   object RepClient: TIdTCPClient
+    MaxLineAction = maException
+    ReadTimeout = 0
     OnDisconnected = RepClientDisconnected
     Port = 3060
     Left = 36

@@ -262,7 +262,7 @@ var
 implementation
 
 var
-  cajpeg:array [0..10] of char=(chr($FF),chr($D8),chr($FF),chr($E0),chr($0),chr($10),'J','F','I','F',chr(0));
+//  cajpeg:array [0..10] of char=(chr($FF),chr($D8),chr($FF),chr($E0),chr($0),chr($10),'J','F','I','F',chr(0));
  printerconfigfile:TMemInifile;
 
 {$IFDEF MSWINDOWS}

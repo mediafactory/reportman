@@ -24,7 +24,10 @@ interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,
  rpalias,rpsubreport,rpsection,rpprintitem,rptypes,
- rpmdrepclient,rpmetafile;
+{$IFNDEF BUILDER4}
+ rpmdrepclient,
+{$ENDIF}
+ rpmetafile;
 
 type
  TCBaseReport=class(TComponent)
@@ -256,10 +259,13 @@ begin
 end;
 
 procedure TCBaseReport.ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
+{$IFNDEF BUILDER4}
 var
  client:Tmodclient;
  metafile:TRpMetafileReport;
+{$ENDIF}
 begin
+{$IFNDEF BUILDER4}
  client:=Connect(hostname,user,password,port);
  try
   metafile:=TRpMetafileReport.Create(nil);
@@ -279,6 +285,7 @@ begin
  finally
   Disconnect(client);
  end;
+{$ENDIF}
 end;
 
 end.
