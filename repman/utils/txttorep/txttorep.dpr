@@ -56,9 +56,8 @@ begin
   begin
    sourcefile:='';
    destinationfile:='';
-   if ParamStr(1)<>'-stdin' then
+   if ParamStr(1)='-stdin' then
    begin
-    sourcefile:=ParamStr(1);
     if ParamCount>1 then
      destinationfile:=ParamStr(2);
    end

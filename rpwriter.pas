@@ -33,7 +33,7 @@ implementation
 
 procedure FileReportToPlainText(reportfile,plainfile:string);
 var
- deststream:TFileStream;
+ deststream:TStream;
  stream,astream:TMemoryStream;
 {$IFDEF USEZLIB}
  memstream:TMemoryStream;
@@ -88,22 +88,18 @@ begin
      end;
      memstream.Seek(0,soFrombeginning);
      if Length(plainfile)>0 then
-     begin
-      deststream:=TFileStream.Create(plainfile,fmCreate);
-      try
-       ObjectBinaryToText(memstream,deststream);
-      finally
-       deststream.Free;
-      end
-     end
+      deststream:=TFileStream.Create(plainfile,fmCreate)
      else
-     begin
-      deststream:=TFileStream.Create(plainfile,fmCreate);
-      try
-       ObjectBinaryToText(memstream,deststream);
-      finally
-       deststream.Free;
-      end
+      deststream:=TMemoryStream.Create;
+     try
+      ObjectBinaryToText(memstream,deststream);
+      if Length(plainfile)<1 then
+      begin
+       deststream.Seek(0,soFromBeginning);
+       WriteStreamToStdOutput(deststream);
+      end;
+     finally
+      deststream.Free;
      end;
     finally
      zlibs.free;
@@ -116,12 +112,17 @@ begin
 {$ENDIF}
   if theformat=1 then
   begin
-   deststream:=TFileStream.Create(plainfile,fmCreate);
-   try
-    stream.SaveToStream(deststream);
-   finally
-    deststream.Free;
-   end;
+   if Length(plainfile)>0 then
+   begin
+    deststream:=TFileStream.Create(plainfile,fmCreate);
+    try
+     stream.SaveToStream(deststream);
+    finally
+     deststream.Free;
+    end;
+   end
+   else
+    WriteStreamToStdOutput(stream);
   end
   else
   begin
@@ -129,7 +130,14 @@ begin
    try
     ObjectBinaryToText(stream,astream);
     astream.Seek(0,soFromBeginning);
-    WriteStreamToStdOutput(astream);
+    if Length(plainfile)>0 then
+    begin
+     astream.SaveToFile(plainfile);
+    end
+    else
+    begin
+     WriteStreamToStdOutput(astream);
+    end;
    finally
     astream.Free;
    end;

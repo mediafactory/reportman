@@ -4,42 +4,50 @@ REPORTMANPATH=c:\prog\toni\cvsroot\reportman\reportman;$(DELPHIPATH)\OCX\Servers
 PACKAGESPATH="$(DELPHIPATH)\Projects\Bpl"
 COMPILE="$(DELPHIPATH)\bin\dcc32" -LN$(PACKAGESPATH) -LE$(PACKAGESPATH) -U"$(REPORTMANPATH);$(DELPHIPATH)\projects\bpl" -I"$(REPORTMANPATH)"
 IMPLIB="c:\prog\cbuilder6\bin\implib" 
-all: clean packages reportman release
+all: clean packages reportman prerelease
 
 reportman: reportmanutils reportmanserver reportmanutilsxp reportmanserverxp
 
-release:
-        del /S ..\release
-        mkdir ..\release
-        copy repman\repmandxp.exe ..\release
-        copy repman\repmandxp.exe.manifest ..\release
-        copy repman\repmand.exe ..\release
-        copy repman\utils\printrep\printrep.exe ..\release
-        copy repman\utils\printrep\printrepxp.exe ..\release
-        copy repman\utils\printrep\printrepxp.exe.manifest ..\release
-        copy repman\utils\metaview\metaviewxp.exe ..\release
-        copy repman\utils\metaview\metaviewxp.exe.manifest ..\release
-        copy repman\utils\metaview\metaview.exe ..\release
-        copy repman\utils\printrep\printreptopdf.exe ..\release
-        copy repman\utils\txttorep\txttorep.exe ..\release
-        copy repman\utils\reptotxt\reptotxt.exe ..\release
-        copy repman\utils\rptranslator\rptranslate.exe ..\release
-        copy repman\utils\rptranslator\rptranslate.exe.manifest ..\release
-        copy repman\utils\rptranslator\unixtodos.exe ..\release
-        copy server\app\reportserverapp.exe ..\release
-        copy server\app\reportserverappxp.exe ..\release
-        copy server\app\reportserverappxp.exe.manifest ..\release
-        copy server\app\reportservercon.exe ..\release
-        copy server\app\repserverconfig.exe ..\release
-        copy server\app\repserverconfigxp.exe ..\release
-        copy server\app\repserverconfigxp.exe.manifest ..\release
-        copy server\service\repserverservice.exe ..\release
-        copy server\service\repserviceinstall.exe ..\release
-        copy server\service\repserviceinstall.exe.manifest ..\release
-        copy server\web\repwebexe.exe ..\release
-        copy server\web\repwebserver.dll ..\release
-        copy webactivex\WebReportManX.cab ..\release
-        copy activex\ReportMan.ocx ..\release
+prerelease:
+        -del /S /Q ..\prerelease
+        -mkdir ..\prerelease
+        copy repman\repmandxp.exe ..\prerelease
+        copy repman\repmandxp.exe.manifest ..\prerelease
+        copy repman\repmand.exe ..\prerelease
+        copy repman\dbxdrivers.ini ..\prerelease
+        copy repman\dbxconnections.ini ..\prerelease
+        copy repman\repsamples\sample4.rep ..\prerelease
+        copy repman\repsamples\biolife.cds ..\prerelease
+        copy drivers\win32\*.* ..\prerelease
+        copy repman\utils\printrep\printrep.exe ..\prerelease
+        copy repman\utils\printrep\printrepxp.exe ..\prerelease
+        copy repman\utils\printrep\printrepxp.exe.manifest ..\prerelease
+        copy repman\utils\metaview\metaviewxp.exe ..\prerelease
+        copy repman\utils\metaview\metaviewxp.exe.manifest ..\prerelease
+        copy repman\utils\metaview\metaview.exe ..\prerelease
+        copy repman\utils\printreptopdf\printreptopdf.exe ..\prerelease
+        copy repman\utils\metaprint\metaprint.exe ..\prerelease
+        copy repman\utils\metaprint\metaprintxp.exe ..\prerelease
+        copy repman\utils\metaprint\metaprintxp.exe.manifest ..\prerelease
+        copy repman\utils\txttorep\txttorep.exe ..\prerelease
+        copy repman\utils\reptotxt\reptotxt.exe ..\prerelease
+        copy repman\utils\rptranslator\rptranslate.exe ..\prerelease
+        copy repman\utils\rptranslator\rptranslate.exe.manifest ..\prerelease
+        copy repman\utils\unixtodos\unixtodos.exe ..\prerelease
+        copy server\app\reportserverapp.exe ..\prerelease
+        copy server\app\reportserverappxp.exe ..\prerelease
+        copy server\app\reportserverappxp.exe.manifest ..\prerelease
+        copy server\app\reportservercon.exe ..\prerelease
+        copy server\config\repserverconfig.exe ..\prerelease
+        copy server\config\repserverconfigxp.exe ..\prerelease
+        copy server\config\repserverconfigxp.exe.manifest ..\prerelease
+        copy server\service\repserverservice.exe ..\prerelease
+        copy server\service\repserviceinstall.exe ..\prerelease
+        copy server\service\repserviceinstall.exe.manifest ..\prerelease
+        copy server\web\repwebexe.exe ..\prerelease
+        copy server\web\repwebserver.dll ..\prerelease
+        copy webactivex\WebReportManX.cab ..\prerelease
+        copy activex\ReportMan.ocx ..\prerelease
 
 webx:   clean
         cd webactivex
