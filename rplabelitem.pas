@@ -493,6 +493,7 @@ begin
    end;
   rpGroupChange:
    begin
+    FUpdated:=false;
     FOldString:='';
     if (FAggregate=rpAgGroup) then
     begin
@@ -512,6 +513,7 @@ begin
   rpPageChange:
    begin
     FOldString:='';
+    FUpdated:=False;
    end;
   rpInvalidateValue:
    begin
