@@ -1137,7 +1137,7 @@ end;
 function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
 begin
  if Assigned(ANode.Parent) then
-  Result:=GetFullFileName(ANode.Parent)+dirseparator+ANode.Text
+  Result:=GetFullFileName(ANode.Parent,dirseparator)+dirseparator+ANode.Text
  else
   Result:=ANode.Text;
 end;

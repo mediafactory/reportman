@@ -60,6 +60,8 @@ type
     Label1: TLabel;
     ComboAlias: TComboBox;
     imalist: TImageList;
+    ComboPort: TComboBox;
+    LPort: TLabel;
     procedure BExecuteClick(Sender: TObject);
     procedure BConnectClick(Sender: TObject);
     procedure BDisconnectClick(Sender: TObject);
@@ -113,6 +115,7 @@ begin
  AParameters.Caption:=TranslateStr(135,AParameters.Caption);
  AParameters.Hint:=TranslateStr(136,AParameters.Hint);
  paramscomp:=TRpParamComp.Create(Self);
+ LPort.Caption:=TranslateStr(829,LPort.Caption);
 
  InitialWidth:=Width;
 end;
@@ -198,7 +201,7 @@ end;
 
 procedure TFRpCliTree.BConnectClick(Sender: TObject);
 begin
- amod:=Connect(ComboHost.Text,EUserName.Text,EPassword.Text);
+ amod:=Connect(ComboHost.Text,EUserName.Text,EPassword.Text,StrToInt(ComboPort.Text));
  amod.OnAuthorization:=OnAuthorization;
  amod.OnExecute:=OnExecute;
  amod.asynchronous:=asynchrohous;

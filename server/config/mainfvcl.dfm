@@ -27,6 +27,13 @@ object FMainVCL: TFMainVCL
     Height = 13
     Caption = 'Host'
   end
+  object LPort: TLabel
+    Left = 292
+    Top = 12
+    Width = 19
+    Height = 13
+    Caption = 'Port'
+  end
   object GUser: TGroupBox
     Left = 8
     Top = 44
@@ -148,9 +155,9 @@ object FMainVCL: TFMainVCL
       end
       object BDeleteUser: TButton
         Left = 316
-        Top = 72
+        Top = 76
         Width = 133
-        Height = 29
+        Height = 25
         Caption = 'Delete'
         TabOrder = 3
         OnClick = BDeleteUserClick
@@ -159,7 +166,7 @@ object FMainVCL: TFMainVCL
         Left = 316
         Top = 17
         Width = 133
-        Height = 28
+        Height = 24
         Caption = 'Add'
         TabOrder = 1
         OnClick = BAddUserClick
@@ -187,7 +194,7 @@ object FMainVCL: TFMainVCL
   object ComboHost: TComboBox
     Left = 92
     Top = 8
-    Width = 213
+    Width = 185
     Height = 21
     ItemHeight = 13
     TabOrder = 0
@@ -201,6 +208,17 @@ object FMainVCL: TFMainVCL
     Height = 53
     ItemHeight = 13
     TabOrder = 3
+  end
+  object ComboPort: TComboBox
+    Left = 340
+    Top = 8
+    Width = 77
+    Height = 21
+    ItemHeight = 13
+    TabOrder = 4
+    Text = '3060'
+    Items.Strings = (
+      '3060')
   end
   object Trans: TRpTranslator
     Active = False

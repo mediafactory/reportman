@@ -60,6 +60,8 @@ type
     Label1: TLabel;
     ComboAlias: TComboBox;
     imalist: TImageList;
+    LPort: TLabel;
+    ComboPort: TComboBox;
     procedure BExecuteClick(Sender: TObject);
     procedure BConnectClick(Sender: TObject);
     procedure BDisconnectClick(Sender: TObject);
@@ -113,6 +115,8 @@ begin
  AParameters.Caption:=TranslateStr(135,AParameters.Caption);
  AParameters.Hint:=TranslateStr(136,AParameters.Hint);
  paramscomp:=TRpParamComp.Create(Self);
+ AExecute.Hint:=TranslateStr(780,AExecute.Hint);
+ LPort.Caption:=TranslateStr(829,LPort.Caption);
 
  InitialWidth:=Width;
 end;
@@ -188,7 +192,7 @@ begin
     begin
      amod.asynchronous:=asynchrohous;
      // Execute with alias and report filename
-     afilename:=GetFullFileName(LTree.Selected)+'.rep';
+     afilename:=GetFullFileName(LTree.Selected,amod.dirseparator)+'.rep';
      amod.Execute(ComboAlias.Text,afilename);
     end;
    end;
@@ -198,7 +202,7 @@ end;
 
 procedure TFRpCliTreeVCL.BConnectClick(Sender: TObject);
 begin
- amod:=Connect(ComboHost.Text,EUserName.Text,EPassword.Text);
+ amod:=Connect(ComboHost.Text,EUserName.Text,EPassword.Text,StrToInt(ComboPort.Text));
  amod.OnAuthorization:=OnAuthorization;
  amod.OnExecute:=OnExecute;
  amod.asynchronous:=asynchrohous;
@@ -288,7 +292,7 @@ begin
     begin
      amod.asynchronous:=asynchrohous;
      // Execute with alias and report filename
-     afilename:=GetFullFileName(LTree.Selected)+'.rep';
+     afilename:=GetFullFileName(LTree.Selected,amod.dirseparator)+'.rep';
      amod.OpenReport(ComboAlias.Text,afilename);
     end;
    end;

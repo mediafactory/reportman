@@ -3,8 +3,8 @@ object FMain: TFMain
   Top = 103
   Width = 490
   Height = 426
-  HorzScrollBar.Range = 473
   VertScrollBar.Range = 417
+  HorzScrollBar.Range = 473
   ActiveControl = ComboHost
   BorderStyle = fbsDialog
   Caption = 'Report Manager Server configuration'
@@ -13,8 +13,8 @@ object FMain: TFMain
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 15
-  TextWidth = 7
+  TextHeight = 13
+  TextWidth = 6
   object GUser: TGroupBox
     Left = 8
     Top = 44
@@ -25,15 +25,15 @@ object FMain: TFMain
     object LUserName: TLabel
       Left = 8
       Top = 24
-      Width = 59
-      Height = 15
+      Width = 51
+      Height = 13
       Caption = 'User name'
     end
     object EUserName: TEdit
       Left = 112
       Top = 20
       Width = 205
-      Height = 23
+      Height = 21
       TabOrder = 1
       Text = 'Admin'
     end
@@ -41,15 +41,15 @@ object FMain: TFMain
       Left = 112
       Top = 48
       Width = 205
-      Height = 23
+      Height = 21
       EchoMode = emPassword
       TabOrder = 2
     end
     object LPassword: TLabel
       Left = 8
       Top = 52
-      Width = 54
-      Height = 15
+      Width = 46
+      Height = 13
       Caption = 'Password'
     end
     object BConnect: TButton
@@ -86,11 +86,11 @@ object FMain: TFMain
         ReadOnly = True
         TabOrder = 0
         TitleFont.Color = clBlack
-        TitleFont.Height = 13
-        TitleFont.Name = 'adobe-helvetica'
+        TitleFont.Height = 11
+        TitleFont.Name = 'MS Shell Dlg'
         TitleFont.Pitch = fpVariable
         TitleFont.Style = []
-        TitleFont.Weight = 0
+        TitleFont.Weight = 40
       end
       object BAddAlias: TButton
         Left = 4
@@ -136,16 +136,16 @@ object FMain: TFMain
       end
       object BDeleteUser: TButton
         Left = 316
-        Top = 68
+        Top = 72
         Width = 133
-        Height = 29
+        Height = 25
         Caption = 'Delete'
         TabOrder = 3
         OnClick = BDeleteUserClick
       end
       object BAddUser: TButton
         Left = 316
-        Top = 17
+        Top = 13
         Width = 133
         Height = 28
         Caption = 'Add'
@@ -154,9 +154,9 @@ object FMain: TFMain
       end
       object BChangePassword: TButton
         Left = 316
-        Top = 41
+        Top = 44
         Width = 133
-        Height = 28
+        Height = 25
         Caption = 'Change Password'
         TabOrder = 2
         OnClick = BChangePasswordClick
@@ -175,16 +175,16 @@ object FMain: TFMain
   object LHost: TLabel
     Left = 4
     Top = 12
-    Width = 25
-    Height = 15
+    Width = 22
+    Height = 13
     Caption = 'Host'
   end
   object ComboHost: TComboBox
     Left = 92
     Top = 8
-    Width = 213
-    Height = 23
-    ItemHeight = 17
+    Width = 185
+    Height = 21
+    ItemHeight = 15
     Items.Strings = (
       'localhost')
     TabOrder = 0
@@ -195,6 +195,24 @@ object FMain: TFMain
     Width = 469
     Height = 65
     TabOrder = 4
+  end
+  object ComboPort: TComboBox
+    Left = 340
+    Top = 8
+    Width = 77
+    Height = 21
+    ItemHeight = 15
+    Items.Strings = (
+      '3060')
+    TabOrder = 5
+    Text = '3060'
+  end
+  object LPort: TLabel
+    Left = 292
+    Top = 12
+    Width = 19
+    Height = 13
+    Caption = 'Port'
   end
   object Trans: TRpTranslator
     Active = False

@@ -10,7 +10,7 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
     Left = 0
     Top = 0
     Width = 216
-    Height = 129
+    Height = 153
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
@@ -18,7 +18,7 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
       Left = 4
       Top = 4
       Width = 201
-      Height = 117
+      Height = 145
       Caption = 'User information'
       TabOrder = 0
       object LUserName: TLabel
@@ -42,6 +42,13 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
         Height = 13
         Caption = 'Host'
       end
+      object LPort: TLabel
+        Left = 10
+        Top = 88
+        Width = 19
+        Height = 13
+        Caption = 'Port'
+      end
       object EUserName: TEdit
         Left = 104
         Top = 36
@@ -60,7 +67,7 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
       end
       object BConnect: TButton
         Left = 8
-        Top = 84
+        Top = 112
         Width = 113
         Height = 25
         Action = AConnect
@@ -75,19 +82,30 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
         TabOrder = 0
         Text = 'localhost'
       end
+      object ComboPort: TComboBox
+        Left = 104
+        Top = 84
+        Width = 77
+        Height = 21
+        ItemHeight = 13
+        TabOrder = 4
+        Text = '3060'
+        Items.Strings = (
+          '3060')
+      end
     end
   end
   object PClient: TPanel
     Left = 0
-    Top = 129
+    Top = 153
     Width = 216
-    Height = 335
+    Height = 311
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object Splitter1: TSplitter
       Left = 0
-      Top = 246
+      Top = 222
       Width = 216
       Height = 7
       Cursor = crVSplit
@@ -96,7 +114,7 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
     end
     object PMessages: TPanel
       Left = 0
-      Top = 253
+      Top = 229
       Width = 216
       Height = 82
       Align = alBottom
@@ -118,7 +136,7 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
       Left = 0
       Top = 0
       Width = 216
-      Height = 246
+      Height = 222
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
@@ -164,7 +182,7 @@ object FRpCliTreeVCL: TFRpCliTreeVCL
         Left = 0
         Top = 59
         Width = 216
-        Height = 187
+        Height = 163
         Align = alClient
         Images = imalist
         Indent = 22

@@ -99,7 +99,7 @@ type
   end;
 
 
-function Connect(hostname:string;user:string;password:string):TModClient;
+function Connect(hostname:string;user:string;password:string;port:integer):TModClient;
 procedure Disconnect(amod:TModClient);
 
 implementation
@@ -255,7 +255,7 @@ begin
 end;
 
 
-function Connect(hostname:string;user:string;password:string):TModClient;
+function Connect(hostname:string;user:string;password:string;port:integer):TModClient;
 var
  amod:TModClient;
  arec:PRpComBlock;
@@ -263,6 +263,7 @@ begin
  amod:=TModClient.Create(nil);
  try
   amod.RepClient.Host:=hostname;
+  amod.RepClient.Port:=port;
   amod.RepClient.Connect;
   // Send user and password message
   amod.FAuthorized:=false;

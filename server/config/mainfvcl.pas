@@ -53,6 +53,8 @@ type
     BCloseConnection: TButton;
     BChangePassword: TButton;
     LMessages: TListBox;
+    LPort: TLabel;
+    ComboPort: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure BConnectClick(Sender: TObject);
     procedure BCloseConnectionClick(Sender: TObject);
@@ -106,11 +108,12 @@ begin
  BAddAlias.Caption:=Trans.LoadString(149,BAddAlias.Caption);
  BPreviewTree.Caption:=Trans.LoadString(761,BPreviewTree.Caption);
  BCloseConnection.Caption:=Trans.LoadString(762,BCloseConnection.Caption);
+ LPort.Caption:=TranslateStr(829,LPort.Caption);
 end;
 
 procedure TFMainVCL.BConnectClick(Sender: TObject);
 begin
- repclient:=Connect(ComboHost.Text,EUsername.Text,EPassword.Text);
+ repclient:=Connect(ComboHost.Text,EUsername.Text,EPassword.Text,StrToInt(ComboPort.Text));
  ComboHost.Enabled:=False;
  GUser.Visible:=False;
  GServerInfo.Visible:=True;
