@@ -974,11 +974,20 @@ end;
 procedure TRpPanelObj.FontClick(Sender:TObject);
 var
  index:integer;
+ aitem:TRpSizeInterface;
 begin
- TFRpObjInspVCL(Owner).FontDialog1.Font.Name:=FCompItem.GetProperty(SRpSWFontName);
- TFRpObjInspVCL(Owner).FontDialog1.Font.Size:= StrToInt(FCompItem.GetProperty(SRpSFontSize));
- TFRpObjInspVCL(Owner).FontDialog1.Font.Color:= StrToInt(FCompItem.GetProperty(SRpSFontColor));
- TFRpObjInspVCL(Owner).FontDialog1.Font.Style:=IntegerToFontStyle(StrToInt(FCompItem.GetProperty(SrpSFontStyle)));
+ if FSelectedItems.Count<2 then
+ begin
+  aitem:=FCompItem;
+ end
+ else
+ begin
+  aitem:=TRpSizeInterface(FSelectedItems.Objects[0]);
+ end;
+ TFRpObjInspVCL(Owner).FontDialog1.Font.Name:=aitem.GetProperty(SRpSWFontName);
+ TFRpObjInspVCL(Owner).FontDialog1.Font.Size:= StrToInt(aitem.GetProperty(SRpSFontSize));
+ TFRpObjInspVCL(Owner).FontDialog1.Font.Color:= StrToInt(aitem.GetProperty(SRpSFontColor));
+ TFRpObjInspVCL(Owner).FontDialog1.Font.Style:=IntegerToFontStyle(StrToInt(aitem.GetProperty(SrpSFontStyle)));
  if TFRpObjInspVCL(Owner).FontDialog1.Execute then
  begin
   index:=TComponent(Sender).Tag;
