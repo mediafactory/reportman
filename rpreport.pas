@@ -28,7 +28,7 @@ unit rpreport;
 interface
 
 uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpconsts,
- rpdatainfo,rpparams,rplabelitem;
+ rpdatainfo,rpparams,rplabelitem,rpdrawitem;
 
 const
  // 1 cms=574
@@ -108,6 +108,7 @@ type
    // Print functions
    procedure PrintAll;
    procedure ActivateDatasets;
+   procedure DeActivateDatasets;
   published
    // Grid options
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
@@ -460,6 +461,15 @@ begin
  end;
 end;
 
+procedure TRpReport.DeActivateDatasets;
+var
+ i:integer;
+begin
+ for i:=0 to FDataInfo.Count-1 do
+ begin
+  FDataInfo.Items[i].Disconnect;
+ end;
+end;
 
 procedure TRpReport.PrintAll;
 begin
@@ -472,7 +482,9 @@ initialization
  RegisterClass(TRpSection);
  RegisterClass(TRpReport);
  RegisterClass(TRpSubReport);
- RegisterClass(TRpCommonComponent);
+// RegisterClass(TRpCommonComponent);
+ RegisterClass(TRpImage);
+ RegisterClass(TRpShape);
  RegisterClass(TRpLabel);
  RegisterClass(TRpExpression);
 

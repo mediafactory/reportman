@@ -231,6 +231,11 @@ begin
   asizepos:=TRpShape.Create(printitem.Owner);
   asizeposint:=TRpDrawInterface.Create(Self,asizepos);
  end;
+ if fmainf.BImage.Down then
+ begin
+  asizepos:=TRpImage.Create(printitem.Owner);
+  asizeposint:=TRpImageInterface.Create(Self,asizepos);
+ end;
 
 
  if Assigned(asizepos) then
@@ -285,6 +290,14 @@ begin
   if compo is TRpExpression then
   begin
    labelint:=TRpExpressionInterface.Create(Self,compo);
+  end;
+  if compo is TRpShape then
+  begin
+   labelint:=TRpDrawInterface.Create(Self,compo);
+  end;
+  if compo is TRpImage then
+  begin
+   labelint:=TRpImageInterface.Create(Self,compo);
   end;
   if Assigned(labelint) then
   begin

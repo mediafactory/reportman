@@ -33,6 +33,7 @@ resourcestring
   SRpIgnoreError='Ignore?';
 
   SRpSampleTextToLabels='Text';
+  SRpSampleExpression='2+2';
   SRpOnlyAReportOwner='Only a report can be the owner of :';
   SrpErrorProcesingFileMenu='Error procesing the File Menu for last saved files';
   SRpRepToTxt1='reptotxt v1.0';
@@ -319,11 +320,60 @@ resourcestring
   SrpSFontStyle='Font Style';
   SrpSTransparent='Transparent';
   SRpSBool='Boolean';
+  SRpSList='List';
   SrpSText='Text';
   SrpSExpression='Expression';
 
+  SRpSBSolid='Solid';
+  SRpSBClear='Clear';
+  SRpSBHorizontal='Horizontal';
+  SRpSBVertical='Vertical';
+  SRpSBFDiagonal='Diagonal A';
+  SRpSBBDiagonal='Diagonal B';
+  SRpSBCross='Cross';
+  SRpSBDiagCross='Diag. Cross';
+  SRpSBDense1='Dense 1';
+  SRpSBDense2='Dense 2';
+  SRpSBDense3='Dense 3';
+  SRpSBDense4='Dense 4';
+  SRpSBDense5='Dense 5';
+  SRpSBDense6='Dense 6';
+  SRpSBDense7='Dense 7';
+  SRpSPSolid='Solid';
+  SRpSPDash='Dash';
+  SRpSPDot='Dot';
+  SRpSPDashDot='Dash-Dot';
+  SRpSPDashDotDot='Dash-Dot-Dot';
+  SRpSPClear='Clear';
+  SRpsSCircle='Circle';
+  SRpsSEllipse='Ellipse';
+  SRpsSRectangle='Rectangle';
+  SRpsSRoundRect='Round Rect';
+  SRpsSRoundSquare='Round Square';
+  SRpsSSquare='Square';
+
+  SRPSDrawCrop='Crop';
+  SRPSDrawStretch='Strecth';
+  SRPSDrawFull='Full';
+
+  SrpSImage='Image';
+  SRpKbytes='Kbytes';
+  SRpInvalidImageFormat='Invalid image format';
+
+  SRpPropertyisnotstream='Property is not a stream: ';
+
+  SrpSShape='Shape';
+  SrpSBrushStyle='Brush Style';
+  SrpSBrushColor='Brush Color';
+  SrpSPenStyle='Pen Style';
+  SrpSPenColor='Pen Color';
+  SrpSPenWIdth='Pen Width';
+
+  SRpDrawStyle='Draw Style';
+
   SRpBringToFront='To Front';
   SRpSendToBack='To Back';
+  SRpInvalidStreaminRpImage='Invalid stream in TRpImage';
 
   SRpPropertyNotFound='Property not found: ';
   SRpPropertyHaveNoListValues='This property have not a list of values';

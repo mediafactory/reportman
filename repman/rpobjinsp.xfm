@@ -31,4 +31,12 @@ object FObjInsp: TFObjInsp
     Left = 256
     Top = 92
   end
+  object OpenDialog1: TOpenDialog
+    DefaultExt = 'bmp'
+    FileName = '*.bmp'
+    Filter = 'Bitmap images|*.*'
+    Title = 'Open bitmap'
+    Left = 72
+    Top = 120
+  end
 end

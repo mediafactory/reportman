@@ -64,7 +64,9 @@ uses
   rpdbxconfig in '..\rpdbxconfig.pas' {FDBXConfig},
   rpgraphutils in '..\rpgraphutils.pas' {FRpGraphProgres},
   rplabelitem in '..\rplabelitem.pas',
-  rpdrawitem in '..\rpdrawitem.pas';
+  rpdrawitem in '..\rpdrawitem.pas',
+  rpprintrep in '..\rpprintrep.pas';
+
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -94,7 +96,8 @@ uses
   rpdbxconfig in '../rpdbxconfig.pas' {FDBXConfig},
   rpgraphutils in '../rpgraphutils.pas' {FRpGraphProgres},
   rplabelitem in '../rplabelitem.pas',
-  rpdrawitem in '../rpdrawitem.pas';
+  rpdrawitem in '../rpdrawitem.pas',
+  rpprintrep in '../rpprintrep.pas';
 {$ENDIF}
 
 

@@ -48,14 +48,15 @@ type
    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
    procedure DblClick; override;
-
   public
    fobjinsp:TComponent;
    procedure UpdatePos;virtual;
    procedure GetProperties(lnames,ltypes,lvalues:TStrings);virtual;
    procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);virtual;
-   procedure SetProperty(pname:string;value:string);virtual;
-   function GetProperty(pname:string):string;virtual;
+   procedure SetProperty(pname:string;value:string);overload;virtual;
+   procedure SetProperty(pname:string;stream:TMemoryStream);overload;virtual;
+   procedure GetProperty(pname:string;var Stream:TMemoryStream);overload;virtual;
+   function GetProperty(pname:string):string;overload;virtual;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);reintroduce;overload;virtual;
    property printitem:TRpCommonComponent read fprintitem;
    property Selected:Boolean read FSelected write SetSelected;
@@ -191,6 +192,16 @@ end;
 procedure TRpSizeInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
 begin
  Raise Exception.Create(SRpPropertyHaveNoListValues+pname);
+end;
+
+procedure TRpSizeInterface.SetProperty(pname:string;stream:TMemoryStream);
+begin
+ Raise Exception.Create(SRpPropertyisnotstream+pname);
+end;
+
+procedure TRpSizeInterface.GetProperty(pname:string;var Stream:TMemoryStream);
+begin
+ Raise Exception.Create(SRpPropertyisnotstream+pname);
 end;
 
 procedure TRpSizeInterface.SetProperty(pname:string;value:string);

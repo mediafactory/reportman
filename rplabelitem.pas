@@ -3,8 +3,8 @@
 {       Report Manager                                  }
 {                                                       }
 {       rplabelitem                                     }
-{       TRpLabel printeable component constant text     }
-{                                                       }
+{       TRpLabel printable component constant text      }
+{       TRpExpression printable expression              }
 {                                                       }
 {       Copyright (c) 1994-2002 Toni Martir             }
 {       toni@pala.com                                   }

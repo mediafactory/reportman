@@ -456,7 +456,7 @@ end;
 
 procedure TRpMetafileObject.LoadFromStream(stream:TStream);
 var
- ssize:LongInt;
+ ssize:Int64;
  numbytes:integer;
  bytesread:integer;
 begin
@@ -533,7 +533,7 @@ end;
 
 procedure TRpMetafileObject.SaveToStream(stream:TStream);
 var
- ssize:LongInt;
+ ssize:Int64;
  numbytes:integer;
 begin
  // Writes the meta type and the info

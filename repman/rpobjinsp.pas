@@ -24,7 +24,7 @@ uses
   SysUtils, Types, Classes, QGraphics, QControls, QForms, QDialogs,
   rpobinsint,QGrids,rpconsts,rpprintitem,QStdCtrls,
   QExtCtrls,rpgraphutils,rpsection,rpmunits, rpexpredlg,
-  rpalias,rpreport;
+  rpalias,rpreport,Qt;
 
 const
   CONS_LEFTGAP=3;
@@ -39,6 +39,7 @@ type
     FontDialog1: TFontDialog;
     RpAlias1: TRpAlias;
     RpExpreDialog1: TRpExpreDialog;
+    OpenDialog1: TOpenDialog;
   private
     { Private declarations }
     dontfreecombo:Boolean;
@@ -58,6 +59,9 @@ type
     procedure ShapeMouseUp(Sender: TObject; Button: TMouseButton;
      Shift: TShiftState; X, Y: Integer);
     procedure FontClick(Sender:TObject);
+    procedure ImageClick(Sender:TObject);
+    procedure ImageKeyDown(Sender: TObject;
+     var Key: Word; Shift: TShiftState);
     procedure ExpressionClick(Sender:TObject);
   public
     { Public declarations }
@@ -259,6 +263,19 @@ begin
    TShape(Control).Shape:=stRectangle;
    TShape(Control).Brush.Color:=StrToInt(LValues.Strings[i]);
    TShape(Control).OnMouseUp:=ShapeMouseUp;
+  end
+  else
+  if LTypes.Strings[i]=SRpSImage then
+  begin
+   if dontrelease then
+    Control:=TControl(LControls.Objects[i])
+   else
+    Control:=TEdit.Create(Self);
+   TEdit(Control).Text:=LValues.Strings[i];
+   TEdit(Control).ReadOnly:=True;
+   TEdit(Control).Color:=clInfoBk;
+   TEdit(Control).OnClick:=ImageClick;
+   TEdit(Control).OnKeyDown:=ImageKeyDown;
   end
   else
   if LTypes.Strings[i]=SRpSFontStyle then
@@ -610,6 +627,39 @@ begin
  if index>=0 then
  begin
   sizeposint.SetProperty(SRpSHeight,gettextfromtwips(pixelstotwips(NewHeight)));
+ end;
+end;
+
+procedure TFObjInsp.ImageClick(Sender:TObject);
+var
+ Stream:TMemoryStream;
+begin
+ if OpenDialog1.Execute then
+ begin
+  Stream:=TMemoryStream.Create;
+  try
+   Stream.LoadFromFile(OpenDialog1.FileName);
+   Stream.Seek(soFromBeginning,0);
+   CompItem.SetProperty(LNames.Strings[TComponent(Sender).Tag],stream);
+  finally
+   Stream.Free;
+  end;
+ end;
+end;
+
+procedure TFObjInsp.ImageKeyDown(Sender: TObject;
+     var Key: Word; Shift: TShiftState);
+var
+ Stream:TMemoryStream;
+begin
+ if ((Key=Key_BackTab) or (Key=Key_Delete)) then
+ begin
+  Stream:=TMemoryStream.Create;
+  try
+   CompItem.SetProperty(LNames.Strings[TComponent(Sender).Tag],stream);
+  finally
+   Stream.Free;
+  end;
  end;
 end;
 

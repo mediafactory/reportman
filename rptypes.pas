@@ -29,6 +29,7 @@ const
 type
  TRpTwips=integer;
  TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
+ TRpImageDrawStyle=(rpDrawCrop,rpDrawStretch,rpDrawFull);
 
  TRpPageSize=(rpPageSizeDefault,rpPageSizeCustom);
 

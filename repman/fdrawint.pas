@@ -23,7 +23,7 @@ interface
 uses SysUtils, Classes, QGraphics, QForms,
   QButtons, QExtCtrls, QControls, QStdCtrls,types,
   rpprintitem,rpdrawitem,rpobinsint,rpconsts,
-  rpgraphutils,rpmunits;
+  rpgraphutils,rpmunits,rptypes;
 
 type
  TRpDrawInterface=class(TRpSizePosInterface)
@@ -36,6 +36,22 @@ type
    procedure SetProperty(pname:string;value:string);override;
    function GetProperty(pname:string):string;override;
    procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
+ end;
+
+ TRpImageInterface=class(TRpSizePosInterface)
+  private
+   FBitmap:TBitmap;
+  protected
+   procedure Paint;override;
+  public
+   constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
+   destructor Destroy;override;
+   procedure GetProperties(lnames,ltypes,lvalues:TStrings);override;
+   procedure SetProperty(pname:string;value:string);override;
+   function GetProperty(pname:string):string;override;
+   procedure GetPropertyValues(pname:string;lpossiblevalues:TStrings);override;
+   procedure SetProperty(pname:string;stream:TMemoryStream);override;
+   procedure GetProperty(pname:string;var Stream:TMemoryStream);override;
  end;
 
   TFDrawInterface = class(TForm)
@@ -58,10 +74,13 @@ const
  StringShapeType:array [stRectangle..stCircle] of String=(
   SRpsSRectangle,SRpsSSquare,SRpsSRoundRect,
   SRpsSRoundSquare,SRpsSEllipse,SRpsSCircle);
-  
+ StringDrawStyles:array [rpDrawCrop..rpDrawFull] of string=(
+  SRPSDrawCrop,SRPSDrawStretch,SRPSDrawFull);
+
 function StringPenStyleToInt(Value:String):integer;
 function StringBrushStyleToInt(Value:String):integer;
 function StringShapeTypeToInt(Value:String):integer;
+function StringDrawStyleToDrawStyle(Value:string):TRpImageDrawStyle;
 
 implementation
 
@@ -159,6 +178,20 @@ begin
  end;
 end;
 
+function StringDrawStyleToDrawStyle(Value:string):TRpImageDrawStyle;
+var
+ i:TRpImageDrawStyle;
+begin
+ Result:=rpDrawCrop;
+ for i:=rpDrawCrop to rpDrawFull do
+ begin
+  if Value=StringDrawStyles[i] then
+  begin
+   Result:=i;
+   break;
+  end;
+ end;
+end;
 
 
 procedure TRpDrawInterface.SetProperty(pname:string;value:string);
@@ -324,5 +357,170 @@ begin
  end;
  inherited GetPropertyValues(pname,lpossiblevalues);
 end;
+
+// Image Interface
+
+constructor TRpImageInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
+begin
+ if Not (pritem is TRpImage) then
+  Raise Exception.Create(SRpIncorrectComponentForInterface);
+ inherited Create(AOwner,pritem);
+end;
+
+destructor TRpImageInterface.Destroy;
+begin
+ if Assigned(FBitmap) then
+  FBitmap.free;
+ inherited destroy;
+end;
+
+procedure TRpImageInterface.GetProperties(lnames,ltypes,lvalues:TStrings);
+begin
+ inherited GetProperties(lnames,ltypes,lvalues);
+
+
+ // DrawStyle
+ lnames.Add(SRpDrawStyle);
+ ltypes.Add(SRpSList);
+ lvalues.Add(StringDrawStyles[TRpImage(printitem).DrawStyle]);
+
+ // Expression
+ lnames.Add(SrpSExpression);
+ ltypes.Add(SRpSExpression);
+ lvalues.Add(TRpImage(printitem).Expression);
+
+ // Image
+ lnames.Add(SrpSImage);
+ ltypes.Add(SRpSImage);
+ lvalues.Add('['+FormatFloat('###,###0.00',TRpImage(printitem).Stream.Size/1024)+
+  SRpKbytes+']');
+end;
+
+
+
+procedure TRpImageInterface.SetProperty(pname:string;value:string);
+begin
+ if length(value)<1 then
+  exit;
+ if pname=SRpSExpression then
+ begin
+  TRpImage(fprintitem).Expression:=Value;
+  invalidate;
+  exit;
+ end;
+ if pname=SRpDrawStyle then
+ begin
+  TRpImage(fprintitem).DrawStyle:=StringDrawStyleToDrawStyle(Value);
+  invalidate;
+  exit;
+ end;
+ inherited SetProperty(pname,value);
+end;
+
+function TRpImageInterface.GetProperty(pname:string):string;
+begin
+ Result:='';
+ if pname=SrpSExpression then
+ begin
+  Result:=TRpImage(printitem).Expression;
+  exit;
+ end;
+ if pname=SrpDrawStyle then
+ begin
+  Result:=StringDrawStyles[TRpImage(printitem).DrawStyle];
+  exit;
+ end;
+ Result:=inherited GetProperty(pname);
+end;
+
+
+
+procedure TRpImageInterface.Paint;
+var
+ aimage:TRpImage;
+ rec:TRect;
+begin
+ aimage:=TRpImage(printitem);
+ try
+  Canvas.Rectangle(0,0,Width,Height);
+  if aimage.Stream.Size>0 then
+  begin
+   if Not Assigned(FBitmap) then
+   begin
+    FBitmap:=TBitmap.Create;
+    FBitmap.PixelFormat:=pf32bit;
+    // Try to load it
+    aimage.Stream.Seek(soFromBeginning,0);
+    try
+     FBitmap.LoadFromStream(aimage.Stream);
+    except
+     FBitmap.free;
+     FBitmap:=nil;
+     raise;
+    end;
+   end;
+   // Draws it with the style
+   if aimage.DrawStyle=rpDrawStretch then
+   begin
+    rec.Top:=0;rec.Left:=0;
+    rec.Bottom:=Height-1;rec.Right:=Width-1;
+    Canvas.StretchDraw(rec,fbitmap);
+   end
+   else
+   begin
+    Canvas.Draw(0,0,fbitmap);
+   end;
+  end;
+  // Draws the expresion
+  Canvas.Brush.Style:=bsClear;
+  Canvas.Rectangle(0,0,Width,Height);
+  Canvas.TextOut(0,0,SRpSImage+aimage.Expression);
+ except
+  Canvas.TextOut(0,0,SRpInvalidImageFormat);
+ end;
+end;
+
+
+procedure TRpImageInterface.SetProperty(pname:string;stream:TMemoryStream);
+begin
+ if pname=SrpSImage then
+ begin
+  TRpImage(printitem).Stream:=stream;
+  FBitmap.Free;
+  FBitmap:=nil;
+  Invalidate;
+  exit;
+ end;
+ inherited SetProperty(pname,stream);
+end;
+
+procedure TRpImageInterface.GetProperty(pname:string;var Stream:TMemoryStream);
+begin
+ if pname=SrpSImage then
+ begin
+  Stream:=TRpImage(printitem).Stream;
+  exit;
+ end;
+ inherited GetProperty(pname,stream);
+end;
+
+
+
+procedure TRpImageInterface.GetPropertyValues(pname:string;lpossiblevalues:TStrings);
+var
+ i:TRpImageDrawStyle;
+begin
+ if pname=SrpDrawStyle then
+ begin
+  lpossiblevalues.clear;
+  for i:=rpDrawCrop to rpDrawFull do
+  begin
+   lpossiblevalues.Add(StringDrawStyles[i]);
+  end;
+  exit;
+ end;
+ inherited GetPropertyValues(pname,lpossiblevalues);
+end;
+
 
 end.
