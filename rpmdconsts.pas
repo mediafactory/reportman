@@ -500,7 +500,13 @@ var
   SRpWarning:WideString='Warning';
   SRpCritical:WideString='Error';
   SRpNotFound:WideString='Not found';
-
+  SRpServerAlreadyRunning:WideString='Report Server already running';
+  SRpAuthFailed:WideString='Authorization failed (user name or password incorrect)';
+  SRpAuthorized:WideString='Authorization Ok';
+  SRpReceivedPacket:WideString='Received Packet:';
+  SRpServerStarted:WideString='Server started';
+  SRpClientConnected:WideString='Client connected';
+  SRpServerStoped:WideString='Server stoped';
 
 implementation
 
@@ -1005,6 +1011,13 @@ begin
  TranslateVar(729,SrpWarning);
  TranslateVar(730,SRpError);
  TranslateVar(731,SRpNotFound);
+ TranslateVar(768,SRpServerAlreadyRunning);
+ TranslateVar(771,SRpAuthFailed);
+ TranslateVar(772,SRpAuthorized);
+ TranslateVar(776,SRpReceivedPacket);
+ TranslateVar(787,SRpServerStarted);
+ TranslateVar(788,SRpClientConnected);
+ TranslateVar(789,SRpServerStoped);
 end;
 
 

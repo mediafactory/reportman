@@ -43,7 +43,7 @@ uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpmdconsts,
 
 
 const
- MILIS_PROGRESS=500;
+ MILIS_PROGRESS_DEFAULT=500;
  // 1 cms=574
  // 0.5 cms=287
  CONS_DEFAULT_GRIDWIDTH=115;
@@ -139,6 +139,7 @@ type
    FAliasList:TRpAlias;
    printingonepass:boolean;
    freespace:integer;
+   FMilisProgres:integer;
    FPrinterFonts:TRpPrinterFontsOption;
 {$IFDEF MSWINDOWS}
    mmfirst,mmlast:DWORD;
@@ -208,6 +209,8 @@ type
    property idenfreespacecms:TIdenReportVar read fidenfreespacecms;
    property idenfreespaceinch:TIdenReportVar read fidenfreespaceinch;
    property idencurrentgroup:TIdenReportVar read fidencurrentgroup;
+   property MilisProgres:integer read FMilisProgres write FMilisProgres
+    default MILIS_PROGRESS_DEFAULT;
   published
    // Grid options
    property GridVisible:Boolean read FGridVisible write FGridVisible default true;
@@ -288,6 +291,7 @@ constructor TRpReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FMilisProgres:=MILIS_PROGRESS_DEFAULT;
  FLanguage:=-1;
  FCopies:=1;
  FPageOrientation:=rpOrientationDefault;
@@ -895,16 +899,16 @@ end;
 // of evaluate the totalpages expression
 procedure TRpReport.PrintAll(Driver:IRpPrintDriver);
 begin
- Driver.NewDocument(metafile);
+ BeginPrint(Driver);
  try
-  BeginPrint(Driver);
+  Driver.NewDocument(metafile);
   try
    while Not PrintNextPage do;
   finally
-   EndPrint;
+   Driver.EndDocument;
   end;
  finally
-  Driver.EndDocument;
+  EndPrint;
  end;
 end;
 
@@ -977,7 +981,7 @@ begin
    mililast:=now;
    difmilis:=MillisecondsBetween(mililast,milifirst);
 {$ENDIF}
-   if difmilis>MILIS_PROGRESS then
+   if difmilis>FMilisProgres then
    begin
      // Get the time
 {$IFDEF MSWINDOWS}
@@ -1166,11 +1170,22 @@ begin
  end;
  if PageSize<>rpPageSizeDefault then
  begin
-  metafile.PageSize:=PageSizeQt;
-  rPageSizeQt.Indexqt:=PageSizeQt;
-  rPageSizeQt.Custom:=Pagesize=rpPageSizeUser;
-  rPageSizeQt.CustomWidth:=FCustomPageWidth;
-  rPageSizeQt.Customheight:=FCustomPageHeight;
+  if PageSize=rpPageSizeUser then
+  begin
+   metafile.PageSize:=-1;
+   rPageSizeQt.Indexqt:=PageSizeQt;
+   rPageSizeQt.Custom:=true;
+   rPageSizeQt.CustomWidth:=FCustomPageWidth;
+   rPageSizeQt.Customheight:=FCustomPageHeight;
+  end
+  else
+  begin
+   metafile.PageSize:=PageSizeQt;
+   rPageSizeQt.Indexqt:=PageSizeQt;
+   rPageSizeQt.Custom:=false;
+   rPageSizeQt.CustomWidth:=FCustomPageWidth;
+   rPageSizeQt.Customheight:=FCustomPageHeight;
+  end;
   apagesize:=Driver.SetPagesize(rPageSizeQt);
  end
  else

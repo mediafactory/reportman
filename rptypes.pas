@@ -85,6 +85,8 @@ type
  // How to show preview
  TRpPreviewStyle = (spWide,spNormal,spEntirePage,spCustom);
 
+ TPrinterRawOp=(rawopcutpaper,rawopopendrawer);
+
  TBitmapResizeEvent=procedure (awidth,aheight:integer;var scale:double) of object;
 
  TRpReportException=class(Exception)
@@ -105,6 +107,7 @@ function CopyFileTo(const Source, Destination: string): Boolean;
 function GetPrinterConfigName(printerindex:TRpPrinterSelect):string;
 function GetPrinterOffset(printerindex:TRpPrinterSelect):TPoint;
 function GetDeviceFontsOption(printerindex:TRpPrinterSelect):boolean;
+function GetPrinterRawOp(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):string;
 
 // Language identifiers
 var
@@ -385,6 +388,65 @@ begin
  CheckLoadedPrinterConfig;
  Result.X:=printerconfigfile.ReadInteger('PrinterOffsetX','Printer'+IntToStr(integer(printerindex)),0);
  Result.Y:=printerconfigfile.ReadInteger('PrinterOffsetY','Printer'+IntToStr(integer(printerindex)),0);
+end;
+
+// A escape coded string is for example for Epson Tear off
+// #27#50#27C#1#12
+// That is escape code+ascci(50)...
+function EscapeCodedToString(astring:string):string;
+var
+ index,i:integer;
+begin
+ astring:=astring+chr(0);
+ result:='';
+ index:=1;
+ while length(astring)>=index do
+ begin
+   case astring[index] of
+    '#':
+     begin
+      Inc(index);
+      I := 0;
+      while astring[index] in ['0'..'9'] do
+      begin
+       I := I * 10 + (Ord(astring[index]) - Ord('0'));
+       Inc(index);
+      end;
+      result:=result+Chr(I);
+     end;
+    chr(0):
+     begin
+      inc(index);
+     end;
+   else
+    begin
+     result:=result+astring[index];
+     inc(index);
+    end;
+  end;
+ end;
+end;
+
+
+function GetPrinterRawOp(printerindex:TRpPrinterSelect;rawop:TPrinterRawOp):string;
+var
+ operation:String;
+begin
+ CheckLoadedPrinterConfig;
+ Result:='';
+ case rawop of
+  rawopcutpaper:
+   Operation:='CutPaper';
+  rawopopendrawer:
+   Operation:='OpenDrawer';
+ end;
+ // Check if active
+ if Not printerconfigfile.ReadBool(Operation+'On','Printer'+IntToStr(integer(printerindex)),false) then
+  exit;
+ // If active decode and return result
+ Result:=printerconfigfile.ReadString(Operation,'Printer'+IntToStr(integer(printerindex)),'');
+ // Transform the string to a real string
+ Result:=EscapeCodedToString(Result);
 end;
 
 initialization

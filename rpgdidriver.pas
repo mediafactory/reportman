@@ -92,6 +92,8 @@ type
    metacanvas:TMetafilecanvas;
    meta:TMetafile;
    pagecliprec:TRect;
+   selectedprinter:TRpPrinterSelect;
+   procedure SendAfterPrintOperations;
   public
    offset:TPoint;
    lockedpagesize:boolean;
@@ -140,6 +142,8 @@ function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
 function DoShowPrintDialog(var allpages:boolean;
  var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
 function PrinterSelection(printerindex:TRpPrinterSelect):TPoint;
+procedure PageSizeSelection(rpPageSize:TPageSizeQt);
+procedure OrientationSelection(neworientation:TRpOrientation);
 
 implementation
 
@@ -409,11 +413,15 @@ begin
  end;
 end;
 
+
+
 procedure TRpGDIDriver.EndDocument;
 begin
  if toprinter then
  begin
   printer.EndDoc;
+  // Send Especial operations
+  SendAfterPrintOperations;
  end
  else
  begin
@@ -951,6 +959,7 @@ var
  offset:TPoint;
 begin
  offset:=PrinterSelection(printerindex);
+ UpdatePrinterFontList;
  pagemargins:=GetPageMarginsTWIPS;
  // Get the time
  mmfirst:=TimeGetTime;
@@ -1418,6 +1427,7 @@ end;
 procedure TRpGDIDriver.SelectPrinter(printerindex:TRpPrinterSelect);
 begin
  offset:=PrinterSelection(printerindex);
+ selectedprinter:=printerindex;
  if neverdevicefonts then
   exit;
  if devicefonts then
@@ -1425,7 +1435,42 @@ begin
  devicefonts:=GetDeviceFontsOption(printerindex);
  if devicefonts then
   UpdatePrinterFontList;
+end;
 
+procedure TRpGDIDriver.SendAfterPrintOperations;
+var
+ Operation:String;
+ i:TPrinterRawOp;
+begin
+ for i:=Low(TPrinterRawOp) to High(TPrinterRawOp) do
+ begin
+  Operation:=GetPrinterRawOp(selectedprinter,i);
+  if Length(Operation)>0 then
+   SendControlCodeToPrinter(Operation);
+ end;
+end;
+
+procedure PageSizeSelection(rpPageSize:TPageSizeQt);
+var
+ pagesize:TGDIPageSize;
+begin
+ if Printer.Printers.Count<0 then
+  exit;
+ pagesize:=QtPageSizeToGDIPageSize(rppagesize);
+ SetCurrentPaper(pagesize);
+end;
+
+
+procedure OrientationSelection(neworientation:TRpOrientation);
+begin
+ if Printer.Printers.Count<0 then
+  exit;
+ if neworientation=rpOrientationDefault then
+  exit;
+ if neworientation=rpOrientationPortrait then
+  Printer.Orientation:=poPortrait
+ else
+  Printer.Orientation:=poLandscape;
 end;
 
 end.

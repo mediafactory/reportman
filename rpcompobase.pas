@@ -20,7 +20,10 @@ unit rpcompobase;
 
 interface
 
-uses Classes,Sysutils,rpreport,rpmdconsts,rpalias;
+{$I rpconf.inc}
+
+uses Classes,Sysutils,rpreport,rpmdconsts,
+ rpalias;
 
 type
  TCBaseReport=class(TComponent)

@@ -136,9 +136,15 @@ type
   TRpDatabaseInfoList=class(TCollection)
   private
    FReport:TComponent;
+{$IFDEF USEBDE}
+   FBDESession:TSession;
+{$ENDIF}
    function GetItem(Index:Integer):TRpDatabaseInfoItem;
    procedure SetItem(index:integer;Value:TRpDatabaseInfoItem);
   public
+{$IFDEF USEBDE}
+   property BDESession:TSession read FBDESession write FBDESession;
+{$ENDIF}
    function Add(alias:string):TRpDatabaseInfoItem;
    function IndexOf(Value:string):integer;
    property Items[index:integer]:TRpDatabaseInfoItem read GetItem write SetItem;default;
@@ -238,6 +244,17 @@ var
  ConAdmin:TRpConnAdmin;
 {$ENDIF}
 
+{$IFDEF USEBDE}
+procedure AddParamsFromDBXToBDE(paramssource,params:TStrings);
+var
+ index:integer;
+begin
+ index:=paramssource.IndexOfName('Password');
+ if index>=0 then
+  params.Add(paramssource.Strings[index]);
+end;
+{$ENDIF}
+
 {$IFDEF USEIBX}
 procedure ConvertParamsFromDBXToIBX(base:TIBDatabase);
 var
@@ -261,6 +278,9 @@ begin
  if index>=0 then
   params.Delete(index);
  index:=params.IndexOfName('CommitRetain');
+ if index>=0 then
+  params.Delete(index);
+ index:=params.IndexOfName('Trim Char');
  if index>=0 then
   params.Delete(index);
  index:=params.IndexOfName('ErrorResourceFile');
@@ -616,6 +636,8 @@ var
  i:integer;
  AlreadyOpen:boolean;
  OpenedName:string;
+ ASession:TSession;
+ adparams:TStrings;
 {$ENDIF}
 begin
  case Fdriver of
@@ -708,6 +730,8 @@ begin
     begin
      FBDEDatabase:=TDatabase.Create(nil);
      FBDEDatabase.KeepConnection:=false;
+     if Assigned(TRpDatabaseInfoList(Collection).FBDESession) then
+      FBDEDatabase.SessionName:=TRpDatabaseInfoList(Collection).FBDESession.SessionName;
     end;
     if FBDEDatabase.DatabaseName=FBDEAlias then
     begin
@@ -718,28 +742,31 @@ begin
     begin
      FBDEDatabase.Connected:=false;
     end;
+    ASession:=Session;
+    if Assigned(TRpDatabaseInfoList(Collection).FBDESession) then
+     ASession:=TRpDatabaseInfoList(Collection).FBDESession;
     // Find an opened database in this session that
     // openend the alias
     OpenedName:=FBDEAlias;
     AlreadyOpen:=False;
-    for i:=0 to Session.DatabaseCount-1 do
+    for i:=0 to ASession.DatabaseCount-1 do
     begin
-     if Session.Databases[i].DatabaseName=FBDEAlias then
+     if ASession.Databases[i].DatabaseName=FBDEAlias then
      begin
-      if Session.Databases[i].Connected then
+      if ASession.Databases[i].Connected then
       begin
        AlreadyOpen:=True;
-       OpenedName:=Session.Databases[i].DatabaseName;
+       OpenedName:=ASession.Databases[i].DatabaseName;
        break;
       end
       else
-       Session.Databases[i].DatabaseName:='';
+       ASession.Databases[i].DatabaseName:='';
      end;
-     if Session.Databases[i].AliasName=FBDEAlias then
-      if Session.Databases[i].Connected then
+     if ASession.Databases[i].AliasName=FBDEAlias then
+      if ASession.Databases[i].Connected then
       begin
        AlreadyOpen:=True;
-       OpenedName:=Session.Databases[i].DatabaseName;
+       OpenedName:=ASession.Databases[i].DatabaseName;
        break;
       end;
     end;
@@ -750,7 +777,17 @@ begin
      begin
       try
        FBDEDatabase.AliasName:=FBDEAlias;
-       Session.GetAliasParams(FBDEAlias,FBDEDatabase.Params);
+       ASession.GetAliasParams(FBDEAlias,FBDEDatabase.Params);
+       // Add aditional parameters
+       adparams:=TStringList.Create;
+       try
+        if Not Assigned(ConAdmin) then
+         CreateConAdmin;
+        ConAdmin.GetConnectionParams(FBDEAlias,adparams);
+        AddParamsFromDBXToBDE(adparams,FBDEDatabase.Params);
+       finally
+        adparams.free;
+       end;
        FBDEDatabase.LoginPrompt:=LoginPrompt;
        FBDEDatabase.Connected:=true;
       except
@@ -933,9 +970,17 @@ begin
       begin
 {$IFDEF USEBDE}
        if FBDEType=rpdquery then
-        FSQLInternalQuery:=TQuery.Create(nil)
+       begin
+        FSQLInternalQuery:=TQuery.Create(nil);
+        if Assigned(databaseinfo.FBDESession) then
+         TQuery(FSQLInternalQuery).SessionName:=databaseinfo.FBDESession.SessionName;
+       end
        else
+       begin
         FSQLInternalQuery:=TTable.Create(nil);
+        if Assigned(databaseinfo.FBDESession) then
+         TTable(FSQLInternalQuery).SessionName:=databaseinfo.FBDESession.SessionName;
+       end;
 {$ELSE}
        Raise Exception.Create(SRpDriverNotSupported+SrpDriverBDE);
 {$ENDIF}
@@ -993,6 +1038,8 @@ begin
          FSQLInternalQuery.Free;
          FSQLInternalQuery:=nil;
          FSQLInternalQuery:=TQuery.Create(nil);
+         if Assigned(databaseinfo.FBDESession) then
+          TQuery(FSQLInternalQuery).SessionName:=databaseinfo.FBDESession.SessionName;
         end;
        end
        else
@@ -1002,6 +1049,8 @@ begin
          FSQLInternalQuery.Free;
          FSQLInternalQuery:=nil;
          FSQLInternalQuery:=TTable.Create(nil);
+         if Assigned(databaseinfo.FBDESession) then
+          TTable(FSQLInternalQuery).SessionName:=databaseinfo.FBDESession.SessionName;
         end;
        end;
 {$ENDIF}
@@ -1073,9 +1122,13 @@ begin
      begin
 {$IFDEF USEBDE}
       if FBDEType=rpdquery then
+      begin
        TQuery(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEAlias
+      end
       else
+      begin
        TTable(FSQLInternalQuery).DatabaseName:=databaseinfo[index].FBDEAlias;
+      end;
       TBDEDataset(FSQLInternalQuery).Filter:=FBDEFilter;
       if length(Trim(FBDEFilter))>0 then
        TBDEDataset(FSQLInternalQuery).Filtered:=True;

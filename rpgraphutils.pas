@@ -20,11 +20,12 @@ unit rpgraphutils;
 interface
 
 uses
-  SysUtils,Classes, QGraphics, QForms,Types,rptranslator,
-  QButtons, QExtCtrls, QControls, QStdCtrls,rpmunits,Qt,
 {$IFDEF MSWINDOWS}
   windows,
 {$ENDIF}
+  SysUtils,Classes, QGraphics, QForms,Types,rptranslator,
+  QButtons, QExtCtrls, QControls, QStdCtrls,rpmunits,Qt,
+  QComCtrls,
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
@@ -67,7 +68,7 @@ function RpMessageBox(const Text: WideString; const Caption: WideString = '';
   Buttons: TMessageButtons = [smbOK]; Style: TMessageStyle = smsInformation;
   Default: TMessageButton = smbOK; Escape: TMessageButton = smbCancel): TMessageButton;
 function RpInputBox(const ACaption, APrompt, ADefault:WideString ):WideString;
-
+procedure FillTreeView(path:String;Nodes:TTreeNodes;Node:TTreeNode;pattern:string);
 
 implementation
 
@@ -576,6 +577,55 @@ begin
    Result:='';
  finally
   dia.free;
+ end;
+end;
+
+procedure FillTreeView(path:String;Nodes:TTreeNodes;Node:TTreeNode;pattern:string);
+var
+ att:integer;
+ han:integer;
+ F:TSearchRec;
+ apath:string;
+ anode:TTreeNode;
+begin
+ Nodes.Clear;
+
+ att:=faReadOnly or faArchive;
+ FillChar(F,sizeof(F),0);
+ apath:=path+'\'+pattern;
+ han:=FindFirst(aPath,Att,F);
+ if han=0 then
+ begin
+  try
+   repeat
+    if (F.Attr and faDirectory)=0 then
+     Nodes.AddChild(Node,F.Name);
+   until FindNext(F)<>0;
+  finally
+   FindClose(F);
+  end;
+ end;
+
+ att:=faDirectory;
+ FillChar(F,sizeof(F),0);
+ apath:=path+'\*.*';
+ han:=FindFirst(aPath,Att,F);
+ if han=0 then
+ begin
+  try
+   repeat
+    if (F.Attr and faDirectory)>0 then
+    begin
+     if ((F.Name<>'.') AND (F.Name<>'..')) then
+     begin
+      anode:=Nodes.AddChild(Node,F.Name);
+      FillTreeView(path+'\'+F.Name,Nodes,aNode,pattern);
+     end;
+    end;
+   until FindNext(F)<>0;
+  finally
+   FindClose(F);
+  end;
  end;
 end;
 

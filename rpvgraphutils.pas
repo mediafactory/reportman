@@ -36,6 +36,7 @@ type
   papername:string;
  end;
 
+
  TPrinterForm=class(TObject)
    public
     Forminfo:Form_Info_1;
@@ -57,6 +58,7 @@ function IsWindowsNT:Boolean;
 function FindIndexPaperName(device,name:string):integer;
 procedure SetCurrentPaper(apapersize:TGDIPageSize);
 function GetCurrentPaper:TGDIPageSize;
+procedure SendControlCodeToPrinter(S: string);
 
 var
  osinfo:TOsVersionInfo;
@@ -836,6 +838,57 @@ begin
  end;
  FormsList.clear;
 end;
+
+procedure SendControlCodeToPrinter(S: string);
+var
+ Handle, hDeviceMode: THandle;
+ N: DWORD;
+ DocInfo1: TDocInfo1;
+ Device, Driver, Port: array[0..255] of char;
+ PrinterName: string;
+ buf:pchar;
+ lbuf:integer;
+begin
+ Printer.GetPrinter(Device, Driver, Port, hDeviceMode);
+ PrinterName := Format('%s', [Device]);
+ if not OpenPrinter(PChar(PrinterName), Handle, nil) then
+{$IFDEF USEVARIANTS}
+   RaiseLastOSError;
+{$ELSE}
+   RaiseLastWin32Error;
+{$ENDIF}
+ try
+  with DocInfo1 do
+  begin
+   pDocName := 'Control';
+   pOutputFile := nil;
+   pDataType := 'RAW';
+  end;
+  StartDocPrinter(Handle, 1, @DocInfo1);
+  try
+//   StartPagePrinter(Handle);
+   lbuf:=length(s);
+   buf:=Allocmem(lbuf+2);
+   try
+    copymemory(buf,Pchar(s),lbuf);
+    if not WritePrinter(Handle, buf, lbuf, N) then
+{$IFDEF USEVARIANTS}
+     RaiseLastOSError;
+{$ELSE}
+     RaiseLastWin32Error;
+{$ENDIF}
+   finally
+    freemem(buf);
+   end;
+//   EndPagePrinter(Handle);
+  finally
+   EndDocPrinter(Handle);
+  end;
+ finally
+  ClosePrinter(Handle);
+ end;
+end;
+
 
 initialization
 

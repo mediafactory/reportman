@@ -143,7 +143,7 @@ var
 {$ENDIF}
 begin
 {$IFDEF LINUX}
- Result:='/etc/'+company+product+filename;
+ Result:=Obtainininameuserconfig(company,product+'etc',filename);
 {$ENDIF}
 {$IFDEF MSWINDOWS}
  if length(filename)<1 then

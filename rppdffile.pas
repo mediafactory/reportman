@@ -203,6 +203,7 @@ type
    property Printing:Boolean read FPrinting;
    property Stream:TMemoryStream read GetStream;
    property StreamValid:Boolean read FStreamValid;
+   property MainPDF:TMemoryStream read FMainPDF;
   published
    // General properties
    property Compressed:boolean read FCompressed write FCompressed default true;

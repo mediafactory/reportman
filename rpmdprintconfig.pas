@@ -44,6 +44,13 @@ type
     LTop: TLabel;
     LMetrics3: TLabel;
     LMetrics4: TLabel;
+    LOperations: TLabel;
+    LExample: TLabel;
+    CheckCutPaper: TCheckBox;
+    ECutPaper: TEdit;
+    CheckOpenDrawer: TCheckBox;
+    EOpenDrawer: TEdit;
+    LExample2: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure LSelPrinterClick(Sender: TObject);
     procedure RadioUserClick(Sender: TObject);
@@ -52,6 +59,8 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ComboPrintersChange(Sender: TObject);
     procedure ELeftMarginChange(Sender: TObject);
+    procedure ECutPaperChange(Sender: TObject);
+    procedure CheckCutPaperClick(Sender: TObject);
   private
     { Private declarations }
     procedure DoSave;
@@ -100,6 +109,11 @@ begin
  LTop.Caption:=TranslateStr(102,LTop.Caption);
  LMetrics3.Caption:=rpunitlabels[defaultunit];
  LMetrics4.Caption:=LMetrics3.Caption;
+ LOperations.Caption:=TranslateStr(763,LOperations.Caption);
+ LExample.Caption:=TranslateStr(764,LExample.Caption);
+ LExample2.Caption:=TranslateStr(765,LExample2.Caption);
+ CheckCutPaper.Caption:=TranslateStr(766,CheckCutPaper.Caption);
+ CheckOpenDrawer.Caption:=TranslateStr(767,CheckOpenDrawer.Caption);
  with LSelPrinter.Items do
  begin
   Add(SRpDefaultPrinter);
@@ -155,6 +169,10 @@ begin
  end;
  ELeftMargin.Text:=gettextfromtwips(configinifile.ReadInteger('PrinterOffsetX','Printer'+IntToStr(LSelPrinter.ItemIndex),0));
  ETopMargin.Text:=gettextfromtwips(configinifile.ReadInteger('PrinterOffsetY','Printer'+IntToStr(LSelPrinter.ItemIndex),0));
+ CheckCutPaper.Checked:=configinifile.ReadBool('CutPaperOn','Printer'+IntToStr(LSelPrinter.ItemIndex),false);
+ ECutPaper.Text:=configinifile.ReadString('CutPaper','Printer'+IntToStr(LSelPrinter.ItemIndex),'');
+ CheckOpenDrawer.Checked:=configinifile.ReadBool('OpenDrawerOn','Printer'+IntToStr(LSelPrinter.ItemIndex),false);
+ EOpenDrawer.Text:=configinifile.ReadString('OpenDrawer','Printer'+IntToStr(LSelPrinter.ItemIndex),'');
 end;
 
 procedure ReadPrintersConfig;
@@ -252,6 +270,28 @@ begin
   configinifile.WriteInteger('PrinterOffsetX','Printer'+IntToStr(LSelPrinter.ItemIndex),margin)
  else
   configinifile.WriteInteger('PrinterOffsetY','Printer'+IntToStr(LSelPrinter.ItemIndex),margin);
+end;
+
+procedure TFRpPrinterConfig.ECutPaperChange(Sender: TObject);
+var
+ Operation:String;
+begin
+ if Sender=ECutPaper then
+  Operation:='CutPaper'
+ else
+  Operation:='OpenDrawer';
+ configinifile.WriteString(Operation,'Printer'+IntToStr(LSelPrinter.ItemIndex),(Sender As TEdit).Text);
+end;
+
+procedure TFRpPrinterConfig.CheckCutPaperClick(Sender: TObject);
+var
+ Operation:String;
+begin
+ if Sender=CheckCutPaper then
+  Operation:='CutPaper'
+ else
+  Operation:='OpenDrawer';
+ configinifile.WriteBool(Operation+'On','Printer'+IntToStr(LSelPrinter.ItemIndex),(Sender As TCheckBox).Checked);
 end;
 
 initialization

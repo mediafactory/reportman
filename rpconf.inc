@@ -1,6 +1,6 @@
 // Database drivers to be used
 {$DEFINE USESQLEXPRESS}
-//{$DEFINE USEIBX}
+{$DEFINE USEIBX}
 {$DEFINE USEADO}
 {$DEFINE USEBDE}
 //{$DEFINE USEIBO}
@@ -62,8 +62,12 @@
 {$IFDEF LINUX}
 {$IFDEF VER140}
  {$UNDEF KYLIX2}
-// Vcl File Filters is a missing feature of CLX Dialogs
+// Vcl File Filters is a missing feature of CLX Dialogs in kylix 2 and Delphi 6
  {$DEFINE VCLFILEFILTERS}
 {$ENDIF}
+{$ENDIF}
+
+{$IFDEF VER150}
+ {$DEFINE VCLFILEFILTERS}
 {$ENDIF}
 

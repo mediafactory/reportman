@@ -80,6 +80,7 @@ type
   private
    intdpix,intdpiy:integer;
    FOrientation:TRpOrientation;
+   FIntPageSize:TPageSizeQt;
    OldOrientation:TPrinterOrientation;
    function InternalSetPagesize(PagesizeQt:integer):TPoint;
   public
@@ -111,7 +112,7 @@ type
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
  showprogress,allpages:boolean;frompage,topage,copies:integer;
-  collate:boolean;printerindex:TRpPrinterSelect=pRpDefaultPrinter):boolean;
+  collate:boolean;printerindex:TRpPrinterSelect):boolean;
 function CalcReportWidthProgress(report:TRpReport):boolean;
 function PrintReport(report:TRpReport;Caption:string;progress:boolean;
   allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
@@ -125,6 +126,8 @@ function ExportReportToPDF(report:TRpReport;Caption:string;progress:boolean;
 function DoShowPrintDialog(var allpages:boolean;
  var frompage,topage,copies:integer;var collate:boolean;disablecopies:boolean=false):boolean;
 function PrinterSelection(printerindex:TRpPrinterSelect):TPoint;
+procedure PageSizeSelection(rpPageSize:TPageSizeQt);
+procedure OrientationSelection(neworientation:TRpOrientation);
 
  var
 {$IFDEF MSWINDOWS}
@@ -167,6 +170,7 @@ end;
 constructor TRpQtDriver.Create;
 begin
  // By default 1:1 scale
+ FIntPageSize.Custom:=false;
  dpi:=Screen.PixelsPerInch;
  scale:=1;
 end;
@@ -304,6 +308,7 @@ end;
 
 procedure TRpQtDriver.EndDocument;
 begin
+ FIntPageSize.Custom:=false;
  if toprinter then
  begin
   printer.EndDoc;
@@ -646,14 +651,29 @@ begin
   result.x:=12047;
   exit;
  end;
- Result.x:=Round((Printer.PageWidth/Printer.XDPI)*TWIPS_PER_INCHESS);
- Result.y:=Round((Printer.PageHeight/Printer.YDPI)*TWIPS_PER_INCHESS);
+ if FIntPageSize.Custom then
+ begin
+  Result.X:=FIntPageSize.CustomWidth;
+  Result.Y:=FIntPageSize.CustomHeight;
+ end
+ else
+ begin
+  Result.x:=Round((Printer.PageWidth/Printer.XDPI)*TWIPS_PER_INCHESS);
+  Result.y:=Round((Printer.PageHeight/Printer.YDPI)*TWIPS_PER_INCHESS);
+ end;
 end;
 
 
 function TRpQTDriver.SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
 begin
- Result:=InternalSetPageSize(PagesizeQT.Indexqt);
+ FIntPageSize:=PageSizeQt;
+ if FIntPageSize.Custom then
+ begin
+  Result.X:=PagesizeQt.CustomWidth;
+  Result.Y:=PagesizeQt.CustomHeight;
+ end
+ else
+  Result:=InternalSetPageSize(PagesizeQT.Indexqt);
 end;
 
 function TRpQTDriver.InternalSetPagesize(PagesizeQt:integer):TPoint;
@@ -684,9 +704,10 @@ begin
    Printer.Orientation:=poLandsCape;
 end;
 
+
 procedure DoPrintMetafile(metafile:TRpMetafileReport;tittle:string;
  aform:TFRpQtProgress;allpages:boolean;frompage,topage,copies:integer;
- collate:boolean;printerindex:TRpPrinterSelect=pRpDefaultPrinter);
+ collate:boolean;printerindex:TRpPrinterSelect);
 var
  i:integer;
  j:integer;
@@ -812,7 +833,7 @@ end;
 
 function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
  showprogress,allpages:boolean;frompage,topage,copies:integer;
-  collate:boolean;printerindex:TRpPrinterSelect=pRpDefaultPrinter):boolean;
+  collate:boolean;printerindex:TRpPrinterSelect):boolean;
 var
  dia:TFRpQtProgress;
 begin
@@ -1018,7 +1039,7 @@ begin
  if not kylixprintbug then
  begin
    if forcecalculation then
-    PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate)
+    PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate,report.PrinterSelect)
    else
    begin
     if progress then
@@ -1233,6 +1254,27 @@ end;
 procedure TRpQtDriver.SelectPrinter(printerindex:TRpPrinterSelect);
 begin
  offset:=PrinterSelection(printerindex);
+end;
+
+procedure PageSizeSelection(rpPageSize:TPageSizeQt);
+begin
+ if Printer.Printers.Count<0 then
+  exit;
+ if rpPageSize.Custom then
+  exit;
+ Printer.PrintAdapter.PageSize:=TPageSize(rpPagesize.Indexqt);
+end;
+
+procedure OrientationSelection(neworientation:TRpOrientation);
+begin
+ if Printer.Printers.Count<0 then
+  exit;
+ if neworientation=rpOrientationDefault then
+  exit;
+ if neworientation=rpOrientationPortrait then
+  Printer.Orientation:=poPortrait
+ else
+  Printer.Orientation:=poLandscape;
 end;
 
 end.

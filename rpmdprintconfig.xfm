@@ -1,9 +1,9 @@
 object FRpPrinterConfig: TFRpPrinterConfig
   Left = 37
   Top = 41
-  Width = 518
-  Height = 354
-  VertScrollBar.Range = 329
+  Width = 527
+  Height = 428
+  VertScrollBar.Range = 409
   HorzScrollBar.Range = 501
   ActiveControl = BOK
   Caption = 'Printers configuration'
@@ -15,7 +15,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
   PixelsPerInch = 96
   object BOK: TButton
     Left = 8
-    Top = 300
+    Top = 380
     Width = 81
     Height = 29
     Caption = 'OK'
@@ -25,7 +25,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
   end
   object BCancel: TButton
     Left = 128
-    Top = 300
+    Top = 380
     Width = 81
     Height = 29
     Cancel = True
@@ -37,7 +37,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
     Left = 4
     Top = 4
     Width = 205
-    Height = 177
+    Height = 253
     TabOrder = 2
     OnClick = LSelPrinterClick
   end
@@ -69,7 +69,7 @@ object FRpPrinterConfig: TFRpPrinterConfig
   end
   object GConfigFile: TGroupBox
     Left = 4
-    Top = 188
+    Top = 268
     Width = 493
     Height = 101
     Caption = 'Configuraiton file'
@@ -153,5 +153,60 @@ object FRpPrinterConfig: TFRpPrinterConfig
       Height = 13
       Caption = 'inch.'
     end
+  end
+  object LOperations: TLabel
+    Left = 220
+    Top = 152
+    Width = 98
+    Height = 13
+    Caption = 'Operations after print'
+  end
+  object LExample: TLabel
+    Left = 220
+    Top = 172
+    Width = 278
+    Height = 13
+    Caption = 'Example, TM200 Open Drawer: #27#112#48#160#160#4'
+  end
+  object CheckCutPaper: TCheckBox
+    Left = 216
+    Top = 208
+    Width = 145
+    Height = 21
+    Caption = 'Cut paper'
+    TabOrder = 10
+    OnClick = CheckCutPaperClick
+  end
+  object ECutPaper: TEdit
+    Left = 368
+    Top = 208
+    Width = 129
+    Height = 21
+    TabOrder = 11
+    OnChange = ECutPaperChange
+  end
+  object CheckOpenDrawer: TCheckBox
+    Left = 216
+    Top = 232
+    Width = 145
+    Height = 21
+    Caption = 'Open drawer'
+    TabOrder = 12
+    OnClick = CheckCutPaperClick
+  end
+  object EOpenDrawer: TEdit
+    Left = 368
+    Top = 232
+    Width = 129
+    Height = 21
+    TabOrder = 13
+    OnChange = ECutPaperChange
+  end
+  object LExample2: TLabel
+    Left = 220
+    Top = 188
+    Width = 266
+    Height = 13
+    Caption = 'Example, TM88 Open Drawer: #27#112#48#40#200#4'
   end
 end
