@@ -1435,6 +1435,7 @@ begin
  if FileExists(configfilename) then
  begin
   config:=TMemInifile.Create(configfilename);
+  config.CaseSensitive:=false;
  end
  else
  begin
@@ -1446,6 +1447,7 @@ begin
   if FileExists(DBXCONFIGFILENAME) then
   begin
    config:=TMemInifile.Create(DBXCONFIGFILENAME);
+   config.CaseSensitive:=false;
    CopyFileTo(DBXCONFIGFILENAME,configfilename);
   end
   else
@@ -1455,6 +1457,7 @@ begin
    begin
     CopyFileTo('/usr/local/etc/'+DBXCONFIGFILENAME+'.conf',configfilename);
     config:=TMemIniFile.Create(configfilename);
+    config.CaseSensitive:=false;
    end
    else
     Raise Exception.Create(SRpConfigFileNotExists+DBXCONFIGFILENAME);

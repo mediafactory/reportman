@@ -1,9 +1,11 @@
-Report Manager Designer Version 1.0 Release Candidate 1
+Report Manager Designer Version 1.0 Release Candidate 2
 
 Author:	Toni Martir
 	toni@pala.com (no free support)
 
-Open Source under the MPL License
+Open Source under the MPL and GPL License
+
+See LICENSE.TXT for detailed information
 
 You will find last version at:
 http://sourceforge.net/projects/reportman
@@ -29,16 +31,7 @@ This is the prerelease of 1.0 version.
 
 What's new:
 
-- Barcode printing
-- Simple chart printing
-- Multiselect in the designer
-- Alignment palette in the designer
-- Full PDF implementation
-- Alignment for constrols (bottom/right)
-- Autoexpansion and autocontraction of sections
-- Autosize for bitmaps and texts (multiline)
-- BDE TTable access (optimized access to DBF using indexes)
-- New ActiveX methods and properties
+- Translation kit (Windows)
 - Documentation included
 - Few bugfixes
 

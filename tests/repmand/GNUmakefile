@@ -22,6 +22,7 @@ install:
 	cp ../../repman/reportmanres.es .
 	cp ../../repman/reportmanres.en .
 	cp ../../repman/qttranslation/linux/qt_* .
+	cp ../../LICENSE.TXT .
 #	cp ../../repman/repmand.es .
 	-cp ../clxreport/Project1 .
 	cp ../../repman/repsamples/sample4.rep .
@@ -31,7 +32,7 @@ install:
 	mkdir doc/images
 	cp ../../doc/doc/images/*.jpg doc/images
 #	include repmand.es when linux translation done
-	tar c doc sample4.rep biolife.cds repmand dbxdrivers dbxconnections metaprint metaview printrep printreptopdf reptotxt txttorep repmand repmand.sh README *.so *.so.1 *.so.2 *.so.1.0 qt_* > repmand-1RC1.i386.tar
+	tar c doc LICENSE.TXT sample4.rep biolife.cds repmand dbxdrivers dbxconnections metaprint metaview printrep printreptopdf reptotxt txttorep repmand repmand.sh README *.so *.so.1 *.so.2 *.so.1.0 qt_* > repmand-1RC2.i386.tar
 	gzip repmand-1RC2.i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0
@@ -48,3 +49,4 @@ clean:
 	-rm -f qt_*
 	-rm -f repmand.es
 	-rm -f reportmanres*
+	-rm -f LICENSE.TXT
