@@ -34,10 +34,10 @@ uses Classes,SysUtils,rpprintitem,rpmdconsts,rpeval,
  Chart,Series,rpdrawitem,
  teEngine,ArrowCha,BubbleCh,GanttCh,
  {$IFDEF MSWINDOWS}
-   rpgraphutilsvcl,rpvgraphutils,Graphics,
+   rpgraphutilsvcl,rpvgraphutils,Graphics,Controls,
  {$ENDIF}
  {$IFDEF LINUX}
-   rpgraphutils,QGraphics,
+   rpgraphutils,QGraphics,QControls,
  {$ENDIF}
 {$ENDIF}
  rpmetafile;
@@ -385,6 +385,8 @@ var
  changeserie:boolean;
  caption:widestring;
 begin
+ if Length(FValueExpression)<1 then
+  exit;
  EvaluateClearExpression;
  if FSeries.Count<1 then
  begin
@@ -582,6 +584,7 @@ var
 begin
  achart:=TChart.Create(nil);
  try
+  achart.BevelOuter:=bvNone;
   achart.Legend.Visible:=false;
   achart.View3D:=FView3d;
   achart.View3DOptions.Rotation:=FRotation;
