@@ -50,8 +50,11 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
+    allpages,collate:boolean;
+    frompage,topage,copies:integer;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure AppIdleReport(Sender:TObject;var done:boolean);
+    procedure AppIdlePrintRange(Sender:TObject;var done:boolean);
     procedure RepProgress(Sender:TRpReport;var docancel:boolean);
   public
     { Public declarations }
@@ -78,6 +81,7 @@ type
    procedure NewPage;stdcall;
    procedure EndPage;stdcall;
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
+   procedure DrawPage(apage:TRpMetaFilePage);stdcall;
    function AllowCopies:boolean;stdcall;
    function GetPageSize:TPoint;stdcall;
    function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
@@ -85,9 +89,12 @@ type
    constructor Create;
   end;
 
-function PrintMetafile(metafile:TRpMetafileReport;tittle:string;showprogress:boolean):boolean;
+function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
+ showprogress,allpages:boolean;frompage,topage,copies:integer;
+  collate:boolean):boolean;
 function CalcReportWidthProgress(report:TRpReport):boolean;
-function PrintReport(report:TRpReport;Caption:string;progress:boolean):Boolean;
+function PrintReport(report:TRpReport;Caption:string;progress:boolean;
+  allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
 
 implementation
 
@@ -338,6 +345,16 @@ begin
  end;
 end;
 
+procedure TRpQtDriver.DrawPage(apage:TRpMetaFilePage);
+var
+ j:integer;
+begin
+ for j:=0 to apage.ObjectCount-1 do
+ begin
+  DrawObject(apage,apage.Objects[j]);
+ end;
+end;
+
 procedure TRpQtDriver.DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
 var
  dpix,dpiy:integer;
@@ -360,8 +377,6 @@ begin
   dpiy:=dpi;
  end;
  PrintObject(Canvas,page,obj,dpix,dpiy);
-
-
 end;
 
 function TRpQtDriver.AllowCopies:boolean;
@@ -392,12 +407,17 @@ begin
   Printer.Orientation:=poLandsCape;
 end;
 
-procedure DoPrintMetafile(metafile:TRpMetafileReport;tittle:string;aform:TFRpQtProgress);
+procedure DoPrintMetafile(metafile:TRpMetafileReport;tittle:string;
+ aform:TFRpQtProgress;allpages:boolean;frompage,topage,copies:integer;
+ collate:boolean);
 var
  i:integer;
  j:integer;
  apage:TRpMetafilePage;
+ pagecopies:integer;
+ reportcopies:integer;
  dpix,dpiy:integer;
+ count1,count2:integer;
 {$IFDEF MSWINDOWS}
     mmfirst,mmlast:DWORD;
 {$ENDIF}
@@ -405,6 +425,7 @@ var
     milifirst,mililast:TDatetime;
 {$ENDIF}
     difmilis:int64;
+ totalcount:integer;
 begin
  // Get the time
 {$IFDEF MSWINDOWS}
@@ -426,52 +447,79 @@ begin
  if metafile.PageSize>=0 then
   Printer.PrintAdapter.PageSize:=TPageSize(metafile.PageSize);
 
-
-
+ pagecopies:=1;
+ reportcopies:=1;
+ if copies>1 then
+ begin
+  if collate then
+   reportcopies:=copies
+  else
+   pagecopies:=copies;
+ end;
+ if allpages then
+ begin
+  frompage:=0;
+  topage:=metafile.PageCount-1;
+ end
+ else
+ begin
+  frompage:=frompage-1;
+  topage:=topage-1;
+  if topage>metafile.PageCount-1 then
+   topage:=metafile.PageCount-1;
+ end;
  printer.Begindoc;
  try
   dpix:=printer.XDPI;
   dpiy:=printer.YDPI;
-  for i:=0 to metafile.PageCount-1 do
+  totalcount:=0;
+  for count1:=0 to reportcopies-1 do
   begin
-   if i>0 then
-    printer.NewPage;
-   apage:=metafile.Pages[i];
-   for j:=0 to apage.ObjectCount-1 do
+   for i:=frompage to topage do
    begin
-    PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy);
-    if assigned(aform) then
+    for count2:=0 to pagecopies-1 do
     begin
-{$IFDEF MSWINDOWS}
-     mmlast:=TimeGetTime;
-     difmilis:=(mmlast-mmfirst);
-{$ENDIF}
-{$IFDEF LINUX}
-     mililast:=now;
-     difmilis:=MillisecondsBetween(mililast,milifirst);
-{$ENDIF}
-     if difmilis>MILIS_PROGRESS then
+     if totalcount>0 then
+      printer.NewPage;
+     inc(totalcount);
+     apage:=metafile.Pages[i];
+     for j:=0 to apage.ObjectCount-1 do
      begin
-      // Get the time
-{$IFDEF MSWINDOWS}
-      mmfirst:=TimeGetTime;
-{$ENDIF}
-{$IFDEF LINUX}
-      milifirst:=now;
-{$ENDIF}
-      aform.LRecordCount.Caption:=SRpPage+':'+ IntToStr(i+1)+
-        ' - '+SRpItem+':'+ IntToStr(j+1);
-      Application.ProcessMessages;
-      if aform.cancelled then
-       Raise Exception.Create(SRpOperationAborted);
+      PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy);
+      if assigned(aform) then
+      begin
+  {$IFDEF MSWINDOWS}
+       mmlast:=TimeGetTime;
+       difmilis:=(mmlast-mmfirst);
+  {$ENDIF}
+  {$IFDEF LINUX}
+       mililast:=now;
+       difmilis:=MillisecondsBetween(mililast,milifirst);
+  {$ENDIF}
+       if difmilis>MILIS_PROGRESS then
+       begin
+        // Get the time
+  {$IFDEF MSWINDOWS}
+        mmfirst:=TimeGetTime;
+  {$ENDIF}
+  {$IFDEF LINUX}
+        milifirst:=now;
+  {$ENDIF}
+        aform.LRecordCount.Caption:=SRpPage+':'+ IntToStr(i+1)+
+          ' - '+SRpItem+':'+ IntToStr(j+1);
+        Application.ProcessMessages;
+        if aform.cancelled then
+         Raise Exception.Create(SRpOperationAborted);
+       end;
+      end;
+     end;
+     if assigned(aform) then
+     begin
+       Application.ProcessMessages;
+       if aform.cancelled then
+        Raise Exception.Create(SRpOperationAborted);
      end;
     end;
-   end;
-   if assigned(aform) then
-   begin
-     Application.ProcessMessages;
-     if aform.cancelled then
-      Raise Exception.Create(SRpOperationAborted);
    end;
   end;
   Printer.EndDoc;
@@ -483,14 +531,16 @@ begin
   aform.close;
 end;
 
-function PrintMetafile(metafile:TRpMetafileReport;tittle:string;showprogress:boolean):boolean;
+function PrintMetafile(metafile:TRpMetafileReport;tittle:string;
+ showprogress,allpages:boolean;frompage,topage,copies:integer;
+  collate:boolean):boolean;
 var
  dia:TFRpQtProgress;
 begin
  Result:=true;
  if Not ShowProgress then
  begin
-  DoPrintMetafile(metafile,tittle,nil);
+  DoPrintMetafile(metafile,tittle,nil,allpages,frompage,topage,copies,collate);
   exit;
  end;
  dia:=TFRpQtProgress.Create(Application);
@@ -499,6 +549,11 @@ begin
   try
    dia.metafile:=metafile;
    dia.tittle:=tittle;
+   dia.allpages:=allpages;
+   dia.frompage:=frompage;
+   dia.topage:=topage;
+   dia.copies:=copies;
+   dia.collate:=collate;
    Application.OnIdle:=dia.AppIdle;
    dia.ShowModal;
    Result:=Not dia.cancelled;
@@ -524,7 +579,7 @@ begin
  done:=false;
  LTittle.Caption:=tittle;
  Label2.Visible:=true;
- DoPrintMetafile(metafile,tittle,self);
+ DoPrintMetafile(metafile,tittle,self,allpages,frompage,topage,copies,collate);
 end;
 
 
@@ -536,6 +591,8 @@ end;
 
 procedure TFRpQtProgress.RepProgress(Sender:TRpReport;var docancel:boolean);
 begin
+ if Not Assigned(LRecordCount) then
+  exit;
  LRecordCount.Caption:=IntToStr(Sender.CurrentSubReportIndex)+':'+SRpPage+':'+
  FormatFloat('#########,####',Sender.PageNum)+'-'+FormatFloat('#########,####',Sender.RecordCount);
  Application.ProcessMessages;
@@ -555,12 +612,7 @@ begin
  oldprogres:=RepProgress;
  try
   report.OnProgress:=RepProgress;
-  report.BeginPrint(qtdriver);
-  try
-   while Not report.PrintNextPage do;
-  finally
-   report.EndPrint;
-  end;
+  report.PrintAll(qtdriver);
  finally
   report.OnProgress:=oldprogres;
  end;
@@ -587,7 +639,30 @@ begin
  end;
 end;
 
-function PrintReport(report:TRpReport;Caption:string;progress:boolean):Boolean;
+
+procedure TFRpQtProgress.AppIdlePrintRange(Sender:TObject;var done:boolean);
+var
+ oldprogres:TRpProgressEvent;
+begin
+ Application.Onidle:=nil;
+ done:=false;
+
+ qtdriver:=TRpQtDriver.Create;
+ qtdriver.toprinter:=true;
+ aqtdriver:=qtdriver;
+ oldprogres:=RepProgress;
+ try
+  report.OnProgress:=RepProgress;
+  report.PrintRange(aqtdriver,allpages,frompage,topage,copies);
+ finally
+  report.OnProgress:=oldprogres;
+ end;
+ Close;
+end;
+
+
+function PrintReport(report:TRpReport;Caption:string;progress:boolean;
+  allpages:boolean;frompage,topage,copies:integer;collate:boolean):Boolean;
 var
 {$IFDEF LINUX}
  abuffer:array [0..L_tmpnam] of char;
@@ -600,27 +675,79 @@ var
 {$ENDIF}
  qtdriver:TRpQtDriver;
  aqtdriver:IRpPrintDriver;
+ forcecalculation:boolean;
+{$IFDEF MSWINDOWS}
+ dia:TFRpQtProgress;
+ oldonidle:TIdleEvent;
+{$ENDIF}
 begin
  Result:=true;
- if progress then
+{$IFDEF MSWINDOWS}
+ forcecalculation:=false;
+{$ENDIF}
+{$IFDEF LINUX}
+ forcecalculation:=true;
+{$ENDIF}
+ if ((report.copies>1) and (report.CollateCopies)) then
  begin
-  if Not CalcReportWidthProgress(report) then
-  begin
-   Result:=false;
-   exit;
-  end;
- end
- else
- begin
-  qtdriver:=TRpQtDriver.Create;
-  aqtdriver:=qtdriver;
-  report.PrintAll(qtdriver);
+  forcecalculation:=true;
  end;
-
+ if report.TwoPass then
+  forcecalculation:=true;
+ if forcecalculation then
+ begin
+  if progress then
+  begin
+   if Not CalcReportWidthProgress(report) then
+   begin
+    Result:=false;
+    exit;
+   end;
+  end
+  else
+  begin
+   qtdriver:=TRpQtDriver.Create;
+   aqtdriver:=qtdriver;
+   report.PrintAll(qtdriver);
+  end;
+ end;
  // A bug in Kylix 2 does not allow printing
  // when using dbexpress
 {$IFDEF MSWINDOWS}
- PrintMetafile(report.Metafile,Caption,progress);
+ if forcecalculation then
+  PrintMetafile(report.Metafile,Caption,progress,allpages,frompage,topage,copies,collate)
+ else
+ begin
+  if progress then
+  begin
+   // Assign appidle frompage to page...
+   dia:=TFRpQtProgress.Create(Application);
+   try
+    dia.allpages:=allpages;
+    dia.frompage:=frompage;
+    dia.topage:=topage;
+    dia.copies:=copies;
+    dia.report:=report;
+    dia.collate:=collate;
+    oldonidle:=Application.Onidle;
+    try
+     Application.OnIdle:=dia.AppIdlePrintRange;
+     dia.ShowModal;
+    finally
+     Application.OnIdle:=oldonidle;
+    end;
+   finally
+    dia.Free;
+   end;
+  end
+  else
+  begin
+   qtdriver:=TRpQtDriver.Create;
+   aqtdriver:=qtdriver;
+   qtdriver.toprinter:=true;
+   report.PrintRange(aqtdriver,allpages,frompage,topage,copies);
+  end;
+ end;
 {$ENDIF}
 {$IFDEF LINUX}
  // Saves the metafile

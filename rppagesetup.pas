@@ -54,6 +54,10 @@ type
     LMetrics6: TLabel;
     Label1: TLabel;
     ComboPageSize: TComboBox;
+    Label2: TLabel;
+    ECopies: TEdit;
+    CheckCollate: TCheckBox;
+    CheckTwoPass: TCheckBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -185,7 +189,16 @@ begin
 end;
 
 procedure TFPageSetup.SaveOptions;
+var
+ acopies:integer;
 begin
+ acopies:=StrToInt(ECopies.Text);
+ if acopies<=0 then
+  acopies:=1;
+ report.Copies:=acopies;
+ report.CollateCopies:=CheckCollate.Checked;
+ report.TwoPass:=CheckTwoPass.Checked;
+
  // Saves the options to report
  if RPageSize.itemindex=0 then
  begin
@@ -224,6 +237,10 @@ end;
 procedure TFPageSetup.ReadOptions;
 begin
  // ReadOptions
+ ECopies.Text:=IntToStr(report.Copies);
+ CheckCollate.Checked:=report.CollateCopies;
+ CheckTwoPass.Checked:=report.TwoPass;
+
  // Size
  ComboPageSize.ItemIndex:=report.PagesizeQt;
  GPageSize.Visible:=false;

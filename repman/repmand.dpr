@@ -68,6 +68,7 @@ uses
   rpfparams in '..\rpfparams.pas' {FRpParams},
   rpdbxconfig in '..\rpdbxconfig.pas' {FDBXConfig},
   rpgraphutils in '..\rpgraphutils.pas' {FRpGraphProgres},
+  rpprintdia in '..\rpprintdia.pas' {FRpPrintDialog},
   rplabelitem in '..\rplabelitem.pas',
   rpdrawitem in '..\rpdrawitem.pas',
   rpzlib in '..\rpzlib.pas',
@@ -84,6 +85,7 @@ uses
   rpzlibzlib in '..\rpzlibzlib.pas',
   rpzlibzutil in '..\rpzlibzutil.pas',
   rpclxreport in '..\rpclxreport.pas';
+
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -113,6 +115,7 @@ uses
   rpfparams in '../rpfparams.pas' {FRpParams},
   rpdbxconfig in '../rpdbxconfig.pas' {FDBXConfig},
   rpgraphutils in '../rpgraphutils.pas' {FRpGraphProgres},
+  rpprintdia in '..\rpprintdia.pas' {FRpPrintDialog};
   rplabelitem in '../rplabelitem.pas',
   rpdrawitem in '../rpdrawitem.pas',
   rpzlib in '../rpzlib.pas',

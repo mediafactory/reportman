@@ -125,6 +125,8 @@ type
     AFeatures: TAction;
     Features1: TMenuItem;
     utorial1: TMenuItem;
+    APrintSetup: TAction;
+    Printersetup1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -155,6 +157,7 @@ type
     procedure ShowHelp(AURL:string);
     procedure ATutorialExecute(Sender: TObject);
     procedure AFeaturesExecute(Sender: TObject);
+    procedure APrintSetupExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFDesignFrame;
@@ -190,7 +193,8 @@ var
 
 implementation
 
-uses rppagesetup, rpshfolder,  fdatainfo, frpgrid, rppreview, fabout;
+uses rppagesetup, rpshfolder,  fdatainfo, frpgrid, rppreview, fabout,
+  rpprintdia;
 
 {$R *.xfm}
 
@@ -740,8 +744,16 @@ begin
 end;
 
 procedure TFMainf.APrintExecute(Sender: TObject);
+var
+ allpages,collate:boolean;
+ frompage,topage,copies:integer;
 begin
- PrintReport(report,Caption,true);
+ allpages:=true;
+ collate:=report.CollateCopies;
+ frompage:=1; topage:=999999;
+ copies:=report.Copies;
+ if DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+  PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
 end;
 
 
@@ -865,6 +877,11 @@ begin
 {$ENDIF}
  aurl:=aurl+'doc'+Directorysep+'features.html';
  ShowHelp(aurl);
+end;
+
+procedure TFMainf.APrintSetupExecute(Sender: TObject);
+begin
+ printer.ExecuteSetup;
 end;
 
 initialization

@@ -83,6 +83,7 @@ type
    function GeTRpValue:TRpValue;override;
  end;
 
+
  TRpReport=class(TComponent)
   private
    FSubReports:TRpSubReportList;
@@ -115,6 +116,11 @@ type
    FDriver:IRpPrintDriver;
    FLeftMargin,FTopMargin,FRightMargin,FBottomMargin:TRpTwips;
    Fidenpagenum:TIdenpagenum;
+   FCopies:integer;
+   FCollateCopies:boolean;
+   FTwoPass:boolean;
+   FTotalPagesList:TList;
+   printingonepass:boolean;
 {$IFDEF MSWINDOWS}
    mmfirst,mmlast:DWORD;
 {$ENDIF}
@@ -128,6 +134,7 @@ type
    procedure SetDataInfo(Value:TRpDataInfoList);
    procedure SetDatabaseInfo(Value:TRpDatabaseInfoList);
    procedure SetParams(Value:TRpParamList);
+   procedure ClearTotalPagesList;
   protected
     section:TRpSection;
     subreport:TRpSubreport;
@@ -163,11 +170,15 @@ type
    // Print functions
    procedure ActivateDatasets;
    procedure DeActivateDatasets;
+   procedure AddTotalPagesItem(apageindex,aobjectindex:integer;
+    adisplayformat:widestring);
    property Evaluator:TRpEvaluator read FEvaluator;
    procedure BeginPrint(Driver:IRpPrintDriver);
    procedure EndPrint;
    function PrintNextPage:boolean;
    procedure PrintAll(Driver:IRpPrintDriver);
+   procedure PrintRange(Driver:IRpPrintDriver;allpages:boolean;
+    frompage,topage,copies:integer);
    property OnProgress:TRpProgressEvent read FOnProgress write FOnProgress;
   published
    // Grid options
@@ -206,6 +217,10 @@ type
    property Params:TRpParamList read FParams write SetParams;
    // Language
    property Language:integer read FLanguage write FLanguage default 0;
+   // Other
+   property Copies:integer read FCopies write FCopies default 1;
+   property CollateCopies:boolean read FCollateCopies write FCollateCopies default false;
+   property TwoPass:boolean read FTwoPass write FTwoPass default false;
  end;
 
 implementation
@@ -222,6 +237,7 @@ constructor TRpReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FCopies:=1;
  FPageOrientation:=rpOrientationDefault;
  // Means default pagesize
  FPagesize:=rpPageSizeDefault;
@@ -257,7 +273,34 @@ begin
  // Metafile
  FMetafile:=TRpMetafileReport.Create(nil);
  FDataAlias:=TRpAlias.Create(nil);
+ FTotalPagesList:=TList.Create;
+
 end;
+
+procedure TRpReport.AddTotalPagesItem(apageindex,aobjectindex:integer;
+ adisplayformat:widestring);
+var
+ aobject:TTotalPagesObject;
+begin
+ aobject:=TTotalPagesObject.Create;
+ FTotalPagesList.Add(aobject);
+ aobject.PageIndex:=apageindex;
+ aobject.ObjectIndex:=aobjectindex;
+ aobject.DisplayFormat:=adisplayformat;
+end;
+
+
+procedure TRpReport.ClearTotalPagesList;
+var
+ i:integer;
+begin
+ for i:=0 to FTotalPagesList.Count-1 do
+ begin
+  TObject(FTotalPagesList.Items[i]).Free;
+ end;
+ FTotalPagesList.Clear;
+end;
+
 
 destructor TRpReport.Destroy;
 begin
@@ -269,6 +312,7 @@ begin
  FMetafile.Free;
  FDataAlias.Free;
  FIdenPagenum.free;
+ FTotalPagesList.free;
  inherited destroy;
 end;
 
@@ -645,6 +689,73 @@ begin
  end;
 end;
 
+procedure TRpReport.PrintRange(Driver:IRpPrintDriver;allpages:boolean;
+    frompage,topage,copies:integer);
+var
+ initiated:boolean;
+ i:integer;
+ finished:boolean;
+begin
+ if allpages then
+ begin
+  frompage:=0;
+  topage:=999999999;
+ end
+ else
+ begin
+  dec(frompage);
+  dec(topage);
+ end;
+ printingonepass:=true;
+ try
+  BeginPrint(Driver);
+  try
+   initiated:=false;
+   try
+    finished:=false;
+    while Not PrintNextPage do
+    begin
+     if not initiated then
+     begin
+      Driver.NewDocument(metafile);
+      initiated:=true;
+     end;
+     if PageNum in [frompage..topage] then
+     begin
+      for i:=0 to copies-1 do
+      begin
+       Driver.NewPage;
+       Driver.DrawPage(metafile.pages[0]);
+       Driver.EndPage;
+      end;
+     end;
+     if pagenum=topage then
+     begin
+      finished:=true;
+      break;
+     end;
+     metafile.Clear;
+    end;
+    if not finished then
+    begin
+     if pagenum in [frompage..topage] then
+     begin
+      Driver.DrawPage(metafile.pages[0]);
+     end;
+    end;
+   finally
+    Driver.EndDocument;
+   end;
+  finally
+   EndPrint;
+  end;
+ finally
+  printingonepass:=false;
+ end;
+end;
+
+// Print all generaties the metafile, it's capable also
+// of evaluate the totalpages expression
 procedure TRpReport.PrintAll(Driver:IRpPrintDriver);
 begin
  BeginPrint(Driver);
@@ -669,6 +780,7 @@ begin
  begin
   Subreports.Items[i].Subreport.LastRecord:=false;
  end;
+ metafile.UpdateTotalPages(FTotalPagesList);
 end;
 
 
@@ -901,6 +1013,7 @@ begin
  if Not Assigned(FDriver) then
   Raise Exception.Create(SRpNoDriverPassedToPrint);
  metafile.Clear;
+ ClearTotalPagesList;
  // Sets page orientation
  if PageOrientation<>rpOrientationDefault then
  begin
@@ -1122,11 +1235,16 @@ begin
  oldprintedsection:=nil;
  printedsomething:=false;
  inc(Pagenum);
- if fmetafile.PageCount<=PageNum then
+ if not printingonepass then
  begin
+  if fmetafile.PageCount<=PageNum then
+  begin
+   fmetafile.NewPage;
+  end;
+  fmetafile.CurrentPage:=PageNum;
+ end
+ else
   fmetafile.NewPage;
- end;
- fmetafile.CurrentPage:=PageNum;
 
 
  if PageOrientation=rpOrientationLandscape then

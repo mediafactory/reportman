@@ -163,7 +163,7 @@ end;
 procedure TRpLabel.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 begin
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
-  aposx+PosX,width,height,Text,WFontName,LFontName,FontSize,
+  aposx+PosX,width,height,Text,WFontName,LFontName,FontSize,FontRotation,
   FontStyle,FOntColor,BackColor,Transparent,CutText,Alignment or VAlignment,WordWrap);
 end;
 
@@ -218,24 +218,43 @@ begin
 end;
 
 function TRpExpression.GetText:widestring;
+var
+ expre:WideString;
 begin
- if Length(Trim(Expression))<1 then
+ expre:=Trim(Expression);
+ if Length(expre)<1 then
  begin
   Result:='';
   exit;
  end;
- Evaluate;
- Result:=FormatVariant(displayformat,FValue);
+ // Is Total pages variable?
+ if (UpperCase(expre)='PAGECOUNT') then
+ begin
+  // 20 spaces
+  Result:='                    ';
+ end
+ else
+ begin
+  Evaluate;
+  Result:=FormatVariant(displayformat,FValue);
+ end;
 end;
 
 procedure TRpExpression.DoPrint(aposx,aposy:integer;metafile:TRpMetafileReport);
 var
- aText:string;
+ aText:WideString;
+ expre:WideString;
 begin
+ expre:=Trim(Expression);
  aText:=GetText;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy+PosY,
-   aposx+PosX,width,height,aText,WFontName,LFontName,FontSize,
+   aposx+PosX,width,height,aText,WFontName,LFontName,FontSize,FontRotation,
    FontStyle,FOntColor,BackColor,Transparent,CutText,Alignment or VAlignment,WordWrap);
+ // Is Total pages variable?
+ if (UpperCase(expre)='PAGECOUNT') then
+ begin
+  TRpReport(Owner).AddTotalPagesItem(metafile.currentpage,metafile.Pages[metafile.currentpage].ObjectCount-1,displayformat);
+ end;
 end;
 
 procedure TRpExpression.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');

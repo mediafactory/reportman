@@ -25,7 +25,7 @@ uses Sysutils,
 {$IFDEF MSWINDOWS}
 windows,
 {$ENDIF}
-Classes,rpconsts,Variants;
+Classes,rpconsts,Variants,fmtbcd;
 
 const
  MAX_LANGUAGES=3;
@@ -142,6 +142,8 @@ end;
 
 
 function FormatVariant(displayformat:string;Value:Variant):widestring;
+var
+ atype:TVarType;
 begin
  if VarIsNull(Value) then
  begin
@@ -153,10 +155,12 @@ begin
   Result:=widestring(Value);
   exit;
  end;
- case VarType(Value) of
+ atype:=VarType(value);
+ case atype of
   varEmpty,varNull:
    Result:='';
-  varSmallint,varInteger,varSingle,varWord,  varDouble,varInt64,varLongWord,varShortInt,varByte:   Result:=FormatFloat(displayformat,Value);  varCurrency:   Result:=FormatCurr(displayformat,Value);  varDate:   Result:=FormatDateTime(displayformat,Value);  varString:   Result:=Format(displayformat,[Value]);  varBoolean:   Result:=Format(displayformat,[BoolToStr(Value,true)]);  else   Result:=SRpUnknownType; end;{  varOleStr   = $0008;  varDispatch = $0009;  varError    = $000A;  varVariant  = $000C;  varUnknown  = $000D;  varStrArg   = $0048;  varAny      = $0101;  varTypeMask = $0FFF;  varArray    = $2000;  varByRef    = $4000;
+  varSmallint,varInteger,varSingle,varWord,varDouble,
+   varInt64,varLongWord,varShortInt,varByte:   Result:=FormatFloat(displayformat,Value);  varCurrency:   Result:=FormatCurr(displayformat,Value);  varDate:   Result:=FormatDateTime(displayformat,Value);  varString:   Result:=Format(displayformat,[Value]);  varBoolean:   Result:=Format(displayformat,[BoolToStr(Value,true)]);  else  begin   if atype=varFmtBCD then    Result:=FormatBCD(displayformat,VarToBcd(Value))   else    Result:=SRpUnknownType;  end; end;{  varOleStr   = $0008;  varDispatch = $0009;  varError    = $000A;  varVariant  = $000C;  varUnknown  = $000D;  varStrArg   = $0048;  varAny      = $0101;  varTypeMask = $0FFF;  varArray    = $2000;  varByRef    = $4000;
 }
 end;
 

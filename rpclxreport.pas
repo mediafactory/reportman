@@ -31,6 +31,7 @@ type
    FPreview:Boolean;
    FShowProgress:Boolean;
    FTitle:WideString;
+   FShowPrintDialog:boolean;
   public
    function Execute:boolean;
    procedure PrinterSetup;
@@ -45,9 +46,13 @@ type
    property ShowProgress:boolean read FShowProgress write FShowProgress
     default true;
    property Title:widestring read FTitle write FTitle;
+   property ShowPrintDialog:boolean read FShowPrintDialog
+    write FShowPrintDialog default true;
   end;
 
 implementation
+
+uses rpprintdia;
 
 constructor TCLXReport.Create(AOwner:TComponent);
 begin
@@ -56,6 +61,7 @@ begin
  FFilename:='';
  FPreview:=true;
  FTitle:=SRpUntitled;
+ FShowPrintDialog:=True;
 end;
 
 procedure TCLXReport.SetFileName(Value:TFilename);
@@ -108,6 +114,9 @@ end;
 
 
 function TCLXReport.Execute:boolean;
+var
+ allpages,collate:boolean;
+ frompage,topage,copies:integer;
 begin
  CheckLoaded;
  if FPreview then
@@ -116,7 +125,25 @@ begin
  end
  else
  begin
-  Result:=PrintReport(report,Title,FShowprogress);
+  allpages:=true;
+  collate:=report.CollateCopies;
+  frompage:=1; topage:=999999;
+  copies:=report.Copies;
+  if FShowPrintDialog then
+  begin
+   if DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+   begin
+    Result:=PrintReport(report,Title,FShowprogress,allpages,frompage,
+     topage,copies,collate);
+   end
+   else
+    Result:=false;
+  end
+  else
+  begin
+    Result:=PrintReport(report,Title,FShowprogress,true,1,
+     9999999,report.copies,report.collatecopies);
+  end;
  end;
 end;
 

@@ -84,7 +84,8 @@ type
   private
    FWFontName:widestring;
    FLFontName:widestring;
-   FFontSize:integer;
+   FFontSize:smallint;
+   FFontRotation:smallint;
    FFontStyle:integer;
    FFontColor:integer;
    FBackColor:integer;
@@ -98,7 +99,8 @@ type
   published
    property WFontName:widestring read FWFontName write FWFontName;
    property LFontName:widestring read FLFontName write FLFontName;
-   property FontSize:integer read FFontSize write FFontSize default 10;
+   property FontSize:smallint read FFontSize write FFontSize default 10;
+   property FontRotation:smallint read FFontRotation write FFontRotation default 0;
    property FontStyle:integer read FFontStyle write FFontStyle default 0;
    property FontColor:integer read FFontColor write FFontColor default 0;
    property BackColor:integer read FBackColor write FBackColor default $FFFFFF;
@@ -264,6 +266,7 @@ begin
  FLFontName:='Helvetica';
  FWFontName:='Arial';
  FontSize:=10;
+ FontRotation:=0;
  FontStyle:=0;
  FontColor:=0;
  FBackColor:=$FFFFFF;

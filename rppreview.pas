@@ -101,6 +101,8 @@ function ShowPreview(report:TRpReport;caption:string):boolean;
 
 implementation
 
+uses rpprintdia;
+
 {$R *.xfm}
 
 function ShowPreview(report:TRpReport;caption:string):boolean;
@@ -144,7 +146,10 @@ begin
      begin
       // Canbe canceled
       if report.PrintNextPage then
+      begin
+       report.EndPrint;
        break;
+      end;
      end;
     finally
      EnableControls;
@@ -174,7 +179,14 @@ begin
  Application.OnIdle:=nil;
  done:=false;
  try
-  report.BeginPrint(qtdriver);
+  if report.TwoPass then
+  begin
+   CalcReportWidthProgress(report);
+  end
+  else
+  begin
+   report.BeginPrint(qtdriver);
+  end;
   pagenum:=1;
   PrintPage;
   printed:=true;
@@ -248,19 +260,28 @@ begin
 end;
 
 procedure TFRpPreview.APrintExecute(Sender: TObject);
-{$IFDEF LINUX}
 var
+ allpages,collate:boolean;
+ frompage,topage,copies:integer;
+{$IFDEF LINUX}
  theparams:array [0..3] of pchar;
  param1:string;
  param2:string;
  child:__pid_t;
 {$ENDIF}
 begin
+ allpages:=true;
+ collate:=report.CollateCopies;
+ frompage:=1; topage:=999999;
+ copies:=report.Copies;
+ if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+  exit;
  // A bug in Kylix 2 does not allow printing
  // when using dbexpress
 {$IFDEF MSWINDOWS}
  if CalcReportWidthProgress(report) then
-  PrintMetafile(report.Metafile,Caption,true);
+  PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,
+   copies,collate);
 {$ENDIF}
 {$IFDEF LINUX}
  if CalcReportWidthProgress(report) then

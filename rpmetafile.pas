@@ -54,7 +54,7 @@ const
  RpSignature:array[0..RP_SIGNATURELENGTH-1] of char=('R','P','M','E','T','A','F','I','L',
   'E','0','1',#0);
 const
- FIRST_ALLOCATION_OBJECTS=500;
+ FIRST_ALLOCATION_OBJECTS=50;
  FIRST_ALLOCATED_WIDESTRING=1000;
 type
 
@@ -71,6 +71,11 @@ type
  TrpMetafileReport=class;
  TrpMetafilePage=class;
 
+ TTotalPagesObject=class(TObject)
+  public
+   PageIndex,ObjectIndex:integer;
+   DisplayFormat:widestring;
+  end;
 
  TRpMetaObjectType=(rpMetaText,rpMetaDraw,rpMetaImage);
 
@@ -83,7 +88,8 @@ type
     (TextP,TextS:integer;
     LFontNameP,LFontNameS:integer;
     WFontNameP,WFontNameS:integer;
-    FontSize:integer;
+    FontSize:smallint;
+    FontRotation:smallint;
     FontStyle:integer;
     FontColor:integer;
     BackColor:integer;
@@ -115,6 +121,7 @@ type
   function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
   procedure SetOrientation(Orientation:TRpOrientation);stdcall;
   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);stdcall;
+  procedure DrawPage(apage:TRpMetaFilePage);stdcall;
   function AllowCopies:boolean;stdcall;
  end;
 
@@ -138,8 +145,10 @@ type
    destructor Destroy;override;
    procedure Clear;
    procedure NewTextObject(Top,Left,Width,Height:integer;
-    Text:widestring;WFontName:widestring;LFontName:widestring;FontSize:integer;FontStyle:integer;
-    FontColor:integer;BackColor:integer;transparent:boolean;cuttext:boolean;Alignment:integer;WordWrap:boolean);
+    Text:widestring;WFontName:widestring;LFontName:widestring;
+    FontSize:smallint;FontRotation:smallint;FontStyle:integer;
+    FontColor:integer;BackColor:integer;transparent:boolean;
+    cuttext:boolean;Alignment:integer;WordWrap:boolean);
    procedure NewDrawObject(Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenStyle:integer;PenWidth:integer; PenColor:integer);
@@ -150,6 +159,7 @@ type
    function GetLFontName(arecord:TRpMetaObject):widestring;
    function GetStream(arecord:TRpMetaObject):TMemoryStream;
    property ObjectCount:integer read FObjectCount;
+   property Pool:WideString read FPool;
    property Objects[Index:integer]:TRpMetaObject read GetObject;
   end;
 
@@ -193,6 +203,7 @@ type
    procedure DeletePage(index:integer);
    property CurrentPage:integer read FCurrentPage write SetCurrentPage;
    property PageCount:integer read GetPageCount;
+   procedure UpdateTotalPages(alist:TList);
    property Pages[Index:integer]:TRpMetafilePage read GetPage;
    property OnProgress:TRpMetafileStreamProgres read FOnProgress write FOnProgress;
   published
@@ -211,6 +222,7 @@ end;
 
 procedure TRpMetafilePage.Clear;
 begin
+ SetLength(FObjects,FIRST_ALLOCATION_OBJECTS);
  FObjectCount:=0;
  FPoolPos:=1;
  FStreamPos:=0;
@@ -332,7 +344,8 @@ end;
 
 
 procedure TrpMetafilePage.NewTextObject(Top,Left,Width,Height:integer;
-    Text:widestring;WFontName:widestring;LFontName:widestring;FontSize:integer;FontStyle:integer;
+    Text:widestring;WFontName:widestring;LFontName:widestring;
+    FontSize:smallint;FontRotation:smallint;FontStyle:integer;
     FontColor:integer;BackColor:integer;transparent:boolean;cuttext:boolean;Alignment:integer;WordWrap:boolean);
 begin
  if FObjectCount>=High(FObjects)-1 then
@@ -352,6 +365,7 @@ begin
  NewWideString(FObjects[FObjectCount].LFontNameP,
   FObjects[FObjectCount].LFontNameS,LFontName);
  FObjects[FObjectCount].FontSize:=FontSize;
+ FObjects[FObjectCount].FontRotation:=FontRotation;
  FObjects[FObjectCount].FontStyle:=FontStyle;
  FObjects[FObjectCount].FontColor:=FontColor;
  FObjects[FObjectCount].BackColor:=BackColor;
@@ -477,8 +491,11 @@ begin
  for i:=0 to FPages.Count-1 do
  begin
   TRpMetafilePage(FPages.Items[i]).Clear;
+  TRpMetafilePage(Fpages.Items[i]).Free;
  end;
  FPages.clear;
+
+
  FCurrentPage:=-1;
 end;
 
@@ -737,6 +754,7 @@ begin
 
  FObjectCount:=objcount;
 end;
+
 constructor ErpBadFileFormat.Create(Msg:String;APosition:LongInt);
 begin
  FPosition:=Position;
@@ -819,5 +837,32 @@ begin
  end;
 end;
 
+procedure TRpMetafileReport.UpdateTotalPages(alist:TList);
+var
+ i,index:integer;
+ aobject:TTotalPagesObject;
+ apage:TrpMetafilePage;
+ astring:widestring;
+ oldtexts:integer;
+ tempstring:widestring;
+begin
+ for i:=0 to alist.count-1 do
+ begin
+  aobject:=TTotalPagesObject(alist.Items[i]);
+  apage:=Pages[aobject.PageIndex];
+  index:=apage.Objects[aobject.ObjectIndex].TextP;
+  if Length(aobject.displayformat)>0 then
+   astring:=FormatCurr(aobject.displayformat,PageCount)
+  else
+   astring:=IntToStr(PageCount);
+  oldtexts:=apage.Objects[aobject.ObjectIndex].TextS;
+  apage.FObjects[aobject.ObjectIndex].TextS:=Length(astring);
+  astring:=astring+'                                      ';
+  tempstring:=Copy(apage.Pool,1,index-1);
+  tempstring:=tempstring+Copy(astring,1,oldtexts);
+  tempstring:=tempstring+Copy(apage.Pool,index+oldtexts,Length(apage.Pool));
+  apage.FPool:=tempstring;
+ end;
+end;
 
 end.

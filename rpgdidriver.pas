@@ -39,6 +39,7 @@ type
    function GetPageSize:TPoint;stdcall;
    function SetPagesize(PagesizeQt:integer):TPoint;stdcall;
    procedure SetOrientation(Orientation:TRpOrientation);stdcall;
+   procedure DrawPage(apage:TRpMetaFilePage);stdcall;
   end;
 
 
@@ -108,6 +109,17 @@ begin
   Canvas:=nil;
  end;
 end;
+
+procedure TRpWinGDIDriver.DrawPage(apage:TRpMetaFilePage);
+var
+ j:integer;
+begin
+ for j:=0 to apage.ObjectCount-1 do
+ begin
+  DrawObject(apage,apage.Objects[j]);
+ end;
+end;
+
 
 procedure TRpWinGDIDriver.DrawObject(page:TRpMetafilePage;obj:TRpMetaObject);
 begin
