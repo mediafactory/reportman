@@ -69,7 +69,9 @@ procedure RpShowSystemInfoQt;
 
 implementation
 
+{$IFDEF MSWINDOWS}
 uses rpvgraphutils;
+{$ENDIF}
 
 {$R *.xfm}
 

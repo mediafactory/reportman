@@ -18,21 +18,22 @@
 #ifndef _REPORTMAN_H
 #define _REPORTMAN_H
 
-#define REP_LIBNAME "Reportman.ocx"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-int __stdcall rp_open(char *filename);
-int __stdcall rp_execute(int hreport,char *outputfilename,int metafile,int compressed);
-int __stdcall rp_close(int hreport);
-char * __stdcall rp_lasterror(void);
-int __stdcall rp_print(int hreport,char *title,int showprogress,int showprintdialog);
-int __stdcall rp_preview(int hreport,char *title);
+/* Add __stdcall in Microsoft Windows */
+int rp_open(char *filename);
+int rp_execute(int hreport,char *outputfilename,int metafile,int compressed);
+int rp_close(int hreport);
+char * rp_lasterror(void);
+int rp_print(int hreport,char *title,int showprogress,int showprintdialog);
+int rp_preview(int hreport,char *title);
 
 #ifdef __cplusplus
 }
 #endif
 #endif
+
 
 

@@ -10,16 +10,16 @@ library reportmanapiqt;
 // you can use reportmanapi lib
 
 {$I rpconf.inc}
+{$E so}
 
 uses
   SysUtils,
   Classes,
-  rpdllutil in '..\rpdllutil.pas',
-  rpmdconsts in '..\rpmdconsts.pas',
-  rppdfdriver in '..\rppdfdriver.pas',
-  rpdllutilqt in '..\rpdllutilqt.pas';
+  rpdllutil in '../rpdllutil.pas',
+  rpmdconsts in '../rpmdconsts.pas',
+  rppdfdriver in '../rppdfdriver.pas',
+  rpdllutilqt in '../rpdllutilqt.pas';
 
-{$R *.RES}
 exports
  rp_open,
  rp_execute,

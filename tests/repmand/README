@@ -1,4 +1,4 @@
-Report Manager Designer Version 1.5
+Report Manager Designer Version 1.6
 
 Author:	Toni Martir
 	toni@pala.com (no free support)
@@ -15,7 +15,7 @@ http://reportman.sourceforge.net
 
 To install:
 
-tar zxvf repmand-1_5.i386.tar.gz
+tar zxvf repmand-1_6.i386.tar.gz
 
 To execute the application:
 
@@ -31,6 +31,8 @@ To execute the report server or report client use
 ./metaview.sh
 
 To execute other commandline tools  set first the library path (see repmand.sh script)
+
+Or better copy the libraries to /opt/kylixlibs and execute allways the executable named as .bin that is a launcher.
 
 Linux version:
 

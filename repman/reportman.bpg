@@ -5,7 +5,8 @@ MAKE = make -$(MAKEFLAGS) -f$**
 DCC =dcc $<
 #------------------------------------------------------------------------------
 PROJECTS = repmand metaprint metaview printrep reptotxt txttorep printreptopdf \
-  reportserverapp reportservercon repserverconfig repwebexe startup.bin
+  reportserverapp reportservercon repserverconfig repwebexe startup.bin \
+  libreportmanapi.so libreportmanapiqt.so
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -44,6 +45,12 @@ repwebexe: ../server/web/repwebexe.dpr
 	$(DCC)
 
 startup.bin: utils/startup/startup.dpr
+	$(DCC)
+
+libreportmanapi.so: ../dll/reportmanapi.dpr
+	$(DCC)
+
+libreportmanapiqt.so: ../dll/reportmanapiqt.dpr
 	$(DCC)
 
 

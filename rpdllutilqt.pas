@@ -93,7 +93,13 @@ begin
  Result:=1;
  try
   report:=FindReport(hreport);
+{$IFDEF MSWINDOWS}
   ShowPreview(report,Title);
+{$ENDIF}
+{$IFDEF LINUX}
+  ShowPreview(report,Title,true);
+{$ENDIF}
+
  except
   on E:Exception do
   begin
