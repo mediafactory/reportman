@@ -222,11 +222,14 @@ begin
     Exit;
    evaluator:=TRpReport(GetReport).evaluator;
    iden:=evaluator.SearchIdentifier(Expression);
+   if Assigned(iden) then
+    if (Not (iden is TIdenField)) then
+     iden:=nil;
    if Not Assigned(iden) then
    begin
     // Looks for a string (path to file)
     aValue:=evaluator.EvaluateText(Expression);
-    if (VarType(aValue)<>varString) then
+    if (not (VarType(aValue)=varString)) then
      Raise Exception.Create(SRpFieldNotFound+FExpression);
     afilename:=aValue;
     FMStream:=TMemoryStream.Create;
@@ -260,8 +263,6 @@ begin
    end
    else
    begin
-    if (Not (iden is TIdenField)) then
-     Raise Exception.Create(SRpNotAField+FExpression);
     AField:=(iden As TIdenField).Field;
     if (Not (AField is TBlobField)) then
      Raise Exception.Create(SRpNotBinary+FExpression);
