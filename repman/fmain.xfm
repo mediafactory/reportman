@@ -1,6 +1,6 @@
 object FMainf: TFMainf
-  Left = 58
-  Top = 23
+  Left = 27
+  Top = 24
   VertScrollBar.Visible = False
   HorzScrollBar.Visible = False
   ActiveControl = ToolButton1

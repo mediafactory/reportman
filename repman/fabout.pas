@@ -35,6 +35,8 @@ type
     LVersion: TLabel;
     Label4: TLabel;
     Label5: TLabel;
+    Memo1: TMemo;
+    Label6: TLabel;
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }

@@ -2,7 +2,7 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       Rpgdidriver                                     }
+{       Rpqtriver                                     }
 {       TRpQTDriver: Printer driver for  QT Libs        }
 {       can be used for windows and linux               }
 {       it includes printer and bitmap support          }
@@ -246,16 +246,16 @@ begin
      aalign:=aalign or Integer(AlignmentFlags_DontClip);
     if obj.Wordwrap then
      aalign:=aalign or Integer(AlignmentFlags_WordBreak);
-    if obj.CutText then
+//    if obj.CutText then
     begin
-     rec.Top:=posx;
-     rec.Left:=posy;
+     rec.Left:=posx;
+     rec.Top:=posy;
      rec.Right:=posx+round(obj.Width*dpix/TWIPS_PER_INCHESS);
      rec.Bottom:=posy+round(obj.Height*dpiy/TWIPS_PER_INCHESS);
      Canvas.TextRect(rec,posx,posy,page.GetText(Obj),aalign);
     end
-    else
-     Canvas.TextOut(posx,posy,page.GetText(Obj));
+//    else
+//     Canvas.TextOut(posx,posy,page.GetText(Obj));
    end;
   rpMetaDraw:
    begin

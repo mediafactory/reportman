@@ -40,7 +40,7 @@ uses
 {$IFDEF MSWINDOWS}
   ShLwApi in 'ShLwApi.pas',
   ShFolder in 'ShFolder.pas',
-  midaslib,
+  midaslib,Crtl,
   rpreport in '..\rpreport.pas',
   rpsubreport in '..\rpsubreport.pas',
   rpconsts in '..\rpconsts.pas',
@@ -86,7 +86,9 @@ uses
   rpzlibzinflate in '..\rpzlibzinflate.pas',
   rpzlibzlib in '..\rpzlibzlib.pas',
   rpzlibzutil in '..\rpzlibzutil.pas',
-  rpclxreport in '..\rpclxreport.pas';
+  rpclxreport in '..\rpclxreport.pas',
+  rppdffile in '..\rppdffile.pas',
+  rppdfdriver in '..\rppdfdriver.pas';
 {$ENDIF}
 
 {$IFDEF LINUX}
@@ -133,7 +135,9 @@ uses
   rpzlibzinflate in '../rpzlibzinflate.pas',
   rpzlibzlib in '../rpzlibzlib.pas',
   rpzlibzutil in '../rpzlibzutil.pas',
-  rpclxreport in '../rpclxreport.pas';
+  rpclxreport in '../rpclxreport.pas',
+  rppdfdriver in '../rppdfdriver.pas',
+  rppdffile in '../rppdffile.pas';
 {$ENDIF}
 
 

@@ -106,7 +106,7 @@ function ShowPreview(report:TRpReport;caption:string):boolean;
 
 implementation
 
-uses rpprintdia, rprfparams;
+uses rpprintdia, rprfparams, rppdfdriver;
 
 {$R *.xfm}
 
@@ -306,7 +306,11 @@ begin
    report.Metafile.OnProgress:=MetProgress;
    DisableControls(true);
    try
-    report.Metafile.SaveToFile(SaveDialog1.Filename);
+    if SaveDialog1.FilterIndex=1 then
+     report.Metafile.SaveToFile(SaveDialog1.Filename)
+    else
+     if SaveDialog1.FilterIndex=2 then
+      SaveMetafileToPDF(report.Metafile,SaveDialog1.filename);
    finally
     EnableControls;
    end;
