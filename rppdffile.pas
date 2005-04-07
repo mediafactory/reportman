@@ -1479,6 +1479,7 @@ begin
    fimagestream.SetSize(abitmap.size);
    fimagestream.LoadFromStream(abitmap);
    fimagestream.Seek(0,soFromBeginning);
+   imagesize:=fimagestream.size;
   end
   else
   begin

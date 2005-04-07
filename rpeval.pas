@@ -346,6 +346,10 @@ begin
  Rpfunctions.AddObject('GRAPHICCLEAR',iden);
  iden:=TIdenGraphicNew.Create(nil);
  Rpfunctions.AddObject('GRAPHICNEW',iden);
+ iden:=TIdenGraphicColor.Create(nil);
+ Rpfunctions.AddObject('GRAPHICCOLOR',iden);
+ iden:=TIdenGraphicSerieColor.Create(nil);
+ Rpfunctions.AddObject('GRAPHICSERIECOLOR',iden);
  iden:=TIdenGraphicBounds.Create(nil);
  Rpfunctions.AddObject('GRAPHICBOUNDS',iden);
  // SQl functions

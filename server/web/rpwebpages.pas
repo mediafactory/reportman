@@ -752,9 +752,9 @@ begin
        rpParamBool:
         begin
          aparamstring:=aparamstring+
-          '<select name="Param'+
-         aparam.Name+
-          '" alt="'+HtmlEncode(aparam.Hint);
+          '<select name="Param'+aparam.Name+'" ';
+         if Length(aparam.Hint)>0 then
+          aparamstring:=aparamstring+' alt="'+HtmlEncode(aparam.Hint)+'" ';
          if aparam.IsReadOnly then
           aparamstring:=aparamstring+' readonly ';
          aparamstring:=aparamstring+'>'+#10;
@@ -772,20 +772,25 @@ begin
            aparamstring:=aparamstring+' selected ';
          aparamstring:=aparamstring+'>'+HtmlEncode(SRpNo)+
           '</option>'+#10;
-         aparamstring:=aparamstring+'>'+HtmlEncode(aparam.Items.Strings[i])+
+         aparamstring:=aparamstring+
           '</select>'+#10;
         end;
        rpParamList:
         begin
-         aparamstring:=aparamstring+
-          '<select name="Param'+
-         aparam.Name+
-          '" alt="'+HtmlEncode(aparam.Hint);
+         aparamstring:=aparamstring+'<select name="Param'+
+          aparam.Name+'" ';
+         if Length(aparam.Hint)>0 then
+           aparamstring:=aparamstring+' alt="'+HtmlEncode(aparam.Hint)+'" ';
          if aparam.Isreadonly then
           aparamstring:=aparamstring+' readonly ';
          aparamstring:=aparamstring+'>'+#10;
          if Not VarIsNull(aparam.value) then
-          selectedindex:=aparam.Values.IndexOf(aparam.Value)
+         begin
+          if VarType(aparam.Value)=varInteger then
+           selectedindex:=aparam.Value
+          else
+           selectedindex:=aparam.Values.IndexOf(String(aparam.Value));
+         end
          else
           selectedindex:=-1;
          for k:=0 to aparam.Items.Count-1 do
@@ -794,19 +799,20 @@ begin
             IntToStr(k)+'" ';
           if k=selectedindex then
            aparamstring:=aparamstring+' selected ';
-          aparamstring:=aparamstring+'>'+HtmlEncode(aparam.Items.Strings[i])+
+          aparamstring:=aparamstring+'>'+HtmlEncode(aparam.Items.Strings[k])+
            '</option>'+#10;
          end;
-         aparamstring:=aparamstring+'>'+HtmlEncode(aparam.Items.Strings[i])+
-          '</select>'+#10;
+         aparamstring:=aparamstring+'</select>'+#10;
         end;
        else
        begin
         aparamstring:=aparamstring+
          '<input type="text" name="Param'+
-         aparam.Name+
-         '" alt="'+HtmlEncode(aparam.Hint)+
-         '" value="'+HtmlEncode(aparam.AsString)+'"';
+         aparam.Name+'" ';
+        if Length(aparam.Hint)>0 then
+         aparamstring:=aparamstring+' alt="'+HtmlEncode(aparam.Hint)+'" ';
+        aparamstring:=aparamstring+
+         ' value="'+HtmlEncode(aparam.AsString)+'"';
        end;
        if aparam.IsReadOnly then
         aparamstring:=aparamstring+' readonly >'+#10;
@@ -895,7 +901,10 @@ begin
      else
      begin
       // Assign the parameter as a string
-      pdfreport.Params.ParamByName(paramname).AsString:=paramvalue;
+      if pdfreport.Params.ParamByName(paramname).ParamType=rpParamList then
+       pdfreport.Params.ParamByName(paramname).Value:=pdfreport.Params.ParamByName(paramname).Values[StrToInt(paramvalue)]
+      else
+       pdfreport.Params.ParamByName(paramname).AsString:=paramvalue;
      end;
     end;
     if Uppercase(Request.QueryFields.Names[i])='METAFILE' then

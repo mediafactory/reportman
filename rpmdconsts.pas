@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.3f';
+ RM_VERSION='2.4pre1';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 type
   TPageWidthHeight = record
@@ -1251,6 +1251,27 @@ var
   SRpTimeOut:WideString='Timeout detected';
   SRpPrintRep26:WideString='         -onesheet Optional one sheet excel output';
   SRpTypeInfo:WideString='Data type information';
+  //
+  SRpStreamXML:WideString='XML';
+  SRpStreamXMLComp:WideString='XML Compressed';
+  SRpMarkType:WideString='Mark Style';
+  SRpSMarkType0:WideString='Value';
+  SRpSMarkType1:WideString='Percent';
+  SRpSMarkType2:WideString='Label';
+  SRpSMarkType3:WideString='Label-Percent';
+  SRpSMarkType4:WideString='Label-Value';
+  SRpSMarkType5:WideString='Legend';
+  SRpSMarkType6:WideString='Percent-Total';
+  SRpSMarkType7:WideString='LabelPercentTotal';
+  SRpSMarkType8:WideString='XValue';
+  SRpSVertAxisFSize:WideString='F.Size V.Axis';
+  SRpSVertAxisFRot:WideString='F.Rot. V.Axis';
+  SRpSHorzAxisFSize:WideString='F.Size H.Axis';
+  SRpSHorzAxisFRot:WideString='F.Rot. H.Axis';
+  SrpSSerieColor:WideString='S.Color Expression';
+  SrpSValueColor:WideString='Color Expression';
+  SRpGraphicColor:WideString='Set color for last value';
+  SRpGraphicSerieColor:WideString='Set color for last serie';
 
 implementation
 

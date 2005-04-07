@@ -19,7 +19,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     Top = 0
     Width = 458
     Height = 392
-    ActivePage = TabPrint
+    ActivePage = TabOptions
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -131,7 +131,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           Width = 253
           Height = 21
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 0
         end
       end
@@ -506,7 +506,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 0
       end
     end

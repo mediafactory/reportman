@@ -39,6 +39,7 @@ uses
   rprfvparams in '..\rprfvparams.pas' {FRpRTParams},
   rpmdfsectionintvcl in '..\rpmdfsectionintvcl.pas',
   rptextdriver in '..\rptextdriver.pas',
+  rpxmlstream in '..\rpxmlstream.pas',
 {$IFDEF USEEVALHASH}
   rpstringhash in '..\rpstringhash.pas',
   rpcomparable in '..\rpcomparable.pas',

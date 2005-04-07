@@ -2349,15 +2349,9 @@ begin
   achart.LeftAxis.LabelsFont.Name:=nchart.WFontName;
   achart.BottomAxis.LabelsFont.Name:=nchart.WFontName;
   achart.Legend.Font.Name:=nchart.WFontName;
-  achart.LeftAxis.LabelsFont.Size:=afontsize;
-  // Convert to degrees first
-  achart.LeftAxis.LabelsAngle:=Abs(nchart.FontRotation div 10) mod 360;
   achart.LeftAxis.LabelsFont.Style:=CLXIntegerToFontStyle(nchart.FontStyle);
-  achart.BottomAxis.LabelsFont.Size:=aFontSize;
-  achart.Legend.Font.Size:=aFontSize;
-  // Convert to degrees first
-  achart.BottomAxis.LabelsAngle:=Abs(nchart.FontRotation div 10) mod 360;
   achart.BottomAxis.LabelsFont.Style:=CLXIntegerToFontStyle(nchart.FontStyle);
+  achart.Legend.Font.Size:=aFontSize;
   achart.Legend.Font.Style:=CLXIntegerToFontStyle(nchart.FontStyle);
   achart.Legend.Visible:=nchart.ShowLegend;
   acolor:=0;
@@ -2367,6 +2361,10 @@ begin
   achart.LeftAxis.Automatic:=false;
   achart.LeftAxis.AutomaticMaximum:=Series.AutoRangeH;
   achart.LeftAxis.AutomaticMinimum:=Series.AutoRangeL;
+  achart.LeftAxis.LabelsAngle:=nchart.VertFontRotation mod 360;
+  achart.LeftAxis.LabelsFont.Size:=Round(nchart.VertFontSize*nchart.Resolution/100);
+  achart.BottomAxis.LabelsAngle:=nchart.HorzFontRotation mod 360;
+  achart.BottomAxis.LabelsFont.Size:=Round(nchart.HorzFontSize*nchart.Resolution/100);
 {$IFDEF USEVARIANTS}
   achart.LeftAxis.Logarithmic:=Series.Logaritmic;
   achart.LeftAxis.LogarithmicBase:=Round(Series.LogBase);
@@ -2404,7 +2402,6 @@ begin
     rpchartpie:
      begin
       aserie:=TPieSeries.Create(nil);
-      aserie.Marks.Style:=smsPercent;
      end;
     rpchartarrow:
      aserie:=TArrowSeries.Create(nil);
@@ -2421,23 +2418,37 @@ begin
    aserie.Marks.Font.Size:=aFontSize;
    aserie.Marks.Font.Style:=CLXIntegerToFontStyle(nchart.FontStyle);
    aserie.Marks.Visible:=nchart.ShowHint;
+   aserie.Marks.Style:=TSeriesMarksStyle(nchart.MarkStyle);
    aserie.ParentChart:=achart;
+   if intserie.Color>=0 then
+    aserie.SeriesColor:=intserie.Color
+   else
+    aserie.SeriesColor:=SeriesColors[aColor];
    // Assigns the color for this serie
    for j:=0 to intserie.ValueCount-1 do
    begin
-    aserie.ValueColor[1]:=clBlue;
-    if nchart.ChartType=rpchartpie then
-     aserie.Add(intserie.Values[j],
-      intSerie.ValueCaptions[j],SeriesColors[aColor])
-    else
-    aserie.Add(intserie.Values[j],
-     intSerie.ValueCaptions[j],SeriesColors[aColor]);
     if series.count<2 then
     begin
-     if nchart.ChartType=rpchartpie then
+     if intserie.Colors[j]>=0 then
+      aserie.Add(intserie.Values[j],
+       intSerie.ValueCaptions[j],intSerie.Colors[j])
+     else
+      aserie.Add(intserie.Values[j],
+       intSerie.ValueCaptions[j],SeriesColors[aColor]);
+     if (nchart.ChartType in [rpchartpie]) or nchart.ShowLegend then
       acolor:=((acolor+1) mod (MAX_SERIECOLORS));
+    end
+    else
+    begin
+     if intserie.Colors[j]>=0 then
+      aserie.Add(intserie.Values[j],
+       intSerie.ValueCaptions[j],intserie.Colors[j])
+     else
+      aserie.Add(intserie.Values[j],
+       intSerie.ValueCaptions[j],SeriesColors[aColor]);
     end;
    end;
+   acolor:=((acolor+1) mod (MAX_SERIECOLORS));
    abitmap:=TBitmap.Create;
    try
 {$IFNDEF DOTNETDBUGS}

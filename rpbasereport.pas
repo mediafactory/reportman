@@ -397,6 +397,7 @@ type
 
 implementation
 
+uses rpxmlstream;
 
 function TIdenReportVar.GeTRpValue:TRpValue;
 var
@@ -706,10 +707,25 @@ begin
   end;
  end
  else
+ if theformat=rpStreamXMLZLib then
+ begin
+  zstream:=TCompressionStream.Create(clDefault,Stream);
+  try
+    WriteReportXML(Self,zstream);
+  finally
+   zstream.free;
+  end;
+ end
+ else
 {$ENDIF}
  if theformat=rpStreamBinary then
  begin
   Stream.WriteComponent(Self);
+ end
+ else
+ if theformat=rpStreamXML then
+ begin
+  WriteReportXML(Self,Stream);
  end
  else
  begin

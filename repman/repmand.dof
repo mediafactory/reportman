@@ -145,7 +145,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=3
 Release=0
-Build=5
+Build=7
 Debug=0
 PreRelease=0
 Special=0
@@ -156,7 +156,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Designer
-FileVersion=2.3.0.5
+FileVersion=2.3.0.7
 InternalName=repmand.exe
 LegalCopyright=Toni Martir - Open Source (MPL)
 LegalTrademarks=

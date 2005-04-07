@@ -220,7 +220,7 @@ procedure GetSkipTypePossibleValues(alist:TRpWideStrings);
 
 implementation
 
-uses rpsubreport,rpbasereport, Math;
+uses rpsubreport,rpbasereport, Math,rpxmlstream;
 
 type
   TGraphicHeader = record
@@ -741,6 +741,16 @@ begin
   end;
  end
  else
+ if theformat=rpStreamXMLZLib then
+ begin
+  zstream:=TCompressionStream.Create(clDefault,Stream);
+  try
+   WriteSectionXML(Self,zStream);
+  finally
+   zstream.free;
+  end;
+ end
+ else
 {$ENDIF}
  if theformat=rpStreamBinary then
  begin
@@ -750,6 +760,11 @@ begin
   finally
    writer.free;
   end;
+ end
+ else
+ if theformat=rpStreamXML then
+ begin
+  WriteSectionXML(Self,Stream);
  end
  else
  begin

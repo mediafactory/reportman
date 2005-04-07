@@ -182,6 +182,18 @@ type
   public
    constructor Create(AOwner:TComponent);override;
   end;
+ TIdenGraphicColor=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+ TIdenGraphicSerieColor=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
  {SQL function}
  TIdenGetValueFromSQL=class(TIdenFunction)
   protected
@@ -399,7 +411,9 @@ type
   end;
 
 
- TRpNewValue=procedure (Y:Single;Cambio:Boolean;leyen,textleyen,textserie:string;ChartType:TRpChartType) of object;
+ TRpNewValue=procedure (Y:Single;Cambio:Boolean;leyen,textleyen,
+  textserie:string;ChartType:TRpChartType) of object;
+ TRpColorEvent=procedure (Color:Integer) of object;
  TRpBoundsValue=procedure (autol,autoh:boolean;lvalue,hvalue:double;
   logaritmic:boolean;logbase:double;inverted:boolean) of object;
 
@@ -408,6 +422,8 @@ type
    FOnNewValue:TRpNewValue;
    FOnClear:TNotifyEvent;
    FOnBounds:TRpBoundsValue;
+   FOnSerieColor:TRpColorEvent;
+   FOnValueColor:TRpColorEvent;
    procedure SetRpValue(Value:TRpValue);override;
    function GetRpValue:TRpValue;override;
   public
@@ -418,6 +434,8 @@ type
    property OnClear:TNotifyEvent read FOnClear write FOnClear;
    property OnNewValue:TRpNewValue read FOnNewValue write FOnNewValue;
    property OnBounds:TRpBoundsValue read FOnBounds write FOnBounds;
+   property OnSerieColor:TRpColorEvent read FOnSerieColor write FOnSerieColor;
+   property OnValueColor:TRpColorEvent read FOnValueColor write FOnValueColor;
   end;
 
 
@@ -1051,7 +1069,80 @@ begin
          IdenName+'-'+Params[0]);
 
  Result:=True;
- (iden As TVariableGrap).NewValue(single(Params[1]),Boolean(Params[2]),string(Params[3]),string(Params[4]),'',(iden As TVariableGrap).DefaultChartType);
+ (iden As TVariableGrap).NewValue(single(Params[1]),Boolean(Params[2]),string(Params[3]),'',string(Params[4]),(iden As TVariableGrap).DefaultChartType);
+end;
+
+constructor TIdenGraphicColor.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=2;
+ IdenName:='GraphicColor';
+ Help:=SRpGraphicColor;
+ model:='function '+'GraphicColor'+'(Gr:string, Color:Integer):Boolean';
+end;
+
+
+function TIdenGraphicColor.GeTRpValue:TRpValue;
+var
+ iden:TRpIdentifier;
+begin
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Not VarIsInteger(Params[1]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ // Buscamos el identificador
+ iden:=(evaluator As TRpEvaluator).SearchIdentifier(String(Params[0]));
+ if iden=nil then
+ begin
+   Raise TRpNamedException.Create(SRpIdentifierexpected,
+         IdenName+'-'+Params[0]);
+ end;
+ if Not (iden is TVariableGrap) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName+'-'+Params[0]);
+
+ Result:=True;
+ if assigned((iden As TVariableGrap).OnValueColor) then
+  (iden As TVariableGrap).OnValueColor(Params[1]);
+end;
+
+
+constructor TIdenGraphicSerieColor.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=2;
+ IdenName:='GraphicSerieColor';
+ Help:=SRpGraphicColor;
+ model:='function '+'GraphicSerieColor'+'(Gr:string, Color:Integer):Boolean';
+end;
+
+
+function TIdenGraphicSerieColor.GeTRpValue:TRpValue;
+var
+ iden:TRpIdentifier;
+begin
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Not VarIsInteger(Params[1]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ // Buscamos el identificador
+ iden:=(evaluator As TRpEvaluator).SearchIdentifier(String(Params[0]));
+ if iden=nil then
+ begin
+   Raise TRpNamedException.Create(SRpIdentifierexpected,
+         IdenName+'-'+Params[0]);
+ end;
+ if Not (iden is TVariableGrap) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName+'-'+Params[0]);
+
+ Result:=True;
+ if assigned((iden As TVariableGrap).OnSerieColor) then
+  (iden As TVariableGrap).OnSerieColor(Params[1]);
 end;
 
 constructor TIdenGetValueFromSQL.Create(AOwner:TComponent);
@@ -1063,6 +1154,8 @@ begin
  model:='function '+'GetValueFromSQL'+'(connectionname:String;sql:String):Variant';
  aParams:=SRpGetValueFromSQLP;
 end;
+
+
 
 function TIdenGetValueFromSQL.GetRpValue:TRpValue;
 begin

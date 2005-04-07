@@ -126,7 +126,7 @@ type
 
  TRpOrientation=(rpOrientationDefault,rpOrientationPortrait,rpOrientationLandscape);
 
- TRpStreamFormat=(rpStreamzlib,rpStreamText,rpStreambinary);
+ TRpStreamFormat=(rpStreamzlib,rpStreamText,rpStreambinary,rpStreamXML,rpStreamXMLZlib);
 
  TRpBidiMode=(rpBidiNo,rpBidiPartial,rpBidiFull);
 
@@ -4056,6 +4056,8 @@ begin
  end
  else
   decseparator:=false;
+ if Not decseparator then
+  decimalplacesvariable:=false;
  // Right mask
  if index>0 then
   rightmask:=Copy(mask,index+1,Length(mask));
@@ -4137,6 +4139,8 @@ begin
   astring:=intstring[index]+astring;
   dec(index);
  end;
+ if not decseparator then
+  inc(i);
  // Now fills if all 0
  while (allzeros and (i<=Length(leftmask))) do
  begin

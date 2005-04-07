@@ -278,6 +278,53 @@ begin
  lcat.Add(SRpChartAspect);
  if Assigned(lvalues) then
   lvalues.Add(BoolToStr(TRpChart(printitem).ShowLegend,True));
+ // Mark Type
+ lnames.Add(SRpMarkType);
+ ltypes.Add(SRpSList);
+ lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
+ if Assigned(lvalues) then
+  lvalues.Add(RpMarkTypeToString(TRpChart(printitem).MarkStyle));
+ // Axis
+ lnames.Add(SRpSVertAxisFSize);
+ ltypes.Add(SRpSInteger);
+ lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpChart(printitem).VertFontSize));
+ lnames.Add(SRpSHorzAxisFSize);
+ ltypes.Add(SRpSInteger);
+ lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpChart(printitem).HorzFontSize));
+ lnames.Add(SRpSVertAxisFRot);
+ ltypes.Add(SRpSInteger);
+ lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpChart(printitem).VertFontRotation));
+ lnames.Add(SRpSHorzAxisFRot);
+ ltypes.Add(SRpSInteger);
+ lhints.Add('refchart.html');
+ lcat.Add(SRpChartAspect);
+ if Assigned(lvalues) then
+  lvalues.Add(IntToStr(TRpChart(printitem).HorzFontRotation));
+ // Colors
+ // Value Color
+ lnames.Add(SrpSValueColor);
+ ltypes.Add(SRpSExpression);
+ lhints.Add('refchart.html');
+ lcat.Add(SRpChartData);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpChart(printitem).ColorExpression);
+ // Serie Color
+ lnames.Add(SrpSSerieColor);
+ ltypes.Add(SRpSExpression);
+ lhints.Add('refchart.html');
+ lcat.Add(SRpChartData);
+ if Assigned(lvalues) then
+  lvalues.Add(TRpChart(printitem).SerieColorExpression);
 end;
 
 
@@ -409,6 +456,42 @@ begin
   TRpChart(fprintitem).ShowLegend:=StrToBool(value);
   exit;
  end;
+ if pname=SRpMarkType then
+ begin
+  TRpChart(fprintitem).MarkStyle:=StringToRpMarkType(value);
+  exit;
+ end;
+ if pname=SRpSVertAxisFSize then
+ begin
+  TRpChart(fprintitem).VertFontSize:=StrToInt(value);
+  exit;
+ end;
+ if pname=SRpSHorzAxisFSize then
+ begin
+  TRpChart(fprintitem).HorzFontSize:=StrToInt(value);
+  exit;
+ end;
+ if pname=SRpSVertAxisFRot then
+ begin
+  TRpChart(fprintitem).VertFontRotation:=StrToInt(value);
+  exit;
+ end;
+ if pname=SRpSHorzAxisFRot then
+ begin
+  TRpChart(fprintitem).HorzFontRotation:=StrToInt(value);
+  exit;
+ end;
+ if pname=SRpSValueColor then
+ begin
+  TRpChart(fprintitem).ColorExpression:=value;
+  exit;
+ end;
+ if pname=SRpSSerieColor then
+ begin
+  TRpChart(fprintitem).SerieColorExpression:=value;
+  exit;
+ end;
+
  inherited SetProperty(pname,value);
 end;
 
@@ -540,6 +623,41 @@ begin
   Result:=BoolToStr(TRpChart(printitem).ShowLegend,True);
   exit;
  end;
+ if pname=SRpMarkType then
+ begin
+  Result:=RpMarkTypeToString(TRpChart(fprintitem).MarkStyle);
+  exit;
+ end;
+ if pname=SRpSVertAxisFSize then
+ begin
+  Result:=IntToStr(TRpChart(fprintitem).VertFontSize);
+  exit;
+ end;
+ if pname=SRpSHorzAxisFSize then
+ begin
+  Result:=IntToStr(TRpChart(fprintitem).HorzFontSize);
+  exit;
+ end;
+ if pname=SRpSVertAxisFRot then
+ begin
+  Result:=IntToStr(TRpChart(fprintitem).VertFontRotation);
+  exit;
+ end;
+ if pname=SRpSHorzAxisFRot then
+ begin
+  Result:=IntToStr(TRpChart(fprintitem).HorzFontRotation);
+  exit;
+ end;
+ if pname=SRpSValueColor then
+ begin
+  Result:=TRpChart(fprintitem).ColorExpression;
+  exit;
+ end;
+ if pname=SRpSSerieColor then
+ begin
+  Result:=TRpChart(fprintitem).SerieColorExpression;
+  exit;
+ end;
  Result:=inherited GetProperty(pname);
 end;
 
@@ -559,6 +677,11 @@ begin
  if pname=SRpSMultibar then
  begin
   GetRpMultibarPossibleValues(lpossiblevalues);
+  exit;
+ end;
+ if pname=SRpMarkType then
+ begin
+  GetRpMarTypePossibleValues(lpossiblevalues);
   exit;
  end;
  inherited GetPropertyValues(pname,lpossiblevalues);

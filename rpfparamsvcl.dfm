@@ -3,7 +3,7 @@ object FRpParamsVCL: TFRpParamsVCL
   Top = 192
   Width = 462
   Height = 500
-  Caption = 'Dialog'
+  Caption = 'Parameter definition'
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True

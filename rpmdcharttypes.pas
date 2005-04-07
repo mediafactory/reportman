@@ -47,6 +47,7 @@ type
  TRpSeriesItem=class(TCollectionItem)
   private
    FValues:array of Double;
+   FColors:array of Integer;
    FPoolPositions:array of integer;
    FPoolSizes:array of integer;
    FValueCount:Integer;
@@ -55,8 +56,10 @@ type
    FMaxAllocated:integer;
    FColor:integer;
    procedure SetValue(index:integer;AValue:double);
+   procedure SetValueColor(index:integer;AValue:integer);
    function GetValue(index:integer):double;
    function GetValueCaption(index:integer):WideString;
+   function GetValueColor(index:integer):Integer;
   public
    ChangeValue:Variant;
    MinValue:double;
@@ -65,10 +68,13 @@ type
    charttype:TRpChartType;
    constructor Create(Collection: TCollection);override;
    property Values[index:integer]:double read GetValue write SetValue;
+   property Colors[index:integer]:integer read GetValueColor write SetValueColor;
    property ValueCaptions[index:integer]:WideString read GetValueCaption;
    property ValueCount:integer read FValueCount;
    procedure AddValue(avalue:double;acaption:widestring='');
+   procedure AddValueColor(avalue:double;color:integer;acaption:widestring='');
    procedure Assign(Source:TPersistent);override;
+   procedure SetLastValueColor(color:integer);
    procedure ClearValues;
   published
    property Color:integer read FColor write FColor;
@@ -109,6 +115,10 @@ function RpMultiBarToString(multibar:TRpMultibar):String;
 function StringToRpMultibar(Value:String):TRpMultiBar;
 procedure GetRpMultiBarPossibleValues(alist:TRpWideStrings);
 
+function RpMarkTypeToString(mtype:Integer):String;
+function StringToRpMarkType(Value:String):Integer;
+procedure GetRpMarTypePossibleValues(alist:TRpWideStrings);
+
 
 implementation
 
@@ -138,8 +148,10 @@ constructor TRpSeriesItem.Create(Collection: TCollection);
 begin
  inherited Create(Collection);
 
+ FColor:=-1;
  FValueCount:=0;
  SetLength(FValues,DEFAULT_ALLOCATION);
+ SetLength(FColors,DEFAULT_ALLOCATION);
  SetLength(FPoolPositions,DEFAULT_ALLOCATION);
  SetLength(FPoolSizes,DEFAULT_ALLOCATION);
  FMaxAllocated:=DEFAULT_ALLOCATION;
@@ -163,10 +175,18 @@ begin
 end;
 
 
+procedure TRpSeriesItem.SetValueColor(index:integer;AValue:integer);
+begin
+ if index>=FValueCount then
+  Raise Exception.Create(SRpIndexOutOfBounds+':'+ClassName);
+ FColors[index]:=AValue;
+end;
+
 procedure TRpSeriesItem.SetValue(index:integer;AValue:double);
 begin
  if index>=FValueCount then
   Raise Exception.Create(SRpIndexOutOfBounds+':'+ClassName);
+ FValues[index]:=AValue;
 end;
 
 function TRpSeriesItem.GetValue(index:integer):double;
@@ -174,6 +194,13 @@ begin
  if index>=FValueCount then
   Raise Exception.Create(SRpIndexOutOfBounds+':'+ClassName);
  Result:=FValues[index];
+end;
+
+function TRpSeriesItem.GetValueColor(index:integer):Integer;
+begin
+ if index>=FValueCount then
+  Raise Exception.Create(SRpIndexOutOfBounds+':'+ClassName);
+ Result:=FColors[index];
 end;
 
 function TRpSeriesItem.GetValueCaption(index:integer):WideString;
@@ -192,6 +219,18 @@ begin
  MinValue:=+10e300;
 end;
 
+procedure TRpSeriesItem.SetLastValueColor(color:integer);
+begin
+ if FValueCount=0 then
+  exit;
+ FColors[FValueCount-1]:=color;
+end;
+
+procedure TRpSeriesItem.AddValueColor(avalue:double;color:integer;acaption:widestring='');
+begin
+ AddValue(avalue,caption);
+ SetLastValueColor(color);
+end;
 
 procedure TRpSeriesItem.AddValue(avalue:double;acaption:widestring='');
 var
@@ -205,6 +244,11 @@ begin
   FMaxAllocated:=FMaxAllocated*2;
  end;
  FValues[FValueCount]:=avalue;
+ FColors[FValueCount]:=-1;
+ if FColor>=0 then
+ begin
+  FColors[FValueCount]:=FColor;
+ end;
  // Adds the string
  caplength:=Length(acaption);
  if caplength>0 then
@@ -389,6 +433,73 @@ begin
  alist.Add(SRpSSide);
  alist.Add(SRpSStacked);
  alist.Add(SRpSStacked100);
+end;
+
+
+function RpMarkTypeToString(mtype:Integer):String;
+begin
+ case mtype of
+  1:
+   Result:=SRpSMarkType1;
+  2:
+   Result:=SRpSMarkType2;
+  3:
+   Result:=SRpSMarkType3;
+  4:
+   Result:=SRpSMarkType4;
+  5:
+   Result:=SRpSMarkType5;
+  6:
+   Result:=SRpSMarkType6;
+  7:
+   Result:=SRpSMarkType7;
+  8:
+   Result:=SRpSMarkType8;
+  else
+   Result:=SRpSMarkType0;
+ end;
+end;
+
+function StringToRpMarkType(Value:String):Integer;
+begin
+ if Value=SRpSMarkType1 then
+  Result:=1
+ else
+ if Value=SRpSMarkType2 then
+  Result:=2
+ else
+ if Value=SRpSMarkType3 then
+  Result:=3
+ else
+ if Value=SRpSMarkType4 then
+  Result:=4
+ else
+ if Value=SRpSMarkType5 then
+  Result:=5
+ else
+ if Value=SRpSMarkType6 then
+  Result:=6
+ else
+ if Value=SRpSMarkType7 then
+  Result:=7
+ else
+ if Value=SRpSMarkType8 then
+  Result:=8
+ else
+  Result:=0;
+end;
+
+procedure GetRpMarTypePossibleValues(alist:TRpWideStrings);
+begin
+ alist.Clear;
+ alist.Add(SRpSMarkType0);
+ alist.Add(SRpSMarkType1);
+ alist.Add(SRpSMarkType2);
+ alist.Add(SRpSMarkType3);
+ alist.Add(SRpSMarkType4);
+ alist.Add(SRpSMarkType5);
+ alist.Add(SRpSMarkType6);
+ alist.Add(SRpSMarkType7);
 end;
 
 end.

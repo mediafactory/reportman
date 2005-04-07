@@ -46,6 +46,7 @@ type
    FChangeSerieExpression:widestring;
    FChangeSerieBool,FClearExpressionBool:Boolean;
    FCaptionExpression,FSerieCaption,FClearExpression:widestring;
+   FColorExpression,FSerieColorExpression:widestring;
    FIdenChart:TVariableGrap;
    FIdentifier:string;
    FDriver:TRpChartDriver;
@@ -64,10 +65,17 @@ type
    FResolution:Integer;
    FShowHint:Boolean;
    FShowLegend:Boolean;
+   FMarkStyle:Integer;
+   FHorzFontSize:Integer;
+   FVertFontSize:Integer;
+   FHorzFontRotation:Integer;
+   FVertFontRotation:Integer;
    procedure OnClear(Sender:TObject);
    procedure OnNewValue(Y:Single;Cambio:Boolean;leyen,textleyen,textserie:string;newcharttype:TRpChartType);
    procedure OnBoundsValue(autol,autoh:boolean;lvalue,hvalue:double;
     logaritmic:boolean;logbase:double;inverted:boolean);
+   procedure OnSerieColor(color:Integer);
+   procedure OnValueColor(color:Integer);
    procedure SetIdentifier(Value:string);
    procedure SetSeries(avalue:TRpSeries);
    function CheckValueCondition:boolean;
@@ -87,14 +95,21 @@ type
    procedure ReadSerieCaption(Reader:TReader);
    procedure WriteClearExpression(Writer:TWriter);
    procedure ReadClearExpression(Reader:TReader);
+   procedure WriteColorExpression(Writer:TWriter);
+   procedure ReadColorExpression(Reader:TReader);
+   procedure WriteSerieColorExpression(Writer:TWriter);
+   procedure ReadSerieColorExpression(Reader:TReader);
+   function EvaluateText(atext:WideString):Variant;
   protected
    procedure DoPrint(adriver:IRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
+   procedure Loaded;override;
   public
    procedure GetNewValue;
    procedure Evaluate;
+   procedure SetChartType(avalue:TRpChartType);
    property IdenChart:TVariableGrap read FIdenChart;
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    constructor Create(AOwner:TComponent);override;
@@ -110,11 +125,15 @@ type
     write FCaptionExpression;
    property SerieCaption:widestring read FSerieCaption
     write FSerieCaption;
+   property ColorExpression:widestring read FColorExpression write
+    FColorExpression;
+   property SerieColorExpression:widestring read FSerieColorExpression write
+    FSerieColorExpression;
   published
    property Series:TRpSeries read FSeries write SetSeries;
    property ChangeSerieBool:boolean read FChangeSerieBool write FChangeSerieBool
     default false;
-   property ChartType:TRpChartType read FChartType write FChartType
+   property ChartType:TRpChartType read FChartType write SetChartType
     default rpchartline;
    property Identifier:string read FIdentifier write SetIdentifier;
    property ClearExpressionBool:boolean read FClearExpressionBool write FClearExpressionBool
@@ -137,6 +156,11 @@ type
     default false;
    property ShowHint:boolean read FShowHint write FShowHint
     default true;
+   property MarkStyle:Integer read FMarkStyle write FMarkStyle default 0;
+   property HorzFontSize:Integer read FHorzFontSize write FHorzFontSize;
+   property VertFontSize:Integer read FVertFontSize write FVertFontSize;
+   property HorzFontRotation:Integer read FHorzFontRotation write FHorzFontRotation;
+   property VertFontRotation:Integer read FVertFontRotation write FVertFontRotation;
   end;
 
 
@@ -149,6 +173,18 @@ const
  AlignmentFlags_SingleLine=64;
 
 
+procedure TRpChart.SetChartType(avalue:TRpChartType);
+begin
+ FChartType:=avalue;
+ if assigned(FIdenChart) then
+  FIdenChart.DefaultChartType:=avalue;
+end;
+
+procedure TRpChart.Loaded;
+begin
+ inherited Loaded;
+ FIdenChart.DefaultChartType:=FChartType;
+end;
 
 constructor TRpChart.Create(AOwner:TComponent);
 begin
@@ -164,6 +200,8 @@ begin
  FIdenChart:=TVariableGrap.Create(Self);
  FIdenChart.OnClear:=OnClear;
  FIdenChart.OnNewValue:=OnNewValue;
+ FIdenChart.OnSerieColor:=OnSerieColor;
+ FIdenChart.OnValueColor:=OnValueColor;
  FIdenChart.OnBounds:=OnBoundsValue;
  FView3d:=true;
  FPerspective:=15;
@@ -173,6 +211,12 @@ begin
  FZoom:=100;
  FOrthogonal:=True;
  FMultiBar:=rpMultiside;
+ //
+ FMarkStyle:=0;
+ FHorzFontSize:=10;
+ FVertFontSize:=10;
+ FHorzFontRotation:=0;
+ FVertFontRotation:=0;
 end;
 
 procedure TRpChart.SetSeries(avalue:TRpSeries);
@@ -251,6 +295,17 @@ begin
    if Length(FSerieCaption)>0 then
     aserie.Caption:=EvaluateSerieCaption;
    aserie.ChangeValue:=newvalue;
+   if Length(Trim(FSerieColorExpression))>0 then
+   begin
+    try
+     aserie.Color:=EvaluateText(FSerieColorExpression);
+    except
+     on E:Exception do
+     begin
+      Raise TRpReportException.Create(E.Message+':'+SRpSChart+' '+Name,self,SrpSSerieColor);
+     end;
+    end;
+   end;
   end;
  end;
  // Gests the data
@@ -260,6 +315,17 @@ begin
  else
   Caption:=EvaluateCaption;
  aserie.AddValue(FValue,Caption);
+ if Length(Trim(FColorExpression))>0 then
+ begin
+  try
+   aserie.SetLastValueColor(EvaluateText(FColorExpression));
+  except
+   on E:Exception do
+   begin
+    Raise TRpReportException.Create(E.Message+':'+SRpSChart+' '+Name,self,SrpSValueColor);
+   end;
+  end;
+ end;
 end;
 
 
@@ -305,6 +371,22 @@ begin
   end;
  end;
 end;
+
+function TRpChart.EvaluateText(atext:WideString):Variant;
+var
+ fevaluator:TRpEvaluator;
+begin
+ if Length(Trim(atext))<1 then
+ begin
+  Result:='';
+  exit;
+ end;
+ fevaluator:=TRpBaseReport(GetReport).Evaluator;
+ fevaluator.Expression:=atext;
+ fevaluator.Evaluate;
+ Result:=fevaluator.EvalResult;
+end;
+
 
 procedure TRpChart.EvaluateClearExpression;
 var
@@ -436,7 +518,6 @@ procedure TRpChart.DoPrint(adriver:IRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 begin
- FIdenChart.DefaultChartType:=chartType;
  inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
  if FSeries.Count<1 then
   exit;
@@ -444,15 +525,38 @@ begin
  adriver.DrawChart(FSeries,metafile,aposx,aposy,self);
 end;
 
-procedure TRpChart.OnNewValue(Y:Single;Cambio:Boolean;leyen,textleyen,textserie:string;newcharttype:TRpChartType);
+procedure TRpChart.OnSerieColor(Color:Integer);
 var
  aserie:TRpSeriesItem;
 begin
+ if FSeries.Count<1 then
+  exit;
+ aserie:=FSeries.Items[FSeries.Count-1];
+ aserie.Color:=Color;
+end;
+
+procedure TRpChart.OnValueColor(Color:Integer);
+var
+ aserie:TRpSeriesItem;
+begin
+ if FSeries.Count<1 then
+  exit;
+ aserie:=FSeries.Items[FSeries.Count-1];
+ aserie.SetLastValueColor(Color);
+end;
+
+procedure TRpChart.OnNewValue(Y:Single;Cambio:Boolean;leyen,textleyen,textserie:string;newcharttype:TRpChartType);
+var
+ aserie:TRpSeriesItem;
+ firstserie:Boolean;
+begin
+ firstserie:=false;
  if FSeries.Count<1 then
  begin
   aserie:=FSeries.Add;
   aserie.charttype:=newChartType;
   aserie.Caption:=textserie;
+  firstserie:=true;
  end
  else
  begin
@@ -461,7 +565,8 @@ begin
   // Looks if the serie has changed
  if Cambio then
  begin
-  aserie:=FSeries.Add;
+  if not firstserie then
+   aserie:=FSeries.Add;
   aserie.charttype:=newChartType;
   aserie.Caption:=textserie;
  end;
@@ -526,6 +631,28 @@ begin
  FClearExpression:=ReadWideString(Reader);
 end;
 
+procedure TRpChart.WriteColorExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FColorExpression);
+end;
+
+
+procedure TRpChart.ReadColorExpression(Reader:TReader);
+begin
+ FColorExpression:=ReadWideString(Reader);
+end;
+
+procedure TRpChart.WriteSerieColorExpression(Writer:TWriter);
+begin
+ WriteWideString(Writer, FSerieColorExpression);
+end;
+
+
+procedure TRpChart.ReadSerieColorExpression(Reader:TReader);
+begin
+ FSerieColorExpression:=ReadWideString(Reader);
+end;
+
 
 procedure TRpChart.WriteCaptionExpression(Writer:TWriter);
 begin
@@ -558,6 +685,8 @@ begin
  Filer.DefineProperty('CaptionExpression',ReadCaptionExpression,WriteCaptionExpression,True);
  Filer.DefineProperty('SerieCaption',ReadSerieCaption,WriteSerieCaption,True);
  Filer.DefineProperty('ClearExpression',ReadClearExpression,WriteClearExpression,True);
+ Filer.DefineProperty('ColorExpression',ReadColorExpression,WriteColorExpression,True);
+ Filer.DefineProperty('SerieColorExpression',ReadSerieColorExpression,WriteSerieColorExpression,True);
 end;
 
 end.

@@ -983,6 +983,7 @@ end;
 procedure TFRpMainFVCL.AParamsExecute(Sender: TObject);
 begin
  ShowParamDef(report.Params,report.DataInfo);
+ fdesignframe.freportstructure.Report:=report;
 end;
 
 procedure TFRpMainFVCL.AGridOptionsExecute(Sender: TObject);

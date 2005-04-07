@@ -1102,6 +1102,7 @@ begin
  end;
 {$ENDIF}
  rpfparams.ShowParamDef(report.Params,report.DataInfo);
+ fdesignframe.freportstructure.Report:=report;
 end;
 
 procedure TFRpMainF.AGridOptionsExecute(Sender: TObject);
