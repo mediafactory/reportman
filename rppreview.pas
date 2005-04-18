@@ -904,11 +904,27 @@ end;
 procedure TFRpPreview.AMailToExecute(Sender: TObject);
 var
  afilename:String;
+ destination,subject,body:string;
 begin
+ destination:='';
+ body:='';
+ subject:='';
+ if report.Params.IndexOf('MAIL_DESTINATION')>0 then
+  destination:=report.Params.ParamByName('MAIL_DESTINATION').AsString;
+ if report.Params.IndexOf('MAIL_SUBJECT')>0 then
+  subject:=report.Params.ParamByName('MAIL_SUBJECT').AsString;
+ if report.Params.IndexOf('MAIL_BODY')>0 then
+  body:=report.Params.ParamByName('MAIL_BODY').AsString;
  ALastExecute(Self);
  afilename:=ChangeFileExt(RpTempFileName,'.pdf');
  SaveMetafileToPDF(report.Metafile,afilename,true);
- rptypes.SendMail('',Caption,'',afilename);
+ try
+  if Length(subject)<1 then
+   subject:=ExtractFileName(afilename);
+  rptypes.SendMail(destination,subject,body,afilename);
+ finally
+  sysutils.DeleteFile(afilename);
+ end;
 end;
 
 procedure TFRpPreview.APageSetupExecute(Sender: TObject);
