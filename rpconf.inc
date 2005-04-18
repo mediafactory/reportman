@@ -62,6 +62,7 @@
 
 // Delphi 5  compiler defines
 {$IFDEF VER130}
+ {$DEFINE CHARPLACBOOL}
  {$UNDEF USEVARIANTS}
  {$UNDEF USEBCD}
  {$UNDEF USESQLEXPRESS}
@@ -71,6 +72,7 @@
 
 // Delphi 4  compiler defines
 {$IFDEF VER120}
+ {$DEFINE CHARPLACBOOL}
  {$UNDEF USEVARIANTS}
  {$UNDEF USEBCD}
  {$UNDEF USESQLEXPRESS}
@@ -195,6 +197,9 @@
 
 // VCL and CLX sharing compatibility
 {$IFDEF MSWINDOWS}
+ {$IFDEF VER140}
+   {$DEFINE CHARPLACBOOL}
+ {$ENDIF}
  {$DEFINE VCLANDCLX}
  // C++ Builder 6 does not allow VCL and CLX
  {$IFDEF BCB}

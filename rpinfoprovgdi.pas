@@ -485,18 +485,12 @@ begin
   gcp.nMaxFit:=1;
   astring:='';
   astring:=astring+charcode+Widechar(0);
-{$IFDEF USEVARIANTS}
-{$IFDEF CBUILDER6}
+{$IFDEF CHARPLACBOOL}
   if GetCharacterPlacementW(adc,PWideChar(astring),true,false,gcp,GCP_DIACRITIC)=0 then
    RaiseLastOSError;
 {$ENDIF}
-{$IFNDEF CBUILDER6}
+{$IFNDEF CHARPLACBOOL}
   if GetCharacterPlacementW(adc,PWideChar(astring),1,0,gcp,GCP_DIACRITIC)=0 then
-   RaiseLastOSError;
-{$ENDIF}
-{$ENDIF}
-{$IFNDEF USEVARIANTS}
-  if GetCharPlac(adc,PWideChar(astring),1,0,gcp,GCP_DIACRITIC)=0 then
    RaiseLastOSError;
 {$ENDIF}
   data.loadedglyphs[aint]:=WideChar(glyphindex);
