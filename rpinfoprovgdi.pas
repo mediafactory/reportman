@@ -443,10 +443,74 @@ begin
 end;
 {$ENDIF}
 
-function GetCharPlac(DC: HDC; p2: PWideChar; p3, p4:integer;
-   var p5: TGCPResults; p6: DWORD): DWORD;stdcall;external 'gdi32.dll' name 'GetCharacterPlacementW';
 
+//function GetCharPlac(DC: HDC; p2: PWideChar; p3, p4:integer;
+//   var p5: TGCPResults; p6: DWORD): DWORD;stdcall;external 'gdi32.dll' name 'GetCharacterPlacementW';
 
+{$IFDEF DOTNETD}
+{$UNSAFECODE ON}
+function TRpGDIInfoProvider.GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):integer;unsafe;
+var
+ logx:integer;
+ aabc:array [1..1] of ABC;
+ aint:Word;
+ glyphindex:UInt;
+ gcp:windows.tagGCP_RESULTS;
+ astring:WideString;
+begin
+ glyphindex:=0;
+ aint:=Ord(charcode);
+ if isnt then
+ begin
+  if aint>255 then
+   data.isunicode:=true;
+ end;
+ if data.loaded[aint] then
+ begin
+  Result:=data.loadedwidths[aint];
+   exit;
+ end;
+ SelectFont(pdffont);
+ logx:=GetDeviceCaps(adc,LOGPIXELSX);
+ if isnt then
+ begin
+  if not GetCharABCWidthsW(adc,aint,aint,aabc[1]) then
+   RaiseLastOSError;
+  gcp.lStructSize:=sizeof(gcp);
+  gcp.lpOutString:=nil;
+  gcp.lpOrder:=nil;
+  gcp.lpDx:=nil;
+  gcp.lpCaretPos:=nil;
+  gcp.lpClass:=nil;
+  gcp.lpGlyphs:=IntPtr(@glyphindex);
+  gcp.nGlyphs:=1;
+  gcp.nMaxFit:=1;
+  astring:='';
+  astring:=astring+charcode+Widechar(0);
+  if GetCharacterPlacementW(adc,astring,true,false,gcp,GCP_DIACRITIC)=0 then
+   RaiseLastOSError;
+  data.loadedglyphs[aint]:=WideChar(glyphindex);
+  data.loadedg[aint]:=true;
+ end
+ else
+ begin
+  if not GetCharABCWidths(adc,Cardinal(chr(aint)),Cardinal(chr(aint)),aabc[1]) then
+    RaiseLastOSError;
+ end;
+ Result:=Round(
+   (Integer(aabc[1].abcA)+Integer(aabc[1].abcB)+Integer(aabc[1].abcC))/logx*72000/TTF_PRECISION
+   );
+ data.loadedwidths[aint]:=Result;
+ data.loaded[aint]:=true;
+ if data.firstloaded>aint then
+  data.firstloaded:=aint;
+ if data.lastloaded<aint then
+  data.lastloaded:=aint;
+end;
+{$UNSAFECODE OFF}
+{$ENDIF}
+
+{$IFNDEF DOTNETD}
 function TRpGDIInfoProvider.GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):integer;
 var
  logx:integer;
@@ -511,6 +575,7 @@ begin
  if data.lastloaded<aint then
   data.lastloaded:=aint;
 end;
+{$ENDIF}
 
 
 function TRpGDIInfoProvider.GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;

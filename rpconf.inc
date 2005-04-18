@@ -162,6 +162,10 @@
 // {$UNDEF USEREPORTFUNC}
 {$ENDIF}
 
+// Delphi 2005
+{$IFDEF VER170}
+ {$DEFINE CHARPLACBOOL}
+{$ENDIF}
 
 // Windows qtintf.dll has a bug about selecting horz paper
 // If horz paper is set and print setup is called seems
@@ -227,3 +231,5 @@
 {$IFDEF FORCECONSOLE}
  {$UNDEF USECLXTEECHART}
 {$ENDIF}
+
+

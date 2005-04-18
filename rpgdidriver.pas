@@ -252,7 +252,12 @@ begin
   Result:=false;
   exit;
  end;
+{$IFNDEF DOTNETD}
  if (a.ForcePaperName<>b.ForcePaperName) then
+{$ENDIF}
+{$IFDEF DOTNETD}
+ if (String(a.ForcePaperName)<>String(b.ForcePaperName)) then
+{$ENDIF}
  begin
   Result:=false;
   exit;
@@ -1170,11 +1175,18 @@ begin
 end;
 
 procedure TRpGDIDriver.SetOrientation(Orientation:TRpOrientation);
+{$IFNDEF DOTNETD}
 var
   Device, Driver, Port: array[0..1023] of char;
   DeviceMode: THandle;
   PDevmode:^TDevicemode;
+{$ENDIF}
 begin
+{$IFDEF DOTNETD}
+ if Printer.Printing then
+  exit;
+{$ENDIF}
+{$IFNDEF DOTNETD}
  if Printer.Printing then
  begin
   Printer.GetPrinter(Device, Driver, Port, DeviceMode);
@@ -1196,6 +1208,7 @@ begin
   end;
   exit;
  end;
+{$ENDIF}
  if Orientation=rpOrientationPortrait then
  begin
   if Printer.Orientation<>poPortrait then

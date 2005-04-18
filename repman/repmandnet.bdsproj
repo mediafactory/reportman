@@ -119,8 +119,8 @@
 			<Directories Name="UnitOutputDir" Type="String"></Directories>
 			<Directories Name="PackageDLLOutputDir" Type="String"></Directories>
 			<Directories Name="PackageDCPOutputDir" Type="String"></Directories>
-			<Directories Name="SearchPath" Type="String">h:\windows\microsoft.net\framework\v1.1.4322;c:\windows\microsoft.net\framework\v1.1.4322</Directories>
-			<Directories Name="Packages" Type="String">c:\windows\microsoft.net\framework\v1.1.4322\System.XML.dll;c:\windows\microsoft.net\framework\v1.1.4322\System.Drawing.dll;c:\windows\microsoft.net\framework\v1.1.4322\System.Data.dll;c:\windows\microsoft.net\framework\v1.1.4322\System.dll</Directories>
+			<Directories Name="SearchPath" Type="String">h:\windows\microsoft.net\framework\v1.1.4322;c:\windows\microsoft.net\framework\v1.1.4322;k:\windows\microsoft.net\framework\v1.1.4322</Directories>
+			<Directories Name="Packages" Type="String">k:\windows\microsoft.net\framework\v1.1.4322\system.xml.dll;k:\windows\microsoft.net\framework\v1.1.4322\system.drawing.dll;k:\windows\microsoft.net\framework\v1.1.4322\system.data.dll;k:\windows\microsoft.net\framework\v1.1.4322\system.dll</Directories>
 			<Directories Name="Conditionals" Type="String"></Directories>
 			<Directories Name="DebugSourceDirs" Type="String"></Directories>
 			<Directories Name="UsePackages" Type="Boolean">True</Directories>
@@ -158,13 +158,11 @@
 			<VersionInfo Name="CodePage" Type="Integer">1252</VersionInfo>
 		</VersionInfo>  
     
-    
-    
     <FileList>
-      <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="System" AssemblyName="system" Version="1.0.5000.0" LinkUnits="False"/>
-      <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.Data.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="System.Data" AssemblyName="system.data" Version="1.0.5000.0" LinkUnits="False"/>
-      <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.Drawing.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="System.Drawing" AssemblyName="system.drawing" Version="1.0.5000.0" LinkUnits="False"/>
-      <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.XML.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="System.XML" AssemblyName="system.xml" Version="1.0.5000.0" LinkUnits="False"/>
+      <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\system.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="system" AssemblyName="system" Version="1.0.5000.0" LinkUnits="False"/>
+      <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\system.data.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="system.data" AssemblyName="system.data" Version="1.0.5000.0" LinkUnits="False"/>
+      <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\system.drawing.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="system.drawing" AssemblyName="system.drawing" Version="1.0.5000.0" LinkUnits="False"/>
+      <File FileName="$(SystemRoot)\microsoft.net\framework\v1.1.4322\system.xml.dll" ContainerId="DelphiDotNetAssemblyCompiler" ModuleName="system.xml" AssemblyName="system.xml" Version="1.0.5000.0" LinkUnits="False"/>
       <File FileName="" ContainerId="" ModuleName="System.Reflection"/>
       <File FileName="" ContainerId="" ModuleName="System.Runtime.CompilerServices"/>
       <File FileName="" ContainerId="" ModuleName="SysUtils"/>
@@ -243,5 +241,17 @@
       <File FileName="..\rpmdftreevcl.pas" ContainerId="" ModuleName="rpmdftreevcl"/>
       <File FileName="..\rpmdfopenlibvcl.pas" ContainerId="" ModuleName="rpmdfopenlibvcl"/>
     </FileList>
+    <VersionInfoKeys>
+      <VersionInfoKeys Name="CompanyName"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileDescription"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="InternalName"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys>
+      <VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductName"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="Comments"></VersionInfoKeys>
+    </VersionInfoKeys>
   </DelphiDotNet.Personality>
 </BorlandProject>

@@ -26,7 +26,7 @@ package ReportMan;
 
 requires
   Borland.Delphi,
-  System.Drawing,
+  system.drawing,
   Borland.VclIBXpress,
   Borland.VclRtl,
   Borland.VclDSnap,
@@ -96,7 +96,8 @@ contains
   rppdfreport in 'rppdfreport.pas' {rppdfreport.TPDFReport: rpcompobase.TCBaseReport},
   rpinfoprovgdi in 'rpinfoprovgdi.pas',
   rpinfoprovid in 'rpinfoprovid.pas',
-  rpbarcodecons in 'rpbarcodecons.pas';
+  rpbarcodecons in 'rpbarcodecons.pas',
+  rpxmlstream in 'rpxmlstream.pas';
 
 [assembly: AssemblyDescription('')]
 [assembly: AssemblyConfiguration('')]

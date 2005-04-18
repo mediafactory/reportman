@@ -1,9 +1,9 @@
 program repmandnet;
 
-{%DelphiDotNetAssemblyCompiler '$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.dll'}
-{%DelphiDotNetAssemblyCompiler '$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.Data.dll'}
-{%DelphiDotNetAssemblyCompiler '$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.Drawing.dll'}
-{%DelphiDotNetAssemblyCompiler '$(SystemRoot)\microsoft.net\framework\v1.1.4322\System.XML.dll'}
+{%DelphiDotNetAssemblyCompiler '$(SystemRoot)\microsoft.net\framework\v1.1.4322\system.dll'}
+{%DelphiDotNetAssemblyCompiler '$(SystemRoot)\microsoft.net\framework\v1.1.4322\system.data.dll'}
+{%DelphiDotNetAssemblyCompiler '$(SystemRoot)\microsoft.net\framework\v1.1.4322\system.drawing.dll'}
+{%DelphiDotNetAssemblyCompiler '$(SystemRoot)\microsoft.net\framework\v1.1.4322\system.xml.dll'}
 
 uses
   System.Reflection,
@@ -52,7 +52,7 @@ uses
   rpmdobinsintvcl in '..\rpmdobinsintvcl.pas',
   rpmdprintconfigvcl in '..\rpmdprintconfigvcl.pas' {FRpPrinterConfigVCL},
   rpmdshfolder in '..\rpmdshfolder.pas',
-  rpmetafile in '..\rpmetafile.pas',
+  rpmetafile in '..\rpmetafile.pas' {rpmetafile.TRpMetafileReport: System.ComponentModel.Component},
   rpmunits in '..\rpmunits.pas',
   rpparams in '..\rpparams.pas',
   rpparser in '..\rpparser.pas',

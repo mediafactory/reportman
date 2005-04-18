@@ -988,8 +988,27 @@ begin
  separator:=integer(rpFObject);
  Stream.Write(separator,sizeof(separator));
  Stream.Write(FMark,sizeof(FMark));
+{$IFDEF DOTNETD}
+ Stream.Write(integer(forientation),sizeof(integer(forientation)));
+ Stream.Write(fpagesizeqt.Indexqt,sizeof(fpagesizeqt.Indexqt));
+ Stream.Write(fpagesizeqt.Custom,sizeof(fpagesizeqt.Custom));
+ Stream.Write(fpagesizeqt.CustomWidth,sizeof(fpagesizeqt.CustomWidth));
+ Stream.Write(fpagesizeqt.CustomHeight,sizeof(fpagesizeqt.CustomHeight));
+ Stream.Write(fpagesizeqt.PhysicWidth,sizeof(fpagesizeqt.PhysicWidth));
+ Stream.Write(fpagesizeqt.PhysicHeight,sizeof(fpagesizeqt.PhysicHeight));
+ Stream.Write(fpagesizeqt.PaperSource,sizeof(fpagesizeqt.PaperSource));
+ Stream.Write(fpagesizeqt.PaperSource,sizeof(fpagesizeqt.PaperSource));
+ byteswrite:=61;
+ System.Array.Copy(fpagesizeqt.ForcePaperName,abytes,byteswrite);
+ if byteswrite<>Stream.Write(abytes[0],byteswrite) then
+  Raise Exception.Create(SRpErrorWritingPage);
+//  ForcePaperName:array [0..60] of char;
+ Stream.Write(fpagesizeqt.Duplex,sizeof(fpagesizeqt.Duplex));
+{$ENDIF}
+{$IFNDEF DOTNETD}
  Stream.Write(forientation,sizeof(forientation));
  Stream.Write(fpagesizeqt,sizeof(fpagesizeqt));
+{$ENDIF}
  Stream.Write(FUpdatedPageSize,sizeof(FUpdatedPageSize));
  Stream.Write(FObjectCount,sizeof(FObjectCount));
  byteswrite:=sizeof(TRpMetaObject)*FObjectCount;
@@ -1046,12 +1065,49 @@ begin
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
  if Not FVersion2_2 then
  begin
+{$IFDEF DOTNETD}
+  bytesread:=Stream.Read(separator,sizeof(separator));
+  if (bytesread<>sizeof(separator)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  FOrientation:=TRpOrientation(separator);
+  bytesread:=Stream.Read(fpagesizeqt.Indexqt,sizeof(fpagesizeqt.IndexQt));
+  if (bytesread<>sizeof(fpagesizeqt.Indexqt)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  bytesread:=Stream.Read(fpagesizeqt.Custom,sizeof(fpagesizeqt.Custom));
+  if (bytesread<>sizeof(fpagesizeqt.Custom)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  bytesread:=Stream.Read(fpagesizeqt.CustomWidth,sizeof(fpagesizeqt.CustomWidth));
+  if (bytesread<>sizeof(fpagesizeqt.CustomWidth)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  bytesread:=Stream.Read(fpagesizeqt.CustomHeight,sizeof(fpagesizeqt.CustomHeight));
+  if (bytesread<>sizeof(fpagesizeqt.CustomHeight)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  bytesread:=Stream.Read(fpagesizeqt.PhysicWidth,sizeof(fpagesizeqt.PhysicWidth));
+  if (bytesread<>sizeof(fpagesizeqt.PhysicWidth)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  bytesread:=Stream.Read(fpagesizeqt.PhysicHeight,sizeof(fpagesizeqt.PhysicHeight));
+  if (bytesread<>sizeof(fpagesizeqt.PhysicHeight)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  bytesread:=Stream.Read(fpagesizeqt.PaperSource,sizeof(fpagesizeqt.PaperSource));
+  if (bytesread<>sizeof(fpagesizeqt.PaperSource)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  SetLength(abytes,bytesread);
+  bytesread:=61;
+  if (bytesread<>Stream.Read(abytes[0],bytesread)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  System.Array.Copy(abytes,fpagesizeqt.ForcePaperName,bytesread);
+  bytesread:=Stream.Read(fpagesizeqt.Duplex,sizeof(fpagesizeqt.Duplex));
+  if (bytesread<>sizeof(fpagesizeqt.Duplex)) then
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+{$ENDIF}
+{$IFNDEF DOTNETD}
   bytesread:=Stream.Read(FOrientation,sizeof(Forientation));
   if (bytesread<>sizeof(Forientation)) then
    Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
   bytesread:=Stream.Read(Fpagesizeqt,sizeof(Fpagesizeqt));
   if (bytesread<>sizeof(Fpagesizeqt)) then
    Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+{$ENDIF}
   bytesread:=Stream.Read(FUpdatedPageSize,sizeof(FUpdatedPageSize));
   if (bytesread<>sizeof(FUpdatedPageSize)) then
    Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
@@ -1131,8 +1187,8 @@ end;
 
 constructor ErpBadFileFormat.CreatePos(Msg:String;APosition,Pos2:LongInt);
 begin
- FPosition:=Position;
  inherited Create(Msg);
+ FPosition:=Position;
 end;
 
 

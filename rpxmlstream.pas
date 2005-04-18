@@ -595,7 +595,12 @@ end;
 
 function RpDoubleToStr(avalue:double):string;
 var
+{$IFDEF DOTNETD}
+ olddec:String;
+{$ENDIF}
+{$IFNDEF DOTNETD}
  olddec:char;
+{$ENDIF}
 begin
  olddec:=DecimalSeparator;
  try
@@ -750,6 +755,7 @@ begin
  WriteStringToStream(astring,stream);
 end;
 
+
 procedure ReadReportXML(areport:TComponent;Stream:TStream);
 var
  astring:string;
@@ -815,8 +821,13 @@ var
 
 begin
  // Find the <report label>
+{$IFNDEF DOTNETD}
  SetLength(astring,Stream.Size);
  Stream.Read(astring[1],Stream.size);
+{$ENDIF}
+{$IFDEF DOTNETD}
+ astring:='';
+{$ENDIF}
  position:=Pos('<REPORT',astring);
  if position<1 then
   Raise Exception.Create(SRpStreamFormat);
