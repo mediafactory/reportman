@@ -1228,6 +1228,7 @@ begin
        astream.clear;
        acompo:=TRpParamcomp.Create(nil);
        try
+        ActClient.CurrentReport.Params.UpdateLookup;
         acompo.Params.Assign(ActClient.CurrentReport.Params);
         writer:=TWriter.Create(astream,4096);
         try

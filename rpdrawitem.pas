@@ -167,7 +167,7 @@ begin
  end
  else
  begin
-  if TRpBaseReport(GetReport).StreamFormat=rpStreamzlib then
+  if (TRpBaseReport(GetReport).StreamFormat in [rpStreamzlib,rpStreamXMLZLib]) then
   begin
    CompressStream(Value,FStream);
   end

@@ -34,31 +34,115 @@ object FRpParams: TFRpParams
         Left = 6
         Top = 164
         Width = 421
-        Height = 97
+        Height = 105
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Strings to show (left) and strings to assign (right) '
-        TabOrder = 15
+        TabOrder = 13
         Visible = False
-        object MItems: TMemo
+        object Panel4: TPanel
           Left = 2
           Top = 13
-          Width = 195
-          Height = 82
-          Align = alLeft
+          Width = 417
+          Height = 60
+          Align = alTop
+          BevelOuter = bvNone
           TabOrder = 0
-          WordWrap = False
+          object MItems: TMemo
+            Left = 0
+            Top = 0
+            Width = 195
+            Height = 60
+            Align = alLeft
+            TabOrder = 0
+            WordWrap = False
+            OnChange = EDescriptionChange
+          end
+          object MValues: TMemo
+            Left = 195
+            Top = 0
+            Width = 222
+            Height = 60
+            Align = alClient
+            TabOrder = 1
+            WordWrap = False
+            OnChange = EDescriptionChange
+          end
+        end
+        object LLookup: TLabel
+          Left = 4
+          Top = 85
+          Width = 74
+          Height = 13
+          Caption = 'Lookup dataset'
+        end
+        object ComboLookup: TComboBox
+          Left = 124
+          Top = 81
+          Width = 161
+          Height = 21
+          Hint = 'The parameters will be assigned not the selected datasets'
+          Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
+          ItemHeight = 15
+          TabOrder = 2
           OnChange = EDescriptionChange
         end
-        object MValues: TMemo
-          Left = 197
-          Top = 13
-          Width = 222
-          Height = 82
-          Align = alClient
+      end
+      object GSearch: TGroupBox
+        Left = 4
+        Top = 164
+        Width = 425
+        Height = 73
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Search value'
+        TabOrder = 22
+        Visible = False
+        object LSearchDataset: TLabel
+          Left = 8
+          Top = 24
+          Width = 72
+          Height = 13
+          Caption = 'Search dataset'
+        end
+        object Label1: TLabel
+          Left = 8
+          Top = 48
+          Width = 84
+          Height = 13
+          Caption = 'Search parameter'
+        end
+        object ComboSearchDataset: TComboBox
+          Left = 132
+          Top = 20
+          Width = 165
+          Height = 21
+          Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
+          ItemHeight = 15
+          TabOrder = 0
+          OnChange = EDescriptionChange
+        end
+        object ComboSearchParam: TComboBox
+          Left = 132
+          Top = 44
+          Width = 165
+          Height = 21
+          Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
+          ItemHeight = 15
           TabOrder = 1
-          WordWrap = False
           OnChange = EDescriptionChange
         end
+      end
+      object ECheckList: TCheckListBox
+        Left = 280
+        Top = 4
+        Width = 145
+        Height = 73
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 21
+        Visible = False
+        OnClickCheck = EDescriptionChange
       end
       object LDescription: TLabel
         Left = 12
@@ -159,7 +243,7 @@ object FRpParams: TFRpParams
         Hint = 'The parameters will be assigned not the selected datasets'
         Style = csDropDownList
         ItemHeight = 15
-        TabOrder = 16
+        TabOrder = 14
       end
       object BAdddata: TButton
         Left = 180
@@ -168,7 +252,7 @@ object FRpParams: TFRpParams
         Height = 25
         Hint = 'Include the dataset in the list'
         Caption = '>'
-        TabOrder = 17
+        TabOrder = 15
         OnClick = BAdddataClick
       end
       object BDeleteData: TButton
@@ -178,7 +262,7 @@ object FRpParams: TFRpParams
         Height = 25
         Hint = 'Exclude dataset from the list'
         Caption = '<'
-        TabOrder = 18
+        TabOrder = 16
         OnClick = BDeleteDataClick
       end
       object LDatasets: TListBox
@@ -188,7 +272,7 @@ object FRpParams: TFRpParams
         Height = 53
         Hint = 'The parameter will be assigned to this datasets'
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 20
+        TabOrder = 19
       end
       object LSearch: TLabel
         Left = 12
@@ -591,12 +675,12 @@ object FRpParams: TFRpParams
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF0000000000000000000049D07F0000007E0000007F
-      00000CFF8391B07F00010FFFC00000FF04000FFFE021F07F0E020FC1F3FF00FF
-      0E040F80F320F07F070C0FC0F35580FF03980FE000A1E0FF01F000000388C0FF
-      00E00001F8A340FF01F00F03F8D160FF03900F01F947E0FF0F0C0783F8EAB0FF
-      1E0607FFFB8F80FF180303FFF83FF8FF000001FF901E80FF0000007E008900FF
-      00000000033C807F000000000000007F000000000000007F01C000080000007F
+      0200000002000000FFFFFF00000000000000000000007E7F0000007E000CEFFF
+      00000CFF810F7BFF00010FFFC00B957F04000FFFE20F41FF0E020FC1F00A807F
+      0E040F80F00FC0FF070C0FC0F00AA07F03980FE00000007F01F00000000001FF
+      00E00001F80701FF01F00F03F80D00FF03900F01F80383FF0F0C0783FA077F7F
+      1E0607FFFB01D5FF180303FFF8017F7F000001FF9000547F0000007E0000007F
+      000000000000007F000000000000007F000000000000007F01C000080000007F
       01C0000800FFF07F01C0001C00FFF07F01C0001C0080107F01C0003E00B6D07F
       01C0003E0080107F0FF8007F02B6F87F0FF8007F0080387F07F000FF80FFF87F
       07F000FF80B7FF7F03E0001C00FFFF7F03E0001C0001FF7F01C0001C0000387F

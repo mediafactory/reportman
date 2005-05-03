@@ -147,37 +147,88 @@
     <td>Integer</td>
     <td>Vertical displacement for Teechart</td>
   </tr>
-  <tr>
+  <tr> 
     <td>Tilt</td>
     <td>Tilt</td>
     <td>Integer</td>
     <td>Tilt value for Teechart</td>
   </tr>
-  <tr>
+  <tr> 
     <td>Resolution(dpi)</td>
     <td>Resolution</td>
     <td>Integer</td>
     <td>Dots per inchess for drawing the chart (Teechart), choose a value from 
       100 for low quality (less size) to 400 for high quality (more size)</td>
   </tr>
-  <tr>
+  <tr> 
     <td>Multibar</td>
     <td>Multibar</td>
     <td>TRpMultibar</td>
     <td>Multibar value for Teechart</td>
   </tr>
-  <tr>
+  <tr> 
     <td>Show Hint</td>
     <td>SHowHint</td>
     <td>Boolean</td>
     <td>Show a mark with the value inside the drawing</td>
-  </tr></table>
-  <tr>
+  </tr>
+  <tr> 
     <td>Show Legend</td>
-    <td>SHowLegend</td>
+    <td>Showlegend</td>
     <td>Boolean</td>
     <td>Show chart legend</td>
-  </tr></table>
+  </tr>
+  <tr> 
+    <td>Mark style</td>
+    <td>MarkStyle</td>
+    <td>Integer</td>
+    <td>Select a mark style, value, percent...</td>
+  </tr>
+  <tr> 
+    <td>Font Size V.Axis</td>
+    <td>HorzFontSize</td>
+    <td>Integer</td>
+    <td>Font size, horizontal axis texts</td>
+  </tr>
+  <tr> 
+    <td>Font Rot.V.Axis</td>
+    <td>HorzFontRotation</td>
+    <td>Integer</td>
+    <td>Font rotation, horizontal axis texts</td>
+  </tr>
+  <tr> 
+    <td>Font Size H. Axis</td>
+    <td>VertFontSize</td>
+    <td>Integer</td>
+    <td>Font size, vertical axis texts</td>
+  </tr>
+  <tr> 
+    <td>Font Rot. H.Axis</td>
+    <td>HorzFontRotation</td>
+    <td>Integer</td>
+    <td>Font rotation horizontal axis texts</td>
+  </tr>
+  <tr> 
+    <td>Color Expression</td>
+    <td>ColorExpression</td>
+    <td>WideString</td>
+    <td>A expression can be assigned, the result should be an integer value, that 
+      will be used as the color for the current value added to the chart</td>
+  </tr>
+  <tr>
+    <td>Serie Color Expression</td>
+    <td>SerieColorExpression</td>
+    <td>WideString</td>
+    <td>A expression can be assigned, the result should be an integer value, that 
+      will be used as the color for the current serie added to the chart</td>
+  </tr>
+</table>
+  <tr>
+    
+  <td>&nbsp;</td>
+    
+  <td>&nbsp;</td>
+</tr>
 <p><strong>Aditional details about the implementation</strong></p>
 <p>Because Report Manager <a href="devdriver.html">driver architechture</a>, the
   chart output is processed diferently for each driver, the drivers not supporting

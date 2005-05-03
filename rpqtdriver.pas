@@ -1773,7 +1773,9 @@ var
  dia:TFRpQtProgress;
  oldonidle:TIdleEvent;
  pdfdriver:TRpPDFDriver;
+{$IFDEF USECLXTEECHART}
  qtdriver:TRpQtDriver;
+{$ENDIF}
  apdfdriver:IRpPrintDriver;
 begin
  Result:=false;
@@ -1815,8 +1817,8 @@ begin
   pdfdriver.filename:=filename;
   pdfdriver.compressed:=compressed;
   apdfdriver:=pdfdriver;
-  qtdriver:=TRpQtDriver.Create;
 {$IFDEF USECLXTEECHART}
+  qtdriver:=TRpQtDriver.Create;
   report.Metafile.OnDrawChart:=qtdriver.DoDrawChart;
 {$ENDIF}
   report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);

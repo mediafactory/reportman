@@ -338,6 +338,11 @@ var
  abytes:Array of byte;
 {$ENDIF}
 begin
+ SetLength(FPool,INIT_POOLSIZE);
+ FPoolSize:=INIT_POOLSIZE;
+ FPoolPos:=1;
+ SetLength(FStrings,DEFAULT_SARRAY_SIZE);
+ FArraySize:=DEFAULT_SARRAY_SIZE;
  // Finds the file and read the strings
  // The format is translations separator is a #10, two #10 is a true single #10.
  if Length(FFilename)<1 then
@@ -415,6 +420,7 @@ begin
  FPoolPos:=1;
  FPool:='';
  FCurrentResourceFileName:='';
+ FPoolSize:=0;
 end;
 
 procedure TRpTranslator.AddString(Value:WideString);

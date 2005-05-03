@@ -49,6 +49,10 @@ type
     FDatasets:TStrings;
     FItems:TStrings;
     FValues:TStrings;
+    FSelected:TStrings;
+    FLookupDataset:String;
+    FSearchDataset:String;
+    FSearchParam:String;
     procedure SetVisible(AVisible:boolean);
     procedure SetIsReadOnly(AReadOnly:boolean);
     procedure SetNeverVisible(ANeverVisible:boolean);
@@ -67,6 +71,8 @@ type
     procedure ReadHint(Reader:TReader);
     function GetAsString:WideString;
     procedure SetAsString(NewValue:WideString);
+    function GetMultiValue:String;
+    function GetValue:Variant;
    protected
     procedure DefineProperties(Filer:TFiler);override;
    public
@@ -77,25 +83,32 @@ type
     procedure SetDatasets(AList:TStrings);
     procedure SetItems(AList:TStrings);
     procedure SetValues(AList:TStrings);
+    procedure SetSelected(AList:TStrings);
 {$IFNDEF FORWEBAX}
     function GetListValue:Variant;
+    procedure UpdateLookup;
 {$ENDIF}
     property Description:widestring read FDescription write SetDescription;
     property Hint:widestring read FHint write SetHint;
     property Search:widestring read FSearch write SetSearch;
     property AsString:WideString read GetAsString write SetAsString;
+    property MultiValue:String read GetMultiValue;
    published
     property Name:string read FName write SetName;
     property Visible:Boolean read FVisible write SetVisible default True;
     property IsReadOnly:Boolean read FIsReadOnly write SetIsReadOnly default false;
     property NeverVisible:Boolean read FNeverVisible write SetNeverVisible default false;
     property AllowNulls:Boolean read FAllowNulls write SetAllowNulls default True;
-    property Value:Variant read FValue write SetValue;
+    property Value:Variant read GetValue write SetValue;
     property ParamType:TRpParamType read FParamtype write SetParamType
      default rpParamString;
     property Datasets:TStrings read FDatasets write SetDatasets;
     property Items:TStrings read FItems write SetItems;
     property Values:TStrings read FValues write SetValues;
+    property Selected:TStrings read FSelected write SetSelected;
+    property LookupDataset:String read FLookupDataset write FLookupDataset;
+    property SearchDataset:String read FSearchDataset write FSearchDataset;
+    property SearchParam:String read FSearchParam write FSearchParam;
 {$IFNDEF FORWEBAX}
     property ListValue:Variant read GetListValue;
 {$ENDIF}
@@ -113,7 +126,11 @@ type
     function IndexOf(AName:String):integer;
     function FindParam(AName:string):TRpParam;
     function ParamByName(AName:string):TRpParam;
+{$IFNDEF FORWEBAX}
+    procedure UpdateLookup;
+{$ENDIF}
     property Items[index:integer]:TRpParam read GetItem write SetItem;default;
+    property Report:TComponent read FReport;
    end;
 
   TRpParamComp=class(TComponent)
@@ -141,7 +158,7 @@ procedure ParseCommandLineParams(params:TRpParamList);
 implementation
 
 {$IFNDEF FORWEBAX}
-uses rpeval;
+uses rpeval,rpbasereport,rpreport,rpdatainfo;
 {$ENDIF}
 
 procedure TRpParamComp.SetParams(avalue:TRpParamList);
@@ -164,6 +181,7 @@ begin
  FDatasets:=TStringList.Create;
  FItems:=TStringList.Create;
  FValues:=TStringList.Create;
+ FSelected:=TStringList.Create;
 end;
 
 procedure TRpParam.Assign(Source:TPersistent);
@@ -178,6 +196,9 @@ begin
   FDescription:=TRpParam(Source).FDescription;
   FHint:=TRpParam(Source).FHint;
   FSearch:=TRpParam(Source).FSearch;
+  FSelected.Assign(TRpParam(Source).FSelected);
+  FItems.Assign(TRpParam(Source).FItems);
+  FValues.Assign(TRpParam(Source).FValues);
   FValue:=TRpParam(Source).FValue;
   FParamType:=TRpParam(Source).FParamType;
   if ParamType in [rpParamDate,rpParamDateTime,rpParamTime] then
@@ -187,9 +208,10 @@ begin
   end;
   FDatasets.Clear;
   FDatasets.Assign(TRpParam(Source).FDatasets);
-  FItems.Assign(TRpParam(Source).FItems);
-  FValues.Assign(TRpParam(Source).FValues);
   LastValue:=TRpParam(Source).LastValue;
+  FLookupDataset:=TRpParam(Source).FLookupDataset;
+  FSearchDataset:=TRpParam(Source).FSearchDataset;
+  FSearchParam:=TRpParam(Source).FSearchParam;
  end
  else
   inherited Assign(Source);
@@ -200,6 +222,7 @@ begin
  FDatasets.Free;
  FItems.Free;
  FValues.Free;
+ FSelected.Free;
  inherited Destroy;
 end;
 
@@ -246,6 +269,12 @@ begin
  Changed(False);
 end;
 
+procedure TRpParam.SetSelected(AList:TStrings);
+begin
+ FSelected.Assign(Alist);
+ Changed(False);
+end;
+
 {$IFNDEF FORWEBAX}
 function TRpParam.GetListValue:Variant;
 var
@@ -254,6 +283,9 @@ var
 begin
  if ParamType<>rpParamList then
   Result:=FValue
+ else
+ if ParamType<>rpParamMultiple then
+  Result:=GetMultiValue
  else
  begin
   aoption:=0;
@@ -297,6 +329,48 @@ begin
   end;
  end;
 end;
+
+procedure TRpParam.UpdateLookup;
+var
+ report:TRpReport;
+ ditem:TRpDataInfoItem;
+ index:integer;
+begin
+ if Length(LookupDataset)<1 then
+  exit;
+ report:=TRpReport(TRpParamList(Collection).FReport);
+ index:=report.DataInfo.IndexOf(LookupDataset);
+ if index<0 then
+  Raise Exception.Create(SRpSLookupDatasetNotavail+':'+Name);
+ ditem:=report.DataInfo.Items[index];
+ ditem.Connect(report.DatabaseInfo,TRpParamList(Collection));
+ try
+  if ditem.Dataset.FieldCount<2 then
+   Raise Exception.Create(SRpSLookupDatasetNotavail+':'+Name);
+  Items.Clear;
+  Values.Clear;
+  while not ditem.Dataset.Eof do
+  begin
+   Items.Add(ditem.Dataset.Fields[0].AsString);
+   Values.Add(ditem.Dataset.Fields[1].AsString);
+   ditem.Dataset.Next;
+  end;
+ finally
+  ditem.Disconnect;
+ end;
+end;
+
+
+procedure TRpParamList.UpdateLookup;
+var
+ i:integer;
+begin
+ for i:=0 to Count-1 do
+ begin
+  items[i].UpdateLookUp;
+ end;
+end;
+
 {$ENDIF}
 
 procedure TRpParam.SetName(AName:String);
@@ -400,22 +474,22 @@ end;
 
 function TRpParamList.FindParam(AName:string):TRpParam;
 var
- index:integer;
+ aindex:integer;
 begin
  Result:=nil;
- index:=Indexof(AName);
- if index>=0 then
-  Result:=items[index];
+ aindex:=Indexof(AName);
+ if aindex>=0 then
+  Result:=items[aindex];
 end;
 
 function TRpParamList.ParamByName(AName:string):TRpParam;
 var
- index:integer;
+ aindex:integer;
 begin
- index:=Indexof(AName);
- if index<0 then
+ aindex:=Indexof(AName);
+ if aindex<0 then
   Raise Exception.Create(SRpParamNotFound+AName);
- Result:=items[index];
+ Result:=items[aindex];
 end;
 
 
@@ -593,6 +667,8 @@ begin
    Result:=SRpSBoolean;
   rpParamList:
    Result:=SRpSParamList;
+  rpParamMultiple:
+   Result:=SRpSMultiple;
   rpParamUnknown:
    Result:=SRpSUnknownType;
  end;
@@ -662,6 +738,11 @@ begin
   Result:=rpParamList;
   exit;
  end;
+ if Value=SRpSMultiple then
+ begin
+  Result:=rpParamMultiple;
+  exit;
+ end;
 end;
 
 procedure GetPossibleDataTypesA(alist:TStrings);
@@ -693,6 +774,7 @@ begin
  alist.Add(SrpSExpressionA);
  alist.Add(SRpSParamSubs);
  alist.Add(SRpSParamList);
+ alist.Add(SRpSMultiple);
 end;
 
 // Command line params are in form of:
@@ -719,6 +801,35 @@ begin
  end;
 end;
 
+function TRpParam.GetMultiValue:String;
+var
+ i,aindex:integer;
+ astring:string;
+begin
+ Result:='';
+ if ParamType<>rpParamMultiple then
+  exit;
+ for i:=0 to FSelected.Count-1 do
+ begin
+  astring:=FSelected.Strings[i];
+  aindex:=StrToInt(astring);
+  if FValues.Count>aindex then
+  begin
+   if Length(Result)>0 then
+    Result:=Result+','+FValues.Strings[aindex]
+   else
+    Result:=Result+FValues.Strings[aindex]
+  end;
+ end;
+end;
+
+function TRpParam.GetValue:Variant;
+begin
+ if paramtype=rpParamMultiple then
+  Result:=GetMultiValue
+ else
+  Result:=FValue;
+end;
 
 
 end.

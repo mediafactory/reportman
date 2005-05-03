@@ -29,7 +29,7 @@ package rppack_del4;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $00400000}
-{$DESCRIPTION 'Reportmanager components'}
+{$DESCRIPTION 'Report Manager components'}
 {$IMPLICITBUILD OFF}
 
 requires
@@ -104,6 +104,9 @@ contains
   rpsvgdriver in 'rpsvgdriver.pas',
   rpcsvdriver in 'rpcsvdriver.pas',
   rpinfoprovid in 'rpinfoprovid.pas',
-  rpinfoprovgdi in 'rpinfoprovgdi.pas';
+  rpinfoprovgdi in 'rpinfoprovgdi.pas',
+  rpmdfsearchvcl in 'rpmdfsearchvcl.pas' {FRpSearchParamVCL},
+  rpxmlstream in 'rpxmlstream.pas',
+  rpbarcodecons in 'rpbarcodecons.pas';
 
 end.

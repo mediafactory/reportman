@@ -37,7 +37,8 @@ requires
   dsnap,
   ibxpress,
   bdertl,
-  dbexpress;
+  dbexpress,
+  visualdbclx;
 
 contains
   rpregv in 'rpregv.pas',
@@ -56,6 +57,7 @@ contains
   rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig},
   rpmdfhelpform in 'rpmdfhelpform.pas' {FRpHelpForm},
   rpmaskeditclx in 'rpmaskeditclx.pas',
-  rppagesetup in 'rppagesetup.pas' {FRpPageSetup};
+  rppagesetup in 'rppagesetup.pas' {FRpPageSetup},
+  rpmdfsearch in 'rpmdfsearch.pas' {FRpSearchParam};
 
 end.

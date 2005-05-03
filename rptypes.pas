@@ -132,7 +132,7 @@ type
 
  TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,
   rpParamTime,rpParamDateTime,rpParamCurrency,rpParamBool,
-  rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamList,rpParamUnknown);
+  rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamList,rpParamMultiple,rpParamUnknown);
 
 
  TRpParamObject=class(TObject)
@@ -215,9 +215,6 @@ type
     WString: WideString;
   end;
 
-  TRpDBFieldInfo=class(TObject)
-   FieldSize:Integer;
-  end;
 
   TRpWideStrings = class(TPersistent)
   private
@@ -659,7 +656,7 @@ begin
   if VarIsNull(Value) then
   begin
    case paramtype of
-    rpParamString,rpParamExpreB,rpParamExpreA,rpParamSubst:
+    rpParamString,rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamMultiple:
      Value:='';
     rpParamInteger,rpParamDouble,rpParamCurrency:
      Value:=0;

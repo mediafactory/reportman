@@ -391,7 +391,6 @@ type
    property PaperSource:Integer read FPaperSource write FPaperSource default 0;
    property Duplex:Integer read FDuplex write FDuplex default 0;
    property ForcePaperName:String read FForcePaperName write FForcePaperName;
-
  end;
 
 
@@ -404,10 +403,10 @@ var
  subrep:TRpSubReport;
 begin
  Result:=Null;
- if varname='PAGE' then
+ if ((varname='PAGE') or (varname='PAGINA')) then
   Result:=freport.PageNum+1
  else
-  if varname='PAGENUM' then
+  if ((varname='PAGENUM') or (varname='NUMPAGINA')) then
    Result:=freport.PageNumGroup+1
   else
   if varname='FREE_SPACE_TWIPS' then
@@ -711,7 +710,14 @@ begin
  begin
   zstream:=TCompressionStream.Create(clDefault,Stream);
   try
-    WriteReportXML(Self,zstream);
+    memstream:=TMemorystream.Create;
+    try
+     WriteReportXML(Self,memstream);
+     memstream.Seek(0,soFromBeginning);
+     zstream.CopyFrom(memstream,memstream.size);
+    finally
+     memstream.free;
+    end;
   finally
    zstream.free;
   end;
@@ -845,7 +851,10 @@ begin
    if firstchar='o' then
     theformat:=rpStreamText
    else
-    theformat:=rpStreambinary;
+    if firstchar='<' then
+     theformat:=rpStreamXML
+    else
+     theformat:=rpStreambinary;
 {$IFNDEF USEZLIB}
   if theformat=rpStreamzlib then
    Raise Exception.Create(SRpZLibNotSupported);
@@ -863,12 +872,20 @@ begin
       amemstream.Write(buf[0],readed);
      until readed<120000;
      amemstream.Seek(0,soFromBeginning);
-     reader:=TReader.Create(amemstream,1000);
-     try
-      reader.OnError:=FInternalOnReadError;
-      reader.ReadRootComponent(Self);
-     finally
-      reader.free;
+     // Check if is xml
+     if PChar(amemstream.memory)^='<' then
+     begin
+      ReadReportXML(self,amemstream);
+     end
+     else
+     begin
+      reader:=TReader.Create(amemstream,1000);
+      try
+       reader.OnError:=FInternalOnReadError;
+       reader.ReadRootComponent(Self);
+      finally
+       reader.free;
+      end;
      end;
     finally
      zlibs.Free;
@@ -888,6 +905,11 @@ begin
    finally
     reader.free;
    end;
+  end
+  else
+  if theformat=rpStreamXML then
+  begin
+   ReadReportXML(self,memstream);
   end
   else
   begin
@@ -1073,9 +1095,12 @@ begin
   end;
   for i:=0 to FDataInfo.Count-1 do
   begin
-   UpdateParamsBeforeOpen(i,true);
-   FDataInfo.Items[i].Connect(DatabaseInfo,Params);
-   CheckProgress(false);
+   if FDataInfo.Items[i].OpenOnStart then
+   begin
+    UpdateParamsBeforeOpen(i,true);
+    FDataInfo.Items[i].Connect(DatabaseInfo,Params);
+    CheckProgress(false);
+   end;
   end;
  except
   for i:=0 to FDataInfo.Count-1 do

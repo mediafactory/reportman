@@ -30,7 +30,7 @@ uses SysUtils, Classes,
   Variants,
 {$ENDIF}
   DB,rpmdconsts,rpparams,
-  rpgraphutilsvcl, ToolWin,rptypes, rpmaskedit;
+  rpgraphutilsvcl, ToolWin,rptypes, rpmaskedit, CheckLst;
 
 type
   TFRpParamsVCL = class(TForm)
@@ -72,13 +72,22 @@ type
     ESearch: TEdit;
     LSearch: TLabel;
     GValues: TGroupBox;
-    MItems: TMemo;
-    MValues: TMemo;
     CheckAllowNulls: TCheckBox;
     EHint: TEdit;
     LHint: TLabel;
     CheckNeverVisible: TCheckBox;
     CheckReadOnly: TCheckBox;
+    ECheckList: TCheckListBox;
+    Panel4: TPanel;
+    MItems: TMemo;
+    MValues: TMemo;
+    LLookup: TLabel;
+    ComboLookup: TComboBox;
+    GSearch: TGroupBox;
+    LSearchDataset: TLabel;
+    ComboSearchDataset: TComboBox;
+    Label1: TLabel;
+    ComboSearchParam: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -150,6 +159,7 @@ begin
  CheckNull.Caption:=TranslateStr(196,CheckNull.Caption);
  LDescription.Caption:=TranslateStr(197,LDescription.Caption);
  LAssign.Caption:=TranslateStr(198,LAssign.Caption);
+ LLookup.Caption:=SrpLookupDataset;
  Caption:=TranslateStr(199,Caption);
  GetPossibleDataTypesA(ComboDataType.Items);
  ComboDataType.Hint:=TranslateStr(944,ComboDataType.Hint);
@@ -160,6 +170,8 @@ begin
  BDeleteData.Hint:=TranslateStr(949,BDeleteData.Hint);
  LDatasets.Hint:=TranslateStr(950,LDatasets.Hint);
  GValues.Caption:=SRpSParamListDesc;
+ GSearch.Caption:=SRpValueSearch;
+ LSearchDataset.Caption:=SrpSearchDataset;
 end;
 
 procedure TFRpParamsVCL.BOKClick(Sender: TObject);
@@ -179,10 +191,24 @@ var
 begin
  if Assigned(datainfo) then
  begin
+  ComboLookup.Clear;
+  ComboLookup.Items.Add('');
+  ComboSearchDataset.Clear;
+  ComboSearchDataset.items.Add('');
   for i:=0 to datainfo.count-1 do
   begin
    ComboDatasets.Items.Add(datainfo.items[i].Alias);
+   ComboLookup.Items.Add(datainfo.items[i].Alias);
+   ComboSearchDataset.Items.Add(datainfo.items[i].Alias);
   end;
+  ComboSearchParam.Clear;
+  ComboSearchParam.Items.Add('');
+  for i:=0 to params.Count-1 do
+  begin
+   ComboSearchParam.Items.Add(params.Items[i].Name);
+  end;
+
+
   if ComboDatasets.Items.Count>0 then
    ComboDatasets.ItemIndex:=0;
  end;
@@ -231,6 +257,9 @@ begin
   LDatasets.items.Assign(param.Datasets);
   if LDatasets.items.count>0 then
    LDatasets.ItemIndex:=0;
+  ComboLookup.ItemIndex:=ComboLookup.Items.IndexOf(param.LookupDataset);
+  ComboSearchDataset.ItemIndex:=ComboSearchDataset.Items.IndexOf(param.SearchDataset);
+  ComboSearchParam.ItemIndex:=ComboSearchParam.Items.IndexOf(param.SearchParam);
 
   ComboDataType.ItemIndex:=
    ComboDataType.Items.IndexOf(ParamTypeToString(param.ParamType));
@@ -284,63 +313,88 @@ begin
 end;
 
 procedure TFRpParamsVCL.UpdateValue(param:TRpParam);
+var
+ i,index:integer;
 begin
- ESearch.Visible:=param.ParamType=rpParamSubst;
- GValues.Visible:=param.ParamType=rpParamList;
+ ESearch.Visible:=param.ParamType in [rpParamSubst,rpParamMultiple];
+ GValues.Visible:=param.ParamType in [rpParamList,rpParamMultiple];
+ GSearch.Visible:=Not GValues.Visible;
  LSearch.Visible:=ESearch.Visible;
- if (EValue.Text='') then
+ CheckNull.Visible:=param.ParamType<>rpParamMultiple;
+ CheckAllowNulls.Visible:=CheckNull.Visible;
+ EValue.Visible:=CheckNull.Visible;
+ ECheckList.Visible:=Not CheckNull.Visible;
+ if param.ParamType=rpParamMultiple then
  begin
-  case param.ParamType of
-   rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamUnknown:
-    EValue.Text:='';
-   rpParamInteger:
-    EValue.Text:=IntToStr(0);
-   rpParamDouble:
-    EValue.Text:=FloatToStr(0.0);
-   rpParamCurrency:
-    EValue.Text:=CurrToStr(0.0);
-   rpParamDate:
-    EValue.Text:=DateToStr(Date);
-   rpParamTime:
-    EValue.Text:=TimeToStr(Time);
-   rpParamDateTime:
-    EValue.Text:=DateTimeToStr(Now);
-   rpParamBool:
-    EValue.Text:=BoolToStr(False);
+  ECheckList.Items.Assign(param.Items);
+  for i:=0 to ECheckList.Items.Count-1 do
+  begin
+   ECheckList.Checked[i]:=False;
   end;
- end;
- if CheckNull.Checked then
- begin
-  param.Value:=null;
-  EValue.Visible:=false;
+  for i:=0 to param.Selected.Count-1 do
+  begin
+   index:=StrToInt(param.Selected.Strings[i]);
+   if param.Items.Count>index then
+    ECheckList.Checked[index]:=True;
+  end;
  end
  else
  begin
-   EValue.Visible:=true;
+  if (EValue.Text='') then
+  begin
    case param.ParamType of
     rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamUnknown:
-     param.Value:=EValue.Text;
+     EValue.Text:='';
     rpParamInteger:
-     param.Value:=StrToInt(EValue.Text);
+     EValue.Text:=IntToStr(0);
     rpParamDouble:
-     param.Value:=StrToFloat(EValue.Text);
+     EValue.Text:=FloatToStr(0.0);
     rpParamCurrency:
-     param.Value:=StrToCurr(EValue.Text);
+     EValue.Text:=CurrToStr(0.0);
     rpParamDate:
-     param.Value:=StrToDate(EValue.Text);
+     EValue.Text:=DateToStr(Date);
     rpParamTime:
-     param.Value:=StrToTime(EValue.Text);
+     EValue.Text:=TimeToStr(Time);
     rpParamDateTime:
-     param.Value:=StrToDateTime(EValue.Text);
+     EValue.Text:=DateTimeToStr(Now);
     rpParamBool:
-     param.Value:=StrToBool(EValue.Text);
+     EValue.Text:=BoolToStr(False);
    end;
+  end;
+  if CheckNull.Checked then
+  begin
+   param.Value:=null;
+   EValue.Visible:=false;
+  end
+  else
+  begin
+    EValue.Visible:=true;
+    case param.ParamType of
+     rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamUnknown:
+      param.Value:=EValue.Text;
+     rpParamInteger:
+      param.Value:=StrToInt(EValue.Text);
+     rpParamDouble:
+      param.Value:=StrToFloat(EValue.Text);
+     rpParamCurrency:
+      param.Value:=StrToCurr(EValue.Text);
+     rpParamDate:
+      param.Value:=StrToDate(EValue.Text);
+     rpParamTime:
+      param.Value:=StrToTime(EValue.Text);
+     rpParamDateTime:
+      param.Value:=StrToDateTime(EValue.Text);
+     rpParamBool:
+      param.Value:=StrToBool(EValue.Text);
+    end;
+  end;
  end;
 end;
 
 procedure TFRpParamsVCL.EDescriptionChange(Sender: TObject);
 var
  param:TRpParam;
+ i:integer;
 begin
  if updating then
   exit;
@@ -358,7 +412,10 @@ begin
   param.Search:=ESearch.Text
  else
  if Sender=MItems then
-  param.Items:=MItems.Lines
+ begin
+  param.Items:=MItems.Lines;
+  UpdateValue(param);
+ end
  else
  if Sender=MValues then
   param.Values:=MValues.Lines
@@ -389,7 +446,33 @@ begin
      param.ParamType:=StringToParamType(COmboDataType.Text);
      EValue.Text:='';
      UpdateValue(param);
+    end
+   else
+    if (Sender=ECheckList) then
+    begin
+     param.Selected.Clear;
+     for i:=0 to ECheckList.Items.Count-1 do
+     begin
+      if ECheckList.Checked[i] then
+       param.Selected.Add(IntToStr(i));
+     end;
+    end
+   else
+    if (Sender=ComboLookup) then
+    begin
+     param.LookupDataset:=ComboLookup.Text;
+    end
+   else
+    if (Sender=ComboSearchDataset) then
+    begin
+     param.SearchDataset:=ComboSearchDataset.Text;
+    end
+   else
+    if (Sender=ComboSearchParam) then
+    begin
+     param.SearchParam:=ComboSearchParam.Text;
     end;
+
 end;
 
 procedure TFRpParamsVCL.BAdddataClick(Sender: TObject);

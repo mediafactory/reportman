@@ -271,6 +271,7 @@ type
    FGroupUnion:Boolean;
    FDBInfoList:TRpDatabaseInfoList;
    FParamsList:TRpParamList;
+   FOpenOnStart:Boolean;
 {$IFDEF USEADO}
    FexternalDataSet: Pointer;
 {$ENDIF}
@@ -321,6 +322,7 @@ type
    property BDELastRange:string read FBDELastRange write FBDELastRange;
    property DataUnions:TStrings read FDataUnions write SetDataUnions;
    property GroupUnion:Boolean read FGroupUnion write FGroupUnion default false;
+   property OpenOnStart:Boolean read FOpenOnStart write FOpenOnStart default true;
   end;
 
  TRpDataInfoList=class(TCollection)
@@ -673,6 +675,7 @@ begin
   FGroupUnion:=TRpDataInfoItem(Source).FGroupUnion;
   FBDEFirstRange:=TRpDataInfoItem(Source).FBDEFirstRange;
   FBDELastRange:=TRpDataInfoItem(Source).FBDELastRange;
+  FOpenOnStart:=TRpDataInfoItem(Source).FOpenOnStart;
  end
  else
   inherited Assign(Source);
@@ -1413,7 +1416,7 @@ begin
    for i:=0 to params.Count-1 do
    begin
     param:=params.items[i];
-    if param.ParamType=rpParamSubst then
+    if param.ParamType in [rpParamSubst,rpParamMultiple] then
     begin
      index:=param.Datasets.IndexOf(Alias);
      if index>=0 then
@@ -1884,7 +1887,7 @@ begin
 //    end;
     if ((atype=ftUnknown) or (param.ParamType=rpParamExpreB)) then
      atype:=VarTypeToDataType(Vartype(avalue));
-    if param.ParamType=rpParamSubst then
+    if (param.ParamType in [rpParamSubst,rpParamMultiple]) then
      continue;
     index:=param.Datasets.IndexOf(Alias);
     if index>=0 then
@@ -2018,6 +2021,7 @@ begin
  inherited Create(Collection);
 
  FDataUnions:=TStringList.Create;
+ FOpenOnStart:=true;
  FBDEType:=rpdquery;
 {$IFDEF USERPDATASET}
  FCachedDataset:=TRpDataset.Create(nil);

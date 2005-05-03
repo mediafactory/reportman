@@ -149,6 +149,10 @@ contains
   rpsvgdriver in 'rpsvgdriver.pas',
   rpinfoprovgdi in 'rpinfoprovgdi.pas',
   rpcsvdriver in 'rpcsvdriver.pas',
-  rpinfoprovid in 'rpinfoprovid.pas';
+  rpinfoprovid in 'rpinfoprovid.pas',
+  rpxmlstream in 'rpxmlstream.pas',
+  rpdbgridvcl in 'rpdbgridvcl.pas',
+  rpbarcodecons in 'rpbarcodecons.pas',
+  rpmdfsearchvcl in 'rpmdfsearchvcl.pas' {FRpSearchParamVCL};
 
 end.

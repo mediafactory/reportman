@@ -24,8 +24,11 @@ interface
 {$I rpconf.inc}
 
 uses SysUtils, Classes, QGraphics, QForms,
-  QButtons, QExtCtrls, QControls, QStdCtrls,
+  QButtons, QExtCtrls, QControls, QStdCtrls,QChecklst,
   rpmdconsts,rpmaskeditclx,
+{$IFNDEF FORWEBAX}
+  rpmdfsearch,
+{$ENDIF}
   Variants,rptypes,
   rpparams;
 
@@ -35,6 +38,7 @@ const
   CONS_CONTROLGAP=5;
   CONS_RIGHTBARGAP=25;
   CONS_NULLWIDTH=50;
+  CONS_SEARCH=25;
   CONS_MAXCLIENTHEIGHT=400;
 type
   TFRpRunTimeParams = class(TForm)
@@ -49,8 +53,12 @@ type
     procedure BOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure BSearchClick(Sender: TObject);
   private
     { Private declarations }
+{$IFNDEF FORWEBAX}
+    report:TComponent;
+{$ENDIF}
     fparams:TRpParamList;
     dook:boolean;
     lnulls,lcontrols:TStringList;
@@ -66,6 +74,11 @@ type
 function ShowUserParams(params:TRpParamList):boolean;
 
 implementation
+
+{$IFNDEF FORWEBAX}
+  uses rpreport;
+{$ENDIF}
+
 
 {$R *.xfm}
 
@@ -90,6 +103,9 @@ begin
   Result:=true;
   exit;
  end;
+{$IFNDEF FORWEBAX}
+ params.UpdateLookup;
+{$ENDIF}
  dia:=TFRpRunTimeParams.Create(Application);
  try
   dia.params:=Params;
@@ -121,20 +137,43 @@ begin
  BCancel.Caption:=TranslateStr(94,BCancel.Caption);
 end;
 
+
+function calcdefaultheight(fontsize:integer):integer;
+var
+ Edit:TEdit;
+begin
+ Edit:=TEDit.Create(nil);
+ try
+  Edit.Font.Size:=fontsize;
+  Edit.Text:='MMg';
+  Result:=Edit.Height;
+ finally
+  Edit.free;
+ end;
+end;
+
 procedure TFRpRunTimeParams.SetParams(avalue:TRpParamList);
 var
- i:integer;
+ i,j,index:integer;
  alabel:TLabel;
  acontrol:TControl;
  posy:integer;
  aparam:TRpParam;
  TotalWidth:integer;
  achecknull:TCheckBox;
+{$IFNDEF FORWEBAX}
+ bbutton:TButton;
+ defheight:integer;
+{$ENDIF}
  NewClientHeight:integer;
 begin
+{$IFNDEF FORWEBAX}
+ defheight:=calcdefaultheight(Font.Size);
+ report:=params.Report;
+{$ENDIF}
  acontrol:=nil;
  fparams.assign(avalue);
- TotalWidth:=PRight.Width-CONS_NULLWIDTH-CONS_RIGHTBARGAP;
+ TotalWidth:=PRight.Width-CONS_NULLWIDTH-CONS_SEARCH-CONS_LEFTGAP-CONS_RIGHTBARGAP;
  posy:=CONS_CONTROLGAP;
  // Creates all controls from params
  for i:=0 to fparams.Count-1 do
@@ -149,17 +188,30 @@ begin
    aLabel.Hint:=aparam.Hint;
    alabel.Parent:=PLeft;
    achecknull:=TCheckBox.Create(Self);
-   achecknull.Left:=TotalWidth-CONS_NULLWIDTH+3;
    achecknull.Top:=posy-5;
    achecknull.Tag:=i;
    achecknull.Width:=CONS_NULLWIDTH;
-   achecknull.Left:=TotalWidth;
+   achecknull.Left:=TotalWidth+CONS_SEARCH+CONS_LEFTGAP;
    achecknull.Caption:=SRpNull;
-   achecknull.Parent:=PRight;
    achecknull.Anchors:=[akTop,akRight];
+   achecknull.Parent:=PRight;
    achecknull.OnClick:=CheckNullClick;
-   lnulls.AddObject(aparam.Name,acheckNull);
    achecknull.Visible:=aparam.AllowNulls;
+   lnulls.AddObject(aparam.Name,acheckNull);
+
+{$IFNDEF FORWEBAX}
+   bbutton:=TButton.Create(Self);
+   bbutton.Top:=posy;
+   bbutton.Tag:=i;
+   bbutton.Width:=CONS_SEARCH;
+   bbutton.Left:=TotalWidth;
+   bbutton.Height:=defheight;
+   bbutton.Caption:='...';
+   bbutton.Parent:=PRight;
+   bbutton.OnClick:=BSearchClick;
+   bbutton.VIsible:=false;
+{$ENDIF}
+
    case aparam.ParamType of
     rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamUnknown:
      begin
@@ -179,6 +231,9 @@ begin
       begin
        TEdit(acontrol).Text:=aparam.Value;
       end;
+{$IFNDEF FORWEBAX}
+      bbutton.Visible:=Length(aparam.SearchDataset)>0;
+{$ENDIF}
      end;
    rpParamInteger,rpParamDouble,rpParamCurrency:
      begin
@@ -203,6 +258,9 @@ begin
       begin
        TEdit(acontrol).Text:=VarToStr(aparam.Value);
       end;
+{$IFNDEF FORWEBAX}
+      bbutton.Visible:=Length(aparam.SearchDataset)>0;
+{$ENDIF}
      end;
    rpParamDate:
      begin
@@ -286,6 +344,31 @@ begin
         TComboBox(acontrol).ItemIndex:=0;
       end;
      end;
+   rpParamMultiple:
+     begin
+      acontrol:=TCheckListBox.Create(Self);
+      if aparam.IsReadOnly then
+      begin
+       TCheckListBox(acontrol).Color:=Self.Color;
+      end;
+      acontrol.tag:=i;
+      lcontrols.AddObject(aparam.Name,acontrol);
+      // Can't add items without a parent
+      acontrol.parent:=MainScrollBox;
+      TCheckListBox(acontrol).Items.Assign(aparam.Items);
+      for j:=0 to TCheckListBox(acontrol).Items.Count-1 do
+       TCheckListBox(acontrol).Checked[j]:=false;
+      for j:=0 to aparam.Selected.Count-1 do
+      begin
+       index:=StrToInt(aparam.Selected.Strings[i]);
+       if TCheckListBox(acontrol).Items.Count>index then
+        TCheckListBox(acontrol).Checked[index]:=true;
+      end;
+      index:=TCheckListBox(acontrol).Items.Count;
+      if index>5 then
+       index:=5;
+      acontrol.Height:=index*Self.Canvas.TextHeight('Mg');
+     end;
    rpParamList:
      begin
       acontrol:=TComboBox.Create(Self);
@@ -363,7 +446,7 @@ end;
 
 procedure TFRpRunTimeParams.SaveParams;
 var
- i,index:integer;
+ i,j,index:integer;
 begin
  for i:=0 to fparams.Count-1 do
  begin
@@ -408,6 +491,15 @@ begin
       begin
        fparams.items[i].Value:=StrtoBool(TComboBox(LControls.Objects[i]).Text);
       end;
+     rpParamMultiple:
+      begin
+       fparams.items[i].Selected.Clear;
+       for j:=0 to TCheckListBox(LControls.Objects[i]).Items.Count-1 do
+       begin
+        if TCheckListBox(LControls.Objects[i]).Checked[j] then
+         fparams.items[i].Selected.Add(IntToStr(j));
+       end;
+      end;
      rpParamList:
       begin
        index:=TComboBox(LControls.Objects[i]).ItemIndex;
@@ -424,6 +516,14 @@ begin
    end;
   end;
  end;
+end;
+
+procedure TFRpRunTimeParams.BSearchClick(Sender: TObject);
+begin
+ // Lookup using a dataset
+{$IFNDEF FORWEBAX}
+  rpmdfsearch.ParamValueSearch(params.Items[TComponent(Sender).Tag],TRpReport(report));
+{$ENDIF}
 end;
 
 end.

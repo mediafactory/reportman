@@ -52,7 +52,7 @@ object FRpParamsVCL: TFRpParamsVCL
       end
       object LAssign: TLabel
         Left = 16
-        Top = 273
+        Top = 281
         Width = 86
         Height = 13
         Caption = 'Assign to datasets'
@@ -72,33 +72,72 @@ object FRpParamsVCL: TFRpParamsVCL
         Height = 13
         Caption = 'Hint'
       end
+      object ECheckList: TCheckListBox
+        Left = 284
+        Top = 8
+        Width = 145
+        Height = 73
+        OnClickCheck = EDescriptionChange
+        Anchors = [akLeft, akTop, akRight]
+        ItemHeight = 13
+        TabOrder = 15
+        Visible = False
+      end
       object GValues: TGroupBox
         Left = 12
-        Top = 168
+        Top = 164
         Width = 421
-        Height = 97
+        Height = 105
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Strings to show (left) and strings to assign (right) '
         TabOrder = 10
         Visible = False
-        object MItems: TMemo
+        object LLookup: TLabel
+          Left = 4
+          Top = 84
+          Width = 74
+          Height = 13
+          Caption = 'Lookup dataset'
+        end
+        object Panel4: TPanel
           Left = 2
           Top = 15
-          Width = 195
-          Height = 80
-          Align = alLeft
+          Width = 417
+          Height = 62
+          Align = alTop
+          BevelOuter = bvNone
           TabOrder = 0
-          WordWrap = False
-          OnChange = EDescriptionChange
+          object MItems: TMemo
+            Left = 0
+            Top = 0
+            Width = 195
+            Height = 62
+            Align = alLeft
+            TabOrder = 0
+            WordWrap = False
+            OnChange = EDescriptionChange
+          end
+          object MValues: TMemo
+            Left = 195
+            Top = 0
+            Width = 222
+            Height = 62
+            Align = alClient
+            TabOrder = 1
+            WordWrap = False
+            OnChange = EDescriptionChange
+          end
         end
-        object MValues: TMemo
-          Left = 197
-          Top = 15
-          Width = 222
-          Height = 80
-          Align = alClient
+        object ComboLookup: TComboBox
+          Left = 128
+          Top = 80
+          Width = 161
+          Height = 21
+          Hint = 'The parameters will be assigned not the selected datasets'
+          Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
+          ItemHeight = 13
           TabOrder = 1
-          WordWrap = False
           OnChange = EDescriptionChange
         end
       end
@@ -167,7 +206,7 @@ object FRpParamsVCL: TFRpParamsVCL
       end
       object ComboDatasets: TComboBox
         Left = 16
-        Top = 293
+        Top = 297
         Width = 161
         Height = 21
         Hint = 'The parameters will be assigned not the selected datasets'
@@ -186,7 +225,7 @@ object FRpParamsVCL: TFRpParamsVCL
       end
       object BDeleteData: TButton
         Left = 188
-        Top = 301
+        Top = 305
         Width = 33
         Height = 25
         Caption = '<'
@@ -197,7 +236,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Left = 236
         Top = 272
         Width = 193
-        Height = 50
+        Height = 57
         Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
         TabOrder = 14
@@ -253,6 +292,52 @@ object FRpParamsVCL: TFRpParamsVCL
         Caption = 'Read only'
         TabOrder = 3
         OnClick = EDescriptionChange
+      end
+      object GSearch: TGroupBox
+        Left = 8
+        Top = 164
+        Width = 425
+        Height = 73
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Search value'
+        TabOrder = 16
+        Visible = False
+        object LSearchDataset: TLabel
+          Left = 8
+          Top = 24
+          Width = 72
+          Height = 13
+          Caption = 'Search dataset'
+        end
+        object Label1: TLabel
+          Left = 8
+          Top = 48
+          Width = 84
+          Height = 13
+          Caption = 'Search parameter'
+        end
+        object ComboSearchDataset: TComboBox
+          Left = 132
+          Top = 20
+          Width = 165
+          Height = 21
+          Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
+          ItemHeight = 13
+          TabOrder = 0
+          OnChange = EDescriptionChange
+        end
+        object ComboSearchParam: TComboBox
+          Left = 132
+          Top = 44
+          Width = 165
+          Height = 21
+          Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
+          ItemHeight = 13
+          TabOrder = 1
+          OnChange = EDescriptionChange
+        end
       end
     end
   end

@@ -25,6 +25,7 @@ library repmandxp;
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdfmainvcl.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdfopenlibvcl.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdfsampledatavcl.dfm}
+{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdfsearchvcl.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdfstrucvcl.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdftreevcl.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdfwizardvcl.dfm}
@@ -59,6 +60,7 @@ library repmandxp;
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdfmainvcl.dfm' FRpMainFVCL:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdfopenlibvcl.dfm' FRpOpenLibVCL:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdfsampledatavcl.dfm' FRpShowSampledataVCL:TForm}
+{$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdfsearchvcl.dfm' FRpSearchParamVCL:TForm}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdfstrucvcl.dfm' FRpStructureVCL:TFrame}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdftreevcl.dfm' FRpDBTreeVCL:TFrame}
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdfwizardvcl.dfm' FRpWizardVCL:TForm}

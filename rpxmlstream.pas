@@ -28,7 +28,7 @@ uses Classes,sysutils,rptypes,rpreport,rpdatainfo,rpsubreport,
 {$IFDEF USEVARIANTS}
  Variants,
 {$ENDIF}
- rpdrawitem,rpmdconsts;
+ rpdrawitem,rpmdconsts,rpmdcharttypes;
 
 
 const
@@ -53,6 +53,7 @@ procedure WritePropertyW(propname:string;propvalue:WideString;stream:TStream);
 procedure WritePropertyB(propname:string;propvalue:TStream;stream:TStream);
 procedure WriteReportXML(areport:TComponent;Stream:TStream);
 procedure ReadReportXML(areport:TComponent;Stream:TStream);
+procedure ReadSectionXML(asection:TComponent;Stream:TStream);
 
 procedure WriteDatabaseInfoXML(dbinfo:TRpDatabaseInfoItem;Stream:TStream);
 procedure WriteDataInfoXML(dinfo:TRpDataInfoItem;Stream:TStream);
@@ -67,14 +68,22 @@ function RpIsAlphaW(achar:Widechar):Boolean;
 
 implementation
 
+procedure ReadSectionXML(asection:TComponent;Stream:TStream);
+begin
+
+end;
+
 function RpIsAlpha(achar:char):Boolean;
 begin
- Result:=achar in ['0'..'9','A'..'Z','a'..'z'];
+ Result:=achar in ['0'..'9','A'..'Z','a'..'z','_',' ','.','(',')',
+  '=',';',':'];
 end;
 
 function RpIsAlphaW(achar:Widechar):Boolean;
 begin
- Result:=achar in [WideChar('0')..WideChar('9'),
+ Result:=achar in [WideChar('0')..WideChar('9'),WideChar('_'),WideChar(' '),
+  WideChar('.'),WideChar('('),WideChar(')'),
+  WideChar('='),WideChar(';'),WideChar(':'),
   WideChar('A')..WideChar('Z'),WideChar('a')..WideChar('z')];
 end;
 
@@ -90,6 +99,8 @@ begin
  WritePropertyS('REPORTSEARCHFIELD',dbinfo.ReportSearchField,Stream);
  WritePropertyS('REPORTFIELD',dbinfo.ReportField,Stream);
  WritePropertyS('REPORTGROUPSTABLE',dbinfo.ReportGroupsTable,Stream);
+ WritePropertyW('ADOCONNECTIONSTRING',dbinfo.ADOConnectionString,Stream);
+
 end;
 
 procedure WriteDataInfoXML(dinfo:TRpDataInfoItem;Stream:TStream);
@@ -112,6 +123,7 @@ begin
  WritePropertyS('BDELASTRANGE',dinfo.BDELastRange,Stream);
  WritePropertyS('DATAUNIONS',dinfo.DataUnions.Text,Stream);
  WritePropertyBool('GROUPUNION',dinfo.GroupUnion,Stream);
+ WritePropertyBool('OPENONSTART',dinfo.OpenOnStart,Stream);
 end;
 
 procedure WriteReportPropsXML(report:TRpReport;Stream:TStream);
@@ -172,10 +184,10 @@ end;
 
 procedure WriteParamXML(aparam:TRpParam;Stream:TStream);
 begin
+ WritePropertyS('NAME',aparam.Name,Stream);
  WritePropertyW('DESCRIPTION',aparam.Description,Stream);
  WritePropertyW('HINT',aparam.Hint,Stream);
  WritePropertyW('SEARCH',aparam.Search,Stream);
- WritePropertyS('NAME',aparam.Name,Stream);
  WritePropertyBool('VISIBLE',aparam.Visible,Stream);
  WritePropertyBool('ISREADONLY',aparam.IsReadOnly,Stream);
  WritePropertyBool('NEVERVISIBLE',aparam.NeverVisible,Stream);
@@ -184,6 +196,10 @@ begin
  WritePropertyS('DATASETS',aparam.Datasets.Text,Stream);
  WritePropertyS('ITEMS',aparam.Items.Text,Stream);
  WritePropertyS('VALUES',aparam.Values.Text,Stream);
+ WritePropertyS('SELECTED',aparam.Selected.Text,Stream);
+ WritePropertyS('LOOKUPDATASET',aparam.LookupDataset,Stream);
+ WritePropertyS('SEARCHDATASET',aparam.SearchDataset,Stream);
+ WritePropertyS('SEARCHPARAM',aparam.Searchparam,Stream);
 
  if (aparam.Value<>Null) then
  begin
@@ -212,6 +228,7 @@ end;
 
 procedure WriteSubreportXML(subrep:TRpSubReport;Stream:TStream);
 begin
+ WritePropertyS('NAME',subrep.Name,Stream);
  WritePropertyS('ALIAS',subrep.Alias,Stream);
  if assigned(subrep.ParentSubReport) then
  begin
@@ -255,14 +272,14 @@ begin
  WritePropertyS('EXTERNALFIELD',section.ExternalField,Stream);
  WritePropertyS('EXTERNALSEARCHFIELD',section.ExternalSearchField,Stream);
  WritePropertyS('EXTERNALSEARCHVALUE',section.ExternalSearchValue,Stream);
- WritePropertyI('StreamFormat',Integer(section.StreamFormat),Stream);
+ WritePropertyI('STREAMFORMAT',Integer(section.StreamFormat),Stream);
  if assigned(section.ChildSubReport) then
  begin
   WritePropertyS('CHILDSUBREPORT',section.ChildSubreport.Name,Stream);
  end;
  WritePropertyBool('SKIPRELATIVEH',section.SkipRelativeH,Stream);
  WritePropertyBool('SKIPRELATIVEV',section.SkipRelativeV,Stream);
- WritePropertyI('SKIPRELATIVEV',Integer(section.SkipType),Stream);
+ WritePropertyI('SKIPTYPE',Integer(section.SkipType),Stream);
  WritePropertyBool('ININUMPAGE',section.IniNumPage,Stream);
  WritePropertyBool('GLOBAL',section.Global,Stream);
  WritePropertyI('DPIRES',section.dpires,Stream);
@@ -290,12 +307,13 @@ var
 begin
  WriteStringToStream('<COMPONENT>'+#10,Stream);
 
+ WritePropertyS('NAME',comp.Name,Stream);
  WritePropertyS('CLASSNAME',UpperCase(comp.ClassName),Stream);
  WritePropertyI('WIDTH',comp.Width,Stream);
  WritePropertyI('HEIGHT',comp.height,Stream);
  // CommonPos
  WritePropertyI('POSX',comp.PosX,Stream);
- WritePropertyI('POSY',comp.PosX,Stream);
+ WritePropertyI('POSY',comp.PosY,Stream);
  WritePropertyI('ALIGN',Integer(comp.Align),Stream);
  // Common text component
  if comp is TRpGenTextComponent then
@@ -304,8 +322,6 @@ begin
   WritePropertyW('WFONTNAME',compt.WFontName,Stream);
   WritePropertyW('LFONTNAME',compt.LFontName,Stream);
   WritePropertyI('BIDIMODE',Integer(compt.BidiMode),Stream);
-  WritePropertyBool('RIGHTTOLEFT',compt.RightToLeft,Stream);
-  WritePropertyI('PRINTALIGNMENT',Integer(compt.PrintAlignment),Stream);
   WritePropertyI('TYPE1FONT',Integer(compt.Type1Font),Stream);
   WritePropertyI('FONTSIZE',compt.FontSize,Stream);
   WritePropertyI('FONTROTATION',compt.FontRotation,Stream);
@@ -326,6 +342,7 @@ begin
  if comp is TRpLabel then
  begin
   compl:=TRpLabel(comp);
+  compl.UpdateWideText;
   WritePropertyW('WIDETEXT',compl.WideText,Stream);
  end
  else
@@ -415,6 +432,11 @@ begin
   WritePropertyI('RESOLUTION',compc.Resolution,Stream);
   WritePropertyBool('SHOWLEGEND',compc.ShowLegend,Stream);
   WritePropertyBool('SHOWHINT',compc.ShowHint,Stream);
+  WritePropertyI('MARKSTYLE',compc.MarkStyle,Stream);
+  WritePropertyI('HORZFONTSIZE',compc.HorzFontSize,Stream);
+  WritePropertyI('VERTFONTSIZE',compc.VertFontSize,Stream);
+  WritePropertyI('HORZFONTROTATION',compc.HorzFontRotation,Stream);
+  WritePropertyI('VERTFONTROTATION',compc.VertFontRotation,Stream);
  end
  else
  // TRpBarcode
@@ -431,7 +453,7 @@ begin
   WritePropertyI('BCOLOR',compb.BColor,Stream);
   WritePropertyI('NUMCOLUMNS',compb.NumCOlumns,Stream);
   WritePropertyI('NUMROWS',compb.NumRows,Stream);
-  WritePropertyI('ECCLevel',compb.ECCLevel,Stream);
+  WritePropertyI('ECCLEVEL',compb.ECCLevel,Stream);
   WritePropertyBool('TRUNCATED',compb.Truncated,Stream);
  end;
  WriteStringToStream('</COMPONENT>'+#10,Stream);
@@ -512,14 +534,14 @@ var
 begin
  Result:='';
  i:=1;
- while (i<Length(rpstring)) do
+ while (i<=Length(rpstring)) do
  begin
   if ((RpIsAlpha(rpstring[i])) or (rpstring[i]='#')) then
   begin
     if rpstring[i]='#' then
     begin
      anumber:='0';
-     while (i<Length(rpstring)) do
+     while (i<=Length(rpstring)) do
      begin
       if rpstring[i]='#' then
       begin
@@ -552,14 +574,14 @@ var
 begin
  Result:='';
  i:=1;
- while (i<Length(rpstring)) do
+ while (i<=Length(rpstring)) do
  begin
   if ((RpIsAlpha(rpstring[i])) or (rpstring[i]='#')) then
   begin
     if rpstring[i]='#' then
     begin
      anumber:='0';
-     while (i<Length(rpstring)) do
+     while (i<=Length(rpstring)) do
      begin
       if rpstring[i]='#' then
       begin
@@ -610,6 +632,24 @@ begin
  end;
 end;
 
+
+function RpStrToDouble(avalue:string):double;
+var
+{$IFDEF DOTNETD}
+ olddec:String;
+{$ENDIF}
+{$IFNDEF DOTNETD}
+ olddec:char;
+{$ENDIF}
+begin
+ olddec:=DecimalSeparator;
+ try
+  Result:=StrToFloat(avalue);
+ finally
+  DecimalSeparator:=olddec;
+ end;
+end;
+
 procedure WritePropertyD(propname:string;propvalue:double;stream:TStream);
 var
  astring:string;
@@ -626,6 +666,15 @@ begin
  else
   Result:='False';
 end;
+
+function RpStrToBool(avalue:String):Boolean;
+begin
+ if avalue='True' then
+  Result:=True
+ else
+  Result:=False;
+end;
+
 
 procedure WritePropertyBool(propname:string;propvalue:Boolean;stream:TStream);
 var
@@ -651,23 +700,25 @@ begin
  WriteStringToStream(astring,stream);
 end;
 
-function NibbleToHex(n:integer):String;
-begin
- Result:='';
- case n of
-  0..9:
-   Result:=IntToStr(n);
-  10..15:
-   Result:=Char(Ord('A')+n-10);
- end;
-end;
 
 function StreamToBin(astream:TStream):String;
 var
- achar:byte;
- alen:integer;
+ abufsource,abufdest:PChar;
 begin
- Result:='';
+ abufsource:=AllocMem(astream.Size);
+ try
+  astream.Read(abufsource^,astream.size);
+  abufdest:=AllocMem(astream.size*2+1);
+  try
+   BinToHex(abufsource,abufdest,astream.size);
+   Result:=StrPas(abufdest);
+  finally
+   FreeMem(abufdest);
+  end;
+ finally
+  FreeMem(abufsource);
+ end;
+{ Result:='';
  alen:=0;
  while astream.Read(achar,1)>0 do
  begin
@@ -679,13 +730,36 @@ begin
    alen:=0;
   end;
  end;
+}end;
+
+procedure BinToStream(astream:TStream;bin2:string;propsize:string);
+var
+ alen:integer;
+ abufdest:PCHar;
+ readed:integer;
+begin
+ alen:=StrToInt(propsize);
+ if alen=0 then
+  exit;
+ abufdest:=AllocMem(alen+1);
+ try
+  readed:=HexToBin(PChar(bin2),abufdest,alen);
+  if readed<>alen then
+   Raise Exception.Create('Expected: '+IntToStr(alen)+' Found: '
+    +INtToStr(readed));
+  astream.Write(abufdest^,alen);
+  astream.Seek(0,soFromBeginning);
+ finally
+  FreeMem(abufdest);
+ end;
 end;
+
 
 procedure WritePropertyB(propname:string;propvalue:TStream;stream:TStream);
 var
  astring:string;
 begin
- astring:='<'+propname+' type="Binary">'+StreamToBin(propvalue)+'</'+propname+'>'+#10;
+ astring:='<'+propname+' type="Binary" size="'+IntTostr(propvalue.size)+'">'+StringToRpString(StreamToBin(propvalue))+'</'+propname+'>'+#10;
  WriteStringToStream(astring,stream);
 end;
 
@@ -755,6 +829,780 @@ begin
  WriteStringToStream(astring,stream);
 end;
 
+procedure ReadPropDBInfo(dbitem:TRpDatabaseInfoItem;
+ propname,propvalue,proptype,propsize:string);
+begin
+ if propname='CONFIGFILE' then
+  dbitem.Configfile:=RpStringToString(propvalue)
+ else
+ if propname='LOADPARAMS' then
+  dbitem.LoadParams:=RpStrToBool(propvalue)
+ else
+ if propname='LOADDRIVERPARAMS' then
+  dbitem.LoadDriverParams:=RpStrToBool(propvalue)
+ else
+ if propname='LOGINPROMPT' then
+  dbitem.LoginPrompt:=RpStrToBool(propvalue)
+ else
+ if propname='DRIVER' then
+  dbitem.Driver:=TRpDBDriver(StrToInt(propvalue))
+ else
+ if propname='REPORTTABLE' then
+  dbitem.ReportTable:=RpStringToString(propvalue)
+ else
+ if propname='REPORTSEARCHFIELD' then
+  dbitem.ReportSearchField:=RpStringToString(propvalue)
+ else
+ if propname='REPORTFIELD' then
+  dbitem.ReportField:=RpStringToString(propvalue)
+ else
+ if propname='REPORTGROUPSTABLE' then
+  dbitem.ReportGroupsTable:=RpStringToString(propvalue)
+ else
+ if propname='ADOCONNECTIONSTRING' then
+  dbitem.ADOConnectionString:=RpStringToWString(propvalue);
+end;
+
+procedure ReadPropSubReport(subrep:TRpSubReport;
+ propname,propvalue,proptype,propsize:string);
+begin
+ if propname='ALIAS' then
+  subrep.Alias:=RpStringToString(propvalue)
+ else
+ if propname='PARENTSUBREPORT' then
+  subrep.ParentSub:=RpStringToString(propvalue)
+ else
+ if propname='PARENTSECTION' then
+  subrep.ParentSec:=RpStringToString(propvalue)
+ else
+ if propname='PRINTONLYIFDATAAVAILABLE' then
+  subrep.PrintOnlyIfDataAvailable:=RpStrToBool(propvalue)
+ else
+ if propname='REOPENONPRINT' then
+  subrep.ReOpenOnPrint:=RpStrToBool(propvalue);
+end;
+
+procedure ReadPropSection(sec:TRpSection;
+ propname,propvalue,proptype,propsize:string);
+begin
+ if propname='WIDTH' then
+  sec.Width:=StrToInt(propvalue)
+ else
+ if propname='HEIGHT' then
+  sec.Height:=StrToInt(propvalue)
+ else
+ if propname='SUBREPORT' then
+  sec.SubReportName:=RPStringToString(propvalue)
+ else
+ if propname='GROUPNAME' then
+  sec.GroupName:=RPStringToString(propvalue)
+ else
+ if propname='CHANGEBOOL' then
+  sec.ChangeBool:=RPStrToBool(propvalue)
+ else
+ if propname='PAGEREPEAT' then
+  sec.PageRepeat:=RPStrToBool(propvalue)
+ else
+ if propname='SKIPPAGE' then
+  sec.SkipPage:=RPStrToBool(propvalue)
+ else
+ if propname='ALIGNBOTTOM' then
+  sec.AlignBottom:=RPStrToBool(propvalue)
+ else
+ if propname='SECTIONTYPE' then
+  sec.SectionType:=TRpSectionType(StrToInt(propvalue))
+ else
+ if propname='AUTOEXPAND' then
+  sec.AutoExpand:=RPStrToBool(propvalue)
+ else
+ if propname='AUTOCONTRACT' then
+  sec.AutoContract:=RPStrToBool(propvalue)
+ else
+ if propname='HORZDESP' then
+  sec.HorzDesp:=RPStrToBool(propvalue)
+ else
+ if propname='VERTDESP' then
+  sec.VertDesp:=RPStrToBool(propvalue)
+ else
+ if propname='EXTERNALFILENAME' then
+  sec.ExternalFileName:=RPStringToString(propvalue)
+ else
+ if propname='EXTERNALCONNECTION' then
+  sec.ExternalConnection:=RPStringToString(propvalue)
+ else
+ if propname='EXTERNALTABLE' then
+  sec.ExternalTable:=RPStringToString(propvalue)
+ else
+ if propname='EXTERNALFIELD' then
+  sec.ExternalField:=RPStringToString(propvalue)
+ else
+ if propname='EXTERNALSEARCHFIELD' then
+  sec.ExternalSearchField:=RPStringToString(propvalue)
+ else
+ if propname='EXTERNALSEARCHVALUE' then
+  sec.ExternalSearchValue:=RPStringToString(propvalue)
+ else
+ if propname='STREAMFORMAT' then
+  sec.StreamFormat:=TRpStreamFormat(StrToInt(propvalue))
+ else
+ if propname='CHILDSUBREPORT' then
+  sec.ChildSubReportName:=RPStringToString(propvalue)
+ else
+ if propname='SKIPRELATIVEH' then
+  sec.SkipRelativeH:=RPStrToBool(propvalue)
+ else
+ if propname='SKIPRELATIVEV' then
+  sec.SkipRelativeV:=RPStrToBool(propvalue)
+ else
+ if propname='SKIPTYPE' then
+  sec.SkipType:=TRpSkipType(StrToInt(propvalue))
+ else
+ if propname='ININUMPAGE' then
+  sec.IniNumPage:=RPStrToBool(propvalue)
+ else
+ if propname='GLOBAL' then
+  sec.Global:=RPStrToBool(propvalue)
+ else
+ if propname='DPIRES' then
+  sec.DPIRes:=StrToInt(propvalue)
+ else
+ if propname='BACKSTYLE' then
+  sec.BackStyle:=TRpBackStyle(StrToInt(propvalue))
+ else
+ if propname='DRAWSTYLE' then
+  sec.DrawStyle:=TRpImageDrawStyle(StrToInt(propvalue));
+end;
+
+procedure ReadPropDataInfo(ditem:TRpDataInfoItem;
+ propname,propvalue,proptype,propsize:string);
+begin
+ if propname='DATABASEALIAS' then
+  ditem.DataBaseAlias:=RpStringToString(propvalue)
+ else
+ if propname='SQL' then
+  ditem.SQL:=RpStringToWString(propvalue)
+ else
+ if propname='DATASOURCE' then
+  ditem.DataSource:=RpStringToString(propvalue)
+ else
+ if propname='MYBASEFILENAME' then
+  ditem.MyBaseFileName:=RpStringToString(propvalue)
+ else
+ if propname='MYBASEFIELDS' then
+  ditem.MyBaseFields:=RpStringToString(propvalue)
+ else
+ if propname='MYBASEINDEXFIELDS' then
+  ditem.MyBaseIndexFields:=RpStringToString(propvalue)
+ else
+ if propname='MYBASEINDEXFIELDS' then
+  ditem.MyBaseIndexFields:=RpStringToString(propvalue)
+ else
+ if propname='MYBASEMASTERFIELDS' then
+  ditem.MyBaseMasterFields:=RpStringToString(propvalue)
+ else
+ if propname='BDEINDEXFIELDS' then
+  ditem.BDEIndexFields:=RpStringToString(propvalue)
+ else
+ if propname='BDEINDEXNAME' then
+  ditem.BDEIndexName:=RpStringToString(propvalue)
+ else
+ if propname='BDETABLE' then
+  ditem.BDETable:=RpStringToString(propvalue)
+ else
+ if propname='BDETYPE' then
+  ditem.BDEType:=TRpDatasetType(StrToInt(propvalue))
+ else
+ if propname='BDEFILTER' then
+  ditem.BDEFilter:=RpStringToString(propvalue)
+ else
+ if propname='BDEMASTERFIELDS' then
+  ditem.BDEMasterFields:=RpStringToString(propvalue)
+ else
+ if propname='BDEFIRSTRANGE' then
+  ditem.BDEFirstRange:=RpStringToString(propvalue)
+ else
+ if propname='BDELASTRANGE' then
+  ditem.BDELastRange:=RpStringToString(propvalue)
+ else
+ if propname='DATAUNIONS' then
+  ditem.DataUnions.Text:=RpStringToString(propvalue)
+ else
+ if propname='GROUPUNION' then
+  ditem.GroupUnion:=RpStrToBool(propvalue)
+ else
+ if propname='OPENONSTART' then
+  ditem.OpenOnStart:=RpStrToBool(propvalue);
+end;
+
+procedure ReadPropParam(aparam:TRpParam;
+ propname,propvalue,proptype,propsize:string);
+begin
+ aparam.Value:=Null;
+ if propname='DESCRIPTION' then
+  aparam.Description:=RpStringToWString(propvalue)
+ else
+ if propname='HINT' then
+  aparam.Hint:=RpStringToWString(propvalue)
+ else
+ if propname='SEARCH' then
+  aparam.Search:=RpStringToWString(propvalue)
+ else
+ if propname='VISIBLE' then
+  aparam.Visible:=RpStrToBool(propvalue)
+ else
+ if propname='ISREADONLY' then
+  aparam.IsReadOnly:=RpStrToBool(propvalue)
+ else
+ if propname='NEVERVISIBLE' then
+  aparam.NeverVisible:=RpStrToBool(propvalue)
+ else
+ if propname='ALLOWNULLS' then
+  aparam.AllowNulls:=RpStrToBool(propvalue)
+ else
+ if propname='PARAMTYPE' then
+  aparam.ParamType:=TrpPAramType(StrToInt(propvalue))
+ else
+ if propname='DATASETS' then
+  aparam.Datasets.Text:=RpStringToString(propvalue)
+ else
+ if propname='ITEMS' then
+  aparam.Items.Text:=RpStringToString(propvalue)
+ else
+ if propname='VALUES' then
+  aparam.Values.Text:=RpStringToString(propvalue)
+ else
+ if propname='SELECTED' then
+  aparam.Selected.Text:=RpStringToString(propvalue)
+ else
+ if propname='LOOKUPDATASET' then
+  aparam.LookupDataset:=RpStringToString(propvalue)
+ else
+ if propname='SEARCHPARAM' then
+  aparam.SearchParam:=RpStringToString(propvalue)
+ else
+ if propname='VALUE' then
+ begin
+  case aparam.ParamType of
+   rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamUnknown:
+    aparam.Value:=RpStringToString(propvalue);
+   rpParamInteger:
+    begin
+     aparam.Value:=StrToInt(propvalue);
+    end;
+   rpParamDouble:
+    begin
+     aparam.Value:=RpStrToDouble(propvalue);
+    end;
+   rpParamCurrency:
+    begin
+     aparam.Value:=RpStrToDouble(propvalue);
+    end;
+   rpParamDate,rpParamTime,rpParamDateTime:
+    aparam.Value:=TDateTime(RpStrToDouble(propvalue));
+   rpParamBool:
+    aparam.Value:=StrToBool(propvalue);
+  end;
+ end;
+end;
+
+procedure ReadPropReport(report:TRpReport;
+ propname,propvalue,proptype,propsize:string);
+var
+ actions:TRpReportActions;
+begin
+ actions:=[];
+ if propname='WFONTNAME' then
+  report.WFontName:=RpStringToWString(propvalue)
+ else
+ if propname='LFONTNAME' then
+  report.LFontName:=RpStringToWString(propvalue)
+ else
+ if propname='GRIDVISIBLE' then
+  report.GridVisible:=RpStrToBool(propvalue)
+ else
+ if propname='GRIDLINES' then
+  report.GridLines:=RpStrToBool(propvalue)
+ else
+ if propname='GRIDENABLED' then
+  report.GridEnabled:=RpStrToBool(propvalue)
+ else
+ if propname='GRIDCOLOR' then
+  report.GridColor:=StrToInt(propvalue)
+ else
+ if propname='GRIDWIDTH' then
+  report.GridWidth:=StrToInt(propvalue)
+ else
+ if propname='GRIDHEIGHT' then
+  report.GridHeight:=StrToInt(propvalue)
+ else
+ if propname='PAGEORIENTATION' then
+  report.PageOrientation:=TrpOrientation(StrToInt(propvalue))
+ else
+ if propname='PAGESIZE' then
+  report.PageSize:=TrpPageSize(StrToInt(propvalue))
+ else
+ if propname='PAGESIZEQT' then
+  report.PageSizeQt:=StrToInt(propvalue)
+ else
+ if propname='PAGEHEIGHT' then
+  report.PageHeight:=StrToInt(propvalue)
+ else
+ if propname='PAGEWIDTH' then
+  report.PageWidth:=StrToInt(propvalue)
+ else
+ if propname='CUSTOMPAGEWIDTH' then
+  report.CustomPageWidth:=StrToInt(propvalue)
+ else
+ if propname='CUSTOMPAGEHEIGHT' then
+  report.CustomPageHeight:=StrToInt(propvalue)
+ else
+ if propname='PAGEBACKCOLOR' then
+  report.PageBackColor:=StrToInt(propvalue)
+ else
+ if propname='PREVIEWSTYLE' then
+  report.PreviewStyle:=TrpPreviewStyle(StrToInt(propvalue))
+ else
+ if propname='PREVIEWMARGINS' then
+  report.PreviewMargins:=StrToBool(propvalue)
+ else
+ if propname='PREVIEWWINDOW' then
+  report.PreviewWindow:=TrpPreviewWindowStyle(StrToInt(propvalue))
+ else
+ if propname='LEFTMARGIN' then
+  report.LeftMargin:=StrToInt(propvalue)
+ else
+ if propname='TOPMARGIN' then
+  report.TopMargin:=StrToInt(propvalue)
+ else
+ if propname='RIGHTMARGIN' then
+  report.RightMargin:=StrToInt(propvalue)
+ else
+ if propname='BOTTOMMARGIN' then
+  report.BottomMargin:=StrToInt(propvalue)
+ else
+ if propname='PRINTERSELECT' then
+  report.PrinterSelect:=TrpPrinterSelect(StrToInt(propvalue))
+ else
+ if propname='LANGUAGE' then
+  report.Language:=StrToInt(propvalue)
+ else
+ if propname='COPIES' then
+  report.Copies:=StrToInt(propvalue)
+ else
+ if propname='COLLATECOPIES' then
+  report.CollateCopies:=StrToBool(propvalue)
+ else
+ if propname='TWOPASS' then
+  report.CollateCopies:=StrToBool(propvalue)
+ else
+ if propname='PRINTERFONTS' then
+  report.PrinterFonts:=TRpPrinterFontsOption(StrToInt(propvalue))
+ else
+ if propname='PRINTONLYIFDATAAVAILABLE' then
+  report.PrintOnlyIfDataAvailable:=StrToBool(propvalue)
+ else
+ if propname='STREAMFORMAT' then
+  report.StreamFormat:=TrpStreamFormat(StrToInt(propvalue))
+ else
+ if propname='REPORTACTIONDRAWERBEFORE' then
+ begin
+  if StrToBool(propvalue) then
+  include(actions,rpDrawerBefore);
+ end
+ else
+ if propname='REPORTACTIONDRAWERAFTER' then
+ begin
+  if StrToBool(propvalue) then
+  include(actions,rpDrawerAfter);
+ end
+ else
+ if propname='PREVIEWABOUT' then
+  report.PreviewAbout:=StrToBool(propvalue)
+ else
+ if propname='TYPE1FONT' then
+  report.Type1Font:=TRpType1Font(StrToInt(propvalue))
+ else
+ if propname='FONTSIZE' then
+  report.FontSize:=StrToInt(propvalue)
+ else
+ if propname='FONTROTATION' then
+  report.FontRotation:=StrToInt(propvalue)
+ else
+ if propname='FONTSTYLE' then
+  report.FontStyle:=StrToInt(propvalue)
+ else
+ if propname='FONTCOLOR' then
+  report.FontColor:=StrToInt(propvalue)
+ else
+ if propname='BACKCOLOR' then
+  report.BackColor:=StrToInt(propvalue)
+ else
+ if propname='TRANSPARENT' then
+  report.Transparent:=StrToBool(propvalue)
+ else
+ if propname='CUTTEXT' then
+  report.CutText:=StrToBool(propvalue)
+ else
+ if propname='ALIGNMENT' then
+  report.AlignMent:=StrToInt(propvalue)
+ else
+ if propname='VALIGNMENT' then
+  report.VAlignMent:=StrToInt(propvalue)
+ else
+ if propname='WORDWRAP' then
+  report.WordWrap:=StrToBool(propvalue)
+ else
+ if propname='SINGLELINE' then
+  report.SingleLine:=StrToBool(propvalue)
+ else
+ if propname='BIDIMODES' then
+  report.BidiModes.Text:=RpStringToString(propvalue)
+ else
+ if propname='MULTIPAGE' then
+  report.MultiPage:=StrToBool(propvalue)
+ else
+ if propname='PRINTSTEP' then
+  report.PrintStep:=TrpSelectFontStep(StrToInt(propvalue))
+ else
+ if propname='PAPERSOURCE' then
+  report.PaperSource:=StrToInt(propvalue)
+ else
+ if propname='DUPLEX' then
+  report.Duplex:=StrToInt(propvalue)
+ else
+ if propname='FORCEPAPERNAME' then
+  report.ForcePaperName:=RpStringToString(propvalue);
+
+ report.ReportAction:=actions;
+end;
+
+procedure ReadCompProp(comp:TRpCommonPosComponent;
+ propname,propvalue,proptype,propsize:string);
+var
+ compt:TRpGenTextComponent;
+ compl:TRpLabel;
+ comps:TRpShape;
+ compi:TRpImage;
+ compe:TRpExpression;
+ compb:TRpBarCode;
+ compc:TRpChart;
+ memstream:TMemoryStream;
+begin
+ if propname='WIDTH' then
+  comp.Width:=StrToInt(propvalue)
+ else
+ if propname='HEIGHT' then
+  comp.Height:=StrToInt(propvalue)
+ else
+ if propname='POSX' then
+  comp.PosX:=StrToInt(propvalue)
+ else
+ if propname='POSY' then
+  comp.PosY:=StrToInt(propvalue)
+ else
+ if propname='ALIGN' then
+  comp.Align:=TRpPosAlign(StrToInt(propvalue));
+ if comp is TRpGenTextComponent then
+ begin
+  compt:=TRpGenTextComponent(comp);
+  if propname='WFONTNAME' then
+   compt.WFontName:=RPStringToWString(propvalue);
+  if propname='LFONTNAME' then
+   compt.LFontName:=RPStringToWString(propvalue);
+  if propname='BIDIMODE' then
+   compt.BidiMode:=TRpBidiMode(StrToInt(propvalue));
+  if propname='TYPE1FONT' then
+   compt.Type1Font:=TRpType1Font(StrToInt(propvalue));
+  if propname='FONTSIZE' then
+   compt.FontSize:=StrToInt(propvalue);
+  if propname='FONTROTATION' then
+   compt.FontRotation:=StrToInt(propvalue);
+  if propname='FONTSTYLE' then
+   compt.FontSTyle:=StrToInt(propvalue);
+  if propname='FONTCOLOR' then
+   compt.FontColor:=StrToInt(propvalue);
+  if propname='BACKCOLOR' then
+   compt.BackColor:=StrToInt(propvalue);
+  if propname='TRANSPARENT' then
+   compt.Transparent:=RpStrToBool(propvalue);
+  if propname='CUTTEXT' then
+   compt.CutText:=RpStrToBool(propvalue);
+  if propname='ALIGNMENT' then
+   compt.AlignMent:=StrToInt(propvalue);
+  if propname='VALIGNMENT' then
+   compt.VAlignMent:=StrToInt(propvalue);
+  if propname='WORDWRAP' then
+   compt.WordWrap:=RpStrToBool(propvalue);
+  if propname='SINGLELINE' then
+   compt.SingleLine:=RpStrToBool(propvalue);
+  if propname='BIDIMODES' then
+   compt.BidiModes.Text:=RpStringToString(propvalue);
+  if propname='MULTIPAGE' then
+   compt.MultiPage:=RpStrToBool(propvalue);
+  if propname='PRINTSTEP' then
+   compt.PrintStep:=TRpSelectFontStep(StrToInt(propvalue));
+ end;
+ // TRpLabel
+ if comp is TRpLabel then
+ begin
+  compl:=TRpLabel(comp);
+  if propname='WIDETEXT' then
+   compl.WideText:=RpStringToWString(propvalue);
+ end
+ else
+ // TRpExpression
+ if comp is TRpExpression then
+ begin
+  compe:=TRpExpression(comp);
+  if propname='EXPRESSION' then
+   compe.Expression:=RpStringToWString(propvalue)
+  else
+  if propname='AGINIVALUE' then
+   compe.AgIniValue:=RpStringToWString(propvalue)
+  else
+  if propname='EXPORTEXPRESSION' then
+   compe.ExportExpression:=RpStringToWString(propvalue)
+  else
+  if propname='DATATYPE' then
+   compe.DataType:=TRpParamType(StrToInt(propvalue))
+  else
+  if propname='DISPLAYFORMAT' then
+   compe.DisplayFormat:=RpStringToWString(propvalue)
+  else
+  if propname='IDENTIFIER' then
+   compe.Identifier:=RpStringToString(propvalue)
+  else
+  if propname='AGGREGATE' then
+   compe.Aggregate:=TRpAggregate(StrToInt(propvalue))
+  else
+  if propname='GROUPNAME' then
+   compe.GroupName:=RpStringToString(propvalue)
+  else
+  if propname='AGTYPE' then
+   compe.AgType:=TRpAggregateType(StrToInt(propvalue))
+  else
+  if propname='AUTOEXPAND' then
+   compe.AutoExpand:=RpStrToBool(propvalue)
+  else
+  if propname='AUTOCONTRACT' then
+   compe.AutoContract:=RpStrToBool(propvalue)
+  else
+  if propname='PRINTONLYONE' then
+   compe.PrintOnlyOne:=RpStrToBool(propvalue)
+  else
+  if propname='PRINTNULLS' then
+   compe.PrintNulls:=RpStrToBool(propvalue)
+  else
+  if propname='EXPORTDISPLAYFORMAT' then
+   compe.ExportDisplayFormat:=RpStringToWString(propvalue)
+  else
+  if propname='EXPORTLINE' then
+   compe.ExportLine:=StrToInt(propvalue)
+  else
+  if propname='EXPORTPOSITION' then
+   compe.ExportPosition:=StrToInt(propvalue)
+  else
+  if propname='EXPORTSIZE' then
+   compe.ExportSize:=StrToInt(propvalue)
+  else
+  if propname='EXPORTDONEWLINE' then
+   compe.ExportDoNewLine:=StrToBool(propvalue);
+ end
+ else
+ // TRpShape
+ if comp is TRpShape then
+ begin
+  comps:=TRpShape(comp);
+  if propname='SHAPE' then
+   comps.Shape:=TrpShapeType(StrToInt(propvalue))
+  else
+  if propname='BRUSHSTYLE' then
+   comps.BrushStyle:=StrToInt(propvalue)
+  else
+  if propname='BRUSHCOLOR' then
+   comps.BrushColor:=StrToInt(propvalue)
+  else
+  if propname='PENSTYLE' then
+   comps.PenStyle:=StrToInt(propvalue)
+  else
+  if propname='PENCOLOR' then
+   comps.PenColor:=StrToInt(propvalue)
+  else
+  if propname='PENWIDTH' then
+   comps.PenWidth:=StrToInt(propvalue);
+ end
+ else
+ // TRpImage
+ if comp is TRpImage then
+ begin
+  compi:=TRpImage(comp);
+  if propname='EXPRESSION' then
+   compi.Expression:=RpStringToWString(propvalue)
+  else
+  if propname='STREAM' then
+  begin
+   memstream:=TMemoryStream.Create;
+   try
+    BinToStream(memstream,RpStringToString(propvalue),propsize);
+//    BinToStream(memstream,propvalue,propsize);
+    memstream.Seek(0,soFromBeginning);
+    compi.SetStream(memstream);
+   finally
+    memstream.free;
+   end;
+  end
+  else
+  if propname='ROTATION' then
+   compi.Rotation:=StrToInt(propvalue)
+  else
+  if propname='DRAWSTYLE' then
+   compi.DrawStyle:=TRpImageDrawStyle(StrToInt(propvalue))
+  else
+  if propname='DPIRES' then
+   compi.DPIRes:=StrToInt(propvalue)
+  else
+  if propname='COPYMODE' then
+   compi.CopyMode:=StrToInt(propvalue);
+ end
+ else
+ // TRpChart
+ if comp is TRpChart then
+ begin
+  compc:=TRpChart(comp);
+
+  if propname='VALUEEXPRESSION' then
+   compc.ValueExpression:=RpStringToWString(propvalue)
+  else
+  if propname='GETVALUECONDITION' then
+   compc.GetValueCondition:=RpStringToWString(propvalue)
+  else
+  if propname='CHANGESERIEEXPRESSION' then
+   compc.ChangeSerieExpression:=RpStringToWString(propvalue)
+  else
+  if propname='CAPTIONEXPRESSION' then
+   compc.CaptionExpression:=RpStringToWString(propvalue)
+  else
+  if propname='SERIECAPTION' then
+   compc.SerieCaption:=RpStringToWString(propvalue)
+  else
+  if propname='CLEAREXPRESSION' then
+   compc.ClearExpression:=RpStringToWString(propvalue)
+  else
+  if propname='CHANGESERIEBOOL' then
+   compc.ChangeSerieBool:=RpStrToBool(propvalue)
+  else
+  if propname='CHARTTYPE' then
+   compc.ChartType:=TRpChartType(StrToInt(propvalue))
+  else
+  if propname='IDENTIFIER' then
+   compc.Identifier:=RpStringToString(propvalue)
+  else
+  if propname='CLEAREXPRESSIONBOOL' then
+   compc.ClearExpressionBool:=RpStrToBool(propvalue)
+  else
+  if propname='DRIVER' then
+   compc.Driver:=TRpChartDriver(StrToInt(propvalue))
+  else
+  if propname='VIEW3D' then
+   compc.View3D:=RpStrToBool(propvalue)
+  else
+  if propname='VIEW3DWALLS' then
+   compc.View3DWalls:=RpStrToBool(propvalue)
+  else
+  if propname='PERSPECTIVE' then
+   compc.Perspective:=StrToInt(propvalue)
+  else
+  if propname='ELEVATION' then
+   compc.Elevation:=StrToInt(propvalue)
+  else
+  if propname='ROTATION' then
+   compc.Rotation:=StrToInt(propvalue)
+  else
+  if propname='ZOOM' then
+   compc.Zoom:=StrToInt(propvalue)
+  else
+  if propname='HORZOFFSET' then
+   compc.HorzOffset:=StrToInt(propvalue)
+  else
+  if propname='VERTOFFSET' then
+   compc.VertOffset:=StrToInt(propvalue)
+  else
+  if propname='TILT' then
+   compc.Tilt:=StrToInt(propvalue)
+  else
+  if propname='ORTHOGONAL' then
+   compc.Orthogonal:=RpStrToBool(propvalue)
+  else
+  if propname='MULTIBAR' then
+   compc.MultiBar:=TRpMultiBar(StrToInt(propvalue))
+  else
+  if propname='RESOLUTION' then
+   compc.Resolution:=StrToInt(propvalue)
+  else
+  if propname='SHOWLEGEND' then
+   compc.ShowLegend:=RpStrToBool(propvalue)
+  else
+  if propname='SHOWHINT' then
+   compc.ShowHint:=RpStrToBool(propvalue)
+  else
+  if propname='MARKSTYLE' then
+   compc.MarkStyle:=StrToInt(propvalue)
+  else
+  if propname='HORZFONTSIZE' then
+   compc.HorzFontSize:=StrToInt(propvalue)
+  else
+  if propname='VERTFONTSIZE' then
+   compc.VertFontSize:=StrToInt(propvalue)
+  else
+  if propname='HORZFONTROTATION' then
+   compc.HorzFontRotation:=StrToInt(propvalue)
+  else
+  if propname='VERTFONTROTATION' then
+   compc.VertFontRotation:=StrToInt(propvalue);
+ end
+ else
+ // TRpBarcode
+ if comp is TRpBarcode then
+ begin
+  compb:=TRpBarcode(comp);
+  if propname='EXPRESSION' then
+   compb.Expression:=RpStringToWString(propvalue)
+  else
+  if propname='MODUL' then
+   compb.Modul:=StrToInt(propvalue)
+  else
+  if propname='RATIO' then
+   compb.Ratio:=RpStrToDouble(propvalue)
+  else
+  if propname='TYP' then
+   compb.Typ:=TrpBarcodeType(StrToInt(propvalue))
+  else
+  if propname='CHECKSUM' then
+   compb.CheckSum:=RpStrToBool(propvalue)
+  else
+  if propname='DISPLAYFORMAT' then
+   compb.DisplayFormat:=RpStringToWString(propvalue)
+  else
+  if propname='ROTATION' then
+   compb.Rotation:=StrToInt(propvalue)
+  else
+  if propname='BCOLOR' then
+   compb.BColor:=StrToInt(propvalue)
+  else
+  if propname='NUMCOLUMNS' then
+   compb.NumColumns:=StrToInt(propvalue)
+  else
+  if propname='NUMROWS' then
+   compb.NumRows:=StrToInt(propvalue)
+  else
+  if propname='ECCLEVEL' then
+   compb.ECCLevel:=StrToInt(propvalue)
+  else
+  if propname='TRUNCATED' then
+   compb.Truncated:=RpStrToBool(propvalue)
+ end;
+end;
+
 
 procedure ReadReportXML(areport:TComponent;Stream:TStream);
 var
@@ -763,17 +1611,31 @@ var
  propname:String;
  proptype:String;
  propvalue:String;
+ dbitem:TRpDatabaseInfoItem;
+ ditem:TRpDataInfoItem;
+ comp:TRpCommonPosComponent;
+ compname,compclass:String;
+ aclass:TPersistentClass;
+ aparam:TRpParam;
+ report:TRpReport;
+ propsize:string;
+ subrep:TRpSubReport;
+ sec:TRpSection;
+ compitem:TRpCommonListItem;
+ i,j:integer;
 
  procedure FindNextName;
  var
   abegin,aend:integer;
   typepos:integer;
+  props:string;
  begin
   propname:='';
   proptype:='';
+  propsize:='';
   abegin:=0;
   aend:=0;
-  while position<Length(astring) do
+  while position<=Length(astring) do
   begin
    if astring[position]='<' then
    begin
@@ -795,15 +1657,29 @@ var
   if aend=0 then
    Raise Exception.Create(SRpStreamFormat);
   propname:=Trim(Copy(astring,abegin,aend-abegin));
-  typepos:=Pos('type',propname);
+  typepos:=Pos(' ',propname);
+  props:='';
   if typepos>0 then
   begin
-   proptype:=Copy(propname,typepos+7,Length(propname));
-   proptype:=Copy(proptype,1,Length(proptype)-1);
+   props:=Copy(propname,typepos+1,Length(propname));
    propname:=Copy(propname,1,typepos-1);
   end;
+  typepos:=Pos('size',props);
+  if typepos>0 then
+  begin
+   propsize:=Copy(props,typepos+6,Length(props));
+   propsize:=Copy(propsize,1,Length(propsize)-1);
+   props:=Trim(Copy(props,1,typepos-1));
+  end;
+  typepos:=Pos('type',props);
+  if typepos>0 then
+  begin
+   proptype:=Copy(props,typepos+7,Length(props));
+   proptype:=Copy(proptype,1,Length(proptype)-1);
+   props:=Trim(Copy(props,1,typepos-1));
+  end;
   propvalue:='';
-  while position<Length(astring) do
+  while position<=Length(astring) do
   begin
    if astring[position]='<' then
    begin
@@ -820,6 +1696,7 @@ var
  end;
 
 begin
+ report:=TRpReport(areport);
  // Find the <report label>
 {$IFNDEF DOTNETD}
  SetLength(astring,Stream.Size);
@@ -833,6 +1710,7 @@ begin
   Raise Exception.Create(SRpStreamFormat);
  // Next name must be
  FindNextName;
+ FindNextName;
  while Length(propname)>0 do
  begin
   if propname='/REPORT' then
@@ -840,9 +1718,12 @@ begin
   if propname='DATABASEINFO' then
   begin
    FindNextName;
+   if propname<>'ALIAS' then
+    Raise Exception.Create(SRpStreamFormat);
+   dbitem:=report.DatabaseInfo.Add(RpStringToString(propvalue));
    while propname<>'/DATABASEINFO' do
    begin
-
+    ReadPropDBInfo(dbitem,propname,propvalue,proptype,propsize);
     FindNextName;
    end;
   end
@@ -850,8 +1731,12 @@ begin
   if propname='DATAINFO' then
   begin
    FindNextName;
+   if propname<>'ALIAS' then
+    Raise Exception.Create(SRpStreamFormat);
+   ditem:=report.DataInfo.Add(RpStringToString(propvalue));
    while propname<>'/DATAINFO' do
    begin
+    ReadPropDataInfo(ditem,propname,propvalue,proptype,propsize);
 
     FindNextName;
    end;
@@ -860,8 +1745,12 @@ begin
   if propname='PARAMETER' then
   begin
    FindNextName;
+   if propname<>'NAME' then
+    Raise Exception.Create(SRpStreamFormat);
+   aparam:=report.Params.Add(RpStringToString(propvalue));
    while propname<>'/PARAMETER' do
    begin
+    ReadPropParam(aparam,propname,propvalue,proptype,propsize);
 
     FindNextName;
    end;
@@ -870,11 +1759,24 @@ begin
   if propname='SUBREPORT' then
   begin
    FindNextName;
+   if propname<>'NAME' then
+    Raise Exception.Create(SRpStreamFormat);
+   subrep:=TRpSubReport.Create(report);
+   report.SubReports.Add.SubReport:=subrep;
+   subrep.Name:=RpStringToString(propvalue);
+   FindNextName;
+
    while propname<>'/SUBREPORT' do
    begin
     // Read subreport props
     if propname='SECTION' then
     begin
+     FindNextName;
+     if propname<>'NAME' then
+      Raise Exception.Create(SRpStreamFormat);
+     sec:=TRpSection.Create(report);
+     subrep.Sections.Add.Section:=sec;;
+     sec.Name:=RpStringToString(propvalue);
      FindNextName;
      while propname<>'/SECTION' do
      begin
@@ -882,20 +1784,67 @@ begin
       if propname='COMPONENT' then
       begin
        FindNextName;
+       if propname<>'NAME' then
+        Raise Exception.Create(SRpStreamFormat);
+       compname:=propvalue;
+       FindNextName;
+       FindNextName;
+       if propname<>'CLASSNAME' then
+        Raise Exception.Create(SRpStreamFormat);
+       compclass:=propvalue;
+
+       aclass:=FindClass(compclass);
+       comp:=TRpCommonPosComponent(
+        TComponentClass(aclass).Create(report));
+
+       compitem:=sec.Components.Add;
+       compitem.Component:=comp;
        while propname<>'/COMPONENT' do
        begin
         // Read component props
+        ReadCompProp(comp,propname,propvalue,proptype,propsize);
 
         FindNextName;
        end;
-      end;
+      end
+      else
+       ReadPropSection(sec,propname,propvalue,proptype,propsize);
       FindNextName;
      end;
-    end;
+    end
+    else
+     ReadPropSubReport(subrep,propname,propvalue,proptype,propsize);
     FindNextName;
    end;
-  end;
+  end
+  else
+   ReadPropReport(report,propname,propvalue,proptype,propsize);
   FindNextName;
+ end;
+ // Reload links
+ for i:=0 to report.SubReports.Count-1 do
+ begin
+  subrep:=report.SubReports.Items[i].SubReport;
+  if Length(subrep.ParentSub)>0 then
+  begin
+   subrep.ParentSubReport:=TRpSubReport(report.FindComponent(subrep.ParentSub));
+  end;
+  if Length(subrep.ParentSec)>0 then
+  begin
+   subrep.ParentSection:=TRpSection(report.FindComponent(subrep.ParentSec));
+  end;
+  for j:=0 to subrep.Sections.Count-1 do
+  begin
+   sec:=subrep.Sections.Items[j].Section;
+   if Length(sec.ChildSubReportName)>0 then
+   begin
+    sec.ChildSubReport:=TRpSubReport(report.FindComponent(sec.ChildSubReportName));
+   end;
+   if Length(sec.SubReportName)>0 then
+   begin
+    sec.SubReport:=TRpSubReport(report.FindComponent(sec.SubReportName));
+   end;
+  end;
  end;
 end;
 

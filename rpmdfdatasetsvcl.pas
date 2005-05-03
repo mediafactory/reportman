@@ -103,6 +103,7 @@ type
     PLBrowser: TPanel;
     EMasterFields: TEdit;
     LMasterfi: TLabel;
+    CheckOpen: TCheckBox;
     procedure BParamsClick(Sender: TObject);
     procedure LDatasetsClick(Sender: TObject);
     procedure MSQLChange(Sender: TObject);
@@ -193,6 +194,7 @@ begin
  CheckGroupUnion.Caption:=TranslateStr(1084,CheckGroupUnion.Caption);
  LFields.Caption:=TranslateStr(1085,LFields.Caption);
  BModify.Caption:=TranslateStr(1086,BModify.Caption);
+ CheckOpen.Caption:=SRpOpenOnStart;
 
  ANew.Caption:=TranslateStr(539,ANew.Caption);
  ANew.Hint:=Anew.Caption;
@@ -278,6 +280,7 @@ begin
   PanelBasic.Visible:=False;
   exit;
  end;
+ CheckOpen.Checked:=dinfo.OpenOnStart;
  PControl.Visible:=true;
  PanelBasic.Visible:=true;
  MSQL.Text:=WideStringToDOS(dinfo.SQL);
@@ -502,6 +505,11 @@ begin
  if Sender=EBDELastRange then
  begin
   dinfo.BDELastRange:=EBDELastRange.Text;
+ end
+ else
+ if Sender=CheckOpen then
+ begin
+  dinfo.OpenOnStart:=CheckOpen.Checked;
  end;
 end;
 

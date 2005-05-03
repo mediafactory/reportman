@@ -1,15 +1,15 @@
 object FRpDatasetsVCL: TFRpDatasetsVCL
   Left = 0
   Top = 0
-  Width = 443
-  Height = 277
+  Width = 498
+  Height = 348
   Align = alClient
   AutoScroll = False
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 443
+    Width = 498
     Height = 105
     Align = alTop
     BevelOuter = bvNone
@@ -17,7 +17,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 443
+      Width = 498
       Height = 27
       AutoSize = True
       ButtonHeight = 25
@@ -78,7 +78,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object PTop1: TPanel
       Left = 0
       Top = 27
-      Width = 443
+      Width = 498
       Height = 78
       Align = alClient
       BevelOuter = bvNone
@@ -104,7 +104,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object PanelBasic: TPanel
         Left = 169
         Top = 0
-        Width = 274
+        Width = 329
         Height = 78
         Align = alClient
         BevelOuter = bvNone
@@ -144,7 +144,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           OnChange = MSQLChange
         end
         object BShowData: TButton
-          Left = 5
+          Left = 141
           Top = 48
           Width = 132
           Height = 25
@@ -152,22 +152,31 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           TabOrder = 2
           OnClick = BShowDataClick
         end
+        object CheckOpen: TCheckBox
+          Left = 4
+          Top = 56
+          Width = 133
+          Height = 13
+          Caption = 'Open on start'
+          TabOrder = 3
+          OnClick = MSQLChange
+        end
       end
     end
   end
   object PBottom: TPanel
     Left = 0
     Top = 105
-    Width = 443
-    Height = 172
+    Width = 498
+    Height = 243
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 443
-      Height = 172
+      Width = 498
+      Height = 243
       ActivePage = TabSQL
       Align = alClient
       TabOrder = 0
@@ -177,15 +186,15 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 173
           Top = 0
           Width = 8
-          Height = 144
+          Height = 215
           Cursor = crHSplit
           Beveled = True
         end
         object MSQL: TMemo
           Left = 181
           Top = 0
-          Width = 254
-          Height = 144
+          Width = 309
+          Height = 215
           Align = alClient
           TabOrder = 0
           WordWrap = False
@@ -195,7 +204,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 0
           Top = 0
           Width = 173
-          Height = 144
+          Height = 215
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
@@ -216,7 +225,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 435
+          Width = 490
           Height = 37
           Align = alTop
           Columns = 2
@@ -229,15 +238,15 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 435
-          Height = 107
+          Width = 490
+          Height = 178
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
           object PBDEFilter: TPanel
             Left = 0
             Top = 0
-            Width = 435
+            Width = 490
             Height = 17
             Align = alTop
             Alignment = taLeftJustify
@@ -248,8 +257,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           object MBDEFilter: TMemo
             Left = 0
             Top = 17
-            Width = 435
-            Height = 83
+            Width = 490
+            Height = 161
             Align = alClient
             ScrollBars = ssBoth
             TabOrder = 1
@@ -472,7 +481,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             Width = 181
             Height = 21
             Style = csDropDownList
-            ItemHeight = 0
+            ItemHeight = 13
             TabOrder = 0
           end
           object CheckGroupUnion: TCheckBox

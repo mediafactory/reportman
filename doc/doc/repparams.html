@@ -24,6 +24,8 @@
     server</a> and any html client</li>
   <li>The parameters can contain expressions evaluated before or after opening 
     report datasets.</li>
+  <li>A search dataset can be defined so the user can search for parameter values 
+    inside a dataset.</li>
 </ul>
 <p>You can define the parameters, and also preview how the parameters will show 
   to the user.</p>
@@ -74,9 +76,25 @@
   </tr>
   <tr> 
     <td>Value list</td>
-    <td>You provide two list, one for value captions, and other for real values, 
-      the engine will show to the user a combo box to select from the caption 
-      list, and will assign the corresponding value from list of values.</td>
+    <td><p>You provide two list, one for value captions, and other for real values, 
+        the engine will show to the user a combo box to select from the caption 
+        list, and will assign the corresponding value from list of values.</p>
+      <p>A dataset can be specified to fill the value list, when the parameter 
+        window is shown the list is filled with the dataset, first field of the 
+        dataset will be descriptions, and second field on the dataset will be 
+        real values.</p></td>
+  </tr>
+  <tr>
+    <td>Multi select</td>
+    <td><p>It's a merge of String Substi and Value List, the value to be replaced 
+        will be a combination of selected values separated by commas. Very useful 
+        to use with querys like:</p>
+      <p>WHERE ORDERTYPE IN (:ORDERTYPES)</p>
+      <p>The user will be able to select more than one value, a checklist box 
+        will be provided on parameters window.</p>
+      <p>The value list can also be loaded from a dataset, like Value List parameter 
+        type. </p>
+      </td>
   </tr>
 </table>
 <p><strong>About parameters and database drivers</strong></p>

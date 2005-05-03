@@ -23,6 +23,7 @@ type
     attatchments:TStrings;
     oldonidle:TIdleEvent;
     wasok:Boolean;
+    ErrorMessage:String;
     procedure AppIdle(Sender:TObject;Var done:Boolean);
     procedure OnProgress(amessage:WideString;bytecount,bytetotal:Integer;
      var docancel:Boolean);
@@ -63,6 +64,8 @@ begin
   Application.OnIdle:=dia.AppIdle;
   dia.ShowModal;
   Result:=dia.wasok;
+  if not Result then
+   Raise Exception.Create(dia.ErrorMessage);
  finally
   dia.free;
  end;
@@ -87,9 +90,15 @@ begin
  try
   SendMail(dologin,fromaddress,fromname,smtpserver,username,
    password,subject,content,recipients,cc,attatchments,OnProgress);
- finally
-  Close;
+  wasok:=true;
+ except
+  on E:Exception do
+  begin
+   ErrorMessage:=E.Message;
+   wasok:=false;
+  end;
  end;
+ Close;
 end;
 
 

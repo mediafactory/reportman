@@ -130,6 +130,8 @@ type
   public
    GroupValue:Variant;
    FirstPage:Integer;
+   ChildSubReportName:String;
+   SubReportName:String;
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    function SectionCaption(addchild:boolean):WideString;
@@ -888,7 +890,10 @@ begin
    if Char(abyte)='o' then
     theformat:=rpStreamText
    else
-    theformat:=rpStreambinary;
+    if Char(abyte)='<' then
+     theformat:=rpStreamXML
+    else
+     theformat:=rpStreambinary;
 {$IFNDEF USEZLIB}
   if theformat=rpStreamzlib then
    Raise Exception.Create(SRpZLibNotSupported);
@@ -910,6 +915,73 @@ begin
       freemem(buf);
      end;
      memstream.Seek(0,soFrombeginning);
+
+     // Check if is xml
+     if PChar(memstream.memory)^='<' then
+     begin
+      tempsec:=TRpSection.Create(nil);
+      try
+       ReadSectionXML(tempsec,memstream);
+       AssignSection(tempsec);
+      finally
+       tempsec.free;
+      end;
+     end
+     else
+     begin
+      reader:=TReader.Create(memstream,1000);
+      try
+       reader.OnError:=OnReadError;
+       tempsec:=TRpSection.Create(nil);
+       try
+        reader.ReadRootComponent(tempsec);
+        AssignSection(tempsec);
+       finally
+        tempsec.free;
+       end;
+      finally
+       reader.free;
+      end;
+     end;
+    finally
+     zlibs.Free;
+    end;
+   finally
+    MemStream.free;
+   end;
+  end
+  else
+{$ENDIF}
+  begin
+   if theformat=rpStreamXML then
+   begin
+    tempsec:=TRpSection.Create(nil);
+    try
+     ReadSectionXML(tempsec,amemstream);
+     AssignSection(tempsec);
+    finally
+     tempsec.free;
+    end;
+   end
+   else
+   begin
+    if theformat=rpStreamtext then
+    begin
+     // Converts to binary
+     memstream:=TMemoryStream.Create;
+     try
+      memstream.LoadFromStream(amemstream);
+      amemstream.clear;
+      ObjectTextToBinary(memstream,amemstream);
+      amemstream.Seek(0,soFromBeginning);
+     finally
+      memstream.free;
+     end;
+    end;
+    MemStream:=TMemoryStream.Create;
+    try
+     MemStream.LoadFromStream(amemstream);
+     memstream.Seek(0,soFrombeginning);
      reader:=TReader.Create(memstream,1000);
      try
       reader.OnError:=OnReadError;
@@ -924,47 +996,8 @@ begin
       reader.free;
      end;
     finally
-     zlibs.Free;
+     MemStream.Free;
     end;
-   finally
-    MemStream.free;
-   end;
-  end
-  else
-{$ENDIF}
-  begin
-   if theformat=rpStreamtext then
-   begin
-    // Converts to binary
-    memstream:=TMemoryStream.Create;
-    try
-     memstream.LoadFromStream(amemstream);
-     amemstream.clear;
-     ObjectTextToBinary(memstream,amemstream);
-     amemstream.Seek(0,soFromBeginning);
-    finally
-     memstream.free;
-    end;
-   end;
-   MemStream:=TMemoryStream.Create;
-   try
-    MemStream.LoadFromStream(amemstream);
-    memstream.Seek(0,soFrombeginning);
-    reader:=TReader.Create(memstream,1000);
-    try
-     reader.OnError:=OnReadError;
-     tempsec:=TRpSection.Create(nil);
-     try
-      reader.ReadRootComponent(tempsec);
-      AssignSection(tempsec);
-     finally
-      tempsec.free;
-     end;
-    finally
-     reader.free;
-    end;
-   finally
-    MemStream.Free;
    end;
   end
  finally

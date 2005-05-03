@@ -204,7 +204,10 @@
  {$IFDEF VER140}
    {$DEFINE CHARPLACBOOL}
  {$ENDIF}
- {$DEFINE VCLANDCLX}
+// Removed VCL and CLX compatibility due to duplicate
+// resource in DBGrids when compiling apps containing both
+// {$DEFINE VCLANDCLX}
+// {$USECLXTEECHART also removed}
  // C++ Builder 6 does not allow VCL and CLX
  {$IFDEF BCB}
   {$UNDEF VCLANDCLX}
@@ -215,7 +218,7 @@
  {$ENDIF}
  {$IFNDEF BCB}
   {$IFNDEF FORWEBAX}
-   {$DEFINE USECLXTEECHART}
+//   {$DEFINE USECLXTEECHART}
   {$ENDIF}
  {$ENDIF}
 {$ENDIF}

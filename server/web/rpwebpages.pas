@@ -689,6 +689,7 @@ begin
   if Length(aliasname)>0 then
   begin
    LoadReport(pdfreport,aliasname,reportname);
+   pdfreport.Params.UpdateLookup;
    // Count visible parameters
    visibleparam:=false;
    for i:=0 to pdfreport.Params.Count-1 do
@@ -774,6 +775,27 @@ begin
           '</option>'+#10;
          aparamstring:=aparamstring+
           '</select>'+#10;
+        end;
+       rpParamMultiple:
+        begin
+         aparamstring:=aparamstring+'<select name="Param'+
+          aparam.Name+'" ';
+         aparamstring:=aparamstring+' multiple ';
+         if Length(aparam.Hint)>0 then
+           aparamstring:=aparamstring+' alt="'+HtmlEncode(aparam.Hint)+'" ';
+         if aparam.Isreadonly then
+          aparamstring:=aparamstring+' readonly ';
+         aparamstring:=aparamstring+'>'+#10;
+         for k:=0 to aparam.Items.Count-1 do
+         begin
+          aparamstring:=aparamstring+'<option value="'+
+            IntToStr(k)+'" ';
+          if aparam.Selected.IndexOf(IntToStr(k))>=0 then
+           aparamstring:=aparamstring+' selected ';
+          aparamstring:=aparamstring+'>'+HtmlEncode(aparam.Items.Strings[k])+
+           '</option>'+#10;
+         end;
+         aparamstring:=aparamstring+'</select>'+#10;
         end;
        rpParamList:
         begin
@@ -866,9 +888,10 @@ var
  paramname,paramvalue:string;
  dometafile:boolean;
  dosvg,dotxt,docsv:Boolean;
- i,index,pageindex:integer;
+ i,index,pageindex,k:integer;
  paramisnull:boolean;
  adriver:TRpPDFDriver;
+ param:TRpParam;
 begin
  dometafile:=false;
  docsv:=false;
@@ -896,13 +919,26 @@ begin
       if Request.QueryFields.Values[Request.QueryFields.Names[index]]='NULL' then
        paramisnull:=True;
      end;
+     param:=pdfreport.Params.ParamByName(paramname);
+     if param.ParamType=rpParamMultiple then
+     begin
+      param.Selected.Clear;
+      for k:=0 to Request.QueryFields.Count-1 do
+      begin
+       if Request.QueryFields.Names[k]='Param'+paramname then
+       begin
+        param.Selected.Add(Request.QueryFields.ValueFromIndex[k]);
+       end;
+      end;
+     end
+     else
      if paramisnull then
-      pdfreport.Params.ParamByName(paramname).Value:=Null
+      param.Value:=Null
      else
      begin
       // Assign the parameter as a string
-      if pdfreport.Params.ParamByName(paramname).ParamType=rpParamList then
-       pdfreport.Params.ParamByName(paramname).Value:=pdfreport.Params.ParamByName(paramname).Values[StrToInt(paramvalue)]
+      if param.ParamType=rpParamList then
+       param.Value:=param.Values[StrToInt(paramvalue)]
       else
        pdfreport.Params.ParamByName(paramname).AsString:=paramvalue;
      end;

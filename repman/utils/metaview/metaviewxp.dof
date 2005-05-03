@@ -127,7 +127,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=3
 Release=0
-Build=7
+Build=11
 Debug=0
 PreRelease=0
 Special=0
@@ -138,7 +138,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report client and metafile viewer
-FileVersion=2.3.0.7
+FileVersion=2.3.0.11
 InternalName=metaview
 LegalCopyright=MPL/GLP License
 LegalTrademarks=
@@ -148,11 +148,6 @@ ProductVersion=2.3.0.0
 [Excluded Packages]
 h:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
 h:\prog\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
-[HistoryLists\hlConditionals]
-Count=3
-Item0=REPMANRELEASE
-Item1=NOLINUXPRINTBUG;FORWEBAX
-Item2=FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

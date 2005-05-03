@@ -8,236 +8,225 @@
   resources were bound to the produced executable.
 */
 
-#define IdResourceStrings_RSSocksServerNetUnreachableError 65040
-#define IdResourceStrings_RSSocksServerHostUnreachableError 65041
-#define IdResourceStrings_RSSocksServerConnectionRefusedError 65042
-#define IdResourceStrings_RSSocksServerTTLExpiredError 65043
-#define IdResourceStrings_RSSocksServerCommandError 65044
-#define IdResourceStrings_RSSocksServerAddressError 65045
-#define IdResourceStrings_RSStackECONNREFUSED 65056
-#define IdResourceStrings_RSStackELOOP 65057
-#define IdResourceStrings_RSStackENAMETOOLONG 65058
-#define IdResourceStrings_RSStackEHOSTDOWN 65059
-#define IdResourceStrings_RSStackEHOSTUNREACH 65060
-#define IdResourceStrings_RSStackENOTEMPTY 65061
-#define IdResourceStrings_RSStackHOST_NOT_FOUND 65062
-#define IdResourceStrings_RSSocksRequestFailed 65063
-#define IdResourceStrings_RSSocksRequestServerFailed 65064
-#define IdResourceStrings_RSSocksRequestIdentFailed 65065
-#define IdResourceStrings_RSSocksUnknownError 65066
-#define IdResourceStrings_RSSocksServerRespondError 65067
-#define IdResourceStrings_RSSocksAuthMethodError 65068
-#define IdResourceStrings_RSSocksAuthError 65069
-#define IdResourceStrings_RSSocksServerGeneralError 65070
-#define IdResourceStrings_RSSocksServerPermissionError 65071
-#define IdResourceStrings_RSStackEOPNOTSUPP 65072
-#define IdResourceStrings_RSStackEPFNOSUPPORT 65073
-#define IdResourceStrings_RSStackEAFNOSUPPORT 65074
-#define IdResourceStrings_RSStackEADDRINUSE 65075
-#define IdResourceStrings_RSStackEADDRNOTAVAIL 65076
-#define IdResourceStrings_RSStackENETDOWN 65077
-#define IdResourceStrings_RSStackENETUNREACH 65078
-#define IdResourceStrings_RSStackENETRESET 65079
-#define IdResourceStrings_RSStackECONNABORTED 65080
-#define IdResourceStrings_RSStackECONNRESET 65081
-#define IdResourceStrings_RSStackENOBUFS 65082
-#define IdResourceStrings_RSStackEISCONN 65083
-#define IdResourceStrings_RSStackENOTCONN 65084
-#define IdResourceStrings_RSStackESHUTDOWN 65085
-#define IdResourceStrings_RSStackETOOMANYREFS 65086
-#define IdResourceStrings_RSStackETIMEDOUT 65087
-#define IdResourceStrings_RSStackEINTR 65088
-#define IdResourceStrings_RSStackEBADF 65089
-#define IdResourceStrings_RSStackEACCES 65090
-#define IdResourceStrings_RSStackEFAULT 65091
-#define IdResourceStrings_RSStackEINVAL 65092
-#define IdResourceStrings_RSStackEMFILE 65093
-#define IdResourceStrings_RSStackEWOULDBLOCK 65094
-#define IdResourceStrings_RSStackEINPROGRESS 65095
-#define IdResourceStrings_RSStackEALREADY 65096
-#define IdResourceStrings_RSStackENOTSOCK 65097
-#define IdResourceStrings_RSStackEDESTADDRREQ 65098
-#define IdResourceStrings_RSStackEMSGSIZE 65099
-#define IdResourceStrings_RSStackEPROTOTYPE 65100
-#define IdResourceStrings_RSStackENOPROTOOPT 65101
-#define IdResourceStrings_RSStackEPROTONOSUPPORT 65102
-#define IdResourceStrings_RSStackESOCKTNOSUPPORT 65103
-#define IdResourceStrings_RSIdNoDataToRead 65104
-#define IdResourceStrings_RSCanNotBindRange 65105
-#define IdResourceStrings_RSInvalidPortRange 65106
-#define IdResourceStrings_RSReadTimeout 65107
-#define IdResourceStrings_RSReadLnMaxLineLengthExceeded 65108
-#define IdResourceStrings_RSWS2CallError 65109
-#define IdResourceStrings_RSWS2LoadError 65110
-#define IdResourceStrings_RSStatusResolving 65111
-#define IdResourceStrings_RSStatusConnecting 65112
-#define IdResourceStrings_RSStatusConnected 65113
-#define IdResourceStrings_RSStatusDisconnecting 65114
-#define IdResourceStrings_RSStatusDisconnected 65115
-#define IdResourceStrings_RSStatusText 65116
-#define IdResourceStrings_RSConnectTimeout 65117
-#define IdResourceStrings_RSInvalidServiceName 65118
-#define IdResourceStrings_RSStackError 65119
-#define ExtCtrls_clNameWindowFrame 65120
-#define ExtCtrls_clNameWindowText 65121
-#define WinHelpViewer_hNoKeyword 65122
-#define JConsts_sChangeJPGSize 65123
-#define JConsts_sJPEGError 65124
-#define JConsts_sJPEGImageFile 65125
-#define IdResourceStrings_RSAlreadyConnected 65126
-#define IdResourceStrings_RSCannotAllocateSocket 65127
-#define IdResourceStrings_RSConnectionClosedGracefully 65128
-#define IdResourceStrings_RSCouldNotBindSocket 65129
-#define IdResourceStrings_RSNotEnoughDataInBuffer 65130
-#define IdResourceStrings_RSWinsockInitializationError 65131
-#define IdResourceStrings_RSSetSizeExceeded 65132
-#define IdResourceStrings_RSFileNotFound 65133
-#define IdResourceStrings_RSOnlyOneAntiFreeze 65134
-#define IdResourceStrings_RSNotConnected 65135
-#define ExtCtrls_clNameDefault 65136
-#define ExtCtrls_clNameGrayText 65137
-#define ExtCtrls_clNameHighlight 65138
-#define ExtCtrls_clNameHighlightText 65139
-#define ExtCtrls_clNameInactiveBorder 65140
-#define ExtCtrls_clNameInactiveCaption 65141
-#define ExtCtrls_clNameInactiveCaptionText 65142
-#define ExtCtrls_clNameInfoBk 65143
-#define ExtCtrls_clNameInfoText 65144
-#define ExtCtrls_clNameMenu 65145
-#define ExtCtrls_clNameMenuText 65146
-#define ExtCtrls_clNameNone 65147
-#define ExtCtrls_clNameScrollBar 65148
-#define ExtCtrls_clName3DDkShadow 65149
-#define ExtCtrls_clName3DLight 65150
-#define ExtCtrls_clNameWindow 65151
-#define ExtCtrls_clNameFuchsia 65152
-#define ExtCtrls_clNameAqua 65153
-#define ExtCtrls_clNameWhite 65154
-#define ExtCtrls_clNameMoneyGreen 65155
-#define ExtCtrls_clNameSkyBlue 65156
-#define ExtCtrls_clNameCream 65157
-#define ExtCtrls_clNameMedGray 65158
-#define ExtCtrls_clNameActiveBorder 65159
-#define ExtCtrls_clNameActiveCaption 65160
-#define ExtCtrls_clNameAppWorkSpace 65161
-#define ExtCtrls_clNameBackground 65162
-#define ExtCtrls_clNameBtnFace 65163
-#define ExtCtrls_clNameBtnHighlight 65164
-#define ExtCtrls_clNameBtnShadow 65165
-#define ExtCtrls_clNameBtnText 65166
-#define ExtCtrls_clNameCaptionText 65167
-#define Consts_SDockTreeRemoveError 65168
-#define Consts_SDockZoneNotFound 65169
-#define Consts_SDockZoneHasNoCtl 65170
-#define ExtCtrls_clNameBlack 65171
-#define ExtCtrls_clNameMaroon 65172
-#define ExtCtrls_clNameGreen 65173
-#define ExtCtrls_clNameOlive 65174
-#define ExtCtrls_clNameNavy 65175
-#define ExtCtrls_clNamePurple 65176
-#define ExtCtrls_clNameTeal 65177
-#define ExtCtrls_clNameGray 65178
-#define ExtCtrls_clNameSilver 65179
-#define ExtCtrls_clNameRed 65180
-#define ExtCtrls_clNameLime 65181
-#define ExtCtrls_clNameYellow 65182
-#define ExtCtrls_clNameBlue 65183
-#define Consts_SmkcLeft 65184
-#define Consts_SmkcUp 65185
-#define Consts_SmkcRight 65186
-#define Consts_SmkcDown 65187
-#define Consts_SmkcIns 65188
-#define Consts_SmkcDel 65189
-#define Consts_SmkcShift 65190
-#define Consts_SmkcCtrl 65191
-#define Consts_SmkcAlt 65192
-#define Consts_SInvalidClipFmt 65193
-#define Consts_SIconToClipboard 65194
-#define Consts_SCannotOpenClipboard 65195
-#define Consts_SInvalidPrinterOp 65196
-#define Consts_SNoDefaultPrinter 65197
-#define Consts_SDuplicateMenus 65198
-#define Consts_SDockedCtlNeedsName 65199
-#define Consts_SMsgDlgHelp 65200
-#define Consts_SMsgDlgAbort 65201
-#define Consts_SMsgDlgRetry 65202
-#define Consts_SMsgDlgIgnore 65203
-#define Consts_SMsgDlgAll 65204
-#define Consts_SMsgDlgNoToAll 65205
-#define Consts_SMsgDlgYesToAll 65206
-#define Consts_SmkcBkSp 65207
-#define Consts_SmkcTab 65208
-#define Consts_SmkcEsc 65209
-#define Consts_SmkcEnter 65210
-#define Consts_SmkcSpace 65211
-#define Consts_SmkcPgUp 65212
-#define Consts_SmkcPgDn 65213
-#define Consts_SmkcEnd 65214
-#define Consts_SmkcHome 65215
-#define Consts_SAllButton 65216
-#define Consts_SCannotDragForm 65217
-#define Consts_SVMetafiles 65218
-#define Consts_SVEnhMetafiles 65219
-#define Consts_SVIcons 65220
-#define Consts_SVBitmaps 65221
-#define Consts_SMaskErr 65222
-#define Consts_SMaskEditErr 65223
-#define Consts_SMsgDlgWarning 65224
-#define Consts_SMsgDlgError 65225
-#define Consts_SMsgDlgInformation 65226
-#define Consts_SMsgDlgConfirm 65227
-#define Consts_SMsgDlgYes 65228
-#define Consts_SMsgDlgNo 65229
-#define Consts_SMsgDlgOK 65230
-#define Consts_SMsgDlgCancel 65231
-#define Consts_SPrinting 65232
-#define Consts_SPrinterIndexError 65233
-#define Consts_SInvalidPrinter 65234
-#define Consts_SDeviceOnPort 65235
-#define Consts_SGroupIndexTooLow 65236
-#define Consts_SNoMDIForm 65237
-#define Consts_SControlParentSetToSelf 65238
-#define Consts_SOKButton 65239
-#define Consts_SCancelButton 65240
-#define Consts_SYesButton 65241
-#define Consts_SNoButton 65242
-#define Consts_SHelpButton 65243
-#define Consts_SCloseButton 65244
-#define Consts_SIgnoreButton 65245
-#define Consts_SRetryButton 65246
-#define Consts_SAbortButton 65247
-#define Consts_SInvalidImageList 65248
-#define Consts_SImageIndexError 65249
-#define Consts_SImageReadFail 65250
-#define Consts_SImageWriteFail 65251
-#define Consts_SWindowDCError 65252
-#define Consts_SWindowClass 65253
-#define Consts_SCannotFocus 65254
-#define Consts_SParentRequired 65255
-#define Consts_SMDIChildNotVisible 65256
-#define Consts_SVisibleChanged 65257
-#define Consts_SCannotShowModal 65258
-#define Consts_SMenuIndexError 65259
-#define Consts_SMenuReinserted 65260
-#define Consts_SMenuNotFound 65261
-#define Consts_SNoTimers 65262
-#define Consts_SNotPrinting 65263
+#define ExtCtrls_clNameNone 65056
+#define ExtCtrls_clNameScrollBar 65057
+#define ExtCtrls_clName3DDkShadow 65058
+#define ExtCtrls_clName3DLight 65059
+#define ExtCtrls_clNameWindow 65060
+#define ExtCtrls_clNameWindowFrame 65061
+#define ExtCtrls_clNameWindowText 65062
+#define WinHelpViewer_hNoKeyword 65063
+#define JConsts_sChangeJPGSize 65064
+#define JConsts_sJPEGError 65065
+#define JConsts_sJPEGImageFile 65066
+#define ExtCtrls_clNameBtnFace 65072
+#define ExtCtrls_clNameBtnHighlight 65073
+#define ExtCtrls_clNameBtnShadow 65074
+#define ExtCtrls_clNameBtnText 65075
+#define ExtCtrls_clNameCaptionText 65076
+#define ExtCtrls_clNameDefault 65077
+#define ExtCtrls_clNameGrayText 65078
+#define ExtCtrls_clNameHighlight 65079
+#define ExtCtrls_clNameHighlightText 65080
+#define ExtCtrls_clNameInactiveBorder 65081
+#define ExtCtrls_clNameInactiveCaption 65082
+#define ExtCtrls_clNameInactiveCaptionText 65083
+#define ExtCtrls_clNameInfoBk 65084
+#define ExtCtrls_clNameInfoText 65085
+#define ExtCtrls_clNameMenu 65086
+#define ExtCtrls_clNameMenuText 65087
+#define ExtCtrls_clNameSilver 65088
+#define ExtCtrls_clNameRed 65089
+#define ExtCtrls_clNameLime 65090
+#define ExtCtrls_clNameYellow 65091
+#define ExtCtrls_clNameBlue 65092
+#define ExtCtrls_clNameFuchsia 65093
+#define ExtCtrls_clNameAqua 65094
+#define ExtCtrls_clNameWhite 65095
+#define ExtCtrls_clNameMoneyGreen 65096
+#define ExtCtrls_clNameSkyBlue 65097
+#define ExtCtrls_clNameCream 65098
+#define ExtCtrls_clNameMedGray 65099
+#define ExtCtrls_clNameActiveBorder 65100
+#define ExtCtrls_clNameActiveCaption 65101
+#define ExtCtrls_clNameAppWorkSpace 65102
+#define ExtCtrls_clNameBackground 65103
+#define Consts_SmkcCtrl 65104
+#define Consts_SmkcAlt 65105
+#define Consts_SIconToClipboard 65106
+#define Consts_SDuplicateMenus 65107
+#define Consts_SDockedCtlNeedsName 65108
+#define Consts_SDockTreeRemoveError 65109
+#define Consts_SDockZoneNotFound 65110
+#define Consts_SDockZoneHasNoCtl 65111
+#define ExtCtrls_clNameBlack 65112
+#define ExtCtrls_clNameMaroon 65113
+#define ExtCtrls_clNameGreen 65114
+#define ExtCtrls_clNameOlive 65115
+#define ExtCtrls_clNameNavy 65116
+#define ExtCtrls_clNamePurple 65117
+#define ExtCtrls_clNameTeal 65118
+#define ExtCtrls_clNameGray 65119
+#define Consts_SmkcBkSp 65120
+#define Consts_SmkcTab 65121
+#define Consts_SmkcEsc 65122
+#define Consts_SmkcEnter 65123
+#define Consts_SmkcSpace 65124
+#define Consts_SmkcPgUp 65125
+#define Consts_SmkcPgDn 65126
+#define Consts_SmkcEnd 65127
+#define Consts_SmkcHome 65128
+#define Consts_SmkcLeft 65129
+#define Consts_SmkcUp 65130
+#define Consts_SmkcRight 65131
+#define Consts_SmkcDown 65132
+#define Consts_SmkcIns 65133
+#define Consts_SmkcDel 65134
+#define Consts_SmkcShift 65135
+#define Consts_SVBitmaps 65136
+#define Consts_SMsgDlgWarning 65137
+#define Consts_SMsgDlgError 65138
+#define Consts_SMsgDlgInformation 65139
+#define Consts_SMsgDlgConfirm 65140
+#define Consts_SMsgDlgYes 65141
+#define Consts_SMsgDlgNo 65142
+#define Consts_SMsgDlgOK 65143
+#define Consts_SMsgDlgCancel 65144
+#define Consts_SMsgDlgHelp 65145
+#define Consts_SMsgDlgAbort 65146
+#define Consts_SMsgDlgRetry 65147
+#define Consts_SMsgDlgIgnore 65148
+#define Consts_SMsgDlgAll 65149
+#define Consts_SMsgDlgNoToAll 65150
+#define Consts_SMsgDlgYesToAll 65151
+#define Consts_SNoMDIForm 65152
+#define Consts_SControlParentSetToSelf 65153
+#define Consts_SOKButton 65154
+#define Consts_SCancelButton 65155
+#define Consts_SYesButton 65156
+#define Consts_SNoButton 65157
+#define Consts_SHelpButton 65158
+#define Consts_SCloseButton 65159
+#define Consts_SIgnoreButton 65160
+#define Consts_SRetryButton 65161
+#define Consts_SAbortButton 65162
+#define Consts_SAllButton 65163
+#define Consts_SCannotDragForm 65164
+#define Consts_SVMetafiles 65165
+#define Consts_SVEnhMetafiles 65166
+#define Consts_SVIcons 65167
+#define Consts_SInvalidImageList 65168
+#define Consts_SImageIndexError 65169
+#define Consts_SImageReadFail 65170
+#define Consts_SImageWriteFail 65171
+#define Consts_SWindowDCError 65172
+#define Consts_SWindowClass 65173
+#define Consts_SCannotFocus 65174
+#define Consts_SParentRequired 65175
+#define Consts_SMDIChildNotVisible 65176
+#define Consts_SVisibleChanged 65177
+#define Consts_SCannotShowModal 65178
+#define Consts_SMenuIndexError 65179
+#define Consts_SMenuReinserted 65180
+#define Consts_SMenuNotFound 65181
+#define Consts_SNoTimers 65182
+#define Consts_SGroupIndexTooLow 65183
+#define IdResourceStrings_RSSocksServerNetUnreachableError 65184
+#define IdResourceStrings_RSSocksServerHostUnreachableError 65185
+#define IdResourceStrings_RSSocksServerConnectionRefusedError 65186
+#define IdResourceStrings_RSSocksServerTTLExpiredError 65187
+#define IdResourceStrings_RSSocksServerCommandError 65188
+#define IdResourceStrings_RSSocksServerAddressError 65189
+#define Consts_SInvalidBitmap 65190
+#define Consts_SInvalidIcon 65191
+#define Consts_SInvalidMetafile 65192
+#define Consts_SInvalidPixelFormat 65193
+#define Consts_SScanLine 65194
+#define Consts_SChangeIconSize 65195
+#define Consts_SUnknownClipboardFormat 65196
+#define Consts_SOutOfResources 65197
+#define Consts_SNoCanvasHandle 65198
+#define Consts_SInvalidImageSize 65199
+#define IdResourceStrings_RSStackECONNREFUSED 65200
+#define IdResourceStrings_RSStackELOOP 65201
+#define IdResourceStrings_RSStackENAMETOOLONG 65202
+#define IdResourceStrings_RSStackEHOSTDOWN 65203
+#define IdResourceStrings_RSStackEHOSTUNREACH 65204
+#define IdResourceStrings_RSStackENOTEMPTY 65205
+#define IdResourceStrings_RSStackHOST_NOT_FOUND 65206
+#define IdResourceStrings_RSSocksRequestFailed 65207
+#define IdResourceStrings_RSSocksRequestServerFailed 65208
+#define IdResourceStrings_RSSocksRequestIdentFailed 65209
+#define IdResourceStrings_RSSocksUnknownError 65210
+#define IdResourceStrings_RSSocksServerRespondError 65211
+#define IdResourceStrings_RSSocksAuthMethodError 65212
+#define IdResourceStrings_RSSocksAuthError 65213
+#define IdResourceStrings_RSSocksServerGeneralError 65214
+#define IdResourceStrings_RSSocksServerPermissionError 65215
+#define IdResourceStrings_RSStackEOPNOTSUPP 65216
+#define IdResourceStrings_RSStackEPFNOSUPPORT 65217
+#define IdResourceStrings_RSStackEAFNOSUPPORT 65218
+#define IdResourceStrings_RSStackEADDRINUSE 65219
+#define IdResourceStrings_RSStackEADDRNOTAVAIL 65220
+#define IdResourceStrings_RSStackENETDOWN 65221
+#define IdResourceStrings_RSStackENETUNREACH 65222
+#define IdResourceStrings_RSStackENETRESET 65223
+#define IdResourceStrings_RSStackECONNABORTED 65224
+#define IdResourceStrings_RSStackECONNRESET 65225
+#define IdResourceStrings_RSStackENOBUFS 65226
+#define IdResourceStrings_RSStackEISCONN 65227
+#define IdResourceStrings_RSStackENOTCONN 65228
+#define IdResourceStrings_RSStackESHUTDOWN 65229
+#define IdResourceStrings_RSStackETOOMANYREFS 65230
+#define IdResourceStrings_RSStackETIMEDOUT 65231
+#define IdResourceStrings_RSStackEINTR 65232
+#define IdResourceStrings_RSStackEBADF 65233
+#define IdResourceStrings_RSStackEACCES 65234
+#define IdResourceStrings_RSStackEFAULT 65235
+#define IdResourceStrings_RSStackEINVAL 65236
+#define IdResourceStrings_RSStackEMFILE 65237
+#define IdResourceStrings_RSStackEWOULDBLOCK 65238
+#define IdResourceStrings_RSStackEINPROGRESS 65239
+#define IdResourceStrings_RSStackEALREADY 65240
+#define IdResourceStrings_RSStackENOTSOCK 65241
+#define IdResourceStrings_RSStackEDESTADDRREQ 65242
+#define IdResourceStrings_RSStackEMSGSIZE 65243
+#define IdResourceStrings_RSStackEPROTOTYPE 65244
+#define IdResourceStrings_RSStackENOPROTOOPT 65245
+#define IdResourceStrings_RSStackEPROTONOSUPPORT 65246
+#define IdResourceStrings_RSStackESOCKTNOSUPPORT 65247
+#define IdResourceStrings_RSIdNoDataToRead 65248
+#define IdResourceStrings_RSCanNotBindRange 65249
+#define IdResourceStrings_RSInvalidPortRange 65250
+#define IdResourceStrings_RSReadTimeout 65251
+#define IdResourceStrings_RSReadLnMaxLineLengthExceeded 65252
+#define IdResourceStrings_RSWS2CallError 65253
+#define IdResourceStrings_RSWS2LoadError 65254
+#define IdResourceStrings_RSStatusResolving 65255
+#define IdResourceStrings_RSStatusConnecting 65256
+#define IdResourceStrings_RSStatusConnected 65257
+#define IdResourceStrings_RSStatusDisconnecting 65258
+#define IdResourceStrings_RSStatusDisconnected 65259
+#define IdResourceStrings_RSStatusText 65260
+#define IdResourceStrings_RSConnectTimeout 65261
+#define IdResourceStrings_RSInvalidServiceName 65262
+#define IdResourceStrings_RSStackError 65263
 #define QConsts_SNoAppInLib 65264
 #define QConsts_SDuplicateApp 65265
 #define HelpIntfs_hNoTableOfContents 65266
 #define HelpIntfs_hNothingFound 65267
 #define HelpIntfs_hNoContext 65268
 #define HelpIntfs_hNoTopics 65269
-#define Consts_SInvalidBitmap 65270
-#define Consts_SInvalidIcon 65271
-#define Consts_SInvalidMetafile 65272
-#define Consts_SInvalidPixelFormat 65273
-#define Consts_SScanLine 65274
-#define Consts_SChangeIconSize 65275
-#define Consts_SUnknownClipboardFormat 65276
-#define Consts_SOutOfResources 65277
-#define Consts_SNoCanvasHandle 65278
-#define Consts_SInvalidImageSize 65279
+#define IdResourceStrings_RSAlreadyConnected 65270
+#define IdResourceStrings_RSCannotAllocateSocket 65271
+#define IdResourceStrings_RSConnectionClosedGracefully 65272
+#define IdResourceStrings_RSCouldNotBindSocket 65273
+#define IdResourceStrings_RSNotEnoughDataInBuffer 65274
+#define IdResourceStrings_RSWinsockInitializationError 65275
+#define IdResourceStrings_RSSetSizeExceeded 65276
+#define IdResourceStrings_RSFileNotFound 65277
+#define IdResourceStrings_RSOnlyOneAntiFreeze 65278
+#define IdResourceStrings_RSNotConnected 65279
 #define QConsts_SDriveNotFound 65280
 #define QConsts_SUnknownImageFormat 65281
 #define QConsts_SInvalidHandle 65282
@@ -496,12 +485,145 @@
 #define SysConst_SDiskFull 65535
 STRINGTABLE
 BEGIN
+	ExtCtrls_clNameNone,	"None"
+	ExtCtrls_clNameScrollBar,	"Scroll Bar"
+	ExtCtrls_clName3DDkShadow,	"3D Dark Shadow"
+	ExtCtrls_clName3DLight,	"3D Light"
+	ExtCtrls_clNameWindow,	"Window Background"
+	ExtCtrls_clNameWindowFrame,	"Window Frame"
+	ExtCtrls_clNameWindowText,	"Window Text"
+	WinHelpViewer_hNoKeyword,	"No help keyword specified."
+	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
+	JConsts_sJPEGError,	"JPEG error #%d"
+	JConsts_sJPEGImageFile,	"JPEG Image File"
+	ExtCtrls_clNameBtnFace,	"Button Face"
+	ExtCtrls_clNameBtnHighlight,	"Button Highlight"
+	ExtCtrls_clNameBtnShadow,	"Button Shadow"
+	ExtCtrls_clNameBtnText,	"Button Text"
+	ExtCtrls_clNameCaptionText,	"Caption Text"
+	ExtCtrls_clNameDefault,	"Default"
+	ExtCtrls_clNameGrayText,	"Gray Text"
+	ExtCtrls_clNameHighlight,	"Highlight Background"
+	ExtCtrls_clNameHighlightText,	"Highlight Text"
+	ExtCtrls_clNameInactiveBorder,	"Inactive Border"
+	ExtCtrls_clNameInactiveCaption,	"Inactive Caption"
+	ExtCtrls_clNameInactiveCaptionText,	"Inactive Caption Text"
+	ExtCtrls_clNameInfoBk,	"Info Background"
+	ExtCtrls_clNameInfoText,	"Info Text"
+	ExtCtrls_clNameMenu,	"Menu Background"
+	ExtCtrls_clNameMenuText,	"Menu Text"
+	ExtCtrls_clNameSilver,	"Silver"
+	ExtCtrls_clNameRed,	"Red"
+	ExtCtrls_clNameLime,	"Lime"
+	ExtCtrls_clNameYellow,	"Yellow"
+	ExtCtrls_clNameBlue,	"Blue"
+	ExtCtrls_clNameFuchsia,	"Fuchsia"
+	ExtCtrls_clNameAqua,	"Aqua"
+	ExtCtrls_clNameWhite,	"White"
+	ExtCtrls_clNameMoneyGreen,	"Money Green"
+	ExtCtrls_clNameSkyBlue,	"Sky Blue"
+	ExtCtrls_clNameCream,	"Cream"
+	ExtCtrls_clNameMedGray,	"Medium Gray"
+	ExtCtrls_clNameActiveBorder,	"Active Border"
+	ExtCtrls_clNameActiveCaption,	"Active Caption"
+	ExtCtrls_clNameAppWorkSpace,	"Application Workspace"
+	ExtCtrls_clNameBackground,	"Background"
+	Consts_SmkcCtrl,	"Ctrl+"
+	Consts_SmkcAlt,	"Alt+"
+	Consts_SIconToClipboard,	"Clipboard does not support Icons"
+	Consts_SDuplicateMenus,	"Menu '%s' is already being used by another form"
+	Consts_SDockedCtlNeedsName,	"Docked control must have a name"
+	Consts_SDockTreeRemoveError,	"Error removing control from dock tree"
+	Consts_SDockZoneNotFound,	" - Dock zone not found"
+	Consts_SDockZoneHasNoCtl,	" - Dock zone has no control"
+	ExtCtrls_clNameBlack,	"Black"
+	ExtCtrls_clNameMaroon,	"Maroon"
+	ExtCtrls_clNameGreen,	"Green"
+	ExtCtrls_clNameOlive,	"Olive"
+	ExtCtrls_clNameNavy,	"Navy"
+	ExtCtrls_clNamePurple,	"Purple"
+	ExtCtrls_clNameTeal,	"Teal"
+	ExtCtrls_clNameGray,	"Gray"
+	Consts_SmkcBkSp,	"BkSp"
+	Consts_SmkcTab,	"Tab"
+	Consts_SmkcEsc,	"Esc"
+	Consts_SmkcEnter,	"Enter"
+	Consts_SmkcSpace,	"Space"
+	Consts_SmkcPgUp,	"PgUp"
+	Consts_SmkcPgDn,	"PgDn"
+	Consts_SmkcEnd,	"End"
+	Consts_SmkcHome,	"Home"
+	Consts_SmkcLeft,	"Left"
+	Consts_SmkcUp,	"Up"
+	Consts_SmkcRight,	"Right"
+	Consts_SmkcDown,	"Down"
+	Consts_SmkcIns,	"Ins"
+	Consts_SmkcDel,	"Del"
+	Consts_SmkcShift,	"Shift+"
+	Consts_SVBitmaps,	"Bitmaps"
+	Consts_SMsgDlgWarning,	"Warning"
+	Consts_SMsgDlgError,	"Error"
+	Consts_SMsgDlgInformation,	"Information"
+	Consts_SMsgDlgConfirm,	"Confirm"
+	Consts_SMsgDlgYes,	"&Yes"
+	Consts_SMsgDlgNo,	"&No"
+	Consts_SMsgDlgOK,	"OK"
+	Consts_SMsgDlgCancel,	"Cancel"
+	Consts_SMsgDlgHelp,	"&Help"
+	Consts_SMsgDlgAbort,	"&Abort"
+	Consts_SMsgDlgRetry,	"&Retry"
+	Consts_SMsgDlgIgnore,	"&Ignore"
+	Consts_SMsgDlgAll,	"&All"
+	Consts_SMsgDlgNoToAll,	"N&o to All"
+	Consts_SMsgDlgYesToAll,	"Yes to &All"
+	Consts_SNoMDIForm,	"Cannot create form. No MDI forms are currently active"
+	Consts_SControlParentSetToSelf,	"A control cannot have itself as its parent"
+	Consts_SOKButton,	"OK"
+	Consts_SCancelButton,	"Cancel"
+	Consts_SYesButton,	"&Yes"
+	Consts_SNoButton,	"&No"
+	Consts_SHelpButton,	"&Help"
+	Consts_SCloseButton,	"&Close"
+	Consts_SIgnoreButton,	"&Ignore"
+	Consts_SRetryButton,	"&Retry"
+	Consts_SAbortButton,	"Abort"
+	Consts_SAllButton,	"&All"
+	Consts_SCannotDragForm,	"Cannot drag a form"
+	Consts_SVMetafiles,	"Metafiles"
+	Consts_SVEnhMetafiles,	"Enhanced Metafiles"
+	Consts_SVIcons,	"Icons"
+	Consts_SInvalidImageList,	"Invalid ImageList"
+	Consts_SImageIndexError,	"Invalid ImageList Index"
+	Consts_SImageReadFail,	"Failed to read ImageList data from stream"
+	Consts_SImageWriteFail,	"Failed to write ImageList data to stream"
+	Consts_SWindowDCError,	"Error creating window device context"
+	Consts_SWindowClass,	"Error creating window class"
+	Consts_SCannotFocus,	"Cannot focus a disabled or invisible window"
+	Consts_SParentRequired,	"Control '%s' has no parent window"
+	Consts_SMDIChildNotVisible,	"Cannot hide an MDI Child Form"
+	Consts_SVisibleChanged,	"Cannot change Visible in OnShow or OnHide"
+	Consts_SCannotShowModal,	"Cannot make a visible window modal"
+	Consts_SMenuIndexError,	"Menu index out of range"
+	Consts_SMenuReinserted,	"Menu inserted twice"
+	Consts_SMenuNotFound,	"Sub-menu is not in menu"
+	Consts_SNoTimers,	"Not enough timers available"
+	Consts_SGroupIndexTooLow,	"GroupIndex cannot be less than a previous menu item's GroupIndex"
 	IdResourceStrings_RSSocksServerNetUnreachableError,	"Network unreachable."
 	IdResourceStrings_RSSocksServerHostUnreachableError,	"Host unreachable."
 	IdResourceStrings_RSSocksServerConnectionRefusedError,	"Connection refused."
 	IdResourceStrings_RSSocksServerTTLExpiredError,	"TTL expired."
 	IdResourceStrings_RSSocksServerCommandError,	"Command not supported."
 	IdResourceStrings_RSSocksServerAddressError,	"Address type not supported."
+	Consts_SInvalidBitmap,	"Bitmap image is not valid"
+	Consts_SInvalidIcon,	"Icon image is not valid"
+	Consts_SInvalidMetafile,	"Metafile is not valid"
+	Consts_SInvalidPixelFormat,	"Invalid pixel format"
+	Consts_SScanLine,	"Scan line index out of range"
+	Consts_SChangeIconSize,	"Cannot change the size of an icon"
+	Consts_SUnknownClipboardFormat,	"Unsupported clipboard format"
+	Consts_SOutOfResources,	"Out of system resources"
+	Consts_SNoCanvasHandle,	"Canvas does not allow drawing"
+	Consts_SInvalidImageSize,	"Invalid image size"
 	IdResourceStrings_RSStackECONNREFUSED,	"Connection refused."
 	IdResourceStrings_RSStackELOOP,	"Too many levels of symbolic links."
 	IdResourceStrings_RSStackENAMETOOLONG,	"File name too long."
@@ -566,12 +688,12 @@ BEGIN
 	IdResourceStrings_RSConnectTimeout,	"Connect timed out."
 	IdResourceStrings_RSInvalidServiceName,	"%s is not a valid service."
 	IdResourceStrings_RSStackError,	"Socket Error # %d\r\n%s"
-	ExtCtrls_clNameWindowFrame,	"Window Frame"
-	ExtCtrls_clNameWindowText,	"Window Text"
-	WinHelpViewer_hNoKeyword,	"No help keyword specified."
-	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
-	JConsts_sJPEGError,	"JPEG error #%d"
-	JConsts_sJPEGImageFile,	"JPEG Image File"
+	QConsts_SNoAppInLib,	"Fatal error: Cannot create application object in a shared object or library."
+	QConsts_SDuplicateApp,	"Fatal error: Cannot create more than one TApplication instance"
+	HelpIntfs_hNoTableOfContents,	"Unable to find a Table of Contents"
+	HelpIntfs_hNothingFound,	"No help found for %s"
+	HelpIntfs_hNoContext,	"No context-sensitive help installed"
+	HelpIntfs_hNoTopics,	"No topic-based help system installed"
 	IdResourceStrings_RSAlreadyConnected,	"Already connected."
 	IdResourceStrings_RSCannotAllocateSocket,	"Cannot allocate socket."
 	IdResourceStrings_RSConnectionClosedGracefully,	"Connection Closed Gracefully."
@@ -582,150 +704,6 @@ BEGIN
 	IdResourceStrings_RSFileNotFound,	"File \"%s\" not found"
 	IdResourceStrings_RSOnlyOneAntiFreeze,	"Only one TIdAntiFreeze can exist per application."
 	IdResourceStrings_RSNotConnected,	"Not Connected"
-	ExtCtrls_clNameDefault,	"Default"
-	ExtCtrls_clNameGrayText,	"Gray Text"
-	ExtCtrls_clNameHighlight,	"Highlight Background"
-	ExtCtrls_clNameHighlightText,	"Highlight Text"
-	ExtCtrls_clNameInactiveBorder,	"Inactive Border"
-	ExtCtrls_clNameInactiveCaption,	"Inactive Caption"
-	ExtCtrls_clNameInactiveCaptionText,	"Inactive Caption Text"
-	ExtCtrls_clNameInfoBk,	"Info Background"
-	ExtCtrls_clNameInfoText,	"Info Text"
-	ExtCtrls_clNameMenu,	"Menu Background"
-	ExtCtrls_clNameMenuText,	"Menu Text"
-	ExtCtrls_clNameNone,	"None"
-	ExtCtrls_clNameScrollBar,	"Scroll Bar"
-	ExtCtrls_clName3DDkShadow,	"3D Dark Shadow"
-	ExtCtrls_clName3DLight,	"3D Light"
-	ExtCtrls_clNameWindow,	"Window Background"
-	ExtCtrls_clNameFuchsia,	"Fuchsia"
-	ExtCtrls_clNameAqua,	"Aqua"
-	ExtCtrls_clNameWhite,	"White"
-	ExtCtrls_clNameMoneyGreen,	"Money Green"
-	ExtCtrls_clNameSkyBlue,	"Sky Blue"
-	ExtCtrls_clNameCream,	"Cream"
-	ExtCtrls_clNameMedGray,	"Medium Gray"
-	ExtCtrls_clNameActiveBorder,	"Active Border"
-	ExtCtrls_clNameActiveCaption,	"Active Caption"
-	ExtCtrls_clNameAppWorkSpace,	"Application Workspace"
-	ExtCtrls_clNameBackground,	"Background"
-	ExtCtrls_clNameBtnFace,	"Button Face"
-	ExtCtrls_clNameBtnHighlight,	"Button Highlight"
-	ExtCtrls_clNameBtnShadow,	"Button Shadow"
-	ExtCtrls_clNameBtnText,	"Button Text"
-	ExtCtrls_clNameCaptionText,	"Caption Text"
-	Consts_SDockTreeRemoveError,	"Error removing control from dock tree"
-	Consts_SDockZoneNotFound,	" - Dock zone not found"
-	Consts_SDockZoneHasNoCtl,	" - Dock zone has no control"
-	ExtCtrls_clNameBlack,	"Black"
-	ExtCtrls_clNameMaroon,	"Maroon"
-	ExtCtrls_clNameGreen,	"Green"
-	ExtCtrls_clNameOlive,	"Olive"
-	ExtCtrls_clNameNavy,	"Navy"
-	ExtCtrls_clNamePurple,	"Purple"
-	ExtCtrls_clNameTeal,	"Teal"
-	ExtCtrls_clNameGray,	"Gray"
-	ExtCtrls_clNameSilver,	"Silver"
-	ExtCtrls_clNameRed,	"Red"
-	ExtCtrls_clNameLime,	"Lime"
-	ExtCtrls_clNameYellow,	"Yellow"
-	ExtCtrls_clNameBlue,	"Blue"
-	Consts_SmkcLeft,	"Left"
-	Consts_SmkcUp,	"Up"
-	Consts_SmkcRight,	"Right"
-	Consts_SmkcDown,	"Down"
-	Consts_SmkcIns,	"Ins"
-	Consts_SmkcDel,	"Del"
-	Consts_SmkcShift,	"Shift+"
-	Consts_SmkcCtrl,	"Ctrl+"
-	Consts_SmkcAlt,	"Alt+"
-	Consts_SInvalidClipFmt,	"Invalid clipboard format"
-	Consts_SIconToClipboard,	"Clipboard does not support Icons"
-	Consts_SCannotOpenClipboard,	"Cannot open clipboard"
-	Consts_SInvalidPrinterOp,	"Operation not supported on selected printer"
-	Consts_SNoDefaultPrinter,	"There is no default printer currently selected"
-	Consts_SDuplicateMenus,	"Menu '%s' is already being used by another form"
-	Consts_SDockedCtlNeedsName,	"Docked control must have a name"
-	Consts_SMsgDlgHelp,	"&Help"
-	Consts_SMsgDlgAbort,	"&Abort"
-	Consts_SMsgDlgRetry,	"&Retry"
-	Consts_SMsgDlgIgnore,	"&Ignore"
-	Consts_SMsgDlgAll,	"&All"
-	Consts_SMsgDlgNoToAll,	"N&o to All"
-	Consts_SMsgDlgYesToAll,	"Yes to &All"
-	Consts_SmkcBkSp,	"BkSp"
-	Consts_SmkcTab,	"Tab"
-	Consts_SmkcEsc,	"Esc"
-	Consts_SmkcEnter,	"Enter"
-	Consts_SmkcSpace,	"Space"
-	Consts_SmkcPgUp,	"PgUp"
-	Consts_SmkcPgDn,	"PgDn"
-	Consts_SmkcEnd,	"End"
-	Consts_SmkcHome,	"Home"
-	Consts_SAllButton,	"&All"
-	Consts_SCannotDragForm,	"Cannot drag a form"
-	Consts_SVMetafiles,	"Metafiles"
-	Consts_SVEnhMetafiles,	"Enhanced Metafiles"
-	Consts_SVIcons,	"Icons"
-	Consts_SVBitmaps,	"Bitmaps"
-	Consts_SMaskErr,	"Invalid input value"
-	Consts_SMaskEditErr,	"Invalid input value.  Use escape key to abandon changes"
-	Consts_SMsgDlgWarning,	"Warning"
-	Consts_SMsgDlgError,	"Error"
-	Consts_SMsgDlgInformation,	"Information"
-	Consts_SMsgDlgConfirm,	"Confirm"
-	Consts_SMsgDlgYes,	"&Yes"
-	Consts_SMsgDlgNo,	"&No"
-	Consts_SMsgDlgOK,	"OK"
-	Consts_SMsgDlgCancel,	"Cancel"
-	Consts_SPrinting,	"Printing in progress"
-	Consts_SPrinterIndexError,	"Printer index out of range"
-	Consts_SInvalidPrinter,	"Printer selected is not valid"
-	Consts_SDeviceOnPort,	"%s on %s"
-	Consts_SGroupIndexTooLow,	"GroupIndex cannot be less than a previous menu item's GroupIndex"
-	Consts_SNoMDIForm,	"Cannot create form. No MDI forms are currently active"
-	Consts_SControlParentSetToSelf,	"A control cannot have itself as its parent"
-	Consts_SOKButton,	"OK"
-	Consts_SCancelButton,	"Cancel"
-	Consts_SYesButton,	"&Yes"
-	Consts_SNoButton,	"&No"
-	Consts_SHelpButton,	"&Help"
-	Consts_SCloseButton,	"&Close"
-	Consts_SIgnoreButton,	"&Ignore"
-	Consts_SRetryButton,	"&Retry"
-	Consts_SAbortButton,	"Abort"
-	Consts_SInvalidImageList,	"Invalid ImageList"
-	Consts_SImageIndexError,	"Invalid ImageList Index"
-	Consts_SImageReadFail,	"Failed to read ImageList data from stream"
-	Consts_SImageWriteFail,	"Failed to write ImageList data to stream"
-	Consts_SWindowDCError,	"Error creating window device context"
-	Consts_SWindowClass,	"Error creating window class"
-	Consts_SCannotFocus,	"Cannot focus a disabled or invisible window"
-	Consts_SParentRequired,	"Control '%s' has no parent window"
-	Consts_SMDIChildNotVisible,	"Cannot hide an MDI Child Form"
-	Consts_SVisibleChanged,	"Cannot change Visible in OnShow or OnHide"
-	Consts_SCannotShowModal,	"Cannot make a visible window modal"
-	Consts_SMenuIndexError,	"Menu index out of range"
-	Consts_SMenuReinserted,	"Menu inserted twice"
-	Consts_SMenuNotFound,	"Sub-menu is not in menu"
-	Consts_SNoTimers,	"Not enough timers available"
-	Consts_SNotPrinting,	"Printer is not currently printing"
-	QConsts_SNoAppInLib,	"Fatal error: Cannot create application object in a shared object or library."
-	QConsts_SDuplicateApp,	"Fatal error: Cannot create more than one TApplication instance"
-	HelpIntfs_hNoTableOfContents,	"Unable to find a Table of Contents"
-	HelpIntfs_hNothingFound,	"No help found for %s"
-	HelpIntfs_hNoContext,	"No context-sensitive help installed"
-	HelpIntfs_hNoTopics,	"No topic-based help system installed"
-	Consts_SInvalidBitmap,	"Bitmap image is not valid"
-	Consts_SInvalidIcon,	"Icon image is not valid"
-	Consts_SInvalidMetafile,	"Metafile is not valid"
-	Consts_SInvalidPixelFormat,	"Invalid pixel format"
-	Consts_SScanLine,	"Scan line index out of range"
-	Consts_SChangeIconSize,	"Cannot change the size of an icon"
-	Consts_SUnknownClipboardFormat,	"Unsupported clipboard format"
-	Consts_SOutOfResources,	"Out of system resources"
-	Consts_SNoCanvasHandle,	"Canvas does not allow drawing"
-	Consts_SInvalidImageSize,	"Invalid image size"
 	QConsts_SDriveNotFound,	"Drive %s does not exist.\r\nPlease verify the correct drive was given."
 	QConsts_SUnknownImageFormat,	"Image format not recognized"
 	QConsts_SInvalidHandle,	"Invalid handle value for %s"

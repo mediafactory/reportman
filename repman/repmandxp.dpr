@@ -37,6 +37,7 @@ uses
   rpgraphutilsvcl in '..\rpgraphutilsvcl.pas' {FRpMessageDlgVCL},
   rpexpredlgvcl in '..\rpexpredlgvcl.pas' {FRpExpredialogVCL},
   rprfvparams in '..\rprfvparams.pas' {FRpRTParams},
+  rpmdfsearchvcl in '..\rpmdfsearchvcl.pas' {TFRpSearchParamVCL},
   rpmdfsectionintvcl in '..\rpmdfsectionintvcl.pas',
   rptextdriver in '..\rptextdriver.pas',
   rpxmlstream in '..\rpxmlstream.pas',

@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.4pre1';
+ RM_VERSION='2.4pre6';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 type
   TPageWidthHeight = record
@@ -1251,7 +1251,6 @@ var
   SRpTimeOut:WideString='Timeout detected';
   SRpPrintRep26:WideString='         -onesheet Optional one sheet excel output';
   SRpTypeInfo:WideString='Data type information';
-  //
   SRpStreamXML:WideString='XML';
   SRpStreamXMLComp:WideString='XML Compressed';
   SRpMarkType:WideString='Mark Style';
@@ -1272,6 +1271,14 @@ var
   SrpSValueColor:WideString='Color Expression';
   SRpGraphicColor:WideString='Set color for last value';
   SRpGraphicSerieColor:WideString='Set color for last serie';
+  SRpSMultiple:WideString='Multiple sel.';
+  SRpSLookupDatasetNotavail:WideString='Lookup dataset not available for parameter';
+  SrpLookupDataset:WideString='Lookup dataset';
+  SrpSearchDataset:WideString='Search dataset';
+  SRpValueSearch:WideString='Value search help';
+  SRpOpenOnStart:WideString='Open on start';
+  SRpSearchValue:WideString='Search value';
+  SRpSearch:WideString='Search';
 
 implementation
 
@@ -2188,6 +2195,33 @@ begin
  TranslateVar(1345,SRpTimeOut);
  TranslateVar(1346,SRpPrintRep26);
  TranslateVar(1349,SRpTypeInfo);
+ TranslateVar(1350,SRpStreamXMLComp);
+ TranslateVar(1351,SRpMarkType);
+ TranslateVar(1352,SRpSMarkType0);
+ TranslateVar(1353,SRpSMarkType1);
+ TranslateVar(1354,SRpSMarkType2);
+ TranslateVar(1355,SRpSMarkType3);
+ TranslateVar(1356,SRpSMarkType4);
+ TranslateVar(1357,SRpSMarkType5);
+ TranslateVar(1358,SRpSMarkType6);
+ TranslateVar(1359,SRpSMarkType7);
+ TranslateVar(1360,SRpSMarkType8);
+ TranslateVar(1361,SRpSVertAxisFSize);
+ TranslateVar(1362,SRpSVertAxisFRot);
+ TranslateVar(1363,SRpSHorzAxisFSize);
+ TranslateVar(1364,SrpSSerieColor);
+ TranslateVar(1365,SrpSValueColor);
+ TranslateVar(1366,SRpGraphicColor);
+ TranslateVar(1367,SRpGraphicSerieColor);
+ TranslateVar(1368,SRpSMultiple);
+ TranslateVar(1369,SRpSLookupDatasetNotavail);
+ TranslateVar(1370,SrpLookupDataset);
+ TranslateVar(1371,SrpSearchDataset);
+ TranslateVar(1372,SRpValueSearch);
+ TranslateVar(1373,SRpOpenOnStart);
+ TranslateVar(1374,SRpSearchValue);
+ TranslateVar(1375,SRpSearch);
+ TranslateVar(1376,SRpSHorzAxisFRot);
 end;
 
 

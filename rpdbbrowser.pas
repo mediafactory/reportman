@@ -65,15 +65,23 @@ type
      default true;
   end;
 
+  TRpDBFieldInfo=class(TObject)
+   FieldSize:Integer;
+   dbinfo:TRpDatabaseInfoItem;
+   dinfo:TRpDataInfoItem;
+  end;
+
 implementation
 
 
 {$R *.xfm}
 
-function NewTRpDBFieldInfo(fieldsize:integer):TRpDBFieldInfo;
+function NewTRpDBFieldInfo(fieldsize:integer;dbinfo:TRpDatabaseInfoItem;dinfo:TRpDataInfoItem):TRpDBFieldInfo;
 begin
  Result:=TRpDBFieldInfo.Create;
  Result.FieldSize:=fieldsize;
+ Result.dbinfo:=dbinfo;
+ Result.dinfo:=dinfo;
 end;
 
 procedure TFRpBrowser.FreeFieldsInfo;
@@ -88,6 +96,7 @@ begin
    ATree.Items[i].Data:=nil;
   end;
  end;
+ ATree.Items.Clear;
 end;
 
 destructor TFRpBrowser.Destroy;
@@ -106,7 +115,6 @@ begin
  else
  begin
   FreeFieldsInfo;
-  ATree.Items.Clear;
  end;
 end;
 
@@ -124,14 +132,13 @@ var
 {$ENDIF}
 begin
  FreeFieldsInfo;
- ATree.Items.Clear;
  if FShowDatabases then
  begin
   dbinfo:=FReport.DatabaseInfo;
   for i:=0 to dbinfo.Count-1 do
   begin
    anode:=ATree.Items.AddChild(nil,dbinfo.Items[i].Alias);
-   anode.Data:=dbinfo.Items[i];
+   anode.Data:=NewTRpDBFieldInfo(0,dbinfo.Items[i],nil);
    anode.ImageIndex:=0;
    anode.SelectedIndex:=0;
    // Place an empty child
@@ -144,7 +151,7 @@ begin
   for i:=0 to dinfo.Count-1 do
   begin
    anode:=ATree.Items.AddChild(nil,dinfo.Items[i].Alias);
-   anode.Data:=dinfo.Items[i];
+   anode.Data:=NewTRpDBFieldInfo(0,nil,dinfo.Items[i]);
    anode.ImageIndex:=1;
    anode.SelectedIndex:=1;
    // Place an empty child
@@ -236,6 +243,7 @@ var
  usebrackets:Boolean;
  i,j:integer;
  aname:string;
+ ainfo:TRpDBFieldInfo;
 begin
  if not assigned(Node.Data) then
   exit;
@@ -246,134 +254,138 @@ begin
  if achild.Text<>'' then
   exit;
  try
-  if TObject(Node.Data) is TRpDatabaseInfoItem then
+  if Assigned(Node.Data) then
   begin
-   dbitem:=TRpDatabaseInfoItem(TObject(Node.Data));
-   alist:=TStringList.Create;
-   fieldtypes:=TStringList.Create;
-   fieldsizes:=TStringList.Create;
-   try
-    // Tables
-    Atree.Items.Delete(achild);
-    if Node.Parent=nil then
+   ainfo:=TRpDBFieldInfo(Node.Data);
+    if Assigned(ainfo.dbinfo) then
     begin
-     dbitem.GetTableNames(alist);
-     if alist.count<1 then
-      AllowExpansion:=false
-     else
-     begin
-      for i:=0 to alist.Count-1 do
+     dbitem:=ainfo.dbinfo;
+     alist:=TStringList.Create;
+     fieldtypes:=TStringList.Create;
+     fieldsizes:=TStringList.Create;
+     try
+      // Tables
+      Atree.Items.Delete(achild);
+      if Node.Parent=nil then
       begin
-       aname:=alist.Strings[i];
-       if ((i<fieldtypes.Count) and (FShowDataTypes)) then
+       dbitem.GetTableNames(alist);
+       if alist.count<1 then
+        AllowExpansion:=false
+       else
        begin
-        aname:=aname+'-'+fieldtypes.Strings[i];
-        if (i<fieldsizes.Count) then
-         if Length(fieldsizes.Strings[i])>0 then
-          aname:=aname+'('+fieldsizes.Strings[i]+')';
+        for i:=0 to alist.Count-1 do
+        begin
+         aname:=alist.Strings[i];
+         if ((i<fieldtypes.Count) and (FShowDataTypes)) then
+         begin
+          aname:=aname+'-'+fieldtypes.Strings[i];
+          if (i<fieldsizes.Count) then
+           if Length(fieldsizes.Strings[i])>0 then
+            aname:=aname+'('+fieldsizes.Strings[i]+')';
+         end;
+         achild:=ATree.Items.AddChild(Node,aname);
+         achild.Data:=NewTRpDBFieldInfo(0,dbitem,nil);
+         ATree.Items.AddChild(achild,'');
+        end;
        end;
-       achild:=ATree.Items.AddChild(Node,aname);
-       achild.Data:=Node.Data;
-       ATree.Items.AddChild(achild,'');
+      end
+      // Fields
+      else
+      begin
+       dbitem.GetFieldNames(Node.Text,alist,fieldtypes,fieldsizes);
+       if alist.count<1 then
+        AllowExpansion:=false
+       else
+       begin
+        for i:=0 to alist.Count-1 do
+        begin
+         aname:=alist.Strings[i];
+         if ((i<fieldtypes.Count) and (FShowDataTypes)) then
+         begin
+          aname:=aname+' '+fieldtypes.Strings[i];
+          if i<fieldsizes.Count then
+           if Length(fieldsizes.Strings[i])>0 then
+            aname:=aname+'('+fieldsizes.Strings[i]+')';
+         end;
+         achild:=ATree.Items.AddChild(Node,aname);
+         achild.ImageIndex:=2;
+         achild.SelectedIndex:=2;
+         achild.Data:=NewTRpDBFieldInfo(10,nil,nil);
+         if (i<fieldsizes.Count) then
+          if Length(fieldsizes.Strings[i])>0 then
+          begin
+           TObject(achild.Data).free;
+           achild.Data:=NewTRpDBFieldInfo(StrToInt(fieldsizes.strings[i]),nil,nil);
+          end;
+         achild.ImageIndex:=1;
+         achild.SelectedIndex:=1;
+        end;
+       end;
       end;
+     finally
+      alist.free;
+      fieldtypes.free;
+      fieldsizes.free;
      end;
     end
-    // Fields
     else
     begin
-     dbitem.GetFieldNames(Node.Text,alist,fieldtypes,fieldsizes);
-     if alist.count<1 then
-      AllowExpansion:=false
-     else
+     if Assigned(ainfo.dinfo) then
      begin
-      for i:=0 to alist.Count-1 do
-      begin
-       aname:=alist.Strings[i];
-       if ((i<fieldtypes.Count) and (FShowDataTypes)) then
-       begin
-        aname:=aname+' '+fieldtypes.Strings[i];
-        if i<fieldsizes.Count then
-         if Length(fieldsizes.Strings[i])>0 then
-          aname:=aname+'('+fieldsizes.Strings[i]+')';
-       end;
-       achild:=ATree.Items.AddChild(Node,aname);
-       achild.ImageIndex:=2;
-       achild.SelectedIndex:=2;
-       achild.Data:=NewTRpDBFieldInfo(10);
-       if (i<fieldsizes.Count) then
-        if Length(fieldsizes.Strings[i])>0 then
-        begin
-         TObject(achild.Data).free;
-         achild.Data:=NewTRpDBFieldInfo(StrToInt(fieldsizes.strings[i]));
-        end;
-       achild.ImageIndex:=1;
-       achild.SelectedIndex:=1;
-      end;
-     end;
-    end;
-   finally
-    alist.free;
-    fieldtypes.free;
-    fieldsizes.free;
-   end;
-  end
-  else
-  begin
-   if TObject(Node.Data) is TRpDataInfoItem then
-   begin
-    ditem:=TRpDataInfoItem(TObject(Node.Data));
-    FReport.PrepareParamsBeforeOpen;
-    ditem.Connect(Freport.DatabaseInfo,FReport.Params);
-    alist:=TStringList.Create;
-    fieldtypes:=TStringList.Create;
-    fieldsizes:=TStringList.Create;
-    try
-     Atree.Items.Delete(achild);
-     FillFieldsInfo(ditem.Dataset,alist,fieldtypes,fieldsizes);
-     if alist.count<1 then
-      AllowExpansion:=false
-     else
-     begin
-      for i:=0 to alist.Count-1 do
-      begin
-       aname:=alist.Strings[i];
-       usebrackets:=false;
-       for j:=1 to Length(aname) do
-       begin
-        if Not (aname[j] in ParserSetChars) then
-        begin
-         usebrackets:=true;
-         break;
-        end;
-       end;
-       if usebrackets then
-        aname:='['+ditem.Alias+'.'+aname+']'
+      ditem:=ainfo.dinfo;
+      FReport.PrepareParamsBeforeOpen;
+      ditem.Connect(Freport.DatabaseInfo,FReport.Params);
+      alist:=TStringList.Create;
+      fieldtypes:=TStringList.Create;
+      fieldsizes:=TStringList.Create;
+      try
+       Atree.Items.Delete(achild);
+       FillFieldsInfo(ditem.Dataset,alist,fieldtypes,fieldsizes);
+       if alist.count<1 then
+        AllowExpansion:=false
        else
-        aname:=ditem.Alias+'.'+aname;
-       if ((i<fieldtypes.Count) and (FShowDataTypes)) then
        begin
-        aname:=aname+' '+fieldtypes.Strings[i];
-        if Length(fieldsizes.Strings[i])>0 then
-         aname:=aname+'('+fieldsizes.Strings[i]+')';
-       end;
-       achild:=ATree.Items.AddChild(Node,aname);
-       achild.Data:=NewTRpDBFieldInfo(10);
-       if i<fieldsizes.Count then       
-        if Length(fieldsizes.Strings[i])>0 then
+        for i:=0 to alist.Count-1 do
         begin
-         TObject(achild.Data).free;
-         achild.Data:=NewTRpDBFieldInfo(StrToInt(fieldsizes.strings[i]));
-        end;       
-       achild.ImageIndex:=2;
-       achild.SelectedIndex:=2;
+         aname:=alist.Strings[i];
+         usebrackets:=false;
+         for j:=1 to Length(aname) do
+         begin
+          if Not (aname[j] in ParserSetChars) then
+          begin
+           usebrackets:=true;
+           break;
+          end;
+         end;
+         if usebrackets then
+          aname:='['+ditem.Alias+'.'+aname+']'
+         else
+          aname:=ditem.Alias+'.'+aname;
+         if ((i<fieldtypes.Count) and (FShowDataTypes)) then
+         begin
+          aname:=aname+' '+fieldtypes.Strings[i];
+          if Length(fieldsizes.Strings[i])>0 then
+           aname:=aname+'('+fieldsizes.Strings[i]+')';
+         end;
+         achild:=ATree.Items.AddChild(Node,aname);
+         achild.Data:=NewTRpDBFieldInfo(10,nil,nil);
+         if i<fieldsizes.Count then       
+          if Length(fieldsizes.Strings[i])>0 then
+          begin
+           TObject(achild.Data).free;
+           achild.Data:=NewTRpDBFieldInfo(StrToInt(fieldsizes.strings[i]),nil,nil);
+          end;       
+         achild.ImageIndex:=2;
+         achild.SelectedIndex:=2;
+        end;
+       end;
+      finally
+       alist.free;
+       fieldtypes.free;
+       fieldsizes.free;
       end;
      end;
-    finally
-     alist.free;
-     fieldtypes.free;
-     fieldsizes.free;
     end;
-   end;
   end;
  except
   on E:Exception do

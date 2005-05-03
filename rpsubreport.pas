@@ -52,6 +52,7 @@ type
    CurrentGroupName:string;
    CurrentGroupIndex:integer;
    LastRecord:boolean;
+   ParentSub,ParentSec:String;
    constructor Create(AOWner:TComponent);override;
    destructor Destroy;override;
    procedure CreateNew;

@@ -40,7 +40,9 @@ requires
   vcldb,
   ibxpress,
   bdertl,
-  dbexpress;
+  dbexpress,
+  vclx,
+  Tee67;
 
 {%File 'rpconf.inc'}
 
@@ -61,7 +63,9 @@ contains
   rpexceldriver in 'rpexceldriver.pas' {FRpExcelProgress},
   rpmdfaboutvcl in 'rpmdfaboutvcl.pas' {FRpAboutBoxVCL},
   rpvgraphutils in 'rpvgraphutils.pas',
+  rpdbgridvcl in 'rpdbgridvcl.pas',
   rpmaskedit in 'rpmaskedit.pas',
-  rpgraphutilsvcl in 'rpgraphutilsvcl.pas' {FRpMessageDlgVCL};
+  rpgraphutilsvcl in 'rpgraphutilsvcl.pas' {FRpMessageDlgVCL},
+  rpmdfsearchvcl in 'rpmdfsearchvcl.pas' {FRpSearchParamVCL};
 
 end.
