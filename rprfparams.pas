@@ -24,7 +24,7 @@ interface
 {$I rpconf.inc}
 
 uses SysUtils, Classes, QGraphics, QForms,
-  QButtons, QExtCtrls, QControls, QStdCtrls,QChecklst,
+  QButtons, QExtCtrls, QControls, QStdCtrls,QCheckLst,
   rpmdconsts,rpmaskeditclx,
 {$IFNDEF FORWEBAX}
   rpmdfsearch,

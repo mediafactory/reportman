@@ -61,7 +61,7 @@ procedure ParamValueSearch(aparam:TRpParam;report:TRpReport);
 
 implementation
 
-{$R *.XFM}
+{$R *.xfm}
 
 procedure ParamValueSearch(aparam:TRpParam;report:TRpReport);
 var

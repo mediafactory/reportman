@@ -42,6 +42,8 @@ contains
   rptypes in 'rptypes.pas',
   rpdatainfo in 'rpdatainfo.pas',
   rpparams in 'rpparams.pas',
+  rpxmlstream in 'rpxmlstream.pas',
+  rpbarcodecons in 'rpbarcodecons.pas',
   rpzlibadler in 'rpzlibadler.pas',
   rpzlibinfblock in 'rpzlibinfblock.pas',
   rpzlibinfcodes in 'rpzlibinfcodes.pas',

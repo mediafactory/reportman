@@ -53,10 +53,6 @@ contains
   rpmdfdatatext in 'rpmdfdatatext.pas' {FRpDataText},
   rpmdsysinfoqt in 'rpmdsysinfoqt.pas' {FRpSysInfo},
   rpmregdesign in 'rpmregdesign.pas',
-  rpruler in 'rpruler.pas',
-  rpeditconn in 'rpeditconn.pas' {FRpEditCon},
-  rpdbbrowser in 'rpdbbrowser.pas' {FRpBrowser: TFrame},
-  rpmdftree in 'rpmdftree.pas' {FRpDBTree: TFrame},
-  rpmdfopenlib in 'rpmdfopenlib.pas' {FRpOpenLib};
+  rpruler in 'rpruler.pas';
 
 end.
