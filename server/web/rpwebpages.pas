@@ -834,7 +834,7 @@ begin
         if Length(aparam.Hint)>0 then
          aparamstring:=aparamstring+' alt="'+HtmlEncode(aparam.Hint)+'" ';
         aparamstring:=aparamstring+
-         ' value="'+HtmlEncode(aparam.AsString)+'"';
+         ' value="'+HtmlEncode(aparam.AsString)+'">';
        end;
        if aparam.IsReadOnly then
         aparamstring:=aparamstring+' readonly >'+#10;
