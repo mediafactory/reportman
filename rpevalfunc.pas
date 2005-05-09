@@ -447,6 +447,12 @@ type
    constructor Create(AOWner:TComponent);override;
   end;
 
+ TIdenParamInfo=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
 
 implementation
 
@@ -2209,6 +2215,31 @@ begin
   Result:=false;
 end;
 
+{ TIdenParamInfo }
+
+constructor TIdenParamInfo.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=2;
+ IdenName:='ParamList';
+ Help:='';
+ model:='function ParamInfo(paramname:String;index:integer)';
+ aParams:='';
+end;
+
+{**************************************************************************}
+
+function TIdenParamInfo.GeTRpValue:TRpValue;
+begin
+ if (Not (VarIsString(Params[0]))) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not (VarIsInteger(Params[1]))) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if Assigned((evaluator As TRpEvaluator).OnParamInfo) then
+  Result:=(evaluator As TRpEvaluator).OnParamInfo(Params[0],Params[1])
+ else
+  Result:='';
+end;
 
 
 end.

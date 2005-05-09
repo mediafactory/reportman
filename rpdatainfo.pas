@@ -78,7 +78,10 @@ type
 
 
  TRpConnAdmin=class(TObject)
+  private
   public
+   DBXConnectionsOverride:String;
+   DBXDriversOverride:String;
    driverfilename:string;
    configfilename:string;
    config:TMemInifile;
@@ -888,6 +891,9 @@ begin
 end;
 
 procedure TRpDatabaseinfoitem.UpdateConAdmin;
+var
+ aparam:TRpParam;
+ report:TRpReport;
 begin
  if Assigned(ConAdmin) then
  begin
@@ -895,8 +901,23 @@ begin
   ConAdmin:=nil;
  end;
  ConAdmin:=TRpConnAdmin.Create;
+ if TRpDataInfoList(Collection).FReport is TRpReport then
+ begin
+  report:=TRpDataInfoList(Collection).FReport As TRpReport;
+  aparam:=report.Params.FindParam('DBXCONNECTIONS');
+  if Assigned(aparam) then
+  begin
+   ConAdmin.DBXConnectionsOverride:=aparam.AsString;
+   ConAdmin.LoadConfig;
+  end;
+  aparam:=report.Params.FindParam('DBXDRIVERS');
+  if Assigned(aparam) then
+  begin
+   ConAdmin.DBXDriversOverride:=aparam.AsString;
+   ConAdmin.LoadConfig;
+  end;
+ end;
 end;
-
 
 
 {$IFDEF USEADO}
@@ -2201,8 +2222,9 @@ end;
 
 
 procedure TRpConnAdmin.LoadConfig;
-{$IFDEF LINUX}
 var
+ dbxconpath,dbxdrivpath:String;
+{$IFDEF LINUX}
  configdir:string;
 {$ENDIF}
 begin
@@ -2216,7 +2238,6 @@ begin
   drivers.free;
   drivers:=nil;
  end;
-
  // Looks for ./borland in Linux registry in Windows
 {$IFDEF LINUX}
  configdir:=GetEnvironmentVariable('HOME')+'/.borland';
@@ -2244,6 +2265,14 @@ begin
  driverfilename:=ObtainDriverRegistryFile;
  configfilename:=ObtainConnectionRegistryFile;
 {$ENDIF}
+
+ dbxconpath:=DBXConnectionsOverride;
+ dbxdrivpath:=DBXDriversOverride;
+ // Override configuration if necessary
+ if Length(dbxconpath)>0 then
+  configfilename:=dbxconpath;
+ if Length(dbxdrivpath)>0 then
+  driverfilename:=dbxdrivpath;
  if FileExists(driverfilename) then
  begin
   drivers:=TMemInifile.Create(driverfilename);
@@ -2289,7 +2318,7 @@ begin
  else
  begin
 {$IFDEF MSWINDOWS}
-   Raise Exception.Create(SRpConfigFileNotExists+' - '+driverfilename);
+   Raise Exception.Create(SRpConfigFileNotExists+' - '+configfilename);
 {$ENDIF}
 {$IFDEF LINUX}
   // Check if exists in the current dir

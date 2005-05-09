@@ -121,6 +121,7 @@ type
  TRpTextHeightProc=function (Text,LFontName,WFontName:WideString;
      RectWidth,FontSize,FontStyle,Type1Font:integer;
      PrintStep:integer):integer of object;
+ TRpParamInfoProc=function (ParamName:String;index:integer):String of Object;
 
  TRpReOpenOp=function (datasetname:String;sql:Widestring):Boolean of object;
 

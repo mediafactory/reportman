@@ -252,6 +252,7 @@ type
      RectWidth,FontSize,FontStyle,Type1Font:integer;
      PrintStep:integer):integer;
     function ReOpenOp(datasetname:String;sql:Widestring):BOolean;
+    function OnParamInfo(ParamName:String;index:integer):String;
     procedure CheckIfDataAvailable;
     procedure UpdateParamsBeforeOpen(index:integer;doeval:boolean);
     procedure DefineProperties(Filer:TFiler);override;
@@ -1527,6 +1528,7 @@ begin
  FEvaluator.OnImageOp:=OnImageOp;
  FEvaluator.OnBarcodeOp:=OnBarcodeOp;
  FEvaluator.OnTextOp:=OnTextOp;
+ FEvaluator.OnParamInfo:=OnParamInfo;
  FEvaluator.OnTextHeight:=OnTextHeight;
  FEvaluator.OnReOpenOp:=ReOpenOp;
  FEvaluator.OnGetSQLValue:=GetSQLValue;
@@ -1650,6 +1652,136 @@ begin
   FEvaluator.Language:=FLanguage;
 end;
 
+function TRpBaseReport.OnParamInfo(ParamName:String;index:integer):String;
+var
+ param:TRpParam;
+ i,ind:integer;
+begin
+ Result:='';
+ param:=Params.FindParam(UpperCase(ParamName));
+ if Assigned(param) then
+ begin
+  if param.ParamType in  [rpparammultiple,rpparamlist] then
+  begin
+   case index of
+    0:
+     // Parameter value as string
+     Result:=param.AsString;
+    1:
+     begin
+      // Parameter value as multiple line string, real values
+      if param.ParamType=rpparammultiple then
+      begin
+       for i:=0 to param.Selected.Count-1 do
+       begin
+        ind:=StrToInt(param.Selected.Strings[i]);
+        if param.Values.Count>ind then
+        begin
+         if Length(Result)>0 then
+          Result:=Result+#10+param.Values.Strings[ind]
+         else
+          Result:=param.Values.Strings[ind];
+        end;
+       end;
+      end
+      else
+      begin
+       Result:=param.AsString;
+      end;
+     end;
+    2:
+     begin
+      // Parameter value as multiple line string, indexes selected
+      if param.ParamType=rpparammultiple then
+      begin
+       for i:=0 to param.Selected.Count-1 do
+       begin
+        ind:=StrToInt(param.Selected.Strings[i]);
+        if Length(Result)>0 then
+         Result:=Result+#10+IntToStr(ind)
+        else
+         Result:=IntToStr(ind);
+       end;
+      end
+      else
+      begin
+       Result:=param.AsString;
+      end;
+     end;
+    3:
+     begin
+      // Parameter value as multiple line string, user selection
+      if param.ParamType=rpparammultiple then
+      begin
+       for i:=0 to param.Selected.Count-1 do
+       begin
+        ind:=StrToInt(param.Selected.Strings[i]);
+        if param.Items.Count>ind then
+        begin
+         if Length(Result)>0 then
+          Result:=Result+#10+param.Items.Strings[ind]
+         else
+          Result:=param.Items.Strings[ind];
+        end;
+       end;
+      end
+      else
+      begin
+       Result:=param.AsString;
+      end;
+     end;
+    4:
+     begin
+      // Parameter value as multiple line string, possible values as user see
+      for i:=0 to param.Items.Count-1 do
+      begin
+       if Length(Result)>0 then
+        Result:=Result+#10+param.Items.Strings[i]
+       else
+        Result:=param.Items.Strings[i];
+      end;
+     end;
+    5:
+     begin
+      // Parameter value as multiple line string, possible values as real values
+      for i:=0 to param.Values.Count-1 do
+      begin
+       if Length(Result)>0 then
+        Result:=Result+#10+param.Values.Strings[i]
+       else
+        Result:=param.Values.Strings[i];
+      end;
+     end;
+    6:
+     begin
+     // Datasets related to the param
+      for i:=0 to param.Datasets.Count-1 do
+      begin
+       if Length(Result)>0 then
+        Result:=Result+#10+param.Datasets.Strings[i]
+       else
+        Result:=param.Datasets.Strings[i];
+      end;
+     end;
+   end;
+  end
+  else
+  begin
+   if index=6 then
+   begin
+    for i:=0 to param.Datasets.Count-1 do
+    begin
+     if Length(Result)>0 then
+      Result:=Result+#10+param.Datasets.Strings[i]
+     else
+      Result:=param.Datasets.Strings[i];
+    end;
+   end
+   else
+    Result:=param.AsString;
+  end;
+ end;
+end;
 
 
 end.

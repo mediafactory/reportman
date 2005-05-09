@@ -905,6 +905,7 @@ begin
   pdfreport:=CreateReport;
   try
    LoadReport(pdfreport,aliasname,reportname);
+   pdfreport.Params.UpdateLookup;
    // Assigns parameters to the report
    for i:=0 to Request.QueryFields.Count-1 do
    begin
@@ -927,7 +928,9 @@ begin
       begin
        if Request.QueryFields.Names[k]='Param'+paramname then
        begin
-        param.Selected.Add(Request.QueryFields.ValueFromIndex[k]);
+        index:=StrToInt(Request.QueryFields.ValueFromIndex[k]);
+        if index<param.Values.Count then
+         param.Selected.Add(IntToStr(Index));
        end;
       end;
      end

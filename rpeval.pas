@@ -73,6 +73,7 @@ type
   FOnTextHeight:TRpTextHeightProc;
   FOnNewLanguage:TRpNewLanguage;
   FOnGetSQLValue:TRpOnGetSQLValue;
+  FOnParamInfo:TRpParamInfoProc;
   procedure SetExpression(Value:string);
   // Recursive functions to evaluate the expresion
   procedure variables(var Value:TRpValue);
@@ -149,6 +150,7 @@ type
   property OnReOpenOp:TRpReOpenOp read FOnReOpenOp write FOnReOpenOp;
   property OnGetSQLValue:TRpOnGetSQLValue read FOnGetSQLValue write FOnGetSQLValue;
   property OnNewLanguage:TRpNewLanguage read FOnNewLanguage write FOnNewLanguage;
+  property OnParamInfo:TRpParamInfoProc read FOnParamInfo write FOnParamInfo;
  end;
 
  // The visual component
@@ -339,6 +341,8 @@ begin
  Rpfunctions.AddObject('IMAGEOP',iden);
  iden:=TIdenBarcodeOperation.Create(nil);
  Rpfunctions.AddObject('BARCODEOP',iden);
+ iden:=TIdenParamInfo.Create(nil);
+ Rpfunctions.AddObject('PARAMINFO',iden);
  // Other
 
  // Graphic functions
