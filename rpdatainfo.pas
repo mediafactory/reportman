@@ -365,6 +365,10 @@ function ExtractFieldNameEx(astring:String):string;
 
 implementation
 
+{$IFDEF LINUX}
+uses rpreport;
+{$ENDIF}
+
 {$IFDEF USEBDE}
 uses rpreport,rpeval;
 {$ENDIF}
