@@ -1279,6 +1279,10 @@ var
   SRpOpenOnStart:WideString='Open on start';
   SRpSearchValue:WideString='Search value';
   SRpSearch:WideString='Search';
+  //
+  SRpLithuanian:WideString='Lithuanian';
+  SRpDanish:WideString='Danish';
+  SRpDutch:WideString='Dutch';
 
 implementation
 

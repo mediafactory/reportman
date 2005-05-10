@@ -93,10 +93,43 @@
       <p>The user will be able to select more than one value, a checklist box 
         will be provided on parameters window.</p>
       <p>The value list can also be loaded from a dataset, like Value List parameter 
-        type. </p>
+        type.</p>
+      <p>You can obtain information about a parameter, and multiple selection 
+        using Expression evaluator function: ParamInfo</p>
       </td>
   </tr>
 </table>
+<p><strong>Special parameters</strong></p>
+<p>There are special parameters that can be used to interact with the engine itself, 
+  just define and assign values to them:</p>
+<table border="1">
+  <tr> 
+    <td bgcolor="#FFFFCC"><strong>Name</strong></td>
+    <td bgcolor="#FFFFCC"><strong>Purpose</strong></td>
+  </tr>
+  <tr> 
+    <td>DBXCONNECTIONS</td>
+    <td>Path to a user defined dbxconnections file, to alter password, database 
+      path at runtime</td>
+  </tr>
+  <tr> 
+    <td>DBXDRIVERS</td>
+    <td>Path to a user defined DBXDRIVERS file.</td>
+  </tr>
+  <tr> 
+    <td>MAIL_DESTINATION</td>
+    <td>Default destination, on preview window, send mail option</td>
+  </tr>
+  <tr> 
+    <td>MAIL_SUBJECT</td>
+    <td>Default subject, on preview window, send mail option</td>
+  </tr>
+  <tr> 
+    <td>MAIL_BODY</td>
+    <td>Default body, on preview window, send mail option</td>
+  </tr>
+</table>
+<p>&nbsp;</p>
 <p><strong>About parameters and database drivers</strong></p>
 <p>When you place a parameter inside a query:</p>
 <p>SELECT MYDATA FROM MYTABLE WHERE MYCODE=:CODE</p>

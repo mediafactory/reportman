@@ -365,13 +365,14 @@ function ExtractFieldNameEx(astring:String):string;
 
 implementation
 
-{$IFDEF LINUX}
-uses rpreport;
-{$ENDIF}
 
+uses 
 {$IFDEF USEBDE}
-uses rpreport,rpeval;
+ rpeval,
 {$ENDIF}
+ rpreport;
+
+
 const
   SDRIVERREG_SETTING = 'Driver Registry File';           { Do not localize }
   SCONNECTIONREG_SETTING = 'Connection Registry File';   { Do not localize }
@@ -2030,6 +2031,16 @@ end;
 
 procedure TRpDataInfoItem.DisConnect;
 begin
+ if Assigned(FDataLink) then
+ begin
+  FDataLink.Free;
+  FDataLink:=nil;
+ end;
+ if Assigned(FMasterSource) then
+ begin
+  FMasterSource.Free;
+  FMasterSource:=nil;
+ end;
  if Assigned(FDataset) then
  begin
   if FDataset=FSQLInternalQuery then
@@ -3653,8 +3664,13 @@ begin
 {$ENDIF}
 {$IFDEF USESQLEXPRESS}
  if dtype=rpdatadbexpress then
-  if Not EqualParamValuesS(TSQLQuery(datainfoitem.dataset),DataSource.Dataset) then
-   reopen:=true;
+ begin
+  if datainfoitem.dataset is TSQLQuery then
+  begin
+   if Not EqualParamValuesS(TSQLQuery(datainfoitem.dataset),DataSource.Dataset) then
+    reopen:=true;
+  end;
+ end;
 {$ENDIF}
  if reopen then
  begin

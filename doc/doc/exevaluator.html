@@ -417,7 +417,7 @@
     <td> function GraphicSerieColor(Gr:string, Color:Integer):Boolean;<br></td>
     <td>Set the current chart serie color</td>
   </tr>
-  <tr>
+  <tr> 
     <td> function GraphicColor(Gr:string, Color:Integer):Boolean;<br></td>
     <td>Set the color for the last value added to the chart</td>
   </tr>
@@ -499,6 +499,47 @@
   <tr> 
     <td>M.LANGUAGE</td>
     <td>Allow the change of the report language at runtime</td>
+  </tr>
+  <tr>
+    <td>PARAMINFO(paramname:string; index:integer)</td>
+    <td><p>Allow obtaining information about a report parameter, useful for multiple 
+        selection or list values </p>
+      <table border="1">
+        <tr bgcolor="#FFFFCC"> 
+          <td><strong>Index</strong></td>
+          <td><strong>Meaning</strong></td>
+        </tr>
+        <tr> 
+          <td>0</td>
+          <td>Value as string</td>
+        </tr>
+        <tr> 
+          <td>1</td>
+          <td>Selected values on multiple selection</td>
+        </tr>
+        <tr> 
+          <td>2</td>
+          <td>Selected indexes on multiple selection</td>
+        </tr>
+        <tr> 
+          <td>3</td>
+          <td>Selected items on multiple selection</td>
+        </tr>
+        <tr> 
+          <td>4</td>
+          <td>Full list of items</td>
+        </tr>
+        <tr> 
+          <td>5</td>
+          <td>Full list of values</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Datasets linked to the parameter</td>
+        </tr>
+      </table>
+      
+    </td>
   </tr>
 </table>
 <p><b>Building expressions</b></p>

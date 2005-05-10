@@ -893,6 +893,7 @@ var
  adriver:TRpPDFDriver;
  param:TRpParam;
 begin
+ CheckLogin(Request);
  dometafile:=false;
  docsv:=false;
  dosvg:=false;

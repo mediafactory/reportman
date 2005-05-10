@@ -1557,6 +1557,7 @@ begin
 end;
 
 
+
 // Function cortesy of Hamza Al-Aradi (AradBox@hotmail.com)
 // Altered to support negative and not show fractionary
 // when there is not fractionary part
@@ -1659,6 +1660,400 @@ begin
 end;
 
 {$IFNDEF DOTNETD}
+function NumberToTextLithuanian(Amount : currency; Female : boolean = false) : WideString;
+//..............................................................................
+function Num2Str(Num : Int64; gimine : boolean = false; flag : integer = 0) : string;
+// Made by Antanas Vipartas :))
+Const
+	hundred = 100;
+	Thousand = 1000;
+	Million = 1000000;
+	billion = 1000000000;
+	trillion = 1000000000000;
+begin
+	// ---------------------- T R I L I J O N A I
+	if Num >= trillion then
+		if (Num mod trillion) = 0 then begin // jei dalinasi is trilijono be liekanos (yra kazkiek milijardu lygiai)
+			if ((Num div trillion) < 10) then begin
+				case (Num div trillion) of
+					1 : Num2Str := Num2Str(Num div trillion) + ' trilijonas';
+					2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div trillion) + ' trilijonai';
+				end;
+			end
+			else
+			if (((Num div trillion) < 20) and (Num div trillion > 9)) then
+				Num2Str := Num2Str(Num div trillion) + ' trilijonø'
+			else
+			if (Num div trillion >= 20) then begin
+				if (((Num div trillion > 110) and (Num div trillion < 120)) or
+				   ((Num div trillion > 210) and (Num div trillion < 220)) or
+				   ((Num div trillion > 310) and (Num div trillion < 320)) or
+				   ((Num div trillion > 410) and (Num div trillion < 420)) or
+				   ((Num div trillion > 510) and (Num div trillion < 520)) or
+				   ((Num div trillion > 610) and (Num div trillion < 620)) or
+				   ((Num div trillion > 710) and (Num div trillion < 720)) or
+				   ((Num div trillion > 810) and (Num div trillion < 820)) or
+				   ((Num div trillion > 910) and (Num div trillion < 920))) then
+				begin
+					Num2Str := Num2Str(Num div trillion) + ' trilijonø';
+				end
+				else begin
+					case ((Num div trillion) mod 10) of
+						0 : Num2Str := Num2Str(Num div trillion) + ' trilijonø';
+						1 : Num2Str := Num2Str(Num div trillion) + ' trilijonas';
+						2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div trillion) + ' trilijonai';
+					end;
+				end;
+			end
+		end
+		else begin // jei is milijardo dalinasi su liekanos
+			if ((Num div trillion) < 10) then begin
+				case (Num div trillion) of
+					1 : Num2Str := Num2Str(Num div trillion) + ' trilijonas ' + Num2Str(Num mod trillion, gimine, 1);
+					2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div trillion) + ' trilijonai ' + Num2Str(Num mod trillion, gimine, 1);
+				end;
+			end
+			else
+			if (((Num div trillion) < 20) and (Num div trillion > 9)) then
+				Num2Str := Num2Str(Num div trillion) + ' trilijonø ' + Num2Str(Num mod trillion, gimine, 1)
+			else
+			if (Num div trillion >= 20) then begin
+				if (((Num div trillion > 110) and (Num div trillion < 120)) or
+				   ((Num div trillion > 210) and (Num div trillion < 220)) or
+				   ((Num div trillion > 310) and (Num div trillion < 320)) or
+				   ((Num div trillion > 410) and (Num div trillion < 420)) or
+				   ((Num div trillion > 510) and (Num div trillion < 520)) or
+				   ((Num div trillion > 610) and (Num div trillion < 620)) or
+				   ((Num div trillion > 710) and (Num div trillion < 720)) or
+				   ((Num div trillion > 810) and (Num div trillion < 820)) or
+				   ((Num div trillion > 910) and (Num div trillion < 920))) then
+				begin
+					Num2Str := Num2Str(Num div trillion) + ' trilijonø ' + Num2Str(Num mod trillion, gimine, 1);
+				end
+				else begin
+					case ((Num div trillion) mod 10) of
+						0 : Num2Str := Num2Str(Num div trillion) + ' trilijonø ' + Num2Str(Num mod trillion, gimine, 1);
+						1 : Num2Str := Num2Str(Num div trillion) + ' trilijonas ' + Num2Str(Num mod trillion, gimine, 1);
+						2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div trillion) + ' trilijonai ' + Num2Str(Num mod trillion, gimine, 1);
+					end;
+				end;
+			end;
+		end
+	else
+	// ---------------------- M I L I J A R D A I
+	if Num >= billion then
+		if (Num mod billion) = 0 then begin // jei dalinasi is milijardo be liekanos (yra kazkiek milijardu lygiai)
+			if ((Num div billion) < 10) then begin
+				case (Num div billion) of
+					1 : Num2Str := Num2Str(Num div billion) + ' milijardas';
+					2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div billion) + ' milijardai';
+				end;
+			end
+			else
+			if (((Num div billion) < 20) and (Num div billion > 9)) then
+				Num2Str := Num2Str(Num div billion) + ' milijardø'
+			else
+			if (Num div billion >= 20) then begin
+				if (((Num div billion > 110) and (Num div billion < 120)) or
+				   ((Num div billion > 210) and (Num div billion < 220)) or
+				   ((Num div billion > 310) and (Num div billion < 320)) or
+				   ((Num div billion > 410) and (Num div billion < 420)) or
+				   ((Num div billion > 510) and (Num div billion < 520)) or
+				   ((Num div billion > 610) and (Num div billion < 620)) or
+				   ((Num div billion > 710) and (Num div billion < 720)) or
+				   ((Num div billion > 810) and (Num div billion < 820)) or
+				   ((Num div billion > 910) and (Num div billion < 920))) then
+				begin
+					Num2Str := Num2Str(Num div billion) + ' milijardø';
+				end
+				else begin
+					case ((Num div billion) mod 10) of
+						0 : Num2Str := Num2Str(Num div billion) + ' milijardø';
+						1 : Num2Str := Num2Str(Num div billion) + ' milijardas';
+						2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div billion) + ' milijardai';
+					end;
+				end;
+			end
+		end
+		else begin // jei is milijardo dalinasi su liekanos
+			if ((Num div billion) < 10) then begin
+				case (Num div billion) of
+					1 : Num2Str := Num2Str(Num div billion) + ' milijardas ' + Num2Str(Num mod billion, gimine, 1);
+					2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div billion) + ' milijardai ' + Num2Str(Num mod billion, gimine, 1);
+				end;
+			end
+			else
+			if (((Num div billion) < 20) and (Num div billion > 9)) then
+				Num2Str := Num2Str(Num div billion) + ' milijardø ' + Num2Str(Num mod billion, gimine, 1)
+			else
+			if (Num div billion >= 20) then begin
+				if (((Num div billion > 110) and (Num div billion < 120)) or
+				   ((Num div billion > 210) and (Num div billion < 220)) or
+				   ((Num div billion > 310) and (Num div billion < 320)) or
+				   ((Num div billion > 410) and (Num div billion < 420)) or
+				   ((Num div billion > 510) and (Num div billion < 520)) or
+				   ((Num div billion > 610) and (Num div billion < 620)) or
+				   ((Num div billion > 710) and (Num div billion < 720)) or
+				   ((Num div billion > 810) and (Num div billion < 820)) or
+				   ((Num div billion > 910) and (Num div billion < 920))) then
+				begin
+					Num2Str := Num2Str(Num div billion) + ' milijardø ' + Num2Str(Num mod billion, gimine, 1);
+				end
+				else begin
+					case ((Num div billion) mod 10) of
+						0 : Num2Str := Num2Str(Num div billion) + ' milijardø ' + Num2Str(Num mod billion, gimine, 1);
+						1 : Num2Str := Num2Str(Num div billion) + ' milijardas ' + Num2Str(Num mod billion, gimine, 1);
+						2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div billion) + ' milijardai ' + Num2Str(Num mod billion, gimine, 1);
+					end;
+				end;
+			end;
+		end
+	else
+	// ---------------------- M I L I J O N A I
+	if Num >= Million then
+		if (Num mod Million) = 0 then begin // jei dalinasi is milijono be liekanos (yra kazkiek milijonu lygiai)
+			if ((Num div Million) < 10) then begin
+				case (Num div Million) of
+					1 : Num2Str := Num2Str(Num div Million) + ' milijonas';
+					2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div Million) + ' milijonai';
+				end;
+			end
+			else
+			if (((Num div Million) < 20) and (Num div Million > 9)) then
+				Num2Str := Num2Str(Num div Million) + ' milijonø'
+			else
+			if (Num div Million >= 20) then begin
+				if (((Num div Million > 110) and (Num div Million < 120)) or
+				   ((Num div Million > 210) and (Num div Million < 220)) or
+				   ((Num div Million > 310) and (Num div Million < 320)) or
+				   ((Num div Million > 410) and (Num div Million < 420)) or
+				   ((Num div Million > 510) and (Num div Million < 520)) or
+				   ((Num div Million > 610) and (Num div Million < 620)) or
+				   ((Num div Million > 710) and (Num div Million < 720)) or
+				   ((Num div Million > 810) and (Num div Million < 820)) or
+				   ((Num div Million > 910) and (Num div Million < 920))) then
+				begin
+					Num2Str := Num2Str(Num div Million) + ' milijonø';
+				end
+				else begin
+					case ((Num div Million) mod 10) of
+						0 : Num2Str := Num2Str(Num div Million) + ' milijonø';
+						1 : Num2Str := Num2Str(Num div Million) + ' milijonas';
+						2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div Million) + ' milijonai';
+					end;
+				end;
+			end;
+		end
+		else begin // is milijono dalinasi su liekana
+			if ((Num div Million) < 10) then begin
+				case (Num div Million) of
+					1 : Num2Str := Num2Str(Num div Million) + ' milijonas ' + Num2Str(Num mod million, gimine, 1);
+					2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div Million) + ' milijonai ' + Num2Str(Num mod million, gimine, 1);
+				end;
+			end
+			else
+			if (((Num div Million) < 20) and (Num div Million > 9)) then
+				Num2Str := Num2Str(Num div Million) + ' milijonø ' + Num2Str(Num mod Million, gimine, 1)
+			else
+			if (Num div Million >= 20) then begin
+				if (((Num div Million > 110) and (Num div Million < 120)) or
+				   ((Num div Million > 210) and (Num div Million < 220)) or
+				   ((Num div Million > 310) and (Num div Million < 320)) or
+				   ((Num div Million > 410) and (Num div Million < 420)) or
+				   ((Num div Million > 510) and (Num div Million < 520)) or
+				   ((Num div Million > 610) and (Num div Million < 620)) or
+				   ((Num div Million > 710) and (Num div Million < 720)) or
+				   ((Num div Million > 810) and (Num div Million < 820)) or
+				   ((Num div Million > 910) and (Num div Million < 920))) then
+				begin
+					Num2Str := Num2Str(Num div Million) + ' milijonø ' + Num2Str(Num mod Million, gimine, 1);
+				end
+				else begin
+					case ((Num div Million) mod 10) of
+						0 : Num2Str := Num2Str(Num div Million) + ' milijonø ' + Num2Str(Num mod Million, gimine, 1);
+						1 : Num2Str := Num2Str(Num div Million) + ' milijonas ' + Num2Str(Num mod Million, gimine, 1);
+						2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div Million) + ' milijonai ' + Num2Str(Num mod Million, gimine, 1);
+					end;
+				end;
+			end;
+		end
+	else
+	// ---------------------- T U K S T A N C I A I
+	if Num >= Thousand then
+		if (Num mod Thousand) = 0 then begin // Jei dalinasi is tuksntancio be liekanos
+			if ((Num div Thousand) < 10) then begin
+				case (Num div Thousand) of
+					1 : Num2Str := Num2Str(Num div Thousand) + ' tûkstantis';
+					2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div Thousand) + ' tûkstanèiai';
+				end;
+			end
+			else
+			if (((Num div Thousand) < 20) and (Num div Thousand > 9)) then
+				Num2Str := Num2Str(Num div Thousand) + ' tûkstanèiø'
+			else
+			if (Num div Thousand >= 20) then begin
+				if (((Num div Thousand > 110) and (Num div Thousand < 120)) or
+				   ((Num div Thousand > 210) and (Num div Thousand < 220)) or
+				   ((Num div Thousand > 310) and (Num div Thousand < 320)) or
+				   ((Num div Thousand > 410) and (Num div Thousand < 420)) or
+				   ((Num div Thousand > 510) and (Num div Thousand < 520)) or
+				   ((Num div Thousand > 610) and (Num div Thousand < 620)) or
+				   ((Num div Thousand > 710) and (Num div Thousand < 720)) or
+				   ((Num div Thousand > 810) and (Num div Thousand < 820)) or
+				   ((Num div Thousand > 910) and (Num div Thousand < 920))) then
+				begin
+					Num2Str := Num2Str(Num div Thousand) + ' tûkstanèiø';
+				end
+				else begin
+					case ((Num div Thousand) mod 10) of
+						0 : Num2Str := Num2Str(Num div Thousand) + ' tûkstanèiø';
+						1 : Num2Str := Num2Str(Num div Thousand) + ' tûkstantis';
+						2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div Thousand) + ' tûkstanèiai';
+					end;
+				end
+			end
+		end
+		else begin // is tûkstanèio dalinasi su liekana
+			if ((Num div Thousand) < 10) then begin
+				case (Num div Thousand) of
+					1 : Num2Str := Num2Str(Num div Thousand) + ' tûkstantis ' + Num2Str(Num mod Thousand, gimine, 1);
+					2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div Thousand) + ' tûkstanèiai ' + Num2Str(Num mod Thousand, gimine, 1);
+				end;
+			end
+			else
+			if (((Num div Thousand) < 20) and (Num div Thousand > 9)) then
+				Num2Str := Num2Str(Num div Thousand) + ' tûkstanèiø ' + Num2Str(Num mod Thousand, gimine, 1)
+			else
+			if (Num div Thousand >= 20) then begin
+				if (((Num div Thousand > 110) and (Num div Thousand < 120)) or
+				   ((Num div Thousand > 210) and (Num div Thousand < 220)) or
+				   ((Num div Thousand > 310) and (Num div Thousand < 320)) or
+				   ((Num div Thousand > 410) and (Num div Thousand < 420)) or
+				   ((Num div Thousand > 510) and (Num div Thousand < 520)) or
+				   ((Num div Thousand > 610) and (Num div Thousand < 620)) or
+				   ((Num div Thousand > 710) and (Num div Thousand < 720)) or
+				   ((Num div Thousand > 810) and (Num div Thousand < 820)) or
+				   ((Num div Thousand > 910) and (Num div Thousand < 920))) then
+				begin
+					Num2Str := Num2Str(Num div Thousand) + ' tûkstanèiø ' + Num2Str(Num mod Thousand, gimine, 1);
+				end
+				else begin
+					case ((Num div Thousand) mod 10) of
+						0 : Num2Str := Num2Str(Num div Thousand) + ' tûkstanèiø ' + Num2Str(Num mod Thousand, gimine, 1);
+						1 : Num2Str := Num2Str(Num div Thousand) + ' tûkstantis ' + Num2Str(Num mod Thousand, gimine, 1);
+						2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div Thousand) + ' tûkstanèiai ' + Num2Str(Num mod Thousand, gimine, 1);
+					end;
+				end;
+			end;
+		end
+	else
+	// ---------------------- S I M T A I
+	if Num >= hundred then
+		if (Num mod hundred) = 0 then begin // Jei dalinasi is simto be liekanos
+			case (Num div hundred) of
+				1 : Num2Str := Num2Str(Num div hundred) + ' ðimtas';
+				2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div hundred) + ' ðimtai';
+			end;
+		end
+		else begin
+			case (Num div hundred) of
+				1 : Num2Str := Num2Str(Num div hundred) + ' ðimtas ' + Num2Str(Num mod hundred, gimine, 1);
+				2,3,4,5,6,7,8,9 : Num2Str := Num2Str(Num div hundred) + ' ðimtai ' + Num2Str(Num mod hundred, gimine, 1);
+			end;
+		end
+	// ---------------------- D E S I M T Y S
+	else begin
+		case (Num div 10) of
+			9: 	if Num = 90 then
+					Num2Str := 'devyniasdeðimt'
+				else
+					Num2Str := 'devyniasdeðimt ' + Num2Str(Num mod 10, gimine, 1);
+			8: 	if Num = 80 then
+					Num2Str := 'aðtuoniasdeðimt'
+				else
+					Num2Str := 'aðtuoniasdeðimt ' + Num2Str(Num mod 10, gimine, 1);
+			7: 	if Num = 70 then
+					Num2Str := 'septyniasdeðimt'
+				else
+					Num2Str := 'septyniasdeðimt ' + Num2Str(Num mod 10, gimine, 1);
+			6: 	if Num = 60 then
+					Num2Str := 'ðeðiasdeðimt'
+				else
+					Num2Str := 'ðeðiasdeðimt ' + Num2Str(Num mod 10, gimine, 1);
+			5: 	if Num = 50 then
+					Num2Str := 'penkiasdeðimt'
+				else
+					Num2Str := 'penkiasdeðimt ' + Num2Str(Num mod 10, gimine, 1);
+			4: 	if Num = 40 then
+					Num2Str := 'keturiasdeðimt'
+				else
+					Num2Str := 'keturiasdeðimt ' + Num2Str(Num mod 10, gimine, 1);
+			3: 	if Num = 30 then
+					Num2Str := 'trisdeðimt'
+				else
+					Num2Str := 'trisdeðimt ' + Num2Str(Num mod 10, gimine, 1);
+			2: 	if Num = 20 then
+					Num2Str := 'dvideðimt'
+				else
+					Num2Str := 'dvideðimt ' + Num2Str(Num mod 10, gimine, 1);
+			0,1: if gimine and (flag = 1) then begin // moteriska gimine ir jau pabaiga
+				case Num of
+						0: Num2Str := 'nulis';
+						1: Num2Str := 'viena';
+						2: Num2Str := 'dvi';
+						3: Num2Str := 'trys';
+						4: Num2Str := 'keturios';
+						5: Num2Str := 'penkios';
+						6: Num2Str := 'ðeðios';
+						7: Num2Str := 'septynios';
+						8: Num2Str := 'aðtuonios';
+						9: Num2Str := 'devynios';
+						10: Num2Str := 'deðimt';
+						11: Num2Str := 'vienuolika';
+						12: Num2Str := 'dvylika';
+						13: Num2Str := 'trylika';
+						14: Num2Str := 'keturiolika';
+						15: Num2Str := 'penkiolika';
+						16: Num2Str := 'ðeðiolika';
+						17: Num2Str := 'septyniolika';
+						18: Num2Str := 'aðtuoniolika';
+						19: Num2Str := 'devyniolika'
+				end
+			end
+				else begin // vyriska gimine (arba moteriska gimine bet nera skirtumo nes pradzia)
+				case Num of
+						0: Num2Str := 'nulis';
+						1: Num2Str := 'vienas';
+						2: Num2Str := 'du';
+						3: Num2Str := 'trys';
+						4: Num2Str := 'keturi';
+						5: Num2Str := 'penki';
+						6: Num2Str := 'ðeði';
+						7: Num2Str := 'septyni';
+						8: Num2Str := 'aðtuoni';
+						9: Num2Str := 'devyni';
+						10: Num2Str := 'deðimt';
+						11: Num2Str := 'vienuolika';
+						12: Num2Str := 'dvylika';
+						13: Num2Str := 'trylika';
+						14: Num2Str := 'keturiolika';
+						15: Num2Str := 'penkiolika';
+						16: Num2Str := 'ðeðiolika';
+						17: Num2Str := 'septyniolika';
+						18: Num2Str := 'aðtuoniolika';
+						19: Num2Str := 'devyniolika'
+				end;
+			end;
+		end;
+	end;
+end {Num2Str};
+//..............................................................................
+begin
+	Result := Num2Str(Trunc(Abs(Amount)), Female);
+end;
+
+
+
 function NumberToTextPortuguese(FNumero:currency):WideString;
     function ReplaceSubstring( StringAntiga, StringNova, s : string ) :
 string;
@@ -2471,6 +2866,8 @@ begin
    Result:=NumberToTextPortuguese(FNumero);
   7:
    Result:=NumberToTextTurkish(FNumero);
+  8:
+   Result:=NumberToTextLithuanian(FNumero,female);
 {$ENDIF}
  end;
 end;
@@ -2489,6 +2886,9 @@ begin
  alist.Add(SRpGerman);
  alist.Add(SRpItalian);
  alist.Add(SRpTurkish);
+ alist.Add(SRpLithuanian);
+ alist.Add(SRpDanish);
+ alist.Add(SRpDutch);
 end;
 
 procedure GetBidiDescriptionsA(alist:TStrings);
