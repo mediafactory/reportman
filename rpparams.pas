@@ -281,10 +281,10 @@ var
  aexpression:String;
  aoption:integer;
 begin
- if ParamType<>rpParamList then
+ if Not (ParamType in [rpParamList,rpParamMultiple]) then
   Result:=FValue
  else
- if ParamType<>rpParamMultiple then
+ if ParamType=rpParamMultiple then
   Result:=GetMultiValue
  else
  begin
@@ -602,7 +602,7 @@ begin
  case ParamType of
   rpParamUnknown:
    Result:='';
-  rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList:
+  rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst:
    Result:=String(Value);
   rpParamInteger,rpParamDouble,rpParamCurrency:
    Result:=FloatToStr(Value);
@@ -614,6 +614,16 @@ begin
    Result:=DateTimeToStr(Value);
   rpParamBool:
    Result:=BoolToStr(Value,True);
+{$IFNDEF FORWEBAX}
+  rpParamList:
+   Result:=GetListValue;
+{$ENDIF}
+{$IFDEF FORWEBAX}
+  rpParamList:
+   Result:=String(Value);
+{$ENDIF}
+  rpParamMultiple:
+   Result:=GetMultiValue;
  end;
 end;
 

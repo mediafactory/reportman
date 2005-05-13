@@ -679,6 +679,7 @@ var
  astring,inputstring:String;
  aparamstring:String;
  aparam:TRpParam;
+ multisize:integer;
 begin
  aliasname:=Request.QueryFields.Values['aliasname'];
  reportname:=Request.QueryFields.Values['reportname'];
@@ -785,7 +786,10 @@ begin
            aparamstring:=aparamstring+' alt="'+HtmlEncode(aparam.Hint)+'" ';
          if aparam.Isreadonly then
           aparamstring:=aparamstring+' readonly ';
-         aparamstring:=aparamstring+'>'+#10;
+         multisize:=10;
+         if aparam.Items.Count<10 then
+          multisize:=aparam.Items.Count;
+         aparamstring:=aparamstring+' size="'+IntToStr(multisize)+'" >'+#10;
          for k:=0 to aparam.Items.Count-1 do
          begin
           aparamstring:=aparamstring+'<option value="'+
@@ -942,9 +946,12 @@ begin
      begin
       // Assign the parameter as a string
       if param.ParamType=rpParamList then
-       param.Value:=param.Values[StrToInt(paramvalue)]
+      begin
+//       param.Value:=StrToInt(paramvalue);
+       param.Value:=param.Values.Strings[StrToInt(paramvalue)];
+      end
       else
-       pdfreport.Params.ParamByName(paramname).AsString:=paramvalue;
+       param.AsString:=paramvalue;
      end;
     end;
     if Uppercase(Request.QueryFields.Names[i])='METAFILE' then

@@ -1686,7 +1686,8 @@ begin
       end
       else
       begin
-       Result:=param.AsString;
+       if param.ParamType=rpparamlist then
+        Result:=param.ListValue;
       end;
      end;
     2:

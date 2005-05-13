@@ -518,6 +518,8 @@ begin
      rpParamList:
       begin
        index:=TComboBox(LControls.Objects[i]).ItemIndex;
+       if index<0 then
+        index:=0;
        if index<fparams.items[i].Values.Count then
         fparams.items[i].Value:=fparams.items[i].Values.Strings[index]
        else
