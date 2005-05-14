@@ -113,7 +113,7 @@ RootDir=C:\prog\Delphi7\Bin\
 IncludeVerInfo=1
 AutoIncBuild=1
 MajorVer=2
-MinorVer=3
+MinorVer=4
 Release=0
 Build=4
 Debug=0
@@ -126,21 +126,21 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Server application
-FileVersion=2.3.0.4
+FileVersion=2.4.0.4
 InternalName=reportserverappxp
 LegalCopyright=MPL License
 LegalTrademarks=
 OriginalFilename=reportserverappxp.exe
 ProductName=Report Manager
-ProductVersion=2.3.0.0
+ProductVersion=2.4.0.0
 Comments=
 [Excluded Packages]
 h:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
 h:\prog\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
 [HistoryLists\hlConditionals]
 Count=3
-Item0=FORWEBAX
-Item1=REPMANRELEASE
+Item0=REPMANRELEASE
+Item1=FORWEBAX
 Item2=NOLINUXPRINTBUG;FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1

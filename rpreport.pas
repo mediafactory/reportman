@@ -872,7 +872,7 @@ begin
   printingonepass:=false;
   FInternalPageWidth:=metafile.CustomX;
   FInternalPageHeight:=metafile.CustomY;
-  PageNum:=metafile.PageCount-1;
+  PageNum:=metafile.PageCount-2;
  end
  else
  begin

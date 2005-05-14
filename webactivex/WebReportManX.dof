@@ -109,11 +109,28 @@ DebugCWD=
 ActiveLang=
 ProjectLang=
 RootDir=C:\Archivos de programa\Borland\Delphi7\Bin\
+[Deployment]
+DeployDir=
+DeployURL=
+HTMLDir=
+CABCompress=0
+CodeSign=0
+IncludeVerInfo=1
+AutoIncRelease=0
+DeployPackages=1
+DeployFiles=0
+CompanyURL=
+Description=
+CredFile=
+PrivKey=
+CryptoType=0
+Timestamping=0
+TimestampServer=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=2
-MinorVer=3
+MinorVer=4
 Release=0
 Build=0
 Debug=0
@@ -126,13 +143,13 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir (toni@pala.com)
 FileDescription=Report Manager Active X Control
-FileVersion=2.3.0.0
+FileVersion=2.4.0.0
 InternalName=WeReportManX.ocx
 LegalCopyright=Copyright 2003, Toni Martir (toni@pala.com)
 LegalTrademarks=
 OriginalFilename=
 ProductName=Report Manager IE Plugin
-ProductVersion=2.3.0.0
+ProductVersion=2.4.0.0
 Comments=
 OleSelfRegister=1
 [Excluded Packages]
@@ -140,8 +157,8 @@ h:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
 h:\prog\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
 [HistoryLists\hlConditionals]
 Count=3
-Item0=REPMANRELEASE
-Item1=FORWEBAX
+Item0=FORWEBAX
+Item1=REPMANRELEASE
 Item2=NOLINUXPRINTBUG;FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1
