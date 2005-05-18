@@ -170,8 +170,8 @@ h:\prog\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
 [HistoryLists\hlConditionals]
 Count=3
 Item0=REPMANRELEASE
-Item1=FORWEBAX
-Item2=NOLINUXPRINTBUG;FORWEBAX
+Item1=NOLINUXPRINTBUG;FORWEBAX
+Item2=FORWEBAX
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

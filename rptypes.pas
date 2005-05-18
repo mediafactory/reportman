@@ -27,8 +27,8 @@ uses
 {$IFDEF MSWINDOWS}
  Windows,
 {$IFNDEF FPC}
- ShellApi,
  MApi,
+ ShellApi,
 {$ENDIF}
 {$ENDIF}
 {$IFDEF LINUX}
@@ -243,7 +243,9 @@ procedure GetDrawStyleDescriptionsA(alist:TStrings);
 procedure GetDrawStyleDescriptions(alist:TRpWideStrings);
 function StrToBackStyle(value:string):TrpBackStyle;
 function BackStyleToStr(value:TrpBackStyle):string;
+{$IFNDEF FPC}
 procedure SendMail(destination,subject,content,filename:String);
+{$ENDIF}
 function StrToAlign(value:string):TRpPosAlign;
 function AlignToStr(value:TRpPosAlign):string;
 function VarIsString(avar:Variant):Boolean;
@@ -339,9 +341,6 @@ function RpCharToOem(source:String):String;
 {$UNSAFECODE OFF}
 {$ENDIF}
 
-{$IFNDEF USEVARIANTS}
-procedure RaiseLastOSError;
-{$ENDIF}
 
 {$IFDEF MSWINDOWS}
 function IsWindowsNT:Boolean;
@@ -360,6 +359,11 @@ function CompareValue(const A,B,Epsilon: Double): TValueRelationship;
 
 
 {$IFNDEF USEVARIANTS}
+ {$DEFINE BOOLFUNC}
+{$ENDIF}
+
+{$IFDEF BOOLFUNC}
+procedure RaiseLastOSError;
 function BoolToStr(B: Boolean; UseBoolStrs: Boolean = False): string;
 function StrToBool(const S: string): Boolean;
 function StrToBoolDef(const S: string; const Default: Boolean): Boolean;
@@ -422,7 +426,7 @@ var
 {$ENDIF}
 {$ENDIF}
 
-{$IFNDEF USEVARIANTS}
+{$IFDEF BOOLFUNC}
 
 
 procedure RaiseLastOSError;
@@ -550,12 +554,13 @@ end;
 
 function VarIsNumber(avar:Variant):Boolean;
 begin
- Result:=(Vartype(avar) in [varSmallInt..VarCurrency,varWord,varByte,varShortInt..varInt64]);
+ Result:=(Vartype(avar) in [varSmallInt,varInteger,varSingle,varDouble,VarCurrency,
+  varShortInt,varByte,varWord,varLongWord,varInt64]);
 end;
 
 function VarIsInteger(avar:Variant):Boolean;
 begin
- Result:=(Vartype(avar) in [varSmallInt..varInteger,varShortInt..varInt64]);
+ Result:=(Vartype(avar) in [varSmallInt,varInteger,varShortInt,varByte,varWord,varLongWord,varInt64]);
 end;
 
 
@@ -1361,10 +1366,18 @@ var
   aval:TValueType;
 begin
  aval:=vaWString;
+{$IFDEF FPC}
+// Writer.Write(aval);
+// L := Length(Value);
+// Writer.Write(L, SizeOf(Integer));
+// Writer.Write(Pointer(Value)^, L * 2);
+{$ENDIF}
+{$IFNDEF FPC}
  Writer.Write(aval,SizeOf(aval));
  L := Length(Value);
  Writer.Write(L, SizeOf(Integer));
  Writer.Write(Pointer(Value)^, L * 2);
+{$ENDIF}
 end;
 {$ENDIF}
 
@@ -1476,6 +1489,7 @@ var
   aResult:String;
   avalue:TValueType;
 begin
+{$IFNDEF FPC}
   L := 0;
   avalue:=Reader.ReadValue;
   if  avalue<> vaWString then
@@ -1519,6 +1533,7 @@ begin
    SetLength(Result, L);
    Reader.Read(Pointer(Result)^, L * 2);
   end;
+{$ENDIF}
 end;
 {$ENDIF}
 
@@ -3718,7 +3733,7 @@ begin
  try
   if 0=GetTempPath(alen,apath) then
    RaiseLastOsError;
- if 0=GetTempFileName(apath,'REP',0,afilename) then
+ if 0=Windows.GetTempFileName(apath,'REP',0,afilename) then
   RaiseLastOsError;
  finally
   FreeMem(apath);
@@ -3992,6 +4007,7 @@ end;
 
 
 {$IFDEF MSWINDOWS}
+{$IFNDEF FPC}
 procedure SendMail(destination,subject,content,filename:String);
 procedure CheckMAPI(avalue:Cardinal);
 begin
@@ -4149,6 +4165,7 @@ begin
  end;
 //  ShellExecute(0,PChar('start'),PChar('mailto:'+destination+'?Subject='+subject),nil,nil,SW_SHOWNORMAL);
 end;
+{$ENDIF}
 {$ENDIF}
 
 

@@ -328,8 +328,6 @@ const PageSizeNames: array [0..148] of widestring =
 
 
 function TranslateStr (index:integer; defvalue:Widestring):WideString;
-
-
 var
  SRpNoFilename:WideString='No filename assigned';
  SRpErrorFork:WideString='Error forking';
@@ -2268,7 +2266,7 @@ end;
 
 initialization
 
- ConvertAllStrings;
+ConvertAllStrings;
 
 {$IFDEF LINUX}
  RestoreEnviromentLocale;

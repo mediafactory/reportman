@@ -23,6 +23,8 @@ unit rpmunits;
 
 interface
 
+{$I rpconf.inc}
+
 uses rptypes,
 sysutils;
 

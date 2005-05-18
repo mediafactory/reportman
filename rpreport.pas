@@ -52,6 +52,7 @@ type
  TRpReport=class(TRpBaseReport)
   private
    printingonepass:boolean;
+   FExternalsLoaded:Boolean;
   protected
     procedure DoUpdatepageSize(Driver:IRpPrintDriver;metafilepage:TRpMetafilePage);
     procedure Notification(AComponent:TComponent;Operation:TOperation);override;
@@ -61,6 +62,8 @@ type
     // changed and sets internally CurrentGroup
     function NextRecord(grouprestore:boolean):boolean;
   public
+   IsDesignTime:Boolean;
+   procedure LoadExternals;
    procedure BeginPrint(Driver:IRpPrintDriver);override;
    procedure EndPrint;override;
    function PrintNextPage:boolean;override;
@@ -73,6 +76,70 @@ procedure RegisterRpReportClasses;
 
 implementation
 
+procedure TRpReport.LoadExternals;
+var
+ i,j,k:integer;
+ subrep:TRpSubReport;
+ sec:TRpSection;
+ comp:TRpCommonComponent;
+ rpexpre:TRpExpression;
+ rpchart:TRpChart;
+begin
+ if FExternalsLoaded then
+  exit;
+
+ for i:=0 to Subreports.Count-1 do
+ begin
+  subrep:=Subreports.items[i].SubReport;
+  for j:=0 to Subrep.Sections.Count-1 do
+  begin
+   sec:=SubRep.Sections.Items[j].Section;
+   // If it's a external section try to load it
+   if sec.IsExternal then
+   begin
+    sec.LoadExternal;
+
+    k:=0;
+    while k<sec.ReportComponents.count do
+    begin
+     comp:=sec.ReportComponents.items[k].Component;
+     if comp=nil then
+      sec.ReportComponents.items[k].free
+     else
+     begin
+      if (comp is TRpExpression) then
+      begin
+       rpexpre:=TRpExpression(comp);
+       if Length(rpexpre.Identifier)>0 then
+       begin
+        try
+         FIdentifiers.AddObject(rpexpre.Identifier,comp);
+        except
+         rpexpre.Identifier:='';
+        end;
+       end;
+      end;
+      if (comp is TRpChart) then
+      begin
+       rpchart:=TRpChart(comp);
+       if Length(rpchart.Identifier)>0 then
+       begin
+        try
+         FIdentifiers.AddObject(rpchart.Identifier,comp);
+        except
+         rpchart.Identifier:='';
+        end;
+       end;
+      end;
+      inc(k);
+     end;
+    end;
+   end;
+  end;
+ end;
+
+ FExternalsLoaded:=true;
+end;
 
 procedure TRpReport.Loaded;
 var
@@ -92,7 +159,9 @@ begin
   begin
    sec:=SubRep.Sections.Items[j].Section;
    // If it's a external section try to load it
-   sec.LoadExternal;
+   if IsDesignTime then
+    if sec.IsExternal then
+     sec.LoadExternal;
 
    k:=0;
    while k<sec.ReportComponents.count do
@@ -859,6 +928,7 @@ var
  dataavail:Boolean;
  newpagesize:integer;
 begin
+ LoadExternals;
  FUpdatePageSize:=false;
  FillGlobalHeaders;
  FDriver:=Driver;
@@ -1516,7 +1586,6 @@ begin
   else
   begin
    printedsomething:=true;
-   dec(Pagenum);
   end;
   FCompose:=false;
  end;

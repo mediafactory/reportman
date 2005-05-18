@@ -415,6 +415,7 @@ begin
  DoDisable;
  // Creates a new report
  report:=TRpReport.Create(Self);
+ report.IsDesignTime:=true;
  report.OnReadError:=OnReadError;
  report.FailIfLoadExternalError:=false;
 // if Not NewReportWizard(report) then
@@ -1043,6 +1044,7 @@ begin
   exit;
  acompo:=TRpReport.Create(nil);
  try
+  report.IsDesignTime:=true;
   acompo.Name:='TheOwner';
   for i:=0 to fobjinsp.SelectedItems.Count-1 do
   begin
@@ -1088,6 +1090,7 @@ begin
  section:=TrpSection(secint.printitem);
  acompo:=TRpReport.Create(nil);
  try
+  report.IsDesignTime:=true;
   acompo.Name:='AOwner';
   compo:=Clipboard.GetComponent(acompo,acompo);
   alist:=TList.Create;
@@ -1842,6 +1845,7 @@ begin
  DoDisable;
  report:=TRpReport.Create(Self);
  try
+  report.IsDesignTime:=true;
   report.OnReadError:=OnReadError;
   report.FailIfLoadExternalError:=false;
   report.LoadFromStream(astream);

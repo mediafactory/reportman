@@ -19,6 +19,10 @@
 // Indy support , remote report execution for base components
 {$DEFINE USEINDY}
 
+{$IFDEF FPC}
+ {$UNDEF USEZLIB}
+ {$DEFINE BOOLFUNC}
+{$ENDIF}
 // Kerning support
 {$DEFINE USEKERNING}
 
@@ -178,7 +182,7 @@
 
 {$DEFINE ISDELPHI}
 {$IFDEF FPC}
- {$UNDEF ISDELPHI}
+// {$UNDEF ISDELPHI}
  {$MODE DELPHI}
 // {$UNDEF USEVARIANTS}
  {$UNDEF USEBCD}

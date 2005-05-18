@@ -77,8 +77,13 @@ const
 {$IFNDEF BUILDER4}
 {$IFNDEF DOTNETD}
 {$EXTERNALSYM SHGetFolderPath}
+{$IFNDEF FPC}
 function SHGetFolderPath(hwnd: HWND; csidl: Integer; hToken: THandle; dwFlags: DWORD; pszPath: PChar): HResult; stdcall;
 function SHGetFolderPath; external shfolder name 'SHGetFolderPathA';
+{$ENDIF}
+{$IFDEF FPC}
+function SHGetFolderPath(hwnd: HWND; csidl: Integer; hToken: THandle; dwFlags: DWORD; pszPath: PChar): HResult; stdcall; external shfolder name 'SHGetFolderPathA';
+{$ENDIF}
 {$ENDIF}
 {$ENDIF}
 {$IFDEF BUILDER4}
@@ -90,8 +95,13 @@ var HandleLib:THandle;
 
 {$IFNDEF DOTNETD}
 {$EXTERNALSYM PathAppend}
+{$IFNDEF FPC}
 function PathAppend(pszPath: PChar; pMore: PChar): BOOL; stdcall;
 function PathAppend; external shlwapi32 name 'PathAppendA';
+{$ENDIF}
+{$IFDEF FPC}
+function PathAppend(pszPath: PChar; pMore: PChar): BOOL; stdcall;external shlwapi32 name 'PathAppendA';
+{$ENDIF}
 {$ENDIF}
 {$ENDIF}
 
