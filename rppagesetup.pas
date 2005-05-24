@@ -95,6 +95,8 @@ type
     EForceFormName: TRpCLXMaskEdit;
     LForceFormName: TLabel;
     EPaperSource: TRpCLXMaskEdit;
+    ELinesPerInch: TRpCLXMaskEdit;
+    LLinesPerInch: TLabel;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -196,6 +198,7 @@ begin
  RCustomOrientation.Items.Strings[0]:=TranslateStr(106,RCustomOrientation.Items.Strings[0]);
  RCustomOrientation.Items.Strings[1]:=TranslateStr(107,RCustomOrientation.Items.Strings[1]);
  LCopies.Caption:=TranslateStr(108,LCopies.Caption);
+ LLinesPerInch.Caption:=TranslateStr(1377,LLinesPerInch.Caption);
  CheckCollate.Caption:=TranslateStr(109,CheckCollate.Caption);
  Caption:=TranslateStr(110,Caption);
  CheckTwoPass.Caption:=TranslateStr(111,CheckTwoPass.Caption);
@@ -268,7 +271,12 @@ procedure TFRpPageSetup.SaveOptions;
 var
  acopies:integer;
  FReportAction:TRpReportActions;
+ linch:Integer;
 begin
+ linch:=Round(ELinesPerInch.AsFloat*100);
+ if (Not (linch in [1..30])) then
+  Raise Exception.Create(SRpSLinesInchError);
+ report.LinesPerInch:=linch;
  acopies:=StrToInt(ECopies.Text);
  if acopies<=0 then
   acopies:=1;
@@ -328,6 +336,7 @@ end;
 procedure TFRpPageSetup.ReadOptions;
 begin
  // ReadOptions
+ ELinesPerInch.Text:=FloatToStr(report.LinesPerInch/100);
  ECopies.Text:=IntToStr(report.Copies);
  CheckCollate.Checked:=report.CollateCopies;
  CheckTwoPass.Checked:=report.TwoPass;

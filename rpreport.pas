@@ -949,6 +949,7 @@ begin
   metafile.Clear;
   metafile.PreviewAbout:=PreviewAbout;
   metafile.PreviewMargins:=PreviewMargins;
+  metafile.LinesPerInch:=LinesPerInch;
   ClearTotalPagesList;
   // Sets page orientation
   currentorientation:=PageOrientation;

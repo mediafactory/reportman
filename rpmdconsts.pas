@@ -1277,6 +1277,7 @@ var
   SRpOpenOnStart:WideString='Open on start';
   SRpSearchValue:WideString='Search value';
   SRpSearch:WideString='Search';
+  SRpSLinesInchError:WideString='Lines per inch should be between 1 and 30';
   //
   SRpLithuanian:WideString='Lithuanian';
   SRpDanish:WideString='Danish';
@@ -2224,6 +2225,7 @@ begin
  TranslateVar(1374,SRpSearchValue);
  TranslateVar(1375,SRpSearch);
  TranslateVar(1376,SRpSHorzAxisFRot);
+ TranslateVar(1378,SRpSLinesInchError);
 end;
 
 

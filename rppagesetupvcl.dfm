@@ -19,17 +19,24 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
     Top = 0
     Width = 458
     Height = 392
-    ActivePage = TabOptions
+    ActivePage = TabPage
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
       Caption = 'Page setup'
       object SColor: TShape
-        Left = 164
-        Top = 248
+        Left = 160
+        Top = 276
         Width = 33
         Height = 33
         OnMouseDown = SColorMouseDown
+      end
+      object LLinesperInch: TLabel
+        Left = 4
+        Top = 252
+        Width = 66
+        Height = 13
+        Caption = 'Lines per inch'
       end
       object GUserDefined: TGroupBox
         Left = 184
@@ -131,7 +138,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           Width = 253
           Height = 21
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 0
         end
       end
@@ -162,11 +169,11 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
       end
       object BBackground: TButton
         Left = 4
-        Top = 248
+        Top = 276
         Width = 149
         Height = 33
         Caption = 'Background color'
-        TabOrder = 6
+        TabOrder = 7
         OnClick = BBackgroundClick
       end
       object GPageMargins: TGroupBox
@@ -269,6 +276,15 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
           TabOrder = 3
           EditType = tecurrency
         end
+      end
+      object ELinesPerInch: TRpMaskEdit
+        Left = 232
+        Top = 248
+        Width = 45
+        Height = 21
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 6
+        EditType = tecurrency
       end
     end
     object TabPrint: TTabSheet
@@ -506,7 +522,7 @@ object FRpPageSetupVCL: TFRpPageSetupVCL
         Height = 21
         Style = csDropDownList
         Anchors = [akLeft, akTop, akRight]
-        ItemHeight = 13
+        ItemHeight = 0
         TabOrder = 0
       end
     end

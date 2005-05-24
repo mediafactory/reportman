@@ -180,6 +180,7 @@ begin
  WritePropertyI('PAPERSOURCE',report.PaperSource,Stream);
  WritePropertyI('DUPLEX',report.duplex,Stream);
  WritePropertyS('FORCEPAPERNAME',report.ForcePaperName,Stream);
+ WritePropertyI('LINESPERINCH',report.LinesPerInch,Stream);
 end;
 
 procedure WriteParamXML(aparam:TRpParam;Stream:TStream);
@@ -332,7 +333,9 @@ begin
   WritePropertyBool('CUTTEXT',compt.CutText,Stream);
   WritePropertyI('ALIGNMENT',compt.Alignment,Stream);
   WritePropertyI('VALIGNMENT',compt.VAlignment,Stream);
+  WritePropertyI('INTERLINE',compt.InterLine,Stream);
   WritePropertyBool('WORDWRAP',compt.WordWrap,Stream);
+  WritePropertyBool('WORDBREAK',compt.WordBreak,Stream);
   WritePropertyBool('SINGLELINE',compt.SingleLine,Stream);
   WritePropertyS('BIDIMODES',compt.BidiModes.Text,Stream);
   WritePropertyBool('MULTIPAGE',compt.Multipage,Stream);
@@ -1271,8 +1274,10 @@ begin
   report.Duplex:=StrToInt(propvalue)
  else
  if propname='FORCEPAPERNAME' then
-  report.ForcePaperName:=RpStringToString(propvalue);
-
+  report.ForcePaperName:=RpStringToString(propvalue)
+ else
+ if propname='LINESPERINCH' then
+  report.LinesPerInch:=StrToInt(propvalue);
  report.ReportAction:=actions;
 end;
 
@@ -1306,39 +1311,62 @@ begin
  begin
   compt:=TRpGenTextComponent(comp);
   if propname='WFONTNAME' then
-   compt.WFontName:=RPStringToWString(propvalue);
+   compt.WFontName:=RPStringToWString(propvalue)
+  else
   if propname='LFONTNAME' then
-   compt.LFontName:=RPStringToWString(propvalue);
+   compt.LFontName:=RPStringToWString(propvalue)
+  else
   if propname='BIDIMODE' then
-   compt.BidiMode:=TRpBidiMode(StrToInt(propvalue));
+   compt.BidiMode:=TRpBidiMode(StrToInt(propvalue))
+  else
   if propname='TYPE1FONT' then
-   compt.Type1Font:=TRpType1Font(StrToInt(propvalue));
+   compt.Type1Font:=TRpType1Font(StrToInt(propvalue))
+  else
   if propname='FONTSIZE' then
-   compt.FontSize:=StrToInt(propvalue);
+   compt.FontSize:=StrToInt(propvalue)
+  else
   if propname='FONTROTATION' then
-   compt.FontRotation:=StrToInt(propvalue);
+   compt.FontRotation:=StrToInt(propvalue)
+  else
   if propname='FONTSTYLE' then
-   compt.FontSTyle:=StrToInt(propvalue);
+   compt.FontSTyle:=StrToInt(propvalue)
+  else
   if propname='FONTCOLOR' then
-   compt.FontColor:=StrToInt(propvalue);
+   compt.FontColor:=StrToInt(propvalue)
+  else
   if propname='BACKCOLOR' then
-   compt.BackColor:=StrToInt(propvalue);
+   compt.BackColor:=StrToInt(propvalue)
+  else
   if propname='TRANSPARENT' then
-   compt.Transparent:=RpStrToBool(propvalue);
+   compt.Transparent:=RpStrToBool(propvalue)
+  else
   if propname='CUTTEXT' then
-   compt.CutText:=RpStrToBool(propvalue);
+   compt.CutText:=RpStrToBool(propvalue)
+  else
   if propname='ALIGNMENT' then
-   compt.AlignMent:=StrToInt(propvalue);
+   compt.AlignMent:=StrToInt(propvalue)
+  else
   if propname='VALIGNMENT' then
-   compt.VAlignMent:=StrToInt(propvalue);
+   compt.VAlignMent:=StrToInt(propvalue)
+  else
+  if propname='INTERLINE' then
+   compt.InterLine:=StrToInt(propvalue)
+  else
   if propname='WORDWRAP' then
-   compt.WordWrap:=RpStrToBool(propvalue);
+   compt.WordWrap:=RpStrToBool(propvalue)
+  else
+  if propname='WORDBREAK' then
+   compt.WordBreak:=RpStrToBool(propvalue)
+  else
   if propname='SINGLELINE' then
-   compt.SingleLine:=RpStrToBool(propvalue);
+   compt.SingleLine:=RpStrToBool(propvalue)
+  else
   if propname='BIDIMODES' then
-   compt.BidiModes.Text:=RpStringToString(propvalue);
+   compt.BidiModes.Text:=RpStringToString(propvalue)
+  else
   if propname='MULTIPAGE' then
-   compt.MultiPage:=RpStrToBool(propvalue);
+   compt.MultiPage:=RpStrToBool(propvalue)
+  else
   if propname='PRINTSTEP' then
    compt.PrintStep:=TRpSelectFontStep(StrToInt(propvalue));
  end;

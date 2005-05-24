@@ -134,6 +134,8 @@ type
    FTransparent:Boolean;
    FCutText:Boolean;
    FWordWrap:Boolean;
+   FWordBreak:Boolean;
+   FInterLine:Integer;
    FAlignMent:integer;
    FVAlignMent:integer;
    FSingleLine:boolean;
@@ -172,6 +174,8 @@ type
    property Alignment:integer read FAlignment write FAlignment default 0;
    property VAlignment:integer read FVAlignment write FVAlignment default 0;
    property WordWrap:Boolean read FWordWrap write FWordWrap default false;
+   property WordBreak:Boolean read FWordBreak write FWordBreak default false;
+   property InterLine:Integer read FInterLine write FInterLine default 0;
    property SingleLine:boolean read FSingleLine write FSingleLine default false;
    property BidiModes:TStrings read FBidiModes write SetBidiModes;
    property MultiPage:Boolean read FMultiPage write FMultiPage default false;

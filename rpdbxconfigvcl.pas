@@ -222,6 +222,8 @@ begin
     end
     else
      TEdit(Edit1).OnChange:=Edit1Change;
+    if AnsiUpperCase(params.Names[i])='PASSWORD' then
+     TEdit(Edit1).PasswordChar:='*';
    end
    else
    begin

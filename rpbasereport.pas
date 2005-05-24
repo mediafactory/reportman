@@ -169,6 +169,7 @@ type
    FPaperSource:Integer;
    FDuplex:Integer;
    FForcePaperName:String;
+   FLinesPerInch:Integer;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -392,6 +393,8 @@ type
    property PaperSource:Integer read FPaperSource write FPaperSource default 0;
    property Duplex:Integer read FDuplex write FDuplex default 0;
    property ForcePaperName:String read FForcePaperName write FForcePaperName;
+   // Interline
+   property LinesPerInch:Integer read FLinesPerInch write FLinesPerInch default 600;
  end;
 
 
@@ -457,6 +460,7 @@ constructor TRpBaseReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FLinesPerInch:=600;
  FPaperSource:=0;
  FDuplex:=0;
  FPreviewMargins:=false;

@@ -320,7 +320,8 @@ type
    CustomY:integer;
    Orientation:TRpOrientation;
    PaperSource:Integer;
-   Duplex:integer;
+   Duplex:Word;
+   LinesPerInch:Word;
    BackColor:integer;
    PrinterSelect:TRpPrinterSelect;
    PreviewStyle:TRpPreviewStyle;
@@ -743,6 +744,7 @@ begin
  Stream.Write(ainteger,sizeof(integer));
  Stream.Write(BackColor,sizeof(BackColor));
  Stream.Write(PaperSource,sizeof(PaperSource));
+ Stream.Write(LinesPerInch,sizeof(LinesPerInch));
  Stream.Write(Duplex,sizeof(Duplex));
  ainteger:=Integer(PrinterSelect);
  Stream.Write(ainteger,sizeof(integer));
@@ -887,6 +889,10 @@ begin
   Raise Exception.Create(SRpBadFileHeader);
  if (sizeof(PaperSource)<>Stream.Read(PaperSource,sizeof(PaperSource))) then
   Raise Exception.Create(SRpBadFileHeader);
+ if (sizeof(LinesPerInch)<>Stream.Read(LinesPerInch,sizeof(LinesPerInch))) then
+  Raise Exception.Create(SRpBadFileHeader);
+ if (LinesPerInch<=0) then
+  LinesPerInch:=6;
  if (sizeof(Duplex)<>Stream.Read(Duplex,sizeof(Duplex))) then
   Raise Exception.Create(SRpBadFileHeader);
  if (sizeof(integer)<>Stream.Read(ainteger,sizeof(integer))) then

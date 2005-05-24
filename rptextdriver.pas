@@ -44,7 +44,7 @@ uses Classes,Sysutils,
  rpmunits,rpmdconsts,rpmdcharttypes;
 
 const
- DEFAULT_LINESPERINCH=6;
+ DEFAULT_LINESPERINCH=600;
 type
  TRpPrintLine=record
   FontStep:TRpFontStep;
@@ -66,7 +66,7 @@ type
    FOrientation:TRpOrientation;
    FPageWidth,FPageHeight:integer;
    FFullPlain:Boolean;
-   FLinesPerInch:Currency;
+   FLinesPerInch:Integer;
    FLines:array of TRpPrintLine;
    FLineInfo:array of TRpLineInfo;
    FLineInfoMaxItems:integer;
@@ -128,7 +128,7 @@ type
    procedure SelectPrinter(printerindex:TRpPrinterSelect);
    function SupportsCopies(maxcopies:integer):boolean;
    function SupportsCollation:boolean;
-   property LinesPerInch:Currency read FLinesPerInch write FLinesPerInch;
+   property LinesPerInch:Integer read FLinesPerInch write FLinesPerInch;
    property PlainText:Boolean read FPlainText write FPlainText default false;
    property FullPlain:Boolean read FFullPlain write FFullPlain default false;
    property OemConvert:Boolean read FOemConvert write FOemConvert default false;
@@ -273,7 +273,9 @@ procedure TRpTextDriver.NewDocument(report:TrpMetafileReport;hardwarecopies:inte
    hardwarecollate:boolean);
 var
  sizeqt:TPageSizeQt;
+ astring:String;
 begin
+ LinesPerInch:=report.LinesPerInch;
  DrawerBefore:=report.OpenDrawerBefore;
  DrawerAfter:=report.OpenDrawerAfter;
  MemStream.free;
@@ -283,6 +285,42 @@ begin
  selectedprinter:=report.PrinterSelect;
  UpdatePrinterConfig;
  WriteStringToStream(escapecodes[rpescapeinitprinter],MemStream);
+ // Set line spacing
+ if FLinesPerInch=600 then
+  WriteStringToStream(escapecodes[rplinespace6],MemStream)
+ else
+ if FLinesPerInch=800 then
+  WriteStringToStream(escapecodes[rplinespace8],MemStream)
+ else
+ begin
+  if ((Length(escapecodes[rplinespace7_72])>0) AND (FLinesPerInch=972)) then
+  begin
+   WriteStringToStream(escapecodes[rplinespace7_72],MemStream)
+  end
+  else
+  begin
+   if (Length(escapecodes[rplinespacen_216])>0) then
+   begin
+    astring:=escapecodes[rplinespacen_216];
+    astring:=astring+Chr(Round(1/(FLinesPerInch/100)*216));
+    WriteStringToStream(astring,MemStream);
+   end
+   else
+   if (Length(escapecodes[rplinespacen_180])>0) then
+   begin
+    astring:=escapecodes[rplinespacen_180];
+    astring:=astring+Chr(Round(1/(FLinesPerInch/100)*180));
+    WriteStringToStream(astring,MemStream);
+   end
+   else
+   if (Length(escapecodes[rplinespacen_60])>0) then
+   begin
+    astring:=escapecodes[rplinespacen_60];
+    astring:=astring+Chr(Round(1/(FLinesPerInch/100)*60));
+    WriteStringToStream(astring,MemStream);
+   end;
+  end
+ end;
  if DrawerBefore then
   WriteStringToStream(escapecodes[rpescapepulse],MemStream);
  // Set page size
@@ -343,6 +381,10 @@ begin
  end;
  // Reinitialize the page
  RecalcSize;
+ if metafilepage.UpdatedPageSize then
+ begin
+  WritePageSize;
+ end;
 end;
 
 
@@ -492,7 +534,7 @@ begin
  end;
  if LinesPerInch<0 then
   Raise Exception.Create(SRpLinesPerInchIncorrect);
- numberoflines:=Round(twipstoinchess(FPageHeight)*FLinesPerInch);
+ numberoflines:=Round(twipstoinchess(FPageHeight)*(FLinesPerInch/100));
  SetLength(FLines,numberoflines);
  for i:=0 to high(FLines) do
  begin
@@ -621,6 +663,8 @@ var
 begin
  FPrinterDriverName:=UpperCase(FPrinterDriverName);
  s:='';
+ // Set line space
+
  if ((FPrinterDriverName='EPSON') or (FPrinterDriverName='EPSON-ESCPQ')
   or (FPrinterDriverName='EPSON-ESCP') or (FPrinterDriverName='EPSON-MASTER')
   or (FPrinterDriverName='IBMPROPRINTER')) then
@@ -634,6 +678,7 @@ begin
  end;
  WriteStringToStream(s,MemStream);
 end;
+
 
 procedure TRpTextDriver.FillEspcapes(FPrinterDriverName:String);
 var
@@ -653,8 +698,12 @@ begin
  if FPrinterDriverName='EPSON' then
  begin
   // Init Printer-Line spacing to 1/6
-  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2';
+  escapecodes[rpescapeinitprinter]:=#27+#64;
   escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rplinespace6]:=#27+'2';
+  escapecodes[rplinespace8]:=#27+'0';
+  escapecodes[rplinespace7_72]:=#27+'1';
+  escapecodes[rplinespacen_216]:=#27+'3';
   escapecodes[rpescapecr]:=#13;
   escapecodes[rpescapeformfeed]:=#12;
 //  escapecodes[rpescapebold]:=#27+'E';
@@ -683,8 +732,10 @@ begin
  if FPrinterDriverName='EPSON-MASTER' then
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode
-  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2'+#27+'x'+#0;
+  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'x'+#0;
   escapecodes[rpescapelinefeed]:=#10;
+  escapecodes[rplinespace6]:=#27+'2';
+  escapecodes[rplinespace8]:=#27+'0';
   escapecodes[rpescapecr]:=#13;
   escapecodes[rpescapeformfeed]:=#12;
   masterselect:=true;
@@ -699,7 +750,11 @@ begin
  if FPrinterDriverName='EPSON-ESCP' then
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode - Bidirectional print
-  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2'+#27+'x'+#0+#27+'U'+#0;
+  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'x'+#0+#27+'U'+#0;
+  escapecodes[rplinespace6]:=#27+'2';
+  escapecodes[rplinespace7_72]:=#27+'1';
+  escapecodes[rplinespace8]:=#27+'0';
+  escapecodes[rplinespacen_216]:=#27+'3';
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
   escapecodes[rpescapeformfeed]:=#12;
@@ -729,7 +784,10 @@ begin
  if FPrinterDriverName='EPSON-ESCPQ' then
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode - Bidirectional print
-  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2'+#27+'x'+#1+#27+'U'+#0;
+  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'x'+#1+#27+'U'+#0;
+  escapecodes[rplinespace6]:=#27+'2';
+  escapecodes[rplinespace8]:=#27+'0';
+  escapecodes[rplinespacen_180]:=#27+'3';
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
   escapecodes[rpescapeformfeed]:=#12;
@@ -758,7 +816,11 @@ begin
  if FPrinterDriverName='IBMPROPRINTER' then
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode
-  escapecodes[rpescapeinitprinter]:=#20+#20+#27+#64+#27+'2';
+  escapecodes[rpescapeinitprinter]:=#20+#20+#27+#64;
+  escapecodes[rplinespace6]:=#27+'2';
+  escapecodes[rplinespace8]:=#27+'0';
+  escapecodes[rplinespace7_72]:=#27+'1';
+  escapecodes[rplinespacen_216]:=#27+'3';
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
   escapecodes[rpescapeformfeed]:=#12;
@@ -782,7 +844,9 @@ begin
  if FPrinterDriverName='EPSONTMU210' then
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode
-  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2';
+  escapecodes[rpescapeinitprinter]:=#27+#64;
+  escapecodes[rplinespace6]:=#27+'2';
+  escapecodes[rplinespacen_60]:=#27+'3';
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
   //escapecodes[rpescapeformfeed]:=#12;
@@ -802,7 +866,9 @@ begin
  if FPrinterDriverName='EPSONTMU210CUT' then
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode
-  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2';
+  escapecodes[rpescapeinitprinter]:=#27+#64;
+  escapecodes[rplinespace6]:=#27+'2';
+  escapecodes[rplinespacen_60]:=#27+'3';
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
   //escapecodes[rpescapeformfeed]:=#12;
@@ -821,7 +887,9 @@ begin
  if FPrinterDriverName='EPSONTM88II' then
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode
-  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2';
+  escapecodes[rpescapeinitprinter]:=#27+#64;
+  escapecodes[rplinespace6]:=#27+'2';
+  escapecodes[rplinespacen_60]:=#27+'3';
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
   //escapecodes[rpescapeformfeed]:=#12;
@@ -837,7 +905,9 @@ begin
  if FPrinterDriverName='EPSONTM88IICUT' then
  begin
   // Init Printer-Line spacing to 1/6 - Draft mode
-  escapecodes[rpescapeinitprinter]:=#27+#64+#27+'2';
+  escapecodes[rpescapeinitprinter]:=#27+#64;
+  escapecodes[rplinespace6]:=#27+'2';
+  escapecodes[rplinespacen_60]:=#27+'3';
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
   //escapecodes[rpescapeformfeed]:=#12;
@@ -853,8 +923,11 @@ begin
  if FPrinterDriverName='HP-PCL' then
  begin
   // Init printer + 6 lines per inch
-  escapecodes[rpescapeinitprinter]:=#27+#64+
-   #27+#38+#108+#54+#68;
+  escapecodes[rpescapeinitprinter]:=#27+#64;
+
+  escapecodes[rplinespace6]:=#27+#38+#108+#54+#68;
+  escapecodes[rplinespace8]:=#27+#38+#108+#56+#68;
+
   escapecodes[rpescapelinefeed]:=#10;
   escapecodes[rpescapecr]:=#13;
   escapecodes[rpescapeformfeed]:=#27+#38+#108+#48+#72; // Form feed and eject page
@@ -1135,6 +1208,7 @@ var
  nextline:boolean;
  alastsize:double;
  lockspace:boolean;
+ createsnewline:Boolean;
  //Added by Luciano Enzweiler - 08 Feb, 2004 - Start
  // When you have a field with wordwrap on and the text on it had a #10, the driver was
  // sending this extra linefeed without considering it. So a page with 72 lines, for example
@@ -1156,6 +1230,7 @@ begin
 
  asize:=0;
 
+ createsnewline:=false;
  FLineInfoCount:=0;
  position:=1;
  linebreakpos:=0;
@@ -1212,9 +1287,12 @@ begin
  // Wordwrap issue
 {  if astring[i]=#10 then  //From this
     nextline:=true;  }
-   if astring[i]=#10 then begin  //To this
+   if astring[i]=#10 then
+   begin
+    //To this
     nextline:=true;
     DescPos:=True;
+    createsnewline:=true;
    end;
  //Added by Luciano Enzweiler - 08 Feb, 2004 - End
   if asize>maxwidth then
@@ -1223,21 +1301,31 @@ begin
   begin
    nextline:=false;
    info.Position:=position;
+   info.lastline:=createsnewline;
    info.Size:=i-position+1;
  //Added by Luciano Enzweiler - 08 Feb, 2004 - Start
  // Wordwrap issue
-   if DescPos then begin
+   if DescPos then
+   begin
     DescPos:=False;
     Dec(info.Size);
    end;
  //Added by Luciano Enzweiler - 08 Feb, 2004 - End
    info.Width:=Round((asize));
-   info.height:=Round((TWIPS_PER_INCHESS/FLinesPerInch));
+   info.height:=Round((TWIPS_PER_INCHESS/(FLinesPerInch/100)));
    info.TopPos:=arec.Bottom;
    arec.Bottom:=arec.Bottom+info.height;
    asize:=0;
    position:=i+1;
    NewLineInfo(info);
+   createsnewline:=false;
+   // Skip only one blank char
+   if i<Length(astring) then
+    if astring[i+1]=' ' then
+    begin
+     inc(i);
+     position:=i+1;
+    end;
   end;
   inc(i);
  end;
@@ -1247,7 +1335,7 @@ begin
   info.Position:=position;
   info.Size:=Length(astring)-position+1;
   info.Width:=Round((asize+1));
-  info.height:=Round((TWIPS_PER_INCHESS/FLinesPerInch));
+  info.height:=Round((TWIPS_PER_INCHESS/(FLinesPerInch/100)));
   info.TopPos:=arec.Bottom;
   arec.Bottom:=arec.Bottom+info.height;
   NewLineInfo(info);
@@ -1344,7 +1432,7 @@ begin
    info.Position:=position;
    info.Size:=i-position+1;
    info.Width:=Round((asize));
-   info.height:=Round((TWIPS_PER_INCHESS/FLinesPerInch));
+   info.height:=Round((TWIPS_PER_INCHESS/(FLinesPerInch/100)));
    info.TopPos:=arec.Bottom;
    arec.Bottom:=arec.Bottom+info.height;
    asize:=0;
@@ -1359,7 +1447,7 @@ begin
   info.Position:=position;
   info.Size:=Length(astring)-position+1;
   info.Width:=Round((asize+1));
-  info.height:=Round((TWIPS_PER_INCHESS/FLinesPerInch));
+  info.height:=Round((TWIPS_PER_INCHESS/(FLinesPerInch/100)));
   info.TopPos:=arec.Bottom;
   arec.Bottom:=arec.Bottom+info.height;
   NewLineInfo(info);
@@ -1383,10 +1471,14 @@ procedure TRpTextDriver.TextRect(ARect: TRect; Text: string;
                        RightToLeft:Boolean;fontstep:TRpFontStep;fontstyle:integer;red:Boolean);
 var
  recsize:TRect;
- i:integer;
+ i,index:integer;
  posx,posY:integer;
  singleline:boolean;
  astring:String;
+ lwords,lwidths:TStringList;
+ aword:String;
+ alinesize,alinedif,currpos:integer;
+ arec:TRect;
 begin
  singleline:=(Alignment AND AlignmentFlags_SingleLine)>0;
  if singleline then
@@ -1419,7 +1511,75 @@ begin
    PosX:=ARect.Left+(((Arect.Right-Arect.Left)-FLineInfo[i].Width) div 2);
   end;
   astring:=Copy(Text,FLineInfo[i].Position,FLineInfo[i].Size);
-  DoTextOut(PosX,PosY+FLineInfo[i].TopPos,astring,FLineInfo[i].Width,fontstep,RightToLeft,fontstyle,red);
+  if  (((Alignment AND AlignmentFlags_AlignHJustify)>0) AND (NOT FLineInfo[i].LastLine)) then
+  begin
+   // Calculate the sizes of the words, then
+   // share space between words
+   lwords:=TStringList.Create;
+   try
+    aword:='';
+    index:=1;
+    while index<=Length(astring) do
+    begin
+     if astring[index]<>' ' then
+     begin
+      aword:=aword+astring[index];
+     end
+     else
+     begin
+      if Length(aword)>0 then
+       lwords.Add(aword);
+      aword:='';
+     end;
+     inc(index);
+    end;
+    if Length(aword)>0 then
+      lwords.Add(aword);
+    // Calculate all words size
+    alinesize:=0;
+    lwidths:=TStringList.Create;
+    try
+     for index:=0 to lwords.Count-1 do
+     begin
+      arec:=ARect;
+      arec.Left:=0;
+      arec.Right:=Round(Length(lwords.Strings[index])*steptotwips(fontstep));
+      if RightToLeft then
+       lwidths.Add(IntToStr(-(arec.Right-arec.Left)))
+      else
+       lwidths.Add(IntToStr(arec.Right-arec.Left));
+      alinesize:=alinesize+arec.Right-arec.Left;
+     end;
+     alinedif:=ARect.Right-ARect.Left-alinesize;
+     if alinedif>0 then
+     begin
+      if lwords.count>1 then
+       alinedif:=alinedif div (lwords.count-1);
+      if RightToLeft then
+      begin
+       currpos:=ARect.Right;
+       alinedif:=-alinedif;
+      end
+      else
+       currpos:=PosX;
+      for index:=0 to lwords.Count-1 do
+      begin
+       DoTextOut(currpos,PosY+FLineInfo[i].TopPos,lwords.strings[index],
+        FLineInfo[i].Width,fontstep,RightToLeft,fontstyle,red);
+       currpos:=currpos+StrToInt(lwidths.Strings[index])+alinedif;
+      end;
+     end
+     else
+      DoTextOut(PosX,PosY+FLineInfo[i].TopPos,astring,FLineInfo[i].Width,fontstep,RightToLeft,fontstyle,red);
+    finally
+     lwidths.Free;
+    end;
+   finally
+    lwords.free;
+   end;
+  end
+  else
+   DoTextOut(PosX,PosY+FLineInfo[i].TopPos,astring,FLineInfo[i].Width,fontstep,RightToLeft,fontstyle,red);
  end;
 end;
 

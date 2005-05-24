@@ -197,6 +197,7 @@ type
   rpescapeendprint,rpescaperedfont,rpescapeblackfont,
   rpescapeNormal, rpescapeBold,rpescapeUnderline,rpescapeItalic,
   rpescapeStrikeOut,
+  rplinespace6,rplinespace8,rplinespace7_72,rplinespacen_216,rplinespacen_180,rplinespacen_60,
   rpescape20cpi,rpescape17cpi,rpescape15cpi,rpescape12cpi,rpescape10cpi,
   rpescape6cpi,rpescape5cpi);
 

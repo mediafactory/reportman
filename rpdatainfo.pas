@@ -1770,6 +1770,7 @@ begin
       if Assigned(FexternalDataSet) then
       begin
          TADOQuery(FSQLInternalQuery).Recordset := _Recordset(FexternalDataSet);
+         _Recordset(FexternalDataSet).MoveFirst;
       end
       else
       begin

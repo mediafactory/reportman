@@ -20,14 +20,14 @@ object FRpPageSetup: TFRpPageSetup
     Top = 0
     Width = 486
     Height = 402
-    ActivePage = TabPrint
+    ActivePage = TabPage
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
       Caption = 'Page setup'
       object SColor: TShape
         Left = 168
-        Top = 240
+        Top = 272
         Width = 33
         Height = 33
         OnMouseUp = SColorMouseDown
@@ -90,11 +90,11 @@ object FRpPageSetup: TFRpPageSetup
       end
       object BBackground: TButton
         Left = 4
-        Top = 240
+        Top = 272
         Width = 153
         Height = 33
         Caption = 'Background color'
-        TabOrder = 6
+        TabOrder = 8
         OnClick = BBackgroundClick
       end
       object GPageMargins: TGroupBox
@@ -268,6 +268,21 @@ object FRpPageSetup: TFRpPageSetup
           Height = 13
           Caption = 'Force form name'
         end
+      end
+      object ELinesPerInch: TRpCLXMaskEdit
+        Left = 188
+        Top = 240
+        Width = 45
+        Height = 21
+        TabOrder = 7
+        EditType = tecurrency
+      end
+      object LLinesPerInch: TLabel
+        Left = 8
+        Top = 244
+        Width = 19
+        Height = 13
+        Caption = 'Top'
       end
     end
     object TabPrint: TTabSheet

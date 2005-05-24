@@ -1822,6 +1822,13 @@ begin
    position:=i+1;
    NewLineInfo(info);
    createsnewline:=false;
+   // Skip only one blank char
+   if i<Length(astring) then
+    if astring[i+1]=WideChar(' ') then
+    begin
+     inc(i);
+     position:=i+1;
+    end;
   end;
   inc(i);
  end;

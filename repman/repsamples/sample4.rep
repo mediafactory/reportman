@@ -2,6 +2,7 @@ object TRpReport
   PageHeight = 8120
   PageWidth = 5742
   PageBackColor = 2147483647
+  PrinterSelect = pRpCharacterprinter
   SubReports = <
     item
       SubReport = TRpSubReport0
@@ -32,16 +33,22 @@ object TRpReport
       Name = 'TITLE1'
       Value = 'Fishes, species'
       Description = 'Title 1'
+      Hint = ''
       Search = ''
     end
     item
       Name = 'TITLE2'
       Value = 'Descriptions and images'
       Description = 'Title 2'
+      Hint = ''
       Search = ''
     end>
   StreamFormat = rpStreamText
   ReportAction = []
+  Type1Font = poHelvetica
+  LinesPerInch = 800
+  WFontName = 'Arial'
+  LFontName = 'Helvetica'
   object TRpSubReport0: TRpSubReport
     Sections = <
       item
@@ -91,6 +98,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ' '
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -100,6 +108,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpSection1: TRpSection
     Width = 10900
@@ -123,6 +133,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -132,6 +143,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpLabel0: TRpLabel
     Width = 1440
@@ -154,13 +167,19 @@ object TRpReport
     Type1Font = poHelvetica
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
     WFontName = 'Arial'
     LFontName = 'Helvetica'
     Expression = 'Page'
+    DisplayFormat = ''
+    ExportDisplayFormat = ''
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpSection3: TRpSection
     Width = 10900
@@ -188,6 +207,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -197,6 +217,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpSection4: TRpSection
     Width = 10900
@@ -215,6 +237,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = 'false'
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -224,6 +247,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpLabel2: TRpLabel
     Width = 1843
@@ -250,13 +275,19 @@ object TRpReport
     FontStyle = 3
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
     WFontName = 'Arial'
     LFontName = 'adobe-courier'
     Expression = 'FISH.Category'
+    DisplayFormat = ''
+    ExportDisplayFormat = ''
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpExpression4: TRpExpression
     Width = 4950
@@ -270,13 +301,19 @@ object TRpReport
     MultiPage = True
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
     WFontName = 'Arial'
     LFontName = 'Helvetica'
     Expression = 'FISH.Notes'
+    DisplayFormat = ''
+    ExportDisplayFormat = ''
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpShape0: TRpShape
     Width = 6437
@@ -303,6 +340,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -312,6 +350,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpSection5: TRpSection
     Width = 10900
@@ -333,6 +373,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -342,6 +383,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpChart0: TRpChart
     Width = 10815
@@ -352,13 +395,17 @@ object TRpReport
     FontSize = 6
     Series = <
       item
-        Color = 0
+        Color = -1
       end>
     ChartType = rpchartpie
     Driver = rpchartdriverdefault
     View3dWalls = False
     Resolution = 200
     ShowLegend = True
+    HorzFontSize = 10
+    VertFontSize = 10
+    HorzFontRotation = 0
+    VertFontRotation = 0
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -370,6 +417,8 @@ object TRpReport
     CaptionExpression = 'Fish.Common_Name'
     SerieCaption = ''
     ClearExpression = ''
+    ColorExpression = ''
+    SerieColorExpression = ''
   end
   object TRpLabel4: TRpLabel
     Width = 4605
@@ -398,13 +447,19 @@ object TRpReport
     GroupName = 'F'
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
     WFontName = 'Arial'
     LFontName = 'Helvetica'
     Expression = '1'
+    DisplayFormat = ''
+    ExportDisplayFormat = ''
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpSection6: TRpSection
     Width = 10772
@@ -425,6 +480,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -434,6 +490,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpSection7: TRpSection
     Width = 10772
@@ -460,6 +518,7 @@ object TRpReport
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
+    StreamFormat = rpStreamText
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
@@ -469,6 +528,8 @@ object TRpReport
     SkipExpreV = ''
     SkipExpreH = ''
     SkipToPageExpre = ''
+    BackExpression = ''
+    Stream = {0000000000000000}
   end
   object TRpExpression0: TRpExpression
     Width = 3915
@@ -479,13 +540,19 @@ object TRpReport
     FontStyle = 1
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
     WFontName = 'Arial'
     LFontName = 'Helvetica'
     Expression = 'FISH.Common_Name'
+    DisplayFormat = ''
+    ExportDisplayFormat = ''
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpLabel1: TRpLabel
     Width = 1500
@@ -524,13 +591,19 @@ object TRpReport
     FontStyle = 1
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
     WFontName = 'Arial'
     LFontName = 'Helvetica'
     Expression = '[FISH.Length (cm)]'
+    DisplayFormat = ''
+    ExportDisplayFormat = ''
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpLabel5: TRpLabel
     Width = 10695
@@ -578,13 +651,19 @@ object TRpReport
     FontSize = 14
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
     WFontName = 'Arial'
     LFontName = 'Helvetica'
     Expression = 'Title1'
+    DisplayFormat = ''
+    ExportDisplayFormat = ''
     AgIniValue = '0'
+    ExportExpression = ''
   end
   object TRpExpression7: TRpExpression
     Width = 3210
@@ -595,12 +674,18 @@ object TRpReport
     FontSize = 12
     AutoExpand = False
     AutoContract = False
+    ExportPosition = 0
+    ExportSize = 1
+    ExportDoNewLine = False
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
     WFontName = 'Arial'
     LFontName = 'Helvetica'
     Expression = 'Title2'
+    DisplayFormat = ''
+    ExportDisplayFormat = ''
     AgIniValue = '0'
+    ExportExpression = ''
   end
 end
