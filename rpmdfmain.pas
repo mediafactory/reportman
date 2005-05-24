@@ -2019,7 +2019,7 @@ end;
 
 procedure TFRpMainF.AAlign1_6Execute(Sender: TObject);
 begin
- report.AlignSectionsTo(6);
+ report.AlignSectionsTo(report.LinesPerInch);
  RefreshInterface(Self);
 end;
 

@@ -1011,9 +1011,9 @@ object FRpMainF: TFRpMainF
     end
     object AAlign1_6: TAction
       Category = 'Edit'
-      Caption = 'Align height 1/6'
+      Caption = 'Align height to lines per inch'
       Hint = 
-        'Aligns all sections height to 1/6 inchess for dot matrix compati' +
+        'Aligns all sections height to lines per inch for dot matrix compati' +
         'bility'
       OnExecute = AAlign1_6Execute
     end

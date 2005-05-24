@@ -274,7 +274,7 @@ var
  linch:Integer;
 begin
  linch:=Round(ELinesPerInch.AsFloat*100);
- if (Not (linch in [1..30])) then
+ if ((linch<100) OR (linch>3000)) then
   Raise Exception.Create(SRpSLinesInchError);
  report.LinesPerInch:=linch;
  acopies:=StrToInt(ECopies.Text);
