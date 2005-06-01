@@ -130,7 +130,7 @@ type
     oldonidle:TIdleEvent;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
-    procedure FillTree(groups:TDataset;reports:TDataset);overload;
+    procedure FillTree(adbinfo:TRpDatabaseInfoItem;groups:TDataset;reports:TDataset);overload;
     procedure FillTree(adir:string);overload;
     procedure FillTree(alist:TStringList);overload;
     procedure EditTree(adbinfo:TRpDatabaseInfoItem;readonly:boolean);
@@ -189,7 +189,7 @@ begin
  inherited Destroy;
 end;
 
-procedure TFRpDBTree.FillTree(groups:TDataset;reports:TDataset);
+procedure TFRpDBTree.FillTree(adbinfo:TRpDatabaseInfoItem;groups:TDataset;reports:TDataset);
 var
  acount:integer;
  i:integer;
@@ -798,7 +798,7 @@ begin
   try
    FReportstable:=dbinfo.reporttable;
    FGroupsTable:=dbinfo.Reportgroupstable;
-   FillTree(adatagroups,adatareports);
+   FillTree(dbinfo,mandadatagroups,adatareports);
   finally
    adatagroups.free;
   end;
