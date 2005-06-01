@@ -189,11 +189,22 @@ begin
 {$IFDEF MSWINDOWS}
  mmfirst:=TimeGetTime;
 {$ENDIF}
+ agroup:='REPORT_GROUP';
+ aname:='REPORT_NAME';
+ if Assigned(adbinfo) then
+ begin
+  aname:=adbinfo.ReportSearchField;
+  if length(adbinfo.ReportGroupsTable)<1 then
+   agroup:='';
+ end;
  // Transport the dataset to the clientdatasets
  DReports.Close;
  DReportGroups.Close;
- DReportsREPORT_NAME.Size:=reports.FieldByName('REPORT_NAME').size;
- DReportGroupsGROUP_NAME.Size:=groups.FieldByName('GROUP_NAME').Size;
+ DReportsREPORT_NAME.Size:=reports.FieldByName(aname).size;
+ if Length(agroup)>0 then
+ begin
+  DReportGroupsGROUP_NAME.Size:=groups.FieldByName(agroup).Size;
+ end;
  DReports.CreateDataSet;
  DReportGroups.CreateDataset;
  DReportGroups2.Close;
@@ -237,15 +248,6 @@ begin
   begin
    DReports.Append;
    try
-    agroup:='REPORT_GROUP';
-    aname:='REPORT_NAME';
-    if Assigned(adbinfo) then
-    begin
-     aname:=adbinfo.ReportSearchField;
-     if length(adbinfo.ReportGroupsTable)<1 then
-      agroup:='';
-    end;
-
     DReportsREPORT_NAME.Value:=reports.FieldByName(aname).Value;
     if length(agroup)>0 then
      DReportsREPORT_GROUP.AsVariant:=reports.FieldByName(agroup).AsVariant

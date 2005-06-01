@@ -221,7 +221,9 @@ begin
  EReportField.Text:=dbitem.ReportField;
  EReportSearchfield.Text:=dbitem.ReportSearchField;
  EReportGroupsTable.Text:=dbitem.ReportGroupsTable;
- EAdoConnection.Text:=dbitem.ADOConnectionString;
+ EADOConnection.Onchange:=nil;
+ EAdoConnection.Text:=EncodeADOPAssword(dbitem.ADOConnectionString);
+ EADOConnection.Onchange:=EReportTableChange;
 
  PCon2.Visible:=True;
 end;
@@ -331,11 +333,21 @@ begin
 end;
 
 procedure TFRpEditConVCL.BADOCOnfClick(Sender: TObject);
+{$IFDEF USEADO}
+var
+ dinfoitem:TRpDatabaseinfoitem;
+ newstring:String;
+{$ENDIF}
 begin
 {$IFDEF USEADO}
+ dinfoitem:=rpalias1.Connections.Items[LConnections.ItemIndex];
   if LConnections.ItemIndex<0 then
    Raise Exception.Create(SRpSelectAddConnection);
-  EADOConnection.Text:=PromptDataSource(0,EADOConnection.Text);
+ EADOConnection.OnChange:=nil;
+ newstring:=PromptDataSource(0,dinfoitem.ADOConnectionString);
+ EADOConnection.Text:=EncodeADOPassword(newstring);
+ dinfoitem.ADOConnectionString:=newstring;
+ EADOConnection.Onchange:=EReportTableChange;
 {$ENDIF}
 end;
 

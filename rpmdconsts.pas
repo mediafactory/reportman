@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.4c';
+ RM_VERSION='2.4d';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 type
   TPageWidthHeight = record
@@ -1282,6 +1282,7 @@ var
   SRpLithuanian:WideString='Lithuanian';
   SRpDanish:WideString='Danish';
   SRpDutch:WideString='Dutch';
+  SRpSpanishMe:WideString='Spanish Mexico';
 
 implementation
 
@@ -2226,6 +2227,7 @@ begin
  TranslateVar(1375,SRpSearch);
  TranslateVar(1376,SRpSHorzAxisFRot);
  TranslateVar(1378,SRpSLinesInchError);
+ TranslateVar(1379,SRpSpanishMe);
 end;
 
 

@@ -212,7 +212,9 @@ begin
  CheckLoginPrompt.Checked:=dbinfo.LoginPrompt;
  CheckLoadParams.Checked:=dbinfo.LoadParams;
  CheckLoadDriverParams.Checked:=dbinfo.LoadDriverParams;
- EConnectionString.Text:=dbinfo.ADOConnectionString;
+ EConnectionString.OnChange:=nil;
+ EConnectionString.Text:=EnCodeADOPassword(dbinfo.ADOConnectionString);
+ EConnectionString.OnChange:=EConnectionStringChange;
 end;
 
 procedure TFRpConnectionVCL.GDriverClick(Sender: TObject);
@@ -334,11 +336,21 @@ begin
 end;
 
 procedure TFRpConnectionVCL.BBuildClick(Sender: TObject);
+{$IFDEF USEADO}
+var
+ dinfoitem:TRpDatabaseinfoitem;
+ newstring:String;
+{$ENDIF}
 begin
 {$IFDEF USEADO}
+ dinfoitem:=FindDatabaseInfoItem;
   if LConnections.ItemIndex<0 then
    Raise Exception.Create(SRpSelectAddConnection);
-  EConnectionString.Text:=PromptDataSource(0,EConnectionString.Text);
+ EConnectionString.OnChange:=nil;
+ newstring:=PromptDataSource(0,dinfoitem.ADOConnectionString);
+ EConnectionString.Text:=EncodeADOPassword(newstring);
+ dinfoitem.ADOConnectionString:=newstring;
+ EConnectionString.Onchange:=EConnectionStringChange;
 {$ENDIF}
 end;
 

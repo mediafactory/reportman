@@ -193,6 +193,7 @@ procedure TFRpDBTree.FillTree(groups:TDataset;reports:TDataset);
 var
  acount:integer;
  i:integer;
+ agroup,aname:String;
 begin
  // Get the time
 {$IFDEF MSWINDOWS}
@@ -201,11 +202,22 @@ begin
 {$IFDEF LINUX}
     milifirst:=now;
 {$ENDIF}
+ agroup:='REPORT_GROUP';
+ aname:='REPORT_NAME';
+ if Assigned(adbinfo) then
+ begin
+  aname:=adbinfo.ReportSearchField;
+  if length(adbinfo.ReportGroupsTable)<1 then
+   agroup:='';
+ end;
  // Transport the dataset to the clientdatasets
  DReports.Close;
  DReportGroups.Close;
- DReportsREPORT_NAME.Size:=reports.FieldByName('REPORT_NAME').size;
- DReportGroupsGROUP_NAME.Size:=groups.FieldByName('GROUP_NAME').Size;
+ DReportsREPORT_NAME.Size:=reports.FieldByName(aname).size;
+ if Length(agroup)>0 then
+ begin
+  DReportGroupsGROUP_NAME.Size:=groups.FieldByName(agroup).Size;
+ end;
  DReports.CreateDataSet;
  DReportGroups.CreateDataset;
  DReportGroups2.Close;
@@ -249,8 +261,8 @@ begin
   begin
    DReports.Append;
    try
-    DReportsREPORT_NAME.Value:=reports.FieldByName('REPORT_NAME').Value;
-    DReportsREPORT_GROUP.AsVariant:=reports.FieldByName('REPORT_GROUP').AsVariant;
+    DReportsREPORT_NAME.Value:=reports.FieldByName(aname).Value;
+    DReportsREPORT_GROUP.AsVariant:=reports.FieldByName(agroup).AsVariant;
     DReports.Post;
    except
     DReports.Cancel;

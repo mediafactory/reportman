@@ -362,6 +362,7 @@ procedure CombineAddDataset(client:TClientDataset;data:TDataset;group:boolean);
 {$ENDIF}
 procedure FillFieldsInfo(adata:TDataset;fieldnames,fieldtypes,fieldsizes:TStrings);
 function ExtractFieldNameEx(astring:String):string;
+function EncodeADOPassword(astring:String):String;
 
 implementation
 
@@ -3719,6 +3720,34 @@ begin
 {$ENDIF}
 end;
 
+function EncodeADOPassword(astring:String):String;
+var
+ index:integer;
+ ustring:string;
+begin
+ Result:=astring;
+ ustring:=UpperCase(astring);
+ index:=Pos('PASSWORD=',ustring);
+ if index=0 then
+ begin
+  index:=Pos('PASSWORD =',ustring);
+  if index>0 then
+   index:=index+10;
+ end
+ else
+  index:=index+9;
+ if index>0 then
+ begin
+  while index<=Length(astring) DO
+  begin
+   if astring[index]=';' then
+    break;
+   astring[index]:='*';
+   inc(index);
+  end;
+  Result:=astring;
+ end;
+end;
 
 
 
