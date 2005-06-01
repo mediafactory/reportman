@@ -291,7 +291,7 @@ begin
   metafile.Pages[metafile.CurrentPage].NewImageObject(aposy,aposx,
    PrintWidth,PrintHeight,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),FMStream,false);
  finally
-  if FMStream<>FStream then
+  if ((FMStream<>FStream) AND (FMStream<>FDeCompStream)) then
    FMStream.free;
  end;
 end;

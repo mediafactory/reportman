@@ -798,7 +798,7 @@ begin
   try
    FReportstable:=dbinfo.reporttable;
    FGroupsTable:=dbinfo.Reportgroupstable;
-   FillTree(dbinfo,mandadatagroups,adatareports);
+   FillTree(dbinfo,adatagroups,adatareports);
   finally
    adatagroups.free;
   end;
