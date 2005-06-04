@@ -1298,7 +1298,7 @@ begin
   for j:=0 to subrep.Sections.Count-1 do
   begin
    sec:=subrep.Sections.Items[j].Section;
-   sec.Height:=Round((TWIPS_PER_INCHESS/linesperinch)*Round(sec.Height/(TWIPS_PER_INCHESS/linesperinch)));
+   sec.Height:=Round((TWIPS_PER_INCHESS/(linesperinch/100))*Round(sec.Height/(TWIPS_PER_INCHESS/(linesperinch/100))));
   end;
  end;
 end;

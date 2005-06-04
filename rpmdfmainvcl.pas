@@ -1691,7 +1691,7 @@ end;
 
 procedure TFRpMainFVCL.AAlign1_6Execute(Sender: TObject);
 begin
- report.AlignSectionsTo(6);
+ report.AlignSectionsTo(report.LinesPerInch);
  RefreshInterface(Self);
 end;
 

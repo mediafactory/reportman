@@ -3102,7 +3102,7 @@ begin
   8:
    Result:=NumberToTextLithuanian(FNumero,female);
 {$ENDIF}
-  11:
+  13:
    Result:=NumberToTextSpanishMex(FNumero,female);
  end;
 end;
@@ -3122,6 +3122,8 @@ begin
  alist.Add(SRpItalian);
  alist.Add(SRpTurkish);
  alist.Add(SRpLithuanian);
+ alist.Add(SRpGreek);
+ alist.Add(SRpHungar);
  alist.Add(SRpDanish);
  alist.Add(SRpDutch);
  alist.Add(SrpSpanishMe);

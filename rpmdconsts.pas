@@ -1283,6 +1283,8 @@ var
   SRpDanish:WideString='Danish';
   SRpDutch:WideString='Dutch';
   SRpSpanishMe:WideString='Spanish Mexico';
+  SRpGreek:WideString='Greek';
+  SRpHungar:WideString='Hungarian';
 
 implementation
 
