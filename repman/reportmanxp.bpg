@@ -8,7 +8,7 @@ PROJECTS = repmand repmandxp metaprint metaprintxp metaview metaviewxp printrep 
   printrepxp reptotxt txttorep printreptopdf reportserverapp reportserverappxp \
   reportservercon repserverconfig repserverconfigxp repwebexe reportman \
   rptranslate.exe compilerep.exe unixtodos.exe WebReportManX.ocx \
-  repserverservice.exe repserviceinstall.exe repwebserver.dll
+  repserverservice.exe repserviceinstall.exe repwebserver.dll repmandxp.ESN
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -89,6 +89,9 @@ repserviceinstall.exe: ..\server\service\repserviceinstall.dpr
   $(DCC)
 
 repwebserver.dll: ..\server\web\repwebserver.dpr
+  $(DCC)
+
+repmandxp.ESN: ESN\repmandxp.dpr
   $(DCC)
 
 

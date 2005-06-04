@@ -12,7 +12,7 @@ unit WebReportManX_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 14/05/2005 13:36:28 from Type Library described below.
+// File generated on 04/06/2005 20:43:00 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\webactivex\WebReportManX.tlb (1)

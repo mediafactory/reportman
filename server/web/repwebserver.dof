@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=1
 Release=0
-Build=14
+Build=15
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=ISAPI module web report server
-FileVersion=2.1.0.14
+FileVersion=2.1.0.15
 InternalName=repwebserver
 LegalCopyright=Open Source MPL
 LegalTrademarks=
@@ -134,11 +134,3 @@ OriginalFilename=repwebserver.dll
 ProductName=Report Manager
 ProductVersion=2.1.0.0
 Comments=
-[HistoryLists\hlConditionals]
-Count=3
-Item0=REPMANRELEASE
-Item1=NOLINUXPRINTBUG;FORWEBAX
-Item2=FORWEBAX
-[HistoryLists\hlUnitAliases]
-Count=1
-Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

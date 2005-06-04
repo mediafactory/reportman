@@ -109,23 +109,6 @@ DebugCWD=
 ActiveLang=
 ProjectLang=$00000C0A
 RootDir=
-[Deployment]
-DeployDir=
-DeployURL=
-HTMLDir=
-CABCompress=0
-CodeSign=0
-IncludeVerInfo=1
-AutoIncRelease=0
-DeployPackages=1
-DeployFiles=0
-CompanyURL=
-Description=
-CredFile=
-PrivKey=
-CryptoType=0
-Timestamping=0
-TimestampServer=
 [Version Info]
 IncludeVerInfo=0
 AutoIncBuild=0
@@ -151,11 +134,3 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
-[HistoryLists\hlConditionals]
-Count=3
-Item0=FORWEBAX
-Item1=REPMANRELEASE
-Item2=NOLINUXPRINTBUG;FORWEBAX
-[HistoryLists\hlUnitAliases]
-Count=1
-Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
