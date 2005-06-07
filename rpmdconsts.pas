@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.4d';
+ RM_VERSION='2.4e';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 type
   TPageWidthHeight = record

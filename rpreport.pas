@@ -1504,7 +1504,10 @@ begin
      sectionext:=asection.GetExtension(FDriver,MaxExtent);
      if printit then
       if asection.EvaluatePrintCondition then
+      begin
        PrintSection(adriver,false,PartialPrint);
+       freespace:=0;
+      end;
     end;
    end;
    // Global page footers
@@ -1520,7 +1523,10 @@ begin
     sectionext:=asection.GetExtension(FDriver,MaxExtent);
     if printit then
      if asection.EvaluatePrintCondition then
+     begin
       PrintSection(adriver,false,PartialPrint);
+      freespace:=0;
+     end;
    end;
   end;
  end;
@@ -1579,10 +1585,15 @@ begin
  begin
   if (gheaders.count>0) or (subreport.PageHeaderCount>0) then
   begin
+   // Create new page
+   metafile.NewPage;
+   inc(PageNum);
+   metafile.CurrentPage:=Metafile.PageCount-1;
    freespace:=FInternalPageheight;
    freespace:=freespace-TopMargin-BottomMargin;
    pageposy:=TopMargin;
    pageposx:=LeftMargin;
+   DoUpdatePageSize(FDriver,Metafile.Pages[Metafile.PageCount-1]);
   end
   else
   begin
