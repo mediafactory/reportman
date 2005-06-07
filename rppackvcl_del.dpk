@@ -41,8 +41,7 @@ requires
   ibxpress,
   bdertl,
   dbexpress,
-  vclx,
-  Tee67;
+  vclx;
 
 {%File 'rpconf.inc'}
 
