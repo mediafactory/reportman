@@ -109,6 +109,8 @@ begin
  ComboFormat.Items.Add(SRpStreamZLib);
  ComboFormat.Items.Add(SRpStreamText);
  ComboFormat.Items.Add(SRpStreamBinary);
+ ComboFormat.Items.Add(SRpStreamXML);
+ ComboFormat.Items.Add(SRpStreamXMLComp);
 
  SetInitialBounds;
 end;

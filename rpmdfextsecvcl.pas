@@ -111,9 +111,12 @@ begin
  LSearchValue.Caption:=TranslateStr(865,LSearchValue.Caption);
 
  LPreferedFormat.Caption:=SRpPreferedFormat;
+
  ComboFormat.Items.Add(SRpStreamZLib);
  ComboFormat.Items.Add(SRpStreamText);
  ComboFormat.Items.Add(SRpStreamBinary);
+ ComboFormat.Items.Add(SRpStreamXML);
+ ComboFormat.Items.Add(SRpStreamXMLComp);
 end;
 
 procedure TFRpExtSectionVCL.BOkClick(Sender: TObject);

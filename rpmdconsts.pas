@@ -1278,7 +1278,6 @@ var
   SRpSearchValue:WideString='Search value';
   SRpSearch:WideString='Search';
   SRpSLinesInchError:WideString='Lines per inch should be between 1 and 30';
-  //
   SRpLithuanian:WideString='Lithuanian';
   SRpDanish:WideString='Danish';
   SRpDutch:WideString='Dutch';
@@ -2229,7 +2228,15 @@ begin
  TranslateVar(1375,SRpSearch);
  TranslateVar(1376,SRpSHorzAxisFRot);
  TranslateVar(1378,SRpSLinesInchError);
- TranslateVar(1379,SRpSpanishMe);
+
+ TranslateVar(1383,SRpLithuanian);
+ TranslateVar(1384,SRpDanish);
+ TranslateVar(1385,SRpDutch);
+ TranslateVar(1386,SRpSpanishMe);
+ TranslateVar(1387,SRpGreek);
+ TranslateVar(1388,SRpHungar);
+
+
 end;
 
 

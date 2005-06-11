@@ -143,6 +143,11 @@ begin
  BOK.Caption:=TranslateStr(93,BOK.Caption);
  BCancel.Caption:=TranslateStr(94,BCancel.Caption);
 
+ CheckReadOnly.Caption:=TranslateStr(1379,CheckReadOnly.Caption);
+ CheckNeverVisible.Caption:=TranslateStr(1381,CheckNeverVisible.Caption);
+ Label1.Caption:=TranslateStr(1380,Label1.Caption);
+ LHint.Caption:=TranslateStr(1382,LHint.Caption);
+
  ANewParam.Caption:=TranslateStr(186,ANewParam.Caption);
  ANewParam.Hint:=TranslateStr(187,ANewParam.Hint);
  ADelete.Caption:=TranslateStr(188,ADelete.Caption);

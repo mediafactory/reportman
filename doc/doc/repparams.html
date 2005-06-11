@@ -129,7 +129,52 @@
     <td>Default body, on preview window, send mail option</td>
   </tr>
 </table>
-<p>&nbsp;</p>
+<p><strong>Lookup help for parameters</strong></p>
+<p>Sometines a parameter is specified as a code number (customer code, family 
+  code). You can specify a lookup search so the user can browse a dataset to find 
+  the code number.</p>
+<p>The simple case is to select a code number from a small dataset. Imagine you 
+  have a parameter FAMILY_CODE, and the user must enter the family code as a number. 
+  The final result will be a button beside the parameter input, when the user 
+  click the button all the available families are shown, the user select it by 
+  name and the family code is assigned to the parameter.</p>
+<p>Steps to create a lookup dataset to assist the user on parameters window:</p>
+<ol>
+  <li>Create the parameter FAMILY_CODE as integer. Description family code.</li>
+  <li>Create a new dataset FAMILY_LOOKUP with the sql sentence to show help information 
+    to the user, the first field must be the family code, that is the field that 
+    will be assigned to the parameter: SELECT CODE,DESCRIPTION FROM FAMILIES ORDER 
+    BY DESCRIPTION. Also uncheck the option Open at start, so the dataset will 
+    no be open on report start, but only when needed.</li>
+  <li>Go to parameter definition and select the new dataset, as the Search Dataset 
+    for the parameter FAMILY_CODE.</li>
+  <li>Test the feature going to user parameters window.</li>
+</ol>
+<p>Another case is to select a code from a large dataset where the user should 
+  search for, like a customers table.</p>
+<p>Steps to create a lookup dataset to assist the user on parameters window, with 
+  search feature, usually to loockup on large datasets:</p>
+<ol>
+  <li>Create the parameter CUSTOMER_CODE as integer. Description family code.</li>
+  <li>Create a new dataset CUSTOMER_LOOKUP with the sql sentence to show help 
+    information to the user, the first field must be the customercode, that is 
+    the field that will be assigned to the parameter, but it will also contain 
+    one parameter to search for only a subset of the dataset: SELECT CODE,DESCRIPTION 
+    FROM CUSTOMERS WHERE UPPER(DESCRIPTION) CONTAINING :CUST_DESCRIPTION ORDER 
+    BY DESCRIPTION. Also uncheck the option Open at start, so the dataset will 
+    no be open on report start, but only when needed.</li>
+  <li>You must create a paramerter called CUST_DESCRIPTION as string and assigned 
+    to CUSTOMER_LOOKUP dataset, you should set the visible property to false for 
+    this parameter.</li>
+  <li>Go to parameter definition and select the new dataset, as the Search Dataset 
+    for the parameter FAMILY_CODE, and assign the CUST_DESCRIPTION parameter as 
+    search parameter.</li>
+  <li>Test the feature going to user parameters window, now the user must write 
+    some text and the after a few seconds, the engine will execute the sql sentence 
+    assigning the parameter CUST_DESCRIPTION.</li>
+</ol>
+<ol>
+</ol>
 <p><strong>About parameters and database drivers</strong></p>
 <p>When you place a parameter inside a query:</p>
 <p>SELECT MYDATA FROM MYTABLE WHERE MYCODE=:CODE</p>

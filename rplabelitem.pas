@@ -46,7 +46,6 @@ type
    procedure SetText(Value:WideString);
    function GetText:WideString;
    procedure SetAllText(Value:TStrings);
-   procedure UpdateAllStrings;
    procedure WriteWideText(Writer:TWriter);
    procedure ReadWideText(Reader:TReader);
    function GetTextObject:TRpTextObject;
@@ -58,6 +57,7 @@ type
    procedure Loaded;override;
   public
    procedure UpdateWideText;
+   procedure UpdateAllStrings;
    function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
    property AllStrings:TRpWideStrings read FAllStrings write FAllStrings;
    constructor Create(AOwner:TComponent);override;

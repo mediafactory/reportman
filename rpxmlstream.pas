@@ -544,6 +544,7 @@ begin
     if rpstring[i]='#' then
     begin
      anumber:='0';
+     inc(i);
      while (i<=Length(rpstring)) do
      begin
       if rpstring[i]='#' then
@@ -584,6 +585,7 @@ begin
     if rpstring[i]='#' then
     begin
      anumber:='0';
+     inc(i);
      while (i<=Length(rpstring)) do
      begin
       if rpstring[i]='#' then
@@ -1375,7 +1377,10 @@ begin
  begin
   compl:=TRpLabel(comp);
   if propname='WIDETEXT' then
+  begin
    compl.WideText:=RpStringToWString(propvalue);
+   compl.UpdateAllStrings;
+  end;
  end
  else
  // TRpExpression
