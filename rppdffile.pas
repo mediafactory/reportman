@@ -33,15 +33,13 @@
 {               -Type1 Font selection bold/italic       }
 {               -BMP and JPEG Image support             }
 {               -Embedding True Type fonts              }
+{               -Truetype Unicode support               }
 {                                                       }
 {                                                       }
 {       Still Missing:                                  }
 {               -Brush Patterns                         }
 {               -RLE and monocrhome Bitmaps             }
 {               -RoundRect                              }
-{               -Widechar Fonts                         }
-{               -Composite Fonts                        }
-{               -Unicode Fonts                          }
 {                                                       }
 {       This file is under the MPL license              }
 {       If you enhace the functionality of this file    }
