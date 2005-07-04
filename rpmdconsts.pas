@@ -7,7 +7,7 @@
 {       Resource strings for reportmanager engine and   }
 {       designer                                        }
 {                                                       }
-{       Copyright (c) 1994-2003 Toni Martir             }
+{       Copyright (c) 1994-2005 Toni Martir             }
 {       toni@pala.com                                   }
 {                                                       }
 {       This file is under the MPL license              }
@@ -35,7 +35,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.4e';
+ RM_VERSION='2.4f';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
 type
   TPageWidthHeight = record

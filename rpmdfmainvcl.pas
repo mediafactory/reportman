@@ -682,11 +682,11 @@ begin
  ADown.ShortCut:=ShortCut(VK_DOWN,[ssCtrl]);
 // Shortcuts disabled, must check if there is a TEdit active
 
- ACut.ShortCut:=ShortCut(Ord('X'),[ssCtrl,ssAlt]);
+ ACut.ShortCut:=ShortCut(Ord('X'),[ssAlt]);
  ADelete.ShortCut:=ShortCut(VK_DELETE,[ssCtrl]);
- ACopy.ShortCut:=ShortCut(Ord('C'),[ssCtrl,ssAlt]);
- APaste.ShortCut:=ShortCut(Ord('V'),[ssCtrl,ssAlt]);
- ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssCtrl,ssAlt]);
+ ACopy.ShortCut:=ShortCut(Ord('C'),[ssAlt]);
+ APaste.ShortCut:=ShortCut(Ord('V'),[ssAlt]);
+ ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssAlt]);
  MSystemPrint.Visible:=false;
 
  OpenDialog1.Filter := SRpRepFile+'|*.rep';

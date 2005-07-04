@@ -745,10 +745,10 @@ begin
  ADown.ShortCut:=ShortCut(Key_Down,[ssCtrl]);
 // Shortcuts disabled must checkn if TEdit active
  ADelete.ShortCut:=ShortCut(Key_Delete,[ssCtrl]);
- ACut.ShortCut:=ShortCut(Ord('X'),[ssCtrl,ssAlt]);
- ACopy.ShortCut:=ShortCut(Ord('C'),[ssCtrl,ssAlt]);
- APaste.ShortCut:=ShortCut(Ord('V'),[ssCtrl,ssAlt]);
- ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssCtrl,ssAlt]);
+ ACut.ShortCut:=ShortCut(Ord('X'),[ssAlt]);
+ ACopy.ShortCut:=ShortCut(Ord('C'),[ssAlt]);
+ APaste.ShortCut:=ShortCut(Ord('V'),[ssAlt]);
+ ASelectAll.ShortCut:=ShortCut(Ord('A'),[ssAlt]);
 
 {$IFDEF VCLFILEFILTERS}
  OpenDialog1.Filter := SRpRepFile+'|*.rep';

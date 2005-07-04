@@ -178,56 +178,90 @@ end;
 
 
 {$IFDEF USERPDATASET}
-procedure FillClientDatasetFromFile(data:TClientDataSet;fieldsfile:String;textfilename:String;indexfields:String);
+procedure FillFieldsFromLine(fieldsep,fieldenc:char;line:string;fields:TStringList);
 var
+ afield:string;
+ achar:char;
+ process:Boolean;
+begin
+ while Length(line)>0 do
+ begin
+  afield:='';
+  while Length(line)>0 do
+  begin
+   achar:=line[1];
+   line:=Copy(line,2,Length(line));
+   if achar=fieldenc then
+    break;
+  end;
+  process:=true;
+  if Length(line)>0 then
+  begin
+   achar:=line[1];
+   if achar=fieldenc then
+    process:=false;
+  end;
+  if process then
+  while Length(line)>0 do
+  begin
+   achar:=line[1];
+   line:=Copy(line,2,Length(line));
+   if achar<>fieldenc then
+   begin
+    afield:=afield+achar;
+   end
+   else
+   begin
+    if Length(line)>0 then
+    begin
+     if line[1]=fieldenc then
+     begin
+      line:=Copy(line,2,Length(line));
+      afield:=afield+achar;
+     end
+     else
+     begin
+      break;
+     end;
+    end;
+   end;
+  end;
+  fields.Add(afield);
+  while Length(line)>0 do
+  begin
+   achar:=line[1];
+   line:=Copy(line,2,Length(line));
+   if achar=fieldsep then
+    break;
+  end;
+ end;
+end;
+
+procedure FillDatasetFromSeparated(data:TClientDataset;textfilename:String;indexfields:string);
+var
+ memstream:TMemoryStream;
+ buf:array of Byte;
+ line,oldline:string;
+ position:integer;
+ recorddone:boolean;
+ readed:integer;
  recordseparator:char;
  ignoreafterrecordseparator:char;
- lfields:TStringList;
- fobj:TRpFieldObj;
- i:integer;
- fdef:TFieldDef;
- line,oldline,precision:String;
- memstream:TMemoryStream;
- position,readed:LongInt;
- fieldvalue:Variant;
- buf:array of Byte;
- reccount:integer;
- recorddone:boolean;
- ayear,amonth,aday:Word;
- ahour,amin,asec:Word;
+ fieldsep:char;
+ fieldenc:char;
+ cuenta,i:integer;
+ fields:TStringList;
 begin
- data.Close;
- data.fielddefs.Clear;
- lfields:=TStringList.Create;
+ fieldsep:=',';
+ fieldenc:='"';
+ cuenta:=1;
+ recordseparator:=#10;
+ ignoreafterrecordseparator:=#13;
+ data.FieldDefs.Clear;
+ data.FieldDefs.Add('LNUMBER',ftInteger);
+ // parse first line to get number of fields
+ fields:=TStringList.Create;
  try
-  FillFieldObjList(fieldsfile,lfields,recordseparator,ignoreafterrecordseparator);
-  fdef:=data.FieldDefs.AddFieldDef;
-  fdef.Name:='LNUMBER';
-  fdef.DataType:=ftInteger;
-  for i:=0 to lfields.Count-1 do
-  begin
-   fobj:=TRpFieldobj(lfields.Objects[i]);
-   fdef:=data.FieldDefs.AddFieldDef;
-   fdef.Name:=fobj.fieldname;
-   fdef.DataType:=fobj.fieldtype;
-   if fobj.fieldsize>0 then
-    fdef.Size:=fobj.fieldsize;
-   fdef.Precision:=fobj.Precision;
-  end;
-  if Length(Trim(IndexFields))<1 then
-  begin
-   data.IndexDefs.Clear;
-   data.IndexDefs.Add('IPRIMINDEX','LNUMBER',[]);
-   data.IndexFieldNames:='LNUMBER';
-  end
-  else
-  begin
-   data.IndexDefs.Clear;
-   data.IndexDefs.Add('IPRIMINDEX',IndexFields,[]);
-   data.IndexFieldNames:=IndexFields;
-  end;
-  data.CreateDataSet;
-  reccount:=0;
   // Load the file inside the dataset
   memstream:=TMemoryStream.Create;
   try
@@ -272,129 +306,284 @@ begin
       break;
      end;
     end;
-    if Length(line)>0 then
+//    if Length(line)>0 then
     begin
-     // Add a record
+     fields.clear;
+     FillFieldsFromLine(fieldsep,fieldenc,line,fields);
+     if not data.Active then
+     begin
+      for i:=0 to fields.count-1 do
+      begin
+       data.FieldDefs.Add('FIELD'+IntToStr(i+1),ftString,255);
+      end;
+      if Length(Trim(IndexFields))<1 then
+      begin
+       data.IndexDefs.Clear;
+       data.IndexDefs.Add('IPRIMINDEX','LNUMBER',[]);
+       data.IndexFieldNames:='LNUMBER';
+      end
+      else
+      begin
+       data.IndexDefs.Clear;
+       data.IndexDefs.Add('IPRIMINDEX',IndexFields,[]);
+       data.IndexFieldNames:=IndexFields;
+      end;
+      data.CreateDataSet;
+     end;
      data.Append;
      try
-      for i:=0 to lfields.count-1 do
+      data.FieldByName('LNUMBER').Value:=cuenta;
+      for i:=0 to fields.count-1 do
       begin
-       fobj:=TRpFieldobj(lfields.Objects[i]);
-       // Reads the field
-       fieldvalue:=Null;
-       case fobj.fieldtype of
-        ftInteger:
-         begin
-          if fobj.fieldsize=0 then
-           fieldvalue:=Copy(line,fobj.posbegin,Length(line))
-          else
-           fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
-          if fobj.fieldtrim then
-           fieldvalue:=Trim(fieldvalue);
-          if Length(fieldvalue)<1 then
-           fieldvalue:=Null
-          else
-           fieldvalue:=StrToInt(fieldvalue);
-         end;
-        ftString,ftMemo:
-         begin
-          if fobj.fieldsize=0 then
-           fieldvalue:=Copy(line,fobj.posbegin,Length(line))
-          else
-           fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
-          if fobj.fieldtrim then
-           fieldvalue:=Trim(fieldvalue);
-          if Length(fieldvalue)<1 then
-            fieldvalue:=Null;
-         end;
-        ftBoolean:
-         begin
-          if fobj.fieldsize=0 then
-           fieldvalue:=Copy(line,fobj.posbegin,Length(line))
-          else
-           fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
-          if fobj.fieldtrim then
-           fieldvalue:=Trim(fieldvalue);
-          if Length(fieldvalue)<1 then
-            fieldvalue:=Null
-          else
-           fieldvalue:=StrToBool(fieldvalue);
-         end;
-        ftCurrency:
-         begin
-          if fobj.fieldsize=0 then
-           fieldvalue:=Copy(line,fobj.posbegin,Length(line))
-          else
-           fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
-          if fobj.fieldtrim then
-           fieldvalue:=Trim(fieldvalue);
-          if Length(fieldvalue)<1 then
-           fieldvalue:=Null
-          else
-           fieldvalue:=StrToCurr(fieldvalue);
-          if Not VarIsNull(fieldvalue) then
-          begin
-           if fobj.posbeginprecision>0 then
-            if fobj.precision>0 then
-            begin
-             precision:=Trim(Copy(line,fobj.posbeginprecision,fobj.precision));
-             if Length(precision)>0 then
-              fieldvalue:=fieldvalue+StrToCurr('0'+decimalseparator+precision);
-            end;
-          end;
-         end;
-        ftDate:
-         begin
-          try
-           ayear:=StrToInt(Copy(line,fobj.yearpos,fobj.yearsize));
-           amonth:=StrToInt(Copy(line,fobj.monthpos,fobj.monthsize));
-           aday:=StrToInt(Copy(line,fobj.daypos,fobj.daysize));
-           fieldvalue:=EncodeDate(ayear,amonth,aday);
-          except
-           fieldvalue:=Null;
-          end;
-         end;
-        ftTime:
-         begin
-          try
-           ahour:=StrToInt(Copy(line,fobj.yearpos,fobj.hoursize));
-           amin:=StrToInt(Copy(line,fobj.monthpos,fobj.minsize));
-           asec:=StrToInt(Copy(line,fobj.yearpos,fobj.secsize));
-           fieldvalue:=EncodeTime(ahour,amin,asec,0);
-          except
-           fieldvalue:=Null;
-          end;
-         end;
-        ftDateTime:
-         begin
-          try
-           ayear:=StrToInt(Copy(line,fobj.yearpos,fobj.yearsize));
-           amonth:=StrToInt(Copy(line,fobj.monthpos,fobj.monthsize));
-           aday:=StrToInt(Copy(line,fobj.daypos,fobj.daysize));
-           ahour:=StrToInt(Copy(line,fobj.yearpos,fobj.hoursize));
-           amin:=StrToInt(Copy(line,fobj.monthpos,fobj.minsize));
-           asec:=StrToInt(Copy(line,fobj.yearpos,fobj.secsize));
-           fieldvalue:=EncodeDate(ayear,amonth,aday);
-           fieldvalue:=fieldvalue+EncodeTime(ahour,amin,asec,0);
-          except
-           fieldvalue:=Null;
-          end;
-         end;
-       end;
-       data.FieldByName(fobj.fieldname).AsVariant:=fieldvalue;
+       if i<data.fields.Count-1 then
+       begin
+        data.FieldByName('FIELD'+IntToStr(i+1)).AsString:=fields.Strings[i];
+       end
+       else
+        break;
       end;
-      inc(reccount);
-      data.FieldByName('LNUMBER').Value:=reccount;
       data.post;
      except
       data.cancel;
       raise;
      end;
+     inc(cuenta);
+     line:=oldline;
     end;
-    line:=oldline;
    end;
   finally
    memstream.free;
+  end;
+ finally
+  fields.free;
+ end;
+end;
+
+
+procedure FillClientDatasetFromFile(data:TClientDataSet;fieldsfile:String;textfilename:String;indexfields:String);
+var
+ recordseparator:char;
+ ignoreafterrecordseparator:char;
+ lfields:TStringList;
+ fobj:TRpFieldObj;
+ i:integer;
+ fdef:TFieldDef;
+ line,oldline,precision:String;
+ memstream:TMemoryStream;
+ position,readed:LongInt;
+ fieldvalue:Variant;
+ buf:array of Byte;
+ reccount:integer;
+ recorddone:boolean;
+ ayear,amonth,aday:Word;
+ ahour,amin,asec:Word;
+begin
+ data.Close;
+ data.fielddefs.Clear;
+ lfields:=TStringList.Create;
+ try
+  if Copy(fieldsfile,1,1)=',' then
+  begin
+   FillDatasetFromSeparated(data,textfilename,IndexFields);
+  end
+  else
+  begin
+   FillFieldObjList(fieldsfile,lfields,recordseparator,ignoreafterrecordseparator);
+   fdef:=data.FieldDefs.AddFieldDef;
+   fdef.Name:='LNUMBER';
+   fdef.DataType:=ftInteger;
+   for i:=0 to lfields.Count-1 do
+   begin
+    fobj:=TRpFieldobj(lfields.Objects[i]);
+    fdef:=data.FieldDefs.AddFieldDef;
+    fdef.Name:=fobj.fieldname;
+    fdef.DataType:=fobj.fieldtype;
+    if fobj.fieldsize>0 then
+     fdef.Size:=fobj.fieldsize;
+    fdef.Precision:=fobj.Precision;
+   end;
+   if Length(Trim(IndexFields))<1 then
+   begin
+    data.IndexDefs.Clear;
+    data.IndexDefs.Add('IPRIMINDEX','LNUMBER',[]);
+    data.IndexFieldNames:='LNUMBER';
+   end
+   else
+   begin
+    data.IndexDefs.Clear;
+    data.IndexDefs.Add('IPRIMINDEX',IndexFields,[]);
+    data.IndexFieldNames:=IndexFields;
+   end;
+   data.CreateDataSet;
+   reccount:=0;
+   // Load the file inside the dataset
+   memstream:=TMemoryStream.Create;
+   try
+    memstream.LoadFromFile(textfilename);
+    memstream.Seek(0,soFromBeginning);
+    SetLength(buf,1);
+    line:='';
+    oldline:='';
+    position:=0;
+    recorddone:=false;
+    while position<memstream.Size do
+    begin
+     while position<memstream.Size do
+     begin
+      readed:=memstream.Read(buf[0],1);
+      position:=position+readed;
+      if readed=0 then
+       break;
+      if Char(buf[0])=recordseparator then
+      begin
+       recorddone:=true;
+       oldline:='';
+       // Ignore after record chars
+       while position<memstream.Size do
+       begin
+        readed:=memstream.Read(buf[0],1);
+        position:=position+readed;
+        if readed=0 then
+         break;
+        if Char(buf[0])<>ignoreafterrecordseparator then
+        begin
+         oldline:=char(buf[0]);
+         break;
+        end;
+       end;
+      end
+      else
+       line:=line+char(buf[0]);
+      if recorddone then
+      begin
+       recorddone:=false;
+       break;
+      end;
+     end;
+     if Length(line)>0 then
+     begin
+      // Add a record
+      data.Append;
+      try
+       for i:=0 to lfields.count-1 do
+       begin
+        fobj:=TRpFieldobj(lfields.Objects[i]);
+        // Reads the field
+        fieldvalue:=Null;
+        case fobj.fieldtype of
+         ftInteger:
+          begin
+           if fobj.fieldsize=0 then
+            fieldvalue:=Copy(line,fobj.posbegin,Length(line))
+           else
+            fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
+           if fobj.fieldtrim then
+            fieldvalue:=Trim(fieldvalue);
+           if Length(fieldvalue)<1 then
+            fieldvalue:=Null
+           else
+            fieldvalue:=StrToInt(fieldvalue);
+          end;
+         ftString,ftMemo:
+          begin
+           if fobj.fieldsize=0 then
+            fieldvalue:=Copy(line,fobj.posbegin,Length(line))
+           else
+            fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
+           if fobj.fieldtrim then
+            fieldvalue:=Trim(fieldvalue);
+           if Length(fieldvalue)<1 then
+             fieldvalue:=Null;
+          end;
+         ftBoolean:
+          begin
+           if fobj.fieldsize=0 then
+            fieldvalue:=Copy(line,fobj.posbegin,Length(line))
+           else
+            fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
+           if fobj.fieldtrim then
+            fieldvalue:=Trim(fieldvalue);
+           if Length(fieldvalue)<1 then
+             fieldvalue:=Null
+           else
+            fieldvalue:=StrToBool(fieldvalue);
+          end;
+         ftCurrency:
+          begin
+           if fobj.fieldsize=0 then
+            fieldvalue:=Copy(line,fobj.posbegin,Length(line))
+           else
+            fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
+           if fobj.fieldtrim then
+            fieldvalue:=Trim(fieldvalue);
+           if Length(fieldvalue)<1 then
+            fieldvalue:=Null
+           else
+            fieldvalue:=StrToCurr(fieldvalue);
+           if Not VarIsNull(fieldvalue) then
+           begin
+            if fobj.posbeginprecision>0 then
+             if fobj.precision>0 then
+             begin
+              precision:=Trim(Copy(line,fobj.posbeginprecision,fobj.precision));
+              if Length(precision)>0 then
+               fieldvalue:=fieldvalue+StrToCurr('0'+decimalseparator+precision);
+             end;
+           end;
+          end;
+         ftDate:
+          begin
+           try
+            ayear:=StrToInt(Copy(line,fobj.yearpos,fobj.yearsize));
+            amonth:=StrToInt(Copy(line,fobj.monthpos,fobj.monthsize));
+            aday:=StrToInt(Copy(line,fobj.daypos,fobj.daysize));
+            fieldvalue:=EncodeDate(ayear,amonth,aday);
+           except
+            fieldvalue:=Null;
+           end;
+          end;
+         ftTime:
+          begin
+           try
+            ahour:=StrToInt(Copy(line,fobj.yearpos,fobj.hoursize));
+            amin:=StrToInt(Copy(line,fobj.monthpos,fobj.minsize));
+            asec:=StrToInt(Copy(line,fobj.yearpos,fobj.secsize));
+            fieldvalue:=EncodeTime(ahour,amin,asec,0);
+           except
+            fieldvalue:=Null;
+           end;
+          end;
+         ftDateTime:
+          begin
+           try
+            ayear:=StrToInt(Copy(line,fobj.yearpos,fobj.yearsize));
+            amonth:=StrToInt(Copy(line,fobj.monthpos,fobj.monthsize));
+            aday:=StrToInt(Copy(line,fobj.daypos,fobj.daysize));
+            ahour:=StrToInt(Copy(line,fobj.yearpos,fobj.hoursize));
+            amin:=StrToInt(Copy(line,fobj.monthpos,fobj.minsize));
+            asec:=StrToInt(Copy(line,fobj.yearpos,fobj.secsize));
+            fieldvalue:=EncodeDate(ayear,amonth,aday);
+            fieldvalue:=fieldvalue+EncodeTime(ahour,amin,asec,0);
+           except
+            fieldvalue:=Null;
+           end;
+          end;
+        end;
+        data.FieldByName(fobj.fieldname).AsVariant:=fieldvalue;
+       end;
+       inc(reccount);
+       data.FieldByName('LNUMBER').Value:=reccount;
+       data.post;
+      except
+       data.cancel;
+       raise;
+      end;
+     end;
+     line:=oldline;
+    end;
+   finally
+    memstream.free;
+   end;
   end;
  finally
   FreeFieldObjList(lfields);
