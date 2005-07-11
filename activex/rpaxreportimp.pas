@@ -508,7 +508,7 @@ var
  i:integer;
 begin
  Result:='';
- for i:=0 to printer.printers.count do
+ for i:=0 to printer.printers.count-1 do
  begin
   if i>0 then
    Result:=Result+#10;

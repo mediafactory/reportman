@@ -325,7 +325,7 @@ function RpTempFileName:String;
 function RpTempPath:String;
 procedure WriteStringToStream(astring:String;deststream:TStream);
 procedure WriteWideStringToStream(astring:WideString;deststream:TStream);
-function FormatCurrAdv(mask:String;number:Currency):String;
+function FormatCurrAdv(mask:String;number:double):String;
 // Rounding a number with not balanced system
 // always the upper value if in the middle
 function Roundfloat(num:double;redondeo:double):double;
@@ -4639,7 +4639,7 @@ end;
 // L 000,000
 // Optional thousand char for example blank
 // T.000,000
-function FormatCurrAdv(mask:String;number:Currency):String;
+function FormatCurrAdv(mask:String;number:double):String;
 var
  decseparator:boolean;
  hiddendecseparator:boolean;

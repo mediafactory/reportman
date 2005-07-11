@@ -1,7 +1,7 @@
 object FRpSearchParam: TFRpSearchParam
-  Left = 252
+  Left = 246
   Top = 196
-  Width = 465
+  Width = 471
   Height = 334
   VertScrollBar.Range = 65
   ActiveControl = ESearch
@@ -21,7 +21,7 @@ object FRpSearchParam: TFRpSearchParam
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 465
+    Width = 471
     Height = 65
     Align = alTop
     TabOrder = 0
@@ -35,14 +35,14 @@ object FRpSearchParam: TFRpSearchParam
     object ESearch: TEdit
       Left = 132
       Top = 8
-      Width = 213
+      Width = 219
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       OnChange = ESearchChange
     end
     object BSearch: TButton
-      Left = 360
+      Left = 366
       Top = 32
       Width = 89
       Height = 25
@@ -52,7 +52,7 @@ object FRpSearchParam: TFRpSearchParam
       OnClick = BSearchClick
     end
     object BOK: TButton
-      Left = 360
+      Left = 366
       Top = 4
       Width = 89
       Height = 25
@@ -66,7 +66,7 @@ object FRpSearchParam: TFRpSearchParam
   object GridData: TDBGrid
     Left = 0
     Top = 65
-    Width = 465
+    Width = 471
     Height = 269
     Align = alClient
     DataSource = DataSource1
@@ -103,7 +103,6 @@ object FRpSearchParam: TFRpSearchParam
     Top = 136
   end
   object Dataprov: TDataSetProvider
-    Constraints = True
     Left = 196
     Top = 136
   end

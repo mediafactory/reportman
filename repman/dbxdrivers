@@ -168,17 +168,28 @@ ReadCommited=1
 RepeatableRead=2
 
 [Database Protocol]
-mysql=0
-postgresql=1
-postgresql-7.2=2
+oracle=0
+oracle-9i=1
+sqlite=2
+sqlite-2.8=2
 interbase-5=3
 interbase-6=4
 firebird-1.0=5
 firebird-1.5=6
-mssql=7
-sybase=8
-oracle=9
-db2=10
+postgresql=7
+postgresql-6.5=8
+postgresql-7.2=9
+postgresql-7.3=10
+postgresql-7.4=11
+mysql=12
+mysql-3.20=13
+mysql-3.23=14
+mysql-4.0=15
+mysql-4.1=16
+sybase=17
+mssql=18
+ado=19
+db2=20
 
 [Zeos TransIsolation]
 None=0

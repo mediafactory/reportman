@@ -423,7 +423,7 @@ begin
    acontrol.parent:=PRight;
    acontrol.Anchors:=[akLeft,akTop,akRight];
    if Not assigned(ActiveControl) then
-    if acontrol.Visible then
+    if (acontrol.Visible and acontrol.Enabled) then
      ActiveControl:=TWinControl(acontrol);
    Posy:=PosY+acontrol.Height+CONS_CONTROLGAP;
   end
@@ -492,7 +492,7 @@ begin
       end;
      rpParamDate:
       begin
-       fparams.items[i].Value:=Variant(TDateTimePicker(LControls.Objects[i]).Date);
+       fparams.items[i].Value:=Variant(Trunc(TDateTimePicker(LControls.Objects[i]).Date));
       end;
      rpParamTime:
       begin

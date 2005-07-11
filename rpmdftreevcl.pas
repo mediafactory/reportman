@@ -183,13 +183,14 @@ procedure TFRpDBTreeVCL.FillTree(adbinfo:TRpDatabaseInfoItem;groups:TDataset;rep
 var
  acount:integer;
  i:integer;
- agroup,aname:String;
+ agroup,aname,agroupname:String;
 begin
  // Get the time
 {$IFDEF MSWINDOWS}
  mmfirst:=TimeGetTime;
 {$ENDIF}
  agroup:='REPORT_GROUP';
+ agroupname:='GROUP_NAME';
  aname:='REPORT_NAME';
  if Assigned(adbinfo) then
  begin
@@ -200,10 +201,12 @@ begin
  // Transport the dataset to the clientdatasets
  DReports.Close;
  DReportGroups.Close;
+ DReportGroups2.Close;
  DReportsREPORT_NAME.Size:=reports.FieldByName(aname).size;
  if Length(agroup)>0 then
  begin
-  DReportGroupsGROUP_NAME.Size:=groups.FieldByName(agroup).Size;
+  DReportGroupsGROUP_NAME.Size:=groups.FieldByName(agroupname).Size;
+  DReportGroups2GROUP_NAME.Size:=groups.FieldByName(agroupname).Size;
  end;
  DReports.CreateDataSet;
  DReportGroups.CreateDataset;

@@ -169,7 +169,7 @@ var
 begin
 {$IFNDEF FORWEBAX}
  defheight:=calcdefaultheight(Font.Size);
- report:=params.Report;
+ report:=avalue.Report;
 {$ENDIF}
  acontrol:=nil;
  fparams.assign(avalue);
@@ -407,7 +407,7 @@ begin
     if VarIsNull(aparam.Value) then
      acontrol.Visible:=false;
    if Not assigned(ActiveControl) then
-    if acontrol.Visible then
+    if (acontrol.Visible and acontrol.enabled) then
      ActiveControl:=TWidgetControl(acontrol);
    Posy:=PosY+acontrol.Height+CONS_CONTROLGAP;
   end
