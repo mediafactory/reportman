@@ -369,6 +369,7 @@ function BoolToStr(B: Boolean; UseBoolStrs: Boolean = False): string;
 function StrToBool(const S: string): Boolean;
 function StrToBoolDef(const S: string; const Default: Boolean): Boolean;
 function TryStrToBool(const S: string; out Value: Boolean): Boolean;
+function TryStrToFloat(const S: string; out Value: Double): Boolean;
 var
   TrueBoolStrs: array of String;
   FalseBoolStrs: array of String;
@@ -454,9 +455,20 @@ begin
 end;
 
 function TryStrToFloat(const S: string; out Value: Double): Boolean;
+{$IFNDEF FPC}
+var
+ avalue:extended;
+{$ENDIF}
 begin
 {$IFNDEF FPC}
-  Result := TextToFloat(PChar(S), Value, fvExtended);
+ try
+  avalue:=value;
+  Result := TextToFloat(PChar(S), aValue, fvExtended);
+  if Result then
+   Value:=avalue;
+ except
+  Result:=false;
+ end;
 {$ENDIF}
 {$IFDEF FPC}
   Result:=true;

@@ -354,6 +354,7 @@ type
     datainfo:TRpDataInfoList;
     datainfoitem:TRpDataInfoItem;
     dbinfoitem:TRpDatabaseInfoItem;
+    procedure DoRecordChange;
     constructor Create;
   end;
 procedure GetRpDatabaseDrivers(alist:TStrings);
@@ -1995,6 +1996,8 @@ begin
     FSQLInternalQuery.AfterOpen:=nil;
     FSQLInternalQuery.AfterClose:=nil;
    end;
+   if Assigned(FDataLink) then
+    FDataLink.DoRecordChange;
    FSQLInternalQuery.Active:=true;
 {$IFDEF USEBDE}
    if (FSQLInternalQuery is TTable) then
@@ -3646,6 +3649,10 @@ begin
  Result:=Items[index];
 end;
 
+procedure TRpDataLink.DoRecordChange;
+begin
+ RecordChanged(nil);
+end;
 
 
 procedure TRpDataLink.RecordChanged(Field:TField);

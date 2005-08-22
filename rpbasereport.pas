@@ -169,7 +169,7 @@ type
    FPaperSource:Integer;
    FDuplex:Integer;
    FForcePaperName:String;
-   FLinesPerInch:Integer;
+   FLinesPerInch:Word;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -394,7 +394,7 @@ type
    property Duplex:Integer read FDuplex write FDuplex default 0;
    property ForcePaperName:String read FForcePaperName write FForcePaperName;
    // Interline
-   property LinesPerInch:Integer read FLinesPerInch write FLinesPerInch default 600;
+   property LinesPerInch:Word read FLinesPerInch write FLinesPerInch default 600;
  end;
 
 

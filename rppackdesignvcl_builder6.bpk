@@ -23,7 +23,7 @@
       dbxcds.lib indy.lib bcb2kaxserver.lib rppack_builder6.lib 
       rppackvcl_builder6.lib"/>
     <PACKAGES value="rtl.bpi vcljpg.bpi adortl.bpi bdertl.bpi dbexpress.bpi dbrtl.bpi dsnap.bpi 
-      ibxpress.bpi indy.bpi tee.bpi vcl.bpi vcldb.bpi rppackvcl_builder6.bpi 
+      ibxpress.bpi indy.bpi tee.bpi vcl.bpi vclx.bpi vcldb.bpi rppackvcl_builder6.bpi 
       rppack_builder6.bpi cds.bpi bcbie.bpi bcbsmp.bpi"/>
     <PATHCPP value=".;"/>
     <PATHPAS value=".;"/>
@@ -72,6 +72,7 @@
       <FILE FILENAME="indy.bpi" FORMNAME="" UNITNAME="indy" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="tee.bpi" FORMNAME="" UNITNAME="tee" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="vcl.bpi" FORMNAME="" UNITNAME="vcl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="vclx.bpi" FORMNAME="" UNITNAME="vclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="vcldb.bpi" FORMNAME="" UNITNAME="vcldb" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rppackvcl_builder6.bpi" FORMNAME="" UNITNAME="rppackvcl_builder6" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rppack_builder6.bpi" FORMNAME="" UNITNAME="rppack_builder6" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>

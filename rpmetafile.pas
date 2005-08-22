@@ -319,8 +319,10 @@ type
    CustomX:integer;
    CustomY:integer;
    Orientation:TRpOrientation;
-   PaperSource:Integer;
-   Duplex:Word;
+   PaperSource:Word;
+   Copies:Word;
+   Duplex:Byte;
+   CollateCopies:Boolean;
    LinesPerInch:Word;
    BackColor:integer;
    PrinterSelect:TRpPrinterSelect;
@@ -670,6 +672,8 @@ begin
  CustomY:=17039;
  OpenDrawerBefore:=false;
  OpenDrawerAfter:=false;
+ CollateCopies:=true;
+ LinesPerInch:=6;
 
  FPages:=TList.Create;
 end;
@@ -744,7 +748,9 @@ begin
  Stream.Write(ainteger,sizeof(integer));
  Stream.Write(BackColor,sizeof(BackColor));
  Stream.Write(PaperSource,sizeof(PaperSource));
+ Stream.Write(Copies,sizeof(Copies));
  Stream.Write(LinesPerInch,sizeof(LinesPerInch));
+ Stream.Write(CollateCopies,sizeof(CollateCopies));
  Stream.Write(Duplex,sizeof(Duplex));
  ainteger:=Integer(PrinterSelect);
  Stream.Write(ainteger,sizeof(integer));
@@ -889,7 +895,11 @@ begin
   Raise Exception.Create(SRpBadFileHeader);
  if (sizeof(PaperSource)<>Stream.Read(PaperSource,sizeof(PaperSource))) then
   Raise Exception.Create(SRpBadFileHeader);
+ if (sizeof(Copies)<>Stream.Read(Copies,sizeof(Copies))) then
+  Raise Exception.Create(SRpBadFileHeader);
  if (sizeof(LinesPerInch)<>Stream.Read(LinesPerInch,sizeof(LinesPerInch))) then
+  Raise Exception.Create(SRpBadFileHeader);
+ if (sizeof(CollateCopies)<>Stream.Read(CollateCopies,sizeof(CollateCopies))) then
   Raise Exception.Create(SRpBadFileHeader);
  if (LinesPerInch<=0) then
   LinesPerInch:=6;
@@ -1002,7 +1012,6 @@ begin
  Stream.Write(fpagesizeqt.CustomHeight,sizeof(fpagesizeqt.CustomHeight));
  Stream.Write(fpagesizeqt.PhysicWidth,sizeof(fpagesizeqt.PhysicWidth));
  Stream.Write(fpagesizeqt.PhysicHeight,sizeof(fpagesizeqt.PhysicHeight));
- Stream.Write(fpagesizeqt.PaperSource,sizeof(fpagesizeqt.PaperSource));
  Stream.Write(fpagesizeqt.PaperSource,sizeof(fpagesizeqt.PaperSource));
  byteswrite:=61;
  System.Array.Copy(fpagesizeqt.ForcePaperName,abytes,byteswrite);

@@ -53,7 +53,7 @@ procedure WritePropertyW(propname:string;propvalue:WideString;stream:TStream);
 procedure WritePropertyB(propname:string;propvalue:TStream;stream:TStream);
 procedure WriteReportXML(areport:TComponent;Stream:TStream);
 procedure ReadReportXML(areport:TComponent;Stream:TStream);
-procedure ReadSectionXML(asection:TComponent;Stream:TStream);
+procedure ReadSectionXML(areport:TComponent;Stream:TStream);
 
 procedure WriteDatabaseInfoXML(dbinfo:TRpDatabaseInfoItem;Stream:TStream);
 procedure WriteDataInfoXML(dinfo:TRpDataInfoItem;Stream:TStream);
@@ -68,7 +68,8 @@ function RpIsAlphaW(achar:Widechar):Boolean;
 
 implementation
 
-procedure ReadSectionXML(asection:TComponent;Stream:TStream);
+// Implement it based on FindNextName procedure
+procedure ReadSectionXML(areport:TComponent;Stream:TStream);
 begin
 
 end;
@@ -286,6 +287,14 @@ begin
  WritePropertyI('DPIRES',section.dpires,Stream);
  WritePropertyI('BACKSTYLE',Integer(section.BackStyle),Stream);
  WritePropertyI('DRAWSTYLE',Integer(section.DrawStyle),Stream);
+ if assigned(section.Stream) then
+ begin
+  if section.Stream.Size>0 then
+  begin
+   section.Stream.Seek(0,soFromBeginning);
+   WritePropertyB('STREAM',section.Stream,Stream);
+  end;
+ end;
 
 
  for i:=0 to section.ReportComponents.Count-1 do
@@ -413,6 +422,8 @@ begin
   WritePropertyW('GETVALUECONDITION',compc.GetValueCondition,Stream);
   WritePropertyW('CHANGESERIEEXPRESSION',compc.ChangeSerieExpression,Stream);
   WritePropertyW('CAPTIONEXPRESSION',compc.CaptionExpression,Stream);
+  WritePropertyW('COLOREXPRESSION',compc.ColorExpression,Stream);
+  WritePropertyW('SERIECOLOREXPRESSION',compc.SerieColorExpression,Stream);
   WritePropertyW('SERIECAPTION',compc.SerieCaption,Stream);
   WritePropertyW('CLEAREXPRESSION',compc.ClearExpression,Stream);
 //  WritePropertyI('SERIES',Integer(compc.Series),Stream);
@@ -631,6 +642,7 @@ var
 begin
  olddec:=DecimalSeparator;
  try
+  DecimalSeparator:='.';
   Result:=FloatToStr(avalue);
  finally
   DecimalSeparator:=olddec;
@@ -649,6 +661,7 @@ var
 begin
  olddec:=DecimalSeparator;
  try
+  DecimalSeparator:='.';
   Result:=StrToFloat(avalue);
  finally
   DecimalSeparator:=olddec;
@@ -889,6 +902,8 @@ end;
 
 procedure ReadPropSection(sec:TRpSection;
  propname,propvalue,proptype,propsize:string);
+var
+  memstream:TMemoryStream;
 begin
  if propname='WIDTH' then
   sec.Width:=StrToInt(propvalue)
@@ -975,7 +990,20 @@ begin
   sec.BackStyle:=TRpBackStyle(StrToInt(propvalue))
  else
  if propname='DRAWSTYLE' then
-  sec.DrawStyle:=TRpImageDrawStyle(StrToInt(propvalue));
+  sec.DrawStyle:=TRpImageDrawStyle(StrToInt(propvalue))
+ else
+ if propname='STREAM' then
+ begin
+  memstream:=TMemoryStream.Create;
+  try
+   BinToStream(memstream,RpStringToString(propvalue),propsize);
+//    BinToStream(memstream,propvalue,propsize);
+   memstream.Seek(0,soFromBeginning);
+   sec.SetStream(memstream);
+  finally
+   memstream.free;
+  end;
+ end;
 end;
 
 procedure ReadPropDataInfo(ditem:TRpDataInfoItem;
@@ -1080,6 +1108,9 @@ begin
   aparam.Selected.Text:=RpStringToString(propvalue)
  else
  if propname='LOOKUPDATASET' then
+  aparam.LookupDataset:=RpStringToString(propvalue)
+ else
+ if propname='SEARCHDATASET' then
   aparam.LookupDataset:=RpStringToString(propvalue)
  else
  if propname='SEARCHPARAM' then
@@ -1514,6 +1545,12 @@ begin
   else
   if propname='CAPTIONEXPRESSION' then
    compc.CaptionExpression:=RpStringToWString(propvalue)
+  else
+  if propname='COLOREXPRESSION' then
+   compc.ColorExpression:=RpStringToWString(propvalue)
+  else
+  if propname='SERIECOLOREXPRESSION' then
+   compc.SerieColorExpression:=RpStringToWString(propvalue)
   else
   if propname='SERIECAPTION' then
    compc.SerieCaption:=RpStringToWString(propvalue)

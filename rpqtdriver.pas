@@ -1855,9 +1855,10 @@ begin
 {$ENDIF}
   if metafile then
   begin
-   qtdriver.calconly:=true;
-   aqtdriver:=qtDriver;
-   report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate)
+//   qtdriver.calconly:=true;
+//   aqtdriver:=qtDriver;
+//   report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate)
+   report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
   end
   else
    report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);

@@ -95,7 +95,7 @@ begin
   begin
    sec:=SubRep.Sections.Items[j].Section;
    // If it's a external section try to load it
-   if sec.IsExternal then
+   if ((sec.IsExternal) and (not sec.LoadedExternal)) then
    begin
     sec.LoadExternal;
 
@@ -949,7 +949,7 @@ begin
   metafile.Clear;
   metafile.PreviewAbout:=PreviewAbout;
   metafile.PreviewMargins:=PreviewMargins;
-  metafile.LinesPerInch:=LinesPerInch;
+  metafile.LinesPerInch:=LinesPerInch div 10;
   ClearTotalPagesList;
   // Sets page orientation
   currentorientation:=PageOrientation;

@@ -21,7 +21,7 @@
       inetdbxpress.lib dbexpress.lib nmfast.lib bcbie.lib soaprtl.lib dclocx.lib 
       dbxcds.lib indy.lib bcb2kaxserver.lib rppack_builder6.lib"/>
     <PACKAGES value="rtl.bpi rppack_builder6.bpi vcljpg.bpi adortl.bpi bdertl.bpi dsnap.bpi 
-      ibxpress.bpi indy.bpi tee.bpi vcl.bpi vcldb.bpi dbexpress.bpi dbrtl.bpi 
+      ibxpress.bpi indy.bpi tee.bpi vcl.bpi vclx.bpi vcldb.bpi dbexpress.bpi dbrtl.bpi 
       cds.bpi bcbie.bpi bcbsmp.bpi"/>
     <PATHCPP value=".;"/>
     <PATHPAS value=".;"/>
@@ -69,6 +69,7 @@
       <FILE FILENAME="indy.bpi" FORMNAME="" UNITNAME="indy" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="tee.bpi" FORMNAME="" UNITNAME="tee" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="vcl.bpi" FORMNAME="" UNITNAME="vcl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="vclx.bpi" FORMNAME="" UNITNAME="vclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="vcldb.bpi" FORMNAME="" UNITNAME="vcldb" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="dbexpress.bpi" FORMNAME="" UNITNAME="dbexpress" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rpvclreport.pas" FORMNAME="" UNITNAME="rpvclreport" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>

@@ -132,6 +132,7 @@ type
    FirstPage:Integer;
    ChildSubReportName:String;
    SubReportName:String;
+   LoadedExternal:Boolean;
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    function SectionCaption(addchild:boolean):WideString;
@@ -1013,6 +1014,7 @@ begin
   Height:=0;
   exit;
  end;
+ LoadedExternal:=true;
 end;
 
 

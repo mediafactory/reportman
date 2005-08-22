@@ -1776,7 +1776,7 @@ function ExportReportToPDFMetaStream (report:TRpReport; Caption:string; progress
 var
  pdfdriver:TRpPDFDriver;
  gdidriver:TRpGDIDriver;
- agdidriver:IRpPrintDriver;
+// agdidriver:IRpPrintDriver;
  oldtwopass:Boolean;
  apdfdriver:IRpPrintDriver;
  onprog:TRpProgressEvent;
@@ -1799,9 +1799,10 @@ begin
 {$ENDIF}
   if metafile then
   begin
-   agdidriver:=gdidriver;
-   gdidriver.onlycalc:=true;
-   report.PrintRange(agdidriver,allpages,frompage,topage,copies,collate);
+//   agdidriver:=gdidriver;
+//   gdidriver.onlycalc:=true;
+   report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
+//   report.PrintRange(agdidriver,allpages,frompage,topage,copies,collate);
   end
   else
    report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);

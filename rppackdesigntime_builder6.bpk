@@ -21,7 +21,7 @@
       inetdbxpress.lib dbexpress.lib nmfast.lib bcbie.lib soaprtl.lib dclocx.lib 
       dbxcds.lib indy.lib bcb2kaxserver.lib rppack_builder6.lib 
       rppackvcl_builder6.lib rppackdesignvcl_builder6.lib"/>
-    <PACKAGES value="rtl.bpi designide.bpi vcl.bpi rppack_builder6.bpi adortl.bpi dbrtl.bpi 
+    <PACKAGES value="rtl.bpi designide.bpi vcl.bpi vclx.bpi rppack_builder6.bpi adortl.bpi dbrtl.bpi 
       bdertl.bpi dbexpress.bpi dsnap.bpi ibxpress.bpi cds.bpi indy.bpi 
       rppackdesignvcl_builder6.bpi vcljpg.bpi tee.bpi vcldb.bpi 
       rppackvcl_builder6.bpi designdgm.bpi"/>
@@ -64,6 +64,7 @@
       <FILE FILENAME="rpmregdesigntime.pas" FORMNAME="" UNITNAME="rpmregdesigntime" CONTAINERID="PascalCompiler" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="designide.bpi" FORMNAME="" UNITNAME="designide" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="vcl.bpi" FORMNAME="" UNITNAME="vcl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
+      <FILE FILENAME="vclx.bpi" FORMNAME="" UNITNAME="vclx" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="rppack_builder6.bpi" FORMNAME="" UNITNAME="rppack_builder6" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="adortl.bpi" FORMNAME="" UNITNAME="adortl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
       <FILE FILENAME="dbrtl.bpi" FORMNAME="" UNITNAME="dbrtl" CONTAINERID="BPITool" DESIGNCLASS="" LOCALCOMMAND=""/>
