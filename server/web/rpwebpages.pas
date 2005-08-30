@@ -837,11 +837,11 @@ begin
          aparam.Name+'" ';
         if Length(aparam.Hint)>0 then
          aparamstring:=aparamstring+' alt="'+HtmlEncode(aparam.Hint)+'" ';
+        if aparam.IsReadOnly then
+         aparamstring:=aparamstring+' readonly '+#10;
         aparamstring:=aparamstring+
          ' value="'+HtmlEncode(aparam.AsString)+'">';
        end;
-       if aparam.IsReadOnly then
-        aparamstring:=aparamstring+' readonly >'+#10;
       end;
       aparamstring:=aparamstring+'</td>'+#10;
       if pdfreport.Params.Items[i].AllowNulls then

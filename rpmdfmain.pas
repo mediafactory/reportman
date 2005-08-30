@@ -365,6 +365,7 @@ type
     function GetExpressionText:string;
   end;
 
+procedure ExecuteReportDotNet(report:TRpReport);
 
 implementation
 
@@ -1276,6 +1277,14 @@ procedure TFRpMainF.APreviewExecute(Sender: TObject);
 var
  modified:Boolean;
 begin
+ if (report.DatabaseInfo.Count>0) then
+ begin
+  if report.DatabaseInfo.Items[0].Driver=rpdatadriver then
+  begin
+   ExecuteReportDotNet(report);
+   exit;
+  end;
+ end;
  // Previews the report
 {$IFDEF VCLANDCLX}
  if ADriverGDI.Checked then
@@ -2208,6 +2217,50 @@ begin
  begin
   freportstructure.browser.showdatatypes:=MTypeInfo.Checked;
  end;
+end;
+
+
+procedure ExecuteReportDotNet(report:TRpReport);
+var
+ startinfo:TStartupinfo;
+ linecount:string;
+ tempstring:string;
+ index:integer;
+ exitcode:DWORD;
+ numerror:integer;
+ FExename,FCommandLine:string;
+ memstream:TMemoryStream;
+ procesinfo:TProcessInformation;
+ astring:string;
+begin
+  linecount:='';
+    with startinfo do
+    begin
+     cb:=sizeof(startinfo);
+     lpReserved:=nil;
+     lpDesktop:=nil;
+     lpTitle:=PChar('Report manager');
+     dwX:=0;
+     dwY:=0;
+     dwXSize:=400;
+     dwYSize:=400;
+     dwXCountChars:=80;
+     dwYCountChars:=25;
+     dwFillAttribute:=FOREGROUND_RED or BACKGROUND_RED or BACKGROUND_GREEN or BACKGROUND_BLUe;
+     dwFlags:=STARTF_USECOUNTCHARS or STARTF_USESHOWWINDOW;
+     cbReserved2:=0;
+     lpreserved2:=nil;
+    end;
+    FExename:=ExtractFilePath(Application.exename)+'printreport.exe';
+    astring:=RpTempFileName;
+    report.StreamFormat:=rpStreamXML;
+    report.SaveToFile(astring);
+    FCommandLine:=' -preview "'+astring+'"';
+
+    // Creates the interbase command line proces
+    if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,
+    startinfo,procesinfo) then
+     RaiseLastOSError;
 end;
 
 end.

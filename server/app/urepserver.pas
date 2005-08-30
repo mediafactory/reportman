@@ -1448,6 +1448,8 @@ var
  sinfo:TStartupInfo;
  pinfo:TProcessInformation;
  secat:TSecurityAttributes;
+ alist:TStringLIst;
+ errorfname:string;
 {$ENDIF}
  exefull:string;
  toexecute:String;
@@ -1470,6 +1472,7 @@ begin
    currentdir:=ExtractFilePath(Application.Exename);
    repname:=RpTempFileName;
    pdfname:=RpTempFilename;
+   errorfname:=RpTempFileName;
    exefull:=currentdir+'printreptopdf.exe';
    aparams.Add(exefull);
    aparams.Add(repname);
@@ -1499,7 +1502,8 @@ begin
    toexecute:='printreptopdf.exe';
    if metafile then
     toexecute:=toexecute+' -m ';
-   toexecute:=toexecute+' -q '+repname+' '+pdfname;
+   toexecute:=toexecute+' -q -errorfile "'+
+    errorfname+'" "'+repname+'" "'+pdfname+'"';
    memstream.SaveToFile(repname);
    try
     try
@@ -1514,8 +1518,22 @@ begin
     end;
     WaitForSingleObject(pinfo.hProcess,INFINITE);
     try
-     astream.LoadFromFile(pdfname);
-     astream.Seek(0,soFromBeginning);
+     if FileExists(errorfname) then
+     begin
+      alist:=TStringList.Create;
+      try
+       alist.LoadFromFile(errorfname);
+       DeleteFile(Pchar(errorfname));
+       raise Exception.Create(alist.Text);
+      finally
+       alist.free;
+      end;
+     end
+     else
+     begin
+      astream.LoadFromFile(pdfname);
+      astream.Seek(0,soFromBeginning);
+     end;
     finally
      DeleteFile(Pchar(pdfname));
     end;

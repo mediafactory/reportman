@@ -877,6 +877,8 @@ end;
 
 procedure TRpExpression.UpdateIsPageCount;
 begin
+ FIsPageCount:=false;
+ FIsGroupPageCount:=false;
  if UpperCase(Trim(FExpression))='PAGECOUNT' then
   FIsPageCount:=true;
  if UpperCase(Trim(FExpression))='GROUPPAGECOUNT' then

@@ -1290,6 +1290,9 @@ var
   SrpRegCopy:WideString='Copying record';
   SrpChangeLevel:WideString='Change Level';
   SrpReboot:WideString='Reboot';
+  SRpDriverDotNet:WideString='Dot net driver';
+  SRpDriverDotNetDesc:WideString='Dot net driver';
+  SRpEmptyResponse:WideString='Empty response';
 implementation
 
 uses rptranslator;

@@ -170,6 +170,7 @@ type
   protected
     procedure DefineProperties(Filer:TFiler);override;
   public
+   DotNetDriver:integer;
    procedure UpdateConAdmin;
    procedure Assign(Source:TPersistent);override;
    destructor Destroy;override;
@@ -364,6 +365,7 @@ procedure CombineAddDataset(client:TClientDataset;data:TDataset;group:boolean);
 procedure FillFieldsInfo(adata:TDataset;fieldnames,fieldtypes,fieldsizes:TStrings);
 function ExtractFieldNameEx(astring:String):string;
 function EncodeADOPassword(astring:String):String;
+procedure GetDotNetDrivers(alist:TStrings);
 
 implementation
 
@@ -835,6 +837,7 @@ begin
   FReportField:=TRpDatabaseInfoItem(Source).FReportField;
   FReportSearchField:=TRpDatabaseInfoItem(Source).FReportSearchField;
   FReportGroupsTable:=TRpDatabaseInfoItem(Source).FReportGroupsTable;
+  DotNetDriver:=TRpDatabaseInfoItem(Source).DotNetDriver;
  end
  else
   inherited Assign(Source);
@@ -2851,8 +2854,16 @@ begin
  alist.Add('Microsoft DAO');
  alist.Add('Interbase Objects');
  alist.Add('Zeos Database Objects');
+ alist.Add('Dot Net Connection');
 end;
 
+procedure GetDotNetDrivers(alist:TStrings);
+begin
+ alist.Clear;
+ alist.Add('OleDb');
+ alist.Add('Odbc');
+ alist.Add('Firebird');
+end;
 
 procedure TRpDataInfoList.IntDisableLink(alist:TStringList;i:integer);
 var

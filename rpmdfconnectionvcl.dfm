@@ -1,15 +1,15 @@
 object FRpConnectionVCL: TFRpConnectionVCL
   Left = 0
   Top = 0
-  Width = 443
-  Height = 277
+  Width = 612
+  Height = 386
   Align = alClient
   AutoScroll = False
   TabOrder = 0
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 443
+    Width = 612
     Height = 27
     AutoSize = True
     ButtonHeight = 25
@@ -50,15 +50,15 @@ object FRpConnectionVCL: TFRpConnectionVCL
   object PParent: TPanel
     Left = 0
     Top = 27
-    Width = 443
-    Height = 250
+    Width = 612
+    Height = 359
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PTop: TPanel
       Left = 0
       Top = 0
-      Width = 443
+      Width = 612
       Height = 105
       Align = alTop
       BevelOuter = bvNone
@@ -76,7 +76,7 @@ object FRpConnectionVCL: TFRpConnectionVCL
       object PDriver: TPanel
         Left = 169
         Top = 0
-        Width = 274
+        Width = 443
         Height = 105
         Align = alClient
         BevelOuter = bvNone
@@ -84,7 +84,7 @@ object FRpConnectionVCL: TFRpConnectionVCL
         object MHelp: TMemo
           Left = 0
           Top = 33
-          Width = 274
+          Width = 443
           Height = 72
           Align = alClient
           Color = clInfoBk
@@ -94,7 +94,7 @@ object FRpConnectionVCL: TFRpConnectionVCL
         object Panel1: TPanel
           Left = 0
           Top = 0
-          Width = 274
+          Width = 443
           Height = 33
           Align = alTop
           BevelOuter = bvNone
@@ -114,16 +114,16 @@ object FRpConnectionVCL: TFRpConnectionVCL
     object PanelProps: TPanel
       Left = 0
       Top = 105
-      Width = 443
-      Height = 145
+      Width = 612
+      Height = 254
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
       object GAvailable: TGroupBox
         Left = 0
         Top = 0
-        Width = 443
-        Height = 145
+        Width = 612
+        Height = 254
         Align = alClient
         Caption = 'Available connections'
         TabOrder = 0
@@ -131,7 +131,7 @@ object FRpConnectionVCL: TFRpConnectionVCL
           Left = 2
           Top = 15
           Width = 169
-          Height = 128
+          Height = 237
           Align = alLeft
           ItemHeight = 13
           TabOrder = 0
@@ -140,11 +140,14 @@ object FRpConnectionVCL: TFRpConnectionVCL
         object PConProps: TPanel
           Left = 171
           Top = 15
-          Width = 270
-          Height = 128
+          Width = 439
+          Height = 237
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
+          DesignSize = (
+            439
+            237)
           object LConnectionString: TLabel
             Left = 4
             Top = 92
@@ -155,7 +158,7 @@ object FRpConnectionVCL: TFRpConnectionVCL
           end
           object LAvailable: TLabel
             Left = 7
-            Top = 144
+            Top = 172
             Width = 43
             Height = 13
             Caption = 'Available'
@@ -167,6 +170,14 @@ object FRpConnectionVCL: TFRpConnectionVCL
             Width = 75
             Height = 13
             Caption = 'Database driver'
+          end
+          object LDotNetDriver: TLabel
+            Left = 8
+            Top = 116
+            Width = 64
+            Height = 13
+            Caption = 'Dot net driver'
+            Visible = False
           end
           object CheckLoginPrompt: TCheckBox
             Left = 5
@@ -200,8 +211,8 @@ object FRpConnectionVCL: TFRpConnectionVCL
           end
           object EConnectionString: TEdit
             Left = 136
-            Top = 88
-            Width = 365
+            Top = 84
+            Width = 293
             Height = 21
             TabOrder = 4
             Visible = False
@@ -209,8 +220,8 @@ object FRpConnectionVCL: TFRpConnectionVCL
           end
           object ComboAvailable: TComboBox
             Left = 136
-            Top = 140
-            Width = 365
+            Top = 168
+            Width = 293
             Height = 21
             Style = csDropDownList
             ItemHeight = 13
@@ -218,8 +229,8 @@ object FRpConnectionVCL: TFRpConnectionVCL
             Visible = False
           end
           object BBuild: TButton
-            Left = 124
-            Top = 112
+            Left = 128
+            Top = 136
             Width = 117
             Height = 25
             Caption = 'Build...'
@@ -228,9 +239,9 @@ object FRpConnectionVCL: TFRpConnectionVCL
             OnClick = BBuildClick
           end
           object ComboDriver: TComboBox
-            Left = 132
+            Left = 136
             Top = 4
-            Width = 369
+            Width = 285
             Height = 21
             Style = csDropDownList
             ItemHeight = 13
@@ -238,13 +249,25 @@ object FRpConnectionVCL: TFRpConnectionVCL
             OnClick = ComboDriverClick
           end
           object BTest: TButton
-            Left = 4
-            Top = 112
+            Left = 8
+            Top = 136
             Width = 117
             Height = 25
             Caption = 'Connect'
             TabOrder = 5
             OnClick = BTestClick
+          end
+          object ComboNetDriver: TComboBox
+            Left = 136
+            Top = 109
+            Width = 293
+            Height = 21
+            Style = csDropDownList
+            Anchors = [akLeft, akTop, akRight]
+            ItemHeight = 13
+            TabOrder = 8
+            Visible = False
+            OnClick = CheckLoginPromptClick
           end
         end
       end

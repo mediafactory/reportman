@@ -388,6 +388,7 @@ begin
  alist.Add(SRpChartArrow);
  alist.Add(SRpChartBubble);
  alist.Add(SRpChartGantt);
+ 
 end;
 
 

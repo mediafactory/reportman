@@ -80,6 +80,7 @@ var
  doprintmetafile:boolean;
  stdinput:boolean;
  doprintastext:Boolean;
+ errorfile:string;
 {$IFDEF MSWINDOWS}
  toexcel:Boolean;
 {$ENDIF}
@@ -88,6 +89,7 @@ var
  oemconvert:Boolean;
  htmloutput:Boolean;
  tocsv,tosvg,toctxt:Boolean;
+ filestream:TFileStream;
  dotime:boolean;
  seconds,minutes,hours:integer;
  difmilis:int64;
@@ -154,6 +156,7 @@ begin
 {$IFDEF LINUX}
   milifirst:=0;
 {$ENDIF}
+  errorfile:='';
   dotime:=false;
   tocsv:=false;
   toctxt:=false;
@@ -213,6 +216,15 @@ begin
      if indexparam>=Paramcount+1 then
       Raise Exception.Create(SRpNumberexpected);
      frompage:=StrToInt(ParamStr(indexparam));
+     allpages:=false;
+    end
+    else
+    if ParamStr(indexparam)='-errorfile' then
+    begin
+     inc(indexparam);
+     if indexparam>=Paramcount+1 then
+      Raise Exception.Create(SRpNumberexpected);
+     errorfile:=ParamStr(indexparam);
      allpages:=false;
     end
     else
@@ -454,7 +466,19 @@ begin
  except
   On E:Exception do
   begin
-   WriteToStdError(E.Message+LINE_FEED);
+   if (errorfile<>'') then
+   begin
+    filestream:=TFileStream.Create(errorfile,fmCreate);
+    try
+     WriteStringToStream(E.Message,filestream);
+    finally
+     filestream.free;
+    end;
+   end
+   else
+   begin
+    WriteToStdError(E.Message+LINE_FEED);
+   end;
    ExitCode:=1;
   end;
  end;

@@ -367,6 +367,8 @@ type
 {$ENDIF}
 {$ENDIF}
 
+function IsMetafile(memstream:TMemoryStream):boolean;
+
 implementation
 
 constructor TrpMetafilePage.Create;
@@ -846,6 +848,61 @@ begin
  end;
 end;
 
+
+function IntIsMetafile(Stream:TStream):boolean;
+var
+ buf:array of Byte;
+ bufstring:string;
+ bytesread,i:integer;
+begin
+ Result:=false;
+ SetLength(buf,RP_SIGNATURELENGTH);
+ bytesread:=Stream.Read(buf[0],RP_SIGNATURELENGTH);
+ if (bytesread<RP_SIGNATURELENGTH) then
+  exit;
+ bufstring:='';
+ for i:=0 to RP_SIGNATURELENGTH-1 do
+ begin
+  bufstring:=bufstring+Char(buf[i]);
+ end;
+ if (bufstring<>rpSignature) then
+ begin
+  if bufstring=RpSignature2_2 then
+   Result:=true;
+ end
+ else
+  Result:=true;
+end;
+
+function IsMetafile(memstream:TMemoryStream):boolean;
+var
+{$IFDEF USEZLIB}
+ zStream:TDeCompressionStream;
+{$ENDIF}
+begin
+ memstream.Seek(0,soFromBeginning);
+ if IsCompressed(memstream) then
+ begin
+{$IFDEF USEZLIB}
+  memstream.Seek(0,soFromBeginning);
+  zStream:=TDeCompressionStream.Create(memstream);
+  try
+   Result:=IntIsMetafile(zStream);
+  finally
+   zStream.free;
+  end;
+{$ENDIF}
+{$IFNDEF USEZLIB}
+   Raise Exception.Create(SRpZLibNotSupported);
+{$ENDIF}
+  end
+  else
+  begin
+   Result:=IntIsMetafile(memstream);
+  end;
+end;
+
+
 procedure TRpMetafileReport.IntLoadFromStream(Stream:TStream;LoadStream:TStream;clearfirst:boolean=true);
 var
  separator:integer;
@@ -995,17 +1052,18 @@ procedure TRpMetafilePage.SaveToStream(Stream:TStream);
 var
  separator:integer;
  asize:int64;
- wsize:integer;
+ wsize,i:integer;
  byteswrite:integer;
  abytes:array of Byte;
+ intor:integer;
 begin
  // Objects
  // Save all objects
  separator:=integer(rpFObject);
  Stream.Write(separator,sizeof(separator));
  Stream.Write(FMark,sizeof(FMark));
-{$IFDEF DOTNETD}
- Stream.Write(integer(forientation),sizeof(integer(forientation)));
+ intor:=integer(forientation);
+ Stream.Write(intor,sizeof(intor));
  Stream.Write(fpagesizeqt.Indexqt,sizeof(fpagesizeqt.Indexqt));
  Stream.Write(fpagesizeqt.Custom,sizeof(fpagesizeqt.Custom));
  Stream.Write(fpagesizeqt.CustomWidth,sizeof(fpagesizeqt.CustomWidth));
@@ -1014,16 +1072,21 @@ begin
  Stream.Write(fpagesizeqt.PhysicHeight,sizeof(fpagesizeqt.PhysicHeight));
  Stream.Write(fpagesizeqt.PaperSource,sizeof(fpagesizeqt.PaperSource));
  byteswrite:=61;
- System.Array.Copy(fpagesizeqt.ForcePaperName,abytes,byteswrite);
+ SetLength(abytes,100);
+ for i:=0 to 60 do
+ begin
+  abytes[i]:=byte(fpagesizeqt.ForcePaperName[i]);
+ end;
  if byteswrite<>Stream.Write(abytes[0],byteswrite) then
   Raise Exception.Create(SRpErrorWritingPage);
 //  ForcePaperName:array [0..60] of char;
  Stream.Write(fpagesizeqt.Duplex,sizeof(fpagesizeqt.Duplex));
-{$ENDIF}
-{$IFNDEF DOTNETD}
- Stream.Write(forientation,sizeof(forientation));
- Stream.Write(fpagesizeqt,sizeof(fpagesizeqt));
-{$ENDIF}
+ for i:=0 to 3 do
+ begin
+  abytes[i]:=0;
+ end;
+ Stream.Write(abytes[0],3);
+
  Stream.Write(FUpdatedPageSize,sizeof(FUpdatedPageSize));
  Stream.Write(FObjectCount,sizeof(FObjectCount));
  byteswrite:=sizeof(TRpMetaObject)*FObjectCount;
@@ -1063,9 +1126,7 @@ var
  objcount:integer;
  asize:int64;
  wsize:integer;
-{$IFDEF DOTNETD}
  i:integer;
-{$ENDIF}
  abytes:array of Byte;
 begin
  SetLength(abytes,200);
@@ -1080,7 +1141,6 @@ begin
   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
  if Not FVersion2_2 then
  begin
-{$IFDEF DOTNETD}
   bytesread:=Stream.Read(separator,sizeof(separator));
   if (bytesread<>sizeof(separator)) then
    Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
@@ -1106,23 +1166,18 @@ begin
   bytesread:=Stream.Read(fpagesizeqt.PaperSource,sizeof(fpagesizeqt.PaperSource));
   if (bytesread<>sizeof(fpagesizeqt.PaperSource)) then
    Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
-  SetLength(abytes,bytesread);
-  bytesread:=61;
-  if (bytesread<>Stream.Read(abytes[0],bytesread)) then
+  bytesread:=Stream.Read(abytes[0],61);
+  if (61<>bytesread) then
    Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
-  System.Array.Copy(abytes,fpagesizeqt.ForcePaperName,bytesread);
+  for i:=0 to bytesread-1 do
+  begin
+   fpagesizeqt.ForcePaperName[i]:=chr(abytes[0]);
+  end;
   bytesread:=Stream.Read(fpagesizeqt.Duplex,sizeof(fpagesizeqt.Duplex));
   if (bytesread<>sizeof(fpagesizeqt.Duplex)) then
    Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
-{$ENDIF}
-{$IFNDEF DOTNETD}
-  bytesread:=Stream.Read(FOrientation,sizeof(Forientation));
-  if (bytesread<>sizeof(Forientation)) then
+  if (3<>Stream.Read(abytes[0],3)) then
    Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
-  bytesread:=Stream.Read(Fpagesizeqt,sizeof(Fpagesizeqt));
-  if (bytesread<>sizeof(Fpagesizeqt)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
-{$ENDIF}
   bytesread:=Stream.Read(FUpdatedPageSize,sizeof(FUpdatedPageSize));
   if (bytesread<>sizeof(FUpdatedPageSize)) then
    Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);

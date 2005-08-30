@@ -10,14 +10,14 @@ object TRpReport
   DataInfo = <
     item
       Alias = 'FISH'
-      DatabaseAlias = 'CONFISH'
+      DatabaseAlias = 'CONF'
       SQL = 'SELECT * FROM BIOLIFE ORDER BY CATEGORY'
       MyBaseFilename = 'biolife.cds'
       MyBaseIndexFields = 'Category'
     end>
   DatabaseInfo = <
     item
-      Alias = 'CONFISH'
+      Alias = 'CONF'
       LoadParams = True
       LoadDriverParams = True
       LoginPrompt = False

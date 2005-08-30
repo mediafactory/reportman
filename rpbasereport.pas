@@ -266,6 +266,7 @@ type
    PageNumGroup:integer;
    LastPage:Boolean;
    ProgressToStdOut:Boolean;
+   AdoNetDriver:integer;
    procedure InitEvaluator;
    procedure BeginPrint(Driver:IRpPrintDriver);virtual;abstract;
    procedure EndPrint;virtual;abstract;

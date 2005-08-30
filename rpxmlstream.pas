@@ -101,6 +101,7 @@ begin
  WritePropertyS('REPORTFIELD',dbinfo.ReportField,Stream);
  WritePropertyS('REPORTGROUPSTABLE',dbinfo.ReportGroupsTable,Stream);
  WritePropertyW('ADOCONNECTIONSTRING',dbinfo.ADOConnectionString,Stream);
+ WritePropertyI('DOTNETDRIVER',dbinfo.DotNetDriver,Stream);
 
 end;
 
@@ -254,11 +255,15 @@ begin
  WritePropertyS('NAME',section.Name,Stream);
  WritePropertyI('WIDTH',section.Width,Stream);
  WritePropertyI('HEIGHT',section.height,Stream);
+ WritePropertyW('PRINTCONDITION',section.PrintCondition,Stream);
+ WritePropertyW('DOBEFOREPRINT',section.DoBeforePrint,Stream);
+ WritePropertyW('DOAFTERPRINT',section.DoBeforePrint,Stream);
  if assigned(section.SubReport) then
  begin
   WritePropertyS('SUBREPORT',section.Subreport.Name,Stream);
  end;
  WritePropertyS('GROUPNAME',section.GroupName,Stream);
+ WritePropertyW('CHANGEEXPRESSION',section.ChangeExpression,Stream);
  WritePropertyBool('CHANGEBOOL',section.ChangeBool,Stream);
  WritePropertyBool('PAGEREPEAT',section.PageRepeat,Stream);
  WritePropertyBool('SKIPPAGE',section.SkipPage,Stream);
@@ -321,6 +326,9 @@ begin
  WritePropertyS('CLASSNAME',UpperCase(comp.ClassName),Stream);
  WritePropertyI('WIDTH',comp.Width,Stream);
  WritePropertyI('HEIGHT',comp.height,Stream);
+ WritePropertyW('PRINTCONDITION',comp.PrintCondition,Stream);
+ WritePropertyW('DOBEFOREPRINT',comp.DoBeforePrint,Stream);
+ WritePropertyW('DOAFTERPRINT',comp.DoBeforePrint,Stream);
  // CommonPos
  WritePropertyI('POSX',comp.PosX,Stream);
  WritePropertyI('POSY',comp.PosY,Stream);
@@ -865,6 +873,9 @@ begin
  if propname='DRIVER' then
   dbitem.Driver:=TRpDBDriver(StrToInt(propvalue))
  else
+ if propname='DOTNETDRIVER' then
+  dbitem.DotNetDriver:=StrToInt(propvalue)
+ else
  if propname='REPORTTABLE' then
   dbitem.ReportTable:=RpStringToString(propvalue)
  else
@@ -905,6 +916,18 @@ procedure ReadPropSection(sec:TRpSection;
 var
   memstream:TMemoryStream;
 begin
+ if propname='CHANGEEXPRESSION' then
+  sec.ChangeExpression:=RpStringToWString(propvalue)
+ else
+ if propname='PRINTCONDITION' then
+  sec.PrintCondition:=RpStringToWString(propvalue)
+ else
+ if propname='DOAFTERPRINT' then
+  sec.DoAfterPrint:=RpStringToWString(propvalue)
+ else
+ if propname='DOBEFOREPRINT' then
+  sec.DoBeforePrint:=RpStringToWString(propvalue)
+ else
  if propname='WIDTH' then
   sec.Width:=StrToInt(propvalue)
  else
@@ -1070,7 +1093,6 @@ end;
 procedure ReadPropParam(aparam:TRpParam;
  propname,propvalue,proptype,propsize:string);
 begin
- aparam.Value:=Null;
  if propname='DESCRIPTION' then
   aparam.Description:=RpStringToWString(propvalue)
  else
@@ -1118,6 +1140,7 @@ begin
  else
  if propname='VALUE' then
  begin
+  aparam.Value:=Null;
   case aparam.ParamType of
    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamUnknown:
     aparam.Value:=RpStringToString(propvalue);
@@ -1326,6 +1349,15 @@ var
  compc:TRpChart;
  memstream:TMemoryStream;
 begin
+ if propname='PRINTCONDITION' then
+  comp.PrintCondition:=RpStringToWString(propvalue)
+ else
+ if propname='DOAFTERPRINT' then
+  comp.DoAfterPrint:=RpStringToWString(propvalue)
+ else
+ if propname='DOBEFOREPRINT' then
+  comp.DoBeforePrint:=RpStringToWString(propvalue)
+ else
  if propname='WIDTH' then
   comp.Width:=StrToInt(propvalue)
  else

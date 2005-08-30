@@ -76,6 +76,8 @@ type
     ComboDriver: TComboBox;
     BTest: TButton;
     ImageList1: TImageList;
+    LDotNetDriver: TLabel;
+    ComboNetDriver: TComboBox;
     procedure GDriverClick(Sender: TObject);
     procedure LConnectionsClick(Sender: TObject);
     procedure BNewClick(Sender: TObject);
@@ -113,6 +115,8 @@ constructor TFRpConnection.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ GetDotNetDrivers(ComboNetDriver.Items);
+ LDotNetDriver.Caption:=SRpDriverDotNet;
  // Translations
  BConfig.Caption:=TranslateStr(143,BConfig.Caption);
  CheckLoginPrompt.Caption:=TranslateStr(144,CheckLoginPrompt.Caption);
@@ -154,6 +158,7 @@ var
  i:integer;
 begin
  ComboDriver.Width:=PConProps.Width-ComboDriver.Left-20;
+ ComboNetDriver.Width:=PConProps.Width-ComboNetDriver.Left-20;
  EConnectionString.Width:=PConProps.Width-ECOnnectionString.Left-20;
  ComboAvailable.Width:=PConProps.Width-ComboAvailable.Left-20;
  ComboDriver.Anchors:=[akLeft,akTop,akRight];
@@ -184,6 +189,8 @@ begin
  begin
   MHelp.Text:=SRpNewDatabaseInfo;
   CheckLoginPrompt.Visible:=False;
+  LDotNetDriver.Visible:=False;
+  ComboNetDriver.Visible:=False;
   CheckLoadParams.Visible:=False;
   CheckLoadDriverParams.Visible:=False;
   LConnectionString.Visible:=False;
@@ -201,6 +208,8 @@ begin
   exit;
  CheckLoginPrompt.Visible:=True;
  CheckLoadParams.Visible:=True;
+ LDotNetDriver.Visible:=true;
+ ComboNetDriver.Visible:=true;
  BTest.Visible:=True;
  CheckLoadDriverParams.Visible:=True;
  ComboDriver.Visible:=true;
@@ -210,6 +219,7 @@ begin
  ComboDriver.ItemIndex:=Integer(dbinfo.Driver);
  ComboDriverClick(Self);
  CheckLoginPrompt.Checked:=dbinfo.LoginPrompt;
+ ComboNetDriver.ItemIndex:=dbinfo.DotNetDriver;
  CheckLoadParams.Checked:=dbinfo.LoadParams;
  CheckLoadDriverParams.Checked:=dbinfo.LoadDriverParams;
  EConnectionString.OnChange:=nil;
@@ -236,6 +246,8 @@ begin
    MHelp.Lines.Text:=SRpIBODesc;
   6:
    MHelp.Lines.Text:=SrpDriverZeosDesc;
+  7:
+   MHelp.Lines.Text:=SRpDriverDotNetDesc;
  end;
  // Loads the alias config
  case TrpDbDriver(GDriver.ItemIndex) of
@@ -288,6 +300,14 @@ begin
     BBuild.Visible:=false;
     ComboAvailable.Items.Clear;
 {$ENDIF}
+   end;
+  rpdatadriver:
+   begin
+    BConfig.Visible:=false;
+    BBuild.Visible:=false;
+    ComboAvailable.Items.Clear;
+    ComboNetDriver.Visible:=false;
+    LDotNetDriver.Visible:=false;
    end;
  end;
 end;
@@ -409,6 +429,8 @@ begin
   exit;
  LConnectionString.Visible:=False;
  EConnectionString.Visible:=false;
+ LDotNetDriver.Visible:=False;
+ ComboNetDriver.Visible:=False;
  BBuild.Visible:=false;
  // Loads the alias config
  case TrpDbDriver(ComboDriver.ItemIndex) of
@@ -451,6 +473,14 @@ begin
     EConnectionString.Visible:=True;
     BBuild.Visible:=true;
 {$ENDIF}
+   end;
+  rpdatadriver:
+   begin
+    LConnectionString.Visible:=True;
+    EConnectionString.Visible:=True;
+    BBuild.Visible:=true;
+    LDotNetDriver.Visible:=true;
+    ComboNetDriver.Visible:=true;
    end;
  end;
  if LConnections.ItemIndex<0 then
@@ -533,6 +563,11 @@ begin
  if Sender=CheckLoadParams then
  begin
   dinfoitem.LoadParams:=CheckLoadParams.Checked;
+ end
+ else
+ if Sender=ComboNetDriver then
+ begin
+  dinfoitem.DotNetDriver:=ComboNetDriver.ItemIndex;
  end
  else
  begin

@@ -571,6 +571,8 @@ begin
    else
    begin
     index:=DataInfo.IndexOf(subrep.Alias);
+    if index<0 then
+     Raise Exception(SRPAliasNotExists+' '+subrep.Alias);
     if Length(Datainfo.Items[index].DataSource)<1 then
     begin
      Datainfo.Items[index].Disconnect;
@@ -949,7 +951,7 @@ begin
   metafile.Clear;
   metafile.PreviewAbout:=PreviewAbout;
   metafile.PreviewMargins:=PreviewMargins;
-  metafile.LinesPerInch:=LinesPerInch div 10;
+  metafile.LinesPerInch:=LinesPerInch;
   ClearTotalPagesList;
   // Sets page orientation
   currentorientation:=PageOrientation;
@@ -1760,6 +1762,7 @@ begin
  Classes.RegisterClass(TRpChart);
  Classes.RegisterClass(TRpBarcode);
 end;
+
 
 initialization
  // Need clas registration to be streamable

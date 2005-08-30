@@ -115,7 +115,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=4
 Release=0
-Build=5
+Build=7
 Debug=0
 PreRelease=0
 Special=0
@@ -126,7 +126,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Server application
-FileVersion=2.4.0.5
+FileVersion=2.4.0.7
 InternalName=
 LegalCopyright=MPL License
 LegalTrademarks=

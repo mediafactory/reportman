@@ -1196,7 +1196,8 @@ begin
  for i:=0 to rep.Sections.Count-1 do
  begin
   if rep.Sections.Items[i].Section.ChildSubReport=SubReport then
-   Raise Exception.Create(SRpCircularDatalink);
+    rep.Sections.Items[i].Section.ChildSubReport:=nil;
+//   Raise Exception.Create(SRpCircularDatalink);
  end;
  FChildSubReport:=Value;
 end;

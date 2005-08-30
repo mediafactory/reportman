@@ -100,6 +100,7 @@ var
  allpages,collate:boolean;
  rpPageSize:TPageSizeQt;
  okselected:Boolean;
+ astring:string;
 begin
  errormessage:='';
  try
@@ -128,34 +129,50 @@ begin
      metafile:=TrpMetafileReport.Create(nil);
      try
       astream.Seek(0,soFromBeginning);
-      metafile.LoadFromStream(astream);
-      if preview then
+      if (IsMetafile(astream)) then
       begin
-       Meta:=PreviewMetafile(metafile,aform,ShowPrintDialog,false);
+       astream.Seek(0,soFromBeginning);
+       metafile.LoadFromStream(astream);
+       if preview then
+       begin
+        Meta:=PreviewMetafile(metafile,aform,ShowPrintDialog,false);
+       end
+       else
+       begin
+        // Prints the report
+        rpPageSize.Custom:=metafile.PageSize<0;
+        rpPageSize.Indexqt:=metafile.PageSize;
+        rpPageSize.CustomWidth:=metafile.CustomX;
+        rpPageSize.CustomHeight:=metafile.CustomY;
+        frompage:=1;
+        topage:=999999;
+        allpages:=true;
+        collate:=false;
+        copies:=FCopies;
+        rpgdidriver.PrinterSelection(metafile.PrinterSelect,metafile.papersource,metafile.duplex);
+        rpgdidriver.PageSizeSelection(rpPageSize);
+        rpgdidriver.OrientationSelection(metafile.orientation);
+
+        okselected:=true;
+        if ShowPrintDialog then
+         okselected:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+        if okselected then
+         rpgdidriver.PrintMetafile(metafile,SRpPrintingFile,FShowProgress,allpages,
+          frompage,topage,copies,collate,
+          GetDeviceFontsOption(metafile.PrinterSelect),metafile.PrinterSelect);
+       end;
       end
       else
       begin
-       // Prints the report
-       rpPageSize.Custom:=metafile.PageSize<0;
-       rpPageSize.Indexqt:=metafile.PageSize;
-       rpPageSize.CustomWidth:=metafile.CustomX;
-       rpPageSize.CustomHeight:=metafile.CustomY;
-       frompage:=1;
-       topage:=999999;
-       allpages:=true;
-       collate:=false;
-       copies:=FCopies;
-       rpgdidriver.PrinterSelection(metafile.PrinterSelect,metafile.papersource,metafile.duplex);
-       rpgdidriver.PageSizeSelection(rpPageSize);
-       rpgdidriver.OrientationSelection(metafile.orientation);
-
-       okselected:=true;
-       if ShowPrintDialog then
-        okselected:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
-       if okselected then
-        rpgdidriver.PrintMetafile(metafile,SRpPrintingFile,FShowProgress,allpages,
-         frompage,topage,copies,collate,
-         GetDeviceFontsOption(metafile.PrinterSelect),metafile.PrinterSelect);
+       astream.Seek(0,soFromBeginning);
+       if ((astream.size)<=0) then
+        Raise Exception.Create(SRpEmptyResponse)
+       else
+       begin
+        SetLength(astring,astream.size);
+        astream.Read(astring[1],astream.size);
+        Raise Exception.Create(Copy(astring,1,2000));
+       end;
       end;
      finally
       metafile.free;
@@ -222,6 +239,7 @@ var
  connect:TIdHttp;
  astream:TMemoryStream;
  metafile:TrpMetafileReport;
+ astring:string;
 begin
  connect:=TIdHttp.Create(nil);
  try
@@ -231,8 +249,24 @@ begin
    metafile:=TrpMetafileReport.Create(nil);
    try
     astream.Seek(0,soFromBeginning);
-    metafile.LoadFromStream(astream);
-    rpgdidriver.PrintMetafile(metafile,'Printing',true,true,0,1,1,true,false);
+    if (IsMetafile(astream)) then
+    begin
+     astream.Seek(0,soFromBeginning);
+     metafile.LoadFromStream(astream);
+     rpgdidriver.PrintMetafile(metafile,'Printing',true,true,0,1,1,true,false);
+    end
+    else
+    begin
+     astream.Seek(0,soFromBeginning);
+     if ((astream.size)<=0) then
+      Raise Exception.Create(SRpEmptyResponse)
+     else
+     begin
+      SetLength(astring,astream.size);
+      astream.Read(astring[1],astream.size);
+      Raise Exception.Create(astring);
+     end;
+    end;
    finally
     metafile.free;
    end;
