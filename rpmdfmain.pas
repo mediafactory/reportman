@@ -2220,6 +2220,8 @@ begin
 end;
 
 
+
+{$IFDEF MSWINDOWS}
 procedure ExecuteReportDotNet(report:TRpReport);
 var
  startinfo:TStartupinfo;
@@ -2262,5 +2264,27 @@ begin
     startinfo,procesinfo) then
      RaiseLastOSError;
 end;
+{$ENDIF}
+
+{$IFDEF LINUX}
+procedure ExecuteReportDotNet(report:TRpReport);
+var
+ aparams:TStringList;
+ astring:string;
+begin
+ aparams:=TStringList.Create;
+ try
+  astring:=RpTempFileName;
+  report.StreamFormat:=rpStreamXML;
+  report.SaveToFile(astring);
+  aparams.Add('printreport');
+  aparams.Add('-preview');
+  aparams.Add(astring);
+  ExecuteSystemCommand(aparams);
+ finally
+  aparams.free;
+ end;
+end;
+{$ENDIF}
 
 end.

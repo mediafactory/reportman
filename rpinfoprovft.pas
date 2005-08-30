@@ -280,12 +280,14 @@ begin
       aobj.Type1:=(FT_FACE_FLAG_SFNT AND aface.face_flags)=0;
       if aobj.Type1 then
       begin
-       aobj.convfactor:=1000/aface.units_per_EM;
+       aobj.convfactor:=1;
+//       aobj.convfactor:=1000/aface.units_per_EM;
        aobj.widthmult:=aobj.convfactor;
       end
       else
       begin
-       aobj.convfactor:=1000/aface.units_per_EM;
+       aobj.convfactor:=1;
+//       aobj.convfactor:=1000/aface.units_per_EM;
        aobj.widthmult:=aobj.convfactor;
       end;
       aobj.filename:=fontfiles.strings[i];
@@ -577,11 +579,13 @@ begin
 end;
 
 
-function TRpFTInfoProvider.GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;
+function TRpFTInfoProvider.GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):integer;
 var
  awidth:integer;
  aint:integer;
+ width1,width2:word;
  cfont:TRpLogFont;
+ dwidth:double;
 begin
  aint:=Ord(charcode);
  if aint>255 then
@@ -599,7 +603,13 @@ begin
 //     awidth:=Round((1/64)*currentfont.ftface.glyph.advance.x)
     // It use no scale for better speed
   if 0=FT_Load_Char(currentfont.ftface,Cardinal(charcode),FT_LOAD_NO_SCALE) then
-   awidth:=Round(currentfont.widthmult*currentfont.ftface.glyph.advance.x)
+  begin
+//   awidth:=Round(currentfont.widthmult*currentfont.ftface.glyph.metrics.horiAdvance);
+   width1:=word(currentfont.ftface.glyph.linearHoriAdvance shr 16);
+   width2:=word((currentfont.ftface.glyph.linearHoriAdvance shl 16) shr 16);
+   dwidth:=width1+width2/65535;
+   awidth:=Round(currentfont.widthmult*dwidth);
+  end
   else
    awidth:=0;
   data.loadedwidths[aint]:=awidth;
