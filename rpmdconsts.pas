@@ -1293,6 +1293,8 @@ var
   SRpDriverDotNet:WideString='Dot net driver';
   SRpDriverDotNetDesc:WideString='Dot net driver';
   SRpEmptyResponse:WideString='Empty response';
+  SRpRepMetafileUn:WideString='Report Metafile uncompressed';
+
 implementation
 
 uses rptranslator;

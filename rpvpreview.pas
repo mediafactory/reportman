@@ -338,7 +338,8 @@ begin
    SRpHtmlFile+'|*.html|'+
    SRpSVGFile+'|*.svg|'+
    SRpCSVFile+'|*.csv|'+
-   SRpTXTProFile+'|*.txt';
+   SRpTXTProFile+'|*.txt|'+
+   SRpRepMetafileUn+'|*.rpmf';
 {$IFNDEF DOTNETD}
   SaveDialog1.Filter:=SaveDialog1.Filter+
     '|'+SRpExeMetafile+'|*.exe';
@@ -550,8 +551,13 @@ begin
         1,9999);
        AppIdle(Self,adone);
       end;
-{$IFNDEF DOTNETD}
      12:
+     begin
+      ALastExecute(Self);
+      report.Metafile.SaveToFile(SaveDialog1.Filename,false);
+     end;
+{$IFNDEF DOTNETD}
+     13:
       begin
        ALastExecute(Self);
        MetafileToExe(report.metafile,SaveDialog1.Filename);

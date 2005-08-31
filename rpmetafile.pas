@@ -336,8 +336,8 @@ type
    procedure Clear;
    procedure LoadFromStream(Stream:TStream;clearfirst:boolean=true);
    procedure LoadFromFile(filename:string;clearfirst:boolean=true);
-   procedure SaveToStream(Stream:TStream);
-   procedure SaveToFile(filename:string);
+   procedure SaveToStream(Stream:TStream;compressed:boolean=true);
+   procedure SaveToFile(filename:string;compressed:boolean=true);
    procedure Assign(Source:TPersistent);override;
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
@@ -706,7 +706,7 @@ end;
 
 
 
-procedure TRpMetafileReport.SaveToStream(Stream:TStream);
+procedure TRpMetafileReport.SaveToStream(Stream:TStream;compressed:boolean=true);
 {$IFDEF USEZLIB}
 var
  zstream:TCompressionStream;
@@ -720,16 +720,18 @@ begin
  milifirst:=now;
 {$ENDIF}
 {$IFDEF USEZLIB}
- zstream:=TCompressionStream.Create(clDefault,Stream);
- try
-  IntSaveToStream(zstream,Stream);
- finally
-  zstream.free;
+ if compressed then
+ begin
+  zstream:=TCompressionStream.Create(clDefault,Stream);
+  try
+   IntSaveToStream(zstream,Stream);
+  finally
+   zstream.free;
+  end;
+  exit;
  end;
 {$ENDIF}
-{$IFNDEF USEZLIB}
-  IntSaveToStream(Stream,Stream);
-{$ENDIF}
+ IntSaveToStream(Stream,Stream);
 end;
 
 procedure TRpMetafileReport.IntSaveToStream(Stream:TStream;SaveStream:TStream);
@@ -1262,13 +1264,13 @@ begin
 end;
 
 
-procedure TRpMetafileReport.SaveToFile(filename:string);
+procedure TRpMetafileReport.SaveToFile(filename:string;compressed:boolean=true);
 var
  fstream:TFileStream;
 begin
  fstream:=TFileStream.Create(filename,fmCreate);
  try
-  SaveToStream(fstream);
+  SaveToStream(fstream,compressed);
  finally
   fstream.free;
  end

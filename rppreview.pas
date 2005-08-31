@@ -332,7 +332,8 @@ begin
    SRpHtmlFile+'|*.html|'+
    SRpSVGFile+'|*.svg|'+
    SRpCSVFile+'|*.csv|'+
-   SRpTXTProFile+'|*.txt';
+   SRpTXTProFile+'|*.txt|'+
+   SRpRepMetafileUn+'|*.rpmf';
 {$IFDEF MSWINDOWS}
  SaveDialog1.Filter:=SaveDialog1.Filter+'|'+SRpExeMetafile+'|*.exe';
 {$ENDIF}
@@ -346,7 +347,8 @@ begin
    SRpHtmlFile+' (*.html)|'+
    SRpSVGFile+' (*.svg)|'+
    SRpCSVFile+' (*.csv)|'+
-   SRpTXTProFile+' (*.txt)';
+   SRpTXTProFile+' (*.txt)|'+
+   SRpRepMetafileUn+' (*.rpmf)';
 {$IFDEF MSWINDOWS}
   SaveDialog1.Filter:=SaveDialog1.Filter+'|'+SRpExeMetafile+' (*.exe)';
 {$ENDIF}
@@ -561,8 +563,13 @@ begin
         1,9999);
        AppIdle(Self,adone);
       end;
-{$IFDEF MSWINDOWS}
      10:
+      begin
+       ALastExecute(Self);
+       report.Metafile.SaveToFile(SaveDialog1.Filename,false);
+      end;
+{$IFDEF MSWINDOWS}
+     11:
       begin
        ALastExecute(Self);
        MetafileToExe(report.metafile,SaveDialog1.Filename);
