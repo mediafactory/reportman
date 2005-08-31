@@ -598,17 +598,12 @@ begin
  begin
   cfont:=TRpLogFont(data.fdata);
   cfont.OpenFont;
-    // Drawing glyph is actually no usefull
-//    if 0=FT_Load_Char(currentfont.ftface,Cardinal(charcode),FT_LOAD_NO_BITMAP) then
-//     awidth:=Round((1/64)*currentfont.ftface.glyph.advance.x)
-    // It use no scale for better speed
-  if 0=FT_Load_Char(currentfont.ftface,Cardinal(charcode),FT_LOAD_NO_SCALE) then
+  if 0=FT_Load_Char(cfont.ftface,Cardinal(charcode),FT_LOAD_NO_SCALE) then
   begin
-//   awidth:=Round(currentfont.widthmult*currentfont.ftface.glyph.metrics.horiAdvance);
-   width1:=word(currentfont.ftface.glyph.linearHoriAdvance shr 16);
-   width2:=word((currentfont.ftface.glyph.linearHoriAdvance shl 16) shr 16);
+   width1:=word(cfont.ftface.glyph.linearHoriAdvance shr 16);
+   width2:=word((cfont.ftface.glyph.linearHoriAdvance shl 16) shr 16);
    dwidth:=width1+width2/65535;
-   awidth:=Round(currentfont.widthmult*dwidth);
+   awidth:=Round(cfont.widthmult*dwidth);
   end
   else
    awidth:=0;
@@ -620,7 +615,7 @@ begin
    data.lastloaded:=aint;
   Result:=awidth;
   // Get glyph index
-  data.loadedglyphs[aint]:=WideChar(FT_Get_Char_Index(currentfont.ftface,Cardinal(charcode)));
+  data.loadedglyphs[aint]:=WideChar(FT_Get_Char_Index(cfont.ftface,Cardinal(charcode)));
   data.loadedg[aint]:=true;
  end;
 end;

@@ -16,7 +16,7 @@ K=0
 L=1
 M=0
 N=1
-O=1
+O=0
 P=1
 Q=0
 R=0
@@ -55,19 +55,19 @@ DebugSourceDirs=
 UsePackages=0
 
 [Parameters]
-RunParams=/home/toni/cvsroot/reportman/tests/repmand/reportsicab/tonialldetail_zeos_selectfields.rep /home/toni/cvsroot/reportman/tests/repmand/test.pdf
+RunParams=-u /home/toni/cvsroot/reportman/tests/repmand/FontTest4.rep /home/toni/new.pdf
 HostApplication=
 Launcher=/usr/X11R6/bin/xterm -T KylixDebuggerOutput -e bash -i -c %debuggee%
 UseLauncher=0
-DebugCWD=
+DebugCWD=/home/toni/cvsroot/reportman/tests/repmand/
 
 [Excluded Packages]
 /home/toni/cvsroot/reportman/bplrppackdesign.so=Report Manager Designer Component Package
 
 [HistoryLists\hlConditionals]
 Count=5
-Item0=REPMANRELEASE
-Item1=REPMANRELEASE;FORCECONSOLE
+Item0=REPMANRELEASE;FORCECONSOLE
+Item1=REPMANRELEASE
 Item2=LINUXTEECHART
 Item3=FORWEBAX
 Item4=FORWEBAX;LINUXTEECHART
