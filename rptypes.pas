@@ -4230,7 +4230,7 @@ end;
 
 
 {$IFDEF LINUX}
-procedure SendMail(destination,subject,content,filename:String);
+procedure SendMail(destination,subject,content,filename,originalfile:String);
 var
  astring:String;
 begin

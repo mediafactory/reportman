@@ -197,7 +197,7 @@ type
     oldonHint:TNotifyEvent;
     configfile:string;
     faform:TWinControl;
-    fmetafile:TRpMetafileReport;
+    fmetafile,fintmetafile:TRpMetafileReport;
     procedure SetForm(Value:TWinControl);
     procedure EnableButtons;
     procedure DisableButtons;
@@ -461,6 +461,7 @@ begin
  bitmap.HandleType:=bmDIB;
  AImage.Picture.Bitmap:=bitmap;
  fmetafile:=TrpMetafileReport.Create(nil);
+ fintmetafile:=fmetafile;
  fmetafile.OnWorkProgress:=OnProgress;
  fmetafile.OnWorkAsyncError:=WorkAsyncError;
 
@@ -539,7 +540,7 @@ begin
  SaveConfig;
  Application.OnHint:=oldonhint;
  bitmap.free;
- fmetafile.free;
+ fintmetafile.free;
 
  inherited Destroy;
 end;
@@ -1132,11 +1133,11 @@ end;
 
 procedure TFRpMetaVCL.SetMetafile(avalue:TRpMetafileReport);
 begin
- if Assigned(fmetafile) then
- begin
-  fmetafile.free;
-  fmetafile:=nil;
- end;
+// if Assigned(fmetafile) then
+// begin
+//  fmetafile.free;
+//  fmetafile:=nil;
+// end;
  fmetafile:=Avalue;
  if assigned(FMetafile) then
  begin

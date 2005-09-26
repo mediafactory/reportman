@@ -213,7 +213,7 @@ type
     procedure AMailToExecute(Sender: TObject);
   private
     { Private declarations }
-    fmetafile:TRpMetafileReport;
+    fmetafile,fintmetafile:TRpMetafileReport;
     fhelp:TFRpHelpform;
     cancelled:boolean;
     oldonHint:TNotifyEvent;
@@ -491,7 +491,8 @@ begin
  bitmap:=TBitmap.Create;
  bitmap.PixelFormat:=pf32bit;
  AImage.Picture.Bitmap:=bitmap;
- fmetafile:=TrpMetafileReport.Create(nil);
+ fmetafile:=TRpMetafileReport.Create(nil);
+ fintmetafile:=fmetafile;
  fmetafile.OnWorkProgress:=OnProgress;
  fmetafile.OnWorkAsyncError:=WorkAsyncError;
 
@@ -581,7 +582,7 @@ begin
  SaveConfig;
  Application.OnHint:=oldonhint;
  bitmap.free;
- fmetafile.free;
+ fintmetafile.free;
 
  inherited Destroy;
 end;
@@ -1225,13 +1226,13 @@ begin
  RpMessageBox(amessage);
 end;
 
-procedure TFRpMetaVCL.SetMetafile(avalue:TRpMetafileReport);
+procedure TFRpMeta.SetMetafile(avalue:TRpMetafileReport);
 begin
- if Assigned(fmetafile) then
- begin
-  fmetafile.free;
-  fmetafile:=nil;
- end;
+// if Assigned(fmetafile) then
+// begin
+//  fmetafile.free;
+//  fmetafile:=nil;
+// end;
  fmetafile:=avalue;
  if assigned(FMetafile) then
  begin

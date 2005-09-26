@@ -1008,7 +1008,7 @@ begin
     pdfreport.TwoPass:=true;
     pdfreport.PrintAll(adriver);
     rpcsvdriver.ExportMetafileToCSVStream(pdfreport.metafile,
-     astream,false,true,1,9999);
+     astream,false,true,1,MAX_PAGECOUNT,',');
     Response.Content:='Executed, size:'+IntToStr(astream.size);
     Response.ContentType := 'text/plain';
     astream.Seek(0,soFromBeginning);

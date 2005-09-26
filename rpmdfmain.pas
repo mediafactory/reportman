@@ -1596,6 +1596,7 @@ begin
   ADriverPDFQT.Checked:=inif.ReadBool('Preferences','DriverPDFQt',false);
   ADriverQT.Checked:=Not ADriverPDFQT.Checked;
 {$ENDIF}
+{$IFDEF MSWINDOWS}
 {$IFDEF VCLANDCLX}
   ADriverPDFQt.Checked:=inif.ReadBool('Preferences','DriverPDFQt',false);
   ADriverQt.Checked:=inif.ReadBool('Preferences','DriverQt',false);
@@ -1603,13 +1604,14 @@ begin
 //  ADriverPDFGDI.Checked:=inif.ReadBool('Preferences','DriverPDFGDI',false);
   ADriverPDFGDI.Checked:=Not (ADriverPDFQt.Checked or ADriverQt.Checked or ADriverGDI.Checked);
 {$ENDIF}
+
 {$IFNDEF VCLANDCLX}
   ADriverPDFQt.Checked:=inif.ReadBool('Preferences','DriverPDFQt',false);
   ADriverQt.Checked:=inif.ReadBool('Preferences','DriverQt',true);
   ADriverGDI.Visible:=false;
   ADriverPDFGDI.Visible:=false;
 {$ENDIF}
-
+{$ENDIF}
   AsystemPrintDialog.Checked:=True;
   AsystemPrintDialog.Checked:=inif.ReadBool('Preferences','SystemPrintDialog',True);
   BStatus.Visible:=inif.ReadBool('Preferences','StatusBar',True);

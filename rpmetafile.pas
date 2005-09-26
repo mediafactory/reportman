@@ -771,7 +771,7 @@ begin
   FReading:=False;
   FWaiting:=true;
   try
-   WaitForSingleObject(FReadThread.Handle,INFINITE);
+   FReadThread.WaitFor;
   finally
    FWaiting:=false;
   end;
@@ -1727,7 +1727,12 @@ begin
   begin
    FWaiting:=true;
    try
+{$IFDEF MSWINDOWS}
     WaitForSingleObject(FReadThread.Handle,100);
+{$ENDIF}
+{$IFDEF LINUX}
+    Sleep(100);
+{$ENDIF}
    finally
     FWaiting:=false;
    end;

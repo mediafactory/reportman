@@ -461,7 +461,12 @@ begin
   if not LastPage then
   begin
    AbortingThread:=true;
+{$IFDEF MSWINDOWS}
    WaitForSingleObject(FThreadExec.Handle,INFINITE);
+{$ENDIF}
+{$IFDEF LINUX}
+   FThreadExec.WaitFor;
+{$ENDIF}
   end;
  end;
  DeActivateDatasets;

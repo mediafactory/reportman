@@ -663,7 +663,12 @@ begin
  if (FExecuting) then
  begin
   AbortingThread:=false;
-  WaitForSingleObject(FThreadExec.Handle,INFINITE);
+{$IFDEF MSWINDOWS}
+   WaitForSingleObject(FThreadExec.Handle,INFINITE);
+{$ENDIF}
+{$IFDEF LINUX}
+   FThreadExec.WaitFor;
+{$ENDIF}
  end;
  FGroupHeaders.free;
  gheaders.free;
@@ -1856,7 +1861,12 @@ begin
  begin
    while ((FExecuting) AND  (metafile.CurrentPageCount<=pageindex+1)) do
    begin
-    WaitForSingleObject(FThreadExec.Handle,100);
+{$IFDEF MSWINDOWS}
+   WaitForSingleObject(FThreadExec.Handle,100);
+{$ENDIF}
+{$IFDEF LINUX}
+   sleep(100);
+{$ENDIF}
 //    FThreadExec.WaitFor;
 //    WairForSingleObject(threadexec.handle);
    end;
