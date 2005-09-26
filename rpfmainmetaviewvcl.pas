@@ -64,7 +64,7 @@ function PreviewMetafile(metafile:TRpMetafileReport;aform:TWinControl;
  ShowPrintDialog:Boolean;ShowExit:Boolean):TFRpMetaVCL;
 var
  dia:TFRpMainMetaVCL;
- memstream:TMemoryStream;
+// memstream:TMemoryStream;
  MFrame:TFRpMetaVCL;
  FForm:TWinControl;
 begin
@@ -87,11 +87,12 @@ begin
  MFrame.Exit1.Visible:=ShowExit;
  try
   MFrame.ShowPrintDialog:=ShowPrintDialog;
-  memstream:=TMemoryStream.Create;
-  try
-   metafile.SaveToStream(memstream);
-   memstream.Seek(0,soFromBeginning);
-   MFrame.metafile.LoadFromStream(memstream);
+  MFrame.metafile:=metafile;
+//  memstream:=TMemoryStream.Create;
+//  try
+//   metafile.SaveToStream(memstream);
+//   memstream.Seek(0,soFromBeginning);
+//   MFrame.metafile.LoadFromStream(memstream);
    MFrame.ASave.Enabled:=True;
    MFrame.AMailTo.Enabled:=True;
    MFrame.APrint.Enabled:=True;
@@ -134,9 +135,9 @@ begin
    MFrame.FormResize(dia);
    if not assigned(aform) then
     dia.ShowModal;
-  finally
-   memstream.free;
-  end;
+//  finally
+//   memstream.free;
+//  end;
  finally
   if not assigned(aform) then
    dia.free;

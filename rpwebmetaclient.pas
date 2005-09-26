@@ -32,15 +32,18 @@ uses classes,SysUtils,Windows,graphics,controls,forms,
 {$IFDEF USEVARIANTS}
  Types,
 {$ENDIF}
- rpmetafile,rpfmainmetaviewvcl,rpmdconsts,
- IdHttp,rpgdidriver,rpmdprintconfigvcl,rpmdshfolder,
- rpfmetaviewvcl;
+ rpmetafile,rpfmainmetaviewvcl,rpmdconsts,SyncObjs,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
+ rpgdidriver,rpmdprintconfigvcl,rpmdshfolder,IdThreadComponent,
+ rpfmetaviewvcl,IdSync;
 
 //const
 // READ_TIMEOUT=10000;
 type
  TRpWebMetaPrint=class(TCustomControl)
   private
+   abyte:array of byte;
+   FFinished:Boolean;
    FCaption:WideString;
    FPrinterConfig:Boolean;
    FFontName:String;
@@ -53,14 +56,28 @@ type
    FShowPrintDialog:Boolean;
    FCopies:Integer;
    errormessage:String;
+   FAsyncRead:Boolean;
+   FNewStream,FStream:TMemoryStream;
+   readcount:integer;
+   idthreadcomp: TIdThreadComponent;
+   aborting:boolean;
+   connect:TIdHttp;
+   metafile:TrpMetafileReport;
    procedure DoInstall;
    procedure SetCaption(Value:WideString);
+   procedure OnRequestData(Sender:TObject;count:integer);
+   procedure connectWork(Sender: TObject; AWorkMode: TWorkMode;
+    const AWorkCount: Integer);
+   procedure connectWorkEnd(Sender: TObject;
+    AWorkMode: TWorkMode);
+   procedure idthreadcompRun(Sender: TIdCustomThreadComponent);
   protected
    procedure Paint;override;
   public
    aForm:TWinControl;
    Meta:TFRpMetaVCL;
    constructor Create(AOwner:TComponent);override;
+   destructor Destroy;override;
    procedure Execute;
   published
    property Left;
@@ -75,6 +92,7 @@ type
    property FontSize:Integer read FFontSize write FFontSize default 0;
    property FontName:String read FFontName write FFontName;
    property Preview:Boolean read FPreview write FPreview default false;
+   property AsyncRead:Boolean read FAsyncRead write FAsyncRead default false;
    property Copies:Integer read FCopies write FCopies default 1;
    property ShowProgress:Boolean read FShowProgress write FShowProgress
     default true;
@@ -93,14 +111,10 @@ implementation
 
 procedure TRpWebMetaPrint.Execute;
 var
- connect:TIdHttp;
- astream:TMemoryStream;
- metafile:TrpMetafileReport;
  frompage,topage,copies:integer;
  allpages,collate:boolean;
  rpPageSize:TPageSizeQt;
  okselected:Boolean;
- astring:string;
 begin
  errormessage:='';
  try
@@ -115,24 +129,55 @@ begin
   end
   else
   begin
-   connect:=TIdHttp.Create(nil);
-   try
+ //  connect.ReadTimeout:=READ_TIMEOUT;
+   readcount:=0;
+   if Assigned(FNewStream) then
+   begin
+    FNewStream.free;
+    FNewStream:=nil;
+   end;
+   if Assigned(FStream) then
+   begin
+    FStream.free;
+    FStream:=nil;
+   end;
+   FNewStream:=TMemoryStream.Create;
+   FStream:=TMemoryStream.Create;
+   if Assigned(idthreadcomp) then
+   begin
+    idthreadcomp.Active:=false;
+    idthreadcomp.Free;
+    idthreadcomp:=nil;
+   end;
+   idthreadcomp:=TIdThreadComponent.Create(nil);
+   idthreadcomp.OnRun:=idthreadcompRun;
+   if Assigned(connect) then
+   begin
+    connect.free;
+    connect:=nil;
+   end;
+   connect:=TIdHttp.Create(Self);
 {$IFNDEF DOTNETD}
  {$IFNDEF INDY10}
     connect.Port:=FPort;
  {$ENDIF}
 {$ENDIF}
-  //  connect.ReadTimeout:=READ_TIMEOUT;
-    astream:=TMemoryStream.Create;
-    try
-     connect.Get(MetaUrl,astream);
      metafile:=TrpMetafileReport.Create(nil);
      try
-      astream.Seek(0,soFromBeginning);
-      if (IsMetafile(astream)) then
-      begin
-       astream.Seek(0,soFromBeginning);
-       metafile.LoadFromStream(astream);
+       metafile.AsyncReading:=AsyncRead;
+       if AsyncRead then
+       begin
+        metafile.OnRequestData:=OnRequestData;
+        idthreadcomp.Active:=true;
+//        idthreadcomp.WaitFor;
+       end
+       else
+       begin
+        metafile.OnRequestData:=nil;
+        connect.Get(metaurl,FNewStream);
+        FNewStream.Seek(0,soFromBeginning);
+       end;
+       metafile.LoadFromStream(FNewStream);
        if preview then
        begin
         Meta:=PreviewMetafile(metafile,aform,ShowPrintDialog,false);
@@ -161,28 +206,23 @@ begin
           frompage,topage,copies,collate,
           GetDeviceFontsOption(metafile.PrinterSelect),metafile.PrinterSelect);
        end;
-      end
-      else
-      begin
-       astream.Seek(0,soFromBeginning);
-       if ((astream.size)<=0) then
-        Raise Exception.Create(SRpEmptyResponse)
-       else
-       begin
-        SetLength(astring,astream.size);
-        astream.Read(astring[1],astream.size);
-        Raise Exception.Create(Copy(astring,1,2000));
-       end;
-      end;
+//      end
+//      else
+//      begin
+//       astream.Seek(0,soFromBeginning);
+//       if ((astream.size)<=0) then
+//        Raise Exception.Create(SRpEmptyResponse)
+//       else
+//       begin
+//        SetLength(astring,astream.size);
+//        astream.Read(astring[1],astream.size);
+//        Raise Exception.Create(Copy(astring,1,2000));
+//       end;
+//      end;
      finally
-      metafile.free;
+      if not Preview then
+       metafile.free;
      end;
-    finally
-     astream.free;
-    end;
-   finally
-    connect.free;
-   end;
   end;
  except
   On E:Exception do
@@ -192,6 +232,29 @@ begin
   end;
  end;
 end;
+
+destructor TRpWebMetaPrint.Destroy;
+begin
+    if Assigned(idthreadcomp) then
+    begin
+     idthreadcomp.Active:=false;
+     idthreadcomp.Free;
+     idthreadcomp:=nil;
+    end;
+    if Assigned(FStream) then
+    begin
+     FStream.free;
+     FStream:=nil;
+    end;
+    if Assigned(FNewStream) then
+    begin
+     FNewStream.free;
+     FNewStream:=nil;
+    end;
+
+    inherited Destroy;
+end;
+
 
 procedure TRpWebMetaPrint.SetCaption(Value:WideString);
 begin
@@ -252,6 +315,7 @@ begin
     if (IsMetafile(astream)) then
     begin
      astream.Seek(0,soFromBeginning);
+     metafile.AsyncReading:=false;
      metafile.LoadFromStream(astream);
      rpgdidriver.PrintMetafile(metafile,'Printing',true,true,0,1,1,true,false);
     end
@@ -347,6 +411,97 @@ begin
  finally
   connect.free;
  end;
+end;
+
+
+
+
+procedure TRpWebMetaPrint.idthreadcompRun(Sender: TIdCustomThreadComponent);
+begin
+ FFinished:=false;
+ SetLength(abyte,64000);
+ try
+  connect.OnWorkEnd:=connectWorkEnd;
+  connect.OnWork:=connectWork;
+  connect.Get(metaurl,FStream);
+ finally
+  FFinished:=true;
+ end;
+ idthreadcomp.Active:=false;
+end;
+
+
+procedure TRpWebMetaPrint.connectWork(Sender: TObject; AWorkMode: TWorkMode;
+  const AWorkCount: Integer);
+var
+ oldposition:int64;
+ oldpos2:int64;
+ readed:integer;
+begin
+ if aborting then
+  Raise Exception.Create(SrpOperationAborted);
+  oldpos2:=FStream.Position;
+ readed:=FStream.Position-FNewStream.Size;
+ if readed<1 then
+  exit;
+ if Length(abyte)<readed then
+  SetLength(abyte,readed);
+ FStream.Position:=FNewStream.Size;
+ FStream.Read(abyte[0],readed);
+ metafile.critsec.enter;
+ try
+  oldposition:=FNewStream.Position;
+  FNewStream.Position:=FNewStream.Size;
+  FNewStream.Write(abyte[0],readed);
+  FNewStream.Position:=oldposition;
+ finally
+  metafile.critsec.leave;
+ end;
+ FStream.Position:=oldpos2;
+end;
+
+procedure TRpWebMetaPrint.connectWorkEnd(Sender: TObject;
+  AWorkMode: TWorkMode);
+begin
+ try
+  connectWork(Sender,wmRead,0);
+ finally
+  FFinished:=true;
+ end;
+end;
+
+
+
+procedure TRpWebMetaPrint.OnRequestData(Sender:TObject;count:integer);
+var
+ currentcount:integer;
+begin
+ if (not assigned(idthreadcomp)) then
+  exit;
+ readcount:=readcount+count;
+ currentcount:=FNewStream.Size;
+ while ((not FFinished) and (currentcount<readcount)) do
+ begin
+  WaitForSingleObject(idthreadcomp.Handle,200);
+  currentcount:=FNewStream.Size;
+ end;
+// idthreadcomp.WaitFor;
+{ FGetThread.critsec.enter;
+ try
+  currentcount:=FGetThread.FNewStream.Size;
+ finally
+  FGetThread.critsec.leave;
+ end;
+ while ((not FGetThread.FFinished) and (currentcount<readcount)) do
+ begin
+   WaitForSingleObject(FGetThread.Handle,INFINITE);
+   try
+    currentcount:=FGetThread.FNewStream.Size;
+   finally
+    FGetThread.critsec.leave;
+   end;
+ end;
+}
 end;
 
 

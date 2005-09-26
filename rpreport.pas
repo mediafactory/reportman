@@ -51,7 +51,6 @@ uses Classes,rpbasereport,sysutils,rptypes,rpsubreport,rpsection,rpmdconsts,
 type
  TRpReport=class(TRpBaseReport)
   private
-   printingonepass:boolean;
    FExternalsLoaded:Boolean;
   protected
     procedure DoUpdatepageSize(Driver:IRpPrintDriver;metafilepage:TRpMetafilePage);
@@ -321,7 +320,7 @@ begin
  if allpages then
  begin
   frompage:=0;
-  topage:=99999999;
+  topage:=MAX_PAGECOUNT;
  end
  else
  begin
@@ -345,13 +344,12 @@ begin
   try
    Driver.NewDocument(metafile,hardwarecopies,hardwarecollate);
    try
-    // Calculate the report first
-    while Not PrintNextPage do;
-    EndPrint;
+    RequestPage(MAX_PAGECOUNT);
+    // Now the report is calculate with GetPageCount
     endprintexecuted:=true;
     // Then draw the generated metafile
-    if topage>metafile.PageCount-1 then
-     topage:=metafile.PageCount-1;
+    if topage>metafile.CurrentPageCount-1 then
+     topage:=metafile.CurrentPageCount-1;
     for k:=1 to reportcopies do
     begin
      for j:=frompage to topage do
@@ -371,7 +369,7 @@ begin
      end;
     end;
     // The report metafile must contain only the selected range
-    if ((frompage>0) or (topage<metafile.pagecount-1)) then
+    if ((frompage>0) or (topage<metafile.CurrentPagecount-1)) then
     begin
      while frompage>0 do
      begin
@@ -379,9 +377,9 @@ begin
       dec(frompage);
       dec(topage);
      end;
-     while (metafile.pagecount-1)>topage do
+     while (metafile.Currentpagecount-1)>topage do
      begin
-      metafile.DeletePage(metafile.PageCount-1);
+      metafile.DeletePage(metafile.CurrentPageCount-1);
      end;
     end;
     Driver.EndDocument;
@@ -458,6 +456,14 @@ end;
 
 procedure TRpReport.EndPrint;
 begin
+ if (FExecuting) then
+ begin
+  if not LastPage then
+  begin
+   AbortingThread:=true;
+   WaitForSingleObject(FThreadExec.Handle,INFINITE);
+  end;
+ end;
  DeActivateDatasets;
  FEvaluator.Free;
  FEvaluator:=nil;
@@ -944,7 +950,7 @@ begin
   printingonepass:=false;
   FInternalPageWidth:=metafile.CustomX;
   FInternalPageHeight:=metafile.CustomY;
-  PageNum:=metafile.PageCount-2;
+  PageNum:=metafile.CurrentPageCount-2;
  end
  else
  begin
@@ -1223,11 +1229,11 @@ begin
    if newpage<0 then
     // Loadstr(960)?
     Raise Exception.Create(SRpCannotCombine);
-   while newpage>Metafile.PageCount do
+   while newpage>Metafile.CurrentPageCount do
    begin
     Metafile.NewPage;
-    Metafile.Pages[Metafile.PageCount-1].Orientation:=currentorientation;
-    Metafile.Pages[Metafile.PageCount-1].PageSizeQt:=rpagesizeqt;
+    Metafile.Pages[Metafile.CurrentPageCount-1].Orientation:=currentorientation;
+    Metafile.Pages[Metafile.CurrentPageCount-1].PageSizeQt:=rpagesizeqt;
     CheckProgress(false);
    end;
    Metafile.CurrentPage:=newpage;
@@ -1381,12 +1387,14 @@ procedure PrintFixedSections(adriver:IRpPrintDriver;headers:boolean);
 var
  pheader,pfooter:integer;
  pheadercount,pfootercount:integer;
- i:integer;
+ i,j,index:integer;
  psection:TRpSection;
  afirstdetail:integer;
  printit:boolean;
  MaxExtent:TPoint;
  PartialPrint:Boolean;
+ psubreports:TStringList;
+ subrep:TRpSubReport;
 begin
  PartialPrint:=false;
  MaxExtent.x:=pagespacex;
@@ -1421,40 +1429,41 @@ begin
     end;
    end;
   end;
-  // Now prints repeated group headers
-  afirstdetail:=subreport.FirstDetail;
-  for i:=subreport.GroupCount downto 1 do
-  begin
-   psection:=subreport.Sections.Items[afirstdetail-i].Section;
-   if psection.PageRepeat then
+  psubreports:=TStringList.Create;
+  try
+   for i:=0 to FPendingSections.Count-1 do
    begin
-    if Abs(subreport.CurrentGroupIndex)<i then
+    psection:=TRpSection(FPendingSections.Objects[i]);
+    index:=psubreports.IndexOf(psection.SubReport.Name);
+    if index<0 then
+     psubreports.AddObject(psection.SubReport.Name,psection.SubReport);
+   end;
+   index:=psubreports.IndexOf(subreport.Name);
+   if index<0 then
+    psubreports.AddObject(subreport.Name,subreport);
+   // Now prints repeated group headers for all pending subreports
+   for j:=0 to psubreports.Count-1 do
+   begin
+    subrep:=TRpSubReport(psubreports.Objects[j]);
+    afirstdetail:=subrep.FirstDetail;
+    for i:=subrep.GroupCount downto 1 do
     begin
-     if psection.EvaluatePrintCondition then
+     psection:=subrep.Sections.Items[afirstdetail-i].Section;
+     if psection.PageRepeat then
      begin
-      // Add group headers to be printed at the
-      // main print loop (child subreports and horz/vert.desp)
-//      if FGroupHeaders.Count>0 then
-       FGroupHeaders.AddObject(psection.GroupName,psection)
-{      else
-      begin
-       if Assigned(psection.ChildSubReport) then
+      if Abs(subreport.CurrentGroupIndex)<i then
        begin
-        FGroupHeaders.AddObject(psection.GroupName,psection)
-       end
-       else
+       if psection.EvaluatePrintCondition then
        begin
-        asection:=psection;
-        CheckSpace;
-        PrintSection(adriver,false,PartialPrint);
+         FGroupHeaders.AddObject(psection.GroupName,psection)
        end;
       end;
-}
      end;
     end;
    end;
+  finally
+   psubreports.free;
   end;
-
   pagefooterpos:=pageposy+freespace;
   // Reserve space for page footers
   // Print conditions for footers are evaluated at the begining of
@@ -1544,7 +1553,7 @@ begin
  // Updates page size, and orientation
  if not printingonepass then
  begin
-  if metafile.PageCount<=PageNum then
+  if metafile.CurrentPageCount<=PageNum then
   begin
    metafile.NewPage;
   end;
@@ -1552,14 +1561,14 @@ begin
  end
  else
  begin
-  if metafile.PageCount<1 then
+  if metafile.CurrentPageCount<1 then
   begin
    metafile.NewPage;
   end
   else
    metafile.Pages[0].Clear;
  end;
- DoUpdatePageSize(FDriver,Metafile.Pages[Metafile.PageCount-1]);
+ DoUpdatePageSize(FDriver,Metafile.Pages[Metafile.CurrentPageCount-1]);
 
 
  FGroupHeaders.Clear;
@@ -1590,12 +1599,12 @@ begin
    // Create new page
    metafile.NewPage;
    inc(PageNum);
-   metafile.CurrentPage:=Metafile.PageCount-1;
+   metafile.CurrentPage:=Metafile.CurrentPageCount-1;
    freespace:=FInternalPageheight;
    freespace:=freespace-TopMargin-BottomMargin;
    pageposy:=TopMargin;
    pageposx:=LeftMargin;
-   DoUpdatePageSize(FDriver,Metafile.Pages[Metafile.PageCount-1]);
+   DoUpdatePageSize(FDriver,Metafile.Pages[Metafile.CurrentPageCount-1]);
   end
   else
   begin
@@ -1740,9 +1749,15 @@ begin
  Result:=Not Assigned(Section);
  LastPage:=Result;
  if LastPage then
+ begin
   CheckProgress(true);
+  metafile.Finish;
+ end;
+ if Result then
+ begin
+  EndPrint;
+ end;
 end;
-
 
 
 
@@ -1762,6 +1777,8 @@ begin
  Classes.RegisterClass(TRpChart);
  Classes.RegisterClass(TRpBarcode);
 end;
+
+
 
 
 initialization

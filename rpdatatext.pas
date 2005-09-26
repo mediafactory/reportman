@@ -258,7 +258,7 @@ begin
  recordseparator:=#10;
  ignoreafterrecordseparator:=#13;
  data.FieldDefs.Clear;
- data.FieldDefs.Add('LNUMBER',ftInteger);
+ data.FieldDefs.Add('LNUMBER',ftInteger,0,false);
  // parse first line to get number of fields
  fields:=TStringList.Create;
  try
@@ -314,7 +314,7 @@ begin
      begin
       for i:=0 to fields.count-1 do
       begin
-       data.FieldDefs.Add('FIELD'+IntToStr(i+1),ftString,255);
+       data.FieldDefs.Add('FIELD'+IntToStr(i+1),ftString,255,false);
       end;
       if Length(Trim(IndexFields))<1 then
       begin

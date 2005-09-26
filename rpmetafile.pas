@@ -41,7 +41,7 @@ interface
 
 {$I rpconf.inc}
 
-uses Classes,
+uses Classes,SyncObjs,
 {$IFDEF LINUX}
   Libc,DateUtils,
 {$ENDIF}
@@ -66,6 +66,7 @@ uses Classes,
 const
  MILIS_PROGRESS=500;
  RP_SIGNATURELENGTH=13;
+ BUFFER_FLEX_SIZE=8192;
  // The metafile signature and version
  RpSignature:string='RPMETAFILE09'+chr(0);
  RpSignature2_2:string='RPMETAFILE07'+chr(0);
@@ -73,7 +74,10 @@ const
  FIRST_ALLOCATION_OBJECTS=50;
  FIRST_ALLOCATED_WIDESTRING=1000;
 type
-
+ TMetaFileWorkProgress=procedure (Sender:TObject;records,pagecount:integer;var docancel:boolean) of object;
+ TStopWork=procedure of object;
+ TWorkAsyncError=procedure (amessage:string) of object;
+ TRequestPageEvent=function (pageindex:integer):boolean of object;
  ERpBadFileFormat=class(Exception)
   private
    FPosition:integer;
@@ -84,6 +88,42 @@ type
 
  TRpMetafileReport=class;
  TRpMetafilePage=class;
+
+ TReadThread=class(TThread)
+  private
+   errormessage:string;
+  public
+   metafile:TRpMetafileReport;
+   Stream:TStream;
+   procedure Execute;override;
+   procedure ShowError;
+   procedure Progress;
+ end;
+
+ TOnRequestData=procedure (Sender:TObject;count:integer) of object;
+
+ TFlexStream=class(TStream)
+  private
+   FStream:TStream;
+   FIsCompressed:Boolean;
+   FLastReadCount:Integer;
+   FInternalPosition:integer;
+   FPosition:integer;
+   FBuffer:TMemoryStream;
+   FBuf:array [0..BUFFER_FLEX_SIZE] of byte;
+   FIntStream:TMemoryStream;
+   FEof:boolean;
+   FOnRequestData:TOnRequestData;
+   critsec:TCriticalSection;
+   procedure ReadBuffer;
+  public
+   function Write(const Buffer; Count: Longint): Longint;override;
+   function Read(var Buffer; Count: Longint): Longint; override;
+   function Seek(Offset: Longint; Origin: Word): Longint; override;
+   constructor Create(AStream:TStream;OnRequestData:TOnRequestData;criticalsec:TCriticalSection);
+   destructor Destroy;override;
+   property IsCompressed:boolean read FIsCompressed;
+  end;
 
  TTotalPagesObject=class(TObject)
   public
@@ -260,6 +300,7 @@ type
    FMark:Integer;
    FOrientation:TRpOrientation;
    FPageSizeqt:TPageSizeQt;
+//   FStringList:TStringList;
    function GetObject(index:integer):TRpMetaObject;
    procedure NewWideString(var position,size:integer;const text:widestring);
   public
@@ -292,29 +333,32 @@ type
     write FUpdatedPageSize default false;
   end;
 
- TRpMetafileStreamProgres=procedure (Sender:TRpMetafileReport;Position,Size:int64;page:integer) of object;
-
  TRpMetafileReport=class(TComponent)
   private
+   zStream:TStream;
    FPages:TList;
+   FIntPageCount:Integer;
+   FWaiting:Boolean;
    FCurrentPage:integer;
-   FOnProgress:TRpMetafileStreamProgres;
-{$IFDEF MSWINDOWS}
-   mmfirst,mmlast:DWORD;
-{$ENDIF}
-{$IFDEF LINUX}
-   milifirst,mililast:TDatetime;
-{$ENDIF}
-   difmilis:int64;
+   FFinished:Boolean;
+   FReading:boolean;
    FPreviewAbout:Boolean;
    FPreviewMargins:Boolean;
    Fversion2_2:Boolean;
+   FOnWorkAsyncError:TWorkAsyncError;
+   FOnRequestPage:TRequestPageEvent;
+   FReadThread:TReadThread;
+   FlexStream,FlexStream2:TFlexStream;
+   AbortingThread:Boolean;
+   IntStream:TStream;
    procedure SetCurrentPage(index:integer);
    function GetPageCount:integer;
    function GetPage(Index:integer):TRpMetafilePage;
    procedure IntSaveToStream(Stream:TStream;SaveStream:TStream);
-   procedure IntLoadFromStream(Stream:TStream;LoadStream:TStream;clearfirst:boolean=true);
+   procedure IntLoadFromStream(Stream:TStream;clearfirst:boolean=true);
+   procedure DoRequestData(Sender:TObject;count:integer);
   public
+   AsyncReading:Boolean;
    PageSize:integer;
    CustomX:integer;
    CustomY:integer;
@@ -333,6 +377,10 @@ type
 {$IFNDEF FORWEBAX}
    OnDrawChart:TDoDrawChartEvent;
 {$ENDIF}
+   OnWorkProgress:TMetaFileWorkProgress;
+   OnStopWork:TStopWork;
+   OnRequestData:TOnRequestData;
+   critsec:TCriticalSection;
    procedure Clear;
    procedure LoadFromStream(Stream:TStream;clearfirst:boolean=true);
    procedure LoadFromFile(filename:string;clearfirst:boolean=true);
@@ -342,20 +390,29 @@ type
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    procedure NewPage;
-   procedure DrawPage(IDriver:IRpPrintDriver);
+   procedure DrawPage(IDriver:IRpPrintDriver;index:integer);
    procedure DrawAll(IDriver:IRpPrintDriver);
-   procedure DrawPageOnly(IDriver:IRpPrintDriver);
+   procedure DrawPageOnly(IDriver:IRpPrintDriver;index:integer);
    procedure InsertPage(index:integer);
    procedure DeletePage(index:integer);
+   function RequestPage(pageindex:integer):boolean;
+   procedure WorkProgress(Sender:TObject;records,pagecount:integer;var docancel:boolean);
+   procedure WorkAsyncError(amessage:string);
+   procedure Finish;
+   procedure StopWork;
    property CurrentPage:integer read FCurrentPage write SetCurrentPage;
-   property PageCount:integer read GetPageCount;
+   property Reading:boolean read FReading;
+//   property PagesCount:integer read GetPageCount;
+   property CurrentPageCount:integer read GetPageCount;
    procedure UpdateTotalPages(alist:TList);
    procedure UpdateTotalPagesPCount(alist:TList;pcount:integer);
    procedure PageRange(frompage,topage:integer);
    property Pages[Index:integer]:TRpMetafilePage read GetPage;
-   property OnProgress:TRpMetafileStreamProgres read FOnProgress write FOnProgress;
    property PreviewAbout:Boolean read FPreviewAbout write FPreviewAbout;
    property PreviewMargins:Boolean read FPreviewMargins write FPreviewMargins;
+   property OnWorkAsyncError:TWorkAsyncError read FOnWorkAsyncError write FOnWorkAsyncError;
+   property Finished:Boolean read FFinished;
+   property OnRequestPage:TRequestPageEvent read FOnRequestPage write FOnRequestPage;
   published
   end;
 
@@ -380,6 +437,8 @@ begin
  FPoolPos:=1;
  FStreamPos:=0;
  FMemStream:=TMemoryStream.Create;
+// FStringList:=TStringList.Create;
+// FStringList.Sorted:=true;
 end;
 
 procedure TRpMetafilePage.Clear;
@@ -497,12 +556,20 @@ begin
 end;
 
 procedure TrpMetafilePage.NewWideString(var position,size:integer;const text:widestring);
+//var
+// index:integeR;
 begin
-
  size:=Length(Text);
+// index:=FStringList.IndexOf(text);
+// if (index>=0) then
+// begin
+//  position:=integer(FStringList.Objects[index]);
+//  exit;
+// end;
  FPool:=FPool+Text;
  position:=FPoolPos;
  FPoolPos:=FPoolPos+size;
+// FStringList.AddObject(text,TObject(position));
 
 end;
 
@@ -668,6 +735,7 @@ constructor TRpMetafileReport.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ critsec:=TCriticalSection.Create;
  FCurrentPage:=-1;
  // Standard sizes
  CustomX:=12047;
@@ -684,6 +752,7 @@ procedure TRpMetafileReport.Clear;
 var
  i:integer;
 begin
+ FFinished:=false;
  for i:=0 to FPages.Count-1 do
  begin
   TRpMetafilePage(FPages.Items[i]).Clear;
@@ -697,9 +766,23 @@ end;
 
 destructor TRpMetafileReport.Destroy;
 begin
+ if FReading then
+ begin
+  FReading:=False;
+  FWaiting:=true;
+  try
+   WaitForSingleObject(FReadThread.Handle,INFINITE);
+  finally
+   FWaiting:=false;
+  end;
+ end;
+
+
  Clear;
 
  FPages.free;
+
+ critsec.free;
  inherited Destroy;
 end;
 
@@ -713,12 +796,6 @@ var
 {$ENDIF}
 begin
  // Get the time
-{$IFDEF MSWINDOWS}
- mmfirst:=TimeGetTime;
-{$ENDIF}
-{$IFDEF LINUX}
- milifirst:=now;
-{$ENDIF}
 {$IFDEF USEZLIB}
  if compressed then
  begin
@@ -740,6 +817,7 @@ var
  i:integer;
  acount:integer;
  ainteger:integer;
+ docancel:boolean;
 begin
  WriteStringToStream(rpSignature,Stream);
  separator:=integer(rpFHeader);
@@ -782,59 +860,50 @@ begin
   Stream.Write(separator,sizeof(separator));
 
   TRpMetafilePage(FPages.items[i]).SaveToStream(Stream);
-  if Assigned(FOnProgress) then
+  if Assigned(OnWorkProgress) then
   begin
-{$IFDEF MSWINDOWS}
-   mmlast:=TimeGetTime;
-   difmilis:=(mmlast-mmfirst);
-{$ENDIF}
-{$IFDEF LINUX}
-   mililast:=now;
-   difmilis:=MillisecondsBetween(mililast,milifirst);
-{$ENDIF}
-   if difmilis>MILIS_PROGRESS then
-   begin
-     // Get the time
-{$IFDEF MSWINDOWS}
-    mmfirst:=TimeGetTime;
-{$ENDIF}
-{$IFDEF LINUX}
-    milifirst:=now;
-{$ENDIF}
-    FOnProgress(Self,SaveStream.Position,SaveStream.Position,i+1);
-   end;
+   docancel:=false;
+   OnWorkProgress(Self,-1,CurrentPageCount,docancel);
+   if (docancel) then
+    Raise Exception.Create(SRpOperationAborted);
   end;
  end;
 end;
 
+procedure TRpMetafileReport.DoRequestData(Sender:TObject;count:integer);
+begin
+ if Assigned(OnRequestData) then
+  OnRequestData(Sender,count);
+end;
+
 procedure TRpMetafileReport.LoadFromStream(Stream:TStream;clearfirst:boolean=true);
-var
-{$IFDEF USEZLIB}
- zStream:TDeCompressionStream;
-{$ENDIF}
- memstream:TMemoryStream;
 begin
  if clearfirst then
   Clear;
- memstream:=TMemoryStream.Create;
- try
-  memstream.CopyFrom(Stream,Stream.Size);
-  memstream.Seek(0,soFromBeginning);
   // Get the time
-{$IFDEF MSWINDOWS}
-  mmfirst:=TimeGetTime;
-{$ENDIF}
-{$IFDEF LINUX}
-  milifirst:=now;
-{$ENDIF}
-  if IsCompressed(memstream) then
+ FlexStream:=TFlexStream.Create(Stream,DoRequestData,critsec);
+ try
+  if FlexStream.IsCompressed then
   begin
 {$IFDEF USEZLIB}
-   zStream:=TDeCompressionStream.Create(memStream);
+   zStream:=TDeCompressionStream.Create(FlexStream);
    try
-    IntLoadFromStream(zStream,Stream);
+    FlexStream2:=TFlexStream.Create(zStream,nil,critsec);
+    try
+     IntLoadFromStream(FlexStream2);
+    finally
+     if not FReading then
+     begin
+      FlexStream2.free;
+      FlexStream2:=nil;
+     end;
+    end;
    finally
-    zStream.free;
+     if not FReading then
+     begin
+      zStream.free;
+      zstream:=nil;
+     end;
    end;
 {$ENDIF}
 {$IFNDEF USEZLIB}
@@ -843,10 +912,14 @@ begin
   end
   else
   begin
-   IntLoadFromStream(memstream,memstream);
+   IntLoadFromStream(FlexStream);
   end;
  finally
-  memstream.free;
+  if not FReading then
+  begin
+   FlexStream.free;
+   FlexStream:=nil;
+  end;
  end;
 end;
 
@@ -905,7 +978,7 @@ begin
 end;
 
 
-procedure TRpMetafileReport.IntLoadFromStream(Stream:TStream;LoadStream:TStream;clearfirst:boolean=true);
+procedure TRpMetafileReport.IntLoadFromStream(Stream:TStream;clearfirst:boolean=true);
 var
  separator:integer;
  buf:array of Byte;
@@ -915,7 +988,9 @@ var
  acount:integer;
  i,ainteger:integer;
  apagesizeqt:TPageSizeQt;
+ docancel:boolean;
 begin
+ FFinished:=false;
  // Clears the report metafile
  if clearfirst then
   Clear;
@@ -992,6 +1067,7 @@ begin
  // Read pagecount
  if (sizeof(acount)<>Stream.Read(acount,sizeof(acount))) then
   Raise Exception.Create(SRpBadFileHeader);
+ FIntPageCount:=acount;
 
 
  // Pages
@@ -1021,29 +1097,44 @@ begin
   FPage.PageSizeqt:=apagesizeqt;
   fpage.LoadFromStream(Stream);
 
-  if Assigned(FOnProgress) then
+  if Not AsyncReading then
   begin
-{$IFDEF MSWINDOWS}
-   mmlast:=TimeGetTime;
-   difmilis:=(mmlast-mmfirst);
-{$ENDIF}
-{$IFDEF LINUX}
-   mililast:=now;
-   difmilis:=MillisecondsBetween(mililast,milifirst);
-{$ENDIF}
-   if difmilis>MILIS_PROGRESS then
+   if Assigned(OnWorkProgress) then
    begin
-     // Get the time
-{$IFDEF MSWINDOWS}
-    mmfirst:=TimeGetTime;
-{$ENDIF}
-{$IFDEF LINUX}
-    milifirst:=now;
-{$ENDIF}
-    FOnProgress(Self,LoadStream.Position,LoadStream.Size,pagecount);
+    docancel:=false;
+    OnWorkProgress(Self,-1,FIntPageCount,docancel);
+    if (docancel) then
+     Raise Exception.Create(SRpOperationAborted);
    end;
- end;
+  end;
   bytesread:=Stream.Read(separator,sizeof(separator));
+  if (bytesread>0) then
+  begin
+   if AsyncReading then
+   begin
+    if bytesread<>sizeof(separator) then
+     Raise ERpBadFileFormat.CreatePos(SrpMtPageSeparatorExpected,Stream.Position,0);
+    if (separator<>integer(rpFPage)) then
+     Raise ERpBadFileFormat.CreatePos(SrpMtPageSeparatorExpected,Stream.Position,0);
+    FReadThread:=TReadThread.Create(true);
+    FReadThread.Metafile:=self;
+    FReadThread.Stream:=Stream;
+    FReading:=true;
+    FReadThread.Resume;
+    break;
+   end;
+  end;
+ end;
+ if not FReading then
+ begin
+  FFinished:=true;
+  if Assigned(OnWorkProgress) then
+  begin
+   docancel:=false;
+   OnWorkProgress(Self,-1,FIntPageCount,docancel);
+   if (docancel) then
+    Raise Exception.Create(SRpOperationAborted);
+  end;
  end;
  if Fpages.Count>0 then
   FCurrentPage:=0;
@@ -1124,7 +1215,7 @@ end;
 procedure TRpMetafilePage.LoadFromStream(Stream:TStream);
 var
  separator:integer;
- bytesread:integer;
+ bytesread,readed:integer;
  objcount:integer;
  asize:int64;
  wsize:integer;
@@ -1196,7 +1287,8 @@ begin
  SetLength(abytes,bytesread);
  if bytesread>0 then
  begin
-  if (bytesread<>Stream.Read(abytes[0],bytesread)) then
+  readed:=Stream.Read(abytes[0],bytesread);
+  if (bytesread<>readed) then
    Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
  {$IFDEF DOTNETD}
   System.Array.Copy(abytes,FObjects,bytesread);
@@ -1277,34 +1369,34 @@ begin
 end;
 
 procedure TRpMetafileReport.LoadFromFile(filename:string;clearfirst:boolean=true);
-var
- fstream:TFileStream;
 begin
- fstream:=TFileStream.Create(filename,fmOpenRead);
+ IntStream:=TFileStream.Create(filename,fmOpenRead);
  try
-  LoadFromStream(fstream,clearfirst);
+  LoadFromStream(IntStream,clearfirst);
  finally
-  fstream.free;
+  if (not FReading) then
+  begin
+   IntStream.free;
+   IntStream:=nil;
+  end;
  end
 end;
 
 
-procedure TRpMetafileReport.DrawPageOnly(IDriver:IRpPrintDriver);
+procedure TRpMetafileReport.DrawPageOnly(IDriver:IRpPrintDriver;index:integer);
 var
  FPage:TRpMetafilePage;
 begin
- if FCurrentPage<0 then
-  exit;
- FPage:=TRpMetafilePage(FPages.items[FCurrentPage]);
+ FPage:=TRpMetafilePage(FPages.items[index]);
  IDriver.DrawPage(FPage);
 end;
 
 
-procedure TRpMetafileReport.DrawPage(IDriver:IRpPrintDriver);
+procedure TRpMetafileReport.DrawPage(IDriver:IRpPrintDriver;index:integer);
 begin
  IDriver.NewDocument(self,1,false);
  try
-  DrawPageOnly(IDriver);
+  DrawPageOnly(IDriver,index);
   IDriver.EndPage;
   IDriver.EndDocument;
  except
@@ -1319,12 +1411,12 @@ var
 begin
  IDriver.NewDocument(self,1,false);
  try
-  for i:=0 to PageCount-1 do
+  RequestPage(MAX_PAGECOUNT);
+  for i:=0 to CurrentPageCount-1 do
   begin
    if i>0 then
     IDriver.NewPage(Pages[i]);
-   CurrentPage:=i;
-   DrawPageOnly(IDriver);
+   DrawPageOnly(IDriver,i);
   end;
   IDriver.EndPage;
 
@@ -1350,9 +1442,9 @@ begin
   apage:=Pages[aobject.PageIndex];
   index:=apage.Objects[aobject.ObjectIndex].TextP;
   if Length(aobject.displayformat)>0 then
-   astring:=FormatCurr(aobject.displayformat,PageCount)
+   astring:=FormatCurr(aobject.displayformat,CurrentPageCount)
   else
-   astring:=IntToStr(PageCount);
+   astring:=IntToStr(CurrentPageCount);
 //  oldtexts:=apage.Objects[aobject.ObjectIndex].TextS;
   oldtexts:=9;
   apage.FObjects[aobject.ObjectIndex].TextS:=Length(astring);
@@ -1587,12 +1679,12 @@ begin
  begin
   DeletePage(0);
   Dec(frompage);
-  if pagecount<1 then
+  if currentpagecount<1 then
    break;
  end;
- while newpagecount<PageCount do
+ while newpagecount<currentPageCount do
  begin
-  DeletePage(PageCount-1);
+  DeletePage(currentPageCount-1);
  end;
 end;
 
@@ -1613,6 +1705,271 @@ begin
 end;
 {$ENDIF}
 {$ENDIF}
+
+procedure TRpMetafileReport.Finish;
+begin
+ FFinished:=true;
+end;
+
+
+function TRpMetafileReport.RequestPage(pageindex:integer):boolean;
+begin
+ if (CurrentPageCount>pageindex) then
+ begin
+  Result:=FFinished;
+  exit;
+ end;
+ if Assigned(OnRequestPage) then
+  FFinished:=OnRequestPage(pageindex);
+ if (FReading) then
+ begin
+  while ((FReading) AND (CurrentPageCount<=pageindex)) do
+  begin
+   FWaiting:=true;
+   try
+    WaitForSingleObject(FReadThread.Handle,100);
+   finally
+    FWaiting:=false;
+   end;
+  end;
+ end;
+ Result:=FFinished;
+end;
+
+procedure TRpMetafileReport.WorkProgress(Sender:TObject;records,pagecount:integer;var docancel:boolean);
+begin
+ if Assigned(OnWorkProgress) then
+  OnWorkProgress(self,records,pagecount,docancel);
+end;
+
+
+procedure TRpMetaFileReport.WorkAsyncError(amessage:string);
+begin
+ if Assigned(OnWorkAsyncError) then
+  OnWorkAsyncError(amessage);
+end;
+
+procedure TRpMetaFileReport.StopWork;
+begin
+ if (FReading) then
+ begin
+  FReading:=false;
+  if Assigned(FReadThread) then
+  begin
+   AbortingThread:=true;
+   FreadThread.Terminate();
+   FReadThread:=nil;
+  end;
+ end;
+ if Assigned(OnStopWork) then
+  OnStopWork;
+end;
+
+procedure TFlexStream.ReadBuffer;
+var
+ readed:integer;
+begin
+ if Assigned(FOnRequestData) then
+  FOnRequestData(Self,BUFFER_FLEX_SIZE);
+ FBuffer.SetSize(0);
+ FLastReadCount:=0;
+ while (FLastReadCount<BUFFER_FLEX_SIZE) do
+ begin
+  if assigned(critsec) then
+   critsec.enter;
+  readed:=FStream.Read(FBuf[0],BUFFER_FLEX_SIZE-FLastReadCount);
+  if assigned(critsec) then
+   critsec.leave;
+  FLastReadCount:=FLastReadCount+readed;
+  if readed=0 then
+   break;
+  FBuffer.Write(FBuf[0],readed);
+ end;
+ FBuffer.Seek(0,soFromBeginning);
+ FInternalPosition:=0;
+ if (FLastReadCount=0) then
+  FEof:=true;
+end;
+
+constructor TFlexStream.Create(AStream:TStream;OnRequestData:TOnRequestData;criticalsec:TCriticalSection);
+begin
+ critsec:=criticalsec;
+ FOnRequestData:=OnRequestData;
+ FIntStream:=TMemoryStream.create;
+ FBuffer:=TMemoryStream.Create;
+// FBuffer.SetSize(BUFFER_FLEX_SIZE);
+ FStream:=AStream;
+ ReadBuffer;
+ if FLastReadCount>0 then
+ begin
+  FIsCompressed:=(PChar(FBuffer.Memory)^='x');
+ end;
+end;
+
+destructor TFlexStream.Destroy;
+begin
+ FBuffer.free;
+ FIntStream.free;
+ inherited Destroy;
+end;
+
+function TFlexStream.Read(var Buffer; Count: Longint): Longint;
+var
+ readcount,readed:integer;
+begin
+ if FEof then
+ begin
+  Result:=0;
+  exit;
+ end;
+ readcount:=0;
+ if FIntStream.Size<Count then
+  FIntStream.SetSize(Count);
+ FIntStream.Seek(0,soFromBeginning);
+ while not FEof do
+ begin
+  while readcount<Count do
+  begin
+   if ((Count-readcount)<(FLastReadCount-FInternalPosition)) then
+   begin
+    readed:=FBuffer.Read(FBuf[0],Count-readcount);
+    FIntStream.Write(FBuf[0],readed);
+    FInternalPosition:=FInternalPosition+readed;
+   end
+   else
+   begin
+    readed:=FBuffer.Read(FBuf[0],Count);
+    FIntStream.Write(FBuf[0],readed);
+    ReadBuffer;
+   end;
+   readcount:=readcount+readed;
+   if FEof then
+    break;
+  end;
+  if (readcount>=Count) then
+   break;
+ end;
+ FIntStream.Seek(0,soFromBeginning);
+ FIntStream.Read(Buffer,readcount);
+ Result:=readcount;
+end;
+
+function TFlexStream.Seek(Offset: Longint; Origin: Word): Longint;
+begin
+ if ((offset=0) and (origin=1)) then
+  Result:=FPosition
+ else
+  Result:=0;
+end;
+
+function TFlexStream.Write(const Buffer; Count: Longint): Longint;
+begin
+ Result:=0;
+end;
+
+procedure TReadThread.Execute;
+var
+ bytesread:integer;
+ separator:integer;
+ fpage:TRpMetafilePage;
+ apagesizeqt:TPageSizeQt;
+begin
+ try
+ // Pages
+ bytesread:=sizeof(separator);
+ separator:=integer(rpFPage);
+ while (bytesread>0) do
+ begin
+  if bytesread<>sizeof(separator) then
+   Raise ERpBadFileFormat.CreatePos(SrpMtPageSeparatorExpected,Stream.Position,0);
+  if (separator<>integer(rpFPage)) then
+   Raise ERpBadFileFormat.CreatePos(SrpMtPageSeparatorExpected,Stream.Position,0);
+  // New page and load from stream
+  fpage:=TRpMetafilePage.Create;
+  FPage.Fversion2_2:=metafile.Fversion2_2;
+  FPage.FUpdatedPageSize:=false;
+  FPage.FOrientation:=metafile.Orientation;
+  aPageSizeqt.Indexqt:=metafile.PageSize;
+  aPageSizeqt.Custom:=true;
+  aPageSizeqt.CustomWidth:=metafile.CustomX;
+  aPageSizeqt.Customheight:=metafile.CustomY;
+  aPageSizeqt.PhysicWidth:=metafile.CustomX;
+  aPageSizeqt.PhysicHeight:=metafile.CustomY;
+  aPageSizeqt.PaperSource:=0;
+  aPageSizeqt.ForcePaperName:='';
+  aPageSizeqt.Duplex:=0;
+
+  FPage.PageSizeqt:=apagesizeqt;
+  fpage.LoadFromStream(Stream);
+  metafile.FPages.Add(fpage);
+  if not metafile.FWaiting then
+  begin
+   if Assigned(metafile.OnWorkProgress) then
+     Synchronize(Progress);
+  end;
+  if not metafile.FReading then
+   break;
+  bytesread:=Stream.Read(separator,sizeof(separator));
+ end;
+  metafile.FReading:=false;
+  metafile.FFinished:=true;
+  if not metafile.FWaiting then
+  begin
+   if Assigned(metafile.OnWorkProgress) then
+     Synchronize(Progress);
+  end;
+  if Assigned(metafile.IntStream) then
+  begin
+   metafile.IntStream.Free;
+   metafile.IntStream:=nil;
+  end;
+  if Assigned(metafile.zStream) then
+  begin
+   metafile.zStream.free;
+   metafile.zstream:=nil;
+  end;
+ except
+  on E:Exception do
+  begin
+   metafile.FReading:=false;
+   metafile.FFinished:=true;
+   if Assigned(metafile.IntStream) then
+   begin
+    metafile.IntStream.Free;
+    metafile.IntStream:=nil;
+   end;
+   if Assigned(metafile.zStream) then
+   begin
+    metafile.zStream.free;
+    metafile.zstream:=nil;
+   end;
+   errormessage:=E.Message;
+   // AsyncWorkError
+   if not metafile.FWaiting then
+    if Assigned(metafile.OnWorkAsyncError) then
+     Synchronize(ShowError);
+  end;
+ end;
+end;
+
+procedure TReadThread.Progress;
+var
+ docancel:boolean;
+begin
+ docancel:=false;
+ if Assigned(metafile.OnWorkProgress) then
+  metafile.OnWorkProgress(metafile,0,metafile.FIntPageCount,docancel);
+ if docancel then
+  metafile.FReading:=false;
+end;
+
+procedure TReadThread.ShowError;
+begin
+ if Assigned(metafile.OnWorkAsyncError) then
+  metafile.OnWorkAsyncError(errormessage);
+end;
+
+
 
 
 end.

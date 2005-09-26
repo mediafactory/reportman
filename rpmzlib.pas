@@ -91,12 +91,13 @@ type
 
   TDecompressionStream = class(TCustomZlibStream)
   public
+    IsEof:Boolean;
     constructor Create(Source: TStream);
     destructor Destroy; override;
     function Read(var Buffer; Count: Longint): Longint; override;
     function Write(const Buffer; Count: Longint): Longint; override;
     function Seek(Offset: Longint; Origin: Word): Longint; override;
-    function IsEOF:boolean;
+//    function IsEOF:boolean;
     property OnProgress;
   end;
 
@@ -417,10 +418,10 @@ begin
   inherited Destroy;
 end;
 
-function TDecompressionStream.IsEOF:boolean;
-begin
- Result:=(FStrm.Position=FStrm.size) AND (FZRec.avail_in=0);
-end;
+//function TDecompressionStream.IsEOF:boolean;
+//begin
+// Result:=(FStrm.Position=FStrm.size) AND (FZRec.avail_in=0);
+//end;
 
 function TDecompressionStream.Read(var Buffer; Count: Longint): Longint;
 begin
@@ -447,6 +448,7 @@ begin
       if FZRec.avail_in = 0 then
         begin
           Result := uLong(Count) - uLong(FZRec.avail_out);
+          iseof:=true;
           Exit;
         end;
       FZRec.next_in := @FBuffer;
@@ -457,6 +459,7 @@ begin
   end;
   Result := Count;
 end;
+
 
 function TDecompressionStream.Write(const Buffer; Count: Longint): Longint;
 begin

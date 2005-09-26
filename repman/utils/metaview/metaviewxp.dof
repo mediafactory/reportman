@@ -107,16 +107,6 @@ UseLauncher=0
 DebugCWD=
 [Resource DLL Projects]
 Item0=Español (alfabetización internacional)*$00000C0A*ESN*ESN
-[RDP Source Files]
-Item0=..\..\..\rpfmainmetaviewvcl.dfm
-Item1=..\..\..\rpmdclitreevcl.dfm
-Item2=..\..\..\rpmdfaboutvcl.dfm
-Item3=..\..\..\rprfvparams.dfm
-Item4=..\..\..\rpgdidriver.dfm
-Item5=..\..\..\rpmdprintconfigvcl.dfm
-Item6=..\..\..\rpfmetaviewvcl.dfm
-Item7=..\..\..\rpexceldriver.dfm
-Item8=metaviewxp.drc
 [Language]
 ActiveLang=
 ProjectLang=$00000409
@@ -127,7 +117,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=4
 Release=0
-Build=16
+Build=19
 Debug=0
 PreRelease=0
 Special=0
@@ -138,7 +128,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report client and metafile viewer
-FileVersion=2.4.0.16
+FileVersion=2.4.0.19
 InternalName=metaview
 LegalCopyright=MPL/GLP License
 LegalTrademarks=

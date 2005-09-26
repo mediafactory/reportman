@@ -669,11 +669,14 @@ var
  aatext:widestring;
  aansitext:string;
  arec:TRect;
+ maxextent:TPoint;
 begin
  if atext.FontRotation<>0 then
   exit;
  if atext.CutText then
-  exit;
+ begin
+  maxextent:=extent;
+ end;
  if (toprinter) then
  begin
   if not printer.Printing then
@@ -748,6 +751,12 @@ begin
  // Transformates to twips
  extent.X:=Round(arec.Right/dpix*TWIPS_PER_INCHESS);
  extent.Y:=Round(arec.Bottom/dpiy*TWIPS_PER_INCHESS);
+ if (atext.CutText) then
+ begin
+  if maxextent.Y<extent.Y then
+   extent.Y:=maxextent.Y;
+ end;
+
 end;
 
 procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;pagemargins:TRect;devicefonts:boolean;offset:TPoint);
@@ -1357,15 +1366,17 @@ begin
   end;
   if allpages then
   begin
+   metafile.RequestPage(MAX_PAGECOUNT);
    frompage:=0;
-   topage:=metafile.PageCount-1;
+   topage:=metafile.CurrentPageCount-1;
   end
   else
   begin
    frompage:=frompage-1;
    topage:=topage-1;
-   if topage>metafile.PageCount-1 then
-    topage:=metafile.PageCount-1;
+   metafile.RequestPage(topage);
+   if topage>metafile.CurrentPageCount-1 then
+    topage:=metafile.CurrentPageCount-1;
   end;
   printer.Begindoc;
   try
@@ -1530,16 +1541,17 @@ begin
   pagewidth:=(metafile.CustomX*resx) div TWIPS_PER_INCHESS;
   Result.Width:=pagewidth;
   pageheight:=(metafile.CustomY*resy) div TWIPS_PER_INCHESS;
-  Result.Height:=pageheight*metafile.PageCount;
+  metafile.RequestPage(MAX_PAGECOUNT);
+  Result.Height:=pageheight*metafile.CurrentPageCount;
   arec.Top:=0;
   arec.Right:=pagewidth*2;
-  arec.Bottom:=pageheight*metafile.Pagecount+pageheight;
+  arec.Bottom:=pageheight*metafile.CurrentPagecount+pageheight;
   arec.Left:=0;
   Result.Canvas.Brush.Color:=CLXColorToVCLColor(metafile.BackColor);
   Result.Canvas.FillRect(arec);
   GDIDriver:=TRpGDIDriver.Create;
   aGDIDriver:=GDIDriver;
-  for i:=0 to metafile.PageCount-1 do
+  for i:=0 to metafile.CurrentPageCount-1 do
   begin
    ameta:=TMetafile.Create;
    try

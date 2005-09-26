@@ -85,6 +85,7 @@ begin
  Writeln(AnsiString(SRpPrintRep22));
  Writeln(AnsiString(SRpPrintRep23));
  Writeln(AnsiString(SRpPrintRep25));
+ Writeln(SRpPrintRep29);
  Writeln(AnsiString(SRpParseParamsH));
  Writeln(AnsiString(SRpCommandLineStdIN));
 end;
@@ -101,6 +102,7 @@ var
  aprintername:string;
  aindex:integer;
  amessage:String;
+ async:boolean;
 begin
  faxdevice:='';
  faxcoverstring:='';
@@ -144,6 +146,9 @@ begin
     else
     if ParamStr(indexparam)='-u' then
      compress:=false
+    else
+    if ParamStr(indexparam)='-async' then
+     async:=true
     else
     if ParamStr(indexparam)='-pdialog' then
      pdialog:=true
@@ -307,6 +312,9 @@ begin
    begin
     report:=TRpReport.Create(nil);
     try
+     if not preview then
+      async:=false;
+     report.AsyncExecution:=async;
      report.ProgressToStdOut:=true;
      if assigned(memstream) then
      begin

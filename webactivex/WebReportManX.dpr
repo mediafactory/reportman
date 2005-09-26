@@ -1,7 +1,7 @@
 library WebReportManX;
 
 uses
-  ComServ,XPMan,
+  ComServ,XPMan,IdSync,
   WebReportManX_TLB in 'WebReportManX_TLB.pas',
   rpwebreportx in 'rpwebreportx.pas' {WebReportMan: TActiveForm} {WebReportMan: CoClass},
   rpwebmetaclient in '..\rpwebmetaclient.pas',
@@ -26,4 +26,6 @@ exports
 {$R *.RES}
 
 begin
+ IsMultiThread:=true;
+ IdSync.
 end.

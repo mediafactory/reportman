@@ -230,6 +230,7 @@ type
     MObjFont: TMenuItem;
     FontDialog1: TFontDialog;
     MTypeInfo: TMenuItem;
+    MAsync: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -295,6 +296,7 @@ type
     procedure MAppFontClick(Sender: TObject);
     procedure MObjFontClick(Sender: TObject);
     procedure MTypeInfoClick(Sender: TObject);
+    procedure MAsyncClick(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrameVCL;
@@ -351,6 +353,8 @@ type
 
 var
  FRpMainFVCL:TFRpMainFVCL;
+
+procedure ExecuteReportDotNet(report:TRpReport;preview:boolean);
 
 implementation
 
@@ -415,6 +419,7 @@ begin
  DoDisable;
  // Creates a new report
  report:=TRpReport.Create(Self);
+ report.AsyncExecution:=MAsync.Checked;
  report.IsDesignTime:=true;
  report.OnReadError:=OnReadError;
  report.FailIfLoadExternalError:=false;
@@ -706,6 +711,7 @@ begin
  MAppFont.Caption:=TranslateStr(1347,MAppFont.Caption);
  MObjFont.Caption:=TranslateStr(1348,MAppFont.Caption);
  MTypeInfo.Caption:=SRpTypeInfo;
+ MAsync.Caption:=SRpAsyncExecution;
  File1.Caption:=TranslateStr(0,File1.Caption);
  Caption:=TranslateStr(1,Caption);
  MReport.Caption:=TranslateStr(2,MReport.Caption);
@@ -1158,6 +1164,14 @@ procedure TFRpMainFVCL.APreviewExecute(Sender: TObject);
 var
  modified:boolean;
 begin
+ if (report.DatabaseInfo.Count>0) then
+ begin
+  if report.DatabaseInfo.Items[0].Driver=rpdatadriver then
+  begin
+   ExecuteReportDotNet(report,true);
+   exit;
+  end;
+ end;
  // Previews the report
  if ADriverPDF.Checked then
  begin
@@ -1188,9 +1202,17 @@ var
  allpages,collate:boolean;
  frompage,topage,copies:integer;
 begin
+ if (report.DatabaseInfo.Count>0) then
+ begin
+  if report.DatabaseInfo.Items[0].Driver=rpdatadriver then
+  begin
+   ExecuteReportDotNet(report,false);
+   exit;
+  end;
+ end;
   allpages:=true;
   collate:=report.CollateCopies;
-  frompage:=1; topage:=999999;
+  frompage:=1; topage:=MAX_PAGECOUNT;
   copies:=report.Copies;
   rpgdidriver.PrinterSelection(report.PrinterSelect,report.papersource,report.duplex);
   rpgdidriver.OrientationSelection(report.PageOrientation);
@@ -1294,6 +1316,7 @@ begin
  inif:=TIniFile.Create(configfile);
  try
   MTypeInfo.Checked:=inif.ReadBool('Preferences','TypeInfo',true);
+  MAsync.Checked:=inif.ReadBool('Preferences','Async',false);
   FAppFontName:=inif.ReadString('Preferences','AppFontName',Screen.IconFont.Name);
   FAppFontSize:=inif.ReadInteger('Preferences','AppFontSize',Screen.IconFont.Size);
   FAppFontColor:=inif.ReadInteger('Preferences','AppFontColor',Screen.IconFont.Color);
@@ -1334,6 +1357,7 @@ begin
  inif:=TIniFile.Create(configfile);
  try
   inif.WriteBool('Preferences','TypeInfo', MTypeInfo.Checked);
+  inif.WriteBool('Preferences','Async', MAsync.Checked);
   inif.WriteString('Preferences','AppFontName',FAppFontName);
   inif.WriteInteger('Preferences','AppFontSize',FAppFontSize);
   inif.WriteInteger('Preferences','AppFontColor',FAppFontColor);
@@ -1845,6 +1869,7 @@ begin
  DoDisable;
  report:=TRpReport.Create(Self);
  try
+  report.AsyncExecution:=MAsync.Checked;
   report.IsDesignTime:=true;
   report.OnReadError:=OnReadError;
   report.FailIfLoadExternalError:=false;
@@ -1935,6 +1960,57 @@ begin
  begin
   freportstructure.browser.showdatatypes:=MTypeInfo.Checked;
  end;
+end;
+
+procedure ExecuteReportDotNet(report:TRpReport;preview:boolean);
+var
+ startinfo:TStartupinfo;
+ linecount:string;
+ FExename,FCommandLine:string;
+ procesinfo:TProcessInformation;
+ astring:string;
+begin
+  linecount:='';
+    with startinfo do
+    begin
+     cb:=sizeof(startinfo);
+     lpReserved:=nil;
+     lpDesktop:=nil;
+     lpTitle:=PChar('Report manager');
+     dwX:=0;
+     dwY:=0;
+     dwXSize:=400;
+     dwYSize:=400;
+     dwXCountChars:=80;
+     dwYCountChars:=25;
+     dwFillAttribute:=FOREGROUND_RED or BACKGROUND_RED or BACKGROUND_GREEN or BACKGROUND_BLUe;
+     dwFlags:=STARTF_USECOUNTCHARS or STARTF_USESHOWWINDOW;
+     cbReserved2:=0;
+     lpreserved2:=nil;
+    end;
+    FExename:=ExtractFilePath(Application.exename)+'printreport.exe';
+    astring:=RpTempFileName;
+    report.StreamFormat:=rpStreamXML;
+    report.SaveToFile(astring);
+    if preview then
+     FCommandLine:=' -deletereport -preview "'+astring+'"'
+    else
+     FCommandLine:=' -deletereport -printdialog "'+astring+'"';
+
+    // Creates the interbase command line proces
+    if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,
+    startinfo,procesinfo) then
+     RaiseLastOSError;
+end;
+
+procedure TFRpMainFVCL.MAsyncClick(Sender: TObject);
+begin
+ MAsync.Checked:=not MAsync.Checked;
+ if Assigned(report) then
+ begin
+  report.AsyncExecution:=MAsync.Checked;
+ end;
+
 end;
 
 end.

@@ -91,6 +91,10 @@ procedure SetRecordSet(const datasetname: String,recordset: OleVariant);
   property PrintersAvailable:WideString; // Gets a list of the available printers 
   separated by a LF (Chr(10))<br>
   procedure GetRemoteParams(hostname:string;port:integer;user,password,aliasname,hostname:string)</p>
+<p><b>Since version 2.5</b></p>
+<p>procedure SaveToCSV2(const filename,separator: String);<br>
+  property AsyncExecution:Boolean<br>
+</p>
 <h3>Using the control with VB like languages</h3>
 <p>The ActiveX control may be used directly in VB, VBScript, ASP and WSH. In the 
   VB environment you are generally recommended to &quot;Reference&quot; the control 
@@ -173,6 +177,10 @@ to be used has been identified. For further information on parameters please see
 <p>Version 2.3 DelphiASPObj have this new procedures:</p>
 <p>procedure GetMetafile(const Report: IReportReport);<br>
 </p>
+<p>Version 2.5 DelphiASPObj have this new procedures:</p>
+<p>procedure GetCSV2(const Report: IReportReport;separator:string);<br>
+</p>
+<p>&nbsp; </p>
 <p>&nbsp; </p>
 </body>
 </html>

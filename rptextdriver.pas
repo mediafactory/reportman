@@ -393,11 +393,15 @@ var
  singleline:boolean;
  rect:TRect;
  fontstep:TRpFontStep;
+ maxextent:TPoint;
 begin
  if atext.FontRotation<>0 then
   exit;
  if atext.CutText then
-  exit;
+ begin
+  maxextent:=extent;
+ end;
+
  // single line
  singleline:=(atext.Alignment AND AlignmentFlags_SingleLine)>0;
  fontstep:=FontSizeToStep(atext.FontSize,atext.PrintStep);
@@ -410,6 +414,11 @@ begin
 
  extent.X:=Rect.Right;
  extent.Y:=Rect.Bottom;
+ if (atext.CutText) then
+ begin
+  if maxextent.Y<extent.Y then
+   extent.Y:=maxextent.Y;
+ end;
 
 end;
 
@@ -1090,15 +1099,17 @@ var
 begin
  if allpages then
  begin
+  metafile.RequestPage(MAX_PAGECOUNT);
   frompage:=0;
-  topage:=metafile.PageCount-1;
+  topage:=metafile.CurrentPageCount-1;
  end
  else
  begin
   frompage:=frompage-1;
   topage:=topage-1;
-  if topage>metafile.PageCount-1 then
-   topage:=metafile.PageCount-1;
+  metafile.RequestPage(topage);
+  if topage>metafile.CurrentPageCount-1 then
+   topage:=metafile.CurrentPageCount-1;
  end;
  if copies<0 then
   copies:=1;
@@ -1111,7 +1122,7 @@ begin
    for j:=0 to copies-1 do
    begin
     adriver.DrawPage(metafile.Pages[i]);
-    if ((i<metafile.PageCount-1) or (j<copies-1)) then
+    if ((i<metafile.CurrentPageCount-1) or (j<copies-1)) then
     begin
      if j<copies-1 then
       adriver.NewPage(metafile.Pages[i])
@@ -1133,7 +1144,7 @@ end;
 procedure SaveMetafileToText(metafile:TRpMetafileReport;
  Stream:TStream);
 begin
- SaveMetafileRangeToText(metafile,false,1,99999,1,Stream);
+ SaveMetafileRangeToText(metafile,false,1,MAX_PAGECOUNT,1,Stream);
 end;
 
 procedure SaveMetafileToTextStream(metafile:TRpMetafileReport;
@@ -1145,10 +1156,11 @@ begin
  adriver:=TRpTextDriver.Create;
  adriver.NewDocument(metafile,1,false);
  try
-  for i:=0 to metafile.PageCount-1 do
+  metafile.RequestPage(MAX_PAGECOUNT);
+  for i:=0 to metafile.CurrentPageCount-1 do
   begin
    adriver.DrawPage(metafile.Pages[i]);
-   if i<metafile.PageCount-1 then
+   if i<metafile.CurrentPageCount-1 then
     adriver.NewPage(metafile.Pages[i+1]);
   end;
   adriver.EndDocument;

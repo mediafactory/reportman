@@ -1,8 +1,8 @@
 object FRpMetaVCL: TFRpMetaVCL
   Left = 0
   Top = 0
-  Width = 443
-  Height = 270
+  Width = 596
+  Height = 384
   HorzScrollBar.Range = 561
   VertScrollBar.Range = 338
   Align = alClient
@@ -17,13 +17,13 @@ object FRpMetaVCL: TFRpMetaVCL
     Left = 0
     Top = 27
     Width = 7
-    Height = 290
+    Height = 336
     Beveled = True
   end
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 561
+    Width = 596
     Height = 27
     AutoSize = True
     ButtonHeight = 25
@@ -53,7 +53,7 @@ object FRpMetaVCL: TFRpMetaVCL
       Top = 0
       Width = 44
       Height = 25
-      TabOrder = 2
+      TabOrder = 1
       OnKeyDown = EPageNumKeyDown
       Text = '0'
       EditType = teinteger
@@ -151,16 +151,25 @@ object FRpMetaVCL: TFRpMetaVCL
       Width = 106
       Height = 25
       Action = ACancel
-      TabOrder = 1
-      Visible = False
-    end
-    object PBar: TProgressBar
-      Left = 577
-      Top = 0
-      Width = 64
-      Height = 25
       TabOrder = 0
       Visible = False
+    end
+    object PPBar: TPanel
+      Left = 577
+      Top = 0
+      Width = 104
+      Height = 25
+      BorderStyle = bsSingle
+      TabOrder = 2
+      Visible = False
+      object PBar: TProgressBar
+        Left = 1
+        Top = 1
+        Width = 98
+        Height = 19
+        Align = alClient
+        TabOrder = 0
+      end
     end
   end
   object ImageContainer: TScrollBox
@@ -186,8 +195,8 @@ object FRpMetaVCL: TFRpMetaVCL
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 317
-    Width = 561
+    Top = 363
+    Width = 596
     Height = 21
     Panels = <
       item

@@ -57,8 +57,8 @@ type
    property PDFFilename:string read FPDFFilename write FPDFFilename;
    property Compressed:Boolean read FCompressed write FCompressed default True;
    property FromPage:integer read FFromPage write FFromPage default 1;
-   property ToPage:integer read FToPage write FToPage default 9999999;
-   property Copies:integer read FCopies write FCopies default 9999999;
+   property ToPage:integer read FToPage write FToPage default MAX_PAGECOUNT;
+   property Copies:integer read FCopies write FCopies default 1;
   end;
 
 implementation
@@ -70,7 +70,7 @@ begin
  ShowPrintDialog:=false;
  FCompressed:=true;
  FFromPage:=1;
- FToPage:=9999999;
+ FToPage:=MAX_PAGECOUNT;
  FCopies:=1;
 end;
 
@@ -157,7 +157,7 @@ end;
 procedure TPDFReport.SaveToMetafile(filename:string);
 begin
  rppdfdriver.PrintReportToMetafile(Report,Title,ShowProgress,true,
-  1,999999,1,filename,false);
+  1,MAX_PAGECOUNT,1,filename,false);
 end;
 
 

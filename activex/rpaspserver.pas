@@ -14,6 +14,8 @@ type
     procedure GetCustomText(const Report: IReportReport); safecall;
     procedure GetText(const Report: IReportReport); safecall;
     procedure GetCSV(const Report: IReportReport); safecall;
+    procedure GetCSV2(const Report: IReportReport;
+      const separator: WideString); safecall;
     procedure GetMetafile(const Report: IReportReport); safecall;
   end;
 
@@ -89,6 +91,28 @@ begin
  end;
 end;
 
+procedure TReportmanXAServer.GetCSV2(const Report: IReportReport;
+  const separator: WideString);
+var
+ areport:TRpReport;
+ memstream:TMemoryStream;
+ astring:String;
+begin
+ areport:=TRpReport(Report.VCLReport);
+ memstream:=TMemoryStream.Create;
+ try
+  rpcsvdriver.ExportReportToCSVStream(areport,memstream,false,separator);
+  memstream.Seek(0,soFromBeginning);
+  Response.Clear;
+  Response.ContentType := 'text/plain';
+  SetLength(astring,memstream.size);
+  memstream.Read(astring[1],memstream.size);
+  Response.BinaryWrite(astring);
+ finally
+  memstream.free;
+ end;
+end;
+
 procedure TReportmanXAServer.GetCSV(const Report: IReportReport);
 var
  areport:TRpReport;
@@ -98,7 +122,7 @@ begin
  areport:=TRpReport(Report.VCLReport);
  memstream:=TMemoryStream.Create;
  try
-  rpcsvdriver.ExportReportToCSVStream(areport,memstream,false);
+  rpcsvdriver.ExportReportToCSVStream(areport,memstream,false,',');
   memstream.Seek(0,soFromBeginning);
   Response.Clear;
   Response.ContentType := 'text/plain';

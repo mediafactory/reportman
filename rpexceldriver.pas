@@ -428,15 +428,17 @@ begin
  mmfirst:=TimeGetTime;
  if allpages then
  begin
+  metafile.RequestPage(MAX_PAGECOUNT);
   frompage:=0;
-  topage:=metafile.PageCount-1;
+  topage:=metafile.CurrentPageCount-1;
  end
  else
  begin
   frompage:=frompage-1;
   topage:=topage-1;
-  if topage>metafile.PageCount-1 then
-   topage:=metafile.PageCount-1;
+  metafile.RequestPage(topage);
+  if topage>metafile.CurrentPageCount-1 then
+   topage:=metafile.CurrentPageCount-1;
  end;
  // Distribute in rows and columns
  columns:=TStringList.Create;

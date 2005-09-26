@@ -199,11 +199,14 @@ procedure TRpPDFDriver.TextExtent(atext:TRpTextObject;var extent:TPoint);
 var
  singleline:boolean;
  rect:TRect;
+ maxextent:TPoint;
 begin
  if atext.FontRotation<>0 then
   exit;
  if atext.CutText then
-  exit;
+ begin
+  maxextent:=extent;
+ end;
  // single line
  singleline:=(atext.Alignment AND AlignmentFlags_SingleLine)>0;
  FPDFFile.Canvas.Font.Name:=TRpType1Font(atext.Type1Font);
@@ -227,6 +230,11 @@ begin
  FPDFFile.Canvas.TextExtent(atext.Text,Rect,atext.WordWrap,singleline);
  extent.X:=Rect.Right;
  extent.Y:=Rect.Bottom;
+ if (atext.CutText) then
+ begin
+  if maxextent.Y<extent.Y then
+   extent.Y:=maxextent.Y;
+ end;
 end;
 
 procedure TRpPDFDriver.EndPage;
@@ -485,15 +493,17 @@ var
 begin
  if allpages then
  begin
+  metafile.RequestPage(MAX_PAGECOUNT);
   frompage:=0;
-  topage:=metafile.PageCount-1;
+  topage:=metafile.CurrentPageCount-1;
  end
  else
  begin
   frompage:=frompage-1;
   topage:=topage-1;
-  if topage>metafile.PageCount-1 then
-   topage:=metafile.PageCount-1;
+  metafile.RequestPage(topage);
+  if topage>metafile.CurrentPageCount-1 then
+   topage:=metafile.CurrentPageCount-1;
  end;
  if copies<0 then
   copies:=1;
@@ -507,7 +517,7 @@ begin
    for j:=0 to copies-1 do
    begin
     adriver.DrawPage(metafile.Pages[i]);
-    if ((i<metafile.PageCount-1) or (j<copies-1)) then
+    if ((i<metafile.CurrentPageCount-1) or (j<copies-1)) then
     begin
      if j<copies-1 then
       adriver.NewPage(metafile.Pages[i])
@@ -527,7 +537,7 @@ end;
 procedure SaveMetafileToPDF(metafile:TRpMetafileReport;
  filename:string;compressed:boolean);
 begin
- SaveMetafileRangeToPDF(metafile,false,1,99999,1,filename,compressed);
+ SaveMetafileRangeToPDF(metafile,false,1,MAX_PAGECOUNT,1,filename,compressed);
 end;
 
 procedure SaveMetafileToPDFStream(metafile:TRpMetafileReport;
@@ -540,10 +550,11 @@ begin
  adriver.compressed:=compressed;
  adriver.NewDocument(metafile,1,false);
  try
-  for i:=0 to metafile.PageCount-1 do
+  metafile.RequestPage(MAX_PAGECOUNT);
+  for i:=0 to metafile.CurrentPageCount-1 do
   begin
    adriver.DrawPage(metafile.Pages[i]);
-   if i<metafile.PageCount-1 then
+   if i<metafile.CurrentPageCount-1 then
     adriver.NewPage(metafile.Pages[i+1]);
   end;
   adriver.EndDocument;

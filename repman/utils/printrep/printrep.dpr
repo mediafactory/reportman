@@ -95,6 +95,7 @@ begin
  Writeln(SRpPrintRep20);
  Writeln(SRpPrintRep24);
  Writeln(SRpPrintRep25);
+ Writeln(SRpPrintRep29);
 {$IFDEF LINUX}
  Writeln(SRpUseKPrinter);
 {$ENDIF}
@@ -106,6 +107,7 @@ var
  metafile:TRpMetafileReport;
  isstdin:Boolean;
  memstream:TMemoryStream;
+ async:boolean;
  bmpresx,bmpresy:integer;
  meta:TrpMetafileReport;
  abitmap:TBitmap;
@@ -121,6 +123,7 @@ begin
 {$IFDEF LINUX}
  usekprinter:=GetEnvironmentVariable('REPMANUSEKPRINTER')='true';
 {$ENDIF}
+ async:=false;
  bmpresx:=100;
  bmpresy:=100;
  tobmp:=false;
@@ -167,6 +170,9 @@ begin
     else
     if ParamStr(indexparam)='-u' then
      compress:=false
+    else
+    if ParamStr(indexparam)='-async' then
+     async:=true
     else
 {$IFDEF LINUX}
     if ParamStr(indexparam)='-kprinter' then
@@ -301,6 +307,9 @@ begin
    begin
     report:=TRpReport.Create(nil);
     try
+     if not preview then
+      async:=false;
+     report.AsyncExecution:=async;
      report.ProgressToStdOut:=true;
      if isstdin then
      begin

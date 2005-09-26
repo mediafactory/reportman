@@ -94,7 +94,7 @@ begin
  begin
   allpages:=true;
   collate:=report.CollateCopies;
-  frompage:=1; topage:=999999;
+  frompage:=1; topage:=MAX_PAGECOUNT;
   copies:=report.Copies;
   if ShowPrintDialog then
   begin
@@ -109,7 +109,7 @@ begin
   else
   begin
     Result:=PrintReport(report,Title,Showprogress,true,1,
-     9999999,report.copies,report.collatecopies);
+     MAX_PAGECOUNT,report.copies,report.collatecopies);
   end;
  end;
 end;
@@ -125,7 +125,7 @@ end;
 procedure TVCLReport.SaveToPDF(filename:string;compressed:boolean=false);
 begin
  CheckLoaded;
- rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,True,1,999999,1,
+ rpgdidriver.ExportReportToPDF(report,filename,ShowProgress,True,1,MAX_PAGECOUNT,1,
   false,filename,compressed,false)
 end;
 
@@ -136,7 +136,7 @@ begin
  CheckLoaded;
  memstream:=TMemoryStream.Create;
  try
-  ExportReportToPDFMetaStream(report,filename,showprogress,true,1,999999,1,false,memstream,false,false,true);
+  ExportReportToPDFMetaStream(report,filename,showprogress,true,1,MAX_PAGECOUNT,1,false,memstream,false,false,true);
   memstream.Seek(0,soFromBeginning);
   memstream.SaveToFile(filename);
  finally
@@ -170,7 +170,7 @@ begin
  begin
   allpages:=true;
   collate:=false;
-  frompage:=1; topage:=999999;
+  frompage:=1; topage:=MAX_PAGECOUNT;
   copies:=1;
   doprint:=true;
   if ShowPrintDialog then

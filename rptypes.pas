@@ -245,7 +245,7 @@ procedure GetDrawStyleDescriptions(alist:TRpWideStrings);
 function StrToBackStyle(value:string):TrpBackStyle;
 function BackStyleToStr(value:TrpBackStyle):string;
 {$IFNDEF FPC}
-procedure SendMail(destination,subject,content,filename:String);
+procedure SendMail(destination,subject,content,filename,originalfile:String);
 {$ENDIF}
 function StrToAlign(value:string):TRpPosAlign;
 function AlignToStr(value:TRpPosAlign):string;
@@ -4242,8 +4242,39 @@ end;
 
 
 {$IFDEF MSWINDOWS}
+
+
+
+
+Function LongFileName(ShortName: String): String;
+Var
+ SR: TSearchRec;
+Begin
+  Result := '';
+  If (pos ('\\', ShortName) + pos ('*', ShortName) +
+      pos ('?', ShortName) <> 0) Or Not FileExists(ShortName) Then
+  Begin
+    { ignore NetBIOS name, joker chars and invalid file names }
+    Result:=ShortName;
+    Exit;
+  End;
+  While FindFirst(ShortName, faAnyFile, SR) = 0 Do
+  Begin
+    { next part as prefix }
+    Result := '\' + SR.Name + Result;
+    SysUtils.FindClose(SR); { the SysUtils, not the WinProcs procedure! }
+    { directory up (cut before '\') }
+    ShortName := ExtractFileDir (ShortName);
+    If length (ShortName) <= 2 Then
+    Begin
+      Break; { ShortName contains drive letter followed by ':' }
+    End;
+  End;
+  Result := ExtractFileDrive (ShortName) + Result;
+end;
+
 {$IFNDEF FPC}
-procedure SendMail(destination,subject,content,filename:String);
+procedure SendMail(destination,subject,content,filename,originalfile:String);
 procedure CheckMAPI(avalue:Cardinal);
 begin
  if avalue=SUCCESS_SUCCESS then
@@ -4336,12 +4367,14 @@ begin
   amessage.lpszDateReceived:=nil;
   amessage.nRecipCount:=0;
   amessage.lpRecips:=nil;
+
   if Length(destination)>0 then
   begin
    amessage.nRecipCount:=1;
 {$IFNDEF DOTNETD}
    amessage.lpRecips:=AllocMem(sizeof(MAPIRecipDesc));
    amessage.lpRecips.lpszName:=Pchar(destination);
+   amessage.lpRecips.ulRecipClass:=1;
    amessage.lpRecips.lpszAddress:=Pchar(destination);
    amessage.lpRecips.ulEIDSize:=0;
    amessage.lpRecips.lpEntryID:=nil;
@@ -4379,7 +4412,8 @@ begin
    amessage.lpFiles.ulReserved:=0;
    amessage.lpFiles.flFlags:=0;
    amessage.lpFiles.lpszPathName:=Pchar(filename);
-   amessage.lpFiles.lpszFileName:=PChar(ExtractFileName(filename));
+//   amessage.lpFiles.lpszPathName:=Pchar(LongFileName(filename));
+   amessage.lpFiles.lpszFileName:=Pchar(originalfile);
    amessage.lpFiles.nPosition:=0;
    amessage.lpFiles.lpFileType:=nil;
 {$ENDIF}
@@ -4388,7 +4422,7 @@ begin
    filep:=MapiFileDesc(Marshal.PtrToStructure(amessage.lpFiles,TypeOf(MAPIFileDesc)));
    filep.ulReserved:=0;
    filep.flFlags:=0;
-   filep.lpszPathName:=filename;
+   filep.lpszPathName:=Marshal.StringToHGlobalAnsi(filename);
    filep.lpszFileName:=Marshal.StringToHGlobalAnsi(ExtractFileName(filename));
    filep.nPosition:=0;
    filep.lpFileType:=nil;

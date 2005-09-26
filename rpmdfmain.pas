@@ -234,6 +234,7 @@ type
     AOpenFrom: TAction;
     ASaveTo: TAction;
     MTypeInfo: TMenuItem;
+    MAsync: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -301,6 +302,7 @@ type
     procedure MAppFontClick(Sender: TObject);
     procedure MObjFontClick(Sender: TObject);
     procedure MTypeInfoClick(Sender: TObject);
+    procedure MAsyncClick(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrame;
@@ -365,8 +367,8 @@ type
     function GetExpressionText:string;
   end;
 
-procedure ExecuteReportDotNet(report:TRpReport);
 
+procedure ExecuteReportDotNet(report:TRpReport);
 implementation
 
 uses Math;
@@ -429,6 +431,7 @@ begin
  DoDisable;
  // Creates a new report
  report:=TRpReport.Create(Self);
+ report.AsyncExecution:=MAsync.Checked;
  report.IsDesignTime:=true;
  report.OnReadError:=OnReadError;
  report.FailIfLoadExternalError:=false;
@@ -800,6 +803,7 @@ begin
  MAppFont.Caption:=TranslateStr(1347,MAppFont.Caption);
  MObjFont.Caption:=TranslateStr(1348,MAppFont.Caption);
  MTypeInfo.Caption:=SRpTypeInfo;
+ MAsync.Caption:=SRpAsyncExecution;
  File1.Caption:=TranslateStr(0,File1.Caption);
  Caption:=TranslateStr(1,Caption);
  MReport.Caption:=TranslateStr(2,MReport.Caption);
@@ -1566,6 +1570,7 @@ begin
    deffontsize:=8;
   end;
   MTypeInfo.Checked:=inif.ReadBool('Preferences','TypeInfo',true);  
+  MAsync.Checked:=inif.ReadBool('Preferences','Async',false);
   FAppFontName:=inif.ReadString('Preferences','AppFontName',Self.Font.Name);
   FAppFontSize:=inif.ReadInteger('Preferences','AppFontSize',deffontsize);
   FAppFontColor:=inif.ReadInteger('Preferences','AppFontColor',Self.Font.Color);
@@ -1598,6 +1603,13 @@ begin
 //  ADriverPDFGDI.Checked:=inif.ReadBool('Preferences','DriverPDFGDI',false);
   ADriverPDFGDI.Checked:=Not (ADriverPDFQt.Checked or ADriverQt.Checked or ADriverGDI.Checked);
 {$ENDIF}
+{$IFNDEF VCLANDCLX}
+  ADriverPDFQt.Checked:=inif.ReadBool('Preferences','DriverPDFQt',false);
+  ADriverQt.Checked:=inif.ReadBool('Preferences','DriverQt',true);
+  ADriverGDI.Visible:=false;
+  ADriverPDFGDI.Visible:=false;
+{$ENDIF}
+
   AsystemPrintDialog.Checked:=True;
   AsystemPrintDialog.Checked:=inif.ReadBool('Preferences','SystemPrintDialog',True);
   BStatus.Visible:=inif.ReadBool('Preferences','StatusBar',True);
@@ -1624,6 +1636,7 @@ begin
  inif:=TIniFile.Create(configfile);
  try
   inif.WriteBool('Preferences','TypeInfo', MTypeInfo.Checked);
+  inif.WriteBool('Preferences','Async', MAsync.Checked);
   inif.WriteString('Preferences','AppFontName',FAppFontName);
   inif.WriteInteger('Preferences','AppFontSize',FAppFontSize);
   inif.WriteInteger('Preferences','AppFontColor',FAppFontColor);
@@ -2127,6 +2140,7 @@ begin
  DoDisable;
  report:=TRpReport.Create(Self);
  try
+  report.AsyncExecution:=MAsync.Checked;
   report.IsDesignTime:=true;
   report.OnReadError:=OnReadError;
   report.FailIfLoadExternalError:=false;
@@ -2221,6 +2235,28 @@ end;
 
 
 
+
+{$IFDEF LINUX}
+procedure ExecuteReportDotNet(report:TRpReport);
+var
+ aparams:TStringList;
+ astring:string;
+begin
+ aparams:=TStringList.Create;
+ try
+  astring:=RpTempFileName;
+  report.StreamFormat:=rpStreamXML;
+  report.SaveToFile(astring);
+  aparams.Add('printreport');
+  aparams.Add('-preview');
+  aparams.Add(astring);
+  ExecuteSystemCommand(aparams);
+ finally
+  aparams.free;
+ end;
+end;
+{$ENDIF}
+
 {$IFDEF MSWINDOWS}
 procedure ExecuteReportDotNet(report:TRpReport);
 var
@@ -2266,25 +2302,13 @@ begin
 end;
 {$ENDIF}
 
-{$IFDEF LINUX}
-procedure ExecuteReportDotNet(report:TRpReport);
-var
- aparams:TStringList;
- astring:string;
+procedure TFRpMainF.MAsyncClick(Sender: TObject);
 begin
- aparams:=TStringList.Create;
- try
-  astring:=RpTempFileName;
-  report.StreamFormat:=rpStreamXML;
-  report.SaveToFile(astring);
-  aparams.Add('printreport');
-  aparams.Add('-preview');
-  aparams.Add(astring);
-  ExecuteSystemCommand(aparams);
- finally
-  aparams.free;
+ MAsync.Checked:=not MAsync.Checked;
+ if Assigned(report) then
+ begin
+  report.AsyncExecution:=MAsync.Checked;
  end;
 end;
-{$ENDIF}
 
 end.

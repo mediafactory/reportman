@@ -26,7 +26,7 @@ program printreptopdf;
 uses
   SysUtils,Classes,
 {$IFDEF MSWINDOWS}
-  ActiveX,mmsystem,
+  ActiveX,mmsystem,Windows,
 {$IFDEF USEVARIANTS}
   midaslib,types,
 {$ENDIF}
@@ -65,6 +65,7 @@ uses
 {$ENDIF}
 
 var
+ separator:string;
  report:TRpReport;
  indexparam:integer;
  showprogress:boolean;
@@ -123,6 +124,7 @@ begin
  Writeln(AnsiString(SRpPrintRep15));
  Writeln(AnsiString(SRpPrintRep16));
  Writeln(AnsiString(SRpPrintRep17));
+ Writeln(AnsiString(SRpPrintRep28));
  Writeln(AnsiString(SRpParseParamsH));
  Writeln(AnsiString(SRpCommandLineStdIN));
  Writeln(AnsiString(SRpPrintPDFRep10));
@@ -156,6 +158,7 @@ begin
 {$IFDEF LINUX}
   milifirst:=0;
 {$ENDIF}
+  separator:=',';
   errorfile:='';
   dotime:=false;
   tocsv:=false;
@@ -286,6 +289,14 @@ begin
       doprintastext:=true;
      end
      else
+     if ParamStr(indexparam)='-csvseparator' then
+     begin
+      inc(indexparam);
+      if indexparam>=Paramcount+1 then
+       Raise Exception.Create(SRpstringexpected);
+      separator:=ParamStr(indexparam);
+     end
+     else
      if ParamStr(indexparam)='-collate' then
      begin
       collate:=true;
@@ -375,7 +386,7 @@ begin
       PrintReportToMetafile(report,'',showprogress,allpages,frompage,topage,
        copies,'',collate);
       ExportMetafileToCSV(report.Metafile,pdffilename,showprogress,
-       allpages,frompage,topage);
+       allpages,frompage,topage,separator);
      end
      else
      if toctxt then

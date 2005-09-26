@@ -40,15 +40,15 @@ const
 
 
 {$IFNDEF FORWEBAX}
-procedure ExportReportToCSV(report:TRpBaseReport;filename:String;progress:Boolean);
+procedure ExportReportToCSV(report:TRpBaseReport;filename:String;progress:Boolean;separator:string);
 procedure ExportReportToTextProStream(report:TRpBaseReport;stream:TStream;progress:Boolean);
 procedure ExportReportToTextPro(report:TRpBaseReport;filename:String;progress:Boolean);
-procedure ExportReportToCSVStream(report:TRpBaseReport;stream:TStream;progress:Boolean);
+procedure ExportReportToCSVStream(report:TRpBaseReport;stream:TStream;progress:Boolean;separator:string);
 {$ENDIF}
 function ExportMetafileToCSV (metafile:TRpMetafileReport; filename:string;
- showprogress,allpages:boolean; frompage,topage:integer):boolean;
+ showprogress,allpages:boolean; frompage,topage:integer;separator:string):boolean;
 function ExportMetafileToCSVStream (metafile:TRpMetafileReport; stream:TStream;
- showprogress,allpages:boolean; frompage,topage:integer):boolean;
+ showprogress,allpages:boolean; frompage,topage:integer;separator:string):boolean;
 function ExportMetafileToTextPro (metafile:TRpMetafileReport; filename:string;
  showprogress,allpages:boolean; frompage,topage:integer):boolean;
 function ExportMetafileToTextProStream (metafile:TRpMetafileReport; stream:TStream;
@@ -91,7 +91,7 @@ begin
 end;
 
 function ExportMetafileToCSVStream (metafile:TRpMetafileReport; stream:TStream;
- showprogress,allpages:boolean; frompage,topage:integer):boolean;
+ showprogress,allpages:boolean; frompage,topage:integer;separator:string):boolean;
 var
  i:integer;
  j,k:integer;
@@ -104,15 +104,17 @@ var
 begin
  if allpages then
  begin
+  metafile.RequestPage(MAX_PAGECOUNT);
   frompage:=0;
-  topage:=metafile.PageCount-1;
+  topage:=metafile.CurrentPageCount-1;
  end
  else
  begin
   frompage:=frompage-1;
   topage:=topage-1;
-  if topage>metafile.PageCount-1 then
-   topage:=metafile.PageCount-1;
+  metafile.RequestPage(topage);
+  if topage>metafile.CurrentPageCount-1 then
+   topage:=metafile.CurrentPageCount-1;
  end;
  // Distribute in rows and columns
  columns:=TStringList.Create;
@@ -161,7 +163,7 @@ begin
       srow:=AnsiQuotedStr(pmatrix[j,0],'"');
       for k:=1 to columns.Count-1 do
       begin
-       srow:=srow+','+AnsiQuotedStr(pmatrix[j,k],'"');
+       srow:=srow+separator+AnsiQuotedStr(pmatrix[j,k],'"');
       end;
      end;
      srow:=srow+#13+#10;
@@ -179,13 +181,13 @@ begin
 end;
 
 function ExportMetafileToCSV (metafile:TRpMetafileReport; filename:string;
- showprogress,allpages:boolean; frompage,topage:integer):boolean;
+ showprogress,allpages:boolean; frompage,topage:integer;separator:string):boolean;
 var
  memstream:TMemoryStream;
 begin
  memstream:=TMemoryStream.Create;
  try
-  ExportMetafileToCSVStream(metafile,memstream,showprogress,allpages,frompage,topage);
+  ExportMetafileToCSVStream(metafile,memstream,showprogress,allpages,frompage,topage,separator);
   memstream.Seek(0,soFromBeginning);
   memstream.SaveToFile(filename);
  finally
@@ -225,15 +227,17 @@ begin
  try
   if allpages then
   begin
+   metafile.RequestPage(MAX_PAGECOUNT);
    frompage:=0;
-   topage:=metafile.PageCount-1;
+   topage:=metafile.CurrentPageCount-1;
   end
   else
   begin
    frompage:=frompage-1;
    topage:=topage-1;
-   if topage>metafile.PageCount-1 then
-    topage:=metafile.PageCount-1;
+   metafile.RequestPage(topage);
+   if topage>metafile.CurrentPageCount-1 then
+    topage:=metafile.CurrentPageCount-1;
   end;
   for i:=frompage to topage do
   begin
@@ -282,13 +286,13 @@ begin
 end;
 
 {$IFNDEF FORWEBAX}
-procedure ExportReportToCSV(report:TRpBaseReport;filename:String;progress:Boolean);
+procedure ExportReportToCSV(report:TRpBaseReport;filename:String;progress:Boolean;separator:string);
 var
  astream:TMemoryStream;
 begin
  astream:=TMemoryStream.Create;
  try
-  ExportReportToCSVStream(report,astream,progress);
+  ExportReportToCSVStream(report,astream,progress,separator);
   astream.Seek(0,soFromBeginning);
   astream.SaveToFile(filename);
  finally
@@ -297,7 +301,7 @@ begin
 end;
 
 
-procedure ExportReportToCSVStream(report:TRpBaseReport;stream:TStream;progress:Boolean);
+procedure ExportReportToCSVStream(report:TRpBaseReport;stream:TStream;progress:Boolean;separator:string);
 var
  pdfdriver:TRpPDFDriver;
  apdfdriver:IRpPrintDriver;
@@ -321,7 +325,7 @@ begin
     report.TwoPass:=true;
     report.PrintAll(apdfdriver);
     astream.SetSize(0);
-    ExportMetafileToCSVStream(report.metafile,astream,progress,true,1,999);
+    ExportMetafileToCSVStream(report.metafile,astream,progress,true,1,999,separator);
     astream.Seek(0,soFromBeginning);
     stream.CopyFrom(astream,astream.size);
    finally
@@ -373,7 +377,7 @@ begin
    try
     report.TwoPass:=true;
     report.PrintAll(apdfdriver);
-    ExportMetafileToTextProStream(report.metafile,astream,progress,true,1,99999);
+    ExportMetafileToTextProStream(report.metafile,astream,progress,true,1,MAX_PAGECOUNT);
     astream.Seek(0,soFromBeginning);
     stream.CopyFrom(astream,astream.size);
    finally

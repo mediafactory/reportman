@@ -109,6 +109,8 @@ type
    constructor Create(AOwner:TComponent);override;
   end;
 
+ TThreadExecReport=class;
+
  TRpBaseReport=class(TComponent)
   private
    FSubReports:TRpSubReportList;
@@ -170,6 +172,9 @@ type
    FDuplex:Integer;
    FForcePaperName:String;
    FLinesPerInch:Word;
+   fintpageindex:integer;
+   FOnWorkAsyncError:TWorkAsyncError;
+   FOnWorkProgress:TMetaFileWorkProgress;
    procedure FInternalOnReadError(Reader: TReader; const Message: string;
     var Handled: Boolean);
    procedure SetSubReports(Value:TRpSubReportList);
@@ -184,7 +189,12 @@ type
    procedure WriteLFontName(Writer:TWriter);
    procedure SetBidiModes(Value:TStrings);
    function Newlanguage(alanguage:integer):integer;
+   procedure StopWork;
   protected
+    printingonepass:boolean;
+    AbortingThread:Boolean;
+    FThreadExec:TThreadExecReport;
+    FExecuting:Boolean;
     FUpdatePageSize:Boolean;
     currentorientation:TRpOrientation;
     errorprocessing:Boolean;
@@ -257,6 +267,9 @@ type
     procedure CheckIfDataAvailable;
     procedure UpdateParamsBeforeOpen(index:integer;doeval:boolean);
     procedure DefineProperties(Filer:TFiler);override;
+    procedure  DoPrintInternal;
+    property OnWorkProgress:TMetaFileWorkProgress read FOnWorkProgress write
+     FOnWorkProgress;
   public
    FailIfLoadExternalError:Boolean;
    printing:boolean;
@@ -267,6 +280,7 @@ type
    LastPage:Boolean;
    ProgressToStdOut:Boolean;
    AdoNetDriver:integer;
+   AsyncExecution:boolean;
    procedure InitEvaluator;
    procedure BeginPrint(Driver:IRpPrintDriver);virtual;abstract;
    procedure EndPrint;virtual;abstract;
@@ -293,6 +307,7 @@ type
    procedure DeActivateDatasets;
    procedure AddTotalPagesItem(apageindex,aobjectindex:integer;
     adisplayformat:widestring);
+   property OnWorkAsyncError:TWorkAsyncError read FOnWorkAsyncError write FOnWorkAsyncError;
    property Evaluator:TRpEvaluator read FEvaluator;
    procedure Compose(PrevReport:TRpBaseReport;execute:Boolean;ADriver:IRpPrintDriver);
    property OnProgress:TRpProgressEvent read FOnProgress write FOnProgress;
@@ -311,6 +326,7 @@ type
    procedure AssignDefaultFontTo(aitem:TRpGenTextComponent);
    procedure GetDefaultFontFrom(aitem:TRpGenTextComponent);
    function GetSQLValue(connectionname,sql:String):Variant;
+   function RequestPage(pageindex:integer):boolean;
    // Default Font properties
    property WFontName:widestring read FWFontName write FWFontName;
    property LFontName:widestring read FLFontName write FLFontName;
@@ -398,6 +414,13 @@ type
    property LinesPerInch:Word read FLinesPerInch write FLinesPerInch default 600;
  end;
 
+ TThreadExecReport=class(TThread)
+  public
+   report:TRpBaseReport;
+   docancel:boolean;
+   procedure Execute;override;
+   procedure DoProgress;
+  end;
 
 implementation
 
@@ -542,6 +565,11 @@ begin
  Fideneof.FReport:=self;
  // Metafile
  FMetafile:=TRpMetafileReport.Create(nil);
+ metafile.OnRequestPage:=RequestPage;
+ FOnWorkProgress:=metafile.WorkProgress;
+ OnWorkAsyncError:=metafile.WorkAsyncError;
+ metafile.OnStopWork:=StopWork;
+
  FDataAlias:=TRpAlias.Create(nil);
  FTotalPagesList:=TList.Create;
  // Other
@@ -632,6 +660,11 @@ end;
 
 destructor TRpBaseReport.Destroy;
 begin
+ if (FExecuting) then
+ begin
+  AbortingThread:=false;
+  WaitForSingleObject(FThreadExec.Handle,INFINITE);
+ end;
  FGroupHeaders.free;
  gheaders.free;
  gfooters.free;
@@ -1183,7 +1216,13 @@ begin
     milifirst:=now;
 {$ENDIF}
     docancel:=false;
-    FOnProgress(Self,docancel);
+    if assigned(FThreadExec) then
+    begin
+     if AbortingThread then
+      docancel:=true;
+    end
+    else
+     FOnProgress(Self,docancel);
     if docancel then
      Raise Exception.Create(SRpOperationAborted);
    end;
@@ -1265,7 +1304,7 @@ var
  i:integer;
  aobject:TTotalPagesObject;
 begin
- if PrevReport.Metafile.PageCount<1 then
+ if PrevReport.Metafile.CurrentPageCount<1 then
   exit;
  ClearTotalPagesList;
  metafile.Assign(PrevReport.Metafile);
@@ -1787,6 +1826,138 @@ begin
     Result:=param.AsString;
   end;
  end;
+end;
+
+function TRpBaseReport.RequestPage(pageindex:integer):boolean;
+var
+ asyncexec:Boolean;
+begin
+ AsyncExec:=AsyncExecution;;
+ if (LastPage) then
+ begin
+  Result:=true;
+  exit;
+ end;
+ if (TwoPass) then
+ begin
+  AsyncExec:=false;
+  if (MAX_PAGECOUNT<>pageindex) then
+  begin
+   Result:=RequestPage(MAX_PAGECOUNT);
+   exit;
+  end;
+ end;
+ if (pageindex<metafile.CurrentPageCount) then
+ begin
+  Result:=LastPage;
+  exit;
+ end;
+ if (FExecuting) then
+ begin
+   while ((FExecuting) AND  (metafile.CurrentPageCount<=pageindex+1)) do
+   begin
+    WaitForSingleObject(FThreadExec.Handle,100);
+//    FThreadExec.WaitFor;
+//    WairForSingleObject(threadexec.handle);
+   end;
+   Result:=LastPage;
+   exit;
+ end;
+ if (AsyncExec) then
+ begin
+  Printingonepass:=false;
+  PrintNextPage();
+  if not LastPage then
+  begin
+   fintpageindex:=MAX_PAGECOUNT;
+   FExecuting:=true;
+   try
+     FThreadExec:=TThreadExecReport.Create(true);
+     FThreadExec.Report:=self;
+     AbortingThread:=false;
+     FThreadExec.Resume;
+   except
+    FExecuting:=false;
+    FThreadExec.free;
+    FThreadExec:=nil;
+    raise;
+   end;
+  end;
+ end
+ else
+ begin
+  if Assigned(FThreadExec) then
+  begin
+   FThreadExec.Terminate;
+   FThreadExec:=nil;
+  end;
+  fintpageindex:=pageindex;
+  DoPrintInternal();
+ end;
+ Result:=LastPage;
+end;
+
+procedure TRpBaseReport.DoPrintInternal;
+begin
+ try
+  if (not LastPage) then
+  begin
+   CheckProgress(false);
+   while (not PrintNextPage()) do
+   begin
+    CheckProgress(false);
+    if (PageNum>MAX_PAGECOUNT) then
+     Raise Exception.Create(SRpMaximumPages+' - '+IntToStr(MAX_PAGECOUNT));
+    if (PageNum>=fintpageindex) then
+     break;
+    if (LastPage) then
+     break;
+    if AbortingThread then
+     break;
+   end;
+  end;
+  FExecuting:=false;
+  CheckProgress(false);
+ except
+  on E:Exception do
+  begin
+   FExecuting:=false;
+   if (FThreadExec=nil) then
+    raise;
+   if (not (AbortingThread)) then
+   begin
+    if Assigned(OnWorkAsyncError) then
+     OnWorkAsyncError(E.Message)
+    else
+     raise;
+   end;
+  end;
+ end;
+end;
+
+procedure TRpBaseReport.StopWork;
+begin
+ if Fexecuting then
+ begin
+  if Assigned(FThreadExec) then
+  begin
+   AbortingThread:=true;
+   FThreadExec.Terminate;
+   FExecuting:=false;
+   FThreadExec:=nil;
+  end;
+ end;
+end;
+
+procedure TThreadExecReport.DoProgress;
+begin
+ docancel:=false;
+ report.FOnProgress(report,docancel);
+end;
+
+procedure TThreadExecReport.Execute;
+begin
+ report.DoPrintInternal;
 end;
 
 

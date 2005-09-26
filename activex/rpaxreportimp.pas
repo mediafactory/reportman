@@ -100,6 +100,9 @@ type
     function Get_PrintersAvailable: WideString; safecall;
     procedure GetRemoteParams(const hostname: WideString; port: Integer;
       const user, password, aliasname, reportname: WideString); safecall;
+    function Get_AsyncExecution: WordBool; safecall;
+    procedure SaveToCSV2(const filename, separator: WideString); safecall;
+    procedure Set_AsyncExecution(Value: WordBool); safecall;
   end;
 
 implementation
@@ -520,6 +523,21 @@ procedure TReportManX.GetRemoteParams(const hostname: WideString;
   port: Integer; const user, password, aliasname, reportname: WideString);
 begin
  FDelphiControl.GetRemoteParams(hostname,port,user,password,aliasname,reportname);
+end;
+
+function TReportManX.Get_AsyncExecution: WordBool;
+begin
+  Result := FDelphiControl.AsyncExecution;
+end;
+
+procedure TReportManX.SaveToCSV2(const filename, separator: WideString);
+begin
+  FDelphiControl.SaveToCSV2(filename,separator);
+end;
+
+procedure TReportManX.Set_AsyncExecution(Value: WordBool);
+begin
+ FDelphiControl.AsyncExecution:=Value;
 end;
 
 initialization

@@ -126,7 +126,6 @@ type
     fmodified:Boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure RepProgress(Sender:TRpBaseReport;var docancel:boolean);
-    procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
     procedure DisableControls(enablebar:boolean);
     procedure EnableControls;
     procedure PlaceImagePosition;
@@ -214,9 +213,8 @@ begin
  oldwidth:=AImage.Width;
  oldheight:=AImage.Height;
  try
-  if report.Metafile.PageCount>=pagenum then
+  if report.Metafile.CurrentPageCount>=pagenum then
   begin
-   report.Metafile.CurrentPage:=pagenum-1;
   end
   else
   begin
@@ -225,25 +223,16 @@ begin
     cancelled:=false;
     DisableControls(false);
     try
-     while report.Metafile.PageCount<pagenum do
-     begin
-      // Canbe canceled
-      if report.PrintNextPage then
-      begin
-       report.EndPrint;
-       break;
-      end;
-     end;
+     report.RequestPage(pagenum-1);
     finally
      EnableControls;
     end;
    end;
-   if report.Metafile.PageCount<pagenum then
-    pagenum:=report.Metafile.PageCount;
-   report.Metafile.CurrentPage:=pagenum-1;
+   if report.Metafile.CurrentPageCount<pagenum then
+    pagenum:=report.Metafile.CurrentPageCount;
   end;
   gdidriver.drawclippingregion:=report.PreviewMargins;
-  report.metafile.DrawPage(gdidriver);
+  report.metafile.DrawPage(gdidriver,pagenum-1);
   if Assigned(gdidriver.bitmap) then
   begin
    AImage.Width:=Round(gdidriver.bitmap.Width);
@@ -450,7 +439,7 @@ var
 begin
  allpages:=true;
  collate:=report.CollateCopies;
- frompage:=1; topage:=999999;
+ frompage:=1; topage:=MAX_PAGECOUNT;
  copies:=report.Copies;
  if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
   exit;
@@ -470,7 +459,6 @@ end;
 
 procedure TFRpVPreview.ASaveExecute(Sender: TObject);
 var
- oldonprogress:TRpMetafileStreamProgres;
  adone:boolean;
  abitmap:TBitmap;
  mono:boolean;
@@ -479,9 +467,6 @@ begin
  // Saves the metafile
  if SaveDialog1.Execute then
  begin
-  oldonprogress:=report.Metafile.OnProgress;
-  try
-   report.Metafile.OnProgress:=MetProgress;
    DisableControls(true);
    try
     case SaveDialog1.FilterIndex of
@@ -495,7 +480,7 @@ begin
        ALastExecute(Self);
        SaveMetafileToPDF(report.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
 //    report.endprint
-//      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,9999999,
+//      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,MAX_PAGECOUNT,
 //       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
        AppIdle(Self,adone);
       end;
@@ -541,7 +526,7 @@ begin
       begin
        ALastExecute(Self);
        ExportMetafileToCSV(report.metafile,SaveDialog1.Filename,true,true,
-        1,9999);
+        1,9999,',');
        AppIdle(Self,adone);
       end;
      11:
@@ -573,9 +558,6 @@ begin
    finally
     EnableControls;
    end;
-  finally
-   report.Metafile.OnProgress:=oldonprogress;
-  end;
  end;
 end;
 
@@ -697,28 +679,6 @@ begin
 end;
 
 
-procedure TFRpVPreview.MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
-begin
- BCancel.Caption:=SRpPage+':'+FormatFloat('####,#####',page)+
-  ' -'+FormatFloat('######,####',Position div 1024)+SRpKbytes+' '+SrpCancel;
- if Position=size then
- begin
-  PBar.Position:=page;
-  PBar.Max:=Sender.PageCount;
- end
- else
- begin
-  PBar.Position:=Position;
-  PBar.Max:=Size;
- end;
- Application.ProcessMessages;
-{$IFDEF MSWINDOWS}
- if ((GetAsyncKeyState(VK_ESCAPE) AND $8000)<>0) then
-  cancelled:=true;
-{$ENDIF}
- if cancelled then
-  Raise Exception.Create(SRpOperationAborted);
-end;
 
 
 procedure TFRpVPreview.AExitExecute(Sender: TObject);
@@ -885,19 +845,19 @@ begin
  destination:='';
  body:='';
  subject:='';
- if report.Params.IndexOf('MAIL_DESTINATION')>0 then
+ if report.Params.IndexOf('MAIL_DESTINATION')>=0 then
   destination:=report.Params.ParamByName('MAIL_DESTINATION').AsString;
- if report.Params.IndexOf('MAIL_SUBJECT')>0 then
+ if report.Params.IndexOf('MAIL_SUBJECT')>=0 then
   subject:=report.Params.ParamByName('MAIL_SUBJECT').AsString;
- if report.Params.IndexOf('MAIL_BODY')>0 then
+ if report.Params.IndexOf('MAIL_BODY')>=0 then
   body:=report.Params.ParamByName('MAIL_BODY').AsString;
  ALastExecute(Self);
- afilename:=ChangeFileExt(RpTempFileName,'.pdf');
+ afilename:=RpTempFileName;
  SaveMetafileToPDF(report.Metafile,afilename,true);
  try
   if Length(subject)<1 then
-   subject:=ExtractFileName(afilename);
-  rptypes.SendMail(destination,subject,body,afilename);
+   subject:=ExtractFileName(ChangeFileExt(afilename,'.pdf'));
+  rptypes.SendMail(destination,subject,body,afilename,ExtractFileName(ChangeFileExt(afilename,'.pdf')));
  finally
   sysutils.DeleteFile(afilename);
  end;

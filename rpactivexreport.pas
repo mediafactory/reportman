@@ -44,8 +44,10 @@ type
     FLanguage:integer;
     FSHowProgress:boolean;
     FShowPrintDIalog:boolean;
+    FAsyncExecution:boolean;
     procedure SetFilename(Value:string);
     procedure SetPreview(Value:boolean);
+    procedure SetAsyncExecution(Value:boolean);
     procedure SetShowProgress(Value:boolean);
     procedure SetShowPrintDialog(Value:boolean);
     procedure SetTitle(Value:string);
@@ -70,6 +72,7 @@ type
    procedure SaveToCustomText(filename:string);
    procedure SaveToSVG(filename:string);
    procedure SaveToCSV(filename:string);
+   procedure SaveToCSV2(filename:string;separator:string);
    function PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;
    procedure ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
@@ -85,6 +88,7 @@ type
     { Published declarations }
     property Filename:string read FFilename write SetFilename;
     property Preview:boolean read FPreview write SetPreview default true;
+    property AsyncExecution:boolean read FAsyncExecution write SetAsyncExecution default false;
     property ShowProgress:boolean read FShowProgress write SetShowProgress;
     property ShowPrintDialog:boolean read FShowPrintDialog write SetShowPrintDialog;
     property Title:string read FTitle write SetTitle;
@@ -128,6 +132,12 @@ procedure TRpActiveXReport.SetPreview(Value:boolean);
 begin
  FVCLReport.Preview:=Value;
  FPreview:=Value;
+end;
+
+procedure TRpActiveXReport.SetAsyncExecution(Value:boolean);
+begin
+ FVCLReport.AsyncExecution:=Value;
+ FAsyncExecution:=Value;
 end;
 
 function TRpActiveXReport.Execute:boolean;
@@ -218,6 +228,12 @@ procedure TRpActiveXReport.SaveToCSV(filename:string);
 begin
  FVCLReport.SaveToCSV(filename);
 end;
+
+procedure TRpActiveXReport.SaveToCSV2(filename:string;separator:string);
+begin
+ FVCLReport.SaveToCSV(filename,separator);
+end;
+
 
 function TRpActiveXReport.PrintRange(frompage:integer;topage:integer;
     copies:integer;collate:boolean):boolean;

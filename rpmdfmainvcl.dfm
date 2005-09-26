@@ -2610,6 +2610,10 @@ object FRpMainFVCL: TFRpMainFVCL
         Caption = 'Data type information'
         OnClick = MTypeInfoClick
       end
+      object MAsync: TMenuItem
+        Caption = 'Asynchronous execution'
+        OnClick = MAsyncClick
+      end
     end
     object MHelp: TMenuItem
       Caption = 'Help'

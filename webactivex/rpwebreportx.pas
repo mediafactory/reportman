@@ -8,7 +8,8 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ActiveX, AxCtrls, WebReportManX_TLB,
   rpwebmetaclient,
-  StdVcl, StdCtrls, XPMan, ExtCtrls;
+  StdVcl, StdCtrls, XPMan, ExtCtrls,
+  IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP;
 
 type
   TWebReportMan = class(TActiveForm, IWebReportMan)
@@ -22,6 +23,7 @@ type
     { Private declarations }
     FEvents: IWebReportManEvents;
     Preview:Integer;
+    AsyncRead:Integer;
     ShowProgress:Integer;
     Embedded:Integer;
     PrinterConfig:Integer;
@@ -94,6 +96,8 @@ type
     procedure Set_ShowPrintDialog(Value: Integer); safecall;
     function Get_Copies: Integer; safecall;
     procedure Set_Copies(Value: Integer); safecall;
+    function Get_AsyncRead: Integer; safecall;
+    procedure Set_AsyncRead(Value: Integer); safecall;
   public
     { Public declarations }
     procedure Initialize; override;
@@ -420,6 +424,7 @@ begin
   webmetaprint.Align:=alclient;
   webmetaprint.caption:=Caption;
   webmetaprint.preview:=Preview<>0;
+  webmetaprint.AsyncRead:=AsyncRead<>0;
   webmetaprint.ShowProgress:=ShowProgress<>0;
   if Embedded<>0 then
    webmetaprint.aForm:=webmetaprint;
@@ -431,6 +436,7 @@ begin
   webmetaprint.ShowPrintDialog:=ShowPrintDialog<>0;
   if Length(MetaUrl)>0 then
   begin
+   // Create the stream and handle behaviour of async reading
    webmetaprint.Execute;
   end;
  except
@@ -494,6 +500,16 @@ begin
  Copies:=Value;
 end;
 
+function TWebReportMan.Get_AsyncRead: Integer;
+begin
+ Result:=AsyncRead;
+end;
+
+procedure TWebReportMan.Set_AsyncRead(Value: Integer);
+begin
+ AsyncRead:=Value;
+end;
+
 initialization
   TActiveFormFactory.Create(
     ComServer,
@@ -503,7 +519,7 @@ initialization
     1,
     '',
     OLEMISC_SIMPLEFRAME or OLEMISC_ACTSLIKELABEL,
-    tmSingle);
+    tmApartment);
 // Has been changed from tmApartment to tmSingle
 // Because TPrinter object is not thread safe
 end.

@@ -1669,7 +1669,7 @@ var
 begin
  areport:=TRpBaseReport(Owner);
  ametafile:=areport.metafile;
- ametafile.UpdateTotalPagesPCount(FPageGroupCountList,ametafile.PageCount-FirstPage);
+ ametafile.UpdateTotalPagesPCount(FPageGroupCountList,ametafile.CurrentPageCount-FirstPage);
 end;
 
 

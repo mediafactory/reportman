@@ -62,7 +62,7 @@ procedure PreviewMetafile(metafile:TRpMetafileReport;aform:TForm;ShowPrintDialog
  showexit:Boolean);
 var
  dia:TFRpMainMeta;
- memstream:TMemoryStream;
+// memstream:TMemoryStream;
  MFrame:TFRpMeta;
  FForm:TForm;
 begin
@@ -85,11 +85,12 @@ begin
  MFrame.Exit1.Visible:=ShowExit;
  try
   MFrame.ShowPrintDialog:=ShowPrintDialog;
-  memstream:=TMemoryStream.Create;
-  try
-   metafile.SaveToStream(memstream);
-   memstream.Seek(0,soFromBeginning);
-   MFrame.metafile.LoadFromStream(memstream);
+//  memstream:=TMemoryStream.Create;
+//  try
+//   metafile.SaveToStream(memstream);
+//   memstream.Seek(0,soFromBeginning);
+//   MFrame.metafile.LoadFromStream(memstream);
+   MFrame.metafile:=metafile;
    MFrame.ASave.Enabled:=True;
    MFrame.AMailTo.Enabled:=True;
    MFrame.APrint.Enabled:=True;
@@ -126,9 +127,9 @@ begin
    MFrame.FormResize(dia);
    if Not Assigned(aform) then
     dia.ShowModal;
-  finally
-   memstream.free;
-  end;
+//  finally
+//   memstream.free;
+//  end;
  finally
   if not assigned(aform) then
    dia.free;

@@ -302,15 +302,17 @@ var
 begin
  if allpages then
  begin
+  metafile.RequestPage(MAX_PAGECOUNT);
   frompage:=0;
-  topage:=metafile.PageCount-1;
+  topage:=metafile.CurrentPageCount-1;
  end
  else
  begin
   frompage:=frompage-1;
   topage:=topage-1;
-  if topage>metafile.PageCount-1 then
-   topage:=metafile.PageCount-1;
+  metafile.RequestPage(topage);
+  if topage>metafile.CurrentPageCount-1 then
+   topage:=metafile.CurrentPageCount-1;
  end;
  oldext:=ExtractFileExt(filename);
  for i:=frompage to topage do
@@ -360,7 +362,7 @@ begin
    try
     report.TwoPass:=true;
     report.PrintAll(apdfdriver);
-    ExportMetafileToHtml(report.metafile,filename,filename,true,true,1,99999);
+    ExportMetafileToHtml(report.metafile,filename,filename,true,true,1,MAX_PAGECOUNT);
    finally
     report.TwoPass:=oldtwopass;
    end;

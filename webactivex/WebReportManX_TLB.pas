@@ -12,7 +12,7 @@ unit WebReportManX_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 30/08/2005 11:32:16 from Type Library described below.
+// File generated on 26/09/2005 17:28:43 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\webactivex\WebReportManX.tlb (1)
@@ -159,6 +159,8 @@ type
     procedure Set_ShowPrintDialog(Value: Integer); safecall;
     function Get_Copies: Integer; safecall;
     procedure Set_Copies(Value: Integer); safecall;
+    function Get_AsyncRead: Integer; safecall;
+    procedure Set_AsyncRead(Value: Integer); safecall;
     property Visible: WordBool read Get_Visible write Set_Visible;
     property AutoScroll: WordBool read Get_AutoScroll write Set_AutoScroll;
     property AutoSize: WordBool read Get_AutoSize write Set_AutoSize;
@@ -186,6 +188,7 @@ type
     property Port: Integer read Get_Port write Set_Port;
     property ShowPrintDialog: Integer read Get_ShowPrintDialog write Set_ShowPrintDialog;
     property Copies: Integer read Get_Copies write Set_Copies;
+    property AsyncRead: Integer read Get_AsyncRead write Set_AsyncRead;
   end;
 
 // *********************************************************************//
@@ -222,6 +225,7 @@ type
     property Port: Integer dispid 221;
     property ShowPrintDialog: Integer dispid 222;
     property Copies: Integer dispid 223;
+    property AsyncRead: Integer dispid 224;
   end;
 
 // *********************************************************************//
@@ -315,6 +319,7 @@ type
     property Port: Integer index 221 read GetIntegerProp write SetIntegerProp stored False;
     property ShowPrintDialog: Integer index 222 read GetIntegerProp write SetIntegerProp stored False;
     property Copies: Integer index 223 read GetIntegerProp write SetIntegerProp stored False;
+    property AsyncRead: Integer index 224 read GetIntegerProp write SetIntegerProp stored False;
     property OnActivate: TNotifyEvent read FOnActivate write FOnActivate;
     property OnClick: TNotifyEvent read FOnClick write FOnClick;
     property OnCreate: TNotifyEvent read FOnCreate write FOnCreate;

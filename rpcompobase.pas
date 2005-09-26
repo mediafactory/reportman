@@ -45,6 +45,7 @@ type
    FLanguage:integer;
    FOnBeforePrint:TNotifyEvent;
    FReportName:String;
+   FAsyncExecution:Boolean;
 {$IFDEF USEINDY}
    FRemoteError:Boolean;
    FRemoteMessage:WideString;
@@ -57,6 +58,7 @@ type
    procedure SetOnBeforePrint(NewValue:TNotifyEvent);
    procedure SetConnectionName(Value:String);
    procedure SetReportName(Value:String);
+   procedure SetAsyncExecution(avalue:boolean);
   protected
    procedure Notification(AComponent: TComponent; Operation: TOperation);override;
    procedure InternalExecuteRemote(metafile:TRpMetafileReport);virtual;
@@ -73,7 +75,7 @@ type
    procedure SaveToHTML(filename:string);
    procedure SaveToCustomText(filename:string);
    procedure SaveToSVG(filename:string);
-   procedure SaveToCSV(filename:string);
+   procedure SaveToCSV(filename:string;separator:string=',');
    procedure LoadFromFile(AFilename:string);
    procedure LoadFromStream(stream:TStream);
    procedure ExecuteRemote(hostname:String;port:integer;user,password,aliasname,reportname:String);
@@ -90,6 +92,7 @@ type
   published
    property Filename:TFilename read FFilename write SetFilename;
    property ConnectionName:String read FConnectionName write SetConnectionName;
+   property AsyncExecution:Boolean read FAsyncExecution write SetAsyncExecution;
    property ReportName:String read FReportName write SetReportName;
    property OnBeforePrint:TNotifyEvent read FOnBeforePrint
     write SetOnBeforePrint;
@@ -225,6 +228,7 @@ begin
  try
   FReport.LoadFromStream(Stream);
   InternalSetBeforePrint;
+  Freport.AsyncExecution:=FAsyncExecution;
  except
   FReport.Free;
   FReport:=nil;
@@ -361,6 +365,15 @@ begin
 {$ENDIF}
 end;
 
+procedure TCBaseReport.SetAsyncExecution(avalue:boolean);
+begin
+ FAsyncExecution:=aValue;
+ if Assigned(FReport) then
+ begin
+  FReport.AsyncExecution:=FAsyncExecution;
+ end;
+end;
+
 procedure TCBaseReport.SetReportName(Value:String);
 begin
  if (csloading in ComponentState) then
@@ -416,9 +429,9 @@ begin
  ExportReportToSVG(report,filename,showprogress);
 end;
 
-procedure TCBaseReport.SaveToCSV(filename:string);
+procedure TCBaseReport.SaveToCSV(filename:string;separator:string=',');
 begin
- ExportReportToCSV(report,filename,showprogress);
+ ExportReportToCSV(report,filename,showprogress,separator);
 end;
 
 end.

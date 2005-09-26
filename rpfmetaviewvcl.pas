@@ -63,7 +63,6 @@ type
     AOpen: TAction;
     ToolButton8: TToolButton;
     BCancel: TButton;
-    PBar: TProgressBar;
     AExit: TAction;
     AScale100: TAction;
     AScaleWide: TAction;
@@ -157,6 +156,8 @@ type
     ToolButton14: TToolButton;
     ToolButton15: TToolButton;
     ToolButton16: TToolButton;
+    PPBar: TPanel;
+    PBar: TProgressBar;
     procedure AFirstExecute(Sender: TObject);
     procedure ANextExecute(Sender: TObject);
     procedure APreviousExecute(Sender: TObject);
@@ -196,8 +197,8 @@ type
     oldonHint:TNotifyEvent;
     configfile:string;
     faform:TWinControl;
+    fmetafile:TRpMetafileReport;
     procedure SetForm(Value:TWinControl);
-    procedure MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
     procedure EnableButtons;
     procedure DisableButtons;
     procedure PlaceImagePosition;
@@ -208,6 +209,9 @@ type
     procedure LoadConfig;
     procedure SaveConfig;
     procedure ShowHelp(AURL:string);
+    procedure WorkAsyncError(amessage:String);
+    procedure OnProgress(Sender:TObject;records,pagecount:integer;var docancel:boolean);
+    procedure SetMetafile(avalue:TRpMetafileReport);
   public
     { Public declarations }
 {$IFDEF USEINDY}
@@ -215,7 +219,6 @@ type
 {$ENDIF}
     ShowPrintDialog:Boolean;
     pagenum:integer;
-    metafile:TRpMetafileReport;
     gdidriver:TRpGDIDriver;
     printerindex:TRpPrinterSelect;
     agdidriver:IRpPrintDriver;
@@ -229,6 +232,7 @@ type
     destructor Destroy;override;
     procedure CreateClitree;
     procedure PrintPage;
+    property metafile:TRpMetafileReport read fmetafile write SetMetafile;
   end;
 
 var
@@ -278,9 +282,11 @@ begin
  AViewConnect.Visible:=Metafile.PreviewAbout;
 
  EPageNum.Text:='0';
- if pagenum>Metafile.PageCount then
+ metafile.RequestPage(pagenum-1);
+ if pagenum>Metafile.CurrentPageCount then
  begin
-  pagenum:=Metafile.PageCount;
+  pagenum:=Metafile.CurrentPageCount;
+  PBar.Visible:=false;
  end;
 { apage:=metafile.Pages[pagenum-1];
  rpagesizeQt:=apage.PageSizeqt;
@@ -307,9 +313,8 @@ begin
   end;
  end;
 }
- Metafile.CurrentPage:=pagenum-1;
  gdidriver.drawclippingregion:=metafile.PreviewMargins;
- metafile.DrawPage(gdidriver);
+ metafile.DrawPage(gdidriver,pagenum-1);
  if Assigned(gdidriver.bitmap) then
  begin
   AImage.Width:=gdidriver.bitmap.Width;
@@ -317,7 +322,6 @@ begin
   AImage.Picture.Bitmap.Assign(gdidriver.bitmap);
   AImage.Invalidate;
  end;
- pagenum:=Metafile.CurrentPage+1;
  EPageNum.Text:=IntToStr(PageNum);
  if ((oldwidth<>AImage.Width) or (oldheight<>AImage.Height)) then
   PlaceImagePosition;
@@ -456,8 +460,9 @@ begin
  bitmap.PixelFormat:=pf32bit;
  bitmap.HandleType:=bmDIB;
  AImage.Picture.Bitmap:=bitmap;
- metafile:=TrpMetafileReport.Create(self);
- metafile.OnProgress:=MetProgress;
+ fmetafile:=TrpMetafileReport.Create(nil);
+ fmetafile.OnWorkProgress:=OnProgress;
+ fmetafile.OnWorkAsyncError:=WorkAsyncError;
 
 {$IFDEF DOTNETD}
  // Fix for .net
@@ -534,6 +539,7 @@ begin
  SaveConfig;
  Application.OnHint:=oldonhint;
  bitmap.free;
+ fmetafile.free;
 
  inherited Destroy;
 end;
@@ -547,7 +553,7 @@ var
 begin
  // Prints the report
  frompage:=1;
- topage:=999999;
+ topage:=MAX_PAGECOUNT;
  allpages:=true;
  collate:=false;
  copies:=1;
@@ -559,7 +565,7 @@ begin
  rpPageSize.CustomHeight:=metafile.CustomY;
 
  allpages:=true;
- frompage:=1; topage:=999999;
+ frompage:=1; topage:=MAX_PAGECOUNT;
  copies:=1;
  rpgdidriver.PrinterSelection(printerindex,metafile.papersource,metafile.duplex);
  rpgdidriver.PageSizeSelection(rpPageSize);
@@ -631,7 +637,7 @@ begin
      10:
       begin
        ExportMetafileToCSV(metafile,SaveDialog1.Filename,true,true,
-        1,9999);
+        1,9999,',');
       end;
      11:
       begin
@@ -717,28 +723,6 @@ begin
  end;
 end;
 
-procedure TFRpMetaVCL.MetProgress(Sender:TRpMetafileReport;Position,Size:int64;page:integer);
-begin
- BCancel.Caption:=SRpPage+':'+FormatFloat('####,#####',page)+
-  ' -'+FormatFloat('######,####',Position div 1024)+SRpKbytes+' '+SrpCancel;
- if Position=size then
- begin
-  PBar.Position:=page;
-  PBar.Max:=Sender.PageCount;
- end
- else
- begin
-  PBar.Position:=Position;
-  PBar.Max:=Size;
- end;
- Application.ProcessMessages;
-{$IFDEF MSWINDOWS}
- if ((GetAsyncKeyState(VK_ESCAPE) AND $8000)<>0) then
-  cancelled:=true;
-{$ENDIF}
- if cancelled then
-  Raise Exception.Create(SRpOperationAborted);
-end;
 
 
 
@@ -753,7 +737,7 @@ begin
  AOpen.Enabled:=true;
  APrint.Enabled:=true;
  BCancel.Visible:=false;
- PBar.Visible:=false;
+ PPBar.Visible:=false;
 end;
 
 procedure TFRpMetaVCL.DisableButtons;
@@ -769,7 +753,7 @@ begin
  APrint.Enabled:=false;
  BCancel.Visible:=true;
  PBar.Position:=0;
- PBar.Visible:=true;
+ PPBar.Visible:=true;
 end;
 
 
@@ -952,6 +936,7 @@ begin
   BStatus.Visible:=inif.ReadBool('Preferences','StatusBar',True);
   AStatusBar.Checked:=BStatus.Visible;
   AViewConnect.Checked:=inif.ReadBool('Preferences','DiagConnect',True);
+  AAsyncExec.Checked:=inif.ReadBool('Preferences','AsyncExec',False);;
 {$IFDEF USEINDY}
   if assigned(clitree) then
   begin
@@ -961,7 +946,7 @@ begin
    clitree.asynchrohous:=AAsyncexec.Checked;
   end;
 {$ENDIF}
-  AAsyncExec.Checked:=inif.ReadBool('Preferences','AsyncExec',False);;
+  metafile.AsyncReading:=AAsyncexec.Checked;
   printerindex:=TRpPrinterSelect(inif.ReadInteger('Preferences','PrinterIndex',Integer(pRpDefaultPrinter)));
   UpdatePrintSel;
  finally
@@ -1048,6 +1033,7 @@ end;
 procedure TFRpMetaVCL.AAsyncExecExecute(Sender: TObject);
 begin
  AAsyncExec.Checked:=Not AAsyncExec.checked;
+ metafile.AsyncReading:=AAsyncexec.Checked;
 {$IFDEF USEINDY}
  if assigned(clitree) then
   clitree.asynchrohous:=AAsyncexec.Checked;
@@ -1099,13 +1085,65 @@ procedure TFRpMetaVCL.AMailToExecute(Sender: TObject);
 var
  afilename:String;
 begin
- afilename:=ChangeFileExt(RpTempFileName,'.pdf');
+ afilename:=RpTempFileName;
+
  SaveMetafileToPDF(Metafile,afilename,true);
  try
-  rptypes.SendMail('',ExtractFileName(afilename),'',afilename);
+  rptypes.SendMail('',ExtractFileName(afilename),'',afilename,ExtractFilePath(ChangeFileExt(afilename,'.pdf')));
  finally
   SysUtils.DeleteFile(afilename);
  end;
 end;
+
+procedure TFRpMetaVCL.OnProgress(Sender:TObject;records,pagecount:integer;var docancel:boolean);
+var
+ meta:TRpMetafilereport;
+begin
+ BCancel.Caption:=SRpPage+':'+FormatFloat('##,##',pagecount)+' '+SrpCancel;
+ meta:=TRpMetafileReport(Sender);
+ if meta.Finished then
+ begin
+  BCancel.Visible:=false;
+  PPBar.Visible:=false;
+ end
+ else
+ begin
+  if not meta.Reading then
+  begin
+   BCancel.Visible:=true;
+   BCancel.Caption:=SRpPage+':'+FormatFloat('##,##',pagecount)+' '+SrpCancel;
+   Application.ProcessMessages;
+   docancel:=cancelled;
+{$IFDEF MSWINDOWS}
+   if ((GetAsyncKeyState(VK_ESCAPE) AND $8000)<>0) then
+    docancel:=true;
+{$ENDIF}
+  end;
+  PPBar.Visible:=true;
+  PBar.Max:=pagecount;
+  PBar.Position:=meta.CurrentPageCount;
+ end;
+end;
+
+procedure TFRpMetaVCL.WorkAsyncError(amessage:String);
+begin
+ RpMessageBox(amessage);
+end;
+
+procedure TFRpMetaVCL.SetMetafile(avalue:TRpMetafileReport);
+begin
+ if Assigned(fmetafile) then
+ begin
+  fmetafile.free;
+  fmetafile:=nil;
+ end;
+ fmetafile:=Avalue;
+ if assigned(FMetafile) then
+ begin
+  fmetafile.OnWorkProgress:=OnProgress;
+  fmetafile.OnWorkAsyncError:=WorkAsyncError;
+ end;
+end;
+
 
 end.

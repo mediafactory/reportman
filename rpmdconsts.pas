@@ -35,8 +35,9 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.4j';
+ RM_VERSION='2.4k';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
+ MAX_PAGECOUNT=999999;
 type
   TPageWidthHeight = record
     Width: Integer;
@@ -1294,6 +1295,10 @@ var
   SRpDriverDotNetDesc:WideString='Dot net driver';
   SRpEmptyResponse:WideString='Empty response';
   SRpRepMetafileUn:WideString='Report Metafile uncompressed';
+  SRpPrintRep28:WideString='         -csvseparator     CSV output separator';
+  SRpPrintRep29:WideString='         -async     Asynchronous execution';
+  SRpAsyncExecution:WideString='Asynchronous execution';
+  SRpMaximumPages:WideString='Maximum number of pages reached';
 
 implementation
 

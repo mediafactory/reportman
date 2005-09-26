@@ -257,7 +257,7 @@ begin
  WritePropertyI('HEIGHT',section.height,Stream);
  WritePropertyW('PRINTCONDITION',section.PrintCondition,Stream);
  WritePropertyW('DOBEFOREPRINT',section.DoBeforePrint,Stream);
- WritePropertyW('DOAFTERPRINT',section.DoBeforePrint,Stream);
+ WritePropertyW('DOAFTERPRINT',section.DoAfterPrint,Stream);
  if assigned(section.SubReport) then
  begin
   WritePropertyS('SUBREPORT',section.Subreport.Name,Stream);
@@ -1252,7 +1252,7 @@ begin
   report.CollateCopies:=StrToBool(propvalue)
  else
  if propname='TWOPASS' then
-  report.CollateCopies:=StrToBool(propvalue)
+  report.TwoPass:=StrToBool(propvalue)
  else
  if propname='PRINTERFONTS' then
   report.PrinterFonts:=TRpPrinterFontsOption(StrToInt(propvalue))
