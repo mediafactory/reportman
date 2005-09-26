@@ -27,5 +27,4 @@ exports
 
 begin
  IsMultiThread:=true;
- IdSync.
 end.

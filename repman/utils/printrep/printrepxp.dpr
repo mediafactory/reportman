@@ -104,6 +104,7 @@ var
  amessage:String;
  async:boolean;
 begin
+ async:=false;
  faxdevice:='';
  faxcoverstring:='';
  bmpresx:=100;

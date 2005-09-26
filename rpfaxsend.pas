@@ -160,7 +160,7 @@ begin
  end;
  docancel:=false;
  pageheight:=metafile.CustomY*100 div TWIPS_PER_INCHESS;
- totallines:=pageheight*metafile.PageCount;
+ totallines:=pageheight*metafile.CurrentPageCount;
  pconvers.Max:=totallines;
  if highres then
   abitmap:=rpgdidriver.MetafileToBitmap(metafile,showprogress,true,200,200)
