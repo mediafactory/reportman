@@ -1417,7 +1417,7 @@ begin
    TextDriver:=TRpTextDriver.Create;
    aTextDriver:=TextDriver;
    TextDriver.SelectPrinter(report.PrinterSelect);
-   oldprogres:=RepProgress;
+   oldprogres:=report.OnProgress;
    try
     report.OnProgress:=RepProgress;
     report.PrintAll(TextDriver);
@@ -1484,7 +1484,7 @@ begin
   qtdriver.forceprintername:=forceprintername;
   qtdriver.toprinter:=true;
   aqtdriver:=qtdriver;
-  oldprogres:=RepProgress;
+  oldprogres:=report.OnProgress;
   try
    report.OnProgress:=RepProgress;
    report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate);
@@ -1512,7 +1512,7 @@ begin
  try
   TextDriver:=TRpTextDriver.Create;
   aTextDriver:=TextDriver;
-  oldprogres:=RepProgress;
+  oldprogres:=report.OnProgress;
   try
    TextDriver.SelectPrinter(report.PrinterSelect);
    report.OnProgress:=RepProgress;
@@ -1559,7 +1559,7 @@ begin
 {$ENDIF}
   qtdriver.forceprintername:=forceprintername;
   apdfdriver:=pdfdriver;
-  oldprogres:=RepProgress;
+  oldprogres:=report.OnProgress;
   try
    report.OnProgress:=RepProgress;
    report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);

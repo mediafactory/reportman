@@ -118,8 +118,8 @@ begin
  FBitmap.HandleType:=bmDIB;
  FPage:=-1;
  FEntirePageCount:=1;
- dpix:=DEFAULT_RESOLUTION;
- dpiy:=DEFAULT_RESOLUTION;
+ dpix:=Screen.PixelsPerInch;
+ dpiy:=Screen.PixelsPerInch;
  prdriver:=TRpGDiDriver.Create;
  conteimage:=TPanel.Create(self);
  conteimage.BevelInner:=bvNone;

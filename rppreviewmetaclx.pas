@@ -110,6 +110,7 @@ implementation
 constructor TRpPreviewMetaCLX.Create(AOwner:TComponent);
 var
  asize:Size;
+ astyle:QStyleH;
 begin
  inherited Create(AOwner);
 
@@ -119,8 +120,8 @@ begin
  FBitmap.PixelFormat:=pf32bit;
  FPage:=-1;
  FEntirePageCount:=1;
- dpix:=DEFAULT_RESOLUTION;
- dpiy:=DEFAULT_RESOLUTION;
+ dpix:=Screen.PixelsPerInch;
+ dpiy:=Screen.PixelsPerInch;
  prdriver:=TRpQtDriver.Create;
  conteimage:=TPanel.Create(self);
  conteimage.BevelInner:=bvNone;
@@ -133,7 +134,8 @@ begin
  image.Parent:=conteimage;
  HorzScrollBar.Tracking:=true;
  VertScrollBar.Tracking:=true;
- QApplication_globalStrut(@asize);
+ astyle:=QApplication_style();
+ QStyle_scrollBarExtent(astyle,@asize);
  FBarWidth:=asize.cx;
  FBarHeight:=asize.cy;
 end;

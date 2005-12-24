@@ -35,7 +35,7 @@ uses
 {$ENDIF}
 {$IFDEF LINUX}
  rpqtdriver,
- rppreview,rpclxreport,
+ rppreview,rpclxreport,rppreviewcontrolclx,
 {$ENDIF}
  rpdllutil;
 
@@ -104,6 +104,9 @@ var
 {$IFDEF MSWINDOWS}
  prcontrol:TRpPreviewControl;
 {$ENDIF}
+{$IFDEF LINUX}
+ prcontrol:TRpPreviewControlCLX;
+{$ENDIF}
 begin
  rplibdoinit;
  rplasterror:='';
@@ -120,7 +123,13 @@ begin
   end;
 {$ENDIF}
 {$IFDEF LINUX}
-  ShowPreview(report,Title,true);
+  prcontrol:=TRppreviewControlCLX.Create(nil);
+  try
+   prcontrol.Report:=report;
+   ShowPreview(prcontrol,Title,True);
+  finally
+   prcontrol.free;
+  end;
 {$ENDIF}
  except
   on E:Exception do

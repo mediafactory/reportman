@@ -57,6 +57,7 @@ uses
   rpsecutil in '../../../rpsecutil.pas',
   rprfparams in '../../../rprfparams.pas',
   rpmetafile in '../../../rpmetafile.pas',
+  rppreviewcontrolclx in '../../../rppreviewcontrolclx.pas',
   rppdfdriver in '../../../rppdfdriver.pas',
   rpqtdriver in '../../../rpqtdriver.pas';
 {$ENDIF}
