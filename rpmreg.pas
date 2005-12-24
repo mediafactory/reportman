@@ -24,7 +24,7 @@ uses
   rpparser,rpeval,rpreport,rppdfreport,rptranslator,
   rpevalfunc,rptypes,rpdatainfo,rpalias,rptypeval,
 {$IFNDEF USEVARIANTS}
-  rpvclreport,rpmaskedit,
+  rpvclreport,rpmaskedit,rppreviewcontrol,
   {$IFNDEF BUILDER4}
    rprulervcl,rpmdesignervcl,rpdbgridvcl,
   {$ENDIF}
@@ -45,6 +45,7 @@ begin
   RegisterComponents('Reportman', [TPDFReport]);
 {$IFNDEF USEVARIANTS}
   RegisterComponents('Reportman', [TVCLReport]);
+  RegisterComponents('Reportman', [TRpPreviewControl]);
   RegisterComponents('Reportman', [TRpMaskEdit]);
   {$IFNDEF BUILDER4}
    RegisterComponents('Reportman', [TRpRulerVCL]);

@@ -656,7 +656,9 @@ const tabelle_39: array[0..43] of TCode39 = (
 	( c:'F'; data:'506061505'; chk:15),
 	( c:'G'; data:'505051606'; chk:16),
 	( c:'H'; data:'605051605'; chk:17),
-	( c:'I'; data:'506051600'; chk:18),
+//	( c:'I'; data:'506051600'; chk:18),
+//      Fixed By Wim Vandersmissen
+        (  c:'I'; data:'506051605'; chk:18),
 	( c:'J'; data:'505061605'; chk:19),
 	( c:'K'; data:'605050516'; chk:20),
 	( c:'L'; data:'506050516'; chk:21),
@@ -772,8 +774,12 @@ begin
 		if ord(save[i]) <= 127 then
 			FText := FText + code39x[ord(save[i])];
 	end;
-	result := Code_39;
-	FText := save;
+        CurrentText:=FText;
+        try
+         result := Code_39;
+        finally
+         CurrentText := save;
+        end;
 end;
 
 
@@ -1294,9 +1300,12 @@ begin
 	end;
 
 //Showmessage(Format('Text: <%s>', [FText]));
-
-	result := Code_93;
-	FText := save;
+        CurrentText:=FText;
+        try
+         result := Code_93;
+        finally
+         CurrentText := save;
+        end;
 end;
 
 

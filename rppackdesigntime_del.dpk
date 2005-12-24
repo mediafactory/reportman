@@ -27,18 +27,10 @@ package rppackdesigntime_del;
 {$IMPLICITBUILD OFF}
 
 requires
-  rtl,
   designide,
-  vclx,
-  vcl,
-  vcljpg,
-  dbrtl,
-  dsnap,
-  indy,
   rppack_del,
   rppackvcl_del,
-  rppackdesignvcl_del,
-  vcldb;
+  rppackdesignvcl_del;
 
 contains
   rpmdesigneditors in 'rpmdesigneditors.pas',

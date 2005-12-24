@@ -241,6 +241,7 @@ begin
   SetLength(FValues,FMaxAllocated*2);
   SetLength(FPoolPositions,FMaxAllocated*2);
   SetLength(FPoolSizes,FMaxAllocated*2);
+  SetLength(FColors,FMaxAllocated*2);
   FMaxAllocated:=FMaxAllocated*2;
  end;
  FValues[FValueCount]:=avalue;

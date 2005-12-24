@@ -1,29 +1,25 @@
 object FRpMetaVCL: TFRpMetaVCL
   Left = 0
   Top = 0
-  Width = 596
-  Height = 384
-  HorzScrollBar.Range = 561
-  VertScrollBar.Range = 338
+  Width = 443
+  Height = 270
   Align = alClient
-  AutoScroll = False
   ParentShowHint = False
   ShowHint = True
   TabOrder = 0
   OnMouseWheelDown = FrameMouseWheelDown
   OnMouseWheelUp = FrameMouseWheelUp
-  OnResize = FormResize
   object Splitter1: TSplitter
     Left = 0
     Top = 27
     Width = 7
-    Height = 336
+    Height = 222
     Beveled = True
   end
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 596
+    Width = 443
     Height = 27
     AutoSize = True
     ButtonHeight = 25
@@ -113,6 +109,7 @@ object FRpMetaVCL: TFRpMetaVCL
       Left = 320
       Top = 0
       Action = AScaleFull
+      PopupMenu = MEntireMenu
     end
     object ToolButton12: TToolButton
       Left = 346
@@ -172,31 +169,10 @@ object FRpMetaVCL: TFRpMetaVCL
       end
     end
   end
-  object ImageContainer: TScrollBox
-    Left = 48
-    Top = 30
-    Width = 513
-    Height = 287
-    HorzScrollBar.Increment = 60
-    HorzScrollBar.Tracking = True
-    VertScrollBar.Increment = 60
-    VertScrollBar.Tracking = True
-    BorderStyle = bsNone
-    Color = clAppWorkSpace
-    ParentColor = False
-    TabOrder = 1
-    object AImage: TImage
-      Left = 0
-      Top = 0
-      Width = 89
-      Height = 81
-      OnMouseDown = AImageMouseDown
-    end
-  end
   object BStatus: TStatusBar
     Left = 0
-    Top = 363
-    Width = 596
+    Top = 249
+    Width = 443
     Height = 21
     Panels = <
       item
@@ -1553,6 +1529,95 @@ object FRpMetaVCL: TFRpMetaVCL
         Tag = 15
         OnClick = MSelPrinter0Click
       end
+    end
+  end
+  object MEntireMenu: TPopupMenu
+    OnPopup = MEntireMenuPopup
+    Left = 244
+    Top = 160
+    object MEntire1: TMenuItem
+      Tag = 1
+      Caption = '1'
+      OnClick = MEntire1Click
+    end
+    object MEntire2: TMenuItem
+      Tag = 2
+      Caption = '2'
+      OnClick = MEntire1Click
+    end
+    object MEntire3: TMenuItem
+      Tag = 3
+      Caption = '3'
+      OnClick = MEntire1Click
+    end
+    object MEntire4: TMenuItem
+      Tag = 4
+      Caption = '4'
+      OnClick = MEntire1Click
+    end
+    object MEntire6: TMenuItem
+      Tag = 6
+      Caption = '6'
+      OnClick = MEntire1Click
+    end
+    object MEntire8: TMenuItem
+      Tag = 8
+      Caption = '8'
+      OnClick = MEntire1Click
+    end
+    object MEntire9: TMenuItem
+      Tag = 9
+      Caption = '9'
+      OnClick = MEntire1Click
+    end
+    object MEntire10: TMenuItem
+      Tag = 10
+      Caption = '10'
+      OnClick = MEntire1Click
+    end
+    object MEntire12: TMenuItem
+      Tag = 12
+      Caption = '12'
+      OnClick = MEntire1Click
+    end
+    object MEntire15: TMenuItem
+      Tag = 15
+      Caption = '15'
+      OnClick = MEntire1Click
+    end
+    object MEntire16: TMenuItem
+      Tag = 16
+      Caption = '16'
+      OnClick = MEntire1Click
+    end
+    object MEntire18: TMenuItem
+      Tag = 18
+      Caption = '18'
+      OnClick = MEntire1Click
+    end
+    object MEntire20: TMenuItem
+      Tag = 20
+      Caption = '20'
+      OnClick = MEntire1Click
+    end
+    object MEntire24: TMenuItem
+      Tag = 26
+      Caption = '24'
+      OnClick = MEntire1Click
+    end
+    object MEntire30: TMenuItem
+      Tag = 30
+      Caption = '30'
+      OnClick = MEntire1Click
+    end
+    object MEntire48: TMenuItem
+      Tag = 48
+      Caption = '48'
+      OnClick = MEntire1Click
+    end
+    object MLeftRight: TMenuItem
+      Caption = '->'
+      OnClick = MLeftRightClick
     end
   end
 end

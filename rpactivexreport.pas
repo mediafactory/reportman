@@ -299,10 +299,11 @@ begin
  index:=FVCLReport.Report.DataInfo.IndexOf(datasetname);
  if index<0 then
   Raise Exception.Create(SRpDatasetNotExists+':'+datasetname);
-
+{$IFDEF USEADO}
  FVCLReport.Report.DataInfo.Items[index].externalDataset:=recordset;
  // maybe reste params...
  //FVCLReport.Report.DataInfo.Items[index].SQL := '';
+{$ENDIF}
 end;
 {$ENDIF}
 

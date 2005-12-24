@@ -12,10 +12,10 @@ unit Reportman_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 26/09/2005 23:19:12 from Type Library described below.
+// File generated on 08/12/2005 22:35:54 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\reportman.tlb (1)
+// Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\ReportMan.tlb (1)
 // LIBID: {D4D26F6B-6564-44F4-A913-03C91CE37740}
 // LCID: 0
 // Helpfile: 
@@ -57,6 +57,9 @@ const
   CLASS_ReportParam: TGUID = '{E96B253E-143E-40E8-BFDA-366C5F112DAE}';
   IID_IReportmanXAServer: TGUID = '{F3A6B88C-D629-402E-BC62-BAB0E2EE39AF}';
   CLASS_ReportmanXAServer: TGUID = '{FD3BE5E5-CBE4-4C29-A733-8CB842999075}';
+  IID_IPreviewControl: TGUID = '{3D8043B8-E2F6-4F5D-B055-571924F5B0DC}';
+  DIID_IPreviewControlEvents: TGUID = '{7364E2EA-8EEC-4673-9059-3B078C388717}';
+  CLASS_PreviewControl: TGUID = '{45978803-4B15-4E0E-98CE-AED9B1E1B701}';
 
 // *********************************************************************//
 // Declaration of Enumerations defined in Type Library                    
@@ -86,6 +89,55 @@ const
   rpParamList = $0000000B;
   rpParamUnknown = $0000000C;
 
+// Constants for enum TxAutoScaleType
+type
+  TxAutoScaleType = TOleEnum;
+const
+  AScaleReal = $00000000;
+  AScaleWide = $00000001;
+  AScaleHeight = $00000002;
+  AScaleEntirePage = $00000003;
+  AScaleCustom = $00000004;
+
+// Constants for enum TxBorderStyle
+type
+  TxBorderStyle = TOleEnum;
+const
+  bsNone = $00000000;
+  bsSingle = $00000001;
+
+// Constants for enum TxDragMode
+type
+  TxDragMode = TOleEnum;
+const
+  dmManual = $00000000;
+  dmAutomatic = $00000001;
+
+// Constants for enum TxMouseButton
+type
+  TxMouseButton = TOleEnum;
+const
+  mbLeft = $00000000;
+  mbRight = $00000001;
+  mbMiddle = $00000002;
+
+// Constants for enum TxActiveFormBorderStyle
+type
+  TxActiveFormBorderStyle = TOleEnum;
+const
+  afbNone = $00000000;
+  afbSingle = $00000001;
+  afbSunken = $00000002;
+  afbRaised = $00000003;
+
+// Constants for enum TxPrintScale
+type
+  TxPrintScale = TOleEnum;
+const
+  poNone = $00000000;
+  poProportional = $00000001;
+  poPrintToFit = $00000002;
+
 type
 
 // *********************************************************************//
@@ -102,6 +154,9 @@ type
   IReportParamDisp = dispinterface;
   IReportmanXAServer = interface;
   IReportmanXAServerDisp = dispinterface;
+  IPreviewControl = interface;
+  IPreviewControlDisp = dispinterface;
+  IPreviewControlEvents = dispinterface;
 
 // *********************************************************************//
 // Declaration of CoClasses defined in Type Library                       
@@ -112,6 +167,13 @@ type
   ReportParameters = IReportParameters;
   ReportParam = IReportParam;
   ReportmanXAServer = IReportmanXAServer;
+  PreviewControl = IPreviewControl;
+
+
+// *********************************************************************//
+// Declaration of structures, unions and aliases.                         
+// *********************************************************************//
+  PPUserType1 = ^IFontDisp; {*}
 
 
 // *********************************************************************//
@@ -399,6 +461,156 @@ type
     procedure GetCSV2(const Report: IReportReport; const separator: WideString); dispid 6;
   end;
 
+// *********************************************************************//
+// Interface: IPreviewControl
+// Flags:     (4416) Dual OleAutomation Dispatchable
+// GUID:      {3D8043B8-E2F6-4F5D-B055-571924F5B0DC}
+// *********************************************************************//
+  IPreviewControl = interface(IDispatch)
+    ['{3D8043B8-E2F6-4F5D-B055-571924F5B0DC}']
+    function Get_Visible: WordBool; safecall;
+    procedure Set_Visible(Value: WordBool); safecall;
+    function Get_AutoScroll: WordBool; safecall;
+    procedure Set_AutoScroll(Value: WordBool); safecall;
+    function Get_AutoSize: WordBool; safecall;
+    procedure Set_AutoSize(Value: WordBool); safecall;
+    function Get_AxBorderStyle: TxActiveFormBorderStyle; safecall;
+    procedure Set_AxBorderStyle(Value: TxActiveFormBorderStyle); safecall;
+    function Get_Caption: WideString; safecall;
+    procedure Set_Caption(const Value: WideString); safecall;
+    function Get_Color: OLE_COLOR; safecall;
+    procedure Set_Color(Value: OLE_COLOR); safecall;
+    function Get_Font: IFontDisp; safecall;
+    procedure Set_Font(const Value: IFontDisp); safecall;
+    procedure _Set_Font(var Value: IFontDisp); safecall;
+    function Get_KeyPreview: WordBool; safecall;
+    procedure Set_KeyPreview(Value: WordBool); safecall;
+    function Get_PixelsPerInch: Integer; safecall;
+    procedure Set_PixelsPerInch(Value: Integer); safecall;
+    function Get_PrintScale: TxPrintScale; safecall;
+    procedure Set_PrintScale(Value: TxPrintScale); safecall;
+    function Get_Scaled: WordBool; safecall;
+    procedure Set_Scaled(Value: WordBool); safecall;
+    function Get_Active: WordBool; safecall;
+    function Get_DropTarget: WordBool; safecall;
+    procedure Set_DropTarget(Value: WordBool); safecall;
+    function Get_HelpFile: WideString; safecall;
+    procedure Set_HelpFile(const Value: WideString); safecall;
+    function Get_DoubleBuffered: WordBool; safecall;
+    procedure Set_DoubleBuffered(Value: WordBool); safecall;
+    function Get_VisibleDockClientCount: Integer; safecall;
+    function Get_Enabled: WordBool; safecall;
+    procedure Set_Enabled(Value: WordBool); safecall;
+    function Get_Cursor: Smallint; safecall;
+    procedure Set_Cursor(Value: Smallint); safecall;
+    procedure SetReport(const Report: IReportReport); safecall;
+    function Get_AutoScale: TxAutoScaleType; safecall;
+    procedure Set_AutoScale(Value: TxAutoScaleType); safecall;
+    function Get_PreviewScale: Double; safecall;
+    procedure Set_PreviewScale(Value: Double); safecall;
+    function Get_EntirePageCount: Integer; safecall;
+    procedure Set_EntirePageCount(Value: Integer); safecall;
+    function Get_EntireTopDown: WordBool; safecall;
+    procedure Set_EntireTopDown(Value: WordBool); safecall;
+    procedure FirstPage; safecall;
+    procedure PriorPage; safecall;
+    procedure NextPage; safecall;
+    procedure LastPage; safecall;
+    procedure RefreshMetafile; safecall;
+    function Get_Page: Integer; safecall;
+    procedure Set_Page(Value: Integer); safecall;
+    procedure DoScroll(vertical: WordBool; increment: Integer); safecall;
+    function Get_Finished: WordBool; safecall;
+    procedure Set_Finished(Value: WordBool); safecall;
+    procedure SaveToFile(const filename: WideString; format: Integer; const textdriver: WideString; 
+                         horzres: Integer; vertres: Integer; mono: WordBool); safecall;
+    property Visible: WordBool read Get_Visible write Set_Visible;
+    property AutoScroll: WordBool read Get_AutoScroll write Set_AutoScroll;
+    property AutoSize: WordBool read Get_AutoSize write Set_AutoSize;
+    property AxBorderStyle: TxActiveFormBorderStyle read Get_AxBorderStyle write Set_AxBorderStyle;
+    property Caption: WideString read Get_Caption write Set_Caption;
+    property Color: OLE_COLOR read Get_Color write Set_Color;
+    property Font: IFontDisp read Get_Font write Set_Font;
+    property KeyPreview: WordBool read Get_KeyPreview write Set_KeyPreview;
+    property PixelsPerInch: Integer read Get_PixelsPerInch write Set_PixelsPerInch;
+    property PrintScale: TxPrintScale read Get_PrintScale write Set_PrintScale;
+    property Scaled: WordBool read Get_Scaled write Set_Scaled;
+    property Active: WordBool read Get_Active;
+    property DropTarget: WordBool read Get_DropTarget write Set_DropTarget;
+    property HelpFile: WideString read Get_HelpFile write Set_HelpFile;
+    property DoubleBuffered: WordBool read Get_DoubleBuffered write Set_DoubleBuffered;
+    property VisibleDockClientCount: Integer read Get_VisibleDockClientCount;
+    property Enabled: WordBool read Get_Enabled write Set_Enabled;
+    property Cursor: Smallint read Get_Cursor write Set_Cursor;
+    property AutoScale: TxAutoScaleType read Get_AutoScale write Set_AutoScale;
+    property PreviewScale: Double read Get_PreviewScale write Set_PreviewScale;
+    property EntirePageCount: Integer read Get_EntirePageCount write Set_EntirePageCount;
+    property EntireTopDown: WordBool read Get_EntireTopDown write Set_EntireTopDown;
+    property Page: Integer read Get_Page write Set_Page;
+    property Finished: WordBool read Get_Finished write Set_Finished;
+  end;
+
+// *********************************************************************//
+// DispIntf:  IPreviewControlDisp
+// Flags:     (4416) Dual OleAutomation Dispatchable
+// GUID:      {3D8043B8-E2F6-4F5D-B055-571924F5B0DC}
+// *********************************************************************//
+  IPreviewControlDisp = dispinterface
+    ['{3D8043B8-E2F6-4F5D-B055-571924F5B0DC}']
+    property Visible: WordBool dispid 1;
+    property AutoScroll: WordBool dispid 2;
+    property AutoSize: WordBool dispid 3;
+    property AxBorderStyle: TxActiveFormBorderStyle dispid 4;
+    property Caption: WideString dispid -518;
+    property Color: OLE_COLOR dispid -501;
+    property Font: IFontDisp dispid -512;
+    property KeyPreview: WordBool dispid 5;
+    property PixelsPerInch: Integer dispid 6;
+    property PrintScale: TxPrintScale dispid 7;
+    property Scaled: WordBool dispid 8;
+    property Active: WordBool readonly dispid 9;
+    property DropTarget: WordBool dispid 10;
+    property HelpFile: WideString dispid 11;
+    property DoubleBuffered: WordBool dispid 12;
+    property VisibleDockClientCount: Integer readonly dispid 13;
+    property Enabled: WordBool dispid -514;
+    property Cursor: Smallint dispid 14;
+    procedure SetReport(const Report: IReportReport); dispid 16;
+    property AutoScale: TxAutoScaleType dispid 15;
+    property PreviewScale: Double dispid 17;
+    property EntirePageCount: Integer dispid 18;
+    property EntireTopDown: WordBool dispid 19;
+    procedure FirstPage; dispid 20;
+    procedure PriorPage; dispid 21;
+    procedure NextPage; dispid 22;
+    procedure LastPage; dispid 23;
+    procedure RefreshMetafile; dispid 24;
+    property Page: Integer dispid 25;
+    procedure DoScroll(vertical: WordBool; increment: Integer); dispid 26;
+    property Finished: WordBool dispid 27;
+    procedure SaveToFile(const filename: WideString; format: Integer; const textdriver: WideString; 
+                         horzres: Integer; vertres: Integer; mono: WordBool); dispid 28;
+  end;
+
+// *********************************************************************//
+// DispIntf:  IPreviewControlEvents
+// Flags:     (4096) Dispatchable
+// GUID:      {7364E2EA-8EEC-4673-9059-3B078C388717}
+// *********************************************************************//
+  IPreviewControlEvents = dispinterface
+    ['{7364E2EA-8EEC-4673-9059-3B078C388717}']
+    procedure OnActivate; dispid 1;
+    procedure OnClick; dispid 2;
+    procedure OnCreate; dispid 3;
+    procedure OnDblClick; dispid 5;
+    procedure OnDestroy; dispid 6;
+    procedure OnDeactivate; dispid 7;
+    procedure OnKeyPress(var Key: Smallint); dispid 11;
+    procedure OnPaint; dispid 16;
+    procedure OnWorkProgress(records: Integer; pagecount: Integer; var docancel: WordBool); dispid 4;
+    procedure OnPageDrawn(PageDrawn: Integer; PagesDrawn: Integer); dispid 8;
+  end;
+
 
 // *********************************************************************//
 // OLE Control Proxy class declaration
@@ -466,6 +678,20 @@ type
     property PrintersAvailable: WideString index 44 read GetWideStringProp;
   published
     property Anchors;
+    property  TabStop;
+    property  Align;
+    property  DragCursor;
+    property  DragMode;
+    property  ParentShowHint;
+    property  PopupMenu;
+    property  ShowHint;
+    property  TabOrder;
+    property  OnDragDrop;
+    property  OnDragOver;
+    property  OnEndDrag;
+    property  OnEnter;
+    property  OnExit;
+    property  OnStartDrag;
     property filename: WideString index 12 read GetWideStringProp write SetWideStringProp stored False;
     property Preview: WordBool index 13 read GetWordBoolProp write SetWordBoolProp stored False;
     property ShowProgress: WordBool index 14 read GetWordBoolProp write SetWordBoolProp stored False;
@@ -527,6 +753,103 @@ type
     class function CreateRemote(const MachineName: string): IReportmanXAServer;
   end;
 
+
+// *********************************************************************//
+// OLE Control Proxy class declaration
+// Control Name     : TPreviewControl
+// Help String      : PreviewControl Control
+// Default Interface: IPreviewControl
+// Def. Intf. DISP? : No
+// Event   Interface: IPreviewControlEvents
+// TypeFlags        : (34) CanCreate Control
+// *********************************************************************//
+  TPreviewControlOnKeyPress = procedure(ASender: TObject; var Key: Smallint) of object;
+  TPreviewControlOnWorkProgress = procedure(ASender: TObject; records: Integer; pagecount: Integer; 
+                                                              var docancel: WordBool) of object;
+  TPreviewControlOnPageDrawn = procedure(ASender: TObject; PageDrawn: Integer; PagesDrawn: Integer) of object;
+
+  TPreviewControl = class(TOleControl)
+  private
+    FOnActivate: TNotifyEvent;
+    FOnClick: TNotifyEvent;
+    FOnCreate: TNotifyEvent;
+    FOnDblClick: TNotifyEvent;
+    FOnDestroy: TNotifyEvent;
+    FOnDeactivate: TNotifyEvent;
+    FOnKeyPress: TPreviewControlOnKeyPress;
+    FOnPaint: TNotifyEvent;
+    FOnWorkProgress: TPreviewControlOnWorkProgress;
+    FOnPageDrawn: TPreviewControlOnPageDrawn;
+    FIntf: IPreviewControl;
+    function  GetControlInterface: IPreviewControl;
+  protected
+    procedure CreateControl;
+    procedure InitControlData; override;
+  public
+    procedure SetReport(const Report: IReportReport);
+    procedure FirstPage;
+    procedure PriorPage;
+    procedure NextPage;
+    procedure LastPage;
+    procedure RefreshMetafile;
+    procedure DoScroll(vertical: WordBool; increment: Integer);
+    procedure SaveToFile(const filename: WideString; format: Integer; const textdriver: WideString; 
+                         horzres: Integer; vertres: Integer; mono: WordBool);
+    property  ControlInterface: IPreviewControl read GetControlInterface;
+    property  DefaultInterface: IPreviewControl read GetControlInterface;
+    property Visible: WordBool index 1 read GetWordBoolProp write SetWordBoolProp;
+    property Active: WordBool index 9 read GetWordBoolProp;
+    property DropTarget: WordBool index 10 read GetWordBoolProp write SetWordBoolProp;
+    property HelpFile: WideString index 11 read GetWideStringProp write SetWideStringProp;
+    property DoubleBuffered: WordBool index 12 read GetWordBoolProp write SetWordBoolProp;
+    property VisibleDockClientCount: Integer index 13 read GetIntegerProp;
+    property Enabled: WordBool index -514 read GetWordBoolProp write SetWordBoolProp;
+  published
+    property Anchors;
+    property  ParentColor;
+    property  ParentFont;
+    property  Align;
+    property  DragCursor;
+    property  DragMode;
+    property  ParentShowHint;
+    property  PopupMenu;
+    property  ShowHint;
+    property  TabOrder;
+    property  OnDragDrop;
+    property  OnDragOver;
+    property  OnEndDrag;
+    property  OnEnter;
+    property  OnExit;
+    property  OnStartDrag;
+    property AutoScroll: WordBool index 2 read GetWordBoolProp write SetWordBoolProp stored False;
+    property AutoSize: WordBool index 3 read GetWordBoolProp write SetWordBoolProp stored False;
+    property AxBorderStyle: TOleEnum index 4 read GetTOleEnumProp write SetTOleEnumProp stored False;
+    property Caption: WideString index -518 read GetWideStringProp write SetWideStringProp stored False;
+    property Color: TColor index -501 read GetTColorProp write SetTColorProp stored False;
+    property Font: TFont index -512 read GetTFontProp write SetTFontProp stored False;
+    property KeyPreview: WordBool index 5 read GetWordBoolProp write SetWordBoolProp stored False;
+    property PixelsPerInch: Integer index 6 read GetIntegerProp write SetIntegerProp stored False;
+    property PrintScale: TOleEnum index 7 read GetTOleEnumProp write SetTOleEnumProp stored False;
+    property Scaled: WordBool index 8 read GetWordBoolProp write SetWordBoolProp stored False;
+    property Cursor: Smallint index 14 read GetSmallintProp write SetSmallintProp stored False;
+    property AutoScale: TOleEnum index 15 read GetTOleEnumProp write SetTOleEnumProp stored False;
+    property PreviewScale: Double index 17 read GetDoubleProp write SetDoubleProp stored False;
+    property EntirePageCount: Integer index 18 read GetIntegerProp write SetIntegerProp stored False;
+    property EntireTopDown: WordBool index 19 read GetWordBoolProp write SetWordBoolProp stored False;
+    property Page: Integer index 25 read GetIntegerProp write SetIntegerProp stored False;
+    property Finished: WordBool index 27 read GetWordBoolProp write SetWordBoolProp stored False;
+    property OnActivate: TNotifyEvent read FOnActivate write FOnActivate;
+    property OnClick: TNotifyEvent read FOnClick write FOnClick;
+    property OnCreate: TNotifyEvent read FOnCreate write FOnCreate;
+    property OnDblClick: TNotifyEvent read FOnDblClick write FOnDblClick;
+    property OnDestroy: TNotifyEvent read FOnDestroy write FOnDestroy;
+    property OnDeactivate: TNotifyEvent read FOnDeactivate write FOnDeactivate;
+    property OnKeyPress: TPreviewControlOnKeyPress read FOnKeyPress write FOnKeyPress;
+    property OnPaint: TNotifyEvent read FOnPaint write FOnPaint;
+    property OnWorkProgress: TPreviewControlOnWorkProgress read FOnWorkProgress write FOnWorkProgress;
+    property OnPageDrawn: TPreviewControlOnPageDrawn read FOnPageDrawn write FOnPageDrawn;
+  end;
+
 procedure Register;
 
 resourcestring
@@ -545,7 +868,7 @@ const
     EventIID: '';
     EventCount: 0;
     EventDispIDs: nil;
-    LicenseKey: nil (*HR:$80040154*);
+    LicenseKey: nil (*HR:$00000000*);
     Flags: $00000008;
     Version: 401);
 begin
@@ -780,9 +1103,90 @@ begin
   Result := CreateRemoteComObject(MachineName, CLASS_ReportmanXAServer) as IReportmanXAServer;
 end;
 
+procedure TPreviewControl.InitControlData;
+const
+  CEventDispIDs: array [0..9] of DWORD = (
+    $00000001, $00000002, $00000003, $00000005, $00000006, $00000007,
+    $0000000B, $00000010, $00000004, $00000008);
+  CTFontIDs: array [0..0] of DWORD = (
+    $FFFFFE00);
+  CControlData: TControlData2 = (
+    ClassID: '{45978803-4B15-4E0E-98CE-AED9B1E1B701}';
+    EventIID: '{7364E2EA-8EEC-4673-9059-3B078C388717}';
+    EventCount: 10;
+    EventDispIDs: @CEventDispIDs;
+    LicenseKey: nil (*HR:$00000000*);
+    Flags: $0000001D;
+    Version: 401;
+    FontCount: 1;
+    FontIDs: @CTFontIDs);
+begin
+  ControlData := @CControlData;
+  TControlData2(CControlData).FirstEventOfs := Cardinal(@@FOnActivate) - Cardinal(Self);
+end;
+
+procedure TPreviewControl.CreateControl;
+
+  procedure DoCreate;
+  begin
+    FIntf := IUnknown(OleObject) as IPreviewControl;
+  end;
+
+begin
+  if FIntf = nil then DoCreate;
+end;
+
+function TPreviewControl.GetControlInterface: IPreviewControl;
+begin
+  CreateControl;
+  Result := FIntf;
+end;
+
+procedure TPreviewControl.SetReport(const Report: IReportReport);
+begin
+  DefaultInterface.SetReport(Report);
+end;
+
+procedure TPreviewControl.FirstPage;
+begin
+  DefaultInterface.FirstPage;
+end;
+
+procedure TPreviewControl.PriorPage;
+begin
+  DefaultInterface.PriorPage;
+end;
+
+procedure TPreviewControl.NextPage;
+begin
+  DefaultInterface.NextPage;
+end;
+
+procedure TPreviewControl.LastPage;
+begin
+  DefaultInterface.LastPage;
+end;
+
+procedure TPreviewControl.RefreshMetafile;
+begin
+  DefaultInterface.RefreshMetafile;
+end;
+
+procedure TPreviewControl.DoScroll(vertical: WordBool; increment: Integer);
+begin
+  DefaultInterface.DoScroll(vertical, increment);
+end;
+
+procedure TPreviewControl.SaveToFile(const filename: WideString; format: Integer; 
+                                     const textdriver: WideString; horzres: Integer; 
+                                     vertres: Integer; mono: WordBool);
+begin
+  DefaultInterface.SaveToFile(filename, format, textdriver, horzres, vertres, mono);
+end;
+
 procedure Register;
 begin
-  RegisterComponents(dtlOcxPage, [TReportManX]);
+  RegisterComponents(dtlOcxPage, [TReportManX, TPreviewControl]);
 end;
 
 end.

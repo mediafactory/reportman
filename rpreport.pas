@@ -947,6 +947,7 @@ begin
  FDriver:=Driver;
  FPendingSections.Clear;
  errorprocessing:=false;
+ AbortingThread:=false;
  if Not Assigned(FDriver) then
   Raise Exception.Create(SRpNoDriverPassedToPrint);
  Driver.SelectPrinter(PrinterSelect);

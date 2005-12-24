@@ -1,12 +1,1 @@
-Línea 13: la clase Reportman.ReportManX del control rp no era una clase de control cargada.
-Línea 19: el nombre de la propiedad filename de rp no es válido.
-Línea 20: el nombre de la propiedad Preview de rp no es válido.
-Línea 21: el nombre de la propiedad ShowProgress de rp no es válido.
-Línea 22: el nombre de la propiedad ShowPrintDialog de rp no es válido.
-Línea 23: el nombre de la propiedad Title de rp no es válido.
-Línea 24: el nombre de la propiedad Language de rp no es válido.
-Línea 25: el nombre de la propiedad DoubleBuffered de rp no es válido.
-Línea 27: el nombre de la propiedad Object.Visible de rp no es válido.
-Línea 28: el nombre de la propiedad Cursor de rp no es válido.
-Línea 29: el nombre de la propiedad HelpType de rp no es válido.
-Línea 30: el nombre de la propiedad HelpKeyword de rp no es válido.
+Línea 13: no se puede cargar el control rx1.

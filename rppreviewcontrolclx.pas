@@ -16,14 +16,14 @@
 {                                                       }
 {*******************************************************}
 
-unit rppreviewcontrol;
+unit rppreviewcontrolclx;
 
 interface
 
-uses Classes,Graphics,Controls,Forms,rppreviewmeta,rpbasereport,rpgdidriver;
+uses Classes,QGraphics,QControls,QForms,rppreviewmetaclx,rpbasereport,rpqtdriver;
 
 type
- TRpPreviewControl=class(TRpPreviewMeta)
+ TRpPreviewControlCLX=class(TRpPreviewMetaCLX)
   private
    FReport:TRpBasereport;
    procedure SetReport(Avalue:TRpBaseReport);
@@ -38,13 +38,13 @@ type
 
 implementation
 
-constructor TRpPreviewControl.Create(AOwner:TComponent);
+constructor TRpPreviewControlCLX.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
 end;
 
-destructor TRpPreviewControl.Destroy;
+destructor TRpPreviewControlCLX.Destroy;
 begin
  Metafile:=nil;
  if Assigned(FReport) then
@@ -52,7 +52,7 @@ begin
  inherited Destroy;
 end;
 
-procedure TRpPreviewControl.SetReport(Avalue:TRpBaseReport);
+procedure TRpPreviewControlCLX.SetReport(Avalue:TRpBaseReport);
 begin
  if Assigned(FReport) then
   Report.EndPrint;
@@ -64,13 +64,13 @@ begin
  end;
 end;
 
-procedure TRpPreviewControl.RefreshMetafile;
+procedure TRpPreviewControlCLX.RefreshMetafile;
 begin
  Report:=FReport;
  inherited RefreshMetafile;
 end;
 
-procedure TRpPreviewControl.Notification(AComponent:TComponent;Operation:TOperation);
+procedure TRpPreviewControlCLX.Notification(AComponent:TComponent;Operation:TOperation);
 begin
  inherited Notification(AComponent,Operation);
  if assigned(Report) then

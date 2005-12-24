@@ -1,11 +1,8 @@
 object FRpMainMetaVCL: TFRpMainMetaVCL
   Left = 166
   Top = 124
-  Width = 627
-  Height = 458
-  HorzScrollBar.Range = 561
-  VertScrollBar.Range = 338
-  AutoScroll = False
+  Width = 655
+  Height = 449
   Caption = 'Metafile report preview'
   Color = clBtnFace
   ParentFont = True

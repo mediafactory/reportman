@@ -4,27 +4,24 @@ object FRpPreview: TFRpPreview
   ActiveControl = EPageNum
   AutoScroll = False
   Caption = 'Report Print Preview'
-  ClientHeight = 467
-  ClientWidth = 648
+  ClientHeight = 458
+  ClientWidth = 649
   Color = clBackground
   KeyPreview = True
   Position = poScreenCenter
   Scaled = False
   ShowHint = True
-  OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
   OnKeyDown = FormKeyDown
   OnMouseWheel = FormMouseWheel
   OnMouseWheelDown = FormMouseWheelDown
   OnMouseWheelUp = FormMouseWheelUp
-  OnResize = FormResize
   PixelsPerInch = 96
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 648
+    Width = 649
     Height = 30
     AutoSize = True
     ButtonHeight = 26
@@ -150,6 +147,7 @@ object FRpPreview: TFRpPreview
       Height = 26
       Action = AScaleFull
       Caption = 'Scale to full page'
+      PopupMenu = MEntireMenu
     end
     object ToolButton5: TToolButton
       HelpType = htContext
@@ -218,32 +216,6 @@ object FRpPreview: TFRpPreview
       Style = tbsSeparator
       Caption = 'ToolButton18'
       ImageIndex = 7
-    end
-  end
-  object ImageContainer: TScrollBox
-    Left = 0
-    Top = 30
-    Width = 648
-    Height = 437
-    VertScrollBar.Increment = 60
-    VertScrollBar.Range = 81
-    HorzScrollBar.Increment = 60
-    HorzScrollBar.Range = 89
-    Align = alClient
-    BorderStyle = bsNone
-    Color = clDisabledForeground
-    ParentColor = False
-    TabOrder = 1
-    OnMouseWheel = ImageContainerMouseWheel
-    OnMouseWheelDown = FormMouseWheelDown
-    OnMouseWheelUp = FormMouseWheelUp
-    object AImage: TImage
-      Left = 0
-      Top = 0
-      Width = 89
-      Height = 81
-      Stretch = True
-      OnMouseDown = AImageMouseDown
     end
   end
   object ImageList1: TImageList
@@ -797,14 +769,14 @@ object FRpPreview: TFRpPreview
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF424DCE030000
       000000003E000000280000004C0000004C000000010001000000000090030000
-      120B0000120B00000200000002000000FFFFFF0000000000000000000000007F
-      FFFFFFFF000000000000007FFFFFFFFF00030FFC001FFE7FFFFFFFFF00078FFC
-      00135E7FFFFFFFFF000F8D5C0016EE7FFFFFFFFF001F0AAFF013D67FFFFFFFFF
-      03FE095FF011AA7FFFFFFFFF0FBC0AAD703F567FFFFFFFFF1FDC085FB1D6BA7F
-      FFFFFFFF1FE808AD71BFF67FFFFFFFFF3FFC081EF1D56A7FFFFFFFFF3FFC082D
-      F1AFF27FFFFFFFFF37FC080FF1D5627FFFFFFFFF37FC0FFD61AFDE7FFFFFFFFF
-      13F80080C1D5927FFFFFFFFF18F8004081BF147FFFFFFFFF0FF000210010187F
-      FFFFFFFF03C0001E001FF07FFFFFFFFF000000000000007FFFFFFFFF00000000
+      120B0000120B00000200000002000000FFFFFF00000000000000000000000000
+      000FFFFF0000000000000078001FFFFF00030FFC001FFE48002FFFFF00078FFC
+      00135E0807DFFFFF000F8D5C0016EE18187FFFFF001F0AAFF013D608343FFFFF
+      03FE095FF011AA78231FFFFF0FBC0AAD703F5648420FFFFF1FDC085FB1D6BA18
+      5BCFFFFF1FE808AD71BFF630452FFFFF3FFC081EF1D56A20430FFFFF3FFC082D
+      F1AFF240211FFFFF37FC080FF1D56200303FFFFF37FC0FFD61AFDE00196FFFFF
+      13F80080C1D59200078FFFFF18F8004081BF1400000FFFFF0FF0002100101800
+      000FFFFF03C0001E001FF0303FFFFFFF0000000000000058292FFFFF00000000
       00000000000FFFFF1FFF0FFFF0FFFF00000FFFFF17FF0AFFD0800100018FFFFF
       10030A00D09FF90003CFFFFF10030A00D097F90007CFFFFF10030A00D0901900
       0F8FFFFF10030A00D0901901FF0FFFFF10030A00D0901907DE0FFFFF10030A00
@@ -956,5 +928,94 @@ object FRpPreview: TFRpPreview
     Width = 0
     Left = 240
     Top = 84
+  end
+  object MEntireMenu: TPopupMenu
+    OnPopup = MEntireMenuPopup
+    Left = 244
+    Top = 236
+    object MEntire1: TMenuItem
+      Tag = 1
+      Caption = '1'
+      OnClick = MEntire1Click
+    end
+    object MEntire2: TMenuItem
+      Tag = 2
+      Caption = '2'
+      OnClick = MEntire1Click
+    end
+    object MEntire3: TMenuItem
+      Tag = 3
+      Caption = '3'
+      OnClick = MEntire1Click
+    end
+    object MEntire4: TMenuItem
+      Tag = 4
+      Caption = '4'
+      OnClick = MEntire1Click
+    end
+    object MEntire6: TMenuItem
+      Tag = 6
+      Caption = '6'
+      OnClick = MEntire1Click
+    end
+    object MEntire8: TMenuItem
+      Tag = 8
+      Caption = '8'
+      OnClick = MEntire1Click
+    end
+    object MEntire9: TMenuItem
+      Tag = 9
+      Caption = '9'
+      OnClick = MEntire1Click
+    end
+    object MEntire10: TMenuItem
+      Tag = 10
+      Caption = '10'
+      OnClick = MEntire1Click
+    end
+    object MEntire12: TMenuItem
+      Tag = 12
+      Caption = '12'
+      OnClick = MEntire1Click
+    end
+    object MEntire15: TMenuItem
+      Tag = 15
+      Caption = '15'
+      OnClick = MEntire1Click
+    end
+    object MEntire16: TMenuItem
+      Tag = 16
+      Caption = '16'
+      OnClick = MEntire1Click
+    end
+    object MEntire18: TMenuItem
+      Tag = 18
+      Caption = '18'
+      OnClick = MEntire1Click
+    end
+    object MEntire20: TMenuItem
+      Tag = 20
+      Caption = '20'
+      OnClick = MEntire1Click
+    end
+    object MEntire24: TMenuItem
+      Tag = 26
+      Caption = '24'
+      OnClick = MEntire1Click
+    end
+    object MEntire30: TMenuItem
+      Tag = 30
+      Caption = '30'
+      OnClick = MEntire1Click
+    end
+    object MEntire48: TMenuItem
+      Tag = 48
+      Caption = '48'
+      OnClick = MEntire1Click
+    end
+    object MLeftRight: TMenuItem
+      Caption = '->'
+      OnClick = MLeftRightClick
+    end
   end
 end

@@ -16,7 +16,6 @@
 {                                                       }
 {*******************************************************}
 
-// Implement page size and showprint dialog and font style
 
 unit rpvpreview;
 
@@ -32,19 +31,14 @@ uses
   Types,
 {$ENDIF}
   Classes, Graphics, Controls, Forms, Dialogs,
-{$IFNDEF BUILDER4}
-  rppagesetupvcl,
-{$ENDIF}
-  StdCtrls,rpbasereport,rpreport,rpmetafile, ComCtrls,rphtmldriver,
+  StdCtrls,rpmetafile, ComCtrls,rphtmldriver,rppreviewcontrol,
   rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,rptextdriver,rpsvgdriver,
-  rpcsvdriver,rpgraphutilsvcl,
+  rpcsvdriver,rpgraphutilsvcl,rppreviewmeta,rpbasereport,rppagesetupvcl,
   ActnList, ImgList,Printers,rpmdconsts, ToolWin, Mask, rpmaskedit;
 
 type
   TFRpVPreview = class(TForm)
     BToolBar: TToolBar;
-    ImageContainer: TScrollBox;
-    AImage: TImage;
     ImageList1: TImageList;
     ActionList1: TActionList;
     AFirst: TAction;
@@ -63,7 +57,6 @@ type
     ToolButton7: TToolButton;
     ACancel: TAction;
     BCancel: TButton;
-    PBar: TProgressBar;
     AExit: TAction;
     BExit: TToolButton;
     ToolButton8: TToolButton;
@@ -73,7 +66,6 @@ type
     AScaleFull: TAction;
     ToolButton11: TToolButton;
     ToolButton12: TToolButton;
-    ToolButton13: TToolButton;
     ToolButton14: TToolButton;
     AScaleLess: TAction;
     AScaleMore: TAction;
@@ -86,13 +78,30 @@ type
     ToolButton16: TToolButton;
     ToolButton17: TToolButton;
     ToolButton18: TToolButton;
+    ToolButton13: TToolButton;
+    MEntireMenu: TPopupMenu;
+    MEntire1: TMenuItem;
+    MEntire2: TMenuItem;
+    MEntire3: TMenuItem;
+    MEntire4: TMenuItem;
+    MEntire6: TMenuItem;
+    MEntire8: TMenuItem;
+    MEntire9: TMenuItem;
+    MEntire10: TMenuItem;
+    MEntire12: TMenuItem;
+    MEntire15: TMenuItem;
+    MEntire18: TMenuItem;
+    MEntire16: TMenuItem;
+    MEntire20: TMenuItem;
+    MEntire24: TMenuItem;
+    MEntire30: TMenuItem;
+    MEntire48: TMenuItem;
+    MLeftRight: TMenuItem;
     procedure FormCreate(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
     procedure ANextExecute(Sender: TObject);
     procedure APreviousExecute(Sender: TObject);
     procedure ALastExecute(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure APrintExecute(Sender: TObject);
     procedure ASaveExecute(Sender: TObject);
     procedure BCancelClick(Sender: TObject);
@@ -102,14 +111,10 @@ type
       Shift: TShiftState);
     procedure AExitExecute(Sender: TObject);
     procedure AParamsExecute(Sender: TObject);
-    procedure FormResize(Sender: TObject);
     procedure AScale100Execute(Sender: TObject);
     procedure AScaleWideExecute(Sender: TObject);
-    procedure AScaleFullExecute(Sender: TObject);
     procedure AScaleLessExecute(Sender: TObject);
     procedure AScaleMoreExecute(Sender: TObject);
-    procedure AImageMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure FormMouseWheelDown(Sender: TObject; Shift: TShiftState;
       MousePos: TPoint; var Handled: Boolean);
     procedure FormMouseWheelUp(Sender: TObject; Shift: TShiftState;
@@ -118,30 +123,30 @@ type
       Shift: TShiftState);
     procedure AMailToExecute(Sender: TObject);
     procedure APageSetupExecute(Sender: TObject);
+    procedure MEntire1Click(Sender: TObject);
+    procedure AScaleFullExecute(Sender: TObject);
+    procedure MEntirePagePopup(Sender: TObject);
+    procedure MLeftRightClick(Sender: TObject);
+    procedure MEntireMenuPopup(Sender: TObject);
   private
     { Private declarations }
-    cancelled:boolean;
     printed:boolean;
-    enableparams:boolean;
-    fmodified:Boolean;
+    fpreviewcontrol:TRpPreviewMeta;
+    cancelled:boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
-    procedure RepProgress(Sender:TRpBaseReport;var docancel:boolean);
+    procedure RepProgress(Sender:TObject;records,pagecount:integer;var docancel:boolean);
     procedure DisableControls(enablebar:boolean);
     procedure EnableControls;
-    procedure PlaceImagePosition;
+    procedure SetPreviewControl(avalue:TRpPreviewMeta);
+    procedure OnPageDrawn(prm:TRpPreviewMeta);
   public
     { Public declarations }
-    pagenum:integer;
-    report:TRpReport;
-    gdidriver:TRpgdidriver;
-    agdidriver:IRpPrintDriver;
-    bitmap:TBitmap;
-    procedure PrintPage;
-    property modified:Boolean read fmodified;
+    property PreviewControl:TRpPreviewmeta read fpreviewcontrol write SetPreviewControl;
   end;
 
 
-function ShowPreview(report:TRpReport;caption:string;var modified:boolean):boolean;
+function ShowPreview(previewcontrol:TRpPreviewMeta;
+ caption:string):boolean;
 
 implementation
 
@@ -149,163 +154,56 @@ uses rprfvparams, rppdfdriver;
 
 {$R *.dfm}
 
-function ShowPreview(report:TRpReport;caption:string;var modified:boolean):boolean;
+procedure TFRpVPreview.SetPreviewControl(avalue:TRpPreviewMeta);
+begin
+ fpreviewcontrol:=avalue;
+ fpreviewcontrol.Width:=0;
+ fpreviewcontrol.Height:=0;
+ Fpreviewcontrol.Align:=alClient;
+end;
+
+function ShowPreview(previewcontrol:TRpPreviewMeta;
+ caption:string):boolean;
 var
  dia:TFRpVPreview;
- oldprogres:TRpProgressEvent;
- hasparams:boolean;
- i:integer;
 begin
- modified:=false;
  dia:=TFRpVPreview.Create(Application);
  try
+  previewcontrol.OnWorkProgress:=dia.RepProgress;
+  previewcontrol.OnPageDrawn:=dia.OnPageDrawn;
   dia.caption:=caption;
-  oldprogres:=report.OnProgress;
-  try
-   dia.report:=report;
-   hasparams:=false;
-   for i:=0 to report.params.count-1 do
-   begin
-    if report.params.items[i].Visible then
-    begin
-     hasparams:=true;
-     break;
-    end;
-   end;
-   dia.AParams.Enabled:=hasparams;
-   dia.enableparams:=hasparams;
-   dia.AScale100.Checked:=False;
-   dia.AScaleFull.Checked:=False;
-   dia.AScaleWide.Checked:=False;
-   case report.PreviewStyle of
-    spNormal:
-     begin
-      dia.AScale100.Checked:=True;
-      dia.gdidriver.PreviewStyle:=spNormal;
-     end;
-    spEntirePage:
-     begin
-      dia.AScaleFull.Checked:=True;
-      dia.gdidriver.PreviewStyle:=spEntirePage;
-     end
-    else
-      dia.AScaleWide.Checked:=True;
-   end;
-   if report.PreviewWindow=spwMaximized then
+  dia.PreviewControl:=PreviewControl;
+  dia.AParams.Enabled:=previewcontrol is TRpPreviewControl;
+  dia.APageSetup.Enabled:=previewcontrol is TRpPreviewControl;
+  if previewcontrol.metafile.PreviewWindow=spwMaximized then
     dia.WindowState:=wsMaximized;
-   report.OnProgress:=dia.RepProgress;
-   Application.OnIdle:=dia.AppIdle;
-   dia.ShowModal;
-   modified:=dia.Modified;
-   Result:=dia.printed;
-  finally
-   report.OnProgress:=oldprogres;
-  end;
+  previewcontrol.OnWorkProgress:=dia.RepProgress;
+  Application.OnIdle:=dia.AppIdle;
+  dia.ShowModal;
+  Result:=dia.printed;
  finally
+  previewcontrol.OnWorkProgress:=nil;
+  previewcontrol.OnPageDrawn:=nil;
+  previewcontrol.Parent:=nil;
   dia.Free;
  end;
 end;
 
-procedure TFRpVPreview.PrintPage;
-var
- oldwidth,oldheight:integer;
-begin
- oldwidth:=AImage.Width;
- oldheight:=AImage.Height;
- try
-  if report.Metafile.CurrentPageCount>=pagenum then
-  begin
-  end
-  else
-  begin
-   if Not report.LastPage then
-   begin
-    cancelled:=false;
-    DisableControls(false);
-    try
-     report.RequestPage(pagenum-1);
-    finally
-     EnableControls;
-    end;
-   end;
-   if report.Metafile.CurrentPageCount<pagenum then
-    pagenum:=report.Metafile.CurrentPageCount;
-  end;
-  gdidriver.drawclippingregion:=report.PreviewMargins;
-  report.metafile.DrawPage(gdidriver,pagenum-1);
-  if Assigned(gdidriver.bitmap) then
-  begin
-   AImage.Width:=Round(gdidriver.bitmap.Width);
-   AImage.Height:=Round(gdidriver.bitmap.Height);
-   AImage.Picture.Bitmap.Assign(gdidriver.bitmap);
-   AImage.Invalidate;
-  end;
-  EPageNum.Text:=IntToStr(PageNum);
-  if ((oldwidth<>AImage.Width) or (oldheight<>AImage.Height)) then
-   PlaceImagePosition;
- except
-  EPageNum.Text:='0';
-  raise;
- end;
-end;
 
 procedure TFRpVPreview.AppIdle(Sender:TObject;var done:boolean);
-var
- rPageSizeQt:TPageSizeQt;
- drivername:string;
- istextonly:boolean;
 begin
  Application.OnIdle:=nil;
  done:=false;
  try
-  DisableControls(false);
-  report.OnProgress:=RepProgress;
-  drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
-  istextonly:=Length(drivername)>0;
-  if istextonly then
+  if Assigned(FPreviewControl) then
   begin
-   gdidriver.FontDriver:=TRpTextDriver.Create;
-  end;
-  if report.TwoPass then
-  begin
-   if Not CalcReportWidthProgress(report) then
-    Abort;
-   // Sets page size
-   rpagesizeQt.papersource:=report.metafile.PaperSource;
-   rpagesizeQt.duplex:=report.metafile.duplex;
-   if report.Metafile.PageSize<0 then
-   begin
-    rpagesizeqt.Custom:=True;
-    rPageSizeQt.CustomWidth:=report.metafile.CustomX;
-    rPageSizeQt.CustomHeight:=report.metafile.CustomY;
-   end
-   else
-   begin
-    rpagesizeqt.Indexqt:=report.metafile.PageSize;
-    rpagesizeqt.Custom:=False;
-   end;
+   DisableControls(true);
    try
-    gdidriver.SetPagesize(rpagesizeqt);
-   except
-    On E:Exception do
-    begin
-     rpgraphutilsvcl.RpMessageBox(E.Message);
-    end;
+    FPreviewControl.Parent:=self;
+   finally
+    EnableControls;
    end;
-  end
-  else
-  begin
-   report.BeginPrint(gdidriver);
   end;
-  if report.PrinterFonts=rppfontsalways then
-   gdidriver.devicefonts:=true
-  else
-   gdidriver.devicefonts:=false;
-  pagenum:=1;
-  gdidriver.NewDocument(report.Metafile,1,false);
-  PrintPage;
-  printed:=true;
-  EnableControls;
  except
   on E:Exception do
   begin
@@ -337,18 +235,6 @@ begin
  ANext.ShortCut:=ShortCut(VK_NEXT, []);
  AFirst.ShortCut:=ShortCut(VK_HOME, []);
  ALast.ShortCut:=ShortCut(VK_END, []);
- gdidriver:=TRpgdidriver.Create;
- agdidriver:=gdidriver;
- bitmap:=TBitmap.Create;
- {$IFNDEF DOTNETDBUGS}
-   bitmap.PixelFormat:=pf32bit;
-   bitmap.HandleType:=bmDIB;
- {$ENDIF}
- {$IFDEF DOTNETDBUGS}
-//   bitmap.PixelFormat:=pf24bit;
-//   bitmap.HandleType:=bmDIB;
- {$ENDIF}
- AImage.Picture.Bitmap:=bitmap;
 
  Caption:=TranslateStr(215,Caption);
  SaveDialog1.Title:=TranslateStr(216,SaveDialog1.Title);
@@ -392,44 +278,43 @@ begin
  SaveDialog1.FilterIndex:=2;
 end;
 
-procedure TFRpVPreview.FormDestroy(Sender: TObject);
-begin
- report.EndPrint;
- bitmap.free;
- gdidriver.free;
-end;
-
 procedure TFRpVPreview.AFirstExecute(Sender: TObject);
 begin
- pagenum:=1;
- PrintPage;
+ PreviewControl.FirstPage;
 end;
 
 procedure TFRpVPreview.ANextExecute(Sender: TObject);
+var
+ disable:boolean;
 begin
- inc(pagenum);
- PrintPage;
+ disable:=true;
+ if PreviewControl.Metafile.Finished then
+  disable:=false;
+ if disable then
+  DisableControls(true);
+ try
+  PreviewControl.NextPage;
+ finally
+  if disable then
+   EnableControls;
+ end;
 end;
 
 procedure TFRpVPreview.APreviousExecute(Sender: TObject);
 begin
- dec(pagenum);
- if pagenum<1 then
-  pagenum:=1;
- PrintPage;
+ PreviewControl.PriorPage;
 end;
 
 procedure TFRpVPreview.ALastExecute(Sender: TObject);
 begin
- pagenum:=MaxInt;
- PrintPage;
+ DisableControls(true);
+ try
+  PreviewControl.LastPage;
+ finally
+  EnableControls;
+ end;
 end;
 
-
-procedure TFRpVPreview.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
- gdidriver:=nil;
-end;
 
 procedure TFRpVPreview.APrintExecute(Sender: TObject);
 var
@@ -438,22 +323,19 @@ var
  frompage,topage,copies:integer;
 begin
  allpages:=true;
- collate:=report.CollateCopies;
+ collate:=PreviewControl.metafile.CollateCopies;
  frompage:=1; topage:=MAX_PAGECOUNT;
- copies:=report.Copies;
+ copies:=PreviewControl.metafile.Copies;
  if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
   exit;
  if not allpages then
  begin
-  pagenum:=topage+1;
-  PrintPage;
+  PreviewControl.Page:=topage+1;
  end
  else
   ALastExecute(Self);
- PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,
- collate,false,report.Metafile.PrinterSelect);
-  // report.EndPrint;
-// PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
+ PrintMetafile(PreviewControl.Metafile,Caption,true,allpages,frompage,topage,copies,
+ collate,false,PreviewControl.Metafile.PrinterSelect);
  AppIdle(Self,adone);
 end;
 
@@ -473,21 +355,18 @@ begin
      1:
      begin
       ALastExecute(Self);
-      report.Metafile.SaveToFile(SaveDialog1.Filename)
+      PreviewControl.Metafile.SaveToFile(SaveDialog1.Filename)
      end;
      2,3:
       begin
        ALastExecute(Self);
-       SaveMetafileToPDF(report.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
-//    report.endprint
-//      ExportReportToPDF(report,SaveDialog1.Filename,true,true,1,MAX_PAGECOUNT,
-//       true,SaveDialog1.Filename,SaveDialog1.FilterIndex=2);
+       SaveMetafileToPDF(PreviewControl.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
        AppIdle(Self,adone);
       end;
      4,5:
       begin
        ALastExecute(Self);
-       ExportMetafileToExcel(report.Metafile,SaveDialog1.FileName,
+       ExportMetafileToExcel(PreviewControl.Metafile,SaveDialog1.FileName,
         true,false,true,1,9999,SaveDialog1.FilterIndex=5);
        AppIdle(Self,adone);
       end;
@@ -499,7 +378,7 @@ begin
        if AskBitmapProps(horzres,vertres,mono) then
        begin
         ALastExecute(Self);
-        abitmap:=MetafileToBitmap(report.Metafile,true,mono,horzres,vertres);
+        abitmap:=MetafileToBitmap(PreviewControl.Metafile,true,mono,horzres,vertres);
         try
          if assigned(abitmap) then
           abitmap.SaveToFile(SaveDialog1.FileName);
@@ -511,47 +390,47 @@ begin
      8:
       begin
        ALastExecute(Self);
-       ExportMetafileToHtml(report.Metafile,Caption,SaveDialog1.FileName,
+       ExportMetafileToHtml(PreviewControl.Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
        AppIdle(Self,adone);
       end;
      9:
       begin
        ALastExecute(Self);
-       ExportMetafileToSVG(report.Metafile,Caption,SaveDialog1.FileName,
+       ExportMetafileToSVG(PreviewControl.Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
        AppIdle(Self,adone);
       end;
      10:
       begin
        ALastExecute(Self);
-       ExportMetafileToCSV(report.metafile,SaveDialog1.Filename,true,true,
+       ExportMetafileToCSV(PreviewControl.metafile,SaveDialog1.Filename,true,true,
         1,9999,',');
        AppIdle(Self,adone);
       end;
      11:
       begin
        ALastExecute(Self);
-       ExportMetafileToTextPro(report.metafile,SaveDialog1.Filename,true,true,
+       ExportMetafileToTextPro(PreviewControl.metafile,SaveDialog1.Filename,true,true,
         1,9999);
        AppIdle(Self,adone);
       end;
      12:
      begin
       ALastExecute(Self);
-      report.Metafile.SaveToFile(SaveDialog1.Filename,false);
+      PreviewControl.Metafile.SaveToFile(SaveDialog1.Filename,false);
      end;
 {$IFNDEF DOTNETD}
      13:
       begin
        ALastExecute(Self);
-       MetafileToExe(report.metafile,SaveDialog1.Filename);
+       MetafileToExe(PreviewControl.metafile,SaveDialog1.Filename);
       end;
 {$ENDIF}
      else
      begin
       ALastExecute(Self);
-      SaveMetafileToTextFile(report.Metafile,SaveDialog1.FileName);
+      SaveMetafileToTextFile(PreviewControl.Metafile,SaveDialog1.FileName);
       AppIdle(Self,adone);
      end;
     end;
@@ -561,18 +440,18 @@ begin
  end;
 end;
 
-procedure TFRpVPreview.RepProgress(Sender:TRpBaseReport;var docancel:boolean);
+procedure TFRpVPreview.RepProgress(Sender:TObject;records,pagecount:integer;var docancel:boolean);
 begin
- BCancel.Caption:=IntToStr(Sender.CurrentSubReportIndex)+' '+SRpPage+':'+
-  FormatFloat('####,####',report.PageNum)+':'
-  +FormatFloat('####,####',report.RecordCount)+'-'+SRpCancel;
+ BCancel.Caption:=SRpPage+':'+
+  FormatFloat('####,####',pagecount)+':'
+  +FormatFloat('####,####',records)+'-'+SRpCancel;
 {$IFDEF MSWINDOWS}
  if ((GetAsyncKeyState(VK_ESCAPE) AND $8000)<>0) then
-  cancelled:=true;
+  docancel:=true;
 {$ENDIF}
- Application.ProcessMessages;
  if cancelled then
   docancel:=true;
+ Application.ProcessMessages;
 end;
 
 procedure TFRpVPreview.BCancelClick(Sender: TObject);
@@ -600,34 +479,23 @@ var
  increment:integer;
 begin
  if (ssShift in Shift) then
-  increment:=1
+  increment:=REP_C_WHEELINC
  else
-  increment:=ImageContainer.VertScrollBar.Increment;
+  increment:=REP_C_WHEELINC*REP_C_WHEELSCALE;
  if Key=VK_DOWN then
- begin
-  if ImageContainer.VertScrollBar.Position+increment>ImageContainer.VertScrollBar.Range-ImageContainer.Height then
-   ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Range-ImageContainer.Height+increment
-  else
-   ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position+Increment;
- end;
+  fpreviewcontrol.Scroll(true,increment);
  if Key=VK_UP then
- begin
-  ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position-Increment;
- end;
+  fpreviewcontrol.Scroll(true,-increment);
  if Key=VK_RIGHT then
- begin
-  if ImageContainer.HorzScrollBar.Position+increment>ImageContainer.HorzScrollBar.Range-ImageContainer.Width then
-   ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Range-ImageContainer.Width+increment
-  else
-   ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position+Increment;
- end;
+  fpreviewcontrol.Scroll(false,increment);
  if Key=VK_LEFT then
- begin
-  ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position-Increment;
- end;
+  fpreviewcontrol.Scroll(false,-increment);
  if Key=VK_SPACE then
  begin
-  AImageMouseDown(Self,mbLeft,[],0,0);
+  if fpreviewcontrol.AutoScale=AScaleEntirePage then
+   fpreviewcontrol.AutoScale:=AScaleReal
+  else
+   fpreviewcontrol.AutoScale:=AScaleEntirePage;
   Key:=0;
  end;
 end;
@@ -651,8 +519,6 @@ begin
  AMailTo.Enabled:=false;
  APageSetup.Enabled:=false;
  AParams.Enabled:=false;
- PBar.Position:=0;
- PBar.Visible:=enablebar;
  AExit.Enabled:=false;
 end;
 
@@ -673,13 +539,9 @@ begin
  ASave.Enabled:=true;
  AMailTo.Enabled:=true;
  APageSetup.Enabled:=true;
- AParams.Enabled:=enableparams;
- PBar.Visible:=false;
+ AParams.Enabled:=true;
  AExit.Enabled:=true;
 end;
-
-
-
 
 procedure TFRpVPreview.AExitExecute(Sender: TObject);
 begin
@@ -687,144 +549,61 @@ begin
 end;
 
 procedure TFRpVPreview.AParamsExecute(Sender: TObject);
-var
- adone:boolean;
 begin
- if ShowUserParams(report.params) then
+ if ShowUserParams(TRpPreviewControl(fpreviewcontrol).Report.Params) then
  begin
-  // Reexecutes the report
-  AppIdle(Self,adone);
- end;
-end;
-
-procedure TFRpVPreview.PlaceImagePosition;
-var
- AWidth:integeR;
- Aheight:integer;
-begin
- AWidth:=ImageContainer.Width-GetSystemMetrics(SM_CYHSCROLL);
- AHeight:=ImageContainer.Height-GetSystemMetrics(SM_CXHSCROLL);
-
- if AImage.Width>AWidth then
-  AImage.Left:=-ImageContainer.HorzScrollBar.Position
- else
-  AImage.Left:=((AWidth-AImage.Width) div 2)-ImageContainer.HorzScrollBar.Position;
- if AImage.Height>AHeight then
-  AImage.Top:=-ImageContainer.VertScrollBar.Position
- else
-  AImage.Top:=((AHeight-AImage.Height) div 2)-ImageContainer.VertScrollBar.Position;
-end;
-
-
-procedure TFRpVPreview.FormResize(Sender: TObject);
-begin
- if BCancel.Visible then
-  exit;
- // Sets the driver widths and redraw accordingly
- AScaleFull.Checked:=false;
- AScaleWide.Checked:=false;
- AScale100.Checked:=false;
- if Assigned(gdidriver) then
- begin
-  gdidriver.clientwidth:=ImageContainer.Width;
-  gdidriver.clientHeight:=ImageContainer.Height;
-  case gdidriver.PreviewStyle of
-   spWide:
-    AScaleWide.Checked:=True;
-   spEntirePage:
-    AScaleFull.Checked:=True;
-   spNormal:
-    AScale100.Checked:=True;
+  DisableControls(true);
+  try
+   fpreviewcontrol.RefreshMetafile;
+  finally
+   EnableControls;
   end;
-  if pagenum>=1 then
-   PrintPage;
  end;
 end;
 
 procedure TFRpVPreview.AScale100Execute(Sender: TObject);
 begin
- gdidriver.PreviewStyle:=spNormal;
- FormResize(Self);
+ PreviewControl.AutoScale:=AScaleReal;
 end;
 
 procedure TFRpVPreview.AScaleWideExecute(Sender: TObject);
 begin
- gdidriver.PreviewStyle:=spWide;
- FormResize(Self);
-end;
-
-procedure TFRpVPreview.AScaleFullExecute(Sender: TObject);
-begin
- gdidriver.PreviewStyle:=spEntirePage;
- FormResize(Self);
+ PreviewControl.AutoScale:=rppreviewmeta.AScaleWide;
 end;
 
 procedure TFRpVPreview.AScaleLessExecute(Sender: TObject);
 begin
- gdidriver.PreviewStyle:=spCustom;
- gdidriver.Scale:=gdidriver.scale-0.10;
- FormResize(Self);
+ PreviewControl.PreviewScale:=PreviewControl.PreviewScale-0.1;
 end;
 
 procedure TFRpVPreview.AScaleMoreExecute(Sender: TObject);
 begin
- gdidriver.PreviewStyle:=spCustom;
- gdidriver.Scale:=gdidriver.scale+0.10;
- FormResize(Self);
+ PreviewControl.PreviewScale:=PreviewControl.PreviewScale+0.1;
 end;
 
-procedure TFRpVPreview.AImageMouseDown(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-var
- relx:Double;
- rely:Double;
- posx,migx:Double;
- posy,migy:Double;
- punt:Tpoint;
-begin
- // When clic in image scale to 100% and scroll to the
- // clicked section
- if gdidriver.PreviewStyle=spEntirePage then
- begin
-  punt.X:=X;
-  punt.y:=Y;
-  relx:=punt.X;
-  rely:=punt.Y;
-  relx:=relx/AImage.Width;
-  rely:=rely/AImage.Height;
-  AScale100.Execute;
-  // looks the limit
-  posx:=ImageContainer.HorzScrollBar.Range*relx;
-  posy:=ImageContainer.VertScrollBar.Range*rely;
-  // To the center
-  Migx:=PosX-(ImageContainer.ClientWidth div 2);
-  Migy:=PosY-(ImageContainer.ClientHeight div 2);
-
-  ImageContainer.HorzScrollBar.Position:=Trunc(migX);
-  ImageContainer.VertScrollBar.Position:=Trunc(MigY);
- end
- else
-  AScaleFull.Execute;
-end;
 
 procedure TFRpVPreview.FormMouseWheelDown(Sender: TObject;
   Shift: TShiftState; MousePos: TPoint; var Handled: Boolean);
+var
+ increment:integer;
 begin
- if (ssCtrl in Shift) then
-  ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position+GetWheelInc(Shift)
- else
-  ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position+GetWheelInc(Shift);
- Handled:=true;
+ increment:=REP_C_WHEELINC;
+ if Not (ssShift in Shift) then
+  increment:=increment*REP_C_WHEELSCALE;
+ fpreviewcontrol.Scroll(not (ssCtrl in Shift),increment);
+ Handled:=false;
 end;
 
 procedure TFRpVPreview.FormMouseWheelUp(Sender: TObject;
   Shift: TShiftState; MousePos: TPoint; var Handled: Boolean);
+var
+ increment:integer;
 begin
- if (ssCtrl in Shift) then
-  ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position-GetWheelInc(Shift)
- else
-  ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position-GetWheelInc(Shift);
- Handled:=true;
+ increment:=REP_C_WHEELINC;
+ if Not (ssShift in Shift) then
+  increment:=increment*REP_C_WHEELSCALE;
+ fpreviewcontrol.Scroll(not (ssCtrl in Shift),-increment);
+ Handled:=false;
 end;
 
 procedure TFRpVPreview.EPageNumKeyDown(Sender: TObject; var Key: Word;
@@ -832,8 +611,7 @@ procedure TFRpVPreview.EPageNumKeyDown(Sender: TObject; var Key: Word;
 begin
  if Key=VK_RETURN then
  begin
-  pagenum:=StrToInt(EPageNum.Text);
-  PrintPage;
+  PreviewControl.Page:=StrToInt(EPageNum.Text)-1;
  end;
 end;
 
@@ -841,19 +619,23 @@ procedure TFRpVPreview.AMailToExecute(Sender: TObject);
 var
  afilename:String;
  destination,subject,body:string;
+ report:TRpBasereport;
 begin
  destination:='';
  body:='';
  subject:='';
- if report.Params.IndexOf('MAIL_DESTINATION')>=0 then
-  destination:=report.Params.ParamByName('MAIL_DESTINATION').AsString;
- if report.Params.IndexOf('MAIL_SUBJECT')>=0 then
-  subject:=report.Params.ParamByName('MAIL_SUBJECT').AsString;
- if report.Params.IndexOf('MAIL_BODY')>=0 then
-  body:=report.Params.ParamByName('MAIL_BODY').AsString;
- ALastExecute(Self);
+ if (fpreviewcontrol is TRpPreviewControl) then
+ begin
+  report:=TRpPreviewControl(fpreviewcontrol).Report;
+  if report.Params.IndexOf('MAIL_DESTINATION')>=0 then
+   destination:=report.Params.ParamByName('MAIL_DESTINATION').AsString;
+  if report.Params.IndexOf('MAIL_SUBJECT')>=0 then
+   subject:=report.Params.ParamByName('MAIL_SUBJECT').AsString;
+  if report.Params.IndexOf('MAIL_BODY')>=0 then
+   body:=report.Params.ParamByName('MAIL_BODY').AsString;
+ end;
  afilename:=RpTempFileName;
- SaveMetafileToPDF(report.Metafile,afilename,true);
+ SaveMetafileToPDF(fpreviewcontrol.Metafile,afilename,true);
  try
   if Length(subject)<1 then
    subject:=ExtractFileName(ChangeFileExt(afilename,'.pdf'));
@@ -864,19 +646,54 @@ begin
 end;
 
 procedure TFRpVPreview.APageSetupExecute(Sender: TObject);
-{$IFNDEF BUILDER4}
-var
- adone:boolean;
-{$ENDIF}
 begin
-{$IFNDEF BUILDER4}
- if ExecutePageSetup(report) then
+ if rppagesetupvcl.ExecutePageSetup(TRpPreviewControl(fpreviewcontrol).Report) then
  begin
-  fModified:=true;
-  // Reexecutes the report
-  AppIdle(Self,adone);
+  DisableControls(true);
+  try
+   fpreviewcontrol.RefreshMetafile;
+  finally
+   EnableControls;
+  end;
  end;
-{$ENDIF}
+end;
+
+procedure TFRpVPreview.OnPageDrawn(prm:TRpPreviewMeta);
+begin
+ EPageNum.Text:=IntToStr(prm.Page+1);
+end;
+
+
+procedure TFRpVPreview.MEntire1Click(Sender: TObject);
+begin
+ // Adjust to entirepage
+ PreviewControl.EntirePageCount:=TMenuItem(Sender).Tag;
+ PreviewControl.AutoScale:=AScaleEntirePage;
+end;
+
+procedure TFRpVPreview.AScaleFullExecute(Sender: TObject);
+begin
+ PreviewControl.AutoScale:=AScaleEntirePage;
+end;
+
+procedure TFRpVPreview.MEntirePagePopup(Sender: TObject);
+begin
+ MleftRight.Checked:=Not PreviewControl.EntireTopDown;
+end;
+
+procedure TFRpVPreview.MLeftRightClick(Sender: TObject);
+begin
+ MleftRight.Checked:=Not MLeftRight.Checked;
+ PreviewControl.EntireTopDown:=Not MLeftRight.Checked;
+end;
+
+
+
+
+
+procedure TFRpVPreview.MEntireMenuPopup(Sender: TObject);
+begin
+ MleftRight.Checked:=Not PreviewControl.EntireTopDown;
 end;
 
 end.

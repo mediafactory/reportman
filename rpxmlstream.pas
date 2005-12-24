@@ -467,7 +467,7 @@ begin
   compb:=TRpBarcode(comp);
   WritePropertyW('EXPRESSION',compb.Expression,Stream);
   WritePropertyI('MODUL',compb.Modul,Stream);
-  WritePropertyD('RATIO',compb.Modul,Stream);
+  WritePropertyD('RATIO',compb.Ratio,Stream);
   WritePropertyI('TYP',Integer(compb.Typ),Stream);
   WritePropertyBool('CHECKSUM',compb.CheckSum,Stream);
   WritePropertyW('DISPLAYFORMAT',compb.DisplayFormat,Stream);

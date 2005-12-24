@@ -819,6 +819,7 @@ var
  ainteger:integer;
  docancel:boolean;
 begin
+ RequestPage(MAX_PAGECOUNT);
  WriteStringToStream(rpSignature,Stream);
  separator:=integer(rpFHeader);
  Stream.Write(separator,sizeof(separator));

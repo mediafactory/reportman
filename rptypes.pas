@@ -2078,6 +2078,12 @@ end {Num2Str};
 //..............................................................................
 begin
 	Result := Num2Str(Trunc(Abs(Amount)), Female);
+	if (copy(Result, 1,1) = 'ð') then begin
+		 Result := 'Ð' + copy(Result, 2, length(Result));
+	end
+	else begin
+		Result := UpperCase(copy(Result,1,1)) + Copy(Result,2, length(Result));
+	end;
 end;
 
 
@@ -4375,7 +4381,7 @@ begin
    amessage.lpRecips:=AllocMem(sizeof(MAPIRecipDesc));
    amessage.lpRecips.lpszName:=Pchar(destination);
    amessage.lpRecips.ulRecipClass:=1;
-   amessage.lpRecips.lpszAddress:=Pchar(destination);
+   amessage.lpRecips.lpszAddress:=Pchar('SMTP:'+destination);
    amessage.lpRecips.ulEIDSize:=0;
    amessage.lpRecips.lpEntryID:=nil;
 {$ENDIF}
@@ -4384,6 +4390,7 @@ begin
    recip:=MapiRecipDesc(Marshal.PtrToStructure(amessage.lpRecips,TypeOf(MAPIRecipDesc)));
    recip.ulReserved:=0;
    recip.ulRecipClass:=1;
+   destination:='SMTP:'+destination;
    recip.lpszName:=destination;
    recip.lpszAddress:=Marshal.StringToHGlobalAnsi(destination);
    recip.ulEIDSize:=0;

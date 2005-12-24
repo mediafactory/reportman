@@ -492,7 +492,12 @@ begin
  if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- Result:=Uppercase(Params[0]);
+{$IFDEF DELPHI5UP}
+ Result:=WideUppercase(Params[0]);
+{$ENDIF}
+{$IFNDEF DELPHI5UP}
+ Result:=AnsiUppercase(Params[0]);
+{$ENDIF}
 end;
 
 {**************************************************************************}
@@ -521,7 +526,12 @@ begin
  if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- Result:=Lowercase(Params[0]);
+{$IFDEF DELPHI5UP}
+  Result:=WideLowercase(Params[0]);
+{$ENDIF}
+{$IFNDEF DELPHI5UP}
+  Result:=AnsiLowercase(Params[0]);
+{$ENDIF}
 end;
 
 { TIdenLowercase }

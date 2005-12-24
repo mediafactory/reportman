@@ -38,14 +38,12 @@ uses
   QStdCtrls,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,rpmdclitree,
   QActnList, QImgList,QPrinters,Qt,rpmdconsts,rptypes, QMenus,
   rpmdfabout,QTypes,QStyle,rpmdshfolder,rpmdprintconfig,rptextdriver,
-  rphtmldriver,rpsvgdriver,rpcsvdriver,
+  rphtmldriver,rpsvgdriver,rpcsvdriver,rppreviewmetaclx,
   rpmdfhelpform, QDialogs,rpprintdia,rppdfdriver, QMask, rpmaskeditclx;
 
 type
   TFRpMeta = class(TFrame)
     BToolBar: TToolBar;
-    ImageContainer: TScrollBox;
-    AImage: TImage;
     ImageList1: TImageList;
     ActionList1: TActionList;
     AFirst: TAction;
@@ -175,6 +173,24 @@ type
     ToolButton16: TToolButton;
     PPBar: TPanel;
     PBar: TProgressBar;
+    MEntireMenu: TPopupMenu;
+    MEntire1: TMenuItem;
+    MEntire2: TMenuItem;
+    MEntire3: TMenuItem;
+    MEntire4: TMenuItem;
+    MEntire6: TMenuItem;
+    MEntire8: TMenuItem;
+    MEntire9: TMenuItem;
+    MEntire10: TMenuItem;
+    MEntire12: TMenuItem;
+    MEntire15: TMenuItem;
+    MEntire16: TMenuItem;
+    MEntire18: TMenuItem;
+    MEntire20: TMenuItem;
+    MEntire24: TMenuItem;
+    MEntire30: TMenuItem;
+    MEntire48: TMenuItem;
+    MLeftRight: TMenuItem;
     procedure AFirstExecute(Sender: TObject);
     procedure ANextExecute(Sender: TObject);
     procedure APreviousExecute(Sender: TObject);
@@ -184,9 +200,6 @@ type
     procedure ASaveExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
-    procedure FormResize(Sender: TObject);
-    procedure AImageMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure AScale100Execute(Sender: TObject);
     procedure AScaleWideExecute(Sender: TObject);
     procedure AScaleFullExecute(Sender: TObject);
@@ -211,12 +224,15 @@ type
       MousePos: TPoint; var Handled: Boolean);
     procedure BConfigClick(Sender: TObject);
     procedure AMailToExecute(Sender: TObject);
+    procedure MEntire1Click(Sender: TObject);
+    procedure MLeftRightClick(Sender: TObject);
   private
     { Private declarations }
     fmetafile,fintmetafile:TRpMetafileReport;
     fhelp:TFRpHelpform;
     cancelled:boolean;
     oldonHint:TNotifyEvent;
+    FPreviewControl:TRpPreviewmetaCLX;
     AppStyle:TDefaultStyle;
     configfile:string;
 {$IFDEF LINUX}
@@ -226,7 +242,6 @@ type
     procedure SetForm(Value:TForm);
     procedure EnableButtons;
     procedure DisableButtons;
-    procedure PlaceImagePosition;
     procedure ExecuteServer(Sender:TObject);
     procedure AppHint(Sender:TObject);
     procedure LoadConfig;
@@ -236,14 +251,12 @@ type
     procedure OnProgress(Sender:TObject;records,pagecount:integer;var docancel:boolean);
     procedure WorkAsyncError(amessage:String);
     procedure SetMetafile(avalue:TRpMetafileReport);
+    procedure OnPageDrawn(prm:TRpPreviewMetaCLX);
   public
     { Public declarations }
     clitree:TFRpCliTree;
-    pagenum:integer;
-    qtdriver:TRpQtDriver;
     printerindex:TRpPrinterSelect;
     aqtdriver:IRpPrintDriver;
-    bitmap:TBitmap;
     setmenu:boolean;
     ShowPrintDialog:Boolean;
     procedure DoOpen(afilename:String);
@@ -251,9 +264,9 @@ type
     property aform:TForm read faform write SetForm;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
-    procedure PrintPage;
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    property PreviewControl:TRpPreviewmetaCLX read fpreviewcontrol;
     property metafile:TRpMetafileReport read fmetafile write SetMetafile;
   end;
 
@@ -279,56 +292,16 @@ begin
  end;
 end;
 
-procedure TFRpMeta.PrintPage;
-var
-// rPageSizeQt:TPageSizeQt;
- oldwidth,oldheight:integer;
-begin
- oldwidth:=AImage.Width;
- oldheight:=AImage.Height;
- AAbout.Visible:=Metafile.PreviewAbout;
- ADocumentation.Visible:=Metafile.PreviewAbout;
- MHelp.Visible:=Metafile.PreviewAbout;
- AAsyncExec.Visible:=Metafile.PreviewAbout;
- AViewConnect.Visible:=Metafile.PreviewAbout;
- EPageNum.Text:='0';
- metafile.RequestPage(pagenum-1);
- if pagenum>Metafile.CurrentPageCount then
- begin
-  pagenum:=Metafile.CurrentPageCount;
-  PBar.Visible:=false;
- end;
-{ rpagesizeQt.papersource:=metafile.PaperSource;
- rpagesizeQt.duplex:=metafile.duplex;
- if Metafile.PageSize<0 then
- begin
-  rpagesizeqt.Custom:=True;
-  rPageSizeQt.CustomWidth:=metafile.CustomX;
-  rPageSizeQt.CustomHeight:=metafile.CustomY;
- end
- else
- begin
-  rpagesizeqt.Indexqt:=metafile.PageSize;
-  rpagesizeqt.Custom:=False;
- end;
- qtdriver.SetPagesize(rpagesizeqt);
-}metafile.DrawPage(qtdriver,pagenum-1);
- if Assigned(qtdriver.bitmap) then
- begin
-  AImage.Width:=qtdriver.bitmap.Width;
-  AImage.Height:=qtdriver.bitmap.Height;
-  AImage.Picture.Bitmap.Assign(qtdriver.bitmap);
-  AImage.Invalidate;
- end;
-
- EPageNum.Text:=IntToStr(PageNum);
- if ((oldwidth<>AImage.Width) or (oldheight<>AImage.Height)) then
-  PlaceImagePosition;
-end;
 
 constructor TFRpMeta.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
+ FPreviewControl:=TRpPreviewmetaCLX.Create(Self);
+ FpreviewControl.Width:=643;
+ FpreviewControl.Height:=0;
+ FpreviewControl.Align:=alClient;
+ FpreviewControl.Parent:=Self;
+ FPreviewControl.OnPageDrawn:=OnPageDrawn;
 
 {$IFDEF LINUX}
  usekprinter:=GetEnvironmentVariable('REPMANUSEKPRINTER')='true';
@@ -416,7 +389,6 @@ begin
  MHelp.Caption:=TranslateStr(6,MHelp.Caption);
  AAbout.Caption:=TranslateStr(58,AAbout.Caption);
  AAbout.Hint:=TranslateStr(59,AABout.Hint);
- ImageContainer.Align:=alClient;
  Caption:=SRpRepMetafile;
  SaveDialog1.Title:=TranslateStr(216,SaveDialog1.Title);
  ACancel.Caption:=TranslateStr(94,ACancel.Caption);
@@ -485,12 +457,7 @@ begin
  ANext.ShortCut:=Key_PageDown;
  AFirst.ShortCut:=Key_Home;
  ALast.ShortCut:=Key_End;
- qtdriver:=TRpQtDriver.Create;
- aqtdriver:=qtdriver;
-// qtdriver.toprinter:=true;
- bitmap:=TBitmap.Create;
- bitmap.PixelFormat:=pf32bit;
- AImage.Picture.Bitmap:=bitmap;
+
  fmetafile:=TRpMetafileReport.Create(nil);
  fintmetafile:=fmetafile;
  fmetafile.OnWorkProgress:=OnProgress;
@@ -542,46 +509,37 @@ end;
 
 procedure TFRpMeta.AFirstExecute(Sender: TObject);
 begin
- pagenum:=1;
- PrintPage;
+ fpreviewcontrol.FirstPage;
 end;
 
 procedure TFRpMeta.ANextExecute(Sender: TObject);
 begin
- inc(pagenum);
- PrintPage;
+ fpreviewcontrol.NextPage;
 end;
 
 procedure TFRpMeta.APreviousExecute(Sender: TObject);
 begin
- dec(pagenum);
- if pagenum<1 then
-  pagenum:=1;
- PrintPage;
+ fpreviewcontrol.PriorPage;
 end;
 
 procedure TFRpMeta.ALastExecute(Sender: TObject);
 begin
- pagenum:=MaxInt;
- PrintPage;
+ fpreviewcontrol.LastPage;
 end;
 
 procedure TFRpMeta.EPageNumKeyPress(Sender: TObject; var Key: Char);
 begin
  if Key=chr(13) then
  begin
-  pagenum:=StrToInt(EPageNum.Text);
-  PrintPage;
+  fpreviewcontrol.Page:=StrToInt(EPageNum.Text)-1;
  end;
 end;
 
 destructor TFRpMeta.Destroy;
 begin
  cancelled:=true;
- qtdriver:=nil;
  SaveConfig;
  Application.OnHint:=oldonhint;
- bitmap.free;
  fintmetafile.free;
 
  inherited Destroy;
@@ -745,9 +703,8 @@ begin
  APrevious.Enabled:=True;
  ANext.Enabled:=True;
  ALast.Enabled:=True;
- pagenum:=1;
- PrintPage;
- FormResize(Self);
+ FPreviewControl.Metafile:=nil;
+ FPreviewControl.Metafile:=metafile;
 end;
 
 procedure TFRpMeta.AOpenExecute(Sender: TObject);
@@ -770,31 +727,17 @@ var
  increment:integer;
 begin
  if (ssShift in Shift) then
-  increment:=1
+  increment:=REP_C_WHEELINC
  else
-  increment:=ImageContainer.VertScrollBar.Increment;
- if Key=Key_Down then
- begin
-  if ImageContainer.VertScrollBar.Position+increment>ImageContainer.VertScrollBar.Range-ImageContainer.Height then
-   ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Range-ImageContainer.Height+increment
-  else
-   ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position+Increment;
- end;
- if Key=Key_Up then
- begin
-  ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position-Increment;
- end;
- if Key=Key_Right then
- begin
-  if ImageContainer.HorzScrollBar.Position+increment>ImageContainer.HorzScrollBar.Range-ImageContainer.Width then
-   ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Range-ImageContainer.Width+increment
-  else
-   ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position+Increment;
- end;
- if Key=Key_Left then
- begin
-  ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position-Increment;
- end;
+  increment:=REP_C_WHEELINC*REP_C_WHEELSCALE;
+ if Key=KEY_DOWN then
+  FPreviewControl.Scroll(true,increment);
+ if Key=KEY_UP then
+  FPreviewControl.Scroll(true,-increment);
+ if Key=KEY_RIGHT then
+  FPreviewControl.Scroll(false,increment);
+ if Key=KEY_LEFT then
+  FPreviewControl.Scroll(false,-increment);
 end;
 
 
@@ -838,124 +781,33 @@ begin
 end;
 
 
-procedure TFRpMeta.PlaceImagePosition;
-var
- AWidth:integeR;
- Aheight:integer;
-begin
- ImageContainer.HorzScrollBar.Position:=0;
- ImageContainer.VertScrollBar.Position:=0;
- AImage.Left:=0;
- AImage.Top:=0;
- ImageContainer.HorzScrollBar.Position:=0;
- ImageContainer.VertScrollBar.Position:=0;
 
- AWidth:=ImageContainer.Width-SCROLLBAR_VX;
- AHeight:=ImageContainer.Height-SCROLLBAR_HX;
-
- if AImage.Width>AWidth then
-  AImage.Left:=0
- else
-  AImage.Left:=(AWidth-AImage.Width) div 2;
- if AImage.Height>AHeight then
-  AImage.Top:=0
- else
-  AImage.Top:=(AHeight-AImage.Height) div 2;
- // A bug in the refresh in Windows
-{$IFDEF MSWINDOWS}
- ImageContainer.Visible:=False;
- ImageContainer.Visible:=True;
- {$ENDIF}
-end;
-
-procedure TFRpMeta.FormResize(Sender: TObject);
-begin
- // Sets the driver widths and redraw accordingly
- AScaleFull.Checked:=false;
- AScaleWide.Checked:=false;
- AScale100.Checked:=false;
- if Assigned(qtdriver) then
- begin
-  qtdriver.clientwidth:=ImageContainer.Width;
-  qtdriver.clientHeight:=ImageContainer.Height;
-  case qtdriver.PreviewStyle of
-   spWide:
-    AScaleWide.Checked:=True;
-   spEntirePage:
-    AScaleFull.Checked:=True;
-   spNormal:
-    AScale100.Checked:=True;
-  end;
-  if pagenum>=1 then
-   PrintPage;
- end;
-end;
 
 procedure TFRpMeta.AScale100Execute(Sender: TObject);
 begin
- qtdriver.PreviewStyle:=spNormal;
- FormResize(Self);
+ fpreviewcontrol.AutoScale:=AScaleReal;
 end;
 
 procedure TFRpMeta.AScaleWideExecute(Sender: TObject);
 begin
- qtdriver.PreviewStyle:=spWide;
- FormResize(Self);
+ fpreviewcontrol.AutoScale:=rppreviewmetaclx.AScaleWide;
 end;
 
 procedure TFRpMeta.AScaleFullExecute(Sender: TObject);
 begin
- qtdriver.PreviewStyle:=spEntirePage;
- FormResize(Self);
+ fpreviewcontrol.AutoScale:=AScaleEntirePage;
 end;
 
 procedure TFRpMeta.AScaleLessExecute(Sender: TObject);
 begin
- qtdriver.PreviewStyle:=spCustom;
- qtdriver.Scale:=qtdriver.scale-0.10;
- FormResize(Self);
+ PreviewControl.PreviewScale:=PreviewControl.PreviewScale-0.1;
 end;
 
 procedure TFRpMeta.AScaleMoreExecute(Sender: TObject);
 begin
- qtdriver.PreviewStyle:=spCustom;
- qtdriver.Scale:=qtdriver.scale+0.10;
- FormResize(Self);
+ PreviewControl.PreviewScale:=PreviewControl.PreviewScale+0.1;
 end;
 
-procedure TFRpMeta.AImageMouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-var
- relx:Extended;
- rely:Extended;
- posx,migx:Extended;
- posy,migy:Extended;
- punt:Tpoint;
-begin
- // When clic in image scale to 100% and scroll to the
- // clicked section
- if qtdriver.PreviewStyle=spEntirePage then
- begin
-  punt.X:=X;
-  punt.y:=Y;
-  relx:=punt.X;
-  rely:=punt.Y;
-  relx:=relx/AImage.Width;
-  rely:=rely/AImage.Height;
-  AScale100.Execute;
-  // looks the limit
-  posx:=ImageContainer.HorzScrollBar.Range*relx;
-  posy:=ImageContainer.VertScrollBar.Range*rely;
-  // To the center
-  Migx:=PosX-(ImageContainer.ClientWidth div 2);
-  Migy:=PosY-(ImageContainer.ClientHeight div 2);
-
-  ImageContainer.HorzScrollBar.Position:=Trunc(migX);
-  ImageContainer.VertScrollBar.Position:=Trunc(MigY);
- end
- else
-  AScaleFull.Execute;
-end;
 
 procedure TFRpMeta.ACancelExecute(Sender: TObject);
 begin
@@ -972,9 +824,8 @@ begin
  APrevious.Enabled:=True;
  ANext.Enabled:=True;
  ALast.Enabled:=True;
- pagenum:=1;
- PrintPage;
- FormResize(Self);
+ fpreviewcontrol.metafile:=nil;
+ fpreviewcontrol.metafile:=metafile;
 end;
 
 procedure TFRpMeta.AAboutExecute(Sender: TObject);
@@ -987,14 +838,12 @@ begin
  AViewConnect.Checked:=Not AViewConnect.Checked;
  clitree.Width:=clitree.Initialwidth;
  clitree.Visible:=AViewConnect.Checked;
- FormResize(Self);
 end;
 
 procedure TFRpMeta.AStatusBarExecute(Sender: TObject);
 begin
  AStatusBar.Checked:=Not AStatusBar.Checked;
  BStatus.Visible:=AStatusBar.Checked;
- FormResize(Self);
 end;
 
 
@@ -1150,21 +999,25 @@ end;
 
 procedure TFRpMeta.FrameMouseWheelDown(Sender: TObject; Shift: TShiftState;
   MousePos: TPoint; var Handled: Boolean);
+var
+ increment:integer;
 begin
- if (ssCtrl in Shift) then
-  ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position+GetWheelInc(Shift)
- else
-  ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position+GetWheelInc(Shift);
+ increment:=REP_C_WHEELINC;
+ if Not (ssShift in Shift) then
+  increment:=increment*REP_C_WHEELSCALE;
+ fpreviewcontrol.Scroll(not (ssCtrl in Shift),increment);
  Handled:=true;
 end;
 
 procedure TFRpMeta.FrameMouseWheelUp(Sender: TObject; Shift: TShiftState;
   MousePos: TPoint; var Handled: Boolean);
+var
+ increment:integer;
 begin
- if (ssCtrl in Shift) then
-  ImageContainer.HorzScrollBar.Position:=ImageContainer.HorzScrollBar.Position-GetWheelInc(Shift)
- else
-  ImageContainer.VertScrollBar.Position:=ImageContainer.VertScrollBar.Position-GetWheelInc(Shift);
+ increment:=REP_C_WHEELINC;
+ if Not (ssShift in Shift) then
+  increment:=increment*REP_C_WHEELSCALE;
+ fpreviewcontrol.Scroll(not (ssCtrl in Shift),-increment);
  Handled:=true;
 end;
 
@@ -1228,18 +1081,31 @@ end;
 
 procedure TFRpMeta.SetMetafile(avalue:TRpMetafileReport);
 begin
-// if Assigned(fmetafile) then
-// begin
-//  fmetafile.free;
-//  fmetafile:=nil;
-// end;
  fmetafile:=avalue;
  if assigned(FMetafile) then
  begin
   fmetafile.OnWorkProgress:=OnProgress;
   fmetafile.OnWorkAsyncError:=WorkAsyncError;
  end;
+ fPreviewControl.Metafile:=fmetafile;
 end;
 
+procedure TFRpMeta.MEntire1Click(Sender: TObject);
+begin
+ // Adjust to entirepage
+ PreviewControl.EntirePageCount:=TMenuItem(Sender).Tag;
+ PreviewControl.AutoScale:=AScaleEntirePage;
+end;
+
+procedure TFRpMeta.MLeftRightClick(Sender: TObject);
+begin
+ MleftRight.Checked:=Not MLeftRight.Checked;
+ PreviewControl.EntireTopDown:=Not MLeftRight.Checked;
+end;
+
+procedure TFRpMeta.OnPageDrawn(prm:TRpPreviewMetaCLX);
+begin
+ EPageNum.Text:=IntToStr(prm.Page+1);
+end;
 
 end.

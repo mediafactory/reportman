@@ -30,18 +30,7 @@ package rppackvcl_del;
 {$IMPLICITBUILD OFF}
 
 requires
-  rtl,
-  vcl,
-  dbrtl,
-  rppack_del,
-  vcljpg,
-  dsnap,
-  indy,
-  vcldb,
-  ibxpress,
-  bdertl,
-  dbexpress,
-  vclx;
+  rppack_del;
 
 {%File 'rpconf.inc'}
 
@@ -65,6 +54,8 @@ contains
   rpdbgridvcl in 'rpdbgridvcl.pas',
   rpmaskedit in 'rpmaskedit.pas',
   rpgraphutilsvcl in 'rpgraphutilsvcl.pas' {FRpMessageDlgVCL},
-  rpmdfsearchvcl in 'rpmdfsearchvcl.pas' {FRpSearchParamVCL};
+  rpmdfsearchvcl in 'rpmdfsearchvcl.pas' {FRpSearchParamVCL},
+  rppreviewmeta in 'rppreviewmeta.pas',
+  rppreviewcontrol in 'rppreviewcontrol.pas';
 
 end.

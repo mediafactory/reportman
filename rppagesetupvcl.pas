@@ -31,7 +31,7 @@ uses
   Classes,rpmunits,
   Graphics, Controls, Forms, Dialogs,
   StdCtrls,rpreport, ExtCtrls,Buttons,Printers,
-  rptypes,
+  rptypes,rpbasereport,
   rpmetafile,rpmdconsts,rpmdprintconfigvcl, ComCtrls, Mask, rpmaskedit;
 
 type
@@ -115,7 +115,7 @@ type
     procedure ComboPaperSourceClick(Sender: TObject);
   private
     { Private declarations }
-    report:TRpReport;
+    report:TRpBaseReport;
     oldleftmargin,oldtopmargin,oldrightmargin,oldbottommargin:string;
     oldcustompagewidth,oldcustompageheight:string;
     dook:boolean;
@@ -126,13 +126,13 @@ type
   end;
 
 
-function ExecutePageSetup(report:TRpReport):boolean;
+function ExecutePageSetup(report:TRpBaseReport):boolean;
 
 implementation
 
 {$R *.dfm}
 
-function ExecutePageSetup(report:TRpReport):boolean;
+function ExecutePageSetup(report:TRpBaseReport):boolean;
 var
  dia:TFRpPageSetupVCL;
 begin

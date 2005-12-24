@@ -96,6 +96,8 @@ procedure FillTreeView (ATree:TTreeView;alist:TStringList);
 function GetFullFileName(ANode:TTreeNode;dirseparator:char):String;
 function GetFontData(Font:TFont):TMemoryStream;
 function GetPageSizeFromDevMode:TPoint;
+procedure GetDefaultDocumentProperties;
+procedure SwitchToPrinterIndex(index:integer);
 
 
 implementation
@@ -2394,5 +2396,73 @@ begin
   Result:=ANode.Text;
 end;
 
+
+
+function GetPrinterDefaultConfig(index:integer;var XDevice,XDriver,XPort:string):THandle;
+var
+ FPrinterHandle:THandle;
+ ADevice, ADriver, APort: array[0..1023] of char;
+ pdevmode:^DEVMODE;
+ adevmode:DEVMODE;
+ asize:Integer;
+ aresult:THandle;
+ amode:THandle;
+begin
+ Printer.GetPrinter(ADevice,ADriver,APort,amode);
+ XDevice:=StrPas(ADevice);
+ XDriver:=StrPas(ADriver);
+ XPort:=StrPas(APort);
+ Result:=0;
+ pdevmode:=@adevmode;
+ if OpenPrinter(ADevice,fprinterhandle,nil) then
+ begin
+  try
+   asize:=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,0);
+   if asize>0 then
+   begin
+    aresult:=GlobalAlloc(GHND,asize);
+    try
+     GlobalLock(aresult);
+     try
+      if IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
+      begin
+       Result:=aresult;
+      end;
+     finally
+      GlobalUnlock(aresult);
+     end;
+    finally
+     if Result=0 then
+      GlobalFree(aresult);
+    end;
+   end;
+  finally
+   ClosePrinter(fprinterhandle);
+  end;
+ end;
+end;
+
+procedure GetDefaultDocumentProperties;
+var
+ devicemode:THandle;
+ Device,Driver,Port:String;
+begin
+ if Printer.Printers.Count<1 then
+  exit;
+ devicemode:=GetPrinterDefaultConfig(Printer.printerindex,Device,Driver,Port);
+ Printer.SetPrinter(PChar(Device),PChar(Driver),Pchar(Port),devicemode);
+end;
+
+procedure SwitchToPrinterIndex(index:integer);
+begin
+ if index>=Printer.Printers.Count then
+  exit;
+ if index<0 then
+  exit;
+ if printer.printerindex=index then
+  exit;
+ printer.printerindex:=index;
+ GetDefaultDocumentProperties;
+end;
 
 end.

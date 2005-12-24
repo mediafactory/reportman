@@ -10,7 +10,7 @@ interface
 
 uses
   Windows, ActiveX, SysUtils,Classes, Controls, Graphics, Menus, Forms, StdCtrls,
-  ComServ, StdVCL, AXCtrls, Reportman_TLB, rpactivexreport,rpreport,
+  ComServ, StdVCL, AXCtrls, Reportman_TLB, rpactivexreport,rpreport,rpvgraphutils,
   rpparams,rptypes,rpgdidriver,rpmetafile,comobj,rpaxreportparameters,
   rpaxreportreport,rpexceldriver,rphtmldriver,printers,rpmdconsts;
 
@@ -32,7 +32,7 @@ type
     function Get_Cursor: Smallint; safecall;
     function Get_DoubleBuffered: WordBool; safecall;
     function Get_Enabled: WordBool; safecall;
-    function Get_Filename: WideString; safecall;
+    function Get_FileName: WideString; safecall;
     function Get_HelpKeyword: WideString; safecall;
     function Get_HelpType: TxHelpType; safecall;
     function Get_Language: Integer; safecall;
@@ -61,7 +61,7 @@ type
     procedure Set_Cursor(Value: Smallint); safecall;
     procedure Set_DoubleBuffered(Value: WordBool); safecall;
     procedure Set_Enabled(Value: WordBool); safecall;
-    procedure Set_Filename(const Value: WideString); safecall;
+    procedure Set_FileName(const Value: WideString); safecall;
     procedure Set_HelpKeyword(const Value: WideString); safecall;
     procedure Set_HelpType(Value: TxHelpType); safecall;
     procedure Set_Language(Value: Integer); safecall;
@@ -160,7 +160,7 @@ begin
   Result := FDelphiControl.Enabled;
 end;
 
-function TReportManX.Get_Filename: WideString;
+function TReportManX.Get_FileName: WideString;
 begin
   Result := WideString(FDelphiControl.Filename);
 end;
@@ -294,7 +294,7 @@ begin
   FDelphiControl.Enabled := Value;
 end;
 
-procedure TReportManX.Set_Filename(const Value: WideString);
+procedure TReportManX.Set_FileName(const Value: WideString);
 begin
   FDelphiControl.Filename := String(Value);
 end;
@@ -491,7 +491,7 @@ begin
  end;
  if itemindex<0 then
   Raise Exception.Create(SRpErrorOpenImp+':'+device+#10+printerlist);
- printer.printerindex:=itemindex;
+ SwitchToPrinterIndex(itemindex);
 end;
 
 function TReportManX.Get_DefaultPrinter: WideString;

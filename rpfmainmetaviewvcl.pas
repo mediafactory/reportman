@@ -64,7 +64,6 @@ function PreviewMetafile(metafile:TRpMetafileReport;aform:TWinControl;
  ShowPrintDialog:Boolean;ShowExit:Boolean):TFRpMetaVCL;
 var
  dia:TFRpMainMetaVCL;
-// memstream:TMemoryStream;
  MFrame:TFRpMetaVCL;
  FForm:TWinControl;
 begin
@@ -88,11 +87,6 @@ begin
  try
   MFrame.ShowPrintDialog:=ShowPrintDialog;
   MFrame.metafile:=metafile;
-//  memstream:=TMemoryStream.Create;
-//  try
-//   metafile.SaveToStream(memstream);
-//   memstream.Seek(0,soFromBeginning);
-//   MFrame.metafile.LoadFromStream(memstream);
    MFrame.ASave.Enabled:=True;
    MFrame.AMailTo.Enabled:=True;
    MFrame.APrint.Enabled:=True;
@@ -100,7 +94,6 @@ begin
    MFrame.APrevious.Enabled:=True;
    MFrame.ANext.Enabled:=True;
    MFrame.ALast.Enabled:=True;
-   MFrame.pagenum:=1;
    MFrame.AViewConnect.Checked:=false;
    MFrame.AViewConnect.Enabled:=false;
 {$IFDEF USEINDY}
@@ -118,26 +111,8 @@ begin
    MFrame.AScale100.Checked:=False;
    MFrame.AScaleFull.Checked:=False;
    MFrame.AScaleWide.Checked:=False;
-   case metafile.PreviewStyle of
-    spNormal:
-     begin
-      MFrame.AScale100.Checked:=True;
-      MFrame.gdidriver.PreviewStyle:=spNormal;
-     end;
-    spEntirePage:
-     begin
-      MFrame.AScaleFull.Checked:=True;
-      MFrame.gdidriver.PreviewStyle:=spEntirePage;
-     end
-    else
-      MFrame.AScaleWide.Checked:=True;
-   end;
-   MFrame.FormResize(dia);
    if not assigned(aform) then
     dia.ShowModal;
-//  finally
-//   memstream.free;
-//  end;
  finally
   if not assigned(aform) then
    dia.free;

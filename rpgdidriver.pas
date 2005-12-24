@@ -28,7 +28,7 @@ uses
  mmsystem,windows,
  Classes,sysutils,rpmetafile,rpmdconsts,Graphics,Forms,
  rpmunits,Printers,Dialogs, Controls,rpgdifonts,
- StdCtrls,ExtCtrls,rppdffile,rpgraphutilsvcl,
+ StdCtrls,ExtCtrls,rppdffile,rpgraphutilsvcl,WinSpool,
 {$IFNDEF FORWEBAX}
  rpmdcharttypes,rpmdchart,
 {$ENDIF}
@@ -49,7 +49,7 @@ uses
  teEngine,ArrowCha,BubbleCh,GanttCh,
 {$ENDIF}
 {$ENDIF}
- rppdfdriver,rptextdriver, Mask, WinSpool,rpmaskedit;
+ rppdfdriver,rptextdriver, Mask, rpmaskedit;
 
 
 const
@@ -2264,7 +2264,15 @@ begin
  begin
   index:=Printer.Printers.IndexOf(printername);
   if index>=0 then
-   Printer.PrinterIndex:=index;
+  begin
+   if Printer.PrinterIndex<>Index then
+   begin
+    // Fixes problem, this reads default
+    // document properties after printer selection
+    rpvgraphutils.SwitchToPrinterIndex(index);
+    // Printer.PrinterIndex:=index;
+   end;
+  end;
  end;
  if ((papersource>0) or (duplex>0)) then
  begin

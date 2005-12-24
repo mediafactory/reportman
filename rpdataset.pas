@@ -124,96 +124,101 @@ var
 begin
  if Assigned(FDataset) then
  begin
-  // Compare field types and names
-  docreate:=false;
-  if ((not active) or (FieldDefs.Count<>FDataset.FieldCount)) then
-   docreate:=true
-  else
-  begin
-   for i:=0 to FDataset.FieldCount-1 do
-   begin
-    adef:=FieldDefs.Items[i];
-    if adef.Name<>FDataset.Fields[i].FieldName then
+  DisableControls;
+  try
+    // Compare field types and names
+    docreate:=false;
+    if ((not active) or (FieldDefs.Count<>FDataset.FieldCount)) then
+     docreate:=true
+    else
     begin
-     docreate:=true;
-     break;
+     for i:=0 to FDataset.FieldCount-1 do
+     begin
+      adef:=FieldDefs.Items[i];
+      if adef.Name<>FDataset.Fields[i].FieldName then
+      begin
+       docreate:=true;
+       break;
+      end;
+      adatatype:=FDataset.Fields[i].DataType;
+      if aDataType=ftAutoInc then
+       aDataType:=ftInteger;
+      if aDataType<>adef.DataType then
+      begin
+       docreate:=true;
+       break;
+      end;
+      aSize:=FDataset.Fields[i].Size;
+   {$IFNDEF USEVARIANTS}
+      // A bug in Dephi 5 about WideString and TClientDataset
+      if FDataset.Fields[i].DataType=ftWideString then
+       aSize:=aSize*2;
+   {$ENDIF}
+      if asize<>adef.Size then
+      begin
+       docreate:=true;
+       break;
+      end;
+     end;
     end;
-    adatatype:=FDataset.Fields[i].DataType;
-    if aDataType=ftAutoInc then
-     aDataType:=ftInteger;
-    if aDataType<>adef.DataType then
+    if docreate then
     begin
-     docreate:=true;
-     break;
-    end;
-    aSize:=FDataset.Fields[i].Size;
- {$IFNDEF USEVARIANTS}
-    // A bug in Dephi 5 about WideString and TClientDataset
-    if FDataset.Fields[i].DataType=ftWideString then
-     aSize:=aSize*2;
- {$ENDIF}
-    if asize<>adef.Size then
+     Close;
+    //  FDataset.FieldDefs.Update;
+   //  FieldDefs.Assign(FDataset.FieldDefs);
+     FieldDefs.Clear;
+     for i:=0 to FDataset.FieldCount-1 do
+     begin
+      adef:=FieldDefs.AddFieldDef;
+      adef.Name:=FDataset.Fields[i].FieldName;
+      adef.DataType:=FDataset.Fields[i].DataType;
+      // A bug in Delphi 6- ADO Autoinc fields
+      if adef.DataType=ftAutoInc then
+       adef.DataType:=ftInteger;
+      adef.Size:=FDataset.Fields[i].Size;
+   {$IFNDEF USEVARIANTS}
+      // A bug in Dephi 5 about WideString and TClientDataset
+      if FDataset.Fields[i].DataType=ftWideString then
+       adef.Size:=adef.Size*2;
+   {$ENDIF}
+   {$IFDEF USEBCD}
+      if (FDataset.Fields[i] is TBCDField) then
+       adef.Precision:=TBCDField(FDataset.Fields[i]).Precision;
+   {$ENDIF}
+     end;
+     CreateDataset;
+     FCopyDataset.Close;
+     FCopyDataset.FieldDefs.Assign(FieldDefs);
+     FCopyDataset.CreateDataSet;
+     FCopyDataset.LogChanges:=false;
+    end
+    else
     begin
-     docreate:=true;
-     break;
+     First;
+     while Not Eof do
+      Delete;
+     FCopyDataset.First;
+     while Not FCopyDataset.Eof do
+      FCopyDataset.Delete;
+     DoAfterOpen;
     end;
+    if Not FDataset.Eof then
+    begin
+     Append;
+     try
+      for i:=0 to FDataset.FieldCount-1 do
+      begin
+       AssignField(FDataset.Fields[i],Fields[i]);
+      end;
+      Post;
+     except
+      Cancel;
+      Raise;
+     end;
+    end;
+   finally
+    enablecontrols;
    end;
-  end;
-  if docreate then
-  begin
-   Close;
-  //  FDataset.FieldDefs.Update;
- //  FieldDefs.Assign(FDataset.FieldDefs);
-   FieldDefs.Clear;
-   for i:=0 to FDataset.FieldCount-1 do
-   begin
-    adef:=FieldDefs.AddFieldDef;
-    adef.Name:=FDataset.Fields[i].FieldName;
-    adef.DataType:=FDataset.Fields[i].DataType;
-    // A bug in Delphi 6- ADO Autoinc fields
-    if adef.DataType=ftAutoInc then
-     adef.DataType:=ftInteger;
-    adef.Size:=FDataset.Fields[i].Size;
- {$IFNDEF USEVARIANTS}
-    // A bug in Dephi 5 about WideString and TClientDataset
-    if FDataset.Fields[i].DataType=ftWideString then
-     adef.Size:=adef.Size*2;
- {$ENDIF}
- {$IFDEF USEBCD}
-    if (FDataset.Fields[i] is TBCDField) then
-     adef.Precision:=TBCDField(FDataset.Fields[i]).Precision;
- {$ENDIF}
-   end;
-   CreateDataset;
-   FCopyDataset.Close;
-   FCopyDataset.FieldDefs.Assign(FieldDefs);
-   FCopyDataset.CreateDataSet;
-   FCopyDataset.LogChanges:=false;
-  end
-  else
-  begin
-   First;
-   while Not Eof do
-    Delete;
-   FCopyDataset.First;
-   while Not FCopyDataset.Eof do
-    FCopyDataset.Delete;
-   DoAfterOpen;
-  end;
-  if Not FDataset.Eof then
-  begin
-   Append;
-   try
-    for i:=0 to FDataset.FieldCount-1 do
-    begin
-     AssignField(FDataset.Fields[i],Fields[i]);
-    end;
-    Post;
-   except
-    Cancel;
-    Raise;
-   end;
-  end;
  end;
 end;
 

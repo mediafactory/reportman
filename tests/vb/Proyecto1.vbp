@@ -1,7 +1,7 @@
 Type=Exe
 Form=Form1.frm
-Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#..\..\..\..\..\..\..\WINNT\System32\stdole2.tlb#OLE Automation
-Object={D4D26F6B-6564-44F4-A913-03C91CE37740}#1.6#0; Reportman.ocx
+Reference=*\G{00020430-0000-0000-C000-000000000046}#2.0#0#H:\WINDOWS\system32\stdole2.tlb#OLE Automation
+Object={D4D26F6B-6564-44F4-A913-03C91CE37740}#2.1#0; Reportman.ocx
 IconForm="Form1"
 Startup="Form1"
 Command32=""

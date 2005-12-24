@@ -57,7 +57,7 @@ begin
  docancel:=False;
  asmtp:=TIdSMTP.Create(nil);
  try
-  asmtp.UserId:=username;
+  asmtp.Username:=username;
   asmtp.MailAgent:='IdSMTP-rpsendmail';
   asmtp.Host:=smtpserver;
   asmtp.Password:=password;

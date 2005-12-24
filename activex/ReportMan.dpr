@@ -5,20 +5,23 @@ library ReportMan;
 {%File 'ReportmanXAServer.asp'}
 
 uses
-  ComServ,DBPwdlg,
-{$IFDEF USEVARIANTS}
-  MidasLib,
-{$ENDIF}
+  ComServ,
+  DBPwdlg,
   Reportman_TLB in 'Reportman_TLB.pas',
   rpaxreportimp in 'rpaxreportimp.pas' {ReportManX: CoClass},
   aboutrpax in 'aboutrpax.pas' {ReportManXAbout},
   rpdllutil in '..\rpdllutil.pas',
+{$IFDEF USEVARIANTS}
+  MidasLib,
+{$ENDIF}
   rpdllutilqt in '..\rpdllutilqt.pas',
   rpactivexreport in '..\rpactivexreport.pas',
   rpaxreportreport in 'rpaxreportreport.pas' {ReportReport: CoClass},
   rpaxreportparameters in 'rpaxreportparameters.pas' {ReportParameters: CoClass},
   rpaxreportparam in 'rpaxreportparam.pas' {ReportParam: CoClass},
-  rpaspserver in 'rpaspserver.pas' {ReportmanXAServer: CoClass};
+  rpaspserver in 'rpaspserver.pas' {ReportmanXAServer: CoClass},
+  rpvpreview in '..\rpvpreview.pas' {FRpVPreview},
+  rppreviewformax in 'rppreviewformax.pas' {PreviewControl: TActiveForm} {PreviewControl: CoClass};
 
 {$E ocx}
 

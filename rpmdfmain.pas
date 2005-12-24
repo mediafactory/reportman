@@ -34,7 +34,7 @@ uses
   QGraphics,QStyle,Qt,QControls, QForms,
   QStdCtrls, QComCtrls, QActnList, QImgList, QMenus, QTypes,QExtCtrls,
   QClipbrd,QPrinters,QConsts, QDialogs,rpqtdriver,rpmdfhelpform,
-  rpreport,rpmdfabout,rppagesetup,rpmdshfolder,rpmdfdinfo,
+  rpreport,rpmdfabout,rppagesetup,rpmdshfolder,rpmdfdinfo,rppreviewcontrolclx,
   rpmdfgrid,rppreview,rpprintdia, rplastsav, rpalias,rplabelitem,
   rpmdconsts,rptypes, rpmdfstruc, rpsubreport,rpeditconn,rpmdfopenlib,
   rpmdobinsint,rpfparams,rpmdfdesign,rpmdobjinsp,rpmdfsectionint,IniFiles,
@@ -1280,6 +1280,8 @@ end;
 procedure TFRpMainF.APreviewExecute(Sender: TObject);
 var
  modified:Boolean;
+ previewmodify:Boolean;
+ prcontrol:TRpPreviewControlCLX;
 begin
  if (report.DatabaseInfo.Count>0) then
  begin
@@ -1313,11 +1315,18 @@ begin
 {$ENDIF}
  if ADriverQt.Checked then
  begin
-  rppreview.ShowPreview(report,caption,AsystemPrintDialog.Checked,modified);
-  if modified then
-  begin
-   fdesignframe.UpdateInterface(true);
-   fdesignframe.UpdateSelection(false);
+  previewmodify:=false;
+  prcontrol:=TRpPreviewControlCLX.Create(nil);
+  try
+   prcontrol.Report:=Report;
+   rppreview.ShowPreview(prcontrol,caption,ASystemPrintDialog.Checked);
+   if previewmodify then
+   begin
+    fdesignframe.UpdateInterface(true);
+    fdesignframe.UpdateSelection(false);
+   end;
+  finally
+   prcontrol.free;
   end;
  end
  else

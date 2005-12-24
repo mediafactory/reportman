@@ -274,7 +274,7 @@ object FRpPageSetup: TFRpPageSetup
         Top = 240
         Width = 45
         Height = 21
-        TabOrder = 7
+        TabOrder = 6
         EditType = tecurrency
       end
       object LLinesPerInch: TLabel

@@ -40,6 +40,7 @@ uses
   rpsecutil in '..\..\..\rpsecutil.pas',
   rprfparams in '..\..\..\rprfparams.pas',
   rpmetafile in '..\..\..\rpmetafile.pas',
+  rppreviewcontrolclx in '..\..\..\rppreviewcontrolclx.pas',
   rpqtdriver in '..\..\..\rpqtdriver.pas';
 {$ENDIF}
 
@@ -116,6 +117,7 @@ var
  aprintername:string;
  aindex:integer;
  amessage:String;
+ prcontrol:TRpPreviewControlCLX;
 {$IFDEF LINUX}
  usekprinter:Boolean;
 {$ENDIF}
@@ -405,7 +407,15 @@ begin
       end
       else
       if preview then
-       rppreview.ShowPreview(report,filename,true,modified)
+      begin
+       prcontrol:=TRpPreviewControlCLX.Create(nil);
+       try
+        prcontrol.Report:=report;
+        ShowPreview(prcontrol,filename,true);
+       finally
+        prcontrol.free;
+       end;
+      end
       else
       begin
        if pdialog then

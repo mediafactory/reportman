@@ -1201,7 +1201,7 @@ procedure TRpBaseReport.CheckProgress(finished:Boolean);
 var
  docancel:boolean;
 begin
-  if Assigned(FOnProgress) then
+  if (Assigned(FOnProgress) or Assigned(metafile.OnWorkProgress)) then
   begin
 {$IFDEF MSWINDOWS}
    mmlast:=TimeGetTime;
@@ -1227,7 +1227,14 @@ begin
       docancel:=true;
     end
     else
-     FOnProgress(Self,docancel);
+    begin
+     if Assigned(FOnProgress) then
+      FOnProgress(Self,docancel);
+     if Assigned(metafile.OnWorkProgress) then
+     begin
+      metafile.WorkProgress(Self,recordcount,metafile.CurrentPageCount,docancel);
+     end;
+    end;
     if docancel then
      Raise Exception.Create(SRpOperationAborted);
    end;

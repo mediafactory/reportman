@@ -76,9 +76,9 @@ LocaleToUnicode=1
 ImagebaseMultiple=1
 SuspiciousTypecast=1
 PrivatePropAccessor=1
-UnsafeType=1
-UnsafeCode=1
-UnsafeCast=1
+UnsafeType=0
+UnsafeCode=0
+UnsafeCast=0
 [Linker]
 MapFile=0
 OutputObjs=0
@@ -134,5 +134,5 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 [Excluded Packages]
-c:\archivos de programa\borland\delphi7\Projects\Bpl\rppackdesign_del.bpl=Report Manager Designer Component Package
-c:\archivos de programa\borland\delphi7\Projects\Bpl\Gestor.bpl=Componentes del gestor de Informes
+h:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
+h:\prog\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components

@@ -29,7 +29,7 @@ uses
 {$IFDEF EMPTYCOMBOBUG}
   D7ComboBoxStringsGetPatch,
 {$ENDIF}
-  Classes,Graphics,
+  Classes,Graphics,rpvgraphutils,
   rpgdidriver,rpvpreview,rprfvparams,windows,
   Controls, Forms,
   StdCtrls, ComCtrls, ActnList, ImgList, Menus,ExtCtrls,
@@ -38,7 +38,7 @@ uses
   rpmdfdesignvcl,rpmdfaboutvcl,rppagesetupvcl,
   rpmdobjinspvcl, rplastsav, ToolWin,rpmdfdinfovcl,rpmdfsectionintvcl,
   rpmdfgridvcl,rpmdfstrucvcl,rpmdobinsintvcl,rpfparamsvcl,
-  rpmdconsts,rptypes, rpsubreport,rplabelitem,
+  rpmdconsts,rptypes, rpsubreport,rplabelitem,rppreviewcontrol,
   IniFiles,rpdatainfo,
 {$IFDEF USEINDY}
   rpfmainmetaviewvcl,
@@ -49,7 +49,7 @@ uses
 {$IFDEF DOTNETD}
  System.ComponentModel,
 {$ENDIF}
-  rpmdsysinfo,
+  rpmdsysinfo,rppdfdriver,
   rpsection,rpprintitem,rpmdfopenlibvcl,rpeditconnvcl,
   DB,rpmunits,rpgraphutilsvcl,rpmdfwizardvcl, rpalias;
 
@@ -307,6 +307,7 @@ type
     oldonhint:TNotifyEvent;
     alibrary:String;
     areportname:WideString;
+    prcontrol:TRpPreviewControl;
     oldappidle:TIdleEvent;
     FAppFontName:String;
     FAppFontSize:integer;
@@ -316,6 +317,7 @@ type
     FObjFontSize:integer;
     FObjFontStyle:integer;
     FObjFontColor:Integer;
+    previewmodify:boolean;
     procedure FreeInterface;
     procedure CreateInterface;
     function checkmodified:boolean;
@@ -1161,8 +1163,6 @@ begin
 end;
 
 procedure TFRpMainFVCL.APreviewExecute(Sender: TObject);
-var
- modified:boolean;
 begin
  if (report.DatabaseInfo.Count>0) then
  begin
@@ -1182,12 +1182,18 @@ begin
  end
  else
  begin
-  modified:=false;
-  rpvpreview.ShowPreview(report,caption,modified);
-  if modified then
-  begin
-   fdesignframe.UpdateInterface(true);
-   fdesignframe.UpdateSelection(false);
+  previewmodify:=false;
+  prcontrol:=TRpPreviewControl.Create(nil);
+  try
+   prcontrol.Report:=Report;
+   rpvpreview.ShowPreview(prcontrol,caption);
+   if previewmodify then
+   begin
+    fdesignframe.UpdateInterface(true);
+    fdesignframe.UpdateSelection(false);
+   end;
+  finally
+   prcontrol.free;
   end;
  end;
 end;
@@ -1276,6 +1282,7 @@ var
  aurl:string;
  Directorysep:string;
 begin
+ GetDefaultDocumentProperties;
  aurl:=ExtractFilePath(Application.Exename);
  Directorysep:='\';
  aurl:=aurl+'doc'+Directorysep+
@@ -2012,5 +2019,7 @@ begin
  end;
 
 end;
+
+
 
 end.

@@ -29,15 +29,7 @@ package rppackdesignvcl_del;
 {$IMPLICITBUILD OFF}
 
 requires
-  rtl,
   rppack_del,
-  dsnap,
-  dbrtl,
-  vcl,
-  vcldb,
-  vcljpg,
-  indy,
-  vclx,
   rppackvcl_del;
 
 contains

@@ -35,6 +35,7 @@ uses
 {$ENDIF}
   Graphics,rpfaxsend,Printers,
   rpreport in '..\..\..\rpreport.pas',
+  rppreviewcontrol in '..\..\..\rppreviewcontrol.pas',
   rpparams in '..\..\..\rpparams.pas',
   rpmdconsts in '..\..\..\rpmdconsts.pas',
   rptypes in '..\..\..\rptypes.pas',
@@ -93,7 +94,7 @@ end;
 var
  isstdin:Boolean;
  memstream:TMemoryStream;
- topdf,tobmp,monobmp,tometafile,showparams,modified:Boolean;
+ topdf,tobmp,monobmp,tometafile,showparams:Boolean;
  bmpresx,bmpresy:integer;
  meta:TrpMetafileReport;
  abitmap:TBitmap;
@@ -103,6 +104,7 @@ var
  aindex:integer;
  amessage:String;
  async:boolean;
+ prcontrol:TRpPreviewControl;
 begin
  async:=false;
  faxdevice:='';
@@ -420,7 +422,13 @@ begin
       else
       if preview then
       begin
-       rpvpreview.ShowPreview(report,filename,modified);
+       prcontrol:=TRpPreviewControl.Create(nil);
+       try
+        prcontrol.Report:=report;
+        ShowPreview(prcontrol,filename);
+       finally
+        prcontrol.free;
+       end;
       end
       else
       begin

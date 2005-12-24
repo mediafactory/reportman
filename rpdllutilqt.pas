@@ -31,7 +31,7 @@ uses
  SysUtils,Classes,rpreport,rpmdconsts,
 {$IFDEF MSWINDOWS}
  rpgdidriver,
- rpvpreview,rpvclreport,
+ rpvpreview,rpvclreport,rppreviewcontrol,
 {$ENDIF}
 {$IFDEF LINUX}
  rpqtdriver,
@@ -101,7 +101,9 @@ end;
 function rp_preview(hreport:integer;Title:PChar):integer;
 var
  report:TRpReport;
- modified:boolean;
+{$IFDEF MSWINDOWS}
+ prcontrol:TRpPreviewControl;
+{$ENDIF}
 begin
  rplibdoinit;
  rplasterror:='';
@@ -109,10 +111,16 @@ begin
  try
   report:=FindReport(hreport);
 {$IFDEF MSWINDOWS}
-  ShowPreview(report,Title,modified);
+  prcontrol:=TRppreviewControl.Create(nil);
+  try
+   prcontrol.Report:=report;
+   ShowPreview(prcontrol,Title);
+  finally
+   prcontrol.free;
+  end;
 {$ENDIF}
 {$IFDEF LINUX}
-  ShowPreview(report,Title,true,modified);
+  ShowPreview(report,Title,true);
 {$ENDIF}
  except
   on E:Exception do

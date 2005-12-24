@@ -153,6 +153,8 @@ contains
   rpxmlstream in 'rpxmlstream.pas',
   rpdbgridvcl in 'rpdbgridvcl.pas',
   rpbarcodecons in 'rpbarcodecons.pas',
-  rpmdfsearchvcl in 'rpmdfsearchvcl.pas' {FRpSearchParamVCL};
+  rpmdfsearchvcl in 'rpmdfsearchvcl.pas' {FRpSearchParamVCL},
+  rppreviewmeta in 'rppreviewmeta.pas',
+  rppreviewcontrol in 'rppreviewcontrol.pas';
 
 end.

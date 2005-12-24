@@ -1,29 +1,28 @@
 object FRpMeta: TFRpMeta
   Left = 0
   Top = 0
-  Width = 451
-  Height = 304
-  VertScrollBar.Range = 338
-  HorzScrollBar.Range = 561
+  Width = 643
+  Height = 364
+  VertScrollBar.Range = 50
+  HorzScrollBar.Range = 7
   Align = alClient
   ParentShowHint = False
   ShowHint = True
   TabOrder = 0
   OnMouseWheelDown = FrameMouseWheelDown
   OnMouseWheelUp = FrameMouseWheelUp
-  OnResize = FormResize
   object Splitter1: TSplitter
     Left = 0
-    Top = 55
+    Top = 29
     Width = 7
-    Height = 262
+    Height = 314
     Beveled = True
   end
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 561
-    Height = 55
+    Width = 643
+    Height = 29
     AutoSize = True
     ButtonHeight = 26
     ButtonWidth = 26
@@ -100,9 +99,9 @@ object FRpMeta: TFRpMeta
     end
     object BCancel: TButton
       HelpType = htContext
-      Left = 1
-      Top = 30
-      Width = 140
+      Left = 473
+      Top = 4
+      Width = 74
       Height = 26
       Action = ACancel
       Caption = 'Cancel'
@@ -205,9 +204,9 @@ object FRpMeta: TFRpMeta
       ImageIndex = 8
     end
     object PPBar: TPanel
-      Left = 141
-      Top = 30
-      Width = 108
+      Left = 547
+      Top = 4
+      Width = 58
       Height = 25
       Align = alCustom
       BorderStyle = bsSingle
@@ -216,37 +215,16 @@ object FRpMeta: TFRpMeta
       object PBar: TProgressBar
         Left = 1
         Top = 1
-        Width = 106
+        Width = 56
         Height = 23
         Align = alClient
       end
     end
   end
-  object ImageContainer: TScrollBox
-    Left = 48
-    Top = 30
-    Width = 513
-    Height = 287
-    VertScrollBar.Increment = 60
-    VertScrollBar.Range = 81
-    HorzScrollBar.Increment = 60
-    HorzScrollBar.Range = 89
-    BorderStyle = bsNone
-    Color = clDisabledForeground
-    ParentColor = False
-    TabOrder = 1
-    object AImage: TImage
-      Left = 0
-      Top = 0
-      Width = 89
-      Height = 81
-      OnMouseDown = AImageMouseDown
-    end
-  end
   object BStatus: TStatusBar
     Left = 0
-    Top = 317
-    Width = 561
+    Top = 343
+    Width = 643
     Height = 21
     Panels = <
       item
@@ -1308,6 +1286,94 @@ object FRpMeta: TFRpMeta
         Tag = 15
         OnClick = MSelPrinter0Click
       end
+    end
+  end
+  object MEntireMenu: TPopupMenu
+    Left = 244
+    Top = 160
+    object MEntire1: TMenuItem
+      Tag = 1
+      Caption = '1'
+      OnClick = MEntire1Click
+    end
+    object MEntire2: TMenuItem
+      Tag = 2
+      Caption = '2'
+      OnClick = MEntire1Click
+    end
+    object MEntire3: TMenuItem
+      Tag = 3
+      Caption = '3'
+      OnClick = MEntire1Click
+    end
+    object MEntire4: TMenuItem
+      Tag = 4
+      Caption = '4'
+      OnClick = MEntire1Click
+    end
+    object MEntire6: TMenuItem
+      Tag = 6
+      Caption = '6'
+      OnClick = MEntire1Click
+    end
+    object MEntire8: TMenuItem
+      Tag = 8
+      Caption = '8'
+      OnClick = MEntire1Click
+    end
+    object MEntire9: TMenuItem
+      Tag = 9
+      Caption = '9'
+      OnClick = MEntire1Click
+    end
+    object MEntire10: TMenuItem
+      Tag = 10
+      Caption = '10'
+      OnClick = MEntire1Click
+    end
+    object MEntire12: TMenuItem
+      Tag = 12
+      Caption = '12'
+      OnClick = MEntire1Click
+    end
+    object MEntire15: TMenuItem
+      Tag = 15
+      Caption = '15'
+      OnClick = MEntire1Click
+    end
+    object MEntire16: TMenuItem
+      Tag = 16
+      Caption = '16'
+      OnClick = MEntire1Click
+    end
+    object MEntire18: TMenuItem
+      Tag = 18
+      Caption = '18'
+      OnClick = MEntire1Click
+    end
+    object MEntire20: TMenuItem
+      Tag = 20
+      Caption = '20'
+      OnClick = MEntire1Click
+    end
+    object MEntire24: TMenuItem
+      Tag = 26
+      Caption = '24'
+      OnClick = MEntire1Click
+    end
+    object MEntire30: TMenuItem
+      Tag = 30
+      Caption = '30'
+      OnClick = MEntire1Click
+    end
+    object MEntire48: TMenuItem
+      Tag = 48
+      Caption = '48'
+      OnClick = MEntire1Click
+    end
+    object MLeftRight: TMenuItem
+      Caption = '->'
+      OnClick = MLeftRightClick
     end
   end
 end

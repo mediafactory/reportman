@@ -25,7 +25,7 @@ interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
  rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview,
- rpexceldriver,rptextdriver,rppdfdriver,
+ rpexceldriver,rptextdriver,rppdfdriver,rppreviewcontrol,
 {$IFNDEF BUILDER4}
   rppagesetupvcl,
 {$ENDIF}
@@ -37,6 +37,7 @@ uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
 type
  TVCLReport=class(TCBaseReport)
   private
+   prcontrol:TRpPreviewControl;
   protected
    procedure InternalExecuteRemote(metafile:TRpMetafileReport);override;
   public
@@ -80,15 +81,25 @@ begin
  Result:=ShowUserParams(report.params);
 end;
 
+
+
+
+
 function TVCLReport.Execute:boolean;
 var
- allpages,collate,modified:boolean;
+ allpages,collate:boolean;
  frompage,topage,copies:integer;
 begin
  inherited Execute;
  if Preview then
  begin
-  Result:=ShowPreview(report,Title,modified);
+  prcontrol:=TRpPreviewControl.Create(nil);
+  try
+   prcontrol.Report:=Report;
+   Result:=ShowPreview(prcontrol,Title);
+  finally
+   prcontrol.free;
+  end;
  end
  else
  begin

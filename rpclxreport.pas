@@ -24,7 +24,7 @@ interface
 {$I rpconf.inc}
 
 uses Classes,Sysutils,rpreport,
- rpmdconsts,rpcompobase,rptypes,rpmetafile,rptextdriver,
+ rpmdconsts,rpcompobase,rptypes,rpmetafile,rptextdriver,rppreviewcontrolclx,
  QPrinters,rpqtdriver,rppreview,rprfparams,rpgraphutils,
 {$IFDEF VCLANDCLX}
  rpgdidriver,Printers,Dialogs,rprfvparams,rpvpreview,rpfmainmetaviewvcl,
@@ -134,6 +134,7 @@ var
  metafile:TRpMEtafileReport;
  memstream:TMemoryStream;
 {$ENDIF}
+ prcontrol:TRpPreviewControlCLX;
 begin
  inherited Execute;
  if Preview then
@@ -145,7 +146,13 @@ begin
    exit;
   end;
 {$ENDIF}
-  Result:=rppreview.ShowPreview(report,Title,FUseSystemPrintDialog,modified);
+  prcontrol:=TRpPreviewControlCLX.Create(nil);
+  try
+   prcontrol.Report:=Report;
+   Result:=ShowPreview(prcontrol,Title,FUseSystemPrintDialog);
+  finally
+   prcontrol.free;
+  end;
  end
  else
  begin

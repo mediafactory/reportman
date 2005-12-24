@@ -2,8 +2,8 @@
 {                                                       }
 {       Report Manager                                  }
 {                                                       }
-{       rppreviewmetafile                               }
-{       VCL Preview metafile control                    }
+{       rppreviewmetafileclx                               }
+{       CLX Preview metafile control                    }
 {                                                       }
 {                                                       }
 {       Copyright (c) 1994-2005 Toni Martir             }
@@ -16,12 +16,12 @@
 {                                                       }
 {*******************************************************}
 
-unit rppreviewmeta;
+unit rppreviewmetaclx;
 
 interface
 
-uses Windows,Messages,Classes,Graphics,Controls,Forms,rpmetafile,extctrls,rptypes,
- rpgraphutilsvcl,rpgdidriver,SysUtils,rptextdriver;
+uses Types,Classes,QGraphics,QControls,QForms,rpmetafile,Qextctrls,rptypes,
+ rpgraphutils,rpqtdriver,SysUtils,rptextdriver,Qt;
 
 const
  MAXENTIREPAGES=128;
@@ -29,10 +29,10 @@ const
  MIN_SCALE=0.01;
  MAX_SCALE=10.0;
 type
- TRpPreviewMeta=class;
+ TRpPreviewMetaCLX=class;
  TAutoScaleType=(AScaleReal,AScaleWide,AScaleHeight,AScaleEntirePage,AScaleCustom);
- TPageDrawnEvent=procedure (prm:TRpPreviewMeta) of object;
- TRpPreviewMeta=class(TScrollBox)
+ TPageDrawnEvent=procedure (prm:TRpPreviewMetaCLX) of object;
+ TRpPreviewMetaCLX=class(TScrollBox)
   private
    FBarWidth:integer;
    FBarHeight:integer;
@@ -61,17 +61,16 @@ type
    procedure ChangePreviewScale(newvalue:double);
    procedure DoResize;
    procedure SetAutoScale(newvalue:TAutoScaleType);
-   procedure WMPosChange(var message:TMessage);Message WM_MOVE;
-   procedure WMSizeChange(var message:TMessage);Message WM_SIZE;
+   procedure ResizeEvent(Sender:TObject);
    procedure InternalMouseDown(Sender: TObject; Button: TMouseButton;
     Shift: TShiftState; X, Y: Integer);
    procedure SetPage(avalue:integer);
    procedure SetPreviewScale(avalue:double);
    procedure SetOnWorkProgress(AValue:TMetaFileWorkProgress);
   protected
-   prdriver:TRpGDIDriver;
+   prdriver:TRpQtDriver;
    procedure Notification(AComponent:TComponent;Operation:TOperation);override;
-   procedure SetParent(aparent:TWinControl);override;
+   procedure SetParent(const AParent:TWidgetControl);override;
    procedure ReDrawPage;
   public
    constructor Create(AOwner:TComponent);override;
@@ -108,19 +107,21 @@ type
 
 implementation
 
-constructor TRpPreviewMeta.Create(AOwner:TComponent);
+constructor TRpPreviewMetaCLX.Create(AOwner:TComponent);
+var
+ asize:Size;
 begin
  inherited Create(AOwner);
 
+ OnResize:=ResizeEvent;
  Color:=clAppWorkSpace;
  FBitmap:=TBitmap.Create;
  FBitmap.PixelFormat:=pf32bit;
- FBitmap.HandleType:=bmDIB;
  FPage:=-1;
  FEntirePageCount:=1;
  dpix:=DEFAULT_RESOLUTION;
  dpiy:=DEFAULT_RESOLUTION;
- prdriver:=TRpGDiDriver.Create;
+ prdriver:=TRpQtDriver.Create;
  conteimage:=TPanel.Create(self);
  conteimage.BevelInner:=bvNone;
  conteimage.BevelOuter:=bvNone;
@@ -132,12 +133,13 @@ begin
  image.Parent:=conteimage;
  HorzScrollBar.Tracking:=true;
  VertScrollBar.Tracking:=true;
- FBarWidth:=GetSystemMetrics(SM_CYHSCROLL);
- FBarHeight:=GetSystemMetrics(SM_CXVSCROLL);
+ QApplication_globalStrut(@asize);
+ FBarWidth:=asize.cx;
+ FBarHeight:=asize.cy;
 end;
 
 
-procedure TRpPreviewMeta.SetPreviewScale(avalue:double);
+procedure TRpPreviewMetaCLX.SetPreviewScale(avalue:double);
 begin
  ChangePreviewScale(avalue);
  FAutoScale:=AScaleCustom;
@@ -145,13 +147,13 @@ begin
  ReDrawPage;
 end;
 
-procedure TRpPreviewmeta.SetAutoScale(newvalue:TAutoScaleType);
+procedure TRpPreviewMetaCLX.SetAutoScale(newvalue:TAutoScaleType);
 begin
  FAutoScale:=newvalue;
  ReDrawPage;
 end;
 
-procedure TRpPreviewmeta.SetEntireTopDown(avalue:boolean);
+procedure TRpPreviewMetaCLX.SetEntireTopDown(avalue:boolean);
 begin
  FEntireTopDown:=avalue;
  if (FAutoScale=AScaleEntirePage) then
@@ -161,7 +163,7 @@ begin
  end;
 end;
 
-procedure TRpPreviewmeta.SetEntirePageCount(avalue:integer);
+procedure TRpPreviewMetaCLX.SetEntirePageCount(avalue:integer);
 var
  pcount,i,newpage:integer;
 begin
@@ -196,7 +198,7 @@ begin
 end;
 
 
-procedure TRpPreviewmeta.SetMetafile(meta:TRpMetafileReport);
+procedure TRpPreviewMetaCLX.SetMetafile(meta:TRpMetafileReport);
 var
  drivername:string;
  istextonly:boolean;
@@ -236,12 +238,12 @@ begin
  ReDrawPage;
 end;
 
-procedure TRpPreviewMeta.WorkAsyncError(amessage:String);
+procedure TRpPreviewMetaCLX.WorkAsyncError(amessage:String);
 begin
  RpMessageBox(amessage);
 end;
 
-destructor TRpPreviewMeta.Destroy;
+destructor TRpPreviewMetaCLX.Destroy;
 begin
  if Assigned(FBitmap) then
   FBitmap.Free;
@@ -250,7 +252,7 @@ begin
  inherited Destroy;
 end;
 
-procedure TRpPreviewMeta.Scroll(vertical:boolean;increment:integer);
+procedure TRpPreviewMetaCLX.Scroll(vertical:boolean;increment:integer);
 begin
  if vertical then
   VertScrollBar.Position:=VertScrollBar.Position+increment
@@ -258,7 +260,7 @@ begin
   HorzScrollBar.Position:=HorzScrollBar.Position+increment;
 end;
 
-procedure TRpPreviewMeta.ChangePreviewScale(newvalue:double);
+procedure TRpPreviewMetaCLX.ChangePreviewScale(newvalue:double);
 begin
  if (newvalue<MIN_SCALE) then
   newvalue:=MIN_SCALE;
@@ -268,7 +270,7 @@ begin
  prdriver.Scale:=FPreviewScale;
 end;
 
-procedure TRpPreviewmeta.DoResize;
+procedure TRpPreviewMetaCLX.DoResize;
 var
  AWidth:integeR;
  Aheight:integer;
@@ -295,7 +297,7 @@ type
 
 
 
-procedure TRpPreviewmeta.ReDrawPage;
+procedure TRpPreviewMetaCLX.ReDrawPage;
 var
  newwidth,newheight:integer;
  pagerows,pagecols:integer;
@@ -476,7 +478,6 @@ begin
   FBitmap:=nil;
   FBitmap:=TBitmap.Create;
   FBitmap.PixelFormat:=pf32bit;
-  FBitmap.HandleType:=bmDIB;
   FBitmap.Width:=newwidth;
   FBitmap.Height:=newheight;
   image.Picture.Bitmap:=FBitmap;
@@ -507,7 +508,6 @@ begin
    begin
     FIntBitmap:=TBitmap.Create;
     FIntBitmap.PixelFormat:=pf32bit;
-    FIntBitmap.HandleType:=bmDIB;
     FIntBitmap.Width:=pwidth;
     FIntBitmap.Height:=pheight;
    end
@@ -516,7 +516,6 @@ begin
     if ((FIntBitmap.Width<>pwidth) or (FIntBitmap.Height<>pheight)) then
     begin
      FIntBitmap:=TBitmap.Create;
-     FIntBitmap.PixelFormat:=pf24bit;
      FIntBitmap.Width:=pwidth;
      FIntBitmap.Height:=pheight;
     end;
@@ -590,18 +589,14 @@ begin
  end;
 end;
 
-procedure TRpPreviewmeta.WMPosChange(var message:TMessage);
-begin
-// ReDrawPage;
-end;
 
 
-procedure TRpPreviewmeta.WMSizeChange(var message:TMessage);
+procedure TRpPreviewMetaCLX.ResizeEvent(Sender:TObject);
 begin
  ReDrawPage;
 end;
 
-procedure TRpPreviewmeta.InternalMouseDown(Sender: TObject; Button: TMouseButton;
+procedure TRpPreviewMetaCLX.InternalMouseDown(Sender: TObject; Button: TMouseButton;
     Shift: TShiftState; X, Y: Integer);
 var
  offsetx,offsety:integer;
@@ -643,7 +638,7 @@ begin
  VertScrollBar.Position:=posy;
 end;
 
-procedure TRpPreviewmeta.SetPage(avalue:integer);
+procedure TRpPreviewMetaCLX.SetPage(avalue:integer);
 var
  request:integer;
 begin
@@ -659,7 +654,7 @@ begin
  FOldPage:=-1;
 end;
 
-procedure TRpPreviewmeta.NextPage;
+procedure TRpPreviewMetaCLX.NextPage;
 var
  increment,request:integer;
 begin
@@ -687,7 +682,7 @@ begin
  end;
 end;
 
-procedure TRpPreviewmeta.PriorPage;
+procedure TRpPreviewMetaCLX.PriorPage;
 var
  decrement:integer;
 begin
@@ -703,7 +698,7 @@ begin
   Page:=FPage-decrement;
 end;
 
-procedure TRpPreviewmeta.LastPage;
+procedure TRpPreviewMetaCLX.LastPage;
 var
  newpage,decrement:integer;
 begin
@@ -724,19 +719,19 @@ begin
  end;
 end;
 
-procedure TRpPreviewmeta.FirstPage;
+procedure TRpPreviewMetaCLX.FirstPage;
 begin
  Page:=0;
 end;
 
-procedure TRpPreviewmeta.SetParent(aparent:TWinControl);
+procedure TRpPreviewMetaCLX.SetParent(const AParent:TWidgetControl);
 begin
  inherited SetParent(aparent);
  if aparent<>Parent then
   ReDrawPage;
 end;
 
-procedure TrpPreviewmeta.RefreshPage;
+procedure TRpPreviewMetaCLX.RefreshPage;
 begin
  FScaleDrawn:=-1.0;
  FPageDrawn:=-1;
@@ -744,14 +739,14 @@ begin
  ReDrawPage;
 end;
 
-procedure TRpPreviewMeta.SetOnWorkProgress(AValue:TMetaFileWorkProgress);
+procedure TRpPreviewMetaCLX.SetOnWorkProgress(AValue:TMetaFileWorkProgress);
 begin
  FOnWorkProgress:=AValue;
  if Assigned(metafile) then
   metafile.OnWorkProgress:=FOnWorkProgress;
 end;
 
-procedure TRpPreviewMeta.Notification(AComponent:TComponent;Operation:TOperation);
+procedure TRpPreviewMetaCLX.Notification(AComponent:TComponent;Operation:TOperation);
 begin
  inherited Notification(AComponent,Operation);
  if assigned(metafile) then
@@ -766,7 +761,7 @@ begin
  end;
 end;
 
-procedure TRpPreviewmeta.RefreshMetafile;
+procedure TRpPreviewMetaCLX.RefreshMetafile;
 var
  meta:TRpMetafileReport;
 begin

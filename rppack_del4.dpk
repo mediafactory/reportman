@@ -107,6 +107,9 @@ contains
   rpinfoprovgdi in 'rpinfoprovgdi.pas',
   rpmdfsearchvcl in 'rpmdfsearchvcl.pas' {FRpSearchParamVCL},
   rpxmlstream in 'rpxmlstream.pas',
-  rpbarcodecons in 'rpbarcodecons.pas';
+  rpbarcodecons in 'rpbarcodecons.pas',
+  rppagesetupvcl in 'rppagesetupvcl.pas' {FRpPageSetupVCL},
+  rppreviewcontrol in 'rppreviewcontrol.pas',
+  rppreviewmeta in 'rppreviewmeta.pas';
 
 end.

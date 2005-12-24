@@ -27,7 +27,7 @@ uses
   SysUtils, Types, Classes,rpmunits,
   QGraphics, QControls, QForms, QDialogs,
   QStdCtrls,rpreport, QExtCtrls,QButtons,QPrinters,
-  rptypes,
+  rptypes,rpbasereport,
   rpmetafile,rpmdconsts,rpmdprintconfig, QComCtrls, QMask, rpmaskeditclx;
 
 type
@@ -111,7 +111,7 @@ type
     procedure ComboPaperSourceClick(Sender: TObject);
   private
     { Private declarations }
-    report:TRpReport;
+    report:TRpBaseReport;
     dook:boolean;
     oldleftmargin,oldtopmargin,oldrightmargin,oldbottommargin:string;
     oldcustompagewidth,oldcustompageheight:string;
@@ -122,7 +122,7 @@ type
   end;
 
 
-function ExecutePageSetup(report:TRpReport):boolean;
+function ExecutePageSetup(report:TRpBaseReport):boolean;
 
 implementation
 
@@ -131,7 +131,7 @@ implementation
 
 
 
-function ExecutePageSetup(report:TRpReport):boolean;
+function ExecutePageSetup(report:TRpBaseReport):boolean;
 var
  dia:TFRpPageSetup;
 begin
