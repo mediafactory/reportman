@@ -2422,7 +2422,7 @@ begin
    begin
     aresult:=GlobalAlloc(GHND,asize);
     try
-     GlobalLock(aresult);
+     pdevmode:=GlobalLock(aresult);
      try
       if IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
       begin
