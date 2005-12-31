@@ -93,7 +93,12 @@ procedure SetRecordSet(const datasetname: String,recordset: OleVariant);
   procedure GetRemoteParams(hostname:string;port:integer;user,password,aliasname,hostname:string)</p>
 <p><b>Since version 2.5</b></p>
 <p>procedure SaveToCSV2(const filename,separator: String);<br>
-  property AsyncExecution:Boolean<br>
+  property AsyncExecution:Boolean</p>
+<p>A new control have been introduced: <strong>PreviewControl</strong>, to work 
+  with the classic ActiveX control, drop onto the form:</p>
+<p> ReportManX1.FileName = &quot;c:\test.rep&quot;<br>
+  PreviewControl1.EntirePageCount = 2<br>
+  PreviewControl1.SetReport ReportManX1.Report<br>
 </p>
 <h3>Using the control with VB like languages</h3>
 <p>The ActiveX control may be used directly in VB, VBScript, ASP and WSH. In the 

@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<head>
+  <title>Report Manager - Dot net version</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></head>
+<body>
+<h2>Report Manager for Dot Net</h2>
+<h3><b>Basics</b></h3>
+<p>The dot net version of Report Manager is a translation from Delphi to C# of 
+  the reporting engine. The port to dot net is still uncomplete and requires still 
+  hard work.</p>
+<p><strong>How it works now (while testing the port)</strong></p>
+<p>A single additional file is installed with the designer package for windows, 
+  the file is <strong>printreport.exe</strong>, this is a dot net program.</p>
+<p>When you select the dot net driver on database connections configuration, the 
+  designer will save the report in a temp file, calling printreport.exe, when 
+  you preview or print, the printreport.exe is used instead of the designer itself. 
+  You can also test printreport.exe independently, the only requirement is you 
+  save the report as xml (select prefered save format in page setup).</p>
+<p><strong>Parts already working (Windows)</strong></p>
+<ul>
+  <li>Print preview and printout</li>
+  <li>Label, expression, image, drawing, barcode (partial)</li>
+  <li>Data providers: Odbc, OleDB, SQLServer, Firebird (firebird dotnet assembly 
+    required)</li>
+</ul>
+<p><strong>Missing parts</strong></p>
+<ul>
+  <li>Output as pdf, excel, text</li>
+  <li>Most of the evaluator functions are still missing</li>
+  <li>Linux port, requires winforms on Linux or implementation of pdf output.</li>
+  <li>Some barcodes still missing</li>
+  <li>Other data providers may be included in the future (MySQL)</li>
+</ul>
+<p><strong>Different behaviour</strong></p>
+<ul>
+  <li>You must use dot net syntax for parameters in querys, see documentation 
+    in dot net platform sdk.</li>
+  <li>In odbc provider you use ? for placing parameters, the parameters will be 
+    assigned by position, not by name, parameters by name are not supported by 
+    odbc dot net driver, so make sure to sort the parameters to match query position 
+    when you use odbc.</li>
+</ul>
+</body>
+</html>
