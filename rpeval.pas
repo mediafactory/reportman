@@ -1273,6 +1273,7 @@ var
  FMStream:TMemoryStream;
  Size,readed: Longint;
  Header: TGraphicHeader;
+ astring:String;
 {$IFDEF DOTNETD}
  Temp:TBytes;
 {$ENDIF}
@@ -1339,7 +1340,20 @@ begin
    begin
     AField:=(iden As TIdenField).Field;
     if (Not (AField is TBlobField)) then
-     Raise Exception.Create(SRpNotBinary+atext);
+    begin
+     astring:=AField.AsString;
+     FMStream:=TMemoryStream.Create;
+     try
+      FMStream.SetSize(Length(astring));
+      FMStream.Write(astring[1],FMStream.Size);
+      FMStream.Seek(0,soFromBeginning);
+      Result:=FMStream;
+     except
+      FMStream.free;
+      raise;
+     end;
+     exit;
+    end;
     if AField.isnull then
      exit;
     FMStream:=TMemoryStream.Create;

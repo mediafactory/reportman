@@ -472,11 +472,14 @@ procedure TRpPDFDriver.GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:
 var
  imagesize:integer;
  bitmapwidth,bitmapheight:integer;
+ indexed:boolean;
+ numcolors,bitsperpixel:integer;
+ palette:string;
 begin
  bitmapwidth:=0;
  bitmapheight:=0;
  if Not GetJPegInfo(Stream,bitmapwidth,bitmapheight) then
-  GetBitmapInfo(Stream,bitmapwidth,bitmapheight,imagesize,nil);
+  GetBitmapInfo(Stream,bitmapwidth,bitmapheight,imagesize,nil,indexed,bitsperpixel,numcolors,palette);
  if dpi<=0 then
   exit;
  extent.X:=Round(bitmapwidth/dpi*TWIPS_PER_INCHESS);

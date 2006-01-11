@@ -29,6 +29,9 @@ uses Sysutils,
 {$IFDEF USEVARIANTS}
   Variants,Types,
 {$ENDIF}
+{$IFDEF USEINDY}
+  IdCoderUUE,
+{$ENDIF}
  Classes,rptypes,rpprintitem,rpmdconsts,rpmetafile,rpeval,
  rptypeval,db;
 
@@ -101,6 +104,10 @@ type
    property dpires:integer read   Fdpires write Fdpires default DEfAULT_DPI;
    property CopyMode:integer read FCopyMode write FCopyMode default 10;
   end;
+
+{$IFDEF USEINDY}
+procedure CheckUUDecode(amemstream:TMemoryStream);
+{$ENDIF}
 
 implementation
 
@@ -265,6 +272,10 @@ begin
    else
     Result:=FStream;
   end;
+{$IFDEF USEINDY}
+  if Assigned(Result) then
+   CheckUUDecode(Result);
+{$ENDIF}
  except
   on E:Exception do
   begin
@@ -313,6 +324,55 @@ begin
  finally
   if FMStream<>FStream then
    FMStream.free;
+ end;
+end;
+
+procedure CheckUUDecode(amemstream:TMemoryStream);
+var
+ astring:String;
+ memstream:TMemoryStream;
+ i:integer;
+ decoder:TIdDecoderUUE;
+ alist:TStringList;
+begin
+ if amemstream.Size>5 then
+ begin
+  SetLength(astring,5);
+  amemstream.Seek(0,soFromBeginning);
+  amemstream.Read(astring[1],5);
+  if UpperCase(astring)='BEGIN' then
+  begin
+   memstream:=TMemoryStream.Create;
+   try
+    amemstream.Seek(0,soFromBeginning);
+    memstream.SetSize(amemstream.size);
+    amemstream.Read(memstream.memory^,amemstream.size);
+    decoder:=TIdDecoderUUE.Create(nil);
+    try
+     alist:=TStringList.Create;
+     try
+      alist.LoadFromStream(memstream);
+      memstream.SetSize(0);
+      for i:=1 to alist.Count-2 do
+      begin
+       astring:=decoder.DecodeString(alist.Strings[i]);
+       if Length(astring)>0 then
+        memstream.Write(astring[1],Length(astring))
+      end;
+      memstream.Seek(0,soFromBeginning);
+      amemstream.SetSize(0);
+      amemstream.Write(memstream.memory^,memstream.size);
+      amemstream.Seek(0,soFromBeginning);
+     finally
+      alist.free;
+     end;
+    finally
+     decoder.Free;
+    end;
+   finally
+    memstream.free;
+   end;
+  end;
  end;
 end;
 

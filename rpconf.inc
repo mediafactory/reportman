@@ -53,8 +53,10 @@
 
 // Database drivers to be used when performing a release
 {$IFDEF REPMANRELEASE}
+{$IFNDEF VER180}
  {$DEFINE USETNTUNICODE}
  {$DEFINE USEZEOS}
+{$ENDIF}
  {$DEFINE LINUXTEECHART}
  {$DEFINE TEECHARTPRO}
  {$DEFINE USEIBX}
@@ -64,6 +66,7 @@
 
 {$DEFINE USEVARIANTS}
 {$DEFINE USEBCD}
+
 
 // Delphi 5  compiler defines
 {$IFDEF VER130}

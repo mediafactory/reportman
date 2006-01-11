@@ -492,10 +492,10 @@ begin
  if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
-{$IFDEF DELPHI5UP}
+{$IFDEF USEVARIANTS}
  Result:=WideUppercase(Params[0]);
 {$ENDIF}
-{$IFNDEF DELPHI5UP}
+{$IFNDEF USEVARIANTS}
  Result:=AnsiUppercase(Params[0]);
 {$ENDIF}
 end;
@@ -526,10 +526,10 @@ begin
  if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
-{$IFDEF DELPHI5UP}
+{$IFDEF USEVARIANTS}
   Result:=WideLowercase(Params[0]);
 {$ENDIF}
-{$IFNDEF DELPHI5UP}
+{$IFNDEF USEVARIANTS}
   Result:=AnsiLowercase(Params[0]);
 {$ENDIF}
 end;

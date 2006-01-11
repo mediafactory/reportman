@@ -148,6 +148,3 @@ ProductVersion=2.4.0.0
 [Excluded Packages]
 h:\prog\delphi7\Projects\Bpl\gestor_d6.bpl=Componentes del gestor de Informes
 h:\prog\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components
-[HistoryLists\hlUnitAliases]
-Count=1
-Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

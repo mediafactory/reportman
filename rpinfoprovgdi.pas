@@ -517,7 +517,12 @@ var
  aabc:array [1..1] of ABC;
  aint:Word;
  glyphindex:UInt;
+{$IFDEF VER180}
+ gcp:windows.tagGCP_RESULTSW;
+{$ENDIF}
+{$IFNDEF VER180}
  gcp:windows.tagGCP_RESULTSA;
+{$ENDIF}
  astring:WideString;
 begin
  glyphindex:=0;

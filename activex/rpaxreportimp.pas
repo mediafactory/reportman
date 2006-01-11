@@ -549,5 +549,5 @@ initialization
     1,
     '',
     0,
-    tmApartment);
+    tmSingle);
 end.

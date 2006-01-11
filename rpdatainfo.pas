@@ -60,7 +60,7 @@ uses Classes,SysUtils,
   IB_Components,IBODataset,
 {$ENDIF}
 {$IFDEF USEVARIANTS}
-  Variants,Types,
+  Variants,Types,WSDLIntf,
 {$ENDIF}
 {$IFDEF USERPDATASET}
  rpdataset,DBClient,
@@ -994,7 +994,13 @@ begin
      begin
       if Not Assigned(ConAdmin) then
        UpdateConAdmin;
-      ConAdmin.GetConnectionParams(conname,FSQLConnection.params);
+      alist:=TStringList.Create;
+      try
+       ConAdmin.GetConnectionParams(conname,alist);
+       FSQLConnection.Params.Assign(alist);
+      finally
+       alist.free;
+      end;
      end;
      // Load vendor lib, library name...
      if (FLoadDriverParams) then
@@ -2150,6 +2156,8 @@ begin
   alist2.free;
  end;
 end;
+
+
 
 procedure TRpConnAdmin.GetDriverNames(alist:TStrings);
 var

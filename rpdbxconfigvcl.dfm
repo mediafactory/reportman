@@ -22,17 +22,20 @@ object FRpDBXConfigVCL: TFRpDBXConfigVCL
     Height = 53
     Align = alTop
     TabOrder = 0
+    DesignSize = (
+      585
+      53)
     object LDriversFile: TLabel
       Left = 8
       Top = 8
-      Width = 51
+      Width = 53
       Height = 13
       Caption = 'Driver'#39's file'
     end
     object LConnsFile: TLabel
       Left = 8
       Top = 32
-      Width = 71
+      Width = 72
       Height = 13
       Caption = 'Conection'#39's file'
     end
@@ -95,7 +98,6 @@ object FRpDBXConfigVCL: TFRpDBXConfigVCL
         ButtonWidth = 31
         Caption = 'ToolBar1'
         EdgeBorders = [ebLeft, ebTop, ebRight, ebBottom]
-        Flat = True
         Images = ImageList1
         TabOrder = 1
         object BAdd: TToolButton
@@ -184,7 +186,7 @@ object FRpDBXConfigVCL: TFRpDBXConfigVCL
           Width = 189
           Height = 21
           Style = csDropDownList
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 0
           OnClick = ComboDriversClick
         end

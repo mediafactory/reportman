@@ -128,6 +128,9 @@ var
  isjpeg:Boolean;
  fimagestream:TMemoryStream;
  bitmapwidth,bitmapheight,imagesize:Integer;
+ indexed:boolean;
+ palette:string;
+ bitsperpixel,numcolors:integer;
 begin
  Result:='';
  case obj.Metatype of
@@ -170,7 +173,7 @@ begin
      else
      begin
       fimagestream.Seek(0,soFromBeginning);
-      GetBitmapInfo(fimagestream,bitmapwidth,bitmapheight,imagesize,FImageStream);
+      GetBitmapInfo(fimagestream,bitmapwidth,bitmapheight,imagesize,FImageStream,indexed,bitsperpixel,numcolors,palette);
       imafilename:=ChangeFileExt(imafilename,'.bmp');
      end;
      fimagestream.Seek(0,soFromBeginning);

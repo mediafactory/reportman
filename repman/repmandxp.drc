@@ -8,71 +8,76 @@
   resources were bound to the produced executable.
 */
 
-#define IdResourceStrings_RSStackHOST_NOT_FOUND 64688
-#define IdResourceStrings_RSStackENETUNREACH 64704
-#define IdResourceStrings_RSStackENETRESET 64705
-#define IdResourceStrings_RSStackECONNABORTED 64706
-#define IdResourceStrings_RSStackECONNRESET 64707
-#define IdResourceStrings_RSStackENOBUFS 64708
-#define IdResourceStrings_RSStackEISCONN 64709
-#define IdResourceStrings_RSStackENOTCONN 64710
-#define IdResourceStrings_RSStackESHUTDOWN 64711
-#define IdResourceStrings_RSStackETOOMANYREFS 64712
-#define IdResourceStrings_RSStackETIMEDOUT 64713
-#define IdResourceStrings_RSStackECONNREFUSED 64714
-#define IdResourceStrings_RSStackELOOP 64715
-#define IdResourceStrings_RSStackENAMETOOLONG 64716
-#define IdResourceStrings_RSStackEHOSTDOWN 64717
-#define IdResourceStrings_RSStackEHOSTUNREACH 64718
-#define IdResourceStrings_RSStackENOTEMPTY 64719
-#define IdResourceStrings_RSStackEWOULDBLOCK 64720
-#define IdResourceStrings_RSStackEINPROGRESS 64721
-#define IdResourceStrings_RSStackEALREADY 64722
-#define IdResourceStrings_RSStackENOTSOCK 64723
-#define IdResourceStrings_RSStackEDESTADDRREQ 64724
-#define IdResourceStrings_RSStackEMSGSIZE 64725
-#define IdResourceStrings_RSStackEPROTOTYPE 64726
-#define IdResourceStrings_RSStackENOPROTOOPT 64727
-#define IdResourceStrings_RSStackEPROTONOSUPPORT 64728
-#define IdResourceStrings_RSStackESOCKTNOSUPPORT 64729
-#define IdResourceStrings_RSStackEOPNOTSUPP 64730
-#define IdResourceStrings_RSStackEPFNOSUPPORT 64731
-#define IdResourceStrings_RSStackEAFNOSUPPORT 64732
-#define IdResourceStrings_RSStackEADDRINUSE 64733
-#define IdResourceStrings_RSStackEADDRNOTAVAIL 64734
-#define IdResourceStrings_RSStackENETDOWN 64735
-#define IdResourceStrings_RSWS2CallError 64736
-#define IdResourceStrings_RSWS2LoadError 64737
-#define IdResourceStrings_RSStatusResolving 64738
-#define IdResourceStrings_RSStatusConnecting 64739
-#define IdResourceStrings_RSStatusConnected 64740
-#define IdResourceStrings_RSStatusDisconnecting 64741
-#define IdResourceStrings_RSStatusDisconnected 64742
-#define IdResourceStrings_RSStatusText 64743
-#define IdResourceStrings_RSInvalidServiceName 64744
-#define IdResourceStrings_RSStackError 64745
-#define IdResourceStrings_RSStackEINTR 64746
-#define IdResourceStrings_RSStackEBADF 64747
-#define IdResourceStrings_RSStackEACCES 64748
-#define IdResourceStrings_RSStackEFAULT 64749
-#define IdResourceStrings_RSStackEINVAL 64750
-#define IdResourceStrings_RSStackEMFILE 64751
-#define VDBConsts_SInsertRecord 64752
-#define VDBConsts_SDeleteRecord 64753
-#define VDBConsts_SEditRecord 64754
-#define VDBConsts_SPostEdit 64755
-#define VDBConsts_SCancelEdit 64756
-#define VDBConsts_SRefreshRecord 64757
-#define VDBConsts_SDeleteRecordQuestion 64758
-#define VDBConsts_SDeleteMultipleRecordsQuestion 64759
-#define VDBConsts_SDataSourceFixed 64760
-#define VDBConsts_SPropDefByLookup 64761
-#define VDBConsts_STooManyColumns 64762
-#define VDBConsts_SRemoteLogin 64763
-#define TntSystem_SBufferOverflow 64764
-#define TntSystem_SInvalidUTF7 64765
-#define IdResourceStrings_RSWinsockInitializationError 64766
-#define IdResourceStrings_RSSetSizeExceeded 64767
+#define VDBConsts_SDataSourceFixed 64688
+#define VDBConsts_SPropDefByLookup 64689
+#define VDBConsts_STooManyColumns 64690
+#define VDBConsts_SRemoteLogin 64691
+#define TntSystem_SBufferOverflow 64692
+#define TntSystem_SInvalidUTF7 64693
+#define IdResourceStrings_RSStackEHOSTUNREACH 64704
+#define IdResourceStrings_RSStackENOTEMPTY 64705
+#define IdResourceStrings_RSStackHOST_NOT_FOUND 64706
+#define IdResourceStrings_RSUnevenSizeInDecodeStream 64707
+#define VDBConsts_SFirstRecord 64708
+#define VDBConsts_SPriorRecord 64709
+#define VDBConsts_SNextRecord 64710
+#define VDBConsts_SLastRecord 64711
+#define VDBConsts_SInsertRecord 64712
+#define VDBConsts_SDeleteRecord 64713
+#define VDBConsts_SEditRecord 64714
+#define VDBConsts_SPostEdit 64715
+#define VDBConsts_SCancelEdit 64716
+#define VDBConsts_SRefreshRecord 64717
+#define VDBConsts_SDeleteRecordQuestion 64718
+#define VDBConsts_SDeleteMultipleRecordsQuestion 64719
+#define IdResourceStrings_RSStackEADDRNOTAVAIL 64720
+#define IdResourceStrings_RSStackENETDOWN 64721
+#define IdResourceStrings_RSStackENETUNREACH 64722
+#define IdResourceStrings_RSStackENETRESET 64723
+#define IdResourceStrings_RSStackECONNABORTED 64724
+#define IdResourceStrings_RSStackECONNRESET 64725
+#define IdResourceStrings_RSStackENOBUFS 64726
+#define IdResourceStrings_RSStackEISCONN 64727
+#define IdResourceStrings_RSStackENOTCONN 64728
+#define IdResourceStrings_RSStackESHUTDOWN 64729
+#define IdResourceStrings_RSStackETOOMANYREFS 64730
+#define IdResourceStrings_RSStackETIMEDOUT 64731
+#define IdResourceStrings_RSStackECONNREFUSED 64732
+#define IdResourceStrings_RSStackELOOP 64733
+#define IdResourceStrings_RSStackENAMETOOLONG 64734
+#define IdResourceStrings_RSStackEHOSTDOWN 64735
+#define IdResourceStrings_RSStackEINVAL 64736
+#define IdResourceStrings_RSStackEMFILE 64737
+#define IdResourceStrings_RSStackEWOULDBLOCK 64738
+#define IdResourceStrings_RSStackEINPROGRESS 64739
+#define IdResourceStrings_RSStackEALREADY 64740
+#define IdResourceStrings_RSStackENOTSOCK 64741
+#define IdResourceStrings_RSStackEDESTADDRREQ 64742
+#define IdResourceStrings_RSStackEMSGSIZE 64743
+#define IdResourceStrings_RSStackEPROTOTYPE 64744
+#define IdResourceStrings_RSStackENOPROTOOPT 64745
+#define IdResourceStrings_RSStackEPROTONOSUPPORT 64746
+#define IdResourceStrings_RSStackESOCKTNOSUPPORT 64747
+#define IdResourceStrings_RSStackEOPNOTSUPP 64748
+#define IdResourceStrings_RSStackEPFNOSUPPORT 64749
+#define IdResourceStrings_RSStackEAFNOSUPPORT 64750
+#define IdResourceStrings_RSStackEADDRINUSE 64751
+#define IdResourceStrings_RSWinsockInitializationError 64752
+#define IdResourceStrings_RSSetSizeExceeded 64753
+#define IdResourceStrings_RSWS2CallError 64754
+#define IdResourceStrings_RSWS2LoadError 64755
+#define IdResourceStrings_RSStatusResolving 64756
+#define IdResourceStrings_RSStatusConnecting 64757
+#define IdResourceStrings_RSStatusConnected 64758
+#define IdResourceStrings_RSStatusDisconnecting 64759
+#define IdResourceStrings_RSStatusDisconnected 64760
+#define IdResourceStrings_RSStatusText 64761
+#define IdResourceStrings_RSInvalidServiceName 64762
+#define IdResourceStrings_RSStackError 64763
+#define IdResourceStrings_RSStackEINTR 64764
+#define IdResourceStrings_RSStackEBADF 64765
+#define IdResourceStrings_RSStackEACCES 64766
+#define IdResourceStrings_RSStackEFAULT 64767
 #define ADOConst_SMissingCommandText 64768
 #define ADOConst_SNoResultSet 64769
 #define ADOConst_SADOCreateError 64770
@@ -84,11 +89,11 @@
 #define ADOConst_SRecordsetNotOpen 64776
 #define ADOConst_sNameAttr 64777
 #define ADOConst_sValueAttr 64778
-#define rpdataset_SRpInvOpRpdata 64779
-#define VDBConsts_SFirstRecord 64780
-#define VDBConsts_SPriorRecord 64781
-#define VDBConsts_SNextRecord 64782
-#define VDBConsts_SLastRecord 64783
+#define XMLConst_SDuplicateRegistration 64779
+#define XMLConst_SDOMNotSupported 64780
+#define XMLConst_SNodeExpected 64781
+#define XMLConst_SMSDOMNotInstalled 64782
+#define rpdataset_SRpInvOpRpdata 64783
 #define bdeconst_SLoginError 64784
 #define bdeconst_SInitError 64785
 #define bdeconst_SIDAPILangID 64786
@@ -843,7 +848,30 @@
 #define SysConst_SAccessDenied 65535
 STRINGTABLE
 BEGIN
+	VDBConsts_SDataSourceFixed,	"Operation not allowed in a DBCtrlGrid"
+	VDBConsts_SPropDefByLookup,	"Property already defined by lookup field"
+	VDBConsts_STooManyColumns,	"Grid requested to display more than 256 columns"
+	VDBConsts_SRemoteLogin,	"Remote Login"
+	TntSystem_SBufferOverflow,	"Buffer overflow"
+	TntSystem_SInvalidUTF7,	"Invalid UTF7"
+	IdResourceStrings_RSStackEHOSTUNREACH,	"No route to host."
+	IdResourceStrings_RSStackENOTEMPTY,	"Directory not empty"
 	IdResourceStrings_RSStackHOST_NOT_FOUND,	"Host not found."
+	IdResourceStrings_RSUnevenSizeInDecodeStream,	"Uneven size in DecodeToStream."
+	VDBConsts_SFirstRecord,	"First record"
+	VDBConsts_SPriorRecord,	"Prior record"
+	VDBConsts_SNextRecord,	"Next record"
+	VDBConsts_SLastRecord,	"Last record"
+	VDBConsts_SInsertRecord,	"Insert record"
+	VDBConsts_SDeleteRecord,	"Delete record"
+	VDBConsts_SEditRecord,	"Edit record"
+	VDBConsts_SPostEdit,	"Post edit"
+	VDBConsts_SCancelEdit,	"Cancel edit"
+	VDBConsts_SRefreshRecord,	"Refresh data"
+	VDBConsts_SDeleteRecordQuestion,	"Delete record?"
+	VDBConsts_SDeleteMultipleRecordsQuestion,	"Delete all selected records?"
+	IdResourceStrings_RSStackEADDRNOTAVAIL,	"Cannot assign requested address."
+	IdResourceStrings_RSStackENETDOWN,	"Network is down."
 	IdResourceStrings_RSStackENETUNREACH,	"Network is unreachable."
 	IdResourceStrings_RSStackENETRESET,	"Net dropped connection or reset."
 	IdResourceStrings_RSStackECONNABORTED,	"Software caused connection abort."
@@ -858,8 +886,8 @@ BEGIN
 	IdResourceStrings_RSStackELOOP,	"Too many levels of symbolic links."
 	IdResourceStrings_RSStackENAMETOOLONG,	"File name too long."
 	IdResourceStrings_RSStackEHOSTDOWN,	"Host is down."
-	IdResourceStrings_RSStackEHOSTUNREACH,	"No route to host."
-	IdResourceStrings_RSStackENOTEMPTY,	"Directory not empty"
+	IdResourceStrings_RSStackEINVAL,	"Invalid argument."
+	IdResourceStrings_RSStackEMFILE,	"Too many open files."
 	IdResourceStrings_RSStackEWOULDBLOCK,	"Operation would block. "
 	IdResourceStrings_RSStackEINPROGRESS,	"Operation now in progress."
 	IdResourceStrings_RSStackEALREADY,	"Operation already in progress."
@@ -874,8 +902,8 @@ BEGIN
 	IdResourceStrings_RSStackEPFNOSUPPORT,	"Protocol family not supported."
 	IdResourceStrings_RSStackEAFNOSUPPORT,	"Address family not supported by protocol family."
 	IdResourceStrings_RSStackEADDRINUSE,	"Address already in use."
-	IdResourceStrings_RSStackEADDRNOTAVAIL,	"Cannot assign requested address."
-	IdResourceStrings_RSStackENETDOWN,	"Network is down."
+	IdResourceStrings_RSWinsockInitializationError,	"Winsock Initialization Error."
+	IdResourceStrings_RSSetSizeExceeded,	"Set Size Exceeded."
 	IdResourceStrings_RSWS2CallError,	"Error on call Winsock2 library function %s"
 	IdResourceStrings_RSWS2LoadError,	"Error on loading Winsock2 library (%s)"
 	IdResourceStrings_RSStatusResolving,	"Resolving hostname %s."
@@ -890,24 +918,6 @@ BEGIN
 	IdResourceStrings_RSStackEBADF,	"Bad file number."
 	IdResourceStrings_RSStackEACCES,	"Access denied."
 	IdResourceStrings_RSStackEFAULT,	"Bad address."
-	IdResourceStrings_RSStackEINVAL,	"Invalid argument."
-	IdResourceStrings_RSStackEMFILE,	"Too many open files."
-	VDBConsts_SInsertRecord,	"Insert record"
-	VDBConsts_SDeleteRecord,	"Delete record"
-	VDBConsts_SEditRecord,	"Edit record"
-	VDBConsts_SPostEdit,	"Post edit"
-	VDBConsts_SCancelEdit,	"Cancel edit"
-	VDBConsts_SRefreshRecord,	"Refresh data"
-	VDBConsts_SDeleteRecordQuestion,	"Delete record?"
-	VDBConsts_SDeleteMultipleRecordsQuestion,	"Delete all selected records?"
-	VDBConsts_SDataSourceFixed,	"Operation not allowed in a DBCtrlGrid"
-	VDBConsts_SPropDefByLookup,	"Property already defined by lookup field"
-	VDBConsts_STooManyColumns,	"Grid requested to display more than 256 columns"
-	VDBConsts_SRemoteLogin,	"Remote Login"
-	TntSystem_SBufferOverflow,	"Buffer overflow"
-	TntSystem_SInvalidUTF7,	"Invalid UTF7"
-	IdResourceStrings_RSWinsockInitializationError,	"Winsock Initialization Error."
-	IdResourceStrings_RSSetSizeExceeded,	"Set Size Exceeded."
 	ADOConst_SMissingCommandText,	"Missing %s property"
 	ADOConst_SNoResultSet,	"CommandText does not return a result set"
 	ADOConst_SADOCreateError,	"Error creating object.  Please verify that the Microsoft Data Access Components 2.1 (or later) have been properly installed"
@@ -919,11 +929,11 @@ BEGIN
 	ADOConst_SRecordsetNotOpen,	"Recordset is not open"
 	ADOConst_sNameAttr,	"Name"
 	ADOConst_sValueAttr,	"Value"
+	XMLConst_SDuplicateRegistration,	"\"%s\" DOMImplementation already registered"
+	XMLConst_SDOMNotSupported,	"Property or Method \"%s\" is not supported by DOM Vendor \"%s\""
+	XMLConst_SNodeExpected,	"Node cannot be null"
+	XMLConst_SMSDOMNotInstalled,	"Microsoft MSXML is not installed"
 	rpdataset_SRpInvOpRpdata,	"Invalid operation for TRpDataset"
-	VDBConsts_SFirstRecord,	"First record"
-	VDBConsts_SPriorRecord,	"Prior record"
-	VDBConsts_SNextRecord,	"Next record"
-	VDBConsts_SLastRecord,	"Last record"
 	bdeconst_SLoginError,	"Cannot connect to database '%s'"
 	bdeconst_SInitError,	"An error occurred while attempting to initialize the Borland Database Engine (error $%.4x)"
 	bdeconst_SIDAPILangID,	"0009"

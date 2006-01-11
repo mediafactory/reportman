@@ -21,14 +21,8 @@ uses
   rpexceldriver in '..\..\..\rpexceldriver.pas' {FRpExcelProgress};
 
 {$R *.res}
-var
- meta:TRpMEtafileReport;
 
 begin
-  meta:=TRpMetafileReport.Create(nil);
-  meta.AsyncReading:=true;
-  meta.LoadFromFile('z:\testcinta.rpmf');
-  PreviewMetafile(meta,nil,false,false);
   with Application do
   begin
    Title:=SRpRepMetafile;

@@ -160,5 +160,5 @@ end;
 
 initialization
   TAutoObjectFactory.Create(ComServer, TReportmanXAServer, Class_ReportmanXAServer,
-    ciMultiInstance, tmApartment);
+    ciMultiInstance, tmSingle);
 end.

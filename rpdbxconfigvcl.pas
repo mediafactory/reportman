@@ -348,6 +348,7 @@ procedure TFRpDBXConfigVCL.BConnectClick(Sender: TObject);
 var
  conname:string;
  funcname,drivername,vendorlib,libraryname:string;
+ alist:TStringList;
 {$IFDEF USEZEOS}
  FZConnection:TZConnection;
  transiso:String;
@@ -362,7 +363,13 @@ begin
  conname:=LConnections.Items.strings[Lconnections.itemindex];
  // Assigns properties to SQLCOn.
  SQLConnection1.ConnectionName:=conname;
- ConAdmin.GetConnectionParams(conname,SQLConnection1.params);
+ alist:=TStringList.Create;
+ try
+  ConAdmin.GetConnectionParams(conname,alist);
+  SQLConnection1.params.Assign(alist);
+ finally
+  alist.free;
+ end;
  drivername:=SQLConnection1.params.Values['DriverName'];
 {$IFDEF USEZEOS}
  if drivername='ZeosLib' then

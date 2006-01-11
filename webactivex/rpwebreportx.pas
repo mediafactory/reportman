@@ -519,7 +519,7 @@ initialization
     1,
     '',
     OLEMISC_SIMPLEFRAME or OLEMISC_ACTSLIKELABEL,
-    tmApartment);
+    tmSingle);
 // Has been changed from tmApartment to tmSingle
 // Because TPrinter object is not thread safe
 end.

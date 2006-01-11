@@ -233,7 +233,8 @@ type
 function PDFCompatibleText (astring:Widestring;adata:TRpTTFontData;pdffont:TRpPDFFont):String;
 function NumberToText (Value:double):string;
 
-procedure GetBitmapInfo (stream:TStream; var width, height, imagesize:integer;FMemBits:TMemoryStream);
+procedure GetBitmapInfo (stream:TStream; var width, height, imagesize:integer;FMemBits:TMemoryStream;
+ var indexed:boolean;var bitsperpixel,usedcolors:integer;var palette:string);
 function GetJPegInfo (astream:TStream; var width, height:integer):boolean;
 
 implementation
@@ -1465,6 +1466,9 @@ var
  // pb: PByteArray;
   arect:TRect;
   isjpeg:Boolean;
+  indexed:boolean;
+  bitsperpixel,numcolors:integer;
+  palette:string;
 begin
  arect:=rec;
  FFile.CheckPrinting;
@@ -1482,7 +1486,7 @@ begin
   else
   begin
    abitmap.Seek(0,soFromBeginning);
-   GetBitmapInfo(abitmap,bitmapwidth,bitmapheight,imagesize,FImageStream);
+   GetBitmapInfo(abitmap,bitmapwidth,bitmapheight,imagesize,FImageStream,indexed,bitsperpixel,numcolors,palette);
   end;
   if dpires<>0 then
   begin
@@ -1542,8 +1546,20 @@ begin
   SWriteLine(astream,'/Subtype /Image');
   SWriteLine(astream,'/Width '+IntToStr(bitmapwidth));
   SWriteLine(astream,'/Height '+IntToStr(bitmapheight));
-  SWriteLine(astream,'/ColorSpace /DeviceRGB');
-  SWriteLine(astream,'/BitsPerComponent 8');
+  if indexed then
+  begin
+   SWriteLine(astream,'/ColorSpace');
+   SWriteLine(astream,'[/Indexed');
+   SWriteLine(astream,'/DeviceRGB '+IntToStr(numcolors));
+   SWriteLine(astream,palette);
+   SWriteLine(astream,']');
+   SWriteLine(astream,'/BitsPerComponent '+IntToStr(bitsperpixel))
+  end
+  else
+  begin
+   SWriteLine(astream,'/ColorSpace /DeviceRGB');
+   SWriteLine(astream,'/BitsPerComponent 8');
+  end;
   SWriteLine(astream,'/Length '+IntToStr(imagesize));
   SWriteLine(astream,'/Name /Im'+IntToStr(FFile.FImageCount));
   if isjpeg then
@@ -1918,7 +1934,7 @@ type
 
 
 {$IFDEF DOTNETD}
-procedure GetBitmapInfo(stream:TStream;var width,height,imagesize:integer;FMemBits:TMemoryStream);
+procedure GetBitmapInfo(stream:TStream;var width,height,imagesize:integer;FMemBits:TMemoryStream;;var mono:boolean);
 var
  fileheader:TBitmapFileHeader;
  bitmapinfo:TBitmapInfoHeader;
@@ -2100,7 +2116,8 @@ end;
 {$ENDIF}
 
 {$IFNDEF DOTNETD}
-procedure GetBitmapInfo(stream:TStream;var width,height,imagesize:integer;FMemBits:TMemoryStream);
+procedure GetBitmapInfo(stream:TStream;var width,height,imagesize:integer;FMemBits:TMemoryStream;
+  var indexed:boolean;var bitsperpixel,usedcolors:integer;var palette:string);
 var
  fileheader:TBitmapFileHeader;
  pbitmapinfo:PBitmapInfoHeader;
@@ -2114,7 +2131,6 @@ var
  tcolors:array of TRGBTriple;
  values:array of TRGBTriple;
  qvalues:array of TRGBQuad;
- indexvalues:array of Byte;
 // orgvalues:array of TRGBQuad;
 procedure GetDIBBits;
 var
@@ -2122,12 +2138,20 @@ var
 // dc:HDC;
  toread,ainteger:integer;
  buffer:array of Byte;
- aqcolor:TRGBQuad;
- atcolor:TRGBTriple;
- abytes:array of Byte;
- abytessize:Integer;
- index:Byte;
+ divider:byte;
+ origwidth:integer;
+ acolor:integer;
+{
  position:integer;
+ index:Byte;
+ pixvalue:byte;
+ HDC:integer;
+ aqcolor:TRGBQuad;
+ desp:byte;
+ atcolor:TRGBTriple;
+ abyte,amask:byte;
+ abyteindex:integer;
+}
 begin
  // Read color entries
  case bitcount of
@@ -2145,14 +2169,26 @@ begin
    Raise Exception.Create(SRpBitMapInfoHeaderBitCount+
     IntToStr(pbitmapinfo^.biBitCount));
  end;
+ palette:='';
  if numcolors>0 then
  begin
+  usedcolors:=numcolors-1;
   if coreheader then
   begin
    SetLength(tcolors,numcolors);
    readed:=stream.Read(tcolors[0],sizeof(TRGBTriple)*numcolors);
    if readed<>sizeof(TRGBTriple)*numcolors then
     Raise Exception.Create(SRpInvalidBitmapPalette);
+   palette:='';
+   for y:=0 to numcolors-1 do
+   begin
+    acolor:=(tcolors[y].rgbtRed shl 16)+(tcolors[y].rgbtGreen shl 8)+tcolors[y].rgbtBlue;
+    if length(palette)=0 then
+     palette:='<'+Format('%6.6x',[acolor])
+    else
+     palette:=palette+' '+Format('%6.6x',[acolor]);
+   end;
+   palette:=palette+'>';
   end
   else
   begin
@@ -2160,6 +2196,16 @@ begin
    readed:=stream.Read(qcolors[0],sizeof(TRGBQuad)*numcolors);
    if readed<>sizeof(TRGBQuad)*numcolors then
     Raise Exception.Create(SRpInvalidBitmapPalette);
+   palette:='';
+   for y:=0 to numcolors-1 do
+   begin
+    acolor:=(qcolors[y].rgbRed shl 16)+(qcolors[y].rgbGreen shl 8)+qcolors[y].rgbBlue;
+    if length(palette)=0 then
+     palette:='<'+Format('%6.6x',[acolor])
+    else
+     palette:=palette+' '+Format('%6.6x',[acolor]);
+   end;
+   palette:=palette+'>';
   end;
  end;
  // Go to position bits
@@ -2232,114 +2278,78 @@ begin
 //  Releasedc(0,dc);
   exit;
  end;
- if numcolors=16 then
+ case numcolors of
+  2:
+   divider:=8;
+  16:
+   divider:=2;
+  256:
+   divider:=1;
+  else
+   divider:=1;
+ end;
+ scanwidth:=width div divider;
+ bitsperpixel:=bitcount;
+ indexed:=true;
+ if (width mod divider)>0 then
+  scanwidth:=scanwidth+1;
+ // bitmap file format is aligned on double word
+ // the alignment must be removed from datafile
+ origwidth:=scanwidth;
+ while (scanwidth mod 4)>0 do
+  scanwidth:=scanwidth+1;
+ SetLength(buffer,scanwidth);
+ FMemBits.Clear;
+ FMemBits.SetSize(height*origwidth);
+{ if numcolors=2 then
  begin
-  SetLength(indexvalues,width*height);
-  FillChar(indexvalues[0],width*height,0);
-  scanwidth:=width div 2;
-  if (width mod 2)=1 then
-   scanwidth:=scanwidth+1;
-  // Align to 32bit
-  toread:=4-(scanwidth mod 4);
-  if toread=4 then
-   toread:=0;
-
-  SetLength(buffer,scanwidth);
-  for y:=height-1 downto 0 do
-  begin
-   readed:=stream.Read(buffer[0],scanwidth);
-   if readed<>scanwidth then
-    Raise Exception.Create(SRpBadBitmapStream);
-   for x:=0 to scanwidth-2 do
-   begin
-    indexvalues[y*width+x*2]:=buffer[x] shr 4;
-    index:=Byte(buffer[x] shl 4);
-    indexvalues[y*width+x*2+1]:=index shr 4;
-   end;
-   if (width mod 2)=1 then
-   begin
-    indexvalues[y*width+(scanwidth-1)*2]:=buffer[scanwidth-1] shr 4;
-   end
-   else
-   begin
-    indexvalues[y*width+(scanwidth-1)*2]:=buffer[scanwidth-1] shr 4;
-    index:=Byte(buffer[scanwidth-1] shl 4);
-    indexvalues[y*width+(scanwidth-1)+1]:=index shr 4;
-   end;
-   readed:=stream.Read(ainteger,toread);
-   if readed<>toread then
-    Raise Exception.Create(SRpBadBitmapStream);
-  end;
+  amask:=$80;
+  desp:=1;
  end
  else
- if numcolors=256 then
+ if numcolors=16 then
  begin
-  SetLength(indexvalues,width*height);
-  FillChar(indexvalues[0],width*height,0);
-  scanwidth:=width;
-  // Align to 32bit
-  toread:=4-(scanwidth mod 4);
-  if toread=4 then
-   toread:=0;
-
-  for y:=height-1 downto 0 do
-  begin
-   readed:=stream.Read(indexvalues[y*width],scanwidth);
-   if readed<>scanwidth then
-    Raise Exception.Create(SRpBadBitmapStream);
-   readed:=stream.Read(ainteger,toread);
-   if readed<>toread then
-    Raise Exception.Create(SRpBadBitmapStream);
-  end;
+  amask:=$F0;
+  desp:=4;
+ end
+ else
+ begin
+  amask:=$FF;
+  desp:=0;
  end;
-
-
- // Draws paletted picture
-// dc:=GetDC(0);
- abytessize:=height*width*3;
- SetLength(abytes,abytessize);
- position:=0;
- for y:=0 to height-1 do
+ hdc:=GetDC(0);
+} for y:=height-1 downto 0 do
  begin
-  for x:=0 to width-1 do
+  stream.read(buffer[0],scanwidth);
+  FMemBits.Seek(y*origwidth,soFromBeginning);
+  FMemBits.Write(buffer[0],origwidth);
+{  for x:=0 to width-1 do
   begin
+   abyteindex:=(x div divider);
+   abyte:=buffer[abyteindex] shl ((x mod divider)*desp);
+   abyte:=abyte and amask;
+   pixvalue:=abyte shr desp;
    if coreheader then
    begin
-    index:=indexvalues[y*width+x];
-    if (index>(numcolors-1)) then
-     Raise Exception.Create(SRpBadColorIndex);
-    atcolor:=tcolors[indexvalues[y*width+x]];
-//    SetPixel(DC,x,y,atcolor.rgbtRed shl 16+
-//      atcolor.rgbtGreen shl 8 + atcolor.rgbtBlue);
-    abytes[position]:=atcolor.rgbtRed;
-    inc(position);
-    abytes[position]:=atcolor.rgbtGreen;
-    inc(position);
-    abytes[position]:=atcolor.rgbtBlue;
-    inc(position);
+    atcolor:=tcolors[pixvalue];
+    SetPixel(hdc,x,y,atcolor.rgbtBlue shl 16+atcolor.rgbtGreen shl 8+atcolor.rgbtRed);
    end
    else
    begin
-    index:=indexvalues[y*width+x];
-    if (index>(numcolors-1)) then
-     Raise Exception.Create(SRpBadColorIndex);
-    aqcolor:=qcolors[indexvalues[y*width+x]];
-//    SetPixel(DC,x,y,aqcolor.rgbRed shl 16+
-//      aqcolor.rgbGreen shl 8 + aqcolor.rgbBlue);
-    abytes[position]:=aqcolor.rgbRed;
-    inc(position);
-    abytes[position]:=aqcolor.rgbGreen;
-    inc(position);
-    abytes[position]:=aqcolor.rgbBlue;
-    inc(position);
+    aqcolor:=qcolors[pixvalue];
+    SetPixel(hdc,x,y,aqcolor.rgbBlue shl 16+aqcolor.rgbGreen shl 8+aqcolor.rgbRed);
    end;
   end;
+}  FMembits.Write(buffer[0],origwidth);
  end;
- FMemBits.Write(abytes[0],abytessize);
-// Releasedc(0,dc);
+ FMemBits.Seek(0,soFromBeginning);
+ imagesize:=FMemBits.Size;
 end;
 
 begin
+ indexed:=false;
+ bitsperpixel:=8;
+ usedcolors:=0;
  readed:=stream.Read(fileheader,sizeof(fileheader));
  if readed<>sizeof(fileheader) then
   Raise Exception.Create(SRpBadBitmapFileHeader);
@@ -2397,9 +2407,7 @@ begin
    end
    else
    begin
-    imagesize:=width*height*3;
-    if (bitcount=1) then
-     Raise Exception.Create(SRpMonochromeBitmapPDF);
+    imagesize:=width*height div 100;
     if Assigned(FMemBits) then
      GetDIBBits;
    end;

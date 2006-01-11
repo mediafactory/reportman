@@ -39,5 +39,5 @@ end;
 
 initialization
   TAutoObjectFactory.Create(ComServer, TReportParameters, Class_ReportParameters,
-    ciInternal, tmApartment);
+    ciInternal,tmSingle);
 end.
