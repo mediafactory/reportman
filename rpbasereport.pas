@@ -1506,6 +1506,7 @@ end;
 // of evaluate the totalpages expression
 procedure TRpBaseReport.PrintAll(Driver:IRpPrintDriver);
 begin
+ Driver._AddRef;
  BeginPrint(Driver);
  try
   Driver.NewDocument(metafile,1,false);

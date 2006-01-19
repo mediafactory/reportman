@@ -33,7 +33,7 @@ uses
   Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls,rpmetafile, ComCtrls,rphtmldriver,rppreviewcontrol,
   rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,rptextdriver,rpsvgdriver,
-  rpcsvdriver,rpgraphutilsvcl,rppreviewmeta,rpbasereport,rppagesetupvcl,
+  rpcsvdriver,rpgraphutilsvcl,rppreviewmeta,rpbasereport,rpreport,rppagesetupvcl,
   ActnList, ImgList,Printers,rpmdconsts, ToolWin, Mask, rpmaskedit;
 
 type
@@ -321,6 +321,8 @@ var
  adone:boolean;
  allpages,collate:boolean;
  frompage,topage,copies:integer;
+ areport:TRpReport;
+ recalcreport:boolean;
 begin
  allpages:=true;
  collate:=PreviewControl.metafile.CollateCopies;
@@ -328,15 +330,38 @@ begin
  copies:=PreviewControl.metafile.Copies;
  if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
   exit;
- if not allpages then
+ areport:=nil;
+ // If use printerfonts is enabled recalculate full report
+ recalcreport:=false;
+ if (previewcontrol is TRpPreviewControl) then
  begin
-  PreviewControl.Page:=topage+1;
+  if TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsalways then
+  begin
+   recalcreport:=true;
+   areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
+  end;
+ end;
+ if recalcreport then
+ begin
+  TRpPreviewControl(previewcontrol).Report:=nil;
+  previewcontrol.Parent:=nil;
+  rpgdidriver.PrintReport(areport,Caption,true,allpages,frompage,topage,copies,collate);
+
+  TRpPreviewControl(previewcontrol).Report:=areport;
+  AppIdle(Self,adone);
  end
  else
-  ALastExecute(Self);
- PrintMetafile(PreviewControl.Metafile,Caption,true,allpages,frompage,topage,copies,
- collate,false,PreviewControl.Metafile.PrinterSelect);
- AppIdle(Self,adone);
+ begin
+  if not allpages then
+  begin
+   PreviewControl.Page:=topage+1;
+  end
+  else
+   ALastExecute(Self);
+  PrintMetafile(PreviewControl.Metafile,Caption,true,allpages,frompage,topage,copies,
+  collate,false,PreviewControl.Metafile.PrinterSelect);
+  AppIdle(Self,adone);
+ end;
 end;
 
 procedure TFRpVPreview.ASaveExecute(Sender: TObject);
@@ -345,7 +370,10 @@ var
  abitmap:TBitmap;
  mono:boolean;
  horzres,vertres:integer;
+ recalcreport:boolean;
+ areport:TRpReport;
 begin
+ areport:=nil;
  // Saves the metafile
  if SaveDialog1.Execute then
  begin
@@ -359,9 +387,29 @@ begin
      end;
      2,3:
       begin
-       ALastExecute(Self);
-       SaveMetafileToPDF(PreviewControl.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
-       AppIdle(Self,adone);
+        recalcreport:=false;
+        if (previewcontrol is TRpPreviewControl) then
+        begin
+          if TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsalways then
+          begin
+           recalcreport:=true;
+           areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
+          end;
+        end;
+        if recalcreport then
+        begin
+          TRpPreviewControl(previewcontrol).Report:=nil;
+          previewcontrol.Parent:=nil;
+          rppdfdriver.PrintReportPDF(areport,Caption,true,true,1,99999,1,SaveDialog1.FileName,SaveDialog1.FilterIndex=2,false);
+          TRpPreviewControl(previewcontrol).Report:=areport;
+          AppIdle(Self,adone);
+        end
+        else
+        begin
+          ALastExecute(Self);
+          SaveMetafileToPDF(PreviewControl.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
+          AppIdle(Self,adone);
+        end;
       end;
      4,5:
       begin

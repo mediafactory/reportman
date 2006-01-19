@@ -2652,19 +2652,15 @@ begin
  index:=FFontTTData.IndexOf(searchname);
  if index<0 then
  begin
-  index:=FFontTTData.Indexof(searchname);
-  if index<0 then
-  begin
-   adata:=TRpTTFontData.Create;
-   adata.fontdata:=TMemoryStream.Create;
-   adata.embedded:=false;
-   adata.Objectname:=searchname;
-   FFontTTData.AddObject(searchname,adata);
-   InfoProvider.FillFontData(Font,adata);
-   if adata.fontdata.size>0 then
-    adata.embedded:=Font.Name=poEmbedded;
-   Result:=adata;
-  end;
+  adata:=TRpTTFontData.Create;
+  adata.fontdata:=TMemoryStream.Create;
+  adata.embedded:=false;
+  adata.Objectname:=searchname;
+  FFontTTData.AddObject(searchname,adata);
+  InfoProvider.FillFontData(Font,adata);
+  if adata.fontdata.size>0 then
+   adata.embedded:=Font.Name=poEmbedded;
+  Result:=adata;
  end
  else
   Result:=TRpTTFontData(FFontTTData.Objects[index]);

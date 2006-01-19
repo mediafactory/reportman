@@ -8,98 +8,103 @@
   resources were bound to the produced executable.
 */
 
-#define IdResourceStrings_RSSocksUnknownError 64608
-#define IdResourceStrings_RSSocksServerRespondError 64609
-#define IdResourceStrings_RSSocksAuthMethodError 64610
-#define IdResourceStrings_RSSocksAuthError 64611
-#define IdResourceStrings_RSSocksServerGeneralError 64612
-#define IdResourceStrings_RSSocksServerPermissionError 64613
-#define IdResourceStrings_RSSocksServerNetUnreachableError 64614
-#define IdResourceStrings_RSSocksServerHostUnreachableError 64615
-#define IdResourceStrings_RSSocksServerConnectionRefusedError 64616
-#define IdResourceStrings_RSSocksServerTTLExpiredError 64617
-#define IdResourceStrings_RSSocksServerCommandError 64618
-#define IdResourceStrings_RSSocksServerAddressError 64619
-#define IdResourceStrings_RSStackENOBUFS 64624
-#define IdResourceStrings_RSStackEISCONN 64625
-#define IdResourceStrings_RSStackENOTCONN 64626
-#define IdResourceStrings_RSStackESHUTDOWN 64627
-#define IdResourceStrings_RSStackETOOMANYREFS 64628
-#define IdResourceStrings_RSStackETIMEDOUT 64629
-#define IdResourceStrings_RSStackECONNREFUSED 64630
-#define IdResourceStrings_RSStackELOOP 64631
-#define IdResourceStrings_RSStackENAMETOOLONG 64632
-#define IdResourceStrings_RSStackEHOSTDOWN 64633
-#define IdResourceStrings_RSStackEHOSTUNREACH 64634
-#define IdResourceStrings_RSStackENOTEMPTY 64635
-#define IdResourceStrings_RSStackHOST_NOT_FOUND 64636
-#define IdResourceStrings_RSSocksRequestFailed 64637
-#define IdResourceStrings_RSSocksRequestServerFailed 64638
-#define IdResourceStrings_RSSocksRequestIdentFailed 64639
-#define IdResourceStrings_RSStackEDESTADDRREQ 64640
-#define IdResourceStrings_RSStackEMSGSIZE 64641
-#define IdResourceStrings_RSStackEPROTOTYPE 64642
-#define IdResourceStrings_RSStackENOPROTOOPT 64643
-#define IdResourceStrings_RSStackEPROTONOSUPPORT 64644
-#define IdResourceStrings_RSStackESOCKTNOSUPPORT 64645
-#define IdResourceStrings_RSStackEOPNOTSUPP 64646
-#define IdResourceStrings_RSStackEPFNOSUPPORT 64647
-#define IdResourceStrings_RSStackEAFNOSUPPORT 64648
-#define IdResourceStrings_RSStackEADDRINUSE 64649
-#define IdResourceStrings_RSStackEADDRNOTAVAIL 64650
-#define IdResourceStrings_RSStackENETDOWN 64651
-#define IdResourceStrings_RSStackENETUNREACH 64652
-#define IdResourceStrings_RSStackENETRESET 64653
-#define IdResourceStrings_RSStackECONNABORTED 64654
-#define IdResourceStrings_RSStackECONNRESET 64655
-#define IdResourceStrings_RSStatusDisconnecting 64656
-#define IdResourceStrings_RSStatusDisconnected 64657
-#define IdResourceStrings_RSStatusText 64658
-#define IdResourceStrings_RSConnectTimeout 64659
-#define IdResourceStrings_RSInvalidServiceName 64660
-#define IdResourceStrings_RSStackError 64661
-#define IdResourceStrings_RSStackEINTR 64662
-#define IdResourceStrings_RSStackEBADF 64663
-#define IdResourceStrings_RSStackEACCES 64664
-#define IdResourceStrings_RSStackEFAULT 64665
-#define IdResourceStrings_RSStackEINVAL 64666
-#define IdResourceStrings_RSStackEMFILE 64667
-#define IdResourceStrings_RSStackEWOULDBLOCK 64668
-#define IdResourceStrings_RSStackEINPROGRESS 64669
-#define IdResourceStrings_RSStackEALREADY 64670
-#define IdResourceStrings_RSStackENOTSOCK 64671
-#define IdResourceStrings_RSNotEnoughDataInBuffer 64672
-#define IdResourceStrings_RSWinsockInitializationError 64673
-#define IdResourceStrings_RSSetSizeExceeded 64674
-#define IdResourceStrings_RSFileNotFound 64675
-#define IdResourceStrings_RSOnlyOneAntiFreeze 64676
-#define IdResourceStrings_RSNotConnected 64677
-#define IdResourceStrings_RSIdNoDataToRead 64678
-#define IdResourceStrings_RSCanNotBindRange 64679
-#define IdResourceStrings_RSInvalidPortRange 64680
-#define IdResourceStrings_RSReadTimeout 64681
-#define IdResourceStrings_RSReadLnMaxLineLengthExceeded 64682
-#define IdResourceStrings_RSWS2CallError 64683
-#define IdResourceStrings_RSWS2LoadError 64684
-#define IdResourceStrings_RSStatusResolving 64685
-#define IdResourceStrings_RSStatusConnecting 64686
-#define IdResourceStrings_RSStatusConnected 64687
-#define QDBConsts_SDeleteRecord 64688
-#define QDBConsts_SEditRecord 64689
-#define QDBConsts_SPostEdit 64690
-#define QDBConsts_SCancelEdit 64691
-#define QDBConsts_SConfirmCaption 64692
-#define QDBConsts_SRefreshRecord 64693
-#define QDBConsts_SDeleteRecordQuestion 64694
-#define QDBConsts_SDeleteMultipleRecordsQuestion 64695
-#define QDBConsts_SDataSourceFixed 64696
-#define QDBConsts_SPropDefByLookup 64697
-#define QDBConsts_STooManyColumns 64698
-#define QDBConsts_SRemoteLogin 64699
-#define IdResourceStrings_RSAlreadyConnected 64700
-#define IdResourceStrings_RSCannotAllocateSocket 64701
-#define IdResourceStrings_RSConnectionClosedGracefully 64702
-#define IdResourceStrings_RSCouldNotBindSocket 64703
+#define QDBConsts_SRemoteLogin 64592
+#define QDBConsts_SFirstRecord 64608
+#define QDBConsts_SPriorRecord 64609
+#define QDBConsts_SNextRecord 64610
+#define QDBConsts_SLastRecord 64611
+#define QDBConsts_SInsertRecord 64612
+#define QDBConsts_SDeleteRecord 64613
+#define QDBConsts_SEditRecord 64614
+#define QDBConsts_SPostEdit 64615
+#define QDBConsts_SCancelEdit 64616
+#define QDBConsts_SConfirmCaption 64617
+#define QDBConsts_SRefreshRecord 64618
+#define QDBConsts_SDeleteRecordQuestion 64619
+#define QDBConsts_SDeleteMultipleRecordsQuestion 64620
+#define QDBConsts_SDataSourceFixed 64621
+#define QDBConsts_SPropDefByLookup 64622
+#define QDBConsts_STooManyColumns 64623
+#define IdResourceStrings_RSSocksRequestFailed 64624
+#define IdResourceStrings_RSSocksRequestServerFailed 64625
+#define IdResourceStrings_RSSocksRequestIdentFailed 64626
+#define IdResourceStrings_RSSocksUnknownError 64627
+#define IdResourceStrings_RSSocksServerRespondError 64628
+#define IdResourceStrings_RSSocksAuthMethodError 64629
+#define IdResourceStrings_RSSocksAuthError 64630
+#define IdResourceStrings_RSSocksServerGeneralError 64631
+#define IdResourceStrings_RSSocksServerPermissionError 64632
+#define IdResourceStrings_RSSocksServerNetUnreachableError 64633
+#define IdResourceStrings_RSSocksServerHostUnreachableError 64634
+#define IdResourceStrings_RSSocksServerConnectionRefusedError 64635
+#define IdResourceStrings_RSSocksServerTTLExpiredError 64636
+#define IdResourceStrings_RSSocksServerCommandError 64637
+#define IdResourceStrings_RSSocksServerAddressError 64638
+#define IdResourceStrings_RSUnevenSizeInDecodeStream 64639
+#define IdResourceStrings_RSStackENETRESET 64640
+#define IdResourceStrings_RSStackECONNABORTED 64641
+#define IdResourceStrings_RSStackECONNRESET 64642
+#define IdResourceStrings_RSStackENOBUFS 64643
+#define IdResourceStrings_RSStackEISCONN 64644
+#define IdResourceStrings_RSStackENOTCONN 64645
+#define IdResourceStrings_RSStackESHUTDOWN 64646
+#define IdResourceStrings_RSStackETOOMANYREFS 64647
+#define IdResourceStrings_RSStackETIMEDOUT 64648
+#define IdResourceStrings_RSStackECONNREFUSED 64649
+#define IdResourceStrings_RSStackELOOP 64650
+#define IdResourceStrings_RSStackENAMETOOLONG 64651
+#define IdResourceStrings_RSStackEHOSTDOWN 64652
+#define IdResourceStrings_RSStackEHOSTUNREACH 64653
+#define IdResourceStrings_RSStackENOTEMPTY 64654
+#define IdResourceStrings_RSStackHOST_NOT_FOUND 64655
+#define IdResourceStrings_RSStackEINPROGRESS 64656
+#define IdResourceStrings_RSStackEALREADY 64657
+#define IdResourceStrings_RSStackENOTSOCK 64658
+#define IdResourceStrings_RSStackEDESTADDRREQ 64659
+#define IdResourceStrings_RSStackEMSGSIZE 64660
+#define IdResourceStrings_RSStackEPROTOTYPE 64661
+#define IdResourceStrings_RSStackENOPROTOOPT 64662
+#define IdResourceStrings_RSStackEPROTONOSUPPORT 64663
+#define IdResourceStrings_RSStackESOCKTNOSUPPORT 64664
+#define IdResourceStrings_RSStackEOPNOTSUPP 64665
+#define IdResourceStrings_RSStackEPFNOSUPPORT 64666
+#define IdResourceStrings_RSStackEAFNOSUPPORT 64667
+#define IdResourceStrings_RSStackEADDRINUSE 64668
+#define IdResourceStrings_RSStackEADDRNOTAVAIL 64669
+#define IdResourceStrings_RSStackENETDOWN 64670
+#define IdResourceStrings_RSStackENETUNREACH 64671
+#define IdResourceStrings_RSStatusResolving 64672
+#define IdResourceStrings_RSStatusConnecting 64673
+#define IdResourceStrings_RSStatusConnected 64674
+#define IdResourceStrings_RSStatusDisconnecting 64675
+#define IdResourceStrings_RSStatusDisconnected 64676
+#define IdResourceStrings_RSStatusText 64677
+#define IdResourceStrings_RSConnectTimeout 64678
+#define IdResourceStrings_RSInvalidServiceName 64679
+#define IdResourceStrings_RSStackError 64680
+#define IdResourceStrings_RSStackEINTR 64681
+#define IdResourceStrings_RSStackEBADF 64682
+#define IdResourceStrings_RSStackEACCES 64683
+#define IdResourceStrings_RSStackEFAULT 64684
+#define IdResourceStrings_RSStackEINVAL 64685
+#define IdResourceStrings_RSStackEMFILE 64686
+#define IdResourceStrings_RSStackEWOULDBLOCK 64687
+#define IdResourceStrings_RSCannotAllocateSocket 64688
+#define IdResourceStrings_RSConnectionClosedGracefully 64689
+#define IdResourceStrings_RSCouldNotBindSocket 64690
+#define IdResourceStrings_RSNotEnoughDataInBuffer 64691
+#define IdResourceStrings_RSWinsockInitializationError 64692
+#define IdResourceStrings_RSSetSizeExceeded 64693
+#define IdResourceStrings_RSFileNotFound 64694
+#define IdResourceStrings_RSOnlyOneAntiFreeze 64695
+#define IdResourceStrings_RSNotConnected 64696
+#define IdResourceStrings_RSIdNoDataToRead 64697
+#define IdResourceStrings_RSCanNotBindRange 64698
+#define IdResourceStrings_RSInvalidPortRange 64699
+#define IdResourceStrings_RSReadTimeout 64700
+#define IdResourceStrings_RSReadLnMaxLineLengthExceeded 64701
+#define IdResourceStrings_RSWS2CallError 64702
+#define IdResourceStrings_RSWS2LoadError 64703
 #define ADOConst_SNoResultSet 64704
 #define ADOConst_SADOCreateError 64705
 #define ADOConst_SEventsNotSupported 64706
@@ -110,12 +115,12 @@
 #define ADOConst_SRecordsetNotOpen 64711
 #define ADOConst_sNameAttr 64712
 #define ADOConst_sValueAttr 64713
-#define rpdataset_SRpInvOpRpdata 64714
-#define QDBConsts_SFirstRecord 64715
-#define QDBConsts_SPriorRecord 64716
-#define QDBConsts_SNextRecord 64717
-#define QDBConsts_SLastRecord 64718
-#define QDBConsts_SInsertRecord 64719
+#define XMLConst_SDuplicateRegistration 64714
+#define XMLConst_SDOMNotSupported 64715
+#define XMLConst_SNodeExpected 64716
+#define XMLConst_SMSDOMNotInstalled 64717
+#define rpdataset_SRpInvOpRpdata 64718
+#define IdResourceStrings_RSAlreadyConnected 64719
 #define bdeconst_SInitError 64720
 #define bdeconst_SIDAPILangID 64721
 #define bdeconst_SBDEError 64722
@@ -934,6 +939,26 @@
 #define SysConst_SAccessDenied 65535
 STRINGTABLE
 BEGIN
+	QDBConsts_SRemoteLogin,	"Remote Login"
+	QDBConsts_SFirstRecord,	"First record"
+	QDBConsts_SPriorRecord,	"Prior record"
+	QDBConsts_SNextRecord,	"Next record"
+	QDBConsts_SLastRecord,	"Last record"
+	QDBConsts_SInsertRecord,	"Insert record"
+	QDBConsts_SDeleteRecord,	"Delete record"
+	QDBConsts_SEditRecord,	"Edit record"
+	QDBConsts_SPostEdit,	"Post edit"
+	QDBConsts_SCancelEdit,	"Cancel edit"
+	QDBConsts_SConfirmCaption,	"Confirm"
+	QDBConsts_SRefreshRecord,	"Refresh data"
+	QDBConsts_SDeleteRecordQuestion,	"Delete record?"
+	QDBConsts_SDeleteMultipleRecordsQuestion,	"Delete all selected records?"
+	QDBConsts_SDataSourceFixed,	"Operation not allowed in a DBCtrlGrid"
+	QDBConsts_SPropDefByLookup,	"Property already defined by lookup field"
+	QDBConsts_STooManyColumns,	"Grid requested to display more than 256 columns"
+	IdResourceStrings_RSSocksRequestFailed,	"Request rejected or failed."
+	IdResourceStrings_RSSocksRequestServerFailed,	"Request rejected because SOCKS server cannot connect."
+	IdResourceStrings_RSSocksRequestIdentFailed,	"Request rejected because the client program and identd report different user-ids."
 	IdResourceStrings_RSSocksUnknownError,	"Unknown socks error."
 	IdResourceStrings_RSSocksServerRespondError,	"Socks server did not respond."
 	IdResourceStrings_RSSocksAuthMethodError,	"Invalid socks authentication method."
@@ -946,6 +971,10 @@ BEGIN
 	IdResourceStrings_RSSocksServerTTLExpiredError,	"TTL expired."
 	IdResourceStrings_RSSocksServerCommandError,	"Command not supported."
 	IdResourceStrings_RSSocksServerAddressError,	"Address type not supported."
+	IdResourceStrings_RSUnevenSizeInDecodeStream,	"Uneven size in DecodeToStream."
+	IdResourceStrings_RSStackENETRESET,	"Net dropped connection or reset."
+	IdResourceStrings_RSStackECONNABORTED,	"Software caused connection abort."
+	IdResourceStrings_RSStackECONNRESET,	"Connection reset by peer."
 	IdResourceStrings_RSStackENOBUFS,	"No buffer space available."
 	IdResourceStrings_RSStackEISCONN,	"Socket is already connected."
 	IdResourceStrings_RSStackENOTCONN,	"Socket is not connected."
@@ -959,9 +988,9 @@ BEGIN
 	IdResourceStrings_RSStackEHOSTUNREACH,	"No route to host."
 	IdResourceStrings_RSStackENOTEMPTY,	"Directory not empty"
 	IdResourceStrings_RSStackHOST_NOT_FOUND,	"Host not found."
-	IdResourceStrings_RSSocksRequestFailed,	"Request rejected or failed."
-	IdResourceStrings_RSSocksRequestServerFailed,	"Request rejected because SOCKS server cannot connect."
-	IdResourceStrings_RSSocksRequestIdentFailed,	"Request rejected because the client program and identd report different user-ids."
+	IdResourceStrings_RSStackEINPROGRESS,	"Operation now in progress."
+	IdResourceStrings_RSStackEALREADY,	"Operation already in progress."
+	IdResourceStrings_RSStackENOTSOCK,	"Socket operation on non-socket."
 	IdResourceStrings_RSStackEDESTADDRREQ,	"Destination address required."
 	IdResourceStrings_RSStackEMSGSIZE,	"Message too long."
 	IdResourceStrings_RSStackEPROTOTYPE,	"Protocol wrong type for socket."
@@ -975,9 +1004,9 @@ BEGIN
 	IdResourceStrings_RSStackEADDRNOTAVAIL,	"Cannot assign requested address."
 	IdResourceStrings_RSStackENETDOWN,	"Network is down."
 	IdResourceStrings_RSStackENETUNREACH,	"Network is unreachable."
-	IdResourceStrings_RSStackENETRESET,	"Net dropped connection or reset."
-	IdResourceStrings_RSStackECONNABORTED,	"Software caused connection abort."
-	IdResourceStrings_RSStackECONNRESET,	"Connection reset by peer."
+	IdResourceStrings_RSStatusResolving,	"Resolving hostname %s."
+	IdResourceStrings_RSStatusConnecting,	"Connecting to %s."
+	IdResourceStrings_RSStatusConnected,	"Connected."
 	IdResourceStrings_RSStatusDisconnecting,	"Disconnecting."
 	IdResourceStrings_RSStatusDisconnected,	"Disconnected."
 	IdResourceStrings_RSStatusText,	"%s"
@@ -991,9 +1020,9 @@ BEGIN
 	IdResourceStrings_RSStackEINVAL,	"Invalid argument."
 	IdResourceStrings_RSStackEMFILE,	"Too many open files."
 	IdResourceStrings_RSStackEWOULDBLOCK,	"Operation would block. "
-	IdResourceStrings_RSStackEINPROGRESS,	"Operation now in progress."
-	IdResourceStrings_RSStackEALREADY,	"Operation already in progress."
-	IdResourceStrings_RSStackENOTSOCK,	"Socket operation on non-socket."
+	IdResourceStrings_RSCannotAllocateSocket,	"Cannot allocate socket."
+	IdResourceStrings_RSConnectionClosedGracefully,	"Connection Closed Gracefully."
+	IdResourceStrings_RSCouldNotBindSocket,	"Could not bind socket. Address and port are already in use."
 	IdResourceStrings_RSNotEnoughDataInBuffer,	"Not enough data in buffer."
 	IdResourceStrings_RSWinsockInitializationError,	"Winsock Initialization Error."
 	IdResourceStrings_RSSetSizeExceeded,	"Set Size Exceeded."
@@ -1007,25 +1036,6 @@ BEGIN
 	IdResourceStrings_RSReadLnMaxLineLengthExceeded,	"Max line length exceeded."
 	IdResourceStrings_RSWS2CallError,	"Error on call Winsock2 library function %s"
 	IdResourceStrings_RSWS2LoadError,	"Error on loading Winsock2 library (%s)"
-	IdResourceStrings_RSStatusResolving,	"Resolving hostname %s."
-	IdResourceStrings_RSStatusConnecting,	"Connecting to %s."
-	IdResourceStrings_RSStatusConnected,	"Connected."
-	QDBConsts_SDeleteRecord,	"Delete record"
-	QDBConsts_SEditRecord,	"Edit record"
-	QDBConsts_SPostEdit,	"Post edit"
-	QDBConsts_SCancelEdit,	"Cancel edit"
-	QDBConsts_SConfirmCaption,	"Confirm"
-	QDBConsts_SRefreshRecord,	"Refresh data"
-	QDBConsts_SDeleteRecordQuestion,	"Delete record?"
-	QDBConsts_SDeleteMultipleRecordsQuestion,	"Delete all selected records?"
-	QDBConsts_SDataSourceFixed,	"Operation not allowed in a DBCtrlGrid"
-	QDBConsts_SPropDefByLookup,	"Property already defined by lookup field"
-	QDBConsts_STooManyColumns,	"Grid requested to display more than 256 columns"
-	QDBConsts_SRemoteLogin,	"Remote Login"
-	IdResourceStrings_RSAlreadyConnected,	"Already connected."
-	IdResourceStrings_RSCannotAllocateSocket,	"Cannot allocate socket."
-	IdResourceStrings_RSConnectionClosedGracefully,	"Connection Closed Gracefully."
-	IdResourceStrings_RSCouldNotBindSocket,	"Could not bind socket. Address and port are already in use."
 	ADOConst_SNoResultSet,	"CommandText does not return a result set"
 	ADOConst_SADOCreateError,	"Error creating object.  Please verify that the Microsoft Data Access Components 2.1 (or later) have been properly installed"
 	ADOConst_SEventsNotSupported,	"Events are not supported with server side TableDirect cursors"
@@ -1036,12 +1046,12 @@ BEGIN
 	ADOConst_SRecordsetNotOpen,	"Recordset is not open"
 	ADOConst_sNameAttr,	"Name"
 	ADOConst_sValueAttr,	"Value"
+	XMLConst_SDuplicateRegistration,	"\"%s\" DOMImplementation already registered"
+	XMLConst_SDOMNotSupported,	"Property or Method \"%s\" is not supported by DOM Vendor \"%s\""
+	XMLConst_SNodeExpected,	"Node cannot be null"
+	XMLConst_SMSDOMNotInstalled,	"Microsoft MSXML is not installed"
 	rpdataset_SRpInvOpRpdata,	"Invalid operation for TRpDataset"
-	QDBConsts_SFirstRecord,	"First record"
-	QDBConsts_SPriorRecord,	"Prior record"
-	QDBConsts_SNextRecord,	"Next record"
-	QDBConsts_SLastRecord,	"Last record"
-	QDBConsts_SInsertRecord,	"Insert record"
+	IdResourceStrings_RSAlreadyConnected,	"Already connected."
 	bdeconst_SInitError,	"An error occurred while attempting to initialize the Borland Database Engine (error $%.4x)"
 	bdeconst_SIDAPILangID,	"0009"
 	bdeconst_SBDEError,	"BDE error $%.4x"

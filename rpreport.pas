@@ -340,6 +340,7 @@ begin
  end;
  if forceTwoPass then
  begin
+  Driver._AddRef;
   BeginPrint(Driver);
   try
    Driver.NewDocument(metafile,hardwarecopies,hardwarecollate);
@@ -398,6 +399,7 @@ begin
  // it frees each printed page
  printingonepass:=true;
  try
+  Driver._AddRef;
   BeginPrint(Driver);
   try
    Driver.NewDocument(metafile,hardwarecopies,hardwarecollate);
