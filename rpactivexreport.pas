@@ -22,7 +22,7 @@ interface
 
 {$I rpconf.inc}
 uses
-  Windows, Messages, SysUtils, Classes, Controls,
+  Windows, Messages, SysUtils, Classes, Controls,Forms,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
@@ -306,6 +306,7 @@ begin
 {$ENDIF}
 end;
 {$ENDIF}
-
+initialization
+ Application.UpdateFormatSettings:=false;
 end.
 

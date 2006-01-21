@@ -1863,7 +1863,7 @@ end;
 
 procedure TRpPDFCanvas.NewLineInfo(info:TRpLineInfo);
 begin
- if FLineInfoMaxItems<=FLineInfoCount-1 then
+ if FLineInfoMaxItems<FLineInfoCount+1 then
  begin
   SetLength(FLineInfo,FLineInfoMaxItems*2);
   FLineInfoMaxItems:=FLineInfoMaxItems*2;

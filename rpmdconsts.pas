@@ -23,7 +23,13 @@ interface
 
 {$I rpconf.inc}
 
+{$IFDEF MSWINDOWS}
+uses SysUtils,Windows;
+{$ENDIF}
+
+{$IFDEF LINUX}
 uses SysUtils;
+{$ENDIF}
 
 {$IFDEF MSWINDOWS}
 const
@@ -35,7 +41,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.5b';
+ RM_VERSION='2.5c';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
  MAX_PAGECOUNT=999999;
 type
@@ -2289,16 +2295,47 @@ end;
 {$ENDIF}
 
 
+{$IFDEF MSWINDOWS}
+
+procedure RestoreEnviromentLocale;
+var
+ avalue:string;
+begin
+ avalue:=GetEnvironmentVariable('KYLIX_DEFINEDENVLOCALES');
+ if Length(avalue)<1 then
+  exit;
+ avalue:=SysUtils.GetEnvironmentVariable('KYLIX_DECIMAL_SEPARATOR');
+ if Length(avalue)>0 then
+  DecimalSeparator:=avalue[1]
+ else
+  DecimalSeparator:=chr(0);
+ avalue:=SysUtils.GetEnvironmentVariable('KYLIX_THOUSAND_SEPARATOR');
+ if Length(avalue)>0 then
+  ThousandSeparator:=avalue[1]
+ else
+  ThousandSeparator:=chr(0);
+ avalue:=SysUtils.GetEnvironmentVariable('KYLIX_DATE_SEPARATOR');
+ if Length(avalue)>0 then
+  DateSeparator:=avalue[1]
+ else
+  DateSeparator:=chr(0);
+ avalue:=SysUtils.GetEnvironmentVariable('KYLIX_TIME_SEPARATOR');
+ if Length(avalue)>0 then
+  TimeSeparator:=avalue[1]
+ else
+  TimeSeparator:=chr(0);
+end;
+{$ENDIF}
+
+
 
 
 
 initialization
 
 ConvertAllStrings;
+RestoreEnviromentLocale;
 
-{$IFDEF LINUX}
- RestoreEnviromentLocale;
-{$ENDIF}
 finalization
  if assigned(atrans) then
  begin
