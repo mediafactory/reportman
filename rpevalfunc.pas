@@ -73,6 +73,15 @@ type
    constructor Create(AOwner:TComponent);override;
   end;
 
+  { Function Sinus }
+ TIdenMax=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+
  { Function FloatToDataTime }
  TIdenFloatToDateTime=class(TIdenFunction)
   protected
@@ -670,6 +679,34 @@ function TIdenSinus.GeTRpValue:TRpValue;
 begin
  if  VarIsNumber(Params[0]) then
   Result:=Sin(Double(Params[0]))
+ else
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+end;
+
+{ TIdenMax }
+
+constructor TIdenMax.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=2;
+ IdenName:='Max';
+ Help:=SRpMax;
+ Model:='function '+'Max'+'(a,y:double):double';
+end;
+
+{**************************************************************************}
+
+function TIdenMax.GeTRpValue:TRpValue;
+begin
+ if  VarIsNumber(Params[0]) then
+ begin
+  if VarIsNumber(Params[1]) then
+   Result:=Max(double(Params[0]),double(Params[1]))
+  else
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ end
  else
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);

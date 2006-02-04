@@ -257,6 +257,8 @@ begin
  // Functions
  iden:=TIdenSinus.Create(nil);
  Rpfunctions.AddObject('SIN',iden);
+ iden:=TIdenMax.Create(nil);
+ Rpfunctions.AddObject('MAX',iden);
  iden:=TIdenFloatToDateTime.Create(nil);
  Rpfunctions.AddObject('FLOATTODATETIME',iden);
  iden:=TIdenRound.Create(nil);

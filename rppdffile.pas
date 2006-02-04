@@ -2153,26 +2153,9 @@ var
  abyteindex:integer;
 }
 begin
- // Read color entries
- case bitcount of
-  1:
-   numcolors:=2;
-  4:
-   numcolors:=16;
-  8:
-   numcolors:=256;
-  24:
-   numcolors:=0;
-  32:
-   numcolors:=0;
-  else
-   Raise Exception.Create(SRpBitMapInfoHeaderBitCount+
-    IntToStr(pbitmapinfo^.biBitCount));
- end;
  palette:='';
  if numcolors>0 then
  begin
-  usedcolors:=numcolors-1;
   if coreheader then
   begin
    SetLength(tcolors,numcolors);
@@ -2192,12 +2175,12 @@ begin
   end
   else
   begin
-   SetLength(qcolors,numcolors);
-   readed:=stream.Read(qcolors[0],sizeof(TRGBQuad)*numcolors);
-   if readed<>sizeof(TRGBQuad)*numcolors then
+   SetLength(qcolors,usedcolors);
+   readed:=stream.Read(qcolors[0],sizeof(TRGBQuad)*usedcolors);
+   if readed<>sizeof(TRGBQuad)*usedcolors then
     Raise Exception.Create(SRpInvalidBitmapPalette);
    palette:='';
-   for y:=0 to numcolors-1 do
+   for y:=0 to usedcolors-1 do
    begin
     acolor:=(qcolors[y].rgbRed shl 16)+(qcolors[y].rgbGreen shl 8)+qcolors[y].rgbBlue;
     if length(palette)=0 then
@@ -2231,6 +2214,7 @@ begin
    if toread=4 then
     toread:=0;
   end;
+  scanwidth:=scanwidth+toread;
   for y:=height-1 downto 0 do
   begin
    if bitcount=32 then
@@ -2243,12 +2227,6 @@ begin
    begin
     readed:=stream.Read(values[y*width],scanwidth);
     if readed<>scanwidth then
-     Raise Exception.Create(SRpBadBitmapStream);
-   end;
-   if (toread>0) then
-   begin
-    readed:=stream.Read(ainteger,toread);
-    if readed<>toread then
      Raise Exception.Create(SRpBadBitmapStream);
    end;
   end;
@@ -2340,7 +2318,7 @@ begin
     SetPixel(hdc,x,y,aqcolor.rgbBlue shl 16+aqcolor.rgbGreen shl 8+aqcolor.rgbRed);
    end;
   end;
-}  FMembits.Write(buffer[0],origwidth);
+}
  end;
  FMemBits.Seek(0,soFromBeginning);
  imagesize:=FMemBits.Size;
@@ -2381,6 +2359,24 @@ begin
    height:=pcoreheader^.bcheight;
    imagesize:=width*height*3;
    bitcount:=pcoreheader.bcBitCount;
+   // Read color entries
+   case bitcount of
+    1:
+     numcolors:=2;
+    4:
+     numcolors:=16;
+    8:
+     numcolors:=256;
+    24:
+     numcolors:=0;
+    32:
+     numcolors:=0;
+    else
+     Raise Exception.Create(SRpBitMapInfoHeaderBitCount+
+      IntToStr(pbitmapinfo^.biBitCount));
+   end;
+   if bitcount<24 then
+    usedcolors:=numcolors;
    if Assigned(FMemBits) then
     GetDIBBits;
   finally
@@ -2407,7 +2403,29 @@ begin
    end
    else
    begin
-    imagesize:=width*height div 100;
+    imagesize:=width*height*3;
+    // Read color entries
+    case bitcount of
+     1:
+      numcolors:=2;
+     4:
+      numcolors:=16;
+     8:
+      numcolors:=256;
+     24:
+      numcolors:=0;
+     32:
+      numcolors:=0;
+     else
+      Raise Exception.Create(SRpBitMapInfoHeaderBitCount+
+       IntToStr(pbitmapinfo^.biBitCount));
+    end;
+    if bitcount<24 then
+    begin
+     usedcolors:=pbitmapinfo^.biClrUsed;
+     if usedcolors=0 then
+      usedcolors:=numcolors;
+    end;
     if Assigned(FMemBits) then
      GetDIBBits;
    end;
@@ -2415,6 +2433,8 @@ begin
    FreeMem(pbitmapinfo);
   end;
  end;
+ if (usedcolors>0) then
+  usedcolors:=usedcolors-1;
 end;
 {$ENDIF}
 

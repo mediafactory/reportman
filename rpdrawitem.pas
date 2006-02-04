@@ -327,6 +327,7 @@ begin
  end;
 end;
 
+{$IFDEF USEINDY}
 procedure CheckUUDecode(amemstream:TMemoryStream);
 var
  astring:String;
@@ -375,5 +376,6 @@ begin
   end;
  end;
 end;
+{$ENDIF}
 
 end.

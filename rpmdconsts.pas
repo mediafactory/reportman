@@ -41,7 +41,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.5c';
+ RM_VERSION='2.5d';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
  MAX_PAGECOUNT=999999;
 type
@@ -1305,7 +1305,8 @@ var
   SRpPrintRep29:WideString='         -async     Asynchronous execution';
   SRpAsyncExecution:WideString='Asynchronous execution';
   SRpMaximumPages:WideString='Maximum number of pages reached';
-
+  //
+  SRpPMax:WideString='Returns the maximum value';
 implementation
 
 uses rptranslator;
@@ -2296,6 +2297,17 @@ end;
 
 
 {$IFDEF MSWINDOWS}
+{$IFNDEF USEVARIANTS}
+function GetEnvironmentVariable(aname:string):string;
+var
+ aTempBuf:array[0..MAX_PATH] of char;
+begin
+ atempBuf[0]:=chr(0);
+ Windows.GetEnvironmentVariable(PChar(aname),aTempBuf,MAX_PATH);
+ Result:=StrPas(atempBuf);
+end;
+
+{$ENDIF}
 
 procedure RestoreEnviromentLocale;
 var
@@ -2304,22 +2316,22 @@ begin
  avalue:=GetEnvironmentVariable('KYLIX_DEFINEDENVLOCALES');
  if Length(avalue)<1 then
   exit;
- avalue:=SysUtils.GetEnvironmentVariable('KYLIX_DECIMAL_SEPARATOR');
+ avalue:=GetEnvironmentVariable('KYLIX_DECIMAL_SEPARATOR');
  if Length(avalue)>0 then
   DecimalSeparator:=avalue[1]
  else
   DecimalSeparator:=chr(0);
- avalue:=SysUtils.GetEnvironmentVariable('KYLIX_THOUSAND_SEPARATOR');
+ avalue:=GetEnvironmentVariable('KYLIX_THOUSAND_SEPARATOR');
  if Length(avalue)>0 then
   ThousandSeparator:=avalue[1]
  else
   ThousandSeparator:=chr(0);
- avalue:=SysUtils.GetEnvironmentVariable('KYLIX_DATE_SEPARATOR');
+ avalue:=GetEnvironmentVariable('KYLIX_DATE_SEPARATOR');
  if Length(avalue)>0 then
   DateSeparator:=avalue[1]
  else
   DateSeparator:=chr(0);
- avalue:=SysUtils.GetEnvironmentVariable('KYLIX_TIME_SEPARATOR');
+ avalue:=GetEnvironmentVariable('KYLIX_TIME_SEPARATOR');
  if Length(avalue)>0 then
   TimeSeparator:=avalue[1]
  else
