@@ -115,6 +115,7 @@ type
    PenWidth:integer;
    BrushColor:integer;
    BrushStyle:integer;
+   procedure GetStdLineSpacing(var linespacing,leading:integer);
    property InfoProvider:IRpInfoProvider read FInfoProvider write SetInfoProvider;
    function UnitsToTextX(Value:integer):string;
    function UnitsToTextY(Value:integer):string;
@@ -1342,7 +1343,6 @@ begin
   SaveGraph;
  end;
  try
-
   SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' RG');
   SWriteLine(FFile.FsTempStream,RGBToFloats(Font.Color)+' rg');
   SWriteLine(FFile.FsTempStream,'BT');
@@ -1718,6 +1718,43 @@ begin
 end;
 {$ENDIF}
 
+procedure TRpPDFCanvas.GetStdLineSpacing(var linespacing,leading:integer);
+begin
+ case FFont.Name of
+  poHelvetica:
+   begin
+    linespacing:=1270;
+    leading:=150;
+   end;
+  poCourier:
+   begin
+    linespacing:=1265;
+    leading:=133;
+   end;
+  poTimesRoman:
+   begin
+    linespacing:=1257;
+    leading:=150;
+   end;
+  poSymbol:
+   begin
+    linespacing:=1450;
+    leading:=255;
+   end;
+  poZapfDingbats:
+   begin
+    linespacing:=1200;
+   end;
+   else
+   begin
+    linespacing:=1270;
+    leading:=200;
+   end;
+ end;
+
+end;
+
+
 procedure TRpPDFCanvas.TextExtent(const Text:WideString;var Rect:TRect;
  wordbreak:boolean;singleline:boolean);
 var
@@ -1738,6 +1775,9 @@ var
  havekerning:boolean;
  adata:TRpTTFontData;
  kerningamount:integer;
+ adescent:integer;
+ linespacing:integer;
+ leading:integer;
 begin
  // Text extent for the simple strings, wide strings not supported
  havekerning:=false;
@@ -1746,7 +1786,15 @@ begin
  begin
   if adata.havekerning then
    havekerning:=true;
+  linespacing:=adata.Ascent-adata.Descent+adata.Leading;
+  leading:=adata.Leading;
+ end
+ else
+ begin
+  GetStdLineSpacing(linespacing,leading);
  end;
+ leading:=Round((leading/10000)*FResolution);
+ linespacing:=Round((linespacing/10000)*FResolution);
 
  createsnewline:=false;
  astring:=Text;
@@ -1828,8 +1876,9 @@ begin
    info.Position:=position;
    info.Size:=i-position+1;
    info.Width:=Round((asize)/CONS_PDFRES*FResolution);
-   info.height:=Round((Font.Size)/CONS_PDFRES*FResolution);
-   info.TopPos:=arec.Bottom;
+//   info.height:=Round((Font.Size)/CONS_PDFRES*FResolution);
+   info.height:=linespacing;
+   info.TopPos:=arec.Bottom-leading;
    info.lastline:=createsnewline;
    arec.Bottom:=arec.Bottom+info.height;
    asize:=0;
@@ -1852,8 +1901,8 @@ begin
   info.Position:=position;
   info.Size:=Length(astring)-position+1;
   info.Width:=Round((asize+1)/CONS_PDFRES*FResolution);
-  info.height:=Round((Font.Size)/CONS_PDFRES*FResolution);
-  info.TopPos:=arec.Bottom;
+  info.height:=linespacing;
+  info.TopPos:=arec.Bottom-leading;
   arec.Bottom:=arec.Bottom+info.height;
   info.lastline:=true;
   NewLineInfo(info);
@@ -2136,7 +2185,7 @@ procedure GetDIBBits;
 var
  y,x,scanwidth:integer;
 // dc:HDC;
- toread,ainteger:integer;
+ toread:integer;
  buffer:array of Byte;
  divider:byte;
  origwidth:integer;
@@ -2373,7 +2422,7 @@ begin
      numcolors:=0;
     else
      Raise Exception.Create(SRpBitMapInfoHeaderBitCount+
-      IntToStr(pbitmapinfo^.biBitCount));
+      IntToStr(pcoreheader^.bcBitCount));
    end;
    if bitcount<24 then
     usedcolors:=numcolors;

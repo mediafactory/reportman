@@ -197,7 +197,6 @@ type
     FExecuting:Boolean;
     FUpdatePageSize:Boolean;
     currentorientation:TRpOrientation;
-    errorprocessing:Boolean;
     lasterrorprocessing:WideString;
     FTotalPagesList:TList;
     FEvaluator:TRpEvaluator;
@@ -271,6 +270,7 @@ type
     property OnWorkProgress:TMetaFileWorkProgress read FOnWorkProgress write
      FOnWorkProgress;
   public
+   Errorprocessing:Boolean;
    FailIfLoadExternalError:Boolean;
    printing:boolean;
    CurrentSubReportIndex:integer;
@@ -1344,6 +1344,7 @@ var
  sec:TRpSection;
  i,j:integer;
 begin
+ FTopMargin:=Round((TWIPS_PER_INCHESS/(linesperinch/100))*Round(FTopMargin/(TWIPS_PER_INCHESS/(linesperinch/100))));
  for i:=0 to SubReports.Count-1 do
  begin
   subrep:=Subreports.Items[i].Subreport;

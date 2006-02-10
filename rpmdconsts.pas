@@ -2292,6 +2292,12 @@ begin
   TimeSeparator:=avalue[1]
  else
   TimeSeparator:=chr(0);
+ avalue:=GetEnvironmentVariable('KYLIX_DATE_FORMAT');
+ if Length(avalue)>0 then
+  ShortDateFormat:=avalue;
+ avalue:=GetEnvironmentVariable('KYLIX_TIME_FORMAT');
+ if Length(avalue)>0 then
+  ShortTimeFormat:=avalue;
 end;
 {$ENDIF}
 
@@ -2336,6 +2342,12 @@ begin
   TimeSeparator:=avalue[1]
  else
   TimeSeparator:=chr(0);
+ avalue:=GetEnvironmentVariable('KYLIX_DATE_FORMAT');
+ if Length(avalue)>0 then
+  ShortDateFormat:=avalue;
+ avalue:=GetEnvironmentVariable('KYLIX_TIME_FORMAT');
+ if Length(avalue)>0 then
+  ShortTimeFormat:=avalue;
 end;
 {$ENDIF}
 

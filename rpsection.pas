@@ -643,6 +643,12 @@ begin
  begin
   Result.Y:=currentsize;
   lastextent:=Result;
+  for i:=0 to FReportComponents.Count-1 do
+  begin
+   acompo:=TRpCommonPosComponent(FReportComponents.Items[i].Component);
+   if not (acompo.Align=rpalnone) then
+    acompo.GetExtension(adriver,newExtent);
+  end;
   exit;
  end;
  for i:=0 to FReportComponents.Count-1 do

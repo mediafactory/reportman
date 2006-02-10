@@ -29,13 +29,17 @@ const
 
 type
 
-
+ TGetCharPlac=function (DC: HDC; p2: PWideChar; p3, p4:integer;
+   var p5: TGCPResults; p6: DWORD): DWORD;stdcall;
+ // external 'gdi32.dll' name 'GetCharacterPlacementW'
  TRpGDIInfoProvider=class(TInterfacedObject,IRpInfoProvider)
   adc:HDC;
   fonthandle:THandle;
   currentname:String;
   currentstyle:integer;
   isnt:Boolean;
+  GetCharPlac:TGetCharPlac;
+  gdilib:THandle;
   procedure SelectFont(pdffont:TRpPDFFOnt);
   procedure FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
   function GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;
@@ -58,7 +62,17 @@ begin
  currentname:='';
  currentstyle:=0;
  fonthandle:=0;
+ gdilib:=0;
  adc:=CreateCompatibleDC(GetDC(0));
+ if isnt then
+ begin
+  gdilib:=LoadLibrary('gdi32.dll');
+  if gdilib=0 then
+   RaiseLastOsError;
+  GetCharPlac:=GetProcAddress(gdilib,'GetCharacterPlacementW');
+  if not Assigned(GetCharPlac) then
+   RaiseLastOsError;
+ end;
 end;
 
 destructor TRpGDIInfoProvider.destroy;
@@ -66,6 +80,8 @@ begin
  ReleaseDC(0,adc);
  if fonthandle<>0 then
   DeleteObject(fonthandle);
+ if gdilib<>0 then
+  FreeLibrary(gdilib);
  inherited destroy;
 end;
 
@@ -190,7 +206,7 @@ begin
       data.MaxWidth:=Round(otm.otmTextMetrics.tmMaxCharWidth*multipli);
       data.AvgWidth:=Round(otm.otmTextMetrics.tmAveCharWidth*multipli);
 
-      data.Leading:=Round(otm.otmTextMetrics.tmExternalLeading*multipli);
+      data.Leading:=Round((otm.otmTextMetrics.tmExternalLeading+otm.otmTextMetrics.tmExternalLeading)*multipli);
       apchar:=PChar(Pointer(potm));
       // Windows does not allow Type1 fonts
       data.Type1:=false;
@@ -351,7 +367,7 @@ begin
       data.MaxWidth:=Round(potm^.otmTextMetrics.tmMaxCharWidth*multipli);
       data.AvgWidth:=Round(potm^.otmTextMetrics.tmAveCharWidth*multipli);
 
-      data.Leading:=Round(potm^.otmTextMetrics.tmExternalLeading*multipli);
+      data.Leading:=Round((potm^.otmTextMetrics.tmExternalLeading+potm^.otmTextMetrics.tmInternalLeading)*multipli);
       apchar:=PChar(potm);
       // Windows does not allow Type1 fonts
       data.Type1:=false;
@@ -444,8 +460,6 @@ end;
 {$ENDIF}
 
 
-//function GetCharPlac(DC: HDC; p2: PWideChar; p3, p4:integer;
-//   var p5: TGCPResults; p6: DWORD): DWORD;stdcall;external 'gdi32.dll' name 'GetCharacterPlacementW';
 
 {$IFDEF DOTNETD}
 {$UNSAFECODE ON}
@@ -555,7 +569,7 @@ begin
   astring:='';
   astring:=astring+charcode+Widechar(0);
 {$IFDEF CHARPLACBOOL}
-  if GetCharacterPlacementW(adc,PWideChar(astring),true,false,gcp,GCP_DIACRITIC)=0 then
+  if GetCharPlac(adc,PWideChar(astring),1,9,gcp,GCP_DIACRITIC)=0 then
    RaiseLastOSError;
 {$ENDIF}
 {$IFNDEF CHARPLACBOOL}

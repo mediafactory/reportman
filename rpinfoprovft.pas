@@ -47,6 +47,7 @@ type
   avCharWidth:Integer;
   Capheight:integer;
   ItalicAngle:double;
+  leading:integer;
   BBox:TRect;
   fullinfo:Boolean;
   StemV:double;
@@ -301,6 +302,7 @@ begin
       aobj.BBox.Bottom:=Round(aobj.convfactor*aface.bbox.yMin);
       aobj.ascent:=Round(aobj.convfactor*aface.ascender);
       aobj.descent:=Round(aobj.convfactor*aface.descender);
+      aobj.leading:=Round(aobj.convfactor*aface.height)-(aobj.ascent-aobj.descent);
       aobj.MaxWidth:=Round(aobj.convfactor*aface.max_advance_width);
       aobj.Capheight:=Round(aobj.convfactor*aface.ascender);
       aobj.stylename:=StrPas(aface.style_name);
@@ -537,7 +539,7 @@ begin
   data.FaceName:=currentfont.familyname;
   data.Ascent:=currentfont.ascent;
   data.Descent:=currentfont.descent;
-  data.Leading:=0;
+  data.Leading:=currentfont.leading;
   data.capHeight:=currentfont.Capheight;
   data.FontWeight:=0;
   data.MaxWidth:=currentfont.MaxWidth;

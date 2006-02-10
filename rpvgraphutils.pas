@@ -98,7 +98,7 @@ function GetFontData(Font:TFont):TMemoryStream;
 function GetPageSizeFromDevMode:TPoint;
 procedure GetDefaultDocumentProperties;
 procedure SwitchToPrinterIndex(index:integer);
-
+function CreateICFromCurrentPrinter:HDC;
 
 implementation
 
@@ -1531,6 +1531,43 @@ begin
   end;
  finally
   ClosePrinter(fprinterhandle);
+ end;
+end;
+
+function CreateICFromCurrentPrinter:HDC;
+var
+ Device, Driver, Port: array[0..1023] of char;
+ DeviceMode: THandle;
+ PDevMode :  PDeviceModeA;
+begin
+ if printer.Printers.count<1 then
+  Raise Exception.Create(SRpMustInstall);
+ // Printer selected not valid error
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  on E:Exception do
+  begin
+   Raise Exception.Create(SRpErrorOpenImp+':'+E.Message);
+  end;
+ end;
+
+ PDevMode:=GlobalLock(Devicemode);
+ try
+  Result:=CreateDC(Driver,Device,Port,PDevMode);
+ finally
+  GlobalUnlock(DeviceMode);
+ end;
+ if Result=0 then
+ begin
+  try
+   RaiseLastOsError;
+  except
+   On E:Exception do
+   begin
+    Raise Exception.Create(SRpErrorOpenImp+':'+E.Message);
+   end;
+  end;
  end;
 end;
 

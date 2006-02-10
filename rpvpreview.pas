@@ -204,13 +204,18 @@ begin
     EnableControls;
    end;
   end;
- except
+ finally
+  if TRpPreviewControl(PreviewControl).Report.ErrorProcessing then
+   Close;
+ end;
+{ except
   on E:Exception do
   begin
    Close;
    Raise;
   end;
  end;
+}
 end;
 
 procedure TFRpVPreview.FormCreate(Sender: TObject);
@@ -324,6 +329,8 @@ var
  areport:TRpReport;
  recalcreport:boolean;
 begin
+ if not assigned(previewcontrol) then
+  exit;
  allpages:=true;
  collate:=PreviewControl.metafile.CollateCopies;
  frompage:=1; topage:=MAX_PAGECOUNT;
@@ -374,6 +381,8 @@ var
  areport:TRpReport;
 begin
  areport:=nil;
+ if not Assigned(PreviewControl) then
+  exit;
  // Saves the metafile
  if SaveDialog1.Execute then
  begin
@@ -408,7 +417,6 @@ begin
         begin
           ALastExecute(Self);
           SaveMetafileToPDF(PreviewControl.Metafile,SaveDialog1.FileName,SaveDialog1.FilterIndex=2);
-          AppIdle(Self,adone);
         end;
       end;
      4,5:

@@ -132,7 +132,7 @@ AutoIncBuild=1
 MajorVer=2
 MinorVer=5
 Release=0
-Build=25
+Build=26
 Debug=0
 PreRelease=1
 Special=0
@@ -143,7 +143,7 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=Toni Martir
 FileDescription=Report Manager Active X control
-FileVersion=2.5.0.25
+FileVersion=2.5.0.26
 InternalName=ReportManX
 LegalCopyright=MPL License
 LegalTrademarks=

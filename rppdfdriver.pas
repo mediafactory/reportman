@@ -280,7 +280,7 @@ begin
     rec.Top:=posy;
     rec.Right:=posx+round(obj.Width);
     rec.Bottom:=posy+round(obj.Height);
-    // Unicode not supported
+    // Unicode now supported
     astring:=page.GetText(Obj);
     FPDFFile.Canvas.TextRect(rec,astring,aalign,obj.cuttext,
     obj.WordWrap,obj.FontRotation,obj.RightToLeft);
