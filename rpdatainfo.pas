@@ -2871,6 +2871,7 @@ begin
  alist.Add('OleDb');
  alist.Add('Odbc');
  alist.Add('Firebird');
+ alist.Add('SQL Server');
 end;
 
 procedure TRpDataInfoList.IntDisableLink(alist:TStringList;i:integer);

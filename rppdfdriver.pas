@@ -226,7 +226,6 @@ begin
  Rect.Top:=0;
  Rect.Bottom:=0;
  Rect.Right:=extent.X;
- // Unicode not supported
  FPDFFile.Canvas.TextExtent(atext.Text,Rect,atext.WordWrap,singleline);
  extent.X:=Rect.Right;
  extent.Y:=Rect.Bottom;
@@ -355,8 +354,8 @@ begin
    begin
     if (not obj.PreviewOnly) then
     begin
-     Width:=round(obj.Width);
-     Height:=round(obj.Height);
+     Width:=obj.Width;
+     Height:=obj.Height;
      rec.Top:=PosY;
      rec.Left:=PosX;
      rec.Bottom:=rec.Top+Height-1;

@@ -1,15 +1,15 @@
 object FRpDatasetsVCL: TFRpDatasetsVCL
   Left = 0
   Top = 0
-  Width = 498
-  Height = 348
+  Width = 566
+  Height = 418
   Align = alClient
   AutoScroll = False
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 498
+    Width = 566
     Height = 105
     Align = alTop
     BevelOuter = bvNone
@@ -17,7 +17,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 498
+      Width = 566
       Height = 27
       AutoSize = True
       ButtonHeight = 25
@@ -78,7 +78,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object PTop1: TPanel
       Left = 0
       Top = 27
-      Width = 498
+      Width = 566
       Height = 78
       Align = alClient
       BevelOuter = bvNone
@@ -104,7 +104,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object PanelBasic: TPanel
         Left = 169
         Top = 0
-        Width = 329
+        Width = 397
         Height = 78
         Align = alClient
         BevelOuter = bvNone
@@ -167,16 +167,16 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
   object PBottom: TPanel
     Left = 0
     Top = 105
-    Width = 498
-    Height = 243
+    Width = 566
+    Height = 313
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 498
-      Height = 243
+      Width = 566
+      Height = 313
       ActivePage = TabSQL
       Align = alClient
       TabOrder = 0
@@ -186,15 +186,15 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 173
           Top = 0
           Width = 8
-          Height = 215
+          Height = 285
           Cursor = crHSplit
           Beveled = True
         end
         object MSQL: TMemo
           Left = 181
           Top = 0
-          Width = 309
-          Height = 215
+          Width = 377
+          Height = 285
           Align = alClient
           TabOrder = 0
           WordWrap = False
@@ -204,7 +204,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 0
           Top = 0
           Width = 173
-          Height = 215
+          Height = 285
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
@@ -225,7 +225,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 490
+          Width = 558
           Height = 37
           Align = alTop
           Columns = 2
@@ -238,15 +238,15 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 490
-          Height = 178
+          Width = 558
+          Height = 248
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
           object PBDEFilter: TPanel
             Left = 0
             Top = 0
-            Width = 490
+            Width = 558
             Height = 17
             Align = alTop
             Alignment = taLeftJustify
@@ -257,8 +257,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           object MBDEFilter: TMemo
             Left = 0
             Top = 17
-            Width = 490
-            Height = 161
+            Width = 558
+            Height = 231
             Align = alClient
             ScrollBars = ssBoth
             TabOrder = 1

@@ -537,12 +537,56 @@ end;
 procedure TFRpDatasetsVCL.BShowDataClick(Sender: TObject);
 var
  dinfo:TRpDatainfoitem;
+ dbinfo:TRpDatabaseInfoItem;
  i:integer;
+ startinfo:TStartupinfo;
+ linecount:string;
+ FExename,FCommandLine:string;
+ procesinfo:TProcessInformation;
+ astring:string;
 begin
  // Opens the dataset and show the data
  dinfo:=FindDataInfoItem;
  if dinfo=nil then
   exit;
+ // See if is dot net
+ i:=report.DatabaseInfo.IndexOf(dinfo.DatabaseAlias);
+ if i>=0 then
+ begin
+  if report.DatabaseInfo.Items[i].Driver=rpdatadriver then
+  begin
+    linecount:='';
+    with startinfo do
+    begin
+     cb:=sizeof(startinfo);
+     lpReserved:=nil;
+     lpDesktop:=nil;
+     lpTitle:=PChar('Report manager');
+     dwX:=0;
+     dwY:=0;
+     dwXSize:=400;
+     dwYSize:=400;
+     dwXCountChars:=80;
+     dwYCountChars:=25;
+     dwFillAttribute:=FOREGROUND_RED or BACKGROUND_RED or BACKGROUND_GREEN or BACKGROUND_BLUe;
+     dwFlags:=STARTF_USECOUNTCHARS or STARTF_USESHOWWINDOW;
+     cbReserved2:=0;
+     lpreserved2:=nil;
+    end;
+    FExename:=ExtractFilePath(Application.exename)+'printreport.exe';
+    astring:=RpTempFileName;
+    report.StreamFormat:=rpStreamXML;
+    report.SaveToFile(astring);
+    FCommandLine:=' -SHOWDATA '+dinfo.Alias+' -deletereport "'+astring+'"';
+
+    if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,
+    startinfo,procesinfo) then
+     RaiseLastOSError;
+
+   exit;
+  end;
+ end;
+
  for i:=0 to Datainfo.Count-1 do
  begin
   Datainfo.Items[i].Disconnect;

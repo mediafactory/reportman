@@ -2004,7 +2004,6 @@ begin
     else
      FCommandLine:=' -deletereport -printdialog "'+astring+'"';
 
-    // Creates the interbase command line proces
     if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,
     startinfo,procesinfo) then
      RaiseLastOSError;
