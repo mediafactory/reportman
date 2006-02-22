@@ -615,17 +615,17 @@ end;
 
 function TRpMaskEdit.GetDate:TDateTime;
 begin
- result:=StrToDate(Text);
+ result:=StrToDate(EditText);
 end;
 
 function TRpMaskEdit.GetTime:TDateTime;
 begin
- result:=StrToTime(Text);
+ result:=StrToTime(EditText);
 end;
 
 function TRpMaskEdit.GetDateTime:TDateTime;
 begin
- result:=StrToDateTime(Text);
+ result:=StrToDateTime(EditText);
 end;
 
 function TRpMaskEdit.GetValue:variant;

@@ -541,6 +541,7 @@ begin
   data.Descent:=currentfont.descent;
   data.Leading:=currentfont.leading;
   data.capHeight:=currentfont.Capheight;
+  data.Encoding:='WinAnsiEncoding';
   data.FontWeight:=0;
   data.MaxWidth:=currentfont.MaxWidth;
   data.AvgWidth:=currentfont.avCharWidth;
