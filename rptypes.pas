@@ -3504,7 +3504,7 @@ begin
  begin
   // Waits to the end
   if waitend then
-   wait(@child);
+   waitpid(child,@i,0);
  end;
 end;
 

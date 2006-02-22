@@ -536,11 +536,38 @@ procedure TFRpDatasets.BShowDataClick(Sender: TObject);
 var
  dinfo:TRpDatainfoitem;
  i:integer;
+ aparams:TStringList;
+ astring:string;
 begin
  // Opens the dataset and show the data
  dinfo:=FindDataInfoItem;
  if dinfo=nil then
   exit;
+ // See if is dot net
+ i:=report.DatabaseInfo.IndexOf(dinfo.DatabaseAlias);
+ if i>=0 then
+ begin
+  if report.DatabaseInfo.Items[i].Driver=rpdatadriver then
+  begin
+    aparams:=TStringList.Create;
+    try
+       aparams.Add('mono');
+       aparams.Add(ExtractFilePath(Application.exename)+'printreport.exe');
+       astring:=RpTempFileName;
+       report.StreamFormat:=rpStreamXML;
+       report.SaveToFile(astring);
+       aparams.Add('-SHOWDATA');
+       aparams.Add(dinfo.Alias);
+       aparams.Add('-deletereport');
+       aparams.Add(astring);
+       ExecuteSystemApp(aparams,false);
+    finally
+     aparams.free;
+    end;
+   exit;
+  end;
+ end;
+
  for i:=0 to Datainfo.Count-1 do
  begin
   Datainfo.Items[i].Disconnect;

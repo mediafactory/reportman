@@ -368,7 +368,7 @@ type
   end;
 
 
-procedure ExecuteReportDotNet(report:TRpReport);
+procedure ExecuteReportDotNet(report:TRpReport;preview:boolean);
 implementation
 
 uses Math;
@@ -1287,7 +1287,7 @@ begin
  begin
   if report.DatabaseInfo.Items[0].Driver=rpdatadriver then
   begin
-   ExecuteReportDotNet(report);
+   ExecuteReportDotNet(report,true);
    exit;
   end;
  end;
@@ -1352,6 +1352,14 @@ var
  metafile:TRpMetafileReport;
 {$ENDIF}
 begin
+ if (report.DatabaseInfo.Count>0) then
+ begin
+  if report.DatabaseInfo.Items[0].Driver=rpdatadriver then
+  begin
+   ExecuteReportDotNet(report,false);
+   exit;
+  end;
+ end;
 {$IFDEF LINUX}
  if usekprinter then
  begin
@@ -2248,20 +2256,37 @@ end;
 
 
 {$IFDEF LINUX}
-procedure ExecuteReportDotNet(report:TRpReport);
+procedure ExecuteReportDotNet(report:TRpReport;preview:boolean);
 var
  aparams:TStringList;
- astring:string;
+ astring,apdf:string;
 begin
  aparams:=TStringList.Create;
  try
+  aparams.Add('mono');
+  aparams.Add(ExtractFilePath(Application.exename)+'printreport.exe');
   astring:=RpTempFileName;
   report.StreamFormat:=rpStreamXML;
   report.SaveToFile(astring);
-  aparams.Add('printreport');
-  aparams.Add('-preview');
+  apdf:=ChangeFileExt(RpTempFilename,'.pdf');
+  aparams.Add('-pdf');
+  aparams.Add(apdf);
   aparams.Add(astring);
-  ExecuteSystemCommand(aparams);
+  ExecuteSystemApp(aparams,true);
+  if preview then
+  begin
+   aparams.Clear;
+   aparams.Add('kpdf');
+   aparams.Add(apdf);
+   ExecuteSystemApp(aparams,false);
+  end
+  else
+  begin
+   aparams.Clear;
+   aparams.Add('kprinter');
+   aparams.Add(apdf);
+   ExecuteSystemApp(aparams,false);
+  end;
  finally
   aparams.free;
  end;
@@ -2269,7 +2294,7 @@ end;
 {$ENDIF}
 
 {$IFDEF MSWINDOWS}
-procedure ExecuteReportDotNet(report:TRpReport);
+procedure ExecuteReportDotNet(report:TRpReport;preview:boolean);
 var
  startinfo:TStartupinfo;
  linecount:string;
@@ -2304,7 +2329,10 @@ begin
     astring:=RpTempFileName;
     report.StreamFormat:=rpStreamXML;
     report.SaveToFile(astring);
-    FCommandLine:=' -preview "'+astring+'"';
+    if preview then
+     FCommandLine:=' -preview "'+astring+'"'
+    else
+     FCommandLine:='  "'+astring+'"';
 
     // Creates the interbase command line proces
     if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,
