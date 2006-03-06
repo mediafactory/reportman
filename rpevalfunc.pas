@@ -23,6 +23,9 @@ interface
 uses
   SysUtils, Classes,
   rpmdconsts,DB,
+{$IFDEF MSWINDOWS}
+  Windows,
+{$ENDIF}
 {$IFDEF USEVARIANTS}
   Variants,MaskUtils,
 {$ENDIF}
@@ -462,6 +465,29 @@ type
   public
    constructor Create(AOwner:TComponent);override;
   end;
+
+  TIdenFieldExists=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+{$IFDEF MSWINDOWS}
+  TIdenChsToCht=class(TIdenFunction)
+  protected
+    function GetRpValue:TRpvalue;override;
+   public
+    constructor Create(AOWner:TComponent);override;
+  end;
+
+  TIdenChtToChs=class(TIdenFunction)
+  protected
+    function GetRpValue:TRpvalue;override;
+   public
+    constructor Create(AOWner:TComponent);override;
+  end;
+{$ENDIF}
 
 implementation
 
@@ -2288,5 +2314,122 @@ begin
   Result:='';
 end;
 
+
+constructor TIdenFieldExists.Create(AOwner: TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='IdentExists';
+ Help:='';
+ model:='function IdentExists(s:String)';
+ aParams:='';
+end;
+
+function TIdenFieldExists.GetRpValue: TRpValue;
+ var iden:TRpIdentifier;
+begin
+  // check if the parameter is a string
+  if (Not VarIsStr( Params[0])) then
+   Raise TRpNamedException.Create(SRpEvalType,IdenName);
+  // search for the identifier
+  iden:=(evaluator As TRpEvaluator).Searchidentifier(String(Params[0]));
+  // set result
+  Result := not (iden = nil)
+end;
+
+
+{$IFDEF MSWINDOWS}
+//added jasonpun 20060306
+{ TIdenChsToCht }
+
+constructor TIdenChsToCht.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='ChsToCht';
+ Help:=SRpChsToCht;
+ model:='function '+'ChsToCht'+'(expr:string):String';
+ aParams:=SRpChsToCht;
+end;
+
+function TIdenCHSToCHT.GeTRpValue:TRpValue;
+var
+  buf: PChar;
+  len: Integer;
+  src: String;
+begin
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+
+ src:=Params[0];
+ if src=NULL then
+ begin
+  result:='';
+  exiT;
+ end;
+  len := LCMapString($804,
+    LCMAP_TRADITIONAL_CHINESE,
+    Pchar(src),
+    -1,
+    nil,
+    0);
+  GetMem(buf, len);
+  ZeroMemory(buf, len);
+  LCMapString($804, //LCID_CHINESE_SIMPLIFIED
+    LCMAP_TRADITIONAL_CHINESE,
+    Pchar(src),
+    -1,
+    buf,
+    len);
+  Result := string(buf);
+  FreeMem(buf);
+end;
+
+{ TIdenChtToChs }
+constructor TIdenChtToChs.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='ChtToChs';
+ Help:=SRpChtToChs;
+ model:='function '+'ChtToChs'+'(expr:string):String';
+ aParams:=SRpChtToChs;
+end;
+
+function TIdenCHtToCHs.GeTRpValue:TRpValue;
+var
+  buf: PChar;
+  len: Integer;
+  src: String;
+begin
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+
+ src:=Params[0];
+ if src=NULL then
+ begin
+  result:='';
+  exiT;
+ end;
+  len := LCMapString($804,
+    LCMAP_TRADITIONAL_CHINESE,
+    PChar(src),
+    -1,
+    nil,
+    0);
+  GetMem(buf, len);
+  ZeroMemory(buf, len);
+  LCMapString($804, //LCID_CHINESE_SIMPLIFIED
+    LCMAP_TRADITIONAL_CHINESE,
+    PChar(src),
+    -1,
+    buf,
+    len);
+  Result := string(buf);
+  FreeMem(buf);
+end;
+{$ENDIF}
 
 end.

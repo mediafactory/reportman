@@ -765,14 +765,14 @@ begin
          if Not VarIsNull(aparam.Value) then
           if Not aparam.Value then
            aparamstring:=aparamstring+' selected ';
-         aparamstring:=aparamstring+'>'+HtmlEncode(SRpYes)+
+         aparamstring:=aparamstring+'>'+HtmlEncode(SRpNo)+
           '</option>'+#10;
          aparamstring:=aparamstring+'<option value="'+
            BoolToStr(true,true)+'" ';
          if Not VarIsNull(aparam.Value) then
           if aparam.Value then
            aparamstring:=aparamstring+' selected ';
-         aparamstring:=aparamstring+'>'+HtmlEncode(SRpNo)+
+         aparamstring:=aparamstring+'>'+HtmlEncode(SRpYes)+
           '</option>'+#10;
          aparamstring:=aparamstring+
           '</select>'+#10;

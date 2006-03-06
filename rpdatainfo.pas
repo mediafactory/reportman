@@ -291,6 +291,7 @@ type
 {$ENDIF}
   public
    SQLOverride:widestring;
+   procedure GetFieldNames(fieldlist,fieldtypes,fieldsizes:TStrings);
    property OnConnect:TDatasetNotifyEvent read FOnConnect write FOnConnect;
    property OnDisConnect:TDatasetNotifyEvent read FOnDisConnect write FOnDisConnect;
    procedure Assign(Source:TPersistent);override;
@@ -343,6 +344,7 @@ type
    function IndexOf(Value:string):integer;
    function ItemByName(AName:string):TRpDataInfoItem;
    property Items[index:integer]:TRpDataInfoItem read GetItem write SetItem;default;
+   property Report:TComponent read FReport;
    constructor Create(rep:TComponent);
   end;
 
@@ -2420,6 +2422,108 @@ begin
  end;
 end;
 
+procedure TRpDataInfoItem.GetFieldNames(fieldlist,fieldtypes,fieldsizes:TStrings);
+var
+ report:TRpReport;
+ alist:TStringList;
+ tmpfile:string;
+ i:integer;
+ baseinfo:TRpDatabaseInfoItem;
+ astring:string;
+{$IFDEF LINUX}
+ aparams:TStringList;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+ startinfo:TStartupinfo;
+ linecount:string;
+ FExename,FCommandLine:string;
+ procesinfo:TProcessInformation;
+{$ENDIF}
+begin
+
+ report:=TRpDataInfoList(Collection).FReport As TRpReport;
+ // Opens the connection
+ index:=report.databaseinfo.IndexOf(Databasealias);
+ if index<0 then
+  Raise Exception.Create(SRPDabaseAliasNotFound+' : '+FDatabaseAlias);
+ baseinfo:=report.databaseinfo.items[index];
+ case baseinfo.Driver of
+  rpdatadriver:
+   begin
+    tmpfile:=RpTempFileName;
+    alist:=TStringList.Create;
+    try
+     astring:=RpTempFileName;
+     report.StreamFormat:=rpStreamXML;
+     report.SaveToFile(astring);
+{$IFDEF LINUX}
+     aparams:=TStringList.Create;
+     try
+        aparams.Add('mono');
+        aparams.Add(ExtractFilePath(ParamStr(0))+'printreport.exe');
+        aparams.Add('-showfields');
+        aparams.Add(Alias);
+        aparams.Add(tmpfile);
+        aparams.Add(astring);
+        ExecuteSystemApp(aparams,true);
+     finally
+        aparams.free;
+     end;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+     linecount:='';
+     with startinfo do
+     begin
+      cb:=sizeof(startinfo);
+      lpReserved:=nil;
+      lpDesktop:=nil;
+      lpTitle:=PChar('Report manager');
+      dwX:=0;
+      dwY:=0;
+      dwXSize:=400;
+      dwYSize:=400;
+      dwXCountChars:=80;
+      dwYCountChars:=25;
+      dwFillAttribute:=FOREGROUND_RED or BACKGROUND_RED or BACKGROUND_GREEN or BACKGROUND_BLUe;
+      dwFlags:=STARTF_USECOUNTCHARS or STARTF_USESHOWWINDOW;
+      cbReserved2:=0;
+      lpreserved2:=nil;
+     end;
+
+     FExename:=ExtractFilePath(ParamStr(0))+'printreport.exe';
+     FCommandLine:=' -deletereport -showfields '+Alias+' "'+tmpfile+'" "'+
+      astring+'"';
+     if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,
+     startinfo,procesinfo) then
+      RaiseLastOSError;
+     WaitForSingleObject(procesinfo.hProcess,60000);
+{$ENDIF}
+     alist.LoadFromFile(tmpfile);
+     i:=0;
+     while i<alist.Count do
+     begin
+      fieldlist.Add(alist.Strings[i]);
+      fieldtypes.Add(alist.Strings[i+1]);
+      if alist.Strings[i+2]<>'-1' then
+       fieldsizes.Add(alist.Strings[i+2])
+      else
+       fieldsizes.Add('');
+      i:=i+3;
+     end;
+    finally
+     alist.free;
+     SysUtils.DeleteFile(tmpfile);
+    end;
+   end;
+  else
+  begin
+    report.PrepareParamsBeforeOpen;
+    Connect(report.databaseinfo,report.params);
+    FillFieldsInfo(Dataset,fieldlist,fieldtypes,fieldsizes);
+  end;
+ end;
+end;
+
 procedure TRpDatabaseInfoItem.GetFieldNames(atable:String;fieldlist,fieldtypes,fieldsizes:TStrings);
 {$IFDEF USEZEOS}
 var
@@ -2497,6 +2601,10 @@ begin
 {$ELSE}
     Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBO);
 {$ENDIF}
+   end;
+  rpdatadriver:
+   begin
+    Raise Exception.Create(SRpDriverNotSupported+' -  Dot net ');
    end;
  end;
 end;
@@ -2865,14 +2973,6 @@ begin
  alist.Add('Dot Net Connection');
 end;
 
-procedure GetDotNetDrivers(alist:TStrings);
-begin
- alist.Clear;
- alist.Add('OleDb');
- alist.Add('Odbc');
- alist.Add('Firebird');
- alist.Add('SQL Server');
-end;
 
 procedure TRpDataInfoList.IntDisableLink(alist:TStringList;i:integer);
 var
@@ -3776,6 +3876,20 @@ begin
  end;
 end;
 
+procedure GetDotNetDrivers(alist:TStrings);
+begin
+ alist.Clear;
+ alist.Add('OleDb');
+ alist.Add('Odbc');
+ alist.Add('Firebird');
+ alist.Add('SQL Server');
+ alist.Add('PostgreSQL');
+ alist.Add('MySQL');
+ alist.Add('SQLite');
+ alist.Add('Oracle');
+ alist.Add('Ibm Db2');
+ alist.Add('Sybase');
+end;
 
 
 

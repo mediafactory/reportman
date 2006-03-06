@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 2.5b
-AppVersion=2.5b
-OutputBaseFilename=reportman2_5b
+AppVerName=Report Manager 2.5e
+AppVersion=2.5e
+OutputBaseFilename=reportman2_5e
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -63,8 +63,7 @@ Source: ..\repman\utils\metaview\metaviewxp.exe; DestDir: {app}; Components: cli
 Source: ..\repman\utils\metaprint\metaprintxp.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\metaprint\metaprintxp.exe.manifest; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: c:\prog\toni\net\reportman\printreport\bin\debug\printreport.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: c:\prog\toni\net\reportman\printreport\bin\debug\FirebirdSQL.Data.Firebird.dll; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: c:\prog\toni\net\reportman\printreport\bin\debug\ICSharpCode.SharpZipLib.dll; DestDir: {app}; Components: commandline; Flags: ignoreversion
+Source: c:\prog\toni\net\reportman\printreport\bin\debug\*.dll; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: license.txt; DestDir: {app}; Flags: ignoreversion
 Source: ..\repman\utils\printrep\printrepxp.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\printrep\printrepxp.exe.manifest; DestDir: {app}; Components: commandline; Flags: ignoreversion

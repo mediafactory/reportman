@@ -8,27 +8,37 @@
 <h3><b>Basics</b></h3>
 <p>The dot net version of Report Manager is a translation from Delphi to C# of 
   the reporting engine. The port to dot net is still uncomplete and requires still 
-  hard work.</p>
+  some work, but you can test it easily. In a near future a library will be provided 
+  so you can link easily your reports with your application.</p>
 <p><strong>How it works now (while testing the port)</strong></p>
 <p>A single additional file is installed with the designer package for windows, 
-  the file is <strong>printreport.exe</strong>, this is a dot net program.</p>
+  the file is <strong>printreport.exe</strong>, this is a dot net program. In 
+  Linux Mono 1.1.13 runtime must be installed, in Microsoft Windows Dot Net runtime 
+  Framework 1.1 must be installed.</p>
 <p>When you select the dot net driver on database connections configuration, the 
-  designer will save the report in a temp file, calling printreport.exe, when 
-  you preview or print, the printreport.exe is used instead of the designer itself. 
-  You can also test printreport.exe independently, the only requirement is you 
-  save the report as xml (select prefered save format in page setup).</p>
+  designer, will call printreport.exe to show you data results in data configuration 
+  dialog, and to preview/print the report.</p>
+<p>The internal procedure is save the report in a temp file, as XML (see page 
+  setup, prefered save format), then call printreport.exe with command line options 
+  (-preview for example). That is when you preview or print, the printreport.exe 
+  is used instead of the designer itself. You can also test printreport.exe independently, 
+  the only requirement is you save the report as xml (select prefered save format 
+  in page setup).</p>
+<p>For example, this instruction will generate a pdf file from a report:</p>
+<p>printreport.exe -pdf pdfoutputfilename.pdf mysavedreportasxml.rep</p>
 <p><strong>Parts already working (Windows)</strong></p>
 <ul>
   <li>Print preview and printout</li>
+  <li>PDF output (not truetype support)</li>
   <li>Label, expression, image, drawing, barcode (partial)</li>
-  <li>Data providers: Odbc, OleDB, SQLServer, Firebird (firebird dotnet assembly 
-    required)</li>
+  <li>Data providers: Odbc, OleDB, SQLServer, Firebird</li>
 </ul>
 <p><strong>Missing parts</strong></p>
 <ul>
-  <li>Output as pdf, excel, text</li>
+  <li>Output as excel, text</li>
   <li>Most of the evaluator functions are still missing</li>
-  <li>Linux port, requires winforms on Linux or implementation of pdf output.</li>
+  <li>Linux port, please use pdf output to printout on linux, the Mono printing 
+    components are not complete.</li>
   <li>Some barcodes still missing</li>
   <li>Other data providers may be included in the future (MySQL)</li>
 </ul>

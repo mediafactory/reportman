@@ -393,6 +393,7 @@ begin
    TabBDEType.TabVisible:=false;
    exit;
   end;
+  PBrowser.Visible:=not (databaseinfo.items[index].Driver=rpdatadriver);
   if databaseinfo.items[index].Driver=rpdatamybase then
   begin
    TabSQL.TabVisible:=false;

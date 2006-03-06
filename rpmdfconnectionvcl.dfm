@@ -1,15 +1,15 @@
 object FRpConnectionVCL: TFRpConnectionVCL
   Left = 0
   Top = 0
-  Width = 443
-  Height = 270
+  Width = 670
+  Height = 436
   Align = alClient
   AutoScroll = False
   TabOrder = 0
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 443
+    Width = 670
     Height = 27
     AutoSize = True
     ButtonHeight = 25
@@ -50,15 +50,15 @@ object FRpConnectionVCL: TFRpConnectionVCL
   object PParent: TPanel
     Left = 0
     Top = 27
-    Width = 443
-    Height = 243
+    Width = 670
+    Height = 409
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PTop: TPanel
       Left = 0
       Top = 0
-      Width = 443
+      Width = 670
       Height = 105
       Align = alTop
       BevelOuter = bvNone
@@ -76,7 +76,7 @@ object FRpConnectionVCL: TFRpConnectionVCL
       object PDriver: TPanel
         Left = 169
         Top = 0
-        Width = 274
+        Width = 501
         Height = 105
         Align = alClient
         BevelOuter = bvNone
@@ -84,7 +84,7 @@ object FRpConnectionVCL: TFRpConnectionVCL
         object MHelp: TMemo
           Left = 0
           Top = 33
-          Width = 274
+          Width = 501
           Height = 72
           Align = alClient
           Color = clInfoBk
@@ -94,7 +94,7 @@ object FRpConnectionVCL: TFRpConnectionVCL
         object Panel1: TPanel
           Left = 0
           Top = 0
-          Width = 274
+          Width = 501
           Height = 33
           Align = alTop
           BevelOuter = bvNone
@@ -114,16 +114,16 @@ object FRpConnectionVCL: TFRpConnectionVCL
     object PanelProps: TPanel
       Left = 0
       Top = 105
-      Width = 443
-      Height = 138
+      Width = 670
+      Height = 304
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 0
       object GAvailable: TGroupBox
         Left = 0
         Top = 0
-        Width = 443
-        Height = 138
+        Width = 670
+        Height = 304
         Align = alClient
         Caption = 'Available connections'
         TabOrder = 0
@@ -131,7 +131,7 @@ object FRpConnectionVCL: TFRpConnectionVCL
           Left = 2
           Top = 15
           Width = 169
-          Height = 121
+          Height = 287
           Align = alLeft
           ItemHeight = 13
           TabOrder = 0
@@ -140,8 +140,8 @@ object FRpConnectionVCL: TFRpConnectionVCL
         object PConProps: TPanel
           Left = 171
           Top = 15
-          Width = 270
-          Height = 121
+          Width = 497
+          Height = 287
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
@@ -260,7 +260,6 @@ object FRpConnectionVCL: TFRpConnectionVCL
             Width = 293
             Height = 21
             Style = csDropDownList
-            Anchors = [akLeft, akTop, akRight]
             ItemHeight = 13
             TabOrder = 8
             Visible = False

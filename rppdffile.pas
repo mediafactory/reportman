@@ -890,7 +890,8 @@ begin
  SWriteLine(FTempStream,'/Info 1 0 R');
  SWriteLine(FTempStream,'>>');
  SWriteLine(FTempStream,'startxref');
- SWriteLine(FTempStream,trim(FObjectOffsets.Strings[FObjectCount-1]));
+ SWriteLine(FTempStream,IntToStr(FMainPDF.Size));
+// SWriteLine(FTempStream,trim(FObjectOffsets.Strings[FObjectCount-1]));
  FTempStream.SaveToStream(FmainPDF);
 end;
 
@@ -1775,7 +1776,6 @@ var
  havekerning:boolean;
  adata:TRpTTFontData;
  kerningamount:integer;
- adescent:integer;
  linespacing:integer;
  leading:integer;
 begin

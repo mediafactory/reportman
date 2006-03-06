@@ -41,7 +41,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.5d';
+ RM_VERSION='2.5e';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
  MAX_PAGECOUNT=999999;
 type
@@ -1307,6 +1307,12 @@ var
   SRpMaximumPages:WideString='Maximum number of pages reached';
   //
   SRpPMax:WideString='Returns the maximum value';
+  //added jasonpun 20060306
+  SRpChsToCht:WideString='Convert simplified to traditional Chinese';
+  SRpPChsToCht:WideString='Convert simplified to traditional Chinese';
+  SRpChtToChs:WideString='Convert traditional to simplified Chinese';
+  SRpPChtToChs:WideString='Convert traditional to simplified Chinese';
+
 implementation
 
 uses rptranslator;

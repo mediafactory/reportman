@@ -275,6 +275,14 @@ begin
  Rpfunctions.AddObject('SQRT',iden);
  iden:=TIdenASC2.Create(nil);
  Rpfunctions.AddObject('ASC2',iden);
+ iden:=TIdenFieldExists.Create(nil);
+ Rpfunctions.AddObject('IDENTEXISTS',iden);
+{$IFDEF MSWINDOWS}
+ iden:=TIdenChsToCht.Create(nil);
+ Rpfunctions.AddObject('CHSTOCHT',iden);
+ iden:=TIdenChtToChs.Create(nil);
+ Rpfunctions.AddObject('CHTTOCHS',iden);
+{$ENDIF}
 
  // Functions for compatibility with Gestor reports
  iden:=TIdenVariable.Create(nil);

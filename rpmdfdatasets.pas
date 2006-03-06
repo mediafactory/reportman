@@ -391,6 +391,7 @@ begin
    TabBDEType.TabVisible:=false;
    exit;
   end;
+  PBrowser.Visible:=not (databaseinfo.items[index].Driver=rpdatadriver);
   if databaseinfo.items[index].Driver=rpdatamybase then
   begin
    TabSQL.TabVisible:=false;
@@ -543,6 +544,7 @@ begin
  dinfo:=FindDataInfoItem;
  if dinfo=nil then
   exit;
+{$IFDEF LINUX}
  // See if is dot net
  i:=report.DatabaseInfo.IndexOf(dinfo.DatabaseAlias);
  if i>=0 then
@@ -567,7 +569,7 @@ begin
    exit;
   end;
  end;
-
+{$ENDIF}
  for i:=0 to Datainfo.Count-1 do
  begin
   Datainfo.Items[i].Disconnect;

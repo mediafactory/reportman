@@ -23,7 +23,7 @@ interface
 {$I rpconf.inc}
 
 uses
-  Windows, Messages, SysUtils,
+  Windows, Messages, SysUtils,rptypes,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
@@ -162,6 +162,7 @@ begin
  EConnectionString.Width:=PConProps.Width-ECOnnectionString.Left-20;
  ComboAvailable.Width:=PConProps.Width-ComboAvailable.Left-20;
  ComboDriver.Anchors:=[akLeft,akTop,akRight];
+ ComboNetDriver.Anchors:=[akLeft,akTop,akRight];
  ComboAvailable.Anchors:=[akLeft,akTop,akRight];
  EConnectionString.Anchors:=[akLeft,akTop,akRight];
 
@@ -533,15 +534,53 @@ end;
 procedure TFRpConnectionVCL.BTestClick(Sender: TObject);
 var
  dbinfo:TRpDatabaseInfoItem;
+ startinfo:TStartupinfo;
+ linecount:string;
+ FExename,FCommandLine,astring:string;
+ procesinfo:TProcessInformation;
 begin
  dbinfo:=FindDatabaseInfoItem;
  if Not Assigned(dbinfo) then
   exit;
- dbinfo.Connect;
- try
-  ShowMessage(SRpConnectionOk);
- finally
-  dbinfo.DisConnect;
+ if dbinfo.Driver=rpdatadriver then
+ begin
+  astring:=RpTempFileName;
+  report.StreamFormat:=rpStreamXML;
+  report.SaveToFile(astring);
+  linecount:='';
+  with startinfo do
+  begin
+   cb:=sizeof(startinfo);
+   lpReserved:=nil;
+   lpDesktop:=nil;
+   lpTitle:=PChar('Report manager');
+   dwX:=0;
+   dwY:=0;
+   dwXSize:=400;
+   dwYSize:=400;
+   dwXCountChars:=80;
+   dwYCountChars:=25;
+   dwFillAttribute:=FOREGROUND_RED or BACKGROUND_RED or BACKGROUND_GREEN or BACKGROUND_BLUe;
+   dwFlags:=STARTF_USECOUNTCHARS or STARTF_USESHOWWINDOW;
+   cbReserved2:=0;
+   lpreserved2:=nil;
+  end;
+
+  FExename:=ExtractFilePath(ParamStr(0))+'printreport.exe';
+  FCommandLine:=' -deletereport -testconnection '+dbinfo.Alias+' "'+
+   astring+'"';
+  if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,
+     startinfo,procesinfo) then
+      RaiseLastOSError;
+ end
+ else
+ begin
+  dbinfo.Connect;
+  try
+   ShowMessage(SRpConnectionOk);
+  finally
+   dbinfo.DisConnect;
+  end;
  end;
 end;
 
