@@ -2461,6 +2461,7 @@ begin
      try
         aparams.Add('mono');
         aparams.Add(ExtractFilePath(ParamStr(0))+'printreport.exe');
+        aparams.Add('-deletereport');
         aparams.Add('-showfields');
         aparams.Add(Alias);
         aparams.Add(tmpfile);

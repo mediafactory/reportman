@@ -23,7 +23,7 @@ interface
 {$I rpconf.inc}
 
 uses
-  SysUtils,
+  SysUtils,rptypes,
 {$IFDEF USEVARIANTS}
   Variants,Types,
 {$ENDIF}
@@ -534,15 +534,75 @@ end;
 procedure TFRpConnection.BTestClick(Sender: TObject);
 var
  dbinfo:TRpDatabaseInfoItem;
+ astring:string;
+{$IFDEF MSWINDOWS}
+ startinfo:TStartupinfo;
+ linecount:string;
+ FExename,FCommandLine:string;
+ procesinfo:TProcessInformation;
+{$ENDIF}
+{$IFDEF LINUX}
+ aparams:TStringList;
+{$ENDIF}
 begin
  dbinfo:=FindDatabaseInfoItem;
  if Not Assigned(dbinfo) then
   exit;
- dbinfo.Connect;
- try
-  ShowMessage(SRpConnectionOk);
- finally
-  dbinfo.DisConnect;
+ if dbinfo.Driver=rpdatadriver then
+ begin
+  astring:=RpTempFileName;
+  report.StreamFormat:=rpStreamXML;
+  report.SaveToFile(astring);
+{$IFDEF LINUX}
+     aparams:=TStringList.Create;
+     try
+        aparams.Add('mono');
+        aparams.Add(ExtractFilePath(ParamStr(0))+'printreport.exe');
+        aparams.Add('-deletereport');
+        aparams.Add('-testconnection');
+        aparams.Add(dbinfo.Alias);
+        aparams.Add(astring);
+        ExecuteSystemApp(aparams,true);
+     finally
+        aparams.free;
+     end;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+  linecount:='';
+  with startinfo do
+  begin
+   cb:=sizeof(startinfo);
+   lpReserved:=nil;
+   lpDesktop:=nil;
+   lpTitle:=PChar('Report manager');
+   dwX:=0;
+   dwY:=0;
+   dwXSize:=400;
+   dwYSize:=400;
+   dwXCountChars:=80;
+   dwYCountChars:=25;
+   dwFillAttribute:=FOREGROUND_RED or BACKGROUND_RED or BACKGROUND_GREEN or BACKGROUND_BLUe;
+   dwFlags:=STARTF_USECOUNTCHARS or STARTF_USESHOWWINDOW;
+   cbReserved2:=0;
+   lpreserved2:=nil;
+  end;
+
+  FExename:=ExtractFilePath(ParamStr(0))+'printreport.exe';
+  FCommandLine:=' -deletereport -testconnection '+dbinfo.Alias+' "'+
+   astring+'"';
+  if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,
+     startinfo,procesinfo) then
+      RaiseLastOSError;
+{$ENDIF}
+ end
+ else
+ begin
+  dbinfo.Connect;
+  try
+   ShowMessage(SRpConnectionOk);
+  finally
+   dbinfo.DisConnect;
+  end;
  end;
 end;
 

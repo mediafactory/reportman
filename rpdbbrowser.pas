@@ -333,14 +333,15 @@ begin
      if Assigned(ainfo.dinfo) then
      begin
       ditem:=ainfo.dinfo;
-      FReport.PrepareParamsBeforeOpen;
-      ditem.Connect(Freport.DatabaseInfo,FReport.Params);
+//      FReport.PrepareParamsBeforeOpen;
+//      ditem.Connect(Freport.DatabaseInfo,FReport.Params);
       alist:=TStringList.Create;
       fieldtypes:=TStringList.Create;
       fieldsizes:=TStringList.Create;
       try
        Atree.Items.Delete(achild);
-       FillFieldsInfo(ditem.Dataset,alist,fieldtypes,fieldsizes);
+       ditem.GetFieldNames(alist,fieldtypes,fieldsizes);
+//       FillFieldsInfo(ditem.Dataset,alist,fieldtypes,fieldsizes);
        if alist.count<1 then
         AllowExpansion:=false
        else

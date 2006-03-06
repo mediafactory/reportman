@@ -2,7 +2,7 @@ object FRpDInfo: TFRpDInfo
   Left = 269
   Top = 178
   Width = 565
-  Height = 422
+  Height = 522
   VertScrollBar.Range = 39
   ActiveControl = BOk
   AutoScroll = False
