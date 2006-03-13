@@ -27,6 +27,9 @@ uses
 {$IFDEF USEVARIANTS}
   Variants,Types,
 {$ENDIF}
+{$IFDEF MSWINDOWS}
+  Windows,
+{$ENDIF}
   Classes, QGraphics, QControls, QForms,rpreport,
   QDialogs, QStdCtrls, QExtCtrls, QActnList,
 {$IFDEF USEBDE}

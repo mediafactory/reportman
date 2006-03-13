@@ -62,8 +62,10 @@ Source: ..\repman\utils\metaview\metaviewxp.exe.manifest; DestDir: {app}; Compon
 Source: ..\repman\utils\metaview\metaviewxp.exe; DestDir: {app}; Components: clienttcp; Flags: ignoreversion
 Source: ..\repman\utils\metaprint\metaprintxp.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\metaprint\metaprintxp.exe.manifest; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: c:\prog\toni\net\reportman\printreport\bin\debug\printreport.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
+Source: c:\prog\toni\net\reportman\printreport\bin\debug\*.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: c:\prog\toni\net\reportman\printreport\bin\debug\*.dll; DestDir: {app}; Components: commandline; Flags: ignoreversion
+Source: c:\prog\toni\net\reportman\printreport\bin\debug\*.rep; DestDir: {app}; Components: commandline; Flags: ignoreversion
+Source: c:\prog\toni\net\reportman\printreport\bin\debug\*.fdb; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: license.txt; DestDir: {app}; Flags: ignoreversion
 Source: ..\repman\utils\printrep\printrepxp.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\printrep\printrepxp.exe.manifest; DestDir: {app}; Components: commandline; Flags: ignoreversion
