@@ -33,7 +33,7 @@ uses Classes,sysutils,rptypes,rpreport,rpdatainfo,rpsubreport,
 
 const
  C_MAXDATAWIDTH=40;
-
+ CRLF:String=''+#13+#10;
 type
  TRpPropertytypes=(rppropinteger,rppropdouble,rppropdatetime,rppropstring,
   rppropwidestring,rppropstream);
@@ -250,7 +250,7 @@ var
  i:integer;
  aitem:TRpCommonPosComponent;
 begin
- WriteStringToStream('<SECTION>'+#10,Stream);
+ WriteStringToStream('<SECTION>'+CRLF,Stream);
 
  WritePropertyS('NAME',section.Name,Stream);
  WritePropertyI('WIDTH',section.Width,Stream);
@@ -307,7 +307,7 @@ begin
   aitem:=TRpCommonPosComponent(section.ReportComponents.Items[i].Component);
   WriteComponentXML(aitem,Stream);
  end;
- WriteStringToStream('</SECTION>'+#10,Stream);
+ WriteStringToStream('</SECTION>'+CRLF,Stream);
 end;
 
 procedure WriteComponentXML(comp:TRpCommonPosComponent;Stream:TStream);
@@ -320,7 +320,7 @@ var
  compb:TRpBarCode;
  compc:TRpChart;
 begin
- WriteStringToStream('<COMPONENT>'+#10,Stream);
+ WriteStringToStream('<COMPONENT>'+CRLF,Stream);
 
  WritePropertyS('NAME',comp.Name,Stream);
  WritePropertyS('CLASSNAME',UpperCase(comp.ClassName),Stream);
@@ -478,7 +478,7 @@ begin
   WritePropertyI('ECCLEVEL',compb.ECCLevel,Stream);
   WritePropertyBool('TRUNCATED',compb.Truncated,Stream);
  end;
- WriteStringToStream('</COMPONENT>'+#10,Stream);
+ WriteStringToStream('</COMPONENT>'+CRLF,Stream);
 end;
 
 
@@ -499,7 +499,7 @@ begin
    if (alen > C_MAXDATAWIDTH) then
    begin
     alen:=0;
-    Result:=Result+#10;
+    Result:=Result+CRLF;
    end;
   end
   else
@@ -510,7 +510,7 @@ begin
    if (alen > C_MAXDATAWIDTH) then
    begin
     alen:=0;
-    Result:=Result+#10;
+    Result:=Result+CRLF;
    end;
   end;
  end;
@@ -532,7 +532,7 @@ begin
    if (alen >C_MAXDATAWIDTH) then
    begin
     alen:=0;
-    Result:=Result+#10;
+    Result:=Result+CRLF;
    end;
   end
   else
@@ -543,7 +543,7 @@ begin
    if (alen > C_MAXDATAWIDTH) then
    begin
     alen:=0;
-    Result:=Result+#10;
+    Result:=Result+CRLF;
    end;
   end;
  end;
@@ -635,7 +635,7 @@ procedure WritePropertyI(propname:string;propvalue:integer;stream:TStream);
 var
  astring:string;
 begin
- astring:='<'+propname+' type="Integer">'+IntToStr(propvalue)+'</'+propname+'>'+#10;
+ astring:='<'+propname+' type="Integer">'+IntToStr(propvalue)+'</'+propname+'>'+CRLF;
  WriteStringToStream(astring,stream);
 end;
 
@@ -680,7 +680,7 @@ procedure WritePropertyD(propname:string;propvalue:double;stream:TStream);
 var
  astring:string;
 begin
- astring:='<'+propname+' type="Double">'+RpDoubleToStr(propvalue)+'</'+propname+'>'+#10;
+ astring:='<'+propname+' type="Double">'+RpDoubleToStr(propvalue)+'</'+propname+'>'+CRLF;
  WriteStringToStream(astring,stream);
 end;
 
@@ -706,7 +706,7 @@ procedure WritePropertyBool(propname:string;propvalue:Boolean;stream:TStream);
 var
  astring:string;
 begin
- astring:='<'+propname+' type="Boolean">'+RpBoolToStr(propvalue)+'</'+propname+'>'+#10;
+ astring:='<'+propname+' type="Boolean">'+RpBoolToStr(propvalue)+'</'+propname+'>'+CRLF;
  WriteStringToStream(astring,stream);
 end;
 
@@ -714,7 +714,7 @@ procedure WritePropertyS(propname:string;propvalue:String;stream:TStream);
 var
  astring:string;
 begin
- astring:='<'+propname+' type="String">'+StringToRpString(propvalue)+'</'+propname+'>'+#10;
+ astring:='<'+propname+' type="String">'+StringToRpString(propvalue)+'</'+propname+'>'+CRLF;
  WriteStringToStream(astring,stream);
 end;
 
@@ -722,7 +722,7 @@ procedure WritePropertyW(propname:string;propvalue:WideString;stream:TStream);
 var
  astring:string;
 begin
- astring:='<'+propname+' type="WideString">'+WStringToRpString(propvalue)+'</'+propname+'>'+#10;
+ astring:='<'+propname+' type="WideString">'+WStringToRpString(propvalue)+'</'+propname+'>'+CRLF;
  WriteStringToStream(astring,stream);
 end;
 
@@ -752,7 +752,7 @@ begin
   inc(alen);
   if (alen mod C_MAXDATAWIDTH)=0 then
   begin
-   Result:=Result+#10;
+   Result:=Result+CRLF;
    alen:=0;
   end;
  end;
@@ -785,7 +785,7 @@ procedure WritePropertyB(propname:string;propvalue:TStream;stream:TStream);
 var
  astring:string;
 begin
- astring:='<'+propname+' type="Binary" size="'+IntTostr(propvalue.size)+'">'+StringToRpString(StreamToBin(propvalue))+'</'+propname+'>'+#10;
+ astring:='<'+propname+' type="Binary" size="'+IntTostr(propvalue.size)+'">'+StringToRpString(StreamToBin(propvalue))+'</'+propname+'>'+CRLF;
  WriteStringToStream(astring,stream);
 end;
 
@@ -799,47 +799,47 @@ var
 begin
  report:=TRpReport(areport);
  // Write header
- astring:='<?xml version="1.0" standalone="no"?>'+#10;
+ astring:='<?xml version="1.0" standalone="no"?>'+CRLF;
  WriteStringToStream(astring,stream);
- astring:='<!DOCTYPE REPORT_MANAGER_2>'+#10;
+ astring:='<!DOCTYPE REPORT_MANAGER_2>'+CRLF;
  WriteStringToStream(astring,stream);
  // Write XML Report properties
- astring:='<REPORT>'+#10;
+ astring:='<REPORT>'+CRLF;
  WriteStringToStream(astring,stream);
  WriteReportPropsXML(report,Stream);
 
  // Write database info list
  for i:=0 to report.databaseinfo.count-1 do
  begin
-  astring:='<DATABASEINFO>'+#10;
+  astring:='<DATABASEINFO>'+CRLF;
   WriteStringToStream(astring,stream);
   WriteDatabaseInfoXML(report.databaseinfo.Items[i],Stream);
-  astring:='</DATABASEINFO>'+#10;
+  astring:='</DATABASEINFO>'+CRLF;
   WriteStringToStream(astring,stream);
  end;
  // Write data info list
  for i:=0 to report.datainfo.count-1 do
  begin
-  astring:='<DATAINFO>'+#10;
+  astring:='<DATAINFO>'+CRLF;
   WriteStringToStream(astring,stream);
   WriteDataInfoXML(report.datainfo.Items[i],Stream);
-  astring:='</DATAINFO>'+#10;
+  astring:='</DATAINFO>'+CRLF;
   WriteStringToStream(astring,stream);
  end;
  // Write parameter list
  for i:=0 to report.Params.count-1 do
  begin
-  astring:='<PARAMETER>'+#10;
+  astring:='<PARAMETER>'+CRLF;
   WriteStringToStream(astring,stream);
   WriteParamXML(report.params.Items[i],Stream);
-  astring:='</PARAMETER>'+#10;
+  astring:='</PARAMETER>'+CRLF;
   WriteStringToStream(astring,stream);
  end;
  // Write SubReports
  for i:=0 to report.SubReports.Count-1 do
  begin
   asubrep:=report.SubReports.Items[i].SubReport;
-  astring:='<SUBREPORT>'+#10;
+  astring:='<SUBREPORT>'+CRLF;
   WriteStringToStream(astring,stream);
   WriteSubReportXML(asubrep,Stream);
   for j:=0 to asubrep.Sections.Count-1 do
@@ -847,11 +847,11 @@ begin
    asec:=asubrep.Sections.Items[j].Section;
    WriteSectionXML(asec,Stream);
   end;
-  astring:='</SUBREPORT>'+#10;
+  astring:='</SUBREPORT>'+CRLF;
   WriteStringToStream(astring,stream);
  end;
 
- astring:='</REPORT>'+#10;
+ astring:='</REPORT>'+CRLF;
  WriteStringToStream(astring,stream);
 end;
 
@@ -1901,6 +1901,7 @@ begin
 
        compitem:=sec.Components.Add;
        compitem.Component:=comp;
+       comp.Name:=compname;
        while propname<>'/COMPONENT' do
        begin
         // Read component props

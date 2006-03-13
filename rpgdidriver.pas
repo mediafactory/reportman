@@ -531,14 +531,10 @@ begin
  end;
  if ToPrinter then
  begin
-  printer.Title:=SRpUntitled;
   SetOrientation(report.Orientation);
   // Gets pagesize
   asize:=GetPageSize(qtsize);
   pagemargins:=GetPageMarginsTWIPS;
-  if Length(printer.Title)<1 then
-   printer.Title:='Untitled';
-
   SetPrinterCopies(hardwarecopies);
   SetPrinterCollation(hardwarecollate);
 
@@ -565,6 +561,15 @@ begin
    On E:Exception do
    begin
     rpgraphutilsvcl.RpMessageBox(E.Message);
+   end;
+  end;
+  printer.Title:=report.Title;
+  if Length(printer.Title)<1 then
+  begin
+   printer.Title:=SRpUntitled;
+   if Length(printer.Title)<1 then
+   begin
+    printer.Title:='Untitled';
    end;
   end;
   printer.BeginDoc;
@@ -1304,7 +1309,6 @@ begin
   pagemargins:=GetPageMarginsTWIPS;
   // Get the time
   mmfirst:=TimeGetTime;
-  printer.Title:=tittle;
   // Sets page size and orientation
   if metafile.Orientation<>rpOrientationDefault then
   begin
@@ -1392,7 +1396,10 @@ begin
   if metafile.OpenDrawerBefore then
     SendControlCodeToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer));
   if not nobegindoc then
+  begin
+   printer.Title:=Tittle;
    printer.Begindoc;
+  end;
   try
    dpix:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX);
    dpiy:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY);
@@ -2098,6 +2105,7 @@ var
  drivername:String;
  S:String;
 begin
+ report.metafile.Title:=Caption;
  drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
  istextonly:=Length(drivername)>0;
  if report.PrinterFonts=rppfontsalways then

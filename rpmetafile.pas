@@ -380,6 +380,7 @@ type
    OnWorkProgress:TMetaFileWorkProgress;
    OnStopWork:TStopWork;
    OnRequestData:TOnRequestData;
+   Title:string;
    critsec:TCriticalSection;
    procedure Clear;
    procedure LoadFromStream(Stream:TStream;clearfirst:boolean=true);

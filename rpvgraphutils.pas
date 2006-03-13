@@ -1930,7 +1930,14 @@ begin
  finally
   GlobalUnLock(Integer(DeviceMode));
  end;
- Printer.SetPrinter(Device, Driver, Port, DeviceMode);
+ if not printer.Printing then
+  Printer.SetPrinter(Device, Driver, Port, DeviceMode)
+ else
+ begin
+  DocumentProperties(0,Printer.Handle,Device, PDevMode^,
+        PDevMode^, DM_MODIFY);
+  ResetDC(Printer.Handle,PDevMode^);
+ end;
 end;
 
 
@@ -2124,55 +2131,94 @@ begin
  Result:=maxcopies>copies;
 end;
 
+
+procedure SetPrinterCollation(collation:boolean);
+var
+ FPrinterHandle:THandle;
+ ADevice, ADriver, APort: array[0..1023] of char;
+ pdevmode:^DEVMODE;
+ adevmode:DEVMODE;
+ asize:Integer;
+ aresult:THandle;
+ amode:THandle;
+
+begin
+ Printer.GetPrinter(ADevice,ADriver,APort,amode);
+ pdevmode:=@adevmode;
+ if not OpenPrinter(ADevice,fprinterhandle,nil) then
+  RaiseLastOsError;
+ try
+  asize:=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,0);
+  if asize<0 then
+   RaiseLastOsError;
+  if asize>0 then
+  begin
+   aresult:=GlobalAlloc(GHND,asize);
+   try
+    pdevmode:=GlobalLock(aresult);
+    try
+     if IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
+     begin
+      pdevmode^.dmFields:=pdevmode^.dmFields or DM_COLLATE;
+      if collation then
+       PDevMode^.dmCollate:=DMCOLLATE_TRUE
+      else
+       PDevMode^.dmCollate:=DMCOLLATE_FALSE;
+     end;
+    finally
+     GlobalUnlock(aresult);
+    end;
+   finally
+    GlobalFree(aresult);
+   end;
+  end;
+ finally
+  ClosePrinter(fprinterhandle);
+ end;
+end;
+
+
+
 procedure SetPrinterCopies(copies:integer);
 var
-{$IFDEF DOTNETD}
-  DeviceMode: IntPtr;
-  PDevMode :  TDeviceMode;
-  Device, Driver, Port: String;
-{$ENDIF}
-{$IFNDEF DOTNETD}
-  DeviceMode: THandle;
-  PDevMode :  ^TDeviceMode;
-  Device, Driver, Port: array[0..1023] of char;
-{$ENDIF}
-  printererror:boolean;
+ FPrinterHandle:THandle;
+ ADevice, ADriver, APort: array[0..1023] of char;
+ pdevmode:^DEVMODE;
+ adevmode:DEVMODE;
+ asize:Integer;
+ aresult:THandle;
+ amode:THandle;
+
 begin
- if printer.Printers.count<1 then
-  exit;
- // Printer selected not valid error
- printererror:=false;
+ Printer.GetPrinter(ADevice,ADriver,APort,amode);
+ pdevmode:=@adevmode;
+ if not OpenPrinter(ADevice,fprinterhandle,nil) then
+  RaiseLastOsError;
  try
-  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
- except
-  printererror:=true;
- end;
-{$IFNDEF DOTNETD}
- if DeviceMode=0 then
-{$ENDIF}
-{$IFDEF DOTNETD}
- if Not Assigned(DeviceMode) then
-{$ENDIF}
-  printererror:=true;
- if printererror then
-  exit;
-{$IFDEF DOTNETD}
- PDevMode := TDeviceMode(Marshal.PtrToStructure(GlobalLock(Integer(DeviceMode)),TypeOf(TDeviceMode)));
-{$ENDIF}
-{$IFNDEF DOTNETD}
- PDevMode := GlobalLock(DeviceMode);
-{$ENDIF}
- try
-  PDevMode.dmCopies:=copies;
+  asize:=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,0);
+  if asize<0 then
+   RaiseLastOsError;
+  if asize>0 then
+  begin
+   aresult:=GlobalAlloc(GHND,asize);
+   try
+    pdevmode:=GlobalLock(aresult);
+    try
+     if IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
+     begin
+      pdevmode^.dmFields:=pdevmode^.dmFields or DM_COPIES;
+      pdevmode^.dmCopies:=copies;
+     end;
+    finally
+     GlobalUnlock(aresult);
+    end;
+   finally
+    GlobalFree(aresult);
+   end;
+  end;
  finally
-{$IFNDEF DOTNETD}
-  GlobalUnLock(DeviceMode);
-{$ENDIF}
-{$IFDEF DOTNETD}
-  GlobalUnLock(Integer(DeviceMode));
-{$ENDIF}
+  ClosePrinter(fprinterhandle);
  end;
- Printer.SetPrinter(Device, Driver, Port, DeviceMode);
 end;
 
 function GetPrinterCopies:Integer;
@@ -2224,62 +2270,8 @@ begin
   GlobalUnLock(Integer(DeviceMode));
 {$ENDIF}
  end;
- Printer.SetPrinter(Device, Driver, Port, DeviceMode);
 end;
 
-procedure SetPrinterCollation(collation:boolean);
-var
-{$IFDEF DOTNETD}
-  Device, Driver, Port: String;
-  DeviceMode: IntPtr;
-  PDevmode:TDevicemode;
-{$ENDIF}
-{$IFNDEF DOTNETD}
-  Device, Driver, Port: array[0..1023] of char;
-  DeviceMode: THandle;
-  PDevmode:^TDevicemode;
-{$ENDIF}
-  printererror:boolean;
-begin
- if printer.Printers.count<1 then
-  exit;
- // Printer selected not valid error
- printererror:=false;
- try
-  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
- except
-  printererror:=true;
- end;
-{$IFNDEF DOTNETD}
- if DeviceMode=0 then
-{$ENDIF}
-{$IFDEF DOTNETD}
- if Not Assigned(DeviceMode) then
-{$ENDIF}
-  printererror:=true;
- if printererror then
-  exit;
-{$IFDEF DOTNETD}
- PDevMode := TDeviceMode(Marshal.PtrToStructure(GlobalLock(Integer(DeviceMode)),TypeOf(TDeviceMode)));
-{$ENDIF}
-{$IFNDEF DOTNETD}
- PDevMode := GlobalLock(DeviceMode);
-{$ENDIF}
- try
-  if collation then
-   PDevMode.dmCollate:=DMCOLLATE_TRUE
-  else
-   PDevMode.dmCollate:=DMCOLLATE_FALSE;
- finally
-{$IFNDEF DOTNETD}
-  GlobalUnLock(DeviceMode);
-{$ENDIF}
-{$IFDEF DOTNETD}
-  GlobalUnLock(Integer(DeviceMode));
-{$ENDIF}
- end;
- Printer.SetPrinter(Device, Driver, Port, DeviceMode);
-end;
 
 function GetPrinterCollation:Boolean;
 var
@@ -2330,7 +2322,6 @@ begin
   GlobalUnLock(Integer(DeviceMode));
 {$ENDIF}
  end;
- Printer.SetPrinter(Device, Driver, Port, DeviceMode);
 end;
 
 

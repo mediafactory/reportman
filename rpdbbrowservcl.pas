@@ -29,8 +29,7 @@ uses
   rphashtable,
   rpstringhash,
 {$ENDIF}
-  Dialogs, ComCtrls, ImgList, Menus, QMenus, QTypes, QImgList, QControls,
-  QComCtrls;
+  Dialogs, ComCtrls, ImgList, Menus;
 
 type
   TFRpBrowserVCL = class(TFrame)
