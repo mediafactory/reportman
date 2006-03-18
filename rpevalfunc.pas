@@ -2329,7 +2329,7 @@ function TIdenFieldExists.GetRpValue: TRpValue;
  var iden:TRpIdentifier;
 begin
   // check if the parameter is a string
-  if (Not VarIsStr( Params[0])) then
+  if (Not VarIsString( Params[0])) then
    Raise TRpNamedException.Create(SRpEvalType,IdenName);
   // search for the identifier
   iden:=(evaluator As TRpEvaluator).Searchidentifier(String(Params[0]));

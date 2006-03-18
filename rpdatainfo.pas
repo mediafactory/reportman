@@ -3890,6 +3890,7 @@ begin
  alist.Add('Oracle');
  alist.Add('Ibm Db2');
  alist.Add('Sybase');
+ alist.Add('SQL Server CE');
 end;
 
 

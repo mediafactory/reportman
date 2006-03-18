@@ -3,8 +3,8 @@ object FRpSysInfo: TFRpSysInfo
   Top = 221
   BorderStyle = bsDialog
   Caption = 'System information'
-  ClientHeight = 420
-  ClientWidth = 552
+  ClientHeight = 449
+  ClientWidth = 556
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -14,8 +14,8 @@ object FRpSysInfo: TFRpSysInfo
   PixelsPerInch = 96
   TextHeight = 13
   object BOK: TButton
-    Left = 243
-    Top = 392
+    Left = 239
+    Top = 416
     Width = 75
     Height = 25
     Caption = 'OK'
@@ -345,7 +345,7 @@ object FRpSysInfo: TFRpSysInfo
     Left = 8
     Top = 288
     Width = 541
-    Height = 101
+    Height = 125
     Caption = 'System information'
     TabOrder = 2
     object Label10: TLabel
@@ -417,6 +417,23 @@ object FRpSysInfo: TFRpSysInfo
       Width = 329
       Height = 17
       AutoSize = False
+    end
+    object Label21: TLabel
+      Left = 12
+      Top = 98
+      Width = 51
+      Height = 13
+      Caption = 'Separators'
+    end
+    object ComboSeparators: TComboBox
+      Left = 108
+      Top = 96
+      Width = 153
+      Height = 21
+      Style = csDropDownList
+      Color = clInfoBk
+      ItemHeight = 13
+      TabOrder = 0
     end
   end
 end

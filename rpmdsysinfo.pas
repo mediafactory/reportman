@@ -80,6 +80,8 @@ type
     LOrientationL: TLabel;
     LPaperSources: TLabel;
     ComboSource: TComboBox;
+    Label21: TLabel;
+    ComboSeparators: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
@@ -196,6 +198,12 @@ var
  pagesize:TPoint;
  laste:integer;
 begin
+ ComboSeparators.Items.Clear;
+ ComboSeparators.Items.Add(SRpDate+' '+DateSeparator);
+ ComboSeparators.Items.Add(SRpTime+' '+TimeSeparator);
+ ComboSeparators.Items.Add('Decimal'+' '+DecimalSeparator);
+ ComboSeparators.Items.Add('Thousand'+' '+ThousandSeparator);
+ ComboSeparators.ItemIndex:=0;
  ComboSource.Items.Clear;
  ComboSource.Items.Add(SRpUnknown);
  ComboSource.ItemIndex:=0;

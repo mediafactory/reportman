@@ -165,6 +165,7 @@ begin
  inherited Create(AOwner);
 
  Report:=TRpReport.Create(Self);
+ report.CreateNew;
  Report.InitEvaluator;
  BParams.Caption:=TranslateStr(152,BParams.Caption);
  LConnection.Caption:=TranslateStr(154,LConnection.Caption);
