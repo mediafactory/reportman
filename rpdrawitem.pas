@@ -73,11 +73,13 @@ type
  TRpImage=class(TRpCommonPosComponent)
   private
    FExpression:WideString;
-   FStream,FDecompStream:TMemoryStream;
+   FStream,FDecompStream,FOldStream:TMemoryStream;
    FDrawStyle:TRpImageDrawStyle;
    Fdpires:integer;
    FCopyMode:integer;
    FRotation:SmallInt;
+   FCachedImage:Boolean;
+   cachedpos:int64;
    procedure ReadStream(AStream:TStream);
    procedure WriteStream(AStream:TStream);
    function GetStream:TMemoryStream;
@@ -88,6 +90,7 @@ type
    procedure SetStream(Value:TMemoryStream);
    destructor Destroy;override;
   protected
+   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    procedure DefineProperties(Filer: TFiler);override;
    procedure DoPrint(adriver:IRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
@@ -96,6 +99,7 @@ type
    function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
    property Stream:TMemoryStream read FStream write SetStream;
    property Expression:WideString read FExpression write FExpression;
+   property CachedImage:Boolean read FCachedImage write FCachedImage default false;
   published
    // Rotating bitmaps still not implemented
    property Rotation:smallint read FRotation write FRotation default 0;
@@ -153,6 +157,7 @@ begin
  Height:=DEF_DRAWWIDTH;
  FStream:=TMemoryStream.Create;
  FDecompStream:=TMemoryStream.Create;
+ FOldStream:=TMemoryStream.Create;
  FCopyMode:=DEF_COPYMODE;
  Fdpires:=DEFAULT_DPI;
 end;
@@ -162,6 +167,7 @@ destructor TRpImage.Destroy;
 begin
  FStream.free;
  FDecompStream.free;
+ FOldStream.free;
 
  inherited Destroy;
 end;
@@ -259,6 +265,21 @@ begin
     Exit;
    evaluator:=TRpBaseReport(GetReport).evaluator;
    Result:=evaluator.GetStreamFromExpression(Expression);
+   if CachedImage then
+   begin
+    if Assigned(Result) then
+    begin
+     if Result.Size>0 then
+     begin
+      Result.Seek(0,soFromBeginning);
+      FOldStream.Seek(0,soFromBeginning);
+      if not StreamCompare(FOldStream,Result) then
+      begin
+       cachedpos:=-1;
+      end;
+     end;
+    end;
+   end;
   end
   else
   begin
@@ -266,7 +287,10 @@ begin
     exit;
    if IsCompressed(FStream) then
    begin
-    DecompressStream(FStream,FDecompStream);
+    if FDecompStream.Size>0 then
+    begin
+     DecompressStream(FStream,FDecompStream);
+    end;
     Result:=FDecompStream;
    end
    else
@@ -299,11 +323,31 @@ begin
  if Not Assigned(FMStream) then
   exit;
  try
-  metafile.Pages[metafile.CurrentPage].NewImageObject(aposy,aposx,
-   PrintWidth,PrintHeight,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),FMStream,false);
+  if CachedImage then
+  begin
+   metafile.Pages[metafile.CurrentPage].NewImageObjectShared(aposy,aposx,
+    PrintWidth,PrintHeight,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),cachedpos,FMStream,false);
+  end
+  else
+  begin
+   metafile.Pages[metafile.CurrentPage].NewImageObject(aposy,aposx,
+    PrintWidth,PrintHeight,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),FMStream,false);
+  end;
  finally
   if ((FMStream<>FStream) AND (FMStream<>FDeCompStream)) then
    FMStream.free;
+ end;
+end;
+
+
+procedure TRpImage.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
+begin
+ inherited SubReportChanged(newstate,newgroup);
+ if newstate=rpReportStart then
+ begin
+  cachedpos:=-1;
+  FDecompStream.SetSize(0);
+  FOldStream.SetSize(0);
  end;
 end;
 

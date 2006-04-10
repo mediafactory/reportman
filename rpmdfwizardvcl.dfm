@@ -6,11 +6,11 @@ object FRpWizardVCL: TFRpWizardVCL
   ClientHeight = 495
   ClientWidth = 612
   Color = clBtnFace
+  ParentFont = True
   OldCreateOrder = False
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  ParentFont = True
   object PControl: TPageControl
     Left = 0
     Top = 0
@@ -20,6 +20,7 @@ object FRpWizardVCL: TFRpWizardVCL
     Align = alClient
     TabOrder = 0
     OnChange = PControlChange
+    OnChanging = PControlChanging
     object TabInstructions: TTabSheet
       Caption = 'Instructions'
       object LDesign: TLabel
@@ -54,13 +55,6 @@ object FRpWizardVCL: TFRpWizardVCL
           '3. Select dataset fields to print, follow instructions at select' +
           ' fields page'
       end
-      object LPass4: TLabel
-        Left = 4
-        Top = 96
-        Width = 153
-        Height = 13
-        Caption = '4. Select report type and options'
-      end
       object LBegin: TLabel
         Left = 4
         Top = 120
@@ -80,10 +74,6 @@ object FRpWizardVCL: TFRpWizardVCL
     object TabFields: TTabSheet
       Caption = 'Fields'
       ImageIndex = 3
-    end
-    object TabReportType: TTabSheet
-      Caption = 'Report type'
-      ImageIndex = 4
     end
   end
   object PBottom3: TPanel

@@ -44,6 +44,8 @@ type
    Underline:boolean;
    Bold:boolean;
    StrikeOut:boolean;
+   Transparent:boolean;
+   BackColor:Integer;
    constructor Create;
   end;
 

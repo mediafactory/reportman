@@ -89,6 +89,8 @@ type
    FPosY:TRpTwips;
    FPosX:TRpTwips;
    FAlign:TRpPosAlign;
+  public
+   function GetParent:TRpCommonComponent;
   published
    property PosX:TRpTwips read FPosX write FPosX;
    property PosY:TRpTwips read FPosY write FPosY;
@@ -185,11 +187,13 @@ type
 
 implementation
 
-uses rpbasereport,rpsection;
+uses rpbasereport,rpsection,rpsubreport;
 
 const
  AlignmentFlags_AlignLeft = 1 { $1 };
  AlignmentFlags_AlignRight = 2 { $2 };
+
+
 
 constructor TRpCommonComponent.Create(AOwner:TComponent);
 begin
@@ -311,6 +315,37 @@ begin
  PartialPrint:=False;
 end;
 
+
+function TRpCommonPosComponent.GetParent:TRpCommonComponent;
+var
+ areport:TRpBaseReport;
+ sec:TRpSection;
+ subrep:TRpSubReport;
+ i,j,k:integer;
+begin
+ Result:=nil;
+ areport:=TRpBaseReport(GetReport);
+ for i:=0 to areport.Subreports.Count-1 do
+ begin
+  subrep:=areport.Subreports.items[i].Subreport;
+  for j:=0 to subrep.Sections.Count-1 do
+  begin
+   sec:=subrep.Sections.Items[j].Section;
+   for k:=0 to sec.Components.Count-1 do
+   begin
+    if sec.Components.Items[k].Component=self then
+    begin
+     Result:=sec;
+     break;
+    end;
+   end;
+   if Assigned(Result) then
+    break;
+  end;
+  if Assigned(Result) then
+   break;
+ end;
+end;
 
 procedure TRpCommonComponent.Print(adriver:IRpPrintDriver;
  aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;

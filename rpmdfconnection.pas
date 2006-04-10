@@ -435,6 +435,7 @@ begin
  LDotNetDriver.Visible:=False;
  ComboNetDriver.Visible:=False;
  BBuild.Visible:=false;
+ BTest.Visible:=true;
  // Loads the alias config
  case TrpDbDriver(ComboDriver.ItemIndex) of
   // DBExpress

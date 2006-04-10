@@ -249,6 +249,7 @@ var
  aalign:integer;
  stream:TStream;
  astring:WideString;
+ intimageindex:integer;
 // bitmap:TBitmap;
 begin
  posx:=obj.Left;
@@ -273,6 +274,8 @@ begin
     FPDFFile.Canvas.Font.Italic:=(obj.Fontstyle and (1 shl 1))>0;
     FPDFFile.Canvas.Font.UnderLine:=(obj.Fontstyle  and (1 shl 2))>0;
     FPDFFile.Canvas.Font.StrikeOut:=(obj.Fontstyle and (1 shl 3))>0;
+    FPDFFile.Canvas.Font.BackColor:=obj.BackColor;
+    FPDFFile.Canvas.Font.Transparent:=obj.Transparent;
     FPDFFile.Canvas.UpdateFonts;
     aalign:=obj.Alignment;
     rec.Left:=posx;
@@ -360,23 +363,27 @@ begin
      rec.Left:=PosX;
      rec.Bottom:=rec.Top+Height-1;
      rec.Right:=rec.Left+Width-1;
+     if obj.SharedImage then
+      intimageindex:=obj.StreamPos
+     else
+      intimageindex:=-1;
      stream:=page.GetStream(obj);
      case TRpImageDrawStyle(obj.DrawImageStyle) of
       rpDrawFull:
        begin
-        FPDFFile.Canvas.DrawImage(rec,stream,obj.dpires,false,false);
+        FPDFFile.Canvas.DrawImage(rec,stream,obj.dpires,false,false,intimageindex);
        end;
       rpDrawStretch:
        begin
-        FPDFFile.Canvas.DrawImage(rec,stream,0,false,false);
+        FPDFFile.Canvas.DrawImage(rec,stream,0,false,false,intimageindex);
        end;
       rpDrawCrop:
         begin
-         FPDFFile.Canvas.DrawImage(rec,stream,CONS_PDFRES,false,true);
+         FPDFFile.Canvas.DrawImage(rec,stream,CONS_PDFRES,false,true,intimageindex);
         end;
       rpDrawTile,rpDrawTiledpi:
        begin
-        FPDFFile.Canvas.DrawImage(rec,stream,CONS_PDFRES,true,true);
+        FPDFFile.Canvas.DrawImage(rec,stream,CONS_PDFRES,true,true,intimageindex);
        end;
      end;
     end;

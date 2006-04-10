@@ -41,7 +41,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.5e';
+ RM_VERSION='2.5g';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
  MAX_PAGECOUNT=999999;
 type
@@ -1312,6 +1312,8 @@ var
   SRpPChsToCht:WideString='Convert simplified to traditional Chinese';
   SRpChtToChs:WideString='Convert traditional to simplified Chinese';
   SRpPChtToChs:WideString='Convert traditional to simplified Chinese';
+  SRpParameterExists:WideString='Parameter already exists';
+  SRpCached:WideString='Shared Image';
 
 implementation
 

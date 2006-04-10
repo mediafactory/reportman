@@ -438,6 +438,13 @@ begin
  lcat.Add(SRpSection);
  if Assigned(lvalues) then
   lvalues.Add(RpDrawStyleToString(TRpSection(printitem).DrawStyle));
+ // Cached
+ lnames.Add(SRpCached);
+ ltypes.Add(SRpSBool);
+ lhints.Add('refsection.html');
+ lcat.Add(SRpSection);
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpImage(printitem).CachedImage,true));
 
 end;
 
@@ -599,6 +606,12 @@ begin
   UpdateBack;
   exit;
  end;
+ if pname=SRpCached then
+ begin
+  TRpSection(fprintitem).CachedImage:=StrToBool(Value);
+  invalidate;
+  exit;
+ end;
 
 
  inherited SetProperty(pname,value);
@@ -754,6 +767,11 @@ begin
  if pname=SrpDrawStyle then
  begin
   Result:=RpDrawStyleToString(TRpSection(printitem).DrawStyle);
+  exit;
+ end;
+ if pname=SRpCached then
+ begin
+  Result:=BoolToStr(TRpSection(fprintitem).CachedImage,true);
   exit;
  end;
 

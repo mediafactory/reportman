@@ -100,6 +100,18 @@ procedure SetRecordSet(const datasetname: String,recordset: OleVariant);
   PreviewControl1.EntirePageCount = 2<br>
   PreviewControl1.SetReport ReportManX1.Report<br>
 </p>
+<p><b>Since version 2.5f</b></p>
+<p>The Report object inside the activeX controls have a new property</p>
+<p>property AutoResizeColumns:Boolean</p>
+<p>This property will force the resize of all added columns to fit inside the 
+  parent section.<br>
+</p>
+<p>To add columns to a report you can call the AddColum method</p>
+<p>procedure AddColumn(width:integer;expression,expformat,caption,captionformat,summaryexp,summaryformat:widestring);</p>
+<p>The expformat must be a report elementent inside the template, for example 
+  'TRpExpression2'.</p>
+<p>Inside params, exists a new function, FindParam that returns true if the parameter 
+  exists. </p>
 <h3>Using the control with VB like languages</h3>
 <p>The ActiveX control may be used directly in VB, VBScript, ASP and WSH. In the 
   VB environment you are generally recommended to &quot;Reference&quot; the control 

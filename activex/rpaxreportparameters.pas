@@ -12,6 +12,7 @@ type
   protected
     function Get_Count: Integer; safecall;
     function Get_Items(Index: Integer): ReportParam; safecall;
+    function ParamExists(const paramname: WideString): WordBool; safecall;
     { Protected declarations }
   public
    FReport:TRpReport;
@@ -35,6 +36,12 @@ begin
  FReportParam.FParam:=FReport.Params.Items[index];
  Result:=FReportParam;
  Result._AddRef;
+end;
+
+function TReportParameters.ParamExists(
+  const paramname: WideString): WordBool;
+begin
+ Result:=FReport.Params.FindParam(paramname)<>nil;
 end;
 
 initialization

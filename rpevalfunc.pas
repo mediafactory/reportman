@@ -1563,13 +1563,13 @@ begin
 end;
 
 function TIdenEvalText.GeTRpValue:TRpValue;
-var avaluador:TRpEvaluator;
+var avaluador:TRpCustomEvaluator;
 begin
  if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
  // Evalue
- avaluador:=(evaluator As TRpEvaluator);
+ avaluador:=(evaluator As TRpCustomEvaluator);
  result:=avaluador.Evaluatetext(Params[0]);
 end;
 

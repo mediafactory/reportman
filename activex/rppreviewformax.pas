@@ -57,7 +57,7 @@ type
     procedure Set_DoubleBuffered(Value: WordBool); safecall;
     procedure Set_DropTarget(Value: WordBool); safecall;
     procedure Set_Enabled(Value: WordBool); safecall;
-    procedure Set_Font(const Value: IFontDisp); safecall;
+    procedure Set_Font(var Value: IFontDisp); safecall;
     procedure Set_HelpFile(const Value: WideString); safecall;
     procedure Set_KeyPreview(Value: WordBool); safecall;
     procedure Set_PixelsPerInch(Value: Integer); safecall;
@@ -86,7 +86,7 @@ type
     procedure SaveToFile(const filename: WideString; format: Integer;
       const textdriver: WideString; horzres, vertres: Integer;
       mono: WordBool); safecall;
-    procedure _Set_Font(var Value: IFontDisp); safecall;
+    procedure _Set_Font(const Value: IFontDisp); safecall;
   public
     { Public declarations }
     procedure Initialize; override;
@@ -316,7 +316,7 @@ begin
   Enabled := Value;
 end;
 
-procedure TPreviewControl.Set_Font(const Value: IFontDisp);
+procedure TPreviewControl.Set_Font(var Value: IFontDisp);
 begin
   SetOleFont(Font, Value);
 end;
@@ -549,7 +549,7 @@ begin
     end;
 end;
 
-procedure TPreviewControl._Set_Font(var Value: IFontDisp);
+procedure TPreviewControl._Set_Font(const Value: IFontDisp);
 begin
   SetOleFont(Font, Value);
 end;

@@ -151,6 +151,7 @@ begin
  lcat.Add(SRpShape);
  if Assigned(lvalues) then
   lvalues.Add(IntToStr(TRpShape(printitem).BrushColor));
+
 end;
 
 function StringPenStyleToInt(Value:wideString):integer;
@@ -471,6 +472,13 @@ begin
 // ltypes.Add(SRpSList);
 // if Assigned(lvalues) then
 // lvalues.Add(StringCopyModes[TCopyMode(TRpImage(printitem).CopyMode)]);
+ lnames.Add(SRpCached);
+ ltypes.Add(SRpSBool);
+ lhints.Add('refimage.html');
+ lcat.Add(SRpImage);
+ if Assigned(lvalues) then
+  lvalues.Add(BoolToStr(TRpImage(printitem).CachedImage,true));
+
 end;
 
 
@@ -507,6 +515,12 @@ begin
   invalidate;
   exit;
  end;
+ if pname=SRpCached then
+ begin
+  TRpImage(fprintitem).CachedImage:=StrToBool(Value);
+  invalidate;
+  exit;
+ end;
  inherited SetProperty(pname,value);
 end;
 
@@ -537,6 +551,11 @@ begin
  begin
   Result:='['+FormatFloat('###,###0.00',TRpImage(printitem).Stream.Size/1024)+
   SRpKbytes+']';
+  exit;
+ end;
+ if pname=SRpCached then
+ begin
+  Result:=BoolToStr(TRpImage(fprintitem).CachedImage,true);
   exit;
  end;
  Result:=inherited GetProperty(pname);

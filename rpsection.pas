@@ -51,7 +51,7 @@ type
 
  TRpSection=class(TRpCommonComponent)
   private
-   FStream,FDecompStream:TMemoryStream;
+   FStream,FDecompStream,FOldStream:TMemoryStream;
    FBackExpression:WideString;
    Fdpires:integer;
    FBackStyle:TrpBackStyle;
@@ -92,6 +92,8 @@ type
    // Global headers
    FGlobal:Boolean;
    FPageGroupCountList:TList;
+   cachedpos:Int64;
+   FCachedImage:Boolean;
    procedure SetReportComponents(Value:TRpCommonList);
    procedure SetGroupName(Value:string);
    procedure SetChangeExpression(Value:widestring);
@@ -127,6 +129,7 @@ type
    function GetOwnedComponent(index:Integer):TComponent;
    procedure SetPageRepeat(Value:Boolean);
    procedure Loaded;override;
+   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
   public
    GroupValue:Variant;
    FirstPage:Integer;
@@ -166,6 +169,7 @@ type
    property IsExternal:Boolean read GetIsExternal;
    property BackExpression:WideString read FBackExpression write FBackExpression;
    property Stream:TMemoryStream read FStream write SetStream;
+   property CachedImage:Boolean read FCachedImage write FCachedImage default false;
   published
    property SubReport:TComponent read FSubReport write FSubReport;
    property GroupName:String read FGroupName write SetGroupName;
@@ -246,6 +250,7 @@ begin
  FFooterAtReportEnd:=true;
  FStream:=TMemoryStream.Create;
  FDecompStream:=TMemoryStream.Create;
+ FOldStream:=TMemoryStream.Create;
  Fdpires:=DEFAULT_DPI_BACK;
  FDrawStyle:=rpDrawFull;
  FStreamFormat:=rpStreamtext;
@@ -265,6 +270,8 @@ begin
  FReportComponents.Free;
  FStream.free;
  FDecompStream.free;
+ FOldStream.free;
+
  inherited destroy;
 end;
 
@@ -482,8 +489,14 @@ begin
   astream:=GetStream;
   if astream.Size>0 then
   begin
-   metafile.Pages[metafile.CurrentPage].NewImageObject(aposy,aposx,
-    PrintWidth,PrintHeight,10,Integer(FDrawStyle),Integer(dpires),aStream,BackStyle=baPreview);
+   if CachedImage then
+   begin
+    metafile.Pages[metafile.CurrentPage].NewImageObjectShared(aposy,aposx,
+     PrintWidth,PrintHeight,10,Integer(FDrawStyle),Integer(dpires),cachedpos,aStream,BackStyle=baPreview);
+   end
+   else
+    metafile.Pages[metafile.CurrentPage].NewImageObject(aposy,aposx,
+     PrintWidth,PrintHeight,10,Integer(FDrawStyle),Integer(dpires),aStream,BackStyle=baPreview);
   end;
  end;
  DoPartialPrint:=False;
@@ -1507,114 +1520,20 @@ begin
    if Not Assigned(TRpBaseReport(GetReport).Evaluator) then
     Exit;
    evaluator:=TRpBaseReport(GetReport).evaluator;
-   iden:=evaluator.SearchIdentifier(BackExpression);
-   if Assigned(iden) then
-    if (Not (iden is TIdenField)) then
-     iden:=nil;
-   if Not Assigned(iden) then
+   Result:=evaluator.GetStreamFromExpression(BackExpression);
+   if CachedImage then
    begin
-    // Looks for a string (path to file)
-    aValue:=evaluator.EvaluateText(BackExpression);
-    if (not ((VarType(aValue)=varString) or (VarType(aValue)=varOleStr))) then
-     Raise Exception.Create(SRpFieldNotFound+FBackExpression);
-    afilename:=aValue;
-    FMStream:=TMemoryStream.Create;
-    try
-     AStream:=TFileStream.Create(afilename,fmOpenread or fmShareDenyWrite);
-     try
-      Size := AStream.Size;
-      FMStream.SetSize(Size);
-      if Size >= SizeOf(TGraphicHeader) then
+    if Assigned(Result) then
+    begin
+     if Result.Size>0 then
+     begin
+      Result.Seek(0,soFromBeginning);
+      FOldStream.Seek(0,soFromBeginning);
+      if not StreamCompare(FOldStream,Result) then
       begin
-{$IFDEF DOTNETD}
-      SetLength(Temp,SizeOf(Header));
-      AStream.Read(Temp, SizeOf(Header));
-      Header := BytesToGraphicHeader(Temp);
-      if (Header.Count <> 1) or (Header.HType <> $0100) or
-        (Header.Size <> Size - SizeOf(Header)) then
-        AStream.Position := 0
-      else
-        FMStream.SetSize(AStream.Size-SizeOf(Header));
-{$ENDIF}
-{$IFNDEF DOTNETD}
-        AStream.Read(Header, SizeOf(Header));
-        if (Header.Count <> 1) or (Header.HType <> $0100) or
-          (Header.Size <> Size - SizeOf(Header)) then
-          AStream.Position := 0
-        else
-         FMStream.SetSize(AStream.Size-SizeOf(Header));
-{$ENDIF}
+       cachedpos:=-1;
       end;
-      FMStream.Seek(0,soFromBeginning);
-{$IFNDEF DOTNETD}
-      readed:=AStream.Read(FMStream.Memory^,FMStream.Size);
-{$ENDIF}
-{$IFDEF DOTNETD}
-      readed:=FMStream.CopyFrom(AStream,FMStream.Size);
-{$ENDIF}
-      if readed<>FMStream.Size then
-       Raise Exception.Create(SRpErrorReadingFromFieldStream);
-      FMStream.Seek(0,soFromBeginning);
-     finally
-      AStream.free;
      end;
-     Result:=FMStream;
-    except
-     FMStream.free;
-     Raise;
-    end;
-   end
-   else
-   begin
-    AField:=(iden As TIdenField).Field;
-    if (Not (AField is TBlobField)) then
-     Raise Exception.Create(SRpNotBinary+FBackExpression);
-    if AField.isnull then
-     exit;
-    FMStream:=TMemoryStream.Create;
-    try
-     AStream:=AField.DataSet.CreateBlobStream(AField,bmRead);
-     try
-      Size := AStream.Size;
-      FMStream.SetSize(Size);
-      if Size >= SizeOf(TGraphicHeader) then
-      begin
-{$IFDEF DOTNETD}
-       SetLength(Temp,SizeOf(Header));
-       AStream.Read(Temp, SizeOf(Header));
-       Header := BytesToGraphicHeader(Temp);
-       if (Header.Count <> 1) or (Header.HType <> $0100) or
-         (Header.Size <> Size - SizeOf(Header)) then
-         AStream.Position := 0
-       else
-        FMStream.SetSize(AStream.Size-SizeOf(Header));
-{$ENDIF}
-{$IFNDEF DOTNETD}
-        AStream.Read(Header, SizeOf(Header));
-        if (Header.Count <> 1) or (Header.HType <> $0100) or
-          (Header.Size <> Size - SizeOf(Header)) then
-          AStream.Position := 0
-        else
-         FMStream.SetSize(AStream.Size-SizeOf(Header));
-{$ENDIF}
-      end;
-      FMStream.Seek(0,soFromBeginning);
-{$IFNDEF DOTNETD}
-      readed:=AStream.Read(FMStream.Memory^,FMStream.Size);
-{$ENDIF}
-{$IFDEF DOTNETD}
-      readed:=FMStream.CopyFrom(AStream,FMStream.Size);
-{$ENDIF}
-      if readed<>FMStream.Size then
-       Raise Exception.Create(SRpErrorReadingFromFieldStream);
-      FMStream.Seek(0,soFromBeginning);
-     finally
-      AStream.free;
-     end;
-     Result:=FMStream;
-    except
-     FMStream.free;
-     Raise;
     end;
    end;
   end
@@ -1624,7 +1543,8 @@ begin
     exit;
    if IsCompressed(FStream) then
    begin
-    DecompressStream(FStream,FDecompStream);
+    if FDecompStream.Size=0 then
+     DecompressStream(FStream,FDecompStream);
     Result:=FDecompStream;
    end
    else
@@ -1656,6 +1576,18 @@ begin
   aobject.DisplayFormat:=adisplayformat;
  end;
 end;
+
+procedure TRpSection.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
+begin
+ inherited SubReportChanged(newstate,newgroup);
+ if newstate=rpReportStart then
+ begin
+  cachedpos:=-1;
+  FDecompStream.SetSize(0);
+  FOldStream.SetSize(0);
+ end;
+end;
+
 
 procedure TRpSection.ClearPageCountList;
 var

@@ -750,6 +750,7 @@ begin
  for i:=0 to Sections.Count-1 do
  begin
   sec:=Sections.Items[i].Section;
+  sec.SubReportChanged(newstate,newgroup);
   for j:=0 to sec.ReportComponents.Count-1 do
   begin
    compo:=sec.ReportComponents.Items[j].Component;

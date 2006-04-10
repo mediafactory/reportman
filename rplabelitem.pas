@@ -459,7 +459,12 @@ begin
    end;
   end;
   if FIsPartial then
+  begin
+   // Skip one space if necessary
+   if Result[FPartialPos]=Widechar(' ') then
+    FPartialPos:=FPartialPos+1;
    Result:=Copy(Result,FPartialPos,Length(Result));
+  end;
  end;
 end;
 

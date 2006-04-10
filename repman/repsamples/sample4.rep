@@ -2,7 +2,6 @@ object TRpReport
   PageHeight = 8120
   PageWidth = 5742
   PageBackColor = 2147483647
-  PrinterSelect = pRpCharacterprinter
   SubReports = <
     item
       SubReport = TRpSubReport0
@@ -79,7 +78,7 @@ object TRpReport
   end
   object TRpSection0: TRpSection
     Width = 10205
-    Height = 1701
+    Height = 1365
     SubReport = TRpSubReport0
     ChangeBool = False
     PageRepeat = False
@@ -92,6 +91,9 @@ object TRpReport
       end
       item
         Component = TRpImage0
+      end
+      item
+        Component = TRpShape2
       end>
     AutoExpand = True
     AutoContract = True
@@ -183,7 +185,7 @@ object TRpReport
   end
   object TRpSection3: TRpSection
     Width = 10900
-    Height = 850
+    Height = 1215
     SubReport = TRpSubReport0
     GroupName = 'F'
     ChangeBool = False
@@ -290,9 +292,9 @@ object TRpReport
     ExportExpression = ''
   end
   object TRpExpression4: TRpExpression
-    Width = 4950
+    Width = 7245
     Height = 690
-    PosX = 0
+    PosX = 120
     PosY = 0
     Type1Font = poHelvetica
     FontSize = 13
@@ -495,7 +497,7 @@ object TRpReport
   end
   object TRpSection7: TRpSection
     Width = 10772
-    Height = 450
+    Height = 150
     SubReport = TRpSubReport0
     ChangeBool = False
     PageRepeat = False
@@ -514,7 +516,12 @@ object TRpReport
       end
       item
         Component = TRpExpression1
+      end
+      item
+        Component = TRpShape3
       end>
+    AutoExpand = True
+    AutoContract = True
     ExternalTable = 'REPMAN_REPORTS'
     ExternalField = 'REPORT'
     ExternalSearchField = 'REPORT_NAME'
@@ -534,7 +541,7 @@ object TRpReport
   object TRpExpression0: TRpExpression
     Width = 3915
     Height = 345
-    PosX = 1605
+    PosX = 1725
     PosY = 0
     Type1Font = poHelvetica
     FontStyle = 1
@@ -557,7 +564,7 @@ object TRpReport
   object TRpLabel1: TRpLabel
     Width = 1500
     Height = 345
-    PosX = 0
+    PosX = 120
     PosY = 0
     Type1Font = poHelvetica
     FontStyle = 4
@@ -623,7 +630,7 @@ object TRpReport
   object TRpImage0: TRpImage
     Width = 2070
     Height = 690
-    PosX = 5400
+    PosX = 8055
     PosY = 0
     DrawStyle = rpDrawFull
     PrintCondition = ''
@@ -687,5 +694,29 @@ object TRpReport
     ExportDisplayFormat = ''
     AgIniValue = '0'
     ExportExpression = ''
+  end
+  object TRpShape2: TRpShape
+    Width = 120
+    Height = 465
+    PosX = 0
+    PosY = 0
+    Align = rpaltopbottom
+    Shape = rpsVertLine
+    PenWidth = 0
+    PrintCondition = ''
+    DoBeforePrint = ''
+    DoAfterPrint = ''
+  end
+  object TRpShape3: TRpShape
+    Width = 120
+    Height = 57
+    PosX = 0
+    PosY = 0
+    Align = rpaltopbottom
+    Shape = rpsVertLine
+    PenWidth = 0
+    PrintCondition = ''
+    DoBeforePrint = ''
+    DoAfterPrint = ''
   end
 end

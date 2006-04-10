@@ -133,7 +133,7 @@ type
 
  TRpMetaObjectType=(rpMetaText,rpMetaDraw,rpMetaImage,rpMetaPolygon,rpMetaExport);
 
- TRpMetaSeparator=(rpFHeader,rpFPage,rpFObject);
+ TRpMetaSeparator=(rpFHeader,rpFPage,rpFObject,rpFStream);
 
  TRpTextObject=record
   Text:WideString;
@@ -187,7 +187,8 @@ type
      DPIres:integer;
      PreviewOnly:boolean;
      StreamPos:int64;
-     StreamSize:int64);
+     StreamSize:int64;
+     SharedImage:boolean);
    rpMetaPolygon:
     (PolyBrushStyle:integer;
      PolyBrushColor:integer;
@@ -300,6 +301,7 @@ type
    FMark:Integer;
    FOrientation:TRpOrientation;
    FPageSizeqt:TPageSizeQt;
+   FMetafile:TRpMetafileReport;
 //   FStringList:TStringList;
    function GetObject(index:integer):TRpMetaObject;
    procedure NewWideString(var position,size:integer;const text:widestring);
@@ -317,8 +319,10 @@ type
    procedure NewDrawObject(Top,Left,Width,Height:integer;
     DrawStyle:integer;BrushStyle:integer;BrushColor:integer;
     PenStyle:integer;PenWidth:integer; PenColor:integer);
-   procedure NewImageObject(Top,Left,Width,Height:integer;
-    CopyMode:integer;DrawImageStyle:integer;DPIres:integer;stream:TStream;PreviewOnly:Boolean);
+   function NewImageObject(Top,Left,Width,Height:integer;
+    CopyMode:integer;DrawImageStyle:integer;DPIres:integer;stream:TStream;PreviewOnly:Boolean):integer;
+   procedure NewImageObjectShared(Top,Left,Width,Height:integer;
+    CopyMode:integer;DrawImageStyle:integer;DPIres:integer;var imagepos:int64;stream:TStream;PreviewOnly:Boolean);
    function GetText(arecord:TRpMetaObject):widestring;
    function GetWFontName(arecord:TRpMetaObject):widestring;
    function GetLFontName(arecord:TRpMetaObject):widestring;
@@ -351,6 +355,7 @@ type
    FlexStream,FlexStream2:TFlexStream;
    AbortingThread:Boolean;
    IntStream:TStream;
+   FMemStream:TMemoryStream;
    procedure SetCurrentPage(index:integer);
    function GetPageCount:integer;
    function GetPage(Index:integer):TRpMetafilePage;
@@ -465,9 +470,8 @@ begin
  inherited Destroy;
 end;
 
-
-procedure TrpMetafilePage.NewImageObject(Top,Left,Width,Height:integer;
- CopyMode:integer; DrawImageStyle:integer;DPIres:integer;stream:TStream;PreviewOnly:boolean);
+procedure TrpMetafilePage.NewImageObjectShared(Top,Left,Width,Height:integer;
+ CopyMode:integer;DrawImageStyle:integer;DPIres:integer;var imagepos:int64;stream:TStream;PreviewOnly:Boolean);
 begin
  if FObjectCount>=High(FObjects)-1 then
  begin
@@ -482,24 +486,55 @@ begin
  FObjects[FObjectCount].DrawImageStyle:=DrawImageStyle;
  FObjects[FObjectCount].DPIres:=DPIres;
  FObjects[FObjectCount].Metatype:=rpMetaImage;
- FObjects[FObjectCount].StreamPos:=FStreamPos;
  FObjects[FObjectCount].StreamSize:=stream.Size;
  FObjects[FObjectCount].PreviewOnly:=PreviewOnly;
+ FObjects[FObjectCount].SharedImage:=true;
+ if (imagepos<0) then
+ begin
+  FObjects[FObjectCount].StreamPos:=FMetafile.FMemStream.Size;
+  imagepos:=FMetafile.FMemStream.Size;
+  Stream.Seek(0,soFromBeginning);
+  FMetafile.FMemStream.Seek(FMetafile.FMemStream.Size,soFromBeginning);
+  if (Stream.size<>Fmetafile.FMemStream.CopyFrom(stream,stream.Size)) then
+   Raise Exception.Create(SRpCopyStreamError);
+ end
+ else
+ begin
+  FObjects[FObjectCount].StreamPos:=imagepos;
+ end;
+ inc(FObjectCount);
+end;
+
+function TrpMetafilePage.NewImageObject(Top,Left,Width,Height:integer;
+ CopyMode:integer; DrawImageStyle:integer;DPIres:integer;stream:TStream;PreviewOnly:Boolean):integer;
+begin
+ if FObjectCount>=High(FObjects)-1 then
+ begin
+  // Duplicates capacity
+  SetLength(FObjects,High(FObjects)*2);
+ end;
+ FObjects[FObjectCount].Left:=Left;
+ FObjects[FObjectCount].Top:=Top;
+ FObjects[FObjectCount].Height:=Height;
+ FObjects[FObjectCount].Width:=Width;
+ FObjects[FObjectCount].CopyMode:=CopyMode;
+ FObjects[FObjectCount].DrawImageStyle:=DrawImageStyle;
+ FObjects[FObjectCount].DPIres:=DPIres;
+ FObjects[FObjectCount].Metatype:=rpMetaImage;
+ FObjects[FObjectCount].StreamSize:=stream.Size;
+ FObjects[FObjectCount].PreviewOnly:=PreviewOnly;
+ FObjects[FObjectCount].SharedImage:=false;
+ FObjects[FObjectCount].StreamPos:=FStreamPos;
  // Set the size of the stream
  if FMemStream.size=0 then
  begin
-  FMemStream.SetSize(stream.size*2);
+  FMemStream.SetSize(stream.size);
  end
  else
  begin
   if FMemStream.Size-FStreamPos-1<stream.size then
   begin
-   if FMemStream.size<stream.size then
-   begin
-    FMemStream.SetSize(stream.size*2);
-   end
-   else
-    FMemStream.SetSize(FMemStream.Size*2);
+   FMemStream.SetSize(FStreamPos+stream.size);
   end;
  end;
  Stream.Seek(0,soFromBeginning);
@@ -507,6 +542,7 @@ begin
  if (Stream.size<>FMemStream.CopyFrom(stream,stream.Size)) then
   Raise Exception.Create(SRpCopyStreamError);
  FStreamPos:=FMemStream.Position;
+ Result:=FObjectCount;
  inc(FObjectCount);
 end;
 
@@ -524,8 +560,16 @@ begin
  begin
   FIntStream:=TMemoryStream.Create;
  end;
- FMemStream.Seek(arecord.StreamPos,soFromBeginning);
- FIntStream.CopyFrom(FMemStream,arecord.StreamSize);
+ if arecord.SharedImage then
+ begin
+  FMetafile.FMemStream.Seek(arecord.StreamPos,soFromBeginning);
+  FIntStream.CopyFrom(FMetafile.FMemStream,arecord.StreamSize);
+ end
+ else
+ begin
+  FMemStream.Seek(arecord.StreamPos,soFromBeginning);
+  FIntStream.CopyFrom(FMemStream,arecord.StreamSize);
+ end;
  FIntStream.Seek(0,soFromBeginning);
  Result:=FIntStream;
 end;
@@ -715,6 +759,7 @@ begin
  if index>FPages.Count then
   Raise Exception.Create(SRpMetaIndexPageOutofBounds);
  FPage:=TRpMetafilePage.Create;
+ FPage.FMetafile:=self;
  if index=FPages.Count then
   FPages.Add(FPage)
  else
@@ -738,6 +783,7 @@ begin
 
  critsec:=TCriticalSection.Create;
  FCurrentPage:=-1;
+ FMemStream:=TMemoryStream.Create;
  // Standard sizes
  CustomX:=12047;
  CustomY:=17039;
@@ -763,6 +809,7 @@ begin
 
 
  FCurrentPage:=-1;
+ FMemStream.SetSize(0);
 end;
 
 destructor TRpMetafileReport.Destroy;
@@ -782,7 +829,7 @@ begin
  Clear;
 
  FPages.free;
-
+ FMemStream.free;
  critsec.free;
  inherited Destroy;
 end;
@@ -819,6 +866,7 @@ var
  acount:integer;
  ainteger:integer;
  docancel:boolean;
+ ssize:Int64;
 begin
  RequestPage(MAX_PAGECOUNT);
  WriteStringToStream(rpSignature,Stream);
@@ -852,12 +900,26 @@ begin
   ainteger:=1;
  Stream.Write(ainteger,sizeof(Integer));
 
+
  // Pages
  // Write pagecount
  acount:=FPages.Count;
  Stream.Write(acount,sizeof(acount));
  for i:=0 to FPages.count-1 do
  begin
+  if i=0 then
+  begin
+   // Main stream
+   if FMemStream.Size>0 then
+   begin
+    separator:=integer(rpFStream);
+    Stream.Write(separator,sizeof(separator));
+    ssize:=FMemStream.Size;
+    Stream.Write(ssize,sizeof(ssize));
+    FMemStream.Seek(0,soFromBeginning);
+    Stream.CopyFrom(FMemStream,ssize);
+   end;
+  end;
   separator:=integer(rpFPage);
   Stream.Write(separator,sizeof(separator));
 
@@ -985,6 +1047,7 @@ var
  separator:integer;
  buf:array of Byte;
  bufstring:String;
+ ssize:Int64;
  bytesread:integer;
  fpage:TRpMetafilePage;
  acount:integer;
@@ -1078,10 +1141,20 @@ begin
  begin
   if bytesread<>sizeof(separator) then
    Raise ERpBadFileFormat.CreatePos(SrpMtPageSeparatorExpected,Stream.Position,0);
+  if (separator=integer(rpFStream)) then
+  begin
+   ssize:=0;
+   bytesread:=Stream.Read(ssize,sizeof(ssize));
+   FMemStream.SetSize(ssize);
+   FMemStream.Seek(0,soFromBeginning);
+   FMemStream.CopyFrom(Stream,ssize);
+   bytesread:=Stream.Read(separator,sizeof(separator));
+  end;
   if (separator<>integer(rpFPage)) then
    Raise ERpBadFileFormat.CreatePos(SrpMtPageSeparatorExpected,Stream.Position,0);
   // New page and load from stream
   fpage:=TRpMetafilePage.Create;
+  FPage.FMetafile:=self;
   FPages.Add(fpage);
   FPage.Fversion2_2:=Fversion2_2;
   FPage.FUpdatedPageSize:=false;
@@ -1893,6 +1966,7 @@ begin
    Raise ERpBadFileFormat.CreatePos(SrpMtPageSeparatorExpected,Stream.Position,0);
   // New page and load from stream
   fpage:=TRpMetafilePage.Create;
+  FPage.FMetafile:=metafile;
   FPage.Fversion2_2:=metafile.Fversion2_2;
   FPage.FUpdatedPageSize:=false;
   FPage.FOrientation:=metafile.Orientation;

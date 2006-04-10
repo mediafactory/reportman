@@ -103,6 +103,7 @@ type
    FLineInfoMaxItems:integer;
    FLineInfoCount:integer;
    FFontTTData:TStringList;
+   FImageIndexes:TStringList;
    procedure NewLineInfo(info:TRpLineInfo);
    procedure SetDash;
    procedure SaveGraph;
@@ -128,7 +129,7 @@ type
                        Wordbreak:boolean;Rotation:integer;RightToLeft:Boolean);
    procedure Rectangle(x1,y1,x2,y2:Integer);
    procedure DrawImage(rec:TRect;abitmap:TStream;dpires:integer;
-    tile:boolean;clip:boolean);
+    tile:boolean;clip:boolean;intimageindex:integer);
    procedure Ellipse(X1, Y1, X2, Y2: Integer);
    constructor Create(AFile:TRpPDFFile);
    destructor Destroy;override;
@@ -408,7 +409,9 @@ constructor TrpPDFCanvas.Create(AFile:TRpPDFFile);
 begin
  inherited Create;
 
-{$IFDEF MSWINDOWS}
+ FImageIndexes:=TStringList.Create;
+ FImageIndexes.Sorted:=true;
+ {$IFDEF MSWINDOWS}
  FInfoProvider:=TRpGDIInfoProvider.Create;
 {$ENDIF}
 {$IFDEF LINUX}
@@ -426,6 +429,7 @@ end;
 
 destructor TrpPDFCanvas.Destroy;
 begin
+ FImageIndexes.free;
  FreeFonts;
  FFont.free;
  FFontTTData.free;
@@ -490,6 +494,7 @@ var
 begin
  FreePageInfos;
 
+ FCanvas.FImageIndexes.Clear;
  aobj:=TRpPageInfo.Create;
  aobj.APageWidth:=FPageWidth;
  aobj.APageHeight:=FPageHeight;
@@ -1180,6 +1185,12 @@ begin
   // Calculates text extent and apply alignment
   recsize:=ARect;
   TextExtent(Text,recsize,wordbreak,singleline);
+  if (not Font.Transparent) then
+  begin
+   BrushColor:=Font.BackColor;
+   BrushStyle:=0;
+   Rectangle(arect.Left, arect.Top, arect.Left+recsize.Right, arect.Top+recsize.Bottom);
+  end;
   // Align bottom or center
   PosY:=ARect.Top;
   if (AlignMent AND AlignmentFlags_AlignBottom)>0 then
@@ -1451,7 +1462,7 @@ begin
 end;
 
 procedure TRpPDFCanvas.DrawImage(rec:TRect;abitmap:TStream;dpires:integer;
- tile:boolean;clip:boolean);
+ tile:boolean;clip:boolean;intimageindex:integer);
 var
  astream:TMemoryStream;
  // imagesize,infosize:DWORD;
@@ -1470,6 +1481,8 @@ var
   indexed:boolean;
   bitsperpixel,numcolors:integer;
   palette:string;
+  imageindex:integer;
+  newstream:boolean;
 begin
  arect:=rec;
  FFile.CheckPrinting;
@@ -1494,7 +1507,27 @@ begin
    rec.Right:=rec.Left+Round(bitmapwidth/dpires*FResolution);
    rec.Bottom:=rec.Top+Round(bitmapheight/dpires*FResolution);
   end;
-  FFile.FImageCount:=FFile.FImageCount+1;
+  newstream:=true;
+  if intimageindex>=0 then
+  begin
+   imageindex:=FImageIndexes.IndexOf(IntToStr(intimageindex));
+   if imageindex>=0 then
+   begin
+    imageindex:=integer(FImageIndexes.Objects[imageindex]);
+    newstream:=false;
+   end
+   else
+   begin
+    FFile.FImageCount:=FFile.FImageCount+1;
+    imageindex:=FFile.FImageCount;
+    FimageIndexes.AddObject(IntToStr(intimageindex),TObject(imageindex));
+   end;
+  end
+  else
+  begin
+   FFile.FImageCount:=FFile.FImageCount+1;
+   imageindex:=FFile.FImageCount;
+  end;
   SWriteLine(FFile.FsTempStream,'q');
   if clip then
   begin
@@ -1541,55 +1574,58 @@ begin
   until false;
   SWriteLine(FFile.FsTempStream,'Q');
   // Saves the bitmap to temp bitmaps
-  astream:=TMemoryStream.Create;
-  FFile.FBitmapStreams.Add(astream);
-  SWriteLine(astream,'<< /Type /XObject');
-  SWriteLine(astream,'/Subtype /Image');
-  SWriteLine(astream,'/Width '+IntToStr(bitmapwidth));
-  SWriteLine(astream,'/Height '+IntToStr(bitmapheight));
-  if indexed then
+  if newstream then
   begin
-   SWriteLine(astream,'/ColorSpace');
-   SWriteLine(astream,'[/Indexed');
-   SWriteLine(astream,'/DeviceRGB '+IntToStr(numcolors));
-   SWriteLine(astream,palette);
-   SWriteLine(astream,']');
-   SWriteLine(astream,'/BitsPerComponent '+IntToStr(bitsperpixel))
-  end
-  else
-  begin
-   SWriteLine(astream,'/ColorSpace /DeviceRGB');
-   SWriteLine(astream,'/BitsPerComponent 8');
-  end;
-  SWriteLine(astream,'/Length '+IntToStr(imagesize));
-  SWriteLine(astream,'/Name /Im'+IntToStr(FFile.FImageCount));
-  if isjpeg then
-  begin
-   SWriteLine(astream,'/Filter [/DCTDecode]');
-  end
-  else
-  begin
-{$IFDEF USEZLIB}
-   if FFile.FCompressed then
-    SWriteLine(astream,'/Filter [/FlateDecode]');
-{$ENDIF}
-  end;
-  SWriteLine(astream,'>>');
-  SWriteLine(astream,'stream');
-  FImageStream.Seek(0,soFrombeginning);
-{$IFDEF USEZLIB}
-  if ((FFile.FCompressed) and (not isjpeg)) then
-  begin
-   FCompressionStream := TCompressionStream.Create(clDefault,astream);
-   try
-    FCompressionStream.CopyFrom(FImageStream, 0);
-   finally
-    FCompressionStream.Free;
+   astream:=TMemoryStream.Create;
+   FFile.FBitmapStreams.Add(astream);
+   SWriteLine(astream,'<< /Type /XObject');
+   SWriteLine(astream,'/Subtype /Image');
+   SWriteLine(astream,'/Width '+IntToStr(bitmapwidth));
+   SWriteLine(astream,'/Height '+IntToStr(bitmapheight));
+   if indexed then
+   begin
+    SWriteLine(astream,'/ColorSpace');
+    SWriteLine(astream,'[/Indexed');
+    SWriteLine(astream,'/DeviceRGB '+IntToStr(numcolors));
+    SWriteLine(astream,palette);
+    SWriteLine(astream,']');
+    SWriteLine(astream,'/BitsPerComponent '+IntToStr(bitsperpixel))
+   end
+   else
+   begin
+    SWriteLine(astream,'/ColorSpace /DeviceRGB');
+    SWriteLine(astream,'/BitsPerComponent 8');
    end;
-  end
-  else
-{$ENDIF}
-   FImageStream.SaveToStream(astream);
+   SWriteLine(astream,'/Length '+IntToStr(imagesize));
+   SWriteLine(astream,'/Name /Im'+IntToStr(imageindex));
+   if isjpeg then
+   begin
+    SWriteLine(astream,'/Filter [/DCTDecode]');
+   end
+   else
+   begin
+ {$IFDEF USEZLIB}
+    if FFile.FCompressed then
+     SWriteLine(astream,'/Filter [/FlateDecode]');
+ {$ENDIF}
+   end;
+   SWriteLine(astream,'>>');
+   SWriteLine(astream,'stream');
+   FImageStream.Seek(0,soFrombeginning);
+ {$IFDEF USEZLIB}
+   if ((FFile.FCompressed) and (not isjpeg)) then
+   begin
+    FCompressionStream := TCompressionStream.Create(clDefault,astream);
+    try
+     FCompressionStream.CopyFrom(FImageStream, 0);
+    finally
+     FCompressionStream.Free;
+    end;
+   end
+   else
+ {$ENDIF}
+    FImageStream.SaveToStream(astream);
+  end;
  finally
   FImageStream.Free;
  end;
@@ -1793,8 +1829,10 @@ begin
  begin
   GetStdLineSpacing(linespacing,leading);
  end;
- leading:=Round((leading/10000)*FResolution);
- linespacing:=Round((linespacing/10000)*FResolution);
+ leading:=Round((leading/100000)*FResolution*FFont.Size*1.25);
+ linespacing:=Round(((linespacing)/100000)*FResolution*FFont.Size*1.25);
+// leading:=Round((leading/10000)*FResolution);
+// linespacing:=Round((linespacing/10000)*FResolution);
 
  createsnewline:=false;
  astring:=Text;
@@ -1907,6 +1945,7 @@ begin
   info.lastline:=true;
   NewLineInfo(info);
  end;
+ arec.Bottom:=arec.Bottom+leading;
  rect:=arec;
 end;
 

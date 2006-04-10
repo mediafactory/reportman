@@ -633,17 +633,35 @@ begin
  try
   case FEditType of
    teinteger:
-    result:=strtoint(text);
+    if Length(Trim(text))=0 then
+     result:=0
+    else
+     result:=strtoint(text);
    tefloat:
-    result:=StrTofloat(Text);
+    if Length(Trim(text))=0 then
+     result:=0.0
+    else
+     result:=StrTofloat(Text);
    tecurrency:
-    result:=StrTocurr(TExt);
+    if Length(Trim(text))=0 then
+     result:=0.0
+    else
+     result:=StrToCurr(Text);
    tedate:
-    result:=StrToDate(TExt);
+    if Length(Trim(text))=0 then
+     result:=Date
+    else
+     result:=StrToDate(TExt);
    tetime:
-    result:=StrToTime(TExt);
+    if Length(Trim(text))=0 then
+     result:=Time
+    else
+     result:=StrToTime(TExt);
    teDatetime:
-    result:=StrToDateTime(TExt)
+    if Length(Trim(text))=0 then
+     result:=Now
+    else
+     result:=StrToDateTime(TExt)
    else
     result:=text;
   end;

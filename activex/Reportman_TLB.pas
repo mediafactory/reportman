@@ -12,7 +12,7 @@ unit Reportman_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 08/02/2006 17:41:53 from Type Library described below.
+// File generated on 29/03/2006 8:35:43 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\reportman.tlb (1)
@@ -354,8 +354,14 @@ type
     ['{2FCB34BE-8DD4-4567-A771-9965C2FD3A04}']
     function Get_Params: ReportParameters; safecall;
     function Get_VCLReport: PChar; safecall;
+    procedure AddColumn(Width: Integer; const Expression: WideString; const ExpFormat: WideString; 
+                        const Caption: WideString; const CaptionFormat: WideString; 
+                        const SumaryExpression: WideString; const SumaryFormat: WideString); safecall;
+    function Get_AutoResizeColumns: WordBool; safecall;
+    procedure Set_AutoResizeColumns(Value: WordBool); safecall;
     property Params: ReportParameters read Get_Params;
     property VCLReport: PChar read Get_VCLReport;
+    property AutoResizeColumns: WordBool read Get_AutoResizeColumns write Set_AutoResizeColumns;
   end;
 
 // *********************************************************************//
@@ -367,6 +373,10 @@ type
     ['{2FCB34BE-8DD4-4567-A771-9965C2FD3A04}']
     property Params: ReportParameters readonly dispid 1;
     property VCLReport: {??PChar}OleVariant readonly dispid 3;
+    procedure AddColumn(Width: Integer; const Expression: WideString; const ExpFormat: WideString; 
+                        const Caption: WideString; const CaptionFormat: WideString; 
+                        const SumaryExpression: WideString; const SumaryFormat: WideString); dispid 2;
+    property AutoResizeColumns: WordBool dispid 4;
   end;
 
 // *********************************************************************//
@@ -378,6 +388,7 @@ type
     ['{A5F6E90E-DFE7-49DA-AA38-C1A41C995B6B}']
     function Get_Count: Integer; safecall;
     function Get_Items(Index: Integer): ReportParam; safecall;
+    function ParamExists(const paramname: WideString): WordBool; safecall;
     property Count: Integer read Get_Count;
     property Items[Index: Integer]: ReportParam read Get_Items;
   end;
@@ -391,6 +402,7 @@ type
     ['{A5F6E90E-DFE7-49DA-AA38-C1A41C995B6B}']
     property Count: Integer readonly dispid 1;
     property Items[Index: Integer]: ReportParam readonly dispid 2;
+    function ParamExists(const paramname: WideString): WordBool; dispid 3;
   end;
 
 // *********************************************************************//

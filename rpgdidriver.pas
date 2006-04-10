@@ -110,6 +110,7 @@ type
     filename:string;
     errorproces:boolean;
     ErrorMessage:String;
+    usepdfdriver:boolean;
     metafile:TRpMetafileReport;
 {$IFNDEF FORWEBAX}
     report:TRpReport;
@@ -196,6 +197,7 @@ function AskBitmapProps(var HorzRes,VertRes:Integer;var Mono:Boolean):Boolean;
 
 {$IFNDEF FORWEBAX}
 function CalcReportWidthProgress (report:TRpReport;noenddoc:boolean=false):boolean;
+function CalcReportWidthProgressPDF(report:TRpReport;noenddoc:boolean=false):boolean;
 function PrintReport (report:TRpReport; Caption:string; progress:boolean;
   allpages:boolean; frompage,topage,copies:integer; collate:boolean):Boolean;
 function ExportReportToPDF (report:TRpReport; Caption:string; progress:boolean;
@@ -1925,23 +1927,37 @@ begin
   end
   else
   begin
-   GDIDriver:=TRpGDIDriver.Create;
-   gdidriver.noenddoc:=noenddoc;
-   if noenddoc then
-    gdidriver.ToPrinter:=true;
-   aGDIDriver:=GDIDriver;
-   if report.PrinterFonts=rppfontsalways then
-    gdidriver.devicefonts:=true
+   if usepdfdriver then
+   begin
+    pdfdriver:=TRpPdfDriver.Create;
+    oldprogres:=report.OnProgress;
+    try
+     report.OnProgress:=RepProgress;
+     report.PrintAll(PDFDriver);
+    finally
+     report.OnProgress:=oldprogres;
+    end;
+   end
    else
-    gdidriver.devicefonts:=false;
-   gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
+   begin
+    GDIDriver:=TRpGDIDriver.Create;
+    gdidriver.noenddoc:=noenddoc;
+    if noenddoc then
+     gdidriver.ToPrinter:=true;
+    aGDIDriver:=GDIDriver;
+    if report.PrinterFonts=rppfontsalways then
+     gdidriver.devicefonts:=true
+    else
+     gdidriver.devicefonts:=false;
+    gdidriver.neverdevicefonts:=report.PrinterFonts=rppfontsnever;
 
-   oldprogres:=report.OnProgress;
-   try
-    report.OnProgress:=RepProgress;
-    report.PrintAll(GDIDriver);
-   finally
-    report.OnProgress:=oldprogres;
+    oldprogres:=report.OnProgress;
+    try
+     report.OnProgress:=RepProgress;
+     report.PrintAll(GDIDriver);
+    finally
+     report.OnProgress:=oldprogres;
+    end;
    end;
   end;
  except
@@ -1965,6 +1981,31 @@ begin
   try
    dia.report:=report;
    Application.OnIdle:=dia.AppIdleReport;
+   dia.noenddoc:=noenddoc;
+   dia.ShowModal;
+   if dia.errorproces then
+    Raise Exception.Create(dia.ErrorMessage);
+   Result:=Not dia.cancelled;
+  finally
+   Application.onidle:=dia.oldonidle;
+  end;
+ finally
+  dia.free;
+ end;
+end;
+
+function CalcReportWidthProgressPDF(report:TRpReport;noenddoc:boolean=false):boolean;
+var
+ dia:TFRpVCLProgress;
+begin
+ Result:=false;
+ dia:=TFRpVCLProgress.Create(Application);
+ try
+  dia.oldonidle:=Application.OnIdle;
+  try
+   dia.report:=report;
+   Application.OnIdle:=dia.AppIdleReport;
+   dia.usepdfdriver:=True;
    dia.noenddoc:=noenddoc;
    dia.ShowModal;
    if dia.errorproces then

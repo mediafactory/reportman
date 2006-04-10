@@ -290,6 +290,7 @@ begin
  WritePropertyBool('ININUMPAGE',section.IniNumPage,Stream);
  WritePropertyBool('GLOBAL',section.Global,Stream);
  WritePropertyI('DPIRES',section.dpires,Stream);
+ WritePropertyBool('CACHEDIMAGE',section.CachedImage,Stream);
  WritePropertyI('BACKSTYLE',Integer(section.BackStyle),Stream);
  WritePropertyI('DRAWSTYLE',Integer(section.DrawStyle),Stream);
  if assigned(section.Stream) then
@@ -420,6 +421,7 @@ begin
   WritePropertyI('DRAWSTYLE',Integer(compi.DrawStyle),Stream);
   WritePropertyI('DPIRES',compi.dpires,Stream);
   WritePropertyI('COPYMODE',compi.CopyMode,Stream);
+  WritePropertyBool('CACHEDIMAGE',compi.CachedImage,Stream);
  end
  else
  // TRpChart
@@ -1009,6 +1011,9 @@ begin
  if propname='DPIRES' then
   sec.DPIRes:=StrToInt(propvalue)
  else
+ if propname='CACHEDIMAGE' then
+  sec.CachedImage:=RpStrToBool(propvalue)
+ else
  if propname='BACKSTYLE' then
   sec.BackStyle:=TRpBackStyle(StrToInt(propvalue))
  else
@@ -1556,6 +1561,9 @@ begin
   else
   if propname='DPIRES' then
    compi.DPIRes:=StrToInt(propvalue)
+  else
+  if propname='CACHEDIMAGE' then
+   compi.CachedImage:=RpStrToBool(propvalue)
   else
   if propname='COPYMODE' then
    compi.CopyMode:=StrToInt(propvalue);
