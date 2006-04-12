@@ -696,25 +696,27 @@ object TRpReport
     ExportExpression = ''
   end
   object TRpShape2: TRpShape
-    Width = 120
+    Width = 28
     Height = 465
     PosX = 0
     PosY = 0
     Align = rpaltopbottom
+    BrushColor = 0
     Shape = rpsVertLine
-    PenWidth = 0
+    PenWidth = 57
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''
   end
   object TRpShape3: TRpShape
-    Width = 120
+    Width = 28
     Height = 57
     PosX = 0
     PosY = 0
     Align = rpaltopbottom
+    BrushColor = 0
     Shape = rpsVertLine
-    PenWidth = 0
+    PenWidth = 57
     PrintCondition = ''
     DoBeforePrint = ''
     DoAfterPrint = ''

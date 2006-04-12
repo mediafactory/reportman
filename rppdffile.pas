@@ -1050,6 +1050,8 @@ begin
  LineWidth:=1;
  If (PenWidth>0) then
   LineWidth:=PenWidth;
+ // Line cap
+ SWriteLine(FFile.FsTempStream,'1 J');
  SWriteLine(FFile.FsTempStream,UnitsToTextX(LineWidth)+' w');
  DoWriteLine;
 end;
