@@ -129,7 +129,6 @@ type
    function GetOwnedComponent(index:Integer):TComponent;
    procedure SetPageRepeat(Value:Boolean);
    procedure Loaded;override;
-   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
   public
    GroupValue:Variant;
    FirstPage:Integer;
@@ -140,6 +139,7 @@ type
    destructor Destroy;override;
    function SectionCaption(addchild:boolean):WideString;
    function GetStream:TMemoryStream;
+   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    procedure FreeComponents;
    procedure DeleteComponent(com:TRpCommonComponent);
    function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;

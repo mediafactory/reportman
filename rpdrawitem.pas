@@ -90,12 +90,12 @@ type
    procedure SetStream(Value:TMemoryStream);
    destructor Destroy;override;
   protected
-   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    procedure DefineProperties(Filer: TFiler);override;
    procedure DoPrint(adriver:IRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
   public
+   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
    property Stream:TMemoryStream read FStream write SetStream;
    property Expression:WideString read FExpression write FExpression;

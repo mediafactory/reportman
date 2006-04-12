@@ -3470,8 +3470,8 @@ var
  adatareports:TDataset;
  adatagroups:TDataset;
  dbinfo:TRpDatabaseInfoItem;
- DReportgroups,DReportgroups2:TMemDataset;
- Dreports:TMemDataset;
+ DReportgroups,DReportgroups2:TClientDataset;
+ Dreports:TClientDataset;
  groupcode:Integer;
  grouppath:string;
  sqltext:string;
