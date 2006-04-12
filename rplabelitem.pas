@@ -526,6 +526,24 @@ begin
  end;
 end;
 
+type
+ TArrayExtended=array of Extended;
+ 
+function ToArrayExtended(avalues:array of double):TArrayExtended;
+var
+ i:integer;
+ c:integer;
+begin
+ c:=0;
+ SetLength(REsult,Length(avalues));
+ for i:=Low(avalues) to High(avalues) do
+ begin
+  Result[c]:=avalues[i];
+  c:=c+1;
+ end;
+ 
+end;
+
 procedure TRpExpression.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
 var
  eval:TRpEvaluator;
@@ -642,7 +660,12 @@ begin
           if High(FValues)=Low(FValues) then
            FValue:=0
           else
+{$IFDEF FPC}
+           FValue:=StdDev(ToArrayExtended(FValues));
+{$ENDIF}
+{$IFNDEF FPC}
            FValue:=StdDev(FValues);
+{$ENDIF}
          end;
         end;
       end;

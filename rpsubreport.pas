@@ -22,6 +22,8 @@ unit rpsubreport;
 
 interface
 
+{$I rpconf.inc}
+
 uses Classes,SysUtils,rpsecutil,rpsection,rptypes,rpmdconsts,
  rplabelitem,rpprintitem,rpeval,rpmdbarcode,rpdatainfo;
 

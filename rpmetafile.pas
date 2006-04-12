@@ -1014,8 +1014,8 @@ begin
 end;
 
 function IsMetafile(memstream:TMemoryStream):boolean;
-var
 {$IFDEF USEZLIB}
+var
  zStream:TDeCompressionStream;
 {$ENDIF}
 begin

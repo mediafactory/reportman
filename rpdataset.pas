@@ -25,7 +25,13 @@ interface
 
 {$I rpconf.inc}
 
-uses Sysutils,Classes,DBClient,
+uses Sysutils,Classes,
+{$IFDEF FPC}
+ memds,
+{$ENDIF}
+{$IFNDEF FPC}
+ DBClient,
+{$ENDIF}
  db;
 
 // A client dataset with two record buffer obtaining records from
@@ -34,10 +40,21 @@ resourcestring
  SRpInvOpRpdata='Invalid operation for TRpDataset';
 
 type
+
+{$IFDEF FPC}
+ TRpDataset=class(TMemDataset)
+{$ENDIF}
+{$IFNDEF FPC}
  TRpDataset=class(TClientDataSet)
+{$ENDIF}
   private
-   FDataset:TDataset;
+{$IFDEF FPC}
+   FCopyDataset:TMemDataset;
+{$ENDIF}
+{$IFNDEF FPC}
    FCopyDataset:TClientDataset;
+{$ENDIF}
+   FDataset:TDataset;
    procedure SetDataset(Value:TDataset);
   protected
    procedure DoAfterOpen;override;
@@ -111,7 +128,12 @@ end;
 constructor TRpDataSet.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
- FCopyDataset:=TCLientDataset.Create(Self);
+{$IFDEF FPC}
+ FCopyDataset:=TMemDataset.Create(Self);
+{$ENDIF}
+{$IFNDEF FPC}
+  FCopyDataset:=TCLientDataset.Create(Self);
+{$ENDIF}
 end;
 
 procedure TRpDataSet.DoOpen;
@@ -186,11 +208,21 @@ begin
        adef.Precision:=TBCDField(FDataset.Fields[i]).Precision;
    {$ENDIF}
      end;
+{$IFDEF FPC}
+     CreateTable;
+{$ENDIF}
+{$IFNDEF FPC}
      CreateDataset;
+{$ENDIF}
      FCopyDataset.Close;
      FCopyDataset.FieldDefs.Assign(FieldDefs);
+{$IFDEF FPC}
+     FCopyDataset.CreateTable;
+{$ENDIF}
+{$IFNDEF FPC}
      FCopyDataset.CreateDataSet;
      FCopyDataset.LogChanges:=false;
+{$ENDIF}
     end
     else
     begin
@@ -325,7 +357,9 @@ end;
 procedure TRpDataSet.DoAfterOpen;
 begin
  inherited DoAfterOpen;
+{$IFNDEF FPC}
  LogChanges:=false;
+{$ENDIF}
 end;
 
 

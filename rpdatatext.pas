@@ -30,7 +30,12 @@ uses
 {$ENDIF}
  DB,
 {$IFDEF USERPDATASET}
+ {$IFNDEF FPC}
  DBClient,
+ {$ENDIF}
+ {$IFDEF FPC}
+ memds,
+ {$ENDIF}
 {$ENDIF}
  rpmdconsts;
 
@@ -59,8 +64,14 @@ type
   end;
 
 {$IFDEF USERPDATASET}
+{$IFDEF FPC}
+procedure FillClientDatasetFromFile(data:TMemDataSet;fieldsfile:String;
+ textfilename:String;IndexFields:String);
+{$ENDIF}
+{$IFNDEF FPC}
 procedure FillClientDatasetFromFile(data:TClientDataSet;fieldsfile:String;
  textfilename:String;IndexFields:String);
+{$ENDIF}
 {$ENDIF}
 procedure FillFieldObjList(fieldsfile:String;
  lfields:TStringList;
@@ -237,7 +248,12 @@ begin
  end;
 end;
 
+{$IFDEF FPC}
+procedure FillDatasetFromSeparated(data:TMemDataset;textfilename:String;indexfields:string);
+{$ENDIF}
+{$IFNDEF FPC}
 procedure FillDatasetFromSeparated(data:TClientDataset;textfilename:String;indexfields:string);
+{$ENDIF}
 var
  memstream:TMemoryStream;
  buf:array of Byte;
@@ -316,6 +332,7 @@ begin
       begin
        data.FieldDefs.Add('FIELD'+IntToStr(i+1),ftString,255,false);
       end;
+{$IFNDEF FPC}
       if Length(Trim(IndexFields))<1 then
       begin
        data.IndexDefs.Clear;
@@ -329,6 +346,10 @@ begin
        data.IndexFieldNames:=IndexFields;
       end;
       data.CreateDataSet;
+{$ENDIF}
+{$IFDEF FPC}
+      data.CreateTable;
+{$ENDIF}
      end;
      data.Append;
      try
@@ -360,7 +381,12 @@ begin
 end;
 
 
+{$IFDEF FPC}
+procedure FillClientDatasetFromFile(data:TMemDataSet;fieldsfile:String;textfilename:String;indexfields:String);
+{$ENDIF}
+{$IFNDEF FPC}
 procedure FillClientDatasetFromFile(data:TClientDataSet;fieldsfile:String;textfilename:String;indexfields:String);
+{$ENDIF}
 var
  recordseparator:char;
  ignoreafterrecordseparator:char;
@@ -402,6 +428,7 @@ begin
      fdef.Size:=fobj.fieldsize;
     fdef.Precision:=fobj.Precision;
    end;
+{$IFNDEF FPC}
    if Length(Trim(IndexFields))<1 then
    begin
     data.IndexDefs.Clear;
@@ -415,6 +442,10 @@ begin
     data.IndexFieldNames:=IndexFields;
    end;
    data.CreateDataSet;
+{$ENDIF}
+{$IFDEF FPC}
+   data.CreateTable;
+{$ENDIF}
    reccount:=0;
    // Load the file inside the dataset
    memstream:=TMemoryStream.Create;
@@ -478,7 +509,7 @@ begin
            else
             fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
            if fobj.fieldtrim then
-            fieldvalue:=Trim(fieldvalue);
+            fieldvalue:=Trim(string(fieldvalue));
            if Length(fieldvalue)<1 then
             fieldvalue:=Null
            else
@@ -491,7 +522,7 @@ begin
            else
             fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
            if fobj.fieldtrim then
-            fieldvalue:=Trim(fieldvalue);
+            fieldvalue:=Trim(string(fieldvalue));
            if Length(fieldvalue)<1 then
              fieldvalue:=Null;
           end;
@@ -502,7 +533,7 @@ begin
            else
             fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
            if fobj.fieldtrim then
-            fieldvalue:=Trim(fieldvalue);
+            fieldvalue:=Trim(string(fieldvalue));
            if Length(fieldvalue)<1 then
              fieldvalue:=Null
            else
@@ -515,7 +546,7 @@ begin
            else
             fieldvalue:=Copy(line,fobj.posbegin,fobj.fieldsize);
            if fobj.fieldtrim then
-            fieldvalue:=Trim(fieldvalue);
+            fieldvalue:=Trim(string(fieldvalue));
            if Length(fieldvalue)<1 then
             fieldvalue:=Null
            else

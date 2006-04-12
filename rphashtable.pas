@@ -17,6 +17,9 @@ unit rphashtable;
 
 
 interface
+
+{$I rpconf.inc}
+
 uses rpcomparable, sysutils;
 
 type

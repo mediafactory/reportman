@@ -60,10 +60,19 @@ uses Classes,SysUtils,
   IB_Components,IBODataset,
 {$ENDIF}
 {$IFDEF USEVARIANTS}
-  Variants,Types,WSDLIntf,
+  Variants,Types,
+{$IFNDEF FPC}
+  WSDLIntf,
+{$ENDIF}
 {$ENDIF}
 {$IFDEF USERPDATASET}
- rpdataset,DBClient,
+ rpdataset,
+ {$IFNDEF FPC}
+  DBClient,
+ {$ENDIF}
+ {$IFDEF FPC}
+  Memds,
+ {$ENDIF}
 {$ENDIF}
  rpdatatext;
 
@@ -362,7 +371,12 @@ type
   end;
 procedure GetRpDatabaseDrivers(alist:TStrings);
 {$IFDEF USERPDATASET}
+{$IFDEF FPC}
+procedure CombineAddDataset(client:TMemDataset;data:TDataset;group:boolean);
+{$ENDIF}
+{$IFNDEF FPC}
 procedure CombineAddDataset(client:TClientDataset;data:TDataset;group:boolean);
+{$ENDIF}
 {$ENDIF}
 procedure FillFieldsInfo(adata:TDataset;fieldnames,fieldtypes,fieldsizes:TStrings);
 function ExtractFieldNameEx(astring:String):string;
@@ -1523,7 +1537,12 @@ begin
      rpdatamybase:
       begin
 {$IFDEF USERPDATASET}
+ {$IFDEF FPC}
+       FSQLInternalQuery:=TMemDataset.Create(nil);
+ {$ENDIF}
+ {$IFNDEF FPC}
        FSQLInternalQuery:=TClientDataset.Create(nil);
+ {$ENDIF}
 {$ENDIF}
 {$IFNDEF USERPDATASET}
        Raise Exception.Create(SRpClientDatasetNotSupported);
@@ -1703,22 +1722,37 @@ begin
 {$ENDIF}
 {$IFDEF USERPDATASET}
       try
+{$IFNDEF FPC}
        TClientDataSet(FSQLInternalQuery).IndexName:='';
        TClientDataSet(FSQLInternalQuery).IndexFieldNames:='';
+{$ENDIF}
        if Length(FMyBaseFileName)>0 then
        begin
         // Adds the path
         afilename:=baseinfo.FMyBasePath+FMyBaseFilename;
         if Length(FMyBaseFields)>0 then
         begin
+{$IFNDEF FPC}
          TClientDataSet(FSQLInternalQuery).IndexDefs.Clear;
          TClientDataSet(FSQLInternalQuery).FieldDefs.Clear;
          FillClientDatasetFromFile(TClientDataSet(FSQLInternalQuery),baseinfo.FMyBasePath+FMyBaseFields,afilename,FMyBaseIndexFields);
+{$ENDIF}
+{$IFDEF FPC}
+         FillClientDatasetFromFile(TMemDataSet(FSQLInternalQuery),baseinfo.FMyBasePath+FMyBaseFields,afilename,FMyBaseIndexFields);
+{$ENDIF}
         end
         else
         begin
+{$IFNDEF FPC}
          TClientDataSet(FSQLInternalQuery).IndexFieldNames:=FMyBaseIndexFields;
          TClientDataSet(FSQLInternalQuery).LoadFromFile(afilename);
+{$ENDIF}
+{$IFDEF FPC}
+         TMemDataSet(FSQLInternalQuery).LoadFromFile(afilename);
+        end;
+       end;
+{$ENDIF}
+{$IFNDEF FPC}
         end;
        end
        else
@@ -1728,13 +1762,19 @@ begin
         TClientDataSet(FSQLInternalQuery).IndexDefs.Add('IPRIM',FMyBaseIndexFields,[]);
         TClientDataSet(FSQLInternalQuery).IndexFieldNames:=FMyBaseIndexFields;
        end;
+{$ENDIF}
        for i:=0 to FDataUnions.Count-1 do
        begin
         index:=TRpDatainfolist(Collection).IndexOf(FDataUnions.Strings[i]);
         if index<0 then
          Raise Exception.Create(SRpDataUnionNotFound+' - '+Alias+' - '+FDataUnions.Strings[i]);
         TRpDatainfolist(Collection).Items[index].Connect(databaseinfo,params);
+{$IFNDEF FPC}
         CombineAddDataset(TClientDataSet(FSQLInternalQuery),TRpDatainfolist(Collection).Items[index].Dataset,FGroupUnion);
+{$ENDIF}
+{$IFDEF FPC}
+        CombineAddDataset(TMemDataSet(FSQLInternalQuery),TRpDatainfolist(Collection).Items[index].Dataset,FGroupUnion);
+{$ENDIF}
        end;
       except
        FDataset:=nil;
@@ -1861,12 +1901,14 @@ begin
       end;
      rpdatamybase:
       begin
+{$IFNDEF FPC}
        TClientDataset(FSQLInternalQuery).MasterFields:=MyBaseMasterFields;
        TClientDataset(FSQLInternalQuery).MasterSource:=FMasterSource;
        if datainfosource.cached then
         FMasterSource.DataSet:=datainfosource.CachedDataset
        else
         FMasterSource.DataSet:=datainfosource.Dataset;
+{$ENDIF}
       end;
      rpdatabde:
       begin
@@ -1926,7 +1968,12 @@ begin
 //      avalue:=param.ListValue
 //    end;
     if ((atype=ftUnknown) or (param.ParamType=rpParamExpreB)) then
+{$IFNDEF FPC}
      atype:=VarTypeToDataType(Vartype(avalue));
+{$ENDIF}
+{$IFDEF FPC}
+     Raise Exception.Create('Freepascal does not implement VarTypeToDataType');
+{$ENDIF}
     if (param.ParamType in [rpParamSubst,rpParamMultiple]) then
      continue;
     index:=param.Datasets.IndexOf(Alias);
@@ -2345,7 +2392,9 @@ begin
  begin
   config:=TMemInifile.Create(configfilename);
 {$IFDEF USEVARIANTS}
-  config.CaseSensitive:=false;
+ {$IFNDEF FPC}
+   config.CaseSensitive:=false;
+ {$ENDIF}
 {$ENDIF}
  end
  else
@@ -2358,7 +2407,9 @@ begin
   if FileExists(DBXCONFIGFILENAME) then
   begin
    config:=TMemInifile.Create(DBXCONFIGFILENAME);
+ {$IFNDEF FPC}
    config.CaseSensitive:=false;
+ {$ENDIF}
    CopyFileTo(DBXCONFIGFILENAME,configfilename);
   end
   else
@@ -2368,7 +2419,9 @@ begin
    begin
     CopyFileTo('/usr/local/etc/'+DBXCONFIGFILENAME+'.conf',configfilename);
     config:=TMemIniFile.Create(configfilename);
+ {$IFNDEF FPC}
     config.CaseSensitive:=false;
+ {$ENDIF}
    end
    else
     Raise Exception.Create(SRpConfigFileNotExists+' - '+DBXCONFIGFILENAME);
@@ -3090,7 +3143,12 @@ begin
 end;
 
 {$IFDEF USERPDATASET}
+{$IFDEF FPC}
+procedure CombineAddDataset(client:TMemDataset;data:TDataset;group:boolean);
+{$ENDIF}
+{$IFNDEF FPC}
 procedure CombineAddDataset(client:TClientDataset;data:TDataset;group:boolean);
+{$ENDIF}
 var
  i,index:integer;
  groupfields:TStringList;
@@ -3105,7 +3163,12 @@ begin
   begin
    client.Close;
    client.FieldDefs.Assign(data.FieldDefs);
+{$IFNDEF FPC}
    client.CreateDataSet;
+{$ENDIF}
+{$IFDEF FPC}
+   client.CreateTable;
+{$ENDIF}
   end;
   if data.fields.Count>client.Fields.Count then
   begin
@@ -3113,17 +3176,26 @@ begin
   end;
   if group then
   begin
+{$IFNDEF FPC}
    ParseFields(client.IndexFieldNames,groupfields);
    for i:=0 to groupfields.count-1 do
    begin
     groupfieldindex.Add(IntToStr(client.FieldByName(groupfields.strings[i]).index));
    end;
+{$ENDIF}
+{$IFDEF FPC}
+   Raise Exception.Create('TMemDataset does not implement indexes');
+{$ENDIF}
   end;
   while not data.eof do
   begin
    grouped:=false;
    if Group then
    begin
+{$IFDEF FPC}
+    Raise Exception.Create('TMemDataset does not implement indexes');
+{$ENDIF}
+{$IFNDEF FPC}
     client.SetKey;
     for i:=0 to groupfieldindex.count-1 do
     begin
@@ -3155,6 +3227,7 @@ begin
       raise;
      end;
     end;
+{$ENDIF}
    end;
    if not grouped then
    begin
@@ -3384,14 +3457,21 @@ begin
  end;
 end;
 
+{$IFDEF FPC}
+procedure TRpDatabaseInfoList.FillTreeDir(ConnectionName:String;alist:TStrings);
+begin
+ Raise Exception.Create('FIllTreeDir Not implemented on Freepascal version');
+end;
+{$ENDIF}
+{$IFNDEF FPC}
 procedure TRpDatabaseInfoList.FillTreeDir(ConnectionName:String;alist:TStrings);
 var
  index:integer;
  adatareports:TDataset;
  adatagroups:TDataset;
  dbinfo:TRpDatabaseInfoItem;
- DReportgroups,DReportgroups2:TClientDataset;
- Dreports:TClientDataset;
+ DReportgroups,DReportgroups2:TMemDataset;
+ Dreports:TMemDataset;
  groupcode:Integer;
  grouppath:string;
  sqltext:string;
@@ -3544,6 +3624,8 @@ begin
   adatareports.free;
  end;
 end;
+{$ENDIF}
+
 
 procedure FieldToDataString(afield:TField;var typestring,sizestring:String);
 begin

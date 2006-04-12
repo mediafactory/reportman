@@ -1,6 +1,9 @@
 unit rpcomparable;
 
+
 interface
+
+{$I rpconf.inc}
 
 uses sysutils;
 
@@ -8,7 +11,7 @@ uses sysutils;
 {$Q-}
 
 type
-ECompareException = class(Exception);
+ ECompareException = class(Exception);
 
 
 

@@ -432,22 +432,9 @@ var
 
 
 procedure RaiseLastOSError;
-{$IFDEF FPC}
-var
- LastError:Integer;
-{$ENDIF}
 begin
 {$IFDEF FPC}
- LastError := GetLastError;
- if LastError <> 0 then
-  Raise Exception.Create('SystemError: '+IntToStr(LastError));
-//  Error := EOSError.CreateResFmt(@SOSError, [LastError,
-//       SysErrorMessage(LastError)])
-//   else
-//     Error := EOSError.CreateRes(@SUnkOSError);
-//   Error.ErrorCode := LastError;
-//   raise Error;
-// end;
+ SysUtils.RaiseLastOSError;
 {$ENDIF}
 {$IFNDEF FPC}
  RaiseLastWin32Error;
@@ -4238,11 +4225,23 @@ end;
 {$IFDEF LINUX}
 procedure SendMail(destination,subject,content,filename,originalfile:String);
 var
- astring:String;
+ aparams:TStringList;
 begin
- astring:='kmail -s "'+subject+'" --body "'+content+
-  '" -c "'+destination+'" --attach "'+filename+'"';
- libc.system(PChar(astring));
+ aparams:=TStringList.Create;
+ try
+  aparams.Add('kmail');
+  aparams.Add('-s');
+  aparams.ADD(subject);
+  aparams.Add('--body');
+  aparams.Add(content);
+  aparams.Add('-c');
+  aparams.Add(destination);
+  aparams.Add('--attatch');
+  aparams.Add(filename);
+  ExecuteSystemApp(aparams,false);
+ finally
+  aparams.free;
+ end;
 end;
 {$ENDIF LINUX}
 

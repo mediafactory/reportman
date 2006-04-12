@@ -27,7 +27,10 @@ uses
   Windows,
 {$ENDIF}
 {$IFDEF USEVARIANTS}
-  Variants,MaskUtils,
+  Variants,
+{$IFNDEF FPC}
+  MaskUtils,
+{$ENDIF}
 {$ENDIF}
 {$IFNDEF USEVARIANTS}
   Mask,
@@ -842,6 +845,24 @@ end;
 
 
 {**************************************************************************}
+{$IFDEF FPC}
+function CompareValue(p1,p2,epsilon:double):integer;
+var
+ dif:double;
+begin
+ dif:=Abs(p1-p2);
+ epsilon:=Abs(epsilon);
+ if dif<epsilon then
+ begin
+  Result:=0;
+  exit;
+ end;
+ if p1<p2 then
+  REsult:=-1
+ else
+  Result:=1;
+end;
+{$ENDIF}
 
 function TIdenCompareValue.GeTRpValue:TRpValue;
 begin
@@ -1872,7 +1893,12 @@ begin
  if Not VarIsString(Params[1]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
+{$IFDEF FPC}
+ Raise Exception.Create('Free pascal library does not support FOrmatMaskText');
+{$ENDIF}
+{$IFNDEF FPC}
  Result:=FormatMaskText(Params[0],Value);
+{$ENDIF}
 end;
 
 

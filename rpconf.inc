@@ -23,6 +23,7 @@
 {$IFDEF FPC}
  {$UNDEF USEZLIB}
  {$DEFINE BOOLFUNC}
+
 {$ENDIF}
 // Kerning support
 {$DEFINE USEKERNING}
@@ -34,6 +35,7 @@
 {$DEFINE USEBDE}
 //{$DEFINE USEZEOS}
 //{$DEFINE USEIBO}
+
 
 
 // Unsupported database drivers in Linux
@@ -193,6 +195,9 @@
  {$MODE DELPHI}
 // {$UNDEF USEVARIANTS}
  {$UNDEF USEBCD}
+ {$UNDEF USESQLEXPRESS}
+ {$UNDEF USEINDY}
+ {$UNDEF USEEVALHASH}
 {$ENDIF}
 
 // Disable databases if webaxcontrol

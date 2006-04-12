@@ -332,12 +332,12 @@ var
  atype1,atype2:TVarType;
 
 begin
- if Value1=NULL then
+ if VarIsNull(Value1) then
  begin
   Result:=Value2;
  end
  else
-  if Value2=NULL then
+  if VarIsNull(Value2) then
   begin
    Result:=Value1;
   end
