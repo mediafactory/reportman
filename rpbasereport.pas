@@ -1861,7 +1861,7 @@ begin
    exit;
   end;
  end;
- if (pageindex<metafile.CurrentPageCount) then
+ if (pageindex<(metafile.CurrentPageCount-1)) then
  begin
   Result:=LastPage;
   exit;

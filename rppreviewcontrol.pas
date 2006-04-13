@@ -62,7 +62,7 @@ begin
  FReport:=Avalue;
  if Assigned(FReport) then
  begin
-  adriver:=prdriver;
+  adriver:=prdriver_internal;
   adriver._AddRef;
   FReport.BeginPrint(adriver);
   Metafile:=FReport.metafile;

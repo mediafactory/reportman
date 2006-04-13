@@ -70,6 +70,7 @@ type
    procedure SetOnWorkProgress(AValue:TMetaFileWorkProgress);
   protected
    prdriver:TRpGDIDriver;
+   prdriver_internal:TRpGDIDriver;
    procedure Notification(AComponent:TComponent;Operation:TOperation);override;
    procedure SetParent(aparent:TWinControl);override;
    procedure ReDrawPage;
@@ -121,6 +122,7 @@ begin
  dpix:=Screen.PixelsPerInch;
  dpiy:=Screen.PixelsPerInch;
  prdriver:=TRpGDiDriver.Create;
+ prdriver_internal:=TRpGDiDriver.Create;
  conteimage:=TPanel.Create(self);
  conteimage.BevelInner:=bvNone;
  conteimage.BevelOuter:=bvNone;
@@ -212,10 +214,15 @@ begin
  if istextonly then
  begin
   prdriver.FontDriver:=TRpTextDriver.Create;
+  prdriver_internal.FontDriver:=TRpTextDriver.Create;
  end
  else
+ begin
   prdriver.FontDriver:=nil;
+  prdriver_internal.FontDriver:=nil;
+ end;
  prdriver.NewDocument(meta,1,false);
+ prdriver_internal.NewDocument(meta,1,false);
  FScaleDrawn:=-1.0;
  FPageDrawn:=-1;
  FOldPage:=-1;

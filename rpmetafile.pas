@@ -302,6 +302,8 @@ type
    FOrientation:TRpOrientation;
    FPageSizeqt:TPageSizeQt;
    FMetafile:TRpMetafileReport;
+   CritEx:TCriticalSection;
+
 //   FStringList:TStringList;
    function GetObject(index:integer):TRpMetaObject;
    procedure NewWideString(var position,size:integer;const text:widestring);
@@ -442,6 +444,7 @@ begin
  FMark:=0;
  FPoolPos:=1;
  FStreamPos:=0;
+ CritEx:=TCriticalSection.Create;
  FMemStream:=TMemoryStream.Create;
 // FStringList:=TStringList.Create;
 // FStringList.Sorted:=true;
@@ -460,7 +463,7 @@ destructor TRpMetafilePage.Destroy;
 begin
  FMemStream.Free;
  FMemStream:=nil;
-
+ CritEx.free;
  if Assigned(FIntStream) then
  begin
   FIntStream.Free;
@@ -491,12 +494,17 @@ begin
  FObjects[FObjectCount].SharedImage:=true;
  if (imagepos<0) then
  begin
-  FObjects[FObjectCount].StreamPos:=FMetafile.FMemStream.Size;
-  imagepos:=FMetafile.FMemStream.Size;
-  Stream.Seek(0,soFromBeginning);
-  FMetafile.FMemStream.Seek(FMetafile.FMemStream.Size,soFromBeginning);
-  if (Stream.size<>Fmetafile.FMemStream.CopyFrom(stream,stream.Size)) then
-   Raise Exception.Create(SRpCopyStreamError);
+  CritEx.Enter;
+  try
+   FObjects[FObjectCount].StreamPos:=FMetafile.FMemStream.Size;
+   imagepos:=FMetafile.FMemStream.Size;
+   Stream.Seek(0,soFromBeginning);
+   FMetafile.FMemStream.Seek(FMetafile.FMemStream.Size,soFromBeginning);
+   if (Stream.size<>Fmetafile.FMemStream.CopyFrom(stream,stream.Size)) then
+    Raise Exception.Create(SRpCopyStreamError);
+  finally
+   CritEx.Leave;
+  end;
  end
  else
  begin
@@ -562,8 +570,13 @@ begin
  end;
  if arecord.SharedImage then
  begin
-  FMetafile.FMemStream.Seek(arecord.StreamPos,soFromBeginning);
-  FIntStream.CopyFrom(FMetafile.FMemStream,arecord.StreamSize);
+  CritEx.Enter;
+  try
+   FMetafile.FMemStream.Seek(arecord.StreamPos,soFromBeginning);
+   FIntStream.CopyFrom(FMetafile.FMemStream,arecord.StreamSize);
+  finally
+   CritEx.Leave;
+  end;
  end
  else
  begin
