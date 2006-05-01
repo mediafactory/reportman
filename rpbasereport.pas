@@ -1868,7 +1868,7 @@ begin
  end;
  if (FExecuting) then
  begin
-   while ((FExecuting) AND  (metafile.CurrentPageCount<=pageindex+1)) do
+   while ((FExecuting) AND  (metafile.CurrentPageCount<=pageindex)) do
    begin
 {$IFDEF MSWINDOWS}
    WaitForSingleObject(FThreadExec.Handle,100);
@@ -1900,6 +1900,15 @@ begin
     FThreadExec.free;
     FThreadExec:=nil;
     raise;
+   end;
+   while ((FExecuting) AND  (metafile.CurrentPageCount<=pageindex)) do
+   begin
+{$IFDEF MSWINDOWS}
+   WaitForSingleObject(FThreadExec.Handle,100);
+{$ENDIF}
+{$IFDEF LINUX}
+   sleep(100);
+{$ENDIF}
    end;
   end;
  end

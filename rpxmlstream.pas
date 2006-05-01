@@ -264,6 +264,11 @@ begin
  end;
  WritePropertyS('GROUPNAME',section.GroupName,Stream);
  WritePropertyW('CHANGEEXPRESSION',section.ChangeExpression,Stream);
+ WritePropertyW('BEGINPAGEEXPRESSION',section.BeginPageExpression,Stream);
+ WritePropertyW('SKIPEXPREV',section.SkipExpreV,Stream);
+ WritePropertyW('SKIPEXPREH',section.SkipExpreH,Stream);
+ WritePropertyW('SKIPTOPAGEEXPRE',section.SkipToPageExpre,Stream);
+ WritePropertyW('BACKEXPRESSION',section.BackExpression,Stream);
  WritePropertyBool('CHANGEBOOL',section.ChangeBool,Stream);
  WritePropertyBool('PAGEREPEAT',section.PageRepeat,Stream);
  WritePropertyBool('SKIPPAGE',section.SkipPage,Stream);
@@ -920,6 +925,21 @@ var
 begin
  if propname='CHANGEEXPRESSION' then
   sec.ChangeExpression:=RpStringToWString(propvalue)
+ else
+ if propname='BEGINPAGEEXPRESSION' then
+  sec.BeginPageExpression:=RpStringToWString(propvalue)
+ else
+ if propname='SKIPEXPREV' then
+  sec.SkipExpreV:=RpStringToWString(propvalue)
+ else
+ if propname='SKIPEXPREH' then
+  sec.SkipExpreH:=RpStringToWString(propvalue)
+ else
+ if propname='SKIPTOPAGEEXPRE' then
+  sec.SkipToPageExpre:=RpStringToWString(propvalue)
+ else
+ if propname='BACKEXPRESSION' then
+  sec.BackExpression:=RpStringToWString(propvalue)
  else
  if propname='PRINTCONDITION' then
   sec.PrintCondition:=RpStringToWString(propvalue)
