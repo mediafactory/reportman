@@ -1,7 +1,7 @@
 kylix_bin=/opt/kylix3/bin
 #kylix_bin=/home/toni/kylix3/bin
 drivers_path=../../drivers/linux
-rpversion=2_5g
+rpversion=2_5i
 
 install:
 	make clean
@@ -30,7 +30,9 @@ install:
 	cp ../../repman/utils/printrep/printrep .
 	cp ../../repman/utils/reptotxt/reptotxt .
 	cp ../../repman/utils/txttorep/txttorep .
+#	Patchelf for execshield execution
 	cp ../../repman/utils/startup/startup.bin repmand.bin
+	./patchelf repmand.bin
 	cp repmand.bin metaview.bin
 	cp repmand.bin printrep.bin
 	cp printrep.bin printreptopdf.bin
@@ -71,7 +73,32 @@ install:
 	cp ../../../net/reportman/printreport/printreport.exe .
 	cp ../../../net/reportman/reportmanlib/reportmanlib.dll .
 #	include repmand.es when linux translation done
-	tar c LICENSE.TXT sample4.rep biolife.cds reportmanres.pt reportmanres.it reportmanres.de reportmanres.ca reportmanres.en reportmanres.es reportmanres.fr repmand dbxdrivers dbxconnections repmand repmand.sh repmand.bin README *.so *.so.1 qt_* dbxres.en.1 libborunwind.so.6.0 printreport.exe reportmanlib.dll > rpdesigner-$(rpversion).i386.tar
+#	Patching for execution on execshield
+	./patchelf repmand
+	./patchelf printreptopdf
+	./patchelf reportservercon
+	./patchelf reportserverapp
+	./patchelf repserverconfig
+	./patchelf repwebexe
+	./patchelf repwebexex
+	./patchelf reptotxt
+	./patchelf txttorep
+	./patchelf printrep
+	./patchelf metaview
+	./patchelf metaprint
+	./patchelf apilib/libreportmanapiqt.so
+	./patchelf apilib/libreportmanapi.so
+	./patchelf libborqt-6.9-qt2.3.so
+	./patchelf libdbxoodbc.so
+	./patchelf libqtintf-6.9-qt2.3.so
+	./patchelf libsqldb2.so
+	./patchelf libsqlib.so
+	./patchelf libsqlinf.so
+	./patchelf libsqlmy23.so
+	./patchelf libsqlora.so
+	./patchelf libsqlpg.so
+	./patchelf libborunwind.so.6.0
+	tar c libdbxoodbc.txt LICENSE.TXT sample4.rep biolife.cds reportmanres.pt reportmanres.it reportmanres.de reportmanres.ca reportmanres.en reportmanres.es reportmanres.fr repmand dbxdrivers dbxconnections repmand repmand.sh repmand.bin README *.so *.so.1 qt_* dbxres.en.1 libborunwind.so.6.0 printreport.exe reportmanlib.dll > rpdesigner-$(rpversion).i386.tar
 	gzip rpdesigner-$(rpversion).i386.tar
 	tar c LICENSE.TXT reportserverapp reportserverapp.sh reportserverapp.bin reportservercon reportservercon.sh reportservercon.bin repserverconfig repserverconfig.sh repserverconfig.bin metaprint metaprint.sh metaprint.bin metaview metaview.sh metaview.bin printrep printrep.sh printrep.bin printreptopdf printreptopdf.sh printreptopdf.bin reptotxt txttorep repwebexe repwebexe.bin repwebexex repwebexex.bin .htaccess > rpservercline-$(rpversion).i386.tar
 	gzip rpservercline-$(rpversion).i386.tar
