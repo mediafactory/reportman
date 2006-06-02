@@ -473,11 +473,11 @@ begin
 // if Assigned(lvalues) then
 // lvalues.Add(StringCopyModes[TCopyMode(TRpImage(printitem).CopyMode)]);
  lnames.Add(SRpCached);
- ltypes.Add(SRpSBool);
+ ltypes.Add(SRpSList);
  lhints.Add('refimage.html');
  lcat.Add(SRpImage);
  if Assigned(lvalues) then
-  lvalues.Add(BoolToStr(TRpImage(printitem).CachedImage,true));
+  lvalues.Add(RpCachedImageToString(TRpImage(printitem).CachedImage));
 
 end;
 
@@ -517,7 +517,7 @@ begin
  end;
  if pname=SRpCached then
  begin
-  TRpImage(fprintitem).CachedImage:=StrToBool(Value);
+  TRpImage(fprintitem).CachedImage:=StringCachedImageToCachedImage(value);
   invalidate;
   exit;
  end;
@@ -555,7 +555,7 @@ begin
  end;
  if pname=SRpCached then
  begin
-  Result:=BoolToStr(TRpImage(fprintitem).CachedImage,true);
+  Result:=RpCachedImageToString(TRpImage(fprintitem).CachedImage);
   exit;
  end;
  Result:=inherited GetProperty(pname);
@@ -683,6 +683,11 @@ begin
  if pname=SrpDrawStyle then
  begin
   GetDrawStyleDescriptions(lpossiblevalues);
+  exit;
+ end;
+ if pname=SRpCached then
+ begin
+  GetCachedImageDescriptions(lpossiblevalues);
   exit;
  end;
 { if pname=SrpCopyMode then

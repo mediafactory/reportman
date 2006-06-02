@@ -1,11 +1,11 @@
 object FRpParams: TFRpParams
-  Left = 151
-  Top = 169
+  Left = 227
+  Top = 39
   ActiveControl = LParams
   AutoScroll = False
   Caption = 'Parameter definition'
-  ClientHeight = 471
-  ClientWidth = 449
+  ClientHeight = 550
+  ClientWidth = 444
   Color = clButton
   Position = poScreenCenter
   ShowHint = True
@@ -16,33 +16,33 @@ object FRpParams: TFRpParams
   TextWidth = 6
   object Panel1: TPanel
     Left = 0
-    Top = 128
-    Width = 449
-    Height = 343
+    Top = 132
+    Width = 444
+    Height = 418
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
     object GProperties: TGroupBox
       Left = 2
-      Top = 5
-      Width = 439
-      Height = 332
+      Top = 20
+      Width = 434
+      Height = 393
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       Visible = False
       object GValues: TGroupBox
         Left = 6
-        Top = 164
-        Width = 421
+        Top = 216
+        Width = 416
         Height = 105
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Strings to show (left) and strings to assign (right) '
-        TabOrder = 13
+        TabOrder = 11
         Visible = False
         object Panel4: TPanel
           Left = 2
           Top = 13
-          Width = 417
+          Width = 412
           Height = 60
           Align = alTop
           BevelOuter = bvNone
@@ -60,7 +60,7 @@ object FRpParams: TFRpParams
           object MValues: TMemo
             Left = 195
             Top = 0
-            Width = 222
+            Width = 217
             Height = 60
             Align = alClient
             TabOrder = 1
@@ -78,7 +78,7 @@ object FRpParams: TFRpParams
         object ComboLookup: TComboBox
           Left = 124
           Top = 81
-          Width = 161
+          Width = 156
           Height = 21
           Hint = 'The parameters will be assigned not the selected datasets'
           Style = csDropDownList
@@ -90,8 +90,8 @@ object FRpParams: TFRpParams
       end
       object GSearch: TGroupBox
         Left = 4
-        Top = 164
-        Width = 425
+        Top = 216
+        Width = 420
         Height = 73
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Search value'
@@ -114,7 +114,7 @@ object FRpParams: TFRpParams
         object ComboSearchDataset: TComboBox
           Left = 132
           Top = 20
-          Width = 165
+          Width = 160
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
@@ -125,7 +125,7 @@ object FRpParams: TFRpParams
         object ComboSearchParam: TComboBox
           Left = 132
           Top = 44
-          Width = 165
+          Width = 160
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
@@ -137,10 +137,10 @@ object FRpParams: TFRpParams
       object ECheckList: TCheckListBox
         Left = 280
         Top = 4
-        Width = 145
+        Width = 140
         Height = 73
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 21
+        TabOrder = 20
         Visible = False
         OnClickCheck = EDescriptionChange
       end
@@ -154,7 +154,7 @@ object FRpParams: TFRpParams
       object EDescription: TEdit
         Left = 116
         Top = 80
-        Width = 309
+        Width = 304
         Height = 21
         Hint = 'Description to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
@@ -201,7 +201,7 @@ object FRpParams: TFRpParams
       object EValue: TRpCLXMaskEdit
         Left = 284
         Top = 8
-        Width = 141
+        Width = 136
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 1
@@ -229,54 +229,54 @@ object FRpParams: TFRpParams
         OnClick = EDescriptionChange
       end
       object LAssign: TLabel
-        Left = 8
-        Top = 276
+        Left = 4
+        Top = 336
         Width = 86
         Height = 13
         Caption = 'Assign to datasets'
       end
       object ComboDatasets: TComboBox
-        Left = 8
-        Top = 300
+        Left = 4
+        Top = 360
         Width = 161
         Height = 21
         Hint = 'The parameters will be assigned not the selected datasets'
         Style = csDropDownList
         ItemHeight = 15
-        TabOrder = 14
+        TabOrder = 12
       end
       object BAdddata: TButton
-        Left = 180
-        Top = 272
+        Left = 176
+        Top = 332
         Width = 33
         Height = 25
         Hint = 'Include the dataset in the list'
         Caption = '>'
-        TabOrder = 15
+        TabOrder = 13
         OnClick = BAdddataClick
       end
       object BDeleteData: TButton
-        Left = 180
-        Top = 300
+        Left = 176
+        Top = 360
         Width = 33
         Height = 25
         Hint = 'Exclude dataset from the list'
         Caption = '<'
-        TabOrder = 16
+        TabOrder = 14
         OnClick = BDeleteDataClick
       end
       object LDatasets: TListBox
-        Left = 224
-        Top = 272
-        Width = 201
+        Left = 220
+        Top = 332
+        Width = 196
         Height = 53
         Hint = 'The parameter will be assigned to this datasets'
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 19
+        TabOrder = 17
       end
       object LSearch: TLabel
         Left = 12
-        Top = 140
+        Top = 196
         Width = 77
         Height = 13
         Caption = 'Search for string'
@@ -284,8 +284,8 @@ object FRpParams: TFRpParams
       end
       object ESearch: TEdit
         Left = 116
-        Top = 136
-        Width = 309
+        Top = 192
+        Width = 304
         Height = 21
         Hint = 'Description to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
@@ -306,7 +306,7 @@ object FRpParams: TFRpParams
       object EHint: TEdit
         Left = 116
         Top = 108
-        Width = 309
+        Width = 304
         Height = 21
         Hint = 'Description to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
@@ -341,21 +341,57 @@ object FRpParams: TFRpParams
         TabOrder = 3
         OnClick = EDescriptionChange
       end
+      object EErrorMessage: TEdit
+        Left = 116
+        Top = 164
+        Width = 304
+        Height = 21
+        Hint = 'Description to be show on the end user dialog'
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 23
+        Text = 'EDescription'
+        OnChange = EDescriptionChange
+      end
+      object LErrorMessage: TLabel
+        Left = 12
+        Top = 168
+        Width = 67
+        Height = 13
+        Caption = 'Error message'
+      end
+      object EValidation: TEdit
+        Left = 116
+        Top = 136
+        Width = 304
+        Height = 21
+        Hint = 'Description to be show on the end user dialog'
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 25
+        Text = 'EDescription'
+        OnChange = EDescriptionChange
+      end
+      object LValidation: TLabel
+        Left = 12
+        Top = 140
+        Width = 46
+        Height = 13
+        Caption = 'Validation'
+      end
     end
   end
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 449
-    Height = 128
+    Width = 444
+    Height = 132
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object LParams: TListBox
       Left = 0
       Top = 30
-      Width = 353
-      Height = 98
+      Width = 348
+      Height = 102
       Align = alClient
       TabOrder = 0
       OnClick = LParamsClick
@@ -363,7 +399,7 @@ object FRpParams: TFRpParams
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 449
+      Width = 444
       Height = 30
       ButtonHeight = 26
       ButtonWidth = 26
@@ -431,10 +467,10 @@ object FRpParams: TFRpParams
       end
     end
     object Panel3: TPanel
-      Left = 353
+      Left = 348
       Top = 30
       Width = 96
-      Height = 98
+      Height = 102
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2
@@ -675,11 +711,11 @@ object FRpParams: TFRpParams
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF00000000000000000000007E7F0000007E000CEFFF
-      00000CFF810F7BFF00010FFFC00B957F04000FFFE20F41FF0E020FC1F00A807F
-      0E040F80F00FC0FF070C0FC0F00AA07F03980FE00000007F01F00000000001FF
-      00E00001F80701FF01F00F03F80D00FF03900F01F80383FF0F0C0783FA077F7F
-      1E0607FFFB01D5FF180303FFF8017F7F000001FF9000547F0000007E0000007F
+      0200000002000000FFFFFF0000000000000000000000007F0000007E0000007F
+      00000CFF8000047F00010FFFC0000E7F04000FFFE0000E7F0E020FC1F000077F
+      0E040F80F00003FF070C0FC0F00001FF03980FE0000000FF01F00000000001FF
+      00E00001F80003FF01F00F03F8000F7F03900F01F8001E7F0F0C0783F800187F
+      1E0607FFF800007F180303FFF800007F000001FF9000007F0000007E0000007F
       000000000000007F000000000000007F000000000000007F01C000080000007F
       01C0000800FFF07F01C0001C00FFF07F01C0001C0080107F01C0003E00B6D07F
       01C0003E0080107F0FF8007F02B6F87F0FF8007F0080387F07F000FF80FFF87F

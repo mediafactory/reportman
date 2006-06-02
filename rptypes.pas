@@ -135,7 +135,7 @@ type
   rpParamTime,rpParamDateTime,rpParamCurrency,rpParamBool,
   rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamList,rpParamMultiple,rpParamUnknown);
 
-
+ TRpCachedImage=(rpCachedNone,rpCachedFixed,rpCachedVariable);
  TRpParamObject=class(TObject)
   public
    Value:Variant;
@@ -223,6 +223,8 @@ type
     FWideList: TList;
     function GetString(Index: Integer): WideString;
     procedure PutString(Index: Integer; const S: WideString);
+    procedure SetText(avalue:widestring);
+    function GetText:widestring;
   protected
     procedure AssignTo(destination:TPersistent);override;
   public
@@ -234,8 +236,15 @@ type
     procedure Insert(Index: Integer; const S: WideString);
     function Add(const S: WideString): Integer;
     property Strings[Index: Integer]: WideString read GetString write PutString;
+    property Text:widestring read GetText write SetText;
   end;
 
+
+
+function StringCachedImageToCachedImage(Value:widestring):TRpCachedImage;
+function RpCachedImageToString(Value:TRpCachedImage):String;
+procedure GetCachedImageDescriptionsA(alist:TStrings);
+procedure GetCachedImageDescriptions(alist:TRpWideStrings);
 
 procedure SetForcePaperName(apagesize:TPageSizeQt;source:string);
 function StringDrawStyleToDrawStyle(Value:widestring):TRpImageDrawStyle;
@@ -252,6 +261,7 @@ function AlignToStr(value:TRpPosAlign):string;
 function VarIsString(avar:Variant):Boolean;
 function VarIsNumber(avar:Variant):Boolean;
 function VarIsInteger(avar:Variant):Boolean;
+function VarIsBoolean(avar:Variant):Boolean;
 function IsRedColor(Color:Integer):Boolean;
 // Compares 2 streams and returns true if they are equal
 function StreamCompare(Stream1:TStream;Stream2:TStream):Boolean;
@@ -388,6 +398,8 @@ function GetEnvironmentVariable(aname:String):string;
 function HTMLEncode(astring:String):String;
 {$ENDIF}
 
+function GetLineLangByIndex(astring:widestring;index:integer):string;
+function AddLineLangByIndex(astring:widestring;newstring:widestring;index:integer):string;
 
 {$IFDEF MSWINDOWS}
 var
@@ -561,6 +573,11 @@ end;
 function VarIsInteger(avar:Variant):Boolean;
 begin
  Result:=(Vartype(avar) in [varSmallInt,varInteger,varShortInt,varByte,varWord,varLongWord,varInt64]);
+end;
+
+function VarIsBoolean(avar:Variant):Boolean;
+begin
+ Result:=(Vartype(avar) in [varBoolean]);
 end;
 
 
@@ -1179,6 +1196,49 @@ begin
   inherited Create;
   FWideList := TList.Create;
 end;
+
+procedure TRpWideStrings.SetText(avalue:widestring);
+var
+ astring:string;
+ i:integer;
+begin
+ Clear;
+ astring:='';
+ i:=1;
+ while i<=Length(avalue) do
+ begin
+  if avalue[i]=#10 then
+  begin
+   Add(astring);
+   if Length(avalue)>i then
+    if (avalue[i+1])=#13 then
+     Inc(i);
+   astring:='';
+  end
+  else
+   astring:=astring+avalue[i];
+  inc(i);
+ end;
+ Add(astring);
+end;
+
+function TRpWideStrings.GetText:widestring;
+var
+ i:integer;
+begin
+ Result:='';
+ if Count>0 then
+ begin
+  Result:=Result+Strings[0];
+  i:=1;
+  while i<Count do
+  begin
+   Result:=Result+#10+Strings[i];
+   Inc(i);
+  end;
+ end;
+end;
+
 
 destructor TRpWideStrings.Destroy;
 var
@@ -4444,6 +4504,47 @@ end;
 {$ENDIF}
 
 
+function StringCachedImageToCachedImage(Value:widestring):TRpCachedImage;
+begin
+ Result:=rpCachedNone;
+
+ if Value=SRpCachedFixed then
+  Result:=rpCachedFixed
+ else
+  if Value=SRPCachedVariable then
+   Result:=rpCachedVariable;
+end;
+
+
+function RpCachedImageToString(Value:TRpCachedImage):String;
+begin
+ case Value of
+  rpCachedNone:
+   Result:=SRPNone;
+  rpCachedFixed:
+   Result:=SRPCachedFixed;
+  rpCachedVariable:
+   Result:=SRPCachedVariable;
+ end;
+end;
+
+procedure GetCachedImageDescriptionsA(alist:TStrings);
+begin
+ alist.Clear;
+ alist.Add(SRpNone);
+ alist.Add(SRpCachedFixed);
+ alist.Add(SRpCachedVariable);
+end;
+
+procedure GetCachedImageDescriptions(alist:TRpWideStrings);
+begin
+ alist.Clear;
+ alist.Add(SRpNone);
+ alist.Add(SRpCachedFixed);
+ alist.Add(SRpCachedVariable);
+end;
+
+
 function StringDrawStyleToDrawStyle(Value:widestring):TRpImageDrawStyle;
 begin
  Result:=rpDrawCrop;
@@ -5012,6 +5113,54 @@ begin
  Result:=astring;
 end;
 {$ENDIF}
+
+
+function GetLineLangByIndex(astring:widestring;index:integer):string;
+var
+ alist:TRpWideStrings;
+begin
+ if index<0 then
+  index:=0;
+ if Length(astring)<0 then
+ begin
+  Result:='';
+  exit;
+ end;
+ alist:=TRpWideStrings.Create;
+ try
+  alist.Text:=astring;
+  if (alist.Count>index) then
+   Result:=alist.Strings[index]
+  else
+   Result:=alist.Strings[0];
+ finally
+  alist.free;
+ end;
+end;
+
+
+function AddLineLangByIndex(astring:widestring;newstring:widestring;index:integer):string;
+var
+ alist:TRpWideStrings;
+ defvalue:widestring;
+begin
+ defvalue:=astring;
+ alist:=TRPWideStrings.Create;
+ try
+  alist.Text:=astring;
+  if alist.Count>0 then
+   defvalue:=alist.Strings[0];
+  while (alist.Count<(index+1)) do
+  begin
+   alist.Add(defvalue);
+  end;
+  alist.Strings[index]:=newstring;
+  Result:=alist.Text;
+ finally
+  alist.free;
+ end;
+end;
+
 
 initialization
 

@@ -29,7 +29,7 @@ Name: custom; Description: {cm:Custominstallation}; Flags: iscustom
 Name: designer; Description: {cm:ReportManagerDesigner}; Types: full custom
 Name: dbexpress; Description: {cm:DBExpressdatabasedrivers}; Types: full custom
 Name: commandline; Description: {cm:Commandlinetools}; Types: full custom
-Name: help; Description: {cm:Documentation}; Types: full custom
+;Name: help; Description: {cm:Documentation}; Types: full custom
 Name: servertcp; Description: {cm:TCPserver}; Types: full custom
 Name: serverconf; Description: {cm:ServerconfigurationXP}; Types: full custom
 Name: clienttcp; Description: {cm:TCPclientandmetafileviewer}; Types: full custom
@@ -62,10 +62,8 @@ Source: ..\repman\utils\metaview\metaviewxp.exe.manifest; DestDir: {app}; Compon
 Source: ..\repman\utils\metaview\metaviewxp.exe; DestDir: {app}; Components: clienttcp; Flags: ignoreversion
 Source: ..\repman\utils\metaprint\metaprintxp.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\metaprint\metaprintxp.exe.manifest; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: c:\prog\toni\net\reportman\printreport\bin\debug\*.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: c:\prog\toni\net\reportman\printreport\bin\debug\*.dll; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: c:\prog\toni\net\reportman\printreport\bin\debug\*.rep; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: c:\prog\toni\net\reportman\printreport\bin\debug\*.fdb; DestDir: {app}; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net\*.*; DestDir: {app}\net; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\*.*; DestDir: {app}\net; Components: commandline; Flags: ignoreversion
 Source: license.txt; DestDir: {app}; Flags: ignoreversion
 Source: ..\repman\utils\printrep\printrepxp.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\printrep\printrepxp.exe.manifest; DestDir: {app}; Components: commandline; Flags: ignoreversion
@@ -114,9 +112,9 @@ Source: ..\rpreportman.h; DestDir: {app}\api; Components: activex; Flags: ignore
 Source: ..\rpreportmanapi.bas; DestDir: {app}\api; Components: activex; Flags: ignoreversion
 Source: ..\tests\gcctest\Reportman.def; DestDir: {app}\api; Components: activex; Flags: ignoreversion
 ; Documentation
-Source: ..\doc\doc\*.*; DestDir: {app}\doc; Components: help; Flags: ignoreversion
-Source: ..\doc\doc\images\*.*; DestDir: {app}\doc\images; Components: help; Flags: ignoreversion
-Source: ..\doc\doc\units\*.*; DestDir: {app}\doc\units; Components: help; Flags: ignoreversion
+;Source: ..\doc\doc\*.*; DestDir: {app}\doc; Components: help; Flags: ignoreversion
+;Source: ..\doc\doc\images\*.*; DestDir: {app}\doc\images; Components: help; Flags: ignoreversion
+;Source: ..\doc\doc\units\*.*; DestDir: {app}\doc\units; Components: help; Flags: ignoreversion
 
 
 [Registry]

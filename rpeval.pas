@@ -277,6 +277,14 @@ begin
  Rpfunctions.AddObject('ASC2',iden);
  iden:=TIdenFieldExists.Create(nil);
  Rpfunctions.AddObject('IDENTEXISTS',iden);
+ iden:=TIdenIsInteger.Create(nil);
+ Rpfunctions.AddObject('ISINTEGER',iden);
+ iden:=TIdenIsNumeric.Create(nil);
+ Rpfunctions.AddObject('ISNUMERIC',iden);
+ iden:=TIdenIsValidDateTime.Create(nil);
+ Rpfunctions.AddObject('ISVALIDDATETIME',iden);
+ iden:=TIdenCheckExpression.Create(nil);
+ Rpfunctions.AddObject('CHECKEXPRESSION',iden);
 {$IFDEF MSWINDOWS}
  iden:=TIdenChsToCht.Create(nil);
  Rpfunctions.AddObject('CHSTOCHT',iden);

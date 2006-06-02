@@ -281,6 +281,7 @@ type
    ProgressToStdOut:Boolean;
    AdoNetDriver:integer;
    AsyncExecution:boolean;
+   procedure AddReportItemsToEvaluator(eval:TRpEvaluator);
    procedure InitEvaluator;
    procedure BeginPrint(Driver:IRpPrintDriver);virtual;abstract;
    procedure EndPrint;virtual;abstract;
@@ -322,11 +323,13 @@ type
    property MilisProgres:integer read FMilisProgres write FMilisProgres
     default MILIS_PROGRESS_DEFAULT;
    procedure AlignSectionsTo(linesperinch:integer);
+   procedure SetLanguage(index:integer);
    procedure PrepareParamsBeforeOpen;
    procedure AssignDefaultFontTo(aitem:TRpGenTextComponent);
    procedure GetDefaultFontFrom(aitem:TRpGenTextComponent);
    function GetSQLValue(connectionname,sql:String):Variant;
    function RequestPage(pageindex:integer):boolean;
+   function CheckParameters(paramlist:TRpParamList;var paramname,amessage:string):Boolean;
    // Default Font properties
    property WFontName:widestring read FWFontName write FWFontName;
    property LFontName:widestring read FLFontName write FLFontName;
@@ -375,7 +378,7 @@ type
    property DatabaseInfo:TRpDatabaseInfoList read FDatabaseInfo write SetDatabaseInfo;
    property Params:TRpParamList read FParams write SetParams;
    // Language
-   property Language:integer read FLanguage write FLanguage default -1;
+   property Language:integer read FLanguage write SetLanguage default -1;
    // Other
    property Copies:integer read FCopies write FCopies default 1;
    property CollateCopies:boolean read FCollateCopies write FCollateCopies default false;
@@ -424,7 +427,7 @@ type
 
 implementation
 
-uses rpxmlstream;
+uses rpxmlstream,rplabelitem,rpmdchart;
 
 function TIdenReportVar.GeTRpValue:TRpValue;
 var
@@ -1705,9 +1708,9 @@ end;
 function TRpBaseReport.Newlanguage(alanguage:integer):integer;
 begin
  Result:=FLanguage;
- FLanguage:=aLanguage;
- if Assigned(FEvaluator) then
-  FEvaluator.Language:=FLanguage;
+ // Setting the property, sets the new language
+ // for the evaluator and the parameters
+ Language:=aLanguage;
 end;
 
 function TRpBaseReport.OnParamInfo(ParamName:String;index:integer):String;
@@ -1822,22 +1825,64 @@ begin
         Result:=param.Datasets.Strings[i];
       end;
      end;
+    7:
+     begin
+      // Description
+      Result:=param.Description;
+     end;
+    8:
+     begin
+      // Description
+      Result:=param.Hint;
+     end;
+    9:
+     begin
+      // Description
+      Result:=param.ErrorMessage;
+     end;
+    10:
+     begin
+      // Description
+      Result:=param.Validation;
+     end;
    end;
   end
   else
   begin
-   if index=6 then
-   begin
-    for i:=0 to param.Datasets.Count-1 do
-    begin
-     if Length(Result)>0 then
-      Result:=Result+#10+param.Datasets.Strings[i]
+   case index of
+    6:
+      begin
+       for i:=0 to param.Datasets.Count-1 do
+       begin
+        if Length(Result)>0 then
+         Result:=Result+#10+param.Datasets.Strings[i]
+        else
+         Result:=param.Datasets.Strings[i];
+       end;
+      end;
+    7:
+     begin
+      // Description
+      Result:=param.Description;
+     end;
+    8:
+     begin
+      // Description
+      Result:=param.Hint;
+     end;
+    9:
+     begin
+      // Description
+      Result:=param.ErrorMessage;
+     end;
+    10:
+     begin
+      // Description
+      Result:=param.Validation;
+     end;
      else
-      Result:=param.Datasets.Strings[i];
-    end;
-   end
-   else
-    Result:=param.AsString;
+       Result:=param.AsString;
+   end;
   end;
  end;
 end;
@@ -1977,6 +2022,14 @@ begin
  end;
 end;
 
+procedure TRpBaseReport.SetLanguage(index:integer);
+begin
+ FLanguage:=index;
+ Params.Language:=index;
+ if Assigned(FEvaluator) then
+  FEvaluator.Language:=FLanguage;
+end;
+
 procedure TThreadExecReport.DoProgress;
 begin
  docancel:=false;
@@ -1988,5 +2041,93 @@ begin
  report.DoPrintInternal;
 end;
 
+
+procedure TRpBaseReport.AddReportItemsToEvaluator(eval:TRpEvaluator);
+var
+ i:integeR;
+begin
+ // Insert params into rpEvaluator
+ for i:=0 to Params.Count-1 do
+ begin
+  eval.NewVariable(params.items[i].Name,params.items[i].Value);
+ end;
+ // Here identifiers are added to evaluator
+ for i:=0 to Identifiers.Count-1 do
+ begin
+  if FIdentifiers.Objects[i] is TRpExpression then
+  begin
+   eval.AddVariable(FIdentifiers.Strings[i],
+    TRpExpression(FIdentifiers.Objects[i]).IdenExpression);
+  end
+  else
+  if FIdentifiers.Objects[i] is TRpChart then
+  begin
+   eval.AddVariable(FIdentifiers.Strings[i],
+    TRpChart(FIdentifiers.Objects[i]).IdenChart);
+  end
+ end;
+ // Compatibility with earlier versions
+ eval.AddVariable('PAGINA',fidenpagenum);
+ eval.AddVariable('NUMPAGINA',fidenpagenumgroup);
+ // Insert page number and other variables
+ eval.AddVariable('PAGE',fidenpagenum);
+ eval.AddVariable('PAGENUM',fidenpagenumgroup);
+ eval.AddVariable('LANGUAGE',fidenlanguage);
+ // Free space and sizes
+ eval.AddVariable('FREE_SPACE_TWIPS',fidenfreespace);
+ eval.AddVariable('PAGEWIDTH',fidenpagewidth);
+ eval.AddVariable('PAGEHEIGHT',fidenpageheight);
+ eval.AddVariable('CURRENTGROUP',fidencurrentgroup);
+ eval.AddVariable('FIRSTSECTION',fidenfirstsection);
+ eval.AddVariable('FREE_SPACE_CMS',fidenfreespacecms);
+ eval.AddVariable('FREE_SPACE_INCH',fidenfreespaceinch);
+ eval.AddIden('EOF',fideneof);
+end;
+
+function TRpBaseReport.CheckParameters(paramlist:TRpParamList;var paramname,amessage:string):Boolean;
+var
+ i:integer;
+ validation:widestring;
+ errormessage:widestring;
+ aresult:Variant;
+ paramtemp:TRpParamList;
+begin
+ paramtemp:=TRpParamList.Create(nil);
+ try
+  paramtemp.Assign(params);
+  try
+   params.Assign(paramlist);
+   InitEvaluator;
+   AddReportItemsToEvaluator(FEvaluator);
+   Result:=true;
+   for i:=0 to Params.Count-1 do
+   begin
+    validation:=Params.Items[i].Validation;
+    errormessage:=Params.Items[i].ErrorMessage;
+    if Length(validation)>0 then
+    begin
+     aresult:=Evaluator.EvaluateText(validation);
+     if not VarIsNull(aresult) then
+     begin
+      if VarIsBoolean(aresult) then
+      begin
+       if not aresult then
+       begin
+        paramname:=Params.Items[i].Name;
+        amessage:=errormessage;
+        Result:=false;
+        break;
+       end;
+      end;
+     end;
+    end;
+   end;
+  finally
+   params.Assign(paramtemp);
+  end;
+ finally
+  paramtemp.free;
+ end;
+end;
 
 end.

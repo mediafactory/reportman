@@ -539,7 +539,6 @@ end;
 procedure TFRpDatasetsVCL.BShowDataClick(Sender: TObject);
 var
  dinfo:TRpDatainfoitem;
- dbinfo:TRpDatabaseInfoItem;
  i:integer;
  startinfo:TStartupinfo;
  linecount:string;
@@ -555,7 +554,7 @@ begin
  i:=report.DatabaseInfo.IndexOf(dinfo.DatabaseAlias);
  if i>=0 then
  begin
-  if report.DatabaseInfo.Items[i].Driver=rpdatadriver then
+  if report.DatabaseInfo.Items[i].Driver in [rpdatadriver,rpdotnet2driver] then
   begin
     linecount:='';
     with startinfo do
@@ -575,7 +574,10 @@ begin
      cbReserved2:=0;
      lpreserved2:=nil;
     end;
-    FExename:=ExtractFilePath(Application.exename)+'printreport.exe';
+    if report.DatabaseInfo.Items[i].Driver=rpdatadriver then
+     FExename:=ExtractFilePath(Application.exename)+'printreport.exe'
+    else
+     FExename:=ExtractFilePath(Application.exename)+'printreport2.exe';
     astring:=RpTempFileName;
     report.StreamFormat:=rpStreamXML;
     report.SaveToFile(astring);

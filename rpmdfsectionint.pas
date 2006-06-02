@@ -435,11 +435,11 @@ begin
   lvalues.Add(RpDrawStyleToString(TRpSection(printitem).DrawStyle));
  // Cached
  lnames.Add(SRpCached);
- ltypes.Add(SRpSBool);
+ ltypes.Add(SRpSlIST);
  lhints.Add('refsection.html');
  lcat.Add(SRpSection);
  if Assigned(lvalues) then
-  lvalues.Add(BoolToStr(TRpImage(printitem).CachedImage,true));
+  lvalues.Add(RpCachedImageToString(TRpSection(printitem).CachedImage));
 end;
 
 procedure TRpSectionInterface.SetProperty(pname:string;value:Widestring);
@@ -602,7 +602,7 @@ begin
  end;
  if pname=SRpCached then
  begin
-  TRpSection(fprintitem).CachedImage:=StrToBool(Value);
+  TRpSection(fprintitem).CachedImage:=StringCachedImageToCachedImage(Value);
   invalidate;
   exit;
  end;
@@ -765,7 +765,7 @@ begin
  end;
  if pname=SRpCached then
  begin
-  Result:=BoolToStr(TRpSection(fprintitem).CachedImage,true);
+  Result:=RpCachedImageToString(TRpSection(fprintitem).CachedImage);
   exit;
  end;
  Result:=inherited GetProperty(pname);
@@ -799,6 +799,11 @@ end;
 
 procedure TRpSectionInterface.GetPropertyValues(pname:string;lpossiblevalues:TRpWideStrings);
 begin
+ if pname=SRpCached then
+ begin
+  GetCachedImageDescriptions(lpossiblevalues);
+  exit;
+ end;
  if pname=SRpSSkipType then
  begin
   GetSkipTypePossibleValues(lpossiblevalues);

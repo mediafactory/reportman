@@ -68,7 +68,6 @@ type
    function PrintNextPage:boolean;override;
    procedure PrintRange(Driver:IRpPrintDriver;allpages:boolean;
     frompage,topage,copies:integer;collate:boolean);
-   procedure AddReportItemsToEvaluator(eval:TRpEvaluator);
  end;
 
 procedure RegisterRpReportClasses;
@@ -860,47 +859,6 @@ end;
 
 
 
-procedure TRpReport.AddReportItemsToEvaluator(eval:TRpEvaluator);
-var
- i:integer;
-begin
- // Insert params into rpEvaluator
- for i:=0 to Params.Count-1 do
- begin
-  eval.NewVariable(params.items[i].Name,params.items[i].Value);
- end;
- // Here identifiers are added to evaluator
- for i:=0 to Identifiers.Count-1 do
- begin
-  if FIdentifiers.Objects[i] is TRpExpression then
-  begin
-   eval.AddVariable(FIdentifiers.Strings[i],
-    TRpExpression(FIdentifiers.Objects[i]).IdenExpression);
-  end
-  else
-  if FIdentifiers.Objects[i] is TRpChart then
-  begin
-   eval.AddVariable(FIdentifiers.Strings[i],
-    TRpChart(FIdentifiers.Objects[i]).IdenChart);
-  end
- end;
- // Compatibility with earlier versions
- eval.AddVariable('PAGINA',fidenpagenum);
- eval.AddVariable('NUMPAGINA',fidenpagenumgroup);
- // Insert page number and other variables
- eval.AddVariable('PAGE',fidenpagenum);
- eval.AddVariable('PAGENUM',fidenpagenumgroup);
- eval.AddVariable('LANGUAGE',fidenlanguage);
- // Free space and sizes
- eval.AddVariable('FREE_SPACE_TWIPS',fidenfreespace);
- eval.AddVariable('PAGEWIDTH',fidenpagewidth);
- eval.AddVariable('PAGEHEIGHT',fidenpageheight);
- eval.AddVariable('CURRENTGROUP',fidencurrentgroup);
- eval.AddVariable('FIRSTSECTION',fidenfirstsection);
- eval.AddVariable('FREE_SPACE_CMS',fidenfreespacecms);
- eval.AddVariable('FREE_SPACE_INCH',fidenfreespaceinch);
- eval.AddIden('EOF',fideneof);
-end;
 
 
 procedure TRpReport.DoUpdatepageSize(Driver:IRpPrintDriver;metafilepage:TRpMetafilePage);

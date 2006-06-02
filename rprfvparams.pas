@@ -33,7 +33,7 @@ uses SysUtils, Classes,
 {$IFNDEF FORWEBAX}
   rpmdfsearchvcl,
 {$ENDIF}
-  rpparams;
+  rpparams,rpgraphutilsvcl;
 
 const
   CONS_LEFTGAP=3;
@@ -79,7 +79,7 @@ function ShowUserParams(params:TRpParamList):boolean;
 implementation
 
 {$IFNDEF FORWEBAX}
-  uses rpreport;
+  uses rpreport,rpbasereport;
 {$ENDIF}
 
 
@@ -126,8 +126,31 @@ begin
 end;
 
 procedure TFRpRTParams.BOKClick(Sender: TObject);
+{$IFNDEF FORWEBAX}
+var
+ paramname,amessage:String;
+ aparam:TRpParam;
+ acontrol:TControl;
+ index:integer;
+{$ENDIF}
 begin
  SaveParams;
+ // Check parameters
+{$IFNDEF FORWEBAX}
+ if not Trpbasereport(report).CheckParameters(params,paramname,amessage) then
+ begin
+  aparam:=TRpBaseReport(report).Params.ParamByName(paramname);
+  RpMessageBox(amessage,aparam.Description);
+  index:=lcontrols.IndexOf(paramname);
+  if index>=0 then
+  begin
+   acontrol:= TControl(lcontrols.Objects[index]);
+   if acontrol.Enabled then
+    TWinControl(acontrol).SetFocus;
+  end;
+  exit;
+ end;
+{$ENDIF}
  dook:=true;
  close;
 end;

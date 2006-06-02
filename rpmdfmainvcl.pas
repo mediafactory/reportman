@@ -356,7 +356,7 @@ type
 var
  FRpMainFVCL:TFRpMainFVCL;
 
-procedure ExecuteReportDotNet(report:TRpReport;preview:boolean);
+procedure ExecuteReportDotNet(report:TRpReport;preview:boolean;Version:integer);
 
 implementation
 
@@ -1166,9 +1166,12 @@ procedure TFRpMainFVCL.APreviewExecute(Sender: TObject);
 begin
  if (report.DatabaseInfo.Count>0) then
  begin
-  if report.DatabaseInfo.Items[0].Driver=rpdatadriver then
+  if report.DatabaseInfo.Items[0].Driver in [rpdatadriver,rpdotnet2driver] then
   begin
-   ExecuteReportDotNet(report,true);
+   if (report.DatabaseInfo.Items[0].Driver=rpdatadriver) then
+    ExecuteReportDotNet(report,true,1)
+   else
+    ExecuteReportDotNet(report,true,2);
    exit;
   end;
  end;
@@ -1210,9 +1213,12 @@ var
 begin
  if (report.DatabaseInfo.Count>0) then
  begin
-  if report.DatabaseInfo.Items[0].Driver=rpdatadriver then
+  if report.DatabaseInfo.Items[0].Driver in [rpdatadriver,rpdotnet2driver] then
   begin
-   ExecuteReportDotNet(report,false);
+   if report.DatabaseInfo.Items[0].Driver=rpdatadriver then
+    ExecuteReportDotNet(report,false,1)
+   else
+    ExecuteReportDotNet(report,false,2);
    exit;
   end;
  end;
@@ -1969,7 +1975,7 @@ begin
  end;
 end;
 
-procedure ExecuteReportDotNet(report:TRpReport;preview:boolean);
+procedure ExecuteReportDotNet(report:TRpReport;preview:boolean;Version:integer);
 var
  startinfo:TStartupinfo;
  linecount:string;
@@ -1995,7 +2001,10 @@ begin
      cbReserved2:=0;
      lpreserved2:=nil;
     end;
-    FExename:=ExtractFilePath(Application.exename)+'printreport.exe';
+    if version=1 then
+     FExename:=ExtractFilePath(Application.exename)+'net\printreport.exe'
+    else
+     FExename:=ExtractFilePath(Application.exename)+'net2\printreport.exe';
     astring:=RpTempFileName;
     report.StreamFormat:=rpStreamXML;
     report.SaveToFile(astring);

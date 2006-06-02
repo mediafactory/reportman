@@ -118,7 +118,6 @@ constructor TFRpConnection.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
- GetDotNetDrivers(ComboNetDriver.Items);
  LDotNetDriver.Caption:=SRpDriverDotNet;
  // Translations
  BConfig.Caption:=TranslateStr(143,BConfig.Caption);
@@ -222,7 +221,11 @@ begin
  ComboDriver.ItemIndex:=Integer(dbinfo.Driver);
  ComboDriverClick(Self);
  CheckLoginPrompt.Checked:=dbinfo.LoginPrompt;
- ComboNetDriver.ItemIndex:=dbinfo.DotNetDriver;
+ if (dbinfo.Driver=rpdataDriver) then
+  ComboNetDriver.ItemIndex:=dbinfo.DotNetDriver
+ else
+ if (dbinfo.Driver=rpdotnet2Driver) then
+  ComboNetDriver.Text:=dbinfo.ProviderFactory;
  CheckLoadParams.Checked:=dbinfo.LoadParams;
  CheckLoadDriverParams.Checked:=dbinfo.LoadDriverParams;
  EConnectionString.OnChange:=nil;
@@ -304,7 +307,7 @@ begin
     ComboAvailable.Items.Clear;
 {$ENDIF}
    end;
-  rpdatadriver:
+  rpdatadriver,rpdotnet2driver:
    begin
     BConfig.Visible:=false;
     BBuild.Visible:=false;
@@ -480,6 +483,26 @@ begin
    end;
   rpdatadriver:
    begin
+    GetDotNetDrivers(ComboNetDriver.Items);
+    ComboNetDriver.Style:=csDropDownList;
+    LConnectionString.Visible:=True;
+    EConnectionString.Visible:=True;
+    BBuild.Visible:=true;
+    LDotNetDriver.Visible:=true;
+    ComboNetDriver.Visible:=true;
+   end;
+  rpdotnet2driver:
+   begin
+    ComboNetDriver.Style:=csDropDown;
+    try
+     GetDotNet2Drivers(ComboNetDriver.Items);
+    except
+     on E:Exception do
+     begin
+      ShowMessage(E.Message);
+	ComboNetDriver.Clear;
+     end;
+    end;
     LConnectionString.Visible:=True;
     EConnectionString.Visible:=True;
     BBuild.Visible:=true;
@@ -552,7 +575,7 @@ begin
  dbinfo:=FindDatabaseInfoItem;
  if Not Assigned(dbinfo) then
   exit;
- if dbinfo.Driver=rpdatadriver then
+ if dbinfo.Driver in [rpdatadriver,rpdotnet2driver] then
  begin
   astring:=RpTempFileName;
   report.StreamFormat:=rpStreamXML;
@@ -561,7 +584,10 @@ begin
      aparams:=TStringList.Create;
      try
         aparams.Add('mono');
-        aparams.Add(ExtractFilePath(ParamStr(0))+'printreport.exe');
+        if dbinfo.Driver=rpdatadriver then
+         aparams.Add(ExtractFilePath(ParamStr(0))+'net/printreport.exe')
+        else
+         aparams.Add(ExtractFilePath(ParamStr(0))+'net2/printreport.exe');
         aparams.Add('-deletereport');
         aparams.Add('-testconnection');
         aparams.Add(dbinfo.Alias);
@@ -591,7 +617,10 @@ begin
    lpreserved2:=nil;
   end;
 
-  FExename:=ExtractFilePath(ParamStr(0))+'printreport.exe';
+  if dbinfo.Driver=rpdatadriver then
+   FExename:=ExtractFilePath(ParamStr(0))+'printreport.exe'
+  else
+   FExename:=ExtractFilePath(ParamStr(0))+'printreport2.exe';
   FCommandLine:=' -deletereport -testconnection '+dbinfo.Alias+' "'+
    astring+'"';
   if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,
@@ -631,7 +660,10 @@ begin
  else
  if Sender=ComboNetDriver then
  begin
-  dinfoitem.DotNetDriver:=ComboNetDriver.ItemIndex;
+  if dinfoitem.Driver=rpdatadriver then
+   dinfoitem.DotNetDriver:=ComboNetDriver.ItemIndex
+  else
+   dinfoitem.ProviderFactory:=ComboNetDriver.Text;
  end
  else
  begin

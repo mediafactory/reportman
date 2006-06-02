@@ -326,7 +326,7 @@
       and # are not required format positions, this function is used in display 
       format property for expressions</td>
   </tr>
-  <tr>
+  <tr> 
     <td>FormatNum(mask:String; number:double)</td>
     <td><p>Formats a number with a mask, this function is used in display format 
         property for expressions. The mask is similar to the one used in FormatStr 
@@ -366,8 +366,7 @@
         </tr>
       </table>
       <p><br>
-      </p>
-      </td>
+      </p></td>
   </tr>
   <tr> 
     <td> function NumToText (n:double,f:boolean):string</td>
@@ -384,6 +383,32 @@
   <tr> 
     <td>function FileExists (s:String):boolean</td>
     <td>Return true if the file exists</td>
+  </tr>
+  <tr> 
+    <td>function ChtToChs (expr:string):String</td>
+    <td>Translates traditional Chinesse to simplified chinesse (available only 
+      on Win32)</td>
+  </tr>
+  <tr> 
+    <td>function ChtToChs (expr:string):String</td>
+    <td>Translates simplified chinesse to traditional chinesse (available only 
+      on Win32)</td>
+  </tr>
+  <tr> 
+    <td>function IsInteger (avalue:string):boolean</td>
+    <td>Returns true if the string is a valid integer</td>
+  </tr>
+  <tr> 
+    <td>function IsNumeric (avalue:string):boolean</td>
+    <td>Returns true if the string is a valid number</td>
+  </tr>
+  <tr> 
+    <td>function IsValidDateTime(avalue:string):boolean</td>
+    <td>Returns true if the string is a valid date/time</td>
+  </tr>
+  <tr>
+    <td>function CheckExpression(expression,message):boolean</td>
+    <td>If the expression is false raises an exception with the provided message</td>
   </tr>
 </table>
 <p><b>Evaluator functions and variables available while executing a report</b></p>
@@ -533,9 +558,25 @@
           <td>5</td>
           <td>Full list of values</td>
         </tr>
-        <tr>
+        <tr> 
           <td>6</td>
           <td>Datasets linked to the parameter</td>
+        </tr>
+        <tr> 
+          <td>7</td>
+          <td>Parameter description</td>
+        </tr>
+        <tr> 
+          <td>8</td>
+          <td>Parameter hint</td>
+        </tr>
+        <tr> 
+          <td>9</td>
+          <td>Parameter error message</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Parameter validation expression</td>
         </tr>
       </table>
       

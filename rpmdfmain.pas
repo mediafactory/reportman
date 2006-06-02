@@ -368,7 +368,7 @@ type
   end;
 
 
-procedure ExecuteReportDotNet(report:TRpReport;preview:boolean);
+procedure ExecuteReportDotNet(report:TRpReport;preview:boolean;version:integer);
 implementation
 
 uses Math;
@@ -1285,9 +1285,12 @@ var
 begin
  if (report.DatabaseInfo.Count>0) then
  begin
-  if report.DatabaseInfo.Items[0].Driver=rpdatadriver then
+  if report.DatabaseInfo.Items[0].Driver in [rpdatadriver,rpdotnet2driver] then
   begin
-   ExecuteReportDotNet(report,true);
+   if (report.DatabaseInfo.Items[0].Driver=rpdatadriver) then
+    ExecuteReportDotNet(report,true,1)
+   else
+    ExecuteReportDotNet(report,true,2);
    exit;
   end;
  end;
@@ -1354,9 +1357,12 @@ var
 begin
  if (report.DatabaseInfo.Count>0) then
  begin
-  if report.DatabaseInfo.Items[0].Driver=rpdatadriver then
+  if report.DatabaseInfo.Items[0].Driver in [rpdatadriver,rpdotnet2driver] then
   begin
-   ExecuteReportDotNet(report,false);
+   if report.DatabaseInfo.Items[0].Driver=rpdatadriver then
+    ExecuteReportDotNet(report,false,1)
+   else
+    ExecuteReportDotNet(report,false,2);
    exit;
   end;
  end;
@@ -2256,7 +2262,7 @@ end;
 
 
 {$IFDEF LINUX}
-procedure ExecuteReportDotNet(report:TRpReport;preview:boolean);
+procedure ExecuteReportDotNet(report:TRpReport;preview:boolean;version:integer);
 var
  aparams:TStringList;
  astring,apdf:string;
@@ -2264,7 +2270,10 @@ begin
  aparams:=TStringList.Create;
  try
   aparams.Add('mono');
-  aparams.Add(ExtractFilePath(Application.exename)+'printreport.exe');
+  if version=1 then
+   aparams.Add(ExtractFilePath(Application.exename)+'net/printreport.exe')
+  else
+   aparams.Add(ExtractFilePath(Application.exename)+'net2/printreport.exe');
   astring:=RpTempFileName;
   report.StreamFormat:=rpStreamXML;
   report.SaveToFile(astring);
@@ -2294,7 +2303,7 @@ end;
 {$ENDIF}
 
 {$IFDEF MSWINDOWS}
-procedure ExecuteReportDotNet(report:TRpReport;preview:boolean);
+procedure ExecuteReportDotNet(report:TRpReport;preview:boolean;version:integer);
 var
  startinfo:TStartupinfo;
  linecount:string;
@@ -2325,7 +2334,10 @@ begin
      cbReserved2:=0;
      lpreserved2:=nil;
     end;
-    FExename:=ExtractFilePath(Application.exename)+'printreport.exe';
+    if version=1 then
+     FExename:=ExtractFilePath(Application.exename)+'net\printreport.exe'
+    else
+     FExename:=ExtractFilePath(Application.exename)+'net2\printreport.exe';
     astring:=RpTempFileName;
     report.StreamFormat:=rpStreamXML;
     report.SaveToFile(astring);

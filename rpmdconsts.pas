@@ -41,7 +41,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.5i';
+ RM_VERSION='2.6pre2';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
  MAX_PAGECOUNT=999999;
 type
@@ -1298,7 +1298,8 @@ var
   SrpChangeLevel:WideString='Change Level';
   SrpReboot:WideString='Reboot';
   SRpDriverDotNet:WideString='Dot net driver';
-  SRpDriverDotNetDesc:WideString='Dot net driver';
+  SRpDriverDotNetDesc:WideString='Dot net driver allow the execution of reports using '+
+   ' dot net technology exclusively';
   SRpEmptyResponse:WideString='Empty response';
   SRpRepMetafileUn:WideString='Report Metafile uncompressed';
   SRpPrintRep28:WideString='         -csvseparator     CSV output separator';
@@ -1309,11 +1310,16 @@ var
   SRpPMax:WideString='Returns the maximum value';
   //added jasonpun 20060306
   SRpChsToCht:WideString='Convert simplified to traditional Chinese';
-  SRpPChsToCht:WideString='Convert simplified to traditional Chinese';
   SRpChtToChs:WideString='Convert traditional to simplified Chinese';
-  SRpPChtToChs:WideString='Convert traditional to simplified Chinese';
   SRpParameterExists:WideString='Parameter already exists';
   SRpCached:WideString='Shared Image';
+  SRpIsInteger:WideString='Returns true if the string is a valid integer';
+  SRpIsNumeric:WideString='Returns true if the string is a valid number';
+  SRpIsValidDateTime:WideString='Returns true if the string is a valid date and time';
+  SRpCheckExpression:WideString='Raises an exception with provided message if the expression is false';
+  //
+  SRpCachedFixed:WideString='Fixed Image';
+  SRpCachedVariable:WideString='Variable Image';
 
 implementation
 
@@ -2265,6 +2271,29 @@ begin
  TranslateVar(1386,SRpSpanishMe);
  TranslateVar(1387,SRpGreek);
  TranslateVar(1388,SRpHungar);
+
+ TranslateVar(1389,SRpSelectDest);
+ TranslateVar(1390,SRpProcessing);
+ TranslateVar(1391,SRpRegCopy);
+ TranslateVar(1392,SrpChangeLevel);
+ TranslateVar(1393,SrpReboot);
+ TranslateVar(1394,SRpDriverDotNet);
+ TranslateVar(1395,SRpDriverDotNetDesc);
+ TranslateVar(1396,SRpEmptyResponse);
+ TranslateVar(1397,SRpRepMetafileUn);
+ TranslateVar(1398,SRpPrintRep28);
+ TranslateVar(1399,SRpPrintRep29);
+ TranslateVar(1400,SRpMaximumPages);
+
+ TranslateVar(1405,SRpPMax);
+ TranslateVar(1406,SRpChsToCht);
+ TranslateVar(1407,SRpChtToChs);
+ TranslateVar(1408,SRpParameterExists);
+ TranslateVar(1409,SRpCached);
+ TranslateVar(1410,SRpIsInteger);
+ TranslateVar(1411,SRpIsNumeric);
+ TranslateVar(1412,SRpIsValidDateTime);
+ TranslateVar(1413,SRpCheckExpression);
 
 
 end;

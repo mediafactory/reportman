@@ -1157,11 +1157,11 @@ begin
   if (separator=integer(rpFStream)) then
   begin
    ssize:=0;
-   bytesread:=Stream.Read(ssize,sizeof(ssize));
+   Stream.Read(ssize,sizeof(ssize));
    FMemStream.SetSize(ssize);
    FMemStream.Seek(0,soFromBeginning);
    FMemStream.CopyFrom(Stream,ssize);
-   bytesread:=Stream.Read(separator,sizeof(separator));
+   Stream.Read(separator,sizeof(separator));
   end;
   if (separator<>integer(rpFPage)) then
    Raise ERpBadFileFormat.CreatePos(SrpMtPageSeparatorExpected,Stream.Position,0);

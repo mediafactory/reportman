@@ -26,6 +26,9 @@
     report datasets.</li>
   <li>A search dataset can be defined so the user can search for parameter values 
     inside a dataset.</li>
+  <li>Set a validation rule for the parameter</li>
+  <li>Set an error message for the validation rule fail</li>
+  <li>Set diferent description, hints and error messages for each report language</li>
 </ul>
 <p>You can define the parameters, and also preview how the parameters will show 
   to the user.</p>
@@ -108,6 +111,10 @@
     <td bgcolor="#FFFFCC"><strong>Purpose</strong></td>
   </tr>
   <tr> 
+    <td>ADOCONNECTIONSTRING</td>
+    <td>Replaces the connection string with the provided in this parameter</td>
+  </tr>
+  <tr> 
     <td>DBXCONNECTIONS</td>
     <td>Path to a user defined dbxconnections file, to alter password, database 
       path at runtime</td>
@@ -129,6 +136,13 @@
     <td>Default body, on preview window, send mail option</td>
   </tr>
 </table>
+<p><strong>Validation</strong></p>
+<p>You can set a validation expression for a parameter, the validation of parameters 
+  is done in the moment of showing the parameters to the user, if the validation 
+  is not valid, the error message is shown to the user, this is true also for 
+  integrated web server. Note the validation is not done before running the report, 
+  to do validations before running the report you can use the checkexpression 
+  evaluator function.</p>
 <p><strong>Lookup help for parameters</strong></p>
 <p>Sometines a parameter is specified as a code number (customer code, family 
   code). You can specify a lookup search so the user can browse a dataset to find 

@@ -1,8 +1,8 @@
 object FRpParamsVCL: TFRpParamsVCL
-  Left = 348
-  Top = 192
-  Width = 462
-  Height = 500
+  Left = 539
+  Top = 39
+  Width = 481
+  Height = 582
   Caption = 'Parameter definition'
   Color = clBtnFace
   ParentFont = True
@@ -15,17 +15,17 @@ object FRpParamsVCL: TFRpParamsVCL
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 131
-    Width = 454
-    Height = 342
+    Top = 154
+    Width = 473
+    Height = 401
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
     object GProperties: TGroupBox
       Left = 2
       Top = 4
-      Width = 443
-      Height = 333
+      Width = 464
+      Height = 389
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       Visible = False
@@ -52,14 +52,14 @@ object FRpParamsVCL: TFRpParamsVCL
       end
       object LAssign: TLabel
         Left = 16
-        Top = 281
+        Top = 329
         Width = 86
         Height = 13
         Caption = 'Assign to datasets'
       end
       object LSearch: TLabel
         Left = 12
-        Top = 140
+        Top = 188
         Width = 77
         Height = 13
         Caption = 'Search for string'
@@ -72,25 +72,39 @@ object FRpParamsVCL: TFRpParamsVCL
         Height = 13
         Caption = 'Hint'
       end
+      object LErrorMessage: TLabel
+        Left = 12
+        Top = 164
+        Width = 67
+        Height = 13
+        Caption = 'Error message'
+      end
+      object LValidation: TLabel
+        Left = 12
+        Top = 140
+        Width = 46
+        Height = 13
+        Caption = 'Validation'
+      end
       object ECheckList: TCheckListBox
         Left = 284
         Top = 8
-        Width = 145
+        Width = 166
         Height = 73
         OnClickCheck = EDescriptionChange
         Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
-        TabOrder = 15
+        TabOrder = 17
         Visible = False
       end
       object GValues: TGroupBox
         Left = 12
-        Top = 164
-        Width = 421
+        Top = 212
+        Width = 442
         Height = 105
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Strings to show (left) and strings to assign (right) '
-        TabOrder = 10
+        TabOrder = 12
         Visible = False
         object LLookup: TLabel
           Left = 4
@@ -102,7 +116,7 @@ object FRpParamsVCL: TFRpParamsVCL
         object Panel4: TPanel
           Left = 2
           Top = 15
-          Width = 417
+          Width = 438
           Height = 62
           Align = alTop
           BevelOuter = bvNone
@@ -120,7 +134,7 @@ object FRpParamsVCL: TFRpParamsVCL
           object MValues: TMemo
             Left = 195
             Top = 0
-            Width = 222
+            Width = 243
             Height = 62
             Align = alClient
             TabOrder = 1
@@ -131,7 +145,7 @@ object FRpParamsVCL: TFRpParamsVCL
         object ComboLookup: TComboBox
           Left = 128
           Top = 80
-          Width = 161
+          Width = 182
           Height = 21
           Hint = 'The parameters will be assigned not the selected datasets'
           Style = csDropDownList
@@ -144,7 +158,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object EDescription: TEdit
         Left = 116
         Top = 88
-        Width = 309
+        Width = 330
         Height = 21
         Hint = 'Description to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
@@ -177,7 +191,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object EValue: TRpMaskEdit
         Left = 284
         Top = 8
-        Width = 141
+        Width = 162
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 1
@@ -206,49 +220,49 @@ object FRpParamsVCL: TFRpParamsVCL
       end
       object ComboDatasets: TComboBox
         Left = 16
-        Top = 297
+        Top = 345
         Width = 161
         Height = 21
         Hint = 'The parameters will be assigned not the selected datasets'
         Style = csDropDownList
         ItemHeight = 13
-        TabOrder = 11
+        TabOrder = 13
       end
       object BAdddata: TButton
         Left = 188
-        Top = 273
+        Top = 321
         Width = 33
         Height = 25
         Caption = '>'
-        TabOrder = 12
+        TabOrder = 14
         OnClick = BAdddataClick
       end
       object BDeleteData: TButton
         Left = 188
-        Top = 305
+        Top = 353
         Width = 33
         Height = 25
         Caption = '<'
-        TabOrder = 13
+        TabOrder = 15
         OnClick = BDeleteDataClick
       end
       object LDatasets: TListBox
         Left = 236
-        Top = 272
-        Width = 193
+        Top = 320
+        Width = 214
         Height = 57
         Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
-        TabOrder = 14
+        TabOrder = 16
       end
       object ESearch: TEdit
         Left = 116
-        Top = 136
-        Width = 309
+        Top = 184
+        Width = 330
         Height = 21
         Hint = 'Description to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 9
+        TabOrder = 11
         Visible = False
         OnChange = EDescriptionChange
       end
@@ -265,7 +279,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object EHint: TEdit
         Left = 116
         Top = 112
-        Width = 309
+        Width = 330
         Height = 21
         Hint = 'Description to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
@@ -295,12 +309,12 @@ object FRpParamsVCL: TFRpParamsVCL
       end
       object GSearch: TGroupBox
         Left = 8
-        Top = 164
-        Width = 425
+        Top = 212
+        Width = 446
         Height = 73
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Search value'
-        TabOrder = 16
+        TabOrder = 18
         Visible = False
         object LSearchDataset: TLabel
           Left = 8
@@ -319,7 +333,7 @@ object FRpParamsVCL: TFRpParamsVCL
         object ComboSearchDataset: TComboBox
           Left = 132
           Top = 20
-          Width = 165
+          Width = 186
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
@@ -330,7 +344,7 @@ object FRpParamsVCL: TFRpParamsVCL
         object ComboSearchParam: TComboBox
           Left = 132
           Top = 44
-          Width = 165
+          Width = 186
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
@@ -339,21 +353,43 @@ object FRpParamsVCL: TFRpParamsVCL
           OnChange = EDescriptionChange
         end
       end
+      object EValidation: TEdit
+        Left = 116
+        Top = 136
+        Width = 330
+        Height = 21
+        Hint = 'Description to be show on the end user dialog'
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 9
+        Text = 'EDescription'
+        OnChange = EDescriptionChange
+      end
+      object EErrorMessage: TEdit
+        Left = 116
+        Top = 160
+        Width = 330
+        Height = 21
+        Hint = 'Description to be show on the end user dialog'
+        Anchors = [akLeft, akTop, akRight]
+        TabOrder = 10
+        Text = 'EDescription'
+        OnChange = EDescriptionChange
+      end
     end
   end
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 454
-    Height = 131
+    Width = 473
+    Height = 154
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object LParams: TListBox
       Left = 0
       Top = 28
-      Width = 358
-      Height = 103
+      Width = 377
+      Height = 126
       Align = alClient
       ItemHeight = 13
       TabOrder = 0
@@ -362,7 +398,7 @@ object FRpParamsVCL: TFRpParamsVCL
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 454
+      Width = 473
       Height = 28
       AutoSize = True
       ButtonHeight = 26
@@ -414,10 +450,10 @@ object FRpParamsVCL: TFRpParamsVCL
       end
     end
     object Panel3: TPanel
-      Left = 358
+      Left = 377
       Top = 28
       Width = 96
-      Height = 103
+      Height = 126
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2

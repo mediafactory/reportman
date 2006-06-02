@@ -78,7 +78,7 @@ type
    Fdpires:integer;
    FCopyMode:integer;
    FRotation:SmallInt;
-   FCachedImage:Boolean;
+   FCachedImage:TRpCachedImage;
    cachedpos:int64;
    procedure ReadStream(AStream:TStream);
    procedure WriteStream(AStream:TStream);
@@ -99,7 +99,6 @@ type
    function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
    property Stream:TMemoryStream read FStream write SetStream;
    property Expression:WideString read FExpression write FExpression;
-   property CachedImage:Boolean read FCachedImage write FCachedImage default false;
   published
    // Rotating bitmaps still not implemented
    property Rotation:smallint read FRotation write FRotation default 0;
@@ -107,6 +106,7 @@ type
     default rpDrawCrop;
    property dpires:integer read   Fdpires write Fdpires default DEfAULT_DPI;
    property CopyMode:integer read FCopyMode write FCopyMode default 10;
+   property CachedImage:TRpCachedImage read FCachedImage write FCachedImage default rpCachedNone;
   end;
 
 {$IFDEF USEINDY}
@@ -265,7 +265,7 @@ begin
     Exit;
    evaluator:=TRpBaseReport(GetReport).evaluator;
    Result:=evaluator.GetStreamFromExpression(Expression);
-   if CachedImage then
+   if CachedImage=rpCachedVariable then
    begin
     if Assigned(Result) then
     begin
@@ -323,7 +323,7 @@ begin
  if Not Assigned(FMStream) then
   exit;
  try
-  if CachedImage then
+  if CachedImage<>rpCachedNone then
   begin
    metafile.Pages[metafile.CurrentPage].NewImageObjectShared(aposy,aposx,
     PrintWidth,PrintHeight,Integer(CopyMode),Integer(DrawStyle),Integer(dpires),cachedpos,FMStream,false);

@@ -7,17 +7,19 @@
 <h2>Report Manager for Dot Net</h2>
 <h3><b>Basics</b></h3>
 <p>The dot net version of Report Manager is a translation from Delphi to C# of 
-  the reporting engine. The port to dot net is still uncomplete and requires still 
-  some work, but you can test it easily. A library is provided so you can link 
-  easily your reports with your application.</p>
-<p><strong>How it works now (while testing the port)</strong></p>
-<p>A single additional file is installed with the designer package for windows, 
-  the file is <strong>printreport.exe</strong>, this is a dot net program. In 
-  Linux Mono 1.1.13 runtime must be installed, in Microsoft Windows Dot Net runtime 
-  Framework 1.1 must be installed.</p>
-<p>When you select the dot net driver on database connections configuration, the 
-  designer, will call printreport.exe to show you data results in data configuration 
-  dialog, and to preview/print the report.</p>
+  the reporting engine. The port to dot net is near completion but requires still 
+  some work. Libraries are provided so you can link easily your reports with your 
+  application.</p>
+<p><strong>How it works</strong></p>
+<p>You use the designer, and select a dot net provider on database connection 
+  configuration dialog. After you do this, the designer will use the dot net version 
+  of the engine (Framework 1.1 or 2.0 depending on the selected provider). That 
+  is effectively executing the command <strong>printreport.exe</strong> inside 
+  the net or net2 folder inside designer folder. </p>
+<p>In Linux, Mono 1.1.13 or newer must be installed, in Microsoft Windows, Dot 
+  Net runtime Framework 1.1 or 2.0 must be installed depending on the selected 
+  provider. </p>
+<p><strong>Internals</strong></p>
 <p>The internal procedure is save the report in a temp file, as XML (see page 
   setup, prefered save format), then call printreport.exe with command line options 
   (-preview for example). That is when you preview or print, the printreport.exe 
@@ -31,8 +33,11 @@
   <li>Print preview and printout</li>
   <li>PDF output (not truetype support)</li>
   <li>Label, expression, image, drawing, barcode (partial)</li>
-  <li>Data providers: Odbc, OleDB, SQLServer, Firebird, SQLite,Sybase,PostgreSQL,IBM 
+  <li>Data providers 1.1: Odbc, OleDB, SQLServer, Firebird, SQLite,Sybase,PostgreSQL,IBM 
     DB2 (Linux),MySQL(Windows)</li>
+  <li>Data providers 2.0: Any registered provider, the library does not have any 
+    dependence on any data provider. See Framework documentation to know how to 
+    register database providers.</li>
 </ul>
 <p><strong>Missing parts</strong></p>
 <ul>
@@ -54,39 +59,31 @@
     when you use odbc.</li>
 </ul>
 <p><strong>Using the library</strong></p>
-<p>To use the library provided (reportmanlib.dll), you should include a reference 
-  to reportmanlib.dll in your project.</p>
+<p>To use the libraries provided, you should include a reference to them in your 
+  project.</p>
+<p>&nbsp;</p>
 <p>This is sample code to execute a report, a portion of the sample provided testinglib.exe.</p>
-<p>using Reportman;</p>
+using Reportman.Drawing;
+<br></br>
+using Reportman.Reporting; 
 <p> Report rp=new Reportman.Report();<br>
-  ReportReader rreader=new ReportReader(rp);<br>
-  rreader.LoadFromFile(EFile.Text);<br>
-  if (pdf.Checked)<br>
+  rp.LoadFromFile(EFile.Text);<br>
+  if (pdf)<br>
   {<br>
   rp.AsyncExecution=false;<br>
-  PrintOutPDF printpdf=new PrintOutPDF();<br>
-  printpdf.FileName=EPDFFile.Text;<br>
-  printpdf.Compressed=false;<br>
-  rp.BeginPrint(printpdf);<br>
-  printpdf.Print(rp.metafile);<br>
-  }<br>
-  else<br>
-  if (preview.Checked)<br>
-  {<br>
-  rp.AsyncExecution=true;<br>
-  Reportman.PreviewControl prc=new PreviewControl();<br>
-  prc.SetReport(rp);<br>
-  Reportman.PreviewWinForms prw=new PreviewWinForms();<br>
-  prw.PreviewReport(prc);<br>
+  PrintOutPDF printpdf = new PrintOutPDF();<br>
+  printpdf.FileName=pdffilename;<br>
+  printpdf.Compressed=compressedpdf;<br>
+  printpdf.Print(rp.MetaFile);<br>
   }<br>
   else<br>
   {<br>
-  rp.AsyncExecution=false;<br>
-  PrintOutWinForms printout=new PrintOutWinForms();<br>
-  printout.Preview=systempreview.Checked;<br>
-  printout.ShowPrintDialog=showprintdialog.Checked;<br>
-  rp.BeginPrint(printout);<br>
-  printout.Print(rp.metafile);<br>
+  rp.AsyncExecution=asyncexecution;<br>
+  PrintOutWinForms prw = new PrintOutWinForms();<br>
+  prw.Preview = preview;<br>
+  prw.SystemPreview=systempreview;<br>
+  prw.ShowPrintDialog=showprintdialog;<br>
+  prw.Print(rp.MetaFile);<br>
   }<br>
 </p>
 </body>

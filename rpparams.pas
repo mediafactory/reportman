@@ -53,6 +53,8 @@ type
     FLookupDataset:String;
     FSearchDataset:String;
     FSearchParam:String;
+    FValidation:WideString;
+    FErrorMessage:WideString;
     procedure SetVisible(AVisible:boolean);
     procedure SetIsReadOnly(AReadOnly:boolean);
     procedure SetNeverVisible(ANeverVisible:boolean);
@@ -60,14 +62,23 @@ type
     procedure SetName(AName:String);
     procedure SetValue(AValue:variant);
     procedure SetDescription(ADescription:widestring);
+    procedure SetErrorMessage(AMessage:widestring);
+    function GetErrorMessage:widestring;
+    procedure SetValidation(AValidation:widestring);
+    function GetDescription:widestring;
+    function GetHint:widestring;
     procedure SetHint(AHint:widestring);
     procedure SetSearch(ASearch:widestring);
     procedure SetParamType(AParamType:TRpParamType);
     procedure WriteDescription(Writer:TWriter);
+    procedure WriteErrorMessage(Writer:TWriter);
+    procedure WriteValidation(Writer:TWriter);
     procedure WriteHint(Writer:TWriter);
     procedure ReadSearch(Reader:TReader);
     procedure WriteSearch(Writer:TWriter);
     procedure ReadDescription(Reader:TReader);
+    procedure ReadErrorMessage(Reader:TReader);
+    procedure ReadValidation(Reader:TReader);
     procedure ReadHint(Reader:TReader);
     function GetAsString:WideString;
     procedure SetAsString(NewValue:WideString);
@@ -88,8 +99,13 @@ type
     function GetListValue:Variant;
     procedure UpdateLookup;
 {$ENDIF}
-    property Description:widestring read FDescription write SetDescription;
-    property Hint:widestring read FHint write SetHint;
+    property Description:widestring read GetDescription write SetDescription;
+    property Descriptions:widestring read FDescription write FDescription;
+    property Hint:widestring read GetHint write SetHint;
+    property Hints:widestring read FHint write FHint;
+    property Validation:widestring read FValidation write SetValidation;
+    property ErrorMessage:widestring read GetErrorMessage write SetErrorMessage;
+    property ErrorMessages:widestring read FErrorMessage write FErrorMessage;
     property Search:widestring read FSearch write SetSearch;
     property AsString:WideString read GetAsString write SetAsString;
     property MultiValue:String read GetMultiValue;
@@ -121,10 +137,12 @@ type
     function GetItem(Index:Integer):TRpParam;
     procedure SetItem(index:integer;Value:TRpParam);
    public
+    Language:integer;
     constructor Create(AOwner:TComponent);
     function Add(AName:String):TRpParam;
     function IndexOf(AName:String):integer;
     function FindParam(AName:string):TRpParam;
+    procedure Assign(Source:TPersistent);override;
     function ParamByName(AName:string):TRpParam;
 {$IFNDEF FORWEBAX}
     procedure UpdateLookup;
@@ -139,6 +157,7 @@ type
     procedure SetParams(avalue:TRpParamList);
    public
     constructor Create(AOwner:TComponent);override;
+
    published
     property Params:TRpParamList read FParams write
      SetParams;
@@ -184,6 +203,46 @@ begin
  FSelected:=TStringList.Create;
 end;
 
+function TRpParam.GetDescription:WideString;
+begin
+ Result:=GetLineLangByIndex(FDescription,TRpParamList(Collection).Language);
+end;
+
+function TRpParam.GetHint:WideString;
+begin
+ Result:=GetLineLangByIndex(FHint,TRpParamList(Collection).Language);
+end;
+
+procedure TRpParam.SetDescription(ADescription:WideString);
+begin
+ FDescription:=AddLineLangByIndex(FDescription,ADescription,TRpParamList(Collection).Language);
+ Changed(false);
+end;
+
+procedure TRpParam.SetHint(AHint:widestring);
+begin
+ FHint:=AddLineLangByIndex(FHint,AHint,TRpParamList(Collection).Language);
+ Changed(false);
+end;
+
+function TRpParam.GetErrorMessage:WideString;
+begin
+ Result:=GetLineLangByIndex(FErrorMessage,TRpParamList(Collection).Language);
+end;
+
+procedure TRpParam.SetErrorMessage(AMessage:widestring);
+begin
+ FErrorMessage:=AddLineLangByIndex(FErrorMessage,AMessage,TRpParamList(Collection).Language);
+ Changed(false);
+end;
+
+procedure TRpParam.SetValidation(AValidation:widestring);
+begin
+ FValidation:=AValidation;
+ Changed(false);
+end;
+
+
 procedure TRpParam.Assign(Source:TPersistent);
 begin
  if (Source is TRpParam) then
@@ -193,14 +252,16 @@ begin
   FNeverVisible:=TRpParam(Source).FNeverVisible;
   FIsReadOnly:=TRpParam(Source).FIsReadOnly;
   FAllowNulls:=TRpParam(Source).FAllowNulls;
-  FDescription:=TRpParam(Source).FDescription;
-  FHint:=TRpParam(Source).FHint;
+  Descriptions:=TRpParam(Source).Descriptions;
+  Hints:=TRpParam(Source).Hints;
   FSearch:=TRpParam(Source).FSearch;
   FSelected.Assign(TRpParam(Source).FSelected);
   FItems.Assign(TRpParam(Source).FItems);
   FValues.Assign(TRpParam(Source).FValues);
   FValue:=TRpParam(Source).FValue;
   FParamType:=TRpParam(Source).FParamType;
+  FValidation:=TRpParam(Source).FValidation;
+  ErrorMessages:=TRpParam(Source).ErrorMessages;
   if ParamType in [rpParamDate,rpParamDateTime,rpParamTime] then
   begin
    if Not VarIsNull(FValue) then
@@ -385,17 +446,7 @@ begin
  Changed(False);
 end;
 
-procedure TRpParam.SetDescription(ADescription:wideString);
-begin
- FDescription:=ADescription;
- Changed(false);
-end;
 
-procedure TRpParam.SetHint(AHint:widestring);
-begin
- FHint:=AHint;
- Changed(false);
-end;
 
 procedure TRpParam.SetSearch(ASearch:wideString);
 begin
@@ -558,9 +609,29 @@ begin
  WriteWideString(Writer, FDescription);
 end;
 
+procedure TRpParam.WriteErrorMessage(Writer:TWriter);
+begin
+ WriteWideString(Writer, FErrorMessage);
+end;
+
+procedure TRpParam.WriteValidation(Writer:TWriter);
+begin
+ WriteWideString(Writer, FValidation);
+end;
+
 procedure TRpParam.ReadDescription(Reader:TReader);
 begin
  FDescription:=ReadWideString(Reader);
+end;
+
+procedure TRpParam.ReadErrorMessage(Reader:TReader);
+begin
+ FErrorMessage:=ReadWideString(Reader);
+end;
+
+procedure TRpParam.ReadValidation(Reader:TReader);
+begin
+ FValidation:=ReadWideString(Reader);
 end;
 
 procedure TRpParam.WriteHint(Writer:TWriter);
@@ -590,6 +661,8 @@ begin
  Filer.DefineProperty('Description',ReadDescription,WriteDescription,True);
  Filer.DefineProperty('Hint',ReadHint,WriteHint,True);
  Filer.DefineProperty('Search',ReadSearch,WriteSearch,True);
+ Filer.DefineProperty('ErrorMessage',ReadErrorMessage,WriteErrorMessage,True);
+ Filer.DefineProperty('Validation',ReadValidation,WriteValidation,True);
 end;
 
 function TRpParam.GetAsString:WideString;
@@ -839,6 +912,13 @@ begin
   Result:=GetMultiValue
  else
   Result:=FValue;
+end;
+
+procedure TRpParamList.Assign(Source:TPersistent);
+begin
+ if Source is TRpParamList then
+  Language:=TRpParamList(Source).Language;
+ inherited Assign(Source);
 end;
 
 

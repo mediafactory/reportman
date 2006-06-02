@@ -93,7 +93,7 @@ type
    FGlobal:Boolean;
    FPageGroupCountList:TList;
    cachedpos:Int64;
-   FCachedImage:Boolean;
+   FCachedImage:TRpCachedImage;
    procedure SetReportComponents(Value:TRpCommonList);
    procedure SetGroupName(Value:string);
    procedure SetChangeExpression(Value:widestring);
@@ -169,7 +169,6 @@ type
    property IsExternal:Boolean read GetIsExternal;
    property BackExpression:WideString read FBackExpression write FBackExpression;
    property Stream:TMemoryStream read FStream write SetStream;
-   property CachedImage:Boolean read FCachedImage write FCachedImage default false;
   published
    property SubReport:TComponent read FSubReport write FSubReport;
    property GroupName:String read FGroupName write SetGroupName;
@@ -218,6 +217,7 @@ type
    property BackStyle:TrpBackStyle read FBackStyle write FBackStyle default baDesign;
    property DrawStyle:TRpImageDrawStyle read FDrawStyle write FDrawStyle
     default rpDrawFull;
+   property CachedImage:TRpCachedImage read FCachedImage write FCachedImage default rpCachedNone;
  end;
 
 
@@ -489,7 +489,7 @@ begin
   astream:=GetStream;
   if astream.Size>0 then
   begin
-   if CachedImage then
+   if CachedImage<>rpCachedNone then
    begin
     metafile.Pages[metafile.CurrentPage].NewImageObjectShared(aposy,aposx,
      PrintWidth,PrintHeight,10,Integer(FDrawStyle),Integer(dpires),cachedpos,aStream,BackStyle=baPreview);
@@ -1500,14 +1500,6 @@ end;
 function TRpSection.GetStream:TMemoryStream;
 var
  evaluator:TRpEvaluator;
- iden:TRpIdentifier;
- afield:TField;
- AStream:TStream;
- Size,readed: Longint;
- Header: TGraphicHeader;
- FMStream:TMemoryStream;
- aValue:Variant;
- afilename:TFilename;
 {$IFDEF DOTNETD}
  Temp:TBytes;
 {$ENDIF}
@@ -1521,7 +1513,7 @@ begin
     Exit;
    evaluator:=TRpBaseReport(GetReport).evaluator;
    Result:=evaluator.GetStreamFromExpression(BackExpression);
-   if CachedImage then
+   if CachedImage=rpCachedVariable then
    begin
     if Assigned(Result) then
     begin

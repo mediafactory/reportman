@@ -84,6 +84,10 @@ type
     MValues: TMemo;
     LLookup: TLabel;
     ComboLookup: TComboBox;
+    EErrorMessage: TEdit;
+    LErrorMessage: TLabel;
+    EValidation: TEdit;
+    LValidation: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -176,6 +180,10 @@ begin
  GValues.Caption:=SRpSParamListDesc;
  GSearch.Caption:=SRpValueSearch;
  LSearchDataset.Caption:=SrpSearchDataset;
+ LValidation.Caption:=TranslateStr(1401,LValidation.Caption);
+ LValidation.HInt:=TranslateStr(1402,LValidation.Hint);
+ LErrorMessage.Caption:=TranslateStr(1403,LErrorMessage.Caption);
+ LErrorMessage.Hint:=TranslateStr(1404,LErrorMessage.Hint);
 
  SetInitialBounds;
 end;
@@ -254,7 +262,9 @@ begin
   CheckAllowNulls.Checked:=param.AllowNulls;
    CheckNull.Checked:=param.Value=Null;
   EDescription.Text:=param.Description;
+  EValidation.Text:=param.Validation;
   EHint.Text:=param.Hint;
+  EErrorMessage.Text:=param.ErrorMessage;
   ESearch.Text:=param.Search;
   MValues.Lines.Assign(param.Values);
   MItems.Lines.Assign(param.Items);
@@ -408,6 +418,12 @@ begin
  param:=params.ParamByName(LParams.items.strings[LParams.ItemIndex]);
  if Sender=EDescription then
   param.Description:=EDescription.Text
+ else
+ if Sender=EErrorMessage then
+  param.ErrorMessage:=EErrorMessage.Text
+ else
+ if Sender=EValidation then
+  param.Validation:=EValidation.Text
  else
  if Sender=EHint then
   param.Hint:=EHint.Text

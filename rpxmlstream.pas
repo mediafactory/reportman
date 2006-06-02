@@ -102,6 +102,7 @@ begin
  WritePropertyS('REPORTGROUPSTABLE',dbinfo.ReportGroupsTable,Stream);
  WritePropertyW('ADOCONNECTIONSTRING',dbinfo.ADOConnectionString,Stream);
  WritePropertyI('DOTNETDRIVER',dbinfo.DotNetDriver,Stream);
+ WritePropertyS('PROVIDERFACTORY',dbinfo.ProviderFactory,Stream);
 
 end;
 
@@ -188,8 +189,10 @@ end;
 procedure WriteParamXML(aparam:TRpParam;Stream:TStream);
 begin
  WritePropertyS('NAME',aparam.Name,Stream);
- WritePropertyW('DESCRIPTION',aparam.Description,Stream);
- WritePropertyW('HINT',aparam.Hint,Stream);
+ WritePropertyW('DESCRIPTION',aparam.Descriptions,Stream);
+ WritePropertyW('HINT',aparam.Hints,Stream);
+ WritePropertyW('ERRORMESSAGE',aparam.ErrorMessage,Stream);
+ WritePropertyW('VALIDATION',aparam.Validation,Stream);
  WritePropertyW('SEARCH',aparam.Search,Stream);
  WritePropertyBool('VISIBLE',aparam.Visible,Stream);
  WritePropertyBool('ISREADONLY',aparam.IsReadOnly,Stream);
@@ -295,7 +298,7 @@ begin
  WritePropertyBool('ININUMPAGE',section.IniNumPage,Stream);
  WritePropertyBool('GLOBAL',section.Global,Stream);
  WritePropertyI('DPIRES',section.dpires,Stream);
- WritePropertyBool('CACHEDIMAGE',section.CachedImage,Stream);
+ WritePropertyI('CACHEDIMAGE',Integer(section.CachedImage),Stream);
  WritePropertyI('BACKSTYLE',Integer(section.BackStyle),Stream);
  WritePropertyI('DRAWSTYLE',Integer(section.DrawStyle),Stream);
  if assigned(section.Stream) then
@@ -426,7 +429,7 @@ begin
   WritePropertyI('DRAWSTYLE',Integer(compi.DrawStyle),Stream);
   WritePropertyI('DPIRES',compi.dpires,Stream);
   WritePropertyI('COPYMODE',compi.CopyMode,Stream);
-  WritePropertyBool('CACHEDIMAGE',compi.CachedImage,Stream);
+  WritePropertyI('CACHEDIMAGE',Integer(compi.CachedImage),Stream);
  end
  else
  // TRpChart
@@ -883,6 +886,9 @@ begin
  if propname='DOTNETDRIVER' then
   dbitem.DotNetDriver:=StrToInt(propvalue)
  else
+ if propname='PROVIDERFACTORY' then
+  dbitem.ProviderFactory:=RpStringToString(propvalue)
+ else
  if propname='REPORTTABLE' then
   dbitem.ReportTable:=RpStringToString(propvalue)
  else
@@ -1032,7 +1038,7 @@ begin
   sec.DPIRes:=StrToInt(propvalue)
  else
  if propname='CACHEDIMAGE' then
-  sec.CachedImage:=RpStrToBool(propvalue)
+  sec.CachedImage:=TrpCachedImage(StrToInt(propvalue))
  else
  if propname='BACKSTYLE' then
   sec.BackStyle:=TRpBackStyle(StrToInt(propvalue))
@@ -1119,10 +1125,16 @@ procedure ReadPropParam(aparam:TRpParam;
  propname,propvalue,proptype,propsize:string);
 begin
  if propname='DESCRIPTION' then
-  aparam.Description:=RpStringToWString(propvalue)
+  aparam.Descriptions:=RpStringToWString(propvalue)
  else
  if propname='HINT' then
-  aparam.Hint:=RpStringToWString(propvalue)
+  aparam.Hints:=RpStringToWString(propvalue)
+ else
+ if propname='ERRORMESSAGE' then
+  aparam.ErrorMessages:=RpStringToWString(propvalue)
+ else
+ if propname='VALIDATION' then
+  aparam.Validation:=RpStringToWString(propvalue)
  else
  if propname='SEARCH' then
   aparam.Search:=RpStringToWString(propvalue)
@@ -1583,7 +1595,7 @@ begin
    compi.DPIRes:=StrToInt(propvalue)
   else
   if propname='CACHEDIMAGE' then
-   compi.CachedImage:=RpStrToBool(propvalue)
+   compi.CachedImage:=TrpCachedImage(StrToInt(propvalue))
   else
   if propname='COPYMODE' then
    compi.CopyMode:=StrToInt(propvalue);

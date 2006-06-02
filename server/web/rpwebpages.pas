@@ -9,7 +9,7 @@ uses SysUtils,Classes,HTTPApp,rpmdconsts,Inifiles,rpalias,
  Windows,FileCtrl,asptlb,
 {$ENDIF}
  rpmdshfolder,rptypes,rpreport,rppdfdriver,rpparams,rptextdriver,rpsvgdriver,
- rpcsvdriver,
+ rpcsvdriver,rpdatainfo,
 {$IFDEF USEVARIANTS}
  Variants,
 {$ENDIF}
@@ -58,6 +58,7 @@ type
    loginpage:string;
    indexpage:string;
    showaliaspage:string;
+   showerrorpage:string;
    paramspage:string;
    isadmin:boolean;
    FRpAliasLibs:TRpAlias;
@@ -253,6 +254,8 @@ var
  astring:string;
  atemp:string;
  i:integer;
+ ConAdmin:TRpConnAdmin;
+ memstream:TMemoryStream;
 begin
  try
   CheckInitReaded;
@@ -263,21 +266,52 @@ begin
     begin
      astring:='<html><body>'+TranslateStr(837,'Report Manager Web Server')+#10+
       '<p></p>'+TranslateStr(91,'Version')+' '+RM_VERSION+#10+'<p></p>'+
-      TranslateStr(743,'Configuration File')+': '+Ffilenameconfig;
+      TranslateStr(743,'Configuration File')+': '+HtmlEncode(Ffilenameconfig);
      if Length(FLogFileName)>0 then
-      astring:=astring+'<p>Log File:'+FLogFileName+'</p>';
+      astring:=astring+'<p>Log File:'+HtmlEncode(FLogFileName)+'</p>';
 
      if Length(LogFileErrorMessage)>0 then
      begin
-      astring:=astring+'<p>'+LogFileErrorMessage+'</p>';
+      astring:=astring+'<p>'+HtmlEncode(LogFileErrorMessage)+'</p>';
      end;
      // Configuration
-     astring:=astring+'<p>[CONFIG]PAGESDIR='+FPagesDirectory+'</p>';
-     astring:=astring+'<p>Configured libs:'+ThousandSeparator;
+     astring:=astring+'<p>[CONFIG]PAGESDIR='+HtmlEncode(FPagesDirectory)+'</p>';
+     astring:=astring+'<p>Configured libs:<br/>';
      // Configured libs
      for i:=0 to FRpAliasLibs.Connections.Count-1 do
      begin
-      astring:=astring+'|'+FRpAliasLibs.Connections.Items[i].Alias;
+      astring:=astring+HtmlEncode(FRpAliasLibs.Connections.Items[i].Alias)+'<br/>';
+     end;
+     astring:=astring+'</p>';
+     try
+      ConAdmin:=TRpConnAdmin.Create;
+      try
+       astring:=astring+'<p>[DBXCONNECTIONS]='+
+        HtmlEncode(ConAdmin.configfilename)+'</p>';
+       try
+        memstream:=TMemoryStream.Create;
+        try
+         memstream.LoadFromFile(ConAdmin.configfilename);
+        finally
+         memstream.free;
+        end;
+        astring:=astring+'<p>DBXConnections accessibility ok'+'</p>';
+       except
+        On E:Exception do
+        begin
+         astring:=astring+'<p>DBXConnections accessibility error:'+
+          HtmlEncode(E.Message)+'</p>';
+        end;
+       end;
+      finally
+       ConAdmin.Free;
+      end;
+     except
+      on E:Exception do
+      begin
+       astring:=astring+'<p><b>DBXConnections accessibility error:'+
+        HtmlEncode(E.Message)+'</b></p>';
+      end;
      end;
      astring:=astring+'</p>';
      astring:=astring+'<p>Decimal separator:'+DecimalSeparator+'</p>';
@@ -335,8 +369,22 @@ begin
 end;
 
 function TRpWebPageLoader.GenerateError(errmessage:String):string;
+var
+ astring:String;
 begin
- Result:='Error: '+errmessage;
+ if Length(FPagesDirectory)<1 then
+ begin
+  astring:=showerrorpage;
+ end
+ else
+ begin
+  aresult.LoadFromFile(FPagesDirectory+'rperror.html');
+  astring:=aresult.Text;
+ end;
+ astring:=StringReplace(astring,'ReportManagerErrorLabel',
+  errmessage,[rfReplaceAll]);
+
+ Result:=astring;
 end;
 
 constructor TRpWebPageLoader.Create(AOwner:TComponent);
@@ -420,9 +468,21 @@ begin
  aresult.Add('<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">');
  aresult.Add('</head>');
  aresult.Add('<body bgcolor="#FFFFFF">');
+ aresult.Add('<h3 align="center">ReportManagerErrorLabel</h3>');
+ aresult.Add('</body>');
+ aresult.Add('</html>');
+ showerrorpage:=aresult.text;
+
+ aresult.clear;
+ aresult.Add('<html>');
+ aresult.Add('<head>');
+ aresult.Add('<title>RepManWebServer</title>');
+ aresult.Add('<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">');
+ aresult.Add('</head>');
+ aresult.Add('<body bgcolor="#FFFFFF">');
  aresult.Add('<h2>ReportTitleLocation<h2>');
  aresult.Add('<p><h3 align="center">ReportManagerParamsLabel</h3></p>');
- aresult.Add('<form method="get" action="./execute.pdf">');
+ aresult.Add('<form method="get" name="fparams" id="fparams" action="./execute.pdf">');
  aresult.Add('ReportHiddenLocation');
  aresult.Add('<p>ReportsParamsTableLocation</p>');
  aresult.Add('<p>');
@@ -669,7 +729,7 @@ begin
  end;
 end;
 
-// returns emptystring
+// returns empty string if no parameters in the report
 function TRpWebPageLoader.LoadParamsPage(Request: TWebRequest):string;
 var
  pdfreport:TRpReport;
@@ -680,6 +740,7 @@ var
  aparamstring:String;
  aparam:TRpParam;
  multisize:integer;
+ prevvalue,tofocus:string;
 begin
  aliasname:=Request.QueryFields.Values['aliasname'];
  reportname:=Request.QueryFields.Values['reportname'];
@@ -690,6 +751,9 @@ begin
   if Length(aliasname)>0 then
   begin
    LoadReport(pdfreport,aliasname,reportname);
+   // Assign language
+   if Length(Request.QueryFields.Values['LANGUAGE'])>0 then
+    pdfreport.Language:=StrToInt(Request.QueryFields.Values['LANGUAGE']);
    pdfreport.Params.UpdateLookup;
    // Count visible parameters
    visibleparam:=false;
@@ -747,6 +811,9 @@ begin
      aparam:=pdfreport.Params.Items[i];
      if ((aparam.Visible) and (not aparam.NeverVisible))  then
      begin
+      prevvalue:=Request.ContentFields.Values['Param'+aparam.Name];
+      if Length(prevvalue)<1 then
+       prevvalue:=Request.QueryFields.Values['Param'+aparam.Name];
       aparamstring:=aparamstring+'<tr>'+#10+
        '<td>'+HtmlEncode(aparam.Description)+'</td>'+#10+
        '<td>'+#10;
@@ -754,7 +821,7 @@ begin
        rpParamBool:
         begin
          aparamstring:=aparamstring+
-          '<select name="Param'+aparam.Name+'" ';
+          '<select name="Param'+aparam.Name+'" id="Param'+aparam.Name+'" ';
          if Length(aparam.Hint)>0 then
           aparamstring:=aparamstring+' alt="'+HtmlEncode(aparam.Hint)+'" ';
          if aparam.IsReadOnly then
@@ -762,6 +829,14 @@ begin
          aparamstring:=aparamstring+'>'+#10;
          aparamstring:=aparamstring+'<option value="'+
            BoolToStr(false,true)+'" ';
+         // Check if it's a post back
+         if Length(prevvalue)=0 then
+         begin
+          if prevvalue=BoolToStr(true,true) then
+           aparam.Value:=true
+          else
+           aparam.Value:=false;
+         end;
          if Not VarIsNull(aparam.Value) then
           if Not aparam.Value then
            aparamstring:=aparamstring+' selected ';
@@ -779,8 +854,13 @@ begin
         end;
        rpParamMultiple:
         begin
+         // Check if it's a post back
+         if Length(prevvalue)=0 then
+         begin
+          aparam.Value:=StrToInt(prevvalue);
+         end;
          aparamstring:=aparamstring+'<select name="Param'+
-          aparam.Name+'" ';
+          aparam.Name+'" id="Param'+aparam.Name+'" ';
          aparamstring:=aparamstring+' multiple ';
          if Length(aparam.Hint)>0 then
            aparamstring:=aparamstring+' alt="'+HtmlEncode(aparam.Hint)+'" ';
@@ -803,8 +883,13 @@ begin
         end;
        rpParamList:
         begin
+         // Check if it's a post back
+         if Length(prevvalue)=0 then
+         begin
+          aparam.Value:=StrToInt(prevvalue);
+         end;
          aparamstring:=aparamstring+'<select name="Param'+
-          aparam.Name+'" ';
+          aparam.Name+'" id="Param'+aparam.Name+'" ';
          if Length(aparam.Hint)>0 then
            aparamstring:=aparamstring+' alt="'+HtmlEncode(aparam.Hint)+'" ';
          if aparam.Isreadonly then
@@ -832,15 +917,18 @@ begin
         end;
        else
        begin
+        // Check if it's a post back
+        if Length(prevvalue)=0 then
+         prevvalue:=aparam.AsString;
         aparamstring:=aparamstring+
          '<input type="text" name="Param'+
-         aparam.Name+'" ';
+         aparam.Name+'" id="Param'+aparam.Name+'" ';
         if Length(aparam.Hint)>0 then
          aparamstring:=aparamstring+' alt="'+HtmlEncode(aparam.Hint)+'" ';
         if aparam.IsReadOnly then
          aparamstring:=aparamstring+' readonly '+#10;
         aparamstring:=aparamstring+
-         ' value="'+HtmlEncode(aparam.AsString)+'">';
+         ' value="'+HtmlEncode(prevvalue)+'">';
        end;
       end;
       aparamstring:=aparamstring+'</td>'+#10;
@@ -870,6 +958,24 @@ begin
     </tr>
 }    end;
     end;
+    if Length(Request.QueryFields.Values['ERROR_MESSAGE'])>0 then
+    begin
+     aparamstring:=aparamstring+'<tr>'+
+      '<td  colspan="2"><b>'+HtmlEncode(Request.QueryFields.Values['ERROR_MESSAGE'])
+      +'</b></td><tr>';
+    end;
+    tofocus:=Request.QueryFields.Values['ERROR_PARAM'];
+    if Length(tofocus)>0 then
+    begin
+      aparamstring:=aparamstring+
+       '<script type="text/javascript">'+#10+
+       '<!--'+#10+
+       ' document.fparams.'+tofocus+'.focus();'+#10+
+//       ' document.fparams.'+tofocus+'.scrollIntoView();'+#10+
+       '// -->'+#10+
+       '</script>'+#10;
+    end;
+
     aparamstring:=aparamstring+
      '</table>'+#10;
     // Insert the params table
@@ -893,15 +999,20 @@ var
  dometafile:boolean;
  dosvg,dotxt,docsv:Boolean;
  i,index,pageindex,k:integer;
+ aname:string;
  paramisnull:boolean;
  adriver:TRpPDFDriver;
  param:TRpParam;
+ checkparamname,checkamessage:string;
+ doexit:boolean;
+ separator,textdriver:string;
 begin
  CheckLogin(Request);
  dometafile:=false;
  docsv:=false;
  dosvg:=false;
  dotxt:=false;
+ doexit:=false;
  username:=UpperCase(Request.QueryFields.Values['username']);
  reportname:='';
  try
@@ -910,6 +1021,8 @@ begin
   pdfreport:=CreateReport;
   try
    LoadReport(pdfreport,aliasname,reportname);
+   if Length(Request.QueryFields.Values['LANGUAGE'])>0 then
+    pdfreport.Language:=StrToInt(Request.QueryFields.Values['LANGUAGE']);
    pdfreport.Params.UpdateLookup;
    // Assigns parameters to the report
    for i:=0 to Request.QueryFields.Count-1 do
@@ -919,39 +1032,54 @@ begin
      paramname:=Copy(Request.QueryFields.Names[i],6,Length(Request.QueryFields.Names[i]));
      paramvalue:=Request.QueryFields.Values[Request.QueryFields.Names[i]];
      paramisnull:=false;
-     index:=Request.QueryFields.IndexOfName('NULLParam'+paramname);
-     if index>=0 then
-     begin
-      if Request.QueryFields.Values[Request.QueryFields.Names[index]]='NULL' then
-       paramisnull:=True;
-     end;
-     param:=pdfreport.Params.ParamByName(paramname);
-     if param.ParamType=rpParamMultiple then
-     begin
-      param.Selected.Clear;
-      for k:=0 to Request.QueryFields.Count-1 do
+     // Check for error assigning parameters
+     try
+      index:=Request.QueryFields.IndexOfName('NULLParam'+paramname);
+      if index>=0 then
       begin
-       if Request.QueryFields.Names[k]='Param'+paramname then
-       begin
-        index:=StrToInt(Request.QueryFields.ValueFromIndex[k]);
-        if index<param.Values.Count then
-         param.Selected.Add(IntToStr(Index));
-       end;
+       if Request.QueryFields.Values[Request.QueryFields.Names[index]]='NULL' then
+        paramisnull:=True;
       end;
-     end
-     else
-     if paramisnull then
-      param.Value:=Null
-     else
-     begin
-      // Assign the parameter as a string
-      if param.ParamType=rpParamList then
+      param:=pdfreport.Params.ParamByName(paramname);
+      if param.ParamType=rpParamMultiple then
       begin
-//       param.Value:=StrToInt(paramvalue);
-       param.Value:=param.Values.Strings[StrToInt(paramvalue)];
+       param.Selected.Clear;
+       for k:=0 to Request.QueryFields.Count-1 do
+       begin
+        if Request.QueryFields.Names[k]='Param'+paramname then
+        begin
+         aname:=Request.QueryFields.Names[k];
+         index:=StrToInt(Request.QueryFields.Values[aname]);
+         if index<param.Values.Count then
+          param.Selected.Add(IntToStr(Index));
+        end;
+       end;
       end
       else
-       param.AsString:=paramvalue;
+      if paramisnull then
+       param.Value:=Null
+      else
+      begin
+       // Assign the parameter as a string
+       if param.ParamType=rpParamList then
+       begin
+ //       param.Value:=StrToInt(paramvalue);
+        param.Value:=param.Values.Strings[StrToInt(paramvalue)];
+       end
+       else
+       begin
+        param.AsString:=paramvalue;
+       end;
+      end;
+     except
+      On E:Exception do
+      begin
+       Request.QueryFields.Values['ERROR_MESSAGE']:=E.Message;
+       Request.QueryFields.Values['ERROR_PARAM']:='Param'+paramname;
+       Response.Content:=LoadParamsPage(Request);
+       doexit:=true;
+       break;;
+      end;
      end;
     end;
     if Uppercase(Request.QueryFields.Names[i])='METAFILE' then
@@ -962,97 +1090,119 @@ begin
      dosvg:=Request.QueryFields.Values['METAFILE']='4';
     end;
    end;
+   if doexit then
+    exit;
    // Assigns pusername param if exists
    index:=pdfreport.Params.IndexOf('PUSERNAME');
    if index>=0 then
     pdfreport.Params.ParamByName('PUSERNAME').Value:=username;
+   // Check parameter values, if error show error on
+   // Parameters page
+   if not pdfreport.CheckParameters(pdfreport.Params,checkparamname,checkamessage) then
+   begin
+    Request.QueryFields.Values['ERROR_MESSAGE']:=checkamessage;
+    Request.QueryFields.Values['ERROR_PARAM']:='Param'+checkparamname;
+    Response.Content:=LoadParamsPage(Request);
+    exit;
+   end;
    astream:=TMemoryStream.Create;
-   astream.Clear;
-   if dometafile then
-   begin
+   try
+    astream.Clear;
+    if dometafile then
+    begin
 {$IFDEF FORCECONSOLE}
-    rppdfdriver.PrintReportMetafileStream(pdfreport,'',false,true,1,9999,1,
-     astream,true,false);
+     rppdfdriver.PrintReportMetafileStream(pdfreport,'',false,true,1,9999,1,
+      astream,true,false);
 {$ENDIF}
 {$IFNDEF FORCECONSOLE}
  {$IFDEF MSWINDOWS}
-    rpgdidriver.ExportReportToPDFMetaStream(pdfreport,'',
-     false,true,1,9999,1,false,astream,true,false,true);
+     rpgdidriver.ExportReportToPDFMetaStream(pdfreport,'',
+      false,true,1,9999,1,false,astream,true,false,true);
  {$ENDIF}
  {$IFDEF LINUX}
-    rpqtdriver.ExportReportToPDFMetaStream(pdfreport,'',
-     false,true,1,9999,1,false,astream,true,false,true);
+     rpqtdriver.ExportReportToPDFMetaStream(pdfreport,'',
+      false,true,1,9999,1,false,astream,true,false,true);
  {$ENDIF}
 {$ENDIF}
-    Response.Content:='Executed, size:'+IntToStr(astream.size);
-    Response.ContentType := 'application/rpmf';
-    astream.Seek(0,soFromBeginning);
-    Response.ContentStream:=astream;
-    WriteLog(reportname+' Executed Metafile');
-   end
-   else
-   if dotxt then
-   begin
-    rptextdriver.PrintReportToStream(pdfreport,'',false,true,1,9999,1,
-     astream,true,Request.QueryFields.Values['OEMCONVERT']='1','PLAIN');
-    Response.Content:='Executed, size:'+IntToStr(astream.size);
-    Response.ContentType := 'text/plain';
-    astream.Seek(0,soFromBeginning);
-    Response.ContentStream:=astream;
-    WriteLog(reportname+' Executed Text');
-   end
-   else
-   if docsv then
-   begin
-    adriver:=TRpPdfDriver.Create;
-    pdfreport.TwoPass:=true;
-    pdfreport.PrintAll(adriver);
-    rpcsvdriver.ExportMetafileToCSVStream(pdfreport.metafile,
-     astream,false,true,1,MAX_PAGECOUNT,',');
-    Response.Content:='Executed, size:'+IntToStr(astream.size);
-    Response.ContentType := 'text/plain';
-    astream.Seek(0,soFromBeginning);
-    Response.ContentStream:=astream;
-    WriteLog(reportname+' Executed CSV');
-   end
-   else
-   if dosvg then
-   begin
-    adriver:=TRpPdfDriver.Create;
-    pdfreport.TwoPass:=true;
-    pdfreport.PrintAll(adriver);
-    if Request.QueryFields.Values['PAGEINDEX']='' then
-     pageindex:=1
+     Response.Content:='Executed, size:'+IntToStr(astream.size);
+     Response.ContentType := 'application/rpmf';
+     astream.Seek(0,soFromBeginning);
+     Response.ContentStream:=astream;
+     WriteLog(reportname+' Executed Metafile');
+    end
     else
-     pageindex:=StrToInt(Request.QueryFields.Values['PAGEINDEX']);
-    rpsvgdriver.MetafilePageToSVG(pdfreport.metafile,pageindex,astream,'','');
-    Response.Content:='Executed, size:'+IntToStr(astream.size);
-    Response.ContentType := 'application/svg';
-    astream.Seek(0,soFromBeginning);
-    Response.ContentStream:=astream;
-    WriteLog(reportname+' Executed SVG');
-   end
-   else
-   begin
+    if dotxt then
+    begin
+     textdriver:='PLAIN';
+     if Length(Request.QueryFields.Values['TEXTDRIVER'])>0 then
+      textdriver:=Request.QueryFields.Values['TEXTDRIVER'];
+     rptextdriver.PrintReportToStream(pdfreport,'',false,true,1,9999,1,
+      astream,true,Request.QueryFields.Values['OEMCONVERT']='1',textdriver);
+     Response.Content:='Executed, size:'+IntToStr(astream.size);
+     Response.ContentType := 'text/plain';
+     astream.Seek(0,soFromBeginning);
+     Response.ContentStream:=astream;
+     WriteLog(reportname+' Executed Text');
+    end
+    else
+    if docsv then
+    begin
+     separator:=',';
+     if Length(Request.QueryFields.Values['SEPARATOR'])>0 then
+      separator:=Request.QueryFields.Values['SEPARATOR'];
+     adriver:=TRpPdfDriver.Create;
+     pdfreport.TwoPass:=true;
+     pdfreport.PrintAll(adriver);
+     rpcsvdriver.ExportMetafileToCSVStream(pdfreport.metafile,
+      astream,false,true,1,MAX_PAGECOUNT,separator);
+     Response.Content:='Executed, size:'+IntToStr(astream.size);
+     Response.ContentType := 'text/plain';
+     astream.Seek(0,soFromBeginning);
+     Response.ContentStream:=astream;
+     WriteLog(reportname+' Executed CSV');
+    end
+    else
+    if dosvg then
+    begin
+     adriver:=TRpPdfDriver.Create;
+     pdfreport.TwoPass:=true;
+     pdfreport.PrintAll(adriver);
+     if Request.QueryFields.Values['PAGEINDEX']='' then
+      pageindex:=1
+     else
+      pageindex:=StrToInt(Request.QueryFields.Values['PAGEINDEX']);
+     rpsvgdriver.MetafilePageToSVG(pdfreport.metafile,pageindex,astream,'','');
+     Response.Content:='Executed, size:'+IntToStr(astream.size);
+     Response.ContentType := 'application/svg';
+     astream.Seek(0,soFromBeginning);
+     Response.ContentStream:=astream;
+     WriteLog(reportname+' Executed SVG');
+    end
+    else
+    begin
 {$IFDEF FORCECONSOLE}
-    rppdfdriver.PrintReportPDFStream(pdfreport,'',false,true,1,9999,1,
-     astream,true,false);
+     rppdfdriver.PrintReportPDFStream(pdfreport,'',false,true,1,9999,1,
+      astream,true,false);
 {$ENDIF}
 {$IFNDEF FORCECONSOLE}
  {$IFDEF MSWINDOWS}
-    rpgdidriver.ExportReportToPDFMetaStream(pdfreport,'',
-     false,true,1,9999,1,false,astream,true,false,false);
+     rpgdidriver.ExportReportToPDFMetaStream(pdfreport,'',
+      false,true,1,9999,1,false,astream,true,false,false);
  {$ENDIF}
  {$IFDEF LINUX}
-    rpqtdriver.ExportReportToPDFMetaStream(pdfreport,'',
-     false,true,1,9999,1,false,astream,true,false,false);
+     rpqtdriver.ExportReportToPDFMetaStream(pdfreport,'',
+      false,true,1,9999,1,false,astream,true,false,false);
  {$ENDIF}
 {$ENDIF}
-    astream.Seek(0,soFromBeginning);
-    Response.Content:='Executed, size:'+IntToStr(astream.size);
-    Response.ContentType := 'application/pdf';
-    Response.ContentStream:=astream;
-    WriteLog(reportname+' Executed PDF');
+     astream.Seek(0,soFromBeginning);
+     Response.Content:='Executed, size:'+IntToStr(astream.size);
+     Response.ContentType := 'application/pdf';
+     Response.ContentStream:=astream;
+     WriteLog(reportname+' Executed PDF');
+    end;
+   except
+    astream.free;
+    raise;
    end;
   finally
    pdfreport.Free;

@@ -83,7 +83,7 @@ const
 {$ENDIF}
 type
  TRpDbDriver=(rpdatadbexpress,rpdatamybase,rpdataibx,
-  rpdatabde,rpdataado,rpdataibo,rpdatazeos,rpdatadriver);
+  rpdatabde,rpdataado,rpdataibo,rpdatazeos,rpdatadriver,rpdotnet2driver);
 
 
  TRpConnAdmin=class(TObject)
@@ -180,6 +180,7 @@ type
     procedure DefineProperties(Filer:TFiler);override;
   public
    DotNetDriver:integer;
+   ProviderFactory:string;
    procedure UpdateConAdmin;
    procedure Assign(Source:TPersistent);override;
    destructor Destroy;override;
@@ -382,6 +383,7 @@ procedure FillFieldsInfo(adata:TDataset;fieldnames,fieldtypes,fieldsizes:TString
 function ExtractFieldNameEx(astring:String):string;
 function EncodeADOPassword(astring:String):String;
 procedure GetDotNetDrivers(alist:TStrings);
+procedure GetDotNet2Drivers(alist:TStrings);
 
 implementation
 
@@ -390,7 +392,7 @@ uses
 {$IFDEF USEBDE}
  rpeval,
 {$ENDIF}
- rpreport;
+ rpreport,rpbasereport;
 
 
 const
@@ -854,6 +856,7 @@ begin
   FReportSearchField:=TRpDatabaseInfoItem(Source).FReportSearchField;
   FReportGroupsTable:=TRpDatabaseInfoItem(Source).FReportGroupsTable;
   DotNetDriver:=TRpDatabaseInfoItem(Source).DotNetDriver;
+  ProviderFactory:=TRpDatabaseInfoItem(Source).ProviderFactory;
  end
  else
   inherited Assign(Source);
@@ -975,6 +978,9 @@ var
  conname:string;
  index:integer;
  alist:TStringList;
+{$IFDEF USEADO}
+ report:TRpBasereport;
+{$ENDIF}
 {$IFDEF USESQLEXPRESS}
  funcname,drivername,vendorlib,libraryname:string;
 {$ENDIF}
@@ -1275,7 +1281,11 @@ begin
     if Not Assigned(FProvidedADOCOnnection) then
     begin
      ADOConnection.Mode:=cmRead;
-     ADOConnection.ConnectionString:=ADOConnectionString;
+     report:=TRpDataInfoList(Collection).FReport As TRpbASEReport;
+     if report.Params.IndexOf('ADOCONNECTIONSTRING')>=0 then
+      ADOConnection.ConnectionString:=report.Params.ParamByName('ADOCONNECTIONSTRING').AsString
+     else
+      ADOConnection.ConnectionString:=ADOConnectionString;
      ADOConnection.LoginPrompt:=LoginPrompt;
      ADOConnection.Connected:=true;
     end
@@ -2569,6 +2579,74 @@ begin
      SysUtils.DeleteFile(tmpfile);
     end;
    end;
+  rpdotnet2driver:
+   begin
+    tmpfile:=RpTempFileName;
+    alist:=TStringList.Create;
+    try
+     astring:=RpTempFileName;
+     report.StreamFormat:=rpStreamXML;
+     report.SaveToFile(astring);
+{$IFDEF LINUX}
+     aparams:=TStringList.Create;
+     try
+        aparams.Add('mono');
+        aparams.Add(ExtractFilePath(ParamStr(0))+'printreport2.exe');
+        aparams.Add('-deletereport');
+        aparams.Add('-showfields');
+        aparams.Add(Alias);
+        aparams.Add(tmpfile);
+        aparams.Add(astring);
+        ExecuteSystemApp(aparams,true);
+     finally
+        aparams.free;
+     end;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+     linecount:='';
+     with startinfo do
+     begin
+      cb:=sizeof(startinfo);
+      lpReserved:=nil;
+      lpDesktop:=nil;
+      lpTitle:=PChar('Report manager');
+      dwX:=0;
+      dwY:=0;
+      dwXSize:=400;
+      dwYSize:=400;
+      dwXCountChars:=80;
+      dwYCountChars:=25;
+      dwFillAttribute:=FOREGROUND_RED or BACKGROUND_RED or BACKGROUND_GREEN or BACKGROUND_BLUe;
+      dwFlags:=STARTF_USECOUNTCHARS or STARTF_USESHOWWINDOW;
+      cbReserved2:=0;
+      lpreserved2:=nil;
+     end;
+
+     FExename:=ExtractFilePath(ParamStr(0))+'printreport2.exe';
+     FCommandLine:=' -deletereport -showfields '+Alias+' "'+tmpfile+'" "'+
+      astring+'"';
+     if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,
+     startinfo,procesinfo) then
+      RaiseLastOSError;
+     WaitForSingleObject(procesinfo.hProcess,60000);
+{$ENDIF}
+     alist.LoadFromFile(tmpfile);
+     i:=0;
+     while i<alist.Count do
+     begin
+      fieldlist.Add(alist.Strings[i]);
+      fieldtypes.Add(alist.Strings[i+1]);
+      if alist.Strings[i+2]<>'-1' then
+       fieldsizes.Add(alist.Strings[i+2])
+      else
+       fieldsizes.Add('');
+      i:=i+3;
+     end;
+    finally
+     alist.free;
+     SysUtils.DeleteFile(tmpfile);
+    end;
+   end;
   else
   begin
     report.PrepareParamsBeforeOpen;
@@ -2659,6 +2737,10 @@ begin
   rpdatadriver:
    begin
     Raise Exception.Create(SRpDriverNotSupported+' -  Dot net ');
+   end;
+  rpdotnet2driver:
+   begin
+    Raise Exception.Create(SRpDriverNotSupported+' -  Dot net 2');
    end;
  end;
 end;
@@ -3025,6 +3107,7 @@ begin
  alist.Add('Interbase Objects');
  alist.Add('Zeos Database Objects');
  alist.Add('Dot Net Connection');
+ alist.Add('Dot Net 2 Connection');
 end;
 
 
@@ -3974,6 +4057,67 @@ begin
  alist.Add('Sybase');
  alist.Add('SQL Server CE');
 end;
+
+procedure GetDotNet2Drivers(alist:TStrings);
+var
+ tmpfile:string;
+{$IFDEF LINUX}
+ aparams:TStringList;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+ startinfo:TStartupinfo;
+ linecount:string;
+ FExename,FCommandLine:string;
+ procesinfo:TProcessInformation;
+{$ENDIF}
+begin
+ tmpfile:=RpTempFileName;
+ try
+{$IFDEF LINUX}
+  aparams:=TStringList.Create;
+  try
+     aparams.Add('mono');
+     aparams.Add(ExtractFilePath(ParamStr(0))+'net2/printreport.exe');
+     aparams.Add('-getproviders');
+     aparams.Add(tmpfile);
+     ExecuteSystemApp(aparams,true);
+  finally
+     aparams.free;
+  end;
+{$ENDIF}
+{$IFDEF MSWINDOWS}
+     linecount:='';
+     with startinfo do
+     begin
+      cb:=sizeof(startinfo);
+      lpReserved:=nil;
+      lpDesktop:=nil;
+      lpTitle:=PChar('Report manager');
+      dwX:=0;
+      dwY:=0;
+      dwXSize:=400;
+      dwYSize:=400;
+      dwXCountChars:=80;
+      dwYCountChars:=25;
+      dwFillAttribute:=FOREGROUND_RED or BACKGROUND_RED or BACKGROUND_GREEN or BACKGROUND_BLUe;
+      dwFlags:=STARTF_USECOUNTCHARS or STARTF_USESHOWWINDOW;
+      cbReserved2:=0;
+      lpreserved2:=nil;
+     end;
+
+     FExename:=ExtractFilePath(ParamStr(0))+'net2\printreport.exe';
+     FCommandLine:=' -getproviders  "'+tmpfile+'"';
+     if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,
+      startinfo,procesinfo) then
+      RaiseLastOSError;
+     WaitForSingleObject(procesinfo.hProcess,60000);
+{$ENDIF}
+     alist.LoadFromFile(tmpfile);
+    finally
+     SysUtils.DeleteFile(tmpfile);
+    end;
+end;
+
 
 
 

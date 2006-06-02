@@ -176,6 +176,40 @@ type
    constructor Create(AOwner:TComponent);override;
   end;
 
+ { Function IsInteger }
+ TIdenIsInteger=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+ { Function IsNumeric }
+ TIdenIsNumeric=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+
+ { Function IsValidDateTime }
+ TIdenIsValidDateTime=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+ { Function CheckExpression }
+ TIdenCheckExpression=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
+
  { Function Pos }
  TIdenPos=class(TIdenFunction)
   protected
@@ -1062,6 +1096,129 @@ begin
          IdenName);
  Result:=Length(String(Params[0]));
 end;
+
+{ TIdenIsInteger }
+
+constructor TIdenIsInteger.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='IsInteger';
+ Help:=SRpIsInteger;
+ model:='function '+'IsInteger'+'(s:string):boolean';
+end;
+
+{**************************************************************************}
+
+function TIdenIsInteger.GeTRpValue:TRpValue;
+begin
+ if VarIsNull(Params[0]) then
+ begin
+  Result:=false;
+  exit;
+ end;
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ Result:=true;
+ try
+  StrToInt(Params[0]);
+ except
+  Result:=false;
+ end;
+end;
+
+{ TIdenIsNumeric }
+
+constructor TIdenIsNumeric.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='IsNumeric';
+ Help:=SRpIsNumeric;
+ model:='function '+'IsNumeric'+'(s:string):boolean';
+end;
+
+{**************************************************************************}
+
+function TIdenIsNumeric.GeTRpValue:TRpValue;
+begin
+ if VarIsNull(Params[0]) then
+ begin
+  Result:=false;
+  exit;
+ end;
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ Result:=true;
+ try
+  StrToFloat(Params[0]);
+ except
+  Result:=false;
+ end;
+end;
+
+{ TIdenIsVaidDateTime }
+
+constructor TIdenIsValidDateTime.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='IsValidDateTime';
+ Help:=SRpIsValidDateTime;
+ model:='function '+'IsValidDateTime'+'(s:string):boolean';
+end;
+
+{**************************************************************************}
+
+function TIdenIsValidDateTime.GeTRpValue:TRpValue;
+begin
+ if VarIsNull(Params[0]) then
+ begin
+  Result:=false;
+  exit;
+ end;
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ Result:=true;
+ try
+  StrToDateTime(Params[0]);
+ except
+  Result:=false;
+ end;
+end;
+
+
+{ TIdenCheckExpression }
+
+constructor TIdenCheckExpression.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=2;
+ IdenName:='CheckExpression';
+ Help:=SRpCheckExpression;
+ model:='function '+'CheckExpression'+'(expression,message:string):boolean';
+end;
+
+{**************************************************************************}
+
+function TIdenCheckExpression.GeTRpValue:TRpValue;
+begin
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ if Not VarIsString(Params[1]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ Result:=TRpEvaluator(evaluator).EvaluateText(Params[0]);
+ if VarIsBoolean(Params[0]) then
+  Result:=Params[0];
+ if (not Result) then
+  Raise Exception.Create(Params[1]);
+end;
+
 
 { TIdenPos }
 
