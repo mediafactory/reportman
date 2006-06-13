@@ -99,6 +99,7 @@ function GetPageSizeFromDevMode:TPoint;
 procedure GetDefaultDocumentProperties;
 procedure SwitchToPrinterIndex(index:integer);
 function CreateICFromCurrentPrinter:HDC;
+function PrinterDuplexSupport:boolean;
 
 implementation
 
@@ -1722,7 +1723,11 @@ begin
   GlobalUnLock(DeviceMode);
  end;
  if not printer.Printing then
+ begin
+//  DocumentProperties(0,Printer.Handle,Device, PDevMode^,
+//        PDevMode^, DM_MODIFY);
   Printer.SetPrinter(Device, Driver, Port, DeviceMode)
+ end
  else
  begin
   DocumentProperties(0,Printer.Handle,Device, PDevMode^,
@@ -1787,7 +1792,7 @@ begin
  Result:=FPrinters;
 end;
 
-
+(*
 procedure SetCurrentPaper(apapersize:TGDIPageSize);
 var
   Device, Driver, Port: String;
@@ -1939,7 +1944,7 @@ begin
   ResetDC(Printer.Handle,PDevMode^);
  end;
 end;
-
+*)
 
 function FindFormNameFromSize(width,height:integer):String;
 var
@@ -2122,6 +2127,47 @@ begin
  end;
  Result:=maxcopies;
 end;
+
+function PrinterDuplexSupport:boolean;
+var
+{$IFDEF DOTNETD}
+  Device, Driver, Port: String;
+  DeviceMode: IntPtr;
+{$ENDIF}
+{$IFNDEF DOTNETD}
+  Device, Driver, Port: array[0..1023] of char;
+  DeviceMode: THandle;
+{$ENDIF}
+  printererror:boolean;
+  aresult:integer;
+begin
+ Result:=false;
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+{$IFNDEF DOTNETD}
+ if DeviceMode=0 then
+{$ENDIF}
+{$IFDEF DOTNETD}
+ if Not Assigned(DeviceMode) then
+{$ENDIF}
+  printererror:=true;
+ if printererror then
+  exit;
+ try
+   aresult:=DeviceCapabilities(Device,Port,DC_DUPLEX,nil,nil);
+   if aresult=1 then
+    Result:=true;
+ except
+ end;
+end;
+
 
 function PrinterSupportsCopies(copies:integer):Boolean;
 var

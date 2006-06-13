@@ -269,7 +269,7 @@ begin
       Atree.Items.Delete(achild);
       if Node.Parent=nil then
       begin
-       dbitem.GetTableNames(alist);
+       dbitem.GetTableNames(alist,report.Params);
        if alist.count<1 then
         AllowExpansion:=false
        else
@@ -293,7 +293,7 @@ begin
       // Fields
       else
       begin
-       dbitem.GetFieldNames(Node.Text,alist,fieldtypes,fieldsizes);
+       dbitem.GetFieldNames(Node.Text,alist,fieldtypes,fieldsizes,report.Params);
        if alist.count<1 then
         AllowExpansion:=false
        else

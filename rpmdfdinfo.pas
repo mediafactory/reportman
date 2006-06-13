@@ -71,6 +71,7 @@ begin
  fdatasets.Parent:=TabDatasets;
  fdatasets.Datainfo:=report.DataInfo;
  fdatasets.Databaseinfo:=report.DatabaseInfo;
+ fconnections.Params:=report.Params;
  fconnections.Databaseinfo:=report.DatabaseInfo;
  fdatasets.params:=report.params;
  if report.DatabaseInfo.Count>0 then
@@ -113,6 +114,7 @@ end;
 procedure TFRpDInfo.PControlChange(Sender: TObject);
 begin
  fdatasets.Databaseinfo:=fconnections.DatabaseInfo;
+ fconnections.Params:=fdatasets.Params;
 end;
 
 procedure TFRpDInfo.BOkClick(Sender: TObject);

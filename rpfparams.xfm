@@ -37,7 +37,7 @@ object FRpParams: TFRpParams
         Height = 105
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Strings to show (left) and strings to assign (right) '
-        TabOrder = 11
+        TabOrder = 10
         Visible = False
         object Panel4: TPanel
           Left = 2
@@ -140,7 +140,7 @@ object FRpParams: TFRpParams
         Width = 140
         Height = 73
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 20
+        TabOrder = 19
         Visible = False
         OnClickCheck = EDescriptionChange
       end
@@ -243,7 +243,7 @@ object FRpParams: TFRpParams
         Hint = 'The parameters will be assigned not the selected datasets'
         Style = csDropDownList
         ItemHeight = 15
-        TabOrder = 12
+        TabOrder = 11
       end
       object BAdddata: TButton
         Left = 176
@@ -252,7 +252,7 @@ object FRpParams: TFRpParams
         Height = 25
         Hint = 'Include the dataset in the list'
         Caption = '>'
-        TabOrder = 13
+        TabOrder = 12
         OnClick = BAdddataClick
       end
       object BDeleteData: TButton
@@ -262,7 +262,7 @@ object FRpParams: TFRpParams
         Height = 25
         Hint = 'Exclude dataset from the list'
         Caption = '<'
-        TabOrder = 14
+        TabOrder = 13
         OnClick = BDeleteDataClick
       end
       object LDatasets: TListBox
@@ -272,7 +272,7 @@ object FRpParams: TFRpParams
         Height = 53
         Hint = 'The parameter will be assigned to this datasets'
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 17
+        TabOrder = 15
       end
       object LSearch: TLabel
         Left = 12
@@ -287,7 +287,6 @@ object FRpParams: TFRpParams
         Top = 192
         Width = 304
         Height = 21
-        Hint = 'Description to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 9
         Visible = False
@@ -308,7 +307,7 @@ object FRpParams: TFRpParams
         Top = 108
         Width = 304
         Height = 21
-        Hint = 'Description to be show on the end user dialog'
+        Hint = 'Hint to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 8
         Text = 'EDescription'
@@ -346,7 +345,7 @@ object FRpParams: TFRpParams
         Top = 164
         Width = 304
         Height = 21
-        Hint = 'Description to be show on the end user dialog'
+        Hint = 'Error message to show when validation returns false'
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 23
         Text = 'EDescription'
@@ -364,7 +363,9 @@ object FRpParams: TFRpParams
         Top = 136
         Width = 304
         Height = 21
-        Hint = 'Description to be show on the end user dialog'
+        Hint = 
+          'Validation expression, if evaluated to false, error message will' +
+          ' be shown'
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 25
         Text = 'EDescription'
@@ -711,12 +712,12 @@ object FRpParams: TFRpParams
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF0000000000000000000000007F0000007E0000007F
-      00000CFF8000047F00010FFFC0000E7F04000FFFE0000E7F0E020FC1F000077F
-      0E040F80F00003FF070C0FC0F00001FF03980FE0000000FF01F00000000001FF
-      00E00001F80003FF01F00F03F8000F7F03900F01F8001E7F0F0C0783F800187F
-      1E0607FFF800007F180303FFF800007F000001FF9000007F0000007E0000007F
-      000000000000007F000000000000007F000000000000007F01C000080000007F
+      0200000002000000FFFFFF00000000000000000003FFFFFF0000007E03FFFFFF
+      00000CFF83FFFFFF00010FFFC3FFFFFF04000FFFE3FFFFFF0E020FC1F3FFFFFF
+      0E040F80F3FFFFFF070C0FC0F3FFFFFF03980FE003FFFFFF01F0000003FFFFFF
+      00E00001FBFFFFFF01F00F03FBFFFFFF03900F01FBFFFFFF0F0C0783FBFFFFFF
+      1E0607FFFBFFFFFF180303FFFBFFFFFF000001FF93FFFFFF0000007E03FFFFFF
+      0000000003FFFFFF000000000000007F000000000000007F01C000080000007F
       01C0000800FFF07F01C0001C00FFF07F01C0001C0080107F01C0003E00B6D07F
       01C0003E0080107F0FF8007F02B6F87F0FF8007F0080387F07F000FF80FFF87F
       07F000FF80B7FF7F03E0001C00FFFF7F03E0001C0001FF7F01C0001C0000387F

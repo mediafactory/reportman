@@ -1678,7 +1678,7 @@ var
  adataset:TDataset;
 begin
  Result:=Null;
- adataset:=databaseinfo.ItemByName(connectionname).OpenDatasetFromSQL(sql,nil,false);
+ adataset:=databaseinfo.ItemByName(connectionname).OpenDatasetFromSQL(sql,nil,false,params);
  if Not adataset.Eof then
  begin
   Result:=adataset.Fields[0].AsVariant;
@@ -2092,11 +2092,15 @@ var
  aresult:Variant;
  paramtemp:TRpParamList;
 begin
- paramtemp:=TRpParamList.Create(nil);
+ paramtemp:=nil;
+ if paramlist<>params then
+  paramtemp:=TRpParamList.Create(nil);
  try
-  paramtemp.Assign(params);
+  if Assigned(paramtemp) then
+   paramtemp.Assign(params);
   try
-   params.Assign(paramlist);
+   if Assigned(paramtemp) then
+    params.Assign(paramlist);
    InitEvaluator;
    AddReportItemsToEvaluator(FEvaluator);
    Result:=true;
@@ -2123,10 +2127,12 @@ begin
     end;
    end;
   finally
-   params.Assign(paramtemp);
+   if Assigned(paramtemp) then
+    params.Assign(paramtemp);
   end;
  finally
-  paramtemp.free;
+  if Assigned(paramtemp) then
+   paramtemp.free;
  end;
 end;
 

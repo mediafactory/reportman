@@ -1,7 +1,7 @@
 kylix_bin=/opt/kylix3/bin
 #kylix_bin=/home/toni/kylix3/bin
 drivers_path=../../drivers/linux
-rpversion=2_5i
+rpversion=2_6pre3
 
 install:
 	make clean
@@ -57,7 +57,7 @@ install:
 	cp ../../repman/reportmanres.it .
 	cp ../../repman/reportmanres.de .
 	cp ../../repman/qttranslation/linux/qt_* .
-	cp ../../LICENSE.TXT .
+	cp ../../license.txt .
 #	cp ../../repman/repmand.es .
 	-cp ../clxreport/Project1 .
 	cp ../../repman/repsamples/sample4.rep .
@@ -98,13 +98,13 @@ install:
 	./patchelf libsqlora.so
 	./patchelf libsqlpg.so
 	./patchelf libborunwind.so.6.0
-	tar c libdbxoodbc.txt LICENSE.TXT sample4.rep biolife.cds reportmanres.pt reportmanres.it reportmanres.de reportmanres.ca reportmanres.en reportmanres.es reportmanres.fr repmand dbxdrivers dbxconnections repmand repmand.sh repmand.bin README *.so *.so.1 qt_* dbxres.en.1 libborunwind.so.6.0 printreport.exe reportmanlib.dll > rpdesigner-$(rpversion).i386.tar
+	tar c libdbxoodbc.txt license.txt sample4.rep biolife.cds reportmanres.pt reportmanres.it reportmanres.de reportmanres.ca reportmanres.en reportmanres.es reportmanres.fr repmand dbxdrivers dbxconnections repmand repmand.sh repmand.bin readme *.so *.so.1 qt_* dbxres.en.1 libborunwind.so.6.0 printreport.exe reportmanlib.dll > rpdesigner-$(rpversion).i386.tar
 	gzip rpdesigner-$(rpversion).i386.tar
-	tar c LICENSE.TXT reportserverapp reportserverapp.sh reportserverapp.bin reportservercon reportservercon.sh reportservercon.bin repserverconfig repserverconfig.sh repserverconfig.bin metaprint metaprint.sh metaprint.bin metaview metaview.sh metaview.bin printrep printrep.sh printrep.bin printreptopdf printreptopdf.sh printreptopdf.bin reptotxt txttorep repwebexe repwebexe.bin repwebexex repwebexex.bin .htaccess > rpservercline-$(rpversion).i386.tar
+	tar c license.txt reportserverapp reportserverapp.sh reportserverapp.bin reportservercon reportservercon.sh reportservercon.bin repserverconfig repserverconfig.sh repserverconfig.bin metaprint metaprint.sh metaprint.bin metaview metaview.sh metaview.bin printrep printrep.sh printrep.bin printreptopdf printreptopdf.sh printreptopdf.bin reptotxt txttorep repwebexe repwebexe.bin repwebexex repwebexex.bin .htaccess > rpservercline-$(rpversion).i386.tar
 	gzip rpservercline-$(rpversion).i386.tar
-	tar c LICENSE.TXT apilib > rplibapi-$(rpversion).i386.tar
+	tar c license.txt apilib > rplibapi-$(rpversion).i386.tar
 	gzip rplibapi-$(rpversion).i386.tar
-	tar c LICENSE.TXT doc > rpdocs-$(rpversion).i386.tar
+	tar c license.txt doc > rpdocs-$(rpversion).i386.tar
 	gzip rpdocs-$(rpversion).i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0

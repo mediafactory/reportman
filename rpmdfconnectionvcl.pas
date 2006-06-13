@@ -35,7 +35,7 @@ uses
 {$IFDEF USEADO}
   adodb,
 {$ENDIF}
-  rpdatainfo,rpmdconsts,
+  rpdatainfo,rpmdconsts,rpparams,
 //  DBConnAdmin,
   rpgraphutilsvcl,rpdbxconfigvcl,
   Menus;
@@ -95,7 +95,9 @@ type
     conadmin:TRpCOnnAdmin;
     FDatabaseInfo:TRpDatabaseInfoList;
     report:TRpReport;
+    FParams:TRpParamList;
     procedure SetDatabaseInfo(Value:TRpDatabaseInfoList);
+    procedure SetParams(Value:TRpParamList);
     procedure MenuAddClick(Sender:TObject);
     function FindDatabaseInfoItem:TRpDatabaseInfoItem;
   public
@@ -104,6 +106,8 @@ type
     destructor Destroy;override;
     property Databaseinfo:TRpDatabaseInfoList read FDatabaseinfo
      write SetDatabaseInfo;
+    property Params:TRpParamList read FParams write
+     SetParams;
   end;
 
 implementation
@@ -141,6 +145,7 @@ begin
 
  report:=TRPReport.Create(Self);
  FDatabaseInfo:=report.databaseinfo;
+ FParams:=report.Params;
 
  GDriver.ItemIndex:=0;
  GDriverClick(Self);
@@ -150,6 +155,11 @@ destructor TFRpConnectionVCL.Destroy;
 begin
  conadmin.free;
  inherited destroy;
+end;
+
+procedure TFRpConnectionVCL.SetParams(Value:TRpParamList);
+begin
+ FParams.Assign(Value);
 end;
 
 procedure TFRpConnectionVCL.SetDatabaseInfo(Value:TRpDatabaseInfoList);
@@ -602,7 +612,7 @@ begin
  end
  else
  begin
-  dbinfo.Connect;
+  dbinfo.Connect(report.Params);
   try
    ShowMessage(SRpConnectionOk);
   finally

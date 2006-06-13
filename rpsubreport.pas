@@ -820,11 +820,12 @@ begin
    if index>=0 then
    begin
     dinfo:=datainfo.Items[index];
-    if dinfo.Dataset.Active then
-    begin
-     if Not dinfo.Dataset.Eof then
-      Result:=true;
-    end;
+    if Assigned(dinfo.Dataset) then
+     if dinfo.Dataset.Active then
+     begin
+      if Not dinfo.Dataset.Eof then
+       Result:=true;
+     end;
    end;
   end;
  end;

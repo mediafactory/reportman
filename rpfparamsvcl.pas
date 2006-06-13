@@ -182,10 +182,11 @@ begin
  GSearch.Caption:=SRpValueSearch;
  LSearchDataset.Caption:=SrpSearchDataset;
  LValidation.Caption:=TranslateStr(1401,LValidation.Caption);
- LValidation.HInt:=TranslateStr(1402,LValidation.Hint);
+ EValidation.Hint:=TranslateStr(1402,EValidation.Hint);
  LErrorMessage.Caption:=TranslateStr(1403,LErrorMessage.Caption);
- LErrorMessage.Hint:=TranslateStr(1404,LErrorMessage.Hint);
-
+ EErrorMessage.Hint:=TranslateStr(1404,EErrorMessage.Hint);
+ EDescription.Hint:=TranslateStr(1418,EDescription.Hint);
+ EHint.Hint:=TranslateStr(1419,EDescription.Hint);
 end;
 
 procedure TFRpParamsVCL.BOKClick(Sender: TObject);

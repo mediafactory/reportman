@@ -860,7 +860,7 @@ begin
     aparam2.Stream:=astream;
     SaveToStream(AStream);
     astream.Seek(0,soFromBeginning);
-    report.DatabaseInfo.Items[index].OpenDatasetFromSQL(sqlsentence,alist,true);
+    report.DatabaseInfo.Items[index].OpenDatasetFromSQL(sqlsentence,alist,true,report.params);
    finally
     astream.free;
    end;
@@ -1095,7 +1095,7 @@ begin
    alist.AddObject(ExternalSearchField,aparam);
    errordata:=false;
    try
-    astream:=report.DatabaseInfo.Items[index].GetStreamFromSQL(sqlsentence,alist);
+    astream:=report.DatabaseInfo.Items[index].GetStreamFromSQL(sqlsentence,alist,report.Params);
    except
     errordata:=True;
    end;

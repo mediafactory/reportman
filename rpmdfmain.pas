@@ -657,7 +657,7 @@ begin
   try
    report.SaveToStream(astream);
    astream.Seek(0,soFromBeginning);
-   RpAlias1.Connections.SaveReportStream(alibrary,areportname,astream);
+   RpAlias1.Connections.SaveReportStream(alibrary,areportname,astream,nil);
   finally
    astream.free;
   end;
@@ -2138,7 +2138,7 @@ begin
  try
   alibrary:=alibname;
   areportname:=arepname;
-  astream:=rpalias1.Connections.GetReportStream(alibrary,areportname);
+  astream:=rpalias1.Connections.GetReportStream(alibrary,areportname,nil);
   try
    filename:='';
    DoOpenStream(astream);

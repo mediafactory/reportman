@@ -16,7 +16,7 @@ object FRpDInfo: TFRpDInfo
   TextWidth = 6
   object PBottom: TPanel
     Left = 0
-    Top = 383
+    Top = 483
     Width = 565
     Height = 39
     Align = alBottom
@@ -44,7 +44,7 @@ object FRpDInfo: TFRpDInfo
     Left = 0
     Top = 0
     Width = 565
-    Height = 383
+    Height = 483
     ActivePage = TabConnections
     Align = alClient
     TabOrder = 1

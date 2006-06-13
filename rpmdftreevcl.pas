@@ -453,38 +453,55 @@ begin
    try
     aparam.Value:=String(ninfo.ReportName);
     params.AddObject('REPNAME',aparam);
-    dbinfo.OpenDatasetFromSQL(astring,params,true);
+    dbinfo.OpenDatasetFromSQL(astring,params,true,nil);
    finally
     aparam.free;
    end;
-   EditTree(dbinfo,doreadonly);
+   //
+   lobjects.Remove(curnode.Data);
+   curnode.Free;
+//   EditTree(dbinfo,doreadonly);
   end
   else
   begin
    // A group needs checking for a report using the
    // group or a group using the parent_group
-   astring:='SELECT COUNT(REPORT_GROUP) AS COUNTG FROM '+dbinfo.ReportTable+
-    ' WHERE REPORT_GROUP='+IntToStr(ninfo.Group_Code);
-   adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false);
+   if dbinfo.ReportGroupsTable='GINFORME' then
+    astring:='SELECT COUNT(GRUPO) AS COUNTG FROM '+dbinfo.ReportTable+
+     ' WHERE GRUPO='+IntToStr(ninfo.Group_Code)
+   else
+    astring:='SELECT COUNT(REPORT_GROUP) AS COUNTG FROM '+dbinfo.ReportTable+
+     ' WHERE REPORT_GROUP='+IntToStr(ninfo.Group_Code);
+   adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false,nil);
    try
     if adata.FieldByName('COUNTG').AsInteger>0 then
      Raise Exception.Create(SRpExistReportInThisGroup);
    finally
     adata.free;
    end;
-   astring:='SELECT COUNT(GROUP_CODE) AS COUNTG FROM '+dbinfo.ReportGroupsTable+
-   ' WHERE PARENT_GROUP='+IntToStr(ninfo.Group_Code);
-   adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false);
+   if dbinfo.ReportGroupsTable='GINFORME' then
+    astring:='SELECT COUNT(CODIGO)AS COUNTG FROM '+dbinfo.ReportGroupsTable+
+    ' WHERE GRUPO='+IntToStr(ninfo.Group_Code)
+   else
+    astring:='SELECT COUNT(GROUP_CODE) AS COUNTG FROM '+dbinfo.ReportGroupsTable+
+    ' WHERE PARENT_GROUP='+IntToStr(ninfo.Group_Code);
+   adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false,nil);
    try
     if adata.FieldByName('COUNTG').AsInteger>0 then
      Raise Exception.Create(SRpGroupParent);
    finally
     adata.free;
    end;
-   astring:='DELETE FROM '+dbinfo.ReportGroupsTable+
-    ' WHERE GROUP_CODE='+IntToStr(ninfo.Group_Code);
-   dbinfo.OpenDatasetFromSQL(astring,nil,true);
-   EditTree(dbinfo,doreadonly);
+   if dbinfo.ReportGroupsTable='GINFORME' then
+    astring:='DELETE FROM '+dbinfo.ReportGroupsTable+
+     ' WHERE CODIGO='+IntToStr(ninfo.Group_Code)
+   else
+    astring:='DELETE FROM '+dbinfo.ReportGroupsTable+
+     ' WHERE GROUP_CODE='+IntToStr(ninfo.Group_Code);
+   dbinfo.OpenDatasetFromSQL(astring,nil,true,nil);
+   lobjects.Remove(curnode.Data);
+   curnode.Free;
+//   EditTree(dbinfo,doreadonly);
   end;
  finally
   params.free;
@@ -518,7 +535,7 @@ begin
    Raise Exception.Create(SRptReportnotfound);
   if CurrentLoaded=ninfo.ReportName then
    exit;
-  memstream:=dbinfo.GetReportStream(ninfo.ReportName);
+  memstream:=dbinfo.GetReportStream(ninfo.ReportName,nil);
   try
    memstream.Seek(0,soFromBeginning);
    report.LoadFromStream(memstream);
@@ -600,7 +617,7 @@ begin
   end
   else
   begin
-   memstream:=TMemoryStream(dbinfo.GetReportStream(ainfo.ReportName));
+   memstream:=TMemoryStream(dbinfo.GetReportStream(ainfo.ReportName,nil));
    try
     memstream.Seek(0,soFromBeginning);
     repname:=StringReplace(ainfo.ReportName,'/','-',[rfReplaceAll]);
@@ -749,20 +766,30 @@ begin
   ADelete.Enabled:=false;
  end;
  dbinfo:=adbinfo;
- dbinfo.Connect;
+ dbinfo.Connect(nil);
  ATree.Items.Clear;
  sqltext:='SELECT '+dbinfo.ReportSearchField;
  sqltext:=sqltext+','+dbinfo.ReportField;
  if length(dbinfo.ReportGroupsTable)>0 then
-  sqltext:=sqltext+',REPORT_GROUP';
+ begin
+  if dbinfo.ReportGroupsTable='GINFORME' then
+   sqltext:=sqltext+',GRUPO AS REPORT_GROUP'
+  else
+   sqltext:=sqltext+',REPORT_GROUP';
+ end;
  sqltext:=sqltext+' FROM '+dbinfo.ReportTable;
- adatareports:=dbinfo.OpenDatasetFromSQL(sqltext,nil,false);
+ adatareports:=dbinfo.OpenDatasetFromSQL(sqltext,nil,false,nil);
  try
   if Length(dbinfo.ReportGroupsTable)>0 then
   begin
-   adatagroups:=
-   dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
-     ' PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false);
+   if dbinfo.ReportGroupsTable='GINFORME' then
+    adatagroups:=
+    dbinfo.OpenDatasetFromSQL('SELECT CODIGO AS GROUP_CODE,NOMBRE AS GROUP_NAME,'+
+      ' GRUPO AS PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false,nil)
+   else
+    adatagroups:=
+    dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
+      ' PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false,nil);
   end
   else
   begin
@@ -795,6 +822,8 @@ var
  adata:TDataset;
  params:TStringList;
  aparam:TRpParamObject;
+ ANode:TTreeNode;
+ i:integer;
 begin
  // Creates a new group
  curnode:=ATree.Selected;
@@ -804,6 +833,19 @@ begin
   if Length(ninfo.ReportName)>0 then
   begin
    groupcode:=ninfo.Group_Code;
+   // Look for the group
+   for i:=0 to lobjects.count-1 do
+   begin
+    ninfo:=TRpNodeInfo(lobjects.Items[i]);
+    if ninfo.Group_Code=groupcode then
+    begin
+     if Length(ninfo.ReportName)=0 then
+     begin
+      curnode:=ninfo.Node;
+      break;
+     end;
+    end;
+   end;
   end
   else
    groupcode:=ninfo.Group_Code;
@@ -817,8 +859,11 @@ begin
  if Length(group_name)<1 then
   exit;
  // obtain the next group code
- astring:='SELECT MAX(GROUP_CODE) GCODE'+' FROM '+dbinfo.ReportGroupsTable;
- adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false);
+ if dbinfo.ReportGroupsTable='GINFORME' then
+  astring:='SELECT MAX(CODIGO) GCODE'+' FROM '+dbinfo.ReportGroupsTable
+ else
+  astring:='SELECT MAX(GROUP_CODE) GCODE'+' FROM '+dbinfo.ReportGroupsTable;
+ adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false,nil);
  try
   if ((adata.eof) and (adata.bof)) then
    newgroup:=1
@@ -834,29 +879,42 @@ begin
  end;
  params:=TStringList.Create;
  try
-  // A report can always be deleted
-  astring:='DELETE FROM '+dbinfo.ReportTable+' WHERE '+
-   dbinfo.ReportSearchField+'=:REPNAME';
   aparam:=TRpParamObject.Create;
   try
    aparam.Value:=String(group_name);
    params.AddObject('GROUPNAME',aparam);
-   astring:='INSERT INTO '+dbinfo.ReportGroupsTable+
-    ' (GROUP_CODE,GROUP_NAME,PARENT_GROUP)  VALUES ('+
+   astring:='INSERT INTO '+dbinfo.ReportGroupsTable;
+   if dbinfo.ReportGroupsTable='GINFORME' then
+    astring:=Astring+ ' (CODIGO,NOMBRE,GRUPO)  '
+   else
+    astring:=Astring+ ' (GROUP_CODE,GROUP_NAME,PARENT_GROUP)  ';
+   astring:=astring+ ' VALUES ('+
     IntToStr(newgroup)+',:GROUPNAME,'+IntToStr(groupcode)+')';
-   dbinfo.OpenDatasetFromSQL(astring,params,true);
+   dbinfo.OpenDatasetFromSQL(astring,params,true,nil);
   finally
    aparam.free;
   end;
  finally
   params.free;
  end;
- EditTree(dbinfo,doreadonly);
+ ANode:=ATree.Items.AddChild(curnode,group_name);
+ ANode.ImageIndex:=9;
+ ANode.SelectedIndex:=9;
+ ninfo:=TRpNodeInfo.Create;
+ lobjects.Add(ninfo);
+ ninfo.ReportName:='';
+ ninfo.Group_Code:=newgroup;
+ ninfo.Parent_Group:=groupcode;
+ ninfo.Node:=ANode;
+ ANode.Data:=ninfo;
+ ATree.Selected:=ANode;
+
+// EditTree(dbinfo,doreadonly);
 end;
 
 procedure TFRpDBTreeVCL.ANewExecute(Sender: TObject);
 var
- curnode:TTreeNode;
+ curnode,NewNode:TTreeNode;
  ninfo:TRpNodeInfo;
  groupcode:integer;
  reportname:String;
@@ -887,10 +945,20 @@ begin
    astring:='INSERT INTO '+dbinfo.ReportTable+' ( '+
     dbinfo.ReportSearchField+','+dbinfo.ReportField;
    if Length(dbinfo.ReportGroupsTable)>0 then
-    astring:=astring+',REPORT_GROUP';
+   begin
+    if  dbinfo.ReportGroupsTable='GINFORME' then
+     astring:=astring+',GRUPO,DEF_USUARIO'
+    else
+     astring:=astring+',REPORT_GROUP';
+   end;
    astring:=astring+') VALUES (:REPNAME,:REPORT';
    if Length(dbinfo.ReportGroupsTable)>0 then
-    astring:=astring+','+IntToStr(groupcode);
+   begin
+    if  dbinfo.ReportGroupsTable='GINFORME' then
+     astring:=astring+','+IntToStr(groupcode)+',0'
+    else
+     astring:=astring+','+IntToStr(groupcode);
+   end;
    astring:=astring+')';
    aparam.Value:=String(reportname);
    aparam2.Value:=Null;
@@ -903,16 +971,27 @@ begin
     try
      areport.SaveToStream(aparam2.Stream);
      aparam2.Stream.Seek(0,soFromBeginning);
-     dbinfo.OpenDatasetFromSQL(astring,params,true);
+     dbinfo.OpenDatasetFromSQL(astring,params,true,nil);
     finally
      aparam2.Stream.free;
     end;
    finally
     areport.free;
    end;
-   EditTree(dbinfo,doreadonly);
-   EFind.Text:=reportname;
-   FindDialog1Find(Self);
+   NewNode:=ATree.Items.AddChild(curnode,reportname);
+   NewNode.ImageIndex:=10;
+   NewNode.SelectedIndex:=10;
+   ninfo:=TRpNodeInfo.Create;
+   lobjects.Add(ninfo);
+   ninfo.ReportName:=reportname;
+   ninfo.Group_Code:=groupcode;
+   ninfo.Parent_Group:=0;
+   ninfo.Node:=NewNode;
+   NewNode.Data:=ninfo;
+   ATree.Selected:=NewNode;
+//   EditTree(dbinfo,doreadonly);
+//   EFind.Text:=reportname;
+//   FindDialog1Find(Self);
   finally
    aparam.free;
    aparam2.free;

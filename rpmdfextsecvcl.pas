@@ -157,7 +157,7 @@ begin
  index:=Freport.DatabaseInfo.IndexOf(ComboConnections.Text);
  if index>=0 then
  begin
-  FReport.DatabaseInfo.Items[index].GetTableNames(ComboTable.Items);
+  FReport.DatabaseInfo.Items[index].GetTableNames(ComboTable.Items,Freport.Params);
   if ComboTable.Items.Count<1 then
    ComboTable.Items.Add(' ');
  end;
@@ -179,7 +179,7 @@ begin
  if Length(Trim(ComboTable.Text))<1 then
   exit;
  sqlsentence:='SELECT * FROM '+ComboTable.Text;
- adata:=FReport.DatabaseInfo.Items[index].OpenDatasetFromSQL(sqlsentence,nil,false);
+ adata:=FReport.DatabaseInfo.Items[index].OpenDatasetFromSQL(sqlsentence,nil,false,Freport.Params);
  try
   adata.GetFieldNames(TComboBox(Sender).Items);
  finally
@@ -208,7 +208,7 @@ begin
   exit;
  sqlsentence:='SELECT '+ComboSearchField.Text+' FROM '+ComboTable.Text+
   ' ORDER BY '+ComboSearchField.Text;
- adata:=FReport.DatabaseInfo.Items[index].OpenDatasetFromSQL(sqlsentence,nil,false);
+ adata:=FReport.DatabaseInfo.Items[index].OpenDatasetFromSQL(sqlsentence,nil,false,Freport.Params);
  try
   TComboBox(Sender).Items.Clear;
   while Not adata.Eof do
@@ -247,7 +247,7 @@ begin
   try
    aparam.Value:=ComboSearchValue.Text;
    alist.AddObject(ComboSearchField.Text,aparam);
-   adata:=FReport.DatabaseInfo.Items[index].OpenDatasetFromSQL(sqlsentence,alist,false);
+   adata:=FReport.DatabaseInfo.Items[index].OpenDatasetFromSQL(sqlsentence,alist,false,FReport.Params);
    try
     if adata.eof then
     begin
@@ -258,7 +258,7 @@ begin
       sqlsentence:='INSERT INTO '+ComboTable.Text+'('+
        ComboSearchField.Text+') VALUES (:'
        +ComboSearchField.Text+')';
-      FReport.DatabaseInfo.Items[index].OpenDatasetFromSQL(sqlsentence,alist,true);
+      FReport.DatabaseInfo.Items[index].OpenDatasetFromSQL(sqlsentence,alist,true,FReport.Params);
       FSection.SaveExternal;
      end;
     end

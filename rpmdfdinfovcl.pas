@@ -72,6 +72,7 @@ begin
  fdatasets.Datainfo:=report.DataInfo;
  fdatasets.Databaseinfo:=report.DatabaseInfo;
  fconnections.Databaseinfo:=report.DatabaseInfo;
+ fconnections.Params:=report.Params;
  fdatasets.params:=report.params;
  if report.DatabaseInfo.Count>0 then
   PControl.ActivePage:=TabDatasets
@@ -113,6 +114,7 @@ end;
 procedure TFRpDInfoVCL.PControlChange(Sender: TObject);
 begin
  fdatasets.Databaseinfo:=fconnections.DatabaseInfo;
+ fconnections.Params:=fdatasets.Params;
 end;
 
 procedure TFRpDInfoVCL.BOkClick(Sender: TObject);

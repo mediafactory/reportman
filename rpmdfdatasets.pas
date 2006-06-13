@@ -1,5 +1,4 @@
-{*******************************************************}
-{                                                       }
+{*******************************************************}{                                                       }
 {       Report Manager Designer                         }
 {                                                       }
 {       rpmdfdatasets                                   }
@@ -549,12 +548,15 @@ begin
  i:=report.DatabaseInfo.IndexOf(dinfo.DatabaseAlias);
  if i>=0 then
  begin
-  if report.DatabaseInfo.Items[i].Driver in [rpdatadriver,rpdotnet2driver] then  begin
+  if report.DatabaseInfo.Items[i].Driver in [rpdatadriver,rpdotnet2driver] then
+  begin
     aparams:=TStringList.Create;
     try
        aparams.Add('mono');
-       if report.DatabaseInfo.Items[i].Driver=rpdatadriver then        aparams.Add(ExtractFilePath(Application.exename)+'printreport.exe')       else        aparams.Add(ExtractFilePath(Application.exename)+'printreport2.exe');
-
+       if report.DatabaseInfo.Items[i].Driver=rpdatadriver then
+        aparams.Add(ExtractFilePath(Application.exename)+'printreport.exe')
+       else
+        aparams.Add(ExtractFilePath(Application.exename)+'printreport2.exe');
        astring:=RpTempFileName;
        report.StreamFormat:=rpStreamXML;
        report.SaveToFile(astring);
@@ -785,8 +787,9 @@ begin
  if index<0 then
   exit;
  dbinfo:=databaseinfo.items[index];
- dbinfo.Connect;
+ dbinfo.Connect(params);
  ShowDataTextConfig(dbinfo.MyBasePath+EMyBaseDefs.Text,dbinfo.MyBasePath+EMyBase.Text);
 end;
 
 end.
+

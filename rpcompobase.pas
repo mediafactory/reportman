@@ -175,7 +175,7 @@ begin
   if Not Assigned(AliasList) then
    Raise Exception.Create(SRpPRpAliasRequired);
   dblist:=AliasList.Connections;
-  astream:=dblist.GetReportStream(ConnectionName,ReportName);
+  astream:=dblist.GetReportStream(ConnectionName,ReportName,nil);
   try
    LoadFromStream(astream);
   finally

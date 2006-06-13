@@ -963,6 +963,7 @@ begin
   FInternalPageWidth:=apagesize.X;
   FInternalPageHeight:=apagesize.Y;
   metafile.Orientation:=PageOrientation;
+  metafile.Duplex:=duplex;
   metafile.BackColor:=PageBackColor;
   metafile.CustomX:=FInternalPageWidth;
   metafile.CustomY:=FInternalPageHeight;

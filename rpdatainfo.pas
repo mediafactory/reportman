@@ -112,10 +112,10 @@ type
   procedure Connect;
   procedure AssignParams(params:TStrings);
   procedure GetParams(params:TStrings);
-  function GetStreamFromSQL(sqlsentence:String;params:TStringList):TStream;
-  procedure GetTableNames(Alist:TStrings);
-  procedure GetFieldNames(atable:String;fieldlist,fieldtypes,fieldsizes:TStrings);
-  function OpenDatasetFromSQL(sqlsentence:String;params:TStringList;onlyexec:Boolean):TDataset;
+  function GetStreamFromSQL(sqlsentence:String;params:TStringList;paramlist:TRpParamList):TStream;
+  procedure GetTableNames(Alist:TStrings;params:TRpParamList);
+  procedure GetFieldNames(atable:String;fieldlist,fieldtypes,fieldsizes:TStrings;params:TRpParamList);
+  function OpenDatasetFromSQL(sqlsentence:String;params:TStringList;onlyexec:Boolean;paramlist:TRpParamList):TDataset;
  end;
 
  IRpDataDriver=interface
@@ -184,7 +184,7 @@ type
    procedure UpdateConAdmin;
    procedure Assign(Source:TPersistent);override;
    destructor Destroy;override;
-   procedure Connect;
+   procedure Connect(params:TRpParamList);
    procedure DisConnect;
    constructor Create(Collection:TCollection);override;
 {$IFDEF USESQLEXPRESS}
@@ -200,13 +200,13 @@ type
    property ZConnection:TZConnection read FZConnection
     write FZConnection;
 {$ENDIF}
-   function GetStreamFromSQL(sqlsentence:String;params:TStringList):TStream;
-   procedure GetTableNames(Alist:TStrings);
-   procedure GetFieldNames(atable:String;fieldlist,fieldtypes,fieldsizes:TStrings);
-   function OpenDatasetFromSQL(sqlsentence:String;params:TStringList;onlyexec:Boolean):TDataset;
-   procedure CreateLibrary(reporttable,reportfield,reportsearchfield,groupstable:String);
-   function GetReportStream(ReportName:WideString):TStream;
-   procedure SaveReportStream(ReportName:WideString;astream:TStream);
+   function GetStreamFromSQL(sqlsentence:String;params:TStringList;paramlist:TRpParamList):TStream;
+   procedure GetTableNames(Alist:TStrings;params:TRpParamList);
+   procedure GetFieldNames(atable:String;fieldlist,fieldtypes,fieldsizes:TStrings;params:TRpParamList);
+   function OpenDatasetFromSQL(sqlsentence:String;params:TStringList;onlyexec:Boolean;paramlist:TRpParamList):TDataset;
+   procedure CreateLibrary(reporttable,reportfield,reportsearchfield,groupstable:String;paramlist:TRpParamList);
+   function GetReportStream(ReportName:WideString;paramlist:TRpParamList):TStream;
+   procedure SaveReportStream(ReportName:WideString;astream:TStream;paramlist:TRpParamList);
 {$IFDEF USEADO}
    property ADOConnection:TADOConnection read GetADOConnection write SetADOConnection;
 {$ENDIF}
@@ -241,8 +241,8 @@ type
    function Add(alias:string):TRpDatabaseInfoItem;
    function IndexOf(Value:string):integer;
    function ItemByName(AName:string):TRpDatabaseInfoItem;
-   function GetReportStream(ConnectionName:String;ReportName:WideString):TStream;
-   procedure SaveReportStream(ConnectionName:String;ReportName:WideString;astream:TStream);
+   function GetReportStream(ConnectionName:String;ReportName:WideString;paramlist:TRpParamList):TStream;
+   procedure SaveReportStream(ConnectionName:String;ReportName:WideString;astream:TStream;paramlist:TRpParamList);
    procedure SaveToFile(ainifile:String);
    procedure LoadFromFile(ainifile:String);
    procedure FillTreeDir(ConnectionName:String;alist:TStrings);
@@ -973,11 +973,33 @@ end;
 
 {$ENDIF}
 
-procedure TRpDatabaseinfoitem.Connect;
+procedure MergeList(source,destination:TStrings);
+var
+ i:integer;
+ index:integer;
+ aname:string;
+begin
+ for i:=0 to source.Count-1 do
+ begin
+  aname:=source.Names[i];
+  index:=destination.IndexOfName(aname);
+  if index>=0 then
+  begin
+   destination.Strings[index]:=source.Strings[i];
+  end
+  else
+   destination.Add(source.Strings[i]);
+ end;
+end;
+
+procedure TRpDatabaseinfoitem.Connect(params:TRpParamList);
 var
  conname:string;
+ paramname:String;
  index:integer;
  alist:TStringList;
+ paramlist:TStringList;
+ i:integer;
 {$IFDEF USEADO}
  report:TRpBasereport;
 {$ENDIF}
@@ -988,7 +1010,6 @@ var
   transiso:String;
 {$ENDIF}
 {$IFDEF USEBDE}
- i:integer;
  AlreadyOpen:boolean;
  OpenedName:string;
  FOpenedDatabase:TDatabase;
@@ -996,329 +1017,388 @@ var
  adparams:TStrings;
 {$ENDIF}
 begin
- case Fdriver of
-  rpdatadbexpress:
+ paramlist:=TStringList.Create;
+ try
+   if Assigned(params) then
    begin
-{$IFDEF USESQLEXPRESS}
-     if Not Assigned(FSQLConnection) then
-     begin
-      if Not Assigned(FSQLInternalConnection) then
-       FSQLInternalConnection:=TSQLConnection.Create(nil);
-      FSQLConnection:=FSQLInternalConnection;
-     end;
-     if FSQLCOnnection.Connected then
-      exit;
-     FSQLConnection.LoginPrompt:=FLoginPrompt;
-     conname:=alias;
-     FSQLConnection.ConnectionName:=alias;
-     // Load Connection parameters
-     if (FLoadParams) then
-     begin
-      if Not Assigned(ConAdmin) then
-       UpdateConAdmin;
-      alist:=TStringList.Create;
-      try
-       ConAdmin.GetConnectionParams(conname,alist);
-       FSQLConnection.Params.Assign(alist);
-      finally
-       alist.free;
-      end;
-     end;
-     // Load vendor lib, library name...
-     if (FLoadDriverParams) then
-     begin
-      if Not Assigned(ConAdmin) then
-       UpdateConAdmin;
-      drivername:=FSQLCOnnection.DriverName;
-      if Length(drivername)<1 then
-       drivername:=FSQLConnection.params.Values['DriverName'];
-      if Length(drivername)<1 then
-       drivername:=FSQLConnection.params.Values['Drivername'];
-      if Length(drivername)<1 then
-       Raise Exception.Create(SRpNoDriverName+' - '+conname);
-
-
-      funcname:=ConAdmin.drivers.ReadString(drivername,'GetDriverFunc','');
-      ConAdmin.GetDriverLibNames(drivername,LibraryName,VendorLib);
-      // Assigns all
-      FSQLConnection.DriverName:=drivername;
-      FSQLConnection.VendorLib:=vendorlib;
-      FSQLConnection.LibraryName:=libraryname;
-      FSQLConnection.GetDriverFunc:=funcname;
-      FSQLConnection.Connected:=true;
-     end;
-{$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverDBX);
-{$ENDIF}
-   end;
-  rpdataibx:
-   begin
-{$IFDEF USEIBX}
-     if Not Assigned(FIBDatabase) then
-     begin
-      FIBInternalDatabase:=TIBDatabase.Create(nil);
-
-      FIBInternalDatabase.DefaultTransaction:=TIBTransaction.Create(nil);
-      FIBInternalDatabase.DefaultTransaction.DefaultDatabase:=FIBInternalDatabase;
-      FIBInternalDatabase.DefaultTransaction.Params.Add('concurrency');
-      FIBInternalDatabase.DefaultTransaction.Params.Add('nowait');
-      FIBDatabase:=FIBInternalDatabase;
-      FIBTransaction:=FIBInternalDatabase.DefaultTransaction;
-      FIBInternalTransaction:=FIBTransaction;
-     end;
-     if Not Assigned(FIBTransaction) then
-     begin
-      FIBInternalTransaction:=TIBTransaction.Create(nil);
-      FIBInternalTransaction.DefaultDatabase:=FIBDatabase;
-      FIBInternalTransaction.Params.Add('concurrency');
-      FIBInternalTransaction.Params.Add('nowait');
-      FIBTransaction:=FIBInternalTransaction;
-     end;
-     if FIBDatabase.Connected then
-      exit;
-     FIBDatabase.LoginPrompt:=FLoginPrompt;
-     conname:=alias;
-     // Load Connection parameters
-     if (FLoadParams) then
-     begin
-      if Not Assigned(ConAdmin) then
-       UpdateConAdmin;
-      ConAdmin.GetConnectionParams(conname,FIBDatabase.params);
-     end;
-     ConvertParamsFromDBXToIBX(FIBDatabase);
-     FIBDatabase.Connected:=true;
-     if FIBTransaction=FIBInternalTransaction then
-     begin
-      if FIBInternalTransaction.InTransaction then
-       FIBInternalTransaction.Commit;
-      FIBInternalTransaction.StartTransaction;
-     end;
-{$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
-{$ENDIF}
-   end;
-  rpdatazeos:
-   begin
-{$IFDEF USEZEOS}
-     if Not Assigned(FZConnection) then
-     begin
-      FZInternalDatabase:=TZConnection.Create(nil);
-      FZConnection:=FZInternalDatabase;
-     end;
-     if FZConnection.Connected then
-      exit;
-     FZConnection.LoginPrompt:=FLoginPrompt;
-     conname:=alias;
-     // Load Connection parameters
-     if (FLoadParams) then
-     begin
-      if Not Assigned(ConAdmin) then
-       UpdateConAdmin;
-      alist:=TStringList.Create;
-      try
-       ConAdmin.GetConnectionParams(conname,alist);
-       FZConnection.User:=alist.Values['User_Name'];
-       FZConnection.Password:=alist.Values['Password'];
-       if length(alist.Values['Port'])>0 then
-        FZConnection.Port:=StrToInt(alist.Values['Port']);
-       FZConnection.HostName:=alist.Values['HostName'];
-       FZConnection.Database:=alist.Values['Database'];
-       FZConnection.Protocol:=alist.Values['Database Protocol'];
-       FZConnection.Properties.Add(alist.Values['Property1']);
-       FZConnection.Properties.Add(alist.Values['Property2']);
-       FZConnection.Properties.Add(alist.Values['Property3']);
-       FZConnection.Properties.Add(alist.Values['Property4']);
-       FZConnection.Properties.Add(alist.Values['Property5']);
-       FZConnection.Properties.Add(alist.Values['Property6']);
-       FZConnection.Properties.Add(alist.Values['Property7']);
-       FZConnection.Properties.Add(alist.Values['Property8']);
-       FZConnection.Properties.Add(alist.Values['Property9']);
-       transiso:=alist.Values['Zeos TransIsolation'];
-       if (transiso='ReadCommited') then
-        FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiReadCommitted
-       else
-       if (transiso='ReadUnCommited') then
-        FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiReadUnCommitted
-       else
-       if (transiso='RepeatableRead') then
-        FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiRepeatableRead
-       else
-       if (transiso='Serializable') then
-        FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiSerializable
-       else
-        FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiNone;
-      finally
-       alist.free;
-      end;
-     end;
-     FZConnection.Connected:=true;
-{$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverZEOS);
-{$ENDIF}
-   end;
-  rpdatamybase:
-   begin
-    // Connect will read the mybasepath variable
-    // or will left blank if not found
-    FMyBasePath:='';
-    conname:=alias;
-    // Load Connection parameters
-    if (FLoadParams) then
+    for i:=0 to params.COunt-1 do
     begin
-     if Not Assigned(ConAdmin) then
-      UpdateConAdmin;
-     alist:=TStringList.Create;
-     try
-      ConAdmin.GetConnectionParams(conname,alist);
-      index:=alist.IndexOfName('Database');
-      if index>=0 then
-       FMyBasePath:=alist.Values['Database'];
-     finally
-      alist.free;
+     paramname:=params.Items[i].Name;
+     if Copy(paramname,1,8)='DBPARAM_' then
+     begin
+      paramlist.Add(Copy(paramname,9,Length(paramname))+
+       '='+params.Items[i].AsString);
      end;
     end;
    end;
-  rpdatabde:
-   begin
-{$IFDEF USEBDE}
-    FOpenedDatabase:=nil;
-    FBDEAlias:=Alias;
-    CreatedBDE:=false;
-    if Not Assigned(FBDEDatabase) then
-    begin
-     FBDEDatabase:=TDatabase.Create(nil);
-     createdBDE:=true;
-     FBDEDatabase.KeepConnection:=False;
-     if Assigned(TRpDatabaseInfoList(Collection).FBDESession) then
-      FBDEDatabase.SessionName:=TRpDatabaseInfoList(Collection).FBDESession.SessionName;
-    end;
-    if FBDEDatabase.Connected then
-     exit;
-    ASession:=Session;
-    if Assigned(TRpDatabaseInfoList(Collection).FBDESession) then
-     ASession:=TRpDatabaseInfoList(Collection).FBDESession;
-    // Find an opened database in this session that
-    // openend the alias
-    OpenedName:=FBDEAlias;
-    AlreadyOpen:=False;
-    for i:=0 to ASession.DatabaseCount-1 do
-    begin
-     if ((UpperCase(ASession.Databases[i].DatabaseName)=UpperCase(FBDEAlias)) or
-      (UpperCase(ASession.Databases[i].AliasName)=UpperCase(FBDEAlias))) then
+   case Fdriver of
+    rpdatadbexpress:
      begin
-      if ASession.Databases[i].Connected then
-      begin
-       AlreadyOpen:=True;
-       OpenedName:=ASession.Databases[i].DatabaseName;
-       FOpenedDatabase:=ASession.Databases[i];
-       break;
-      end
-      else
-       ASession.Databases[i].DatabaseName:='';
-     end;
-     if ASession.Databases[i].AliasName=FBDEAlias then
-      if ASession.Databases[i].Connected then
-      begin
-       AlreadyOpen:=True;
-       FOpenedDatabase:=ASession.Databases[i];
-       OpenedName:=ASession.Databases[i].DatabaseName;
-       break;
-      end;
-    end;
-    if Not AlreadyOpen then
-    begin
-     FBDEDatabase.DatabaseName:=OpenedName;
-     if FLoadParams then
-     begin
-      try
-       FBDEDatabase.AliasName:=FBDEAlias;
-       ASession.GetAliasParams(FBDEAlias,FBDEDatabase.Params);
-       // Add aditional parameters
-       adparams:=TStringList.Create;
-       try
+  {$IFDEF USESQLEXPRESS}
+       if Not Assigned(FSQLConnection) then
+       begin
+        if Not Assigned(FSQLInternalConnection) then
+         FSQLInternalConnection:=TSQLConnection.Create(nil);
+        FSQLConnection:=FSQLInternalConnection;
+       end;
+       if FSQLCOnnection.Connected then
+        exit;
+       FSQLConnection.LoginPrompt:=FLoginPrompt;
+       conname:=alias;
+       FSQLConnection.ConnectionName:=alias;
+       // Load Connection parameters
+       if (FLoadParams) then
+       begin
         if Not Assigned(ConAdmin) then
          UpdateConAdmin;
-        ConAdmin.GetConnectionParams(FBDEAlias,adparams);
-        AddParamsFromDBXToBDE(adparams,FBDEDatabase.Params);
-       finally
-        adparams.free;
+        alist:=TStringList.Create;
+        try
+         ConAdmin.GetConnectionParams(conname,alist);
+         FSQLConnection.Params.Assign(alist);
+        finally
+         alist.free;
+        end;
        end;
-       FBDEDatabase.LoginPrompt:=LoginPrompt;
-       FBDEDatabase.Connected:=true;
-      except
-       on E:Exception do
+       index:=paramlist.IndexOfName('CONNECTIONNAME');
+       if (index>=0) then
        begin
-{$IFDEF DOTNETD}
-        Raise Exception.Create(E.Message+':BDE-ALIAS:'+FBDEAlias);
-{$ENDIF}
-{$IFNDEF DOTNETD}
-        E.Message:=E.Message+':BDE-ALIAS:'+FBDEAlias;
-        Raise;
-{$ENDIF}
+        FSQLConnection.ConnectionName:=paramlist.Values['CONNECTIONNAME'];
+        paramlist.Delete(index);
        end;
+       index:=paramlist.IndexOfName('DRIVERNAME');
+       if (index>=0) then
+       begin
+        FSQLConnection.DriverName:=paramlist.Values['DRIVERNAME'];
+        paramlist.Delete(index);
+       end;
+       // Load vendor lib, library name...
+       if (FLoadDriverParams) then
+       begin
+        if Not Assigned(ConAdmin) then
+         UpdateConAdmin;
+        drivername:=FSQLCOnnection.DriverName;
+        if Length(drivername)<1 then
+         drivername:=FSQLConnection.params.Values['DriverName'];
+        if Length(drivername)<1 then
+         drivername:=FSQLConnection.params.Values['Drivername'];
+        if Length(drivername)<1 then
+         Raise Exception.Create(SRpNoDriverName+' - '+conname);
+
+
+        funcname:=ConAdmin.drivers.ReadString(drivername,'GetDriverFunc','');
+        ConAdmin.GetDriverLibNames(drivername,LibraryName,VendorLib);
+        // Assigns all
+        FSQLConnection.DriverName:=drivername;
+        FSQLConnection.VendorLib:=vendorlib;
+        FSQLConnection.LibraryName:=libraryname;
+        FSQLConnection.GetDriverFunc:=funcname;
+       end;
+       index:=paramlist.IndexOfName('VENDORLIB');
+       if (index>=0) then
+       begin
+        FSQLConnection.VendorLib:=paramlist.Values['VENDORLIB'];
+        paramlist.Delete(index);
+       end;
+       index:=paramlist.IndexOfName('GETDRIVERFUNC');
+       if (index>=0) then
+       begin
+        FSQLConnection.GetDriverFunc:=paramlist.Values['GETDRIVERFUNC'];
+        paramlist.Delete(index);
+       end;
+       index:=paramlist.IndexOfName('LIBRARYNAME');
+       if (index>=0) then
+       begin
+        FSQLConnection.LibraryName:=paramlist.Values['LIBRARYNAME'];
+        paramlist.Delete(index);
+       end;
+       MergeList(paramlist,FSQLConnection.Params);
+       FSQLConnection.Connected:=true;
+  {$ELSE}
+      Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverDBX);
+  {$ENDIF}
+     end;
+    rpdataibx:
+     begin
+  {$IFDEF USEIBX}
+       if Not Assigned(FIBDatabase) then
+       begin
+        FIBInternalDatabase:=TIBDatabase.Create(nil);
+
+        FIBInternalDatabase.DefaultTransaction:=TIBTransaction.Create(nil);
+        FIBInternalDatabase.DefaultTransaction.DefaultDatabase:=FIBInternalDatabase;
+        FIBInternalDatabase.DefaultTransaction.Params.Add('concurrency');
+        FIBInternalDatabase.DefaultTransaction.Params.Add('nowait');
+        FIBDatabase:=FIBInternalDatabase;
+        FIBTransaction:=FIBInternalDatabase.DefaultTransaction;
+        FIBInternalTransaction:=FIBTransaction;
+       end;
+       if Not Assigned(FIBTransaction) then
+       begin
+        FIBInternalTransaction:=TIBTransaction.Create(nil);
+        FIBInternalTransaction.DefaultDatabase:=FIBDatabase;
+        FIBInternalTransaction.Params.Add('concurrency');
+        FIBInternalTransaction.Params.Add('nowait');
+        FIBTransaction:=FIBInternalTransaction;
+       end;
+       if FIBDatabase.Connected then
+        exit;
+       FIBDatabase.LoginPrompt:=FLoginPrompt;
+       conname:=alias;
+       // Load Connection parameters
+       if (FLoadParams) then
+       begin
+        if Not Assigned(ConAdmin) then
+         UpdateConAdmin;
+        ConAdmin.GetConnectionParams(conname,FIBDatabase.params);
+       end;
+       ConvertParamsFromDBXToIBX(FIBDatabase);
+       index:=paramlist.IndexOfName('DATABASENAME');
+       if (index>=0) then
+       begin
+        FIBDatabase.DatabaseName:=paramlist.Values['DATABASENAME'];
+        paramlist.Delete(index);
+       end;
+       MergeList(paramlist,FIBDatabase.Params);
+
+       FIBDatabase.Connected:=true;
+       if FIBTransaction=FIBInternalTransaction then
+       begin
+        if FIBInternalTransaction.InTransaction then
+         FIBInternalTransaction.Commit;
+        FIBInternalTransaction.StartTransaction;
+       end;
+  {$ELSE}
+      Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
+  {$ENDIF}
+     end;
+    rpdatazeos:
+     begin
+  {$IFDEF USEZEOS}
+       if Not Assigned(FZConnection) then
+       begin
+        FZInternalDatabase:=TZConnection.Create(nil);
+        FZConnection:=FZInternalDatabase;
+       end;
+       if FZConnection.Connected then
+        exit;
+       FZConnection.LoginPrompt:=FLoginPrompt;
+       conname:=alias;
+       // Load Connection parameters
+       alist:=TStringList.Create;
+       try
+        if (FLoadParams) then
+        begin
+         if Not Assigned(ConAdmin) then
+          UpdateConAdmin;
+         ConAdmin.GetConnectionParams(conname,alist);
+        end;
+        MergeList(paramlist,alist);
+        FZConnection.User:=alist.Values['User_Name'];
+        FZConnection.Password:=alist.Values['Password'];
+        if length(alist.Values['Port'])>0 then
+         FZConnection.Port:=StrToInt(alist.Values['Port']);
+        FZConnection.HostName:=alist.Values['HostName'];
+        FZConnection.Database:=alist.Values['Database'];
+        FZConnection.Protocol:=alist.Values['Database Protocol'];
+        FZConnection.Properties.Add(alist.Values['Property1']);
+        FZConnection.Properties.Add(alist.Values['Property2']);
+        FZConnection.Properties.Add(alist.Values['Property3']);
+        FZConnection.Properties.Add(alist.Values['Property4']);
+        FZConnection.Properties.Add(alist.Values['Property5']);
+        FZConnection.Properties.Add(alist.Values['Property6']);
+        FZConnection.Properties.Add(alist.Values['Property7']);
+        FZConnection.Properties.Add(alist.Values['Property8']);
+        FZConnection.Properties.Add(alist.Values['Property9']);
+        transiso:=alist.Values['Zeos TransIsolation'];
+        if (transiso='ReadCommited') then
+         FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiReadCommitted
+        else
+        if (transiso='ReadUnCommited') then
+         FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiReadUnCommitted
+        else
+        if (transiso='RepeatableRead') then
+         FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiRepeatableRead
+        else
+        if (transiso='Serializable') then
+         FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiSerializable
+        else
+         FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiNone;
+       finally
+        alist.free;
+       end;
+       FZConnection.Connected:=true;
+  {$ELSE}
+      Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverZEOS);
+  {$ENDIF}
+     end;
+    rpdatamybase:
+     begin
+      // Connect will read the mybasepath variable
+      // or will left blank if not found
+      FMyBasePath:='';
+      conname:=alias;
+      // Load Connection parameters
+      alist:=TStringList.Create;
+      try
+       if (FLoadParams) then
+       begin
+        if Not Assigned(ConAdmin) then
+         UpdateConAdmin;
+        ConAdmin.GetConnectionParams(conname,alist);
+       end;
+       MergeList(paramlist,alist);
+       index:=alist.IndexOfName('DATABASE');
+       if index>=0 then
+        FMyBasePath:=alist.Values['DATABASE'];
+      finally
+       alist.free;
       end;
      end;
-    end
-    else
-    begin
-     if createdBDE then
+    rpdatabde:
      begin
-      FBDEDatabase.free;
-      FBDEDatabase:=nil;
+  {$IFDEF USEBDE}
+      FOpenedDatabase:=nil;
+      FBDEAlias:=Alias;
       CreatedBDE:=false;
+      if Not Assigned(FBDEDatabase) then
+      begin
+       FBDEDatabase:=TDatabase.Create(nil);
+       createdBDE:=true;
+       FBDEDatabase.KeepConnection:=False;
+       if Assigned(TRpDatabaseInfoList(Collection).FBDESession) then
+        FBDEDatabase.SessionName:=TRpDatabaseInfoList(Collection).FBDESession.SessionName;
+      end;
+      if FBDEDatabase.Connected then
+       exit;
+      ASession:=Session;
+      if Assigned(TRpDatabaseInfoList(Collection).FBDESession) then
+       ASession:=TRpDatabaseInfoList(Collection).FBDESession;
+      // Find an opened database in this session that
+      // openend the alias
+      OpenedName:=FBDEAlias;
+      AlreadyOpen:=False;
+      for i:=0 to ASession.DatabaseCount-1 do
+      begin
+       if ((UpperCase(ASession.Databases[i].DatabaseName)=UpperCase(FBDEAlias)) or
+        (UpperCase(ASession.Databases[i].AliasName)=UpperCase(FBDEAlias))) then
+       begin
+        if ASession.Databases[i].Connected then
+        begin
+         AlreadyOpen:=True;
+         OpenedName:=ASession.Databases[i].DatabaseName;
+         FOpenedDatabase:=ASession.Databases[i];
+         break;
+        end
+        else
+         ASession.Databases[i].DatabaseName:='';
+       end;
+       if ASession.Databases[i].AliasName=FBDEAlias then
+        if ASession.Databases[i].Connected then
+        begin
+         AlreadyOpen:=True;
+         FOpenedDatabase:=ASession.Databases[i];
+         OpenedName:=ASession.Databases[i].DatabaseName;
+         break;
+        end;
+      end;
+      if Not AlreadyOpen then
+      begin
+       FBDEDatabase.DatabaseName:=OpenedName;
+       if FLoadParams then
+       begin
+        try
+         FBDEDatabase.AliasName:=FBDEAlias;
+         ASession.GetAliasParams(FBDEAlias,FBDEDatabase.Params);
+         // Add aditional parameters
+         adparams:=TStringList.Create;
+         try
+          if Not Assigned(ConAdmin) then
+           UpdateConAdmin;
+          ConAdmin.GetConnectionParams(FBDEAlias,adparams);
+          AddParamsFromDBXToBDE(adparams,FBDEDatabase.Params);
+         finally
+          adparams.free;
+         end;
+         FBDEDatabase.LoginPrompt:=LoginPrompt;
+         MergeList(paramlist,FBDEDatabase.Params);
+         FBDEDatabase.Connected:=true;
+        except
+         on E:Exception do
+         begin
+  {$IFDEF DOTNETD}
+          Raise Exception.Create(E.Message+':BDE-ALIAS:'+FBDEAlias);
+  {$ENDIF}
+  {$IFNDEF DOTNETD}
+          E.Message:=E.Message+':BDE-ALIAS:'+FBDEAlias;
+          Raise;
+  {$ENDIF}
+         end;
+        end;
+       end;
+      end
+      else
+      begin
+       if createdBDE then
+       begin
+        FBDEDatabase.free;
+        FBDEDatabase:=nil;
+        CreatedBDE:=false;
+       end;
+       FBDEDatabase:=FOpenedDatabase;
+      end;
+  {$ELSE}
+      Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverBDE);
+  {$ENDIF}
      end;
-     FBDEDatabase:=FOpenedDatabase;
-    end;
-{$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverBDE);
-{$ENDIF}
-   end;
-  rpdataado:
-   begin
-{$IFDEF USEADO}
-    if ADOConnection.Connected then
-     exit;
-    if Not Assigned(FProvidedADOCOnnection) then
-    begin
-     ADOConnection.Mode:=cmRead;
-     report:=TRpDataInfoList(Collection).FReport As TRpbASEReport;
-     if report.Params.IndexOf('ADOCONNECTIONSTRING')>=0 then
-      ADOConnection.ConnectionString:=report.Params.ParamByName('ADOCONNECTIONSTRING').AsString
-     else
-      ADOConnection.ConnectionString:=ADOConnectionString;
-     ADOConnection.LoginPrompt:=LoginPrompt;
-     ADOConnection.Connected:=true;
-    end
-    else
-     FProvidedADOConnection.Connected:=True;
-{$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverADO);
-{$ENDIF}
-   end;
-  rpdataibo:
-   begin
-{$IFDEF USEIBO}
-     if Not Assigned(FIBODatabase) then
+    rpdataado:
      begin
-      FIBODatabase:=TIB_Database.Create(nil);
+  {$IFDEF USEADO}
+      if ADOConnection.Connected then
+       exit;
+      if Not Assigned(FProvidedADOCOnnection) then
+      begin
+       ADOConnection.Mode:=cmRead;
+       report:=TRpDataInfoList(Collection).FReport As TRpbASEReport;
+       if report.Params.IndexOf('ADOCONNECTIONSTRING')>=0 then
+        ADOConnection.ConnectionString:=report.Params.ParamByName('ADOCONNECTIONSTRING').AsString
+       else
+        ADOConnection.ConnectionString:=ADOConnectionString;
+       ADOConnection.LoginPrompt:=LoginPrompt;
+       ADOConnection.Connected:=true;
+      end
+      else
+       FProvidedADOConnection.Connected:=True;
+  {$ELSE}
+      Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverADO);
+  {$ENDIF}
      end;
-     if FIBODatabase.Connected then
-      exit;
-     FIBODatabase.LoginPrompt:=FLoginPrompt;
-     conname:=alias;
-     // Load Connection parameters
-     if (FLoadParams) then
+    rpdataibo:
      begin
-      if Not Assigned(ConAdmin) then
-       UpdateConAdmin;
-      ConAdmin.GetConnectionParams(conname,FIBODatabase.params);
+  {$IFDEF USEIBO}
+       if Not Assigned(FIBODatabase) then
+       begin
+        FIBODatabase:=TIB_Database.Create(nil);
+       end;
+       if FIBODatabase.Connected then
+        exit;
+       FIBODatabase.LoginPrompt:=FLoginPrompt;
+       conname:=alias;
+       // Load Connection parameters
+       if (FLoadParams) then
+       begin
+        if Not Assigned(ConAdmin) then
+         UpdateConAdmin;
+        ConAdmin.GetConnectionParams(conname,FIBODatabase.params);
+       end;
+       ConvertParamsFromDBXToIBO(FIBODatabase);
+       FIBODatabase.Connected:=true;
+  {$ELSE}
+      Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBO);
+  {$ENDIF}
      end;
-     ConvertParamsFromDBXToIBO(FIBODatabase);
-     FIBODatabase.Connected:=true;
-{$ELSE}
-    Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBO);
-{$ENDIF}
    end;
+ finally
+  paramlist.Clear;
  end;
 end;
 
@@ -1504,7 +1584,7 @@ begin
    if index<0 then
     Raise Exception.Create(SRPDabaseAliasNotFound+' : '+FDatabaseAlias);
    baseinfo:=databaseinfo.items[index];
-   baseinfo.Connect;
+   baseinfo.Connect(params);
 
    // Connect first the parent datasource
    if Length(DataSource)>0 then
@@ -2451,14 +2531,14 @@ begin
  VendorLib:=drivers.ReadString(DriverName,VENDORLIB_KEY,'');
 end;
 
-function TRpDatabaseInfoItem.GetStreamFromSQL(sqlsentence:String;params:TStringList):TStream;
+function TRpDatabaseInfoItem.GetStreamFromSQL(sqlsentence:String;params:TStringList;paramlist:TRpParamList):TStream;
 var
  data:TDataset;
  memstream:TMemoryStream;
  astream:TStream;
 begin
  Result:=nil;
- data:=OpenDatasetFromSQL(sqlsentence,params,false);
+ data:=OpenDatasetFromSQL(sqlsentence,params,false,paramlist);
  try
   if data.Eof then
    Raise Exception.Create(SRpExternalSectionNotFound);
@@ -2656,7 +2736,7 @@ begin
  end;
 end;
 
-procedure TRpDatabaseInfoItem.GetFieldNames(atable:String;fieldlist,fieldtypes,fieldsizes:TStrings);
+procedure TRpDatabaseInfoItem.GetFieldNames(atable:String;fieldlist,fieldtypes,fieldsizes:TStrings;params:TRpParamList);
 {$IFDEF USEZEOS}
 var
  res:IZResultSet;
@@ -2666,7 +2746,7 @@ var
   bdetable:TTable;
 {$ENDIF}
 begin
- Connect;
+ Connect(params);
  case Driver of
   rpdatadbexpress:
    begin
@@ -2746,13 +2826,13 @@ begin
 end;
 
 
-procedure TRpDatabaseInfoItem.GetTableNames(Alist:TStrings);
+procedure TRpDatabaseInfoItem.GetTableNames(Alist:TStrings;params:TRpParamList);
 {$IFDEF USEZEOS}
 var
  res:IZResultSet;
 {$ENDIF}
 begin
- Connect;
+ Connect(params);
 
  case Driver of
   rpdatadbexpress:
@@ -2819,7 +2899,7 @@ begin
  end;
 end;
 
-function TRpDatabaseInfoItem.OpenDatasetFromSQL(sqlsentence:String;params:TStringList;onlyexec:Boolean):TDataset;
+function TRpDatabaseInfoItem.OpenDatasetFromSQL(sqlsentence:String;params:TStringList;onlyexec:Boolean;paramlist:TRpParamList):TDataset;
 var
  FSQLInternalQuery:TDataset;
  i:integer;
@@ -2835,7 +2915,7 @@ begin
  Result:=nil;
  FSQLInternalQuery:=nil;
  // Connects and opens the dataset
- Connect;
+ Connect(paramlist);
  case Driver of
   rpdatadbexpress:
    begin
@@ -3419,44 +3499,44 @@ begin
  end;
 end;
 
-procedure TRpDatabaseInfoItem.CreateLibrary(reporttable,reportfield,reportsearchfield,groupstable:String);
+procedure TRpDatabaseInfoItem.CreateLibrary(reporttable,reportfield,reportsearchfield,groupstable:String;paramlist:TRpParamList);
 var
  astring:String;
 begin
  // Creates the library
  astring:='CREATE TABLE '+reporttable+' ('+reportsearchfield+' VARCHAR(50) NOT NULL,'+
   reportfield+' BLOB,REPORT_GROUP INTEGER,USER_FLAG INTEGER,PRIMARY KEY ('+reportsearchfield+'))';
- OpenDatasetFromSQL(astring,nil,true);
+ OpenDatasetFromSQL(astring,nil,true,paramlist);
  astring:='CREATE TABLE REPMAN_GROUPS (GROUP_CODE INTEGER NOT NULL,'+
   'GROUP_NAME VARCHAR(50),PARENT_GROUP INTEGER NOT NULL,'+
   'PRIMARY KEY (GROUP_CODE))';
- OpenDatasetFromSQL(astring,nil,true);
+ OpenDatasetFromSQL(astring,nil,true,paramlist);
 end;
 
 
 
-function TRpDatabaseInfoList.GetReportStream(ConnectionName:String;ReportName:WideString):TStream;
+function TRpDatabaseInfoList.GetReportStream(ConnectionName:String;ReportName:WideString;paramlist:TRpParamList):TStream;
 var
  index:integer;
 begin
  index:=IndexOf(ConnectionName);
  if index<0 then
   Raise Exception.Create(SRPDabaseAliasNotFound+':'+ConnectionName);
- Result:=Items[index].GetReportStream(Reportname);
+ Result:=Items[index].GetReportStream(Reportname,paramlist);
 end;
 
-procedure TRpDatabaseInfoList.SaveReportStream(ConnectionName:String;ReportName:WideString;astream:TStream);
+procedure TRpDatabaseInfoList.SaveReportStream(ConnectionName:String;ReportName:WideString;astream:TStream;paramlist:TRpParamList);
 var
  index:integer;
 begin
  index:=IndexOf(ConnectionName);
  if index<0 then
   Raise Exception.Create(SRPDabaseAliasNotFound+':'+ConnectionName);
- Items[index].SaveReportStream(Reportname,astream);
+ Items[index].SaveReportStream(Reportname,astream,paramlist);
 end;
 
 
-function TRpDatabaseInfoItem.GetReportStream(ReportName:WideString):TStream;
+function TRpDatabaseInfoItem.GetReportStream(ReportName:WideString;paramlist:TRpParamList):TStream;
 var
  astring:String;
  params:TStringList;
@@ -3475,7 +3555,7 @@ begin
    // WideStrings not supported by most dbdrivers
    aparam.Value:=String(reportname);
    params.AddObject('REPNAME',aparam);
-   adata:=OpenDatasetFromSQL(astring,params,false);
+   adata:=OpenDatasetFromSQL(astring,params,false,paramlist);
    try
     if adata.eof and adata.Bof then
      Raise Exception.Create(SRptReportnotfound+':'+Alias+':'+ReportName);
@@ -3498,7 +3578,7 @@ begin
  end;
 end;
 
-procedure TRpDatabaseInfoItem.SaveReportStream(ReportName:WideString;astream:TStream);
+procedure TRpDatabaseInfoItem.SaveReportStream(ReportName:WideString;astream:TStream;paramlist:TRpParamList);
 var
  astring:String;
  params:TStringList;
@@ -3518,7 +3598,7 @@ begin
    astring:='SELECT '+ReportSearchField+' FROM '+
     ReportTable+' WHERE '+ReportSearchField+
     '=:REPNAME';
-   adata:=OpenDatasetFromSQL(astring,params,false);
+   adata:=OpenDatasetFromSQL(astring,params,false,paramlist);
    try
     if adata.eof and adata.Bof then
      Raise Exception.Create(SRptReportnotfound+':'+Alias+':'+ReportName);
@@ -3529,7 +3609,7 @@ begin
     +' WHERE '+ReportSearchField+
     '=:REPNAME';
    params.AddObject('REPORT',aparam2);
-   OpenDatasetFromSQL(astring,params,true);
+   OpenDatasetFromSQL(astring,params,true,paramlist);
    DoCommit;
   finally
    aparam.free;
@@ -3591,18 +3671,30 @@ begin
  adatagroups:=nil;
  alist.Clear;
  dbinfo:=Items[Index];
- dbinfo.Connect;
+ dbinfo.Connect(nil);
  sqltext:='SELECT '+dbinfo.ReportSearchField;
  if Length(dbinfo.Reportgroupstable)>0 then
-  sqltext:=sqltext+',REPORT_GROUP';
+ begin
+  if dbinfo.Reportgroupstable='GINFORME' then
+   sqltext:=sqltext+',GRUPO AS REPORT_GROUP'
+  else
+   sqltext:=sqltext+',REPORT_GROUP';
+ end;
  sqltext:=sqltext+' FROM '+dbinfo.reporttable;
- adatareports:=dbinfo.OpenDatasetFromSQL(sqltext,nil,false);
+ adatareports:=dbinfo.OpenDatasetFromSQL(sqltext,nil,false,nil);
  try
   if Length(dbinfo.Reportgroupstable)>0 then
   begin
-   adatagroups:=
-    dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
-      ' PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false);
+   if dbinfo.ReportGroupsTable='GINFORME' then
+   begin
+    adatagroups:=
+     dbinfo.OpenDatasetFromSQL('SELECT CODIGO AS GROUP_CODE,NOMBRE AS GROUP_NAME,'+
+       ' GRUPO AS PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false,nil);
+   end
+   else
+    adatagroups:=
+     dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
+       ' PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false,nil);
   end;
   try
    // Fill client dataset helpers

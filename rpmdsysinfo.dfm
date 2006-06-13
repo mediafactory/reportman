@@ -3,7 +3,7 @@ object FRpSysInfo: TFRpSysInfo
   Top = 221
   BorderStyle = bsDialog
   Caption = 'System information'
-  ClientHeight = 449
+  ClientHeight = 446
   ClientWidth = 556
   Color = clBtnFace
   ParentFont = True
@@ -178,9 +178,9 @@ object FRpSysInfo: TFRpSysInfo
       Caption = 'Form Name'
     end
     object LFormName: TLabel
-      Left = 172
+      Left = 108
       Top = 128
-      Width = 78
+      Width = 142
       Height = 13
       Caption = '                          '
     end
@@ -224,9 +224,9 @@ object FRpSysInfo: TFRpSysInfo
     object LOrientationL: TLabel
       Left = 272
       Top = 148
-      Width = 46
+      Width = 77
       Height = 13
-      Caption = 'Page size'
+      Caption = 'Page orientation'
     end
     object LPaperSources: TLabel
       Left = 272
@@ -234,6 +234,20 @@ object FRpSysInfo: TFRpSysInfo
       Width = 68
       Height = 13
       Caption = 'Paper sources'
+    end
+    object LDuplexL: TLabel
+      Left = 272
+      Top = 128
+      Width = 33
+      Height = 13
+      Caption = 'Duplex'
+    end
+    object LDuplex: TLabel
+      Left = 380
+      Top = 128
+      Width = 78
+      Height = 13
+      Caption = '                          '
     end
     object EStatus: TEdit
       Left = 380

@@ -82,6 +82,8 @@ type
     ComboSource: TComboBox;
     Label21: TLabel;
     ComboSeparators: TComboBox;
+    LDuplexL: TLabel;
+    LDuplex: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
@@ -243,6 +245,10 @@ begin
    EPort.Text:=Port;
 {$ENDIF}
    maxcopies:=PrinterMaxCopiesSupport;
+   if PrinterDuplexSupport then
+    LDuplex.Caption:=SRpYes
+   else
+    LDuplex.Caption:=SRpNo;
    LMaxCopies.Caption:=FormatFloat('####,0',maxcopies);
    if PrinterSupportsCollation then
     LCollation.Caption:=SRpYes

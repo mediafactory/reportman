@@ -63,7 +63,7 @@ Source: ..\repman\utils\metaview\metaviewxp.exe; DestDir: {app}; Components: cli
 Source: ..\repman\utils\metaprint\metaprintxp.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\metaprint\metaprintxp.exe.manifest; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\net\*.*; DestDir: {app}\net; Components: commandline; Flags: ignoreversion
-Source: ..\repman\net2\*.*; DestDir: {app}\net; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\*.*; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
 Source: license.txt; DestDir: {app}; Flags: ignoreversion
 Source: ..\repman\utils\printrep\printrepxp.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\printrep\printrepxp.exe.manifest; DestDir: {app}; Components: commandline; Flags: ignoreversion

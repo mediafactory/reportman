@@ -473,7 +473,7 @@ begin
    try
     aparam.Value:=ninfo.ReportName;
     params.AddObject('REPNAME',aparam);
-    dbinfo.OpenDatasetFromSQL(astring,params,true);
+    dbinfo.OpenDatasetFromSQL(astring,params,true,nil);
    finally
     aparam.free;
    end;
@@ -485,7 +485,7 @@ begin
    // group or a group using the parent_group
    astring:='SELECT COUNT(REPORT_GROUP) AS COUNTG FROM '+dbinfo.ReportTable+
     ' WHERE REPORT_GROUP='+IntToStr(ninfo.Group_Code);
-   adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false);
+   adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false,nil);
    try
     if adata.FieldByName('COUNTG').AsInteger>0 then
      Raise Exception.Create(SRpExistReportInThisGroup);
@@ -494,7 +494,7 @@ begin
    end;
    astring:='SELECT COUNT(GROUP_CODE) AS COUNTG FROM '+dbinfo.ReportGroupsTable+
    ' WHERE PARENT_GROUP='+IntToStr(ninfo.Group_Code);
-   adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false);
+   adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false,nil);
    try
     if adata.FieldByName('COUNTG').AsInteger>0 then
      Raise Exception.Create(SRpGroupParent);
@@ -503,7 +503,7 @@ begin
    end;
    astring:='DELETE FROM '+dbinfo.ReportGroupsTable+
     ' WHERE GROUP_CODE='+IntToStr(ninfo.Group_Code);
-   dbinfo.OpenDatasetFromSQL(astring,nil,true);
+   dbinfo.OpenDatasetFromSQL(astring,nil,true,nil);
    EditTree(dbinfo,doreadonly);
   end;
  finally
@@ -538,7 +538,7 @@ begin
    Raise Exception.Create(SRptReportnotfound);
   if CurrentLoaded=ninfo.ReportName then
    exit;
-  memstream:=dbinfo.GetReportStream(ninfo.ReportName);
+  memstream:=dbinfo.GetReportStream(ninfo.ReportName,nil);
   try
    memstream.Seek(0,soFromBeginning);
    report.LoadFromStream(memstream);
@@ -620,7 +620,7 @@ begin
   end
   else
   begin
-   memstream:=TMemoryStream(dbinfo.GetReportStream(ainfo.ReportName));
+   memstream:=TMemoryStream(dbinfo.GetReportStream(ainfo.ReportName,nil));
    try
     memstream.Seek(0,soFromBeginning);
     repname:=StringReplace(ainfo.ReportName,'/','-',[rfReplaceAll]);
@@ -774,7 +774,7 @@ begin
   ADelete.Enabled:=false;
  end;
  dbinfo:=adbinfo;
- dbinfo.Connect;
+ dbinfo.Connect(nil);
  ATree.Items.Clear;
  sqltext:='SELECT '+dbinfo.ReportSearchField;
  sqltext:=sqltext+','+dbinfo.ReportField;
@@ -782,13 +782,13 @@ begin
   sqltext:=sqltext+',REPORT_GROUP';
  sqltext:=sqltext+' FROM '+dbinfo.ReportTable;
  adatareports:=
- dbinfo.OpenDatasetFromSQL(sqltext,nil,false);
+ dbinfo.OpenDatasetFromSQL(sqltext,nil,false,nil);
  try
   if Length(dbinfo.ReportGroupsTable)>0 then
   begin
    adatagroups:=
    dbinfo.OpenDatasetFromSQL('SELECT GROUP_CODE,GROUP_NAME,'+
-     ' PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false);
+     ' PARENT_GROUP FROM '+dbinfo.Reportgroupstable,nil,false,nil);
   end
   else
   begin
@@ -844,7 +844,7 @@ begin
   exit;
  // obtain the next group code
  astring:='SELECT MAX(GROUP_CODE) GCODE'+' FROM '+dbinfo.ReportGroupsTable;
- adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false);
+ adata:=dbinfo.OpenDatasetFromSQL(astring,nil,false,nil);
  try
   if ((adata.eof) and (adata.bof)) then
    newgroup:=1
@@ -870,7 +870,7 @@ begin
    astring:='INSERT INTO '+dbinfo.ReportGroupsTable+
     ' (GROUP_CODE,GROUP_NAME,PARENT_GROUP)  VALUES ('+
     IntToStr(newgroup)+',:GROUPNAME,'+IntToStr(groupcode)+')';
-   dbinfo.OpenDatasetFromSQL(astring,params,true);
+   dbinfo.OpenDatasetFromSQL(astring,params,true,nil);
   finally
    aparam.free;
   end;
@@ -929,7 +929,7 @@ begin
     try
      areport.SaveToStream(aparam2.Stream);
      aparam2.Stream.Seek(0,soFromBeginning);
-     dbinfo.OpenDatasetFromSQL(astring,params,true);
+     dbinfo.OpenDatasetFromSQL(astring,params,true,nil);
     finally
      aparam2.Stream.free;
     end;

@@ -15,12 +15,15 @@ object FRpParamsVCL: TFRpParamsVCL
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 154
+    Top = 147
     Width = 473
     Height = 401
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
+    DesignSize = (
+      473
+      401)
     object GProperties: TGroupBox
       Left = 2
       Top = 4
@@ -29,6 +32,9 @@ object FRpParamsVCL: TFRpParamsVCL
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       Visible = False
+      DesignSize = (
+        464
+        389)
       object LDescription: TLabel
         Left = 12
         Top = 92
@@ -106,6 +112,9 @@ object FRpParamsVCL: TFRpParamsVCL
         Caption = 'Strings to show (left) and strings to assign (right) '
         TabOrder = 12
         Visible = False
+        DesignSize = (
+          442
+          105)
         object LLookup: TLabel
           Left = 4
           Top = 84
@@ -260,7 +269,6 @@ object FRpParamsVCL: TFRpParamsVCL
         Top = 184
         Width = 330
         Height = 21
-        Hint = 'Description to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 11
         Visible = False
@@ -281,7 +289,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Top = 112
         Width = 330
         Height = 21
-        Hint = 'Description to be show on the end user dialog'
+        Hint = 'Hint to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 8
         Text = 'EDescription'
@@ -316,6 +324,9 @@ object FRpParamsVCL: TFRpParamsVCL
         Caption = 'Search value'
         TabOrder = 18
         Visible = False
+        DesignSize = (
+          446
+          73)
         object LSearchDataset: TLabel
           Left = 8
           Top = 24
@@ -358,7 +369,9 @@ object FRpParamsVCL: TFRpParamsVCL
         Top = 136
         Width = 330
         Height = 21
-        Hint = 'Description to be show on the end user dialog'
+        Hint = 
+          'Validation expression, if evaluated to false, error message will' +
+          ' be shown'
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 9
         Text = 'EDescription'
@@ -369,7 +382,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Top = 160
         Width = 330
         Height = 21
-        Hint = 'Description to be show on the end user dialog'
+        Hint = 'Error message to show when validation expression returns false'
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 10
         Text = 'EDescription'
@@ -381,7 +394,7 @@ object FRpParamsVCL: TFRpParamsVCL
     Left = 0
     Top = 0
     Width = 473
-    Height = 154
+    Height = 147
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -389,7 +402,7 @@ object FRpParamsVCL: TFRpParamsVCL
       Left = 0
       Top = 28
       Width = 377
-      Height = 126
+      Height = 119
       Align = alClient
       ItemHeight = 13
       TabOrder = 0
@@ -453,7 +466,7 @@ object FRpParamsVCL: TFRpParamsVCL
       Left = 377
       Top = 28
       Width = 96
-      Height = 126
+      Height = 119
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2

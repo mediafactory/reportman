@@ -2231,6 +2231,12 @@ var
  divider:byte;
  origwidth:integer;
  acolor:integer;
+ bufdest:array of Byte;
+ linewidth:integer;
+ bcolor,rcolor,gcolor:Byte;
+ num,num2:Word;
+ h:integer;
+
 {
  position:integer;
  index:Byte;
@@ -2296,54 +2302,118 @@ begin
   end
   else
   begin
-   SetLength(values,imagesize);
-   scanwidth:=width*3;
-   // Alignment to 32bit
-   // Align to 32bit
-   toread:=4-(scanwidth mod 4);
-   if toread=4 then
-    toread:=0;
-  end;
-  scanwidth:=scanwidth+toread;
-  for y:=height-1 downto 0 do
-  begin
-   if bitcount=32 then
+   if bitcount=24 then
    begin
-    readed:=stream.Read(qvalues[y*width],scanwidth);
-    if readed<>scanwidth then
-     Raise Exception.Create(SRpBadBitmapStream);
+    SetLength(values,imagesize);
+    scanwidth:=width*3;
+    // Alignment to 32bit
+    // Align to 32bit
+    toread:=4-(scanwidth mod 4);
+    if toread=4 then
+     toread:=0;
    end
    else
    begin
-    readed:=stream.Read(values[y*width],scanwidth);
-    if readed<>scanwidth then
-     Raise Exception.Create(SRpBadBitmapStream);
+    SetLength(values,imagesize);
+    scanwidth:=width*2;
+    // Alignment to 32bit
+    // Align to 32bit
+    toread:=4-(scanwidth mod 4);
+    if toread=4 then
+     toread:=0;
    end;
   end;
-//  dc:=GetDC(0);
-  for y:=0 to height-1 do
+  scanwidth:=scanwidth+toread;
+  if (bitcount>16) then
   begin
-   for x:=0 to width-1 do
+   for y:=height-1 downto 0 do
    begin
     if bitcount=32 then
     begin
-//     SetPixel(DC,x,y,qvalues[y*width+x].rgbRed shl 16+
-//       qvalues[y*width+x].rgbGreen shl 8 + qvalues[y*width+x].rgbBlue);
-     FMemBits.Write(qvalues[y*width+x].rgbRed,1);
-     FMemBits.Write(qvalues[y*width+x].rgbGreen,1);
-     FMemBits.Write(qvalues[y*width+x].rgbBlue,1);
+     readed:=stream.Read(qvalues[y*width],scanwidth);
+     if readed<>scanwidth then
+      Raise Exception.Create(SRpBadBitmapStream);
     end
     else
     begin
-//     SetPixel(DC,x,y,values[y*width+x].rgbtRed shl 16+
-//       values[y*width+x].rgbtGreen shl 8 + values[y*width+x].rgbtBlue);
-     FMemBits.Write(values[y*width+x].rgbtRed,1);
-     FMemBits.Write(values[y*width+x].rgbtGreen,1);
-     FMemBits.Write(values[y*width+x].rgbtBlue,1);
+     readed:=stream.Read(values[y*width],scanwidth);
+     if readed<>scanwidth then
+      Raise Exception.Create(SRpBadBitmapStream);
     end;
    end;
+   for y:=0 to height-1 do
+   begin
+    for x:=0 to width-1 do
+    begin
+     if bitcount=32 then
+     begin
+      FMemBits.Write(qvalues[y*width+x].rgbRed,1);
+      FMemBits.Write(qvalues[y*width+x].rgbGreen,1);
+      FMemBits.Write(qvalues[y*width+x].rgbBlue,1);
+     end
+     else
+     begin
+      FMemBits.Write(values[y*width+x].rgbtRed,1);
+      FMemBits.Write(values[y*width+x].rgbtGreen,1);
+      FMemBits.Write(values[y*width+x].rgbtBlue,1);
+     end;
+    end;
+   end;
+  end
+  else
+  begin
+   FMemBits.SetSize(width*height*3);
+   linewidth:=width*3;
+   SetLength(buffer,scanwidth);
+	 SetLength(bufdest,linewidth);
+	 for y := height - 1 downto 0 do
+   begin
+		readed := stream.Read(buffer[0],scanwidth);
+    if readed<>scanwidth then
+     Raise Exception.Create(SRpBadBitmapStream);
+    FMemBits.Seek((width * 3) * y, soFromBeginning);
+		if (bitsperpixel=15) then
+		begin
+		 // 5-5-5
+		 for  h := 0 to width-1 do
+     begin
+			num:=Word(buffer[2*h]);
+ 		  num2:=Word(Word(buffer[2*h+1]) shl 8);
+			num:=Word(num or num2);
+			rcolor:=byte(num and $1F);
+      gcolor := byte((num and $3FF) shr 5);
+      bcolor := byte((num and $7FFF) shr 10);
+			rcolor:=byte(Round(rcolor/31.0*255));
+			gcolor:=byte(Round(gcolor/31.0*255));
+			bcolor:=byte(Round(bcolor/31.0*255));
+			bufdest[h * 3] := bcolor;
+			bufdest[h * 3 + 1] :=  gcolor;
+			bufdest[h * 3 + 2] := rcolor;
+		 end
+    end
+    else
+ 	  begin
+		 for  h := 0 to width-1 do
+     begin
+     	// 5-6-5
+			num:=Word(buffer[2*h]);
+ 		  num2:=Word(Word(buffer[2*h+1]) shl 8);
+			num:=Word(num or num2);
+			rcolor:=byte(num and $1F);
+      gcolor := byte((num and $7FF) shr 5);
+      bcolor := byte((num) shr 11);
+			rcolor:=byte(Round(rcolor/31.0*255));
+			gcolor:=byte(Round(gcolor/63.0*255));
+			bcolor:=byte(Round(bcolor/31.0*255));
+			bufdest[h * 3] := bcolor;
+			bufdest[h * 3 + 1] :=  gcolor;
+			bufdest[h * 3 + 2] := rcolor;
+     end;
+    end;
+ 		FMemBits.Write(bufdest[0],linewidth);
+   end;
   end;
-//  Releasedc(0,dc);
+  FMemBits.Seek(0, soFromBeginning);
   exit;
  end;
  case numcolors of
@@ -2502,7 +2572,7 @@ begin
       numcolors:=16;
      8:
       numcolors:=256;
-     24:
+     24,16,15:
       numcolors:=0;
      32:
       numcolors:=0;
@@ -2510,7 +2580,7 @@ begin
       Raise Exception.Create(SRpBitMapInfoHeaderBitCount+
        IntToStr(pbitmapinfo^.biBitCount));
     end;
-    if bitcount<24 then
+    if bitcount<15 then
     begin
      usedcolors:=pbitmapinfo^.biClrUsed;
      if usedcolors=0 then

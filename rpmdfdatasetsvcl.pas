@@ -575,9 +575,9 @@ begin
      lpreserved2:=nil;
     end;
     if report.DatabaseInfo.Items[i].Driver=rpdatadriver then
-     FExename:=ExtractFilePath(Application.exename)+'printreport.exe'
+     FExename:=ExtractFilePath(Application.exename)+'net\printreport.exe'
     else
-     FExename:=ExtractFilePath(Application.exename)+'printreport2.exe';
+     FExename:=ExtractFilePath(Application.exename)+'net2\printreport.exe';
     astring:=RpTempFileName;
     report.StreamFormat:=rpStreamXML;
     report.SaveToFile(astring);
@@ -586,7 +586,6 @@ begin
     if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,
     startinfo,procesinfo) then
      RaiseLastOSError;
-
    exit;
   end;
  end;
@@ -806,7 +805,7 @@ begin
  if index<0 then
   exit;
  dbinfo:=databaseinfo.items[index];
- dbinfo.Connect;
+ dbinfo.Connect(Params);
  ShowDataTextConfig(dbinfo.MyBasePath+EMyBaseDefs.Text,dbinfo.MyBasePath+EMyBase.Text);
 end;
 

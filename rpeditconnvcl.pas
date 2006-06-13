@@ -356,7 +356,7 @@ var
  dbinfo:TRpDatabaseInfoItem;
 begin
  dbinfo:=rpalias1.Connections.Items[LConnections.ItemIndex];
- dbinfo.Connect;
+ dbinfo.Connect(nil);
  try
   ShowMessage(SRpConnectionOk);
  finally
@@ -374,7 +374,7 @@ begin
  if LConnections.ItemIndex<0 then
   exit;
  dbitem:=rpalias1.Connections.Items[LConnections.ItemIndex];
- dbitem.CreateLibrary(dbitem.ReportTable,dbitem.ReportField,dbitem.ReportSearchField,dbitem.ReportGroupsTable);
+ dbitem.CreateLibrary(dbitem.ReportTable,dbitem.ReportField,dbitem.ReportSearchField,dbitem.ReportGroupsTable,nil);
 end;
 
 procedure TFRpEditConVCL.BBrowseClick(Sender: TObject);
