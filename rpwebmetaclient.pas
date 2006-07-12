@@ -35,7 +35,7 @@ uses classes,SysUtils,Windows,graphics,controls,forms,
  rpmetafile,rpfmainmetaviewvcl,rpmdconsts,SyncObjs,
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
  rpgdidriver,rpmdprintconfigvcl,rpmdshfolder,IdThreadComponent,
- rpfmetaviewvcl,IdSync;
+ rpfmetaviewvcl,IdSync,rpvgraphutils;
 
 //const
 // READ_TIMEOUT=10000;
@@ -116,6 +116,7 @@ var
  rpPageSize:TPageSizeQt;
  okselected:Boolean;
 begin
+ GetDefaultDocumentProperties;
  errormessage:='';
  try
   if FPrinterconfig then
@@ -197,7 +198,6 @@ begin
         rpgdidriver.PrinterSelection(metafile.PrinterSelect,metafile.papersource,metafile.duplex);
         rpgdidriver.PageSizeSelection(rpPageSize);
         rpgdidriver.OrientationSelection(metafile.orientation);
-
         okselected:=true;
         if ShowPrintDialog then
          okselected:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);

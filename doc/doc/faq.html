@@ -161,6 +161,12 @@ suppressed </li>
   doubt other engines implement SkipToPage, and I doubt other engines allow using 
   PAGECOUNT in expressions, (for example in print condition of a section because 
   can produce a dead lock).</p>
+<p><b>Q. While using the report in my software this error occur: Property xxx 
+  does not exists, what is wrong?</b></p>
+<p>You are reading a report saved with a new version, and your components installation 
+  (Delphi/Builder/Kylix) or your ActiveX component is older, so it's not able 
+  to execute reports that have new (unknown) properties onm it. Just reinstall 
+  the components with the newest version (Delphi/Builder/Kylix) or ActiveX control.</p>
 </body>
 </html>
 

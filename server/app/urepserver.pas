@@ -638,7 +638,7 @@ begin
   reportname:=alist.Values[alist.Names[0]];
   reportname:=ChangeFileExt(reportname,'');
   reportname:=ExtractFilename(reportname);
-  astream:=ActClient.RpAliasLibs.Connections.GetReportStream(Copy(apath,2,Length(apath)),reportname);
+  astream:=ActClient.RpAliasLibs.Connections.GetReportStream(Copy(apath,2,Length(apath)),reportname,nil);
   try
    ActClient.CurrentReport.LoadFromStream(astream);
   finally

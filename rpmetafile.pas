@@ -905,6 +905,7 @@ begin
  Stream.Write(ainteger,sizeof(Integer));
  Stream.Write(OpenDrawerBefore,sizeof(OpenDrawerBefore));
  Stream.Write(OpenDrawerAfter,sizeof(OpenDrawerAfter));
+ ainteger:=0;
  if FPreviewAbout then
   ainteger:=1;
  Stream.Write(ainteger,sizeof(Integer));

@@ -10,6 +10,9 @@ object FRpExtSectionVCL: TFRpExtSectionVCL
   OldCreateOrder = True
   Position = poScreenCenter
   OnCreate = FormCreate
+  DesignSize = (
+    387
+    214)
   PixelsPerInch = 96
   TextHeight = 13
   object LConnection: TLabel

@@ -127,6 +127,7 @@ type
 
  TRpGDIDriver=class(TInterfacedObject,IRpPrintDriver)
   private
+    FReport:TRpMetafileReport;
     BackColor:integer;
    intdpix,intdpiy:integer;
    metacanvas:TMetafilecanvas;
@@ -391,14 +392,19 @@ var
  rec:TRect;
  scale2:double;
 // aregion:HRGN;
+ frompage:boolean;
 begin
  // Offset is 0 in preview
  offset.X:=0;
  offset.Y:=0;
  // Sets Orientation
- if assigned(report) then
+ BackColor:=report.BackColor;
+ frompage:=false;
+ if assigned(apage) then
+  if apage.UpdatedPageSize then
+   frompage:=true;
+ if not frompage then
  begin
-  BackColor:=report.BackColor;
   if drawclippingregion then
   begin
    SetOrientation(report.Orientation);
@@ -520,6 +526,7 @@ var
  qtsize:integer;
  rpagesizeQt:TPageSizeQt;
 begin
+ FReport:=report;
 {$IFNDEF FORWEBAX}
 {$IFDEF USETEECHART}
  report.OnDrawChart:=Self.DoDrawChart;
@@ -650,7 +657,7 @@ begin
  end
  else
  begin
-  UpdateBitmapSize(nil,metafilepage);
+  UpdateBitmapSize(FReport,metafilepage);
  end;
 end;
 
@@ -1080,7 +1087,7 @@ begin
  end
  else
  begin
-  UpdateBitmapSize(nil,apage);
+  UpdateBitmapSize(FReport,apage);
   if assigned(metacanvas) then
   begin
    metacanvas.free;

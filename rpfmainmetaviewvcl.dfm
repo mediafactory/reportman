@@ -1,6 +1,6 @@
 object FRpMainMetaVCL: TFRpMainMetaVCL
-  Left = 166
-  Top = 124
+  Left = 334
+  Top = 134
   Width = 655
   Height = 449
   Caption = 'Metafile report preview'

@@ -997,7 +997,7 @@ var
  conname:string;
  paramname:String;
  index:integer;
- alist:TStringList;
+ alist,alist2:TStringList;
  paramlist:TStringList;
  i:integer;
 {$IFDEF USEADO}
@@ -1111,7 +1111,14 @@ begin
         FSQLConnection.LibraryName:=paramlist.Values['LIBRARYNAME'];
         paramlist.Delete(index);
        end;
-       MergeList(paramlist,FSQLConnection.Params);
+       alist2:=TStringList.Create;
+       try
+        alist2.Assign(FSQLConnection.Params);
+        MergeList(paramlist,alist2);
+        FSQLConnection.Params.Assign(alist2);
+       finally
+        alist2.free;
+       end;
        FSQLConnection.Connected:=true;
   {$ELSE}
       Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverDBX);

@@ -714,7 +714,7 @@ begin
  if dirpath[1]=':' then
  begin
   astream:=FRpAliasLibs.Connections.GetReportStream(Copy(dirpath,2,Length(dirpath)),
-   ExtractFileName(reportname));
+   ExtractFileName(reportname),nil);
   try
    pdfreport.LoadFromStream(astream);
   finally

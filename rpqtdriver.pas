@@ -66,7 +66,7 @@ type
     LVertRes: TLabel;
     EHorzRes: TRpCLXMaskEdit;
     EVertRes: TRpCLXMaskEdit;
-    CheckMono: TCheckBox;    
+    CheckMono: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure BCancelClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -114,6 +114,7 @@ type
 
  TRpQtDriver=class(TInterfacedObject,IRpPrintDriver)
   private
+    FReport:TRpMetafileReport;
     BackColor:integer;
    intdpix,intdpiy:integer;
    FOrientation:TRpOrientation;
@@ -281,6 +282,7 @@ var
  rec:TRect;
  asize:TPoint;
  scale2:double;
+ frompage:boolean;
 begin
   // Offset is 0 in preview
   offset.X:=0;
@@ -290,29 +292,22 @@ begin
    bitmap:=TBitmap.Create;
    bitmap.PixelFormat:=pf32bit;
   end;
-  if Assigned(report) then
-  begin
-   BackColor:=report.BackColor;
-{   // Sets Orientation
-   SetOrientation(report.Orientation);
-   // Sets pagesize
-   if report.PageSize<0 then
-   begin
-    asize:=GetPageSize(sizeqt);
-   end
-   else
-   begin
-    asize:=InternalSetPageSize(report.PageSize);
-   end;
-}
-   asize.X:=report.CustomX;
-   asize.Y:=report.CustomY;
-  end
-  else
+  BackColor:=report.BackColor;
+  frompage:=false;
+  if assigned(apage) then
+   if apage.UpdatedPageSize then
+    frompage:=true;
+  if frompage then
   begin
    SetOrientation(apage.Orientation);
    asize.X:=apage.PageSizeqt.PhysicWidth;
    asize.Y:=apage.PageSizeqt.PhysicHeight;
+  end
+  else
+  begin
+   SetOrientation(report.Orientation);
+   asize.X:=report.CustomX;
+   asize.Y:=report.CustomY;
   end;
   bitmapwidth:=Round((asize.x/TWIPS_PER_INCHESS)*dpi);
   bitmapheight:=Round((asize.y/TWIPS_PER_INCHESS)*dpi);
@@ -380,6 +375,7 @@ var
  asize:TPoint;
  sizeqt:integer;
 begin
+ FReport:=report;
 {$IFDEF USECLXTEECHART}
    report.OnDrawChart:=DoDrawChart;
 {$ENDIF}
@@ -483,7 +479,7 @@ begin
  end
  else
  begin
-  UpdateBitmapSize(nil,metafilepage);
+  UpdateBitmapSize(FReport,metafilepage);
  end;
 end;
 
@@ -771,7 +767,7 @@ var
 begin
  if not toprinter then
  begin
-  UpdateBitmapSize(nil,apage);
+  UpdateBitmapSize(FReport,apage);
  end;
  for j:=0 to apage.ObjectCount-1 do
  begin
