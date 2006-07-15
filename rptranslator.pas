@@ -270,8 +270,15 @@ begin
    SetLength(Result, I-1);
    if not FileExists(Result) then
    begin
-    Result:=afilename;
-    Exit;
+    if not FileExists(LowerCase(Result)) then
+    begin
+     Result:=afilename;
+     Exit;
+    end
+    else
+    begin
+     Result:=LowerCase(Result);
+    end;
    end;
   end;
  end;

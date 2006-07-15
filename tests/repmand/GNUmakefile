@@ -32,7 +32,9 @@ install:
 	cp ../../repman/utils/txttorep/txttorep .
 #	Patchelf for execshield execution
 	cp ../../repman/utils/startup/startup.bin repmand.bin
+	cp ../../repman/utils/startup/startupk2.bin .
 	./patchelf repmand.bin
+	./patchelf startupk2.bin
 	cp repmand.bin metaview.bin
 	cp repmand.bin printrep.bin
 	cp printrep.bin printreptopdf.bin
@@ -57,7 +59,7 @@ install:
 	cp ../../repman/reportmanres.it .
 	cp ../../repman/reportmanres.de .
 	cp ../../repman/qttranslation/linux/qt_* .
-	cp ../../license.txt .
+	cp ../../LICENSE.TXT .
 #	cp ../../repman/repmand.es .
 	-cp ../clxreport/Project1 .
 	cp ../../repman/repsamples/sample4.rep .
@@ -98,13 +100,13 @@ install:
 	./patchelf libsqlora.so
 	./patchelf libsqlpg.so
 	./patchelf libborunwind.so.6.0
-	tar c libdbxoodbc.txt license.txt sample4.rep biolife.cds reportmanres.pt reportmanres.it reportmanres.de reportmanres.ca reportmanres.en reportmanres.es reportmanres.fr repmand dbxdrivers dbxconnections repmand repmand.sh repmand.bin readme *.so *.so.1 qt_* dbxres.en.1 libborunwind.so.6.0 printreport.exe reportmanlib.dll > rpdesigner-$(rpversion).i386.tar
+	tar c libdbxoodbc.txt LICENSE.TXT sample4.rep biolife.cds reportmanres.pt reportmanres.it reportmanres.de reportmanres.ca reportmanres.en reportmanres.es reportmanres.fr repmand dbxdrivers dbxconnections repmand repmand.sh repmand.bin README *.so *.so.1 qt_* dbxres.en.1 libborunwind.so.6.0 printreport.exe reportmanlib.dll startupk2.bin > rpdesigner-$(rpversion).i386.tar
 	gzip rpdesigner-$(rpversion).i386.tar
-	tar c license.txt reportserverapp reportserverapp.sh reportserverapp.bin reportservercon reportservercon.sh reportservercon.bin repserverconfig repserverconfig.sh repserverconfig.bin metaprint metaprint.sh metaprint.bin metaview metaview.sh metaview.bin printrep printrep.sh printrep.bin printreptopdf printreptopdf.sh printreptopdf.bin reptotxt txttorep repwebexe repwebexe.bin repwebexex repwebexex.bin .htaccess > rpservercline-$(rpversion).i386.tar
+	tar c LICENSE.TXT reportserverapp reportserverapp.sh reportserverapp.bin reportservercon reportservercon.sh reportservercon.bin repserverconfig repserverconfig.sh repserverconfig.bin metaprint metaprint.sh metaprint.bin metaview metaview.sh metaview.bin printrep printrep.sh printrep.bin printreptopdf printreptopdf.sh printreptopdf.bin reptotxt txttorep repwebexe repwebexe.bin repwebexex repwebexex.bin .htaccess > rpservercline-$(rpversion).i386.tar
 	gzip rpservercline-$(rpversion).i386.tar
-	tar c license.txt apilib > rplibapi-$(rpversion).i386.tar
+	tar c LICENSE.TXT apilib > rplibapi-$(rpversion).i386.tar
 	gzip rplibapi-$(rpversion).i386.tar
-	tar c license.txt doc > rpdocs-$(rpversion).i386.tar
+	tar c LICENSE.TXT doc > rpdocs-$(rpversion).i386.tar
 	gzip rpdocs-$(rpversion).i386.tar
 clean:
 	-rm -f *.so *.so.1 *.so.2 *.so.1.0

@@ -1899,11 +1899,13 @@ begin
  graphic:=TBitmap.Create;
  try
 // CLX Graphics in Windows does not support jpeg
+{$IFDEF MSWINDOWS}
 {$IFDEF VCLANDCLX}
   if GetJPegInfo(Stream,bitmapwidth,bitmapheight) then
   begin
    rpvgraphutils.JPegStreamToBitmapStream(Stream);
   end;
+{$ENDIF}
 {$ENDIF}
   Graphic.LoadFromStream(Stream);
   extent.X:=Round(graphic.width/dpi*TWIPS_PER_INCHESS);

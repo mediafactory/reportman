@@ -419,6 +419,7 @@ begin
    end;
   end;
  end;
+ amemstream.Seek(0,soFromBeginning);
 end;
 {$ENDIF}
 
