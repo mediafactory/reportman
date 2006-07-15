@@ -15,15 +15,12 @@ object FRpParamsVCL: TFRpParamsVCL
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 147
+    Top = 154
     Width = 473
     Height = 401
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    DesignSize = (
-      473
-      401)
     object GProperties: TGroupBox
       Left = 2
       Top = 4
@@ -32,9 +29,6 @@ object FRpParamsVCL: TFRpParamsVCL
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       Visible = False
-      DesignSize = (
-        464
-        389)
       object LDescription: TLabel
         Left = 12
         Top = 92
@@ -112,9 +106,6 @@ object FRpParamsVCL: TFRpParamsVCL
         Caption = 'Strings to show (left) and strings to assign (right) '
         TabOrder = 12
         Visible = False
-        DesignSize = (
-          442
-          105)
         object LLookup: TLabel
           Left = 4
           Top = 84
@@ -324,9 +315,6 @@ object FRpParamsVCL: TFRpParamsVCL
         Caption = 'Search value'
         TabOrder = 18
         Visible = False
-        DesignSize = (
-          446
-          73)
         object LSearchDataset: TLabel
           Left = 8
           Top = 24
@@ -394,7 +382,7 @@ object FRpParamsVCL: TFRpParamsVCL
     Left = 0
     Top = 0
     Width = 473
-    Height = 147
+    Height = 154
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -402,7 +390,7 @@ object FRpParamsVCL: TFRpParamsVCL
       Left = 0
       Top = 28
       Width = 377
-      Height = 119
+      Height = 126
       Align = alClient
       ItemHeight = 13
       TabOrder = 0
@@ -466,7 +454,7 @@ object FRpParamsVCL: TFRpParamsVCL
       Left = 377
       Top = 28
       Width = 96
-      Height = 119
+      Height = 126
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2

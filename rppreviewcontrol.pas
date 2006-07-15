@@ -20,8 +20,8 @@ unit rppreviewcontrol;
 
 interface
 
-uses Classes,Graphics,Controls,Forms,rppreviewmeta,rpbasereport,rpgdidriver,
- rpmetafile;
+uses Classes,SysUtils,Graphics,Controls,Forms,rppreviewmeta,rpbasereport,rpgdidriver,
+ rpmetafile,dialogs;
 
 type
  TRpPreviewControl=class(TRpPreviewMeta)
@@ -56,9 +56,20 @@ end;
 procedure TRpPreviewControl.SetReport(Avalue:TRpBaseReport);
 var
   adriver:IRpPrintDriver;
+  errormessage:string;
 begin
- if Assigned(FReport) then
-  Report.EndPrint;
+ errormessage:='';
+ try
+  if Assigned(FReport) then
+   Report.EndPrint;
+ except
+  on E:Exception do
+  begin
+   errormessage:=E.Message;
+  end;
+ end;
+ if Length(errormessage)>0 then
+  ShowMessage(errormessage);
  FReport:=Avalue;
  if Assigned(FReport) then
  begin
