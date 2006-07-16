@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 2.6pre7
-AppVersion=2.6pre3
-OutputBaseFilename=reportman2_6pre7
+AppVerName=Report Manager 2.6a
+AppVersion=2.6<
+OutputBaseFilename=reportman2_6a
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -62,8 +62,17 @@ Source: ..\repman\utils\metaview\metaviewxp.exe.manifest; DestDir: {app}; Compon
 Source: ..\repman\utils\metaview\metaviewxp.exe; DestDir: {app}; Components: clienttcp; Flags: ignoreversion
 Source: ..\repman\utils\metaprint\metaprintxp.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\metaprint\metaprintxp.exe.manifest; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: ..\repman\net\*.*; DestDir: {app}\net; Components: commandline; Flags: ignoreversion
-Source: ..\repman\net2\*.*; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net\*.dll; DestDir: {app}\net; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net\*.exe; DestDir: {app}\net; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\printreport.exe; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\ICSharpCode.SharpZipLib.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\Reportman.Drawing.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\Reportman.Drawing.Forms.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\Reportman.Reporting.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\Reportman.Reporting.Forms.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
+Source: ..\..\..\..\reportmannet\output2\examples\sales.rep; DestDir: {app}; Components: commandline; Flags: ignoreversion
+Source: ..\repman\reportmanres.*; DestDir: {app}\net; Flags: restartreplace
+Source: ..\repman\reportmanres.*; DestDir: {app}\net2; Flags: restartreplace
 Source: license.txt; DestDir: {app}; Flags: ignoreversion
 Source: ..\repman\utils\printrep\printrepxp.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\printrep\printrepxp.exe.manifest; DestDir: {app}; Components: commandline; Flags: ignoreversion

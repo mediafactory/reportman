@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager Standard Edition
-AppVerName=Report Manager 2.5g
-AppVersion=2.5g
-OutputBaseFilename=reportmanstd2_5g
+AppVerName=Report Manager 2.6a
+AppVersion=2.6a
+OutputBaseFilename=reportmanstd2_6a
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -66,10 +66,17 @@ Source: ..\repman\utils\metaprint\metaprintxp.exe.manifest; DestDir: {app}; Comp
 Source: license.txt; DestDir: {app}; Flags: ignoreversion
 Source: ..\repman\utils\printrep\printrepxp.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\printrep\printrepxp.exe.manifest; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: c:\prog\toni\net\reportman\printreport\bin\debug\*.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: c:\prog\toni\net\reportman\printreport\bin\debug\*.dll; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: c:\prog\toni\net\reportman\printreport\bin\debug\*.rep; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: c:\prog\toni\net\reportman\printreport\bin\debug\*.fdb; DestDir: {app}; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net\*.dll; DestDir: {app}\net; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net\*.exe; DestDir: {app}\net; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\printreport.exe; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\ICSharpCode.SharpZipLib.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\Reportman.Drawing.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\Reportman.Drawing.Forms.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\Reportman.Reporting.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
+Source: ..\repman\net2\Reportman.Reporting.Forms.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
+Source: ..\..\..\..\reportmannet\output2\examples\sales.rep; DestDir: {app}; Components: commandline; Flags: ignoreversion
+Source: ..\repman\reportmanres.*; DestDir: {app}\net; Flags: restartreplace
+Source: ..\repman\reportmanres.*; DestDir: {app}\net2; Flags: restartreplace
 Source: ..\repman\utils\reptotxt\reptotxt.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\txttorep\txttorep.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\drivers\win32\upx.exe; DestDir: {sys}; Flags: restartreplace
