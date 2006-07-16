@@ -2590,7 +2590,6 @@ var
  procesinfo:TProcessInformation;
 {$ENDIF}
 begin
-
  report:=TRpDataInfoList(Collection).FReport As TRpReport;
  // Opens the connection
  index:=report.databaseinfo.IndexOf(Databasealias);
@@ -2641,7 +2640,7 @@ begin
       lpreserved2:=nil;
      end;
 
-     FExename:=ExtractFilePath(ParamStr(0))+'printreport.exe';
+     FExename:=ExtractFilePath(ParamStr(0))+'net/printreport.exe';
      FCommandLine:=' -deletereport -showfields '+Alias+' "'+tmpfile+'" "'+
       astring+'"';
      if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,
@@ -2678,7 +2677,7 @@ begin
      aparams:=TStringList.Create;
      try
         aparams.Add('mono');
-        aparams.Add(ExtractFilePath(ParamStr(0))+'printreport2.exe');
+        aparams.Add(ExtractFilePath(ParamStr(0))+'net2/printreport.exe');
         aparams.Add('-deletereport');
         aparams.Add('-showfields');
         aparams.Add(Alias);

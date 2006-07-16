@@ -736,8 +736,27 @@ var
 {$ENDIF}
  theformat:TRpStreamFormat;
  memstream:TMemoryStream;
+ forcexml:boolean;
+ i:integer;
 begin
  theformat:=FStreamFormat;
+ forcexml:=false;
+ for i:=0 to DatabaseInfo.Count-1 do
+ begin
+  if DatabaseInfo.Items[i].Driver in [rpdatadriver,rpdotnet2driver] then
+  begin
+   forcexml:=true;
+   break;
+  end;
+ end;
+ if (forcexml) then
+  if ((theformat<>rpStreamXML) AND (theformat<>rpStreamXMLZLib)) then
+   theformat:=rpStreamXML;
+
+ if (Subreports.Count<1) then
+ begin
+  AddSubReport;
+ end;
 {$IFNDEF USEZLIB}
  if theformat=rpStreamZLib then
   theformat:=rpStreambinary;

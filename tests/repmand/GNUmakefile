@@ -72,8 +72,13 @@ install:
 	mkdir doc/units
 	cp ../../doc/doc/units/*.html doc/units
 	cp ../../doc/doc/images/*.jpg doc/images
-	cp ../../../net/reportman/printreport/printreport.exe .
-	cp ../../../net/reportman/reportmanlib/reportmanlib.dll .
+	mkdir net
+	mkdir net2
+	cp ../../../net/reportmannet/output/printreport.exe net
+	cp ../../../net/reportmannet/output/*.dll net
+	cp ../../../net/reportmannet/output2/printreport.exe net2
+	cp ../../../net/reportmannet/output2/printreport.exe.config net2
+	cp ../../../net/reportmannet/output2/*.dll net2
 #	include repmand.es when linux translation done
 #	Patching for execution on execshield
 	./patchelf repmand
@@ -100,7 +105,7 @@ install:
 	./patchelf libsqlora.so
 	./patchelf libsqlpg.so
 	./patchelf libborunwind.so.6.0
-	tar c libdbxoodbc.txt LICENSE.TXT sample4.rep biolife.cds reportmanres.pt reportmanres.it reportmanres.de reportmanres.ca reportmanres.en reportmanres.es reportmanres.fr repmand dbxdrivers dbxconnections repmand repmand.sh repmand.bin README *.so *.so.1 qt_* dbxres.en.1 libborunwind.so.6.0 printreport.exe reportmanlib.dll startupk2.bin > rpdesigner-$(rpversion).i386.tar
+	tar c libdbxoodbc.txt LICENSE.TXT sample4.rep biolife.cds reportmanres.pt reportmanres.it reportmanres.de reportmanres.ca reportmanres.en reportmanres.es reportmanres.fr repmand dbxdrivers dbxconnections repmand repmand.sh repmand.bin README *.so *.so.1 qt_* dbxres.en.1 libborunwind.so.6.0 printreport.exe reportmanlib.dll startupk2.bin net net2 > rpdesigner-$(rpversion).i386.tar
 	gzip rpdesigner-$(rpversion).i386.tar
 	tar c LICENSE.TXT reportserverapp reportserverapp.sh reportserverapp.bin reportservercon reportservercon.sh reportservercon.bin repserverconfig repserverconfig.sh repserverconfig.bin metaprint metaprint.sh metaprint.bin metaview metaview.sh metaview.bin printrep printrep.sh printrep.bin printreptopdf printreptopdf.sh printreptopdf.bin reptotxt txttorep repwebexe repwebexe.bin repwebexex repwebexex.bin .htaccess > rpservercline-$(rpversion).i386.tar
 	gzip rpservercline-$(rpversion).i386.tar
@@ -130,3 +135,5 @@ clean:
 	-rm -f .htaccess
 	-rm -Rf apilib
 	-rm -f libborunwind.so.6.0
+	-rm -Rf net
+	-rm -Rf net2

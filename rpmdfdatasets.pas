@@ -390,7 +390,7 @@ begin
    TabBDEType.TabVisible:=false;
    exit;
   end;
-  PBrowser.Visible:=not (databaseinfo.items[index].Driver=rpdatadriver);
+  PBrowser.Visible:=not (databaseinfo.items[index].Driver in [rpdatadriver,rpdotnet2driver] );
   if databaseinfo.items[index].Driver=rpdatamybase then
   begin
    TabSQL.TabVisible:=false;
@@ -554,9 +554,9 @@ begin
     try
        aparams.Add('mono');
        if report.DatabaseInfo.Items[i].Driver=rpdatadriver then
-        aparams.Add(ExtractFilePath(Application.exename)+'printreport.exe')
+        aparams.Add(ExtractFilePath(Application.exename)+'net/printreport.exe')
        else
-        aparams.Add(ExtractFilePath(Application.exename)+'printreport2.exe');
+        aparams.Add(ExtractFilePath(Application.exename)+'net2/printreport.exe');
        astring:=RpTempFileName;
        report.StreamFormat:=rpStreamXML;
        report.SaveToFile(astring);
@@ -792,4 +792,4 @@ begin
 end;
 
 end.
-
+
