@@ -1664,7 +1664,9 @@ begin
   if FFont.Bold then
   begin
    if FFont.Italic then
-    aarray:=Helvetica_BoldItalic_Widths;
+    aarray:=Helvetica_BoldItalic_Widths
+   else
+    aarray:=Helvetica_Bold_Widths;
   end
   else
    if FFont.Italic then
@@ -1679,7 +1681,9 @@ begin
   if FFont.Bold then
   begin
    if FFont.Italic then
-    aarray:=TimesRoman_BoldItalic_Widths;
+    aarray:=TimesRoman_BoldItalic_Widths
+   else
+    aarray:=TimesRoman_Bold_Widths;
   end
   else
    if FFont.Italic then

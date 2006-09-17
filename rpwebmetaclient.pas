@@ -66,11 +66,17 @@ type
    procedure DoInstall;
    procedure SetCaption(Value:WideString);
    procedure OnRequestData(Sender:TObject;count:integer);
-   procedure connectWork(Sender: TObject; AWorkMode: TWorkMode;
-    const AWorkCount: Integer);
    procedure connectWorkEnd(Sender: TObject;
     AWorkMode: TWorkMode);
+{$IFNDEF INDY10}
    procedure idthreadcompRun(Sender: TIdCustomThreadComponent);
+   procedure connectWork(Sender: TObject; AWorkMode: TWorkMode;
+    const AWorkCount: Integer);
+{$ENDIF}
+{$IFDEF INDY10}
+   procedure idthreadcompRun(Sender: TIdThreadComponent);
+   procedure connectWork(Sender: TObject; AWorkMode:TWorkMode;AWorkCount:Integer);
+{$ENDIF}
   protected
    procedure Paint;override;
   public
@@ -416,7 +422,12 @@ end;
 
 
 
+{$IFDEF INDY10}
+procedure TRpWebMetaPrint.idthreadcompRun(Sender: TIdThreadComponent);
+{$ENDIF}
+{$IFNDEF INDY10}
 procedure TRpWebMetaPrint.idthreadcompRun(Sender: TIdCustomThreadComponent);
+{$ENDIF}
 begin
  FFinished:=false;
  SetLength(abyte,64000);
@@ -431,8 +442,13 @@ begin
 end;
 
 
+{$IFNDEF INDY10}
 procedure TRpWebMetaPrint.connectWork(Sender: TObject; AWorkMode: TWorkMode;
   const AWorkCount: Integer);
+{$ENDIF}
+{$IFDEF INDY10}
+procedure TRpWebMetaPrint.connectWork(Sender: TObject; AWorkMode:TWorkMode;AWorkCount:Integer);
+{$ENDIF}
 var
  oldposition:int64;
  oldpos2:int64;

@@ -59,6 +59,7 @@ type
    procedure SetConnectionName(Value:String);
    procedure SetReportName(Value:String);
    procedure SetAsyncExecution(avalue:boolean);
+   procedure SetLanguage(Value:Integer);
   protected
    procedure Notification(AComponent: TComponent; Operation: TOperation);override;
    procedure InternalExecuteRemote(metafile:TRpMetafileReport);virtual;
@@ -88,7 +89,7 @@ type
    property ShowPrintDialog:boolean read FShowPrintDialog
     write FShowPrintDialog default true;
    property AliasList:TRpAlias read FAliasList write FAliasList;
-   property Language:integer read FLanguage write FLanguage default -1;
+   property Language:integer read FLanguage write SetLanguage default -1;
   published
    property Filename:TFilename read FFilename write SetFilename;
    property ConnectionName:String read FConnectionName write SetConnectionName;
@@ -160,6 +161,8 @@ begin
  if Assigned(FReport) then
  begin
   FReport.AliasList:=AliasList;
+  if FLanguage>=0 then
+   FReport.Language:=FLanguage;
   exit;
  end;
  if Length(FFilename)>0 then
@@ -196,11 +199,18 @@ begin
 end;
 
 
+procedure TCBaseReport.SetLanguage(Value:Integer);
+begin
+ FLanguage:=Value;
+ if Assigned(FReport) then
+  if FLanguage>=0 then
+   FReport.Language:=FLanguage;
+end;
+
+
 function TCBaseReport.Execute:boolean;
 begin
  CheckLoaded;
- if FLanguage>=0 then
-  report.Language:=FLanguage;
  Result:=false;
 end;
 

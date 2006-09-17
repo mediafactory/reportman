@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 2.6a
-AppVersion=2.6<
-OutputBaseFilename=reportman2_6a
+AppVerName=Report Manager 2.6d
+AppVersion=2.6d
+OutputBaseFilename=reportman2_6d
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman

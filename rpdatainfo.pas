@@ -2592,10 +2592,10 @@ var
 begin
  report:=TRpDataInfoList(Collection).FReport As TRpReport;
  // Opens the connection
- index:=report.databaseinfo.IndexOf(Databasealias);
- if index<0 then
+ i:=report.databaseinfo.IndexOf(Databasealias);
+ if i<0 then
   Raise Exception.Create(SRPDabaseAliasNotFound+' : '+FDatabaseAlias);
- baseinfo:=report.databaseinfo.items[index];
+ baseinfo:=report.databaseinfo.items[i];
  case baseinfo.Driver of
   rpdatadriver:
    begin
@@ -2708,7 +2708,7 @@ begin
       lpreserved2:=nil;
      end;
 
-     FExename:=ExtractFilePath(ParamStr(0))+'printreport2.exe';
+     FExename:=ExtractFilePath(ParamStr(0))+'net2\printreport.exe';
      FCommandLine:=' -deletereport -showfields '+Alias+' "'+tmpfile+'" "'+
       astring+'"';
      if Not CreateProcess(Pchar(FExename),Pchar(Fcommandline),nil,nil,True,NORMAL_PRIORITY_CLASS or CREATE_NEW_PROCESS_GROUP,nil,nil,

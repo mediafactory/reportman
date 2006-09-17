@@ -192,6 +192,9 @@ begin
 {$IFNDEF FORWEBAX}
  defheight:=calcdefaultheight(Font.Size);
  report:=avalue.Report;
+ aparam:=avalue.FindParam('LANGUAGE');
+ if Assigned(aparam) then
+  TRpBaseReport(report).Language:=aparam.Value;
 {$ENDIF}
  acontrol:=nil;
  fparams.assign(avalue);

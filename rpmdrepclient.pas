@@ -281,21 +281,6 @@ begin
 end;
 
 procedure TRpClientHandleThread.Execute;
-{$IFDEF DOTNETD}
-var
- {$IFNDEF INDY10}
- astream:TIdStream;
- {$ENDIF}
- {$IFDEF INDY10}
- astream:TIdStreamVCL;
- {$ENDIF}
-{$ENDIF}
-{$IFNDEF DOTNETD}
- {$IFDEF INDY10}
-var
- astream:TIdStreamVCL;
- {$ENDIF}
-{$ENDIF}
 begin
  data:=TMemoryStream.Create;
  try
@@ -311,37 +296,12 @@ begin
    else
    begin
     try
-{$IFDEF DOTNETD}
  {$IFDEF INDY10}
-     astream:=TIdStreamVCL.Create(data);
-     try
-      amod.RepClient.IOHandler.ReadStream(astream);
-     finally
-      astream.free;
-     end;
- {$ENDIF}
- {$IFNDEF INDY10}
-     astream:=TIdStream.Create(data);
-     try
-      amod.RepClient.IOHandler.ReadStream(astream);
-     finally
-      astream.free;
-     end;
- {$ENDIF}
-{$ENDIF}
-{$IFNDEF DOTNETD}
- {$IFDEF INDY10}
-     astream:=TIdStreamVCL.Create(data);
-     try
-      amod.RepClient.IOHandler.ReadStream(astream);
-     finally
-      astream.free;
-     end;
+     amod.RepClient.IOHandler.ReadStream(data);
  {$ENDIF}
  {$IFNDEF INDY10}
      amod.RepClient.ReadStream(data);
  {$ENDIF}
-{$ENDIF}
      data.Seek(0,soFromBeginning);
      CB:=ReadRpComBlockFromStream(data);
      try

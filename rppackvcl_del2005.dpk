@@ -42,7 +42,6 @@ requires
   dbexpress,
   adortl,
   tee,
-  indy,
   rppack_del2005,
   vclx;
 

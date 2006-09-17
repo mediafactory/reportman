@@ -9,15 +9,15 @@ MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
 DCC = $(ROOT)\bin\dcc32.exe $**
 BRCC = $(ROOT)\bin\brcc32.exe $**
 #------------------------------------------------------------------------------
-PROJECTS = metaview.exe metaview.ESN
+PROJECTS = metaviewxp.exe metaviewxp.ESN
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
 
-metaview.exe: metaview.dpr
+metaviewxp.exe: metaviewxp.dpr
   $(DCC)
 
-metaview.ESN: ESN\metaview.dpr
+metaviewxp.ESN: ESN\metaviewxp.dpr
   $(DCC)
 
 

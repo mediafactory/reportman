@@ -1,7 +1,9 @@
 library WebReportManX;
 
 uses
-  ComServ,XPMan,IdSync,
+  ComServ,
+  XPMan,
+  IdSync,
   WebReportManX_TLB in 'WebReportManX_TLB.pas',
   rpwebreportx in 'rpwebreportx.pas' {WebReportMan: TActiveForm} {WebReportMan: CoClass},
   rpwebmetaclient in '..\rpwebmetaclient.pas',
@@ -11,7 +13,8 @@ uses
   rptypes in '..\rptypes.pas',
   rpmdfaboutvcl in '..\rpmdfaboutvcl.pas' {FRpAboutBoxVCL},
   rpmzlib in '..\rpmzlib.pas',
-  rpmetafile in '..\rpmetafile.pas';
+  rpmetafile in '..\rpmetafile.pas',
+  AxCtrls in 'AxCtrls.pas';
 
 {$E ocx}
 

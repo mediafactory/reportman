@@ -2211,6 +2211,11 @@ begin
       else
        PDevMode^.dmCollate:=DMCOLLATE_FALSE;
      end;
+     if not IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_IN_BUFFER) then
+      RaiseLastOSError;
+     DocumentProperties(0,Printer.Handle,ADevice, PDevMode^,
+       PDevMode^, DM_MODIFY);
+     ResetDC(Printer.Handle,PDevMode^);
     finally
      GlobalUnlock(aresult);
     end;
@@ -2255,6 +2260,18 @@ begin
       pdevmode^.dmFields:=pdevmode^.dmFields or DM_COPIES;
       pdevmode^.dmCopies:=copies;
      end;
+     if not printer.Printing then
+     begin
+      Printer.Copies:=copies;
+     end
+     else
+     begin
+      DocumentProperties(0,Printer.Handle,ADevice, PDevMode^,
+        PDevMode^, DM_MODIFY);
+       ResetDC(Printer.Handle,PDevMode^);
+     end;
+     if not IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_IN_BUFFER) then
+      RaiseLastOSError;
     finally
      GlobalUnlock(aresult);
     end;
