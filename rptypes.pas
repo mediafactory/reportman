@@ -133,7 +133,7 @@ type
 
  TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,
   rpParamTime,rpParamDateTime,rpParamCurrency,rpParamBool,
-  rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamList,rpParamMultiple,rpParamUnknown);
+  rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamList,rpParamMultiple,rpParamSubstE,rpParamUnknown);
 
  TRpCachedImage=(rpCachedNone,rpCachedFixed,rpCachedVariable);
  TRpParamObject=class(TObject)
@@ -679,7 +679,7 @@ begin
   if VarIsNull(Value) then
   begin
    case paramtype of
-    rpParamString,rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamMultiple:
+    rpParamString,rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamSubstE,rpParamMultiple:
      Value:='';
     rpParamInteger,rpParamDouble,rpParamCurrency:
      Value:=0;
@@ -4748,6 +4748,11 @@ begin
   result:=num;
   exit;
  end;
+ if redondeo<0.0001 then
+ begin
+  redondeo:=0.0001;
+ end;
+
  // Original number
  signenum:=1;
  if num<0 then

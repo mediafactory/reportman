@@ -244,7 +244,7 @@ begin
 {$ENDIF}
 
    case aparam.ParamType of
-    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamUnknown:
+    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamSubstE,rpParamUnknown:
      begin
       acontrol:=TEdit.Create(Self);
       if aparam.IsReadOnly then

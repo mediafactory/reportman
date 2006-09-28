@@ -830,7 +830,7 @@ begin
          aparamstring:=aparamstring+'<option value="'+
            BoolToStr(false,true)+'" ';
          // Check if it's a post back
-         if Length(prevvalue)=0 then
+         if Length(prevvalue)>0 then
          begin
           if prevvalue=BoolToStr(true,true) then
            aparam.Value:=true
@@ -855,7 +855,7 @@ begin
        rpParamMultiple:
         begin
          // Check if it's a post back
-         if Length(prevvalue)=0 then
+         if Length(prevvalue)>0 then
          begin
           aparam.Value:=StrToInt(prevvalue);
          end;
@@ -884,7 +884,7 @@ begin
        rpParamList:
         begin
          // Check if it's a post back
-         if Length(prevvalue)=0 then
+         if Length(prevvalue)>0 then
          begin
           aparam.Value:=StrToInt(prevvalue);
          end;

@@ -600,6 +600,8 @@ begin
     Result:=ftString;
    rpParamSubst:
     Result:=ftString;
+   rpParamSubstE:
+    Result:=ftString;
   end;
 end;
 {$ENDIF}
@@ -675,7 +677,7 @@ begin
  case ParamType of
   rpParamUnknown:
    Result:='';
-  rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst:
+  rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamSubstE:
    Result:=String(Value);
   rpParamInteger,rpParamDouble,rpParamCurrency:
    Result:=FloatToStr(Value);
@@ -703,7 +705,7 @@ end;
 procedure TRpParam.SetAsString(NewValue:WideString);
 begin
  case ParamType of
-  rpParamString,rpParamExpreB,rpParamExpreA,rpParamSubst:
+  rpParamString,rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamSubstE:
    Value:=NewValue;
   rpParamInteger,rpParamDouble,rpParamCurrency:
    Value:=StrToFloat(NewValue);
@@ -734,6 +736,8 @@ begin
    Result:=SrpSExpressionA;
   rpParamSubst:
    Result:=SRpSParamSubs;
+  rpParamSubstE:
+   Result:=SRpSParamSubsE;
   rpParamInteger:
    Result:=SRpSInteger;
   rpParamDouble:
@@ -779,6 +783,11 @@ begin
  if Value=SRpSParamSubs then
  begin
   Result:=rpParamSubst;
+  exit;
+ end;
+ if Value=SRpSParamSubsE then
+ begin
+  Result:=rpParamSubstE;
   exit;
  end;
  if Value=SRpSInteger then
@@ -858,6 +867,7 @@ begin
  alist.Add(SRpSParamSubs);
  alist.Add(SRpSParamList);
  alist.Add(SRpSMultiple);
+ alist.Add(SRpSParamSubsE);
 end;
 
 // Command line params are in form of:

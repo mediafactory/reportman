@@ -61,9 +61,6 @@ uses Classes,SysUtils,
 {$ENDIF}
 {$IFDEF USEVARIANTS}
   Variants,Types,
-{$IFNDEF FPC}
-  WSDLIntf,
-{$ENDIF}
 {$ENDIF}
 {$IFDEF USERPDATASET}
  rpdataset,
@@ -1566,12 +1563,15 @@ begin
    for i:=0 to params.Count-1 do
    begin
     param:=params.items[i];
-    if param.ParamType in [rpParamSubst,rpParamMultiple] then
+    if param.ParamType in [rpParamSubst,rpParamSubstE,rpParamMultiple] then
     begin
      index:=param.Datasets.IndexOf(Alias);
      if index>=0 then
      begin
-      sqlsentence:=StringReplace(sqlsentence,param.Search,param.Value,[rfReplaceAll, rfIgnoreCase]);
+      if param.ParamType=rpParamSubstE then
+       sqlsentence:=StringReplace(sqlsentence,param.Search,param.LastValue,[rfReplaceAll, rfIgnoreCase])
+      else
+       sqlsentence:=StringReplace(sqlsentence,param.Search,param.Value,[rfReplaceAll, rfIgnoreCase]);
      end;
     end;
    end;
@@ -2071,7 +2071,7 @@ begin
 {$IFDEF FPC}
      Raise Exception.Create('Freepascal does not implement VarTypeToDataType');
 {$ENDIF}
-    if (param.ParamType in [rpParamSubst,rpParamMultiple]) then
+    if (param.ParamType in [rpParamSubst,rpParamSubstE,rpParamMultiple]) then
      continue;
     index:=param.Datasets.IndexOf(Alias);
     if index>=0 then

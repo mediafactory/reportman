@@ -285,7 +285,7 @@ begin
   if (param.Value<>Null) then
   begin
    case param.ParamType of
-    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamUnknown:
+    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamSubstE,rpParamList,rpParamUnknown:
      EValue.Text:=param.AsString;
     rpParamInteger:
      begin
@@ -333,8 +333,8 @@ procedure TFRpParamsVCL.UpdateValue(param:TRpParam);
 var
  i,index:integer;
 begin
- ESearch.Visible:=param.ParamType in [rpParamSubst,rpParamMultiple];
- GValues.Visible:=param.ParamType in [rpParamList,rpParamMultiple];
+ ESearch.Visible:=param.ParamType in [rpParamSubst,rpParamSubstE,rpParamMultiple];
+ GValues.Visible:=param.ParamType in [rpParamList,rpParamSubstE,rpParamMultiple];
  GSearch.Visible:=Not GValues.Visible;
  LSearch.Visible:=ESearch.Visible;
  CheckNull.Visible:=param.ParamType<>rpParamMultiple;
@@ -360,7 +360,7 @@ begin
   if (EValue.Text='') then
   begin
    case param.ParamType of
-    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamUnknown:
+    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamSubstE,rpParamList,rpParamUnknown:
      EValue.Text:='';
     rpParamInteger:
      EValue.Text:=IntToStr(0);
@@ -387,7 +387,7 @@ begin
   begin
     EValue.Visible:=true;
     case param.ParamType of
-     rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamUnknown:
+     rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamSubstE,rpParamList,rpParamUnknown:
       param.Value:=EValue.Text;
      rpParamInteger:
       param.Value:=StrToInt(EValue.Text);

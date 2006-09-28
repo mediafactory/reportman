@@ -41,7 +41,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.6d';
+ RM_VERSION='2.6e';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
  MAX_PAGECOUNT=999999;
 type
@@ -1320,6 +1320,7 @@ var
   //
   SRpCachedFixed:WideString='Fixed Image';
   SRpCachedVariable:WideString='Variable Image';
+  SRpSParamSubsE:WideString='String Substi.Ex.';
 
 implementation
 

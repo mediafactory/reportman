@@ -673,6 +673,9 @@ begin
    FThreadExec.WaitFor;
 {$ENDIF}
  end;
+ FIdenLanguage.Free;
+ FBidiModes.Free;
+
  FGroupHeaders.free;
  gheaders.free;
  gfooters.free;
@@ -1581,7 +1584,39 @@ begin
     end;
    end;
   end;
-end;
+ end;
+ for i:=0 to Params.Count-1 do
+ begin
+  if params.items[i].ParamType=rpParamSubstE then
+  begin
+   paramname:=params.items[i].Name;
+   try
+    if Not VarIsNull(params.items[i].Value) then
+    begin
+     if doeval then
+     begin
+      FEvaluator.EvaluateText(paramname+':=('+String(params.items[i].Value)+')');
+      params.items[i].LastValue:=FEvaluator.EvaluateText(paramname);
+     end
+     else
+     begin
+      params.items[i].LastValue:=FEvaluator.EvaluateText(String(params.items[i].Value));
+     end;
+    end;
+   except
+    on E:Exception do
+    begin
+{$IFDEF DOTNETD}
+     Raise Exception.Create(E.Message+SRpParameter+'-'+paramname);
+{$ENDIF}
+{$IFNDEF DOTNETD}
+     E.Message:=E.Message+SRpParameter+'-'+paramname;
+     Raise;
+{$ENDIF}
+    end;
+   end;
+  end;
+ end;
 end;
 
 procedure TRpBaseReport.PrepareParamsBeforeOpen;

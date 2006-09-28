@@ -135,4 +135,4 @@ ProductName=
 ProductVersion=1.0.0.0
 Comments=
 [Excluded Packages]
-c:\prog\delphi7\Projects\Bpl\rppackv_del.bpl=Report manager Visual CLX components
+h:\prog\delphi7\Bin\dcldss70.bpl=Borland Decision Cube Components

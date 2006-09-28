@@ -663,6 +663,7 @@ var
  APDFDriver:TRpPDFDriver;
  acompo:TRpParamComp;
  writer:TWriter;
+ found:boolean;
  reader:TReader;
 begin
  // Execution of commands
@@ -1350,19 +1351,26 @@ begin
         Raise Exception.Create(SRpAuthFailed);
        alist:=TStringList.Create;
        try
+        found:=true;
         alist.LoadFromStream(astream);
         if alist.Count<1 then
-         Raise Exception.Create(SRpAuthFailed);
-        aliasname:=alist.Names[0];
-        index:=LAliases.IndexOfName(aliasname);
-        if index<0 then
-         Raise Exception.Create(SRpAuthFailed);
-        username:=ActClient.Username;
-        // Must check for privileges
-        if Not CheckPrivileges(username,aliasname) then
-         Raise Exception.Create(SRpAuthFailed+' - '+username+' - '+aliasname);
-        apath:=LAliases.Values[alist.Names[0]];
-        DoFillTreeDir(apath,alist,actclient);
+         found:=false;
+        if found then
+        begin
+         aliasname:=alist.Names[0];
+         index:=LAliases.IndexOfName(aliasname);
+         if index<0 then
+          found:=false;
+        end;
+        if found then
+        begin
+         username:=ActClient.Username;
+         // Must check for privileges
+         if Not CheckPrivileges(username,aliasname) then
+          Raise Exception.Create(SRpAuthFailed+' - '+username+' - '+aliasname);
+         apath:=LAliases.Values[alist.Names[0]];
+         DoFillTreeDir(apath,alist,actclient);
+        end;
         CB:=GenerateBlock(repgettree,alist);
         try
          SendBlock(AThread.COnnection,CB);
@@ -1499,7 +1507,12 @@ begin
    secat.bInheritHandle:=False;
    sinfo.hStdInput:=0;
    sinfo.hStdOutput:=0;
-   toexecute:='printreptopdf.exe';
+// Fixing 'printreptopdf System Error. Code:2':
+// Missimg file-path in commandline-parameter for CreateProcess
+// earlier code:
+//   toexecute:='printreptopdf.exe';
+// changed code:
+   toexecute:='"'+currentdir+'printreptopdf.exe"';
    if metafile then
     toexecute:=toexecute+' -m ';
    toexecute:=toexecute+' -q -errorfile "'+
@@ -1507,7 +1520,15 @@ begin
    memstream.SaveToFile(repname);
    try
     try
-     if not CreateProcess(PChar('printreptopdf.exe'),Pchar(toexecute),nil,nil,false,
+// Fixing second error: 'Error - ':
+// An existing empty errorfile raises an error
+// Errorfile should not exist except printreptopdf.exe create this  and fill it with errortext
+// (it seems windows sometimes creates the file with the  GetTempFileName-API)
+// new code-line before CreateProcess
+// (may be there is a better way to solve this problem):
+     DeleteFile(Pchar(errorfname));
+
+     if not CreateProcess(PChar(exefull),Pchar(toexecute),nil,nil,false,
        NORMAL_PRIORITY_CLASS or DETACHED_PROCESS,nil,PChar(Currentdir),sinfo,pinfo) then
         RaiseLastOsError;
     except
