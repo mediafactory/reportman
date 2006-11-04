@@ -673,9 +673,6 @@ begin
    FThreadExec.WaitFor;
 {$ENDIF}
  end;
- FIdenLanguage.Free;
- FBidiModes.Free;
-
  FGroupHeaders.free;
  gheaders.free;
  gfooters.free;
@@ -695,7 +692,9 @@ begin
  FIdenCurrentGroup.free;
  FIdenFirstSection.free;
  Fidenfreespacecms.free;
+ FBidiModes.free;
  Fidenfreespaceinch.free;
+ FIdenLanguage.free;
  FIdenEof.free;
  FTotalPagesList.free;
  if Assigned(FEvaluator) then
@@ -1532,7 +1531,6 @@ end;
 // of evaluate the totalpages expression
 procedure TRpBaseReport.PrintAll(Driver:IRpPrintDriver);
 begin
- Driver._AddRef;
  BeginPrint(Driver);
  try
   Driver.NewDocument(metafile,1,false);

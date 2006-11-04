@@ -2211,8 +2211,8 @@ begin
       else
        PDevMode^.dmCollate:=DMCOLLATE_FALSE;
      end;
-     if not IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_IN_BUFFER) then
-      RaiseLastOSError;
+//     if not IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_IN_BUFFER) then
+//      RaiseLastOSError;
      DocumentProperties(0,Printer.Handle,ADevice, PDevMode^,
        PDevMode^, DM_MODIFY);
      ResetDC(Printer.Handle,PDevMode^);
@@ -2255,6 +2255,7 @@ begin
    try
     pdevmode:=GlobalLock(aresult);
     try
+     pdevmode^.dmSize:=Word(asize);
      if IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
      begin
       pdevmode^.dmFields:=pdevmode^.dmFields or DM_COPIES;
@@ -2268,10 +2269,15 @@ begin
      begin
       DocumentProperties(0,Printer.Handle,ADevice, PDevMode^,
         PDevMode^, DM_MODIFY);
-       ResetDC(Printer.Handle,PDevMode^);
+      ResetDC(Printer.Handle,PDevMode^);
      end;
-     if not IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_IN_BUFFER) then
+     pdevmode^.dmFields:=DM_COPIES;
+     pdevmode^.dmCopies:=copies;
+     if not IDOK= DocumentProperties(0,Printer.Handle,ADevice, PDevMode^,
+        PDevMode^, DM_MODIFY) then
       RaiseLastOSError;
+//     if not IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_IN_BUFFER) then
+//      RaiseLastOSError;
     finally
      GlobalUnlock(aresult);
     end;

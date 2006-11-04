@@ -339,7 +339,6 @@ begin
  end;
  if forceTwoPass then
  begin
-  Driver._AddRef;
   BeginPrint(Driver);
   try
    Driver.NewDocument(metafile,hardwarecopies,hardwarecollate);
@@ -398,7 +397,6 @@ begin
  // it frees each printed page
  printingonepass:=true;
  try
-  Driver._AddRef;
   BeginPrint(Driver);
   try
    Driver.NewDocument(metafile,hardwarecopies,hardwarecollate);
@@ -475,6 +473,7 @@ begin
  FEvaluator:=nil;
  section:=nil;
  subreport:=nil;
+// FDriver:=nil;
  printing:=false;
  metafile.UpdateTotalPages(FTotalPagesList);
 end;
@@ -901,6 +900,7 @@ var
  dataavail:Boolean;
  newpagesize:integer;
 begin
+// Driver._AddRef;
  LoadExternals;
  FUpdatePageSize:=false;
  FillGlobalHeaders;

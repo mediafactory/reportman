@@ -27,6 +27,7 @@ type
  TRpPreviewControl=class(TRpPreviewMeta)
   private
    FReport:TRpBasereport;
+   ndriver:IRpPrintDriver;
    procedure SetReport(Avalue:TRpBaseReport);
   protected
    procedure Notification(AComponent:TComponent;Operation:TOperation);override;
@@ -50,14 +51,16 @@ begin
  Metafile:=nil;
  if Assigned(FReport) then
   Report.EndPrint;
+ ndriver:=nil;
  inherited Destroy;
 end;
 
 procedure TRpPreviewControl.SetReport(Avalue:TRpBaseReport);
 var
-  adriver:IRpPrintDriver;
   errormessage:string;
 begin
+ if ndriver<>IRpPrintDriver(prdriver_internal) then
+  ndriver:=prdriver_internal;
  errormessage:='';
  try
   if Assigned(FReport) then
@@ -73,9 +76,7 @@ begin
  FReport:=Avalue;
  if Assigned(FReport) then
  begin
-  adriver:=prdriver_internal;
-  adriver._AddRef;
-  FReport.BeginPrint(adriver);
+  FReport.BeginPrint(ndriver);
   Metafile:=FReport.metafile;
  end;
 end;

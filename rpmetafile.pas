@@ -355,6 +355,7 @@ type
    FOnRequestPage:TRequestPageEvent;
    FReadThread:TReadThread;
    FlexStream,FlexStream2:TFlexStream;
+   FBackColor:integer;
    AbortingThread:Boolean;
    IntStream:TStream;
    FMemStream:TMemoryStream;
@@ -364,6 +365,7 @@ type
    procedure IntSaveToStream(Stream:TStream;SaveStream:TStream);
    procedure IntLoadFromStream(Stream:TStream;clearfirst:boolean=true);
    procedure DoRequestData(Sender:TObject;count:integer);
+   procedure SetBackColor(avalue:integer);
   public
    AsyncReading:Boolean;
    PageSize:integer;
@@ -375,7 +377,6 @@ type
    Duplex:Byte;
    CollateCopies:Boolean;
    LinesPerInch:Word;
-   BackColor:integer;
    PrinterSelect:TRpPrinterSelect;
    PreviewStyle:TRpPreviewStyle;
    PreviewWindow:TRpPreviewWindowStyle;
@@ -408,6 +409,7 @@ type
    procedure WorkAsyncError(amessage:string);
    procedure Finish;
    procedure StopWork;
+   property BackColor:integer read FBackColor write SetBackColor;
    property CurrentPage:integer read FCurrentPage write SetCurrentPage;
    property Reading:boolean read FReading;
 //   property PagesCount:integer read GetPageCount;
@@ -435,6 +437,11 @@ type
 function IsMetafile(memstream:TMemoryStream):boolean;
 
 implementation
+
+procedure TRpMetafileReport.SetBackColor(avalue:integer);
+begin
+ FBackColor:=avalue AND $00FFFFFF;
+end;
 
 constructor TrpMetafilePage.Create;
 begin
@@ -1104,8 +1111,9 @@ begin
  if (sizeof(integer)<>Stream.Read(ainteger,sizeof(Integer))) then
   Raise Exception.Create(SRpBadFileHeader);
  Orientation:=TRpOrientation(ainteger);
- if (sizeof(BackColor)<>Stream.Read(BackColor,sizeof(BackColor))) then
+ if (sizeof(ainteger)<>Stream.Read(ainteger,sizeof(BackColor))) then
   Raise Exception.Create(SRpBadFileHeader);
+ BackColor:=ainteger;
  if (sizeof(PaperSource)<>Stream.Read(PaperSource,sizeof(PaperSource))) then
   Raise Exception.Create(SRpBadFileHeader);
  if (sizeof(Copies)<>Stream.Read(Copies,sizeof(Copies))) then

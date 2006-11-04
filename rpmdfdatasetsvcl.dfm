@@ -2,7 +2,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
   Left = 0
   Top = 0
   Width = 443
-  Height = 277
+  Height = 270
   Align = alClient
   AutoScroll = False
   TabOrder = 0
@@ -168,7 +168,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     Left = 0
     Top = 105
     Width = 443
-    Height = 172
+    Height = 165
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -176,7 +176,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       Left = 0
       Top = 0
       Width = 443
-      Height = 172
+      Height = 165
       ActivePage = TabSQL
       Align = alClient
       TabOrder = 0
@@ -186,7 +186,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 173
           Top = 0
           Width = 8
-          Height = 144
+          Height = 137
           Cursor = crHSplit
           Beveled = True
         end
@@ -194,8 +194,9 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 181
           Top = 0
           Width = 254
-          Height = 144
+          Height = 137
           Align = alClient
+          ScrollBars = ssBoth
           TabOrder = 0
           WordWrap = False
           OnChange = MSQLChange
@@ -204,7 +205,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 0
           Top = 0
           Width = 173
-          Height = 144
+          Height = 137
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
@@ -239,7 +240,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 0
           Top = 37
           Width = 435
-          Height = 107
+          Height = 100
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1

@@ -471,6 +471,7 @@ procedure TFRpRTParams.FormDestroy(Sender: TObject);
 begin
  lcontrols.free;
  lnulls.free;
+ fparams.free;
 end;
 
 procedure TFRpRTParams.CheckNullClick(Sender:TObject);

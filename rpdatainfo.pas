@@ -1402,7 +1402,7 @@ begin
      end;
    end;
  finally
-  paramlist.Clear;
+  paramlist.free;
  end;
 end;
 

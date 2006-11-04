@@ -1246,6 +1246,7 @@ begin
    Rpfunctions.objects[i].free;
   end;
  end;
+ rpfunctions.free;
 end;
 
 procedure TRpCustomEvaluator.InitRpFunctions;

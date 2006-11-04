@@ -127,6 +127,7 @@ begin
  conteimage.BevelInner:=bvNone;
  conteimage.BevelOuter:=bvNone;
  image:=TImage.Create(Self);
+// image.Transparent:=false;
  image.OnMouseDown:=InternalMouseDown;
  conteimage.Width:=0;
  conteimage.Height:=0;
@@ -254,6 +255,8 @@ begin
   FBitmap.Free;
  if Assigned(FIntBitmap) then
   FIntBitmap.Free;
+// prdriver_internal.free;
+ prdriver.free;
  inherited Destroy;
 end;
 

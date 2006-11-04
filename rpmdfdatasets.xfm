@@ -1,15 +1,15 @@
 object FRpDatasets: TFRpDatasets
   Left = 0
   Top = 0
-  Width = 451
-  Height = 304
-  VertScrollBar.Range = 113
+  Width = 599
+  Height = 496
+  VertScrollBar.Range = 120
   Align = alClient
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 451
+    Width = 599
     Height = 120
     Align = alTop
     BevelOuter = bvNone
@@ -17,7 +17,7 @@ object FRpDatasets: TFRpDatasets
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 451
+      Width = 599
       Height = 30
       AutoSize = True
       ButtonHeight = 26
@@ -88,7 +88,7 @@ object FRpDatasets: TFRpDatasets
     object PTop1: TPanel
       Left = 0
       Top = 30
-      Width = 451
+      Width = 599
       Height = 90
       Align = alClient
       BevelOuter = bvNone
@@ -97,14 +97,14 @@ object FRpDatasets: TFRpDatasets
         Left = 161
         Top = 0
         Width = 8
-        Height = 83
+        Height = 90
         Beveled = True
       end
       object LDatasets: TListBox
         Left = 0
         Top = 0
         Width = 161
-        Height = 83
+        Height = 90
         Align = alLeft
         TabOrder = 0
         OnClick = LDatasetsClick
@@ -112,7 +112,7 @@ object FRpDatasets: TFRpDatasets
       object PanelBasic: TPanel
         Left = 169
         Top = 0
-        Width = 282
+        Width = 430
         Height = 90
         Align = alClient
         BevelOuter = bvNone
@@ -174,18 +174,18 @@ object FRpDatasets: TFRpDatasets
   end
   object PBottom: TPanel
     Left = 0
-    Top = 113
-    Width = 451
-    Height = 191
+    Top = 120
+    Width = 599
+    Height = 376
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 451
-      Height = 191
-      ActivePage = TabMyBase
+      Width = 599
+      Height = 376
+      ActivePage = TabSQL
       Align = alClient
       TabOrder = 0
       object TabSQL: TTabSheet
@@ -194,15 +194,16 @@ object FRpDatasets: TFRpDatasets
           Left = 161
           Top = 0
           Width = 8
-          Height = 161
+          Height = 346
           Beveled = True
         end
         object MSQL: TMemo
           Left = 169
           Top = 0
-          Width = 274
-          Height = 161
+          Width = 422
+          Height = 346
           Align = alClient
+          ScrollBars = ssBoth
           TabOrder = 0
           WordWrap = False
           OnChange = MSQLChange
@@ -211,7 +212,7 @@ object FRpDatasets: TFRpDatasets
           Left = 0
           Top = 0
           Width = 161
-          Height = 161
+          Height = 346
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
@@ -232,7 +233,7 @@ object FRpDatasets: TFRpDatasets
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 443
+          Width = 591
           Height = 37
           Items.Strings = (
             'Query'
@@ -245,15 +246,15 @@ object FRpDatasets: TFRpDatasets
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 443
-          Height = 124
+          Width = 591
+          Height = 309
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
           object PBDEFilter: TPanel
             Left = 0
             Top = 0
-            Width = 443
+            Width = 591
             Height = 17
             Align = alTop
             Alignment = taLeftJustify
@@ -264,8 +265,8 @@ object FRpDatasets: TFRpDatasets
           object MBDEFilter: TMemo
             Left = 0
             Top = 17
-            Width = 443
-            Height = 107
+            Width = 591
+            Height = 292
             Align = alClient
             ScrollBars = ssBoth
             TabOrder = 1
@@ -797,11 +798,11 @@ object FRpDatasets: TFRpDatasets
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00424D6E010000000000003E000000
       280000003900000026000000010001000000000030010000120B0000120B0000
-      0200000002000000FFFFFF00000000000000000000007E7F0000007E000CD5FF
-      00000CFF810B7F7F00010FFFC00FA5FF04000FFFE20D40FF0E020FC1F00B80FF
-      0E040F80F00F407F070C0FC0F00AA07F03980FE00000007F01F00000000001FF
-      00E00001F80701FF01F00F03F80F00FF03900F01F80383FF0F0C0783FA057DFF
-      1E0607FFFB03DF7F180303FFF80176FF000001FF90005A7F0000007E0000007F
+      0200000002000000FFFFFF0000000000000000000088007F0000007E0001207F
+      00000CFF8000087F00010FFFC220017F04000FFFE009007F0E020FC1F000207F
+      0E040F80F080087F070C0FC0F022027F03980FE00000407F01F000000080007F
+      00E00001F809087F01F00F03F800027F03900F01F920207F0F0C0783F802007F
+      1E0607FFF800097F180303FFF848807F000001FF9200007F0000007E0000007F
       000000000000007F000000000000007F000000000000007F01C000080000007F
       01C0000800FFF07F01C0001C00FFF07F01C0001C0080107F01C0003E00B6D07F
       01C0003E0080107F0FF8007F02B6F87F0FF8007F0080387F07F000FF80FFF87F
