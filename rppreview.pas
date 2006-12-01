@@ -180,6 +180,7 @@ var
  oldprogres:TRpProgressEvent;
  hasparams:boolean;
  i:integer;
+  OldIdleHandler : TIdleEvent;
 begin
  dia:=TFRpPreview.Create(Application);
  try
@@ -193,10 +194,12 @@ begin
   if previewcontrol.metafile.PreviewWindow=spwMaximized then
     dia.WindowState:=wsMaximized;
   previewcontrol.OnWorkProgress:=dia.RepProgress;
+    OldIdleHandler := Application.OnIdle;
   Application.OnIdle:=dia.AppIdle;
   dia.ShowModal;
   Result:=dia.printed;
  finally
+    Application.OnIdle := OldIdleHandler;
   previewcontrol.OnWorkProgress:=nil;
   previewcontrol.OnPageDrawn:=nil;
   previewcontrol.Parent:=nil;

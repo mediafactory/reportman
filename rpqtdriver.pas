@@ -650,6 +650,11 @@ begin
    begin
     Width:=round(obj.Width*dpix*scale/TWIPS_PER_INCHESS);
     Height:=round(obj.Height*dpiy*scale/TWIPS_PER_INCHESS);
+// Workaround CLX bug. On printed version detail band shapes appear in black color and psSolid.
+       Canvas.Pen.Color := 0;
+       Canvas.Pen.Style := psSolid;
+
+
     Canvas.Pen.Color:=obj.Pencolor;
     Canvas.Pen.Style:=TPenStyle(obj.PenStyle);
     Canvas.Brush.Color:=obj.BrushColor;
