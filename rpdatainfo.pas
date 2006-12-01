@@ -1145,7 +1145,15 @@ begin
         FIBTransaction:=FIBInternalTransaction;
        end;
        if FIBDatabase.Connected then
+       begin
+        if FIBTransaction=FIBInternalTransaction then
+        begin
+         if FIBInternalTransaction.InTransaction then
+          FIBInternalTransaction.Commit;
+         FIBInternalTransaction.StartTransaction;
+        end;
         exit;
+       end;
        FIBDatabase.LoginPrompt:=FLoginPrompt;
        conname:=alias;
        // Load Connection parameters
@@ -1463,6 +1471,9 @@ begin
  begin
   FIBInternalDatabase.Connected:=False;
  end;
+ if assigned(FIBInternalTransaction) then
+   if FIBInternalTransaction.InTransaction then
+    FIBInternalTransaction.Commit;
 {$ENDIF}
 {$IFDEF USEZEOS}
  if Assigned(FZInternalDatabase) then

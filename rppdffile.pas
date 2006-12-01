@@ -99,7 +99,6 @@ type
    FFont:TRpPDFFont;
    FFile:TRpPDFFile;
    FResolution:integer;
-   FLineInfo:array of TRpLineInfo;
    FLineInfoMaxItems:integer;
    FLineInfoCount:integer;
    FFontTTData:TStringList;
@@ -138,8 +137,11 @@ type
    procedure FreeFonts;
    function PDFCompatibleTextWidthKerning(astring:WideString;adata:TRpTTFontData;pdffont:TRpPDFFont):String;
   public
+   LineInfo:array of TRpLineInfo;
    procedure TextExtent(const Text:WideString;var Rect:TRect;wordbreak:boolean;
     singleline:boolean);
+   property LineInfoMaxItems:integer read FLineInfoMaxItems;
+   property LineInfoCount:integer read FLineInfoCount;
 
    property Font:TRpPDFFont read FFOnt;
   end;
@@ -422,7 +424,7 @@ begin
  FFile:=AFile;
  FFontTTData:=TStringList.Create;
  FFontTTData.Sorted:=true;
- SetLength(FLineInfo,CONS_MINLINEINFOITEMS);
+ SetLength(LineInfo,CONS_MINLINEINFOITEMS);
  FLineInfoMaxItems:=CONS_MINLINEINFOITEMS;
 end;
 
@@ -1160,7 +1162,7 @@ var
  singleline:boolean;
  astring:WideString;
  alinesize:integer;
- lwords:TStringList;
+ lwords:TRpWideStrings;
  lwidths:TStringList;
  arec:TRect;
  aword:WideString;
@@ -1211,19 +1213,19 @@ begin
    if  ((Alignment AND AlignmentFlags_AlignRight)>0) then
    begin
     // recsize.right contains the width of the full text
-    PosX:=ARect.Right-FLineInfo[i].Width;
+    PosX:=ARect.Right-LineInfo[i].Width;
    end;
    // Aligns horz.
    if (Alignment AND AlignmentFlags_AlignHCenter)>0 then
    begin
-    PosX:=ARect.Left+(((Arect.Right-Arect.Left)-FLineInfo[i].Width) div 2);
+    PosX:=ARect.Left+(((Arect.Right-Arect.Left)-LineInfo[i].Width) div 2);
    end;
-   astring:=Copy(Text,FLineInfo[i].Position,FLineInfo[i].Size);
-   if  (((Alignment AND AlignmentFlags_AlignHJustify)>0) AND (NOT FLineInfo[i].LastLine)) then
+   astring:=Copy(Text,LineInfo[i].Position,LineInfo[i].Size);
+   if  (((Alignment AND AlignmentFlags_AlignHJustify)>0) AND (NOT LineInfo[i].LastLine)) then
    begin
     // Calculate the sizes of the words, then
     // share space between words
-    lwords:=TStringList.Create;
+    lwords:=TRpWideStrings.Create;
     try
      aword:='';
      index:=1;
@@ -1271,7 +1273,7 @@ begin
         currpos:=PosX;
        for index:=0 to lwords.Count-1 do
        begin
-        TextOut(currpos,PosY+FLineInfo[i].TopPos,lwords.strings[index],FLineInfo[i].Width,Rotation,RightToLeft);
+        TextOut(currpos,PosY+LineInfo[i].TopPos,lwords.strings[index],LineInfo[i].Width,Rotation,RightToLeft);
         currpos:=currpos+StrToInt(lwidths.Strings[index])+alinedif;
        end;
       end;
@@ -1283,7 +1285,7 @@ begin
     end;
    end
    else
-    TextOut(PosX,PosY+FLineInfo[i].TopPos,astring,FLineInfo[i].Width,Rotation,RightToLeft);
+    TextOut(PosX,PosY+LineInfo[i].TopPos,astring,LineInfo[i].Width,Rotation,RightToLeft);
   end;
  finally
   if (Clipping or (Rotation<>0)) then
@@ -1292,6 +1294,8 @@ begin
   end;
  end;
 end;
+
+
 
 
 function Type1FontTopdfFontName(Type1Font:TRpType1Font;oblique,bold:boolean;WFontName:WideString;FontStyle:integer):String;
@@ -1959,10 +1963,10 @@ procedure TRpPDFCanvas.NewLineInfo(info:TRpLineInfo);
 begin
  if FLineInfoMaxItems<FLineInfoCount+1 then
  begin
-  SetLength(FLineInfo,FLineInfoMaxItems*2);
+  SetLength(LineInfo,FLineInfoMaxItems*2);
   FLineInfoMaxItems:=FLineInfoMaxItems*2;
  end;
- FLineInfo[FLineInfoCount]:=info;
+ LineInfo[FLineInfoCount]:=info;
  inc(FLineInfoCount);
 end;
 

@@ -91,6 +91,7 @@ type
     MetaBitmap:TBitmap;
     bitresx,bitresy:Integer;
     bitmono:Boolean;
+    pdfdriver:TRpPDFDriver;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure AppIdleBitmap(Sender:TObject;var done:boolean);
 {$IFNDEF FORWEBAX}
@@ -119,7 +120,6 @@ type
     aGDIDriver:IRpPrintDriver;
     TextDriver:TRpTextDriver;
     aTextDriver:IRpPrintDriver;
-    pdfdriver:TRpPDFDriver;
     apdfdriver:IRpPrintDriver;
     nobegindoc:boolean;
   end;
@@ -136,6 +136,8 @@ type
    onlycalc:Boolean;
    selectedprinter:TRpPrinterSelect;
    DrawerBefore,DrawerAfter:Boolean;
+   npdfdriver:TRpPDFDriver;
+   procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;pagemargins:TRect;devicefonts:boolean;offset:TPoint);
    procedure SendAfterPrintOperations;
    function DoNewPage(aorientation:TRpOrientation;apagesizeqt:TPageSizeQt):Boolean;
    procedure UpdateBitmapSize(report:TrpMetafileReport;apage:TrpMetafilePage);
@@ -179,6 +181,9 @@ type
    function GetPageSize(var PageSizeQt:Integer):TPoint;
    function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
    procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
+   procedure TextRectJustify(Canvas:TCanvas;ARect: TRect; Text: Widestring;
+                       Alignment: integer; Clipping: boolean;Wordbreak:boolean;
+                       Rotation:integer;RightToLeft:Boolean);
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
    procedure SetOrientation(Orientation:TRpOrientation);
    procedure SelectPrinter(printerindex:TRpPrinterSelect);
@@ -352,6 +357,7 @@ begin
  drawclippingregion:=false;
  oldpagesize.PageIndex:=-1;
  scale:=1;
+ npdfdriver:=TRpPDFDriver.Create;
 end;
 
 destructor TRpGDIDriver.Destroy;
@@ -694,6 +700,14 @@ var
 begin
  if atext.FontRotation<>0 then
   exit;
+ // Justified text use pdf driver
+ if (atext.AlignMent AND AlignmentFlags_AlignHJustify)>0 then
+ begin
+  npdfdriver.TextExtent(atext,extent);
+  exit;
+ end;
+
+
  if atext.CutText then
  begin
   maxextent:=extent;
@@ -780,7 +794,7 @@ begin
 
 end;
 
-procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;pagemargins:TRect;devicefonts:boolean;offset:TPoint);
+procedure TRpGDIDriver.PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;pagemargins:TRect;devicefonts:boolean;offset:TPoint);
 var
  posx,posy:integer;
  rec,recsrc:TRect;
@@ -803,6 +817,7 @@ var
  jpegimage:TJPegImage;
 {$ENDIF}
  bitmapwidth,bitmapheight:integer;
+ astring:WideString;
 begin
  // Switch to device points
  if toprinter then
@@ -840,87 +855,104 @@ begin
       FindDeviceFont(Canvas.Handle,Canvas.Font,FontSizeToStep(Canvas.Font.Size,obj.PrintStep));
     end;
 
-
-    aalign:=DT_NOPREFIX;
-    if (obj.AlignMent AND AlignmentFlags_AlignHCenter)>0 then
-     aalign:=aalign or DT_CENTER;
-    if (obj.AlignMent AND AlignmentFlags_SingleLine)>0 then
-     aalign:=aalign or DT_SINGLELINE;
-    if (obj.AlignMent AND AlignmentFlags_AlignLEFT)>0 then
-     aalign:=aalign or DT_LEFT;
-    if (obj.AlignMent AND AlignmentFlags_AlignRight)>0 then
-     aalign:=aalign or DT_RIGHT;
-    if obj.WordWrap then
-     aalign:=aalign or DT_WORDBREAK;
-    if Not obj.CutText then
-     aalign:=aalign or DT_NOCLIP;
-    if obj.RightToLeft then
-     aalign:=aalign or DT_RTLREADING;
-    rec.Left:=posx;
-    rec.Top:=posy;
-    rec.Right:=posx+Ceil(obj.Width*dpix/TWIPS_PER_INCHESS);
-    rec.Bottom:=posy+Ceil(obj.Height*dpiy/TWIPS_PER_INCHESS);
-//    rec.Right:=posx+Round(obj.Width*dpix/TWIPS_PER_INCHESS);
-//    rec.Bottom:=posy+Round(obj.Height*dpiy/TWIPS_PER_INCHESS);
-    atext:=page.GetText(Obj);
-    aansitext:=atext;
-    alvbottom:=(obj.AlignMent AND AlignmentFlags_AlignBottom)>0;
-    alvcenter:=(obj.AlignMent AND AlignmentFlags_AlignVCenter)>0;
-
-    calcrect:=(not obj.Transparent) or alvbottom or alvcenter;
-    arec:=rec;
-    if calcrect then
+    // Justified text use pdf driver
+    if (obj.AlignMent AND AlignmentFlags_AlignHJustify)>0 then
     begin
-     // First calculates the text extent
-     // Win9x does not support drawing WideChars
-{$IFNDEF DOTNETD}
-     if IsWindowsNT then
-      DrawTextW(Canvas.Handle,PWideChar(atext),Length(atext),arec,aalign or DT_CALCRECT)
+     astring:=page.GetText(Obj);
+     rec.Left:=Round(posx/dpix*TWIPS_PER_INCHESS);
+     rec.Top:=Round(posy/dpix*TWIPS_PER_INCHESS);
+     rec.Right:=Rec.Left+obj.Width;
+     rec.Bottom:=rec.TOp+obj.Height;
+     if obj.Transparent then
+      SetBkMode(Canvas.Handle,TRANSPARENT)
      else
-      DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),arec,aalign or DT_CALCRECT);
-{$ENDIF}
-{$IFDEF DOTNETD}
-     if IsWindowsNT then
-      DrawTextW(Canvas.Handle,atext,Length(atext),arec,aalign or DT_CALCRECT)
-     else
-      DrawTextA(Canvas.Handle,aansitext,Length(aansitext),arec,aalign or DT_CALCRECT);
-{$ENDIF}
-     Canvas.Brush.Style:=bsSolid;
-     Canvas.Brush.Color:=CLXColorToVCLColor(obj.BackColor);
+      SetBkMode(Canvas.Handle,OPAQUE);
+     TextRectJustify(Canvas,rec,astring,obj.AlignMent,obj.CutText,obj.WordWrap,
+      obj.FontRotation,obj.RightToLeft);
     end
     else
-     Canvas.Brush.Style:=bsClear;
-    if alvbottom then
     begin
-     rec.Top:=rec.Top+(rec.bottom-arec.bottom)
-    end;
-    if alvcenter then
-    begin
-     rec.Top:=rec.Top+((rec.bottom-arec.bottom) div 2);
-    end;
-    if obj.Transparent then
-     SetBkMode(Canvas.Handle,TRANSPARENT)
-    else
-    begin
-//   This does not work on XP?
-     SetBkMode(Canvas.Handle,OPAQUE);
-//     SetBkColor(Canvas.Handle,Canvas.Brush.Color);
-//     SelectObject(Canvas.Handle,Canvas.Font.Handle);
-    end;
+      aalign:=DT_NOPREFIX;
+      if (obj.AlignMent AND AlignmentFlags_AlignHCenter)>0 then
+       aalign:=aalign or DT_CENTER;
+      if (obj.AlignMent AND AlignmentFlags_SingleLine)>0 then
+       aalign:=aalign or DT_SINGLELINE;
+      if (obj.AlignMent AND AlignmentFlags_AlignLEFT)>0 then
+       aalign:=aalign or DT_LEFT;
+      if (obj.AlignMent AND AlignmentFlags_AlignRight)>0 then
+       aalign:=aalign or DT_RIGHT;
+      if obj.WordWrap then
+       aalign:=aalign or DT_WORDBREAK;
+      if Not obj.CutText then
+       aalign:=aalign or DT_NOCLIP;
+      if obj.RightToLeft then
+       aalign:=aalign or DT_RTLREADING;
+      rec.Left:=posx;
+      rec.Top:=posy;
+      rec.Right:=posx+Ceil(obj.Width*dpix/TWIPS_PER_INCHESS);
+      rec.Bottom:=posy+Ceil(obj.Height*dpiy/TWIPS_PER_INCHESS);
+  //    rec.Right:=posx+Round(obj.Width*dpix/TWIPS_PER_INCHESS);
+  //    rec.Bottom:=posy+Round(obj.Height*dpiy/TWIPS_PER_INCHESS);
+      atext:=page.GetText(Obj);
+      aansitext:=atext;
+      alvbottom:=(obj.AlignMent AND AlignmentFlags_AlignBottom)>0;
+      alvcenter:=(obj.AlignMent AND AlignmentFlags_AlignVCenter)>0;
+
+      calcrect:=(not obj.Transparent) or alvbottom or alvcenter;
+      arec:=rec;
+      if calcrect then
+      begin
+       // First calculates the text extent
+       // Win9x does not support drawing WideChars
+{$IFNDEF DOTNETD}
+       if IsWindowsNT then
+        DrawTextW(Canvas.Handle,PWideChar(atext),Length(atext),arec,aalign or DT_CALCRECT)
+       else
+        DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),arec,aalign or DT_CALCRECT);
+{$ENDIF}
 {$IFDEF DOTNETD}
-    if IsWindowsNT then
-     DrawTextW(Canvas.Handle,atext,Length(atext),rec,aalign)
-    else
-     DrawTextA(Canvas.Handle,aansitext,Length(aansitext),rec,aalign)
-   end;
+       if IsWindowsNT then
+        DrawTextW(Canvas.Handle,atext,Length(atext),arec,aalign or DT_CALCRECT)
+       else
+        DrawTextA(Canvas.Handle,aansitext,Length(aansitext),arec,aalign or DT_CALCRECT);
+{$ENDIF}
+       Canvas.Brush.Style:=bsSolid;
+       Canvas.Brush.Color:=CLXColorToVCLColor(obj.BackColor);
+      end
+      else
+       Canvas.Brush.Style:=bsClear;
+      if alvbottom then
+      begin
+       rec.Top:=rec.Top+(rec.bottom-arec.bottom)
+      end;
+      if alvcenter then
+      begin
+       rec.Top:=rec.Top+((rec.bottom-arec.bottom) div 2);
+      end;
+      if obj.Transparent then
+       SetBkMode(Canvas.Handle,TRANSPARENT)
+      else
+      begin
+  //   This does not work on XP?
+       SetBkMode(Canvas.Handle,OPAQUE);
+  //     SetBkColor(Canvas.Handle,Canvas.Brush.Color);
+  //     SelectObject(Canvas.Handle,Canvas.Font.Handle);
+      end;
+{$IFDEF DOTNETD}
+      if IsWindowsNT then
+       DrawTextW(Canvas.Handle,atext,Length(atext),rec,aalign)
+      else
+       DrawTextA(Canvas.Handle,aansitext,Length(aansitext),rec,aalign)
+     end;
 {$ENDIF}
 {$IFNDEF DOTNETD}
-    if IsWindowsNT then
-     DrawTextW(Canvas.Handle,PWideChar(atext),Length(atext),rec,aalign)
-    else
-     DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),rec,aalign)
-   end;
+      if IsWindowsNT then
+       DrawTextW(Canvas.Handle,PWideChar(atext),Length(atext),rec,aalign)
+      else
+       DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),rec,aalign)
+     end;
 {$ENDIF}
+   end;
   rpMetaDraw:
    begin
     Width:=round(obj.Width*dpix/TWIPS_PER_INCHESS);
@@ -1072,6 +1104,200 @@ begin
    end;
  end;
 end;
+
+procedure TRpGDIDriver.TextRectJustify(Canvas:TCanvas;ARect: TRect; Text: Widestring;
+                       Alignment: integer; Clipping: boolean;Wordbreak:boolean;
+                       Rotation:integer;RightToLeft:Boolean);
+var
+ recsize:TRect;
+ i,index:integer;
+ posx,posY,currpos,alinedif:integer;
+ singleline:boolean;
+ astring:WideString;
+ alinesize:integer;
+ lwords:TRpWideStrings;
+ lwidths:TStringList;
+ arec,arec2:TRect;
+ aword:WideString;
+ nposx,nposy:integer;
+ aatext:WideString;
+ aansitext:string;
+ aalign:Cardinal;
+ aintdpix,aintdpiy:integer;
+begin
+ try
+  singleline:=(Alignment AND AlignmentFlags_SingleLine)>0;
+  if singleline then
+   wordbreak:=false;
+  if toprinter then
+  begin
+   if intdpix=0 then
+   begin
+    intdpix:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSX); //  printer.XDPI;
+    intdpiy:=GetDeviceCaps(Printer.Canvas.handle,LOGPIXELSY);  // printer.YDPI;
+   end;
+   aintdpix:=intdpix;
+   aintdpiy:=intdpiy;
+  end
+  else
+  begin
+   aintdpix:=dpi;
+   aintdpiy:=dpi;
+  end;
+  // Calculates text extent and apply alignment
+  recsize:=ARect;
+  npdfdriver.PDFFile.Canvas.Font.Size:=Canvas.Font.Size;
+  npdfdriver.PDFFile.Canvas.Font.WFontName:=Canvas.Font.Name;
+  npdfdriver.PDFFile.Canvas.Font.Name:=poLinked;
+  npdfdriver.PDFFile.Canvas.Font.Color:=Canvas.Font.Color;
+  npdfdriver.PDFFile.Canvas.Font.Italic:=fsItalic in Canvas.Font.Style;
+  npdfdriver.PDFFile.Canvas.Font.Bold:=fsBold in Canvas.Font.Style;
+
+  npdfdriver.PDFFile.Canvas.TextExtent(Text,recsize,wordbreak,singleline);
+  // Align bottom or center
+  PosY:=ARect.Top;
+  if (AlignMent AND AlignmentFlags_AlignBottom)>0 then
+  begin
+   PosY:=ARect.Bottom-recsize.bottom;
+  end;
+  if (AlignMent AND AlignmentFlags_AlignVCenter)>0 then
+  begin
+   PosY:=ARect.Top+(((ARect.Bottom-ARect.Top)-recsize.Bottom) div 2);
+  end;
+
+  for i:=0 to npdfdriver.pdffile.Canvas.LineInfoCount-1 do
+  begin
+   posX:=ARect.Left;
+   // Aligns horz.
+   if  ((Alignment AND AlignmentFlags_AlignRight)>0) then
+   begin
+    // recsize.right contains the width of the full text
+    PosX:=ARect.Right-npdfdriver.pdffile.Canvas.LineInfo[i].Width;
+   end;
+   // Aligns horz.
+   if (Alignment AND AlignmentFlags_AlignHCenter)>0 then
+   begin
+    PosX:=ARect.Left+(((Arect.Right-Arect.Left)-npdfdriver.pdffile.Canvas.LineInfo[i].Width) div 2);
+   end;
+   astring:=Copy(Text,npdfdriver.pdffile.Canvas.LineInfo[i].Position,npdfdriver.pdffile.Canvas.LineInfo[i].Size);
+   if  (((Alignment AND AlignmentFlags_AlignHJustify)>0) AND (NOT npdfdriver.pdffile.Canvas.LineInfo[i].LastLine)) then
+   begin
+    // Calculate the sizes of the words, then
+    // share space between words
+    lwords:=TRpWideStrings.Create;
+    try
+     aword:='';
+     index:=1;
+     while index<=Length(astring) do
+     begin
+      if astring[index]<>' ' then
+      begin
+       aword:=aword+astring[index];
+      end
+      else
+      begin
+       if Length(aword)>0 then
+        lwords.Add(aword);
+       aword:='';
+      end;
+      inc(index);
+     end;
+     if Length(aword)>0 then
+       lwords.Add(aword);
+     // Calculate all words size
+     alinesize:=0;
+     lwidths:=TStringList.Create;
+     try
+      for index:=0 to lwords.Count-1 do
+      begin
+       arec:=ARect;
+       npdfdriver.pdffile.Canvas.TextExtent(lwords.Strings[index],arec,false,true);
+       if RightToLeft then
+        lwidths.Add(IntToStr(-(arec.Right-arec.Left)))
+       else
+        lwidths.Add(IntToStr(arec.Right-arec.Left));
+       alinesize:=alinesize+arec.Right-arec.Left;
+      end;
+      alinedif:=ARect.Right-ARect.Left-alinesize;
+      if alinedif>0 then
+      begin
+       if lwords.count>1 then
+        alinedif:=alinedif div (lwords.count-1);
+       if RightToLeft then
+       begin
+        currpos:=ARect.Right;
+        alinedif:=-alinedif;
+       end
+       else
+        currpos:=PosX;
+       for index:=0 to lwords.Count-1 do
+       begin
+        nposx:=currpos;
+        nposy:=PosY+npdfdriver.pdffile.Canvas.LineInfo[i].TopPos;
+        nposx:=Round(nposx/1440*aintdpix);
+        nposy:=Round(nposy/1440*aintdpiy);
+        arec2.Left:=nposx;
+        arec2.Top:=nposy;
+        arec2.Bottom:=arec.Bottom+100;
+        arec2.Right:=Round(arect.Right/1440*aintdpix);
+        aalign:=DT_NOPREFIX or DT_NOCLIP;
+        if ((index=lwords.Count-1) AND (lwords.count>0)) then
+         aalign:=aalign OR DT_RIGHT
+        else
+         aalign:=aalign OR DT_LEFT;
+        if IsWindowsNT then
+        begin
+         aatext:=lwords.strings[index];
+         DrawTextW(Canvas.Handle,PWideChar(aatext),Length(aatext),arec2,aalign);
+        end
+        else
+        begin
+         aansitext:=lwords.strings[index];
+         DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),arec2,aalign);
+        end;
+//        TextOutW(Canvas.Handle,nposx,nposy,PWideChar(lwords.strings[index]),
+//         Length(lwords.strings[index]));
+//        TextOut(currpos,PosY+npdfdriver.pdffile.Canvas.LineInfo[i].TopPos,lwords.strings[index],
+//         npdfdriver.pdffile.Canvas.LineInfo[i].Width,Rotation,RightToLeft);
+        currpos:=currpos+StrToInt(lwidths.Strings[index])+alinedif;
+       end;
+      end;
+     finally
+      lwidths.Free;
+     end;
+    finally
+     lwords.free;
+    end;
+   end
+   else
+   begin
+    aalign:=DT_NOPREFIX or DT_NOCLIP or DT_LEFT;
+    nposx:=Posx;
+    nposy:=PosY+npdfdriver.pdffile.Canvas.LineInfo[i].TopPos;
+    nposx:=Round(nposx/1440*aintdpix);
+    nposy:=Round(nposy/1440*aintdpiy);
+    arec2.Left:=nposx;
+    arec2.Top:=nposy;
+    arec2.Bottom:=arec.Bottom+100;
+    arec2.Right:=Round(arect.Right/1440*aintdpix);
+    if IsWindowsNT then
+     DrawTextW(Canvas.Handle,PWideChar(astring),Length(astring),arec2,aalign)
+//     TextOutW(Canvas.Handle,nposx,nposy,PWideChar(astring),
+//       Length(astring))
+    else
+    begin
+     aansitext:=Trim(astring);
+     DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),arec2,aalign);
+//     TextOut(Canvas.Handle,nposx,nposy,PChar(aansitext),
+//       Length(astring))
+    end;
+   end;
+//    TextOut(PosX,PosY+npdfdriver.pdffile.Canvas.LineInfo[i].TopPos,astring,npdfdriver.pdffile.Canvas.LineInfo[i].Width,Rotation,RightToLeft);
+  end;
+ finally
+ end;
+end;
+
 
 procedure TRpGDIDriver.DrawPage(apage:TRpMetaFilePage);
 var
@@ -1425,7 +1651,7 @@ begin
       inc(totalcount);
       for j:=0 to apage.ObjectCount-1 do
       begin
-       PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,true,pagemargins,devicefonts,offset);
+       gdidriver.PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,true,pagemargins,devicefonts,offset);
        if assigned(aform) then
        begin
         mmlast:=TimeGetTime;
@@ -1617,7 +1843,7 @@ begin
          aobj.FontColor:=clBlack;
        end;
       end;
-      PrintObject(ametaCanvas,apage,aobj,realx,realy,true,pagemargins,false,offset);
+      gdidriver.PrintObject(ametaCanvas,apage,aobj,realx,realy,true,pagemargins,false,offset);
       if assigned(aform) then
       begin
        mmlast:=TimeGetTime;
