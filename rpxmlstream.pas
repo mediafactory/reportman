@@ -1038,7 +1038,9 @@ begin
   sec.DPIRes:=StrToInt(propvalue)
  else
  if propname='CACHEDIMAGE' then
+ begin
   sec.CachedImage:=TrpCachedImage(StrToInt(propvalue))
+ end
  else
  if propname='BACKSTYLE' then
   sec.BackStyle:=TRpBackStyle(StrToInt(propvalue))

@@ -1731,9 +1731,13 @@ var
 begin
  Result:=Null;
  adataset:=databaseinfo.ItemByName(connectionname).OpenDatasetFromSQL(sql,nil,false,params);
- if Not adataset.Eof then
- begin
-  Result:=adataset.Fields[0].AsVariant;
+ try
+  if Not adataset.Eof then
+  begin
+   Result:=adataset.Fields[0].AsVariant;
+  end;
+ finally
+  adataset.free;
  end;
 end;
 

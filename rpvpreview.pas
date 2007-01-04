@@ -168,6 +168,7 @@ var
  dia:TFRpVPreview;
   OldIdleHandler : TIdleEvent;
 begin
+ OldIdleHandler := Application.OnIdle;
  dia:=TFRpVPreview.Create(Application);
  try
   previewcontrol.OnWorkProgress:=dia.RepProgress;
@@ -179,7 +180,6 @@ begin
   if previewcontrol.metafile.PreviewWindow=spwMaximized then
     dia.WindowState:=wsMaximized;
   previewcontrol.OnWorkProgress:=dia.RepProgress;
-    OldIdleHandler := Application.OnIdle;
   Application.OnIdle:=dia.AppIdle;
   dia.ShowModal;
   Result:=dia.printed;
@@ -243,6 +243,20 @@ begin
  ANext.ShortCut:=ShortCut(VK_NEXT, []);
  AFirst.ShortCut:=ShortCut(VK_HOME, []);
  ALast.ShortCut:=ShortCut(VK_END, []);
+
+ APrint.ShortCut:=ShortCut(Ord('P'), [ssCtrl]);
+ ASave.ShortCut:=ShortCut(Ord('S'), [ssCtrl]);
+ AMailTo.ShortCut:=ShortCut(Ord('E'), [ssCtrl]);
+
+ APageSetup.ShortCut:=ShortCut(VK_F11, []);
+ AParams.ShortCut:=ShortCut(VK_F12, []);
+
+ AScale100.ShortCut:=ShortCut(VK_F5, []);
+ AScaleWide.ShortCut:=ShortCut(VK_F6, []);
+ AScaleFull.ShortCut:=ShortCut(VK_F7, []);
+ AScaleLess.ShortCut:=ShortCut(VK_SUBTRACT, []);
+ AScaleMore.ShortCut:=ShortCut(VK_ADD, []);
+
 
  Caption:=TranslateStr(215,Caption);
  SaveDialog1.Title:=TranslateStr(216,SaveDialog1.Title);
