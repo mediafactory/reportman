@@ -256,7 +256,7 @@ type
     { Public declarations }
     clitree:TFRpCliTree;
     printerindex:TRpPrinterSelect;
-    aqtdriver:IRpPrintDriver;
+    aqtdriver:TRpPrintDriver;
     setmenu:boolean;
     ShowPrintDialog:Boolean;
     procedure DoOpen(afilename:String);

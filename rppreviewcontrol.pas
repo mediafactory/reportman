@@ -27,7 +27,7 @@ type
  TRpPreviewControl=class(TRpPreviewMeta)
   private
    FReport:TRpBasereport;
-   ndriver:IRpPrintDriver;
+   ndriver:TRpPrintDriver;
    procedure SetReport(Avalue:TRpBaseReport);
   protected
    procedure Notification(AComponent:TComponent;Operation:TOperation);override;
@@ -59,7 +59,7 @@ procedure TRpPreviewControl.SetReport(Avalue:TRpBaseReport);
 var
   errormessage:string;
 begin
- if ndriver<>IRpPrintDriver(prdriver_internal) then
+ if ndriver<>TRpPrintDriver(prdriver_internal) then
   ndriver:=prdriver_internal;
  errormessage:='';
  try

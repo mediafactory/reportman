@@ -37,7 +37,6 @@ type
   protected
    procedure InternalExecuteRemote(metafile:TRpMetafileReport);override;
   public
-   InfoProvider:IRpInfoProvider;
    function Execute:boolean;override;
    procedure PrinterSetup;override;
    function ShowParams:boolean;override;

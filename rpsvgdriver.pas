@@ -380,7 +380,7 @@ end;
 procedure ExportReportToSVG(report:TRpBaseReport;filename:String;progress:Boolean);
 var
  pdfdriver:TRpPDFDriver;
- apdfdriver:IRpPrintDriver;
+ apdfdriver:TRpPrintDriver;
  oldprogres:TRpProgressEvent;
  astream:TMemoryStream;
  oldtwopass:boolean;

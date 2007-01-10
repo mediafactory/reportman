@@ -120,7 +120,7 @@ type
    procedure AddPageGroupCountItem(apageindex,aobjectindex:integer;
     adisplayformat:widestring);
   protected
-   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:TRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
    procedure GetChildren(Proc: TGetChildProc; Root: TComponent);override;
@@ -142,7 +142,7 @@ type
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    procedure FreeComponents;
    procedure DeleteComponent(com:TRpCommonComponent);
-   function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
+   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;override;
    function EvaluateBeginPage:boolean;
    procedure LoadFromStream(stream:TStream);
    procedure SaveToStream(stream:TStream);
@@ -471,7 +471,7 @@ begin
  end;
 end;
 
-procedure TRpSection.DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
+procedure TRpSection.DoPrint(adriver:TRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  i:integer;
@@ -614,7 +614,7 @@ begin
 end;
 
 
-function TRpSection.GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;
+function TRpSection.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;
 var
  minsize,maxsize,currentsize:integer;
  compsize:TPoint;

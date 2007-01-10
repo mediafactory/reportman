@@ -207,7 +207,7 @@ type
     section:TRpSection;
     subreport:TRpSubreport;
     FRecordCount:integer;
-    FDriver:IRpPrintDriver;
+    FDriver:TRpPrintDriver;
     // Identifiers
     Fidenpagenum:TIdenReportVar;
     Fidenlanguage:TIdenReportVar;
@@ -283,10 +283,10 @@ type
    AsyncExecution:boolean;
    procedure AddReportItemsToEvaluator(eval:TRpEvaluator);
    procedure InitEvaluator;
-   procedure BeginPrint(Driver:IRpPrintDriver);virtual;abstract;
+   procedure BeginPrint(Driver:TRpPrintDriver);virtual;abstract;
    procedure EndPrint;virtual;abstract;
    function PrintNextPage:boolean;virtual;abstract;
-   procedure PrintAll(Driver:IRpPrintDriver);
+   procedure PrintAll(Driver:TRpPrintDriver);
    property RecordCount:integer read FRecordCount;
    property Metafile:TRpMetafileReport read FMetafile;
    property Identifiers:TStringList read FIdentifiers;
@@ -310,7 +310,7 @@ type
     adisplayformat:widestring);
    property OnWorkAsyncError:TWorkAsyncError read FOnWorkAsyncError write FOnWorkAsyncError;
    property Evaluator:TRpEvaluator read FEvaluator;
-   procedure Compose(PrevReport:TRpBaseReport;execute:Boolean;ADriver:IRpPrintDriver);
+   procedure Compose(PrevReport:TRpBaseReport;execute:Boolean;ADriver:TRpPrintDriver);
    property OnProgress:TRpProgressEvent read FOnProgress write FOnProgress;
    property AliasList:TRpAlias read FAliasList write FAliasList;
    property idenpagenum:TIdenReportVar read fidenpagenum;
@@ -1335,7 +1335,7 @@ begin
  Result:=dataset.Eof;
 end;
 
-procedure TRpBaseReport.Compose(PrevReport:TRpBaseReport;execute:Boolean;ADriver:IRpPrintDriver);
+procedure TRpBaseReport.Compose(PrevReport:TRpBaseReport;execute:Boolean;ADriver:TRpPrintDriver);
 var
  i:integer;
  aobject:TTotalPagesObject;
@@ -1529,7 +1529,7 @@ end;
 
 // Print all generaties the metafile, it's capable also
 // of evaluate the totalpages expression
-procedure TRpBaseReport.PrintAll(Driver:IRpPrintDriver);
+procedure TRpBaseReport.PrintAll(Driver:TRpPrintDriver);
 begin
  BeginPrint(Driver);
  try

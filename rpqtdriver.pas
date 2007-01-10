@@ -36,8 +36,9 @@ uses
 {$IFDEF VCLANDCLX}
  rpvgraphutils,
 {$ENDIF}
+ rpmdcharttypes,
 {$IFNDEF FORWEBAX}
- rpbasereport,rpreport,rpmdchart,rpmdcharttypes,
+ rpbasereport,rpreport,rpmdchart,
  {$IFDEF USECLXTEECHART}
   Chart,Series,rpdrawitem,
   {$IFDEF MSWINDOWS}
@@ -104,15 +105,12 @@ type
     report:TRpReport;
 {$ENDIF}
     qtdriver:TRpQtDriver;
-    aqtdriver:IRpPrintDriver;
     TextDriver:TRpTextDriver;
-    aTextDriver:IRpPrintDriver;
     pdfdriver:TRpPDFDriver;
-    apdfdriver:IRpPrintDriver;
   end;
 
 
- TRpQtDriver=class(TInterfacedObject,IRpPrintDriver)
+ TRpQtDriver=class(TRpPrintDriver)
   private
     FReport:TRpMetafileReport;
     BackColor:integer;
@@ -138,36 +136,34 @@ type
    PreviewStyle:TRpPreviewStyle;
    clientwidth,clientheight:integer;
    printerindex:TRpPrinterSelect;
-   FontDriver:IRpPrintDriver;
+   FontDriver:TRpPrintDriver;
    procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
-    hardwarecollate:boolean);
-   procedure EndDocument;
-   procedure AbortDocument;
-   procedure NewPage(metafilepage:TRpMetafilePage);
-   procedure EndPage;
-   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
-{$IFNDEF FORWEBAX}
-   procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
-{$ENDIF}
+    hardwarecollate:boolean);override;
+   procedure EndDocument;override;
+   procedure AbortDocument;override;
+   procedure NewPage(metafilepage:TRpMetafilePage);override;
+   procedure EndPage;override;
+   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);override;
+   procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);override;
 {$IFNDEF FORWEBAX}
  {$IFDEF USECLXTEECHART}
    procedure DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
     aposx,aposy:integer;xchart:TObject);
  {$ENDIF}
 {$ENDIF}
-   procedure DrawPage(apage:TRpMetaFilePage);
-   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
-   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
-   function AllowCopies:boolean;
-   procedure SelectPrinter(printerindex:TRpPrinterSelect);
-   function GetPageSize(var PageSizeQt:Integer):TPoint;
-   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
-   procedure SetOrientation(Orientation:TRpOrientation);
-   function SupportsCopies(maxcopies:integer):boolean;
-   function SupportsCollation:boolean;
+   procedure DrawPage(apage:TRpMetaFilePage);override;
+   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);override;
+   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);override;
+   function AllowCopies:boolean;override;
+   procedure SelectPrinter(printerindex:TRpPrinterSelect);override;
+   function GetPageSize(var PageSizeQt:Integer):TPoint;override;
+   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;override;
+   procedure SetOrientation(Orientation:TRpOrientation);override;
+   function SupportsCopies(maxcopies:integer):boolean;override;
+   function SupportsCollation:boolean;override;
    constructor Create;
    destructor Destroy;override;
-   function GetFontDriver:IRpPrintDriver;
+   function GetFontDriver:TRpPrintDriver;override;
   end;
 
 function PrintMetafile (metafile:TRpMetafileReport; tittle:string;
@@ -1098,7 +1094,6 @@ function DoMetafileToBitmap(metafile:TRpMetafileReport;aform:TFRpQtProgress;
  Mono:Boolean;resx:integer=200;resy:integer=100):TBitmap;
 var
  QtDriver:TRpQtDriver;
- aqtDriver:IRpPrintDriver;
  apage:TRpMetafilePage;
  i,j:integer;
  offset:TPoint;
@@ -1168,7 +1163,7 @@ begin
   REsult.Canvas.Brush.Style:=bsSolid;
   Result.Canvas.FillRect(arec);
   QtDriver:=TRpQtDriver.Create;
-  aqtDriver:=QtDriver;
+  try
   tempbitmap:=TBitmap.Create;
   try
    for i:=0 to metafile.CurrentPageCount-1 do
@@ -1229,6 +1224,9 @@ begin
    end;
   finally
    tempbitmap.free;
+  end;
+  finally
+   qtdriver.Free;
   end;
   // To obtain monocrhome bitmaps must use convert command line tool
 {$IFDEF LINUX}
@@ -1404,7 +1402,6 @@ var
  istextonly:Boolean;
  drivername:String;
  TextDriver:TRpTextDriver;
- aTextDriver:IRpPrintDriver;
 begin
  Application.Onidle:=nil;
  done:=false;
@@ -1416,7 +1413,7 @@ begin
   if istextonly then
   begin
    TextDriver:=TRpTextDriver.Create;
-   aTextDriver:=TextDriver;
+   try
    TextDriver.SelectPrinter(report.PrinterSelect);
    oldprogres:=report.OnProgress;
    try
@@ -1425,11 +1422,14 @@ begin
    finally
     report.OnProgress:=oldprogres;
    end;
+   finally
+    TextDriver.free;
+   end;
   end
   else
   begin
    qtdriver:=TRpQtDriver.Create;
-   aqtdriver:=qtdriver;
+   try
    qtdriver.forceprintername:=forceprintername;
    oldprogres:=report.OnProgress;
    try
@@ -1437,6 +1437,9 @@ begin
     report.PrintAll(qtdriver);
    finally
     report.OnProgress:=oldprogres;
+   end;
+   finally
+    qtdriver.free;
    end;
   end;
  except
@@ -1482,15 +1485,18 @@ begin
  errorproces:=false;
  try
   qtdriver:=TRpQtDriver.Create;
+  try
   qtdriver.forceprintername:=forceprintername;
   qtdriver.toprinter:=true;
-  aqtdriver:=qtdriver;
   oldprogres:=report.OnProgress;
   try
    report.OnProgress:=RepProgress;
-   report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate);
+   report.PrintRange(qtdriver,allpages,frompage,topage,copies,collate);
   finally
    report.OnProgress:=oldprogres;
+  end;
+  finally
+   qtdriver.free;
   end;
  except
   On E:Exception do
@@ -1512,12 +1518,12 @@ begin
  errorproces:=false;
  try
   TextDriver:=TRpTextDriver.Create;
-  aTextDriver:=TextDriver;
+  try
   oldprogres:=report.OnProgress;
   try
    TextDriver.SelectPrinter(report.PrinterSelect);
    report.OnProgress:=RepProgress;
-   report.PrintRange(aTextDriver,allpages,frompage,topage,copies,collate);
+   report.PrintRange(TextDriver,allpages,frompage,topage,copies,collate);
    // Now Prints to selected printer the stream
    SetLength(S,TextDriver.MemStream.Size);
    TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
@@ -1530,6 +1536,9 @@ begin
 {$ENDIF}
   finally
    report.OnProgress:=oldprogres;
+  end;
+  finally
+   textdriver.free;
   end;
  except
   On E:Exception do
@@ -1552,20 +1561,24 @@ begin
  errorproces:=false;
  try
   pdfdriver:=TRpPDFDriver.Create;
-  pdfdriver.filename:=filename;
-  pdfdriver.compressed:=pdfcompressed;
   qtdriver:=TRpQtDriver.Create;
-{$IFDEF USECLXTEECHART}
-  report.metafile.OnDrawChart:=qtdriver.DoDrawChart;
-{$ENDIF}
-  qtdriver.forceprintername:=forceprintername;
-  apdfdriver:=pdfdriver;
-  oldprogres:=report.OnProgress;
   try
-   report.OnProgress:=RepProgress;
-   report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
+   pdfdriver.filename:=filename;
+   pdfdriver.compressed:=pdfcompressed;
+{$IFDEF USECLXTEECHART}
+   report.metafile.OnDrawChart:=qtdriver.DoDrawChart;
+{$ENDIF}
+   qtdriver.forceprintername:=forceprintername;
+   oldprogres:=report.OnProgress;
+   try
+    report.OnProgress:=RepProgress;
+    report.PrintRange(pdfdriver,allpages,frompage,topage,copies,collate);
+   finally
+    report.OnProgress:=oldprogres;
+   end;
   finally
-   report.OnProgress:=oldprogres;
+   pdfdriver.free;
+   qtdriver.free;
   end;
  except
   On E:Exception do
@@ -1592,9 +1605,7 @@ var
  i:integer;
 {$ENDIF}
  qtdriver:TRpQtDriver;
- aqtdriver:IRpPrintDriver;
  Textdriver:TRpTextDriver;
- aTextdriver:IRpPrintDriver;
  forcecalculation:boolean;
  dia:TFRpQtProgress;
  oldonidle:TIdleEvent;
@@ -1629,16 +1640,22 @@ begin
    if istextonly then
    begin
     TextDriver:=TRpTextDriver.Create;
-    aTextDriver:=TextDriver;
-    TextDriver.SelectPrinter(report.PrinterSelect);
-    report.PrintAll(TextDriver);
+    try
+     TextDriver.SelectPrinter(report.PrinterSelect);
+     report.PrintAll(TextDriver);
+    finally
+     Textdriver.free;
+    end;
    end
    else
    begin
     qtdriver:=TRpQtDriver.Create;
-    qtdriver.forceprintername:=forceprintername;
-    aqtdriver:=qtdriver;
-    report.PrintAll(qtdriver);
+    try
+     qtdriver.forceprintername:=forceprintername;
+     report.PrintAll(qtdriver);
+    finally
+     qtdriver.free;
+    end;
    end;
   end;
  end;
@@ -1685,26 +1702,32 @@ begin
      if istextonly then
      begin
       TextDriver:=TRpTextDriver.Create;
-      aTextDriver:=TextDriver;
-      TextDriver.SelectPrinter(report.PrinterSelect);
-      report.PrintRange(aTextDriver,allpages,frompage,topage,copies,collate);
-      SetLength(S,TextDriver.MemStream.Size);
-      TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
-      PrinterSelection(report.PrinterSelect);
+      try
+       TextDriver.SelectPrinter(report.PrinterSelect);
+       report.PrintRange(TextDriver,allpages,frompage,topage,copies,collate);
+       SetLength(S,TextDriver.MemStream.Size);
+       TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
+       PrinterSelection(report.PrinterSelect);
 {$IFDEF VCLANDCLX}
-      SendControlCodeToPrinter(S);
+       SendControlCodeToPrinter(S);
 {$ENDIF}
 {$IFDEF LINUX}
-     SendTextToPrinter(S,report.PrinterSelect,Caption,forceprintername);
+      SendTextToPrinter(S,report.PrinterSelect,Caption,forceprintername);
 {$ENDIF}
+      finally
+       TextDriver.free;
+      end;
      end
      else
      begin
       qtdriver:=TRpQtDriver.Create;
-      aqtdriver:=qtdriver;
+      try
       qtdriver.forceprintername:=forceprintername;
       qtdriver.toprinter:=true;
-      report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate);
+      report.PrintRange(qtdriver,allpages,frompage,topage,copies,collate);
+      finally
+       qtdriver.free;
+      end;
      end;
     end;
    end;
@@ -1788,7 +1811,6 @@ var
 {$IFDEF USECLXTEECHART}
  qtdriver:TRpQtDriver;
 {$ENDIF}
- apdfdriver:IRpPrintDriver;
 begin
  Result:=false;
  allpages:=true;
@@ -1826,14 +1848,17 @@ begin
  else
  begin
   pdfdriver:=TRpPDFDriver.Create;
+  try
   pdfdriver.filename:=filename;
   pdfdriver.compressed:=compressed;
-  apdfdriver:=pdfdriver;
 {$IFDEF USECLXTEECHART}
   qtdriver:=TRpQtDriver.Create;
   report.Metafile.OnDrawChart:=qtdriver.DoDrawChart;
 {$ENDIF}
-  report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
+  report.PrintRange(pdfdriver,allpages,frompage,topage,copies,collate);
+  finally
+   pdfdriver.free;
+  end;
   Result:=True;
  end;
 end;
@@ -1845,9 +1870,7 @@ var
  pdfdriver:TRpPDFDriver;
  qtdriver:TRpQtDriver;
  oldtwopass:Boolean;
- apdfdriver:IRpPrintDriver;
  onprog:TRpProgressEvent;
- aqtdriver:IRpPrintDriver;
 begin
  oldtwopass:=report.TwoPass;
  onprog:=report.OnPRogress;
@@ -1856,10 +1879,10 @@ begin
    report.TwoPass:=true;
   qtdriver:=TRpQtDriver.create;
   pdfdriver:=TRpPDFDriver.Create;
+  try
   if not metafile then
    pdfdriver.DestStream:=stream;
   pdfdriver.compressed:=compressed;
-  apdfdriver:=pdfdriver;
   if progress then
    report.OnProgress:=pdfdriver.RepProgress;
 {$IFDEF USECLXTEECHART}
@@ -1870,12 +1893,16 @@ begin
 //   qtdriver.calconly:=true;
 //   aqtdriver:=qtDriver;
 //   report.PrintRange(aqtdriver,allpages,frompage,topage,copies,collate)
-   report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
+   report.PrintRange(pdfdriver,allpages,frompage,topage,copies,collate);
   end
   else
-   report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
+   report.PrintRange(pdfdriver,allpages,frompage,topage,copies,collate);
   if metafile then
    report.Metafile.SaveToStream(stream);
+  finally
+   qtdriver.Free;
+   pdfdriver.free;
+  end;
  finally
   report.TwoPass:=oldtwopass;
   report.OnPRogress:=onprog;
@@ -2223,14 +2250,14 @@ end;
 {$ENDIF}
 {$ENDIF}
 
-{$IFNDEF FORWEBAX}
 procedure TRpQtDriver.DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
 begin
+{$IFNDEF FORWEBAX}
  {$IFDEF USECLXTEECHART}
    DoDrawChart(Self,Series,ametafile.Pages[ametafile.CurrentPage],posx,posy,achart);
  {$ENDIF}
-end;
 {$ENDIF}
+end;
 
 
 function AskBitmapProps(var HorzRes,VertRes:Integer;var Mono:Boolean):Boolean;
@@ -2273,7 +2300,7 @@ begin
  Close;
 end;
 
-function TRpQtDriver.GetFontDriver:IRpPrintDriver;
+function TRpQtDriver.GetFontDriver:TRpPrintDriver;
 begin
  if Assigned(FontDriver) then
   Result:=FontDriver

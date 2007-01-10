@@ -88,11 +88,10 @@ type
   destructor Destroy;override;
  end;
 
- IRpInfoProvider=interface
-  ['{59F66653-ACEC-4FC9-B918-C22136F576F1}']
-  procedure FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
-  function GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;
-  function GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;
+ TRpInfoProvider=class(TObject)
+  procedure FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);virtual;abstract;
+  function GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;virtual;abstract;
+  function GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;virtual;abstract;
  end;
 
 

@@ -1039,7 +1039,8 @@ begin
  else
  if propname='CACHEDIMAGE' then
  begin
-  sec.CachedImage:=TrpCachedImage(StrToInt(propvalue))
+  if (propvalue<>'False') then
+   sec.CachedImage:=TrpCachedImage(StrToInt(propvalue));
  end
  else
  if propname='BACKSTYLE' then
@@ -1597,7 +1598,10 @@ begin
    compi.DPIRes:=StrToInt(propvalue)
   else
   if propname='CACHEDIMAGE' then
-   compi.CachedImage:=TrpCachedImage(StrToInt(propvalue))
+  begin
+   if (propvalue<>'False') then
+    compi.CachedImage:=TrpCachedImage(StrToInt(propvalue));
+  end
   else
   if propname='COPYMODE' then
    compi.CopyMode:=StrToInt(propvalue);

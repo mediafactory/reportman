@@ -51,14 +51,14 @@ type
    function GetTextObject:TRpTextObject;
   protected
    procedure DefineProperties(Filer:TFiler);override;
-   procedure DoPrint(adriver:IRpPrintDriver;
+   procedure DoPrint(adriver:TRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure Loaded;override;
   public
    procedure UpdateWideText;
    procedure UpdateAllStrings;
-   function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
+   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;override;
    property AllStrings:TRpWideStrings read FAllStrings write FAllStrings;
    constructor Create(AOwner:TComponent);override;
    property Text:widestring read GetText write SetText;
@@ -119,7 +119,7 @@ type
    procedure UpdateIsPageCount;
   protected
    procedure DefineProperties(Filer:TFiler);override;
-   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:TRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure Loaded;override;
   public
@@ -129,7 +129,7 @@ type
    function GetTextObject:TRpTextObject;
    function GetText:widestring;
    property IdenExpression:TIdenRpExpression read FIdenExpression;
-   function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
+   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;override;
    property Expression:widestring read FExpression write SetExpression;
    property AgIniValue:widestring read FAgIniValue write FAgIniValue;
    property IsPartial:Boolean read FIsPartial;
@@ -334,7 +334,7 @@ begin
  FExportValue:=Null;
 end;
 
-procedure TRpLabel.DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
+procedure TRpLabel.DoPrint(adriver:TRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  aalign:integer;
@@ -468,7 +468,7 @@ begin
  end;
 end;
 
-procedure TRpExpression.DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
+procedure TRpExpression.DoPrint(adriver:TRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
  expre:WideString;
@@ -764,7 +764,7 @@ begin
  Result.PrintStep:=PrintStep;
 end;
 
-function TRpExpression.GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;
+function TRpExpression.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;
 var
  aText:TRpTextObject;
  aposition:integer;
@@ -893,7 +893,7 @@ begin
 end;
 
 
-function TRpLabel.GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;
+function TRpLabel.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;
 var
  aText:TRpTextObject;
 begin

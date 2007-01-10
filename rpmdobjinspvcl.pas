@@ -617,15 +617,10 @@ var
  item:TRpAliaslistItem;
  FRpMainF:TFRpMainFVCL;
  expredia:TRpExpreDialogVCL;
- adriver:IRpPrintDriver;
 begin
  FRpMainF:=TFRpMainFVCL(Owner.Owner);
  report:=FRpMainf.report;
  try
-  adriver:=fpdfdriver;
-{$IFNDEF DOTNETD}
-  adriver._AddRef;
-{$ENDIF}
   report.BeginPrint(fpdfdriver);
  except
   on E:Exception do

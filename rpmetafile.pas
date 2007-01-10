@@ -55,9 +55,7 @@ uses Classes,SyncObjs,
  types,
 {$ENDIF}
  Sysutils,rpmdconsts,
-{$IFNDEF FORWEBAX}
  rpmdcharttypes,
-{$ENDIF}
 {$IFDEF USEZLIB}
  rpmzlib,
 {$ENDIF}
@@ -257,33 +255,30 @@ type
 {$ENDIF}
 
 
- IRpPrintDriver=interface
- ['{11EF15B0-5CDE-40F0-A204-973A25B38B81}']
+ TRpPrintDriver=class(TObject)
   procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
-   hardwarecollate:boolean);
-  procedure EndDocument;
-  procedure AbortDocument;
-  procedure NewPage(metafilepage:TRpMetafilePage);
-  procedure EndPage;
-  function GetPageSize(var PageSizeQt:Integer):TPoint;
-  function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
-  procedure SetOrientation(Orientation:TRpOrientation);
-  procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
-{$IFNDEF FORWEBAX}
-  procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
-{$ENDIF}
-  procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
-  procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
-  procedure DrawPage(apage:TRpMetaFilePage);
-  function SupportsCopies(maxcopies:integer):boolean;
-  function SupportsCollation:boolean;
-  function AllowCopies:boolean;
-  procedure SelectPrinter(printerindex:TRpPrinterSelect);
-  function GetFontDriver:IRpPrintDriver;
+   hardwarecollate:boolean);virtual;abstract;
+  procedure EndDocument;virtual;abstract;
+  procedure AbortDocument;virtual;abstract;
+  procedure NewPage(metafilepage:TRpMetafilePage);virtual;abstract;
+  procedure EndPage;virtual;abstract;
+  function GetPageSize(var PageSizeQt:Integer):TPoint;virtual;abstract;
+  function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;virtual;abstract;
+  procedure SetOrientation(Orientation:TRpOrientation);virtual;abstract;
+  procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);virtual;abstract;
+  procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);virtual;abstract;
+  procedure TextExtent(atext:TRpTextObject;var extent:TPoint);virtual;abstract;
+  procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);virtual;abstract;
+  procedure DrawPage(apage:TRpMetaFilePage);virtual;abstract;
+  function SupportsCopies(maxcopies:integer):boolean;virtual;abstract;
+  function SupportsCollation:boolean;virtual;abstract;
+  function AllowCopies:boolean;virtual;abstract;
+  procedure SelectPrinter(printerindex:TRpPrinterSelect);virtual;abstract;
+  function GetFontDriver:TRpPrintDriver;virtual;abstract;
  end;
 
 {$IFNDEF FORWEBAX}
- TDoDrawChartEvent=procedure (adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
+ TDoDrawChartEvent=procedure (adriver:TRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
   aposx,aposy:integer;achart:TObject) of Object;
 {$ENDIF}
 
@@ -399,9 +394,9 @@ type
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    procedure NewPage;
-   procedure DrawPage(IDriver:IRpPrintDriver;index:integer);
-   procedure DrawAll(IDriver:IRpPrintDriver);
-   procedure DrawPageOnly(IDriver:IRpPrintDriver;index:integer);
+   procedure DrawPage(IDriver:TRpPrintDriver;index:integer);
+   procedure DrawAll(IDriver:TRpPrintDriver);
+   procedure DrawPageOnly(IDriver:TRpPrintDriver;index:integer);
    procedure InsertPage(index:integer);
    procedure DeletePage(index:integer);
    function RequestPage(pageindex:integer):boolean;
@@ -426,7 +421,7 @@ type
   published
   end;
 
-  function CalcTextExtent(adriver:IRpPrintDriver;maxextent:TPoint;obj:TRpTextObject):integer;
+  function CalcTextExtent(adriver:TRpPrintDriver;maxextent:TPoint;obj:TRpTextObject):integer;
 
 {$IFDEF MSWINDOWS}
 {$IFNDEF DOTNETD}
@@ -1480,7 +1475,7 @@ begin
 end;
 
 
-procedure TRpMetafileReport.DrawPageOnly(IDriver:IRpPrintDriver;index:integer);
+procedure TRpMetafileReport.DrawPageOnly(IDriver:TRpPrintDriver;index:integer);
 var
  FPage:TRpMetafilePage;
 begin
@@ -1489,7 +1484,7 @@ begin
 end;
 
 
-procedure TRpMetafileReport.DrawPage(IDriver:IRpPrintDriver;index:integer);
+procedure TRpMetafileReport.DrawPage(IDriver:TRpPrintDriver;index:integer);
 begin
  IDriver.NewDocument(self,1,false);
  try
@@ -1502,7 +1497,7 @@ begin
  end;
 end;
 
-procedure TRpMetafileReport.DrawAll(IDriver:IRpPrintDriver);
+procedure TRpMetafileReport.DrawAll(IDriver:TRpPrintDriver);
 var
  i:integeR;
 begin
@@ -1686,7 +1681,7 @@ begin
  end;
 end;
 
-function CalcTextExtent(adriver:IRpPrintDriver;maxextent:TPoint;obj:TRpTextObject):integer;
+function CalcTextExtent(adriver:TRpPrintDriver;maxextent:TPoint;obj:TRpTextObject):integer;
 var
  newextent:TPoint;
  currentPos,lasttested,oldcurrentpos:Integer;

@@ -100,6 +100,7 @@ procedure GetDefaultDocumentProperties;
 procedure SwitchToPrinterIndex(index:integer);
 function CreateICFromCurrentPrinter:HDC;
 function PrinterDuplexSupport:boolean;
+procedure SetPrinterOrientation(landscape:boolean);
 
 implementation
 
@@ -2210,6 +2211,56 @@ begin
        PDevMode^.dmCollate:=DMCOLLATE_TRUE
       else
        PDevMode^.dmCollate:=DMCOLLATE_FALSE;
+     end;
+//     if not IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_IN_BUFFER) then
+//      RaiseLastOSError;
+     DocumentProperties(0,Printer.Handle,ADevice, PDevMode^,
+       PDevMode^, DM_MODIFY);
+     ResetDC(Printer.Handle,PDevMode^);
+    finally
+     GlobalUnlock(aresult);
+    end;
+   finally
+    GlobalFree(aresult);
+   end;
+  end;
+ finally
+  ClosePrinter(fprinterhandle);
+ end;
+end;
+
+procedure SetPrinterOrientation(landscape:boolean);
+var
+ FPrinterHandle:THandle;
+ ADevice, ADriver, APort: array[0..1023] of char;
+ pdevmode:^DEVMODE;
+ adevmode:DEVMODE;
+ asize:Integer;
+ aresult:THandle;
+ amode:THandle;
+
+begin
+ Printer.GetPrinter(ADevice,ADriver,APort,amode);
+ pdevmode:=@adevmode;
+ if not OpenPrinter(ADevice,fprinterhandle,nil) then
+  RaiseLastOsError;
+ try
+  asize:=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,0);
+  if asize<0 then
+   RaiseLastOsError;
+  if asize>0 then
+  begin
+   aresult:=GlobalAlloc(GHND,asize);
+   try
+    pdevmode:=GlobalLock(aresult);
+    try
+     if IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
+     begin
+      pdevmode^.dmFields:=pdevmode^.dmFields or DM_ORIENTATION;
+      if landscape then
+       PDevMode^.dmOrientation:=DMORIENT_LANDSCAPE
+      else
+       PDevMode^.dmCollate:=DMORIENT_PORTRAIT;
      end;
 //     if not IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_IN_BUFFER) then
 //      RaiseLastOSError;

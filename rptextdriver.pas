@@ -60,7 +60,7 @@ type
   Position:Integer;
  end;
 
- TRpTextDriver=class(TInterfacedObject,IRpPrintDriver)
+ TRpTextDriver=class(TRpPrintDriver)
   private
    selectedprinter:TRpPrinterSelect;
    FOrientation:TRpOrientation;
@@ -111,29 +111,29 @@ type
    constructor Create;
    destructor Destroy;override;
    procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
-    hardwarecollate:boolean);
-   procedure EndDocument;
-   procedure AbortDocument;
-   procedure NewPage(metafilepage:TRpMetafilePage);
-   procedure EndPage;
-   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
-   procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
-   procedure DrawPage(apage:TRpMetaFilePage);
-   function AllowCopies:boolean;
-   function GetPageSize(var PageSizeQt:Integer):TPoint;
-   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
-   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
-   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
-   procedure SetOrientation(Orientation:TRpOrientation);
-   procedure SelectPrinter(printerindex:TRpPrinterSelect);
-   function SupportsCopies(maxcopies:integer):boolean;
-   function SupportsCollation:boolean;
+    hardwarecollate:boolean);override;
+   procedure EndDocument;override;
+   procedure AbortDocument;override;
+   procedure NewPage(metafilepage:TRpMetafilePage);override;
+   procedure EndPage;override;
+   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);override;
+   procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);override;
+   procedure DrawPage(apage:TRpMetaFilePage);override;
+   function AllowCopies:boolean;override;
+   function GetPageSize(var PageSizeQt:Integer):TPoint;override;
+   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;override;
+   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);override;
+   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);override;
+   procedure SetOrientation(Orientation:TRpOrientation);override;
+   procedure SelectPrinter(printerindex:TRpPrinterSelect);override;
+   function SupportsCopies(maxcopies:integer):boolean;override;
+   function SupportsCollation:boolean;override;
    property LinesPerInch:Integer read FLinesPerInch write FLinesPerInch;
    property PlainText:Boolean read FPlainText write FPlainText default false;
    property FullPlain:Boolean read FFullPlain write FFullPlain default false;
    property OemConvert:Boolean read FOemConvert write FOemConvert default false;
    property ForceDriverName:String read FForceDriverName write FForceDriverName;
-   function GetFontDriver:IRpPrintDriver;
+   function GetFontDriver:TRpPrintDriver;override;
   end;
 
 
@@ -612,7 +612,7 @@ function PrintReportToStream(report:TRpReport;Caption:string;progress:boolean;
      stream:TStream;collate:Boolean;oemconvert:boolean;forcedrivername:string):Boolean;
 var
  TextDriver:TRpTextDriver;
- aTextDriver:IRpPrintDriver;
+ aTextDriver:TRpPrintDriver;
  oldprogres:TRpProgressEvent;
 begin
  TextDriver:=TRpTextDriver.Create;
@@ -641,7 +641,7 @@ function PrintReportToText(report:TRpReport;Caption:string;progress:boolean;
      filename:string;collate:Boolean;oemconvert:boolean;forcedrivername:string):Boolean;
 var
  TextDriver:TRpTextDriver;
- aTextDriver:IRpPrintDriver;
+ aTextDriver:TRpPrintDriver;
  oldprogres:TRpProgressEvent;
 begin
  if Length(Trim(filename))<0 then
@@ -2026,7 +2026,7 @@ begin
 
 end;
 
-function TRpTextDriver.GetFontDriver:IRpPrintDriver;
+function TRpTextDriver.GetFontDriver:TRpPrintDriver;
 begin
  Result:=Self;
 end;

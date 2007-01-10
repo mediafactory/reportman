@@ -55,7 +55,7 @@ type
    FShape:TRpShapeType;
    FPenWidth:integer;
   protected
-   procedure DoPrint(adriver:IRpPrintDriver;
+   procedure DoPrint(adriver:TRpPrintDriver;
    aposx,aposy,newwidth,newheight:Integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
   public
@@ -91,12 +91,12 @@ type
    destructor Destroy;override;
   protected
    procedure DefineProperties(Filer: TFiler);override;
-   procedure DoPrint(adriver:IRpPrintDriver;
+   procedure DoPrint(adriver:TRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
   public
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
-   function GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;override;
+   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;override;
    property Stream:TMemoryStream read FStream write SetStream;
    property Expression:WideString read FExpression write FExpression;
   published
@@ -140,7 +140,7 @@ begin
  inherited destroy;
 end;
 
-procedure TRpShape.DoPrint(adriver:IRpPrintDriver;
+procedure TRpShape.DoPrint(adriver:TRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 begin
@@ -310,7 +310,7 @@ end;
 
 
 
-procedure TRpImage.DoPrint(adriver:IRpPrintDriver;
+procedure TRpImage.DoPrint(adriver:TRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
@@ -351,7 +351,7 @@ begin
  end;
 end;
 
-function TRpImage.GetExtension(adriver:IRpPrintDriver;MaxExtent:TPoint):TPoint;
+function TRpImage.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;
 var
  FMStream:TMemoryStream;
 begin

@@ -41,7 +41,7 @@ uses Classes,Sysutils,
  rpmunits,rpmdconsts,rpmdcharttypes;
 
 type
- TRpPdfDriver=class(TInterfacedObject,IRpPrintDriver)
+ TRpPdfDriver=class(TRpPrintDriver)
   private
    FPDFFIle:TRpPDFFile;
    FOrientation:TRpOrientation;
@@ -57,25 +57,25 @@ type
    procedure RepProgress(Sender:TRpBaseReport;var docancel:boolean);
 {$ENDIF}
    procedure NewDocument(report:TrpMetafileReport;hardwarecopies:integer;
-    hardwarecollate:boolean);
-   procedure EndDocument;
-   procedure AbortDocument;
-   procedure NewPage(metafilepage:TRpMetafilePage);
-   procedure EndPage;
-   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
-   procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
-   procedure DrawPage(apage:TRpMetaFilePage);
-   function AllowCopies:boolean;
-   function GetPageSize(var PageSizeQt:Integer):TPoint;
-   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;
-   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);
-   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);
-   procedure SetOrientation(Orientation:TRpOrientation);
-   procedure SelectPrinter(printerindex:TRpPrinterSelect);
-   function SupportsCopies(maxcopies:integer):boolean;
-   function SupportsCollation:boolean;
+    hardwarecollate:boolean);override;
+   procedure EndDocument;override;
+   procedure AbortDocument;override;
+   procedure NewPage(metafilepage:TRpMetafilePage);override;
+   procedure EndPage;override;
+   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);override;
+   procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);override;
+   procedure DrawPage(apage:TRpMetaFilePage);override;
+   function AllowCopies:boolean;override;
+   function GetPageSize(var PageSizeQt:Integer):TPoint;override;
+   function SetPagesize(PagesizeQt:TPageSizeQt):TPoint;override;
+   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);override;
+   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);override;
+   procedure SetOrientation(Orientation:TRpOrientation);override;
+   procedure SelectPrinter(printerindex:TRpPrinterSelect);override;
+   function SupportsCopies(maxcopies:integer):boolean;override;
+   function SupportsCollation:boolean;override;
    property PDFFile:TRpPDFFile read FPDFFile;
-   function GetFontDriver:IRpPrintDriver;
+   function GetFontDriver:TRpPrintDriver;override;
   end;
 
 
@@ -101,7 +101,7 @@ function PrintReportMetafileStream(report:TRpReport;
 function PrintReportToMetafile(report:TRpReport;Caption:string;progress:boolean;
      allpages:boolean;frompage,topage,copies:integer;
      filename:string;collate:boolean):Boolean;
-procedure DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
+procedure DoDrawChart(adriver:TRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
  aposx,aposy:integer;achart:TObject);
 {$ENDIF}
 
@@ -517,28 +517,32 @@ begin
  if copies<0 then
   copies:=1;
  adriver:=TRpPDFDriver.Create;
- adriver.filename:=filename;
- adriver.compressed:=compressed;
- adriver.NewDocument(metafile,1,false);
  try
-  for i:=frompage to topage do
-  begin
-   for j:=0 to copies-1 do
+  adriver.filename:=filename;
+  adriver.compressed:=compressed;
+  adriver.NewDocument(metafile,1,false);
+  try
+   for i:=frompage to topage do
    begin
-    adriver.DrawPage(metafile.Pages[i]);
-    if ((i<metafile.CurrentPageCount-1) or (j<copies-1)) then
+    for j:=0 to copies-1 do
     begin
-     if j<copies-1 then
-      adriver.NewPage(metafile.Pages[i])
-     else
-      adriver.NewPage(metafile.Pages[i+1]);
+     adriver.DrawPage(metafile.Pages[i]);
+     if ((i<metafile.CurrentPageCount-1) or (j<copies-1)) then
+     begin
+      if j<copies-1 then
+       adriver.NewPage(metafile.Pages[i])
+      else
+       adriver.NewPage(metafile.Pages[i+1]);
+     end;
     end;
    end;
+   adriver.EndDocument;
+  except
+   adriver.AbortDocument;
+   raise;
   end;
-  adriver.EndDocument;
- except
-  adriver.AbortDocument;
-  raise;
+ finally
+  adriver.free;
  end;
 end;
 
@@ -556,6 +560,7 @@ var
  i:integer;
 begin
  adriver:=TRpPDFDriver.Create;
+ try
  adriver.compressed:=compressed;
  adriver.NewDocument(metafile,1,false);
  try
@@ -575,6 +580,9 @@ begin
   adriver.AbortDocument;
   raise;
  end;
+ finally
+  adriver.free;
+ end;
 end;
 
 {$IFNDEF FORWEBAX}
@@ -584,22 +592,24 @@ function PrintReportPDFStream(report:TRpReport;Caption:string;progress:boolean;
      collate:boolean):Boolean;
 var
  pdfdriver:TRpPDFDriver;
- apdfdriver:IRpPrintDriver;
  oldprogres:TRpProgressEvent;
 begin
  pdfdriver:=TRpPDFDriver.Create;
+ try
  pdfdriver.compressed:=compressed;
  pdfdriver.DestStream:=Stream;
- apdfdriver:=pdfdriver;
  // If report progress must print progress
  oldprogres:=report.OnProgress;
  try
   if progress then
    report.OnProgress:=pdfdriver.RepProgress;
-  report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
+  report.PrintRange(pdfdriver,allpages,frompage,topage,copies,collate);
   Stream.Seek(0,soFromBeginning);
  finally
   report.OnProgress:=oldprogres;
+ end;
+ finally
+  pdfdriver.free;
  end;
  Result:=True;
 end;
@@ -611,16 +621,15 @@ function PrintReportMetafileStream(report:TRpReport;
  collate:boolean):Boolean;
 var
  pdfdriver:TRpPDFDriver;
- apdfdriver:IRpPrintDriver;
  oldprogres:TRpProgressEvent;
  astream:TMemoryStream;
 begin
  pdfdriver:=TRpPDFDriver.Create;
+ try
  pdfdriver.compressed:=compressed;
  astream:=TMemoryStream.Create;
  try
   pdfdriver.DestStream:=aStream;
-  apdfdriver:=pdfdriver;
   // If report progress must print progress
   oldprogres:=report.OnProgress;
   try
@@ -628,7 +637,7 @@ begin
     report.OnProgress:=pdfdriver.RepProgress;
    report.TwoPass:=true;
 //   report.PrintAll(apdfdriver);
-   report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
+   report.PrintRange(pdfdriver,allpages,frompage,topage,copies,collate);
    if not allpages then
     report.Metafile.PageRange(frompage,topage);
    report.Metafile.SaveToStream(Stream);
@@ -639,6 +648,9 @@ begin
   Result:=True;
  finally
   astream.free;
+ end;
+ finally
+  pdfdriver.free;
  end;
 end;
 
@@ -677,14 +689,13 @@ function PrintReportToMetafile(report:TRpReport;Caption:string;progress:boolean;
      collate:boolean):Boolean;
 var
  pdfdriver:TRpPDFDriver;
- apdfdriver:IRpPrintDriver;
  oldprogres:TRpProgressEvent;
 begin
  if Length(Trim(filename))<0 then
   Raise Exception.Create(SRpNoFileNameProvided+':Metafile');
  pdfdriver:=TRpPDFDriver.Create;
+ try
  pdfdriver.compressed:=false;
- apdfdriver:=pdfdriver;
  report.TwoPass:=true;
  // If report progress must print progress
  oldprogres:=report.OnProgress;
@@ -692,13 +703,16 @@ begin
   if progress then
    report.OnProgress:=pdfdriver.RepProgress;
   report.TwoPass:=true;
-  report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
+  report.PrintRange(pdfdriver,allpages,frompage,topage,copies,collate);
   if not allpages then
    report.Metafile.PageRange(frompage,topage);
   if Length(filename)>0 then
    report.Metafile.SaveToFile(filename);
  finally
   report.OnProgress:=oldprogres;
+ end;
+ finally
+  pdfdriver.free;
  end;
  Result:=True;
 end;
@@ -709,28 +723,30 @@ function PrintReportPDF(report:TRpReport;Caption:string;progress:boolean;
      collate:boolean):Boolean;
 var
  pdfdriver:TRpPDFDriver;
- apdfdriver:IRpPrintDriver;
  oldprogres:TRpProgressEvent;
 begin
  if Length(Trim(filename))<0 then
   Raise Exception.Create(SRpNoFileNameProvided+':PDF');
  pdfdriver:=TRpPDFDriver.Create;
+ try
  pdfdriver.filename:=filename;
  pdfdriver.compressed:=compressed;
- apdfdriver:=pdfdriver;
  // If report progress must print progress
  oldprogres:=report.OnProgress;
  try
   if progress then
    report.OnProgress:=pdfdriver.RepProgress;
-  report.PrintRange(apdfdriver,allpages,frompage,topage,copies,collate);
+  report.PrintRange(pdfdriver,allpages,frompage,topage,copies,collate);
  finally
   report.OnProgress:=oldprogres;
+ end;
+ finally
+  pdfdriver.free;
  end;
  Result:=True;
 end;
 
-procedure DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
+procedure DoDrawChart(adriver:TRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
  aposx,aposy:integer;achart:TObject);
 var
  nchart:TRpChart;
@@ -907,7 +923,7 @@ begin
 end;
 {$ENDIF}
 
-function TRpPDFDriver.GetFontDriver:IRpPrintDriver;
+function TRpPDFDriver.GetFontDriver:TRpPrintDriver;
 begin
  Result:=Self;
 end;

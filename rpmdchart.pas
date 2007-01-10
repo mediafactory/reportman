@@ -101,7 +101,7 @@ type
    procedure ReadSerieColorExpression(Reader:TReader);
    function EvaluateText(atext:WideString):Variant;
   protected
-   procedure DoPrint(adriver:IRpPrintDriver;
+   procedure DoPrint(adriver:TRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
@@ -514,7 +514,7 @@ end;
 
 
 
-procedure TRpChart.DoPrint(adriver:IRpPrintDriver;
+procedure TRpChart.DoPrint(adriver:TRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 begin

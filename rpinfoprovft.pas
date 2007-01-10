@@ -61,16 +61,16 @@ type
   procedure OpenFont;
  end;
 
- TRpFTInfoProvider=class(TInterfacedObject,IRpInfoProvider)
+ TRpFTInfoProvider=class(TRpInfoProvider)
   currentname:String;
   currentstyle:integer;
   currentfont:TRpLogFont;
   crit:TCriticalSection;
   procedure InitLibrary;
   procedure SelectFont(pdffont:TRpPDFFOnt);
-  procedure FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
-  function GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;
-  function GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;
+  procedure FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);override;
+  function GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;override;
+  function GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;override;
   constructor Create;
   destructor destroy;override;
  end;

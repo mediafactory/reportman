@@ -53,7 +53,7 @@ type
   private
    FExternalsLoaded:Boolean;
   protected
-    procedure DoUpdatepageSize(Driver:IRpPrintDriver;metafilepage:TRpMetafilePage);
+    procedure DoUpdatepageSize(Driver:TRpPrintDriver;metafilepage:TRpMetafilePage);
     procedure Notification(AComponent:TComponent;Operation:TOperation);override;
     procedure Loaded;override;
     function NextSection(child:boolean):boolean;
@@ -63,10 +63,10 @@ type
   public
    IsDesignTime:Boolean;
    procedure LoadExternals;
-   procedure BeginPrint(Driver:IRpPrintDriver);override;
+   procedure BeginPrint(Driver:TRpPrintDriver);override;
    procedure EndPrint;override;
    function PrintNextPage:boolean;override;
-   procedure PrintRange(Driver:IRpPrintDriver;allpages:boolean;
+   procedure PrintRange(Driver:TRpPrintDriver;allpages:boolean;
     frompage,topage,copies:integer;collate:boolean);
  end;
 
@@ -278,7 +278,7 @@ end;
 
 
 
-procedure TRpReport.PrintRange(Driver:IRpPrintDriver;allpages:boolean;
+procedure TRpReport.PrintRange(Driver:TRpPrintDriver;allpages:boolean;
     frompage,topage,copies:integer;collate:boolean);
 var
  i,j,k:integer;
@@ -860,7 +860,7 @@ end;
 
 
 
-procedure TRpReport.DoUpdatepageSize(Driver:IRpPrintDriver;metafilepage:TRpMetafilePage);
+procedure TRpReport.DoUpdatepageSize(Driver:TRpPrintDriver;metafilepage:TRpMetafilePage);
 var
  apagesize:TPoint;
 begin
@@ -890,7 +890,7 @@ begin
  metafilepage.PageSizeqt:=rPageSizeQt;
 end;
 
-procedure TRpReport.BeginPrint(Driver:IRpPrintDriver);
+procedure TRpReport.BeginPrint(Driver:TRpPrintDriver);
 var
  i,index:integer;
  item:TRpAliaslistItem;
@@ -1297,7 +1297,7 @@ begin
  sectionextevaluated:=false;
 end;
 
-procedure PrintSection(adriver:IRpPrintDriver;datasection:boolean;var PartialPrint:Boolean);
+procedure PrintSection(adriver:TRpPrintDriver;datasection:boolean;var PartialPrint:Boolean);
 var
  MaxExtent:TPoint;
  ispagerepeat:boolean;
@@ -1350,7 +1350,7 @@ begin
   SkipToPageAndPosition;
 end;
 
-procedure PrintFixedSections(adriver:IRpPrintDriver;headers:boolean);
+procedure PrintFixedSections(adriver:TRpPrintDriver;headers:boolean);
 var
  pheader,pfooter:integer;
  pheadercount,pfootercount:integer;

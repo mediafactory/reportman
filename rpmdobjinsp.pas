@@ -663,13 +663,10 @@ var
  item:TRpAliaslistItem;
  FRpMainF:TFRpMainF;
  expredia:TRpExpreDialog;
- adriver:IRpPrintDriver;
 begin
  FRpMainF:=TFRpMainF(Owner.Owner);
  report:=FRpMainf.report;
  try
-  adriver:=fpdfdriver;
-  adriver._AddRef;
   report.BeginPrint(fpdfdriver);
  except
   on E:Exception do

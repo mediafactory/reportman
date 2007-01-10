@@ -165,7 +165,7 @@ type
    procedure WriteDispFormat(Writer:TWriter);
    procedure ReadDispFormat(Reader:TReader);
   protected
-   procedure DoPrint(adriver:IRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
+   procedure DoPrint(adriver:TRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
    procedure DefineProperties(Filer:TFiler);override;
    function  GoodForNumericCompaction (Position : Integer;
@@ -2639,7 +2639,7 @@ begin
 end;
 
 
-procedure TRpBarCode.DoPrint(adriver:IRpPrintDriver;
+procedure TRpBarCode.DoPrint(adriver:TRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var

@@ -18,7 +18,7 @@ unit rpinfoprovgdi;
 
 interface
 
-uses Classes,SysUtils,Windows,rpinfoprovid,
+uses Classes,SysUtils,Windows,rpinfoprovid,SyncObjs,
 {$IFDEF DOTNETD}
  System.Runtime.InteropServices,
 {$ENDIF}
@@ -32,8 +32,8 @@ type
  TGetCharPlac=function (DC: HDC; p2: PWideChar; p3, p4:integer;
    var p5: TGCPResults; p6: DWORD): DWORD;stdcall;
  // external 'gdi32.dll' name 'GetCharacterPlacementW'
- TRpGDIInfoProvider=class(TInterfacedObject,IRpInfoProvider)
-  adc:HDC;
+ TRpGDIInfoProvider=class(TRpInfoProvider)
+//  adc:HDC;
   fonthandle:THandle;
   currentname:String;
   currentstyle:integer;
@@ -41,29 +41,43 @@ type
   GetCharPlac:TGetCharPlac;
   gdilib:THandle;
   procedure SelectFont(pdffont:TRpPDFFOnt);
-  procedure FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);
-  function GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;
-  function GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;
+  procedure FillFontData(pdffont:TRpPDFFont;data:TRpTTFontData);override;
+  function GetCharWidth(pdffont:TRpPDFFont;data:TRpTTFontData;charcode:widechar):Integer;override;
+  function GetKerning(pdffont:TRpPDFFont;data:TRpTTFontData;leftchar,rightchar:widechar):integer;override;
   constructor Create;
   destructor Destroy;override;
  end;
 
 implementation
 
+var
+ adc:ThAndle;
+ critsec:TCriticalSection;
 const
  TTF_PRECISION=1000;
 
 
 constructor TRpGDIInfoProvider.Create;
+var
+ ddc:THandle;
 begin
  inherited Create;
-
  isnt:=IsWindowsNt;
  currentname:='';
  currentstyle:=0;
  fonthandle:=0;
  gdilib:=0;
- adc:=CreateCompatibleDC(GetDC(0));
+ critsec.Enter;
+ try
+  if adc=0 then
+  begin
+   ddc:=GetDC(0);
+   adc:=CreateCompatibleDC(ddc);
+   ReleaseDC(0,ddc);
+  end;
+ finally
+  critsec.Leave;
+ end;
  if isnt then
  begin
   gdilib:=LoadLibrary('gdi32.dll');
@@ -77,7 +91,6 @@ end;
 
 destructor TRpGDIInfoProvider.destroy;
 begin
- ReleaseDC(0,adc);
  if fonthandle<>0 then
   DeleteObject(fonthandle);
  if gdilib<>0 then
@@ -623,5 +636,12 @@ begin
 {$ENDIF}
 end;
 
+initialization
+adc:=0;
+critsec:=TCriticalSection.Create;
+finalization
+if adc<>0 then
+ ReleaseDC(0,adc);
+critsec.Free;
 
 end.

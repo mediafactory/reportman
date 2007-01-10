@@ -94,8 +94,8 @@ type
 
  TRpPDFCanvas=class(TObject)
   private
-   FInfoProvider:IRpInfoProvider;
-   FDefInfoProvider:IRpInfoProvider;
+   FInfoProvider:TRpInfoProvider;
+   FDefInfoProvider:TRpInfoProvider;
    FFont:TRpPDFFont;
    FFile:TRpPDFFile;
    FResolution:integer;
@@ -103,11 +103,17 @@ type
    FLineInfoCount:integer;
    FFontTTData:TStringList;
    FImageIndexes:TStringList;
+{$IFDEF MSWINDOWS}
+   FGDIInfoProvider:TRpGDIInfoProvider;
+{$ENDIF}
+{$IFDEF LINUX}
+  FFtInfoProvider:TRpFtInfoProvider;
+{$ENDIF}
    procedure NewLineInfo(info:TRpLineInfo);
    procedure SetDash;
    procedure SaveGraph;
    procedure RestoreGraph;
-   procedure SetInfoProvider(aprov:IRpInfoProvider);
+   procedure SetInfoProvider(aprov:TRpInfoProvider);
    function GetTTFontData:TRpTTFontData;
   public
    PenColor:integer;
@@ -116,7 +122,7 @@ type
    BrushColor:integer;
    BrushStyle:integer;
    procedure GetStdLineSpacing(var linespacing,leading:integer);
-   property InfoProvider:IRpInfoProvider read FInfoProvider write SetInfoProvider;
+   property InfoProvider:TRpInfoProvider read FInfoProvider write SetInfoProvider;
    function UnitsToTextX(Value:integer):string;
    function UnitsToTextY(Value:integer):string;
    function UnitsToTextText(Value:integer;FontSize:integer):string;
@@ -413,11 +419,13 @@ begin
 
  FImageIndexes:=TStringList.Create;
  FImageIndexes.Sorted:=true;
- {$IFDEF MSWINDOWS}
- FInfoProvider:=TRpGDIInfoProvider.Create;
+{$IFDEF MSWINDOWS}
+ FGDIInfoProvider:=TRpGDIInfoProvider.Create;
+ FInfoProvider:=FGDIInfoProvider;
 {$ENDIF}
 {$IFDEF LINUX}
- FInfoProvider:=TRpFtInfoProvider.Create;
+ FFtInfoProvider:=TRpFtInfoProvider.Create;
+ FInfoProvider:=FFtInfoProvider;
 {$ENDIF}
  FDefInfoProvider:=FInfoProvider;
  FFont:=TRpPDFFont.Create;
@@ -435,6 +443,14 @@ begin
  FreeFonts;
  FFont.free;
  FFontTTData.free;
+{$IFDEF MSWINDOWS}
+ FGDIInfoProvider.free;
+{$ENDIF}
+{$IFDEF LINUX}
+ FFtInfoProvider.free;
+{$ENDIF}
+ FInfoProvider:=nil;
+ FDefInfoProvider:=nil;
  FFont:=nil;
  inherited Destroy;
 end;
@@ -464,13 +480,14 @@ end;
 destructor TRpPDFFile.Destroy;
 begin
  FreePageInfos;
+ FPageInfos.Free;
+ FCanvas.free;
  FMainPDF.Free;
  FTempStream.Free;
  FsTempStream.Free;
- FCanvas.free;
  FObjectOffsets.free;
- FPages.Free;
  FFOntList.Free;
+ FPages.Free;
  FBitmapStreams.Free;
 
  inherited Destroy;
@@ -3072,16 +3089,13 @@ begin
  end;
 end;
 
-procedure TRpPDFCanvas.SetInfoProvider(aprov:IRpInfoProvider);
+procedure TRpPDFCanvas.SetInfoProvider(aprov:TRpInfoProvider);
 begin
  if Not assigned(aprov) then
   FInfoProvider:=FDefInfoProvider
  else
  begin
   FInfoProvider:=aprov;
-{$IFNDEF DOTNETD}
-  FInfoprovider._AddRef;
-{$ENDIF}
  end;
 end;
 
