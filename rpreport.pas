@@ -422,7 +422,7 @@ begin
       finished:=true;
       break;
      end;
-     metafile.Clear;
+     metafile.Pages[0].Clear;
     end;
     if not finished then
     begin

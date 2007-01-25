@@ -610,15 +610,18 @@ begin
  begin
   // Does nothing because the last bitmap can be usefull
  end;
- if orientationset then
- begin
-  SetPrinterOrientation(oldorientation=poLandscape);
-  orientationset:=false;
- end;
  if oldpagesize.PageIndex<>-1 then
  begin
   SetCurrentPaper(oldpagesize);
   oldpagesize.PageIndex:=-1;
+ end;
+ if orientationset then
+ begin
+  if printer.printing then
+   SetPrinterOrientation(oldorientation=poLandscape)
+  else
+   printer.orientation:=oldorientation;
+  orientationset:=false;
  end;
 end;
 
@@ -1431,57 +1434,39 @@ begin
 end;
 
 procedure TRpGDIDriver.SetOrientation(Orientation:TRpOrientation);
-{$IFNDEF DOTNETD}
 var
-  Device, Driver, Port: array[0..1023] of char;
-  DeviceMode: THandle;
-  PDevmode:^TDevicemode;
-{$ENDIF}
+ currentorientation:TPrinterOrientation;
 begin
-{$IFDEF DOTNETD}
- if Printer.Printing then
-  exit;
-{$ENDIF}
-{$IFNDEF DOTNETD}
- if Printer.Printing then
- begin
-  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
-  if DeviceMode=0 then
-   exit;
-  PDevMode := GlobalLock(DeviceMode);
-  try
-   PDevMode.dmFields:=dm_Orientation;
-   if Orientation=rpOrientationPortrait then
-    PDevMode.dmOrientation := 1
-   else
-   if Orientation=rpOrientationLandscape then
-    PDevMode.dmOrientation := 2;
-   DocumentProperties(0,Printer.Handle,Device, PDevMode^,
-        PDevMode^, DM_MODIFY);
-   ResetDC(Printer.Handle,PDevMode^);
-  finally
-   GlobalUnLock(DeviceMode);
-  end;
-  exit;
- end;
-{$ENDIF}
+ currentorientation:=GetPrinterOrientation;
  if Orientation=rpOrientationPortrait then
  begin
-  if Printer.Orientation<>poPortrait then
+  if currentorientation<>poPortrait then
   begin
-   orientationset:=true;
-   oldorientation:=Printer.Orientation;
-   Printer.Orientation:=poPortrait;
+   if not orientationset then
+   begin
+    orientationset:=true;
+    oldorientation:=currentorientation;
+   end;
+   if printer.Printing then
+    SetPrinterOrientation(false)
+   else
+    Printer.Orientation:=poPortrait;
   end;
  end
  else
  if Orientation=rpOrientationLandscape then
  begin
-  if Printer.Orientation<>poLandscape then
+  if currentorientation<>poLandscape then
   begin
-   orientationset:=true;
-   oldorientation:=Printer.Orientation;
-   Printer.Orientation:=poLandsCape;
+   if not orientationset then
+   begin
+    orientationset:=true;
+    oldorientation:=currentorientation;
+   end;
+   if printer.Printing then
+    SetPrinterOrientation(true)
+   else
+    Printer.Orientation:=poLandscape;
   end;
  end;
 end;
@@ -1507,6 +1492,7 @@ var
  memstream:TMemoryStream;
  rPageSizeQt:TPageSizeQt;
  gdidriver:TRpGDIDriver;
+ currentorientation:TPrinterOrientation;
 begin
  gdidriver:=nil;
  try
@@ -1545,11 +1531,34 @@ begin
   mmfirst:=TimeGetTime;
   gdidriver:=TRpGDIDriver.Create;
   try
+   currentorientation:=GetPrinterOrientation;
    // Sets page size and orientation
    if metafile.Orientation<>rpOrientationDefault then
    begin
-    SetPrinterOrientation(metafile.Orientation=rpOrientationLandscape);
-    gdidriver.orientationset:=true;
+    if metafile.Orientation=rpOrientationPortrait then
+    begin
+     if currentorientation<>poPortrait then
+     begin
+      gdidriver.orientationset:=true;
+      gdidriver.oldorientation:=currentorientation;
+      if printer.Printing then
+       SetPrinterOrientation(false)
+      else
+       printer.Orientation:=poPortrait;
+     end;
+    end
+    else
+    begin
+     if currentorientation<>poLandscape then
+     begin
+      gdidriver.orientationset:=true;
+      gdidriver.oldorientation:=currentorientation;
+      if printer.Printing then
+       SetPrinterOrientation(true)
+      else
+       printer.Orientation:=poLandscape;
+     end;
+    end;
    end;
    // Sets pagesize
    rpagesizeQt.papersource:=metafile.PaperSource;
@@ -1683,7 +1692,13 @@ begin
   if metafile.OpenDrawerAfter then
    SendControlCodeToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer));
   if Assigned(gdidriver) then
+  begin
    gdidriver.SendAfterPrintOperations;
+   if gdidriver.orientationset then
+   begin
+    Printer.Orientation:=gdidriver.oldorientation;
+   end;
+  end;
  finally
   if assigned(gdidriver) then
    gdidriver.free;

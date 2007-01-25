@@ -257,6 +257,7 @@ begin
   FIntBitmap.Free;
 // prdriver_internal.free;
  prdriver.free;
+ prdriver_internal.free;
  inherited Destroy;
 end;
 

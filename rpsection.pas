@@ -266,6 +266,7 @@ end;
 
 destructor TRpSection.Destroy;
 begin
+ ClearPageCountList;
  FPageGroupCountList.free;
  FReportComponents.Free;
  FStream.free;

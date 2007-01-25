@@ -455,6 +455,7 @@ end;
 procedure TRpMetafilePage.Clear;
 begin
  SetLength(FObjects,FIRST_ALLOCATION_OBJECTS);
+ FPool:='';
  FObjectCount:=0;
  FMark:=0;
  FPoolPos:=1;

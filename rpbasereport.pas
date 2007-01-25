@@ -696,6 +696,7 @@ begin
  Fidenfreespaceinch.free;
  FIdenLanguage.free;
  FIdenEof.free;
+ ClearTotalPagesList;
  FTotalPagesList.free;
  if Assigned(FEvaluator) then
  begin

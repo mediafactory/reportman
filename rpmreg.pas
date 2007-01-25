@@ -22,7 +22,7 @@ interface
 uses
   Classes,rpcompobase,
   rpparser,rpeval,rpreport,rppdfreport,rptranslator,
-  rpevalfunc,rptypes,rpdatainfo,rpalias,rptypeval,
+  rpevalfunc,rptypes,rpdatainfo,rpalias,rptypeval,rpclientdataset,
 {$IFNDEF USEVARIANTS}
   rpvclreport,rpmaskedit,rppreviewcontrol,
   {$IFNDEF BUILDER4}
@@ -43,6 +43,7 @@ begin
   RegisterComponents('Reportman', [TRpLastUsedStrings]);
   RegisterComponents('Reportman', [TRpTranslator]);
   RegisterComponents('Reportman', [TPDFReport]);
+  RegisterComponents('Reportman', [TRpClientDataset]);
 {$IFNDEF USEVARIANTS}
   RegisterComponents('Reportman', [TVCLReport]);
   RegisterComponents('Reportman', [TRpPreviewControl]);

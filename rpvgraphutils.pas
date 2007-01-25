@@ -83,6 +83,7 @@ procedure SetPrinterCopies(copies:integer);
 procedure SetPrinterCollation(collation:boolean);
 function GetPrinterCopies:Integer;
 function GetPrinterCollation:Boolean;
+function GetPrinterOrientation:TPrinterOrientation;
 function PrinterSupportsCollation:Boolean;
 function PrinterSupportsCopies(copies:integer):Boolean;
 function GetCurrentPaper:TGDIPageSize;
@@ -2229,6 +2230,33 @@ begin
  end;
 end;
 
+
+procedure SetPrinterOrientation(landscape:boolean);
+var
+  Device, Driver, Port: array[0..1023] of char;
+  DeviceMode: THandle;
+  PDevmode:^TDevicemode;
+begin
+ Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ if DeviceMode=0 then
+  exit;
+ PDevMode := GlobalLock(DeviceMode);
+ try
+  PDevMode.dmFields:=dm_Orientation;
+  if landscape then
+   PDevMode.dmOrientation := 2
+  else
+   PDevMode.dmOrientation := 1;
+  DocumentProperties(0,Printer.Handle,Device, PDevMode^,
+       PDevMode^, DM_MODIFY);
+  ResetDC(Printer.Handle,PDevMode^);
+ finally
+  GlobalUnLock(DeviceMode);
+ end;
+end;
+
+
+{
 procedure SetPrinterOrientation(landscape:boolean);
 var
  FPrinterHandle:THandle;
@@ -2260,7 +2288,7 @@ begin
       if landscape then
        PDevMode^.dmOrientation:=DMORIENT_LANDSCAPE
       else
-       PDevMode^.dmCollate:=DMORIENT_PORTRAIT;
+       PDevMode^.dmOrientation:=DMORIENT_PORTRAIT;
      end;
 //     if not IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_IN_BUFFER) then
 //      RaiseLastOSError;
@@ -2278,7 +2306,7 @@ begin
   ClosePrinter(fprinterhandle);
  end;
 end;
-
+}
 
 
 procedure SetPrinterCopies(copies:integer);
@@ -2441,6 +2469,37 @@ begin
 {$IFDEF DOTNETD}
   GlobalUnLock(Integer(DeviceMode));
 {$ENDIF}
+ end;
+end;
+
+
+function GetPrinterOrientation:TPrinterOrientation;
+var
+  Device, Driver, Port: array[0..1023] of char;
+  DeviceMode: THandle;
+  PDevmode:^TDevicemode;
+  printererror:boolean;
+begin
+ Result:=poPortrait;
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if DeviceMode=0 then
+  printererror:=true;
+ if printererror then
+  exit;
+ PDevMode := GlobalLock(DeviceMode);
+ try
+  if PDevMode.dmOrientation=DMORIENT_LANDSCAPE then
+   Result:=poLandscape;
+ finally
+  GlobalUnLock(DeviceMode);
  end;
 end;
 

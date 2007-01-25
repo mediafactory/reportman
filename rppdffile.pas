@@ -1579,7 +1579,7 @@ begin
     // Scale
     SWriteLine(FFile.FsTempStream,UnitsToTextX(rec.Right-rec.Left)+
      ' 0 0  '+UnitsToTextX(rec.Bottom-rec.Top)+' 0 0 cm');
-    SWriteLine(FFile.FsTempStream,'/Im'+IntToStr(FFile.FImageCount)+' Do');
+    SWriteLine(FFile.FsTempStream,'/Im'+IntToStr(imageindex)+' Do');
     SWriteLine(FFile.FsTempStream,'Q');
     if not tile then
      break;
