@@ -204,6 +204,8 @@ end;
 
 destructor TrpPanelObj.Destroy;
 begin
+ fpdfdriver.free;
+
  LNames.Free;
  LTypes.Free;
  LValues.Free;
