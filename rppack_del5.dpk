@@ -155,6 +155,9 @@ contains
   rpbarcodecons in 'rpbarcodecons.pas',
   rpmdfsearchvcl in 'rpmdfsearchvcl.pas' {FRpSearchParamVCL},
   rppreviewmeta in 'rppreviewmeta.pas',
-  rppreviewcontrol in 'rppreviewcontrol.pas';
+  rppreviewcontrol in 'rppreviewcontrol.pas',
+  rpcolumnar in 'rpcolumnar.pas',
+  rpclientdataset in 'rpclientdataset.pas',
+  rpmdfselectfields in 'rpmdfselectfields.pas' {FRpSelectFields: TFrame};
 
 end.

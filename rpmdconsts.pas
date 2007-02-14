@@ -1047,7 +1047,7 @@ var
   SRpBitmapFile:WideString='Bitmap File';
   SRpBitmapFileMono:WideString='Bitmap - monochrome';
   SRpPFormatMask:WideString='Format is the format string: ex.''99,99,99'''+#10+' and v is the value to convert to a formated string';
-  SrpSAlignJustify:WideString='Justified(PDF)';
+  SrpSAlignJustify:WideString='Justified';
   SRpSelectedPrinter:WideString='Selected printer';
   SRPVertDesp:WideString='Vert.Desp.';
   SRpLineTooLong:WideString='Line too long';

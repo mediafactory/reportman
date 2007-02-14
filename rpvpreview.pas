@@ -708,6 +708,9 @@ begin
    body:=report.Params.ParamByName('MAIL_BODY').AsString;
  end;
  afilename:=RpTempFileName;
+ if report.Params.IndexOf('MAIL_FILE')>=0 then
+  afilename:=ExtractFilePath(afilename)+report.Params.ParamByName('MAIL_FILE').AsString;
+
  SaveMetafileToPDF(fpreviewcontrol.Metafile,afilename,true);
  try
   if Length(subject)<1 then

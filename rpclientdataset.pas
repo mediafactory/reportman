@@ -2,6 +2,8 @@ unit rpclientdataset;
 
 interface
 
+
+{$I rpconf.inc}
 uses Classes, DB, DBClient;
 
 type
@@ -21,7 +23,9 @@ type
 
 implementation
 
-uses Variants; // not needed for Delpphi 5
+{$IFDEF USEVARIANTS}
+uses Variants; // not needed for Delphi 5
+{$ENDIF}
 
 function TRpClientDataset.Locate(const KeyFields: string; const KeyValues:
     Variant; Options: TLocateOptions): Boolean;
@@ -136,3 +140,4 @@ end;
 //end;
 
 end.
+

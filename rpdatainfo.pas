@@ -1148,9 +1148,8 @@ begin
        begin
         if FIBTransaction=FIBInternalTransaction then
         begin
-         if FIBInternalTransaction.InTransaction then
-          FIBInternalTransaction.Commit;
-         FIBInternalTransaction.StartTransaction;
+         if not FIBInternalTransaction.InTransaction then
+          FIBInternalTransaction.StartTransaction;
         end;
         exit;
        end;
@@ -1175,9 +1174,8 @@ begin
        FIBDatabase.Connected:=true;
        if FIBTransaction=FIBInternalTransaction then
        begin
-        if FIBInternalTransaction.InTransaction then
-         FIBInternalTransaction.Commit;
-        FIBInternalTransaction.StartTransaction;
+        if not FIBInternalTransaction.InTransaction then
+         FIBInternalTransaction.StartTransaction;
        end;
   {$ELSE}
       Raise Exception.Create(SRpDriverNotSupported+' - '+SrpDriverIBX);
@@ -1467,13 +1465,13 @@ begin
  end;
 {$ENDIF}
 {$IFDEF USEIBX}
+ if assigned(FIBInternalTransaction) then
+   if FIBInternalTransaction.InTransaction then
+    FIBInternalTransaction.Commit;
  if Assigned(FIBInternalDatabase) then
  begin
   FIBInternalDatabase.Connected:=False;
  end;
- if assigned(FIBInternalTransaction) then
-   if FIBInternalTransaction.InTransaction then
-    FIBInternalTransaction.Commit;
 {$ENDIF}
 {$IFDEF USEZEOS}
  if Assigned(FZInternalDatabase) then

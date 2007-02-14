@@ -377,15 +377,17 @@ end;
 procedure TReportManX.CalcReport(ShowProgress: WordBool);
 var
  gdidriver:TRpGDIDriver;
- agdidriver:IRpPrintDriver;
 begin
  if ShowProgress then
   CalcReportWidthProgress(FDelphiControl.GetReport)
  else
  begin
   GDIDriver:=TRpGDIDriver.Create;
-  aGDIDriver:=GDIDriver;
-  FDelphiControl.GetReport.PrintAll(agdidriver);
+  try
+   FDelphiControl.GetReport.PrintAll(gdidriver);
+  finally
+   gdidriver.free;
+  end;
  end;
 end;
 
@@ -400,13 +402,15 @@ procedure TReportManX.IReportManX_Compose(const Report: ReportReport;
   Execute: WordBool);
 var
  gdidriver:TRpGDIDriver;
- agdidriver:IRpPrintDriver;
 begin
  GDIDriver:=TRpGDIDriver.Create;
- aGDIDriver:=GDIDriver;
- FDelphiControl.GetReport.Compose(TRpReport(Report.VCLReport),false,aGDIDriver);
- if Execute then
-  FDelphiControl.Execute;
+ try
+  FDelphiControl.GetReport.Compose(TRpReport(Report.VCLReport),false,GDIDriver);
+  if Execute then
+   FDelphiControl.Execute;
+ finally
+  gdidriver.free;
+ end;
 end;
 
 

@@ -702,6 +702,7 @@ begin
  begin
   if not assigned(npdfdriver) then
     npdfdriver:=TRpPDFDriver.Create;
+  atext.Type1Font:=integer(poLinked);
   npdfdriver.TextExtent(atext,extent);
   exit;
  end;
