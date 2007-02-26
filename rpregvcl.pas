@@ -19,7 +19,8 @@ unit rpregvcl;
 interface
 
 uses
-  Classes,rpvclreport,rpexpredlgvcl,rpmaskedit,rpdbgridvcl,rppreviewcontrol;
+  Classes,rpvclreport,rpexpredlgvcl,rpmaskedit,rpdbgridvcl,rppreviewcontrol,
+  rpdbdatetimepicker;
 
 
 procedure Register;
@@ -34,6 +35,7 @@ begin
   RegisterComponents('Reportman', [TRpMaskEdit]);
   RegisterComponents('Reportman', [TRpGrid]);
   RegisterComponents('Reportman', [TRpPreviewControl]);
+  RegisterComponents('Reportman', [TRpDateTimePicker]);
   // TRpActiveXReport is a Wrapper to generate the ActiveX version
   // with Delphi 6 Active X Control Wizard
 //  RegisterComponents('Reportman', [TRpActiveXReport]);
