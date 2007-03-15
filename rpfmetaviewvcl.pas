@@ -94,7 +94,7 @@ type
     ACancel: TAction;
     MHelp: TMenuItem;
     AAbout: TAction;
-    AAbout1: TMenuItem;
+    MAbout: TMenuItem;
     AViewConnect: TAction;
     ReportConnection1: TMenuItem;
     MPreferences: TMenuItem;
@@ -102,7 +102,7 @@ type
     BStatus: TStatusBar;
     ADocumentation: TAction;
     StatusBar1: TMenuItem;
-    Documentation1: TMenuItem;
+    MDoc: TMenuItem;
     APrintSetup: TAction;
     PrinterSetup1: TMenuItem;
     MSelectPrinter: TMenuItem;
@@ -283,12 +283,21 @@ end;
 
 
 constructor TFRpMetaVCL.Create(AOwner:TComponent);
-{$IFDEF DOTNETD}
 var
+ inif:TInifile;
+{$IFDEF DOTNETD}
  i:integer;
 {$ENDIF}
 begin
  inherited Create(AOwner);
+ inif:=TIniFile.Create(ChangeFileExt(Application.ExeName,'.ini'));
+ try
+  MDoc.Visible:=inif.ReadBool('CONFIG','ShowAboutBox',true);
+  MAbout.Visible:=inif.ReadBool('CONFIG','ShowDocumentation',true);
+  MHelp.Visible:=MDoc.Visible or MAbout.Visible;
+ finally
+  inif.free;
+ end;
  FPreviewControl:=TRpPreviewmeta.Create(Self);
  FpreviewControl.Width:=0;
  FpreviewControl.Height:=0;
@@ -993,7 +1002,10 @@ begin
  begin
   fmetafile.OnWorkProgress:=OnProgress;
   fmetafile.OnWorkAsyncError:=WorkAsyncError;
+  if not fmetafile.PreviewAbout then
+   MHelp.Visible:=false;
  end;
+
  fPreviewControl.Metafile:=fmetafile;
 end;
 

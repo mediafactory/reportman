@@ -811,11 +811,29 @@ end;
 procedure TRpSection.SaveExternal;
 var
  AStream:TStream;
+ ffilename:string;
+ report:TRpBaseReport;
 begin
  // Saves the components as a external section
  if Length(FExternalFilename)>0 then
  begin
-  AStream:=TFileStream.Create(FExternalFilename,fmCreate);
+  report:=TRpBaseReport(Owner);
+  if FExternalFilename[1]='@' then
+  begin
+   try
+    report.evaluator.Expression:=Copy(FExternalFilename,2,Length(FExternalFileName));
+    report.evaluator.evaluate;
+    ffilename:=report.evaluator.EvalResultString;
+   except
+    on E:exception do
+    begin
+      Raise TRpReportException.Create(E.Message+':'+SRpSExternalpath+': '+FExternalFileName+' :'+Name,self,SRpSExternalPath);
+    end;
+   end;
+  end
+  else
+   ffilename:=FExternalFilename;
+  AStream:=TFileStream.Create(ffilename,fmCreate);
   try
    SaveToStream(AStream);
   finally
@@ -1042,13 +1060,29 @@ procedure TRpSection.LoadExternal;
 var
  AStream:TStream;
  report:TRpBaseReport;
+ ffilename:String;
 begin
  report:=TRpBaseReport(Owner);
  try
   // Try to load the section as an external section
   if Length(FExternalFilename)>0 then
   begin
-   AStream:=TFileStream.Create(FExternalFilename,fmOpenRead or fmShareDenyWrite);
+   if FExternalFilename[1]='@' then
+   begin
+    try
+     report.evaluator.Expression:=Copy(FExternalFilename,2,Length(FExternalFileName));
+     report.evaluator.evaluate;
+     ffilename:=report.evaluator.EvalResultString;
+    except
+     on E:exception do
+     begin
+       Raise TRpReportException.Create(E.Message+':'+SRpSExternalpath+': '+FExternalFileName+' :'+Name,self,SRpSExternalPath);
+     end;
+    end
+   end
+   else
+    ffilename:=FExternalFileName;
+   AStream:=TFileStream.Create(ffilename,fmOpenRead or fmShareDenyWrite);
    try
     LoadFromStream(AStream);
    finally

@@ -281,6 +281,7 @@ type
    ProgressToStdOut:Boolean;
    AdoNetDriver:integer;
    AsyncExecution:boolean;
+   procedure LoadExternals;virtual;
    procedure AddReportItemsToEvaluator(eval:TRpEvaluator);
    procedure InitEvaluator;
    procedure BeginPrint(Driver:TRpPrintDriver);virtual;abstract;
@@ -2141,6 +2142,12 @@ begin
  eval.AddIden('EOF',fideneof);
 end;
 
+procedure TRpBaseReport.LoadExternals;
+begin
+
+end;
+
+
 function TRpBaseReport.CheckParameters(paramlist:TRpParamList;var paramname,amessage:string):Boolean;
 var
  i:integer;
@@ -2192,5 +2199,6 @@ begin
    paramtemp.free;
  end;
 end;
+
 
 end.

@@ -2619,13 +2619,13 @@ object FRpMainFVCL: TFRpMainFVCL
     end
     object MHelp: TMenuItem
       Caption = 'Help'
-      object utorial1: TMenuItem
+      object MDoc: TMenuItem
         Action = ADocumentation
       end
       object MSysInfo: TMenuItem
         Action = ASysInfo
       end
-      object ReportManager1: TMenuItem
+      object MAbout: TMenuItem
         Action = AAbout
       end
     end

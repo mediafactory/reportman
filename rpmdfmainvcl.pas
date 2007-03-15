@@ -138,9 +138,9 @@ type
     ToolButton13: TToolButton;
     AAbout: TAction;
     MHelp: TMenuItem;
-    ReportManager1: TMenuItem;
+    MAbout: TMenuItem;
     ADocumentation: TAction;
-    utorial1: TMenuItem;
+    MDoc: TMenuItem;
     APrintSetup: TAction;
     Printersetup1: TMenuItem;
     AUnitCms: TAction;
@@ -1274,6 +1274,8 @@ var
  aurl:string;
  Directorysep:string;
 begin
+ if not MDoc.Visible then
+  exit;
  aurl:=ExtractFilePath(Application.Exename);
  Directorysep:='\';
  aurl:=aurl+'doc'+Directorysep+document;
@@ -1326,6 +1328,13 @@ procedure TFRpMainFVCL.LoadConfig;
 var
  inif:TInifile;
 begin
+ inif:=TIniFile.Create(ChangeFileExt(Application.ExeName,'.ini'));
+ try
+  MDoc.Visible:=inif.ReadBool('CONFIG','ShowAboutBox',true);
+  MAbout.Visible:=inif.ReadBool('CONFIG','ShowDocumentation',true);
+ finally
+  inif.free;
+ end;
  inif:=TIniFile.Create(configfile);
  try
   MTypeInfo.Checked:=inif.ReadBool('Preferences','TypeInfo',true);

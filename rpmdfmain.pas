@@ -133,9 +133,9 @@ type
     ToolButton13: TToolButton;
     AAbout: TAction;
     MHelp: TMenuItem;
-    ReportManager1: TMenuItem;
+    MAbout: TMenuItem;
     ADocumentation: TAction;
-    utorial1: TMenuItem;
+    MDoc: TMenuItem;
     APrintSetup: TAction;
     Printersetup1: TMenuItem;
     AUnitCms: TAction;
@@ -1447,6 +1447,8 @@ var
  aurl:string;
  Directorysep:string;
 begin
+ if not MDoc.Visible then
+  exit;
  aurl:=ExtractFilePath(Application.Exename);
 {$IFDEF MSWINDOWS}
  Directorysep:='\';
@@ -1585,6 +1587,13 @@ var
  inif:TInifile;
  deffontsize:Integer;
 begin
+ inif:=TIniFile.Create(ChangeFileExt(Application.ExeName,'.ini'));
+ try
+  MDoc.Visible:=inif.ReadBool('CONFIG','ShowAboutBox',true);
+  MAbout.Visible:=inif.ReadBool('CONFIG','ShowDocumentation',true);
+ finally
+  inif.free;
+ end;
  inif:=TIniFile.Create(configfile);
  try
   deffontsize:=Self.Font.Size;

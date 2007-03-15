@@ -62,7 +62,7 @@ type
     function NextRecord(grouprestore:boolean):boolean;
   public
    IsDesignTime:Boolean;
-   procedure LoadExternals;
+   procedure LoadExternals;override;
    procedure BeginPrint(Driver:TRpPrintDriver);override;
    procedure EndPrint;override;
    function PrintNextPage:boolean;override;
@@ -82,18 +82,33 @@ var
  comp:TRpCommonComponent;
  rpexpre:TRpExpression;
  rpchart:TRpChart;
+ externalexpression:boolean;
+ reload:boolean;
 begin
+ inherited LoadExternals;
+
  if FExternalsLoaded then
   exit;
-
+ externalexpression:=false;
  for i:=0 to Subreports.Count-1 do
  begin
   subrep:=Subreports.items[i].SubReport;
   for j:=0 to Subrep.Sections.Count-1 do
   begin
    sec:=SubRep.Sections.Items[j].Section;
+   reload:=sec.IsExternal;
+   if reload then
+   begin
+    reload:=not sec.LoadedExternal;
+    if Length(sec.ExternalFilename)>0 then
+     if sec.ExternalFilename[1]='@' then
+     begin
+      reload:=true;
+      externalexpression:=true;
+     end;
+   end;
    // If it's a external section try to load it
-   if ((sec.IsExternal) and (not sec.LoadedExternal)) then
+   if (reload) then
    begin
     sec.LoadExternal;
 
@@ -135,8 +150,9 @@ begin
    end;
   end;
  end;
-
- FExternalsLoaded:=true;
+ // If exists one section with variable expression try reloading allways
+ if not externalexpression then
+  FExternalsLoaded:=true;
 end;
 
 procedure TRpReport.Loaded;
@@ -159,7 +175,10 @@ begin
    // If it's a external section try to load it
    if IsDesignTime then
     if sec.IsExternal then
+    begin
+     AddReportItemsToEvaluator(evaluator);
      sec.LoadExternal;
+    end;
 
    k:=0;
    while k<sec.ReportComponents.count do
@@ -900,8 +919,6 @@ var
  dataavail:Boolean;
  newpagesize:integer;
 begin
-// Driver._AddRef;
- LoadExternals;
  FUpdatePageSize:=false;
  FillGlobalHeaders;
  FDriver:=Driver;
@@ -1087,6 +1104,8 @@ begin
    end;
   end;
  end;
+ // Load External sections
+ LoadExternals;
 
  // Sends the message report header to all components
 

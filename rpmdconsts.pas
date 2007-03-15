@@ -41,7 +41,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.6q';
+ RM_VERSION='2.6t';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
  MAX_PAGECOUNT=999999;
 type
@@ -1321,6 +1321,8 @@ var
   SRpCachedFixed:WideString='Fixed Image';
   SRpCachedVariable:WideString='Variable Image';
   SRpSParamSubsE:WideString='String Substi.Ex.';
+  SRpExcelFiles:WideString='Excel Files';
+  SRpDBFFiles:WideString='DBF Files';
 
 implementation
 

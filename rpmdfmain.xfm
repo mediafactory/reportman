@@ -6,8 +6,8 @@ object FRpMainF: TFRpMainF
   ActiveControl = ToolButton1
   AutoScroll = False
   Caption = 'Report Manager Designer'
-  ClientHeight = 220
-  ClientWidth = 532
+  ClientHeight = 387
+  ClientWidth = 576
   Color = clBackground
   Menu = MainMenu1
   Position = poScreenCenter
@@ -23,7 +23,7 @@ object FRpMainF: TFRpMainF
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 532
+    Width = 576
     Height = 56
     AutoSize = True
     ButtonHeight = 26
@@ -226,23 +226,23 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton15: TToolButton
       HelpType = htContext
-      Left = 1
-      Top = 30
+      Left = 517
+      Top = 4
       Height = 26
       Action = ALeft
       Caption = 'Left'
     end
     object ToolButton16: TToolButton
       HelpType = htContext
-      Left = 27
-      Top = 30
+      Left = 543
+      Top = 4
       Height = 26
       Action = ARight
       Caption = 'Right'
     end
     object ToolButton17: TToolButton
       HelpType = htContext
-      Left = 53
+      Left = 1
       Top = 30
       Height = 26
       Action = AUp
@@ -250,14 +250,14 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton18: TToolButton
       HelpType = htContext
-      Left = 79
+      Left = 27
       Top = 30
       Height = 26
       Action = ADown
       Caption = 'Down'
     end
     object ToolButton19: TToolButton
-      Left = 105
+      Left = 53
       Top = 30
       Width = 12
       Height = 26
@@ -267,7 +267,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton20: TToolButton
       HelpType = htContext
-      Left = 117
+      Left = 65
       Top = 30
       Height = 26
       Action = AAlignLeft
@@ -275,7 +275,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton21: TToolButton
       HelpType = htContext
-      Left = 143
+      Left = 91
       Top = 30
       Height = 26
       Action = AAlignRight
@@ -283,7 +283,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton22: TToolButton
       HelpType = htContext
-      Left = 169
+      Left = 117
       Top = 30
       Height = 26
       Action = AAlignUp
@@ -291,7 +291,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton23: TToolButton
       HelpType = htContext
-      Left = 195
+      Left = 143
       Top = 30
       Height = 26
       Action = AAlignDown
@@ -299,7 +299,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton24: TToolButton
       HelpType = htContext
-      Left = 221
+      Left = 169
       Top = 30
       Height = 26
       Action = AAlignHorz
@@ -307,7 +307,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton25: TToolButton
       HelpType = htContext
-      Left = 247
+      Left = 195
       Top = 30
       Height = 26
       Action = AAlignVert
@@ -336,8 +336,8 @@ object FRpMainF: TFRpMainF
   object mainscrollbox: TScrollBox
     Left = 0
     Top = 56
-    Width = 532
-    Height = 143
+    Width = 576
+    Height = 310
     HorzScrollBar.Range = 189
     Align = alClient
     BorderStyle = bsNone
@@ -347,7 +347,7 @@ object FRpMainF: TFRpMainF
       Left = 181
       Top = 0
       Width = 8
-      Height = 143
+      Height = 310
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
@@ -356,7 +356,7 @@ object FRpMainF: TFRpMainF
       Left = 0
       Top = 0
       Width = 181
-      Height = 143
+      Height = 310
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -374,8 +374,8 @@ object FRpMainF: TFRpMainF
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 199
-    Width = 532
+    Top = 366
+    Width = 576
     Height = 21
     Panels = <
       item
@@ -654,13 +654,13 @@ object FRpMainF: TFRpMainF
     end
     object MHelp: TMenuItem
       Caption = 'Help'
-      object utorial1: TMenuItem
+      object MDoc: TMenuItem
         Action = ADocumentation
       end
       object MSysInfo: TMenuItem
         Action = ASysInfo
       end
-      object ReportManager1: TMenuItem
+      object MAbout: TMenuItem
         Action = AAbout
       end
     end
