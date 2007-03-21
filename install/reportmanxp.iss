@@ -54,12 +54,14 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: Additi
 
 [Files]
 Source: ..\repman\repmandxp.exe; DestDir: {app}; Components: designer; Flags: ignoreversion
+Source: ..\repman\repmandxp.ini; DestDir: {app}; Components: designer; Flags: ignoreversion
 Source: ..\repman\repmandxp.exe.manifest; DestDir: {app}; Components: designer; Flags: ignoreversion
 Source: ..\repman\reportmanres.*; DestDir: {app}; Flags: restartreplace
 Source: ..\repman\transwin\repmandxp.*; DestDir: {app}; Components: designer; Flags: ignoreversion
 Source: ..\repman\transwin\metaviewxp.*; DestDir: {app}; Components: clienttcp; Flags: ignoreversion
 Source: ..\repman\utils\metaview\metaviewxp.exe.manifest; DestDir: {app}; Components: clienttcp; Flags: ignoreversion
 Source: ..\repman\utils\metaview\metaviewxp.exe; DestDir: {app}; Components: clienttcp; Flags: ignoreversion
+Source: ..\repman\utils\metaview\metaviewxp.ini; DestDir: {app}; Components: clienttcp; Flags: ignoreversion
 Source: ..\repman\utils\metaprint\metaprintxp.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\metaprint\metaprintxp.exe.manifest; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\net\*.dll; DestDir: {app}\net; Components: commandline; Flags: ignoreversion

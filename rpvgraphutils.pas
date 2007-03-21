@@ -24,12 +24,7 @@ interface
 
 uses Classes,SysUtils,Windows,Graphics,rpmunits,Printers,WinSpool,
  rpmdconsts,rptypes,Forms,
-{$IFNDEF DOTNETD}
  jpeg,
-{$ENDIF}
-{$IFDEF DOTNETD}
- System.Runtime.InteropServices,
-{$ENDIF}
  ComCtrls;
 const
  // Max bitmap size for tile result operation
@@ -88,9 +83,7 @@ function PrinterSupportsCollation:Boolean;
 function PrinterSupportsCopies(copies:integer):Boolean;
 function GetCurrentPaper:TGDIPageSize;
 procedure SendControlCodeToPrinter (S: string);
-{$IFNDEF DOTNETD}
 procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
-{$ENDIF}
 function FindFormNameFromSize(width,height:integer):String;
 function PrinterMaxCopiesSupport:Integer;
 procedure FillTreeView (ATree:TTreeView;alist:TStringList);
@@ -143,7 +136,6 @@ begin
 end;
 
 
-{$IFNDEF DOTNETD}
 procedure JPegStreamToBitmapStream(AStream:TMemoryStream);
 var
  jpegimage:TJPegImage;
@@ -168,43 +160,7 @@ begin
   bitmap.Free;
  end;
 end;
-{$ENDIF}
 
-// Bitmap print routine
-{$IFNDEF DOTNETD}
-(*procedure DrawBitmap (Destination:TCanvas;Bitmap:TBitmap;Rec,RecSrc:TRect);
-var
-  Info:PBitmapInfo;
-  InfoSize:DWORD;
-  Image:Pointer;
-  ImageSize:DWORD;
-begin
- With Bitmap do
- begin
-  Graphics.GetDIBSizes(Handle,InfoSize,ImageSize);
-  Info:=AllocMem(InfoSize);
-  try
-   Image:=AllocMem(Imagesize);
-   try
-    GetDIB(Handle,Palette,Info^,Image^);
-    if not Monochrome then
-     SetStretchBltMode(Destination.handle,STRETCH_DELETESCANS);
-    with info^.bmiHeader do
-     StretchDIBits(Destination.Handle,rec.Left,rec.Top,rec.Right-rec.Left+1,
-        rec.Bottom-rec.Top+1,recsrc.Left,recsrc.Top,
-         recsrc.Right-recsrc.Left+1,recsrc.Bottom-recsrc.Top+1,Image,Info^,
-        DIB_RGB_COLORS,SRCCOPY);
-   finally
-    {$R-}
-    Dispose(Image);
-    {$R+}
-   end;
-  finally
-   FreeMem(Info,InfoSize);
-  end;
- end;
-end;
-*)
 // Bitmap print routine
 // Bugfix sent by Walter de Boer
 procedure DrawBitmap (Destination:TCanvas;Bitmap:TBitmap;Rec,RecSrc:TRect);
@@ -340,32 +296,6 @@ begin
   {$ENDIF}
 end;
 
-{$ENDIF}
-
-// Bitmap print routine
-{$IFDEF DOTNETD}
-procedure DrawBitmap (Destination:TCanvas;Bitmap:TBitmap;Rec,RecSrc:TRect);
-var
- abitmap:TBitmap;
- arec:TRect;
-begin
- abitmap:=TBitmap.Create;
- try
-  abitmap.Width:=RecSrc.Right-RecSrc.Left;
-  abitmap.Height:=RecSrc.Bottom-RecSrc.Top;
-  arec.Top:=0;
-  arec.Left:=0;
-  arec.Bottom:=abitmap.Height-1;
-  arec.Right:=abitmap.Width-1;
-  abitmap.Canvas.CopyRect(arec,bitmap.canvas,recsrc);
-  Destination.StretchDraw(rec,abitmap);
- finally
-  abitmap.free;
- end;
-end;
-{$ENDIF}
-
-
 procedure DrawBitmapMosaic(canvas:TCanvas;rec:Trect;bitmap:TBitmap);
 var
  x,y:integer;
@@ -422,10 +352,8 @@ var
 begin
  abitmap:=TBitmap.Create;
  try
-{$IFNDEF DOTNETD}
-   abitmap.PixelFormat:=pf32bit;
-   abitmap.HandleType:=bmDIB;
-{$ENDIF}
+  abitmap.PixelFormat:=pf32bit;
+  abitmap.HandleType:=bmDIB;
   if dpi<=0 then
   begin
    abitmap.Assign(bitmap);
@@ -500,35 +428,6 @@ begin
 end;
 
 
-
-
-{procedure DrawBitmapMosaicSlow(canvas:TCanvas;rec:Trect;bitmap:TBitmap);
-var
- x,y:integer;
- arec,recsrc:TRect;
-begin
- recsrc.Left:=0;
- recsrc.Top:=0;
- recsrc.Right:=Bitmap.Width-1;
- recsrc.Bottom:=Bitmap.Height-1;
- x:=rec.Left;
- y:=rec.Top;
- While y<rec.Bottom do
- begin
-  While x<rec.right do
-  begin
-   arec.Left:=x;
-   arec.Top:=y;
-   arec.Bottom:=y+bitmap.Height-1;
-   arec.Right:=x+bitmap.Width-1;
-   DrawBitmap(Canvas,Bitmap,arec,recsrc);
-   x:=x+bitmap.width;
-  end;
-  x:=rec.left;
-  y:=y+bitmap.Height;
- end;
-end;
-}
 
 function GetPageMarginsTWIPS:TRect;
 var rec:TRect;
@@ -1113,135 +1012,15 @@ begin
  Result.y:=Round(gdipage.FormHeight/100/CMS_PER_INCHESS*TWIPS_PER_INCHESS);
 end;
 
-(*
-function GetCurrentPaper:TGDIPageSize;
-var
- FPrinterHandle:THandle;
-{$IFNDEF DOTNETD}
- DeviceMode: THandle;
- Device, Driver, Port: array[0..1023] of char;
- pdevmode:^DEVMODE;
-{$ENDIF}
-{$IFDEF DOTNETD}
- DeviceMode: IntPtr;
- PDevMode :  TDeviceMode;
- Device, Driver, Port:String;
-{$ENDIF}
- printererror:Boolean;
- PrinterName:String;
- asize:Integer;
-begin
- if printer.printers.count<1 then
- begin
-  Result.PageIndex:=DMPAPER_A4;
-  Result.Width:=0;
-  Result.Height:=0;
-  Result.FormWidth:=2100;
-  Result.FormHeight:=2970;
-  exit;
- end;
- // Printer selected not valid error
- printererror:=false;
- try
-  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
-  PrinterName := Format('%s', [Device]);
- except
-  printererror:=true;
- end;
-{$IFNDEF DOTNETD}
- if DeviceMode=0 then
-{$ENDIF}
-{$IFDEF DOTNETD}
- if Not Assigned(DeviceMode) then
-{$ENDIF}
-  printererror:=true;
- if printererror then
- begin
-  Result.PageIndex:=DMPAPER_A4;
-  Result.Width:=0;
-  Result.Height:=0;
-  Result.FormWidth:=2100;
-  Result.FormHeight:=2970;
-  exit;
- end;
- Result.FormWidth:=0;
- Result.FormHeight:=0;
- if OpenPrinter(Device,fprinterhandle,nil) then
- begin
-  try
-   pdevmode:=AllocMem(sizeof(devmode));
-   try
-    asize:=DocumentProperties(0,fprinterhandle,Device,pdevmode^,pdevmode^,0);
-    if asize>0 then
-    begin
-     FreeMem(pdevmode);
-     pdevmode:=AllocMem(asize);
-     if IDOK=DocumentProperties(0,fprinterhandle,Device,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
-     begin
-      // Orientation
-      if (pdevmode^.dmFields AND DM_ORIENTATION)>0 then
-      begin
-       if pdevmode^.dmOrientation=1 then
-        Result.landscape:=false
-       else
-       if pdevmode^.dmOrientation=2 then
-        Result.landscape:=true
-      end;
-      if PDevMode.dmPapersize>=256 then
-      begin
-       Result.PageIndex:= 0;     { User defined (custom page size) }
-       Result.Height:=PDevMode.dmPaperlength;
-       Result.Width:=PDevMode.dmPaperwidth;
-       Result.papername:=PDevmode.dmFormName;
-       Result.FormWidth:=PDevMode.dmPaperwidth;
-       Result.FormHeight:=PDevMode.dmPaperLength;
-      end
-      else
-      begin
-       REsult.PageIndex:=PDevMode.dmPaperSize;
-       Result.Height:=0;
-       Result.Width:=0;
-       Result.FormWidth:=PdevMode.dmPaperwidth;
-       Result.FormHeight:=PdevMode.dmPaperLength;
-       Result.papername:=PDevmode.dmFormName;
-      end;
-     end
-     else
-     begin
-      Result.PageIndex:=DMPAPER_A4;
-      Result.Width:=0;
-      Result.Height:=0;
-      Result.FormWidth:=PDevMode.dmPaperwidth;
-      Result.FormHeight:=PDevMode.dmPaperLength;
-     end;
-    end;
-   finally
-    FreeMem(pdevmode);
-   end;
-  finally
-   ClosePrinter(fprinterhandle);
-  end;
- end;
-end;
-*)
 
 // Gets current paper page size old version
 // That checks for existent forms
 function GetCurrentPaper:TGDIPageSize;
 var
-{$IFNDEF DOTNETD}
   DeviceMode: THandle;
   PDevMode :  ^TDeviceMode;
   Device, Driver, Port: array[0..1023] of char;
   pforminfo:^Form_info_1;
-{$ENDIF}
-{$IFDEF DOTNETD}
-  DeviceMode: IntPtr;
-  PDevMode :  TDeviceMode;
-  Device, Driver, Port:String;
-  pforminfo:Form_info_1;
-  apforminfo:IntPtr;
-{$ENDIF}
   printererror:boolean;
   Handle:THandle;
   printername:String;
@@ -1265,12 +1044,7 @@ begin
  except
   printererror:=true;
  end;
-{$IFNDEF DOTNETD}
  if DeviceMode=0 then
-{$ENDIF}
-{$IFDEF DOTNETD}
- if Not Assigned(DeviceMode) then
-{$ENDIF}
   printererror:=true;
  if printererror then
  begin
@@ -1283,118 +1057,84 @@ begin
  end;
  Result.FormWidth:=0;
  Result.FormHeight:=0;
-{$IFNDEF DOTNETD}
  PDevMode := GlobalLock(DeviceMode);
-{$ENDIF}
-{$IFDEF DOTNETD}
- PDevMode := TDeviceMode(Marshal.PtrToStructure(GlobalLock(Integer(DeviceMode)),TypeOf(TDeviceMode)));
-{$ENDIF}
- // Warning the custom page size does not work in all drivers
- // especially in Windows NT drivers
- Result.landscape:=false;
- if (PDevMode.dmFields AND DM_ORIENTATION>0) then
- begin
-  Result.landscape:=PDevMode.dmOrientation=2;
- end;
- if PDevMode.dmPapersize>=256 then
- begin
-  Result.PageIndex:= 0;     { User defined (custom page size) }
-  Result.Height:=PDevMode.dmPaperlength;
-  Result.Width:=PDevMode.dmPaperwidth;
-  Result.papername:=PDevmode.dmFormName;
-  if ((PDevMode.dmFields AND DM_FORMNAME)>0) then
-  begin
-   Result.FormWidth:=PDevmode.dmPaperWidth;
-   Result.FormHeight:=PDevmode.dmPaperLength;
-  end;
-  if Length(Result.PaperName)>0 then
-  begin
-{$IFDEF DOTNETD}
-   if not OpenPrinter(PrinterName, Handle, nil) then
-{$ENDIF}
-{$IFNDEF DOTNETD}
-   if not OpenPrinter(PChar(PrinterName), Handle, nil) then
-{$ENDIF}
-    RaiseLastOSError;
-   try
-{$IFNDEF DOTNETD}
-    pforminfo:=allocmem(sizeof(form_info_1));
-    try
-     if Not GetForm(handle,Pchar(Result.papername),1,pforminfo,sizeof(Form_info_1),needed) then
-{$ENDIF}
-{$IFDEF DOTNETD}
-    apforminfo:=Marshal.AllocHGlobal(needed);
-    pforminfo:=Form_info_1(Marshal.PtrToStructure(apforminfo,TypeOf(form_info_1)));
-    try
-     if Not GetForm(handle,Result.papername,1,pforminfo,needed,needed) then
-{$ENDIF}
-     begin
-      laste:=GetLasterror;
-      if ((laste<>122) AND (Laste<>123) AND (laste<>1902)) then
-       RaiseLastOSError
-      else
-      begin
-       if laste<>1902 then
-       begin
-        if needed>0 then
-        begin
-{$IFNDEF DOTNETD}
-         freemem(pforminfo);
-         pforminfo:=AllocMem(needed);
-         if Not GetForm(handle,Pchar(Result.papername),1,pforminfo,needed,needed) then
-{$ENDIF}
-{$IFDEF DOTNETD}
-         Marshal.FreeHGlobal(apforminfo);
-         apforminfo:=Marshal.AllocHGlobal(needed);
-         pforminfo:=Form_info_1(Marshal.PtrToStructure(apforminfo,TypeOf(form_info_1)));
-         if Not GetForm(handle,Result.papername,1,pforminfo,needed,needed) then
-{$ENDIF}
-          RaiseLastOSError;
-         Result.Height:=pforminfo.Size.cy div 100;
-         Result.Width:=pforminfo.Size.cx div 100;
-        end;
-       end;
-      end;
-     end
-     else
-     begin
-      Result.Height:=pforminfo.Size.cy div 100;
-      Result.Width:=pforminfo.Size.cx div 100;
-     end;
-    finally
-{$IFNDEF DOTNETD}
-     freemem(pforminfo);
-{$ENDIF}
-{$IFDEF DOTNETD}
-     Marshal.FreeHGlobal(apforminfo);
-{$ENDIF}
-    end;
-   finally
-    ClosePrinter(Handle);
+ try
+   // Warning the custom page size does not work in all drivers
+   // especially in Windows NT drivers
+   Result.landscape:=false;
+   if (PDevMode.dmFields AND DM_ORIENTATION>0) then
+   begin
+    Result.landscape:=PDevMode.dmOrientation=2;
    end;
-  end;
- end
- else
- begin
-  REsult.PageIndex:=PDevMode.dmPaperSize;
-  Result.Height:=0;
-  Result.Width:=0;
-  Result.papername:=PDevmode.dmFormName;
+   if PDevMode.dmPapersize>=256 then
+   begin
+    Result.PageIndex:= 0;     { User defined (custom page size) }
+    Result.Height:=PDevMode.dmPaperlength;
+    Result.Width:=PDevMode.dmPaperwidth;
+    Result.papername:=PDevmode.dmFormName;
+    if ((PDevMode.dmFields AND DM_FORMNAME)>0) then
+    begin
+     Result.FormWidth:=PDevmode.dmPaperWidth;
+     Result.FormHeight:=PDevmode.dmPaperLength;
+    end;
+    if Length(Result.PaperName)>0 then
+    begin
+     if not OpenPrinter(PChar(PrinterName), Handle, nil) then
+      RaiseLastOSError;
+     try
+      pforminfo:=allocmem(sizeof(form_info_1));
+      try
+       if Not GetForm(handle,Pchar(Result.papername),1,pforminfo,sizeof(Form_info_1),needed) then
+       begin
+        laste:=GetLasterror;
+        if ((laste<>122) AND (Laste<>123) AND (laste<>1902)) then
+         RaiseLastOSError
+        else
+        begin
+         if laste<>1902 then
+         begin
+          if needed>0 then
+          begin
+           freemem(pforminfo);
+           pforminfo:=AllocMem(needed);
+           if Not GetForm(handle,Pchar(Result.papername),1,pforminfo,needed,needed) then
+            RaiseLastOSError;
+           Result.Height:=pforminfo.Size.cy div 100;
+           Result.Width:=pforminfo.Size.cx div 100;
+          end;
+         end;
+        end;
+       end
+       else
+       begin
+        Result.Height:=pforminfo.Size.cy div 100;
+        Result.Width:=pforminfo.Size.cx div 100;
+       end;
+      finally
+       freemem(pforminfo);
+      end;
+     finally
+      ClosePrinter(Handle);
+     end;
+    end;
+   end
+   else
+   begin
+    REsult.PageIndex:=PDevMode.dmPaperSize;
+    Result.Height:=0;
+    Result.Width:=0;
+    Result.papername:=PDevmode.dmFormName;
+   end;
+   Result.papersource:=PDevMode.dmDefaultSource;
+   Result.duplex:=PDevMode.dmDuplex;
+ finally
+  GlobalUnLock(DeviceMode);
  end;
- Result.papersource:=PDevMode.dmDefaultSource;
- Result.duplex:=PDevMode.dmDuplex;
-{$IFNDEF DOTNETD}
- GlobalUnLock(DeviceMode);
-{$ENDIF}
-{$IFDEF DOTNETD}
- GlobalUnLock(Integer(DeviceMode));
-{$ENDIF}
 end;
 
 
 
 
-{$IFNDEF DOTNETD}
 procedure SendControlCodeToPrinter(S: string);
 var
  Handle, hDeviceMode: THandle;
@@ -1739,259 +1479,6 @@ begin
 end;
 
 
-{$ENDIF}
-{$IFDEF DOTNETD}
-procedure SendControlCodeToPrinter(S: string);
-var
- hDeviceMode: IntPtr;
- Handle:THandle;
- N: DWORD;
- DocInfo1: TDocInfo1;
- pdocinfo: IntPtr;
- Device, Driver, Port: String;
- PrinterName: string;
- lbuf:integer;
- buf:IntPtr;
-begin
- Printer.GetPrinter(Device, Driver, Port, hDeviceMode);
- PrinterName := Format('%s', [Device]);
- if not OpenPrinter(PrinterName, Handle, nil) then
-   RaiseLastOSError;
- try
-  with DocInfo1 do
-  begin
-   pDocName := 'Control';
-   pOutputFile := nil;
-   pDataType := 'RAW';
-  end;
-  pdocinfo:=Marshal.AllocHGlobal(sizeof(TDocInfo1));
-  Marshal.StructureToPtr(DocInfo1,pdocinfo,true);
-  StartDocPrinter(Handle, 1, pdocinfo);
-  try
-//   StartPagePrinter(Handle);
-   buf:=Marshal.StringToHGlobalAnsi(s);
-   lbuf:=length(s);
-   if not WritePrinter(Handle, buf, lbuf, N) then
-    RaiseLastOSError;
-//   EndPagePrinter(Handle);
-  finally
-   EndDocPrinter(Handle);
-  end;
- finally
-  ClosePrinter(Handle);
- end;
-end;
-
-
-function GetPrinters: TStrings;
-var
- i:integer;
-begin
- if FPrinters = nil then
- begin
-  FPrinters.Assign(Printer.Printers);
- end;
- Result:=FPrinters;
-end;
-
-(*
-procedure SetCurrentPaper(apapersize:TGDIPageSize);
-var
-  Device, Driver, Port: String;
-  DeviceMode: IntPtr;
-  PDevmode:TDevicemode;
-  pforms:IntPtr;
-  pforminfo:Form_info_1;
-  printername,apapername:string;
-  FPrinterHandle:THandle;
-  foundpaper:boolean;
-  needed:DWord;
-  printererror:boolean;
-  laste:integer;
-begin
- if printer.Printers.count<1 then
-  exit;
- // Printer selected not valid error
- printererror:=false;
- try
-  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
- except
-  printererror:=true;
- end;
-{$IFNDEF DOTNETD}
- if DeviceMode=0 then
-{$ENDIF}
-{$IFDEF DOTNETD}
- if Not Assigned(DeviceMode) then
-{$ENDIF}
-  printererror:=true;
- if printererror then
-  exit;
- PDevMode := TDeviceMode(Marshal.PtrToStructure(GlobalLock(Integer(DeviceMode)),TypeOf(TDeviceMode)));
- try
-  // Custom page size, warning not all drivers supports it
-  // especially Windows NT drivers
-  // In Windows NT only Administrator has rights to add a
-  // custom paper once added it's stored until the print driver
-  // is removed
-  if apapersize.PageIndex=0 then
-  begin
-   if Not IsWIndowsNT then
-   begin
-    // If is not Windows NT select custom paper
-    PDevMode.dmPaperSize := 256;
-    PDevMode.dmPaperlength := apapersize.Height;
-    PDevMode.dmPaperwidth  := apapersize.Width;
-   end
-   else
-   begin
-    foundpaper:=false;
-    // In Windows NT we must search or create a form
-    apapername:=FindFormNameFromSize(apapersize.Width,apapersize.Height);
-    if Length(apapername)>0 then
-     foundpaper:=true;
-    if not foundpaper then
-    begin
-     // Busquem un form que s'adapti
-     apapername:='User ('+
-     IntToStr(apapersize.Width)+'x'+
-     IntToStr(apapersize.Height)+')';
-    end;
-    PrinterName := Format('%s', [Device]);
-    if not OpenPrinter(PrinterName, FPrinterHandle, nil) then
-     RaiseLastOSError;
-    try
-     if Not GetForm(FPrinterhandle,apapername,1,pforminfo,sizeof(Form_info_1),needed) then
-     begin
-      laste:=GetLasterror;
-      if ((laste<>122) AND (Laste<>123) AND (laste<>1902)) then
-       RaiseLastOSError
-      else
-      begin
-       if laste<>1902 then
-       begin
-        if needed>0 then
-        begin
-         pforminfo:=Form_info_1(Marshal.PtrToStructure(Marshal.AllocHGlobal(needed),TypeOf(form_info_1)));
-         if Not GetForm(FPrinterhandle,apapername,1,pforminfo,needed,needed) then
-          RaiseLastOSError;
-        if pforminfo.pname<>nil then
-         foundpaper:=true;
-        // Si l'ha trobat trobem el seu index
-        end;
-       end;
-      end;
-     end;
-     if Not foundpaper then
-     begin
-      pforminfo.pname:=apapername;
-      pforminfo.Flags:=FORM_USER;
-      pforminfo.Size.cx:=apapersize.Width*100;
-      pforminfo.size.cy:=apapersize.Height*100;
-      pforminfo.ImageableArea.Top:=0;
-      pforminfo.ImageableArea.left:=0;
-      pforminfo.ImageableArea.Right:=pforminfo.Size.cx;
-      pforminfo.ImageableArea.Bottom:=pforminfo.size.cy;
-      try
-       if not AddForm(fprinterhandle,1,pforminfo) then
-        RaiseLastOSError;
-      except
-       on E:Exception do
-       begin
-        Raise Exception.Create(SRpErrorCreatingPaper+apapername+#10+E.Message);
-       end;
-      end;
-     end;
-     // Select by name
-{$IFDEF DOTNETD}
-     PDevMode.dmFormName:=Copy(apapername,1,32);
-{$ENDIF}
-{$IFNDEF DOTNETD}
-     StrPCopy(PDevMode.dmFormName,Copy(apapername,1,32));
-{$ENDIF}
-     PDevMode.dmFields:=PDevMode.dmFields or dm_formname;
-     PDevMode.dmFields:=PDevMode.dmFields AND (NOT dm_papersize);
-    finally
-     ClosePrinter(FPrinterhandle);
-    end;
-   end;
-  end
-  else
-  begin
-   PDevMode.dmPaperSize :=apapersize.PageIndex;
-   PDevMode.dmPaperlength := apapersize.Height;
-   PDevMode.dmPaperwidth  := apapersize.Width;
-  end;
-  if apapersize.papersource>0 then
-   PDevMode.dmDefaultSource:=apapersize.papersource;
-  if apapersize.papersource>0 then
-  begin
-   PDevMode.dmFields:=PDevMode.dmFields or dm_defaultsource;
-   PDevMode.dmDefaultSource:=apapersize.papersource;
-  end;
-  if apapersize.duplex>0 then
-  begin
-   PDevMode.dmFields:=PDevMode.dmFields or dm_duplex;
-   PDevMode.dmDuplex:=apapersize.duplex;
-  end;
- finally
-  GlobalUnLock(Integer(DeviceMode));
- end;
- if not printer.Printing then
-  Printer.SetPrinter(Device, Driver, Port, DeviceMode)
- else
- begin
-  DocumentProperties(0,Printer.Handle,Device, PDevMode^,
-        PDevMode^, DM_MODIFY);
-  ResetDC(Printer.Handle,PDevMode^);
- end;
-end;
-*)
-
-function FindFormNameFromSize(width,height:integer):String;
-var
-// pforms,p:^Form_info_1;
- pforms,p:IntPtr;
- needed,received:dword;
- fprinterhandle:THandle;
- aprintername:String;
- i:integer;
- cadenaimp:String;
- forminfo:Form_info_1;
-begin
- aprintername:=GetPrinters[Printer.PrinterIndex];
- Result:='';
- if Not OpenPrinter(aprintername,fprinterhandle,nil) then
-   Raise Exception.create(SRpError+aprintername);
- try
-  pforms:=nil;
-  if Not EnumForms(fprinterhandle,1,pforms,0,needed,received) then
-    if GetLastError<>122 then
-     RaiseLastOSError;
-  pforms:=Marshal.AllocHGlobal(needed);
-  try
-   if NOt EnumForms(fprinterhandle,1,pforms,needed,needed,received) then
-    RaiseLastOSError;
-   for i:=0 to received-1 do
-   begin
-    p:=IntPtr(Integer(pforms)+sizeof(Form_info_1)*i);
-//    forminfo:=p^;
-    forminfo:=Form_info_1(Marshal.PtrToStructure(p,TypeOf(form_info_1)));
-    if forminfo.Size.cx=width*100 then
-     if forminfo.Size.cy=height*100 then
-     begin
-      Result:=forminfo.pName;
-     end;
-   end;
-  finally
-   Marshal.FreeHGlobal(pforms);
-  end;
- finally
-  ClosePrinter(fprinterhandle);
- end;
-end;
-
-{$ENDIF}
 
 
 
@@ -2048,14 +1535,8 @@ end;
 
 function PrinterSupportsCollation:Boolean;
 var
-{$IFDEF DOTNETD}
-  Device, Driver, Port: String;
-  DeviceMode: IntPtr;
-{$ENDIF}
-{$IFNDEF DOTNETD}
   Device, Driver, Port: array[0..1023] of char;
   DeviceMode: THandle;
-{$ENDIF}
   printererror:boolean;
   aresult:DWord;
 begin
@@ -2069,12 +1550,7 @@ begin
  except
   printererror:=true;
  end;
-{$IFNDEF DOTNETD}
  if DeviceMode=0 then
-{$ENDIF}
-{$IFDEF DOTNETD}
- if Not Assigned(DeviceMode) then
-{$ENDIF}
   printererror:=true;
  if printererror then
   exit;
@@ -2090,14 +1566,8 @@ end;
 
 function PrinterMaxCopiesSupport:Integer;
 var
-{$IFDEF DOTNETD}
-  Device, Driver, Port: String;
-  DeviceMode: IntPtr;
-{$ENDIF}
-{$IFNDEF DOTNETD}
   Device, Driver, Port: array[0..1023] of char;
   DeviceMode: THandle;
-{$ENDIF}
   printererror:boolean;
   maxcopies:integer;
 begin
@@ -2112,12 +1582,7 @@ begin
  except
   printererror:=true;
  end;
-{$IFNDEF DOTNETD}
  if DeviceMode=0 then
-{$ENDIF}
-{$IFDEF DOTNETD}
- if Not Assigned(DeviceMode) then
-{$ENDIF}
   printererror:=true;
  if printererror then
   exit;
@@ -2132,14 +1597,8 @@ end;
 
 function PrinterDuplexSupport:boolean;
 var
-{$IFDEF DOTNETD}
-  Device, Driver, Port: String;
-  DeviceMode: IntPtr;
-{$ENDIF}
-{$IFNDEF DOTNETD}
   Device, Driver, Port: array[0..1023] of char;
   DeviceMode: THandle;
-{$ENDIF}
   printererror:boolean;
   aresult:integer;
 begin
@@ -2153,12 +1612,7 @@ begin
  except
   printererror:=true;
  end;
-{$IFNDEF DOTNETD}
  if DeviceMode=0 then
-{$ENDIF}
-{$IFDEF DOTNETD}
- if Not Assigned(DeviceMode) then
-{$ENDIF}
   printererror:=true;
  if printererror then
   exit;
@@ -2179,6 +1633,42 @@ begin
  Result:=maxcopies>copies;
 end;
 
+
+{procedure SetPrinterCollation(collation:boolean);
+var
+  Device, Driver, Port: array[0..1023] of char;
+  DeviceMode: THandle;
+  PDevmode:^TDevicemode;
+  printererror:boolean;
+begin
+ if printer.Printers.count<1 then
+  exit;
+ exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if DeviceMode=0 then
+  printererror:=true;
+ if printererror then
+  exit;
+ PDevMode := GlobalLock(DeviceMode);
+ try
+  PDevMode.dmFields:=dm_collate;
+  if collation then
+   PDevMode.dmCollate:=DMCOLLATE_TRUE
+  else
+   PDevMode.dmCollate:=DMCOLLATE_FALSE;
+ finally
+  GlobalUnLock(DeviceMode);
+ end;
+// DocumentProperties(0,Printer.Handle,Device, PDevMode^,
+//       PDevMode^, DM_MODIFY);
+// ResetDC(Printer.Handle,PDevMode^);
+end;
 
 procedure SetPrinterCollation(collation:boolean);
 var
@@ -2207,17 +1697,18 @@ begin
     try
      if IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
      begin
-      pdevmode^.dmFields:=pdevmode^.dmFields or DM_COLLATE;
+      pdevmode^.dmFields:=pdevmode^.dmFields or DM_COLLATE or DM_COPIES;
       if collation then
        PDevMode^.dmCollate:=DMCOLLATE_TRUE
       else
        PDevMode^.dmCollate:=DMCOLLATE_FALSE;
+       PDevMode^.dmCopies:=printer.copies;
      end;
 //     if not IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_IN_BUFFER) then
 //      RaiseLastOSError;
      DocumentProperties(0,Printer.Handle,ADevice, PDevMode^,
        PDevMode^, DM_MODIFY);
-     ResetDC(Printer.Handle,PDevMode^);
+//     ResetDC(Printer.Handle,PDevMode^);
     finally
      GlobalUnlock(aresult);
     end;
@@ -2229,7 +1720,7 @@ begin
   ClosePrinter(fprinterhandle);
  end;
 end;
-
+}
 
 procedure SetPrinterOrientation(landscape:boolean);
 var
@@ -2256,61 +1747,101 @@ begin
 end;
 
 
-{
-procedure SetPrinterOrientation(landscape:boolean);
-var
- FPrinterHandle:THandle;
- ADevice, ADriver, APort: array[0..1023] of char;
- pdevmode:^DEVMODE;
- adevmode:DEVMODE;
- asize:Integer;
- aresult:THandle;
- amode:THandle;
-
-begin
- Printer.GetPrinter(ADevice,ADriver,APort,amode);
- pdevmode:=@adevmode;
- if not OpenPrinter(ADevice,fprinterhandle,nil) then
-  RaiseLastOsError;
- try
-  asize:=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,0);
-  if asize<0 then
-   RaiseLastOsError;
-  if asize>0 then
-  begin
-   aresult:=GlobalAlloc(GHND,asize);
-   try
-    pdevmode:=GlobalLock(aresult);
-    try
-     if IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
-     begin
-      pdevmode^.dmFields:=pdevmode^.dmFields or DM_ORIENTATION;
-      if landscape then
-       PDevMode^.dmOrientation:=DMORIENT_LANDSCAPE
-      else
-       PDevMode^.dmOrientation:=DMORIENT_PORTRAIT;
-     end;
-//     if not IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_IN_BUFFER) then
-//      RaiseLastOSError;
-     DocumentProperties(0,Printer.Handle,ADevice, PDevMode^,
-       PDevMode^, DM_MODIFY);
-     ResetDC(Printer.Handle,PDevMode^);
-    finally
-     GlobalUnlock(aresult);
-    end;
-   finally
-    GlobalFree(aresult);
-   end;
-  end;
- finally
-  ClosePrinter(fprinterhandle);
- end;
-end;
-}
-
 
 procedure SetPrinterCopies(copies:integer);
 var
+  Device, Driver, Port: array[0..1023] of char;
+  DeviceMode: THandle;
+  PDevmode:^TDevicemode;
+  printererror:boolean;
+begin
+ if printer.Printers.count<1 then
+  exit;
+ if not printer.Printing then
+ begin
+  printer.copies:=copies;
+  exit;
+ end;
+ if printer.copies=copies then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if DeviceMode=0 then
+  printererror:=true;
+ if printererror then
+  exit;
+ PDevMode := GlobalLock(DeviceMode);
+ try
+  PDevMode.dmFields:=dm_copies;
+  PDevMode.dmCopies  := copies;
+ finally
+  GlobalUnLock(DeviceMode);
+ end;
+ if not printer.Printing then
+ begin
+  Printer.SetPrinter(Device, Driver, Port, DeviceMode)
+ end
+ else
+ begin
+  DocumentProperties(0,Printer.Handle,Device, PDevMode^,
+        PDevMode^, DM_MODIFY);
+  ResetDC(Printer.Handle,PDevMode^);
+ end;
+end;
+
+
+procedure SetPrinterCollation(collation:boolean);
+var
+  Device, Driver, Port: array[0..1023] of char;
+  DeviceMode: THandle;
+  PDevmode:^TDevicemode;
+  printererror:boolean;
+begin
+ if printer.Printers.count<1 then
+  exit;
+ // Printer selected not valid error
+ printererror:=false;
+ try
+  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
+ except
+  printererror:=true;
+ end;
+ if DeviceMode=0 then
+  printererror:=true;
+ if printererror then
+  exit;
+ PDevMode := GlobalLock(DeviceMode);
+ try
+  PDevMode.dmFields:=dm_copies or dm_collate;
+  PDevMode.dmCopies  := printer.copies;
+  if collation then
+  PDevMode.dmCollate:=DMCOLLATE_TRUE
+   else
+  PDevMode.dmCollate:=DMCOLLATE_FALSE;
+ finally
+  GlobalUnLock(DeviceMode);
+ end;
+ if not printer.Printing then
+ begin
+  Printer.SetPrinter(Device, Driver, Port, DeviceMode)
+ end
+ else
+ begin
+  DocumentProperties(0,Printer.Handle,Device, PDevMode^,
+        PDevMode^, DM_MODIFY);
+  ResetDC(Printer.Handle,PDevMode^);
+ end;
+end;
+
+
+
+{procedure SetPrinterCopies(copies:integer);
+var
  FPrinterHandle:THandle;
  ADevice, ADriver, APort: array[0..1023] of char;
  pdevmode:^DEVMODE;
@@ -2320,6 +1851,13 @@ var
  amode:THandle;
 
 begin
+ if not printer.Printing then
+ begin
+  Printer.Copies:=copies;
+  exit;
+ end;
+ if printer.copies=copies then
+  exit;
  Printer.GetPrinter(ADevice,ADriver,APort,amode);
  pdevmode:=@adevmode;
  if not OpenPrinter(ADevice,fprinterhandle,nil) then
@@ -2335,26 +1873,21 @@ begin
     pdevmode:=GlobalLock(aresult);
     try
      pdevmode^.dmSize:=Word(asize);
-     if IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
+     if IDOK<>DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_OUT_BUFFER) then
+      RaiseLastOsError;
+     if pdevmode^.dmCopies<>copies then
      begin
-      pdevmode^.dmFields:=pdevmode^.dmFields or DM_COPIES;
+      pdevmode^.dmFields:=DM_COPIES;
       pdevmode^.dmCopies:=copies;
+      DocumentProperties(0,fprinterhandle,ADevice, PDevMode^,
+        PDevMode^, DM_IN_BUFFER);
+      ResetDC(fprinterhandle,PDevMode^);
      end;
-     if not printer.Printing then
-     begin
-      Printer.Copies:=copies;
-     end
-     else
-     begin
-      DocumentProperties(0,Printer.Handle,ADevice, PDevMode^,
-        PDevMode^, DM_MODIFY);
-      ResetDC(Printer.Handle,PDevMode^);
-     end;
-     pdevmode^.dmFields:=DM_COPIES;
-     pdevmode^.dmCopies:=copies;
-     if not IDOK= DocumentProperties(0,Printer.Handle,ADevice, PDevMode^,
-        PDevMode^, DM_MODIFY) then
-      RaiseLastOSError;
+//     pdevmode^.dmFields:=DM_COPIES;
+//     pdevmode^.dmCopies:=copies;
+//     if not IDOK= DocumentProperties(0,Printer.Handle,ADevice, PDevMode^,
+//        PDevMode^, DM_MODIFY) then
+//      RaiseLastOSError;
 //     if not IDOK=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,DM_IN_BUFFER) then
 //      RaiseLastOSError;
     finally
@@ -2367,20 +1900,26 @@ begin
  finally
   ClosePrinter(fprinterhandle);
  end;
+ if not printer.Printing then
+ begin
+//  DocumentProperties(0,Printer.Handle,Device, PDevMode^,
+//        PDevMode^, DM_MODIFY);
+  Printer.SetPrinter(adevmode, Driver, Port, DeviceMode)
+ end
+ else
+ begin
+  DocumentProperties(0,Printer.Handle,aDevmode, PDevMode^,
+        PDevMode^, DM_MODIFY);
+  ResetDC(Printer.Handle,PDevMode^);
+ end;
 end;
+}
 
 function GetPrinterCopies:Integer;
 var
-{$IFDEF DOTNETD}
-  Device, Driver, Port: String;
-  DeviceMode: IntPtr;
-  PDevmode:TDevicemode;
-{$ENDIF}
-{$IFNDEF DOTNETD}
   Device, Driver, Port: array[0..1023] of char;
   DeviceMode: THandle;
   PDevmode:^TDevicemode;
-{$ENDIF}
   printererror:boolean;
 begin
  Result:=1;
@@ -2393,46 +1932,24 @@ begin
  except
   printererror:=true;
  end;
-{$IFNDEF DOTNETD}
  if DeviceMode=0 then
-{$ENDIF}
-{$IFDEF DOTNETD}
- if Not Assigned(DeviceMode) then
-{$ENDIF}
   printererror:=true;
  if printererror then
   exit;
-{$IFDEF DOTNETD}
- PDevMode := TDeviceMode(Marshal.PtrToStructure(GlobalLock(Integer(DeviceMode)),TypeOf(TDeviceMode)));
-{$ENDIF}
-{$IFNDEF DOTNETD}
  PDevMode := GlobalLock(DeviceMode);
-{$ENDIF}
  try
   Result:=PDevMode.dmCopies;
  finally
-{$IFNDEF DOTNETD}
   GlobalUnLock(DeviceMode);
-{$ENDIF}
-{$IFDEF DOTNETD}
-  GlobalUnLock(Integer(DeviceMode));
-{$ENDIF}
  end;
 end;
 
 
 function GetPrinterCollation:Boolean;
 var
-{$IFDEF DOTNETD}
-  Device, Driver, Port: String;
-  DeviceMode: IntPtr;
-  PDevmode:TDevicemode;
-{$ENDIF}
-{$IFNDEF DOTNETD}
   Device, Driver, Port: array[0..1023] of char;
   DeviceMode: THandle;
   PDevmode:^TDevicemode;
-{$ENDIF}
   printererror:boolean;
 begin
  Result:=false;
@@ -2445,30 +1962,15 @@ begin
  except
   printererror:=true;
  end;
-{$IFNDEF DOTNETD}
  if DeviceMode=0 then
-{$ENDIF}
-{$IFDEF DOTNETD}
- if Not Assigned(DeviceMode) then
-{$ENDIF}
   printererror:=true;
  if printererror then
   exit;
-{$IFDEF DOTNETD}
- PDevMode := TDeviceMode(Marshal.PtrToStructure(GlobalLock(Integer(DeviceMode)),TypeOf(TDeviceMode)));
-{$ENDIF}
-{$IFNDEF DOTNETD}
  PDevMode := GlobalLock(DeviceMode);
-{$ENDIF}
  try
   Result:=PDevMode.dmCollate=DMCOLLATE_TRUE;
  finally
-{$IFNDEF DOTNETD}
   GlobalUnLock(DeviceMode);
-{$ENDIF}
-{$IFDEF DOTNETD}
-  GlobalUnLock(Integer(DeviceMode));
-{$ENDIF}
  end;
 end;
 

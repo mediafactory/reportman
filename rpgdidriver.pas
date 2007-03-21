@@ -315,6 +315,7 @@ begin
   end;
   exit;
  end;
+ SetPrinterCollation(collate);
  dia:=TPrintDialog.Create(Application);
  try
   dia.Options:=[poPageNums,poWarning,

@@ -1323,6 +1323,7 @@ var
   SRpSParamSubsE:WideString='String Substi.Ex.';
   SRpExcelFiles:WideString='Excel Files';
   SRpDBFFiles:WideString='DBF Files';
+  SRpShowPrintDialog:WideString='Show print dialog';
 
 implementation
 

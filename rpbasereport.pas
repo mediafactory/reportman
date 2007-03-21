@@ -1535,7 +1535,7 @@ procedure TRpBaseReport.PrintAll(Driver:TRpPrintDriver);
 begin
  BeginPrint(Driver);
  try
-  Driver.NewDocument(metafile,1,false);
+  Driver.NewDocument(metafile,copies,CollateCopies);
   try
    while Not PrintNextPage do;
   finally

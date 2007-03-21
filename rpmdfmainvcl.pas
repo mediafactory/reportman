@@ -231,6 +231,8 @@ type
     FontDialog1: TFontDialog;
     MTypeInfo: TMenuItem;
     MAsync: TMenuItem;
+    APrintDialog: TAction;
+    APrintDialog1: TMenuItem;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -297,6 +299,7 @@ type
     procedure MObjFontClick(Sender: TObject);
     procedure MTypeInfoClick(Sender: TObject);
     procedure MAsyncClick(Sender: TObject);
+    procedure APrintDialogExecute(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrameVCL;
@@ -796,6 +799,7 @@ begin
  ADriverGDI.Caption:=TranslateStr(70,ADriverGDI.Caption);
  ADriverGDI.Hint:=TranslateStr(71,ADriverGDI.Hint);
  ADriverPDF.Caption:=TranslateStr(936,ADriverPDF.Caption);
+ APrintDialog.Caption:=SRpShowPrintDialog;
  ADriverPDF.Hint:=TranslateStr(939,ADriverPDF.Hint);
  AKylixPrintBug.Caption:=TranslateStr(74,AKylixPrintBug.Caption);
  AKylixPrintBug.Hint:=TranslateStr(75,AKylixPrintBug.Hint);
@@ -1210,6 +1214,7 @@ procedure TFRpMainFVCL.APrintExecute(Sender: TObject);
 var
  allpages,collate:boolean;
  frompage,topage,copies:integer;
+ doprint:boolean;
 begin
  if (report.DatabaseInfo.Count>0) then
  begin
@@ -1228,7 +1233,10 @@ begin
   copies:=report.Copies;
   rpgdidriver.PrinterSelection(report.PrinterSelect,report.papersource,report.duplex);
   rpgdidriver.OrientationSelection(report.PageOrientation);
-  if rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
+  doprint:=true;
+  if APrintDialog.Checked then
+   doprint:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+  if doprint then
   begin
    if ADriverPDF.Checked then
    begin
@@ -1357,6 +1365,7 @@ begin
 
   AUnitCms.Checked:=inif.ReadBool('Preferences','UnitCms',true);
   ADriverPDF.Checked:=inif.ReadBool('Preferences','DriverPDF',false);
+  APrintDialog.Checked:=inif.ReadBool('Preferences','ShowPrintDialog',true);
   ADriverQt.Checked:=False;
   ADriverGDI.Checked:=Not ADriverPDF.Checked;
   AsystemPrintDialog.Checked:=True;
@@ -1378,6 +1387,7 @@ var
 begin
  inif:=TIniFile.Create(configfile);
  try
+  inif.WriteBool('Preferences','ShowPrintDialog',APrintDialog.Checked);
   inif.WriteBool('Preferences','TypeInfo', MTypeInfo.Checked);
   inif.WriteBool('Preferences','Async', MAsync.Checked);
   inif.WriteString('Preferences','AppFontName',FAppFontName);
@@ -2038,5 +2048,10 @@ begin
 end;
 
 
+
+procedure TFRpMainFVCL.APrintDialogExecute(Sender: TObject);
+begin
+ APrintDialog.Checked:=not APrintDialog.Checked;
+end;
 
 end.

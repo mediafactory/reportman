@@ -697,6 +697,7 @@ begin
  destination:='';
  body:='';
  subject:='';
+ afilename:='';
  if (fpreviewcontrol is TRpPreviewControl) then
  begin
   report:=TRpPreviewControl(fpreviewcontrol).Report;
@@ -706,10 +707,11 @@ begin
    subject:=report.Params.ParamByName('MAIL_SUBJECT').AsString;
   if report.Params.IndexOf('MAIL_BODY')>=0 then
    body:=report.Params.ParamByName('MAIL_BODY').AsString;
+  if report.Params.IndexOf('MAIL_FILE')>=0 then
+   afilename:=ExtractFilePath(afilename)+report.Params.ParamByName('MAIL_FILE').AsString;
  end;
- afilename:=RpTempFileName;
- if report.Params.IndexOf('MAIL_FILE')>=0 then
-  afilename:=ExtractFilePath(afilename)+report.Params.ParamByName('MAIL_FILE').AsString;
+ if Length(afilename)<1 then
+  afilename:=RpTempFileName;
 
  SaveMetafileToPDF(fpreviewcontrol.Metafile,afilename,true);
  try
