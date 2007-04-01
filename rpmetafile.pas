@@ -385,6 +385,7 @@ type
    OnRequestData:TOnRequestData;
    Title:string;
    critsec:TCriticalSection;
+   ForcePaperName:string;
    procedure Clear;
    procedure LoadFromStream(Stream:TStream;clearfirst:boolean=true);
    procedure LoadFromFile(filename:string;clearfirst:boolean=true);
@@ -1189,6 +1190,7 @@ begin
 
   FPage.PageSizeqt:=apagesizeqt;
   fpage.LoadFromStream(Stream);
+  ForcePaperName:=StrPas(fpage.PageSizeqt.ForcePaperName);
 
   if Not AsyncReading then
   begin
@@ -1334,6 +1336,7 @@ begin
   bytesread:=Stream.Read(fpagesizeqt.Indexqt,sizeof(fpagesizeqt.IndexQt));
   if (bytesread<>sizeof(fpagesizeqt.Indexqt)) then
    Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+
   bytesread:=Stream.Read(fpagesizeqt.Custom,sizeof(fpagesizeqt.Custom));
   if (bytesread<>sizeof(fpagesizeqt.Custom)) then
    Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);

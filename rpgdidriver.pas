@@ -553,6 +553,7 @@ begin
     SendControlCodeToPrinter(GetPrinterRawOp(selectedprinter,rawopopendrawer));
   // Sets pagesize
   rpagesizeQt.papersource:=report.PaperSource;
+  SetForcePaperName(rpagesizeqt,report.ForcePaperName);
   rpagesizeQt.duplex:=report.duplex;
   if report.PageSize<0 then
   begin

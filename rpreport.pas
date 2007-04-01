@@ -951,6 +951,7 @@ begin
   rPageSizeQt.papersource:=papersource;
   rPageSizeQt.duplex:=duplex;
   SetForcePaperName(rpagesizeqt,forcepapername);
+  metafile.ForcePaperName:=ForcePaperName;
   if PageSize<>rpPageSizeDefault then
   begin
    if PageSize=rpPageSizeUser then

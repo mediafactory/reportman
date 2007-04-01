@@ -612,7 +612,7 @@ begin
  begin
   // Gets the page size from devmode
   Result:=GetPageSizeFromDevMode;
-//  Raise Exception.Create(SRpWrongREsult+':'+'GetDeviceCaps(DC,PHYSICALWIDTH)');
+       //  Raise Exception.Create(SRpWrongREsult+':'+'GetDeviceCaps(DC,PHYSICALWIDTH)');
  end
  else
  begin
@@ -623,6 +623,7 @@ begin
   Result.X:=Round(Result.X/dpix*TWIPS_PER_INCHESS);
   Result.Y:=Round(Result.Y/dpiy*TWIPS_PER_INCHESS);
  end;
+// Result:=GetPageSizeFromDevMode;
 end;
 
 
@@ -1245,6 +1246,14 @@ var
  cadenaimp:String;
  forminfo:Form_info_1;
 begin
+ if Assigned(FPrinters) then
+ begin
+  if FPrinters.Count<=Printer.PrinterIndex then
+  begin
+   FPrinters.free;
+   FPrinters:=nil;
+  end;
+ end;
  cadenaimp:=GetPrinters[Printer.PrinterIndex];
  buf:=Pchar(cadenaimp);
  Result:='';
@@ -1403,9 +1412,9 @@ begin
            pforminfo:=AllocMem(needed);
            if Not GetForm(FPrinterhandle,Pchar(apapername),1,pforminfo,needed,needed) then
             RaiseLastOSError;
-          if pforminfo^.pname<>nil then
-           foundpaper:=true;
-          // Si l'ha trobat trobem el seu index
+           if pforminfo^.pname<>nil then
+            foundpaper:=true;
+           // Si l'ha trobat trobem el seu index
           end;
          end;
         end;
@@ -1777,7 +1786,8 @@ begin
   exit;
  PDevMode := GlobalLock(DeviceMode);
  try
-  PDevMode.dmFields:=dm_copies;
+  PDevMode.dmFields:=PDevMode.dmFields or dm_copies or dm_collate;
+//  PDevMode.dmFields:=dm_copies;
   PDevMode.dmCopies  := copies;
  finally
   GlobalUnLock(DeviceMode);
@@ -1817,7 +1827,7 @@ begin
   exit;
  PDevMode := GlobalLock(DeviceMode);
  try
-  PDevMode.dmFields:=dm_copies or dm_collate;
+  PDevMode.dmFields:=PDevMode.dmFields or dm_copies or dm_collate;
   PDevMode.dmCopies  := printer.copies;
   if collation then
   PDevMode.dmCollate:=DMCOLLATE_TRUE

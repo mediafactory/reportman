@@ -246,7 +246,7 @@ function RpCachedImageToString(Value:TRpCachedImage):String;
 procedure GetCachedImageDescriptionsA(alist:TStrings);
 procedure GetCachedImageDescriptions(alist:TRpWideStrings);
 
-procedure SetForcePaperName(apagesize:TPageSizeQt;source:string);
+procedure SetForcePaperName(var apagesize:TPageSizeQt;source:string);
 function StringDrawStyleToDrawStyle(Value:widestring):TRpImageDrawStyle;
 function RpDrawStyleToString(Value:TRpImageDrawStyle):String;
 procedure GetDrawStyleDescriptionsA(alist:TStrings);
@@ -409,7 +409,7 @@ var
 
 implementation
 
-procedure SetForcePaperName(apagesize:TPageSizeQt;source:string);
+procedure SetForcePaperName(var apagesize:TPageSizeQt;source:string);
 var
  i:integer;
 begin
