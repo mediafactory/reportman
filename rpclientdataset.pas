@@ -4,7 +4,11 @@ interface
 
 
 {$I rpconf.inc}
-uses Classes, DB, DBClient;
+uses Classes, DB,
+{$IFDEF DELPHI2006UP}
+ DbCommonTypes,
+{$ENDIF}
+ DBClient;
 
 type
   TRpClientDataset = class(TClientDataSet)

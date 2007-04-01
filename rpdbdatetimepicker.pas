@@ -45,7 +45,7 @@ type
   public
     { Public declarations }
     constructor Create(AOwner:TComponent);override;
-    destructor destroy;override;
+    destructor Destroy;override;
   published
     { Published declarations }
     property TabOrder;

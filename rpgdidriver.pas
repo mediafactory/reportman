@@ -2766,7 +2766,8 @@ begin
   achart.BottomAxis.LabelsFont.Size:=Round(nchart.HorzFontSize*nchart.Resolution/100);
 {$IFDEF USEVARIANTS}
   achart.LeftAxis.Logarithmic:=Series.Logaritmic;
-  achart.LeftAxis.LogarithmicBase:=Round(Series.LogBase);
+  if achart.LeftAxis.Logarithmic then
+    achart.LeftAxis.LogarithmicBase:=Round(Series.LogBase);
 {$ENDIF}
   achart.LeftAxis.Inverted:=Series.Inverted;
   for i:=0 to Series.Count-1 do

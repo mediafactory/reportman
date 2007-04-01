@@ -1306,9 +1306,7 @@ var
   SRpPrintRep29:WideString='         -async     Asynchronous execution';
   SRpAsyncExecution:WideString='Asynchronous execution';
   SRpMaximumPages:WideString='Maximum number of pages reached';
-  //
   SRpPMax:WideString='Returns the maximum value';
-  //added jasonpun 20060306
   SRpChsToCht:WideString='Convert simplified to traditional Chinese';
   SRpChtToChs:WideString='Convert traditional to simplified Chinese';
   SRpParameterExists:WideString='Parameter already exists';
@@ -1317,7 +1315,6 @@ var
   SRpIsNumeric:WideString='Returns true if the string is a valid number';
   SRpIsValidDateTime:WideString='Returns true if the string is a valid date and time';
   SRpCheckExpression:WideString='Raises an exception with provided message if the expression is false';
-  //
   SRpCachedFixed:WideString='Fixed Image';
   SRpCachedVariable:WideString='Variable Image';
   SRpSParamSubsE:WideString='String Substi.Ex.';
@@ -2298,8 +2295,13 @@ begin
  TranslateVar(1411,SRpIsNumeric);
  TranslateVar(1412,SRpIsValidDateTime);
  TranslateVar(1413,SRpCheckExpression);
-
-
+ TranslateVar(1420,SRpCachedFixed);
+ TranslateVar(1421,SRpCachedVariable);
+ TranslateVar(1422,SRpSParamSubsE);
+ TranslateVar(1423,SRpExcelFiles);
+ TranslateVar(1424,SRpDBFFiles);
+ TranslateVar(1425,SRpShowPrintDialog);
+ TranslateVar(783,SRpAsyncExecution);
 end;
 
 

@@ -26,7 +26,18 @@ uses SysUtils,Classes,rpreport,rpmdconsts,rppdfdriver,
  Variants,
 {$ENDIF}
  rptypes,rpeval,rptypeval,rpdatainfo,rppdfreport,
- rpparams;
+ rpparams,rpcsvdriver,rptextdriver,
+{$IFDEF MSWINDOWS}
+ rpexceldriver,
+ rpgdidriver,
+ Graphics,
+{$ENDIF}
+{$IFDEF LINUX}
+ rpqtdriver,
+ QGraphics,
+{$ENDIF}
+ rphtmldriver,
+ rpsvgdriver;
 
 var
  lreports:TStringList;
@@ -171,6 +182,10 @@ function rp_execute(hreport:integer;outputfilename:PChar;metafile,compressed:int
 var
  report:TRpReport;
  acompressed:boolean;
+ adriver:TRpPdfDriver;
+ mono:boolean;
+ horzres,vertres:integer;
+ abitmap:TBitmap;
 begin
  rplibdoinit;
  rplasterror:='';
@@ -181,15 +196,121 @@ begin
   else
    acompressed:=true;
   report:=FindReport(hreport);
-  if metafile=0 then
-  begin
-   rppdfdriver.PrintReportPDF(report,'',false,true,1,99999,1,
-    StrPas(outputfilename),acompressed,false);
-  end
-  else
-  begin
-   rppdfdriver.PrintReportToMetafile(report,'',false,true,1,99999,1,
-    StrPas(outputfilename),false);
+  case metafile of
+   0:
+    begin
+     rppdfdriver.PrintReportPDF(report,'',false,true,1,99999,1,
+      StrPas(outputfilename),acompressed,false);
+    end;
+   1:
+    begin
+     rppdfdriver.PrintReportToMetafile(report,'',false,true,1,99999,1,
+      StrPas(outputfilename),false);
+    end;
+   2:
+    begin
+     report.TwoPass:=true;
+     adriver:=TRpPdfDriver.Create;
+     try
+      report.PrintAll(adriver);
+      ExportMetafileToCSV(report.metafile,StrPas(outputfilename),true,true,
+        1,9999,',');
+     finally
+      adriver.free;
+     end;
+    end;
+   3:
+    begin
+     report.TwoPass:=true;
+     adriver:=TRpPdfDriver.Create;
+     try
+      report.PrintAll(adriver);
+      ExportMetafileToHtml(report.Metafile,'',StrPas(outputfilename),
+       true,true,1,9999);
+     finally
+      adriver.free;
+     end;
+    end;
+   4:
+    begin
+     report.TwoPass:=true;
+     adriver:=TRpPdfDriver.Create;
+     try
+      report.PrintAll(adriver);
+      ExportMetafileToSVG(report.Metafile,'',StrPas(outputfilename),
+       true,true,1,9999);
+     finally
+      adriver.free;
+     end;
+    end;
+   5:
+    begin
+     report.TwoPass:=true;
+     adriver:=TRpPdfDriver.Create;
+     try
+      report.PrintAll(adriver);
+      horzres:=100;
+      vertres:=100;
+      mono:=true;
+      if AskBitmapProps(horzres,vertres,mono) then
+      begin
+       abitmap:=MetafileToBitmap(report.Metafile,true,mono,horzres,vertres);
+       try
+        if assigned(abitmap) then
+         abitmap.SaveToFile(StrPas(outputfilename));
+       finally
+        abitmap.free;
+       end;
+      end;
+     finally
+      adriver.free;
+     end;
+    end;
+   6:
+    begin
+     report.TwoPass:=true;
+     adriver:=TRpPdfDriver.Create;
+     try
+      report.PrintAll(adriver);
+      SaveMetafileToTextFile(report.Metafile,StrPas(outputfilename));
+     finally
+      adriver.free;
+     end;
+    end;
+   7:
+    begin
+     report.TwoPass:=true;
+     adriver:=TRpPdfDriver.Create;
+     try
+      report.PrintAll(adriver);
+      ExportMetafileToTextPro(report.metafile,StrPas(outputfilename),true,true,
+        1,9999);
+     finally
+      adriver.free;
+     end;
+    end;
+   8,9:
+    begin
+{$IFDEF MSWINDOWS}
+     report.TwoPass:=true;
+     adriver:=TRpPdfDriver.Create;
+     try
+      report.PrintAll(adriver);
+       ExportMetafileToExcel(report.Metafile,StrPas(outputfilename),
+        true,false,true,1,9999,metafile=9);
+     finally
+      adriver.free;
+     end;
+{$ENDIF}
+{$IFDEF LINUX}
+    raise Exception.Create(SRpError+'-'+SRpParameter+':'+'metafile'+
+     ' function:rp_execute, excel output not supported ');
+{$ENDIF}
+    end;
+
+   else
+    raise Exception.Create(SRpError+'-'+SRpParameter+':'+'metafile'+
+     ' function:rp_execute ');
   end;
  except
   on E:Exception do
