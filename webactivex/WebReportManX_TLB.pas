@@ -11,8 +11,8 @@ unit WebReportManX_TLB;
 // manual modifications will be lost.                                         
 // ************************************************************************ //
 
-// PASTLWTR : 1.2
-// File generated on 16/08/2006 12:00:15 from Type Library described below.
+// $Rev: 5081 $
+// File generated on 04/04/2007 13:06:12 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\webactivex\WebReportManX.tlb (1)

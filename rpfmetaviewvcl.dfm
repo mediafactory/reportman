@@ -1,8 +1,8 @@
 object FRpMetaVCL: TFRpMetaVCL
   Left = 0
   Top = 0
-  Width = 443
-  Height = 277
+  Width = 639
+  Height = 270
   Align = alClient
   ParentShowHint = False
   ShowHint = True
@@ -13,14 +13,13 @@ object FRpMetaVCL: TFRpMetaVCL
     Left = 0
     Top = 27
     Width = 7
-    Height = 229
-    Cursor = crHSplit
+    Height = 222
     Beveled = True
   end
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 443
+    Width = 639
     Height = 27
     AutoSize = True
     ButtonHeight = 25
@@ -166,22 +165,19 @@ object FRpMetaVCL: TFRpMetaVCL
         Width = 98
         Height = 19
         Align = alClient
-        Min = 0
-        Max = 100
         TabOrder = 0
       end
     end
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 256
-    Width = 443
+    Top = 249
+    Width = 639
     Height = 21
     Panels = <
       item
         Width = 50
       end>
-    SimplePanel = False
   end
   object ActionList1: TActionList
     Images = ImageList1

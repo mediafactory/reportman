@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager ActiveX plugin
-AppVerName=Report Manager ActiveX plugin 2.6e
-AppVersion=2.6e
-OutputBaseFilename=reportmaplugin2_6e
+AppVerName=Report Manager ActiveX plugin 2.6v
+AppVersion=2.6v
+OutputBaseFilename=reportmaplugin2_6v
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman

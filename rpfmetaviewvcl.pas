@@ -505,6 +505,7 @@ var
  allpages,collate:boolean;
  rpPageSize:TPageSizeQt;
  selectedok:Boolean;
+ afilename:string;
 begin
  // Prints the report
  frompage:=1;
@@ -528,8 +529,11 @@ begin
  selectedok:=true;
  if ShowPrintDialog then
   selectedok:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+ afilename:=opendialog1.FileName;
+ if afilename='*.rpmf' then
+  afilename:=SRpPrintingFile;
  if selectedok then
-  rpgdidriver.PrintMetafile(metafile,opendialog1.FileName,true,allpages,
+  rpgdidriver.PrintMetafile(metafile,afilename,true,allpages,
     frompage,topage,copies,collate,GetDeviceFontsOption(printerindex),printerindex);
 end;
 
