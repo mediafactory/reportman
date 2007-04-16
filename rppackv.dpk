@@ -29,7 +29,8 @@ package rppackv;
 {$IMPLICITBUILD OFF}
 
 requires
-  designide;
+  designide,
+  rppack;
 
 contains
   rpclxreport in 'rpclxreport.pas',
@@ -55,6 +56,8 @@ contains
   rpprintdia in 'rpprintdia.pas' {FRpPrintDialog},
   rprfparams in 'rprfparams.pas' {FRpRunTimeParams},
   rpmdprintconfig in 'rpmdprintconfig.pas' {FRpPrinterConfig},
-  rpregv in 'rpregv.pas';
+  rpregv in 'rpregv.pas',
+  rppreviewcontrolclx in 'rppreviewcontrolclx.pas',
+  rppreviewmetaclx in 'rppreviewmetaclx.pas';
 
 end.

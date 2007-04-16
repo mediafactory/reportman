@@ -147,7 +147,7 @@ type
    procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);override;
 {$IFNDEF FORWEBAX}
  {$IFDEF USECLXTEECHART}
-   procedure DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
+   procedure DoDrawChart(adriver:TRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
     aposx,aposy:integer;xchart:TObject);
  {$ENDIF}
 {$ENDIF}
@@ -2032,7 +2032,7 @@ end;
 
 {$IFNDEF FORWEBAX}
  {$IFDEF USECLXTEECHART}
-procedure TRpQtDriver.DoDrawChart(adriver:IRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
+procedure TRpQtDriver.DoDrawChart(adriver:TRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
   aposx,aposy:integer;xchart:TObject);
 var
  nchart:TRpChart;
