@@ -28,13 +28,13 @@ uses
 {$IFDEF LINUX}
  ShareExcept,
 {$ENDIF}
- SysUtils,Classes,rpreport,rpmdconsts,
+ SysUtils,Classes,rpreport,rpmdconsts,rppdfdriver,
 {$IFDEF MSWINDOWS}
- rpgdidriver,
+ Graphics,rpgdidriver,
  rpvpreview,rpvclreport,rppreviewcontrol,
 {$ENDIF}
 {$IFDEF LINUX}
- rpqtdriver,
+ QGraphics,rpqtdriver,
  rppreview,rpclxreport,rppreviewcontrolclx,
 {$ENDIF}
  rpdllutil;
@@ -48,9 +48,53 @@ function rp_previewremote(hostname:PChar;port:integer;user,password,aliasname,re
 function rp_printremote(hostname:PChar;port:integer;user,password,aliasname,reportname,title:PChar;showprogress,showprintdialog:integer):integer;stdcall;
 function rp_previewremote_report(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname,title:PChar):integer;stdcall;
 function rp_printremote_report(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname,title:PChar;showprogress,showprintdialog:integer):integer;stdcall;
-
+function rp_bitmap(hreport:integer;outputfilename:PChar;ask,mono,vertres,horzres:integer):integer;stdcall;
 
 implementation
+
+
+function rp_bitmap(hreport:integer;outputfilename:PChar;ask,mono,vertres,horzres:integer):integer;stdcall;
+var
+ report:TRpReport;
+ adriver:TRpPdfDriver;
+ doexport:boolean;
+ mon:boolean;
+ abitmap:TBitmap;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ Result:=1;
+ try
+  report:=FindReport(hreport);
+  report.TwoPass:=true;
+  adriver:=TRpPdfDriver.Create;
+  try
+   report.PrintAll(adriver);
+   doexport:=false;
+   if ask=1 then
+    doexport:=AskBitmapProps(horzres,vertres,mon);
+   mon:=mono=1;
+   if doexport then
+   begin
+    abitmap:=MetafileToBitmap(report.Metafile,true,mon,horzres,vertres);
+    try
+     if assigned(abitmap) then
+      abitmap.SaveToFile(StrPas(outputfilename));
+    finally
+     abitmap.free;
+    end;
+   end;
+  finally
+   adriver.free;
+  end;
+ except
+  on E:Exception do
+  begin
+   rplasterror:=E.Message;
+   Result:=0;
+  end;
+ end;
+end;
 
 function rp_print(hreport:integer;Title:PChar;
  showprogress,ShowPrintDialog:integer):integer;

@@ -32,10 +32,6 @@ uses SysUtils,Classes,rpreport,rpmdconsts,rppdfdriver,
  rpgdidriver,
  Graphics,
 {$ENDIF}
-{$IFDEF LINUX}
- rpqtdriver,
- QGraphics,
-{$ENDIF}
  rphtmldriver,
  rpsvgdriver;
 
@@ -183,9 +179,11 @@ var
  report:TRpReport;
  acompressed:boolean;
  adriver:TRpPdfDriver;
+{$IFDEF MSWINDOWS}
  mono:boolean;
  horzres,vertres:integer;
  abitmap:TBitmap;
+{$ENDIF}
 begin
  rplibdoinit;
  rplasterror:='';
@@ -245,6 +243,7 @@ begin
     end;
    5:
     begin
+{$IFDEF MSWINDOWS}
      report.TwoPass:=true;
      adriver:=TRpPdfDriver.Create;
      try
@@ -265,6 +264,11 @@ begin
      finally
       adriver.free;
      end;
+{$ENDIF}
+{$IFDEF LINUX}
+    raise Exception.Create(SRpError+'-'+SRpParameter+':'+'metafile'+
+     ' function:rp_execute, bitmap output not supported, use rp_bitmap instead ');
+{$ENDIF}
     end;
    6:
     begin

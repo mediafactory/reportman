@@ -39,6 +39,7 @@ exports
  rp_previewremote_report,
  rp_previewremote,
  rp_printremote,
+ rp_bitmap,
  rp_printremote_report;
 
 

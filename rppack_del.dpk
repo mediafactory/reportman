@@ -85,6 +85,7 @@ contains
   rpmdcharttypes in 'rpmdcharttypes.pas',
   rpinfoprovgdi in 'rpinfoprovgdi.pas',
   rpinfoprovid in 'rpinfoprovid.pas',
+  rpclientdataset in 'rpclientdataset.pas',
   rpxmlstream in 'rpxmlstream.pas',
   rpbarcodecons in 'rpbarcodecons.pas';
 

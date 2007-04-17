@@ -12,7 +12,7 @@ unit Reportman_TLB;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 15/07/2006 11:28:03 from Type Library described below.
+// File generated on 17/04/2007 10:55:07 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\reportman.tlb (1)
@@ -21,7 +21,7 @@ unit Reportman_TLB;
 // Helpfile: 
 // HelpString: Report Manager ActiveX Library
 // DepndLst: 
-//   (1) v2.0 stdole, (H:\WINDOWS\system32\STDOLE2.TLB)
+//   (1) v2.0 stdole, (E:\WINDOWS\system32\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
@@ -692,20 +692,6 @@ type
     property PrintersAvailable: WideString index 44 read GetWideStringProp;
   published
     property Anchors;
-    property  TabStop;
-    property  Align;
-    property  DragCursor;
-    property  DragMode;
-    property  ParentShowHint;
-    property  PopupMenu;
-    property  ShowHint;
-    property  TabOrder;
-    property  OnDragDrop;
-    property  OnDragOver;
-    property  OnEndDrag;
-    property  OnEnter;
-    property  OnExit;
-    property  OnStartDrag;
     property filename: WideString index 12 read GetWideStringProp write SetWideStringProp stored False;
     property Preview: WordBool index 13 read GetWordBoolProp write SetWordBoolProp stored False;
     property ShowProgress: WordBool index 14 read GetWordBoolProp write SetWordBoolProp stored False;
@@ -821,21 +807,6 @@ type
     property Enabled: WordBool index -514 read GetWordBoolProp write SetWordBoolProp;
   published
     property Anchors;
-    property  ParentColor;
-    property  ParentFont;
-    property  Align;
-    property  DragCursor;
-    property  DragMode;
-    property  ParentShowHint;
-    property  PopupMenu;
-    property  ShowHint;
-    property  TabOrder;
-    property  OnDragDrop;
-    property  OnDragOver;
-    property  OnEndDrag;
-    property  OnEnter;
-    property  OnExit;
-    property  OnStartDrag;
     property AutoScroll: WordBool index 2 read GetWordBoolProp write SetWordBoolProp stored False;
     property AutoSize: WordBool index 3 read GetWordBoolProp write SetWordBoolProp stored False;
     property AxBorderStyle: TOleEnum index 4 read GetTOleEnumProp write SetTOleEnumProp stored False;
@@ -883,7 +854,7 @@ const
     EventIID: '';
     EventCount: 0;
     EventDispIDs: nil;
-    LicenseKey: nil (*HR:$00000000*);
+    LicenseKey: nil (*HR:$80040154*);
     Flags: $00000008;
     Version: 401);
 begin
@@ -1130,7 +1101,7 @@ const
     EventIID: '{7364E2EA-8EEC-4673-9059-3B078C388717}';
     EventCount: 10;
     EventDispIDs: @CEventDispIDs;
-    LicenseKey: nil (*HR:$00000000*);
+    LicenseKey: nil (*HR:$80040154*);
     Flags: $0000001D;
     Version: 401;
     FontCount: 1;
