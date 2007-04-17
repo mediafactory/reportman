@@ -107,8 +107,10 @@
   int rp_getparamcount(int hreport:integer;int *paramcount);<br>
   int rp_getparamname(int hreport,int index,char *abuffer);<br>
   int rp_setadoconnectionstring(int hreport,char *conname,char *constring);<br>
+  int rp_bitmap(int hreport,char *outputfilename,int ask,int mono,int vertres,int 
+  horzres);<br>
 </p>
-<p>All the functions returns 0 if fail, the rp_lasterror function returns the 
+<p> All the functions returns 0 if fail, the rp_lasterror function returns the 
   error message for the last library call so the call of a report engine function 
   clears the rp_lasterror returned value, you should call rp_lasterror after checking 
   if the function is successfull, for example:</p>
