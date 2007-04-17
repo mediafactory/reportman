@@ -52,6 +52,7 @@ int rp_previewremote_report(int hreport,char *hostname,int port,char *user,char 
 int rp_printremote_report(int hreport,char *hostname,int port,char *user,char *password,
  char *aliasname,char *reportname,char *title,int showprogress,
  int showprintdialog);
+int rp_bitmap(int hreport,char *outputfilename,int ask,int mono,int vertres,int horzres);
 
 #ifdef __cplusplus
 }

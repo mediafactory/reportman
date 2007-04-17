@@ -4,8 +4,8 @@ object FRpParams: TFRpParams
   ActiveControl = LParams
   AutoScroll = False
   Caption = 'Parameter definition'
-  ClientHeight = 550
-  ClientWidth = 444
+  ClientHeight = 521
+  ClientWidth = 569
   Color = clButton
   Position = poScreenCenter
   ShowHint = True
@@ -16,24 +16,24 @@ object FRpParams: TFRpParams
   TextWidth = 6
   object Panel1: TPanel
     Left = 0
-    Top = 132
-    Width = 444
-    Height = 418
+    Top = 148
+    Width = 569
+    Height = 373
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
     object GProperties: TGroupBox
       Left = 2
-      Top = 20
-      Width = 434
-      Height = 393
+      Top = 8
+      Width = 559
+      Height = 361
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       Visible = False
       object GValues: TGroupBox
         Left = 6
-        Top = 216
-        Width = 416
+        Top = 192
+        Width = 541
         Height = 105
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Strings to show (left) and strings to assign (right) '
@@ -42,7 +42,7 @@ object FRpParams: TFRpParams
         object Panel4: TPanel
           Left = 2
           Top = 13
-          Width = 412
+          Width = 537
           Height = 60
           Align = alTop
           BevelOuter = bvNone
@@ -60,7 +60,7 @@ object FRpParams: TFRpParams
           object MValues: TMemo
             Left = 195
             Top = 0
-            Width = 217
+            Width = 342
             Height = 60
             Align = alClient
             TabOrder = 1
@@ -76,9 +76,9 @@ object FRpParams: TFRpParams
           Caption = 'Lookup dataset'
         end
         object ComboLookup: TComboBox
-          Left = 124
+          Left = 132
           Top = 81
-          Width = 156
+          Width = 281
           Height = 21
           Hint = 'The parameters will be assigned not the selected datasets'
           Style = csDropDownList
@@ -90,8 +90,8 @@ object FRpParams: TFRpParams
       end
       object GSearch: TGroupBox
         Left = 4
-        Top = 216
-        Width = 420
+        Top = 188
+        Width = 545
         Height = 73
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Search value'
@@ -114,7 +114,7 @@ object FRpParams: TFRpParams
         object ComboSearchDataset: TComboBox
           Left = 132
           Top = 20
-          Width = 160
+          Width = 285
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
@@ -125,7 +125,7 @@ object FRpParams: TFRpParams
         object ComboSearchParam: TComboBox
           Left = 132
           Top = 44
-          Width = 160
+          Width = 285
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
@@ -137,10 +137,10 @@ object FRpParams: TFRpParams
       object ECheckList: TCheckListBox
         Left = 280
         Top = 4
-        Width = 140
+        Width = 265
         Height = 73
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 19
+        TabOrder = 17
         Visible = False
         OnClickCheck = EDescriptionChange
       end
@@ -154,7 +154,7 @@ object FRpParams: TFRpParams
       object EDescription: TEdit
         Left = 116
         Top = 80
-        Width = 304
+        Width = 429
         Height = 21
         Hint = 'Description to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
@@ -201,7 +201,7 @@ object FRpParams: TFRpParams
       object EValue: TRpCLXMaskEdit
         Left = 284
         Top = 8
-        Width = 136
+        Width = 261
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 1
@@ -229,15 +229,15 @@ object FRpParams: TFRpParams
         OnClick = EDescriptionChange
       end
       object LAssign: TLabel
-        Left = 4
-        Top = 336
+        Left = 8
+        Top = 304
         Width = 86
         Height = 13
         Caption = 'Assign to datasets'
       end
       object ComboDatasets: TComboBox
-        Left = 4
-        Top = 360
+        Left = 8
+        Top = 328
         Width = 161
         Height = 21
         Hint = 'The parameters will be assigned not the selected datasets'
@@ -246,8 +246,8 @@ object FRpParams: TFRpParams
         TabOrder = 11
       end
       object BAdddata: TButton
-        Left = 176
-        Top = 332
+        Left = 180
+        Top = 300
         Width = 33
         Height = 25
         Hint = 'Include the dataset in the list'
@@ -256,8 +256,8 @@ object FRpParams: TFRpParams
         OnClick = BAdddataClick
       end
       object BDeleteData: TButton
-        Left = 176
-        Top = 360
+        Left = 180
+        Top = 328
         Width = 33
         Height = 25
         Hint = 'Exclude dataset from the list'
@@ -266,17 +266,17 @@ object FRpParams: TFRpParams
         OnClick = BDeleteDataClick
       end
       object LDatasets: TListBox
-        Left = 220
-        Top = 332
-        Width = 196
+        Left = 224
+        Top = 300
+        Width = 321
         Height = 53
         Hint = 'The parameter will be assigned to this datasets'
         Anchors = [akLeft, akTop, akRight]
-        TabOrder = 15
+        TabOrder = 14
       end
       object LSearch: TLabel
         Left = 12
-        Top = 196
+        Top = 168
         Width = 77
         Height = 13
         Caption = 'Search for string'
@@ -284,8 +284,8 @@ object FRpParams: TFRpParams
       end
       object ESearch: TEdit
         Left = 116
-        Top = 192
-        Width = 304
+        Top = 164
+        Width = 429
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 9
@@ -305,7 +305,7 @@ object FRpParams: TFRpParams
       object EHint: TEdit
         Left = 116
         Top = 108
-        Width = 304
+        Width = 429
         Height = 21
         Hint = 'Hint to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
@@ -341,9 +341,9 @@ object FRpParams: TFRpParams
         OnClick = EDescriptionChange
       end
       object EErrorMessage: TEdit
-        Left = 116
-        Top = 164
-        Width = 304
+        Left = 400
+        Top = 136
+        Width = 145
         Height = 21
         Hint = 'Error message to show when validation returns false'
         Anchors = [akLeft, akTop, akRight]
@@ -352,8 +352,8 @@ object FRpParams: TFRpParams
         OnChange = EDescriptionChange
       end
       object LErrorMessage: TLabel
-        Left = 12
-        Top = 168
+        Left = 308
+        Top = 140
         Width = 67
         Height = 13
         Caption = 'Error message'
@@ -361,7 +361,7 @@ object FRpParams: TFRpParams
       object EValidation: TEdit
         Left = 116
         Top = 136
-        Width = 304
+        Width = 181
         Height = 21
         Hint = 
           'Validation expression, if evaluated to false, error message will' +
@@ -383,16 +383,16 @@ object FRpParams: TFRpParams
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 444
-    Height = 132
+    Width = 569
+    Height = 148
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object LParams: TListBox
       Left = 0
       Top = 30
-      Width = 348
-      Height = 102
+      Width = 473
+      Height = 118
       Align = alClient
       TabOrder = 0
       OnClick = LParamsClick
@@ -400,7 +400,7 @@ object FRpParams: TFRpParams
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 444
+      Width = 569
       Height = 30
       ButtonHeight = 26
       ButtonWidth = 26
@@ -468,16 +468,16 @@ object FRpParams: TFRpParams
       end
     end
     object Panel3: TPanel
-      Left = 348
+      Left = 473
       Top = 30
       Width = 96
-      Height = 102
+      Height = 118
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2
       object BCancel: TButton
         Left = 10
-        Top = 54
+        Top = 38
         Width = 75
         Height = 25
         Cancel = True
