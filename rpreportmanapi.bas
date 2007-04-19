@@ -18,4 +18,5 @@ Public Declare Function rp_previewremote Lib "Reportman.ocx" (ByVal hostname As 
 Public Declare Function rp_previewremote_report Lib "Reportman.ocx" (ByVal hreport As Long,ByVal hostname As String, ByVal port As Long, ByVal user As String,ByVal password As String,ByVal aliasname As String,ByVal reportname As String,ByVal title As String) As Long
 Public Declare Function rp_printremote Lib "Reportman.ocx" (ByVal hostname As String, ByVal port As Long, ByVal user As String,ByVal password As String,ByVal aliasname As String,ByVal reportname As String,ByVal title As String) As Long
 Public Declare Function rp_printremote_report Lib "Reportman.ocx" (ByVal hreport As Long,ByVal hostname As String, ByVal port As Long, ByVal user As String,ByVal password As String,ByVal aliasname As String,ByVal reportname As String,ByVal title As String) As Long
+Public Declare Function rp_bitmap Lib "Reportman.ocx" (ByVal hreport As Long, ByVal outputfilename As String, ByVal ask As Long, ByVal mono As Long, ByVal vertres As Long, ByVal horzres As Long) As Long
 
