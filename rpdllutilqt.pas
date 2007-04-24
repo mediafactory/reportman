@@ -70,7 +70,7 @@ begin
   adriver:=TRpPdfDriver.Create;
   try
    report.PrintAll(adriver);
-   doexport:=false;
+   doexport:=true;
    if ask=1 then
     doexport:=AskBitmapProps(horzres,vertres,mon);
    mon:=mono=1;

@@ -8,24 +8,102 @@
   resources were bound to the produced executable.
 */
 
-#define TntSystem_SBufferOverflow 64688
-#define TntSystem_SInvalidUTF7 64689
-#define VDBConsts_SFirstRecord 64704
-#define VDBConsts_SPriorRecord 64705
-#define VDBConsts_SNextRecord 64706
-#define VDBConsts_SLastRecord 64707
-#define VDBConsts_SInsertRecord 64708
-#define VDBConsts_SDeleteRecord 64709
-#define VDBConsts_SEditRecord 64710
-#define VDBConsts_SPostEdit 64711
-#define VDBConsts_SCancelEdit 64712
-#define VDBConsts_SRefreshRecord 64713
-#define VDBConsts_SDeleteRecordQuestion 64714
-#define VDBConsts_SDeleteMultipleRecordsQuestion 64715
-#define VDBConsts_SDataSourceFixed 64716
-#define VDBConsts_SPropDefByLookup 64717
-#define VDBConsts_STooManyColumns 64718
-#define VDBConsts_SRemoteLogin 64719
+#define VDBConsts_SNextRecord 64624
+#define VDBConsts_SLastRecord 64625
+#define VDBConsts_SInsertRecord 64626
+#define VDBConsts_SDeleteRecord 64627
+#define VDBConsts_SEditRecord 64628
+#define VDBConsts_SPostEdit 64629
+#define VDBConsts_SCancelEdit 64630
+#define VDBConsts_SRefreshRecord 64631
+#define VDBConsts_SDeleteRecordQuestion 64632
+#define VDBConsts_SDeleteMultipleRecordsQuestion 64633
+#define VDBConsts_SDataSourceFixed 64634
+#define VDBConsts_SPropDefByLookup 64635
+#define VDBConsts_STooManyColumns 64636
+#define VDBConsts_SRemoteLogin 64637
+#define TntSystem_SBufferOverflow 64638
+#define TntSystem_SInvalidUTF7 64639
+#define TeeConst_TeeMsg_CheckPointerSize 64640
+#define TeeConst_TeeMsg_FunctionPeriod 64641
+#define TeeConst_TeeMsg_PieOther 64642
+#define TeeConst_TeeMsg_ValuesX 64643
+#define TeeConst_TeeMsg_ValuesY 64644
+#define TeeConst_TeeMsg_ValuesPie 64645
+#define TeeConst_TeeMsg_ValuesBar 64646
+#define TeeConst_TeeMsg_ValuesAngle 64647
+#define TeeConst_TeeMsg_ValuesGanttStart 64648
+#define TeeConst_TeeMsg_ValuesGanttEnd 64649
+#define TeeConst_TeeMsg_ValuesGanttNextTask 64650
+#define TeeConst_TeeMsg_ValuesBubbleRadius 64651
+#define TeeConst_TeeMsg_ValuesArrowEndX 64652
+#define TeeConst_TeeMsg_ValuesArrowEndY 64653
+#define VDBConsts_SFirstRecord 64654
+#define VDBConsts_SPriorRecord 64655
+#define TeeConst_TeeMsg_GanttSample5 64656
+#define TeeConst_TeeMsg_GanttSample6 64657
+#define TeeConst_TeeMsg_GanttSample7 64658
+#define TeeConst_TeeMsg_GanttSample8 64659
+#define TeeConst_TeeMsg_GanttSample9 64660
+#define TeeConst_TeeMsg_GanttSample10 64661
+#define TeeConst_TeeMsg_DefaultFontSize 64662
+#define TeeConst_TeeMsg_FunctionAdd 64663
+#define TeeConst_TeeMsg_FunctionSubtract 64664
+#define TeeConst_TeeMsg_FunctionMultiply 64665
+#define TeeConst_TeeMsg_FunctionDivide 64666
+#define TeeConst_TeeMsg_FunctionHigh 64667
+#define TeeConst_TeeMsg_FunctionLow 64668
+#define TeeConst_TeeMsg_FunctionAverage 64669
+#define TeeConst_TeeMsg_GalleryBubble 64670
+#define TeeConst_TeeMsg_DefaultFontName 64671
+#define TeeConst_TeeMsg_PieSample1 64672
+#define TeeConst_TeeMsg_PieSample2 64673
+#define TeeConst_TeeMsg_PieSample3 64674
+#define TeeConst_TeeMsg_PieSample4 64675
+#define TeeConst_TeeMsg_PieSample5 64676
+#define TeeConst_TeeMsg_PieSample6 64677
+#define TeeConst_TeeMsg_PieSample7 64678
+#define TeeConst_TeeMsg_PieSample8 64679
+#define TeeConst_TeeMsg_GalleryStandard 64680
+#define TeeConst_TeeMsg_GalleryFunctions 64681
+#define TeeConst_TeeMsg_GalleryArrow 64682
+#define TeeConst_TeeMsg_GalleryGantt 64683
+#define TeeConst_TeeMsg_GanttSample1 64684
+#define TeeConst_TeeMsg_GanttSample2 64685
+#define TeeConst_TeeMsg_GanttSample3 64686
+#define TeeConst_TeeMsg_GanttSample4 64687
+#define TeeConst_TeeMsg_CircularSeries 64688
+#define TeeConst_TeeMsg_BarWidthPercent 64689
+#define TeeConst_TeeMsg_BarOffsetPercent 64690
+#define TeeConst_TeeMsg_DefaultPercentOf 64691
+#define TeeConst_TeeMsg_DefPercentFormat 64692
+#define TeeConst_TeeMsg_DefValueFormat 64693
+#define TeeConst_TeeMsg_AxisTitle 64694
+#define TeeConst_TeeMsg_AxisLabels 64695
+#define TeeConst_TeeMsg_GalleryLine 64696
+#define TeeConst_TeeMsg_GalleryPoint 64697
+#define TeeConst_TeeMsg_GalleryArea 64698
+#define TeeConst_TeeMsg_GalleryBar 64699
+#define TeeConst_TeeMsg_GalleryHorizBar 64700
+#define TeeConst_TeeMsg_GalleryPie 64701
+#define TeeConst_TeeMsg_GalleryFastLine 64702
+#define TeeConst_TeeMsg_Rotation 64703
+#define TeeConst_TeeMsg_LegendTopPos 64704
+#define TeeConst_TeeMsg_LegendFirstValue 64705
+#define TeeConst_TeeMsg_LegendColorWidth 64706
+#define TeeConst_TeeMsg_SeriesSetDataSource 64707
+#define TeeConst_TeeMsg_SeriesInvDataSource 64708
+#define TeeConst_TeeMsg_FillSample 64709
+#define TeeConst_TeeMsg_Angle 64710
+#define TeeConst_TeeMsg_AxisLogDateTime 64711
+#define TeeConst_TeeMsg_AxisLogNotPositive 64712
+#define TeeConst_TeeMsg_AxisLabelSep 64713
+#define TeeConst_TeeMsg_AxisIncrementNeg 64714
+#define TeeConst_TeeMsg_AxisMinMax 64715
+#define TeeConst_TeeMsg_AxisMaxMin 64716
+#define TeeConst_TeeMsg_AxisLogBase 64717
+#define TeeConst_TeeMsg_MaxPointsPerPage 64718
+#define TeeConst_TeeMsg_3dPercent 64719
 #define IdResourceStrings_RSStackECONNABORTED 64720
 #define IdResourceStrings_RSStackECONNRESET 64721
 #define IdResourceStrings_RSStackENOBUFS 64722
@@ -844,10 +922,6 @@
 #define SysConst_SAccessDenied 65535
 STRINGTABLE
 BEGIN
-	TntSystem_SBufferOverflow,	"Buffer overflow"
-	TntSystem_SInvalidUTF7,	"Invalid UTF7"
-	VDBConsts_SFirstRecord,	"First record"
-	VDBConsts_SPriorRecord,	"Prior record"
 	VDBConsts_SNextRecord,	"Next record"
 	VDBConsts_SLastRecord,	"Last record"
 	VDBConsts_SInsertRecord,	"Insert record"
@@ -862,6 +936,88 @@ BEGIN
 	VDBConsts_SPropDefByLookup,	"Property already defined by lookup field"
 	VDBConsts_STooManyColumns,	"Grid requested to display more than 256 columns"
 	VDBConsts_SRemoteLogin,	"Remote Login"
+	TntSystem_SBufferOverflow,	"Buffer overflow"
+	TntSystem_SInvalidUTF7,	"Invalid UTF7"
+	TeeConst_TeeMsg_CheckPointerSize,	"Pointer size must be greater than zero"
+	TeeConst_TeeMsg_FunctionPeriod,	"Function Period should be >= 0"
+	TeeConst_TeeMsg_PieOther,	"Other"
+	TeeConst_TeeMsg_ValuesX,	"X"
+	TeeConst_TeeMsg_ValuesY,	"Y"
+	TeeConst_TeeMsg_ValuesPie,	"Pie"
+	TeeConst_TeeMsg_ValuesBar,	"Bar"
+	TeeConst_TeeMsg_ValuesAngle,	"Angle"
+	TeeConst_TeeMsg_ValuesGanttStart,	"Start"
+	TeeConst_TeeMsg_ValuesGanttEnd,	"End"
+	TeeConst_TeeMsg_ValuesGanttNextTask,	"NextTask"
+	TeeConst_TeeMsg_ValuesBubbleRadius,	"Radius"
+	TeeConst_TeeMsg_ValuesArrowEndX,	"EndX"
+	TeeConst_TeeMsg_ValuesArrowEndY,	"EndY"
+	VDBConsts_SFirstRecord,	"First record"
+	VDBConsts_SPriorRecord,	"Prior record"
+	TeeConst_TeeMsg_GanttSample5,	"Marketing"
+	TeeConst_TeeMsg_GanttSample6,	"Testing"
+	TeeConst_TeeMsg_GanttSample7,	"Manufac."
+	TeeConst_TeeMsg_GanttSample8,	"Debugging"
+	TeeConst_TeeMsg_GanttSample9,	"New Version"
+	TeeConst_TeeMsg_GanttSample10,	"Banking"
+	TeeConst_TeeMsg_DefaultFontSize,	"8"
+	TeeConst_TeeMsg_FunctionAdd,	"Add"
+	TeeConst_TeeMsg_FunctionSubtract,	"Subtract"
+	TeeConst_TeeMsg_FunctionMultiply,	"Multiply"
+	TeeConst_TeeMsg_FunctionDivide,	"Divide"
+	TeeConst_TeeMsg_FunctionHigh,	"High"
+	TeeConst_TeeMsg_FunctionLow,	"Low"
+	TeeConst_TeeMsg_FunctionAverage,	"Average"
+	TeeConst_TeeMsg_GalleryBubble,	"Bubble"
+	TeeConst_TeeMsg_DefaultFontName,	"Arial"
+	TeeConst_TeeMsg_PieSample1,	"Cars"
+	TeeConst_TeeMsg_PieSample2,	"Phones"
+	TeeConst_TeeMsg_PieSample3,	"Tables"
+	TeeConst_TeeMsg_PieSample4,	"Monitors"
+	TeeConst_TeeMsg_PieSample5,	"Lamps"
+	TeeConst_TeeMsg_PieSample6,	"Keyboards"
+	TeeConst_TeeMsg_PieSample7,	"Bikes"
+	TeeConst_TeeMsg_PieSample8,	"Chairs"
+	TeeConst_TeeMsg_GalleryStandard,	"Standard"
+	TeeConst_TeeMsg_GalleryFunctions,	"Functions"
+	TeeConst_TeeMsg_GalleryArrow,	"Arrow"
+	TeeConst_TeeMsg_GalleryGantt,	"Gantt"
+	TeeConst_TeeMsg_GanttSample1,	"Design"
+	TeeConst_TeeMsg_GanttSample2,	"Prototyping"
+	TeeConst_TeeMsg_GanttSample3,	"Development"
+	TeeConst_TeeMsg_GanttSample4,	"Sales"
+	TeeConst_TeeMsg_CircularSeries,	"Circular Series dependences are not allowed"
+	TeeConst_TeeMsg_BarWidthPercent,	"Bar Width Percent must be between 1 and 100"
+	TeeConst_TeeMsg_BarOffsetPercent,	"Bar Offset Percent must be between -100% and 100%"
+	TeeConst_TeeMsg_DefaultPercentOf,	"%s of %s"
+	TeeConst_TeeMsg_DefPercentFormat,	"##0.## %"
+	TeeConst_TeeMsg_DefValueFormat,	"#,##0.###"
+	TeeConst_TeeMsg_AxisTitle,	"Axis Title"
+	TeeConst_TeeMsg_AxisLabels,	"Axis Labels"
+	TeeConst_TeeMsg_GalleryLine,	"Line"
+	TeeConst_TeeMsg_GalleryPoint,	"Point"
+	TeeConst_TeeMsg_GalleryArea,	"Area"
+	TeeConst_TeeMsg_GalleryBar,	"Bar"
+	TeeConst_TeeMsg_GalleryHorizBar,	"Horiz. Bar"
+	TeeConst_TeeMsg_GalleryPie,	"Pie"
+	TeeConst_TeeMsg_GalleryFastLine,	"Fast Line"
+	TeeConst_TeeMsg_Rotation,	"Rotation"
+	TeeConst_TeeMsg_LegendTopPos,	"Top Legend Position must be between 0 and 100 %"
+	TeeConst_TeeMsg_LegendFirstValue,	"First Legend Value must be > 0"
+	TeeConst_TeeMsg_LegendColorWidth,	"Legend Color Width must be between 0 and 100 %"
+	TeeConst_TeeMsg_SeriesSetDataSource,	"No ParentChart to validate DataSource"
+	TeeConst_TeeMsg_SeriesInvDataSource,	"No valid DataSource: %s"
+	TeeConst_TeeMsg_FillSample,	"FillSampleValues NumValues must be > 0"
+	TeeConst_TeeMsg_Angle,	"%s Angle must be between 0 and 359 degrees"
+	TeeConst_TeeMsg_AxisLogDateTime,	"DateTime Axis cannot be Logarithmic"
+	TeeConst_TeeMsg_AxisLogNotPositive,	"Logarithmic Axis Min and Max values should be >= 0"
+	TeeConst_TeeMsg_AxisLabelSep,	"Labels Separation % must be greater than 0"
+	TeeConst_TeeMsg_AxisIncrementNeg,	"Axis increment must be >= 0"
+	TeeConst_TeeMsg_AxisMinMax,	"Axis Minimum Value must be <= Maximum"
+	TeeConst_TeeMsg_AxisMaxMin,	"Axis Maximum Value must be >= Minimum"
+	TeeConst_TeeMsg_AxisLogBase,	"Axis Logarithmic Base should be >= 2"
+	TeeConst_TeeMsg_MaxPointsPerPage,	"MaxPointsPerPage must be >= 0"
+	TeeConst_TeeMsg_3dPercent,	"3D effect percent must be between %d and %d"
 	IdResourceStrings_RSStackECONNABORTED,	"Software caused connection abort."
 	IdResourceStrings_RSStackECONNRESET,	"Connection reset by peer."
 	IdResourceStrings_RSStackENOBUFS,	"No buffer space available."
