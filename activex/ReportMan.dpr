@@ -48,7 +48,8 @@ exports
   rp_getparamname,
   rp_getparamcount,
   rp_getremoteparams,
-  rp_setadoconnectionstring;
+  rp_setadoconnectionstring,
+  rp_bitmap;
 
 {$R *.TLB}
 

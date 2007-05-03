@@ -71,12 +71,12 @@ begin
   try
    report.PrintAll(adriver);
    doexport:=true;
+   mon:=mono=1;
    if ask=1 then
     doexport:=AskBitmapProps(horzres,vertres,mon);
-   mon:=mono=1;
    if doexport then
    begin
-    abitmap:=MetafileToBitmap(report.Metafile,true,mon,horzres,vertres);
+    abitmap:=MetafileToBitmap(report.Metafile,ask<>0,mon,horzres,vertres);
     try
      if assigned(abitmap) then
       abitmap.SaveToFile(StrPas(outputfilename));

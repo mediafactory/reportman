@@ -53,6 +53,8 @@ function rp_setparamvaluevar(hreport:integer;paramname:pchar;
  paramvalue:OleVariant):integer;external REP_LIBNAME;
 function rp_setadoconnectionstring(hreport:integer;conname:pchar;
  constring:PChar):integer;external REP_LIBNAME;
+function rp_bitmap(hreport:integer;outputfilename:PChar;
+ ask,mono,vertres,horzres:integer):integer;stdcall;external REP_LIBNAME;
 {$ENDIF}
 
 implementation
