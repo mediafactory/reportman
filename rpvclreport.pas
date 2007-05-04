@@ -107,6 +107,8 @@ begin
   collate:=report.CollateCopies;
   frompage:=1; topage:=MAX_PAGECOUNT;
   copies:=report.Copies;
+  rpgdidriver.PrinterSelection(report.PrinterSelect,report.papersource,report.duplex);
+  rpgdidriver.OrientationSelection(report.PageOrientation);
   if ShowPrintDialog then
   begin
    if DoShowPrintDialog(allpages,frompage,topage,copies,collate) then

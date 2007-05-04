@@ -1322,6 +1322,11 @@ var
   SRpDBFFiles:WideString='DBF Files';
   SRpShowPrintDialog:WideString='Show print dialog';
 
+  SRpWaitTwain:WideString='Waiting for image in twain source';
+  SRpWaitTwainExceededMax:WideString='Scanned image is too large, current size and maximum in KBytes: ';
+  SRpCompletedUpload:WideString='Upload completed';
+  SRpUploadProg:WideString='Uploading %d of %d (Kbytes)';
+
 implementation
 
 uses rptranslator;
