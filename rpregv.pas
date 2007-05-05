@@ -43,7 +43,9 @@ begin
 {$IFDEF LINUX}
 {$IFNDEF BCB}
  RegisterPropertyEditor(TypeInfo(String),TCBaseReport,'ConnectionName',TRpReportLibNamePropEditor);
- RegisterPropertyEditor(TypeInfo(String),TCBaseReport,'ReportName',TRpReportNamePropEditor); RegisterPropertyEditor(TypeInfo(TRpDatabaseInfoList),TRpAlias,'',TRpConnectionPropEditor);{$ENDIF}
+ RegisterPropertyEditor(TypeInfo(String),TCBaseReport,'ReportName',TRpReportNamePropEditor);
+ RegisterPropertyEditor(TypeInfo(TRpDatabaseInfoList),TRpAlias,'',TRpConnectionPropEditor);
+{$ENDIF}
 {$ENDIF}
 end;
 

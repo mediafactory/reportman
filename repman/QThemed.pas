@@ -426,7 +426,7 @@ begin
   end;
 end;
 
-function PrivateApp: TPrivateApplication;
+function PrivateApp: TPrivateApplication;
 begin
   Result := TPrivateApplication(Application);
 end;
