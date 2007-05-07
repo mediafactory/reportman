@@ -23,7 +23,7 @@
 
 {20/01/2004 - Some updates and bug fixes by Nemeth Peter}
 
-{$INCLUDE prdeltwain.inc}
+{$INCLUDE rpdeltwain.inc}
 
 unit rpdeltwain;
 

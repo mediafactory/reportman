@@ -23,7 +23,7 @@ interface
 
 {$I rpconf.inc}
 
-uses SysUtils, Classes,
+uses SysUtils, Classes,Windows,
   Graphics, Forms,
   Buttons, ExtCtrls, Controls, StdCtrls,
   rpmdconsts,rptypes,ComCtrls,rpmaskedit,checklst,
@@ -61,7 +61,7 @@ type
     { Private declarations }
     fparams:TRpParamList;
     dook:boolean;
-    lnulls,lcontrols:TStringList;
+    lnulls,lcontrols,lcontrols2:TStringList;
 {$IFNDEF FORWEBAX}
     report:TComponent;
 {$ENDIF}
@@ -159,6 +159,7 @@ procedure TFRpRTParams.FormCreate(Sender: TObject);
 begin
  fparams:=TRpParamList.Create(Self);
  lcontrols:=TStringList.Create;
+ lcontrols2:=TStringList.Create;
  lnulls:=TStringList.Create;
  BOK.Caption:=TranslateStr(93,BOK.Caption);
  BCancel.Caption:=TranslateStr(94,BCancel.Caption);
@@ -190,6 +191,7 @@ var
  TotalWidth:integer;
  achecknull:TCheckBox;
  NewClientHeight:integer;
+ acontrol2:TControl;
 {$IFNDEF FORWEBAX}
  bbutton:TButton;
  defheight:integer;
@@ -202,13 +204,14 @@ begin
  if Assigned(aparam) then
   TRpBaseReport(report).Language:=aparam.Value;
 {$ENDIF}
- acontrol:=nil;
  fparams.assign(avalue);
  TotalWidth:=PRight.Width-CONS_NULLWIDTH-CONS_SEARCH-CONS_LEFTGAP-CONS_RIGHTBARGAP;
  posy:=CONS_CONTROLGAP;
  // Creates all controls from params
  for i:=0 to fparams.Count-1 do
  begin
+  acontrol:=nil;
+  acontrol2:=nil;
   aparam:=fparams.Items[i];
   if ((aparam.Visible) and (not aparam.NeverVisible)) then
   begin
@@ -238,6 +241,7 @@ begin
    bbutton.Left:=TotalWidth;
    bbutton.Height:=defheight;
    bbutton.Caption:='...';
+   bbutton.Anchors:=[akTop,akRight];
    bbutton.Parent:=PRight;
    bbutton.OnClick:=BSearchClick;
    bbutton.Visible:=false;
@@ -253,6 +257,7 @@ begin
       end;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
+      lcontrols2.AddObject(aparam.Name,acontrol);
       TEdit(acontrol).Text:='';
       if aparam.Value=Null then
       begin
@@ -275,6 +280,7 @@ begin
       end;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
+      lcontrols2.AddObject(aparam.Name,acontrol);
       TEdit(acontrol).Text:='0';
       TRpMaskEdit(acontrol).DisplayMask:='####,##0.##';
       if aparam.ParamType=rpParamInteger then
@@ -303,18 +309,14 @@ begin
       TDateTimePicker(acontrol).Kind:=dtkDate;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
+      lcontrols2.AddObject(aparam.Name,acontrol);
       if aparam.Value=Null then
       begin
        achecknull.Checked:=true;
       end
       else
       begin
-{$IFNDEF DOTNETD}
        TDateTimePicker(acontrol).Date:=TDateTime(aparam.Value);
-{$ENDIF}
-{$IFDEF DOTNETD}
-       TDateTimePicker(acontrol).Date:=TDate(aparam.Value);
-{$ENDIF}
       end;
      end;
    rpParamTime:
@@ -327,23 +329,55 @@ begin
       TDateTimePicker(acontrol).Kind:=dtkTime;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
+      lcontrols2.AddObject(aparam.Name,acontrol);
       if aparam.Value=Null then
       begin
        achecknull.Checked:=true;
       end
       else
       begin
-{$IFDEF DOTNETD}
-       TDateTimePicker(acontrol).Time:=TTime(aparam.Value);
-{$ENDIF}
-{$IFNDEF DOTNETD}
        TDateTimePicker(acontrol).Time:=TDateTime(aparam.Value);
-{$ENDIF}
       end;
      end;
    rpParamDateTime:
      begin
-      acontrol:=TEdit.Create(Self);
+      acontrol:=TDateTimePicker.Create(Self);
+      if aparam.IsReadOnly then
+      begin
+       TDateTimePicker(acontrol).Color:=Self.Color;
+      end;
+      TDateTimePicker(acontrol).Kind:=dtkDate;
+      acontrol.tag:=i;
+      acontrol.Width:=Canvas.TextWidth(FormatDateTime(ShortDateFormat,EncodeDate(2000,12,31)))+
+       GetSystemMetrics(SM_CYHSCROLL)+20;
+      lcontrols.AddObject(aparam.Name,acontrol);
+      if aparam.Value=Null then
+      begin
+       achecknull.Checked:=true;
+      end
+      else
+      begin
+       TDateTimePicker(acontrol).Date:=TDateTime(aparam.Value);
+      end;
+
+
+      acontrol2:=TDateTimePicker.Create(Self);
+      if aparam.IsReadOnly then
+      begin
+       TDateTimePicker(acontrol2).Color:=Self.Color;
+      end;
+      TDateTimePicker(acontrol2).Kind:=dtkTime;
+      acontrol2.tag:=i;
+      lcontrols2.AddObject(aparam.Name,acontrol2);
+      if aparam.Value=Null then
+      begin
+       achecknull.Checked:=true;
+      end
+      else
+      begin
+       TDateTimePicker(acontrol2).Time:=TDateTime(aparam.Value);
+      end;
+{      acontrol:=TEdit.Create(Self);
       if aparam.IsReadOnly then
       begin
        TEdit(acontrol).Color:=Self.Color;
@@ -360,6 +394,8 @@ begin
        TEdit(acontrol).Text:=DateTimeToStr(aparam.Value);
       end;
      end;
+}
+     end;
    rpParamBool:
      begin
       acontrol:=TComboBox.Create(Self);
@@ -370,6 +406,7 @@ begin
       TComboBox(acontrol).Style:=csDropDownList;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
+      lcontrols2.AddObject(aparam.Name,acontrol);
       // Can't add items without a parent
       acontrol.parent:=MainScrollBox;
       TComboBox(acontrol).Items.Add(BoolToStr(false,true));
@@ -396,6 +433,7 @@ begin
       end;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
+      lcontrols2.AddObject(aparam.Name,acontrol);
       // Can't add items without a parent
       acontrol.parent:=MainScrollBox;
       TCheckListBox(acontrol).Items.Assign(aparam.Items);
@@ -422,6 +460,7 @@ begin
       TComboBox(acontrol).Style:=csDropDownList;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
+      lcontrols2.AddObject(aparam.Name,acontrol);
       // Can't add items without a parent
       acontrol.parent:=MainScrollBox;
       TComboBox(acontrol).Items.Assign(aparam.Items);
@@ -442,12 +481,39 @@ begin
     acontrol.Enabled:=false;
    end;
    acontrol.Left:=CONS_LEFTGAP;
-   acontrol.Width:=TotalWidth-acontrol.Left;
+   if assigned(acontrol2) then
+   begin
+    acontrol2.Top:=Posy;
+    acontrol2.Hint:=aparam.Hint;
+    if aparam.IsReadOnly then
+    begin
+     acontrol2.Enabled:=false;
+    end;
+    acontrol2.Left:=acontrol.Left+acontrol.Width+CONS_LEFTGAP;
+    acontrol2.Width:=TotalWidth-(acontrol.Left+acontrol.Width)-CONS_LEFTGAP;
+    acontrol2.parent:=PRight;
+{$IFNDEF FORWEBAX}
+    bbutton.TabOrder:=bbutton.TabOrder+1;
+{$ENDIF}
+    acontrol2.Anchors:=[akLeft,akTop,akRight];
+   end
+   else
+   begin
+    acontrol.Width:=TotalWidth-acontrol.Left;
+   end;
    if aparam.allownulls then
     if VarIsNull(aparam.Value) then
+    begin
      acontrol.Visible:=false;
+     if assigned(acontrol2) then
+      acontrol2.Visible:=false;
+    end;
    acontrol.parent:=PRight;
-   acontrol.Anchors:=[akLeft,akTop,akRight];
+{$IFNDEF FORWEBAX}
+   bbutton.TabOrder:=bbutton.TabOrder+1;
+{$ENDIF}
+   if Not Assigned(acontrol2) then
+    acontrol.Anchors:=[akLeft,akTop,akRight];
    if Not assigned(ActiveControl) then
     if (acontrol.Visible and acontrol.Enabled) then
      ActiveControl:=TWinControl(acontrol);
@@ -456,6 +522,7 @@ begin
   else
   begin
    lcontrols.AddObject('',nil);
+   lcontrols2.AddObject('',nil);
    lnulls.AddObject('',nil);
   end;
  end;
@@ -470,6 +537,7 @@ end;
 procedure TFRpRTParams.FormDestroy(Sender: TObject);
 begin
  lcontrols.free;
+ lcontrols2.free;
  lnulls.free;
  fparams.free;
 end;
@@ -536,7 +604,15 @@ begin
       end;
      rpParamDateTime:
       begin
-       fparams.items[i].Value:=StrtoDateTime(TEdit(LControls.Objects[i]).Text);
+{$IFNDEF USEVARIANTS}
+       datevalue:=Trunc(TDateTimePicker(LControls.Objects[i]).Date);
+       fparams.items[i].Value:=TDateTime(datevalue);
+{$ENDIF}
+{$IFDEF USEVARIANTS}
+       fparams.items[i].Value:=Variant(Trunc(TDateTimePicker(LControls.Objects[i]).Date));
+{$ENDIF}
+       datevalue:=TDateTimePicker(LControls2.Objects[i]).Time-Trunc(TDateTimePicker(LControls2.Objects[i]).Date);
+       fparams.items[i].Value:=fparams.items[i].Value+datevalue;
       end;
      rpParamBool:
       begin

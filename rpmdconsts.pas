@@ -1326,6 +1326,7 @@ var
   SRpWaitTwainExceededMax:WideString='Scanned image is too large, current size and maximum in KBytes: ';
   SRpCompletedUpload:WideString='Upload completed';
   SRpUploadProg:WideString='Uploading %d of %d (Kbytes)';
+  SRpNoTwain:WideString='No twain sources';
 
 implementation
 

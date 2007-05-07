@@ -158,6 +158,13 @@ contains
   rppreviewcontrol in 'rppreviewcontrol.pas',
   rpcolumnar in 'rpcolumnar.pas',
   rpclientdataset in 'rpclientdataset.pas',
-  rpmdfselectfields in 'rpmdfselectfields.pas' {FRpSelectFields: TFrame};
+  rpmdfselectfields in 'rpmdfselectfields.pas' {FRpSelectFields: TFrame},
+  rptwaincomp in 'rptwaincomp.pas',
+  rpdeltwain in 'rpdeltwain.pas',
+  rpdeltwainfunc in 'rpdeltwainfunc.pas' {FTwainHelp},
+  rpdeltwainutils in 'rpdeltwainutils.pas',
+  rptwain in 'rptwain.pas',
+  rpdbdatetimepicker in 'rpdbdatetimepicker.pas',
+  rpGIFImage in 'rpgifimage.pas';
 
 end.

@@ -8,7 +8,7 @@
 
 unit rpdeltwainutils;
 
-{$INCLUDE prdeltwain.INC}
+{$INCLUDE rpdeltwain.INC}
 
 interface
 

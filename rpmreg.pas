@@ -27,6 +27,9 @@ uses
   rpvclreport,rpmaskedit,rppreviewcontrol,rpdbdatetimepicker,
   {$IFNDEF BUILDER4}
    rprulervcl,rpmdesignervcl,rpdbgridvcl,
+{$IFDEF USEINDY}
+   rptwaincomp,
+{$ENDIF}
   {$ENDIF}
    DsgnIntf,
 {$ENDIF}
@@ -53,6 +56,9 @@ begin
    RegisterComponents('Reportman', [TRpRulerVCL]);
    RegisterComponents('Reportman', [TRpDesignerVCL]);
    RegisterComponents('Reportman', [TRpGrid]);
+  {$IFDEF USEINDY}
+   RegisterComponents('Reportman', [TRpTwainWeb]);
+  {$ENDIF}
   {$ENDIF}
 {$ENDIF}
 

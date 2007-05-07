@@ -100,6 +100,7 @@ begin
  Caption:=SRpSearchValue;
  LSearch.Caption:=SRpSearchValue;
  BOK.Caption:=TranslateStr(93,BOK.Caption);
+ BSearch.Caption:=SRpSearch;
 end;
 
 procedure TFRpSearchParamVCL.ESearchChange(Sender: TObject);

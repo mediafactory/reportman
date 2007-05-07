@@ -4,7 +4,7 @@ interface
 
 uses SysUtils,Classes,Graphics,Controls,ComCtrls,ExtCtrls,Forms,
   IdBaseComponent, IdComponent, IdTCPConnection,
-  IdTCPClient, IdHTTP,rpmdconsts,GIFImage;
+  IdTCPClient, IdHTTP,rpmdconsts,rpGIFImage;
 
 type
  TRpHttpUploader=class(TThread)
@@ -265,8 +265,6 @@ begin
  BottomPanel.Parent:=Self;
  BottomPanel.Align:=alClient;
  BottomPanel.BorderStyle:=bsNone;
- BottomPanel.BevelInner:=bvNone;
- BottomPanel.BevelOuter:=bvNone;
  BottomPanel.HorzScrollBar.Tracking:=True;
  BottomPanel.VertScrollBar.Tracking:=True;
  PanelCaption:=TPanel.Create(Self);

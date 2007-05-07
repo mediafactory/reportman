@@ -3,7 +3,7 @@ unit rpdeltwainfunc;
 interface
 
 uses Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls,
-  Buttons, ExtCtrls,rpdeltwain,rptwain,rpmdconsts,jpeg,GIFImage;
+  Buttons, ExtCtrls,rpdeltwain,rptwain,rpmdconsts,jpeg,rpGIFImage,rpgraphutilsvcl;
 
 const MAX_IMAGE_SIZE_KBYTES=1024*100;
 
@@ -54,7 +54,11 @@ begin
   //sources and returns it's index or -1 if either
   //the user pressed Cancel or if there were no sources
   if atwain.SourceCount<2 then
-   SourceIndex:=0
+  begin
+   SourceIndex:=0;
+   if atwain.SourceCount<1 then
+    Raise Exception.Create(SRpNoTwain);
+  end
   else
    SourceIndex := aTwain.SelectSource();
   if (SourceIndex <> -1) then
@@ -67,7 +71,11 @@ begin
      Source.Enabled := TRUE;
   end {if (SourceIndex <> -1)}
  except
-  Close;
+  On E:Exception do
+  begin
+   RpMessageBox(E.Message);
+   Close;
+  end;
  end;
 end;
 
