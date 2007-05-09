@@ -1020,10 +1020,13 @@ begin
   reportname:=Request.QueryFields.Values['reportname'];
   pdfreport:=CreateReport;
   try
+   WriteLog('Loading report: '+aliasname+':'+reportname+' into memory');
    LoadReport(pdfreport,aliasname,reportname);
+   WriteLog('Report Loaded');
    if Length(Request.QueryFields.Values['LANGUAGE'])>0 then
     pdfreport.Language:=StrToInt(Request.QueryFields.Values['LANGUAGE']);
    pdfreport.Params.UpdateLookup;
+   WriteLog('Assigning parameters to the report');
    // Assigns parameters to the report
    for i:=0 to Request.QueryFields.Count-1 do
    begin
@@ -1105,16 +1108,20 @@ begin
     Response.Content:=LoadParamsPage(Request);
     exit;
    end;
+   WriteLog('Creating memory stream');
    astream:=TMemoryStream.Create;
    try
+    WriteLog('Memory stream created');
     astream.Clear;
     if dometafile then
     begin
 {$IFDEF FORCECONSOLE}
+     WriteLog('Calculating report metafile: console mode');
      rppdfdriver.PrintReportMetafileStream(pdfreport,'',false,true,1,9999,1,
       astream,true,false);
 {$ENDIF}
 {$IFNDEF FORCECONSOLE}
+     WriteLog('Calculating report metafile: not console mode');
  {$IFDEF MSWINDOWS}
      rpgdidriver.ExportReportToPDFMetaStream(pdfreport,'',
       false,true,1,9999,1,false,astream,true,false,true);
@@ -1124,6 +1131,7 @@ begin
       false,true,1,9999,1,false,astream,true,false,true);
  {$ENDIF}
 {$ENDIF}
+     WriteLog('Writing response (application/rpmf)');
      Response.Content:='Executed, size:'+IntToStr(astream.size);
      Response.ContentType := 'application/rpmf';
      astream.Seek(0,soFromBeginning);
@@ -1133,11 +1141,13 @@ begin
     else
     if dotxt then
     begin
+     WriteLog('Calculating report, PLAIN');
      textdriver:='PLAIN';
      if Length(Request.QueryFields.Values['TEXTDRIVER'])>0 then
       textdriver:=Request.QueryFields.Values['TEXTDRIVER'];
      rptextdriver.PrintReportToStream(pdfreport,'',false,true,1,9999,1,
       astream,true,Request.QueryFields.Values['OEMCONVERT']='1',textdriver);
+     WriteLog('Writing response, PLAIN');
      Response.Content:='Executed, size:'+IntToStr(astream.size);
      Response.ContentType := 'text/plain';
      astream.Seek(0,soFromBeginning);
@@ -1147,6 +1157,7 @@ begin
     else
     if docsv then
     begin
+     WriteLog('Calculating report, CSV');
      separator:=',';
      if Length(Request.QueryFields.Values['SEPARATOR'])>0 then
       separator:=Request.QueryFields.Values['SEPARATOR'];
@@ -1155,6 +1166,7 @@ begin
      pdfreport.PrintAll(adriver);
      rpcsvdriver.ExportMetafileToCSVStream(pdfreport.metafile,
       astream,false,true,1,MAX_PAGECOUNT,separator);
+     WriteLog('Writing response, CSV');
      Response.Content:='Executed, size:'+IntToStr(astream.size);
      Response.ContentType := 'text/plain';
      astream.Seek(0,soFromBeginning);
@@ -1164,6 +1176,7 @@ begin
     else
     if dosvg then
     begin
+     WriteLog('Calculating report, SVG');
      adriver:=TRpPdfDriver.Create;
      pdfreport.TwoPass:=true;
      pdfreport.PrintAll(adriver);
@@ -1172,6 +1185,7 @@ begin
      else
       pageindex:=StrToInt(Request.QueryFields.Values['PAGEINDEX']);
      rpsvgdriver.MetafilePageToSVG(pdfreport.metafile,pageindex,astream,'','');
+     WriteLog('Writing response, SVG');
      Response.Content:='Executed, size:'+IntToStr(astream.size);
      Response.ContentType := 'application/svg';
      astream.Seek(0,soFromBeginning);
@@ -1181,10 +1195,12 @@ begin
     else
     begin
 {$IFDEF FORCECONSOLE}
+     WriteLog('Calculating report pdf: console mode');
      rppdfdriver.PrintReportPDFStream(pdfreport,'',false,true,1,9999,1,
       astream,true,false);
 {$ENDIF}
 {$IFNDEF FORCECONSOLE}
+     WriteLog('Calculating report pdf: not console mode');
  {$IFDEF MSWINDOWS}
      rpgdidriver.ExportReportToPDFMetaStream(pdfreport,'',
       false,true,1,9999,1,false,astream,true,false,false);
@@ -1195,6 +1211,7 @@ begin
  {$ENDIF}
 {$ENDIF}
      astream.Seek(0,soFromBeginning);
+     WriteLog('Writing response, PDF');
      Response.Content:='Executed, size:'+IntToStr(astream.size);
      Response.ContentType := 'application/pdf';
      Response.ContentStream:=astream;
