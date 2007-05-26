@@ -291,6 +291,8 @@ begin
  iden:=TIdenChtToChs.Create(nil);
  Rpfunctions.AddObject('CHTTOCHS',iden);
 {$ENDIF}
+ iden := TIdenGetINIValue.Create(nil);
+ Rpfunctions.AddObject('GETINIVALUE', iden);
 
  // Functions for compatibility with Gestor reports
  iden:=TIdenVariable.Create(nil);
@@ -493,7 +495,7 @@ begin
   Evaluating:=True;
   try
    // Call the recursive tree to evaluate the expresion
-   variables(FPartial);
+   separator(FPartial);
   finally
    Evaluating:=False;
   end;
@@ -597,7 +599,7 @@ begin
      // The :=
      Rpparser.NextToken;
      // Look for the value
-     variables(Value);
+     separator(Value);
      // If syntax checking not touch the variable
      if (Not FChecking) then
       (iden As TIdenVariable).Value:=Value;
@@ -650,7 +652,7 @@ procedure TRpCustomEvaluator.logicalAND(var Value:TRpValue);
 var operador:string[3];
     Auxiliar,Auxiliar2:TRpValue;
 begin
- separator(Value);
+ comparations(Value);       
 
  if Rpparser.Token=toOperator then
  begin
@@ -659,7 +661,7 @@ begin
   begin
    Rpparser.NextToken;
    Auxiliar2:=Value;
-   separator(Auxiliar);
+   comparations(Auxiliar);
    // Compatible types?
    if (Not FChecking) then
     Value:=LogicalANDTRpValue(Auxiliar2,Auxiliar);
@@ -673,12 +675,12 @@ end;
 
 procedure TRpCustomEvaluator.separator(var Value:TRpValue);
 begin
- comparations(Value);
+ variables(Value);
  if Rpparser.Token=toOperator then
   while (Rpparser.TokenString[1]=';') do
   begin
    Rpparser.NextToken;
-   comparations(Value);
+   variables(Value);
    if Rpparser.Token<>tooperator then
     Exit
   end;
@@ -868,7 +870,7 @@ begin
     // Next param
     Rpparser.NextToken;
     // Look for the value
-    variables(iden.Params[i]);
+    separator(iden.Params[i]);
     // Param separator is ','
     if iden.paramcount>i+1 then
     begin
@@ -990,7 +992,7 @@ begin
   begin
    Rpparser.NextToken;
    // Look into the parentesis
-   variables(Value);
+   separator(Value);
 
    if (Rpparser.Token<>toOperator) then
     Raise TRpEvalException.Create(SRpEvalParent,'',
@@ -1022,7 +1024,7 @@ begin
       Rpparser.SourceLine,Rpparser.SourcePos);
  // Decision term
  Rpparser.NextToken;
- variables(Value);
+ separator(Value);
  // Null means false
  if VarIsNull(Value) then
   Value:=false;
@@ -1043,7 +1045,7 @@ begin
  begin
   if Boolean(Value) then
   begin
-   variables(Value);
+   separator(Value);
    // Skip the second term
    if Rpparser.Token<>tooperator then
      Raise TRpEvalException.Create(SRpEvalSyntax,'IIF',
@@ -1055,14 +1057,14 @@ begin
 
    AnticFChecking:=FChecking;
    FChecking:=True;
-   variables(auxiliar);
+   separator(auxiliar);
    FChecking:=AnticFChecking;
   end
   else
   begin
    AnticFChecking:=FChecking;
    FChecking:=True;
-   variables(auxiliar);
+   separator(auxiliar);
 
    if Rpparser.Token<>tooperator then
      Raise TRpEvalException.Create(SRpEvalSyntax,'IIF',
@@ -1073,14 +1075,14 @@ begin
    Rpparser.NextToken;
 
    FChecking:=AnticFChecking;
-   variables(Value);
+   separator(Value);
   end;
  end
  else
  // Syntax checking
  begin
   // Skip the params
-  variables(Value);
+  separator(Value);
   if Rpparser.Token<>tooperator then
     Raise TRpEvalException.Create(SRpEvalSyntax,'IIF',
        Rpparser.SourceLine,Rpparser.SourcePos);
@@ -1088,7 +1090,7 @@ begin
     Raise TRpEvalException.Create(SRpEvalSyntax,'IIF',
        Rpparser.SourceLine,Rpparser.SourcePos);
   Rpparser.NextToken;
-  variables(auxiliar);
+  separator(auxiliar);
  end;
  // Must be a ) now
  if Rpparser.Token<>toOperator then

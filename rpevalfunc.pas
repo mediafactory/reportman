@@ -526,9 +526,17 @@ type
   end;
 {$ENDIF}
 
+ TIdenGetINIValue=class(TIdenFunction)
+ protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOWner:TComponent);override;
+  end;
+
+
 implementation
 
-uses rpeval,Math;
+uses rpeval,Math,IniFiles;
 
 function VarIsString(avar:Variant):Boolean;
 begin
@@ -2615,4 +2623,40 @@ begin
 end;
 {$ENDIF}
 
+
+{ TIdenGetINIValue }
+
+constructor TIdenGetINIValue.Create(AOWner: TComponent);
+begin
+  inherited;
+ FParamcount:=4;
+ IdenName:='GetINIValue';
+ Help:=SRpGetIniValue;
+ model:='function '+'GetINIValue'+'(file, section, name, default : string):String';
+ aParams:='';
+end;
+function TIdenGetINIValue.GetRpValue: TRpValue;
+begin
+ if (Not (VarIsString(Params[0]))) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not (VarIsString(Params[1]))) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not (VarIsString(Params[2]))) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+ if (Not (VarIsString(Params[3]))) then
+  Raise TRpNamedException.Create(SRpEvalType,IdenName);
+
+// try
+  with TMemIniFile.Create(Params[0]) do
+  begin
+      try
+          Result := ReadString(Params[1], Params[2], Params[3]);
+      finally
+          Free;
+      end;
+  end;
+// except
+//    Result := ''
+// end;
+end;
 end.

@@ -1327,6 +1327,8 @@ var
   SRpCompletedUpload:WideString='Upload completed';
   SRpUploadProg:WideString='Uploading %d of %d (Kbytes)';
   SRpNoTwain:WideString='No twain sources';
+  ///
+  SRpGetIniValue:WideString='Get a (string) value from an ini file';
 
 implementation
 
@@ -2307,6 +2309,10 @@ begin
  TranslateVar(1423,SRpExcelFiles);
  TranslateVar(1424,SRpDBFFiles);
  TranslateVar(1425,SRpShowPrintDialog);
+ TranslateVar(1426,SRpGetIniValue);
+
+
+
  TranslateVar(783,SRpAsyncExecution);
 end;
 
