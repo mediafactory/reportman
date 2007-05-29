@@ -1327,8 +1327,21 @@ var
   SRpCompletedUpload:WideString='Upload completed';
   SRpUploadProg:WideString='Uploading %d of %d (Kbytes)';
   SRpNoTwain:WideString='No twain sources';
-  ///
   SRpGetIniValue:WideString='Get a (string) value from an ini file';
+  SrpSpanishAr:WideString='Spanish (Argentina)';
+  SRpPortuguesseBrasil:WideString='Portuguesse (Brasil)';
+  SrpCroatian:WideString='Croatian';
+  SrpCzech:WideString='Checo';
+  SRpDutchFlemish:WideString='Dutch (Flemish)';
+  SRpFinn:WideString='Finn';
+  SRpNorwegian:WideString='Norwegian';
+  SRpGalician:WideString='Galician';
+  SRpHungarian:WideString='Hungarian';
+  SRpPolish:WideString='Polish';
+  SRpSwedish:WideString='Swedish';
+  SRpSlovenian:WideString='Slovenian';
+  SRpBasque:WideString='Basque';
+  SRpJapanese:WideString='Japanese';
 
 implementation
 

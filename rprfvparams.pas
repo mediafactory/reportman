@@ -557,9 +557,7 @@ end;
 procedure TFRpRTParams.SaveParams;
 var
  i,j,index:integer;
-{$IFNDEF USEVARIANTS}
  datevalue:double;
-{$ENDIF}
 begin
  for i:=0 to fparams.Count-1 do
  begin
@@ -590,13 +588,8 @@ begin
       end;
      rpParamDate:
       begin
-{$IFNDEF USEVARIANTS}
        datevalue:=Trunc(TDateTimePicker(LControls.Objects[i]).Date);
        fparams.items[i].Value:=TDateTime(datevalue);
-{$ENDIF}
-{$IFDEF USEVARIANTS}
-       fparams.items[i].Value:=Variant(Trunc(TDateTimePicker(LControls.Objects[i]).Date));
-{$ENDIF}
       end;
      rpParamTime:
       begin
@@ -604,15 +597,9 @@ begin
       end;
      rpParamDateTime:
       begin
-{$IFNDEF USEVARIANTS}
        datevalue:=Trunc(TDateTimePicker(LControls.Objects[i]).Date);
+       datevalue:=datevalue+TDateTimePicker(LControls2.Objects[i]).Time-Trunc(TDateTimePicker(LControls2.Objects[i]).Date);
        fparams.items[i].Value:=TDateTime(datevalue);
-{$ENDIF}
-{$IFDEF USEVARIANTS}
-       fparams.items[i].Value:=Variant(Trunc(TDateTimePicker(LControls.Objects[i]).Date));
-{$ENDIF}
-       datevalue:=TDateTimePicker(LControls2.Objects[i]).Time-Trunc(TDateTimePicker(LControls2.Objects[i]).Date);
-       fparams.items[i].Value:=fparams.items[i].Value+datevalue;
       end;
      rpParamBool:
       begin

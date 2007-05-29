@@ -3178,20 +3178,34 @@ procedure GetLanguageDescriptions(alist:TStrings);
 // rplangids:array [0..MAX_LANGUAGES-1] of string=('EN','ES','CAT','FR','PT');
 begin
  alist.Clear;
- alist.Add(SRpEnglish);
+ alist.Add(SRpEnglish);     // 0
  alist.Add(SRpSpanish);
  alist.Add(SRpCatalan);
  alist.Add(SRpFrench);
  alist.Add(SRpPortuguesse);
- alist.Add(SRpGerman);
+ alist.Add(SRpGerman);      // 5
  alist.Add(SRpItalian);
  alist.Add(SRpTurkish);
  alist.Add(SRpLithuanian);
  alist.Add(SRpGreek);
- alist.Add(SRpHungar);
+ alist.Add(SRpHungar);      // 10
  alist.Add(SRpDanish);
  alist.Add(SRpDutch);
  alist.Add(SrpSpanishMe);
+ alist.Add(SrpSpanishAr);
+ alist.Add(SRpPortuguesseBrasil);   // 15
+ alist.Add(SrpCroatian);
+ alist.Add(SrpCzech);
+ alist.Add(SRpDutchFlemish);
+ alist.Add(SRpFinn);
+ alist.Add(SRpNorwegian);   // 20
+ alist.Add(SRpGalician);
+ alist.Add(SRpHungarian);
+ alist.Add(SRpPolish);
+ alist.Add(SRpSwedish);
+ alist.Add(SRpSlovenian);   // 25
+ alist.Add(SRpBasque);
+ alist.Add(SRpJapanese);
 end;
 
 procedure GetBidiDescriptionsA(alist:TStrings);

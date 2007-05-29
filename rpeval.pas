@@ -599,10 +599,12 @@ begin
      // The :=
      Rpparser.NextToken;
      // Look for the value
-     separator(Value);
+     variables(Value);
      // If syntax checking not touch the variable
      if (Not FChecking) then
       (iden As TIdenVariable).Value:=Value;
+     if ((Rpparser.Token=toOperator) and (Rpparser.TokenString[1]=';')) then
+      separator(Value);
     end
     else
      // not a := we must continue
@@ -675,15 +677,16 @@ end;
 
 procedure TRpCustomEvaluator.separator(var Value:TRpValue);
 begin
- variables(Value);
- if Rpparser.Token=toOperator then
-  while (Rpparser.TokenString[1]=';') do
+ if ((Rpparser.Token=toOperator) and (Rpparser.TokenString[1]=';')) then
+ begin
+  while ((Rpparser.Token=toOperator) and (Rpparser.TokenString[1]=';')) do
   begin
    Rpparser.NextToken;
    variables(Value);
-   if Rpparser.Token<>tooperator then
-    Exit
-  end;
+  end
+ end
+ else
+  variables(Value);
 end;
 
 procedure TRpCustomEvaluator.comparations(var Value:TRpValue);
