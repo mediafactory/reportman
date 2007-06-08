@@ -3200,7 +3200,7 @@ begin
  alist.Add(SRpFinn);
  alist.Add(SRpNorwegian);   // 20
  alist.Add(SRpGalician);
- alist.Add(SRpHungarian);
+ alist.Add(SRpRussian);
  alist.Add(SRpPolish);
  alist.Add(SRpSwedish);
  alist.Add(SRpSlovenian);   // 25

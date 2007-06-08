@@ -1336,12 +1336,13 @@ var
   SRpFinn:WideString='Finn';
   SRpNorwegian:WideString='Norwegian';
   SRpGalician:WideString='Galician';
-  SRpHungarian:WideString='Hungarian';
+  SRpRussian:WideString='Russian';
   SRpPolish:WideString='Polish';
   SRpSwedish:WideString='Swedish';
   SRpSlovenian:WideString='Slovenian';
   SRpBasque:WideString='Basque';
   SRpJapanese:WideString='Japanese';
+  SRpErrorGeneratingFax:WideString='Error generating fax';
 
 implementation
 

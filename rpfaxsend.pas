@@ -167,9 +167,9 @@ begin
  else
   abitmap:=rpgdidriver.MetafileToBitmap(metafile,showprogress,true,200,100);
  if not assigned(abitmap) then
-  Raise Exception.Create('Error generating fax');
+  Raise Exception.Create(SRpErrorGeneratingFax);
  if abitmap.Height<1 then
-  Raise Exception.Create('Error generating fax');
+  Raise Exception.Create(SRpErrorGeneratingFax);
  bitmapfile:=ChangeFileExt(RpTempFileName,'.bmp');
  abitmap.SaveToFile(bitmapfile);
  try
