@@ -57,6 +57,9 @@ uses
 {$IFDEF USEZLIB}
  rpmzlib,
 {$ENDIF}
+{$IFDEF USEINDY}
+  IdCoderUUE,IdCoderMIME,
+{$ENDIF}
  rpmdconsts;
 
 
@@ -404,6 +407,13 @@ function AddLineLangByIndex(astring:widestring;newstring:widestring;index:intege
 {$IFDEF MSWINDOWS}
 var
  osinfo:TOsVersionInfo;
+{$ENDIF}
+
+{$IFDEF USEINDY}
+procedure CheckUUDecode(amemstream:TMemoryStream);
+procedure MIMEDecode(amemstream:TMemoryStream);
+function MIMEDecodeString(avalue:string):string;
+procedure MIMEEncode(amemstream:TMemoryStream;DestStream:TStream);
 {$ENDIF}
 
 
@@ -5181,6 +5191,146 @@ begin
 end;
 
 
+{$IFDEF USEINDY}
+procedure CheckUUDecode(amemstream:TMemoryStream);
+var
+ astring:String;
+ memstream:TMemoryStream;
+ i:integer;
+ decoder:TIdDecoderUUE;
+ alist:TStringList;
+begin
+ if amemstream.Size>5 then
+ begin
+  SetLength(astring,5);
+  amemstream.Seek(0,soFromBeginning);
+  amemstream.Read(astring[1],5);
+  if UpperCase(astring)='BEGIN' then
+  begin
+   memstream:=TMemoryStream.Create;
+   try
+    amemstream.Seek(0,soFromBeginning);
+    memstream.SetSize(amemstream.size);
+    amemstream.Read(memstream.memory^,amemstream.size);
+    decoder:=TIdDecoderUUE.Create(nil);
+    try
+     alist:=TStringList.Create;
+     try
+      alist.LoadFromStream(memstream);
+      memstream.SetSize(0);
+      for i:=1 to alist.Count-2 do
+      begin
+       astring:=decoder.DecodeString(alist.Strings[i]);
+       if Length(astring)>0 then
+        memstream.Write(astring[1],Length(astring))
+      end;
+      memstream.Seek(0,soFromBeginning);
+      amemstream.SetSize(0);
+      amemstream.Write(memstream.memory^,memstream.size);
+      amemstream.Seek(0,soFromBeginning);
+     finally
+      alist.free;
+     end;
+    finally
+     decoder.Free;
+    end;
+   finally
+    memstream.free;
+   end;
+  end;
+ end;
+ amemstream.Seek(0,soFromBeginning);
+end;
+
+
+
+procedure MIMEEncode(amemstream:TMemoryStream;DestStream:TStream);
+var
+ acoder:TIdEncoderMIME;
+ astring:string;
+begin
+ amemstream.Seek(0,soFromBeginning);
+ acoder:=TIdEncoderMIME.Create(nil);
+ try
+  astring:=acoder.Encode(amemstream);
+  if Length(astring)>0 then
+   DestStream.Write(astring[1],Length(astring));
+ finally
+  acoder.free;
+ end;
+end;
+
+function MIMEDecodeString(avalue:string):string;
+var
+ decoder:TIdDecoderMIME;
+ alist:TStringList;
+ aresult:string;
+ i:integer;
+ astring:string;
+begin
+ aresult:='';
+ alist:=TStringList.Create;
+ try
+  alist.Text:=avalue;
+  decoder:=TIdDecoderMIME.Create(nil);
+  try
+   for i:=0 to alist.count-1 do
+   begin
+    astring:=decoder.DecodeString(alist.strings[i]);
+    if Length(astring)>0 then
+     aresult:=aresult+astring;
+   end;
+  finally
+   decoder.free;
+  end;
+  Result:=aresult;
+ finally
+  alist.free;
+ end;
+end;
+
+procedure MIMEDecode(amemstream:TMemoryStream);
+var
+ memstream:TMemoryStream;
+ decoder:TIdDecoderMIME;
+ astring:string;
+ alist:TStringList;
+ i:integer;
+begin
+ if amemstream.Size<5 then
+  exit;
+ amemstream.Seek(0,soFromBeginning);
+ alist:=TStringList.Create;
+ memstream:=TMemoryStream.Create;
+ try
+   alist.LoadFromStream(amemstream);
+   decoder:=TIdDecoderMIME.Create(nil);
+   try
+    for i:=0 to alist.count-1 do
+    begin
+     astring:=decoder.DecodeString(alist.strings[i]);
+     if Length(astring)>0 then
+      memstream.Write(astring[1],Length(astring));
+    end;
+   finally
+    decoder.free;
+   end;
+   // Copy the decoded to the result
+   memstream.Seek(0,soFromBeginning);
+   amemstream.SetSize(0);
+   amemstream.Write(memstream.memory^,memstream.size);
+   amemstream.Seek(0,soFromBeginning);
+ finally
+  alist.free;
+  memstream.free;
+ end;
+ amemstream.Seek(0,soFromBeginning);
+end;
+
+
+{$ENDIF}
+
+
 initialization
 
 {$IFNDEF DOTNETD}
@@ -5198,6 +5348,8 @@ begin
  printerconfigfile.free;
  printerconfigfile:=nil;
 end;
+
+
 
 
 end.

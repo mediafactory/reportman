@@ -29,9 +29,6 @@ uses Sysutils,
 {$IFDEF USEVARIANTS}
   Variants,Types,
 {$ENDIF}
-{$IFDEF USEINDY}
-  IdCoderUUE,
-{$ENDIF}
  Classes,rptypes,rpprintitem,rpmdconsts,rpmetafile,rpeval,
  rptypeval,db;
 
@@ -61,6 +58,7 @@ type
   public
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
+   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;override;
   published
    property BrushStyle:integer read FBrushStyle write FBrushStyle default 0;
    property BrushColor:integer read FBrushColor write FBrushColor default $FFFFFF;
@@ -109,9 +107,6 @@ type
    property CachedImage:TRpCachedImage read FCachedImage write FCachedImage default rpCachedNone;
   end;
 
-{$IFDEF USEINDY}
-procedure CheckUUDecode(amemstream:TMemoryStream);
-{$ENDIF}
 
 implementation
 
@@ -371,56 +366,16 @@ begin
  end;
 end;
 
-{$IFDEF USEINDY}
-procedure CheckUUDecode(amemstream:TMemoryStream);
-var
- astring:String;
- memstream:TMemoryStream;
- i:integer;
- decoder:TIdDecoderUUE;
- alist:TStringList;
+function TRpShape.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;
 begin
- if amemstream.Size>5 then
+ Result:=inherited GetExtension(adriver,MaxExtent);
+ if (Shape=rpsHorzLine) then
  begin
-  SetLength(astring,5);
-  amemstream.Seek(0,soFromBeginning);
-  amemstream.Read(astring[1],5);
-  if UpperCase(astring)='BEGIN' then
-  begin
-   memstream:=TMemoryStream.Create;
-   try
-    amemstream.Seek(0,soFromBeginning);
-    memstream.SetSize(amemstream.size);
-    amemstream.Read(memstream.memory^,amemstream.size);
-    decoder:=TIdDecoderUUE.Create(nil);
-    try
-     alist:=TStringList.Create;
-     try
-      alist.LoadFromStream(memstream);
-      memstream.SetSize(0);
-      for i:=1 to alist.Count-2 do
-      begin
-       astring:=decoder.DecodeString(alist.Strings[i]);
-       if Length(astring)>0 then
-        memstream.Write(astring[1],Length(astring))
-      end;
-      memstream.Seek(0,soFromBeginning);
-      amemstream.SetSize(0);
-      amemstream.Write(memstream.memory^,memstream.size);
-      amemstream.Seek(0,soFromBeginning);
-     finally
-      alist.free;
-     end;
-    finally
-     decoder.Free;
-    end;
-   finally
-    memstream.free;
-   end;
-  end;
+  Result.Y:=PenWidth;
+  lastextent:=Result;
  end;
- amemstream.Seek(0,soFromBeginning);
 end;
-{$ENDIF}
+
+
 
 end.

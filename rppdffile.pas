@@ -3154,7 +3154,11 @@ begin
   begin
    if astring[i] in [WideChar('('),WideChar(')'),WideChar('\')] then
     Result:=Result+'\';
-   Result:=Result+astring[i];
+   // Euro exception
+   if astring[i]=widechar(8364) then
+    Result:=Result+chr(128)
+   else
+    Result:=Result+astring[i];
    if (i<Length(astring)) then
    begin
     kerningvalue:=infoprovider.GetKerning(pdffont,adata,WideChar(astring[i]),WideChar(astring[i+1]));
@@ -3197,7 +3201,11 @@ begin
   begin
    if astring[i] in [WideChar('('),WideChar(')'),WideChar('\')] then
     Result:=Result+'\';
-   Result:=Result+astring[i];
+   // Euro character exception
+   if astring[i]=widechar(8364) then
+    Result:=Result+chr(128)
+   else
+    Result:=Result+astring[i];
   end;
   Result:=Result+')';
  end;

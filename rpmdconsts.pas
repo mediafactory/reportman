@@ -1343,6 +1343,10 @@ var
   SRpBasque:WideString='Basque';
   SRpJapanese:WideString='Japanese';
   SRpErrorGeneratingFax:WideString='Error generating fax';
+  SRpErrorFilter:WideString='Error on filter';
+  SRpDecode64:WideString='Decode base 64 string';
+  SRpStringToBin:WideString='Converts string to binary stream';
+  SRpLoadfile:WideString='Loads a file inside a string';
 
 implementation
 

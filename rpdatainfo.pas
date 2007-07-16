@@ -1506,6 +1506,7 @@ var
  param:TRpParam;
  atype:TFieldType;
  avalue:Variant;
+ afilter:String;
  sqlsentence:widestring;
 {$IFDEF USEADO}
   j:integer;
@@ -1881,6 +1882,25 @@ begin
 {$IFDEF FPC}
         CombineAddDataset(TMemDataSet(FSQLInternalQuery),TRpDatainfolist(Collection).Items[index].Dataset,FGroupUnion);
 {$ENDIF}
+       end;
+       // Apply filter if exists
+       index:=params.IndexOf(Alias+'_FILTER');
+       if index>=0 then
+       begin
+        afilter:=Trim(params.Items[index].AsString);
+        if Length(afilter)>0 then
+        begin
+         try
+          TClientDataSet(FSQLInternalQuery).Filter:=afilter;
+          TClientDataSet(FSQLInternalQuery).Filtered:=true;
+         except
+          on E:Exception do
+          begin
+           E.Message:=SRpErrorFilter+'-'+afilter+'-'+E.Message;
+           raise;
+          end;
+         end;
+        end;
        end;
       except
        FDataset:=nil;

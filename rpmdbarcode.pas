@@ -2030,6 +2030,8 @@ begin
   if (Count > BytesNeeded) or
      ((Position + Count >= CodeLen) and (Count > 0)) then
     Result := True;
+  if (Count=1) then
+   Result:=false;
 end;
 
 procedure TRpBarcode.EncodeBinary (var Position : Integer;
@@ -2186,13 +2188,13 @@ var
     LatchMixedToAlpha       = 28;
     ShiftMixedToPunctuation = 29;
     LatchPunctuationToAlpha = 29;
-      
+
   begin
     if UseShift then
       Result := CurrentMode
     else
       Result := NewMode;
-        
+
     case CurrentMode of
       cmAlpha :
         case NewMode of
@@ -2246,7 +2248,7 @@ var
               AddTextCharacter (LatchMixedToPunctuation);
             end;
         end;
-          
+
       cmMixed :
         case NewMode of
           cmAlpha :
@@ -2307,6 +2309,7 @@ var
   Dummy              : Integer;
   NewChar            : Integer;
   Codeword           : Boolean;
+  validtext:boolean;
 
 const
   EndingPadChar      = 29;
@@ -2321,9 +2324,17 @@ begin
   { get characters until it is necessary to step out of text mode }
   while (Position <= CodeLen) and (CurChar.Value >= 0) and
         (not Done) do begin
-    if (Position <= CodeLen) then begin
+    if (Position <= CodeLen) then
+    begin
       GetNextCharacter (NewChar, Codeword, Position, CodeLen);
+      validtext:=true;
       if NewChar>127 then
+       validtext:=false
+      else
+      begin
+       validtext:=(TSPDF417TextCompaction[NewChar].Value>=0);
+      end;
+      if (not validtext) then
       begin
        Position:=Position-2;
        break;
@@ -2332,7 +2343,8 @@ begin
        CurChar := TSPDF417TextCompaction[NewChar];
     end;
 
-    if Codeword then begin
+    if Codeword then
+    begin
       { If the text contains an odd number of letters, follow it with a
         trailing 29 }
       if not FNewTextCodeword then

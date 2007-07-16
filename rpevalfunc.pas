@@ -35,6 +35,9 @@ uses
 {$IFNDEF USEVARIANTS}
   Mask,
 {$ENDIF}
+{$IFDEF USEINDY}
+  IdCoderMIME,
+{$ENDIF}
   rptypeval,rptypes,rpmdcharttypes;
 
 type
@@ -331,6 +334,7 @@ type
    constructor Create(AOWner:TComponent);override;
   end;
 
+
 //Added by Luciano Enzweiler - 17 Dec, 2003 - Start
 // On Brazilian Portuguese we use a lot á, ç, ú, etc. and it wasn't
 // printable on matrix printers.
@@ -418,6 +422,20 @@ type
   end;
 
  TIdenRight=Class(TIdenFunction)
+ protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOWner:TComponent);override;
+  end;
+
+ TIdenDecode64=Class(TIdenFunction)
+ protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOWner:TComponent);override;
+  end;
+
+ TIdenStringToBin=Class(TIdenFunction)
  protected
    function GetRpValue:TRpValue;override;
   public
@@ -527,6 +545,12 @@ type
 {$ENDIF}
 
  TIdenGetINIValue=class(TIdenFunction)
+ protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOWner:TComponent);override;
+  end;
+ TIdenLoadFile=class(TIdenFunction)
  protected
    function GetRpValue:TRpValue;override;
   public
@@ -2659,4 +2683,109 @@ begin
 //    Result := ''
 // end;
 end;
+
+{ TIdenDecode64 }
+
+constructor TIdenDecode64.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='Decode64';
+ Help:=SRpDecode64;
+ model:='function '+'Decode64'+'(s:string):string';
+ aParams:='';
+end;
+
+{**************************************************************************}
+
+function TIdenDecode64.GeTRpValue:TRpValue;
+begin
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ Result:=MIMEDecodeString(String(Params[0]));
+end;
+
+
+{ TIdenLoadFile }
+
+constructor TIdenLoadFile.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='LoadFile';
+ Help:=SRpLoadFile;
+ model:='function '+'LoadFile'+'(s:string):string';
+ aParams:='';
+end;
+
+{**************************************************************************}
+
+function TIdenLoadFile.GeTRpValue:TRpValue;
+var
+ astring:string;
+ memstream:TMemorystream;
+begin
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ astring:=String(Params[0]);
+ memstream:=TMemoryStream.Create;
+ try
+  memstream.LoadFromFile(astring);
+  astring:='';
+  if memstream.size>0 then
+  begin
+   SetLength(astring,memstream.size);
+   memstream.Seek(0,soFromBeginning);
+   memstream.Read(astring[1],memstream.size);
+  end;
+ finally
+  memstream.free;
+ end;
+ Result:=astring;
+end;
+
+
+{ TIdenStringToBin }
+
+constructor TIdenStringToBin.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='StringToBin';
+ Help:=SRpDecode64;
+ model:='function '+'StringToBin'+'(s:string):binary';
+ aParams:='';
+end;
+
+{**************************************************************************}
+
+function TIdenStringToBin.GeTRpValue:TRpValue;
+var
+// i:integer;
+ astring:string;
+ p:pointer;
+begin
+ if Not VarIsString(Params[0]) then
+   Raise TRpNamedException.Create(SRpEvalType,
+         IdenName);
+ astring:=String(Params[0]);
+ if Length(astring)>0 then
+ begin
+  Result:=VarArrayCreate([0,Length(astring)-1],varByte);
+//   for i:=1 to Length(astring) do
+//   begin
+//    Result[i-1]:=byte(astring[i]);
+//   end;
+  p:=VarArrayLock(Result);
+  try
+   Move(astring[1],p^,Length(astring));
+  finally
+   VarArrayUnlock(Result);
+  end;
+ end;
+end;
+
+
 end.

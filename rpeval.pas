@@ -293,6 +293,12 @@ begin
 {$ENDIF}
  iden := TIdenGetINIValue.Create(nil);
  Rpfunctions.AddObject('GETINIVALUE', iden);
+ iden := TIdenDecode64.Create(nil);
+ Rpfunctions.AddObject('DECODE64', iden);
+ iden := TIdenStringToBin.Create(nil);
+ Rpfunctions.AddObject('STRINGTOBIN', iden);
+ iden := TIdenLoadFile.Create(nil);
+ Rpfunctions.AddObject('LOADFILE', iden);
 
  // Functions for compatibility with Gestor reports
  iden:=TIdenVariable.Create(nil);
@@ -1296,8 +1302,10 @@ var
  AStream:TStream;
  FMStream:TMemoryStream;
  Size,readed: Longint;
+ i,lvalue,hvalue:integer;
  Header: TGraphicHeader;
  astring:String;
+ p:Pointer;
 {$IFDEF DOTNETD}
  Temp:TBytes;
 {$ENDIF}
@@ -1312,7 +1320,42 @@ begin
     // Looks for a string (path to file)
     aValue:=EvaluateText(atext);
     if (not ((VarType(aValue)=varString) or (VarType(aValue)=varOleStr))) then
+    begin
+     // Check for a varvinary variant type
+     i:=VarType(aValue);
+     if (i=8209) then
+     begin
+      FMStream:=TMemoryStream.Create;
+      try
+       lvalue:=VarArrayLowBound(aValue,1);
+       hvalue:=VarArrayHighBound(aValue,1);
+//       readed:=1;
+//       lvalue:=VarArrayLowBound(aValue,1);
+//       hvalue:=VarArrayHighBound(aValue,1);
+//       SetLength(astring,hvalue-lvalue+1);
+//       for i:=lvalue to hvalue do
+//       begin
+//        astring[readed]:=char(byte(aValue[i]));
+//        readed:=readed+1;
+//       end;
+       p:=VarArrayLock(aValue);
+       try
+        FMStream.Write(p^,hvalue-lvalue+1);
+       finally
+        VarArrayUnLock(aValue);
+       end;
+       FMStream.Seek(0,soFromBeginning);
+//       FMStream.Write(astring[1],Length(astring));
+//       FMStream.Seek(0,soFromBeginning);
+      except
+       FMStream.free;
+       raise;
+      end;
+      Result:=FMStream;
+      exit;
+     end;
      Raise Exception.Create(SRpFieldNotFound+atext);
+    end;
     afilename:=aValue;
     FMStream:=TMemoryStream.Create;
     try
