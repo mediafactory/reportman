@@ -165,7 +165,7 @@ begin
 {$ENDIF}
 
  Canvas.Font.Color:=alabel.FontColor;
- Canvas.Font.Size:=alabel.FontSize;
+ Canvas.Font.Size:=Round(alabel.FontSize*Scale);
  Canvas.Font.Style:=IntegerToFontStyle(alabel.FontStyle);
  rec.Top:=0;
  rec.Left:=0;
@@ -580,7 +580,7 @@ begin
  Canvas.Font.Name:=aexp.LFontName;
 {$ENDIF}
  Canvas.Font.Color:=aexp.FontColor;
- Canvas.Font.Size:=aexp.FontSize;
+ Canvas.Font.Size:=Round(aexp.FontSize*Scale);
  Canvas.Font.Style:=IntegerToFontStyle(aexp.FontStyle);
 
  rec.Top:=0;

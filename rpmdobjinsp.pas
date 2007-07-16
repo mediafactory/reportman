@@ -711,22 +711,22 @@ begin
  index:=LNames.IndexOf(SRpSLeft);
  if index>=0 then
  begin
-  SetPropertyFull(SRpSLeft,gettextfromtwips(pixelstotwips(NewLeft)));
+  SetPropertyFull(SRpSLeft,gettextfromtwips(pixelstotwips(NewLeft,sizeposint.Scale)));
  end;
  index:=LNames.IndexOf(SRpSTop);
  if index>=0 then
  begin
-  SetPropertyFull(SRpSTop,gettextfromtwips(pixelstotwips(NewTop)));
+  SetPropertyFull(SRpSTop,gettextfromtwips(pixelstotwips(NewTop,sizeposint.Scale)));
  end;
  index:=LNames.IndexOf(SRpSWidth);
  if index>=0 then
  begin
-  SetPropertyFull(SRpSWidth,gettextfromtwips(pixelstotwips(NewWidth)));
+  SetPropertyFull(SRpSWidth,gettextfromtwips(pixelstotwips(NewWidth,sizeposint.Scale)));
  end;
  index:=LNames.IndexOf(SRpSHeight);
  if index>=0 then
  begin
-  SetPropertyFull(SRpSHeight,gettextfromtwips(pixelstotwips(NewHeight)));
+  SetPropertyFull(SRpSHeight,gettextfromtwips(pixelstotwips(NewHeight,sizeposint.Scale)));
  end;
 end;
 
@@ -1203,7 +1203,7 @@ begin
  end
  else
  begin
-  unitsize:=pixelstotwips(1);
+  unitsize:=pixelstotwips(1,TRpSizePosInterface(FSelectedItems.Objects[0]).Scale);
  end;
  if direction in [1,3] then
   unitsize:=-unitsize;

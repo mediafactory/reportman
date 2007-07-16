@@ -235,6 +235,7 @@ type
     ASaveTo: TAction;
     MTypeInfo: TMenuItem;
     MAsync: TMenuItem;
+    ComboScale: TComboBox;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -303,6 +304,7 @@ type
     procedure MObjFontClick(Sender: TObject);
     procedure MTypeInfoClick(Sender: TObject);
     procedure MAsyncClick(Sender: TObject);
+    procedure ComboScaleClick(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrame;
@@ -356,6 +358,7 @@ type
     procedure DoOpenStream(astream:TStream);
     procedure IdleMaximize(Sender:TObject;var done:Boolean);
     procedure UpdateFonts;
+    function GetScale:double;
   public
     { Public declarations }
     report:TRpReport;
@@ -608,6 +611,9 @@ begin
  freportstructure.Align:=alTop;
  freportstructure.Parent:=leftPanel;
  fdesignframe:=TFRpDesignFrame.Create(Self);
+
+ fdesignframe.Scale:=GetScale;
+
  fobjinsp.DesignFrame:=fdesignframe;
  fdesignframe.Align:=alclient;
  fdesignframe.Parent:=MainScrollBox;
@@ -735,6 +741,7 @@ end;
 
 procedure TFRpMainF.FormCreate(Sender: TObject);
 begin
+ ComboScale.ItemIndex:=ComboScale.Items.IndexOf('100%');
 {$IFDEF LINUX}
  usekprinter:=GetEnvironmentVariable('REPMANUSEKPRINTER')='true';
 {$ENDIF}
@@ -2370,5 +2377,19 @@ begin
   report.AsyncExecution:=MAsync.Checked;
  end;
 end;
+
+procedure TFRpMainF.ComboScaleClick(Sender: TObject);
+begin
+ if Assigned(fdesignframe) then
+ begin
+  fdesignframe.Scale:=GetScale;
+ end;
+end;
+
+function TFRpMainF.GetScale:double;
+begin
+ Result:=StrToFloat(Copy(ComboScale.Text,1,Length(ComboScale.Text)-1))/100;
+end;
+
 
 end.

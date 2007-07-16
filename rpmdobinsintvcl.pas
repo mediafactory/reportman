@@ -50,6 +50,7 @@ type
  TRpSizeInterface=class(TGraphicControl)
   private
    FSelected:boolean;
+   FScale:double;
    procedure SetSelected(Value:boolean);
   protected
    fprintitem:TRpCommonComponent;
@@ -58,6 +59,7 @@ type
    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer); override;
    procedure DblClick; override;
+   procedure SetScale(nscale:double);virtual;
   public
    fobjinsp:TComponent;
    procedure UpdatePos;virtual;
@@ -71,6 +73,7 @@ type
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);reintroduce;overload;virtual;
    property printitem:TRpCommonComponent read fprintitem;
    property Selected:Boolean read FSelected write SetSelected;
+   property Scale:double read FScale write SetScale;
  end;
 
  TRpSizePosInterfaceClass=class of TRpSizePosInterface;
@@ -200,6 +203,7 @@ constructor TRpSizeInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent)
 begin
  inherited Create(AOwner);
  fprintitem:=pritem;
+ FScale:=1.0;
  UpdatePos;
 end;
 
@@ -216,12 +220,19 @@ begin
  end;
 end;
 
+
+procedure TRpSizeInterface.SetScale(nscale:double);
+begin
+ FScale:=nscale;
+ UpdatePos;
+end;
+
 procedure TRpSizeInterface.UpdatePos;
 var
  NewWidth,NewHeight:integer;
 begin
- NewWidth:=twipstopixels(TRpCommonComponent(printitem).Width);
- NewHeight:=twipstopixels(TRpCommonComponent(printitem).Height);
+ NewWidth:=twipstopixels(TRpCommonComponent(printitem).Width,scale);
+ NewHeight:=twipstopixels(TRpCommonComponent(printitem).Height,scale);
  SetBounds(Left,Top,NewWidth,NewHeight);
 end;
 
@@ -486,10 +497,10 @@ procedure TRpSizePosInterface.UpdatePos;
 var
  NewLeft,NewTop,NewWidth,NewHeight:integer;
 begin
- NewLeft:=twipstopixels(TRpCOmmonPosComponent(printitem).PosX);
- NewWidth:=twipstopixels(TRpCOmmonPosComponent(printitem).Width);
- NewTop:=twipstopixels(TRpCOmmonPosComponent(printitem).PosY);
- NewHeight:=twipstopixels(TRpCOmmonPosComponent(printitem).Height);
+ NewLeft:=twipstopixels(TRpCOmmonPosComponent(printitem).PosX,scale);
+ NewWidth:=twipstopixels(TRpCOmmonPosComponent(printitem).Width,Scale);
+ NewTop:=twipstopixels(TRpCOmmonPosComponent(printitem).PosY,Scale);
+ NewHeight:=twipstopixels(TRpCOmmonPosComponent(printitem).Height,scale);
  SetBounds(NewLeft,NewTop,NewWidth,NewHeight);
 end;
 
@@ -696,8 +707,8 @@ begin
    // Align to grid
    if (TRpReport(printitem.Report).GridEnabled) then
    begin
-    NewLeft:=AlignToGridPixels(NewLeft,TRpReport(printitem.Report).GridWidth);
-    NewTop:=AlignToGridPixels(NewTop,TRpReport(printitem.Report).GridHeight);
+    NewLeft:=AlignToGridPixels(NewLeft,TRpReport(printitem.Report).GridWidth,Scale);
+    NewTop:=AlignToGridPixels(NewTop,TRpReport(printitem.Report).GridHeight,Scale);
    end;
    FRectangle.SetBounds(Newleft,NewTop,Width,1);
    FRectangle2.SetBounds(Newleft,NewTop+Height,Width,1);
@@ -748,8 +759,8 @@ begin
   // Align to grid
   if (TRpReport(printitem.Report).GridEnabled) then
   begin
-   NewLeft:=AlignToGridPixels(NewLeft,TRpReport(printitem.Report).GridWidth);
-   NewTop:=AlignToGridPixels(NewTop,TRpReport(printitem.Report).GridHeight);
+   NewLeft:=AlignToGridPixels(NewLeft,TRpReport(printitem.Report).GridWidth,Scale);
+   NewTop:=AlignToGridPixels(NewTop,TRpReport(printitem.Report).GridHeight,Scale);
   end;
 
   if Selected then
@@ -757,8 +768,8 @@ begin
    if Assigned(fobjinsp) then
    begin
     insp:=TFRpObjInspVCL(fobjinsp);
-    difx:=TRpCOmmonPosComponent(printitem).PosX-pixelstotwips(NewLeft);
-    dify:=TRpCOmmonPosComponent(printitem).PosY-pixelstotwips(NewTop);
+    difx:=TRpCOmmonPosComponent(printitem).PosX-pixelstotwips(NewLeft,Scale);
+    dify:=TRpCOmmonPosComponent(printitem).PosY-pixelstotwips(NewTop,Scale);
     for i:=0 to insp.SelectedItems.Count-1 do
     begin
      afitem:=TRpSizePosInterface(insp.SelectedItems.Objects[i]);
@@ -779,8 +790,8 @@ begin
   end
   else
   begin
-   TRpCOmmonPosComponent(printitem).PosX:=pixelstotwips(NewLeft);
-   TRpCOmmonPosComponent(printitem).PosY:=pixelstotwips(NewTop);
+   TRpCOmmonPosComponent(printitem).PosX:=pixelstotwips(NewLeft,Scale);
+   TRpCOmmonPosComponent(printitem).PosY:=pixelstotwips(NewTop,Scale);
    UpdatePos;
    if Assigned(fobjinsp) then
     TFRpObjInspVCL(fobjinsp).AddCompItem(Self,Not (ssShift in Shift));
@@ -862,8 +873,8 @@ begin
      // Align to grid
      if TRpSizeModifier(Owner).GridEnabled then
      begin
-      NewLeft:=AlignToGridPixels(NewLeft,TRpSizeModifier(Owner).GridX);
-      NewTop:=AlignToGridPixels(NewTop,TRpSizeModifier(Owner).GridY);
+      NewLeft:=AlignToGridPixels(NewLeft,TRpSizeModifier(Owner).GridX,TRpSizeInterface(Control).Scale);
+      NewTop:=AlignToGridPixels(NewTop,TRpSizeModifier(Owner).GridY,TRpSizeInterface(Control).Scale);
      end;
      // It mantains the bottom corner position
      if NewTop>Control.Top+Control.Height then
@@ -895,13 +906,13 @@ begin
      NewLeft:=Control.Left;
      NewWidth:=Control.Width-FXOrigin+X;
      if TRpSizeModifier(Owner).GridEnabled then
-      NewWidth:=AlignToGridPixels(NewLeft+NewWidth,TRpSizeModifier(Owner).GridX)-NewLeft;
+      NewWidth:=AlignToGridPixels(NewLeft+NewWidth,TRpSizeModifier(Owner).GridX,TRpSizeInterface(Control).Scale)-NewLeft;
      NewTop:=Control.Top-FYOrigin+Y;
 
      // Align to grid
      if TRpSizeModifier(Owner).GridEnabled then
      begin
-      NewTop:=AlignToGridPixels(NewTop,TRpSizeModifier(Owner).GridY);
+      NewTop:=AlignToGridPixels(NewTop,TRpSizeModifier(Owner).GridY,TRpSizeInterface(Control).Scale);
      end;
      // It mantains the bottom corner position
      if NewTop>Control.Top+Control.Height then
@@ -930,12 +941,12 @@ begin
      NewHeight:=Control.Height-FYOrigin+Y;
      NewTop:=Control.Top;
      if TRpSizeModifier(Owner).GridEnabled then
-      NewHeight:=AlignToGridPixels(NewTop+NewHeight,TRpSizeModifier(Owner).GridY)-NewTop;
+      NewHeight:=AlignToGridPixels(NewTop+NewHeight,TRpSizeModifier(Owner).GridY,TRpSizeInterface(Control).Scale)-NewTop;
 
      // Align to grid
      if TRpSizeModifier(Owner).GridEnabled then
      begin
-      NewLeft:=AlignToGridPixels(NewLeft,TRpSizeModifier(Owner).GridX);
+      NewLeft:=AlignToGridPixels(NewLeft,TRpSizeModifier(Owner).GridX,TRpSizeInterface(Control).Scale);
      end;
 
      if NewHeight<0 then
@@ -967,8 +978,8 @@ begin
      NewWidth:=Control.Width-FXOrigin+X;
      if TRpSizeModifier(Owner).GridEnabled then
      begin
-      NewWidth:=AlignToGridPixels(NewLeft+NewWidth,TRpSizeModifier(Owner).GridX)-NewLeft;
-      NewHeight:=AlignToGridPixels(NewTop+NewHeight,TRpSizeModifier(Owner).GridY)-NewTop;
+      NewWidth:=AlignToGridPixels(NewLeft+NewWidth,TRpSizeModifier(Owner).GridX,TRpSizeInterface(Control).Scale)-NewLeft;
+      NewHeight:=AlignToGridPixels(NewTop+NewHeight,TRpSizeModifier(Owner).GridY,TRpSizeInterface(Control).Scale)-NewTop;
      end;
      if NewHeight<0 then
      begin

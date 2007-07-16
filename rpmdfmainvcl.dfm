@@ -1,6 +1,6 @@
 object FRpMainFVCL: TFRpMainFVCL
-  Left = 94
-  Top = 77
+  Left = 269
+  Top = 191
   Width = 575
   Height = 478
   Caption = 'Report Manager Designer'
@@ -31,9 +31,9 @@ object FRpMainFVCL: TFRpMainFVCL
     Left = 0
     Top = 0
     Width = 567
-    Height = 70
+    Height = 68
     AutoSize = True
-    ButtonHeight = 26
+    ButtonHeight = 25
     ButtonWidth = 26
     Caption = 'ToolBar1'
     Color = clBtnFace
@@ -174,98 +174,121 @@ object FRpMainFVCL: TFRpMainFVCL
       Wrap = True
       Style = tbsSeparator
     end
-    object BDelete: TToolButton
+    object ComboScale: TComboBox
       Left = 0
-      Top = 42
+      Top = 43
+      Width = 53
+      Height = 21
+      Style = csDropDownList
+      DropDownCount = 12
+      ItemHeight = 13
+      TabOrder = 0
+      OnClick = ComboScaleClick
+      Items.Strings = (
+        '50%'
+        '75%'
+        '100%'
+        '125%'
+        '150%'
+        '175%'
+        '200%'
+        '250%'
+        '300%'
+        '350%'
+        '400%')
+    end
+    object BDelete: TToolButton
+      Left = 53
+      Top = 41
       Action = ADelete
     end
     object ToolButton11: TToolButton
-      Left = 26
-      Top = 42
+      Left = 79
+      Top = 41
       Action = ACut
     end
     object ToolButton12: TToolButton
-      Left = 52
-      Top = 42
+      Left = 105
+      Top = 41
       Action = ACopy
     end
     object ToolButton13: TToolButton
-      Left = 78
-      Top = 42
+      Left = 131
+      Top = 41
       Action = APaste
     end
     object ToolButton14: TToolButton
-      Left = 104
-      Top = 42
+      Left = 157
+      Top = 41
       Width = 14
       Caption = 'ToolButton14'
       ImageIndex = 17
       Style = tbsSeparator
     end
     object ToolButton15: TToolButton
-      Left = 118
-      Top = 42
+      Left = 171
+      Top = 41
       Action = ALeft
     end
     object ToolButton16: TToolButton
-      Left = 144
-      Top = 42
+      Left = 197
+      Top = 41
       Action = ARight
     end
     object ToolButton17: TToolButton
-      Left = 170
-      Top = 42
+      Left = 223
+      Top = 41
       Action = AUp
     end
     object ToolButton18: TToolButton
-      Left = 196
-      Top = 42
+      Left = 249
+      Top = 41
       Action = ADown
     end
     object ToolButton19: TToolButton
-      Left = 222
-      Top = 42
+      Left = 275
+      Top = 41
       Width = 17
       Caption = 'ToolButton19'
       ImageIndex = 25
       Style = tbsSeparator
     end
     object ToolButton20: TToolButton
-      Left = 239
-      Top = 42
+      Left = 292
+      Top = 41
       Action = AAlignLeft
     end
     object ToolButton21: TToolButton
-      Left = 265
-      Top = 42
+      Left = 318
+      Top = 41
       Action = AAlignRight
     end
     object ToolButton22: TToolButton
-      Left = 291
-      Top = 42
+      Left = 344
+      Top = 41
       Action = AAlignUp
     end
     object ToolButton23: TToolButton
-      Left = 317
-      Top = 42
+      Left = 370
+      Top = 41
       Action = AAlignDown
     end
     object ToolButton24: TToolButton
-      Left = 343
-      Top = 42
+      Left = 396
+      Top = 41
       Action = AAlignHorz
     end
     object ToolButton25: TToolButton
-      Left = 369
-      Top = 42
+      Left = 422
+      Top = 41
       Action = AAlignVert
     end
   end
   object mainscrollbox: TPanel
     Left = 0
-    Top = 70
+    Top = 68
     Width = 567
-    Height = 333
+    Height = 335
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
@@ -274,7 +297,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 181
       Top = 0
       Width = 8
-      Height = 333
+      Height = 335
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
@@ -283,7 +306,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 0
       Top = 0
       Width = 181
-      Height = 333
+      Height = 335
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0

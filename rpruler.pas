@@ -40,8 +40,10 @@ type
     FRType:TRprulertype;
     FBorderStyle:TBorderStyle;
     Fmetrics:TRprulermetric;
+    FScale:double;
     procedure SetRType(value:TRprulertype);
     procedure SetMetrics(Value:TRprulermetric);
+    procedure SetScale(nvalue:double);
    protected
     { Protected declarations }
     procedure Paint;override;
@@ -54,13 +56,14 @@ type
    property BorderStyle:TBorderStyle read FBorderStyle write FBorderStyle default bssingle;
    property RType:TRprulertype read FRType Write SetRType default rVertical;
    property Align;
+   property Scale:double read FScale write SetScale;
    property Metrics:TRprulermetric read FMetrics write SetMetrics default rCms;
    property Visible;
   end;
 
 
 
-function PaintRuler (metrics:TRprulermetric; RType:TRpRulerType; Color:TColor; Width,Height:integer):TBitmap;
+function PaintRuler (metrics:TRprulermetric; pixel_scale:double; RType:TRpRulerType; Color:TColor; Width,Height:integer):TBitmap;
 
 implementation
 
@@ -68,9 +71,13 @@ implementation
 
 var
  bitmapHcm:TBitmap;
+ bitscaleHcm:double;
  bitmapVcm:TBitmap;
+ bitscaleVcm:double;
  bitmapHin:TBitmap;
+ bitscaleHin:double;
  bitmapVin:TBitmap;
+ bitscaleVin:double;
 
 
 
@@ -79,6 +86,7 @@ constructor TRpRuler.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FScale:=1.0;
  FBorderStyle:=bssingle;
  FRType:=rVertical;
  Color:=clWhite;
@@ -90,6 +98,15 @@ begin
  Width:=20;
  Updated:=False;
 end;
+
+procedure TRpRuler.SetScale(nvalue:double);
+begin
+ if FScale=nvalue then
+  exit;
+ FScale:=nvalue;
+ Invalidate;
+end;
+
 
 destructor TRpRuler.Destroy;
 begin
@@ -123,7 +140,7 @@ procedure TRpRuler.Paint;
 var
  bit:TBitmap;
 begin
- bit:=PaintRuler(metrics,RType,Color,Width,Height);
+ bit:=PaintRuler(metrics,fscale,RType,Color,Width,Height);
  Canvas.Draw(0,0,bit);
  if BorderStyle=bsSingle then
  begin
@@ -133,7 +150,7 @@ begin
  end;
 end;
 
-function PaintRuler(metrics:TRprulermetric;RType:TRpRulerType;Color:TColor;Width,Height:integer):TBitmap;
+function PaintRuler(metrics:TRprulermetric;pixel_scale:double;RType:TRpRulerType;Color:TColor;Width,Height:integer):TBitmap;
 var rect,rectrefresh:TRect;
     scale:double;
     value,Clength,CHeight:integer;
@@ -146,6 +163,8 @@ var rect,rectrefresh:TRect;
   han:QPainterH;
     bwidth,bheight:integer;
 begin
+ if pixel_scale=0 then
+  pixel_scale:=1.0;
  Bitmap:=nil;
  bwidth:=2500;
  bheight:=2500;
@@ -155,9 +174,10 @@ begin
   begin
    if assigned(BitmapHcm) then
    begin
-    if width>BitmapHcm.Width then
+    if ((width>BitmapHcm.Width)  or (bitscaleHcm<>pixel_scale)) then
     begin
      bwidth:=width;
+     bitscaleHcm:=pixel_scale;
      BitmapHcm.free;
      BitmapHcm:=nil;
     end
@@ -169,9 +189,10 @@ begin
   begin
    if assigned(BitmapVcm) then
    begin
-    if height>BitmapVcm.Height then
+    if ((height>BitmapVcm.Height) or (bitscaleVcm<>pixel_scale)) then
     begin
      bheight:=height;
+     bitscaleVcm:=pixel_scale;
      BitmapVcm.free;
      BitmapVcm:=nil;
     end
@@ -186,9 +207,10 @@ begin
   begin
    if assigned(BitmapHin) then
    begin
-    if width>BitmapHin.Width then
+    if ((width>BitmapHin.Width) or (bitscaleHin<>pixel_scale)) then
     begin
      bwidth:=width;
+     bitscaleHin:=pixel_scale;
      BitmapHin.free;
      BitmapHin:=nil;
     end
@@ -200,9 +222,10 @@ begin
   begin
    if assigned(BitmapVin) then
    begin
-    if height>BitmapVin.Height then
+    if ((height>BitmapVin.Height) or (bitscaleVin<>pixel_scale)) then
     begin
      bheight:=height;
+     bitscaleVin:=pixel_scale;
      BitmapVin.free;
      BitmapVin:=nil;
     end
@@ -262,8 +285,8 @@ begin
  Rect.Bottom:=Bitmap.Height;
  rectrefresh:=rect;
 
- pixelsperinchx:=Screen.PixelsPerInch;
- pixelsperinchy:=Screen.PixelsPerInch;
+ pixelsperinchx:=Round(Screen.PixelsPerInch*pixel_scale);
+ pixelsperinchy:=Round(Screen.PixelsPerInch*pixel_scale);
 
  Canvas.Rectangle(rect.Left,rect.Top,rect.Right,rect.Bottom);
 

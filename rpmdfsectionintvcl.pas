@@ -83,6 +83,7 @@ type
       X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer);override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
+    procedure SetScale(nscale:double);override;
    public
     backbitmap:TBitmap;
     freportstructure:TFRpStructureVCL;
@@ -121,6 +122,7 @@ const
 
 var
  fbitmap:TBitmap;
+ fbscale:double;
  fbwidth,fbheight:integer;
  fxgrid,fygrid:integer;
  fcolor:TColor;
@@ -137,7 +139,7 @@ begin
  end;
 end;
 
-function DrawBitmapGrid(width,height,xgrid,ygrid:integer;color:TColor;lines:boolean):TBitmap;
+function DrawBitmapGrid(width,height,xgrid,ygrid:integer;color:TColor;lines:boolean;scale:double):TBitmap;
 var
  rec:TRect;
 begin
@@ -155,7 +157,7 @@ begin
    begin
     if ((fbwidth>=width) and (fbheight>=height) and
      (fcolor=color) and (fxgrid=xgrid) and
-     (fygrid=ygrid) and (flines=lines)) then
+     (fygrid=ygrid) and (flines=lines) and (fbscale=scale)) then
     begin
      Result:=fbitmap;
      exit;
@@ -184,7 +186,7 @@ begin
    rec.Bottom:=fbitmap.Height;
    fbitmap.Canvas.FillRect(rec);
 
-   DrawGrid(fbitmap.Canvas,xgrid,ygrid,Width,Height,color,lines,0,0);
+   DrawGrid(fbitmap.Canvas,xgrid,ygrid,Width,Height,color,lines,0,0,scale);
    fbheight:=height;
    fbwidth:=width;
    fcolor:=color;
@@ -846,6 +848,18 @@ begin
 end;
 
 
+procedure TRpSectionInterface.SetScale(nscale:double);
+var
+ i:integer;
+begin
+ inherited SetScale(nscale);
+ for i:=0 to childlist.count-1 do
+ begin
+  TRpSizeInterface(childlist.Items[i]).Scale:=nscale;
+ end;
+end;
+
+
 procedure TRpSectionIntf.Paint;
 var
  report:TRpReport;
@@ -992,7 +1006,7 @@ begin
      // Draw
      DrawGrid(secint.backbitmap.Canvas,Report.GridWidth,Report.GridHeight,
       secint.backbitmap.width,secint.backbitmap.height,Report.GridColor,Report.GridLines,
-       0,0);
+       0,0,secint.scale);
       dodrawgrid:=false;
     end;
    except
@@ -1013,7 +1027,7 @@ begin
  end;
  if dodrawgrid then
  begin
-  abitmap:=DrawBitmapGrid(width,height,report.GridWidth,report.GridHeight,report.GridColor,report.GridLines);
+  abitmap:=DrawBitmapGrid(width,height,report.GridWidth,report.GridHeight,report.GridColor,report.GridLines,secint.Scale);
   if assigned(abitmap) then
   begin
    Canvas.Draw(0,0,abitmap);
@@ -1092,28 +1106,28 @@ begin
  begin
   NewLeft:=FXOrigin;
   if gridenabled then
-   NewLeft:=AlignToGridPixels(NewLeft,GridX);
+   NewLeft:=AlignToGridPixels(NewLeft,GridX,Scale);
   NewWidth:=X-FXOrigin;
  end
  else
  begin
   NewLeft:=X;
   if gridenabled then
-   NewLeft:=AlignToGridPixels(NewLeft,GridX);
+   NewLeft:=AlignToGridPixels(NewLeft,GridX,Scale);
   NewWidth:=FXOrigin-X;
  end;
  if Y>FYOrigin then
  begin
   NewTop:=FYOrigin;
   if gridenabled then
-   NewTop:=AlignToGridPixels(NewTop,GridY);
+   NewTop:=AlignToGridPixels(NewTop,GridY,Scale);
   NewHeight:=Y-FYOrigin;
  end
  else
  begin
   NewTop:=Y;
   if gridenabled then
-   NewTop:=AlignToGridPixels(NewTop,GridY);
+   NewTop:=AlignToGridPixels(NewTop,GridY,Scale);
   NewHeight:=FYOrigin-Y;
  end;
  if NewLeft+NewWidth>FInterface.Width then
@@ -1122,9 +1136,9 @@ begin
   NewHeight:=FInterface.Height-NewTop;
  // Align to grid width and height
  if GridEnabled then
-  NewWidth:=AlignToGridPixels(NewLeft+NewWidth,GridX)-NewLeft;
+  NewWidth:=AlignToGridPixels(NewLeft+NewWidth,GridX,Scale)-NewLeft;
  if GridEnabled then
-  NewHeight:=AlignToGridPixels(NewTop+NewHeight,GridY)-NewTop;
+  NewHeight:=AlignToGridPixels(NewTop+NewHeight,GridY,Scale)-NewTop;
  if NewHeight<CONS_MINHEIGHT then
   Newheight:=CONS_MINHEIGHT;
  if NewWidth<CONS_MINWIDTH then
@@ -1295,14 +1309,15 @@ begin
  begin
   if asizepos is TRpGenTextComponent then
    FRpMainF.Report.AssignDefaultFontTo(TRpGenTextComponent(asizepos));
-  asizepos.PosX:=pixelstotwips(NewLeft);
-  asizepos.PosY:=pixelstotwips(NewTop);
-  asizepos.Height:=pixelstotwips(NewHeight);
-  asizepos.Width:=pixelstotwips(NewWidth);
+  asizepos.PosX:=pixelstotwips(NewLeft,Scale);
+  asizepos.PosY:=pixelstotwips(NewTop,Scale);
+  asizepos.Height:=pixelstotwips(NewHeight,Scale);
+  asizepos.Width:=pixelstotwips(NewWidth,Scale);
   GenerateNewName(asizepos);
   aitem:=TRpSection(printitem).ReportComponents.Add;
   aitem.Component:=asizepos;
   asizeposint.Parent:=FInterface;
+  asizeposint.Scale:=Scale;
   asizeposint.sectionint:=self;
   asizeposint.UpdatePos;
   asizeposint.fobjinsp:=fobjinsp;
@@ -1352,6 +1367,7 @@ begin
  if Assigned(labelint) then
  begin
   labelint.Parent:=FInterface;
+  labelint.Scale:=Scale;
   labelint.sectionint:=self;
   labelint.Visible:=compo.visible;
   labelint.UpdatePos;
@@ -1481,8 +1497,9 @@ begin
 
   asizeposint:=TRpExpressionInterface.Create(Self,asizepos);
 
-  asizepos.PosX:=pixelstotwips(X);
-  asizepos.PosY:=pixelstotwips(Y);
+  asizeposint.Scale:=Scale;
+  asizepos.PosX:=pixelstotwips(X,Scale);
+  asizepos.PosY:=pixelstotwips(Y,Scale);
   apoint.y:=Canvas.TextHeight('Mg');
   if size<=MAX_DROP_SIZE then
   begin
@@ -1493,8 +1510,8 @@ begin
 //   apoint.y:=Canvas.TextHeight('Mg')*((size div MAX_DROP_SIZE)+1);
    apoint.x:=Canvas.TextWidth(getmstring(MAX_DROP_SIZE));
   end;
-  apoint.x:=pixelstotwips(apoint.x);
-  apoint.y:=pixelstotwips(apoint.y);
+  apoint.x:=pixelstotwips(apoint.x,1.0);
+  apoint.y:=pixelstotwips(apoint.y,1.0);
   if asizepos.PosX+apoint.x>printitem.Width then
    apoint.x:=printitem.Width-asizepos.PosX;
 //  if asizepos.PosY+apoint.y>printitem.Height then

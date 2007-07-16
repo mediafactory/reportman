@@ -64,14 +64,14 @@ type
     { Public declarations }
   end;
 
-procedure DrawGrid(Canvas:TCanvas;XWidth,XHeight,PixelsWidth,PixelsHeight:integer;Color:TColor;lines:boolean;XOffset,YOffset:integer);
-function twipstopixels(ATwips:integer):integer;
-function pixelstotwips(apixels:integer):integer;
+procedure DrawGrid(Canvas:TCanvas;XWidth,XHeight,PixelsWidth,PixelsHeight:integer;Color:TColor;lines:boolean;XOffset,YOffset:integer;scale:double);
+function twipstopixels(ATwips:integer;Scale:double):integer;
+function pixelstotwips(apixels:integer;scale:double):integer;
 function FontStyleToCLXInteger(fontstyle:TFontStyles):integer;
 function CLXIntegerToFontStyle(intfontstyle:integer):TFontStyles;
 function IntegerFontStyleToString(intfontstyle:integer):String;
 function AlignToGrid(Value:integer;scale:integer):integer;
-function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
+function AlignToGridPixels(Value:integer;scaletwips:integer;scale:double):integer;
 function RpMessageBox(const Text: WideString; const Caption: WideString = '';
   Buttons: TMessageButtons = [smbOK]; Style: TMessageStyle = smsInformation;
   Default: TMessageButton = smbOK; Escape: TMessageButton = smbCancel): TMessageButton;
@@ -113,11 +113,11 @@ begin
   Result:=Result+scale;
 end;
 
-function AlignToGridPixels(Value:integer;scaletwips:integer):integer;
+function AlignToGridPixels(Value:integer;scaletwips:integer;scale:double):integer;
 begin
- Value:=pixelstotwips(Value);
+ Value:=pixelstotwips(Value,scale);
  Value:=AlignToGrid(Value,scaletwips);
- Result:=twipstopixels(Value);
+ Result:=twipstopixels(Value,scale);
 end;
 
 
@@ -129,7 +129,7 @@ begin
  Result:=Value;
 end;
 
-procedure DrawGrid(Canvas:TCanvas;XWidth,XHeight,PixelsWidth,PixelsHeight:integer;Color:TColor;lines:boolean;XOffset,YOffset:integer);
+procedure DrawGrid(Canvas:TCanvas;XWidth,XHeight,PixelsWidth,PixelsHeight:integer;Color:TColor;lines:boolean;XOffset,YOffset:integer;scale:double);
 var
  pixelsperinchx,pixelsperinchy:integer;
  rect:TRect;
@@ -147,7 +147,8 @@ begin
   exit;
  if XWidth<=0 then
   exit;
-
+ if scale=0 then
+  scale:=1;
  Rect.Left:=0;
  Rect.Top:=0;
  Rect.Right:=PixelsWidth+XOffset;
@@ -155,8 +156,8 @@ begin
 
  if Screen.PixelsPerInch<=0 then
   exit;
- pixelsperinchx:=Screen.PixelsPerInch;
- pixelsperinchy:=Screen.PixelsPerInch;
+ pixelsperinchx:=Round(Screen.PixelsPerInch*scale);
+ pixelsperinchy:=Round(Screen.PixelsPerInch*scale);
  xof:=Round(XOffset/pixelsperinchx*TWIPS_PER_INCHESS);
  yof:=Round(YOffset/pixelsperinchy*TWIPS_PER_INCHESS);
  windowwidth:=Round(TWIPS_PER_INCHESS*(rect.right+XOffset)/pixelsperinchx);
@@ -244,14 +245,16 @@ begin
 end;
 
 
-function twipstopixels(ATwips:integer):integer;
+function twipstopixels(ATwips:integer;Scale:double):integer;
 begin
- Result:=Round((ATwips/TWIPS_PER_INCHESS)*Screen.PixelsPerInch);
+ Result:=Round((ATwips/TWIPS_PER_INCHESS)*Screen.PixelsPerInch*Scale);
 end;
 
-function pixelstotwips(apixels:integer):integer;
+function pixelstotwips(apixels:integer;scale:double):integer;
 begin
- Result:=Round((APixels/Screen.PixelsPerInch)*TWIPS_PER_INCHESS);
+ if scale=0 then
+  scale:=1;
+ Result:=Round((APixels/(Screen.PixelsPerInch*scale))*TWIPS_PER_INCHESS);
 end;
 
 function FontStyleToCLXInteger(fontstyle:TFontStyles):integer;

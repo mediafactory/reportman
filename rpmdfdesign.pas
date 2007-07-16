@@ -103,8 +103,10 @@ type
     FSubReport:TRpSubreport;
     toptitles:Tlist;
     righttitles:Tlist;
+    FScale:double;
     procedure SetReport(Value:TRpReport);
     procedure SecPosChange(Sender:TObject);
+    procedure SetScale(nvalue:double);
   public
     { Public declarations }
     freportstructure:TFRpStructure;
@@ -120,6 +122,8 @@ type
     procedure SelectSubReport(subreport:TRpSubReport);
     property Report:TRpReport read FReport write SetReport;
     property ObjInsp:TFRpObjInsp read FObjInsp write FObjInsp;
+    property CurrentSubreport:TRpSubReport read FSubReport;
+    property Scale:double read FScale write SetScale;
   end;
 
 
@@ -200,6 +204,7 @@ begin
  TopRuler.Width:=389;
  TopRuler.Height:=20;
  TopRuler.Parent:=PTop;
+ FScale:=1.0;
 
  panelheight:=Round(1.5*Font.Size/72*Screen.PixelsPerInch);
  SectionScrollBox:=TRpScrollBox.Create(Self);
@@ -415,6 +420,7 @@ begin
    toptitles.Add(apanel);
 
    asecint:=TRpSectionInterface.Create(Self,fsubreport.Sections.Items[i].Section);
+   asecint.Scale:=Scale;
    asecint.OnPosChange:=SecPosChange;
    asecint.fobjinsp:=FObjInsp;
    asecint.freportstructure:=freportstructure;
@@ -443,6 +449,7 @@ begin
    aruler.RType:=rVertical;
    aruler.Width:=20;
    aruler.Left:=0;
+   aruler.Scale:=Scale;
    aruler.parent:=PLeft;
    leftrulers.Add(aruler);
    aruler.Top:=posx;
@@ -726,7 +733,7 @@ begin
   // Resize with the diference
   if NewTop<>Top then
   begin
-   asection.Height:=pixelstotwips(NewTop-MaxY);
+   asection.Height:=pixelstotwips(NewTop-MaxY,FFrame.Scale);
    if asection.Height=0 then
     asection.Height:=0;
    FFrame.UpdateInterface(true);
@@ -850,10 +857,30 @@ begin
   if NewLeft<0 then
    NewLeft:=0;
 
-  section.Width:=pixelstotwips(NewLeft);
+  section.Width:=pixelstotwips(NewLeft,FFrame.Scale);
 
   FFrame.UpdateInterface(true);
  end;
 end;
+
+procedure TFRpDesignFrame.SetScale(nvalue:double);
+var
+ i:integer;
+ subrep:TRpSubReport;
+begin
+ FScale:=nvalue;
+ TopRuler.Scale:=FScale;
+ for i:=0 to leftrulers.Count-1 do
+ begin
+  TRpRuler(leftrulers.Items[i]).Scale:=FScale;
+ end;
+ if Assigned(FReport) then
+ begin
+  subrep:=CurrentSubReport;
+  SelectSubReport(nil);
+  SelectSubReport(subrep);
+ end;
+end;
+
 
 end.

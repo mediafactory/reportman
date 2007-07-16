@@ -6,8 +6,8 @@ object FRpMainF: TFRpMainF
   ActiveControl = ToolButton1
   AutoScroll = False
   Caption = 'Report Manager Designer'
-  ClientHeight = 387
-  ClientWidth = 576
+  ClientHeight = 394
+  ClientWidth = 891
   Color = clBackground
   Menu = MainMenu1
   Position = poScreenCenter
@@ -23,8 +23,8 @@ object FRpMainF: TFRpMainF
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 576
-    Height = 56
+    Width = 891
+    Height = 30
     AutoSize = True
     ButtonHeight = 26
     ButtonWidth = 26
@@ -193,7 +193,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton11: TToolButton
       HelpType = htContext
-      Left = 425
+      Left = 478
       Top = 4
       Height = 26
       Action = ACut
@@ -201,7 +201,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton12: TToolButton
       HelpType = htContext
-      Left = 451
+      Left = 504
       Top = 4
       Height = 26
       Action = ACopy
@@ -209,14 +209,14 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton13: TToolButton
       HelpType = htContext
-      Left = 477
+      Left = 530
       Top = 4
       Height = 26
       Action = APaste
       Caption = 'Paste'
     end
     object ToolButton14: TToolButton
-      Left = 503
+      Left = 556
       Top = 4
       Width = 14
       Height = 26
@@ -226,7 +226,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton15: TToolButton
       HelpType = htContext
-      Left = 517
+      Left = 570
       Top = 4
       Height = 26
       Action = ALeft
@@ -234,7 +234,7 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton16: TToolButton
       HelpType = htContext
-      Left = 543
+      Left = 596
       Top = 4
       Height = 26
       Action = ARight
@@ -242,23 +242,23 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton17: TToolButton
       HelpType = htContext
-      Left = 1
-      Top = 30
+      Left = 622
+      Top = 4
       Height = 26
       Action = AUp
       Caption = 'Up'
     end
     object ToolButton18: TToolButton
       HelpType = htContext
-      Left = 27
-      Top = 30
+      Left = 648
+      Top = 4
       Height = 26
       Action = ADown
       Caption = 'Down'
     end
     object ToolButton19: TToolButton
-      Left = 53
-      Top = 30
+      Left = 674
+      Top = 4
       Width = 12
       Height = 26
       Style = tbsSeparator
@@ -267,48 +267,48 @@ object FRpMainF: TFRpMainF
     end
     object ToolButton20: TToolButton
       HelpType = htContext
-      Left = 65
-      Top = 30
+      Left = 686
+      Top = 4
       Height = 26
       Action = AAlignLeft
       Caption = 'Left'
     end
     object ToolButton21: TToolButton
       HelpType = htContext
-      Left = 91
-      Top = 30
+      Left = 712
+      Top = 4
       Height = 26
       Action = AAlignRight
       Caption = 'Right'
     end
     object ToolButton22: TToolButton
       HelpType = htContext
-      Left = 117
-      Top = 30
+      Left = 738
+      Top = 4
       Height = 26
       Action = AAlignUp
       Caption = 'Up'
     end
     object ToolButton23: TToolButton
       HelpType = htContext
-      Left = 143
-      Top = 30
+      Left = 764
+      Top = 4
       Height = 26
       Action = AAlignDown
       Caption = 'Down'
     end
     object ToolButton24: TToolButton
       HelpType = htContext
-      Left = 169
-      Top = 30
+      Left = 790
+      Top = 4
       Height = 26
       Action = AAlignHorz
       Caption = 'Horizontal space'
     end
     object ToolButton25: TToolButton
       HelpType = htContext
-      Left = 195
-      Top = 30
+      Left = 816
+      Top = 4
       Height = 26
       Action = AAlignVert
       Caption = 'Vertical space'
@@ -326,18 +326,41 @@ object FRpMainF: TFRpMainF
     end
     object BDelete: TToolButton
       HelpType = htContext
-      Left = 399
+      Left = 452
       Top = 4
       Height = 26
       Action = ADelete
       Caption = 'Delete'
     end
+    object ComboScale: TComboBox
+      Left = 399
+      Top = 4
+      Width = 53
+      Height = 21
+      Style = csDropDownList
+      DropDownCount = 12
+      ItemHeight = 15
+      Items.Strings = (
+        '50%'
+        '75%'
+        '100%'
+        '125%'
+        '150%'
+        '175%'
+        '200%'
+        '250%'
+        '300%'
+        '350%'
+        '400%')
+      TabOrder = 34
+      OnClick = ComboScaleClick
+    end
   end
   object mainscrollbox: TScrollBox
     Left = 0
-    Top = 56
-    Width = 576
-    Height = 310
+    Top = 30
+    Width = 891
+    Height = 343
     HorzScrollBar.Range = 189
     Align = alClient
     BorderStyle = bsNone
@@ -347,7 +370,7 @@ object FRpMainF: TFRpMainF
       Left = 181
       Top = 0
       Width = 8
-      Height = 310
+      Height = 343
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
@@ -356,7 +379,7 @@ object FRpMainF: TFRpMainF
       Left = 0
       Top = 0
       Width = 181
-      Height = 310
+      Height = 343
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -374,8 +397,8 @@ object FRpMainF: TFRpMainF
   end
   object BStatus: TStatusBar
     Left = 0
-    Top = 366
-    Width = 576
+    Top = 373
+    Width = 891
     Height = 21
     Panels = <
       item

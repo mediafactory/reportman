@@ -233,6 +233,7 @@ type
     MAsync: TMenuItem;
     APrintDialog: TAction;
     APrintDialog1: TMenuItem;
+    ComboScale: TComboBox;
     procedure ANewExecute(Sender: TObject);
     procedure AExitExecute(Sender: TObject);
     procedure AOpenExecute(Sender: TObject);
@@ -300,6 +301,7 @@ type
     procedure MTypeInfoClick(Sender: TObject);
     procedure MAsyncClick(Sender: TObject);
     procedure APrintDialogExecute(Sender: TObject);
+    procedure ComboScaleClick(Sender: TObject);
   private
     { Private declarations }
     fdesignframe:TFRpDesignFrameVCL;
@@ -345,6 +347,7 @@ type
     procedure DoOpenFromLib(alibname:String;arepname:WideString);
     procedure IdleMaximize(Sender:TObject;var done:Boolean);
     procedure UpdateFonts;
+    function GetScale:double;
   public
     { Public declarations }
     report:TRpReport;
@@ -546,6 +549,12 @@ begin
  mainscrollbox.Visible:=false;
 end;
 
+function TFRpMainFVCL.GetScale:double;
+begin
+ Result:=StrToFloat(Copy(ComboScale.Text,1,Length(ComboScale.Text)-1))/100;
+end;
+
+
 procedure TFRpMainFVCL.CreateInterface;
 begin
  // Creates an interface for the report
@@ -607,6 +616,9 @@ begin
  freportstructure.Align:=alTop;
  freportstructure.Parent:=leftPanel;
  fdesignframe:=TFRpDesignFrameVCL.Create(Self);
+
+ fdesignframe.Scale:=GetScale;
+
  fobjinsp.DesignFrame:=fdesignframe;
  fdesignframe.Align:=alclient;
  fdesignframe.Parent:=MainScrollBox;
@@ -683,6 +695,7 @@ end;
 
 procedure TFRpMainFVCL.FormCreate(Sender: TObject);
 begin
+ ComboScale.ItemIndex:=ComboScale.Items.IndexOf('100%');
  Application.UpdateFormatSettings:=false;
  // Inits Bools Arrays
  BoolToStr(True,True);
@@ -2052,6 +2065,14 @@ end;
 procedure TFRpMainFVCL.APrintDialogExecute(Sender: TObject);
 begin
  APrintDialog.Checked:=not APrintDialog.Checked;
+end;
+
+procedure TFRpMainFVCL.ComboScaleClick(Sender: TObject);
+begin
+ if Assigned(fdesignframe) then
+ begin
+  fdesignframe.Scale:=GetScale;
+ end;
 end;
 
 end.

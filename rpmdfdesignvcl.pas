@@ -54,8 +54,10 @@ type
     FSubReport:TRpSubreport;
     toptitles:Tlist;
     righttitles:Tlist;
+    FScale:double;
     procedure SetReport(Value:TRpReport);
     procedure SecPosChange(Sender:TObject);
+    procedure SetScale(nvalue:double);
   public
     { Public declarations }
     freportstructure:TFRpStructureVCL;
@@ -71,6 +73,8 @@ type
     procedure SelectSubReport(subreport:TRpSubReport);
     property Report:TRpReport read FReport write SetReport;
     property ObjInsp:TFRpObjInspVCL read FObjInsp write FObjInsp;
+    property Scale:double read FScale write SetScale;
+    property CurrentSubreport:TRpSubReport read FSubReport;
   end;
 
   // A ScrollBox that not scrolls in view focused controls
@@ -210,10 +214,12 @@ end;
 
 
 
+
 constructor TFRpDesignFrameVCL.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FScale:=1.0;
  TopRuler:=TRpRulerVCL.Create(Self);
  TopRuler.Rtype:=rHorizontal;
  TopRuler.Left:=20;
@@ -245,6 +251,27 @@ begin
  PSection.Parent:=SectionSCrollBox;
  PSection.OnPosChange:=SecPosChange;
 end;
+
+
+procedure TFRpDesignFrameVCL.SetScale(nvalue:double);
+var
+ i:integer;
+ subrep:TRpSubReport;
+begin
+ FScale:=nvalue;
+ TopRuler.Scale:=FScale;
+ for i:=0 to leftrulers.Count-1 do
+ begin
+  TRpRulerVCL(leftrulers.Items[i]).Scale:=FScale;
+ end;
+ if Assigned(FReport) then
+ begin
+  subrep:=CurrentSubReport;
+  SelectSubReport(nil);
+  SelectSubReport(subrep);
+ end;
+end;
+
 
 destructor TFRpDesignFrameVCL.Destroy;
 begin
@@ -428,6 +455,7 @@ begin
 
 
    asecint:=TRpSectionInterface.Create(Self,fsubreport.Sections.Items[i].Section);
+   asecint.Scale:=Scale;
    asecint.OnPosChange:=SecPosChange;
    asecint.fobjinsp:=FObjInsp;
    asecint.freportstructure:=freportstructure;
@@ -458,6 +486,7 @@ begin
    aruler.RType:=rVertical;
    aruler.Width:=20;
    aruler.Left:=0;
+   aruler.Scale:=Scale;
    aruler.parent:=PLeft;
    leftrulers.Add(aruler);
    aruler.Top:=posx;
@@ -745,7 +774,7 @@ begin
   // Resize with the diference
   if NewTop<>Top then
   begin
-   asection.Height:=pixelstotwips(NewTop-MaxY);
+   asection.Height:=pixelstotwips(NewTop-MaxY,FFrame.Scale);
    if asection.Height=0 then
     asection.Height:=0;
    FFrame.UpdateInterface(true);
@@ -869,7 +898,7 @@ begin
   if NewLeft<0 then
    NewLeft:=0;
 
-  section.Width:=pixelstotwips(NewLeft);
+  section.Width:=pixelstotwips(NewLeft,FFrame.Scale);
 
   FFrame.UpdateInterface(true);
  end;
