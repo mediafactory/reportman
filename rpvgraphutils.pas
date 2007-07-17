@@ -1787,7 +1787,6 @@ begin
  PDevMode := GlobalLock(DeviceMode);
  try
   PDevMode.dmFields:=PDevMode.dmFields or dm_copies or dm_collate;
-//  PDevMode.dmFields:=dm_copies;
   PDevMode.dmCopies  := copies;
  finally
   GlobalUnLock(DeviceMode);

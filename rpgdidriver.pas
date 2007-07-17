@@ -545,8 +545,11 @@ begin
   // Gets pagesize
   asize:=GetPageSize(qtsize);
   pagemargins:=GetPageMarginsTWIPS;
-  SetPrinterCopies(hardwarecopies);
-  SetPrinterCollation(hardwarecollate);
+  if not noenddoc then
+  begin
+   SetPrinterCopies(hardwarecopies);
+   SetPrinterCollation(hardwarecollate);
+  end;
 
   if not noenddoc then
    if DrawerBefore then

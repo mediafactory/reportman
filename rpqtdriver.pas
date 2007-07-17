@@ -413,7 +413,11 @@ begin
 {$ENDIF}
    end;
   if Not Printer.Printing then
+  begin
+   printer.copies:=1;
+   QPrinter_setNumCopies(QprinterH(printer.Handle),1);
    printer.BeginDoc;
+  end;
   intdpix:=printer.XDPI;
   intdpiy:=printer.YDPI;
  end
@@ -984,6 +988,8 @@ begin
    if topage>metafile.CurrentPageCount-1 then
     topage:=metafile.CurrentPageCount-1;
   end;
+  printer.Copies:=1;
+  QPrinter_setNumCopies(QprinterH(printer.Handle),1);
   printer.Begindoc;
   try
    dpix:=printer.XDPI;

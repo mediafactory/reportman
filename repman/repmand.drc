@@ -8,124 +8,147 @@
   resources were bound to the produced executable.
 */
 
-#define ZMessages_SUnsupportedParameterType 64624
-#define ZMessages_SUnsupportedDataType 64625
-#define ZMessages_SErrorConvertionField 64626
-#define ZMessages_SUnknownError 64627
-#define ZMessages_SFieldNotFound1 64628
-#define ZMessages_SLoginPromptFailure 64629
-#define ZMessages_STableIsNotSpecified 64640
-#define ZMessages_SLiveResultSetsAreNotSupported 64641
-#define ZMessages_SInvalidInputParameterCount 64642
-#define ZMessages_SIsolationIsNotSupported 64643
-#define ZMessages_SColumnWasNotFound 64644
-#define ZMessages_SWrongTypeForBlobParameter 64645
-#define ZMessages_SIncorrectConnectionURL 64646
-#define ZMessages_SUnsupportedProtocol 64647
-#define ZMessages_SOperationIsNotAllowed1 64648
-#define ZMessages_SOperationIsNotAllowed2 64649
-#define ZMessages_SOperationIsNotAllowed4 64650
-#define ZMessages_SInvalidOperationInTrans 64651
-#define ZMessages_SPattern2Long 64652
-#define ZMessages_SStatementIsNotAllowed 64653
-#define ZMessages_SInvalidState 64654
-#define ZMessages_SErrorConvertion 64655
-#define ZMessages_SRowBufferIsNotAssigned 64656
-#define ZMessages_SColumnIsNotAccessable 64657
-#define ZMessages_SConvertionIsNotPossible 64658
-#define ZMessages_SCanNotAccessBlobRecord 64659
-#define ZMessages_SRowDataIsNotAvailable 64660
-#define ZMessages_SResolverIsNotSpecified 64661
-#define ZMessages_SResultsetIsAlreadyOpened 64662
-#define ZMessages_SCanNotUpdateEmptyRow 64663
-#define ZMessages_SCanNotUpdateDeletedRow 64664
-#define ZMessages_SCanNotDeleteEmptyRow 64665
-#define ZMessages_SCannotUseCommit 64666
-#define ZMessages_SCannotUseRollBack 64667
-#define ZMessages_SCanNotUpdateComplexQuery 64668
-#define ZMessages_SCanNotUpdateThisQueryType 64669
-#define ZMessages_SDriverWasNotFound 64670
-#define ZMessages_SCanNotConnectToServer 64671
-#define ZMessages_SSQLError1 64672
-#define ZMessages_SListCapacityError 64673
-#define ZMessages_SListCountError 64674
-#define ZMessages_SListIndexError 64675
-#define ZMessages_SClonningIsNotSupported 64676
-#define ZMessages_SImmutableOpIsNotAllowed 64677
-#define ZMessages_STypesMismatch 64678
-#define ZMessages_SUnsupportedOperation 64679
-#define ZMessages_SLibraryNotFound 64680
-#define ZMessages_SEncodeDateIsNotSupported 64681
-#define ZMessages_SEncodeTimeIsNotSupported 64682
-#define ZMessages_SEncodeTimestampIsNotSupported 64683
-#define ZMessages_SDecodeDateIsNotSupported 64684
-#define ZMessages_SDecodeTimeIsNotSupported 64685
-#define ZMessages_SDecodeTimestampIsNotSupported 64686
-#define ZMessages_SCanNotRetrieveResultSetData 64687
-#define QDBConsts_SPriorRecord 64688
-#define QDBConsts_SNextRecord 64689
-#define QDBConsts_SLastRecord 64690
-#define QDBConsts_SInsertRecord 64691
-#define QDBConsts_SDeleteRecord 64692
-#define QDBConsts_SEditRecord 64693
-#define QDBConsts_SPostEdit 64694
-#define QDBConsts_SCancelEdit 64695
-#define QDBConsts_SConfirmCaption 64696
-#define QDBConsts_SRefreshRecord 64697
-#define QDBConsts_SDeleteRecordQuestion 64698
-#define QDBConsts_SDeleteMultipleRecordsQuestion 64699
-#define QDBConsts_SDataSourceFixed 64700
-#define QDBConsts_SPropDefByLookup 64701
-#define QDBConsts_STooManyColumns 64702
-#define QDBConsts_SRemoteLogin 64703
-#define ADOConst_SMissingConnection 64704
-#define ADOConst_SNoDetailFilter 64705
-#define ADOConst_SBookmarksRequired 64706
-#define ADOConst_SMissingCommandText 64707
-#define ADOConst_SNoResultSet 64708
-#define ADOConst_SADOCreateError 64709
-#define ADOConst_SEventsNotSupported 64710
-#define ADOConst_SUsupportedFieldType 64711
-#define ADOConst_SConnectionRequired 64712
-#define ADOConst_SCantRequery 64713
-#define ADOConst_SNoFilterOptions 64714
-#define ADOConst_SRecordsetNotOpen 64715
-#define ADOConst_sNameAttr 64716
-#define ADOConst_sValueAttr 64717
-#define rpdataset_SRpInvOpRpdata 64718
-#define QDBConsts_SFirstRecord 64719
-#define bdeconst_SNoReferenceTableName 64720
-#define bdeconst_SEmptySQLStatement 64721
-#define bdeconst_SNoParameterValue 64722
-#define bdeconst_SLoginError 64723
-#define bdeconst_SInitError 64724
-#define bdeconst_SIDAPILangID 64725
-#define bdeconst_SBDEError 64726
-#define bdeconst_SIndexDoesNotExist 64727
-#define bdeconst_SNoTableName 64728
-#define bdeconst_SNoDataSetField 64729
-#define bdeconst_SNoCachedUpdates 64730
-#define bdeconst_SInvalidAliasName 64731
-#define bdeconst_SNoFieldAccess 64732
-#define bdeconst_SUntitled 64733
-#define bdeconst_SLocalTransDirty 64734
-#define ADOConst_SInvalidEnumValue 64735
+#define QDBConsts_SInsertRecord 64608
+#define QDBConsts_SDeleteRecord 64609
+#define QDBConsts_SEditRecord 64610
+#define QDBConsts_SPostEdit 64611
+#define QDBConsts_SCancelEdit 64612
+#define QDBConsts_SConfirmCaption 64613
+#define QDBConsts_SRefreshRecord 64614
+#define QDBConsts_SDeleteRecordQuestion 64615
+#define QDBConsts_SDeleteMultipleRecordsQuestion 64616
+#define QDBConsts_SDataSourceFixed 64617
+#define QDBConsts_SPropDefByLookup 64618
+#define QDBConsts_STooManyColumns 64619
+#define QDBConsts_SRemoteLogin 64620
+#define ADOConst_SMissingCommandText 64624
+#define ADOConst_SNoResultSet 64625
+#define ADOConst_SADOCreateError 64626
+#define ADOConst_SEventsNotSupported 64627
+#define ADOConst_SUsupportedFieldType 64628
+#define ADOConst_SConnectionRequired 64629
+#define ADOConst_SCantRequery 64630
+#define ADOConst_SNoFilterOptions 64631
+#define ADOConst_SRecordsetNotOpen 64632
+#define ADOConst_sNameAttr 64633
+#define ADOConst_sValueAttr 64634
+#define rpdataset_SRpInvOpRpdata 64635
+#define QDBConsts_SFirstRecord 64636
+#define QDBConsts_SPriorRecord 64637
+#define QDBConsts_SNextRecord 64638
+#define QDBConsts_SLastRecord 64639
+#define bdeconst_SLoginError 64640
+#define bdeconst_SInitError 64641
+#define bdeconst_SIDAPILangID 64642
+#define bdeconst_SBDEError 64643
+#define bdeconst_SIndexDoesNotExist 64644
+#define bdeconst_SNoTableName 64645
+#define bdeconst_SNoDataSetField 64646
+#define bdeconst_SNoCachedUpdates 64647
+#define bdeconst_SInvalidAliasName 64648
+#define bdeconst_SNoFieldAccess 64649
+#define bdeconst_SUntitled 64650
+#define bdeconst_SLocalTransDirty 64651
+#define ADOConst_SInvalidEnumValue 64652
+#define ADOConst_SMissingConnection 64653
+#define ADOConst_SNoDetailFilter 64654
+#define ADOConst_SBookmarksRequired 64655
+#define bdeconst_SAutoSessionExclusive 64656
+#define bdeconst_SAutoSessionExists 64657
+#define bdeconst_SAutoSessionActive 64658
+#define bdeconst_SDuplicateDatabaseName 64659
+#define bdeconst_SDuplicateSessionName 64660
+#define bdeconst_SInvalidSessionName 64661
+#define bdeconst_SDatabaseNameMissing 64662
+#define bdeconst_SSessionNameMissing 64663
+#define bdeconst_SDatabaseOpen 64664
+#define bdeconst_SDatabaseClosed 64665
+#define bdeconst_SDatabaseHandleSet 64666
+#define bdeconst_SSessionActive 64667
+#define bdeconst_SHandleError 64668
+#define bdeconst_SNoReferenceTableName 64669
+#define bdeconst_SEmptySQLStatement 64670
+#define bdeconst_SNoParameterValue 64671
+#define ZMessages_SCircularLink 64672
+#define ZMessages_SBookmarkWasNotFound 64673
+#define ZMessages_SIncorrectSearchFieldsNumber 64674
+#define ZMessages_SInvalidOperationInTrans 64675
+#define ZMessages_SIncorrectSymbol 64676
+#define ZMessages_SIncorrectToken 64677
+#define ZMessages_SPattern2Long 64678
+#define ZMessages_SStatementIsNotAllowed 64679
+#define ZMessages_SInvalidState 64680
+#define ZMessages_SErrorConvertion 64681
+#define ZMessages_SUnsupportedParameterType 64682
+#define ZMessages_SUnsupportedDataType 64683
+#define ZMessages_SErrorConvertionField 64684
+#define ZMessages_SUnknownError 64685
+#define ZMessages_SFieldNotFound1 64686
+#define ZMessages_SLoginPromptFailure 64687
+#define ZMessages_STableIsNotSpecified 64688
+#define ZMessages_SLiveResultSetsAreNotSupported 64689
+#define ZMessages_SInvalidInputParameterCount 64690
+#define ZMessages_SIsolationIsNotSupported 64691
+#define ZMessages_SColumnWasNotFound 64692
+#define ZMessages_SWrongTypeForBlobParameter 64693
+#define ZMessages_SIncorrectConnectionURL 64694
+#define ZMessages_SUnsupportedProtocol 64695
+#define ZMessages_SConnectionIsNotAssigned 64696
+#define ZMessages_SQueryIsEmpty 64697
+#define ZMessages_SCanNotExecuteMoreQueries 64698
+#define ZMessages_SOperationIsNotAllowed1 64699
+#define ZMessages_SOperationIsNotAllowed2 64700
+#define ZMessages_SOperationIsNotAllowed4 64701
+#define ZMessages_SNoMoreRecords 64702
+#define ZMessages_SCanNotOpenResultSet 64703
+#define ZMessages_SRowBufferIsNotAssigned 64704
+#define ZMessages_SColumnIsNotAccessable 64705
+#define ZMessages_SConvertionIsNotPossible 64706
+#define ZMessages_SCanNotAccessBlobRecord 64707
+#define ZMessages_SRowDataIsNotAvailable 64708
+#define ZMessages_SResolverIsNotSpecified 64709
+#define ZMessages_SResultsetIsAlreadyOpened 64710
+#define ZMessages_SCanNotUpdateEmptyRow 64711
+#define ZMessages_SCanNotUpdateDeletedRow 64712
+#define ZMessages_SCanNotDeleteEmptyRow 64713
+#define ZMessages_SCannotUseCommit 64714
+#define ZMessages_SCannotUseRollBack 64715
+#define ZMessages_SCanNotUpdateComplexQuery 64716
+#define ZMessages_SCanNotUpdateThisQueryType 64717
+#define ZMessages_SDriverWasNotFound 64718
+#define ZMessages_SCanNotConnectToServer 64719
+#define ZMessages_SUnexpectedExprEnd 64720
+#define ZMessages_SRightBraceExpected 64721
+#define ZMessages_SParametersError 64722
+#define ZMessages_SExpectedMoreParams 64723
+#define ZMessages_SInvalidVarByteArray 64724
+#define ZMessages_SVariableAlreadyExists 64725
+#define ZMessages_STypesMismatch 64726
+#define ZMessages_SUnsupportedOperation 64727
+#define ZMessages_SLibraryNotFound 64728
+#define ZMessages_SEncodeDateIsNotSupported 64729
+#define ZMessages_SEncodeTimeIsNotSupported 64730
+#define ZMessages_SEncodeTimestampIsNotSupported 64731
+#define ZMessages_SDecodeDateIsNotSupported 64732
+#define ZMessages_SDecodeTimeIsNotSupported 64733
+#define ZMessages_SDecodeTimestampIsNotSupported 64734
+#define ZMessages_SCanNotRetrieveResultSetData 64735
 #define IBXConst_SIB65feature 64736
 #define IBXConst_SLoginPromptFailure 64737
 #define IBXConst_SIB70feature 64738
-#define bdeconst_SAutoSessionExclusive 64739
-#define bdeconst_SAutoSessionExists 64740
-#define bdeconst_SAutoSessionActive 64741
-#define bdeconst_SDuplicateDatabaseName 64742
-#define bdeconst_SDuplicateSessionName 64743
-#define bdeconst_SInvalidSessionName 64744
-#define bdeconst_SDatabaseNameMissing 64745
-#define bdeconst_SSessionNameMissing 64746
-#define bdeconst_SDatabaseOpen 64747
-#define bdeconst_SDatabaseClosed 64748
-#define bdeconst_SDatabaseHandleSet 64749
-#define bdeconst_SSessionActive 64750
-#define bdeconst_SHandleError 64751
+#define ZMessages_SSQLError1 64739
+#define ZMessages_SListCapacityError 64740
+#define ZMessages_SListCountError 64741
+#define ZMessages_SListIndexError 64742
+#define ZMessages_SClonningIsNotSupported 64743
+#define ZMessages_SImmutableOpIsNotAllowed 64744
+#define ZMessages_SStackIsEmpty 64745
+#define ZMessages_SVariableWasNotFound 64746
+#define ZMessages_SFunctionWasNotFound 64747
+#define ZMessages_SInternalError 64748
+#define ZMessages_SSyntaxErrorNear 64749
+#define ZMessages_SSyntaxError 64750
+#define ZMessages_SUnknownSymbol 64751
 #define IBXConst_SNoOptionsSet 64752
 #define IBXConst_SNoDestinationDirectory 64753
 #define IBXConst_SNosourceDirectory 64754
@@ -912,6 +935,77 @@
 #define SysConst_SAccessDenied 65535
 STRINGTABLE
 BEGIN
+	QDBConsts_SInsertRecord,	"Insert record"
+	QDBConsts_SDeleteRecord,	"Delete record"
+	QDBConsts_SEditRecord,	"Edit record"
+	QDBConsts_SPostEdit,	"Post edit"
+	QDBConsts_SCancelEdit,	"Cancel edit"
+	QDBConsts_SConfirmCaption,	"Confirm"
+	QDBConsts_SRefreshRecord,	"Refresh data"
+	QDBConsts_SDeleteRecordQuestion,	"Delete record?"
+	QDBConsts_SDeleteMultipleRecordsQuestion,	"Delete all selected records?"
+	QDBConsts_SDataSourceFixed,	"Operation not allowed in a DBCtrlGrid"
+	QDBConsts_SPropDefByLookup,	"Property already defined by lookup field"
+	QDBConsts_STooManyColumns,	"Grid requested to display more than 256 columns"
+	QDBConsts_SRemoteLogin,	"Remote Login"
+	ADOConst_SMissingCommandText,	"Missing %s property"
+	ADOConst_SNoResultSet,	"CommandText does not return a result set"
+	ADOConst_SADOCreateError,	"Error creating object.  Please verify that the Microsoft Data Access Components 2.1 (or later) have been properly installed"
+	ADOConst_SEventsNotSupported,	"Events are not supported with server side TableDirect cursors"
+	ADOConst_SUsupportedFieldType,	"Unsupported field type (%s) in field %s"
+	ADOConst_SConnectionRequired,	"A connection component is required for async ExecuteOptions"
+	ADOConst_SCantRequery,	"Cannot perform a requery after connection has changed"
+	ADOConst_SNoFilterOptions,	"FilterOptions are not supported"
+	ADOConst_SRecordsetNotOpen,	"Recordset is not open"
+	ADOConst_sNameAttr,	"Name"
+	ADOConst_sValueAttr,	"Value"
+	rpdataset_SRpInvOpRpdata,	"Invalid operation for TRpDataset"
+	QDBConsts_SFirstRecord,	"First record"
+	QDBConsts_SPriorRecord,	"Prior record"
+	QDBConsts_SNextRecord,	"Next record"
+	QDBConsts_SLastRecord,	"Last record"
+	bdeconst_SLoginError,	"Cannot connect to database '%s'"
+	bdeconst_SInitError,	"An error occurred while attempting to initialize the Borland Database Engine (error $%.4x)"
+	bdeconst_SIDAPILangID,	"0009"
+	bdeconst_SBDEError,	"BDE error $%.4x"
+	bdeconst_SIndexDoesNotExist,	"Index does not exist. Index: %s"
+	bdeconst_SNoTableName,	"Missing TableName property"
+	bdeconst_SNoDataSetField,	"Missing DataSetField property"
+	bdeconst_SNoCachedUpdates,	"Not in cached update mode"
+	bdeconst_SInvalidAliasName,	"Invalid alias name %s"
+	bdeconst_SNoFieldAccess,	"Cannot access field '%s' in a filter"
+	bdeconst_SUntitled,	"Untitled Application"
+	bdeconst_SLocalTransDirty,	"The transaction isolation level must be dirty read for local databases"
+	ADOConst_SInvalidEnumValue,	"Invalid Enum Value"
+	ADOConst_SMissingConnection,	"Missing Connection or ConnectionString"
+	ADOConst_SNoDetailFilter,	"Filter property cannot be used for detail tables"
+	ADOConst_SBookmarksRequired,	"Dataset does not support bookmarks, which are required for multi-record data controls"
+	bdeconst_SAutoSessionExclusive,	"Cannot enable AutoSessionName property with more than one session on a form or data-module"
+	bdeconst_SAutoSessionExists,	"Cannot add a session to the form or data-module while session '%s' has AutoSessionName enabled"
+	bdeconst_SAutoSessionActive,	"Cannot modify SessionName while AutoSessionName is enabled"
+	bdeconst_SDuplicateDatabaseName,	"Duplicate database name '%s'"
+	bdeconst_SDuplicateSessionName,	"Duplicate session name '%s'"
+	bdeconst_SInvalidSessionName,	"Invalid session name %s"
+	bdeconst_SDatabaseNameMissing,	"Database name missing"
+	bdeconst_SSessionNameMissing,	"Session name missing"
+	bdeconst_SDatabaseOpen,	"Cannot perform this operation on an open database"
+	bdeconst_SDatabaseClosed,	"Cannot perform this operation on a closed database"
+	bdeconst_SDatabaseHandleSet,	"Database handle owned by a different session"
+	bdeconst_SSessionActive,	"Cannot perform this operation on an active session"
+	bdeconst_SHandleError,	"Error creating cursor handle"
+	bdeconst_SNoReferenceTableName,	"ReferenceTableName not specified for field '%s'"
+	bdeconst_SEmptySQLStatement,	"No SQL statement available"
+	bdeconst_SNoParameterValue,	"No value for parameter '%s'"
+	ZMessages_SCircularLink,	"Datasource makes a circular link"
+	ZMessages_SBookmarkWasNotFound,	"Bookmark was not found"
+	ZMessages_SIncorrectSearchFieldsNumber,	"Incorrect number of search field values"
+	ZMessages_SInvalidOperationInTrans,	"Invalid operation in explicit transaction mode"
+	ZMessages_SIncorrectSymbol,	"Incorrect symbol in field list \"%s\"."
+	ZMessages_SIncorrectToken,	"Incorrect token followed by \":\""
+	ZMessages_SPattern2Long,	"Pattern is too long"
+	ZMessages_SStatementIsNotAllowed,	"Statement is not allowed"
+	ZMessages_SInvalidState,	"Invalid state"
+	ZMessages_SErrorConvertion,	"Convertion error"
 	ZMessages_SUnsupportedParameterType,	"Unsupported parameter type"
 	ZMessages_SUnsupportedDataType,	"Unsupported data type"
 	ZMessages_SErrorConvertionField,	"Convertion error for field \"%s\" to SQLType \"%s\""
@@ -926,14 +1020,14 @@ BEGIN
 	ZMessages_SWrongTypeForBlobParameter,	"Wrong type for Blob parameter"
 	ZMessages_SIncorrectConnectionURL,	"Incorrect connection URL: %s"
 	ZMessages_SUnsupportedProtocol,	"Unsupported protocol: %s"
+	ZMessages_SConnectionIsNotAssigned,	"Database connection component is not assigned"
+	ZMessages_SQueryIsEmpty,	"SQL Query is empty"
+	ZMessages_SCanNotExecuteMoreQueries,	"Cannot execute more then one query"
 	ZMessages_SOperationIsNotAllowed1,	"Operation is not allowed in FORWARD ONLY mode"
 	ZMessages_SOperationIsNotAllowed2,	"Operation is not allowed in READ ONLY mode"
 	ZMessages_SOperationIsNotAllowed4,	"Operation is not allowed for closed dataset"
-	ZMessages_SInvalidOperationInTrans,	"Invalid operation in explicit transaction mode"
-	ZMessages_SPattern2Long,	"Pattern is too long"
-	ZMessages_SStatementIsNotAllowed,	"Statement is not allowed"
-	ZMessages_SInvalidState,	"Invalid state"
-	ZMessages_SErrorConvertion,	"Convertion error"
+	ZMessages_SNoMoreRecords,	"No more records in the ResultSet"
+	ZMessages_SCanNotOpenResultSet,	"Can not open a ResultSet"
 	ZMessages_SRowBufferIsNotAssigned,	"Row buffer is not assigned"
 	ZMessages_SColumnIsNotAccessable,	"Column with index %d is not accessable"
 	ZMessages_SConvertionIsNotPossible,	"Convertion is not possible for column %d from %s to %s"
@@ -950,12 +1044,12 @@ BEGIN
 	ZMessages_SCanNotUpdateThisQueryType,	"Can not update this query type"
 	ZMessages_SDriverWasNotFound,	"Requested database driver was not found"
 	ZMessages_SCanNotConnectToServer,	"Can not connect to SQL server"
-	ZMessages_SSQLError1,	"SQL Error: %s"
-	ZMessages_SListCapacityError,	"List capacity out of bounds (%d)"
-	ZMessages_SListCountError,	"List count out of bounds (%d)"
-	ZMessages_SListIndexError,	"List index out of bounds (%d)"
-	ZMessages_SClonningIsNotSupported,	"Clonning is not supported by this class"
-	ZMessages_SImmutableOpIsNotAllowed,	"The operation is not allowed for immutable collection"
+	ZMessages_SUnexpectedExprEnd,	"Unexpected end of expression"
+	ZMessages_SRightBraceExpected,	") expected"
+	ZMessages_SParametersError,	"Expected %d parameters but was found %d"
+	ZMessages_SExpectedMoreParams,	"Expected more then 2 parameters"
+	ZMessages_SInvalidVarByteArray,	"Invalid VarByte array"
+	ZMessages_SVariableAlreadyExists,	"Variable \"%s\" already exists"
 	ZMessages_STypesMismatch,	"Types mismatch"
 	ZMessages_SUnsupportedOperation,	"Unsupported operation"
 	ZMessages_SLibraryNotFound,	"No dynamic library from the list %s found"
@@ -966,70 +1060,22 @@ BEGIN
 	ZMessages_SDecodeTimeIsNotSupported,	"This version is not is no supported isc_decode_sql_time"
 	ZMessages_SDecodeTimestampIsNotSupported,	"This version is not is no supported isc_decode_sql_timestamp"
 	ZMessages_SCanNotRetrieveResultSetData,	"Can not retrieve ResultSet data"
-	QDBConsts_SPriorRecord,	"Prior record"
-	QDBConsts_SNextRecord,	"Next record"
-	QDBConsts_SLastRecord,	"Last record"
-	QDBConsts_SInsertRecord,	"Insert record"
-	QDBConsts_SDeleteRecord,	"Delete record"
-	QDBConsts_SEditRecord,	"Edit record"
-	QDBConsts_SPostEdit,	"Post edit"
-	QDBConsts_SCancelEdit,	"Cancel edit"
-	QDBConsts_SConfirmCaption,	"Confirm"
-	QDBConsts_SRefreshRecord,	"Refresh data"
-	QDBConsts_SDeleteRecordQuestion,	"Delete record?"
-	QDBConsts_SDeleteMultipleRecordsQuestion,	"Delete all selected records?"
-	QDBConsts_SDataSourceFixed,	"Operation not allowed in a DBCtrlGrid"
-	QDBConsts_SPropDefByLookup,	"Property already defined by lookup field"
-	QDBConsts_STooManyColumns,	"Grid requested to display more than 256 columns"
-	QDBConsts_SRemoteLogin,	"Remote Login"
-	ADOConst_SMissingConnection,	"Missing Connection or ConnectionString"
-	ADOConst_SNoDetailFilter,	"Filter property cannot be used for detail tables"
-	ADOConst_SBookmarksRequired,	"Dataset does not support bookmarks, which are required for multi-record data controls"
-	ADOConst_SMissingCommandText,	"Missing %s property"
-	ADOConst_SNoResultSet,	"CommandText does not return a result set"
-	ADOConst_SADOCreateError,	"Error creating object.  Please verify that the Microsoft Data Access Components 2.1 (or later) have been properly installed"
-	ADOConst_SEventsNotSupported,	"Events are not supported with server side TableDirect cursors"
-	ADOConst_SUsupportedFieldType,	"Unsupported field type (%s) in field %s"
-	ADOConst_SConnectionRequired,	"A connection component is required for async ExecuteOptions"
-	ADOConst_SCantRequery,	"Cannot perform a requery after connection has changed"
-	ADOConst_SNoFilterOptions,	"FilterOptions are not supported"
-	ADOConst_SRecordsetNotOpen,	"Recordset is not open"
-	ADOConst_sNameAttr,	"Name"
-	ADOConst_sValueAttr,	"Value"
-	rpdataset_SRpInvOpRpdata,	"Invalid operation for TRpDataset"
-	QDBConsts_SFirstRecord,	"First record"
-	bdeconst_SNoReferenceTableName,	"ReferenceTableName not specified for field '%s'"
-	bdeconst_SEmptySQLStatement,	"No SQL statement available"
-	bdeconst_SNoParameterValue,	"No value for parameter '%s'"
-	bdeconst_SLoginError,	"Cannot connect to database '%s'"
-	bdeconst_SInitError,	"An error occurred while attempting to initialize the Borland Database Engine (error $%.4x)"
-	bdeconst_SIDAPILangID,	"0009"
-	bdeconst_SBDEError,	"BDE error $%.4x"
-	bdeconst_SIndexDoesNotExist,	"Index does not exist. Index: %s"
-	bdeconst_SNoTableName,	"Missing TableName property"
-	bdeconst_SNoDataSetField,	"Missing DataSetField property"
-	bdeconst_SNoCachedUpdates,	"Not in cached update mode"
-	bdeconst_SInvalidAliasName,	"Invalid alias name %s"
-	bdeconst_SNoFieldAccess,	"Cannot access field '%s' in a filter"
-	bdeconst_SUntitled,	"Untitled Application"
-	bdeconst_SLocalTransDirty,	"The transaction isolation level must be dirty read for local databases"
-	ADOConst_SInvalidEnumValue,	"Invalid Enum Value"
 	IBXConst_SIB65feature,	"%s is an InterBase 6.5 function. Please upgrade to InterBase 6.5 to use this functonality"
 	IBXConst_SLoginPromptFailure,	"Can not find default login prompt dialog.  Please add DBLogDlg to the uses section of your main file."
 	IBXConst_SIB70feature,	"%s is an InterBase 7.0 function. Please upgrade to InterBase 7.0 to use this functonality"
-	bdeconst_SAutoSessionExclusive,	"Cannot enable AutoSessionName property with more than one session on a form or data-module"
-	bdeconst_SAutoSessionExists,	"Cannot add a session to the form or data-module while session '%s' has AutoSessionName enabled"
-	bdeconst_SAutoSessionActive,	"Cannot modify SessionName while AutoSessionName is enabled"
-	bdeconst_SDuplicateDatabaseName,	"Duplicate database name '%s'"
-	bdeconst_SDuplicateSessionName,	"Duplicate session name '%s'"
-	bdeconst_SInvalidSessionName,	"Invalid session name %s"
-	bdeconst_SDatabaseNameMissing,	"Database name missing"
-	bdeconst_SSessionNameMissing,	"Session name missing"
-	bdeconst_SDatabaseOpen,	"Cannot perform this operation on an open database"
-	bdeconst_SDatabaseClosed,	"Cannot perform this operation on a closed database"
-	bdeconst_SDatabaseHandleSet,	"Database handle owned by a different session"
-	bdeconst_SSessionActive,	"Cannot perform this operation on an active session"
-	bdeconst_SHandleError,	"Error creating cursor handle"
+	ZMessages_SSQLError1,	"SQL Error: %s"
+	ZMessages_SListCapacityError,	"List capacity out of bounds (%d)"
+	ZMessages_SListCountError,	"List count out of bounds (%d)"
+	ZMessages_SListIndexError,	"List index out of bounds (%d)"
+	ZMessages_SClonningIsNotSupported,	"Clonning is not supported by this class"
+	ZMessages_SImmutableOpIsNotAllowed,	"The operation is not allowed for immutable collection"
+	ZMessages_SStackIsEmpty,	"Stack is empty"
+	ZMessages_SVariableWasNotFound,	"Variable \"%s\" was not found"
+	ZMessages_SFunctionWasNotFound,	"Function \"%s\" was not found"
+	ZMessages_SInternalError,	"Internal error"
+	ZMessages_SSyntaxErrorNear,	"Syntax error near \"%s\""
+	ZMessages_SSyntaxError,	"Syntax error"
+	ZMessages_SUnknownSymbol,	"Unknown symbol \"%s\""
 	IBXConst_SNoOptionsSet,	"No Install Options selected"
 	IBXConst_SNoDestinationDirectory,	"DestinationDirectory is not set"
 	IBXConst_SNosourceDirectory,	"SourceDirectory is not set"
