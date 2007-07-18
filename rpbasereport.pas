@@ -1532,10 +1532,15 @@ end;
 // Print all generaties the metafile, it's capable also
 // of evaluate the totalpages expression
 procedure TRpBaseReport.PrintAll(Driver:TRpPrintDriver);
+var
+ ncopies:integer;
 begin
+ ncopies:=copies;
+ if ncopies=0 then
+  ncopies:=1;
  BeginPrint(Driver);
  try
-  Driver.NewDocument(metafile,copies,CollateCopies);
+  Driver.NewDocument(metafile,ncopies,CollateCopies);
   try
    while Not PrintNextPage do;
   finally

@@ -1111,7 +1111,7 @@ begin
   if topage>metafile.CurrentPageCount-1 then
    topage:=metafile.CurrentPageCount-1;
  end;
- if copies<0 then
+ if copies<=0 then
   copies:=1;
  adriver:=TRpTextDriver.Create;
  adriver.ForceDriverName:=rptypes.GetPrinterEscapeStyleDriver(metafile.Printerselect);

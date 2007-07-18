@@ -224,12 +224,15 @@ function DoShowPrintDialog(var allpages:boolean;
 begin
  Result:=false;
  QPrinter_setMinMax(QPrinterH(Printer.Handle),1,999999);
- QPrinter_setNumCopies(QprinterH(printer.Handle),copies);
  QPrinter_setFromTo(QPrinterH(Printer.Handle),frompage,topage);
- if Not Collate then
-  QPrinter_setPageOrder(QPrinterH(Printer.Handle),qt.QPrinterPageOrder_FirstPageFirst)
- else
-  QPrinter_setPageOrder(QPrinterH(Printer.Handle),qt.QPrinterPageOrder_LastPageFirst);
+ if copies>0 then
+ begin
+  QPrinter_setNumCopies(QprinterH(printer.Handle),copies);
+  if Not Collate then
+   QPrinter_setPageOrder(QPrinterH(Printer.Handle),qt.QPrinterPageOrder_FirstPageFirst)
+  else
+   QPrinter_setPageOrder(QPrinterH(Printer.Handle),qt.QPrinterPageOrder_LastPageFirst);
+ end;
  if Integer(QPrinter_setup(QPrinterH(Printer.handle),nil))<>0 then
  begin
   frompage:=QPrinter_fromPage(QPrinterH(Printer.handle));
@@ -914,6 +917,8 @@ var
  memstream:TMemoryStream;
  qtdriver:TRpQtDriver;
 begin
+ if copies<=0 then
+  copies:=1;
  drivername:=Trim(GetPrinterEscapeStyleDriver(printerindex));
  istextonly:=Length(drivername)>0;
  if istextonly then

@@ -1347,6 +1347,7 @@ var
   SRpDecode64:WideString='Decode base 64 string';
   SRpStringToBin:WideString='Converts string to binary stream';
   SRpLoadfile:WideString='Loads a file inside a string';
+  SRpDefaultCopies:WideString='Default printer copies';
 
 implementation
 
@@ -2328,7 +2329,7 @@ begin
  TranslateVar(1424,SRpDBFFiles);
  TranslateVar(1425,SRpShowPrintDialog);
  TranslateVar(1426,SRpGetIniValue);
-
+ TranslateVar(1427,SRpDefaultCopies);
 
 
  TranslateVar(783,SRpAsyncExecution);

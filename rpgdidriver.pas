@@ -315,15 +315,24 @@ begin
   end;
   exit;
  end;
- SetPrinterCollation(collate);
+ if (copies>0) then
+  SetPrinterCollation(collate);
  dia:=TPrintDialog.Create(Application);
  try
   dia.Options:=[poPageNums,poWarning,
         poPrintToFile];
   dia.MinPage:=1;
   dia.MaxPage:=65535;
-  dia.collate:=collate;
-  dia.copies:=copies;
+  if copies=0 then
+  begin
+   dia.copies:=GetPrinterCopies;
+   dia.collate:=GetPrinterCollation;
+  end
+  else
+  begin
+   dia.copies:=copies;
+   dia.collate:=collate;
+  end;
   dia.frompage:=frompage;
   dia.topage:=topage;
   if dia.execute then
@@ -1502,6 +1511,8 @@ var
 begin
  gdidriver:=nil;
  try
+ if copies=0 then
+  copies:=1;
  drivername:=Trim(GetPrinterEscapeStyleDriver(printerindex));
  istextonly:=Length(drivername)>0;
  if istextonly then

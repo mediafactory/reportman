@@ -309,8 +309,10 @@ var
  hardwarecopies:integer;
  hardwarecollate:boolean;
 begin
- if copies<1 then
+ if copies<0 then
   exit;
+ if copies=0 then
+  copies:=1;
  hardwarecopies:=1;
  hardwarecollate:=false;
  if (copies>1) then

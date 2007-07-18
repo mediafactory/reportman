@@ -20,7 +20,7 @@ object FRpPageSetup: TFRpPageSetup
     Top = 0
     Width = 486
     Height = 402
-    ActivePage = TabPage
+    ActivePage = TabPrint
     Align = alClient
     TabOrder = 0
     object TabPage: TTabSheet
@@ -441,7 +441,7 @@ object FRpPageSetup: TFRpPageSetup
         TabOrder = 15
       end
       object CheckPreviewAbout: TCheckBox
-        Left = 212
+        Left = 228
         Top = 228
         Width = 261
         Height = 21
@@ -450,7 +450,7 @@ object FRpPageSetup: TFRpPageSetup
         TabOrder = 17
       end
       object CheckMargins: TCheckBox
-        Left = 212
+        Left = 228
         Top = 252
         Width = 261
         Height = 21
@@ -501,6 +501,15 @@ object FRpPageSetup: TFRpPageSetup
         TabOrder = 23
         OnChange = EPaperSourceChange
         EditType = teinteger
+      end
+      object CheckDefaultCopies: TCheckBox
+        Left = 228
+        Top = 200
+        Width = 237
+        Height = 21
+        Caption = 'Default printer copies'
+        TabOrder = 24
+        OnClick = CheckDefaultCopiesClick
       end
     end
     object TabOptions: TTabSheet

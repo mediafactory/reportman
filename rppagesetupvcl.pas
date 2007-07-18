@@ -101,6 +101,7 @@ type
     EPaperSource: TRpMaskEdit;
     LLinesperInch: TLabel;
     ELinesPerInch: TRpMaskEdit;
+    CheckDefaultCopies: TCheckBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -113,6 +114,7 @@ type
     procedure BConfigureClick(Sender: TObject);
     procedure EPaperSourceChange(Sender: TObject);
     procedure ComboPaperSourceClick(Sender: TObject);
+    procedure CheckDefaultCopiesClick(Sender: TObject);
   private
     { Private declarations }
     report:TRpBaseReport;
@@ -159,6 +161,7 @@ var
  i:integer;
 begin
  PControl.ActivePage:=TabPage;
+ CheckDefaultCopies.Caption:=SRpDefaultCopies;
  LMetrics3.Caption:=rpunitlabels[defaultunit];
  LMetrics4.Caption:=LMetrics3.Caption;
  LMetrics5.Caption:=LMetrics3.Caption;
@@ -270,8 +273,13 @@ var
  FReportAction:TRpReportActions;
  linch:integer;
 begin
- acopies:=StrToInt(ECopies.Text);
- if acopies<=0 then
+ if CheckDefaultCopies.Checked then
+  acopies:=0
+ else
+ begin
+  acopies:=StrToInt(ECopies.Text);
+ end;
+ if acopies<0 then
   acopies:=1;
  linch:=Round(ELinesPerInch.AsFloat*100);
  if ((linch<100) OR (linch>3000)) then
@@ -335,7 +343,15 @@ procedure TFRpPageSetupVCL.ReadOptions;
 begin
  // ReadOptions
  ELinesPerInch.Text:=FloatToStr(report.LinesPerInch/100);
- ECopies.Text:=IntToStr(report.Copies);
+ if report.copies=0 then
+ begin
+  CheckDefaultCopies.Checked:=true;
+  ECopies.Text:='1';
+  CheckDefaultCopiesClick(Self);
+ end
+ else
+  ECopies.Text:=IntToStr(report.Copies);
+ 
  CheckCollate.Checked:=report.CollateCopies;
  CheckTwoPass.Checked:=report.TwoPass;
  CheckPrintOnlyIfData.Checked:=report.PrintOnlyIfDataAvailable;
@@ -446,6 +462,11 @@ end;
 procedure TFRpPageSetupVCL.ComboPaperSourceClick(Sender: TObject);
 begin
  EPaperSource.Text:=IntToStr(ComboPaperSource.ItemIndex);
+end;
+
+procedure TFRpPageSetupVCL.CheckDefaultCopiesClick(Sender: TObject);
+begin
+ ECopies.Enabled:=not CheckDefaultCopies.Checked;
 end;
 
 end.

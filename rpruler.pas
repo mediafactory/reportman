@@ -305,11 +305,18 @@ begin
  end;
  windowwidth:=Round(1000*rect.right/pixelsperinchx);
  windowheight:=Round(1000*rect.bottom/pixelsperinchy);
- h1:=120;
- h2:=60;
- h3:=30;
-
-
+ if scale>=1 then
+ begin
+  h1:=Round(120/scale*1.5);
+  h2:=Round(60/scale*1.5);
+  h3:=Round(30/scale*1.5);
+ end
+ else
+ begin
+  h1:=240;
+  h2:=120;
+  h3:=60;
+ end;
  han:=Canvas.Handle;
  // Painting of the ruler
  Canvas.start;

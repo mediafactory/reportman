@@ -97,6 +97,7 @@ type
     EPaperSource: TRpCLXMaskEdit;
     ELinesPerInch: TRpCLXMaskEdit;
     LLinesPerInch: TLabel;
+    CheckDefaultCopies: TCheckBox;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure BOKClick(Sender: TObject);
@@ -109,6 +110,7 @@ type
     procedure BConfigureClick(Sender: TObject);
     procedure EPaperSourceChange(Sender: TObject);
     procedure ComboPaperSourceClick(Sender: TObject);
+    procedure CheckDefaultCopiesClick(Sender: TObject);
   private
     { Private declarations }
     report:TRpBaseReport;
@@ -159,6 +161,7 @@ var
  i:integer;
 begin
  PControl.ActivePage:=TabPage;
+ CheckDefaultCopies.Caption:=SRpDefaultCopies;
  LMetrics3.Caption:=rpunitlabels[defaultunit];
  LMetrics4.Caption:=LMetrics3.Caption;
  LMetrics5.Caption:=LMetrics3.Caption;
@@ -277,7 +280,14 @@ begin
  if ((linch<100) OR (linch>3000)) then
   Raise Exception.Create(SRpSLinesInchError);
  report.LinesPerInch:=linch;
- acopies:=StrToInt(ECopies.Text);
+ if CheckDefaultCopies.Checked then
+  acopies:=0
+ else
+ begin
+  acopies:=StrToInt(ECopies.Text);
+ end;
+ if acopies<=0 then
+  acopies:=1;
  if acopies<=0 then
   acopies:=1;
  report.Copies:=acopies;
@@ -450,6 +460,12 @@ end;
 procedure TFRpPageSetup.ComboPaperSourceClick(Sender: TObject);
 begin
  EPaperSource.Text:=IntToStr(ComboPaperSource.ItemIndex);
+end;
+
+procedure TFRpPageSetup.CheckDefaultCopiesClick(Sender: TObject);
+begin
+ ECopies.Enabled:=not CheckDefaultCopies.Checked;
+
 end;
 
 end.
