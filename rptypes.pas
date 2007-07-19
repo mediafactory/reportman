@@ -2528,7 +2528,7 @@ var s:String;
 	  18: Decenas:='dieciocho';
 	  19: Decenas:='diecinueve';
 	  20: Decenas:='veinte';
-	  21: Decenas:='veintiuna';
+	  21: Decenas:='veinti'+Unidades(numero mod 10);
 	  22: Decenas:='veintidós';
 	  23: Decenas:='veintitrés';
 	  24..29: Decenas:='veinti'+Unidades(numero mod 10);
