@@ -41,6 +41,7 @@ type
    FBufferSize:integer;
    FGifColorReduction:integer;
    FGifDither:integer;
+   FCurrentSize:integer;
    procedure DoTerminate(Sender:TObject);
    procedure DoTimer(Sender:TObject);
   public
@@ -128,7 +129,8 @@ begin
     finally
      http1.Free;
     end;
-    PanelCaption.Caption:=SRpCompletedUpload;
+    PanelCaption.Caption:=SRpCompletedUpload+' '+FormatFloat('##0',FCurrentSize div 1024)+' Kbytes';
+    AProgres.Position:=AProgres.Max;
    except
     on E:Exception do
     begin
@@ -175,6 +177,10 @@ var
  agif:TGifImage;
  abitmap:TBitmap;
 begin
+ AImage.Picture.Graphic:=nil;
+ AProgres.Position:=0;
+ PanelCaption.Caption:='';
+ try
  memstream:=TMemoryStream.Create;
  try
   case FImageFormat of
@@ -224,6 +230,9 @@ begin
     end;
   end;
   memstream.Seek(0,soFromBeginning);
+  FCurrentSize:=memstream.Size;
+  if FCurrentSize<1 then
+   Raise Exception.Create(SRpOperationAborted);
   if Length(FUrlPath)>0 then
   begin
    FTHread:=TRpHttpUploader.Create(true);
@@ -239,6 +248,12 @@ begin
   begin
    memstream.free;
    memstream:=nil;
+  end;
+ end;
+ except
+  on E:Exception do
+  begin
+   PanelCaption.Caption:=E.Message;
   end;
  end;
 end;

@@ -2329,10 +2329,19 @@ begin
  TranslateVar(1424,SRpDBFFiles);
  TranslateVar(1425,SRpShowPrintDialog);
  TranslateVar(1426,SRpGetIniValue);
- TranslateVar(1427,SRpDefaultCopies);
+
+ TranslateVar(1427,SRpWaitTwain);
+ TranslateVar(1428,SRpWaitTwainExceededMax);
+ TranslateVar(1429,SRpCompletedUpload);
+ TranslateVar(1430,SRpUploadProg);
+ TranslateVar(1431,SRpNoTwain);
+
+
+ TranslateVar(1432,SRpDefaultCopies);
 
 
  TranslateVar(783,SRpAsyncExecution);
+
 end;
 
 

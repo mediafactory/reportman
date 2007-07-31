@@ -10,7 +10,7 @@ const MAX_IMAGE_SIZE_KBYTES=1024*100;
 type
   TFTwainHelp = class(TForm)
     BCancel: TButton;
-    Label1: TLabel;
+    LWait: TLabel;
     procedure BCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
@@ -20,6 +20,7 @@ type
     bitmap:TBitmap;
     atwain:TDelphiTwain;
     procedure OnTwainAcquire(Sender: TObject; const Index: Integer; Image: TBitmap; var Cancel: Boolean);
+    procedure OnTwainCancel(Sender: TObject;const index:integer);
     procedure AppIdle(Sender:TObject;var done:BOolean);
   public
     { Public declarations }
@@ -69,7 +70,9 @@ begin
      //Load source and acquire image
      Source.Loaded := TRUE;
      Source.Enabled := TRUE;
-  end {if (SourceIndex <> -1)}
+  end
+  else
+   Close; {if (SourceIndex <> -1)}
  except
   On E:Exception do
   begin
@@ -217,8 +220,17 @@ end;
 procedure TFTwainHelp.FormCreate(Sender: TObject);
 begin
  BCancel.Caption:=SRpCancel;
+ LWait.Caption:=SRpWaitTwain;
  atwain:=TDelphiTwain.Create(Self);
+ atwain.OnAcquireCancel:=OnTwainCancel;
  atwain.OnTwainAcquire:=OnTwainAcquire;
+end;
+
+procedure TFTwainHelp.OnTwainCancel(Sender: TObject;const index:integer);
+begin
+ bitmap.free;
+ bitmap:=nil;
+ Close;
 end;
 
 procedure TFTwainHelp.OnTwainAcquire(Sender: TObject; const Index: Integer; Image: TBitmap; var Cancel: Boolean);

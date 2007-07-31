@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs,rptwaincomp, IdBaseComponent, IdComponent, IdTCPConnection,
-  IdTCPClient, IdHTTP, StdCtrls, XPMan, Menus;
+  IdTCPClient, IdHTTP, StdCtrls, XPMan, Menus, ExtCtrls, Spin;
 
 type
   TForm1 = class(TForm)
@@ -13,6 +13,24 @@ type
     MainMenu1: TMainMenu;
     Archivo1: TMenuItem;
     Empezar1: TMenuItem;
+    Panel1: TPanel;
+    Label1: TLabel;
+    EURL: TEdit;
+    Label2: TLabel;
+    EURLComplete: TEdit;
+    Label3: TLabel;
+    EJpeg: TSpinEdit;
+    Label4: TLabel;
+    ComboDithering: TComboBox;
+    EBuffer: TSpinEdit;
+    Label5: TLabel;
+    Label6: TLabel;
+    ETitle: TEdit;
+    ComboFormat: TComboBox;
+    Label7: TLabel;
+    Button1: TButton;
+    Label8: TLabel;
+    EMaxSize: TSpinEdit;
     procedure FormCreate(Sender: TObject);
     procedure Empezar1Click(Sender: TObject);
   private
@@ -32,6 +50,8 @@ implementation
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
+ combodithering.ItemIndex:=1;
+ comboformat.ItemIndex:=0;
  awebtwain:=TRpTwainWeb.Create(Self);
  awebtwain.Align:=alClient;
  awebtwain.Parent:=self;
@@ -40,12 +60,18 @@ begin
  awebtwain.GifDither:=1;
  awebtwain.JPegQuality:=100;
 // awebtwain.GifColorReduction:=4;
- awebtwain.CompletedUrlPath:='http://reportman.dyndns.org/';
- awebtwain.UrlPath:='http://reportman.dyndns.org/upload/test4.gif';
 end;
 
 procedure TForm1.Empezar1Click(Sender: TObject);
 begin
+ awebtwain.CompletedUrlPath:=EURLComplete.Text;
+ awebtwain.UrlPath:=EURL.Text;
+ awebtwain.ImageFormat:=ComboFormat.ItemIndex;
+ awebtwain.BufferSize:=EBuffer.Value;
+ awebtwain.JPegQuality:=EJpeg.Value;
+ awebtwain.GifDither:=ComboDithering.ItemIndex;
+ awebtwain.AppTitle:=ETitle.Text;
+ awebtwain.MaxKBytes:=EMaxSize.Value;
  awebtwain.Execute;
 end;
 

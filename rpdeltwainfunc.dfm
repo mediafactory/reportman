@@ -12,12 +12,12 @@ object FTwainHelp: TFTwainHelp
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object Label1: TLabel
+  object LWait: TLabel
     Left = 12
     Top = 12
-    Width = 262
+    Width = 128
     Height = 13
-    Caption = 'Esperando la recepci'#243'n de una imagen del origen twain'
+    Caption = 'Waiting for the twain image'
   end
   object BCancel: TButton
     Left = 115
@@ -25,7 +25,7 @@ object FTwainHelp: TFTwainHelp
     Width = 75
     Height = 25
     Cancel = True
-    Caption = 'Cancelar'
+    Caption = 'Cancel'
     TabOrder = 0
     OnClick = BCancelClick
   end
