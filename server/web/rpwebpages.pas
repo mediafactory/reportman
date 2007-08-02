@@ -1052,7 +1052,7 @@ begin
         if Request.QueryFields.Names[k]='Param'+paramname then
         begin
          aname:=Request.QueryFields.Names[k];
-         index:=StrToInt(Request.QueryFields.Values[aname]);
+         index:=StrToInt(Request.QueryFields.ValueFromIndex[k]);
          if index<param.Values.Count then
           param.Selected.Add(IntToStr(Index));
         end;
