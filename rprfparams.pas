@@ -385,14 +385,14 @@ begin
        TCheckListBox(acontrol).Checked[j]:=false;
       for j:=0 to aparam.Selected.Count-1 do
       begin
-       index:=StrToInt(aparam.Selected.Strings[i]);
+       index:=StrToInt(aparam.Selected.Strings[j]);
        if TCheckListBox(acontrol).Items.Count>index then
         TCheckListBox(acontrol).Checked[index]:=true;
       end;
       index:=TCheckListBox(acontrol).Items.Count;
       if index>5 then
        index:=5;
-      acontrol.Height:=index*Self.Canvas.TextHeight('Mg');
+      acontrol.Height:=(index+1)*Self.Canvas.TextHeight('Mg');
      end;
    rpParamList:
      begin

@@ -139,7 +139,6 @@ type
     fpreviewcontrol:TRpPreviewMetaCLX;
     cancelled:boolean;
     printed:boolean;
-    enableparams:boolean;
 {$IFDEF LINUX}
     usekprinter:boolean;
 {$ENDIF}
@@ -606,7 +605,7 @@ begin
  ASave.Enabled:=true;
  AMailTo.Enabled:=true;
  APageSetup.Enabled:=true;
- AParams.Enabled:=enableparams;
+ AParams.Enabled:=true;
  PBar.Visible:=false;
  AExit.Enabled:=true;
 end;
