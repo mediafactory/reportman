@@ -393,11 +393,16 @@ begin
        Raise Exception.Create(SRpNoTrueType+'-'+data.FaceName);
       data.postcriptname:=StringReplace(data.familyname,' ','',[rfReplaceAll]);
       // Italic emulation
+      if pdffont.Bold then
+        data.postcriptname:=data.postcriptname+',Bold';
       if pdffont.Italic then
-       if data.ItalicAngle=0 then
-       begin
+//       if data.ItalicAngle=0 then
+//       begin
+      if pdffont.Bold then
+        data.postcriptname:=data.postcriptname+'Italic'
+      else
         data.postcriptname:=data.postcriptname+',Italic';
-       end;
+//       end;
       //
       data.Flags:=32;
       // Fixed pitch? Doc says inverse meaning

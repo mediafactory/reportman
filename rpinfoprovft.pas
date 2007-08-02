@@ -558,22 +558,16 @@ begin
   data.Flags:=32;
   if (currentfont.fixedpitch) then
    data.Flags:=data.Flags+1;
-  if not currentfont.bold then
+  if pdffont.Bold then
+   data.postcriptname:=data.postcriptname+',Bold';
+  if currentfont.italic then
+    data.Flags:=data.Flags+64;
+  if pdffont.Italic then
   begin
    if pdffont.Bold then
-    data.postcriptname:=data.postcriptname+',Bold';
-  end;
-  if currentfont.italic then
-    data.Flags:=data.Flags+64
-  else
-  begin
-   if pdffont.Italic then
-   begin
-    if data.postcriptname<>currentfont.postcriptname then
-     data.postcriptname:=data.postcriptname+'Italic'
-    else
+    data.postcriptname:=data.postcriptname+'Italic'
+   else
      data.postcriptname:=data.postcriptname+',Italic';
-   end;
   end;
   data.Type1:=currentfont.Type1;
  finally
