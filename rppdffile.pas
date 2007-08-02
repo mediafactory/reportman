@@ -1841,6 +1841,7 @@ var
  kerningamount:integer;
  linespacing:integer;
  leading:integer;
+ offset:integer;
 begin
  // Text extent for the simple strings, wide strings not supported
  havekerning:=false;
@@ -1870,6 +1871,7 @@ begin
  asize:=0;
  FLineInfoCount:=0;
  position:=1;
+ offset:=0;
  linebreakpos:=0;
  maxwidth:=0;
  recwidth:=(rect.Right-rect.Left)/FResolution*CONS_PDFRES;
@@ -1928,18 +1930,35 @@ begin
    asize:=asize+newsize;
   end;
   if not singleline then
-   if astring[i]=#10 then
+  begin
+   if (astring[i]=#10) then
    begin
+    offset:=1;
     nextline:=true;
     createsnewline:=true;
-   end;
+   end
+   else
+   if (astring[i]=#13) then
+   begin
+    if (i<Length(astring)) then
+    begin
+     if (astring[i+1]=#10) then
+     begin
+      offset:=2;
+      Inc(i);
+      nextline:=true;
+      createsnewline:=true;
+     end;
+    end;
+   end
+  end;
   if asize>maxwidth then
    maxwidth:=asize;
   if nextline then
   begin
    nextline:=false;
    info.Position:=position;
-   info.Size:=i-position+1;
+   info.Size:=i-position+1-offset;
    info.Width:=Round((asize)/CONS_PDFRES*FResolution);
 //   info.height:=Round((Font.Size)/CONS_PDFRES*FResolution);
    info.height:=linespacing;
@@ -1947,6 +1966,7 @@ begin
    info.lastline:=createsnewline;
    arec.Bottom:=arec.Bottom+info.height;
    asize:=0;
+   offset:=0;
    position:=i+1;
    NewLineInfo(info);
    createsnewline:=false;
@@ -1964,7 +1984,7 @@ begin
  if Position<=Length(astring) then
  begin
   info.Position:=position;
-  info.Size:=Length(astring)-position+1;
+  info.Size:=Length(astring)-position+1-offset;
   info.Width:=Round((asize+1)/CONS_PDFRES*FResolution);
   info.height:=linespacing;
   info.TopPos:=arec.Bottom-leading;
