@@ -1027,6 +1027,15 @@ begin
     pdfreport.Language:=StrToInt(Request.QueryFields.Values['LANGUAGE']);
    pdfreport.Params.UpdateLookup;
    WriteLog('Assigning parameters to the report');
+   // Clear multiple selection parameters
+   for i:=0 to pdfreport.Params.Count-1 do
+   begin
+    param:=pdfreport.Params.Items[i];
+    if param.ParamType=rpParamMultiple then
+    begin
+     param.Selected.Clear;
+    end;
+   end;
    // Assigns parameters to the report
    for i:=0 to Request.QueryFields.Count-1 do
    begin
