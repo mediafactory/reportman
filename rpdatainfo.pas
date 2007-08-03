@@ -1162,6 +1162,7 @@ begin
          UpdateConAdmin;
         ConAdmin.GetConnectionParams(conname,FIBDatabase.params);
        end;
+       MergeList(paramlist,FIBDatabase.Params);
        ConvertParamsFromDBXToIBX(FIBDatabase);
        index:=paramlist.IndexOfName('DATABASENAME');
        if (index>=0) then
@@ -1169,7 +1170,6 @@ begin
         FIBDatabase.DatabaseName:=paramlist.Values['DATABASENAME'];
         paramlist.Delete(index);
        end;
-       MergeList(paramlist,FIBDatabase.Params);
 
        FIBDatabase.Connected:=true;
        if FIBTransaction=FIBInternalTransaction then
