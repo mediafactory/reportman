@@ -8,145 +8,146 @@
   resources were bound to the produced executable.
 */
 
-#define ExtCtrls_clNameNone 65056
-#define ExtCtrls_clNameScrollBar 65057
-#define ExtCtrls_clName3DDkShadow 65058
-#define ExtCtrls_clName3DLight 65059
-#define ExtCtrls_clNameWindow 65060
-#define ExtCtrls_clNameWindowFrame 65061
-#define ExtCtrls_clNameWindowText 65062
-#define WinHelpViewer_hNoKeyword 65063
-#define JConsts_sChangeJPGSize 65064
-#define JConsts_sJPEGError 65065
-#define JConsts_sJPEGImageFile 65066
-#define ExtCtrls_clNameBtnFace 65072
-#define ExtCtrls_clNameBtnHighlight 65073
-#define ExtCtrls_clNameBtnShadow 65074
-#define ExtCtrls_clNameBtnText 65075
-#define ExtCtrls_clNameCaptionText 65076
-#define ExtCtrls_clNameDefault 65077
-#define ExtCtrls_clNameGrayText 65078
-#define ExtCtrls_clNameHighlight 65079
-#define ExtCtrls_clNameHighlightText 65080
-#define ExtCtrls_clNameInactiveBorder 65081
-#define ExtCtrls_clNameInactiveCaption 65082
-#define ExtCtrls_clNameInactiveCaptionText 65083
-#define ExtCtrls_clNameInfoBk 65084
-#define ExtCtrls_clNameInfoText 65085
-#define ExtCtrls_clNameMenu 65086
-#define ExtCtrls_clNameMenuText 65087
-#define ExtCtrls_clNameSilver 65088
-#define ExtCtrls_clNameRed 65089
-#define ExtCtrls_clNameLime 65090
-#define ExtCtrls_clNameYellow 65091
-#define ExtCtrls_clNameBlue 65092
-#define ExtCtrls_clNameFuchsia 65093
-#define ExtCtrls_clNameAqua 65094
-#define ExtCtrls_clNameWhite 65095
-#define ExtCtrls_clNameMoneyGreen 65096
-#define ExtCtrls_clNameSkyBlue 65097
-#define ExtCtrls_clNameCream 65098
-#define ExtCtrls_clNameMedGray 65099
-#define ExtCtrls_clNameActiveBorder 65100
-#define ExtCtrls_clNameActiveCaption 65101
-#define ExtCtrls_clNameAppWorkSpace 65102
-#define ExtCtrls_clNameBackground 65103
-#define Consts_SmkcCtrl 65104
-#define Consts_SmkcAlt 65105
-#define Consts_SIconToClipboard 65106
-#define Consts_SDuplicateMenus 65107
-#define Consts_SDockedCtlNeedsName 65108
-#define Consts_SDockTreeRemoveError 65109
-#define Consts_SDockZoneNotFound 65110
-#define Consts_SDockZoneHasNoCtl 65111
-#define ExtCtrls_clNameBlack 65112
-#define ExtCtrls_clNameMaroon 65113
-#define ExtCtrls_clNameGreen 65114
-#define ExtCtrls_clNameOlive 65115
-#define ExtCtrls_clNameNavy 65116
-#define ExtCtrls_clNamePurple 65117
-#define ExtCtrls_clNameTeal 65118
-#define ExtCtrls_clNameGray 65119
-#define Consts_SmkcBkSp 65120
-#define Consts_SmkcTab 65121
-#define Consts_SmkcEsc 65122
-#define Consts_SmkcEnter 65123
-#define Consts_SmkcSpace 65124
-#define Consts_SmkcPgUp 65125
-#define Consts_SmkcPgDn 65126
-#define Consts_SmkcEnd 65127
-#define Consts_SmkcHome 65128
-#define Consts_SmkcLeft 65129
-#define Consts_SmkcUp 65130
-#define Consts_SmkcRight 65131
-#define Consts_SmkcDown 65132
-#define Consts_SmkcIns 65133
-#define Consts_SmkcDel 65134
-#define Consts_SmkcShift 65135
-#define Consts_SVBitmaps 65136
-#define Consts_SMsgDlgWarning 65137
-#define Consts_SMsgDlgError 65138
-#define Consts_SMsgDlgInformation 65139
-#define Consts_SMsgDlgConfirm 65140
-#define Consts_SMsgDlgYes 65141
-#define Consts_SMsgDlgNo 65142
-#define Consts_SMsgDlgOK 65143
-#define Consts_SMsgDlgCancel 65144
-#define Consts_SMsgDlgHelp 65145
-#define Consts_SMsgDlgAbort 65146
-#define Consts_SMsgDlgRetry 65147
-#define Consts_SMsgDlgIgnore 65148
-#define Consts_SMsgDlgAll 65149
-#define Consts_SMsgDlgNoToAll 65150
-#define Consts_SMsgDlgYesToAll 65151
-#define Consts_SNoMDIForm 65152
-#define Consts_SControlParentSetToSelf 65153
-#define Consts_SOKButton 65154
-#define Consts_SCancelButton 65155
-#define Consts_SYesButton 65156
-#define Consts_SNoButton 65157
-#define Consts_SHelpButton 65158
-#define Consts_SCloseButton 65159
-#define Consts_SIgnoreButton 65160
-#define Consts_SRetryButton 65161
-#define Consts_SAbortButton 65162
-#define Consts_SAllButton 65163
-#define Consts_SCannotDragForm 65164
-#define Consts_SVMetafiles 65165
-#define Consts_SVEnhMetafiles 65166
-#define Consts_SVIcons 65167
-#define Consts_SInvalidImageList 65168
-#define Consts_SImageIndexError 65169
-#define Consts_SImageReadFail 65170
-#define Consts_SImageWriteFail 65171
-#define Consts_SWindowDCError 65172
-#define Consts_SWindowClass 65173
-#define Consts_SCannotFocus 65174
-#define Consts_SParentRequired 65175
-#define Consts_SMDIChildNotVisible 65176
-#define Consts_SVisibleChanged 65177
-#define Consts_SCannotShowModal 65178
-#define Consts_SMenuIndexError 65179
-#define Consts_SMenuReinserted 65180
-#define Consts_SMenuNotFound 65181
-#define Consts_SNoTimers 65182
-#define Consts_SGroupIndexTooLow 65183
+#define ExtCtrls_clNameMenuText 65056
+#define ExtCtrls_clNameNone 65057
+#define ExtCtrls_clNameScrollBar 65058
+#define ExtCtrls_clName3DDkShadow 65059
+#define ExtCtrls_clName3DLight 65060
+#define ExtCtrls_clNameWindow 65061
+#define ExtCtrls_clNameWindowFrame 65062
+#define ExtCtrls_clNameWindowText 65063
+#define WinHelpViewer_hNoKeyword 65064
+#define JConsts_sChangeJPGSize 65065
+#define JConsts_sJPEGError 65066
+#define JConsts_sJPEGImageFile 65067
+#define ExtCtrls_clNameBackground 65072
+#define ExtCtrls_clNameBtnFace 65073
+#define ExtCtrls_clNameBtnHighlight 65074
+#define ExtCtrls_clNameBtnShadow 65075
+#define ExtCtrls_clNameBtnText 65076
+#define ExtCtrls_clNameCaptionText 65077
+#define ExtCtrls_clNameDefault 65078
+#define ExtCtrls_clNameGrayText 65079
+#define ExtCtrls_clNameHighlight 65080
+#define ExtCtrls_clNameHighlightText 65081
+#define ExtCtrls_clNameInactiveBorder 65082
+#define ExtCtrls_clNameInactiveCaption 65083
+#define ExtCtrls_clNameInactiveCaptionText 65084
+#define ExtCtrls_clNameInfoBk 65085
+#define ExtCtrls_clNameInfoText 65086
+#define ExtCtrls_clNameMenu 65087
+#define ExtCtrls_clNameGray 65088
+#define ExtCtrls_clNameSilver 65089
+#define ExtCtrls_clNameRed 65090
+#define ExtCtrls_clNameLime 65091
+#define ExtCtrls_clNameYellow 65092
+#define ExtCtrls_clNameBlue 65093
+#define ExtCtrls_clNameFuchsia 65094
+#define ExtCtrls_clNameAqua 65095
+#define ExtCtrls_clNameWhite 65096
+#define ExtCtrls_clNameMoneyGreen 65097
+#define ExtCtrls_clNameSkyBlue 65098
+#define ExtCtrls_clNameCream 65099
+#define ExtCtrls_clNameMedGray 65100
+#define ExtCtrls_clNameActiveBorder 65101
+#define ExtCtrls_clNameActiveCaption 65102
+#define ExtCtrls_clNameAppWorkSpace 65103
+#define Consts_SmkcShift 65104
+#define Consts_SmkcCtrl 65105
+#define Consts_SmkcAlt 65106
+#define Consts_SIconToClipboard 65107
+#define Consts_SDuplicateMenus 65108
+#define Consts_SDockedCtlNeedsName 65109
+#define Consts_SDockTreeRemoveError 65110
+#define Consts_SDockZoneNotFound 65111
+#define Consts_SDockZoneHasNoCtl 65112
+#define ExtCtrls_clNameBlack 65113
+#define ExtCtrls_clNameMaroon 65114
+#define ExtCtrls_clNameGreen 65115
+#define ExtCtrls_clNameOlive 65116
+#define ExtCtrls_clNameNavy 65117
+#define ExtCtrls_clNamePurple 65118
+#define ExtCtrls_clNameTeal 65119
+#define Consts_SMsgDlgYesToAll 65120
+#define Consts_SmkcBkSp 65121
+#define Consts_SmkcTab 65122
+#define Consts_SmkcEsc 65123
+#define Consts_SmkcEnter 65124
+#define Consts_SmkcSpace 65125
+#define Consts_SmkcPgUp 65126
+#define Consts_SmkcPgDn 65127
+#define Consts_SmkcEnd 65128
+#define Consts_SmkcHome 65129
+#define Consts_SmkcLeft 65130
+#define Consts_SmkcUp 65131
+#define Consts_SmkcRight 65132
+#define Consts_SmkcDown 65133
+#define Consts_SmkcIns 65134
+#define Consts_SmkcDel 65135
+#define Consts_SVIcons 65136
+#define Consts_SVBitmaps 65137
+#define Consts_SMsgDlgWarning 65138
+#define Consts_SMsgDlgError 65139
+#define Consts_SMsgDlgInformation 65140
+#define Consts_SMsgDlgConfirm 65141
+#define Consts_SMsgDlgYes 65142
+#define Consts_SMsgDlgNo 65143
+#define Consts_SMsgDlgOK 65144
+#define Consts_SMsgDlgCancel 65145
+#define Consts_SMsgDlgHelp 65146
+#define Consts_SMsgDlgAbort 65147
+#define Consts_SMsgDlgRetry 65148
+#define Consts_SMsgDlgIgnore 65149
+#define Consts_SMsgDlgAll 65150
+#define Consts_SMsgDlgNoToAll 65151
+#define Consts_SGroupIndexTooLow 65152
+#define Consts_SNoMDIForm 65153
+#define Consts_SControlParentSetToSelf 65154
+#define Consts_SOKButton 65155
+#define Consts_SCancelButton 65156
+#define Consts_SYesButton 65157
+#define Consts_SNoButton 65158
+#define Consts_SHelpButton 65159
+#define Consts_SCloseButton 65160
+#define Consts_SIgnoreButton 65161
+#define Consts_SRetryButton 65162
+#define Consts_SAbortButton 65163
+#define Consts_SAllButton 65164
+#define Consts_SCannotDragForm 65165
+#define Consts_SVMetafiles 65166
+#define Consts_SVEnhMetafiles 65167
+#define Consts_SInvalidImageSize 65168
+#define Consts_SInvalidImageList 65169
+#define Consts_SImageIndexError 65170
+#define Consts_SImageReadFail 65171
+#define Consts_SImageWriteFail 65172
+#define Consts_SWindowDCError 65173
+#define Consts_SWindowClass 65174
+#define Consts_SCannotFocus 65175
+#define Consts_SParentRequired 65176
+#define Consts_SMDIChildNotVisible 65177
+#define Consts_SVisibleChanged 65178
+#define Consts_SCannotShowModal 65179
+#define Consts_SMenuIndexError 65180
+#define Consts_SMenuReinserted 65181
+#define Consts_SMenuNotFound 65182
+#define Consts_SNoTimers 65183
 #define IdResourceStrings_RSSocksServerNetUnreachableError 65184
 #define IdResourceStrings_RSSocksServerHostUnreachableError 65185
 #define IdResourceStrings_RSSocksServerConnectionRefusedError 65186
 #define IdResourceStrings_RSSocksServerTTLExpiredError 65187
 #define IdResourceStrings_RSSocksServerCommandError 65188
 #define IdResourceStrings_RSSocksServerAddressError 65189
-#define Consts_SInvalidBitmap 65190
-#define Consts_SInvalidIcon 65191
-#define Consts_SInvalidMetafile 65192
-#define Consts_SInvalidPixelFormat 65193
-#define Consts_SScanLine 65194
-#define Consts_SChangeIconSize 65195
-#define Consts_SUnknownClipboardFormat 65196
-#define Consts_SOutOfResources 65197
-#define Consts_SNoCanvasHandle 65198
-#define Consts_SInvalidImageSize 65199
+#define IdResourceStrings_RSUnevenSizeInDecodeStream 65190
+#define Consts_SInvalidBitmap 65191
+#define Consts_SInvalidIcon 65192
+#define Consts_SInvalidMetafile 65193
+#define Consts_SInvalidPixelFormat 65194
+#define Consts_SScanLine 65195
+#define Consts_SChangeIconSize 65196
+#define Consts_SUnknownClipboardFormat 65197
+#define Consts_SOutOfResources 65198
+#define Consts_SNoCanvasHandle 65199
 #define IdResourceStrings_RSStackECONNREFUSED 65200
 #define IdResourceStrings_RSStackELOOP 65201
 #define IdResourceStrings_RSStackENAMETOOLONG 65202
@@ -485,6 +486,7 @@
 #define SysConst_SDiskFull 65535
 STRINGTABLE
 BEGIN
+	ExtCtrls_clNameMenuText,	"Menu Text"
 	ExtCtrls_clNameNone,	"None"
 	ExtCtrls_clNameScrollBar,	"Scroll Bar"
 	ExtCtrls_clName3DDkShadow,	"3D Dark Shadow"
@@ -496,6 +498,7 @@ BEGIN
 	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
 	JConsts_sJPEGError,	"JPEG error #%d"
 	JConsts_sJPEGImageFile,	"JPEG Image File"
+	ExtCtrls_clNameBackground,	"Background"
 	ExtCtrls_clNameBtnFace,	"Button Face"
 	ExtCtrls_clNameBtnHighlight,	"Button Highlight"
 	ExtCtrls_clNameBtnShadow,	"Button Shadow"
@@ -511,7 +514,7 @@ BEGIN
 	ExtCtrls_clNameInfoBk,	"Info Background"
 	ExtCtrls_clNameInfoText,	"Info Text"
 	ExtCtrls_clNameMenu,	"Menu Background"
-	ExtCtrls_clNameMenuText,	"Menu Text"
+	ExtCtrls_clNameGray,	"Gray"
 	ExtCtrls_clNameSilver,	"Silver"
 	ExtCtrls_clNameRed,	"Red"
 	ExtCtrls_clNameLime,	"Lime"
@@ -527,7 +530,7 @@ BEGIN
 	ExtCtrls_clNameActiveBorder,	"Active Border"
 	ExtCtrls_clNameActiveCaption,	"Active Caption"
 	ExtCtrls_clNameAppWorkSpace,	"Application Workspace"
-	ExtCtrls_clNameBackground,	"Background"
+	Consts_SmkcShift,	"Shift+"
 	Consts_SmkcCtrl,	"Ctrl+"
 	Consts_SmkcAlt,	"Alt+"
 	Consts_SIconToClipboard,	"Clipboard does not support Icons"
@@ -543,7 +546,7 @@ BEGIN
 	ExtCtrls_clNameNavy,	"Navy"
 	ExtCtrls_clNamePurple,	"Purple"
 	ExtCtrls_clNameTeal,	"Teal"
-	ExtCtrls_clNameGray,	"Gray"
+	Consts_SMsgDlgYesToAll,	"Yes to &All"
 	Consts_SmkcBkSp,	"BkSp"
 	Consts_SmkcTab,	"Tab"
 	Consts_SmkcEsc,	"Esc"
@@ -559,7 +562,7 @@ BEGIN
 	Consts_SmkcDown,	"Down"
 	Consts_SmkcIns,	"Ins"
 	Consts_SmkcDel,	"Del"
-	Consts_SmkcShift,	"Shift+"
+	Consts_SVIcons,	"Icons"
 	Consts_SVBitmaps,	"Bitmaps"
 	Consts_SMsgDlgWarning,	"Warning"
 	Consts_SMsgDlgError,	"Error"
@@ -575,7 +578,7 @@ BEGIN
 	Consts_SMsgDlgIgnore,	"&Ignore"
 	Consts_SMsgDlgAll,	"&All"
 	Consts_SMsgDlgNoToAll,	"N&o to All"
-	Consts_SMsgDlgYesToAll,	"Yes to &All"
+	Consts_SGroupIndexTooLow,	"GroupIndex cannot be less than a previous menu item's GroupIndex"
 	Consts_SNoMDIForm,	"Cannot create form. No MDI forms are currently active"
 	Consts_SControlParentSetToSelf,	"A control cannot have itself as its parent"
 	Consts_SOKButton,	"OK"
@@ -591,7 +594,7 @@ BEGIN
 	Consts_SCannotDragForm,	"Cannot drag a form"
 	Consts_SVMetafiles,	"Metafiles"
 	Consts_SVEnhMetafiles,	"Enhanced Metafiles"
-	Consts_SVIcons,	"Icons"
+	Consts_SInvalidImageSize,	"Invalid image size"
 	Consts_SInvalidImageList,	"Invalid ImageList"
 	Consts_SImageIndexError,	"Invalid ImageList Index"
 	Consts_SImageReadFail,	"Failed to read ImageList data from stream"
@@ -607,13 +610,13 @@ BEGIN
 	Consts_SMenuReinserted,	"Menu inserted twice"
 	Consts_SMenuNotFound,	"Sub-menu is not in menu"
 	Consts_SNoTimers,	"Not enough timers available"
-	Consts_SGroupIndexTooLow,	"GroupIndex cannot be less than a previous menu item's GroupIndex"
 	IdResourceStrings_RSSocksServerNetUnreachableError,	"Network unreachable."
 	IdResourceStrings_RSSocksServerHostUnreachableError,	"Host unreachable."
 	IdResourceStrings_RSSocksServerConnectionRefusedError,	"Connection refused."
 	IdResourceStrings_RSSocksServerTTLExpiredError,	"TTL expired."
 	IdResourceStrings_RSSocksServerCommandError,	"Command not supported."
 	IdResourceStrings_RSSocksServerAddressError,	"Address type not supported."
+	IdResourceStrings_RSUnevenSizeInDecodeStream,	"Uneven size in DecodeToStream."
 	Consts_SInvalidBitmap,	"Bitmap image is not valid"
 	Consts_SInvalidIcon,	"Icon image is not valid"
 	Consts_SInvalidMetafile,	"Metafile is not valid"
@@ -623,7 +626,6 @@ BEGIN
 	Consts_SUnknownClipboardFormat,	"Unsupported clipboard format"
 	Consts_SOutOfResources,	"Out of system resources"
 	Consts_SNoCanvasHandle,	"Canvas does not allow drawing"
-	Consts_SInvalidImageSize,	"Invalid image size"
 	IdResourceStrings_RSStackECONNREFUSED,	"Connection refused."
 	IdResourceStrings_RSStackELOOP,	"Too many levels of symbolic links."
 	IdResourceStrings_RSStackENAMETOOLONG,	"File name too long."

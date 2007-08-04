@@ -8,87 +8,88 @@
   resources were bound to the produced executable.
 */
 
-#define ComConst_STooManyParams 65136
-#define IdResourceStrings_RSSocksRequestIdentFailed 65152
-#define IdResourceStrings_RSSocksUnknownError 65153
-#define IdResourceStrings_RSSocksServerRespondError 65154
-#define IdResourceStrings_RSSocksAuthMethodError 65155
-#define IdResourceStrings_RSSocksAuthError 65156
-#define IdResourceStrings_RSSocksServerGeneralError 65157
-#define IdResourceStrings_RSSocksServerPermissionError 65158
-#define IdResourceStrings_RSSocksServerNetUnreachableError 65159
-#define IdResourceStrings_RSSocksServerHostUnreachableError 65160
-#define IdResourceStrings_RSSocksServerConnectionRefusedError 65161
-#define IdResourceStrings_RSSocksServerTTLExpiredError 65162
-#define IdResourceStrings_RSSocksServerCommandError 65163
-#define IdResourceStrings_RSSocksServerAddressError 65164
-#define ComConst_SOleError 65165
-#define ComConst_SNoMethod 65166
-#define ComConst_SVarNotObject 65167
-#define IdResourceStrings_RSStackECONNRESET 65168
-#define IdResourceStrings_RSStackENOBUFS 65169
-#define IdResourceStrings_RSStackEISCONN 65170
-#define IdResourceStrings_RSStackENOTCONN 65171
-#define IdResourceStrings_RSStackESHUTDOWN 65172
-#define IdResourceStrings_RSStackETOOMANYREFS 65173
-#define IdResourceStrings_RSStackETIMEDOUT 65174
-#define IdResourceStrings_RSStackECONNREFUSED 65175
-#define IdResourceStrings_RSStackELOOP 65176
-#define IdResourceStrings_RSStackENAMETOOLONG 65177
-#define IdResourceStrings_RSStackEHOSTDOWN 65178
-#define IdResourceStrings_RSStackEHOSTUNREACH 65179
-#define IdResourceStrings_RSStackENOTEMPTY 65180
-#define IdResourceStrings_RSStackHOST_NOT_FOUND 65181
-#define IdResourceStrings_RSSocksRequestFailed 65182
-#define IdResourceStrings_RSSocksRequestServerFailed 65183
-#define IdResourceStrings_RSStackENOTSOCK 65184
-#define IdResourceStrings_RSStackEDESTADDRREQ 65185
-#define IdResourceStrings_RSStackEMSGSIZE 65186
-#define IdResourceStrings_RSStackEPROTOTYPE 65187
-#define IdResourceStrings_RSStackENOPROTOOPT 65188
-#define IdResourceStrings_RSStackEPROTONOSUPPORT 65189
-#define IdResourceStrings_RSStackESOCKTNOSUPPORT 65190
-#define IdResourceStrings_RSStackEOPNOTSUPP 65191
-#define IdResourceStrings_RSStackEPFNOSUPPORT 65192
-#define IdResourceStrings_RSStackEAFNOSUPPORT 65193
-#define IdResourceStrings_RSStackEADDRINUSE 65194
-#define IdResourceStrings_RSStackEADDRNOTAVAIL 65195
-#define IdResourceStrings_RSStackENETDOWN 65196
-#define IdResourceStrings_RSStackENETUNREACH 65197
-#define IdResourceStrings_RSStackENETRESET 65198
-#define IdResourceStrings_RSStackECONNABORTED 65199
-#define IdResourceStrings_RSStatusConnected 65200
-#define IdResourceStrings_RSStatusDisconnecting 65201
-#define IdResourceStrings_RSStatusDisconnected 65202
-#define IdResourceStrings_RSStatusText 65203
-#define IdResourceStrings_RSConnectTimeout 65204
-#define IdResourceStrings_RSInvalidServiceName 65205
-#define IdResourceStrings_RSStackError 65206
-#define IdResourceStrings_RSStackEINTR 65207
-#define IdResourceStrings_RSStackEBADF 65208
-#define IdResourceStrings_RSStackEACCES 65209
-#define IdResourceStrings_RSStackEFAULT 65210
-#define IdResourceStrings_RSStackEINVAL 65211
-#define IdResourceStrings_RSStackEMFILE 65212
-#define IdResourceStrings_RSStackEWOULDBLOCK 65213
-#define IdResourceStrings_RSStackEINPROGRESS 65214
-#define IdResourceStrings_RSStackEALREADY 65215
-#define IdResourceStrings_RSCouldNotBindSocket 65216
-#define IdResourceStrings_RSNotEnoughDataInBuffer 65217
-#define IdResourceStrings_RSWinsockInitializationError 65218
-#define IdResourceStrings_RSSetSizeExceeded 65219
-#define IdResourceStrings_RSFileNotFound 65220
-#define IdResourceStrings_RSOnlyOneAntiFreeze 65221
-#define IdResourceStrings_RSNotConnected 65222
-#define IdResourceStrings_RSIdNoDataToRead 65223
-#define IdResourceStrings_RSCanNotBindRange 65224
-#define IdResourceStrings_RSInvalidPortRange 65225
-#define IdResourceStrings_RSReadTimeout 65226
-#define IdResourceStrings_RSReadLnMaxLineLengthExceeded 65227
-#define IdResourceStrings_RSWS2CallError 65228
-#define IdResourceStrings_RSWS2LoadError 65229
-#define IdResourceStrings_RSStatusResolving 65230
-#define IdResourceStrings_RSStatusConnecting 65231
+#define ComConst_SVarNotObject 65136
+#define ComConst_STooManyParams 65137
+#define IdResourceStrings_RSSocksAuthMethodError 65152
+#define IdResourceStrings_RSSocksAuthError 65153
+#define IdResourceStrings_RSSocksServerGeneralError 65154
+#define IdResourceStrings_RSSocksServerPermissionError 65155
+#define IdResourceStrings_RSSocksServerNetUnreachableError 65156
+#define IdResourceStrings_RSSocksServerHostUnreachableError 65157
+#define IdResourceStrings_RSSocksServerConnectionRefusedError 65158
+#define IdResourceStrings_RSSocksServerTTLExpiredError 65159
+#define IdResourceStrings_RSSocksServerCommandError 65160
+#define IdResourceStrings_RSSocksServerAddressError 65161
+#define IdResourceStrings_RSUnevenSizeInDecodeStream 65162
+#define JConsts_sChangeJPGSize 65163
+#define JConsts_sJPEGError 65164
+#define JConsts_sJPEGImageFile 65165
+#define ComConst_SOleError 65166
+#define ComConst_SNoMethod 65167
+#define IdResourceStrings_RSStackENOTCONN 65168
+#define IdResourceStrings_RSStackESHUTDOWN 65169
+#define IdResourceStrings_RSStackETOOMANYREFS 65170
+#define IdResourceStrings_RSStackETIMEDOUT 65171
+#define IdResourceStrings_RSStackECONNREFUSED 65172
+#define IdResourceStrings_RSStackELOOP 65173
+#define IdResourceStrings_RSStackENAMETOOLONG 65174
+#define IdResourceStrings_RSStackEHOSTDOWN 65175
+#define IdResourceStrings_RSStackEHOSTUNREACH 65176
+#define IdResourceStrings_RSStackENOTEMPTY 65177
+#define IdResourceStrings_RSStackHOST_NOT_FOUND 65178
+#define IdResourceStrings_RSSocksRequestFailed 65179
+#define IdResourceStrings_RSSocksRequestServerFailed 65180
+#define IdResourceStrings_RSSocksRequestIdentFailed 65181
+#define IdResourceStrings_RSSocksUnknownError 65182
+#define IdResourceStrings_RSSocksServerRespondError 65183
+#define IdResourceStrings_RSStackEPROTOTYPE 65184
+#define IdResourceStrings_RSStackENOPROTOOPT 65185
+#define IdResourceStrings_RSStackEPROTONOSUPPORT 65186
+#define IdResourceStrings_RSStackESOCKTNOSUPPORT 65187
+#define IdResourceStrings_RSStackEOPNOTSUPP 65188
+#define IdResourceStrings_RSStackEPFNOSUPPORT 65189
+#define IdResourceStrings_RSStackEAFNOSUPPORT 65190
+#define IdResourceStrings_RSStackEADDRINUSE 65191
+#define IdResourceStrings_RSStackEADDRNOTAVAIL 65192
+#define IdResourceStrings_RSStackENETDOWN 65193
+#define IdResourceStrings_RSStackENETUNREACH 65194
+#define IdResourceStrings_RSStackENETRESET 65195
+#define IdResourceStrings_RSStackECONNABORTED 65196
+#define IdResourceStrings_RSStackECONNRESET 65197
+#define IdResourceStrings_RSStackENOBUFS 65198
+#define IdResourceStrings_RSStackEISCONN 65199
+#define IdResourceStrings_RSStatusText 65200
+#define IdResourceStrings_RSConnectTimeout 65201
+#define IdResourceStrings_RSInvalidServiceName 65202
+#define IdResourceStrings_RSStackError 65203
+#define IdResourceStrings_RSStackEINTR 65204
+#define IdResourceStrings_RSStackEBADF 65205
+#define IdResourceStrings_RSStackEACCES 65206
+#define IdResourceStrings_RSStackEFAULT 65207
+#define IdResourceStrings_RSStackEINVAL 65208
+#define IdResourceStrings_RSStackEMFILE 65209
+#define IdResourceStrings_RSStackEWOULDBLOCK 65210
+#define IdResourceStrings_RSStackEINPROGRESS 65211
+#define IdResourceStrings_RSStackEALREADY 65212
+#define IdResourceStrings_RSStackENOTSOCK 65213
+#define IdResourceStrings_RSStackEDESTADDRREQ 65214
+#define IdResourceStrings_RSStackEMSGSIZE 65215
+#define IdResourceStrings_RSSetSizeExceeded 65216
+#define IdResourceStrings_RSFileNotFound 65217
+#define IdResourceStrings_RSOnlyOneAntiFreeze 65218
+#define IdResourceStrings_RSNotConnected 65219
+#define IdResourceStrings_RSIdNoDataToRead 65220
+#define IdResourceStrings_RSCanNotBindRange 65221
+#define IdResourceStrings_RSInvalidPortRange 65222
+#define IdResourceStrings_RSReadTimeout 65223
+#define IdResourceStrings_RSReadLnMaxLineLengthExceeded 65224
+#define IdResourceStrings_RSWS2CallError 65225
+#define IdResourceStrings_RSWS2LoadError 65226
+#define IdResourceStrings_RSStatusResolving 65227
+#define IdResourceStrings_RSStatusConnecting 65228
+#define IdResourceStrings_RSStatusConnected 65229
+#define IdResourceStrings_RSStatusDisconnecting 65230
+#define IdResourceStrings_RSStatusDisconnected 65231
 #define ComStrs_sInsertError 65232
 #define ComStrs_sInvalidComCtl32 65233
 #define ComStrs_sDateTimeMax 65234
@@ -99,12 +100,12 @@
 #define ComStrs_sFailSetCalMinMaxRange 65239
 #define ComStrs_sFailsetCalSelRange 65240
 #define WinHelpViewer_hNoKeyword 65241
-#define JConsts_sChangeJPGSize 65242
-#define JConsts_sJPEGError 65243
-#define JConsts_sJPEGImageFile 65244
-#define IdResourceStrings_RSAlreadyConnected 65245
-#define IdResourceStrings_RSCannotAllocateSocket 65246
-#define IdResourceStrings_RSConnectionClosedGracefully 65247
+#define IdResourceStrings_RSAlreadyConnected 65242
+#define IdResourceStrings_RSCannotAllocateSocket 65243
+#define IdResourceStrings_RSConnectionClosedGracefully 65244
+#define IdResourceStrings_RSCouldNotBindSocket 65245
+#define IdResourceStrings_RSNotEnoughDataInBuffer 65246
+#define IdResourceStrings_RSWinsockInitializationError 65247
 #define ExtCtrls_clNameHighlightText 65248
 #define ExtCtrls_clNameInactiveBorder 65249
 #define ExtCtrls_clNameInactiveCaption 65250
@@ -395,10 +396,8 @@
 #define SysConst_SDiskFull 65535
 STRINGTABLE
 BEGIN
+	ComConst_SVarNotObject,	"Variant does not reference an automation object"
 	ComConst_STooManyParams,	"Dispatch methods do not support more than 64 parameters"
-	IdResourceStrings_RSSocksRequestIdentFailed,	"Request rejected because the client program and identd report different user-ids."
-	IdResourceStrings_RSSocksUnknownError,	"Unknown socks error."
-	IdResourceStrings_RSSocksServerRespondError,	"Socks server did not respond."
 	IdResourceStrings_RSSocksAuthMethodError,	"Invalid socks authentication method."
 	IdResourceStrings_RSSocksAuthError,	"Authentication error to socks server."
 	IdResourceStrings_RSSocksServerGeneralError,	"General SOCKS server failure."
@@ -409,12 +408,12 @@ BEGIN
 	IdResourceStrings_RSSocksServerTTLExpiredError,	"TTL expired."
 	IdResourceStrings_RSSocksServerCommandError,	"Command not supported."
 	IdResourceStrings_RSSocksServerAddressError,	"Address type not supported."
+	IdResourceStrings_RSUnevenSizeInDecodeStream,	"Uneven size in DecodeToStream."
+	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
+	JConsts_sJPEGError,	"JPEG error #%d"
+	JConsts_sJPEGImageFile,	"JPEG Image File"
 	ComConst_SOleError,	"OLE error %.8x"
 	ComConst_SNoMethod,	"Method '%s' not supported by automation object"
-	ComConst_SVarNotObject,	"Variant does not reference an automation object"
-	IdResourceStrings_RSStackECONNRESET,	"Connection reset by peer."
-	IdResourceStrings_RSStackENOBUFS,	"No buffer space available."
-	IdResourceStrings_RSStackEISCONN,	"Socket is already connected."
 	IdResourceStrings_RSStackENOTCONN,	"Socket is not connected."
 	IdResourceStrings_RSStackESHUTDOWN,	"Cannot send or receive after socket is closed."
 	IdResourceStrings_RSStackETOOMANYREFS,	"Too many references, cannot splice."
@@ -428,9 +427,9 @@ BEGIN
 	IdResourceStrings_RSStackHOST_NOT_FOUND,	"Host not found."
 	IdResourceStrings_RSSocksRequestFailed,	"Request rejected or failed."
 	IdResourceStrings_RSSocksRequestServerFailed,	"Request rejected because SOCKS server cannot connect."
-	IdResourceStrings_RSStackENOTSOCK,	"Socket operation on non-socket."
-	IdResourceStrings_RSStackEDESTADDRREQ,	"Destination address required."
-	IdResourceStrings_RSStackEMSGSIZE,	"Message too long."
+	IdResourceStrings_RSSocksRequestIdentFailed,	"Request rejected because the client program and identd report different user-ids."
+	IdResourceStrings_RSSocksUnknownError,	"Unknown socks error."
+	IdResourceStrings_RSSocksServerRespondError,	"Socks server did not respond."
 	IdResourceStrings_RSStackEPROTOTYPE,	"Protocol wrong type for socket."
 	IdResourceStrings_RSStackENOPROTOOPT,	"Bad protocol option."
 	IdResourceStrings_RSStackEPROTONOSUPPORT,	"Protocol not supported."
@@ -444,9 +443,9 @@ BEGIN
 	IdResourceStrings_RSStackENETUNREACH,	"Network is unreachable."
 	IdResourceStrings_RSStackENETRESET,	"Net dropped connection or reset."
 	IdResourceStrings_RSStackECONNABORTED,	"Software caused connection abort."
-	IdResourceStrings_RSStatusConnected,	"Connected."
-	IdResourceStrings_RSStatusDisconnecting,	"Disconnecting."
-	IdResourceStrings_RSStatusDisconnected,	"Disconnected."
+	IdResourceStrings_RSStackECONNRESET,	"Connection reset by peer."
+	IdResourceStrings_RSStackENOBUFS,	"No buffer space available."
+	IdResourceStrings_RSStackEISCONN,	"Socket is already connected."
 	IdResourceStrings_RSStatusText,	"%s"
 	IdResourceStrings_RSConnectTimeout,	"Connect timed out."
 	IdResourceStrings_RSInvalidServiceName,	"%s is not a valid service."
@@ -460,9 +459,9 @@ BEGIN
 	IdResourceStrings_RSStackEWOULDBLOCK,	"Operation would block. "
 	IdResourceStrings_RSStackEINPROGRESS,	"Operation now in progress."
 	IdResourceStrings_RSStackEALREADY,	"Operation already in progress."
-	IdResourceStrings_RSCouldNotBindSocket,	"Could not bind socket. Address and port are already in use."
-	IdResourceStrings_RSNotEnoughDataInBuffer,	"Not enough data in buffer."
-	IdResourceStrings_RSWinsockInitializationError,	"Winsock Initialization Error."
+	IdResourceStrings_RSStackENOTSOCK,	"Socket operation on non-socket."
+	IdResourceStrings_RSStackEDESTADDRREQ,	"Destination address required."
+	IdResourceStrings_RSStackEMSGSIZE,	"Message too long."
 	IdResourceStrings_RSSetSizeExceeded,	"Set Size Exceeded."
 	IdResourceStrings_RSFileNotFound,	"File \"%s\" not found"
 	IdResourceStrings_RSOnlyOneAntiFreeze,	"Only one TIdAntiFreeze can exist per application."
@@ -476,6 +475,9 @@ BEGIN
 	IdResourceStrings_RSWS2LoadError,	"Error on loading Winsock2 library (%s)"
 	IdResourceStrings_RSStatusResolving,	"Resolving hostname %s."
 	IdResourceStrings_RSStatusConnecting,	"Connecting to %s."
+	IdResourceStrings_RSStatusConnected,	"Connected."
+	IdResourceStrings_RSStatusDisconnecting,	"Disconnecting."
+	IdResourceStrings_RSStatusDisconnected,	"Disconnected."
 	ComStrs_sInsertError,	"Unable to insert an item"
 	ComStrs_sInvalidComCtl32,	"This control requires version 4.70 or greater of COMCTL32.DLL"
 	ComStrs_sDateTimeMax,	"Date exceeds maximum of %s"
@@ -486,12 +488,12 @@ BEGIN
 	ComStrs_sFailSetCalMinMaxRange,	"Failed to set calendar min/max range"
 	ComStrs_sFailsetCalSelRange,	"Failed to set calendar selected range"
 	WinHelpViewer_hNoKeyword,	"No help keyword specified."
-	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
-	JConsts_sJPEGError,	"JPEG error #%d"
-	JConsts_sJPEGImageFile,	"JPEG Image File"
 	IdResourceStrings_RSAlreadyConnected,	"Already connected."
 	IdResourceStrings_RSCannotAllocateSocket,	"Cannot allocate socket."
 	IdResourceStrings_RSConnectionClosedGracefully,	"Connection Closed Gracefully."
+	IdResourceStrings_RSCouldNotBindSocket,	"Could not bind socket. Address and port are already in use."
+	IdResourceStrings_RSNotEnoughDataInBuffer,	"Not enough data in buffer."
+	IdResourceStrings_RSWinsockInitializationError,	"Winsock Initialization Error."
 	ExtCtrls_clNameHighlightText,	"Highlight Text"
 	ExtCtrls_clNameInactiveBorder,	"Inactive Border"
 	ExtCtrls_clNameInactiveCaption,	"Inactive Caption"

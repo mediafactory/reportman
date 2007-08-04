@@ -145,6 +145,22 @@ begin
  end;
 {$ENDIF}
  SaveParams;
+ // Check parameters
+{$IFNDEF FORWEBAX}
+ if not Trpbasereport(report).CheckParameters(params,paramname,amessage) then
+ begin
+  aparam:=TRpBaseReport(report).Params.ParamByName(paramname);
+  RpMessageBox(amessage,aparam.Description);
+  index:=lcontrols.IndexOf(paramname);
+  if index>=0 then
+  begin
+   acontrol:= TControl(lcontrols.Objects[index]);
+   if acontrol.Enabled then
+    TWinControl(acontrol).SetFocus;
+  end;
+  exit;
+ end;
+{$ENDIF}
  dook:=true;
  close;
 end;

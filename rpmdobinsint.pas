@@ -785,9 +785,12 @@ begin
   end
   else
   begin
-   TRpCOmmonPosComponent(printitem).PosX:=pixelstotwips(NewLeft,Scale);
-   TRpCOmmonPosComponent(printitem).PosY:=pixelstotwips(NewTop,Scale);
-   UpdatePos;
+   if Not FBlocked then
+   begin
+    TRpCOmmonPosComponent(printitem).PosX:=pixelstotwips(NewLeft,Scale);
+    TRpCOmmonPosComponent(printitem).PosY:=pixelstotwips(NewTop,Scale);
+    UpdatePos;
+   end;
    if Assigned(fobjinsp) then
     TFRpObjInsp(fobjinsp).AddCompItem(Self,Not (ssShift in Shift));
   end;

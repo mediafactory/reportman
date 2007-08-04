@@ -2112,7 +2112,8 @@ begin
  // Insert params into rpEvaluator
  for i:=0 to Params.Count-1 do
  begin
-  eval.NewVariable(params.items[i].Name,params.items[i].Value);
+  if eval.Searchidentifier(params.items[i].Name)=nil then
+   eval.NewVariable(params.items[i].Name,params.items[i].Value);
  end;
  // Here identifiers are added to evaluator
  for i:=0 to Identifiers.Count-1 do
