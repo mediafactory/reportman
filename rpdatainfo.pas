@@ -1891,14 +1891,26 @@ begin
         if Length(afilter)>0 then
         begin
          try
-          TClientDataSet(FSQLInternalQuery).Filter:=afilter;
-          TClientDataSet(FSQLInternalQuery).Filtered:=true;
+          if (TClientDataSet(FSQLInternalQuery).Filter<>afilter) then
+          begin
+           TClientDataSet(FSQLInternalQuery).Filtered:=false;
+           TClientDataSet(FSQLInternalQuery).Filter:=afilter;
+           TClientDataSet(FSQLInternalQuery).Filtered:=true;
+          end;
          except
           on E:Exception do
           begin
            E.Message:=SRpErrorFilter+'-'+afilter+'-'+E.Message;
            raise;
           end;
+         end;
+        end
+        else
+        begin
+         if TClientDataSet(FSQLInternalQuery).Filtered then
+         begin
+          TClientDataSet(FSQLInternalQuery).Filtered:=false;
+          TClientDataSet(FSQLInternalQuery).Filter:=afilter;
          end;
         end;
        end;

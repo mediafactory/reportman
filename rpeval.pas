@@ -688,11 +688,20 @@ begin
   while ((Rpparser.Token=toOperator) and (Rpparser.TokenString[1]=';')) do
   begin
    Rpparser.NextToken;
-   variables(Value);
+   if (Rpparser.Token<>toEof) then
+    variables(Value);
   end
  end
  else
+ begin
   variables(Value);
+  while ((Rpparser.Token=toOperator) and (Rpparser.TokenString[1]=';')) do
+  begin
+   Rpparser.NextToken;
+   if (Rpparser.Token<>toEof) then
+    variables(Value);
+  end
+ end;
 end;
 
 procedure TRpCustomEvaluator.comparations(var Value:TRpValue);
