@@ -133,11 +133,12 @@ type
   TRpParamList=class(TCollection)
    private
     FReport:TComponent;
+    FLanguage:integer;
    public
     function GetItem(Index:Integer):TRpParam;
     procedure SetItem(index:integer;Value:TRpParam);
+    procedure SetLanguage(ALang:integer);
    public
-    Language:integer;
     constructor Create(AOwner:TComponent);
     function Add(AName:String):TRpParam;
     function IndexOf(AName:String):integer;
@@ -149,6 +150,7 @@ type
 {$ENDIF}
     property Items[index:integer]:TRpParam read GetItem write SetItem;default;
     property Report:TComponent read FReport;
+    property Language:Integer read FLanguage write SetLanguage;
    end;
 
   TRpParamComp=class(TComponent)
@@ -931,5 +933,12 @@ begin
  inherited Assign(Source);
 end;
 
+procedure TRpParamList.SetLanguage(ALang:integer);
+begin
+ if (ALang<0) then
+  ALang:=0;
+ FLanguage:=ALang;
+end;
 
 end.
+
