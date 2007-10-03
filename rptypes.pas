@@ -4836,7 +4836,12 @@ var
  rightmask:String;
  i:integer;
  allzeros:boolean;
+ isnegative:boolean;
 begin
+ isnegative:=number<0;
+ if (isnegative) then
+  number:=-number;
+
  decseparator:=true;
  hiddendecseparator:=false;
  leftfillchar:='0';
@@ -4980,6 +4985,8 @@ begin
   else
    Result:=astring;
  end;
+ if (isnegative) then
+  Result:='-'+Result;
 end;
 
 
