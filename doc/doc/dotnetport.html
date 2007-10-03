@@ -64,9 +64,13 @@
 <p>Modularized libraries are provided, <a href="../docnet/index.html">documentation 
   is available</a> but still incomplete.</p>
 <p>This is sample code to execute a report, a portion of the sample provided testinglib.exe.</p>
-using Reportman.Drawing;
-<br></br>
-using Reportman.Reporting; 
+<p>using Reportman.Drawing;
+  <br>
+  </br>
+using Reportman.Drawing.Forms;<br></br>
+using Reportman.Reporting;<br></br>
+using Reportman.Reporting.Forms;<br></br>
+</p>
 <p> Report rp=new Reportman.Report();<br>
   rp.LoadFromFile(EFile.Text);<br>
   if (pdf)<br>
@@ -80,11 +84,14 @@ using Reportman.Reporting;
   else<br>
   {<br>
   rp.AsyncExecution=asyncexecution;<br>
+  if (ParamsForm.ShowParams(rp)<br>
+  {<br>  
   PrintOutWinForms prw = new PrintOutWinForms();<br>
   prw.Preview = preview;<br>
   prw.SystemPreview=systempreview;<br>
   prw.ShowPrintDialog=showprintdialog;<br>
   prw.Print(rp.MetaFile);<br>
+  }  <br>
   }<br>
 </p>
 </body>
