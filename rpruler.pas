@@ -162,6 +162,7 @@ var rect,rectrefresh:TRect;
     i,onethousand,onecent:double;
   han:QPainterH;
     bwidth,bheight:integer;
+    posx,posy:integer;
 begin
  if pixel_scale=0 then
   pixel_scale:=1.0;
@@ -305,11 +306,11 @@ begin
  end;
  windowwidth:=Round(1000*rect.right/pixelsperinchx);
  windowheight:=Round(1000*rect.bottom/pixelsperinchy);
- if scale>=1 then
+ if pixel_scale>=1 then
  begin
-  h1:=Round(120/scale*1.5);
-  h2:=Round(60/scale*1.5);
-  h3:=Round(30/scale*1.5);
+  h1:=Round(120/pixel_scale*1.5);
+  h2:=Round(60/pixel_scale*1.5);
+  h3:=Round(30/pixel_scale*1.5);
  end
  else
  begin
@@ -336,11 +337,12 @@ begin
    while (i<Clength) do
    begin
     value:=x mod 10;
+    posx:=Round((i/onethousand)*scale);
     if value=0 then
     // One number
     begin
      QPainter_setWindow(han,rect.left,rect.top,rect.right,rect.bottom);
-     Canvas.TextOut(Round((i/onethousand)*scale),0,IntToStr(Round(i/onethousand)));
+     Canvas.TextOut(posx,0,IntToStr(Round(i/onethousand)));
      QPainter_SetWindow(han,rect.left,rect.top,windowwidth
       ,windowheight);
 //     Canvas.TextOut(i,CHeight,IntToStr(i div onethousand));
@@ -370,6 +372,7 @@ begin
    x:=0;
    while (i<Clength) do
    begin
+    posy:=Round((i/onethousand)*scale);
     value:=x mod 10;
 //    value:=Round(i/onethousand) mod 10;
 //      value:=Round(i) Mod Round(onethousand);
@@ -377,7 +380,7 @@ begin
     // One number
     begin
      QPainter_setWindow(han,rect.left,rect.top,rect.right,rect.bottom);
-     Canvas.TextOut(0,Round((i/onethousand)*scale),IntToStr(Round(i/onethousand)));
+     Canvas.TextOut(0,posy,IntToStr(Round(i/onethousand)));
      QPainter_SetWindow(han,rect.left,rect.top,windowwidth
       ,windowheight);
      Canvas.MoveTo(CHeight,Round(i));
