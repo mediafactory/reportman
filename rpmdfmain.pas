@@ -2281,7 +2281,7 @@ end;
 procedure ExecuteReportDotNet(report:TRpReport;preview:boolean;version:integer);
 var
  aparams:TStringList;
- astring,apdf:string;
+ astring:string;
 begin
  aparams:=TStringList.Create;
  try
@@ -2293,25 +2293,10 @@ begin
   astring:=RpTempFileName;
   report.StreamFormat:=rpStreamXML;
   report.SaveToFile(astring);
-  apdf:=ChangeFileExt(RpTempFilename,'.pdf');
-  aparams.Add('-pdf');
-  aparams.Add(apdf);
+  if preview then
+   aparams.Add('-preview');
   aparams.Add(astring);
   ExecuteSystemApp(aparams,true);
-  if preview then
-  begin
-   aparams.Clear;
-   aparams.Add('kpdf');
-   aparams.Add(apdf);
-   ExecuteSystemApp(aparams,false);
-  end
-  else
-  begin
-   aparams.Clear;
-   aparams.Add('kprinter');
-   aparams.Add(apdf);
-   ExecuteSystemApp(aparams,false);
-  end;
  finally
   aparams.free;
  end;
