@@ -162,7 +162,7 @@ type
  TRpReportAction=(rpDrawerBefore,rpDrawerAfter);
  TRpReportActions=set of TRpReportAction;
 
- TRpPrinterFontsOption=(rppfontsdefault,rppfontsalways,rppfontsnever);
+ TRpPrinterFontsOption=(rppfontsdefault,rppfontsalways,rppfontsnever,rppfontsrecalculate);
 
  TRpPrinterEscapeStyle=(rpPrinterDefault,rpPrinterPlain,rpPrinterDatabase,rpPrinterCustom);
 

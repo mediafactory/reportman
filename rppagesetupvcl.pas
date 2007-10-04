@@ -211,6 +211,7 @@ begin
  ComboPrinterFonts.Items.Strings[0]:=TranslateStr(95,ComboPrinterFonts.Items.Strings[0]);
  ComboPrinterFonts.Items.Strings[1]:=TranslateStr(114,ComboPrinterFonts.Items.Strings[1]);
  ComboPrinterFonts.Items.Strings[2]:=TranslateStr(115,ComboPrinterFonts.Items.Strings[2]);
+ ComboPrinterFonts.Items.Strings[3]:=TranslateStr(1433,ComboPrinterFonts.Items.Strings[3]);
  BBAckground.Caption:=TranslateStr(116,BBAckground.Caption);
  CheckPreviewAbout.Caption:=SRpAboutBoxPreview;
  with ComboSelPrinter.Items do

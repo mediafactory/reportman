@@ -359,7 +359,7 @@ begin
  recalcreport:=false;
  if (previewcontrol is TRpPreviewControl) then
  begin
-  if TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsalways then
+  if (TRpPreviewControl(previewcontrol).Report.PrinterFonts in [rppfontsalways,rppfontsrecalculate]) then
   begin
    recalcreport:=true;
    areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
@@ -416,7 +416,7 @@ begin
         recalcreport:=false;
         if (previewcontrol is TRpPreviewControl) then
         begin
-          if TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsalways then
+          if (TRpPreviewControl(previewcontrol).Report.PrinterFonts in [rppfontsalways,rppfontsrecalculate]) then
           begin
            recalcreport:=true;
            areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
