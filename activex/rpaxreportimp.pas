@@ -10,7 +10,7 @@ interface
 
 uses
   Windows, ActiveX, SysUtils,Classes, Controls, Graphics, Menus, Forms, StdCtrls,
-  ComServ, StdVCL, AXCtrls, Reportman_TLB, rpactivexreport,rpreport,rpvgraphutils,
+  ComServ, StdVCL, AXCtrls, reportman_TLB, rpactivexreport,rpreport,rpvgraphutils,
   rpparams,rptypes,rpgdidriver,rpmetafile,comobj,rpaxreportparameters,
   rpaxreportreport,rpexceldriver,rphtmldriver,printers,rpmdconsts;
 
@@ -103,6 +103,7 @@ type
     function Get_AsyncExecution: WordBool; safecall;
     procedure SaveToCSV2(const filename, separator: WideString); safecall;
     procedure Set_AsyncExecution(Value: WordBool); safecall;
+    procedure SaveToHTMLSingle(const filename: WideString); safecall;
   end;
 
 implementation
@@ -542,6 +543,11 @@ end;
 procedure TReportManX.Set_AsyncExecution(Value: WordBool);
 begin
  FDelphiControl.AsyncExecution:=Value;
+end;
+
+procedure TReportManX.SaveToHTMLSingle(const filename: WideString);
+begin
+
 end;
 
 initialization

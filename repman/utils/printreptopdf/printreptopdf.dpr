@@ -92,6 +92,7 @@ var
  tocsv,tosvg,toctxt:Boolean;
  filestream:TFileStream;
  dotime:boolean;
+ singlefile:boolean;
  seconds,minutes,hours:integer;
  difmilis:int64;
 {$IFDEF MSWINDOWS}
@@ -166,6 +167,7 @@ begin
   tosvg:=false;
   onesheet:=false;
   htmloutput:=false;
+  singlefile:=false;
   stdinput:=false;
   doprintmetafile:=false;
   doprintastext:=False;
@@ -268,6 +270,12 @@ begin
      if ParamStr(indexparam)='-html' then
      begin
       htmloutput:=true;
+     end
+     else
+     if ParamStr(indexparam)='-htmlsingle' then
+     begin
+      htmloutput:=true;
+      singlefile:=true;
      end
      else
      if ParamStr(indexparam)='-text' then
@@ -403,6 +411,10 @@ begin
        Raise Exception.Create(SRpOutputFilenameHTML);
       PrintReportToMetafile(report,'',showprogress,allpages,frompage,topage,
        copies,'',collate);
+      if (singlefile) then
+      ExportMetafileToHtmlSingle(report.metafile,pdffilename,pdffilename,showprogress,
+       true,1,99999)
+      else
       ExportMetafileToHtml(report.metafile,pdffilename,pdffilename,showprogress,
        true,1,99999);
      end

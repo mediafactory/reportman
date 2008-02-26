@@ -155,6 +155,14 @@ type
    constructor Create(AOwner:TComponent);override;
   end;
 
+ { Function STR }
+ TIdenUTF8ToWideString=class(TIdenFunction)
+  protected
+   function GetRpValue:TRpValue;override;
+  public
+   constructor Create(AOwner:TComponent);override;
+  end;
+
  { Function LEFT }
  TIdenTrim=class(TIdenFunction)
   protected
@@ -982,6 +990,7 @@ begin
 
 end;
 
+
 { TIdenSTR }
 
 constructor TIdenSTR.Create(AOwner:TComponent);
@@ -996,7 +1005,7 @@ end;
 
 {**************************************************************************}
 
-function TIdenSTR.GeTRpValue:TRpValue;
+function TIdenStr.GeTRpValue:TRpValue;
 begin
 // if VarType(Params[0])=varString then
 //   Raise TRpNamedException.Create(SRpEvalType,
@@ -1006,6 +1015,40 @@ begin
  else
   Result:=String(Params[0]);
 end;
+
+{ TIdenUTF8ToWideString }
+
+constructor TIdenUTF8ToWideString.Create(AOwner:TComponent);
+begin
+ inherited Create(AOwner);
+ FParamcount:=1;
+ IdenName:='UTF8ToWideString';
+// Help:=SRpStr;
+ model:='function '+'StrFSSToWideString'+'(value:string):WideString';
+end;
+
+{**************************************************************************}
+
+function TIdenUTF8ToWideString.GeTRpValue:TRpValue;
+var
+ cadena:string;
+ cadenaw:WideString;
+begin
+ if VarIsNull(Params[0]) then
+  Result:=''
+ else
+ begin
+  cadenaw:='';
+  cadena:=String(Params[0]);
+{$IFDEF USEVARIANTS}
+  Result:=UTF8Decode(cadena);
+{$ENDIF}
+{$IFNDEF USEVARIANTS}
+  Result:=cadena;
+{$ENDIF}
+ end;
+end;
+
 
 {**************************************************************************}
 

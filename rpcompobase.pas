@@ -74,6 +74,7 @@ type
   // Defined as public but will be published in descendants
    procedure SaveToText(filename:string;textdriver:String='');virtual;abstract;
    procedure SaveToHTML(filename:string);
+   procedure SaveToHTMLSingle(filename:string);
    procedure SaveToCustomText(filename:string);
    procedure SaveToSVG(filename:string);
    procedure SaveToCSV(filename:string;separator:string=',');
@@ -427,6 +428,11 @@ end;
 procedure TCBaseReport.SaveToHTML(filename:string);
 begin
  ExportReportToHtml(report,filename,showprogress);
+end;
+
+procedure TCBaseReport.SaveToHTMLSingle(filename:string);
+begin
+ ExportReportToHtmlSingle(report,filename);
 end;
 
 procedure TCBaseReport.SaveToCustomText(filename:string);

@@ -3,7 +3,7 @@ unit rpaspserver;
 interface
 
 uses
-  Classes,ComObj, ActiveX, AspTlb, ReportMan_TLB, StdVcl,
+  Classes,ComObj, ActiveX, AspTlb, reportman_TLB, StdVcl,
   rpreport,rppdfdriver,rpcsvdriver,rptextdriver;
 
 type

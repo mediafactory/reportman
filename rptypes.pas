@@ -398,8 +398,9 @@ function VarTypeToDataType(VarType: Integer): TFieldType;
 
 {$IFNDEF USEVARIANTS}
 function GetEnvironmentVariable(aname:String):string;
-function HTMLEncode(astring:String):String;
 {$ENDIF}
+function RpHTMLEncode(const AStr:String):String;
+
 
 function GetLineLangByIndex(astring:widestring;index:integer):string;
 function AddLineLangByIndex(astring:widestring;newstring:widestring;index:integer):string;
@@ -733,6 +734,8 @@ begin
   end;
  end;
  atype:=VarType(value);
+ if ((atype=271) or (atype=272)) then
+  atype:=varDate;
  case atype of
   varEmpty,varNull:
    Result:='';
@@ -905,7 +908,9 @@ begin
    end
    else
 {$ENDIF}
+   begin
     Result:=SRpUnknownType;
+   end;
   end;
  end;
  {  varOleStr   = $0008;  varDispatch = $0009;  varError    = $000A;  varVariant  = $000C;  varUnknown  = $000D;  varStrArg   = $0048;  varAny      = $0101;  varTypeMask = $0FFF;  varArray    = $2000;  varByRef    = $4000;}
@@ -2528,7 +2533,12 @@ var s:String;
 	  18: Decenas:='dieciocho';
 	  19: Decenas:='diecinueve';
 	  20: Decenas:='veinte';
-	  21: Decenas:='veinti'+Unidades(numero mod 10);
+	  21: begin
+         if female then
+          Decenas:='veintiuna'
+         else
+          Decenas:='veintiún';
+        end;
 	  22: Decenas:='veintidós';
 	  23: Decenas:='veintitrés';
 	  24..29: Decenas:='veinti'+Unidades(numero mod 10);
@@ -2741,7 +2751,7 @@ var s:String;
 	  14: Decenas:='catorze';
 	  15: Decenas:='quinze';
 	  16: Decenas:='setze';
-	  17: Decenas:='diset';
+	  17: Decenas:='disset';
 	  18: Decenas:='divuit';
 	  19: Decenas:='dinou';
 	  20: Decenas:='vint';
@@ -2829,9 +2839,9 @@ var s:String;
 		centenas:='nou-centes '+decenas(numero mod 100);
 	  else
 	   If Not Female then
-	    centenas:=unidades(numero div 100)+'cents'+' '+decenas(numero mod 100)
+	    centenas:=unidades(numero div 100)+'-cents '+decenas(numero mod 100)
 	   else
-	      centenas:=unidades(numero div 100)+'centes'+' '+decenas(numero mod 100);
+	      centenas:=unidades(numero div 100)+'-centes '+decenas(numero mod 100);
 	  end;
      end;
 
@@ -2992,7 +3002,12 @@ var s:String;
 	  18: Decenas:='dieciocho';
 	  19: Decenas:='diecinueve';
 	  20: Decenas:='veinte';
-	  21: Decenas:='veintiuna';
+	  21: begin
+         if female then
+          Decenas:='veintiuna'
+         else
+          Decenas:='veintiún';
+        end;
 	  22: Decenas:='veintidós';
 	  23: Decenas:='veintitrés';
 	  24..29: Decenas:='veinti'+Unidades(numero mod 10);
@@ -5144,11 +5159,16 @@ begin
  end;
 end;
 
-function HTMLEncode(astring:String):String;
-begin
- Result:=astring;
-end;
 {$ENDIF}
+
+function RpHTMLEncode(const AStr:String):String;
+begin
+	Result := StringReplace(AStr,   '&', '&amp;', [rfReplaceAll]);    {Do not Localize}
+	Result := StringReplace(Result, '<', '&lt;', [rfReplaceAll]);    {Do not Localize}
+	Result := StringReplace(Result, '>', '&gt;', [rfReplaceAll]);    {Do not Localize}
+	Result := StringReplace(Result, '"', '&quot;', [rfReplaceAll]);    {Do not Localize}
+	Result := StringReplace(Result, '''', '&apos;', [rfReplaceAll]);    {Do not Localize}
+end;
 
 
 function GetLineLangByIndex(astring:widestring;index:integer):string;

@@ -369,6 +369,8 @@ begin
  Rpfunctions.AddObject('BARCODEOP',iden);
  iden:=TIdenParamInfo.Create(nil);
  Rpfunctions.AddObject('PARAMINFO',iden);
+ iden:=TIdenUTF8ToWideString.Create(nil);
+ Rpfunctions.AddObject('UTF8TOWIDESTRING',iden);
  // Other
 
  // Graphic functions

@@ -1,4 +1,4 @@
-unit Reportman_TLB;
+unit reportman_TLB;
 
 // ************************************************************************ //
 // WARNING                                                                    
@@ -11,8 +11,8 @@ unit Reportman_TLB;
 // manual modifications will be lost.                                         
 // ************************************************************************ //
 
-// PASTLWTR : 1.2
-// File generated on 02/08/2007 14:31:59 from Type Library described below.
+// $Rev: 8291 $
+// File generated on 22/02/2008 9:59:50 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\reportman.tlb (1)
@@ -41,10 +41,10 @@ uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL, Variants;
 // *********************************************************************//
 const
   // TypeLibrary Major and minor versions
-  ReportmanMajorVersion = 2;
-  ReportmanMinorVersion = 1;
+  reportmanMajorVersion = 2;
+  reportmanMinorVersion = 1;
 
-  LIBID_Reportman: TGUID = '{D4D26F6B-6564-44F4-A913-03C91CE37740}';
+  LIBID_reportman: TGUID = '{D4D26F6B-6564-44F4-A913-03C91CE37740}';
 
   IID_IReportManX: TGUID = '{B3AE1470-158D-4855-83DB-BC3A2746C26E}';
   DIID_IReportManXEvents: TGUID = '{50909EA4-8F4F-4865-877D-287FC7072177}';
@@ -252,6 +252,7 @@ type
     procedure SaveToCSV2(const filename: WideString; const separator: WideString); safecall;
     function Get_AsyncExecution: WordBool; safecall;
     procedure Set_AsyncExecution(Value: WordBool); safecall;
+    procedure SaveToHTMLSingle(const filename: WideString); safecall;
     property filename: WideString read Get_filename write Set_filename;
     property Preview: WordBool read Get_Preview write Set_Preview;
     property ShowProgress: WordBool read Get_ShowProgress write Set_ShowProgress;
@@ -334,6 +335,7 @@ type
                               const reportname: WideString); dispid 40;
     procedure SaveToCSV2(const filename: WideString; const separator: WideString); dispid 41;
     property AsyncExecution: WordBool dispid 43;
+    procedure SaveToHTMLSingle(const filename: WideString); dispid 205;
   end;
 
 // *********************************************************************//
@@ -681,6 +683,7 @@ type
                               const password: WideString; const aliasname: WideString; 
                               const reportname: WideString);
     procedure SaveToCSV2(const filename: WideString; const separator: WideString);
+    procedure SaveToHTMLSingle(const filename: WideString);
     property  ControlInterface: IReportManX read GetControlInterface;
     property  DefaultInterface: IReportManX read GetControlInterface;
     property DoubleBuffered: WordBool index 18 read GetWordBoolProp write SetWordBoolProp;
@@ -1076,6 +1079,11 @@ end;
 procedure TReportManX.SaveToCSV2(const filename: WideString; const separator: WideString);
 begin
   DefaultInterface.SaveToCSV2(filename, separator);
+end;
+
+procedure TReportManX.SaveToHTMLSingle(const filename: WideString);
+begin
+  DefaultInterface.SaveToHTMLSingle(filename);
 end;
 
 class function CoReportReport.Create: IReportReport;

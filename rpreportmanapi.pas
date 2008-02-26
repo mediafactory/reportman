@@ -55,6 +55,9 @@ function rp_setadoconnectionstring(hreport:integer;conname:pchar;
  constring:PChar):integer;external REP_LIBNAME;
 function rp_bitmap(hreport:integer;outputfilename:PChar;
  ask,mono,vertres,horzres:integer):integer;stdcall;external REP_LIBNAME;
+function rp_getdefaultprinter:pchar;stdcall;external REP_LIBNAME;
+function rp_getprinters:pchar;stdcall;external REP_LIBNAME;
+function rp_setdefaultprinter(device:pchar):integer;stdcall;external REP_LIBNAME;
 {$ENDIF}
 
 implementation

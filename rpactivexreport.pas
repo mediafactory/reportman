@@ -69,6 +69,7 @@ type
    procedure SaveToText(filename:string;textdriver:String);
    procedure SaveToMetafile(filename:string);
    procedure SaveToHTML(filename:string);
+   procedure SaveToHTMLSingle(filename:string);
    procedure SaveToCustomText(filename:string);
    procedure SaveToSVG(filename:string);
    procedure SaveToCSV(filename:string);
@@ -212,6 +213,11 @@ end;
 procedure TRpActiveXReport.SaveToHTML(filename:string);
 begin
  FVCLReport.SaveToHtml(filename);
+end;
+
+procedure TRpActiveXReport.SaveToHTMLSingle(filename:string);
+begin
+ FVCLReport.SaveToHtmlSingle(filename);
 end;
 
 procedure TRpActiveXReport.SaveToCustomText(filename:string);

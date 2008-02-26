@@ -49,7 +49,10 @@ exports
   rp_getparamcount,
   rp_getremoteparams,
   rp_setadoconnectionstring,
-  rp_bitmap;
+  rp_bitmap,
+  rp_getdefaultprinter,
+  rp_getprinters,
+  rp_setdefaultprinter;
 
 {$R *.TLB}
 

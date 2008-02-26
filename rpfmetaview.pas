@@ -368,6 +368,7 @@ begin
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
    SRpHtmlFile+'|*.html|'+
+   SRpHtmlFileSingle+'|*.html|'+
    SRpSVGFile+'|*.svg|'+
    SRpCSVFile+'|*.csv|'+
    SRpTXTProFile+'|*.txt';
@@ -383,6 +384,7 @@ begin
    SRpPlainFile+' (*.txt)|'+
    SRpBitmapFile+' (*.bmp)|'+
    SRpHtmlFile+' (*.html)|'+
+   SRpHtmlFileSingle+' (*.html)'+
    SRpSVGFile+' (*.svg)|'+
    SRpCSVFile+' (*.csv)|'+
    SRpTXTProFile+' (*.txt)';
@@ -671,21 +673,26 @@ begin
      end;
     7:
      begin
-      ExportMetafileToSVG(Metafile,Caption,SaveDialog1.FileName,
+      ExportMetafileToHtmlSingle(Metafile,Caption,SaveDialog1.FileName,
        true,true,1,9999);
      end;
     8:
      begin
+      ExportMetafileToSVG(Metafile,Caption,SaveDialog1.FileName,
+       true,true,1,9999);
+     end;
+    9:
+     begin
       ExportMetafileToCSV(metafile,SaveDialog1.Filename,true,true,
        1,MAX_PAGECOUNT,',');
      end;
-    9:
+    10:
      begin
       ExportMetafileToTextPro(metafile,SaveDialog1.Filename,true,true,
        1,9999);
      end;
 {$IFDEF MSWINDOWS}
-    10:
+    11:
      begin
       MetafileToExe(metafile,SaveDialog1.Filename);
      end;

@@ -354,6 +354,8 @@ type
    AbortingThread:Boolean;
    IntStream:TStream;
    FMemStream:TMemoryStream;
+   FTextsFound:TStringList;
+   FTextsFoundByPage:TStringList;
    procedure SetCurrentPage(index:integer);
    function GetPageCount:integer;
    function GetPage(Index:integer):TRpMetafilePage;
@@ -386,7 +388,9 @@ type
    Title:string;
    critsec:TCriticalSection;
    ForcePaperName:string;
+   DidSearch:boolean;
    procedure Clear;
+   procedure DoSearch(avalue:string);
    procedure LoadFromStream(Stream:TStream;clearfirst:boolean=true);
    procedure LoadFromFile(filename:string;clearfirst:boolean=true);
    procedure SaveToStream(Stream:TStream;compressed:boolean=true);
@@ -405,6 +409,8 @@ type
    procedure WorkAsyncError(amessage:string);
    procedure Finish;
    procedure StopWork;
+   function IsFound(page:TRpMetafilePage;objectindex:integer):boolean;
+   function NextPageFound(pageindex:integer):integer;
    property BackColor:integer read FBackColor write SetBackColor;
    property CurrentPage:integer read FCurrentPage write SetCurrentPage;
    property Reading:boolean read FReading;
@@ -801,6 +807,11 @@ begin
  critsec:=TCriticalSection.Create;
  FCurrentPage:=-1;
  FMemStream:=TMemoryStream.Create;
+ FTextsFound:=TStringList.Create;
+ FTextsFoundByPage:=TStringList.Create;
+ FTextsFound.Sorted:=true;
+ FTextsFoundByPage.Sorted:=true;
+
  // Standard sizes
  CustomX:=12047;
  CustomY:=17039;
@@ -831,6 +842,8 @@ end;
 
 destructor TRpMetafileReport.Destroy;
 begin
+ FTextsFound.free;
+ FTextsFoundByPage.free;
  if FReading then
  begin
   FReading:=False;
@@ -2071,6 +2084,82 @@ begin
   metafile.OnWorkAsyncError(errormessage);
 end;
 
+function TrpMetaFileReport.IsFound(page:TRpMetafilePage;objectindex:integer):boolean;
+var
+ tosearch:string;
+begin
+ if not didsearch then
+ begin
+  Result:=false;
+  exit;
+ end;
+ tosearch:=FormatFloat('0000000000000',Integer(page))+
+      FormatFloat('0000000000',objectindex);
+ Result:=FTextsFound.IndexOf(tosearch)>=0;
+end;
+
+function TrpMetaFileReport.NextPageFound(pageindex:integer):integer;
+var
+ tosearch:string;
+ index:integer;
+begin
+ if not didsearch then
+ begin
+  Result:=0;
+  exit;
+ end;
+ tosearch:=FormatFloat('0000000000',pageindex);
+ index:=FTextsFoundByPage.IndexOf(tosearch);
+ if (index>=FTextsFoundByPage.Count-1) then
+ begin
+  Result:=0;
+  if FTextsFoundByPage.Count>0 then
+  begin
+  Result:=StrToInt(FTextsFoundByPage[0]);
+  end;
+ end
+ else
+ begin
+  Result:=StrToInt(FTextsFoundByPage[index+1]);
+ end;
+end;
+
+procedure TrpMetaFileReport.DoSearch(avalue:string);
+var
+ i:integer;
+ j:integer;
+ page:TRpMetafilePage;
+ atext:string;
+ foundinpage:boolean;
+begin
+ avalue:=UpperCase(avalue);
+ RequestPage(MAX_PAGECOUNT);
+ DidSearch:=true;
+ FTextsFound.Clear;
+ FTextsFoundByPage.Clear;
+ if Length(avalue)<1 then
+  exit;
+ for i:=0 to CurrentPageCount-1 do
+ begin
+  page:=Pages[i];
+  foundinpage:=false;
+  for j:=0 to page.ObjectCount-1 do
+  begin
+   if page.Objects[j].Metatype=rpMetaText then
+   begin
+    atext:=UpperCase(page.GetText(page.Objects[j]));
+    if (Pos(avalue,atext)>0) then
+    begin
+     FTextsFound.Add(FormatFloat('0000000000000',Integer(page))+
+      FormatFloat('0000000000',j));
+     foundinpage:=true;
+    end;
+   end;
+   if foundinpage then
+    FTextsFoundByPage.Add(FormatFloat('0000000000',i));
+  end;
+ end;
+end;
 
 
 

@@ -58,7 +58,9 @@ int rp_printremote_report(int hreport,char *hostname,int port,char *user,char *p
 
 /*int rp_setparamvaluevar(int hreport,char *paramname,OleVariant paramvalue);*/
 int rp_setadoconnectionstring(int hreport,char *conname,char *constring);
-
+char* rp_getprinters(void);
+char* rp_getdefaultprinter(void);
+int rp_setdefaultprinter(char *device); 
 
 
 #ifdef __cplusplus

@@ -333,10 +333,10 @@ begin
      rpsHorzLine:
       begin
        FPDFFile.Canvas.Line(X+PosX, Y+PosY,X+PosX+W, Y+PosY);
-       if obj.PenStyle in [3,4] then
-       begin
-        FPDFFile.Canvas.PenStyle:=6;
-        FPDFFile.Canvas.Line(X+PosX, Y+PosY,X+PosX, Y+PosY+H);
+//       if obj.PenStyle in [3,4] then
+//       begin
+//        FPDFFile.Canvas.PenStyle:=6;
+//        FPDFFile.Canvas.Line(X+PosX, Y+PosY,X+PosX, Y+PosY+H);
        end;
       end;
      rpsVertLine:

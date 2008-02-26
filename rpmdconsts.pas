@@ -41,7 +41,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.7a';
+ RM_VERSION='2.7d';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
  MAX_PAGECOUNT=999999;
 type
@@ -1148,7 +1148,9 @@ var
   SRpGerman:WideString='Germany';
   SRpItalian:WideString='Italian';
   SRpHtmlFile:WideString='Html file';
+  SRpHtmlFileSingle:WideString='Html file (single)';
   SRpPrintPDFRep13:WideString='         -html     Generate Html output';
+  SRpPrintPDFRep13b:WideString='         -htmlsingle     Generate Html output in a single file';
   SRpOutputFilenameHTML:WideString='Output filename required, generating HTML output';
   SRPLeftRight:WideString='Left/Right';
   SRPTopBottom:WideString='Top/Bottom';
@@ -2341,6 +2343,9 @@ begin
 
 
  TranslateVar(783,SRpAsyncExecution);
+
+ TranslateVar(1438,SRpHtmlFileSingle);
+ TranslateVar(1439,SRpPrintPDFRep13b);
 
 end;
 

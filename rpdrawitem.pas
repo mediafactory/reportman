@@ -282,7 +282,7 @@ begin
     exit;
    if IsCompressed(FStream) then
    begin
-    if FDecompStream.Size>0 then
+    if FDecompStream.Size<1 then
     begin
      DecompressStream(FStream,FDecompStream);
     end;

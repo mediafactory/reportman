@@ -921,6 +921,8 @@ var
  dataavail:Boolean;
  newpagesize:integer;
 begin
+ maximum_width:=0;
+ maximum_height:=0;
  FUpdatePageSize:=false;
  FillGlobalHeaders;
  FDriver:=Driver;
@@ -1360,6 +1362,7 @@ begin
   asection.Print(adriver,pageposx,pageposy,-1,-1,metafile,MaxExtent,PartialPrint);
   freespace:=freespace-sectionext.Y;
   pageposy:=pageposy+sectionext.Y;
+  maximum_height:=pageposy;
  end
  else
  // Align to bottom
@@ -1367,7 +1370,11 @@ begin
   pageposy:=pageposy+freespace-sectionext.Y;
   asection.Print(adriver,pageposx,pageposy,-1,-1,metafile,MaxExtent,PartialPrint);
   freespace:=0;
+  if ((pageposy+sectionext.Y)>maximum_height) then
+   maximum_height:=pageposy+sectionext.Y;
  end;
+ if (sectionext.X>maximum_width) then
+  maximum_width:=sectionext.X;
  if asection.SkipType=secskipafter then
   SkipToPageAndPosition;
 end;

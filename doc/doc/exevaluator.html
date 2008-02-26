@@ -278,8 +278,7 @@
     <td>Retutns the right part of a string</td>
   </tr>
   <tr> 
-    <td> function Substr(cadena:string; index:integer; count:integer) :string 
-    </td>
+    <td> function Substr(cadena:string; index:integer; count:integer) :string    </td>
     <td>Returns a substring begining at index and copying count characters</td>
   </tr>
   <tr> 
@@ -409,6 +408,14 @@
   <tr>
     <td>function CheckExpression(expression,message):boolean</td>
     <td>If the expression is false raises an exception with the provided message</td>
+  </tr>
+  <tr>
+    <td>function StringToBin:binary</td>
+    <td>Convers a string to a binary type. An expression returning a binary type can be used in the image expression for example. </td>
+  </tr>
+  <tr>
+    <td>function Decode64(value:string):string </td>
+    <td>Decodes a base64 string to the original string representation, you can convert the result to binary if the original string represens an image for example. </td>
   </tr>
 </table>
 <p><b>Evaluator functions and variables available while executing a report</b></p>

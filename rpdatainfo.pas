@@ -1026,6 +1026,11 @@ begin
       paramlist.Add(Copy(paramname,9,Length(paramname))+
        '='+params.Items[i].AsString);
      end;
+     if Copy(paramname,1,8+Length(alias)+1)=Alias+'_DBPARAM_' then
+     begin
+      paramlist.Add(Copy(paramname,9,Length(paramname))+
+       '='+params.Items[i].AsString);
+     end;
     end;
    end;
    case Fdriver of
@@ -1369,10 +1374,13 @@ begin
       begin
        ADOConnection.Mode:=cmRead;
        report:=TRpDataInfoList(Collection).FReport As TRpbASEReport;
-       if report.Params.IndexOf('ADOCONNECTIONSTRING')>=0 then
-        ADOConnection.ConnectionString:=report.Params.ParamByName('ADOCONNECTIONSTRING').AsString
+       if report.Params.IndexOf(Alias+'_ADOCONNECTIONSTRING')>=0 then
+        ADOConnection.ConnectionString:=report.Params.ParamByName(Alias+'_ADOCONNECTIONSTRING').AsString
        else
-        ADOConnection.ConnectionString:=ADOConnectionString;
+        if report.Params.IndexOf('ADOCONNECTIONSTRING')>=0 then
+         ADOConnection.ConnectionString:=report.Params.ParamByName('ADOCONNECTIONSTRING').AsString
+        else
+         ADOConnection.ConnectionString:=ADOConnectionString;
        ADOConnection.LoginPrompt:=LoginPrompt;
        ADOConnection.Connected:=true;
       end

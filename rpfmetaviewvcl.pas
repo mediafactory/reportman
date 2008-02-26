@@ -174,6 +174,8 @@ type
     MEntire48: TMenuItem;
     MLeftRight: TMenuItem;
     Splitter1: TSplitter;
+    AFind: TAction;
+    ESearch: TRpMaskEdit;
     procedure AFirstExecute(Sender: TObject);
     procedure ANextExecute(Sender: TObject);
     procedure APreviousExecute(Sender: TObject);
@@ -207,6 +209,10 @@ type
     procedure MEntire1Click(Sender: TObject);
     procedure MLeftRightClick(Sender: TObject);
     procedure MEntireMenuPopup(Sender: TObject);
+    procedure ESearchChange(Sender: TObject);
+    procedure ESearchKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure AFindExecute(Sender: TObject);
   private
     { Private declarations }
     cancelled:boolean;
@@ -215,6 +221,7 @@ type
     faform:TWinControl;
     fmetafile,fintmetafile:TRpMetafileReport;
     FPreviewControl:TRpPreviewmeta;
+    textchanged:boolean;
     procedure SetForm(Value:TWinControl);
     procedure EnableButtons;
     procedure DisableButtons;
@@ -229,6 +236,7 @@ type
     procedure OnProgress(Sender:TObject;records,pagecount:integer;var docancel:boolean);
     procedure SetMetafile(avalue:TRpMetafileReport);
     procedure OnPageDrawn(prm:TRpPreviewMeta);
+    procedure FindNext;
   public
     { Public declarations }
 {$IFDEF USEINDY}
@@ -354,6 +362,7 @@ begin
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
    SRpHtmlFile+'|*.html|'+
+   SRpHtmlFileSingle+'|*.html|'+
    SRpSVGFile+'|*.svg|'+
    SRpCSVFile+'|*.csv|'+
    SRpTXTProFile+'|*.txt';
@@ -403,7 +412,8 @@ begin
  ADocumentation.Hint:=TranslateStr(61,ADocumentation.Hint);
  AAsyncExec.Caption:=TranslateStr(783,AASyncExec.Caption);
  AAsyncExec.Hint:=TranslateStr(784,AAsyncExec.Hint);
-
+ AFind.Caption:=TranslateStr(1434,AFind.Caption);
+ AFind.Hint:=TranslateStr(1435,AFind.Hint);
 
  File1.Caption:=TranslateStr(0,File1.Caption);
  Page1.Caption:=TranslateStr(269,Page1.Caption);
@@ -422,6 +432,7 @@ begin
  ANext.ShortCut:=VK_NEXT;
  AFirst.ShortCut:=VK_HOME;
  ALast.ShortCut:=VK_END;
+ AFind.ShortCut:=ShortCut(VK_F3, []);
  fmetafile:=TrpMetafileReport.Create(nil);
  fintmetafile:=fmetafile;
  fmetafile.OnWorkProgress:=OnProgress;
@@ -590,21 +601,25 @@ begin
       end;
      9:
       begin
+       ExportMetafileToHtmlSingle(Metafile,Caption,SaveDialog1.FileName);
+      end;
+     10:
+      begin
        ExportMetafileToSVG(Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
       end;
-     10:
+     11:
       begin
        ExportMetafileToCSV(metafile,SaveDialog1.Filename,true,true,
         1,9999,',');
       end;
-     11:
+     12:
       begin
        ExportMetafileToTextPro(metafile,SaveDialog1.Filename,true,true,
         1,9999);
       end;
 {$IFNDEF DOTNETD}
-     12:
+     13:
       begin
        MetafileToExe(metafile,SaveDialog1.Filename);
       end;
@@ -1031,5 +1046,61 @@ procedure TFRpMetaVCL.MEntireMenuPopup(Sender: TObject);
 begin
  MleftRight.Checked:=Not PreviewControl.EntireTopDown;
 end;
+
+procedure TFRpMetaVCL.ESearchChange(Sender: TObject);
+begin
+ textchanged:=true;
+end;
+
+procedure TFRpMetaVCL.ESearchKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+var
+ increment:integer;
+begin
+ if (ssShift in Shift) then
+  increment:=REP_C_WHEELINC
+ else
+  increment:=REP_C_WHEELINC*REP_C_WHEELSCALE;
+ if Key=VK_DOWN then
+  fpreviewcontrol.Scroll(true,increment);
+ if Key=VK_UP then
+  fpreviewcontrol.Scroll(true,-increment);
+ if Key=VK_RIGHT then
+  fpreviewcontrol.Scroll(false,increment);
+ if Key=VK_LEFT then
+  fpreviewcontrol.Scroll(false,-increment);
+ if Key=VK_SPACE then
+ begin
+  if fpreviewcontrol.AutoScale=AScaleEntirePage then
+   fpreviewcontrol.AutoScale:=AScaleReal
+  else
+   fpreviewcontrol.AutoScale:=AScaleEntirePage;
+  Key:=0;
+ end;
+end;
+
+procedure TFRpMetaVCL.AFindExecute(Sender: TObject);
+begin
+ FindNext;
+end;
+
+procedure TFRpMetaVCL.FindNext;
+var
+ pageindex:integer;
+begin
+ if (textchanged) then
+ begin
+  PreviewControl.Metafile.DoSearch(Trim(ESearch.Text));
+  pageindex:=PreviewControl.Metafile.NextPageFound(-1);
+  textchanged:=false;
+ end
+ else
+  pageindex:=PreviewControl.Metafile.NextPageFound(PreviewControl.Page+PreviewControl.PagesDrawn-1);
+ if PreviewControl.Page=pageindex then
+  PreviewControl.RefreshPage
+ else
+  PreviewControl.Page:=pageindex;
+end;
+
 
 end.

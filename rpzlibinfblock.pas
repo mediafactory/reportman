@@ -15,7 +15,7 @@ uses
   {$IFDEF DEBUG}
   strutils,
   {$ENDIF}
-  rpzlibzutil, rpzlibzlib;
+  rpzlibzutil, rpzlibzlib,SysUtils;
 
 function inflate_blocks_new(var z : z_stream;
                             c : check_func;  { check function }

@@ -86,7 +86,7 @@ procedure SetRecordSet(const datasetname: String,recordset: OleVariant);
 <p>procedure SaveToMetafile(const filename: String);<br>
   procedure SaveExcel2(const filename: String); // Save to excel in only one sheet 
   <br>
-  property SetDefaultPrinter:WideString; // Sets &amp; gets the default printer 
+  property DefaultPrinter:WideString; // Sets &amp; gets the default printer 
   for Report Manager Engine<br>
   property PrintersAvailable:WideString; // Gets a list of the available printers 
   separated by a LF (Chr(10))<br>
@@ -112,6 +112,10 @@ procedure SetRecordSet(const datasetname: String,recordset: OleVariant);
   'TRpExpression2'.</p>
 <p>Inside params, exists a new function, FindParam that returns true if the parameter 
   exists. </p>
+<p><b>Since version 2.7c </b></p>
+<p>procedure SaveToHtmlSingle(const filename: String);</p>
+<p>Saves the report as html file, in a single html file if possible. <br>
+</p>
 <h3>Using the control with VB like languages</h3>
 <p>The ActiveX control may be used directly in VB, VBScript, ASP and WSH. In the 
   VB environment you are generally recommended to &quot;Reference&quot; the control 

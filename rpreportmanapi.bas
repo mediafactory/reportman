@@ -14,6 +14,9 @@ Public Declare Function rp_setparamvaluevar Lib "Reportman.ocx" (ByVal hreport A
 Public Declare Function rp_getparamcount Lib "Reportman.ocx" (ByVal hreport As Long, ByRef paramcount As Long) As Long
 Public Declare Function rp_getparamname Lib "Reportman.ocx" (ByVal hreport As Long, ByVal index as Long, ByVal abuffer As String) As Long
 Public Declare Function rp_setadoconnectionstring Lib "Reportman.ocx" (ByVal hreport As Long, ByVal conname As String, ByVal constring As String) As Long
+Public Declare Function rp_getprinters Lib "Reportman.ocx" () As String
+Public Declare Function rp_getdefaultprinter Lib "Reportman.ocx" () As String
+Public Declare Function rp_setdefaultprinter Lib "Reportman.ocx" (ByVal device As String) As Long
 Public Declare Function rp_previewremote Lib "Reportman.ocx" (ByVal hostname As String, ByVal port As Long, ByVal user As String,ByVal password As String,ByVal aliasname As String,ByVal reportname As String,ByVal title As String) As Long
 Public Declare Function rp_previewremote_report Lib "Reportman.ocx" (ByVal hreport As Long,ByVal hostname As String, ByVal port As Long, ByVal user As String,ByVal password As String,ByVal aliasname As String,ByVal reportname As String,ByVal title As String) As Long
 Public Declare Function rp_printremote Lib "Reportman.ocx" (ByVal hostname As String, ByVal port As Long, ByVal user As String,ByVal password As String,ByVal aliasname As String,ByVal reportname As String,ByVal title As String) As Long

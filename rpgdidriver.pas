@@ -130,7 +130,7 @@ type
    selectedprinter:TRpPrinterSelect;
    DrawerBefore,DrawerAfter:Boolean;
    npdfdriver:TRpPDFDriver;
-   procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;pagemargins:TRect;devicefonts:boolean;offset:TPoint);
+   procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;pagemargins:TRect;devicefonts:boolean;offset:TPoint;selected:boolean);
    procedure SendAfterPrintOperations;
    function DoNewPage(aorientation:TRpOrientation;apagesizeqt:TPageSizeQt):Boolean;
    procedure UpdateBitmapSize(report:TrpMetafileReport;apage:TrpMetafilePage);
@@ -160,6 +160,7 @@ type
    procedure NewPage(metafilepage:TRpMetafilePage);override;
    procedure EndPage;override;
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);override;
+   procedure IntDrawObject(page:TRpMetaFilePage;obj:TRpMetaObject;selected:boolean);
 {$IFNDEF FORWEBAX}
    procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);override;
 {$ENDIF}
@@ -176,7 +177,7 @@ type
    procedure TextExtent(atext:TRpTextObject;var extent:TPoint);override;
    procedure TextRectJustify(Canvas:TCanvas;ARect: TRect; Text: Widestring;
                        Alignment: integer; Clipping: boolean;Wordbreak:boolean;
-                       Rotation:integer;RightToLeft:Boolean);
+                       Rotation:integer;RightToLeft:Boolean;drawbackground:Boolean;backcolor:TColor);
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);override;
    procedure SetOrientation(Orientation:TRpOrientation);  override;
    procedure SelectPrinter(printerindex:TRpPrinterSelect);override;
@@ -713,6 +714,7 @@ begin
   exit;
  // Justified text use pdf driver
  if (atext.AlignMent AND AlignmentFlags_AlignHJustify)>0 then
+// if true then
  begin
   if not assigned(npdfdriver) then
     npdfdriver:=TRpPDFDriver.Create;
@@ -765,6 +767,12 @@ begin
  aalign:=DT_NOPREFIX;
  if (atext.AlignMent AND AlignmentFlags_AlignHCenter)>0 then
   aalign:=aalign or DT_CENTER;
+ if (atext.AlignMent AND AlignmentFlags_AlignVCenter)>0 then
+  aalign:=aalign or DT_VCENTER;
+ if (atext.AlignMent AND AlignmentFlags_AlignTop)>0 then
+  aalign:=aalign or DT_TOP;
+ if (atext.AlignMent AND AlignmentFlags_AlignBottom)>0 then
+  aalign:=aalign or DT_BOTTOM;
  if (atext.AlignMent AND AlignmentFlags_SingleLine)>0 then
   aalign:=aalign or DT_SINGLELINE;
  if (atext.AlignMent AND AlignmentFlags_AlignLEFT)>0 then
@@ -808,7 +816,8 @@ begin
 
 end;
 
-procedure TRpGDIDriver.PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;pagemargins:TRect;devicefonts:boolean;offset:TPoint);
+procedure TRpGDIDriver.PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;dpix,dpiy:integer;toprinter:boolean;
+ pagemargins:TRect;devicefonts:boolean;offset:TPoint;selected:boolean);
 var
  posx,posy:integer;
  rec,recsrc:TRect;
@@ -832,6 +841,7 @@ var
 {$ENDIF}
  bitmapwidth,bitmapheight:integer;
  astring:WideString;
+ drawbackground:boolean;
 begin
  // Switch to device points
  if toprinter then
@@ -868,27 +878,46 @@ begin
      if devicefonts then
       FindDeviceFont(Canvas.Handle,Canvas.Font,FontSizeToStep(Canvas.Font.Size,obj.PrintStep));
     end;
-
     // Justified text use pdf driver
     if (obj.AlignMent AND AlignmentFlags_AlignHJustify)>0 then
+//    if true then
     begin
      astring:=page.GetText(Obj);
      rec.Left:=Round(posx/dpix*TWIPS_PER_INCHESS);
      rec.Top:=Round(posy/dpix*TWIPS_PER_INCHESS);
      rec.Right:=Rec.Left+obj.Width;
      rec.Bottom:=rec.TOp+obj.Height;
-     if obj.Transparent then
-      SetBkMode(Canvas.Handle,TRANSPARENT)
+     if ((obj.Transparent) and (not selected)) then
+     begin
+      SetBkMode(Canvas.Handle,TRANSPARENT);
+      drawbackground:=false;
+     end
      else
+     begin
       SetBkMode(Canvas.Handle,OPAQUE);
+      drawbackground:=true ;
+     end;
+     if selected then
+     begin
+      Canvas.Brush.Color:=clHighlight;
+      Canvas.Font.Color:=clHighlightText;
+     end;
      TextRectJustify(Canvas,rec,astring,obj.AlignMent,obj.CutText,obj.WordWrap,
-      obj.FontRotation,obj.RightToLeft);
+      obj.FontRotation,obj.RightToLeft,drawbackground,Canvas.Brush.Color);
     end
     else
     begin
       aalign:=DT_NOPREFIX;
       if (obj.AlignMent AND AlignmentFlags_AlignHCenter)>0 then
        aalign:=aalign or DT_CENTER;
+      // Vertical alignment is not implemented by Windows GDI
+      // on multiple lines, so it's calculated manually
+//      if (obj.AlignMent AND AlignmentFlags_AlignVCenter)>0 then
+//        aalign:=aalign or DT_VCENTER;
+//      if (obj.AlignMent AND AlignmentFlags_AlignTop)>0 then
+//        aalign:=aalign or DT_TOP;
+//      if (obj.AlignMent AND AlignmentFlags_AlignBottom)>0 then
+//        aalign:=aalign or DT_BOTTOM;
       if (obj.AlignMent AND AlignmentFlags_SingleLine)>0 then
        aalign:=aalign or DT_SINGLELINE;
       if (obj.AlignMent AND AlignmentFlags_AlignLEFT)>0 then
@@ -943,7 +972,7 @@ begin
       begin
        rec.Top:=rec.Top+((rec.bottom-arec.bottom) div 2);
       end;
-      if obj.Transparent then
+      if (obj.Transparent and (not selected)) then
        SetBkMode(Canvas.Handle,TRANSPARENT)
       else
       begin
@@ -951,6 +980,11 @@ begin
        SetBkMode(Canvas.Handle,OPAQUE);
   //     SetBkColor(Canvas.Handle,Canvas.Brush.Color);
   //     SelectObject(Canvas.Handle,Canvas.Font.Handle);
+      end;
+      if selected then
+      begin
+       Canvas.Brush.Color:=clHighlight;
+       Canvas.Font.Color:=clHighlightText;
       end;
 {$IFDEF DOTNETD}
       if IsWindowsNT then
@@ -1121,7 +1155,7 @@ end;
 
 procedure TRpGDIDriver.TextRectJustify(Canvas:TCanvas;ARect: TRect; Text: Widestring;
                        Alignment: integer; Clipping: boolean;Wordbreak:boolean;
-                       Rotation:integer;RightToLeft:Boolean);
+                       Rotation:integer;RightToLeft:Boolean;drawbackground:Boolean;backcolor:TColor);
 var
  recsize:TRect;
  i,index:integer;
@@ -1138,8 +1172,13 @@ var
  aansitext:string;
  aalign:Cardinal;
  aintdpix,aintdpiy:integer;
+ lastword:boolean;
 begin
  try
+  if drawbackground then
+  begin
+   Canvas.Pen.COlor:=backcolor;
+  end;
   singleline:=(Alignment AND AlignmentFlags_SingleLine)>0;
   if singleline then
    wordbreak:=false;
@@ -1250,14 +1289,15 @@ begin
        begin
         nposx:=currpos;
         nposy:=PosY+npdfdriver.pdffile.Canvas.LineInfo[i].TopPos;
-        nposx:=Round(nposx/1440*aintdpix);
-        nposy:=Round(nposy/1440*aintdpiy);
+        nposx:=Round(nposx*aintdpix/1440);
+        nposy:=Round(nposy*aintdpiy/1440);
         arec2.Left:=nposx;
         arec2.Top:=nposy;
-        arec2.Bottom:=arec.Bottom+100;
-        arec2.Right:=Round(arect.Right/1440*aintdpix);
+        arec2.Bottom:=arec.Top+Round(npdfdriver.pdffile.Canvas.LineInfo[i].Height*aintdpiy/1440);
+        arec2.Right:=Round(arect.Right*aintdpix/1440);
         aalign:=DT_NOPREFIX or DT_NOCLIP;
-        if ((index=lwords.Count-1) AND (lwords.count>0)) then
+        lastword:=((index=lwords.Count-1) AND (lwords.count>0));
+        if lastword then
          aalign:=aalign OR DT_RIGHT
         else
          aalign:=aalign OR DT_LEFT;
@@ -1276,6 +1316,32 @@ begin
 //        TextOut(currpos,PosY+npdfdriver.pdffile.Canvas.LineInfo[i].TopPos,lwords.strings[index],
 //         npdfdriver.pdffile.Canvas.LineInfo[i].Width,Rotation,RightToLeft);
         currpos:=currpos+StrToInt(lwidths.Strings[index])+alinedif;
+        if (drawbackground) then
+        begin
+         if lastword then
+          aalign:=(aalign AND (NOT DT_RIGHT)) OR DT_LEFT;
+         if IsWindowsNT then
+         begin
+          DrawTextW(Canvas.Handle,PWideChar(aatext),Length(aatext),arec2,aalign or DT_CALCRECT);
+         end
+         else
+         begin
+          DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),arec2,aalign or DT_CALCRECT);
+         end;
+         arec2.Top:=nposy;
+         arec2.Bottom:=nposy+Round(npdfdriver.pdffile.Canvas.LineInfo[i].Height*aintdpiy/1440);
+         if (lastword) then
+         begin
+          arec2.Left:=nposx-1;
+          arec2.Right:=Round(arect.Right*aintdpix/1440)-(arec2.Right-arec2.Left)+1;
+         end
+         else
+         begin
+          arec2.Left:=arec2.Right-1;
+          arec2.Right:=Round(currpos*aintdpix/1440)+1;
+         end;
+         Canvas.Rectangle(arec2);
+        end;
        end;
       end;
      finally
@@ -1290,12 +1356,12 @@ begin
     aalign:=DT_NOPREFIX or DT_NOCLIP or DT_LEFT;
     nposx:=Posx;
     nposy:=PosY+npdfdriver.pdffile.Canvas.LineInfo[i].TopPos;
-    nposx:=Round(nposx/1440*aintdpix);
-    nposy:=Round(nposy/1440*aintdpiy);
+    nposx:=Round(nposx*aintdpix/1440);
+    nposy:=Round(nposy*aintdpiy/1440);
     arec2.Left:=nposx;
     arec2.Top:=nposy;
     arec2.Bottom:=arec.Bottom+100;
-    arec2.Right:=Round(arect.Right/1440*aintdpix);
+    arec2.Right:=Round(arect.Right*aintdpix/1440);
     if IsWindowsNT then
      DrawTextW(Canvas.Handle,PWideChar(astring),Length(astring),arec2,aalign)
 //     TextOutW(Canvas.Handle,nposx,nposy,PWideChar(astring),
@@ -1319,12 +1385,13 @@ procedure TRpGDIDriver.DrawPage(apage:TRpMetaFilePage);
 var
  j:integer;
  rec:TRect;
+ selected:boolean;
 begin
  if toprinter then
  begin
   for j:=0 to apage.ObjectCount-1 do
   begin
-   DrawObject(apage,apage.Objects[j]);
+   IntDrawObject(apage,apage.Objects[j],false);
   end;
  end
  else
@@ -1349,7 +1416,8 @@ begin
    try
     for j:=0 to apage.ObjectCount-1 do
     begin
-     DrawObject(apage,apage.Objects[j]);
+     selected:=FReport.IsFound(apage,j);
+     IntDrawObject(apage,apage.Objects[j],selected);
     end;
    finally
     metacanvas.free;
@@ -1376,6 +1444,11 @@ begin
 end;
 
 procedure TRpGDIDriver.DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
+begin
+ IntDrawObject(page,obj,false);
+end;
+
+procedure TRpGDIDriver.IntDrawObject(page:TRpMetaFilePage;obj:TRpMetaObject;selected:boolean);
 var
  dpix,dpiy:integer;
  Canvas:TCanvas;
@@ -1400,7 +1473,7 @@ begin
   dpix:=Screen.PixelsPerInch;
   dpiy:=Screen.PixelsPerInch;
  end;
- PrintObject(Canvas,page,obj,dpix,dpiy,toprinter,pagemargins,devicefonts,offset);
+ PrintObject(Canvas,page,obj,dpix,dpiy,toprinter,pagemargins,devicefonts,offset,selected);
 end;
 
 function TRpGDIDriver.AllowCopies:boolean;
@@ -1674,7 +1747,7 @@ begin
        inc(totalcount);
        for j:=0 to apage.ObjectCount-1 do
        begin
-        gdidriver.PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,true,pagemargins,devicefonts,offset);
+        gdidriver.PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,true,pagemargins,devicefonts,offset,false);
         if assigned(aform) then
         begin
          mmlast:=TimeGetTime;
@@ -1878,7 +1951,7 @@ begin
           aobj.FontColor:=clBlack;
         end;
        end;
-       gdidriver.PrintObject(ametaCanvas,apage,aobj,realx,realy,true,pagemargins,false,offset);
+       gdidriver.PrintObject(ametaCanvas,apage,aobj,realx,realy,true,pagemargins,false,offset,false);
        if assigned(aform) then
        begin
         mmlast:=TimeGetTime;

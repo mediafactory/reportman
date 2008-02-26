@@ -39,13 +39,25 @@ uses
 
 function ExportMetafileToHtml (metafile:TRpMetafileReport;caption,filename:string;
  showprogress,allpages:boolean; frompage,topage:integer):boolean;
+function ExportMetafileToHtmlSingle (metafile:TRpMetafileReport; caption,filename:string):boolean;
 function MetafilePageToHtml(metafile:TRpMetafileReport;index:integer;Stream:TStream;caption,filename:String):boolean;
 function ColorToHTMLColor(color:integer):String;
 {$IFNDEF FORWEBAX}
 procedure ExportReportToHtml(report:TRpBaseReport;filename:String;progress:Boolean);
+procedure ExportReportToHtmlSingle(report:TRpBaseReport;filename:String);
 {$ENDIF}
 
 implementation
+
+function TwipsToPX(twips:Int64):String;
+var
+ sizepoints:double;
+begin
+ sizepoints:=twips*72/1440;
+ // Adjust size beacuse IE custom sizing?
+ sizepoints:=sizepoints*1.3;
+ Result:=IntToStr(Round(sizepoints));
+end;
 
 function ColorToHTMLColor(color:integer):String;
 var
@@ -68,6 +80,9 @@ const
 
 function TextToHtml(astring:String):String;
 begin
+ astring:=RpHtmlEncode(astring);
+ astring:=StringReplace(astring,#10,'<br/>',[rfReplaceall]);
+ astring:=StringReplace(astring,#13,'',[rfReplaceall]);
  Result:=astring;
 end;
 
@@ -149,13 +164,17 @@ begin
      else
      begin
       fimagestream.Seek(0,soFromBeginning);
-      GetBitmapInfo(fimagestream,bitmapwidth,bitmapheight,imagesize,FImageStream,indexed,bitsperpixel,numcolors,palette);
+      GetBitmapInfo(fimagestream,bitmapwidth,bitmapheight,imagesize,nil,indexed,bitsperpixel,numcolors,palette);
       imafilename:=ChangeFileExt(imafilename,'.bmp');
      end;
      fimagestream.Seek(0,soFromBeginning);
      fimagestream.SaveToFile(imafilename);
-     Result:='<IMG SRC="'+imafilename+'" HEIGHT='+IntToStr(bitmapheight)+
-      ' WIDTH='+IntToStr(bitmapwidth)+' BORDER=0>';
+
+     Result:='<IMG SRC="'+imafilename+'" HEIGHT='+TwipsToPX(obj.Height)+'PX '+
+      ' WIDTH='+TwipsToPX(obj.Width)+'PX'+' BORDER=0>';
+
+//     Result:='<IMG SRC="'+imafilename+'" HEIGHT='+IntToStr(bitmapheight)+
+//      ' WIDTH='+IntToStr(bitmapwidth)+' BORDER=0>';
     except
      // Omit image processing errors?
      on E:Exception do
@@ -168,17 +187,18 @@ begin
 end;
 
 
-function TwipsToPX(twips:Integer):String;
+
+function TwipsToIntPX(twips:Integer):Int64;
 var
  sizepoints:double;
 begin
  sizepoints:=twips*72/1440;
  // Adjust size beacuse IE custom sizing?
  sizepoints:=sizepoints*1.3;
- Result:=IntToStr(Round(sizepoints));
+ Result:=Round(sizepoints);
 end;
 
-function ObjectBounds(page:TRpMetafilePage;obj:TRpMetaObject;filename:String;index:integer):String;
+function ObjectBounds(page:TRpMetafilePage;obj:TRpMetaObject;filename:String;index:integer;yoffset:Int64):String;
 begin
  Result:='';
  case obj.Metatype of
@@ -186,7 +206,7 @@ begin
    begin
     Result:='"';
     Result:=Result+'left:'+TwipsToPX(obj.Left)+'PX;'+
-    'top:'+TwipsToPX(obj.Top)+'PX;'+
+    'top:'+TwipsToPX(obj.Top+yoffset)+'PX;'+
     'width:'+TwipsToPX(obj.Width)+'PX;'+
     'height:'+TwipsToPX(obj.Height)+'PX;';
     if  ((obj.Alignment AND AlignmentFlags_AlignRight)>0) then
@@ -212,7 +232,7 @@ begin
      rpsRectangle:
       begin
        Result:=Result+'''display:svg-rect'' '+'x="'+TwipsToPX(obj.Left)+
-        'px" y="'+TwipsToPX(obj.Top)+'px" width="'+TwipsToPX(obj.Width)+
+        'px" y="'+TwipsToPX(obj.Top+yoffset)+'px" width="'+TwipsToPX(obj.Width)+
         'px" height="'+TwipsToPX(obj.Height)+'px"';
       end;
     end;
@@ -221,7 +241,7 @@ begin
    begin
     Result:='"';
     Result:=Result+'left:'+TwipsToPX(obj.Left)+'PX;'+
-    'top:'+TwipsToPX(obj.Top)+'PX;'+
+    'top:'+TwipsToPX(obj.Top+yoffset)+'PX;'+
     'width:'+TwipsToPX(obj.Width)+'PX;'+
     'height:'+TwipsToPX(obj.Height)+'PX;';
     Result:=Result+'"';
@@ -281,7 +301,7 @@ begin
   begin
    singleline:=(page.Objects[i].Alignment AND AlignmentFlags_SingleLine)>0;
    astring:=astring+LINE_FEED+'<DIV style='+
-    ObjectBounds(page,page.Objects[i],filename,i)+
+    ObjectBounds(page,page.Objects[i],filename,i,0)+
     '><span class="fc'+IntToStr(pstyles[i])+'">';
    if singleline then
     astring:=astring+'<NOBR>';
@@ -296,6 +316,176 @@ begin
  WriteStringToStream(astring,stream);
 end;
 
+
+procedure ExportPagesToHtml(metafile:TRpMetafileReport;Stream:TStream;caption,filename:String);
+var
+ astring:String;
+ pstyles:array of Integer;
+ astyle:String;
+ pstyledescriptions:TStringList;
+ i,p,index:integer;
+ singleline:Boolean;
+ page:TrpMetafilePage;
+ currentposy:Int64;
+ objid,objcount:integer;
+begin
+ astring:='<HTML>';
+  astring:=astring+LINE_FEED+'<STYLE>';
+ astring:=astring+LINE_FEED+'.pg{position:absolute;top:'+
+  '0px;left:0px;height:'+
+  twipstopx(metafile.CustomY*metafile.CurrentPageCount)+'px;width:'+twipstopx(metafile.CustomX)+'px;}';
+ astring:=astring+LINE_FEED+'DIV {position:absolute}';
+ SetLength(pstyles,100);
+ objcount:=100;
+ objid:=0;
+ pstyledescriptions:=TStringList.Create;
+ try
+  // Generates a style for each report component
+  pstyledescriptions.Sorted:=true;
+  for p:=0 to metafile.CurrentPageCount -1 do
+  begin
+   page:=metafile.Pages[p];
+   if page.ObjectCount>0 then
+   begin
+    for i:=0 to page.ObjectCount-1 do
+    begin
+     astyle:=ObjectToStyle(page,page.Objects[i]);
+     index:=pstyledescriptions.IndexOf(astyle);
+     if index>=0 then
+      pstyles[objid]:=Integer(pstyledescriptions.Objects[index])
+     else
+     begin
+      astring:=astring+LINE_FEED+'.fc'+IntToStr(i)+' '+
+       astyle;
+      pstyledescriptions.AddObject(astyle,TObject(i));
+      pstyles[objid]:=i;
+     end;
+     inc(objid);
+     if (objid>(objcount-2)) then
+     begin
+      objcount:=objcount*2;
+      SetLength(pstyles,objcount);
+     end;
+    end;
+   end;
+  end;
+ finally
+   pstyledescriptions.free;
+  end;
+ astring:=astring+LINE_FEED+'</STYLE>';
+ astring:=astring+LINE_FEED+'<TITLE>'+TextToHtml(Caption)+'</TITLE>';
+ astring:=astring+LINE_FEED+'<BODY  BGCOLOR="'+
+  ColorToHTMLColor(metafile.BackColor)   +'" LEFTMARGIN=0 TOPMARGIN=0 BOTTOMMARGIN=0 RIGHTMARGIN=0>';
+ currentposy:=0;
+ objid:=0;
+ for p:=0 to metafile.CurrentPageCount -1 do
+ begin
+  page:=metafile.Pages[p];
+  if page.ObjectCount>0 then
+  begin
+   // This line defines the page size
+   //astring:=astring+LINE_FEED+'<DIV CLASS="pg"></DIV>';
+   for i:=0 to page.ObjectCount-1 do
+   begin
+    singleline:=(page.Objects[i].Alignment AND AlignmentFlags_SingleLine)>0;
+    astring:=astring+LINE_FEED+'<DIV style='+
+     ObjectBounds(page,page.Objects[i],filename,i,currentposy)+
+     '><span class="fc';
+    astring:=astring+IntToStr(pstyles[objid])+'">';
+    inc(objid);
+    if singleline then
+     astring:=astring+'<NOBR>';
+    astring:=astring+ObjectToHtmlText(page,p,page.Objects[i],filename,i);
+    if singleline then
+     astring:=astring+'</NOBR>';
+    astring:=astring+'</span></DIV>';
+   end;
+  end;
+  currentposy:=currentposy+metafile.CustomY;
+//  astring:=astring+'<DIV style="page-break-after:allways">';
+//  astring:=astring+'</DIV>';
+ end;
+ astring:=astring+LINE_FEED+'</BODY>';
+ astring:=astring+LINE_FEED+'</HTML>';
+ WriteStringToStream(astring,stream);
+end;
+
+
+(*procedure ExportPagesToHtml(metafile:TRpMetafileReport;Stream:TStream;caption,filename:String);
+var
+ astring:String;
+ pstyles:array of Integer;
+ astyle:String;
+ pstyledescriptions:TStringList;
+ i,p,index:integer;
+ singleline:Boolean;
+ page:TrpMetafilePage;
+ currentposy:LongInt;
+begin
+ currentposy:=0;
+ astring:='<HTML>';
+ for p:=0 to metafile.CurrentPageCount -1 do
+ begin
+ page:=metafile.Pages[p];
+ if page.ObjectCount>0 then
+ begin
+  astring:=astring+LINE_FEED+'<STYLE>';
+  astring:=astring+LINE_FEED+'.pg{position:absolute;top:'+
+   twipstopx(currentposy)+'px;left:0px;height:'+
+   twipstopx(metafile.CustomY)+'px;width:'+twipstopx(metafile.CustomX)+'px;}';
+  astring:=astring+LINE_FEED+'DIV {position:absolute}';
+  currentposy:=currentposy+metafile.CustomY;
+  SetLength(pstyles,page.ObjectCount);
+  pstyledescriptions:=TStringList.Create;
+  try
+   // Generates a style for each report component
+   pstyledescriptions.Sorted:=true;
+   for i:=0 to page.ObjectCount-1 do
+   begin
+    astyle:=ObjectToStyle(page,page.Objects[i]);
+    index:=pstyledescriptions.IndexOf(astyle);
+    if index>=0 then
+     pstyles[i]:=Integer(pstyledescriptions.Objects[index])
+    else
+    begin
+     astring:=astring+LINE_FEED+'.fc'+IntToStr(i)+' '+
+      astyle;
+     pstyledescriptions.AddObject(astyle,TObject(i));
+     pstyles[i]:=i;
+    end;
+   end;
+  finally
+   pstyledescriptions.free;
+  end;
+  astring:=astring+LINE_FEED+'</STYLE>';
+ end;
+ astring:=astring+LINE_FEED+'<TITLE>'+TextToHtml(Caption)+'</TITLE>';
+ if page.ObjectCount>0 then
+ begin
+  astring:=astring+LINE_FEED+'<BODY  BGCOLOR="'+
+   ColorToHTMLColor(metafile.BackColor)   +'" LEFTMARGIN=0 TOPMARGIN=0 BOTTOMMARGIN=0 RIGHTMARGIN=0>';
+  // This line defines the page size
+  //astring:=astring+LINE_FEED+'<DIV CLASS="pg"></DIV>';
+  for i:=0 to page.ObjectCount-1 do
+  begin
+   singleline:=(page.Objects[i].Alignment AND AlignmentFlags_SingleLine)>0;
+   astring:=astring+LINE_FEED+'<DIV style='+
+    ObjectBounds(page,page.Objects[i],filename,i,currentposy)+
+    '><span class="fc'+IntToStr(pstyles[i])+'">';
+   if singleline then
+    astring:=astring+'<NOBR>';
+   astring:=astring+ObjectToHtmlText(page,p,page.Objects[i],filename,i);
+   if singleline then
+    astring:=astring+'</NOBR>';
+   astring:=astring+'</span></DIV>';
+  end;
+  astring:=astring+LINE_FEED+'</BODY>';
+ end;
+ end;
+ astring:=astring+LINE_FEED+'</HTML>';
+ WriteStringToStream(astring,stream);
+end;
+*)
 function ExportMetafileToHtml (metafile:TRpMetafileReport; caption,filename:string;
  showprogress,allpages:boolean; frompage,topage:integer):boolean;
 var
@@ -334,6 +524,23 @@ begin
  end;
  Result:=true;
 end;
+
+function ExportMetafileToHtmlSingle (metafile:TRpMetafileReport; caption,filename:string):boolean;
+var
+ oldext:String;
+ astream:TFileStream;
+begin
+ metafile.RequestPage(MAX_PAGECOUNT);
+ oldext:=ExtractFileExt(filename);
+ astream:=TFileStream.Create(filename,fmCreate);
+ try
+  ExportPagesToHtml(metafile,astream,caption,filename);
+ finally
+  astream.free;
+ end;
+ Result:=true;
+end;
+
 
 function MetafilePageToHtml(metafile:TRpMetafileReport;index:integer;Stream:TStream;caption,filename:String):boolean;
 begin
@@ -376,6 +583,60 @@ begin
   astream.free;
  end;
 end;
+
+procedure ExportReportToHtmlSingle(report:TRpBaseReport;filename:String);
+var
+ pdfdriver:TRpPDFDriver;
+ apdfdriver:TRpPrintDriver;
+ oldprogres:TRpProgressEvent;
+ astream:TMemoryStream;
+ oldtwopass:boolean;
+ oldpagesize:TRpPageSize;
+ oldwidth,oldheight:integer;
+begin
+ pdfdriver:=TRpPDFDriver.Create;
+ pdfdriver.compressed:=true;
+ astream:=TMemoryStream.Create;
+ try
+  pdfdriver.DestStream:=aStream;
+  apdfdriver:=pdfdriver;
+  // If report progress must print progress
+  oldprogres:=report.OnProgress;
+  try
+  oldtwopass:=report.TwoPass;
+   oldpagesize:=report.Pagesize;
+   oldwidth:=report.CustomPageWidth;
+   oldheight:=report.CustomPageHeight;
+   try
+    report.TwoPass:=true;
+     report.Pagesize:=rpPageSizeUser;
+     // Maximum of aprox 25000 A4 pages
+     if (report.PrinterFonts=rppfontsrecalculate) then
+        report.CustomPageHeight:=TWIPS_PER_INCHESS*100000;
+     report.PrintAll(pdfdriver);
+     if (report.Metafile.CurrentPageCount=1) then
+     begin
+      // For only one page shorts the page to maximum printed
+      // area
+      report.Metafile.CustomY:=report.maximum_height;
+      report.Metafile.CustomX:=report.maximum_width;
+     end;
+     ExportMetafileToHtmlSingle(report.metafile,filename,filename);
+   finally
+    report.Pagesize:=oldpagesize;
+    report.CustomPageWidth:=oldwidth;
+    report.CustomPageHeight:=oldheight;
+    report.TwoPass:=oldtwopass;
+   end;
+  finally
+   report.OnProgress:=oldprogres;
+  end;
+ finally
+  astream.free;
+ end;
+end;
+
+
 {$ENDIF}
 
 end.

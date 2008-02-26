@@ -5,7 +5,7 @@ unit rpaxreportparam;
 interface
 
 uses
-  ComObj, ActiveX, Reportman_TLB, StdVcl,rpparams,
+  ComObj, ActiveX, reportman_TLB, StdVcl,rpparams,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}

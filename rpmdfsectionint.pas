@@ -188,6 +188,7 @@ begin
    flines:=lines;
    fygrid:=ygrid;
    fxgrid:=xgrid;
+   fbscale:=scale;
 
    Result:=fbitmap;
  except

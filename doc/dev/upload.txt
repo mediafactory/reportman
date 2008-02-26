@@ -5,6 +5,8 @@ To upload the web page:
 
 scp doc.zip tonim@reportman.sourceforge.net:/home/groups/r/re/reportman/htdocs/ 
 
+You can use also putty command line tool pscp
+
 Note: It will ask the password.
 
 3.Enter in sourceforge shell using ssh putty for example

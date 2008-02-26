@@ -18,8 +18,8 @@ object PreviewControl: TPreviewControl
   object PControl: TRpPreviewControl
     Left = 0
     Top = 0
-    Width = 688
-    Height = 446
+    Width = 696
+    Height = 480
     HorzScrollBar.Tracking = True
     VertScrollBar.Tracking = True
     Align = alClient
@@ -30,5 +30,7 @@ object PreviewControl: TPreviewControl
     EntirePageCount = 1
     EntireTopDown = False
     AutoScale = AScaleReal
+    ExplicitWidth = 688
+    ExplicitHeight = 446
   end
 end

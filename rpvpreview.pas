@@ -34,7 +34,7 @@ uses
   StdCtrls,rpmetafile, ComCtrls,rphtmldriver,rppreviewcontrol,
   rpgdidriver, ExtCtrls,Menus,rptypes,rpexceldriver,rptextdriver,rpsvgdriver,
   rpcsvdriver,rpgraphutilsvcl,rppreviewmeta,rpbasereport,rpreport,rppagesetupvcl,
-  ActnList, ImgList,Printers,rpmdconsts, ToolWin, Mask, rpmaskedit;
+  ActnList, ImgList,Printers,rpmdconsts, ToolWin, Mask, rpmaskedit,rpmunits;
 
 type
   TFRpVPreview = class(TForm)
@@ -97,6 +97,10 @@ type
     MEntire30: TMenuItem;
     MEntire48: TMenuItem;
     MLeftRight: TMenuItem;
+    ToolButton19: TToolButton;
+    ToolButton20: TToolButton;
+    ESearch: TRpMaskEdit;
+    AFind: TAction;
     procedure FormCreate(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
     procedure ANextExecute(Sender: TObject);
@@ -128,17 +132,23 @@ type
     procedure MEntirePagePopup(Sender: TObject);
     procedure MLeftRightClick(Sender: TObject);
     procedure MEntireMenuPopup(Sender: TObject);
+    procedure ESearchKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure AFindExecute(Sender: TObject);
+    procedure ESearchChange(Sender: TObject);
   private
     { Private declarations }
     printed:boolean;
     fpreviewcontrol:TRpPreviewMeta;
     cancelled:boolean;
+    textchanged:boolean;
     procedure AppIdle(Sender:TObject;var done:boolean);
     procedure RepProgress(Sender:TObject;records,pagecount:integer;var docancel:boolean);
     procedure DisableControls(enablebar:boolean);
     procedure EnableControls;
     procedure SetPreviewControl(avalue:TRpPreviewMeta);
     procedure OnPageDrawn(prm:TRpPreviewMeta);
+    procedure FindNext;
   public
     { Public declarations }
     property PreviewControl:TRpPreviewmeta read fpreviewcontrol write SetPreviewControl;
@@ -231,6 +241,7 @@ begin
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
    SRpHtmlFile+'|*.html|'+
+   SRpHtmlFileSingle+'|*.html|'+
    SRpSVGFile+'|*.svg|'+
    SRpCSVFile+'|*.csv|'+
    SRpTXTProFile+'|*.txt|'+
@@ -247,6 +258,7 @@ begin
  APrint.ShortCut:=ShortCut(Ord('P'), [ssCtrl]);
  ASave.ShortCut:=ShortCut(Ord('S'), [ssCtrl]);
  AMailTo.ShortCut:=ShortCut(Ord('E'), [ssCtrl]);
+ AFind.ShortCut:=ShortCut(VK_F3, []);
 
  APageSetup.ShortCut:=ShortCut(VK_F11, []);
  AParams.ShortCut:=ShortCut(VK_F12, []);
@@ -292,6 +304,9 @@ begin
  AScaleMore.Hint:=TranslateStr(237,AScaleMore.Hint);
  APageSetup.Caption:=TranslateStr(50,APageSetup.Caption);
  APageSetup.Hint:=TranslateStr(51,APageSetup.Hint);
+ AFind.Caption:=TranslateStr(1434,AFind.Caption);
+ AFind.Hint:=TranslateStr(1435,AFind.Hint);
+
 
 {$IFDEF BUILDER4}
  APageSetup.Enabled:=false;
@@ -396,6 +411,11 @@ var
  horzres,vertres:integer;
  recalcreport:boolean;
  areport:TRpReport;
+ meta:TRpMetafileReport;
+ pdfdriver:TRpPDfDriveR;
+ oldpagesize:TRpPageSize;
+ oldheight:integer;
+ oldwidth:integer;
 begin
  areport:=nil;
  if not Assigned(PreviewControl) then
@@ -438,10 +458,58 @@ begin
       end;
      4,5:
       begin
-       ALastExecute(Self);
-       ExportMetafileToExcel(PreviewControl.Metafile,SaveDialog1.FileName,
-        true,false,true,1,9999,SaveDialog1.FilterIndex=5);
-       AppIdle(Self,adone);
+       recalcreport:=false;
+       if (previewcontrol is TRpPreviewControl) then
+       begin
+         if (TRpPreviewControl(previewcontrol).Report.PrinterFonts in [rppfontsalways,rppfontsrecalculate]) then
+         begin
+          recalcreport:=true;
+          areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
+         end;
+       end;
+       if recalcreport then
+       begin
+         TRpPreviewControl(previewcontrol).Report:=nil;
+         previewcontrol.Parent:=nil;
+         pdfdriver:=TRpPdfDriver.Create;
+         try
+          pdfdriver.filename:='';
+          oldpagesize:=areport.Pagesize;
+          oldwidth:=areport.CustomPageWidth;
+          oldheight:=areport.CustomPageHeight;
+          try
+           areport.Pagesize:=rpPageSizeUser;
+           // Maximum of aprox 25000 A4 pages
+           if (TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsrecalculate) then
+            areport.CustomPageHeight:=TWIPS_PER_INCHESS*100000;
+
+           areport.PrintAll(pdfdriver);
+           if (TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsrecalculate) then
+           begin
+            areport.Metafile.CustomY:=areport.maximum_height;
+            areport.Metafile.CustomX:=areport.maximum_width;
+           end;
+          finally
+           areport.Pagesize:=oldpagesize;
+           areport.CustomPageWidth:=oldwidth;
+           areport.CustomPageHeight:=oldheight;
+          end;
+          meta:=areport.Metafile;
+         finally
+          pdfdriver.free;
+         end;
+         ExportMetafileToExcel(meta,SaveDialog1.FileName,
+          true,false,true,1,9999,SaveDialog1.FilterIndex=5);
+         TRpPreviewControl(previewcontrol).Report:=areport;
+         AppIdle(Self,adone);
+       end
+       else
+       begin
+        ALastExecute(Self);
+        ExportMetafileToExcel(PreviewControl.Metafile,SaveDialog1.FileName,
+         true,false,true,1,9999,SaveDialog1.FilterIndex=5);
+        AppIdle(Self,adone);
+        end;
       end;
      7:
       begin
@@ -462,39 +530,143 @@ begin
       end;
      8:
       begin
-       ALastExecute(Self);
-       ExportMetafileToHtml(PreviewControl.Metafile,Caption,SaveDialog1.FileName,
+       recalcreport:=false;
+       if (previewcontrol is TRpPreviewControl) then
+       begin
+         if (TRpPreviewControl(previewcontrol).Report.PrinterFonts in [rppfontsalways,rppfontsrecalculate]) then
+         begin
+          recalcreport:=true;
+          areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
+         end;
+       end;
+       if recalcreport then
+       begin
+         TRpPreviewControl(previewcontrol).Report:=nil;
+         previewcontrol.Parent:=nil;
+         pdfdriver:=TRpPdfDriver.Create;
+         try
+          pdfdriver.filename:='';
+          oldpagesize:=areport.Pagesize;
+          oldwidth:=areport.CustomPageWidth;
+          oldheight:=areport.CustomPageHeight;
+          try
+           areport.Pagesize:=rpPageSizeUser;
+           // Maximum of aprox 25000 A4 pages
+           if (TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsrecalculate) then
+            areport.CustomPageHeight:=TWIPS_PER_INCHESS*100000;
+           areport.PrintAll(pdfdriver);
+           if (TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsrecalculate) then
+           begin
+            areport.Metafile.CustomY:=areport.maximum_height;
+            areport.Metafile.CustomX:=areport.maximum_width;
+           end;
+          finally
+           areport.Pagesize:=oldpagesize;
+           areport.CustomPageWidth:=oldwidth;
+           areport.CustomPageHeight:=oldheight;
+          end;
+          meta:=areport.Metafile;
+         finally
+          pdfdriver.free;
+         end;
+       end
+       else
+       begin
+        ALastExecute(Self);
+        meta:=PreviewControl.Metafile;
+       end;
+       ExportMetafileToHtml(meta,Caption,SaveDialog1.FileName,
         true,true,1,9999);
+       if recalcreport then
+        TRpPreviewControl(previewcontrol).Report:=areport;
        AppIdle(Self,adone);
+//       ALastExecute(Self);
+//       ExportMetafileToHtml(PreviewControl.Metafile,Caption,SaveDialog1.FileName,
+//        true,true,1,9999);
+//       AppIdle(Self,adone);
       end;
      9:
+      begin
+       recalcreport:=false;
+       if (previewcontrol is TRpPreviewControl) then
+       begin
+         if (TRpPreviewControl(previewcontrol).Report.PrinterFonts in [rppfontsalways,rppfontsrecalculate]) then
+         begin
+          recalcreport:=true;
+          areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
+         end;
+       end;
+       if recalcreport then
+       begin
+         TRpPreviewControl(previewcontrol).Report:=nil;
+         previewcontrol.Parent:=nil;
+         pdfdriver:=TRpPdfDriver.Create;
+         try
+          pdfdriver.filename:='';
+          oldpagesize:=areport.Pagesize;
+          oldwidth:=areport.CustomPageWidth;
+          oldheight:=areport.CustomPageHeight;
+          try
+           areport.Pagesize:=rpPageSizeUser;
+           // Maximum of aprox 25000 A4 pages
+           if (TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsrecalculate) then
+            areport.CustomPageHeight:=TWIPS_PER_INCHESS*100000;
+           areport.PrintAll(pdfdriver);
+           if (areport.Metafile.CurrentPageCount=1) then
+           begin
+            // For only one page shorts the page to maximum printed
+            // area
+            areport.Metafile.CustomY:=areport.maximum_height;
+            areport.Metafile.CustomX:=areport.maximum_width;
+           end;
+          finally
+           areport.Pagesize:=oldpagesize;
+           areport.CustomPageWidth:=oldwidth;
+           areport.CustomPageHeight:=oldheight;
+          end;
+          meta:=areport.Metafile;
+         finally
+          pdfdriver.free;
+         end;
+       end
+       else
+       begin
+        ALastExecute(Self);
+        meta:=PreviewControl.Metafile;
+       end;
+       ExportMetafileToHtmlSingle(meta,Caption,SaveDialog1.FileName);
+       if recalcreport then
+        TRpPreviewControl(previewcontrol).Report:=areport;
+       AppIdle(Self,adone);
+      end;
+     10:
       begin
        ALastExecute(Self);
        ExportMetafileToSVG(PreviewControl.Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
        AppIdle(Self,adone);
       end;
-     10:
+     11:
       begin
        ALastExecute(Self);
        ExportMetafileToCSV(PreviewControl.metafile,SaveDialog1.Filename,true,true,
         1,9999,',');
        AppIdle(Self,adone);
       end;
-     11:
+     12:
       begin
        ALastExecute(Self);
        ExportMetafileToTextPro(PreviewControl.metafile,SaveDialog1.Filename,true,true,
         1,9999);
        AppIdle(Self,adone);
       end;
-     12:
+     13:
      begin
       ALastExecute(Self);
       PreviewControl.Metafile.SaveToFile(SaveDialog1.Filename,false);
      end;
 {$IFNDEF DOTNETD}
-     13:
+     14:
       begin
        ALastExecute(Self);
        MetafileToExe(PreviewControl.metafile,SaveDialog1.Filename);
@@ -772,6 +944,44 @@ end;
 procedure TFRpVPreview.MEntireMenuPopup(Sender: TObject);
 begin
  MleftRight.Checked:=Not PreviewControl.EntireTopDown;
+end;
+
+procedure TFRpVPreview.FindNext;
+var
+ pageindex:integer;
+begin
+ if (textchanged) then
+ begin
+  PreviewControl.Metafile.DoSearch(Trim(ESearch.Text));
+  pageindex:=PreviewControl.Metafile.NextPageFound(-1);
+  textchanged:=false;
+ end
+ else
+  pageindex:=PreviewControl.Metafile.NextPageFound(PreviewControl.Page+PreviewControl.PagesDrawn-1);
+ if PreviewControl.Page=pageindex then
+  PreviewControl.RefreshPage
+ else
+  PreviewControl.Page:=pageindex;
+end;
+
+
+procedure TFRpVPreview.ESearchKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+ if Key=VK_RETURN then
+ begin
+  FindNext;
+ end;
+end;
+
+procedure TFRpVPreview.AFindExecute(Sender: TObject);
+begin
+ FindNext;
+end;
+
+procedure TFRpVPreview.ESearchChange(Sender: TObject);
+begin
+ textchanged:=true;
 end;
 
 end.

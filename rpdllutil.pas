@@ -31,6 +31,7 @@ uses SysUtils,Classes,rpreport,rpmdconsts,rppdfdriver,
  rpexceldriver,
  rpgdidriver,
  Graphics,
+ Printers,rpvgraphutils,
 {$ENDIF}
  rphtmldriver,
  rpsvgdriver;
@@ -62,6 +63,9 @@ function rp_setparamvaluevar(hreport:integer;paramname:pchar;
  paramvalue:OleVariant):integer;stdcall;
 function rp_setadoconnectionstring(hreport:integer;conname:pchar;
  constring:PChar):integer;stdcall;
+function rp_getdefaultprinter:pchar;stdcall;
+function rp_getprinters:pchar;stdcall;
+function rp_setdefaultprinter(device:pchar):integer;stdcall;
 {$ENDIF}
 
 function FindReportIndex(hreport:integer):integer;
@@ -217,14 +221,21 @@ begin
       adriver.free;
      end;
     end;
-   3:
+   3,10:
     begin
      report.TwoPass:=true;
      adriver:=TRpPdfDriver.Create;
      try
-      report.PrintAll(adriver);
-      ExportMetafileToHtml(report.Metafile,'',StrPas(outputfilename),
-       true,true,1,9999);
+      if (metafile=10) then
+      begin
+       ExportReportToHtmlSingle(report,StrPas(outputfilename));
+      end
+      else      
+      begin
+        report.PrintAll(adriver);
+        ExportMetafileToHtml(report.Metafile,'',StrPas(outputfilename),
+          true,true,1,9999);
+      end
      finally
       adriver.free;
      end;
@@ -436,6 +447,86 @@ begin
   end;
  end;
 end;
+
+{$IFDEF MSWINDOWS}
+function rp_setdefaultprinter(device:pchar):integer;
+var
+ adevice:string;
+ i:integer;
+ itemindex:integer;
+ printerlist:string;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ Result:=1;
+ try
+  adevice:=UpperCase(device);
+  itemindex:=-1;
+  printerlist:='';
+  for i:=0 to printer.printers.count-1 do
+  begin
+   if UpperCase(printer.printers.strings[i])=adevice then
+   begin
+    itemindex:=i;
+    break;
+   end;
+   printerlist:=printerlist+printer.printers.strings[i]+#10;
+  end;
+  if itemindex<0 then
+   Raise Exception.Create(SRpErrorOpenImp+':'+device+#10+printerlist);
+  SwitchToPrinterIndex(itemindex); 
+ except
+  on E:Exception do
+  begin
+   rplasterror:=E.Message;
+   Result:=0;
+  end;
+ end;
+end;
+
+function rp_getprinters:pchar;
+var
+ i:integer;
+ aresult:String;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ try
+  aresult:='';
+  for i:=0 to printer.printers.count-1 do
+  begin
+   if i>0 then
+    aResult:=aResult+#10;
+   aResult:=aResult+printer.printers[i];
+  end;  
+  Result:=Pchar(aresult);
+ except
+  on E:Exception do
+  begin
+   Result:=PChar(E.Message);
+  end;
+ end;
+end;
+
+function rp_getdefaultprinter:pchar;
+var
+ aresult:String;
+begin
+ rplibdoinit;
+ rplasterror:='';
+ try
+  aResult:='';
+  if printer.printerindex>0 then
+   aResult:=printer.printers[printer.printerindex];
+  Result:=Pchar(aresult);
+ except
+  on E:Exception do
+  begin
+   Result:=PChar(E.Message);
+  end;
+ end;
+end;
+{$ENDIF}
 
 function rp_setparamvalue(hreport:integer;paramname:pchar;paramtype:integer;
  paramvalue:Pointer):integer;

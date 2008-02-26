@@ -3,7 +3,7 @@ unit rpaxreportreport;
 interface
 
 uses
-  ComObj, ActiveX, Reportman_TLB, StdVcl,rpreport,
+  ComObj, ActiveX, reportman_TLB, StdVcl,rpreport,
   rpaxreportparameters,rpcolumnar;
 
 type

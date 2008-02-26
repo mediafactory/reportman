@@ -54,7 +54,7 @@ const
  // 0.5 cms=287
  CONS_DEFAULT_GRIDWIDTH=115;
  CONS_DEFAULT_GRIDCOLOR=$FF0000;
- CONS_MIN_GRID_WIDTH=50;
+ CONS_MIN_GRID_WIDTH=10;
  // 29,7/2.54*1440
  DEFAULT_PAGEHEIGHT=16837;
  DEFAULT_PAGEWIDTH=11906;
@@ -281,6 +281,8 @@ type
    ProgressToStdOut:Boolean;
    AdoNetDriver:integer;
    AsyncExecution:boolean;
+   maximum_width:integer;
+   maximum_height:integer;
    procedure LoadExternals;virtual;
    procedure AddReportItemsToEvaluator(eval:TRpEvaluator);
    procedure InitEvaluator;

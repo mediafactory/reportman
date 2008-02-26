@@ -398,20 +398,17 @@ begin
      end;
    rpParamBool:
      begin
-      acontrol:=TComboBox.Create(Self);
+      acontrol:=TCheckBox.Create(Self);
       if aparam.IsReadOnly then
       begin
-       TComboBox(acontrol).Color:=Self.Color;
+       TCheckBox(acontrol).Color:=Self.Color;
       end;
-      TComboBox(acontrol).Style:=csDropDownList;
       acontrol.tag:=i;
       lcontrols.AddObject(aparam.Name,acontrol);
       lcontrols2.AddObject(aparam.Name,acontrol);
       // Can't add items without a parent
       acontrol.parent:=MainScrollBox;
-      TComboBox(acontrol).Items.Add(BoolToStr(false,true));
-      TComboBox(acontrol).Items.Add(BoolToStr(true,true));
-      TComboBox(acontrol).ItemIndex:=0;
+      TCheckBox(acontrol).Checked:=false;
       if aparam.Value=Null then
       begin
        achecknull.Checked:=true;
@@ -419,9 +416,9 @@ begin
       else
       begin
        if Boolean(aparam.value) then
-        TComboBox(acontrol).ItemIndex:=1
+        TCheckBox(acontrol).Checked:=true
        else
-        TComboBox(acontrol).ItemIndex:=0;
+        TCheckBox(acontrol).Checked:=false
       end;
      end;
    rpParamMultiple:
@@ -603,7 +600,7 @@ begin
       end;
      rpParamBool:
       begin
-       fparams.items[i].Value:=StrtoBool(TComboBox(LControls.Objects[i]).Text);
+       fparams.items[i].Value:=TCheckBox(LControls.Objects[i]).Checked;
       end;
      rpParamMultiple:
       begin

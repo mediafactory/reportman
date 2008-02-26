@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ActiveX, AxCtrls, Reportman_TLB, StdVcl, rppreviewmeta, rppreviewcontrol,
+  ActiveX, AxCtrls, reportman_TLB, StdVcl, rppreviewmeta, rppreviewcontrol,
   rpreport,rppdfdriver,rptextdriver,rpexceldriver,rpgdidriver,
   rphtmldriver,rpsvgdriver,rpcsvdriver,rpmetafile;
 

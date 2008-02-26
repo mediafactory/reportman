@@ -1,8 +1,8 @@
 object FRpMainMeta: TFRpMainMeta
   Left = 121
   Top = 58
-  Width = 573
-  Height = 434
+  Width = 658
+  Height = 435
   Caption = 'Metafile report preview'
   Color = clBackground
   KeyPreview = True

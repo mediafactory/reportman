@@ -28,10 +28,10 @@
   in page setup).</p>
 <p>For example, this instruction will generate a pdf file from a report:</p>
 <p>printreport.exe -pdf pdfoutputfilename.pdf mysavedreportasxml.rep</p>
-<p><strong>Parts already working (Windows)</strong></p>
+<p><strong>Parts already working</strong></p>
 <ul>
   <li>Print preview and printout</li>
-  <li>PDF output (not truetype support)</li>
+  <li>PDF output (not truetype embedding support)</li>
   <li>Label, expression, image, drawing, barcode (partial)</li>
   <li>Data providers 1.1: Odbc, OleDB, SQLServer, Firebird, SQLite,Sybase,PostgreSQL,IBM 
     DB2 (Linux),MySQL(Windows)</li>
@@ -41,11 +41,10 @@
 </ul>
 <p><strong>Missing parts</strong></p>
 <ul>
-  <li>Output as excel, text</li>
-  <li>Some evaluator functions are still missing</li>
-  <li>Linux port, please use pdf output to printout on linux, the Mono printing 
-    components are not complete (Winforms still not implemented).</li>
-  <li>Some barcodes still missing</li>
+  <li>Output as excel, text, csv </li>
+  <li>A few evaluator functions are still missing</li>
+  <li>Linux port: use of  pdf output is recommended, preview and print should work but problems can appear because Mono winforms and printing is not mature enought.</li>
+  <li>Some barcodes still missing, charting not implemented </li>
   <li>Other data providers may be included in the future: IBM DB2 (Windows), MySQL 
     (Linux)</li>
 </ul>
@@ -57,6 +56,7 @@
     assigned by position, not by name, parameters by name are not supported by 
     odbc dot net driver, so make sure to sort the parameters to match query position 
     when you use odbc.</li>
+  <li>The display format for expressions follows dot net formatting standard (main differences are for date and time formatting). </li>
 </ul>
 <p><strong>Using the library</strong></p>
 <p>To use the libraries provided, you should include a reference to them in your 

@@ -103,12 +103,20 @@
   showprintdialog)<br>
   int rp_preview(int hreport,char *title);<br>
   int rp_setparamvalue(int hreport,char *paramname, int paramtype,void *paramvalue);<br>
-  int rp_setparamvaluevar(int hreport,char *paramname, OleVariant paramvalue);<br>
   int rp_getparamcount(int hreport:integer;int *paramcount);<br>
   int rp_getparamname(int hreport,int index,char *abuffer);<br>
   int rp_setadoconnectionstring(int hreport,char *conname,char *constring);<br>
   int rp_bitmap(int hreport,char *outputfilename,int ask,int mono,int vertres,int 
   horzres);<br>
+</p>
+<p>
+<strong>Only available in Microsoft Windows</strong><br>
+int rp_setparamvaluevar(int hreport,char *paramname, OleVariant paramvalue);<br>
+int rp_setadoconnectionstring(int hreport,char *conname,char *constring);<br>
+char* rp_getprinters(void);<br>
+char* rp_getdefaultprinter(void);<br>
+int rp_setdefaultprinter(char *device);
+
 </p>
 <p> All the functions returns 0 if fail, the rp_lasterror function returns the 
   error message for the last library call so the call of a report engine function 
@@ -215,6 +223,10 @@ hreport=rp_open(reportmanfile);<br>
   <tr>
     <td>9</td>
     <td>Excel, one sheet</td>
+  </tr>
+  <tr>
+    <td>10</td>
+    <td>HTML output one file only </td>
   </tr>
 </table>
 <p><strong>Compiling</strong></p>

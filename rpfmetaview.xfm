@@ -1,9 +1,9 @@
 object FRpMeta: TFRpMeta
   Left = 0
   Top = 0
-  Width = 451
+  Width = 667
   Height = 304
-  VertScrollBar.Range = 76
+  VertScrollBar.Range = 50
   HorzScrollBar.Range = 7
   Align = alClient
   ParentShowHint = False
@@ -13,16 +13,16 @@ object FRpMeta: TFRpMeta
   OnMouseWheelUp = FrameMouseWheelUp
   object Splitter1: TSplitter
     Left = 0
-    Top = 55
+    Top = 29
     Width = 7
-    Height = 228
+    Height = 254
     Beveled = True
   end
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 451
-    Height = 55
+    Width = 667
+    Height = 29
     AutoSize = True
     ButtonHeight = 26
     ButtonWidth = 26
@@ -99,8 +99,8 @@ object FRpMeta: TFRpMeta
     end
     object BCancel: TButton
       HelpType = htContext
-      Left = 27
-      Top = 30
+      Left = 473
+      Top = 4
       Width = 74
       Height = 26
       Action = ACancel
@@ -110,8 +110,8 @@ object FRpMeta: TFRpMeta
     end
     object BExit: TToolButton
       HelpType = htContext
-      Left = 1
-      Top = 30
+      Left = 447
+      Top = 4
       Height = 26
       Action = AExit
       Caption = 'Exit'
@@ -204,8 +204,8 @@ object FRpMeta: TFRpMeta
       ImageIndex = 8
     end
     object PPBar: TPanel
-      Left = 101
-      Top = 30
+      Left = 547
+      Top = 4
       Width = 58
       Height = 25
       Align = alCustom
@@ -224,7 +224,7 @@ object FRpMeta: TFRpMeta
   object BStatus: TStatusBar
     Left = 0
     Top = 283
-    Width = 451
+    Width = 667
     Height = 21
     Panels = <
       item

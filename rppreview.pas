@@ -249,6 +249,7 @@ begin
    SRpPlainFile+'|*.txt|'+
    SRpBitmapFile+'|*.bmp|'+
    SRpHtmlFile+'|*.html|'+
+   SRpHtmlFileSingle+'|*.html|'+
    SRpSVGFile+'|*.svg|'+
    SRpCSVFile+'|*.csv|'+
    SRpTXTProFile+'|*.txt|'+
@@ -264,6 +265,7 @@ begin
    SRpPlainFile+' (*.txt)|'+
    SRpBitmapFile+' (*.bmp)|'+
    SRpHtmlFile+' (*.html)|'+
+   SRpHtmlFileSingle+' (*.html)|'+
    SRpSVGFile+' (*.svg)|'+
    SRpCSVFile+' (*.csv)|'+
    SRpTXTProFile+' (*.txt)|'+
@@ -458,31 +460,38 @@ begin
      7:
       begin
        ALastExecute(Self);
-       ExportMetafileToSVG(PreviewControl.Metafile,Caption,SaveDialog1.FileName,
+       ExportMetafileToHtmlSingle(PreviewControl.Metafile,Caption,SaveDialog1.FileName,
         true,true,1,9999);
        AppIdle(Self,adone);
       end;
      8:
       begin
        ALastExecute(Self);
+       ExportMetafileToSVG(PreviewControl.Metafile,Caption,SaveDialog1.FileName,
+        true,true,1,9999);
+       AppIdle(Self,adone);
+      end;
+     9:
+      begin
+       ALastExecute(Self);
        ExportMetafileToCSV(PreviewControl.metafile,SaveDialog1.Filename,true,true,
         1,MAX_PAGECOUNT,',');
        AppIdle(Self,adone);
       end;
-     9:
+     10:
       begin
        ALastExecute(Self);
        ExportMetafileToTextPro(PreviewControl.metafile,SaveDialog1.Filename,true,true,
         1,9999);
        AppIdle(Self,adone);
       end;
-     10:
+     11:
       begin
        ALastExecute(Self);
        PreviewControl.Metafile.SaveToFile(SaveDialog1.Filename,false);
       end;
 {$IFDEF MSWINDOWS}
-     11:
+     12:
       begin
        ALastExecute(Self);
        MetafileToExe(PreviewControl.metafile,SaveDialog1.Filename);

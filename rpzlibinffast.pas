@@ -15,7 +15,7 @@ uses
   {$ifdef DEBUG}
   strutils,
   {$ENDIF}
-  rpzlibzutil, rpzlibzlib;
+  rpzlibzutil, rpzlibzlib,SysUtils;
 
 function inflate_fast( bl : uInt;
                        bd : uInt;

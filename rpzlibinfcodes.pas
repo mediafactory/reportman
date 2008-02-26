@@ -15,7 +15,7 @@ uses
   {$IFDEF DEBUG}
   strutils,
   {$ENDIF}
-  rpzlibzutil, rpzlibzlib;
+  rpzlibzutil, rpzlibzlib,SysUtils;
 
 function inflate_codes_new (bl : uInt;
                             bd : uInt;
