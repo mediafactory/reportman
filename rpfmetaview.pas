@@ -673,8 +673,7 @@ begin
      end;
     7:
      begin
-      ExportMetafileToHtmlSingle(Metafile,Caption,SaveDialog1.FileName,
-       true,true,1,9999);
+       ExportMetafileToHtmlSingle(Metafile,Caption,SaveDialog1.FileName);
      end;
     8:
      begin

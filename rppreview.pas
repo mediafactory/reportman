@@ -460,8 +460,7 @@ begin
      7:
       begin
        ALastExecute(Self);
-       ExportMetafileToHtmlSingle(PreviewControl.Metafile,Caption,SaveDialog1.FileName,
-        true,true,1,9999);
+       ExportMetafileToHtmlSingle(PreviewControl.Metafile,Caption,SaveDialog1.FileName);
        AppIdle(Self,adone);
       end;
      8:

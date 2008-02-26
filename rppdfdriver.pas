@@ -337,7 +337,7 @@ begin
 //       begin
 //        FPDFFile.Canvas.PenStyle:=6;
 //        FPDFFile.Canvas.Line(X+PosX, Y+PosY,X+PosX, Y+PosY+H);
-       end;
+//       end;
       end;
      rpsVertLine:
       begin
