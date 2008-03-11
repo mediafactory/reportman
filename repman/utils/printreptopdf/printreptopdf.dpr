@@ -412,8 +412,7 @@ begin
       PrintReportToMetafile(report,'',showprogress,allpages,frompage,topage,
        copies,'',collate);
       if (singlefile) then
-      ExportMetafileToHtmlSingle(report.metafile,pdffilename,pdffilename,showprogress,
-       true,1,99999)
+       ExportMetafileToHtmlSingle(report.Metafile,'',pdffilename)
       else
       ExportMetafileToHtml(report.metafile,pdffilename,pdffilename,showprogress,
        true,1,99999);
