@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager TCP Client and metafile viewer
-AppVerName=Report Manager TCP Client 2.7a
-AppVersion=2.7a
-OutputBaseFilename=reportmanclient2_7a
+AppVerName=Report Manager TCP Client 2.7e
+AppVersion=2.7e
+OutputBaseFilename=reportmanclient2_7e
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman

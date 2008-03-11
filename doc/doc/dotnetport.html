@@ -16,7 +16,7 @@
   of the engine (Framework 1.1 or 2.0 depending on the selected provider). That 
   is effectively executing the command <strong>printreport.exe</strong> inside 
   the net or net2 folder inside designer folder. </p>
-<p>In Linux, Mono 1.1.13 or newer must be installed, in Microsoft Windows, Dot 
+<p>In Linux, Mono 1.1.13 or newer must be installed (preview and print only word latests versions), in Microsoft Windows, Dot 
   Net runtime Framework 1.1 or 2.0 must be installed depending on the selected 
   provider. </p>
 <p><strong>Internals</strong></p>
@@ -30,7 +30,7 @@
 <p>printreport.exe -pdf pdfoutputfilename.pdf mysavedreportasxml.rep</p>
 <p><strong>Parts already working</strong></p>
 <ul>
-  <li>Print preview and printout</li>
+  <li>Print preview and printout, including report parameters and page setup. </li>
   <li>PDF output (not truetype embedding support)</li>
   <li>Label, expression, image, drawing, barcode (partial)</li>
   <li>Data providers 1.1: Odbc, OleDB, SQLServer, Firebird, SQLite,Sybase,PostgreSQL,IBM 
@@ -41,9 +41,8 @@
 </ul>
 <p><strong>Missing parts</strong></p>
 <ul>
-  <li>Output as excel, text, csv </li>
-  <li>A few evaluator functions are still missing</li>
-  <li>Linux port: use of  pdf output is recommended, preview and print should work but problems can appear because Mono winforms and printing is not mature enought.</li>
+  <li>Output as excel, text, csv.</li>
+  <li>Linux port: The preview uses the dot net 1.0 preview window becuase 2.0 toolstrips are still not working well in Mono. Print out have been implemented recently in Mono, but it seems to work well, if you experiment problems you can use  pdf output and send the pdf file to printer using system commands..</li>
   <li>Some barcodes still missing, charting not implemented </li>
   <li>Other data providers may be included in the future: IBM DB2 (Windows), MySQL 
     (Linux)</li>
@@ -51,12 +50,12 @@
 <p><strong>Different behaviour</strong></p>
 <ul>
   <li>You must use dot net syntax for parameters in querys, see documentation 
-    in dot net platform sdk.</li>
+    in dot net platform sdk, usually use @paramname for parameters instead of :paramname. Also add all parameters to parameter definition including the parameters used to link querys.</li>
   <li>In odbc provider you use ? for placing parameters, the parameters will be 
     assigned by position, not by name, parameters by name are not supported by 
     odbc dot net driver, so make sure to sort the parameters to match query position 
     when you use odbc.</li>
-  <li>The display format for expressions follows dot net formatting standard (main differences are for date and time formatting). </li>
+  <li>The display format for expressions follows dot net formatting standard (main differences are for date and time formatting, use M for month, and m for minutes). </li>
 </ul>
 <p><strong>Using the library</strong></p>
 <p>To use the libraries provided, you should include a reference to them in your 
