@@ -2,7 +2,7 @@ kylix_bin=/opt/kylix3/bin
 #kylix_bin=/home/toni/kylix3/bin
 drivers_path=../../drivers/linux
 net_path=../../../reportmannet
-rpversion=2_7a
+rpversion=2_7e
 
 install:
 	make clean
@@ -77,7 +77,7 @@ install:
 	cp $(net_path)/output/printreport.exe net
 	cp $(net_path)/output/*.dll net
 	cp $(net_path)/output2/printreport.exe net2
-#	cp $(net_path)/printreport.exe.config net2
+	cp $(net_path)/output2/printreport.exe.config net2
 	cp $(net_path)/output2/*.dll net2
 #	include repmand.es when linux translation done
 #	Patching for execution on execshield
