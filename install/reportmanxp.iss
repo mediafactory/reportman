@@ -86,10 +86,10 @@ Source: ..\repman\utils\rptranslator\rptranslate.exe.manifest; DestDir: {app}; C
 Source: ..\repman\utils\rptranslator\rptranslateres.*; DestDir: {app}; Components: translation; Flags: ignoreversion
 Source: ..\repman\utils\compilerep\compilerep.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\printreptopdf\printreptopdf.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: ..\activex\ReportMan.ocx; DestDir: {sys}; Components: activex; Flags: restartreplace sharedfile regserver
+Source: ..\activex\ReportMan.ocx; DestDir: {sys}; Components: activex; Flags: restartreplace sharedfile regserver ignoreversion
 Source: ..\activex\ReportMan.ocx.manifest; DestDir: {sys}; Components: activex
 Source: ..\webactivex\WebReportManX.cab; DestDir: {app}; Components: ieplugin; Flags: ignoreversion
-Source: ..\webactivex\WebReportManX.ocx; DestDir: {sys}; Components: ieplugin; Flags: restartreplace sharedfile regserver
+Source: ..\webactivex\WebReportManX.ocx; DestDir: {sys}; Components: ieplugin; Flags: restartreplace sharedfile regserver ignoreversion
 Source: ..\server\service\repserverservice.exe; DestDir: {app}; Components: servertcp; Flags: ignoreversion
 Source: ..\server\app\reportserverappxp.exe; DestDir: {app}; Components: servertcp; Flags: ignoreversion
 Source: ..\server\app\reportserverappxp.exe.manifest; DestDir: {app}; Components: servertcp; Flags: ignoreversion

@@ -42,7 +42,7 @@ Name: fr; MessagesFile: FrenchT.isl
 Source: ..\repman\reportmanres.*; DestDir: {sys}; Flags: restartreplace
 ;Source: license.txt; DestDir: {app}; Flags: ignoreversion
 Source: ..\drivers\win32\upx.exe; DestDir: {sys}; Flags: restartreplace
-Source: ..\webactivex\WebReportManX.ocx; DestDir: {sys}; Flags: restartreplace sharedfile regserver
+Source: ..\webactivex\WebReportManX.ocx; DestDir: {sys}; Flags: restartreplace sharedfile regserver ignoreversion
 
 
 

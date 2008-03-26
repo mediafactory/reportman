@@ -604,14 +604,20 @@ var
  eval:TRpEvaluator;
 begin
  Result:=false;
-
- if Length(FBeginPageExpression)<1 then
-  exit;
- report:=TRpBaseReport(Owner);
- eval:=report.Evaluator;
- eval.Expression:=FBeginPageExpression;
- eval.Evaluate;
- Result:=eval.EvalResult;
+ try
+  if Length(FBeginPageExpression)<1 then
+   exit;
+  report:=TRpBaseReport(Owner);
+  eval:=report.Evaluator;
+  eval.Expression:=FBeginPageExpression;
+  eval.Evaluate;
+  Result:=eval.EvalResult;
+ except
+  on E:Exception do
+  begin
+   Raise TRpReportException.Create(E.Message+':'+SRPSBeginPage,self,SRPSBeginPage);
+  end;
+ end;
 end;
 
 

@@ -1768,6 +1768,8 @@ begin
  LControls2.Free;
  LPages.Free;
  AList.Free;
+ LCat.free;
+ LHints.free;
 
  inherited Destroy;
 end;

@@ -1371,7 +1371,24 @@ var
  astring:WideString;
  adata:TRpTTFontData;
  havekerning:boolean;
+ leading:integer;
+ linespacing:integer;
 begin
+ /// Add Font leading
+ adata:=GetTTFontData;
+ if assigned(adata) then
+ begin
+  leading:=adata.Leading;
+ end
+ else
+ begin
+  GetStdLineSpacing(linespacing,leading);
+ end;
+ leading:=Round((leading/100000)*FResolution*FFont.Size*1.25);
+ Y:=Y+leading;
+
+
+
  FFile.CheckPrinting;
  if (Rotation<>0) then
  begin
@@ -1407,7 +1424,6 @@ begin
    astring:=DoReverseStringW(astring);
   end;
   havekerning:=false;
-  adata:=GetTTFontData;
   if assigned(adata) then
   begin
    if adata.havekerning then
@@ -1842,6 +1858,7 @@ var
  linespacing:integer;
  leading:integer;
  offset:integer;
+ incomplete:boolean;
 begin
  // Text extent for the simple strings, wide strings not supported
  havekerning:=false;
@@ -1881,6 +1898,7 @@ begin
  lockspace:=false;
  while i<=Length(astring) do
  begin
+  incomplete:=false;
   newsize:=CalcCharWidth(astring[i],adata);
   if havekerning then
   begin
@@ -1902,6 +1920,12 @@ begin
      nextline:=true;
      asize:=alastsize;
      linebreakpos:=0;
+    end
+    else
+    begin
+     nextline := true;
+     incomplete:=true;
+     linebreakpos := 0;
     end;
    end
    else
@@ -1958,7 +1982,7 @@ begin
   begin
    nextline:=false;
    info.Position:=position;
-   info.Size:=i-position+1-offset;
+   info.Size:=i-position-offset;
    info.Width:=Round((asize)/CONS_PDFRES*FResolution);
 //   info.height:=Round((Font.Size)/CONS_PDFRES*FResolution);
    info.height:=linespacing;
@@ -1967,16 +1991,19 @@ begin
    arec.Bottom:=arec.Bottom+info.height;
    asize:=0;
    offset:=0;
+   if (incomplete) then
+    i:=i-1;
    position:=i+1;
    NewLineInfo(info);
    createsnewline:=false;
    // Skip only one blank char
-   if i<Length(astring) then
-    if astring[i+1]=WideChar(' ') then
-    begin
-     inc(i);
-     position:=i+1;
-    end;
+   if (incomplete) then
+     if i<Length(astring) then
+      if astring[i+1]=WideChar(' ') then
+      begin
+      inc(i);
+      position:=i+1;
+      end;
   end;
   inc(i);
  end;

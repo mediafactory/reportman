@@ -368,6 +368,7 @@ type
     procedure RefreshInterface(Sender: TObject);
     constructor Create(AOwner:TComponent);override;
     function GetExpressionText:string;
+    destructor Destroy;override;
   end;
 
 
@@ -378,6 +379,17 @@ uses Math;
 
 
 {$R *.xfm}
+
+
+destructor TFRpMainF.Destroy;
+begin
+ if Assigned(lastsaved) then
+ begin
+  lastsaved.free;
+  lastsaved:=nil;
+ end;
+ inherited Destroy;
+end;
 
 procedure TFRpMainF.UpdateFonts;
 begin

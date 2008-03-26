@@ -356,6 +356,7 @@ type
     browsecommandline:boolean;
     procedure RefreshInterface(Sender: TObject);
     constructor Create(AOwner:TComponent);override;
+    destructor Destroy;override;
     function GetExpressionText:string;
   end;
 
@@ -368,6 +369,16 @@ implementation
 
 
 {$R *.dfm}
+
+destructor TFRpMainFVCL.Destroy;
+begin
+ if Assigned(lastsaved) then
+ begin
+  lastsaved.free;
+  lastsaved:=nil;
+ end;
+ inherited Destroy;
+end;
 
 
 procedure TFRpMainFVCL.UpdateFonts;

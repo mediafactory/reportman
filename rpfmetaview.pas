@@ -191,6 +191,10 @@ type
     MEntire30: TMenuItem;
     MEntire48: TMenuItem;
     MLeftRight: TMenuItem;
+    ESearch: TEdit;
+    ToolButton17: TToolButton;
+    AFind: TAction;
+    ToolButton18: TToolButton;
     procedure AFirstExecute(Sender: TObject);
     procedure ANextExecute(Sender: TObject);
     procedure APreviousExecute(Sender: TObject);
@@ -226,6 +230,10 @@ type
     procedure AMailToExecute(Sender: TObject);
     procedure MEntire1Click(Sender: TObject);
     procedure MLeftRightClick(Sender: TObject);
+    procedure ESearchChange(Sender: TObject);
+    procedure AFindExecute(Sender: TObject);
+    procedure ESearchKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
     fmetafile,fintmetafile:TRpMetafileReport;
@@ -235,6 +243,7 @@ type
     FPreviewControl:TRpPreviewmetaCLX;
     AppStyle:TDefaultStyle;
     configfile:string;
+    textchanged:boolean;
 {$IFDEF LINUX}
     usekprinter:boolean;
 {$ENDIF}
@@ -259,6 +268,7 @@ type
     aqtdriver:TRpPrintDriver;
     setmenu:boolean;
     ShowPrintDialog:Boolean;
+    procedure FindNext;
     procedure DoOpen(afilename:String);
     procedure UpdatePrintSel;
     property aform:TForm read faform write SetForm;
@@ -1124,6 +1134,61 @@ end;
 procedure TFRpMeta.OnPageDrawn(prm:TRpPreviewMetaCLX);
 begin
  EPageNum.Text:=IntToStr(prm.Page+1);
+end;
+
+procedure TFRpMeta.ESearchChange(Sender: TObject);
+begin
+ textchanged:=true;
+end;
+
+procedure TFRpMeta.AFindExecute(Sender: TObject);
+begin
+ FindNext;
+end;
+
+procedure TFRpMeta.FindNext;
+var
+ pageindex:integer;
+begin
+ if (textchanged) then
+ begin
+  PreviewControl.Metafile.DoSearch(Trim(ESearch.Text));
+  pageindex:=PreviewControl.Metafile.NextPageFound(-1);
+  textchanged:=false;
+ end
+ else
+  pageindex:=PreviewControl.Metafile.NextPageFound(PreviewControl.Page+PreviewControl.PagesDrawn-1);
+ if PreviewControl.Page=pageindex then
+  PreviewControl.RefreshPage
+ else
+  PreviewControl.Page:=pageindex;
+end;
+
+procedure TFRpMeta.ESearchKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+var
+ increment:integer;
+begin
+ if (ssShift in Shift) then
+  increment:=REP_C_WHEELINC
+ else
+  increment:=REP_C_WHEELINC*REP_C_WHEELSCALE;
+ if Key=VK_DOWN then
+  fpreviewcontrol.Scroll(true,increment);
+ if Key=VK_UP then
+  fpreviewcontrol.Scroll(true,-increment);
+ if Key=VK_RIGHT then
+  fpreviewcontrol.Scroll(false,increment);
+ if Key=VK_LEFT then
+  fpreviewcontrol.Scroll(false,-increment);
+ if Key=VK_SPACE then
+ begin
+  if fpreviewcontrol.AutoScale=AScaleEntirePage then
+   fpreviewcontrol.AutoScale:=AScaleReal
+  else
+   fpreviewcontrol.AutoScale:=AScaleEntirePage;
+  Key:=0;
+ end;
 end;
 
 end.

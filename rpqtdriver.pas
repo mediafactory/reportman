@@ -125,6 +125,7 @@ type
    procedure SendAfterPrintOperations;
 {$ENDIF}
    procedure UpdateBitmapSize(report:TrpMetafileReport;apage:TrpMetafilePage);
+   procedure IntDrawObject(page:TRpMetaFilePage;obj:TRpMetaObject;selected:boolean);
   public
    forceprintername:string;
    bitmap:TBitmap;
@@ -151,6 +152,8 @@ type
     aposx,aposy:integer;xchart:TObject);
  {$ENDIF}
 {$ENDIF}
+   procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;
+    dpix,dpiy:integer;scale:double;offset:TPoint;selected:boolean);
    procedure DrawPage(apage:TRpMetaFilePage);override;
    procedure TextExtent(atext:TRpTextObject;var extent:TPoint);override;
    procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);override;
@@ -550,8 +553,8 @@ begin
  end;
 end;
 
-procedure PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;
- dpix,dpiy:integer;scale:double;offset:TPoint;toprinter:boolean);
+procedure TRpQtDriver.PrintObject(Canvas:TCanvas;page:TRpMetafilePage;obj:TRpMetaObject;
+ dpix,dpiy:integer;scale:double;offset:TPoint;selected:boolean);
 var
  posx,posy:integer;
  rec:TRect;
@@ -579,7 +582,10 @@ begin
 {$IFDEF LINUX}
     Canvas.Font.Name:=page.GetLFontName(Obj);
 {$ENDIF}
-    Canvas.Font.Color:=Obj.FontColor;
+    if (selected) then
+     Canvas.Brush.Color:=clHighlightText
+    else
+     Canvas.Font.Color:=Obj.FontColor;
     Canvas.Font.Style:=IntegerToFontStyle(obj.FontStyle);
     Canvas.Font.Size:=Obj.FontSize;
     aalign:=obj.Alignment;
@@ -592,15 +598,22 @@ begin
     rec.Right:=posx+round(obj.Width*dpix*scale/TWIPS_PER_INCHESS);
     rec.Bottom:=posy+round(obj.Height*dpiy*scale/TWIPS_PER_INCHESS);
     // Not Transparent
-    if Not obj.Transparent then
+    if ((Not obj.Transparent) or selected) then
     begin
      arec:=rec;
      Canvas.TextExtent(page.GetText(obj),arec,aalign);
+     arec.Right:=arec.Left+Round((arec.Right-arec.Left)*scale);
+     arec.Bottom:=arec.Top+Round((arec.Bottom-arec.Top)*scale);
      Canvas.Brush.Style:=bsSolid;
-     Canvas.Brush.Color:=obj.BackColor;
+     if (selected) then
+      Canvas.Brush.Color:=clHighlight
+     else
+      Canvas.Brush.Color:=obj.BackColor;
      Canvas.FillRect(arec);
-    end;
-    Canvas.Brush.Style:=bsClear;
+    end
+    else
+     Canvas.Brush.Style:=bsClear;
+
     atext:=page.GetText(Obj);
     if obj.RightToLeft then
      atext:=DoReverseStringW(atext);
@@ -772,18 +785,33 @@ end;
 procedure TRpQtDriver.DrawPage(apage:TRpMetaFilePage);
 var
  j:integer;
+ selected:boolean;
 begin
  if not toprinter then
  begin
   UpdateBitmapSize(FReport,apage);
- end;
- for j:=0 to apage.ObjectCount-1 do
+  for j:=0 to apage.ObjectCount-1 do
+  begin
+    selected:=FReport.IsFound(apage,j);
+    IntDrawObject(apage,apage.Objects[j],selected);
+  end;
+ end
+ else
  begin
-  DrawObject(apage,apage.Objects[j]);
+  for j:=0 to apage.ObjectCount-1 do
+  begin
+   IntDrawObject(apage,apage.Objects[j],false);
+  end;
  end;
 end;
 
+
 procedure TRpQtDriver.DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);
+begin
+ IntDrawObject(page,obj,false);
+end;
+
+procedure TRpQtDriver.IntDrawObject(page:TRpMetaFilePage;obj:TRpMetaObject;selected:boolean);
 var
  dpix,dpiy:integer;
  Canvas:TCanvas;
@@ -806,7 +834,7 @@ begin
   dpix:=dpi;
   dpiy:=dpi;
  end;
- PrintObject(Canvas,page,obj,dpix,dpiy,scale,offset,toprinter);
+ PrintObject(Canvas,page,obj,dpix,dpiy,scale,offset,selected);
 end;
 
 function TRpQtDriver.AllowCopies:boolean;
@@ -997,6 +1025,8 @@ begin
   QPrinter_setNumCopies(QprinterH(printer.Handle),1);
   printer.Begindoc;
   try
+   qtdriver:=TRpQtDriver.Create;
+   try
    dpix:=printer.XDPI;
    dpiy:=printer.YDPI;
    totalcount:=0;
@@ -1014,7 +1044,7 @@ begin
       inc(totalcount);
       for j:=0 to apage.ObjectCount-1 do
       begin
-       PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,1,offset,true);
+       qtdriver.PrintObject(Printer.Canvas,apage,apage.Objects[j],dpix,dpiy,1,offset,false);
        if assigned(aform) then
        begin
    {$IFDEF MSWINDOWS}
@@ -1050,6 +1080,10 @@ begin
       end;
      end;
     end;
+
+   end;
+   finally
+    qtdriver.free;
    end;
    Printer.EndDoc;
   except
@@ -1175,6 +1209,7 @@ begin
   Result.Canvas.FillRect(arec);
   QtDriver:=TRpQtDriver.Create;
   try
+  qtdriver.toprinter:=false;
   tempbitmap:=TBitmap.Create;
   try
    for i:=0 to metafile.CurrentPageCount-1 do
@@ -1192,7 +1227,7 @@ begin
     tempbitmap.Canvas.FillRect(arec);
     for j:=0 to apage.ObjectCount-1 do
     begin
-     PrintObject(tempbitmap.Canvas,apage,apage.Objects[j],realdpix,
+     QtDriver.PrintObject(tempbitmap.Canvas,apage,apage.Objects[j],realdpix,
       realdpiy,scale,offset,false);
      if assigned(aform) then
      begin

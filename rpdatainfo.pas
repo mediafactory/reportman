@@ -1028,7 +1028,7 @@ begin
      end;
      if Copy(paramname,1,8+Length(alias)+1)=Alias+'_DBPARAM_' then
      begin
-      paramlist.Add(Copy(paramname,9,Length(paramname))+
+      paramlist.Add(Copy(paramname,10+Length(alias),Length(paramname)-1)+
        '='+params.Items[i].AsString);
      end;
     end;

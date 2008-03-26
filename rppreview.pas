@@ -101,6 +101,10 @@ type
     MEntire30: TMenuItem;
     MEntire48: TMenuItem;
     MLeftRight: TMenuItem;
+    ESearch: TEdit;
+    AFind: TAction;
+    ToolButton19: TToolButton;
+    ToolButton20: TToolButton;
     procedure FormCreate(Sender: TObject);
     procedure AFirstExecute(Sender: TObject);
     procedure ANextExecute(Sender: TObject);
@@ -134,8 +138,11 @@ type
     procedure MEntireMenuPopup(Sender: TObject);
     procedure MEntire1Click(Sender: TObject);
     procedure MLeftRightClick(Sender: TObject);
+    procedure ESearchChange(Sender: TObject);
+    procedure AFindExecute(Sender: TObject);
   private
     { Private declarations }
+    textchanged:boolean;
     fpreviewcontrol:TRpPreviewMetaCLX;
     cancelled:boolean;
     printed:boolean;
@@ -151,6 +158,7 @@ type
   public
     { Public declarations }
     systemprintdialog:boolean;
+    procedure FindNext;
     property PreviewControl:TRpPreviewmetaCLX read fpreviewcontrol write SetPreviewControl;
   end;
 
@@ -782,6 +790,34 @@ procedure TFRpPreview.MLeftRightClick(Sender: TObject);
 begin
  MleftRight.Checked:=Not MLeftRight.Checked;
  PreviewControl.EntireTopDown:=Not MLeftRight.Checked;
+end;
+
+procedure TFRpPreview.ESearchChange(Sender: TObject);
+begin
+ textchanged:=true;
+end;
+
+procedure TFRpPreview.FindNext;
+var
+ pageindex:integer;
+begin
+ if (textchanged) then
+ begin
+  PreviewControl.Metafile.DoSearch(Trim(ESearch.Text));
+  pageindex:=PreviewControl.Metafile.NextPageFound(-1);
+  textchanged:=false;
+ end
+ else
+  pageindex:=PreviewControl.Metafile.NextPageFound(PreviewControl.Page+PreviewControl.PagesDrawn-1);
+ if PreviewControl.Page=pageindex then
+  PreviewControl.RefreshPage
+ else
+  PreviewControl.Page:=pageindex;
+end;
+
+procedure TFRpPreview.AFindExecute(Sender: TObject);
+begin
+ FindNext;
 end;
 
 end.

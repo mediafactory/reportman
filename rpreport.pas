@@ -1383,7 +1383,7 @@ procedure PrintFixedSections(adriver:TRpPrintDriver;headers:boolean);
 var
  pheader,pfooter:integer;
  pheadercount,pfootercount:integer;
- i,j,index:integer;
+ i,j,index,indexlimit:integer;
  psection:TRpSection;
  afirstdetail:integer;
  printit:boolean;
@@ -1391,6 +1391,7 @@ var
  PartialPrint:Boolean;
  psubreports:TStringList;
  subrep:TRpSubReport;
+ dopagerepeat:boolean;
 begin
  PartialPrint:=false;
  MaxExtent.x:=pagespacex;
@@ -1447,8 +1448,25 @@ begin
      psection:=subrep.Sections.Items[afirstdetail-i].Section;
      if psection.PageRepeat then
      begin
-      if Abs(subreport.CurrentGroupIndex)<i then
+      dopagerepeat:=false;
+      // Allways if there is another active subreport
+      if (subrep <> subreport) then
+         dopagerepeat := true
+      else
+      begin
+       // Never if the current section is just the group header
+       if (section <> psection) then
        begin
+        // If the section is enclosed between the header
+        // and the footer (footer included)
+        if ((CurrentSectionIndex > subrep.FirstDetail - i)
+          AND (CurrentSectionIndex <= subrep.LastDetail + i)) then
+           dopagerepeat := true;
+        end;
+      end;
+      if (dopagerepeat) then
+//      if ((Abs(subrep.CurrentGroupIndex)<=i) and (section<>psection)) then
+      begin
        if psection.EvaluatePrintCondition then
        begin
          FGroupHeaders.AddObject(psection.GroupName,psection)
