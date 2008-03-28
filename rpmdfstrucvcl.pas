@@ -82,6 +82,7 @@ type
     function FindSelectedSubreport:TRpSubreport;
     function FindSelectedObject:TObject;
     constructor Create(AOwner:TComponent);override;
+    destructor Destroy;override;
     procedure DeleteSelectedNode;
     property Report:TRpReport read FReport write SetReport;
     property ObjInsp:TFRpObjInspVCL read FObjInsp write FObjInsp;
@@ -94,6 +95,8 @@ implementation
 {$R *.dfm}
 
 uses rpmdfdesignvcl, rpmdfmainvcl;
+
+
 
 
 constructor TFRpStructureVCL.Create(AOwner:TComponent);
@@ -125,6 +128,13 @@ begin
  browser.Parent:=TabData;
  PControl.ActivePageIndex:=0;
 end;
+
+destructor TFRpStructureVCL.Destroy;
+begin
+ browser.FreeFieldsInfo;
+ inherited Destroy;
+end;
+
 
 procedure TFRpStructureVCL.SetReport(Value:TRpReport);
 begin

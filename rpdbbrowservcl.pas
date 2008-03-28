@@ -52,9 +52,9 @@ type
     procedure SetReport(Value:TRpReport);
     procedure InitTree;
     procedure SetShowDataTypes(value:Boolean);
-    procedure FreeFieldsInfo;
   public
     { Public declarations }
+    procedure FreeFieldsInfo;
     constructor Create(AOwner:TComponent);override;
     destructor Destroy;override;
     property Report:TRpReport read FReport write SetReport;
@@ -96,6 +96,7 @@ begin
    ATree.Items[i].Data:=nil;
   end;
  end;
+ ATree.Items.Clear;
 end;
 
 destructor TFRpBrowserVCL.Destroy;
@@ -114,7 +115,6 @@ begin
  else
  begin
   FreeFieldsInfo;
-  ATree.Items.Clear;
  end;
 end;
 
@@ -132,7 +132,6 @@ var
 {$ENDIF}
 begin
  FreeFieldsInfo;
- ATree.Items.Clear;
  if FShowDatabases then
  begin
   dbinfo:=FReport.DatabaseInfo;

@@ -3,7 +3,7 @@
 {       Report Manager Designer                         }
 {                                                       }
 {       rpmdfmainvcl                                    }
-{       Main form of report manager designer            }
+{       Main form of report manager designer            }             
 {                                                       }
 {                                                       }
 {                                                       }
