@@ -415,6 +415,7 @@ procedure CheckUUDecode(amemstream:TMemoryStream);
 procedure MIMEDecode(amemstream:TMemoryStream);
 function MIMEDecodeString(avalue:string):string;
 procedure MIMEEncode(amemstream:TMemoryStream;DestStream:TStream);
+function MIMEEncodeString(amemstream:TMemoryStream):string;
 {$ENDIF}
 
 
@@ -5270,6 +5271,20 @@ begin
 end;
 
 
+function MIMEEncodeString(amemstream:TMemoryStream):string;
+var
+ acoder:TIdEncoderMIME;
+ astring:string;
+begin
+ amemstream.Seek(0,soFromBeginning);
+ acoder:=TIdEncoderMIME.Create(nil);
+ try
+  astring:=acoder.Encode(amemstream);
+ finally
+  acoder.free;
+ end;
+ Result:=astring;
+end;
 
 procedure MIMEEncode(amemstream:TMemoryStream;DestStream:TStream);
 var

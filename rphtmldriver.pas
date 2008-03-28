@@ -49,6 +49,14 @@ procedure ExportReportToHtmlSingle(report:TRpBaseReport;filename:String);
 
 implementation
 
+function TwipsToPoints(twips:Int64):integer;
+var
+ sizepoints:double;
+begin
+ sizepoints:=twips*72/1440;
+ Result:=Round(sizepoints);
+end;
+
 function TwipsToPX(twips:Int64):String;
 var
  sizepoints:double;
@@ -64,7 +72,7 @@ var
  acolor:string;
 begin
  acolor:=Format('%.8x', [Color]);
- Result:=Copy(acolor,7,2)+Copy(acolor,5,2)+Copy(acolor,3,2);
+ Result:='#'+Copy(acolor,7,2)+Copy(acolor,5,2)+Copy(acolor,3,2);
 end;
 
 const
@@ -127,7 +135,7 @@ begin
  Result:=Result+'}';
 end;
 
-function ObjectToHtmlText(apage:TrpMetafilePage;pageindex:integer;obj:TRpMetaObject;filename:string;index:integer):String;
+function ObjectToHtmlText(apage:TrpMetafilePage;pageindex:integer;obj:TRpMetaObject;filename:string;index:integer;embedimages:boolean):String;
 var
  imafilename:String;
  isjpeg:Boolean;
@@ -135,7 +143,8 @@ var
  indexed:boolean;
  bitmapwidth,bitmapheight,imagesize:Integer;
  palette:string;
- bitsperpixel,numcolors:integer;
+ bitsperpixel,numcolors,nwidth,nheight:integer;
+ fileext:string;
 begin
  Result:='';
  case obj.Metatype of
@@ -145,34 +154,60 @@ begin
    end;
   rpMetaDraw:
    begin
-
    end;
   rpMetaImage:
    begin
+    fileext:='';
     // Saves the object as objectindex
     try
-     // Get information and save the image
      imafilename:=ChangeFileExt(filename,'');
      imafilename:=imafilename+'page'+IntToStr(pageindex)+'obj'+IntToStr(index);
+     // Get information and save the image
      fimagestream:=apage.GetStream(obj);
-     isjpeg:=GetJPegInfo(fimagestream,bitmapwidth,bitmapheight);
-     if isjpeg then
-     begin
-      // Read image dimensions
-      imafilename:=ChangeFileExt(imafilename,'.jpg');
-     end
-     else
-     begin
+      isjpeg:=GetJPegInfo(fimagestream,bitmapwidth,bitmapheight);
+      if isjpeg then
+      begin
+       // Read image dimensions
+       imafilename:=ChangeFileExt(imafilename,'.jpg');
+       fileext:='jpg';
+      end
+      else
+      begin
+       fimagestream.Seek(0,soFromBeginning);
+       GetBitmapInfo(fimagestream,bitmapwidth,bitmapheight,imagesize,nil,indexed,bitsperpixel,numcolors,palette);
+       imafilename:=ChangeFileExt(imafilename,'.bmp');
+       fileext:='bmp';
+      end;
       fimagestream.Seek(0,soFromBeginning);
-      GetBitmapInfo(fimagestream,bitmapwidth,bitmapheight,imagesize,nil,indexed,bitsperpixel,numcolors,palette);
-      imafilename:=ChangeFileExt(imafilename,'.bmp');
-     end;
-     fimagestream.Seek(0,soFromBeginning);
-     fimagestream.SaveToFile(imafilename);
-
-     Result:='<IMG SRC="'+imafilename+'" HEIGHT='+TwipsToPX(obj.Height)+'PX '+
-      ' WIDTH='+TwipsToPX(obj.Width)+'PX'+' BORDER=0>';
-
+      if (embedimages) then
+      begin
+{$IFDEF USEINDY}
+       imafilename:='data:image/'+fileext+';base64,'+MIMEEncodeString(fimagestream);
+{$ENDIF}
+{$IFNDEF USEINDY}
+       raise Exception.Create('Embedding images in html not supported, compilation option USEINDY disabled';
+{$ENDIF}
+      end
+      else
+      begin
+       fimagestream.SaveToFile(imafilename);
+      end;
+      nwidth:=obj.Width;
+      nheight:=obj.Height;
+      case TRpImageDrawStyle(obj.DrawImageStyle) of
+       rpDrawFull:
+        begin
+         nwidth:=round(bitmapwidth/obj.dpires*1440);
+         nheight:=round(bitmapheight/obj.dpires*1440);
+        end;
+       rpDrawTile,rpDrawTiledpi:
+        imafilename:='';
+      end;
+      if Length(imafilename)>0 then
+      begin
+       Result:='<IMG SRC="'+imafilename+'" HEIGHT='+TwipsToPX(nHeight)+'PX '+
+        ' WIDTH='+TwipsToPX(nWidth)+'PX'+' BORDER=0>';
+      end;
 //     Result:='<IMG SRC="'+imafilename+'" HEIGHT='+IntToStr(bitmapheight)+
 //      ' WIDTH='+IntToStr(bitmapwidth)+' BORDER=0>';
     except
@@ -198,7 +233,22 @@ begin
  Result:=Round(sizepoints);
 end;
 
-function ObjectBounds(page:TRpMetafilePage;obj:TRpMetaObject;filename:String;index:integer;yoffset:Int64):String;
+const
+ DEFAULT_DPI=96;
+
+function ObjectBounds(page:TRpMetafilePage;pageindex:integer;obj:TRpMetaObject;filename:String;index:integer;yoffset:Int64;embedimages:boolean):String;
+var
+ penwidth:integer;
+ dtype:TRpShapeType;
+ nwidth,nheight:integer;
+ isjpeg:Boolean;
+ fimagestream:TMemoryStream;
+ indexed:boolean;
+ bitmapwidth,bitmapheight,imagesize:Integer;
+ palette:string;
+ bitsperpixel,numcolors:integer;
+ imafilename:String;
+ fileext:string;
 begin
  Result:='';
  case obj.Metatype of
@@ -228,12 +278,55 @@ begin
    end;
   rpMetaDraw:
    begin
-    case TRpShapeType(obj.DrawStyle) of
+    dtype:=TRpShapeType(obj.DrawStyle);
+    penwidth:=TwipsToPoints(obj.PenWidth);
+    if (penwidth<1) then
+     penwidth:=1;
+    case dtype of
      rpsRectangle:
       begin
-       Result:=Result+'''display:svg-rect'' '+'x="'+TwipsToPX(obj.Left)+
-        'px" y="'+TwipsToPX(obj.Top+yoffset)+'px" width="'+TwipsToPX(obj.Width)+
-        'px" height="'+TwipsToPX(obj.Height)+'px"';
+       Result:='"';
+       Result:=Result+'left:'+TwipsToPX(obj.Left)+'PX;'+
+        'top:'+TwipsToPX(obj.Top+yoffset)+'PX;';
+       Result:=Result+'width:'+TwipsToPX(obj.Width)+'PX;';
+       Result:=Result+'height:'+TwipsToPX(obj.Height)+'PX;';
+       if obj.PenStyle<>5 then
+       begin
+        Result:=Result+'BORDER-STYLE:SOLID;';
+        Result:=Result+'BORDER-COLOR:'+ColorToHTMLColor(obj.PenColor)+';';
+        Result:=Result+'BORDER-WIDTH:'+IntToStr(penwidth)+'PX;';
+       end;
+       if obj.BrushStyle=1 then
+        Result:=Result+'BACKGROUND-COLOR:TRANSPARENT;'
+       else
+        Result:=Result+'BACKGROUND-COLOR:'+ColorToHTMLColor(obj.BrushColor)+';';
+       Result:=Result+'"';
+      end;
+     rpsHorzLine:
+      begin
+       Result:='"';
+       Result:=Result+'left:'+TwipsToPX(obj.Left)+'PX;'+
+        'top:'+TwipsToPX(obj.Top+yoffset)+'PX;';
+       Result:=Result+'width:'+TwipsToPX(obj.Width)+'PX;';
+       Result:=Result+'height:1PX;';
+       if obj.PenStyle<>5 then
+       begin
+        Result:=Result+'BORDER-TOP:'+IntToStr(penwidth)+'PX SOLID '+ColorToHTMLColor(obj.PenColor)+';';
+       end;
+       Result:=Result+'"';
+      end;
+     rpsVertLine:
+      begin
+       Result:='"';
+       Result:=Result+'left:'+TwipsToPX(obj.Left)+'PX;'+
+        'top:'+TwipsToPX(obj.Top+yoffset)+'PX;';
+       Result:=Result+'width:1PX;';
+       Result:=Result+'height:'+TwipsToPX(obj.Height)+'PX;';
+       if obj.PenStyle<>5 then
+       begin
+        Result:=Result+'BORDER-LEFT:'+IntToStr(penwidth)+'PX SOLID '+ColorToHTMLColor(obj.PenColor)+';';
+       end;
+       Result:=Result+'"';
       end;
     end;
    end;
@@ -241,9 +334,48 @@ begin
    begin
     Result:='"';
     Result:=Result+'left:'+TwipsToPX(obj.Left)+'PX;'+
-    'top:'+TwipsToPX(obj.Top+yoffset)+'PX;'+
-    'width:'+TwipsToPX(obj.Width)+'PX;'+
-    'height:'+TwipsToPX(obj.Height)+'PX;';
+    'top:'+TwipsToPX(obj.Top+yoffset)+'PX;';
+    nwidth:=obj.Width;
+    nheight:=obj.Height;
+    imafilename:=ChangeFileExt(filename,'');
+    imafilename:=imafilename+'page'+IntToStr(pageindex)+'obj'+IntToStr(index);
+    fimagestream:=page.GetStream(obj);
+    isjpeg:=GetJPegInfo(fimagestream,bitmapwidth,bitmapheight);
+    if isjpeg then
+    begin
+      imafilename:=ChangeFileExt(imafilename,'.jpg');
+      fileext:='jpg';
+    end
+    else
+    begin
+     // Read image dimensions
+     fimagestream.Seek(0,soFromBeginning);
+     GetBitmapInfo(fimagestream,bitmapwidth,bitmapheight,imagesize,nil,indexed,bitsperpixel,numcolors,palette);
+     imafilename:=ChangeFileExt(imafilename,'.bmp');
+     fileext:='bmp';
+    end;
+    case TRpImageDrawStyle(obj.DrawImageStyle) of
+     rpDrawFull:
+      begin
+       nwidth:=round(bitmapwidth/obj.dpires*1440);
+       nheight:=round(bitmapheight/obj.dpires*1440);
+      end;
+     rpDrawTile,rpDrawTiledpi:
+      begin
+       if (embedimages) then
+       begin
+{$IFDEF USEINDY}
+        imafilename:='data:image/'+fileext+';base64,'+MIMEEncodeString(fimagestream);
+{$ENDIF}
+{$IFNDEF USEINDY}
+        raise Exception.Create('Embedding images in html not supported, compilation option USEINDY disabled';
+{$ENDIF}
+       end;
+       Result:=Result+'background-image:url('+imafilename+');';
+      end;
+    end;
+    Result:=Result+'width:'+TwipsToPX(nwidth)+'PX;'+
+     'height:'+TwipsToPX(nheight)+'PX;';
     Result:=Result+'"';
    end;
  end;
@@ -301,11 +433,11 @@ begin
   begin
    singleline:=(page.Objects[i].Alignment AND AlignmentFlags_SingleLine)>0;
    astring:=astring+LINE_FEED+'<DIV style='+
-    ObjectBounds(page,page.Objects[i],filename,i,0)+
+    ObjectBounds(page,pageindex,page.Objects[i],filename,i,0,false)+
     '><span class="fc'+IntToStr(pstyles[i])+'">';
    if singleline then
     astring:=astring+'<NOBR>';
-   astring:=astring+ObjectToHtmlText(page,pageindex,page.Objects[i],filename,i);
+   astring:=astring+ObjectToHtmlText(page,pageindex,page.Objects[i],filename,i,false);
    if singleline then
     astring:=astring+'</NOBR>';
    astring:=astring+'</span></DIV>';
@@ -389,13 +521,13 @@ begin
    begin
     singleline:=(page.Objects[i].Alignment AND AlignmentFlags_SingleLine)>0;
     astring:=astring+LINE_FEED+'<DIV style='+
-     ObjectBounds(page,page.Objects[i],filename,i,currentposy)+
+     ObjectBounds(page,p,page.Objects[i],filename,i,currentposy,true)+
      '><span class="fc';
     astring:=astring+IntToStr(pstyles[objid])+'">';
     inc(objid);
     if singleline then
      astring:=astring+'<NOBR>';
-    astring:=astring+ObjectToHtmlText(page,p,page.Objects[i],filename,i);
+    astring:=astring+ObjectToHtmlText(page,p,page.Objects[i],filename,i,true);
     if singleline then
      astring:=astring+'</NOBR>';
     astring:=astring+'</span></DIV>';
@@ -587,7 +719,6 @@ end;
 procedure ExportReportToHtmlSingle(report:TRpBaseReport;filename:String);
 var
  pdfdriver:TRpPDFDriver;
- apdfdriver:TRpPrintDriver;
  oldprogres:TRpProgressEvent;
  astream:TMemoryStream;
  oldtwopass:boolean;
@@ -599,7 +730,6 @@ begin
  astream:=TMemoryStream.Create;
  try
   pdfdriver.DestStream:=aStream;
-  apdfdriver:=pdfdriver;
   // If report progress must print progress
   oldprogres:=report.OnProgress;
   try

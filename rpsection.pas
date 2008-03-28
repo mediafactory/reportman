@@ -481,6 +481,7 @@ var
  intPartialPrint:Boolean;
  DoPartialPrint:BOolean;
  astream:TMemoryStream;
+ compoprinted:boolean;
 begin
  inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
 
@@ -568,25 +569,39 @@ begin
 
   if DoPartialPrint then
   begin
+   compoprinted:=false;
    if (compo is TRpExpression) then
     if TRpExpression(Compo).IsPartial then
     begin
      IntPartialPrint:=false;
-     FReportComponents.Items[i].Component.Print(adriver,newposx,newposy,
+     compo.Print(adriver,newposx,newposy,
       newwidth,newheight,metafile,MaxExtent,IntPartialPrint);
      if IntPartialPrint then
       PartialPrint:=True;
+     compoprinted:=true;
     end;
+   if ((not compoprinted) and compo.PartialFlag and (not PartialPrint)) then
+   begin
+    compo.PartialFlag:=false;
+    compo.Print(adriver,newposx,newposy,
+      newwidth,newheight,metafile,MaxExtent,IntPartialPrint);
+   end;
   end
   else
   begin
+   compo.PartialFlag:=false;
    // Evaluates print condition of each comonent
    if compo.EvaluatePrintCondition then
    begin
     IntPartialPrint:=false;
-    compo.Print(adriver,newposx,newposy,
-     newwidth,newheight,metafile,
-     MaxExtent,IntPartialPrint);
+    if (PartialPrint and (compo.Align in [rpalbottom,rpalbotright])) then
+     compo.PartialFlag:=true
+    else
+    begin
+     compo.Print(adriver,newposx,newposy,
+      newwidth,newheight,metafile,
+      MaxExtent,IntPartialPrint);
+    end;
     if IntPartialPrint then
      PartialPrint:=True;
     if compo is TRpExpression then

@@ -90,6 +90,7 @@ type
    FPosX:TRpTwips;
    FAlign:TRpPosAlign;
   public
+   PartialFlag:boolean;
    function GetParent:TRpCommonComponent;
   published
    property PosX:TRpTwips read FPosX write FPosX;

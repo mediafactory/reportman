@@ -1383,7 +1383,7 @@ procedure PrintFixedSections(adriver:TRpPrintDriver;headers:boolean);
 var
  pheader,pfooter:integer;
  pheadercount,pfootercount:integer;
- i,j,index,indexlimit:integer;
+ i,j,index:integer;
  psection:TRpSection;
  afirstdetail:integer;
  printit:boolean;
