@@ -34,9 +34,9 @@ uses
 {$IFDEF LINUX}
   Libc,
 {$ENDIF}
-  Types, Classes, QGraphics, QControls, QForms,rpgraphutils,
+  Qt,Types, Classes, QGraphics, QControls, QForms,rpgraphutils,
   QStdCtrls,rpmetafile, QComCtrls,rpqtdriver, QExtCtrls,rpmdclitree,
-  QActnList, QImgList,QPrinters,Qt,rpmdconsts,rptypes, QMenus,
+  QActnList, QImgList,QPrinters,rpmdconsts,rptypes, QMenus,
   rpmdfabout,QTypes,QStyle,rpmdshfolder,rpmdprintconfig,rptextdriver,
   rphtmldriver,rpsvgdriver,rpcsvdriver,rppreviewmetaclx,
   rpmdfhelpform, QDialogs,rpprintdia,rppdfdriver, QMask, rpmaskeditclx;
@@ -1173,15 +1173,15 @@ begin
   increment:=REP_C_WHEELINC
  else
   increment:=REP_C_WHEELINC*REP_C_WHEELSCALE;
- if Key=VK_DOWN then
+ if Key=Key_Down then
   fpreviewcontrol.Scroll(true,increment);
- if Key=VK_UP then
+ if Key=Key_Up then
   fpreviewcontrol.Scroll(true,-increment);
- if Key=VK_RIGHT then
+ if Key=Key_Right then
   fpreviewcontrol.Scroll(false,increment);
- if Key=VK_LEFT then
+ if Key=Key_Left then
   fpreviewcontrol.Scroll(false,-increment);
- if Key=VK_SPACE then
+ if Key=Key_Space then
  begin
   if fpreviewcontrol.AutoScale=AScaleEntirePage then
    fpreviewcontrol.AutoScale:=AScaleReal
