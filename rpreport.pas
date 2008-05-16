@@ -1451,7 +1451,10 @@ begin
       dopagerepeat:=false;
       // Allways if there is another active subreport
       if (subrep <> subreport) then
+      begin
+       if (psection.FooterAtReportEnd) then
          dopagerepeat := true
+      end
       else
       begin
        // Never if the current section is just the group header
@@ -1459,10 +1462,22 @@ begin
        begin
         // If the section is enclosed between the header
         // and the footer (footer included)
-        if ((CurrentSectionIndex > subrep.FirstDetail - i)
-          AND (CurrentSectionIndex <= subrep.LastDetail + i)) then
+        if (CurrentSectionIndex > subrep.FirstDetail - i) then
+        begin
+         // Force print even if the footer is pending
+         if psection.FooterAtReportEnd then
+         begin
+          if (CurrentSectionIndex <= subrep.LastDetail + i) then
            dopagerepeat := true;
+         end
+         else
+         begin
+          // Print only if the current secion is lower than the footer
+          if (CurrentSectionIndex < subrep.LastDetail + i) then
+           dopagerepeat := true;
+         end;
         end;
+       end;
       end;
       if (dopagerepeat) then
 //      if ((Abs(subrep.CurrentGroupIndex)<=i) and (section<>psection)) then

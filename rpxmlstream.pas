@@ -274,6 +274,7 @@ begin
  WritePropertyW('BACKEXPRESSION',section.BackExpression,Stream);
  WritePropertyBool('CHANGEBOOL',section.ChangeBool,Stream);
  WritePropertyBool('PAGEREPEAT',section.PageRepeat,Stream);
+ WritePropertyBool('FORCEPRINT',section.FooterAtReportEnd,Stream);
  WritePropertyBool('SKIPPAGE',section.SkipPage,Stream);
  WritePropertyBool('ALIGNBOTTOM',section.AlignBottom,Stream);
  WritePropertyI('SECTIONTYPE',Integer(section.SectionType),Stream);
@@ -973,6 +974,9 @@ begin
  else
  if propname='PAGEREPEAT' then
   sec.PageRepeat:=RPStrToBool(propvalue)
+ else
+ if propname='FORCEPRINT' then
+  sec.FooterAtReportEnd:=RPStrToBool(propvalue)
  else
  if propname='SKIPPAGE' then
   sec.SkipPage:=RPStrToBool(propvalue)

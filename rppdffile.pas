@@ -1940,13 +1940,16 @@ begin
        alastsize:=asize;
        lockspace:=true;
       end;
+      asize:=asize+newsize;
      end
      else
      begin
-      alastsize:=asize+newsize;
+      asize:=asize+newsize;
+      alastsize:=asize;
      end;
-    end;
-    asize:=asize+newsize;
+    end
+    else
+     asize:=asize+newsize;
    end;
   end
   else

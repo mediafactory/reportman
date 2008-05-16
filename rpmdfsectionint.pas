@@ -311,6 +311,12 @@ begin
    lcat.Add(SRpSection);
    if Assigned(lvalues) then
     lvalues.Add(BoolToStr(TRpSection(printitem).PageRepeat,true));
+   lnames.Add(SRpSForcePrint);
+   ltypes.Add(SRpSBool);
+   lhints.Add('refsection.html');
+   lcat.Add(SRpSection);
+   if Assigned(lvalues) then
+    lvalues.Add(BoolToStr(TRpSection(printitem).FooterAtReportEnd,true));
   end;
  end;
  if (TrpSection(printitem).SectionType in [rpsecgheader,rpsecgfooter,rpsecdetail]) then
@@ -393,7 +399,7 @@ begin
   if Assigned(lvalues) then
    lvalues.Add(TRpSection(printitem).GetChildSubReportName);
  end;
- if (TrpSection(printitem).SectionType=rpsecpfooter) then
+ if (TrpSection(printitem).SectionType in [rpsecpfooter,rpsecgheader]) then
  begin
   lnames.Add(SRpSForcePrint);
   ltypes.Add(SRpSBool);
@@ -569,7 +575,7 @@ begin
    exit;
   end;
  end;
- if (TrpSection(printitem).SectionType=rpsecpfooter) then
+ if (TrpSection(printitem).SectionType in [rpsecpfooter,rpsecgheader]) then
  begin
   if pname=SRpSForcePrint then
   begin

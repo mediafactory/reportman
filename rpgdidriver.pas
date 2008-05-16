@@ -903,7 +903,7 @@ begin
       Canvas.Font.Color:=clHighlightText;
      end;
      TextRectJustify(Canvas,rec,astring,obj.AlignMent,obj.CutText,obj.WordWrap,
-      obj.FontRotation,obj.RightToLeft,drawbackground,Canvas.Brush.Color);
+      obj.FontRotation,obj.RightToLeft,drawbackground,CLXColorToVCLColor(obj.BackColor));
     end
     else
     begin
@@ -1178,6 +1178,7 @@ begin
   if drawbackground then
   begin
    Canvas.Pen.COlor:=backcolor;
+   Canvas.Brush.COlor:=backcolor;
   end;
   singleline:=(Alignment AND AlignmentFlags_SingleLine)>0;
   if singleline then
@@ -1296,7 +1297,7 @@ begin
         arec2.Bottom:=arec.Top+Round(npdfdriver.pdffile.Canvas.LineInfo[i].Height*aintdpiy/1440);
         arec2.Right:=Round(arect.Right*aintdpix/1440);
         aalign:=DT_NOPREFIX or DT_NOCLIP;
-        lastword:=((index=lwords.Count-1) AND (lwords.count>0));
+        lastword:=((index=lwords.Count-1) AND (lwords.count>1));
         if lastword then
          aalign:=aalign OR DT_RIGHT
         else

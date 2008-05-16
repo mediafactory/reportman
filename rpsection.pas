@@ -204,8 +204,10 @@ type
    property ChildSubReport:TComponent read FChildSubReport write SetChildSubReport;
    // Deprecated properties for compatibility only
    property BeginPage:boolean read FBeginpage write FBeginPage default false;
+   // For page footer force page footer print at end of the report
+   // For group headers force print header even when the footer is to be print
    property FooterAtReportEnd:boolean read FFooterAtReportEnd write
-    FFooterAtReportEnd default true;
+    FFooterAtReportEnd default false;
    // Skip inside page before print
    property SkipRelativeH:boolean Read FSkipRelativeH write FSkipRelativeH default false;
    property SkipRelativeV:boolean Read FSkipRelativeV write FSkipRelativeV default false;
@@ -247,7 +249,7 @@ begin
  FExternalTable:='REPMAN_REPORTS';
  FExternalField:='REPORT';
  FExternalSearchField:='REPORT_NAME';
- FFooterAtReportEnd:=true;
+ FFooterAtReportEnd:=false;
  FStream:=TMemoryStream.Create;
  FDecompStream:=TMemoryStream.Create;
  FOldStream:=TMemoryStream.Create;

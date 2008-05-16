@@ -397,10 +397,13 @@ begin
  try
   evaluator.CheckSyntax;
  except
-  MemoExpre.SetFocus;
-  MemoExpre.SelStart:=evaluator.PosError;
-  MemoExpre.SelLength:=0;
-  Raise;
+  on E:Exception do
+  begin
+   MemoExpre.SetFocus;
+   MemoExpre.SelStart:=evaluator.PosError;
+   MemoExpre.SelLength:=0;
+   Raise exception.Create(E.MEssage);
+  end;
  end;
 end;
 
@@ -410,10 +413,13 @@ begin
  try
   evaluator.evaluate;
  except
-  MemoExpre.SetFocus;
-  MemoExpre.SelStart:=evaluator.PosError;
-  MemoExpre.SelLength:=0;
-  Raise;
+  on E:Exception do
+  begin
+   MemoExpre.SetFocus;
+   MemoExpre.SelStart:=evaluator.PosError;
+   MemoExpre.SelLength:=0;
+   Raise exception.Create(E.MEssage);
+  end;
  end;
  showmessage(TRpValueToString(evaluator.EvalResult));
 end;
@@ -523,10 +529,13 @@ begin
    evaluator.evaluate;
    AResult:=evaluator.EvalResult;
   except
-   MemoExpre.SetFocus;
-   MemoExpre.SelStart:=evaluator.PosError;
-   MemoExpre.SelLength:=0;
-   Raise;
+   on E:Exception do
+   begin
+    MemoExpre.SetFocus;
+    MemoExpre.SelStart:=evaluator.PosError;
+    MemoExpre.SelLength:=0;
+    Raise exception.Create(E.MEssage);
+   end;
   end;
  end;
  dook:=true;
