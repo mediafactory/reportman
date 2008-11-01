@@ -127,6 +127,7 @@ begin
  WritePropertyS('DATAUNIONS',dinfo.DataUnions.Text,Stream);
  WritePropertyBool('GROUPUNION',dinfo.GroupUnion,Stream);
  WritePropertyBool('OPENONSTART',dinfo.OpenOnStart,Stream);
+ WritePropertyBool('PARALLELUNION',dinfo.ParallelUnion,Stream);
 end;
 
 procedure WriteReportPropsXML(report:TRpReport;Stream:TStream);
@@ -210,7 +211,7 @@ begin
  if (aparam.Value<>Null) then
  begin
   case aparam.ParamType of
-   rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamUnknown:
+   rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamSubstList,rpParamInitialExpression,rpParamUnknown:
     WritePropertyS('VALUE',aparam.AsString,Stream);
    rpParamInteger:
     begin
@@ -1125,7 +1126,10 @@ begin
   ditem.GroupUnion:=RpStrToBool(propvalue)
  else
  if propname='OPENONSTART' then
-  ditem.OpenOnStart:=RpStrToBool(propvalue);
+  ditem.OpenOnStart:=RpStrToBool(propvalue)
+ else
+ if propname='PARALLELUNION' then
+  ditem.ParallelUnion:=RpStrToBool(propvalue);
 end;
 
 procedure ReadPropParam(aparam:TRpParam;

@@ -2,8 +2,6 @@
 
 library repmandxp;
 
-{$R *.RES}
-{ITE} {LCID:00000C0A:00000C0A} {}
 {ITE} {DFMFileType} {vcl\DBLOGDLG.dfm}
 {ITE} {DFMFileType} {vcl\DBPWDLG.dfm}
 {ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpdbbrowservcl.dfm}
@@ -74,6 +72,7 @@ library repmandxp;
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpvpreview.dfm' FRpVPreview:TForm}
 {$R 'repmandxp_DRC.res' 'repmandxp_DRC.rc'}
 
+{$R *.RES}
 {$E ESN}
 
 begin

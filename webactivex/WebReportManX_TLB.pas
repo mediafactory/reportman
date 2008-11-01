@@ -11,8 +11,8 @@ unit WebReportManX_TLB;
 // manual modifications will be lost.                                         
 // ************************************************************************ //
 
-// $Rev: 5081 $
-// File generated on 04/04/2007 13:06:12 from Type Library described below.
+// PASTLWTR : 1.2
+// File generated on 08/08/2008 9:58:34 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\webactivex\WebReportManX.tlb (1)
@@ -21,7 +21,7 @@ unit WebReportManX_TLB;
 // Helpfile: 
 // HelpString: WebReportManX Library
 // DepndLst: 
-//   (1) v2.0 stdole, (H:\WINDOWS\system32\STDOLE2.TLB)
+//   (1) v2.0 stdole, (C:\WINDOWS\system32\stdole2.tlb)
 // ************************************************************************ //
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
@@ -161,6 +161,8 @@ type
     procedure Set_Copies(Value: Integer); safecall;
     function Get_AsyncRead: Integer; safecall;
     procedure Set_AsyncRead(Value: Integer); safecall;
+    function Get_SSL: Integer; safecall;
+    procedure Set_SSL(Value: Integer); safecall;
     property Visible: WordBool read Get_Visible write Set_Visible;
     property AutoScroll: WordBool read Get_AutoScroll write Set_AutoScroll;
     property AutoSize: WordBool read Get_AutoSize write Set_AutoSize;
@@ -189,6 +191,7 @@ type
     property ShowPrintDialog: Integer read Get_ShowPrintDialog write Set_ShowPrintDialog;
     property Copies: Integer read Get_Copies write Set_Copies;
     property AsyncRead: Integer read Get_AsyncRead write Set_AsyncRead;
+    property SSL: Integer read Get_SSL write Set_SSL;
   end;
 
 // *********************************************************************//
@@ -226,6 +229,7 @@ type
     property ShowPrintDialog: Integer dispid 222;
     property Copies: Integer dispid 223;
     property AsyncRead: Integer dispid 224;
+    property SSL: Integer dispid 225;
   end;
 
 // *********************************************************************//
@@ -320,6 +324,7 @@ type
     property ShowPrintDialog: Integer index 222 read GetIntegerProp write SetIntegerProp stored False;
     property Copies: Integer index 223 read GetIntegerProp write SetIntegerProp stored False;
     property AsyncRead: Integer index 224 read GetIntegerProp write SetIntegerProp stored False;
+    property SSL: Integer index 225 read GetIntegerProp write SetIntegerProp stored False;
     property OnActivate: TNotifyEvent read FOnActivate write FOnActivate;
     property OnClick: TNotifyEvent read FOnClick write FOnClick;
     property OnCreate: TNotifyEvent read FOnCreate write FOnCreate;

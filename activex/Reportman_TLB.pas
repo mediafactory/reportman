@@ -12,7 +12,7 @@ unit reportman_TLB;
 // ************************************************************************ //
 
 // $Rev: 8291 $
-// File generated on 22/02/2008 9:59:50 from Type Library described below.
+// File generated on 01/11/2008 19:11:13 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\reportman.tlb (1)

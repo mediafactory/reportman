@@ -41,7 +41,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.8a';
+ RM_VERSION='2.8c';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
  MAX_PAGECOUNT=999999;
 type
@@ -1351,6 +1351,11 @@ var
   SRpLoadfile:WideString='Loads a file inside a string';
   SRpDefaultCopies:WideString='Default printer copies';
 
+  //
+  SRpSParamSubsList:WideString='String Subs.List';
+  SRpSParamInitialExpression:WideString='Initial expression';
+  //
+  SRpCommonFields:WideString='Common fields that match with the first dataset, semicolon separated';
 implementation
 
 uses rptranslator;

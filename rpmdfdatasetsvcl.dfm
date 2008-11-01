@@ -1,15 +1,15 @@
 object FRpDatasetsVCL: TFRpDatasetsVCL
   Left = 0
   Top = 0
-  Width = 443
-  Height = 270
+  Width = 483
+  Height = 361
   Align = alClient
   AutoScroll = False
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 443
+    Width = 483
     Height = 105
     Align = alTop
     BevelOuter = bvNone
@@ -17,7 +17,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 443
+      Width = 483
       Height = 27
       AutoSize = True
       ButtonHeight = 25
@@ -78,7 +78,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object PTop1: TPanel
       Left = 0
       Top = 27
-      Width = 443
+      Width = 483
       Height = 78
       Align = alClient
       BevelOuter = bvNone
@@ -104,7 +104,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object PanelBasic: TPanel
         Left = 169
         Top = 0
-        Width = 274
+        Width = 314
         Height = 78
         Align = alClient
         BevelOuter = bvNone
@@ -167,17 +167,17 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
   object PBottom: TPanel
     Left = 0
     Top = 105
-    Width = 443
-    Height = 165
+    Width = 483
+    Height = 256
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 443
-      Height = 165
-      ActivePage = TabSQL
+      Width = 483
+      Height = 256
+      ActivePage = TabMyBase
       Align = alClient
       TabOrder = 0
       object TabSQL: TTabSheet
@@ -186,15 +186,15 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 173
           Top = 0
           Width = 8
-          Height = 137
+          Height = 205
           Cursor = crHSplit
           Beveled = True
         end
         object MSQL: TMemo
           Left = 181
           Top = 0
-          Width = 254
-          Height = 137
+          Width = 313
+          Height = 205
           Align = alClient
           ScrollBars = ssBoth
           TabOrder = 0
@@ -205,7 +205,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 0
           Top = 0
           Width = 173
-          Height = 137
+          Height = 205
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
@@ -226,7 +226,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 435
+          Width = 475
           Height = 37
           Align = alTop
           Columns = 2
@@ -239,8 +239,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 435
-          Height = 100
+          Width = 475
+          Height = 191
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
@@ -466,7 +466,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Left = 0
           Top = 100
           Width = 449
-          Height = 89
+          Height = 101
           Caption = 'Dataset client side unions'
           TabOrder = 6
           object LabelUnions: TLabel
@@ -482,16 +482,16 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             Width = 181
             Height = 21
             Style = csDropDownList
-            ItemHeight = 0
+            ItemHeight = 13
             TabOrder = 0
           end
           object CheckGroupUnion: TCheckBox
             Left = 4
-            Top = 60
+            Top = 80
             Width = 117
             Height = 17
             Caption = 'Union grouping'
-            TabOrder = 1
+            TabOrder = 2
             OnClick = MSQLChange
           end
           object BAddUnions: TButton
@@ -500,26 +500,35 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             Width = 33
             Height = 29
             Caption = '>'
-            TabOrder = 2
+            TabOrder = 3
             OnClick = BAddUnionsClick
           end
           object BDelUnions: TButton
             Left = 196
-            Top = 48
+            Top = 64
             Width = 33
             Height = 29
             Caption = '<'
-            TabOrder = 3
+            TabOrder = 4
             OnClick = BDelUnionsClick
           end
           object LUnions: TListBox
             Left = 232
             Top = 16
             Width = 209
-            Height = 65
+            Height = 77
             Anchors = [akLeft, akTop, akRight]
             ItemHeight = 13
-            TabOrder = 4
+            TabOrder = 5
+          end
+          object CheckParallelUnion: TCheckBox
+            Left = 4
+            Top = 60
+            Width = 117
+            Height = 17
+            Caption = 'Parallel union'
+            TabOrder = 1
+            OnClick = MSQLChange
           end
         end
         object EMybasedefs: TEdit

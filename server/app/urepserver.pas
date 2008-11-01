@@ -45,11 +45,15 @@ uses
 {$IFDEF LINUX}
  Libc,
 {$ENDIF}
-{$IFNDEF DOTNETD}
- IdThreadMgr, IdThreadMgrDefault,
+{$IFDEF INDY10}
+ IdThread,IdThreadComponent,IdContext,IdStack,IdTCPConnection,IdCustomTCPServer,
+ IdGlobal,
+{$ENDIF}
+{$IFNDEF INDY10}
+ IdThreadMgr, IdThreadMgrDefault,IdThreadMgrPool,IdTCPConnection,
 {$ENDIF}
   rptranslator,rpmdshfolder,IniFiles,rpmdprotocol,rpalias,dbclient,
-  rpreport,rpbasereport,rppdfdriver, IdThreadMgrPool,rptypes,rpparams, Db;
+  rpreport,rpbasereport,rppdfdriver, rptypes,rpparams, Db;
 
 const
  DEFAULT_MILIS_PROGRESS=10000;
@@ -59,7 +63,12 @@ type
     DNS: String;
     ConnectionDate,                           { Time of connect }
     LastAction  : TDateTime;             { Time of last transaction }
+{$IFDEF INDY10}
+    Thread      : TIdContext;               { Pointer to context }
+{$ENDIF}
+{$IFNDEF INDY10}
     Thread      : TIdPeerThread;               { Pointer to thread }
+{$ENDIF}
     Auth:boolean;
     IsAdmin:boolean;
     Username:string;
@@ -87,7 +96,6 @@ type
 
 
   Tmodserver = class(TDataModule)
-    RepServer: TIdTCPServer;
     adata: TClientDataSet;
     adataID: TIntegerField;
     adataLASTOPERATION: TDateTimeField;
@@ -96,13 +104,10 @@ type
     adataRUNNING: TBooleanField;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
-    procedure RepServerExecute(AThread: TIdPeerThread);
-    procedure RepServerConnect(AThread: TIdPeerThread);
-    procedure RepServerDisconnect(AThread: TIdPeerThread);
   private
     { Private declarations }
     // Data for all clients
-{$IFNDEF DOTNETD}
+{$IFNDEF INDY10}
     ThreadMan: TIdThreadMgrPool;
 {$ENDIF}
     Clients:TThreadList;
@@ -115,6 +120,16 @@ type
     FLogFile:TFileStream;
     FFileNameConfig:String;
     fport:integer;
+{$IFNDEF INDY10}
+    procedure RepServerExecute(AThread: TIdPeerThread);
+    procedure RepServerConnect(AThread: TIdPeerThread);
+    procedure RepServerDisconnect(AThread: TIdPeerThread);
+{$ENDIF}
+{$IFDEF INDY10}
+    procedure RepServerExecute(AContext: TIdContext);
+    procedure RepServerConnect(AContext: TIdContext);
+    procedure RepServerDisconnect(AContext: TIdContext);
+{$ENDIF}
     procedure ClearLists;
     procedure WriteLog(aMessage:WideString);
     procedure GetIsSMP;
@@ -124,6 +139,7 @@ type
   public
     smp:Boolean;
     disablesmp:Boolean;
+    RepServer:TIdTcpServer;
     procedure InitConfig;
     procedure WriteConfig;
     property LogFileName:TFileName read FLogFileName;
@@ -222,7 +238,12 @@ begin
   amod.RepServer.DefaultPort:=amod.fport;
   amod.RepServer.Active:=True;
   amod.FOnLog:=OnLog;
+{$IFDEF INDY10}
+  amod.FHostname:=GStack.HostName;
+{$ENDIF}
+{$IFNDEF INDY10}
   amod.FHostname:=amod.RepServer.LocalName;
+{$ENDIF}
   amod.WriteLog(SRpServerStarted);
   if amod.smp then
    amod.WriteLog('SMP Server');
@@ -303,8 +324,13 @@ end;
 
 procedure Tmodserver.DataModuleCreate(Sender: TObject);
 begin
+ RepServer:=TIdTCPServer.Create(Self);
+ RepServer.DefaultPort:=3060;
+ RepServer.OnDisconnect:=RepServerDisconnect;
+ RepServer.OnConnect:=RepServerConnect;
+ RepServer.OnExecute:=RepServerExecute;
  disablesmp:=false;
-{$IFNDEF DOTNETD}
+{$IFNDEF INDY10}
  ThreadMan:=TIdThreadMgrPool.Create(Self);
  ThreadMan.PoolSize:=10;
  RepServer.ThreadMgr:=ThreadMan;
@@ -647,7 +673,12 @@ begin
  end;
 end;
 
+{$IFNDEF INDY10}
 procedure Tmodserver.RepServerExecute(AThread: TIdPeerThread);
+{$ENDIF}
+{$IFDEF INDY10}
+procedure Tmodserver.RepServerExecute(AContext: TIdContext);
+{$ENDIF}
 var
  CB,ACB:TRpComBlock;
  astream:TMemoryStream;
@@ -663,16 +694,30 @@ var
  APDFDriver:TRpPDFDriver;
  acompo:TRpParamComp;
  writer:TWriter;
+ connection:TIdTCPConnection;
  found:boolean;
  reader:TReader;
 begin
  // Execution of commands
+{$IFDEF INDY10}
+ connection:=AContext.Connection;
+ if ((not connection.IOHandler.Connected)) then
+  exit;
+{$ENDIF}
+{$IFNDEF INDY10}
+ connection:=AThread.Connection;
  if (AThread.Terminated) or (Not AThread.Connection.Connected) then
   exit;
+{$ENDIF}
  try
   astream:=TMemoryStream.Create;
   try
+{$IFDEF INDY10}
+   AContext.Connection.IOHandler.ReadStream(astream);
+{$ENDIF}
+{$IFNDEF INDY10}
    AThread.Connection.ReadStream(astream);
+{$ENDIF}
    ACB:=ReadRpComBlockFromStream(astream);
    try
     astream.Seek(0,soFromBeginning);
@@ -680,7 +725,12 @@ begin
     astream.SetSize(ACB.Data.Size);
     astream.CopyFrom(ACB.Data,ACB.Data.Size);
     astream.Seek(0,soFromBeginning);
+{$IFDEF INDY10}
+    ActClient := TRpClient(AContext.Data);
+{$ENDIF}
+{$IFNDEF INDY10}
     ActClient := TRpClient(AThread.Data);
+{$ENDIF}
     ActClient.LastAction := Now;  // update the time of last action
     // if is a auth message return the key
     case ACB.Command of
@@ -726,7 +776,7 @@ begin
          alist.insert(0,C_DIRSEPARATOR);
          CB:=GenerateBlock(repauth,alist);
          try
-          SendBlock(AThread.Connection,CB);
+          SendBlock(connection,CB);
          finally
           FreeBlock(CB);
          end;
@@ -747,7 +797,7 @@ begin
          alist.Add(LUsers.Names[i]);
         CB:=GenerateBlock(repgetusers,alist);
         try
-         SendBlock(AThread.COnnection,CB);
+         SendBlock(cOnnection,CB);
         finally
          FreeBlock(CB);
         end;
@@ -765,7 +815,7 @@ begin
          alist.Add(LGroups.Names[i]);
         CB:=GenerateBlock(repgetgroups,alist);
         try
-         SendBlock(AThread.COnnection,CB);
+         SendBlock(COnnection,CB);
         finally
          FreeBlock(CB);
         end;
@@ -786,7 +836,7 @@ begin
         end;
         CB:=GenerateBlock(repgetaliases,alist);
         try
-         SendBlock(AThread.COnnection,CB);
+         SendBlock(COnnection,CB);
         finally
          FreeBlock(CB);
         end;
@@ -960,7 +1010,7 @@ begin
           begin
            CB:=GenerateBlock(repgetusergroups,TStringList(LUserGroups.Objects[index]));
            try
-            SendBlock(AThread.COnnection,CB);
+            SendBlock(COnnection,CB);
            finally
             FreeBlock(CB);
            end;
@@ -1053,18 +1103,38 @@ begin
        adata.Close;
        adata.CreateDataSet;
        try
+{$IFDEF INDY10}
+        aplist:=RepServer.Contexts.LockList;
+{$ENDIF}
+{$IFNDEF INDY10}
         aplist:=RepServer.Threads.LockList;
+{$ENDIF}
         try
          for i:=0 to aplist.Count-1 do
          begin
+{$IFDEF INDY10}
+          actclient:=TRpClient(TIdContext(aplist.Items[i]).Data);
+{$ENDIF}
+{$IFNDEF INDY10}
           actclient:=TRpClient(TIdPeerThread(aplist.Items[i]).Data);
+{$ENDIF}
           adata.Append;
           try
+{$IFDEF INDY10}
+           adataID.Value:=Integer(TIdContext(aplist.Items[i]));
+{$ENDIF}
+{$IFNDEF INDY10}
            adataID.Value:=TIdPeerThread(aplist.Items[i]).ThreadID;
+{$ENDIF}
            adataLASTOPERATION.Value:=actclient.LastAction;
            adataCONNECTIONDATE.Value:=actclient.ConnectionDate;
            adataUSERNAME.Value:=actclient.username;
+{$IFDEF INDY10}
+           adataRUNNING.Value:=true;
+{$ENDIF}
+{$IFNDEF INDY10}
            adataRUNNING.Value:=Not TIdPeerThread(aplist.Items[i]).Suspended;
+{$ENDIF}
            adata.Post;
           except
            adata.Cancel;
@@ -1072,14 +1142,19 @@ begin
           end;
          end;
         finally
+{$IFDEF INDY10}
+         RepServer.Contexts.UnlockList;
+{$ENDIF}
+{$IFNDEF INDY10}
          RepServer.Threads.UnlockList;
+{$ENDIF}
         end;
         astream.Clear;
         adata.SaveToStream(astream,dfBinary);
         astream.Seek(0,soFromBeginning);
         CB:=GenerateBlock(repgetconnections,astream);
         try
-         SendBlock(AThread.COnnection,CB);
+         SendBlock(COnnection,CB);
         finally
          FreeBlock(CB);
         end;
@@ -1099,20 +1174,37 @@ begin
         begin
          taskid:=StrToInt(alist.Strings[0]);
          i:=0;
+{$IFDEF INDY10}
+         aplist:=RepServer.Contexts.LockList;
+{$ENDIF}
+{$IFNDEF INDY10}
          aplist:=RepServer.Threads.LockList;
+{$ENDIF}
          try
           while i<aplist.Count do
           begin
+{$IFDEF INDY10}
+           if Integer(TIdContext(aplist.Items[i]))=taskid then
+           begin
+            TIdContext(aplist.Items[i]).Free;
+{$ENDIF}
+{$IFNDEF INDY10}
            if Integer(TIdPeerThread(aplist.Items[i]).ThreadID)=taskid then
            begin
             TIdPeerThread(aplist.Items[i]).Terminate;
+{$ENDIF}
             aplist.Remove(aplist.Items[i]);
             break;
            end;
            inc(i);
           end;
          finally
-          RepServer.Threads.UnLockList;
+{$IFDEF INDY10}
+         RepServer.Contexts.UnlockList;
+{$ENDIF}
+{$IFNDEF INDY10}
+         RepServer.Threads.UnlockList;
+{$ENDIF}
          end;
         end;
        finally
@@ -1135,7 +1227,7 @@ begin
          begin
           CB:=GenerateBlock(repgetaliasgroups,TStringList(LAliasGroups.Objects[index]));
           try
-           SendBlock(AThread.COnnection,CB);
+           SendBlock(COnnection,CB);
           finally
            FreeBlock(CB);
           end;
@@ -1214,7 +1306,7 @@ begin
         LoadReport(alist,ActClient);
         CB:=GenerateBlock(repopenreport,alist);
         try
-         SendBlock(AThread.COnnection,CB);
+         SendBlock(COnnection,CB);
         finally
          FreeBlock(CB);
         end;
@@ -1243,7 +1335,7 @@ begin
        astream.Seek(0,soFromBeginning);
        CB:=GenerateBlock(repgetparams,astream);
        try
-        SendBlock(AThread.COnnection,CB);
+        SendBlock(COnnection,CB);
        finally
         FreeBlock(CB);
        end;
@@ -1269,7 +1361,7 @@ begin
        try
         CB:=GenerateBlock(repsetparams,alist);
         try
-         SendBlock(AThread.COnnection,CB);
+         SendBlock(COnnection,CB);
         finally
          FreeBlock(CB);
         end;
@@ -1302,7 +1394,7 @@ begin
          end;
          CB:=GenerateBlock(repexecutereportmeta,astream);
          try
-          SendBlock(AThread.COnnection,CB);
+          SendBlock(COnnection,CB);
          finally
           FreeBlock(CB);
          end;
@@ -1336,7 +1428,7 @@ begin
           CB:=GenerateBlock(repexecutereportpdf,APDFDriver.PDFFile.MainPDF);
          end;
          try
-           SendBlock(AThread.COnnection,CB);
+           SendBlock(COnnection,CB);
          finally
           FreeBlock(CB);
          end;
@@ -1373,7 +1465,7 @@ begin
         end;
         CB:=GenerateBlock(repgettree,alist);
         try
-         SendBlock(AThread.COnnection,CB);
+         SendBlock(COnnection,CB);
         finally
          FreeBlock(CB);
         end;
@@ -1396,7 +1488,7 @@ begin
    begin
     CB:=GenerateCBErrorMessage(SRpError+' - '+E.Message);
     try
-     SendBlock(AThread.COnnection,CB);
+     SendBlock(COnnection,CB);
     finally
      FreeBlock(CB);
     end;
@@ -1404,17 +1496,31 @@ begin
   end;
  end;
 end;
-
+{$IFNDEF INDY10}
 procedure Tmodserver.RepServerConnect(AThread: TIdPeerThread);
+{$ENDIF}
+{$IFDEF INDY10}
+procedure Tmodserver.RepServerConnect(AContext: TIdContext);
+{$ENDIF}
 var
  NewClient: TRpClient;
 begin
  NewClient:=TRpClient.Create;
  NewClient.DoInit(FFileNameConfig);
+{$IFNDEF INDY10}
  NewClient.DNS:= AThread.Connection.LocalName;
+{$ENDIF}
+{$IFDEF INDY10}
+ NewClient.DNS:= GStack.HostName;
+{$ENDIF}
  NewClient.ConnectionDate:=Now;
  NewClient.LastAction:=NewClient.ConnectionDate;
+{$IFNDEF INDY10}
  NewClient.Thread:=AThread;
+{$ENDIF}
+{$IFDEF INDY10}
+ NewClient.Thread:=AContext;
+{$ENDIF}
  NewClient.Auth:=False;
  NewClient.FromPage:=1;
  NewClient.ToPage:=9999999;
@@ -1422,7 +1528,12 @@ begin
  NewClient.Copies:=1;
  NewClient.UserName:='';
  NewClient.Password:='';
+{$IFNDEF INDY10}
  AThread.Data:=NewClient;
+{$ENDIF}
+{$IFDEF INDY10}
+ AContext.Data:=NewClient;
+{$ENDIF}
  try
   Clients.LockList.Add(NewClient);
  finally
@@ -1430,11 +1541,21 @@ begin
  end;
 end;
 
+{$IFNDEF INDY10}
 procedure Tmodserver.RepServerDisconnect(AThread: TIdPeerThread);
+{$ENDIF}
+{$IFDEF INDY10}
+procedure Tmodserver.RepServerDisconnect(AContext: TIdContext);
+{$ENDIF}
 var
  ActClient: TRpClient;
 begin
+{$IFNDEF INDY10}
  ActClient:= TRpClient(AThread.Data);
+{$ENDIF}
+{$IFDEF INDY10}
+ ActClient:= TRpClient(AContext.Data);
+{$ENDIF}
  try
 {$IFDEF USEBDE}
   ActClient.ASession.Close;
@@ -1444,7 +1565,12 @@ begin
   Clients.UnlockList;
  end;
  ActClient.free;
+{$IFNDEF INDY10}
  AThread.Data := nil;
+{$ENDIF}
+{$IFDEF INDY10}
+ AContext.Data := nil;
+{$ENDIF}
 end;
 
 procedure SMPExecuteReport(report:TRpReport;astream:TMemoryStream;metafile:Boolean);

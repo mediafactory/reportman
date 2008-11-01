@@ -24,7 +24,7 @@ uses
   SysUtils, Classes,
   Graphics,Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls,Buttons,
-  rpalias,rpeval, rptypeval,
+  rpalias,rpeval, rptypeval,rpgraphutilsvcl,
 {$IFDEF USEEVALHASH}
   rphashtable,rpstringhash,
 {$ENDIF}
@@ -420,7 +420,7 @@ begin
    raise Exception.Create(E.MEssage);
   end;
  end;
- showmessage(TRpValueToString(evaluator.EvalResult));
+ RpShowmessage(TRpValueToString(evaluator.EvalResult));
 end;
 
 procedure TFRpExpredialogVCL.BitBtn1Click(Sender: TObject);

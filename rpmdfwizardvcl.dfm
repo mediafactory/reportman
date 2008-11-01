@@ -62,6 +62,15 @@ object FRpWizardVCL: TFRpWizardVCL
         Height = 13
         Caption = 'To begin the wizard click Next button'
       end
+      object BPageSetup: TButton
+        Left = 8
+        Top = 140
+        Width = 93
+        Height = 33
+        Caption = 'Configure page'
+        TabOrder = 0
+        OnClick = BPageSetupClick
+      end
     end
     object TabConnections: TTabSheet
       Caption = 'Connections'

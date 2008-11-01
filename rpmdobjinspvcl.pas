@@ -34,6 +34,9 @@ uses
   Windows,Graphics, Controls, Forms,ExtCtrls,StdCtrls,
   rpmdobinsintvcl,rpmdconsts,rpprintitem,comctrls,
   rpgraphutilsvcl,rpsection,rpmunits, rpexpredlgvcl,rpmdfextsecvcl,
+{$IFDEF EXTENDEDGRAPHICS}
+ rpgraphicex,jpeg,
+{$ENDIF}
   rpreport,rpsubreport,rpmdflabelintvcl,rplabelitem,
   rpmdfdrawintvcl,rpmdfbarcodeintvcl,rpmdfchartintvcl,
   rpmaskedit,rpmetafile;
@@ -625,7 +628,7 @@ begin
  except
   on E:Exception do
   begin
-   ShowMessage(E.Message);
+   RpShowMessage(E.Message);
   end;
  end;
 
@@ -640,7 +643,8 @@ begin
  try
   expredia.Rpalias:=TFRpObjInspVCL(Owner).RpAlias1;
   report.InitEvaluator;
-  report.AddReportItemsToEvaluator(expredia.evaluator);
+  report.AddReportItemsToEvaluator(report.evaluator);
+  expredia.evaluator:=report.Evaluator;
   expredia.Expresion.Text:=TRpMaskEdit(LControls.Objects[TButton(Sender).Tag]).Text;
   if expredia.Execute then
   begin
@@ -688,17 +692,51 @@ end;
 procedure TRpPanelObj.ImageClick(Sender:TObject);
 var
  Stream:TMemoryStream;
+{$IFDEF EXTENDEDGRAPHICS}
+ apic:TPicture;
+ jpeg:TJpegImage;
+{$ENDIF}
 begin
  if TFRpObjInspVCL(Owner).OpenDialog1.Execute then
  begin
-  Stream:=TMemoryStream.Create;
-  try
-   Stream.LoadFromFile(TFRpObjInspVCL(Owner).OpenDialog1.FileName);
-   Stream.Seek(0,soFromBeginning);
-   SetPropertyFull(LNames.Strings[TComponent(Sender).Tag],stream);
-  finally
-   Stream.Free;
+  if (TFRpObjInspVCL(Owner).OpenDialog1.FilterIndex<=1) then
+  begin
+   Stream:=TMemoryStream.Create;
+   try
+    Stream.LoadFromFile(TFRpObjInspVCL(Owner).OpenDialog1.FileName);
+    Stream.Seek(0,soFromBeginning);
+    SetPropertyFull(LNames.Strings[TComponent(Sender).Tag],stream);
+   finally
+    Stream.Free;
+   end;
+  end
+{$IFDEF EXTENDEDGRAPHICS}
+  else
+  begin
+   apic:=TPicture.Create;
+   try
+     apic.LoadFromFile(TFRpObjInspVCL(Owner).OpenDialog1.FileName);
+     jpeg:=TJPegImage.Create;
+     try
+      jpeg.CompressionQuality:=100;
+      jpeg.Assign(apic.Graphic);
+      Stream:=TMemoryStream.Create;
+      try
+       jpeg.SaveToStream(stream);
+       Stream.Seek(0,soFromBeginning);
+       SetPropertyFull(LNames.Strings[TComponent(Sender).Tag],stream);
+      finally
+       Stream.Free;
+      end;
+     finally
+      jpeg.free;
+     end;
+   finally
+    apic.free;
+   end;
   end;
+{$ENDIF}
+  AssignPropertyValues;
  end;
 end;
 
@@ -1728,6 +1766,10 @@ begin
 end;
 
 constructor TrpPanelObj.Create(AOwner:TComponent);
+{$IFDEF EXTENDEDGRAPHICS}
+var
+ gfilter:string;
+{$ENDIF}
 begin
  inherited Create(AOwner);
 
@@ -1738,6 +1780,20 @@ begin
   SrpSJpegImages+'|*.jpg|';
 //  SrpSPNGImages+'|*.png|'+
 //  SRpSXPMImages+'|*.xpm';
+ // Add Registered file formats
+ // Add registered filters
+{$IFDEF EXTENDEDGRAPHICS}
+ gfilter:=rpgraphicex.FileFormatList.GetGraphicFilter([],fstExtension,[foIncludeExtension],nil);
+ TFRpObjInspVCL(Owner).OpenDialog1.Filter:=TFRpObjInspVCL(Owner).OpenDialog1.Filter+gfilter;
+(* TFRpObjInspVCL(Owner).OpenDialog1.Filter:=TFRpObjInspVCL(Owner).OpenDialog1.Filter+
+  'PCX '+'|*.pcx|'+
+  'GIF '+'|*.gif|'+
+  'PNG '+'|*.png|'+
+  'TIFF '+'|*.tiff|'+
+  'TIF '+'|*.tif|'+
+  'FAX '+'|*.fax|'+
+  'EPS '+'|*.eps|';*)
+{$ENDIF}
 
  Align:=alClient;
 

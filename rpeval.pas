@@ -293,8 +293,10 @@ begin
 {$ENDIF}
  iden := TIdenGetINIValue.Create(nil);
  Rpfunctions.AddObject('GETINIVALUE', iden);
+{$IFDEF USEINDY}
  iden := TIdenDecode64.Create(nil);
  Rpfunctions.AddObject('DECODE64', iden);
+{$ENDIF}
  iden := TIdenStringToBin.Create(nil);
  Rpfunctions.AddObject('STRINGTOBIN', iden);
  iden := TIdenLoadFile.Create(nil);

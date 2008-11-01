@@ -24,7 +24,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms,
-  rpdatainfo,rpmdconsts,rpreport,rptypeval,rpparser,rptypes,
+  rpdatainfo,rpmdconsts,rpreport,rptypeval,rpparser,rptypes,rpgraphutilsvcl,
 {$IFDEF USEEVALHASH}
   rphashtable,
   rpstringhash,
@@ -392,7 +392,7 @@ begin
  except
   on E:Exception do
   begin
-   ShowMessage(E.Message);
+   RpShowMessage(E.Message);
    AllowExpansion:=false;
   end;
  end;

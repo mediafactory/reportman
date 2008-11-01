@@ -30,7 +30,7 @@ uses
 {$IFDEF MSWINDOWS}
  Windows,
 {$ENDIF}
- Classes;
+ Classes,rptypes;
 
 
 
@@ -56,6 +56,7 @@ type
    FStrings:array of TRpStringInfo;
    FArraySize:integer;
    FStringCount:integer;
+   FLookForresource:boolean;
    FCurrentResourceFileName:String;
    procedure AddString(Value:WideString);
    procedure SetActive(Value:boolean);
@@ -73,11 +74,14 @@ type
   published
    property Active:Boolean read FActive write SetActive;
    property AutoLocale:Boolean read FAutoLocale write FAutoLocale default true;
+   property LookForResource:boolean read FLookForResource write FLookForResource default true;
    property Filename:string read FFilename write FFilename;
   end;
 
 
 function AddLocaleSufix(afilename:string):string;
+function FindLocaleSuffix3:string;
+function FindLocaleSuffix2:string;
 
 implementation
 
@@ -112,6 +116,7 @@ begin
  SetLength(FStrings,DEFAULT_SARRAY_SIZE);
  FArraySize:=DEFAULT_SARRAY_SIZE;
  FAutoLocale:=True;
+ FLookForresource:=true;
 end;
 
 
@@ -144,23 +149,27 @@ begin
 end;
 
 
-{$IFDEF DOTNETD}
-function AddLocaleSufix(afilename:string):string;
+function FindLocaleSuffix3:string;
 var
- newname:String;
+  LocaleName:array[0..4] of Char;
 begin
- Result:=ChangeFileExt(afilename,'.exe');
- newname:=ChangeFileExt(afilename,'.'+System.Globalization.RegionInfo.CurrentRegion.ThreeLetterISORegionName);
- if (FileExists(newname)) then
-  Result:=newname
- else
- begin
-  newname:=ChangeFileExt(afilename,'.'+System.Globalization.RegionInfo.CurrentRegion.TwoLetterISORegionName);
-  if (FileExists(newname)) then
-   Result:=newname
- end;
+  GetLocaleInfo(GetThreadLocale, LOCALE_SABBREVLANGNAME, LocaleName, SizeOf(LocaleName));
+  Result:=StrPas(LocaleName);
 end;
-{$ENDIF}
+
+
+
+
+function FindLocaleSuffix2:string;
+var
+  LocaleName:array[0..4] of Char;
+begin
+  GetLocaleInfo(GetThreadLocale, LOCALE_SABBREVLANGNAME, LocaleName, SizeOf(LocaleName));
+  Result:=Copy(StrPas(LocaleName),1,2);
+end;
+
+
+
 {$IFNDEF DOTNETD}
 function AddLocaleSufix(afilename:string):string;
 {$IFDEF LINUX}
@@ -339,7 +348,12 @@ var
  memstream:TMemoryStream;
  astring:array of WideChar;
  asize,i:integer;
+ resname:string;
+ nstream:TMemoryStream;
  tempstring:widestring;
+ resstream:TResourceStream;
+ fromresource:boolean;
+ hfind:HRSRC;
 {$IFDEF DOTNETD}
  wsize:integer;
  abytes:Array of byte;
@@ -357,44 +371,79 @@ begin
  afilename:=FFilename;
  if FAutoLocale then
  begin
-  afilename:=AddLocaleSufix(ExtractFilePath(ParamStr(0))+FFilename);
+   afilename:=AddLocaleSufix(ExtractFilePath(ParamStr(0))+FFilename);
+   if Length(afilename)=0 then
+    afilename:=FFilename;
  end;
- FCurrentResourceFileName:=afilename;
- if Not FileExists(afilename) then
- begin
-  // Try with system directory
-  afilename:=FFilename;
-  if FAutoLocale then
-  begin
-   afilename:=GetTheSystemDirectory+DIR_SEPARATOR+FFilename;
-   afilename:=AddLocaleSufix(afilename);
-  end;
-  if Not FileExists(afilename) then
-   exit;
- end;
- // Opens the file and loads the strings
- memstream:=TMemoryStream.Create;
+ // Look for a resource named same
+ resname:=ExtractFileName(afilename);
+ fromresource:=false;
+ memstream:=nil;
  try
-  memstream.LoadFromFile(afilename);
-  memstream.Seek(0,soFromBeginning);
-  SetLength(astring,memstream.size div 2);
-{$IFNDEF DOTNETD}
-  memstream.Read(astring[0],memstream.Size);
-{$ENDIF}
-{$IFDEF DOTNETD}
- wsize:=memstream.Size;
- SetLength(abytes,wsize);
- if (wsize<>memstream.Read(abytes,wsize)) then
-  Raise Exception.Create(SRpStreamNotValid);
- for i:=0 to (wsize div 2)-1 do
- begin
-  // Revise byte order
-  astring[i]:=WideChar((Integer(abytes[i*2+1]) shl 8)+abytes[i*2]);
- end;
-{$ENDIF}
+   if (Length(resname)>2) then
+   begin
+    resname:=ChangeFileExt(resname,'')+'_'+FindLocaleSuffix3;
+    hFind := FindResource(HInstance, PChar(resname),RT_RCDATA);
+    if hFind=0 then
+    begin
+     resname:=ExtractFileName(afilename);
+     resname:=ChangeFileExt(resname,'')+'_'+FindLocaleSuffix2;
+     hFind := FindResource(HInstance, PChar(resname),RT_RCDATA);
+    end;
+    if (hFind<>0) then
+    begin
+     resstream:=TResourceStream.Create(hinstance,resname,RT_RCDATA);
+     try
+      if (resstream.Size>0) then
+      begin
+       fromresource:=true;
+       memstream:=TMemoryStream.Create;
+       memstream.CopyFrom(resstream,resstream.size);
+      end;
+     finally
+      resstream.free;
+     end;
+    end;
+   end;
+   FCurrentResourceFileName:=afilename;
+   if (not fromresource) then
+   begin
+    if Not FileExists(afilename) then
+    begin
+     // Try with system directory
+     afilename:=FFilename;
+     if FAutoLocale then
+     begin
+      afilename:=GetTheSystemDirectory+DIR_SEPARATOR+FFilename;
+      afilename:=AddLocaleSufix(afilename);
+     end;
+     if Not FileExists(afilename) then
+      exit;
+    end;
+    memstream:=TMemoryStream.Create;
+    memstream.LoadFromFile(afilename);
+   end;
+   // Opens the file and loads the strings
+   memstream.Seek(0,soFromBeginning);
+   // Look for compressed
+   if (IsCompressed(memstream)) then
+   begin
+    nstream:=memstream;
+    memstream:=TMemoryStream.Create;
+    try
+     DecompressStream(nstream,memstream);
+     memstream.Seek(0,soFromBeginning);
+    finally
+     nstream.free;
+    end;
+   end;
+   SetLength(astring,memstream.size div 2);
+   memstream.Read(astring[0],memstream.Size);
  finally
-  memstream.free;
+  if memstream<>nil then
+   memstream.free;
  end;
+
  asize:=Length(astring);
  i:=0;
  tempstring:='';

@@ -68,7 +68,7 @@ type
    oldowner:TComponent;
    PrintWidth,PrintHeight:Integer;
    constructor Create(AOwner:TComponent);override;
-   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;virtual;
+   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint;forcepartial:boolean):TPoint;virtual;
    function EvaluatePrintCondition:boolean;
    procedure Print(adriver:TRpPrintDriver;aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
@@ -267,7 +267,7 @@ begin
  FHeight:=Value;
 end;
 
-function TRpCommonComponent.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;
+function TRpCommonComponent.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint;forcepartial:boolean):TPoint;
 begin
  Result.X:=Width;
  Result.Y:=Height;

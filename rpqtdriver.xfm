@@ -13,8 +13,8 @@ object FRpQtProgress: TFRpQtProgress
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96
-  TextHeight = 20
-  TextWidth = 7
+  TextHeight = 13
+  TextWidth = 6
   object BCancel: TButton
     Left = 111
     Top = 124
@@ -29,8 +29,8 @@ object FRpQtProgress: TFRpQtProgress
   object LProcessing: TLabel
     Left = 8
     Top = 60
-    Width = 62
-    Height = 20
+    Width = 52
+    Height = 13
     Caption = 'Processing'
   end
   object LRecordCount: TLabel
@@ -43,8 +43,8 @@ object FRpQtProgress: TFRpQtProgress
   object LTitle: TLabel
     Left = 8
     Top = 4
-    Width = 26
-    Height = 20
+    Width = 23
+    Height = 13
     Caption = 'Tittle'
     Visible = False
   end
@@ -76,22 +76,22 @@ object FRpQtProgress: TFRpQtProgress
     object LHorzRes: TLabel
       Left = 12
       Top = 20
-      Width = 217
-      Height = 20
+      Width = 180
+      Height = 13
       Caption = 'Horizotal resolution in dots per inchess'
     end
     object LVertRes: TLabel
       Left = 12
       Top = 52
-      Width = 217
-      Height = 20
+      Width = 180
+      Height = 13
       Caption = 'Horizotal resolution in dots per inchess'
     end
     object EHorzRes: TRpCLXMaskEdit
       Left = 212
       Top = 16
       Width = 77
-      Height = 28
+      Height = 21
       Cursor = crIBeam
       TabOrder = 0
       Text = '100'
@@ -101,7 +101,7 @@ object FRpQtProgress: TFRpQtProgress
       Left = 212
       Top = 48
       Width = 77
-      Height = 28
+      Height = 21
       Cursor = crIBeam
       TabOrder = 1
       Text = '100'

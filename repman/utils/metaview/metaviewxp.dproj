@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{3efd3655-723d-4e7c-8c1a-64377f72bbdc}</ProjectGuid>
+    <MainSource>metaviewxp.dpr</MainSource>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+    <DCC_DependencyCheckOutputName>metaviewxp.exe</DCC_DependencyCheckOutputName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_DebugInformation>False</DCC_DebugInformation>
+    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    <DCC_Define>RELEASE</DCC_Define>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_Define>DEBUG</DCC_Define>
+    <DCC_OutputDRCFile>True</DCC_OutputDRCFile>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Delphi.Personality</Borland.Personality>
+    <Borland.ProjectType>VCLApplication</Borland.ProjectType>
+    <BorlandProject>
+<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">False</VersionInfo><VersionInfo Name="MajorVer">1</VersionInfo><VersionInfo Name="MinorVer">0</VersionInfo><VersionInfo Name="Release">0</VersionInfo><VersionInfo Name="Build">0</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">3082</VersionInfo><VersionInfo Name="CodePage">1252</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName"></VersionInfoKeys><VersionInfoKeys Name="FileDescription"></VersionInfoKeys><VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys><VersionInfoKeys Name="InternalName"></VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys><VersionInfoKeys Name="ProductName"></VersionInfoKeys><VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">metaviewxp.dpr</Source></Source>  
+    
+    <Language>
+      <Language Name="ProjectLang">$00000C0A</Language>
+    </Language>
+    
+    
+    
+    
+    <Resource_DLL_Projects>
+      <Resource_DLL_Projects Name="Item0">Español (alfabetización internacional)*$00000C0A*ESN*ESN</Resource_DLL_Projects>
+    </Resource_DLL_Projects>
+    <RDP_Source_Files>
+      <RDP_Source_Files Name="Item0">..\..\..\rpfmainmetaviewvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item1">..\..\..\rpmdrepclient.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item2">..\..\..\rpmdclitreevcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item3">..\..\..\rpmdfaboutvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item4">..\..\..\rprfvparams.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item5">..\..\..\rpgdidriver.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item6">..\..\..\rpmdprintconfigvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item7">..\..\..\rpfmetaviewvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item8">..\..\..\rpexceldriver.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item9">metaviewxp.drc</RDP_Source_Files>
+    </RDP_Source_Files>
+  </Delphi.Personality></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
+  <ItemGroup>
+    <DelphiCompile Include="metaviewxp.dpr">
+      <MainSource>MainSource</MainSource>
+    </DelphiCompile>
+    <DCCReference Include="..\..\..\rpexceldriver.pas">
+      <Form>FRpExcelProgress</Form>
+    </DCCReference>
+    <DCCReference Include="..\..\..\rpfmainmetaviewvcl.pas">
+      <Form>FRpMainMetaVCL</Form>
+    </DCCReference>
+    <DCCReference Include="..\..\..\rpfmetaviewvcl.pas">
+      <Form>FRpMetaVCL</Form>
+      <DesignClass>TFrame</DesignClass>
+    </DCCReference>
+    <DCCReference Include="..\..\..\rpgdidriver.pas">
+      <Form>FRpVCLProgress</Form>
+    </DCCReference>
+    <DCCReference Include="..\..\..\rpmdclitreevcl.pas">
+      <Form>FRpCliTreeVCL</Form>
+      <DesignClass>TFrame</DesignClass>
+    </DCCReference>
+    <DCCReference Include="..\..\..\rpmdconsts.pas" />
+    <DCCReference Include="..\..\..\rpmdfaboutvcl.pas">
+      <Form>FRpAboutBoxVCL</Form>
+    </DCCReference>
+    <DCCReference Include="..\..\..\rpmdprintconfigvcl.pas">
+      <Form>FRpPrinterConfigVCL</Form>
+    </DCCReference>
+    <DCCReference Include="..\..\..\rpmdprotocol.pas" />
+    <DCCReference Include="..\..\..\rpmdrepclient.pas" />
+    <DCCReference Include="..\..\..\rpmetafile.pas" />
+    <DCCReference Include="..\..\..\rppdfdriver.pas" />
+    <DCCReference Include="..\..\..\rprfvparams.pas">
+      <Form>FRpRTParams</Form>
+    </DCCReference>
+    <DCCReference Include="..\..\..\rpvgraphutils.pas" />
+    <None Include="..\..\..\rpconf.inc" />
+  </ItemGroup>
+</Project>

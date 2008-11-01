@@ -23,7 +23,8 @@ program repmandxp;
 uses
   Graphics,
   Forms,
-  Controls,ActiveX,
+  Controls,
+  ActiveX,
 {$IFDEF USEVARIANTS}
   midaslib,
 {$ENDIF}
@@ -42,11 +43,9 @@ uses
   rptextdriver in '..\rptextdriver.pas',
   rpxmlstream in '..\rpxmlstream.pas',
   rpcolumnar in '..\rpcolumnar.pas',
-{$IFDEF USEEVALHASH}
   rpstringhash in '..\rpstringhash.pas',
   rpcomparable in '..\rpcomparable.pas',
   rphashtable in '..\rphashtable.pas',
-{$ENDIF}
   rpactivexreport in '..\rpactivexreport.pas',
   rpalias in '..\rpalias.pas',
   rpdatatext in '..\rpdatatext.pas',
@@ -117,7 +116,10 @@ uses
   rpmdfopenlibvcl in '..\rpmdfopenlibvcl.pas' {FRpOpenLibVCL},
   rpsvgdriver in '..\rpsvgdriver.pas',
   rpinfoprovgdi in '..\rpinfoprovgdi.pas',
-  rpinfoprovid in '..\rpinfoprovid.pas';
+  rpinfoprovid in '..\rpinfoprovid.pas',
+  rpdatetimepicker in '..\rpdatetimepicker.pas',
+  rppreviewcontrol in '..\rppreviewcontrol.pas',
+  rppreviewmeta in '..\rppreviewmeta.pas';
 
 {$R *.res}
 

@@ -436,12 +436,14 @@ type
    constructor Create(AOWner:TComponent);override;
   end;
 
+{$IFDEF USEINDY}
  TIdenDecode64=Class(TIdenFunction)
  protected
    function GetRpValue:TRpValue;override;
   public
    constructor Create(AOWner:TComponent);override;
   end;
+{$ENDIF}
 
  TIdenStringToBin=Class(TIdenFunction)
  protected
@@ -2729,6 +2731,7 @@ end;
 
 { TIdenDecode64 }
 
+{$IFDEF USEINDY}
 constructor TIdenDecode64.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
@@ -2748,7 +2751,7 @@ begin
          IdenName);
  Result:=MIMEDecodeString(String(Params[0]));
 end;
-
+{$ENDIF}
 
 { TIdenLoadFile }
 

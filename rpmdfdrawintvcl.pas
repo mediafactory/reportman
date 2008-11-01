@@ -23,7 +23,7 @@ interface
 {$I rpconf.inc}
 
 uses SysUtils, Classes,Windows,
-  Graphics, Forms,
+  Graphics, Forms,Menus,Dialogs,extdlgs,
   Buttons, ExtCtrls, Controls, StdCtrls,rpvgraphutils,
 {$IFDEF USEVARIANTS}
   types,
@@ -31,7 +31,10 @@ uses SysUtils, Classes,Windows,
 {$IFNDEF DOTNETD}
   jpeg,
 {$ENDIF}
-  rppdffile,
+{$IFDEF EXTENDEDGRAPHICS}
+ rpgraphicex,
+{$ENDIF}
+  rppdffile,clipbrd,
   rpprintitem,rpdrawitem,rpmdobinsintvcl,rpmdconsts,
   rpgraphutilsvcl,rpmunits,rptypes;
 
@@ -53,9 +56,15 @@ type
   private
    FBitmap:TBitmap;
    FIntStream:TMemoryStream;
-
+   mcut,mcopy,mpaste,mopen:TMenuItem;
+   procedure CutImageClick(Sender:TObject);
+   procedure CopyImageClick(Sender:TObject);
+   procedure PasteImageClick(Sender:TObject);
+   procedure LoadImageClick(Sender:TObject);
   protected
    procedure Paint;override;
+   procedure InitPopUpMenu;override;
+   procedure PopUpContextMenu;override;
   public
    class procedure FillAncestors(alist:TStrings);override;
    constructor Create(AOwner:TComponent;pritem:TRpCommonComponent);override;
@@ -413,7 +422,6 @@ end;
 
 constructor TRpImageInterface.Create(AOwner:TComponent;pritem:TRpCommonComponent);
 begin
- FIntStream:=TMemoryStream.Create;
  if Not (pritem is TRpImage) then
   Raise Exception.Create(SRpIncorrectComponentForInterface);
  inherited Create(AOwner,pritem);
@@ -737,6 +745,206 @@ begin
   exit;
  end;
 } inherited GetPropertyValues(pname,lpossiblevalues);
+end;
+
+procedure TRpImageInterface.InitPopUpMenu;
+begin
+ inherited InitPopUpMenu;
+
+ // Cut Image
+ mcut:=TMenuItem.Create(FContextMenu);
+ mcut.Caption:=TranslateStr(9,'Cut');
+ mcut.Hint:=TranslateStr(12,'Cut the image to the clipboard');
+ mcut.OnClick:=CutImageClick;
+ FContextMenu.Items.Add(mcut);
+
+ // Copy Image
+ mcopy:=TMenuItem.Create(FContextMenu);
+ mcopy.Caption:=TranslateStr(10,'Copy');
+ mcopy.Hint:=TranslateStr(13,'Copy the image to the clipboard');
+ mcopy.OnClick:=CopyImageClick;
+ FContextMenu.Items.Add(mcopy);
+
+ // Paste Image
+ mpaste:=TMenuItem.Create(FContextMenu);
+ mpaste.Caption:=TranslateStr(11,'Paste');
+ mpaste.Hint:=TranslateStr(14,'Paste the image from the clipboard');
+ mpaste.OnClick:=PasteImageClick;
+ FContextMenu.Items.Add(mpaste);
+
+ // Open Image
+ mopen:=TMenuItem.Create(FContextMenu);
+ mopen.Caption:=TranslateStr(42,'Open');
+// mopen.Hint:=TranslateStr(43,'Load the image from a file');
+ mopen.OnClick:=LoadImageClick;
+ FContextMenu.Items.Add(mopen);
+end;
+
+procedure TRpImageInterface.PopUpContextMenu;
+var
+ aimage:TRpImage;
+begin
+ inherited PopUpContextMenu;
+ aimage:=TRpImage(printitem);
+
+ if aimage.Stream.Size=0 then
+ begin
+  mcut.Enabled:=false;
+  mcopy.Enabled:=false;
+ end
+ else
+ begin
+  mcut.Enabled:=true;
+  mcopy.Enabled:=true;
+ end;
+ if Clipboard.HasFormat(CF_BITMAP) then
+ begin
+  mpaste.Enabled:=true;
+ end
+ else
+ begin
+  mpaste.Enabled:=false;
+ end;
+end;
+
+
+procedure TRpImageInterface.CutImageClick(Sender:TObject);
+var
+ aimage:TRpImage;
+begin
+ aimage:=TRpImage(printitem);
+
+ CopyImageClick(Self);
+
+ aimage.Stream.Clear;
+ Invalidate;
+end;
+
+procedure TRpImageInterface.CopyImageClick(Sender:TObject);
+var
+ jpe:TJPEGImage;
+ bitmap:TBitmap;
+ isjpeg:boolean;
+ bitmapwidth,bitmapheight:integer;
+ aimage:TRpImage;
+begin
+ aimage:=TRpImage(printitem);
+ if (aimage.Stream.Size=0) then
+  exit;
+ bitmap:=TBitmap.Create;
+ try
+   aimage.Stream.Seek(0,soFromBeginning);
+   isjpeg:=GetJPegInfo(aimage.Stream,bitmapwidth,bitmapheight);
+   if isjpeg then
+   begin
+    aimage.Stream.Seek(0,soFromBeginning);
+    jpe:=TJPEGImage.Create;
+    try
+     jpe.LoadFromStream(aimage.Stream);
+     bitmap.PixelFormat:=pf24bit;
+     bitmap.Width:=jpe.Width;
+     bitmap.Height:=jpe.Height;
+     bitmap.Canvas.Draw(0,0,jpe);
+    finally
+     jpe.free;
+    end;
+   end
+   else
+   begin
+    aimage.Stream.Seek(0,soFromBeginning);
+    bitmap.LoadFromStream(aimage.Stream);
+    ClipBoard.Assign(bitmap);
+   end;
+ finally
+  bitmap.free;
+ end;
+end;
+
+procedure TRpImageInterface.PasteImageClick(Sender:TObject);
+var
+ bitmap:TBitmap;
+ aimage:TRpImage;
+begin
+ aimage:=TRpImage(printitem);
+ if ClipBoard.HasFormat(CF_BITMAP) then
+ begin
+  bitmap:=TBitmap.Create;
+  try
+   bitmap.Assign(ClipBoard);
+   aimage.Stream.Clear;
+   bitmap.SaveToStream(aimage.Stream);
+   aimage.Expression:='';
+   Invalidate;
+  finally
+   bitmap.free;
+  end;
+ end;
+end;
+
+
+
+procedure TRpImageInterface.LoadImageClick(Sender:TObject);
+var
+ OpenDialog1:TOpenPictureDialog;
+ aimage:TRpImage;
+ jpeg:TJPegImage;
+{$IFDEF EXTENDEDGRAPHICS}
+ gfilter:string;
+ apic:TPicture;
+{$ENDIF}
+begin
+ aimage:=TRpImage(printitem);
+ OpenDialog1:=TOpenPictureDialog.Create(Application);
+ try
+  OpenDialog1.Filter:=
+   SrpBitmapImages+'|*.bmp|'+
+   SrpSJpegImages+'|*.jpg|';
+//  SrpSPNGImages+'|*.png|'+
+//  SRpSXPMImages+'|*.xpm';
+ // Add Registered file formats
+ // Add registered filters
+{$IFDEF EXTENDEDGRAPHICS}
+  gfilter:=rpgraphicex.FileFormatList.GetGraphicFilter([],fstExtension,[foIncludeExtension],nil);
+  OpenDialog1.Filter:=OpenDialog1.Filter+gfilter;
+(* TFRpObjInspVCL(Owner).OpenDialog1.Filter:=TFRpObjInspVCL(Owner).OpenDialog1.Filter+
+  'PCX '+'|*.pcx|'+
+  'GIF '+'|*.gif|'+
+  'PNG '+'|*.png|'+
+  'TIFF '+'|*.tiff|'+
+  'TIF '+'|*.tif|'+
+  'FAX '+'|*.fax|'+
+  'EPS '+'|*.eps|';*)
+{$ENDIF}
+
+ if OpenDialog1.Execute then
+ begin
+  if (OpenDialog1.FilterIndex<=1) then
+  begin
+   aimage.Stream.LoadFromFile(OpenDialog1.FileName);
+  end
+{$IFDEF EXTENDEDGRAPHICS}
+  else
+  begin
+   apic:=TPicture.Create;
+   try
+     apic.LoadFromFile(OpenDialog1.FileName);
+     jpeg:=TJPegImage.Create;
+     try
+      jpeg.CompressionQuality:=100;
+      jpeg.Assign(apic.Graphic);
+      jpeg.SaveToStream(aimage.stream);
+     finally
+      jpeg.free;
+     end;
+   finally
+    apic.free;
+   end;
+  end;
+{$ENDIF}
+ end;
+ finally
+  OpenDialog1.free;
+ end;
 end;
 
 initialization

@@ -24,7 +24,7 @@ interface
 
 uses Windows,Messages,Classes,SysUtils,Grids,DBGrids,DbCtrls,StdCtrls,Controls,
 {$IFDEF USEVARIANTS}
- Variants,
+ Variants,Types,
 {$ENDIF}
  DB,Graphics,Forms;
 

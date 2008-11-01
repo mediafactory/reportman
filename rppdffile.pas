@@ -1960,7 +1960,11 @@ begin
   begin
    if (astring[i]=#10) then
    begin
-    offset:=1;
+    if (i>1) then
+     if (astring[i-1]=#13) then
+      offset:=1
+     else
+      offset:=0;
     nextline:=true;
     createsnewline:=true;
    end
@@ -1971,7 +1975,7 @@ begin
     begin
      if (astring[i+1]=#10) then
      begin
-      offset:=2;
+      offset:=1;
       Inc(i);
       nextline:=true;
       createsnewline:=true;
@@ -2136,7 +2140,6 @@ begin
   SetLength(bits,bitmap.width*bitmap.Height*3);
 //  if not GetDIB(bitmap.Handle,bitmap.Palette,bitmapinfoptr,bits) then
 //   RaiseLastOsError;
-//  ShowMessage('hello2');
   abitmapinfo.bmiHeader.biSize:=sizeof(abitmapinfo.bmiHeader);
   abitmapinfo.bmiheader.biWidth:=bitmapinfo.biWidth;
   abitmapinfo.bmiheader.biHeight:=bitmapinfo.biHeight;

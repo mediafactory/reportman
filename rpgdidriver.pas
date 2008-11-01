@@ -48,6 +48,9 @@ uses
  Chart,Series,rpdrawitem,
  teEngine,ArrowCha,BubbleCh,GanttCh,
 {$ENDIF}
+{$IFDEF EXTENDEDGRAPHICS}
+ rpgraphicex,
+{$ENDIF}
 {$ENDIF}
  rppdfdriver,rptextdriver, Mask, rpmaskedit;
 
@@ -136,6 +139,7 @@ type
    procedure UpdateBitmapSize(report:TrpMetafileReport;apage:TrpMetafilePage);
   public
    offset:TPoint;
+   showpagemargins:boolean;
 //   CurrentPageSize:Tpoint;
    bitmap:TBitmap;
    dpi:integer;
@@ -163,6 +167,9 @@ type
    procedure IntDrawObject(page:TRpMetaFilePage;obj:TRpMetaObject;selected:boolean);
 {$IFNDEF FORWEBAX}
    procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);override;
+{$IFDEF EXTENDEDGRAPHICS}
+   procedure FilterImage(memstream:TMemoryStream);override;
+{$ENDIF}
 {$ENDIF}
 {$IFNDEF FORWEBAX}
 {$IFDEF USETEECHART}
@@ -541,6 +548,9 @@ begin
 {$IFNDEF FORWEBAX}
 {$IFDEF USETEECHART}
  report.OnDrawChart:=Self.DoDrawChart;
+{$ENDIF}
+{$IFDEF EXTENDEDGRAPHICS}
+ report.OnFilterImage:=Self.FilterImage;
  {$ENDIF}
 {$ENDIF}
  DrawerBefore:=report.OpenDrawerBefore;
@@ -1341,7 +1351,7 @@ begin
           arec2.Left:=arec2.Right-1;
           arec2.Right:=Round(currpos*aintdpix/1440)+1;
          end;
-         Canvas.Rectangle(arec2);
+         Canvas.Rectangle(arec2.Left,arec2.Top,arec2.Right,arec2.Bottom);
         end;
        end;
       end;
@@ -1386,6 +1396,7 @@ procedure TRpGDIDriver.DrawPage(apage:TRpMetaFilePage);
 var
  j:integer;
  rec:TRect;
+ dpix,dpiy:integer;
  selected:boolean;
 begin
  if toprinter then
@@ -1419,6 +1430,24 @@ begin
     begin
      selected:=FReport.IsFound(apage,j);
      IntDrawObject(apage,apage.Objects[j],selected);
+    end;
+    //Draw page margins
+    if (showpagemargins) then
+    begin
+     rec:=rpvgraphutils.GetPageMarginsTWIPS;
+     // transform to dpi device
+     dpix:=Screen.PixelsPerInch;
+     dpiy:=Screen.PixelsPerInch;
+
+     rec.Left:=round(rec.Left*dpix/TWIPS_PER_INCHESS);
+     rec.Top:=round(rec.Top*dpiy/TWIPS_PER_INCHESS);
+     rec.Right:=round(rec.Right*dpix/TWIPS_PER_INCHESS);
+     rec.Bottom:=round(rec.Bottom*dpiy/TWIPS_PER_INCHESS);
+     metacanvas.Brush.Style:=bsClear;
+     metacanvas.Pen.Color:=clBlack;
+     metacanvas.Pen.Style:=psSolid;
+
+     metacanvas.Rectangle(rec);
     end;
    finally
     metacanvas.free;
@@ -2150,6 +2179,9 @@ begin
  {$IFDEF USETEECHART}
    report.Metafile.OnDrawChart:=gdidriver.DoDrawChart;
  {$ENDIF}
+ {$IFDEF EXTENDEDGRAPHICS}
+  report.Metafile.OnFilterImage:=gdidriver.FilterImage;
+ {$ENDIF}
    report.PrintRange(pdfdriver,allpages,frompage,topage,copies,collate);
   finally
    gdidriver.free;
@@ -2183,6 +2215,9 @@ begin
     report.OnProgress:=pdfdriver.RepProgress;
 {$IFDEF USETEECHART}
    report.Metafile.OnDrawChart:=gdidriver.DoDrawChart;
+{$ENDIF}
+{$IFDEF EXTENDEDGRAPHICS}
+  report.Metafile.OnFilterImage:=gdidriver.FilterImage;
 {$ENDIF}
    if metafile then
    begin
@@ -2477,6 +2512,9 @@ begin
    pdfdriver.compressed:=pdfcompressed;
  {$IFDEF USETEECHART}
    report.Metafile.OnDrawChart:=gdidriver.DoDrawChart;
+ {$ENDIF}
+ {$IFDEF EXTENDEDGRAPHICS}
+  report.Metafile.OnFilterImage:=gdidriver.FilterImage;
  {$ENDIF}
    oldprogres:=report.OnProgress;
    try
@@ -2793,6 +2831,48 @@ end;
 
 
 {$IFNDEF FORWEBAX}
+
+{$IFDEF EXTENDEDGRAPHICS}
+procedure TRpGDIDriver.FilterImage(memstream:TMemoryStream);
+var
+ gclass:TGraphicExGraphicClass;
+ bitmap:TBitmap;
+ gpicture:TGraphicExGraphic;
+ jpegimage:TJPegImage;
+begin
+ inherited FilterImage(memstream);
+ // Use graphicex library to obtain type and convert it to jpeg
+ gclass:=rpgraphicex.FileFormatList.GraphicFromContent(memstream);
+ if (gclass=nil) then
+  exit;
+ memstream.Seek(0,soFromBeginning);
+ gpicture:=gclass.Create;
+ try
+  try
+   gpicture.LoadFromStream(memstream);
+   bitmap:=TBitmap.Create;
+   bitmap.PixelFormat:=pf24bit;
+   bitmap.Height:=gpicture.Height;
+   bitmap.Width:=gpicture.Width;
+   bitmap.Canvas.Draw(0,0,gpicture);
+   jpegimage:=TJPegImage.Create;
+   try
+    jpegimage.CompressionQuality:=100;
+    jpegimage.Assign(bitmap);
+    memstream.Clear;
+    jpegimage.SaveToStream(memstream);
+   finally
+    jpegimage.Free;
+   end;
+  finally
+   memstream.Seek(0,soFromBeginning);
+  end;
+ finally
+  gpicture.free;
+ end;
+end;
+{$ENDIF}
+
 {$IFDEF USETEECHART}
 procedure TRpGDIDriver.DoDrawChart(adriver:TRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
   aposx,aposy:integer;xchart:TObject);

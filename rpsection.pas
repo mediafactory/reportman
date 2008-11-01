@@ -142,7 +142,7 @@ type
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
    procedure FreeComponents;
    procedure DeleteComponent(com:TRpCommonComponent);
-   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;override;
+   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint;forcepartial:boolean):TPoint;override;
    function EvaluateBeginPage:boolean;
    procedure LoadFromStream(stream:TStream);
    procedure SaveToStream(stream:TStream);
@@ -481,6 +481,7 @@ var
  compo:TRpCommonPosComponent;
  newposx,newposy:integer;
  intPartialPrint:Boolean;
+ dummypartial:Boolean;
  DoPartialPrint:BOolean;
  astream:TMemoryStream;
  compoprinted:boolean;
@@ -588,6 +589,14 @@ begin
     compo.Print(adriver,newposx,newposy,
       newwidth,newheight,metafile,MaxExtent,IntPartialPrint);
    end;
+   // For all other elements if alignment is allclient print again
+   if ((not (compo is TRpExpression)) AND ((compo.Align=rpaltopbottom)
+    or (compo.Align=rpalclient))) then
+   begin
+    dummypartial:=false;
+    compo.Print(adriver,newposx,newposy,
+      newwidth,newheight,metafile,MaxExtent,dummypartial);
+   end;
   end
   else
   begin
@@ -638,7 +647,8 @@ begin
 end;
 
 
-function TRpSection.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;
+function TRpSection.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint;
+ forcepartial:boolean):TPoint;
 var
  minsize,maxsize,currentsize:integer;
  compsize:TPoint;
@@ -648,7 +658,7 @@ var
  acompo:TRpCommonPosComponent;
  DoPartialPrint:Boolean;
 begin
- Result:=inherited GetExtension(adriver,MaxExtent);
+ Result:=inherited GetExtension(adriver,MaxExtent,forcepartial);
  DoPartialPrint:=False;
  // Look for a partial print
  for i:=0 to FReportComponents.Count-1 do
@@ -684,7 +694,7 @@ begin
   begin
    acompo:=TRpCommonPosComponent(FReportComponents.Items[i].Component);
    if not (acompo.Align=rpalnone) then
-    acompo.GetExtension(adriver,newExtent);
+    acompo.GetExtension(adriver,newExtent,forcepartial);
   end;
   exit;
  end;
@@ -699,7 +709,7 @@ begin
     begin
      newextent:=MaxExtent;
      newextent.Y:=newextent.Y-acompo.PosY;
-     compsize:=acompo.GetExtension(adriver,newExtent);
+     compsize:=acompo.GetExtension(adriver,newExtent,forcepartial);
      if compsize.Y>0 then
      begin
       if acompo.Align in [rpalbottom,rpalbotright] then
@@ -718,7 +728,7 @@ begin
   begin
    newextent:=MaxExtent;
    newextent.Y:=newextent.Y-acompo.PosY;
-   compsize:=acompo.GetExtension(adriver,newExtent);
+   compsize:=acompo.GetExtension(adriver,newExtent,forcepartial);
    if compsize.Y>0 then
    begin
     if acompo.Align in [rpalbottom,rpalbotright] then
@@ -1633,6 +1643,7 @@ begin
  if newstate=rpReportStart then
  begin
   cachedpos:=-1;
+  FirstPage:=0;
   FDecompStream.SetSize(0);
   FOldStream.SetSize(0);
  end;

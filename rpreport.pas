@@ -586,6 +586,8 @@ var
  dataavail:boolean;
  index:integer;
  SearchGroupHeader:Boolean;
+ dbinfo:TRpDatabaseInfoItem;
+ doreopen:boolean;
 begin
  SearchGroupHeader:=false;
  oldsection:=section;
@@ -607,9 +609,23 @@ begin
      Raise Exception(SRPAliasNotExists+' '+subrep.Alias);
     if Length(Datainfo.Items[index].DataSource)<1 then
     begin
-     Datainfo.Items[index].Disconnect;
-     UpdateParamsBeforeOpen(index,true);
-     Datainfo.Items[index].Connect(DatabaseInfo,params);
+     doreopen:=true;
+     // for datasets unions does not read again but call first method
+     dbinfo:=DatabaseInfo.ItemByName(DataInfo.Items[index].DatabaseAlias);
+     if Assigned(dbinfo) then
+     begin
+      if dbinfo.Driver=rpdatamybase then
+      begin
+       Datainfo.Items[index].Dataset.First;
+       doreopen:=false;
+      end;
+     end;
+     if doreopen then
+     begin
+      Datainfo.Items[index].Disconnect;
+      UpdateParamsBeforeOpen(index,true);
+      Datainfo.Items[index].Connect(DatabaseInfo,params);
+     end;
     end
     else
     begin
@@ -921,6 +937,7 @@ var
  dataavail:Boolean;
  newpagesize:integer;
 begin
+ params.UpdateInitialValues;
  maximum_width:=0;
  maximum_height:=0;
  FUpdatePageSize:=false;
@@ -1191,14 +1208,13 @@ var
  pagefooterpos:integer;
  havepagefooters:boolean;
  oldsubreport:TRpSubreport;
- oldprintedsection:TRpSection;
- oldprintedsectionext:TPoint;
  i,oldhorzdespposition:integer;
  pagespacex:integer;
  sectionextevaluated:boolean;
  PartialPrint:Boolean;
  MaxExtent:TPoint;
  lastvertpos:TPoint;
+ oldpageposx:Integer;
 
 
 procedure SkipToPageAndPosition;
@@ -1302,7 +1318,7 @@ begin
   // Skip to page and position
   if asection.SkipType=secskipbefore then
    SkipToPageAndPosition;
-  sectionext:=asection.GetExtension(FDriver,MaxExtent);
+  sectionext:=asection.GetExtension(FDriver,MaxExtent,false);
  end;
  Result:=true;
  if sectionext.Y>freespace then
@@ -1313,9 +1329,13 @@ begin
   end
   else
   begin
-   Raise Exception.Create(SRpNoSpaceToPrint+' '+
-    SRpSubReport+':'+IntToStr(CurrentSubReportIndex)+' '+
-    SRpSection+':'+IntToStr(CurrentSectionIndex));
+   // Retry forcing printing partial texts
+   // else it can not be printed
+   sectionext:=asection.GetExtension(FDriver,MaxExtent,true);
+   if sectionext.Y>freespace then
+    Raise Exception.Create(SRpNoSpaceToPrint+' '+
+     SRpSubReport+':'+IntToStr(CurrentSubReportIndex)+' '+
+     SRpSection+':'+IntToStr(CurrentSectionIndex));
   end;
  end;
  sectionextevaluated:=false;
@@ -1541,7 +1561,7 @@ begin
       if Not Assigned(Section) then
        printit:=false;
      end;
-     sectionext:=asection.GetExtension(FDriver,MaxExtent);
+     sectionext:=asection.GetExtension(FDriver,MaxExtent,false);
      if printit then
       if asection.EvaluatePrintCondition then
       begin
@@ -1560,7 +1580,7 @@ begin
      if Not Assigned(Section) then
       printit:=false;
     end;
-    sectionext:=asection.GetExtension(FDriver,MaxExtent);
+    sectionext:=asection.GetExtension(FDriver,MaxExtent,false);
     if printit then
      if asection.EvaluatePrintCondition then
      begin
@@ -1613,13 +1633,13 @@ begin
  end;
  havepagefooters:=false;
  sectionextevaluated:=false;
- oldprintedsection:=nil;
  if Not FCompose then
  begin
   freespace:=FInternalPageheight;
   freespace:=freespace-TopMargin-BottomMargin;
   pageposy:=TopMargin;
   pageposx:=LeftMargin;
+  oldprintedsection:=nil;
  end
  else
  begin
@@ -1677,7 +1697,7 @@ begin
      begin
       MaxExtent.x:=pagespacex;
       MaxExtent.y:=freespace;
-      sectionext:=section.GetExtension(FDriver,MaxExtent);
+      sectionext:=section.GetExtension(FDriver,MaxExtent,false);
       sectionextevaluated:=true;
       if (pageposx+oldprintedsectionext.X+sectionext.X)<=pagespacex then
       begin
@@ -1705,7 +1725,7 @@ begin
      // Go to old vertical position if fits horizontally
      MaxExtent.x:=pagespacex;
      MaxExtent.y:=lastvertpos.y-BottomMargin;
-     sectionext:=section.GetExtension(FDriver,MaxExtent);
+     sectionext:=section.GetExtension(FDriver,MaxExtent,false);
      sectionextevaluated:=true;
      if (pageposx+sectionext.X*2)<=pagespacex then
      begin
@@ -1754,6 +1774,7 @@ begin
    oldsubreport:=subreport;
   end;
   // Fills the page with fixed sections
+  oldpageposx:=pageposx;
   if PrintedSomething then
   begin
    if Assigned(oldprintedsection) then
@@ -1765,6 +1786,7 @@ begin
    end;
   end;
   PrintFixedSections(FDriver,false);
+  pageposx:=oldpageposx;
   pagefooters.Free;
  except
   on E:Exception do

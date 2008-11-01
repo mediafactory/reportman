@@ -58,7 +58,7 @@ type
   public
    procedure UpdateWideText;
    procedure UpdateAllStrings;
-   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;override;
+   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint;forcepartial:boolean):TPoint;override;
    property AllStrings:TRpWideStrings read FAllStrings write FAllStrings;
    constructor Create(AOwner:TComponent);override;
    property Text:widestring read GetText write SetText;
@@ -103,6 +103,7 @@ type
    FExportDoNewLine:Boolean;
    FIsPageCount:Boolean;
    FIsGroupPageCount:Boolean;
+   forcedpartial:boolean;
    procedure SetIdentifier(Value:string);
    procedure Evaluate;
    procedure WriteExpression(Writer:TWriter);
@@ -129,7 +130,7 @@ type
    function GetTextObject:TRpTextObject;
    function GetText:widestring;
    property IdenExpression:TIdenRpExpression read FIdenExpression;
-   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;override;
+   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint;forcepartial:boolean):TPoint;override;
    property Expression:widestring read FExpression write SetExpression;
    property AgIniValue:widestring read FAgIniValue write FAgIniValue;
    property IsPartial:Boolean read FIsPartial;
@@ -486,7 +487,7 @@ begin
    exit;
   FOldString:=Textobj.Text;
  end;
- if MultiPage then
+ if (MultiPage or forcedpartial) then
  begin
   maxextent.X:=PrintWidth;
   newposition:=CalcTextExtent(adriver.GetFontDriver,maxextent,Textobj);
@@ -500,7 +501,10 @@ begin
    TextObj.Text:=Copy(TextObj.Text,1,newposition);
   end
   else
+  begin
    FIsPartial:=false;
+   forcedpartial:=false;
+  end;
  end;
  metafile.Pages[metafile.CurrentPage].NewTextObject(aposy,
    aposx,Printwidth,Printheight,Textobj,BackColor,Transparent);
@@ -554,6 +558,7 @@ begin
    begin
     FExportValue:=Null;
     FIsPartial:=false;
+    forcedpartial:=false;
     FOldString:='';
     FUpdated:=false;
     FDataCount:=0;
@@ -579,6 +584,7 @@ begin
    begin
     FExportValue:=Null;
     FIsPartial:=false;
+    forcedpartial:=false;
     FOldString:='';
     FUpdated:=false;
     FDataCount:=0;
@@ -603,6 +609,7 @@ begin
   rpDataChange:
    begin
     FIsPartial:=false;
+    forcedpartial:=false;
     FUpdated:=false;
     inc(FDataCount);
     if (FAggregate<>rpAgNone) then
@@ -681,6 +688,7 @@ begin
   rpGroupChange:
    begin
     FIsPartial:=false;
+    forcedpartial:=false;
     FUpdated:=false;
     FOldString:='';
     if (FAggregate=rpAgGroup) then
@@ -736,6 +744,7 @@ begin
   rpInvalidateValue:
    begin
     FIsPartial:=false;
+    forcedpartial:=false;
     FOldString:='';
     FUpdated:=false;
    end;
@@ -764,16 +773,16 @@ begin
  Result.PrintStep:=PrintStep;
 end;
 
-function TRpExpression.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;
+function TRpExpression.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint;forcepartial:boolean):TPoint;
 var
  aText:TRpTextObject;
  aposition:integer;
  IsPartial:Boolean;
 begin
  IsPartial:=False;
- Result:=inherited GetExtension(adriver,MaxExtent);
+ Result:=inherited GetExtension(adriver,MaxExtent,forcepartial);
  aText:=GetTextObject;
- if MultiPage then
+ if (MultiPage or forcepartial) then
  begin
   maxextent.X:=Result.X;
   aposition:=CalcTextExtent(adriver.GetFontDriver,maxextent,aText);
@@ -782,7 +791,11 @@ begin
   aText.Text:=Copy(aText.Text,1,aposition);
   adriver.TextExtent(aText,Result);
   if ispartial then
+  begin
    Result.Y:=MaxExtent.Y;
+   if forcepartial then
+    forcedpartial:=true;
+  end;
  end
  else
   adriver.TextExtent(aText,Result);
@@ -893,11 +906,11 @@ begin
 end;
 
 
-function TRpLabel.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;
+function TRpLabel.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint;forcepartial:boolean):TPoint;
 var
  aText:TRpTextObject;
 begin
- Result:=inherited GetExtension(adriver,MaxExtent);
+ Result:=inherited GetExtension(adriver,MaxExtent,forcepartial);
  aText:=GetTextObject;
  adriver.TextExtent(aText,Result);
  LastExtent:=Result;

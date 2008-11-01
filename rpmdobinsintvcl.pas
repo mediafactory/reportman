@@ -29,7 +29,7 @@ uses
 {$IFDEF USEVARIANTS}
  Types,Variants,
 {$ENDIF}
-  Graphics,Forms,Controls,Dialogs,ComCtrls,Menus,
+  Graphics,Forms,Controls,Dialogs,ComCtrls,Menus,Windows,Messages,
  rpmdconsts,classes,sysutils,rpmunits,rpdbbrowservcl,
  rpprintitem,rpvgraphutils,rpgraphutilsvcl,rpsection,
  rpreport,rptypes;
@@ -95,10 +95,12 @@ type
    FRectangle2:TRpRectangle;
    FRectangle3:TRpRectangle;
    FRectangle4:TRpRectangle;
+   insertingelement:boolean;
    procedure RenameClick(Sender:TObject);
    procedure DoDragOver(Sender, Source: TObject; X, Y: Integer; State: TDragState;
      var Accept: Boolean);
    procedure DoDragDrop(Sender, Source: TObject; X, Y: Integer);
+   procedure IntContextPopUp(Sender:TObject);
   protected
    FContextMenu:TPopUpMenu;
    procedure MouseDown(Button: TMouseButton; Shift: TShiftState;
@@ -107,6 +109,7 @@ type
    procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
    procedure Paint;override;
    procedure InitPopUpMenu;virtual;
+   procedure PopUpContextMenu;virtual;
   public
    SectionInt:TRpSizeInterface;
    procedure DoSelect;
@@ -186,7 +189,7 @@ type
 
 implementation
 
-uses rpmdobjinspvcl,rpmdfsectionintvcl;
+uses rpmdobjinspvcl,rpmdfsectionintvcl,rpmdfmainvcl;
 
 
 const
@@ -385,8 +388,19 @@ begin
  OnDragOver:=DoDragOver;
  OnDragDrop:=DoDragDrop;
  FContextMenu:=TPopUpMenu.Create(Self);
+ FContextMenu.OnPopup:=IntContextPopUp;
  PopupMenu:=FContextMenu;
  InitPopUpMenu;
+end;
+
+procedure TRpSizePosInterface.IntContextPopUp(Sender:TObject);
+begin
+ PopUpContextMenu;
+end;
+
+procedure TRpSizePosInterface.PopUpContextMenu;
+begin
+
 end;
 
 class procedure TRpSizePosInterface.FillAncestors(alist:TStrings);
@@ -643,11 +657,32 @@ end;
 
 procedure TRpSizePosInterface.MouseDown(Button: TMouseButton; Shift: TShiftState;
       X, Y: Integer);
+var
+ FRpMainf:TFRpMainFVCL;
+ secint:TRpSectionIntf;
+ p1:TPoint;
 begin
  inherited MouseDown(Button,Shift,X,Y);
 
  if Button<>mbLeft then
   exit;
+ insertingelement:=false;
+ if Assigned(Parent) then
+ begin
+  secint:=TRpSectionIntf(Parent);
+  FRpMainf:=TFRpMainFVCL(secint.Owner.Owner.Owner);
+  // There's a selected item to insert
+  if (not FRpMainf.BArrow.Down) then
+  begin
+   insertingelement:=true;
+   p1.x:=x;
+   p1.y:=y;
+   p1:=ClientToScreen(p1);
+   p1:=secint.ScreenToClient(p1);
+   secint.ExecuteMouseDown(Button,Shift,P1.X,P1.Y);
+   Exit;
+  end;
+ end;
  if Not Assigned(FRectangle) then
  begin
   FRectangle:=TRpRectangle.Create(Self);
@@ -679,11 +714,28 @@ end;
 procedure TRpSizePosInterface.MouseMove(Shift: TShiftState; X, Y: Integer);
 var
  NewLeft,NewTop:integer;
+ p1:TPoint;
+ secint:TRpSectionIntf;
 begin
  inherited MouseMove(Shift,X,Y);
 
  if MouseCapture then
  begin
+  if Assigned(Parent) then
+  begin
+   secint:=TRpSectionIntf(Parent);
+   if insertingelement then
+   begin
+    p1.x:=x;
+    p1.y:=y;
+    p1:=ClientToScreen(p1);
+    p1:=secint.ScreenToClient(p1);
+    secint.ExecuteMouseMove(Shift,P1.X,P1.Y);
+    Exit;
+   end;
+  end;
+
+
   if ((Abs(X-FXOrigin)>CONS_MINIMUMMOVE) OR
     (Abs(Y-FYOrigin)>CONS_MINIMUMMOVE)) then
      FBlocked:=False;
@@ -726,11 +778,27 @@ var
  insp:TFRpObjInspVCL;
  aitem:TRpCommonPosComponent;
  afitem:TRpSizePosInterface;
+ secint:TRpSectionIntf;
+ p1:Tpoint;
 begin
  inherited MouseUp(Button,Shift,X,Y);
 
  if Button<>mbLeft then
   exit;
+ if Assigned(Parent) then
+ begin
+  secint:=TRpSectionIntf(Parent);
+  if insertingelement then
+  begin
+   p1.x:=x;
+   p1.y:=y;
+   p1:=ClientToScreen(p1);
+   p1:=secint.ScreenToClient(p1);
+   secint.ExecuteMouseUp(Button,Shift,P1.X,P1.Y);
+   Exit;
+  end;
+ end;
+
  if Assigned(FRectangle) then
  begin
   FRectangle.Free;

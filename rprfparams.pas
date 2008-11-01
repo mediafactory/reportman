@@ -105,6 +105,7 @@ begin
  end;
 {$IFNDEF FORWEBAX}
  params.UpdateLookup;
+ params.UpdateInitialValues;
 {$ENDIF}
  dia:=TFRpRunTimeParams.Create(Application);
  try
@@ -410,7 +411,7 @@ begin
        index:=5;
       acontrol.Height:=(index+1)*Self.Canvas.TextHeight('Mg');
      end;
-   rpParamList:
+   rpParamList,rpParamSubstList:
      begin
       acontrol:=TComboBox.Create(Self);
       if aparam.IsReadOnly then
@@ -542,7 +543,7 @@ begin
          fparams.items[i].Selected.Add(IntToStr(j));
        end;
       end;
-     rpParamList:
+     rpParamList,rpParamSubstList:
       begin
        index:=TComboBox(LControls.Objects[i]).ItemIndex;
        if index<fparams.items[i].Values.Count then

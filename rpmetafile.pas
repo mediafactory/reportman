@@ -267,6 +267,7 @@ type
   procedure SetOrientation(Orientation:TRpOrientation);virtual;abstract;
   procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);virtual;abstract;
   procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);virtual;abstract;
+  procedure FilterImage(memstream:TMemoryStream);virtual;
   procedure TextExtent(atext:TRpTextObject;var extent:TPoint);virtual;abstract;
   procedure GraphicExtent(Stream:TMemoryStream;var extent:TPoint;dpi:integer);virtual;abstract;
   procedure DrawPage(apage:TRpMetaFilePage);virtual;abstract;
@@ -280,6 +281,7 @@ type
 {$IFNDEF FORWEBAX}
  TDoDrawChartEvent=procedure (adriver:TRpPrintDriver;Series:TRpSeries;page:TRpMetaFilePage;
   aposx,aposy:integer;achart:TObject) of Object;
+ TDoFilterImage=procedure (memstream:TMemoryStream) of object;
 {$ENDIF}
 
  TRpMetafilePage=class(TObject)
@@ -381,6 +383,7 @@ type
    OpenDrawerAfter:Boolean;
 {$IFNDEF FORWEBAX}
    OnDrawChart:TDoDrawChartEvent;
+   OnFilterImage:TDoFilterImage;
 {$ENDIF}
    OnWorkProgress:TMetaFileWorkProgress;
    OnStopWork:TStopWork;
@@ -522,6 +525,7 @@ begin
  end;
  inc(FObjectCount);
 end;
+
 
 function TrpMetafilePage.NewImageObject(Top,Left,Width,Height:integer;
  CopyMode:integer; DrawImageStyle:integer;DPIres:integer;stream:TStream;PreviewOnly:Boolean):integer;
@@ -1339,56 +1343,56 @@ begin
   Raise ERpBadFileFormat.CreatePos(SrpMtObjectSeparatorExpected,Stream.Position,0);
  bytesread:=Stream.Read(FMark,sizeof(FMark));
  if (bytesread<>sizeof(FMark)) then
-  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' Mark',Stream.Position,0);
  if Not FVersion2_2 then
  begin
   bytesread:=Stream.Read(separator,sizeof(separator));
   if (bytesread<>sizeof(separator)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' Separator',Stream.Position,0);
   FOrientation:=TRpOrientation(separator);
   bytesread:=Stream.Read(fpagesizeqt.Indexqt,sizeof(fpagesizeqt.IndexQt));
   if (bytesread<>sizeof(fpagesizeqt.Indexqt)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' PageSize',Stream.Position,0);
 
   bytesread:=Stream.Read(fpagesizeqt.Custom,sizeof(fpagesizeqt.Custom));
   if (bytesread<>sizeof(fpagesizeqt.Custom)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' Custom',Stream.Position,0);
   bytesread:=Stream.Read(fpagesizeqt.CustomWidth,sizeof(fpagesizeqt.CustomWidth));
   if (bytesread<>sizeof(fpagesizeqt.CustomWidth)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' Custom Width',Stream.Position,0);
   bytesread:=Stream.Read(fpagesizeqt.CustomHeight,sizeof(fpagesizeqt.CustomHeight));
   if (bytesread<>sizeof(fpagesizeqt.CustomHeight)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' Custom Height',Stream.Position,0);
   bytesread:=Stream.Read(fpagesizeqt.PhysicWidth,sizeof(fpagesizeqt.PhysicWidth));
   if (bytesread<>sizeof(fpagesizeqt.PhysicWidth)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' Physic Width',Stream.Position,0);
   bytesread:=Stream.Read(fpagesizeqt.PhysicHeight,sizeof(fpagesizeqt.PhysicHeight));
   if (bytesread<>sizeof(fpagesizeqt.PhysicHeight)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' Physic Height',Stream.Position,0);
   bytesread:=Stream.Read(fpagesizeqt.PaperSource,sizeof(fpagesizeqt.PaperSource));
   if (bytesread<>sizeof(fpagesizeqt.PaperSource)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' Paper Source',Stream.Position,0);
   bytesread:=Stream.Read(abytes[0],61);
   if (61<>bytesread) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' Paper name',Stream.Position,0);
   for i:=0 to bytesread-1 do
   begin
    fpagesizeqt.ForcePaperName[i]:=chr(abytes[0]);
   end;
   bytesread:=Stream.Read(fpagesizeqt.Duplex,sizeof(fpagesizeqt.Duplex));
   if (bytesread<>sizeof(fpagesizeqt.Duplex)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' Duplex',Stream.Position,0);
   if (3<>Stream.Read(abytes[0],3)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' Duplex 3',Stream.Position,0);
   bytesread:=Stream.Read(FUpdatedPageSize,sizeof(FUpdatedPageSize));
   if (bytesread<>sizeof(FUpdatedPageSize)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' UpdatedPageSize',Stream.Position,0);
  end;
  bytesread:=Stream.Read(objcount,sizeof(objcount));
  if (bytesread<>sizeof(objcount)) then
-  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' ObjCount',Stream.Position,0);
  if (objcount<0) then
-  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' ObjCount<0',Stream.Position,0);
  if High(FObjects)-1<objcount then
   SetLength(FObjects,objcount+1);
  // Read then whole array
@@ -1398,7 +1402,7 @@ begin
  begin
   readed:=Stream.Read(abytes[0],bytesread);
   if (bytesread<>readed) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' ObjectArraySize',Stream.Position,0);
  {$IFDEF DOTNETD}
   System.Array.Copy(abytes,FObjects,bytesread);
  {$ENDIF}
@@ -1408,16 +1412,16 @@ begin
  end;
  // Read string pool
  if (sizeof(wsize)<>Stream.Read(wsize,sizeof(wsize))) then
-  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' StringPoolSize',Stream.Position,0);
  if wsize<0 then
-  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' StringPoolSize<0',Stream.Position,0);
  SetLength(FPool,wsize div 2);
  SetLength(abytes,wsize);
  if wsize>0 then
  begin
 {$IFDEF DOTNETD}
   if (wsize<>Stream.Read(abytes[0],wsize)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' StringPool',Stream.Position,0);
   for i:=0 to wsize div 2 do
   begin
    // Revise byte order
@@ -1427,7 +1431,7 @@ begin
 {$ENDIF}
 {$IFNDEF DOTNETD}
   if (wsize<>Stream.Read(abytes[0],wsize)) then
-   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+   Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' StringPool',Stream.Position,0);
  // Copy the pool
   Move(abytes[0],FPool[1],wsize);
 {$ENDIF}
@@ -1435,9 +1439,9 @@ begin
  FPoolPos:=(wsize div 2)+1;
  // The Stream
  if (sizeof(asize)<>Stream.Read(asize,sizeof(asize))) then
-  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' MemStreamSize',Stream.Position,0);
  if asize<0 then
-  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' MemStreamSize<0',Stream.Position,0);
  if asize=0 then
  begin
   FMemStream.Free;
@@ -1448,12 +1452,17 @@ begin
  if asize>0 then
  begin
 {$IFDEF DOTNETD}
-  if (asize<>Stream.Read(FMemStream.Memory[0],asize)) then
+  readed:=Stream.Read(FMemStream.Memory[0],asize);
+  if (asize<>readed) then
 {$ENDIF}
 {$IFNDEF DOTNETD}
-  if (asize<>Stream.Read(FMemStream.Memory^,asize)) then
+  readed:=Stream.Read(FMemStream.Memory^,asize);
+  if (asize<>readed) then
 {$ENDIF}
-  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage,Stream.Position,0);
+  Raise ERpBadFileFormat.CreatePos(SrpStreamErrorPage+' MemStream readed:'
+   +IntToStr(readed)+'Total:'+IntToStr(asize),Stream.Position,0);
+  // Seeks at the end to add objects at correct position
+  FStreamPos:=FMemStream.Size;
  end;
  FObjectCount:=objcount;
 end;
@@ -2161,6 +2170,10 @@ begin
  end;
 end;
 
+procedure TRpPrintDriver.FilterImage(memstream:TMemoryStream);
+begin
+
+end;
 
 
 end.

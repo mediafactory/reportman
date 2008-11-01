@@ -61,6 +61,11 @@ type
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);override;
    public
     OnPosChange:TNotifyEvent;
+    procedure ExecuteMouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
+    procedure ExecuteMouseMove(Shift: TShiftState; X, Y: Integer);
+    procedure ExecuteMouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+
     constructor Create(AOwner:TComponent);override;
    end;
 
@@ -105,6 +110,10 @@ type
     procedure DeleteChild(achild:TRpSizePosInterface);
     property OnPosChange:TNotifyEvent read FOnPosChange write SetOnPosChange;
     procedure DoDeleteComponent(aitem:TComponent);
+    procedure ExecuteMouseDown(Button: TMouseButton; Shift: TShiftState;
+      X, Y: Integer);
+    procedure ExecuteMouseMove(Shift: TShiftState; X, Y: Integer);
+    procedure ExecuteMouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
   end;
 
 
@@ -1119,10 +1128,14 @@ begin
  end
  else
  begin
-  NewLeft:=X;
-  if gridenabled then
-   NewLeft:=AlignToGridPixels(NewLeft,GridX,Scale);
   NewWidth:=FXOrigin-X;
+  if gridenabled then
+   NewWidth:=AlignToGridPixels(NewWidth,GridX,Scale);
+  NewLeft:=FXOrigin-NewWidth;
+//  NewLeft:=X;
+//  if gridenabled then
+//   NewLeft:=AlignToGridPixels(NewLeft,GridX,Scale);
+//  NewWidth:=FXOrigin-X;
  end;
  if Y>FYOrigin then
  begin
@@ -1133,10 +1146,14 @@ begin
  end
  else
  begin
-  NewTop:=Y;
-  if gridenabled then
-   NewTop:=AlignToGridPixels(NewTop,GridY,Scale);
   NewHeight:=FYOrigin-Y;
+  if gridenabled then
+   NewHeight:=AlignToGridPixels(NewHeight,GridY,Scale);
+  NewTop:=FYOrigin-NewHeight;
+//  NewTop:=Y;
+//  if gridenabled then
+//   NewTop:=AlignToGridPixels(NewTop,GridY,Scale);
+//  NewHeight:=FYOrigin-Y;
  end;
  if NewLeft+NewWidth>FInterface.Width then
   NewWidth:=FInterface.Width-NewLeft;
@@ -1500,6 +1517,11 @@ begin
    size:=TRpDBFieldInfo(anode.Data).FieldSize;
   fieldname:=ExtractFieldNameEx(anode.Text);
   TRpExpression(asizepos).Expression:=fieldname;
+  if ((fieldname='PAGECOUNT') or (fieldname='GROUPPAGECOUNT')) then
+  begin
+   if Not TRpReport(printitem.Report).TwoPass then
+    TRpReport(printitem.Report).TwoPass:=true;
+  end;
   Canvas.Font.Name:=TRpExpression(asizepos).WFontName;
   Canvas.Font.Size:=TRpExpression(asizepos).FontSize;
 
@@ -1554,6 +1576,40 @@ begin
  if assigned(parent) then
   FInterface.Invalidate;
 end;
+
+
+procedure TRpSectionInTf.ExecuteMouseDown(Button: TMouseButton; Shift: TShiftState;
+   X, Y: Integer);
+begin
+ secint.MouseDown(Button,Shift,X,Y);
+end;
+
+procedure TRpSectionInTf.ExecuteMouseMove(Shift: TShiftState; X, Y: Integer);
+begin
+ secint.MouseMove(Shift,X,Y);
+end;
+
+procedure TRpSectionInTf.ExecuteMouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+ secint.MouseUp(Button,Shift,X,Y);
+end;
+
+procedure TRpSectionInterface.ExecuteMouseDown(Button: TMouseButton; Shift: TShiftState;
+   X, Y: Integer);
+begin
+ MouseDown(Button,Shift,X,Y);
+end;
+
+procedure TRpSectionInterface.ExecuteMouseMove(Shift: TShiftState; X, Y: Integer);
+begin
+ MouseMove(Shift,X,Y);
+end;
+
+procedure TRpSectionInterface.ExecuteMouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+ MouseUp(Button,Shift,X,Y);
+end;
+
 
 initialization
 fbitmap:=nil;

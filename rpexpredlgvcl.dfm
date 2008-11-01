@@ -1,7 +1,7 @@
 object FRpExpredialogVCL: TFRpExpredialogVCL
   Left = 320
   Top = 101
-  Width = 516
+  Width = 533
   Height = 491
   Caption = 'Dialog'
   Color = clBtnFace
@@ -16,7 +16,7 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
   object PBottom: TPanel
     Left = 0
     Top = 172
-    Width = 508
+    Width = 525
     Height = 285
     Align = alBottom
     BevelOuter = bvNone
@@ -111,7 +111,7 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
   object PAlClient: TPanel
     Left = 0
     Top = 0
-    Width = 508
+    Width = 525
     Height = 172
     Align = alClient
     BevelOuter = bvNone
@@ -119,7 +119,7 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
     object MemoExpre: TMemo
       Left = 0
       Top = 0
-      Width = 508
+      Width = 525
       Height = 139
       Align = alClient
       Lines.Strings = (
@@ -131,7 +131,7 @@ object FRpExpredialogVCL: TFRpExpredialogVCL
     object Panel1: TPanel
       Left = 0
       Top = 139
-      Width = 508
+      Width = 525
       Height = 33
       Align = alBottom
       TabOrder = 1

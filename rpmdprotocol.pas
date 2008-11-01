@@ -238,7 +238,7 @@ begin
   WriteRpComBlockToStream(CB,memstream);
   memstream.Seek(0,soFromBeginning);
 {$IFDEF INDY10}
-  AConnection.IOHandler.Write(memstream);
+  AConnection.IOHandler.Write(memstream,0,True);
 {$ENDIF}
 {$IFNDEF INDY10}
   AConnection.WriteStream(memstream,true,true);

@@ -71,6 +71,7 @@ implementation
 
 var
  currentprinter:integer;
+ idx:integer;
  sizestruetype:Tstringlist;
 
 
@@ -551,7 +552,14 @@ begin
  Add(' 72');
 end;
 
+
 finalization
+ idx:=0;
+ while idx<PrinterFonts.Count do
+ begin
+  TPrinterFont(PrinterFonts.Items[idx]).Free;
+  Inc(idx);
+ end;
 PrinterFonts.free;
 PrinterSorted.free;
 ScreenSorted.free;

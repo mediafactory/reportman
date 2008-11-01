@@ -88,6 +88,8 @@ type
     procedure DefineProperties(Filer:TFiler);override;
    public
     LastValue:Variant;
+    EvaluatedParam:boolean;
+    EvaluatedString:string;
     Constructor Create(Collection:TCollection);override;
     procedure Assign(Source:TPersistent);override;
     destructor Destroy;override;
@@ -98,6 +100,7 @@ type
 {$IFNDEF FORWEBAX}
     function GetListValue:Variant;
     procedure UpdateLookup;
+    procedure UpdateInitialValue;
 {$ENDIF}
     property Description:widestring read GetDescription write SetDescription;
     property Descriptions:widestring read FDescription write FDescription;
@@ -147,6 +150,8 @@ type
     function ParamByName(AName:string):TRpParam;
 {$IFNDEF FORWEBAX}
     procedure UpdateLookup;
+    procedure UpdateInitialValues;
+    procedure RestoreInitialValues;
 {$ENDIF}
     property Items[index:integer]:TRpParam read GetItem write SetItem;default;
     property Report:TComponent read FReport;
@@ -168,6 +173,7 @@ type
 {$IFNDEF FORWEBAX}
 function ParamTypeToDataType(paramtype:TRpParamType):TFieldType;
 function VariantTypeToDataType(avariant:Variant):TFieldType;
+function VariantTypeToParamType(avariant:Variant):TRpParamtype;
 {$ENDIF}
 
 function ParamTypeToString(paramtype:TRpParamType):String;
@@ -339,12 +345,37 @@ begin
 end;
 
 {$IFNDEF FORWEBAX}
+procedure TRpParam.UpdateInitialValue;
+var
+ aexpression:String;
+ avalue:variant;
+begin
+ if ParamType<>rpParamInitialExpression then
+  exit;
+ try
+  aexpression:=AsString;
+  avalue:=rpeval.EvaluateExpression(aexpression);
+  EvaluatedParam:=true;
+  EvaluatedString:=aexpression;
+  ParamType:=VariantTypeToParamType(avalue);
+  Value:=avalue;
+ except
+  on E:Exception do
+  begin
+   E.Message:=E.Message+' - '+SRpParameter+':'+Name;
+   raise;
+  end;
+ end;
+
+end;
+
+
 function TRpParam.GetListValue:Variant;
 var
  aexpression:String;
  aoption:integer;
 begin
- if Not (ParamType in [rpParamList,rpParamMultiple]) then
+ if Not (ParamType in [rpParamList,rpParamMultiple,rpParamSubstList]) then
   Result:=FValue
  else
  if ParamType=rpParamMultiple then
@@ -420,6 +451,31 @@ begin
   end;
  finally
   ditem.Disconnect;
+ end;
+end;
+
+procedure TRpParamList.UpdateInitialValues;
+var
+ i:integer;
+begin
+ for i:=0 to Count-1 do
+ begin
+  items[i].UpdateInitialValue;
+ end;
+end;
+
+procedure TRpParamList.RestoreInitialValues;
+var
+ i:integer;
+begin
+ for i:=0 to Count-1 do
+ begin
+  if items[i].EvaluatedParam then
+  begin
+   items[i].ParamType:=rpParamInitialExpression;
+   items[i].Value:=items[i].EvaluatedString;
+   items[i].EvaluatedParam:=false;
+  end;
  end;
 end;
 
@@ -575,6 +631,44 @@ begin
  end;
 end;
 
+function VariantTypeToParamType(avariant:Variant):TRpParamType;
+var
+ avalue:double;
+begin
+ case VarType(avariant) of
+  varEmpty,varNull:
+   Result:=rpparamunknown;
+  varSmallInt,varInteger,varShortInt,varWord,varLongWord:
+   Result:=rpparaminteger;
+  varSingle,varDouble:
+   Result:=rpParamDouble;
+  varCurrency:
+   Result:=rpParamCurrency;
+  varDate:
+   begin
+    Result:=rpParamDate;
+    avalue:=avariant;
+    if ((avalue-Trunc(avalue))>0) then
+    begin
+     Result:=rpParamDateTime;
+    end;
+    if (avalue<1) then
+     Result:=rpParamTime;
+   end;
+  varBoolean:
+   Result:=rpParamBool;
+  varInt64:
+   Result:=rpParamInteger;
+  varString:
+   Result:=rpParamString;
+  varOleStr:
+   Result:=rpParamString;
+  else
+   Result:=rpparamUnknown;
+ end;
+end;
+
+
 
 function ParamTypeToDataType(paramtype:TRpParamType):TFieldType;
 begin
@@ -602,7 +696,7 @@ begin
     Result:=ftString;
    rpParamSubst:
     Result:=ftString;
-   rpParamSubstE:
+   rpParamSubstE,rpParamInitialExpression:
     Result:=ftString;
   end;
 end;
@@ -679,7 +773,7 @@ begin
  case ParamType of
   rpParamUnknown:
    Result:='';
-  rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamSubstE:
+  rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamSubstE,rpParamInitialExpression:
    Result:=String(Value);
   rpParamInteger,rpParamDouble,rpParamCurrency:
    Result:=FloatToStr(Value);
@@ -692,7 +786,7 @@ begin
   rpParamBool:
    Result:=BoolToStr(Value,True);
 {$IFNDEF FORWEBAX}
-  rpParamList:
+  rpParamList,rpParamSubstList:
    Result:=GetListValue;
 {$ENDIF}
 {$IFDEF FORWEBAX}
@@ -707,7 +801,7 @@ end;
 procedure TRpParam.SetAsString(NewValue:WideString);
 begin
  case ParamType of
-  rpParamString,rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamSubstE:
+  rpParamString,rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamSubstE,rpParamInitialExpression:
    Value:=NewValue;
   rpParamInteger,rpParamDouble,rpParamCurrency:
    Value:=StrToFloat(NewValue);
@@ -758,6 +852,10 @@ begin
    Result:=SRpSParamList;
   rpParamMultiple:
    Result:=SRpSMultiple;
+  rpParamSubstList:
+   Result:=SRpSParamSubsList;
+  rpParamInitialExpression:
+   Result:=SRpSParamInitialExpression;
   rpParamUnknown:
    Result:=SRpSUnknownType;
  end;
@@ -837,6 +935,16 @@ begin
   Result:=rpParamMultiple;
   exit;
  end;
+ if Value=SRpSParamSubsList then
+ begin
+  Result:=rpParamSubstList;
+  exit;
+ end;
+ if Value=SRpSParamInitialExpression then
+ begin
+  Result:=rpParamInitialExpression;
+  exit;
+ end;
 end;
 
 procedure GetPossibleDataTypesA(alist:TStrings);
@@ -870,6 +978,8 @@ begin
  alist.Add(SRpSParamList);
  alist.Add(SRpSMultiple);
  alist.Add(SRpSParamSubsE);
+ alist.Add(SRpSParamSubsList);
+ alist.Add(SRpSParamInitialExpression);
 end;
 
 // Command line params are in form of:
@@ -881,6 +991,7 @@ var
  paramname:String;
  paramvalue:String;
  index:integer;
+ param:TRpParam;
 begin
  for i:=1 to ParamCount do
  begin
@@ -891,7 +1002,13 @@ begin
    index:=Pos('=',aparam);
    paramname:=copy(aparam,1,index-1);
    paramvalue:=copy(aparam,index+1,Length(aparam));
-   params.ParamByName(paramname).AsString:=paramvalue;
+   param:=params.ParamByName(paramname);
+   if param.ParamType=rpParamList then
+   begin
+    param.Value:=param.Values.Strings[StrToInt(paramvalue)];
+   end
+   else
+    params.ParamByName(paramname).AsString:=paramvalue;
   end;
  end;
 end;

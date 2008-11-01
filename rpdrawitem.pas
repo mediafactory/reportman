@@ -58,7 +58,7 @@ type
   public
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
-   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;override;
+   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint;forcepartial:boolean):TPoint;override;
   published
    property BrushStyle:integer read FBrushStyle write FBrushStyle default 0;
    property BrushColor:integer read FBrushColor write FBrushColor default $FFFFFF;
@@ -94,7 +94,7 @@ type
     MaxExtent:TPoint;var PartialPrint:Boolean);override;
   public
    procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
-   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;override;
+   function GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint;forcepartial:boolean):TPoint;override;
    property Stream:TMemoryStream read FStream write SetStream;
    property Expression:WideString read FExpression write FExpression;
   published
@@ -250,6 +250,7 @@ end;
 function TRpImage.GetStream:TMemoryStream;
 var
  evaluator:TRpEvaluator;
+ areport:TRpBaseReport;
 begin
  try
   Result:=nil;
@@ -258,8 +259,12 @@ begin
    // If the expression is a field
    if Not Assigned(TRpBaseReport(GetReport).Evaluator) then
     Exit;
-   evaluator:=TRpBaseReport(GetReport).evaluator;
+   areport:=TRpBaseReport(GetReport);
+   evaluator:=areport.evaluator;
    Result:=evaluator.GetStreamFromExpression(Expression);
+   // Filter the image
+   if assigned(areport.MetaFile.OnFilterImage) then
+    areport.MetaFile.OnFilterImage(result);
    if CachedImage=rpCachedVariable then
    begin
     if Assigned(Result) then
@@ -346,11 +351,11 @@ begin
  end;
 end;
 
-function TRpImage.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;
+function TRpImage.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint;forcepartial:boolean):TPoint;
 var
  FMStream:TMemoryStream;
 begin
- Result:=inherited GetExtension(adriver,MaxExtent);
+ Result:=inherited GetExtension(adriver,MaxExtent,forcepartial);
 
  if (DrawStyle in [rpDrawCrop,rpDrawStretch,rpDrawTile]) then
   exit;
@@ -366,9 +371,9 @@ begin
  end;
 end;
 
-function TRpShape.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint):TPoint;
+function TRpShape.GetExtension(adriver:TRpPrintDriver;MaxExtent:TPoint;forcepartial:boolean):TPoint;
 begin
- Result:=inherited GetExtension(adriver,MaxExtent);
+ Result:=inherited GetExtension(adriver,MaxExtent,forcepartial);
  if (Shape=rpsHorzLine) then
  begin
   Result.Y:=PenWidth;

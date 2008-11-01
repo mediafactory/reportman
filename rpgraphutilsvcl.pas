@@ -42,7 +42,7 @@ type
   TMessageStyle = (smsInformation, smsWarning, smsCritical);
 
   TFRpMessageDlgVCL = class(TForm)
-    Panel1: TPanel;
+    PBottom: TPanel;
     BCancel: TButton;
     BOk: TButton;
     BYes: TButton;
@@ -56,6 +56,7 @@ type
     procedure BYesClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure FormShow(Sender: TObject);
   private
     { Private declarations }
    Buttonpressed,EscapeButton:TMessageButton;
@@ -79,6 +80,7 @@ function RpInputBox(const ACaption, APrompt, ADefault:WideString ):WideString;
 procedure FillTreeView(ATree:TTreeView;alist:TStringList);
 function GetFullFileName (ANode:TTreeNode;dirseparator:char):String;
 function CLXColorToVCLColor (CLXColor:integer):integer;
+procedure RpShowMessage(const Text: WideString);
 
 implementation
 
@@ -101,6 +103,12 @@ function RegQueryValueEx(hKey: LongWord; lpValueName: PChar;
 {$ENDIF}
 
 {$ENDIF}
+
+procedure RpShowMessage(const Text: WideString);
+begin
+ RpMessageBox(Text);
+end;
+
 
 function AlignToGrid(Value:integer;scale:integer):integer;
 var
@@ -618,6 +626,37 @@ begin
   Result:=ANode.Text;
 end;
 
+
+procedure TFRpMessageDlgVCL.FormShow(Sender: TObject);
+const
+ BUTTON_GAP=10;
+ BUTTON_WIDTH=80;
+var
+ i:integer;
+ alist:TList;
+ leftpos:integer;
+begin
+ // Center visible buttons
+ alist:=TList.Create;
+ try
+  for i:=0 to PBottom.ControlCount-1 do
+  begin
+   if PBottom.Controls[i].Visible then
+   begin
+    alist.Add(PBottom.Controls[i]);
+   end;
+  end;
+  leftpos:=(PBottom.Width div 2)-alist.Count*(BUTTON_WIDTH div 2)-
+   (alist.Count-1)*BUTTON_GAP;
+  for i:=0 to alist.Count-1 do
+  begin
+   TControl(alist.Items[i]).Left:=leftpos;
+   leftpos:=leftpos+BUTTON_WIDTH+BUTTON_GAP;
+  end;
+ finally
+  alist.Free;
+ end;
+end;
 
 initialization
 {$IFNDEF DOTNETDBUGS}

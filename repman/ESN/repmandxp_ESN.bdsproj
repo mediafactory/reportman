@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <PersonalityInfo>
+    <Option>
+      <Option Name="Personality">W32ResourceDLL.Personality</Option>
+      <Option Name="ProjectType">ResourceDLL</Option>
+      <Option Name="Version">1.0</Option>
+      <Option Name="GUID">{184BAC33-7E03-41BC-9628-C1C7D1693BF7}</Option>
+    </Option>
+  </PersonalityInfo>
+  <W32ResourceDLL.Personality>
+    <Source>
+      <Source Name="MainSource">C:\prog\toni\cvsroot\reportman\reportman\repman\ESN\repmandxp.dpr</Source>
+    </Source>
+    <Options>
+      <Options Name="BaseLang">3082</Options>
+      <Options Name="TargetName">..\repmandxp.ESN</Options>
+    </Options>
+    <VersionInfo>
+      <VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+      <VersionInfo Name="AutoIncBuild">True</VersionInfo>
+      <VersionInfo Name="MajorVer">2</VersionInfo>
+      <VersionInfo Name="MinorVer">4</VersionInfo>
+      <VersionInfo Name="Release">0</VersionInfo>
+      <VersionInfo Name="Build">99</VersionInfo>
+      <VersionInfo Name="Debug">False</VersionInfo>
+      <VersionInfo Name="PreRelease">False</VersionInfo>
+      <VersionInfo Name="Special">False</VersionInfo>
+      <VersionInfo Name="Private">False</VersionInfo>
+      <VersionInfo Name="DLL">False</VersionInfo>
+      <VersionInfo Name="Locale">3082</VersionInfo>
+      <VersionInfo Name="CodePage">1252</VersionInfo>
+    </VersionInfo>
+    <VersionInfoKeys>
+      <VersionInfoKeys Name="CompanyName">Toni Martir</VersionInfoKeys>
+      <VersionInfoKeys Name="FileDescription">Report Manager Designer</VersionInfoKeys>
+      <VersionInfoKeys Name="FileVersion">2.4.0.99</VersionInfoKeys>
+      <VersionInfoKeys Name="InternalName">repmandxp</VersionInfoKeys>
+      <VersionInfoKeys Name="LegalCopyright">MPL/GPL License</VersionInfoKeys>
+      <VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys>
+      <VersionInfoKeys Name="OriginalFilename">repmandxp</VersionInfoKeys>
+      <VersionInfoKeys Name="ProductName">Report Manager Designer</VersionInfoKeys>
+      <VersionInfoKeys Name="ProductVersion">2.4.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="Comments"></VersionInfoKeys>
+    </VersionInfoKeys>
+    <FileList>
+      <File FileName="vcl\DBLOGDLG.dfm" ContainerId="W32Form" ModuleName="DBLOGDLG.dfm"/>
+      <File FileName="vcl\DBPWDLG.dfm" ContainerId="W32Form" ModuleName="DBPWDLG.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpdbbrowservcl.dfm" ContainerId="W32Form" ModuleName="rpdbbrowservcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpdbxconfigvcl.dfm" ContainerId="W32Form" ModuleName="rpdbxconfigvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpeditconnvcl.dfm" ContainerId="W32Form" ModuleName="rpeditconnvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpexceldriver.dfm" ContainerId="W32Form" ModuleName="rpexceldriver.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpexpredlgvcl.dfm" ContainerId="W32Form" ModuleName="rpexpredlgvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpfmainmetaviewvcl.dfm" ContainerId="W32Form" ModuleName="rpfmainmetaviewvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpfmetaviewvcl.dfm" ContainerId="W32Form" ModuleName="rpfmetaviewvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpfparamsvcl.dfm" ContainerId="W32Form" ModuleName="rpfparamsvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpgdidriver.dfm" ContainerId="W32Form" ModuleName="rpgdidriver.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpgraphutilsvcl.dfm" ContainerId="W32Form" ModuleName="rpgraphutilsvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfaboutvcl.dfm" ContainerId="W32Form" ModuleName="rpmdfaboutvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfconnectionvcl.dfm" ContainerId="W32Form" ModuleName="rpmdfconnectionvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfdatasetsvcl.dfm" ContainerId="W32Form" ModuleName="rpmdfdatasetsvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfdatatextvcl.dfm" ContainerId="W32Form" ModuleName="rpmdfdatatextvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfdesignvcl.dfm" ContainerId="W32Form" ModuleName="rpmdfdesignvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfdinfovcl.dfm" ContainerId="W32Form" ModuleName="rpmdfdinfovcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfextsecvcl.dfm" ContainerId="W32Form" ModuleName="rpmdfextsecvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfgridvcl.dfm" ContainerId="W32Form" ModuleName="rpmdfgridvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfmainvcl.dfm" ContainerId="W32Form" ModuleName="rpmdfmainvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfopenlibvcl.dfm" ContainerId="W32Form" ModuleName="rpmdfopenlibvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfsampledatavcl.dfm" ContainerId="W32Form" ModuleName="rpmdfsampledatavcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfsearchvcl.dfm" ContainerId="W32Form" ModuleName="rpmdfsearchvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfstrucvcl.dfm" ContainerId="W32Form" ModuleName="rpmdfstrucvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdftreevcl.dfm" ContainerId="W32Form" ModuleName="rpmdftreevcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfwizardvcl.dfm" ContainerId="W32Form" ModuleName="rpmdfwizardvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdobjinspvcl.dfm" ContainerId="W32Form" ModuleName="rpmdobjinspvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdprintconfigvcl.dfm" ContainerId="W32Form" ModuleName="rpmdprintconfigvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdsysinfo.dfm" ContainerId="W32Form" ModuleName="rpmdsysinfo.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rppagesetupvcl.dfm" ContainerId="W32Form" ModuleName="rppagesetupvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rprfvparams.dfm" ContainerId="W32Form" ModuleName="rprfvparams.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpvpreview.dfm" ContainerId="W32Form" ModuleName="rpvpreview.dfm"/>
+      <File FileName="repmandxp_DRC.rc" ContainerId="W32RC" ModuleName="repmandxp_DRC.rc"/>
+    </FileList>
+  </W32ResourceDLL.Personality>
+</BorlandProject>

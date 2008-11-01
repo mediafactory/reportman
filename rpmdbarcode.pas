@@ -1299,7 +1299,7 @@ begin
 			FText := FText + code93x[ord(save[i])];
 	end;
 
-//Showmessage(Format('Text: <%s>', [FText]));
+//RpShowmessage(Format('Text: <%s>', [FText]));
         CurrentText:=FText;
         try
          result := Code_93;
@@ -2327,7 +2327,6 @@ begin
     if (Position <= CodeLen) then
     begin
       GetNextCharacter (NewChar, Codeword, Position, CodeLen);
-      validtext:=true;
       if NewChar>127 then
        validtext:=false
       else
@@ -2668,7 +2667,7 @@ begin
   end;
  end;
  // Draws Barcode
-//Showmessage(Format('Data <%s>', [data]));
+//RpShowmessage(Format('Data <%s>', [data]));
  DoLines(data, aposx,aposy,metafile);    // draw the barcode
 
 end;

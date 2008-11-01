@@ -74,42 +74,16 @@ const
   function Obtainininamecommonconfig (company, product, filename:string):string;
   function GetTheSystemDirectory:String;
 {$IFDEF MSWINDOWS}
-{$IFNDEF BUILDER4}
-{$IFNDEF DOTNETD}
-{$EXTERNALSYM SHGetFolderPath}
-{$IFNDEF FPC}
-function SHGetFolderPath(hwnd: HWND; csidl: Integer; hToken: THandle; dwFlags: DWORD; pszPath: PChar): HResult; stdcall;
-function SHGetFolderPath; external shfolder name 'SHGetFolderPathA';
-{$ENDIF}
-{$IFDEF FPC}
-function SHGetFolderPath(hwnd: HWND; csidl: Integer; hToken: THandle; dwFlags: DWORD; pszPath: PChar): HResult; stdcall; external shfolder name 'SHGetFolderPathA';
-{$ENDIF}
-{$ENDIF}
-{$ENDIF}
-{$IFDEF BUILDER4}
-{$IFNDEF DOTNETD}
 var SHGetFolderPath:function (hwnd: HWND; csidl: Integer; hToken: THandle; dwFlags: DWORD; pszPath: PChar): HResult; stdcall;
 var HandleLib:THandle;
-{$ENDIF}
-{$ENDIF}
-
-{$IFNDEF DOTNETD}
-{$EXTERNALSYM PathAppend}
-{$IFNDEF FPC}
-function PathAppend(pszPath: PChar; pMore: PChar): BOOL; stdcall;
-function PathAppend; external shlwapi32 name 'PathAppendA';
-{$ENDIF}
-{$IFDEF FPC}
-function PathAppend(pszPath: PChar; pMore: PChar): BOOL; stdcall;external shlwapi32 name 'PathAppendA';
-{$ENDIF}
-{$ENDIF}
+var PathAppend:function (pszPath: PChar; pMore: PChar): BOOL; stdcall;
+var HandleLib2:THandle;
 {$ENDIF}
 
 implementation
 
 uses rptypes;
 
-{$IFNDEF DOTNETD}
 function Obtainininameuserconfig(company,product,filename:string):string;
 var
  szAppData:array [0..MAX_PATH] of char;
@@ -286,97 +260,30 @@ begin
  end;
 {$ENDIF}
 end;
-{$ENDIF}
-
-{$IFDEF DOTNETD}
-function Obtainininameuserconfig(company,product,filename:string):string;
-begin
- Result:=Environment.GetFolderPath (System.Environment.SpecialFolder.ApplicationData);
- if length(filename)<1 then
-  Raise Exception.Create(SRpFileNameRequired);
- if length(company)>0 then
-  Result:=System.IO.Path.Combine(Result,company);
- if Length(product)>0 then
- begin
-  Result:=System.IO.Path.Combine(Result,product);
- end;
- if Not System.IO.Directory.Exists(Result) then
- begin
-   System.IO.Directory.CreateDirectory(Result);
-   if Not System.IO.Directory.Exists(Result) then
-    Result:='';
- end;
- if Length(Result)>0 then
-  Result:=System.IO.Path.Combine(Result,filename+'.ini');
-end;
 
 
-function Obtainininamelocalconfig(company,product,filename:string):string;
-begin
- Result:=Environment.GetFolderPath (System.Environment.SpecialFolder.LocalApplicationData);
- if length(filename)<1 then
-  Raise Exception.Create(SRpFileNameRequired);
- if length(company)>0 then
-  Result:=System.IO.Path.Combine(Result,company);
- if Length(product)>0 then
- begin
-  Result:=System.IO.Path.Combine(Result,product);
- end;
- if Not System.IO.Directory.Exists(Result) then
- begin
-   System.IO.Directory.CreateDirectory(Result);
-   if Not System.IO.Directory.Exists(Result) then
-    Result:='';
- end;
- if Length(Result)>0 then
-  Result:=System.IO.Path.Combine(Result,filename+'.ini');
-end;
 
-
-function Obtainininamecommonconfig(company,product,filename:string):string;
-begin
- Result:=Environment.GetFolderPath (System.Environment.SpecialFolder.CommonApplicationData);
- if length(filename)<1 then
-  Raise Exception.Create(SRpFileNameRequired);
- if length(company)>0 then
-  Result:=System.IO.Path.Combine(Result,company);
- if Length(product)>0 then
- begin
-  Result:=System.IO.Path.Combine(Result,product);
- end;
- if Not System.IO.Directory.Exists(Result) then
- begin
-   System.IO.Directory.CreateDirectory(Result);
-   if Not System.IO.Directory.Exists(Result) then
-    Result:='';
- end;
- if Length(Result)>0 then
-  Result:=System.IO.Path.Combine(Result,filename+'.ini');
-end;
-
-function GetTheSystemDirectory:String;
-begin
- Result:=Environment.GetFolderPath (System.Environment.SpecialFolder.System);
-end;
-
-{$ENDIF}
-
-
-{$IFDEF BUILDER4}
 initialization
 
 HandleLib:=LoadLibrary(shfolder);
 if HandleLib=0 then
  RaiseLastOSError;
+HandleLib2:=LoadLibrary(shlwapi32);
+if HandleLib=2 then
+ RaiseLastOSError;
 SHGetFolderPath:=GetProcAddress(HandleLib,PChar('SHGetFolderPathA'));
 if Not Assigned(SHGetFolderPath) then
+ RaiseLastOSError;
+PathAppend:=GetProcAddress(HandleLib2,PChar('PathAppendA'));
+if Not Assigned(PathAppend) then
  RaiseLastOSError;
 
 finalization
 
 if HandleLib<>0 then
  FreeLibrary(HandleLib);
-{$ENDIF}
+if HandleLib2<>0 then
+ FreeLibrary(HandleLib2);
 end.
 
 

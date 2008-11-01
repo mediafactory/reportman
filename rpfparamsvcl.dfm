@@ -15,7 +15,7 @@ object FRpParamsVCL: TFRpParamsVCL
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 154
+    Top = 147
     Width = 473
     Height = 401
     Align = alBottom
@@ -382,7 +382,7 @@ object FRpParamsVCL: TFRpParamsVCL
     Left = 0
     Top = 0
     Width = 473
-    Height = 154
+    Height = 147
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
@@ -390,7 +390,7 @@ object FRpParamsVCL: TFRpParamsVCL
       Left = 0
       Top = 28
       Width = 377
-      Height = 126
+      Height = 119
       Align = alClient
       ItemHeight = 13
       TabOrder = 0
@@ -454,7 +454,7 @@ object FRpParamsVCL: TFRpParamsVCL
       Left = 377
       Top = 28
       Width = 96
-      Height = 126
+      Height = 119
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2

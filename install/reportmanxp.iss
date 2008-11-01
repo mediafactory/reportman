@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 2.7e
-AppVersion=2.7e
-OutputBaseFilename=reportman2_7e
+AppVerName=Report Manager 2.8c
+AppVersion=2.8c
+OutputBaseFilename=reportman2_8c
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -80,16 +80,16 @@ Source: ..\repman\utils\printrep\printrepxp.exe; DestDir: {app}; Components: com
 Source: ..\repman\utils\printrep\printrepxp.exe.manifest; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\reptotxt\reptotxt.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\txttorep\txttorep.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: ..\drivers\win32\upx.exe; DestDir: {sys}; Flags: restartreplace
+Source: ..\drivers\win32\upx.exe; DestDir: {app}; Flags: restartreplace
 Source: ..\repman\utils\rptranslator\rptranslate.exe; DestDir: {app}; Components: translation; Flags: ignoreversion
 Source: ..\repman\utils\rptranslator\rptranslate.exe.manifest; DestDir: {app}; Components: translation; Flags: ignoreversion
 Source: ..\repman\utils\rptranslator\rptranslateres.*; DestDir: {app}; Components: translation; Flags: ignoreversion
 Source: ..\repman\utils\compilerep\compilerep.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\utils\printreptopdf\printreptopdf.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
-Source: ..\activex\ReportMan.ocx; DestDir: {sys}; Components: activex; Flags: restartreplace sharedfile regserver ignoreversion
-Source: ..\activex\ReportMan.ocx.manifest; DestDir: {sys}; Components: activex
+Source: ..\activex\ReportMan.ocx; DestDir: {app}; Components: activex; Flags: restartreplace sharedfile regserver ignoreversion
+Source: ..\activex\ReportMan.ocx.manifest; DestDir: {app}; Components: activex
 Source: ..\webactivex\WebReportManX.cab; DestDir: {app}; Components: ieplugin; Flags: ignoreversion
-Source: ..\webactivex\WebReportManX.ocx; DestDir: {sys}; Components: ieplugin; Flags: restartreplace sharedfile regserver ignoreversion
+Source: ..\webactivex\WebReportManX.ocx; DestDir: {app}; Components: ieplugin; Flags: restartreplace sharedfile regserver ignoreversion
 Source: ..\server\service\repserverservice.exe; DestDir: {app}; Components: servertcp; Flags: ignoreversion
 Source: ..\server\app\reportserverappxp.exe; DestDir: {app}; Components: servertcp; Flags: ignoreversion
 Source: ..\server\app\reportserverappxp.exe.manifest; DestDir: {app}; Components: servertcp; Flags: ignoreversion
@@ -109,14 +109,17 @@ Source: ..\repman\repsamples\biolife.cds; DestDir: {app}; Components: repsample;
 
 Source: ..\repman\dbxdrivers.ini; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
 Source: ..\repman\dbxconnections.ini; DestDir: {app}; Components: dbexpress; Flags: onlyifdoesntexist
-Source: ..\drivers\win32\dbexpint.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpmys.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpinf.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpmysql.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpmss.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpora.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpdb2.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbxoodbc.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: ..\drivers\win32new\dbxint30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxadapter30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxasa30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxase30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxidb230.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxinf30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmss30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmy30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmysA30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxora30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxoodbc.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
 
 ; Api libraries
 Source: ..\rpreportman.h; DestDir: {app}\api; Components: activex; Flags: ignoreversion

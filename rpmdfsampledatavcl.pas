@@ -27,8 +27,10 @@ uses SysUtils, Classes, Graphics, Forms,
 const
  DCONTROL_DISTANCEY=5;
  DCONTROL_DISTANCEX=10;
- DCONTROL_DISTANCEX2=150;
+ DCONTROL_DISTANCEX2=300;
  DCONTROL_WIDTHX=200;
+ DCONTROL_GAP=15;
+ DBEVEL_GAP=2;
  DLABEL_INCY=1;
 
 type
@@ -76,6 +78,7 @@ var
  label1:TLabel;
  Control:TControl;
  top:integer;
+ bevel:TBevel;
 begin
  if Not Assigned(Datasource1.dataset) then
   exit;
@@ -98,9 +101,19 @@ begin
 
   control.top:=top;
   control.left:=DCONTROL_DISTANCEX2;
-  control.Width:=DCONTROL_WIDTHX;
+  control.Anchors:=[akLeft,akTop,akRight];
+  control.Width:=ScrollBox1.Width-DCONTROL_GAP-control.Left;
   control.Height:=Canvas.TextHeight('Wg');
   control.parent:=SCrollbox1;
+
+  bevel:=TBevel.Create(Self);
+  bevel.Top:=top+Control.Height+DBEVEL_GAP;
+  bevel.left:=label1.Left;
+  bevel.Anchors:=[akLeft,akTop,akRight];
+  bevel.Width:=ScrollBox1.Width-DCONTROL_GAP-bevel.Left;
+  bevel.Height:=2;
+  bevel.parent:=SCrollbox1;
+
 
   top:=top+Control.Height+DCONTROL_DISTANCEY;
  end;

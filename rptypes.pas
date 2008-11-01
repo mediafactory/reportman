@@ -136,7 +136,7 @@ type
 
  TRpParamtype=(rpParamString,rpParamInteger,rpParamDouble,rpParamDate,
   rpParamTime,rpParamDateTime,rpParamCurrency,rpParamBool,
-  rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamList,rpParamMultiple,rpParamSubstE,rpParamUnknown);
+  rpParamExpreB,rpParamExpreA,rpParamSubst,rpParamList,rpParamMultiple,rpParamSubstE,rpParamSubstList,rpParamInitialExpression,rpParamUnknown);
 
  TRpCachedImage=(rpCachedNone,rpCachedFixed,rpCachedVariable);
  TRpParamObject=class(TObject)
@@ -417,6 +417,7 @@ function MIMEDecodeString(avalue:string):string;
 procedure MIMEEncode(amemstream:TMemoryStream;DestStream:TStream);
 function MIMEEncodeString(amemstream:TMemoryStream):string;
 {$ENDIF}
+function EscapeCodedToString(astring:string):string;
 
 
 implementation
@@ -5371,6 +5372,9 @@ end;
 
 
 {$ENDIF}
+
+
+
 
 
 initialization

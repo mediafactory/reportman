@@ -191,6 +191,8 @@ type
    function Newlanguage(alanguage:integer):integer;
    procedure StopWork;
   protected
+    oldprintedsectionext:TPoint;
+    oldprintedsection:TRpSection;
     printingonepass:boolean;
     AbortingThread:Boolean;
     FThreadExec:TThreadExecReport;
@@ -296,7 +298,7 @@ type
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    procedure FreeSubreports;
-   procedure AddSubReport;
+   function AddSubReport:TRpSubReport;
    procedure DeleteSubReport(subr:TRpSubReport);
    // Streaming functions and properties
    procedure SaveToStream(Stream:TStream);
@@ -745,6 +747,8 @@ var
  forcexml:boolean;
  i:integer;
 begin
+ // restore parameters initial values
+ Params.RestoreInitialValues;
  theformat:=FStreamFormat;
  forcexml:=false;
  for i:=0 to DatabaseInfo.Count-1 do
@@ -834,7 +838,7 @@ begin
 end;
 
 
-procedure TRpBaseReport.AddSubReport;
+function TRpBaseReport.AddSubReport:TRpSubReport;
 var
  it:TRpSubReportListItem;
 begin
@@ -842,6 +846,7 @@ begin
  it.FSubReport:=TRpSubreport.Create(Self);
  Generatenewname(it.FSubReport);
  it.FSubReport.CreateNew;
+ Result:=it.FSubReport;
 end;
 
 procedure TRpBaseReport.CreateNew;
@@ -1355,7 +1360,10 @@ begin
  end;
  freespace:=PrevReport.freespace;
  pageposy:=PrevReport.pageposy;
- pageposx:=FLeftMargin;
+// pageposx:=FLeftMargin;
+ pageposx:=PrevReport.pageposx;
+ oldprintedsection:=PrevReport.oldprintedsection;
+ oldprintedsectionext:=PrevReport.oldprintedsectionext;
  FCompose:=True;
  TwoPass:=true;
  if execute then
@@ -1594,7 +1602,7 @@ begin
  end;
  for i:=0 to Params.Count-1 do
  begin
-  if params.items[i].ParamType=rpParamSubstE then
+  if (params.items[i].ParamType in [rpParamSubstE,rpParamSubstList]) then
   begin
    paramname:=params.items[i].Name;
    try
@@ -1602,8 +1610,8 @@ begin
     begin
      if doeval then
      begin
-      FEvaluator.EvaluateText(paramname+':=('+String(params.items[i].Value)+')');
-      params.items[i].LastValue:=FEvaluator.EvaluateText(paramname);
+      FEvaluator.EvaluateText('M.'+paramname+':=('+String(params.items[i].Value)+')');
+      params.items[i].LastValue:=FEvaluator.EvaluateText('M.'+paramname);
      end
      else
      begin
@@ -1787,7 +1795,7 @@ begin
  param:=Params.FindParam(UpperCase(ParamName));
  if Assigned(param) then
  begin
-  if param.ParamType in  [rpparammultiple,rpparamlist] then
+  if param.ParamType in  [rpparammultiple,rpparamlist,rpparamsubstlist] then
   begin
    case index of
     0:
@@ -1812,7 +1820,7 @@ begin
       end
       else
       begin
-       if param.ParamType=rpparamlist then
+       if ((param.ParamType=rpparamlist) or (param.ParamType=rpparamsubstlist))  then
         Result:=param.ListValue;
       end;
      end;

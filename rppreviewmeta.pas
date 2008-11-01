@@ -54,7 +54,10 @@ type
    FOnWorkProgress:TMetaFileWorkProgress;
    image:TImage;
    conteimage:TPanel;
+   FShowPageMargins:boolean;
+   FTimerResize:TTimer;
    procedure SetMetafile(meta:TRpMetafileReport);
+   procedure ResizeEventTimer(Sender:TObject);
    procedure WorkAsyncError(amessage:String);
    procedure SetEntireTopDown(avalue:boolean);
    procedure SetEntirePageCount(avalue:integer);
@@ -68,6 +71,7 @@ type
    procedure SetPage(avalue:integer);
    procedure SetPreviewScale(avalue:double);
    procedure SetOnWorkProgress(AValue:TMetaFileWorkProgress);
+   procedure SetShowPageMargins(avalue:boolean);
   protected
    prdriver:TRpGDIDriver;
    prdriver_internal:TRpGDIDriver;
@@ -104,6 +108,7 @@ type
     SetEntireTopDown;
    property AutoScale:TAutoScaleType read FAutoScale write SetAutoScale;
    property Color;
+   property ShowPageMargins:boolean read FShowPageMargins write SetShowPageMargins default false;
    property OnWorkProgress:TMetaFileWorkProgress read FOnWorkProgress write SetOnWorkProgress;
  end;
 
@@ -113,6 +118,9 @@ constructor TRpPreviewMeta.Create(AOwner:TComponent);
 begin
  inherited Create(AOwner);
 
+ FTimerResize:=TTimer.Create(Self);
+ FTimerResize.Interval:=10;
+ FTImerResize.OnTimer:=ResizeEventTimer;
  Color:=clAppWorkSpace;
  FBitmap:=TBitmap.Create;
  FBitmap.PixelFormat:=pf32bit;
@@ -137,6 +145,15 @@ begin
  VertScrollBar.Tracking:=true;
  FBarWidth:=GetSystemMetrics(SM_CYHSCROLL);
  FBarHeight:=GetSystemMetrics(SM_CXVSCROLL);
+end;
+
+procedure TRpPreviewMeta.SetShowPageMargins(avalue:boolean);
+begin
+ FShowPageMargins:=avalue;
+ prdriver.showpagemargins:=avalue;
+ prdriver_internal.showpagemargins:=avalue;
+ FPageDrawn:=-1;
+ ReDrawPage;
 end;
 
 
@@ -609,7 +626,8 @@ end;
 
 procedure TRpPreviewmeta.WMSizeChange(var message:TMessage);
 begin
- ReDrawPage;
+// ReDrawPage;
+ FTimerResize.Enabled:=true;
 end;
 
 procedure TRpPreviewmeta.InternalMouseDown(Sender: TObject; Button: TMouseButton;
@@ -786,5 +804,12 @@ begin
  Metafile:=meta;
  RefreshPage;
 end;
+
+procedure TRpPreviewmeta.ResizeEventTimer(Sender:TObject);
+begin
+ FTimerResize.Enabled:=False;
+ ReDrawPage;
+end;
+
 
 end.

@@ -128,7 +128,7 @@ public
     constructor create;
     {$ENDIF}
 
-    destructor destroy; override;
+    destructor Destroy; override;
 
     procedure clear; virtual;
     procedure deleteAll; virtual;

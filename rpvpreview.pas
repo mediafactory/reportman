@@ -187,6 +187,10 @@ begin
   dia.PreviewControl:=PreviewControl;
   dia.AParams.Enabled:=previewcontrol is TRpPreviewControl;
   dia.APageSetup.Enabled:=previewcontrol is TRpPreviewControl;
+  if (previewcontrol is TRpPreviewControl) then
+  begin
+   previewcontrol.ShowPageMargins:=TRpPreviewControl(previewcontrol).Report.PreviewMargins;
+  end;
   if previewcontrol.metafile.PreviewWindow=spwMaximized then
     dia.WindowState:=wsMaximized;
   previewcontrol.OnWorkProgress:=dia.RepProgress;
@@ -263,9 +267,9 @@ begin
  APageSetup.ShortCut:=ShortCut(VK_F11, []);
  AParams.ShortCut:=ShortCut(VK_F12, []);
 
- AScale100.ShortCut:=ShortCut(VK_F5, []);
- AScaleWide.ShortCut:=ShortCut(VK_F6, []);
- AScaleFull.ShortCut:=ShortCut(VK_F7, []);
+ AScale100.ShortCut:=ShortCut(VK_F6, []);
+ AScaleWide.ShortCut:=ShortCut(VK_F7, []);
+ AScaleFull.ShortCut:=ShortCut(VK_F8, []);
  AScaleLess.ShortCut:=ShortCut(VK_SUBTRACT, []);
  AScaleMore.ShortCut:=ShortCut(VK_ADD, []);
 
@@ -723,6 +727,8 @@ procedure TFRpVPreview.FormKeyDown(Sender: TObject; var Key: Word;
 var
  increment:integer;
 begin
+ if not Assigned(fpreviewcontrol) then
+  exit;
  if (ssShift in Shift) then
   increment:=REP_C_WHEELINC
  else
@@ -742,6 +748,10 @@ begin
   else
    fpreviewcontrol.AutoScale:=AScaleEntirePage;
   Key:=0;
+ end;
+ if Key=VK_F5 then
+ begin
+  fpreviewControl.ShowPageMargins:=not fPreviewControl.ShowPageMargins;
  end;
 end;
 

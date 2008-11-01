@@ -102,7 +102,7 @@ object FMain: TFMain
     Left = 0
     Top = 28
     Width = 681
-    Height = 393
+    Height = 401
     Align = alClient
     BevelOuter = bvNone
     Caption = 'PParent'
@@ -111,7 +111,7 @@ object FMain: TFMain
     Visible = False
     object Splitter1: TSplitter
       Left = 0
-      Top = 266
+      Top = 274
       Width = 681
       Height = 8
       Cursor = crVSplit
@@ -122,7 +122,7 @@ object FMain: TFMain
     end
     object DBMemo1: TDBMemo
       Left = 0
-      Top = 274
+      Top = 282
       Width = 681
       Height = 119
       Align = alBottom
@@ -136,7 +136,7 @@ object FMain: TFMain
       Left = 0
       Top = 0
       Width = 681
-      Height = 266
+      Height = 274
       Align = alClient
       DataSource = STexts
       Options = [dgEditing, dgAlwaysShowEditor, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit]
@@ -178,13 +178,14 @@ object FMain: TFMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 421
+    Top = 429
     Width = 681
     Height = 21
     Panels = <
       item
         Width = 50
       end>
+    SimplePanel = False
   end
   object DTexts: TClientDataSet
     Aggregates = <>
@@ -408,7 +409,7 @@ object FMain: TFMain
     Top = 52
   end
   object SaveDialog1: TSaveDialog
-    Filter = 'All files|*.*'
+    Filter = 'Translation file|*.*|Resource file|*.RC'
     Left = 376
     Top = 52
   end

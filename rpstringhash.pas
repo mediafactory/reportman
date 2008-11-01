@@ -59,7 +59,7 @@ public
     constructor create(caseSensitive : boolean; initialcapacity : integer);
     {$ENDIF FPC}
 
-    destructor destroy; override;
+    destructor Destroy; override;
 
     procedure clear; virtual;
     procedure deleteAll; virtual;

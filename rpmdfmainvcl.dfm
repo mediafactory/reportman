@@ -19,13 +19,14 @@ object FRpMainFVCL: TFRpMainFVCL
   TextHeight = 13
   object BStatus: TStatusBar
     Left = 0
-    Top = 403
+    Top = 411
     Width = 567
     Height = 21
     Panels = <
       item
         Width = 50
       end>
+    SimplePanel = False
   end
   object ToolBar1: TToolBar
     Left = 0
@@ -288,7 +289,7 @@ object FRpMainFVCL: TFRpMainFVCL
     Left = 0
     Top = 68
     Width = 567
-    Height = 335
+    Height = 343
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
@@ -297,7 +298,8 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 181
       Top = 0
       Width = 8
-      Height = 335
+      Height = 343
+      Cursor = crHSplit
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
@@ -306,7 +308,7 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 0
       Top = 0
       Width = 181
-      Height = 335
+      Height = 343
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -2682,6 +2684,8 @@ object FRpMainFVCL: TFRpMainFVCL
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
+    MinFontSize = 0
+    MaxFontSize = 0
     Left = 384
     Top = 122
   end

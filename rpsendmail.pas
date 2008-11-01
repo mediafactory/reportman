@@ -103,7 +103,8 @@ begin
       for i:=0 to attatchments.Count-1 do
       begin
        idfile:=TIdAttachment.Create(amessage.MessageParts);
-       idfile.FileName:=attatchments.Strings[i];
+       idfile.FileName:=ExtractFileName(attatchments.Strings[i]);
+       idfile.StoredPathName:=attatchments.Strings[i];
       end;
      end;
     finally

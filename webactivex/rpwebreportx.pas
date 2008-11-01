@@ -7,7 +7,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ActiveX, AxCtrls, WebReportManX_TLB,
-  rpwebmetaclient,
+  rpwebmetaclient,rptypes,rpmetafile,
   StdVcl, StdCtrls, XPMan, ExtCtrls,
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP;
 
@@ -30,6 +30,7 @@ type
     Install:Integer;
     MetaUrl:WideString;
     Port:Integer;
+    SSL:Integer;
     ShowPrintDialog:Integer;
     Copies:Integer;
     procedure ActivateEvent(Sender: TObject);
@@ -98,6 +99,8 @@ type
     procedure Set_Copies(Value: Integer); safecall;
     function Get_AsyncRead: Integer; safecall;
     procedure Set_AsyncRead(Value: Integer); safecall;
+    function Get_SSL: Integer; safecall;
+    procedure Set_SSL(Value: Integer); safecall;
   public
     { Public declarations }
     procedure Initialize; override;
@@ -418,6 +421,8 @@ begin
 end;
 
 procedure TWebReportMan.Timer1Timer(Sender: TObject);
+var
+ msg:string;
 begin
  Timer1.Enabled:=false;
  try
@@ -434,6 +439,7 @@ begin
   webmetaprint.Port:=Port;
   webmetaprint.Copies:=Copies;
   webmetaprint.ShowPrintDialog:=ShowPrintDialog<>0;
+  webmetaprint.SSL:=SSL<>0;
   if Length(MetaUrl)>0 then
   begin
    // Create the stream and handle behaviour of async reading
@@ -442,8 +448,17 @@ begin
  except
   On E:Exception do
   begin
-   ShowMessage(E.Message);
-   caption:=E.Message;
+   // Build message
+   msg:=E.Message;
+   msg:=msg+#10+'MetaUrl:'+MetaUrl;
+   msg:=msg+#10+'Stream size:'+FormatFloat('##,##0',webmetaprint.StreamSize)+' bytes';
+   msg:=msg+#10+'SSL:'+IntToStr(SSL);
+   msg:=msg+#10+'AyncRead:'+BoolToStr(webmetaprint.AsyncRead);
+   if (E is ERpBadFileFormat) then
+    msg:=msg+#10+'BadFileFormat, position:'+FormatFloat('##,#0',ERpBadFileFormat(E).position);
+   ShowMessage(msg);
+
+   caption:=msg;
    webmetaprint.visible:=false;
    Invalidate;
   end;
@@ -508,6 +523,16 @@ end;
 procedure TWebReportMan.Set_AsyncRead(Value: Integer);
 begin
  AsyncRead:=Value;
+end;
+
+function TWebReportMan.Get_SSL: Integer;
+begin
+ Result:=SSL;
+end;
+
+procedure TWebReportMan.Set_SSL(Value: Integer);
+begin
+ SSL:=Value;
 end;
 
 initialization

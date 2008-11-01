@@ -444,7 +444,7 @@ const
             'incompatible version',{ Z_VERSION_ERROR (-6) }
             '');
 const
-  z_verbose : inti = 1;
+  z_verbose : inti = 0;
 
 {$IFDEF DEBUG}
 procedure z_error (m : string);
@@ -478,6 +478,8 @@ end;
 
 procedure Trace(x : string);
 begin
+ if (z_verbose>0) then
+ 
   WriteLn(x);
 end;
 

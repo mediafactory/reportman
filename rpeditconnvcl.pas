@@ -25,7 +25,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ExtCtrls, ComCtrls, ToolWin, ActnList,rpalias,
+  ExtCtrls, ComCtrls, ToolWin, ActnList,rpalias,rpgraphutilsvcl,
   DB,rpdatainfo,
 {$IFNDEF BUILDER4}
   rpdbxconfigvcl,rpmdfopenlibvcl,
@@ -358,7 +358,7 @@ begin
  dbinfo:=rpalias1.Connections.Items[LConnections.ItemIndex];
  dbinfo.Connect(nil);
  try
-  ShowMessage(SRpConnectionOk);
+  RpShowMessage(SRpConnectionOk);
  finally
   dbinfo.DisConnect;
  end;

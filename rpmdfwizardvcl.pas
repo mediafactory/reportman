@@ -26,7 +26,7 @@ uses
   Variants,
 {$ENDIF}
   Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ComCtrls,
+  Dialogs, StdCtrls, ComCtrls,rppagesetupvcl,
   rpmdconsts,rpreport,rpmdfconnectionvcl, ExtCtrls,
   rpmdfdatasetsvcl,rpmdfselectfields;
 
@@ -47,6 +47,7 @@ type
     BNext: TButton;
     BFinish: TButton;
     BBack: TButton;
+    BPageSetup: TButton;
     procedure BNext1Click(Sender: TObject);
     procedure BCancelClick(Sender: TObject);
     procedure BFinishClick(Sender: TObject);
@@ -54,6 +55,7 @@ type
     procedure BBackClick(Sender: TObject);
     procedure PControlChange(Sender: TObject);
     procedure PControlChanging(Sender: TObject; var AllowChange: Boolean);
+    procedure BPageSetupClick(Sender: TObject);
   private
     { Private declarations }
     report:TRpReport;
@@ -65,7 +67,7 @@ type
     { Public declarations }
   end;
 
-function NewReportWizard(report:TRpReport):Boolean;
+function NewReportWizard(report:TRpReport;fromtemplate:boolean):Boolean;
 
 implementation
 
@@ -74,15 +76,32 @@ uses rpcolumnar;
 {$R *.dfm}
 
 
-function NewReportWizard(report:TRpReport):boolean;
+function NewReportWizard(report:TRpReport;fromtemplate:boolean):boolean;
 var
  dia:TFRpWizardVCL;
+ i:integer;
 begin
  dia:=TFRpWizardVCL.Create(Application);
  try
+  if not fromtemplate then
+  begin
+   report.Createnew;
+   report.SubReports[0].SubReport.AddGroup('TOTAL');
+   for i:=0 to report.SubReports[0].SubReport.Sections.Count-1 do
+   begin
+    report.SubReports[0].SubReport.Sections[i].Section.Height:=275;
+   end;
+  end;
   dia.report:=report;
   dia.ShowModal;
   Result:=dia.Created;
+  if (dia.Created and (not fromtemplate)) then
+  begin
+   if report.DataInfo.Count>0 then
+   begin
+    report.SubReports[0].SubReport.Alias:=report.DataInfo.Items[0].Alias;
+   end;
+  end;
  finally
   dia.free;
  end;
@@ -121,12 +140,12 @@ begin
   for i:=0 to selframe.LSelected.Items.Count-1 do
   begin
    expression:=selframe.LSelected.Items.Strings[i];
-   expformat:='TRpExpression3';
-   captionformat:='TRpLabel3';
+   expformat:='';
+   captionformat:='';
    if selframe.LSelected.Checked[i] then
    begin
     sumaryexpression:=expression;
-    sumaryformat:='TrpExpression5';
+    sumaryformat:='';
    end
    else
    begin
@@ -225,6 +244,11 @@ begin
   report.Params.Assign(dataframe.params);
  end;
 
+end;
+
+procedure TFRpWizardVCL.BPageSetupClick(Sender: TObject);
+begin
+ ExecutePageSetup(report);
 end;
 
 end.

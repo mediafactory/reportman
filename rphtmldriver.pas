@@ -185,7 +185,7 @@ begin
        imafilename:='data:image/'+fileext+';base64,'+MIMEEncodeString(fimagestream);
 {$ENDIF}
 {$IFNDEF USEINDY}
-       raise Exception.Create('Embedding images in html not supported, compilation option USEINDY disabled';
+       raise Exception.Create('Embedding images in html not supported, compilation option USEINDY disabled');
 {$ENDIF}
       end
       else
@@ -368,7 +368,7 @@ begin
         imafilename:='data:image/'+fileext+';base64,'+MIMEEncodeString(fimagestream);
 {$ENDIF}
 {$IFNDEF USEINDY}
-        raise Exception.Create('Embedding images in html not supported, compilation option USEINDY disabled';
+        raise Exception.Create('Embedding images in html not supported, compilation option USEINDY disabled');
 {$ENDIF}
        end;
        Result:=Result+'background-image:url('+imafilename+');';

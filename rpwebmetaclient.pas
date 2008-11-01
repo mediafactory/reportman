@@ -35,13 +35,14 @@ uses classes,SysUtils,Windows,graphics,controls,forms,
  rpmetafile,rpfmainmetaviewvcl,rpmdconsts,SyncObjs,
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
  rpgdidriver,rpmdprintconfigvcl,rpmdshfolder,IdThreadComponent,
- rpfmetaviewvcl,IdSync,rpvgraphutils;
+ rpfmetaviewvcl,IdSync,rpvgraphutils,IdSSLOpenSSL;
 
-//const
-// READ_TIMEOUT=10000;
+const
+ READ_TIMEOUT=10000;
 type
  TRpWebMetaPrint=class(TCustomControl)
   private
+   FSSL:boolean;
    abyte:array of byte;
    FFinished:Boolean;
    FCaption:WideString;
@@ -63,6 +64,7 @@ type
    aborting:boolean;
    connect:TIdHttp;
    metafile:TrpMetafileReport;
+   FStreamSize:Integer;
    procedure DoInstall;
    procedure SetCaption(Value:WideString);
    procedure OnRequestData(Sender:TObject;count:integer);
@@ -82,6 +84,7 @@ type
   public
    aForm:TWinControl;
    Meta:TFRpMetaVCL;
+   property StreamSize:integer read FStreamSize;
    constructor Create(AOwner:TComponent);override;
    destructor Destroy;override;
    procedure Execute;
@@ -95,6 +98,7 @@ type
    property Caption:WideString read FCaption write SetCaption;
    property MetaUrl:String read FMetaUrl write FMetaUrl;
    property Port:integer read FPort write FPort default 90;
+   property SSL:boolean read FSSL write FSSL default false;
    property FontSize:Integer read FFontSize write FFontSize default 0;
    property FontName:String read FFontName write FFontName;
    property Preview:Boolean read FPreview write FPreview default false;
@@ -105,8 +109,11 @@ type
    property ShowPrintDialog:Boolean read FShowPrintDialog
     write FShowPrintDialog default false;
   end;
+{$IFDEF DELPHI2007}
+  TIdSSLIOHandlerSocket=class(TIdSSLIOHandlerSocketOpenSSL);
+{$ENDIF}
 
-procedure PrintHttpReport(httpstring:String);
+procedure PrintHttpReport(httpstring:String;usessl:boolean=false);
 
 
 
@@ -122,6 +129,7 @@ var
  rpPageSize:TPageSizeQt;
  okselected:Boolean;
 begin
+ FStreamSize:=0;
  GetDefaultDocumentProperties;
  errormessage:='';
  try
@@ -136,7 +144,6 @@ begin
   end
   else
   begin
- //  connect.ReadTimeout:=READ_TIMEOUT;
    readcount:=0;
    if Assigned(FNewStream) then
    begin
@@ -169,6 +176,12 @@ begin
     connect.Port:=FPort;
  {$ENDIF}
 {$ENDIF}
+     if (FSSL) then
+     begin
+      connect.IOHandler:=TIdSSLIOHandlerSocket.Create(nil);
+      TIdSSLIOHandlerSocket(connect.IOHandler).SSLOptions.Mode:= sslmClient;
+      TIdSSLIOHandlerSocket(connect.IOHandler).SSLOptions.Method:=sslvSSLv23;
+     end;
      metafile:=TrpMetafileReport.Create(nil);
      try
        metafile.AsyncReading:=AsyncRead;
@@ -181,10 +194,23 @@ begin
        else
        begin
         metafile.OnRequestData:=nil;
-        connect.Get(metaurl,FNewStream);
+        connect.Request.ContentType:='octet/stream';
+        connect.ReadTimeout:=READ_TIMEOUT;
+        connect.HandleRedirects:= True;
+        connect.Request.AcceptEncoding := 'gzip,deflate';
+        connect.Get(MetaUrl,FNewStream);
         FNewStream.Seek(0,soFromBeginning);
        end;
-       metafile.LoadFromStream(FNewStream);
+       FStreamSize:=FNewStream.Size;
+       try
+        metafile.LoadFromStream(FNewStream);
+       except
+        On E:Exception do
+        begin
+         E.Message:=E.Message;
+         raise;
+        end;
+       end;
        if preview then
        begin
         Meta:=PreviewMetafile(metafile,aform,ShowPrintDialog,false);
@@ -275,6 +301,7 @@ begin
  FPreview:=false;
  FFontSize:=0;
  FPort:=80;
+ FSSL:=false;
  FShowProgress:=True;
  FCopies:=1;
 end;
@@ -303,7 +330,7 @@ begin
  end;
 end;
 
-procedure PrintHttpReport(httpstring:String);
+procedure PrintHttpReport(httpstring:String;usessl:boolean=false);
 var
  connect:TIdHttp;
  astream:TMemoryStream;
@@ -314,6 +341,16 @@ begin
  try
   astream:=TMemoryStream.Create;
   try
+   if (usessl) then
+   begin
+    connect.IOHandler:=TIdSSLIOHandlerSocket.Create(nil);
+    TIdSSLIOHandlerSocket(connect.IOHandler).SSLOptions.Mode:= sslmClient;
+    TIdSSLIOHandlerSocket(connect.IOHandler).SSLOptions.Method:=sslvSSLv23;
+   end;
+   connect.Request.ContentType:='octet/stream';
+   connect.ReadTimeout:=READ_TIMEOUT;
+   connect.HandleRedirects:= True;
+   connect.Request.AcceptEncoding := 'gzip,deflate';
    connect.Get(httpstring,astream);
    metafile:=TrpMetafileReport.Create(nil);
    try
@@ -362,9 +399,18 @@ begin
   connect.Port:=FPort;
  {$ENDIF}
 {$ENDIF}
+  if (FSSL) then
+  begin
+   connect.IOHandler:=TIdSSLIOHandlerSocket.Create(nil);
+   TIdSSLIOHandlerSocket(connect.IOHandler).SSLOptions.Mode:= sslmClient;
+  end;
   astream:=TMemoryStream.Create;
   try
    sysdir:=GetTheSystemDirectory;
+   connect.Request.ContentType:='octet/stream';
+   connect.ReadTimeout:=READ_TIMEOUT;
+   connect.HandleRedirects:= True;
+   connect.Request.AcceptEncoding := 'gzip,deflate';
    connect.Get(MetaUrl+'/reportmanres.es',astream);
    if astream.size=0 then
     Raise Exception.Create(SRpNotFound+' - es '+MetaUrl);
@@ -432,8 +478,18 @@ begin
  FFinished:=false;
  SetLength(abyte,64000);
  try
+  if (FSSL) then
+  begin
+   connect.IOHandler:=TIdSSLIOHandlerSocket.Create(nil);
+   TIdSSLIOHandlerSocket(connect.IOHandler).SSLOptions.Mode:= sslmClient;
+   TIdSSLIOHandlerSocket(connect.IOHandler).SSLOptions.Method:=sslvSSLv23;
+  end;
   connect.OnWorkEnd:=connectWorkEnd;
   connect.OnWork:=connectWork;
+  connect.Request.ContentType:='octet/stream';
+  connect.ReadTimeout:=READ_TIMEOUT;
+  connect.HandleRedirects:= True;
+  connect.Request.AcceptEncoding := 'gzip,deflate';
   connect.Get(metaurl,FStream);
  finally
   FFinished:=true;

@@ -432,7 +432,19 @@ begin
  ANext.ShortCut:=VK_NEXT;
  AFirst.ShortCut:=VK_HOME;
  ALast.ShortCut:=VK_END;
+
+ APrint.ShortCut:=ShortCut(Ord('P'), [ssCtrl]);
+ ASave.ShortCut:=ShortCut(Ord('S'), [ssCtrl]);
+ AMailTo.ShortCut:=ShortCut(Ord('E'), [ssCtrl]);
  AFind.ShortCut:=ShortCut(VK_F3, []);
+
+ AScale100.ShortCut:=ShortCut(VK_F6, []);
+ AScaleWide.ShortCut:=ShortCut(VK_F7, []);
+ AScaleFull.ShortCut:=ShortCut(VK_F8, []);
+ AScaleLess.ShortCut:=ShortCut(VK_SUBTRACT, []);
+ AScaleMore.ShortCut:=ShortCut(VK_ADD, []);
+
+
  fmetafile:=TrpMetafileReport.Create(nil);
  fintmetafile:=fmetafile;
  fmetafile.OnWorkProgress:=OnProgress;
@@ -680,6 +692,18 @@ begin
   FPreviewControl.Scroll(false,increment);
  if Key=VK_LEFT then
   FPreviewControl.Scroll(false,-increment);
+ if Key=VK_SPACE then
+ begin
+  if Fpreviewcontrol.AutoScale=AScaleEntirePage then
+   Fpreviewcontrol.AutoScale:=AScaleReal
+  else
+   Fpreviewcontrol.AutoScale:=AScaleEntirePage;
+  Key:=0;
+ end;
+ if Key=VK_F5 then
+ begin
+  FPreviewControl.ShowPageMargins:=not FPreviewControl.ShowPageMargins;
+ end;
 end;
 
 

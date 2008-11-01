@@ -360,11 +360,17 @@ begin
 end;
 
 procedure TFRpConnectionVCL.BConfigClick(Sender: TObject);
+var
+ i:integer;
 begin
  ShowDBXConfig(TRpDbDriver(GDriver.ItemIndex) in [rpdataibx,rpdataibo,rpdatamybase]);
  conadmin.free;
  conadmin:=TRPCOnnAdmin.Create;
  conadmin.GetConnectionNames(ComboAvailable.Items,'');
+ for i:=0 to report.DatabaseInfo.Count-1 do
+ begin
+  report.DatabaseInfo[i].UpdateConAdmin;
+ end;
 end;
 
 procedure TFRpConnectionVCL.BBuildClick(Sender: TObject);
@@ -507,7 +513,7 @@ begin
     except
      on E:Exception do
      begin
-      ShowMessage(E.Message);
+      RpShowMessage(E.Message);
 	ComboNetDriver.Clear;
      end;
     end;
@@ -614,7 +620,7 @@ begin
  begin
   dbinfo.Connect(report.Params);
   try
-   ShowMessage(SRpConnectionOk);
+   RpShowMessage(SRpConnectionOk);
   finally
    dbinfo.DisConnect;
   end;

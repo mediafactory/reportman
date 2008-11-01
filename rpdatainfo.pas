@@ -26,6 +26,9 @@ interface
 
 
 uses Classes,SysUtils,
+ {$IFDEF DELPHI2007UP}
+  DBXCLient,DBXDynaLink,
+ {$ENDIF}
 {$IFDEF MSWINDOWS}
  registry,windows,
 {$ENDIF}
@@ -288,6 +291,7 @@ type
 {$ENDIF}
    FOnConnect:TDatasetNotifyEvent;
    FOnDisConnect:TDatasetNotifyEvent;
+   FParallelUnion:Boolean;
    procedure SetDataUnions(Value:TStrings);
    procedure SetDatabaseAlias(Value:string);
    procedure SetAlias(Value:string);
@@ -335,6 +339,7 @@ type
    property DataUnions:TStrings read FDataUnions write SetDataUnions;
    property GroupUnion:Boolean read FGroupUnion write FGroupUnion default false;
    property OpenOnStart:Boolean read FOpenOnStart write FOpenOnStart default true;
+   property ParallelUnion:Boolean read FParallelUnion write FParallelUnion default false;
   end;
 
  TRpDataInfoList=class(TCollection)
@@ -381,6 +386,8 @@ function ExtractFieldNameEx(astring:String):string;
 function EncodeADOPassword(astring:String):String;
 procedure GetDotNetDrivers(alist:TStrings);
 procedure GetDotNet2Drivers(alist:TStrings);
+function CombineParallel(data1:TClientDataset;data2:TDataset;prefix:string;commonfields:TStrings;originalfields:TStrings):TClientDataset;
+procedure ExtractUnionFields(var datasetname:string;alist:TStrings);
 
 implementation
 
@@ -703,6 +710,7 @@ begin
   FBDEFirstRange:=TRpDataInfoItem(Source).FBDEFirstRange;
   FBDELastRange:=TRpDataInfoItem(Source).FBDELastRange;
   FOpenOnStart:=TRpDataInfoItem(Source).FOpenOnStart;
+  FParallelUnion:=TRpDataInfoItem(Source).FParallelUnion;
  end
  else
   inherited Assign(Source);
@@ -1503,6 +1511,28 @@ begin
 {$ENDIF}
 end;
 
+procedure ExtractUnionFields(var datasetname:string;alist:TStrings);
+var
+ index:integer;
+ fullname:string;
+begin
+ alist.Clear;
+ fullname:=datasetname;
+ index:=Pos('-',fullname);
+ if index=0 then
+  exit;
+ datasetname:=Copy(fullname,1,index-1);
+ fullname:=Copy(fullname,index+1,Length(fullname));
+ index:=Pos(';',fullname);
+ while (index>0) do
+ begin
+  alist.Add(UpperCase(Copy(fullname,1,index-1)));
+  fullname:=Copy(fullname,index+1,Length(fullname));
+  index:=Pos(';',fullname);
+ end;
+ alist.Add(UpperCase(fullname));
+end;
+
 procedure TRpDataInfoItem.Connect(databaseinfo:TRpDatabaseInfoList;params:TRpParamList);
 var
  index:integer;
@@ -1520,7 +1550,12 @@ var
   j:integer;
   adoParam:TParameter;
 {$ENDIF}
+ datasetname:string;
+ originalfields,commonfields:TStrings;
+ ndataset:TClientDataset;
 begin
+ originalfields:=nil;
+ commonfields:=nil;
  if connecting then
   Raise Exception.Create(SRpCircularDatalink+' - '+alias);
  connecting:=true;
@@ -1581,12 +1616,12 @@ begin
    for i:=0 to params.Count-1 do
    begin
     param:=params.items[i];
-    if param.ParamType in [rpParamSubst,rpParamSubstE,rpParamMultiple] then
+    if param.ParamType in [rpParamSubst,rpParamSubstE,rpParamSubstList,rpParamMultiple] then
     begin
      index:=param.Datasets.IndexOf(Alias);
      if index>=0 then
      begin
-      if param.ParamType=rpParamSubstE then
+      if ((param.ParamType=rpParamSubstE) or (param.ParamType=rpParamSubstList)) then
        sqlsentence:=StringReplace(sqlsentence,param.Search,param.LastValue,[rfReplaceAll, rfIgnoreCase])
       else
        sqlsentence:=StringReplace(sqlsentence,param.Search,param.Value,[rfReplaceAll, rfIgnoreCase]);
@@ -1878,18 +1913,43 @@ begin
         TClientDataSet(FSQLInternalQuery).IndexFieldNames:=FMyBaseIndexFields;
        end;
 {$ENDIF}
-       for i:=0 to FDataUnions.Count-1 do
-       begin
-        index:=TRpDatainfolist(Collection).IndexOf(FDataUnions.Strings[i]);
-        if index<0 then
-         Raise Exception.Create(SRpDataUnionNotFound+' - '+Alias+' - '+FDataUnions.Strings[i]);
-        TRpDatainfolist(Collection).Items[index].Connect(databaseinfo,params);
+       commonfields:=TStringList.Create;
+       originalfields:=TStringList.Create;
+       try
+        for i:=0 to FDataUnions.Count-1 do
+        begin
+         datasetname:=FDataUnions[i];
+         ExtractUnionFields(datasetname,commonfields);
+         index:=TRpDatainfolist(Collection).IndexOf(datasetname);
+         if index<0 then
+          Raise Exception.Create(SRpDataUnionNotFound+' - '+Alias+' - '+FDataUnions.Strings[i]);
+         TRpDatainfolist(Collection).Items[index].Connect(databaseinfo,params);
+         if ((i=0) or (not FParallelUnion)) then
+         begin
 {$IFNDEF FPC}
-        CombineAddDataset(TClientDataSet(FSQLInternalQuery),TRpDatainfolist(Collection).Items[index].Dataset,FGroupUnion);
+         CombineAddDataset(TClientDataSet(FSQLInternalQuery),TRpDatainfolist(Collection).Items[index].Dataset,FGroupUnion);
 {$ENDIF}
 {$IFDEF FPC}
-        CombineAddDataset(TMemDataSet(FSQLInternalQuery),TRpDatainfolist(Collection).Items[index].Dataset,FGroupUnion);
+         CombineAddDataset(TMemDataSet(FSQLInternalQuery),TRpDatainfolist(Collection).Items[index].Dataset,FGroupUnion);
 {$ENDIF}
+          originalfields.Assign(commonfields);
+         end
+         else
+         begin
+          ndataset:=CombineParallel(TClientDataset(FSQLInternalQuery),
+           TRpDatainfolist(Collection).Items[index].Dataset,'Q'+FormatFloat('00',i+1)+'_',commonfields,originalfields);
+          try
+           FSQLInternalQuery.Close;
+           TClientDataSet(FSQLInternalQuery).FieldDefs.Clear;
+           CombineAddDataset(TClientDataSet(FSQLInternalQuery),ndataset,FGroupUnion);
+          finally
+           ndataset.free;
+          end;
+         end;
+        end;
+       finally
+        originalfields.free;
+        commonfields.free;
        end;
        // Apply filter if exists
        index:=params.IndexOf(Alias+'_FILTER');
@@ -2120,7 +2180,7 @@ begin
 {$IFDEF FPC}
      Raise Exception.Create('Freepascal does not implement VarTypeToDataType');
 {$ENDIF}
-    if (param.ParamType in [rpParamSubst,rpParamSubstE,rpParamMultiple]) then
+    if (param.ParamType in [rpParamSubst,rpParamSubstE,rpParamSubstList,rpParamMultiple]) then
      continue;
     index:=param.Datasets.IndexOf(Alias);
     if index>=0 then
@@ -3360,6 +3420,124 @@ begin
  list.add(fieldrest);
 end;
 
+
+
+function CombineParallel(data1:TClientDataset;data2:TDataset;prefix:string;commonfields:TStrings;originalfields:TStrings):TClientDataset;
+var
+ aresult:TClientDataset;
+ lfields1:TStringList;
+ lfields2:TStringList;
+ i,index:integer;
+ fname:string;
+ firstfieldcount:integer;
+ fdef:TFieldDef;
+ counter:integer;
+ indexfieldnames:string;
+begin
+ counter:=0;
+ aresult:=TClientDataset.Create(nil);
+ lfields1:=TStringList.Create;
+ lfields2:=TStringList.Create;
+ try
+  aresult.FieldDefs.Assign(data1.FieldDefs);
+  aresult.FieldDefs.Add(prefix,ftInteger);
+  indexfieldnames:=prefix;
+  for i:=0 to originalfields.Count-1 do
+  begin
+   indexfieldnames:=indexfieldnames+';'+originalfields[i];
+  end;
+  aresult.IndexDefs.Add('IPRIMINDEX',indexfieldnames,[]);
+  if indexfieldnames<>prefix then
+   aresult.IndexFieldNames:=indexfieldnames;
+  firstfieldcount:=aresult.FieldDefs.Count;
+  for i:=0 to data2.FieldDefs.Count-1 do
+  begin
+   fname:=UpperCase(data2.FieldDefs.Items[i].Name);
+   index:=commonfields.IndexOf(fname);
+   if (index<0) then
+   begin
+    lfields1.Add(data2.FieldDefs.Items[i].Name);
+    lfields2.Add(prefix+data2.FieldDefs.Items[i].Name);
+    fdef:=aresult.FieldDefs.AddFieldDef;
+    fdef.DataType:=data2.FieldDefs[i].DataType;
+    fdef.Precision:=data2.FieldDefs[i].Precision;
+    fdef.Size:=data2.FieldDefs[i].Size;
+//    fdef.Assign(data2.FieldDefs[i]);
+    fdef.Name:=prefix+data2.FieldDefs.Items[i].Name;
+    fdef.DisplayName:=fdef.Name;
+   end
+   else
+   begin
+    lfields1.Add(data2.FieldDefs.Items[i].Name);
+    lfields2.Add(originalfields[counter]);
+    Inc(counter);
+   end;
+  end;
+  aresult.CreateDataSet;
+  data1.First;
+  while not data1.Eof do
+  begin
+   aresult.Append;
+   try
+    for i:=0 to data1.Fields.Count-1 do
+    begin
+     aresult.Fields[i].AsVariant:=data1.Fields[i].AsVariant;
+    end;
+    aresult.FieldByName(prefix).Value:=0;
+    aresult.Post;
+   except
+    aresult.Cancel;
+    raise;
+   end;
+   data1.Next;
+  end;
+  aresult.First;
+  while not data2.eof do
+  begin
+   if aresult.Indexfieldnames<>'' then
+   begin
+    aresult.SetKey;
+    for i:=0 to commonfields.Count-1 do
+    begin
+     aresult.FieldByName(originalfields[i]).AsVariant:=data2.FieldByName(commonfields.Strings[i]).AsVariant;
+    end;
+    aresult.FieldByName(prefix).Value:=0;
+    if (aresult.GotoKey) then
+     aresult.Edit
+    else
+     aresult.Append;
+   end
+   else
+   begin
+    if aresult.Eof then
+     aresult.Append
+    else
+     aresult.Edit;
+   end;
+   try
+    for i:=0 to data2.fields.Count-1 do
+    begin
+     aresult.FieldByName(lfields2.Strings[i]).AsVariant:=data2.FieldByName(lfields1.Strings[i]).AsVariant;
+    end;
+    aresult.FieldByName(prefix).Value:=1;
+    aresult.Post;
+   except
+    aresult.cancel;
+    raise;
+   end;
+   data2.Next;
+   if aresult.indexfieldnames='' then
+    aresult.Next;
+  end;
+ finally
+  lfields1.free;
+  lfields2.free;
+ end;
+ aresult.first;
+ Result:=aresult;
+end;
+
+
 {$IFDEF USERPDATASET}
 {$IFDEF FPC}
 procedure CombineAddDataset(client:TMemDataset;data:TDataset;group:boolean);
@@ -3377,18 +3555,15 @@ begin
  groupfieldindex:=TStringList.Create;
  try
   // Combine the two datasets
-  if client.FieldDefs.Count<1 then
-  begin
-   client.Close;
-   client.FieldDefs.Assign(data.FieldDefs);
+  client.Close;
+  client.FieldDefs.Assign(data.FieldDefs);
 {$IFNDEF FPC}
    client.CreateDataSet;
 {$ENDIF}
 {$IFDEF FPC}
    client.CreateTable;
 {$ENDIF}
-  end;
-  if data.fields.Count>client.Fields.Count then
+  if (data.fields.Count>client.Fields.Count) then
   begin
    Raise Exception.Create(SRpCannotCombine);
   end;
@@ -3451,6 +3626,7 @@ begin
    begin
     client.Append;
     try
+
      for i:=0 to data.fieldcount-1 do
      begin
       client.Fields[i].AsVariant:=data.Fields[i].AsVariant;
@@ -3464,6 +3640,8 @@ begin
    data.Next;
   end;
   client.First;
+  if data is TClientDataset then
+   TClientDataSet(data).First;
  finally
   groupfields.free;
   groupfieldindex.free;

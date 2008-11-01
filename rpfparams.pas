@@ -124,6 +124,7 @@ procedure ShowParamDef(params:TRpParamList;datainfo:TRpDatainfoList);
 var
  dia:TFRpParams;
 begin
+ params.RestoreInitialValues;
  dia:=TFRpParams.Create(Application);
  try
   dia.params.Assign(params);
@@ -284,8 +285,10 @@ begin
   if (param.Value<>Null) then
   begin
    case param.ParamType of
-    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamSubstE,rpParamList,rpParamUnknown:
+    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamSubstE,rpparamInitialExpression,rpParamUnknown:
      EValue.Text:=param.AsString;
+    rpParamSubstList,rpParamList:
+     EValue.Text:=param.Value;
     rpParamInteger:
      begin
       EValue.Text:=IntToStr(param.Value);
@@ -332,8 +335,8 @@ procedure TFRpParams.UpdateValue(param:TRpParam);
 var
  i,index:integer;
 begin
- ESearch.Visible:=param.ParamType in [rpParamSubst,rpParamSubstE,rpParamMultiple];
- GValues.Visible:=param.ParamType in [rpParamList,rpParamSubstE,rpParamMultiple];
+ ESearch.Visible:=param.ParamType in [rpParamSubst,rpParamSubstE,rpParamSubstList,rpParamMultiple];
+ GValues.Visible:=param.ParamType in [rpParamList,rpParamSubstList,rpParamMultiple];
  GSearch.Visible:=Not GValues.Visible;
  LSearch.Visible:=ESearch.Visible;
  CheckNull.Visible:=param.ParamType<>rpParamMultiple;
@@ -359,7 +362,7 @@ begin
   if (EValue.Text='') then
   begin
    case param.ParamType of
-    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamSubstE,rpParamList,rpParamUnknown:
+    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamSubstE,rpParamList,rpParamSubstList,rpParamInitialExpression,rpParamUnknown:
      EValue.Text:='';
     rpParamInteger:
      EValue.Text:=IntToStr(0);
@@ -386,7 +389,7 @@ begin
   begin
     EValue.Visible:=true;
     case param.ParamType of
-     rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamSubstE,rpParamList,rpParamUnknown:
+     rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamSubstE,rpParamSubstList,rpParamInitialExpression,rpParamList,rpParamUnknown:
       param.Value:=EValue.Text;
      rpParamInteger:
       param.Value:=StrToInt(EValue.Text);

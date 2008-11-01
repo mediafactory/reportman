@@ -35,7 +35,7 @@ uses
   Graphics, Controls, Forms,
   Dialogs,rpmdconsts, ActnList, ImgList, ComCtrls,rpvgraphutils, DB,
   DBClient, StdCtrls,Printers,rpdatainfo,rpgraphutilsvcl,
-  rptypes,rpvclreport, rpreport,ToolWin, ExtCtrls;
+  rptypes,rpvclreport, rpreport,ToolWin, ExtCtrls, Menus;
 
 const PROGRESS_INTERVAL=500;
 
@@ -84,6 +84,12 @@ type
     AExportFolder: TAction;
     PFind: TPanel;
     EFind: TEdit;
+    mpopup: TPopupMenu;
+    ARename: TAction;
+    Rename1: TMenuItem;
+    timerscroll1: TTimer;
+    timerexpand: TTimer;
+    timerinvalidate: TTimer;
     procedure ADeleteExecute(Sender: TObject);
     procedure APreviewExecute(Sender: TObject);
     procedure AUserParamsExecute(Sender: TObject);
@@ -96,9 +102,19 @@ type
     procedure AFindExecute(Sender: TObject);
     procedure FindDialog1Find(Sender: TObject);
     procedure ATreeChange(Sender: TObject; Node: TTreeNode);
+    procedure ARenameExecute(Sender: TObject);
+    procedure ATreeDragOver(Sender, Source: TObject; X, Y: Integer;
+      State: TDragState; var Accept: Boolean);
+    procedure ATreeDragDrop(Sender, Source: TObject; X, Y: Integer);
+    procedure timerscroll1Timer(Sender: TObject);
+    procedure ATreeEndDrag(Sender, Target: TObject; X, Y: Integer);
+    procedure timerexpandTimer(Sender: TObject);
+    procedure timerinvalidateTimer(Sender: TObject);
   private
     { Private declarations }
     docancel:boolean;
+    expandcount:integer;
+    oldtarget:TTreeNode;
     lobjects:TList;
     report:TVCLReport;
     CurrentLoaded:String;
@@ -108,6 +124,8 @@ type
     difmilis:int64;
     dbinfo:TRpDatabaseInfoItem;
     doreadonly:Boolean;
+    mouseX:integer;
+    mouseY:integer;
     procedure IntFillTree(adir:string;anode:TTreeNode);
     procedure SaveDir(adir:String;anode:TTreeNode);
     procedure CheckCancel(acount:integer);
@@ -135,9 +153,14 @@ implementation
 
 
 constructor TFRpDBTreeVCL.Create(AOwner:TComponent);
+var
+ ncontrolstyle:TControlStyle;
 begin
  inherited Create(AOwner);
 
+ ncontrolstyle:=ATree.ControlStyle;
+ include(ncontrolstyle,csCaptureMouse);
+ ATree.ControlStyle:=ncontrolstyle;
  lobjects:=TList.Create;
  ANew.Caption:=TranslateStr(790,ANew.Caption);
  ANew.Hint:=TranslateStr(791,ANew.Hint);
@@ -151,6 +174,7 @@ begin
  APrintSetup.Hint:=TranslateStr(57,APrintSetup.Hint);
  AUserParams.Caption:=TranslateStr(135,AUserparams.Caption);
  AUserParams.Hint:=TranslateStr(136,AUserparams.Hint);
+ ARename.Caption:=SRprename;
  ANew.Caption:=SRpNewReport;
  Anew.Hint:=SRpNewReport;
  ANewFolder.Caption:=SRpNewFolder;
@@ -253,7 +277,11 @@ begin
    try
     DReportsREPORT_NAME.Value:=reports.FieldByName(aname).Value;
     if length(agroup)>0 then
-     DReportsREPORT_GROUP.AsVariant:=reports.FieldByName(agroup).AsVariant
+    begin
+     DReportsREPORT_GROUP.AsVariant:=reports.FieldByName(agroup).AsVariant;
+     if DReportsREPORT_GROUP.IsNull then
+      DReportsREPORT_GROUP.Value:=0;
+    end
     else
      DReportsREPORT_GROUP.Value:=0;
     DReports.Post;
@@ -340,7 +368,20 @@ var
 begin
  ATree.Items.BeginUpdate;
  try
-  ATopItem:=ATree.TopItem;
+// ATopItem:=ATree.TopItem;
+  ANode:=ATree.Items.AddChild(nil,'');
+  ANode.ImageIndex:=9;
+  ANode.SelectedIndex:=9;
+  ninfo:=TRpNodeInfo.Create;
+  lobjects.Add(ninfo);
+  ninfo.ReportName:='';
+  ninfo.Group_Code:=0;
+  ninfo.Parent_Group:=0;
+  ninfo.Node:=ANode;
+  ANode.Data:=ninfo;
+
+  ATopItem:=ANode;
+
   DReportGroups.First;
   While Not DReportGroups.Eof do
   begin
@@ -391,7 +432,7 @@ begin
    if Not DReportsREPORT_GROUP.IsNull then
     if DReportsREPORT_GROUP.Value=0 then
     begin
-     NewNode:=ATree.Items.AddChild(nil,DReportsREPORT_NAME.AsString);
+     NewNode:=ATree.Items.AddChild(ATopItem,DReportsREPORT_NAME.AsString);
      NewNode.ImageIndex:=10;
      NewNode.SelectedIndex:=10;
      ninfo:=TRpNodeInfo.Create;
@@ -408,6 +449,7 @@ begin
  finally
   ATree.Items.EndUpdate;
  end;
+ ATopItem.Expand(false);
 end;
 
 procedure TFRpDBTreeVCL.CheckCancel(acount:integer);
@@ -764,6 +806,8 @@ begin
   AExportFolder.Enabled:=false;
   ANewFolder.Enabled:=false;
   ADelete.Enabled:=false;
+  ARename.Enabled:=false;
+  ATree.DragMode:=dmManual;
  end;
  dbinfo:=adbinfo;
  dbinfo.Connect(nil);
@@ -1078,6 +1122,354 @@ begin
   else
    EnableButtonsReport;
  end;
+end;
+
+
+procedure TFRpDBTreeVCL.ARenameExecute(Sender: TObject);
+var
+ ANode:TTreeNode;
+ ninfo:TRpNodeInfo;
+ oldername,newname:widestring;
+ params:TStringList;
+ aparam:TRpParamObject;
+ aparam2:TRpParamObject;
+ astring:string;
+begin
+ // See if selected node is a report
+ if Not Assigned(ATree.Selected) then
+ begin
+  DisableButtonsReport;
+  exit;
+ end;
+ ANode:=ATree.Selected;
+ if Assigned(Anode.Data) then
+ begin
+  ninfo:=TRpNodeInfo(ANode.Data);
+  if Length(ninfo.ReportName)<1 then
+  begin
+   // Rename folder
+   oldername:=ANode.Text;
+   newname:=RpInputBox(SRpRename,SRpSGroupName,oldername);
+   if (oldername<>newname) then
+    if Length(newname)>0 then
+    begin
+     params:=TStringList.Create;
+     try
+      aparam:=TRpParamObject.Create;
+      aparam2:=TRpParamObject.Create;
+      try
+       aparam.Value:=String(newname);
+       aparam2.Value:=ninfo.Group_Code;
+       params.AddObject('GROUPNAME',aparam);
+       params.AddObject('GROUPCODE',aparam2);
+       astring:='UPDATE '+dbinfo.ReportGroupsTable;
+       if dbinfo.ReportGroupsTable='GINFORME' then
+        astring:=Astring+ ' SET NOMBRE=:GROUPNAME WHERE CODIGO=:GROUPCODE  '
+       else
+        astring:=Astring+ ' SET GROUP_NAME=:GROUPNAME WHERE GROUP_CODE=:GROUPCODE';
+       dbinfo.OpenDatasetFromSQL(astring,params,true,nil);
+       ANode.Text:=newname;
+      finally
+       aparam.free;
+      end;
+     finally
+      params.free;
+     end;
+    end;
+  end
+  else
+  begin
+   // Rename report
+   oldername:=ninfo.ReportName;
+   newname:=RpInputBox(SRpRename,SRpReportName,oldername);
+   if (oldername<>newname) then
+    if Length(newname)>0 then
+    begin
+     params:=TStringList.Create;
+     try
+      aparam:=TRpParamObject.Create;
+      aparam2:=TRpParamObject.Create;
+      try
+       astring:='UPDATE '+dbinfo.ReportTable+' SET '+
+         dbinfo.ReportSearchField+'=:REPNAME'+
+         ' WHERE '+dbinfo.ReportSearchField+'=:OLDREPNAME';
+        aparam.Value:=String(newname);
+        aparam2.Value:=String(oldername);
+        params.AddObject('REPNAME',aparam);
+        params.AddObject('OLDREPNAME',aparam2);
+        dbinfo.OpenDatasetFromSQL(astring,params,true,nil);
+       ANode.Text:=newname;
+       ninfo.ReportName:=newname;
+      finally
+       aparam.free;
+       aparam2.free;
+      end;
+     finally
+      params.free;
+     end;
+    end;
+  end;
+ end;
+end;
+
+
+
+procedure TFRpDBTreeVCL.ATreeDragOver(Sender, Source: TObject; X,
+  Y: Integer; State: TDragState; var Accept: Boolean);
+var
+ nodesource:TTreeNode;
+ nodedest:TTreeNode;
+ infosource,infodest:TRpNodeInfo;
+begin
+ TimerScroll1.Enabled:=true;
+ mouseX:=X;
+ mouseY:=Y;
+ Accept:=false;
+ if not assigned(ATree.Selected) then
+  exit;
+ if not (Source is TTreeView) then
+  exit;
+ if not (Sender is TTreeView) then
+  exit;
+ if (Sender<>Source) then
+  exit;
+ nodedest := ATree.GetNodeAt(X,Y);
+ nodesource := ATree.Selected;
+ if (nodedest = nil) then
+   Exit;
+ if nodedest=nodesource then
+  exit;
+ if not assigned(nodesource.Data) then
+  exit;
+ if not assigned(nodedest.Data) then
+  exit;
+ if not nodedest.Expanded then
+ begin
+  expandcount:=10;
+  oldtarget:=nodedest;
+  timerexpand.Enabled:=True;
+ end;
+ // Same group does nothing
+ infosource:=TRpNodeInfo(nodesource.Data);
+ infodest:=TRpNodeInfo(nodedest.Data);
+ // Source is a folder
+ if infosource.ReportName='' then
+ begin
+  // Both are folders
+  if infodest.ReportName='' then
+  begin
+   if (infosource.Parent_Group<>infodest.Group_Code) then
+    Accept:=true;
+   // Check the source is not parent of the child
+   if (Accept) then
+   begin
+    if nodedest.HasAsParent(nodesource) then
+     Accept:=false;
+   end;
+  end
+  else
+  begin
+   if infosource.Group_Code<>infodest.Group_Code then
+    Accept:=true;
+  end;
+ end
+ else
+ // Source is a report
+ begin
+  if infodest.ReportName='' then
+  begin
+   if infosource.Group_Code<>infodest.Group_Code then
+    Accept:=true;
+  end
+  else
+  begin
+   if infosource.Group_Code<>infodest.Group_Code then
+    Accept:=true;
+  end;
+ end;
+end;
+
+procedure TFRpDBTreeVCL.ATreeDragDrop(Sender, Source: TObject; X,
+  Y: Integer);
+var
+ nodesource:TTreeNode;
+ nodedest:TTreeNode;
+ infosource,infodest:TRpNodeInfo;
+ params:TStringList;
+ aparam:TRpParamObject;
+ aparam2:TRpParamObject;
+ astring:string;
+begin
+ if not assigned(ATree.Selected) then
+  exit;
+ if not (Source is TTreeView) then
+  exit;
+ if not (Sender is TTreeView) then
+  exit;
+ if (Sender<>Source) then
+  exit;
+ nodedest := ATree.GetNodeAt(X,Y);
+ nodesource := ATree.Selected;
+ if (nodedest = nil) then
+ begin
+   EndDrag(False);
+   Exit;
+ end;
+
+ if nodedest=nodesource then
+  exit;
+ if not assigned(nodesource.Data) then
+  exit;
+ if not assigned(nodedest.Data) then
+  exit;
+ infosource:=TRpNodeInfo(nodesource.Data);
+ infodest:=TRpNodeInfo(nodedest.Data);
+ // Source as folder
+ if (infosource.ReportName='') then
+ begin
+  params:=TStringList.Create;
+  try
+   aparam:=TRpParamObject.Create;
+   aparam2:=TRpParamObject.Create;
+   try
+    // Destination is always the folder
+    // For a report group_code
+    aparam.Value:=infodest.Group_Code;
+    aparam2.Value:=infosource.Group_Code;
+    params.AddObject('GROUP',aparam);
+    params.AddObject('GROUPCODE',aparam2);
+    astring:='UPDATE '+dbinfo.ReportGroupsTable;
+    if dbinfo.ReportGroupsTable='GINFORME' then
+     astring:=Astring+ ' SET GRUPO=:GROUP WHERE CODIGO=:GROUPCODE  '
+    else
+     astring:=Astring+ ' SET PARENT_GROUP=:GROUP WHERE GROUP_CODE=:GROUPCODE';
+    dbinfo.OpenDatasetFromSQL(astring,params,true,nil);
+    // If it's a report change to his parent
+    // else add as child
+    infosource.Parent_Group:=infodest.Group_Code;
+    if infodest.ReportName='' then
+    begin
+     nodesource.MoveTo(nodedest,naAddChildFirst);
+    end
+    else
+    begin
+     nodesource.MoveTo(nodedest.Parent,naAddFirst);
+    end;
+   finally
+    aparam.free;
+   end;
+  finally
+   params.free;
+  end;
+ end
+ else
+ begin
+  // Source as report
+  params:=TStringList.Create;
+  try
+   aparam:=TRpParamObject.Create;
+   aparam2:=TRpParamObject.Create;
+   try
+    // Destination is always the folder
+    // For a report group_code
+    aparam.Value:=infodest.Group_Code;
+    aparam2.Value:=String(infosource.ReportName);
+    params.AddObject('GROUP',aparam);
+    params.AddObject('REPNAME',aparam2);
+    astring:='UPDATE '+dbinfo.ReportTable;
+    if dbinfo.ReportGroupsTable='GINFORME' then
+     astring:=Astring+ ' SET GRUPO=:GROUP WHERE NOMBRE=:REPNAME  '
+    else
+     astring:=Astring+ ' SET REPORT_GROUP=:GROUP WHERE REPORT_NAME=:REPNAME';
+    dbinfo.OpenDatasetFromSQL(astring,params,true,nil);
+    // If it's a report change to his parent
+    // else add as child
+    infosource.Group_Code:=infodest.Group_Code;
+    if infodest.ReportName='' then
+    begin
+     nodesource.MoveTo(nodedest,naAddChild);
+    end
+    else
+    begin
+     infosource.Parent_Group:=infodest.Group_Code;
+     nodesource.MoveTo(nodedest.Parent,naAddChild);
+    end;
+   finally
+    aparam.free;
+   end;
+  finally
+   params.free;
+  end;
+ end;
+end;
+
+
+procedure TFRpDBTreeVCL.ATreeEndDrag(Sender, Target: TObject; X,
+  Y: Integer);
+begin
+ TimerScroll1.Enabled:=false;
+end;
+
+procedure TFRpDBTreeVCL.timerscroll1Timer(Sender: TObject);
+var
+ target:TTreeNode;
+begin
+ // Top auto scroll
+ // Get node at mouse Position
+ target:=ATree.GetNodeAt(mouseX,mouseY);
+
+ if Assigned(target) then
+  if mouseY<20 then
+  begin
+    if target.GetPrevVisible <> nil then
+    begin
+     ATree.topitem :=target.GetPrevVisible;
+    timerinvalidate.Enabled:=true;
+    end;
+  end;
+ // Bottom autoscroll
+ if MouseY > ATree.Height-20 then
+ begin
+   target:=ATree.GetNodeAt(2,2);
+   if target.GetNextVisible <> nil then
+   begin
+     ATree.topitem := target.GetNextVisible;
+     timerinvalidate.Enabled:=true;
+   end;
+ end;
+end;
+
+
+procedure TFRpDBTreeVCL.timerexpandTimer(Sender: TObject);
+var
+ target:TTreeNode;
+begin
+ // Top auto scroll
+ // Get node at mouse Position
+ target:=ATree.GetNodeAt(mouseX,mouseY);
+ if target=nil then
+ begin
+  timerexpand.Enabled:=false;
+  exit;
+ end;
+ if (oldtarget<>target) then
+ begin
+  timerexpand.Enabled:=false;
+  exit;
+ end;
+ dec(expandcount);
+ if (expandcount<0) then
+ begin
+  target.Expand(false);
+  timerinvalidate.Enabled:=true;
+  timerexpand.Enabled:=false;
+ end;
+end;
+
+procedure TFRpDBTreeVCL.timerinvalidateTimer(Sender: TObject);
+begin
+ ATree.Invalidate;
+ timerinvalidate.Enabled:=false;
 end;
 
 end.

@@ -19,7 +19,7 @@ uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls,rptranslator, DBCtrls, Grids, DBGrids, Db, DBClient, Menus,
   ActnList, ExtCtrls, ToolWin, ComCtrls,Consts, ImgList, rpeval,
-  clipbrd,rpmdconsts,comobj, TntDBGrids;
+  clipbrd,rpmdconsts,comobj, TntDBGrids,rptypes;
 
 
 resourcestring
@@ -128,7 +128,7 @@ type
     reading:boolean;
     currentfilename:string;
     formcaption:Widestring;
-    procedure Saveas(filename:String);
+    procedure Saveas(filename:String;filterindex:integer);
     procedure AppHint(Sender:TObject);
     procedure CheckSaved;
     procedure UpdateDescriptions;
@@ -236,59 +236,114 @@ begin
 end;
 
 
-procedure TFMain.Saveas(filename:String);
+procedure TFMain.Saveas(filename:String;filterindex:integer);
 var
  memstream:TMemoryStream;
  i:integer;
  astring:WideString;
+ nstring,partial:string;
  deststring:WideString;
+ achar:Widechar;
+ conta:integer;
 begin
  ComboOrder.ItemIndex:=0;
  ComboOrderClick(Self);
- // Saves the strings to the resource file
- memstream:=TMemoryStream.Create;
+ DTexts.CheckBrowseMode;
+ DTexts.DisableControls;
  try
-  DTexts.CheckBrowseMode;
-  DTexts.DisableControls;
-  try
-   DTexts.First;
-   while Not DTexts.Eof do
-   begin
-    astring:=DTextsTEXT.Value;
-    deststring:='';
-    for i:=1 to Length(astring) do
-    begin
-     deststring:=deststring+astring[i];
-     if astring[i]=#10 then
-      deststring:=deststring+#10;
-    end;
-    DTexts.Next;
-    if Not DTexts.Eof then
-     deststring:=deststring+#10;
-    memstream.Write(deststring[1],Length(deststring)*2);
+  if (filterindex=2) then
+  begin
+   memstream:=TMemoryStream.Create;
+   try
+     nstring:=ChangeFileExt(ExtractFileName(filename),'')+' RCDATA'+#13+#10;
+     WriteStringToStream(nstring,memstream);
+     nstring:='BEGIN'+#13+#10;
+     WriteStringToStream(nstring,memstream);
+     DTexts.First;
+     while Not DTexts.Eof do
+     begin
+      astring:=DTextsTEXT.Value;
+      deststring:='';
+      for i:=1 to Length(astring) do
+      begin
+       deststring:=deststring+astring[i];
+       if astring[i]=#10 then
+        deststring:=deststring+#10;
+      end;
+      DTexts.Next;
+      if Not DTexts.Eof then
+       deststring:=deststring+#10;
+      nstring:='';
+      conta:=0;
+      // Write deststring coded
+      for i:=1 to Length(deststring) do
+      begin
+       achar:=deststring[i];
+       if (nstring<>'') then
+        nstring:=nstring+',';
+       if (conta>80) then
+       begin
+        nstring:=nstring+#13+#10;
+        conta:=0;
+       end;
+       partial:='0x'+IntToHex(Integer(achar),2);
+       conta:=conta+Length(partial);
+       nstring:=nstring+partial;
+      end;
+      nstring:=nstring+#13+#10;
+      memstream.Write(nstring[1],Length(nstring));
+     end;
+     nstring:=#13+#10+'END'+#13+#10;
+     WriteStringToStream(nstring,memstream);
+     memstream.SaveToFile(filename);
+   finally
+    memstream.Free;
    end;
-   memstream.SaveToFile(filename);
-   modified:=false;
-   ASave.Enabled:=True;
-   AMerge.Enabled:=True;
-   ASaveAs.Enabled:=True;
-   APaste.Enabled:=True;
-   ASearch.Enabled:=True;
-   CurrentFilename:=filename;
-   Caption:=FormCaption+'-'+CurrentFilename;
+  end
+  else
+  begin
+   // Saves the strings to the resource file
+   memstream:=TMemoryStream.Create;
+   try
+     DTexts.First;
+     while Not DTexts.Eof do
+     begin
+      astring:=DTextsTEXT.Value;
+      deststring:='';
+      for i:=1 to Length(astring) do
+      begin
+       deststring:=deststring+astring[i];
+       if astring[i]=#10 then
+        deststring:=deststring+#10;
+      end;
+      DTexts.Next;
+      if Not DTexts.Eof then
+       deststring:=deststring+#10;
+      memstream.Write(deststring[1],Length(deststring)*2);
+     end;
+     memstream.SaveToFile(filename);
+   finally
+    memstream.Free;
+   end;
+  end;
+  modified:=false;
+  ASave.Enabled:=True;
+  AMerge.Enabled:=True;
+  ASaveAs.Enabled:=True;
+  APaste.Enabled:=True;
+  ASearch.Enabled:=True;
+  CurrentFilename:=filename;
+  Caption:=FormCaption+'-'+CurrentFilename;
   finally
    DTexts.EnableControls;
   end;
- finally
-  memstream.Free;
- end;
 end;
 
 procedure TFMain.ASaveasExecute(Sender: TObject);
 begin
  if Not SaveDialog1.Execute then
   exit;
- SaveAs(SaveDialog1.Filename);
+ SaveAs(SaveDialog1.Filename,SaveDialog1.FilterIndex);
 end;
 
 procedure TFMain.ANewExecute(Sender: TObject);
@@ -356,7 +411,7 @@ procedure TFMain.ASaveExecute(Sender: TObject);
 begin
  if Length(currentfilename)<1 then
   exit;
- SaveAs(CurrentFilename);
+ SaveAs(CurrentFilename,1);
 end;
 
 procedure TFMain.DTextsAfterPost(DataSet: TDataSet);

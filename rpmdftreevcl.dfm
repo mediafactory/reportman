@@ -2,7 +2,7 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
   Left = 0
   Top = 0
   Width = 443
-  Height = 270
+  Height = 277
   VertScrollBar.Range = 30
   Align = alClient
   AutoScroll = False
@@ -110,14 +110,19 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
     Left = 0
     Top = 76
     Width = 443
-    Height = 194
+    Height = 201
     Align = alClient
+    DragMode = dmAutomatic
     HideSelection = False
     Images = imalist
     Indent = 22
+    PopupMenu = mpopup
     ReadOnly = True
     TabOrder = 1
     OnChange = ATreeChange
+    OnDragDrop = ATreeDragDrop
+    OnDragOver = ATreeDragOver
+    OnEndDrag = ATreeEndDrag
   end
   object imalist: TImageList
     Height = 19
@@ -943,6 +948,11 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
       ImageIndex = 12
       OnExecute = ToolButton9Click
     end
+    object ARename: TAction
+      Caption = 'Rename'
+      ImageIndex = 6
+      OnExecute = ARenameExecute
+    end
   end
   object DReports: TClientDataSet
     Aggregates = <>
@@ -1033,5 +1043,33 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
   object PrinterSetupDialog1: TPrinterSetupDialog
     Left = 284
     Top = 124
+  end
+  object mpopup: TPopupMenu
+    Left = 128
+    Top = 176
+    object Rename1: TMenuItem
+      Action = ARename
+    end
+  end
+  object timerscroll1: TTimer
+    Enabled = False
+    Interval = 200
+    OnTimer = timerscroll1Timer
+    Left = 268
+    Top = 208
+  end
+  object timerexpand: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = timerexpandTimer
+    Left = 348
+    Top = 164
+  end
+  object timerinvalidate: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = timerinvalidateTimer
+    Left = 216
+    Top = 192
   end
 end

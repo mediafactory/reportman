@@ -21,7 +21,7 @@ unit rppreviewcontrol;
 interface
 
 uses Classes,SysUtils,Graphics,Controls,Forms,rppreviewmeta,rpbasereport,rpgdidriver,
- rpmetafile,dialogs;
+ rpmetafile,dialogs,rpgraphutilsvcl;
 
 type
  TRpPreviewControl=class(TRpPreviewMeta)
@@ -72,7 +72,7 @@ begin
   end;
  end;
  if Length(errormessage)>0 then
-  ShowMessage(errormessage);
+  RpShowMessage(errormessage);
  FReport:=Avalue;
  if Assigned(FReport) then
  begin

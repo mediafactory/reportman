@@ -442,7 +442,7 @@ begin
  report.IsDesignTime:=true;
  report.OnReadError:=OnReadError;
  report.FailIfLoadExternalError:=false;
-// if Not NewReportWizard(report) then
+// if Not NewReportWizard(report,false) then
   report.CreateNew;
  filename:='';
  alibrary:='';
@@ -684,7 +684,6 @@ begin
   exit;
  if Not Assigned(lastsaved) then
   exit;
-
  newsave:=TMemoryStream.create;
  try
   report.SaveToStream(newsave);
@@ -941,28 +940,34 @@ begin
 end;
 
 procedure TFRpMainFVCL.ANewPageHeaderExecute(Sender: TObject);
+var
+ asection:TRPSection;
 begin
  // Inserts a new page header
  Assert(report<>nil,'Called AddNew PageHeader without a report assigned');
-
- freportstructure.FindSelectedSubreport.AddPageHeader;
+ asection:=freportstructure.FindSelectedSubreport.AddPageHeader;
 
  RefreshInterface(Self);
+ freportstructure.SelectDataItem(asection);
 end;
 
 procedure TFRpMainFVCL.ANewPageFooterExecute(Sender: TObject);
+var
+ asection:TRPSection;
 begin
  // Inserts a new page footer
  Assert(report<>nil,'Called AddNewPageFooter without a report assigned');
 
- freportstructure.FindSelectedSubreport.AddPageFooter;
+ asection:=freportstructure.FindSelectedSubreport.AddPageFooter;
 
  RefreshInterface(Self);
+ freportstructure.SelectDataItem(asection);
 end;
 
 procedure TFRpMainFVCL.ANewGroupExecute(Sender: TObject);
 var
  newgroupname:string;
+ asection:TRPSection;
 begin
  // Inserts a new group header and footer
  Assert(report<>nil,'Called AddNewGroupout a report unassigned');
@@ -970,42 +975,55 @@ begin
  newgroupname:=Uppercase(Trim(RpInputBox(SRpNewGroup,SRpSGroupName,'')));
  if length(newgroupname)>0 then
  begin
-  freportstructure.FindSelectedSubreport.AddGroup(newgroupname);
-
+  asection:=freportstructure.FindSelectedSubreport.AddGroup(newgroupname);
   RefreshInterface(Self);
+  freportstructure.SelectDataItem(asection);
  end;
 end;
 
 procedure TFRpMainFVCL.ANewSubreportExecute(Sender: TObject);
+var
+ subrep:TRpSubReport;
 begin
  // Inserts a new group header and footer
  Assert(report<>nil,'Called AddSubReport a report unassigned');
 
- report.AddSubReport;
+ subrep:=report.AddSubReport;
 
  RefreshInterface(Self);
+ freportstructure.SelectDataItem(subrep);
 end;
 
 procedure TFRpMainFVCL.ADeleteSelectionExecute(Sender: TObject);
+var
+ currentsubrep:TRpSubReport;
 begin
  // Deletes section
  Assert(report<>nil,'Called ADeleteSection a report unassigned');
 
  if RpMessageBox(SRpSureDeleteSection,SRpWarning,[smbok,smbcancel],smsWarning,smbCancel)=smbOk then
  begin
+  currentsubrep:=nil;
+  if (not (freportstructure.FindSelectedObject is TRpSubReport)) then
+   currentsubrep:=freportstructure.FindSelectedSubreport;
   freportstructure.DeleteSelectedNode;
   RefreshInterface(Self);
+  if Assigned(currentsubrep) then
+   freportstructure.SelectDataItem(currentsubrep);
  end;
 end;
 
 procedure TFRpMainFVCL.ANewDetailExecute(Sender: TObject);
+var
+ asection:TRPSection;
 begin
  // Inserts a new group header and footer
  Assert(report<>nil,'Called ADeleteSection a report unassigned');
 
- freportstructure.FindSelectedSubreport.AddDetail;
+ asection:=freportstructure.FindSelectedSubreport.AddDetail;
 
  RefreshInterface(Self);
+ freportstructure.SelectDataItem(asection);
 end;
 
 procedure TFRpMainFVCL.ADataConfigExecute(Sender: TObject);

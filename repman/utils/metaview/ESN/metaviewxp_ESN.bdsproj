@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <PersonalityInfo>
+    <Option>
+      <Option Name="Personality">W32ResourceDLL.Personality</Option>
+      <Option Name="ProjectType">ResourceDLL</Option>
+      <Option Name="Version">1.0</Option>
+      <Option Name="GUID">{7011EB52-6B15-4F4F-884C-D622547CFBDD}</Option>
+    </Option>
+  </PersonalityInfo>
+  <W32ResourceDLL.Personality>
+    <Source>
+      <Source Name="MainSource">C:\prog\toni\cvsroot\reportman\reportman\repman\utils\metaview\ESN\metaviewxp.dpr</Source>
+    </Source>
+    <Options>
+      <Options Name="BaseLang">3082</Options>
+      <Options Name="TargetName">..\metaviewxp.ESN</Options>
+    </Options>
+    <VersionInfo>
+      <VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+      <VersionInfo Name="AutoIncBuild">False</VersionInfo>
+      <VersionInfo Name="MajorVer">1</VersionInfo>
+      <VersionInfo Name="MinorVer">0</VersionInfo>
+      <VersionInfo Name="Release">0</VersionInfo>
+      <VersionInfo Name="Build">0</VersionInfo>
+      <VersionInfo Name="Debug">False</VersionInfo>
+      <VersionInfo Name="PreRelease">False</VersionInfo>
+      <VersionInfo Name="Special">False</VersionInfo>
+      <VersionInfo Name="Private">False</VersionInfo>
+      <VersionInfo Name="DLL">False</VersionInfo>
+      <VersionInfo Name="Locale">3082</VersionInfo>
+      <VersionInfo Name="CodePage">1252</VersionInfo>
+    </VersionInfo>
+    <VersionInfoKeys>
+      <VersionInfoKeys Name="CompanyName"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileDescription"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="InternalName"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys>
+      <VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductName"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="Comments"></VersionInfoKeys>
+    </VersionInfoKeys>
+    <FileList>
+      <File FileName="vcl\DBLOGDLG.dfm" ContainerId="W32Form" ModuleName="DBLOGDLG.dfm"/>
+      <File FileName="vcl\DBPWDLG.dfm" ContainerId="W32Form" ModuleName="DBPWDLG.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpexceldriver.dfm" ContainerId="W32Form" ModuleName="rpexceldriver.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpfmainmetaviewvcl.dfm" ContainerId="W32Form" ModuleName="rpfmainmetaviewvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpfmetaviewvcl.dfm" ContainerId="W32Form" ModuleName="rpfmetaviewvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpgdidriver.dfm" ContainerId="W32Form" ModuleName="rpgdidriver.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdclitreevcl.dfm" ContainerId="W32Form" ModuleName="rpmdclitreevcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdfaboutvcl.dfm" ContainerId="W32Form" ModuleName="rpmdfaboutvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdprintconfigvcl.dfm" ContainerId="W32Form" ModuleName="rpmdprintconfigvcl.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rpmdrepclient.dfm" ContainerId="W32Form" ModuleName="rpmdrepclient.dfm"/>
+      <File FileName="C\prog\toni\cvsroot\reportman\reportman\rprfvparams.dfm" ContainerId="W32Form" ModuleName="rprfvparams.dfm"/>
+      <File FileName="metaviewxp_DRC.rc" ContainerId="W32RC" ModuleName="metaviewxp_DRC.rc"/>
+    </FileList>
+  </W32ResourceDLL.Personality>
+</BorlandProject>

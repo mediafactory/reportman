@@ -43,6 +43,7 @@ type
     FToken: Char;
     FFloatType: Char;
     FWideStr: WideString;
+    ParseBufSize :integer;
     procedure ReadBuffer;
     procedure SkipBlanks;
     procedure SetExpression(Value:String);
@@ -87,8 +88,6 @@ begin
   Result := CompareText(S1, S2) = 0;
 end;
 
-const
-  ParseBufSize = 4096;
 
 
 const
@@ -130,6 +129,8 @@ end;
 constructor TRpParser.Create;
 begin
   inherited Create;
+  ParseBufSize := 4096;
+  SetLength(FBuffer, ParseBufSize);
 end;
 
 
@@ -571,25 +572,19 @@ begin
 end;
 
 procedure TRpParser.SetExpression(Value:String);
-{$IFDEF DOTNETD}
-var
- i:integer;
-{$ENDIF}
 begin
   if Assigned(FStream) then
    FStream.free;
   FStream := TMemoryStream.Create;
   if Length(Value)>0 then
-{$IFNDEF DOTNETD}
    FStream.Write(Value[1],Length(Value));
-{$ENDIF}
-{$IFDEF DOTNETD}
- for i:=1 to Length(Value) do
-  FStream.Write(Value[i],1);
-{$ENDIF}
   FStream.Seek(0,soFromBeginning);
   FNewExpression:=Value;
-  SetLength(FBuffer, ParseBufSize);
+  if (Length(Value)>(ParseBufSize-1)) then
+  begin
+   ParseBufSize:=Length(Value)*2;
+   SetLength(FBuffer, ParseBufSize);
+  end;
   FBuffer[0] := 0;
   FBufPtr := 0;
   FBufEnd := ParseBufSize;

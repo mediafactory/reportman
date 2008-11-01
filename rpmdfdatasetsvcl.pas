@@ -104,6 +104,7 @@ type
     EMasterFields: TEdit;
     LMasterfi: TLabel;
     CheckOpen: TCheckBox;
+    CheckParallelUnion: TCheckBox;
     procedure BParamsClick(Sender: TObject);
     procedure LDatasetsClick(Sender: TObject);
     procedure MSQLChange(Sender: TObject);
@@ -193,6 +194,8 @@ begin
  GUnions.Caption:=TranslateStr(1082,GUnions.Caption);
  LabelUnions.Caption:=TranslateStr(1083,LabelUnions.Caption);
  CheckGroupUnion.Caption:=TranslateStr(1084,CheckGroupUnion.Caption);
+ CheckParallelUnion.Caption:=TranslateStr(1440,CheckParallelUnion.Caption);
+ CheckParallelUnion.Hint:=TranslateStr(1441,CheckParallelUnion.Hint);
  LFields.Caption:=TranslateStr(1085,LFields.Caption);
  BModify.Caption:=TranslateStr(1086,BModify.Caption);
  CheckOpen.Caption:=SRpOpenOnStart;
@@ -290,6 +293,7 @@ begin
  EIndexFields.Text:=dinfo.MyBaseIndexFields;
  LUnions.Items.Assign(dinfo.DataUnions);
  CheckGroupUnion.Checked:=dinfo.GroupUnion;
+ CheckParallelUnion.Checked:=dinfo.ParallelUnion;
  EBDEIndexFields.Text:=dinfo.BDEIndexFields;
  MBDEFilter.Text:=dinfo.BDEFilter;
  EBDEIndexName.Text:=dinfo.BDEIndexName;
@@ -376,6 +380,9 @@ begin
  if Sender=CheckGroupUnion then
   dinfo.GroupUnion:=CheckGroupUnion.Checked
  else
+ if Sender=CheckParallelUnion then
+  dinfo.ParallelUnion:=CheckParallelUnion.Checked
+ else
  if Sender=MSQL then
  begin
   dinfo.SQL:=TMemo(Sender).Text;
@@ -412,12 +419,14 @@ begin
      TabSQL.TabVisible:=False;
      TabBDETable.TabVisible:=True;
      TabMyBase.TabVisible:=False;
+     PControl.ActivePage:=TabBDETable;
     end
     else
     begin
      TabSQL.TabVisible:=True;
      TabBDETable.TabVisible:=False;
      TabMyBase.TabVisible:=False;
+     PControl.ActivePage:=TabSQL;
     end;
    end
    else
@@ -677,16 +686,43 @@ end;
 procedure TFRpDatasetsVCL.BAddUnionsClick(Sender: TObject);
 var
  index:integer;
+ alist:TStringList;
+ i:integer;
+ datasetname:string;
+ commonfields:string;
 begin
  if ComboUnions.Items.Count<1 then
   exit;
  if ComboUnions.ItemIndex<0 then
   exit;
- index:=LUnions.Items.IndexOf(ComboUnions.Text);
- if index<0 then
- begin
-  LUnions.Items.Add(ComboUnions.Text);
-  MSQLChange(BAddUnions);
+ alist:=TStringList.Create;
+ try
+  index:=-1;
+  for i:=0 to LUnions.Items.Count-1 do
+  begin
+   datasetname:=LUnions.Items.Strings[i];
+   ExtractUnionFields(datasetname,alist);
+   if datasetname=ComboUnions.Text then
+   begin
+    index:=i;
+    break;
+   end;
+  end;
+  index:=LUnions.Items.IndexOf(ComboUnions.Text);
+  if index<0 then
+  begin
+   datasetname:=ComboUnions.Text;
+   if CheckParallelUnion.Checked then
+   begin
+    commonfields:=Trim(RpInputBox(datasetname,SRpCommonFields,''));
+    if Length(commonfields)>0 then
+     datasetname:=datasetname+'-'+commonfields;
+   end;
+   LUnions.Items.Add(datasetname);
+   MSQLChange(BAddUnions);
+  end;
+ finally
+  alist.free;
  end;
 end;
 

@@ -306,12 +306,14 @@ begin
   exit;
  if ComboDrivers.ItemIndex=0 then
   Raise Exception.Create(SRpSelectDriver);
- newname:=Trim(RpInputBox(SRpNewConnection,SRpConnectionName,''));
+ newname:=UpperCase(Trim(RpInputBox(SRpNewConnection,SRpConnectionName,'')));
  if Length(newname)<1 then
   exit;
  ConAdmin.AddConnection(newname,ComboDrivers.Text);
  ConAdmin.config.UpdateFile;
  ComboDriversClick(Self);
+ LConnections.ItemIndex:=LConnections.Items.IndexOf(newname);
+ LConnectionsClick(Self);
 end;
 
 procedure TFRpDBXConfigVCL.BDeleteClick(Sender: TObject);
@@ -340,7 +342,7 @@ begin
  if ComboDrivers.ItemIndex=0 then
   Raise Exception.Create(SRpSelectDriver);
  ConAdmin.GetDriverLibNames(ComboDrivers.Text,LibraryName,VendorLib);
- ShowMessage(SRpVendorLib+':'+VendorLib+#10+SRpLibraryName+':'+LibraryName);
+ RpShowMessage(SRpVendorLib+':'+VendorLib+#10+SRpLibraryName+':'+LibraryName);
 end;
 
 procedure TFRpDBXConfigVCL.BConnectClick(Sender: TObject);
@@ -399,7 +401,7 @@ begin
    else
     FZConnection.TransactIsolationLevel:=ZDbcIntfs.tiNone;
    FZConnection.Connected:=True;
-   ShowMessage(SRpConnectionOk);
+   RpShowMessage(SRpConnectionOk);
    FZConnection.Connected:=False;
   finally
    FZConnection.free;
@@ -415,7 +417,7 @@ begin
   SQLConnection1.LibraryName:=libraryname;
   SQLConnection1.GetDriverFunc:=funcname;
   SQLConnection1.Connected:=true;
-  ShowMessage(SRpConnectionOk);
+  RpShowMessage(SRpConnectionOk);
   SQLConnection1.Connected:=false;
  end;
 {$ENDIF}

@@ -34,12 +34,14 @@ uses
   StdCtrls,rpmetafile, ComCtrls,ExtCtrls,
   ActnList, ImgList,Printers,rpmdconsts,rptypes, Menus,
   rpmdfaboutvcl,rpmdshfolder,rpmdprintconfigvcl,
-  ToolWin,rpfmetaviewvcl;
+  ToolWin,rpfmetaviewvcl,rppreviewmeta;
 
 type
   TFRpMainMetaVCL = class(TForm)
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -85,8 +87,8 @@ begin
  MFrame.BExit.Visible:=ShowExit;
  MFrame.Exit1.Visible:=ShowExit;
  try
-  MFrame.ShowPrintDialog:=ShowPrintDialog;
-  MFrame.metafile:=metafile;
+   MFrame.ShowPrintDialog:=ShowPrintDialog;
+   MFrame.metafile:=metafile;
    MFrame.ASave.Enabled:=True;
    MFrame.AMailTo.Enabled:=True;
    MFrame.APrint.Enabled:=True;
@@ -142,6 +144,41 @@ begin
    if Assigned(MFrame) then
     MFrame.DoOpen(ParamStr(1));
   end;
+ end;
+end;
+
+procedure TFRpMainMetaVCL.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+var
+ increment:integer;
+begin
+ if not Assigned(MFrame) then
+  exit;
+ if not Assigned(MFrame.PreviewControl) then
+  exit;
+ if (ssShift in Shift) then
+  increment:=REP_C_WHEELINC
+ else
+  increment:=REP_C_WHEELINC*REP_C_WHEELSCALE;
+ if Key=VK_DOWN then
+  MFrame.previewcontrol.Scroll(true,increment);
+ if Key=VK_UP then
+  MFrame.previewcontrol.Scroll(true,-increment);
+ if Key=VK_RIGHT then
+  MFrame.previewcontrol.Scroll(false,increment);
+ if Key=VK_LEFT then
+  MFrame.previewcontrol.Scroll(false,-increment);
+ if Key=VK_SPACE then
+ begin
+  if MFrame.previewcontrol.AutoScale=AScaleEntirePage then
+   MFrame.previewcontrol.AutoScale:=AScaleReal
+  else
+   MFrame.previewcontrol.AutoScale:=AScaleEntirePage;
+  Key:=0;
+ end;
+ if Key=VK_F5 then
+ begin
+  MFrame.PreviewControl.ShowPageMargins:=not MFrame.PreviewControl.ShowPageMargins;
  end;
 end;
 

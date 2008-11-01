@@ -320,7 +320,7 @@ procedure TRpColumnar.AddColumn(width:integer;expression:widestring;expformat:st
   caption:widestring;captionformat:string;sumaryexpression:string;sumaryformat:string);
 var
  secinfo:TRpSectionInfo;
- expitem:TRpExpression;
+ expitem,sumitem:TRpExpression;
  fexitem:TRpExpression;
  litem:TRpLabel;
  flitem:TRpLabel;
@@ -330,49 +330,77 @@ var
  psection:TRpSection;
 begin
  fexitem:=nil;
- compo:=FReport.FindComponent(expformat);
- if Assigned(compo) then
-  if compo is TRpExpression then
-   fexitem:=TRpExpression(compo);
- if fexitem=nil then
-  Raise Exception.Create(SRpNotFound+':'+expformat);
- parentsection:=fexitem.GetParent.Name;
- secinfo:=FindSection(parentsection);
- expitem:=TrpExpression(secinfo.Section.AddComponent(TRpExpression));
- expitem.Expression:=expression;
- CopyProperties(fexitem,expitem);
+ if Length(expformat)>0 then
+ begin
+  compo:=FReport.FindComponent(expformat);
+  if Assigned(compo) then
+   if compo is TRpExpression then
+    fexitem:=TRpExpression(compo);
+  if fexitem=nil then
+   Raise Exception.Create(SRpNotFound+':'+expformat);
+ end;
+ if Assigned(fexitem) then
+ begin
+  parentsection:=fexitem.GetParent.Name;
+  secinfo:=FindSection(parentsection);
+  expitem:=TrpExpression(secinfo.Section.AddComponent(TRpExpression));
+  expitem.Expression:=expression;
+  CopyProperties(fexitem,expitem);
+ end
+ else
+ begin
+  if Length(sumaryexpression)>0 then
+   parentsection:=report.SubReports[0].SubReport.Sections[
+    report.SubReports[0].SubReport.LastDetail++1].Section.Name
+  else
+   parentsection:=report.SubReports[0].SubReport.Sections[
+    report.SubReports[0].SubReport.FirstDetail].Section.Name;
+  secinfo:=FindSection(parentsection);
+  expitem:=TrpExpression(secinfo.Section.AddComponent(TRpExpression));
+  expitem.Expression:=expression;
+ end;
  itemwidth:=CalcMaxWidth(expitem)*width;
  secinfo.expressions.AddObject(expitem.Name,expitem);
  secinfo.widths.Add(intToStr(itemwidth));
  if Length(caption)>0 then
  begin
-  compo:=FReport.FindComponent(captionformat);
-  if Assigned(compo) then
+  if (Length(captionformat)>0) then
   begin
-   if compo is TRpLabel then
+   compo:=FReport.FindComponent(captionformat);
+   if Assigned(compo) then
    begin
-    flitem:=TRpLabel(compo);
-    psection:=TrpSection(flitem.GetParent);
-    litem:=TrpLabel(psection.AddComponent(TRpLabel));
-    litem.Text:=caption;
-    CopyPropertiesLabel(flitem,litem);
-    secinfo.captions.AddObject(litem.name,litem);
+    if compo is TRpLabel then
+    begin
+     flitem:=TRpLabel(compo);
+     psection:=TrpSection(flitem.GetParent);
+     litem:=TrpLabel(psection.AddComponent(TRpLabel));
+     litem.Text:=caption;
+     CopyPropertiesLabel(flitem,litem);
+     secinfo.captions.AddObject(litem.name,litem);
+    end
+    else
+    if compo is TRpExpression then
+    begin
+     fexitem:=TRpExpression(compo);
+     psection:=TrpSection(fexitem.GetParent);
+     litem:=TrpLabel(psection.AddComponent(TRpLabel));
+     litem.Text:=caption;
+     CopyPropertiesExLabel(fexitem,litem);
+     secinfo.captions.AddObject(litem.name,litem);
+    end
+    else
+     Raise Exception.Create(SRpNotFound+':'+captionformat);
    end
    else
-   if compo is TRpExpression then
-   begin
-    fexitem:=TRpExpression(compo);
-    psection:=TrpSection(fexitem.GetParent);
-    litem:=TrpLabel(psection.AddComponent(TRpLabel));
-    litem.Text:=caption;
-    CopyPropertiesExLabel(fexitem,litem);
-    secinfo.captions.AddObject(litem.name,litem);
-   end
-   else
-    Raise Exception.Create(SRpNotFound+':'+captionformat);
+     Raise Exception.Create(SRpNotFound+':'+captionformat);
   end
   else
-    Raise Exception.Create(SRpNotFound+':'+captionformat);
+  begin
+   psection:=report.SubReports[0].SubReport.Sections[report.SubReports[0].SubReport.FirstDetail-1].Section;
+   litem:=TrpLabel(psection.AddComponent(TRpLabel));
+   litem.Text:=caption;
+   secinfo.captions.AddObject(litem.name,litem);
+  end;
  end
  else
  begin
@@ -381,17 +409,32 @@ begin
  if Length(sumaryexpression)>0 then
  begin
   fexitem:=nil;
-  compo:=FReport.FindComponent(sumaryformat);
-  if Assigned(compo) then
-   if compo is TRpExpression then
-    fexitem:=TRpExpression(compo);
-  if fexitem=nil then
-   Raise Exception.Create(SRpNotFound+':'+sumaryformat);
-  psection:=TRpSection(fexitem.GetParent);
-  expitem:=TrpExpression(psection.AddComponent(TRpExpression));
-  expitem.Expression:=sumaryexpression;
-  CopyProperties(fexitem,expitem);
-  secinfo.sumarys.AddObject(expitem.Name,expitem);
+  if (Length(sumaryformat)>0) then
+  begin
+   compo:=FReport.FindComponent(sumaryformat);
+   if Assigned(compo) then
+    if compo is TRpExpression then
+     fexitem:=TRpExpression(compo);
+   if fexitem=nil then
+    Raise Exception.Create(SRpNotFound+':'+sumaryformat);
+   psection:=TRpSection(fexitem.GetParent);
+   expitem:=TrpExpression(psection.AddComponent(TRpExpression));
+   expitem.Expression:=sumaryexpression;
+   CopyProperties(fexitem,expitem);
+   secinfo.sumarys.AddObject(expitem.Name,expitem);
+  end
+  else
+  begin
+   psection:=report.SubReports[0].SubReport.Sections[report.SubReports[0].SubReport.LastDetail+1].Section;
+   sumitem:=TrpExpression(psection.AddComponent(TRpExpression));
+   sumitem.Expression:=sumaryexpression;
+   sumitem.GroupName:='TOTAL';
+   CopyProperties(expitem,sumitem);
+   sumitem.PosX:=expitem.PosX;
+   sumitem.Aggregate:=rpAgGroup;
+   sumitem.AgType:=rpagSum;
+   secinfo.sumarys.AddObject(sumitem.Name,sumitem);
+  end;
  end
  else
  begin
