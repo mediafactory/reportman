@@ -265,6 +265,7 @@ end;
 
 initialization
 
+{$IFDEF MSWINDOWS}
 HandleLib:=LoadLibrary(shfolder);
 if HandleLib=0 then
  RaiseLastOSError;
@@ -277,13 +278,17 @@ if Not Assigned(SHGetFolderPath) then
 PathAppend:=GetProcAddress(HandleLib2,PChar('PathAppendA'));
 if Not Assigned(PathAppend) then
  RaiseLastOSError;
+{$ENDIF}
 
 finalization
 
+{$IFDEF MSWINDOWS}
 if HandleLib<>0 then
  FreeLibrary(HandleLib);
 if HandleLib2<>0 then
  FreeLibrary(HandleLib2);
+{$ENDIF}
+
 end.
 
 

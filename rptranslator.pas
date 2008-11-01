@@ -80,8 +80,10 @@ type
 
 
 function AddLocaleSufix(afilename:string):string;
+{$IFDEF MSWINDOWS}
 function FindLocaleSuffix3:string;
 function FindLocaleSuffix2:string;
+{$ENDIF}
 
 implementation
 
@@ -149,6 +151,7 @@ begin
 end;
 
 
+{$IFDEF MSWINDOWS}
 function FindLocaleSuffix3:string;
 var
   LocaleName:array[0..4] of Char;
@@ -167,6 +170,7 @@ begin
   GetLocaleInfo(GetThreadLocale, LOCALE_SABBREVLANGNAME, LocaleName, SizeOf(LocaleName));
   Result:=Copy(StrPas(LocaleName),1,2);
 end;
+{$ENDIF}
 
 
 
@@ -351,9 +355,11 @@ var
  resname:string;
  nstream:TMemoryStream;
  tempstring:widestring;
+{$IFDEF MSWINDOWS}
  resstream:TResourceStream;
  fromresource:boolean;
  hfind:HRSRC;
+{$ENDIF}
 {$IFDEF DOTNETD}
  wsize:integer;
  abytes:Array of byte;
@@ -375,11 +381,14 @@ begin
    if Length(afilename)=0 then
     afilename:=FFilename;
  end;
+{$IFDEF MSWINDOWS}
  // Look for a resource named same
  resname:=ExtractFileName(afilename);
  fromresource:=false;
+{$ENDIF}
  memstream:=nil;
  try
+{$IFDEF MSWINDOWS}
    if (Length(resname)>2) then
    begin
     resname:=ChangeFileExt(resname,'')+'_'+FindLocaleSuffix3;
@@ -407,6 +416,7 @@ begin
    end;
    FCurrentResourceFileName:=afilename;
    if (not fromresource) then
+{$ENDIF}
    begin
     if Not FileExists(afilename) then
     begin

@@ -2,7 +2,7 @@ kylix_bin=/opt/kylix3/bin
 #kylix_bin=/home/toni/kylix3/bin
 drivers_path=../../drivers/linux
 net_path=../../../reportmannet
-rpversion=2_8a
+rpversion=2_8c
 
 install:
 	make clean
