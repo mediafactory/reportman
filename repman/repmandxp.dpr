@@ -24,6 +24,7 @@ uses
   Graphics,
   Forms,
   Controls,
+  Dialogs,
   ActiveX,
 {$IFDEF USEVARIANTS}
   midaslib,
@@ -124,6 +125,9 @@ uses
 {$R *.res}
 
 begin
+{$IFDEF DELPHI2007UP}
+ UseLatestCommonDialogs:=true;
+{$ENDIF}
   with Application do
   begin
    Title:=TranslateStr(1,Title);

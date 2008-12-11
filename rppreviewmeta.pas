@@ -809,6 +809,7 @@ procedure TRpPreviewmeta.ResizeEventTimer(Sender:TObject);
 begin
  FTimerResize.Enabled:=False;
  ReDrawPage;
+ FTimerResize.Enabled:=False;
 end;
 
 

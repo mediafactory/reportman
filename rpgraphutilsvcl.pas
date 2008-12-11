@@ -630,7 +630,6 @@ end;
 procedure TFRpMessageDlgVCL.FormShow(Sender: TObject);
 const
  BUTTON_GAP=10;
- BUTTON_WIDTH=80;
 var
  i:integer;
  alist:TList;
@@ -646,12 +645,12 @@ begin
     alist.Add(PBottom.Controls[i]);
    end;
   end;
-  leftpos:=(PBottom.Width div 2)-alist.Count*(BUTTON_WIDTH div 2)-
+  leftpos:=(PBottom.Width div 2)-alist.Count*(BYes.Width div 2)-
    (alist.Count-1)*BUTTON_GAP;
   for i:=0 to alist.Count-1 do
   begin
    TControl(alist.Items[i]).Left:=leftpos;
-   leftpos:=leftpos+BUTTON_WIDTH+BUTTON_GAP;
+   leftpos:=leftpos+BYes.Width+BUTTON_GAP;
   end;
  finally
   alist.Free;

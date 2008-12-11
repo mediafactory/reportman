@@ -268,7 +268,7 @@ end;
 
 procedure TFRpDatasetsVCL.BParamsClick(Sender: TObject);
 begin
- ShowParamDef(report.params,report.datainfo);
+ ShowParamDef(report.params,report.datainfo,report);
 end;
 
 procedure TFRpDatasetsVCL.LDatasetsClick(Sender: TObject);

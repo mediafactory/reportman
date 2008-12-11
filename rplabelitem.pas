@@ -779,9 +779,21 @@ var
  aposition:integer;
  IsPartial:Boolean;
 begin
+ aText:=GetTextObject;
+ if PrintOnlyOne then
+ begin
+  if FOldString=aText.Text then
+  begin
+   Result.x:=0;
+   Result.y:=0;
+   exit;
+  end;
+ end;
+
  IsPartial:=False;
  Result:=inherited GetExtension(adriver,MaxExtent,forcepartial);
- aText:=GetTextObject;
+
+
  if (MultiPage or forcepartial) then
  begin
   maxextent.X:=Result.X;

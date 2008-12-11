@@ -41,7 +41,7 @@ const
 {$ENDIF}
 
 const
- RM_VERSION='2.8c';
+ RM_VERSION='2.8rc2';
  REPMAN_WEBSITE='http://reportman.sourceforge.net';
  MAX_PAGECOUNT=999999;
 type
@@ -2352,6 +2352,9 @@ begin
  TranslateVar(1438,SRpHtmlFileSingle);
  TranslateVar(1439,SRpPrintPDFRep13b);
 
+ TranslateVar(1442,SRpSParamSubsList);
+ TranslateVar(1443,SRpSParamInitialExpression);
+ TranslateVar(1444,SRpCommonFields);
 end;
 
 

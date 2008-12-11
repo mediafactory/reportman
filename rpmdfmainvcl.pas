@@ -1037,7 +1037,7 @@ end;
 
 procedure TFRpMainFVCL.AParamsExecute(Sender: TObject);
 begin
- ShowParamDef(report.Params,report.DataInfo);
+ ShowParamDef(report.Params,report.DataInfo,report);
  fdesignframe.freportstructure.Report:=report;
 end;
 

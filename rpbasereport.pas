@@ -313,6 +313,7 @@ type
    procedure DeActivateDatasets;
    procedure AddTotalPagesItem(apageindex,aobjectindex:integer;
     adisplayformat:widestring);
+   function IsDotNet:boolean;
    property OnWorkAsyncError:TWorkAsyncError read FOnWorkAsyncError write FOnWorkAsyncError;
    property Evaluator:TRpEvaluator read FEvaluator;
    procedure Compose(PrevReport:TRpBaseReport;execute:Boolean;ADriver:TRpPrintDriver);
@@ -2215,6 +2216,15 @@ begin
    paramtemp.free;
  end;
 end;
+
+function TRpBaseReport.IsDotNet:boolean;
+begin
+ Result:=false;
+ if Databaseinfo.Count>0 then
+  if (Databaseinfo.Items[0].Driver in [rpdatadriver,rpdotnet2driver]) then
+   Result:=true;
+end;
+
 
 
 end.

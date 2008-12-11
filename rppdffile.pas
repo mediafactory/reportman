@@ -2300,6 +2300,7 @@ var
  values:array of TRGBTriple;
  qvalues:array of TRGBQuad;
 // orgvalues:array of TRGBQuad;
+ module,h:integer;
 procedure GetDIBBits;
 var
  y,x,scanwidth:integer;
@@ -2377,6 +2378,7 @@ begin
    SetLength(qvalues,imagesize);
    scanwidth:=width*4;
    toread:=0;
+   module:=4;
   end
   else
   begin
@@ -2389,6 +2391,7 @@ begin
     toread:=4-(scanwidth mod 4);
     if toread=4 then
      toread:=0;
+    module:=3;
    end
    else
    begin
@@ -2399,10 +2402,11 @@ begin
     toread:=4-(scanwidth mod 4);
     if toread=4 then
      toread:=0;
+    module:=2;
    end;
   end;
   scanwidth:=scanwidth+toread;
-  if (bitcount>16) then
+(*  if (bitcount>16) then
   begin
    for y:=height-1 downto 0 do
    begin
@@ -2438,7 +2442,7 @@ begin
     end;
    end;
   end
-  else
+  else*)
   begin
    FMemBits.SetSize(width*height*3);
    linewidth:=width*3;
@@ -2450,6 +2454,16 @@ begin
     if readed<>scanwidth then
      Raise Exception.Create(SRpBadBitmapStream);
     FMemBits.Seek((width * 3) * y, soFromBeginning);
+    if (bitcount>16) then
+    begin
+     for h:=0 to  width-1 do
+     begin
+			bufdest[h * 3] := buffer[module * h + 2];
+			bufdest[h * 3 + 1] := buffer[module * h + 1];
+			bufdest[h * 3 + 2] := buffer[module * h];
+     end;
+    end
+    else
 		if (bitsperpixel=15) then
 		begin
 		 // 5-5-5

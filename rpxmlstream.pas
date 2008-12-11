@@ -339,7 +339,7 @@ begin
  WritePropertyI('HEIGHT',comp.height,Stream);
  WritePropertyW('PRINTCONDITION',comp.PrintCondition,Stream);
  WritePropertyW('DOBEFOREPRINT',comp.DoBeforePrint,Stream);
- WritePropertyW('DOAFTERPRINT',comp.DoBeforePrint,Stream);
+ WritePropertyW('DOAFTERPRINT',comp.DoAfterPrint,Stream);
  // CommonPos
  WritePropertyI('POSX',comp.PosX,Stream);
  WritePropertyI('POSY',comp.PosY,Stream);
@@ -1181,7 +1181,7 @@ begin
   aparam.LookupDataset:=RpStringToString(propvalue)
  else
  if propname='SEARCHDATASET' then
-  aparam.LookupDataset:=RpStringToString(propvalue)
+  aparam.SearchDataset:=RpStringToString(propvalue)
  else
  if propname='SEARCHPARAM' then
   aparam.SearchParam:=RpStringToString(propvalue)

@@ -1122,7 +1122,7 @@ begin
  begin
   aitem:=TRpSizePosInterface(FSelectedItems.Objects[i]);
   pitem:=TRpCommonPosComponent(aitem.printitem);
-  if direction=5 then
+  if direction=6 then
   begin
    newminpos:=pitem.PosX;
    newmaxpos:=pitem.PosX+pitem.Width;
@@ -1146,7 +1146,7 @@ begin
   begin
    aitem:=TRpSizePosInterface(FSelectedItems.Objects[i]);
    pitem:=TRpCommonPosComponent(aitem.printitem);
-   if direction=5 then
+   if direction=6 then
     fselitems.AddObject(FormatFloat('00000000000',pitem.PosX),aitem)
    else
     fselitems.AddObject(FormatFloat('00000000000',pitem.PosY),aitem)
@@ -1157,7 +1157,7 @@ begin
   begin
    aitem:=TRpSizePosInterface(FSelItems.Objects[i]);
    pitem:=TRpCommonPosComponent(aitem.printitem);
-   if direction=5 then
+   if direction=6 then
    begin
     pitem.PosX:=minpos;
     minpos:=minpos+pitem.Width+distance;

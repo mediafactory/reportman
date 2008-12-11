@@ -25,7 +25,7 @@ interface
 uses SysUtils, Classes,
   Graphics, Forms,Dialogs, ActnList, ImgList, ComCtrls,
   Buttons, ExtCtrls, Controls, StdCtrls,Mask,
-  rpdatainfo,
+  rpdatainfo,rpreport,
 {$IFDEF USEVARIANTS}
   Variants,
 {$ENDIF}
@@ -111,26 +111,29 @@ type
     params:TRpParamList;
     datainfo:TRpDatainfoList;
     dook:boolean;
+    report:TRpReport;
     procedure FillParamList;
     procedure UpdateValue(param:TRpParam);
+    function IsDotNet:boolean;
   public
     { Public declarations }
   end;
 
 
-procedure ShowParamDef(params:TRpParamList;datainfo:TRpDatainfoList);
+procedure ShowParamDef(params:TRpParamList;datainfo:TRpDatainfoList;report:TRpReport);
 
 implementation
 
 {$R *.dfm}
 
-procedure ShowParamDef(params:TRpParamList;datainfo:TRpDatainfoList);
+procedure ShowParamDef(params:TRpParamList;datainfo:TRpDatainfoList;report:TRpReport);
 var
  dia:TFRpParamsVCL;
 begin
  params.RestoreInitialValues;
  dia:=TFRpParamsVCL.Create(Application);
  try
+  dia.report:=report;
   dia.params.Assign(params);
   dia.datainfo:=datainfo;
   dia.ShowModal;
@@ -332,6 +335,16 @@ begin
  UpdateValue(param);
 end;
 
+function TFRpParamsVCL.IsDotNet:boolean;
+begin
+ Result:=false;
+ if report.databaseinfo.Count>0 then
+ begin
+  if (report.databaseinfo[0].Driver in [rpdatadriver,rpdotnet2driver]) then
+   Result:=true;
+ end;
+end;
+
 procedure TFRpParamsVCL.UpdateValue(param:TRpParam);
 var
  i,index:integer;
@@ -351,11 +364,23 @@ begin
   begin
    ECheckList.Checked[i]:=False;
   end;
-  for i:=0 to param.Selected.Count-1 do
+  if (IsDotnet) then
   begin
-   index:=StrToInt(param.Selected.Strings[i]);
-   if param.Items.Count>index then
-    ECheckList.Checked[index]:=True;
+   for i:=0 to param.Selected.Count-1 do
+   begin
+    index:=param.Values.IndexOf(param.Selected.Strings[i]);
+    if index>=0 then
+     ECheckList.Checked[index]:=True;
+   end;
+  end
+  else
+  begin
+   for i:=0 to param.Selected.Count-1 do
+   begin
+    index:=StrToInt(param.Selected.Strings[i]);
+    if param.Items.Count>index then
+     ECheckList.Checked[index]:=True;
+   end;
   end;
  end
  else
@@ -480,7 +505,14 @@ begin
      for i:=0 to ECheckList.Items.Count-1 do
      begin
       if ECheckList.Checked[i] then
-       param.Selected.Add(IntToStr(i));
+      begin
+       if IsDotNet then
+       begin
+        param.Selected.Add(param.Values[i]);
+       end
+       else
+        param.Selected.Add(IntToStr(i));
+      end;
      end;
     end
    else
@@ -573,6 +605,8 @@ begin
  param:=params.ParamByName(LParams.Items.strings[LParams.Itemindex]);
  paramname:=RpInputBox(SRpRenameParam,SRpParamName,param.Name);
  paramname:=AnsiUpperCase(Trim(paramname));
+ if Length(paramname)=0 then
+  exit;
 
  index:=params.IndexOf(paramname);
  if ( (index>=0) or (Length(paramname)=0) ) then

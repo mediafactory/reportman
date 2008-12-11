@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 2.8c
-AppVersion=2.8c
-OutputBaseFilename=reportman2_8c
+AppVerName=Report Manager 2.8rc2
+AppVersion=2.8rc2
+OutputBaseFilename=reportman2_8rc2
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -72,7 +72,6 @@ Source: ..\repman\net2\Reportman.Drawing.dll; DestDir: {app}\net2; Components: c
 Source: ..\repman\net2\Reportman.Drawing.Forms.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
 Source: ..\repman\net2\Reportman.Reporting.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
 Source: ..\repman\net2\Reportman.Reporting.Forms.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
-Source: ..\..\..\..\reportmannet\output2\examples\sales.rep; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\reportmanres.*; DestDir: {app}\net; Flags: restartreplace
 Source: ..\repman\reportmanres.*; DestDir: {app}\net2; Flags: restartreplace
 Source: license.txt; DestDir: {app}; Flags: ignoreversion

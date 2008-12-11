@@ -439,9 +439,19 @@ begin
        TCheckListBox(acontrol).Checked[j]:=false;
       for j:=0 to aparam.Selected.Count-1 do
       begin
-       index:=StrToInt(aparam.Selected.Strings[j]);
-       if TCheckListBox(acontrol).Items.Count>index then
-        TCheckListBox(acontrol).Checked[index]:=true;
+       // Dot net checked means by value
+       if TrpBasereport(report).IsDotNet then
+       begin
+        index:=aparam.Values.IndexOf(aparam.Selected.Strings[j]);
+        if index>=0 then
+         TCheckListBox(acontrol).Checked[index]:=true;
+       end
+       else
+       begin
+        index:=StrToInt(aparam.Selected.Strings[j]);
+        if TCheckListBox(acontrol).Items.Count>index then
+         TCheckListBox(acontrol).Checked[index]:=true;
+       end;
       end;
       index:=TCheckListBox(acontrol).Items.Count;
       if index>5 then
@@ -609,7 +619,16 @@ begin
        for j:=0 to TCheckListBox(LControls.Objects[i]).Items.Count-1 do
        begin
         if TCheckListBox(LControls.Objects[i]).Checked[j] then
-         fparams.items[i].Selected.Add(IntToStr(j));
+        begin
+         if (TRpbaseReport(report).IsDotNet) then
+         begin
+          fparams.items[i].Selected.Add(fparams.items[i].Values[j]);
+         end
+         else
+         begin
+           fparams.items[i].Selected.Add(IntToStr(j));
+         end;
+        end;
        end;
       end;
      rpParamList,rpParamSubstList:
