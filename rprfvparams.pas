@@ -440,6 +440,7 @@ begin
       for j:=0 to aparam.Selected.Count-1 do
       begin
        // Dot net checked means by value
+{$IFNDEF FORWEBAX}
        if TrpBasereport(report).IsDotNet then
        begin
         index:=aparam.Values.IndexOf(aparam.Selected.Strings[j]);
@@ -447,6 +448,7 @@ begin
          TCheckListBox(acontrol).Checked[index]:=true;
        end
        else
+{$ENDIF}
        begin
         index:=StrToInt(aparam.Selected.Strings[j]);
         if TCheckListBox(acontrol).Items.Count>index then
@@ -620,11 +622,13 @@ begin
        begin
         if TCheckListBox(LControls.Objects[i]).Checked[j] then
         begin
+{$IFNDEF FORWEBAX}
          if (TRpbaseReport(report).IsDotNet) then
          begin
           fparams.items[i].Selected.Add(fparams.items[i].Values[j]);
          end
          else
+{$ENDIF}
          begin
            fparams.items[i].Selected.Add(IntToStr(j));
          end;
