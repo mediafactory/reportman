@@ -212,7 +212,7 @@ begin
  begin
   case aparam.ParamType of
    rpParamString,rpParamExpreA,rpParamExpreB,rpParamSubst,rpParamList,rpParamSubstList,rpParamInitialExpression,rpParamUnknown:
-    WritePropertyS('VALUE',aparam.AsString,Stream);
+    WritePropertyS('VALUE',aparam.Value,Stream);
    rpParamInteger:
     begin
      WritePropertyI('VALUE',aparam.Value,Stream);
@@ -228,7 +228,7 @@ begin
    rpParamDate,rpParamTime,rpParamDateTime:
     WritePropertyD('VALUE',double(aparam.Value),Stream);
    rpParamBool:
-    WritePropertyS('VALUE',aparam.Value,Stream);
+    WritePropertyBool('VALUE',aparam.Value,Stream);
   end;
  end;
 end;
@@ -1207,7 +1207,7 @@ begin
    rpParamDate,rpParamTime,rpParamDateTime:
     aparam.Value:=TDateTime(RpStrToDouble(propvalue));
    rpParamBool:
-    aparam.Value:=StrToBool(propvalue);
+    aparam.Value:=RpStrToBool(propvalue);
   end;
  end;
 end;
@@ -1270,7 +1270,7 @@ begin
   report.PreviewStyle:=TrpPreviewStyle(StrToInt(propvalue))
  else
  if propname='PREVIEWMARGINS' then
-  report.PreviewMargins:=StrToBool(propvalue)
+  report.PreviewMargins:=RpStrToBool(propvalue)
  else
  if propname='PREVIEWWINDOW' then
   report.PreviewWindow:=TrpPreviewWindowStyle(StrToInt(propvalue))
@@ -1297,34 +1297,34 @@ begin
   report.Copies:=StrToInt(propvalue)
  else
  if propname='COLLATECOPIES' then
-  report.CollateCopies:=StrToBool(propvalue)
+  report.CollateCopies:=RpStrToBool(propvalue)
  else
  if propname='TWOPASS' then
-  report.TwoPass:=StrToBool(propvalue)
+  report.TwoPass:=RpStrToBool(propvalue)
  else
  if propname='PRINTERFONTS' then
   report.PrinterFonts:=TRpPrinterFontsOption(StrToInt(propvalue))
  else
  if propname='PRINTONLYIFDATAAVAILABLE' then
-  report.PrintOnlyIfDataAvailable:=StrToBool(propvalue)
+  report.PrintOnlyIfDataAvailable:=RpStrToBool(propvalue)
  else
  if propname='STREAMFORMAT' then
   report.StreamFormat:=TrpStreamFormat(StrToInt(propvalue))
  else
  if propname='REPORTACTIONDRAWERBEFORE' then
  begin
-  if StrToBool(propvalue) then
+  if RpStrToBool(propvalue) then
   include(actions,rpDrawerBefore);
  end
  else
  if propname='REPORTACTIONDRAWERAFTER' then
  begin
-  if StrToBool(propvalue) then
+  if RpStrToBool(propvalue) then
   include(actions,rpDrawerAfter);
  end
  else
  if propname='PREVIEWABOUT' then
-  report.PreviewAbout:=StrToBool(propvalue)
+  report.PreviewAbout:=RpStrToBool(propvalue)
  else
  if propname='TYPE1FONT' then
   report.Type1Font:=TRpType1Font(StrToInt(propvalue))
@@ -1345,10 +1345,10 @@ begin
   report.BackColor:=StrToInt(propvalue)
  else
  if propname='TRANSPARENT' then
-  report.Transparent:=StrToBool(propvalue)
+  report.Transparent:=RpStrToBool(propvalue)
  else
  if propname='CUTTEXT' then
-  report.CutText:=StrToBool(propvalue)
+  report.CutText:=RpStrToBool(propvalue)
  else
  if propname='ALIGNMENT' then
   report.AlignMent:=StrToInt(propvalue)
@@ -1357,16 +1357,16 @@ begin
   report.VAlignMent:=StrToInt(propvalue)
  else
  if propname='WORDWRAP' then
-  report.WordWrap:=StrToBool(propvalue)
+  report.WordWrap:=RpStrToBool(propvalue)
  else
  if propname='SINGLELINE' then
-  report.SingleLine:=StrToBool(propvalue)
+  report.SingleLine:=RpStrToBool(propvalue)
  else
  if propname='BIDIMODES' then
   report.BidiModes.Text:=RpStringToString(propvalue)
  else
  if propname='MULTIPAGE' then
-  report.MultiPage:=StrToBool(propvalue)
+  report.MultiPage:=RpStrToBool(propvalue)
  else
  if propname='PRINTSTEP' then
   report.PrintStep:=TrpSelectFontStep(StrToInt(propvalue))
@@ -1550,7 +1550,7 @@ begin
    compe.ExportSize:=StrToInt(propvalue)
   else
   if propname='EXPORTDONEWLINE' then
-   compe.ExportDoNewLine:=StrToBool(propvalue);
+   compe.ExportDoNewLine:=RpStrToBool(propvalue);
  end
  else
  // TRpShape

@@ -10,550 +10,550 @@
 
 #define TntSystem_SBufferOverflow 64464
 #define TntSystem_SInvalidUTF7 64465
-#define rpzlib77_SInvalidDistanceCode 64480
-#define rpzlib77_SInvalidLengthCode 64481
-#define rpzlib77_SOversubscribedDBLTree 64482
-#define rpzlib77_SIncompleteDBLTree 64483
-#define rpzlib77_SOversubscribedLLTree 64484
-#define rpzlib77_SIncompleteLLTree 64485
-#define rpzlib77_SEmptyDistanceTree 64486
-#define rpzlib77_SInvalidBlockType 64487
-#define rpzlib77_SInvalidStoredBlockLengths 64488
-#define rpzlib77_STooManyLDSymbols 64489
-#define rpzlib77_SInvalidBitLengthRepeat 64490
-#define rpzlib77_SIncorrectDataCheck 64491
-#define rpzlib77_SUnknownCompression 64492
-#define rpzlib77_SInvalidWindowSize 64493
-#define rpzlib77_SIncorrectHeaderCheck 64494
-#define rpzlib77_SNeedDictionary 64495
-#define rpgraphicstrings_gesInvalidPixelDepth 64496
-#define rpgraphicstrings_gesInvalidSubSampling 64497
-#define rpgraphicstrings_gesVerticalSubSamplingError 64498
-#define rpgraphicstrings_gesPreparing 64499
-#define rpgraphicstrings_gesLoadingData 64500
-#define rpgraphicstrings_gesUpsampling 64501
-#define rpgraphicstrings_gesTransfering 64502
-#define rpgraphicstrings_gesLZ77Error 64503
-#define rpzlib77_SNeedDict 64504
-#define rpzlib77_SStreamEnd 64505
-#define rpzlib77_SFileError 64506
-#define rpzlib77_SStreamError 64507
-#define rpzlib77_SDataError 64508
-#define rpzlib77_SInsufficientMemory 64509
-#define rpzlib77_SBufferError 64510
-#define rpzlib77_SIncompatibleVersion 64511
-#define rpgraphicstrings_gesHalo 64512
-#define rpgraphicstrings_gesPaintShopPro 64513
-#define rpgraphicstrings_gesPortableNetworkGraphic 64514
-#define rpgraphicstrings_gesInvalidImage 64515
-#define rpgraphicstrings_gesInvalidColorFormat 64516
-#define rpgraphicstrings_gesStreamReadError 64517
-#define rpgraphicstrings_gesUnsupportedFeature 64518
-#define rpgraphicstrings_gesInvalidCRC 64519
-#define rpgraphicstrings_gesCompression 64520
-#define rpgraphicstrings_gesExtraCompressedData 64521
-#define rpgraphicstrings_gesInvalidPalette 64522
-#define rpgraphicstrings_gesUnknownCriticalChunk 64523
-#define rpgraphicstrings_gesCompressionScheme 64524
-#define rpgraphicstrings_gesIndexedNotSupported 64525
-#define rpgraphicstrings_gesConversionUnsupported 64526
-#define rpgraphicstrings_gesInvalidSampleDepth 64527
-#define rpgraphicstrings_gesGFIFax 64528
-#define rpgraphicstrings_gesSGI 64529
-#define rpgraphicstrings_gesSGITrueColor 64530
-#define rpgraphicstrings_gesZSoft 64531
-#define rpgraphicstrings_gesZSoftWord 64532
-#define rpgraphicstrings_gesAliasWaveFront 64533
-#define rpgraphicstrings_gesSGITrueColorAlpha 64534
-#define rpgraphicstrings_gesSGIMono 64535
-#define rpgraphicstrings_gesPhotoshop 64536
-#define rpgraphicstrings_gesPortable 64537
-#define rpgraphicstrings_gesPortablePixel 64538
-#define rpgraphicstrings_gesPortableGray 64539
-#define rpgraphicstrings_gesPortableMono 64540
-#define rpgraphicstrings_gesAutoDesk 64541
-#define rpgraphicstrings_gesKodakPhotoCD 64542
-#define rpgraphicstrings_gesCompuserve 64543
-#define rpgraphicstrings_gesRegistration 64544
-#define rpgraphicstrings_gesBitmaps 64545
-#define rpgraphicstrings_gesRLEBitmaps 64546
-#define rpgraphicstrings_gesDIBs 64547
-#define rpgraphicstrings_gesEPS 64548
-#define rpgraphicstrings_gesIcons 64549
-#define rpgraphicstrings_gesMetaFiles 64550
-#define rpgraphicstrings_gesEnhancedMetaFiles 64551
-#define rpgraphicstrings_gesJPGImages 64552
-#define rpgraphicstrings_gesJPEGImages 64553
-#define rpgraphicstrings_gesJPEImages 64554
-#define rpgraphicstrings_gesJFIFImages 64555
-#define rpgraphicstrings_gesTruevision 64556
-#define rpgraphicstrings_gesTIFF 64557
-#define rpgraphicstrings_gesMacTIFF 64558
-#define rpgraphicstrings_gesPCTIF 64559
-#define VDBConsts_SInsertRecord 64560
-#define VDBConsts_SDeleteRecord 64561
-#define VDBConsts_SEditRecord 64562
-#define VDBConsts_SPostEdit 64563
-#define VDBConsts_SCancelEdit 64564
-#define VDBConsts_SRefreshRecord 64565
-#define VDBConsts_SDeleteRecordQuestion 64566
-#define VDBConsts_SDeleteMultipleRecordsQuestion 64567
-#define VDBConsts_SDataSourceFixed 64568
-#define VDBConsts_SPropDefByLookup 64569
-#define VDBConsts_STooManyColumns 64570
-#define VDBConsts_SRemoteLogin 64571
-#define JConsts_sChangeJPGSize 64572
-#define JConsts_sJPEGError 64573
-#define JConsts_sJPEGImageFile 64574
-#define rpgraphicstrings_gesAllImages 64575
-#define ComStrs_sInvalidIndex 64576
-#define ComStrs_sInsertError 64577
-#define ComStrs_sInvalidOwner 64578
-#define ComStrs_sPageIndexError 64579
-#define ComStrs_sInvalidComCtl32 64580
-#define ComStrs_sDateTimeMax 64581
-#define ComStrs_sDateTimeMin 64582
-#define ComStrs_sNeedAllowNone 64583
-#define ComStrs_sFailSetCalDateTime 64584
-#define ComStrs_sFailSetCalMaxSelRange 64585
-#define ComStrs_sFailSetCalMinMaxRange 64586
-#define ComStrs_sFailsetCalSelRange 64587
-#define VDBConsts_SFirstRecord 64588
-#define VDBConsts_SPriorRecord 64589
-#define VDBConsts_SNextRecord 64590
-#define VDBConsts_SLastRecord 64591
-#define DBXMetaDataCommand_SAfterRow 64592
-#define DBXMetaDataCommandFactory_SUnknownDataType 64593
-#define DBXDynalink_SAdditionalInfo 64594
-#define DBXDynalink_SInvalidDataType 64595
-#define DBXDataStoreMetaDataReader_SCannotLoadMetaDataForJds7 64596
-#define DBXClient_ParameterNotSet 64597
-#define DBXPool_SConnectTimeout 64598
-#define DBXPool_SInvalidCommand 64599
-#define DBXTrace_SINVALID_TRACE_FLAG 64600
-#define ComStrs_sTabFailClear 64601
-#define ComStrs_sTabFailDelete 64602
-#define ComStrs_sTabFailRetrieve 64603
-#define ComStrs_sTabFailGetObject 64604
-#define ComStrs_sTabFailSet 64605
-#define ComStrs_sTabFailSetObject 64606
-#define ComStrs_sTabMustBeMultiLine 64607
-#define DBXMetaDataReader_SColumnSize 64608
-#define DBXMetaDataReader_SPrimaryColumnName 64609
-#define DBXMetaDataReader_SIsAutoIncrementable 64610
-#define DBXMetaDataReader_SProcedureName 64611
-#define DBXMetaDataReader_STableCatalogName 64612
-#define DBXMetaDataReader_SReservedWord 64613
-#define DBXMetaDataReader_STableSchemaName 64614
-#define DBXMetaDataReader_STypeName 64615
-#define DBXMetaDataReader_SViewName 64616
-#define DBXMetaDataReader_SIsLong 64617
-#define DBXMetaDataReader_SPastEndOfCursor 64618
-#define DBXMetaDataReader_SUnexpectedSymbol 64619
-#define DBXMetaDataReader_SLiteralPrefix 64620
-#define DBXMetaDataReader_SMinimumScale 64621
-#define DBXMetaDataReader_SLiteralSuffix 64622
-#define DBXMetaDataCommand_SBeforeRow 64623
-#define DBXMetaDataReader_SIsNullable 64624
-#define DBXMetaDataReader_SWrongAccessorForType 64625
-#define DBXMetaDataReader_SExternalDefinition 64626
-#define DBXMetaDataReader_SForeignKeyName 64627
-#define DBXMetaDataReader_SIsSearchable 64628
-#define DBXMetaDataReader_SPrimarySchemaName 64629
-#define DBXMetaDataReader_SIsCaseSensitive 64630
-#define DBXMetaDataReader_SParameterName 64631
-#define DBXMetaDataReader_SIsUnsigned 64632
-#define DBXMetaDataReader_SIsAutoIncrement 64633
-#define DBXMetaDataReader_SRoleName 64634
-#define DBXMetaDataReader_SOrdinalOutOfRange 64635
-#define DBXMetaDataReader_SIsUnique 64636
-#define DBXMetaDataReader_SCreateFormat 64637
-#define DBXMetaDataReader_SPrimaryKeyName 64638
-#define DBXMetaDataReader_SUnknownTableType 64639
-#define DBXMetaDataReader_SMinimumVersion 64640
-#define DBXMetaDataReader_SDefinition 64641
-#define DBXMetaDataReader_SColumnName 64642
-#define DBXMetaDataReader_SCreateParameters 64643
-#define DBXMetaDataReader_SIsConcurrencyType 64644
-#define DBXMetaDataReader_SDbxDataType 64645
-#define DBXMetaDataReader_STableType 64646
-#define DBXMetaDataReader_SMaxInline 64647
-#define DBXMetaDataReader_SUnclosedQuotes 64648
-#define DBXMetaDataReader_SIsLiteralSupported 64649
-#define DBXMetaDataReader_SIsAscending 64650
-#define DBXMetaDataReader_SIsUnicode 64651
-#define DBXMetaDataReader_SPrecision 64652
-#define DBXMetaDataReader_SConstraintName 64653
-#define DBXMetaDataReader_SMustCallNextFirst 64654
-#define DBXMetaDataReader_SScale 64655
-#define DBXMetaDataReader_SProviderDbType 64656
-#define DBXMetaDataReader_SSynonymName 64657
-#define DBXMetaDataReader_SProcedureType 64658
-#define DBXMetaDataReader_SParameterMode 64659
-#define DBXMetaDataReader_SMetaDataCommandExpected 64660
-#define DBXMetaDataReader_SMissingImplementation 64661
-#define DBXMetaDataReader_SIsFixedLength 64662
-#define DBXMetaDataReader_SIsFixedPrecisionScale 64663
-#define DBXMetaDataReader_SUserName 64664
-#define DBXMetaDataReader_SCatalogName 64665
-#define DBXMetaDataReader_SIsBestMatch 64666
-#define DBXMetaDataReader_SMaximumScale 64667
-#define DBXMetaDataReader_SOrdinal 64668
-#define DBXMetaDataReader_SMaximumVersion 64669
-#define DBXMetaDataReader_SDefaultValue 64670
-#define DBXMetaDataReader_SPrimaryTableName 64671
-#define SqlConst_SNOTIMPLEMENTED 64672
-#define SqlConst_SDRIVERINCOMPATIBLE 64673
-#define SqlConst_SDriverNotInConfigFile 64674
-#define SqlConst_SObjectTypenameRequired 64675
-#define SqlConst_SCannotCreateFile 64676
-#define SqlConst_SUnknownDataType 64677
-#define DBXPlatformUtil_SIllegalArgument 64678
-#define DBXPlatformUtil_SUnsupportedOperation 64679
-#define DBXMetaDataReader_SIndexName 64680
-#define DBXMetaDataReader_SDataType 64681
-#define DBXMetaDataReader_STableName 64682
-#define DBXMetaDataReader_SPackageName 64683
-#define DBXMetaDataReader_SIsSearchableWithLike 64684
-#define DBXMetaDataReader_SPrimaryCatalogName 64685
-#define DBXMetaDataReader_SIsPrimary 64686
-#define DBXMetaDataReader_SSchemaName 64687
-#define SqlConst_SSQLPARAMNOTSET 64688
-#define SqlConst_SINVALIDUSRPASS 64689
-#define SqlConst_SINVALIDPRECISION 64690
-#define SqlConst_SINVALIDLEN 64691
-#define SqlConst_SINVALIDXISOLEVEL 64692
-#define SqlConst_SINVALIDTXNID 64693
-#define SqlConst_SDUPLICATETXNID 64694
-#define SqlConst_SDRIVERRESTRICTED 64695
-#define SqlConst_SLOCALTRANSACTIVE 64696
-#define SqlConst_SMULTIPLETRANSNOTENABLED 64697
-#define SqlConst_SCONNECTIONFAILED 64698
-#define SqlConst_SDRIVERINITFAILED 64699
-#define SqlConst_SOPTLOCKFAILED 64700
-#define SqlConst_SINVALIDREF 64701
-#define SqlConst_SNOTABLE 64702
-#define SqlConst_SMISSINGPARAMINSQL 64703
-#define SqlConst_SMissingDriverRegFile 64704
-#define SqlConst_SNoCursor 64705
-#define SqlConst_SErrorMappingError 64706
-#define SqlConst_SStoredProcsNotSupported 64707
-#define SqlConst_SPackagesNotSupported 64708
-#define SqlConst_SNOERROR 64709
-#define SqlConst_SWARNING 64710
-#define SqlConst_SNOMEMORY 64711
-#define SqlConst_SINVALIDFLDTYPE 64712
-#define SqlConst_SINVALIDHNDL 64713
-#define SqlConst_SNOTSUPPORTED 64714
-#define SqlConst_SINVALIDTIME 64715
-#define SqlConst_SINVALIDXLATION 64716
-#define SqlConst_SOUTOFRANGE 64717
-#define SqlConst_SINVALIDPARAM 64718
-#define SqlConst_SEOF 64719
-#define SqlConst_SLoginError 64720
-#define SqlConst_SMonitorActive 64721
-#define SqlConst_SDatabaseOpen 64722
-#define SqlConst_SDatabaseClosed 64723
-#define SqlConst_SMissingSQLConnection 64724
-#define SqlConst_SConnectionNameMissing 64725
-#define SqlConst_SEmptySQLStatement 64726
-#define SqlConst_SNoParameterValue 64727
-#define SqlConst_SNoSqlStatement 64728
-#define SqlConst_SMissingDataBaseName 64729
-#define SqlConst_SMissingDriverName 64730
-#define SqlConst_SPrepareError 64731
-#define SqlConst_SObjectNameError 64732
-#define SqlConst_SSQLDataSetOpen 64733
-#define SqlConst_SNoActiveTrans 64734
-#define SqlConst_SActiveTrans 64735
-#define DBXCommon_SUnknownDriver 64736
-#define DBXCommon_SInvalidArgument 64737
-#define DBXCommon_SInvalidTransaction 64738
-#define DBXCommon_SNotImplemented 64739
-#define DBXCommon_SRequiredProperty 64740
-#define DBXCommon_SDriverLoadError 64741
-#define DBXCommon_SReaderNew 64742
-#define DBXCommon_SReaderClosed 64743
-#define DBXCommon_SReadOnlyType 64744
-#define DBXCommon_SConnectionFactoryInitFailed 64745
-#define DBXCommon_SInvalidDelegationDepth 64746
-#define DBXCommon_SInvalidOrdinal 64747
-#define DBXCommon_SDefaultErrorMessage 64748
-#define DBXCommon_SAlreadyPrepared 64749
-#define DBXCommon_SInvalidTypeAccess 64750
-#define DBXCommon_SNoStatementToExecute 64751
-#define IBSQLMonitor_StrFetch 64752
-#define IBSQLMonitor_StrPrepare 64753
-#define IBSQLMonitor_StrPlan 64754
-#define IBSQLMonitor_StrPlanCantRetrive 64755
-#define IBSQLMonitor_StrCommitHardComm 64756
-#define IBSQLMonitor_StrCommitRetaining 64757
-#define IBSQLMonitor_StrRollback 64758
-#define IBSQLMonitor_StrRollbackRetainin 64759
-#define IBSQLMonitor_StrStartTransaction 64760
-#define IBSQLMonitor_StrApplication 64761
-#define ClassRegistry_SAlreadyRegistered 64762
-#define ClassRegistry_SNotRegistered 64763
-#define ClassRegistry_SInvalidClassRegister 64764
-#define ClassRegistry_SCannotFreeClassRegistry 64765
-#define DBXCommon_SDllLoadError 64766
-#define DBXCommon_SDllProcLoadError 64767
-#define IBXConst_SIB65feature 64768
-#define IBXConst_SLoginPromptFailure 64769
-#define IBXConst_SIB70feature 64770
-#define IBXConst_SIB71feature 64771
-#define IBXConst_SIB80feature 64772
-#define IBSQLMonitor_StrConnect 64773
-#define IBSQLMonitor_StrDisconnect 64774
-#define IBSQLMonitor_StrMisc 64775
-#define IBSQLMonitor_StrError 64776
-#define IBSQLMonitor_StrAttach 64777
-#define IBSQLMonitor_StrDetach 64778
-#define IBSQLMonitor_StrQuery 64779
-#define IBSQLMonitor_StrStart 64780
-#define IBSQLMonitor_StrExecute 64781
-#define IBSQLMonitor_StrNULL 64782
-#define IBSQLMonitor_StrBLOB 64783
-#define IBXConst_SNoOptionsSet 64784
-#define IBXConst_SNoDestinationDirectory 64785
-#define IBXConst_SNosourceDirectory 64786
-#define IBXConst_SNoUninstallFile 64787
-#define IBXConst_SOptionNeedsClient 64788
-#define IBXConst_SOptionNeedsServer 64789
-#define IBXConst_SInvalidOption 64790
-#define IBXConst_SInvalidOnErrorResult 64791
-#define IBXConst_SInvalidOnStatusResult 64792
-#define IBXConst_SDPBConstantUnknownEx 64793
-#define IBXConst_STPBConstantUnknownEx 64794
-#define IBXConst_SUnknownPlan 64795
-#define IBXConst_SFieldSizeMismatch 64796
-#define IBXConst_SEventAlreadyRegistered 64797
-#define IBXConst_SStringTooLarge 64798
-#define IBXConst_SNoTimers 64799
-#define IBXConst_SSPBConstantUnknown 64800
-#define IBXConst_SServiceActive 64801
-#define IBXConst_SServiceInActive 64802
-#define IBXConst_SServerNameMissing 64803
-#define IBXConst_SQueryParamsError 64804
-#define IBXConst_SStartParamsError 64805
-#define IBXConst_SOutputParsingError 64806
-#define IBXConst_SUseSpecificProcedures 64807
-#define IBXConst_SSQLMonitorAlreadyPresent 64808
-#define IBXConst_SCantPrintValue 64809
-#define IBXConst_SEOFReached 64810
-#define IBXConst_SEOFInComment 64811
-#define IBXConst_SEOFInString 64812
-#define IBXConst_SParamNameExpected 64813
-#define IBXConst_SSuccess 64814
-#define IBXConst_SDelphiException 64815
-#define IBXConst_SNoProvider 64816
-#define IBXConst_SNoRecordsAffected 64817
-#define IBXConst_SNoTableName 64818
-#define IBXConst_SCannotCreatePrimaryIndex 64819
-#define IBXConst_SCannotDropSystemIndex 64820
-#define IBXConst_STableNameMismatch 64821
-#define IBXConst_SIndexFieldMissing 64822
-#define IBXConst_SInvalidCancellation 64823
-#define IBXConst_SInvalidEvent 64824
-#define IBXConst_SMaximumEvents 64825
-#define IBXConst_SNoEventsRegistered 64826
-#define IBXConst_SInvalidQueueing 64827
-#define IBXConst_SInvalidRegistration 64828
-#define IBXConst_SInvalidBatchMove 64829
-#define IBXConst_SSQLDialectInvalid 64830
-#define IBXConst_SSPBConstantNotSupported 64831
-#define IBXConst_SDataSetUniDirectional 64832
-#define IBXConst_SCannotCreateSharedResource 64833
-#define IBXConst_SWindowsAPIError 64834
-#define IBXConst_SColumnListsDontMatch 64835
-#define IBXConst_SColumnTypesDontMatch 64836
-#define IBXConst_SCantEndSharedTransaction 64837
-#define IBXConst_SFieldUnsupportedType 64838
-#define IBXConst_SCircularDataLink 64839
-#define IBXConst_SEmptySQLStatement 64840
-#define IBXConst_SIsASelectStatement 64841
-#define IBXConst_SRequiredParamNotSet 64842
-#define IBXConst_SNoStoredProcName 64843
-#define IBXConst_SIsAExecuteProcedure 64844
-#define IBXConst_SUpdateFailed 64845
-#define IBXConst_SNotCachedUpdates 64846
-#define IBXConst_SNotLiveRequest 64847
-#define IBXConst_SBlobCannotBeWritten 64848
-#define IBXConst_SEmptyQuery 64849
-#define IBXConst_SCannotOpenNonSQLSelect 64850
-#define IBXConst_SNoFieldAccess 64851
-#define IBXConst_SFieldReadOnly 64852
-#define IBXConst_SFieldNotFound 64853
-#define IBXConst_SNotEditing 64854
-#define IBXConst_SCannotInsert 64855
-#define IBXConst_SCannotPost 64856
-#define IBXConst_SCannotUpdate 64857
-#define IBXConst_SCannotDelete 64858
-#define IBXConst_SCannotRefresh 64859
-#define IBXConst_SBufferNotSet 64860
-#define IBXConst_SCircularReference 64861
-#define IBXConst_SSQLParseError 64862
-#define IBXConst_SUserAbort 64863
-#define IBXConst_STransactionNotAssigned 64864
-#define IBXConst_SXSQLDAIndexOutOfRange 64865
-#define IBXConst_SXSQLDANameDoesNotExist 64866
-#define IBXConst_SEOF 64867
-#define IBXConst_SBOF 64868
-#define IBXConst_SInvalidStatementHandle 64869
-#define IBXConst_SSQLOpen 64870
-#define IBXConst_SSQLClosed 64871
-#define IBXConst_SDatasetOpen 64872
-#define IBXConst_SDatasetClosed 64873
-#define IBXConst_SUnknownSQLDataType 64874
-#define IBXConst_SInvalidColumnIndex 64875
-#define IBXConst_SInvalidParamColumnIndex 64876
-#define IBXConst_SInvalidDataConversion 64877
-#define IBXConst_SColumnIsNotNullable 64878
-#define IBXConst_SBlobCannotBeRead 64879
-#define IBXConst_SCannotSetTransaction 64880
-#define IBXConst_SOperationCancelled 64881
-#define IBXConst_SDPBConstantNotSupported 64882
-#define IBXConst_SDPBConstantUnknown 64883
-#define IBXConst_STPBConstantNotSupported 64884
-#define IBXConst_STPBConstantUnknown 64885
-#define IBXConst_SDatabaseClosed 64886
-#define IBXConst_SDatabaseOpen 64887
-#define IBXConst_SDatabaseNameMissing 64888
-#define IBXConst_SNotInTransaction 64889
-#define IBXConst_SInTransaction 64890
-#define IBXConst_STimeoutNegative 64891
-#define IBXConst_SNoDatabasesInTransaction 64892
-#define IBXConst_SUpdateWrongDB 64893
-#define IBXConst_SUpdateWrongTR 64894
-#define IBXConst_SDatabaseNotAssigned 64895
-#define ZMessages_SUnsupportedDataType 64896
-#define ZMessages_SErrorConvertionField 64897
-#define ZMessages_SUnknownError 64898
-#define ZMessages_SFieldNotFound1 64899
-#define ZMessages_SLoginPromptFailure 64900
-#define ZMessages_SNeedField 64901
-#define ZMessages_SInvalidUpdateCount 64902
-#define IBXConst_SUnknownError 64903
-#define IBXConst_SInterBaseMissing 64904
-#define IBXConst_SInterBaseInstallMissing 64905
-#define IBXConst_SIB60feature 64906
-#define IBXConst_SNotSupported 64907
-#define IBXConst_SNotPermitted 64908
-#define IBXConst_SFileAccessError 64909
-#define IBXConst_SConnectionTimeout 64910
-#define IBXConst_SCannotSetDatabase 64911
-#define ZMessages_SOperationIsNotAllowed1 64912
-#define ZMessages_SOperationIsNotAllowed2 64913
-#define ZMessages_SOperationIsNotAllowed4 64914
-#define ZMessages_SNoMoreRecords 64915
-#define ZMessages_SCanNotOpenResultSet 64916
-#define ZMessages_SCircularLink 64917
-#define ZMessages_SBookmarkWasNotFound 64918
-#define ZMessages_SIncorrectSearchFieldsNumber 64919
-#define ZMessages_SInvalidOperationInTrans 64920
-#define ZMessages_SIncorrectSymbol 64921
-#define ZMessages_SIncorrectToken 64922
-#define ZMessages_SPattern2Long 64923
-#define ZMessages_SStatementIsNotAllowed 64924
-#define ZMessages_SInvalidState 64925
-#define ZMessages_SErrorConvertion 64926
-#define ZMessages_SUnsupportedParameterType 64927
-#define ZMessages_SCanNotConnectToServer 64928
-#define ZMessages_STableIsNotSpecified 64929
-#define ZMessages_SLiveResultSetsAreNotSupported 64930
-#define ZMessages_SInvalidInputParameterCount 64931
-#define ZMessages_SIsolationIsNotSupported 64932
-#define ZMessages_SColumnWasNotFound 64933
-#define ZMessages_SWrongTypeForBlobParameter 64934
-#define ZMessages_SIncorrectConnectionURL 64935
-#define ZMessages_SUnsupportedProtocol 64936
-#define ZMessages_SConnectionIsNotOpened 64937
-#define ZMessages_SInvalidOpInAutoCommit 64938
-#define ZMessages_SInvalidOpInNonAutoCommit 64939
-#define ZMessages_SInvalidOpPrepare 64940
-#define ZMessages_SConnectionIsNotAssigned 64941
-#define ZMessages_SQueryIsEmpty 64942
-#define ZMessages_SCanNotExecuteMoreQueries 64943
-#define ZMessages_SCanNotRetrieveResultSetData 64944
-#define ZMessages_SRowBufferIsNotAssigned 64945
-#define ZMessages_SColumnIsNotAccessable 64946
-#define ZMessages_SConvertionIsNotPossible 64947
-#define ZMessages_SCanNotAccessBlobRecord 64948
-#define ZMessages_SRowDataIsNotAvailable 64949
-#define ZMessages_SResolverIsNotSpecified 64950
-#define ZMessages_SResultsetIsAlreadyOpened 64951
-#define ZMessages_SCanNotUpdateEmptyRow 64952
-#define ZMessages_SCanNotUpdateDeletedRow 64953
-#define ZMessages_SCanNotDeleteEmptyRow 64954
-#define ZMessages_SCannotUseCommit 64955
-#define ZMessages_SCannotUseRollBack 64956
-#define ZMessages_SCanNotUpdateComplexQuery 64957
-#define ZMessages_SCanNotUpdateThisQueryType 64958
-#define ZMessages_SDriverWasNotFound 64959
-#define ZMessages_SUnknownSymbol 64960
-#define ZMessages_SUnexpectedExprEnd 64961
-#define ZMessages_SRightBraceExpected 64962
-#define ZMessages_SParametersError 64963
-#define ZMessages_SExpectedMoreParams 64964
-#define ZMessages_SInvalidVarByteArray 64965
-#define ZMessages_SVariableAlreadyExists 64966
-#define ZMessages_STypesMismatch 64967
-#define ZMessages_SUnsupportedOperation 64968
-#define ZMessages_SLibraryNotFound 64969
-#define ZMessages_SEncodeDateIsNotSupported 64970
-#define ZMessages_SEncodeTimeIsNotSupported 64971
-#define ZMessages_SEncodeTimestampIsNotSupported 64972
-#define ZMessages_SDecodeDateIsNotSupported 64973
-#define ZMessages_SDecodeTimeIsNotSupported 64974
-#define ZMessages_SDecodeTimestampIsNotSupported 64975
-#define bdeconst_SInvalidAliasName 64976
-#define bdeconst_SNoFieldAccess 64977
-#define bdeconst_SUntitled 64978
-#define bdeconst_SLocalTransDirty 64979
-#define ZMessages_SSQLError1 64980
-#define ZMessages_SListCapacityError 64981
-#define ZMessages_SListCountError 64982
-#define ZMessages_SListIndexError 64983
-#define ZMessages_SClonningIsNotSupported 64984
-#define ZMessages_SImmutableOpIsNotAllowed 64985
-#define ZMessages_SStackIsEmpty 64986
-#define ZMessages_SVariableWasNotFound 64987
-#define ZMessages_SFunctionWasNotFound 64988
-#define ZMessages_SInternalError 64989
-#define ZMessages_SSyntaxErrorNear 64990
-#define ZMessages_SSyntaxError 64991
-#define bdeconst_SDatabaseOpen 64992
-#define bdeconst_SDatabaseClosed 64993
-#define bdeconst_SDatabaseHandleSet 64994
-#define bdeconst_SSessionActive 64995
-#define bdeconst_SHandleError 64996
-#define bdeconst_SNoReferenceTableName 64997
-#define bdeconst_SEmptySQLStatement 64998
-#define bdeconst_SNoParameterValue 64999
-#define bdeconst_SLoginError 65000
-#define bdeconst_SInitError 65001
-#define bdeconst_SIDAPILangID 65002
-#define bdeconst_SBDEError 65003
-#define bdeconst_SIndexDoesNotExist 65004
-#define bdeconst_SNoTableName 65005
-#define bdeconst_SNoDataSetField 65006
-#define bdeconst_SNoCachedUpdates 65007
-#define ADOConst_SEventsNotSupported 65008
-#define ADOConst_SUsupportedFieldType 65009
-#define ADOConst_SConnectionRequired 65010
-#define ADOConst_SCantRequery 65011
-#define ADOConst_SNoFilterOptions 65012
-#define ADOConst_SRecordsetNotOpen 65013
-#define ADOConst_sNameAttr 65014
-#define ADOConst_sValueAttr 65015
-#define bdeconst_SAutoSessionExclusive 65016
-#define bdeconst_SAutoSessionExists 65017
-#define bdeconst_SAutoSessionActive 65018
-#define bdeconst_SDuplicateDatabaseName 65019
-#define bdeconst_SDuplicateSessionName 65020
-#define bdeconst_SInvalidSessionName 65021
-#define bdeconst_SDatabaseNameMissing 65022
-#define bdeconst_SSessionNameMissing 65023
+#define VDBConsts_SFirstRecord 64480
+#define VDBConsts_SPriorRecord 64481
+#define VDBConsts_SNextRecord 64482
+#define VDBConsts_SLastRecord 64483
+#define VDBConsts_SInsertRecord 64484
+#define VDBConsts_SDeleteRecord 64485
+#define VDBConsts_SEditRecord 64486
+#define VDBConsts_SPostEdit 64487
+#define VDBConsts_SCancelEdit 64488
+#define VDBConsts_SRefreshRecord 64489
+#define VDBConsts_SDeleteRecordQuestion 64490
+#define VDBConsts_SDeleteMultipleRecordsQuestion 64491
+#define VDBConsts_SDataSourceFixed 64492
+#define VDBConsts_SPropDefByLookup 64493
+#define VDBConsts_STooManyColumns 64494
+#define VDBConsts_SRemoteLogin 64495
+#define rpgraphicstrings_gesCompression 64496
+#define rpgraphicstrings_gesExtraCompressedData 64497
+#define rpgraphicstrings_gesInvalidPalette 64498
+#define rpgraphicstrings_gesUnknownCriticalChunk 64499
+#define rpgraphicstrings_gesCompressionScheme 64500
+#define rpgraphicstrings_gesIndexedNotSupported 64501
+#define rpgraphicstrings_gesConversionUnsupported 64502
+#define rpgraphicstrings_gesInvalidSampleDepth 64503
+#define rpgraphicstrings_gesInvalidPixelDepth 64504
+#define rpgraphicstrings_gesInvalidSubSampling 64505
+#define rpgraphicstrings_gesVerticalSubSamplingError 64506
+#define rpgraphicstrings_gesPreparing 64507
+#define rpgraphicstrings_gesLoadingData 64508
+#define rpgraphicstrings_gesUpsampling 64509
+#define rpgraphicstrings_gesTransfering 64510
+#define rpgraphicstrings_gesLZ77Error 64511
+#define rpgraphicstrings_gesPhotoshop 64512
+#define rpgraphicstrings_gesPortable 64513
+#define rpgraphicstrings_gesPortablePixel 64514
+#define rpgraphicstrings_gesPortableGray 64515
+#define rpgraphicstrings_gesPortableMono 64516
+#define rpgraphicstrings_gesAutoDesk 64517
+#define rpgraphicstrings_gesKodakPhotoCD 64518
+#define rpgraphicstrings_gesCompuserve 64519
+#define rpgraphicstrings_gesHalo 64520
+#define rpgraphicstrings_gesPaintShopPro 64521
+#define rpgraphicstrings_gesPortableNetworkGraphic 64522
+#define rpgraphicstrings_gesInvalidImage 64523
+#define rpgraphicstrings_gesInvalidColorFormat 64524
+#define rpgraphicstrings_gesStreamReadError 64525
+#define rpgraphicstrings_gesUnsupportedFeature 64526
+#define rpgraphicstrings_gesInvalidCRC 64527
+#define rpgraphicstrings_gesJPGImages 64528
+#define rpgraphicstrings_gesJPEGImages 64529
+#define rpgraphicstrings_gesJPEImages 64530
+#define rpgraphicstrings_gesJFIFImages 64531
+#define rpgraphicstrings_gesTruevision 64532
+#define rpgraphicstrings_gesTIFF 64533
+#define rpgraphicstrings_gesMacTIFF 64534
+#define rpgraphicstrings_gesPCTIF 64535
+#define rpgraphicstrings_gesGFIFax 64536
+#define rpgraphicstrings_gesSGI 64537
+#define rpgraphicstrings_gesSGITrueColor 64538
+#define rpgraphicstrings_gesZSoft 64539
+#define rpgraphicstrings_gesZSoftWord 64540
+#define rpgraphicstrings_gesAliasWaveFront 64541
+#define rpgraphicstrings_gesSGITrueColorAlpha 64542
+#define rpgraphicstrings_gesSGIMono 64543
+#define rpzlib77_STooManyLDSymbols 64544
+#define rpzlib77_SInvalidBitLengthRepeat 64545
+#define rpzlib77_SIncorrectDataCheck 64546
+#define rpzlib77_SUnknownCompression 64547
+#define rpzlib77_SInvalidWindowSize 64548
+#define rpzlib77_SIncorrectHeaderCheck 64549
+#define rpzlib77_SNeedDictionary 64550
+#define rpgraphicstrings_gesAllImages 64551
+#define rpgraphicstrings_gesRegistration 64552
+#define rpgraphicstrings_gesBitmaps 64553
+#define rpgraphicstrings_gesRLEBitmaps 64554
+#define rpgraphicstrings_gesDIBs 64555
+#define rpgraphicstrings_gesEPS 64556
+#define rpgraphicstrings_gesIcons 64557
+#define rpgraphicstrings_gesMetaFiles 64558
+#define rpgraphicstrings_gesEnhancedMetaFiles 64559
+#define rpzlib77_SStreamEnd 64560
+#define rpzlib77_SFileError 64561
+#define rpzlib77_SStreamError 64562
+#define rpzlib77_SDataError 64563
+#define rpzlib77_SInsufficientMemory 64564
+#define rpzlib77_SBufferError 64565
+#define rpzlib77_SIncompatibleVersion 64566
+#define rpzlib77_SInvalidDistanceCode 64567
+#define rpzlib77_SInvalidLengthCode 64568
+#define rpzlib77_SOversubscribedDBLTree 64569
+#define rpzlib77_SIncompleteDBLTree 64570
+#define rpzlib77_SOversubscribedLLTree 64571
+#define rpzlib77_SIncompleteLLTree 64572
+#define rpzlib77_SEmptyDistanceTree 64573
+#define rpzlib77_SInvalidBlockType 64574
+#define rpzlib77_SInvalidStoredBlockLengths 64575
+#define ADOConst_SMissingConnection 64576
+#define ADOConst_SNoDetailFilter 64577
+#define ADOConst_SBookmarksRequired 64578
+#define ADOConst_SMissingCommandText 64579
+#define ADOConst_SNoResultSet 64580
+#define ADOConst_SADOCreateError 64581
+#define ADOConst_SEventsNotSupported 64582
+#define ADOConst_SUsupportedFieldType 64583
+#define ADOConst_SConnectionRequired 64584
+#define ADOConst_SCantRequery 64585
+#define ADOConst_SNoFilterOptions 64586
+#define ADOConst_SRecordsetNotOpen 64587
+#define ADOConst_sNameAttr 64588
+#define ADOConst_sValueAttr 64589
+#define rpdataset_SRpInvOpRpdata 64590
+#define rpzlib77_SNeedDict 64591
+#define bdeconst_SHandleError 64592
+#define bdeconst_SNoReferenceTableName 64593
+#define bdeconst_SEmptySQLStatement 64594
+#define bdeconst_SNoParameterValue 64595
+#define bdeconst_SLoginError 64596
+#define bdeconst_SInitError 64597
+#define bdeconst_SIDAPILangID 64598
+#define bdeconst_SBDEError 64599
+#define bdeconst_SIndexDoesNotExist 64600
+#define bdeconst_SNoTableName 64601
+#define bdeconst_SNoDataSetField 64602
+#define bdeconst_SNoCachedUpdates 64603
+#define bdeconst_SInvalidAliasName 64604
+#define bdeconst_SNoFieldAccess 64605
+#define bdeconst_SUntitled 64606
+#define bdeconst_SLocalTransDirty 64607
+#define ZMessages_SFieldNotFound1 64608
+#define ZMessages_SLoginPromptFailure 64609
+#define ZMessages_SNeedField 64610
+#define ZMessages_SInvalidUpdateCount 64611
+#define bdeconst_SAutoSessionExclusive 64612
+#define bdeconst_SAutoSessionExists 64613
+#define bdeconst_SAutoSessionActive 64614
+#define bdeconst_SDuplicateDatabaseName 64615
+#define bdeconst_SDuplicateSessionName 64616
+#define bdeconst_SInvalidSessionName 64617
+#define bdeconst_SDatabaseNameMissing 64618
+#define bdeconst_SSessionNameMissing 64619
+#define bdeconst_SDatabaseOpen 64620
+#define bdeconst_SDatabaseClosed 64621
+#define bdeconst_SDatabaseHandleSet 64622
+#define bdeconst_SSessionActive 64623
+#define ZMessages_SNoMoreRecords 64624
+#define ZMessages_SCanNotOpenResultSet 64625
+#define ZMessages_SCircularLink 64626
+#define ZMessages_SBookmarkWasNotFound 64627
+#define ZMessages_SIncorrectSearchFieldsNumber 64628
+#define ZMessages_SInvalidOperationInTrans 64629
+#define ZMessages_SIncorrectSymbol 64630
+#define ZMessages_SIncorrectToken 64631
+#define ZMessages_SPattern2Long 64632
+#define ZMessages_SStatementIsNotAllowed 64633
+#define ZMessages_SInvalidState 64634
+#define ZMessages_SErrorConvertion 64635
+#define ZMessages_SUnsupportedParameterType 64636
+#define ZMessages_SUnsupportedDataType 64637
+#define ZMessages_SErrorConvertionField 64638
+#define ZMessages_SUnknownError 64639
+#define ZMessages_SInvalidInputParameterCount 64640
+#define ZMessages_SIsolationIsNotSupported 64641
+#define ZMessages_SColumnWasNotFound 64642
+#define ZMessages_SWrongTypeForBlobParameter 64643
+#define ZMessages_SIncorrectConnectionURL 64644
+#define ZMessages_SUnsupportedProtocol 64645
+#define ZMessages_SConnectionIsNotOpened 64646
+#define ZMessages_SInvalidOpInAutoCommit 64647
+#define ZMessages_SInvalidOpInNonAutoCommit 64648
+#define ZMessages_SInvalidOpPrepare 64649
+#define ZMessages_SConnectionIsNotAssigned 64650
+#define ZMessages_SQueryIsEmpty 64651
+#define ZMessages_SCanNotExecuteMoreQueries 64652
+#define ZMessages_SOperationIsNotAllowed1 64653
+#define ZMessages_SOperationIsNotAllowed2 64654
+#define ZMessages_SOperationIsNotAllowed4 64655
+#define ZMessages_SConvertionIsNotPossible 64656
+#define ZMessages_SCanNotAccessBlobRecord 64657
+#define ZMessages_SRowDataIsNotAvailable 64658
+#define ZMessages_SResolverIsNotSpecified 64659
+#define ZMessages_SResultsetIsAlreadyOpened 64660
+#define ZMessages_SCanNotUpdateEmptyRow 64661
+#define ZMessages_SCanNotUpdateDeletedRow 64662
+#define ZMessages_SCanNotDeleteEmptyRow 64663
+#define ZMessages_SCannotUseCommit 64664
+#define ZMessages_SCannotUseRollBack 64665
+#define ZMessages_SCanNotUpdateComplexQuery 64666
+#define ZMessages_SCanNotUpdateThisQueryType 64667
+#define ZMessages_SDriverWasNotFound 64668
+#define ZMessages_SCanNotConnectToServer 64669
+#define ZMessages_STableIsNotSpecified 64670
+#define ZMessages_SLiveResultSetsAreNotSupported 64671
+#define ZMessages_SParametersError 64672
+#define ZMessages_SExpectedMoreParams 64673
+#define ZMessages_SInvalidVarByteArray 64674
+#define ZMessages_SVariableAlreadyExists 64675
+#define ZMessages_STypesMismatch 64676
+#define ZMessages_SUnsupportedOperation 64677
+#define ZMessages_SLibraryNotFound 64678
+#define ZMessages_SEncodeDateIsNotSupported 64679
+#define ZMessages_SEncodeTimeIsNotSupported 64680
+#define ZMessages_SEncodeTimestampIsNotSupported 64681
+#define ZMessages_SDecodeDateIsNotSupported 64682
+#define ZMessages_SDecodeTimeIsNotSupported 64683
+#define ZMessages_SDecodeTimestampIsNotSupported 64684
+#define ZMessages_SCanNotRetrieveResultSetData 64685
+#define ZMessages_SRowBufferIsNotAssigned 64686
+#define ZMessages_SColumnIsNotAccessable 64687
+#define IBSQLMonitor_StrApplication 64688
+#define ZMessages_SSQLError1 64689
+#define ZMessages_SListCapacityError 64690
+#define ZMessages_SListCountError 64691
+#define ZMessages_SListIndexError 64692
+#define ZMessages_SClonningIsNotSupported 64693
+#define ZMessages_SImmutableOpIsNotAllowed 64694
+#define ZMessages_SStackIsEmpty 64695
+#define ZMessages_SVariableWasNotFound 64696
+#define ZMessages_SFunctionWasNotFound 64697
+#define ZMessages_SInternalError 64698
+#define ZMessages_SSyntaxErrorNear 64699
+#define ZMessages_SSyntaxError 64700
+#define ZMessages_SUnknownSymbol 64701
+#define ZMessages_SUnexpectedExprEnd 64702
+#define ZMessages_SRightBraceExpected 64703
+#define IBSQLMonitor_StrAttach 64704
+#define IBSQLMonitor_StrDetach 64705
+#define IBSQLMonitor_StrQuery 64706
+#define IBSQLMonitor_StrStart 64707
+#define IBSQLMonitor_StrExecute 64708
+#define IBSQLMonitor_StrNULL 64709
+#define IBSQLMonitor_StrBLOB 64710
+#define IBSQLMonitor_StrFetch 64711
+#define IBSQLMonitor_StrPrepare 64712
+#define IBSQLMonitor_StrPlan 64713
+#define IBSQLMonitor_StrPlanCantRetrive 64714
+#define IBSQLMonitor_StrCommitHardComm 64715
+#define IBSQLMonitor_StrCommitRetaining 64716
+#define IBSQLMonitor_StrRollback 64717
+#define IBSQLMonitor_StrRollbackRetainin 64718
+#define IBSQLMonitor_StrStartTransaction 64719
+#define IBXConst_SDPBConstantUnknownEx 64720
+#define IBXConst_STPBConstantUnknownEx 64721
+#define IBXConst_SUnknownPlan 64722
+#define IBXConst_SFieldSizeMismatch 64723
+#define IBXConst_SEventAlreadyRegistered 64724
+#define IBXConst_SStringTooLarge 64725
+#define IBXConst_SNoTimers 64726
+#define IBXConst_SIB65feature 64727
+#define IBXConst_SLoginPromptFailure 64728
+#define IBXConst_SIB70feature 64729
+#define IBXConst_SIB71feature 64730
+#define IBXConst_SIB80feature 64731
+#define IBSQLMonitor_StrConnect 64732
+#define IBSQLMonitor_StrDisconnect 64733
+#define IBSQLMonitor_StrMisc 64734
+#define IBSQLMonitor_StrError 64735
+#define IBXConst_SCantPrintValue 64736
+#define IBXConst_SEOFReached 64737
+#define IBXConst_SEOFInComment 64738
+#define IBXConst_SEOFInString 64739
+#define IBXConst_SParamNameExpected 64740
+#define IBXConst_SSuccess 64741
+#define IBXConst_SDelphiException 64742
+#define IBXConst_SNoOptionsSet 64743
+#define IBXConst_SNoDestinationDirectory 64744
+#define IBXConst_SNosourceDirectory 64745
+#define IBXConst_SNoUninstallFile 64746
+#define IBXConst_SOptionNeedsClient 64747
+#define IBXConst_SOptionNeedsServer 64748
+#define IBXConst_SInvalidOption 64749
+#define IBXConst_SInvalidOnErrorResult 64750
+#define IBXConst_SInvalidOnStatusResult 64751
+#define IBXConst_SMaximumEvents 64752
+#define IBXConst_SNoEventsRegistered 64753
+#define IBXConst_SInvalidQueueing 64754
+#define IBXConst_SInvalidRegistration 64755
+#define IBXConst_SInvalidBatchMove 64756
+#define IBXConst_SSQLDialectInvalid 64757
+#define IBXConst_SSPBConstantNotSupported 64758
+#define IBXConst_SSPBConstantUnknown 64759
+#define IBXConst_SServiceActive 64760
+#define IBXConst_SServiceInActive 64761
+#define IBXConst_SServerNameMissing 64762
+#define IBXConst_SQueryParamsError 64763
+#define IBXConst_SStartParamsError 64764
+#define IBXConst_SOutputParsingError 64765
+#define IBXConst_SUseSpecificProcedures 64766
+#define IBXConst_SSQLMonitorAlreadyPresent 64767
+#define IBXConst_SIsASelectStatement 64768
+#define IBXConst_SRequiredParamNotSet 64769
+#define IBXConst_SNoStoredProcName 64770
+#define IBXConst_SIsAExecuteProcedure 64771
+#define IBXConst_SUpdateFailed 64772
+#define IBXConst_SNotCachedUpdates 64773
+#define IBXConst_SNotLiveRequest 64774
+#define IBXConst_SNoProvider 64775
+#define IBXConst_SNoRecordsAffected 64776
+#define IBXConst_SNoTableName 64777
+#define IBXConst_SCannotCreatePrimaryIndex 64778
+#define IBXConst_SCannotDropSystemIndex 64779
+#define IBXConst_STableNameMismatch 64780
+#define IBXConst_SIndexFieldMissing 64781
+#define IBXConst_SInvalidCancellation 64782
+#define IBXConst_SInvalidEvent 64783
+#define IBXConst_SCannotUpdate 64784
+#define IBXConst_SCannotDelete 64785
+#define IBXConst_SCannotRefresh 64786
+#define IBXConst_SBufferNotSet 64787
+#define IBXConst_SCircularReference 64788
+#define IBXConst_SSQLParseError 64789
+#define IBXConst_SUserAbort 64790
+#define IBXConst_SDataSetUniDirectional 64791
+#define IBXConst_SCannotCreateSharedResource 64792
+#define IBXConst_SWindowsAPIError 64793
+#define IBXConst_SColumnListsDontMatch 64794
+#define IBXConst_SColumnTypesDontMatch 64795
+#define IBXConst_SCantEndSharedTransaction 64796
+#define IBXConst_SFieldUnsupportedType 64797
+#define IBXConst_SCircularDataLink 64798
+#define IBXConst_SEmptySQLStatement 64799
+#define IBXConst_SDatasetClosed 64800
+#define IBXConst_SUnknownSQLDataType 64801
+#define IBXConst_SInvalidColumnIndex 64802
+#define IBXConst_SInvalidParamColumnIndex 64803
+#define IBXConst_SInvalidDataConversion 64804
+#define IBXConst_SColumnIsNotNullable 64805
+#define IBXConst_SBlobCannotBeRead 64806
+#define IBXConst_SBlobCannotBeWritten 64807
+#define IBXConst_SEmptyQuery 64808
+#define IBXConst_SCannotOpenNonSQLSelect 64809
+#define IBXConst_SNoFieldAccess 64810
+#define IBXConst_SFieldReadOnly 64811
+#define IBXConst_SFieldNotFound 64812
+#define IBXConst_SNotEditing 64813
+#define IBXConst_SCannotInsert 64814
+#define IBXConst_SCannotPost 64815
+#define IBXConst_SNotInTransaction 64816
+#define IBXConst_SInTransaction 64817
+#define IBXConst_STimeoutNegative 64818
+#define IBXConst_SNoDatabasesInTransaction 64819
+#define IBXConst_SUpdateWrongDB 64820
+#define IBXConst_SUpdateWrongTR 64821
+#define IBXConst_SDatabaseNotAssigned 64822
+#define IBXConst_STransactionNotAssigned 64823
+#define IBXConst_SXSQLDAIndexOutOfRange 64824
+#define IBXConst_SXSQLDANameDoesNotExist 64825
+#define IBXConst_SEOF 64826
+#define IBXConst_SBOF 64827
+#define IBXConst_SInvalidStatementHandle 64828
+#define IBXConst_SSQLOpen 64829
+#define IBXConst_SSQLClosed 64830
+#define IBXConst_SDatasetOpen 64831
+#define IBXConst_SInterBaseInstallMissing 64832
+#define IBXConst_SIB60feature 64833
+#define IBXConst_SNotSupported 64834
+#define IBXConst_SNotPermitted 64835
+#define IBXConst_SFileAccessError 64836
+#define IBXConst_SConnectionTimeout 64837
+#define IBXConst_SCannotSetDatabase 64838
+#define IBXConst_SCannotSetTransaction 64839
+#define IBXConst_SOperationCancelled 64840
+#define IBXConst_SDPBConstantNotSupported 64841
+#define IBXConst_SDPBConstantUnknown 64842
+#define IBXConst_STPBConstantNotSupported 64843
+#define IBXConst_STPBConstantUnknown 64844
+#define IBXConst_SDatabaseClosed 64845
+#define IBXConst_SDatabaseOpen 64846
+#define IBXConst_SDatabaseNameMissing 64847
+#define SqlConst_SLOCALTRANSACTIVE 64848
+#define SqlConst_SMULTIPLETRANSNOTENABLED 64849
+#define SqlConst_SCONNECTIONFAILED 64850
+#define SqlConst_SDRIVERINITFAILED 64851
+#define SqlConst_SOPTLOCKFAILED 64852
+#define SqlConst_SINVALIDREF 64853
+#define SqlConst_SNOTABLE 64854
+#define SqlConst_SMISSINGPARAMINSQL 64855
+#define SqlConst_SNOTIMPLEMENTED 64856
+#define SqlConst_SDRIVERINCOMPATIBLE 64857
+#define SqlConst_SDriverNotInConfigFile 64858
+#define SqlConst_SObjectTypenameRequired 64859
+#define SqlConst_SCannotCreateFile 64860
+#define SqlConst_SUnknownDataType 64861
+#define IBXConst_SUnknownError 64862
+#define IBXConst_SInterBaseMissing 64863
+#define SqlConst_SINVALIDFLDTYPE 64864
+#define SqlConst_SINVALIDHNDL 64865
+#define SqlConst_SNOTSUPPORTED 64866
+#define SqlConst_SINVALIDTIME 64867
+#define SqlConst_SINVALIDXLATION 64868
+#define SqlConst_SOUTOFRANGE 64869
+#define SqlConst_SINVALIDPARAM 64870
+#define SqlConst_SEOF 64871
+#define SqlConst_SSQLPARAMNOTSET 64872
+#define SqlConst_SINVALIDUSRPASS 64873
+#define SqlConst_SINVALIDPRECISION 64874
+#define SqlConst_SINVALIDLEN 64875
+#define SqlConst_SINVALIDXISOLEVEL 64876
+#define SqlConst_SINVALIDTXNID 64877
+#define SqlConst_SDUPLICATETXNID 64878
+#define SqlConst_SDRIVERRESTRICTED 64879
+#define SqlConst_SNoSqlStatement 64880
+#define SqlConst_SMissingDataBaseName 64881
+#define SqlConst_SMissingDriverName 64882
+#define SqlConst_SPrepareError 64883
+#define SqlConst_SObjectNameError 64884
+#define SqlConst_SSQLDataSetOpen 64885
+#define SqlConst_SNoActiveTrans 64886
+#define SqlConst_SActiveTrans 64887
+#define SqlConst_SMissingDriverRegFile 64888
+#define SqlConst_SNoCursor 64889
+#define SqlConst_SErrorMappingError 64890
+#define SqlConst_SStoredProcsNotSupported 64891
+#define SqlConst_SPackagesNotSupported 64892
+#define SqlConst_SNOERROR 64893
+#define SqlConst_SWARNING 64894
+#define SqlConst_SNOMEMORY 64895
+#define DBXMetaDataCommandFactory_SUnknownDataType 64896
+#define DBXDataStoreMetaDataReader_SCannotLoadMetaDataForJds7 64897
+#define DBXClient_ParameterNotSet 64898
+#define DBXDynalink_SAdditionalInfo 64899
+#define DBXDynalink_SInvalidDataType 64900
+#define DBXPool_SConnectTimeout 64901
+#define DBXPool_SInvalidCommand 64902
+#define DBXTrace_SINVALID_TRACE_FLAG 64903
+#define SqlConst_SLoginError 64904
+#define SqlConst_SMonitorActive 64905
+#define SqlConst_SDatabaseOpen 64906
+#define SqlConst_SDatabaseClosed 64907
+#define SqlConst_SMissingSQLConnection 64908
+#define SqlConst_SConnectionNameMissing 64909
+#define SqlConst_SEmptySQLStatement 64910
+#define SqlConst_SNoParameterValue 64911
+#define DBXMetaDataReader_SPrimaryColumnName 64912
+#define DBXMetaDataReader_SIsAutoIncrementable 64913
+#define DBXMetaDataReader_SProcedureName 64914
+#define DBXMetaDataReader_STableCatalogName 64915
+#define DBXMetaDataReader_SReservedWord 64916
+#define DBXMetaDataReader_STableSchemaName 64917
+#define DBXMetaDataReader_STypeName 64918
+#define DBXMetaDataReader_SViewName 64919
+#define DBXMetaDataReader_SIsLong 64920
+#define DBXMetaDataReader_SPastEndOfCursor 64921
+#define DBXMetaDataReader_SUnexpectedSymbol 64922
+#define DBXMetaDataReader_SLiteralPrefix 64923
+#define DBXMetaDataReader_SMinimumScale 64924
+#define DBXMetaDataReader_SLiteralSuffix 64925
+#define DBXMetaDataCommand_SBeforeRow 64926
+#define DBXMetaDataCommand_SAfterRow 64927
+#define DBXMetaDataReader_SWrongAccessorForType 64928
+#define DBXMetaDataReader_SExternalDefinition 64929
+#define DBXMetaDataReader_SForeignKeyName 64930
+#define DBXMetaDataReader_SIsSearchable 64931
+#define DBXMetaDataReader_SPrimarySchemaName 64932
+#define DBXMetaDataReader_SIsCaseSensitive 64933
+#define DBXMetaDataReader_SParameterName 64934
+#define DBXMetaDataReader_SIsUnsigned 64935
+#define DBXMetaDataReader_SIsAutoIncrement 64936
+#define DBXMetaDataReader_SRoleName 64937
+#define DBXMetaDataReader_SOrdinalOutOfRange 64938
+#define DBXMetaDataReader_SIsUnique 64939
+#define DBXMetaDataReader_SCreateFormat 64940
+#define DBXMetaDataReader_SPrimaryKeyName 64941
+#define DBXMetaDataReader_SUnknownTableType 64942
+#define DBXMetaDataReader_SColumnSize 64943
+#define DBXMetaDataReader_SDefinition 64944
+#define DBXMetaDataReader_SColumnName 64945
+#define DBXMetaDataReader_SCreateParameters 64946
+#define DBXMetaDataReader_SIsConcurrencyType 64947
+#define DBXMetaDataReader_SDbxDataType 64948
+#define DBXMetaDataReader_STableType 64949
+#define DBXMetaDataReader_SMaxInline 64950
+#define DBXMetaDataReader_SUnclosedQuotes 64951
+#define DBXMetaDataReader_SIsLiteralSupported 64952
+#define DBXMetaDataReader_SIsAscending 64953
+#define DBXMetaDataReader_SIsUnicode 64954
+#define DBXMetaDataReader_SPrecision 64955
+#define DBXMetaDataReader_SConstraintName 64956
+#define DBXMetaDataReader_SMustCallNextFirst 64957
+#define DBXMetaDataReader_SScale 64958
+#define DBXMetaDataReader_SIsNullable 64959
+#define DBXMetaDataReader_SSynonymName 64960
+#define DBXMetaDataReader_SProcedureType 64961
+#define DBXMetaDataReader_SParameterMode 64962
+#define DBXMetaDataReader_SMetaDataCommandExpected 64963
+#define DBXMetaDataReader_SMissingImplementation 64964
+#define DBXMetaDataReader_SIsFixedLength 64965
+#define DBXMetaDataReader_SIsFixedPrecisionScale 64966
+#define DBXMetaDataReader_SUserName 64967
+#define DBXMetaDataReader_SCatalogName 64968
+#define DBXMetaDataReader_SIsBestMatch 64969
+#define DBXMetaDataReader_SMaximumScale 64970
+#define DBXMetaDataReader_SOrdinal 64971
+#define DBXMetaDataReader_SMaximumVersion 64972
+#define DBXMetaDataReader_SDefaultValue 64973
+#define DBXMetaDataReader_SPrimaryTableName 64974
+#define DBXMetaDataReader_SMinimumVersion 64975
+#define DBXCommon_SInvalidOrdinal 64976
+#define DBXCommon_SDefaultErrorMessage 64977
+#define DBXCommon_SAlreadyPrepared 64978
+#define DBXCommon_SInvalidTypeAccess 64979
+#define DBXCommon_SNoStatementToExecute 64980
+#define DBXPlatformUtil_SIllegalArgument 64981
+#define DBXPlatformUtil_SUnsupportedOperation 64982
+#define DBXMetaDataReader_SIndexName 64983
+#define DBXMetaDataReader_SDataType 64984
+#define DBXMetaDataReader_STableName 64985
+#define DBXMetaDataReader_SPackageName 64986
+#define DBXMetaDataReader_SIsSearchableWithLike 64987
+#define DBXMetaDataReader_SPrimaryCatalogName 64988
+#define DBXMetaDataReader_SIsPrimary 64989
+#define DBXMetaDataReader_SSchemaName 64990
+#define DBXMetaDataReader_SProviderDbType 64991
+#define ClassRegistry_SNotRegistered 64992
+#define ClassRegistry_SInvalidClassRegister 64993
+#define ClassRegistry_SCannotFreeClassRegistry 64994
+#define DBXCommon_SDllLoadError 64995
+#define DBXCommon_SDllProcLoadError 64996
+#define DBXCommon_SUnknownDriver 64997
+#define DBXCommon_SInvalidArgument 64998
+#define DBXCommon_SInvalidTransaction 64999
+#define DBXCommon_SNotImplemented 65000
+#define DBXCommon_SRequiredProperty 65001
+#define DBXCommon_SDriverLoadError 65002
+#define DBXCommon_SReaderNew 65003
+#define DBXCommon_SReaderClosed 65004
+#define DBXCommon_SReadOnlyType 65005
+#define DBXCommon_SConnectionFactoryInitFailed 65006
+#define DBXCommon_SInvalidDelegationDepth 65007
+#define ComStrs_sTabFailSet 65008
+#define ComStrs_sTabFailSetObject 65009
+#define ComStrs_sTabMustBeMultiLine 65010
+#define ComStrs_sInvalidIndex 65011
+#define ComStrs_sInsertError 65012
+#define ComStrs_sInvalidOwner 65013
+#define ComStrs_sPageIndexError 65014
+#define ComStrs_sInvalidComCtl32 65015
+#define ComStrs_sDateTimeMax 65016
+#define ComStrs_sDateTimeMin 65017
+#define ComStrs_sNeedAllowNone 65018
+#define ComStrs_sFailSetCalDateTime 65019
+#define ComStrs_sFailSetCalMaxSelRange 65020
+#define ComStrs_sFailSetCalMinMaxRange 65021
+#define ComStrs_sFailsetCalSelRange 65022
+#define ClassRegistry_SAlreadyRegistered 65023
 #define IdResourceStringsCore_RSReadLnMaxLineLengthExceeded 65024
 #define IdResourceStringsCore_RSConnectTimeout 65025
 #define IdResourceStringsCore_RSAlreadyConnected 65026
@@ -563,13 +563,13 @@
 #define IdResourceStringsCore_RSBufferMissingTerminator 65030
 #define IdResourceStringsCore_RSBufferInvalidStartPos 65031
 #define IdResourceStringsCore_RSReplyInvalidCode 65032
-#define rpdataset_SRpInvOpRpdata 65033
-#define ADOConst_SMissingConnection 65034
-#define ADOConst_SNoDetailFilter 65035
-#define ADOConst_SBookmarksRequired 65036
-#define ADOConst_SMissingCommandText 65037
-#define ADOConst_SNoResultSet 65038
-#define ADOConst_SADOCreateError 65039
+#define JConsts_sChangeJPGSize 65033
+#define JConsts_sJPEGError 65034
+#define JConsts_sJPEGImageFile 65035
+#define ComStrs_sTabFailClear 65036
+#define ComStrs_sTabFailDelete 65037
+#define ComStrs_sTabFailRetrieve 65038
+#define ComStrs_sTabFailGetObject 65039
 #define IdResourceStringsCore_RSSocksServerGeneralError 65040
 #define IdResourceStringsCore_RSSocksServerPermissionError 65041
 #define IdResourceStringsCore_RSSocksServerNetUnreachableError 65042
@@ -1070,86 +1070,10 @@ STRINGTABLE
 BEGIN
 	TntSystem_SBufferOverflow,	"Buffer overflow"
 	TntSystem_SInvalidUTF7,	"Invalid UTF7"
-	rpzlib77_SInvalidDistanceCode,	"invalid distance code"
-	rpzlib77_SInvalidLengthCode,	"invalid literal/length code"
-	rpzlib77_SOversubscribedDBLTree,	"oversubscribed dynamic bit lengths tree"
-	rpzlib77_SIncompleteDBLTree,	"incomplete dynamic bit lengths tree"
-	rpzlib77_SOversubscribedLLTree,	"oversubscribed literal/length tree"
-	rpzlib77_SIncompleteLLTree,	"incomplete literal/length tree"
-	rpzlib77_SEmptyDistanceTree,	"empty distance tree with lengths"
-	rpzlib77_SInvalidBlockType,	"invalid block type"
-	rpzlib77_SInvalidStoredBlockLengths,	"invalid stored block lengths"
-	rpzlib77_STooManyLDSymbols,	"too many length or distance symbols"
-	rpzlib77_SInvalidBitLengthRepeat,	"invalid bit length repeat"
-	rpzlib77_SIncorrectDataCheck,	"incorrect data check"
-	rpzlib77_SUnknownCompression,	"unknown compression method"
-	rpzlib77_SInvalidWindowSize,	"invalid window size"
-	rpzlib77_SIncorrectHeaderCheck,	"incorrect header check"
-	rpzlib77_SNeedDictionary,	"need dictionary"
-	rpgraphicstrings_gesInvalidPixelDepth,	"Sample count per pixel does not correspond to the given color scheme."
-	rpgraphicstrings_gesInvalidSubSampling,	"Subsampling value is invalid. Allowed are 1, 2 and 4."
-	rpgraphicstrings_gesVerticalSubSamplingError,	"Vertical subsampling value must be <= horizontal subsampling value."
-	rpgraphicstrings_gesPreparing,	"Preparing..."
-	rpgraphicstrings_gesLoadingData,	"Loading data..."
-	rpgraphicstrings_gesUpsampling,	"Upsampling..."
-	rpgraphicstrings_gesTransfering,	"Transfering..."
-	rpgraphicstrings_gesLZ77Error,	"LZ77 decompression error."
-	rpzlib77_SNeedDict,	"need dictionary"
-	rpzlib77_SStreamEnd,	"stream end"
-	rpzlib77_SFileError,	"file error"
-	rpzlib77_SStreamError,	"stream error"
-	rpzlib77_SDataError,	"data error"
-	rpzlib77_SInsufficientMemory,	"insufficient memory"
-	rpzlib77_SBufferError,	"buffer error"
-	rpzlib77_SIncompatibleVersion,	"incompatible version"
-	rpgraphicstrings_gesHalo,	"Dr. Halo images"
-	rpgraphicstrings_gesPaintShopPro,	"Paintshop Pro images"
-	rpgraphicstrings_gesPortableNetworkGraphic,	"Portable network graphic images"
-	rpgraphicstrings_gesInvalidImage,	"Cannot load image. Invalid or unexpected %s image format."
-	rpgraphicstrings_gesInvalidColorFormat,	"Invalid color format in %s file."
-	rpgraphicstrings_gesStreamReadError,	"Stream read error in %s file."
-	rpgraphicstrings_gesUnsupportedFeature,	"Cannot load image. %s not supported for %s files."
-	rpgraphicstrings_gesInvalidCRC,	"Cannot load image. CRC error found in %s file."
-	rpgraphicstrings_gesCompression,	"Cannot load image. Compression error found in %s file."
-	rpgraphicstrings_gesExtraCompressedData,	"Cannot load image. Extra compressed data found in %s file."
-	rpgraphicstrings_gesInvalidPalette,	"Cannot load image. Palette in %s file is invalid."
-	rpgraphicstrings_gesUnknownCriticalChunk,	"Cannot load PNG image. Unexpected but critical chunk detected."
-	rpgraphicstrings_gesCompressionScheme,	"The compression scheme is"
-	rpgraphicstrings_gesIndexedNotSupported,	"Conversion between indexed and non-indexed pixel formats is not supported."
-	rpgraphicstrings_gesConversionUnsupported,	"Color conversion failed. Could not find a proper method."
-	rpgraphicstrings_gesInvalidSampleDepth,	"Color depth is invalid. Bits per sample must be 1, 2, 4, 8 or 16."
-	rpgraphicstrings_gesGFIFax,	"GFI fax images"
-	rpgraphicstrings_gesSGI,	"SGI images"
-	rpgraphicstrings_gesSGITrueColor,	"SGI true color images"
-	rpgraphicstrings_gesZSoft,	"ZSoft Paintbrush images"
-	rpgraphicstrings_gesZSoftWord,	"Word 5.x screen capture images"
-	rpgraphicstrings_gesAliasWaveFront,	"Alias/Wavefront images"
-	rpgraphicstrings_gesSGITrueColorAlpha,	"SGI true color images with alpha"
-	rpgraphicstrings_gesSGIMono,	"SGI black/white images"
-	rpgraphicstrings_gesPhotoshop,	"Photoshop images"
-	rpgraphicstrings_gesPortable,	"Portable map images"
-	rpgraphicstrings_gesPortablePixel,	"Portable pixel map images"
-	rpgraphicstrings_gesPortableGray,	"Portable gray map images"
-	rpgraphicstrings_gesPortableMono,	"Portable bitmap images"
-	rpgraphicstrings_gesAutoDesk,	"Autodesk images"
-	rpgraphicstrings_gesKodakPhotoCD,	"Kodak Photo-CD images"
-	rpgraphicstrings_gesCompuserve,	"CompuServe images"
-	rpgraphicstrings_gesRegistration,	"Attempt to register %s twice."
-	rpgraphicstrings_gesBitmaps,	"Windows bitmaps"
-	rpgraphicstrings_gesRLEBitmaps,	"Run length encoded Windows bitmaps"
-	rpgraphicstrings_gesDIBs,	"Device independant Windows bitmaps"
-	rpgraphicstrings_gesEPS,	"Encapsulated Postscript images"
-	rpgraphicstrings_gesIcons,	"Windows icons"
-	rpgraphicstrings_gesMetaFiles,	"Windows metafiles"
-	rpgraphicstrings_gesEnhancedMetaFiles,	"Windows enhanced meta files"
-	rpgraphicstrings_gesJPGImages,	"JPG images"
-	rpgraphicstrings_gesJPEGImages,	"JPEG images"
-	rpgraphicstrings_gesJPEImages,	"JPE images"
-	rpgraphicstrings_gesJFIFImages,	"JFIF images"
-	rpgraphicstrings_gesTruevision,	"Truevision images"
-	rpgraphicstrings_gesTIFF,	"Tagged image file format images"
-	rpgraphicstrings_gesMacTIFF,	"Macintosh TIFF images"
-	rpgraphicstrings_gesPCTIF,	"PC TIF images"
+	VDBConsts_SFirstRecord,	"First record"
+	VDBConsts_SPriorRecord,	"Prior record"
+	VDBConsts_SNextRecord,	"Next record"
+	VDBConsts_SLastRecord,	"Last record"
 	VDBConsts_SInsertRecord,	"Insert record"
 	VDBConsts_SDeleteRecord,	"Delete record"
 	VDBConsts_SEditRecord,	"Edit record"
@@ -1162,43 +1086,422 @@ BEGIN
 	VDBConsts_SPropDefByLookup,	"Property already defined by lookup field"
 	VDBConsts_STooManyColumns,	"Grid requested to display more than 256 columns"
 	VDBConsts_SRemoteLogin,	"Remote Login"
-	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
-	JConsts_sJPEGError,	"JPEG error #%d"
-	JConsts_sJPEGImageFile,	"JPEG Image File"
+	rpgraphicstrings_gesCompression,	"Cannot load image. Compression error found in %s file."
+	rpgraphicstrings_gesExtraCompressedData,	"Cannot load image. Extra compressed data found in %s file."
+	rpgraphicstrings_gesInvalidPalette,	"Cannot load image. Palette in %s file is invalid."
+	rpgraphicstrings_gesUnknownCriticalChunk,	"Cannot load PNG image. Unexpected but critical chunk detected."
+	rpgraphicstrings_gesCompressionScheme,	"The compression scheme is"
+	rpgraphicstrings_gesIndexedNotSupported,	"Conversion between indexed and non-indexed pixel formats is not supported."
+	rpgraphicstrings_gesConversionUnsupported,	"Color conversion failed. Could not find a proper method."
+	rpgraphicstrings_gesInvalidSampleDepth,	"Color depth is invalid. Bits per sample must be 1, 2, 4, 8 or 16."
+	rpgraphicstrings_gesInvalidPixelDepth,	"Sample count per pixel does not correspond to the given color scheme."
+	rpgraphicstrings_gesInvalidSubSampling,	"Subsampling value is invalid. Allowed are 1, 2 and 4."
+	rpgraphicstrings_gesVerticalSubSamplingError,	"Vertical subsampling value must be <= horizontal subsampling value."
+	rpgraphicstrings_gesPreparing,	"Preparing..."
+	rpgraphicstrings_gesLoadingData,	"Loading data..."
+	rpgraphicstrings_gesUpsampling,	"Upsampling..."
+	rpgraphicstrings_gesTransfering,	"Transfering..."
+	rpgraphicstrings_gesLZ77Error,	"LZ77 decompression error."
+	rpgraphicstrings_gesPhotoshop,	"Photoshop images"
+	rpgraphicstrings_gesPortable,	"Portable map images"
+	rpgraphicstrings_gesPortablePixel,	"Portable pixel map images"
+	rpgraphicstrings_gesPortableGray,	"Portable gray map images"
+	rpgraphicstrings_gesPortableMono,	"Portable bitmap images"
+	rpgraphicstrings_gesAutoDesk,	"Autodesk images"
+	rpgraphicstrings_gesKodakPhotoCD,	"Kodak Photo-CD images"
+	rpgraphicstrings_gesCompuserve,	"CompuServe images"
+	rpgraphicstrings_gesHalo,	"Dr. Halo images"
+	rpgraphicstrings_gesPaintShopPro,	"Paintshop Pro images"
+	rpgraphicstrings_gesPortableNetworkGraphic,	"Portable network graphic images"
+	rpgraphicstrings_gesInvalidImage,	"Cannot load image. Invalid or unexpected %s image format."
+	rpgraphicstrings_gesInvalidColorFormat,	"Invalid color format in %s file."
+	rpgraphicstrings_gesStreamReadError,	"Stream read error in %s file."
+	rpgraphicstrings_gesUnsupportedFeature,	"Cannot load image. %s not supported for %s files."
+	rpgraphicstrings_gesInvalidCRC,	"Cannot load image. CRC error found in %s file."
+	rpgraphicstrings_gesJPGImages,	"JPG images"
+	rpgraphicstrings_gesJPEGImages,	"JPEG images"
+	rpgraphicstrings_gesJPEImages,	"JPE images"
+	rpgraphicstrings_gesJFIFImages,	"JFIF images"
+	rpgraphicstrings_gesTruevision,	"Truevision images"
+	rpgraphicstrings_gesTIFF,	"Tagged image file format images"
+	rpgraphicstrings_gesMacTIFF,	"Macintosh TIFF images"
+	rpgraphicstrings_gesPCTIF,	"PC TIF images"
+	rpgraphicstrings_gesGFIFax,	"GFI fax images"
+	rpgraphicstrings_gesSGI,	"SGI images"
+	rpgraphicstrings_gesSGITrueColor,	"SGI true color images"
+	rpgraphicstrings_gesZSoft,	"ZSoft Paintbrush images"
+	rpgraphicstrings_gesZSoftWord,	"Word 5.x screen capture images"
+	rpgraphicstrings_gesAliasWaveFront,	"Alias/Wavefront images"
+	rpgraphicstrings_gesSGITrueColorAlpha,	"SGI true color images with alpha"
+	rpgraphicstrings_gesSGIMono,	"SGI black/white images"
+	rpzlib77_STooManyLDSymbols,	"too many length or distance symbols"
+	rpzlib77_SInvalidBitLengthRepeat,	"invalid bit length repeat"
+	rpzlib77_SIncorrectDataCheck,	"incorrect data check"
+	rpzlib77_SUnknownCompression,	"unknown compression method"
+	rpzlib77_SInvalidWindowSize,	"invalid window size"
+	rpzlib77_SIncorrectHeaderCheck,	"incorrect header check"
+	rpzlib77_SNeedDictionary,	"need dictionary"
 	rpgraphicstrings_gesAllImages,	"All images"
-	ComStrs_sInvalidIndex,	"Invalid index"
-	ComStrs_sInsertError,	"Unable to insert an item"
-	ComStrs_sInvalidOwner,	"Invalid owner"
-	ComStrs_sPageIndexError,	"%d is an invalid PageIndex value.  PageIndex must be between 0 and %d"
-	ComStrs_sInvalidComCtl32,	"This control requires version 4.70 or greater of COMCTL32.DLL"
-	ComStrs_sDateTimeMax,	"Date exceeds maximum of %s"
-	ComStrs_sDateTimeMin,	"Date is less than minimum of %s"
-	ComStrs_sNeedAllowNone,	"You must be in ShowCheckbox mode to set to this date"
-	ComStrs_sFailSetCalDateTime,	"Failed to set calendar date or time"
-	ComStrs_sFailSetCalMaxSelRange,	"Failed to set maximum selection range"
-	ComStrs_sFailSetCalMinMaxRange,	"Failed to set calendar min/max range"
-	ComStrs_sFailsetCalSelRange,	"Failed to set calendar selected range"
-	VDBConsts_SFirstRecord,	"First record"
-	VDBConsts_SPriorRecord,	"Prior record"
-	VDBConsts_SNextRecord,	"Next record"
-	VDBConsts_SLastRecord,	"Last record"
-	DBXMetaDataCommand_SAfterRow,	"No more data in reader."
+	rpgraphicstrings_gesRegistration,	"Attempt to register %s twice."
+	rpgraphicstrings_gesBitmaps,	"Windows bitmaps"
+	rpgraphicstrings_gesRLEBitmaps,	"Run length encoded Windows bitmaps"
+	rpgraphicstrings_gesDIBs,	"Device independant Windows bitmaps"
+	rpgraphicstrings_gesEPS,	"Encapsulated Postscript images"
+	rpgraphicstrings_gesIcons,	"Windows icons"
+	rpgraphicstrings_gesMetaFiles,	"Windows metafiles"
+	rpgraphicstrings_gesEnhancedMetaFiles,	"Windows enhanced meta files"
+	rpzlib77_SStreamEnd,	"stream end"
+	rpzlib77_SFileError,	"file error"
+	rpzlib77_SStreamError,	"stream error"
+	rpzlib77_SDataError,	"data error"
+	rpzlib77_SInsufficientMemory,	"insufficient memory"
+	rpzlib77_SBufferError,	"buffer error"
+	rpzlib77_SIncompatibleVersion,	"incompatible version"
+	rpzlib77_SInvalidDistanceCode,	"invalid distance code"
+	rpzlib77_SInvalidLengthCode,	"invalid literal/length code"
+	rpzlib77_SOversubscribedDBLTree,	"oversubscribed dynamic bit lengths tree"
+	rpzlib77_SIncompleteDBLTree,	"incomplete dynamic bit lengths tree"
+	rpzlib77_SOversubscribedLLTree,	"oversubscribed literal/length tree"
+	rpzlib77_SIncompleteLLTree,	"incomplete literal/length tree"
+	rpzlib77_SEmptyDistanceTree,	"empty distance tree with lengths"
+	rpzlib77_SInvalidBlockType,	"invalid block type"
+	rpzlib77_SInvalidStoredBlockLengths,	"invalid stored block lengths"
+	ADOConst_SMissingConnection,	"Missing Connection or ConnectionString"
+	ADOConst_SNoDetailFilter,	"Filter property cannot be used for detail tables"
+	ADOConst_SBookmarksRequired,	"Dataset does not support bookmarks, which are required for multi-record data controls"
+	ADOConst_SMissingCommandText,	"Missing %s property"
+	ADOConst_SNoResultSet,	"CommandText does not return a result set"
+	ADOConst_SADOCreateError,	"Error creating object.  Please verify that the Microsoft Data Access Components 2.1 (or later) have been properly installed"
+	ADOConst_SEventsNotSupported,	"Events are not supported with server side TableDirect cursors"
+	ADOConst_SUsupportedFieldType,	"Unsupported field type (%s) in field %s"
+	ADOConst_SConnectionRequired,	"A connection component is required for async ExecuteOptions"
+	ADOConst_SCantRequery,	"Cannot perform a requery after connection has changed"
+	ADOConst_SNoFilterOptions,	"FilterOptions are not supported"
+	ADOConst_SRecordsetNotOpen,	"Recordset is not open"
+	ADOConst_sNameAttr,	"Name"
+	ADOConst_sValueAttr,	"Value"
+	rpdataset_SRpInvOpRpdata,	"Invalid operation for TRpDataset"
+	rpzlib77_SNeedDict,	"need dictionary"
+	bdeconst_SHandleError,	"Error creating cursor handle"
+	bdeconst_SNoReferenceTableName,	"ReferenceTableName not specified for field '%s'"
+	bdeconst_SEmptySQLStatement,	"No SQL statement available"
+	bdeconst_SNoParameterValue,	"No value for parameter '%s'"
+	bdeconst_SLoginError,	"Cannot connect to database '%s'"
+	bdeconst_SInitError,	"An error occurred while attempting to initialize the Borland Database Engine (error $%.4x)"
+	bdeconst_SIDAPILangID,	"0009"
+	bdeconst_SBDEError,	"BDE error $%.4x"
+	bdeconst_SIndexDoesNotExist,	"Index does not exist. Index: %s"
+	bdeconst_SNoTableName,	"Missing TableName property"
+	bdeconst_SNoDataSetField,	"Missing DataSetField property"
+	bdeconst_SNoCachedUpdates,	"Not in cached update mode"
+	bdeconst_SInvalidAliasName,	"Invalid alias name %s"
+	bdeconst_SNoFieldAccess,	"Cannot access field '%s' in a filter"
+	bdeconst_SUntitled,	"Untitled Application"
+	bdeconst_SLocalTransDirty,	"The transaction isolation level must be dirty read for local databases"
+	ZMessages_SFieldNotFound1,	"Field \"%s\" was not found"
+	ZMessages_SLoginPromptFailure,	"Can not find default login prompt dialog. Please add DBLogDlg to the uses section of your main file."
+	ZMessages_SNeedField,	"Field %s is required, but not supplied."
+	ZMessages_SInvalidUpdateCount,	"%d record(s) updated. Only one record should have been updated."
+	bdeconst_SAutoSessionExclusive,	"Cannot enable AutoSessionName property with more than one session on a form or data-module"
+	bdeconst_SAutoSessionExists,	"Cannot add a session to the form or data-module while session '%s' has AutoSessionName enabled"
+	bdeconst_SAutoSessionActive,	"Cannot modify SessionName while AutoSessionName is enabled"
+	bdeconst_SDuplicateDatabaseName,	"Duplicate database name '%s'"
+	bdeconst_SDuplicateSessionName,	"Duplicate session name '%s'"
+	bdeconst_SInvalidSessionName,	"Invalid session name %s"
+	bdeconst_SDatabaseNameMissing,	"Database name missing"
+	bdeconst_SSessionNameMissing,	"Session name missing"
+	bdeconst_SDatabaseOpen,	"Cannot perform this operation on an open database"
+	bdeconst_SDatabaseClosed,	"Cannot perform this operation on a closed database"
+	bdeconst_SDatabaseHandleSet,	"Database handle owned by a different session"
+	bdeconst_SSessionActive,	"Cannot perform this operation on an active session"
+	ZMessages_SNoMoreRecords,	"No more records in the Resultset"
+	ZMessages_SCanNotOpenResultSet,	"Can not open a Resultset"
+	ZMessages_SCircularLink,	"Datasource makes a circular link"
+	ZMessages_SBookmarkWasNotFound,	"Bookmark was not found"
+	ZMessages_SIncorrectSearchFieldsNumber,	"Incorrect number of search field values"
+	ZMessages_SInvalidOperationInTrans,	"Invalid operation in explicit transaction mode"
+	ZMessages_SIncorrectSymbol,	"Incorrect symbol in field list \"%s\"."
+	ZMessages_SIncorrectToken,	"Incorrect token followed by \":\""
+	ZMessages_SPattern2Long,	"Pattern is too long"
+	ZMessages_SStatementIsNotAllowed,	"Statement is not allowed"
+	ZMessages_SInvalidState,	"Invalid state"
+	ZMessages_SErrorConvertion,	"Convertion error"
+	ZMessages_SUnsupportedParameterType,	"Unsupported parameter type"
+	ZMessages_SUnsupportedDataType,	"Unsupported data type"
+	ZMessages_SErrorConvertionField,	"Conversion error for field \"%s\" to SQLType \"%s\""
+	ZMessages_SUnknownError,	"Unknown error"
+	ZMessages_SInvalidInputParameterCount,	"Input parameter count is less then expected"
+	ZMessages_SIsolationIsNotSupported,	"Transaction isolation level is not supported"
+	ZMessages_SColumnWasNotFound,	"Column with name \"%s\" was not found"
+	ZMessages_SWrongTypeForBlobParameter,	"Wrong type for Blob parameter"
+	ZMessages_SIncorrectConnectionURL,	"Incorrect connection URL: %s"
+	ZMessages_SUnsupportedProtocol,	"Unsupported protocol: %s"
+	ZMessages_SConnectionIsNotOpened,	"Connection is not opened yet"
+	ZMessages_SInvalidOpInAutoCommit,	"Invalid operation in AutoCommit mode"
+	ZMessages_SInvalidOpInNonAutoCommit,	"Invalid operation in non AutoCommit mode"
+	ZMessages_SInvalidOpPrepare,	"Prepare transaction only possible on matching first(!) Starttransaction"
+	ZMessages_SConnectionIsNotAssigned,	"Database connection component is not assigned"
+	ZMessages_SQueryIsEmpty,	"SQL Query is empty"
+	ZMessages_SCanNotExecuteMoreQueries,	"Cannot execute more then one query"
+	ZMessages_SOperationIsNotAllowed1,	"Operation is not allowed in FORWARD ONLY mode"
+	ZMessages_SOperationIsNotAllowed2,	"Operation is not allowed in READ ONLY mode"
+	ZMessages_SOperationIsNotAllowed4,	"Operation is not allowed for closed dataset"
+	ZMessages_SConvertionIsNotPossible,	"Convertion is not possible for column %d from %s to %s"
+	ZMessages_SCanNotAccessBlobRecord,	"Cannot access blob record in column %d with type %s"
+	ZMessages_SRowDataIsNotAvailable,	"Row data is not available"
+	ZMessages_SResolverIsNotSpecified,	"Resolver is not specified for this ResultSet"
+	ZMessages_SResultsetIsAlreadyOpened,	"Resultset is already open"
+	ZMessages_SCanNotUpdateEmptyRow,	"Cannot update an empty row"
+	ZMessages_SCanNotUpdateDeletedRow,	"Cannot update a deleted row"
+	ZMessages_SCanNotDeleteEmptyRow,	"Cannot delete an empty row"
+	ZMessages_SCannotUseCommit,	"You cannot use COMMIT in AUTOCOMMIT mode"
+	ZMessages_SCannotUseRollBack,	"You cannot use ROLLBACK in AUTOCOMMIT mode"
+	ZMessages_SCanNotUpdateComplexQuery,	"Cannot update a complex query with more then one table"
+	ZMessages_SCanNotUpdateThisQueryType,	"Cannot update this query type"
+	ZMessages_SDriverWasNotFound,	"Requested database driver was not found"
+	ZMessages_SCanNotConnectToServer,	"Cannot connect to SQL server"
+	ZMessages_STableIsNotSpecified,	"Table is not specified"
+	ZMessages_SLiveResultSetsAreNotSupported,	"Live query is not supported by this class"
+	ZMessages_SParametersError,	"%d parameters were expected but %d were found"
+	ZMessages_SExpectedMoreParams,	"More than two parameters are expected"
+	ZMessages_SInvalidVarByteArray,	"Invalid VarByte array"
+	ZMessages_SVariableAlreadyExists,	"Variable \"%s\" already exists"
+	ZMessages_STypesMismatch,	"Types mismatch"
+	ZMessages_SUnsupportedOperation,	"Unsupported operation"
+	ZMessages_SLibraryNotFound,	"None of the dynamic libraries can be found: %s"
+	ZMessages_SEncodeDateIsNotSupported,	"This version does not support isc_encode_sql_date"
+	ZMessages_SEncodeTimeIsNotSupported,	"This version does not support isc_encode_sql_time"
+	ZMessages_SEncodeTimestampIsNotSupported,	"This version does not support isc_encode_sql_timestamp"
+	ZMessages_SDecodeDateIsNotSupported,	"This version does not support isc_decode_sql_date"
+	ZMessages_SDecodeTimeIsNotSupported,	"This version does not support isc_decode_sql_time"
+	ZMessages_SDecodeTimestampIsNotSupported,	"This version does not support isc_decode_sql_timestamp"
+	ZMessages_SCanNotRetrieveResultSetData,	"Cannot retrieve Resultset data"
+	ZMessages_SRowBufferIsNotAssigned,	"Row buffer is not assigned"
+	ZMessages_SColumnIsNotAccessable,	"Column with index %d is not accessable"
+	IBSQLMonitor_StrApplication,	"[Application: "
+	ZMessages_SSQLError1,	"SQL Error: %s"
+	ZMessages_SListCapacityError,	"List capacity out of bounds (%d)"
+	ZMessages_SListCountError,	"List count out of bounds (%d)"
+	ZMessages_SListIndexError,	"List index out of bounds (%d)"
+	ZMessages_SClonningIsNotSupported,	"Clonning is not supported by this class"
+	ZMessages_SImmutableOpIsNotAllowed,	"The operation is not allowed on not changeable collections"
+	ZMessages_SStackIsEmpty,	"Stack is empty"
+	ZMessages_SVariableWasNotFound,	"Variable \"%s\" was not found"
+	ZMessages_SFunctionWasNotFound,	"Function \"%s\" was not found"
+	ZMessages_SInternalError,	"Internal error"
+	ZMessages_SSyntaxErrorNear,	"Syntax error near \"%s\""
+	ZMessages_SSyntaxError,	"Syntax error"
+	ZMessages_SUnknownSymbol,	"Unknown symbol \"%s\""
+	ZMessages_SUnexpectedExprEnd,	"Unexpected end of expression"
+	ZMessages_SRightBraceExpected,	") expected"
+	IBSQLMonitor_StrAttach,	": [Attach]"
+	IBSQLMonitor_StrDetach,	": [Detach]"
+	IBSQLMonitor_StrQuery,	": [Query]"
+	IBSQLMonitor_StrStart,	": [Start]"
+	IBSQLMonitor_StrExecute,	": [Execute] "
+	IBSQLMonitor_StrNULL,	"<NULL>"
+	IBSQLMonitor_StrBLOB,	"<BLOB>"
+	IBSQLMonitor_StrFetch,	": [Fetch] "
+	IBSQLMonitor_StrPrepare,	": [Prepare] "
+	IBSQLMonitor_StrPlan,	"  Plan: "
+	IBSQLMonitor_StrPlanCantRetrive,	"  Plan: Can't retrieve plan - too large"
+	IBSQLMonitor_StrCommitHardComm,	": [Commit (Hard commit)]"
+	IBSQLMonitor_StrCommitRetaining,	": [Commit retaining (Soft commit)]"
+	IBSQLMonitor_StrRollback,	": [Rollback]"
+	IBSQLMonitor_StrRollbackRetainin,	": [Rollback retaining (Soft rollback)]"
+	IBSQLMonitor_StrStartTransaction,	": [Start transaction]"
+	IBXConst_SDPBConstantUnknownEx,	"DPB Constant (%s) is unknown"
+	IBXConst_STPBConstantUnknownEx,	"TPB Constant (%s) is unknown"
+	IBXConst_SUnknownPlan,	"Unknown Error - Can't retrieve plan"
+	IBXConst_SFieldSizeMismatch,	"Size Mismatch - Field %s size is too small for data"
+	IBXConst_SEventAlreadyRegistered,	"Events already registered"
+	IBXConst_SStringTooLarge,	"Trying to store a string of length %d into a field that can only contain %d"
+	IBXConst_SNoTimers,	"Not enough timers available"
+	IBXConst_SIB65feature,	"%s is an InterBase 6.5 function. Please upgrade to InterBase 6.5 to use this functonality"
+	IBXConst_SLoginPromptFailure,	"Can not find default login prompt dialog.  Please add DBLogDlg to the uses section of your main file."
+	IBXConst_SIB70feature,	"%s is an InterBase 7.0 function. Please upgrade to InterBase 7.0 to use this functonality"
+	IBXConst_SIB71feature,	"%s is an InterBase 7.1 function. Please upgrade to InterBase 7.1 to use this functonality"
+	IBXConst_SIB80feature,	"%s is an InterBase 2007 function. Please upgrade to InterBase 2007 to use this functonality"
+	IBSQLMonitor_StrConnect,	": [Connect]"
+	IBSQLMonitor_StrDisconnect,	": [Disconnect]"
+	IBSQLMonitor_StrMisc,	"[Misc] "
+	IBSQLMonitor_StrError,	"[Error] "
+	IBXConst_SCantPrintValue,	"Cannot print value"
+	IBXConst_SEOFReached,	"SEOFReached"
+	IBXConst_SEOFInComment,	"EOF in comment detected"
+	IBXConst_SEOFInString,	"EOF in string detected"
+	IBXConst_SParamNameExpected,	"Parameter name expected"
+	IBXConst_SSuccess,	"Successful execution"
+	IBXConst_SDelphiException,	"DelphiException %s"
+	IBXConst_SNoOptionsSet,	"No Install Options selected"
+	IBXConst_SNoDestinationDirectory,	"DestinationDirectory is not set"
+	IBXConst_SNosourceDirectory,	"SourceDirectory is not set"
+	IBXConst_SNoUninstallFile,	"Uninstall File Name is not set"
+	IBXConst_SOptionNeedsClient,	"%s component requires Client to function properly"
+	IBXConst_SOptionNeedsServer,	"%s component requires Server to function properly"
+	IBXConst_SInvalidOption,	"Invalid option specified"
+	IBXConst_SInvalidOnErrorResult,	"Unexpected onError return value"
+	IBXConst_SInvalidOnStatusResult,	"Unexpected onStatus return value"
+	IBXConst_SMaximumEvents,	"Exceded Maximum Event limits"
+	IBXConst_SNoEventsRegistered,	"No Events Registered"
+	IBXConst_SInvalidQueueing,	"Invalid Queueing"
+	IBXConst_SInvalidRegistration,	"Invalid Registration"
+	IBXConst_SInvalidBatchMove,	"Invalid Batch Move"
+	IBXConst_SSQLDialectInvalid,	"SQL Dialect Invalid"
+	IBXConst_SSPBConstantNotSupported,	"SPB Constant Not supported"
+	IBXConst_SSPBConstantUnknown,	"SPB Constant Unknown"
+	IBXConst_SServiceActive,	"Cannot perform operation -- service is not attached"
+	IBXConst_SServiceInActive,	"Cannot perform operation -- service is attached"
+	IBXConst_SServerNameMissing,	"Server Name Missing"
+	IBXConst_SQueryParamsError,	"Query Parameters missing or incorrect"
+	IBXConst_SStartParamsError,	"start Parameters missing or incorrect"
+	IBXConst_SOutputParsingError,	"Unexpected Output buffer value"
+	IBXConst_SUseSpecificProcedures,	"Generic ServiceStart not applicable: Use Specific Procedures to set configuration params"
+	IBXConst_SSQLMonitorAlreadyPresent,	"SQL Monitor Instance is already present"
+	IBXConst_SIsASelectStatement,	"use Open for a Select Statement"
+	IBXConst_SRequiredParamNotSet,	"Required Param value not set"
+	IBXConst_SNoStoredProcName,	"No Stored Procedure Name assigned"
+	IBXConst_SIsAExecuteProcedure,	"use ExecProc for Procedure; use TQuery for Select procedures"
+	IBXConst_SUpdateFailed,	"Update Failed"
+	IBXConst_SNotCachedUpdates,	"CachedUpdates not enabled"
+	IBXConst_SNotLiveRequest,	"Request is not live - cannot modify"
+	IBXConst_SNoProvider,	"No Provider"
+	IBXConst_SNoRecordsAffected,	"No Records Affected"
+	IBXConst_SNoTableName,	"No Table Name assigned"
+	IBXConst_SCannotCreatePrimaryIndex,	"Cannot Create Primary Index; are created automatically"
+	IBXConst_SCannotDropSystemIndex,	"Cannot Drop System Index"
+	IBXConst_STableNameMismatch,	"Table Name Mismatch"
+	IBXConst_SIndexFieldMissing,	"Index Field Missing"
+	IBXConst_SInvalidCancellation,	"Cannot Cancel events while processing"
+	IBXConst_SInvalidEvent,	"Invalid Event"
+	IBXConst_SCannotUpdate,	"Cannot update. (No update query)"
+	IBXConst_SCannotDelete,	"Cannot delete from dataset. (No delete query)"
+	IBXConst_SCannotRefresh,	"Cannot refresh row. (No refresh query)"
+	IBXConst_SBufferNotSet,	"Buffer not set"
+	IBXConst_SCircularReference,	"Circular references not permitted"
+	IBXConst_SSQLParseError,	"SQL Parse Error:\r\n\r\n%s"
+	IBXConst_SUserAbort,	"User abort"
+	IBXConst_SDataSetUniDirectional,	"Data set is uni-directional"
+	IBXConst_SCannotCreateSharedResource,	"Cannot create shared resource. (Windows error %d)"
+	IBXConst_SWindowsAPIError,	"Windows API error. (Windows error %d [$%.8x])"
+	IBXConst_SColumnListsDontMatch,	"Column lists do not match"
+	IBXConst_SColumnTypesDontMatch,	"Column types don't match. (From index: %d; To index: %d)"
+	IBXConst_SCantEndSharedTransaction,	"Can't end a shared transaction unless it is forced and equal to the transaction's TimeoutAction"
+	IBXConst_SFieldUnsupportedType,	"Unsupported Field Type"
+	IBXConst_SCircularDataLink,	"Circular DataLink Reference"
+	IBXConst_SEmptySQLStatement,	"Empty SQL Statement"
+	IBXConst_SDatasetClosed,	"Dataset closed"
+	IBXConst_SUnknownSQLDataType,	"Unknown SQL Data type (%d)"
+	IBXConst_SInvalidColumnIndex,	"Invalid column index (index exceeds permitted range)"
+	IBXConst_SInvalidParamColumnIndex,	"Invalid parameter index (index exceeds permitted range)"
+	IBXConst_SInvalidDataConversion,	"Invalid data conversion"
+	IBXConst_SColumnIsNotNullable,	"Column cannot be set to null (%s)"
+	IBXConst_SBlobCannotBeRead,	"Blob stream cannot be read"
+	IBXConst_SBlobCannotBeWritten,	"Blob stream cannot be written"
+	IBXConst_SEmptyQuery,	"Empty query"
+	IBXConst_SCannotOpenNonSQLSelect,	"Cannot \"open\" a non-select statement. Use ExecQuery"
+	IBXConst_SNoFieldAccess,	"No access to field \"%s\""
+	IBXConst_SFieldReadOnly,	"Field \"%s\" is read-only"
+	IBXConst_SFieldNotFound,	"Field \"%s\" not found"
+	IBXConst_SNotEditing,	"Not in edit mode"
+	IBXConst_SCannotInsert,	"Cannot insert into dataset. (No insert query)"
+	IBXConst_SCannotPost,	"Cannot post. (No update/insert query)"
+	IBXConst_SNotInTransaction,	"Transaction is not active"
+	IBXConst_SInTransaction,	"Transaction is active"
+	IBXConst_STimeoutNegative,	"Timeout values cannot be negative"
+	IBXConst_SNoDatabasesInTransaction,	"No databases are listed in transaction component"
+	IBXConst_SUpdateWrongDB,	"Updating wrong database"
+	IBXConst_SUpdateWrongTR,	"Updating wrong transaction. Unique transaction expected in set"
+	IBXConst_SDatabaseNotAssigned,	"Database not assigned"
+	IBXConst_STransactionNotAssigned,	"Transaction not assigned"
+	IBXConst_SXSQLDAIndexOutOfRange,	"XSQLDA index out of range"
+	IBXConst_SXSQLDANameDoesNotExist,	"XSQLDA name does not exist (%s)"
+	IBXConst_SEOF,	"End of file"
+	IBXConst_SBOF,	"Beginning of file"
+	IBXConst_SInvalidStatementHandle,	"Invalid statement handle"
+	IBXConst_SSQLOpen,	"IBSQL Open"
+	IBXConst_SSQLClosed,	"IBSQL Closed"
+	IBXConst_SDatasetOpen,	"Dataset open"
+	IBXConst_SInterBaseInstallMissing,	"InterBase Install DLL ibinstall.dll not found in the path. Please install InterBase 6 to use this functionality"
+	IBXConst_SIB60feature,	"%s is an InterBase 6 function. Please upgrade to InterBase 6 to use this functonality"
+	IBXConst_SNotSupported,	"Unsupported feature"
+	IBXConst_SNotPermitted,	"Not permitted"
+	IBXConst_SFileAccessError,	"Temporary file access error"
+	IBXConst_SConnectionTimeout,	"Database connection timed out"
+	IBXConst_SCannotSetDatabase,	"Cannot set database"
+	IBXConst_SCannotSetTransaction,	"Cannot set transaction"
+	IBXConst_SOperationCancelled,	"Operation cancelled at user's request"
+	IBXConst_SDPBConstantNotSupported,	"DPB Constant (isc_dpb_%s) is unsupported"
+	IBXConst_SDPBConstantUnknown,	"DPB Constant (%d) is unknown"
+	IBXConst_STPBConstantNotSupported,	"TPB Constant (isc_tpb_%s) is unsupported"
+	IBXConst_STPBConstantUnknown,	"TPB Constant (%d) is unknown"
+	IBXConst_SDatabaseClosed,	"Cannot perform operation -- DB is not open"
+	IBXConst_SDatabaseOpen,	"Cannot perform operation -- DB is currently open"
+	IBXConst_SDatabaseNameMissing,	"Database name is missing"
+	SqlConst_SLOCALTRANSACTIVE,	"[0x0013]: Local Transaction already active"
+	SqlConst_SMULTIPLETRANSNOTENABLED,	"[0x0014]: Multiple Transactions not Enabled"
+	SqlConst_SCONNECTIONFAILED,	"[0x0015]: Connection failed"
+	SqlConst_SDRIVERINITFAILED,	"[0x0016]: Driver initialization failed"
+	SqlConst_SOPTLOCKFAILED,	"[0x0017]: Optimistic Locking failed"
+	SqlConst_SINVALIDREF,	"[0x0018]: Invalid REF"
+	SqlConst_SNOTABLE,	"[0x0019]: No table found"
+	SqlConst_SMISSINGPARAMINSQL,	"[0x001A] Missing parameter marker in SQL"
+	SqlConst_SNOTIMPLEMENTED,	"[0x001B] Not implemented"
+	SqlConst_SDRIVERINCOMPATIBLE,	"[0x001C] Incompatible driver"
+	SqlConst_SDriverNotInConfigFile,	"Driver (%s) not found in Cfg file (%s)"
+	SqlConst_SObjectTypenameRequired,	"Object type name required as parameter value"
+	SqlConst_SCannotCreateFile,	"Cannot create file %s"
+	SqlConst_SUnknownDataType,	"Unknown data type:  %s for %s parameter"
+	IBXConst_SUnknownError,	"Unknown error"
+	IBXConst_SInterBaseMissing,	"InterBase library gds32.dll not found in the path. Please install InterBase to use this functionality"
+	SqlConst_SINVALIDFLDTYPE,	"[0x0003]: Invalid Field Type"
+	SqlConst_SINVALIDHNDL,	"[0x0004]: Invalid Handle"
+	SqlConst_SNOTSUPPORTED,	"[0x0005]: Operation Not Supported"
+	SqlConst_SINVALIDTIME,	"[0x0006]: Invalid Time"
+	SqlConst_SINVALIDXLATION,	"[0x0007]: Invalid Data Translation"
+	SqlConst_SOUTOFRANGE,	"[0x0008]: Parameter/Column out of Range"
+	SqlConst_SINVALIDPARAM,	"[0x0009]: Invalid Parameter"
+	SqlConst_SEOF,	"[0x000A]: Result set at EOF"
+	SqlConst_SSQLPARAMNOTSET,	"dbExpress Error [0x000B]: Parameter Not Set"
+	SqlConst_SINVALIDUSRPASS,	"[0x000C] Invalid Username/Password"
+	SqlConst_SINVALIDPRECISION,	"[0x000D]: Invalid Precision"
+	SqlConst_SINVALIDLEN,	"[0x000E]: Invalid Length"
+	SqlConst_SINVALIDXISOLEVEL,	"[0x000F]: Invalid Transaction Isolation Level"
+	SqlConst_SINVALIDTXNID,	"[0x0010]: Invalid Transaction ID"
+	SqlConst_SDUPLICATETXNID,	"[0x0011]: Duplicate Transaction ID"
+	SqlConst_SDRIVERRESTRICTED,	"[0x0012]: Application is not licensed to use this feature"
+	SqlConst_SNoSqlStatement,	"Missing query, table name or procedure name"
+	SqlConst_SMissingDataBaseName,	"Missing Database property"
+	SqlConst_SMissingDriverName,	"Missing DriverName property"
+	SqlConst_SPrepareError,	"Unable to execute Query"
+	SqlConst_SObjectNameError,	"Table/Procedure not found"
+	SqlConst_SSQLDataSetOpen,	"Unable to determine field names for %s"
+	SqlConst_SNoActiveTrans,	"There is no active transaction"
+	SqlConst_SActiveTrans,	"A transaction is already active"
+	SqlConst_SMissingDriverRegFile,	"Driver/Connection Registry File '%s' not found"
+	SqlConst_SNoCursor,	"Cursor not returned from Query"
+	SqlConst_SErrorMappingError,	"SQL Error: Error mapping failed"
+	SqlConst_SStoredProcsNotSupported,	"Stored Procedures not supported by '%s' Server"
+	SqlConst_SPackagesNotSupported,	"Packages are not supported by '%s' Server"
+	SqlConst_SNOERROR,	""
+	SqlConst_SWARNING,	"[0x0001]: Warning"
+	SqlConst_SNOMEMORY,	"[0x0002]: Insufficient Memory for Operation"
 	DBXMetaDataCommandFactory_SUnknownDataType,	"Unknown Data Type"
-	DBXDynalink_SAdditionalInfo,	"%s.  Vendor error message:  %s."
-	DBXDynalink_SInvalidDataType,	"dbExpress driver does not support the %s data type"
 	DBXDataStoreMetaDataReader_SCannotLoadMetaDataForJds7,	"MetaData cannot be provided from a BlackfishSQL server older than version 8.0"
 	DBXClient_ParameterNotSet,	"Parameter not set for column number %d"
+	DBXDynalink_SAdditionalInfo,	"%s.  Vendor error message:  %s."
+	DBXDynalink_SInvalidDataType,	"dbExpress driver does not support the %s data type"
 	DBXPool_SConnectTimeout,	"Connect request timed out after %s milliseconds"
 	DBXPool_SInvalidCommand,	"Unrecognized command:  %s"
 	DBXTrace_SINVALID_TRACE_FLAG,	"%s is an invalid setting for the %s property.\r\nUse '%s' or a semicolon separated list of one or more of the following:\r\n%s %s %s %s %s %s %s %s %s %s %s %s"
-	ComStrs_sTabFailClear,	"Failed to clear tab control"
-	ComStrs_sTabFailDelete,	"Failed to delete tab at index %d"
-	ComStrs_sTabFailRetrieve,	"Failed to retrieve tab at index %d"
-	ComStrs_sTabFailGetObject,	"Failed to get object at index %d"
-	ComStrs_sTabFailSet,	"Failed to set tab \"%s\" at index %d"
-	ComStrs_sTabFailSetObject,	"Failed to set object at index %d"
-	ComStrs_sTabMustBeMultiLine,	"MultiLine must be True when TabPosition is tpLeft or tpRight"
-	DBXMetaDataReader_SColumnSize,	"Column Size"
+	SqlConst_SLoginError,	"Cannot connect to database '%s'"
+	SqlConst_SMonitorActive,	"Cannot change connection on Active Monitor"
+	SqlConst_SDatabaseOpen,	"Cannot perform this operation on an open connection"
+	SqlConst_SDatabaseClosed,	"Cannot perform this operation on a closed connection"
+	SqlConst_SMissingSQLConnection,	"SQLConnection property required for this operation"
+	SqlConst_SConnectionNameMissing,	"Connection name missing"
+	SqlConst_SEmptySQLStatement,	"No SQL statement available"
+	SqlConst_SNoParameterValue,	"No value for parameter '%s'"
 	DBXMetaDataReader_SPrimaryColumnName,	"Primary Column Name"
 	DBXMetaDataReader_SIsAutoIncrementable,	"AutoIncrementable"
 	DBXMetaDataReader_SProcedureName,	"Procedure Name"
@@ -1214,7 +1517,7 @@ BEGIN
 	DBXMetaDataReader_SMinimumScale,	"Minimum Scale"
 	DBXMetaDataReader_SLiteralSuffix,	"Literal Suffix"
 	DBXMetaDataCommand_SBeforeRow,	"Invoke Next before getting data from a reader."
-	DBXMetaDataReader_SIsNullable,	"Nullable"
+	DBXMetaDataCommand_SAfterRow,	"No more data in reader."
 	DBXMetaDataReader_SWrongAccessorForType,	"Wrong accessor method used for the datatype: %s."
 	DBXMetaDataReader_SExternalDefinition,	"External Definition"
 	DBXMetaDataReader_SForeignKeyName,	"Foreign Key Name"
@@ -1230,7 +1533,7 @@ BEGIN
 	DBXMetaDataReader_SCreateFormat,	"Create Format"
 	DBXMetaDataReader_SPrimaryKeyName,	"Primary Key Name"
 	DBXMetaDataReader_SUnknownTableType,	"Unknown table type specified:"
-	DBXMetaDataReader_SMinimumVersion,	"Minimum Version"
+	DBXMetaDataReader_SColumnSize,	"Column Size"
 	DBXMetaDataReader_SDefinition,	"Definition"
 	DBXMetaDataReader_SColumnName,	"Column Name"
 	DBXMetaDataReader_SCreateParameters,	"Create Parameters"
@@ -1246,7 +1549,7 @@ BEGIN
 	DBXMetaDataReader_SConstraintName,	"Constraint Name"
 	DBXMetaDataReader_SMustCallNextFirst,	"Cursor is positioned before the first row, move to the next row before getting data"
 	DBXMetaDataReader_SScale,	"Scale"
-	DBXMetaDataReader_SProviderDbType,	"Provider Type"
+	DBXMetaDataReader_SIsNullable,	"Nullable"
 	DBXMetaDataReader_SSynonymName,	"Synonym Name"
 	DBXMetaDataReader_SProcedureType,	"Procedure Type"
 	DBXMetaDataReader_SParameterMode,	"Parameter Mode"
@@ -1262,12 +1565,12 @@ BEGIN
 	DBXMetaDataReader_SMaximumVersion,	"Maximum Version"
 	DBXMetaDataReader_SDefaultValue,	"Default Value"
 	DBXMetaDataReader_SPrimaryTableName,	"Primary Table Name"
-	SqlConst_SNOTIMPLEMENTED,	"[0x001B] Not implemented"
-	SqlConst_SDRIVERINCOMPATIBLE,	"[0x001C] Incompatible driver"
-	SqlConst_SDriverNotInConfigFile,	"Driver (%s) not found in Cfg file (%s)"
-	SqlConst_SObjectTypenameRequired,	"Object type name required as parameter value"
-	SqlConst_SCannotCreateFile,	"Cannot create file %s"
-	SqlConst_SUnknownDataType,	"Unknown data type:  %s for %s parameter"
+	DBXMetaDataReader_SMinimumVersion,	"Minimum Version"
+	DBXCommon_SInvalidOrdinal,	"Invalid Ordinal:  %d"
+	DBXCommon_SDefaultErrorMessage,	"DBX Error:  %s"
+	DBXCommon_SAlreadyPrepared,	"Command can only be prepared once"
+	DBXCommon_SInvalidTypeAccess,	"%s value type cannot be accessed as %s value type"
+	DBXCommon_SNoStatementToExecute,	"No statement to execute"
 	DBXPlatformUtil_SIllegalArgument,	"Illegal argument"
 	DBXPlatformUtil_SUnsupportedOperation,	"Unsupported operation"
 	DBXMetaDataReader_SIndexName,	"Index Name"
@@ -1278,54 +1581,12 @@ BEGIN
 	DBXMetaDataReader_SPrimaryCatalogName,	"Primary Catalog Name"
 	DBXMetaDataReader_SIsPrimary,	"Primary"
 	DBXMetaDataReader_SSchemaName,	"Schema Name"
-	SqlConst_SSQLPARAMNOTSET,	"dbExpress Error [0x000B]: Parameter Not Set"
-	SqlConst_SINVALIDUSRPASS,	"[0x000C] Invalid Username/Password"
-	SqlConst_SINVALIDPRECISION,	"[0x000D]: Invalid Precision"
-	SqlConst_SINVALIDLEN,	"[0x000E]: Invalid Length"
-	SqlConst_SINVALIDXISOLEVEL,	"[0x000F]: Invalid Transaction Isolation Level"
-	SqlConst_SINVALIDTXNID,	"[0x0010]: Invalid Transaction ID"
-	SqlConst_SDUPLICATETXNID,	"[0x0011]: Duplicate Transaction ID"
-	SqlConst_SDRIVERRESTRICTED,	"[0x0012]: Application is not licensed to use this feature"
-	SqlConst_SLOCALTRANSACTIVE,	"[0x0013]: Local Transaction already active"
-	SqlConst_SMULTIPLETRANSNOTENABLED,	"[0x0014]: Multiple Transactions not Enabled"
-	SqlConst_SCONNECTIONFAILED,	"[0x0015]: Connection failed"
-	SqlConst_SDRIVERINITFAILED,	"[0x0016]: Driver initialization failed"
-	SqlConst_SOPTLOCKFAILED,	"[0x0017]: Optimistic Locking failed"
-	SqlConst_SINVALIDREF,	"[0x0018]: Invalid REF"
-	SqlConst_SNOTABLE,	"[0x0019]: No table found"
-	SqlConst_SMISSINGPARAMINSQL,	"[0x001A] Missing parameter marker in SQL"
-	SqlConst_SMissingDriverRegFile,	"Driver/Connection Registry File '%s' not found"
-	SqlConst_SNoCursor,	"Cursor not returned from Query"
-	SqlConst_SErrorMappingError,	"SQL Error: Error mapping failed"
-	SqlConst_SStoredProcsNotSupported,	"Stored Procedures not supported by '%s' Server"
-	SqlConst_SPackagesNotSupported,	"Packages are not supported by '%s' Server"
-	SqlConst_SNOERROR,	""
-	SqlConst_SWARNING,	"[0x0001]: Warning"
-	SqlConst_SNOMEMORY,	"[0x0002]: Insufficient Memory for Operation"
-	SqlConst_SINVALIDFLDTYPE,	"[0x0003]: Invalid Field Type"
-	SqlConst_SINVALIDHNDL,	"[0x0004]: Invalid Handle"
-	SqlConst_SNOTSUPPORTED,	"[0x0005]: Operation Not Supported"
-	SqlConst_SINVALIDTIME,	"[0x0006]: Invalid Time"
-	SqlConst_SINVALIDXLATION,	"[0x0007]: Invalid Data Translation"
-	SqlConst_SOUTOFRANGE,	"[0x0008]: Parameter/Column out of Range"
-	SqlConst_SINVALIDPARAM,	"[0x0009]: Invalid Parameter"
-	SqlConst_SEOF,	"[0x000A]: Result set at EOF"
-	SqlConst_SLoginError,	"Cannot connect to database '%s'"
-	SqlConst_SMonitorActive,	"Cannot change connection on Active Monitor"
-	SqlConst_SDatabaseOpen,	"Cannot perform this operation on an open connection"
-	SqlConst_SDatabaseClosed,	"Cannot perform this operation on a closed connection"
-	SqlConst_SMissingSQLConnection,	"SQLConnection property required for this operation"
-	SqlConst_SConnectionNameMissing,	"Connection name missing"
-	SqlConst_SEmptySQLStatement,	"No SQL statement available"
-	SqlConst_SNoParameterValue,	"No value for parameter '%s'"
-	SqlConst_SNoSqlStatement,	"Missing query, table name or procedure name"
-	SqlConst_SMissingDataBaseName,	"Missing Database property"
-	SqlConst_SMissingDriverName,	"Missing DriverName property"
-	SqlConst_SPrepareError,	"Unable to execute Query"
-	SqlConst_SObjectNameError,	"Table/Procedure not found"
-	SqlConst_SSQLDataSetOpen,	"Unable to determine field names for %s"
-	SqlConst_SNoActiveTrans,	"There is no active transaction"
-	SqlConst_SActiveTrans,	"A transaction is already active"
+	DBXMetaDataReader_SProviderDbType,	"Provider Type"
+	ClassRegistry_SNotRegistered,	"%s class is not registered"
+	ClassRegistry_SInvalidClassRegister,	"%s class registered with a nil class reference"
+	ClassRegistry_SCannotFreeClassRegistry,	"Cannot free TClassRegistry.ClassRegistry"
+	DBXCommon_SDllLoadError,	"Unable to load %s (ErrorCode %d).  It may be missing from the system path."
+	DBXCommon_SDllProcLoadError,	"Unable to find procedure %s"
 	DBXCommon_SUnknownDriver,	"Unknown driver:  %s"
 	DBXCommon_SInvalidArgument,	"Invalid argument:  %s"
 	DBXCommon_SInvalidTransaction,	"Invalid transaction Object"
@@ -1337,283 +1598,22 @@ BEGIN
 	DBXCommon_SReadOnlyType,	"%s type cannot be modified"
 	DBXCommon_SConnectionFactoryInitFailed,	"Cannot find connection files from application directory (%s) or the system registry (%s)."
 	DBXCommon_SInvalidDelegationDepth,	"Cannot delegate a connection more than 16 times:  %s"
-	DBXCommon_SInvalidOrdinal,	"Invalid Ordinal:  %d"
-	DBXCommon_SDefaultErrorMessage,	"DBX Error:  %s"
-	DBXCommon_SAlreadyPrepared,	"Command can only be prepared once"
-	DBXCommon_SInvalidTypeAccess,	"%s value type cannot be accessed as %s value type"
-	DBXCommon_SNoStatementToExecute,	"No statement to execute"
-	IBSQLMonitor_StrFetch,	": [Fetch] "
-	IBSQLMonitor_StrPrepare,	": [Prepare] "
-	IBSQLMonitor_StrPlan,	"  Plan: "
-	IBSQLMonitor_StrPlanCantRetrive,	"  Plan: Can't retrieve plan - too large"
-	IBSQLMonitor_StrCommitHardComm,	": [Commit (Hard commit)]"
-	IBSQLMonitor_StrCommitRetaining,	": [Commit retaining (Soft commit)]"
-	IBSQLMonitor_StrRollback,	": [Rollback]"
-	IBSQLMonitor_StrRollbackRetainin,	": [Rollback retaining (Soft rollback)]"
-	IBSQLMonitor_StrStartTransaction,	": [Start transaction]"
-	IBSQLMonitor_StrApplication,	"[Application: "
+	ComStrs_sTabFailSet,	"Failed to set tab \"%s\" at index %d"
+	ComStrs_sTabFailSetObject,	"Failed to set object at index %d"
+	ComStrs_sTabMustBeMultiLine,	"MultiLine must be True when TabPosition is tpLeft or tpRight"
+	ComStrs_sInvalidIndex,	"Invalid index"
+	ComStrs_sInsertError,	"Unable to insert an item"
+	ComStrs_sInvalidOwner,	"Invalid owner"
+	ComStrs_sPageIndexError,	"%d is an invalid PageIndex value.  PageIndex must be between 0 and %d"
+	ComStrs_sInvalidComCtl32,	"This control requires version 4.70 or greater of COMCTL32.DLL"
+	ComStrs_sDateTimeMax,	"Date exceeds maximum of %s"
+	ComStrs_sDateTimeMin,	"Date is less than minimum of %s"
+	ComStrs_sNeedAllowNone,	"You must be in ShowCheckbox mode to set to this date"
+	ComStrs_sFailSetCalDateTime,	"Failed to set calendar date or time"
+	ComStrs_sFailSetCalMaxSelRange,	"Failed to set maximum selection range"
+	ComStrs_sFailSetCalMinMaxRange,	"Failed to set calendar min/max range"
+	ComStrs_sFailsetCalSelRange,	"Failed to set calendar selected range"
 	ClassRegistry_SAlreadyRegistered,	"%s class already registered"
-	ClassRegistry_SNotRegistered,	"%s class is not registered"
-	ClassRegistry_SInvalidClassRegister,	"%s class registered with a nil class reference"
-	ClassRegistry_SCannotFreeClassRegistry,	"Cannot free TClassRegistry.ClassRegistry"
-	DBXCommon_SDllLoadError,	"Unable to load %s (ErrorCode %d).  It may be missing from the system path."
-	DBXCommon_SDllProcLoadError,	"Unable to find procedure %s"
-	IBXConst_SIB65feature,	"%s is an InterBase 6.5 function. Please upgrade to InterBase 6.5 to use this functonality"
-	IBXConst_SLoginPromptFailure,	"Can not find default login prompt dialog.  Please add DBLogDlg to the uses section of your main file."
-	IBXConst_SIB70feature,	"%s is an InterBase 7.0 function. Please upgrade to InterBase 7.0 to use this functonality"
-	IBXConst_SIB71feature,	"%s is an InterBase 7.1 function. Please upgrade to InterBase 7.1 to use this functonality"
-	IBXConst_SIB80feature,	"%s is an InterBase 2007 function. Please upgrade to InterBase 2007 to use this functonality"
-	IBSQLMonitor_StrConnect,	": [Connect]"
-	IBSQLMonitor_StrDisconnect,	": [Disconnect]"
-	IBSQLMonitor_StrMisc,	"[Misc] "
-	IBSQLMonitor_StrError,	"[Error] "
-	IBSQLMonitor_StrAttach,	": [Attach]"
-	IBSQLMonitor_StrDetach,	": [Detach]"
-	IBSQLMonitor_StrQuery,	": [Query]"
-	IBSQLMonitor_StrStart,	": [Start]"
-	IBSQLMonitor_StrExecute,	": [Execute] "
-	IBSQLMonitor_StrNULL,	"<NULL>"
-	IBSQLMonitor_StrBLOB,	"<BLOB>"
-	IBXConst_SNoOptionsSet,	"No Install Options selected"
-	IBXConst_SNoDestinationDirectory,	"DestinationDirectory is not set"
-	IBXConst_SNosourceDirectory,	"SourceDirectory is not set"
-	IBXConst_SNoUninstallFile,	"Uninstall File Name is not set"
-	IBXConst_SOptionNeedsClient,	"%s component requires Client to function properly"
-	IBXConst_SOptionNeedsServer,	"%s component requires Server to function properly"
-	IBXConst_SInvalidOption,	"Invalid option specified"
-	IBXConst_SInvalidOnErrorResult,	"Unexpected onError return value"
-	IBXConst_SInvalidOnStatusResult,	"Unexpected onStatus return value"
-	IBXConst_SDPBConstantUnknownEx,	"DPB Constant (%s) is unknown"
-	IBXConst_STPBConstantUnknownEx,	"TPB Constant (%s) is unknown"
-	IBXConst_SUnknownPlan,	"Unknown Error - Can't retrieve plan"
-	IBXConst_SFieldSizeMismatch,	"Size Mismatch - Field %s size is too small for data"
-	IBXConst_SEventAlreadyRegistered,	"Events already registered"
-	IBXConst_SStringTooLarge,	"Trying to store a string of length %d into a field that can only contain %d"
-	IBXConst_SNoTimers,	"Not enough timers available"
-	IBXConst_SSPBConstantUnknown,	"SPB Constant Unknown"
-	IBXConst_SServiceActive,	"Cannot perform operation -- service is not attached"
-	IBXConst_SServiceInActive,	"Cannot perform operation -- service is attached"
-	IBXConst_SServerNameMissing,	"Server Name Missing"
-	IBXConst_SQueryParamsError,	"Query Parameters missing or incorrect"
-	IBXConst_SStartParamsError,	"start Parameters missing or incorrect"
-	IBXConst_SOutputParsingError,	"Unexpected Output buffer value"
-	IBXConst_SUseSpecificProcedures,	"Generic ServiceStart not applicable: Use Specific Procedures to set configuration params"
-	IBXConst_SSQLMonitorAlreadyPresent,	"SQL Monitor Instance is already present"
-	IBXConst_SCantPrintValue,	"Cannot print value"
-	IBXConst_SEOFReached,	"SEOFReached"
-	IBXConst_SEOFInComment,	"EOF in comment detected"
-	IBXConst_SEOFInString,	"EOF in string detected"
-	IBXConst_SParamNameExpected,	"Parameter name expected"
-	IBXConst_SSuccess,	"Successful execution"
-	IBXConst_SDelphiException,	"DelphiException %s"
-	IBXConst_SNoProvider,	"No Provider"
-	IBXConst_SNoRecordsAffected,	"No Records Affected"
-	IBXConst_SNoTableName,	"No Table Name assigned"
-	IBXConst_SCannotCreatePrimaryIndex,	"Cannot Create Primary Index; are created automatically"
-	IBXConst_SCannotDropSystemIndex,	"Cannot Drop System Index"
-	IBXConst_STableNameMismatch,	"Table Name Mismatch"
-	IBXConst_SIndexFieldMissing,	"Index Field Missing"
-	IBXConst_SInvalidCancellation,	"Cannot Cancel events while processing"
-	IBXConst_SInvalidEvent,	"Invalid Event"
-	IBXConst_SMaximumEvents,	"Exceded Maximum Event limits"
-	IBXConst_SNoEventsRegistered,	"No Events Registered"
-	IBXConst_SInvalidQueueing,	"Invalid Queueing"
-	IBXConst_SInvalidRegistration,	"Invalid Registration"
-	IBXConst_SInvalidBatchMove,	"Invalid Batch Move"
-	IBXConst_SSQLDialectInvalid,	"SQL Dialect Invalid"
-	IBXConst_SSPBConstantNotSupported,	"SPB Constant Not supported"
-	IBXConst_SDataSetUniDirectional,	"Data set is uni-directional"
-	IBXConst_SCannotCreateSharedResource,	"Cannot create shared resource. (Windows error %d)"
-	IBXConst_SWindowsAPIError,	"Windows API error. (Windows error %d [$%.8x])"
-	IBXConst_SColumnListsDontMatch,	"Column lists do not match"
-	IBXConst_SColumnTypesDontMatch,	"Column types don't match. (From index: %d; To index: %d)"
-	IBXConst_SCantEndSharedTransaction,	"Can't end a shared transaction unless it is forced and equal to the transaction's TimeoutAction"
-	IBXConst_SFieldUnsupportedType,	"Unsupported Field Type"
-	IBXConst_SCircularDataLink,	"Circular DataLink Reference"
-	IBXConst_SEmptySQLStatement,	"Empty SQL Statement"
-	IBXConst_SIsASelectStatement,	"use Open for a Select Statement"
-	IBXConst_SRequiredParamNotSet,	"Required Param value not set"
-	IBXConst_SNoStoredProcName,	"No Stored Procedure Name assigned"
-	IBXConst_SIsAExecuteProcedure,	"use ExecProc for Procedure; use TQuery for Select procedures"
-	IBXConst_SUpdateFailed,	"Update Failed"
-	IBXConst_SNotCachedUpdates,	"CachedUpdates not enabled"
-	IBXConst_SNotLiveRequest,	"Request is not live - cannot modify"
-	IBXConst_SBlobCannotBeWritten,	"Blob stream cannot be written"
-	IBXConst_SEmptyQuery,	"Empty query"
-	IBXConst_SCannotOpenNonSQLSelect,	"Cannot \"open\" a non-select statement. Use ExecQuery"
-	IBXConst_SNoFieldAccess,	"No access to field \"%s\""
-	IBXConst_SFieldReadOnly,	"Field \"%s\" is read-only"
-	IBXConst_SFieldNotFound,	"Field \"%s\" not found"
-	IBXConst_SNotEditing,	"Not in edit mode"
-	IBXConst_SCannotInsert,	"Cannot insert into dataset. (No insert query)"
-	IBXConst_SCannotPost,	"Cannot post. (No update/insert query)"
-	IBXConst_SCannotUpdate,	"Cannot update. (No update query)"
-	IBXConst_SCannotDelete,	"Cannot delete from dataset. (No delete query)"
-	IBXConst_SCannotRefresh,	"Cannot refresh row. (No refresh query)"
-	IBXConst_SBufferNotSet,	"Buffer not set"
-	IBXConst_SCircularReference,	"Circular references not permitted"
-	IBXConst_SSQLParseError,	"SQL Parse Error:\r\n\r\n%s"
-	IBXConst_SUserAbort,	"User abort"
-	IBXConst_STransactionNotAssigned,	"Transaction not assigned"
-	IBXConst_SXSQLDAIndexOutOfRange,	"XSQLDA index out of range"
-	IBXConst_SXSQLDANameDoesNotExist,	"XSQLDA name does not exist (%s)"
-	IBXConst_SEOF,	"End of file"
-	IBXConst_SBOF,	"Beginning of file"
-	IBXConst_SInvalidStatementHandle,	"Invalid statement handle"
-	IBXConst_SSQLOpen,	"IBSQL Open"
-	IBXConst_SSQLClosed,	"IBSQL Closed"
-	IBXConst_SDatasetOpen,	"Dataset open"
-	IBXConst_SDatasetClosed,	"Dataset closed"
-	IBXConst_SUnknownSQLDataType,	"Unknown SQL Data type (%d)"
-	IBXConst_SInvalidColumnIndex,	"Invalid column index (index exceeds permitted range)"
-	IBXConst_SInvalidParamColumnIndex,	"Invalid parameter index (index exceeds permitted range)"
-	IBXConst_SInvalidDataConversion,	"Invalid data conversion"
-	IBXConst_SColumnIsNotNullable,	"Column cannot be set to null (%s)"
-	IBXConst_SBlobCannotBeRead,	"Blob stream cannot be read"
-	IBXConst_SCannotSetTransaction,	"Cannot set transaction"
-	IBXConst_SOperationCancelled,	"Operation cancelled at user's request"
-	IBXConst_SDPBConstantNotSupported,	"DPB Constant (isc_dpb_%s) is unsupported"
-	IBXConst_SDPBConstantUnknown,	"DPB Constant (%d) is unknown"
-	IBXConst_STPBConstantNotSupported,	"TPB Constant (isc_tpb_%s) is unsupported"
-	IBXConst_STPBConstantUnknown,	"TPB Constant (%d) is unknown"
-	IBXConst_SDatabaseClosed,	"Cannot perform operation -- DB is not open"
-	IBXConst_SDatabaseOpen,	"Cannot perform operation -- DB is currently open"
-	IBXConst_SDatabaseNameMissing,	"Database name is missing"
-	IBXConst_SNotInTransaction,	"Transaction is not active"
-	IBXConst_SInTransaction,	"Transaction is active"
-	IBXConst_STimeoutNegative,	"Timeout values cannot be negative"
-	IBXConst_SNoDatabasesInTransaction,	"No databases are listed in transaction component"
-	IBXConst_SUpdateWrongDB,	"Updating wrong database"
-	IBXConst_SUpdateWrongTR,	"Updating wrong transaction. Unique transaction expected in set"
-	IBXConst_SDatabaseNotAssigned,	"Database not assigned"
-	ZMessages_SUnsupportedDataType,	"Unsupported data type"
-	ZMessages_SErrorConvertionField,	"Conversion error for field \"%s\" to SQLType \"%s\""
-	ZMessages_SUnknownError,	"Unknown error"
-	ZMessages_SFieldNotFound1,	"Field \"%s\" was not found"
-	ZMessages_SLoginPromptFailure,	"Can not find default login prompt dialog. Please add DBLogDlg to the uses section of your main file."
-	ZMessages_SNeedField,	"Field %s is required, but not supplied."
-	ZMessages_SInvalidUpdateCount,	"%d record(s) updated. Only one record should have been updated."
-	IBXConst_SUnknownError,	"Unknown error"
-	IBXConst_SInterBaseMissing,	"InterBase library gds32.dll not found in the path. Please install InterBase to use this functionality"
-	IBXConst_SInterBaseInstallMissing,	"InterBase Install DLL ibinstall.dll not found in the path. Please install InterBase 6 to use this functionality"
-	IBXConst_SIB60feature,	"%s is an InterBase 6 function. Please upgrade to InterBase 6 to use this functonality"
-	IBXConst_SNotSupported,	"Unsupported feature"
-	IBXConst_SNotPermitted,	"Not permitted"
-	IBXConst_SFileAccessError,	"Temporary file access error"
-	IBXConst_SConnectionTimeout,	"Database connection timed out"
-	IBXConst_SCannotSetDatabase,	"Cannot set database"
-	ZMessages_SOperationIsNotAllowed1,	"Operation is not allowed in FORWARD ONLY mode"
-	ZMessages_SOperationIsNotAllowed2,	"Operation is not allowed in READ ONLY mode"
-	ZMessages_SOperationIsNotAllowed4,	"Operation is not allowed for closed dataset"
-	ZMessages_SNoMoreRecords,	"No more records in the Resultset"
-	ZMessages_SCanNotOpenResultSet,	"Can not open a Resultset"
-	ZMessages_SCircularLink,	"Datasource makes a circular link"
-	ZMessages_SBookmarkWasNotFound,	"Bookmark was not found"
-	ZMessages_SIncorrectSearchFieldsNumber,	"Incorrect number of search field values"
-	ZMessages_SInvalidOperationInTrans,	"Invalid operation in explicit transaction mode"
-	ZMessages_SIncorrectSymbol,	"Incorrect symbol in field list \"%s\"."
-	ZMessages_SIncorrectToken,	"Incorrect token followed by \":\""
-	ZMessages_SPattern2Long,	"Pattern is too long"
-	ZMessages_SStatementIsNotAllowed,	"Statement is not allowed"
-	ZMessages_SInvalidState,	"Invalid state"
-	ZMessages_SErrorConvertion,	"Convertion error"
-	ZMessages_SUnsupportedParameterType,	"Unsupported parameter type"
-	ZMessages_SCanNotConnectToServer,	"Cannot connect to SQL server"
-	ZMessages_STableIsNotSpecified,	"Table is not specified"
-	ZMessages_SLiveResultSetsAreNotSupported,	"Live query is not supported by this class"
-	ZMessages_SInvalidInputParameterCount,	"Input parameter count is less then expected"
-	ZMessages_SIsolationIsNotSupported,	"Transaction isolation level is not supported"
-	ZMessages_SColumnWasNotFound,	"Column with name \"%s\" was not found"
-	ZMessages_SWrongTypeForBlobParameter,	"Wrong type for Blob parameter"
-	ZMessages_SIncorrectConnectionURL,	"Incorrect connection URL: %s"
-	ZMessages_SUnsupportedProtocol,	"Unsupported protocol: %s"
-	ZMessages_SConnectionIsNotOpened,	"Connection is not opened yet"
-	ZMessages_SInvalidOpInAutoCommit,	"Invalid operation in AutoCommit mode"
-	ZMessages_SInvalidOpInNonAutoCommit,	"Invalid operation in non AutoCommit mode"
-	ZMessages_SInvalidOpPrepare,	"Prepare transaction only possible on matching first(!) Starttransaction"
-	ZMessages_SConnectionIsNotAssigned,	"Database connection component is not assigned"
-	ZMessages_SQueryIsEmpty,	"SQL Query is empty"
-	ZMessages_SCanNotExecuteMoreQueries,	"Cannot execute more then one query"
-	ZMessages_SCanNotRetrieveResultSetData,	"Cannot retrieve Resultset data"
-	ZMessages_SRowBufferIsNotAssigned,	"Row buffer is not assigned"
-	ZMessages_SColumnIsNotAccessable,	"Column with index %d is not accessable"
-	ZMessages_SConvertionIsNotPossible,	"Convertion is not possible for column %d from %s to %s"
-	ZMessages_SCanNotAccessBlobRecord,	"Cannot access blob record in column %d with type %s"
-	ZMessages_SRowDataIsNotAvailable,	"Row data is not available"
-	ZMessages_SResolverIsNotSpecified,	"Resolver is not specified for this ResultSet"
-	ZMessages_SResultsetIsAlreadyOpened,	"Resultset is already open"
-	ZMessages_SCanNotUpdateEmptyRow,	"Cannot update an empty row"
-	ZMessages_SCanNotUpdateDeletedRow,	"Cannot update a deleted row"
-	ZMessages_SCanNotDeleteEmptyRow,	"Cannot delete an empty row"
-	ZMessages_SCannotUseCommit,	"You cannot use COMMIT in AUTOCOMMIT mode"
-	ZMessages_SCannotUseRollBack,	"You cannot use ROLLBACK in AUTOCOMMIT mode"
-	ZMessages_SCanNotUpdateComplexQuery,	"Cannot update a complex query with more then one table"
-	ZMessages_SCanNotUpdateThisQueryType,	"Cannot update this query type"
-	ZMessages_SDriverWasNotFound,	"Requested database driver was not found"
-	ZMessages_SUnknownSymbol,	"Unknown symbol \"%s\""
-	ZMessages_SUnexpectedExprEnd,	"Unexpected end of expression"
-	ZMessages_SRightBraceExpected,	") expected"
-	ZMessages_SParametersError,	"%d parameters were expected but %d were found"
-	ZMessages_SExpectedMoreParams,	"More than two parameters are expected"
-	ZMessages_SInvalidVarByteArray,	"Invalid VarByte array"
-	ZMessages_SVariableAlreadyExists,	"Variable \"%s\" already exists"
-	ZMessages_STypesMismatch,	"Types mismatch"
-	ZMessages_SUnsupportedOperation,	"Unsupported operation"
-	ZMessages_SLibraryNotFound,	"None of the dynamic libraries can be found: %s"
-	ZMessages_SEncodeDateIsNotSupported,	"This version does not support isc_encode_sql_date"
-	ZMessages_SEncodeTimeIsNotSupported,	"This version does not support isc_encode_sql_time"
-	ZMessages_SEncodeTimestampIsNotSupported,	"This version does not support isc_encode_sql_timestamp"
-	ZMessages_SDecodeDateIsNotSupported,	"This version does not support isc_decode_sql_date"
-	ZMessages_SDecodeTimeIsNotSupported,	"This version does not support isc_decode_sql_time"
-	ZMessages_SDecodeTimestampIsNotSupported,	"This version does not support isc_decode_sql_timestamp"
-	bdeconst_SInvalidAliasName,	"Invalid alias name %s"
-	bdeconst_SNoFieldAccess,	"Cannot access field '%s' in a filter"
-	bdeconst_SUntitled,	"Untitled Application"
-	bdeconst_SLocalTransDirty,	"The transaction isolation level must be dirty read for local databases"
-	ZMessages_SSQLError1,	"SQL Error: %s"
-	ZMessages_SListCapacityError,	"List capacity out of bounds (%d)"
-	ZMessages_SListCountError,	"List count out of bounds (%d)"
-	ZMessages_SListIndexError,	"List index out of bounds (%d)"
-	ZMessages_SClonningIsNotSupported,	"Clonning is not supported by this class"
-	ZMessages_SImmutableOpIsNotAllowed,	"The operation is not allowed on not changeable collections"
-	ZMessages_SStackIsEmpty,	"Stack is empty"
-	ZMessages_SVariableWasNotFound,	"Variable \"%s\" was not found"
-	ZMessages_SFunctionWasNotFound,	"Function \"%s\" was not found"
-	ZMessages_SInternalError,	"Internal error"
-	ZMessages_SSyntaxErrorNear,	"Syntax error near \"%s\""
-	ZMessages_SSyntaxError,	"Syntax error"
-	bdeconst_SDatabaseOpen,	"Cannot perform this operation on an open database"
-	bdeconst_SDatabaseClosed,	"Cannot perform this operation on a closed database"
-	bdeconst_SDatabaseHandleSet,	"Database handle owned by a different session"
-	bdeconst_SSessionActive,	"Cannot perform this operation on an active session"
-	bdeconst_SHandleError,	"Error creating cursor handle"
-	bdeconst_SNoReferenceTableName,	"ReferenceTableName not specified for field '%s'"
-	bdeconst_SEmptySQLStatement,	"No SQL statement available"
-	bdeconst_SNoParameterValue,	"No value for parameter '%s'"
-	bdeconst_SLoginError,	"Cannot connect to database '%s'"
-	bdeconst_SInitError,	"An error occurred while attempting to initialize the Borland Database Engine (error $%.4x)"
-	bdeconst_SIDAPILangID,	"0009"
-	bdeconst_SBDEError,	"BDE error $%.4x"
-	bdeconst_SIndexDoesNotExist,	"Index does not exist. Index: %s"
-	bdeconst_SNoTableName,	"Missing TableName property"
-	bdeconst_SNoDataSetField,	"Missing DataSetField property"
-	bdeconst_SNoCachedUpdates,	"Not in cached update mode"
-	ADOConst_SEventsNotSupported,	"Events are not supported with server side TableDirect cursors"
-	ADOConst_SUsupportedFieldType,	"Unsupported field type (%s) in field %s"
-	ADOConst_SConnectionRequired,	"A connection component is required for async ExecuteOptions"
-	ADOConst_SCantRequery,	"Cannot perform a requery after connection has changed"
-	ADOConst_SNoFilterOptions,	"FilterOptions are not supported"
-	ADOConst_SRecordsetNotOpen,	"Recordset is not open"
-	ADOConst_sNameAttr,	"Name"
-	ADOConst_sValueAttr,	"Value"
-	bdeconst_SAutoSessionExclusive,	"Cannot enable AutoSessionName property with more than one session on a form or data-module"
-	bdeconst_SAutoSessionExists,	"Cannot add a session to the form or data-module while session '%s' has AutoSessionName enabled"
-	bdeconst_SAutoSessionActive,	"Cannot modify SessionName while AutoSessionName is enabled"
-	bdeconst_SDuplicateDatabaseName,	"Duplicate database name '%s'"
-	bdeconst_SDuplicateSessionName,	"Duplicate session name '%s'"
-	bdeconst_SInvalidSessionName,	"Invalid session name %s"
-	bdeconst_SDatabaseNameMissing,	"Database name missing"
-	bdeconst_SSessionNameMissing,	"Session name missing"
 	IdResourceStringsCore_RSReadLnMaxLineLengthExceeded,	"Max line length exceeded."
 	IdResourceStringsCore_RSConnectTimeout,	"Connect timed out."
 	IdResourceStringsCore_RSAlreadyConnected,	"Already connected."
@@ -1623,13 +1623,13 @@ BEGIN
 	IdResourceStringsCore_RSBufferMissingTerminator,	"Buffer terminator must be specified."
 	IdResourceStringsCore_RSBufferInvalidStartPos,	"Buffer start position is invalid."
 	IdResourceStringsCore_RSReplyInvalidCode,	"Reply Code is not valid: %s"
-	rpdataset_SRpInvOpRpdata,	"Invalid operation for TRpDataset"
-	ADOConst_SMissingConnection,	"Missing Connection or ConnectionString"
-	ADOConst_SNoDetailFilter,	"Filter property cannot be used for detail tables"
-	ADOConst_SBookmarksRequired,	"Dataset does not support bookmarks, which are required for multi-record data controls"
-	ADOConst_SMissingCommandText,	"Missing %s property"
-	ADOConst_SNoResultSet,	"CommandText does not return a result set"
-	ADOConst_SADOCreateError,	"Error creating object.  Please verify that the Microsoft Data Access Components 2.1 (or later) have been properly installed"
+	JConsts_sChangeJPGSize,	"Cannot change the size of a JPEG image"
+	JConsts_sJPEGError,	"JPEG error #%d"
+	JConsts_sJPEGImageFile,	"JPEG Image File"
+	ComStrs_sTabFailClear,	"Failed to clear tab control"
+	ComStrs_sTabFailDelete,	"Failed to delete tab at index %d"
+	ComStrs_sTabFailRetrieve,	"Failed to retrieve tab at index %d"
+	ComStrs_sTabFailGetObject,	"Failed to get object at index %d"
 	IdResourceStringsCore_RSSocksServerGeneralError,	"General SOCKS server failure."
 	IdResourceStringsCore_RSSocksServerPermissionError,	"Connection not allowed by ruleset."
 	IdResourceStringsCore_RSSocksServerNetUnreachableError,	"Network unreachable."
@@ -2132,43 +2132,43 @@ END
 /* c:\archivos de programa\codegear\rad studio\5.0\lib\midas.res */
 /* c:\archivos de programa\codegear\rad studio\5.0\lib\Buttons.res */
 /* c:\archivos de programa\codegear\rad studio\5.0\lib\ExtDlgs.res */
-/* ..\rpmdprintconfigvcl.dfm */
-/* ..\rppagesetupvcl.dfm */
-/* ..\rpgraphutilsvcl.dfm */
-/* ..\rpdbxconfigvcl.dfm */
-/* ..\rpmdfconnectionvcl.dfm */
-/* ..\rpdbbrowservcl.DFM */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpgraphutilsvcl.dfm */
+/* c:\archivos de programa\codegear\rad studio\5.0\lib\TeeResou.res */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpgdidriver.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpexceldriver.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdprintconfigvcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rppagesetupvcl.dfm */
 /* c:\archivos de programa\codegear\rad studio\5.0\lib\DBPWDlg.dfm */
 /* c:\archivos de programa\codegear\rad studio\5.0\lib\DBLogDlg.dfm */
 /* c:\archivos de programa\codegear\rad studio\5.0\lib\DBCtrls.res */
 /* c:\archivos de programa\codegear\rad studio\5.0\lib\DBGrids.res */
-/* ..\rpmdfsampledatavcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdfsearchvcl.DFM */
+/* c:\prog\toni\cvsroot\reportman\reportman\rprfvparams.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpvpreview.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpdbbrowservcl.DFM */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpexpredlgvcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdfextsecvcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdfaboutvcl.dfm */
 /* c:\prog\toni\cvsroot\reportman\reportman\rpfparamsvcl.dfm */
-/* ..\rpmdfdatatextvcl.dfm */
-/* ..\rpmdfdatasetsvcl.DFM */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdfsampledatavcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdfdatatextvcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdfdatasetsvcl.DFM */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpdbxconfigvcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdfconnectionvcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdfdinfovcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdfgridvcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdclitreevcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpfmetaviewvcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpfmainmetaviewvcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdsysinfo.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdftreevcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdfopenlibvcl.DFM */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpeditconnvcl.DFM */
 /* c:\prog\toni\cvsroot\reportman\reportman\rpmdfselectfields.DFM */
 /* c:\prog\toni\cvsroot\reportman\reportman\rpmdfwizardvcl.dfm */
-/* c:\archivos de programa\codegear\rad studio\5.0\lib\TeeResou.res */
-/* ..\rpgdidriver.dfm */
-/* ..\rpmdfaboutvcl.dfm */
-/* ..\rpexceldriver.dfm */
-/* ..\rpmdfsearchvcl.DFM */
-/* ..\rprfvparams.dfm */
-/* c:\prog\toni\cvsroot\reportman\reportman\rpmdclitreevcl.dfm */
-/* ..\rpfmetaviewvcl.dfm */
-/* ..\rpfmainmetaviewvcl.dfm */
-/* c:\prog\toni\cvsroot\reportman\reportman\rpvpreview.dfm */
-/* ..\rpmdftreevcl.dfm */
-/* ..\rpmdfopenlibvcl.DFM */
-/* ..\rpeditconnvcl.DFM */
-/* ..\rpmdsysinfo.dfm */
-/* ..\rpmdfextsecvcl.dfm */
-/* ..\rpexpredlgvcl.dfm */
-/* ..\rpmdfgridvcl.dfm */
-/* ..\rpmdfdinfovcl.dfm */
-/* ..\rpmdfdesignvcl.dfm */
-/* ..\rpmdfstrucvcl.dfm */
-/* ..\rpmdobjinspvcl.dfm */
-/* ..\rpmdfmainvcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdfmainvcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdfdesignvcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdfstrucvcl.dfm */
+/* c:\prog\toni\cvsroot\reportman\reportman\rpmdobjinspvcl.dfm */
 /* C:\prog\toni\cvsroot\reportman\reportman\repman\repmandxp.res */
 /* C:\prog\toni\cvsroot\reportman\reportman\repman\repmandxp.drf */

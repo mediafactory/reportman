@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager
-AppVerName=Report Manager 2.8rc2
-AppVersion=2.8rc2
-OutputBaseFilename=reportman2_8rc2
+AppVerName=Report Manager 2.8e
+AppVersion=2.8e
+OutputBaseFilename=reportman2_8e
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -162,4 +162,5 @@ Name: {commondesktop}\{cm:ReportManagerDesignerXP}; Filename: {app}\repmandxp.ex
 Name: {commondesktop}\{cm:ReportManagerClient}; Filename: {app}\metaviewxp.exe; WorkingDir: {app}; Components: clienttcp; MinVersion: 4,4; Tasks: desktopicon
 
 [Run]
-Filename: {app}\repmandxp.exe; Description: {cm:LaunchReportManagerDesignerXP}; Components: designer; Flags: nowait postinstall skipifsilent
+;For Windows Vista compatibilty it should not run Report Manager at end of installation
+;Filename: {app}\repmandxp.exe; Description: {cm:LaunchReportManagerDesignerXP}; Components: designer; Flags: nowait postinstall skipifsilent
