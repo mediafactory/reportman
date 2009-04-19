@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager Standard Edition
-AppVerName=Report Manager 2.8a
-AppVersion=2.8a
-OutputBaseFilename=reportmanstd2_8a
+AppVerName=Report Manager 2.8e
+AppVersion=2.8e
+OutputBaseFilename=reportmanstd2_8e
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -109,14 +109,25 @@ Source: ..\repman\repsamples\biolife.cds; DestDir: {app}; Components: repsample;
 
 Source: ..\repman\dbxdrivers.ini; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
 Source: ..\repman\dbxconnections.ini; DestDir: {app}; Components: dbexpress; Flags: onlyifdoesntexist
-Source: ..\drivers\win32\dbexpint.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpmys.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpinf.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpmysql.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpmss.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpora.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpdb2.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbxoodbc.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+;Source: ..\drivers\win32\dbexpint.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+;Source: ..\drivers\win32\dbexpmys.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+;Source: ..\drivers\win32\dbexpinf.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+;Source: ..\drivers\win32\dbexpmysql.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+;Source: ..\drivers\win32\dbexpmss.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+;Source: ..\drivers\win32\dbexpora.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+;Source: ..\drivers\win32\dbexpdb2.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+;Source: ..\drivers\win32\dbxoodbc.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: ..\drivers\win32new\dbxint30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxadapter30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxasa30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxase30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxdb230.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxinf30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmss30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmys30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmysA30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxora30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxoodbc.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
 
 ;BDE
 Source: C:\Archivos de programa\Archivos comunes\Borland Shared\BDEINST\*.*; DestDir: {cf}\Borland Shared\BDE; Components: bde; Flags: uninsneveruninstall restartreplace sharedfile
@@ -449,4 +460,5 @@ Name: {userdesktop}\{cm:ReportManagerDesignerXP}; Filename: {app}\repmandxp.exe;
 Name: {userdesktop}\{cm:ReportManagerClient}; Filename: {app}\metaviewxp.exe; WorkingDir: {app}; Components: clienttcp; MinVersion: 4,4; Tasks: desktopicon
 
 [Run]
-Filename: {app}\repmandxp.exe; Description: {cm:LaunchReportManagerDesignerXP}; Components: designer; Flags: nowait postinstall skipifsilent
+;Windows Vista compatibility
+;Filename: {app}\repmandxp.exe; Description: {cm:LaunchReportManagerDesignerXP}; Components: designer; Flags: nowait postinstall skipifsilent

@@ -165,8 +165,8 @@ type
     destructor Destroy; override;
 
     procedure Assign(Source: TPersistent); override;
-    class function CanLoad(const FileName: String): Boolean; overload; virtual;
-    class function CanLoad(Stream: TStream): Boolean; overload; virtual; 
+    function CanLoad(const FileName: String): Boolean; overload; virtual;
+    function CanLoad(Stream: TStream): Boolean; overload; virtual;
     procedure LoadFromResourceName(Instance: THandle; const ResName: String);
     procedure LoadFromResourceID(Instance: THandle; ResID: Integer);
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; virtual;
@@ -186,7 +186,7 @@ type
     FDecoder: TDecoder;          // ...same applies here
     procedure ReadAndDecode(Red, Green, Blue, Alpha: Pointer; Row, BPC: Cardinal);
   public
-    class function CanLoad(Stream: TStream): Boolean; override;
+    function CanLoad(Stream: TStream): Boolean; override;
     procedure LoadFromStream(Stream: TStream); override;
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
   end;
@@ -196,7 +196,7 @@ type
   // *.cel, *.pic images
   TAutodeskGraphic = class(TGraphicExGraphic)
   public
-    class function CanLoad(Stream: TStream): Boolean; override;
+    function CanLoad(Stream: TStream): Boolean; override;
     procedure LoadFromStream(Stream: TStream); override;
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
   end;
@@ -230,7 +230,7 @@ type
     procedure SortIFD;
     procedure SwapIFD;
   public
-    class function CanLoad(Stream: TStream): Boolean; override;
+    function CanLoad(Stream: TStream): Boolean; override;
     procedure LoadFromStream(Stream: TStream); override;
     procedure SaveToStream(Stream: TStream); override;
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
@@ -239,7 +239,7 @@ type
     {$ifdef EPSGraphic}
     TEPSGraphic = class(TTIFFGraphic)
     public
-      class function CanLoad(Stream: TStream): Boolean; override;
+      function CanLoad(Stream: TStream): Boolean; override;
       procedure LoadFromStream(Stream: TStream); override;
       function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
     end;
@@ -250,7 +250,7 @@ type
   // *.tga; *.vst; *.icb; *.vda; *.win images
   TTargaGraphic = class(TGraphicExGraphic)
    public
-    class function CanLoad(Stream: TStream): Boolean; override;
+    function CanLoad(Stream: TStream): Boolean; override;
     procedure LoadFromStream(Stream: TStream); override;
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
     procedure SaveToStream(Stream: TStream); overload; override;
@@ -265,7 +265,7 @@ type
   //       Hence the image must be the only one in the stream or the last one.
   TPCXGraphic = class(TGraphicExGraphic)
   public
-    class function CanLoad(Stream: TStream): Boolean; override;
+    function CanLoad(Stream: TStream): Boolean; override;
     procedure LoadFromStream(Stream: TStream); override;
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
   end;
@@ -276,7 +276,7 @@ type
   // Note: By default the BASE resolution of a PCD image is loaded with LoadFromStream. 
   TPCDGraphic = class(TGraphicExGraphic)
   public
-    class function CanLoad(Stream: TStream): Boolean; override;
+    function CanLoad(Stream: TStream): Boolean; override;
     procedure LoadFromStream(Stream: TStream); override;
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
   end;
@@ -293,7 +293,7 @@ type
     function GetNumber: Cardinal;
     function ReadLine: String;
   public
-    class function CanLoad(Stream: TStream): Boolean; override;
+    function CanLoad(Stream: TStream): Boolean; override;
     procedure LoadFromStream(Stream: TStream); override;
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
   end;
@@ -308,7 +308,7 @@ type
   protected
     procedure LoadPalette;
   public
-    class function CanLoad(Stream: TStream): Boolean; override;
+    function CanLoad(Stream: TStream): Boolean; override;
     procedure LoadFromFile(const FileName: String); override;
     procedure LoadFromStream(Stream: TStream); override;
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
@@ -323,7 +323,7 @@ type
   private
     function SkipExtensions: Byte;
   public
-    class function CanLoad(Stream: TStream): Boolean; override;
+    function CanLoad(Stream: TStream): Boolean; override;
     procedure LoadFromStream(Stream: TStream); override;
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
   end;
@@ -336,7 +336,7 @@ type
   private
     procedure SwapHeader(var Header); // start position of the image header in the stream
   public
-    class function CanLoad(Stream: TStream): Boolean; override;
+    function CanLoad(Stream: TStream): Boolean; override;
     procedure LoadFromStream(Stream: TStream); override;
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
   end;
@@ -346,7 +346,7 @@ type
   // *.psd, *.pdd images
   TPSDGraphic = class(TGraphicExGraphic)
   public
-    class function CanLoad(Stream: TStream): Boolean; override;
+    function CanLoad(Stream: TStream): Boolean; override;
     procedure LoadFromStream(Stream: TStream); override;
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
   end;
@@ -356,7 +356,7 @@ type
   // *.psp images (file version 3 and 4)
   TPSPGraphic = class(TGraphicExGraphic)
   public
-    class function CanLoad(Stream: TStream): Boolean; override;
+    function CanLoad(Stream: TStream): Boolean; override;
     procedure LoadFromStream(Stream: TStream); override;
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
   end;
@@ -364,7 +364,7 @@ type
 
   {$ifdef PortableNetworkGraphic}
   // *.png images
-  TChunkType = array[0..3] of Char;
+  TChunkType = array[0..3] of AnsiChar;
 
   // This header is followed by a variable number of data bytes, which are followed by the CRC for this data.
   // The actual size of this data is given by field length in the chunk header.
@@ -401,7 +401,7 @@ type
     procedure ReadRow(RowBuffer: Pointer; BytesPerRow: Integer);
     function SetupColorDepth(ColorType, BitDepth: Integer): Integer;
   public
-    class function CanLoad(Stream: TStream): Boolean; override;
+    function CanLoad(Stream: TStream): Boolean; override;
     procedure LoadFromStream(Stream: TStream); override;
     function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; override;
 
@@ -1209,7 +1209,7 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TGraphicExGraphic.CanLoad(const FileName: String): Boolean;
+function TGraphicExGraphic.CanLoad(const FileName: String): Boolean;
 
 var
   Stream: TFileStream;
@@ -1225,7 +1225,7 @@ end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TGraphicExGraphic.CanLoad(Stream: TStream): Boolean;
+function TGraphicExGraphic.CanLoad(Stream: TStream): Boolean;
 
 // Descentants have to override this method and return True if they consider the data in Stream
 // as loadable by the particular class.
@@ -1300,7 +1300,7 @@ type
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TAutodeskGraphic.CanLoad(Stream: TStream): Boolean;
+function TAutodeskGraphic.CanLoad(Stream: TStream): Boolean;
 
 var
   FileID: Word;
@@ -1455,7 +1455,7 @@ type
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TSGIGraphic.CanLoad(Stream: TStream): Boolean;
+function TSGIGraphic.CanLoad(Stream: TStream): Boolean;
 
 // returns True if the data in Stream represents a graphic which can be loaded by this class
 
@@ -2052,7 +2052,7 @@ type
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TTIFFGraphic.CanLoad(Stream: TStream): Boolean;
+function TTIFFGraphic.CanLoad(Stream: TStream): Boolean;
 
 var
   Header: TTIFFHeader;
@@ -3131,7 +3131,7 @@ type
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TEPSGraphic.CanLoad(Stream: TStream): Boolean;
+function TEPSGraphic.CanLoad(Stream: TStream): Boolean;
 
 var
   Header: TEPSHeader;
@@ -3251,7 +3251,7 @@ type
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TTargaGraphic.CanLoad(Stream: TStream): Boolean;
+function TTargaGraphic.CanLoad(Stream: TStream): Boolean;
 
 var
   Header: TTargaHeader;
@@ -3636,7 +3636,7 @@ type
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TPCXGraphic.CanLoad(Stream: TStream): Boolean;
+function TPCXGraphic.CanLoad(Stream: TStream): Boolean;
 
 var
   Header: TPCXHeader;
@@ -3969,7 +3969,7 @@ const
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TPCDGraphic.CanLoad(Stream: TStream): Boolean;
+function TPCDGraphic.CanLoad(Stream: TStream): Boolean;
 
 var
   Header: array of Byte;
@@ -4302,7 +4302,7 @@ end;
 
 {$ifdef PortableMapGraphic}
 
-class function TPPMGraphic.CanLoad(Stream: TStream): Boolean;
+function TPPMGraphic.CanLoad(Stream: TStream): Boolean;
 
 var
   Buffer: array[0..9] of Char;
@@ -4694,7 +4694,7 @@ end;
 
 {$ifdef CUTGraphic}
 
-class function TCUTGraphic.CanLoad(Stream: TStream): Boolean;
+function TCUTGraphic.CanLoad(Stream: TStream): Boolean;
 
 // Note: cut files cannot be determined from stream because the only information
 //       is width and height of the image at stream/image start which is by no means
@@ -4931,7 +4931,7 @@ type
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TGIFGraphic.CanLoad(Stream: TStream): Boolean;
+function TGIFGraphic.CanLoad(Stream: TStream): Boolean;
 
 var
   Header: TGIFHeader;
@@ -5321,7 +5321,7 @@ type
   
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TRLAGraphic.CanLoad(Stream: TStream): Boolean;
+function TRLAGraphic.CanLoad(Stream: TStream): Boolean;
 
 var
   Header: TRLAHeader;
@@ -5582,7 +5582,7 @@ type
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TPSDGraphic.CanLoad(Stream: TStream): Boolean;
+function TPSDGraphic.CanLoad(Stream: TStream): Boolean;
 
 var
   Header: TPSDHeader;
@@ -6264,7 +6264,7 @@ type
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TPSPGraphic.CanLoad(Stream: TStream): Boolean;
+function TPSPGraphic.CanLoad(Stream: TStream): Boolean;
 
 var
   Header: TPSPFileHeader;
@@ -6774,7 +6774,7 @@ type
 
 //----------------------------------------------------------------------------------------------------------------------
 
-class function TPNGGraphic.CanLoad(Stream: TStream): Boolean;
+function TPNGGraphic.CanLoad(Stream: TStream): Boolean;
 
 var
   Magic: array[0..7] of Byte;
@@ -6803,9 +6803,12 @@ function TPNGGraphic.IsChunk(ChunkType: TChunkType): Boolean;
 
 const
   Mask = not $20202020;
+var
+ chtype:Cardinal;
 
 begin
-  Result := (Cardinal(FHeader.ChunkType) and Mask) = (Cardinal(ChunkType) and Mask);
+  chtype:=Cardinal(FHeader.ChunkType);
+  Result := (chtype and Mask) = (Cardinal(ChunkType) and Mask);
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -7868,20 +7871,29 @@ function TFileFormatList.GraphicFromContent(Stream: TStream): TGraphicExGraphicC
 var
   I: Integer;
   T: TGraphicExGraphicClass;
-
+  TInst:TGraphicExGraphic;
 begin
   Result := nil;
-  for I := 0 to FClassList.Count - 1 do
+  if (Stream<>nil) then
   begin
-    if PClassEntry(FClassList[I]).GraphicClass.InheritsFrom(TGraphicExGraphic) then
-    begin
-      T := TGraphicExGraphicClass(PClassEntry(FClassList[I]).GraphicClass);
-      if T.CanLoad(Stream) then
-      begin
-        Result := T;
-        Break;
-      end;
-    end;
+   for I := 0 to FClassList.Count - 1 do
+   begin
+     if PClassEntry(FClassList[I]).GraphicClass.InheritsFrom(TGraphicExGraphic) then
+     begin
+       T := TGraphicExGraphicClass(PClassEntry(FClassList[I]).GraphicClass);
+       TInst:=T.Create;
+       try
+        if TInst.CanLoad(Stream) then
+        begin
+          Result := T;
+        end;
+       finally
+         TInst.free;
+       end;
+       if Assigned(Result) then
+         break;
+     end;
+   end;
   end;
 end;
 

@@ -30,13 +30,13 @@ function inflateInit(var z : z_stream) : inti;
 
 
 function inflateInit_(z : z_streamp;
-                      const version : string;
+                      const version : AnsiString;
                       stream_size : inti) : inti;
 
 
 function inflateInit2_(var z: z_stream;
                        w : inti;
-                       const version : string;
+                       const version : AnsiString;
                        stream_size : inti) : inti;
 
 function inflateInit2(var z: z_stream;
@@ -245,7 +245,7 @@ end;
 
 function inflateInit2_(var z: z_stream;
                        w : inti;
-                       const version : string;
+                       const version : AnsiString;
                        stream_size : inti) : inti;
 begin
   if (version = '') or (version[1] <> ZLIB_VERSION[1]) or
@@ -332,7 +332,7 @@ begin
 end;
 
 function inflateInit_(z : z_streamp;
-                      const version : string;
+                      const version : AnsiString;
                       stream_size : inti) : inti;
 begin
   { initialize state }

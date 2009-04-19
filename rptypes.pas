@@ -257,7 +257,7 @@ procedure GetDrawStyleDescriptions(alist:TRpWideStrings);
 function StrToBackStyle(value:string):TrpBackStyle;
 function BackStyleToStr(value:TrpBackStyle):string;
 {$IFNDEF FPC}
-procedure SendMail(destination,subject,content,filename,originalfile:String);
+procedure SendMail(destination,subject,content,filename,originalfile:AnsiString);
 {$ENDIF}
 function StrToAlign(value:string):TRpPosAlign;
 function AlignToStr(value:TRpPosAlign):string;
@@ -336,7 +336,7 @@ procedure GetDuplexDescriptions(alist:TStrings);
 
 function RpTempFileName:String;
 function RpTempPath:String;
-procedure WriteStringToStream(astring:String;deststream:TStream);
+procedure WriteStringToStream(astring:AnsiString;deststream:TStream);
 procedure WriteWideStringToStream(astring:WideString;deststream:TStream);
 function FormatCurrAdv(mask:String;number:double):String;
 // Rounding a number with not balanced system
@@ -344,7 +344,7 @@ function FormatCurrAdv(mask:String;number:double):String;
 function Roundfloat(num:double;redondeo:double):double;
 
 {$IFDEF MSWINDOWS}
-function RpCharToOem(source:String):String;
+function RpCharToOem(source:AnsiString):AnsiString;
 {$ENDIF}
 
 {$IFDEF DOTNETD}
@@ -884,6 +884,14 @@ begin
   varOleStr,
 {$ENDIF}
   varString:
+   begin
+    if Length(displayformat)>0 then
+     Result:=Format(displayformat,[Value])
+    else
+     Result:=widestring(Value);
+   end;
+  // Delphi 2009 widestring
+  258:
    begin
     if Length(displayformat)>0 then
      Result:=Format(displayformat,[Value])
@@ -1555,12 +1563,12 @@ end;
 {$ENDIF}
 
 function ReadWideString(Reader:TReader):WideString;
-{$IFDEF DOTNETD}
+{$IFDEF DELPHI2009UP}
 begin
  Result:=Reader.ReadWideString;
 end;
 {$ENDIF}
-{$IFNDEF DOTNETD}
+{$IFNDEF DELPHI2009UP}
 var
   L: Integer;
   aResult:String;
@@ -4176,7 +4184,7 @@ begin
 end;
 
 
-procedure WriteStringToStream(astring:String;deststream:TStream);
+procedure WriteStringToStream(astring:AnsiString;deststream:TStream);
 {$IFDEF DOTNETD}
 var
  i:integer;
@@ -4380,7 +4388,7 @@ Begin
 end;
 
 {$IFNDEF FPC}
-procedure SendMail(destination,subject,content,filename,originalfile:String);
+procedure SendMail(destination,subject,content,filename,originalfile:AnsiString);
 procedure CheckMAPI(avalue:Cardinal);
 begin
  if avalue=SUCCESS_SUCCESS then
@@ -4438,35 +4446,16 @@ end;
 var
  Sessionh:LHandle;
  amessage:MapiMessage;
-{$IFDEF DOTNETD}
- recip:MAPIRecipDesc;
- filep:MapiFileDesc;
-{$ENDIF}
 begin
-{$IFNDEF DOTNETD}
  CheckMAPI(MapiLogOn(0,nil,nil,MAPI_LOGON_UI,0,@Sessionh));
-{$ENDIF}
-{$IFDEF DOTNETD}
- CheckMAPI(MapiLogOn(0,nil,nil,MAPI_LOGON_UI,0,Sessionh));
-{$ENDIF}
  try
   amessage.ulReserved:=0;
   amessage.lpszSubject:=nil;
   if Length(subject)>0 then
-{$IFNDEF DOTNETD}
-   amessage.lpszSubject:=Pchar(subject);
-{$ENDIF}
-{$IFDEF DOTNETD}
-   amessage.lpszSubject:=subject;
-{$ENDIF}
+  amessage.lpszSubject:=PAnsiChar(subject);
   if Length(content)<1 then
    content:=' ';
-{$IFNDEF DOTNETD}
-  amessage.lpszNoteText:=PChar(content);
-{$ENDIF}
-{$IFDEF DOTNETD}
-  amessage.lpszNoteText:=content;
-{$ENDIF}
+  amessage.lpszNoteText:=PAnsiChar(content);
   amessage.lpszMessageType:=nil;
   amessage.lpszDateReceived:=nil;
   amessage.lpszConversationID:=nil;
@@ -4477,25 +4466,12 @@ begin
   if Length(destination)>0 then
   begin
    amessage.nRecipCount:=1;
-{$IFNDEF DOTNETD}
    amessage.lpRecips:=AllocMem(sizeof(MAPIRecipDesc));
-   amessage.lpRecips.lpszName:=Pchar(destination);
+   amessage.lpRecips.lpszName:=PAnsiChar(destination);
    amessage.lpRecips.ulRecipClass:=1;
-   amessage.lpRecips.lpszAddress:=Pchar('SMTP:'+destination);
+   amessage.lpRecips.lpszAddress:=PAnsiChar('SMTP:'+destination);
    amessage.lpRecips.ulEIDSize:=0;
    amessage.lpRecips.lpEntryID:=nil;
-{$ENDIF}
-{$IFDEF DOTNETD}
-   amessage.lpRecips:=Marshal.AllocHGlobal(sizeof(MAPIRecipDesc));
-   recip:=MapiRecipDesc(Marshal.PtrToStructure(amessage.lpRecips,TypeOf(MAPIRecipDesc)));
-   recip.ulReserved:=0;
-   recip.ulRecipClass:=1;
-   destination:='SMTP:'+destination;
-   recip.lpszName:=destination;
-   recip.lpszAddress:=Marshal.StringToHGlobalAnsi(destination);
-   recip.ulEIDSize:=0;
-   recip.lpEntryID:=nil;
-{$ENDIF}
   end;
 
   amessage.flFlags:=MAPI_RECEIPT_REQUESTED;
@@ -4514,26 +4490,14 @@ begin
   if Length(filename)>0 then
   begin
    amessage.nFileCount:=1;
-{$IFNDEF DOTNETD}
    amessage.lpFiles:=AllocMem(sizeof(MapiFileDesc));
    amessage.lpFiles.ulReserved:=0;
    amessage.lpFiles.flFlags:=0;
-   amessage.lpFiles.lpszPathName:=Pchar(filename);
+   amessage.lpFiles.lpszPathName:=PAnsiChar(filename);
 //   amessage.lpFiles.lpszPathName:=Pchar(LongFileName(filename));
-   amessage.lpFiles.lpszFileName:=Pchar(originalfile);
+   amessage.lpFiles.lpszFileName:=PAnsiChar(originalfile);
    amessage.lpFiles.nPosition:=0;
    amessage.lpFiles.lpFileType:=nil;
-{$ENDIF}
-{$IFDEF DOTNETD}
-   amessage.lpFiles:=Marshal.AllocHGlobal(sizeof(MapiFileDesc));
-   filep:=MapiFileDesc(Marshal.PtrToStructure(amessage.lpFiles,TypeOf(MAPIFileDesc)));
-   filep.ulReserved:=0;
-   filep.flFlags:=0;
-   filep.lpszPathName:=Marshal.StringToHGlobalAnsi(filename);
-   filep.lpszFileName:=Marshal.StringToHGlobalAnsi(ExtractFileName(filename));
-   filep.nPosition:=0;
-   filep.lpFileType:=nil;
-{$ENDIF}
   end;
   CheckMAPI(MapiSendMail(sessionh,0,amessage,MAPI_DIALOG,0));
  finally
@@ -5039,10 +5003,9 @@ end;
 
 
 {$IFDEF MSWINDOWS}
-{$IFNDEF DOTNETD}
-function RpCharToOem(source:String):String;
+function RpCharToOem(source:AnsiString):AnsiString;
 var
- abuf:Pchar;
+ abuf:PAnsichar;
  i:integer;
 begin
  Result:='';
@@ -5050,7 +5013,7 @@ begin
   exit;
  abuf:=AllocMem(Length(source)+1);
  try
-  CharToOem(Pchar(source),abuf);
+  CharToOemA(PAnsiChar(source),abuf);
   Result:=StrPas(abuf);
   for i:=1 to Length(Result) do
   begin
@@ -5063,59 +5026,7 @@ begin
  end;
 end;
 {$ENDIF}
-{$IFDEF DOTNETD}
-function RpCharToOem(source:String):String;
-var
- abuf:StringBuilder;
- i:integer;
-begin
- Result:='';
- if Length(source)<1 then
-  exit;
- CharToOem(source,abuf);
- Result:=abuf.ToString;
- for i:=1 to Length(Result) do
- begin
-  // The Euro symbol
-  if Source[i]=chr(128) then
-   Result[i]:=chr($D5);
- end;
-end;
-{$ENDIF}
-{$ENDIF}
 
-{$IFDEF DOTNETD}
-function StrPas(source:Pchar):String;
-var
- i:integer;
-begin
- Result:='';
- i:=0;
- while source[i]>chr(0) do
-  Result:=Result+Source[i];
-end;
-
-function StrPCopy(destination:PChar;Source:String):PChar;
-var
- i:integer;
-begin
- for i:=1 to Length(source) do
-  destination[i-1]:=Source[i];
- destination[Length(source)]:=chr(0);
- Result:=destination;
-end;
-
-function StrPWCopy(destination:PWideChar;Source:WideString):PWideChar;
-var
- i:integer;
-begin
- for i:=1 to Length(source) do
-  destination[i-1]:=Source[i];
- destination[Length(source)]:=chr(0);
- Result:=destination;
-end;
-
-{$ENDIF}
 
 
 {$IFNDEF USEVARIANTS}

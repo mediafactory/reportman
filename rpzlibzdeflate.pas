@@ -42,7 +42,7 @@ unit rpzlibzdeflate;
        Fiala,E.R., and Greene,D.H.
           Data Compression with Finite Windows, Comm.ACM, 32,4 (1989) 490-595}
 
-{ $Id: rpzlibzdeflate.pas,v 1.4 2003/02/18 14:49:05 tonim Exp $ }
+{ $Id: rpzlibzdeflate.pas,v 1.5 2009/04/19 15:51:02 tonim Exp $ }
 
 interface
 
@@ -54,7 +54,7 @@ uses
 
 function deflateInit_(strm : z_streamp;
                       level : inti;
-                      const version : string;
+                      const version : AnsiString;
                       stream_size : inti) : inti;
 
 
@@ -311,7 +311,7 @@ function deflateParams (var strm : z_stream; level : inti; strategy : inti) : in
 
 
 const
-   deflate_copyright : string = ' deflate 1.1.2 Copyright 1995-1998 Jean-loup Gailly ';
+   deflate_copyright : Ansistring = ' deflate 1.1.2 Copyright 1995-1998 Jean-loup Gailly ';
 
 { If you use the zlib library in a product, an acknowledgment is welcome
   in the documentation of your product. If for some reason you cannot
@@ -492,7 +492,7 @@ function deflateInit2_(var strm : z_stream;
                        windowBits : inti;
                        memLevel : inti;
                        strategy : inti;
-                       const version : string;
+                       const version : Ansistring;
                        stream_size : inti) : inti;
 var
   s : deflate_state_ptr;
@@ -615,7 +615,7 @@ end;
 
 function deflateInit_(strm : z_streamp;
                       level : inti;
-                      const version : string;
+                      const version : AnsiString;
                       stream_size : inti) : inti;
 begin
   if (strm = Z_NULL) then

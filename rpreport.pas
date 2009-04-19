@@ -496,6 +496,9 @@ begin
  subreport:=nil;
 // FDriver:=nil;
  printing:=false;
+ if (FTotalPagesList.Count>0) then
+  if (not TwoPass) then
+   raise Exception.Create(SRpSTwoPassReportNeeded+'-'+TranslateStr(50,'Page setup'));
  metafile.UpdateTotalPages(FTotalPagesList);
 end;
 

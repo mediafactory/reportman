@@ -110,6 +110,7 @@ begin
  if length(filename)<1 then
   Raise Exception.Create(SRpFileNameRequired);
  SHGetFolderPath(0, CSIDL_APPDATA or CSIDL_FLAG_CREATE, 0, 0, szAppData);
+
  if length(company)>0 then
  begin
   if not PathAppend(szAppdata,Pchar(company)) then
@@ -272,10 +273,20 @@ if HandleLib=0 then
 HandleLib2:=LoadLibrary(shlwapi32);
 if HandleLib=2 then
  RaiseLastOSError;
+{$IFDEF DELPHI2009UP}
+SHGetFolderPath:=GetProcAddress(HandleLib,PChar('SHGetFolderPathW'));
+{$ENDIF}
+{$IFNDEF DELPHI2009UP}
 SHGetFolderPath:=GetProcAddress(HandleLib,PChar('SHGetFolderPathA'));
+{$ENDIF}
 if Not Assigned(SHGetFolderPath) then
  RaiseLastOSError;
+{$IFDEF DELPHI2009UP}
+PathAppend:=GetProcAddress(HandleLib2,PChar('PathAppendW'));
+{$ENDIF}
+{$IFNDEF DELPHI2009UP}
 PathAppend:=GetProcAddress(HandleLib2,PChar('PathAppendA'));
+{$ENDIF}
 if Not Assigned(PathAppend) then
  RaiseLastOSError;
 {$ENDIF}

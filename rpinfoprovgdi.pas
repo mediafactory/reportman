@@ -384,10 +384,10 @@ begin
       apchar:=PChar(potm);
       // Windows does not allow Type1 fonts
       data.Type1:=false;
-      data.FamilyName:=StrPas(@apchar[Integer(potm^.otmpFamilyName)]);
-      data.FullName:=StrPas(@apchar[Integer(potm^.otmpFullName)]);
-      data.StyleName:=StrPas(@apchar[Integer(potm^.otmpStyleName)]);
-      data.FaceName:=StrPas(@apchar[Integer(potm^.otmpFaceName)]);
+      data.FamilyName:=StrPas(PAnsiChar(@apchar[Integer(potm^.otmpFamilyName)]));
+      data.FullName:=StrPas(PAnsiChar(@apchar[Integer(potm^.otmpFullName)]));
+      data.StyleName:=StrPas(PAnsiChar(@apchar[Integer(potm^.otmpStyleName)]));
+      data.FaceName:=StrPas(PAnsiChar(@apchar[Integer(potm^.otmpFaceName)]));
       data.ItalicAngle:=Round(potm^.otmItalicAngle/10);
       if ((potm^.otmTextMetrics.tmPitchAndFamily AND TMPF_TRUETYPE)=0) then
        Raise Exception.Create(SRpNoTrueType+'-'+data.FaceName);
@@ -549,12 +549,18 @@ var
  aabc:array [1..1] of ABC;
  aint:Word;
  glyphindex:UInt;
+{$IFNDEF DELPHI2009UP}
 {$IFDEF VER180}
  gcp:windows.tagGCP_RESULTSW;
 {$ENDIF}
 {$IFNDEF VER180}
  gcp:windows.tagGCP_RESULTSA;
 {$ENDIF}
+{$ENDIF}
+{$IFDEF DELPHI2009UP}
+ gcp:windows.tagGCP_RESULTSW;
+{$ENDIF}
+
  astring:WideString;
 begin
  glyphindex:=0;

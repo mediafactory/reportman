@@ -376,7 +376,10 @@ begin
  Result:=inherited GetExtension(adriver,MaxExtent,forcepartial);
  if (Shape=rpsHorzLine) then
  begin
-  Result.Y:=PenWidth;
+  if (PenWidth=0) then
+   Result.Y:=1
+  else
+   Result.Y:=PenWidth;
   lastextent:=Result;
  end;
 end;

@@ -27,7 +27,11 @@ interface
 
 uses Classes,SysUtils,
  {$IFDEF DELPHI2007UP}
+{$IFDEF USESQLEXPRESS}
+ {$IFDEF REPMANRELEASE}
   DBXCLient,DBXDynaLink,
+ {$ENDIF}
+{$ENDIF}
  {$ENDIF}
 {$IFDEF MSWINDOWS}
  registry,windows,

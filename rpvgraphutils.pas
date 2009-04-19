@@ -1290,7 +1290,7 @@ function CreateICFromCurrentPrinter:HDC;
 var
  Device, Driver, Port: array[0..1023] of char;
  DeviceMode: THandle;
- PDevMode :  PDeviceModeA;
+ PDevMode :  PDeviceMode;
 begin
  if printer.Printers.count<1 then
   Raise Exception.Create(SRpMustInstall);

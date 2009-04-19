@@ -99,19 +99,19 @@ type
    FPDFLeft,FPDFTop:Integer;
    FPDFMeta:TRpMetafileReport;
    modules:array[0..3] of integer;
-   function Code_2_5_interleaved:string;
-   function Code_2_5_industrial:string;
-   function Code_2_5_matrix:string;
-   function Code_39:string;
-   function Code_39Extended:string;
-   function Code_128:string;
-   function Code_93:string;
-   function Code_93Extended:string;
-   function Code_MSI:string;
-   function Code_PostNet:string;
-   function Code_Codabar:string;
-   function Code_EAN8:string;
-   function Code_EAN13:string;
+   function Code_2_5_interleaved: AnsiString;
+   function Code_2_5_industrial: AnsiString;
+   function Code_2_5_matrix: AnsiString;
+   function Code_39: AnsiString;
+   function Code_39Extended: AnsiString;
+   function Code_128: AnsiString;
+   function Code_93: AnsiString;
+   function Code_93Extended: AnsiString;
+   function Code_MSI: AnsiString;
+   function Code_PostNet: AnsiString;
+   function Code_Codabar: AnsiString;
+   function Code_EAN8: AnsiString;
+   function Code_EAN13: AnsiString;
    procedure MakeModules;
    procedure SetModul(v:integer);
    procedure Evaluate;
@@ -129,14 +129,14 @@ type
    procedure EncodeText (var Position : Integer; CodeLen : Integer);
    procedure ConvertBytesToBase900 (const S : array of byte;
                                        var A : array of integer);
-   procedure ConvertToBase900 (const S : string;
+   procedure ConvertToBase900 (const S : AnsiString;
                                   var A : array of integer;
                                   var LenA : integer);
    procedure GetNextCharacter (var NewChar  : Integer;
                                              var Codeword : Boolean;
                                              var Position : Integer;
                                              CodeLen      : Integer);
-   function IsNumericString (const S : string) : boolean;
+   function IsNumericString (const S : AnsiString) : boolean;
    procedure Draw2DBarcode(FLeft,FTop:integer;meta:TRpMetaFileReport);
    procedure DrawStartPattern (RowNumber     : Integer;
                                              WorkBarHeight : Integer);
@@ -155,7 +155,7 @@ type
    procedure DrawCodeword (RowNumber     : Integer;
                                          ColNumber     : Integer;
                                          WorkBarHeight : Integer;
-                                         Pattern       : string);
+                                         Pattern       : AnsiString);
    procedure DrawCodewordBitmask (RowNumber     : Integer;
                                                 ColNumber     : Integer;
                                                 WorkBarHeight : Integer;
@@ -176,12 +176,12 @@ type
                                        var Count : Integer) : Boolean;
    procedure AddCodeword (Value : Word);
   public
-   CurrentText:String;
-   function  CalculateBarcode:string;
-   procedure DoLines(data:string;FLeft,FTop:integer;meta:TRpMetafileReport);
+   CurrentText: AnsiString;
+   function  CalculateBarcode: AnsiString;
+   procedure DoLines(data: AnsiString;FLeft,FTop:integer;meta:TRpMetafileReport);
    function GetText:widestring;
-   function GetTypText:string;
-   procedure SubReportChanged(newstate:TRpReportChanged;newgroup:string='');override;
+   function GetTypText: AnsiString;
+   procedure SubReportChanged(newstate:TRpReportChanged;newgroup: String='');override;
    constructor Create(Owner:TComponent); override;
 //   procedure DrawText(Canvas:TCanvas);
    property Expression:widestring read FExpression write FExpression;
@@ -210,9 +210,9 @@ type
    'Code93','Code93Ex','MSI',
    'PostNet','Codabar','EAN8','EAN13','PDF417');
 
- function StringBarcodeToBarCodeType(value:string):TRpBarCodeType;
- function StringECCToInteger(value:String):Integer;
- function ECCToString(value:integer):String;
+ function StringBarcodeToBarCodeType(value: AnsiString):TRpBarCodeType;
+ function StringECCToInteger(value: AnsiString):Integer;
+ function ECCToString(value:integer): AnsiString;
  procedure FillECCValues(alist:TRpWideStrings);
 
 implementation
@@ -230,7 +230,7 @@ begin
 end;
 
 
-function StringBarcodeToBarCodeType(value:string):TRpBarCodeType;
+function StringBarcodeToBarCodeType(value: AnsiString):TRpBarCodeType;
 var
  i:TRpBarCodeType;
 begin
@@ -255,10 +255,10 @@ end;
 	converts to '05161'
 
 }
-function Convert(s:string):string;
+function Convert(s: AnsiString): AnsiString;
 var
 	i, v : integer;
-	t : string;
+	t : AnsiString;
 begin
 	t := '';
 	for i:=1 to Length(s) do
@@ -333,7 +333,7 @@ end;
 
 
 
-function TRpBarcode.GetTypText:string;
+function TRpBarcode.GetTypText: AnsiString;
 
 const bcNames:array[bcCode_2_5_interleaved..bcCodeEAN13] of string =
 	(
@@ -371,9 +371,9 @@ end;
 
 ////////////////////////////// EAN /////////////////////////////////////////
 
-function getEAN(Nr : String) : String;
+function getEAN(Nr : AnsiString) : AnsiString;
    var i,fak,sum : Integer;
-       tmp   : String;
+       tmp   : AnsiString;
 begin
      sum := 0;
      tmp := copy(nr,1,Length(Nr)-1);
@@ -427,10 +427,10 @@ const tabelle_EAN_C:array['0'..'9', 1..4] of char =
 	);
 
 
-function TRpBarcode.Code_EAN8:string;
+function TRpBarcode.Code_EAN8: AnsiString;
 var
 	i, j: integer;
-        tmp : String;
+        tmp : AnsiString;
 begin
 	if FCheckSum then
            begin
@@ -492,10 +492,10 @@ const tabelle_ParityEAN13:array[0..9, 1..6] of char =
 	('A', 'B', 'B', 'A', 'B', 'A')     // 9
 	);
 
-function TRpBarcode.Code_EAN13:string;
+function TRpBarcode.Code_EAN13: AnsiString;
 var
 	i, j, LK: integer;
-        tmp : String;
+        tmp : AnsiString;
 begin
 	if FCheckSum then
 	begin
@@ -548,11 +548,11 @@ const tabelle_2_5:array['0'..'9', 1..5] of char =
 	('0', '1', '0', '1', '0')     // 9
 	);
 
-function TRpBarcode.Code_2_5_interleaved:string;
+function TRpBarcode.Code_2_5_interleaved: AnsiString;
 var
 	i, j: integer;
 	c : char;
-        FText:string;
+        FText: AnsiString;
 begin
         FText:=string(CurrentText);
 	result := '5050';   // Startcode
@@ -578,10 +578,10 @@ begin
 end;
 
 
-function TRpBarcode.Code_2_5_industrial:string;
+function TRpBarcode.Code_2_5_industrial: AnsiString;
 var
 	i, j: integer;
-        FText:string;
+        FText: AnsiString;
 begin
 	result := '606050';   // Startcode
         FText:=CurrentText;
@@ -599,11 +599,11 @@ begin
 	result := result + '605060';   // Stopcode
 end;
 
-function TRpBarcode.Code_2_5_matrix:string;
+function TRpBarcode.Code_2_5_matrix: AnsiString;
 var
 	i, j: integer;
 	c :char;
-        FText:string;
+        FText: AnsiString;
 begin
 	result := '705050';   // Startcode
         FText:=CurrentText;
@@ -628,12 +628,12 @@ begin
 end;
 
 
-function TRpBarcode.Code_39:string;
+function TRpBarcode.Code_39: AnsiString;
 
 type TCode39 =
 	record
-		c : char;
-		data : array[0..9] of char;
+		c : AnsiChar;
+		data : array[0..9] of AnsiChar;
 		chk: shortint;
 	end;
 
@@ -687,7 +687,7 @@ const tabelle_39: array[0..43] of TCode39 = (
 	);
 
 
-function FindIdx(z:char):integer;
+function FindIdx(z:AnsiChar):integer;
 var
 	i:integer;
 begin
@@ -705,11 +705,13 @@ end;
 var
 	i, idx : integer;
 	checksum:integer;
-        FText:string;
+        FText:Ansistring;
+ zstring:AnsiString;
 begin
+  zstring:='0';
 	checksum := 0;
 	// Startcode
-	result := tabelle_39[FindIdx('*')].data + '0';
+	result := tabelle_39[FindIdx('*')].data + zstring;
 
         FText:=CurrentText;
 	for i:=1 to Length(FText) do
@@ -717,7 +719,7 @@ begin
 		idx := FindIdx(FText[i]);
 		if idx < 0 then
 			continue;
-		result := result + tabelle_39[idx].data + '0';
+		result := result + tabelle_39[idx].data + zstring;
 		Inc(checksum, tabelle_39[idx].chk);
 	end;
 
@@ -728,7 +730,7 @@ begin
 		for i:=0 to High(tabelle_39) do
 			if checksum = tabelle_39[i].chk then
 			begin
-				result := result + tabelle_39[i].data + '0';
+				result := result + tabelle_39[i].data + AnsiChar('0');
 				exit;
 			end;
 		end;
@@ -737,7 +739,7 @@ begin
 	result := result + tabelle_39[FindIdx('*')].data;
 end;
 
-function TRpBarcode.Code_39Extended:string;
+function TRpBarcode.Code_39Extended: AnsiString;
 
 const code39x : array[0..127] of string[2] =
 	(
@@ -761,9 +763,9 @@ const code39x : array[0..127] of string[2] =
 
 
 var
-	save:string;
+	save: AnsiString;
 	i : integer;
-        FText:string;
+        FText: AnsiString;
 begin
         FText:=CurrentText;
 	save := FText;
@@ -787,12 +789,12 @@ end;
 {
 Code 128
 }
-function TRpBarcode.Code_128:string;
+function TRpBarcode.Code_128: AnsiString;
 type TCode128 =
 	record
-		a, b : char;
-		c : string[2];
-		data : string[6];
+		a, b : AnsiChar;
+		c : AnsiString;
+		data : AnsiString;
 	end;
 
 const tabelle_128: array[0..102] of TCode128 = (
@@ -920,10 +922,10 @@ Stop   = '2331112';
 
 
 // find Code 128 Codeset A or B
-function Find_Code128AB(c:char):integer;
+function Find_Code128AB(c:AnsiChar):integer;
 var
 	i:integer;
-	v:char;
+	v:Ansichar;
 begin
 	for i:=0 to High(tabelle_128) do
 	begin
@@ -931,7 +933,6 @@ begin
 			v := tabelle_128[i].a
 		else
 			v := tabelle_128[i].b;
-
 		if c = v then
 		begin
 			result := i;
@@ -942,10 +943,10 @@ begin
 end;
 
 // find Code 128 Codeset A or B
-function Find_Code128C(c:string):integer;
+function Find_Code128C(c: AnsiString):integer;
 var
  i:integer;
- v:string;
+ v: AnsiString;
 begin
  for i:=0 to High(tabelle_128) do
  begin
@@ -959,9 +960,9 @@ begin
  result := -1;
 end;
 
-function FindNewType(FText:string;i:integer):TRpBarcodeType;
+function FindNewType(FText: AnsiString;i:integer):TRpBarcodeType;
 var
- acopy:string;
+ acopy: AnsiString;
  isalpha:boolean;
  index:integer;
 begin
@@ -994,15 +995,15 @@ begin
 end;
 
 var i, idx: integer;
-	startcode:string;
+	startcode: AnsiString;
 	checksum : integer;
         newtyp:TRpBarcodeType;
 //        isalphanum:boolean;
 //        isean:boolean;
-//        newtext:string;
-        cadc:string;
+//        newtext: AnsiString;
+        cadc: AnsiString;
 //        index,numint:integer;
-        FText:string;
+        FText: AnsiString;
 
 begin
  checksum:=0;
@@ -1127,11 +1128,11 @@ begin
 
 
 
-function TRpBarcode.Code_93:string;
+function TRpBarcode.Code_93: AnsiString;
 type TCode93 =
 	record
-		c : char;
-		data : array[0..5] of char;
+		c : Ansichar;
+		data : array[0..5] of Ansichar;
 	end;
 
 const tabelle_93: array[0..46] of TCode93 = (
@@ -1186,7 +1187,7 @@ const tabelle_93: array[0..46] of TCode93 = (
 
 
 // find Code 93
-function Find_Code93(c:char):integer;
+function Find_Code93(c:AnsiChar):integer;
 var
 	i:integer;
 begin
@@ -1208,7 +1209,7 @@ var
 	i, idx : integer;
 	checkC, checkK,   // Checksums
 	weightC, weightK : integer;
-        FText:string;
+  FText: AnsiString;
 begin
         FText:=CurrentText;
 
@@ -1256,7 +1257,7 @@ end;
 
 
 
-function TRpBarcode.Code_93Extended:string;
+function TRpBarcode.Code_93Extended: AnsiString;
 const code93x : array[0..127] of string[2] =
 	(
 	(']U'), ('[A'), ('[B'), ('[C'), ('[D'), ('[E'), ('[F'), ('[G'),
@@ -1279,10 +1280,10 @@ const code93x : array[0..127] of string[2] =
 
 var
 //	save:array[0..254] of char;
-//	old:string;
-	save : string;
+//	old: AnsiString;
+	save : AnsiString;
 	i : integer;
-        FText:string;
+        FText: AnsiString;
 begin
 //	CharToOem(PChar(FText), save);
         FText:=CurrentText;
@@ -1310,7 +1311,7 @@ end;
 
 
 
-function TRpBarcode.Code_MSI:string;
+function TRpBarcode.Code_MSI: AnsiString;
 const tabelle_MSI:array['0'..'9'] of string[8] =
 	(
 	( '51515151' ),    // '0'
@@ -1328,7 +1329,7 @@ const tabelle_MSI:array['0'..'9'] of string[8] =
 var
 	i:integer;
 	check_even, check_odd, checksum:integer;
-        FText:string;
+        FText: AnsiString;
 begin
         FText:=CurrentText;
 	result := '60';    // Startcode
@@ -1358,7 +1359,7 @@ end;
 
 
 
-function TRpBarcode.Code_PostNet:string;
+function TRpBarcode.Code_PostNet: AnsiString;
 const tabelle_PostNet:array['0'..'9'] of string[10] =
 	(
 	( '5151A1A1A1' ),    // '0'
@@ -1374,7 +1375,7 @@ const tabelle_PostNet:array['0'..'9'] of string[10] =
 	);
 var
 	i:integer;
-        FText:string;
+        FText: AnsiString;
 begin
         FText:=CurrentText;
 	result := '51';
@@ -1387,11 +1388,11 @@ begin
 end;
 
 
-function TRpBarcode.Code_Codabar:string;
+function TRpBarcode.Code_Codabar: AnsiString;
 type TCodabar =
 	record
-		c : char;
-		data : array[0..6] of char;
+		c : AnsiChar;
+		data : array[0..6] of AnsiChar;
 	end;
 
 const tabelle_cb: array[0..19] of TCodabar = (
@@ -1420,7 +1421,7 @@ const tabelle_cb: array[0..19] of TCodabar = (
 
 
 // find Codabar
-function Find_Codabar(c:char):integer;
+function Find_Codabar(c:AnsiChar):integer;
 var
 	i:integer;
 begin
@@ -1437,14 +1438,16 @@ end;
 
 var
 	i, idx : integer;
-        FText:string;
+        FText: AnsiString;
+  zstring:AnsiString;
 begin
-	result := tabelle_cb[Find_Codabar('A')].data + '0';
+  zstring:='0';
+	result := tabelle_cb[Find_Codabar('A')].data + zstring;
         FText:=CurrentText;
 	for i:=1 to Length(FText) do
 	begin
 		idx := Find_Codabar(FText[i]);
-		result := result + tabelle_cb[idx].data + '0';
+		result := result + tabelle_cb[idx].data + zstring;
 	end;
 	result := result + tabelle_cb[Find_Codabar('B')].data;
 end;
@@ -1526,7 +1529,7 @@ data[] :
 	'C'   black           150%*Ratio          2/5  (used for PostNet)
 	'D'   black           200%*Ratio          2/5  (used for PostNet)
 }
-procedure TRpBarcode.DoLines(data:string; FLeft,FTop:integer;meta:TRpMetaFileReport);
+procedure TRpBarcode.DoLines(data: AnsiString; FLeft,FTop:integer;meta:TRpMetaFileReport);
 
 type
 	TLineType = (white, black, black_half);
@@ -1667,7 +1670,7 @@ begin
  Result:=FormatVariant(displayformat,FValue,rpParamUnknown,true);
 end;
 
-procedure TRpBarcode.SubReportChanged(newstate:TRpReportChanged;newgroup:string='');
+procedure TRpBarcode.SubReportChanged(newstate:TRpReportChanged;newgroup:String='');
 begin
  inherited SubReportChanged(newstate,newgroup);
  case newstate of
@@ -1683,9 +1686,9 @@ begin
 end;
 
 
-function TRpBarcode.CalculateBarcode:string;
+function TRpBarcode.CalculateBarcode: AnsiString;
 var
- data:string;
+ data: AnsiString;
 begin
  if typ=bcCodePDF417 then
  begin
@@ -1795,7 +1798,7 @@ var
   CodeLen            : Integer;
   CurrentMode        : TStDataMode;
   Count              : Integer;
-  Code:String;
+  Code: AnsiString;
 
 const
   TextCompaction     = 900;
@@ -1983,7 +1986,7 @@ function TRpBarcode.GoodForNumericCompaction (
                                                CodeLen   : Integer;
                                                var Count : Integer) : Boolean;
 var
- code:String;
+ code: AnsiString;
 const
   BytesNeeded = 13;
 
@@ -2005,8 +2008,8 @@ function TRpBarcode.GoodForTextCompaction (
                                              var Count : Integer) : Boolean;
 
 var
- code:String;
-  function IsGoodTextValue (const v : Char) : Boolean;                 {!!.01}
+ code: AnsiString;
+  function IsGoodTextValue (const v : AnsiChar) : Boolean;                 {!!.01}
   begin                                                                {!!.01}
     if v > #127 then                                                   {!!.01}
       Result := False                                                  {!!.01}
@@ -2063,7 +2066,7 @@ var
   i              : Integer;
   j              : Integer;
   A              : array [0..6] of Integer;
-  code:String;
+  code: AnsiString;
 const
   Even6Bytes = 924;
   Odd6Bytes  = 901;
@@ -2103,9 +2106,9 @@ procedure TRpBarcode.EncodeNumeric (var Position : Integer;
                                           CodeLen      : Integer);
 
 var
- code:String;
+ code: AnsiString;
   function CollectDigits (var Position : Integer;
-                          CodeLen      : Integer) : string;
+                          CodeLen      : Integer) : AnsiString;
   var
     StartPos : Integer;
 
@@ -2125,7 +2128,7 @@ var
   end;
 
 var
-  NumericString : string;
+  NumericString : AnsiString;
   A             : array [0..MAX_DIGITS_NUM] of Integer;
   LenA          : Integer;
   i             : Integer;
@@ -2146,7 +2149,7 @@ end;
 procedure TRpBarcode.EncodeText (var Position : Integer;
                                        CodeLen      : Integer);
 var
- Code:String;
+ Code: AnsiString;
   function SelectBestTextMode (
         CurChar : TSPDF417TextCompactionData) : TSPDF417TextCompactionMode;
   begin
@@ -2444,11 +2447,11 @@ begin
   end;
 end;
 
-procedure TRpBarcode.ConvertToBase900 (const S  : string;
+procedure TRpBarcode.ConvertToBase900 (const S  : AnsiString;
                                              var A    : array of Integer;
                                              var LenA : Integer);
 var
-  D          : string;
+  D          : AnsiString;
   i          : Integer;
   LenD       : Integer;
   Dividend   : Integer;
@@ -2474,7 +2477,7 @@ begin
    the process calculate the first non-zero digit}
   FirstDigit := 0;
   for i := LenD downto 1 do begin
-    D[i] := char(ord(D[i]) - ord('0'));
+    D[i] := Ansichar(ord(D[i]) - ord('0'));
     if (D[i] <> #0) then
       FirstDigit := i;
   end;
@@ -2527,7 +2530,7 @@ begin
       Dividend := 0;
       for i := FirstDigit to LenD do begin
         Dividend := (Dividend * 10) + ord(D[i]);
-        D[i] := char(Dividend div 9);
+        D[i] := Ansichar(Dividend div 9);
         Dividend := Dividend mod 9;
       end;
 
@@ -2559,7 +2562,7 @@ procedure TRpBarcode.GetNextCharacter (var NewChar  : Integer;
                                              CodeLen      : Integer);
 var
   WorkNum : Integer;
-  FCode:String;
+  FCode: AnsiString;
 begin
   FCode:=CurrentText;
   NewChar := 0;
@@ -2632,7 +2635,7 @@ begin
   end;
 end;
 
-function TRpBarcode.IsNumericString (const S : string) : boolean;
+function TRpBarcode.IsNumericString (const S : AnsiString) : boolean;
 var
   i      : integer;
   LenS : integer;
@@ -2654,7 +2657,7 @@ procedure TRpBarCode.DoPrint(adriver:TRpPrintDriver;
     aposx,aposy,newwidth,newheight:integer;metafile:TRpMetafileReport;
     MaxExtent:TPoint;var PartialPrint:Boolean);
 var
- data:string;
+ data: AnsiString;
 begin
  inherited DoPrint(adriver,aposx,aposy,newwidth,newheight,metafile,MaxExtent,PartialPrint);
  CurrentText:=GetText;
@@ -2826,7 +2829,7 @@ end;
 procedure TRpBarcode.DrawCodeword (RowNumber     : Integer;
                                          ColNumber     : Integer;
                                          WorkBarHeight : Integer;
-                                         Pattern       : string);
+                                         Pattern       : AnsiString);
 
   function GetColumnPosition (ColNumber : Integer) : Integer;
   begin
@@ -2987,7 +2990,7 @@ begin
 end;
 
 
-function StringECCToInteger(value:String):Integer;
+function StringECCToInteger(value: AnsiString):Integer;
 begin
  if value='Auto' then
   Result:=-1
@@ -2995,7 +2998,7 @@ begin
   Result:=StrToInt(value[6]);
 end;
 
-function ECCToString(value:integer):String;
+function ECCToString(value:integer): AnsiString;
 begin
  Result:='Auto';
  if (value in [0..8]) then

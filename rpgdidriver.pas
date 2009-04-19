@@ -852,6 +852,7 @@ var
  bitmapwidth,bitmapheight:integer;
  astring:WideString;
  drawbackground:boolean;
+ oldhandle:THandle;
 begin
  // Switch to device points
  if toprinter then
@@ -872,8 +873,10 @@ begin
     Canvas.Font.Color:=CLXColorToVCLColor(Obj.FontColor);
     Canvas.Font.Style:=CLXIntegerToFontStyle(obj.FontStyle);
     Canvas.Font.Size:=Obj.FontSize;
+    try
     if obj.FontRotation<>0 then
     begin
+     oldhandle:=Canvas.Font.Handle;
      // Find rotated font
      Canvas.Font.Handle:=FindRotatedFont(Canvas.Handle,Canvas.Font,obj.FontRotation);
      // Moves the print position
@@ -1010,6 +1013,12 @@ begin
        DrawTextA(Canvas.Handle,PChar(aansitext),Length(aansitext),rec,aalign)
      end;
 {$ENDIF}
+    finally
+      if (obj.FontRotation<>0) then
+      begin
+        Canvas.Font.Handle:=oldhandle;
+      end;
+    end;
    end;
   rpMetaDraw:
    begin

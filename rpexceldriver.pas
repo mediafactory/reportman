@@ -419,6 +419,7 @@ var
  FontName:String;
  FontSize:integer;
  rowinit:integer;
+ version:string;
 {$ENDIF}
 begin
 {$IFNDEF DOTNETD}
@@ -522,7 +523,19 @@ begin
  end;
  if Length(Filename)>0 then
  begin
-  wb.SaveAs(Filename);
+  if (UpperCase(ExtractFileExt(Filename))='.XLSX') then
+   wb.SaveAs(Filename)
+  else
+  begin
+   version:=Excel.Version;
+   index:=Pos('.',version);
+   if (index>=0) then
+    version:=Copy(version,1,index-1);
+   If StrToInt(version)<12 Then
+    wb.SaveAs(Filename)
+   else
+    wb.SaveAs(Filename,56);
+  end;
   wb.Close;
  end;
  if not visible then

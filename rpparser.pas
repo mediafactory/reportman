@@ -28,7 +28,7 @@ type
 
   TRpParser = class(TObject)
   private
-    FNewExpression:String;
+    FNewExpression:AnsiString;
     FStream: TStream;
     FOrigin: Longint;
     FBuffer: array of Byte;
@@ -46,29 +46,29 @@ type
     ParseBufSize :integer;
     procedure ReadBuffer;
     procedure SkipBlanks;
-    procedure SetExpression(Value:String);
+    procedure SetExpression(Value:AnsiString);
   public
     constructor Create;
     destructor Destroy;override;
     procedure CheckToken(T: Char);
-    procedure CheckTokenSymbol(const S: string);
+    procedure CheckTokenSymbol(const S: Ansistring);
     procedure Error(MessageID:WideString);
     procedure HexToBinary(Stream: TStream);
     function NextToken: Char;
     function SourcePos: Longint;
-    function TokenComponentIdent: string;
+    function TokenComponentIdent: Ansistring;
     function TokenFloat: Double;
 //    function TokenInt: Int64;
     function TokenInt: Integer;
-    function TokenString: string;
+    function TokenString: Ansistring;
     function TokenWideString: WideString;
-    function TokenSymbolIs(const S: string): Boolean;
+    function TokenSymbolIs(const S: Ansistring): Boolean;
     // Ask for the next token
-    function NextTokenIs(Value:string):Boolean;
+    function NextTokenIs(Value:Ansistring):Boolean;
     property FloatType: Char read FFloatType;
     property SourceLine: Integer read FSourceLine;
     property Token: Char read FToken;
-    property Expression:String read FNewExpression write SetExpression;
+    property Expression:AnsiString read FNewExpression write SetExpression;
   end;
 
 var
@@ -157,7 +157,7 @@ begin
 end;
 
 
-procedure TRpParser.CheckTokenSymbol(const S: string);
+procedure TRpParser.CheckTokenSymbol(const S: Ansistring);
 begin
   if not TokenSymbolIs(S) then
    Raise TRpEvalException.Create(Format(SRpExpected, [S]),'',SourceLine,SourcePos);
@@ -491,7 +491,7 @@ begin
   Result := StrToInt64(TokenString);
 end;
 
-function TRpParser.TokenString: string;
+function TRpParser.TokenString: Ansistring;
 var
   L: Integer;
 begin
@@ -503,7 +503,7 @@ begin
   Result := AnsiEncoding.GetString(FBuffer, FTokenPtr, L);
 {$ENDIF}
 {$IFNDEF DOTNETD}
-  SetString(Result,Pchar(@FBuffer[FTokenPtr]),L);
+  SetString(Result,PAnsichar(@FBuffer[FTokenPtr]),L);
 {$ENDIF}
   // Brackets out
   if FToken=toSymbol then
@@ -525,12 +525,12 @@ begin
     Result := FWideStr;
 end;
 
-function TRpParser.TokenSymbolIs(const S: string): Boolean;
+function TRpParser.TokenSymbolIs(const S: Ansistring): Boolean;
 begin
   Result := (Token = toSymbol) and SameText(S, TokenString);
 end;
 
-function TRpParser.TokenComponentIdent: string;
+function TRpParser.TokenComponentIdent: Ansistring;
 var
   P: Integer;
 begin
@@ -553,7 +553,7 @@ end;
 
 
 
-function TRpParser.NextTokenIs(Value:string):Boolean;
+function TRpParser.NextTokenIs(Value:Ansistring):Boolean;
 var NewParser:TRpParser;
     Apuntador:Integer;
 begin
@@ -571,7 +571,7 @@ begin
   end;
 end;
 
-procedure TRpParser.SetExpression(Value:String);
+procedure TRpParser.SetExpression(Value:AnsiString);
 begin
   if Assigned(FStream) then
    FStream.free;

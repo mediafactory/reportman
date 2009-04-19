@@ -365,7 +365,7 @@
 #define SqlConst_SINVALIDTIME 64941
 #define SqlConst_SINVALIDXLATION 64942
 #define SqlConst_SOUTOFRANGE 64943
-#define DBXDynalink_SInvalidDataType 64944
+#define DBXClient_ParameterNotSet 64944
 #define DBXPool_SConnectTimeout 64945
 #define DBXPool_SInvalidCommand 64946
 #define DBXTrace_SINVALID_TRACE_FLAG 64947
@@ -394,9 +394,9 @@
 #define DBXMetaDataCommand_SBeforeRow 64970
 #define DBXMetaDataCommand_SAfterRow 64971
 #define DBXMetaDataCommandFactory_SUnknownDataType 64972
-#define DBXDataStoreMetaDataReader_SCannotLoadMetaDataForJds7 64973
-#define DBXClient_ParameterNotSet 64974
-#define DBXDynalink_SAdditionalInfo 64975
+#define DBXDynalink_SAdditionalInfo 64973
+#define DBXDynalink_SInvalidDataType 64974
+#define DBXDataStoreMetaDataReader_SCannotLoadMetaDataForJds7 64975
 #define DBXMetaDataReader_SPrimarySchemaName 64976
 #define DBXMetaDataReader_SIsCaseSensitive 64977
 #define DBXMetaDataReader_SParameterName 64978
@@ -445,9 +445,9 @@
 #define DBXMetaDataReader_SColumnName 65021
 #define DBXMetaDataReader_SCreateParameters 65022
 #define DBXMetaDataReader_SIsConcurrencyType 65023
-#define DBXCommon_SNoStatementToExecute 65024
-#define DBXPlatformUtil_SIllegalArgument 65025
-#define DBXPlatformUtil_SUnsupportedOperation 65026
+#define DBXCommon_SAlreadyPrepared 65024
+#define DBXCommon_SInvalidTypeAccess 65025
+#define DBXCommon_SNoStatementToExecute 65026
 #define DBXMetaDataReader_SIndexName 65027
 #define DBXMetaDataReader_SDataType 65028
 #define DBXMetaDataReader_STableName 65029
@@ -461,22 +461,22 @@
 #define DBXMetaDataReader_SProcedureType 65037
 #define DBXMetaDataReader_SParameterMode 65038
 #define DBXMetaDataReader_SMetaDataCommandExpected 65039
-#define DBXCommon_SDllProcLoadError 65040
-#define DBXCommon_SUnknownDriver 65041
-#define DBXCommon_SInvalidArgument 65042
-#define DBXCommon_SInvalidTransaction 65043
-#define DBXCommon_SNotImplemented 65044
-#define DBXCommon_SRequiredProperty 65045
-#define DBXCommon_SDriverLoadError 65046
-#define DBXCommon_SReaderNew 65047
-#define DBXCommon_SReaderClosed 65048
-#define DBXCommon_SReadOnlyType 65049
-#define DBXCommon_SConnectionFactoryInitFailed 65050
-#define DBXCommon_SInvalidDelegationDepth 65051
-#define DBXCommon_SInvalidOrdinal 65052
-#define DBXCommon_SDefaultErrorMessage 65053
-#define DBXCommon_SAlreadyPrepared 65054
-#define DBXCommon_SInvalidTypeAccess 65055
+#define ClassRegistry_SCannotFreeClassRegistry 65040
+#define DBXCommon_SDllLoadError 65041
+#define DBXCommon_SDllProcLoadError 65042
+#define DBXCommon_SUnknownDriver 65043
+#define DBXCommon_SInvalidArgument 65044
+#define DBXCommon_SInvalidTransaction 65045
+#define DBXCommon_SNotImplemented 65046
+#define DBXCommon_SRequiredProperty 65047
+#define DBXCommon_SDriverLoadError 65048
+#define DBXCommon_SReaderNew 65049
+#define DBXCommon_SReaderClosed 65050
+#define DBXCommon_SReadOnlyType 65051
+#define DBXCommon_SConnectionFactoryInitFailed 65052
+#define DBXCommon_SInvalidDelegationDepth 65053
+#define DBXCommon_SInvalidOrdinal 65054
+#define DBXCommon_SDefaultErrorMessage 65055
 #define ComStrs_sDateTimeMax 65056
 #define ComStrs_sDateTimeMin 65057
 #define ComStrs_sNeedAllowNone 65058
@@ -488,11 +488,11 @@
 #define ComConst_SNoMethod 65064
 #define ComConst_SVarNotObject 65065
 #define ComConst_STooManyParams 65066
-#define ClassRegistry_SAlreadyRegistered 65067
-#define ClassRegistry_SNotRegistered 65068
-#define ClassRegistry_SInvalidClassRegister 65069
-#define ClassRegistry_SCannotFreeClassRegistry 65070
-#define DBXCommon_SDllLoadError 65071
+#define DBXPlatformUtil_SIllegalArgument 65067
+#define DBXPlatformUtil_SUnsupportedOperation 65068
+#define ClassRegistry_SAlreadyRegistered 65069
+#define ClassRegistry_SNotRegistered 65070
+#define ClassRegistry_SInvalidClassRegister 65071
 #define IdResourceStringsCore_RSNotConnected 65072
 #define IdResourceStringsCore_RSObjectTypeNotSupported 65073
 #define IdResourceStringsCore_RSIdNoDataToRead 65074
@@ -1316,7 +1316,7 @@ BEGIN
 	SqlConst_SINVALIDTIME,	"[0x0006]: Invalid Time"
 	SqlConst_SINVALIDXLATION,	"[0x0007]: Invalid Data Translation"
 	SqlConst_SOUTOFRANGE,	"[0x0008]: Parameter/Column out of Range"
-	DBXDynalink_SInvalidDataType,	"dbExpress driver does not support the %s data type"
+	DBXClient_ParameterNotSet,	"Parameter not set for column number %d"
 	DBXPool_SConnectTimeout,	"Connect request timed out after %s milliseconds"
 	DBXPool_SInvalidCommand,	"Unrecognized command:  %s"
 	DBXTrace_SINVALID_TRACE_FLAG,	"%s is an invalid setting for the %s property.\r\nUse '%s' or a semicolon separated list of one or more of the following:\r\n%s %s %s %s %s %s %s %s %s %s %s %s"
@@ -1345,9 +1345,9 @@ BEGIN
 	DBXMetaDataCommand_SBeforeRow,	"Invoke Next before getting data from a reader."
 	DBXMetaDataCommand_SAfterRow,	"No more data in reader."
 	DBXMetaDataCommandFactory_SUnknownDataType,	"Unknown Data Type"
-	DBXDataStoreMetaDataReader_SCannotLoadMetaDataForJds7,	"MetaData cannot be provided from a BlackfishSQL server older than version 8.0"
-	DBXClient_ParameterNotSet,	"Parameter not set for column number %d"
 	DBXDynalink_SAdditionalInfo,	"%s.  Vendor error message:  %s."
+	DBXDynalink_SInvalidDataType,	"dbExpress driver does not support the %s data type"
+	DBXDataStoreMetaDataReader_SCannotLoadMetaDataForJds7,	"MetaData cannot be provided from a BlackfishSQL server older than version 8.0"
 	DBXMetaDataReader_SPrimarySchemaName,	"Primary Schema Name"
 	DBXMetaDataReader_SIsCaseSensitive,	"Case Sensitive"
 	DBXMetaDataReader_SParameterName,	"Parameter Name"
@@ -1396,9 +1396,9 @@ BEGIN
 	DBXMetaDataReader_SColumnName,	"Column Name"
 	DBXMetaDataReader_SCreateParameters,	"Create Parameters"
 	DBXMetaDataReader_SIsConcurrencyType,	"Concurrency"
+	DBXCommon_SAlreadyPrepared,	"Command can only be prepared once"
+	DBXCommon_SInvalidTypeAccess,	"%s value type cannot be accessed as %s value type"
 	DBXCommon_SNoStatementToExecute,	"No statement to execute"
-	DBXPlatformUtil_SIllegalArgument,	"Illegal argument"
-	DBXPlatformUtil_SUnsupportedOperation,	"Unsupported operation"
 	DBXMetaDataReader_SIndexName,	"Index Name"
 	DBXMetaDataReader_SDataType,	"Platform Type Name"
 	DBXMetaDataReader_STableName,	"Table Name"
@@ -1412,6 +1412,8 @@ BEGIN
 	DBXMetaDataReader_SProcedureType,	"Procedure Type"
 	DBXMetaDataReader_SParameterMode,	"Parameter Mode"
 	DBXMetaDataReader_SMetaDataCommandExpected,	"A MetaData command was expected here e.g. GetTables."
+	ClassRegistry_SCannotFreeClassRegistry,	"Cannot free TClassRegistry.ClassRegistry"
+	DBXCommon_SDllLoadError,	"Unable to load %s (ErrorCode %d).  It may be missing from the system path."
 	DBXCommon_SDllProcLoadError,	"Unable to find procedure %s"
 	DBXCommon_SUnknownDriver,	"Unknown driver:  %s"
 	DBXCommon_SInvalidArgument,	"Invalid argument:  %s"
@@ -1426,8 +1428,6 @@ BEGIN
 	DBXCommon_SInvalidDelegationDepth,	"Cannot delegate a connection more than 16 times:  %s"
 	DBXCommon_SInvalidOrdinal,	"Invalid Ordinal:  %d"
 	DBXCommon_SDefaultErrorMessage,	"DBX Error:  %s"
-	DBXCommon_SAlreadyPrepared,	"Command can only be prepared once"
-	DBXCommon_SInvalidTypeAccess,	"%s value type cannot be accessed as %s value type"
 	ComStrs_sDateTimeMax,	"Date exceeds maximum of %s"
 	ComStrs_sDateTimeMin,	"Date is less than minimum of %s"
 	ComStrs_sNeedAllowNone,	"You must be in ShowCheckbox mode to set to this date"
@@ -1439,11 +1439,11 @@ BEGIN
 	ComConst_SNoMethod,	"Method '%s' not supported by automation object"
 	ComConst_SVarNotObject,	"Variant does not reference an automation object"
 	ComConst_STooManyParams,	"Dispatch methods do not support more than 64 parameters"
+	DBXPlatformUtil_SIllegalArgument,	"Illegal argument"
+	DBXPlatformUtil_SUnsupportedOperation,	"Unsupported operation"
 	ClassRegistry_SAlreadyRegistered,	"%s class already registered"
 	ClassRegistry_SNotRegistered,	"%s class is not registered"
 	ClassRegistry_SInvalidClassRegister,	"%s class registered with a nil class reference"
-	ClassRegistry_SCannotFreeClassRegistry,	"Cannot free TClassRegistry.ClassRegistry"
-	DBXCommon_SDllLoadError,	"Unable to load %s (ErrorCode %d).  It may be missing from the system path."
 	IdResourceStringsCore_RSNotConnected,	"Not Connected"
 	IdResourceStringsCore_RSObjectTypeNotSupported,	"Object type not supported."
 	IdResourceStringsCore_RSIdNoDataToRead,	"No data to read."

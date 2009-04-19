@@ -5,6 +5,7 @@
   <ItemGroup />
   <ItemGroup>
     <Projects Include="..\activex\reportman.dproj" />
+    <Projects Include="..\rppack_del2007.dproj" />
     <Projects Include="..\server\app\reportserverappxp.dproj" />
     <Projects Include="..\server\app\reportservercon.dproj" />
     <Projects Include="..\server\config\repserverconfigxp.dproj" />
@@ -221,14 +222,23 @@
   <Target Name="repmandxp_ESN:Make">
     <MSBuild Projects="ESN\repmandxp_ESN.bdsproj" Targets="Make" />
   </Target>
+  <Target Name="rppack_del2007">
+    <MSBuild Projects="..\rppack_del2007.dproj" Targets="" />
+  </Target>
+  <Target Name="rppack_del2007:Clean">
+    <MSBuild Projects="..\rppack_del2007.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="rppack_del2007:Make">
+    <MSBuild Projects="..\rppack_del2007.dproj" Targets="Make" />
+  </Target>
   <Target Name="Build">
-    <CallTarget Targets="metaprintxp;metaviewxp;printrepxp;reptotxt;txttorep;printreptopdf;reportserverappxp;reportservercon;repserverconfigxp;repwebexe;reportman;rptranslate;compilerep;unixtodos;WebReportManX;repserverservice;repserviceinstall;repwebserver;repmandxp;metaviewxp_ESN;repmandxp_ESN" />
+    <CallTarget Targets="metaprintxp;metaviewxp;printrepxp;reptotxt;txttorep;printreptopdf;reportserverappxp;reportservercon;repserverconfigxp;repwebexe;reportman;rptranslate;compilerep;unixtodos;WebReportManX;repserverservice;repserviceinstall;repwebserver;repmandxp;metaviewxp_ESN;repmandxp_ESN;rppack_del2007" />
   </Target>
   <Target Name="Clean">
-    <CallTarget Targets="metaprintxp:Clean;metaviewxp:Clean;printrepxp:Clean;reptotxt:Clean;txttorep:Clean;printreptopdf:Clean;reportserverappxp:Clean;reportservercon:Clean;repserverconfigxp:Clean;repwebexe:Clean;reportman:Clean;rptranslate:Clean;compilerep:Clean;unixtodos:Clean;WebReportManX:Clean;repserverservice:Clean;repserviceinstall:Clean;repwebserver:Clean;repmandxp:Clean;metaviewxp_ESN:Clean;repmandxp_ESN:Clean" />
+    <CallTarget Targets="metaprintxp:Clean;metaviewxp:Clean;printrepxp:Clean;reptotxt:Clean;txttorep:Clean;printreptopdf:Clean;reportserverappxp:Clean;reportservercon:Clean;repserverconfigxp:Clean;repwebexe:Clean;reportman:Clean;rptranslate:Clean;compilerep:Clean;unixtodos:Clean;WebReportManX:Clean;repserverservice:Clean;repserviceinstall:Clean;repwebserver:Clean;repmandxp:Clean;metaviewxp_ESN:Clean;repmandxp_ESN:Clean;rppack_del2007:Clean" />
   </Target>
   <Target Name="Make">
-    <CallTarget Targets="metaprintxp:Make;metaviewxp:Make;printrepxp:Make;reptotxt:Make;txttorep:Make;printreptopdf:Make;reportserverappxp:Make;reportservercon:Make;repserverconfigxp:Make;repwebexe:Make;reportman:Make;rptranslate:Make;compilerep:Make;unixtodos:Make;WebReportManX:Make;repserverservice:Make;repserviceinstall:Make;repwebserver:Make;repmandxp:Make;metaviewxp_ESN:Make;repmandxp_ESN:Make" />
+    <CallTarget Targets="metaprintxp:Make;metaviewxp:Make;printrepxp:Make;reptotxt:Make;txttorep:Make;printreptopdf:Make;reportserverappxp:Make;reportservercon:Make;repserverconfigxp:Make;repwebexe:Make;reportman:Make;rptranslate:Make;compilerep:Make;unixtodos:Make;WebReportManX:Make;repserverservice:Make;repserviceinstall:Make;repwebserver:Make;repmandxp:Make;metaviewxp_ESN:Make;repmandxp_ESN:Make;rppack_del2007:Make" />
   </Target>
   <Import Condition="Exists('$(MSBuildBinPath)\Borland.Group.Targets')" Project="$(MSBuildBinPath)\Borland.Group.Targets" />
 </Project>

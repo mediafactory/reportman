@@ -6,6 +6,12 @@
 // Enable this if you have teechart pro
 //{$DEFINE TEECHARTPRO}
 
+// Delphi 2009
+{$IFDEF UNICODE}
+ {$DEFINE DELPHI2009UP}
+ {$DEFINE INDY10}
+ {$DEFINE DELPHI2006UP}
+{$ENDIF}
 
 // In Delphi 2007, default INDY 10
 {$IFDEF VER185}
@@ -66,8 +72,10 @@
 
 // Database drivers to be used when performing a release
 {$IFDEF REPMANRELEASE}
+{$IFNDEF DELPHI2009UP}
  {$DEFINE USETNTUNICODE}
  {$DEFINE USEZEOS}
+{$ENDIF}
  {$DEFINE LINUXTEECHART}
  {$DEFINE TEECHARTPRO}
  {$DEFINE USEIBX}

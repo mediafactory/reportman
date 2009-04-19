@@ -50,7 +50,7 @@ type
   // The parser
   Rpparser:TRpparser;
   // The expresion to evaluate
-  FExpression:string;
+  FExpression:Ansistring;
   // Result of the evaluation
   FEvalResult:TRpValue;
 {$IFDEF USEEVALHASH}
@@ -74,7 +74,7 @@ type
   FOnNewLanguage:TRpNewLanguage;
   FOnGetSQLValue:TRpOnGetSQLValue;
   FOnParamInfo:TRpParamInfoProc;
-  procedure SetExpression(Value:string);
+  procedure SetExpression(Value:Ansistring);
   // Recursive functions to evaluate the expresion
   procedure variables(var Value:TRpValue);
   procedure separator(var Value:TRpValue);
@@ -91,7 +91,7 @@ type
   function EvaluateExpression:TRpValue;
   // Searching indentifiers
   function Searchwithoutdot(name1:Shortstring):TRpIdentifier;
-  function GetEvalResultString:string;
+  function GetEvalResultString:Ansistring;
   procedure AddIdentifiers;
   procedure Freerprmfunctions;
   procedure InitRpFunctions;
@@ -119,7 +119,7 @@ type
 
   // Checking Syntax
   procedure CheckSyntax;
-  property Expression:string Read FExpression write SetExpression;
+  property Expression:Ansistring Read FExpression write SetExpression;
   property EvalResult:TRpValue Read FEvalResult;
   // The identifiers including functions
 {$IFDEF USEEVALHASH}
@@ -134,7 +134,7 @@ type
   property Error:string read FError;
   property PosError:LongInt read FPosError;
   property LineError:Word read FLineError;
-  property EvalResultString:string read GetEvalResultString;
+  property EvalResultString:Ansistring read GetEvalResultString;
   // Database access component link
 {$IFDEF USEREPORTFUNC}
   property Rpalias:TRpalias read FRpalias write FRpalias;
@@ -423,7 +423,7 @@ begin
  inherited Destroy;
 end;
 
-procedure TRpCustomEvaluator.SetExpression(Value:string);
+procedure TRpCustomEvaluator.SetExpression(Value:Ansistring);
 begin
  if Evaluating then
   Raise Exception.Create(SRpsetexpression);
@@ -1005,7 +1005,7 @@ begin
 end;
 
 procedure TRpCustomEvaluator.parentesis(var Value:TRpValue);
-var operation:char;
+var operation:Ansichar;
 begin
  if Rpparser.Token=toOperator then
  begin
@@ -1224,7 +1224,7 @@ begin
 {$ENDIF}
 end;
 
-function TRpCustomEvaluator.GetEvalResultString:string;
+function TRpCustomEvaluator.GetEvalResultString:Ansistring;
 begin
  Result:=TRpValueToString(EvalResult);
 end;

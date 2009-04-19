@@ -1668,6 +1668,15 @@ var
 begin
  areport:=TRpBaseReport(Owner);
  ametafile:=areport.metafile;
+ // Two pass report is needed for UpdateTotalPages
+ if (FPageGroupCountList.Count>0) then
+ begin
+  if (not areport.TwoPass)  then
+   raise Exception.Create(SRpSTwoPassReportNeeded+'-'+TranslateStr(50,'Page setup'));
+ end;
+ if (FPageGroupCountList.Count>0) then
+  if (not areport.TwoPass) then
+   raise Exception.Create(SRpSTwoPassReportNeeded+'-'+TranslateStr(50,'Page setup'));
  ametafile.UpdateTotalPagesPCount(FPageGroupCountList,ametafile.CurrentPageCount-FirstPage);
 end;
 

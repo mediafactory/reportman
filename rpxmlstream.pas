@@ -33,24 +33,24 @@ uses Classes,sysutils,rptypes,rpreport,rpdatainfo,rpsubreport,
 
 const
  C_MAXDATAWIDTH=40;
- CRLF:String=''+#13+#10;
+ CRLF:AnsiString=''+#13+#10;
 type
  TRpPropertytypes=(rppropinteger,rppropdouble,rppropdatetime,rppropstring,
   rppropwidestring,rppropstream);
 
 
 
-function StringToRpString(astring:String):String;
-function RpStringToString(rpstring:string):String;
-function WStringToRpString(astring:WideString):String;
-function RpStringToWString(rpstring:string):WideString;
+function StringToRpString(astring:AnsiString):AnsiString;
+function RpStringToString(rpstring:Ansistring):AnsiString;
+function WStringToRpString(astring:WideString):AnsiString;
+function RpStringToWString(rpstring:Ansistring):WideString;
 
-procedure WritePropertyI(propname:string;propvalue:integer;stream:TStream);
-procedure WritePropertyD(propname:string;propvalue:double;stream:TStream);
-procedure WritePropertyBool(propname:string;propvalue:Boolean;stream:TStream);
-procedure WritePropertyS(propname:string;propvalue:String;stream:TStream);
-procedure WritePropertyW(propname:string;propvalue:WideString;stream:TStream);
-procedure WritePropertyB(propname:string;propvalue:TStream;stream:TStream);
+procedure WritePropertyI(propname:Ansistring;propvalue:integer;stream:TStream);
+procedure WritePropertyD(propname:Ansistring;propvalue:double;stream:TStream);
+procedure WritePropertyBool(propname:Ansistring;propvalue:Boolean;stream:TStream);
+procedure WritePropertyS(propname:Ansistring;propvalue:AnsiString;stream:TStream);
+procedure WritePropertyW(propname:Ansistring;propvalue:WideString;stream:TStream);
+procedure WritePropertyB(propname:Ansistring;propvalue:TStream;stream:TStream);
 procedure WriteReportXML(areport:TComponent;Stream:TStream);
 procedure ReadReportXML(areport:TComponent;Stream:TStream);
 procedure ReadSectionXML(areport:TComponent;Stream:TStream);
@@ -63,7 +63,7 @@ procedure WriteSubreportXML(subrep:TRpSubReport;Stream:TStream);
 procedure WriteSectionXML(section:TRpSection;Stream:TStream);
 procedure WriteComponentXML(comp:TRpCommonPosComponent;Stream:TStream);
 
-function RpIsAlpha(achar:char):Boolean;
+function RpIsAlpha(achar:Ansichar):Boolean;
 function RpIsAlphaW(achar:Widechar):Boolean;
 
 implementation
@@ -74,7 +74,7 @@ begin
 
 end;
 
-function RpIsAlpha(achar:char):Boolean;
+function RpIsAlpha(achar:Ansichar):Boolean;
 begin
  Result:=achar in ['0'..'9','A'..'Z','a'..'z','_',' ','.','(',')',
   '=',';',':'];
@@ -494,11 +494,11 @@ begin
 end;
 
 
-function StringToRpString(astring:String):String;
+function StringToRpString(astring:AnsiString):AnsiString;
 var
  i:integer;
  alen:integer;
- asubs:String;
+ asubs:AnsiString;
 begin
  Result:='';
  alen:=0;
@@ -528,10 +528,10 @@ begin
  end;
 end;
 
-function WStringToRpString(astring:WideString):String;
+function WStringToRpString(astring:WideString):AnsiString;
 var
  i,alen:integer;
- subs:String;
+ subs:AnsiString;
 begin
  Result:='';
  alen:=0;
@@ -561,9 +561,9 @@ begin
  end;
 end;
 
-function RpStringToString(rpstring:string):String;
+function RpStringToString(rpstring:Ansistring):AnsiString;
 var
- anumber:string;
+ anumber:Ansistring;
  i:integer;
 begin
  Result:='';
@@ -602,9 +602,9 @@ begin
  end;
 end;
 
-function RpStringToWString(rpstring:string):WideString;
+function RpStringToWString(rpstring:Ansistring):WideString;
 var
- anumber:string;
+ anumber:Ansistring;
  i:integer;
 begin
  Result:='';
@@ -643,22 +643,17 @@ begin
  end;
 end;
 
-procedure WritePropertyI(propname:string;propvalue:integer;stream:TStream);
+procedure WritePropertyI(propname:Ansistring;propvalue:integer;stream:TStream);
 var
- astring:string;
+ astring:Ansistring;
 begin
  astring:='<'+propname+' type="Integer">'+IntToStr(propvalue)+'</'+propname+'>'+CRLF;
  WriteStringToStream(astring,stream);
 end;
 
-function RpDoubleToStr(avalue:double):string;
+function RpDoubleToStr(avalue:double):Ansistring;
 var
-{$IFDEF DOTNETD}
- olddec:String;
-{$ENDIF}
-{$IFNDEF DOTNETD}
  olddec:char;
-{$ENDIF}
 begin
  olddec:=DecimalSeparator;
  try
@@ -670,14 +665,9 @@ begin
 end;
 
 
-function RpStrToDouble(avalue:string):double;
+function RpStrToDouble(avalue:Ansistring):double;
 var
-{$IFDEF DOTNETD}
- olddec:String;
-{$ENDIF}
-{$IFNDEF DOTNETD}
  olddec:char;
-{$ENDIF}
 begin
  olddec:=DecimalSeparator;
  try
@@ -688,16 +678,16 @@ begin
  end;
 end;
 
-procedure WritePropertyD(propname:string;propvalue:double;stream:TStream);
+procedure WritePropertyD(propname:Ansistring;propvalue:double;stream:TStream);
 var
- astring:string;
+ astring:Ansistring;
 begin
  astring:='<'+propname+' type="Double">'+RpDoubleToStr(propvalue)+'</'+propname+'>'+CRLF;
  WriteStringToStream(astring,stream);
 end;
 
 
-function RpBoolToStr(avalue:Boolean):String;
+function RpBoolToStr(avalue:Boolean):AnsiString;
 begin
  if avalue then
   Result:='True'
@@ -705,7 +695,7 @@ begin
   Result:='False';
 end;
 
-function RpStrToBool(avalue:String):Boolean;
+function RpStrToBool(avalue:AnsiString):Boolean;
 begin
  if avalue='True' then
   Result:=True
@@ -714,34 +704,34 @@ begin
 end;
 
 
-procedure WritePropertyBool(propname:string;propvalue:Boolean;stream:TStream);
+procedure WritePropertyBool(propname:Ansistring;propvalue:Boolean;stream:TStream);
 var
- astring:string;
+ astring:Ansistring;
 begin
  astring:='<'+propname+' type="Boolean">'+RpBoolToStr(propvalue)+'</'+propname+'>'+CRLF;
  WriteStringToStream(astring,stream);
 end;
 
-procedure WritePropertyS(propname:string;propvalue:String;stream:TStream);
+procedure WritePropertyS(propname:Ansistring;propvalue:AnsiString;stream:TStream);
 var
- astring:string;
+ astring:Ansistring;
 begin
  astring:='<'+propname+' type="String">'+StringToRpString(propvalue)+'</'+propname+'>'+CRLF;
  WriteStringToStream(astring,stream);
 end;
 
-procedure WritePropertyW(propname:string;propvalue:WideString;stream:TStream);
+procedure WritePropertyW(propname:Ansistring;propvalue:WideString;stream:TStream);
 var
- astring:string;
+ astring:Ansistring;
 begin
  astring:='<'+propname+' type="WideString">'+WStringToRpString(propvalue)+'</'+propname+'>'+CRLF;
  WriteStringToStream(astring,stream);
 end;
 
 
-function StreamToBin(astream:TStream):String;
+function StreamToBin(astream:TStream):AnsiString;
 var
- abufsource,abufdest:PChar;
+ abufsource,abufdest:PAnsiChar;
 begin
  abufsource:=AllocMem(astream.Size);
  try
@@ -770,10 +760,10 @@ begin
  end;
 }end;
 
-procedure BinToStream(astream:TStream;bin2:string;propsize:string);
+procedure BinToStream(astream:TStream;bin2:Ansistring;propsize:Ansistring);
 var
  alen:integer;
- abufdest:PCHar;
+ abufdest:PAnsiCHar;
  readed:integer;
 begin
  alen:=StrToInt(propsize);
@@ -781,7 +771,7 @@ begin
   exit;
  abufdest:=AllocMem(alen+1);
  try
-  readed:=HexToBin(PChar(bin2),abufdest,alen);
+  readed:=HexToBin(PAnsiChar(bin2),abufdest,alen);
   if readed<>alen then
    Raise Exception.Create('Expected: '+IntToStr(alen)+' Found: '
     +INtToStr(readed));
@@ -793,9 +783,9 @@ begin
 end;
 
 
-procedure WritePropertyB(propname:string;propvalue:TStream;stream:TStream);
+procedure WritePropertyB(propname:Ansistring;propvalue:TStream;stream:TStream);
 var
- astring:string;
+ astring:Ansistring;
 begin
  astring:='<'+propname+' type="Binary" size="'+IntTostr(propvalue.size)+'">'+StringToRpString(StreamToBin(propvalue))+'</'+propname+'>'+CRLF;
  WriteStringToStream(astring,stream);
@@ -805,7 +795,7 @@ procedure WriteReportXML(areport:TComponent;Stream:TStream);
 var
  report:TRpReport;
  i,j:integer;
- astring:string;
+ astring:Ansistring;
  asubrep:TRpSubReport;
  asec:TRpSection;
 begin
@@ -868,7 +858,7 @@ begin
 end;
 
 procedure ReadPropDBInfo(dbitem:TRpDatabaseInfoItem;
- propname,propvalue,proptype,propsize:string);
+ propname,propvalue,proptype,propsize:Ansistring);
 begin
  if propname='CONFIGFILE' then
   dbitem.Configfile:=RpStringToString(propvalue)
@@ -908,7 +898,7 @@ begin
 end;
 
 procedure ReadPropSubReport(subrep:TRpSubReport;
- propname,propvalue,proptype,propsize:string);
+ propname,propvalue,proptype,propsize:Ansistring);
 begin
  if propname='ALIAS' then
   subrep.Alias:=RpStringToString(propvalue)
@@ -927,7 +917,7 @@ begin
 end;
 
 procedure ReadPropSection(sec:TRpSection;
- propname,propvalue,proptype,propsize:string);
+ propname,propvalue,proptype,propsize:Ansistring);
 var
   memstream:TMemoryStream;
 begin
@@ -1069,7 +1059,7 @@ begin
 end;
 
 procedure ReadPropDataInfo(ditem:TRpDataInfoItem;
- propname,propvalue,proptype,propsize:string);
+ propname,propvalue,proptype,propsize:Ansistring);
 begin
  if propname='DATABASEALIAS' then
   ditem.DataBaseAlias:=RpStringToString(propvalue)
@@ -1133,7 +1123,7 @@ begin
 end;
 
 procedure ReadPropParam(aparam:TRpParam;
- propname,propvalue,proptype,propsize:string);
+ propname,propvalue,proptype,propsize:Ansistring);
 begin
  if propname='DESCRIPTION' then
   aparam.Descriptions:=RpStringToWString(propvalue)
@@ -1213,7 +1203,7 @@ begin
 end;
 
 procedure ReadPropReport(report:TRpReport;
- propname,propvalue,proptype,propsize:string);
+ propname,propvalue,proptype,propsize:Ansistring);
 var
  actions:TRpReportActions;
 begin
@@ -1386,7 +1376,7 @@ begin
 end;
 
 procedure ReadCompProp(comp:TRpCommonPosComponent;
- propname,propvalue,proptype,propsize:string);
+ propname,propvalue,proptype,propsize:Ansistring);
 var
  compt:TRpGenTextComponent;
  compl:TRpLabel;
@@ -1762,19 +1752,19 @@ end;
 
 procedure ReadReportXML(areport:TComponent;Stream:TStream);
 var
- astring:string;
+ astring:Ansistring;
  position:integer;
- propname:String;
- proptype:String;
- propvalue:String;
+ propname:AnsiString;
+ proptype:AnsiString;
+ propvalue:ansiString;
  dbitem:TRpDatabaseInfoItem;
  ditem:TRpDataInfoItem;
  comp:TRpCommonPosComponent;
- compname,compclass:String;
+ compname,compclass:AnsiString;
  aclass:TPersistentClass;
  aparam:TRpParam;
  report:TRpReport;
- propsize:string;
+ propsize:Ansistring;
  subrep:TRpSubReport;
  sec:TRpSection;
  compitem:TRpCommonListItem;
@@ -1784,7 +1774,7 @@ var
  var
   abegin,aend:integer;
   typepos:integer;
-  props:string;
+  props:Ansistring;
  begin
   propname:='';
   proptype:='';

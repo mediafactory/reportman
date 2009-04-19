@@ -105,10 +105,10 @@ begin
  begin
   if FileExists(path+'\upx.exe') then
   begin
-   WinExec(PChar('"'+path+'\'+'upx" '+'"'+destinationexe+'"'),SW_HIDE);
+   WinExec(PAnsiChar('"'+path+'\'+'upx" '+'"'+destinationexe+'"'),SW_HIDE);
   end
   else
-   WinExec(PChar('"upx" '+'"'+destinationexe+'"'),SW_HIDE);
+   WinExec(PAnsiChar('"upx" '+'"'+destinationexe+'"'),SW_HIDE);
  end;
 end;
 
