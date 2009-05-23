@@ -1209,6 +1209,8 @@ begin
 end;
 
 procedure TFRpMainFVCL.APreviewExecute(Sender: TObject);
+var
+ pconfig:TPrinterConfig;
 begin
  if (report.DatabaseInfo.Count>0) then
  begin
@@ -1221,6 +1223,10 @@ begin
    exit;
   end;
  end;
+ pconfig.changed:=false;
+ rpgdidriver.PrinterSelection(report.PrinterSelect,report.papersource,report.duplex,pconfig);
+ rpgdidriver.OrientationSelection(report.PageOrientation);
+ try
  // Previews the report
  if ADriverPDF.Checked then
  begin
@@ -1245,6 +1251,9 @@ begin
    prcontrol.free;
   end;
  end;
+ finally
+  SetPrinterConfig(pconfig);
+ end;
 end;
 
 procedure TFRpMainFVCL.AAboutExecute(Sender: TObject);
@@ -1257,7 +1266,10 @@ var
  allpages,collate:boolean;
  frompage,topage,copies:integer;
  doprint:boolean;
+ pconfig:TPrinterConfig;
 begin
+ pconfig.Changed:=false;
+ try
  if (report.DatabaseInfo.Count>0) then
  begin
   if report.DatabaseInfo.Items[0].Driver in [rpdatadriver,rpdotnet2driver] then
@@ -1273,21 +1285,34 @@ begin
   collate:=report.CollateCopies;
   frompage:=1; topage:=MAX_PAGECOUNT;
   copies:=report.Copies;
-  rpgdidriver.PrinterSelection(report.PrinterSelect,report.papersource,report.duplex);
+  rpgdidriver.PrinterSelection(report.PrinterSelect,report.papersource,report.duplex,pconfig);
   rpgdidriver.OrientationSelection(report.PageOrientation);
   doprint:=true;
   if APrintDialog.Checked then
+  begin
    doprint:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+   if (doprint) then
+    report.Metafile.BlockPrinterSelection:=true;
+  end
+  else
+   report.Metafile.BlockPrinterSelection:=true;
   if doprint then
   begin
-   if ADriverPDF.Checked then
-   begin
-    rpgdidriver.CalcReportWidthProgressPDF(report);
-    rpgdidriver.PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,collate,false);
-   end
-   else
-    rpgdidriver.PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
+   try
+    if ADriverPDF.Checked then
+    begin
+     rpgdidriver.CalcReportWidthProgressPDF(report);
+     rpgdidriver.PrintMetafile(report.Metafile,Caption,true,allpages,frompage,topage,copies,collate,false);
+    end
+    else
+     rpgdidriver.PrintReport(report,Caption,true,allpages,frompage,topage,copies,collate);
+    finally
+     report.Metafile.BlockPrinterSelection:=false;
+    end;
   end;
+ finally
+  SetPrinterConfig(pconfig);
+ end;
 end;
 
 

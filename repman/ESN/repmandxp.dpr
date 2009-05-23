@@ -72,7 +72,6 @@ library repmandxp;
 {$R 'C\prog\toni\cvsroot\reportman\reportman\rpvpreview.dfm' FRpVPreview:TForm}
 {$R 'repmandxp_DRC.res' 'repmandxp_DRC.rc'}
 
-{$R *.RES}
 {$E ESN}
 
 begin

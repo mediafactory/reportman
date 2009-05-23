@@ -951,7 +951,8 @@ begin
  AbortingThread:=false;
  if Not Assigned(FDriver) then
   Raise Exception.Create(SRpNoDriverPassedToPrint);
- Driver.SelectPrinter(PrinterSelect);
+ if (not Metafile.BlockPrinterSelection) then
+  Driver.SelectPrinter(PrinterSelect);
  if FCompose then
  begin
   printingonepass:=false;

@@ -128,6 +128,7 @@ var
  allpages,collate:boolean;
  rpPageSize:TPageSizeQt;
  okselected:Boolean;
+ pconfig:TPrinterConfig;
 begin
  FStreamSize:=0;
  GetDefaultDocumentProperties;
@@ -227,7 +228,9 @@ begin
         allpages:=true;
         collate:=false;
         copies:=FCopies;
-        rpgdidriver.PrinterSelection(metafile.PrinterSelect,metafile.papersource,metafile.duplex);
+        pconfig.changed:=false;
+        try
+        rpgdidriver.PrinterSelection(metafile.PrinterSelect,metafile.papersource,metafile.duplex,pconfig);
         rpgdidriver.PageSizeSelection(rpPageSize);
         rpgdidriver.OrientationSelection(metafile.orientation);
         okselected:=true;
@@ -237,6 +240,9 @@ begin
          rpgdidriver.PrintMetafile(metafile,SRpPrintingFile,FShowProgress,allpages,
           frompage,topage,copies,collate,
           GetDeviceFontsOption(metafile.PrinterSelect),metafile.PrinterSelect);
+        finally
+        SetPrinterConfig(pconfig);
+        end;
        end;
 //      end
 //      else

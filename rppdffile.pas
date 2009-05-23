@@ -2304,10 +2304,10 @@ var
  values:array of TRGBTriple;
  qvalues:array of TRGBQuad;
 // orgvalues:array of TRGBQuad;
- module,h:integer;
+ module:integer;
 procedure GetDIBBits;
 var
- y,x,scanwidth:integer;
+ y,scanwidth:integer;
 // dc:HDC;
  toread:integer;
  buffer:array of Byte;

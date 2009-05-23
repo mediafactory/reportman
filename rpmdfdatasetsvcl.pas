@@ -697,14 +697,12 @@ begin
   exit;
  alist:=TStringList.Create;
  try
-  index:=-1;
   for i:=0 to LUnions.Items.Count-1 do
   begin
    datasetname:=LUnions.Items.Strings[i];
    ExtractUnionFields(datasetname,alist);
    if datasetname=ComboUnions.Text then
    begin
-    index:=i;
     break;
    end;
   end;

@@ -28,9 +28,9 @@ uses
  mmsystem,windows,
  Classes,sysutils,rpmetafile,rpmdconsts,Graphics,Forms,
  rpmunits,Printers,Dialogs, Controls,rpgdifonts,Math,
- StdCtrls,ExtCtrls,rppdffile,rpgraphutilsvcl,WinSpool,
+ StdCtrls,ExtCtrls,rppdffile,rpgraphutilsvcl,WinSpool,rpmdcharttypes,
 {$IFNDEF FORWEBAX}
- rpmdcharttypes,rpmdchart,
+ rpmdchart,
 {$ENDIF}
 {$IFDEF USEVARIANTS}
  types,Variants,
@@ -165,8 +165,8 @@ type
    procedure EndPage;override;
    procedure DrawObject(page:TRpMetaFilePage;obj:TRpMetaObject);override;
    procedure IntDrawObject(page:TRpMetaFilePage;obj:TRpMetaObject;selected:boolean);
-{$IFNDEF FORWEBAX}
    procedure DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);override;
+{$IFNDEF FORWEBAX}
 {$IFDEF EXTENDEDGRAPHICS}
    procedure FilterImage(memstream:TMemoryStream);override;
 {$ENDIF}
@@ -216,7 +216,7 @@ function ExportReportToPDFMetaStream (report:TRpReport; Caption:string; progress
 {$ENDIF}
 function DoShowPrintDialog (var allpages:boolean;
  var frompage,topage,copies:integer; var collate:boolean;disablecopies:boolean=false) :boolean;
-function PrinterSelection (printerindex:TRpPrinterSelect;papersource,duplex:integer) :TPoint;
+function PrinterSelection (printerindex:TRpPrinterSelect;papersource,duplex:integer;var pconfig:TPrinterConfig) :TPoint;
 procedure PageSizeSelection (rpPageSize:TPageSizeQt);
 procedure OrientationSelection (neworientation:TRpOrientation);
 
@@ -855,6 +855,7 @@ var
  oldhandle:THandle;
 begin
  // Switch to device points
+ oldhandle:=0;
  if toprinter then
  begin
   // If printer then must be displaced
@@ -1620,7 +1621,9 @@ var
  rPageSizeQt:TPageSizeQt;
  gdidriver:TRpGDIDriver;
  currentorientation:TPrinterOrientation;
+ pconfig:TPrinterConfig;
 begin
+ pconfig.Changed:=false;
  gdidriver:=nil;
  try
  if copies=0 then
@@ -1645,15 +1648,19 @@ begin
    memstream.free;
   end;
   // Now Prints to selected printer the stream
-  PrinterSelection(metafile.PrinterSelect,metafile.papersource,metafile.duplex);
+  if (not metafile.BlockPrinterSelection) then
+   PrinterSelection(metafile.PrinterSelect,metafile.papersource,metafile.duplex,pconfig);
   SendControlCodeToPrinter(S);
  end
  else
  begin
-  if printerindex<>pRpDefaultPrinter then
-   offset:=PrinterSelection(printerindex,metafile.papersource,metafile.duplex)
-  else
-   offset:=PrinterSelection(metafile.PrinterSelect,metafile.papersource,metafile.duplex);
+  if (not metafile.BlockPrinterSelection) then
+  begin
+   if printerindex<>pRpDefaultPrinter then
+    offset:=PrinterSelection(printerindex,metafile.papersource,metafile.duplex,pconfig)
+   else
+    offset:=PrinterSelection(metafile.PrinterSelect,metafile.papersource,metafile.duplex,pconfig);
+  end;
   UpdatePrinterFontList;
   pagemargins:=GetPageMarginsTWIPS;
   // Get the time
@@ -1831,6 +1838,7 @@ begin
  finally
   if assigned(gdidriver) then
    gdidriver.free;
+  SetPrinterConfig(pconfig);
  end;
  // Send Especial operations
  if assigned(aform) then
@@ -2308,7 +2316,8 @@ begin
   begin
    TextDriver:=TRpTextDriver.Create;
    try
-    TextDriver.SelectPrinter(report.PrinterSelect);
+    if (not report.metafile.BlockPrinterSelection) then
+     TextDriver.SelectPrinter(report.PrinterSelect);
     oldprogres:=report.OnProgress;
     try
      report.OnProgress:=RepProgress;
@@ -2463,16 +2472,20 @@ var
  oldprogres:TRpProgressEvent;
  S:String;
  TextDriver:TRpTextDriver;
+ pconfig:TPrinterConfig;
 begin
+ pconfig.changed:=false;
  Application.Onidle:=nil;
  done:=false;
+ try
  errorproces:=false;
  try
   TextDriver:=TRpTextDriver.Create;
   try
   oldprogres:=report.OnProgress;
   try
-   TextDriver.SelectPrinter(report.PrinterSelect);
+   if (not report.Metafile.BlockPrinterSelection) then
+    TextDriver.SelectPrinter(report.PrinterSelect);
    report.OnProgress:=RepProgress;
    report.PrintRange(TextDriver,allpages,frompage,topage,copies,collate);
    // Now Prints to selected printer the stream
@@ -2483,7 +2496,8 @@ begin
 {$IFDEF DOTNETD}
     s:=TextDriver.MemStream.ToString;
 {$ENDIF}
-   PrinterSelection(report.PrinterSelect,report.papersource,report.duplex);
+   if (not report.metafile.BlockPrinterSelection) then
+    PrinterSelection(report.PrinterSelect,report.papersource,report.duplex,pconfig);
    SendControlCodeToPrinter(S);
   finally
    report.OnProgress:=oldprogres;
@@ -2497,6 +2511,9 @@ begin
    ErrorMessage:=E.Message;
    errorproces:=true;
   end;
+ end;
+ finally
+  SetPrinterConfig(pconfig);
  end;
  Close;
 end;
@@ -2560,7 +2577,10 @@ var
  istextonly:boolean;
  drivername:String;
  S:String;
+ pconfig:TPrinterConfig;
 begin
+ pconfig.Changed:=false;
+ try
  report.metafile.Title:=Caption;
  drivername:=Trim(GetPrinterEscapeStyleDriver(report.PrinterSelect));
  istextonly:=Length(drivername)>0;
@@ -2597,7 +2617,8 @@ begin
     begin
      TextDriver:=TRpTextDriver.Create;
      try
-      TextDriver.SelectPrinter(report.PrinterSelect);
+      if (not report.Metafile.BlockPrinterSelection) then
+       TextDriver.SelectPrinter(report.PrinterSelect);
       report.PrintAll(TextDriver);
      finally
       TextDriver.free;
@@ -2660,16 +2681,13 @@ begin
   begin
    TextDriver:=TRpTextDriver.Create;
    try
-    TextDriver.SelectPrinter(report.PrinterSelect);
+    if (not report.Metafile.BlockPrinterSelection) then
+     TextDriver.SelectPrinter(report.PrinterSelect);
     report.PrintRange(TextDriver,allpages,frompage,topage,copies,collate);
     SetLength(S,TextDriver.MemStream.Size);
-{$IFNDEF DOTNETD}
     TextDriver.MemStream.Read(S[1],TextDriver.MemStream.Size);
-{$ENDIF}
-{$IFDEF DOTNETD}
-    s:=TextDriver.MemStream.ToString;
-{$ENDIF}
-    PrinterSelection(report.PrinterSelect,report.papersource,report.duplex);
+    if (not report.metafile.BlockPrinterSelection) then
+      PrinterSelection(report.PrinterSelect,report.papersource,report.duplex,pconfig);
     SendControlCodeToPrinter(S);
    finally
     TextDriver.free;
@@ -2690,6 +2708,9 @@ begin
     gdidriver.free;
    end;
   end;
+ end;
+ finally
+  SetPrinterConfig(pconfig);
  end;
 end;
 {$ENDIF}
@@ -2751,7 +2772,7 @@ begin
  end;
 end;
 
-function PrinterSelection(printerindex:TRpPrinterSelect;papersource,duplex:integer):TPoint;
+function PrinterSelection(printerindex:TRpPrinterSelect;papersource,duplex:integer;var pconfig:TPrinterConfig):TPoint;
 var
  printername:String;
  index:integer;
@@ -2769,6 +2790,8 @@ begin
    begin
     // Fixes problem, this reads default
     // document properties after printer selection
+    pconfig:=GetPrinterConfig;
+    pconfig.Changed:=true;
     rpvgraphutils.SwitchToPrinterIndex(index);
     // Printer.PrinterIndex:=index;
    end;
@@ -2787,8 +2810,10 @@ begin
 end;
 
 procedure TRpGDIDriver.SelectPrinter(printerindex:TRpPrinterSelect);
+var
+ pconfig:TPrinterConfig;
 begin
- offset:=PrinterSelection(printerindex,0,0);
+ offset:=PrinterSelection(printerindex,0,0,pconfig);
  selectedprinter:=printerindex;
  if neverdevicefonts then
   exit;
@@ -3066,9 +3091,9 @@ end;
 {$ENDIF}
 {$ENDIF}
 
-{$IFNDEF FORWEBAX}
 procedure TRpGDIDriver.DrawChart(Series:TRpSeries;ametafile:TRpMetaFileReport;posx,posy:integer;achart:TObject);
 begin
+{$IFNDEF FORWEBAX}
 {$IFDEF USETEECHART}
  DoDrawChart(Self,Series,ametafile.Pages[ametafile.CurrentPage],posx,posy,achart);
 {$ENDIF}
@@ -3076,8 +3101,8 @@ begin
  rppdfdriver.DoDrawChart(Self,Series,ametafile.Pages[ametafile.CurrentPage],
   posx,posy,achart);
 {$ENDIF}
-end;
 {$ENDIF}
+end;
 
 function AskBitmapProps(var HorzRes,VertRes:Integer;var Mono:Boolean):Boolean;
 var

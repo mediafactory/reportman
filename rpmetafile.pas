@@ -366,6 +366,7 @@ type
    procedure DoRequestData(Sender:TObject;count:integer);
    procedure SetBackColor(avalue:integer);
   public
+   BlockPrinterSelection:Boolean;
    AsyncReading:Boolean;
    PageSize:integer;
    CustomX:integer;

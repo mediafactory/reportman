@@ -1558,8 +1558,6 @@ var
  originalfields,commonfields:TStrings;
  ndataset:TClientDataset;
 begin
- originalfields:=nil;
- commonfields:=nil;
  if connecting then
   Raise Exception.Create(SRpCircularDatalink+' - '+alias);
  connecting:=true;
@@ -3433,7 +3431,6 @@ var
  lfields2:TStringList;
  i,index:integer;
  fname:string;
- firstfieldcount:integer;
  fdef:TFieldDef;
  counter:integer;
  indexfieldnames:string;
@@ -3453,7 +3450,6 @@ begin
   aresult.IndexDefs.Add('IPRIMINDEX',indexfieldnames,[]);
   if indexfieldnames<>prefix then
    aresult.IndexFieldNames:=indexfieldnames;
-  firstfieldcount:=aresult.FieldDefs.Count;
   for i:=0 to data2.FieldDefs.Count-1 do
   begin
    fname:=UpperCase(data2.FieldDefs.Items[i].Name);

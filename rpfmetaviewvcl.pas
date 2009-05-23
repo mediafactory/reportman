@@ -37,7 +37,7 @@ uses
   rpexceldriver,rptextdriver,rpsvgdriver,rpcsvdriver,
   ActnList, ImgList,Printers,rpmdconsts,rptypes, Menus,
   rpmdfaboutvcl,rpmdshfolder,rpmdprintconfigvcl,
-  ToolWin, Mask, rpmaskedit;
+  ToolWin, Mask, rpmaskedit,rpvgraphutils;
 
 type
 
@@ -529,7 +529,10 @@ var
  rpPageSize:TPageSizeQt;
  selectedok:Boolean;
  afilename:string;
+ pconfig:TPrinterConfig;
 begin
+ pconfig.Changed:=false;
+ try
  // Prints the report
  frompage:=1;
  topage:=MAX_PAGECOUNT;
@@ -546,18 +549,29 @@ begin
  allpages:=true;
  frompage:=1; topage:=MAX_PAGECOUNT;
  copies:=1;
- rpgdidriver.PrinterSelection(printerindex,metafile.papersource,metafile.duplex);
+ rpgdidriver.PrinterSelection(printerindex,metafile.papersource,metafile.duplex,pconfig);
  rpgdidriver.PageSizeSelection(rpPageSize);
  rpgdidriver.OrientationSelection(metafile.orientation);
  selectedok:=true;
  if ShowPrintDialog then
   selectedok:=rpgdidriver.DoShowPrintDialog(allpages,frompage,topage,copies,collate);
+ if (selectedok) then
+  metafile.BlockPrinterSelection:=true;
  afilename:=opendialog1.FileName;
  if afilename='*.rpmf' then
   afilename:=SRpPrintingFile;
  if selectedok then
-  rpgdidriver.PrintMetafile(metafile,afilename,true,allpages,
-    frompage,topage,copies,collate,GetDeviceFontsOption(printerindex),printerindex);
+ begin
+  try
+   rpgdidriver.PrintMetafile(metafile,afilename,true,allpages,
+     frompage,topage,copies,collate,GetDeviceFontsOption(printerindex),printerindex);
+  finally
+   metafile.BlockPrinterSelection:=false;
+  end;
+ end;
+ finally
+  SetPrinterConfig(pconfig);
+ end;
 end;
 
 procedure TFRpMetaVCL.ASaveExecute(Sender: TObject);

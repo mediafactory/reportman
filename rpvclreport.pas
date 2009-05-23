@@ -25,7 +25,7 @@ interface
 
 uses Classes,Sysutils,rpreport,rpmdconsts,rpcompobase,
  rpgdidriver,rpalias,dialogs,rprfvparams,rpvpreview,
- rpexceldriver,rptextdriver,rppdfdriver,rppreviewcontrol,
+ rpexceldriver,rptextdriver,rppdfdriver,rppreviewcontrol,rpvgraphutils,
 {$IFNDEF BUILDER4}
   rppagesetupvcl,
 {$ENDIF}
@@ -89,8 +89,13 @@ function TVCLReport.Execute:boolean;
 var
  allpages,collate:boolean;
  frompage,topage,copies:integer;
+ pconfig:TPrinterConfig;
 begin
  inherited Execute;
+ pconfig.Changed:=false;
+ rpgdidriver.PrinterSelection(report.PrinterSelect,report.papersource,report.duplex,pconfig);
+ rpgdidriver.OrientationSelection(report.PageOrientation);
+ try
  if Preview then
  begin
   prcontrol:=TRpPreviewControl.Create(nil);
@@ -107,23 +112,35 @@ begin
   collate:=report.CollateCopies;
   frompage:=1; topage:=MAX_PAGECOUNT;
   copies:=report.Copies;
-  rpgdidriver.PrinterSelection(report.PrinterSelect,report.papersource,report.duplex);
-  rpgdidriver.OrientationSelection(report.PageOrientation);
+
   if ShowPrintDialog then
   begin
    if DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
    begin
-    Result:=PrintReport(report,Title,Showprogress,allpages,frompage,
-     topage,copies,collate);
+    report.Metafile.BlockPrinterSelection:=true;
+    try
+     Result:=PrintReport(report,Title,Showprogress,allpages,frompage,
+      topage,copies,collate);
+    finally
+     report.Metafile.BlockPrinterSelection:=false;
+    end;
    end
    else
     Result:=false;
   end
   else
   begin
-    Result:=PrintReport(report,Title,Showprogress,true,1,
-     MAX_PAGECOUNT,report.copies,report.collatecopies);
+    report.Metafile.BlockPrinterSelection:=true;
+    try
+     Result:=PrintReport(report,Title,Showprogress,true,1,
+      MAX_PAGECOUNT,report.copies,report.collatecopies);
+    finally
+     report.Metafile.BlockPrinterSelection:=false;
+    end;
   end;
+ end;
+ finally
+  SetPrinterConfig(pconfig);
  end;
 end;
 

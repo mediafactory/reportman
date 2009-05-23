@@ -64,6 +64,16 @@ type
     sizey:double;
   end;
 
+  TPrinterConfig=record
+    Changed:boolean;
+    Index:integer;
+    PageSize:TGDIPageSize;
+    Orientation:TPrinterOrientation;
+   end;
+
+function GetPrinterConfig:TPrinterConfig;
+procedure SetPrinterConfig(valor:TPrinterConfig);
+
 procedure DrawBitmap (Destination:TCanvas; Bitmap:TBitmap; Rec,RecSrc:TRect);
 procedure DrawBitmapMosaic (canvas:TCanvas; rec:TRect; bitmap:TBitmap);
 procedure DrawBitmapMosaicSlow(canvas:TCanvas;rec:Trect;bitmap:TBitmap;dpi:Integer);
@@ -2181,6 +2191,24 @@ begin
   exit;
  printer.printerindex:=index;
  GetDefaultDocumentProperties;
+end;
+
+
+
+function GetPrinterConfig:TPrinterConfig;
+begin
+ Result.Index:=printer.PrinterIndex;
+ Result.PageSize:=GetCurrentPaper;
+ Result.Orientation:=GetPrinterOrientation;
+end;
+
+procedure SetPrinterConfig(valor:TPrinterConfig);
+begin
+ if not valor.changed then
+  exit;
+ printer.PrinterIndex:=valor.Index;
+ SetCurrentPaper(valor.PageSize);
+ SetPrinterOrientation(valor.Orientation=poLandscape);
 end;
 
 end.

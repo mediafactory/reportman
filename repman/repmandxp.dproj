@@ -32,7 +32,9 @@
     <Borland.Personality>Delphi.Personality</Borland.Personality>
     <Borland.ProjectType>VCLApplication</Borland.ProjectType>
     <BorlandProject>
-<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><Language><Language Name="ProjectLang">$00000C0A</Language></Language><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">True</VersionInfo><VersionInfo Name="MajorVer">2</VersionInfo><VersionInfo Name="MinorVer">4</VersionInfo><VersionInfo Name="Release">0</VersionInfo><VersionInfo Name="Build">101</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1033</VersionInfo><VersionInfo Name="CodePage">1252</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">Toni Martir</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Report Manager Designer</VersionInfoKeys><VersionInfoKeys Name="FileVersion">2.4.0.101</VersionInfoKeys><VersionInfoKeys Name="InternalName">repmandxp</VersionInfoKeys><VersionInfoKeys Name="LegalCopyright">MPL/GPL License</VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename">repmandxp</VersionInfoKeys><VersionInfoKeys Name="ProductName">Report Manager Designer</VersionInfoKeys><VersionInfoKeys Name="ProductVersion">2.4.0.0</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">repmandxp.dpr</Source></Source>  
+<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><Language><Language Name="ProjectLang">$00000C0A</Language></Language><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">True</VersionInfo><VersionInfo Name="MajorVer">2</VersionInfo><VersionInfo Name="MinorVer">4</VersionInfo><VersionInfo Name="Release">0</VersionInfo><VersionInfo Name="Build">103</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1033</VersionInfo><VersionInfo Name="CodePage">1252</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">Toni Martir</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Report Manager Designer</VersionInfoKeys><VersionInfoKeys Name="FileVersion">2.4.0.103</VersionInfoKeys><VersionInfoKeys Name="InternalName">repmandxp</VersionInfoKeys><VersionInfoKeys Name="LegalCopyright">MPL/GPL License</VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename">repmandxp</VersionInfoKeys><VersionInfoKeys Name="ProductName">Report Manager Designer</VersionInfoKeys><VersionInfoKeys Name="ProductVersion">2.4.0.0</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">repmandxp.dpr</Source></Source>  
+    
+    
     
     
     
@@ -40,8 +42,42 @@
     
     
     <Resource_DLL_Projects>
-      <Resource_DLL_Projects Name="Item0">Español (alfabetización internacional)*$00000C0A*ESN*ESN</Resource_DLL_Projects>
+      <Resource_DLL_Projects Name="Item0">Español (alfabetización internacional)*$00000C0A*ESN*C:\prog\toni\cvsroot\reportman\reportman\repman\ESN</Resource_DLL_Projects>
     </Resource_DLL_Projects>
+    <RDP_Source_Files>
+      <RDP_Source_Files Name="Item0">..\rpmdfmainvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item1">..\rpmdfdesignvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item2">..\rpmdfaboutvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item3">..\rpmdfstrucvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item4">..\rpmdobjinspvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item5">..\rppagesetupvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item6">..\rpfparamsvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item7">..\rpgraphutilsvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item8">..\rpexpredlgvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item9">..\rprfvparams.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item10">..\rpmdfsearchvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item11">..\rpdbxconfigvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item12">..\rpdbbrowservcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item13">..\rpgdidriver.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item14">..\rpexceldriver.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item15">..\rpmdfdatatextvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item16">..\rpmdfdinfovcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item17">..\rpmdfgridvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item18">..\rpmdfsampledatavcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item19">..\rpmdprintconfigvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item20">..\rpvpreview.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item21">..\rpmdfconnectionvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item22">..\rpmdfwizardvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item23">..\rpmdfextsecvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item24">..\rpmdfdatasetsvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item25">..\rpfmetaviewvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item26">..\rpfmainmetaviewvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item27">..\rpmdsysinfo.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item28">..\rpeditconnvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item29">..\rpmdftreevcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item30">..\rpmdfopenlibvcl.dfm</RDP_Source_Files>
+      <RDP_Source_Files Name="Item31">repmandxp.drc</RDP_Source_Files>
+    </RDP_Source_Files>
   </Delphi.Personality></BorlandProject></BorlandProject>
   </ProjectExtensions>
   <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
