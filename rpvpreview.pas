@@ -373,17 +373,22 @@ begin
  copies:=PreviewControl.metafile.Copies;
  if Not DoShowPrintDialog(allpages,frompage,topage,copies,collate) then
   exit;
+
  areport:=nil;
  // If use printerfonts is enabled recalculate full report
  recalcreport:=false;
  if (previewcontrol is TRpPreviewControl) then
  begin
+  areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
+  areport.Metafile.BlockPrinterSelection:=true;
   if (TRpPreviewControl(previewcontrol).Report.PrinterFonts in [rppfontsalways,rppfontsrecalculate]) then
   begin
    recalcreport:=true;
-   areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
   end;
  end;
+ try
+
+
  if recalcreport then
  begin
   TRpPreviewControl(previewcontrol).Report:=nil;
@@ -405,6 +410,10 @@ begin
   collate,false,PreviewControl.Metafile.PrinterSelect);
   AppIdle(Self,adone);
  end;
+  finally
+  if (areport<>nil) then
+    areport.Metafile.BlockPrinterSelection:=false;
+  end;
 end;
 
 procedure TFRpVPreview.ASaveExecute(Sender: TObject);

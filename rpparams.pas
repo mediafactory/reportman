@@ -178,8 +178,10 @@ function VariantTypeToParamType(avariant:Variant):TRpParamtype;
 
 function ParamTypeToString(paramtype:TRpParamType):String;
 function StringToParamType(Value:String):TRpParamType;
-procedure GetPossibleDataTypes(alist:TRpWideStrings);
-procedure GetPossibleDataTypesA(alist:TStrings);
+procedure GetPossibleDataTypesDesign(alist:TRpWideStrings);
+procedure GetPossibleDataTypesRuntime(alist:TRpWideStrings);
+procedure GetPossibleDataTypesDesignA(alist:TStrings);
+procedure GetPossibleDataTypesRuntimeA(alist:TStrings);
 procedure ParseCommandLineParams(params:TRpParamList);
 
 implementation
@@ -947,20 +949,33 @@ begin
  end;
 end;
 
-procedure GetPossibleDataTypesA(alist:TStrings);
+procedure GetPossibleDataTypesDesignA(alist:TStrings);
 var
  list:TRpWideStrings;
 begin
  list:=TRpWideStrings.Create;
  try
-  GetPossibleDataTypes(list);
+  GetPossibleDataTypesDesign(list);
   alist.Assign(TPersistent(list));
  finally
   list.free;
  end;
 end;
 
-procedure GetPossibleDataTypes(alist:TRpWideStrings);
+procedure GetPossibleDataTypesRuntimeA(alist:TStrings);
+var
+ list:TRpWideStrings;
+begin
+ list:=TRpWideStrings.Create;
+ try
+  GetPossibleDataTypesRuntime(list);
+  alist.Assign(TPersistent(list));
+ finally
+  list.free;
+ end;
+end;
+
+procedure GetPossibleDataTypesDesign(alist:TRpWideStrings);
 begin
  alist.Clear;
  alist.Add(SRpSUnknownType);
@@ -980,6 +995,20 @@ begin
  alist.Add(SRpSParamSubsE);
  alist.Add(SRpSParamSubsList);
  alist.Add(SRpSParamInitialExpression);
+end;
+
+procedure GetPossibleDataTypesRuntime(alist:TRpWideStrings);
+begin
+ alist.Clear;
+ alist.Add(SRpSUnknownType);
+ alist.Add(SRpSString);
+ alist.Add(SRpSInteger);
+ alist.Add(SRpSFloat);
+ alist.Add(SRpSCurrency);
+ alist.Add(SRpSDate);
+ alist.Add(SRpSDateTime);
+ alist.Add(SRpSTime);
+ alist.Add(SRpSBoolean);
 end;
 
 // Command line params are in form of:

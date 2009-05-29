@@ -546,7 +546,7 @@ begin
  end;
  if pname=SRpSDataType then
  begin
-  GetPossibleDataTypes(lpossiblevalues);
+  GetPossibleDataTypesRunTime(lpossiblevalues);
   exit;
  end;
  if pname=SRpSAggregate then

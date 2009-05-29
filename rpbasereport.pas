@@ -1571,7 +1571,7 @@ begin
  for i:=0 to Params.Count-1 do
  begin
   if Params.Items[i].Datasets.IndexOf(datainfo.Items[index].Alias)>=0 then
-  if params.items[i].ParamType=rpParamExpreB then
+  if (params.items[i].ParamType in [rpParamExpreB,rpParamList]) then
   begin
    paramname:=params.items[i].Name;
    try

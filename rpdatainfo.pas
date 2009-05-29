@@ -570,6 +570,24 @@ begin
  index:=params.IndexOfName('Interbase TransIsolation');
  if index>=0 then
   params.Delete(index);
+ // D2007 DBX4 params
+ index:=params.IndexOfName('DriverUnit');
+ if index>=0 then
+  params.Delete(index);
+ index:=params.IndexOfName('DriverPackageLoader');
+ if index>=0 then
+  params.Delete(index);
+ index:=params.IndexOfName('DriverAssemblyLoader');
+ if index>=0 then
+  params.Delete(index);
+ index:=params.IndexOfName('MetaDataPackageLoader');
+ if index>=0 then
+  params.Delete(index);
+ index:=params.IndexOfName('MetaDataAssemblyLoader');
+ if index>=0 then
+  params.Delete(index);
+
+ // End D2007 DBX4 params
  index:=params.IndexOfName('WaitOnLocks');
  if index>=0 then
   params.Delete(index);

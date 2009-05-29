@@ -170,7 +170,7 @@ begin
  LAssign.Caption:=TranslateStr(198,LAssign.Caption);
  LLookup.Caption:=SrpLookupDataset;
  Caption:=TranslateStr(199,Caption);
- GetPossibleDataTypesA(ComboDataType.Items);
+ GetPossibleDataTypesDesignA(ComboDataType.Items);
  ComboDataType.Hint:=TranslateStr(944,ComboDataType.Hint);
  CheckNull.Hint:=TranslateStr(945,CheckNull.Hint);
  LSearch.Caption:=TranslateStr(946,CheckNull.Hint);
