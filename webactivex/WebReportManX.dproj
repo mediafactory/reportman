@@ -1,55 +1,129 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <ProjectGuid>{11213313-c43e-44c4-9edd-96635ecb561e}</ProjectGuid>
-    <MainSource>WebReportManX.dpr</MainSource>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
-    <DCC_DependencyCheckOutputName>WebReportManX.ocx</DCC_DependencyCheckOutputName>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Version>7.0</Version>
-    <DCC_DebugInformation>False</DCC_DebugInformation>
-    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
-    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
-    <DCC_Define>FORWEBAX;RELEASE</DCC_Define>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <Version>7.0</Version>
-    <DCC_Define>FORWEBAX;DEBUG</DCC_Define>
-  </PropertyGroup>
-  <ProjectExtensions>
-    <Borland.Personality>Delphi.Personality</Borland.Personality>
-    <Borland.ProjectType>VCLApplication</Borland.ProjectType>
-    <BorlandProject>
-<BorlandProject><Delphi.Personality><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><Language><Language Name="RootDir">C:\Archivos de programa\Borland\Delphi7\Bin\</Language></Language><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">False</VersionInfo><VersionInfo Name="MajorVer">2</VersionInfo><VersionInfo Name="MinorVer">6</VersionInfo><VersionInfo Name="Release">0</VersionInfo><VersionInfo Name="Build">0</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">True</VersionInfo><VersionInfo Name="Locale">1033</VersionInfo><VersionInfo Name="CodePage">1252</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">Toni Martir (toni@pala.com)</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Report Manager Active X Control</VersionInfoKeys><VersionInfoKeys Name="FileVersion">2.6.0.0</VersionInfoKeys><VersionInfoKeys Name="InternalName">WeReportManX.ocx</VersionInfoKeys><VersionInfoKeys Name="LegalCopyright">Copyright 2003, Toni Martir (toni@pala.com)</VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys><VersionInfoKeys Name="ProductName">Report Manager IE Plugin</VersionInfoKeys><VersionInfoKeys Name="ProductVersion">2.4.0.0</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys><VersionInfoKeys Name="OleSelfRegister">1</VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">WebReportManX.dpr</Source></Source></Delphi.Personality></BorlandProject></BorlandProject>
-  </ProjectExtensions>
-  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
-  <ItemGroup>
-    <DelphiCompile Include="WebReportManX.dpr">
-      <MainSource>MainSource</MainSource>
-    </DelphiCompile>
-    <DCCReference Include="..\rpfmainmetaviewvcl.pas">
-      <Form>FRpMainMetaVCL</Form>
-    </DCCReference>
-    <DCCReference Include="..\rpfmetaviewvcl.pas">
-      <Form>FRpMetaVCL</Form>
-      <DesignClass>TFrame</DesignClass>
-    </DCCReference>
-    <DCCReference Include="..\rpmdfaboutvcl.pas">
-      <Form>FRpAboutBoxVCL</Form>
-    </DCCReference>
-    <DCCReference Include="..\rpmetafile.pas" />
-    <DCCReference Include="..\rpmzlib.pas" />
-    <DCCReference Include="..\rptranslator.pas" />
-    <DCCReference Include="..\rptypes.pas" />
-    <DCCReference Include="..\rpwebmetaclient.pas" />
-    <DCCReference Include="AxCtrls.pas" />
-    <DCCReference Include="rpwebreportx.pas">
-      <Form>WebReportMan</Form>
-      <DesignClass>TActiveForm</DesignClass>
-      <CoClasses>WebReportMan</CoClasses>
-    </DCCReference>
-    <DCCReference Include="WebReportManX_TLB.pas" />
-  </ItemGroup>
-</Project>
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<ProjectGuid>{11213313-c43e-44c4-9edd-96635ecb561e}</ProjectGuid>
+			<MainSource>WebReportManX.dpr</MainSource>
+			<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+			<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+			<DCC_DependencyCheckOutputName>WebReportManX.ocx</DCC_DependencyCheckOutputName>
+			<ProjectVersion>12.0</ProjectVersion>
+			<Config Condition="'$(Config)'==''">Debug</Config>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+			<Cfg_1>true</Cfg_1>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+			<Cfg_2>true</Cfg_2>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_Define>FORWEBAX;$(DCC_Define)</DCC_Define>
+			<DCC_OutputDRCFile>true</DCC_OutputDRCFile>
+			<DCC_DependencyCheckOutputName>WebReportManX.ocx</DCC_DependencyCheckOutputName>
+			<GenDll>true</GenDll>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1)'!=''">
+			<Version>7.0</Version>
+			<DCC_DebugInformation>False</DCC_DebugInformation>
+			<DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+			<DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2)'!=''">
+			<Version>7.0</Version>
+			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+		</PropertyGroup>
+		<ProjectExtensions>
+			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
+			<Borland.ProjectType>VCLApplication</Borland.ProjectType>
+			<BorlandProject>
+				<Delphi.Personality>
+					<Parameters>
+						<Parameters Name="UseLauncher">False</Parameters>
+						<Parameters Name="LoadAllSymbols">True</Parameters>
+						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
+					</Parameters>
+					<VersionInfo>
+						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
+						<VersionInfo Name="MajorVer">2</VersionInfo>
+						<VersionInfo Name="MinorVer">6</VersionInfo>
+						<VersionInfo Name="Release">0</VersionInfo>
+						<VersionInfo Name="Build">0</VersionInfo>
+						<VersionInfo Name="Debug">False</VersionInfo>
+						<VersionInfo Name="PreRelease">False</VersionInfo>
+						<VersionInfo Name="Special">False</VersionInfo>
+						<VersionInfo Name="Private">False</VersionInfo>
+						<VersionInfo Name="DLL">True</VersionInfo>
+						<VersionInfo Name="Locale">1033</VersionInfo>
+						<VersionInfo Name="CodePage">1252</VersionInfo>
+					</VersionInfo>
+					<VersionInfoKeys>
+						<VersionInfoKeys Name="CompanyName">Toni Martir (toni@pala.com)</VersionInfoKeys>
+						<VersionInfoKeys Name="FileDescription">Report Manager Active X Control</VersionInfoKeys>
+						<VersionInfoKeys Name="FileVersion">2.6.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="InternalName">WeReportManX.ocx</VersionInfoKeys>
+						<VersionInfoKeys Name="LegalCopyright">Copyright 2003, Toni Martir (toni@pala.com)</VersionInfoKeys>
+						<VersionInfoKeys Name="LegalTrademarks"/>
+						<VersionInfoKeys Name="OriginalFilename"/>
+						<VersionInfoKeys Name="ProductName">Report Manager IE Plugin</VersionInfoKeys>
+						<VersionInfoKeys Name="ProductVersion">2.4.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="Comments"/>
+						<VersionInfoKeys Name="OleSelfRegister">1</VersionInfoKeys>
+					</VersionInfoKeys>
+					<Source>
+						<Source Name="MainSource">WebReportManX.dpr</Source>
+					</Source>
+				</Delphi.Personality>
+				<ActiveXProjectInfo>
+					<version>1</version>
+				</ActiveXProjectInfo>
+			</BorlandProject>
+			<ProjectFileVersion>12</ProjectFileVersion>
+		</ProjectExtensions>
+		<ItemGroup>
+			<DelphiCompile Include="WebReportManX.dpr">
+				<MainSource>MainSource</MainSource>
+			</DelphiCompile>
+			<DCCReference Include="WebReportManX_TLB.pas"/>
+			<DCCReference Include="rpwebreportx.pas">
+				<Form>WebReportMan</Form>
+				<DesignClass>TActiveForm</DesignClass>
+				<CoClasses>WebReportMan</CoClasses>
+			</DCCReference>
+			<DCCReference Include="..\rpfmainmetaviewvcl.pas">
+				<Form>FRpMainMetaVCL</Form>
+			</DCCReference>
+			<DCCReference Include="..\rpfmetaviewvcl.pas">
+				<Form>FRpMetaVCL</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
+			<DCCReference Include="..\rptranslator.pas"/>
+			<DCCReference Include="..\rptypes.pas"/>
+			<DCCReference Include="..\rpmdfaboutvcl.pas">
+				<Form>FRpAboutBoxVCL</Form>
+			</DCCReference>
+			<DCCReference Include="..\rpmzlib.pas"/>
+			<DCCReference Include="..\rpmetafile.pas"/>
+			<DCCReference Include="..\rpwebmetaclient.pas"/>
+			<RidlCompile Include="WebReportManX.ridl"/>
+			<BuildConfiguration Include="Base">
+				<Key>Base</Key>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Debug">
+				<Key>Cfg_2</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Release">
+				<Key>Cfg_1</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+		</ItemGroup>
+		<Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+	</Project>

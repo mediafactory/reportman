@@ -32,7 +32,6 @@ type
     Panel1: TPanel;
     BOK: TButton;
     Panel2: TPanel;
-    Image1: TImage;
     Image2: TImage;
     LReport: TLabel;
     LAuthor: TLabel;

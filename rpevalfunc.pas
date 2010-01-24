@@ -676,7 +676,10 @@ begin
  if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- Result:=FileExists(String(Params[0]));
+ if (VarType(Params[0])=varString) then
+   Result:=FileExists(String(Params[0]))
+ else
+   Result:=FileExists(WideString(Params[0]));
 end;
 
 {**************************************************************************}
@@ -1019,7 +1022,12 @@ begin
  if VarIsNull(Params[0]) then
   Result:=''
  else
-  Result:=String(Params[0]);
+ begin
+  if (VarIsString(params[0])) then
+    Result := params[0]
+  else
+    Result:=String(Params[0]);
+ end;
 end;
 
 { TIdenUTF8ToWideString }
@@ -1121,7 +1129,10 @@ begin
  if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- Result:=Trim(String(Params[0]));
+ if (VarType(Params[0])=varString) then
+  Result:=Trim(String(Params[0]))
+ else
+  Result:=Trim(WideString(Params[0]));
 end;
 
 {**************************************************************************}
@@ -1148,7 +1159,10 @@ begin
  if  Not (VarIsInteger(Params[1])) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- Result:=Copy(String(Params[0]),1,Integer(Params[1]));
+ if (VarType(Params[0])=varString) then
+  Result:=Copy(String(Params[0]),1,Integer(Params[1]))
+ else
+  Result:= Copy(WideString(Params[0]),1,Integer(Params[1]));
 end;
 
 { TIdenLength }
@@ -1175,7 +1189,10 @@ begin
  if Not VarIsString(Params[0]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- Result:=Length(String(Params[0]));
+ if (VarType(Params[0])=varString) then 
+   Result:=Length(String(Params[0]))
+ else
+   Result:=Length(WideString(Params[0]));
 end;
 
 { TIdenIsInteger }
@@ -1328,7 +1345,15 @@ begin
  if Not VarIsString(Params[1]) then
    Raise TRpNamedException.Create(SRpEvalType,
          IdenName);
- Result:=Pos(String(Params[0]),string(Params[1]));
+ if (VarType(Params[0])=varString) then
+   Result:=Pos(String(Params[0]),string(Params[1]))
+ else
+ begin
+   if (VarType(Params[0])=varString) then
+    Result:=Pos(WideString(Params[0]),WideString(Params[1]))
+   else
+    Result:=Pos(WideString(Params[0]),WideString(Params[1]));
+ end;
 end;
 
 
@@ -1970,9 +1995,16 @@ begin
  if  (Integer(Params[1])<1) then
   Result:=''
  else
+ begin
+ if (VarType(Params[0])=varString) then
   Result:=Copy(String(Params[0]),
               Length(String(Params[0]))+1-Integer(Params[1]),
+              Integer(Params[1]))
+ else
+  Result:=Copy(WideString(Params[0]),
+              Length(WideString(Params[0]))+1-Integer(Params[1]),
               Integer(Params[1]));
+ end;
 end;
 
 
@@ -2011,9 +2043,18 @@ begin
   Result:='';
   exit;
  end;
- Result:=Copy(String(Params[0]),
+ if (VarType(Params[0])=varString) then
+ begin
+  Result:=Copy(String(Params[0]),
               Integer(Params[1]),
               Integer(Params[2]));
+ end
+ else
+ begin
+  Result:=Copy(WideString(Params[0]),
+              Integer(Params[1]),
+              Integer(Params[2]));
+ end;
 end;
 
 { TIdenFormatStr }
@@ -2228,8 +2269,16 @@ begin
   or (Not VarIsString(Params[1]))
   or (Not VarIsString(Params[2])) then
    Raise TRpNamedException.Create(SRpEvalType,IdenName);
- Result:=StringReplace(String(Params[0]),String(Params[1]),String(Params[2]),
-  [rfReplaceAll, rfIgnoreCase]);
+ if (VarType(Params[0])=varString) then
+ begin
+   Result:=StringReplace(String(Params[0]),String(Params[1]),String(Params[2]),
+    [rfReplaceAll, rfIgnoreCase]);
+ end
+ else
+ begin
+   Result:=StringReplace(WideString(Params[0]),WideString(Params[1]),WideString(Params[2]),
+    [rfReplaceAll, rfIgnoreCase]);
+ end;
 end;
 
 

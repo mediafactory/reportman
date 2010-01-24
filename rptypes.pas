@@ -257,7 +257,7 @@ procedure GetDrawStyleDescriptions(alist:TRpWideStrings);
 function StrToBackStyle(value:string):TrpBackStyle;
 function BackStyleToStr(value:TrpBackStyle):string;
 {$IFNDEF FPC}
-procedure SendMail(destination,subject,content,filename,originalfile:AnsiString);
+procedure SendMail(destination,subject,content,filename,originalfile:String);
 {$ENDIF}
 function StrToAlign(value:string):TRpPosAlign;
 function AlignToStr(value:TRpPosAlign):string;
@@ -4388,7 +4388,7 @@ Begin
 end;
 
 {$IFNDEF FPC}
-procedure SendMail(destination,subject,content,filename,originalfile:AnsiString);
+procedure SendMail(destination,subject,content,filename,originalfile:String);
 procedure CheckMAPI(avalue:Cardinal);
 begin
  if avalue=SUCCESS_SUCCESS then
@@ -4449,27 +4449,45 @@ var
 begin
  CheckMAPI(MapiLogOn(0,nil,nil,MAPI_LOGON_UI,0,@Sessionh));
  try
-  amessage.ulReserved:=0;
   amessage.lpszSubject:=nil;
   if Length(subject)>0 then
   amessage.lpszSubject:=PAnsiChar(subject);
   if Length(content)<1 then
    content:=' ';
-  amessage.lpszNoteText:=PAnsiChar(content);
+{$IFDEF UNICODE}
+  amessage.ulReserved:=CP_UTF8;
+  amessage.lpszNoteText:=PAnsichar(UTF8Encode(content));
   amessage.lpszMessageType:=nil;
   amessage.lpszDateReceived:=nil;
   amessage.lpszConversationID:=nil;
   amessage.lpszDateReceived:=nil;
   amessage.nRecipCount:=0;
   amessage.lpRecips:=nil;
+{$ENDIF}
+{$IFNDEF UNICODE}
+  amessage.ulReserved:=0;
+  amessage.lpszNoteText:= PAnsiChar(content);
+  amessage.lpszMessageType:=nil;
+  amessage.lpszDateReceived:=nil;
+  amessage.lpszConversationID:=nil;
+  amessage.lpszDateReceived:=nil;
+  amessage.nRecipCount:=0;
+  amessage.lpRecips:=nil;
+{$ENDIF}
 
   if Length(destination)>0 then
   begin
    amessage.nRecipCount:=1;
    amessage.lpRecips:=AllocMem(sizeof(MAPIRecipDesc));
+{$IFDEF UNICODE}
+   amessage.lpRecips.lpszName:=PAnsichar(UTF8Encode(destination));
+   amessage.lpRecips.lpszAddress:=PAnsichar(UTF8Encode('SMTP:'+destination));
+{$ENDIF}
+{$IFNDEF UNICODE}
    amessage.lpRecips.lpszName:=PAnsiChar(destination);
-   amessage.lpRecips.ulRecipClass:=1;
    amessage.lpRecips.lpszAddress:=PAnsiChar('SMTP:'+destination);
+{$ENDIF}
+   amessage.lpRecips.ulRecipClass:=1;
    amessage.lpRecips.ulEIDSize:=0;
    amessage.lpRecips.lpEntryID:=nil;
   end;
@@ -4493,9 +4511,14 @@ begin
    amessage.lpFiles:=AllocMem(sizeof(MapiFileDesc));
    amessage.lpFiles.ulReserved:=0;
    amessage.lpFiles.flFlags:=0;
+{$IFDEF UNICODE}
+   amessage.lpFiles.lpszPathName:=PAnsichar(UTF8Encode(filename));
+   amessage.lpFiles.lpszFileName:=PAnsichar(UTF8Encode(originalfile));
+{$ENDIF}
+{$IFNDEF UNICODE}
    amessage.lpFiles.lpszPathName:=PAnsiChar(filename);
-//   amessage.lpFiles.lpszPathName:=Pchar(LongFileName(filename));
    amessage.lpFiles.lpszFileName:=PAnsiChar(originalfile);
+{$ENDIF}
    amessage.lpFiles.nPosition:=0;
    amessage.lpFiles.lpFileType:=nil;
   end;
@@ -4607,13 +4630,13 @@ end;
 
 function IsCompressed(astream:TMemoryStream):Boolean;
 var
- achar:Char;
+ abyte:Byte;
 begin
  Result:=false;
  astream.Seek(0,soFromBeginning);
- if 1=astream.Read(achar,1) then
+ if 1=astream.Read(abyte,1) then
  begin
-  if achar='x' then
+  if Char(abyte)='x' then
    Result:=true;
   astream.Seek(0,soFromBeginning);
  end;

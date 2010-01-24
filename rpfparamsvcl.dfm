@@ -1,9 +1,9 @@
 object FRpParamsVCL: TFRpParamsVCL
   Left = 539
   Top = 39
+  Width = 498
+  Height = 582
   Caption = 'Parameter definition'
-  ClientHeight = 548
-  ClientWidth = 473
   Color = clBtnFace
   ParentFont = True
   OldCreateOrder = True
@@ -16,14 +16,11 @@ object FRpParamsVCL: TFRpParamsVCL
   object Panel1: TPanel
     Left = 0
     Top = 147
-    Width = 473
+    Width = 490
     Height = 401
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    DesignSize = (
-      473
-      401)
     object GProperties: TGroupBox
       Left = 2
       Top = 4
@@ -32,9 +29,6 @@ object FRpParamsVCL: TFRpParamsVCL
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
       Visible = False
-      DesignSize = (
-        464
-        389)
       object LDescription: TLabel
         Left = 12
         Top = 92
@@ -45,28 +39,28 @@ object FRpParamsVCL: TFRpParamsVCL
       object LDataType: TLabel
         Left = 8
         Top = 12
-        Width = 48
+        Width = 46
         Height = 13
         Caption = 'Data type'
       end
       object LValue: TLabel
         Left = 216
         Top = 12
-        Width = 26
+        Width = 27
         Height = 13
         Caption = 'Value'
       end
       object LAssign: TLabel
         Left = 16
         Top = 329
-        Width = 89
+        Width = 86
         Height = 13
         Caption = 'Assign to datasets'
       end
       object LSearch: TLabel
         Left = 12
         Top = 188
-        Width = 80
+        Width = 77
         Height = 13
         Caption = 'Search for string'
         Visible = False
@@ -81,7 +75,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object LErrorMessage: TLabel
         Left = 12
         Top = 164
-        Width = 69
+        Width = 67
         Height = 13
         Caption = 'Error message'
       end
@@ -112,9 +106,6 @@ object FRpParamsVCL: TFRpParamsVCL
         Caption = 'Strings to show (left) and strings to assign (right) '
         TabOrder = 12
         Visible = False
-        DesignSize = (
-          442
-          105)
         object LLookup: TLabel
           Left = 4
           Top = 84
@@ -159,7 +150,7 @@ object FRpParamsVCL: TFRpParamsVCL
           Hint = 'The parameters will be assigned not the selected datasets'
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 1
           OnChange = EDescriptionChange
         end
@@ -234,7 +225,7 @@ object FRpParamsVCL: TFRpParamsVCL
         Height = 21
         Hint = 'The parameters will be assigned not the selected datasets'
         Style = csDropDownList
-        ItemHeight = 0
+        ItemHeight = 13
         TabOrder = 13
       end
       object BAdddata: TButton
@@ -324,20 +315,17 @@ object FRpParamsVCL: TFRpParamsVCL
         Caption = 'Search value'
         TabOrder = 18
         Visible = False
-        DesignSize = (
-          446
-          73)
         object LSearchDataset: TLabel
           Left = 8
           Top = 24
-          Width = 73
+          Width = 72
           Height = 13
           Caption = 'Search dataset'
         end
         object Label1: TLabel
           Left = 8
           Top = 48
-          Width = 86
+          Width = 84
           Height = 13
           Caption = 'Search parameter'
         end
@@ -348,7 +336,7 @@ object FRpParamsVCL: TFRpParamsVCL
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 0
           OnChange = EDescriptionChange
         end
@@ -359,7 +347,7 @@ object FRpParamsVCL: TFRpParamsVCL
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 1
           OnChange = EDescriptionChange
         end
@@ -393,16 +381,16 @@ object FRpParamsVCL: TFRpParamsVCL
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 473
+    Width = 490
     Height = 147
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object LParams: TListBox
       Left = 0
-      Top = 28
-      Width = 377
-      Height = 119
+      Top = 30
+      Width = 394
+      Height = 117
       Align = alClient
       ItemHeight = 13
       TabOrder = 0
@@ -411,8 +399,8 @@ object FRpParamsVCL: TFRpParamsVCL
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 473
-      Height = 28
+      Width = 490
+      Height = 30
       AutoSize = True
       ButtonHeight = 26
       ButtonWidth = 26
@@ -421,22 +409,22 @@ object FRpParamsVCL: TFRpParamsVCL
       TabOrder = 1
       object ToolButton1: TToolButton
         Left = 0
-        Top = 0
+        Top = 2
         Action = ANewParam
       end
       object ToolButton2: TToolButton
         Left = 26
-        Top = 0
+        Top = 2
         Action = ADown
       end
       object ToolButton3: TToolButton
         Left = 52
-        Top = 0
+        Top = 2
         Action = AUp
       end
       object ToolButton5: TToolButton
         Left = 78
-        Top = 0
+        Top = 2
         Width = 36
         Caption = 'ToolButton5'
         ImageIndex = 4
@@ -444,12 +432,12 @@ object FRpParamsVCL: TFRpParamsVCL
       end
       object ToolButton4: TToolButton
         Left = 114
-        Top = 0
+        Top = 2
         Action = ADelete
       end
       object ToolButton6: TToolButton
         Left = 140
-        Top = 0
+        Top = 2
         Width = 40
         Caption = 'ToolButton6'
         ImageIndex = 4
@@ -457,15 +445,15 @@ object FRpParamsVCL: TFRpParamsVCL
       end
       object ToolButton7: TToolButton
         Left = 180
-        Top = 0
+        Top = 2
         Action = ARename
       end
     end
     object Panel3: TPanel
-      Left = 377
-      Top = 28
+      Left = 394
+      Top = 30
       Width = 96
-      Height = 119
+      Height = 117
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2

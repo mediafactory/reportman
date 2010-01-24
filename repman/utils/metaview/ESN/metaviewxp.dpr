@@ -2,33 +2,26 @@
 
 library metaviewxp;
 
-{ITE} {DFMFileType} {vcl\DBLOGDLG.dfm}
-{ITE} {DFMFileType} {vcl\DBPWDLG.dfm}
-{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpexceldriver.dfm}
-{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpfmainmetaviewvcl.dfm}
-{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpfmetaviewvcl.dfm}
-{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpgdidriver.dfm}
-{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdclitreevcl.dfm}
-{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdfaboutvcl.dfm}
-{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdprintconfigvcl.dfm}
-{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rpmdrepclient.dfm}
-{ITE} {DFMFileType} {C\prog\toni\cvsroot\reportman\reportman\rprfvparams.dfm}
+{ITE} {DFMFileType} {C\Users\Toni\Documents\prog\toni\reportman\rpexceldriver.dfm}
+{ITE} {DFMFileType} {C\Users\Toni\Documents\prog\toni\reportman\rpfmainmetaviewvcl.dfm}
+{ITE} {DFMFileType} {C\Users\Toni\Documents\prog\toni\reportman\rpfmetaviewvcl.dfm}
+{ITE} {DFMFileType} {C\Users\Toni\Documents\prog\toni\reportman\rpgdidriver.dfm}
+{ITE} {DFMFileType} {C\Users\Toni\Documents\prog\toni\reportman\rpmdclitreevcl.dfm}
+{ITE} {DFMFileType} {C\Users\Toni\Documents\prog\toni\reportman\rpmdfaboutvcl.dfm}
+{ITE} {DFMFileType} {C\Users\Toni\Documents\prog\toni\reportman\rpmdprintconfigvcl.dfm}
+{ITE} {DFMFileType} {C\Users\Toni\Documents\prog\toni\reportman\rprfvparams.dfm}
 {ITE} {RCFileType} {metaviewxp_DRC.rc}
 
-{$R 'vcl\DBLOGDLG.dfm' LoginDialog:TForm(Form)}
-{$R 'vcl\DBPWDLG.dfm' PasswordDialog:TForm(Form)}
-{$R 'C\prog\toni\cvsroot\reportman\reportman\rpexceldriver.dfm' FRpExcelProgress:TForm}
-{$R 'C\prog\toni\cvsroot\reportman\reportman\rpfmainmetaviewvcl.dfm' FRpMainMetaVCL:TForm}
-{$R 'C\prog\toni\cvsroot\reportman\reportman\rpfmetaviewvcl.dfm' FRpMetaVCL:TFrame}
-{$R 'C\prog\toni\cvsroot\reportman\reportman\rpgdidriver.dfm' FRpVCLProgress:TForm}
-{$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdclitreevcl.dfm' FRpCliTreeVCL:TFrame}
-{$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdfaboutvcl.dfm' FRpAboutBoxVCL:TForm}
-{$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdprintconfigvcl.dfm' FRpPrinterConfigVCL:TForm}
-{$R 'C\prog\toni\cvsroot\reportman\reportman\rpmdrepclient.dfm' modclient:TForm(Component)}
-{$R 'C\prog\toni\cvsroot\reportman\reportman\rprfvparams.dfm' FRpRTParams:TForm}
+{$R 'C\Users\Toni\Documents\prog\toni\reportman\rpexceldriver.dfm' FRpExcelProgress:TForm}
+{$R 'C\Users\Toni\Documents\prog\toni\reportman\rpfmainmetaviewvcl.dfm' FRpMainMetaVCL:TForm}
+{$R 'C\Users\Toni\Documents\prog\toni\reportman\rpfmetaviewvcl.dfm' FRpMetaVCL:TFrame}
+{$R 'C\Users\Toni\Documents\prog\toni\reportman\rpgdidriver.dfm' FRpVCLProgress:TForm}
+{$R 'C\Users\Toni\Documents\prog\toni\reportman\rpmdclitreevcl.dfm' FRpCliTreeVCL:TFrame}
+{$R 'C\Users\Toni\Documents\prog\toni\reportman\rpmdfaboutvcl.dfm' FRpAboutBoxVCL:TForm}
+{$R 'C\Users\Toni\Documents\prog\toni\reportman\rpmdprintconfigvcl.dfm' FRpPrinterConfigVCL:TForm}
+{$R 'C\Users\Toni\Documents\prog\toni\reportman\rprfvparams.dfm' FRpRTParams:TForm}
 {$R 'metaviewxp_DRC.res' 'metaviewxp_DRC.rc'}
 
-{$R *.RES}
 {$E ESN}
 
 begin

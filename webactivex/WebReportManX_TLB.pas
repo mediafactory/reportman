@@ -11,26 +11,42 @@ unit WebReportManX_TLB;
 // manual modifications will be lost.                                         
 // ************************************************************************ //
 
-// PASTLWTR : 1.2
-// File generated on 08/08/2008 9:58:34 from Type Library described below.
+// $Rev: 17244 $
+// File generated on 09/01/2010 14:52:43 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\prog\toni\cvsroot\reportman\reportman\webactivex\WebReportManX.tlb (1)
+// Type Lib: WebReportmanX.tlb (1)
 // LIBID: {3C25C257-3AA3-4215-9128-3DCD59849E05}
 // LCID: 0
 // Helpfile: 
 // HelpString: WebReportManX Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINDOWS\system32\stdole2.tlb)
+//   (1) v2.0 stdole, (C:\Windows\system32\stdole2.tlb)
+// Errors:
+//   Error creating palette bitmap of (TWebReportMan) : No Server registered for this CoClass
+// Cmdline:
+//   "c:\Program Files (x86)\Embarcadero\RAD Studio\7.0\bin\tlibimp.exe"  -P WebReportmanX.tlb
 // ************************************************************************ //
+// *************************************************************************//
+// NOTE:                                                                      
+// Items guarded by $IFDEF_LIVE_SERVER_AT_DESIGN_TIME are used by properties  
+// which return objects that may need to be explicitly created via a function 
+// call prior to any access via the property. These items have been disabled  
+// in order to prevent accidental use from within the object inspector. You   
+// may enable them by defining LIVE_SERVER_AT_DESIGN_TIME or by selectively   
+// removing them from the $IFDEF blocks. However, such items must still be    
+// programmatically created via a method of the appropriate CoClass before    
+// they can be used.                                                          
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
 {$WRITEABLECONST ON}
 {$VARPROPSETTER ON}
+{$ALIGN 4}
 interface
 
-uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL, Variants;
+uses Windows, ActiveX, Classes, Graphics, OleCtrls, OleServer, StdVCL, Variants;
   
+
 
 // *********************************************************************//
 // GUIDS declared in the TypeLibrary. Following prefixes are used:        
@@ -289,21 +305,6 @@ type
     property Enabled: WordBool index -514 read GetWordBoolProp write SetWordBoolProp;
   published
     property Anchors;
-    property  ParentColor;
-    property  ParentFont;
-    property  Align;
-    property  DragCursor;
-    property  DragMode;
-    property  ParentShowHint;
-    property  PopupMenu;
-    property  ShowHint;
-    property  TabOrder;
-    property  OnDragDrop;
-    property  OnDragOver;
-    property  OnEndDrag;
-    property  OnEnter;
-    property  OnExit;
-    property  OnStartDrag;
     property AutoScroll: WordBool index 202 read GetWordBoolProp write SetWordBoolProp stored False;
     property AutoSize: WordBool index 203 read GetWordBoolProp write SetWordBoolProp stored False;
     property AxBorderStyle: TOleEnum index 204 read GetTOleEnumProp write SetTOleEnumProp stored False;
@@ -358,7 +359,7 @@ const
     EventIID: '{F6EFBA04-D512-4CFB-9D2B-2362E3C173D9}';
     EventCount: 8;
     EventDispIDs: @CEventDispIDs;
-    LicenseKey: nil (*HR:$00000000*);
+    LicenseKey: nil (*HR:$80040154*);
     Flags: $0000001D;
     Version: 401;
     FontCount: 1;

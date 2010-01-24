@@ -23,9 +23,11 @@ unit rpfaxsend;
 interface
 
 uses Windows, SysUtils, Classes, Graphics, Forms, Controls, StdCtrls,
-  Buttons, ExtCtrls,rpmetafile, AdFaxCvt, AdPort, AdFax, AdFStat, OoMisc,
-  AdTapi,rpgdidriver,rptypes,rpmunits, ComCtrls, AdFView,rpgraphutilsvcl,
-  rpreport,rpmdshfolder,inifiles,rpmdconsts,AdExcept;
+  Buttons, ExtCtrls,rpmetafile,
+  AdFaxCvt, AdPort, AdFax, AdFStat, OoMisc,AdExcept,AdFView,
+  AdTapi,
+  rpgdidriver,rptypes,rpmunits, ComCtrls, rpgraphutilsvcl,
+  rpreport,rpmdshfolder,inifiles,rpmdconsts;
 
 const
  CT_FAXHEADER='$D $T, $S $P / $N';

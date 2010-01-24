@@ -1705,7 +1705,7 @@ begin
  if not OpenPrinter(ADevice,fprinterhandle,nil) then
   RaiseLastOsError;
  try
-  asize:=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,0);
+  asize:=DocumentProperties(0,fprinterhandle,ADevice,nil,nil,0);
   if asize<0 then
    RaiseLastOsError;
   if asize>0 then
@@ -1882,7 +1882,7 @@ begin
  if not OpenPrinter(ADevice,fprinterhandle,nil) then
   RaiseLastOsError;
  try
-  asize:=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,0);
+  asize:=DocumentProperties(0,fprinterhandle,ADevice,nil,nil,0);
   if asize<0 then
    RaiseLastOsError;
   if asize>0 then
@@ -2145,7 +2145,7 @@ begin
  if OpenPrinter(ADevice,fprinterhandle,nil) then
  begin
   try
-   asize:=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,0);
+   asize:=DocumentProperties(0,fprinterhandle,ADevice,nil,nil,0);
    if asize>0 then
    begin
     aresult:=GlobalAlloc(GHND,asize);

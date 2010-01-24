@@ -20,6 +20,8 @@ unit uinstall;
 
 interface
 
+{$I rpconf.inc}
+
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls,rpmdconsts,rptypes,WinSvc, ExtCtrls,WInSock;
@@ -130,7 +132,7 @@ begin
  exename:='"'+exename+'"'+' /INSTALL ';
  if Length(Trim(EUserName.Text))>0 then
   exename:=exename+Trim(EUserName.Text)+' '+EPassword.Text;
- if (WinExec(Pchar(exename),SW_SHOWNORMAL)<=31) then
+ if (WinExec(PAnsichar(exename),SW_SHOWNORMAL)<=31) then
   Raise Exception.Create(SRpCanNotExecute+' '+exename);
  RefreshServiceTimer;
 end;
@@ -142,7 +144,7 @@ begin
  // Executes repserverservice with parameters
  exename:=ExtractFilePath(Application.ExeName)+'repserverservice.exe';
  exename:='"'+exename+'"'+' /UNINSTALL ';
- if (WinExec(Pchar(exename),SW_SHOWNORMAL)<=31) then
+ if (WinExec(PAnsichar(exename),SW_SHOWNORMAL)<=31) then
   Raise Exception.Create(SRpCanNotExecute+' '+exename);
  RefreshServiceTimer;
 end;
@@ -157,17 +159,24 @@ var
  schandle:SC_HANDLE;
  hservice:SC_HANDLE;
  sstatus:SERVICE_STATUS;
- pbuf:PChar;
+ pbuf:PAnsiChar;
  buffer:array[0..255] of char;
+ nhostname:string;
 begin
  pbuf:=@buffer[0];
  if 0<>gethostname(pbuf,255) then
   RaiseLastOSError;
+ nhostname:=StrPas(pbuf);
  BStart.Enabled:=false;
  BStop.Enabled:=false;
  // Open the service control manager and
  // try to open the service
+{$IFNDEF DELPHI2009UP}
  schandle:=OpenSCManager(pbuf,nil,GENERIC_READ);
+{$ENDIF}
+{$IFDEF DELPHI2009UP}
+ schandle:=OpenSCManager(PWideChar(nhostname),nil,GENERIC_READ);
+{$ENDIF}
  if schandle=0 then
   RaiseLastOsError;
  try
@@ -212,16 +221,23 @@ var
  hservice:SC_HANDLE;
  args:PChar;
  buffer:array[0..255] of char;
- pbuf:PChar;
+ pbuf:PAnsiChar;
+ nhostname:string;
 begin
  pbuf:=@buffer[0];
  if 0<>gethostname(pbuf,255) then
   RaiseLastOSError;
+ nhostname:=StrPas(pbuf);
  BStart.Enabled:=false;
  BStop.Enabled:=false;
  // Open the service control manager and
  // try to open the service
+{$IFNDEF DELPHI2009UP}
  schandle:=OpenSCManager(pbuf,nil,GENERIC_READ);
+{$ENDIF}
+{$IFDEF DELPHI2009UP}
+ schandle:=OpenSCManager(PWideChar(nhostname),nil,GENERIC_READ);
+{$ENDIF}
  if schandle=0 then
   RaiseLastOsError;
  try
@@ -255,16 +271,23 @@ var
  hservice:SC_HANDLE;
  sstatus:SERVICE_STATUS;
  buffer:array[0..255] of char;
- pbuf:PChar;
+ pbuf:PAnsiChar;
+ nhostname:string;
 begin
  pbuf:=@buffer[0];
  if 0<>gethostname(pbuf,255) then
   RaiseLastOSError;
+ nhostname:=StrPas(pbuf);
  BStart.Enabled:=false;
  BStop.Enabled:=false;
  // Open the service control manager and
  // try to open the service
+{$IFNDEF DELPHI2009UP}
  schandle:=OpenSCManager(pbuf,nil,GENERIC_READ);
+{$ENDIF}
+{$IFDEF DELPHI2009UP}
+ schandle:=OpenSCManager(PWideChar(nhostname),nil,GENERIC_READ);
+{$ENDIF}
  if schandle=0 then
   RaiseLastOsError;
  try

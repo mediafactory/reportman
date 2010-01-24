@@ -1,26 +1,23 @@
 object FRpDatasetsVCL: TFRpDatasetsVCL
   Left = 0
   Top = 0
-  Width = 451
-  Height = 304
+  Width = 443
+  Height = 270
   Align = alClient
   TabOrder = 0
-  ExplicitWidth = 483
-  ExplicitHeight = 361
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 451
+    Width = 443
     Height = 105
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 483
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 483
-      Height = 27
+      Width = 443
+      Height = 29
       AutoSize = True
       ButtonHeight = 25
       ButtonWidth = 26
@@ -29,12 +26,12 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       TabOrder = 0
       object ToolButton1: TToolButton
         Left = 0
-        Top = 0
+        Top = 2
         Action = ANew
       end
       object ToolButton2: TToolButton
         Left = 26
-        Top = 0
+        Top = 2
         Width = 23
         Caption = 'ToolButton2'
         ImageIndex = 3
@@ -42,12 +39,12 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       end
       object ToolButton3: TToolButton
         Left = 49
-        Top = 0
+        Top = 2
         Action = ADelete
       end
       object ToolButton5: TToolButton
         Left = 75
-        Top = 0
+        Top = 2
         Width = 8
         Caption = 'ToolButton5'
         ImageIndex = 5
@@ -55,12 +52,12 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       end
       object ToolButton6: TToolButton
         Left = 83
-        Top = 0
+        Top = 2
         Action = ARename
       end
       object ToolButton4: TToolButton
         Left = 109
-        Top = 0
+        Top = 2
         Width = 8
         Caption = 'ToolButton4'
         ImageIndex = 4
@@ -68,7 +65,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       end
       object BParams: TButton
         Left = 117
-        Top = 0
+        Top = 2
         Width = 143
         Height = 25
         Caption = 'Parameters'
@@ -78,9 +75,9 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     end
     object PTop1: TPanel
       Left = 0
-      Top = 27
-      Width = 483
-      Height = 78
+      Top = 29
+      Width = 443
+      Height = 76
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
@@ -88,14 +85,15 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         Left = 161
         Top = 0
         Width = 8
-        Height = 78
+        Height = 76
+        Cursor = crHSplit
         Beveled = True
       end
       object LDatasets: TListBox
         Left = 0
         Top = 0
         Width = 161
-        Height = 78
+        Height = 76
         Align = alLeft
         ItemHeight = 13
         TabOrder = 0
@@ -104,16 +102,15 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object PanelBasic: TPanel
         Left = 169
         Top = 0
-        Width = 282
-        Height = 78
+        Width = 274
+        Height = 76
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitWidth = 314
         object LMasterDataset: TLabel
           Left = 4
           Top = 28
-          Width = 73
+          Width = 70
           Height = 13
           Caption = 'Master dataset'
         end
@@ -130,7 +127,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Width = 161
           Height = 21
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 1
           OnChange = MSQLChange
         end
@@ -140,7 +137,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Width = 161
           Height = 21
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 0
           OnChange = MSQLChange
         end
@@ -168,34 +165,27 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
   object PBottom: TPanel
     Left = 0
     Top = 105
-    Width = 451
-    Height = 199
+    Width = 443
+    Height = 165
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 483
-    ExplicitHeight = 256
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 451
-      Height = 199
+      Width = 443
+      Height = 165
       ActivePage = TabMyBase
       Align = alClient
       TabOrder = 0
-      ExplicitWidth = 483
-      ExplicitHeight = 256
       object TabSQL: TTabSheet
         Caption = 'SQL'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object Splitter2: TSplitter
           Left = 173
           Top = 0
           Width = 8
           Height = 205
+          Cursor = crHSplit
           Beveled = True
         end
         object MSQL: TMemo
@@ -231,14 +221,10 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object TabBDEType: TTabSheet
         Caption = 'BDE Type'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 443
+          Width = 435
           Height = 37
           Align = alTop
           Columns = 2
@@ -247,18 +233,15 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             'Table')
           TabOrder = 0
           OnClick = MSQLChange
-          ExplicitWidth = 475
         end
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 443
-          Height = 134
+          Width = 435
+          Height = 100
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitWidth = 475
-          ExplicitHeight = 191
           object PBDEFilter: TPanel
             Left = 0
             Top = 0
@@ -286,35 +269,31 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object TabBDETable: TTabSheet
         Caption = 'Table and order'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object LBDEIndexFields: TLabel
           Left = 5
           Top = 58
-          Width = 58
+          Width = 56
           Height = 13
           Caption = 'Index Fields'
         end
         object LIndexName: TLabel
           Left = 4
           Top = 32
-          Width = 58
+          Width = 57
           Height = 13
           Caption = 'Index Name'
         end
         object LTable: TLabel
           Left = 4
           Top = 10
-          Width = 26
+          Width = 27
           Height = 13
           Caption = 'Table'
         end
         object LMasterFields: TLabel
           Left = 4
           Top = 82
-          Width = 61
+          Width = 59
           Height = 13
           Caption = 'Master fields'
         end
@@ -330,14 +309,14 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object LFirstRange: TLabel
           Left = 260
           Top = 0
-          Width = 52
+          Width = 49
           Height = 13
           Caption = 'First range'
         end
         object LLastRange: TLabel
           Left = 388
           Top = 0
-          Width = 51
+          Width = 50
           Height = 13
           Caption = 'Last range'
         end
@@ -419,35 +398,31 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object TabMyBase: TTabSheet
         Caption = 'MyBase'
         ImageIndex = 3
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object LIndexFields: TLabel
           Left = 0
           Top = 53
-          Width = 56
+          Width = 53
           Height = 13
           Caption = 'Index fields'
         end
         object LMyBase: TLabel
           Left = 0
           Top = 6
-          Width = 82
+          Width = 83
           Height = 13
           Caption = 'MyBase Filename'
         end
         object LFields: TLabel
           Left = 0
           Top = 28
-          Width = 63
+          Width = 61
           Height = 13
           Caption = 'Field defs file'
         end
         object LMasterfi: TLabel
           Left = 0
           Top = 77
-          Width = 61
+          Width = 59
           Height = 13
           Caption = 'Master fields'
         end
@@ -492,13 +467,10 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Height = 101
           Caption = 'Dataset client side unions'
           TabOrder = 6
-          DesignSize = (
-            449
-            101)
           object LabelUnions: TLabel
             Left = 4
             Top = 20
-            Width = 32
+            Width = 33
             Height = 13
             Caption = 'Unions'
           end
@@ -508,7 +480,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             Width = 181
             Height = 21
             Style = csDropDownList
-            ItemHeight = 0
+            ItemHeight = 13
             TabOrder = 0
           end
           object CheckGroupUnion: TCheckBox

@@ -1,22 +1,22 @@
 object FRpDBTreeVCL: TFRpDBTreeVCL
   Left = 0
   Top = 0
-  Width = 443
-  Height = 277
+  Width = 459
+  Height = 343
   VertScrollBar.Range = 30
   Align = alClient
-  AutoScroll = False
   TabOrder = 0
+  ExplicitWidth = 451
+  ExplicitHeight = 304
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 443
-    Height = 76
+    Width = 459
+    Height = 25
     AutoSize = True
-    ButtonHeight = 26
+    ButtonHeight = 25
     ButtonWidth = 26
     Caption = 'BToolBar'
-    Flat = True
     Images = imalist
     TabOrder = 0
     object ToolButton10: TToolButton
@@ -34,73 +34,48 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
       Top = 0
       Action = ADelete
     end
-    object ToolButton11: TToolButton
+    object EFind: TEdit
       Left = 78
+      Top = 0
+      Width = 93
+      Height = 25
+      TabOrder = 1
+    end
+    object ToolButton11: TToolButton
+      Left = 171
       Top = 0
       Action = AFind
     end
-    object ToolButton3: TToolButton
-      Left = 104
-      Top = 0
-      Width = 24
-      Caption = 'ToolButton3'
-      ImageIndex = 2
-      Style = tbsSeparator
-    end
-    object PFind: TPanel
-      Left = 128
-      Top = 0
-      Width = 100
-      Height = 26
-      BevelOuter = bvNone
-      TabOrder = 1
-      object EFind: TEdit
-        Left = 4
-        Top = 1
-        Width = 93
-        Height = 21
-        TabOrder = 0
-      end
-    end
     object ToolButton4: TToolButton
-      Left = 228
+      Left = 197
       Top = 0
       Action = APreview
     end
     object ToolButton5: TToolButton
-      Left = 254
+      Left = 223
       Top = 0
       Action = AUserParams
     end
     object ToolButton6: TToolButton
-      Left = 280
+      Left = 249
       Top = 0
       Action = APrint
     end
-    object ToolButton7: TToolButton
-      Left = 0
-      Top = 0
-      Width = 22
-      Caption = 'ToolButton7'
-      ImageIndex = 5
-      Wrap = True
-      Style = tbsSeparator
-    end
     object ToolButton8: TToolButton
-      Left = 0
-      Top = 48
+      Left = 275
+      Top = 0
       Action = APrintSetup
     end
     object ToolButton9: TToolButton
-      Left = 26
-      Top = 48
+      Left = 301
+      Top = 0
       Action = AExportFolder
     end
     object BCancel: TButton
-      Left = 52
-      Top = 48
+      Left = 327
+      Top = 0
       Width = 65
-      Height = 26
+      Height = 25
       TabOrder = 0
       Visible = False
       OnClick = BCancelClick
@@ -108,9 +83,9 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
   end
   object ATree: TTreeView
     Left = 0
-    Top = 76
-    Width = 443
-    Height = 201
+    Top = 25
+    Width = 459
+    Height = 318
     Align = alClient
     DragMode = dmAutomatic
     HideSelection = False
@@ -123,6 +98,9 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
     OnDragDrop = ATreeDragDrop
     OnDragOver = ATreeDragOver
     OnEndDrag = ATreeEndDrag
+    ExplicitTop = 26
+    ExplicitWidth = 451
+    ExplicitHeight = 278
   end
   object imalist: TImageList
     Height = 19
@@ -130,7 +108,7 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
     Left = 176
     Top = 76
     Bitmap = {
-      494C01010D000E00040013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010D000E00100013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000004C0000004C0000000100200000000000405A
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -967,7 +945,7 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
     StoreDefs = True
     Left = 120
     Top = 80
-    object DReportsREPORT_NAME: TStringField
+    object DReportsREPORT_NAME: TWideStringField
       FieldName = 'REPORT_NAME'
       Size = 100
     end
@@ -991,7 +969,7 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
     object DReportGroupsGROUP_CODE: TIntegerField
       FieldName = 'GROUP_CODE'
     end
-    object DReportGroupsGROUP_NAME: TStringField
+    object DReportGroupsGROUP_NAME: TWideStringField
       FieldName = 'GROUP_NAME'
       Size = 100
     end
@@ -1022,7 +1000,7 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
     object DReportGroups2GROUP_CODE: TIntegerField
       FieldName = 'GROUP_CODE'
     end
-    object DReportGroups2GROUP_NAME: TStringField
+    object DReportGroups2GROUP_NAME: TWideStringField
       FieldName = 'GROUP_NAME'
       Size = 100
     end

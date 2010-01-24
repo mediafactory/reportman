@@ -1,9 +1,9 @@
 object FMain: TFMain
   Left = 129
   Top = 55
-  Width = 689
-  Height = 496
   Caption = 'Translation utility'
+  ClientHeight = 458
+  ClientWidth = 673
   Color = clBtnFace
   ParentFont = True
   Menu = MainMenu1
@@ -16,15 +16,15 @@ object FMain: TFMain
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 681
+    Width = 673
     Height = 28
     AutoSize = True
     ButtonHeight = 26
     ButtonWidth = 26
     Caption = 'ToolBar1'
-    Flat = True
     Images = ImageList1
     TabOrder = 0
+    ExplicitWidth = 681
     object ToolButton1: TToolButton
       Left = 0
       Top = 0
@@ -89,7 +89,6 @@ object FMain: TFMain
         Width = 133
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 0
         OnClick = ComboOrderClick
         Items.Strings = (
@@ -100,15 +99,18 @@ object FMain: TFMain
   end
   object PParent: TPanel
     Left = 0
-    Top = 28
-    Width = 681
-    Height = 401
+    Top = 26
+    Width = 673
+    Height = 411
     Align = alClient
     BevelOuter = bvNone
     Caption = 'PParent'
     ParentColor = True
     TabOrder = 1
     Visible = False
+    ExplicitTop = 28
+    ExplicitWidth = 681
+    ExplicitHeight = 401
     object Splitter1: TSplitter
       Left = 0
       Top = 274
@@ -132,7 +134,7 @@ object FMain: TFMain
       TabOrder = 0
       WordWrap = False
     end
-    object GridEdit: TTntDBGrid
+    object GridEdit: TDBGrid
       Left = 0
       Top = 0
       Width = 681
@@ -144,7 +146,7 @@ object FMain: TFMain
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
-      TitleFont.Name = 'MS Sans Serif'
+      TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
       OnDrawColumnCell = GridEditDrawColumnCell
       Columns = <
@@ -178,14 +180,15 @@ object FMain: TFMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 429
-    Width = 681
+    Top = 437
+    Width = 673
     Height = 21
     Panels = <
       item
         Width = 50
       end>
-    SimplePanel = False
+    ExplicitTop = 429
+    ExplicitWidth = 681
   end
   object DTexts: TClientDataSet
     Aggregates = <>
@@ -419,7 +422,7 @@ object FMain: TFMain
     Left = 240
     Top = 104
     Bitmap = {
-      494C010108000900040013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010108000900080013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000004C000000390000000100200000000000B043
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

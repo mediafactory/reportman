@@ -11,26 +11,47 @@ unit reportman_TLB;
 // manual modifications will be lost.                                         
 // ************************************************************************ //
 
-// $Rev: 8291 $
-// File generated on 23/05/2009 10:42:24 from Type Library described below.
+// $Rev: 17244 $
+// File generated on 09/01/2010 14:44:57 from Type Library described below.
 
 // ************************************************************************  //
-// Type Lib: C:\prog\toni\cvsroot\reportman\reportman\activex\reportman.tlb (1)
+// Type Lib: reportman.tlb (1)
 // LIBID: {D4D26F6B-6564-44F4-A913-03C91CE37740}
 // LCID: 0
 // Helpfile: 
 // HelpString: Report Manager ActiveX Library
 // DepndLst: 
-//   (1) v2.0 stdole, (C:\WINDOWS\system32\stdole2.tlb)
+//   (1) v2.0 stdole, (C:\Windows\system32\stdole2.tlb)
+// Errors:
+//   Error creating palette bitmap of (TReportManX) : No Server registered for this CoClass
+//   Error creating palette bitmap of (TReportReport) : No Server registered for this CoClass
+//   Error creating palette bitmap of (TReportParameters) : No Server registered for this CoClass
+//   Error creating palette bitmap of (TReportParam) : No Server registered for this CoClass
+//   Error creating palette bitmap of (TReportmanXAServer) : No Server registered for this CoClass
+//   Error creating palette bitmap of (TPreviewControl) : No Server registered for this CoClass
+// Cmdline:
+//   "c:\Program Files (x86)\Embarcadero\RAD Studio\7.0\bin\tlibimp.exe"  -P reportman.tlb
 // ************************************************************************ //
+// *************************************************************************//
+// NOTE:                                                                      
+// Items guarded by $IFDEF_LIVE_SERVER_AT_DESIGN_TIME are used by properties  
+// which return objects that may need to be explicitly created via a function 
+// call prior to any access via the property. These items have been disabled  
+// in order to prevent accidental use from within the object inspector. You   
+// may enable them by defining LIVE_SERVER_AT_DESIGN_TIME or by selectively   
+// removing them from the $IFDEF blocks. However, such items must still be    
+// programmatically created via a method of the appropriate CoClass before    
+// they can be used.                                                          
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers. 
 {$WARN SYMBOL_PLATFORM OFF}
 {$WRITEABLECONST ON}
 {$VARPROPSETTER ON}
+{$ALIGN 4}
 interface
 
-uses Windows, ActiveX, Classes, Graphics, OleCtrls, StdVCL, Variants;
+uses Windows, ActiveX, Classes, Graphics, OleCtrls, OleServer, StdVCL, Variants;
   
+
 
 // *********************************************************************//
 // GUIDS declared in the TypeLibrary. Following prefixes are used:        
@@ -695,20 +716,6 @@ type
     property PrintersAvailable: WideString index 44 read GetWideStringProp;
   published
     property Anchors;
-    property  TabStop;
-    property  Align;
-    property  DragCursor;
-    property  DragMode;
-    property  ParentShowHint;
-    property  PopupMenu;
-    property  ShowHint;
-    property  TabOrder;
-    property  OnDragDrop;
-    property  OnDragOver;
-    property  OnEndDrag;
-    property  OnEnter;
-    property  OnExit;
-    property  OnStartDrag;
     property filename: WideString index 12 read GetWideStringProp write SetWideStringProp stored False;
     property Preview: WordBool index 13 read GetWordBoolProp write SetWordBoolProp stored False;
     property ShowProgress: WordBool index 14 read GetWordBoolProp write SetWordBoolProp stored False;
@@ -734,6 +741,77 @@ type
     class function CreateRemote(const MachineName: string): IReportReport;
   end;
 
+
+// *********************************************************************//
+// OLE Server Proxy class declaration
+// Server Object    : TReportReport
+// Help String      : ReportReport Object
+// Default Interface: IReportReport
+// Def. Intf. DISP? : No
+// Event   Interface: 
+// TypeFlags        : (2) CanCreate
+// *********************************************************************//
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  TReportReportProperties= class;
+{$ENDIF}
+  TReportReport = class(TOleServer)
+  private
+    FIntf: IReportReport;
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+    FProps: TReportReportProperties;
+    function GetServerProperties: TReportReportProperties;
+{$ENDIF}
+    function GetDefaultInterface: IReportReport;
+  protected
+    procedure InitServerData; override;
+    function Get_Params: ReportParameters;
+    function Get_VCLReport: PChar;
+    function Get_AutoResizeColumns: WordBool;
+    procedure Set_AutoResizeColumns(Value: WordBool);
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor  Destroy; override;
+    procedure Connect; override;
+    procedure ConnectTo(svrIntf: IReportReport);
+    procedure Disconnect; override;
+    procedure AddColumn(Width: Integer; const Expression: WideString; const ExpFormat: WideString; 
+                        const Caption: WideString; const CaptionFormat: WideString; 
+                        const SumaryExpression: WideString; const SumaryFormat: WideString);
+    property DefaultInterface: IReportReport read GetDefaultInterface;
+    property Params: ReportParameters read Get_Params;
+    property VCLReport: PChar read Get_VCLReport;
+    property AutoResizeColumns: WordBool read Get_AutoResizeColumns write Set_AutoResizeColumns;
+  published
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+    property Server: TReportReportProperties read GetServerProperties;
+{$ENDIF}
+  end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+// *********************************************************************//
+// OLE Server Properties Proxy Class
+// Server Object    : TReportReport
+// (This object is used by the IDE's Property Inspector to allow editing
+//  of the properties of this server)
+// *********************************************************************//
+ TReportReportProperties = class(TPersistent)
+  private
+    FServer:    TReportReport;
+    function    GetDefaultInterface: IReportReport;
+    constructor Create(AServer: TReportReport);
+  protected
+    function Get_Params: ReportParameters;
+    function Get_VCLReport: PChar;
+    function Get_AutoResizeColumns: WordBool;
+    procedure Set_AutoResizeColumns(Value: WordBool);
+  public
+    property DefaultInterface: IReportReport read GetDefaultInterface;
+  published
+    property AutoResizeColumns: WordBool read Get_AutoResizeColumns write Set_AutoResizeColumns;
+  end;
+{$ENDIF}
+
+
 // *********************************************************************//
 // The Class CoReportParameters provides a Create and CreateRemote method to          
 // create instances of the default interface IReportParameters exposed by              
@@ -745,6 +823,69 @@ type
     class function Create: IReportParameters;
     class function CreateRemote(const MachineName: string): IReportParameters;
   end;
+
+
+// *********************************************************************//
+// OLE Server Proxy class declaration
+// Server Object    : TReportParameters
+// Help String      : ReportParameters Object
+// Default Interface: IReportParameters
+// Def. Intf. DISP? : No
+// Event   Interface: 
+// TypeFlags        : (2) CanCreate
+// *********************************************************************//
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  TReportParametersProperties= class;
+{$ENDIF}
+  TReportParameters = class(TOleServer)
+  private
+    FIntf: IReportParameters;
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+    FProps: TReportParametersProperties;
+    function GetServerProperties: TReportParametersProperties;
+{$ENDIF}
+    function GetDefaultInterface: IReportParameters;
+  protected
+    procedure InitServerData; override;
+    function Get_Count: Integer;
+    function Get_Items(Index: Integer): ReportParam;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor  Destroy; override;
+    procedure Connect; override;
+    procedure ConnectTo(svrIntf: IReportParameters);
+    procedure Disconnect; override;
+    function ParamExists(const paramname: WideString): WordBool;
+    property DefaultInterface: IReportParameters read GetDefaultInterface;
+    property Count: Integer read Get_Count;
+    property Items[Index: Integer]: ReportParam read Get_Items;
+  published
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+    property Server: TReportParametersProperties read GetServerProperties;
+{$ENDIF}
+  end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+// *********************************************************************//
+// OLE Server Properties Proxy Class
+// Server Object    : TReportParameters
+// (This object is used by the IDE's Property Inspector to allow editing
+//  of the properties of this server)
+// *********************************************************************//
+ TReportParametersProperties = class(TPersistent)
+  private
+    FServer:    TReportParameters;
+    function    GetDefaultInterface: IReportParameters;
+    constructor Create(AServer: TReportParameters);
+  protected
+    function Get_Count: Integer;
+    function Get_Items(Index: Integer): ReportParam;
+  public
+    property DefaultInterface: IReportParameters read GetDefaultInterface;
+  published
+  end;
+{$ENDIF}
+
 
 // *********************************************************************//
 // The Class CoReportParam provides a Create and CreateRemote method to          
@@ -758,6 +899,91 @@ type
     class function CreateRemote(const MachineName: string): IReportParam;
   end;
 
+
+// *********************************************************************//
+// OLE Server Proxy class declaration
+// Server Object    : TReportParam
+// Help String      : ReportParam Object
+// Default Interface: IReportParam
+// Def. Intf. DISP? : No
+// Event   Interface: 
+// TypeFlags        : (2) CanCreate
+// *********************************************************************//
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  TReportParamProperties= class;
+{$ENDIF}
+  TReportParam = class(TOleServer)
+  private
+    FIntf: IReportParam;
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+    FProps: TReportParamProperties;
+    function GetServerProperties: TReportParamProperties;
+{$ENDIF}
+    function GetDefaultInterface: IReportParam;
+  protected
+    procedure InitServerData; override;
+    function Get_Name: WideString;
+    procedure Set_Name(const Value: WideString);
+    function Get_Description: WideString;
+    procedure Set_Description(const Value: WideString);
+    function Get_Visible: WordBool;
+    procedure Set_Visible(Value: WordBool);
+    function Get_ParamType: TxParamType;
+    procedure Set_ParamType(Value: TxParamType);
+    function Get_Value: OleVariant;
+    procedure Set_Value(Value: OleVariant);
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor  Destroy; override;
+    procedure Connect; override;
+    procedure ConnectTo(svrIntf: IReportParam);
+    procedure Disconnect; override;
+    property DefaultInterface: IReportParam read GetDefaultInterface;
+    property Value: OleVariant read Get_Value write Set_Value;
+    property Name: WideString read Get_Name write Set_Name;
+    property Description: WideString read Get_Description write Set_Description;
+    property Visible: WordBool read Get_Visible write Set_Visible;
+    property ParamType: TxParamType read Get_ParamType write Set_ParamType;
+  published
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+    property Server: TReportParamProperties read GetServerProperties;
+{$ENDIF}
+  end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+// *********************************************************************//
+// OLE Server Properties Proxy Class
+// Server Object    : TReportParam
+// (This object is used by the IDE's Property Inspector to allow editing
+//  of the properties of this server)
+// *********************************************************************//
+ TReportParamProperties = class(TPersistent)
+  private
+    FServer:    TReportParam;
+    function    GetDefaultInterface: IReportParam;
+    constructor Create(AServer: TReportParam);
+  protected
+    function Get_Name: WideString;
+    procedure Set_Name(const Value: WideString);
+    function Get_Description: WideString;
+    procedure Set_Description(const Value: WideString);
+    function Get_Visible: WordBool;
+    procedure Set_Visible(Value: WordBool);
+    function Get_ParamType: TxParamType;
+    procedure Set_ParamType(Value: TxParamType);
+    function Get_Value: OleVariant;
+    procedure Set_Value(Value: OleVariant);
+  public
+    property DefaultInterface: IReportParam read GetDefaultInterface;
+  published
+    property Name: WideString read Get_Name write Set_Name;
+    property Description: WideString read Get_Description write Set_Description;
+    property Visible: WordBool read Get_Visible write Set_Visible;
+    property ParamType: TxParamType read Get_ParamType write Set_ParamType;
+  end;
+{$ENDIF}
+
+
 // *********************************************************************//
 // The Class CoReportmanXAServer provides a Create and CreateRemote method to          
 // create instances of the default interface IReportmanXAServer exposed by              
@@ -769,6 +995,68 @@ type
     class function Create: IReportmanXAServer;
     class function CreateRemote(const MachineName: string): IReportmanXAServer;
   end;
+
+
+// *********************************************************************//
+// OLE Server Proxy class declaration
+// Server Object    : TReportmanXAServer
+// Help String      : ReportmanXAServer Object
+// Default Interface: IReportmanXAServer
+// Def. Intf. DISP? : No
+// Event   Interface: 
+// TypeFlags        : (2) CanCreate
+// *********************************************************************//
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  TReportmanXAServerProperties= class;
+{$ENDIF}
+  TReportmanXAServer = class(TOleServer)
+  private
+    FIntf: IReportmanXAServer;
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+    FProps: TReportmanXAServerProperties;
+    function GetServerProperties: TReportmanXAServerProperties;
+{$ENDIF}
+    function GetDefaultInterface: IReportmanXAServer;
+  protected
+    procedure InitServerData; override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor  Destroy; override;
+    procedure Connect; override;
+    procedure ConnectTo(svrIntf: IReportmanXAServer);
+    procedure Disconnect; override;
+    procedure GetPDF(const Report: IReportReport; compressed: WordBool);
+    procedure GetCustomText(const Report: IReportReport);
+    procedure GetText(const Report: IReportReport);
+    procedure GetCSV(const Report: IReportReport);
+    procedure GetMetafile(const Report: IReportReport);
+    procedure GetCSV2(const Report: IReportReport; const separator: WideString);
+    property DefaultInterface: IReportmanXAServer read GetDefaultInterface;
+  published
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+    property Server: TReportmanXAServerProperties read GetServerProperties;
+{$ENDIF}
+  end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+// *********************************************************************//
+// OLE Server Properties Proxy Class
+// Server Object    : TReportmanXAServer
+// (This object is used by the IDE's Property Inspector to allow editing
+//  of the properties of this server)
+// *********************************************************************//
+ TReportmanXAServerProperties = class(TPersistent)
+  private
+    FServer:    TReportmanXAServer;
+    function    GetDefaultInterface: IReportmanXAServer;
+    constructor Create(AServer: TReportmanXAServer);
+  protected
+  public
+    property DefaultInterface: IReportmanXAServer read GetDefaultInterface;
+  published
+  end;
+{$ENDIF}
+
 
 
 // *********************************************************************//
@@ -824,21 +1112,6 @@ type
     property Enabled: WordBool index -514 read GetWordBoolProp write SetWordBoolProp;
   published
     property Anchors;
-    property  ParentColor;
-    property  ParentFont;
-    property  Align;
-    property  DragCursor;
-    property  DragMode;
-    property  ParentShowHint;
-    property  PopupMenu;
-    property  ShowHint;
-    property  TabOrder;
-    property  OnDragDrop;
-    property  OnDragOver;
-    property  OnEndDrag;
-    property  OnEnter;
-    property  OnExit;
-    property  OnStartDrag;
     property AutoScroll: WordBool index 2 read GetWordBoolProp write SetWordBoolProp stored False;
     property AutoSize: WordBool index 3 read GetWordBoolProp write SetWordBoolProp stored False;
     property AxBorderStyle: TOleEnum index 4 read GetTOleEnumProp write SetTOleEnumProp stored False;
@@ -886,7 +1159,7 @@ const
     EventIID: '';
     EventCount: 0;
     EventDispIDs: nil;
-    LicenseKey: nil (*HR:$00000000*);
+    LicenseKey: nil (*HR:$80040154*);
     Flags: $00000008;
     Version: 401);
 begin
@@ -1096,6 +1369,137 @@ begin
   Result := CreateRemoteComObject(MachineName, CLASS_ReportReport) as IReportReport;
 end;
 
+procedure TReportReport.InitServerData;
+const
+  CServerData: TServerData = (
+    ClassID:   '{E30FD4FC-F47A-4932-A3E6-6694550588F3}';
+    IntfIID:   '{2FCB34BE-8DD4-4567-A771-9965C2FD3A04}';
+    EventIID:  '';
+    LicenseKey: nil;
+    Version: 500);
+begin
+  ServerData := @CServerData;
+end;
+
+procedure TReportReport.Connect;
+var
+  punk: IUnknown;
+begin
+  if FIntf = nil then
+  begin
+    punk := GetServer;
+    Fintf:= punk as IReportReport;
+  end;
+end;
+
+procedure TReportReport.ConnectTo(svrIntf: IReportReport);
+begin
+  Disconnect;
+  FIntf := svrIntf;
+end;
+
+procedure TReportReport.DisConnect;
+begin
+  if Fintf <> nil then
+  begin
+    FIntf := nil;
+  end;
+end;
+
+function TReportReport.GetDefaultInterface: IReportReport;
+begin
+  if FIntf = nil then
+    Connect;
+  Assert(FIntf <> nil, 'DefaultInterface is NULL. Component is not connected to Server. You must call "Connect" or "ConnectTo" before this operation');
+  Result := FIntf;
+end;
+
+constructor TReportReport.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  FProps := TReportReportProperties.Create(Self);
+{$ENDIF}
+end;
+
+destructor TReportReport.Destroy;
+begin
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  FProps.Free;
+{$ENDIF}
+  inherited Destroy;
+end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+function TReportReport.GetServerProperties: TReportReportProperties;
+begin
+  Result := FProps;
+end;
+{$ENDIF}
+
+function TReportReport.Get_Params: ReportParameters;
+begin
+    Result := DefaultInterface.Params;
+end;
+
+function TReportReport.Get_VCLReport: PChar;
+begin
+    Result := DefaultInterface.VCLReport;
+end;
+
+function TReportReport.Get_AutoResizeColumns: WordBool;
+begin
+    Result := DefaultInterface.AutoResizeColumns;
+end;
+
+procedure TReportReport.Set_AutoResizeColumns(Value: WordBool);
+begin
+  DefaultInterface.Set_AutoResizeColumns(Value);
+end;
+
+procedure TReportReport.AddColumn(Width: Integer; const Expression: WideString; 
+                                  const ExpFormat: WideString; const Caption: WideString; 
+                                  const CaptionFormat: WideString; 
+                                  const SumaryExpression: WideString; const SumaryFormat: WideString);
+begin
+  DefaultInterface.AddColumn(Width, Expression, ExpFormat, Caption, CaptionFormat, 
+                             SumaryExpression, SumaryFormat);
+end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+constructor TReportReportProperties.Create(AServer: TReportReport);
+begin
+  inherited Create;
+  FServer := AServer;
+end;
+
+function TReportReportProperties.GetDefaultInterface: IReportReport;
+begin
+  Result := FServer.DefaultInterface;
+end;
+
+function TReportReportProperties.Get_Params: ReportParameters;
+begin
+    Result := DefaultInterface.Params;
+end;
+
+function TReportReportProperties.Get_VCLReport: PChar;
+begin
+    Result := DefaultInterface.VCLReport;
+end;
+
+function TReportReportProperties.Get_AutoResizeColumns: WordBool;
+begin
+    Result := DefaultInterface.AutoResizeColumns;
+end;
+
+procedure TReportReportProperties.Set_AutoResizeColumns(Value: WordBool);
+begin
+  DefaultInterface.Set_AutoResizeColumns(Value);
+end;
+
+{$ENDIF}
+
 class function CoReportParameters.Create: IReportParameters;
 begin
   Result := CreateComObject(CLASS_ReportParameters) as IReportParameters;
@@ -1105,6 +1509,113 @@ class function CoReportParameters.CreateRemote(const MachineName: string): IRepo
 begin
   Result := CreateRemoteComObject(MachineName, CLASS_ReportParameters) as IReportParameters;
 end;
+
+procedure TReportParameters.InitServerData;
+const
+  CServerData: TServerData = (
+    ClassID:   '{F79CF82C-C2AD-46CC-ABEA-084016CFE58A}';
+    IntfIID:   '{A5F6E90E-DFE7-49DA-AA38-C1A41C995B6B}';
+    EventIID:  '';
+    LicenseKey: nil;
+    Version: 500);
+begin
+  ServerData := @CServerData;
+end;
+
+procedure TReportParameters.Connect;
+var
+  punk: IUnknown;
+begin
+  if FIntf = nil then
+  begin
+    punk := GetServer;
+    Fintf:= punk as IReportParameters;
+  end;
+end;
+
+procedure TReportParameters.ConnectTo(svrIntf: IReportParameters);
+begin
+  Disconnect;
+  FIntf := svrIntf;
+end;
+
+procedure TReportParameters.DisConnect;
+begin
+  if Fintf <> nil then
+  begin
+    FIntf := nil;
+  end;
+end;
+
+function TReportParameters.GetDefaultInterface: IReportParameters;
+begin
+  if FIntf = nil then
+    Connect;
+  Assert(FIntf <> nil, 'DefaultInterface is NULL. Component is not connected to Server. You must call "Connect" or "ConnectTo" before this operation');
+  Result := FIntf;
+end;
+
+constructor TReportParameters.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  FProps := TReportParametersProperties.Create(Self);
+{$ENDIF}
+end;
+
+destructor TReportParameters.Destroy;
+begin
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  FProps.Free;
+{$ENDIF}
+  inherited Destroy;
+end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+function TReportParameters.GetServerProperties: TReportParametersProperties;
+begin
+  Result := FProps;
+end;
+{$ENDIF}
+
+function TReportParameters.Get_Count: Integer;
+begin
+    Result := DefaultInterface.Count;
+end;
+
+function TReportParameters.Get_Items(Index: Integer): ReportParam;
+begin
+    Result := DefaultInterface.Items[Index];
+end;
+
+function TReportParameters.ParamExists(const paramname: WideString): WordBool;
+begin
+  Result := DefaultInterface.ParamExists(paramname);
+end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+constructor TReportParametersProperties.Create(AServer: TReportParameters);
+begin
+  inherited Create;
+  FServer := AServer;
+end;
+
+function TReportParametersProperties.GetDefaultInterface: IReportParameters;
+begin
+  Result := FServer.DefaultInterface;
+end;
+
+function TReportParametersProperties.Get_Count: Integer;
+begin
+    Result := DefaultInterface.Count;
+end;
+
+function TReportParametersProperties.Get_Items(Index: Integer): ReportParam;
+begin
+    Result := DefaultInterface.Items[Index];
+end;
+
+{$ENDIF}
 
 class function CoReportParam.Create: IReportParam;
 begin
@@ -1116,6 +1627,218 @@ begin
   Result := CreateRemoteComObject(MachineName, CLASS_ReportParam) as IReportParam;
 end;
 
+procedure TReportParam.InitServerData;
+const
+  CServerData: TServerData = (
+    ClassID:   '{E96B253E-143E-40E8-BFDA-366C5F112DAE}';
+    IntfIID:   '{F1634F9E-DE5A-411E-9A9E-3A46707A7ABB}';
+    EventIID:  '';
+    LicenseKey: nil;
+    Version: 500);
+begin
+  ServerData := @CServerData;
+end;
+
+procedure TReportParam.Connect;
+var
+  punk: IUnknown;
+begin
+  if FIntf = nil then
+  begin
+    punk := GetServer;
+    Fintf:= punk as IReportParam;
+  end;
+end;
+
+procedure TReportParam.ConnectTo(svrIntf: IReportParam);
+begin
+  Disconnect;
+  FIntf := svrIntf;
+end;
+
+procedure TReportParam.DisConnect;
+begin
+  if Fintf <> nil then
+  begin
+    FIntf := nil;
+  end;
+end;
+
+function TReportParam.GetDefaultInterface: IReportParam;
+begin
+  if FIntf = nil then
+    Connect;
+  Assert(FIntf <> nil, 'DefaultInterface is NULL. Component is not connected to Server. You must call "Connect" or "ConnectTo" before this operation');
+  Result := FIntf;
+end;
+
+constructor TReportParam.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  FProps := TReportParamProperties.Create(Self);
+{$ENDIF}
+end;
+
+destructor TReportParam.Destroy;
+begin
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  FProps.Free;
+{$ENDIF}
+  inherited Destroy;
+end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+function TReportParam.GetServerProperties: TReportParamProperties;
+begin
+  Result := FProps;
+end;
+{$ENDIF}
+
+function TReportParam.Get_Name: WideString;
+begin
+    Result := DefaultInterface.Name;
+end;
+
+procedure TReportParam.Set_Name(const Value: WideString);
+  { Warning: The property Name has a setter and a getter whose
+    types do not match. Delphi was unable to generate a property of
+    this sort and so is using a Variant as a passthrough. }
+var
+  InterfaceVariant: OleVariant;
+begin
+  InterfaceVariant := DefaultInterface;
+  InterfaceVariant.Name := Value;
+end;
+
+function TReportParam.Get_Description: WideString;
+begin
+    Result := DefaultInterface.Description;
+end;
+
+procedure TReportParam.Set_Description(const Value: WideString);
+  { Warning: The property Description has a setter and a getter whose
+    types do not match. Delphi was unable to generate a property of
+    this sort and so is using a Variant as a passthrough. }
+var
+  InterfaceVariant: OleVariant;
+begin
+  InterfaceVariant := DefaultInterface;
+  InterfaceVariant.Description := Value;
+end;
+
+function TReportParam.Get_Visible: WordBool;
+begin
+    Result := DefaultInterface.Visible;
+end;
+
+procedure TReportParam.Set_Visible(Value: WordBool);
+begin
+  DefaultInterface.Set_Visible(Value);
+end;
+
+function TReportParam.Get_ParamType: TxParamType;
+begin
+    Result := DefaultInterface.ParamType;
+end;
+
+procedure TReportParam.Set_ParamType(Value: TxParamType);
+begin
+  DefaultInterface.Set_ParamType(Value);
+end;
+
+function TReportParam.Get_Value: OleVariant;
+var
+  InterfaceVariant : OleVariant;
+begin
+  InterfaceVariant := DefaultInterface;
+  Result := InterfaceVariant.Value;
+end;
+
+procedure TReportParam.Set_Value(Value: OleVariant);
+begin
+  DefaultInterface.Set_Value(Value);
+end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+constructor TReportParamProperties.Create(AServer: TReportParam);
+begin
+  inherited Create;
+  FServer := AServer;
+end;
+
+function TReportParamProperties.GetDefaultInterface: IReportParam;
+begin
+  Result := FServer.DefaultInterface;
+end;
+
+function TReportParamProperties.Get_Name: WideString;
+begin
+    Result := DefaultInterface.Name;
+end;
+
+procedure TReportParamProperties.Set_Name(const Value: WideString);
+  { Warning: The property Name has a setter and a getter whose
+    types do not match. Delphi was unable to generate a property of
+    this sort and so is using a Variant as a passthrough. }
+var
+  InterfaceVariant: OleVariant;
+begin
+  InterfaceVariant := DefaultInterface;
+  InterfaceVariant.Name := Value;
+end;
+
+function TReportParamProperties.Get_Description: WideString;
+begin
+    Result := DefaultInterface.Description;
+end;
+
+procedure TReportParamProperties.Set_Description(const Value: WideString);
+  { Warning: The property Description has a setter and a getter whose
+    types do not match. Delphi was unable to generate a property of
+    this sort and so is using a Variant as a passthrough. }
+var
+  InterfaceVariant: OleVariant;
+begin
+  InterfaceVariant := DefaultInterface;
+  InterfaceVariant.Description := Value;
+end;
+
+function TReportParamProperties.Get_Visible: WordBool;
+begin
+    Result := DefaultInterface.Visible;
+end;
+
+procedure TReportParamProperties.Set_Visible(Value: WordBool);
+begin
+  DefaultInterface.Set_Visible(Value);
+end;
+
+function TReportParamProperties.Get_ParamType: TxParamType;
+begin
+    Result := DefaultInterface.ParamType;
+end;
+
+procedure TReportParamProperties.Set_ParamType(Value: TxParamType);
+begin
+  DefaultInterface.Set_ParamType(Value);
+end;
+
+function TReportParamProperties.Get_Value: OleVariant;
+var
+  InterfaceVariant : OleVariant;
+begin
+  InterfaceVariant := DefaultInterface;
+  Result := InterfaceVariant.Value;
+end;
+
+procedure TReportParamProperties.Set_Value(Value: OleVariant);
+begin
+  DefaultInterface.Set_Value(Value);
+end;
+
+{$ENDIF}
+
 class function CoReportmanXAServer.Create: IReportmanXAServer;
 begin
   Result := CreateComObject(CLASS_ReportmanXAServer) as IReportmanXAServer;
@@ -1125,6 +1848,118 @@ class function CoReportmanXAServer.CreateRemote(const MachineName: string): IRep
 begin
   Result := CreateRemoteComObject(MachineName, CLASS_ReportmanXAServer) as IReportmanXAServer;
 end;
+
+procedure TReportmanXAServer.InitServerData;
+const
+  CServerData: TServerData = (
+    ClassID:   '{FD3BE5E5-CBE4-4C29-A733-8CB842999075}';
+    IntfIID:   '{F3A6B88C-D629-402E-BC62-BAB0E2EE39AF}';
+    EventIID:  '';
+    LicenseKey: nil;
+    Version: 500);
+begin
+  ServerData := @CServerData;
+end;
+
+procedure TReportmanXAServer.Connect;
+var
+  punk: IUnknown;
+begin
+  if FIntf = nil then
+  begin
+    punk := GetServer;
+    Fintf:= punk as IReportmanXAServer;
+  end;
+end;
+
+procedure TReportmanXAServer.ConnectTo(svrIntf: IReportmanXAServer);
+begin
+  Disconnect;
+  FIntf := svrIntf;
+end;
+
+procedure TReportmanXAServer.DisConnect;
+begin
+  if Fintf <> nil then
+  begin
+    FIntf := nil;
+  end;
+end;
+
+function TReportmanXAServer.GetDefaultInterface: IReportmanXAServer;
+begin
+  if FIntf = nil then
+    Connect;
+  Assert(FIntf <> nil, 'DefaultInterface is NULL. Component is not connected to Server. You must call "Connect" or "ConnectTo" before this operation');
+  Result := FIntf;
+end;
+
+constructor TReportmanXAServer.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  FProps := TReportmanXAServerProperties.Create(Self);
+{$ENDIF}
+end;
+
+destructor TReportmanXAServer.Destroy;
+begin
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+  FProps.Free;
+{$ENDIF}
+  inherited Destroy;
+end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+function TReportmanXAServer.GetServerProperties: TReportmanXAServerProperties;
+begin
+  Result := FProps;
+end;
+{$ENDIF}
+
+procedure TReportmanXAServer.GetPDF(const Report: IReportReport; compressed: WordBool);
+begin
+  DefaultInterface.GetPDF(Report, compressed);
+end;
+
+procedure TReportmanXAServer.GetCustomText(const Report: IReportReport);
+begin
+  DefaultInterface.GetCustomText(Report);
+end;
+
+procedure TReportmanXAServer.GetText(const Report: IReportReport);
+begin
+  DefaultInterface.GetText(Report);
+end;
+
+procedure TReportmanXAServer.GetCSV(const Report: IReportReport);
+begin
+  DefaultInterface.GetCSV(Report);
+end;
+
+procedure TReportmanXAServer.GetMetafile(const Report: IReportReport);
+begin
+  DefaultInterface.GetMetafile(Report);
+end;
+
+procedure TReportmanXAServer.GetCSV2(const Report: IReportReport; const separator: WideString);
+begin
+  DefaultInterface.GetCSV2(Report, separator);
+end;
+
+{$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
+constructor TReportmanXAServerProperties.Create(AServer: TReportmanXAServer);
+begin
+  inherited Create;
+  FServer := AServer;
+end;
+
+function TReportmanXAServerProperties.GetDefaultInterface: IReportmanXAServer;
+begin
+  Result := FServer.DefaultInterface;
+end;
+
+{$ENDIF}
 
 procedure TPreviewControl.InitControlData;
 const
@@ -1138,7 +1973,7 @@ const
     EventIID: '{7364E2EA-8EEC-4673-9059-3B078C388717}';
     EventCount: 10;
     EventDispIDs: @CEventDispIDs;
-    LicenseKey: nil (*HR:$00000000*);
+    LicenseKey: nil (*HR:$80040154*);
     Flags: $0000001D;
     Version: 401;
     FontCount: 1;
@@ -1215,6 +2050,7 @@ end;
 procedure Register;
 begin
   RegisterComponents(dtlOcxPage, [TReportManX, TPreviewControl]);
+  RegisterComponents(dtlServerPage, [TReportReport, TReportParameters, TReportParam, TReportmanXAServer]);
 end;
 
 end.

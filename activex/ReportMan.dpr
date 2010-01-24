@@ -2,18 +2,15 @@ library ReportMan;
 
 {$I rpconf.inc}
 
-{%File 'ReportmanXAServer.asp'}
+
 
 uses
   ComServ,
   DBPwdlg,
-  Reportman_TLB in 'Reportman_TLB.pas',
+  reportman_TLB in 'reportman_TLB.pas',
   rpaxreportimp in 'rpaxreportimp.pas' {ReportManX: CoClass},
   aboutrpax in 'aboutrpax.pas' {ReportManXAbout},
   rpdllutil in '..\rpdllutil.pas',
-{$IFDEF USEVARIANTS}
-  MidasLib,
-{$ENDIF}
   rpdllutilqt in '..\rpdllutilqt.pas',
   rpactivexreport in '..\rpactivexreport.pas',
   rpaxreportreport in 'rpaxreportreport.pas' {ReportReport: CoClass},

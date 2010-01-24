@@ -586,6 +586,9 @@ begin
  index:=params.IndexOfName('MetaDataAssemblyLoader');
  if index>=0 then
   params.Delete(index);
+ index:=params.IndexOfName('IsolationLevel');
+ if index>=0 then
+  params.Delete(index);
 
  // End D2007 DBX4 params
  index:=params.IndexOfName('WaitOnLocks');

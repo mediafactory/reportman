@@ -262,7 +262,7 @@ begin
     try
      pdevmode:=AllocMem(sizeof(devmode));
      try
-      asize:=DocumentProperties(0,fprinterhandle,Device,pdevmode^,pdevmode^,0);
+      asize:=DocumentProperties(0,fprinterhandle,Device,nil,nil,0);
       if asize>0 then
       begin
        FreeMem(pdevmode);
@@ -379,7 +379,21 @@ begin
          end;
         end;
        end;
+      end
+      else
+      begin
+       try
+        RaiseLastOSError;
+       except
+        on E:Exception do
+        begin
+         ShowMessage(E.Message);
+        end;
+
+       end;
+
       end;
+
       // Se obtienen las posibles bandejas de entrada
       ComboSource.Items.Clear;
       numbins:=DeviceCapabilities(Device,Port,DC_BINS,nil,nil);

@@ -33,7 +33,6 @@ uses Classes, SysUtils,rpmdconsts,
  rptypes;
 
 type
-
   TRpParam=class(TCollectionitem)
    private
     FName:string;
@@ -257,6 +256,9 @@ procedure TRpParam.Assign(Source:TPersistent);
 begin
  if (Source is TRpParam) then
  begin
+  EvaluatedParam := TRpParam(Source).EvaluatedParam;
+  EvaluatedString := TRpParam(Source).EvaluatedString;
+
   FName:=TRpParam(Source).FName;
   FVisible:=TRpParam(Source).FVisible;
   FNeverVisible:=TRpParam(Source).FNeverVisible;
@@ -359,7 +361,7 @@ begin
   avalue:=rpeval.EvaluateExpression(aexpression);
   EvaluatedParam:=true;
   EvaluatedString:=aexpression;
-  ParamType:=VariantTypeToParamType(avalue);
+  FParamType:=VariantTypeToParamType(avalue);
   Value:=avalue;
  except
   on E:Exception do
@@ -370,6 +372,8 @@ begin
  end;
 
 end;
+
+
 
 
 function TRpParam.GetListValue:Variant;

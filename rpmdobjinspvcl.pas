@@ -75,8 +75,8 @@ type
     procedure ChangeSizeChange(Sender:TObject);
     function GetCompItem:TRpSizeInterface;
     function GetCurrentPanel:TRpPanelObj;
-    function GetCommonClassName:ShortString;
-    function FindCommonClass(baseclass,newclass:ShortString):ShortString;
+    function GetCommonClassName:String;
+    function FindCommonClass(baseclass,newclass:String):String;
   public
     { Public declarations }
     fchangesize:TRpSizeModifier;
@@ -835,7 +835,7 @@ begin
  end;
 end;
 
-function TFRpObjInspVCL.FindCommonClass(baseclass,newclass:ShortString):ShortString;
+function TFRpObjInspVCL.FindCommonClass(baseclass,newclass:String):String;
 var
  indexnew,indexbase,i,j:integer;
  aorigin,adestination:TStrings;
@@ -870,10 +870,10 @@ begin
  end;
 end;
 
-function TFRpObjInspVCL.GetCommonClassName:ShortString;
+function TFRpObjInspVCL.GetCommonClassName:String;
 var
- baseclass:ShortString;
- newclass:ShortString;
+ baseclass:String;
+ newclass:String;
  i:integer;
 begin
  baseclass:=FSelectedItems.Objects[0].ClassName;
@@ -958,7 +958,7 @@ end;
 
 procedure TFRpObjInspVCL.AddCompItemPos(aitem:TRpSizePosInterface;onlyone:boolean);
 var
- parentclassname:ShortString;
+ parentclassname:String;
  i,index:integer;
  found:boolean;
 begin

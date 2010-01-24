@@ -70,14 +70,14 @@ type
    procedure OnRequestData(Sender:TObject;count:integer);
    procedure connectWorkEnd(Sender: TObject;
     AWorkMode: TWorkMode);
-{$IFNDEF INDY10}
-   procedure idthreadcompRun(Sender: TIdCustomThreadComponent);
-   procedure connectWork(Sender: TObject; AWorkMode: TWorkMode;
-    const AWorkCount: Integer);
-{$ENDIF}
-{$IFDEF INDY10}
+{$IFNDEF INDY10_2}
    procedure idthreadcompRun(Sender: TIdThreadComponent);
-   procedure connectWork(Sender: TObject; AWorkMode:TWorkMode;AWorkCount:Integer);
+   procedure connectWork(Sender: TObject; AWorkMode: TWorkMode;
+    AWorkCount: Integer);
+{$ENDIF}
+{$IFDEF INDY10_2}
+   procedure idthreadcompRun(Sender: TIdThreadComponent);
+   procedure connectWork(Sender: TObject; AWorkMode:TWorkMode;AWorkCount:Int64);
 {$ENDIF}
   protected
    procedure Paint;override;
@@ -109,7 +109,7 @@ type
    property ShowPrintDialog:Boolean read FShowPrintDialog
     write FShowPrintDialog default false;
   end;
-{$IFDEF DELPHI2007}
+{$IFDEF DELPHI2007UP}
   TIdSSLIOHandlerSocket=class(TIdSSLIOHandlerSocketOpenSSL);
 {$ENDIF}
 
@@ -474,11 +474,11 @@ end;
 
 
 
-{$IFDEF INDY10}
+{$IFDEF INDY10_2}
 procedure TRpWebMetaPrint.idthreadcompRun(Sender: TIdThreadComponent);
 {$ENDIF}
-{$IFNDEF INDY10}
-procedure TRpWebMetaPrint.idthreadcompRun(Sender: TIdCustomThreadComponent);
+{$IFNDEF INDY10_2}
+procedure TRpWebMetaPrint.idthreadcompRun(Sender: TIdThreadComponent);
 {$ENDIF}
 begin
  FFinished:=false;
@@ -504,12 +504,12 @@ begin
 end;
 
 
-{$IFNDEF INDY10}
+{$IFNDEF INDY10_2}
 procedure TRpWebMetaPrint.connectWork(Sender: TObject; AWorkMode: TWorkMode;
-  const AWorkCount: Integer);
+  AWorkCount: Integer);
 {$ENDIF}
-{$IFDEF INDY10}
-procedure TRpWebMetaPrint.connectWork(Sender: TObject; AWorkMode:TWorkMode;AWorkCount:Integer);
+{$IFDEF INDY10_2}
+procedure TRpWebMetaPrint.connectWork(Sender: TObject; AWorkMode:TWorkMode;AWorkCount:Int64);
 {$ENDIF}
 var
  oldposition:int64;

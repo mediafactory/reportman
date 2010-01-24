@@ -23,6 +23,9 @@ interface
 
 uses
   SysUtils,
+{$IFDEF DELPHI2007UP}
+  XPMan,
+{$ENDIF}
 {$IFDEF USEVARIANTS}
   Types,
 {$ENDIF}

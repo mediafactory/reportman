@@ -1567,6 +1567,7 @@ procedure TRpBaseReport.UpdateParamsBeforeOpen(index:integer;doeval:boolean);
 var
  i:integer;
  paramname:string;
+ avalue:Variant;
 begin
  for i:=0 to Params.Count-1 do
  begin
@@ -1579,7 +1580,10 @@ begin
     begin
      if doeval then
      begin
-      FEvaluator.EvaluateText(paramname+':=('+String(params.items[i].Value)+')');
+      avalue := params.items[i].Value;
+      if (VarIsString(avalue)) then
+        avalue := QuotedStr(avalue);
+      FEvaluator.EvaluateText(paramname+':=('+String(avalue)+')');
       params.items[i].LastValue:=FEvaluator.EvaluateText(paramname);
      end
      else
@@ -1611,7 +1615,10 @@ begin
     begin
      if doeval then
      begin
-      FEvaluator.EvaluateText('M.'+paramname+':=('+String(params.items[i].Value)+')');
+      avalue := params.items[i].Value;
+      if (VarIsString(avalue)) then
+        avalue := QuotedStr(avalue);
+      FEvaluator.EvaluateText('M.'+paramname+':=('+String(avalue)+')');
       params.items[i].LastValue:=FEvaluator.EvaluateText('M.'+paramname);
      end
      else

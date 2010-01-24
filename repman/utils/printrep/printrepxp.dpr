@@ -33,7 +33,9 @@ uses
 {$IFDEF USEVARIANTS}
   MidasLib,
 {$ENDIF}
-  Graphics,rpfaxsend,Printers,
+  Graphics,
+  rpfaxsend,
+  Printers,
   rpreport in '..\..\..\rpreport.pas',
   rppreviewcontrol in '..\..\..\rppreviewcontrol.pas',
   rpparams in '..\..\..\rpparams.pas',

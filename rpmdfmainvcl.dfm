@@ -1,9 +1,9 @@
 object FRpMainFVCL: TFRpMainFVCL
   Left = 269
   Top = 191
-  Width = 575
-  Height = 478
   Caption = 'Report Manager Designer'
+  ClientHeight = 420
+  ClientWidth = 559
   Color = clBtnFace
   ParentFont = True
   Menu = MainMenu1
@@ -19,26 +19,24 @@ object FRpMainFVCL: TFRpMainFVCL
   TextHeight = 13
   object BStatus: TStatusBar
     Left = 0
-    Top = 411
-    Width = 567
+    Top = 399
+    Width = 559
     Height = 21
     Panels = <
       item
         Width = 50
       end>
-    SimplePanel = False
   end
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 567
-    Height = 68
+    Width = 559
+    Height = 66
     AutoSize = True
     ButtonHeight = 25
     ButtonWidth = 26
     Caption = 'ToolBar1'
     Color = clBtnFace
-    Flat = True
     Images = iconlist
     ParentColor = False
     TabOrder = 1
@@ -177,12 +175,11 @@ object FRpMainFVCL: TFRpMainFVCL
     end
     object ComboScale: TComboBox
       Left = 0
-      Top = 43
+      Top = 41
       Width = 53
       Height = 21
       Style = csDropDownList
       DropDownCount = 12
-      ItemHeight = 13
       TabOrder = 0
       OnClick = ComboScaleClick
       Items.Strings = (
@@ -287,9 +284,9 @@ object FRpMainFVCL: TFRpMainFVCL
   end
   object mainscrollbox: TPanel
     Left = 0
-    Top = 68
-    Width = 567
-    Height = 343
+    Top = 66
+    Width = 559
+    Height = 333
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
@@ -298,17 +295,17 @@ object FRpMainFVCL: TFRpMainFVCL
       Left = 181
       Top = 0
       Width = 8
-      Height = 343
-      Cursor = crHSplit
+      Height = 333
       Beveled = True
       ResizeStyle = rsUpdate
       OnMoved = Splitter1Moved
+      ExplicitHeight = 335
     end
     object leftpanel: TPanel
       Left = 0
       Top = 0
       Width = 181
-      Height = 343
+      Height = 333
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -330,7 +327,7 @@ object FRpMainFVCL: TFRpMainFVCL
     Left = 248
     Top = 196
     Bitmap = {
-      494C010121002200040013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101210022000C0013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000004C000000AB000000010020000000000010CB
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2684,8 +2681,6 @@ object FRpMainFVCL: TFRpMainFVCL
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
-    MinFontSize = 0
-    MaxFontSize = 0
     Left = 384
     Top = 122
   end

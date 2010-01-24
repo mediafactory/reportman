@@ -51,6 +51,10 @@ UsePackages=0
 [Parameters]
 RunParams=
 HostApplication=
+[Language]
+ActiveLang=
+ProjectLang=$00000C0A
+RootDir=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=0
@@ -92,9 +96,3 @@ $(DELPHI)\Bin\dcldss50.bpl=Borland Decision Cube Components
 $(DELPHI)\Bin\dcltqr50.bpl=TeeChart 5.0 for QuickReport Components Design Package
 $(DELPHI)\Bin\dclqrt50.bpl=QuickReport Components
 $(DELPHI)\Bin\dclite50.bpl=Borland Integrated Translation Environment
-[HistoryLists\hlUnitAliases]
-Count=1
-Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
-[HistoryLists\hlBPLOutput]
-Count=1
-Item0=c:\provacomp

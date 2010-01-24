@@ -18,9 +18,14 @@ unit rpregvcl;
 
 interface
 
+{$I rpconf.inc}
+
 uses
-  Classes,rpvclreport,rpexpredlgvcl,rpmaskedit,rpdbgridvcl,rppreviewcontrol,
-  rpdbdatetimepicker;
+  Classes,rpvclreport,rpexpredlgvcl,rpmaskedit,rpdbgridvcl,rpdbdatetimepicker,
+{$IFDEF DELPHI2007UP}
+  rpactivexreport,rpwebmetaclient,
+{$ENDIF}
+  rppreviewcontrol;
 
 
 procedure Register;
@@ -38,7 +43,10 @@ begin
   RegisterComponents('Reportman', [TRpDateTimePicker]);
   // TRpActiveXReport is a Wrapper to generate the ActiveX version
   // with Delphi 6 Active X Control Wizard
-//  RegisterComponents('Reportman', [TRpActiveXReport]);
+{$IFDEF DELPHI2007UP}
+  RegisterComponents('Reportman', [TRpActiveXReport]);
+  RegisterComponents('Reportman', [TRpWebMetaPrint]);
+{$ENDIF}
 end;
 
 end.

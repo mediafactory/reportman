@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager Lite
-AppVerName=Report Manager Lite  2.8a
-AppVersion=2.8a
-OutputBaseFilename=reportmanlite2_8a
+AppVerName=Report Manager Lite  2.8g
+AppVersion=2.8g
+OutputBaseFilename=reportmanlite2_8g
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -56,14 +56,17 @@ Source: ..\repman\repsamples\biolife.cds; DestDir: {app}; Components: repsample;
 
 Source: ..\repman\dbxdrivers.ini; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
 Source: ..\repman\dbxconnections.ini; DestDir: {app}; Components: dbexpress; Flags: onlyifdoesntexist
-Source: ..\drivers\win32\dbexpint.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpmys.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpinf.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpmysql.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpmss.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpora.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbexpdb2.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32\dbxoodbc.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
+Source: ..\drivers\win32new\dbxint30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxadapter30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxasa30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxase30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxdb230.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxinf30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmss30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmys30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmysA30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxora30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxoodbc.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
 
 
 

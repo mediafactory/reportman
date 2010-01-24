@@ -1369,7 +1369,13 @@ begin
      end;
      Raise Exception.Create(SRpFieldNotFound+atext);
     end;
-    afilename:=aValue;
+    afilename:=Trim(aValue);
+    if (Length(afilename)=0) then
+    begin
+     FMStream:=nil;
+    end
+    else
+    begin
     FMStream:=TMemoryStream.Create;
     try
      AStream:=TFileStream.Create(afilename,fmOpenread or fmShareDenyWrite);
@@ -1415,6 +1421,7 @@ begin
      FMStream.free;
      Raise;
     end;
+    end;
    end
    else
    begin
@@ -1422,15 +1429,18 @@ begin
     if (Not (AField is TBlobField)) then
     begin
      astring:=AField.AsString;
-     FMStream:=TMemoryStream.Create;
-     try
-      FMStream.SetSize(Length(astring));
-      FMStream.Write(astring[1],FMStream.Size);
-      FMStream.Seek(0,soFromBeginning);
-      Result:=FMStream;
-     except
-      FMStream.free;
-      raise;
+     if (Length(astring)>0) then
+     begin
+      FMStream:=TMemoryStream.Create;
+      try
+       FMStream.SetSize(Length(astring));
+       FMStream.Write(astring[1],FMStream.Size);
+       FMStream.Seek(0,soFromBeginning);
+       Result:=FMStream;
+      except
+       FMStream.free;
+       raise;
+      end;
      end;
      exit;
     end;

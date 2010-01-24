@@ -1203,7 +1203,7 @@ begin
 end;
 
 procedure ReadPropReport(report:TRpReport;
- propname,propvalue,proptype,propsize:Ansistring);
+ propname,propvalue,proptype,propsize:string);
 var
  actions:TRpReportActions;
 begin
