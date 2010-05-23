@@ -26,7 +26,12 @@ interface
 
 uses Classes,
 {$IFDEF USEZLIB}
-rpmzlib,
+{$IFDEF DELPHI2009UP}
+ zlib,
+{$ENDIF}
+{$IFNDEF DELPHI2009UP}
+ rpmzlib,
+{$ENDIF}
 {$ENDIF}
 {$IFDEF MSWINDOWS}
  windows,
@@ -270,7 +275,7 @@ destructor TRpSection.Destroy;
 begin
  ClearPageCountList;
  FPageGroupCountList.free;
- FReportComponents.Free;
+ //FReportComponents.Free;
  FStream.free;
  FDecompStream.free;
  FOldStream.free;

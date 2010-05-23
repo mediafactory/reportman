@@ -834,13 +834,13 @@ END
 /* c:\program files (x86)\embarcadero\rad studio\7.0\lib\Controls.res */
 /* c:\program files (x86)\embarcadero\rad studio\7.0\lib\Buttons.res */
 /* C:\Users\Toni\Documents\prog\toni\reportman\rpgraphutilsvcl.dfm */
-/* C:\Users\Toni\Documents\prog\toni\reportman\rpgdidriver.dfm */
-/* C:\Users\Toni\Documents\prog\toni\reportman\rpmdfaboutvcl.dfm */
-/* C:\Users\Toni\Documents\prog\toni\reportman\rpmdprintconfigvcl.dfm */
-/* C:\Users\Toni\Documents\prog\toni\reportman\rprfvparams.dfm */
-/* C:\Users\Toni\Documents\prog\toni\reportman\rpmdclitreevcl.dfm */
-/* C:\Users\Toni\Documents\prog\toni\reportman\rpexceldriver.dfm */
-/* C:\Users\Toni\Documents\prog\toni\reportman\rpfmetaviewvcl.dfm */
-/* C:\Users\Toni\Documents\prog\toni\reportman\rpfmainmetaviewvcl.dfm */
+/* ..\..\..\rpgdidriver.dfm */
+/* ..\..\..\rpmdprintconfigvcl.dfm */
+/* ..\..\..\rpmdfaboutvcl.dfm */
+/* ..\..\..\rpexceldriver.dfm */
+/* ..\..\..\rprfvparams.dfm */
+/* ..\..\..\rpmdclitreevcl.dfm */
+/* ..\..\..\rpfmetaviewvcl.dfm */
+/* ..\..\..\rpfmainmetaviewvcl.dfm */
 /* C:\Users\Toni\Documents\prog\toni\reportman\repman\utils\metaview\metaviewxp.res */
 /* C:\Users\Toni\Documents\prog\toni\reportman\repman\utils\metaview\metaviewxp.drf */

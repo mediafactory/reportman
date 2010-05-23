@@ -31,7 +31,7 @@ uses SysUtils, Classes,
   jpeg,
 {$ENDIF}
   Messages,Windows,Comctrls,
-  Graphics, Forms,rpdatainfo,
+  Graphics, Forms,rpdatainfo,rpgdidriver,
   Buttons, ExtCtrls, Controls, StdCtrls,
   rpmdobinsintvcl,rpmdobjinspvcl,rpmdfstrucvcl,rpmdflabelintvcl,
   rpgraphutilsvcl,rpmdfdrawintvcl,rpmdfbarcodeintvcl,rpmdfchartintvcl,
@@ -893,6 +893,7 @@ var
  recsrc:TRect;
  oldrgn,newrgn:HRGN;
  aresult:integer;
+ format:string;
 begin
  errormessage:='';
  if not assigned(secint) then
@@ -948,7 +949,9 @@ begin
      abitmap.HandleType:=bmDIB;
 {$ENDIF}
      astream.Seek(0,soFromBeginning);
-     if GetJPegInfo(astream,bitmapwidth,bitmapheight) then
+     format:='';
+     GetJPegInfo(astream,bitmapwidth,bitmapheight,format);
+     if (format='JPEG') then
      begin
 {$IFNDEF DOTNETD}
       jpegimage:=TJPegImage.Create;
@@ -966,7 +969,24 @@ begin
      else
      begin
       astream.Seek(0,soFromBeginning);
-      abitmap.LoadFromStream(astream);
+      if (format='BMP') then
+      begin
+        abitmap.LoadFromStream(astream);
+      end
+      else
+      begin
+        // All other formats
+{$IFDEF EXTENDEDGRAPHICS}
+       ExFilterImage(aStream);
+       jpegimage:=TJPegImage.Create;
+       try
+        jpegimage.LoadFromStream(astream);
+        abitmap.Assign(jpegimage);
+       finally
+        jpegimage.free;
+       end;
+{$ENDIF}
+      end;
      end;
      rec.Top:=0;rec.Left:=0;
      rec.Bottom:=Height-1;rec.Right:=Width-1;

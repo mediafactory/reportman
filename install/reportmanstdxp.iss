@@ -3,9 +3,9 @@
 
 [Setup]
 AppName=Report Manager Standard Edition
-AppVerName=Report Manager 2.8g
-AppVersion=2.8g
-OutputBaseFilename=reportmanstd2_8g
+AppVerName=Report Manager 2.9a
+AppVersion=2.9a
+OutputBaseFilename=reportmanstd2_9a
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -75,7 +75,6 @@ Source: ..\repman\net2\Reportman.Drawing.dll; DestDir: {app}\net2; Components: c
 Source: ..\repman\net2\Reportman.Drawing.Forms.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
 Source: ..\repman\net2\Reportman.Reporting.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
 Source: ..\repman\net2\Reportman.Reporting.Forms.dll; DestDir: {app}\net2; Components: commandline; Flags: ignoreversion
-Source: ..\..\..\..\reportmannet\output2\examples\sales.rep; DestDir: {app}; Components: commandline; Flags: ignoreversion
 Source: ..\repman\reportmanres.*; DestDir: {app}\net; Flags: restartreplace
 Source: ..\repman\reportmanres.*; DestDir: {app}\net2; Flags: restartreplace
 Source: ..\repman\utils\reptotxt\reptotxt.exe; DestDir: {app}; Components: commandline; Flags: ignoreversion
@@ -117,20 +116,21 @@ Source: ..\repman\dbxconnections.ini; DestDir: {app}; Components: dbexpress; Fla
 ;Source: ..\drivers\win32\dbexpora.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
 ;Source: ..\drivers\win32\dbexpdb2.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
 ;Source: ..\drivers\win32\dbxoodbc.dll; DestDir: {sys}; Components: dbexpress; Flags: uninsneveruninstall restartreplace sharedfile
-Source: ..\drivers\win32new\dbxint30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxadapter30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxasa30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxase30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxdb230.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxinf30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxmss30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxmys30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxmysA30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxora30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxint.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxadapter.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxasa.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxase.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxdb2.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxinf.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmss.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmss9.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmys.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxfb.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxora.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
 Source: ..\drivers\win32new\dbxoodbc.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
 
 ;BDE
-Source: C:\Archivos de programa\Archivos comunes\Borland Shared\BDEINST\*.*; DestDir: {cf}\Borland Shared\BDE; Components: bde; Flags: uninsneveruninstall restartreplace sharedfile
+Source: C:\Legacy\BDE\*.*; DestDir: {cf}\Borland Shared\BDE; Components: bde; Flags: uninsneveruninstall restartreplace sharedfile
 Source: C:\Windows\System32\bdeadmin.cpl; DestDir: {sys}; Components: bde; Flags: uninsneveruninstall restartreplace sharedfile
 
 ; Api libraries

@@ -23,10 +23,11 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
 			<DesignOnlyPackage>false</DesignOnlyPackage>
 			<DCC_Description>Report Manager components(non-visual)</DCC_Description>
-			<DCC_DependencyCheckOutputName>..\..\..\..\..\Public\Documents\RAD Studio\7.0\Bpl\rppack_del2009.bpl</DCC_DependencyCheckOutputName>
+			<DCC_DependencyCheckOutputName>..\..\..\..\..\Public\Documents\RAD Studio\6.0\Bpl\rppack_del2009.bpl</DCC_DependencyCheckOutputName>
 			<DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
 			<GenDll>true</GenDll>
 			<GenPackage>true</GenPackage>
@@ -192,6 +193,14 @@
 			<DCCReference Include="rpmdclitreevcl.pas"/>
 			<DCCReference Include="rprfvparams.pas"/>
 			<DCCReference Include="rpfmainmetaviewvcl.pas"/>
+			<DCCReference Include="rpeval.dcr"/>
+			<DCCReference Include="rpalias.dcr"/>
+			<DCCReference Include="rplastsav.dcr"/>
+			<DCCReference Include="rppdfreport.dcr"/>
+			<DCCReference Include="rptranslator.dcr"/>
+			<DCCReference Include="rpmaskedit.dcr"/>
+			<DCCReference Include="rpvclreport.dcr"/>
+			<DCCReference Include="rpexpredlgvcl.dcr"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

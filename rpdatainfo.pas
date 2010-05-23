@@ -42,6 +42,10 @@ uses Classes,SysUtils,
 {$IFDEF USESQLEXPRESS}
  {$DEFINE USENEWLINK}
  SqlExpr,DBXpress,SqlConst,//DBExpMYSQL,DbExpMyS,dbExpDB2,dbExpORA,dbExpINT
+ {$IFDEF DELPHI2009UP}
+   DBXOracle,DBXInformix,DBXFirebird,DBXInterbase,DBXSyBaseASA,
+   DBXSyBaseASE,DBXMSSQL,DBXMySQL,DBXCommon,DBXDb2,
+ {$ENDIF}
 {$ENDIF}
  rpmdconsts,rpmdshfolder,
  DB,rpparams,Inifiles,rptypes,

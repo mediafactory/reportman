@@ -2,10 +2,10 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 [Setup]
-AppName=Report Manager Lite
-AppVerName=Report Manager Lite  2.8g
-AppVersion=2.8g
-OutputBaseFilename=reportmanlite2_8g
+AppName=Report Manager
+AppVerName=Report Manager 2.9a
+AppVersion=2.9a
+OutputBaseFilename=repmandesigneronly2_9a
 AppPublisher=Toni Martir
 AppPublisherURL=http://reportman.sourceforge.net
 AppSupportURL=http://sourceforge.net/projects/reportman
@@ -28,6 +28,7 @@ Name: custom; Description: {cm:Custominstallation}; Flags: iscustom
 [Components]
 Name: designer; Description: {cm:ReportManagerDesigner}; Types: full custom
 Name: dbexpress; Description: {cm:DBExpressdatabasedrivers}; Types: full custom
+;Name: help; Description: {cm:Documentation}; Types: full custom
 Name: repsample; Description: {cm:ReportSamples}; Types: full custom
 
 [Languages]
@@ -45,29 +46,39 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: Additi
 
 [Files]
 Source: ..\repman\repmandxp.exe; DestDir: {app}; Components: designer; Flags: ignoreversion
+Source: ..\repman\repmandxp.ini; DestDir: {app}; Components: designer; Flags: ignoreversion
 Source: ..\repman\repmandxp.exe.manifest; DestDir: {app}; Components: designer; Flags: ignoreversion
+Source: ..\repman\reportmanres.*; DestDir: {app}; Flags: restartreplace
 Source: ..\repman\transwin\repmandxp.*; DestDir: {app}; Components: designer; Flags: ignoreversion
-Source: ..\repman\reportmanres.*; DestDir: {app}; Flags: ignoreversion
-Source: ..\repman\transwin\repmandxp.*; DestDir: {app}; Components: designer; Flags: ignoreversion
+Source: ..\repman\reportmanres.*; DestDir: {app}\net2; Flags: restartreplace
 Source: license.txt; DestDir: {app}; Flags: ignoreversion
-Source: ..\drivers\win32\upx.exe; DestDir: {sys}; Flags: restartreplace
+Source: ..\drivers\win32\upx.exe; DestDir: {app}; Flags: restartreplace
+
+; Report Server custom files
+
 Source: ..\repman\repsamples\sample4.rep; DestDir: {app}; Components: repsample; Flags: ignoreversion
 Source: ..\repman\repsamples\biolife.cds; DestDir: {app}; Components: repsample; Flags: ignoreversion
 
 Source: ..\repman\dbxdrivers.ini; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
 Source: ..\repman\dbxconnections.ini; DestDir: {app}; Components: dbexpress; Flags: onlyifdoesntexist
-Source: ..\drivers\win32new\dbxint30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxadapter30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxasa30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxase30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxdb230.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxinf30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxmss30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxmys30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxmysA30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
-Source: ..\drivers\win32new\dbxora30.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxint.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxadapter.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxasa.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxase.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxdb2.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxinf.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmss.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmss9.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxmys.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxfb.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
+Source: ..\drivers\win32new\dbxora.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
 Source: ..\drivers\win32new\dbxoodbc.dll; DestDir: {app}; Components: dbexpress; Flags: ignoreversion
 
+; Api libraries
+; Documentation
+;Source: ..\doc\doc\*.*; DestDir: {app}\doc; Components: help; Flags: ignoreversion
+;Source: ..\doc\doc\images\*.*; DestDir: {app}\doc\images; Components: help; Flags: ignoreversion
+;Source: ..\doc\doc\units\*.*; DestDir: {app}\doc\units; Components: help; Flags: ignoreversion
 
 
 [Registry]
@@ -85,7 +96,8 @@ Root: HKLM; Subkey: SOFTWARE\Borland\DBExpress; ValueType: string; Components: d
 [Icons]
 Name: {group}\{cm:DesignerXP}; Filename: {app}\repmandxp.exe; Components: designer; WorkingDir: {app}
 Name: {group}\{cm:SLicense}; Filename: {app}\license.txt
-Name: {userdesktop}\{cm:ReportManagerDesignerXP}; Filename: {app}\repmandxp.exe; WorkingDir: {app}; Components: designer; MinVersion: 4,4; Tasks: desktopicon
+Name: {commondesktop}\{cm:ReportManagerDesignerXP}; Filename: {app}\repmandxp.exe; WorkingDir: {app}; Components: designer; MinVersion: 4,4; Tasks: desktopicon
 
 [Run]
-Filename: {app}\repmandxp.exe; Description: {cm:LaunchReportManagerDesignerXP}; Components: designer; Flags: nowait postinstall skipifsilent
+;For Windows Vista compatibilty it should not run Report Manager at end of installation
+;Filename: {app}\repmandxp.exe; Description: {cm:LaunchReportManagerDesignerXP}; Components: designer; Flags: nowait postinstall skipifsilent

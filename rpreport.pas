@@ -34,7 +34,12 @@ uses Classes,rpbasereport,sysutils,rptypes,rpsubreport,rpsection,rpmdconsts,
 {$ENDIF}
  rpalias,db,
 {$IFDEF USEZLIB}
+{$IFDEF DELPHI2009UP}
+ zlib,
+{$ENDIF}
+{$IFNDEF DELPHI2009UP}
  rpmzlib,
+{$ENDIF}
 {$ENDIF}
 {$IFDEF USERPDATASET}
  rpdataset,
@@ -963,6 +968,7 @@ begin
  else
  begin
   metafile.Clear;
+  metafile.Copies := Copies;
   metafile.PreviewAbout:=PreviewAbout;
   metafile.PreviewMargins:=PreviewMargins;
   metafile.LinesPerInch:=LinesPerInch;

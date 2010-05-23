@@ -21,7 +21,12 @@ interface
 
 uses Classes,
 {$IFDEF USEZLIB}
-rpmzlib,
+{$IFDEF DELPHI2009UP}
+ zlib,
+{$ENDIF}
+{$IFNDEF DELPHI2009UP}
+ rpmzlib,
+{$ENDIF}
 {$ENDIF}
 SysUtils,rptypes;
 

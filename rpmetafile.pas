@@ -57,7 +57,12 @@ uses Classes,SyncObjs,
  Sysutils,rpmdconsts,
  rpmdcharttypes,
 {$IFDEF USEZLIB}
+{$IFDEF DELPHI2009UP}
+ zlib,
+{$ENDIF}
+{$IFNDEF DELPHI2009UP}
  rpmzlib,
+{$ENDIF}
 {$ENDIF}
  rptypes;
 
@@ -1926,7 +1931,7 @@ begin
  ReadBuffer;
  if FLastReadCount>0 then
  begin
-  FIsCompressed:=(PChar(FBuffer.Memory)^='x');
+  FIsCompressed:=(PAnsiChar(FBuffer.Memory)^='x');
  end;
 end;
 

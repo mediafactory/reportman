@@ -481,11 +481,23 @@ var
  indexed:boolean;
  numcolors,bitsperpixel:integer;
  palette:string;
+ format:string;
 begin
  bitmapwidth:=0;
  bitmapheight:=0;
- if Not GetJPegInfo(Stream,bitmapwidth,bitmapheight) then
-  GetBitmapInfo(Stream,bitmapwidth,bitmapheight,imagesize,nil,indexed,bitsperpixel,numcolors,palette);
+ format:='';
+ GetJPegInfo(Stream,bitmapwidth,bitmapheight,format);
+ if (not (format='JPEG')) then
+ begin
+  if (format='BMP') then
+  begin
+    GetBitmapInfo(Stream,bitmapwidth,bitmapheight,imagesize,nil,indexed,bitsperpixel,numcolors,palette);
+  end
+  else
+  begin
+   // All other formats
+  end;
+ end;
  if dpi<=0 then
   exit;
  extent.X:=Round(bitmapwidth/dpi*TWIPS_PER_INCHESS);

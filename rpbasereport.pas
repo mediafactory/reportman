@@ -34,7 +34,12 @@ uses Classes,sysutils,rptypes,rpsubreport,rpsection,rpmdconsts,
 {$ENDIF}
  rpalias,db,
 {$IFDEF USEZLIB}
+{$IFDEF DELPHI2009UP}
+ zlib,
+{$ENDIF}
+{$IFNDEF DELPHI2009UP}
  rpmzlib,
+{$ENDIF}
 {$ENDIF}
 {$IFDEF USERPDATASET}
  rpdataset,

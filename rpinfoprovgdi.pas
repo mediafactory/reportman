@@ -333,7 +333,11 @@ var
  embeddable:boolean;
  logx:integer;
  multipli:double;
- apchar:PChar;
+{$IFDEF DELPHI2009UP}
+ apchar:PWideChar;
+{$ELSE}
+ apchar:PAnsiChar;
+{$ENDIF}
  alog:LOGFONT;
  acomp:byte;
 {$IFDEF USEKERNING}
@@ -342,6 +346,7 @@ var
  langinfo:DWord;
  i:integer;
  index:integer;
+ newsize:integer;
  klist:TStringList;
 {$ENDIF}
 begin
@@ -351,7 +356,11 @@ begin
    logx:=GetDeviceCaps(adc,LOGPIXELSX);
    data.postcriptname:=StringReplace(pdfFont.WFontName,' ','',[rfReplaceAll]);
    data.Encoding:='WinAnsiEncoding';
-   asize:=GetOutlineTextMetrics(adc,0,nil);
+{$IFDEF DELPHI2009UP}
+   asize:=GetOutlineTextMetricsW(adc,0,nil);
+{$ELSE}
+   asize:=GetOutlineTextMetricsA(adc,0,nil);
+{$ENDIF}
    if asize>0 then
    begin
 {$IFNDEF DOTNETD}
@@ -361,7 +370,13 @@ begin
     potm:=Marshal.AllocHGlobal(sizeof(OUTLINETEXTMETRIC));
 {$ENDIF}
     try
-     if 0<>GetOutlineTextMetrics(adc,asize,potm) then
+
+{$IFDEF DELPHI2009UP}
+     newsize:=GetOutlineTextMetricsW(adc,asize,potm);
+{$ELSE}
+     newsize:=GetOutlineTextMetricsA(adc,asize,potm);
+{$ENDIF}
+     if (newsize<>0) then
      begin
       if (potm^.otmfsType AND $8000)=0 then
        embeddable:=true;
@@ -381,13 +396,34 @@ begin
       data.AvgWidth:=Round(potm^.otmTextMetrics.tmAveCharWidth*multipli);
 
       data.Leading:=Round((potm^.otmTextMetrics.tmExternalLeading+potm^.otmTextMetrics.tmInternalLeading)*multipli);
-      apchar:=PChar(potm);
       // Windows does not allow Type1 fonts
       data.Type1:=false;
-      data.FamilyName:=StrPas(PAnsiChar(@apchar[Integer(potm^.otmpFamilyName)]));
-      data.FullName:=StrPas(PAnsiChar(@apchar[Integer(potm^.otmpFullName)]));
-      data.StyleName:=StrPas(PAnsiChar(@apchar[Integer(potm^.otmpStyleName)]));
-      data.FaceName:=StrPas(PAnsiChar(@apchar[Integer(potm^.otmpFaceName)]));
+
+{$IFDEF DELPHI2009UP}
+      apchar:=PWideChar(Integer(potm)+potm^.otmpFamilyName);
+      data.FamilyName:=StrPas(PWideChar(apchar));
+      apchar:=PWideChar(Integer(potm)+potm^.otmpFullName);
+      data.FullName:=StrPas(apchar);
+      apchar:=PWideChar(Integer(potm)+potm^.otmpStyleName);
+      data.StyleName:=StrPas(apchar);
+      apchar:=PWideChar(Integer(potm)+potm^.otmpFaceName);
+      data.FaceName:=StrPas(apchar);
+{$ELSE}
+      apchar:=PAnsiChar(Integer(potm)+potm^.otmpFamilyName);
+      data.FamilyName:=StrPas(apchar);
+      apchar:=PAnsiChar(Integer(potm)+potm^.otmpFullName);
+      data.FullName:=StrPas(apchar);
+      apchar:=PAnsiChar(Integer(potm)+potm^.otmpStyleName);
+      data.StyleName:=StrPas(apchar);
+      apchar:=PAnsiChar(Integer(potm)+potm^.otmpFaceName);
+      data.FaceName:=StrPas(apchar);
+//      data.FamilyName:=StrPas(PAnsiChar(@apchar[Integer(potm^.otmpFamilyName)]));
+//      data.FullName:=StrPas(PAnsiChar(@apchar[Integer(potm^.otmpFullName)]));
+//      data.StyleName:=StrPas(PAnsiChar(@apchar[Integer(potm^.otmpStyleName)]));
+//      data.FaceName:=StrPas(PAnsiChar(@apchar[Integer(potm^.otmpFaceName)]));
+{$ENDIF}
+
+
       data.ItalicAngle:=Round(potm^.otmItalicAngle/10);
       if ((potm^.otmTextMetrics.tmPitchAndFamily AND TMPF_TRUETYPE)=0) then
        Raise Exception.Create(SRpNoTrueType+'-'+data.FaceName);
@@ -492,6 +528,8 @@ var
 begin
  glyphindex:=0;
  aint:=Ord(charcode);
+ if (not (data.isunicode)) then
+   data.isunicode:=true;
  if isnt then
  begin
   if aint>255 then

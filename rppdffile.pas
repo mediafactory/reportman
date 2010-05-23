@@ -59,7 +59,12 @@ uses Classes,Sysutils,rpinfoprovid,
  Types,
 {$ENDIF}
 {$IFDEF USEZLIB}
+{$IFDEF DELPHI2009UP}
+ zlib,
+{$ENDIF}
+{$IFNDEF DELPHI2009UP}
  rpmzlib,
+{$ENDIF}
 {$ENDIF}
 {$IFDEF MSWINDOWS}
  rpinfoprovgdi,Windows,
@@ -115,6 +120,7 @@ type
    procedure RestoreGraph;
    procedure SetInfoProvider(aprov:TRpInfoProvider);
    function GetTTFontData:TRpTTFontData;
+   function EncodeUnicode(astring:Widestring;adata:TRpTTFontData;pdffont:TRpPDFFont):string;
   public
    PenColor:integer;
    PenStyle:integer;
@@ -245,10 +251,14 @@ function NumberToText (Value:double):string;
 
 procedure GetBitmapInfo (stream:TStream; var width, height, imagesize:integer;FMemBits:TMemoryStream;
  var indexed:boolean;var bitsperpixel,usedcolors:integer;var palette:string);
-function GetJPegInfo (astream:TStream; var width, height:integer):boolean;
+procedure GetJPegInfo(astream:TStream;var width,height:integer;var format:string);
 
 implementation
 
+function IntToHex(nvalue:integer):string;
+begin
+ Result:=Format('%4.4x',[nvalue]);
+end;
 
 const
  AlignmentFlags_SingleLine=64;
@@ -1521,13 +1531,16 @@ var
   bitsperpixel,numcolors:integer;
   palette:string;
   imageindex:integer;
+  format:string;
   newstream:boolean;
 begin
  arect:=rec;
  FFile.CheckPrinting;
  FImageStream:=TMemoryStream.Create;
  try
-  isjpeg:=GetJPegInfo(abitmap,bitmapwidth,bitmapheight);
+  format:='';
+  GetJPegInfo(abitmap,bitmapwidth,bitmapheight,format);
+  isjpeg:=(format='JPEG');
   if isjpeg then
   begin
    // Read image dimensions
@@ -1539,7 +1552,14 @@ begin
   else
   begin
    abitmap.Seek(0,soFromBeginning);
-   GetBitmapInfo(abitmap,bitmapwidth,bitmapheight,imagesize,FImageStream,indexed,bitsperpixel,numcolors,palette);
+   if (format='BMP') then
+   begin
+    GetBitmapInfo(abitmap,bitmapwidth,bitmapheight,imagesize,FImageStream,indexed,bitsperpixel,numcolors,palette);
+   end
+   else
+   begin
+
+   end;
   end;
   if dpires<>0 then
   begin
@@ -2716,7 +2736,7 @@ const
 
 
 // Returns false if it's not a jpeg
-function GetJPegInfo(astream:TStream;var width,height:integer):boolean;
+procedure GetJPegInfo(astream:TStream;var width,height:integer;var format:string);
 var
  c1, c2 : Byte;
  i1,i2:integer;
@@ -2833,33 +2853,49 @@ var
 
 
 begin
- Result:=false;
+ format:='JPEG';
  // Checks it's a jpeg image
  readed:=astream.Read(c1,1);
  if readed<1 then
  begin
   astream.seek(0,soFromBeginning);
+  format:='';
   exit;
  end;
  i1:=c1;
  if i1<>$FF then
  begin
-  astream.seek(0,soFromBeginning);
-  exit;
+  format:='';
  end;
  readed:=astream.Read(c2,1);
  if readed<1 then
  begin
   astream.seek(0,soFromBeginning);
+  format:='';
   exit;
  end;
  i2:=c2;
  if i2<>M_SOI then
  begin
+  format:='';
+  if ((c1=Ord('B')) AND (c2=Ord('M'))) then
+  begin
+   astream.seek(0,soFromBeginning);
+   format:='BMP';
+   exit;
+  end;
+  if ((c1=Ord('G')) AND (c2=Ord('I'))) then
+  begin
+   format:='GIF';
+   astream.seek(0,soFromBeginning);
+   exit;
+  end;
+ end;
+ if (not (format='JPEG')) then
+ begin
   astream.seek(0,soFromBeginning);
   exit;
  end;
- Result:=true;
  width:=0;
  height:=0;
  // Read segments until M_SOS
@@ -3065,9 +3101,11 @@ begin
    SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
    SWriteLine(FTempStream,'<< /Type /Font');
    SWriteLine(FTempStream,'/Subtype /Type0');
+   //SWriteLine(FTempStream,'/Subtype /TrueType');
    SWriteLine(FTempStream,'/Name /F'+adata.ObjectName);
    SWriteLine(FTempStream,'/BaseFont /'+CONS_UNICODEPREDIX+adata.postcriptname);
    SWriteLine(FTempStream,'/Encoding /Identity-H');
+   //SWriteLine(FTempStream,'/Encoding /PDFDocEncoding');
    SWriteLine(FTempStream,'/DescendantFonts [ '+IntToStr(FObjectCount+1)+' 0 R ]');
 
    SWriteLine(FTempStream,'>>');
@@ -3102,6 +3140,7 @@ begin
     if adata.loaded[index] then
     begin
      awidths:=awidths+IntToStr(Integer(adata.loadedglyphs[index]))+'['+IntToStr(adata.loadedwidths[index])+'] ';
+//     awidths:=awidths+IntToStr(index)+'['+IntToStr(adata.loadedwidths[index])+'] ';
      acount:=acount+1;
      if (acount mod 8)=7 then
       awidths:=awidths+LINE_FEED;
@@ -3110,6 +3149,28 @@ begin
    until index>adata.lastloaded;
    SWriteLine(FTempStream,awidths);
    SWriteLine(FTempStream,']');
+(*
+   // To unicode cmap
+   SWriteLine(FTempStream,'/ToUnicode [');
+
+   awidths:='';
+   index:=adata.firstloaded;
+   acount:=0;
+   repeat
+    if adata.loaded[index] then
+    begin
+     awidths:=awidths+'<'+IntToHex(Integer(adata.loadedglyphs[index]))+'> <'+IntToHex(index)+'> ';
+//     awidths:=awidths+IntToStr(index)+'['+IntToStr(adata.loadedwidths[index])+'] ';
+     acount:=acount+1;
+     if (acount mod 8)=7 then
+      awidths:=awidths+LINE_FEED;
+    end;
+    inc(index);
+   until index>adata.lastloaded;
+   SWriteLine(FTempStream,awidths);
+   SWriteLine(FTempStream,']');*)
+
+
    SWriteLine(FTempStream,'/CDIToGDIMap /Identity');
 
    SWriteLine(FTempStream,'>>');
@@ -3189,6 +3250,42 @@ begin
  Result:=Format('%4.4x',[aint]);
 end;
 
+
+
+function TRpPDFCanvas.EncodeUnicode(astring:Widestring;adata:TRpTTFontData;pdffont:TRpPDFFont):string;
+var
+ aresult:string;
+ i:integer;
+ kerningvalue:integer;
+begin
+ aresult:= aresult+'[(';
+ aresult := aresult + char(254);
+ aresult := aresult + char(254);
+// aresult := aresult + char(255);
+  for i:=1 to Length(astring) do
+  begin
+   if astring[i] in [WideChar('('),WideChar(')'),WideChar('\')] then
+    aresult:=aresult+'\';
+   // Euro exception
+//   if astring[i]=widechar(8364) then
+//    Result:=Result+chr(128)
+//   else
+   aresult:=aresult+chr(Word(astring[i]) shr 8);
+   aresult:=aresult+chr(Word(astring[i]) AND $F0);
+   if (i<Length(astring)) then
+   begin
+    kerningvalue:=infoprovider.GetKerning(pdffont,adata,WideChar(astring[i]),WideChar(astring[i+1]));
+    if kerningvalue<>0 then
+    begin
+     aresult:=aresult+')'+' '+IntToStr(kerningvalue);
+     aresult:=aresult+' (';
+    end;
+   end;
+  end;
+  aresult:=aresult+')]';
+  Result:=aresult;
+end;
+
 function TRpPDFCanvas.PDFCompatibleTextWidthKerning(astring:WideString;adata:TRpTTFontData;pdffont:TRpPDFFont):String;
 var
  i:integer;
@@ -3201,6 +3298,8 @@ begin
  end;
  if adata.isunicode then
  begin
+  //Result:=EncodeUnicode(astring,adata,pdffont);
+
   Result:='[<';
   for i:=1 to Length(astring) do
   begin

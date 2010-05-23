@@ -1,18 +1,17 @@
 object FRpDBTreeVCL: TFRpDBTreeVCL
   Left = 0
   Top = 0
-  Width = 459
-  Height = 343
+  Width = 435
+  Height = 266
   VertScrollBar.Range = 30
   Align = alClient
+  AutoScroll = False
   TabOrder = 0
-  ExplicitWidth = 451
-  ExplicitHeight = 304
   object BToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 459
-    Height = 25
+    Width = 435
+    Height = 29
     AutoSize = True
     ButtonHeight = 25
     ButtonWidth = 26
@@ -21,59 +20,59 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
     TabOrder = 0
     object ToolButton10: TToolButton
       Left = 0
-      Top = 0
+      Top = 2
       Action = ANewFolder
     end
     object ToolButton1: TToolButton
       Left = 26
-      Top = 0
+      Top = 2
       Action = ANew
     end
     object ToolButton2: TToolButton
       Left = 52
-      Top = 0
+      Top = 2
       Action = ADelete
     end
     object EFind: TEdit
       Left = 78
-      Top = 0
+      Top = 2
       Width = 93
       Height = 25
       TabOrder = 1
     end
     object ToolButton11: TToolButton
       Left = 171
-      Top = 0
+      Top = 2
       Action = AFind
     end
     object ToolButton4: TToolButton
       Left = 197
-      Top = 0
+      Top = 2
       Action = APreview
     end
     object ToolButton5: TToolButton
       Left = 223
-      Top = 0
+      Top = 2
       Action = AUserParams
     end
     object ToolButton6: TToolButton
       Left = 249
-      Top = 0
+      Top = 2
       Action = APrint
     end
     object ToolButton8: TToolButton
       Left = 275
-      Top = 0
+      Top = 2
       Action = APrintSetup
     end
     object ToolButton9: TToolButton
       Left = 301
-      Top = 0
+      Top = 2
       Action = AExportFolder
     end
     object BCancel: TButton
       Left = 327
-      Top = 0
+      Top = 2
       Width = 65
       Height = 25
       TabOrder = 0
@@ -83,9 +82,9 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
   end
   object ATree: TTreeView
     Left = 0
-    Top = 25
-    Width = 459
-    Height = 318
+    Top = 29
+    Width = 435
+    Height = 237
     Align = alClient
     DragMode = dmAutomatic
     HideSelection = False
@@ -98,9 +97,6 @@ object FRpDBTreeVCL: TFRpDBTreeVCL
     OnDragDrop = ATreeDragDrop
     OnDragOver = ATreeDragOver
     OnEndDrag = ATreeEndDrag
-    ExplicitTop = 26
-    ExplicitWidth = 451
-    ExplicitHeight = 278
   end
   object imalist: TImageList
     Height = 19

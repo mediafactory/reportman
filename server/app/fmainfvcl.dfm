@@ -5,7 +5,6 @@ object FSerMainVCL: TFSerMainVCL
   Height = 354
   VertScrollBar.Range = 117
   ActiveControl = LMEssages
-  AutoScroll = False
   Caption = 'Report Manager Server application'
   Color = clBtnFace
   ParentFont = True
@@ -18,8 +17,8 @@ object FSerMainVCL: TFSerMainVCL
   object LMEssages: TMemo
     Left = 0
     Top = 149
-    Width = 536
-    Height = 178
+    Width = 528
+    Height = 167
     Align = alClient
     Color = clInfoBk
     ReadOnly = True
@@ -30,10 +29,13 @@ object FSerMainVCL: TFSerMainVCL
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 536
+    Width = 528
     Height = 149
     Align = alTop
     TabOrder = 1
+    DesignSize = (
+      528
+      149)
     object LLog: TLabel
       Left = 8
       Top = 72
@@ -58,14 +60,14 @@ object FSerMainVCL: TFSerMainVCL
     object LConfigFile: TLabel
       Left = 8
       Top = 96
-      Width = 78
+      Width = 82
       Height = 13
       Caption = 'Configuration file'
     end
     object LPort: TLabel
       Left = 8
       Top = 124
-      Width = 19
+      Width = 20
       Height = 13
       Caption = 'Port'
     end

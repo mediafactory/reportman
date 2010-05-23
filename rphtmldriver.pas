@@ -138,7 +138,7 @@ end;
 function ObjectToHtmlText(apage:TrpMetafilePage;pageindex:integer;obj:TRpMetaObject;filename:string;index:integer;embedimages:boolean):String;
 var
  imafilename:String;
- isjpeg:Boolean;
+ format:string;
  fimagestream:TMemoryStream;
  indexed:boolean;
  bitmapwidth,bitmapheight,imagesize:Integer;
@@ -164,8 +164,9 @@ begin
      imafilename:=imafilename+'page'+IntToStr(pageindex)+'obj'+IntToStr(index);
      // Get information and save the image
      fimagestream:=apage.GetStream(obj);
-      isjpeg:=GetJPegInfo(fimagestream,bitmapwidth,bitmapheight);
-      if isjpeg then
+     format:='';
+      GetJPegInfo(fimagestream,bitmapwidth,bitmapheight,format);
+      if (format='JPEG') then
       begin
        // Read image dimensions
        imafilename:=ChangeFileExt(imafilename,'.jpg');
@@ -174,9 +175,16 @@ begin
       else
       begin
        fimagestream.Seek(0,soFromBeginning);
-       GetBitmapInfo(fimagestream,bitmapwidth,bitmapheight,imagesize,nil,indexed,bitsperpixel,numcolors,palette);
-       imafilename:=ChangeFileExt(imafilename,'.bmp');
-       fileext:='bmp';
+       if (format='BMP') then
+       begin
+        GetBitmapInfo(fimagestream,bitmapwidth,bitmapheight,imagesize,nil,indexed,bitsperpixel,numcolors,palette);
+        imafilename:=ChangeFileExt(imafilename,'.bmp');
+        fileext:='bmp';
+       end
+       else
+       begin
+        // Al otther formats
+       end
       end;
       fimagestream.Seek(0,soFromBeginning);
       if (embedimages) then
@@ -241,7 +249,7 @@ var
  penwidth:integer;
  dtype:TRpShapeType;
  nwidth,nheight:integer;
- isjpeg:Boolean;
+ format:string;
  fimagestream:TMemoryStream;
  indexed:boolean;
  bitmapwidth,bitmapheight,imagesize:Integer;
@@ -340,8 +348,9 @@ begin
     imafilename:=ChangeFileExt(filename,'');
     imafilename:=imafilename+'page'+IntToStr(pageindex)+'obj'+IntToStr(index);
     fimagestream:=page.GetStream(obj);
-    isjpeg:=GetJPegInfo(fimagestream,bitmapwidth,bitmapheight);
-    if isjpeg then
+    format:='';
+    GetJPegInfo(fimagestream,bitmapwidth,bitmapheight,format);
+    if format='JPEG' then
     begin
       imafilename:=ChangeFileExt(imafilename,'.jpg');
       fileext:='jpg';
@@ -350,9 +359,16 @@ begin
     begin
      // Read image dimensions
      fimagestream.Seek(0,soFromBeginning);
-     GetBitmapInfo(fimagestream,bitmapwidth,bitmapheight,imagesize,nil,indexed,bitsperpixel,numcolors,palette);
-     imafilename:=ChangeFileExt(imafilename,'.bmp');
-     fileext:='bmp';
+     if (format='BMP') then
+     begin
+       GetBitmapInfo(fimagestream,bitmapwidth,bitmapheight,imagesize,nil,indexed,bitsperpixel,numcolors,palette);
+       imafilename:=ChangeFileExt(imafilename,'.bmp');
+       fileext:='bmp';
+     end
+     else
+     begin
+      // All other formats
+     end;
     end;
     case TRpImageDrawStyle(obj.DrawImageStyle) of
      rpDrawFull:

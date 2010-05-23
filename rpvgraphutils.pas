@@ -2141,11 +2141,12 @@ begin
  XDriver:=StrPas(ADriver);
  XPort:=StrPas(APort);
  Result:=0;
- pdevmode:=@adevmode;
  if OpenPrinter(ADevice,fprinterhandle,nil) then
  begin
   try
-   asize:=DocumentProperties(0,fprinterhandle,ADevice,nil,nil,0);
+   pdevmode:=nil;
+   asize:=DocumentProperties(0,fprinterhandle,ADevice,pdevmode^,pdevmode^,0);
+   pdevmode:=@adevmode;
    if asize>0 then
    begin
     aresult:=GlobalAlloc(GHND,asize);

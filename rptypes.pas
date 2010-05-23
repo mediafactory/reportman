@@ -55,7 +55,12 @@ uses
  Db,
 {$ENDIF}
 {$IFDEF USEZLIB}
+{$IFDEF DELPHI2009UP}
+ zlib,
+{$ENDIF}
+{$IFNDEF DELPHI2009UP}
  rpmzlib,
+{$ENDIF}
 {$ENDIF}
 {$IFDEF USEINDY}
   IdCoderUUE,IdCoderMIME,

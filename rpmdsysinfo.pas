@@ -260,9 +260,10 @@ begin
    if OpenPrinter(buf,fprinterhandle,nil) then
    begin
     try
-     pdevmode:=AllocMem(sizeof(devmode));
+     pdevmode:=nil;
+     asize:=DocumentProperties(0,fprinterhandle,Device,pdevmode^,pdevmode^,0);
+     pdevmode:=AllocMem(sizeof(asize));
      try
-      asize:=DocumentProperties(0,fprinterhandle,Device,nil,nil,0);
       if asize>0 then
       begin
        FreeMem(pdevmode);

@@ -163,8 +163,11 @@ begin
 {$ENDIF}
  if Assigned(CurrentReport) then
  begin
-  CurrentReport.free;
-  CurrentReport:=nil;
+  try
+   CurrentReport.free;
+  finally
+   CurrentReport:=nil;
+  end;
  end;
  CurrentReport:=TRpReport.Create(nil);
  CurrentReport.OnProgress:=OnProgress;

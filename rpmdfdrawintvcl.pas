@@ -34,7 +34,7 @@ uses SysUtils, Classes,Windows,
 {$IFDEF EXTENDEDGRAPHICS}
  rpgraphicex,
 {$ENDIF}
-  rppdffile,clipbrd,
+  rppdffile,clipbrd,rpgdidriver,
   rpprintitem,rpdrawitem,rpmdobinsintvcl,rpmdconsts,
   rpgraphutilsvcl,rpmunits,rptypes;
 
@@ -586,6 +586,7 @@ var
 // newrgn:HRGN;
 // aresult:integer;
  bitmapwidth,bitmapheight:integer;
+ format:string;
 {$IFNDEF DOTNETD}
  jpegimage:TJPegImage;
 {$ENDIF}
@@ -618,7 +619,8 @@ begin
     aStream.Seek(0,soFromBeginning);
     try
      FBitmap.HandleType:=bmDIB;
-     if GetJPegInfo(astream,bitmapwidth,bitmapheight) then
+     GetJPegInfo(astream,bitmapwidth,bitmapheight,format);
+     if (format='JPEG') then
      begin
 {$IFNDEF DOTNETD}
       jpegimage:=TJPegImage.Create;
@@ -636,7 +638,24 @@ begin
      else
      begin
       aStream.Seek(0,soFromBeginning);
+      if (format='BMP') then
+      begin
       fbitmap.LoadFromStream(astream);
+      end
+      else
+      begin
+        // All other formats
+{$IFDEF EXTENDEDGRAPHICS}
+       ExFilterImage(aimage.Stream);
+       jpegimage:=TJPegImage.Create;
+       try
+        jpegimage.LoadFromStream(aimage.stream);
+        fbitmap.Assign(jpegimage);
+       finally
+        jpegimage.free;
+       end;
+{$ENDIF}
+      end;
      end;
     except
      FBitmap.free;
@@ -823,8 +842,9 @@ end;
 procedure TRpImageInterface.CopyImageClick(Sender:TObject);
 var
  jpe:TJPEGImage;
+ jpegimage:TJPEGImage;
  bitmap:TBitmap;
- isjpeg:boolean;
+   format:string;
  bitmapwidth,bitmapheight:integer;
  aimage:TRpImage;
 begin
@@ -834,8 +854,9 @@ begin
  bitmap:=TBitmap.Create;
  try
    aimage.Stream.Seek(0,soFromBeginning);
-   isjpeg:=GetJPegInfo(aimage.Stream,bitmapwidth,bitmapheight);
-   if isjpeg then
+   format:='';
+   GetJPegInfo(aimage.Stream,bitmapwidth,bitmapheight,format);
+   if (format='JPEG') then
    begin
     aimage.Stream.Seek(0,soFromBeginning);
     jpe:=TJPEGImage.Create;
@@ -851,9 +872,26 @@ begin
    end
    else
    begin
+    if (format='BMP') then
+    begin
     aimage.Stream.Seek(0,soFromBeginning);
     bitmap.LoadFromStream(aimage.Stream);
     ClipBoard.Assign(bitmap);
+    end
+    else
+    begin
+      // All other formats
+{$IFDEF EXTENDEDGRAPHICS}
+       ExFilterImage(aimage.Stream);
+       jpegimage:=TJPegImage.Create;
+       try
+        jpegimage.LoadFromStream(aimage.stream);
+        bitmap.Assign(jpegimage);
+       finally
+        jpegimage.free;
+       end;
+{$ENDIF}
+    end;
    end;
  finally
   bitmap.free;

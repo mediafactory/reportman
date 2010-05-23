@@ -129,6 +129,7 @@ var
  fimagestream:TMemoryStream;
  bitmapwidth,bitmapheight,imagesize:Integer;
  indexed:boolean;
+ format:string;
  palette:string;
  bitsperpixel,numcolors:integer;
 begin
@@ -164,8 +165,10 @@ begin
      imafilename:=ChangeFileExt(filename,'');
      imafilename:=imafilename+'page'+IntToStr(pageindex)+'obj'+IntToStr(index);
      fimagestream:=apage.GetStream(obj);
-     isjpeg:=GetJPegInfo(fimagestream,bitmapwidth,bitmapheight);
-     if isjpeg then
+     format:='';
+     GetJPegInfo(fimagestream,bitmapwidth,bitmapheight,format);
+
+     if format='JPEG' then
      begin
       // Read image dimensions
       imafilename:=ChangeFileExt(imafilename,'.jpg');
@@ -173,8 +176,15 @@ begin
      else
      begin
       fimagestream.Seek(0,soFromBeginning);
-      GetBitmapInfo(fimagestream,bitmapwidth,bitmapheight,imagesize,FImageStream,indexed,bitsperpixel,numcolors,palette);
-      imafilename:=ChangeFileExt(imafilename,'.bmp');
+      if (format='BMP') then
+      begin
+       GetBitmapInfo(fimagestream,bitmapwidth,bitmapheight,imagesize,FImageStream,indexed,bitsperpixel,numcolors,palette);
+       imafilename:=ChangeFileExt(imafilename,'.bmp');
+      end
+      else
+      begin
+       // All other formats
+      end;
      end;
      fimagestream.Seek(0,soFromBeginning);
      fimagestream.SaveToFile(imafilename);

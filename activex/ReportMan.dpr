@@ -6,7 +6,7 @@ library ReportMan;
 
 uses
   ComServ,
-  DBPwdlg,
+  DBPwdlg, MidasLib,
   reportman_TLB in 'reportman_TLB.pas',
   rpaxreportimp in 'rpaxreportimp.pas' {ReportManX: CoClass},
   aboutrpax in 'aboutrpax.pas' {ReportManXAbout},
