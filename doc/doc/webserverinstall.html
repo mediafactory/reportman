@@ -118,5 +118,9 @@
   PassEnv ORACLE_HOME<br>
   PassEnv PATH<br>
   PassEnv LD_LIBRARY_PATH</p>
+<p>To generate advanced graphics (charts) you must use the alternative repwebexex.<br>
+The apache server service must start in runlevel 5, and the Xserver must be running.<br>
+The environment variable DISPLAY must be defined to :0 in he apache runtime.<br>
+Some security settigs should be disabled, the fastest way is to disable the firewall and then execute the comand to enable access to the Xserver: xhost +<br>
 </body>
 </html>

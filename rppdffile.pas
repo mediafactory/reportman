@@ -2982,8 +2982,10 @@ procedure TRpPDFFile.SetFontType;
 var
  i:integer;
  adata:TRpTTFontData;
- index,acount:integer;
+ aunicodecount,index,acount:integer;
+ currentindex,nextindex:integer;
  awidths:string;
+ cmaphead,fromTo:AnsiString;
 begin
  CreateFont('Type1','Helvetica','WinAnsiEncoding');
  CreateFont('Type1','Helvetica-Bold','WinAnsiEncoding');
@@ -3088,6 +3090,92 @@ begin
   SWriteLine(FTempStream,'endobj');
   AddToOffset(FTempStream.Size);
   FTempStream.SaveToStream(FMainPDF);
+
+  // To unicode stream
+  if (adata.IsUnicode) then
+  begin
+   // First Build the string
+   cmaphead:='/CIDInit /ProcSet findresource begin' +LINE_FEED+
+                '12 dict begin ' +LINE_FEED+
+                'begincmap' +LINE_FEED+
+                '/CIDSystemInfo' +LINE_FEED+
+                '<< /Registry (TTX+0)' +LINE_FEED+
+                '/Ordering (T42UV)' +LINE_FEED+
+                '/Supplement 0' +LINE_FEED+
+                '>> def' +LINE_FEED+
+                '/CMapName /TTX+0 def' +LINE_FEED+
+                '/CMapType 2 def' +LINE_FEED+
+                '1 begincodespacerange' +LINE_FEED+
+                '<0000><FFFF>' +LINE_FEED+
+                'endcodespacerange'+LINE_FEED;
+   currentindex:=adata.firstloaded;
+   nextindex:=adata.firstloaded;
+   while (currentindex<=adata.lastloaded) do
+   begin
+    aunicodecount := 0;
+    index:=currentindex;
+    while (index<=adata.lastloaded) do
+    begin
+     nextindex:=index;
+     if adata.loaded[index] then
+     begin
+      Inc(aunicodecount);
+      if (aunicodecount>=100) then
+       break;
+     end;
+     inc(index);
+    end;
+    if (aunicodecount>0) then
+    begin
+     cmaphead:= cmaphead+IntToStr(aunicodecount)+
+      ' beginbfchar'+LINE_FEED;
+     for index := currentindex to nextindex do
+     begin
+      if adata.loaded[index] then
+      begin
+       fromTo:='<'+ IntToHex(Integer(adata.loadedglyphs[index]))+'> ';
+       cmaphead:=cmaphead+fromTo+' <'+IntToHex(index)+'>'+LINE_FEED;
+      end;
+     end;
+     cmaphead:=cmaphead+'endbfchar' +LINE_FEED;
+    end;
+    currentindex:=nextindex+1;
+   end;
+   cmaphead:= cmaphead+'endcmap' +LINE_FEED+
+               'CMapName currentdict /CMap defineresource pop'+LINE_FEED+
+               'end end'+LINE_FEED;
+
+   FObjectCount:= FObjectCount + 1;
+   adata.ToUnicodeIndex := FObjectCount;
+   FTempStream.Clear;
+   SWriteLine(FTempStream,IntToStr(FObjectCount)+' 0 obj');
+   SWriteLine(FTempStream,'<< /Length '+IntToStr(Length(cmaphead)));
+{$IFDEF USEZLIB}
+   if FCompressed then
+   begin
+    SWriteLine(FTempStream,'/Filter [/FlateDecode]');
+   end;
+{$ENDIF}
+   SWriteLine(FTempStream,'>>');
+   SWriteLine(FTempStream,'stream');
+{$IFDEF USEZLIB}
+   if FCompressed then
+   begin
+    FCompressionStream := TCompressionStream.Create(clDefault,FTempStream);
+    try
+     WriteStringToStream(cmaphead,FCompressionStream);
+    finally
+     FCompressionStream.Free;
+    end;
+   end
+   else
+{$ENDIF}
+     WriteStringToStream(cmaphead,FTempStream);
+   SWriteLine(FTempStream,'endstream');
+   SWriteLine(FTempStream,'endobj');
+   AddToOffset(FTempStream.Size);
+   FTempStream.SaveToStream(FMainPDF);
+  end;
  end;
  // Creates the fonts of the font list
  for i:=0 to Canvas.FFontTTData.Count-1 do
@@ -3107,6 +3195,7 @@ begin
    SWriteLine(FTempStream,'/Encoding /Identity-H');
    //SWriteLine(FTempStream,'/Encoding /PDFDocEncoding');
    SWriteLine(FTempStream,'/DescendantFonts [ '+IntToStr(FObjectCount+1)+' 0 R ]');
+   SWriteLine(FTempStream,'/ToUnicode '+IntToStr(adata.ToUnicodeIndex) + ' 0 R ');
 
    SWriteLine(FTempStream,'>>');
    SWriteLine(FTempStream,'endobj');

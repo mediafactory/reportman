@@ -1,5 +1,5 @@
 {*******************************************************}
-{                                                       }
+{                                                      }
 {       Report Manager                                  }
 {                                                       }
 {       TRpInfoProvider  Base class                     }
@@ -74,6 +74,7 @@ type
   ObjectIndex:integer;
   ObjectIndexParent:integer;
   DescriptorIndex:Integer;
+  ToUnicodeIndex:Integer;
   loadedkernings:array [0..65535] of TStringList;
   loadedglyphs:array [0..65535] of WideChar;
   loadedg:array [0..65535] of boolean;
