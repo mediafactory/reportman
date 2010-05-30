@@ -65,7 +65,7 @@
 						<VersionInfo Name="MajorVer">2</VersionInfo>
 						<VersionInfo Name="MinorVer">4</VersionInfo>
 						<VersionInfo Name="Release">0</VersionInfo>
-						<VersionInfo Name="Build">120</VersionInfo>
+						<VersionInfo Name="Build">121</VersionInfo>
 						<VersionInfo Name="Debug">False</VersionInfo>
 						<VersionInfo Name="PreRelease">False</VersionInfo>
 						<VersionInfo Name="Special">False</VersionInfo>
@@ -77,7 +77,7 @@
 					<VersionInfoKeys>
 						<VersionInfoKeys Name="CompanyName">Toni Martir</VersionInfoKeys>
 						<VersionInfoKeys Name="FileDescription">Report Manager Designer</VersionInfoKeys>
-						<VersionInfoKeys Name="FileVersion">2.4.0.120</VersionInfoKeys>
+						<VersionInfoKeys Name="FileVersion">2.4.0.121</VersionInfoKeys>
 						<VersionInfoKeys Name="InternalName">repmandxp</VersionInfoKeys>
 						<VersionInfoKeys Name="LegalCopyright">MPL/GPL License</VersionInfoKeys>
 						<VersionInfoKeys Name="LegalTrademarks"/>
