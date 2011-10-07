@@ -1,14 +1,14 @@
 object FRpDatasetsVCL: TFRpDatasetsVCL
   Left = 0
   Top = 0
-  Width = 443
-  Height = 270
+  Width = 435
+  Height = 266
   Align = alClient
   TabOrder = 0
   object PTop: TPanel
     Left = 0
     Top = 0
-    Width = 443
+    Width = 435
     Height = 105
     Align = alTop
     BevelOuter = bvNone
@@ -16,7 +16,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 443
+      Width = 435
       Height = 29
       AutoSize = True
       ButtonHeight = 25
@@ -66,7 +66,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object BParams: TButton
         Left = 117
         Top = 2
-        Width = 143
+        Width = 172
         Height = 25
         Caption = 'Parameters'
         TabOrder = 0
@@ -76,13 +76,13 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     object PTop1: TPanel
       Left = 0
       Top = 29
-      Width = 443
+      Width = 435
       Height = 76
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
       object Splitter1: TSplitter
-        Left = 161
+        Left = 185
         Top = 0
         Width = 8
         Height = 76
@@ -92,7 +92,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
       object LDatasets: TListBox
         Left = 0
         Top = 0
-        Width = 161
+        Width = 185
         Height = 76
         Align = alLeft
         ItemHeight = 13
@@ -100,9 +100,9 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         OnClick = LDatasetsClick
       end
       object PanelBasic: TPanel
-        Left = 169
+        Left = 193
         Top = 0
-        Width = 274
+        Width = 242
         Height = 76
         Align = alClient
         BevelOuter = bvNone
@@ -122,30 +122,33 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           Caption = 'Connection'
         end
         object ComboDataSource: TComboBox
-          Left = 112
+          Left = 120
           Top = 24
-          Width = 161
+          Width = 290
           Height = 21
           Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
           ItemHeight = 13
           TabOrder = 1
           OnChange = MSQLChange
         end
         object ComboConnection: TComboBox
-          Left = 112
+          Left = 120
           Top = 0
-          Width = 161
+          Width = 290
           Height = 21
           Style = csDropDownList
+          Anchors = [akLeft, akTop, akRight]
           ItemHeight = 13
           TabOrder = 0
           OnChange = MSQLChange
         end
         object BShowData: TButton
-          Left = 141
+          Left = 120
           Top = 48
-          Width = 132
+          Width = 290
           Height = 25
+          Anchors = [akLeft, akTop, akRight]
           Caption = 'Show data'
           TabOrder = 2
           OnClick = BShowDataClick
@@ -153,7 +156,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object CheckOpen: TCheckBox
           Left = 4
           Top = 56
-          Width = 133
+          Width = 110
           Height = 13
           Caption = 'Open on start'
           TabOrder = 3
@@ -165,34 +168,34 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
   object PBottom: TPanel
     Left = 0
     Top = 105
-    Width = 443
-    Height = 165
+    Width = 435
+    Height = 161
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object PControl: TPageControl
       Left = 0
       Top = 0
-      Width = 443
-      Height = 165
+      Width = 435
+      Height = 161
       ActivePage = TabMyBase
       Align = alClient
       TabOrder = 0
       object TabSQL: TTabSheet
         Caption = 'SQL'
         object Splitter2: TSplitter
-          Left = 173
+          Left = 189
           Top = 0
           Width = 8
-          Height = 205
+          Height = 293
           Cursor = crHSplit
           Beveled = True
         end
         object MSQL: TMemo
-          Left = 181
+          Left = 197
           Top = 0
-          Width = 313
-          Height = 205
+          Width = 412
+          Height = 293
           Align = alClient
           ScrollBars = ssBoth
           TabOrder = 0
@@ -202,15 +205,15 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object PBrowser: TPanel
           Left = 0
           Top = 0
-          Width = 173
-          Height = 205
+          Width = 189
+          Height = 293
           Align = alLeft
           BevelOuter = bvNone
           TabOrder = 1
           object PLBrowser: TPanel
             Left = 0
             Top = 0
-            Width = 173
+            Width = 189
             Height = 21
             Align = alTop
             Caption = 'Database Browser'
@@ -224,7 +227,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object RBDEType: TRadioGroup
           Left = 0
           Top = 0
-          Width = 435
+          Width = 427
           Height = 37
           Align = alTop
           Columns = 2
@@ -237,15 +240,15 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         object Panel4: TPanel
           Left = 0
           Top = 37
-          Width = 435
-          Height = 100
+          Width = 427
+          Height = 96
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 1
           object PBDEFilter: TPanel
             Left = 0
             Top = 0
-            Width = 558
+            Width = 609
             Height = 17
             Align = alTop
             Alignment = taLeftJustify
@@ -256,8 +259,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           object MBDEFilter: TMemo
             Left = 0
             Top = 17
-            Width = 558
-            Height = 231
+            Width = 609
+            Height = 239
             Align = alClient
             ScrollBars = ssBoth
             TabOrder = 1
@@ -270,61 +273,63 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         Caption = 'Table and order'
         ImageIndex = 1
         object LBDEIndexFields: TLabel
-          Left = 5
-          Top = 58
+          Left = 3
+          Top = 72
           Width = 56
           Height = 13
           Caption = 'Index Fields'
         end
         object LIndexName: TLabel
-          Left = 4
-          Top = 32
+          Left = 3
+          Top = 43
           Width = 57
           Height = 13
           Caption = 'Index Name'
         end
         object LTable: TLabel
-          Left = 4
-          Top = 10
+          Left = 0
+          Top = 14
           Width = 27
           Height = 13
           Caption = 'Table'
         end
         object LMasterFields: TLabel
-          Left = 4
-          Top = 82
+          Left = 3
+          Top = 102
           Width = 59
           Height = 13
           Caption = 'Master fields'
         end
         object LNote: TLabel
           Left = 4
-          Top = 104
-          Width = 249
-          Height = 37
+          Top = 128
+          Width = 250
+          Height = 153
+          Anchors = [akLeft, akTop, akBottom]
           AutoSize = False
           Caption = 'Note: Write fields separated by ; character'
           WordWrap = True
         end
         object LFirstRange: TLabel
-          Left = 260
+          Left = 288
           Top = 0
           Width = 49
           Height = 13
           Caption = 'First range'
         end
         object LLastRange: TLabel
-          Left = 388
-          Top = 0
+          Left = 445
+          Top = 3
           Width = 50
           Height = 13
           Caption = 'Last range'
         end
         object LRange: TLabel
-          Left = 260
-          Top = 84
-          Width = 249
-          Height = 57
+          Left = 288
+          Top = 128
+          Width = 297
+          Height = 162
+          Anchors = [akLeft, akTop, akRight, akBottom]
           AutoSize = False
           Caption = 
             'Each line will be evaluated and assigned to each field as the st' +
@@ -332,9 +337,9 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           WordWrap = True
         end
         object EBDEIndexFields: TComboBox
-          Left = 116
-          Top = 54
-          Width = 137
+          Left = 115
+          Top = 69
+          Width = 167
           Height = 21
           ItemHeight = 13
           TabOrder = 2
@@ -344,9 +349,9 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             '')
         end
         object EBDEIndexName: TComboBox
-          Left = 116
-          Top = 28
-          Width = 137
+          Left = 115
+          Top = 40
+          Width = 167
           Height = 21
           ItemHeight = 13
           TabOrder = 1
@@ -356,9 +361,9 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             '')
         end
         object EBDETable: TComboBox
-          Left = 116
-          Top = 2
-          Width = 137
+          Left = 115
+          Top = 11
+          Width = 167
           Height = 21
           ItemHeight = 13
           TabOrder = 0
@@ -368,28 +373,29 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             '')
         end
         object EBDEMasterFields: TEdit
-          Left = 116
-          Top = 78
-          Width = 137
-          Height = 21
+          Left = 115
+          Top = 99
+          Width = 167
+          Height = 22
           TabOrder = 3
           Text = 'EBDEMasterFields'
           OnChange = MSQLChange
         end
         object EBDEFirstRange: TMemo
-          Left = 260
-          Top = 16
-          Width = 121
-          Height = 65
+          Left = 288
+          Top = 19
+          Width = 151
+          Height = 95
           TabOrder = 4
           WordWrap = False
           OnChange = MSQLChange
         end
         object EBDELastRange: TMemo
-          Left = 388
-          Top = 16
-          Width = 121
-          Height = 65
+          Left = 445
+          Top = 19
+          Width = 154
+          Height = 95
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 5
           WordWrap = False
           OnChange = MSQLChange
@@ -400,71 +406,76 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         ImageIndex = 3
         object LIndexFields: TLabel
           Left = 0
-          Top = 53
+          Top = 60
           Width = 53
           Height = 13
           Caption = 'Index fields'
         end
         object LMyBase: TLabel
           Left = 0
-          Top = 6
+          Top = 9
           Width = 83
           Height = 13
           Caption = 'MyBase Filename'
         end
         object LFields: TLabel
           Left = 0
-          Top = 28
+          Top = 33
           Width = 61
           Height = 13
           Caption = 'Field defs file'
         end
         object LMasterfi: TLabel
           Left = 0
-          Top = 77
+          Top = 87
           Width = 59
           Height = 13
           Caption = 'Master fields'
         end
         object EMyBase: TEdit
           Left = 96
-          Top = 2
-          Width = 277
+          Top = 3
+          Width = 400
           Height = 21
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 0
           OnChange = MSQLChange
         end
         object EIndexFields: TEdit
           Left = 96
-          Top = 49
-          Width = 209
+          Top = 57
+          Width = 503
           Height = 21
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 5
           OnChange = MSQLChange
         end
         object BMyBase: TButton
-          Left = 376
-          Top = 2
-          Width = 77
+          Left = 502
+          Top = 3
+          Width = 97
           Height = 23
+          Anchors = [akTop, akRight]
           Caption = 'Search...'
           TabOrder = 1
           OnClick = BMyBaseClick
         end
         object BSearchFieldsFile: TButton
-          Left = 376
-          Top = 26
-          Width = 77
+          Left = 502
+          Top = 32
+          Width = 97
           Height = 23
+          Anchors = [akTop, akRight]
           Caption = 'Search...'
           TabOrder = 4
           OnClick = BMyBaseClick
         end
         object GUnions: TGroupBox
           Left = 0
-          Top = 100
-          Width = 449
-          Height = 101
+          Top = 124
+          Width = 599
+          Height = 166
+          Anchors = [akLeft, akTop, akRight, akBottom]
           Caption = 'Dataset client side unions'
           TabOrder = 6
           object LabelUnions: TLabel
@@ -477,23 +488,23 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
           object ComboUnions: TComboBox
             Left = 4
             Top = 36
-            Width = 181
+            Width = 197
             Height = 21
             Style = csDropDownList
             ItemHeight = 13
             TabOrder = 0
           end
           object CheckGroupUnion: TCheckBox
-            Left = 4
-            Top = 80
-            Width = 117
+            Left = 3
+            Top = 91
+            Width = 198
             Height = 17
             Caption = 'Union grouping'
             TabOrder = 2
             OnClick = MSQLChange
           end
           object BAddUnions: TButton
-            Left = 196
+            Left = 225
             Top = 16
             Width = 33
             Height = 29
@@ -502,8 +513,8 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             OnClick = BAddUnionsClick
           end
           object BDelUnions: TButton
-            Left = 196
-            Top = 64
+            Left = 225
+            Top = 124
             Width = 33
             Height = 29
             Caption = '<'
@@ -511,18 +522,18 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
             OnClick = BDelUnionsClick
           end
           object LUnions: TListBox
-            Left = 232
+            Left = 264
             Top = 16
-            Width = 209
-            Height = 77
-            Anchors = [akLeft, akTop, akRight]
+            Width = 321
+            Height = 137
+            Anchors = [akLeft, akTop, akRight, akBottom]
             ItemHeight = 13
             TabOrder = 5
           end
           object CheckParallelUnion: TCheckBox
-            Left = 4
-            Top = 60
-            Width = 117
+            Left = 3
+            Top = 68
+            Width = 198
             Height = 17
             Caption = 'Parallel union'
             TabOrder = 1
@@ -531,26 +542,28 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
         end
         object EMybasedefs: TEdit
           Left = 96
-          Top = 26
-          Width = 209
+          Top = 30
+          Width = 306
           Height = 21
           TabOrder = 2
           OnChange = MSQLChange
         end
         object BModify: TButton
-          Left = 308
-          Top = 26
-          Width = 65
-          Height = 23
+          Left = 408
+          Top = 30
+          Width = 88
+          Height = 25
+          Anchors = [akTop, akRight]
           Caption = 'Modify...'
           TabOrder = 3
           OnClick = BModifyClick
         end
         object EMasterFields: TEdit
           Left = 96
-          Top = 73
-          Width = 209
+          Top = 84
+          Width = 503
           Height = 21
+          Anchors = [akLeft, akTop, akRight]
           TabOrder = 7
           OnChange = MSQLChange
         end
@@ -563,7 +576,7 @@ object FRpDatasetsVCL: TFRpDatasetsVCL
     Left = 256
     Top = 144
     Bitmap = {
-      494C010105000900040013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101050009000C0013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000004C000000260000000100200000000000202D
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -1,8 +1,8 @@
 object FRpParamsVCL: TFRpParamsVCL
   Left = 539
   Top = 39
-  Width = 498
-  Height = 582
+  Width = 660
+  Height = 648
   Caption = 'Parameter definition'
   Color = clBtnFace
   ParentFont = True
@@ -15,8 +15,8 @@ object FRpParamsVCL: TFRpParamsVCL
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
-    Top = 147
-    Width = 490
+    Top = 209
+    Width = 644
     Height = 401
     Align = alBottom
     BevelOuter = bvNone
@@ -24,7 +24,7 @@ object FRpParamsVCL: TFRpParamsVCL
     object GProperties: TGroupBox
       Left = 2
       Top = 4
-      Width = 464
+      Width = 609
       Height = 389
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
@@ -89,7 +89,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object ECheckList: TCheckListBox
         Left = 284
         Top = 8
-        Width = 166
+        Width = 311
         Height = 73
         OnClickCheck = EDescriptionChange
         Anchors = [akLeft, akTop, akRight]
@@ -100,7 +100,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object GValues: TGroupBox
         Left = 12
         Top = 212
-        Width = 442
+        Width = 587
         Height = 105
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Strings to show (left) and strings to assign (right) '
@@ -116,7 +116,7 @@ object FRpParamsVCL: TFRpParamsVCL
         object Panel4: TPanel
           Left = 2
           Top = 15
-          Width = 438
+          Width = 583
           Height = 62
           Align = alTop
           BevelOuter = bvNone
@@ -134,7 +134,7 @@ object FRpParamsVCL: TFRpParamsVCL
           object MValues: TMemo
             Left = 195
             Top = 0
-            Width = 243
+            Width = 388
             Height = 62
             Align = alClient
             TabOrder = 1
@@ -145,7 +145,7 @@ object FRpParamsVCL: TFRpParamsVCL
         object ComboLookup: TComboBox
           Left = 128
           Top = 80
-          Width = 182
+          Width = 327
           Height = 21
           Hint = 'The parameters will be assigned not the selected datasets'
           Style = csDropDownList
@@ -158,7 +158,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object EDescription: TEdit
         Left = 116
         Top = 88
-        Width = 330
+        Width = 475
         Height = 21
         Hint = 'Description to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
@@ -191,7 +191,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object EValue: TRpMaskEdit
         Left = 284
         Top = 8
-        Width = 162
+        Width = 307
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 1
@@ -249,7 +249,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object LDatasets: TListBox
         Left = 236
         Top = 320
-        Width = 214
+        Width = 359
         Height = 57
         Anchors = [akLeft, akTop, akRight]
         ItemHeight = 13
@@ -258,7 +258,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object ESearch: TEdit
         Left = 116
         Top = 184
-        Width = 330
+        Width = 475
         Height = 21
         Anchors = [akLeft, akTop, akRight]
         TabOrder = 11
@@ -278,7 +278,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object EHint: TEdit
         Left = 116
         Top = 112
-        Width = 330
+        Width = 475
         Height = 21
         Hint = 'Hint to be show on the end user dialog'
         Anchors = [akLeft, akTop, akRight]
@@ -309,7 +309,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object GSearch: TGroupBox
         Left = 8
         Top = 212
-        Width = 446
+        Width = 591
         Height = 73
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Search value'
@@ -332,7 +332,7 @@ object FRpParamsVCL: TFRpParamsVCL
         object ComboSearchDataset: TComboBox
           Left = 132
           Top = 20
-          Width = 186
+          Width = 331
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
@@ -343,7 +343,7 @@ object FRpParamsVCL: TFRpParamsVCL
         object ComboSearchParam: TComboBox
           Left = 132
           Top = 44
-          Width = 186
+          Width = 331
           Height = 21
           Style = csDropDownList
           Anchors = [akLeft, akTop, akRight]
@@ -355,7 +355,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object EValidation: TEdit
         Left = 116
         Top = 136
-        Width = 330
+        Width = 475
         Height = 21
         Hint = 
           'Validation expression, if evaluated to false, error message will' +
@@ -368,7 +368,7 @@ object FRpParamsVCL: TFRpParamsVCL
       object EErrorMessage: TEdit
         Left = 116
         Top = 160
-        Width = 330
+        Width = 475
         Height = 21
         Hint = 'Error message to show when validation expression returns false'
         Anchors = [akLeft, akTop, akRight]
@@ -381,16 +381,16 @@ object FRpParamsVCL: TFRpParamsVCL
   object Panel2: TPanel
     Left = 0
     Top = 0
-    Width = 490
-    Height = 147
+    Width = 644
+    Height = 209
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
     object LParams: TListBox
       Left = 0
       Top = 30
-      Width = 394
-      Height = 117
+      Width = 528
+      Height = 179
       Align = alClient
       ItemHeight = 13
       TabOrder = 0
@@ -399,7 +399,7 @@ object FRpParamsVCL: TFRpParamsVCL
     object ToolBar1: TToolBar
       Left = 0
       Top = 0
-      Width = 490
+      Width = 644
       Height = 30
       AutoSize = True
       ButtonHeight = 26
@@ -450,28 +450,29 @@ object FRpParamsVCL: TFRpParamsVCL
       end
     end
     object Panel3: TPanel
-      Left = 394
+      Left = 528
       Top = 30
-      Width = 96
-      Height = 117
+      Width = 116
+      Height = 179
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 2
       object BCancel: TButton
-        Left = 10
-        Top = 54
-        Width = 75
-        Height = 25
+        Left = 6
+        Top = 146
+        Width = 95
+        Height = 35
+        Anchors = [akLeft, akBottom]
         Cancel = True
         Caption = 'Cancel'
         ModalResult = 2
         TabOrder = 0
       end
       object BOK: TButton
-        Left = 10
-        Top = 4
-        Width = 75
-        Height = 25
+        Left = 6
+        Top = 0
+        Width = 95
+        Height = 37
         Caption = 'OK'
         Default = True
         ModalResult = 4
@@ -486,7 +487,7 @@ object FRpParamsVCL: TFRpParamsVCL
     Left = 172
     Top = 200
     Bitmap = {
-      494C010105000900040013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010105000900080013001300FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       00000000000036000000280000004C000000260000000100200000000000202D
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

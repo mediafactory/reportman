@@ -41,10 +41,14 @@ uses Classes,SysUtils,
 {$ENDIF}
 {$IFDEF USESQLEXPRESS}
  {$DEFINE USENEWLINK}
- SqlExpr,DBXpress,SqlConst,//DBExpMYSQL,DbExpMyS,dbExpDB2,dbExpORA,dbExpINT
+  SqlExpr,SqlConst,
+ //DBExpMYSQL,DbExpMyS,dbExpDB2,dbExpORA,dbExpINT
  {$IFDEF DELPHI2009UP}
    DBXOracle,DBXInformix,DBXFirebird,DBXInterbase,DBXSyBaseASA,
    DBXSyBaseASE,DBXMSSQL,DBXMySQL,DBXCommon,DBXDb2,
+ {$ENDIF}
+ {$IFNDEF DELPHI2009UP}
+  DBXpress,
  {$ENDIF}
 {$ENDIF}
  rpmdconsts,rpmdshfolder,
@@ -61,7 +65,7 @@ uses Classes,SysUtils,
 {$ENDIF}
 {$IFDEF USEADO}
  {$IFNDEF DOTNETD}
-  adodb,
+  adodb,oleauto,
  {$ENDIF}
  {$IFDEF DOTNETD}
   ADONetDb,
@@ -400,7 +404,8 @@ procedure ExtractUnionFields(var datasetname:string;alist:TStrings);
 implementation
 
 
-uses 
+
+uses
 {$IFDEF USEBDE}
  rpeval,
 {$ENDIF}
@@ -424,7 +429,6 @@ const
   SConnectionConfigFile = 'dbxconnections';          { Do not localize }
   SConfExtension = '.conf';                       { Do not localize }
 {$ENDIF}
-
 
 
 {$IFDEF USEZEOS}
@@ -998,7 +1002,9 @@ begin
   if Not Assigned(FADOConnection) then
   begin
     FADOConnection:=TADOConnection.Create(nil);
-    FADOConnection.KeepConnection:=false;
+    FADOConnection.KeepConnection:=true;
+    // Keep connection=false fails when using ADO and parameters
+    //FADOConnection.KeepConnection:=false;
     FADOConnection.Mode:=cmRead;
   end;
   Result:=FADOConnection;
@@ -1104,10 +1110,22 @@ begin
         FSQLConnection.ConnectionName:=paramlist.Values['CONNECTIONNAME'];
         paramlist.Delete(index);
        end;
+       index:=paramlist.IndexOfName('ConnectionName');
+       if (index>=0) then
+       begin
+        FSQLConnection.ConnectionName:=paramlist.Values['ConnectionName'];
+        paramlist.Delete(index);
+       end;
        index:=paramlist.IndexOfName('DRIVERNAME');
        if (index>=0) then
        begin
         FSQLConnection.DriverName:=paramlist.Values['DRIVERNAME'];
+        paramlist.Delete(index);
+       end;
+       index:=paramlist.IndexOfName('DriverName');
+       if (index>=0) then
+       begin
+        FSQLConnection.DriverName:=paramlist.Values['DriverName'];
         paramlist.Delete(index);
        end;
        // Load vendor lib, library name...
@@ -1127,6 +1145,7 @@ begin
         funcname:=ConAdmin.drivers.ReadString(drivername,'GetDriverFunc','');
         ConAdmin.GetDriverLibNames(drivername,LibraryName,VendorLib);
         // Assigns all
+          FSQLConnection.Params.Delete(index);
         FSQLConnection.DriverName:=drivername;
         FSQLConnection.VendorLib:=vendorlib;
         FSQLConnection.LibraryName:=libraryname;
@@ -1561,6 +1580,8 @@ begin
  end;
  alist.Add(UpperCase(fullname));
 end;
+
+
 
 procedure TRpDataInfoItem.Connect(databaseinfo:TRpDatabaseInfoList;params:TRpParamList);
 var
@@ -2320,10 +2341,20 @@ begin
   on E:Exception do
   begin
    connecting:=false;
-   Raise Exception.Create(Alias+':'+E.Message);
+{$IFDEF USEADO}
+   if (E.ClassName='EOleSysError') then
+   begin   
+    Raise Exception.Create(Alias+':'+E.Message+' Error code:'+IntToStr(EOleSysError(E).ErrorCode));
+   end
+   else
+{$ENDIF}
+    Raise Exception.Create(Alias+':'+E.Message);
+//    Raise Exception.Create(Alias+':'+E.Message+':'+E.ClassName);
   end;
  end;
 end;
+
+ 
 
 procedure TRpDataInfoItem.DisConnect;
 begin
@@ -3494,7 +3525,7 @@ begin
    else
    begin
     lfields1.Add(data2.FieldDefs.Items[i].Name);
-    lfields2.Add(originalfields[counter]);
+    lfields2.Add(data2.FieldDefs.Items[i].Name);
     Inc(counter);
    end;
   end;

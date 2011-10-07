@@ -27,11 +27,11 @@ uses
  Classes,sysutils,rpmetafile,rpmdconsts,Graphics,Forms,
  rpmunits,Dialogs, Controls,Comobj,
  StdCtrls,ExtCtrls,rppdffile,rpgraphutilsvcl,
-{$IFNDEF DOTNETD}
- jpeg,
+{$IFDEF VCLNOTATION}
+ Vcl.Imaging.jpeg,
 {$ENDIF}
-{$IFDEF DOTNETD}
- System.ComponentModel,
+{$IFNDEF VCLNOTATION}
+ jpeg,
 {$ENDIF}
 {$IFDEF USEVARIANTS}
  types,Variants,

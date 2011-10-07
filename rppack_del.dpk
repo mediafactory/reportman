@@ -30,6 +30,16 @@ package rppack_del;
 {$DESCRIPTION 'Report Manager components(non-visual)'}
 {$IMPLICITBUILD OFF}
 
+requires
+  rtl,
+  dbrtl,
+  dsnap,
+  bdertl,
+  dbexpress,
+  adortl,
+  ibxpress,
+  indy;
+
 contains
   rptypeval in 'rptypeval.pas',
   rpmdconsts in 'rpmdconsts.pas',

@@ -956,7 +956,7 @@ begin
      until readed<120000;
      amemstream.Seek(0,soFromBeginning);
      // Check if is xml
-     if PChar(amemstream.memory)^='<' then
+     if PAnsiChar(amemstream.memory)^='<' then
      begin
       ReadReportXML(self,amemstream);
      end

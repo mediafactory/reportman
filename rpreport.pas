@@ -659,7 +659,9 @@ begin
 }     if (Not Datainfo.Items[index].Dataset.Eof) then
      begin
       dataavail:=true;
-     end;
+     end
+     else
+       SearchGroupHeader:=true;
     end
     else
 {$ENDIF}
@@ -667,7 +669,9 @@ begin
      if (Not Datainfo.Items[index].Dataset.Eof) then
      begin
       dataavail:=true;
-     end;
+     end
+     else
+       SearchGroupHeader:=true;
     end;
    end;
    subrep.LastRecord:=Not dataavail;

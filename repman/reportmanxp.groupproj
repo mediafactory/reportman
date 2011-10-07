@@ -1,6 +1,6 @@
 ﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		<PropertyGroup>
-			<ProjectGuid>{E2BCCC5E-B36C-4824-B5B3-54379691BB87}</ProjectGuid>
+			<ProjectGuid>{AA688718-B1B4-4745-A1EE-E93E79697A7A}</ProjectGuid>
 		</PropertyGroup>
 		<ItemGroup>
 			<Projects Include="repmand.dproj">
@@ -93,226 +93,226 @@
 			<MSBuild Projects="repmand.dproj"/>
 		</Target>
 		<Target Name="repmand:Clean">
-			<MSBuild Targets="Clean" Projects="repmand.dproj"/>
+			<MSBuild Projects="repmand.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="repmand:Make">
-			<MSBuild Targets="Make" Projects="repmand.dproj"/>
+			<MSBuild Projects="repmand.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="repmandxp">
 			<MSBuild Projects="ESN\repmandxp.dproj"/>
 		</Target>
 		<Target Name="repmandxp:Clean">
-			<MSBuild Targets="Clean" Projects="ESN\repmandxp.dproj"/>
+			<MSBuild Projects="ESN\repmandxp.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="repmandxp:Make">
-			<MSBuild Targets="Make" Projects="ESN\repmandxp.dproj"/>
+			<MSBuild Projects="ESN\repmandxp.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="metaprint">
 			<MSBuild Projects="utils\metaprint\metaprint.dproj"/>
 		</Target>
 		<Target Name="metaprint:Clean">
-			<MSBuild Targets="Clean" Projects="utils\metaprint\metaprint.dproj"/>
+			<MSBuild Projects="utils\metaprint\metaprint.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="metaprint:Make">
-			<MSBuild Targets="Make" Projects="utils\metaprint\metaprint.dproj"/>
+			<MSBuild Projects="utils\metaprint\metaprint.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="metaprintxp">
 			<MSBuild Projects="utils\metaprint\metaprintxp.dproj"/>
 		</Target>
 		<Target Name="metaprintxp:Clean">
-			<MSBuild Targets="Clean" Projects="utils\metaprint\metaprintxp.dproj"/>
+			<MSBuild Projects="utils\metaprint\metaprintxp.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="metaprintxp:Make">
-			<MSBuild Targets="Make" Projects="utils\metaprint\metaprintxp.dproj"/>
+			<MSBuild Projects="utils\metaprint\metaprintxp.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="metaview">
 			<MSBuild Projects="utils\metaview\metaview.dproj"/>
 		</Target>
 		<Target Name="metaview:Clean">
-			<MSBuild Targets="Clean" Projects="utils\metaview\metaview.dproj"/>
+			<MSBuild Projects="utils\metaview\metaview.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="metaview:Make">
-			<MSBuild Targets="Make" Projects="utils\metaview\metaview.dproj"/>
+			<MSBuild Projects="utils\metaview\metaview.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="metaviewxp">
 			<MSBuild Projects="utils\metaview\metaviewxp.dproj"/>
 		</Target>
 		<Target Name="metaviewxp:Clean">
-			<MSBuild Targets="Clean" Projects="utils\metaview\metaviewxp.dproj"/>
+			<MSBuild Projects="utils\metaview\metaviewxp.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="metaviewxp:Make">
-			<MSBuild Targets="Make" Projects="utils\metaview\metaviewxp.dproj"/>
+			<MSBuild Projects="utils\metaview\metaviewxp.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="printrep">
 			<MSBuild Projects="utils\printrep\printrep.dproj"/>
 		</Target>
 		<Target Name="printrep:Clean">
-			<MSBuild Targets="Clean" Projects="utils\printrep\printrep.dproj"/>
+			<MSBuild Projects="utils\printrep\printrep.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="printrep:Make">
-			<MSBuild Targets="Make" Projects="utils\printrep\printrep.dproj"/>
+			<MSBuild Projects="utils\printrep\printrep.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="printrepxp">
 			<MSBuild Projects="utils\printrep\printrepxp.dproj"/>
 		</Target>
 		<Target Name="printrepxp:Clean">
-			<MSBuild Targets="Clean" Projects="utils\printrep\printrepxp.dproj"/>
+			<MSBuild Projects="utils\printrep\printrepxp.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="printrepxp:Make">
-			<MSBuild Targets="Make" Projects="utils\printrep\printrepxp.dproj"/>
+			<MSBuild Projects="utils\printrep\printrepxp.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="reptotxt">
 			<MSBuild Projects="utils\reptotxt\reptotxt.dproj"/>
 		</Target>
 		<Target Name="reptotxt:Clean">
-			<MSBuild Targets="Clean" Projects="utils\reptotxt\reptotxt.dproj"/>
+			<MSBuild Projects="utils\reptotxt\reptotxt.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="reptotxt:Make">
-			<MSBuild Targets="Make" Projects="utils\reptotxt\reptotxt.dproj"/>
+			<MSBuild Projects="utils\reptotxt\reptotxt.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="txttorep">
 			<MSBuild Projects="utils\txttorep\txttorep.dproj"/>
 		</Target>
 		<Target Name="txttorep:Clean">
-			<MSBuild Targets="Clean" Projects="utils\txttorep\txttorep.dproj"/>
+			<MSBuild Projects="utils\txttorep\txttorep.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="txttorep:Make">
-			<MSBuild Targets="Make" Projects="utils\txttorep\txttorep.dproj"/>
+			<MSBuild Projects="utils\txttorep\txttorep.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="printreptopdf">
 			<MSBuild Projects="utils\printreptopdf\printreptopdf.dproj"/>
 		</Target>
 		<Target Name="printreptopdf:Clean">
-			<MSBuild Targets="Clean" Projects="utils\printreptopdf\printreptopdf.dproj"/>
+			<MSBuild Projects="utils\printreptopdf\printreptopdf.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="printreptopdf:Make">
-			<MSBuild Targets="Make" Projects="utils\printreptopdf\printreptopdf.dproj"/>
+			<MSBuild Projects="utils\printreptopdf\printreptopdf.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="reportserverapp">
 			<MSBuild Projects="..\server\app\reportserverapp.dproj"/>
 		</Target>
 		<Target Name="reportserverapp:Clean">
-			<MSBuild Targets="Clean" Projects="..\server\app\reportserverapp.dproj"/>
+			<MSBuild Projects="..\server\app\reportserverapp.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="reportserverapp:Make">
-			<MSBuild Targets="Make" Projects="..\server\app\reportserverapp.dproj"/>
+			<MSBuild Projects="..\server\app\reportserverapp.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="reportserverappxp">
 			<MSBuild Projects="..\server\app\reportserverappxp.dproj"/>
 		</Target>
 		<Target Name="reportserverappxp:Clean">
-			<MSBuild Targets="Clean" Projects="..\server\app\reportserverappxp.dproj"/>
+			<MSBuild Projects="..\server\app\reportserverappxp.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="reportserverappxp:Make">
-			<MSBuild Targets="Make" Projects="..\server\app\reportserverappxp.dproj"/>
+			<MSBuild Projects="..\server\app\reportserverappxp.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="reportservercon">
 			<MSBuild Projects="..\server\app\reportservercon.dproj"/>
 		</Target>
 		<Target Name="reportservercon:Clean">
-			<MSBuild Targets="Clean" Projects="..\server\app\reportservercon.dproj"/>
+			<MSBuild Projects="..\server\app\reportservercon.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="reportservercon:Make">
-			<MSBuild Targets="Make" Projects="..\server\app\reportservercon.dproj"/>
+			<MSBuild Projects="..\server\app\reportservercon.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="repserverconfig">
 			<MSBuild Projects="..\server\config\repserverconfig.dproj"/>
 		</Target>
 		<Target Name="repserverconfig:Clean">
-			<MSBuild Targets="Clean" Projects="..\server\config\repserverconfig.dproj"/>
+			<MSBuild Projects="..\server\config\repserverconfig.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="repserverconfig:Make">
-			<MSBuild Targets="Make" Projects="..\server\config\repserverconfig.dproj"/>
+			<MSBuild Projects="..\server\config\repserverconfig.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="repserverconfigxp">
 			<MSBuild Projects="..\server\config\repserverconfigxp.dproj"/>
 		</Target>
 		<Target Name="repserverconfigxp:Clean">
-			<MSBuild Targets="Clean" Projects="..\server\config\repserverconfigxp.dproj"/>
+			<MSBuild Projects="..\server\config\repserverconfigxp.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="repserverconfigxp:Make">
-			<MSBuild Targets="Make" Projects="..\server\config\repserverconfigxp.dproj"/>
+			<MSBuild Projects="..\server\config\repserverconfigxp.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="repwebexe">
 			<MSBuild Projects="..\server\web\repwebexe.dproj"/>
 		</Target>
 		<Target Name="repwebexe:Clean">
-			<MSBuild Targets="Clean" Projects="..\server\web\repwebexe.dproj"/>
+			<MSBuild Projects="..\server\web\repwebexe.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="repwebexe:Make">
-			<MSBuild Targets="Make" Projects="..\server\web\repwebexe.dproj"/>
+			<MSBuild Projects="..\server\web\repwebexe.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="reportman">
 			<MSBuild Projects="..\activex\reportman.dproj"/>
 		</Target>
 		<Target Name="reportman:Clean">
-			<MSBuild Targets="Clean" Projects="..\activex\reportman.dproj"/>
+			<MSBuild Projects="..\activex\reportman.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="reportman:Make">
-			<MSBuild Targets="Make" Projects="..\activex\reportman.dproj"/>
+			<MSBuild Projects="..\activex\reportman.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="rptranslate">
 			<MSBuild Projects="utils\rptranslator\rptranslate.dproj"/>
 		</Target>
 		<Target Name="rptranslate:Clean">
-			<MSBuild Targets="Clean" Projects="utils\rptranslator\rptranslate.dproj"/>
+			<MSBuild Projects="utils\rptranslator\rptranslate.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="rptranslate:Make">
-			<MSBuild Targets="Make" Projects="utils\rptranslator\rptranslate.dproj"/>
+			<MSBuild Projects="utils\rptranslator\rptranslate.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="compilerep">
 			<MSBuild Projects="utils\compilerep\compilerep.dproj"/>
 		</Target>
 		<Target Name="compilerep:Clean">
-			<MSBuild Targets="Clean" Projects="utils\compilerep\compilerep.dproj"/>
+			<MSBuild Projects="utils\compilerep\compilerep.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="compilerep:Make">
-			<MSBuild Targets="Make" Projects="utils\compilerep\compilerep.dproj"/>
+			<MSBuild Projects="utils\compilerep\compilerep.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="unixtodos">
 			<MSBuild Projects="utils\unixtodos\unixtodos.dproj"/>
 		</Target>
 		<Target Name="unixtodos:Clean">
-			<MSBuild Targets="Clean" Projects="utils\unixtodos\unixtodos.dproj"/>
+			<MSBuild Projects="utils\unixtodos\unixtodos.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="unixtodos:Make">
-			<MSBuild Targets="Make" Projects="utils\unixtodos\unixtodos.dproj"/>
+			<MSBuild Projects="utils\unixtodos\unixtodos.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="WebReportManX">
 			<MSBuild Projects="..\webactivex\WebReportManX.dproj"/>
 		</Target>
 		<Target Name="WebReportManX:Clean">
-			<MSBuild Targets="Clean" Projects="..\webactivex\WebReportManX.dproj"/>
+			<MSBuild Projects="..\webactivex\WebReportManX.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="WebReportManX:Make">
-			<MSBuild Targets="Make" Projects="..\webactivex\WebReportManX.dproj"/>
+			<MSBuild Projects="..\webactivex\WebReportManX.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="repserverservice">
 			<MSBuild Projects="..\server\service\repserverservice.dproj"/>
 		</Target>
 		<Target Name="repserverservice:Clean">
-			<MSBuild Targets="Clean" Projects="..\server\service\repserverservice.dproj"/>
+			<MSBuild Projects="..\server\service\repserverservice.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="repserverservice:Make">
-			<MSBuild Targets="Make" Projects="..\server\service\repserverservice.dproj"/>
+			<MSBuild Projects="..\server\service\repserverservice.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="repserviceinstall">
 			<MSBuild Projects="..\server\service\repserviceinstall.dproj"/>
 		</Target>
 		<Target Name="repserviceinstall:Clean">
-			<MSBuild Targets="Clean" Projects="..\server\service\repserviceinstall.dproj"/>
+			<MSBuild Projects="..\server\service\repserviceinstall.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="repserviceinstall:Make">
-			<MSBuild Targets="Make" Projects="..\server\service\repserviceinstall.dproj"/>
+			<MSBuild Projects="..\server\service\repserviceinstall.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="repwebserver">
 			<MSBuild Projects="..\server\web\repwebserver.dproj"/>
 		</Target>
 		<Target Name="repwebserver:Clean">
-			<MSBuild Targets="Clean" Projects="..\server\web\repwebserver.dproj"/>
+			<MSBuild Projects="..\server\web\repwebserver.dproj" Targets="Clean"/>
 		</Target>
 		<Target Name="repwebserver:Make">
-			<MSBuild Targets="Make" Projects="..\server\web\repwebserver.dproj"/>
+			<MSBuild Projects="..\server\web\repwebserver.dproj" Targets="Make"/>
 		</Target>
 		<Target Name="Build">
 			<CallTarget Targets="repmand;repmandxp;metaprint;metaprintxp;metaview;metaviewxp;printrep;printrepxp;reptotxt;txttorep;printreptopdf;reportserverapp;reportserverappxp;reportservercon;repserverconfig;repserverconfigxp;repwebexe;reportman;rptranslate;compilerep;unixtodos;WebReportManX;repserverservice;repserviceinstall;repwebserver;repmandxp"/>
@@ -323,5 +323,5 @@
 		<Target Name="Make">
 			<CallTarget Targets="repmand:Make;repmandxp:Make;metaprint:Make;metaprintxp:Make;metaview:Make;metaviewxp:Make;printrep:Make;printrepxp:Make;reptotxt:Make;txttorep:Make;printreptopdf:Make;reportserverapp:Make;reportserverappxp:Make;reportservercon:Make;repserverconfig:Make;repserverconfigxp:Make;repwebexe:Make;reportman:Make;rptranslate:Make;compilerep:Make;unixtodos:Make;WebReportManX:Make;repserverservice:Make;repserviceinstall:Make;repwebserver:Make;repmandxp:Make"/>
 		</Target>
-		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+		<Import Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')" Project="$(BDS)\Bin\CodeGear.Group.Targets"/>
 	</Project>

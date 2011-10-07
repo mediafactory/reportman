@@ -391,6 +391,7 @@ begin
 
  if recalcreport then
  begin
+  areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
   TRpPreviewControl(previewcontrol).Report:=nil;
   previewcontrol.Parent:=nil;
   rpgdidriver.PrintReport(areport,Caption,true,allpages,frompage,topage,copies,collate);
@@ -457,6 +458,7 @@ begin
         end;
         if recalcreport then
         begin
+          areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
           TRpPreviewControl(previewcontrol).Report:=nil;
           previewcontrol.Parent:=nil;
           rppdfdriver.PrintReportPDF(areport,Caption,true,true,1,99999,1,SaveDialog1.FileName,SaveDialog1.FilterIndex=2,false);
@@ -482,6 +484,7 @@ begin
        end;
        if recalcreport then
        begin
+         areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
          TRpPreviewControl(previewcontrol).Report:=nil;
          previewcontrol.Parent:=nil;
          pdfdriver:=TRpPdfDriver.Create;
@@ -493,11 +496,11 @@ begin
           try
            areport.Pagesize:=rpPageSizeUser;
            // Maximum of aprox 25000 A4 pages
-           if (TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsrecalculate) then
+           if (areport.PrinterFonts=rppfontsrecalculate) then
             areport.CustomPageHeight:=TWIPS_PER_INCHESS*100000;
 
            areport.PrintAll(pdfdriver);
-           if (TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsrecalculate) then
+           if (areport.PrinterFonts=rppfontsrecalculate) then
            begin
             areport.Metafile.CustomY:=areport.maximum_height;
             areport.Metafile.CustomX:=areport.maximum_width;
@@ -510,6 +513,7 @@ begin
           meta:=areport.Metafile;
          finally
           pdfdriver.free;
+          TRpPreviewControl(previewcontrol).Report:=areport;
          end;
          ExportMetafileToExcel(meta,SaveDialog1.FileName,
           true,false,true,1,9999,SaveDialog1.FilterIndex=5);
@@ -554,6 +558,7 @@ begin
        end;
        if recalcreport then
        begin
+         areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
          TRpPreviewControl(previewcontrol).Report:=nil;
          previewcontrol.Parent:=nil;
          pdfdriver:=TRpPdfDriver.Create;
@@ -565,10 +570,10 @@ begin
           try
            areport.Pagesize:=rpPageSizeUser;
            // Maximum of aprox 25000 A4 pages
-           if (TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsrecalculate) then
+           if (aReport.PrinterFonts=rppfontsrecalculate) then
             areport.CustomPageHeight:=TWIPS_PER_INCHESS*100000;
            areport.PrintAll(pdfdriver);
-           if (TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsrecalculate) then
+           if (areport.PrinterFonts=rppfontsrecalculate) then
            begin
             areport.Metafile.CustomY:=areport.maximum_height;
             areport.Metafile.CustomX:=areport.maximum_width;
@@ -581,6 +586,7 @@ begin
           meta:=areport.Metafile;
          finally
           pdfdriver.free;
+          TRpPreviewControl(previewcontrol).Report:=areport;
          end;
        end
        else
@@ -611,6 +617,7 @@ begin
        end;
        if recalcreport then
        begin
+         areport:=TRpReport(TRpPreviewControl(previewcontrol).Report);
          TRpPreviewControl(previewcontrol).Report:=nil;
          previewcontrol.Parent:=nil;
          pdfdriver:=TRpPdfDriver.Create;
@@ -622,7 +629,7 @@ begin
           try
            areport.Pagesize:=rpPageSizeUser;
            // Maximum of aprox 25000 A4 pages
-           if (TRpPreviewControl(previewcontrol).Report.PrinterFonts=rppfontsrecalculate) then
+           if (areport.PrinterFonts=rppfontsrecalculate) then
             areport.CustomPageHeight:=TWIPS_PER_INCHESS*100000;
            areport.PrintAll(pdfdriver);
            if (areport.Metafile.CurrentPageCount=1) then
@@ -640,6 +647,7 @@ begin
           meta:=areport.Metafile;
          finally
           pdfdriver.free;
+          TRpPreviewControl(previewcontrol).Report:=areport;
          end;
        end
        else

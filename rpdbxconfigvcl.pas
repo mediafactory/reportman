@@ -29,7 +29,9 @@ uses SysUtils, Classes,
   rpgraphutilsvcl,rpdatainfo,
 {$IFDEF USESQLEXPRESS}
   SQLExpr,
+{$IFNDEF DELPHI2009UP}
   DBXpress,
+{$ENDIF´}
 {$ENDIF}
 {$IFDEF USEZEOS}
  ZDbcIntfs,ZConnection,

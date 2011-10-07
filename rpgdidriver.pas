@@ -39,14 +39,19 @@ uses
  System.ComponentModel,
 {$ENDIF}
  rptypes,rpvgraphutils,
-{$IFNDEF DOTNETD}
- jpeg,
-{$ENDIF}
 {$IFNDEF FORWEBAX}
  rpbasereport,rpreport,
 {$IFDEF USETEECHART}
- Chart,Series,rpdrawitem,
- teEngine,ArrowCha,BubbleCh,GanttCh,
+ {$IFDEF VCLNOTATION}
+  VCLTee.Chart,VCLTee.Series,rpdrawitem,
+  VCLTee.teEngine,VCLTee.ArrowCha,VCLTee.BubbleCh,VCLTee.GanttCh,
+  VCL.Imaging.jpeg,
+ {$ENDIF}
+ {$IFNDEF VCLNOTATION}
+  Chart,Series,rpdrawitem,
+  teEngine,ArrowCha,BubbleCh,GanttCh,
+  jpeg,
+ {$ENDIF}
 {$ENDIF}
 {$IFDEF EXTENDEDGRAPHICS}
  rpgraphicex,
@@ -216,7 +221,7 @@ function ExportReportToPDFMetaStream (report:TRpReport; Caption:string; progress
 {$ENDIF}
 function DoShowPrintDialog (var allpages:boolean;
  var frompage,topage,copies:integer; var collate:boolean;disablecopies:boolean=false) :boolean;
-function PrinterSelection (printerindex:TRpPrinterSelect;papersource,duplex:integer;var pconfig:TPrinterConfig) :TPoint;
+function PrinterSelection(printerindex:TRpPrinterSelect;papersource,duplex:integer;var pconfig:TPrinterConfig) :TPoint;
 procedure PageSizeSelection (rpPageSize:TPageSizeQt);
 procedure OrientationSelection (neworientation:TRpOrientation);
 
@@ -1588,7 +1593,8 @@ var
  currentorientation:TPrinterOrientation;
 begin
  currentorientation:=GetPrinterOrientation;
- if Orientation=rpOrientationPortrait then
+// if Orientation=rpOrientationPortrait then
+ if Orientation<>rpOrientationLandscape then
  begin
   if currentorientation<>poPortrait then
   begin
@@ -1604,7 +1610,7 @@ begin
   end;
  end
  else
- if Orientation=rpOrientationLandscape then
+// if Orientation=rpOrientationLandscape then
  begin
   if currentorientation<>poLandscape then
   begin
@@ -1794,7 +1800,7 @@ begin
    end;
    if metafile.OpenDrawerBefore then
      SendControlCodeToPrinter(GetPrinterRawOp(printerindex,rawopopendrawer));
-   if not nobegindoc then
+   if ((not nobegindoc) OR (not printer.Printing)) then
    begin
     printer.Title:=Tittle;
     printer.Begindoc;
@@ -2899,12 +2905,13 @@ procedure OrientationSelection(neworientation:TRpOrientation);
 begin
  if Printer.Printers.Count<1 then
   exit;
- if neworientation=rpOrientationDefault then
-  exit;
- if neworientation=rpOrientationPortrait then
-  Printer.Orientation:=poPortrait
- else
-  Printer.Orientation:=poLandscape;
+ SetPrinterOrientation(neworientation=rpOrientationLandscape);
+// if neworientation=rpOrientationDefault then
+//  exit;
+// if neworientation=rpOrientationPortrait then
+//  Printer.Orientation:=poPortrait
+// else
+//  Printer.Orientation:=poLandscape;
 end;
 
 

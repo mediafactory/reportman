@@ -34,7 +34,9 @@ uses
   MidasLib,
 {$ENDIF}
   Graphics,
+{$IFDEF USEAPRO}
   rpfaxsend,
+{$ENDIF}
   Printers,
   rpreport in '..\..\..\rpreport.pas',
   rppreviewcontrol in '..\..\..\rppreviewcontrol.pas',
@@ -397,7 +399,12 @@ begin
          meta.LoadFromStream(memstream);
          if Length(sendfax)>0 then
          begin
+{$IFDEF USEAPRO}
           SendFaxMetafile(sendfax,faxcovertext,faxdevice,meta,ShowProgress);
+{$ELSE}
+          raise Exception.Create('Send fax not supported, not compiled with APRO');
+{$ENDIF}
+
          end
          else
          begin

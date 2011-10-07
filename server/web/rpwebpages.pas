@@ -18,7 +18,7 @@ uses SysUtils,Classes,HTTPApp,rpmdconsts,Inifiles,rpalias,
 {$ENDIF}
 {$IFNDEF FORCECONSOLE}
 {$IFDEF MSWINDOWS}
-  rpgdidriver,
+  rpgdidriver,Windows,
  {$ENDIF}
  {$IFDEF LINUX}
   rpqtdriver,
@@ -245,7 +245,23 @@ begin
  Result:=astring;
 end;
 
-
+{$IFDEF MSWINDOWS}
+function GetCurrentUserName : string;
+const
+  cnMaxUserNameLen = 254;
+var
+  sUserName     : string;
+  dwUserNameLen : DWORD;
+begin
+  dwUserNameLen := cnMaxUserNameLen-1;
+  SetLength( sUserName, cnMaxUserNameLen );
+  GetUserName(
+    PChar( sUserName ),
+    dwUserNameLen );
+  SetLength( sUserName, dwUserNameLen );
+  Result := sUserName;
+end;
+{$ENDIF}
 
 
 procedure TRpWebPageLoader.GetWebPage(Request: TWebRequest;apage:TRpWebPage;
@@ -333,6 +349,13 @@ begin
      astring:=astring+'<p>KYLIX_DATE_SEPARATOR='+atemp+'</p>';
      atemp:=GetEnvironmentVariable('KYLIX_TIME_SEPARATOR');
      astring:=astring+'<p>KYLIX_TIME_SEPARATOR='+atemp+'</p>';
+     atemp:=GetEnvironmentVariable('USERNAME');
+     astring:=astring+'<p>USERNAME='+atemp+'</p>';
+     astring:=astring+'</body></html>';
+{$IFDEF MSWINDOWS}
+     atemp:=GetCurrentUserName;
+     astring:=astring+'<p>Current user='+atemp+'</p>';
+{$ENDIF}
      astring:=astring+'</body></html>';
      Response.Content:=astring;
     end;
@@ -543,6 +566,7 @@ var
  FLogFile:TFileStream;
  alist:TStringList;
 begin
+ Ffilenameconfig:='';
  try
   Ffilenameconfig:=Obtainininamecommonconfig('','','reportmanserver');
   ForceDirectories(ExtractFilePath(ffilenameconfig));
@@ -638,7 +662,7 @@ begin
  except
   on E:Exception do
   begin
-   InitErrorMessage:=E.Message;
+   InitErrorMessage:=E.Message+' Configuration file:'+Ffilenameconfig;
   end;
  end;
 end;

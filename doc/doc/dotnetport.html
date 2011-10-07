@@ -6,61 +6,34 @@
 <body>
 <h2>Report Manager for Dot Net</h2>
 <h3><b>Basics</b></h3>
-<p>The dot net version of Report Manager is a translation from Delphi to C# of 
+<p>The dot net version of Report Manager is a full translation from Delphi to C# of 
   the reporting engine. The port to dot net is near completion but requires still 
   some work. Libraries are provided so you can link easily your reports with your 
-  application.</p>
-<p><strong>How it works</strong></p>
-<p>You use the designer, and select a dot net provider on database connection 
-  configuration dialog. After you do this, the designer will use the dot net version 
-  of the engine (Framework 1.1 or 2.0 depending on the selected provider). That 
-  is effectively executing the command <strong>printreport.exe</strong> inside 
-  the net or net2 folder inside designer folder. </p>
-<p>In Linux, Mono 1.1.13 or newer must be installed (preview and print only word latests versions), in Microsoft Windows, Dot 
-  Net runtime Framework 1.1 or 2.0 must be installed depending on the selected 
-  provider. </p>
-<p><strong>Internals</strong></p>
-<p>The internal procedure is save the report in a temp file, as XML (see page 
-  setup, prefered save format), then call printreport.exe with command line options 
-  (-preview for example). That is when you preview or print, the printreport.exe 
-  is used instead of the designer itself. You can also test printreport.exe independently, 
-  the only requirement is you save the report as xml (select prefered save format 
-  in page setup).</p>
-<p>For example, this instruction will generate a pdf file from a report:</p>
-<p>printreport.exe -pdf pdfoutputfilename.pdf mysavedreportasxml.rep</p>
-<p><strong>Parts already working</strong></p>
+  application. The .net por tof the Report Designer is not completed, so, the design and test of ther reports must be done with native Win32 database drivers </p>
+<p><strong>How to design reports for .Net</strong></p>
+<p>Design the report normally but:</p>
 <ul>
-  <li>Print preview and printout, including report parameters and page setup. </li>
-  <li>PDF output (not truetype embedding support)</li>
-  <li>Label, expression, image, drawing, barcode (partial)</li>
-  <li>Data providers 1.1: Odbc, OleDB, SQLServer, Firebird, SQLite,Sybase,PostgreSQL,IBM 
-    DB2 (Linux),MySQL(Windows)</li>
-  <li>Data providers 2.0: Any registered provider, the library does not have any 
-    dependence on any data provider. See Framework documentation to know how to 
-    register database providers.</li>
+  <li> Set at page setup, options tab the prefered save method to XML or XML compressed. The .net runtime read and save the reports in this new formats.</li>
+  <li>There are small diferences, for example when executing in .net, the fortmat property for dates will behave like in .Net framework so the M represents the month and the m the minutes, and the H is the 24 hour format hour.</li>
+  <li>For linked querys, the parameters of the child dataset must be defined in Parameters definition and must be assigned to the child dataset.</li>
 </ul>
 <p><strong>Missing parts</strong></p>
 <ul>
-  <li>Output as excel, text, csv.</li>
-  <li>Linux port: The preview uses the dot net 1.0 preview window becuase 2.0 toolstrips are still not working well in Mono. Print out have been implemented recently in Mono, but it seems to work well, if you experiment problems you can use  pdf output and send the pdf file to printer using system commands..</li>
+  <li>Output as csv.</li>
+  <li>Report Designer </li>
   <li>Some barcodes still missing, charting not implemented </li>
-  <li>Other data providers may be included in the future: IBM DB2 (Windows), MySQL 
-    (Linux)</li>
 </ul>
 <p><strong>Different behaviour</strong></p>
 <ul>
-  <li>You must use dot net syntax for parameters in querys, see documentation 
-    in dot net platform sdk, usually use @paramname for parameters instead of :paramname. Also add all parameters to parameter definition including the parameters used to link querys.</li>
   <li>In odbc provider you use ? for placing parameters, the parameters will be 
     assigned by position, not by name, parameters by name are not supported by 
     odbc dot net driver, so make sure to sort the parameters to match query position 
     when you use odbc.</li>
-  <li>The display format for expressions follows dot net formatting standard (main differences are for date and time formatting, use M for month, and m for minutes). </li>
 </ul>
 <p><strong>Using the library</strong></p>
 <p>To use the libraries provided, you should include a reference to them in your 
-  project.</p>
-<p>Modularized libraries are provided, <a href="../docnet/index.html">documentation 
+  project. It' better if you include the .csproj to your project and then a reference to that project so you can debug any problem deeper. </p>
+<p><a href="../docnet/index.html">Documentation 
   is available</a> but still incomplete.</p>
 <p>This is sample code to execute a report, a portion of the sample provided testinglib.exe.</p>
 <p>using Reportman.Drawing;
@@ -71,7 +44,15 @@ using Reportman.Reporting;<br></br>
 using Reportman.Reporting.Forms;<br></br>
 </p>
 <p> Report rp=new Reportman.Report();<br>
-  rp.LoadFromFile(EFile.Text);<br>
+rp.LoadFromFile(EFile.Text);</p>
+<p>// Set the provider factory for each database, user the invariant name of the factory (defined in mahine.config) </p>
+<p> rp.DatabaseInfo[0].ProviderFactory = &quot;YourDatabasefactory&quot;; <br>
+</p>
+<p>// As an alternative you can provide an already stablished connection and transaction </p>
+<p>//  rp.DatabaseInfo[0].Connection =YourIDBConnection</p>
+<p>//  rp.DatabaseInfo[0].Transaction=YourIDBTransacion</p>
+<p></p>
+<p><br>
   if (pdf)<br>
   {<br>
   rp.AsyncExecution=false;<br>
@@ -84,13 +65,13 @@ using Reportman.Reporting.Forms;<br></br>
   {<br>
   rp.AsyncExecution=asyncexecution;<br>
   if (ParamsForm.ShowParams(rp)<br>
-  {<br>  
+  {<br>
   PrintOutWinForms prw = new PrintOutWinForms();<br>
   prw.Preview = preview;<br>
   prw.SystemPreview=systempreview;<br>
   prw.ShowPrintDialog=showprintdialog;<br>
   prw.Print(rp.MetaFile);<br>
-  }  <br>
+  } <br>
   }<br>
 </p>
 </body>

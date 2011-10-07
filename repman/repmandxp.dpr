@@ -26,9 +26,7 @@ uses
   Controls,
   Dialogs,
   ActiveX,
-{$IFDEF USEVARIANTS}
-  midaslib,
-{$ENDIF}
+  SysUtils,
   rpmdfmainvcl in '..\rpmdfmainvcl.pas' {FRpMainFVCL},
   rpmdfdesignvcl in '..\rpmdfdesignvcl.pas' {FRpDesignFrameVCL: TFrame},
   rpmdfaboutvcl in '..\rpmdfaboutvcl.pas' {FRpAboutBoxVCL},
@@ -124,6 +122,9 @@ uses
 
 {$R *.res}
 
+// Para corregir el bud en adodb
+// ADODB in '..\ADOBUG\ADODB.pas'
+
 begin
 {$IFDEF DELPHI2007UP}
  UseLatestCommonDialogs:=true;
@@ -138,5 +139,7 @@ begin
   Application.CreateForm(TFRpMainFVCL, FRpMainFVCL);
   FRpMainFVCL.Font.Assign(Screen.IconFont);
   FRpMainFVCL.BrowseCommandLine:=true;
+
   Application.Run;
+
 end.

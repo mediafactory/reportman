@@ -30,7 +30,12 @@ package rppackvcl_del;
 {$IMPLICITBUILD OFF}
 
 requires
-  rppack_del;
+  rppack_del,
+  vcljpg,
+  vcl,
+  vclx,
+  vcldb,
+  tee;
 
 {%File 'rpconf.inc'}
 

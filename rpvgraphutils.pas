@@ -24,7 +24,12 @@ interface
 
 uses Classes,SysUtils,Windows,Graphics,rpmunits,Printers,WinSpool,
  rpmdconsts,rptypes,Forms,
+{$IFDEF VCLNOTATION}
+ Vcl.Imaging.jpeg,
+{$ENDIF}
+{$IFNDEF VCLNOTATION}
  jpeg,
+{$ENDIF}
  ComCtrls;
 const
  // Max bitmap size for tile result operation
@@ -1589,6 +1594,7 @@ var
   DeviceMode: THandle;
   printererror:boolean;
   maxcopies:integer;
+  oldcopies:integer;
 begin
  Result:=1;
  if printer.Printers.count<1 then
@@ -1605,6 +1611,25 @@ begin
   printererror:=true;
  if printererror then
   exit;
+ if (printer.Printing) then
+ begin
+  maxcopies:=1;
+  exit;
+ end
+ else
+ begin
+  oldcopies:=printer.Copies;
+  printer.Copies:=printer.Copies+1;
+  if (printer.Copies=oldcopies) then
+  begin
+   maxcopies:=1;
+   exit;
+  end
+  else
+  begin
+   printer.Copies:=oldcopies;
+  end;
+ end;
  try
    maxcopies:=DeviceCapabilities(Device,Port,DC_COPIES,nil,nil);
    if maxcopies<0 then
@@ -1746,12 +1771,19 @@ var
   Device, Driver, Port: array[0..1023] of char;
   DeviceMode: THandle;
   PDevmode:^TDevicemode;
+//  devsize:integer;
 begin
  Printer.GetPrinter(Device, Driver, Port, DeviceMode);
  if DeviceMode=0 then
   exit;
  PDevMode := GlobalLock(DeviceMode);
  try
+(*  devsize := DocumentProperties(0,Printer.Handle,Device, PDevMode^,
+        PDevMode^, 0);
+  if (devsize>SizeOf(DeviceMode)) then
+  begin
+   DeviceMode := GlobalAlloc(0,devsize);
+  end;*)
   PDevMode.dmFields:=dm_Orientation;
   if landscape then
    PDevMode.dmOrientation := 2

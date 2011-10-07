@@ -183,7 +183,7 @@ object TRpReport
     item
       Name = 'TRIMESTRE'
       AllowNulls = False
-      Value = '4'
+      Value = '3'
       Description = 'Trimestre (1-2-3-4)'
       Hint = ''
       Search = ''
@@ -193,7 +193,7 @@ object TRpReport
     item
       Name = 'ANO'
       AllowNulls = False
-      Value = 2009
+      Value = 2010
       ParamType = rpParamInteger
       Description = 'A'#241'o'
       Hint = ''

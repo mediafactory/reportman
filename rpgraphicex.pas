@@ -52,9 +52,16 @@ unit rpgraphicex;
 interface
 
 {$I rpgraphicconfiguration.inc}
+{$I rpconf.inc}
 
 uses
-  Windows, Classes, ExtCtrls, Graphics, SysUtils,jpeg,
+  Windows, Classes, ExtCtrls, Graphics, SysUtils,
+{$IFDEF VCLNOTATION}
+  Vcl.Imaging.jpeg,
+{$ENDIF}
+{$IFNDEF VCLNOTATION}
+  jpeg,
+{$ENDIF}
   rpgraphiccompression, rpgraphicstrings, rpgraphiccolor;
 
 type

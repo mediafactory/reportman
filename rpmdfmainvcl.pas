@@ -32,7 +32,7 @@ uses
 {$IFDEF EMPTYCOMBOBUG}
   D7ComboBoxStringsGetPatch,
 {$ENDIF}
-  Classes,Graphics,rpvgraphutils,
+  Classes,Graphics,rpvgraphutils, DBLogDlg,
   rpgdidriver,rpvpreview,rprfvparams,windows,
   Controls, Forms,
   StdCtrls, ComCtrls, ActnList, ImgList, Menus,ExtCtrls,

@@ -71,9 +71,15 @@ type
    procedure connectWorkEnd(Sender: TObject;
     AWorkMode: TWorkMode);
 {$IFNDEF INDY10_2}
+{$IFNDEF INDY10}
+   procedure idthreadcompRun(Sender: TIdCustomThreadComponent);
+   procedure connectWork(Sender: TObject; AWorkMode:TWorkMode;const AWorkCount:Integer);
+{$ENDIF}
+{$IFDEF INDY10}
    procedure idthreadcompRun(Sender: TIdThreadComponent);
    procedure connectWork(Sender: TObject; AWorkMode: TWorkMode;
     AWorkCount: Integer);
+{$ENDIF}
 {$ENDIF}
 {$IFDEF INDY10_2}
    procedure idthreadcompRun(Sender: TIdThreadComponent);
@@ -478,7 +484,12 @@ end;
 procedure TRpWebMetaPrint.idthreadcompRun(Sender: TIdThreadComponent);
 {$ENDIF}
 {$IFNDEF INDY10_2}
+{$IFDEF INDY10}
 procedure TRpWebMetaPrint.idthreadcompRun(Sender: TIdThreadComponent);
+{$ENDIF}
+{$IFNDEF INDY10}
+procedure TRpWebMetaPrint.idthreadcompRun(Sender: TIdCustomThreadComponent);
+{$ENDIF}
 {$ENDIF}
 begin
  FFinished:=false;
@@ -505,8 +516,14 @@ end;
 
 
 {$IFNDEF INDY10_2}
+{$IFNDEF INDY10}
+procedure TRpWebMetaPrint.connectWork(Sender: TObject; AWorkMode: TWorkMode;
+  const AWorkCount: Integer);
+{$ENDIF}
+{$IFDEF INDY10}
 procedure TRpWebMetaPrint.connectWork(Sender: TObject; AWorkMode: TWorkMode;
   AWorkCount: Integer);
+{$ENDIF}
 {$ENDIF}
 {$IFDEF INDY10_2}
 procedure TRpWebMetaPrint.connectWork(Sender: TObject; AWorkMode:TWorkMode;AWorkCount:Int64);

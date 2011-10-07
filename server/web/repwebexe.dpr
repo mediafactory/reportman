@@ -9,7 +9,9 @@ uses
   CGIApp,
 {$IFDEF MSWINDOWS}
 {$IFDEF USEVARIANTS}
+{$IFNDEF WIN64}
   midaslib,
+{$ENDIF}
 {$ENDIF}
 {$ENDIF}
   rpwebmodule in 'rpwebmodule.pas' {repwebmod: TWebModule},

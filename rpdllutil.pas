@@ -42,20 +42,32 @@ var
  rplasterror:String;
 
 function rp_new:integer;stdcall;
-function rp_open(filename:PChar):integer;stdcall;
-function rp_execute(hreport:integer;outputfilename:PChar;metafile,
+function rp_open(filename:PAnsiChar):integer;stdcall;
+function rp_openW(filename:PChar):integer;stdcall;
+function rp_execute(hreport:integer;outputfilename:PAnsiChar;metafile,
  compressed:integer):integer;stdcall;
-function rp_executeremote(hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
+function rp_executeW(hreport:integer;outputfilename:PChar;metafile,
  compressed:integer):integer;stdcall;
-function rp_executeremote_report(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
+function rp_executeremote(hostname:PAnsiChar;port:integer;user,password,aliasname,reportname:PAnsiChar;outputfilename:PAnsiChar;metafile,
  compressed:integer):integer;stdcall;
-function rp_getremoteparams(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname:PChar):integer;stdcall;
+function rp_executeremoteW(hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
+ compressed:integer):integer;stdcall;
+function rp_executeremote_report(hreport:integer;hostname:PAnsiChar;port:integer;user,password,aliasname,reportname:PAnsiChar;outputfilename:PAnsiChar;metafile,
+ compressed:integer):integer;stdcall;
+function rp_executeremote_reportW(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
+ compressed:integer):integer;stdcall;
+function rp_getremoteparams(hreport:integer;hostname:PAnsiChar;port:integer;user,password,aliasname,reportname:PAnsiChar):integer;stdcall;
+function rp_getremoteparamsW(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname:PChar):integer;stdcall;
 function rp_close(hreport:integer):integer;stdcall;
 function rp_lasterror:PChar;stdcall;
-function rp_setparamvalue(hreport:integer;paramname:pchar;paramtype:integer;
+function rp_setparamvalue(hreport:integer;paramname:pansichar;paramtype:integer;
+ paramvalue:Pointer):integer;stdcall;
+function rp_setparamvalueW(hreport:integer;paramname:pchar;paramtype:integer;
  paramvalue:Pointer):integer;stdcall;
 function rp_getparamcount(hreport:integer;var paramcount:Integer):integer;stdcall;
 function rp_getparamname(hreport:integer;index:integer;
+ abuffer:PAnsiChar):integer;stdcall;
+function rp_getparamnameW(hreport:integer;index:integer;
  abuffer:PChar):integer;stdcall;
 
 {$IFDEF MSWINDOWS}
@@ -120,7 +132,13 @@ begin
  Result:=TRpReport(lreports.Objects[index]);
 end;
 
-function rp_open(filename:PChar):integer;
+function rp_openW(filename:PChar):integer;
+begin
+ Result:=rp_open(PAnsiChar(filename));
+end;
+
+
+function rp_open(filename:PAnsiChar):integer;
 var
  report:TRpReport;
 begin
@@ -177,8 +195,12 @@ begin
  end;
 end;
 
+function rp_executeW(hreport:integer;outputfilename:PChar;metafile,compressed:integer):integer;
+begin
+ Result:=rp_execute(hreport,PAnsiChar(outputfilename),metafile,compressed);
+end;
 
-function rp_execute(hreport:integer;outputfilename:PChar;metafile,compressed:integer):integer;
+function rp_execute(hreport:integer;outputfilename:PAnsiChar;metafile,compressed:integer):integer;
 var
  report:TRpReport;
  acompressed:boolean;
@@ -336,7 +358,12 @@ begin
  end;
 end;
 
-function rp_getremoteparams(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname:PChar):integer;stdcall;
+function rp_getremoteparamsW(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname:PChar):integer;stdcall;
+begin
+ Result:=rp_getremoteparams(hreport,PAnsiChar(hostname),port,PansiChar(user),pansichar(password),pansichar(aliasname),pansichar(reportname));
+end;
+
+function rp_getremoteparams(hreport:integer;hostname:PAnsiChar;port:integer;user,password,aliasname,reportname:PAnsiChar):integer;stdcall;
 var
   pdfreport:TPDFReport;
   report:TRpReport;
@@ -362,7 +389,14 @@ begin
  end;
 end;
 
-function rp_executeremote_report(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
+function rp_executeremote_reportW(hreport:integer;hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
+ compressed:integer):integer;
+begin
+  rp_executeremote_report(hreport,PansiChar(hostname),port,PansiChar(user),Pansichar(password),Pansichar(aliasname),Pansichar(reportname),
+   PansiChar(outputfilename),metafile,compressed);
+end;
+
+function rp_executeremote_report(hreport:integer;hostname:PAnsiChar;port:integer;user,password,aliasname,reportname:PAnsiChar;outputfilename:PAnsiChar;metafile,
  compressed:integer):integer;
 var
  pdfreport:TPDFReport;
@@ -400,7 +434,14 @@ begin
  end;
 end;
 
-function rp_executeremote(hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
+function rp_executeremoteW(hostname:PChar;port:integer;user,password,aliasname,reportname:PChar;outputfilename:PChar;metafile,
+ compressed:integer):integer;
+begin
+ Result:= rp_executeremote(Pansichar(hostname),port,Pansichar(user),Pansichar(password),pansichar(aliasname),Pansichar(reportname),
+   pansichar(outputfilename),metafile,compressed);
+end;
+
+function rp_executeremote(hostname:PAnsiChar;port:integer;user,password,aliasname,reportname:PAnsiChar;outputfilename:PAnsiChar;metafile,
  compressed:integer):integer;
 var
  pdfreport:TPDFReport;
@@ -528,7 +569,13 @@ begin
 end;
 {$ENDIF}
 
-function rp_setparamvalue(hreport:integer;paramname:pchar;paramtype:integer;
+function rp_setparamvalueW(hreport:integer;paramname:pchar;paramtype:integer;
+ paramvalue:Pointer):integer;
+begin
+ Result:=rp_setparamvalue(hreport,Pansichar(paramname),paramtype,paramvalue);
+end;
+
+function rp_setparamvalue(hreport:integer;paramname:pAnsichar;paramtype:integer;
  paramvalue:Pointer):integer;
 var
  report:TRpReport;
@@ -576,7 +623,13 @@ begin
  end;
 end;
 
-function rp_getparamname(hreport:integer;index:integer;abuffer:PChar):integer;
+function rp_getparamnameW(hreport:integer;index:integer;abuffer:PChar):integer;
+begin
+ Result:=rp_getparamname(hreport,index,Pansichar(abuffer));
+end;
+
+
+function rp_getparamname(hreport:integer;index:integer;abuffer:PAnsiChar):integer;
 var
  report:TRpReport;
  aparam:TRpParam;
